@@ -13,6 +13,8 @@ int                                 ID_ALIAS    =   -1
 
 ; Private Variables
 Actor ref_actor = none
+bool is_clone = false
+bool is_generic = false
 
 ; Friend Methods
 function f_Initialize(doticu_npc_party_script_data DATA, int int_ID_ALIAS)
@@ -30,14 +32,18 @@ endFunction
 ; Public Methods
 int function Create(bool make_clone)
     ref_actor = MEMBER.GetActorReference()
-
-    ACTOR2.Token(ref_actor, CONSTS.TOKEN_MEMBER)
     if make_clone
-        ACTOR2.Token(ref_actor, CONSTS.TOKEN_CLONE)
+        is_clone = true
+    else
+        is_clone = false
     endIf
-    if !ACTOR2.Is_Unique(ref_actor)
-        ACTOR2.Token(ref_actor, CONSTS.TOKEN_GENERIC)
+    if ACTOR2.Is_Generic(ref_actor)
+        is_generic = true
+    else
+        is_generic = false
     endIf
+
+    Token()
     ; here we can do whatever else we need to do
 
     return CODES.SUCCESS
@@ -45,15 +51,35 @@ endFunction
 
 int function Destroy()
     ; here we can do whatever else we need to do
-    if ACTOR2.Has_Token(ref_actor, CONSTS.TOKEN_GENERIC)
-        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_GENERIC)
-    endIf
-    if ACTOR2.Has_Token(ref_actor, CONSTS.TOKEN_CLONE)
-        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_CLONE)
-    endIf
-    ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_MEMBER)
+    Untoken()
 
+    is_generic = false
+    is_clone = false
     ref_actor = none
 
     return CODES.SUCCESS
+endFunction
+
+function Token()
+    ACTOR2.Token(ref_actor, CONSTS.TOKEN_MEMBER)
+    if is_clone
+        ACTOR2.Token(ref_actor, CONSTS.TOKEN_CLONE)
+    else
+        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_CLONE)
+    endIf
+    if is_generic
+        ACTOR2.Token(ref_actor, CONSTS.TOKEN_GENERIC)
+    else
+        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_GENERIC)
+    endIf
+endFunction
+
+function Untoken()
+    ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_GENERIC)
+    ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_CLONE)
+    ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_MEMBER)
+endFunction
+
+function Enforce()
+    Token()
 endFunction

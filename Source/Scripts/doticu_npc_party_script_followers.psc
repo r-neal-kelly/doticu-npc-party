@@ -80,10 +80,49 @@ int function Get_ID(Actor ref_actor)
     return ALIASES.Get_ID(ref_actor)
 endFunction
 
+bool function Has_ID(int id_follower)
+    return ALIASES.Has_ID(id_follower)
+endFunction
+
 doticu_npc_party_script_follower function Get_Follower_By_ID(int id_member)
     return ALIASES.Get_Alias_By_ID(id_member) as doticu_npc_party_script_follower
 endFunction
 
 doticu_npc_party_script_follower function Get_Follower_By_Ref(Actor ref_actor)
     return ALIASES.Get_Alias_By_Ref(ref_actor) as doticu_npc_party_script_follower
+endFunction
+
+int function Enforce_Follower_By_Ref(Actor ref_actor)
+    int code_return
+
+    code_return = Get_ID(ref_actor)
+    if code_return < 0
+        return code_return
+    endIf
+    int id_follower = code_return
+
+    code_return = Enforce_Follower_By_ID(id_follower)
+    if code_return < 0
+        return code_return
+    endIf
+
+    return CODES.SUCCESS
+endFunction
+
+int function Enforce_Follower_By_ID(int id_follower)
+    int code_return
+
+    if !Has_ID(id_follower)
+        return CODES.NO_FOLLOWER
+    endIf
+
+    Actor ref_actor = ALIASES.Get_Actor(id_follower)
+    code_return = MODS.MEMBERS.Enforce_Member_By_Ref(ref_actor)
+    if code_return < 0
+        return code_return
+    endIf
+
+    Get_Follower_By_ID(id_follower).Enforce()
+
+    return CODES.SUCCESS
 endFunction

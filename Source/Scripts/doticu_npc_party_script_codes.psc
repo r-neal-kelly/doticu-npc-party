@@ -12,4 +12,5 @@ int property FATAL_ERROR    = -600 autoReadOnly
 int property NO_ACTOR       = -100 autoReadOnly
 int property NO_ALIAS       = -110 autoReadOnly
 int property NO_MEMBER      = -120 autoReadOnly
+int property NO_FOLLOWER    = -130 autoReadOnly
 int property NO_RESURRECT   = -140 autoReadOnly

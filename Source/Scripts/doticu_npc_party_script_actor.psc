@@ -23,6 +23,10 @@ bool function Is_Unique(Actor ref_actor)
     return ref_actor.GetActorBase().IsUnique()
 endFunction
 
+bool function Is_Generic(Actor ref_actor)
+    return !ref_actor.GetActorBase().IsUnique()
+endFunction
+
 function Resurrect(Actor ref_actor)
     ref_actor.SetActorValue("Aggression", 0)
     ref_actor.Disable()

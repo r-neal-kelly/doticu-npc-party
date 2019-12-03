@@ -91,8 +91,8 @@ int function Get_ID(Actor ref_actor)
     return ALIASES.Get_ID(ref_actor)
 endFunction
 
-bool function Has_ID(int id_alias)
-    return ALIASES.Has_ID(id_alias)
+bool function Has_ID(int id_member)
+    return ALIASES.Has_ID(id_member)
 endFunction
 
 bool function Has_Actor(Actor ref_actor)
@@ -121,4 +121,33 @@ endFunction
 
 doticu_npc_party_script_immobile function Get_Immobile_By_Ref(Actor ref_actor)
     return ALIASES.Get_Alias_By_Ref(ref_actor) as doticu_npc_party_script_immobile
+endFunction
+
+int function Enforce_Member_By_Ref(Actor ref_actor)
+    int code_return
+
+    code_return = Get_ID(ref_actor)
+    if code_return < 0
+        return code_return
+    endIf
+    int id_member = code_return
+
+    code_return = Enforce_Member_By_ID(id_member)
+    if code_return < 0
+        return code_return
+    endIf
+
+    return CODES.SUCCESS
+endFunction
+
+int function Enforce_Member_By_ID(int id_member)
+    if !Has_ID(id_member)
+        return CODES.NO_MEMBER
+    endIf
+
+    Get_Member_By_ID(id_member).Enforce()
+    Get_Settler_By_ID(id_member).Enforce()
+    Get_Immobile_By_ID(id_member).Enforce()
+
+    return CODES.SUCCESS
 endFunction
