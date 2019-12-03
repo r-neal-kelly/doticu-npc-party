@@ -74,9 +74,9 @@ int function Destroy_Member(Actor ref_actor)
         return CODES.NO_MEMBER
     endIf
 
-    Get_Member_By_ID(id_member).Destroy()
-    Get_Settler_By_ID(id_member).Destroy()
-    Get_Immobile_By_ID(id_member).Destroy()
+    Get_Member_By_Ref(ref_actor).Destroy()
+    Get_Settler_By_Ref(ref_actor).Destroy()
+    Get_Immobile_By_Ref(ref_actor).Destroy()
 
     code_return = ALIASES.Destroy_Alias(ref_actor)
     if code_return < 0
