@@ -97,13 +97,13 @@ int function Destroy()
         endIf
     endIf
     if IMMOBILE.Exists()
-        code_return = Unsettle()
+        code_return = Mobilize()
         if code_return < 0
             return code_return
         endIf
     endIf
     if SETTLER.Exists()
-        code_return = Mobilize()
+        code_return = Unsettle()
         if code_return < 0
             return code_return
         endIf
