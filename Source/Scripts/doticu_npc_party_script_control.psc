@@ -30,5 +30,6 @@ function f_Initialize(doticu_npc_party_script_data DATA)
     p_KEYS = (self as Quest) as doticu_npc_party_script_keys
     p_MCM = (self as Quest) as doticu_npc_party_script_mcm
 
+    p_DIALOGUE.f_Initialize(DATA)
     p_KEYS.f_Initialize(DATA)
 endFunction

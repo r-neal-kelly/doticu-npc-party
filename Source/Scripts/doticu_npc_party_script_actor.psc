@@ -34,6 +34,10 @@ function Resurrect(Actor ref_actor)
     ref_actor.Enable()
 endFunction
 
+function Open_Inventory(Actor ref_actor)
+    ref_actor.OpenInventory(true)
+endFunction
+
 function Token(Actor ref_actor, MiscObject misc_token)
     int count_token = ref_actor.GetItemCount(misc_token)
     if count_token < 1

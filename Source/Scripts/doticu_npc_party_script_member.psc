@@ -224,3 +224,13 @@ doticu_npc_party_script_immobile function Get_Immobile()
         return IMMOBILE
     endIf
 endFunction
+
+int function Access()
+    if !Exists()
+        return CODES.NO_MEMBER
+    endIf
+    
+    ACTOR2.Open_Inventory(ref_actor)
+
+    return CODES.SUCCESS
+endFunction
