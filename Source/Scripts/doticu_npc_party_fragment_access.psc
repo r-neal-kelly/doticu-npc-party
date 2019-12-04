@@ -6,8 +6,7 @@ Scriptname doticu_npc_party_fragment_access Extends TopicInfo Hidden
 Function Fragment_0(ObjectReference akSpeakerRef)
 Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
-doticu_npc_party_script_dialogue DIALOGUE = GetOwningQuest() as doticu_npc_party_script_dialogue
-DIALOGUE.MEMBERS.Get_Member(akSpeaker).Access()
+(GetOwningQuest() as doticu_npc_party_script_dialogue).Member_Access(akSpeaker)
 ;END CODE
 EndFunction
 ;END FRAGMENT

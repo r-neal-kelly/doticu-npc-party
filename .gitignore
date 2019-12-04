@@ -1,3 +1,4 @@
+.gitignore
 meta.ini
 .vscode
 doticu_npc_party.code-workspace
