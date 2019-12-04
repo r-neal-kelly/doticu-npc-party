@@ -31,98 +31,57 @@ endFunction
 int function Create_Follower(Actor ref_actor)
     int code_return
 
-    if !ref_actor
-        return CODES.BAD_PARAM
-    endIf
-    if !MODS.MEMBERS.Has_Actor(ref_actor)
-        return CODES.NO_MEMBER
-    endIf
-    if ALIASES.Has_Actor(ref_actor)
-        return CODES.IS_DUPLICATE
-    endIf
-    if ALIASES.Is_Full()
-        return CODES.OUT_OF_SPACE
-    endIf
-
     code_return = ALIASES.Create_Alias(ref_actor)
     if code_return < 0
         return code_return
     endIf
-    int id_follower = code_return
 
-    Get_Follower_By_ID(id_follower).Create()
+    code_return = Get_Follower(ref_actor).Create()
+    if code_return < 0
+        ALIASES.Destroy_Alias(ref_actor)
+        return code_return
+    endIf
 
-    return id_follower
+    return CODES.SUCCESS
 endFunction
 
 int function Destroy_Follower(Actor ref_actor)
     int code_return
-    
-    if !ref_actor
-        return CODES.NO_ACTOR
-    endIf
-    if !ALIASES.Has_Actor(ref_actor)
-        return CODES.NO_MEMBER; INVALID_PARAM, NO_COUNTERPART
+
+    if !Has_Follower(ref_actor)
+        return CODES.NO_FOLLOWER
     endIf
 
-    Get_Follower_By_Ref(ref_actor).Destroy()
+    code_return = Get_Follower(ref_actor).Destroy()
+    if code_return < 0
+        return code_return
+    endIf
 
     code_return = ALIASES.Destroy_Alias(ref_actor)
     if code_return < 0
         return code_return
     endIf
-    int id_follower = code_return
-
-    return id_follower
-endFunction
-
-int function Get_ID(Actor ref_actor)
-    return ALIASES.Get_ID(ref_actor)
-endFunction
-
-bool function Has_ID(int id_follower)
-    return ALIASES.Has_ID(id_follower)
-endFunction
-
-doticu_npc_party_script_follower function Get_Follower_By_ID(int id_member)
-    return ALIASES.Get_Alias_By_ID(id_member) as doticu_npc_party_script_follower
-endFunction
-
-doticu_npc_party_script_follower function Get_Follower_By_Ref(Actor ref_actor)
-    return ALIASES.Get_Alias_By_Ref(ref_actor) as doticu_npc_party_script_follower
-endFunction
-
-int function Enforce_Follower_By_Ref(Actor ref_actor)
-    int code_return
-
-    code_return = Get_ID(ref_actor)
-    if code_return < 0
-        return code_return
-    endIf
-    int id_follower = code_return
-
-    code_return = Enforce_Follower_By_ID(id_follower)
-    if code_return < 0
-        return code_return
-    endIf
 
     return CODES.SUCCESS
 endFunction
 
-int function Enforce_Follower_By_ID(int id_follower)
+int function Enforce_Follower(Actor ref_actor)
     int code_return
 
-    if !Has_ID(id_follower)
+    if !Has_Follower(ref_actor)
         return CODES.NO_FOLLOWER
     endIf
 
-    Actor ref_actor = ALIASES.Get_Actor(id_follower)
-    code_return = MODS.MEMBERS.Enforce_Member_By_Ref(ref_actor)
-    if code_return < 0
-        return code_return
-    endIf
-
-    Get_Follower_By_ID(id_follower).Enforce()
+    Get_Follower(ref_actor).Enforce()
+    ; do we enforce member here too?
 
     return CODES.SUCCESS
+endFunction
+
+bool function Has_Follower(Actor ref_actor)
+    return ALIASES.Has_Alias(ref_actor)
+endFunction
+
+doticu_npc_party_script_follower function Get_Follower(Actor ref_actor)
+    return ALIASES.Get_Alias(ref_actor) as doticu_npc_party_script_follower
 endFunction

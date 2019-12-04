@@ -3,6 +3,10 @@ Scriptname doticu_npc_party_script_codes extends Quest
 ; Codes
 int property SUCCESS        =    0 autoReadOnly
 int property FAILURE        =   -1 autoReadOnly
+int property STARTED        =  -10 autoReadOnly
+int property STOPPED        =  -20 autoReadOnly
+int property CREATED        =  -30 autoReadOnly
+int property DESTROYED      =  -40 autoReadOnly
 int property BAD_PARAM      =  -50 autoReadOnly
 int property IS_DUPLICATE   =  -60 autoReadOnly
 int property OUT_OF_BOUNDS  =  -70 autoReadOnly

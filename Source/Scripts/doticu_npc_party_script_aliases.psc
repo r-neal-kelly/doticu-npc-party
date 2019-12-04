@@ -53,6 +53,33 @@ int function p_Destroy_ID(int id)
     return CODES.SUCCESS
 endFunction
 
+int function p_Get_ID(Actor ref_actor)
+    ; it would be awesome to just pull this from a ref_actor value. "LastFlattered" might be a good one. make sure to check it, and use this as a fall back
+    if !ref_actor
+        return CODES.NO_ACTOR
+    endIf
+
+    ; id_alias > -1 && id_alias < MAX_ALIASES ; for when we check cached id on ref_actor
+
+    int idx_ids_used = 0
+    int idx_alias
+    ReferenceAlias ref_alias
+    while idx_ids_used < size_ids_used
+        idx_alias = arr_ids_used[idx_ids_used]
+        ref_alias = GetNthAlias(idx_alias) as ReferenceAlias
+        if !ref_alias
+            ; something must be wrong with our code
+            return CODES.FATAL_ERROR
+        endIf
+        if ref_alias.GetActorReference() == ref_actor
+            return idx_alias
+        endIf
+        idx_ids_used += 1
+    endWhile
+
+    return CODES.NO_MEMBER
+endFunction
+
 ; Friend Methods
 function f_Initialize(doticu_npc_party_script_data DATA)
     CONSTS = DATA.CONSTS
@@ -77,113 +104,71 @@ endFunction
 
 ; Public Methods
 int function Create_Alias(Actor ref_actor)
+    int code_return
+
     if !ref_actor
         return CODES.NO_ACTOR
     endIf
-
+    if Has_Alias(ref_actor)
+        return CODES.IS_DUPLICATE
+    endIf
     if Is_Full()
         return CODES.OUT_OF_SPACE
     endIf
 
-    int id_alias = p_Create_ID()
-    if id_alias < 0
-        ; something must be wrong with our code
-        return CODES.FATAL_ERROR
+    code_return = p_Create_ID()
+    if code_return < 0
+        return code_return
     endIf
+    int id_alias = code_return
 
-    ReferenceAlias ref_alias = GetNthAlias(id_alias) as ReferenceAlias
-    ref_alias.ForceRefTo(ref_actor)
+    ; need to add id_alias to ref_actor values. but we need to pass in the string...
 
-    return id_alias
+    (GetNthAlias(id_alias) as ReferenceAlias).ForceRefTo(ref_actor)
+
+    return CODES.SUCCESS
 endFunction
 
 int function Destroy_Alias(Actor ref_actor)
-    if !ref_actor
-        return CODES.NO_ACTOR
-    endIf
+    int code_return
 
-    int id_alias = Get_ID(ref_actor)
-    if id_alias < 0
-        int code_error = id_alias
-        return code_error
-    endIf
-
-    int code_return = p_Destroy_ID(id_alias)
+    code_return = p_Get_ID(ref_actor)
     if code_return < 0
-        ; something must be wrong with our code
-        return CODES.FATAL_ERROR
+        return code_return
+    endIf
+    int id_alias = code_return
+
+    code_return = p_Destroy_ID(id_alias)
+    if code_return < 0
+        return code_return
     endIf
 
-    ReferenceAlias ref_alias = GetNthAlias(id_alias) as ReferenceAlias
-    ref_alias.Clear()
+    (GetNthAlias(id_alias) as ReferenceAlias).Clear()
 
-    return id_alias
+    ; need to remove id_alias from ref_actor values. but we need to pass in the string...
+
+    return CODES.SUCCESS
+endFunction
+
+ReferenceAlias function Get_Alias(Actor ref_actor)
+    int id_alias = p_Get_ID(ref_actor)
+    if id_alias < 0
+        return none
+    else
+        return GetNthAlias(id_alias) as ReferenceAlias
+    endIf
+endFunction
+
+bool function Has_Alias(Actor ref_actor)
+    return p_Get_ID(ref_actor) > -1
 endFunction
 
 bool function Is_Full()
     return size_ids_free <= 0
 endFunction
 
-bool function Has_Actor(Actor ref_actor)
-    return Get_ID(ref_actor) > -1
-endFunction
-
-bool function Has_ID(int id_alias)
-    return Get_Actor(id_alias) != none
-endFunction
-
-Actor function Get_Actor(int id_alias)
-    if id_alias < 0 || id_alias >= MAX_ALIASES
-        return none
-    else
-        return (GetNthAlias(id_alias) as ReferenceAlias).GetActorReference()
-    endIf
-endFunction
-
-ReferenceAlias function Get_Alias_By_ID(int id_alias)
-    if !Has_ID(id_alias)
-        return none
-    else
-        return GetNthAlias(id_alias) as ReferenceAlias
-    endIf
-endFunction
-
-ReferenceAlias function Get_Alias_By_Ref(Actor ref_actor)
-    int id_alias = Get_ID(ref_actor)
-    if id_alias < 0
-        return none
-    else
-        return GetNthAlias(id_alias) as ReferenceAlias
-    endIf
-endFunction
-
 int function Get_Count()
     return size_ids_used
-endFunction
-
-int function Get_ID(Actor ref_member)
-    ; it would be awesome to just pull this from a ref_actor value. "LastFlattered" might be a good one. make sure to check it, and use this as a fall back
-    if !ref_member
-        return CODES.NO_ACTOR
-    endIf
-
-    int idx_ids_used = 0
-    int idx_alias
-    ReferenceAlias ref_alias
-    while idx_ids_used < size_ids_used
-        idx_alias = arr_ids_used[idx_ids_used]
-        ref_alias = GetNthAlias(idx_alias) as ReferenceAlias
-        if !ref_alias
-            ; something must be wrong with our code
-            return CODES.FATAL_ERROR
-        endIf
-        if ref_alias.GetActorReference() == ref_member
-            return idx_alias
-        endIf
-        idx_ids_used += 1
-    endWhile
-
-    return CODES.NO_MEMBER
 endFunction
 
 int function Get_Max()
