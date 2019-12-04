@@ -67,91 +67,10 @@ int function Destroy_Member(Actor ref_actor)
     return CODES.SUCCESS
 endFunction
 
-int function Create_Settler(Actor ref_actor)
-    int code_return
-
-    if !Has_Member(ref_actor)
-        return CODES.NO_MEMBER
-    endIf
-
-    code_return = Get_Settler(ref_actor).Create()
-    if code_return < 0
-        return code_return
-    endIf
-
-    return CODES.SUCCESS
-endFunction
-
-int function Destroy_Settler(Actor ref_actor)
-    int code_return
-
-    if !Has_Member(ref_actor)
-        return CODES.NO_MEMBER
-    endIf
-
-    code_return = Get_Settler(ref_actor).Destroy()
-    if code_return < 0
-        return code_return
-    endIf
-
-    return CODES.SUCCESS
-endFunction
-
-int function Create_Immobile(Actor ref_actor)
-    int code_return
-
-    if !Has_Member(ref_actor)
-        return CODES.NO_MEMBER
-    endIf
-
-    code_return = Get_Immobile(ref_actor).Create()
-    if code_return < 0
-        return code_return
-    endIf
-
-    return CODES.SUCCESS
-endFunction
-
-int function Destroy_Immobile(Actor ref_actor)
-    int code_return
-
-    if !Has_Member(ref_actor)
-        return CODES.NO_MEMBER
-    endIf
-
-    code_return = Get_Immobile(ref_actor).Destroy()
-    if code_return < 0
-        return code_return
-    endIf
-
-    return CODES.SUCCESS
-endFunction
-
-int function Enforce_Member(Actor ref_actor)
-    int code_return
-
-    if !Has_Member(ref_actor)
-        return CODES.NO_MEMBER
-    endIf
-
-    Get_Member(ref_actor).Enforce()
-    ; should we enfore settler and immobile here?
-
-    return CODES.SUCCESS
-endFunction
-
 bool function Has_Member(Actor ref_actor)
     return ALIASES.Has_Alias(ref_actor)
 endFunction
 
 doticu_npc_party_script_member function Get_Member(Actor ref_actor)
     return ALIASES.Get_Alias(ref_actor) as doticu_npc_party_script_member
-endFunction
-
-doticu_npc_party_script_settler function Get_Settler(Actor ref_actor)
-    return ALIASES.Get_Alias(ref_actor) as doticu_npc_party_script_settler
-endFunction
-
-doticu_npc_party_script_immobile function Get_Immobile(Actor ref_actor)
-    return ALIASES.Get_Alias(ref_actor) as doticu_npc_party_script_immobile
 endFunction

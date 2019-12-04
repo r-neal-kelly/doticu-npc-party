@@ -65,19 +65,6 @@ int function Destroy_Follower(Actor ref_actor)
     return CODES.SUCCESS
 endFunction
 
-int function Enforce_Follower(Actor ref_actor)
-    int code_return
-
-    if !Has_Follower(ref_actor)
-        return CODES.NO_FOLLOWER
-    endIf
-
-    Get_Follower(ref_actor).Enforce()
-    ; do we enforce member here too?
-
-    return CODES.SUCCESS
-endFunction
-
 bool function Has_Follower(Actor ref_actor)
     return ALIASES.Has_Alias(ref_actor)
 endFunction
