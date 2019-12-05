@@ -209,6 +209,16 @@ int function Enforce()
     return CODES.SUCCESS
 endFunction
 
+int function Access()
+    if !Exists()
+        return CODES.NO_MEMBER
+    endIf
+    
+    ACTOR2.Open_Inventory(ref_actor)
+
+    return CODES.SUCCESS
+endFunction
+
 doticu_npc_party_script_settler function Get_Settler()
     if !Exists() || !SETTLER.Exists()
         return none
@@ -223,14 +233,4 @@ doticu_npc_party_script_immobile function Get_Immobile()
     else
         return IMMOBILE
     endIf
-endFunction
-
-int function Access()
-    if !Exists()
-        return CODES.NO_MEMBER
-    endIf
-    
-    ACTOR2.Open_Inventory(ref_actor)
-
-    return CODES.SUCCESS
 endFunction
