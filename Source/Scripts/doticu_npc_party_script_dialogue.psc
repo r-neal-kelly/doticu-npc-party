@@ -82,3 +82,19 @@ function Member_Mobilize(Actor ref_actor)
     endIf
     p_Handle_If_Error(ref_member.Mobilize())
 endFunction
+
+function Member_Follow(Actor ref_actor)
+    doticu_npc_party_script_member ref_member = p_Get_Member(ref_actor)
+    if !ref_member
+        return
+    endIf
+    p_Handle_If_Error(ref_member.Follow())
+endFunction
+
+function Member_Unfollow(Actor ref_actor)
+    doticu_npc_party_script_member ref_member = p_Get_Member(ref_actor)
+    if !ref_member
+        return
+    endIf
+    p_Handle_If_Error(ref_member.Unfollow())
+endFunction

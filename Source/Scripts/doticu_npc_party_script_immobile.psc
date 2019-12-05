@@ -33,8 +33,20 @@ function f_Initialize(doticu_npc_party_script_data DATA, int int_ID_ALIAS)
     ID_ALIAS = int_ID_ALIAS
 endFunction
 
+int function f_Enforce()
+    if !Exists()
+        return CODES.NO_IMMOBILE
+    endIf
+
+    p_Token()
+
+    return CODES.SUCCESS
+endFunction
+
 ; Public Methods
 int function Create()
+    int code_return
+
     if Exists()
         return CODES.EXISTS
     endIf
@@ -47,8 +59,10 @@ int function Create()
     endIf
     is_created = true
 
-    p_Token()
-    ; here we can do whatever else we need to do
+    code_return = f_Enforce()
+    if code_return < 0
+        return code_return
+    endIf
 
     return CODES.SUCCESS
 endFunction
@@ -58,7 +72,7 @@ int function Destroy()
         return CODES.NO_IMMOBILE
     endIf
 
-    ; here we can do whatever else we need to do
+    ; here we can do whatever else we need to do, the opposite of f_Enforce
     p_Untoken()
 
     ref_actor = none
@@ -69,14 +83,4 @@ endFunction
 
 bool function Exists()
     return is_created
-endFunction
-
-int function Enforce()
-    if !Exists()
-        return CODES.NO_IMMOBILE
-    endIf
-
-    p_Token()
-
-    return CODES.SUCCESS
 endFunction

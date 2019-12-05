@@ -1,16 +1,29 @@
 Scriptname doticu_npc_party_script_consts extends Quest
 
 ; Private Constants
-MiscObject p_TOKEN_MEMBER           = none
-MiscObject p_TOKEN_SETTLER          = none
-MiscObject p_TOKEN_FOLLOWER         = none
-MiscObject p_TOKEN_FOLLOWER_SNEAK   = none
-MiscObject p_TOKEN_IMMOBILE         = none
-MiscObject p_TOKEN_CLONE            = none
-MiscObject p_TOKEN_BANISHED         = none
-MiscObject p_TOKEN_GENERIC          = none
+Actor           p_ACTOR_PLAYER                  = none
+MiscObject      p_TOKEN_MEMBER                  = none
+MiscObject      p_TOKEN_SETTLER                 = none
+MiscObject      p_TOKEN_FOLLOWER                = none
+MiscObject      p_TOKEN_FOLLOWER_SNEAK          = none
+MiscObject      p_TOKEN_IMMOBILE                = none
+MiscObject      p_TOKEN_CLONE                   = none
+MiscObject      p_TOKEN_BANISHED                = none
+MiscObject      p_TOKEN_GENERIC                 = none
+GlobalVariable  p_GLOBAL_PLAYER_FOLLOWER_COUNT  = none
 
 ; Public Constants
+Actor property ACTOR_PLAYER
+    Actor function Get()
+        return p_ACTOR_PLAYER
+    endFunction
+    function Set(Actor val)
+        if p_ACTOR_PLAYER == none
+            p_ACTOR_PLAYER = val
+        endIf
+    endFunction
+endProperty
+
 MiscObject property TOKEN_MEMBER
     MiscObject function Get()
         return p_TOKEN_MEMBER
@@ -95,6 +108,17 @@ MiscObject property TOKEN_GENERIC
     function Set(MiscObject val)
         if p_TOKEN_GENERIC == none
             p_TOKEN_GENERIC = val
+        endIf
+    endFunction
+endProperty
+
+GlobalVariable property GLOBAL_PLAYER_FOLLOWER_COUNT
+    GlobalVariable function Get()
+        return p_GLOBAL_PLAYER_FOLLOWER_COUNT
+    endFunction
+    function Set(GlobalVariable val)
+        if p_GLOBAL_PLAYER_FOLLOWER_COUNT == none
+            p_GLOBAL_PLAYER_FOLLOWER_COUNT = val
         endIf
     endFunction
 endProperty

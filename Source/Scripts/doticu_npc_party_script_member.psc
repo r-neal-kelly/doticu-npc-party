@@ -8,6 +8,7 @@ doticu_npc_party_script_mods        MODS        = none
 doticu_npc_party_script_actor       ACTOR2      = none
 doticu_npc_party_script_settler     SETTLER     = none
 doticu_npc_party_script_immobile    IMMOBILE    = none
+doticu_npc_party_script_followers   FOLLOWERS   = none
 int                                 ID_ALIAS    =   -1
 
 ; Private Variables
@@ -46,11 +47,40 @@ function f_Initialize(doticu_npc_party_script_data DATA, int int_ID_ALIAS)
     ACTOR2 = MODS.FUNCS.ACTOR2
     SETTLER = (self as ReferenceAlias) as doticu_npc_party_script_settler
     IMMOBILE = (self as ReferenceAlias) as doticu_npc_party_script_immobile
+    FOLLOWERS = MODS.FOLLOWERS
     ID_ALIAS = int_ID_ALIAS
+endFunction
+
+int function f_Enforce()
+    int code_return
+
+    if !Exists()
+        return CODES.NO_MEMBER
+    endIf
+
+    p_Token()
+
+    ; only f_Enforce these if they exist
+    if SETTLER.Exists()
+        code_return = SETTLER.f_Enforce()
+        if code_return < 0
+            return code_return
+        endIf
+    endIf
+    if IMMOBILE.Exists()
+        code_return = IMMOBILE.f_Enforce()
+        if code_return < 0
+            return code_return
+        endIf
+    endIf
+
+    return CODES.SUCCESS
 endFunction
 
 ; Public Methods
 int function Create(bool make_clone)
+    int code_return
+
     if Exists()
         return CODES.EXISTS
     endIf
@@ -64,8 +94,8 @@ int function Create(bool make_clone)
             return CODES.NO_RESURRECT
         endIf
     endIf
-    is_created = true
 
+    is_created = true
     if make_clone
         is_clone = true
     else
@@ -77,8 +107,10 @@ int function Create(bool make_clone)
         is_generic = false
     endIf
 
-    p_Token()
-    ; here we can do whatever else we need to do
+    code_return = f_Enforce()
+    if code_return < 0
+        return code_return
+    endIf
 
     return CODES.SUCCESS
 endFunction
@@ -109,7 +141,7 @@ int function Destroy()
         endIf
     endIf
 
-    ; here we can do whatever else we need to do
+    ; here we can do whatever else we need to do, the opposite of f_Enforce
     p_Untoken()
 
     is_generic = false
@@ -122,6 +154,22 @@ endFunction
 
 bool function Exists()
     return is_created
+endFunction
+
+doticu_npc_party_script_settler function Get_Settler()
+    if !Exists() || !SETTLER.Exists()
+        return none
+    else
+        return SETTLER
+    endIf
+endFunction
+
+doticu_npc_party_script_immobile function Get_Immobile()
+    if !Exists() || !IMMOBILE.Exists()
+        return none
+    else
+        return IMMOBILE
+    endIf
 endFunction
 
 int function Settle()
@@ -184,26 +232,31 @@ int function Mobilize()
     return CODES.SUCCESS
 endFunction
 
-int function Enforce()
+int function Follow()
     int code_return
 
     if !Exists()
         return CODES.NO_MEMBER
     endIf
 
-    p_Token()
-
-    if SETTLER.Exists()
-        code_return = SETTLER.Enforce()
-        if code_return < 0
-            return code_return
-        endIf
+    code_return = FOLLOWERS.Create_Follower(ref_actor)
+    if code_return < 0
+        return code_return
     endIf
-    if IMMOBILE.Exists()
-        code_return = IMMOBILE.Enforce()
-        if code_return < 0
-            return code_return
-        endIf
+
+    return CODES.SUCCESS
+endFunction
+
+int function Unfollow()
+    int code_return
+
+    if !Exists()
+        return CODES.NO_MEMBER
+    endIf
+
+    code_return = FOLLOWERS.Destroy_Follower(ref_actor)
+    if code_return < 0
+        return code_return
     endIf
 
     return CODES.SUCCESS
@@ -219,18 +272,7 @@ int function Access()
     return CODES.SUCCESS
 endFunction
 
-doticu_npc_party_script_settler function Get_Settler()
-    if !Exists() || !SETTLER.Exists()
-        return none
-    else
-        return SETTLER
-    endIf
-endFunction
-
-doticu_npc_party_script_immobile function Get_Immobile()
-    if !Exists() || !IMMOBILE.Exists()
-        return none
-    else
-        return IMMOBILE
-    endIf
-endFunction
+; Events
+event OnActivate(ObjectReference ref_activator); should this go on an ALIAS type?
+    f_Enforce()
+endEvent

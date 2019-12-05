@@ -9,25 +9,45 @@ doticu_npc_party_script_actor       ACTOR2      = none
 int                                 ID_ALIAS    =   -1
 
 ; Private Variables
-bool                            is_created  = false
-Actor                           ref_actor   =  none
-doticu_npc_party_script_member  ref_member  =  none
-bool                            is_sneak    = false
+bool                            is_created              = false
+Actor                           ref_actor               =  none
+doticu_npc_party_script_member  ref_member              =  none
+bool                            is_sneak                = false
+int                             prev_relationship_rank  =    -1
 
 ; Private Methods
+function p_Backup()
+    prev_relationship_rank = ref_actor.GetRelationshipRank(CONSTS.ACTOR_PLAYER)
+endFunction
+
 function p_Token()
+    ACTOR2.Token(ref_actor, CONSTS.TOKEN_FOLLOWER)
     if is_sneak
-        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_FOLLOWER)
         ACTOR2.Token(ref_actor, CONSTS.TOKEN_FOLLOWER_SNEAK)
-    else
-        ACTOR2.Token(ref_actor, CONSTS.TOKEN_FOLLOWER)
-        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_FOLLOWER_SNEAK)
     endIf
 endFunction
 
 function p_Untoken()
     ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_FOLLOWER_SNEAK)
     ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_FOLLOWER)
+endFunction
+
+function p_Follow()
+    if MODS.FOLLOWERS.Get_Count() == 0
+        CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(1)
+    endIf
+    ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, 3); the previous state needs to be stored
+    ref_actor.SetPlayerTeammate(true, true)
+    ref_actor.IgnoreFriendlyHits(true)
+endFunction
+
+function p_Unfollow()
+    ref_actor.IgnoreFriendlyHits(false)
+    ref_actor.SetPlayerTeammate(false, false)
+    ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, prev_relationship_rank)
+    if MODS.FOLLOWERS.Get_Count() == 0
+        CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(0)
+    endIf
 endFunction
 
 ; Friend Methods
@@ -40,8 +60,28 @@ function f_Initialize(doticu_npc_party_script_data DATA, int int_ID_ALIAS)
     ID_ALIAS = int_ID_ALIAS
 endFunction
 
+int function f_Enforce()
+    int code_return
+
+    if !Exists()
+        return CODES.NO_FOLLOWER
+    endIf
+
+    code_return = ref_member.f_Enforce()
+    if code_return < 0
+        return code_return
+    endIf
+
+    p_Token()
+    p_Follow()
+
+    return CODES.SUCCESS
+endFunction
+
 ; Public Methods
 int function Create()
+    int code_return
+
     if Exists()
         return CODES.EXISTS
     endIf
@@ -55,8 +95,12 @@ int function Create()
     endIf
     is_created = true
 
-    p_Token()
-    ; here we can do whatever else we need to do
+    p_Backup(); maybe in MEMBER?
+
+    code_return = f_Enforce()
+    if code_return < 0
+        return code_return
+    endIf
 
     return CODES.SUCCESS
 endFunction
@@ -66,7 +110,7 @@ int function Destroy()
         return CODES.NO_FOLLOWER
     endIf
 
-    ; here we can do whatever else we need to do
+    p_Unfollow()
     p_Untoken()
 
     is_sneak = false
@@ -81,21 +125,12 @@ bool function Exists()
     return is_created
 endFunction
 
-int function Enforce()
-    int code_return
-
-    if !Exists()
-        return CODES.NO_FOLLOWER
+doticu_npc_party_script_member function Get_Member()
+    if !Exists() || !ref_member.Exists()
+        return none
+    else
+        return ref_member
     endIf
-
-    code_return = ref_member.Enforce()
-    if code_return < 0
-        return code_return
-    endIf
-
-    p_Token()
-
-    return CODES.SUCCESS
 endFunction
 
 int function Sneak()
@@ -107,7 +142,7 @@ int function Sneak()
 
     is_sneak = true
 
-    code_return = Enforce()
+    code_return = f_Enforce()
     if code_return < 0
         return code_return
     endIf
@@ -124,7 +159,7 @@ int function Unsneak()
 
     is_sneak = false
 
-    code_return = Enforce()
+    code_return = f_Enforce()
     if code_return < 0
         return code_return
     endIf
@@ -132,10 +167,7 @@ int function Unsneak()
     return CODES.SUCCESS
 endFunction
 
-doticu_npc_party_script_member function Get_Member()
-    if !Exists() || !ref_member.Exists()
-        return none
-    else
-        return ref_member
-    endIf
-endFunction
+; Events
+event OnActivate(ObjectReference ref_activator); should this go on an ALIAS type?
+    f_Enforce()
+endEvent
