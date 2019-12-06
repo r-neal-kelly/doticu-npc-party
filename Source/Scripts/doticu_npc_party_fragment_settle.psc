@@ -6,7 +6,7 @@ Scriptname doticu_npc_party_fragment_settle Extends TopicInfo Hidden
 Function Fragment_0(ObjectReference akSpeakerRef)
 Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
-(GetOwningQuest() as doticu_npc_party_script_dialogue).Member_Settle(akSpeaker)
+(GetOwningQuest() as doticu_npc_party_script_control).Settle(akSpeaker)
 ;END CODE
 EndFunction
 ;END FRAGMENT

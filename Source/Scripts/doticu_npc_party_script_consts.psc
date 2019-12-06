@@ -11,6 +11,7 @@ MiscObject      p_TOKEN_CLONE                   = none
 MiscObject      p_TOKEN_BANISHED                = none
 MiscObject      p_TOKEN_GENERIC                 = none
 GlobalVariable  p_GLOBAL_PLAYER_FOLLOWER_COUNT  = none
+FormList        p_FORMLIST_MARKERS_SETTLER      = none
 
 ; Public Constants
 Actor property ACTOR_PLAYER
@@ -119,6 +120,17 @@ GlobalVariable property GLOBAL_PLAYER_FOLLOWER_COUNT
     function Set(GlobalVariable val)
         if p_GLOBAL_PLAYER_FOLLOWER_COUNT == none
             p_GLOBAL_PLAYER_FOLLOWER_COUNT = val
+        endIf
+    endFunction
+endProperty
+
+Formlist property FORMLIST_MARKERS_SETTLER
+    Formlist function Get()
+        return p_FORMLIST_MARKERS_SETTLER
+    endFunction
+    function Set(Formlist val)
+        if p_FORMLIST_MARKERS_SETTLER == none
+            p_FORMLIST_MARKERS_SETTLER = val
         endIf
     endFunction
 endProperty

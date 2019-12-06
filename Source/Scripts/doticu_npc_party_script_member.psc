@@ -74,6 +74,8 @@ int function f_Enforce()
         endIf
     endIf
 
+    ref_actor.EvaluatePackage()
+
     return CODES.SUCCESS
 endFunction
 
@@ -270,6 +272,22 @@ int function Access()
     ACTOR2.Open_Inventory(ref_actor)
 
     return CODES.SUCCESS
+endFunction
+
+bool function Is_Member()
+    return Exists()
+endFunction
+
+bool function Is_Settler()
+    return SETTLER.Exists()
+endFunction
+
+bool function Is_Immobile()
+    return IMMOBILE.Exists()
+endFunction
+
+bool function Is_Follower()
+    return FOLLOWERS.Has_Follower(ref_actor)
 endFunction
 
 ; Events

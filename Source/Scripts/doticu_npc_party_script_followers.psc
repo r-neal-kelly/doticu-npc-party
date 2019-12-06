@@ -65,14 +65,14 @@ int function Destroy_Follower(Actor ref_actor)
     return CODES.SUCCESS
 endFunction
 
+int function Get_Count()
+    return ALIASES.Get_Count()
+endFunction
+
 bool function Has_Follower(Actor ref_actor)
     return ALIASES.Has_Alias(ref_actor)
 endFunction
 
 doticu_npc_party_script_follower function Get_Follower(Actor ref_actor)
     return ALIASES.Get_Alias(ref_actor) as doticu_npc_party_script_follower
-endFunction
-
-int function Get_Count()
-    return ALIASES.Get_Count()
 endFunction

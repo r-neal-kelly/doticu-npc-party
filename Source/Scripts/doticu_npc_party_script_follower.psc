@@ -13,11 +13,15 @@ bool                            is_created              = false
 Actor                           ref_actor               =  none
 doticu_npc_party_script_member  ref_member              =  none
 bool                            is_sneak                = false
-int                             prev_relationship_rank  =    -1
+int                             prev_relationship_rank  =    -1; put in MEMBER?
 
 ; Private Methods
-function p_Backup()
+function p_Backup(); put in MEMBER?
     prev_relationship_rank = ref_actor.GetRelationshipRank(CONSTS.ACTOR_PLAYER)
+endFunction
+
+function p_Restore(); put in MEMBER?
+    ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, prev_relationship_rank)
 endFunction
 
 function p_Token()
@@ -75,6 +79,8 @@ int function f_Enforce()
     p_Token()
     p_Follow()
 
+    ref_actor.EvaluatePackage()
+
     return CODES.SUCCESS
 endFunction
 
@@ -95,7 +101,7 @@ int function Create()
     endIf
     is_created = true
 
-    p_Backup(); maybe in MEMBER?
+    p_Backup(); put in MEMBER?
 
     code_return = f_Enforce()
     if code_return < 0
@@ -165,6 +171,10 @@ int function Unsneak()
     endIf
 
     return CODES.SUCCESS
+endFunction
+
+bool function Is_Sneak()
+    return is_sneak
 endFunction
 
 ; Events

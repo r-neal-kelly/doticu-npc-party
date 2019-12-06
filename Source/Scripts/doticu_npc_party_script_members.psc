@@ -67,14 +67,14 @@ int function Destroy_Member(Actor ref_actor)
     return CODES.SUCCESS
 endFunction
 
+int function Get_Count()
+    return ALIASES.Get_Count()
+endFunction
+
 bool function Has_Member(Actor ref_actor)
     return ALIASES.Has_Alias(ref_actor)
 endFunction
 
 doticu_npc_party_script_member function Get_Member(Actor ref_actor)
     return ALIASES.Get_Alias(ref_actor) as doticu_npc_party_script_member
-endFunction
-
-int function Get_Count()
-    return ALIASES.Get_Count()
 endFunction

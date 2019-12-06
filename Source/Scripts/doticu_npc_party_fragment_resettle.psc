@@ -1,12 +1,12 @@
 ;BEGIN FRAGMENT CODE - Do not edit anything between this and the end comment
 ;NEXT FRAGMENT INDEX 1
-Scriptname doticu_npc_party_fragment_immobilize Extends TopicInfo Hidden
+Scriptname doticu_npc_party_fragment_resettle Extends TopicInfo Hidden
 
 ;BEGIN FRAGMENT Fragment_0
 Function Fragment_0(ObjectReference akSpeakerRef)
 Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
-(GetOwningQuest() as doticu_npc_party_script_control).Immobilize(akSpeaker)
+(GetOwningQuest() as doticu_npc_party_script_control).Resettle(akSpeaker)
 ;END CODE
 EndFunction
 ;END FRAGMENT
