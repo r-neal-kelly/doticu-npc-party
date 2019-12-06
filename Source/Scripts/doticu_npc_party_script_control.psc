@@ -220,10 +220,14 @@ int function Access(Actor ref_actor, bool do_create = true)
     string str_failure = "Could not access " + str_name + "."
     string str_success = "Accessed " + str_name + "."
 
+    MiscUtil.PrintConsole("initiating attempt to access")
+
     if do_create && !p_Members.Has_Member(ref_actor) && Member(ref_actor) == p_CODES.FAILURE
         Debug.Notification(str_failure)
         return p_CODES.FAILURE
     endIf
+
+    MiscUtil.PrintConsole("attempting to get member")
 
     doticu_npc_party_script_member ref_member = Get_Member(ref_actor)
     if !ref_member
@@ -231,10 +235,14 @@ int function Access(Actor ref_actor, bool do_create = true)
         return p_CODES.FAILURE
     endIf
 
+    MiscUtil.PrintConsole("attempting to access")
+
     if p_Notify_On(ref_member.Access(), str_success) == p_CODES.FAILURE
         Debug.Notification(str_failure)
         return p_CODES.FAILURE
     endIf
+
+    MiscUtil.PrintConsole("successfully accessed")
 
     return p_CODES.SUCCESS
 endFunction
@@ -313,7 +321,7 @@ int function Resettle(Actor ref_actor, bool do_create = true)
         return p_CODES.FAILURE
     endIf
 
-    if do_create && !ref_member.Is_Settler() && Settle(ref_actor) == p_CODES.FAILURE
+    if do_create && !ref_member.Is_Settler() && Settle(ref_actor, true) == p_CODES.FAILURE
         Debug.Notification(str_failure)
         return p_CODES.FAILURE
     endIf
@@ -434,7 +442,7 @@ int function Sneak(Actor ref_actor, bool do_create = true)
     string str_success = "Made " + str_name + " a sneak follower."
     string str_nothing = str_name + " was already a sneak follower."
 
-    if do_create && !p_Followers.Has_Follower(ref_actor) && Follow(ref_actor) == p_CODES.FAILURE
+    if do_create && !p_Followers.Has_Follower(ref_actor) && Follow(ref_actor, true) == p_CODES.FAILURE
         Debug.Notification(str_failure)
         return p_CODES.FAILURE
     endIf
@@ -464,7 +472,7 @@ int function Unsneak(Actor ref_actor, bool do_create = true)
     string str_success = "Stopped " + str_name + " from being a sneak follower."
     string str_nothing = str_name + " was already not a sneak follower."
 
-    if do_create && !p_Followers.Has_Follower(ref_actor) && Follow(ref_actor) == p_CODES.FAILURE
+    if do_create && !p_Followers.Has_Follower(ref_actor) && Follow(ref_actor, true) == p_CODES.FAILURE
         Debug.Notification(str_failure)
         return p_CODES.FAILURE
     endIf
@@ -500,37 +508,37 @@ endFunction
 function Toggle_Settler(Actor ref_actor)
     doticu_npc_party_script_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if ref_member && ref_member.Is_Settler()
-        Unsettle(ref_actor)
+        Unsettle(ref_actor, true)
     else
-        Settle(ref_actor)
+        Settle(ref_actor, true)
     endIf
 endFunction
 
 function Toggle_Immobile(Actor ref_actor)
     doticu_npc_party_script_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if ref_member && ref_member.Is_Immobile()
-        Mobilize(ref_actor)
+        Mobilize(ref_actor, true)
     else
-        Immobilize(ref_actor)
+        Immobilize(ref_actor, true)
     endIf
 endFunction
 
 function Toggle_Follower(Actor ref_actor)
     doticu_npc_party_script_follower ref_follower = p_FOLLOWERS.Get_Follower(ref_actor)
     if ref_follower && ref_follower.Is_Sneak()
-        Unsneak(ref_actor)
+        Unsneak(ref_actor, true)
     elseIf ref_follower
-        Unfollow(ref_actor)
+        Unfollow(ref_actor, true)
     else
-        Follow(ref_actor)
+        Follow(ref_actor, true)
     endIf
 endFunction
 
 function Toggle_Sneak(Actor ref_actor)
     doticu_npc_party_script_follower ref_follower = p_FOLLOWERS.Get_Follower(ref_actor)
     if ref_follower && ref_follower.Is_Sneak()
-        Unsneak(ref_actor)
+        Unsneak(ref_actor, true)
     else
-        Sneak(ref_actor)
+        Sneak(ref_actor, true)
     endIf
 endFunction

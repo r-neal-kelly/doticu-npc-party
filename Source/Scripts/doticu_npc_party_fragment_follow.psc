@@ -6,7 +6,7 @@ Scriptname doticu_npc_party_fragment_follow Extends TopicInfo Hidden
 Function Fragment_0(ObjectReference akSpeakerRef)
 Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
-(GetOwningQuest() as doticu_npc_party_script_control).Follow(akSpeaker)
+(GetOwningQuest() as doticu_npc_party_script_control).Follow(akSpeaker, false)
 ;END CODE
 EndFunction
 ;END FRAGMENT

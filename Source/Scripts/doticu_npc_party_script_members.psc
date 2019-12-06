@@ -87,7 +87,5 @@ bool function Has_Member(Actor ref_actor)
 endFunction
 
 doticu_npc_party_script_member function Get_Member(Actor ref_actor)
-    if Has_Member(ref_actor)
-        return p_Get_Member(p_Get_Alias_ID(ref_actor))
-    endIf
+    return ALIASES.Get_Alias(p_Get_Alias_ID(ref_actor), ref_actor) as doticu_npc_party_script_member
 endFunction

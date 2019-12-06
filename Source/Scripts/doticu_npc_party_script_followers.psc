@@ -91,7 +91,5 @@ bool function Has_Follower(Actor ref_actor)
 endFunction
 
 doticu_npc_party_script_follower function Get_Follower(Actor ref_actor)
-    if Has_Follower(ref_actor)
-        return p_Get_Follower(p_Get_Alias_ID(ref_actor))
-    endIf
+    return ALIASES.Get_Alias(p_Get_Alias_ID(ref_actor), ref_actor) as doticu_npc_party_script_follower
 endFunction
