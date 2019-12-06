@@ -28,6 +28,8 @@ function p_Token()
     ACTOR2.Token(ref_actor, CONSTS.TOKEN_FOLLOWER)
     if is_sneak
         ACTOR2.Token(ref_actor, CONSTS.TOKEN_FOLLOWER_SNEAK)
+    else
+        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_FOLLOWER_SNEAK)
     endIf
 endFunction
 
