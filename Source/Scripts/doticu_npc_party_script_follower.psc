@@ -13,19 +13,15 @@ bool                            is_created              = false
 Actor                           ref_actor               =  none
 doticu_npc_party_script_member  ref_member              =  none
 bool                            is_sneak                = false
-int                             prev_relationship_rank  =    -1; put in MEMBER?
+int                             prev_relationship_rank  =    -1
 
 ; Private Methods
-function p_Backup(); put in MEMBER?
+function p_Backup()
     prev_relationship_rank = ref_actor.GetRelationshipRank(CONSTS.ACTOR_PLAYER)
 endFunction
 
-function p_Restore(); put in MEMBER?
-    ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, prev_relationship_rank)
-endFunction
-
 function p_Token()
-    ACTOR2.Token(ref_actor, CONSTS.TOKEN_FOLLOWER)
+    ACTOR2.Token(ref_actor, CONSTS.TOKEN_FOLLOWER, ID_ALIAS + 1)
     if is_sneak
         ACTOR2.Token(ref_actor, CONSTS.TOKEN_FOLLOWER_SNEAK)
     else
@@ -39,9 +35,7 @@ function p_Untoken()
 endFunction
 
 function p_Follow()
-    if MODS.FOLLOWERS.Get_Count() == 0
-        CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(1)
-    endIf
+    CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(1)
     ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, 3)
     ref_actor.SetPlayerTeammate(true, true)
     ref_actor.IgnoreFriendlyHits(true)
@@ -51,19 +45,16 @@ function p_Unfollow()
     ref_actor.IgnoreFriendlyHits(false)
     ref_actor.SetPlayerTeammate(false, false)
     ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, prev_relationship_rank)
-    if MODS.FOLLOWERS.Get_Count() == 0
-        CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(0)
-    endIf
 endFunction
 
 ; Friend Methods
-function f_Initialize(doticu_npc_party_script_data DATA, int int_ID_ALIAS)
+function f_Initialize(doticu_npc_party_script_data DATA, int IDX_ALIAS)
     CONSTS = DATA.CONSTS
     CODES = DATA.CODES
     VARS = DATA.VARS
     MODS = DATA.MODS
     ACTOR2 = DATA.MODS.FUNCS.ACTOR2
-    ID_ALIAS = int_ID_ALIAS
+    ID_ALIAS = IDX_ALIAS
 endFunction
 
 int function f_Enforce()
@@ -103,7 +94,7 @@ int function Create()
     endIf
     is_created = true
 
-    p_Backup(); put in MEMBER?
+    p_Backup()
 
     code_return = f_Enforce()
     if code_return < 0
@@ -180,6 +171,6 @@ bool function Is_Sneak()
 endFunction
 
 ; Events
-event OnActivate(ObjectReference ref_activator); should this go on an ALIAS type?
+event OnActivate(ObjectReference ref_activator)
     f_Enforce()
 endEvent

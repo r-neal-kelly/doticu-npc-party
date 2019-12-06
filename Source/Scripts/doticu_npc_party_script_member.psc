@@ -19,7 +19,7 @@ bool    is_generic  = false
 
 ; Private Methods
 function p_Token()
-    ACTOR2.Token(ref_actor, CONSTS.TOKEN_MEMBER)
+    ACTOR2.Token(ref_actor, CONSTS.TOKEN_MEMBER, ID_ALIAS + 1)
     if is_clone
         ACTOR2.Token(ref_actor, CONSTS.TOKEN_CLONE)
     else
@@ -39,7 +39,7 @@ function p_Untoken()
 endFunction
 
 ; Friend Methods
-function f_Initialize(doticu_npc_party_script_data DATA, int int_ID_ALIAS)
+function f_Initialize(doticu_npc_party_script_data DATA, int IDX_ALIAS)
     CONSTS = DATA.CONSTS
     CODES = DATA.CODES
     VARS = DATA.VARS
@@ -48,7 +48,7 @@ function f_Initialize(doticu_npc_party_script_data DATA, int int_ID_ALIAS)
     SETTLER = (self as ReferenceAlias) as doticu_npc_party_script_settler
     IMMOBILE = (self as ReferenceAlias) as doticu_npc_party_script_immobile
     FOLLOWERS = MODS.FOLLOWERS
-    ID_ALIAS = int_ID_ALIAS
+    ID_ALIAS = IDX_ALIAS
 endFunction
 
 int function f_Enforce()
@@ -60,7 +60,6 @@ int function f_Enforce()
 
     p_Token()
 
-    ; only f_Enforce these if they exist
     if SETTLER.Exists()
         code_return = SETTLER.f_Enforce()
         if code_return < 0
@@ -143,7 +142,6 @@ int function Destroy()
         endIf
     endIf
 
-    ; here we can do whatever else we need to do, the opposite of f_Enforce
     p_Untoken()
 
     is_generic = false
@@ -328,6 +326,6 @@ bool function Is_Follower()
 endFunction
 
 ; Events
-event OnActivate(ObjectReference ref_activator); should this go on an ALIAS type?
+event OnActivate(ObjectReference ref_activator)
     f_Enforce()
 endEvent

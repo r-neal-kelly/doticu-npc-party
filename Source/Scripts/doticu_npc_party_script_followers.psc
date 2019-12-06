@@ -27,6 +27,15 @@ function f_Initialize(doticu_npc_party_script_data DATA)
     endWhile
 endFunction
 
+; Private Methods
+int function p_Get_Alias_ID(Actor ref_actor)
+    return ref_actor.GetItemCount(CONSTS.TOKEN_FOLLOWER) - 1
+endFunction
+
+doticu_npc_party_script_follower function p_Get_Follower(int id_alias)
+    return ALIASES.f_Get_Alias(id_alias) as doticu_npc_party_script_follower
+endFunction
+
 ; Public Methods
 int function Create_Follower(Actor ref_actor)
     int code_return
@@ -35,12 +44,15 @@ int function Create_Follower(Actor ref_actor)
     if code_return < 0
         return code_return
     endIf
+    int id_alias = code_return
 
-    code_return = Get_Follower(ref_actor).Create()
+    code_return = p_Get_Follower(id_alias).Create()
     if code_return < 0
-        ALIASES.Destroy_Alias(ref_actor)
+        ALIASES.Destroy_Alias(id_alias, ref_actor)
         return code_return
     endIf
+
+    CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(1)
 
     return CODES.SUCCESS
 endFunction
@@ -48,18 +60,23 @@ endFunction
 int function Destroy_Follower(Actor ref_actor)
     int code_return
 
-    if !Has_Follower(ref_actor)
+    int id_alias = p_Get_Alias_ID(ref_actor)
+    if !ALIASES.Has_Alias(id_alias, ref_actor)
         return CODES.NO_FOLLOWER
     endIf
 
-    code_return = Get_Follower(ref_actor).Destroy()
+    code_return = p_Get_Follower(id_alias).Destroy()
     if code_return < 0
         return code_return
     endIf
 
-    code_return = ALIASES.Destroy_Alias(ref_actor)
+    code_return = ALIASES.Destroy_Alias(id_alias, ref_actor)
     if code_return < 0
         return code_return
+    endIf
+
+    if Get_Count() == 0
+        CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(0)
     endIf
 
     return CODES.SUCCESS
@@ -70,9 +87,11 @@ int function Get_Count()
 endFunction
 
 bool function Has_Follower(Actor ref_actor)
-    return ALIASES.Has_Alias(ref_actor)
+    return ALIASES.Has_Alias(p_Get_Alias_ID(ref_actor), ref_actor)
 endFunction
 
 doticu_npc_party_script_follower function Get_Follower(Actor ref_actor)
-    return ALIASES.Get_Alias(ref_actor) as doticu_npc_party_script_follower
+    if Has_Follower(ref_actor)
+        return p_Get_Follower(p_Get_Alias_ID(ref_actor))
+    endIf
 endFunction

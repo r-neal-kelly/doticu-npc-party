@@ -13,6 +13,36 @@ int     size_ids_free   =   -1
 int[]   arr_ids_used    = none
 int[]   arr_ids_free    = none
 
+; Friend Methods
+function f_Initialize(doticu_npc_party_script_data DATA)
+    CONSTS = DATA.CONSTS
+    CODES = DATA.CODES
+    VARS = DATA.VARS
+    MODS = DATA.MODS
+    MAX_ALIASES = GetNumAliases()
+
+    size_ids_used = 0
+    size_ids_free = MAX_ALIASES
+    arr_ids_used = Utility.CreateIntArray(MAX_ALIASES, -1)
+    arr_ids_free = Utility.CreateIntArray(MAX_ALIASES, -1)
+    
+    int idx_ids_free = 0
+    int val_ids_free = MAX_ALIASES - 1
+    while idx_ids_free < MAX_ALIASES
+        arr_ids_free[idx_ids_free] = val_ids_free
+        idx_ids_free += 1
+        val_ids_free -= 1
+    endWhile
+endFunction
+
+ReferenceAlias function f_Get_Alias(int id_alias)
+    if -1 < id_alias && id_alias < MAX_ALIASES
+        return GetNthAlias(id_alias) as ReferenceAlias
+    else
+        return none
+    endIf
+endFunction
+
 ; Private Methods
 int function p_Create_ID()
     if size_ids_free <= 0 || size_ids_used >= arr_ids_used.length
@@ -53,13 +83,19 @@ int function p_Destroy_ID(int id)
     return CODES.SUCCESS
 endFunction
 
-int function p_Get_ID(Actor ref_actor)
-    ; it would be awesome to just pull this from a ref_actor value. "LastFlattered" might be a good one. make sure to check it, and use this as a fall back
-    if !ref_actor
-        return CODES.NO_ACTOR
+Actor function p_Get_Actor(int id_alias)
+    ReferenceAlias ref_alias = f_Get_Alias(id_alias)
+    if !ref_alias
+        return none
+    else
+        return ref_alias.GetActorReference()
     endIf
+endFunction
 
-    ; id_alias > -1 && id_alias < MAX_ALIASES ; for when we check cached id on ref_actor
+bool function p_Has_Actor(Actor ref_actor)
+    if !ref_actor
+        return false
+    endIf
 
     int idx_ids_used = 0
     int idx_alias
@@ -67,39 +103,13 @@ int function p_Get_ID(Actor ref_actor)
     while idx_ids_used < size_ids_used
         idx_alias = arr_ids_used[idx_ids_used]
         ref_alias = GetNthAlias(idx_alias) as ReferenceAlias
-        if !ref_alias
-            ; something must be wrong with our code
-            return CODES.FATAL_ERROR
-        endIf
-        if ref_alias.GetActorReference() == ref_actor
-            return idx_alias
+        if ref_alias && ref_alias.GetActorReference() == ref_actor
+            return true
         endIf
         idx_ids_used += 1
     endWhile
 
-    return CODES.NO_MEMBER
-endFunction
-
-; Friend Methods
-function f_Initialize(doticu_npc_party_script_data DATA)
-    CONSTS = DATA.CONSTS
-    CODES = DATA.CODES
-    VARS = DATA.VARS
-    MODS = DATA.MODS
-    MAX_ALIASES = GetNumAliases()
-
-    size_ids_used = 0
-    size_ids_free = MAX_ALIASES
-    arr_ids_used = Utility.CreateIntArray(MAX_ALIASES, -1)
-    arr_ids_free = Utility.CreateIntArray(MAX_ALIASES, -1)
-    
-    int idx_ids_free = 0
-    int val_ids_free = MAX_ALIASES - 1
-    while idx_ids_free < MAX_ALIASES
-        arr_ids_free[idx_ids_free] = val_ids_free
-        idx_ids_free += 1
-        val_ids_free -= 1
-    endWhile
+    return false
 endFunction
 
 ; Public Methods
@@ -109,7 +119,7 @@ int function Create_Alias(Actor ref_actor)
     if !ref_actor
         return CODES.NO_ACTOR
     endIf
-    if Has_Alias(ref_actor)
+    if p_Has_Actor(ref_actor)
         return CODES.IS_DUPLICATE
     endIf
     if Is_Full()
@@ -122,45 +132,41 @@ int function Create_Alias(Actor ref_actor)
     endIf
     int id_alias = code_return
 
-    ; need to add id_alias to ref_actor values. but we need to pass in the string...
+    f_Get_Alias(id_alias).ForceRefTo(ref_actor)
 
-    (GetNthAlias(id_alias) as ReferenceAlias).ForceRefTo(ref_actor)
-
-    return CODES.SUCCESS
+    return id_alias
 endFunction
 
-int function Destroy_Alias(Actor ref_actor)
+int function Destroy_Alias(int id_alias, Actor ref_actor)
     int code_return
 
-    code_return = p_Get_ID(ref_actor)
-    if code_return < 0
-        return code_return
+    if !ref_actor
+        return CODES.NO_ACTOR
     endIf
-    int id_alias = code_return
+    if !Has_Alias(id_alias, ref_actor)
+        return CODES.NO_ALIAS
+    endIf
+
+    f_Get_Alias(id_alias).Clear()
 
     code_return = p_Destroy_ID(id_alias)
     if code_return < 0
         return code_return
     endIf
 
-    (GetNthAlias(id_alias) as ReferenceAlias).Clear()
-
-    ; need to remove id_alias from ref_actor values. but we need to pass in the string...
-
     return CODES.SUCCESS
 endFunction
 
-ReferenceAlias function Get_Alias(Actor ref_actor)
-    int id_alias = p_Get_ID(ref_actor)
-    if id_alias < 0
-        return none
-    else
-        return GetNthAlias(id_alias) as ReferenceAlias
-    endIf
+bool function Has_Alias(int id_alias, Actor ref_actor)
+    return p_Get_Actor(id_alias) == ref_actor
 endFunction
 
-bool function Has_Alias(Actor ref_actor)
-    return p_Get_ID(ref_actor) > -1
+ReferenceAlias function Get_Alias(int id_alias, Actor ref_actor)
+    if Has_Alias(id_alias, ref_actor)
+        return f_Get_Alias(id_alias)
+    else
+        return none
+    endIf
 endFunction
 
 bool function Is_Full()
