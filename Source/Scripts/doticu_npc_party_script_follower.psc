@@ -40,7 +40,7 @@ function p_Follow()
     if MODS.FOLLOWERS.Get_Count() == 0
         CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(1)
     endIf
-    ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, 3); the previous state needs to be stored
+    ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, 3)
     ref_actor.SetPlayerTeammate(true, true)
     ref_actor.IgnoreFriendlyHits(true)
 endFunction

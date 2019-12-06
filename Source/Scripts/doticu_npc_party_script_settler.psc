@@ -70,10 +70,10 @@ int function Create()
     endIf
     is_created = true
 
-    code_return = f_Enforce()
+    ;/code_return = f_Enforce()
     if code_return < 0
         return code_return
-    endIf
+    endIf/;
 
     p_Settle()
 
@@ -106,6 +106,11 @@ int function Resettle()
     endIf
 
     p_Settle()
+
+    code_return = MEMBER.f_Enforce()
+    if code_return < 0
+        return code_return
+    endIf
 
     return CODES.SUCCESS
 endFunction

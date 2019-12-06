@@ -61,12 +61,37 @@ function p_Notify_Unmember(int code)
 endFunction
 
 function p_Notify_Follow(int code)
+    if code == p_CODES.NO_ACTOR
+        Debug.Notification("Not an npc. Cannot add to followers.")
+    elseIf code == p_CODES.IS_DUPLICATE
+        Debug.Notification("Is already a follower.")
+    elseIf code == p_CODES.OUT_OF_SPACE
+        Debug.Notification("Cannot add any more followers.")
+    elseIf code == p_CODES.FATAL_ERROR
+        Debug.Notification("Fatal error. Cannot add to followers.")
+    elseIf code < 0
+        Debug.Notification("Unknown error. Cannot add to followers.")
+    else
+        Debug.Notification("Added member to followers.")
+    endIf
 endFunction
 
 function p_Notify_Unfollow(int code)
+    if code == p_CODES.NO_ACTOR
+        Debug.Notification("Not an npc. Cannot remove from followers.")
+    elseIf code == p_CODES.NO_MEMBER
+        Debug.Notification("Not a follower. Cannot remove from followers.")
+    elseIf code == p_CODES.FATAL_ERROR
+        Debug.Notification("Fatal error. Cannot add to followers.")
+    elseIf code < 0
+        Debug.Notification("Unknown error. Cannot remove follower.")
+    else
+        Debug.Notification("Removed member from followers.")
+    endIf
 endFunction
 
 function p_Notify(int code)
+    ; these should never be seen
     if code == p_CODES.IS_DUPLICATE
         Debug.Notification("ERROR: Is a duplicate")
     elseIf code == p_CODES.OUT_OF_SPACE
@@ -191,6 +216,7 @@ function Settle(Actor ref_actor)
         return
     endIf
     p_Notify(ref_member.Settle())
+    Debug.Notification("Settled member.")
 endFunction
 
 function Unsettle(Actor ref_actor)
@@ -199,6 +225,7 @@ function Unsettle(Actor ref_actor)
         return
     endIf
     p_Notify(ref_member.Unsettle())
+    Debug.Notification("Unsettled member.")
 endFunction
 
 function Resettle(Actor ref_actor)
@@ -207,6 +234,7 @@ function Resettle(Actor ref_actor)
         return
     endIf
     p_Notify(ref_settler.Resettle())
+    Debug.Notification("Resettled member.")
 endFunction
 
 function Immobilize(Actor ref_actor)
@@ -221,6 +249,7 @@ function Immobilize(Actor ref_actor)
         return
     endIf
     p_Notify(ref_member.Immobilize())
+    Debug.Notification("Immobilized member.")
 endFunction
 
 function Mobilize(Actor ref_actor)
@@ -229,6 +258,7 @@ function Mobilize(Actor ref_actor)
         return
     endIf
     p_Notify(ref_member.Mobilize())
+    Debug.Notification("Mobilized member.")
 endFunction
 
 function Follow(Actor ref_actor)
@@ -242,7 +272,7 @@ function Follow(Actor ref_actor)
     if !ref_member
         return
     endIf
-    p_Notify(ref_member.Follow())
+    p_Notify_Follow(ref_member.Follow())
 endFunction
 
 function Unfollow(Actor ref_actor)
@@ -250,7 +280,7 @@ function Unfollow(Actor ref_actor)
     if !ref_member
         return
     endIf
-    p_Notify(ref_member.Unfollow())
+    p_Notify_Unfollow(ref_member.Unfollow())
 endFunction
 
 function Sneak(Actor ref_actor)
@@ -265,6 +295,7 @@ function Sneak(Actor ref_actor)
         return
     endIf
     p_Notify(ref_follower.Sneak())
+    Debug.Notification("The follower will now sneak.")
 endFunction
 
 function Unsneak(Actor ref_actor)
@@ -273,6 +304,7 @@ function Unsneak(Actor ref_actor)
         return
     endIf
     p_Notify(ref_follower.Unsneak())
+    Debug.Notification("The follower will no longer sneak.")
 endFunction
 
 function Toggle_Member(Actor ref_actor)

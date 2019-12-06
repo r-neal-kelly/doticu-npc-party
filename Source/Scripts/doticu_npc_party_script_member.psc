@@ -186,6 +186,11 @@ int function Settle()
         return code_return
     endIf
 
+    code_return = f_Enforce()
+    if code_return < 0
+        return code_return
+    endIf
+
     return CODES.SUCCESS
 endFunction
 
@@ -197,6 +202,11 @@ int function Unsettle()
     endIf
 
     code_return = SETTLER.Destroy()
+    if code_return < 0
+        return code_return
+    endIf
+
+    code_return = f_Enforce()
     if code_return < 0
         return code_return
     endIf
@@ -216,6 +226,11 @@ int function Immobilize()
         return code_return
     endIf
 
+    code_return = f_Enforce()
+    if code_return < 0
+        return code_return
+    endIf
+
     return CODES.SUCCESS
 endFunction
 
@@ -227,6 +242,11 @@ int function Mobilize()
     endIf
 
     code_return = IMMOBILE.Destroy()
+    if code_return < 0
+        return code_return
+    endIf
+
+    code_return = f_Enforce()
     if code_return < 0
         return code_return
     endIf
@@ -246,6 +266,11 @@ int function Follow()
         return code_return
     endIf
 
+    code_return = f_Enforce()
+    if code_return < 0
+        return code_return
+    endIf
+
     return CODES.SUCCESS
 endFunction
 
@@ -261,15 +286,27 @@ int function Unfollow()
         return code_return
     endIf
 
+    code_return = f_Enforce()
+    if code_return < 0
+        return code_return
+    endIf
+
     return CODES.SUCCESS
 endFunction
 
 int function Access()
+    int code_return
+    
     if !Exists()
         return CODES.NO_MEMBER
     endIf
     
     ACTOR2.Open_Inventory(ref_actor)
+
+    code_return = f_Enforce()
+    if code_return < 0
+        return code_return
+    endIf
 
     return CODES.SUCCESS
 endFunction

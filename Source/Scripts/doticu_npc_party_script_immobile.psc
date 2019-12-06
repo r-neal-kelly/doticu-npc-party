@@ -59,10 +59,10 @@ int function Create()
     endIf
     is_created = true
 
-    code_return = f_Enforce()
+    ;/code_return = f_Enforce()
     if code_return < 0
         return code_return
-    endIf
+    endIf/;
 
     return CODES.SUCCESS
 endFunction
@@ -72,7 +72,6 @@ int function Destroy()
         return CODES.NO_IMMOBILE
     endIf
 
-    ; here we can do whatever else we need to do, the opposite of f_Enforce
     p_Untoken()
 
     ref_actor = none
