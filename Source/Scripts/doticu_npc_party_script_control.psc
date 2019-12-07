@@ -43,449 +43,467 @@ function f_Initialize(doticu_npc_party_script_data DATA)
 endFunction
 
 ; Private Methods
-int function p_Notify_On_Member(int int_code, string str_name = "NPC")
-    if int_code > -1
-        Debug.Notification("Added " + str_name + " as a member of your party.")
-        return p_CODES.SUCCESS
-    endIf
-
-    if int_code == p_CODES.NO_ACTOR
-        Debug.Notification("Invalid target. Cannot add " + str_name + " as a member of your party.")
-    elseIf int_code == p_CODES.IS_DUPLICATE
-        Debug.Notification(str_name + " is already a member of your party.")
-    elseIf int_code == p_CODES.OUT_OF_SPACE
-        Debug.Notification("Members are maxed out. Cannot add " + str_name + " as a member of your party.")
-    elseIf int_code == p_CODES.NO_RESURRECT
-        Debug.Notification("Failed to resurrect. Cannot add " + str_name + " as a member of your party.")
+function p_Notify_On_Member(int code_return, string str_name)
+    if code_return == p_CODES.SUCCESS
+        Debug.Notification("NPC Party: " + str_name + " is now a member.")
+    elseIf code_return == p_CODES.NO_ACTOR
+        Debug.Notification("NPC Party: " + str_name + " is not an npc.")
+    elseIf code_return == p_CODES.IS_DUPLICATE
+        Debug.Notification("NPC Party: " + str_name + " is already a member.")
+    elseIf code_return == p_CODES.OUT_OF_SPACE
+        Debug.Notification("NPC Party: No room for " + str_name + " to join.")
+    elseIf code_return == p_CODES.NO_RESURRECT
+        Debug.Notification("NPC Party: " + str_name + " won't come back to life.")
     else
-        Debug.Notification("Unknown error. Cannot add " + str_name + " as a member of your party.")
+        Debug.Notification("NPC Party: It is unknown why " + str_name + " can't join.")
     endIf
-
-    return p_CODES.FAILURE
 endFunction
 
-int function p_Notify_On_Unmember(int int_code, string str_name = "NPC")
-    if int_code > -1
-        Debug.Notification("Removed " + str_name + " from being a member of your party.")
-        return p_CODES.SUCCESS
-    endIf
-
-    if int_code == p_CODES.NO_ACTOR
-        Debug.Notification("Invalid target. Cannot remove " + str_name + " from being a member of your party.")
-    elseIf int_code == p_CODES.NO_MEMBER
-        Debug.Notification("Not a member. Cannot remove " + str_name + " from being a member of your party.")
+int function p_Notify_On_Unmember(int code_return, string str_name)
+    if code_return == p_CODES.SUCCESS
+        Debug.Notification("NPC Party: " + str_name + " is no longer a member.")
+    elseIf code_return == p_CODES.NO_ACTOR
+        Debug.Notification("NPC Party: " + str_name + " is not an npc.")
+    elseIf code_return == p_CODES.NO_MEMBER
+        Debug.Notification("NPC Party: " + str_name + " is already not a member.")
     else
-        Debug.Notification("Unknown error. Cannot remove " + str_name + " from being a member of your party.")
+        Debug.Notification("NPC Party: It is unknown why " + str_name + " can't join.")
     endIf
-
-    return p_CODES.FAILURE
 endFunction
 
-int function p_Notify_On_Follow(int int_code, string str_name = "NPC")
-    if int_code > -1
-        Debug.Notification("Added " + str_name + " as a follower in your party.")
-        return p_CODES.SUCCESS
-    endIf
-
-    if int_code == p_CODES.NO_ACTOR
-        Debug.Notification("Invalid target. Cannot add " + str_name + " as a follower in your party.")
-    elseIf int_code == p_CODES.IS_DUPLICATE
-        Debug.Notification(str_name + " is already a follower in your party.")
-    elseIf int_code == p_CODES.OUT_OF_SPACE
-        Debug.Notification("Followers are maxed out. Cannot add " + str_name + " as a follower in your party.")
+function p_Notify_On_Access(int code_return, string str_name)
+    if code_return == p_CODES.SUCCESS
+        Debug.Notification("NPC Party: Accessing inventory of " + str_name + ".")
+    elseIf code_return == p_CODES.NO_ACTOR
+        Debug.Notification("NPC Party: " + str_name + " can not be accessed.")
+    elseIf code_return == p_CODES.OUT_OF_SPACE
+        Debug.Notification("NPC Party: No room for " + str_name + " to join and be accessed.")
+    elseIf code_return == p_CODES.NO_RESURRECT
+        Debug.Notification("NPC Party: " + str_name + " can't be revived and accessed.")
+    elseIf code_return == p_CODES.NO_MEMBER
+        Debug.Notification("NPC Party: " + str_name + " isn't a member and can't be accessed.")
     else
-        Debug.Notification("Unknown error. Cannot add " + str_name + " as a follower in your party.")
+        Debug.Notification("NPC Party: It is unknown why " + str_name + " can't be accessed.")
     endIf
-
-    return p_CODES.FAILURE
 endFunction
 
-int function p_Notify_On_Unfollow(int int_code, string str_name = "NPC")
-    if int_code > -1
-        Debug.Notification("Removed " + str_name + " from being a follower in your party.")
-        return p_CODES.SUCCESS
-    endIf
-
-    if int_code == p_CODES.NO_ACTOR
-        Debug.Notification("Invalid target. Cannot remove " + str_name + " from being a follower in your party.")
-    elseIf int_code == p_CODES.NO_FOLLOWER
-        Debug.Notification("Not a follower. Cannot remove " + str_name + " from being a follower in your party.")
+function p_Notify_On_Settle(int code_return, string str_name)
+    if code_return == p_CODES.SUCCESS
+        Debug.Notification("NPC Party: " + str_name + " has settled here.")
+    elseIf code_return == p_CODES.NO_ACTOR
+        Debug.Notification("NPC Party: " + str_name + " can't be a settler.")
+    elseIf code_return == p_CODES.OUT_OF_SPACE
+        Debug.Notification("NPC Party: No room for " + str_name + " a new settler to join.")
+    elseIf code_return == p_CODES.NO_RESURRECT
+        Debug.Notification("NPC Party: " + str_name + " can't be revived or settled.")
+    elseIf code_return == p_CODES.NO_MEMBER
+        Debug.Notification("NPC Party: " + str_name + " isn't a member and can't settle.")
     else
-        Debug.Notification("Unknown error. Cannot remove " + str_name + " from being a follower in your party.")
+        Debug.Notification("NPC Party: It is unknown why " + str_name + " can't settle.")
     endIf
-
-    return p_CODES.FAILURE
 endFunction
 
-int function p_Notify_On(int int_code, string str_success = "Success.")
-    if int_code > -1
-        Debug.Notification(str_success)
-        return p_CODES.SUCCESS
-    endIf
-
-    if int_code == p_CODES.IS_DUPLICATE
-        Debug.Notification("ERROR: Is a duplicate")
-    elseIf int_code == p_CODES.OUT_OF_SPACE
-        Debug.Notification("ERROR: Out of space")
-    elseIf int_code == p_CODES.NO_ACTOR
-        Debug.Notification("ERROR: Not an actor")
-    elseIf int_code == p_CODES.NO_MEMBER
-        Debug.Notification("ERROR: Not a member")
-    elseIf int_code == p_CODES.NO_SETTLER
-        Debug.Notification("ERROR: Not a settler")
-    elseIf int_code == p_CODES.NO_IMMOBILE
-        Debug.Notification("ERROR: Not an immobile")
-    elseIf int_code == p_CODES.NO_FOLLOWER
-        Debug.Notification("ERROR: Not a follower")
-    elseIf int_code == p_CODES.EXISTS
-        Debug.Notification("ERROR: Already exists")
+function p_Notify_On_Unsettle(int code_return, string str_name)
+    if code_return == p_CODES.SUCCESS
+        Debug.Notification("NPC Party: " + str_name + " will no longer settle.")
+    elseIf code_return == p_CODES.NO_ACTOR
+        Debug.Notification("NPC Party: " + str_name + " isn't an npc.")
+    elseIf code_return == p_CODES.OUT_OF_SPACE
+        Debug.Notification("NPC Party: No room for " + str_name + " to be an unsettled member.")
+    elseIf code_return == p_CODES.NO_RESURRECT
+        Debug.Notification("NPC Party: " + str_name + " can't be revived or unsettled.")
+    elseIf code_return == p_CODES.NO_MEMBER
+        Debug.Notification("NPC Party: " + str_name + " isn't a member and can't unsettle.")
+    elseIf code_return == p_CODES.NO_SETTLER
+        Debug.Notification("NPC Party: " + str_name + " is not a settler.")
     else
-        Debug.Notification("ERROR: Unknown")
+        Debug.Notification("NPC Party: It is unknown why " + str_name + " can't unsettle.")
     endIf
+endFunction
 
-    return p_CODES.FAILURE
+function p_Notify_On_Resettle(int code_return, string str_name)
+    if code_return == p_CODES.SUCCESS
+        Debug.Notification("NPC Party: " + str_name + " has resettled here.")
+    elseIf code_return == p_CODES.NO_ACTOR
+        Debug.Notification("NPC Party: " + str_name + " can't be a settler.")
+    elseIf code_return == p_CODES.NO_MEMBER
+        Debug.Notification("NPC Party: " + str_name + " isn't a member and can't resettle.")
+    elseIf code_return == p_CODES.NO_SETTLER
+        Debug.Notification("NPC Party: " + str_name + " is not a settler.")
+    else
+        Debug.Notification("NPC Party: It is unknown why " + str_name + " can't resettle.")
+    endIf
+endFunction
+
+function p_Notify_On_Immobilize(int code_return, string str_name)
+    if code_return == p_CODES.SUCCESS
+        Debug.Notification("NPC Party: " + str_name + " is now immobile.")
+    elseIf code_return == p_CODES.NO_ACTOR
+        Debug.Notification("NPC Party: " + str_name + " cannot be immobilized.")
+    elseIf code_return == p_CODES.OUT_OF_SPACE
+        Debug.Notification("NPC Party: No room for " + str_name + " an immobile to join.")
+    elseIf code_return == p_CODES.NO_RESURRECT
+        Debug.Notification("NPC Party: " + str_name + " can't be revived or made immobile.")
+    elseIf code_return == p_CODES.NO_MEMBER
+        Debug.Notification("NPC Party: " + str_name + " isn't a member and can't be immobile.")
+    else
+        Debug.Notification("NPC Party: It is unknown why " + str_name + " can't be immobile.")
+    endIf
+endFunction
+
+function p_Notify_On_Mobilize(int code_return, string str_name)
+    if code_return == p_CODES.SUCCESS
+        Debug.Notification("NPC Party: " + str_name + " is now mobile.")
+    elseIf code_return == p_CODES.NO_ACTOR
+        Debug.Notification("NPC Party: " + str_name + " cannot be mobilized.")
+    elseIf code_return == p_CODES.OUT_OF_SPACE
+        Debug.Notification("NPC Party: No room for " + str_name + " a mobile member to join.")
+    elseIf code_return == p_CODES.NO_RESURRECT
+        Debug.Notification("NPC Party: " + str_name + " can't be revived or made mobile.")
+    elseIf code_return == p_CODES.NO_MEMBER
+        Debug.Notification("NPC Party: " + str_name + " isn't a member and can't be mobile.")
+    elseIf code_return == p_CODES.NO_IMMOBILE
+        Debug.Notification("NPC Party: " + str_name + " is not immobile.")
+    else
+        Debug.Notification("NPC Party: It is unknown why " + str_name + " can't be mobile.")
+    endIf
+endFunction
+
+function p_Notify_On_Follow(int code_return, string str_name)
+    if code_return == p_CODES.SUCCESS
+        Debug.Notification("NPC Party: " + str_name + " is now a follower.")
+    elseIf code_return == p_CODES.NO_ACTOR
+        Debug.Notification("NPC Party: " + str_name + " is not an npc.")
+    elseIf code_return == p_CODES.IS_DUPLICATE
+        Debug.Notification("NPC Party: " + str_name + " is already a follower.")
+    elseIf code_return == p_CODES.OUT_OF_SPACE
+        Debug.Notification("NPC Party: No room for " + str_name + " to join as a follower.")
+    elseIf code_return == p_CODES.NO_RESURRECT
+        Debug.Notification("NPC Party: " + str_name + " won't come back to life.")
+    else
+        Debug.Notification("NPC Party: It is unknown why " + str_name + " can't be a follower.")
+    endIf
+endFunction
+
+function p_Notify_On_Unfollow(int code_return, string str_name)
+    if code_return == p_CODES.SUCCESS
+        Debug.Notification("NPC Party: " + str_name + " is no longer a follower.")
+    elseIf code_return == p_CODES.NO_ACTOR
+        Debug.Notification("NPC Party: " + str_name + " is not an npc.")
+    elseIf code_return == p_CODES.NO_MEMBER
+        Debug.Notification("NPC Party: " + str_name + " is not a member.")
+    elseIf code_return == p_CODES.NO_FOLLOWER
+        Debug.Notification("NPC Party: " + str_name + " is already not a follower.")
+    else
+        Debug.Notification("NPC Party: It is unknown why " + str_name + " can't unfollow.")
+    endIf
+endFunction
+
+function p_Notify_On_Sneak(int code_return, string str_name)
+    if code_return == p_CODES.SUCCESS
+        Debug.Notification("NPC Party: " + str_name + " is now sneaking.")
+    elseIf code_return == p_CODES.NO_ACTOR
+        Debug.Notification("NPC Party: " + str_name + " can't be a sneaky follower.")
+    elseIf code_return == p_CODES.NO_MEMBER
+        Debug.Notification("NPC Party: " + str_name + " isn't a member who can be sneaky.")
+    elseIf code_return == p_CODES.NO_FOLLOWER
+        Debug.Notification("NPC Party: " + str_name + " isn't a follower who can be sneaky.")
+    elseIf code_return == p_CODES.EXISTS
+        Debug.Notification("NPC Party: " + str_name + " is already sneaky.")
+    elseIf code_return == p_CODES.OUT_OF_SPACE
+        Debug.Notification("NPC Party: No room for " + str_name + " to be a sneaky follower.")
+    elseIf code_return == p_CODES.NO_RESURRECT
+        Debug.Notification("NPC Party: " + str_name + " can't be revived or made sneaky.")
+    else
+        Debug.Notification("NPC Party: It's unknown why " + str_name + " can't be sneaky.")
+    endIf
+endFunction
+
+function p_Notify_On_Unsneak(int code_return, string str_name)
+    if code_return == p_CODES.SUCCESS
+        Debug.Notification("NPC Party: " + str_name + " is no longer sneaky.")
+    elseIf code_return == p_CODES.OUT_OF_SPACE
+        Debug.Notification("NPC Party: No room for " + str_name + " a non-sneak to join.")
+    elseIf code_return == p_CODES.NO_RESURRECT
+        Debug.Notification("NPC Party: " + str_name + " can't be revived or made unsneaky.")
+    elseIf code_return == p_CODES.NO_ACTOR
+        Debug.Notification("NPC Party: " + str_name + " cannot be unsneaky.")
+    elseIf code_return == p_CODES.NO_MEMBER
+        Debug.Notification("NPC Party: " + str_name + " isn't a member who can be unsneaky.")
+    elseIf code_return == p_CODES.NO_FOLLOWER
+        Debug.Notification("NPC Party: " + str_name + " is not a follower who can be unsneaky.")
+    elseIf code_return == p_CODES.NO_SNEAK
+        Debug.Notification("NPC Party: " + str_name + " was already not sneaky.")
+    else
+        Debug.Notification("NPC Party: It's unknown why " + str_name + " can't be unsneaky.")
+    endIf
 endFunction
 
 ; Public Methods
-doticu_npc_party_script_member function Get_Member(Actor ref_actor)
-    if !ref_actor
-        Debug.Notification("ERROR: Not an actor")
-        return none
+function Member(Actor ref_actor)
+    int code_return
+    string str_name = p_ACTOR2.Get_Name(ref_actor)
+
+    p_Notify_On_Member(p_MEMBERS.Create_Member(ref_actor), str_name)
+endFunction
+
+int function Unmember(Actor ref_actor)
+    int code_return
+    string str_name = p_ACTOR2.Get_Name(ref_actor)
+
+    p_Notify_On_Unmember(p_MEMBERS.Destroy_Member(ref_actor), p_ACTOR2.Get_Name(ref_actor))
+endFunction
+
+function Access(Actor ref_actor, bool do_create)
+    int code_return
+    string str_name = p_ACTOR2.Get_Name(ref_actor)
+    
+    if do_create && !p_Members.Has_Member(ref_actor)
+        code_return = p_MEMBERS.Create_Member(ref_actor)
+        if code_return < 0
+            p_Notify_On_Access(code_return, str_name)
+            return
+        endIf
     endIf
 
     doticu_npc_party_script_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        Debug.Notification("ERROR: Not a member")
-        return none
+        p_Notify_On_Access(p_CODES.NO_MEMBER, str_name)
+        return
     endIf
 
-    return ref_member
+    p_Notify_On_Access(ref_member.Access(), str_name)
 endFunction
 
-doticu_npc_party_script_settler function Get_Settler(Actor ref_actor)
-    doticu_npc_party_script_member ref_member = Get_Member(ref_actor)
+function Settle(Actor ref_actor, bool do_create)
+    int code_return
+    string str_name = p_ACTOR2.Get_Name(ref_actor)
+
+    if do_create && !p_Members.Has_Member(ref_actor)
+        code_return = p_MEMBERS.Create_Member(ref_actor)
+        if code_return < 0
+            p_Notify_On_Settle(code_return, str_name)
+            return
+        endIf
+    endIf
+
+    doticu_npc_party_script_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        return none
+        p_Notify_On_Settle(p_CODES.NO_MEMBER, str_name)
+        return
+    endIf
+
+    p_Notify_On_Settle(ref_member.Settle(), str_name)
+endFunction
+
+function Unsettle(Actor ref_actor, bool do_create)
+    int code_return
+    string str_name = p_ACTOR2.Get_Name(ref_actor)
+
+    if do_create && !p_Members.Has_Member(ref_actor)
+        code_return = p_MEMBERS.Create_Member(ref_actor)
+        if code_return < 0
+            p_Notify_On_Unsettle(code_return, str_name)
+            return
+        endIf
+    endIf
+
+    doticu_npc_party_script_member ref_member = p_MEMBERS.Get_Member(ref_actor)
+    if !ref_member
+        p_Notify_On_Unsettle(p_CODES.NO_MEMBER, str_name)
+        return
+    endIf
+
+    p_Notify_On_Unsettle(ref_member.Unsettle(), str_name)
+endFunction
+
+function Resettle(Actor ref_actor, bool do_create)
+    int code_return
+    string str_name = p_ACTOR2.Get_Name(ref_actor)
+
+    if do_create && !p_Members.Has_Member(ref_actor)
+        code_return = p_MEMBERS.Create_Member(ref_actor)
+        if code_return < 0
+            p_Notify_On_Resettle(code_return, str_name)
+            return
+        endIf
+    endIf
+
+    doticu_npc_party_script_member ref_member = p_MEMBERS.Get_Member(ref_actor)
+    if !ref_member
+        p_Notify_On_Resettle(p_CODES.NO_MEMBER, str_name)
+        return
+    endIf
+
+    if do_create && !ref_member.Is_Settler()
+        code_return = ref_member.Settle()
+        if code_return < 0
+            p_Notify_On_Resettle(code_return, str_name)
+            return
+        endIf
     endIf
 
     doticu_npc_party_script_settler ref_settler = ref_member.Get_Settler()
     if !ref_settler
-        Debug.Notification("ERROR: Not a settler")
-        return none
+        p_Notify_On_Resettle(p_CODES.NO_SETTLER, str_name)
+        return
     endIf
 
-    return ref_settler
+    p_Notify_On_Resettle(ref_settler.Resettle(), str_name)
 endFunction
 
-doticu_npc_party_script_immobile function Get_Immobile(Actor ref_actor)
-    doticu_npc_party_script_member ref_member = Get_Member(ref_actor)
+function Immobilize(Actor ref_actor, bool do_create)
+    int code_return
+    string str_name = p_ACTOR2.Get_Name(ref_actor)
+
+    if do_create && !p_Members.Has_Member(ref_actor)
+        code_return = p_MEMBERS.Create_Member(ref_actor)
+        if code_return < 0
+            p_Notify_On_Immobilize(code_return, str_name)
+            return
+        endIf
+    endIf
+
+    doticu_npc_party_script_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        return none
+        p_Notify_On_Immobilize(p_CODES.NO_MEMBER, str_name)
+        return
     endIf
 
-    doticu_npc_party_script_immobile ref_immobile = ref_member.Get_Immobile()
-    if !ref_immobile
-        Debug.Notification("ERROR: Not an immobile")
-        return none
-    endIf
-
-    return ref_immobile
+    p_Notify_On_Immobilize(ref_member.Immobilize(), str_name)
 endFunction
 
-doticu_npc_party_script_follower function Get_Follower(Actor ref_actor)
-    if !ref_actor
-        Debug.Notification("ERROR: Not an actor")
-        return none
+function Mobilize(Actor ref_actor, bool do_create)
+    int code_return
+    string str_name = p_ACTOR2.Get_Name(ref_actor)
+
+    if do_create && !p_Members.Has_Member(ref_actor)
+        code_return = p_MEMBERS.Create_Member(ref_actor)
+        if code_return < 0
+            p_Notify_On_Mobilize(code_return, str_name)
+            return
+        endIf
+    endIf
+
+    doticu_npc_party_script_member ref_member = p_MEMBERS.Get_Member(ref_actor)
+    if !ref_member
+        p_Notify_On_Mobilize(p_CODES.NO_MEMBER, str_name)
+        return
+    endIf
+
+    p_Notify_On_Mobilize(ref_member.Mobilize(), str_name)
+endFunction
+
+function Follow(Actor ref_actor, bool do_create)
+    int code_return
+    string str_name = p_ACTOR2.Get_Name(ref_actor)
+
+    if do_create && !p_Members.Has_Member(ref_actor)
+        code_return = p_MEMBERS.Create_Member(ref_actor)
+        if code_return < 0
+            p_Notify_On_Follow(code_return, str_name)
+            return
+        endIf
+    endIf
+
+    doticu_npc_party_script_member ref_member = p_MEMBERS.Get_Member(ref_actor)
+    if !ref_member
+        p_Notify_On_Follow(p_CODES.NO_MEMBER, str_name)
+        return
+    endIf
+
+    p_Notify_On_Follow(ref_member.Follow(), str_name)
+endFunction
+
+function Unfollow(Actor ref_actor, bool do_create)
+    int code_return
+    string str_name = p_ACTOR2.Get_Name(ref_actor)
+
+    if do_create && !p_Members.Has_Member(ref_actor)
+        code_return = p_MEMBERS.Create_Member(ref_actor)
+        if code_return < 0
+            p_Notify_On_Unfollow(code_return, str_name)
+            return
+        endIf
+    endIf
+
+    doticu_npc_party_script_member ref_member = p_MEMBERS.Get_Member(ref_actor)
+    if !ref_member
+        p_Notify_On_Unfollow(p_CODES.NO_MEMBER, str_name)
+        return
+    endIf
+
+    p_Notify_On_Unfollow(ref_member.Unfollow(), str_name)
+endFunction
+
+function Sneak(Actor ref_actor, bool do_create)
+    int code_return
+    string str_name = p_ACTOR2.Get_Name(ref_actor)
+
+    if do_create && !p_Members.Has_Member(ref_actor)
+        code_return = p_MEMBERS.Create_Member(ref_actor)
+        if code_return < 0
+            p_Notify_On_Sneak(code_return, str_name)
+            return
+        endIf
+    endIf
+
+    doticu_npc_party_script_member ref_member = p_MEMBERS.Get_Member(ref_actor)
+    if !ref_member
+        p_Notify_On_Sneak(p_CODES.NO_MEMBER, str_name)
+        return
+    endIf
+
+    if do_create && !ref_member.Is_Follower()
+        code_return = ref_member.Follow()
+        if code_return < 0
+            p_Notify_On_Sneak(code_return, str_name)
+            return
+        endIf
     endIf
 
     doticu_npc_party_script_follower ref_follower = p_FOLLOWERS.Get_Follower(ref_actor)
     if !ref_follower
-        Debug.Notification("ERROR: Not a follower")
-        return none
+        p_Notify_On_Sneak(p_CODES.NO_FOLLOWER, str_name)
+        return
     endIf
 
-    return ref_follower
+    p_Notify_On_Sneak(ref_follower.Sneak(), str_name)
 endFunction
 
-int function Member(Actor ref_actor)
-    return p_Notify_On_Member(p_MEMBERS.Create_Member(ref_actor), p_ACTOR2.Get_Name(ref_actor))
-endFunction
-
-int function Unmember(Actor ref_actor)
-    return p_Notify_On_Unmember(p_MEMBERS.Destroy_Member(ref_actor), p_ACTOR2.Get_Name(ref_actor))
-endFunction
-
-int function Access(Actor ref_actor, bool do_create = true)
+function Unsneak(Actor ref_actor, bool do_create)
+    int code_return
     string str_name = p_ACTOR2.Get_Name(ref_actor)
-    string str_failure = "Could not access " + str_name + "."
-    string str_success = "Accessed " + str_name + "."
 
-    if do_create && !p_Members.Has_Member(ref_actor) && Member(ref_actor) == p_CODES.FAILURE
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
+    if do_create && !p_Members.Has_Member(ref_actor)
+        code_return = p_MEMBERS.Create_Member(ref_actor)
+        if code_return < 0
+            p_Notify_On_Unsneak(code_return, str_name)
+            return
+        endIf
     endIf
 
-    doticu_npc_party_script_member ref_member = Get_Member(ref_actor)
+    doticu_npc_party_script_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
+        p_Notify_On_Unsneak(p_CODES.NO_MEMBER, str_name)
+        return
     endIf
 
-    if p_Notify_On(ref_member.Access(), str_success) == p_CODES.FAILURE
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
+    if do_create && !ref_member.Is_Follower()
+        code_return = ref_member.Follow()
+        if code_return < 0
+            p_Notify_On_Unsneak(code_return, str_name)
+            return
+        endIf
     endIf
 
-    return p_CODES.SUCCESS
-endFunction
-
-int function Settle(Actor ref_actor, bool do_create = true)
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
-    string str_failure = "Could not settle " + str_name + "."
-    string str_success = "Settled " + str_name + "."
-
-    if do_create && !p_Members.Has_Member(ref_actor) && Member(ref_actor) == p_CODES.FAILURE
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
-    endIf
-
-    doticu_npc_party_script_member ref_member = Get_Member(ref_actor)
-    if !ref_member
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
-    endIf
-
-    if ref_member.Is_Settler()
-        return Resettle(ref_actor, do_create)
-    endIf
-
-    if p_Notify_On(ref_member.Settle(), str_success) == p_CODES.FAILURE
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
-    endIf
-
-    return p_CODES.SUCCESS
-endFunction
-
-int function Unsettle(Actor ref_actor, bool do_create = true)
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
-    string str_failure = "Could not unsettle " + str_name + "."
-    string str_success = "Unsettled " + str_name + "."
-    string str_nothing = str_name + " was already unsettled."
-
-    if do_create && !p_Members.Has_Member(ref_actor) && Member(ref_actor) == p_CODES.FAILURE
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
-    endIf
-
-    doticu_npc_party_script_member ref_member = Get_Member(ref_actor)
-    if !ref_member
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
-    endIf
-
-    if !ref_member.Is_Settler()
-        Debug.Notification(str_nothing)
-        return p_CODES.SUCCESS
-    endIf
-
-    if p_Notify_On(ref_member.Unsettle(), str_success) == p_CODES.FAILURE
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
-    endIf
-
-    return p_CODES.SUCCESS
-endFunction
-
-int function Resettle(Actor ref_actor, bool do_create = true)
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
-    string str_failure = "Could not resettle " + str_name + "."
-    string str_success = "Resettled " + str_name + "."
-
-    if do_create && !p_Members.Has_Member(ref_actor) && Member(ref_actor) == p_CODES.FAILURE
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
-    endIf
-
-    doticu_npc_party_script_member ref_member = Get_Member(ref_actor)
-    if !ref_member
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
-    endIf
-
-    if do_create && !ref_member.Is_Settler() && Settle(ref_actor, true) == p_CODES.FAILURE
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
-    endIf
-
-    doticu_npc_party_script_settler ref_settler = Get_Settler(ref_actor)
-    if !ref_settler
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
-    endIf
-
-    if p_Notify_On(ref_settler.Resettle(), str_success) == p_CODES.FAILURE
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
-    endIf
-
-    return p_CODES.SUCCESS
-endFunction
-
-int function Immobilize(Actor ref_actor, bool do_create = true)
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
-    string str_failure = "Could not immobilize " + str_name + "."
-    string str_success = "Immobilized " + str_name + "."
-    string str_nothing = str_name + " was already immobilized."
-
-    if do_create && !p_Members.Has_Member(ref_actor) && Member(ref_actor) == p_CODES.FAILURE
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
-    endIf
-
-    doticu_npc_party_script_member ref_member = Get_Member(ref_actor)
-    if !ref_member
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
-    endIf
-
-    if ref_member.Is_Immobile()
-        Debug.Notification(str_nothing)
-        return p_CODES.SUCCESS
-    endIF
-
-    if p_Notify_On(ref_member.Immobilize(), str_success) == p_CODES.FAILURE
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
-    endIf
-
-    return p_CODES.SUCCESS
-endFunction
-
-int function Mobilize(Actor ref_actor, bool do_create = true)
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
-    string str_failure = "Could not mobilize " + str_name + "."
-    string str_success = "Mobilized " + str_name + "."
-    string str_nothing = str_name + " was already mobilized."
-
-    if do_create && !p_Members.Has_Member(ref_actor) && Member(ref_actor) == p_CODES.FAILURE
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
-    endIf
-
-    doticu_npc_party_script_member ref_member = Get_Member(ref_actor)
-    if !ref_member
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
-    endIf
-
-    if !ref_member.Is_Immobile()
-        Debug.Notification(str_nothing)
-        return p_CODES.SUCCESS
-    endIf
-
-    if p_Notify_On(ref_member.Mobilize(), str_success) == p_CODES.FAILURE
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
-    endIf
-
-    return p_CODES.SUCCESS
-endFunction
-
-int function Follow(Actor ref_actor, bool do_create = true)
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
-    string str_failure = "Could not make " + str_name + " a follower."
-
-    if do_create && !p_Members.Has_Member(ref_actor) && Member(ref_actor) == p_CODES.FAILURE
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
-    endIf
-
-    doticu_npc_party_script_member ref_member = Get_Member(ref_actor)
-    if !ref_member
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
-    endIf
-
-    return p_Notify_On_Follow(ref_member.Follow(), str_name)
-endFunction
-
-int function Unfollow(Actor ref_actor, bool do_create = true)
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
-    string str_failure = "Could not remove " + str_name + " from being a follower."
-
-    if do_create && !p_Members.Has_Member(ref_actor) && Member(ref_actor) == p_CODES.FAILURE
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
-    endIf
-
-    doticu_npc_party_script_member ref_member = Get_Member(ref_actor)
-    if !ref_member
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
-    endIf
-
-    return p_Notify_On_Unfollow(ref_member.Unfollow(), str_name)
-endFunction
-
-int function Sneak(Actor ref_actor, bool do_create = true)
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
-    string str_failure = "Could not make " + str_name + " a sneak follower."
-    string str_success = "Made " + str_name + " a sneak follower."
-    string str_nothing = str_name + " was already a sneak follower."
-
-    if do_create && !p_Followers.Has_Follower(ref_actor) && Follow(ref_actor, true) == p_CODES.FAILURE
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
-    endIf
-
-    doticu_npc_party_script_follower ref_follower = Get_Follower(ref_actor)
+    doticu_npc_party_script_follower ref_follower = p_FOLLOWERS.Get_Follower(ref_actor)
     if !ref_follower
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
+        p_Notify_On_Unsneak(p_CODES.NO_FOLLOWER, str_name)
+        return
     endIf
 
-    if ref_follower.Is_Sneak()
-        Debug.Notification(str_nothing)
-        return p_CODES.SUCCESS
-    endIF
-
-    if p_Notify_On(ref_follower.Sneak(), str_success) == p_CODES.FAILURE
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
-    endIf
-
-    return p_CODES.SUCCESS
-endFunction
-
-int function Unsneak(Actor ref_actor, bool do_create = true)
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
-    string str_failure = "Could not stop " + str_name + " from being a sneak follower."
-    string str_success = "Stopped " + str_name + " from being a sneak follower."
-    string str_nothing = str_name + " was already not a sneak follower."
-
-    if do_create && !p_Followers.Has_Follower(ref_actor) && Follow(ref_actor, true) == p_CODES.FAILURE
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
-    endIf
-
-    doticu_npc_party_script_follower ref_follower = Get_Follower(ref_actor)
-    if !ref_follower
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
-    endIf
-
-    if !ref_follower.Is_Sneak()
-        Debug.Notification(str_nothing)
-        return p_CODES.SUCCESS
-    endIf
-
-    if p_Notify_On(ref_follower.Unsneak(), str_success) == p_CODES.FAILURE
-        Debug.Notification(str_failure)
-        return p_CODES.FAILURE
-    endIf
-
-    return p_CODES.SUCCESS
+    p_Notify_On_Unsneak(ref_follower.Unsneak(), str_name)
 endFunction
 
 function Toggle_Member(Actor ref_actor)
@@ -517,9 +535,7 @@ endFunction
 
 function Toggle_Follower(Actor ref_actor)
     doticu_npc_party_script_follower ref_follower = p_FOLLOWERS.Get_Follower(ref_actor)
-    if ref_follower && ref_follower.Is_Sneak()
-        Unsneak(ref_actor, true)
-    elseIf ref_follower
+    if ref_follower
         Unfollow(ref_actor, true)
     else
         Follow(ref_actor, true)

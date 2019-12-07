@@ -139,6 +139,10 @@ int function Sneak()
         return CODES.NO_FOLLOWER
     endIf
 
+    if is_sneak
+        return CODES.EXISTS
+    endIf
+
     is_sneak = true
 
     code_return = f_Enforce()
@@ -154,6 +158,10 @@ int function Unsneak()
 
     if !Exists()
         return CODES.NO_FOLLOWER
+    endIf
+
+    if !is_sneak
+        return CODES.NO_SNEAK
     endIf
 
     is_sneak = false
