@@ -220,14 +220,10 @@ int function Access(Actor ref_actor, bool do_create = true)
     string str_failure = "Could not access " + str_name + "."
     string str_success = "Accessed " + str_name + "."
 
-    MiscUtil.PrintConsole("initiating attempt to access")
-
     if do_create && !p_Members.Has_Member(ref_actor) && Member(ref_actor) == p_CODES.FAILURE
         Debug.Notification(str_failure)
         return p_CODES.FAILURE
     endIf
-
-    MiscUtil.PrintConsole("attempting to get member")
 
     doticu_npc_party_script_member ref_member = Get_Member(ref_actor)
     if !ref_member
@@ -235,14 +231,10 @@ int function Access(Actor ref_actor, bool do_create = true)
         return p_CODES.FAILURE
     endIf
 
-    MiscUtil.PrintConsole("attempting to access")
-
     if p_Notify_On(ref_member.Access(), str_success) == p_CODES.FAILURE
         Debug.Notification(str_failure)
         return p_CODES.FAILURE
     endIf
-
-    MiscUtil.PrintConsole("successfully accessed")
 
     return p_CODES.SUCCESS
 endFunction
