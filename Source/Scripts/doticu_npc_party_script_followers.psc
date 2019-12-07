@@ -40,13 +40,15 @@ endFunction
 int function Create_Follower(Actor ref_actor)
     int code_return
 
-    if ALIASES.Is_Full()
-        return CODES.NO_FOLLOWERS
-    endIf
-
     code_return = ALIASES.Create_Alias(ref_actor)
     if code_return < 0
-        return code_return
+        if code_return == CODES.HAS_ACTOR || code_return == CODES.HAS_ALIAS
+            return CODES.HAS_FOLLOWER
+        elseIf code_return == CODES.HASNT_SPACE
+            return CODES.HASNT_SPACE_FOLLOWER
+        else
+            return code_return
+        endIf
     endIf
     int id_alias = code_return
 
@@ -66,7 +68,7 @@ int function Destroy_Follower(Actor ref_actor)
 
     int id_alias = p_Get_Alias_ID(ref_actor)
     if !ALIASES.Has_Alias(id_alias, ref_actor)
-        return CODES.NO_FOLLOWER
+        return CODES.HASNT_FOLLOWER
     endIf
 
     code_return = p_Get_Follower(id_alias).Destroy()

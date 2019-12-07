@@ -46,7 +46,8 @@ endFunction
 ; Private Methods
 int function p_Create_ID()
     if size_ids_free <= 0 || size_ids_used >= arr_ids_used.length
-        return CODES.OUT_OF_SPACE
+        ; no ids are free
+        return CODES.FAILURE
     endIf
 
     size_ids_free -= 1
@@ -117,13 +118,13 @@ int function Create_Alias(Actor ref_actor)
     int code_return
 
     if !ref_actor
-        return CODES.NO_ACTOR
+        return CODES.ISNT_ACTOR
     endIf
     if p_Has_Actor(ref_actor)
-        return CODES.IS_DUPLICATE
+        return CODES.HAS_ACTOR
     endIf
     if Is_Full()
-        return CODES.OUT_OF_SPACE
+        return CODES.HASNT_SPACE
     endIf
 
     code_return = p_Create_ID()
@@ -141,10 +142,10 @@ int function Destroy_Alias(int id_alias, Actor ref_actor)
     int code_return
 
     if !ref_actor
-        return CODES.NO_ACTOR
+        return CODES.ISNT_ACTOR
     endIf
     if !Has_Alias(id_alias, ref_actor)
-        return CODES.NO_ALIAS
+        return CODES.HASNT_ALIAS
     endIf
 
     f_Get_Alias(id_alias).Clear()

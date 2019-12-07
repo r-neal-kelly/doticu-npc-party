@@ -35,7 +35,7 @@ endFunction
 
 int function f_Enforce()
     if !Exists()
-        return CODES.NO_IMMOBILE
+        return CODES.ISNT_IMMOBILE
     endIf
 
     p_Token()
@@ -48,28 +48,23 @@ int function Create()
     int code_return
 
     if Exists()
-        return CODES.EXISTS
+        return CODES.IS_IMMOBILE
     endIf
     ref_actor = GetActorReference()
     if !ref_actor
-        return CODES.NO_ACTOR
+        return CODES.ISNT_ACTOR
     endIf
     if !MEMBER.Exists()
-        return CODES.NO_MEMBER
+        return CODES.ISNT_MEMBER
     endIf
     is_created = true
-
-    ;/code_return = f_Enforce()
-    if code_return < 0
-        return code_return
-    endIf/;
 
     return CODES.SUCCESS
 endFunction
 
 int function Destroy()
     if !Exists()
-        return CODES.NO_IMMOBILE
+        return CODES.ISNT_IMMOBILE
     endIf
 
     p_Untoken()

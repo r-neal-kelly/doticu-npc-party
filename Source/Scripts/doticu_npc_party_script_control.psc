@@ -46,202 +46,216 @@ endFunction
 function p_Notify_On_Member(int code_return, string str_name)
     if code_return == p_CODES.SUCCESS
         Debug.Notification("NPC Party: " + str_name + " is now a member.")
-    elseIf code_return == p_CODES.NO_ACTOR
-        Debug.Notification("NPC Party: " + str_name + " is not an npc.")
-    elseIf code_return == p_CODES.IS_DUPLICATE
+    elseIf code_return == p_CODES.HASNT_SPACE_MEMBER
+        Debug.Notification("NPC Party: No room for " + str_name + " to become a member.")
+    elseIf code_return == p_CODES.CANT_RESURRECT
+        Debug.Notification("NPC Party: " + str_name + " can't be revived, and so can't become a member.")
+    elseIf code_return == p_CODES.HAS_MEMBER
         Debug.Notification("NPC Party: " + str_name + " is already a member.")
-    elseIf code_return == p_CODES.NO_MEMBERS
-        Debug.Notification("NPC Party: No room for " + str_name + " to join.")
-    elseIf code_return == p_CODES.NO_RESURRECT
-        Debug.Notification("NPC Party: " + str_name + " won't come back to life.")
+    elseIf code_return == p_CODES.ISNT_ACTOR
+        Debug.Notification("NPC Party: That can't become a member.")
     else
-        Debug.Notification("NPC Party: It is unknown why " + str_name + " can't join.")
+        Debug.Notification("NPC Party: It's unknown why " + str_name + " can't be a member.")
     endIf
 endFunction
 
 int function p_Notify_On_Unmember(int code_return, string str_name)
     if code_return == p_CODES.SUCCESS
         Debug.Notification("NPC Party: " + str_name + " is no longer a member.")
-    elseIf code_return == p_CODES.NO_ACTOR
-        Debug.Notification("NPC Party: " + str_name + " is not an npc.")
-    elseIf code_return == p_CODES.NO_MEMBER
-        Debug.Notification("NPC Party: " + str_name + " is already not a member.")
+    elseIf code_return == p_CODES.HASNT_MEMBER
+        Debug.Notification("NPC Party: " + str_name + " was already not a member.")
+    elseIf code_return == p_CODES.ISNT_ACTOR
+        Debug.Notification("NPC Party: That can't be unmembered.")
     else
-        Debug.Notification("NPC Party: It is unknown why " + str_name + " can't join.")
+        Debug.Notification("NPC Party: It's unknown why " + str_name + " can't be unmembered.")
     endIf
 endFunction
 
 function p_Notify_On_Access(int code_return, string str_name)
     if code_return == p_CODES.SUCCESS
-        Debug.Notification("NPC Party: Accessing inventory of " + str_name + ".")
-    elseIf code_return == p_CODES.NO_ACTOR
-        Debug.Notification("NPC Party: " + str_name + " can not be accessed.")
-    elseIf code_return == p_CODES.NO_MEMBERS
-        Debug.Notification("NPC Party: No room for " + str_name + " to join and be accessed.")
-    elseIf code_return == p_CODES.NO_RESURRECT
-        Debug.Notification("NPC Party: " + str_name + " can't be revived and accessed.")
-    elseIf code_return == p_CODES.NO_MEMBER
-        Debug.Notification("NPC Party: " + str_name + " isn't a member and can't be accessed.")
+        Debug.Notification("NPC Party: " + str_name + " has been accessed.")
+    elseIf code_return == p_CODES.HASNT_SPACE_MEMBER
+        Debug.Notification("NPC Party: No room for " + str_name + " to be accessed as a new member.")
+    elseIf code_return == p_CODES.CANT_RESURRECT
+        Debug.Notification("NPC Party: " + str_name + " can't be revived, and so can't be accessed as a new member.")
+    elseIf code_return == p_CODES.ISNT_ACTOR
+        Debug.Notification("NPC Party: That can't become a member and be accessed.")
+    elseIf code_return == p_CODES.ISNT_MEMBER
+        Debug.Notification("NPC Party: " + str_name + " isn't a member, and so can't be accessed.")
     else
-        Debug.Notification("NPC Party: It is unknown why " + str_name + " can't be accessed.")
+        Debug.Notification("NPC Party: It's unknown why " + str_name + " can't be accessed.")
     endIf
 endFunction
 
 function p_Notify_On_Settle(int code_return, string str_name)
     if code_return == p_CODES.SUCCESS
-        Debug.Notification("NPC Party: " + str_name + " has settled here.")
-    elseIf code_return == p_CODES.NO_ACTOR
-        Debug.Notification("NPC Party: That can't be a settler.")
-    elseIf code_return == p_CODES.NO_MEMBERS
-        Debug.Notification("NPC Party: Too many members for " + str_name + " to join as a settler.")
-    elseIf code_return == p_CODES.NO_RESURRECT
-        Debug.Notification("NPC Party: " + str_name + " can't be revived, nor settled.")
-    elseIf code_return == p_CODES.NO_MEMBER
-        Debug.Notification("NPC Party: " + str_name + " isn't a member and can't be a settler.")
+        Debug.Notification("NPC Party: " + str_name + " will settle here.")
+    elseIf code_return == p_CODES.HASNT_SPACE_MEMBER
+        Debug.Notification("NPC Party: No room for " + str_name + " to become a settled member.")
+    elseIf code_return == p_CODES.CANT_RESURRECT
+        Debug.Notification("NPC Party: " + str_name + " can't be revived, and so can't be a settled member.")
+    elseIf code_return == p_CODES.ISNT_ACTOR
+        Debug.Notification("NPC Party: That can't become a settled member.")
+    elseIf code_return == p_CODES.ISNT_MEMBER
+        Debug.Notification("NPC Party: " + str_name + " isn't a member, and so can't settle here.")
+    elseIf code_return == p_CODES.IS_SETTLER
+        Debug.Notification("NPC Party: " + str_name + " is already settled elsewhere.")
     else
-        Debug.Notification("NPC Party: Unknown reason why " + str_name + " can't be a settler.")
+        Debug.Notification("NPC Party: It's unknown why " + str_name + " can't settle here.")
     endIf
 endFunction
 
 function p_Notify_On_Unsettle(int code_return, string str_name)
     if code_return == p_CODES.SUCCESS
-        Debug.Notification("NPC Party: " + str_name + " will no longer settle.")
-    elseIf code_return == p_CODES.NO_ACTOR
-        Debug.Notification("NPC Party: " + str_name + " isn't an npc.")
-    elseIf code_return == p_CODES.NO_MEMBERS
-        Debug.Notification("NPC Party: No room for " + str_name + " to be an unsettled member.")
-    elseIf code_return == p_CODES.NO_RESURRECT
-        Debug.Notification("NPC Party: " + str_name + " can't be revived or unsettled.")
-    elseIf code_return == p_CODES.NO_MEMBER
-        Debug.Notification("NPC Party: " + str_name + " isn't a member and can't unsettle.")
-    elseIf code_return == p_CODES.NO_SETTLER
-        Debug.Notification("NPC Party: " + str_name + " is not a settler.")
+        Debug.Notification("NPC Party: " + str_name + " will no longer be a settler.")
+    elseIf code_return == p_CODES.HASNT_SPACE_MEMBER
+        Debug.Notification("NPC Party: No room for " + str_name + " to become an unsettled member.")
+    elseIf code_return == p_CODES.CANT_RESURRECT
+        Debug.Notification("NPC Party: " + str_name + " can't be revived, and so can't be an unsettled member.")
+    elseIf code_return == p_CODES.ISNT_ACTOR
+        Debug.Notification("NPC Party: That can't become an unsettled member.")
+    elseIf code_return == p_CODES.ISNT_MEMBER
+        Debug.Notification("NPC Party: " + str_name + " isn't a member, and so can't unsettle.")
+    elseIf code_return == p_CODES.ISNT_SETTLER
+        Debug.Notification("NPC Party: " + str_name + " isn't settled.")
     else
-        Debug.Notification("NPC Party: It is unknown why " + str_name + " can't unsettle.")
+        Debug.Notification("NPC Party: It's unknown why " + str_name + " can't unsettle.")
     endIf
 endFunction
 
 function p_Notify_On_Resettle(int code_return, string str_name)
     if code_return == p_CODES.SUCCESS
-        Debug.Notification("NPC Party: " + str_name + " has resettled here.")
-    elseIf code_return == p_CODES.NO_ACTOR
-        Debug.Notification("NPC Party: " + str_name + " can't be a settler.")
-    elseIf code_return == p_CODES.NO_MEMBER
-        Debug.Notification("NPC Party: " + str_name + " isn't a member and can't resettle.")
-    elseIf code_return == p_CODES.NO_SETTLER
-        Debug.Notification("NPC Party: " + str_name + " is not a settler.")
+        Debug.Notification("NPC Party: " + str_name + " will settle here.")
+    elseIf code_return == p_CODES.HASNT_SPACE_MEMBER
+        Debug.Notification("NPC Party: No room for " + str_name + " to become a resettled member.")
+    elseIf code_return == p_CODES.CANT_RESURRECT
+        Debug.Notification("NPC Party: " + str_name + " can't be revived, and so can't become a settled member.")
+    elseIf code_return == p_CODES.ISNT_ACTOR
+        Debug.Notification("NPC Party: That can't become a settled member.")
+    elseIf code_return == p_CODES.ISNT_MEMBER
+        Debug.Notification("NPC Party: " + str_name + " isn't a member, and so can't resettle.")
+    elseIf code_return == p_CODES.ISNT_SETTLER
+        Debug.Notification("NPC Party: " + str_name + " isn't a settler, and so can't resettle.")
     else
-        Debug.Notification("NPC Party: It is unknown why " + str_name + " can't resettle.")
+        Debug.Notification("NPC Party: It's unknown why " + str_name + " can't resettle.")
     endIf
 endFunction
 
 function p_Notify_On_Immobilize(int code_return, string str_name)
     if code_return == p_CODES.SUCCESS
-        Debug.Notification("NPC Party: " + str_name + " is now immobile.")
-    elseIf code_return == p_CODES.NO_ACTOR
-        Debug.Notification("NPC Party: " + str_name + " cannot be immobilized.")
-    elseIf code_return == p_CODES.NO_MEMBERS
-        Debug.Notification("NPC Party: No room for " + str_name + " an immobile to join.")
-    elseIf code_return == p_CODES.NO_RESURRECT
-        Debug.Notification("NPC Party: " + str_name + " can't be revived or made immobile.")
-    elseIf code_return == p_CODES.NO_MEMBER
-        Debug.Notification("NPC Party: " + str_name + " isn't a member and can't be immobile.")
+        Debug.Notification("NPC Party: " + str_name + " will stop moving.")
+    elseIf code_return == p_CODES.HASNT_SPACE_MEMBER
+        Debug.Notification("NPC Party: No room for " + str_name + " to become an immobile member.")
+    elseIf code_return == p_CODES.CANT_RESURRECT
+        Debug.Notification("NPC Party: " + str_name + " can't be revived, and so can't be immobilized.")
+    elseIf code_return == p_CODES.ISNT_ACTOR
+        Debug.Notification("NPC Party: That can't become an immobile member.")
+    elseIf code_return == p_CODES.ISNT_MEMBER
+        Debug.Notification("NPC Party: " + str_name + " isn't a member, and so can't be immobilized.")
+    elseIf code_return == p_CODES.IS_IMMOBILE
+        Debug.Notification("NPC Party: " + str_name + " is already immobile.")
     else
-        Debug.Notification("NPC Party: It is unknown why " + str_name + " can't be immobile.")
+        Debug.Notification("NPC Party: It's unknown why " + str_name + " can't be immobilized.")
     endIf
 endFunction
 
 function p_Notify_On_Mobilize(int code_return, string str_name)
     if code_return == p_CODES.SUCCESS
-        Debug.Notification("NPC Party: " + str_name + " is now mobile.")
-    elseIf code_return == p_CODES.NO_ACTOR
-        Debug.Notification("NPC Party: " + str_name + " cannot be mobilized.")
-    elseIf code_return == p_CODES.NO_MEMBERS
-        Debug.Notification("NPC Party: No room for " + str_name + " a mobile member to join.")
-    elseIf code_return == p_CODES.NO_RESURRECT
-        Debug.Notification("NPC Party: " + str_name + " can't be revived or made mobile.")
-    elseIf code_return == p_CODES.NO_MEMBER
-        Debug.Notification("NPC Party: " + str_name + " isn't a member and can't be mobile.")
-    elseIf code_return == p_CODES.NO_IMMOBILE
-        Debug.Notification("NPC Party: " + str_name + " is not immobile.")
+        Debug.Notification("NPC Party: " + str_name + " will start moving.")
+    elseIf code_return == p_CODES.HASNT_SPACE_MEMBER
+        Debug.Notification("NPC Party: No room for " + str_name + " to become a mobile member.")
+    elseIf code_return == p_CODES.CANT_RESURRECT
+        Debug.Notification("NPC Party: " + str_name + " can't be revived, and so can't be mobilized.")
+    elseIf code_return == p_CODES.ISNT_ACTOR
+        Debug.Notification("NPC Party: That can't become a mobile member.")
+    elseIf code_return == p_CODES.ISNT_MEMBER
+        Debug.Notification("NPC Party: " + str_name + " isn't a member, and so can't be mobilized.")
+    elseIf code_return == p_CODES.ISNT_IMMOBILE
+        Debug.Notification("NPC Party: " + str_name + " is already mobile.")
     else
-        Debug.Notification("NPC Party: It is unknown why " + str_name + " can't be mobile.")
+        Debug.Notification("NPC Party: It's unknown why " + str_name + " can't be mobilized.")
     endIf
 endFunction
 
 function p_Notify_On_Follow(int code_return, string str_name)
     if code_return == p_CODES.SUCCESS
-        Debug.Notification("NPC Party: " + str_name + " is now a follower.")
-    elseIf code_return == p_CODES.NO_ACTOR
-        Debug.Notification("NPC Party: " + str_name + " is not an npc.")
-    elseIf code_return == p_CODES.IS_DUPLICATE
-        Debug.Notification("NPC Party: " + str_name + " is already a follower.")
-    elseIf code_return == p_CODES.NO_MEMBERS
-        Debug.Notification("NPC Party: No room for " + str_name + " to join as a follower.")
-    elseIf code_return == p_CODES.NO_FOLLOWERS
-        Debug.Notification("NPC Party: No room for " + str_name + " to join as a follower.")
-    elseIf code_return == p_CODES.NO_RESURRECT
-        Debug.Notification("NPC Party: " + str_name + " won't come back to life.")
+        Debug.Notification("NPC Party: " + str_name + " will start following.")
+    elseIf code_return == p_CODES.HASNT_SPACE_MEMBER
+        Debug.Notification("NPC Party: No room for " + str_name + " to become a member or a follower.")
+    elseIf code_return == p_CODES.HASNT_SPACE_FOLLOWER
+        Debug.Notification("NPC Party: No room for " + str_name + " to become a follower.")
+    elseIf code_return == p_CODES.CANT_RESURRECT
+        Debug.Notification("NPC Party: " + str_name + " can't be revived, and so can't become a follower.")
+    elseIf code_return == p_CODES.ISNT_ACTOR
+        Debug.Notification("NPC Party: That can't become a member or a follower.")
+    elseIf code_return == p_CODES.ISNT_MEMBER
+        Debug.Notification("NPC Party: " + str_name + " isn't a member, and so can't start following.")
+    elseIf code_return == p_CODES.IS_FOLLOWER
+        Debug.Notification("NPC Party: " + str_name + " is already following.")
     else
-        Debug.Notification("NPC Party: It is unknown why " + str_name + " can't be a follower.")
+        Debug.Notification("NPC Party: It's unknown why " + str_name + " can't start following.")
     endIf
 endFunction
 
 function p_Notify_On_Unfollow(int code_return, string str_name)
     if code_return == p_CODES.SUCCESS
-        Debug.Notification("NPC Party: " + str_name + " is no longer a follower.")
-    elseIf code_return == p_CODES.NO_ACTOR
-        Debug.Notification("NPC Party: " + str_name + " is not an npc.")
-    elseIf code_return == p_CODES.NO_MEMBER
-        Debug.Notification("NPC Party: " + str_name + " is not a member.")
-    elseIf code_return == p_CODES.NO_FOLLOWER
-        Debug.Notification("NPC Party: " + str_name + " is already not a follower.")
+        Debug.Notification("NPC Party: " + str_name + " will stop following.")
+    elseIf code_return == p_CODES.HASNT_SPACE_MEMBER
+        Debug.Notification("NPC Party: No room for " + str_name + " to become a non-following member.")
+    elseIf code_return == p_CODES.CANT_RESURRECT
+        Debug.Notification("NPC Party: " + str_name + " can't be revived, and so can't become a non-following member.")
+    elseIf code_return == p_CODES.ISNT_ACTOR
+        Debug.Notification("NPC Party: That can't become a member or a non-following member.")
+    elseIf code_return == p_CODES.ISNT_MEMBER
+        Debug.Notification("NPC Party: " + str_name + " isn't a member, and so can't stop following.")
+    elseIf code_return == p_CODES.ISNT_FOLLOWER
+        Debug.Notification("NPC Party: " + str_name + " wasn't following.")
     else
-        Debug.Notification("NPC Party: It is unknown why " + str_name + " can't unfollow.")
+        Debug.Notification("NPC Party: It's unknown why " + str_name + " can't stop following.")
     endIf
 endFunction
 
 function p_Notify_On_Sneak(int code_return, string str_name)
     if code_return == p_CODES.SUCCESS
-        Debug.Notification("NPC Party: " + str_name + " is now sneaking.")
-    elseIf code_return == p_CODES.NO_ACTOR
-        Debug.Notification("NPC Party: That can't sneak.")
-    elseIf code_return == p_CODES.NO_MEMBER
-        Debug.Notification("NPC Party: " + str_name + " isn't a member, so can't sneak.")
-    elseIf code_return == p_CODES.NO_FOLLOWER
-        Debug.Notification("NPC Party: " + str_name + " isn't a follower, so can't sneak.")
-    elseIf code_return == p_CODES.EXISTS
+        Debug.Notification("NPC Party: " + str_name + " will start sneaking.")
+    elseIf code_return == p_CODES.HASNT_SPACE_MEMBER
+        Debug.Notification("NPC Party: No room for " + str_name + " to become a member or a sneaking follower.")
+    elseIf code_return == p_CODES.HASNT_SPACE_FOLLOWER
+        Debug.Notification("NPC Party: No room for " + str_name + " to become a sneaking follower.")
+    elseIf code_return == p_CODES.CANT_RESURRECT
+        Debug.Notification("NPC Party: " + str_name + " can't be revived, and so can't become a sneaking follower.")
+    elseIf code_return == p_CODES.ISNT_ACTOR
+        Debug.Notification("NPC Party: That can't become a member or a sneaking follower.")
+    elseIf code_return == p_CODES.ISNT_MEMBER
+        Debug.Notification("NPC Party: " + str_name + " isn't a member, and so can't start sneaking.")
+    elseIf code_return == p_CODES.ISNT_FOLLOWER
+        Debug.Notification("NPC Party: " + str_name + " isn't a follower, and so can't start sneaking.")
+    elseIf code_return == p_CODES.IS_SNEAK
         Debug.Notification("NPC Party: " + str_name + " is already sneaking.")
-    elseIf code_return == p_CODES.NO_MEMBERS
-        Debug.Notification("NPC Party: Too many members for " + str_name + " to join as a sneak.")
-    elseIf code_return == p_CODES.NO_FOLLOWERS
-        Debug.Notification("NPC Party: Too many followers for " + str_name + " to join as a sneak.")
-    elseIf code_return == p_CODES.NO_RESURRECT
-        Debug.Notification("NPC Party: " + str_name + " can't be revived or made sneaky.")
     else
-        Debug.Notification("NPC Party: It's unknown why " + str_name + " can't be sneaky.")
+        Debug.Notification("NPC Party: It's unknown why " + str_name + " can't start sneaking.")
     endIf
 endFunction
 
 function p_Notify_On_Unsneak(int code_return, string str_name)
     if code_return == p_CODES.SUCCESS
-        Debug.Notification("NPC Party: " + str_name + " is no longer sneaking.")
-    elseIf code_return == p_CODES.NO_MEMBERS
-        Debug.Notification("NPC Party: Too many members for " + str_name + " to join as a non-sneak.")
-    elseIf code_return == p_CODES.NO_FOLLOWERS
-        Debug.Notification("NPC Party: Too many followers for " + str_name + " to join as a non-sneak.")
-    elseIf code_return == p_CODES.NO_RESURRECT
-        Debug.Notification("NPC Party: " + str_name + " can't be revived, so can't stop sneaking.")
-    elseIf code_return == p_CODES.NO_ACTOR
-        Debug.Notification("NPC Party: That cannot be join as a non-sneak.")
-    elseIf code_return == p_CODES.NO_MEMBER
-        Debug.Notification("NPC Party: " + str_name + " isn't a member who can be unsneaky.")
-    elseIf code_return == p_CODES.NO_FOLLOWER
-        Debug.Notification("NPC Party: " + str_name + " is not a follower who can be unsneaky.")
-    elseIf code_return == p_CODES.NO_SNEAK
-        Debug.Notification("NPC Party: " + str_name + " was already not sneaky.")
+        Debug.Notification("NPC Party: " + str_name + " will stop sneaking.")
+    elseIf code_return == p_CODES.HASNT_SPACE_MEMBER
+        Debug.Notification("NPC Party: No room for " + str_name + " to become a member or an unsneaking follower.")
+    elseIf code_return == p_CODES.HASNT_SPACE_FOLLOWER
+        Debug.Notification("NPC Party: No room for " + str_name + " to become an unsneaking follower.")
+    elseIf code_return == p_CODES.CANT_RESURRECT
+        Debug.Notification("NPC Party: " + str_name + " can't be revived, and so can't become an unsneaking follower.")
+    elseIf code_return == p_CODES.ISNT_ACTOR
+        Debug.Notification("NPC Party: That can't become a member or an unsneaking follower.")
+    elseIf code_return == p_CODES.ISNT_MEMBER
+        Debug.Notification("NPC Party: " + str_name + " isn't a member, and so can't stop sneaking.")
+    elseIf code_return == p_CODES.ISNT_FOLLOWER
+        Debug.Notification("NPC Party: " + str_name + " isn't a follower, and so can't stop sneaking.")
+    elseIf code_return == p_CODES.ISNT_SNEAK
+        Debug.Notification("NPC Party: " + str_name + " wasn't sneaking.")
     else
-        Debug.Notification("NPC Party: It's unknown why " + str_name + " can't be unsneaky.")
+        Debug.Notification("NPC Party: It's unknown why " + str_name + " can't stop sneaking.")
     endIf
 endFunction
 
@@ -274,7 +288,7 @@ function Access(Actor ref_actor, bool do_create)
 
     doticu_npc_party_script_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        p_Notify_On_Access(p_CODES.NO_MEMBER, str_name)
+        p_Notify_On_Access(p_CODES.HASNT_MEMBER, str_name)
         return
     endIf
 
@@ -295,7 +309,7 @@ function Settle(Actor ref_actor, bool do_create)
 
     doticu_npc_party_script_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        p_Notify_On_Settle(p_CODES.NO_MEMBER, str_name)
+        p_Notify_On_Settle(p_CODES.HASNT_MEMBER, str_name)
         return
     endIf
 
@@ -316,7 +330,7 @@ function Unsettle(Actor ref_actor, bool do_create)
 
     doticu_npc_party_script_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        p_Notify_On_Unsettle(p_CODES.NO_MEMBER, str_name)
+        p_Notify_On_Unsettle(p_CODES.HASNT_MEMBER, str_name)
         return
     endIf
 
@@ -337,7 +351,7 @@ function Resettle(Actor ref_actor, bool do_create)
 
     doticu_npc_party_script_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        p_Notify_On_Resettle(p_CODES.NO_MEMBER, str_name)
+        p_Notify_On_Resettle(p_CODES.HASNT_MEMBER, str_name)
         return
     endIf
 
@@ -351,7 +365,7 @@ function Resettle(Actor ref_actor, bool do_create)
 
     doticu_npc_party_script_settler ref_settler = ref_member.Get_Settler()
     if !ref_settler
-        p_Notify_On_Resettle(p_CODES.NO_SETTLER, str_name)
+        p_Notify_On_Resettle(p_CODES.HASNT_SETTLER, str_name)
         return
     endIf
 
@@ -372,7 +386,7 @@ function Immobilize(Actor ref_actor, bool do_create)
 
     doticu_npc_party_script_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        p_Notify_On_Immobilize(p_CODES.NO_MEMBER, str_name)
+        p_Notify_On_Immobilize(p_CODES.HASNT_MEMBER, str_name)
         return
     endIf
 
@@ -393,7 +407,7 @@ function Mobilize(Actor ref_actor, bool do_create)
 
     doticu_npc_party_script_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        p_Notify_On_Mobilize(p_CODES.NO_MEMBER, str_name)
+        p_Notify_On_Mobilize(p_CODES.HASNT_MEMBER, str_name)
         return
     endIf
 
@@ -414,7 +428,7 @@ function Follow(Actor ref_actor, bool do_create)
 
     doticu_npc_party_script_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        p_Notify_On_Follow(p_CODES.NO_MEMBER, str_name)
+        p_Notify_On_Follow(p_CODES.HASNT_MEMBER, str_name)
         return
     endIf
 
@@ -435,7 +449,7 @@ function Unfollow(Actor ref_actor, bool do_create)
 
     doticu_npc_party_script_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        p_Notify_On_Unfollow(p_CODES.NO_MEMBER, str_name)
+        p_Notify_On_Unfollow(p_CODES.HASNT_MEMBER, str_name)
         return
     endIf
 
@@ -456,7 +470,7 @@ function Sneak(Actor ref_actor, bool do_create)
 
     doticu_npc_party_script_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        p_Notify_On_Sneak(p_CODES.NO_MEMBER, str_name)
+        p_Notify_On_Sneak(p_CODES.HASNT_MEMBER, str_name)
         return
     endIf
 
@@ -470,14 +484,14 @@ function Sneak(Actor ref_actor, bool do_create)
 
     doticu_npc_party_script_follower ref_follower = p_FOLLOWERS.Get_Follower(ref_actor)
     if !ref_follower
-        p_Notify_On_Sneak(p_CODES.NO_FOLLOWER, str_name)
+        p_Notify_On_Sneak(p_CODES.HASNT_FOLLOWER, str_name)
         return
     endIf
 
     p_Notify_On_Sneak(ref_follower.Sneak(), str_name)
 endFunction
 
-function Unsneak(Actor ref_actor, bool do_create)
+function Unsneak(Actor ref_actor, bool do_create); not sure if I want the "un" funcs to create anything...
     int code_return
     string str_name = p_ACTOR2.Get_Name(ref_actor)
 
@@ -491,7 +505,7 @@ function Unsneak(Actor ref_actor, bool do_create)
 
     doticu_npc_party_script_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        p_Notify_On_Unsneak(p_CODES.NO_MEMBER, str_name)
+        p_Notify_On_Unsneak(p_CODES.HASNT_MEMBER, str_name)
         return
     endIf
 
@@ -505,7 +519,7 @@ function Unsneak(Actor ref_actor, bool do_create)
 
     doticu_npc_party_script_follower ref_follower = p_FOLLOWERS.Get_Follower(ref_actor)
     if !ref_follower
-        p_Notify_On_Unsneak(p_CODES.NO_FOLLOWER, str_name)
+        p_Notify_On_Unsneak(p_CODES.HASNT_FOLLOWER, str_name)
         return
     endIf
 

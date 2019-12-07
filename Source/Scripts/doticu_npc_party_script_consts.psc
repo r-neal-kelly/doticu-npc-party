@@ -1,17 +1,20 @@
 Scriptname doticu_npc_party_script_consts extends Quest
 
 ; Private Constants
-Actor           p_ACTOR_PLAYER                  = none
-MiscObject      p_TOKEN_MEMBER                  = none
-MiscObject      p_TOKEN_SETTLER                 = none
-MiscObject      p_TOKEN_FOLLOWER                = none
-MiscObject      p_TOKEN_FOLLOWER_SNEAK          = none
-MiscObject      p_TOKEN_IMMOBILE                = none
-MiscObject      p_TOKEN_CLONE                   = none
-MiscObject      p_TOKEN_BANISHED                = none
-MiscObject      p_TOKEN_GENERIC                 = none
-GlobalVariable  p_GLOBAL_PLAYER_FOLLOWER_COUNT  = none
-FormList        p_FORMLIST_MARKERS_SETTLER      = none
+Actor           p_ACTOR_PLAYER                          = none
+MiscObject      p_TOKEN_MEMBER                          = none
+MiscObject      p_TOKEN_SETTLER                         = none
+MiscObject      p_TOKEN_FOLLOWER                        = none
+MiscObject      p_TOKEN_FOLLOWER_SNEAK                  = none
+MiscObject      p_TOKEN_IMMOBILE                        = none
+MiscObject      p_TOKEN_CLONE                           = none
+MiscObject      p_TOKEN_BANISHED                        = none
+MiscObject      p_TOKEN_GENERIC                         = none
+MiscObject      p_TOKEN_THRALL                          = none
+GlobalVariable  p_GLOBAL_PLAYER_FOLLOWER_COUNT          = none
+FormList        p_FORMLIST_MARKERS_SETTLER              = none
+Faction         p_FACTION_DLC1_THRALL                   = none
+Faction         p_FACTION_DLC1_VAMPIRE_FEED_NO_CRIME    = none
 
 ; Public Constants
 Actor property ACTOR_PLAYER
@@ -113,6 +116,17 @@ MiscObject property TOKEN_GENERIC
     endFunction
 endProperty
 
+MiscObject property TOKEN_THRALL
+    MiscObject function Get()
+        return p_TOKEN_THRALL
+    endFunction
+    function Set(MiscObject val)
+        if p_TOKEN_THRALL == none
+            p_TOKEN_THRALL = val
+        endIf
+    endFunction
+endProperty
+
 GlobalVariable property GLOBAL_PLAYER_FOLLOWER_COUNT
     GlobalVariable function Get()
         return p_GLOBAL_PLAYER_FOLLOWER_COUNT
@@ -131,6 +145,28 @@ Formlist property FORMLIST_MARKERS_SETTLER
     function Set(Formlist val)
         if p_FORMLIST_MARKERS_SETTLER == none
             p_FORMLIST_MARKERS_SETTLER = val
+        endIf
+    endFunction
+endProperty
+
+Faction property FACTION_DLC1_THRALL
+    Faction function Get()
+        return p_FACTION_DLC1_THRALL
+    endFunction
+    function Set(Faction val)
+        if p_FACTION_DLC1_THRALL == none
+            p_FACTION_DLC1_THRALL = val
+        endIf
+    endFunction
+endProperty
+
+Faction property FACTION_DLC1_VAMPIRE_FEED_NO_CRIME
+    Faction function Get()
+        return p_FACTION_DLC1_VAMPIRE_FEED_NO_CRIME
+    endFunction
+    function Set(Faction val)
+        if p_FACTION_DLC1_VAMPIRE_FEED_NO_CRIME == none
+            p_FACTION_DLC1_VAMPIRE_FEED_NO_CRIME = val
         endIf
     endFunction
 endProperty

@@ -20,6 +20,8 @@ function p_Backup()
     prev_relationship_rank = ref_actor.GetRelationshipRank(CONSTS.ACTOR_PLAYER)
 endFunction
 
+; function p_Restore() ?
+
 function p_Token()
     ACTOR2.Token(ref_actor, CONSTS.TOKEN_FOLLOWER, ID_ALIAS + 1)
     if is_sneak
@@ -47,6 +49,12 @@ function p_Unfollow()
     ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, prev_relationship_rank)
 endFunction
 
+function p_Sneak()
+endFunction
+
+function p_Unsneak()
+endFunction
+
 ; Friend Methods
 function f_Initialize(doticu_npc_party_script_data DATA, int IDX_ALIAS)
     CONSTS = DATA.CONSTS
@@ -61,7 +69,7 @@ int function f_Enforce()
     int code_return
 
     if !Exists()
-        return CODES.NO_FOLLOWER
+        return CODES.ISNT_FOLLOWER
     endIf
 
     code_return = ref_member.f_Enforce()
@@ -71,6 +79,9 @@ int function f_Enforce()
 
     p_Token()
     p_Follow()
+    if is_sneak
+        p_Sneak()
+    endIf
 
     ref_actor.EvaluatePackage()
 
@@ -82,15 +93,15 @@ int function Create()
     int code_return
 
     if Exists()
-        return CODES.EXISTS
+        return CODES.IS_FOLLOWER
     endIf
     ref_actor = GetActorReference()
     if !ref_actor
-        return CODES.NO_ACTOR
+        return CODES.ISNT_ACTOR
     endIf
     ref_member = MODS.MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        return CODES.NO_MEMBER
+        return CODES.ISNT_MEMBER
     endIf
     is_created = true
 
@@ -106,9 +117,12 @@ endFunction
 
 int function Destroy()
     if !Exists()
-        return CODES.NO_FOLLOWER
+        return CODES.ISNT_FOLLOWER
     endIf
 
+    if is_sneak
+        p_Unsneak()
+    endIf
     p_Unfollow()
     p_Untoken()
 
@@ -136,11 +150,11 @@ int function Sneak()
     int code_return
 
     if !Exists()
-        return CODES.NO_FOLLOWER
+        return CODES.ISNT_FOLLOWER
     endIf
 
     if is_sneak
-        return CODES.EXISTS
+        return CODES.IS_SNEAK
     endIf
 
     is_sneak = true
@@ -157,11 +171,11 @@ int function Unsneak()
     int code_return
 
     if !Exists()
-        return CODES.NO_FOLLOWER
+        return CODES.ISNT_FOLLOWER
     endIf
 
     if !is_sneak
-        return CODES.NO_SNEAK
+        return CODES.ISNT_SNEAK
     endIf
 
     is_sneak = false
@@ -181,4 +195,20 @@ endFunction
 ; Events
 event OnActivate(ObjectReference ref_activator)
     f_Enforce()
+endEvent
+
+event OnCombatStateChanged(Actor ref_target, int code_combat)
+    ; may want to put on member instead
+
+    if ref_target == CONSTS.ACTOR_PLAYER
+        ref_actor.StopCombat()
+        ;ref_actor.StopCombatAlarm()
+    endIf
+
+    ; check for other members, if they have the member token, stop fighting them
+
+    if code_combat == 0; Not in Combat
+    elseIf code_combat == 1; In Combat
+    elseIf code_combat == 2; Searching
+    endIf
 endEvent

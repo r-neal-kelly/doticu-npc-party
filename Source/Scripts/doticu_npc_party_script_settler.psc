@@ -45,7 +45,7 @@ endFunction
 
 int function f_Enforce()
     if !Exists()
-        return CODES.NO_SETTLER
+        return CODES.ISNT_SETTLER
     endIf
 
     p_Token()
@@ -59,21 +59,16 @@ int function Create()
     int code_return
 
     if Exists()
-        return CODES.EXISTS
+        return CODES.IS_SETTLER
     endIf
     ref_actor = GetActorReference()
     if !ref_actor
-        return CODES.NO_ACTOR
+        return CODES.ISNT_ACTOR
     endIf
     if !MEMBER.Exists()
-        return CODES.NO_MEMBER
+        return CODES.ISNT_MEMBER
     endIf
     is_created = true
-
-    ;/code_return = f_Enforce()
-    if code_return < 0
-        return code_return
-    endIf/;
 
     p_Settle()
 
@@ -82,7 +77,7 @@ endFunction
 
 int function Destroy()
     if !Exists()
-        return CODES.NO_SETTLER
+        return CODES.ISNT_SETTLER
     endIf
 
     p_Unsettle()
@@ -102,7 +97,7 @@ int function Resettle()
     int code_return
 
     if !Exists()
-        return CODES.NO_SETTLER
+        return CODES.ISNT_SETTLER
     endIf
 
     p_Settle()
