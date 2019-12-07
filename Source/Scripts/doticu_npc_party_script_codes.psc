@@ -16,9 +16,11 @@ int property FATAL_ERROR    = -600 autoReadOnly
 
 int property NO_ACTOR       = -100 autoReadOnly
 int property NO_ALIAS       = -110 autoReadOnly
-int property NO_MEMBER      = -120 autoReadOnly
-int property NO_SETTLER     = -130 autoReadOnly
-int property NO_IMMOBILE    = -140 autoReadOnly
-int property NO_FOLLOWER    = -150 autoReadOnly
-int property NO_SNEAK       = -160 autoReadOnly
-int property NO_RESURRECT   = -170 autoReadOnly
+int property NO_MEMBERS     = -120 autoReadOnly
+int property NO_FOLLOWERS   = -130 autoReadOnly
+int property NO_MEMBER      = -140 autoReadOnly
+int property NO_SETTLER     = -150 autoReadOnly
+int property NO_IMMOBILE    = -160 autoReadOnly
+int property NO_FOLLOWER    = -170 autoReadOnly
+int property NO_SNEAK       = -180 autoReadOnly
+int property NO_RESURRECT   = -190 autoReadOnly

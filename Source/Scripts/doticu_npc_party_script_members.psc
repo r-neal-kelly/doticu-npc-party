@@ -42,6 +42,10 @@ endFunction
 int function Create_Member(Actor ref_actor, bool make_clone = false)
     int code_return
 
+    if ALIASES.Is_Full()
+        return CODES.NO_MEMBERS
+    endIf
+
     code_return = ALIASES.Create_Alias(ref_actor)
     if code_return < 0
         return code_return
