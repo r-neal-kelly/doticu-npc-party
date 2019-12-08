@@ -41,6 +41,10 @@ function p_Follow()
     ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, 3)
     ref_actor.SetPlayerTeammate(true, true)
     ref_actor.IgnoreFriendlyHits(true)
+    ; will want to add to CurrentFollowerFaction?
+    ; or completely remove it from the npc?
+    ; or disable the vanilla follower dialogue?
+    ; should we make our own with hard links?
 endFunction
 
 function p_Unfollow()
