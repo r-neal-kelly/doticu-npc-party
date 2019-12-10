@@ -401,11 +401,11 @@ int function Style_Default()
         return CODES.ISNT_MEMBER
     endIf
 
-    if code_combat == -1
+    if code_combat == CODES.IS_DEFAULT
         return CODES.IS_DEFAULT
     endIf
 
-    code_combat = -1
+    code_combat = CODES.IS_DEFAULT
 
     code_return = f_Enforce()
     if code_return < 0

@@ -159,7 +159,7 @@ int function Destroy_Alias(int id_alias, Actor ref_actor)
 endFunction
 
 bool function Has_Alias(int id_alias, Actor ref_actor)
-    return p_Get_Actor(id_alias) == ref_actor
+    return ref_actor != none && p_Get_Actor(id_alias) == ref_actor
 endFunction
 
 ReferenceAlias function Get_Alias(int id_alias, Actor ref_actor)
