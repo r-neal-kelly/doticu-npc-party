@@ -1,1 +1,0 @@
-Scriptname doticu_npc_party_script_mcm extends SKI_ConfigBase
