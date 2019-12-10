@@ -60,6 +60,9 @@ function Update_Keys()
     if p_VARS.key_toggle_immobile > -1
         RegisterForKey(p_VARS.key_toggle_immobile)
     endIf
+    if p_VARS.key_toggle_enthrall > -1
+        RegisterForKey(p_VARS.key_toggle_enthrall)
+    endIf
     if p_VARS.key_toggle_follower > -1
         RegisterForKey(p_VARS.key_toggle_follower)
     endIf
@@ -100,6 +103,8 @@ event OnKeyDown(int code_key)
         p_CONTROL.Toggle_Settler(ref_actor)
     elseIf code_key == p_VARS.key_toggle_immobile
         p_CONTROL.Toggle_Immobile(ref_actor)
+    elseIf code_key == p_VARS.key_toggle_enthrall
+        p_CONTROL.Toggle_Thrall(ref_actor)
     elseIf code_key == p_VARS.key_toggle_follower
         p_CONTROL.Toggle_Follower(ref_actor)
     elseIf code_key == p_VARS.key_toggle_sneak

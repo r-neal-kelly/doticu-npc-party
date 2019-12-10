@@ -36,6 +36,10 @@ int property IS_IMMOBILE            = -340 autoReadOnly
 int property IS_FOLLOWER            = -350 autoReadOnly
 int property IS_SNEAK               = -360 autoReadOnly
 int property IS_THRALL              = -370 autoReadOnly
+int property IS_DEFAULT             = -380 autoReadOnly
+int property IS_WARRIOR             = -381 autoReadOnly
+int property IS_MAGE                = -382 autoReadOnly
+int property IS_ARCHER              = -383 autoReadOnly
 
 int property ISNT_ACTOR             = -400 autoReadOnly
 int property ISNT_ALIAS             = -410 autoReadOnly

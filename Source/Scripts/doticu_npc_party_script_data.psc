@@ -37,4 +37,6 @@ function f_Initialize()
     p_CODES = (self as Quest) as doticu_npc_party_script_codes
     p_VARS = (self as Quest) as doticu_npc_party_script_vars
     p_MODS = (self as Quest) as doticu_npc_party_script_mods
+
+    p_VARS.f_Initialize(self)
 endFunction

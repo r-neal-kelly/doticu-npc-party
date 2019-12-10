@@ -11,7 +11,14 @@ MiscObject      p_TOKEN_CLONE                           = none
 MiscObject      p_TOKEN_BANISHED                        = none
 MiscObject      p_TOKEN_GENERIC                         = none
 MiscObject      p_TOKEN_THRALL                          = none
+MiscObject      p_TOKEN_COMBAT_DEFAULT                  = none
+MiscObject      p_TOKEN_COMBAT_WARRIOR                  = none
+MiscObject      p_TOKEN_COMBAT_MAGE                     = none
+MiscObject      p_TOKEN_COMBAT_ARCHER                   = none
 GlobalVariable  p_GLOBAL_PLAYER_FOLLOWER_COUNT          = none
+GlobalVariable  p_GLOBAL_AUTO_CLONE                     = none
+GlobalVariable  p_GLOBAL_AUTO_CLONE_GENERIC             = none
+GlobalVariable  p_GLOBAL_AUTO_DELETE_CLONE              = none
 FormList        p_FORMLIST_MARKERS_SETTLER              = none
 Faction         p_FACTION_DLC1_THRALL                   = none
 Faction         p_FACTION_DLC1_VAMPIRE_FEED_NO_CRIME    = none
@@ -127,6 +134,50 @@ MiscObject property TOKEN_THRALL
     endFunction
 endProperty
 
+MiscObject property TOKEN_COMBAT_DEFAULT
+    MiscObject function Get()
+        return p_TOKEN_COMBAT_DEFAULT
+    endFunction
+    function Set(MiscObject val)
+        if p_TOKEN_COMBAT_DEFAULT == none
+            p_TOKEN_COMBAT_DEFAULT = val
+        endIf
+    endFunction
+endProperty
+
+MiscObject property TOKEN_COMBAT_WARRIOR
+    MiscObject function Get()
+        return p_TOKEN_COMBAT_WARRIOR
+    endFunction
+    function Set(MiscObject val)
+        if p_TOKEN_COMBAT_WARRIOR == none
+            p_TOKEN_COMBAT_WARRIOR = val
+        endIf
+    endFunction
+endProperty
+
+MiscObject property TOKEN_COMBAT_MAGE
+    MiscObject function Get()
+        return p_TOKEN_COMBAT_MAGE
+    endFunction
+    function Set(MiscObject val)
+        if p_TOKEN_COMBAT_MAGE == none
+            p_TOKEN_COMBAT_MAGE = val
+        endIf
+    endFunction
+endProperty
+
+MiscObject property TOKEN_COMBAT_ARCHER
+    MiscObject function Get()
+        return p_TOKEN_COMBAT_ARCHER
+    endFunction
+    function Set(MiscObject val)
+        if p_TOKEN_COMBAT_ARCHER == none
+            p_TOKEN_COMBAT_ARCHER = val
+        endIf
+    endFunction
+endProperty
+
 GlobalVariable property GLOBAL_PLAYER_FOLLOWER_COUNT
     GlobalVariable function Get()
         return p_GLOBAL_PLAYER_FOLLOWER_COUNT
@@ -134,6 +185,39 @@ GlobalVariable property GLOBAL_PLAYER_FOLLOWER_COUNT
     function Set(GlobalVariable val)
         if p_GLOBAL_PLAYER_FOLLOWER_COUNT == none
             p_GLOBAL_PLAYER_FOLLOWER_COUNT = val
+        endIf
+    endFunction
+endProperty
+
+GlobalVariable property GLOBAL_AUTO_CLONE
+    GlobalVariable function Get()
+        return p_GLOBAL_AUTO_CLONE
+    endFunction
+    function Set(GlobalVariable val)
+        if p_GLOBAL_AUTO_CLONE == none
+            p_GLOBAL_AUTO_CLONE = val
+        endIf
+    endFunction
+endProperty
+
+GlobalVariable property GLOBAL_AUTO_CLONE_GENERIC
+    GlobalVariable function Get()
+        return p_GLOBAL_AUTO_CLONE_GENERIC
+    endFunction
+    function Set(GlobalVariable val)
+        if p_GLOBAL_AUTO_CLONE_GENERIC == none
+            p_GLOBAL_AUTO_CLONE_GENERIC = val
+        endIf
+    endFunction
+endProperty
+
+GlobalVariable property GLOBAL_AUTO_DELETE_CLONE
+    GlobalVariable function Get()
+        return p_GLOBAL_AUTO_DELETE_CLONE
+    endFunction
+    function Set(GlobalVariable val)
+        if p_GLOBAL_AUTO_DELETE_CLONE == none
+            p_GLOBAL_AUTO_DELETE_CLONE = val
         endIf
     endFunction
 endProperty

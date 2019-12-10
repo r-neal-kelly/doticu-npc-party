@@ -17,28 +17,58 @@ Actor   ref_actor   =  none
 bool    is_clone    = false
 bool    is_generic  = false
 bool    is_thrall   = false
+int     code_combat =    -1
 
 ; Private Methods
 function p_Token()
     ACTOR2.Token(ref_actor, CONSTS.TOKEN_MEMBER, ID_ALIAS + 1)
+
     if is_clone
         ACTOR2.Token(ref_actor, CONSTS.TOKEN_CLONE)
     else
         ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_CLONE)
     endIf
+
     if is_generic
         ACTOR2.Token(ref_actor, CONSTS.TOKEN_GENERIC)
     else
         ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_GENERIC)
     endIf
+
     if is_thrall
         ACTOR2.Token(ref_actor, CONSTS.TOKEN_THRALL)
     else
         ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_THRALL)
     endIf
+
+    if code_combat == CODES.IS_WARRIOR
+        ACTOR2.Token(ref_actor, CONSTS.TOKEN_COMBAT_WARRIOR)
+        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_DEFAULT)
+        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_MAGE)
+        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_ARCHER)
+    elseIf code_combat == CODES.IS_MAGE
+        ACTOR2.Token(ref_actor, CONSTS.TOKEN_COMBAT_MAGE)
+        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_DEFAULT)
+        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_WARRIOR)
+        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_ARCHER)
+    elseIf code_combat == CODES.IS_ARCHER
+        ACTOR2.Token(ref_actor, CONSTS.TOKEN_COMBAT_ARCHER)
+        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_DEFAULT)
+        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_WARRIOR)
+        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_MAGE)
+    else
+        ACTOR2.Token(ref_actor, CONSTS.TOKEN_COMBAT_DEFAULT)
+        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_WARRIOR)
+        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_MAGE)
+        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_ARCHER)
+    endIf
 endFunction
 
 function p_Untoken()
+    ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_ARCHER)
+    ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_MAGE)
+    ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_WARRIOR)
+    ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_DEFAULT)
     ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_THRALL)
     ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_GENERIC)
     ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_CLONE)
@@ -46,11 +76,16 @@ function p_Untoken()
 endFunction
 
 function p_Enthrall()
-    ; add factions
+    ; also, we want to limit this to whether or not the pc is a vamp.
+    ref_actor.AddToFaction(CONSTS.FACTION_DLC1_THRALL)
+    ref_actor.AddToFaction(CONSTS.FACTION_DLC1_VAMPIRE_FEED_NO_CRIME)
+    ; we need to investigate further how to stop the quest that has these topics
+    ; from disallowing any other dialogue with the enthralled npc.
 endFunction
 
 function p_Unthrall()
-    ; remove factions
+    ref_actor.RemoveFromFaction(CONSTS.FACTION_DLC1_VAMPIRE_FEED_NO_CRIME)
+    ref_actor.RemoveFromFaction(CONSTS.FACTION_DLC1_THRALL)
 endFunction
 
 ; Friend Methods
@@ -97,7 +132,7 @@ int function f_Enforce()
 endFunction
 
 ; Public Methods
-int function Create(bool make_clone)
+int function Create(bool is_a_clone)
     int code_return
 
     if Exists()
@@ -115,9 +150,8 @@ int function Create(bool make_clone)
     endIf
 
     is_created = true
-    if make_clone
-        is_clone = true
-        ; need to add this function, but probably in MEMBERS.Create_Member()
+    if is_a_clone
+        is_clone = is_a_clone
     else
         is_clone = false
     endIf
@@ -126,9 +160,12 @@ int function Create(bool make_clone)
     else
         is_generic = false
     endIf
+    ;code_combat = CODES.IS_DEFAULT
+    code_combat = CODES.IS_WARRIOR; temp
 
-    code_return = f_Enforce()
+    code_return = f_Enforce(); maybe we shouldn't require f_Enforce to be checked?
     if code_return < 0
+        Destroy()
         return code_return
     endIf
 
@@ -166,6 +203,7 @@ int function Destroy()
     endIf
     p_Untoken()
 
+    code_combat = -1
     is_thrall = false
     is_generic = false
     is_clone = false
@@ -357,6 +395,90 @@ int function Unthrall()
     return CODES.SUCCESS
 endFunction
 
+int function Style_Default()
+    int code_return
+
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+
+    if code_combat == -1
+        return CODES.IS_DEFAULT
+    endIf
+
+    code_combat = -1
+
+    code_return = f_Enforce()
+    if code_return < 0
+        return code_return
+    endIf
+
+    return CODES.SUCCESS
+endFunction
+
+int function Style_Warrior()
+    int code_return
+
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+
+    if code_combat == CODES.IS_WARRIOR
+        return CODES.IS_WARRIOR
+    endIf
+
+    code_combat = CODES.IS_WARRIOR
+
+    code_return = f_Enforce()
+    if code_return < 0
+        return code_return
+    endIf
+
+    return CODES.SUCCESS
+endFunction
+
+int function Style_Mage()
+    int code_return
+
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+
+    if code_combat == CODES.IS_MAGE
+        return CODES.IS_MAGE
+    endIf
+
+    code_combat = CODES.IS_MAGE
+
+    code_return = f_Enforce()
+    if code_return < 0
+        return code_return
+    endIf
+
+    return CODES.SUCCESS
+endFunction
+
+int function Style_Archer()
+    int code_return
+
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+
+    if code_combat == CODES.IS_ARCHER
+        return CODES.IS_ARCHER
+    endIf
+
+    code_combat = CODES.IS_ARCHER
+
+    code_return = f_Enforce()
+    if code_return < 0
+        return code_return
+    endIf
+
+    return CODES.SUCCESS
+endFunction
+
 int function Access()
     int code_return
     
@@ -390,8 +512,28 @@ bool function Is_Follower()
     return FOLLOWERS.Has_Follower(ref_actor)
 endFunction
 
+bool function Is_Clone()
+    return is_clone
+endFunction
+
 bool function Is_Thrall()
     return is_thrall
+endFunction
+
+bool function Is_Styled_Default()
+    return code_combat == CODES.IS_DEFAULT
+endFunction
+
+bool function Is_Styled_Warrior()
+    return code_combat == CODES.IS_WARRIOR
+endFunction
+
+bool function Is_Styled_Mage()
+    return code_combat == CODES.IS_MAGE
+endFunction
+
+bool function Is_Styled_Archer()
+    return code_combat == CODES.IS_ARCHER
 endFunction
 
 ; Events

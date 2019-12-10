@@ -2,6 +2,7 @@ Scriptname doticu_npc_party_script_control extends Quest
 
 ; Private Constants
 doticu_npc_party_script_codes       p_CODES     = none
+doticu_npc_party_script_vars        p_VARS      = none
 doticu_npc_party_script_actor       p_ACTOR2    = none
 doticu_npc_party_script_members     p_MEMBERS   = none
 doticu_npc_party_script_followers   p_FOLLOWERS = none
@@ -31,6 +32,7 @@ endProperty
 ; Friend Methods
 function f_Initialize(doticu_npc_party_script_data DATA)
     p_CODES = DATA.CODES
+    p_VARS = DATA.VARS
     p_ACTOR2 = DATA.MODS.FUNCS.ACTOR2
     p_MEMBERS = DATA.MODS.MEMBERS
     p_FOLLOWERS = DATA.MODS.FOLLOWERS
@@ -59,7 +61,7 @@ function p_Notify_On_Member(int code_return, string str_name)
     endIf
 endFunction
 
-int function p_Notify_On_Unmember(int code_return, string str_name)
+function p_Notify_On_Unmember(int code_return, string str_name)
     if code_return == p_CODES.SUCCESS
         Debug.Notification("NPC Party: " + str_name + " is no longer a member.")
     elseIf code_return == p_CODES.HASNT_MEMBER
@@ -68,6 +70,32 @@ int function p_Notify_On_Unmember(int code_return, string str_name)
         Debug.Notification("NPC Party: That can't be unmembered.")
     else
         Debug.Notification("NPC Party: It's unknown why " + str_name + " can't be unmembered.")
+    endIf
+endFunction
+
+function p_Notify_On_Clone(int code_return, string str_name)
+    if code_return == p_CODES.SUCCESS
+        Debug.Notification("NPC Party: A clone of " + str_name + " is now a member.")
+    elseIf code_return == p_CODES.HASNT_SPACE_MEMBER
+        Debug.Notification("NPC Party: No room for a clone of " + str_name + " to be a member.")
+    elseIf code_return == p_CODES.CANT_RESURRECT
+        Debug.Notification("NPC Party: " + str_name + " can't be revived, can't be cloned, and can't become a member.")
+    elseIf code_return == p_CODES.ISNT_ACTOR
+        Debug.Notification("NPC Party: A clone of this can't be made a member.")
+    else
+        Debug.Notification("NPC Party: It's unknown why a clone of" + str_name + " can't be a member.")
+    endIf
+endFunction
+
+function p_Notify_On_Unclone(int code_return, string str_name)
+    if code_return == p_CODES.SUCCESS
+        Debug.Notification("NPC Party: " + str_name + " is no longer a member and was uncloned.")
+    elseIf code_return == p_CODES.HASNT_MEMBER
+        Debug.Notification("NPC Party: " + str_name + " was already not a member and can't be uncloned.")
+    elseIf code_return == p_CODES.ISNT_ACTOR
+        Debug.Notification("NPC Party: That can't be unmembered or uncloned.")
+    else
+        Debug.Notification("NPC Party: It's unknown why " + str_name + " can't be unmembered and uncloned.")
     endIf
 endFunction
 
@@ -125,13 +153,13 @@ endFunction
 
 function p_Notify_On_Resettle(int code_return, string str_name)
     if code_return == p_CODES.SUCCESS
-        Debug.Notification("NPC Party: " + str_name + " will settle here.")
+        Debug.Notification("NPC Party: " + str_name + " will resettle here.")
     elseIf code_return == p_CODES.HASNT_SPACE_MEMBER
         Debug.Notification("NPC Party: No room for " + str_name + " to become a resettled member.")
     elseIf code_return == p_CODES.CANT_RESURRECT
-        Debug.Notification("NPC Party: " + str_name + " can't be revived, and so can't become a settled member.")
+        Debug.Notification("NPC Party: " + str_name + " can't be revived, and so can't become a resettled member.")
     elseIf code_return == p_CODES.ISNT_ACTOR
-        Debug.Notification("NPC Party: That can't become a settled member.")
+        Debug.Notification("NPC Party: That can't become a resettled member.")
     elseIf code_return == p_CODES.ISNT_MEMBER
         Debug.Notification("NPC Party: " + str_name + " isn't a member, and so can't resettle.")
     elseIf code_return == p_CODES.ISNT_SETTLER
@@ -174,6 +202,42 @@ function p_Notify_On_Mobilize(int code_return, string str_name)
         Debug.Notification("NPC Party: " + str_name + " is already mobile.")
     else
         Debug.Notification("NPC Party: It's unknown why " + str_name + " can't be mobilized.")
+    endIf
+endFunction
+
+function p_Notify_On_Enthrall(int code_return, string str_name)
+    if code_return == p_CODES.SUCCESS
+        Debug.Notification("NPC Party: " + str_name + " is now enthralled.")
+    elseIf code_return == p_CODES.HASNT_SPACE_MEMBER
+        Debug.Notification("NPC Party: No room for " + str_name + " to become an enthralled member.")
+    elseIf code_return == p_CODES.CANT_RESURRECT
+        Debug.Notification("NPC Party: " + str_name + " can't be revived, and so can't be enthralled.")
+    elseIf code_return == p_CODES.ISNT_ACTOR
+        Debug.Notification("NPC Party: That can't become an enthralled member.")
+    elseIf code_return == p_CODES.ISNT_MEMBER
+        Debug.Notification("NPC Party: " + str_name + " isn't a member, and so can't be enthralled.")
+    elseIf code_return == p_CODES.IS_IMMOBILE
+        Debug.Notification("NPC Party: " + str_name + " is already enthralled.")
+    else
+        Debug.Notification("NPC Party: It's unknown why " + str_name + " can't be enthralled.")
+    endIf
+endFunction
+
+function p_Notify_On_Unthrall(int code_return, string str_name)
+    if code_return == p_CODES.SUCCESS
+        Debug.Notification("NPC Party: " + str_name + " is no longer be enthralled.")
+    elseIf code_return == p_CODES.HASNT_SPACE_MEMBER
+        Debug.Notification("NPC Party: No room for " + str_name + " to become an unthralled member.")
+    elseIf code_return == p_CODES.CANT_RESURRECT
+        Debug.Notification("NPC Party: " + str_name + " can't be revived, and so can't be unthralled.")
+    elseIf code_return == p_CODES.ISNT_ACTOR
+        Debug.Notification("NPC Party: That can't become an unthralled member.")
+    elseIf code_return == p_CODES.ISNT_MEMBER
+        Debug.Notification("NPC Party: " + str_name + " isn't a member, and so can't be unthralled.")
+    elseIf code_return == p_CODES.ISNT_IMMOBILE
+        Debug.Notification("NPC Party: " + str_name + " is already unthralled.")
+    else
+        Debug.Notification("NPC Party: It's unknown why " + str_name + " can't be unthralled.")
     endIf
 endFunction
 
@@ -261,17 +325,41 @@ endFunction
 
 ; Public Methods
 function Member(Actor ref_actor)
+    if p_VARS.auto_clone || p_VARS.auto_clone_generic && p_ACTOR2.Is_Generic(ref_actor)
+        Clone(ref_actor)
+        return
+    endIf
+
     int code_return
     string str_name = p_ACTOR2.Get_Name(ref_actor)
 
     p_Notify_On_Member(p_MEMBERS.Create_Member(ref_actor), str_name)
 endFunction
 
-int function Unmember(Actor ref_actor)
+function Unmember(Actor ref_actor)
+    if p_VARS.auto_delete_clone && p_MEMBERS.Get_Member(ref_actor).Is_Clone()
+        Unclone(ref_actor)
+        return
+    endIf
+
     int code_return
     string str_name = p_ACTOR2.Get_Name(ref_actor)
 
-    p_Notify_On_Unmember(p_MEMBERS.Destroy_Member(ref_actor), p_ACTOR2.Get_Name(ref_actor))
+    p_Notify_On_Unmember(p_MEMBERS.Destroy_Member(ref_actor), str_name)
+endFunction
+
+function Clone(Actor ref_actor)
+    int code_return
+    string str_name = p_ACTOR2.Get_Name(ref_actor)
+
+    p_Notify_On_Clone(p_MEMBERS.Create_Member(ref_actor, true), str_name)
+endFunction
+
+function Unclone(Actor ref_actor)
+    int code_return
+    string str_name = p_ACTOR2.Get_Name(ref_actor)
+
+    p_Notify_On_Unclone(p_MEMBERS.Destroy_Member(ref_actor, true), str_name)
 endFunction
 
 function Access(Actor ref_actor, bool do_create)
@@ -414,6 +502,48 @@ function Mobilize(Actor ref_actor, bool do_create)
     p_Notify_On_Mobilize(ref_member.Mobilize(), str_name)
 endFunction
 
+function Enthrall(Actor ref_actor, bool do_create)
+    int code_return
+    string str_name = p_ACTOR2.Get_Name(ref_actor)
+
+    if do_create && !p_Members.Has_Member(ref_actor)
+        code_return = p_MEMBERS.Create_Member(ref_actor)
+        if code_return < 0
+            p_Notify_On_Enthrall(code_return, str_name)
+            return
+        endIf
+    endIf
+
+    doticu_npc_party_script_member ref_member = p_MEMBERS.Get_Member(ref_actor)
+    if !ref_member
+        p_Notify_On_Enthrall(p_CODES.HASNT_MEMBER, str_name)
+        return
+    endIf
+
+    p_Notify_On_Enthrall(ref_member.Enthrall(), str_name)
+endFunction
+
+function Unthrall(Actor ref_actor, bool do_create)
+    int code_return
+    string str_name = p_ACTOR2.Get_Name(ref_actor)
+
+    if do_create && !p_Members.Has_Member(ref_actor)
+        code_return = p_MEMBERS.Create_Member(ref_actor)
+        if code_return < 0
+            p_Notify_On_Unthrall(code_return, str_name)
+            return
+        endIf
+    endIf
+
+    doticu_npc_party_script_member ref_member = p_MEMBERS.Get_Member(ref_actor)
+    if !ref_member
+        p_Notify_On_Unthrall(p_CODES.HASNT_MEMBER, str_name)
+        return
+    endIf
+
+    p_Notify_On_Unthrall(ref_member.Unthrall(), str_name)
+endFunction
+
 function Follow(Actor ref_actor, bool do_create)
     int code_return
     string str_name = p_ACTOR2.Get_Name(ref_actor)
@@ -550,6 +680,15 @@ function Toggle_Immobile(Actor ref_actor)
         Mobilize(ref_actor, true)
     else
         Immobilize(ref_actor, true)
+    endIf
+endFunction
+
+function Toggle_Thrall(Actor ref_actor)
+    doticu_npc_party_script_member ref_member = p_MEMBERS.Get_Member(ref_actor)
+    if ref_member && ref_member.Is_Thrall()
+        Unthrall(ref_actor, true)
+    else
+        Enthrall(ref_actor, true)
     endIf
 endFunction
 

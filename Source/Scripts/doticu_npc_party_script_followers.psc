@@ -58,6 +58,8 @@ int function Create_Follower(Actor ref_actor)
         return code_return
     endIf
 
+    ; this value needs to be 1 whenever there is a follower
+    ; because the engine won't update player teammates when 0
     CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(1)
 
     return CODES.SUCCESS
@@ -82,6 +84,9 @@ int function Destroy_Follower(Actor ref_actor)
     endIf
 
     if Get_Count() == 0
+        ; this would conflict with the vanilla system
+        ; and any other mods that use it, except that we
+        ; modify the vanilla system to force use of ours
         CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(0)
     endIf
 
