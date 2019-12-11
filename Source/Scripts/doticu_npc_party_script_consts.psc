@@ -18,7 +18,7 @@ MiscObject      p_TOKEN_COMBAT_ARCHER                   = none
 GlobalVariable  p_GLOBAL_PLAYER_FOLLOWER_COUNT          = none
 GlobalVariable  p_GLOBAL_AUTO_CLONE                     = none
 GlobalVariable  p_GLOBAL_AUTO_CLONE_GENERIC             = none
-GlobalVariable  p_GLOBAL_AUTO_DELETE_CLONE              = none
+GlobalVariable  p_GLOBAL_AUTO_UNCLONE                   = none
 FormList        p_FORMLIST_MARKERS_SETTLER              = none
 Faction         p_FACTION_DLC1_THRALL                   = none
 Faction         p_FACTION_DLC1_VAMPIRE_FEED_NO_CRIME    = none
@@ -211,13 +211,13 @@ GlobalVariable property GLOBAL_AUTO_CLONE_GENERIC
     endFunction
 endProperty
 
-GlobalVariable property GLOBAL_AUTO_DELETE_CLONE
+GlobalVariable property GLOBAL_AUTO_UNCLONE
     GlobalVariable function Get()
-        return p_GLOBAL_AUTO_DELETE_CLONE
+        return p_GLOBAL_AUTO_UNCLONE
     endFunction
     function Set(GlobalVariable val)
-        if p_GLOBAL_AUTO_DELETE_CLONE == none
-            p_GLOBAL_AUTO_DELETE_CLONE = val
+        if p_GLOBAL_AUTO_UNCLONE == none
+            p_GLOBAL_AUTO_UNCLONE = val
         endIf
     endFunction
 endProperty

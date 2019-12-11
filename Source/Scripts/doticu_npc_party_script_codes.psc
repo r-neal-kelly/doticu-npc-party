@@ -49,7 +49,9 @@ int property ISNT_IMMOBILE          = -440 autoReadOnly
 int property ISNT_FOLLOWER          = -450 autoReadOnly
 int property ISNT_SNEAK             = -460 autoReadOnly
 int property ISNT_THRALL            = -470 autoReadOnly
+int property ISNT_CLONE             = -480 autoReadOnly
 
 int property CAN_RESURRECT          = -500 autoReadOnly
 
 int property CANT_RESURRECT         = -600 autoReadOnly
+int property CANT_RENAME            = -610 autoReadOnly

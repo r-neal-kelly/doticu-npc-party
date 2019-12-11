@@ -113,6 +113,23 @@ bool function p_Has_Actor(Actor ref_actor)
     return false
 endFunction
 
+function p_Sort_IDs_Used()
+    ; this can be checked against a private bool to see
+    ; if arr_ids_used is dirty, which it is whenever
+    ; a new member is added. This would be called
+    ; everytime before using Get_Aliases(), so it should
+    ; be in that func or in an update after adding a member.
+    ; there may be problems with syncronizing things in the
+    ; latter, so need to read up on papyrus multi-threading.
+    ; either way, this func will completely replace
+    ; arr_ids_used with an entirely new array if dirty
+
+    ; it may sort the arr using one of two algoritms:
+    ; either papryusutil or an in house quicksort,
+    ; which if we actually do the latter, it will be
+    ; super slow in papyrus.
+endFunction
+
 ; Public Methods
 int function Create_Alias(Actor ref_actor)
     int code_return
@@ -168,6 +185,36 @@ ReferenceAlias function Get_Alias(int id_alias, Actor ref_actor)
     else
         return none
     endIf
+endFunction
+
+Alias[] function Get_Aliases(int idx_from = 0, int idx_to_ex = -1)
+    if idx_from < 0
+        idx_from = 0
+    endIf
+    if idx_to_ex > size_ids_used || idx_to_ex < 0
+        idx_to_ex = size_ids_used
+    endIf
+    int size_arr_aliases = idx_to_ex - idx_from
+    if size_arr_aliases <= 0
+        return Utility.CreateAliasArray(0, none)
+    endIf
+
+    Alias[] arr_aliases = Utility.CreateAliasArray(size_arr_aliases, none)
+    
+    int idx = idx_from
+    int id_alias
+    while idx < idx_to_ex
+        id_alias = arr_ids_used[idx]
+        arr_aliases[idx] = GetNthAlias(id_alias)
+        idx += 1
+    endWhile
+
+    return arr_aliases
+endFunction
+
+Alias[] function Get_Aliases_Sorted(int idx_from = 0, int idx_to_ex = -1)
+    p_Sort_IDs_Used()
+    return Get_Aliases(idx_from, idx_to_ex)
 endFunction
 
 bool function Is_Full()

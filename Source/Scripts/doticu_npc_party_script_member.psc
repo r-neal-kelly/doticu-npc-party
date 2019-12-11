@@ -8,6 +8,7 @@ doticu_npc_party_script_mods        MODS        = none
 doticu_npc_party_script_actor       ACTOR2      = none
 doticu_npc_party_script_settler     SETTLER     = none
 doticu_npc_party_script_immobile    IMMOBILE    = none
+doticu_npc_party_script_members     MEMBERS     = none
 doticu_npc_party_script_followers   FOLLOWERS   = none
 int                                 ID_ALIAS    =   -1
 
@@ -132,7 +133,7 @@ int function f_Enforce()
 endFunction
 
 ; Public Methods
-int function Create(bool is_a_clone)
+int function Create(bool is_a_clone); shouldn't this be f_?
     int code_return
 
     if Exists()
@@ -171,7 +172,7 @@ int function Create(bool is_a_clone)
     return CODES.SUCCESS
 endFunction
 
-int function Destroy()
+int function Destroy(); shouldn't this be f_?
     int code_return
 
     if !Exists()
@@ -216,6 +217,14 @@ bool function Exists()
     return is_created
 endFunction
 
+string function Get_Name()
+    return ACTOR2.Get_Name(ref_actor)
+endFunction
+
+Actor function Get_Actor()
+    return ref_actor
+endFunction
+
 doticu_npc_party_script_settler function Get_Settler()
     if !Exists() || !SETTLER.Exists()
         return none
@@ -230,6 +239,20 @@ doticu_npc_party_script_immobile function Get_Immobile()
     else
         return IMMOBILE
     endIf
+endFunction
+
+int function Set_Name(string str_name)
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+
+    ACTOR2.Set_Name(ref_actor, str_name)
+
+    if Get_Name() != str_name
+        return CODES.CANT_RENAME
+    endIf
+
+    return CODES.SUCCESS
 endFunction
 
 int function Settle()
@@ -495,6 +518,34 @@ int function Access()
     return CODES.SUCCESS
 endFunction
 
+int function Unmember()
+    int code_return
+
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+
+    if is_clone && VARS.auto_unclone
+        return Unclone()
+    else
+        return MEMBERS.Destroy_Member(ref_actor, false)
+    endIf
+endFunction
+
+int function Unclone()
+    int code_return
+
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+
+    if !is_clone
+        return CODES.ISNT_CLONE
+    endIf
+
+    return MEMBERS.Destroy_Member(ref_actor, true)
+endFunction
+
 bool function Is_Member()
     return Exists()
 endFunction
@@ -533,6 +584,18 @@ endFunction
 
 bool function Is_Styled_Archer()
     return code_combat == CODES.IS_ARCHER
+endFunction
+
+function Summon(int distance = 60, int angle = 0)
+    ACTOR2.Move_To(ref_actor, CONSTS.ACTOR_PLAYER, distance, angle)
+endFunction
+
+function Summon_Ahead()
+    Summon(60, 0)
+endFunction
+
+function Summon_Behind()
+    Summon(60, 180)
 endFunction
 
 ; Events

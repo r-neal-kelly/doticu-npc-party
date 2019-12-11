@@ -143,3 +143,10 @@ function Delete(Actor ref_actor)
         ref_actor.Delete()
     endIf
 endFunction
+
+function Move_To(ObjectReference ref_subject, ObjectReference ref_object, int distance = 60, int angle = 0)
+    ; angle 0 == front of ref_object
+    float object_angle_z = ref_object.GetAngleZ()
+    ref_subject.MoveTo(ref_object, distance * Math.Sin(object_angle_z - angle), distance * Math.Cos(object_angle_z - angle), 0.0)
+    ref_subject.SetAngle(0.0, 0.0, object_angle_z - 180 + angle)
+endFunction

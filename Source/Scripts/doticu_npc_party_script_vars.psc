@@ -6,7 +6,7 @@ doticu_npc_party_script_consts p_CONSTS = none
 ; Private Variables
 bool p_auto_clone           = false
 bool p_auto_clone_generic   = false
-bool p_auto_delete_clone    = false
+bool p_auto_unclone         = false
 int  p_code_combat_default  =    -1
 
 ; Public Variables
@@ -70,16 +70,16 @@ bool property auto_clone_generic hidden
     endFunction
 endProperty
 
-bool property auto_delete_clone hidden
+bool property auto_unclone hidden
     bool function Get()
-        return p_auto_delete_clone
+        return p_auto_unclone
     endFunction
     function Set(bool val)
-        p_auto_delete_clone = val
-        if p_auto_delete_clone
-            p_CONSTS.GLOBAL_AUTO_DELETE_CLONE.SetValue(1)
+        p_auto_unclone = val
+        if p_auto_unclone
+            p_CONSTS.GLOBAL_AUTO_UNCLONE.SetValue(1)
         else
-            p_CONSTS.GLOBAL_AUTO_DELETE_CLONE.SetValue(0)
+            p_CONSTS.GLOBAL_AUTO_UNCLONE.SetValue(0)
         endIf
     endFunction
 endProperty
@@ -99,7 +99,7 @@ function f_Initialize(doticu_npc_party_script_data DATA)
 
     auto_clone = false
     auto_clone_generic = true
-    auto_delete_clone = true
-    ; auto_delete_clone_generic = true
+    auto_unclone = true
+    ; auto_unclone_generic = true
     code_combat_default = DATA.CODES.IS_DEFAULT
 endFunction

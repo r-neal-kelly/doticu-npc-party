@@ -100,7 +100,7 @@ int function Destroy_Member(Actor ref_actor, bool destroy_clone = false)
         return code_return
     endIf
 
-    if is_clone && destroy_clone || is_clone && VARS.auto_delete_clone
+    if is_clone && destroy_clone || is_clone && VARS.auto_unclone
         destroy_clone = true
         ACTOR2.Delete(ref_actor)
     endIf
@@ -112,10 +112,29 @@ int function Get_Count()
     return ALIASES.Get_Count()
 endFunction
 
+int function Get_Max()
+    return ALIASES.Get_Max()
+endFunction
+
 bool function Has_Member(Actor ref_actor)
     return ALIASES.Has_Alias(p_Get_Alias_ID(ref_actor), ref_actor)
 endFunction
 
 doticu_npc_party_script_member function Get_Member(Actor ref_actor)
     return ALIASES.Get_Alias(p_Get_Alias_ID(ref_actor), ref_actor) as doticu_npc_party_script_member
+endFunction
+
+Alias[] function Get_Aliases_Sorted(int idx_from = 0, int idx_to_ex = -1)
+    return ALIASES.Get_Aliases_Sorted(idx_from, idx_to_ex)
+endFunction
+
+function Unmember()
+    doticu_npc_party_script_member ref_member
+    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    int idx_arr = 0
+    while idx_arr < arr_aliases.length
+        ref_member = arr_aliases[idx_arr] as doticu_npc_party_script_member
+        ref_member.Unmember()
+        idx_arr += 1
+    endWhile
 endFunction

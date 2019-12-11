@@ -335,7 +335,7 @@ function Member(Actor ref_actor)
 endFunction
 
 function Unmember(Actor ref_actor)
-    if p_VARS.auto_delete_clone && p_MEMBERS.Get_Member(ref_actor).Is_Clone()
+    if p_VARS.auto_unclone && p_MEMBERS.Get_Member(ref_actor).Is_Clone()
         Unclone(ref_actor)
         return
     endIf

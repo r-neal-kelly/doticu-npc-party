@@ -32,4 +32,5 @@ function f_Initialize(doticu_npc_party_script_data DATA)
 
     p_COMMANDS.f_Initialize(DATA)
     p_KEYS.f_Initialize(DATA)
+    p_MCM.f_Initialize(DATA)
 endFunction

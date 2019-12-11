@@ -97,10 +97,164 @@ int function Get_Count()
     return ALIASES.Get_Count()
 endFunction
 
+int function Get_Max()
+    return ALIASES.Get_Max()
+endFunction
+
 bool function Has_Follower(Actor ref_actor)
     return ALIASES.Has_Alias(p_Get_Alias_ID(ref_actor), ref_actor)
 endFunction
 
 doticu_npc_party_script_follower function Get_Follower(Actor ref_actor)
     return ALIASES.Get_Alias(p_Get_Alias_ID(ref_actor), ref_actor) as doticu_npc_party_script_follower
+endFunction
+
+Alias[] function Get_Aliases_Sorted(int idx_from = 0, int idx_to_ex = -1)
+    return ALIASES.Get_Aliases_Sorted(idx_from, idx_to_ex)
+endFunction
+
+function Summon()
+    doticu_npc_party_script_follower ref_follower
+    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    int idx_arr = 0
+    int angle_even = 0
+    int angle_odd = 0
+    while idx_arr < arr_aliases.length
+        ref_follower = arr_aliases[idx_arr] as doticu_npc_party_script_follower
+        if idx_arr % 2 == 0
+            angle_even += 12
+            ref_follower.Summon(120, angle_even)
+        else
+            angle_odd += 12
+            ref_follower.Summon(120, angle_odd)
+        endIf
+        idx_arr += 1
+    endWhile
+endFunction
+
+function Summon_Mobile()
+    doticu_npc_party_script_follower ref_follower
+    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    int idx_arr = 0
+    int angle_even = 0
+    int angle_odd = 0
+    bool do_even = true
+    while idx_arr < arr_aliases.length
+        ref_follower = arr_aliases[idx_arr] as doticu_npc_party_script_follower
+        if !ref_follower.Is_Immobile()
+            if do_even
+                angle_even += 12
+                ref_follower.Summon(120, angle_even)
+            else
+                angle_odd += 12
+                ref_follower.Summon(120, angle_odd)
+            endIf
+            do_even = !do_even
+        endIf
+        idx_arr += 1
+    endWhile
+endFunction
+
+function Summon_Immobile()
+    doticu_npc_party_script_follower ref_follower
+    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    int idx_arr = 0
+    int angle_even = 0
+    int angle_odd = 0
+    bool do_even = true
+    while idx_arr < arr_aliases.length
+        ref_follower = arr_aliases[idx_arr] as doticu_npc_party_script_follower
+        if ref_follower.Is_Immobile()
+            if do_even
+                angle_even += 12
+                ref_follower.Summon(120, angle_even)
+            else
+                angle_odd += 12
+                ref_follower.Summon(120, angle_odd)
+            endIf
+            do_even = !do_even
+        endIf
+        idx_arr += 1
+    endWhile
+endFunction
+
+function Settle()
+    doticu_npc_party_script_follower ref_follower
+    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    int idx_arr = 0
+    while idx_arr < arr_aliases.length
+        ref_follower = arr_aliases[idx_arr] as doticu_npc_party_script_follower
+        if ref_follower.Is_Settler()
+            ref_follower.Get_Settler().Resettle()
+        else
+            ref_follower.Settle()
+        endIf
+        idx_arr += 1
+    endWhile
+endFunction
+
+function Unsettle()
+    doticu_npc_party_script_follower ref_follower
+    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    int idx_arr = 0
+    while idx_arr < arr_aliases.length
+        ref_follower = arr_aliases[idx_arr] as doticu_npc_party_script_follower
+        ref_follower.Unsettle()
+        idx_arr += 1
+    endWhile
+endFunction
+
+function Immobilize()
+    doticu_npc_party_script_follower ref_follower
+    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    int idx_arr = 0
+    while idx_arr < arr_aliases.length
+        ref_follower = arr_aliases[idx_arr] as doticu_npc_party_script_follower
+        ref_follower.Immobilize()
+        idx_arr += 1
+    endWhile
+endFunction
+
+function Mobilize()
+    doticu_npc_party_script_follower ref_follower
+    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    int idx_arr = 0
+    while idx_arr < arr_aliases.length
+        ref_follower = arr_aliases[idx_arr] as doticu_npc_party_script_follower
+        ref_follower.Mobilize()
+        idx_arr += 1
+    endWhile
+endFunction
+
+function Sneak()
+    doticu_npc_party_script_follower ref_follower
+    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    int idx_arr = 0
+    while idx_arr < arr_aliases.length
+        ref_follower = arr_aliases[idx_arr] as doticu_npc_party_script_follower
+        ref_follower.Sneak()
+        idx_arr += 1
+    endWhile
+endFunction
+
+function Unsneak()
+    doticu_npc_party_script_follower ref_follower
+    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    int idx_arr = 0
+    while idx_arr < arr_aliases.length
+        ref_follower = arr_aliases[idx_arr] as doticu_npc_party_script_follower
+        ref_follower.Unsneak()
+        idx_arr += 1
+    endWhile
+endFunction
+
+function Unmember()
+    doticu_npc_party_script_follower ref_follower
+    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    int idx_arr = 0
+    while idx_arr < arr_aliases.length
+        ref_follower = arr_aliases[idx_arr] as doticu_npc_party_script_follower
+        ref_follower.Unmember()
+        idx_arr += 1
+    endWhile
 endFunction
