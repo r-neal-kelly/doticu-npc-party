@@ -16,3 +16,13 @@ function f_Initialize(doticu_npc_party_script_data DATA)
 
     p_ACTOR2.f_Initialize(DATA)
 endFunction
+
+; Public Methods
+function Close_Menu()
+    int key_menu = Input.GetMappedKey("Tween Menu")
+    
+    while Utility.IsInMenuMode()
+        Input.TapKey(key_menu)
+        ;Utility.WaitMenuMode(0.5)
+    endWhile
+endFunction

@@ -65,7 +65,7 @@ int function Create_Member(Actor ref_actor, bool create_clone = false)
     endIf
     int id_alias = code_return
 
-    code_return = p_Get_Member(id_alias).Create(create_clone)
+    code_return = p_Get_Member(id_alias).f_Create(create_clone)
     if code_return < 0
         ALIASES.Destroy_Alias(id_alias, ref_actor)
 
@@ -90,7 +90,7 @@ int function Destroy_Member(Actor ref_actor, bool destroy_clone = false)
     doticu_npc_party_script_member ref_member = p_Get_Member(id_alias)
     bool is_clone = ref_member.Is_Clone()
 
-    code_return = ref_member.Destroy()
+    code_return = ref_member.f_Destroy()
     if code_return < 0
         return code_return
     endIf

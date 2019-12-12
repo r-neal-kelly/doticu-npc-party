@@ -1,268 +1,267 @@
 Scriptname doticu_npc_party_script_member extends ReferenceAlias
 
 ; Private Constants
-doticu_npc_party_script_consts      CONSTS      = none
-doticu_npc_party_script_codes       CODES       = none
-doticu_npc_party_script_vars        VARS        = none
-doticu_npc_party_script_mods        MODS        = none
-doticu_npc_party_script_actor       ACTOR2      = none
-doticu_npc_party_script_settler     SETTLER     = none
-doticu_npc_party_script_immobile    IMMOBILE    = none
-doticu_npc_party_script_members     MEMBERS     = none
-doticu_npc_party_script_followers   FOLLOWERS   = none
-int                                 ID_ALIAS    =   -1
+doticu_npc_party_script_consts      p_CONSTS    = none
+doticu_npc_party_script_codes       p_CODES     = none
+doticu_npc_party_script_vars        p_VARS      = none
+doticu_npc_party_script_actor       p_ACTOR2    = none
+doticu_npc_party_script_members     p_MEMBERS   = none
+doticu_npc_party_script_followers   p_FOLLOWERS = none
+doticu_npc_party_script_settler     p_SETTLER   = none
+doticu_npc_party_script_immobile    p_IMMOBILE  = none
+int                                 p_ID_ALIAS  =   -1
 
 ; Private Variables
-bool    is_created  = false
-Actor   ref_actor   =  none
-bool    is_clone    = false
-bool    is_generic  = false
-bool    is_thrall   = false
-int     code_combat =    -1
-
-; Private Methods
-function p_Token()
-    ACTOR2.Token(ref_actor, CONSTS.TOKEN_MEMBER, ID_ALIAS + 1)
-
-    if is_clone
-        ACTOR2.Token(ref_actor, CONSTS.TOKEN_CLONE)
-    else
-        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_CLONE)
-    endIf
-
-    if is_generic
-        ACTOR2.Token(ref_actor, CONSTS.TOKEN_GENERIC)
-    else
-        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_GENERIC)
-    endIf
-
-    if is_thrall
-        ACTOR2.Token(ref_actor, CONSTS.TOKEN_THRALL)
-    else
-        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_THRALL)
-    endIf
-
-    if code_combat == CODES.IS_WARRIOR
-        ACTOR2.Token(ref_actor, CONSTS.TOKEN_COMBAT_WARRIOR)
-        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_DEFAULT)
-        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_MAGE)
-        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_ARCHER)
-    elseIf code_combat == CODES.IS_MAGE
-        ACTOR2.Token(ref_actor, CONSTS.TOKEN_COMBAT_MAGE)
-        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_DEFAULT)
-        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_WARRIOR)
-        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_ARCHER)
-    elseIf code_combat == CODES.IS_ARCHER
-        ACTOR2.Token(ref_actor, CONSTS.TOKEN_COMBAT_ARCHER)
-        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_DEFAULT)
-        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_WARRIOR)
-        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_MAGE)
-    else
-        ACTOR2.Token(ref_actor, CONSTS.TOKEN_COMBAT_DEFAULT)
-        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_WARRIOR)
-        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_MAGE)
-        ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_ARCHER)
-    endIf
-endFunction
-
-function p_Untoken()
-    ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_ARCHER)
-    ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_MAGE)
-    ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_WARRIOR)
-    ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_COMBAT_DEFAULT)
-    ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_THRALL)
-    ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_GENERIC)
-    ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_CLONE)
-    ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_MEMBER)
-endFunction
-
-function p_Enthrall()
-    ; also, we want to limit this to whether or not the pc is a vamp.
-    ref_actor.AddToFaction(CONSTS.FACTION_DLC1_THRALL)
-    ref_actor.AddToFaction(CONSTS.FACTION_DLC1_VAMPIRE_FEED_NO_CRIME)
-    ; we need to investigate further how to stop the quest that has these topics
-    ; from disallowing any other dialogue with the enthralled npc.
-endFunction
-
-function p_Unthrall()
-    ref_actor.RemoveFromFaction(CONSTS.FACTION_DLC1_VAMPIRE_FEED_NO_CRIME)
-    ref_actor.RemoveFromFaction(CONSTS.FACTION_DLC1_THRALL)
-endFunction
+bool    p_is_created    = false
+Actor   p_ref_actor     =  none
+bool    p_is_clone      = false
+bool    p_is_generic    = false
+bool    p_is_thrall     = false
+int     p_code_combat   =    -1
 
 ; Friend Methods
 function f_Initialize(doticu_npc_party_script_data DATA, int IDX_ALIAS)
-    CONSTS = DATA.CONSTS
-    CODES = DATA.CODES
-    VARS = DATA.VARS
-    MODS = DATA.MODS
-    ACTOR2 = MODS.FUNCS.ACTOR2
-    SETTLER = (self as ReferenceAlias) as doticu_npc_party_script_settler
-    IMMOBILE = (self as ReferenceAlias) as doticu_npc_party_script_immobile
-    FOLLOWERS = MODS.FOLLOWERS
-    ID_ALIAS = IDX_ALIAS
+    p_CONSTS = DATA.CONSTS
+    p_CODES = DATA.CODES
+    p_VARS = DATA.VARS
+    p_ACTOR2 = DATA.MODS.FUNCS.ACTOR2
+    p_MEMBERS = DATA.MODS.MEMBERS
+    p_FOLLOWERS = DATA.MODS.FOLLOWERS
+    p_SETTLER = (self as ReferenceAlias) as doticu_npc_party_script_settler
+    p_IMMOBILE = (self as ReferenceAlias) as doticu_npc_party_script_immobile
+    p_ID_ALIAS = IDX_ALIAS
 endFunction
 
-int function f_Enforce()
-    int code_return
-
-    if !Exists()
-        return CODES.ISNT_MEMBER
-    endIf
-
-    p_Token()
-    if is_thrall
-        p_Enthrall()
-    endIf
-
-    if SETTLER.Exists()
-        code_return = SETTLER.f_Enforce()
-        if code_return < 0
-            return code_return
-        endIf
-    endIf
-    if IMMOBILE.Exists()
-        code_return = IMMOBILE.f_Enforce()
-        if code_return < 0
-            return code_return
-        endIf
-    endIf
-
-    ref_actor.EvaluatePackage()
-
-    return CODES.SUCCESS
-endFunction
-
-; Public Methods
-int function Create(bool is_a_clone); shouldn't this be f_?
+int function f_Create(bool is_a_clone)
     int code_return
 
     if Exists()
-        return CODES.IS_MEMBER
+        return p_CODES.IS_MEMBER
     endIf
-    ref_actor = GetActorReference()
-    if !ref_actor
-        return CODES.ISNT_ACTOR
+    p_ref_actor = GetActorReference()
+    if !p_ref_actor
+        return p_CODES.ISNT_ACTOR
     endIf
-    if ACTOR2.Is_Dead(ref_actor)
-        ACTOR2.Resurrect(ref_actor)
-        if ACTOR2.Is_Dead(ref_actor)
-            return CODES.CANT_RESURRECT
+    if p_ACTOR2.Is_Dead(p_ref_actor)
+        p_ACTOR2.Resurrect(p_ref_actor)
+        if p_ACTOR2.Is_Dead(p_ref_actor)
+            return p_CODES.CANT_RESURRECT
         endIf
     endIf
 
-    is_created = true
+    p_is_created = true
     if is_a_clone
-        is_clone = is_a_clone
+        p_is_clone = is_a_clone
     else
-        is_clone = false
+        p_is_clone = false
     endIf
-    if ACTOR2.Is_Generic(ref_actor)
-        is_generic = true
+    if p_ACTOR2.Is_Generic(p_ref_actor)
+        p_is_generic = true
     else
-        is_generic = false
+        p_is_generic = false
     endIf
-    code_combat = VARS.code_combat_default
+    p_code_combat = p_VARS.code_combat_default
 
     code_return = f_Enforce(); maybe we shouldn't require f_Enforce to be checked?
     if code_return < 0
-        Destroy()
+        f_Destroy()
         return code_return
     endIf
 
-    return CODES.SUCCESS
+    return p_CODES.SUCCESS
 endFunction
 
-int function Destroy(); shouldn't this be f_?
+int function f_Destroy()
     int code_return
 
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return p_CODES.ISNT_MEMBER
     endIf
 
-    if MODS.FOLLOWERS.Has_Follower(ref_actor)
-        code_return = MODS.FOLLOWERS.Destroy_Follower(ref_actor)
+    if p_FOLLOWERS.Has_Follower(p_ref_actor)
+        code_return = p_FOLLOWERS.Destroy_Follower(p_ref_actor)
         if code_return < 0
             return code_return
         endIf
     endIf
-    if IMMOBILE.Exists()
+    if p_IMMOBILE.Exists()
         code_return = Mobilize()
         if code_return < 0
             return code_return
         endIf
     endIf
-    if SETTLER.Exists()
+    if p_SETTLER.Exists()
         code_return = Unsettle()
         if code_return < 0
             return code_return
         endIf
     endIf
 
-    if is_thrall
+    if p_is_thrall
         p_Unthrall()
     endIf
     p_Untoken()
 
-    code_combat = -1
-    is_thrall = false
-    is_generic = false
-    is_clone = false
-    ref_actor = none
-    is_created = false
+    p_code_combat = -1
+    p_is_thrall = false
+    p_is_generic = false
+    p_is_clone = false
+    p_ref_actor = none
+    p_is_created = false
 
-    return CODES.SUCCESS
+    return p_CODES.SUCCESS
 endFunction
 
+int function f_Enforce()
+    int code_return
+
+    if !Exists()
+        return p_CODES.ISNT_MEMBER
+    endIf
+
+    p_Token()
+    if p_is_thrall
+        p_Enthrall()
+    endIf
+
+    if p_SETTLER.Exists()
+        code_return = p_SETTLER.f_Enforce()
+        if code_return < 0
+            return code_return
+        endIf
+    endIf
+    if p_IMMOBILE.Exists()
+        code_return = p_IMMOBILE.f_Enforce()
+        if code_return < 0
+            return code_return
+        endIf
+    endIf
+
+    p_ref_actor.EvaluatePackage()
+
+    return p_CODES.SUCCESS
+endFunction
+
+; Private Methods
+function p_Token()
+    p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_MEMBER, p_ID_ALIAS + 1)
+
+    if p_is_clone
+        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_CLONE)
+    else
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_CLONE)
+    endIf
+
+    if p_is_generic
+        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_GENERIC)
+    else
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_GENERIC)
+    endIf
+
+    if p_is_thrall
+        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_THRALL)
+    else
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_THRALL)
+    endIf
+
+    if p_code_combat == p_CODES.IS_WARRIOR
+        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_COMBAT_WARRIOR)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_DEFAULT)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_MAGE)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_ARCHER)
+    elseIf p_code_combat == p_CODES.IS_MAGE
+        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_COMBAT_MAGE)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_DEFAULT)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_WARRIOR)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_ARCHER)
+    elseIf p_code_combat == p_CODES.IS_ARCHER
+        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_COMBAT_ARCHER)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_DEFAULT)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_WARRIOR)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_MAGE)
+    else
+        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_COMBAT_DEFAULT)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_WARRIOR)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_MAGE)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_ARCHER)
+    endIf
+endFunction
+
+function p_Untoken()
+    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_ARCHER)
+    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_MAGE)
+    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_WARRIOR)
+    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_DEFAULT)
+    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_THRALL)
+    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_GENERIC)
+    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_CLONE)
+    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_MEMBER)
+endFunction
+
+function p_Enthrall()
+    ; also, we want to limit this to whether or not the pc is a vamp.
+    p_ref_actor.AddToFaction(p_CONSTS.FACTION_DLC1_THRALL)
+    p_ref_actor.AddToFaction(p_CONSTS.FACTION_DLC1_VAMPIRE_FEED_NO_CRIME)
+    ; we need to investigate further how to stop the quest that has these topics
+    ; from disallowing any other dialogue with the enthralled npc.
+endFunction
+
+function p_Unthrall()
+    p_ref_actor.RemoveFromFaction(p_CONSTS.FACTION_DLC1_VAMPIRE_FEED_NO_CRIME)
+    p_ref_actor.RemoveFromFaction(p_CONSTS.FACTION_DLC1_THRALL)
+endFunction
+
+; Public Methods
 bool function Exists()
-    return is_created
+    return p_is_created
 endFunction
 
 string function Get_Name()
-    return ACTOR2.Get_Name(ref_actor)
+    return p_ACTOR2.Get_Name(p_ref_actor)
 endFunction
 
 Actor function Get_Actor()
-    return ref_actor
+    return p_ref_actor
 endFunction
 
 doticu_npc_party_script_settler function Get_Settler()
-    if !Exists() || !SETTLER.Exists()
+    if !Exists() || !p_SETTLER.Exists()
         return none
     else
-        return SETTLER
+        return p_SETTLER
     endIf
 endFunction
 
 doticu_npc_party_script_immobile function Get_Immobile()
-    if !Exists() || !IMMOBILE.Exists()
+    if !Exists() || !p_IMMOBILE.Exists()
         return none
     else
-        return IMMOBILE
+        return p_IMMOBILE
     endIf
 endFunction
 
 int function Set_Name(string str_name)
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return p_CODES.ISNT_MEMBER
     endIf
 
-    ACTOR2.Set_Name(ref_actor, str_name)
+    p_ACTOR2.Set_Name(p_ref_actor, str_name)
 
     if Get_Name() != str_name
-        return CODES.CANT_RENAME
+        return p_CODES.CANT_RENAME
     endIf
 
-    return CODES.SUCCESS
+    return p_CODES.SUCCESS
 endFunction
 
 int function Settle()
     int code_return
 
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return p_CODES.ISNT_MEMBER
     endIf
 
-    code_return = SETTLER.Create()
+    code_return = p_SETTLER.Create()
     if code_return < 0
         return code_return
     endIf
@@ -272,17 +271,17 @@ int function Settle()
         return code_return
     endIf
 
-    return CODES.SUCCESS
+    return p_CODES.SUCCESS
 endFunction
 
 int function Unsettle()
     int code_return
 
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return p_CODES.ISNT_MEMBER
     endIf
 
-    code_return = SETTLER.Destroy()
+    code_return = p_SETTLER.Destroy()
     if code_return < 0
         return code_return
     endIf
@@ -292,17 +291,17 @@ int function Unsettle()
         return code_return
     endIf
 
-    return CODES.SUCCESS
+    return p_CODES.SUCCESS
 endFunction
 
 int function Immobilize()
     int code_return
 
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return p_CODES.ISNT_MEMBER
     endIf
 
-    code_return = IMMOBILE.Create()
+    code_return = p_IMMOBILE.Create()
     if code_return < 0
         return code_return
     endIf
@@ -312,17 +311,17 @@ int function Immobilize()
         return code_return
     endIf
 
-    return CODES.SUCCESS
+    return p_CODES.SUCCESS
 endFunction
 
 int function Mobilize()
     int code_return
 
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return p_CODES.ISNT_MEMBER
     endIf
 
-    code_return = IMMOBILE.Destroy()
+    code_return = p_IMMOBILE.Destroy()
     if code_return < 0
         return code_return
     endIf
@@ -332,17 +331,17 @@ int function Mobilize()
         return code_return
     endIf
 
-    return CODES.SUCCESS
+    return p_CODES.SUCCESS
 endFunction
 
 int function Follow()
     int code_return
 
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return p_CODES.ISNT_MEMBER
     endIf
 
-    code_return = FOLLOWERS.Create_Follower(ref_actor)
+    code_return = p_FOLLOWERS.Create_Follower(p_ref_actor)
     if code_return < 0
         return code_return
     endIf
@@ -352,17 +351,17 @@ int function Follow()
         return code_return
     endIf
 
-    return CODES.SUCCESS
+    return p_CODES.SUCCESS
 endFunction
 
 int function Unfollow()
     int code_return
 
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return p_CODES.ISNT_MEMBER
     endIf
 
-    code_return = FOLLOWERS.Destroy_Follower(ref_actor)
+    code_return = p_FOLLOWERS.Destroy_Follower(p_ref_actor)
     if code_return < 0
         return code_return
     endIf
@@ -372,178 +371,188 @@ int function Unfollow()
         return code_return
     endIf
 
-    return CODES.SUCCESS
+    return p_CODES.SUCCESS
 endFunction
 
 int function Enthrall()
     int code_return
 
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return p_CODES.ISNT_MEMBER
     endIf
 
-    if is_thrall
-        return CODES.IS_THRALL
+    if p_is_thrall
+        return p_CODES.IS_THRALL
     endIf
 
-    is_thrall = true
+    p_is_thrall = true
 
     code_return = f_Enforce()
     if code_return < 0
         return code_return
     endIf
 
-    return CODES.SUCCESS
+    return p_CODES.SUCCESS
 endFunction
 
 int function Unthrall()
     int code_return
 
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return p_CODES.ISNT_MEMBER
     endIf
 
-    if !is_thrall
-        return CODES.ISNT_THRALL
+    if !p_is_thrall
+        return p_CODES.ISNT_THRALL
     endIf
 
-    is_thrall = false
+    p_is_thrall = false
 
     code_return = f_Enforce()
     if code_return < 0
         return code_return
     endIf
 
-    return CODES.SUCCESS
+    return p_CODES.SUCCESS
 endFunction
 
 int function Style_Default()
     int code_return
 
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return p_CODES.ISNT_MEMBER
     endIf
 
-    if code_combat == CODES.IS_DEFAULT
-        return CODES.IS_DEFAULT
+    if p_code_combat == p_CODES.IS_DEFAULT
+        return p_CODES.IS_DEFAULT
     endIf
 
-    code_combat = CODES.IS_DEFAULT
+    p_code_combat = p_CODES.IS_DEFAULT
 
     code_return = f_Enforce()
     if code_return < 0
         return code_return
     endIf
 
-    return CODES.SUCCESS
+    return p_CODES.SUCCESS
 endFunction
 
 int function Style_Warrior()
     int code_return
 
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return p_CODES.ISNT_MEMBER
     endIf
 
-    if code_combat == CODES.IS_WARRIOR
-        return CODES.IS_WARRIOR
+    if p_code_combat == p_CODES.IS_WARRIOR
+        return p_CODES.IS_WARRIOR
     endIf
 
-    code_combat = CODES.IS_WARRIOR
+    p_code_combat = p_CODES.IS_WARRIOR
 
     code_return = f_Enforce()
     if code_return < 0
         return code_return
     endIf
 
-    return CODES.SUCCESS
+    return p_CODES.SUCCESS
 endFunction
 
 int function Style_Mage()
     int code_return
 
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return p_CODES.ISNT_MEMBER
     endIf
 
-    if code_combat == CODES.IS_MAGE
-        return CODES.IS_MAGE
+    if p_code_combat == p_CODES.IS_MAGE
+        return p_CODES.IS_MAGE
     endIf
 
-    code_combat = CODES.IS_MAGE
+    p_code_combat = p_CODES.IS_MAGE
 
     code_return = f_Enforce()
     if code_return < 0
         return code_return
     endIf
 
-    return CODES.SUCCESS
+    return p_CODES.SUCCESS
 endFunction
 
 int function Style_Archer()
     int code_return
 
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return p_CODES.ISNT_MEMBER
     endIf
 
-    if code_combat == CODES.IS_ARCHER
-        return CODES.IS_ARCHER
+    if p_code_combat == p_CODES.IS_ARCHER
+        return p_CODES.IS_ARCHER
     endIf
 
-    code_combat = CODES.IS_ARCHER
+    p_code_combat = p_CODES.IS_ARCHER
 
     code_return = f_Enforce()
     if code_return < 0
         return code_return
     endIf
 
-    return CODES.SUCCESS
+    return p_CODES.SUCCESS
 endFunction
 
 int function Access()
     int code_return
     
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return p_CODES.ISNT_MEMBER
     endIf
     
-    ACTOR2.Open_Inventory(ref_actor)
+    p_ACTOR2.Open_Inventory(p_ref_actor)
 
     code_return = f_Enforce()
     if code_return < 0
         return code_return
     endIf
 
-    return CODES.SUCCESS
+    return p_CODES.SUCCESS
 endFunction
 
 int function Unmember()
     int code_return
 
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return p_CODES.ISNT_MEMBER
     endIf
 
-    if is_clone && VARS.auto_unclone
+    if p_is_clone && p_VARS.auto_unclone
         return Unclone()
     else
-        return MEMBERS.Destroy_Member(ref_actor, false)
+        return p_MEMBERS.Destroy_Member(p_ref_actor, false)
     endIf
+endFunction
+
+int function Clone()
+    int code_return
+
+    if !Exists()
+        return p_CODES.ISNT_MEMBER
+    endIf
+
+    return p_MEMBERS.Create_Member(p_ref_actor, true)
 endFunction
 
 int function Unclone()
     int code_return
 
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return p_CODES.ISNT_MEMBER
     endIf
 
-    if !is_clone
-        return CODES.ISNT_CLONE
+    if !p_is_clone
+        return p_CODES.ISNT_CLONE
     endIf
 
-    return MEMBERS.Destroy_Member(ref_actor, true)
+    return p_MEMBERS.Destroy_Member(p_ref_actor, true)
 endFunction
 
 bool function Is_Member()
@@ -551,43 +560,43 @@ bool function Is_Member()
 endFunction
 
 bool function Is_Settler()
-    return SETTLER.Exists()
+    return p_SETTLER.Exists()
 endFunction
 
 bool function Is_Immobile()
-    return IMMOBILE.Exists()
+    return p_IMMOBILE.Exists()
 endFunction
 
 bool function Is_Follower()
-    return FOLLOWERS.Has_Follower(ref_actor)
+    return p_FOLLOWERS.Has_Follower(p_ref_actor)
 endFunction
 
 bool function Is_Clone()
-    return is_clone
+    return p_is_clone
 endFunction
 
 bool function Is_Thrall()
-    return is_thrall
+    return p_is_thrall
 endFunction
 
 bool function Is_Styled_Default()
-    return code_combat == CODES.IS_DEFAULT
+    return p_code_combat == p_CODES.IS_DEFAULT
 endFunction
 
 bool function Is_Styled_Warrior()
-    return code_combat == CODES.IS_WARRIOR
+    return p_code_combat == p_CODES.IS_WARRIOR
 endFunction
 
 bool function Is_Styled_Mage()
-    return code_combat == CODES.IS_MAGE
+    return p_code_combat == p_CODES.IS_MAGE
 endFunction
 
 bool function Is_Styled_Archer()
-    return code_combat == CODES.IS_ARCHER
+    return p_code_combat == p_CODES.IS_ARCHER
 endFunction
 
 function Summon(int distance = 60, int angle = 0)
-    ACTOR2.Move_To(ref_actor, CONSTS.ACTOR_PLAYER, distance, angle)
+    p_ACTOR2.Move_To(p_ref_actor, p_CONSTS.ACTOR_PLAYER, distance, angle)
 endFunction
 
 function Summon_Ahead()

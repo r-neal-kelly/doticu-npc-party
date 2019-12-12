@@ -248,6 +248,17 @@ function Unsneak()
     endWhile
 endFunction
 
+function Unfollow()
+    doticu_npc_party_script_follower ref_follower
+    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    int idx_arr = 0
+    while idx_arr < arr_aliases.length
+        ref_follower = arr_aliases[idx_arr] as doticu_npc_party_script_follower
+        ref_follower.Unfollow()
+        idx_arr += 1
+    endWhile
+endFunction
+
 function Unmember()
     doticu_npc_party_script_follower ref_follower
     Alias[] arr_aliases = ALIASES.Get_Aliases()
