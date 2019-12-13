@@ -323,7 +323,7 @@ endFunction
 
 ; Public Methods
 function Member(Actor ref_actor)
-    if p_VARS.auto_clone || p_VARS.auto_clone_generic && p_ACTOR2.Is_Generic(ref_actor)
+    if p_MEMBERS.Should_Clone_Actor(ref_actor)
         Clone(ref_actor)
         return
     endIf
@@ -335,9 +335,19 @@ function Member(Actor ref_actor)
 endFunction
 
 function Unmember(Actor ref_actor)
-    if p_VARS.auto_unclone && p_MEMBERS.Get_Member(ref_actor).Is_Clone()
+    if p_MEMBERS.Should_Unclone_Member(p_MEMBERS.Get_Member(ref_actor))
         Unclone(ref_actor)
         return
+    endIf
+
+    if p_MEMBERS.Get_Member(ref_actor).Is_Clone()
+        if p_VARS.force_unclone_unique && p_ACTOR2.Is_Unique(ref_actor)
+            Unclone(ref_actor)
+            return
+        elseIf p_VARS.force_unclone_generic && p_ACTOR2.Is_Generic(ref_actor)
+            Unclone(ref_actor)
+            return
+        endIf
     endIf
 
     int code_return

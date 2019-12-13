@@ -4,6 +4,7 @@ Scriptname doticu_npc_party_script_control extends Quest
 doticu_npc_party_script_commands    p_COMMANDS  = none
 doticu_npc_party_script_keys        p_KEYS      = none
 doticu_npc_party_script_mcm         p_MCM       = none
+doticu_npc_party_script_greeter     p_GREETER   = none
 
 ; Public Constants
 doticu_npc_party_script_commands property COMMANDS
@@ -29,8 +30,15 @@ function f_Initialize(doticu_npc_party_script_data DATA)
     p_COMMANDS = (self as Quest) as doticu_npc_party_script_commands
     p_KEYS = (self as Quest) as doticu_npc_party_script_keys
     p_MCM = (self as Quest) as doticu_npc_party_script_mcm
+    p_GREETER = GetAliasByName("Greeter") as doticu_npc_party_script_greeter
 
     p_COMMANDS.f_Initialize(DATA)
     p_KEYS.f_Initialize(DATA)
     p_MCM.f_Initialize(DATA)
+    p_Greeter.f_Initialize(DATA)
+endFunction
+
+; Public Methods
+function Greet_Player(Actor ref_actor)
+    p_GREETER.f_Create(ref_actor)
 endFunction

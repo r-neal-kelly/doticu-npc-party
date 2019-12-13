@@ -60,8 +60,8 @@ int function f_Create(bool is_a_clone)
     else
         p_is_generic = false
     endIf
-    p_code_combat = p_VARS.code_combat_default
-
+    p_code_combat = p_VARS.auto_style
+    
     code_return = f_Enforce(); maybe we shouldn't require f_Enforce to be checked?
     if code_return < 0
         f_Destroy()
@@ -524,7 +524,7 @@ int function Unmember()
         return p_CODES.ISNT_MEMBER
     endIf
 
-    if p_is_clone && p_VARS.auto_unclone
+    if p_MEMBERS.Should_Unclone_Actor(p_ref_actor)
         return Unclone()
     else
         return p_MEMBERS.Destroy_Member(p_ref_actor, false)
@@ -553,6 +553,14 @@ int function Unclone()
     endIf
 
     return p_MEMBERS.Destroy_Member(p_ref_actor, true)
+endFunction
+
+bool function Is_Unique()
+    return !p_is_generic
+endFunction
+
+bool function Is_Generic()
+    return p_is_generic
 endFunction
 
 bool function Is_Member()

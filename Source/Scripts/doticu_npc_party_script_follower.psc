@@ -15,6 +15,7 @@ Actor                           ref_actor               =  none
 doticu_npc_party_script_member  ref_member              =  none
 bool                            is_sneak                = false
 int                             prev_relationship_rank  =    -1
+float                           prev_waiting_for_player =  -1.0
 float                           prev_aggression         =  -1.0
 float                           prev_confidence         =  -1.0
 float                           prev_assistance         =  -1.0; this may need to go on Member
@@ -57,6 +58,7 @@ endFunction
 ; Private Methods
 function p_Backup()
     prev_relationship_rank = ref_actor.GetRelationshipRank(CONSTS.ACTOR_PLAYER)
+    prev_waiting_for_player = ref_actor.GetBaseActorValue("WaitingForPlayer")
     prev_aggression = ref_actor.GetBaseActorValue("Aggression")
     prev_confidence = ref_actor.GetBaseActorValue("Confidence")
     prev_assistance = ref_actor.GetBaseActorValue("Assistance"); this may need to go on Member
@@ -85,10 +87,12 @@ function p_Follow()
     ref_actor.SetPlayerTeammate(true, true)
     ref_actor.IgnoreFriendlyHits(true)
     ref_actor.SetNotShowOnStealthMeter(true)
+    ref_actor.SetActorValue("WaitingForPlayer", 0.0)
     ref_actor.SetActorValue("Aggression", 0.0)
     ref_actor.SetActorValue("Confidence", 4.0)
     ref_actor.SetActorValue("Assistance", 2.0); this may need to go on Member
     ref_actor.SetActorValue("Morality", 0.0)
+    ; use VARS to auto set as essential, protected, or mortal (immortal instead of essential?)
 
     ; need to calc values, at least when it seems they should be, like if the player leveled.
 
@@ -103,6 +107,7 @@ function p_Unfollow()
     ref_actor.SetActorValue("Assistance", prev_assistance); this may need to go on Member
     ref_actor.SetActorValue("Confidence", prev_confidence)
     ref_actor.SetActorValue("Aggression", prev_aggression)
+    ref_actor.SetActorValue("WaitingForPlayer",prev_waiting_for_player)
     ref_actor.SetNotShowOnStealthMeter(false)
     ref_actor.IgnoreFriendlyHits(false)
     ref_actor.SetPlayerTeammate(false, false)

@@ -4,10 +4,11 @@ Scriptname doticu_npc_party_script_vars extends Quest
 doticu_npc_party_script_consts p_CONSTS = none
 
 ; Private Variables
-bool p_auto_clone           = false
-bool p_auto_clone_generic   = false
-bool p_auto_unclone         = false
-int  p_code_combat_default  =    -1
+bool p_force_clone_unique       = false
+bool p_force_clone_generic      = false
+bool p_force_unclone_unique     = false
+bool p_force_unclone_generic    = false
+int  p_auto_style               =    -1
 
 ; Public Variables
 int property key_resurrect                  = -1 auto hidden;
@@ -42,54 +43,68 @@ int property key_toggle_follower            = 55 auto hidden; NUM*
 int property key_toggle_sneak               = 74 auto hidden; NUM-
 int property key_cycle_style                = 43 auto hidden; Back Slash
 
-bool property auto_clone hidden
+bool property force_clone_unique hidden
     bool function Get()
-        return p_auto_clone
+        return p_force_clone_unique
     endFunction
     function Set(bool val)
-        p_auto_clone = val
-        if p_auto_clone
-            p_CONSTS.GLOBAL_AUTO_CLONE.SetValue(1)
+        p_force_clone_unique = val
+        if p_force_clone_unique
+            p_CONSTS.GLOBAL_FORCE_CLONE_UNIQUE.SetValue(1)
         else
-            p_CONSTS.GLOBAL_AUTO_CLONE.SetValue(0)
+            p_CONSTS.GLOBAL_FORCE_CLONE_UNIQUE.SetValue(0)
         endIf
     endFunction
 endProperty
 
-bool property auto_clone_generic hidden
+bool property force_clone_generic hidden
     bool function Get()
-        return p_auto_clone_generic
+        return p_force_clone_generic
     endFunction
     function Set(bool val)
-        p_auto_clone_generic = val
-        if p_auto_clone_generic
-            p_CONSTS.GLOBAL_AUTO_CLONE_GENERIC.SetValue(1)
+        p_force_clone_generic = val
+        if p_force_clone_generic
+            p_CONSTS.GLOBAL_FORCE_CLONE_GENERIC.SetValue(1)
         else
-            p_CONSTS.GLOBAL_AUTO_CLONE_GENERIC.SetValue(0)
+            p_CONSTS.GLOBAL_FORCE_CLONE_GENERIC.SetValue(0)
         endIf
     endFunction
 endProperty
 
-bool property auto_unclone hidden
+bool property force_unclone_unique hidden
     bool function Get()
-        return p_auto_unclone
+        return p_force_unclone_unique
     endFunction
     function Set(bool val)
-        p_auto_unclone = val
-        if p_auto_unclone
-            p_CONSTS.GLOBAL_AUTO_UNCLONE.SetValue(1)
+        p_force_unclone_unique = val
+        if p_force_unclone_unique
+            p_CONSTS.GLOBAL_FORCE_UNCLONE_UNIQUE.SetValue(1)
         else
-            p_CONSTS.GLOBAL_AUTO_UNCLONE.SetValue(0)
+            p_CONSTS.GLOBAL_FORCE_UNCLONE_UNIQUE.SetValue(0)
         endIf
     endFunction
 endProperty
 
-int property code_combat_default hidden
+bool property force_unclone_generic hidden
+    bool function Get()
+        return p_force_unclone_generic
+    endFunction
+    function Set(bool val)
+        p_force_unclone_generic = val
+        if p_force_unclone_generic
+            p_CONSTS.GLOBAL_FORCE_UNCLONE_GENERIC.SetValue(1)
+        else
+            p_CONSTS.GLOBAL_FORCE_UNCLONE_GENERIC.SetValue(0)
+        endIf
+    endFunction
+endProperty
+
+int property auto_style hidden
     int function Get()
-        return p_code_combat_default
+        return p_auto_style
     endFunction
     function Set(int val)
-        p_code_combat_default = val
+        p_auto_style = val
     endFunction
 endProperty
 
@@ -97,9 +112,9 @@ endProperty
 function f_Initialize(doticu_npc_party_script_data DATA)
     p_CONSTS = DATA.CONSTS
 
-    auto_clone = false
-    auto_clone_generic = true
-    auto_unclone = true
-    ; auto_unclone_generic = true
-    code_combat_default = DATA.CODES.IS_DEFAULT
+    force_clone_unique = false
+    force_clone_generic = true
+    force_unclone_unique = false
+    force_unclone_generic = true
+    auto_style = DATA.CODES.IS_DEFAULT
 endFunction

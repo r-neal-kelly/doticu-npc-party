@@ -11,14 +11,16 @@ MiscObject      p_TOKEN_CLONE                           = none
 MiscObject      p_TOKEN_BANISHED                        = none
 MiscObject      p_TOKEN_GENERIC                         = none
 MiscObject      p_TOKEN_THRALL                          = none
+MiscObject      p_TOKEN_GREETER                         = none
 MiscObject      p_TOKEN_COMBAT_DEFAULT                  = none
 MiscObject      p_TOKEN_COMBAT_WARRIOR                  = none
 MiscObject      p_TOKEN_COMBAT_MAGE                     = none
 MiscObject      p_TOKEN_COMBAT_ARCHER                   = none
 GlobalVariable  p_GLOBAL_PLAYER_FOLLOWER_COUNT          = none
-GlobalVariable  p_GLOBAL_AUTO_CLONE                     = none
-GlobalVariable  p_GLOBAL_AUTO_CLONE_GENERIC             = none
-GlobalVariable  p_GLOBAL_AUTO_UNCLONE                   = none
+GlobalVariable  p_GLOBAL_FORCE_CLONE_UNIQUE             = none
+GlobalVariable  p_GLOBAL_FORCE_CLONE_GENERIC            = none
+GlobalVariable  p_GLOBAL_FORCE_UNCLONE_UNIQUE           = none
+GlobalVariable  p_GLOBAL_FORCE_UNCLONE_GENERIC          = none
 FormList        p_FORMLIST_MARKERS_SETTLER              = none
 Faction         p_FACTION_DLC1_THRALL                   = none
 Faction         p_FACTION_DLC1_VAMPIRE_FEED_NO_CRIME    = none
@@ -134,6 +136,17 @@ MiscObject property TOKEN_THRALL
     endFunction
 endProperty
 
+MiscObject property TOKEN_GREETER
+    MiscObject function Get()
+        return p_TOKEN_GREETER
+    endFunction
+    function Set(MiscObject val)
+        if p_TOKEN_GREETER == none
+            p_TOKEN_GREETER = val
+        endIf
+    endFunction
+endProperty
+
 MiscObject property TOKEN_COMBAT_DEFAULT
     MiscObject function Get()
         return p_TOKEN_COMBAT_DEFAULT
@@ -189,35 +202,46 @@ GlobalVariable property GLOBAL_PLAYER_FOLLOWER_COUNT
     endFunction
 endProperty
 
-GlobalVariable property GLOBAL_AUTO_CLONE
+GlobalVariable property GLOBAL_FORCE_CLONE_UNIQUE
     GlobalVariable function Get()
-        return p_GLOBAL_AUTO_CLONE
+        return p_GLOBAL_FORCE_CLONE_UNIQUE
     endFunction
     function Set(GlobalVariable val)
-        if p_GLOBAL_AUTO_CLONE == none
-            p_GLOBAL_AUTO_CLONE = val
+        if p_GLOBAL_FORCE_CLONE_UNIQUE == none
+            p_GLOBAL_FORCE_CLONE_UNIQUE = val
         endIf
     endFunction
 endProperty
 
-GlobalVariable property GLOBAL_AUTO_CLONE_GENERIC
+GlobalVariable property GLOBAL_FORCE_CLONE_GENERIC
     GlobalVariable function Get()
-        return p_GLOBAL_AUTO_CLONE_GENERIC
+        return p_GLOBAL_FORCE_CLONE_GENERIC
     endFunction
     function Set(GlobalVariable val)
-        if p_GLOBAL_AUTO_CLONE_GENERIC == none
-            p_GLOBAL_AUTO_CLONE_GENERIC = val
+        if p_GLOBAL_FORCE_CLONE_GENERIC == none
+            p_GLOBAL_FORCE_CLONE_GENERIC = val
         endIf
     endFunction
 endProperty
 
-GlobalVariable property GLOBAL_AUTO_UNCLONE
+GlobalVariable property GLOBAL_FORCE_UNCLONE_UNIQUE
     GlobalVariable function Get()
-        return p_GLOBAL_AUTO_UNCLONE
+        return p_GLOBAL_FORCE_UNCLONE_UNIQUE
     endFunction
     function Set(GlobalVariable val)
-        if p_GLOBAL_AUTO_UNCLONE == none
-            p_GLOBAL_AUTO_UNCLONE = val
+        if p_GLOBAL_FORCE_UNCLONE_UNIQUE == none
+            p_GLOBAL_FORCE_UNCLONE_UNIQUE = val
+        endIf
+    endFunction
+endProperty
+
+GlobalVariable property GLOBAL_FORCE_UNCLONE_GENERIC
+    GlobalVariable function Get()
+        return p_GLOBAL_FORCE_UNCLONE_GENERIC
+    endFunction
+    function Set(GlobalVariable val)
+        if p_GLOBAL_FORCE_UNCLONE_GENERIC == none
+            p_GLOBAL_FORCE_UNCLONE_GENERIC = val
         endIf
     endFunction
 endProperty

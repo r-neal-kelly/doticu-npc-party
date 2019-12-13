@@ -1,0 +1,1 @@
+Scriptname doticu_npc_party_script_player extends ReferenceAlias

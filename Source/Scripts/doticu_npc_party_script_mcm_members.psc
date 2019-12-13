@@ -9,7 +9,7 @@ doticu_npc_Party_script_mcm     p_MCM                   = none
 int                             p_VIEW_MEMBERS          =    0
 int                             p_VIEW_MEMBER           =    1
 
-int                             p_HEADERS_PER_PAGE      =    4
+int                             p_HEADERS_PER_PAGE      =    2
 int                             p_MEMBERS_PER_PAGE      =   20
 
 int                             p_COMMANDS_PER_MEMBER   =    4
@@ -86,17 +86,17 @@ auto state p_STATE_MEMBERS
         string str_count_members
         string str_count_pages
         if count_members == 0
-            str_count_members = "0 / " + max_members as string + " Members"
-            str_count_pages = "Page 1 of 1"
-            p_MCM.AddHeaderOption(str_count_members + ", " + str_count_pages)
+            str_count_members = "Members: 0/" + max_members
+            str_count_pages = "Page: 1/1"
+            p_MCM.SetTitleText(str_count_members + ", " + str_count_pages)
+            ; should add a no members option(s)
             return
         endIf
 
         p_count_pages = Math.Ceiling(count_members / (p_MEMBERS_PER_PAGE as float))
-        str_count_members = count_members as string + " / " + max_members as string + " Members"
-        str_count_pages = "Page " + (p_curr_page + 1) as string + " of " + p_count_pages as string
-        p_options_offset = p_MCM.AddHeaderOption(str_count_members + ", " + str_count_pages)
-        p_MCM.AddEmptyOption()
+        str_count_members = "Members: " + count_members + "/" + max_members
+        str_count_pages = "Page: " + (p_curr_page + 1) + "/" + p_count_pages
+        p_MCM.SetTitleText(str_count_members + ", " + str_count_pages)
 
         if count_members > p_MEMBERS_PER_PAGE
             p_option_prev = p_MCM.AddTextOption("                     Go to Previous Page", "")
@@ -105,6 +105,7 @@ auto state p_STATE_MEMBERS
             p_option_prev = p_MCM.AddTextOption("                     Go to Previous Page", "", p_MCM.OPTION_FLAG_DISABLED)
             p_option_next = p_MCM.AddTextOption("                       Go to Next Page", "", p_MCM.OPTION_FLAG_DISABLED)
         endIf
+        p_options_offset = p_option_prev
 
         int idx_from = p_MEMBERS_PER_PAGE * p_curr_page
         int idx_to_ex = idx_from + p_MEMBERS_PER_PAGE
@@ -219,14 +220,16 @@ state p_STATE_MEMBER
         p_MCM.SetCursorPosition(0)
         p_MCM.SetCursorFillMode(p_MCM.LEFT_TO_RIGHT)
 
-        p_MCM.AddHeaderOption("Member: " + str_member_name)
+        p_MCM.SetTitleText("Member: " + str_member_name)
+
+        p_MCM.AddEmptyOption()
         p_option_back = p_MCM.AddTextOption("                            Go Back", "")
         if p_MEMBERS.Get_Count() > 1
-            p_option_prev = p_MCM.AddTextOption("                       Previous Member", "")
-            p_option_next = p_MCM.AddTextOption("                         Next Member", "")
+            p_option_prev = p_MCM.AddTextOption("                      Previous Member", "")
+            p_option_next = p_MCM.AddTextOption("                        Next Member", "")
         else
-            p_option_prev = p_MCM.AddTextOption("                       Previous Member", "", p_MCM.OPTION_FLAG_DISABLED)
-            p_option_next = p_MCM.AddTextOption("                         Next Member", "", p_MCM.OPTION_FLAG_DISABLED)
+            p_option_prev = p_MCM.AddTextOption("                      Previous Member", "", p_MCM.OPTION_FLAG_DISABLED)
+            p_option_next = p_MCM.AddTextOption("                        Next Member", "", p_MCM.OPTION_FLAG_DISABLED)
         endIf
 
         p_option_access = p_MCM.AddTextOption(" Access ", "")
@@ -235,7 +238,7 @@ state p_STATE_MEMBER
         if p_ref_member.Is_Clone()
             p_option_unclone  = p_MCM.AddTextOption(" Unclone ", "")
         endIf
-        if !p_ref_member.Is_Clone() || !p_VARS.auto_unclone
+        if !p_MEMBERS.Should_Unclone_Member(p_ref_member)
             p_option_unmember = p_MCM.AddTextOption(" Unmember ", "")
         endIf
     endFunction

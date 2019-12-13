@@ -44,8 +44,10 @@ endFunction
 int function Create_Member(Actor ref_actor, bool create_clone = false)
     int code_return
 
-    if create_clone || VARS.auto_clone || VARS.auto_clone_generic && ACTOR2.Is_Generic(ref_actor)
+    if Should_Clone_Actor(ref_actor)
         create_clone = true
+    endIf
+    if create_clone
         ref_actor = ACTOR2.Clone(ref_actor)
     endIf
 
@@ -76,6 +78,11 @@ int function Create_Member(Actor ref_actor, bool create_clone = false)
         return code_return
     endIf
 
+    if create_clone
+        ACTOR2.Move_To(ref_actor, CONSTS.ACTOR_PLAYER, 60, 180)
+        MODS.CONTROL.Greet_Player(ref_actor); maybe this should be on FUNCS? In ACTOR2 maybe?
+    endIf
+
     return CODES.SUCCESS
 endFunction
 
@@ -100,8 +107,10 @@ int function Destroy_Member(Actor ref_actor, bool destroy_clone = false)
         return code_return
     endIf
 
-    if is_clone && destroy_clone || is_clone && VARS.auto_unclone
+    if Should_Unclone_Actor(ref_actor)
         destroy_clone = true
+    endIf
+    if destroy_clone
         ACTOR2.Delete(ref_actor)
     endIf
 
@@ -137,4 +146,32 @@ function Unmember()
         ref_member.Unmember()
         idx_arr += 1
     endWhile
+endFunction
+
+bool function Should_Clone_Actor(Actor ref_actor)
+    if !ref_actor
+        return false
+    elseIf VARS.force_clone_unique && ACTOR2.Is_Unique(ref_actor)
+        return true
+    elseIf VARS.force_clone_generic && ACTOR2.Is_Generic(ref_actor)
+        return true
+    else
+        return false
+    endIf
+endFunction
+
+bool function Should_Unclone_Actor(Actor ref_actor)
+    if !ref_actor
+        return false
+    elseIf VARS.force_unclone_unique && ACTOR2.Is_Unique(ref_actor)
+        return true
+    elseIf VARS.force_unclone_generic && ACTOR2.Is_Generic(ref_actor)
+        return true
+    else
+        return false
+    endIf
+endFunction
+
+bool function Should_Unclone_Member(doticu_npc_party_script_member ref_member)
+    return ref_member && ref_member.Is_Clone() && Should_Unclone_Actor(ref_member.Get_Actor())
 endFunction

@@ -8,7 +8,7 @@ doticu_npc_Party_script_mcm         p_MCM                       = none
 int                                 p_VIEW_FOLLOWERS            =    0
 int                                 p_VIEW_FOLLOWER             =    1
 
-int                                 p_HEADERS_PER_PAGE          =    4
+int                                 p_HEADERS_PER_PAGE          =    2
 
 int                                 p_COMMANDS_PER_PAGE         =   11
 int                                 p_IDX_ALL_SUMMON            =    0
@@ -91,14 +91,15 @@ auto state p_STATE_FOLLOWERS
         int count_followers = p_FOLLOWERS.Get_Count()
         int max_followers = p_FOLLOWERS.Get_Max()
         if count_followers == 0
-            p_MCM.AddHeaderOption("0 / " + max_followers as string + " Followers")
+            p_MCM.SetTitleText("Followers: 0/" + max_followers)
             return
         endIf
 
-        p_options_offset = p_MCM.AddHeaderOption(count_followers as string + " / " + max_followers as string + " Followers")
-        p_option_menu = p_MCM.AddMenuOption(" Command All ", "...")
+        p_MCM.SetTitleText("Followers: " + count_followers + "/" + max_followers)
+
+        p_option_menu = p_MCM.AddMenuOption("        Command All", "...")
         p_MCM.AddEmptyOption()
-        p_MCM.AddEmptyOption()
+        p_options_offset = p_option_menu
 
         p_MCM.SetCursorFillMode(p_MCM.TOP_TO_BOTTOM)
 
@@ -238,7 +239,9 @@ state p_STATE_FOLLOWER
         p_MCM.SetCursorPosition(0)
         p_MCM.SetCursorFillMode(p_MCM.LEFT_TO_RIGHT)
 
-        p_MCM.AddHeaderOption("Follower: " + str_follower_name)
+        p_MCM.SetTitleText("Follower: " + str_follower_name)
+
+        p_MCM.AddEmptyOption()
         p_option_back = p_MCM.AddTextOption("                            Go Back", "")
         if p_FOLLOWERS.Get_Count() > 1
             p_option_prev = p_MCM.AddTextOption("                       Previous Follower", "")
