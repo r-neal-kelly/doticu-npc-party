@@ -266,7 +266,7 @@ state p_STATE_MEMBER
             p_ref_member = p_arr_aliases[p_idx_member] as doticu_npc_party_script_member
             p_MCM.ForcePageReset()
         elseIf id_option == p_option_access
-            p_FUNCS.Close_Menu()
+            p_FUNCS.Close_Menus()
             p_ref_member.Access()
         elseIf id_option == p_option_clone
             p_ref_member.Clone()

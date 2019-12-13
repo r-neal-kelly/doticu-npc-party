@@ -1,17 +1,15 @@
 Scriptname doticu_npc_party_script_actor extends Quest
 
 ; Private Constants
-doticu_npc_party_script_consts  CONSTS  = none
-doticu_npc_party_script_codes   CODES   = none
-doticu_npc_party_script_vars    VARS    = none
-doticu_npc_party_script_mods    MODS    = none
+doticu_npc_party_script_consts  p_CONSTS    = none
+doticu_npc_party_script_greeter p_GREETER   = none
 
 ; Friend Methods
 function f_Initialize(doticu_npc_party_script_data DATA)
-    CONSTS = DATA.CONSTS
-    CODES = DATA.CODES
-    VARS = DATA.VARS
-    MODS = DATA.MODS
+    p_CONSTS = DATA.CONSTS
+    p_GREETER = GetAliasByName("Greeter") as doticu_npc_party_script_greeter
+
+    p_Greeter.f_Initialize(DATA)
 endFunction
 
 ; Private Methods
@@ -116,13 +114,13 @@ endFunction
 
 Actor function Clone(Actor ref_actor)
     Form ref_form = ref_actor.GetBaseObject() as Form
-    Actor ref_clone = CONSTS.ACTOR_PLAYER.PlaceAtMe(ref_form, 1, true, true) as Actor; persist, disabled
+    Actor ref_clone = p_CONSTS.ACTOR_PLAYER.PlaceAtMe(ref_form, 1, true, true) as Actor; persist, disabled
 
     if Is_Generic(ref_actor)
         while !p_Has_Same_Head(ref_actor, ref_clone)
             ;ref_clone.SetCriticalStage(ref_clone.CritStage_DisintegrateEnd)
             ref_clone.Delete()
-            ref_clone = CONSTS.ACTOR_PLAYER.PlaceAtMe(ref_form, 1, true, true) as Actor; persist, disabled
+            ref_clone = p_CONSTS.ACTOR_PLAYER.PlaceAtMe(ref_form, 1, true, true) as Actor; persist, disabled
         endWhile
     endIf
 
@@ -149,4 +147,8 @@ function Move_To(ObjectReference ref_subject, ObjectReference ref_object, int di
     float object_angle_z = ref_object.GetAngleZ()
     ref_subject.MoveTo(ref_object, distance * Math.Sin(object_angle_z - angle), distance * Math.Cos(object_angle_z - angle), 0.0)
     ref_subject.SetAngle(0.0, 0.0, object_angle_z - 180 + angle)
+endFunction
+
+function Greet_Player(Actor ref_actor)
+    p_GREETER.f_Create(ref_actor)
 endFunction

@@ -80,7 +80,7 @@ int function Create_Member(Actor ref_actor, bool create_clone = false)
 
     if create_clone
         ACTOR2.Move_To(ref_actor, CONSTS.ACTOR_PLAYER, 60, 180)
-        MODS.CONTROL.Greet_Player(ref_actor); maybe this should be on FUNCS? In ACTOR2 maybe?
+        ACTOR2.Greet_Player(ref_actor)
     endIf
 
     return CODES.SUCCESS

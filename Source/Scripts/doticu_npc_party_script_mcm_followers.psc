@@ -279,7 +279,7 @@ state p_STATE_FOLLOWER
             p_ref_follower = p_arr_aliases[p_idx_follower] as doticu_npc_party_script_follower
             p_MCM.ForcePageReset()
         elseIf id_option == p_option_access
-            p_FUNCS.Close_Menu()
+            p_FUNCS.Close_Menus()
             p_ref_follower.Access()
         elseIf id_option == p_option_unfollow
             p_ref_follower.Unfollow()
