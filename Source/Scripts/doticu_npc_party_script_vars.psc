@@ -9,39 +9,41 @@ bool p_force_clone_generic      = false
 bool p_force_unclone_unique     = false
 bool p_force_unclone_generic    = false
 int  p_auto_style               =    -1
+bool p_is_mcm_open              = false
 
 ; Public Variables
-int property key_resurrect                  = -1 auto hidden;
-int property key_member                     = -1 auto hidden;
-int property key_unmember                   = -1 auto hidden;
-int property key_clone                      = -1 auto hidden;
-int property key_unclone                    = -1 auto hidden;
-int property key_access                     = -1 auto hidden;
-int property key_settle                     = -1 auto hidden;
-int property key_unsettle                   = -1 auto hidden;
-int property key_immobilize                 = -1 auto hidden;
-int property key_mobilize                   = -1 auto hidden;
-int property key_enthrall                   = -1 auto hidden;
-int property key_unthrall                   = -1 auto hidden;
-int property key_style_default              = -1 auto hidden;
-int property key_style_warrior              = -1 auto hidden;
-int property key_style_mage                 = -1 auto hidden;
-int property key_style_archer               = -1 auto hidden;
-int property key_follow                     = -1 auto hidden;
-int property key_unfollow                   = -1 auto hidden;
-int property key_sneak                      = -1 auto hidden;
-int property key_unsneak                    = -1 auto hidden;
-int property key_summon_followers           = -1 auto hidden;
-int property key_summon_followers_mobile    = -1 auto hidden;
-int property key_summon_followers_immobile  = -1 auto hidden;
-int property key_toggle_member              = 78 auto hidden; NUM+
-int property key_toggle_clone               = -1 auto hidden;
-int property key_toggle_settler             = 82 auto hidden; NUM0
-int property key_toggle_immobile            = 83 auto hidden; NUM.
-int property key_toggle_enthrall            = 73 auto hidden; NUM9
-int property key_toggle_follower            = 55 auto hidden; NUM*
-int property key_toggle_sneak               = 74 auto hidden; NUM-
-int property key_cycle_style                = 43 auto hidden; Back Slash
+int property key_open_mcm                   =  -1 auto hidden;
+int property key_resurrect                  =  -1 auto hidden;
+int property key_member                     =  -1 auto hidden;
+int property key_unmember                   =  -1 auto hidden;
+int property key_clone                      =  -1 auto hidden;
+int property key_unclone                    =  -1 auto hidden;
+int property key_access                     =  -1 auto hidden;
+int property key_settle                     =  -1 auto hidden;
+int property key_unsettle                   =  -1 auto hidden;
+int property key_immobilize                 =  -1 auto hidden;
+int property key_mobilize                   =  -1 auto hidden;
+int property key_enthrall                   =  -1 auto hidden;
+int property key_unthrall                   =  -1 auto hidden;
+int property key_style_default              =  -1 auto hidden;
+int property key_style_warrior              =  -1 auto hidden;
+int property key_style_mage                 =  -1 auto hidden;
+int property key_style_archer               =  -1 auto hidden;
+int property key_follow                     =  -1 auto hidden;
+int property key_unfollow                   =  -1 auto hidden;
+int property key_sneak                      =  -1 auto hidden;
+int property key_unsneak                    =  -1 auto hidden;
+int property key_summon_followers           =  -1 auto hidden;
+int property key_summon_followers_mobile    =  -1 auto hidden;
+int property key_summon_followers_immobile  =  -1 auto hidden;
+int property key_toggle_member              =  78 auto hidden; NUM+
+int property key_toggle_clone               =  -1 auto hidden;
+int property key_toggle_settler             =  82 auto hidden; NUM0
+int property key_toggle_immobile            =  83 auto hidden; NUM.
+int property key_toggle_enthrall            =  73 auto hidden; NUM9
+int property key_toggle_follower            =  55 auto hidden; NUM*
+int property key_toggle_sneak               =  74 auto hidden; NUM-
+int property key_cycle_style                =  43 auto hidden; Back Slash
 
 bool property force_clone_unique hidden
     bool function Get()
@@ -105,6 +107,15 @@ int property auto_style hidden
     endFunction
     function Set(int val)
         p_auto_style = val
+    endFunction
+endProperty
+
+bool property is_mcm_open hidden
+    bool function Get()
+        return p_is_mcm_open
+    endFunction
+    function Set(bool val)
+        p_is_mcm_open = val
     endFunction
 endProperty
 

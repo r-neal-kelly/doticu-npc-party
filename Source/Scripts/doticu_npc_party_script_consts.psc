@@ -278,3 +278,25 @@ Faction property FACTION_DLC1_VAMPIRE_FEED_NO_CRIME
         endIf
     endFunction
 endProperty
+
+string property STR_HEALTH      = "Health"      auto hidden
+string property STR_MAGICKA     = "Magicka"     auto hidden
+string property STR_STAMINA     = "Stamina"     auto hidden
+string property STR_ONE_HANDED  = "OneHanded"   auto hidden
+string property STR_TWO_HANDED  = "TwoHanded"   auto hidden
+string property STR_BLOCK       = "Block"       auto hidden
+string property STR_HEAVY_ARMOR = "HeavyArmor"  auto hidden
+string property STR_LIGHT_ARMOR = "LightArmor"  auto hidden
+string property STR_SMITHING    = "Smithing"    auto hidden
+string property STR_DESTRUCTION = "Destruction" auto hidden
+string property STR_RESTORATION = "Restoration" auto hidden
+string property STR_CONJURATION = "Conjuration" auto hidden
+string property STR_ALTERATION  = "Alteration"  auto hidden
+string property STR_ILLUSION    = "Illusion"    auto hidden
+string property STR_ENCHANTING  = "Enchanting"  auto hidden
+string property STR_MARKSMAN    = "Marksman"    auto hidden
+string property STR_SNEAK       = "Sneak"       auto hidden
+string property STR_ALCHEMY     = "Alchemy"     auto hidden
+string property STR_LOCKPICKING = "Lockpicking" auto hidden
+string property STR_PICKPOCKET  = "Pickpocket"  auto hidden
+string property STR_SPEECHCRAFT = "Speechcraft" auto hidden

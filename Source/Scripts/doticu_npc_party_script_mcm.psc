@@ -1,6 +1,7 @@
 Scriptname doticu_npc_party_script_mcm extends SKI_ConfigBase
 
 ; Private Constants
+doticu_npc_party_script_vars            p_VARS          = none
 doticu_npc_party_script_mcm_followers   p_MCM_FOLLOWERS = none
 doticu_npc_party_script_mcm_members     p_MCM_MEMBERS   = none
 doticu_npc_party_script_mcm_filter      p_MCM_FILTER    = none
@@ -12,6 +13,7 @@ string                                  p_STR_SETTINGS  = "   Settings"
 
 ; Friend Methods
 function f_Initialize(doticu_npc_party_script_data DATA)
+    p_VARS = DATA.VARS
     p_MCM_FOLLOWERS = (self as Quest) as doticu_npc_party_script_mcm_followers
     p_MCM_MEMBERS = (self as Quest) as doticu_npc_party_script_mcm_members
     p_MCM_FILTER = (self as Quest) as doticu_npc_party_script_mcm_filter
@@ -25,11 +27,17 @@ endFunction
 
 ; Events
 event OnConfigOpen()
+    p_VARS.is_mcm_open = true
+
     Pages = Utility.CreateStringArray(4, "")
     Pages[0] = p_STR_FOLLOWERS
     Pages[1] = p_STR_MEMBERS
     Pages[2] = p_STR_FILTER
     Pages[3] = p_STR_SETTINGS
+endEvent
+
+event OnConfigClose()
+    p_VARS.is_mcm_open = false
 endEvent
 
 event OnPageReset(string str_page)

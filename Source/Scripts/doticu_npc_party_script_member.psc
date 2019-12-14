@@ -62,7 +62,7 @@ int function f_Create(bool is_a_clone)
     endIf
     p_code_combat = p_VARS.auto_style
     
-    code_return = f_Enforce(); maybe we shouldn't require f_Enforce to be checked?
+    code_return = Enforce()
     if code_return < 0
         f_Destroy()
         return code_return
@@ -79,7 +79,7 @@ int function f_Destroy()
     endIf
 
     if p_FOLLOWERS.Has_Follower(p_ref_actor)
-        code_return = p_FOLLOWERS.Destroy_Follower(p_ref_actor)
+        code_return = Unfollow()
         if code_return < 0
             return code_return
         endIf
@@ -100,6 +100,7 @@ int function f_Destroy()
     if p_is_thrall
         p_Unthrall()
     endIf
+    p_Unmember()
     p_Untoken()
 
     p_code_combat = -1
@@ -108,36 +109,6 @@ int function f_Destroy()
     p_is_clone = false
     p_ref_actor = none
     p_is_created = false
-
-    return p_CODES.SUCCESS
-endFunction
-
-int function f_Enforce()
-    int code_return
-
-    if !Exists()
-        return p_CODES.ISNT_MEMBER
-    endIf
-
-    p_Token()
-    if p_is_thrall
-        p_Enthrall()
-    endIf
-
-    if p_SETTLER.Exists()
-        code_return = p_SETTLER.f_Enforce()
-        if code_return < 0
-            return code_return
-        endIf
-    endIf
-    if p_IMMOBILE.Exists()
-        code_return = p_IMMOBILE.f_Enforce()
-        if code_return < 0
-            return code_return
-        endIf
-    endIf
-
-    p_ref_actor.EvaluatePackage()
 
     return p_CODES.SUCCESS
 endFunction
@@ -198,6 +169,14 @@ function p_Untoken()
     p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_MEMBER)
 endFunction
 
+function p_Member()
+    p_ref_actor.SetActorValue("Aggression", 0)
+endFunction
+
+function p_Unmember()
+    p_ref_actor.SetActorValue("Aggression", 0)
+endFunction
+
 function p_Enthrall()
     ; also, we want to limit this to whether or not the pc is a vamp.
     p_ref_actor.AddToFaction(p_CONSTS.FACTION_DLC1_THRALL)
@@ -212,6 +191,43 @@ function p_Unthrall()
 endFunction
 
 ; Public Methods
+int function Enforce()
+    int code_return
+
+    if !Exists()
+        return p_CODES.ISNT_MEMBER
+    endIf
+
+    p_Token()
+    p_Member()
+    if p_is_thrall
+        p_Enthrall()
+    endIf
+
+    if p_SETTLER.Exists()
+        code_return = p_SETTLER.f_Enforce()
+        if code_return < 0
+            return code_return
+        endIf
+    endIf
+    if p_IMMOBILE.Exists()
+        code_return = p_IMMOBILE.f_Enforce()
+        if code_return < 0
+            return code_return
+        endIf
+    endIf
+    if p_FOLLOWERS.Has_Follower(p_ref_actor)
+        code_return = p_Followers.Get_Follower(p_ref_actor).f_Enforce()
+        if code_return < 0
+            return code_return
+        endIf
+    endIf
+
+    p_ref_actor.EvaluatePackage()
+
+    return p_CODES.SUCCESS
+endFunction
+
 bool function Exists()
     return p_is_created
 endFunction
@@ -240,6 +256,14 @@ doticu_npc_party_script_immobile function Get_Immobile()
     endIf
 endFunction
 
+int function Get_Style()
+    if !Exists()
+        return -1
+    else
+        return p_code_combat
+    endIf
+endFunction
+
 int function Set_Name(string str_name)
     if !Exists()
         return p_CODES.ISNT_MEMBER
@@ -261,12 +285,12 @@ int function Settle()
         return p_CODES.ISNT_MEMBER
     endIf
 
-    code_return = p_SETTLER.Create()
+    code_return = p_SETTLER.f_Create()
     if code_return < 0
         return code_return
     endIf
 
-    code_return = f_Enforce()
+    code_return = Enforce()
     if code_return < 0
         return code_return
     endIf
@@ -281,12 +305,12 @@ int function Unsettle()
         return p_CODES.ISNT_MEMBER
     endIf
 
-    code_return = p_SETTLER.Destroy()
+    code_return = p_SETTLER.f_Destroy()
     if code_return < 0
         return code_return
     endIf
 
-    code_return = f_Enforce()
+    code_return = Enforce()
     if code_return < 0
         return code_return
     endIf
@@ -301,12 +325,12 @@ int function Immobilize()
         return p_CODES.ISNT_MEMBER
     endIf
 
-    code_return = p_IMMOBILE.Create()
+    code_return = p_IMMOBILE.f_Create()
     if code_return < 0
         return code_return
     endIf
 
-    code_return = f_Enforce()
+    code_return = Enforce()
     if code_return < 0
         return code_return
     endIf
@@ -321,12 +345,12 @@ int function Mobilize()
         return p_CODES.ISNT_MEMBER
     endIf
 
-    code_return = p_IMMOBILE.Destroy()
+    code_return = p_IMMOBILE.f_Destroy()
     if code_return < 0
         return code_return
     endIf
 
-    code_return = f_Enforce()
+    code_return = Enforce()
     if code_return < 0
         return code_return
     endIf
@@ -341,12 +365,12 @@ int function Follow()
         return p_CODES.ISNT_MEMBER
     endIf
 
-    code_return = p_FOLLOWERS.Create_Follower(p_ref_actor)
+    code_return = p_FOLLOWERS.f_Create_Follower(p_ref_actor)
     if code_return < 0
         return code_return
     endIf
 
-    code_return = f_Enforce()
+    code_return = Enforce()
     if code_return < 0
         return code_return
     endIf
@@ -361,12 +385,14 @@ int function Unfollow()
         return p_CODES.ISNT_MEMBER
     endIf
 
-    code_return = p_FOLLOWERS.Destroy_Follower(p_ref_actor)
+    ; should check to see if is a follower, even though it's redundant
+
+    code_return = p_FOLLOWERS.f_Destroy_Follower(p_ref_actor)
     if code_return < 0
         return code_return
     endIf
 
-    code_return = f_Enforce()
+    code_return = Enforce()
     if code_return < 0
         return code_return
     endIf
@@ -387,7 +413,7 @@ int function Enthrall()
 
     p_is_thrall = true
 
-    code_return = f_Enforce()
+    code_return = Enforce()
     if code_return < 0
         return code_return
     endIf
@@ -408,7 +434,7 @@ int function Unthrall()
 
     p_is_thrall = false
 
-    code_return = f_Enforce()
+    code_return = Enforce()
     if code_return < 0
         return code_return
     endIf
@@ -429,7 +455,7 @@ int function Style_Default()
 
     p_code_combat = p_CODES.IS_DEFAULT
 
-    code_return = f_Enforce()
+    code_return = Enforce()
     if code_return < 0
         return code_return
     endIf
@@ -450,7 +476,7 @@ int function Style_Warrior()
 
     p_code_combat = p_CODES.IS_WARRIOR
 
-    code_return = f_Enforce()
+    code_return = Enforce()
     if code_return < 0
         return code_return
     endIf
@@ -471,7 +497,7 @@ int function Style_Mage()
 
     p_code_combat = p_CODES.IS_MAGE
 
-    code_return = f_Enforce()
+    code_return = Enforce()
     if code_return < 0
         return code_return
     endIf
@@ -492,7 +518,7 @@ int function Style_Archer()
 
     p_code_combat = p_CODES.IS_ARCHER
 
-    code_return = f_Enforce()
+    code_return = Enforce()
     if code_return < 0
         return code_return
     endIf
@@ -509,7 +535,7 @@ int function Access()
     
     p_ACTOR2.Open_Inventory(p_ref_actor)
 
-    code_return = f_Enforce()
+    code_return = Enforce()
     if code_return < 0
         return code_return
     endIf
@@ -617,5 +643,20 @@ endFunction
 
 ; Events
 event OnActivate(ObjectReference ref_activator)
-    f_Enforce()
+    Enforce()
+    ; maybe we could pop up some basic stats on screen
+endEvent
+
+event OnCombatStateChanged(Actor ref_target, int code_combat)
+    if ref_target == p_CONSTS.ACTOR_PLAYER || p_ACTOR2.Has_Token(ref_target, p_CONSTS.TOKEN_MEMBER)
+        p_ACTOR2.Pacify(p_ref_actor)
+    endIf
+
+    if code_combat == 0; Not in Combat
+        Enforce()
+    elseIf code_combat == 1; In Combat
+
+    elseIf code_combat == 2; Searching
+        Enforce(); this may be too intensive here
+    endIf
 endEvent

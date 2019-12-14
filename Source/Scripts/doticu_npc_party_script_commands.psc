@@ -232,7 +232,13 @@ function p_Notify_On_Style(int code_return, string str_name, string str_style)
         Debug.Notification("NPC Party: That can't become " + str_style + ".")
     elseIf code_return == p_CODES.ISNT_MEMBER
         Debug.Notification("NPC Party: " + str_name + " isn't a member, and so can't be " + str_style + ".")
-    elseIf code_return == p_CODES.IS_IMMOBILE
+    elseIf code_return == p_CODES.IS_DEFAULT
+        Debug.Notification("NPC Party: " + str_name + " is already " + str_style + ".")
+    elseIf code_return == p_CODES.IS_WARRIOR
+        Debug.Notification("NPC Party: " + str_name + " is already " + str_style + ".")
+    elseIf code_return == p_CODES.IS_MAGE
+        Debug.Notification("NPC Party: " + str_name + " is already " + str_style + ".")
+    elseIf code_return == p_CODES.IS_ARCHER
         Debug.Notification("NPC Party: " + str_name + " is already " + str_style + ".")
     else
         Debug.Notification("NPC Party: It's unknown why " + str_name + " can't be " + str_style + ".")
@@ -359,6 +365,10 @@ endFunction
 function Clone(Actor ref_actor)
     int code_return
     string str_name = p_ACTOR2.Get_Name(ref_actor)
+
+    if p_ACTOR2.Is_Generic(ref_actor)
+        Debug.Notification("NPC Party: Please wait, cloning may take a while.")
+    endIf
 
     p_Notify_On_Clone(p_MEMBERS.Create_Member(ref_actor, true), str_name)
 endFunction

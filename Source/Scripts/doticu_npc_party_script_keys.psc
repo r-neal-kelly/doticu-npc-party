@@ -2,12 +2,14 @@ Scriptname doticu_npc_party_script_keys extends Quest
 
 ; Private Constants
 doticu_npc_party_script_vars        p_VARS      = none
+doticu_npc_party_script_funcs       p_FUNCS     = none
 doticu_npc_party_script_members     p_MEMBERS   = none
 doticu_npc_party_script_commands    p_COMMANDS  = none
 
 ; Friend Methods
 function f_Initialize(doticu_npc_party_script_data DATA)
     p_VARS = DATA.VARS
+    p_FUNCS = DATA.MODS.FUNCS
     p_MEMBERS = DATA.MODS.MEMBERS
     p_COMMANDS = DATA.MODS.CONTROL.COMMANDS
 
@@ -18,6 +20,9 @@ endFunction
 function Update_Keys()
     UnregisterForAllKeys()
 
+    if p_VARS.key_open_mcm > -1
+        RegisterForKey(p_VARS.key_open_mcm)
+    endIf
     if p_VARS.key_member > -1
         RegisterForKey(p_VARS.key_member)
     endIf
@@ -78,7 +83,9 @@ endFunction
 event OnKeyDown(int code_key)
     Actor ref_actor = Game.GetCurrentCrosshairRef() as Actor
 
-    if code_key == p_VARS.key_member
+    if code_key == p_VARS.key_open_mcm
+        p_FUNCS.Open_MCM()
+    elseIf code_key == p_VARS.key_member
         p_COMMANDS.Member(ref_actor)
     elseIf code_key == p_VARS.key_unmember
         p_COMMANDS.Unmember(ref_actor)

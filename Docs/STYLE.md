@@ -4,12 +4,13 @@ An overview of the several patterns, naming conventions, and symbols that are us
 ---
 
 ## Naming Conventions
-- Vanilla intrinsic types and descriptors are always in lower camelCase:
+- Vanilla intrinsic types and keywords are always in lower camelCase:
 
         string
         int
         bool
         autoReadOnly
+        endIf
 
 - Refined vanilla types are always in captial CamelCase:
 

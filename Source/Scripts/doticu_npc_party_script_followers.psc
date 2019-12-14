@@ -27,17 +27,7 @@ function f_Initialize(doticu_npc_party_script_data DATA)
     endWhile
 endFunction
 
-; Private Methods
-int function p_Get_Alias_ID(Actor ref_actor)
-    return ref_actor.GetItemCount(CONSTS.TOKEN_FOLLOWER) - 1
-endFunction
-
-doticu_npc_party_script_follower function p_Get_Follower(int id_alias)
-    return ALIASES.f_Get_Alias(id_alias) as doticu_npc_party_script_follower
-endFunction
-
-; Public Methods
-int function Create_Follower(Actor ref_actor)
+int function f_Create_Follower(Actor ref_actor)
     int code_return
 
     code_return = ALIASES.Create_Alias(ref_actor)
@@ -52,7 +42,7 @@ int function Create_Follower(Actor ref_actor)
     endIf
     int id_alias = code_return
 
-    code_return = p_Get_Follower(id_alias).Create()
+    code_return = p_Get_Follower(id_alias).f_Create()
     if code_return < 0
         ALIASES.Destroy_Alias(id_alias, ref_actor)
         return code_return
@@ -65,7 +55,7 @@ int function Create_Follower(Actor ref_actor)
     return CODES.SUCCESS
 endFunction
 
-int function Destroy_Follower(Actor ref_actor)
+int function f_Destroy_Follower(Actor ref_actor)
     int code_return
 
     int id_alias = p_Get_Alias_ID(ref_actor)
@@ -73,7 +63,7 @@ int function Destroy_Follower(Actor ref_actor)
         return CODES.HASNT_FOLLOWER
     endIf
 
-    code_return = p_Get_Follower(id_alias).Destroy()
+    code_return = p_Get_Follower(id_alias).f_Destroy()
     if code_return < 0
         return code_return
     endIf
@@ -93,6 +83,16 @@ int function Destroy_Follower(Actor ref_actor)
     return CODES.SUCCESS
 endFunction
 
+; Private Methods
+int function p_Get_Alias_ID(Actor ref_actor)
+    return ref_actor.GetItemCount(CONSTS.TOKEN_FOLLOWER) - 1
+endFunction
+
+doticu_npc_party_script_follower function p_Get_Follower(int id_alias)
+    return ALIASES.f_Get_Alias(id_alias) as doticu_npc_party_script_follower
+endFunction
+
+; Public Methods
 int function Get_Count()
     return ALIASES.Get_Count()
 endFunction
@@ -111,6 +111,17 @@ endFunction
 
 Alias[] function Get_Aliases_Sorted(int idx_from = 0, int idx_to_ex = -1)
     return ALIASES.Get_Aliases_Sorted(idx_from, idx_to_ex)
+endFunction
+
+function Enforce()
+    doticu_npc_party_script_follower ref_follower
+    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    int idx_arr = 0
+    while idx_arr < arr_aliases.length
+        ref_follower = arr_aliases[idx_arr] as doticu_npc_party_script_follower
+        ref_follower.Get_Member().Enforce()
+        idx_arr += 1
+    endWhile
 endFunction
 
 function Summon()
@@ -266,6 +277,17 @@ function Unmember()
     while idx_arr < arr_aliases.length
         ref_follower = arr_aliases[idx_arr] as doticu_npc_party_script_follower
         ref_follower.Unmember()
+        idx_arr += 1
+    endWhile
+endFunction
+
+function Level()
+    doticu_npc_party_script_follower ref_follower
+    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    int idx_arr = 0
+    while idx_arr < arr_aliases.length
+        ref_follower = arr_aliases[idx_arr] as doticu_npc_party_script_follower
+        ref_follower.Level()
         idx_arr += 1
     endWhile
 endFunction

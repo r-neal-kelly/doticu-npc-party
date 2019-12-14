@@ -40,6 +40,7 @@ int property IS_DEFAULT             = -380 autoReadOnly
 int property IS_WARRIOR             = -381 autoReadOnly
 int property IS_MAGE                = -382 autoReadOnly
 int property IS_ARCHER              = -383 autoReadOnly
+int property IS_GREETER             = -390 autoReadOnly
 
 int property ISNT_ACTOR             = -400 autoReadOnly
 int property ISNT_ALIAS             = -410 autoReadOnly
@@ -50,6 +51,7 @@ int property ISNT_FOLLOWER          = -450 autoReadOnly
 int property ISNT_SNEAK             = -460 autoReadOnly
 int property ISNT_THRALL            = -470 autoReadOnly
 int property ISNT_CLONE             = -480 autoReadOnly
+int property ISNT_GREETER           = -490 autoReadOnly
 
 int property CAN_RESURRECT          = -500 autoReadOnly
 

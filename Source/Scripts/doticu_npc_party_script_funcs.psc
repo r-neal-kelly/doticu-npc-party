@@ -23,5 +23,9 @@ function Close_Menus()
     
     while Utility.IsInMenuMode()
         Input.TapKey(key_menu)
+        Utility.Wait(0.5)
     endWhile
+endFunction
+
+function Open_MCM()
 endFunction

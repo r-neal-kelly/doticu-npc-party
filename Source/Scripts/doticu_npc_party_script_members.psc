@@ -41,19 +41,24 @@ doticu_npc_party_script_member function p_Get_Member(int id_alias)
 endFunction
 
 ; Public Methods
-int function Create_Member(Actor ref_actor, bool create_clone = false)
+int function Create_Member(Actor ref_actor, bool do_clone = false)
     int code_return
 
-    if Should_Clone_Actor(ref_actor)
-        create_clone = true
+    if ALIASES.Is_Full()
+        ; cloning can be slow, so check first
+        return CODES.HASNT_SPACE_MEMBER
     endIf
-    if create_clone
+
+    if Should_Clone_Actor(ref_actor)
+        do_clone = true
+    endIf
+    if do_clone
         ref_actor = ACTOR2.Clone(ref_actor)
     endIf
 
     code_return = ALIASES.Create_Alias(ref_actor)
     if code_return < 0
-        if create_clone
+        if do_clone
             ACTOR2.Delete(ref_actor)
         endIf
 
@@ -67,18 +72,18 @@ int function Create_Member(Actor ref_actor, bool create_clone = false)
     endIf
     int id_alias = code_return
 
-    code_return = p_Get_Member(id_alias).f_Create(create_clone)
+    code_return = p_Get_Member(id_alias).f_Create(do_clone)
     if code_return < 0
         ALIASES.Destroy_Alias(id_alias, ref_actor)
 
-        if create_clone
+        if do_clone
             ACTOR2.Delete(ref_actor)
         endIf
 
         return code_return
     endIf
 
-    if create_clone
+    if do_clone
         ACTOR2.Move_To(ref_actor, CONSTS.ACTOR_PLAYER, 60, 180)
         ACTOR2.Greet_Player(ref_actor)
     endIf
@@ -135,6 +140,17 @@ endFunction
 
 Alias[] function Get_Aliases_Sorted(int idx_from = 0, int idx_to_ex = -1)
     return ALIASES.Get_Aliases_Sorted(idx_from, idx_to_ex)
+endFunction
+
+function Enforce()
+    doticu_npc_party_script_member ref_member
+    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    int idx_arr = 0
+    while idx_arr < arr_aliases.length
+        ref_member = arr_aliases[idx_arr] as doticu_npc_party_script_member
+        ref_member.Enforce()
+        idx_arr += 1
+    endWhile
 endFunction
 
 function Unmember()

@@ -81,9 +81,9 @@ function Set_Base_Name(Actor ref_actor, string str_name)
 endFunction
 
 function Resurrect(Actor ref_actor)
-    ref_actor.SetActorValue("Aggression", 0)
     ref_actor.Disable()
     ref_actor.Resurrect()
+    Pacify(ref_actor)
     ref_actor.Enable()
 endFunction
 
@@ -114,32 +114,25 @@ endFunction
 
 Actor function Clone(Actor ref_actor)
     Form ref_form = ref_actor.GetBaseObject() as Form
-    Actor ref_clone = p_CONSTS.ACTOR_PLAYER.PlaceAtMe(ref_form, 1, true, true) as Actor; persist, disabled
+    Actor ref_clone = p_CONSTS.ACTOR_PLAYER.PlaceAtMe(ref_form, 1, true, false) as Actor; persist, disable
 
     if Is_Generic(ref_actor)
         while !p_Has_Same_Head(ref_actor, ref_clone)
-            ;ref_clone.SetCriticalStage(ref_clone.CritStage_DisintegrateEnd)
+            ref_clone.Disable()
             ref_clone.Delete()
-            ref_clone = p_CONSTS.ACTOR_PLAYER.PlaceAtMe(ref_form, 1, true, true) as Actor; persist, disabled
+            ref_clone = p_CONSTS.ACTOR_PLAYER.PlaceAtMe(ref_form, 1, true, false) as Actor; persist, disable
         endWhile
     endIf
 
-    ref_clone.SetActorValue("Aggression", 0)
-    ref_clone.Enable()
+    Pacify(ref_clone)
     Set_Name(ref_clone, "Clone of " + Get_Name(ref_actor))
     
     return ref_clone
 endFunction
 
 function Delete(Actor ref_actor)
-    if Is_Generic(ref_actor)
-        ;ref_actor.SetCriticalStage(ref_actor.CritStage_DisintegrateEnd)
-        ref_actor.Disable()
-        ref_actor.Delete()
-    else
-        ref_actor.Disable()
-        ref_actor.Delete()
-    endIf
+    ref_actor.Disable()
+    ref_actor.Delete()
 endFunction
 
 function Move_To(ObjectReference ref_subject, ObjectReference ref_object, int distance = 60, int angle = 0)
@@ -150,5 +143,13 @@ function Move_To(ObjectReference ref_subject, ObjectReference ref_object, int di
 endFunction
 
 function Greet_Player(Actor ref_actor)
+    p_GREETER.f_Destroy()
     p_GREETER.f_Create(ref_actor)
+endFunction
+
+function Pacify(Actor ref_actor)
+    ref_actor.SetActorValue("Aggression", 0)
+    ref_actor.StopCombat()
+    ref_actor.StopCombatAlarm()
+    ref_actor.EvaluatePackage()
 endFunction

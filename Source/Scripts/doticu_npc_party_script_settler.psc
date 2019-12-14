@@ -6,13 +6,13 @@ doticu_npc_party_script_codes       CODES       = none
 doticu_npc_party_script_vars        VARS        = none
 doticu_npc_party_script_mods        MODS        = none
 doticu_npc_party_script_actor       ACTOR2      = none
-doticu_npc_party_script_member      MEMBER      = none
 int                                 ID_ALIAS    =   -1
 ObjectReference                     REF_MARKER  = none
 
 ; Private Variables
-bool    is_created      = false
-Actor   ref_actor       =  none
+bool                            is_created  = false
+Actor                           ref_actor   =  none
+doticu_npc_party_script_member  ref_member  =  none
 
 ; Private Methods
 function p_Token()
@@ -38,24 +38,11 @@ function f_Initialize(doticu_npc_party_script_data DATA, int idx_alias)
     VARS = DATA.VARS
     MODS = DATA.MODS
     ACTOR2 = DATA.MODS.FUNCS.ACTOR2
-    MEMBER = (self as ReferenceAlias) as doticu_npc_party_script_member
     ID_ALIAS = idx_alias
     REF_MARKER = DATA.CONSTS.FORMLIST_MARKERS_SETTLER.GetAt(idx_alias) as ObjectReference
 endFunction
 
-int function f_Enforce()
-    if !Exists()
-        return CODES.ISNT_SETTLER
-    endIf
-
-    p_Token()
-    ; p_Settle() is not f_Enforce()'d
-
-    return CODES.SUCCESS
-endFunction
-
-; Public Methods
-int function Create()
+int function f_Create()
     int code_return
 
     if Exists()
@@ -65,17 +52,23 @@ int function Create()
     if !ref_actor
         return CODES.ISNT_ACTOR
     endIf
-    if !MEMBER.Exists()
+    ref_member = MODS.MEMBERS.Get_Member(ref_actor)
+    if !ref_member
         return CODES.ISNT_MEMBER
     endIf
     is_created = true
 
     p_Settle()
 
+    code_return = Enforce()
+    if code_return < 0
+        return code_return
+    endIf
+
     return CODES.SUCCESS
 endFunction
 
-int function Destroy()
+int function f_Destroy()
     if !Exists()
         return CODES.ISNT_SETTLER
     endIf
@@ -83,10 +76,29 @@ int function Destroy()
     p_Unsettle()
     p_Untoken()
 
+    ref_member = none
     ref_actor = none
     is_created = false
 
     return CODES.SUCCESS
+endFunction
+
+int function f_Enforce()
+    int code_return
+    
+    if !Exists()
+        return CODES.ISNT_SETTLER
+    endIf
+
+    p_Token()
+    ; p_Settle() is not enforced
+
+    return CODES.SUCCESS
+endFunction
+
+; Public Methods
+int function Enforce()
+    return ref_member.Enforce()
 endFunction
 
 bool function Exists()
@@ -102,7 +114,7 @@ int function Resettle()
 
     p_Settle()
 
-    code_return = MEMBER.f_Enforce()
+    code_return = Enforce()
     if code_return < 0
         return code_return
     endIf
