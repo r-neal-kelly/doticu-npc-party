@@ -4,7 +4,7 @@ Scriptname doticu_npc_party_script_mcm_log extends Quest
 doticu_npc_party_script_logs    p_LOGS                  = none
 doticu_npc_party_script_mcm     p_MCM                   = none
 
-int                             p_HEADERS_PER_PAGE      =    2
+int                             p_HEADERS_PER_PAGE      =    4
 int                             p_STRINGS_PER_PAGE      =   20
 
 ; Private Variables
@@ -58,7 +58,7 @@ auto state p_STATE_LOGS
         string str_errors = "Errors: " + errors_count + "/" + errors_max
 
         if notes_count == 0 && errors_count == 0
-            p_MCM.SetTitleText(str_notes + "    -    " + "Page 1/1" + "    -    " + str_errors)
+            p_MCM.SetTitleText(str_notes + "         " + "Page 1/1" + "         " + str_errors)
             return
         endIf
 
@@ -70,7 +70,7 @@ auto state p_STATE_LOGS
         
         string str_pages = "Pages: " + (p_pages_curr + 1) + "/" + p_pages_count
 
-        p_MCM.SetTitleText(str_notes + "    -    " + str_pages + "    -    " + str_errors)
+        p_MCM.SetTitleText(str_notes + "         " + str_pages + "         " + str_errors)
 
         p_MCM.SetCursorPosition(0)
         p_MCM.SetCursorFillMode(p_MCM.LEFT_TO_RIGHT)
@@ -91,6 +91,8 @@ auto state p_STATE_LOGS
         p_MCM.SetCursorPosition(2)
         p_MCM.SetCursorFillMode(p_MCM.TOP_TO_BOTTOM)
 
+        p_MCM.AddHeaderOption("Notes ")
+
         int idx_notes = 0
         while idx_notes < p_arr_notes.length
             p_MCM.AddTextOption(p_arr_notes[idx_notes], "")
@@ -98,6 +100,7 @@ auto state p_STATE_LOGS
         endWhile
 
         if notes_count > 0
+            p_MCM.AddHeaderOption("")
             p_option_clear_notes    =  p_MCM.AddTextOption("                        Clear Notes", "")
         endIf
 
@@ -109,13 +112,16 @@ auto state p_STATE_LOGS
         p_MCM.SetCursorPosition(3)
         p_MCM.SetCursorFillMode(p_MCM.TOP_TO_BOTTOM)
 
+        p_MCM.AddHeaderOption("Errors ")
+
         int idx_errors = 0
         while idx_errors < p_arr_errors.length
             p_MCM.AddTextOption(p_arr_errors[idx_errors], "")
             idx_errors += 1
         endWhile
-        
+
         if errors_count > 0
+            p_MCM.AddHeaderOption("")
             p_option_clear_errors = p_MCM.AddTextOption("                         Clear Errors", "")
         endIf
     endFunction

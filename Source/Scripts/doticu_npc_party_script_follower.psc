@@ -7,6 +7,7 @@ doticu_npc_party_script_vars        p_VARS          = none
 doticu_npc_party_script_actor       p_ACTOR2        = none
 doticu_npc_party_script_members     p_MEMBERS       = none
 doticu_npc_party_script_followers   p_FOLLOWERS     = none
+doticu_npc_party_script_queue_alias p_QUEUE         = none
 Actor                               p_REF_PLAYER    = none
 int                                 p_ID_ALIAS      =   -1
 
@@ -56,6 +57,7 @@ function f_Initialize(doticu_npc_party_script_data DATA, int ID_ALIAS)
     p_ACTOR2 = DATA.MODS.FUNCS.ACTOR2
     p_MEMBERS = DATA.MODS.MEMBERS
     p_FOLLOWERS = DATA.MODS.FOLLOWERS
+    p_QUEUE = (self as ReferenceAlias) as doticu_npc_party_script_queue_alias
     p_REF_PLAYER = DATA.CONSTS.ACTOR_PLAYER
     p_ID_ALIAS = ID_ALIAS
 endFunction
@@ -116,7 +118,7 @@ int function f_Enforce()
 
     p_Token()
     p_Follow()
-    p_Level(); this needs to be put in an OnUpdate, so it doesn't disrupt user experience
+    p_QUEUE.Enqueue("p_Level()")
     if p_is_sneak
         p_Sneak()
     endIf
@@ -276,69 +278,77 @@ function p_Level()
     float pickpocket    = p_prev_pickpocket     + p_REF_PLAYER.GetBaseActorValue(p_CONSTS.STR_PICKPOCKET)   * modifier
     float speechcraft   = p_prev_speechcraft    + p_REF_PLAYER.GetBaseActorValue(p_CONSTS.STR_SPEECHCRAFT)  * modifier
 
+    float level_player_modded = level_player * modifier
+
     if Is_Styled_Warrior()
-        one_handed  += level_player * modifier
-        two_handed  += level_player * modifier
-        block       += level_player * modifier
-        heavy_armor += level_player * modifier
-        light_armor += level_player * modifier
-        smithing    += level_player * modifier
+        health      += level_player * 4; find a better equation
 
-        destruction -= level_player * modifier
-        restoration -= level_player * modifier
-        conjuration -= level_player * modifier
-        alteration  -= level_player * modifier
-        illusion    -= level_player * modifier
-        enchanting  -= level_player * modifier
+        one_handed  += level_player_modded
+        two_handed  += level_player_modded
+        block       += level_player_modded
+        heavy_armor += level_player_modded
+        light_armor += level_player_modded
+        smithing    += level_player_modded
 
-        marksman    -= level_player * modifier
-        sneak       -= level_player * modifier
-        alchemy     -= level_player * modifier
-        lockpicking -= level_player * modifier
-        pickpocket  -= level_player * modifier
-        speechcraft -= level_player * modifier
+        destruction -= level_player_modded
+        restoration -= level_player_modded
+        conjuration -= level_player_modded
+        alteration  -= level_player_modded
+        illusion    -= level_player_modded
+        enchanting  -= level_player_modded
+
+        marksman    -= level_player_modded
+        sneak       -= level_player_modded
+        alchemy     -= level_player_modded
+        lockpicking -= level_player_modded
+        pickpocket  -= level_player_modded
+        speechcraft -= level_player_modded
     elseIf Is_Styled_Mage()
-        one_handed  -= level_player * modifier
-        two_handed  -= level_player * modifier
-        block       -= level_player * modifier
-        heavy_armor -= level_player * modifier
-        light_armor -= level_player * modifier
-        smithing    -= level_player * modifier
+        magicka      += level_player * 4; find a better equation
 
-        destruction += level_player * modifier
-        restoration += level_player * modifier
-        conjuration += level_player * modifier
-        alteration  += level_player * modifier
-        illusion    += level_player * modifier
-        enchanting  += level_player * modifier
+        one_handed  -= level_player_modded
+        two_handed  -= level_player_modded
+        block       -= level_player_modded
+        heavy_armor -= level_player_modded
+        light_armor -= level_player_modded
+        smithing    -= level_player_modded
 
-        marksman    -= level_player * modifier
-        sneak       -= level_player * modifier
-        alchemy     -= level_player * modifier
-        lockpicking -= level_player * modifier
-        pickpocket  -= level_player * modifier
-        speechcraft -= level_player * modifier
+        destruction += level_player_modded
+        restoration += level_player_modded
+        conjuration += level_player_modded
+        alteration  += level_player_modded
+        illusion    += level_player_modded
+        enchanting  += level_player_modded
+
+        marksman    -= level_player_modded
+        sneak       -= level_player_modded
+        alchemy     -= level_player_modded
+        lockpicking -= level_player_modded
+        pickpocket  -= level_player_modded
+        speechcraft -= level_player_modded
     elseIf Is_Styled_Archer()
-        one_handed  -= level_player * modifier
-        two_handed  -= level_player * modifier
-        block       -= level_player * modifier
-        heavy_armor -= level_player * modifier
-        light_armor -= level_player * modifier
-        smithing    -= level_player * modifier
+        stamina      += level_player * 4; find a better equation
 
-        destruction -= level_player * modifier
-        restoration -= level_player * modifier
-        conjuration -= level_player * modifier
-        alteration  -= level_player * modifier
-        illusion    -= level_player * modifier
-        enchanting  -= level_player * modifier
+        one_handed  -= level_player_modded
+        two_handed  -= level_player_modded
+        block       -= level_player_modded
+        heavy_armor -= level_player_modded
+        light_armor -= level_player_modded
+        smithing    -= level_player_modded
 
-        marksman    += level_player * modifier
-        sneak       += level_player * modifier
-        alchemy     += level_player * modifier
-        lockpicking += level_player * modifier
-        pickpocket  += level_player * modifier
-        speechcraft += level_player * modifier
+        destruction -= level_player_modded
+        restoration -= level_player_modded
+        conjuration -= level_player_modded
+        alteration  -= level_player_modded
+        illusion    -= level_player_modded
+        enchanting  -= level_player_modded
+
+        marksman    += level_player_modded
+        sneak       += level_player_modded
+        alchemy     += level_player_modded
+        lockpicking += level_player_modded
+        pickpocket  += level_player_modded
+        speechcraft += level_player_modded
     endIf
 
     if health > max_attribute
@@ -474,32 +484,6 @@ function p_Level()
     p_ref_actor.SetActorValue(p_CONSTS.STR_LOCKPICKING, lockpicking)
     p_ref_actor.SetActorValue(p_CONSTS.STR_PICKPOCKET, pickpocket)
     p_ref_actor.SetActorValue(p_CONSTS.STR_SPEECHCRAFT, speechcraft)
-
-    ; Print
-    ;/MiscUtil.PrintConsole("health: " + p_ref_actor.GetActorValue(p_CONSTS.STR_HEALTH))
-    MiscUtil.PrintConsole("magicka: " + p_ref_actor.GetActorValue(p_CONSTS.STR_MAGICKA))
-    MiscUtil.PrintConsole("stamina: " + p_ref_actor.GetActorValue(p_CONSTS.STR_STAMINA))
-
-    MiscUtil.PrintConsole("one_handed: " + p_ref_actor.GetActorValue(p_CONSTS.STR_ONE_HANDED))
-    MiscUtil.PrintConsole("two_handed: " + p_ref_actor.GetActorValue(p_CONSTS.STR_TWO_HANDED))
-    MiscUtil.PrintConsole("block: " + p_ref_actor.GetActorValue(p_CONSTS.STR_BLOCK))
-    MiscUtil.PrintConsole("heavy_armor: " + p_ref_actor.GetActorValue(p_CONSTS.STR_HEAVY_ARMOR))
-    MiscUtil.PrintConsole("light_armor: " + p_ref_actor.GetActorValue(p_CONSTS.STR_LIGHT_ARMOR))
-    MiscUtil.PrintConsole("smithing: " + p_ref_actor.GetActorValue(p_CONSTS.STR_SMITHING))
-
-    MiscUtil.PrintConsole("destruction: " + p_ref_actor.GetActorValue(p_CONSTS.STR_DESTRUCTION))
-    MiscUtil.PrintConsole("restoration: " + p_ref_actor.GetActorValue(p_CONSTS.STR_RESTORATION))
-    MiscUtil.PrintConsole("conjuration: " + p_ref_actor.GetActorValue(p_CONSTS.STR_CONJURATION))
-    MiscUtil.PrintConsole("alteration: " + p_ref_actor.GetActorValue(p_CONSTS.STR_ALTERATION))
-    MiscUtil.PrintConsole("illusion: " + p_ref_actor.GetActorValue(p_CONSTS.STR_ILLUSION))
-    MiscUtil.PrintConsole("enchanting: " + p_ref_actor.GetActorValue(p_CONSTS.STR_ENCHANTING))
-
-    MiscUtil.PrintConsole("marksman: " + p_ref_actor.GetActorValue(p_CONSTS.STR_MARKSMAN))
-    MiscUtil.PrintConsole("sneak: " + p_ref_actor.GetActorValue(p_CONSTS.STR_SNEAK))
-    MiscUtil.PrintConsole("alchemy: " + p_ref_actor.GetActorValue(p_CONSTS.STR_ALCHEMY))
-    MiscUtil.PrintConsole("lockpicking: " + p_ref_actor.GetActorValue(p_CONSTS.STR_LOCKPICKING))
-    MiscUtil.PrintConsole("pickpocket: " + p_ref_actor.GetActorValue(p_CONSTS.STR_PICKPOCKET))
-    MiscUtil.PrintConsole("speechcraft: " + p_ref_actor.GetActorValue(p_CONSTS.STR_SPEECHCRAFT))/;
 endFunction
 
 function p_Unlevel()
@@ -571,23 +555,6 @@ int function Unsneak()
     endIf
 
     p_is_sneak = false
-
-    code_return = Enforce()
-    if code_return < 0
-        return code_return
-    endIf
-
-    return p_CODES.SUCCESS
-endFunction
-
-int function Level()
-    int code_return
-
-    if !Exists()
-        return p_CODES.ISNT_FOLLOWER
-    endIf
-
-    p_Level()
 
     code_return = Enforce()
     if code_return < 0
@@ -670,4 +637,12 @@ function Summon_Behind()
 endFunction
 
 ; Events
+event OnUpdate()
+    string str_message = p_QUEUE.Get_Message()
+
+    if str_message == "p_Level()"
+        p_Level()
+    endIf
+endEvent
+
 ; need to add the catch up function, when player pulls out their weapon. but make it faster this time.

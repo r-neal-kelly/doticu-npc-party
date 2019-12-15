@@ -1,6 +1,7 @@
 Scriptname doticu_npc_party_script_mcm_members extends Quest
 
 ; Private Constants
+doticu_npc_party_script_consts  p_CONSTS                = none
 doticu_npc_party_script_vars    p_VARS                  = none
 doticu_npc_party_script_funcs   p_FUNCS                 = none
 doticu_npc_party_script_members p_MEMBERS               = none
@@ -9,7 +10,7 @@ doticu_npc_Party_script_mcm     p_MCM                   = none
 int                             p_VIEW_MEMBERS          =    0
 int                             p_VIEW_MEMBER           =    1
 
-int                             p_HEADERS_PER_PAGE      =    2
+int                             p_HEADERS_PER_PAGE      =    4
 int                             p_MEMBERS_PER_PAGE      =   20
 
 int                             p_COMMANDS_PER_MEMBER   =    4
@@ -27,17 +28,23 @@ doticu_npc_party_script_member  p_ref_member            = none
 int                             p_idx_member            =   -1
 int                             p_options_offset        =   -1
 
+int                             p_option_rename         =   -1
 int                             p_option_back           =   -1
 int                             p_option_prev           =   -1
 int                             p_option_next           =   -1
+
 int                             p_option_access         =   -1; will this action work when npc is unloaded? I don't think so
-int                             p_option_rename         =   -1
 int                             p_option_clone          =   -1
 int                             p_option_unclone        =   -1
 int                             p_option_unmember       =   -1
 
+int                             p_option_health         =   -1
+int                             p_option_magicka        =   -1
+int                             p_option_stamina        =   -1
+
 ; Friend Methods
 function f_Initialize(doticu_npc_party_script_data DATA)
+    p_CONSTS = DATA.CONSTS
     p_VARS = DATA.VARS
     p_FUNCS = DATA.MODS.FUNCS
     p_MEMBERS = DATA.MODS.MEMBERS
@@ -106,6 +113,9 @@ auto state p_STATE_MEMBERS
             p_option_next = p_MCM.AddTextOption("                       Go to Next Page", "", p_MCM.OPTION_FLAG_DISABLED)
         endIf
         p_options_offset = p_option_prev
+
+        p_MCM.AddHeaderOption("")
+        p_MCM.AddHeaderOption("")
 
         int idx_from = p_MEMBERS_PER_PAGE * p_curr_page
         int idx_to_ex = idx_from + p_MEMBERS_PER_PAGE
@@ -221,7 +231,7 @@ state p_STATE_MEMBER
 
         p_MCM.SetTitleText("Member: " + str_member_name)
 
-        p_option_rename = p_MCM.AddInputOption(" Rename ", str_member_name)
+        p_option_rename = p_MCM.AddInputOption(str_member_name + " ", " Rename ")
         p_option_back = p_MCM.AddTextOption("                            Go Back", "")
         if p_MEMBERS.Get_Count() > 1
             p_option_prev = p_MCM.AddTextOption("                      Previous Member", "")
@@ -231,14 +241,31 @@ state p_STATE_MEMBER
             p_option_next = p_MCM.AddTextOption("                        Next Member", "", p_MCM.OPTION_FLAG_DISABLED)
         endIf
 
+        p_MCM.SetCursorPosition(4)
+        p_MCM.SetCursorFillMode(p_MCM.TOP_TO_BOTTOM)
+
+        p_MCM.AddHeaderOption("Commands: ")
         p_option_access = p_MCM.AddTextOption(" Access ", "")
         p_option_clone  = p_MCM.AddTextOption(" Clone ", "")
         if p_ref_member.Is_Clone()
             p_option_unclone  = p_MCM.AddTextOption(" Unclone ", "")
+        else
+            p_option_unclone  = p_MCM.AddTextOption(" Unclone ", "", p_MCM.OPTION_FLAG_DISABLED)
         endIf
         if !p_MEMBERS.Should_Unclone_Member(p_ref_member)
             p_option_unmember = p_MCM.AddTextOption(" Unmember ", "")
+        else
+            p_option_unmember = p_MCM.AddTextOption(" Unmember ", "", p_MCM.OPTION_FLAG_DISABLED)
         endIf
+
+        p_MCM.SetCursorPosition(5)
+        p_MCM.SetCursorFillMode(p_MCM.TOP_TO_BOTTOM)
+
+        Actor ref_actor = p_ref_member.Get_Actor()
+        p_MCM.AddHeaderOption("Statistics: ")
+        p_option_health = p_MCM.AddTextOption(" Health: ", ref_actor.GetActorValue(p_CONSTS.STR_HEALTH) as int)
+        p_option_magicka = p_MCM.AddTextOption(" Magicka: ", ref_actor.GetActorValue(p_CONSTS.STR_MAGICKA) as int)
+        p_option_stamina = p_MCM.AddTextOption(" Stamina: ", ref_actor.GetActorValue(p_CONSTS.STR_STAMINA) as int)
     endFunction
 
     function f_On_Option_Select(int id_option)

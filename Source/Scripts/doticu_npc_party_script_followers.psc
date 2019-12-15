@@ -22,6 +22,7 @@ function f_Initialize(doticu_npc_party_script_data DATA)
     ReferenceAlias ref_alias = none
     while idx_alias < max_aliases
         ref_alias = GetNthAlias(idx_alias) as ReferenceAlias
+        (ref_alias as doticu_npc_party_script_queue_alias).f_Initialize(DATA, idx_alias)
         (ref_alias as doticu_npc_party_script_follower).f_Initialize(DATA, idx_alias)
         idx_alias += 1
     endWhile
@@ -277,17 +278,6 @@ function Unmember()
     while idx_arr < arr_aliases.length
         ref_follower = arr_aliases[idx_arr] as doticu_npc_party_script_follower
         ref_follower.Unmember()
-        idx_arr += 1
-    endWhile
-endFunction
-
-function Level()
-    doticu_npc_party_script_follower ref_follower
-    Alias[] arr_aliases = ALIASES.Get_Aliases()
-    int idx_arr = 0
-    while idx_arr < arr_aliases.length
-        ref_follower = arr_aliases[idx_arr] as doticu_npc_party_script_follower
-        ref_follower.Level()
         idx_arr += 1
     endWhile
 endFunction

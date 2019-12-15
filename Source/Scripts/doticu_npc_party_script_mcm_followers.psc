@@ -97,7 +97,7 @@ auto state p_STATE_FOLLOWERS
 
         p_MCM.SetTitleText("Followers: " + count_followers + "/" + max_followers)
 
-        p_option_menu = p_MCM.AddMenuOption("        Command All", "...")
+        p_option_menu = p_MCM.AddMenuOption("Command All ", "...")
         p_MCM.AddEmptyOption()
         p_options_offset = p_option_menu
 
@@ -211,6 +211,7 @@ auto state p_STATE_FOLLOWERS
             elseIf idx_option == p_IDX_ALL_UNMEMBER
                 p_FOLLOWERS.Unmember()
             endIf
+            p_MCM.ForcePageReset()
         endIf
     endFunction
 
@@ -241,15 +242,18 @@ state p_STATE_FOLLOWER
 
         p_MCM.SetTitleText("Follower: " + str_follower_name)
 
-        p_option_rename = p_MCM.AddInputOption(" Rename ", str_follower_name)
+        p_option_rename = p_MCM.AddInputOption(str_follower_name + " ", " Rename ")
         p_option_back = p_MCM.AddTextOption("                            Go Back", "")
         if p_FOLLOWERS.Get_Count() > 1
-            p_option_prev = p_MCM.AddTextOption("                       Previous Follower", "")
-            p_option_next = p_MCM.AddTextOption("                         Next Follower", "")
+            p_option_prev = p_MCM.AddTextOption("                      Previous Follower", "")
+            p_option_next = p_MCM.AddTextOption("                        Next Follower", "")
         else
-            p_option_prev = p_MCM.AddTextOption("                       Previous Follower", "", p_MCM.OPTION_FLAG_DISABLED)
-            p_option_next = p_MCM.AddTextOption("                         Next Follower", "", p_MCM.OPTION_FLAG_DISABLED)
+            p_option_prev = p_MCM.AddTextOption("                      Previous Follower", "", p_MCM.OPTION_FLAG_DISABLED)
+            p_option_next = p_MCM.AddTextOption("                        Next Follower", "", p_MCM.OPTION_FLAG_DISABLED)
         endIf
+
+        p_MCM.AddHeaderOption("")
+        p_MCM.AddHeaderOption("")
 
         p_option_access = p_MCM.AddTextOption(" Access ", "")
         p_option_unfollow = p_MCM.AddTextOption(" Unfollow ", "")
