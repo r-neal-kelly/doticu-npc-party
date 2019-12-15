@@ -188,14 +188,13 @@ auto state p_STATE_MEMBERS
     endFunction
     
     function f_On_Option_Highlight(int id_option)
-        int idx_entity = p_Get_Idx_Entity(id_option)
-        doticu_npc_party_script_member ref_member = p_arr_aliases[idx_entity] as doticu_npc_party_script_member
-
         if id_option == p_option_prev
             p_MCM.SetInfoText("Go to the Previous Page")
         elseIf id_option == p_option_next
             p_MCM.SetInfoText("Go to the Next Page")
         else
+            int idx_entity = p_Get_Idx_Entity(id_option)
+            doticu_npc_party_script_member ref_member = p_arr_aliases[idx_entity] as doticu_npc_party_script_member
             string str_name = ref_member.Get_Name()
             p_MCM.SetInfoText("Opens the member menu for " + str_name)
             ; this should show more about the member, like race, gender, style, and stats!!!
@@ -222,7 +221,7 @@ state p_STATE_MEMBER
 
         p_MCM.SetTitleText("Member: " + str_member_name)
 
-        p_MCM.AddEmptyOption()
+        p_option_rename = p_MCM.AddInputOption(" Rename ", str_member_name)
         p_option_back = p_MCM.AddTextOption("                            Go Back", "")
         if p_MEMBERS.Get_Count() > 1
             p_option_prev = p_MCM.AddTextOption("                      Previous Member", "")
@@ -233,7 +232,6 @@ state p_STATE_MEMBER
         endIf
 
         p_option_access = p_MCM.AddTextOption(" Access ", "")
-        p_option_rename = p_MCM.AddInputOption(" Rename ", str_member_name)
         p_option_clone  = p_MCM.AddTextOption(" Clone ", "")
         if p_ref_member.Is_Clone()
             p_option_unclone  = p_MCM.AddTextOption(" Unclone ", "")

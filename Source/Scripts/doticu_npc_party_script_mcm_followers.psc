@@ -241,7 +241,7 @@ state p_STATE_FOLLOWER
 
         p_MCM.SetTitleText("Follower: " + str_follower_name)
 
-        p_MCM.AddEmptyOption()
+        p_option_rename = p_MCM.AddInputOption(" Rename ", str_follower_name)
         p_option_back = p_MCM.AddTextOption("                            Go Back", "")
         if p_FOLLOWERS.Get_Count() > 1
             p_option_prev = p_MCM.AddTextOption("                       Previous Follower", "")
@@ -252,7 +252,6 @@ state p_STATE_FOLLOWER
         endIf
 
         p_option_access = p_MCM.AddTextOption(" Access ", "")
-        p_option_rename = p_MCM.AddInputOption(" Rename ", str_follower_name)
         p_option_unfollow = p_MCM.AddTextOption(" Unfollow ", "")
     endFunction
 

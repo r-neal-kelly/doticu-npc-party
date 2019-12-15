@@ -116,7 +116,7 @@ int function f_Enforce()
 
     p_Token()
     p_Follow()
-    p_Level()
+    p_Level(); this needs to be put in an OnUpdate, so it doesn't disrupt user experience
     if p_is_sneak
         p_Sneak()
     endIf
@@ -184,7 +184,6 @@ function p_Restore()
     p_ref_actor.SetActorValue("Morality", p_prev_morality)
     p_ref_actor.SetActorValue("Assistance", p_prev_assistance); this may need to go on Member
     p_ref_actor.SetActorValue("Confidence", p_prev_confidence)
-    ;p_ref_actor.SetActorValue("Aggression", p_prev_aggression)
     p_ref_actor.SetActorValue("Aggression", 0.0)
     p_ref_actor.SetActorValue("WaitingForPlayer", p_prev_waiting_for_player)
 endFunction
@@ -246,7 +245,7 @@ function p_Level()
     p_style_follower = style_member
     p_level_follower = level_player
 
-    float modifier = 0.67 - (level_player * 0.003)
+    float modifier = 0.67 - (level_player * 0.003); maybe use Math.Log to get a more fair equation for higher levels
     float max_attribute = 1000
     float min_attribute = 100
     float max_skill = 100

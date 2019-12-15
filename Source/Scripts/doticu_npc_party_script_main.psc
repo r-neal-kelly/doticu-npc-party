@@ -23,5 +23,5 @@ event OnInit()
     DATA.MODS.FOLLOWERS.f_Initialize(DATA)
     DATA.MODS.CONTROL.f_Initialize(DATA)
     
-    Debug.Notification("NPC Party has been installed.")
+    DATA.MODS.FUNCS.LOGS.Create_Note("Thank you for installing!")
 endEvent

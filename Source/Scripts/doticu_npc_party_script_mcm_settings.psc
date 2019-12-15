@@ -63,6 +63,7 @@ auto state p_STATE_SETTINGS
         p_MCM.AddEmptyOption()
         p_MCM.AddEmptyOption()
         p_MCM.AddEmptyOption()
+        ; add a clear notes/errors button
 
         p_MCM.AddHeaderOption(" Hotkeys ")
         p_MCM.AddEmptyOption()

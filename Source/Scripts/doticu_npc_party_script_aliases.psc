@@ -201,12 +201,12 @@ Alias[] function Get_Aliases(int idx_from = 0, int idx_to_ex = -1)
 
     Alias[] arr_aliases = Utility.CreateAliasArray(size_arr_aliases, none)
     
-    int idx = idx_from
-    int id_alias
-    while idx < idx_to_ex
-        id_alias = arr_ids_used[idx]
-        arr_aliases[idx] = GetNthAlias(id_alias)
-        idx += 1
+    int idx_orig = idx_from
+    int idx_copy = 0
+    while idx_orig < idx_to_ex
+        arr_aliases[idx_copy] = GetNthAlias(arr_ids_used[idx_orig])
+        idx_orig += 1
+        idx_copy += 1
     endWhile
 
     return arr_aliases
