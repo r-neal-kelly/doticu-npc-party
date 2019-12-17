@@ -17,6 +17,8 @@ endProperty
 
 ; Events
 event OnInit()
+    Utility.Wait(3)
+    
     DATA.f_Initialize()
     DATA.MODS.FUNCS.f_Initialize(DATA)
     DATA.MODS.MEMBERS.f_Initialize(DATA)

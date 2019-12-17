@@ -39,12 +39,24 @@ bool function Is_Dead(Actor ref_actor)
     return ref_actor.IsDead()
 endFunction
 
+bool function Is_Sleeping(Actor ref_actor)
+    ; 0 Not Sleeping
+    ; 2 Not Sleeping, Wants to Sleep
+    ; 3 Sleeping
+    ; 4 Sleeping, Wants to Wake
+    return ref_actor.GetSleepState() == 3
+endFunction
+
 bool function Is_Unique(Actor ref_actor)
     return ref_actor.GetActorBase().IsUnique()
 endFunction
 
 bool function Is_Generic(Actor ref_actor)
     return !ref_actor.GetActorBase().IsUnique()
+endFunction
+
+bool function Is_Vampire(Actor ref_actor)
+    return ref_actor.HasKeyword(p_CONSTS.KEYWORD_VAMPIRE)
 endFunction
 
 ActorBase function Get_Base(Actor ref_actor)
@@ -151,5 +163,18 @@ function Pacify(Actor ref_actor)
     ref_actor.SetActorValue("Aggression", 0)
     ref_actor.StopCombat()
     ref_actor.StopCombatAlarm()
+    ref_actor.EvaluatePackage()
+endFunction
+
+function Ragdoll(Actor ref_actor)
+    ; maybe should accept a timer, which can be done async or parallel
+    ref_actor.SetActorValue("Paralysis", 1)
+    p_CONSTS.ACTOR_PLAYER.PushActorAway(ref_actor, 0.0)
+endFunction
+
+function Unragdoll(Actor ref_actor)
+    while ref_actor.GetActorValue("Paralysis") != 0
+        ref_actor.SetActorValue("Paralysis", 0)
+    endwhile
     ref_actor.EvaluatePackage()
 endFunction

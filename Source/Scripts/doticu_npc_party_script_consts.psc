@@ -1,29 +1,33 @@
 Scriptname doticu_npc_party_script_consts extends Quest
 
 ; Private Constants
-Actor           p_ACTOR_PLAYER                          = none
-MiscObject      p_TOKEN_MEMBER                          = none
-MiscObject      p_TOKEN_SETTLER                         = none
-MiscObject      p_TOKEN_FOLLOWER                        = none
-MiscObject      p_TOKEN_FOLLOWER_SNEAK                  = none
-MiscObject      p_TOKEN_IMMOBILE                        = none
-MiscObject      p_TOKEN_CLONE                           = none
-MiscObject      p_TOKEN_BANISHED                        = none
-MiscObject      p_TOKEN_GENERIC                         = none
-MiscObject      p_TOKEN_THRALL                          = none
-MiscObject      p_TOKEN_GREETER                         = none
-MiscObject      p_TOKEN_COMBAT_DEFAULT                  = none
-MiscObject      p_TOKEN_COMBAT_WARRIOR                  = none
-MiscObject      p_TOKEN_COMBAT_MAGE                     = none
-MiscObject      p_TOKEN_COMBAT_ARCHER                   = none
-GlobalVariable  p_GLOBAL_PLAYER_FOLLOWER_COUNT          = none
-GlobalVariable  p_GLOBAL_FORCE_CLONE_UNIQUE             = none
-GlobalVariable  p_GLOBAL_FORCE_CLONE_GENERIC            = none
-GlobalVariable  p_GLOBAL_FORCE_UNCLONE_UNIQUE           = none
-GlobalVariable  p_GLOBAL_FORCE_UNCLONE_GENERIC          = none
-FormList        p_FORMLIST_MARKERS_SETTLER              = none
-Faction         p_FACTION_DLC1_THRALL                   = none
-Faction         p_FACTION_DLC1_VAMPIRE_FEED_NO_CRIME    = none
+Actor                       p_ACTOR_PLAYER                          = none
+MiscObject                  p_TOKEN_MEMBER                          = none
+MiscObject                  p_TOKEN_SETTLER                         = none
+MiscObject                  p_TOKEN_FOLLOWER                        = none
+MiscObject                  p_TOKEN_FOLLOWER_SNEAK                  = none
+MiscObject                  p_TOKEN_IMMOBILE                        = none
+MiscObject                  p_TOKEN_CLONE                           = none
+MiscObject                  p_TOKEN_BANISHED                        = none
+MiscObject                  p_TOKEN_GENERIC                         = none
+MiscObject                  p_TOKEN_THRALL                          = none
+MiscObject                  p_TOKEN_GREETER                         = none
+MiscObject                  p_TOKEN_COMBAT_DEFAULT                  = none
+MiscObject                  p_TOKEN_COMBAT_WARRIOR                  = none
+MiscObject                  p_TOKEN_COMBAT_MAGE                     = none
+MiscObject                  p_TOKEN_COMBAT_ARCHER                   = none
+GlobalVariable              p_GLOBAL_PLAYER_FOLLOWER_COUNT          = none
+GlobalVariable              p_GLOBAL_FORCE_CLONE_UNIQUE             = none
+GlobalVariable              p_GLOBAL_FORCE_CLONE_GENERIC            = none
+GlobalVariable              p_GLOBAL_FORCE_UNCLONE_UNIQUE           = none
+GlobalVariable              p_GLOBAL_FORCE_UNCLONE_GENERIC          = none
+FormList                    p_FORMLIST_MARKERS_SETTLER              = none
+Faction                     p_FACTION_DLC1_THRALL                   = none
+Faction                     p_FACTION_DLC1_VAMPIRE_FEED_NO_CRIME    = none
+Perk                        p_PERK_VAMPIRE_FEED                     = none
+Perk                        p_PERK_KISS_THRALL                      = none
+PlayerVampireQuestScript    p_SCRIPT_PLAYER_VAMPIRE_QUEST           = none
+Keyword                     p_KEYWORD_VAMPIRE                       = none
 
 ; Public Constants
 Actor property ACTOR_PLAYER
@@ -275,6 +279,50 @@ Faction property FACTION_DLC1_VAMPIRE_FEED_NO_CRIME
     function Set(Faction val)
         if p_FACTION_DLC1_VAMPIRE_FEED_NO_CRIME == none
             p_FACTION_DLC1_VAMPIRE_FEED_NO_CRIME = val
+        endIf
+    endFunction
+endProperty
+
+Perk property PERK_VAMPIRE_FEED
+    Perk function Get()
+        return p_PERK_VAMPIRE_FEED
+    endFunction
+    function Set(Perk val)
+        if p_PERK_VAMPIRE_FEED == none
+            p_PERK_VAMPIRE_FEED = val
+        endIf
+    endFunction
+endProperty
+
+Perk property PERK_KISS_THRALL
+    Perk function Get()
+        return p_PERK_KISS_THRALL
+    endFunction
+    function Set(Perk val)
+        if p_PERK_KISS_THRALL == none
+            p_PERK_KISS_THRALL = val
+        endIf
+    endFunction
+endProperty
+
+PlayerVampireQuestScript property SCRIPT_PLAYER_VAMPIRE_QUEST
+    PlayerVampireQuestScript function Get()
+        return p_SCRIPT_PLAYER_VAMPIRE_QUEST
+    endFunction
+    function Set(PlayerVampireQuestScript val)
+        if p_SCRIPT_PLAYER_VAMPIRE_QUEST == none
+            p_SCRIPT_PLAYER_VAMPIRE_QUEST = val
+        endIf
+    endFunction
+endProperty
+
+Keyword property KEYWORD_VAMPIRE
+    Keyword function Get()
+        return p_KEYWORD_VAMPIRE
+    endFunction
+    function Set(Keyword val)
+        if p_KEYWORD_VAMPIRE == none
+            p_KEYWORD_VAMPIRE = val
         endIf
     endFunction
 endProperty

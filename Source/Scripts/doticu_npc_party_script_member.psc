@@ -7,6 +7,7 @@ doticu_npc_party_script_vars        p_VARS      = none
 doticu_npc_party_script_actor       p_ACTOR2    = none
 doticu_npc_party_script_members     p_MEMBERS   = none
 doticu_npc_party_script_followers   p_FOLLOWERS = none
+doticu_npc_party_script_player      p_PLAYER    = none
 doticu_npc_party_script_settler     p_SETTLER   = none
 doticu_npc_party_script_immobile    p_IMMOBILE  = none
 int                                 p_ID_ALIAS  =   -1
@@ -27,6 +28,7 @@ function f_Initialize(doticu_npc_party_script_data DATA, int IDX_ALIAS)
     p_ACTOR2 = DATA.MODS.FUNCS.ACTOR2
     p_MEMBERS = DATA.MODS.MEMBERS
     p_FOLLOWERS = DATA.MODS.FOLLOWERS
+    p_PLAYER = DATA.MODS.CONTROL.PLAYER
     p_SETTLER = (self as ReferenceAlias) as doticu_npc_party_script_settler
     p_IMMOBILE = (self as ReferenceAlias) as doticu_npc_party_script_immobile
     p_ID_ALIAS = IDX_ALIAS
@@ -179,8 +181,10 @@ endFunction
 
 function p_Enthrall()
     ; also, we want to limit this to whether or not the pc is a vamp.
-    p_ref_actor.AddToFaction(p_CONSTS.FACTION_DLC1_THRALL)
+    
+    ;p_ref_actor.AddToFaction(p_CONSTS.FACTION_DLC1_THRALL)
     p_ref_actor.AddToFaction(p_CONSTS.FACTION_DLC1_VAMPIRE_FEED_NO_CRIME)
+
     ; we need to investigate further how to stop the quest that has these topics
     ; from disallowing any other dialogue with the enthralled npc.
 endFunction
