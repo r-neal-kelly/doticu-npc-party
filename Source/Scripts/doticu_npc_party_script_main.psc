@@ -15,15 +15,35 @@ doticu_npc_party_script_data property DATA
     endFunction
 endProperty
 
-; Events
-event OnInit()
-    Utility.Wait(3)
-    
+; Friend Methods
+function f_Register()
+    DATA.f_Register()
+    DATA.MODS.FUNCS.f_Register()
+    DATA.MODS.MEMBERS.f_Register()
+    DATA.MODS.FOLLOWERS.f_Register()
+    DATA.MODS.CONTROL.f_Register()
+
+    RegisterForModEvent("doticu_npc_party_player_load_game", "On_Load_Game")
+endFunction
+
+; Private Methods
+function p_Initialize()
     DATA.f_Initialize()
     DATA.MODS.FUNCS.f_Initialize(DATA)
     DATA.MODS.MEMBERS.f_Initialize(DATA)
     DATA.MODS.FOLLOWERS.f_Initialize(DATA)
     DATA.MODS.CONTROL.f_Initialize(DATA)
-    
+
+    f_Register()
+
     DATA.MODS.FUNCS.LOGS.Create_Note("Thank you for installing!")
+endFunction
+
+; Events
+event OnInit()
+    Utility.Wait(3)
+    p_Initialize()
+endEvent
+
+event On_Load_Game()
 endEvent

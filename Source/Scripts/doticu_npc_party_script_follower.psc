@@ -7,7 +7,7 @@ doticu_npc_party_script_vars        p_VARS          = none
 doticu_npc_party_script_actor       p_ACTOR2        = none
 doticu_npc_party_script_members     p_MEMBERS       = none
 doticu_npc_party_script_followers   p_FOLLOWERS     = none
-doticu_npc_party_script_queue_alias p_QUEUE         = none
+doticu_npc_party_script_alias_async p_ASYNC         = none
 Actor                               p_REF_PLAYER    = none
 int                                 p_ID_ALIAS      =   -1
 
@@ -57,9 +57,12 @@ function f_Initialize(doticu_npc_party_script_data DATA, int ID_ALIAS)
     p_ACTOR2 = DATA.MODS.FUNCS.ACTOR2
     p_MEMBERS = DATA.MODS.MEMBERS
     p_FOLLOWERS = DATA.MODS.FOLLOWERS
-    p_QUEUE = (self as ReferenceAlias) as doticu_npc_party_script_queue_alias
+    p_ASYNC = (self as ReferenceAlias) as doticu_npc_party_script_alias_async
     p_REF_PLAYER = DATA.CONSTS.ACTOR_PLAYER
     p_ID_ALIAS = ID_ALIAS
+endFunction
+
+function f_Register()
 endFunction
 
 int function f_Create()
@@ -118,7 +121,7 @@ int function f_Enforce()
 
     p_Token()
     p_Follow()
-    p_QUEUE.Enqueue("p_Level()")
+    p_ASYNC.Enqueue("p_Level()")
     if p_is_sneak
         p_Sneak()
     endIf
@@ -219,10 +222,9 @@ function p_Follow()
     p_ref_actor.SetActorValue("SpeedMult", 120.0)
     ; use p_VARS to auto set as essential, protected, or mortal (immortal instead of essential?)
 
-    ; will want to add to CurrentFollowerFaction?
-    ; or completely remove it from the npc?
-    ; or disable the vanilla follower dialogue?
-    ; should we make our own with hard links?
+    ; we still need to disable the vanilla follower dialogue. Probably just add an never true condition to the quest data tab.
+
+    ; we also need to figure out how to deal with traps
 endFunction
 
 function p_Unfollow()
@@ -233,6 +235,8 @@ function p_Unfollow()
 endFunction
 
 function p_Sneak()
+    ; if possible, I want this function to make the followers completely undetectable.
+    ; maybe an invisibility spell without the visual effect, if possible? not sure
 endFunction
 
 function p_Unsneak()
@@ -638,7 +642,7 @@ endFunction
 
 ; Events
 event OnUpdate()
-    string str_message = p_QUEUE.Get_Message()
+    string str_message = p_ASYNC.Dequeue()
 
     if str_message == "p_Level()"
         p_Level()

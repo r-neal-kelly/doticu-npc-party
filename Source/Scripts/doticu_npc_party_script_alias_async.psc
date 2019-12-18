@@ -1,4 +1,4 @@
-Scriptname doticu_npc_party_script_queue_alias extends ReferenceAlias
+Scriptname doticu_npc_party_script_alias_async extends ReferenceAlias
 
 ; Private Constants
 string[]    p_BUFFER        =  none
@@ -9,16 +9,18 @@ float       p_INTERVAL      =   0.5
 int         p_buffer_write  =     0
 int         p_buffer_read   =     0
 int         p_buffer_used   =     0
-bool        p_is_executing  = false
-string      p_str_message   =    ""
+bool        p_will_update   = false
 
 ; Friend Methods
 function f_Initialize(doticu_npc_party_script_data DATA, int ID_ALIAS)
     p_BUFFER = Utility.CreateStringArray(p_BUFFER_MAX, "")
 endFunction
 
-; Public Methods
-function Enqueue(string str_message)
+function f_Register()
+endFunction
+
+; Private Methods
+function p_Enqueue(string str_message)
     if Is_Full()
         return
     endIf
@@ -31,15 +33,11 @@ function Enqueue(string str_message)
     endIf
 
     p_buffer_used += 1
-
-    if !p_is_executing
-        RegisterForSingleUpdate(p_INTERVAL)
-    endIf
 endFunction
 
-string function Dequeue()
+string function p_Dequeue()
     if Is_Empty()
-        return 0
+        return ""
     endIf
 
     string str_message = p_BUFFER[p_buffer_read]
@@ -56,6 +54,27 @@ string function Dequeue()
     return str_message
 endFunction
 
+; Public Methods
+function Enqueue(string str_message)
+    p_Enqueue(str_message)
+
+    if !p_will_update
+        p_will_update = true
+        RegisterForSingleUpdate(p_INTERVAL)
+    endIf
+endFunction
+
+string function Dequeue()
+    if Is_Empty()
+        p_will_update = false
+        return ""
+    else 
+        p_will_update = true
+        RegisterForSingleUpdate(p_INTERVAL)
+        return p_Dequeue()
+    endIf
+endFunction
+
 bool function Is_Empty()
     return p_buffer_used == 0
 endFunction
@@ -63,19 +82,3 @@ endFunction
 bool function Is_Full()
     return p_buffer_used == p_buffer_max
 endFunction
-
-string function Get_Message()
-    return p_str_message
-endFunction
-
-; Events
-event OnUpdate()
-    if Is_Empty()
-        p_is_executing = false
-        p_str_message = ""
-    else
-        p_is_executing = true
-        p_str_message = Dequeue()
-        RegisterForSingleUpdate(p_INTERVAL)
-    endIf
-endEvent

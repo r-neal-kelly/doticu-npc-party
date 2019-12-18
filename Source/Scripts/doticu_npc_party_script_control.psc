@@ -43,3 +43,7 @@ function f_Initialize(doticu_npc_party_script_data DATA)
     p_MCM.f_Initialize(DATA)
     p_PLAYER.f_Initialize(DATA)
 endFunction
+
+function f_Register()
+    p_KEYS.f_Register()
+endFunction

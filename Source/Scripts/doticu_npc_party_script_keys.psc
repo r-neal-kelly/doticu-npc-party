@@ -16,12 +16,19 @@ function f_Initialize(doticu_npc_party_script_data DATA)
     Update_Keys()
 endFunction
 
+function f_Register()
+    RegisterForModEvent("doticu_npc_party_player_load_game", "On_Load_Game")
+endFunction
+
 ; Public Methods
 function Update_Keys()
     UnregisterForAllKeys()
 
     if p_VARS.key_open_mcm > -1
         RegisterForKey(p_VARS.key_open_mcm)
+    endIf
+    if p_VARS.key_resurrect > -1
+        RegisterForKey(p_VARS.key_resurrect)
     endIf
     if p_VARS.key_member > -1
         RegisterForKey(p_VARS.key_member)
@@ -80,11 +87,17 @@ function Update_Keys()
 endFunction
 
 ; Events
+event On_Load_Game()
+    Update_Keys()
+endEvent
+
 event OnKeyDown(int code_key)
     Actor ref_actor = Game.GetCurrentCrosshairRef() as Actor
 
     if code_key == p_VARS.key_open_mcm
         p_FUNCS.Open_MCM()
+    elseIf code_key == p_VARS.key_resurrect
+        p_COMMANDS.Resurrect(ref_actor, true)
     elseIf code_key == p_VARS.key_member
         p_COMMANDS.Member(ref_actor)
     elseIf code_key == p_VARS.key_unmember

@@ -22,6 +22,7 @@ GlobalVariable              p_GLOBAL_FORCE_CLONE_GENERIC            = none
 GlobalVariable              p_GLOBAL_FORCE_UNCLONE_UNIQUE           = none
 GlobalVariable              p_GLOBAL_FORCE_UNCLONE_GENERIC          = none
 FormList                    p_FORMLIST_MARKERS_SETTLER              = none
+Faction                     p_FACTION_MEMBER                        = none
 Faction                     p_FACTION_DLC1_THRALL                   = none
 Faction                     p_FACTION_DLC1_VAMPIRE_FEED_NO_CRIME    = none
 Perk                        p_PERK_VAMPIRE_FEED                     = none
@@ -257,6 +258,17 @@ Formlist property FORMLIST_MARKERS_SETTLER
     function Set(Formlist val)
         if p_FORMLIST_MARKERS_SETTLER == none
             p_FORMLIST_MARKERS_SETTLER = val
+        endIf
+    endFunction
+endProperty
+
+Faction property FACTION_MEMBER
+    Faction function Get()
+        return p_FACTION_MEMBER
+    endFunction
+    function Set(Faction val)
+        if p_FACTION_MEMBER == none
+            p_FACTION_MEMBER = val
         endIf
     endFunction
 endProperty

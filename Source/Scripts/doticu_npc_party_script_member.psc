@@ -63,6 +63,8 @@ int function f_Create(bool is_a_clone)
         p_is_generic = false
     endIf
     p_code_combat = p_VARS.auto_style
+
+    p_Backup()
     
     code_return = Enforce()
     if code_return < 0
@@ -104,6 +106,7 @@ int function f_Destroy()
     endIf
     p_Unmember()
     p_Untoken()
+    p_Restore()
 
     p_code_combat = -1
     p_is_thrall = false
@@ -116,6 +119,12 @@ int function f_Destroy()
 endFunction
 
 ; Private Methods
+function p_Backup()
+endFunction
+
+function p_Restore()
+endFunction
+
 function p_Token()
     p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_MEMBER, p_ID_ALIAS + 1)
 
@@ -172,26 +181,21 @@ function p_Untoken()
 endFunction
 
 function p_Member()
+    p_ref_actor.AddToFaction(p_CONSTS.FACTION_MEMBER)
     p_ref_actor.SetActorValue("Aggression", 0)
 endFunction
 
 function p_Unmember()
     p_ref_actor.SetActorValue("Aggression", 0)
+    p_ref_actor.RemoveFromFaction(p_CONSTS.FACTION_MEMBER)
 endFunction
 
 function p_Enthrall()
-    ; also, we want to limit this to whether or not the pc is a vamp.
-    
-    ;p_ref_actor.AddToFaction(p_CONSTS.FACTION_DLC1_THRALL)
     p_ref_actor.AddToFaction(p_CONSTS.FACTION_DLC1_VAMPIRE_FEED_NO_CRIME)
-
-    ; we need to investigate further how to stop the quest that has these topics
-    ; from disallowing any other dialogue with the enthralled npc.
 endFunction
 
 function p_Unthrall()
     p_ref_actor.RemoveFromFaction(p_CONSTS.FACTION_DLC1_VAMPIRE_FEED_NO_CRIME)
-    p_ref_actor.RemoveFromFaction(p_CONSTS.FACTION_DLC1_THRALL)
 endFunction
 
 ; Public Methods
@@ -411,6 +415,10 @@ int function Enthrall()
         return p_CODES.ISNT_MEMBER
     endIf
 
+    if !p_ACTOR2.Is_Vampire(p_CONSTS.ACTOR_PLAYER)
+        return p_CODES.ISNT_VAMPIRE
+    endIf
+
     if p_is_thrall
         return p_CODES.IS_THRALL
     endIf
@@ -432,11 +440,40 @@ int function Unthrall()
         return p_CODES.ISNT_MEMBER
     endIf
 
+    if !p_ACTOR2.Is_Vampire(p_CONSTS.ACTOR_PLAYER)
+        return p_CODES.ISNT_VAMPIRE
+    endIf
+
     if !p_is_thrall
         return p_CODES.ISNT_THRALL
     endIf
 
     p_is_thrall = false
+
+    code_return = Enforce()
+    if code_return < 0
+        return code_return
+    endIf
+
+    return p_CODES.SUCCESS
+endFunction
+
+int function Resurrect()
+    int code_return
+
+    if !Exists()
+        return p_CODES.ISNT_MEMBER
+    endIf
+
+    if p_ACTOR2.Is_Alive(p_ref_actor)
+        return p_CODES.IS_ALIVE
+    endIf
+
+    p_ACTOR2.Resurrect(p_ref_actor)
+
+    if p_ACTOR2.Is_Dead(p_ref_actor)
+        return p_CODES.CANT_RESURRECT
+    endIf
 
     code_return = Enforce()
     if code_return < 0

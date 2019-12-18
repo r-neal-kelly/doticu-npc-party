@@ -4,7 +4,7 @@ A follower framework for The Elder Scrolls V: Skyrim Special Edition
 ## Features:
 - the power to enlist any humaniod npc (other creatures may come later)
 - the ability to clone any humaniod npc (to avoid conflicts with other scripts)
-- every member can be made to sandbox in another part of the game world
+- every member can be made to settle in another part of the game world
 - any member can be made completely immobile, so they never go anywhere
 - a comprehensive dialogue menu to manage each individual member
 - an exhaustive MCM menu to manage all members and settings

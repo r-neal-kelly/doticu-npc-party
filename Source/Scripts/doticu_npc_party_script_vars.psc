@@ -13,7 +13,7 @@ bool p_is_mcm_open              = false
 
 ; Public Variables
 int property key_open_mcm                   =  -1 auto hidden;
-int property key_resurrect                  =  -1 auto hidden;
+int property key_resurrect                  = 200 auto hidden; Up Arrow
 int property key_member                     =  -1 auto hidden;
 int property key_unmember                   =  -1 auto hidden;
 int property key_clone                      =  -1 auto hidden;

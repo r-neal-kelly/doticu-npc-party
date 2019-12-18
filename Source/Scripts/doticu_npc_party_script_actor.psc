@@ -35,6 +35,10 @@ bool function p_Has_Same_Head(Actor ref_actor_1, Actor ref_actor_2)
 endFunction
 
 ; Public Methods
+bool function Is_Alive(Actor ref_actor)
+    return !ref_actor.IsDead()
+endFunction
+
 bool function Is_Dead(Actor ref_actor)
     return ref_actor.IsDead()
 endFunction

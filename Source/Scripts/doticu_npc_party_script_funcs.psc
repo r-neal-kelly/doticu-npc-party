@@ -26,6 +26,9 @@ function f_Initialize(doticu_npc_party_script_data DATA)
     p_LOGS.f_Initialize(DATA)
 endFunction
 
+function f_Register()
+endFunction
+
 ; Public Methods
 function Close_Menus()
     int key_menu = Input.GetMappedKey("Tween Menu")

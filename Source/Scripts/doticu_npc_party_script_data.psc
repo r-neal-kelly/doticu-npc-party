@@ -40,3 +40,6 @@ function f_Initialize()
 
     p_VARS.f_Initialize(self)
 endFunction
+
+function f_Register()
+endFunction

@@ -82,10 +82,28 @@ function p_Notify_On_Access(int code_return, string str_name)
         p_LOGS.Create_Note(str_name + " can't be revived, and so can't be accessed as a new member.")
     elseIf code_return == p_CODES.ISNT_ACTOR
         p_LOGS.Create_Note("That can't become a member and be accessed.")
-    elseIf code_return == p_CODES.ISNT_MEMBER
+    elseIf code_return == p_CODES.ISNT_MEMBER || code_return == p_CODES.HASNT_MEMBER
         p_LOGS.Create_Note(str_name + " isn't a member, and so can't be accessed.")
     else
         p_LOGS.Create_Error("It's unknown why " + str_name + " can't be accessed.")
+    endIf
+endFunction
+
+function p_Notify_On_Resurrect(int code_return, string str_name)
+    if code_return == p_CODES.SUCCESS
+        p_LOGS.Create_Note(str_name + " has been resurrected.")
+    elseIf code_return == p_CODES.HASNT_SPACE_MEMBER
+        p_LOGS.Create_Note("No room for " + str_name + " to be a resurrected new member.")
+    elseIf code_return == p_CODES.CANT_RESURRECT
+        p_LOGS.Create_Note(str_name + " can't be resurrected, and so can't be a new member.")
+    elseIf code_return == p_CODES.IS_ALIVE
+        p_LOGS.Create_Note(str_name + " is already alive.")
+    elseIf code_return == p_CODES.ISNT_ACTOR
+        p_LOGS.Create_Note("That can't become a resurrected new member.")
+    elseIf code_return == p_CODES.ISNT_MEMBER || code_return == p_CODES.HASNT_MEMBER
+        p_LOGS.Create_Note(str_name + " isn't a member, and so can't be resurrected.")
+    else
+        p_LOGS.Create_Error("It's unknown why " + str_name + " can't be resurrected.")
     endIf
 endFunction
 
@@ -186,6 +204,8 @@ function p_Notify_On_Enthrall(int code_return, string str_name)
         p_LOGS.Create_Note("No room for " + str_name + " to become an enthralled member.")
     elseIf code_return == p_CODES.CANT_RESURRECT
         p_LOGS.Create_Note(str_name + " can't be revived, and so can't be enthralled.")
+    elseIf code_return == p_CODES.ISNT_VAMPIRE
+        p_LOGS.Create_Note("Only a vampire can enthrall a member.")
     elseIf code_return == p_CODES.ISNT_ACTOR
         p_LOGS.Create_Note("That can't become an enthralled member.")
     elseIf code_return == p_CODES.ISNT_MEMBER
@@ -204,6 +224,8 @@ function p_Notify_On_Unthrall(int code_return, string str_name)
         p_LOGS.Create_Note("No room for " + str_name + " to become an unthralled member.")
     elseIf code_return == p_CODES.CANT_RESURRECT
         p_LOGS.Create_Note(str_name + " can't be revived, and so can't be unthralled.")
+    elseIf code_return == p_CODES.ISNT_VAMPIRE
+        p_LOGS.Create_Note("Only a vampire can unthrall a member.")
     elseIf code_return == p_CODES.ISNT_ACTOR
         p_LOGS.Create_Note("That can't become an unthralled member.")
     elseIf code_return == p_CODES.ISNT_MEMBER
@@ -348,16 +370,6 @@ function Unmember(Actor ref_actor)
         return
     endIf
 
-    if p_MEMBERS.Get_Member(ref_actor).Is_Clone()
-        if p_VARS.force_unclone_unique && p_ACTOR2.Is_Unique(ref_actor)
-            Unclone(ref_actor)
-            return
-        elseIf p_VARS.force_unclone_generic && p_ACTOR2.Is_Generic(ref_actor)
-            Unclone(ref_actor)
-            return
-        endIf
-    endIf
-
     int code_return
     string str_name = p_ACTOR2.Get_Name(ref_actor)
 
@@ -401,6 +413,24 @@ function Access(Actor ref_actor, bool do_create)
     endIf
 
     p_Notify_On_Access(ref_member.Access(), str_name)
+endFunction
+
+function Resurrect(Actor ref_actor, bool do_create)
+    int code_return
+    string str_name = p_ACTOR2.Get_Name(ref_actor)
+    
+    if do_create && !p_Members.Has_Member(ref_actor)
+        p_Notify_On_Resurrect(p_MEMBERS.Create_Member(ref_actor), str_name)
+        return
+    endIf
+
+    doticu_npc_party_script_member ref_member = p_MEMBERS.Get_Member(ref_actor)
+    if !ref_member
+        p_Notify_On_Resurrect(p_CODES.HASNT_MEMBER, str_name)
+        return
+    endIf
+
+    p_Notify_On_Resurrect(ref_member.Resurrect(), str_name)
 endFunction
 
 function Settle(Actor ref_actor, bool do_create)

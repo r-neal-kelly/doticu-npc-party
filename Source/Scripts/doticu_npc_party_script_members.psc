@@ -31,6 +31,9 @@ function f_Initialize(doticu_npc_party_script_data DATA)
     endWhile
 endFunction
 
+function f_Register()
+endFunction
+
 ; Private Methods
 int function p_Get_Alias_ID(Actor ref_actor)
     return ref_actor.GetItemCount(CONSTS.TOKEN_MEMBER) - 1
