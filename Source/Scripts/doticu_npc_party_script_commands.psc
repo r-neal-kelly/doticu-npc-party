@@ -1,6 +1,7 @@
 Scriptname doticu_npc_party_script_commands extends Quest
 
 ; Private Constants
+doticu_npc_party_script_consts      p_CONSTS    = none
 doticu_npc_party_script_codes       p_CODES     = none
 doticu_npc_party_script_vars        p_VARS      = none
 doticu_npc_party_script_logs        p_LOGS      = none
@@ -10,6 +11,7 @@ doticu_npc_party_script_followers   p_FOLLOWERS = none
 
 ; Friend Methods
 function f_Initialize(doticu_npc_party_script_data DATA)
+    p_CONSTS = DATA.CONSTS
     p_CODES = DATA.CODES
     p_VARS = DATA.VARS
     p_LOGS = DATA.MODS.FUNCS.LOGS
@@ -266,6 +268,36 @@ function p_Notify_On_Style(int code_return, string str_name, string str_style)
         p_LOGS.Create_Note(str_name + " is already " + str_style + ".")
     else
         p_LOGS.Create_Error("It's unknown why " + str_name + " can't be " + str_style + ".")
+    endIf
+endFunction
+
+function p_Notify_On_Vitalize(int code_return, string str_name, string str_vitality)
+    if str_vitality == "essential" || str_vitality == "invulnerable"
+        str_vitality = "an " + str_vitality + " member"
+    else
+        str_vitality = "a " + str_vitality + " member"
+    endIf
+
+    if code_return == p_CODES.SUCCESS
+        p_LOGS.Create_Note(str_name + " is now " + str_vitality + ".")
+    elseIf code_return == p_CODES.HASNT_SPACE_MEMBER
+        p_LOGS.Create_Note("No room for " + str_name + " to become " + str_vitality + ".")
+    elseIf code_return == p_CODES.CANT_RESURRECT
+        p_LOGS.Create_Note(str_name + " can't be revived, and so can't become " + str_vitality + ".")
+    elseIf code_return == p_CODES.ISNT_ACTOR
+        p_LOGS.Create_Note("That can't become " + str_vitality + ".")
+    elseIf code_return == p_CODES.ISNT_MEMBER
+        p_LOGS.Create_Note(str_name + " isn't a member, and so can't be " + str_vitality + ".")
+    elseIf code_return == p_CODES.IS_DEFAULT
+        p_LOGS.Create_Note(str_name + " is already " + str_vitality + ".")
+    elseIf code_return == p_CODES.IS_WARRIOR
+        p_LOGS.Create_Note(str_name + " is already " + str_vitality + ".")
+    elseIf code_return == p_CODES.IS_MAGE
+        p_LOGS.Create_Note(str_name + " is already " + str_vitality + ".")
+    elseIf code_return == p_CODES.IS_ARCHER
+        p_LOGS.Create_Note(str_name + " is already " + str_vitality + ".")
+    else
+        p_LOGS.Create_Error("It's unknown why " + str_name + " can't be " + str_vitality + ".")
     endIf
 endFunction
 
@@ -594,7 +626,7 @@ function Unthrall(Actor ref_actor, bool do_create)
     p_Notify_On_Unthrall(ref_member.Unthrall(), str_name)
 endFunction
 
-function Style(Actor ref_actor, string str_style, bool do_create)
+function Style(Actor ref_actor, string str_style, bool do_create); may want int code_style instead
     int code_return
     string str_name = p_ACTOR2.Get_Name(ref_actor)
     if str_style != "warrior" && str_style != "mage" && str_style != "archer"
@@ -623,6 +655,38 @@ function Style(Actor ref_actor, string str_style, bool do_create)
         p_Notify_On_Style(ref_member.Style_Archer(), str_name, str_style)
     else
         p_Notify_On_Style(ref_member.Style_Default(), str_name, str_style)
+    endIf
+endFunction
+
+function Vitalize(Actor ref_actor, string str_vitality, bool do_create); may want int code_vitality instead
+    int code_return
+    string str_name = p_ACTOR2.Get_Name(ref_actor)
+    if str_vitality != "protected" && str_vitality != "essential" && str_vitality != "invulnerable"
+        str_vitality = "mortal"
+    endIf
+
+    if do_create && !p_Members.Has_Member(ref_actor)
+        code_return = p_MEMBERS.Create_Member(ref_actor)
+        if code_return < 0
+            p_Notify_On_Vitalize(code_return, str_name, str_vitality)
+            return
+        endIf
+    endIf
+
+    doticu_npc_party_script_member ref_member = p_MEMBERS.Get_Member(ref_actor)
+    if !ref_member
+        p_Notify_On_Vitalize(p_CODES.HASNT_MEMBER, str_name, str_vitality)
+        return
+    endIf
+
+    if str_vitality == "mortal"
+        p_Notify_On_Vitalize(ref_member.Vitalize_Mortal(), str_name, str_vitality)
+    elseIf str_vitality == "protected"
+        p_Notify_On_Vitalize(ref_member.Vitalize_Protected(), str_name, str_vitality)
+    elseIf str_vitality == "essential"
+        p_Notify_On_Vitalize(ref_member.Vitalize_Essential(), str_name, str_vitality)
+    elseIf str_vitality == "invulnerable"
+        p_Notify_On_Vitalize(ref_member.Vitalize_Invulnerable(), str_name, str_vitality)
     endIf
 endFunction
 

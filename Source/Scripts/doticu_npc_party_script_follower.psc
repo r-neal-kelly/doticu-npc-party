@@ -7,7 +7,8 @@ doticu_npc_party_script_vars        p_VARS          = none
 doticu_npc_party_script_actor       p_ACTOR2        = none
 doticu_npc_party_script_members     p_MEMBERS       = none
 doticu_npc_party_script_followers   p_FOLLOWERS     = none
-doticu_npc_party_script_alias_async p_ASYNC         = none
+doticu_npc_party_script_control     p_CONTROL       = none
+doticu_npc_party_script_async_alias p_ASYNC         = none
 Actor                               p_REF_PLAYER    = none
 int                                 p_ID_ALIAS      =   -1
 
@@ -57,9 +58,12 @@ function f_Initialize(doticu_npc_party_script_data DATA, int ID_ALIAS)
     p_ACTOR2 = DATA.MODS.FUNCS.ACTOR2
     p_MEMBERS = DATA.MODS.MEMBERS
     p_FOLLOWERS = DATA.MODS.FOLLOWERS
-    p_ASYNC = (self as ReferenceAlias) as doticu_npc_party_script_alias_async
+    p_CONTROL = DATA.MODS.CONTROL
+    p_ASYNC = (self as ReferenceAlias) as doticu_npc_party_script_async_alias
     p_REF_PLAYER = DATA.CONSTS.ACTOR_PLAYER
     p_ID_ALIAS = ID_ALIAS
+
+    p_ASYNC.f_Initialize(DATA)
 endFunction
 
 function f_Register()
@@ -83,6 +87,7 @@ int function f_Create()
     p_style_follower = p_ref_member.Get_Style()
 
     p_Backup()
+
     p_Token()
     ; f_Enforce() will handle the rest
 
@@ -100,6 +105,7 @@ int function f_Destroy()
     p_Unlevel()
     p_Unfollow()
     p_Untoken()
+    
     p_Restore()
 
     p_is_sneak = false
@@ -130,7 +136,7 @@ int function f_Enforce()
 endFunction
 
 ; Private Methods
-function p_Backup()
+function p_Backup(); this may need to be async
     p_prev_relationship_rank = p_ref_actor.GetRelationshipRank(p_CONSTS.ACTOR_PLAYER)
     p_prev_waiting_for_player = p_ref_actor.GetBaseActorValue("WaitingForPlayer")
     p_prev_aggression = p_ref_actor.GetBaseActorValue("Aggression")
@@ -628,6 +634,10 @@ bool function Is_Styled_Archer()
     return p_ref_member.Is_Styled_Archer()
 endFunction
 
+bool function Is_Dead()
+    return p_ACTOR2.Is_Dead(p_ref_actor)
+endFunction
+
 function Summon(int distance = 60, int angle = 0)
     p_ref_member.Summon(distance, angle)
 endFunction
@@ -640,12 +650,27 @@ function Summon_Behind()
     p_ref_member.Summon_Behind()
 endFunction
 
+function Resurrect()
+    p_ref_member.Resurrect()
+endFunction
+
 ; Events
 event OnUpdate()
     string str_message = p_ASYNC.Dequeue()
 
     if str_message == "p_Level()"
         p_Level()
+    endIf
+endEvent
+
+event OnCombatStateChanged(Actor ref_target, int code_combat)
+    if code_combat == p_CODES.COMBAT_NO
+        if !Is_Dead()
+            p_CONTROL.PLAYER.f_End_Combat()
+        endIf
+    elseIf code_combat == p_CODES.COMBAT_YES
+        p_CONTROL.PLAYER.f_Begin_Combat()
+    elseIf code_combat == p_CODES.COMBAT_SEARCHING
     endIf
 endEvent
 

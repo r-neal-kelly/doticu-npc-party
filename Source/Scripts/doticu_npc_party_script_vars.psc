@@ -4,12 +4,14 @@ Scriptname doticu_npc_party_script_vars extends Quest
 doticu_npc_party_script_consts p_CONSTS = none
 
 ; Private Variables
-bool p_force_clone_unique       = false
-bool p_force_clone_generic      = false
-bool p_force_unclone_unique     = false
-bool p_force_unclone_generic    = false
-int  p_auto_style               =    -1
-bool p_is_mcm_open              = false
+bool    p_force_clone_unique        = false
+bool    p_force_clone_generic       = false
+bool    p_force_unclone_unique      = false
+bool    p_force_unclone_generic     = false
+bool    p_auto_resurrect            = false
+int     p_auto_style                =    -1; IS_DEFAULT, IS_WARRIOR, IS_MAGE, IS_ARCHER
+int     p_auto_vitality             =    -1; IS_MORTAL, IS_PROTECTED, IS_ESSENTIAL, IS_INVULNERABLE
+bool    p_is_mcm_open               = false
 
 ; Public Variables
 int property key_open_mcm                   =  -1 auto hidden;
@@ -101,12 +103,30 @@ bool property force_unclone_generic hidden
     endFunction
 endProperty
 
+bool property auto_resurrect hidden
+    bool function Get()
+        return p_auto_resurrect
+    endFunction
+    function Set(bool val)
+        p_auto_resurrect = val
+    endFunction
+endProperty
+
 int property auto_style hidden
     int function Get()
         return p_auto_style
     endFunction
     function Set(int val)
         p_auto_style = val
+    endFunction
+endProperty
+
+int property auto_vitality hidden
+    int function Get()
+        return p_auto_vitality
+    endFunction
+    function Set(int val)
+        p_auto_vitality = val
     endFunction
 endProperty
 
@@ -127,5 +147,7 @@ function f_Initialize(doticu_npc_party_script_data DATA)
     force_clone_generic = true
     force_unclone_unique = false
     force_unclone_generic = true
+    auto_resurrect = true
     auto_style = DATA.CODES.IS_DEFAULT
+    auto_vitality = DATA.CODES.IS_MORTAL
 endFunction

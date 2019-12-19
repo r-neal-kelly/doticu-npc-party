@@ -22,7 +22,6 @@ function f_Initialize(doticu_npc_party_script_data DATA)
     ReferenceAlias ref_alias = none
     while idx_alias < max_aliases
         ref_alias = GetNthAlias(idx_alias) as ReferenceAlias
-        (ref_alias as doticu_npc_party_script_alias_async).f_Initialize(DATA, idx_alias)
         (ref_alias as doticu_npc_party_script_follower).f_Initialize(DATA, idx_alias)
         idx_alias += 1
     endWhile
@@ -34,7 +33,7 @@ function f_Register()
     ReferenceAlias ref_alias = none
     while idx_alias < max_aliases
         ref_alias = GetNthAlias(idx_alias) as ReferenceAlias
-        (ref_alias as doticu_npc_party_script_alias_async).f_Register()
+        (ref_alias as doticu_npc_party_script_async_alias).f_Register()
         (ref_alias as doticu_npc_party_script_follower).f_Register()
         idx_alias += 1
     endWhile
@@ -149,7 +148,7 @@ function Summon()
             angle_even += 12
             ref_follower.Summon(120, angle_even)
         else
-            angle_odd += 12
+            angle_odd -= 12
             ref_follower.Summon(120, angle_odd)
         endIf
         idx_arr += 1
@@ -170,7 +169,7 @@ function Summon_Mobile()
                 angle_even += 12
                 ref_follower.Summon(120, angle_even)
             else
-                angle_odd += 12
+                angle_odd -= 12
                 ref_follower.Summon(120, angle_odd)
             endIf
             do_even = !do_even
@@ -193,7 +192,7 @@ function Summon_Immobile()
                 angle_even += 12
                 ref_follower.Summon(120, angle_even)
             else
-                angle_odd += 12
+                angle_odd -= 12
                 ref_follower.Summon(120, angle_odd)
             endIf
             do_even = !do_even
@@ -290,6 +289,19 @@ function Unmember()
     while idx_arr < arr_aliases.length
         ref_follower = arr_aliases[idx_arr] as doticu_npc_party_script_follower
         ref_follower.Unmember()
+        idx_arr += 1
+    endWhile
+endFunction
+
+function Resurrect()
+    doticu_npc_party_script_follower ref_follower
+    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    int idx_arr = 0
+    while idx_arr < arr_aliases.length
+        ref_follower = arr_aliases[idx_arr] as doticu_npc_party_script_follower
+        if ref_follower.Is_Dead()
+            ref_follower.Resurrect()
+        endIf
         idx_arr += 1
     endWhile
 endFunction

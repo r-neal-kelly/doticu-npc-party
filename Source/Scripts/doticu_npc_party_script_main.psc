@@ -23,7 +23,7 @@ function f_Register()
     DATA.MODS.FOLLOWERS.f_Register()
     DATA.MODS.CONTROL.f_Register()
 
-    RegisterForModEvent("doticu_npc_party_player_load_game", "On_Load_Game")
+    RegisterForModEvent("doticu_npc_party_player_load_game", "On_Player_Load_Game")
 endFunction
 
 ; Private Methods
@@ -45,5 +45,5 @@ event OnInit()
     p_Initialize()
 endEvent
 
-event On_Load_Game()
+event On_Player_Load_Game()
 endEvent

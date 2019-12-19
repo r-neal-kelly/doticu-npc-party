@@ -18,7 +18,11 @@ Actor   p_ref_actor     =  none
 bool    p_is_clone      = false
 bool    p_is_generic    = false
 bool    p_is_thrall     = false
-int     p_code_combat   =    -1
+int     p_code_style    =    -1
+int     p_code_vitality =    -1
+
+int     p_prev_vitality =    -1
+; maybe should backup factions and restore them also.
 
 ; Friend Methods
 function f_Initialize(doticu_npc_party_script_data DATA, int IDX_ALIAS)
@@ -62,7 +66,8 @@ int function f_Create(bool is_a_clone)
     else
         p_is_generic = false
     endIf
-    p_code_combat = p_VARS.auto_style
+    p_code_style = p_VARS.auto_style
+    p_code_vitality = p_VARS.auto_vitality
 
     p_Backup()
     
@@ -101,14 +106,18 @@ int function f_Destroy()
         endIf
     endIf
 
+    p_Unvitalize()
+    p_Unstyle()
     if p_is_thrall
         p_Unthrall()
     endIf
     p_Unmember()
     p_Untoken()
+
     p_Restore()
 
-    p_code_combat = -1
+    p_code_vitality = -1
+    p_code_style = -1
     p_is_thrall = false
     p_is_generic = false
     p_is_clone = false
@@ -120,9 +129,11 @@ endFunction
 
 ; Private Methods
 function p_Backup()
+    p_prev_vitality = p_ACTOR2.Get_Vitality(p_ref_actor)
 endFunction
 
 function p_Restore()
+    p_ACTOR2.Vitalize(p_ref_actor, p_prev_vitality)
 endFunction
 
 function p_Token()
@@ -146,34 +157,60 @@ function p_Token()
         p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_THRALL)
     endIf
 
-    if p_code_combat == p_CODES.IS_WARRIOR
-        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_COMBAT_WARRIOR)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_DEFAULT)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_MAGE)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_ARCHER)
-    elseIf p_code_combat == p_CODES.IS_MAGE
-        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_COMBAT_MAGE)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_DEFAULT)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_WARRIOR)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_ARCHER)
-    elseIf p_code_combat == p_CODES.IS_ARCHER
-        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_COMBAT_ARCHER)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_DEFAULT)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_WARRIOR)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_MAGE)
+    if p_code_style == p_CODES.IS_WARRIOR
+        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_STYLE_WARRIOR)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_DEFAULT)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_MAGE)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_ARCHER)
+    elseIf p_code_style == p_CODES.IS_MAGE
+        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_STYLE_MAGE)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_DEFAULT)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_WARRIOR)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_ARCHER)
+    elseIf p_code_style == p_CODES.IS_ARCHER
+        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_STYLE_ARCHER)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_DEFAULT)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_WARRIOR)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_MAGE)
     else
-        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_COMBAT_DEFAULT)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_WARRIOR)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_MAGE)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_ARCHER)
+        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_STYLE_DEFAULT)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_WARRIOR)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_MAGE)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_ARCHER)
+    endIf
+
+    if p_code_vitality == p_CODES.IS_MORTAL
+        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_VITALITY_MORTAL)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_PROTECTED)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_ESSENTIAL)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_INVULNERABLE)
+    elseIf p_code_vitality == p_CODES.IS_PROTECTED
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_MORTAL)
+        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_VITALITY_PROTECTED)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_ESSENTIAL)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_INVULNERABLE)
+    elseIf p_code_vitality == p_CODES.IS_ESSENTIAL
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_MORTAL)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_PROTECTED)
+        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_VITALITY_ESSENTIAL)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_INVULNERABLE)
+    elseIf p_code_vitality == p_CODES.IS_INVULNERABLE
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_MORTAL)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_PROTECTED)
+        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_ESSENTIAL)
+        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_VITALITY_INVULNERABLE)
     endIf
 endFunction
 
 function p_Untoken()
-    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_ARCHER)
-    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_MAGE)
-    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_WARRIOR)
-    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_COMBAT_DEFAULT)
+    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_INVULNERABLE)
+    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_ESSENTIAL)
+    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_PROTECTED)
+    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_MORTAL)
+    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_ARCHER)
+    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_MAGE)
+    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_WARRIOR)
+    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_DEFAULT)
     p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_THRALL)
     p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_GENERIC)
     p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_CLONE)
@@ -198,6 +235,19 @@ function p_Unthrall()
     p_ref_actor.RemoveFromFaction(p_CONSTS.FACTION_DLC1_VAMPIRE_FEED_NO_CRIME)
 endFunction
 
+function p_Style()
+endFunction
+
+function p_Unstyle()
+endFunction
+
+function p_Vitalize()
+    p_ACTOR2.Vitalize(p_ref_actor, p_code_vitality)
+endFunction
+
+function p_Unvitalize()
+endFunction
+
 ; Public Methods
 int function Enforce()
     int code_return
@@ -211,6 +261,8 @@ int function Enforce()
     if p_is_thrall
         p_Enthrall()
     endIf
+    p_Style()
+    p_Vitalize()
 
     if p_SETTLER.Exists()
         code_return = p_SETTLER.f_Enforce()
@@ -268,7 +320,15 @@ int function Get_Style()
     if !Exists()
         return -1
     else
-        return p_code_combat
+        return p_code_style
+    endIf
+endFunction
+
+int function Get_Vitality()
+    if !Exists()
+        return -1
+    else
+        return p_code_vitality
     endIf
 endFunction
 
@@ -483,6 +543,18 @@ int function Resurrect()
     return p_CODES.SUCCESS
 endFunction
 
+int function Style(int code_style)
+    if code_style == p_CODES.IS_DEFAULT
+        return Style_Default()
+    elseIf code_style == p_CODES.IS_WARRIOR
+        return Style_Warrior()
+    elseIf code_style == p_CODES.IS_MAGE
+        return Style_Mage()
+    elseIf code_style == p_CODES.IS_ARCHER
+        return Style_Archer()
+    endIf
+endFunction
+
 int function Style_Default()
     int code_return
 
@@ -490,11 +562,11 @@ int function Style_Default()
         return p_CODES.ISNT_MEMBER
     endIf
 
-    if p_code_combat == p_CODES.IS_DEFAULT
+    if p_code_style == p_CODES.IS_DEFAULT
         return p_CODES.IS_DEFAULT
     endIf
 
-    p_code_combat = p_CODES.IS_DEFAULT
+    p_code_style = p_CODES.IS_DEFAULT
 
     code_return = Enforce()
     if code_return < 0
@@ -511,11 +583,11 @@ int function Style_Warrior()
         return p_CODES.ISNT_MEMBER
     endIf
 
-    if p_code_combat == p_CODES.IS_WARRIOR
+    if p_code_style == p_CODES.IS_WARRIOR
         return p_CODES.IS_WARRIOR
     endIf
 
-    p_code_combat = p_CODES.IS_WARRIOR
+    p_code_style = p_CODES.IS_WARRIOR
 
     code_return = Enforce()
     if code_return < 0
@@ -532,11 +604,11 @@ int function Style_Mage()
         return p_CODES.ISNT_MEMBER
     endIf
 
-    if p_code_combat == p_CODES.IS_MAGE
+    if p_code_style == p_CODES.IS_MAGE
         return p_CODES.IS_MAGE
     endIf
 
-    p_code_combat = p_CODES.IS_MAGE
+    p_code_style = p_CODES.IS_MAGE
 
     code_return = Enforce()
     if code_return < 0
@@ -553,11 +625,107 @@ int function Style_Archer()
         return p_CODES.ISNT_MEMBER
     endIf
 
-    if p_code_combat == p_CODES.IS_ARCHER
+    if p_code_style == p_CODES.IS_ARCHER
         return p_CODES.IS_ARCHER
     endIf
 
-    p_code_combat = p_CODES.IS_ARCHER
+    p_code_style = p_CODES.IS_ARCHER
+
+    code_return = Enforce()
+    if code_return < 0
+        return code_return
+    endIf
+
+    return p_CODES.SUCCESS
+endFunction
+
+int function Vitalize(int code_vitality)
+    if code_vitality == p_CODES.IS_MORTAL
+        return Vitalize_Mortal()
+    elseIf code_vitality == p_CODES.IS_PROTECTED
+        return Vitalize_Protected()
+    elseIf code_vitality == p_CODES.IS_ESSENTIAL
+        return Vitalize_Essential()
+    elseIf code_vitality == p_CODES.IS_INVULNERABLE
+        return Vitalize_Invulnerable()
+    endIf
+endFunction
+
+int function Vitalize_Mortal()
+    int code_return
+
+    if !Exists()
+        return p_CODES.ISNT_MEMBER
+    endIf
+
+    if p_code_vitality == p_CODES.IS_MORTAL
+        return p_CODES.IS_MORTAL
+    endIf
+
+    p_code_vitality = p_CODES.IS_MORTAL
+
+    code_return = Enforce()
+    if code_return < 0
+        return code_return
+    endIf
+
+    return p_CODES.SUCCESS
+endFunction
+
+int function Vitalize_Protected()
+    int code_return
+
+    if !Exists()
+        return p_CODES.ISNT_MEMBER
+    endIf
+
+    if p_code_vitality == p_CODES.IS_PROTECTED
+        return p_CODES.IS_PROTECTED
+    endIf
+
+    p_code_vitality = p_CODES.IS_PROTECTED
+
+    code_return = Enforce()
+    if code_return < 0
+        return code_return
+    endIf
+
+    return p_CODES.SUCCESS
+endFunction
+
+int function Vitalize_Essential()
+    int code_return
+
+    if !Exists()
+        return p_CODES.ISNT_MEMBER
+    endIf
+
+    if p_code_vitality == p_CODES.IS_ESSENTIAL
+        return p_CODES.IS_ESSENTIAL
+    endIf
+
+    p_code_vitality = p_CODES.IS_ESSENTIAL
+
+    code_return = Enforce()
+    if code_return < 0
+        return code_return
+    endIf
+
+    return p_CODES.SUCCESS
+endFunction
+
+int function Vitalize_Invulnerable()
+    int code_return
+
+    if !Exists()
+        return p_CODES.ISNT_MEMBER
+    endIf
+
+    if p_code_vitality == p_CODES.IS_INVULNERABLE
+        return p_CODES.IS_INVULNERABLE
+    endIf
+
+    p_code_vitality = p_CODES.IS_INVULNERABLE
 
     code_return = Enforce()
     if code_return < 0
@@ -655,19 +823,35 @@ bool function Is_Thrall()
 endFunction
 
 bool function Is_Styled_Default()
-    return p_code_combat == p_CODES.IS_DEFAULT
+    return p_code_style == p_CODES.IS_DEFAULT
 endFunction
 
 bool function Is_Styled_Warrior()
-    return p_code_combat == p_CODES.IS_WARRIOR
+    return p_code_style == p_CODES.IS_WARRIOR
 endFunction
 
 bool function Is_Styled_Mage()
-    return p_code_combat == p_CODES.IS_MAGE
+    return p_code_style == p_CODES.IS_MAGE
 endFunction
 
 bool function Is_Styled_Archer()
-    return p_code_combat == p_CODES.IS_ARCHER
+    return p_code_style == p_CODES.IS_ARCHER
+endFunction
+
+bool function Is_Vitalized_Mortal()
+    return p_code_vitality == p_CODES.IS_MORTAL
+endFunction
+
+bool function Is_Vitalized_Protected()
+    return p_code_vitality == p_CODES.IS_PROTECTED
+endFunction
+
+bool function Is_Vitalized_Essential()
+    return p_code_vitality == p_CODES.IS_ESSENTIAL
+endFunction
+
+bool function Is_Vitalized_Invulnerable()
+    return p_code_vitality == p_CODES.IS_INVULNERABLE
 endFunction
 
 function Summon(int distance = 60, int angle = 0)
@@ -685,7 +869,7 @@ endFunction
 ; Events
 event OnActivate(ObjectReference ref_activator)
     Enforce()
-    ; maybe we could pop up some basic stats on screen
+    ; maybe we could pop up some basic stats on screen?
 endEvent
 
 event OnCombatStateChanged(Actor ref_target, int code_combat)
@@ -693,11 +877,11 @@ event OnCombatStateChanged(Actor ref_target, int code_combat)
         p_ACTOR2.Pacify(p_ref_actor)
     endIf
 
-    if code_combat == 0; Not in Combat
+    if code_combat == p_CODES.COMBAT_NO
         Enforce()
-    elseIf code_combat == 1; In Combat
+    elseIf code_combat == p_CODES.COMBAT_YES
 
-    elseIf code_combat == 2; Searching
+    elseIf code_combat == p_CODES.COMBAT_SEARCHING
         Enforce(); this may be too intensive here
     endIf
 endEvent

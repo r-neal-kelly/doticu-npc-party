@@ -6,6 +6,9 @@ A follower framework for The Elder Scrolls V: Skyrim Special Edition
 - the ability to clone any humaniod npc (to avoid conflicts with other scripts)
 - every member can be made to settle in another part of the game world
 - any member can be made completely immobile, so they never go anywhere
+- members can be a warrior, a mage, an archer, or classless (other classes may come later)
+- each member can be made successively immortal or kept as mortal and resurrectable
+- vampires can enthrall members (making them a vampire in their clan may come later)
 - a comprehensive dialogue menu to manage each individual member
 - an exhaustive MCM menu to manage all members and settings
 

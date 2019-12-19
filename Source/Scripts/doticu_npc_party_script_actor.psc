@@ -2,14 +2,19 @@ Scriptname doticu_npc_party_script_actor extends Quest
 
 ; Private Constants
 doticu_npc_party_script_consts  p_CONSTS    = none
+doticu_npc_party_script_codes   p_CODES     = none
 doticu_npc_party_script_greeter p_GREETER   = none
 
 ; Friend Methods
 function f_Initialize(doticu_npc_party_script_data DATA)
     p_CONSTS = DATA.CONSTS
+    p_CODES = DATA.CODES
     p_GREETER = GetAliasByName("Greeter") as doticu_npc_party_script_greeter
 
     p_Greeter.f_Initialize(DATA)
+endFunction
+
+function f_Register()
 endFunction
 
 ; Private Methods
@@ -96,11 +101,68 @@ function Set_Base_Name(Actor ref_actor, string str_name)
     endIf
 endFunction
 
+int function Get_Vitality(Actor ref_actor)
+    ActorBase p_base_actor = Get_Base(ref_actor)
+
+    if p_base_actor.IsProtected()
+        return p_CODES.IS_PROTECTED
+    elseIf p_base_actor.IsEssential()
+        return p_CODES.IS_ESSENTIAL
+    elseIf p_base_actor.IsInvulnerable()
+        return p_CODES.IS_INVULNERABLE
+    else
+        return p_CODES.IS_MORTAL
+    endIf
+endFunction
+
+function Vitalize(Actor ref_actor, int code_vitality)
+    ActorBase p_base_actor = Get_Base(ref_actor)
+
+    if code_vitality == p_CODES.IS_MORTAL
+        p_base_actor.SetProtected(false)
+        p_base_actor.SetEssential(false)
+        p_base_actor.SetInvulnerable(false)
+    elseIf code_vitality == p_CODES.IS_PROTECTED
+        p_base_actor.SetProtected(true)
+        p_base_actor.SetEssential(false)
+        p_base_actor.SetInvulnerable(false)
+    elseIf code_vitality == p_CODES.IS_ESSENTIAL
+        p_base_actor.SetProtected(false)
+        p_base_actor.SetEssential(true)
+        p_base_actor.SetInvulnerable(false)
+    elseIf code_vitality == p_CODES.IS_INVULNERABLE
+        p_base_actor.SetProtected(false)
+        p_base_actor.SetEssential(false)
+        p_base_actor.SetInvulnerable(true)
+    endIf
+endFunction
+
 function Resurrect(Actor ref_actor)
+    ; might help to put back the orig outfit too, if possible
+
+    int size_forms = ref_actor.GetNumItems()
+    Form[] arr_forms = Utility.CreateFormArray(size_forms, none)
+    int[] arr_counts = Utility.CreateIntArray(size_forms, 0)
+    int idx_forms = 0
+    Form ref_form = none
+    while idx_forms < size_forms
+        ref_form = ref_actor.GetNthForm(idx_forms)
+        arr_forms[idx_forms] = ref_form
+        arr_counts[idx_forms] = ref_actor.GetItemCount(ref_form)
+        idx_forms += 1
+    endWhile
+
     ref_actor.Disable()
     ref_actor.Resurrect()
     Pacify(ref_actor)
     ref_actor.Enable()
+    ref_actor.RemoveAllItems(); can pass this a chest to move all the items natively. much faster.
+
+    idx_forms = 0
+    while idx_forms < size_forms
+        ref_actor.AddItem(arr_forms[idx_forms], arr_counts[idx_forms], true)
+        idx_forms += 1
+    endWhile
 endFunction
 
 function Open_Inventory(Actor ref_actor)
@@ -133,7 +195,7 @@ Actor function Clone(Actor ref_actor)
     Actor ref_clone = p_CONSTS.ACTOR_PLAYER.PlaceAtMe(ref_form, 1, true, false) as Actor; persist, disable
 
     if Is_Generic(ref_actor)
-        while !p_Has_Same_Head(ref_actor, ref_clone)
+        while !p_Has_Same_Head(ref_actor, ref_clone); we may need to limit this to a couple hundred tries, because I ran into an infinite somehow. an unclonable?
             ref_clone.Disable()
             ref_clone.Delete()
             ref_clone = p_CONSTS.ACTOR_PLAYER.PlaceAtMe(ref_form, 1, true, false) as Actor; persist, disable

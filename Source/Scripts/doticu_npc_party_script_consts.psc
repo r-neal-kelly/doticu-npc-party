@@ -12,10 +12,14 @@ MiscObject                  p_TOKEN_BANISHED                        = none
 MiscObject                  p_TOKEN_GENERIC                         = none
 MiscObject                  p_TOKEN_THRALL                          = none
 MiscObject                  p_TOKEN_GREETER                         = none
-MiscObject                  p_TOKEN_COMBAT_DEFAULT                  = none
-MiscObject                  p_TOKEN_COMBAT_WARRIOR                  = none
-MiscObject                  p_TOKEN_COMBAT_MAGE                     = none
-MiscObject                  p_TOKEN_COMBAT_ARCHER                   = none
+MiscObject                  p_TOKEN_STYLE_DEFAULT                   = none
+MiscObject                  p_TOKEN_STYLE_WARRIOR                   = none
+MiscObject                  p_TOKEN_STYLE_MAGE                      = none
+MiscObject                  p_TOKEN_STYLE_ARCHER                    = none
+MiscObject                  p_TOKEN_VITALITY_MORTAL                 = none
+MiscObject                  p_TOKEN_VITALITY_PROTECTED              = none
+MiscObject                  p_TOKEN_VITALITY_ESSENTIAL              = none
+MiscObject                  p_TOKEN_VITALITY_INVULNERABLE           = none
 GlobalVariable              p_GLOBAL_PLAYER_FOLLOWER_COUNT          = none
 GlobalVariable              p_GLOBAL_FORCE_CLONE_UNIQUE             = none
 GlobalVariable              p_GLOBAL_FORCE_CLONE_GENERIC            = none
@@ -152,46 +156,90 @@ MiscObject property TOKEN_GREETER
     endFunction
 endProperty
 
-MiscObject property TOKEN_COMBAT_DEFAULT
+MiscObject property TOKEN_STYLE_DEFAULT
     MiscObject function Get()
-        return p_TOKEN_COMBAT_DEFAULT
+        return p_TOKEN_STYLE_DEFAULT
     endFunction
     function Set(MiscObject val)
-        if p_TOKEN_COMBAT_DEFAULT == none
-            p_TOKEN_COMBAT_DEFAULT = val
+        if p_TOKEN_STYLE_DEFAULT == none
+            p_TOKEN_STYLE_DEFAULT = val
         endIf
     endFunction
 endProperty
 
-MiscObject property TOKEN_COMBAT_WARRIOR
+MiscObject property TOKEN_STYLE_WARRIOR
     MiscObject function Get()
-        return p_TOKEN_COMBAT_WARRIOR
+        return p_TOKEN_STYLE_WARRIOR
     endFunction
     function Set(MiscObject val)
-        if p_TOKEN_COMBAT_WARRIOR == none
-            p_TOKEN_COMBAT_WARRIOR = val
+        if p_TOKEN_STYLE_WARRIOR == none
+            p_TOKEN_STYLE_WARRIOR = val
         endIf
     endFunction
 endProperty
 
-MiscObject property TOKEN_COMBAT_MAGE
+MiscObject property TOKEN_STYLE_MAGE
     MiscObject function Get()
-        return p_TOKEN_COMBAT_MAGE
+        return p_TOKEN_STYLE_MAGE
     endFunction
     function Set(MiscObject val)
-        if p_TOKEN_COMBAT_MAGE == none
-            p_TOKEN_COMBAT_MAGE = val
+        if p_TOKEN_STYLE_MAGE == none
+            p_TOKEN_STYLE_MAGE = val
         endIf
     endFunction
 endProperty
 
-MiscObject property TOKEN_COMBAT_ARCHER
+MiscObject property TOKEN_STYLE_ARCHER
     MiscObject function Get()
-        return p_TOKEN_COMBAT_ARCHER
+        return p_TOKEN_STYLE_ARCHER
     endFunction
     function Set(MiscObject val)
-        if p_TOKEN_COMBAT_ARCHER == none
-            p_TOKEN_COMBAT_ARCHER = val
+        if p_TOKEN_STYLE_ARCHER == none
+            p_TOKEN_STYLE_ARCHER = val
+        endIf
+    endFunction
+endProperty
+
+MiscObject property TOKEN_VITALITY_MORTAL
+    MiscObject function Get()
+        return p_TOKEN_VITALITY_MORTAL
+    endFunction
+    function Set(MiscObject val)
+        if p_TOKEN_VITALITY_MORTAL == none
+            p_TOKEN_VITALITY_MORTAL = val
+        endIf
+    endFunction
+endProperty
+
+MiscObject property TOKEN_VITALITY_PROTECTED
+    MiscObject function Get()
+        return p_TOKEN_VITALITY_PROTECTED
+    endFunction
+    function Set(MiscObject val)
+        if p_TOKEN_VITALITY_PROTECTED == none
+            p_TOKEN_VITALITY_PROTECTED = val
+        endIf
+    endFunction
+endProperty
+
+MiscObject property TOKEN_VITALITY_ESSENTIAL
+    MiscObject function Get()
+        return p_TOKEN_VITALITY_ESSENTIAL
+    endFunction
+    function Set(MiscObject val)
+        if p_TOKEN_VITALITY_ESSENTIAL == none
+            p_TOKEN_VITALITY_ESSENTIAL = val
+        endIf
+    endFunction
+endProperty
+
+MiscObject property TOKEN_VITALITY_INVULNERABLE
+    MiscObject function Get()
+        return p_TOKEN_VITALITY_INVULNERABLE
+    endFunction
+    function Set(MiscObject val)
+        if p_TOKEN_VITALITY_INVULNERABLE == none
+            p_TOKEN_VITALITY_INVULNERABLE = val
         endIf
     endFunction
 endProperty

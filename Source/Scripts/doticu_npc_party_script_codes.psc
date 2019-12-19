@@ -30,7 +30,11 @@ int property HASNT_SNEAK            = -270 autoReadOnly
 
 int property IS_ALIVE               = -301 autoReadOnly
 int property IS_DEAD                = -302 autoReadOnly
-int property IS_ACTOR               = -305 autoReadOnly
+int property IS_MORTAL              = -303 autoReadOnly
+int property IS_PROTECTED           = -304 autoReadOnly
+int property IS_ESSENTIAL           = -305 autoReadOnly
+int property IS_INVULNERABLE        = -306 autoReadOnly
+int property IS_ACTOR               = -307 autoReadOnly
 int property IS_ALIAS               = -310 autoReadOnly
 int property IS_MEMBER              = -320 autoReadOnly
 int property IS_SETTLER             = -330 autoReadOnly
@@ -61,3 +65,19 @@ int property CAN_RESURRECT          = -500 autoReadOnly
 
 int property CANT_RESURRECT         = -600 autoReadOnly
 int property CANT_RENAME            = -610 autoReadOnly
+
+int property ACTION_WEAPON_SWING    =    0 autoReadOnly
+int property ACTION_SPELL_CAST      =    1 autoReadOnly
+int property ACTION_SPELL_FIRE      =    2 autoReadOnly
+int property ACTION_VOICE_CAST      =    3 autoReadOnly
+int property ACTION_VOICE_FIRE      =    4 autoReadOnly
+int property ACTION_BOW_DRAW        =    5 autoReadOnly
+int property ACTION_BOW_RELEASE     =    6 autoReadOnly
+int property ACTION_DRAW_BEGIN      =    7 autoReadOnly
+int property ACTION_DRAW_END        =    8 autoReadOnly
+int property ACTION_SHEATHE_BEGIN   =    9 autoReadOnly
+int property ACTION_SHEATHE_END     =   10 autoReadOnly
+
+int property COMBAT_NO              =    0 autoReadOnly
+int property COMBAT_YES             =    1 autoReadOnly
+int property COMBAT_SEARCHING       =    2 autoReadOnly

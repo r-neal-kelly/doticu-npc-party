@@ -11,6 +11,8 @@ int                             p_option_force_clone_generic    =   -1
 int                             p_option_force_unclone_unique   =   -1
 int                             p_option_force_unclone_generic  =   -1
 int                             p_option_auto_style             =   -1
+int                             p_option_auto_vitality          =   -1
+int                             p_option_auto_resurrect         =   -1
 
 ; Friend Methods
 function f_Initialize(doticu_npc_party_script_data DATA)
@@ -60,10 +62,20 @@ auto state p_STATE_SETTINGS
         elseIf p_VARS.auto_style == p_CODES.IS_ARCHER
             p_option_auto_style = p_MCM.AddTextOption("Auto Style", " Archer ")
         endIf
+        if p_VARS.auto_vitality == p_CODES.IS_MORTAL
+            p_option_auto_vitality = p_MCM.AddTextOption("Auto Vitality", " Mortal ")
+        elseIf p_VARS.auto_vitality == p_CODES.IS_PROTECTED
+            p_option_auto_vitality = p_MCM.AddTextOption("Auto Style", " Protected ")
+        elseIf p_VARS.auto_vitality == p_CODES.IS_ESSENTIAL
+            p_option_auto_vitality = p_MCM.AddTextOption("Auto Style", " Essential ")
+        elseIf p_VARS.auto_vitality == p_CODES.IS_INVULNERABLE
+            p_option_auto_vitality = p_MCM.AddTextOption("Auto Style", " Invulnerable ")
+        endIf
+        p_option_auto_resurrect = p_MCM.AddToggleOption("Auto Resurrect Followers", p_VARS.auto_resurrect)
+        p_MCM.AddEmptyOption()
+
         p_MCM.AddEmptyOption()
         p_MCM.AddEmptyOption()
-        p_MCM.AddEmptyOption()
-        ; add a clear notes/errors button
 
         p_MCM.AddHeaderOption(" Hotkeys ")
         p_MCM.AddEmptyOption()
@@ -88,6 +100,18 @@ auto state p_STATE_SETTINGS
             elseIf p_VARS.auto_style == p_CODES.IS_ARCHER
                 p_VARS.auto_style = p_CODES.IS_DEFAULT
             endIf
+        elseIf id_option == p_option_auto_vitality
+            if p_VARS.auto_vitality == p_CODES.IS_MORTAL
+                p_VARS.auto_vitality = p_CODES.IS_PROTECTED
+            elseIf p_VARS.auto_vitality == p_CODES.IS_PROTECTED
+                p_VARS.auto_vitality = p_CODES.IS_ESSENTIAL
+            elseIf p_VARS.auto_vitality == p_CODES.IS_ESSENTIAL
+                p_VARS.auto_vitality = p_CODES.IS_INVULNERABLE
+            elseIf p_VARS.auto_vitality == p_CODES.IS_INVULNERABLE
+                p_VARS.auto_vitality = p_CODES.IS_MORTAL
+            endIf
+        elseIf id_option == p_option_auto_resurrect
+            p_VARS.auto_resurrect = !p_VARS.auto_resurrect
         endIf
         p_MCM.ForcePageReset()
     endFunction
@@ -126,6 +150,22 @@ auto state p_STATE_SETTINGS
                 p_MCM.SetInfoText("When an npc becomes a member, they will fight as a mage.")
             elseIf p_VARS.auto_style == p_CODES.IS_ARCHER
                 p_MCM.SetInfoText("When an npc becomes a member, they will fight as an archer.")
+            endIf
+        elseIf id_option == p_option_auto_vitality
+            if p_VARS.auto_vitality == p_CODES.IS_MORTAL
+                p_MCM.SetInfoText("When an npc becomes a member, they will be mortal.")
+            elseIf p_VARS.auto_vitality == p_CODES.IS_PROTECTED
+                p_MCM.SetInfoText("When an npc becomes a member, they will be protected and only you can kill them.")
+            elseIf p_VARS.auto_vitality == p_CODES.IS_ESSENTIAL
+                p_MCM.SetInfoText("When an npc becomes a member, they will be essential and will recover when they bleedout.")
+            elseIf p_VARS.auto_vitality == p_CODES.IS_INVULNERABLE
+                p_MCM.SetInfoText("When an npc becomes a member, they will be invulnerable and cannot be hurt.")
+            endIf
+        elseIf id_option == p_option_auto_resurrect
+            if p_VARS.auto_resurrect
+                p_MCM.SetInfoText("Followers will automatically resurrect after each battle.")
+            else
+                p_MCM.SetInfoText("Followers will not automatically resurrect after each battle.")
             endIf
         endIf
     endFunction
