@@ -1,68 +1,69 @@
-Scriptname doticu_npcp_outfit extends Quest
+Scriptname doticu_npcp_outfit extends ObjectReference
 
 ; Private Constants
-doticu_npc_party_script_data        p_DATA          = none
-doticu_npc_party_script_consts      p_CONSTS        = none
-doticu_npc_party_script_actor       p_ACTOR2        = none
-doticu_npc_party_script_container   p_CONTAINER2    = none
+doticu_npcp_consts      p_CONSTS        = none
+doticu_npcp_actor       p_ACTOR2        = none
+doticu_npcp_container   p_CONTAINER2    = none
+doticu_npcp_logs        p_LOGS          = none
+
+Outfit                  p_OUTFIT        = none
+LeveledItem             p_LEVELED       = none
 
 ; Friend Methods
-function f_Initialize(doticu_npc_party_script_data DATA)
-    p_DATA = DATA
+function f_Initialize(doticu_npcp_data DATA, Outfit FORM_OUTFIT)
     p_CONSTS = DATA.CONSTS
     p_ACTOR2 = DATA.MODS.FUNCS.ACTOR2
     p_CONTAINER2 = DATA.MODS.FUNCS.CONTAINER2
+    p_LOGS = DATA.MODS.FUNCS.LOGS
+
+    p_OUTFIT = FORM_OUTFIT
+    p_LEVELED = p_OUTFIT.GetNthPart(0) as LeveledItem
 endFunction
 
 function f_Register()
 endFunction
 
+function f_Create(string str_name)
+    self.SetDisplayName(str_name)
+endFunction
+
+function f_Destroy()
+    self.RemoveAllItems(p_CONSTS.ACTOR_PLAYER, false, true)
+    self.Disable()
+    self.Delete()
+endFunction
+
 ; Public Methods
-doticu_npcp_container_outfit function Create(Container form_container, Outfit form_outfit)
-    ObjectReference ref_container = p_CONTAINER2.Create(form_container, true)
-    (ref_container as doticu_npcp_container_outfit).f_Initialize(p_DATA, form_outfit)
-    (ref_container as doticu_npcp_container_outfit).f_Register()
-    return ref_container as doticu_npcp_container_outfit
-endFunction
-
-function Destroy(doticu_npcp_container_outfit ref_container)
-    ref_container.RemoveAllItems(p_CONSTS.ACTOR_PLAYER, false, true)
-    ref_container.Disable()
-    ref_container.Delete()
-endFunction
-
-function Get(doticu_npcp_container_outfit ref_container, Actor ref_actor)
+function Get(Actor ref_actor)
     int num_forms
     int idx_forms
     Form ref_form
 
-    ref_container.RemoveAllItems(p_CONSTS.ACTOR_PLAYER, false, true)
+    self.RemoveAllItems(p_CONSTS.ACTOR_PLAYER, false, true)
 
     num_forms = ref_actor.GetNumItems()
     idx_forms = 0
     while idx_forms < num_forms
         ref_form = ref_actor.GetNthForm(idx_forms)
         if ref_form as Armor && ref_actor.IsEquipped(ref_form)
-            ref_container.AddItem(ref_form, 1, true)
+            self.AddItem(ref_form, 1, true)
         endIf
         idx_forms += 1
     endWhile
 endFunction
 
-function Set(doticu_npcp_container_outfit ref_container, Actor ref_actor)
-    ObjectReference ref_container_temp = p_CONTAINER2.Create(p_DATA.CONSTS.CONTAINER_EMPTY, false)
-    Outfit form_outfit = ref_container.Get_Outfit()
-    LeveledItem leveled_outfit = form_outfit.GetNthPart(0) as LeveledItem
+function Set(Actor ref_actor)
+    ObjectReference ref_container_temp = p_CONTAINER2.Create(p_CONSTS.CONTAINER_EMPTY, false)
     int num_forms
     int idx_forms
     Form ref_form
 
-    ; Clear Actor Inventory, Except Old Outfit
+    ; Backup Actor Inventory, Except Old Outfit
     num_forms = ref_actor.GetNumItems()
     idx_forms = 0
     while idx_forms < num_forms
         ref_form = ref_actor.GetNthForm(idx_forms)
-        if ref_form as Armor && ref_container.GetItemCount(ref_form) > 0
+        if ref_form as Armor && self.GetItemCount(ref_form) > 0
             ref_actor.RemoveItem(ref_form, ref_actor.GetItemCount(ref_form) - 1, true, ref_container_temp)
             idx_forms += 1
         else
@@ -72,22 +73,22 @@ function Set(doticu_npcp_container_outfit ref_container, Actor ref_actor)
     endWhile
 
     ; Accept User Input
-    ref_container.Activate(p_DATA.CONSTS.ACTOR_PLAYER)
+    self.Activate(p_CONSTS.ACTOR_PLAYER)
     Utility.Wait(0.1)
 
     ; Store User Input into Outfit
-    leveled_outfit.Revert()
-    num_forms = ref_container.GetNumItems()
+    p_LEVELED.Revert()
+    num_forms = self.GetNumItems()
     idx_forms = 0
     while idx_forms < num_forms
-        ref_form = ref_container.GetNthForm(idx_forms)
-        leveled_outfit.AddForm(ref_form, 1, 1)
+        ref_form = self.GetNthForm(idx_forms)
+        p_LEVELED.AddForm(ref_form, 1, 1)
         idx_forms += 1
     endWhile
 
     ; Set New Outfit
-    ref_actor.SetOutfit(p_DATA.CONSTS.OUTFIT_EMPTY)
-    ref_actor.SetOutfit(form_outfit)
+    ref_actor.SetOutfit(p_CONSTS.OUTFIT_EMPTY)
+    ref_actor.SetOutfit(p_OUTFIT)
     Utility.Wait(0.1)
 
     ; Clear Actor Inventory, Except New Outfit
@@ -95,7 +96,7 @@ function Set(doticu_npcp_container_outfit ref_container, Actor ref_actor)
     idx_forms = 0
     while idx_forms < num_forms
         ref_form = ref_actor.GetNthForm(idx_forms)
-        if ref_container.GetItemCount(ref_form) < 1
+        if self.GetItemCount(ref_form) < 1
             ref_actor.RemoveItem(ref_form, ref_actor.GetItemCount(ref_form), true, none)
             num_forms -= 1
         else
@@ -110,10 +111,18 @@ function Set(doticu_npcp_container_outfit ref_container, Actor ref_actor)
     p_ACTOR2.Update_Equipment(ref_actor)
 endFunction
 
-function Unset(doticu_npcp_container_outfit ref_container, Actor ref_actor)
-    ObjectReference ref_container_temp = p_CONTAINER2.Create(p_DATA.CONSTS.CONTAINER_EMPTY, false)
+function Unset(Actor ref_actor)
+    ObjectReference ref_container_temp = p_CONTAINER2.Create(p_CONSTS.CONTAINER_EMPTY, false)
 
-    ref_container.RemoveAllItems(ref_container_temp, false, true)
-    Set(ref_container, ref_actor)
-    ref_container_temp.RemoveAllItems(ref_container, false, true)
+    self.RemoveAllItems(ref_container_temp, false, true)
+    Set(ref_actor)
+    ref_container_temp.RemoveAllItems(self, false, true)
 endFunction
+
+; Events
+event OnItemAdded(Form form_item, int count_item, ObjectReference ref_item, ObjectReference ref_container_source)
+    if form_item as Armor == none
+        self.RemoveItem(form_item, count_item, true, ref_container_source)
+        p_LOGS.Create_Note("Can only add apparel to an outfit.")
+    endIf
+endEvent

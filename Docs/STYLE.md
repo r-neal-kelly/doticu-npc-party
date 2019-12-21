@@ -20,11 +20,11 @@ An overview of the several patterns, naming conventions, and symbols that are us
 
 - Custom types created by this program are all in lower snake_case:
 
-        doticu_npc_party_script_actor
-        doticu_npc_party_script_member
-        doticu_npc_party_script_follower
+        doticu_npcp_actor
+        doticu_npcp_member
+        doticu_npcp_follower
 
-        ; each type's name has "doticu_npc_party_script"
+        ; each type's name has "doticu_npcp_"
         ; because all types are stored in the same folder
         ; on disc, and should never conflict with anything
 
