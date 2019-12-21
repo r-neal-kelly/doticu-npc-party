@@ -26,6 +26,7 @@ GlobalVariable              p_GLOBAL_FORCE_CLONE_GENERIC            = none
 GlobalVariable              p_GLOBAL_FORCE_UNCLONE_UNIQUE           = none
 GlobalVariable              p_GLOBAL_FORCE_UNCLONE_GENERIC          = none
 FormList                    p_FORMLIST_MARKERS_SETTLER              = none
+FormList                    p_FORMLIST_OUTFITS_MEMBER               = none
 Faction                     p_FACTION_MEMBER                        = none
 Faction                     p_FACTION_DLC1_THRALL                   = none
 Faction                     p_FACTION_DLC1_VAMPIRE_FEED_NO_CRIME    = none
@@ -33,6 +34,11 @@ Perk                        p_PERK_VAMPIRE_FEED                     = none
 Perk                        p_PERK_KISS_THRALL                      = none
 PlayerVampireQuestScript    p_SCRIPT_PLAYER_VAMPIRE_QUEST           = none
 Keyword                     p_KEYWORD_VAMPIRE                       = none
+Container                   p_CONTAINER_EMPTY                       = none
+Container                   p_CONTAINER_OUTFIT_MEMBER               = none
+MiscObject                  p_MISC_GOLD                             = none
+Outfit                      p_OUTFIT_EMPTY                          = none
+Weapon                      p_WEAPON_BLANK                          = none
 
 ; Public Constants
 Actor property ACTOR_PLAYER
@@ -310,6 +316,17 @@ Formlist property FORMLIST_MARKERS_SETTLER
     endFunction
 endProperty
 
+Formlist property FORMLIST_OUTFITS_MEMBER
+    Formlist function Get()
+        return p_FORMLIST_OUTFITS_MEMBER
+    endFunction
+    function Set(Formlist val)
+        if p_FORMLIST_OUTFITS_MEMBER == none
+            p_FORMLIST_OUTFITS_MEMBER = val
+        endIf
+    endFunction
+endProperty
+
 Faction property FACTION_MEMBER
     Faction function Get()
         return p_FACTION_MEMBER
@@ -383,6 +400,61 @@ Keyword property KEYWORD_VAMPIRE
     function Set(Keyword val)
         if p_KEYWORD_VAMPIRE == none
             p_KEYWORD_VAMPIRE = val
+        endIf
+    endFunction
+endProperty
+
+Container property CONTAINER_EMPTY
+    Container function Get()
+        return p_CONTAINER_EMPTY
+    endFunction
+    function Set(Container val)
+        if p_CONTAINER_EMPTY == none
+            p_CONTAINER_EMPTY = val
+        endIf
+    endFunction
+endProperty
+
+Container property CONTAINER_OUTFIT_MEMBER
+    Container function Get()
+        return p_CONTAINER_OUTFIT_MEMBER
+    endFunction
+    function Set(Container val)
+        if p_CONTAINER_OUTFIT_MEMBER == none
+            p_CONTAINER_OUTFIT_MEMBER = val
+        endIf
+    endFunction
+endProperty
+
+MiscObject property MISC_GOLD
+    MiscObject function Get()
+        return p_MISC_GOLD
+    endFunction
+    function Set(MiscObject val)
+        if p_MISC_GOLD == none
+            p_MISC_GOLD = val
+        endIf
+    endFunction
+endProperty
+
+Outfit property OUTFIT_EMPTY
+    Outfit function Get()
+        return p_OUTFIT_EMPTY
+    endFunction
+    function Set(Outfit val)
+        if p_OUTFIT_EMPTY == none
+            p_OUTFIT_EMPTY = val
+        endIf
+    endFunction
+endProperty
+
+Weapon property WEAPON_BLANK
+    Weapon function Get()
+        return p_WEAPON_BLANK
+    endFunction
+    function Set(Weapon val)
+        if p_WEAPON_BLANK == none
+            p_WEAPON_BLANK = val
         endIf
     endFunction
 endProperty

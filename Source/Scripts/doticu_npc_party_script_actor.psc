@@ -1,14 +1,20 @@
 Scriptname doticu_npc_party_script_actor extends Quest
 
 ; Private Constants
-doticu_npc_party_script_consts  p_CONSTS    = none
-doticu_npc_party_script_codes   p_CODES     = none
-doticu_npc_party_script_greeter p_GREETER   = none
+doticu_npc_party_script_consts      p_CONSTS        = none
+doticu_npc_party_script_codes       p_CODES         = none
+doticu_npc_party_script_funcs       p_FUNCS         = none
+doticu_npc_party_script_container   p_CONTAINER2    = none
+doticu_npcp_outfit                  p_OUTFIT2       = none
+doticu_npc_party_script_greeter     p_GREETER       = none
 
 ; Friend Methods
 function f_Initialize(doticu_npc_party_script_data DATA)
     p_CONSTS = DATA.CONSTS
     p_CODES = DATA.CODES
+    p_FUNCS = DATA.MODS.FUNCS
+    p_CONTAINER2 = DATA.MODS.FUNCS.CONTAINER2
+    p_OUTFIT2 = DATA.MODS.FUNCS.OUTFIT2
     p_GREETER = GetAliasByName("Greeter") as doticu_npc_party_script_greeter
 
     p_Greeter.f_Initialize(DATA)
@@ -138,31 +144,16 @@ function Vitalize(Actor ref_actor, int code_vitality)
 endFunction
 
 function Resurrect(Actor ref_actor)
-    ; might help to put back the orig outfit too, if possible
+    ObjectReference ref_container = p_CONTAINER2.Create(p_CONSTS.CONTAINER_EMPTY, false)
 
-    int size_forms = ref_actor.GetNumItems()
-    Form[] arr_forms = Utility.CreateFormArray(size_forms, none)
-    int[] arr_counts = Utility.CreateIntArray(size_forms, 0)
-    int idx_forms = 0
-    Form ref_form = none
-    while idx_forms < size_forms
-        ref_form = ref_actor.GetNthForm(idx_forms)
-        arr_forms[idx_forms] = ref_form
-        arr_counts[idx_forms] = ref_actor.GetItemCount(ref_form)
-        idx_forms += 1
-    endWhile
-
+    p_CONTAINER2.Take_All(ref_container, ref_actor)
     ref_actor.Disable()
     ref_actor.Resurrect()
     Pacify(ref_actor)
     ref_actor.Enable()
-    ref_actor.RemoveAllItems(); can pass this a chest to move all the items natively. much faster.
-
-    idx_forms = 0
-    while idx_forms < size_forms
-        ref_actor.AddItem(arr_forms[idx_forms], arr_counts[idx_forms], true)
-        idx_forms += 1
-    endWhile
+    p_CONTAINER2.Empty(ref_actor)
+    p_CONTAINER2.Take_All(ref_actor, ref_container)
+    Update_Equipment(ref_actor)
 endFunction
 
 function Open_Inventory(Actor ref_actor)
@@ -243,4 +234,19 @@ function Unragdoll(Actor ref_actor)
         ref_actor.SetActorValue("Paralysis", 0)
     endwhile
     ref_actor.EvaluatePackage()
+endFunction
+
+function Update_Equipment(Actor ref_actor)
+    bool is_player_teammate = ref_actor.IsPlayerTeammate()
+    
+    if !is_player_teammate
+        ref_actor.SetPlayerTeammate(true, true)
+    endIf
+
+    ref_actor.AddItem(p_CONSTS.WEAPON_BLANK, 1, true)
+    ref_actor.RemoveItem(p_CONSTS.WEAPON_BLANK, 1, true, none)
+
+    if !is_player_teammate
+        ref_actor.SetPlayerTeammate(false, false)
+    endIf
 endFunction

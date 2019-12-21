@@ -25,6 +25,9 @@ function f_Initialize(doticu_npc_party_script_data DATA)
     p_errors_used = 0
 endFunction
 
+function f_Register()
+endFunction
+
 ; Private Methods
 string[] function p_Copy_Array(string[] arr_orig, int orig_pivot, int orig_used)
     string[] arr_copy = Utility.CreateStringArray(orig_used, "")

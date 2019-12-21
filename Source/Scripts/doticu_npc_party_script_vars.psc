@@ -21,6 +21,7 @@ int property key_unmember                   =  -1 auto hidden;
 int property key_clone                      =  -1 auto hidden;
 int property key_unclone                    =  -1 auto hidden;
 int property key_access                     =  -1 auto hidden;
+int property key_outfit                     =  24 auto hidden; O
 int property key_settle                     =  -1 auto hidden;
 int property key_unsettle                   =  -1 auto hidden;
 int property key_immobilize                 =  -1 auto hidden;

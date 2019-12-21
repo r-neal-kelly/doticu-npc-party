@@ -39,6 +39,9 @@ function Update_Keys()
     if p_VARS.key_access > -1
         RegisterForKey(p_VARS.key_access)
     endIf
+    if p_VARS.key_outfit > -1
+        RegisterForKey(p_VARS.key_outfit)
+    endIf
     if p_VARS.key_settle > -1
         RegisterForKey(p_VARS.key_settle)
     endIf
@@ -104,6 +107,8 @@ event OnKeyDown(int code_key)
         p_COMMANDS.Unmember(ref_actor)
     elseIf code_key == p_VARS.key_access
         p_COMMANDS.Access(ref_actor, true)
+    elseIf code_key == p_VARS.key_outfit
+        p_COMMANDS.Outfit(ref_actor, true)
     elseIf code_key == p_VARS.key_settle
         p_COMMANDS.Settle(ref_actor, true)
     elseIf code_key == p_VARS.key_unsettle

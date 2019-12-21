@@ -1,41 +1,57 @@
 Scriptname doticu_npc_party_script_member extends ReferenceAlias
 
 ; Private Constants
-doticu_npc_party_script_consts      p_CONSTS    = none
-doticu_npc_party_script_codes       p_CODES     = none
-doticu_npc_party_script_vars        p_VARS      = none
-doticu_npc_party_script_actor       p_ACTOR2    = none
-doticu_npc_party_script_members     p_MEMBERS   = none
-doticu_npc_party_script_followers   p_FOLLOWERS = none
-doticu_npc_party_script_player      p_PLAYER    = none
-doticu_npc_party_script_settler     p_SETTLER   = none
-doticu_npc_party_script_immobile    p_IMMOBILE  = none
-int                                 p_ID_ALIAS  =   -1
+doticu_npc_party_script_data        p_DATA                      = none
+doticu_npc_party_script_consts      p_CONSTS                    = none
+doticu_npc_party_script_codes       p_CODES                     = none
+doticu_npc_party_script_vars        p_VARS                      = none
+doticu_npc_party_script_actor       p_ACTOR2                    = none
+doticu_npc_party_script_container   p_CONTAINER2                = none
+doticu_npcp_outfit                  p_OUTFIT2                   = none
+doticu_npc_party_script_members     p_MEMBERS                   = none
+doticu_npc_party_script_followers   p_FOLLOWERS                 = none
+doticu_npc_party_script_player      p_PLAYER                    = none
+
+doticu_npc_party_script_settler     p_SETTLER                   = none
+doticu_npc_party_script_immobile    p_IMMOBILE                  = none
+
+int                                 p_ID_ALIAS                  =   -1
+Container                           p_CONTAINER_OUTFIT_MEMBER   = none
+Outfit                              p_OUTFIT_MEMBER             = none
 
 ; Private Variables
-bool    p_is_created    = false
-Actor   p_ref_actor     =  none
-bool    p_is_clone      = false
-bool    p_is_generic    = false
-bool    p_is_thrall     = false
-int     p_code_style    =    -1
-int     p_code_vitality =    -1
+bool                            p_is_created                    = false
+Actor                           p_ref_actor                     =  none
+bool                            p_is_clone                      = false
+bool                            p_is_generic                    = false
+bool                            p_is_thrall                     = false
+int                             p_code_style                    =    -1
+int                             p_code_vitality                 =    -1
+doticu_npcp_container_outfit    p_ref_container_outfit_member   =  none
 
-int     p_prev_vitality =    -1
+int                             p_prev_vitality                 =    -1
+doticu_npcp_container_outfit    p_prev_container_outfit_member  =  none
 ; maybe should backup factions and restore them also.
 
 ; Friend Methods
 function f_Initialize(doticu_npc_party_script_data DATA, int IDX_ALIAS)
+    p_DATA = DATA
     p_CONSTS = DATA.CONSTS
     p_CODES = DATA.CODES
     p_VARS = DATA.VARS
     p_ACTOR2 = DATA.MODS.FUNCS.ACTOR2
+    p_CONTAINER2 = DATA.MODS.FUNCS.CONTAINER2
+    p_OUTFIT2 = DATA.MODS.FUNCS.OUTFIT2
     p_MEMBERS = DATA.MODS.MEMBERS
     p_FOLLOWERS = DATA.MODS.FOLLOWERS
     p_PLAYER = DATA.MODS.CONTROL.PLAYER
+
     p_SETTLER = (self as ReferenceAlias) as doticu_npc_party_script_settler
     p_IMMOBILE = (self as ReferenceAlias) as doticu_npc_party_script_immobile
+
     p_ID_ALIAS = IDX_ALIAS
+    p_CONTAINER_OUTFIT_MEMBER = DATA.CONSTS.CONTAINER_OUTFIT_MEMBER
+    p_OUTFIT_MEMBER = DATA.CONSTS.FORMLIST_OUTFITS_MEMBER.GetAt(idx_alias) as Outfit
 endFunction
 
 int function f_Create(bool is_a_clone)
@@ -68,6 +84,9 @@ int function f_Create(bool is_a_clone)
     endIf
     p_code_style = p_VARS.auto_style
     p_code_vitality = p_VARS.auto_vitality
+
+    p_Create_Outfits()
+    p_OUTFIT2.Get(p_ref_container_outfit_member, p_ref_actor)
 
     p_Backup()
     
@@ -106,6 +125,7 @@ int function f_Destroy()
         endIf
     endIf
 
+    ;p_Unoutfit() Restore sets the original
     p_Unvitalize()
     p_Unstyle()
     if p_is_thrall
@@ -116,6 +136,9 @@ int function f_Destroy()
 
     p_Restore()
 
+    p_Destroy_Outfits()
+
+    p_ref_container_outfit_member = none
     p_code_vitality = -1
     p_code_style = -1
     p_is_thrall = false
@@ -128,12 +151,27 @@ int function f_Destroy()
 endFunction
 
 ; Private Methods
+function p_Create_Outfits()
+    p_ref_container_outfit_member = p_OUTFIT2.Create(p_CONTAINER_OUTFIT_MEMBER, p_OUTFIT_MEMBER)
+    p_prev_container_outfit_member = p_OUTFIT2.Create(p_CONTAINER_OUTFIT_MEMBER, p_OUTFIT_MEMBER)
+endFunction
+
+function p_Destroy_Outfits()
+    p_OUTFIT2.Destroy(p_prev_container_outfit_member)
+    p_OUTFIT2.Destroy(p_ref_container_outfit_member)
+endFunction
+
 function p_Backup()
     p_prev_vitality = p_ACTOR2.Get_Vitality(p_ref_actor)
+    p_OUTFIT2.Get(p_prev_container_outfit_member, p_ref_actor)
 endFunction
 
 function p_Restore()
+    p_OUTFIT2.Set(p_prev_container_outfit_member, p_ref_actor)
     p_ACTOR2.Vitalize(p_ref_actor, p_prev_vitality)
+
+    p_prev_container_outfit_member = none
+    p_prev_vitality = -1
 endFunction
 
 function p_Token()
@@ -248,6 +286,14 @@ endFunction
 function p_Unvitalize()
 endFunction
 
+function p_Outfit()
+    p_OUTFIT2.Set(p_ref_container_outfit_member, p_ref_actor)
+endFunction
+
+function p_Unoutfit()
+    p_OUTFIT2.Unset(p_ref_container_outfit_member, p_ref_actor)
+endFunction
+
 ; Public Methods
 int function Enforce()
     int code_return
@@ -263,6 +309,7 @@ int function Enforce()
     endIf
     p_Style()
     p_Vitalize()
+    ;p_Outfit() currently not enforced
 
     if p_SETTLER.Exists()
         code_return = p_SETTLER.f_Enforce()
@@ -743,6 +790,42 @@ int function Access()
     endIf
     
     p_ACTOR2.Open_Inventory(p_ref_actor)
+    Utility.Wait(0.1)
+    p_ACTOR2.Update_Equipment(p_ref_actor)
+
+    code_return = Enforce()
+    if code_return < 0
+        return code_return
+    endIf
+
+    return p_CODES.SUCCESS
+endFunction
+
+int function Outfit()
+    int code_return
+    
+    if !Exists()
+        return p_CODES.ISNT_MEMBER
+    endIf
+    
+    p_Outfit()
+
+    code_return = Enforce()
+    if code_return < 0
+        return code_return
+    endIf
+
+    return p_CODES.SUCCESS
+endFunction
+
+int function Unoutfit()
+    int code_return
+    
+    if !Exists()
+        return p_CODES.ISNT_MEMBER
+    endIf
+    
+    p_Unoutfit()
 
     code_return = Enforce()
     if code_return < 0
@@ -885,3 +968,5 @@ event OnCombatStateChanged(Actor ref_target, int code_combat)
         Enforce(); this may be too intensive here
     endIf
 endEvent
+
+; we can use OnItemAdded to keep track of stuff that is added to the member's inventory.
