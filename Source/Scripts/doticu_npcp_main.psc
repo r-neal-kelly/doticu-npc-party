@@ -1,7 +1,7 @@
 Scriptname doticu_npcp_main extends Quest
 
 ; Private Constants
-doticu_npcp_data p_DATA = none
+doticu_npcp_data    p_DATA  = none
 
 ; Public Constants
 doticu_npcp_data property DATA

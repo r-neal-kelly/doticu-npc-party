@@ -20,7 +20,7 @@ An overview of the several patterns, naming conventions, and symbols that are us
 
 - Custom types created by this program are all in lower snake_case:
 
-        doticu_npcp_actor
+        doticu_npcp_actors
         doticu_npcp_member
         doticu_npcp_follower
 

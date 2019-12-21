@@ -4,7 +4,7 @@ Scriptname doticu_npcp_perk_kiss extends Perk hidden
 doticu_npcp_data    p_DATA          = none
 doticu_npcp_consts  p_CONSTS        = none
 doticu_npcp_funcs   p_FUNCS         = none
-doticu_npcp_actor   p_ACTOR2        = none
+doticu_npcp_actors  p_ACTORS        = none
 doticu_npcp_perks   p_PERKS         = none
 
 Actor               p_REF_PLAYER    = none
@@ -14,7 +14,7 @@ function f_Initialize(doticu_npcp_data DATA)
     p_DATA = DATA
     p_CONSTS = DATA.CONSTS
     p_FUNCS = DATA.MODS.FUNCS
-    p_ACTOR2 = DATA.MODS.FUNCS.ACTOR2
+    p_ACTORS = DATA.MODS.FUNCS.ACTORS
     p_PERKS = DATA.MODS.FUNCS.PERKS
 
     p_REF_PLAYER = DATA.CONSTS.ACTOR_PLAYER
@@ -27,7 +27,7 @@ endFunction
 function Kiss_Thrall(ObjectReference ref_target, Actor _)
     Actor ref_thrall = ref_target as Actor
 
-    if !ref_thrall || !p_ACTOR2.Is_Vampire(p_REF_PLAYER)
+    if !ref_thrall || !p_ACTORS.Is_Vampire(p_REF_PLAYER)
         return
     endIf
 
@@ -40,7 +40,7 @@ function Kiss_Thrall(ObjectReference ref_target, Actor _)
         (p_CONSTS.PERK_VAMPIRE_FEED as PRKF_VampireFeedBeds_000CF02C).Fragment_15(ref_thrall, none)
         ref_thrall.SetActorValue("Variable08", 8)
         ref_thrall.SetGhost(false)
-    elseIf p_ACTOR2.Is_Dead(ref_thrall)
+    elseIf p_ACTORS.Is_Dead(ref_thrall)
         ; do cannibal instead, or make another perk
     else
         p_REF_PLAYER.StartVampireFeed(ref_thrall)

@@ -1,6 +1,4 @@
-Scriptname doticu_npcp_container extends Quest
-
-; doticu_npcp_containers ?
+Scriptname doticu_npcp_containers extends Quest
 
 ; Private Constants
 doticu_npcp_consts  p_CONSTS    = none

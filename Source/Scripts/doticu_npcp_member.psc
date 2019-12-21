@@ -5,8 +5,8 @@ doticu_npcp_data        p_DATA                  =  none
 doticu_npcp_consts      p_CONSTS                =  none
 doticu_npcp_codes       p_CODES                 =  none
 doticu_npcp_vars        p_VARS                  =  none
-doticu_npcp_actor       p_ACTOR2                =  none
-doticu_npcp_container   p_CONTAINER2            =  none
+doticu_npcp_actors      p_ACTORS                =  none
+doticu_npcp_containers  p_CONTAINERS            =  none
 doticu_npcp_outfits     p_OUTFITS               =  none
 doticu_npcp_members     p_MEMBERS               =  none
 doticu_npcp_followers   p_FOLLOWERS             =  none
@@ -38,8 +38,8 @@ function f_Initialize(doticu_npcp_data DATA, int IDX_ALIAS)
     p_CONSTS = DATA.CONSTS
     p_CODES = DATA.CODES
     p_VARS = DATA.VARS
-    p_ACTOR2 = DATA.MODS.FUNCS.ACTOR2
-    p_CONTAINER2 = DATA.MODS.FUNCS.CONTAINER2
+    p_ACTORS = DATA.MODS.FUNCS.ACTORS
+    p_CONTAINERS = DATA.MODS.FUNCS.CONTAINERS
     p_OUTFITS = DATA.MODS.FUNCS.OUTFITS
     p_MEMBERS = DATA.MODS.MEMBERS
     p_FOLLOWERS = DATA.MODS.FOLLOWERS
@@ -62,9 +62,9 @@ int function f_Create(bool is_a_clone)
     if !p_ref_actor
         return p_CODES.ISNT_ACTOR
     endIf
-    if p_ACTOR2.Is_Dead(p_ref_actor)
-        p_ACTOR2.Resurrect(p_ref_actor)
-        if p_ACTOR2.Is_Dead(p_ref_actor)
+    if p_ACTORS.Is_Dead(p_ref_actor)
+        p_ACTORS.Resurrect(p_ref_actor)
+        if p_ACTORS.Is_Dead(p_ref_actor)
             return p_CODES.CANT_RESURRECT
         endIf
     endIf
@@ -75,7 +75,7 @@ int function f_Create(bool is_a_clone)
     else
         p_is_clone = false
     endIf
-    if p_ACTOR2.Is_Generic(p_ref_actor)
+    if p_ACTORS.Is_Generic(p_ref_actor)
         p_is_generic = true
     else
         p_is_generic = false
@@ -161,97 +161,97 @@ function p_Destroy_Outfits()
 endFunction
 
 function p_Backup()
-    p_prev_vitality = p_ACTOR2.Get_Vitality(p_ref_actor)
+    p_prev_vitality = p_ACTORS.Get_Vitality(p_ref_actor)
     p_prev_outfit2_member.Get(p_ref_actor)
 endFunction
 
 function p_Restore()
     p_prev_outfit2_member.Set(p_ref_actor)
-    p_ACTOR2.Vitalize(p_ref_actor, p_prev_vitality)
+    p_ACTORS.Vitalize(p_ref_actor, p_prev_vitality)
 
     p_prev_outfit2_member = none
     p_prev_vitality = -1
 endFunction
 
 function p_Token()
-    p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_MEMBER, p_ID_ALIAS + 1)
+    p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_MEMBER, p_ID_ALIAS + 1)
 
     if p_is_clone
-        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_CLONE)
+        p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_CLONE)
     else
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_CLONE)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_CLONE)
     endIf
 
     if p_is_generic
-        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_GENERIC)
+        p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_GENERIC)
     else
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_GENERIC)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_GENERIC)
     endIf
 
     if p_is_thrall
-        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_THRALL)
+        p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_THRALL)
     else
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_THRALL)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_THRALL)
     endIf
 
     if p_code_style == p_CODES.IS_WARRIOR
-        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_STYLE_WARRIOR)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_DEFAULT)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_MAGE)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_ARCHER)
+        p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_STYLE_WARRIOR)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_DEFAULT)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_MAGE)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_ARCHER)
     elseIf p_code_style == p_CODES.IS_MAGE
-        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_STYLE_MAGE)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_DEFAULT)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_WARRIOR)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_ARCHER)
+        p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_STYLE_MAGE)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_DEFAULT)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_WARRIOR)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_ARCHER)
     elseIf p_code_style == p_CODES.IS_ARCHER
-        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_STYLE_ARCHER)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_DEFAULT)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_WARRIOR)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_MAGE)
+        p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_STYLE_ARCHER)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_DEFAULT)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_WARRIOR)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_MAGE)
     else
-        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_STYLE_DEFAULT)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_WARRIOR)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_MAGE)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_ARCHER)
+        p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_STYLE_DEFAULT)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_WARRIOR)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_MAGE)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_ARCHER)
     endIf
 
     if p_code_vitality == p_CODES.IS_MORTAL
-        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_VITALITY_MORTAL)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_PROTECTED)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_ESSENTIAL)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_INVULNERABLE)
+        p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_VITALITY_MORTAL)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_PROTECTED)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_ESSENTIAL)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_INVULNERABLE)
     elseIf p_code_vitality == p_CODES.IS_PROTECTED
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_MORTAL)
-        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_VITALITY_PROTECTED)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_ESSENTIAL)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_INVULNERABLE)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_MORTAL)
+        p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_VITALITY_PROTECTED)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_ESSENTIAL)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_INVULNERABLE)
     elseIf p_code_vitality == p_CODES.IS_ESSENTIAL
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_MORTAL)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_PROTECTED)
-        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_VITALITY_ESSENTIAL)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_INVULNERABLE)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_MORTAL)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_PROTECTED)
+        p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_VITALITY_ESSENTIAL)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_INVULNERABLE)
     elseIf p_code_vitality == p_CODES.IS_INVULNERABLE
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_MORTAL)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_PROTECTED)
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_ESSENTIAL)
-        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_VITALITY_INVULNERABLE)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_MORTAL)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_PROTECTED)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_ESSENTIAL)
+        p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_VITALITY_INVULNERABLE)
     endIf
 endFunction
 
 function p_Untoken()
-    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_INVULNERABLE)
-    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_ESSENTIAL)
-    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_PROTECTED)
-    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_MORTAL)
-    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_ARCHER)
-    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_MAGE)
-    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_WARRIOR)
-    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_DEFAULT)
-    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_THRALL)
-    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_GENERIC)
-    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_CLONE)
-    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_MEMBER)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_INVULNERABLE)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_ESSENTIAL)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_PROTECTED)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_MORTAL)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_ARCHER)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_MAGE)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_WARRIOR)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_DEFAULT)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_THRALL)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_GENERIC)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_CLONE)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_MEMBER)
 endFunction
 
 function p_Member()
@@ -279,7 +279,7 @@ function p_Unstyle()
 endFunction
 
 function p_Vitalize()
-    p_ACTOR2.Vitalize(p_ref_actor, p_code_vitality)
+    p_ACTORS.Vitalize(p_ref_actor, p_code_vitality)
 endFunction
 
 function p_Unvitalize()
@@ -339,7 +339,7 @@ bool function Exists()
 endFunction
 
 string function Get_Name()
-    return p_ACTOR2.Get_Name(p_ref_actor)
+    return p_ACTORS.Get_Name(p_ref_actor)
 endFunction
 
 Actor function Get_Actor()
@@ -383,7 +383,7 @@ int function Set_Name(string str_name)
         return p_CODES.ISNT_MEMBER
     endIf
 
-    p_ACTOR2.Set_Name(p_ref_actor, str_name)
+    p_ACTORS.Set_Name(p_ref_actor, str_name)
 
     if Get_Name() != str_name
         return p_CODES.CANT_RENAME
@@ -521,7 +521,7 @@ int function Enthrall()
         return p_CODES.ISNT_MEMBER
     endIf
 
-    if !p_ACTOR2.Is_Vampire(p_CONSTS.ACTOR_PLAYER)
+    if !p_ACTORS.Is_Vampire(p_CONSTS.ACTOR_PLAYER)
         return p_CODES.ISNT_VAMPIRE
     endIf
 
@@ -546,7 +546,7 @@ int function Unthrall()
         return p_CODES.ISNT_MEMBER
     endIf
 
-    if !p_ACTOR2.Is_Vampire(p_CONSTS.ACTOR_PLAYER)
+    if !p_ACTORS.Is_Vampire(p_CONSTS.ACTOR_PLAYER)
         return p_CODES.ISNT_VAMPIRE
     endIf
 
@@ -571,13 +571,13 @@ int function Resurrect()
         return p_CODES.ISNT_MEMBER
     endIf
 
-    if p_ACTOR2.Is_Alive(p_ref_actor)
+    if p_ACTORS.Is_Alive(p_ref_actor)
         return p_CODES.IS_ALIVE
     endIf
 
-    p_ACTOR2.Resurrect(p_ref_actor)
+    p_ACTORS.Resurrect(p_ref_actor)
 
-    if p_ACTOR2.Is_Dead(p_ref_actor)
+    if p_ACTORS.Is_Dead(p_ref_actor)
         return p_CODES.CANT_RESURRECT
     endIf
 
@@ -788,9 +788,9 @@ int function Access()
         return p_CODES.ISNT_MEMBER
     endIf
     
-    p_ACTOR2.Open_Inventory(p_ref_actor)
+    p_ACTORS.Open_Inventory(p_ref_actor)
     Utility.Wait(0.1)
-    p_ACTOR2.Update_Equipment(p_ref_actor)
+    p_ACTORS.Update_Equipment(p_ref_actor)
 
     code_return = Enforce()
     if code_return < 0
@@ -937,7 +937,7 @@ bool function Is_Vitalized_Invulnerable()
 endFunction
 
 function Summon(int distance = 60, int angle = 0)
-    p_ACTOR2.Move_To(p_ref_actor, p_CONSTS.ACTOR_PLAYER, distance, angle)
+    p_ACTORS.Move_To(p_ref_actor, p_CONSTS.ACTOR_PLAYER, distance, angle)
 endFunction
 
 function Summon_Ahead()
@@ -955,12 +955,12 @@ event OnActivate(ObjectReference ref_activator)
 endEvent
 
 event OnLoad()
-    p_ACTOR2.Update_Equipment(p_ref_actor)
+    p_ACTORS.Update_Equipment(p_ref_actor)
 endEvent
 
 event OnCombatStateChanged(Actor ref_target, int code_combat)
-    if ref_target == p_CONSTS.ACTOR_PLAYER || p_ACTOR2.Has_Token(ref_target, p_CONSTS.TOKEN_MEMBER)
-        p_ACTOR2.Pacify(p_ref_actor)
+    if ref_target == p_CONSTS.ACTOR_PLAYER || p_ACTORS.Has_Token(ref_target, p_CONSTS.TOKEN_MEMBER)
+        p_ACTORS.Pacify(p_ref_actor)
     endIf
 
     if code_combat == p_CODES.COMBAT_NO

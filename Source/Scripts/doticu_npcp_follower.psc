@@ -1,55 +1,57 @@
 Scriptname doticu_npcp_follower extends ReferenceAlias
 
 ; Private Constants
-doticu_npcp_consts      p_CONSTS        = none
-doticu_npcp_codes       p_CODES         = none
-doticu_npcp_vars        p_VARS          = none
-doticu_npcp_funcs       p_FUNCS         = none
-doticu_npcp_actor       p_ACTOR2        = none
-doticu_npcp_members     p_MEMBERS       = none
-doticu_npcp_followers   p_FOLLOWERS     = none
-doticu_npcp_control     p_CONTROL       = none
-doticu_npcp_async_alias p_ASYNC         = none
-Actor                   p_REF_PLAYER    = none
-int                     p_ID_ALIAS      =   -1
+doticu_npcp_consts      p_CONSTS                    =  none
+doticu_npcp_codes       p_CODES                     =  none
+doticu_npcp_vars        p_VARS                      =  none
+doticu_npcp_funcs       p_FUNCS                     =  none
+doticu_npcp_actors      p_ACTORS                    =  none
+doticu_npcp_members     p_MEMBERS                   =  none
+doticu_npcp_followers   p_FOLLOWERS                 =  none
+doticu_npcp_control     p_CONTROL                   =  none
+
+doticu_npcp_async_alias p_ASYNC                     =  none
+
+Actor                   p_REF_PLAYER                =  none
+int                     p_ID_ALIAS                  =    -1
 
 ; Private Variables
-bool                            p_is_created                = false
-Actor                           p_ref_actor                 =  none
-doticu_npcp_member  p_ref_member                =  none
-int                             p_style_follower            =    -1
-int                             p_level_follower            =    -1
-bool                            p_is_sneak                  = false
+bool                    p_is_created                = false
+Actor                   p_ref_actor                 =  none
+doticu_npcp_member      p_ref_member                =  none
+int                     p_style_follower            =    -1
+int                     p_level_follower            =    -1
+bool                    p_is_sneak                  = false
 
-int                             p_prev_relationship_rank    =    -1
-float                           p_prev_waiting_for_player   =  -1.0
-float                           p_prev_aggression           =  -1.0
-float                           p_prev_confidence           =  -1.0
-float                           p_prev_assistance           =  -1.0; this may need to go on Member
-float                           p_prev_morality             =  -1.0
-float                           p_prev_speed_mult           =  -1.0
+int                     p_prev_relationship_rank    =    -1
+float                   p_prev_waiting_for_player   =  -1.0
+float                   p_prev_aggression           =  -1.0
+float                   p_prev_confidence           =  -1.0
+float                   p_prev_assistance           =  -1.0; this may need to go on Member
+float                   p_prev_morality             =  -1.0
+float                   p_prev_speed_mult           =  -1.0
 
-float                           p_prev_health               =  -1.0
-float                           p_prev_magicka              =  -1.0
-float                           p_prev_stamina              =  -1.0
-float                           p_prev_one_handed           =  -1.0
-float                           p_prev_two_handed           =  -1.0
-float                           p_prev_block                =  -1.0
-float                           p_prev_heavy_armor          =  -1.0
-float                           p_prev_light_armor          =  -1.0
-float                           p_prev_smithing             =  -1.0
-float                           p_prev_destruction          =  -1.0
-float                           p_prev_restoration          =  -1.0
-float                           p_prev_conjuration          =  -1.0
-float                           p_prev_alteration           =  -1.0
-float                           p_prev_illusion             =  -1.0
-float                           p_prev_enchanting           =  -1.0
-float                           p_prev_marksman             =  -1.0
-float                           p_prev_sneak                =  -1.0
-float                           p_prev_alchemy              =  -1.0
-float                           p_prev_lockpicking          =  -1.0
-float                           p_prev_pickpocket           =  -1.0
-float                           p_prev_speechcraft          =  -1.0
+float                   p_prev_health               =  -1.0
+float                   p_prev_magicka              =  -1.0
+float                   p_prev_stamina              =  -1.0
+float                   p_prev_one_handed           =  -1.0
+float                   p_prev_two_handed           =  -1.0
+float                   p_prev_block                =  -1.0
+float                   p_prev_heavy_armor          =  -1.0
+float                   p_prev_light_armor          =  -1.0
+float                   p_prev_smithing             =  -1.0
+float                   p_prev_destruction          =  -1.0
+float                   p_prev_restoration          =  -1.0
+float                   p_prev_conjuration          =  -1.0
+float                   p_prev_alteration           =  -1.0
+float                   p_prev_illusion             =  -1.0
+float                   p_prev_enchanting           =  -1.0
+float                   p_prev_marksman             =  -1.0
+float                   p_prev_sneak                =  -1.0
+float                   p_prev_alchemy              =  -1.0
+float                   p_prev_lockpicking          =  -1.0
+float                   p_prev_pickpocket           =  -1.0
+float                   p_prev_speechcraft          =  -1.0
 
 ; Friend Methods
 function f_Initialize(doticu_npcp_data DATA, int ID_ALIAS)
@@ -57,11 +59,13 @@ function f_Initialize(doticu_npcp_data DATA, int ID_ALIAS)
     p_CODES = DATA.CODES
     p_VARS = DATA.VARS
     p_FUNCS = DATA.MODS.FUNCS
-    p_ACTOR2 = DATA.MODS.FUNCS.ACTOR2
+    p_ACTORS = DATA.MODS.FUNCS.ACTORS
     p_MEMBERS = DATA.MODS.MEMBERS
     p_FOLLOWERS = DATA.MODS.FOLLOWERS
     p_CONTROL = DATA.MODS.CONTROL
+
     p_ASYNC = (self as ReferenceAlias) as doticu_npcp_async_alias
+
     p_REF_PLAYER = DATA.CONSTS.ACTOR_PLAYER
     p_ID_ALIAS = ID_ALIAS
 
@@ -202,17 +206,17 @@ function p_Restore()
 endFunction
 
 function p_Token()
-    p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER, p_ID_ALIAS + 1)
+    p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER, p_ID_ALIAS + 1)
     if p_is_sneak
-        p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER_SNEAK)
+        p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER_SNEAK)
     else
-        p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER_SNEAK)
+        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER_SNEAK)
     endIf
 endFunction
 
 function p_Untoken()
-    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER_SNEAK)
-    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER_SNEAK)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER)
 endFunction
 
 function p_Follow()
@@ -637,7 +641,7 @@ bool function Is_Styled_Archer()
 endFunction
 
 bool function Is_Dead()
-    return p_ACTOR2.Is_Dead(p_ref_actor)
+    return p_ACTORS.Is_Dead(p_ref_actor)
 endFunction
 
 function Summon(int distance = 60, int angle = 0)

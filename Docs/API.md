@@ -24,7 +24,7 @@ Contains variable values that can be changed by any and every module throughout 
         Scriptname doticu_npcp_vars extends Quest
 
 ### : `MODS`
-Contains a property pointing to every module, so they are all accessible from anywhere that has access to `DATA`. Each module is in turn expected to point to its sub modules so that, e.g. `CONTROL` can access the sub module `ACTOR2` from the module `FUNCS`.
+Contains a property pointing to every module, so they are all accessible from anywhere that has access to `DATA`. Each module is in turn expected to point to its sub modules so that, e.g. `CONTROL` can access the sub module `ACTORS` from the module `FUNCS`.
 
         Scriptname doticu_npcp_mods extends Quest
 
@@ -38,10 +38,10 @@ Contains smaller types that may consist only of a handful of functions. Their su
         ; Public Methods
         function Close_Menus()
 
-### : `ACTOR2`
+### : `ACTORS`
 An extension of the Actor class that acts as a simple helper, and more importantly allows for ease of use in tagging npcs with tokens that are strictly used in the vanilla condition system.
 
-        Scriptname doticu_npcp_actor extends Actor
+        Scriptname doticu_npcp_actors extends Actor
 
         ; Public Methods
         bool function Is_Dead(Actor ref_actor)

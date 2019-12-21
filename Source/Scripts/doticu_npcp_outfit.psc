@@ -2,8 +2,8 @@ Scriptname doticu_npcp_outfit extends ObjectReference
 
 ; Private Constants
 doticu_npcp_consts      p_CONSTS        = none
-doticu_npcp_actor       p_ACTOR2        = none
-doticu_npcp_container   p_CONTAINER2    = none
+doticu_npcp_actors      p_ACTORS        = none
+doticu_npcp_containers  p_CONTAINERS    = none
 doticu_npcp_logs        p_LOGS          = none
 
 Outfit                  p_OUTFIT        = none
@@ -12,8 +12,8 @@ LeveledItem             p_LEVELED       = none
 ; Friend Methods
 function f_Initialize(doticu_npcp_data DATA, Outfit FORM_OUTFIT)
     p_CONSTS = DATA.CONSTS
-    p_ACTOR2 = DATA.MODS.FUNCS.ACTOR2
-    p_CONTAINER2 = DATA.MODS.FUNCS.CONTAINER2
+    p_ACTORS = DATA.MODS.FUNCS.ACTORS
+    p_CONTAINERS = DATA.MODS.FUNCS.CONTAINERS
     p_LOGS = DATA.MODS.FUNCS.LOGS
 
     p_OUTFIT = FORM_OUTFIT
@@ -53,7 +53,7 @@ function Get(Actor ref_actor)
 endFunction
 
 function Set(Actor ref_actor)
-    ObjectReference ref_container_temp = p_CONTAINER2.Create(p_CONSTS.CONTAINER_EMPTY, false)
+    ObjectReference ref_container_temp = p_CONTAINERS.Create(p_CONSTS.CONTAINER_EMPTY, false)
     int num_forms
     int idx_forms
     Form ref_form
@@ -105,14 +105,14 @@ function Set(Actor ref_actor)
     endWhile
 
     ; Restore Old Actor Inventory
-    p_CONTAINER2.Take_All(ref_actor, ref_container_temp)
+    p_CONTAINERS.Take_All(ref_actor, ref_container_temp)
 
     ; Ensure New Outfit is Equipped
-    p_ACTOR2.Update_Equipment(ref_actor)
+    p_ACTORS.Update_Equipment(ref_actor)
 endFunction
 
 function Unset(Actor ref_actor)
-    ObjectReference ref_container_temp = p_CONTAINER2.Create(p_CONSTS.CONTAINER_EMPTY, false)
+    ObjectReference ref_container_temp = p_CONTAINERS.Create(p_CONSTS.CONTAINER_EMPTY, false)
 
     self.RemoveAllItems(ref_container_temp, false, true)
     Set(ref_actor)

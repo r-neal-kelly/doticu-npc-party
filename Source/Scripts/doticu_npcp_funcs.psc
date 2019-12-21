@@ -2,17 +2,17 @@ Scriptname doticu_npcp_funcs extends Quest
 
 ; Private Constants
 doticu_npcp_consts      p_CONSTS        = none
-doticu_npcp_actor       p_ACTOR2        = none
+doticu_npcp_actors      p_ACTORS        = none
 doticu_npcp_perks       p_PERKS         = none
-doticu_npcp_outfits      p_OUTFITS       = none
-doticu_npcp_container   p_CONTAINER2    = none
+doticu_npcp_outfits     p_OUTFITS       = none
+doticu_npcp_containers  p_CONTAINERS    = none
 doticu_npcp_logs        p_LOGS          = none
 doticu_npcp_player      p_PLAYER        = none
 
 ; Public Constants
-doticu_npcp_actor property ACTOR2
-    doticu_npcp_actor function Get()
-        return p_ACTOR2
+doticu_npcp_actors property ACTORS
+    doticu_npcp_actors function Get()
+        return p_ACTORS
     endFunction
 endProperty
 
@@ -28,9 +28,9 @@ doticu_npcp_outfits property OUTFITS
     endFunction
 endProperty
 
-doticu_npcp_container property CONTAINER2
-    doticu_npcp_container function Get()
-        return p_CONTAINER2
+doticu_npcp_containers property CONTAINERS
+    doticu_npcp_containers function Get()
+        return p_CONTAINERS
     endFunction
 endProperty
 
@@ -49,26 +49,26 @@ endProperty
 ; Friend Methods
 function f_Initialize(doticu_npcp_data DATA)
     p_CONSTS = DATA.CONSTS
-    p_ACTOR2 = (self as Quest) as doticu_npcp_actor
+    p_ACTORS = (self as Quest) as doticu_npcp_actors
     p_PERKS = (self as Quest) as doticu_npcp_perks
     p_OUTFITS = (self as Quest) as doticu_npcp_outfits
-    p_CONTAINER2 = (self as Quest) as doticu_npcp_container
+    p_CONTAINERS = (self as Quest) as doticu_npcp_containers
     p_LOGS = (self as Quest) as doticu_npcp_logs
     p_PLAYER = GetAliasByName("player") as doticu_npcp_player
 
-    p_ACTOR2.f_Initialize(DATA)
+    p_ACTORS.f_Initialize(DATA)
     p_PERKS.f_Initialize(DATA)
     p_OUTFITS.f_Initialize(DATA)
-    p_CONTAINER2.f_Initialize(DATA)
+    p_CONTAINERS.f_Initialize(DATA)
     p_LOGS.f_Initialize(DATA)
     p_PLAYER.f_Initialize(DATA)
 endFunction
 
 function f_Register()
-    p_ACTOR2.f_Register()
+    p_ACTORS.f_Register()
     p_PERKS.f_Register()
     p_OUTFITS.f_Register()
-    p_CONTAINER2.f_Register()
+    p_CONTAINERS.f_Register()
     p_LOGS.f_Register()
     p_PLAYER.f_Register()
 endFunction

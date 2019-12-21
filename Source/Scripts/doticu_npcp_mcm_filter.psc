@@ -1,7 +1,7 @@
 Scriptname doticu_npcp_mcm_filter extends Quest
 
 ; Private Constants
-doticu_npcp_mcm p_MCM = none
+doticu_npcp_mcm p_MCM   = none
 
 ; Private Variables
 

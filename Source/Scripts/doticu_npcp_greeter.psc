@@ -3,7 +3,7 @@ Scriptname doticu_npcp_greeter extends ReferenceAlias
 ; Private Constants
 doticu_npcp_consts  p_CONSTS    = none
 doticu_npcp_codes   p_CODES     = none
-doticu_npcp_actor   p_ACTOR2    = none
+doticu_npcp_actors  p_ACTORS    = none
 
 ; Private Variable
 bool    is_created  = false
@@ -12,7 +12,7 @@ Actor   p_ref_actor =  none
 ; Friend Methods
 function f_Initialize(doticu_npcp_data DATA)
     p_CONSTS = DATA.CONSTS
-    p_ACTOR2 = DATA.MODS.FUNCS.ACTOR2
+    p_ACTORS = DATA.MODS.FUNCS.ACTORS
 endFunction
 
 int function f_Create(Actor ref_actor)
@@ -27,8 +27,8 @@ int function f_Create(Actor ref_actor)
     p_ref_actor = ref_actor
 
     ForceRefTo(p_ref_actor)
-    p_ACTOR2.Token(p_ref_actor, p_CONSTS.TOKEN_GREETER); maybe not necessary
-    p_ACTOR2.Pacify(p_ref_actor)
+    p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_GREETER); maybe not necessary
+    p_ACTORS.Pacify(p_ref_actor)
 
     UnregisterForCrosshairRef()
     RegisterForCrosshairRef()
@@ -43,8 +43,8 @@ int function f_Destroy()
 
     UnregisterForCrosshairRef()
 
-    p_ACTOR2.Pacify(p_ref_actor)
-    p_ACTOR2.Untoken(p_ref_actor, p_CONSTS.TOKEN_GREETER)
+    p_ACTORS.Pacify(p_ref_actor)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_GREETER)
     Clear()
     p_ref_actor.EvaluatePackage()
 

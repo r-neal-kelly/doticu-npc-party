@@ -1,24 +1,20 @@
 Scriptname doticu_npcp_followers extends Quest
 
 ; Private Constants
-doticu_npcp_consts  CONSTS  = none
-doticu_npcp_codes   CODES   = none
-doticu_npcp_vars    VARS    = none
-doticu_npcp_mods    MODS    = none
-doticu_npcp_aliases ALIASES = none
+doticu_npcp_consts  p_CONSTS    = none
+doticu_npcp_codes   p_CODES     = none
+doticu_npcp_aliases p_ALIASES   = none
 
 ; Friend Methods
 function f_Initialize(doticu_npcp_data DATA)
-    CONSTS = DATA.CONSTS
-    CODES = DATA.CODES
-    VARS = DATA.VARS
-    MODS = DATA.MODS
-    ALIASES = (self as Quest) as doticu_npcp_aliases
+    p_CONSTS = DATA.CONSTS
+    p_CODES = DATA.CODES
+    p_ALIASES = (self as Quest) as doticu_npcp_aliases
 
-    ALIASES.f_Initialize(DATA)
+    p_ALIASES.f_Initialize(DATA)
 
     int idx_alias = 0
-    int max_aliases = ALIASES.Get_Max()
+    int max_aliases = p_ALIASES.Get_Max()
     ReferenceAlias ref_alias = none
     while idx_alias < max_aliases
         ref_alias = GetNthAlias(idx_alias) as ReferenceAlias
@@ -29,7 +25,7 @@ endFunction
 
 function f_Register()
     int idx_alias = 0
-    int max_aliases = ALIASES.Get_Max()
+    int max_aliases = p_ALIASES.Get_Max()
     ReferenceAlias ref_alias = none
     while idx_alias < max_aliases
         ref_alias = GetNthAlias(idx_alias) as ReferenceAlias
@@ -42,12 +38,12 @@ endFunction
 int function f_Create_Follower(Actor ref_actor)
     int code_return
 
-    code_return = ALIASES.Create_Alias(ref_actor)
+    code_return = p_ALIASES.Create_Alias(ref_actor)
     if code_return < 0
-        if code_return == CODES.HAS_ACTOR || code_return == CODES.HAS_ALIAS
-            return CODES.HAS_FOLLOWER
-        elseIf code_return == CODES.HASNT_SPACE
-            return CODES.HASNT_SPACE_FOLLOWER
+        if code_return == p_CODES.HAS_ACTOR || code_return == p_CODES.HAS_ALIAS
+            return p_CODES.HAS_FOLLOWER
+        elseIf code_return == p_CODES.HASNT_SPACE
+            return p_CODES.HASNT_SPACE_FOLLOWER
         else
             return code_return
         endIf
@@ -56,23 +52,23 @@ int function f_Create_Follower(Actor ref_actor)
 
     code_return = p_Get_Follower(id_alias).f_Create()
     if code_return < 0
-        ALIASES.Destroy_Alias(id_alias, ref_actor)
+        p_ALIASES.Destroy_Alias(id_alias, ref_actor)
         return code_return
     endIf
 
     ; this value needs to be 1 whenever there is a follower
     ; because the engine won't update player teammates when 0
-    CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(1)
+    p_CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(1)
 
-    return CODES.SUCCESS
+    return p_CODES.SUCCESS
 endFunction
 
 int function f_Destroy_Follower(Actor ref_actor)
     int code_return
 
     int id_alias = p_Get_Alias_ID(ref_actor)
-    if !ALIASES.Has_Alias(id_alias, ref_actor)
-        return CODES.HASNT_FOLLOWER
+    if !p_ALIASES.Has_Alias(id_alias, ref_actor)
+        return p_CODES.HASNT_FOLLOWER
     endIf
 
     code_return = p_Get_Follower(id_alias).f_Destroy()
@@ -80,7 +76,7 @@ int function f_Destroy_Follower(Actor ref_actor)
         return code_return
     endIf
 
-    code_return = ALIASES.Destroy_Alias(id_alias, ref_actor)
+    code_return = p_ALIASES.Destroy_Alias(id_alias, ref_actor)
     if code_return < 0
         return code_return
     endIf
@@ -89,45 +85,45 @@ int function f_Destroy_Follower(Actor ref_actor)
         ; this would conflict with the vanilla system
         ; and any other mods that use it, except that we
         ; modify the vanilla system to force use of ours
-        CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(0)
+        p_CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(0)
     endIf
 
-    return CODES.SUCCESS
+    return p_CODES.SUCCESS
 endFunction
 
 ; Private Methods
 int function p_Get_Alias_ID(Actor ref_actor)
-    return ref_actor.GetItemCount(CONSTS.TOKEN_FOLLOWER) - 1
+    return ref_actor.GetItemCount(p_CONSTS.TOKEN_FOLLOWER) - 1
 endFunction
 
 doticu_npcp_follower function p_Get_Follower(int id_alias)
-    return ALIASES.f_Get_Alias(id_alias) as doticu_npcp_follower
+    return p_ALIASES.f_Get_Alias(id_alias) as doticu_npcp_follower
 endFunction
 
 ; Public Methods
 int function Get_Count()
-    return ALIASES.Get_Count()
+    return p_ALIASES.Get_Count()
 endFunction
 
 int function Get_Max()
-    return ALIASES.Get_Max()
+    return p_ALIASES.Get_Max()
 endFunction
 
 bool function Has_Follower(Actor ref_actor)
-    return ALIASES.Has_Alias(p_Get_Alias_ID(ref_actor), ref_actor)
+    return p_ALIASES.Has_Alias(p_Get_Alias_ID(ref_actor), ref_actor)
 endFunction
 
 doticu_npcp_follower function Get_Follower(Actor ref_actor)
-    return ALIASES.Get_Alias(p_Get_Alias_ID(ref_actor), ref_actor) as doticu_npcp_follower
+    return p_ALIASES.Get_Alias(p_Get_Alias_ID(ref_actor), ref_actor) as doticu_npcp_follower
 endFunction
 
 Alias[] function Get_Aliases_Sorted(int idx_from = 0, int idx_to_ex = -1)
-    return ALIASES.Get_Aliases_Sorted(idx_from, idx_to_ex)
+    return p_ALIASES.Get_Aliases_Sorted(idx_from, idx_to_ex)
 endFunction
 
 function Enforce()
     doticu_npcp_follower ref_follower
-    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    Alias[] arr_aliases = p_ALIASES.Get_Aliases()
     int idx_arr = 0
     while idx_arr < arr_aliases.length
         ref_follower = arr_aliases[idx_arr] as doticu_npcp_follower
@@ -138,7 +134,7 @@ endFunction
 
 function Summon()
     doticu_npcp_follower ref_follower
-    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    Alias[] arr_aliases = p_ALIASES.Get_Aliases()
     int idx_arr = 0
     int angle_even = 0
     int angle_odd = 0
@@ -157,7 +153,7 @@ endFunction
 
 function Summon_Mobile()
     doticu_npcp_follower ref_follower
-    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    Alias[] arr_aliases = p_ALIASES.Get_Aliases()
     int idx_arr = 0
     int angle_even = 0
     int angle_odd = 0
@@ -180,7 +176,7 @@ endFunction
 
 function Summon_Immobile()
     doticu_npcp_follower ref_follower
-    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    Alias[] arr_aliases = p_ALIASES.Get_Aliases()
     int idx_arr = 0
     int angle_even = 0
     int angle_odd = 0
@@ -203,7 +199,7 @@ endFunction
 
 function Settle()
     doticu_npcp_follower ref_follower
-    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    Alias[] arr_aliases = p_ALIASES.Get_Aliases()
     int idx_arr = 0
     while idx_arr < arr_aliases.length
         ref_follower = arr_aliases[idx_arr] as doticu_npcp_follower
@@ -218,7 +214,7 @@ endFunction
 
 function Unsettle()
     doticu_npcp_follower ref_follower
-    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    Alias[] arr_aliases = p_ALIASES.Get_Aliases()
     int idx_arr = 0
     while idx_arr < arr_aliases.length
         ref_follower = arr_aliases[idx_arr] as doticu_npcp_follower
@@ -229,7 +225,7 @@ endFunction
 
 function Immobilize()
     doticu_npcp_follower ref_follower
-    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    Alias[] arr_aliases = p_ALIASES.Get_Aliases()
     int idx_arr = 0
     while idx_arr < arr_aliases.length
         ref_follower = arr_aliases[idx_arr] as doticu_npcp_follower
@@ -240,7 +236,7 @@ endFunction
 
 function Mobilize()
     doticu_npcp_follower ref_follower
-    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    Alias[] arr_aliases = p_ALIASES.Get_Aliases()
     int idx_arr = 0
     while idx_arr < arr_aliases.length
         ref_follower = arr_aliases[idx_arr] as doticu_npcp_follower
@@ -251,7 +247,7 @@ endFunction
 
 function Sneak()
     doticu_npcp_follower ref_follower
-    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    Alias[] arr_aliases = p_ALIASES.Get_Aliases()
     int idx_arr = 0
     while idx_arr < arr_aliases.length
         ref_follower = arr_aliases[idx_arr] as doticu_npcp_follower
@@ -262,7 +258,7 @@ endFunction
 
 function Unsneak()
     doticu_npcp_follower ref_follower
-    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    Alias[] arr_aliases = p_ALIASES.Get_Aliases()
     int idx_arr = 0
     while idx_arr < arr_aliases.length
         ref_follower = arr_aliases[idx_arr] as doticu_npcp_follower
@@ -273,7 +269,7 @@ endFunction
 
 function Unfollow()
     doticu_npcp_follower ref_follower
-    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    Alias[] arr_aliases = p_ALIASES.Get_Aliases()
     int idx_arr = 0
     while idx_arr < arr_aliases.length
         ref_follower = arr_aliases[idx_arr] as doticu_npcp_follower
@@ -284,7 +280,7 @@ endFunction
 
 function Unmember()
     doticu_npcp_follower ref_follower
-    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    Alias[] arr_aliases = p_ALIASES.Get_Aliases()
     int idx_arr = 0
     while idx_arr < arr_aliases.length
         ref_follower = arr_aliases[idx_arr] as doticu_npcp_follower
@@ -295,7 +291,7 @@ endFunction
 
 function Resurrect()
     doticu_npcp_follower ref_follower
-    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    Alias[] arr_aliases = p_ALIASES.Get_Aliases()
     int idx_arr = 0
     while idx_arr < arr_aliases.length
         ref_follower = arr_aliases[idx_arr] as doticu_npcp_follower

@@ -1,12 +1,10 @@
-Scriptname doticu_npcp_actor extends Quest
-
-; doticu_npcp_actors ?
+Scriptname doticu_npcp_actors extends Quest
 
 ; Private Constants
 doticu_npcp_consts      p_CONSTS        = none
 doticu_npcp_codes       p_CODES         = none
 doticu_npcp_funcs       p_FUNCS         = none
-doticu_npcp_container   p_CONTAINER2    = none
+doticu_npcp_containers  p_CONTAINERS    = none
 doticu_npcp_outfits     p_OUTFITS       = none
 doticu_npcp_greeter     p_GREETER       = none
 
@@ -15,7 +13,7 @@ function f_Initialize(doticu_npcp_data DATA)
     p_CONSTS = DATA.CONSTS
     p_CODES = DATA.CODES
     p_FUNCS = DATA.MODS.FUNCS
-    p_CONTAINER2 = DATA.MODS.FUNCS.CONTAINER2
+    p_CONTAINERS = DATA.MODS.FUNCS.CONTAINERS
     p_OUTFITS = DATA.MODS.FUNCS.OUTFITS
     p_GREETER = GetAliasByName("greeter") as doticu_npcp_greeter
 
@@ -154,15 +152,15 @@ function Vitalize(Actor ref_actor, int code_vitality)
 endFunction
 
 function Resurrect(Actor ref_actor)
-    ObjectReference ref_container = p_CONTAINER2.Create(p_CONSTS.CONTAINER_EMPTY, false)
+    ObjectReference ref_container = p_CONTAINERS.Create(p_CONSTS.CONTAINER_EMPTY, false)
 
-    p_CONTAINER2.Take_All(ref_container, ref_actor)
+    p_CONTAINERS.Take_All(ref_container, ref_actor)
     ref_actor.Disable()
     ref_actor.Resurrect()
     Pacify(ref_actor)
     ref_actor.Enable()
-    p_CONTAINER2.Empty(ref_actor)
-    p_CONTAINER2.Take_All(ref_actor, ref_container)
+    p_CONTAINERS.Empty(ref_actor)
+    p_CONTAINERS.Take_All(ref_actor, ref_container)
     Update_Equipment(ref_actor)
 endFunction
 

@@ -5,7 +5,7 @@ doticu_npcp_consts      p_CONSTS    = none
 doticu_npcp_codes       p_CODES     = none
 doticu_npcp_vars        p_VARS      = none
 doticu_npcp_logs        p_LOGS      = none
-doticu_npcp_actor       p_ACTOR2    = none
+doticu_npcp_actors      p_ACTORS    = none
 doticu_npcp_members     p_MEMBERS   = none
 doticu_npcp_followers   p_FOLLOWERS = none
 
@@ -15,7 +15,7 @@ function f_Initialize(doticu_npcp_data DATA)
     p_CODES = DATA.CODES
     p_VARS = DATA.VARS
     p_LOGS = DATA.MODS.FUNCS.LOGS
-    p_ACTOR2 = DATA.MODS.FUNCS.ACTOR2
+    p_ACTORS = DATA.MODS.FUNCS.ACTORS
     p_MEMBERS = DATA.MODS.MEMBERS
     p_FOLLOWERS = DATA.MODS.FOLLOWERS
 endFunction
@@ -410,7 +410,7 @@ function Member(Actor ref_actor)
     endIf
 
     int code_return
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
+    string str_name = p_ACTORS.Get_Name(ref_actor)
 
     p_Notify_On_Member(p_MEMBERS.Create_Member(ref_actor), str_name)
 endFunction
@@ -422,16 +422,16 @@ function Unmember(Actor ref_actor)
     endIf
 
     int code_return
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
+    string str_name = p_ACTORS.Get_Name(ref_actor)
 
     p_Notify_On_Unmember(p_MEMBERS.Destroy_Member(ref_actor), str_name)
 endFunction
 
 function Clone(Actor ref_actor)
     int code_return
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
+    string str_name = p_ACTORS.Get_Name(ref_actor)
 
-    if p_ACTOR2.Is_Generic(ref_actor)
+    if p_ACTORS.Is_Generic(ref_actor)
         p_LOGS.Create_Note("Please wait, cloning may take a while.", false)
     endIf
 
@@ -440,14 +440,14 @@ endFunction
 
 function Unclone(Actor ref_actor)
     int code_return
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
+    string str_name = p_ACTORS.Get_Name(ref_actor)
 
     p_Notify_On_Unclone(p_MEMBERS.Destroy_Member(ref_actor, true), str_name)
 endFunction
 
 function Access(Actor ref_actor, bool do_create)
     int code_return
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
+    string str_name = p_ACTORS.Get_Name(ref_actor)
     
     if do_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
@@ -468,7 +468,7 @@ endFunction
 
 function Outfit(Actor ref_actor, String str_outfit, bool do_create); str_outfit not currently used
     int code_return
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
+    string str_name = p_ACTORS.Get_Name(ref_actor)
     
     if do_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
@@ -489,7 +489,7 @@ endFunction
 
 function Resurrect(Actor ref_actor, bool do_create)
     int code_return
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
+    string str_name = p_ACTORS.Get_Name(ref_actor)
     
     if do_create && !p_Members.Has_Member(ref_actor)
         p_Notify_On_Resurrect(p_MEMBERS.Create_Member(ref_actor), str_name)
@@ -507,7 +507,7 @@ endFunction
 
 function Settle(Actor ref_actor, bool do_create)
     int code_return
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
+    string str_name = p_ACTORS.Get_Name(ref_actor)
 
     if do_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
@@ -528,7 +528,7 @@ endFunction
 
 function Unsettle(Actor ref_actor, bool do_create)
     int code_return
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
+    string str_name = p_ACTORS.Get_Name(ref_actor)
 
     if do_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
@@ -549,7 +549,7 @@ endFunction
 
 function Resettle(Actor ref_actor, bool do_create)
     int code_return
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
+    string str_name = p_ACTORS.Get_Name(ref_actor)
 
     if do_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
@@ -584,7 +584,7 @@ endFunction
 
 function Immobilize(Actor ref_actor, bool do_create)
     int code_return
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
+    string str_name = p_ACTORS.Get_Name(ref_actor)
 
     if do_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
@@ -605,7 +605,7 @@ endFunction
 
 function Mobilize(Actor ref_actor, bool do_create)
     int code_return
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
+    string str_name = p_ACTORS.Get_Name(ref_actor)
 
     if do_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
@@ -626,7 +626,7 @@ endFunction
 
 function Enthrall(Actor ref_actor, bool do_create)
     int code_return
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
+    string str_name = p_ACTORS.Get_Name(ref_actor)
 
     if do_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
@@ -647,7 +647,7 @@ endFunction
 
 function Unthrall(Actor ref_actor, bool do_create)
     int code_return
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
+    string str_name = p_ACTORS.Get_Name(ref_actor)
 
     if do_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
@@ -668,7 +668,7 @@ endFunction
 
 function Style(Actor ref_actor, string str_style, bool do_create); may want int code_style instead
     int code_return
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
+    string str_name = p_ACTORS.Get_Name(ref_actor)
     if str_style != "warrior" && str_style != "mage" && str_style != "archer"
         str_style = "default"
     endIf
@@ -700,7 +700,7 @@ endFunction
 
 function Vitalize(Actor ref_actor, string str_vitality, bool do_create); may want int code_vitality instead
     int code_return
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
+    string str_name = p_ACTORS.Get_Name(ref_actor)
     if str_vitality != "protected" && str_vitality != "essential" && str_vitality != "invulnerable"
         str_vitality = "mortal"
     endIf
@@ -732,7 +732,7 @@ endFunction
 
 function Follow(Actor ref_actor, bool do_create)
     int code_return
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
+    string str_name = p_ACTORS.Get_Name(ref_actor)
 
     if do_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
@@ -753,7 +753,7 @@ endFunction
 
 function Unfollow(Actor ref_actor, bool do_create)
     int code_return
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
+    string str_name = p_ACTORS.Get_Name(ref_actor)
 
     if do_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
@@ -774,7 +774,7 @@ endFunction
 
 function Sneak(Actor ref_actor, bool do_create)
     int code_return
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
+    string str_name = p_ACTORS.Get_Name(ref_actor)
 
     if do_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
@@ -809,7 +809,7 @@ endFunction
 
 function Unsneak(Actor ref_actor, bool do_create)
     int code_return
-    string str_name = p_ACTOR2.Get_Name(ref_actor)
+    string str_name = p_ACTORS.Get_Name(ref_actor)
 
     if do_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)

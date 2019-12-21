@@ -1,62 +1,45 @@
 Scriptname doticu_npcp_settler extends ReferenceAlias
 
 ; Private Constants
-doticu_npcp_consts  CONSTS      = none
-doticu_npcp_codes   CODES       = none
-doticu_npcp_vars    VARS        = none
-doticu_npcp_mods    MODS        = none
-doticu_npcp_actor   ACTOR2      = none
-int                 ID_ALIAS    =   -1
-ObjectReference     REF_MARKER  = none
+doticu_npcp_consts  p_CONSTS        = none
+doticu_npcp_codes   p_CODES         = none
+doticu_npcp_actors  p_ACTORS        = none
+doticu_npcp_members p_MEMBERS       = none
+
+int                 p_ID_ALIAS      =   -1
+ObjectReference     p_REF_MARKER    = none
 
 ; Private Variables
-bool                is_created  = false
-Actor               ref_actor   =  none
-doticu_npcp_member  ref_member  =  none
-
-; Private Methods
-function p_Token()
-    ACTOR2.Token(ref_actor, CONSTS.TOKEN_SETTLER)
-endFunction
-
-function p_Untoken()
-    ACTOR2.Untoken(ref_actor, CONSTS.TOKEN_SETTLER)
-endFunction
-
-function p_Settle()
-    REF_MARKER.MoveTo(ref_actor)
-endFunction
-
-function p_Unsettle()
-    REF_MARKER.MoveToMyEditorLocation()
-endFunction
+bool                p_is_created    = false
+Actor               p_ref_actor     =  none
+doticu_npcp_member  p_ref_member    =  none
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA, int idx_alias)
-    CONSTS = DATA.CONSTS
-    CODES = DATA.CODES
-    VARS = DATA.VARS
-    MODS = DATA.MODS
-    ACTOR2 = DATA.MODS.FUNCS.ACTOR2
-    ID_ALIAS = idx_alias
-    REF_MARKER = DATA.CONSTS.FORMLIST_MARKERS_SETTLER.GetAt(idx_alias) as ObjectReference
+function f_Initialize(doticu_npcp_data DATA, int ID_ALIAS)
+    p_CONSTS = DATA.CONSTS
+    p_CODES = DATA.CODES
+    p_ACTORS = DATA.MODS.FUNCS.ACTORS
+    p_MEMBERS = DATA.MODS.MEMBERS
+
+    p_ID_ALIAS = ID_ALIAS
+    p_REF_MARKER = DATA.CONSTS.FORMLIST_MARKERS_SETTLER.GetAt(ID_ALIAS) as ObjectReference
 endFunction
 
 int function f_Create()
     int code_return
 
     if Exists()
-        return CODES.IS_SETTLER
+        return p_CODES.IS_SETTLER
     endIf
-    ref_actor = GetActorReference()
-    if !ref_actor
-        return CODES.ISNT_ACTOR
+    p_ref_actor = GetActorReference()
+    if !p_ref_actor
+        return p_CODES.ISNT_ACTOR
     endIf
-    ref_member = MODS.MEMBERS.Get_Member(ref_actor)
-    if !ref_member
-        return CODES.ISNT_MEMBER
+    p_ref_member = p_MEMBERS.Get_Member(p_ref_actor)
+    if !p_ref_member
+        return p_CODES.ISNT_MEMBER
     endIf
-    is_created = true
+    p_is_created = true
 
     p_Settle()
 
@@ -65,51 +48,68 @@ int function f_Create()
         return code_return
     endIf
 
-    return CODES.SUCCESS
+    return p_CODES.SUCCESS
 endFunction
 
 int function f_Destroy()
     if !Exists()
-        return CODES.ISNT_SETTLER
+        return p_CODES.ISNT_SETTLER
     endIf
 
     p_Unsettle()
     p_Untoken()
 
-    ref_member = none
-    ref_actor = none
-    is_created = false
+    p_ref_member = none
+    p_ref_actor = none
+    p_is_created = false
 
-    return CODES.SUCCESS
+    return p_CODES.SUCCESS
 endFunction
 
 int function f_Enforce()
     int code_return
     
     if !Exists()
-        return CODES.ISNT_SETTLER
+        return p_CODES.ISNT_SETTLER
     endIf
 
     p_Token()
     ; p_Settle() is not enforced
 
-    return CODES.SUCCESS
+    return p_CODES.SUCCESS
+endFunction
+
+; Private Methods
+function p_Token()
+    p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_SETTLER)
+endFunction
+
+function p_Untoken()
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_SETTLER)
+endFunction
+
+function p_Settle()
+    p_REF_MARKER.MoveTo(p_ref_actor)
+endFunction
+
+function p_Unsettle()
+    p_REF_MARKER.MoveToMyEditorLocation()
 endFunction
 
 ; Public Methods
 int function Enforce()
-    return ref_member.Enforce()
+    return p_ref_member.Enforce()
 endFunction
 
 bool function Exists()
-    return is_created
+    return p_is_created
 endFunction
 
 int function Resettle()
     int code_return
 
     if !Exists()
-        return CODES.ISNT_SETTLER
+        return p_CODES.ISNT_SETTLER
     endIf
 
     p_Settle()
@@ -119,5 +119,5 @@ int function Resettle()
         return code_return
     endIf
 
-    return CODES.SUCCESS
+    return p_CODES.SUCCESS
 endFunction

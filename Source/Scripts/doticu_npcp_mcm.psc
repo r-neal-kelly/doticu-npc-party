@@ -1,17 +1,17 @@
 Scriptname doticu_npcp_mcm extends SKI_ConfigBase
 
 ; Private Constants
-doticu_npcp_vars            p_VARS          = none
-doticu_npcp_mcm_followers   p_MCM_FOLLOWERS = none
-doticu_npcp_mcm_members     p_MCM_MEMBERS   = none
-doticu_npcp_mcm_filter      p_MCM_FILTER    = none
-doticu_npcp_mcm_settings    p_MCM_SETTINGS  = none
-doticu_npcp_mcm_log         p_MCM_LOG       = none
+doticu_npcp_vars            p_VARS          =           none
+doticu_npcp_mcm_followers   p_MCM_FOLLOWERS =           none
+doticu_npcp_mcm_members     p_MCM_MEMBERS   =           none
+doticu_npcp_mcm_filter      p_MCM_FILTER    =           none
+doticu_npcp_mcm_settings    p_MCM_SETTINGS  =           none
+doticu_npcp_mcm_log         p_MCM_LOG       =           none
 string                      p_STR_FOLLOWERS = "   Followers"
-string                      p_STR_MEMBERS   = "   Members"
-string                      p_STR_FILTER    = "   Filter"
-string                      p_STR_SETTINGS  = "   Settings"
-string                      p_STR_LOG       = "   Log"
+string                      p_STR_MEMBERS   = "     Members"
+string                      p_STR_FILTER    = "      Filter"
+string                      p_STR_SETTINGS  = "    Settings"
+string                      p_STR_LOG       = "         Log"
 
 ; Friend Methods
 function f_Initialize(doticu_npcp_data DATA)

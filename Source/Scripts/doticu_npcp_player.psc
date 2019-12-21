@@ -5,7 +5,7 @@ doticu_npcp_consts      p_CONSTS        = none
 doticu_npcp_codes       p_CODES         = none
 doticu_npcp_vars        p_VARS          = none
 doticu_npcp_funcs       p_FUNCS         = none
-doticu_npcp_actor       p_ACTOR2        = none
+doticu_npcp_actors      p_ACTORS        = none
 doticu_npcp_followers   p_FOLLOWERS     = none
 doticu_npcp_main        p_MAIN          = none
 
@@ -21,7 +21,7 @@ function f_Initialize(doticu_npcp_data DATA)
     p_CODES = DATA.CODES
     p_VARS = DATA.VARS
     p_FUNCS = DATA.MODS.FUNCS
-    p_ACTOR2 = DATA.MODS.FUNCS.ACTOR2
+    p_ACTORS = DATA.MODS.FUNCS.ACTORS
     p_FOLLOWERS = DATA.MODS.FOLLOWERS
     p_MAIN = DATA.MODS.MAIN
 
