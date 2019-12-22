@@ -16,7 +16,6 @@ doticu_npcp_settler     p_SETTLER               =  none
 doticu_npcp_immobile    p_IMMOBILE              =  none
 
 int                     p_ID_ALIAS              =    -1
-Outfit                  p_OUTFIT_MEMBER         =  none
 
 ; Private Variables
 bool                    p_is_created            = false
@@ -33,7 +32,7 @@ doticu_npcp_outfit      p_prev_outfit2_member   =  none
 ; maybe should backup factions and restore them also.
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA, int IDX_ALIAS)
+function f_Initialize(doticu_npcp_data DATA, int ID_ALIAS)
     p_DATA = DATA
     p_CONSTS = DATA.CONSTS
     p_CODES = DATA.CODES
@@ -48,8 +47,7 @@ function f_Initialize(doticu_npcp_data DATA, int IDX_ALIAS)
     p_SETTLER = (self as ReferenceAlias) as doticu_npcp_settler
     p_IMMOBILE = (self as ReferenceAlias) as doticu_npcp_immobile
 
-    p_ID_ALIAS = IDX_ALIAS
-    p_OUTFIT_MEMBER = DATA.CONSTS.FORMLIST_OUTFITS_MEMBER.GetAt(idx_alias) as Outfit
+    p_ID_ALIAS = ID_ALIAS
 endFunction
 
 int function f_Create(bool is_a_clone)
@@ -151,8 +149,8 @@ endFunction
 
 ; Private Methods
 function p_Create_Outfits()
-    p_outfit2_member = p_OUTFITS.Create(p_OUTFIT_MEMBER, "Member Outfit")
-    p_prev_outfit2_member = p_OUTFITS.Create(p_OUTFIT_MEMBER)
+    p_outfit2_member = p_OUTFITS.Create("Member Outfit")
+    p_prev_outfit2_member = p_OUTFITS.Create()
 endFunction
 
 function p_Destroy_Outfits()

@@ -18,10 +18,10 @@ function f_Register()
 endFunction
 
 ; Public Methods
-doticu_npcp_outfit function Create(Outfit form_outfit, string str_name = "Outfit")
+doticu_npcp_outfit function Create(string str_name = "Outfit")
     doticu_npcp_outfit ref_outfit = p_CONTAINERS.Create(p_CONTAINER_OUTFIT, true) as doticu_npcp_outfit
 
-    ref_outfit.f_Initialize(p_DATA, form_outfit)
+    ref_outfit.f_Initialize(p_DATA)
     ref_outfit.f_Register()
     ref_outfit.f_Create(str_name)
 
