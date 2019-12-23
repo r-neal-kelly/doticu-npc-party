@@ -16,6 +16,7 @@ doticu_npcp_settler     p_SETTLER               =  none
 doticu_npcp_immobile    p_IMMOBILE              =  none
 
 int                     p_ID_ALIAS              =    -1
+Outfit                  p_OUTFIT                =  none
 
 ; Private Variables
 bool                    p_is_created            = false
@@ -48,6 +49,11 @@ function f_Initialize(doticu_npcp_data DATA, int ID_ALIAS)
     p_IMMOBILE = (self as ReferenceAlias) as doticu_npcp_immobile
 
     p_ID_ALIAS = ID_ALIAS
+    p_OUTFIT = p_CONSTS.FORMLIST_OUTFITS.GetAt(ID_ALIAS) as Outfit
+endFunction
+
+function f_Register()
+    RegisterForModEvent("doticu_npcp_version_1_0_0", "On_NPCP_Version_1_0_0")
 endFunction
 
 int function f_Create(bool is_a_clone)
@@ -82,9 +88,6 @@ int function f_Create(bool is_a_clone)
     p_code_vitality = p_VARS.auto_vitality
 
     p_Create_Outfits()
-
-    p_outfit2_member.Get(p_ref_actor)
-
     p_Backup()
     
     code_return = Enforce()
@@ -132,8 +135,10 @@ int function f_Destroy()
     p_Untoken()
 
     p_Restore()
-
     p_Destroy_Outfits()
+
+    p_prev_outfit2_member = none
+    p_prev_vitality = -1
 
     p_outfit2_member = none
     p_code_vitality = -1
@@ -149,8 +154,11 @@ endFunction
 
 ; Private Methods
 function p_Create_Outfits()
-    p_outfit2_member = p_OUTFITS.Create("Member Outfit")
-    p_prev_outfit2_member = p_OUTFITS.Create()
+    p_outfit2_member = p_OUTFITS.Create(p_OUTFIT, p_ACTORS.Get_Name(p_ref_actor) + " Outfit")
+    p_prev_outfit2_member = p_OUTFITS.Create(p_OUTFIT)
+
+    p_outfit2_member.Get(p_ref_actor)
+    p_prev_outfit2_member.Get(p_ref_actor)
 endFunction
 
 function p_Destroy_Outfits()
@@ -160,15 +168,11 @@ endFunction
 
 function p_Backup()
     p_prev_vitality = p_ACTORS.Get_Vitality(p_ref_actor)
-    p_prev_outfit2_member.Get(p_ref_actor)
 endFunction
 
 function p_Restore()
-    p_prev_outfit2_member.Set(p_ref_actor)
+    p_prev_outfit2_member.Set(p_ref_actor); instead of this, we might set the outfit to GetOutfit on base actor
     p_ACTORS.Vitalize(p_ref_actor, p_prev_vitality)
-
-    p_prev_outfit2_member = none
-    p_prev_vitality = -1
 endFunction
 
 function p_Token()
@@ -971,3 +975,6 @@ event OnCombatStateChanged(Actor ref_target, int code_combat)
 endEvent
 
 ; we can use OnItemAdded to keep track of stuff that is added to the member's inventory.
+
+event On_NPCP_Version_1_0_0()
+endEvent

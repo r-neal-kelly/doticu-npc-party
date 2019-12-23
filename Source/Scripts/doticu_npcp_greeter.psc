@@ -12,6 +12,7 @@ Actor   p_ref_actor =  none
 ; Friend Methods
 function f_Initialize(doticu_npcp_data DATA)
     p_CONSTS = DATA.CONSTS
+    p_CODES = DATA.CODES
     p_ACTORS = DATA.MODS.FUNCS.ACTORS
 endFunction
 

@@ -25,6 +25,9 @@ function f_Initialize(doticu_npcp_data DATA, int ID_ALIAS)
     p_REF_MARKER = DATA.CONSTS.FORMLIST_MARKERS_SETTLER.GetAt(ID_ALIAS) as ObjectReference
 endFunction
 
+function f_Register()
+endFunction
+
 int function f_Create()
     int code_return
 

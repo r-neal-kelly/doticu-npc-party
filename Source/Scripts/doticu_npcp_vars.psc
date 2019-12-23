@@ -1,16 +1,19 @@
 Scriptname doticu_npcp_vars extends Quest
 
 ; Private Constants
-doticu_npcp_consts  p_CONSTS                = none
+doticu_npcp_consts  p_CONSTS                =  none
 
 ; Private Variables
+int                 p_version_large         =     0
+int                 p_version_small         =     0
+int                 p_version_bug           =     0
 bool                p_force_clone_unique    = false
 bool                p_force_clone_generic   = false
 bool                p_force_unclone_unique  = false
 bool                p_force_unclone_generic = false
 bool                p_auto_resurrect        = false
-int                 p_auto_style            =    -1; IS_DEFAULT, IS_WARRIOR, IS_MAGE, IS_ARCHER
-int                 p_auto_vitality         =    -1; IS_MORTAL, IS_PROTECTED, IS_ESSENTIAL, IS_INVULNERABLE
+int                 p_auto_style            =    -1
+int                 p_auto_vitality         =    -1
 bool                p_is_mcm_open           = false
 
 ; Public Variables
@@ -47,6 +50,39 @@ int property key_toggle_enthrall            =  73 auto hidden; NUM9
 int property key_toggle_follower            =  55 auto hidden; NUM*
 int property key_toggle_sneak               =  74 auto hidden; NUM-
 int property key_cycle_style                =  43 auto hidden; Back Slash
+
+int property version_large hidden
+    int function Get()
+        return p_version_large
+    endFunction
+    function Set(int val)
+        if p_version_large < val
+            p_version_large = val
+        endIf
+    endFunction
+endProperty
+
+int property version_small hidden
+    int function Get()
+        return p_version_small
+    endFunction
+    function Set(int val)
+        if p_version_small < val
+            p_version_small = val
+        endIf
+    endFunction
+endProperty
+
+int property version_bug hidden
+    int function Get()
+        return p_version_bug
+    endFunction
+    function Set(int val)
+        if p_version_bug < val
+            p_version_bug = val
+        endIf
+    endFunction
+endProperty
 
 bool property force_clone_unique hidden
     bool function Get()
@@ -144,11 +180,15 @@ endProperty
 function f_Initialize(doticu_npcp_data DATA)
     p_CONSTS = DATA.CONSTS
 
+    version_large = p_CONSTS.VERSION_LARGE
+    version_small = p_CONSTS.VERSION_SMALL
+    version_bug = p_CONSTS.VERSION_BUG
+
     force_clone_unique = false
     force_clone_generic = true
     force_unclone_unique = false
     force_unclone_generic = true
     auto_resurrect = true
-    auto_style = DATA.CODES.IS_DEFAULT
-    auto_vitality = DATA.CODES.IS_MORTAL
+    auto_style = DATA.CODES.IS_DEFAULT; IS_DEFAULT, IS_WARRIOR, IS_MAGE, IS_ARCHER
+    auto_vitality = DATA.CODES.IS_PROTECTED; IS_MORTAL, IS_PROTECTED, IS_ESSENTIAL, IS_INVULNERABLE
 endFunction

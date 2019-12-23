@@ -17,7 +17,7 @@ function f_Initialize(doticu_npcp_data DATA)
 endFunction
 
 function f_Register()
-    RegisterForModEvent("doticu_npc_party_player_load_game", "On_Player_Load_Game")
+    RegisterForModEvent("doticu_npcp_load_game", "On_NPCP_Load_Game")
 endFunction
 
 ; Public Methods
@@ -90,7 +90,7 @@ function Update_Keys()
 endFunction
 
 ; Events
-event On_Player_Load_Game()
+event On_NPCP_Load_Game()
     Update_Keys()
 endEvent
 

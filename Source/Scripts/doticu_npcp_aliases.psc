@@ -17,6 +17,19 @@ function f_Initialize(doticu_npcp_data DATA)
 
     p_MAX_ALIASES = GetNumAliases()
 
+    p_Create_ID_Arrays()
+endFunction
+
+ReferenceAlias function f_Get_Alias(int id_alias)
+    if -1 < id_alias && id_alias < p_MAX_ALIASES
+        return GetNthAlias(id_alias) as ReferenceAlias
+    else
+        return none
+    endIf
+endFunction
+
+; Private Methods
+function p_Create_ID_Arrays()
     p_size_ids_used = 0
     p_size_ids_free = p_MAX_ALIASES
     p_arr_ids_used = Utility.CreateIntArray(p_MAX_ALIASES, -1)
@@ -31,15 +44,6 @@ function f_Initialize(doticu_npcp_data DATA)
     endWhile
 endFunction
 
-ReferenceAlias function f_Get_Alias(int id_alias)
-    if -1 < id_alias && id_alias < p_MAX_ALIASES
-        return GetNthAlias(id_alias) as ReferenceAlias
-    else
-        return none
-    endIf
-endFunction
-
-; Private Methods
 int function p_Create_ID()
     if p_size_ids_free <= 0 || p_size_ids_used >= p_arr_ids_used.length
         ; no ids are free
@@ -76,6 +80,10 @@ int function p_Destroy_ID(int id)
     
     p_arr_ids_free[p_size_ids_free] = id
     p_size_ids_free += 1
+
+    if p_size_ids_used < 1
+        p_Create_ID_Arrays(); this may be temp
+    endIf
 
     return p_CODES.SUCCESS
 endFunction

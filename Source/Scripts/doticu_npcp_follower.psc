@@ -232,7 +232,6 @@ function p_Follow()
     p_ref_actor.SetActorValue("Assistance", 2.0); this may need to go on Member
     p_ref_actor.SetActorValue("Morality", 0.0)
     p_ref_actor.SetActorValue("SpeedMult", 120.0)
-    ; use p_VARS to auto set as essential, protected, or mortal (immortal instead of essential?)
 
     ; we still need to disable the vanilla follower dialogue. Probably just add an never true condition to the quest data tab.
 
@@ -249,9 +248,11 @@ endFunction
 function p_Sneak()
     ; if possible, I want this function to make the followers completely undetectable.
     ; maybe an invisibility spell without the visual effect, if possible? not sure
+    p_ref_actor.SetActorValue("SpeedMult", 140.0)
 endFunction
 
 function p_Unsneak()
+    p_ref_actor.SetActorValue("SpeedMult", 120.0)
 endFunction
 
 function p_Level()

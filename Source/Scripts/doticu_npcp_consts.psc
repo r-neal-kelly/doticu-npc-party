@@ -26,6 +26,7 @@ GlobalVariable              p_GLOBAL_FORCE_CLONE_GENERIC            = none
 GlobalVariable              p_GLOBAL_FORCE_UNCLONE_UNIQUE           = none
 GlobalVariable              p_GLOBAL_FORCE_UNCLONE_GENERIC          = none
 FormList                    p_FORMLIST_MARKERS_SETTLER              = none
+FormList                    p_FORMLIST_OUTFITS                      = none
 Faction                     p_FACTION_MEMBER                        = none
 Faction                     p_FACTION_DLC1_THRALL                   = none
 Faction                     p_FACTION_DLC1_VAMPIRE_FEED_NO_CRIME    = none
@@ -37,12 +38,29 @@ PlayerVampireQuestScript    p_SCRIPT_PLAYER_VAMPIRE_QUEST           = none
 Keyword                     p_KEYWORD_VAMPIRE                       = none
 Container                   p_CONTAINER_EMPTY                       = none
 Container                   p_CONTAINER_OUTFIT                      = none
-MiscObject                  p_MISC_GOLD                             = none
 Outfit                      p_OUTFIT_EMPTY                          = none
 Outfit                      p_OUTFIT_TEMPLATE                       = none
 Weapon                      p_WEAPON_BLANK                          = none
 
 ; Public Constants
+int property VERSION_LARGE
+    int function Get()
+        return 0; set manually upon each release
+    endFunction
+endProperty
+
+int property VERSION_SMALL
+    int function Get()
+        return 5; set manually upon each release
+    endFunction
+endProperty
+
+int property VERSION_BUG
+    int function Get()
+        return 0; set manually upon each release
+    endFunction
+endProperty
+
 Actor property ACTOR_PLAYER
     Actor function Get()
         return p_ACTOR_PLAYER
@@ -318,6 +336,17 @@ Formlist property FORMLIST_MARKERS_SETTLER
     endFunction
 endProperty
 
+Formlist property FORMLIST_OUTFITS
+    Formlist function Get()
+        return p_FORMLIST_OUTFITS
+    endFunction
+    function Set(Formlist val)
+        if p_FORMLIST_OUTFITS == none
+            p_FORMLIST_OUTFITS = val
+        endIf
+    endFunction
+endProperty
+
 Faction property FACTION_MEMBER
     Faction function Get()
         return p_FACTION_MEMBER
@@ -439,17 +468,6 @@ Container property CONTAINER_OUTFIT
     endFunction
 endProperty
 
-MiscObject property MISC_GOLD
-    MiscObject function Get()
-        return p_MISC_GOLD
-    endFunction
-    function Set(MiscObject val)
-        if p_MISC_GOLD == none
-            p_MISC_GOLD = val
-        endIf
-    endFunction
-endProperty
-
 Outfit property OUTFIT_EMPTY
     Outfit function Get()
         return p_OUTFIT_EMPTY
@@ -457,17 +475,6 @@ Outfit property OUTFIT_EMPTY
     function Set(Outfit val)
         if p_OUTFIT_EMPTY == none
             p_OUTFIT_EMPTY = val
-        endIf
-    endFunction
-endProperty
-
-Outfit property OUTFIT_TEMPLATE
-    Outfit function Get()
-        return p_OUTFIT_TEMPLATE
-    endFunction
-    function Set(Outfit val)
-        if p_OUTFIT_TEMPLATE == none
-            p_OUTFIT_TEMPLATE = val
         endIf
     endFunction
 endProperty

@@ -1,6 +1,7 @@
 Scriptname doticu_npcp_player extends ReferenceAlias
 
 ; Private Constants
+doticu_npcp_data        p_DATA          = none
 doticu_npcp_consts      p_CONSTS        = none
 doticu_npcp_codes       p_CODES         = none
 doticu_npcp_vars        p_VARS          = none
@@ -17,6 +18,7 @@ bool p_is_in_combat = false
 
 ; Friend Methods
 function f_Initialize(doticu_npcp_data DATA)
+    p_DATA = DATA
     p_CONSTS = DATA.CONSTS
     p_CODES = DATA.CODES
     p_VARS = DATA.VARS
@@ -61,8 +63,8 @@ function f_Try_End_Combat()
 endFunction
 
 ; Private Methods
-bool function p_Send_Player_Load_Game(); we have these separated out so that we can pass arguments too. Maybe there is a better way to abstract this?
-    int handle = ModEvent.Create("doticu_npc_party_player_load_game")
+bool function p_Send_NPCP_Load_Game()
+    int handle = ModEvent.Create("doticu_npcp_load_game")
 
     if !handle
         return false
@@ -98,10 +100,14 @@ endEvent
 
 event OnPlayerLoadGame()
     Utility.Wait(0.5)
+    p_DATA.MODS.RESETS.Reset()
+    Utility.Wait(0.5)
 
     p_MAIN.f_Register()
+    
+    p_MAIN.f_Version()
 
-    while !p_Send_Player_Load_Game()
+    while !p_Send_NPCP_Load_Game()
         Utility.Wait(0.25)
     endWhile
 endEvent

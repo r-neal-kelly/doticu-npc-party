@@ -24,14 +24,31 @@ function f_Initialize(doticu_npcp_data DATA)
     ReferenceAlias ref_alias = none
     while idx_alias < max_aliases
         ref_alias = p_ALIASES.f_Get_Alias(idx_alias)
+
         (ref_alias as doticu_npcp_member).f_Initialize(DATA, idx_alias)
         (ref_alias as doticu_npcp_settler).f_Initialize(DATA, idx_alias)
         (ref_alias as doticu_npcp_immobile).f_Initialize(DATA, idx_alias)
+        (ref_alias as doticu_npcp_member).f_Register()
+        (ref_alias as doticu_npcp_settler).f_Register()
+        (ref_alias as doticu_npcp_immobile).f_Register()
+
         idx_alias += 1
     endWhile
 endFunction
 
 function f_Register()
+    int idx_alias = 0
+    int max_aliases = p_ALIASES.Get_Max()
+    ReferenceAlias ref_alias = none
+    while idx_alias < max_aliases
+        ref_alias = p_ALIASES.f_Get_Alias(idx_alias)
+        
+        (ref_alias as doticu_npcp_member).f_Register()
+        (ref_alias as doticu_npcp_settler).f_Register()
+        (ref_alias as doticu_npcp_immobile).f_Register()
+
+        idx_alias += 1
+    endWhile
 endFunction
 
 ; Private Methods

@@ -10,14 +10,14 @@ Outfit                  p_OUTFIT        = none
 LeveledItem             p_LEVELED       = none
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA)
+function f_Initialize(doticu_npcp_data DATA, Outfit form_outfit)
     p_CONSTS = DATA.CONSTS
     p_ACTORS = DATA.MODS.FUNCS.ACTORS
     p_CONTAINERS = DATA.MODS.FUNCS.CONTAINERS
     p_LOGS = DATA.MODS.FUNCS.LOGS
 
-    p_OUTFIT = DATA.CONSTS.OUTFIT_TEMPLATE
-    p_LEVELED = p_OUTFIT.GetNthPart(0) as LeveledItem
+    p_OUTFIT = form_outfit
+    p_LEVELED = form_outfit.GetNthPart(0) as LeveledItem
 endFunction
 
 function f_Register()
