@@ -9,7 +9,7 @@ doticu_npcp_outfits     p_OUTFITS       = none
 doticu_npcp_greeter     p_GREETER       = none
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA)
+function f_Link(doticu_npcp_data DATA)
     p_CONSTS = DATA.CONSTS
     p_CODES = DATA.CODES
     p_FUNCS = DATA.MODS.FUNCS
@@ -17,10 +17,15 @@ function f_Initialize(doticu_npcp_data DATA)
     p_OUTFITS = DATA.MODS.FUNCS.OUTFITS
     p_GREETER = GetAliasByName("greeter") as doticu_npcp_greeter
 
-    p_Greeter.f_Initialize(DATA)
+    p_GREETER.f_Link(DATA)
+endFunction
+
+function f_Initialize()
+    p_Greeter.f_Initialize()
 endFunction
 
 function f_Register()
+    p_Greeter.f_Register()
 endFunction
 
 ; Private Methods
@@ -257,4 +262,9 @@ function Update_Equipment(Actor ref_actor)
     if !is_player_teammate
         ref_actor.SetPlayerTeammate(false, false)
     endIf
+endFunction
+
+; Update Methods
+function u_0_1_0()
+    p_GREETER.u_0_1_0()
 endFunction

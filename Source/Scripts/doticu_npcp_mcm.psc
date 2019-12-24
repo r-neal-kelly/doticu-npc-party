@@ -1,20 +1,21 @@
 Scriptname doticu_npcp_mcm extends SKI_ConfigBase
 
 ; Private Constants
-doticu_npcp_vars            p_VARS          =           none
-doticu_npcp_mcm_followers   p_MCM_FOLLOWERS =           none
-doticu_npcp_mcm_members     p_MCM_MEMBERS   =           none
-doticu_npcp_mcm_filter      p_MCM_FILTER    =           none
-doticu_npcp_mcm_settings    p_MCM_SETTINGS  =           none
-doticu_npcp_mcm_log         p_MCM_LOG       =           none
-string                      p_STR_FOLLOWERS = "   Followers"
-string                      p_STR_MEMBERS   = "     Members"
-string                      p_STR_FILTER    = "      Filter"
-string                      p_STR_SETTINGS  = "    Settings"
-string                      p_STR_LOG       = "         Log"
+doticu_npcp_vars            p_VARS          = none
+doticu_npcp_mcm_followers   p_MCM_FOLLOWERS = none
+doticu_npcp_mcm_members     p_MCM_MEMBERS   = none
+doticu_npcp_mcm_filter      p_MCM_FILTER    = none
+doticu_npcp_mcm_settings    p_MCM_SETTINGS  = none
+doticu_npcp_mcm_log         p_MCM_LOG       = none
+
+string                      p_STR_FOLLOWERS =   ""
+string                      p_STR_MEMBERS   =   ""
+string                      p_STR_FILTER    =   ""
+string                      p_STR_SETTINGS  =   ""
+string                      p_STR_LOG       =   ""
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA)
+function f_Link(doticu_npcp_data DATA)
     p_VARS = DATA.VARS
     p_MCM_FOLLOWERS = (self as Quest) as doticu_npcp_mcm_followers
     p_MCM_MEMBERS = (self as Quest) as doticu_npcp_mcm_members
@@ -22,14 +23,43 @@ function f_Initialize(doticu_npcp_data DATA)
     p_MCM_SETTINGS = (self as Quest) as doticu_npcp_mcm_settings
     p_MCM_LOG = (self as Quest) as doticu_npcp_mcm_log
 
-    p_MCM_FOLLOWERS.f_Initialize(DATA)
-    p_MCM_MEMBERS.f_Initialize(DATA)
-    p_MCM_FILTER.f_Initialize(DATA)
-    p_MCM_SETTINGS.f_Initialize(DATA)
-    p_MCM_LOG.f_Initialize(DATA)
+    p_MCM_FOLLOWERS.f_Link(DATA)
+    p_MCM_MEMBERS.f_Link(DATA)
+    p_MCM_FILTER.f_Link(DATA)
+    p_MCM_SETTINGS.f_Link(DATA)
+    p_MCM_LOG.f_Link(DATA)
+endFunction
+
+function f_Initialize()
+    p_STR_FOLLOWERS = "   Followers"
+    p_STR_MEMBERS   = "     Members"
+    p_STR_FILTER    = "      Filter"
+    p_STR_SETTINGS  = "    Settings"
+    p_STR_LOG       = "         Log"
+
+    p_MCM_FOLLOWERS.f_Initialize()
+    p_MCM_MEMBERS.f_Initialize()
+    p_MCM_FILTER.f_Initialize()
+    p_MCM_SETTINGS.f_Initialize()
+    p_MCM_LOG.f_Initialize()
 endFunction
 
 function f_Register()
+    p_MCM_FOLLOWERS.f_Register()
+    p_MCM_MEMBERS.f_Register()
+    p_MCM_FILTER.f_Register()
+    p_MCM_SETTINGS.f_Register()
+    p_MCM_LOG.f_Register()
+endFunction
+
+; Update Methods
+function u_0_1_0()
+    ; not sure if this will work, or if we just need to reset the menu each update.
+    p_MCM_FOLLOWERS.u_0_1_0()
+    p_MCM_MEMBERS.u_0_1_0()
+    p_MCM_FILTER.u_0_1_0()
+    p_MCM_SETTINGS.u_0_1_0()
+    p_MCM_LOG.u_0_1_0()
 endFunction
 
 ; Events

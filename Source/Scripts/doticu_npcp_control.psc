@@ -25,18 +25,27 @@ doticu_npcp_mcm property MCM
 endProperty
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA)
+function f_Link(doticu_npcp_data DATA)
     p_COMMANDS = (self as Quest) as doticu_npcp_commands
     p_KEYS = (self as Quest) as doticu_npcp_keys
     p_MCM = (self as Quest) as doticu_npcp_mcm
+endFunction
 
-    p_COMMANDS.f_Initialize(DATA)
-    p_KEYS.f_Initialize(DATA)
-    p_MCM.f_Initialize(DATA)
+function f_Initialize()
+    p_COMMANDS.f_Initialize()
+    p_KEYS.f_Initialize()
+    p_MCM.f_Initialize()
 endFunction
 
 function f_Register()
     p_COMMANDS.f_Register()
     p_KEYS.f_Register()
     p_MCM.f_Register()
+endFunction
+
+; Update Methods
+function u_0_1_0()
+    p_COMMANDS.u_0_1_0()
+    p_KEYS.u_0_1_0()
+    p_MCM.u_0_1_0()
 endFunction

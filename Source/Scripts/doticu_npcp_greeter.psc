@@ -10,10 +10,16 @@ bool    is_created  = false
 Actor   p_ref_actor =  none
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA)
+function f_Link(doticu_npcp_data DATA)
     p_CONSTS = DATA.CONSTS
     p_CODES = DATA.CODES
     p_ACTORS = DATA.MODS.FUNCS.ACTORS
+endFunction
+
+function f_Initialize()
+endFunction
+
+function f_Register()
 endFunction
 
 int function f_Create(Actor ref_actor)
@@ -58,6 +64,10 @@ endFunction
 ; Public Methods
 bool function Exists()
     return is_created
+endFunction
+
+; Update Methods
+function u_0_1_0()
 endFunction
 
 ; Events

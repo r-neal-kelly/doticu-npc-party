@@ -51,7 +51,7 @@ endProperty
 
 int property VERSION_SMALL
     int function Get()
-        return 5; set manually upon each release
+        return 1; set manually upon each release
     endFunction
 endProperty
 

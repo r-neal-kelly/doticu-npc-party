@@ -12,12 +12,17 @@ int[]               p_arr_ids_used  = none
 int[]               p_arr_ids_free  = none
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA)
+function f_Link(doticu_npcp_data DATA)
     p_CODES = DATA.CODES
+endFunction
 
+function f_Initialize()
     p_MAX_ALIASES = GetNumAliases()
 
     p_Create_ID_Arrays()
+endFunction
+
+function f_Register()
 endFunction
 
 ReferenceAlias function f_Get_Alias(int id_alias)
@@ -231,4 +236,8 @@ endFunction
 
 int function Get_Max()
     return p_MAX_ALIASES
+endFunction
+
+; Update Methods
+function u_0_1_0()
 endFunction

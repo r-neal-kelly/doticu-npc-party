@@ -1,7 +1,6 @@
 Scriptname doticu_npcp_funcs extends Quest
 
 ; Private Constants
-doticu_npcp_consts      p_CONSTS        = none
 doticu_npcp_actors      p_ACTORS        = none
 doticu_npcp_perks       p_PERKS         = none
 doticu_npcp_outfits     p_OUTFITS       = none
@@ -47,8 +46,7 @@ doticu_npcp_player property PLAYER
 endProperty
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA)
-    p_CONSTS = DATA.CONSTS
+function f_Link(doticu_npcp_data DATA)
     p_ACTORS = (self as Quest) as doticu_npcp_actors
     p_PERKS = (self as Quest) as doticu_npcp_perks
     p_OUTFITS = (self as Quest) as doticu_npcp_outfits
@@ -56,12 +54,21 @@ function f_Initialize(doticu_npcp_data DATA)
     p_LOGS = (self as Quest) as doticu_npcp_logs
     p_PLAYER = GetAliasByName("player") as doticu_npcp_player
 
-    p_ACTORS.f_Initialize(DATA)
-    p_PERKS.f_Initialize(DATA)
-    p_OUTFITS.f_Initialize(DATA)
-    p_CONTAINERS.f_Initialize(DATA)
-    p_LOGS.f_Initialize(DATA)
-    p_PLAYER.f_Initialize(DATA)
+    p_ACTORS.f_Link(DATA)
+    p_PERKS.f_Link(DATA)
+    p_OUTFITS.f_Link(DATA)
+    p_CONTAINERS.f_Link(DATA)
+    p_LOGS.f_Link(DATA)
+    p_PLAYER.f_Link(DATA)
+endFunction
+
+function f_Initialize()
+    p_ACTORS.f_Initialize()
+    p_PERKS.f_Initialize()
+    p_OUTFITS.f_Initialize()
+    p_CONTAINERS.f_Initialize()
+    p_LOGS.f_Initialize()
+    p_PLAYER.f_Initialize()
 endFunction
 
 function f_Register()
@@ -88,4 +95,14 @@ endFunction
 
 bool function Is_Mod_Installed(string name_mod)
     return Game.GetModByName(name_mod) != 255
+endFunction
+
+; Update Methods
+function u_0_1_0()
+    p_ACTORS.u_0_1_0()
+    p_PERKS.u_0_1_0()
+    p_OUTFITS.u_0_1_0()
+    p_CONTAINERS.u_0_1_0()
+    p_LOGS.u_0_1_0()
+    p_PLAYER.u_0_1_0()
 endFunction

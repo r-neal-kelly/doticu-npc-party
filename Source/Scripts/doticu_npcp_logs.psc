@@ -14,7 +14,10 @@ int         p_errors_used   =    0
 int         p_errors_max    =   64
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA)
+function f_Link(doticu_npcp_data DATA)
+endFunction
+
+function f_Initialize()
     p_NOTES = Utility.CreateStringArray(p_notes_max, "")
     p_ERRORS = Utility.CreateStringArray(p_errors_max, "")
 
@@ -177,4 +180,8 @@ function Clear_Errors()
 
     p_errors_pivot = p_ERRORS.length - 1
     p_errors_used = 0
+endFunction
+
+; Update Methods
+function u_0_1_0()
 endFunction

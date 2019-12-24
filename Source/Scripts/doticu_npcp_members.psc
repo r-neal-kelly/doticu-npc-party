@@ -5,48 +5,50 @@ doticu_npcp_consts  p_CONSTS    = none
 doticu_npcp_codes   p_CODES     = none
 doticu_npcp_vars    p_VARS      = none
 doticu_npcp_actors  p_ACTORS    = none
-
 doticu_npcp_aliases p_ALIASES   = none
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA)
+function f_Link(doticu_npcp_data DATA)
     p_CONSTS = DATA.CONSTS
     p_CODES = DATA.CODES
     p_VARS = DATA.VARS
     p_ACTORS = DATA.MODS.FUNCS.ACTORS
-
     p_ALIASES = (self as Quest) as doticu_npcp_aliases
 
-    p_ALIASES.f_Initialize(DATA)
+    p_ALIASES.f_Link(DATA)
 
     int idx_alias = 0
     int max_aliases = p_ALIASES.Get_Max()
     ReferenceAlias ref_alias = none
     while idx_alias < max_aliases
         ref_alias = p_ALIASES.f_Get_Alias(idx_alias)
+        (ref_alias as doticu_npcp_member).f_Link(DATA)
+        idx_alias += 1
+    endWhile
+endFunction
 
-        (ref_alias as doticu_npcp_member).f_Initialize(DATA, idx_alias)
-        (ref_alias as doticu_npcp_settler).f_Initialize(DATA, idx_alias)
-        (ref_alias as doticu_npcp_immobile).f_Initialize(DATA, idx_alias)
-        (ref_alias as doticu_npcp_member).f_Register()
-        (ref_alias as doticu_npcp_settler).f_Register()
-        (ref_alias as doticu_npcp_immobile).f_Register()
+function f_Initialize()
+    p_ALIASES.f_Initialize()
 
+    int idx_alias = 0
+    int max_aliases = p_ALIASES.Get_Max()
+    ReferenceAlias ref_alias = none
+    while idx_alias < max_aliases
+        ref_alias = p_ALIASES.f_Get_Alias(idx_alias)
+        (ref_alias as doticu_npcp_member).f_Initialize(idx_alias)
         idx_alias += 1
     endWhile
 endFunction
 
 function f_Register()
+    p_ALIASES.f_Register()
+
     int idx_alias = 0
     int max_aliases = p_ALIASES.Get_Max()
     ReferenceAlias ref_alias = none
     while idx_alias < max_aliases
         ref_alias = p_ALIASES.f_Get_Alias(idx_alias)
-        
         (ref_alias as doticu_npcp_member).f_Register()
-        (ref_alias as doticu_npcp_settler).f_Register()
-        (ref_alias as doticu_npcp_immobile).f_Register()
-
         idx_alias += 1
     endWhile
 endFunction
@@ -210,4 +212,18 @@ endFunction
 
 bool function Should_Unclone_Member(doticu_npcp_member ref_member)
     return ref_member && ref_member.Is_Clone() && Should_Unclone_Actor(ref_member.Get_Actor())
+endFunction
+
+; Update Methods
+function u_0_1_0()
+    p_ALIASES.u_0_1_0()
+
+    int idx_alias = 0
+    int max_aliases = p_ALIASES.Get_Max()
+    ReferenceAlias ref_alias = none
+    while idx_alias < max_aliases
+        ref_alias = p_ALIASES.f_Get_Alias(idx_alias)
+        (ref_alias as doticu_npcp_member).u_0_1_0()
+        idx_alias += 1
+    endWhile
 endFunction

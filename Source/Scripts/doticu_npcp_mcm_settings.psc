@@ -15,10 +15,16 @@ int                 p_option_auto_vitality          =   -1
 int                 p_option_auto_resurrect         =   -1
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA)
+function f_Link(doticu_npcp_data DATA)
     p_CODES = DATA.CODES
     p_VARS = DATA.VARS
     p_MCM = DATA.MODS.CONTROL.MCM
+endFunction
+
+function f_Initialize()
+endFunction
+
+function f_Register()
 endFunction
 
 function f_Build_Page()
@@ -37,6 +43,10 @@ function f_On_Option_Input_Accept(int id_option, string str_input)
 endFunction
 
 function f_On_Option_Highlight(int id_option)
+endFunction
+
+; Update Methods
+function u_0_1_0()
 endFunction
 
 ; Private States

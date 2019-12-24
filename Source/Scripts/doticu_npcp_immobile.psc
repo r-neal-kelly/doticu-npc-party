@@ -5,6 +5,7 @@ doticu_npcp_consts  p_CONSTS        =  none
 doticu_npcp_codes   p_CODES         =  none
 doticu_npcp_actors  p_ACTORS        =  none
 doticu_npcp_members p_MEMBERS       =  none
+
 int                 p_ID_ALIAS      =    -1
 
 ; Private Variables
@@ -13,12 +14,14 @@ Actor               p_ref_actor     =  none
 doticu_npcp_member  p_ref_member    =  none
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA, int ID_ALIAS)
+function f_Link(doticu_npcp_data DATA)
     p_CONSTS = DATA.CONSTS
     p_CODES = DATA.CODES
     p_ACTORS = DATA.MODS.FUNCS.ACTORS
     p_MEMBERS = DATA.MODS.MEMBERS
+endFunction
 
+function f_Initialize(int ID_ALIAS)
     p_ID_ALIAS = ID_ALIAS
 endFunction
 
@@ -91,4 +94,8 @@ endFunction
 
 bool function Exists()
     return p_is_created
+endFunction
+
+; Update Methods
+function u_0_1_0()
 endFunction

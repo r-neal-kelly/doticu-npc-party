@@ -6,10 +6,13 @@ doticu_npcp_codes   p_CODES     = none
 doticu_npcp_funcs   p_FUNCS     = none
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA)
+function f_Link(doticu_npcp_data DATA)
     p_CONSTS = DATA.CONSTS
     p_CODES = DATA.CODES
     p_FUNCS = DATA.MODS.FUNCS
+endFunction
+
+function f_Initialize()
 endFunction
 
 function f_Register()
@@ -71,4 +74,8 @@ function Copy(ObjectReference ref_container_subject, ObjectReference ref_contain
         ref_container_subject.AddItem(ref_form, ref_container_object.GetItemCount(ref_form), true)
         idx_forms += 1
     endWhile
+endFunction
+
+; Update Methods
+function u_0_1_0()
 endFunction

@@ -7,17 +7,19 @@ doticu_npcp_members     p_MEMBERS   = none
 doticu_npcp_commands    p_COMMANDS  = none
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA)
+function f_Link(doticu_npcp_data DATA)
     p_VARS = DATA.VARS
     p_FUNCS = DATA.MODS.FUNCS
     p_MEMBERS = DATA.MODS.MEMBERS
     p_COMMANDS = DATA.MODS.CONTROL.COMMANDS
+endFunction
 
-    Update_Keys()
+function f_Initialize()
 endFunction
 
 function f_Register()
-    RegisterForModEvent("doticu_npcp_load_game", "On_NPCP_Load_Game")
+    Update_Keys()
+    RegisterForModEvent("doticu_npcp_load_mod", "On_NPCP_Load_Mod")
 endFunction
 
 ; Public Methods
@@ -89,9 +91,12 @@ function Update_Keys()
     endIf
 endFunction
 
+; Update Methods
+function u_0_1_0()
+endFunction
+
 ; Events
-event On_NPCP_Load_Game()
-    Update_Keys()
+event On_NPCP_Load_Mod()
 endEvent
 
 event OnKeyDown(int code_key)

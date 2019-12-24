@@ -1,7 +1,6 @@
 Scriptname doticu_npcp_perk_kiss extends Perk hidden
 
 ; Private Constants
-doticu_npcp_data    p_DATA          = none
 doticu_npcp_consts  p_CONSTS        = none
 doticu_npcp_funcs   p_FUNCS         = none
 doticu_npcp_actors  p_ACTORS        = none
@@ -10,14 +9,15 @@ doticu_npcp_perks   p_PERKS         = none
 Actor               p_REF_PLAYER    = none
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA)
-    p_DATA = DATA
+function f_Link(doticu_npcp_data DATA)
     p_CONSTS = DATA.CONSTS
     p_FUNCS = DATA.MODS.FUNCS
     p_ACTORS = DATA.MODS.FUNCS.ACTORS
     p_PERKS = DATA.MODS.FUNCS.PERKS
+endFunction
 
-    p_REF_PLAYER = DATA.CONSTS.ACTOR_PLAYER
+function f_Initialize()
+    p_REF_PLAYER = p_CONSTS.ACTOR_PLAYER
 endFunction
 
 function f_Register()
@@ -30,6 +30,8 @@ function Kiss_Thrall(ObjectReference ref_target, Actor _)
     if !ref_thrall || !p_ACTORS.Is_Vampire(p_REF_PLAYER)
         return
     endIf
+
+    Game.ForceThirdPerson()
 
     p_PERKS.Remove_Perk(p_CONSTS.PERK_KISS_THRALL)
     ref_thrall.AddToFaction(p_CONSTS.FACTION_DLC1_THRALL)
@@ -49,4 +51,8 @@ function Kiss_Thrall(ObjectReference ref_target, Actor _)
 
     ref_thrall.RemoveFromFaction(p_CONSTS.FACTION_DLC1_THRALL)
     p_PERKS.Add_Perk(p_CONSTS.PERK_KISS_THRALL)
+endFunction
+
+; Update Methods
+function u_0_1_0()
 endFunction

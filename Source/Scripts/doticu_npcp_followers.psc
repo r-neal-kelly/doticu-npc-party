@@ -6,30 +6,44 @@ doticu_npcp_codes   p_CODES     = none
 doticu_npcp_aliases p_ALIASES   = none
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA)
+function f_Link(doticu_npcp_data DATA)
     p_CONSTS = DATA.CONSTS
     p_CODES = DATA.CODES
     p_ALIASES = (self as Quest) as doticu_npcp_aliases
 
-    p_ALIASES.f_Initialize(DATA)
+    p_ALIASES.f_Link(DATA)
 
     int idx_alias = 0
     int max_aliases = p_ALIASES.Get_Max()
     ReferenceAlias ref_alias = none
     while idx_alias < max_aliases
         ref_alias = GetNthAlias(idx_alias) as ReferenceAlias
-        (ref_alias as doticu_npcp_follower).f_Initialize(DATA, idx_alias)
+        (ref_alias as doticu_npcp_follower).f_Link(DATA)
+        idx_alias += 1
+    endWhile
+endFunction
+
+function f_Initialize()
+    p_ALIASES.f_Initialize()
+
+    int idx_alias = 0
+    int max_aliases = p_ALIASES.Get_Max()
+    ReferenceAlias ref_alias = none
+    while idx_alias < max_aliases
+        ref_alias = GetNthAlias(idx_alias) as ReferenceAlias
+        (ref_alias as doticu_npcp_follower).f_Initialize(idx_alias)
         idx_alias += 1
     endWhile
 endFunction
 
 function f_Register()
+    p_ALIASES.f_Register()
+
     int idx_alias = 0
     int max_aliases = p_ALIASES.Get_Max()
     ReferenceAlias ref_alias = none
     while idx_alias < max_aliases
         ref_alias = GetNthAlias(idx_alias) as ReferenceAlias
-        (ref_alias as doticu_npcp_async_alias).f_Register()
         (ref_alias as doticu_npcp_follower).f_Register()
         idx_alias += 1
     endWhile
@@ -299,5 +313,19 @@ function Resurrect()
             ref_follower.Resurrect()
         endIf
         idx_arr += 1
+    endWhile
+endFunction
+
+; Update Methods
+function u_0_1_0()
+    p_ALIASES.u_0_1_0()
+
+    int idx_alias = 0
+    int max_aliases = p_ALIASES.Get_Max()
+    ReferenceAlias ref_alias = none
+    while idx_alias < max_aliases
+        ref_alias = GetNthAlias(idx_alias) as ReferenceAlias
+        (ref_alias as doticu_npcp_follower).u_0_1_0()
+        idx_alias += 1
     endWhile
 endFunction

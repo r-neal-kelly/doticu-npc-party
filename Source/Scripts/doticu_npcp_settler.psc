@@ -1,13 +1,13 @@
 Scriptname doticu_npcp_settler extends ReferenceAlias
 
 ; Private Constants
-doticu_npcp_consts  p_CONSTS        = none
-doticu_npcp_codes   p_CODES         = none
-doticu_npcp_actors  p_ACTORS        = none
-doticu_npcp_members p_MEMBERS       = none
+doticu_npcp_consts  p_CONSTS        =  none
+doticu_npcp_codes   p_CODES         =  none
+doticu_npcp_actors  p_ACTORS        =  none
+doticu_npcp_members p_MEMBERS       =  none
 
-int                 p_ID_ALIAS      =   -1
-ObjectReference     p_REF_MARKER    = none
+int                 p_ID_ALIAS      =    -1
+ObjectReference     p_REF_MARKER    =  none
 
 ; Private Variables
 bool                p_is_created    = false
@@ -15,14 +15,16 @@ Actor               p_ref_actor     =  none
 doticu_npcp_member  p_ref_member    =  none
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA, int ID_ALIAS)
+function f_Link(doticu_npcp_data DATA)
     p_CONSTS = DATA.CONSTS
     p_CODES = DATA.CODES
     p_ACTORS = DATA.MODS.FUNCS.ACTORS
     p_MEMBERS = DATA.MODS.MEMBERS
+endFunction
 
+function f_Initialize(int ID_ALIAS)
     p_ID_ALIAS = ID_ALIAS
-    p_REF_MARKER = DATA.CONSTS.FORMLIST_MARKERS_SETTLER.GetAt(ID_ALIAS) as ObjectReference
+    p_REF_MARKER = p_CONSTS.FORMLIST_MARKERS_SETTLER.GetAt(ID_ALIAS) as ObjectReference
 endFunction
 
 function f_Register()
@@ -123,4 +125,8 @@ int function Resettle()
     endIf
 
     return p_CODES.SUCCESS
+endFunction
+
+; Update Methods
+function u_0_1_0()
 endFunction

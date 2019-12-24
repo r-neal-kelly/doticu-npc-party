@@ -12,7 +12,10 @@ int         p_buffer_used   =     0
 bool        p_will_update   = false
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA)
+function f_Link(doticu_npcp_data DATA)
+endFunction
+
+function f_Initialize()
     p_MESSAGES = Utility.CreateStringArray(p_BUFFER_MAX, "")
     p_INTERVALS = Utility.CreateFloatArray(p_BUFFER_MAX, 0.0)
 endFunction
@@ -94,4 +97,8 @@ endFunction
 
 bool function Is_Full()
     return p_buffer_used == p_buffer_max
+endFunction
+
+; Update Methods
+function u_0_1_0()
 endFunction

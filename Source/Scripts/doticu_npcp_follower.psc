@@ -9,7 +9,6 @@ doticu_npcp_actors      p_ACTORS                    =  none
 doticu_npcp_members     p_MEMBERS                   =  none
 doticu_npcp_followers   p_FOLLOWERS                 =  none
 doticu_npcp_control     p_CONTROL                   =  none
-
 doticu_npcp_async_alias p_ASYNC                     =  none
 
 Actor                   p_REF_PLAYER                =  none
@@ -54,7 +53,7 @@ float                   p_prev_pickpocket           =  -1.0
 float                   p_prev_speechcraft          =  -1.0
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA, int ID_ALIAS)
+function f_Link(doticu_npcp_data DATA)
     p_CONSTS = DATA.CONSTS
     p_CODES = DATA.CODES
     p_VARS = DATA.VARS
@@ -63,16 +62,20 @@ function f_Initialize(doticu_npcp_data DATA, int ID_ALIAS)
     p_MEMBERS = DATA.MODS.MEMBERS
     p_FOLLOWERS = DATA.MODS.FOLLOWERS
     p_CONTROL = DATA.MODS.CONTROL
-
     p_ASYNC = (self as ReferenceAlias) as doticu_npcp_async_alias
 
-    p_REF_PLAYER = DATA.CONSTS.ACTOR_PLAYER
+    p_ASYNC.f_Link(DATA)
+endFunction
+
+function f_Initialize(int ID_ALIAS)
+    p_REF_PLAYER = p_CONSTS.ACTOR_PLAYER
     p_ID_ALIAS = ID_ALIAS
 
-    p_ASYNC.f_Initialize(DATA)
+    p_ASYNC.f_Initialize()
 endFunction
 
 function f_Register()
+    p_ASYNC.f_Register()
 endFunction
 
 int function f_Create()
@@ -659,6 +662,11 @@ endFunction
 
 function Resurrect()
     p_ref_member.Resurrect()
+endFunction
+
+; Update Methods
+function u_0_1_0()
+    p_ASYNC.u_0_1_0()
 endFunction
 
 ; Events

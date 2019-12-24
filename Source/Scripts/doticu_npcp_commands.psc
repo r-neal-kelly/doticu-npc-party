@@ -10,7 +10,7 @@ doticu_npcp_members     p_MEMBERS   = none
 doticu_npcp_followers   p_FOLLOWERS = none
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA)
+function f_Link(doticu_npcp_data DATA)
     p_CONSTS = DATA.CONSTS
     p_CODES = DATA.CODES
     p_VARS = DATA.VARS
@@ -18,6 +18,9 @@ function f_Initialize(doticu_npcp_data DATA)
     p_ACTORS = DATA.MODS.FUNCS.ACTORS
     p_MEMBERS = DATA.MODS.MEMBERS
     p_FOLLOWERS = DATA.MODS.FOLLOWERS
+endFunction
+
+function f_Initialize()
 endFunction
 
 function f_Register()
@@ -909,4 +912,8 @@ function Cycle_Style(Actor ref_actor)
     elseIf ref_member.Is_Styled_Archer()
         Style(ref_actor, "default", false)
     endIf
+endFunction
+
+; Update Methods
+function u_0_1_0()
 endFunction

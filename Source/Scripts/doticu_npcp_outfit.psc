@@ -10,12 +10,14 @@ Outfit                  p_OUTFIT        = none
 LeveledItem             p_LEVELED       = none
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA, Outfit form_outfit)
+function f_Link(doticu_npcp_data DATA)
     p_CONSTS = DATA.CONSTS
     p_ACTORS = DATA.MODS.FUNCS.ACTORS
     p_CONTAINERS = DATA.MODS.FUNCS.CONTAINERS
     p_LOGS = DATA.MODS.FUNCS.LOGS
+endFunction
 
+function f_Initialize(Outfit form_outfit)
     p_OUTFIT = form_outfit
     p_LEVELED = form_outfit.GetNthPart(0) as LeveledItem
 endFunction
@@ -117,6 +119,10 @@ function Unset(Actor ref_actor)
     self.RemoveAllItems(ref_container_temp, false, true)
     Set(ref_actor)
     ref_container_temp.RemoveAllItems(self, false, true)
+endFunction
+
+; Update Methods
+function u_0_1_0()
 endFunction
 
 ; Events

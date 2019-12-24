@@ -1,7 +1,6 @@
 Scriptname doticu_npcp_mods extends Quest
 
 ; Private Constants
-doticu_npcp_resets      p_RESETS    = none
 doticu_npcp_data        p_DATA      = none
 doticu_npcp_funcs       p_FUNCS     = none
 doticu_npcp_members     p_MEMBERS   = none
@@ -10,17 +9,6 @@ doticu_npcp_control     p_CONTROL   = none
 doticu_npcp_main        p_MAIN      = none
 
 ; Public Constants
-doticu_npcp_resets property RESETS
-    doticu_npcp_resets function Get()
-        return p_RESETS
-    endFunction
-    function Set(doticu_npcp_resets val)
-        if p_RESETS == none
-            p_RESETS = val
-        endIf
-    endFunction
-endProperty
-
 doticu_npcp_data property DATA
     doticu_npcp_data function Get()
         return p_DATA

@@ -45,10 +45,16 @@ int                     p_option_rename             =   -1
 int                     p_option_unfollow           =   -1
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA)
+function f_Link(doticu_npcp_data DATA)
     p_FUNCS = DATA.MODS.FUNCS
     p_FOLLOWERS = DATA.MODS.FOLLOWERS
     p_MCM = DATA.MODS.CONTROL.MCM
+endFunction
+
+function f_Initialize()
+endFunction
+
+function f_Register()
 endFunction
 
 function f_Build_Page()
@@ -74,6 +80,10 @@ int function p_Get_Idx_Entity(int id_option)
 endFunction
 
 int function p_Get_Idx_Command(int id_option, int idx_entity)
+endFunction
+
+; Update Methods
+function u_0_1_0()
 endFunction
 
 ; Private States

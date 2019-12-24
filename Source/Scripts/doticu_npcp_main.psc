@@ -19,6 +19,27 @@ doticu_npcp_data property DATA
 endProperty
 
 ; Friend Methods
+function f_Link()
+    DATA.f_Link(DATA)
+    DATA.MODS.FUNCS.f_Link(DATA)
+    DATA.MODS.MEMBERS.f_Link(DATA)
+    DATA.MODS.FOLLOWERS.f_Link(DATA)
+    DATA.MODS.CONTROL.f_Link(DATA)
+
+    p_DATA = DATA
+    p_CONSTS = DATA.CONSTS
+    p_VARS = DATA.VARS
+    p_FUNCS = DATA.MODS.FUNCS
+endFunction
+
+function f_Initialize()
+    DATA.f_Initialize()
+    DATA.MODS.FUNCS.f_Initialize()
+    DATA.MODS.MEMBERS.f_Initialize()
+    DATA.MODS.FOLLOWERS.f_Initialize()
+    DATA.MODS.CONTROL.f_Initialize()
+endFunction
+
 function f_Register()
     DATA.f_Register()
     DATA.MODS.FUNCS.f_Register()
@@ -26,11 +47,7 @@ function f_Register()
     DATA.MODS.FOLLOWERS.f_Register()
     DATA.MODS.CONTROL.f_Register()
 
-    RegisterForModEvent("doticu_npcp_load_game", "On_NPCP_Load_Game")
-    RegisterForModEvent("doticu_npcp_version_1_0_0", "On_NPCP_Version_1_0_0")
-    RegisterForModEvent("doticu_npcp_version_1_0_1", "On_NPCP_Version_1_0_1")
-    RegisterForModEvent("doticu_npcp_version_1_1_0", "On_NPCP_Version_1_1_0")
-    RegisterForModEvent("doticu_npcp_version_2_0_0", "On_NPCP_Version_2_0_0")
+    RegisterForModEvent("doticu_npcp_load_mod", "On_NPCP_Load_Mod")
 endFunction
 
 function f_Version()
@@ -39,25 +56,20 @@ function f_Version()
     string str_version_new
 
     if version_old < version_new
+        if version_new >= 0 + 1 + 0
+            u_0_1_0()
+        endIf
         if version_new >= 1 + 0 + 0
-            while !p_Send_NPCP_Version("1_0_0")
-                Utility.Wait(0.25)
-            endWhile
+            u_1_0_0()
         endIf
         if version_new >= 1 + 0 + 1
-            while !p_Send_NPCP_Version("1_0_1")
-                Utility.Wait(0.25)
-            endWhile
+            u_1_0_1()
         endIf
         if version_new >= 1 + 1 + 0
-            while !p_Send_NPCP_Version("1_1_0")
-                Utility.Wait(0.25)
-            endWhile
+            u_1_1_0()
         endIf
         if version_new >= 2 + 0 + 0
-            while !p_Send_NPCP_Version("2_0_0")
-                Utility.Wait(0.25)
-            endWhile
+            u_2_0_0()
         endIf
 
         p_VARS.version_large = p_CONSTS.VERSION_LARGE
@@ -69,31 +81,30 @@ function f_Version()
     endIf
 endFunction
 
-; Private Methods
-function p_Initialize()
-    DATA.f_Initialize()
-    DATA.MODS.FUNCS.f_Initialize(DATA)
-    DATA.MODS.MEMBERS.f_Initialize(DATA)
-    DATA.MODS.FOLLOWERS.f_Initialize(DATA)
-    DATA.MODS.CONTROL.f_Initialize(DATA)
+function f_Load_Mod()
+    Utility.Wait(0.5)
 
-    p_CONSTS = DATA.CONSTS
-    p_VARS = DATA.VARS
-    p_FUNCS = DATA.MODS.FUNCS
+    DATA.Reset(); resets doticu_npcp_quest_data_static
+    ; DATA.MODS.CONTROL.MCM.Reset(); not sure yet. would need to set an OnInit on MCM or call its setup funcs
 
+    f_Link()
     f_Register()
-
     f_Version()
 
-    p_FUNCS.LOGS.Create_Note("Thank you for installing!")
+    while !p_Send_NPCP_Load_Mod()
+        Utility.Wait(0.25)
+    endWhile
 endFunction
 
-bool function p_Send_NPCP_Version(string str_version)
-    int handle = ModEvent.Create("doticu_npcp_version_" + str_version)
+; Private Methods
+bool function p_Send_NPCP_Load_Mod()
+    int handle = ModEvent.Create("doticu_npcp_load_mod")
 
     if !handle
         return false
     endIf
+
+    ; push any args here
 
     if !ModEvent.Send(handle)
         ModEvent.Release(handle)
@@ -103,23 +114,37 @@ bool function p_Send_NPCP_Version(string str_version)
     return true
 endFunction
 
+; Update Methods
+function u_0_1_0()
+    DATA.u_0_1_0()
+    DATA.MODS.FUNCS.u_0_1_0()
+    DATA.MODS.MEMBERS.u_0_1_0()
+    DATA.MODS.FOLLOWERS.u_0_1_0()
+    DATA.MODS.CONTROL.u_0_1_0()
+endFunction
+
+function u_1_0_0()
+endFunction
+
+function u_1_0_1()
+endFunction
+
+function u_1_1_0()
+endFunction
+
+function u_2_0_0()
+endFunction
+
 ; Events
 event OnInit()
     Utility.Wait(3)
-    p_Initialize()
+
+    f_Link()
+    f_Initialize()
+    f_Register()
+
+    p_FUNCS.LOGS.Create_Note("Thank you for installing!")
 endEvent
 
-event On_NPCP_Version_1_0_0()
-endEvent
-
-event On_NPCP_Version_1_0_1()
-endEvent
-
-event On_NPCP_Version_1_1_0()
-endEvent
-
-event On_NPCP_Version_2_0_0()
-endEvent
-
-event On_NPCP_Load_Game()
+event On_NPCP_Load_Mod()
 endEvent

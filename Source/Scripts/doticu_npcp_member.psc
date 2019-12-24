@@ -11,7 +11,6 @@ doticu_npcp_outfits     p_OUTFITS               =  none
 doticu_npcp_members     p_MEMBERS               =  none
 doticu_npcp_followers   p_FOLLOWERS             =  none
 doticu_npcp_player      p_PLAYER                =  none
-
 doticu_npcp_settler     p_SETTLER               =  none
 doticu_npcp_immobile    p_IMMOBILE              =  none
 
@@ -33,7 +32,7 @@ doticu_npcp_outfit      p_prev_outfit2_member   =  none
 ; maybe should backup factions and restore them also.
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA, int ID_ALIAS)
+function f_Link(doticu_npcp_data DATA)
     p_DATA = DATA
     p_CONSTS = DATA.CONSTS
     p_CODES = DATA.CODES
@@ -44,16 +43,26 @@ function f_Initialize(doticu_npcp_data DATA, int ID_ALIAS)
     p_MEMBERS = DATA.MODS.MEMBERS
     p_FOLLOWERS = DATA.MODS.FOLLOWERS
     p_PLAYER = DATA.MODS.FUNCS.PLAYER
-
     p_SETTLER = (self as ReferenceAlias) as doticu_npcp_settler
     p_IMMOBILE = (self as ReferenceAlias) as doticu_npcp_immobile
 
+    p_SETTLER.f_Link(DATA)
+    p_IMMOBILE.f_Link(DATA)
+    p_Link_Outfits(DATA)
+endFunction
+
+function f_Initialize(int ID_ALIAS)
     p_ID_ALIAS = ID_ALIAS
     p_OUTFIT = p_CONSTS.FORMLIST_OUTFITS.GetAt(ID_ALIAS) as Outfit
+
+    p_SETTLER.f_Initialize(ID_ALIAS)
+    p_IMMOBILE.f_Initialize(ID_ALIAS)
 endFunction
 
 function f_Register()
-    RegisterForModEvent("doticu_npcp_version_1_0_0", "On_NPCP_Version_1_0_0")
+    p_SETTLER.f_Register()
+    p_IMMOBILE.f_Register()
+    p_Register_Outfits()
 endFunction
 
 int function f_Create(bool is_a_clone)
@@ -153,6 +162,24 @@ int function f_Destroy()
 endFunction
 
 ; Private Methods
+function p_Link_Outfits(doticu_npcp_data DATA)
+    if p_outfit2_member
+        p_outfit2_member.f_Link(DATA)
+    endIf
+    if p_prev_outfit2_member
+        p_prev_outfit2_member.f_Link(DATA)
+    endIf
+endFunction
+
+function p_Register_Outfits()
+    if p_outfit2_member
+        p_outfit2_member.f_Register()
+    endIf
+    if p_prev_outfit2_member
+        p_prev_outfit2_member.f_Register()
+    endIf
+endFunction
+
 function p_Create_Outfits()
     p_outfit2_member = p_OUTFITS.Create(p_OUTFIT, p_ACTORS.Get_Name(p_ref_actor) + " Outfit")
     p_prev_outfit2_member = p_OUTFITS.Create(p_OUTFIT)
@@ -950,6 +977,19 @@ function Summon_Behind()
     Summon(60, 180)
 endFunction
 
+; Update Methods
+function u_0_1_0()
+    p_OUTFIT = p_CONSTS.FORMLIST_OUTFITS.GetAt(p_ID_ALIAS) as Outfit
+    if Exists()
+        p_Destroy_Outfits()
+        p_Create_Outfits()
+    endIf
+
+    p_SETTLER.u_0_1_0()
+    p_IMMOBILE.u_0_1_0()
+    ; we could update outfits, but in this update, we're recreating them anyway.
+endFunction
+
 ; Events
 event OnActivate(ObjectReference ref_activator)
     Enforce()
@@ -975,6 +1015,3 @@ event OnCombatStateChanged(Actor ref_target, int code_combat)
 endEvent
 
 ; we can use OnItemAdded to keep track of stuff that is added to the member's inventory.
-
-event On_NPCP_Version_1_0_0()
-endEvent

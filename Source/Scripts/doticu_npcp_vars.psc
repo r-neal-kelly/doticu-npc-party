@@ -2,11 +2,12 @@ Scriptname doticu_npcp_vars extends Quest
 
 ; Private Constants
 doticu_npcp_consts  p_CONSTS                =  none
+doticu_npcp_codes   p_CODES                 =  none
 
 ; Private Variables
-int                 p_version_large         =     0
-int                 p_version_small         =     0
-int                 p_version_bug           =     0
+int                 p_version_large         =    -1
+int                 p_version_small         =    -1
+int                 p_version_bug           =    -1
 bool                p_force_clone_unique    = false
 bool                p_force_clone_generic   = false
 bool                p_force_unclone_unique  = false
@@ -17,39 +18,39 @@ int                 p_auto_vitality         =    -1
 bool                p_is_mcm_open           = false
 
 ; Public Variables
-int property key_open_mcm                   =  -1 auto hidden;
-int property key_resurrect                  = 200 auto hidden; Up Arrow
-int property key_member                     =  -1 auto hidden;
-int property key_unmember                   =  -1 auto hidden;
-int property key_clone                      =  -1 auto hidden;
-int property key_unclone                    =  -1 auto hidden;
-int property key_access                     =  -1 auto hidden;
-int property key_outfit                     =  24 auto hidden; O
-int property key_settle                     =  -1 auto hidden;
-int property key_unsettle                   =  -1 auto hidden;
-int property key_immobilize                 =  -1 auto hidden;
-int property key_mobilize                   =  -1 auto hidden;
-int property key_enthrall                   =  -1 auto hidden;
-int property key_unthrall                   =  -1 auto hidden;
-int property key_style_default              =  -1 auto hidden;
-int property key_style_warrior              =  -1 auto hidden;
-int property key_style_mage                 =  -1 auto hidden;
-int property key_style_archer               =  -1 auto hidden;
-int property key_follow                     =  -1 auto hidden;
-int property key_unfollow                   =  -1 auto hidden;
-int property key_sneak                      =  -1 auto hidden;
-int property key_unsneak                    =  -1 auto hidden;
-int property key_summon_followers           =  -1 auto hidden;
-int property key_summon_followers_mobile    =  -1 auto hidden;
-int property key_summon_followers_immobile  =  -1 auto hidden;
-int property key_toggle_member              =  78 auto hidden; NUM+
-int property key_toggle_clone               =  -1 auto hidden;
-int property key_toggle_settler             =  82 auto hidden; NUM0
-int property key_toggle_immobile            =  83 auto hidden; NUM.
-int property key_toggle_enthrall            =  73 auto hidden; NUM9
-int property key_toggle_follower            =  55 auto hidden; NUM*
-int property key_toggle_sneak               =  74 auto hidden; NUM-
-int property key_cycle_style                =  43 auto hidden; Back Slash
+int property key_open_mcm                   =    -1 auto hidden;
+int property key_resurrect                  =   200 auto hidden; Up Arrow
+int property key_member                     =    -1 auto hidden;
+int property key_unmember                   =    -1 auto hidden;
+int property key_clone                      =    -1 auto hidden;
+int property key_unclone                    =    -1 auto hidden;
+int property key_access                     =    -1 auto hidden;
+int property key_outfit                     =    24 auto hidden; O
+int property key_settle                     =    -1 auto hidden;
+int property key_unsettle                   =    -1 auto hidden;
+int property key_immobilize                 =    -1 auto hidden;
+int property key_mobilize                   =    -1 auto hidden;
+int property key_enthrall                   =    -1 auto hidden;
+int property key_unthrall                   =    -1 auto hidden;
+int property key_style_default              =    -1 auto hidden;
+int property key_style_warrior              =    -1 auto hidden;
+int property key_style_mage                 =    -1 auto hidden;
+int property key_style_archer               =    -1 auto hidden;
+int property key_follow                     =    -1 auto hidden;
+int property key_unfollow                   =    -1 auto hidden;
+int property key_sneak                      =    -1 auto hidden;
+int property key_unsneak                    =    -1 auto hidden;
+int property key_summon_followers           =    -1 auto hidden;
+int property key_summon_followers_mobile    =    -1 auto hidden;
+int property key_summon_followers_immobile  =    -1 auto hidden;
+int property key_toggle_member              =    78 auto hidden; NUM+
+int property key_toggle_clone               =    -1 auto hidden;
+int property key_toggle_settler             =    82 auto hidden; NUM0
+int property key_toggle_immobile            =    83 auto hidden; NUM.
+int property key_toggle_enthrall            =    73 auto hidden; NUM9
+int property key_toggle_follower            =    55 auto hidden; NUM*
+int property key_toggle_sneak               =    74 auto hidden; NUM-
+int property key_cycle_style                =    43 auto hidden; Back Slash
 
 int property version_large hidden
     int function Get()
@@ -177,18 +178,27 @@ bool property is_mcm_open hidden
 endProperty
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA)
+function f_Link(doticu_npcp_data DATA)
     p_CONSTS = DATA.CONSTS
+    p_CODES = DATA.CODES
+endFunction
 
+function f_Initialize()
     version_large = p_CONSTS.VERSION_LARGE
     version_small = p_CONSTS.VERSION_SMALL
     version_bug = p_CONSTS.VERSION_BUG
-
     force_clone_unique = false
     force_clone_generic = true
     force_unclone_unique = false
     force_unclone_generic = true
     auto_resurrect = true
-    auto_style = DATA.CODES.IS_DEFAULT; IS_DEFAULT, IS_WARRIOR, IS_MAGE, IS_ARCHER
-    auto_vitality = DATA.CODES.IS_PROTECTED; IS_MORTAL, IS_PROTECTED, IS_ESSENTIAL, IS_INVULNERABLE
+    auto_style = p_CODES.IS_DEFAULT; IS_DEFAULT, IS_WARRIOR, IS_MAGE, IS_ARCHER
+    auto_vitality = p_CODES.IS_PROTECTED; IS_MORTAL, IS_PROTECTED, IS_ESSENTIAL, IS_INVULNERABLE
+endFunction
+
+function f_Register()
+endFunction
+
+; Update Methods
+function u_0_1_0()
 endFunction

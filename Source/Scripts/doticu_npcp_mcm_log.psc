@@ -20,9 +20,15 @@ int                 p_option_clear_notes    =   -1
 int                 p_option_clear_errors   =   -1
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA)
+function f_Link(doticu_npcp_data DATA)
     p_LOGS = DATA.MODS.FUNCS.LOGS
     p_MCM = DATA.MODS.CONTROL.MCM
+endFunction
+
+function f_Initialize()
+endFunction
+
+function f_Register()
 endFunction
 
 function f_Build_Page()
@@ -45,6 +51,10 @@ endFunction
 
 ; Private Methods
 int function p_Get_Idx_Entity(int id_option)
+endFunction
+
+; Update Methods
+function u_0_1_0()
 endFunction
 
 ; Private States
