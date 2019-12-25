@@ -51,15 +51,18 @@ function f_Register()
 endFunction
 
 function f_Version()
-    int version_old = p_VARS.version_major + p_VARS.version_minor + p_VARS.version_patch
-    int version_new = p_CONSTS.VERSION_MAJOR + p_CONSTS.VERSION_MINOR + p_CONSTS.VERSION_PATCH
-    string str_version_new
+    int v_ma = p_VARS.version_major
+    int v_mi = p_VARS.version_minor
+    int v_pa = p_VARS.version_patch
+    int C_MA = p_CONSTS.VERSION_MAJOR
+    int C_MI = p_CONSTS.VERSION_MINOR
+    int C_PA = p_CONSTS.VERSION_PATCH
 
-    if version_old < version_new
-        if version_old < 0 + 1 + 0
-            u_0_1_0()
+    if v_ma < C_MA || v_mi < C_MI || v_pa < C_PA
+        if v_ma < 0 && v_mi < 1 && v_pa < 0
+            ;u_0_1_0()
         endIf
-        if version_old < 0 + 1 + 1
+        if v_ma < 0 && v_mi < 1 && v_pa < 1
             u_0_1_1()
         endIf
 
@@ -67,8 +70,7 @@ function f_Version()
         p_VARS.version_minor = p_CONSTS.VERSION_MINOR
         p_VARS.version_patch = p_CONSTS.VERSION_PATCH
 
-        str_version_new = p_CONSTS.VERSION_MAJOR + "." + p_CONSTS.VERSION_MINOR + "." + p_CONSTS.VERSION_PATCH
-        p_FUNCS.LOGS.Create_Note("Running version " + str_version_new)
+        p_FUNCS.LOGS.Create_Note("Running version " + C_MA + "." + C_MI + "." + C_PA)
     endIf
 endFunction
 
