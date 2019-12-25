@@ -5,9 +5,9 @@ doticu_npcp_consts  p_CONSTS                =  none
 doticu_npcp_codes   p_CODES                 =  none
 
 ; Private Variables
-int                 p_version_large         =    -1
-int                 p_version_small         =    -1
-int                 p_version_bug           =    -1
+int                 p_version_major         =    -1
+int                 p_version_minor         =    -1
+int                 p_version_patch         =    -1
 bool                p_force_clone_unique    = false
 bool                p_force_clone_generic   = false
 bool                p_force_unclone_unique  = false
@@ -52,35 +52,35 @@ int property key_toggle_follower            =    55 auto hidden; NUM*
 int property key_toggle_sneak               =    74 auto hidden; NUM-
 int property key_cycle_style                =    43 auto hidden; Back Slash
 
-int property version_large hidden
+int property version_major hidden
     int function Get()
-        return p_version_large
+        return p_version_major
     endFunction
     function Set(int val)
-        if p_version_large < val
-            p_version_large = val
+        if p_version_major < val
+            p_version_major = val
         endIf
     endFunction
 endProperty
 
-int property version_small hidden
+int property version_minor hidden
     int function Get()
-        return p_version_small
+        return p_version_minor
     endFunction
     function Set(int val)
-        if p_version_small < val
-            p_version_small = val
+        if p_version_minor < val
+            p_version_minor = val
         endIf
     endFunction
 endProperty
 
-int property version_bug hidden
+int property version_patch hidden
     int function Get()
-        return p_version_bug
+        return p_version_patch
     endFunction
     function Set(int val)
-        if p_version_bug < val
-            p_version_bug = val
+        if p_version_patch < val
+            p_version_patch = val
         endIf
     endFunction
 endProperty
@@ -184,9 +184,9 @@ function f_Link(doticu_npcp_data DATA)
 endFunction
 
 function f_Initialize()
-    version_large = p_CONSTS.VERSION_LARGE
-    version_small = p_CONSTS.VERSION_SMALL
-    version_bug = p_CONSTS.VERSION_BUG
+    version_major = p_CONSTS.VERSION_MAJOR
+    version_minor = p_CONSTS.VERSION_MINOR
+    version_patch = p_CONSTS.VERSION_PATCH
     force_clone_unique = false
     force_clone_generic = true
     force_unclone_unique = false
@@ -197,8 +197,4 @@ function f_Initialize()
 endFunction
 
 function f_Register()
-endFunction
-
-; Update Methods
-function u_0_1_0()
 endFunction

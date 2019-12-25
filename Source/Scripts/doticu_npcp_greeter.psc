@@ -66,10 +66,6 @@ bool function Exists()
     return is_created
 endFunction
 
-; Update Methods
-function u_0_1_0()
-endFunction
-
 ; Events
 event OnCrosshairRefChange(ObjectReference ref_target)
     if ref_target == p_ref_actor

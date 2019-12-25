@@ -114,6 +114,21 @@ doticu_npcp_follower function p_Get_Follower(int id_alias)
     return p_ALIASES.f_Get_Alias(id_alias) as doticu_npcp_follower
 endFunction
 
+bool function p_Send_Followers(string str_event)
+    int handle = ModEvent.Create(str_event)
+
+    if !handle
+        return false
+    endIf
+
+    if !ModEvent.Send(handle)
+        ModEvent.Release(handle)
+        return false
+    endIf
+
+    return true
+endFunction
+
 ; Public Methods
 int function Get_Count()
     return p_ALIASES.Get_Count()
@@ -212,120 +227,62 @@ function Summon_Immobile()
 endFunction
 
 function Settle()
-    doticu_npcp_follower ref_follower
-    Alias[] arr_aliases = p_ALIASES.Get_Aliases()
-    int idx_arr = 0
-    while idx_arr < arr_aliases.length
-        ref_follower = arr_aliases[idx_arr] as doticu_npcp_follower
-        if ref_follower.Is_Settler()
-            ref_follower.Get_Settler().Resettle()
-        else
-            ref_follower.Settle()
-        endIf
-        idx_arr += 1
+    while !p_Send_Followers("doticu_npcp_followers_settle")
+        Utility.Wait(0.25)
     endWhile
 endFunction
 
 function Unsettle()
-    doticu_npcp_follower ref_follower
-    Alias[] arr_aliases = p_ALIASES.Get_Aliases()
-    int idx_arr = 0
-    while idx_arr < arr_aliases.length
-        ref_follower = arr_aliases[idx_arr] as doticu_npcp_follower
-        ref_follower.Unsettle()
-        idx_arr += 1
+    while !p_Send_Followers("doticu_npcp_followers_unsettle")
+        Utility.Wait(0.25)
     endWhile
 endFunction
 
 function Immobilize()
-    doticu_npcp_follower ref_follower
-    Alias[] arr_aliases = p_ALIASES.Get_Aliases()
-    int idx_arr = 0
-    while idx_arr < arr_aliases.length
-        ref_follower = arr_aliases[idx_arr] as doticu_npcp_follower
-        ref_follower.Immobilize()
-        idx_arr += 1
+    while !p_Send_Followers("doticu_npcp_followers_immobilize")
+        Utility.Wait(0.25)
     endWhile
 endFunction
 
 function Mobilize()
-    doticu_npcp_follower ref_follower
-    Alias[] arr_aliases = p_ALIASES.Get_Aliases()
-    int idx_arr = 0
-    while idx_arr < arr_aliases.length
-        ref_follower = arr_aliases[idx_arr] as doticu_npcp_follower
-        ref_follower.Mobilize()
-        idx_arr += 1
+    while !p_Send_Followers("doticu_npcp_followers_mobilize")
+        Utility.Wait(0.25)
     endWhile
 endFunction
 
 function Sneak()
-    doticu_npcp_follower ref_follower
-    Alias[] arr_aliases = p_ALIASES.Get_Aliases()
-    int idx_arr = 0
-    while idx_arr < arr_aliases.length
-        ref_follower = arr_aliases[idx_arr] as doticu_npcp_follower
-        ref_follower.Sneak()
-        idx_arr += 1
+    while !p_Send_Followers("doticu_npcp_followers_sneak")
+        Utility.Wait(0.25)
     endWhile
 endFunction
 
 function Unsneak()
-    doticu_npcp_follower ref_follower
-    Alias[] arr_aliases = p_ALIASES.Get_Aliases()
-    int idx_arr = 0
-    while idx_arr < arr_aliases.length
-        ref_follower = arr_aliases[idx_arr] as doticu_npcp_follower
-        ref_follower.Unsneak()
-        idx_arr += 1
+    while !p_Send_Followers("doticu_npcp_followers_unsneak")
+        Utility.Wait(0.25)
     endWhile
 endFunction
 
 function Unfollow()
-    doticu_npcp_follower ref_follower
-    Alias[] arr_aliases = p_ALIASES.Get_Aliases()
-    int idx_arr = 0
-    while idx_arr < arr_aliases.length
-        ref_follower = arr_aliases[idx_arr] as doticu_npcp_follower
-        ref_follower.Unfollow()
-        idx_arr += 1
+    while !p_Send_Followers("doticu_npcp_followers_unfollow")
+        Utility.Wait(0.25)
     endWhile
 endFunction
 
 function Unmember()
-    doticu_npcp_follower ref_follower
-    Alias[] arr_aliases = p_ALIASES.Get_Aliases()
-    int idx_arr = 0
-    while idx_arr < arr_aliases.length
-        ref_follower = arr_aliases[idx_arr] as doticu_npcp_follower
-        ref_follower.Unmember()
-        idx_arr += 1
+    while !p_Send_Followers("doticu_npcp_followers_unmember")
+        Utility.Wait(0.25)
     endWhile
 endFunction
 
 function Resurrect()
-    doticu_npcp_follower ref_follower
-    Alias[] arr_aliases = p_ALIASES.Get_Aliases()
-    int idx_arr = 0
-    while idx_arr < arr_aliases.length
-        ref_follower = arr_aliases[idx_arr] as doticu_npcp_follower
-        if ref_follower.Is_Dead()
-            ref_follower.Resurrect()
-        endIf
-        idx_arr += 1
+    while !p_Send_Followers("doticu_npcp_followers_resurrect")
+        Utility.Wait(0.25)
     endWhile
 endFunction
 
 ; Update Methods
-function u_0_1_0()
-    p_ALIASES.u_0_1_0()
-
-    int idx_alias = 0
-    int max_aliases = p_ALIASES.Get_Max()
-    ReferenceAlias ref_alias = none
-    while idx_alias < max_aliases
-        ref_alias = GetNthAlias(idx_alias) as ReferenceAlias
-        (ref_alias as doticu_npcp_follower).u_0_1_0()
-        idx_alias += 1
+function u_0_1_1()
+    while !p_Send_Followers("doticu_npcp_members_u_0_1_1")
+        Utility.Wait(0.25)
     endWhile
 endFunction

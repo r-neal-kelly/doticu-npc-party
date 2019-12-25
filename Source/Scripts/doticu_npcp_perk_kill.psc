@@ -22,7 +22,3 @@ endFunction
 ; Public Methods
 function Kill_Essential(ObjectReference ref_target, Actor _)
 endFunction
-
-; Update Methods
-function u_0_1_0()
-endFunction

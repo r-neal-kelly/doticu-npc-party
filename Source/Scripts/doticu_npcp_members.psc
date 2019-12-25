@@ -62,6 +62,21 @@ doticu_npcp_member function p_Get_Member(int id_alias)
     return p_ALIASES.f_Get_Alias(id_alias) as doticu_npcp_member
 endFunction
 
+bool function p_Send_Members(string str_event)
+    int handle = ModEvent.Create(str_event)
+
+    if !handle
+        return false
+    endIf
+
+    if !ModEvent.Send(handle)
+        ModEvent.Release(handle)
+        return false
+    endIf
+
+    return true
+endFunction
+
 ; Public Methods
 int function Create_Member(Actor ref_actor, bool do_clone = false)
     int code_return
@@ -176,13 +191,8 @@ function Enforce()
 endFunction
 
 function Unmember()
-    doticu_npcp_member ref_member
-    Alias[] arr_aliases = p_ALIASES.Get_Aliases()
-    int idx_arr = 0
-    while idx_arr < arr_aliases.length
-        ref_member = arr_aliases[idx_arr] as doticu_npcp_member
-        ref_member.Unmember()
-        idx_arr += 1
+    while !p_Send_Members("doticu_npcp_members_unmember")
+        Utility.Wait(0.25)
     endWhile
 endFunction
 
@@ -216,14 +226,13 @@ endFunction
 
 ; Update Methods
 function u_0_1_0()
-    p_ALIASES.u_0_1_0()
+    while !p_Send_Members("doticu_npcp_members_u_0_1_0")
+        Utility.Wait(0.25)
+    endWhile
+endFunction
 
-    int idx_alias = 0
-    int max_aliases = p_ALIASES.Get_Max()
-    ReferenceAlias ref_alias = none
-    while idx_alias < max_aliases
-        ref_alias = p_ALIASES.f_Get_Alias(idx_alias)
-        (ref_alias as doticu_npcp_member).u_0_1_0()
-        idx_alias += 1
+function u_0_1_1()
+    while !p_Send_Members("doticu_npcp_members_u_0_1_1")
+        Utility.Wait(0.25)
     endWhile
 endFunction

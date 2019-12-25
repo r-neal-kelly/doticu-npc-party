@@ -53,10 +53,6 @@ endFunction
 int function p_Get_Idx_Entity(int id_option)
 endFunction
 
-; Update Methods
-function u_0_1_0()
-endFunction
-
 ; Private States
 auto state p_STATE_LOGS
     function f_Build_Page()

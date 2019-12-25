@@ -263,8 +263,3 @@ function Update_Equipment(Actor ref_actor)
         ref_actor.SetPlayerTeammate(false, false)
     endIf
 endFunction
-
-; Update Methods
-function u_0_1_0()
-    p_GREETER.u_0_1_0()
-endFunction

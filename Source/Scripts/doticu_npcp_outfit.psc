@@ -121,10 +121,6 @@ function Unset(Actor ref_actor)
     ref_container_temp.RemoveAllItems(self, false, true)
 endFunction
 
-; Update Methods
-function u_0_1_0()
-endFunction
-
 ; Events
 event OnItemAdded(Form form_item, int count_item, ObjectReference ref_item, ObjectReference ref_container_source)
     if form_item as Armor == none

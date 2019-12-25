@@ -31,7 +31,3 @@ function Resurrect_Member(ObjectReference ref_target, Actor _)
 
     p_ACTORS.Resurrect(ref_actor)
 endFunction
-
-; Update Methods
-function u_0_1_0()
-endFunction

@@ -2,6 +2,8 @@ Scriptname doticu_npcp_consts extends Quest
 
 ; Private Constants
 Actor                       p_ACTOR_PLAYER                          = none
+Cell                        p_CELL_STORAGE                          = none
+ObjectReference             p_MARKER_STORAGE                        = none
 MiscObject                  p_TOKEN_MEMBER                          = none
 MiscObject                  p_TOKEN_SETTLER                         = none
 MiscObject                  p_TOKEN_FOLLOWER                        = none
@@ -20,6 +22,7 @@ MiscObject                  p_TOKEN_VITALITY_MORTAL                 = none
 MiscObject                  p_TOKEN_VITALITY_PROTECTED              = none
 MiscObject                  p_TOKEN_VITALITY_ESSENTIAL              = none
 MiscObject                  p_TOKEN_VITALITY_INVULNERABLE           = none
+MiscObject                  p_MISC_QUEUE                            = none
 GlobalVariable              p_GLOBAL_PLAYER_FOLLOWER_COUNT          = none
 GlobalVariable              p_GLOBAL_FORCE_CLONE_UNIQUE             = none
 GlobalVariable              p_GLOBAL_FORCE_CLONE_GENERIC            = none
@@ -43,21 +46,21 @@ Outfit                      p_OUTFIT_TEMPLATE                       = none
 Weapon                      p_WEAPON_BLANK                          = none
 
 ; Public Constants
-int property VERSION_LARGE
+int property VERSION_MAJOR
     int function Get()
         return 0; set manually upon each release
     endFunction
 endProperty
 
-int property VERSION_SMALL
+int property VERSION_MINOR
     int function Get()
         return 1; set manually upon each release
     endFunction
 endProperty
 
-int property VERSION_BUG
+int property VERSION_PATCH
     int function Get()
-        return 0; set manually upon each release
+        return 1; set manually upon each release
     endFunction
 endProperty
 
@@ -68,6 +71,28 @@ Actor property ACTOR_PLAYER
     function Set(Actor val)
         if p_ACTOR_PLAYER == none
             p_ACTOR_PLAYER = val
+        endIf
+    endFunction
+endProperty
+
+Cell property CELL_STORAGE
+    Cell function Get()
+        return p_CELL_STORAGE
+    endFunction
+    function Set(Cell val)
+        if p_CELL_STORAGE == none
+            p_CELL_STORAGE = val
+        endIf
+    endFunction
+endProperty
+
+ObjectReference property MARKER_STORAGE
+    ObjectReference function Get()
+        return p_MARKER_STORAGE
+    endFunction
+    function Set(ObjectReference val)
+        if p_MARKER_STORAGE == none
+            p_MARKER_STORAGE = val
         endIf
     endFunction
 endProperty
@@ -266,6 +291,17 @@ MiscObject property TOKEN_VITALITY_INVULNERABLE
     function Set(MiscObject val)
         if p_TOKEN_VITALITY_INVULNERABLE == none
             p_TOKEN_VITALITY_INVULNERABLE = val
+        endIf
+    endFunction
+endProperty
+
+MiscObject property MISC_QUEUE
+    MiscObject function Get()
+        return p_MISC_QUEUE
+    endFunction
+    function Set(MiscObject val)
+        if p_MISC_QUEUE == none
+            p_MISC_QUEUE = val
         endIf
     endFunction
 endProperty

@@ -52,16 +52,6 @@ function f_Register()
     p_MCM_LOG.f_Register()
 endFunction
 
-; Update Methods
-function u_0_1_0()
-    ; not sure if this will work, or if we just need to reset the menu each update.
-    p_MCM_FOLLOWERS.u_0_1_0()
-    p_MCM_MEMBERS.u_0_1_0()
-    p_MCM_FILTER.u_0_1_0()
-    p_MCM_SETTINGS.u_0_1_0()
-    p_MCM_LOG.u_0_1_0()
-endFunction
-
 ; Events
 event OnConfigOpen()
     p_VARS.is_mcm_open = true

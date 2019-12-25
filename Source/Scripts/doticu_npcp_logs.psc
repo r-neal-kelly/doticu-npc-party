@@ -181,7 +181,3 @@ function Clear_Errors()
     p_errors_pivot = p_ERRORS.length - 1
     p_errors_used = 0
 endFunction
-
-; Update Methods
-function u_0_1_0()
-endFunction

@@ -42,10 +42,3 @@ function f_Register()
     p_KEYS.f_Register()
     p_MCM.f_Register()
 endFunction
-
-; Update Methods
-function u_0_1_0()
-    p_COMMANDS.u_0_1_0()
-    p_KEYS.u_0_1_0()
-    p_MCM.u_0_1_0()
-endFunction

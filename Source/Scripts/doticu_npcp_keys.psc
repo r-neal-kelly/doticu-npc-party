@@ -91,10 +91,6 @@ function Update_Keys()
     endIf
 endFunction
 
-; Update Methods
-function u_0_1_0()
-endFunction
-
 ; Events
 event On_NPCP_Load_Mod()
 endEvent

@@ -237,7 +237,3 @@ endFunction
 int function Get_Max()
     return p_MAX_ALIASES
 endFunction
-
-; Update Methods
-function u_0_1_0()
-endFunction

@@ -36,7 +36,3 @@ endFunction
 function Destroy(doticu_npcp_outfit ref_outfit)
     ref_outfit.f_Destroy()
 endFunction
-
-; Update Methods
-function u_0_1_0()
-endFunction

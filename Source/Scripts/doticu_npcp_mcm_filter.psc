@@ -41,10 +41,6 @@ endFunction
 int function p_Get_Idx_Command(int id_option, int idx_entity)
 endFunction
 
-; Update Methods
-function u_0_1_0()
-endFunction
-
 ; Private States
 auto state p_STATE_FILTER
     ; should be able to request an array with filter variables

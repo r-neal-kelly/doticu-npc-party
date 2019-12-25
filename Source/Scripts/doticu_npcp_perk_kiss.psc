@@ -52,7 +52,3 @@ function Kiss_Thrall(ObjectReference ref_target, Actor _)
     ref_thrall.RemoveFromFaction(p_CONSTS.FACTION_DLC1_THRALL)
     p_PERKS.Add_Perk(p_CONSTS.PERK_KISS_THRALL)
 endFunction
-
-; Update Methods
-function u_0_1_0()
-endFunction

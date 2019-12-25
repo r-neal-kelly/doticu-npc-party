@@ -42,10 +42,3 @@ endFunction
 function Remove_Perk(Perk perk_to_remove)
     p_CONSTS.ACTOR_PLAYER.RemovePerk(perk_to_remove)
 endFunction
-
-; Update Methods
-function u_0_1_0()
-    p_KISS.u_0_1_0()
-    p_KILL.u_0_1_0()
-    p_RESURRECT.u_0_1_0()
-endFunction

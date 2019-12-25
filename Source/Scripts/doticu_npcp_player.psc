@@ -7,11 +7,12 @@ doticu_npcp_codes       p_CODES         = none
 doticu_npcp_vars        p_VARS          = none
 doticu_npcp_funcs       p_FUNCS         = none
 doticu_npcp_actors      p_ACTORS        = none
+doticu_npcp_queues      p_QUEUES        = none
 doticu_npcp_followers   p_FOLLOWERS     = none
 doticu_npcp_main        p_MAIN          = none
-doticu_npcp_async_alias p_ASYNC         = none
 
 Actor                   p_REF_PLAYER    = none
+doticu_npcp_queue       p_QUEUE_PLAYER  = none
 
 ; Private Variables
 bool p_is_in_combat = false
@@ -24,34 +25,36 @@ function f_Link(doticu_npcp_data DATA)
     p_VARS = DATA.VARS
     p_FUNCS = DATA.MODS.FUNCS
     p_ACTORS = DATA.MODS.FUNCS.ACTORS
+    p_QUEUES = DATA.MODS.FUNCS.QUEUES
     p_FOLLOWERS = DATA.MODS.FOLLOWERS
     p_MAIN = DATA.MODS.MAIN
-    p_ASYNC = (self as ReferenceAlias) as doticu_npcp_async_alias
 
-    p_ASYNC.f_Link(DATA)
+    p_Link_Queues(DATA)
 endFunction
 
 function f_Initialize()
     p_REF_PLAYER = p_CONSTS.ACTOR_PLAYER
 
-    p_ASYNC.f_Initialize()
+    p_Create_Queues()
 endFunction
 
 function f_Register()
-    p_ASYNC.f_Register()
+    RegisterForModEvent("doticu_npcp_queue_" + "player", "On_Queue_Player")
+
+    p_Register_Queues()
 endFunction
 
 function f_Begin_Combat()
     if !p_is_in_combat
         p_is_in_combat = true
-        p_ASYNC.Enqueue("f_Try_End_Combat()", 5.0)
+        p_QUEUE_PLAYER.Enqueue("f_Try_End_Combat()", 5.0)
     endIf
 endFunction
 
 function f_End_Combat()
     if p_is_in_combat
         p_is_in_combat = false
-        p_ASYNC.Flush()
+        p_QUEUE_PLAYER.Flush()
         if p_VARS.auto_resurrect
             p_FOLLOWERS.Resurrect()
         endIf
@@ -60,10 +63,31 @@ endFunction
 
 function f_Try_End_Combat()
     if p_REF_PLAYER.IsInCombat()
-        p_ASYNC.Enqueue("f_Try_End_Combat()", 5.0)
+        p_QUEUE_PLAYER.Enqueue("f_Try_End_Combat()", 5.0)
     else
         f_End_Combat()
     endIf
+endFunction
+
+; Private Methods
+function p_Link_Queues(doticu_npcp_data DATA)
+    if p_QUEUE_PLAYER
+        p_QUEUE_PLAYER.f_Link(DATA)
+    endIf
+endFunction
+
+function p_Register_Queues()
+    if p_QUEUE_PLAYER
+        p_QUEUE_PLAYER.f_Register()
+    endIf
+endFunction
+
+function p_Create_Queues()
+    p_QUEUE_PLAYER = p_QUEUES.Create("player", 32, 5.0)
+endFunction
+
+function p_Destroy_Queues()
+    p_QUEUES.Destroy(p_QUEUE_PLAYER)
 endFunction
 
 ; Public Methods
@@ -76,8 +100,8 @@ function Remove_Perk(Perk perk_to_remove)
 endFunction
 
 ; Update Methods
-function u_0_1_0()
-    p_ASYNC.u_0_1_0()
+function u_0_1_1()
+    p_Create_Queues()
 endFunction
 
 ; Events
@@ -86,7 +110,7 @@ event OnPlayerLoadGame()
 endEvent
 
 event OnUpdate()
-    string str_message = p_ASYNC.Dequeue()
+    string str_message = p_QUEUE_PLAYER.Dequeue()
 
     if str_message == "f_Try_End_Combat()"
         f_Try_End_Combat()

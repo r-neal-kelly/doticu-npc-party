@@ -913,7 +913,3 @@ function Cycle_Style(Actor ref_actor)
         Style(ref_actor, "default", false)
     endIf
 endFunction
-
-; Update Methods
-function u_0_1_0()
-endFunction

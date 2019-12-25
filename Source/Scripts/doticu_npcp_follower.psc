@@ -6,10 +6,10 @@ doticu_npcp_codes       p_CODES                     =  none
 doticu_npcp_vars        p_VARS                      =  none
 doticu_npcp_funcs       p_FUNCS                     =  none
 doticu_npcp_actors      p_ACTORS                    =  none
+doticu_npcp_queues      p_QUEUES                    =  none
 doticu_npcp_members     p_MEMBERS                   =  none
 doticu_npcp_followers   p_FOLLOWERS                 =  none
 doticu_npcp_control     p_CONTROL                   =  none
-doticu_npcp_async_alias p_ASYNC                     =  none
 
 Actor                   p_REF_PLAYER                =  none
 int                     p_ID_ALIAS                  =    -1
@@ -21,6 +21,7 @@ doticu_npcp_member      p_ref_member                =  none
 int                     p_style_follower            =    -1
 int                     p_level_follower            =    -1
 bool                    p_is_sneak                  = false
+doticu_npcp_queue       p_queue_follower            =  none
 
 int                     p_prev_relationship_rank    =    -1
 float                   p_prev_waiting_for_player   =  -1.0
@@ -59,23 +60,33 @@ function f_Link(doticu_npcp_data DATA)
     p_VARS = DATA.VARS
     p_FUNCS = DATA.MODS.FUNCS
     p_ACTORS = DATA.MODS.FUNCS.ACTORS
+    p_QUEUES = DATA.MODS.FUNCS.QUEUES
     p_MEMBERS = DATA.MODS.MEMBERS
     p_FOLLOWERS = DATA.MODS.FOLLOWERS
     p_CONTROL = DATA.MODS.CONTROL
-    p_ASYNC = (self as ReferenceAlias) as doticu_npcp_async_alias
 
-    p_ASYNC.f_Link(DATA)
+    p_Link_Queues(DATA)
 endFunction
 
 function f_Initialize(int ID_ALIAS)
     p_REF_PLAYER = p_CONSTS.ACTOR_PLAYER
     p_ID_ALIAS = ID_ALIAS
-
-    p_ASYNC.f_Initialize()
 endFunction
 
 function f_Register()
-    p_ASYNC.f_Register()
+    RegisterForModEvent("doticu_npcp_followers_settle", "On_Followers_Settle")
+    RegisterForModEvent("doticu_npcp_followers_unsettle", "On_Followers_Unsettle")
+    RegisterForModEvent("doticu_npcp_followers_immobilize", "On_Followers_Immobilize")
+    RegisterForModEvent("doticu_npcp_followers_mobilize", "On_Followers_Mobilize")
+    RegisterForModEvent("doticu_npcp_followers_sneak", "On_Followers_Sneak")
+    RegisterForModEvent("doticu_npcp_followers_unsneak", "On_Followers_Unsneak")
+    RegisterForModEvent("doticu_npcp_followers_unfollow", "On_Followers_Unfollow")
+    RegisterForModEvent("doticu_npcp_followers_unmember", "On_Followers_Unmember")
+    RegisterForModEvent("doticu_npcp_followers_resurrect", "On_Followers_Resurrect")
+    RegisterForModEvent("doticu_npcp_members_u_0_1_1", "u_0_1_1")
+    RegisterForModEvent("doticu_npcp_queue_" + "follower_" + p_ID_ALIAS, "On_Queue_Follower")
+
+    p_Register_Queues()
 endFunction
 
 int function f_Create()
@@ -95,10 +106,11 @@ int function f_Create()
     p_is_created = true
     p_style_follower = p_ref_member.Get_Style()
 
-    p_Backup()
+    p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER, p_ID_ALIAS + 1)
+    p_ref_actor.EvaluatePackage()
 
-    p_Token()
-    ; f_Enforce() will handle the rest
+    p_Create_Queues()
+    p_Backup()
 
     return p_CODES.SUCCESS
 endFunction
@@ -108,6 +120,9 @@ int function f_Destroy()
         return p_CODES.ISNT_FOLLOWER
     endIf
 
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER)
+    p_ref_actor.EvaluatePackage()
+
     if p_is_sneak
         p_Unsneak()
     endIf
@@ -116,7 +131,9 @@ int function f_Destroy()
     p_Untoken()
     
     p_Restore()
+    p_Destroy_Queues()
 
+    p_queue_follower = none
     p_is_sneak = false
     p_level_follower = -1
     p_style_follower = -1
@@ -134,17 +151,37 @@ int function f_Enforce()
         return p_CODES.ISNT_FOLLOWER
     endIf
 
-    p_Token()
-    p_Follow()
-    p_ASYNC.Enqueue("p_Level()")
+    p_queue_follower.Enqueue("p_Token")
+    p_queue_follower.Enqueue("p_Follow")
+    p_queue_follower.Enqueue("p_Level")
     if p_is_sneak
-        p_Sneak()
+        p_queue_follower.Enqueue("p_Sneak")
     endIf
 
     return p_CODES.SUCCESS
 endFunction
 
 ; Private Methods
+function p_Link_Queues(doticu_npcp_data DATA)
+    if p_queue_follower
+        p_queue_follower.f_Link(DATA)
+    endIf
+endFunction
+
+function p_Register_Queues()
+    if p_queue_follower
+        p_queue_follower.f_Register()
+    endIf
+endFunction
+
+function p_Create_Queues()
+    p_queue_follower = p_QUEUES.Create("follower_" + p_ID_ALIAS, 32, 0.5)
+endFunction
+
+function p_Destroy_Queues()
+    p_QUEUES.Destroy(p_queue_follower)
+endFunction
+
 function p_Backup(); this may need to be async
     p_prev_relationship_rank = p_ref_actor.GetRelationshipRank(p_CONSTS.ACTOR_PLAYER)
     p_prev_waiting_for_player = p_ref_actor.GetBaseActorValue("WaitingForPlayer")
@@ -215,11 +252,15 @@ function p_Token()
     else
         p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER_SNEAK)
     endIf
+
+    p_ref_actor.EvaluatePackage()
 endFunction
 
 function p_Untoken()
     p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER_SNEAK)
     p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER)
+
+    p_ref_actor.EvaluatePackage()
 endFunction
 
 function p_Follow()
@@ -553,6 +594,9 @@ int function Sneak()
         return p_CODES.IS_SNEAK
     endIf
 
+    p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER_SNEAK)
+    p_ref_actor.EvaluatePackage()
+
     p_is_sneak = true
 
     code_return = Enforce()
@@ -574,6 +618,9 @@ int function Unsneak()
         return p_CODES.ISNT_SNEAK
     endIf
 
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER_SNEAK)
+    p_ref_actor.EvaluatePackage()
+
     p_is_sneak = false
 
     code_return = Enforce()
@@ -593,7 +640,11 @@ int function Access()
 endFunction
 
 int function Settle()
-    return p_ref_member.Settle()
+    if Is_Settler()
+        return p_ref_member.Resettle()
+    else
+        return p_ref_member.Settle()
+    endIf
 endFunction
 
 int function Unsettle()
@@ -626,6 +677,10 @@ endFunction
 
 bool function Is_Immobile()
     return p_ref_member.Is_Immobile()
+endFunction
+
+bool function Is_Mobile()
+    return p_ref_member.Is_Mobile()
 endFunction
 
 bool function Is_Styled_Default()
@@ -665,16 +720,76 @@ function Resurrect()
 endFunction
 
 ; Update Methods
-function u_0_1_0()
-    p_ASYNC.u_0_1_0()
-endFunction
+event u_0_1_1()
+    p_Create_Queues()
+endEvent
 
 ; Events
-event OnUpdate()
-    string str_message = p_ASYNC.Dequeue()
+event On_Queue_Follower()
+    string str_message = p_queue_follower.Dequeue()
 
-    if str_message == "p_Level()"
+    if str_message == "p_Token"
+        p_Token()
+    elseIf str_message == "p_Follow"
+        p_Follow()
+    elseIf str_message == "p_Level"
         p_Level()
+    elseIf str_message == "p_Sneak"
+        p_Sneak()
+    endIf
+endEvent
+
+event On_Followers_Settle()
+    if Exists()
+        Settle()
+    endIf
+endEvent
+
+event On_Followers_Unsettle()
+    if Exists() && Is_Settler()
+        Unsettle()
+    endIf
+endEvent
+
+event On_Followers_Immobilize()
+    if Exists() && Is_Mobile()
+        Immobilize()
+    endIf
+endEvent
+
+event On_Followers_Mobilize()
+    if Exists() && Is_Immobile()
+        Mobilize()
+    endIf
+endEvent
+
+event On_Followers_Sneak()
+    if Exists() && !Is_Sneak()
+        Sneak()
+    endIf
+endEvent
+
+event On_Followers_Unsneak()
+    if Exists() && Is_Sneak()
+        Unsneak()
+    endIf
+endEvent
+
+event On_Followers_Unfollow()
+    if Exists()
+        Unfollow()
+    endIf
+endEvent
+
+event On_Followers_Unmember()
+    if Exists()
+        Unmember()
+    endIf
+endEvent
+
+event On_Followers_Resurrect()
+    if Exists() && Is_Dead()
+        Resurrect()
     endIf
 endEvent
 

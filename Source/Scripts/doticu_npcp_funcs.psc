@@ -5,6 +5,7 @@ doticu_npcp_actors      p_ACTORS        = none
 doticu_npcp_perks       p_PERKS         = none
 doticu_npcp_outfits     p_OUTFITS       = none
 doticu_npcp_containers  p_CONTAINERS    = none
+doticu_npcp_queues      p_QUEUES        = none
 doticu_npcp_logs        p_LOGS          = none
 doticu_npcp_player      p_PLAYER        = none
 
@@ -33,6 +34,12 @@ doticu_npcp_containers property CONTAINERS
     endFunction
 endProperty
 
+doticu_npcp_queues property QUEUES
+    doticu_npcp_queues function Get()
+        return p_QUEUES
+    endFunction
+endProperty
+
 doticu_npcp_logs property LOGS
     doticu_npcp_logs function Get()
         return p_LOGS
@@ -51,6 +58,7 @@ function f_Link(doticu_npcp_data DATA)
     p_PERKS = (self as Quest) as doticu_npcp_perks
     p_OUTFITS = (self as Quest) as doticu_npcp_outfits
     p_CONTAINERS = (self as Quest) as doticu_npcp_containers
+    p_QUEUES = (self as Quest) as doticu_npcp_queues
     p_LOGS = (self as Quest) as doticu_npcp_logs
     p_PLAYER = GetAliasByName("player") as doticu_npcp_player
 
@@ -58,6 +66,7 @@ function f_Link(doticu_npcp_data DATA)
     p_PERKS.f_Link(DATA)
     p_OUTFITS.f_Link(DATA)
     p_CONTAINERS.f_Link(DATA)
+    p_QUEUES.f_Link(DATA)
     p_LOGS.f_Link(DATA)
     p_PLAYER.f_Link(DATA)
 endFunction
@@ -67,6 +76,7 @@ function f_Initialize()
     p_PERKS.f_Initialize()
     p_OUTFITS.f_Initialize()
     p_CONTAINERS.f_Initialize()
+    p_QUEUES.f_Initialize()
     p_LOGS.f_Initialize()
     p_PLAYER.f_Initialize()
 endFunction
@@ -76,6 +86,7 @@ function f_Register()
     p_PERKS.f_Register()
     p_OUTFITS.f_Register()
     p_CONTAINERS.f_Register()
+    p_QUEUES.f_Register()
     p_LOGS.f_Register()
     p_PLAYER.f_Register()
 endFunction
@@ -98,11 +109,8 @@ bool function Is_Mod_Installed(string name_mod)
 endFunction
 
 ; Update Methods
-function u_0_1_0()
-    p_ACTORS.u_0_1_0()
-    p_PERKS.u_0_1_0()
-    p_OUTFITS.u_0_1_0()
-    p_CONTAINERS.u_0_1_0()
-    p_LOGS.u_0_1_0()
-    p_PLAYER.u_0_1_0()
+function u_0_1_1()
+    p_QUEUES.f_Initialize()
+
+    p_PLAYER.u_0_1_1()
 endFunction

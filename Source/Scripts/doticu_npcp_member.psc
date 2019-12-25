@@ -7,6 +7,7 @@ doticu_npcp_codes       p_CODES                 =  none
 doticu_npcp_vars        p_VARS                  =  none
 doticu_npcp_actors      p_ACTORS                =  none
 doticu_npcp_containers  p_CONTAINERS            =  none
+doticu_npcp_queues      p_QUEUES                =  none
 doticu_npcp_outfits     p_OUTFITS               =  none
 doticu_npcp_members     p_MEMBERS               =  none
 doticu_npcp_followers   p_FOLLOWERS             =  none
@@ -26,6 +27,7 @@ bool                    p_is_thrall             = false
 int                     p_code_style            =    -1
 int                     p_code_vitality         =    -1
 doticu_npcp_outfit      p_outfit2_member        =  none
+doticu_npcp_queue       p_queue_member          =  none
 
 int                     p_prev_vitality         =    -1
 doticu_npcp_outfit      p_prev_outfit2_member   =  none
@@ -39,6 +41,7 @@ function f_Link(doticu_npcp_data DATA)
     p_VARS = DATA.VARS
     p_ACTORS = DATA.MODS.FUNCS.ACTORS
     p_CONTAINERS = DATA.MODS.FUNCS.CONTAINERS
+    p_QUEUES = DATA.MODS.FUNCS.QUEUES
     p_OUTFITS = DATA.MODS.FUNCS.OUTFITS
     p_MEMBERS = DATA.MODS.MEMBERS
     p_FOLLOWERS = DATA.MODS.FOLLOWERS
@@ -48,6 +51,8 @@ function f_Link(doticu_npcp_data DATA)
 
     p_SETTLER.f_Link(DATA)
     p_IMMOBILE.f_Link(DATA)
+
+    p_Link_Queues(DATA)
     p_Link_Outfits(DATA)
 endFunction
 
@@ -60,8 +65,15 @@ function f_Initialize(int ID_ALIAS)
 endFunction
 
 function f_Register()
+    RegisterForModEvent("doticu_npcp_members_unmember", "On_Members_Unmember")
+    RegisterForModEvent("doticu_npcp_members_u_0_1_0", "u_0_1_0")
+    RegisterForModEvent("doticu_npcp_members_u_0_1_1", "u_0_1_1")
+    RegisterForModEvent("doticu_npcp_queue_" + "member_" + p_ID_ALIAS, "On_Queue_Member")
+
     p_SETTLER.f_Register()
     p_IMMOBILE.f_Register()
+
+    p_Register_Queues()
     p_Register_Outfits()
 endFunction
 
@@ -96,6 +108,10 @@ int function f_Create(bool is_a_clone)
     p_code_style = p_VARS.auto_style
     p_code_vitality = p_VARS.auto_vitality
 
+    p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_MEMBER, p_ID_ALIAS + 1)
+    p_ref_actor.EvaluatePackage()
+
+    p_Create_Queues()
     p_Create_Outfits()
     p_Backup()
     
@@ -114,6 +130,9 @@ int function f_Destroy()
     if !Exists()
         return p_CODES.ISNT_MEMBER
     endIf
+
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_MEMBER)
+    p_ref_actor.EvaluatePackage()
 
     if p_FOLLOWERS.Has_Follower(p_ref_actor)
         code_return = Unfollow()
@@ -145,10 +164,12 @@ int function f_Destroy()
 
     p_Restore()
     p_Destroy_Outfits()
+    p_Destroy_Queues()
 
     p_prev_outfit2_member = none
     p_prev_vitality = -1
 
+    p_queue_member = none
     p_outfit2_member = none
     p_code_vitality = -1
     p_code_style = -1
@@ -162,6 +183,26 @@ int function f_Destroy()
 endFunction
 
 ; Private Methods
+function p_Link_Queues(doticu_npcp_data DATA)
+    if p_queue_member
+        p_queue_member.f_Link(DATA)
+    endIf
+endFunction
+
+function p_Register_Queues()
+    if p_queue_member
+        p_queue_member.f_Register()
+    endIf
+endFunction
+
+function p_Create_Queues()
+    p_queue_member = p_QUEUES.Create("member_" + p_ID_ALIAS, 32, 0.5)
+endFunction
+
+function p_Destroy_Queues()
+    p_QUEUES.Destroy(p_queue_member)
+endFunction
+
 function p_Link_Outfits(doticu_npcp_data DATA)
     if p_outfit2_member
         p_outfit2_member.f_Link(DATA)
@@ -266,6 +307,8 @@ function p_Token()
         p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_ESSENTIAL)
         p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_VITALITY_INVULNERABLE)
     endIf
+
+    p_ref_actor.EvaluatePackage()
 endFunction
 
 function p_Untoken()
@@ -281,6 +324,8 @@ function p_Untoken()
     p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_GENERIC)
     p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_CLONE)
     p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_MEMBER)
+
+    p_ref_actor.EvaluatePackage()
 endFunction
 
 function p_Member()
@@ -330,27 +375,6 @@ int function Enforce()
         return p_CODES.ISNT_MEMBER
     endIf
 
-    p_Token()
-    p_Member()
-    if p_is_thrall
-        p_Enthrall()
-    endIf
-    p_Style()
-    p_Vitalize()
-    ;p_Outfit() currently not enforced
-
-    if p_SETTLER.Exists()
-        code_return = p_SETTLER.f_Enforce()
-        if code_return < 0
-            return code_return
-        endIf
-    endIf
-    if p_IMMOBILE.Exists()
-        code_return = p_IMMOBILE.f_Enforce()
-        if code_return < 0
-            return code_return
-        endIf
-    endIf
     if p_FOLLOWERS.Has_Follower(p_ref_actor)
         code_return = p_Followers.Get_Follower(p_ref_actor).f_Enforce()
         if code_return < 0
@@ -358,7 +382,28 @@ int function Enforce()
         endIf
     endIf
 
-    p_ref_actor.EvaluatePackage()
+    if p_IMMOBILE.Exists()
+        code_return = p_IMMOBILE.f_Enforce()
+        if code_return < 0
+            return code_return
+        endIf
+    endIf
+
+    if p_SETTLER.Exists()
+        code_return = p_SETTLER.f_Enforce()
+        if code_return < 0
+            return code_return
+        endIf
+    endIf
+
+    p_queue_member.Enqueue("p_Token")
+    p_queue_member.Enqueue("p_Member")
+    if p_is_thrall
+        p_queue_member.Enqueue("p_Enthrall")
+    endIf
+    p_queue_member.Enqueue("p_Style")
+    p_queue_member.Enqueue("p_Vitalize")
+    ;p_Outfit() currently not enforced
 
     return p_CODES.SUCCESS
 endFunction
@@ -429,6 +474,30 @@ int function Settle()
     endIf
 
     code_return = p_SETTLER.f_Create()
+    if code_return < 0
+        return code_return
+    endIf
+
+    code_return = Enforce()
+    if code_return < 0
+        return code_return
+    endIf
+
+    return p_CODES.SUCCESS
+endFunction
+
+int function Resettle()
+    int code_return
+
+    if !Exists()
+        return p_CODES.ISNT_MEMBER
+    endIf
+
+    if !Is_Settler()
+        return p_CODES.ISNT_SETTLER
+    endIf
+
+    code_return = Get_Settler().Resettle()
     if code_return < 0
         return code_return
     endIf
@@ -558,6 +627,9 @@ int function Enthrall()
         return p_CODES.IS_THRALL
     endIf
 
+    p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_THRALL)
+    p_ref_actor.EvaluatePackage()
+
     p_is_thrall = true
 
     code_return = Enforce()
@@ -582,6 +654,9 @@ int function Unthrall()
     if !p_is_thrall
         return p_CODES.ISNT_THRALL
     endIf
+
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_THRALL)
+    p_ref_actor.EvaluatePackage()
 
     p_is_thrall = false
 
@@ -641,6 +716,12 @@ int function Style_Default()
         return p_CODES.IS_DEFAULT
     endIf
 
+    p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_STYLE_DEFAULT)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_WARRIOR)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_MAGE)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_ARCHER)
+    p_ref_actor.EvaluatePackage()
+
     p_code_style = p_CODES.IS_DEFAULT
 
     code_return = Enforce()
@@ -661,6 +742,12 @@ int function Style_Warrior()
     if p_code_style == p_CODES.IS_WARRIOR
         return p_CODES.IS_WARRIOR
     endIf
+
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_DEFAULT)
+    p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_STYLE_WARRIOR)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_MAGE)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_ARCHER)
+    p_ref_actor.EvaluatePackage()
 
     p_code_style = p_CODES.IS_WARRIOR
 
@@ -683,6 +770,12 @@ int function Style_Mage()
         return p_CODES.IS_MAGE
     endIf
 
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_DEFAULT)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_WARRIOR)
+    p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_STYLE_MAGE)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_ARCHER)
+    p_ref_actor.EvaluatePackage()
+
     p_code_style = p_CODES.IS_MAGE
 
     code_return = Enforce()
@@ -703,6 +796,12 @@ int function Style_Archer()
     if p_code_style == p_CODES.IS_ARCHER
         return p_CODES.IS_ARCHER
     endIf
+
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_DEFAULT)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_WARRIOR)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_STYLE_MAGE)
+    p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_STYLE_ARCHER)
+    p_ref_actor.EvaluatePackage()
 
     p_code_style = p_CODES.IS_ARCHER
 
@@ -737,6 +836,12 @@ int function Vitalize_Mortal()
         return p_CODES.IS_MORTAL
     endIf
 
+    p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_VITALITY_MORTAL)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_PROTECTED)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_ESSENTIAL)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_INVULNERABLE)
+    p_ref_actor.EvaluatePackage()
+
     p_code_vitality = p_CODES.IS_MORTAL
 
     code_return = Enforce()
@@ -757,6 +862,12 @@ int function Vitalize_Protected()
     if p_code_vitality == p_CODES.IS_PROTECTED
         return p_CODES.IS_PROTECTED
     endIf
+
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_MORTAL)
+    p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_VITALITY_PROTECTED)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_ESSENTIAL)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_INVULNERABLE)
+    p_ref_actor.EvaluatePackage()
 
     p_code_vitality = p_CODES.IS_PROTECTED
 
@@ -779,6 +890,12 @@ int function Vitalize_Essential()
         return p_CODES.IS_ESSENTIAL
     endIf
 
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_MORTAL)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_PROTECTED)
+    p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_VITALITY_ESSENTIAL)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_INVULNERABLE)
+    p_ref_actor.EvaluatePackage()
+
     p_code_vitality = p_CODES.IS_ESSENTIAL
 
     code_return = Enforce()
@@ -799,6 +916,12 @@ int function Vitalize_Invulnerable()
     if p_code_vitality == p_CODES.IS_INVULNERABLE
         return p_CODES.IS_INVULNERABLE
     endIf
+
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_MORTAL)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_PROTECTED)
+    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_VITALITY_ESSENTIAL)
+    p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_VITALITY_INVULNERABLE)
+    p_ref_actor.EvaluatePackage()
 
     p_code_vitality = p_CODES.IS_INVULNERABLE
 
@@ -921,6 +1044,10 @@ bool function Is_Immobile()
     return p_IMMOBILE.Exists()
 endFunction
 
+bool function Is_Mobile()
+    return !p_IMMOBILE.Exists()
+endFunction
+
 bool function Is_Follower()
     return p_FOLLOWERS.Has_Follower(p_ref_actor)
 endFunction
@@ -978,22 +1105,54 @@ function Summon_Behind()
 endFunction
 
 ; Update Methods
-function u_0_1_0()
+event u_0_1_0()
     p_OUTFIT = p_CONSTS.FORMLIST_OUTFITS.GetAt(p_ID_ALIAS) as Outfit
     if Exists()
         p_Destroy_Outfits()
         p_Create_Outfits()
     endIf
+endEvent
 
-    p_SETTLER.u_0_1_0()
-    p_IMMOBILE.u_0_1_0()
-    ; we could update outfits, but in this update, we're recreating them anyway.
-endFunction
+event u_0_1_1()
+    p_Create_Queues()
+    p_outfit2_member.MoveTo(p_CONSTS.MARKER_STORAGE)
+    p_prev_outfit2_member.MoveTo(p_CONSTS.MARKER_STORAGE)
+
+    p_SETTLER.u_0_1_1()
+    p_IMMOBILE.u_0_1_1()
+endEvent
 
 ; Events
+event On_Queue_Member()
+    string str_message = p_queue_member.Dequeue()
+
+    if str_message == "p_Token"
+        MiscUtil.PrintConsole(p_ID_ALIAS + " p_Token")
+        p_Token()
+    elseIf str_message == "p_Member"
+        MiscUtil.PrintConsole(p_ID_ALIAS + " p_Member")
+        p_Member()
+    elseIf str_message == "p_Enthrall"
+        MiscUtil.PrintConsole(p_ID_ALIAS + " p_Enthrall")
+        p_Enthrall()
+    elseIf str_message == "p_Style"
+        MiscUtil.PrintConsole(p_ID_ALIAS + " p_Style")
+        p_Style()
+    elseIf str_message == "p_Vitalize"
+        MiscUtil.PrintConsole(p_ID_ALIAS + " p_Vitalize")
+        p_Vitalize()
+    endIf
+endEvent
+
+event On_Members_Unmember()
+    if Exists()
+        Unmember()
+    endIf
+endEvent
+
 event OnActivate(ObjectReference ref_activator)
     Enforce()
-    ; maybe we could pop up some basic stats on screen?
+    ; maybe we could also pop up some basic stats on screen?
 endEvent
 
 event OnLoad()

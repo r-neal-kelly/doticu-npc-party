@@ -20,7 +20,7 @@ endFunction
 
 ; Public Methods
 ObjectReference function Create(Container form_container, bool do_persist = false)
-    ObjectReference ref_container = p_CONSTS.ACTOR_PLAYER.PlaceAtMe(form_container, 1, do_persist, false)
+    ObjectReference ref_container = p_CONSTS.MARKER_STORAGE.PlaceAtMe(form_container, 1, do_persist, false)
     ref_container.SetActorOwner(p_CONSTS.ACTOR_PLAYER.GetActorBase())
     return ref_container
 endFunction
@@ -74,8 +74,4 @@ function Copy(ObjectReference ref_container_subject, ObjectReference ref_contain
         ref_container_subject.AddItem(ref_form, ref_container_object.GetItemCount(ref_form), true)
         idx_forms += 1
     endWhile
-endFunction
-
-; Update Methods
-function u_0_1_0()
 endFunction

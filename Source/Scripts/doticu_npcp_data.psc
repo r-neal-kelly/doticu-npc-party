@@ -63,8 +63,3 @@ endFunction
 function f_Register()
     p_VARS.f_Register()
 endFunction
-
-; Update Methods
-function u_0_1_0()
-    p_VARS.u_0_1_0()
-endFunction
