@@ -29,6 +29,10 @@ function f_Link(doticu_npcp_data DATA)
     p_COMMANDS = (self as Quest) as doticu_npcp_commands
     p_KEYS = (self as Quest) as doticu_npcp_keys
     p_MCM = (self as Quest) as doticu_npcp_mcm
+
+    p_COMMANDS.f_Link(DATA)
+    p_KEYS.f_Link(DATA)
+    p_MCM.f_Link(DATA)
 endFunction
 
 function f_Initialize()

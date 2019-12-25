@@ -1127,19 +1127,14 @@ event On_Queue_Member()
     string str_message = p_queue_member.Dequeue()
 
     if str_message == "p_Token"
-        MiscUtil.PrintConsole(p_ID_ALIAS + " p_Token")
         p_Token()
     elseIf str_message == "p_Member"
-        MiscUtil.PrintConsole(p_ID_ALIAS + " p_Member")
         p_Member()
     elseIf str_message == "p_Enthrall"
-        MiscUtil.PrintConsole(p_ID_ALIAS + " p_Enthrall")
         p_Enthrall()
     elseIf str_message == "p_Style"
-        MiscUtil.PrintConsole(p_ID_ALIAS + " p_Style")
         p_Style()
     elseIf str_message == "p_Vitalize"
-        MiscUtil.PrintConsole(p_ID_ALIAS + " p_Vitalize")
         p_Vitalize()
     endIf
 endEvent

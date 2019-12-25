@@ -11,14 +11,12 @@ function f_Link(doticu_npcp_data DATA)
     p_CODES = DATA.CODES
     p_ALIASES = (self as Quest) as doticu_npcp_aliases
 
-    p_ALIASES.f_Link(DATA)
+    p_ALIASES.f_Link(DATA); p_ALIASES is not init'd!
 
     int idx_alias = 0
-    int max_aliases = p_ALIASES.Get_Max()
-    ReferenceAlias ref_alias = none
+    int max_aliases = GetNumAliases()
     while idx_alias < max_aliases
-        ref_alias = GetNthAlias(idx_alias) as ReferenceAlias
-        (ref_alias as doticu_npcp_follower).f_Link(DATA)
+        (GetNthAlias(idx_alias) as doticu_npcp_follower).f_Link(DATA)
         idx_alias += 1
     endWhile
 endFunction
@@ -27,11 +25,9 @@ function f_Initialize()
     p_ALIASES.f_Initialize()
 
     int idx_alias = 0
-    int max_aliases = p_ALIASES.Get_Max()
-    ReferenceAlias ref_alias = none
+    int max_aliases = GetNumAliases()
     while idx_alias < max_aliases
-        ref_alias = GetNthAlias(idx_alias) as ReferenceAlias
-        (ref_alias as doticu_npcp_follower).f_Initialize(idx_alias)
+        (GetNthAlias(idx_alias) as doticu_npcp_follower).f_Initialize(idx_alias)
         idx_alias += 1
     endWhile
 endFunction
@@ -40,11 +36,9 @@ function f_Register()
     p_ALIASES.f_Register()
 
     int idx_alias = 0
-    int max_aliases = p_ALIASES.Get_Max()
-    ReferenceAlias ref_alias = none
+    int max_aliases = GetNumAliases()
     while idx_alias < max_aliases
-        ref_alias = GetNthAlias(idx_alias) as ReferenceAlias
-        (ref_alias as doticu_npcp_follower).f_Register()
+        (GetNthAlias(idx_alias) as doticu_npcp_follower).f_Register()
         idx_alias += 1
     endWhile
 endFunction

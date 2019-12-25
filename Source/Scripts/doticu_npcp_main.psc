@@ -47,7 +47,7 @@ function f_Register()
     DATA.MODS.FOLLOWERS.f_Register()
     DATA.MODS.CONTROL.f_Register()
 
-    RegisterForModEvent("doticu_npcp_load_mod", "On_NPCP_Load_Mod")
+    RegisterForModEvent("doticu_npcp_load_mod", "On_Load_Mod")
 endFunction
 
 function f_Version()
@@ -62,18 +62,6 @@ function f_Version()
         if version_old < 0 + 1 + 1
             u_0_1_1()
         endIf
-        ;/if version_new >= 1 + 0 + 0
-            u_1_0_0()
-        endIf
-        if version_new >= 1 + 0 + 1
-            u_1_0_1()
-        endIf
-        if version_new >= 1 + 1 + 0
-            u_1_1_0()
-        endIf
-        if version_new >= 2 + 0 + 0
-            u_2_0_0()
-        endIf/;
 
         p_VARS.version_major = p_CONSTS.VERSION_MAJOR
         p_VARS.version_minor = p_CONSTS.VERSION_MINOR
@@ -85,30 +73,32 @@ function f_Version()
 endFunction
 
 function f_Load_Mod()
-    Utility.Wait(0.5)
-
     DATA.Stop()
-    DATA.Start()
-    ; DATA.MODS.CONTROL.MCM.Reset(); not sure yet. would need to set an OnInit on MCM or call its setup funcs
+    while !DATA.Start()
+        Utility.Wait(0.5)
+    endWhile
+
+    ;/DATA.MODS.CONTROL.Stop()
+    while !DATA.MODS.CONTROL.Start()
+        Utility.Wait(0.5)
+    endWhile/;
 
     f_Link()
     f_Register()
     f_Version()
 
-    while !p_Send_NPCP_Load_Mod()
+    while !p_Send_Load_Mod()
         Utility.Wait(0.25)
     endWhile
 endFunction
 
 ; Private Methods
-bool function p_Send_NPCP_Load_Mod()
+bool function p_Send_Load_Mod()
     int handle = ModEvent.Create("doticu_npcp_load_mod")
 
     if !handle
         return false
     endIf
-
-    ; push any args here
 
     if !ModEvent.Send(handle)
         ModEvent.Release(handle)
@@ -129,21 +119,31 @@ function u_0_1_1()
     DATA.MODS.FOLLOWERS.u_0_1_1()
 endFunction
 
-function u_1_0_0()
-endFunction
-
-function u_1_0_1()
-endFunction
-
-function u_1_1_0()
-endFunction
-
-function u_2_0_0()
-endFunction
-
 ; Events
 event OnInit()
-    Utility.Wait(3)
+    while !DATA.Start()
+        Utility.Wait(1)
+    endWhile
+
+    while !DATA.VARS.Start()
+        Utility.Wait(1)
+    endWhile
+
+    while !DATA.MODS.FUNCS.Start()
+        Utility.Wait(1)
+    endWhile
+
+    while !DATA.MODS.MEMBERS.Start()
+        Utility.Wait(1)
+    endWhile
+
+    while !DATA.MODS.FOLLOWERS.Start()
+        Utility.Wait(1)
+    endWhile
+
+    while !DATA.MODS.CONTROL.Start()
+        Utility.Wait(1)
+    endWhile
 
     f_Link()
     f_Initialize()
@@ -152,5 +152,5 @@ event OnInit()
     p_FUNCS.LOGS.Create_Note("Thank you for installing!")
 endEvent
 
-event On_NPCP_Load_Mod()
+event On_Load_Mod()
 endEvent
