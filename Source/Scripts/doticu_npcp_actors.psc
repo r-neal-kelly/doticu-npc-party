@@ -157,15 +157,15 @@ function Vitalize(Actor ref_actor, int code_vitality)
 endFunction
 
 function Resurrect(Actor ref_actor)
-    ObjectReference ref_container = p_CONTAINERS.Create(p_CONSTS.CONTAINER_EMPTY, false)
+    ObjectReference ref_container_temp = p_CONTAINERS.Create_Temp()
 
-    p_CONTAINERS.Take_All(ref_container, ref_actor)
+    p_CONTAINERS.Take_All(ref_container_temp, ref_actor)
     ref_actor.Disable()
     ref_actor.Resurrect()
     Pacify(ref_actor)
     ref_actor.Enable()
     p_CONTAINERS.Empty(ref_actor)
-    p_CONTAINERS.Take_All(ref_actor, ref_container)
+    p_CONTAINERS.Take_All(ref_actor, ref_container_temp)
     Update_Equipment(ref_actor)
 endFunction
 

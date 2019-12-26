@@ -51,18 +51,11 @@ function f_Register()
 endFunction
 
 function f_Version()
-    int v_ma = p_VARS.version_major
-    int v_mi = p_VARS.version_minor
-    int v_pa = p_VARS.version_patch
-    int C_MA = p_CONSTS.VERSION_MAJOR
-    int C_MI = p_CONSTS.VERSION_MINOR
-    int C_PA = p_CONSTS.VERSION_PATCH
-
-    if v_ma < C_MA || v_mi < C_MI || v_pa < C_PA
-        if v_ma < 0 && v_mi < 1 && v_pa < 0
-            ;u_0_1_0()
+    if p_Is_Version_Less_Than(p_CONSTS.VERSION_MAJOR, p_CONSTS.VERSION_MINOR, p_CONSTS.VERSION_PATCH)
+        if p_Is_Version_Less_Than(0, 1, 0)
+            u_0_1_0()
         endIf
-        if v_ma < 0 && v_mi < 1 && v_pa < 1
+        if p_Is_Version_Less_Than(0, 1, 1)
             u_0_1_1()
         endIf
 
@@ -70,7 +63,8 @@ function f_Version()
         p_VARS.version_minor = p_CONSTS.VERSION_MINOR
         p_VARS.version_patch = p_CONSTS.VERSION_PATCH
 
-        p_FUNCS.LOGS.Create_Note("Running version " + C_MA + "." + C_MI + "." + C_PA)
+        string str_version = p_CONSTS.VERSION_MAJOR + "." + p_CONSTS.VERSION_MINOR + "." + p_CONSTS.VERSION_PATCH
+        p_FUNCS.LOGS.Create_Note("Running version " + str_version)
     endIf
 endFunction
 
@@ -95,6 +89,18 @@ function f_Load_Mod()
 endFunction
 
 ; Private Methods
+bool function p_Is_Version_Less_Than(int major, int minor, int patch)
+    if p_VARS.version_major != major
+        return p_VARS.version_major < major
+    elseIf p_VARS.version_minor != minor
+        return p_VARS.version_minor < minor
+    elseIf p_VARS.version_patch != patch
+        return p_VARS.version_patch < patch
+    else
+        return false
+    endIf
+endFunction
+
 bool function p_Send_Load_Mod()
     int handle = ModEvent.Create("doticu_npcp_load_mod")
 

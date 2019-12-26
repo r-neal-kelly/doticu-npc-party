@@ -28,10 +28,11 @@ int                     p_code_style            =    -1
 int                     p_code_vitality         =    -1
 doticu_npcp_outfit      p_outfit2_member        =  none
 doticu_npcp_queue       p_queue_member          =  none
+doticu_npcp_container   p_container_pack        =  none
 
 int                     p_prev_vitality         =    -1
 doticu_npcp_outfit      p_prev_outfit2_member   =  none
-; maybe should backup factions and restore them also.
+; maybe should backup factions and restore them also. removing from all factions may make things cleaner.
 
 ; Friend Methods
 function f_Link(doticu_npcp_data DATA)
@@ -54,6 +55,7 @@ function f_Link(doticu_npcp_data DATA)
 
     p_Link_Queues(DATA)
     p_Link_Outfits(DATA)
+    p_Link_Containers(DATA)
 endFunction
 
 function f_Initialize(int ID_ALIAS)
@@ -75,6 +77,7 @@ function f_Register()
 
     p_Register_Queues()
     p_Register_Outfits()
+    p_Register_Containers()
 endFunction
 
 int function f_Create(bool is_a_clone)
@@ -113,6 +116,7 @@ int function f_Create(bool is_a_clone)
 
     p_Create_Queues()
     p_Create_Outfits()
+    p_Create_Containers()
     p_Backup()
     
     code_return = Enforce()
@@ -163,12 +167,14 @@ int function f_Destroy()
     p_Untoken()
 
     p_Restore()
+    p_Destroy_Containers()
     p_Destroy_Outfits()
     p_Destroy_Queues()
 
     p_prev_outfit2_member = none
     p_prev_vitality = -1
 
+    p_container_pack = none
     p_queue_member = none
     p_outfit2_member = none
     p_code_vitality = -1
@@ -222,7 +228,7 @@ function p_Register_Outfits()
 endFunction
 
 function p_Create_Outfits()
-    p_outfit2_member = p_OUTFITS.Create(p_OUTFIT, p_ACTORS.Get_Name(p_ref_actor) + " Outfit")
+    p_outfit2_member = p_OUTFITS.Create(p_OUTFIT, p_ACTORS.Get_Name(p_ref_actor) + "'s Outfit")
     p_prev_outfit2_member = p_OUTFITS.Create(p_OUTFIT)
 
     p_outfit2_member.Get(p_ref_actor)
@@ -232,6 +238,27 @@ endFunction
 function p_Destroy_Outfits()
     p_OUTFITS.Destroy(p_prev_outfit2_member)
     p_OUTFITS.Destroy(p_outfit2_member)
+endFunction
+
+function p_Link_Containers(doticu_npcp_data DATA)
+    if p_container_pack
+        p_container_pack.f_Link(DATA)
+    endIf
+endFunction
+
+function p_Register_Containers()
+    if p_container_pack
+        p_container_pack.f_Register()
+    endIf
+endFunction
+
+function p_Create_Containers()
+    p_container_pack = p_CONTAINERS.Create(p_ACTORS.Get_Name(p_ref_actor) + "'s Pack")
+endFunction
+
+function p_Destroy_Containers()
+    p_container_pack.RemoveAllItems(p_CONSTS.ACTOR_PLAYER, false, true)
+    p_CONTAINERS.Destroy(p_container_pack)
 endFunction
 
 function p_Backup()
@@ -404,6 +431,8 @@ int function Enforce()
     p_queue_member.Enqueue("p_Style")
     p_queue_member.Enqueue("p_Vitalize")
     ;p_Outfit() currently not enforced
+
+    p_ACTORS.Update_Equipment(p_ref_actor); not sure if this should go here
 
     return p_CODES.SUCCESS
 endFunction
@@ -952,6 +981,23 @@ int function Access()
     return p_CODES.SUCCESS
 endFunction
 
+int function Pack()
+    int code_return
+    
+    if !Exists()
+        return p_CODES.ISNT_MEMBER
+    endIf
+    
+    p_container_pack.Open()
+
+    code_return = Enforce()
+    if code_return < 0
+        return code_return
+    endIf
+
+    return p_CODES.SUCCESS
+endFunction
+
 int function Outfit()
     int code_return
     
@@ -1121,6 +1167,11 @@ event u_0_1_1()
     p_SETTLER.u_0_1_1()
     p_IMMOBILE.u_0_1_1()
 endEvent
+
+; we need an update to create pack, but we might move to 0_2_0, with more aliases
+; which will require a fresh restart, because it's not going to be supported, updating
+; members quest. however, we may make it so that we can add new quests containing aliases.
+; we'll need a quest manager that can do that.
 
 ; Events
 event On_Queue_Member()

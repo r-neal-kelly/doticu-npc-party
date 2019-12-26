@@ -27,6 +27,7 @@ endFunction
 
 function f_Create(string str_name)
     self.SetDisplayName(str_name)
+    self.SetActorOwner(p_CONSTS.ACTOR_PLAYER.GetActorBase())
 endFunction
 
 function f_Destroy()
@@ -55,7 +56,7 @@ function Get(Actor ref_actor)
 endFunction
 
 function Set(Actor ref_actor)
-    ObjectReference ref_container_temp = p_CONTAINERS.Create(p_CONSTS.CONTAINER_EMPTY, false)
+    ObjectReference ref_container_temp = p_CONTAINERS.Create_Temp()
     int num_forms
     int idx_forms
     Form ref_form
@@ -114,7 +115,7 @@ function Set(Actor ref_actor)
 endFunction
 
 function Unset(Actor ref_actor)
-    ObjectReference ref_container_temp = p_CONTAINERS.Create(p_CONSTS.CONTAINER_EMPTY, false)
+    ObjectReference ref_container_temp = p_CONTAINERS.Create_Temp()
 
     self.RemoveAllItems(ref_container_temp, false, true)
     Set(ref_actor)
