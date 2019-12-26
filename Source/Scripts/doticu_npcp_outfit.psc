@@ -26,7 +26,7 @@ function f_Register()
 endFunction
 
 function f_Create(string str_name)
-    self.SetDisplayName(str_name)
+    self.SetDisplayName(str_name, true)
     self.SetActorOwner(p_CONSTS.ACTOR_PLAYER.GetActorBase())
 endFunction
 
@@ -37,6 +37,14 @@ function f_Destroy()
 endFunction
 
 ; Public Methods
+string function Get_Name()
+    return self.GetDisplayName()
+endFunction
+
+function Set_Name(string str_name)
+    self.SetDisplayName(str_name, true)
+endFunction
+
 function Get(Actor ref_actor)
     int num_forms
     int idx_forms

@@ -78,6 +78,10 @@ int property ACTION_DRAW_END        =    8 autoReadOnly
 int property ACTION_SHEATHE_BEGIN   =    9 autoReadOnly
 int property ACTION_SHEATHE_END     =   10 autoReadOnly
 
+int property GENDER_MALE            =    0 autoReadOnly
+int property GENDER_FEMALE          =    1 autoReadOnly
+int property GENDER_NONE            =   -1 autoReadOnly
+
 int property COMBAT_NO              =    0 autoReadOnly
 int property COMBAT_YES             =    1 autoReadOnly
 int property COMBAT_SEARCHING       =    2 autoReadOnly

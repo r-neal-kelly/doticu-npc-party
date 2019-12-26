@@ -442,11 +442,19 @@ bool function Exists()
 endFunction
 
 string function Get_Name()
-    return p_ACTORS.Get_Name(p_ref_actor)
+    if !Exists()
+        return ""
+    else
+        return p_ACTORS.Get_Name(p_ref_actor)
+    endIf
 endFunction
 
 Actor function Get_Actor()
-    return p_ref_actor
+    if !Exists()
+        return none
+    else
+        return p_ref_actor
+    endIf
 endFunction
 
 doticu_npcp_settler function Get_Settler()
@@ -491,6 +499,9 @@ int function Set_Name(string str_name)
     if Get_Name() != str_name
         return p_CODES.CANT_RENAME
     endIf
+
+    p_container_pack.Set_Name(str_name + "'s Pack")
+    p_outfit2_member.Set_Name(str_name + "'s Outfit")
 
     return p_CODES.SUCCESS
 endFunction

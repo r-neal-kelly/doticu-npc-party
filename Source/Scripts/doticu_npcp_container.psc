@@ -19,7 +19,7 @@ function f_Register()
 endFunction
 
 function f_Create(string str_name)
-    self.SetDisplayName(str_name)
+    self.SetDisplayName(str_name, true)
     self.SetActorOwner(p_CONSTS.ACTOR_PLAYER.GetActorBase())
 endFunction
 
@@ -33,8 +33,12 @@ function Open()
     return p_CONTAINERS.Open(self)
 endFunction
 
-function Rename(string str_name)
-    return p_CONTAINERS.Rename(self, str_name)
+string function Get_Name()
+    return p_CONTAINERS.Get_Name(self)
+endFunction
+
+function Set_Name(string str_name)
+    return p_CONTAINERS.Set_Name(self, str_name)
 endFunction
 
 function Take_All(ObjectReference ref_container)

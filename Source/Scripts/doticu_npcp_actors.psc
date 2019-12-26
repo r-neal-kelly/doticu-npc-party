@@ -79,6 +79,14 @@ bool function Is_Vampire(Actor ref_actor)
     return ref_actor.HasKeyword(p_CONSTS.KEYWORD_VAMPIRE)
 endFunction
 
+bool function Is_Male(Actor ref_actor)
+    return Get_Sex(ref_actor) == p_CODES.GENDER_MALE
+endFunction
+
+bool function Is_Female(Actor ref_actor)
+    return Get_Sex(ref_actor) == p_CODES.GENDER_FEMALE
+endFunction
+
 ActorBase function Get_Base(Actor ref_actor)
     return ref_actor.GetActorBase()
 endFunction
@@ -110,6 +118,10 @@ function Set_Base_Name(Actor ref_actor, string str_name)
         ref_actor.SetDisplayName(str_name, true)
         ref_actor.SetName(str_name)
     endIf
+endFunction
+
+int function Get_Sex(Actor ref_actor)
+    return Get_Base(ref_actor).GetSex()
 endFunction
 
 int function Get_Vitality(Actor ref_actor)
