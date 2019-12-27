@@ -230,3 +230,9 @@ function u_0_1_1()
         Utility.Wait(0.25)
     endWhile
 endFunction
+
+function u_0_1_2()
+    while !p_Send_Members("doticu_npcp_members_u_0_1_2")
+        Utility.Wait(0.25)
+    endWhile
+endFunction

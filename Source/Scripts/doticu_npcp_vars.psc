@@ -13,6 +13,7 @@ bool                p_force_clone_generic   = false
 bool                p_force_unclone_unique  = false
 bool                p_force_unclone_generic = false
 bool                p_auto_resurrect        = false
+bool                p_auto_outfit           = false
 int                 p_auto_style            =    -1
 int                 p_auto_vitality         =    -1
 bool                p_is_mcm_open           = false
@@ -150,6 +151,15 @@ bool property auto_resurrect hidden
     endFunction
 endProperty
 
+bool property auto_outfit hidden
+    bool function Get()
+        return p_auto_outfit
+    endFunction
+    function Set(bool val)
+        p_auto_outfit = val
+    endFunction
+endProperty
+
 int property auto_style hidden
     int function Get()
         return p_auto_style
@@ -192,6 +202,7 @@ function f_Initialize()
     force_unclone_unique = false
     force_unclone_generic = true
     auto_resurrect = true
+    auto_outfit = true
     auto_style = p_CODES.IS_DEFAULT; IS_DEFAULT, IS_WARRIOR, IS_MAGE, IS_ARCHER
     auto_vitality = p_CODES.IS_PROTECTED; IS_MORTAL, IS_PROTECTED, IS_ESSENTIAL, IS_INVULNERABLE
 endFunction

@@ -13,6 +13,7 @@ int                 p_option_force_unclone_generic  =   -1
 int                 p_option_auto_style             =   -1
 int                 p_option_auto_vitality          =   -1
 int                 p_option_auto_resurrect         =   -1
+int                 p_option_auto_outfit            =   -1
 
 ; Friend Methods
 function f_Link(doticu_npcp_data DATA)
@@ -78,7 +79,7 @@ auto state p_STATE_SETTINGS
             p_option_auto_vitality = p_MCM.AddTextOption("Auto Style", " Invulnerable ")
         endIf
         p_option_auto_resurrect = p_MCM.AddToggleOption("Auto Resurrect Followers", p_VARS.auto_resurrect)
-        p_MCM.AddEmptyOption()
+        p_option_auto_outfit = p_MCM.AddToggleOption("Auto Outfit", p_VARS.auto_outfit)
 
         p_MCM.AddEmptyOption()
         p_MCM.AddEmptyOption()
@@ -118,6 +119,8 @@ auto state p_STATE_SETTINGS
             endIf
         elseIf id_option == p_option_auto_resurrect
             p_VARS.auto_resurrect = !p_VARS.auto_resurrect
+        elseIf id_option == p_option_auto_outfit
+            p_VARS.auto_outfit = !p_VARS.auto_outfit
         endIf
         p_MCM.ForcePageReset()
     endFunction
@@ -172,6 +175,12 @@ auto state p_STATE_SETTINGS
                 p_MCM.SetInfoText("Followers will automatically resurrect after each battle.")
             else
                 p_MCM.SetInfoText("Followers will not automatically resurrect after each battle.")
+            endIf
+        elseIf id_option == p_option_auto_outfit
+            if p_VARS.auto_outfit
+                p_MCM.SetInfoText("Members will automatically dress for the right occasion.")
+            else
+                p_MCM.SetInfoText("Members will not automatically dress for the right occasion.")
             endIf
         endIf
     endFunction

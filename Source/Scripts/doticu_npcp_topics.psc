@@ -30,7 +30,19 @@ function Outfit_Member(ObjectReference ref_object)
 endFunction
 
 function Outfit_Follower(ObjectReference ref_object)
-    ;(GetOwningQuest() as doticu_npcp_commands).Outfit(ref_object as Actor, "follower", false)
+    (GetOwningQuest() as doticu_npcp_commands).Outfit(ref_object as Actor, "follower", false)
+endFunction
+
+function Outfit_Immobile(ObjectReference ref_object)
+    (GetOwningQuest() as doticu_npcp_commands).Outfit(ref_object as Actor, "immobile", false)
+endFunction
+
+function Outfit_Thrall(ObjectReference ref_object)
+    (GetOwningQuest() as doticu_npcp_commands).Outfit(ref_object as Actor, "thrall", false)
+endFunction
+
+function Outfit_Settler(ObjectReference ref_object)
+    (GetOwningQuest() as doticu_npcp_commands).Outfit(ref_object as Actor, "settler", false)
 endFunction
 
 function Enthrall(ObjectReference ref_object)

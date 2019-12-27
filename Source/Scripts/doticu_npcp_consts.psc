@@ -61,7 +61,7 @@ endProperty
 
 int property VERSION_PATCH
     int function Get()
-        return 1; set manually upon each release
+        return 2; set manually upon each release
     endFunction
 endProperty
 

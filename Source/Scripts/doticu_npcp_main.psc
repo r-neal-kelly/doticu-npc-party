@@ -58,6 +58,9 @@ function f_Version()
         if p_Is_Version_Less_Than(0, 1, 1)
             u_0_1_1()
         endIf
+        if p_Is_Version_Less_Than(0, 1, 2)
+            u_0_1_2()
+        endIf
 
         p_VARS.version_major = p_CONSTS.VERSION_MAJOR
         p_VARS.version_minor = p_CONSTS.VERSION_MINOR
@@ -125,6 +128,10 @@ function u_0_1_1()
     DATA.MODS.FUNCS.u_0_1_1()
     DATA.MODS.MEMBERS.u_0_1_1()
     DATA.MODS.FOLLOWERS.u_0_1_1()
+endFunction
+
+function u_0_1_2()
+    DATA.MODS.MEMBERS.u_0_1_2()
 endFunction
 
 ; Events

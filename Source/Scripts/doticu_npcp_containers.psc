@@ -63,6 +63,14 @@ function Set_Name(ObjectReference ref_container, string str_name)
     ref_container.SetDisplayName(str_name, true)
 endFunction
 
+int function Count_Items(ObjectReference ref_container)
+    return ref_container.GetNumItems()
+endFunction
+
+int function Count_Item(ObjectReference ref_container, Form form_item)
+    return ref_container.GetItemCount(form_item)
+endFunction
+
 function Take_All(ObjectReference ref_subject, ObjectReference ref_object)
     int num_forms
     int idx_forms

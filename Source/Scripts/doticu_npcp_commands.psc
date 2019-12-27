@@ -120,19 +120,25 @@ function p_Notify_On_Pack(int code_return, Actor ref_actor, string str_name)
     endIf
 endFunction
 
-function p_Notify_On_Outfit(int code_return, string str_name)
+function p_Notify_On_Outfit(int code_return, string str_name, string str_outfit)
+    if str_outfit == "immobile"
+        str_outfit = "an immobile"
+    else
+        str_outfit = "a " + str_outfit
+    endIf
+
     if code_return == p_CODES.SUCCESS
-        p_LOGS.Create_Note(str_name + " has been outfitted.")
+        p_LOGS.Create_Note(str_name + " has been outfitted as " + str_outfit + ".")
     elseIf code_return == p_CODES.HASNT_SPACE_MEMBER
-        p_LOGS.Create_Note("No room for " + str_name + " to be outfitted as a new member.")
+        p_LOGS.Create_Note("No room for " + str_name + " to be outfitted as " + str_outfit + ".")
     elseIf code_return == p_CODES.CANT_RESURRECT
-        p_LOGS.Create_Note(str_name + " can't be revived, and so can't be outfitted as a new member.")
+        p_LOGS.Create_Note(str_name + " can't be revived, and so can't be outfitted as " + str_outfit + ".")
     elseIf code_return == p_CODES.ISNT_ACTOR
-        p_LOGS.Create_Note("That can't become a member and be outfitted.")
+        p_LOGS.Create_Note("That can't become " + str_outfit + " and be outfitted.")
     elseIf code_return == p_CODES.ISNT_MEMBER || code_return == p_CODES.HASNT_MEMBER
         p_LOGS.Create_Note(str_name + " isn't a member, and so can't be outfitted.")
     else
-        p_LOGS.Create_Error("It's unknown why " + str_name + " can't be outfitted.")
+        p_LOGS.Create_Error("It's unknown why " + str_name + " can't be outfitted as " + str_outfit + ".")
     endIf
 endFunction
 
@@ -513,25 +519,38 @@ function Pack(Actor ref_actor, bool do_create)
     p_Notify_On_Pack(ref_member.Pack(), ref_actor, str_name)
 endFunction
 
-function Outfit(Actor ref_actor, String str_outfit, bool do_create); str_outfit not currently used
+function Outfit(Actor ref_actor, String str_outfit, bool do_create)
     int code_return
     string str_name = p_ACTORS.Get_Name(ref_actor)
+    if str_outfit != "settler" && str_outfit != "immobile" && str_outfit != "follower" && str_outfit != "thrall"
+        str_outfit = "member"
+    endIf
     
     if do_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
         if code_return < 0
-            p_Notify_On_Outfit(code_return, str_name)
+            p_Notify_On_Outfit(code_return, str_name, str_outfit)
             return
         endIf
     endIf
 
     doticu_npcp_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        p_Notify_On_Outfit(p_CODES.HASNT_MEMBER, str_name)
+        p_Notify_On_Outfit(p_CODES.HASNT_MEMBER, str_name, str_outfit)
         return
     endIf
 
-    p_Notify_On_Outfit(ref_member.Outfit(), str_name)
+    if str_outfit == "member"
+        p_Notify_On_Outfit(ref_member.Outfit_Member(), str_name, str_outfit)
+    elseIf str_outfit == "settler"
+        p_Notify_On_Outfit(ref_member.Outfit_Settler(), str_name, str_outfit)
+    elseIf str_outfit == "thrall"
+        p_Notify_On_Outfit(ref_member.Outfit_Thrall(), str_name, str_outfit)
+    elseIf str_outfit == "immobile"
+        p_Notify_On_Outfit(ref_member.Outfit_Immobile(), str_name, str_outfit)
+    elseIf str_outfit == "follower"
+        p_Notify_On_Outfit(ref_member.Outfit_Follower(), str_name, str_outfit)
+    endIf
 endFunction
 
 function Resurrect(Actor ref_actor, bool do_create)

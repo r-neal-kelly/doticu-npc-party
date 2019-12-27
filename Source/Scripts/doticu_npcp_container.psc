@@ -41,6 +41,14 @@ function Set_Name(string str_name)
     return p_CONTAINERS.Set_Name(self, str_name)
 endFunction
 
+int function Count_Items()
+    return p_CONTAINERS.Count_Items(self)
+endFunction
+
+int function Count_Item(Form form_item)
+    return p_CONTAINERS.Count_Item(self, form_item)
+endFunction
+
 function Take_All(ObjectReference ref_container)
     return p_CONTAINERS.Take_All(self, ref_container)
 endFunction
