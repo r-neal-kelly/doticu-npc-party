@@ -103,7 +103,6 @@ Contains the methods and state that allow for the most basic of manipulations of
         int function Immobilize()
         int function Mobilize()
         int function Enforce()
-        int function Access()
         doticu_npcp_settler function Get_Settler()
         doticu_npcp_immobile function Get_Immobile()
 

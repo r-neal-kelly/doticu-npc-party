@@ -38,8 +38,8 @@ function Update_Keys()
     if p_VARS.key_unmember > -1
         RegisterForKey(p_VARS.key_unmember)
     endIf
-    if p_VARS.key_access > -1
-        RegisterForKey(p_VARS.key_access)
+    if p_VARS.key_pack > -1
+        RegisterForKey(p_VARS.key_pack)
     endIf
     if p_VARS.key_outfit > -1
         RegisterForKey(p_VARS.key_outfit)
@@ -106,10 +106,10 @@ event OnKeyDown(int code_key)
         p_COMMANDS.Member(ref_actor)
     elseIf code_key == p_VARS.key_unmember
         p_COMMANDS.Unmember(ref_actor)
-    elseIf code_key == p_VARS.key_access
-        p_COMMANDS.Access(ref_actor, true)
-    elseIf code_key == p_VARS.key_outfit; this needs to be fixed
-        p_COMMANDS.Outfit(ref_actor, "", true)
+    elseIf code_key == p_VARS.key_pack
+        p_COMMANDS.Pack(ref_actor, true)
+    elseIf code_key == p_VARS.key_outfit; this needs to be expanded to a cycle
+        p_COMMANDS.Outfit(ref_actor, "member", true)
     elseIf code_key == p_VARS.key_settle
         p_COMMANDS.Settle(ref_actor, true)
     elseIf code_key == p_VARS.key_unsettle

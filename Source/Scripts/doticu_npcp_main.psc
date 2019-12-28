@@ -72,6 +72,8 @@ function f_Version()
 endFunction
 
 function f_Load_Mod()
+    ; do checks to make sure SKSE and PapyrusUtil are running
+
     DATA.Stop()
     while !DATA.Start()
         Utility.Wait(0.5)
@@ -136,6 +138,8 @@ endFunction
 
 ; Events
 event OnInit()
+    ; do checks to make sure SKSE and PapyrusUtil are running
+    
     while !DATA.Start()
         Utility.Wait(1)
     endWhile

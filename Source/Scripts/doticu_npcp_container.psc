@@ -53,6 +53,10 @@ function Take_All(ObjectReference ref_container)
     return p_CONTAINERS.Take_All(self, ref_container)
 endFunction
 
+function Take_All_Playable(ObjectReference ref_container)
+    return p_CONTAINERS.Take_All_Playable(self, ref_container)
+endFunction
+
 function Copy(ObjectReference ref_container)
     return p_CONTAINERS.Copy(self, ref_container)
 endFunction

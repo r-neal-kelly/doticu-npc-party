@@ -33,7 +33,7 @@ int                 p_option_back           =   -1
 int                 p_option_prev           =   -1
 int                 p_option_next           =   -1
 
-int                 p_option_access         =   -1; will this action work when npc is unloaded? I don't think so
+int                 p_option_pack           =   -1
 int                 p_option_clone          =   -1
 int                 p_option_unclone        =   -1
 int                 p_option_unmember       =   -1
@@ -251,7 +251,7 @@ state p_STATE_MEMBER
         p_MCM.SetCursorFillMode(p_MCM.TOP_TO_BOTTOM)
 
         p_MCM.AddHeaderOption("Commands: ")
-        p_option_access = p_MCM.AddTextOption(" Access ", "")
+        p_option_pack = p_MCM.AddTextOption(" Pack ", "")
         p_option_clone  = p_MCM.AddTextOption(" Clone ", "")
         if p_ref_member.Is_Clone()
             p_option_unclone  = p_MCM.AddTextOption(" Unclone ", "")
@@ -296,9 +296,9 @@ state p_STATE_MEMBER
             endIf
             p_ref_member = p_arr_aliases[p_idx_member] as doticu_npcp_member
             p_MCM.ForcePageReset()
-        elseIf id_option == p_option_access
+        elseIf id_option == p_option_pack
             p_FUNCS.Close_Menus()
-            p_ref_member.Access()
+            p_ref_member.Pack()
         elseIf id_option == p_option_clone
             p_ref_member.Clone()
         elseIf id_option == p_option_unclone
@@ -332,8 +332,8 @@ state p_STATE_MEMBER
             p_MCM.SetInfoText("Go to the Previous Member")
         elseIf id_option == p_option_next
             p_MCM.SetInfoText("Go to the Next Member")
-        elseIf id_option == p_option_access
-            p_MCM.SetInfoText("Access this member's inventory.")
+        elseIf id_option == p_option_pack
+            p_MCM.SetInfoText("Pack items in this member's inventory.")
         elseIf id_option == p_option_rename
             p_MCM.SetInfoText("Rename this member.")
         elseIf id_option == p_option_clone

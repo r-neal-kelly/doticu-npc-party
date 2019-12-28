@@ -635,8 +635,8 @@ int function Unfollow()
     return p_ref_member.Unfollow()
 endFunction
 
-int function Access()
-    return p_ref_member.Access()
+int function Pack()
+    return p_ref_member.Pack()
 endFunction
 
 int function Settle()

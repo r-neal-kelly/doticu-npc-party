@@ -17,10 +17,6 @@ function Unclone(ObjectReference ref_object)
     (GetOwningQuest() as doticu_npcp_commands).Unclone(ref_object as Actor)
 endFunction
 
-function Access(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Access(ref_object as Actor, false)
-endFunction
-
 function Pack(ObjectReference ref_object)
     (GetOwningQuest() as doticu_npcp_commands).Pack(ref_object as Actor, false)
 endFunction

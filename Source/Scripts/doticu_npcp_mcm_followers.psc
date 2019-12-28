@@ -40,7 +40,7 @@ int                     p_option_menu               =   -1
 int                     p_option_back               =   -1
 int                     p_option_prev               =   -1
 int                     p_option_next               =   -1
-int                     p_option_access             =   -1
+int                     p_option_pack               =   -1
 int                     p_option_rename             =   -1
 int                     p_option_unfollow           =   -1
 
@@ -261,7 +261,7 @@ state p_STATE_FOLLOWER
         p_MCM.AddHeaderOption("")
         p_MCM.AddHeaderOption("")
 
-        p_option_access = p_MCM.AddTextOption(" Access ", "")
+        p_option_pack = p_MCM.AddTextOption(" Pack ", "")
         p_option_unfollow = p_MCM.AddTextOption(" Unfollow ", "")
     endFunction
 
@@ -287,9 +287,9 @@ state p_STATE_FOLLOWER
             endIf
             p_ref_follower = p_arr_aliases[p_idx_follower] as doticu_npcp_follower
             p_MCM.ForcePageReset()
-        elseIf id_option == p_option_access
+        elseIf id_option == p_option_pack
             p_FUNCS.Close_Menus()
-            p_ref_follower.Access()
+            p_ref_follower.Pack()
         elseIf id_option == p_option_unfollow
             p_ref_follower.Unfollow()
             p_ref_follower = none
@@ -315,8 +315,8 @@ state p_STATE_FOLLOWER
             p_MCM.SetInfoText("Go to the Previous Follower")
         elseIf id_option == p_option_next
             p_MCM.SetInfoText("Go to the Next Follower")
-        elseIf id_option == p_option_access
-            p_MCM.SetInfoText("Access this follower's inventory.")
+        elseIf id_option == p_option_pack
+            p_MCM.SetInfoText("Pack items in this follower's inventory.")
         elseIf id_option == p_option_rename
             p_MCM.SetInfoText("Rename this follower.")
         elseIf id_option == p_option_unfollow

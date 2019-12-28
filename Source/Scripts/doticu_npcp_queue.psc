@@ -45,9 +45,17 @@ function f_Destroy()
 endFunction
 
 ; Private Methods
-function p_Write(string str_message, float float_interval = -1.0)
+bool function p_Write(string str_message, float float_interval = -1.0, bool allow_repeat = false)
     if Is_Full()
-        return
+        return false
+    endIf
+
+    if str_message == ""
+        return false
+    endIf
+
+    if !allow_repeat && p_Has_Message(str_message)
+        return false
     endIf
 
     if float_interval <= 0.0
@@ -63,6 +71,8 @@ function p_Write(string str_message, float float_interval = -1.0)
     endIf
 
     p_buffer_used += 1
+
+    return true
 endFunction
 
 int function p_Read()
@@ -82,6 +92,22 @@ int function p_Read()
     return idx_buffer
 endFunction
 
+bool function p_Has_Message(string str_message)
+    if Is_Empty()
+        return false
+    endIf
+
+    int idx = p_buffer_read
+    while idx < p_buffer_write
+        if p_MESSAGES[idx] == str_message
+            return true
+        endIf
+        idx += 1
+    endWhile
+
+    return false
+endFunction
+
 bool function p_Send_Queue()
     int handle = ModEvent.Create(p_STR_EVENT)
 
@@ -98,14 +124,8 @@ bool function p_Send_Queue()
 endFunction
 
 ; Public Methods
-function Enqueue(string str_message, float float_interval = -1.0)
-    if str_message == ""
-        return
-    endIf
-
-    p_Write(str_message, float_interval)
-
-    if !p_will_update
+function Enqueue(string str_message, float float_interval = -1.0, bool allow_repeat = false)
+    if p_Write(str_message, float_interval, allow_repeat) && !p_will_update
         p_will_update = true
         RegisterForSingleUpdate(float_interval)
     endIf

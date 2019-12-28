@@ -9,6 +9,7 @@ doticu_npcp_actors      p_ACTORS                =  none
 doticu_npcp_containers  p_CONTAINERS            =  none
 doticu_npcp_queues      p_QUEUES                =  none
 doticu_npcp_outfits     p_OUTFITS               =  none
+doticu_npcp_logs        p_LOGS                  =  none
 doticu_npcp_members     p_MEMBERS               =  none
 doticu_npcp_followers   p_FOLLOWERS             =  none
 doticu_npcp_player      p_PLAYER                =  none
@@ -26,14 +27,14 @@ bool                    p_is_generic            = false
 bool                    p_is_thrall             = false
 int                     p_code_style            =    -1
 int                     p_code_vitality         =    -1
-int                     p_code_outfit           =    -1
+doticu_npcp_queue       p_queue_member          =  none
+doticu_npcp_container   p_container2_pack       =  none
 doticu_npcp_outfit      p_outfit2_member        =  none
 doticu_npcp_outfit      p_outfit2_settler       =  none
 doticu_npcp_outfit      p_outfit2_thrall        =  none
 doticu_npcp_outfit      p_outfit2_immobile      =  none
 doticu_npcp_outfit      p_outfit2_follower      =  none
-doticu_npcp_queue       p_queue_member          =  none
-doticu_npcp_container   p_container_pack        =  none
+doticu_npcp_outfit      p_outfit2_current       =  none
 
 int                     p_prev_vitality         =    -1
 doticu_npcp_outfit      p_prev_outfit2_member   =  none
@@ -49,6 +50,7 @@ function f_Link(doticu_npcp_data DATA)
     p_CONTAINERS = DATA.MODS.FUNCS.CONTAINERS
     p_QUEUES = DATA.MODS.FUNCS.QUEUES
     p_OUTFITS = DATA.MODS.FUNCS.OUTFITS
+    p_LOGS = DATA.MODS.FUNCS.LOGS
     p_MEMBERS = DATA.MODS.MEMBERS
     p_FOLLOWERS = DATA.MODS.FOLLOWERS
     p_PLAYER = DATA.MODS.FUNCS.PLAYER
@@ -72,6 +74,7 @@ function f_Initialize(int ID_ALIAS)
 endFunction
 
 function f_Register()
+    RegisterForModEvent("doticu_npcp_load_mod", "On_Load_Mod")
     RegisterForModEvent("doticu_npcp_members_unmember", "On_Members_Unmember")
     RegisterForModEvent("doticu_npcp_members_u_0_1_0", "u_0_1_0")
     RegisterForModEvent("doticu_npcp_members_u_0_1_1", "u_0_1_1")
@@ -116,14 +119,13 @@ int function f_Create(bool is_a_clone)
     endIf
     p_code_style = p_VARS.auto_style
     p_code_vitality = p_VARS.auto_vitality
-    p_code_outfit = p_CODES.IS_MEMBER
 
     p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_MEMBER, p_ID_ALIAS + 1)
     p_ref_actor.EvaluatePackage()
 
     p_Create_Queues()
-    p_Create_Outfits()
     p_Create_Containers()
+    p_Create_Outfits()
     p_Backup()
     
     code_return = Enforce()
@@ -174,21 +176,21 @@ int function f_Destroy()
     p_Untoken()
 
     p_Restore()
-    p_Destroy_Containers()
     p_Destroy_Outfits()
+    p_Destroy_Containers()
     p_Destroy_Queues()
 
     p_prev_outfit2_member = none
     p_prev_vitality = -1
 
-    p_container_pack = none
-    p_queue_member = none
+    p_outfit2_current = none
     p_outfit2_follower = none
     p_outfit2_immobile = none
     p_outfit2_thrall = none
     p_outfit2_settler = none
     p_outfit2_member = none
-    p_code_outfit = -1
+    p_container2_pack = none
+    p_queue_member = none
     p_code_vitality = -1
     p_code_style = -1
     p_is_thrall = false
@@ -219,6 +221,32 @@ endFunction
 
 function p_Destroy_Queues()
     p_QUEUES.Destroy(p_queue_member)
+endFunction
+
+function p_Link_Containers(doticu_npcp_data DATA)
+    if p_container2_pack
+        p_container2_pack.f_Link(DATA)
+    endIf
+endFunction
+
+function p_Register_Containers()
+    if p_container2_pack
+        p_container2_pack.f_Register()
+    endIf
+endFunction
+
+function p_Create_Containers()
+    p_container2_pack = p_CONTAINERS.Create()
+    p_Rename_Containers(Get_Name())
+endFunction
+
+function p_Destroy_Containers()
+    p_container2_pack.RemoveAllItems(p_CONSTS.ACTOR_PLAYER, false, true)
+    p_CONTAINERS.Destroy(p_container2_pack)
+endFunction
+
+function p_Rename_Containers(string str_name_member)
+    p_container2_pack.Set_Name(str_name_member + "'s Pack")
 endFunction
 
 function p_Link_Outfits(doticu_npcp_data DATA)
@@ -277,6 +305,10 @@ function p_Create_Outfits()
 
     p_outfit2_member.Get(p_ref_actor)
     p_prev_outfit2_member.Get(p_ref_actor)
+
+    p_outfit2_member.Remove_Inventory(p_ref_actor, p_container2_pack)
+
+    p_outfit2_current = p_outfit2_member
 endFunction
 
 function p_Destroy_Outfits()
@@ -296,50 +328,12 @@ function p_Rename_Outfits(string str_name_member)
     p_outfit2_follower.Set_Name(str_name_member + "'s Follower Outfit")
 endFunction
 
-function p_Link_Containers(doticu_npcp_data DATA)
-    if p_container_pack
-        p_container_pack.f_Link(DATA)
-    endIf
-endFunction
-
-function p_Register_Containers()
-    if p_container_pack
-        p_container_pack.f_Register()
-    endIf
-endFunction
-
-function p_Create_Containers()
-    p_container_pack = p_CONTAINERS.Create()
-    p_Rename_Containers(Get_Name())
-endFunction
-
-function p_Destroy_Containers()
-    p_container_pack.RemoveAllItems(p_CONSTS.ACTOR_PLAYER, false, true)
-    p_CONTAINERS.Destroy(p_container_pack)
-endFunction
-
-function p_Rename_Containers(string str_name_member)
-    p_container_pack.Set_Name(str_name_member + "'s Pack")
-endFunction
-
 function p_Backup()
     p_prev_vitality = p_ACTORS.Get_Vitality(p_ref_actor)
 endFunction
 
 function p_Restore()
-    doticu_npcp_outfit outfit_curr = none
-    if p_code_outfit == p_CODES.IS_FOLLOWER
-        outfit_curr = p_outfit2_follower
-    elseIf p_code_outfit == p_CODES.IS_IMMOBILE
-        outfit_curr = p_outfit2_immobile
-    elseIf p_code_outfit == p_CODES.IS_THRALL
-        outfit_curr = p_outfit2_thrall
-    elseIf p_code_outfit == p_CODES.IS_SETTLER
-        outfit_curr = p_outfit2_settler
-    else
-        outfit_curr = p_outfit2_member
-    endIf
-    p_prev_outfit2_member.Set(p_ref_actor, outfit_curr); instead of this, we might set the outfit to GetOutfit on base actor.
+    p_prev_outfit2_member.Set(p_ref_actor); instead of this, we might set the outfit to GetOutfit on base actor.
 
     p_ACTORS.Vitalize(p_ref_actor, p_prev_vitality)
 endFunction
@@ -460,53 +454,32 @@ endFunction
 function p_Unvitalize()
 endFunction
 
-function p_Outfit_Enforce()
-    if Is_Immobile()
-        p_Outfit_Set(p_CODES.IS_IMMOBILE, false)
-    elseIf Is_Follower()
-        p_Outfit_Set(p_CODES.IS_FOLLOWER, false)
-    elseIf Is_Thrall()
-        p_Outfit_Set(p_CODES.IS_THRALL, false)
-    elseIf Is_Settler()
-        p_Outfit_Set(p_CODES.IS_SETTLER, false)
-    else
-        p_Outfit_Set(p_CODES.IS_MEMBER, false)
-    endIf
-endFunction
-
-function p_Outfit_Put(int code_outfit)
-    if code_outfit == p_CODES.IS_IMMOBILE
-        p_outfit2_immobile.Put()
-    elseIf code_outfit == p_CODES.IS_FOLLOWER
-        p_outfit2_follower.Put()
-    elseIf code_outfit == p_CODES.IS_THRALL
-        p_outfit2_thrall.Put()
-    elseIf code_outfit == p_CODES.IS_SETTLER
-        p_outfit2_settler.Put()
-    else
-        p_outfit2_member.Put()
-    endIf
-endFunction
-
-function p_Outfit_Set(int code_outfit, bool do_input)
-    if code_outfit == p_CODES.IS_IMMOBILE
-        p_outfit2_immobile.Set(p_ref_actor, do_input)
-    elseIf code_outfit == p_CODES.IS_FOLLOWER
-        p_outfit2_follower.Set(p_ref_actor, do_input)
-    elseIf code_outfit == p_CODES.IS_THRALL
-        p_outfit2_thrall.Set(p_ref_actor, do_input)
-    elseIf code_outfit == p_CODES.IS_SETTLER
-        p_outfit2_settler.Set(p_ref_actor, do_input)
-    else
-        p_outfit2_member.Set(p_ref_actor, do_input)
+function p_Outfit()
+    if p_VARS.auto_outfit
+        if Is_Immobile()
+            p_outfit2_current = p_outfit2_immobile
+        elseIf Is_Follower()
+            p_outfit2_current = p_outfit2_follower
+        elseIf Is_Thrall()
+            p_outfit2_current = p_outfit2_thrall
+        elseIf Is_Settler()
+            p_outfit2_current = p_outfit2_settler
+        else
+            p_outfit2_current = p_outfit2_member
+        endIf
     endIf
 
-    p_code_outfit = code_outfit
+    if !p_outfit2_current
+        p_outfit2_current = p_outfit2_member
+    endIf
+
+    p_outfit2_current.Set(p_ref_actor)
 endFunction
 
 function p_Unoutfit()
-    p_outfit2_member.Unset(p_ref_actor); removes all outfits, equips inventory
-    p_code_outfit = -1
+    ; this is not really helpful atm
+    p_outfit2_member.Unset(p_ref_actor)
+    p_outfit2_current = none
 endFunction
 
 ; Public Methods
@@ -538,6 +511,7 @@ int function Enforce()
         endIf
     endIf
 
+    p_queue_member.Enqueue("p_Outfit")
     p_queue_member.Enqueue("p_Token")
     p_queue_member.Enqueue("p_Member")
     if p_is_thrall
@@ -545,9 +519,6 @@ int function Enforce()
     endIf
     p_queue_member.Enqueue("p_Style")
     p_queue_member.Enqueue("p_Vitalize")
-    ;p_Outfit() currently not enforced
-
-    p_ACTORS.Update_Equipment(p_ref_actor); not sure if this should go here
 
     return p_CODES.SUCCESS
 endFunction
@@ -638,10 +609,6 @@ int function Settle()
         return code_return
     endIf
 
-    if p_VARS.auto_outfit
-        p_queue_member.Enqueue("p_Outfit")
-    endIf
-
     return p_CODES.SUCCESS
 endFunction
 
@@ -686,10 +653,6 @@ int function Unsettle()
         return code_return
     endIf
 
-    if p_VARS.auto_outfit
-        p_queue_member.Enqueue("p_Outfit")
-    endIf
-
     return p_CODES.SUCCESS
 endFunction
 
@@ -708,10 +671,6 @@ int function Immobilize()
     code_return = Enforce()
     if code_return < 0
         return code_return
-    endIf
-
-    if p_VARS.auto_outfit
-        p_queue_member.Enqueue("p_Outfit")
     endIf
 
     return p_CODES.SUCCESS
@@ -734,10 +693,6 @@ int function Mobilize()
         return code_return
     endIf
 
-    if p_VARS.auto_outfit
-        p_queue_member.Enqueue("p_Outfit")
-    endIf
-
     return p_CODES.SUCCESS
 endFunction
 
@@ -756,10 +711,6 @@ int function Follow()
     code_return = Enforce()
     if code_return < 0
         return code_return
-    endIf
-
-    if p_VARS.auto_outfit
-        p_queue_member.Enqueue("p_Outfit")
     endIf
 
     return p_CODES.SUCCESS
@@ -782,10 +733,6 @@ int function Unfollow()
     code_return = Enforce()
     if code_return < 0
         return code_return
-    endIf
-
-    if p_VARS.auto_outfit
-        p_queue_member.Enqueue("p_Outfit")
     endIf
 
     return p_CODES.SUCCESS
@@ -816,10 +763,6 @@ int function Enthrall()
         return code_return
     endIf
 
-    if p_VARS.auto_outfit
-        p_queue_member.Enqueue("p_Outfit")
-    endIf
-
     return p_CODES.SUCCESS
 endFunction
 
@@ -846,10 +789,6 @@ int function Unthrall()
     code_return = Enforce()
     if code_return < 0
         return code_return
-    endIf
-
-    if p_VARS.auto_outfit
-        p_queue_member.Enqueue("p_Outfit")
     endIf
 
     return p_CODES.SUCCESS
@@ -1120,25 +1059,6 @@ int function Vitalize_Invulnerable()
     return p_CODES.SUCCESS
 endFunction
 
-int function Access()
-    int code_return
-    
-    if !Exists()
-        return p_CODES.ISNT_MEMBER
-    endIf
-    
-    p_ACTORS.Open_Inventory(p_ref_actor)
-    Utility.Wait(0.1)
-    p_ACTORS.Update_Equipment(p_ref_actor)
-
-    code_return = Enforce()
-    if code_return < 0
-        return code_return
-    endIf
-
-    return p_CODES.SUCCESS
-endFunction
-
 int function Pack()
     int code_return
     
@@ -1146,7 +1066,8 @@ int function Pack()
         return p_CODES.ISNT_MEMBER
     endIf
     
-    p_container_pack.Open()
+    p_container2_pack.Open()
+    Utility.Wait(0.1)
 
     code_return = Enforce()
     if code_return < 0
@@ -1176,14 +1097,10 @@ int function Outfit_Member()
     if !Exists()
         return p_CODES.ISNT_MEMBER
     endIf
-    
-    if p_VARS.auto_outfit
-        p_Outfit_Put(p_CODES.IS_MEMBER)
-        ;p_queue_member.Enqueue("p_Outfit")
-        p_Outfit_Enforce()
-    else
-        p_Outfit_Set(p_CODES.IS_MEMBER, true)
-    endIf
+
+    p_outfit2_member.Put()
+    Utility.Wait(0.1)
+    p_outfit2_current = p_outfit2_member
 
     code_return = Enforce()
     if code_return < 0
@@ -1199,14 +1116,10 @@ int function Outfit_Settler()
     if !Exists()
         return p_CODES.ISNT_MEMBER
     endIf
-    
-    if p_VARS.auto_outfit
-        p_Outfit_Put(p_CODES.IS_SETTLER)
-        ;p_queue_member.Enqueue("p_Outfit")
-        p_Outfit_Enforce()
-    else
-        p_Outfit_Set(p_CODES.IS_SETTLER, true)
-    endIf
+
+    p_outfit2_settler.Put()
+    Utility.Wait(0.1)
+    p_outfit2_current = p_outfit2_settler
 
     code_return = Enforce()
     if code_return < 0
@@ -1222,14 +1135,10 @@ int function Outfit_Thrall()
     if !Exists()
         return p_CODES.ISNT_MEMBER
     endIf
-    
-    if p_VARS.auto_outfit
-        p_Outfit_Put(p_CODES.IS_THRALL)
-        ;p_queue_member.Enqueue("p_Outfit")
-        p_Outfit_Enforce()
-    else
-        p_Outfit_Set(p_CODES.IS_THRALL, true)
-    endIf
+
+    p_outfit2_thrall.Put()
+    Utility.Wait(0.1)
+    p_outfit2_current = p_outfit2_thrall
 
     code_return = Enforce()
     if code_return < 0
@@ -1245,14 +1154,10 @@ int function Outfit_Immobile()
     if !Exists()
         return p_CODES.ISNT_MEMBER
     endIf
-    
-    if p_VARS.auto_outfit
-        p_Outfit_Put(p_CODES.IS_IMMOBILE)
-        ;p_queue_member.Enqueue("p_Outfit")
-        p_Outfit_Enforce()
-    else
-        p_Outfit_Set(p_CODES.IS_IMMOBILE, true)
-    endIf
+
+    p_outfit2_immobile.Put()
+    Utility.Wait(0.1)
+    p_outfit2_current = p_outfit2_immobile
 
     code_return = Enforce()
     if code_return < 0
@@ -1268,14 +1173,10 @@ int function Outfit_Follower()
     if !Exists()
         return p_CODES.ISNT_MEMBER
     endIf
-    
-    if p_VARS.auto_outfit
-        p_Outfit_Put(p_CODES.IS_FOLLOWER)
-        ;p_queue_member.Enqueue("p_Outfit")
-        p_Outfit_Enforce()
-    else
-        p_Outfit_Set(p_CODES.IS_FOLLOWER, true)
-    endIf
+
+    p_outfit2_follower.Put()
+    Utility.Wait(0.1)
+    p_outfit2_current = p_outfit2_follower
 
     code_return = Enforce()
     if code_return < 0
@@ -1292,7 +1193,7 @@ int function Unoutfit()
         return p_CODES.ISNT_MEMBER
     endIf
     
-    p_Unoutfit()
+    p_Unoutfit(); this needs to be worked out better
 
     code_return = Enforce()
     if code_return < 0
@@ -1446,11 +1347,6 @@ event u_0_1_2()
     endIf
 endEvent
 
-; we need an update to create pack, but we might move to 0_2_0, with more aliases
-; which will require a fresh restart, because it's not going to be supported, updating
-; members quest. however, we may make it so that we can add new quests containing aliases.
-; we'll need a quest manager that can do that.
-
 ; Events
 event On_Queue_Member()
     string str_message = p_queue_member.Dequeue()
@@ -1466,7 +1362,7 @@ event On_Queue_Member()
     elseIf str_message == "p_Vitalize"
         p_Vitalize()
     elseIf str_message == "p_Outfit"
-        p_Outfit_Enforce()
+        p_Outfit()
     endIf
 endEvent
 
@@ -1476,13 +1372,20 @@ event On_Members_Unmember()
     endIf
 endEvent
 
+event On_Load_Mod()
+    if Exists()
+        p_Rename_Containers(Get_Name())
+        p_Rename_Outfits(Get_Name())
+    endIf
+endEvent
+
 event OnActivate(ObjectReference ref_activator)
     Enforce()
     ; maybe we could also pop up some basic stats on screen?
 endEvent
 
 event OnLoad()
-    p_ACTORS.Update_Equipment(p_ref_actor)
+    Enforce()
 endEvent
 
 event OnCombatStateChanged(Actor ref_target, int code_combat)
@@ -1499,4 +1402,9 @@ event OnCombatStateChanged(Actor ref_target, int code_combat)
     endIf
 endEvent
 
-; we can use OnItemAdded to keep track of stuff that is added to the member's inventory.
+event OnItemAdded(Form form_item, int count_item, ObjectReference ref_item, ObjectReference ref_container_source)
+    if ref_container_source == p_CONSTS.ACTOR_PLAYER
+        p_ref_actor.RemoveItem(form_item, count_item, true, ref_container_source)
+        p_LOGS.Create_Error("You can only put items into a member's pack or one of their outfits.")
+    endIf
+endEvent

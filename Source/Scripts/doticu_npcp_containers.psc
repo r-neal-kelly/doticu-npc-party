@@ -76,6 +76,10 @@ function Take_All(ObjectReference ref_subject, ObjectReference ref_object)
     int idx_forms
     Form ref_form
 
+    if !ref_object
+        return
+    endIf
+
     ref_object.RemoveAllItems(ref_subject, false, true)
 
     num_forms = ref_object.GetNumItems()
@@ -85,6 +89,10 @@ function Take_All(ObjectReference ref_subject, ObjectReference ref_object)
         ref_subject.AddItem(ref_form, ref_object.GetItemCount(ref_form), true)
         idx_forms += 1
     endWhile
+endFunction
+
+function Take_All_Playable(ObjectReference ref_subject, ObjectReference ref_object)
+    ref_object.RemoveAllItems(ref_subject, false, true)
 endFunction
 
 function Copy(ObjectReference ref_subject, ObjectReference ref_object)
