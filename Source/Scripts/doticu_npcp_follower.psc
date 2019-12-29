@@ -74,6 +74,8 @@ function f_Initialize(int ID_ALIAS)
 endFunction
 
 function f_Register()
+    ; registering mod events is global for each script on an object, and
+    ; further, works for handlers labeled as function as well as event.
     RegisterForModEvent("doticu_npcp_followers_settle", "On_Followers_Settle")
     RegisterForModEvent("doticu_npcp_followers_unsettle", "On_Followers_Unsettle")
     RegisterForModEvent("doticu_npcp_followers_immobilize", "On_Followers_Immobilize")
@@ -83,7 +85,7 @@ function f_Register()
     RegisterForModEvent("doticu_npcp_followers_unfollow", "On_Followers_Unfollow")
     RegisterForModEvent("doticu_npcp_followers_unmember", "On_Followers_Unmember")
     RegisterForModEvent("doticu_npcp_followers_resurrect", "On_Followers_Resurrect")
-    RegisterForModEvent("doticu_npcp_members_u_0_1_1", "u_0_1_1")
+    RegisterForModEvent("doticu_npcp_members_u_0_1_1", "On_u_0_1_1")
     RegisterForModEvent("doticu_npcp_queue_" + "follower_" + p_ID_ALIAS, "On_Queue_Follower")
 
     p_Register_Queues()
@@ -122,6 +124,8 @@ int function f_Destroy()
 
     p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER)
     p_ref_actor.EvaluatePackage()
+
+    p_queue_follower.Flush(); I think this is the right spot
 
     if p_is_sneak
         p_Unsneak()
@@ -621,6 +625,8 @@ int function Unsneak()
     p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER_SNEAK)
     p_ref_actor.EvaluatePackage()
 
+    p_Unsneak()
+
     p_is_sneak = false
 
     code_return = Enforce()
@@ -720,14 +726,12 @@ function Resurrect()
 endFunction
 
 ; Update Methods
-event u_0_1_1()
+event On_u_0_1_1()
     p_Create_Queues()
 endEvent
 
 ; Events
-event On_Queue_Follower()
-    string str_message = p_queue_follower.Dequeue()
-
+event On_Queue_Follower(string str_message)
     if str_message == "p_Token"
         p_Token()
     elseIf str_message == "p_Follow"
@@ -737,6 +741,8 @@ event On_Queue_Follower()
     elseIf str_message == "p_Sneak"
         p_Sneak()
     endIf
+
+    p_queue_follower.Dequeue()
 endEvent
 
 event On_Followers_Settle()

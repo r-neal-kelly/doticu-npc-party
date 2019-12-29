@@ -109,12 +109,12 @@ event OnPlayerLoadGame()
     p_MAIN.f_Load_Mod()
 endEvent
 
-event OnUpdate()
-    string str_message = p_QUEUE_PLAYER.Dequeue()
-
+event On_Queue_Player(string str_message)
     if str_message == "f_Try_End_Combat()"
         f_Try_End_Combat()
     endIf
+
+    p_QUEUE_PLAYER.Dequeue()
 endEvent
 
 event OnActorAction(int code_action, Actor ref_activator, Form form_source, int slot)

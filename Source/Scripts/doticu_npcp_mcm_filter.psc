@@ -31,6 +31,9 @@ endFunction
 function f_On_Option_Input_Accept(int id_option, string str_input)
 endFunction
 
+function f_On_Option_Keymap_Change(int id_option, int code_key, string str_conflict_control, string str_conflict_mod)
+endFunction
+
 function f_On_Option_Highlight(int id_option)
 endFunction
 

@@ -3,6 +3,7 @@ Scriptname doticu_npcp_mcm_followers extends Quest
 ; Private Constants
 doticu_npcp_funcs       p_FUNCS                     = none
 doticu_npcp_followers   p_FOLLOWERS                 = none
+doticu_npcp_commands    p_COMMANDS                  = none
 doticu_npcp_mcm         p_MCM                       = none
 
 int                     p_VIEW_FOLLOWERS            =    0
@@ -11,7 +12,7 @@ int                     p_VIEW_FOLLOWER             =    1
 int                     p_HEADERS_PER_PAGE          =    2
 
 int                     p_COMMANDS_PER_PAGE         =   11
-int                     p_IDX_ALL_SUMMON            =    0
+int                     p_IDX_ALL_SUMMON_ALL        =    0
 int                     p_IDX_ALL_SUMMON_MOBILE     =    1
 int                     p_IDX_ALL_SUMMON_IMMOBILE   =    2
 int                     p_IDX_ALL_IMMOBILIZE        =    3
@@ -48,6 +49,7 @@ int                     p_option_unfollow           =   -1
 function f_Link(doticu_npcp_data DATA)
     p_FUNCS = DATA.MODS.FUNCS
     p_FOLLOWERS = DATA.MODS.FOLLOWERS
+    p_COMMANDS = DATA.MODS.CONTROL.COMMANDS
     p_MCM = DATA.MODS.CONTROL.MCM
 endFunction
 
@@ -70,6 +72,9 @@ function f_On_Option_Menu_Accept(int id_option, int idx_option)
 endFunction
 
 function f_On_Option_Input_Accept(int id_option, string str_input)
+endFunction
+
+function f_On_Option_Keymap_Change(int id_option, int code_key, string str_conflict_control, string str_conflict_mod)
 endFunction
 
 function f_On_Option_Highlight(int id_option)
@@ -176,7 +181,7 @@ auto state p_STATE_FOLLOWERS
         if id_option == p_option_menu
             string[] arr_options = Utility.CreateStringArray(p_COMMANDS_PER_PAGE, "")
 
-            arr_options[p_IDX_ALL_SUMMON] = " Summon "
+            arr_options[p_IDX_ALL_SUMMON_ALL] = " Summon All "
             arr_options[p_IDX_ALL_SUMMON_MOBILE] = " Summon Mobile "
             arr_options[p_IDX_ALL_SUMMON_IMMOBILE] = " Summon Immobile "
             arr_options[p_IDX_ALL_IMMOBILIZE] = " Immobilize "
@@ -194,12 +199,12 @@ auto state p_STATE_FOLLOWERS
 
     function f_On_Option_Menu_Accept(int id_option, int idx_option)
         if id_option == p_option_menu
-            if idx_option == p_IDX_ALL_SUMMON
-                p_FOLLOWERS.Summon()
+            if idx_option == p_IDX_ALL_SUMMON_ALL
+                p_COMMANDS.Followers_Summon_All()
             elseIf idx_option == p_IDX_ALL_SUMMON_MOBILE
-                p_FOLLOWERS.Summon_Mobile()
+                p_COMMANDS.Followers_Summon_Mobile()
             elseIf idx_option == p_IDX_ALL_SUMMON_IMMOBILE
-                p_FOLLOWERS.Summon_Immobile()
+                p_COMMANDS.Followers_Summon_Immobile()
             elseIf idx_option == p_IDX_ALL_IMMOBILIZE
                 p_FOLLOWERS.Immobilize()
             elseIf idx_option == p_IDX_ALL_MOBILIZE

@@ -74,11 +74,14 @@ function f_Initialize(int ID_ALIAS)
 endFunction
 
 function f_Register()
+    ; registering mod events is global for each script on an object, and
+    ; further, works for handlers labeled as function as well as event.
     RegisterForModEvent("doticu_npcp_load_mod", "On_Load_Mod")
     RegisterForModEvent("doticu_npcp_members_unmember", "On_Members_Unmember")
-    RegisterForModEvent("doticu_npcp_members_u_0_1_0", "u_0_1_0")
-    RegisterForModEvent("doticu_npcp_members_u_0_1_1", "u_0_1_1")
-    RegisterForModEvent("doticu_npcp_members_u_0_1_2", "u_0_1_2")
+    RegisterForModEvent("doticu_npcp_members_u_0_1_0", "On_u_0_1_0")
+    RegisterForModEvent("doticu_npcp_members_u_0_1_1", "On_u_0_1_1")
+    RegisterForModEvent("doticu_npcp_members_u_0_1_2", "On_u_0_1_2")
+    RegisterForModEvent("doticu_npcp_members_u_0_1_3", "On_u_0_1_3")
     RegisterForModEvent("doticu_npcp_queue_" + "member_" + p_ID_ALIAS, "On_Queue_Member")
 
     p_SETTLER.f_Register()
@@ -166,6 +169,8 @@ int function f_Destroy()
         endIf
     endIf
 
+    p_queue_member.Flush(); I think this is the right spot
+
     ;p_Unoutfit() Restore sets the original
     p_Unvitalize()
     p_Unstyle()
@@ -202,6 +207,10 @@ int function f_Destroy()
     return p_CODES.SUCCESS
 endFunction
 
+function f_Enqueue(string str_message, float float_interval = -1.0, bool allow_repeat = false)
+    p_queue_member.Enqueue(str_message, float_interval, allow_repeat)
+endFunction
+
 ; Private Methods
 function p_Link_Queues(doticu_npcp_data DATA)
     if p_queue_member
@@ -216,7 +225,7 @@ function p_Register_Queues()
 endFunction
 
 function p_Create_Queues()
-    p_queue_member = p_QUEUES.Create("member_" + p_ID_ALIAS, 32, 0.5)
+    p_queue_member = p_QUEUES.Create("member_" + p_ID_ALIAS, 32, 0.15)
 endFunction
 
 function p_Destroy_Queues()
@@ -497,28 +506,17 @@ int function Enforce()
         endIf
     endIf
 
-    if p_IMMOBILE.Exists()
-        code_return = p_IMMOBILE.f_Enforce()
-        if code_return < 0
-            return code_return
-        endIf
+    p_queue_member.Enqueue("p_Outfit", 0.12)
+    if Is_Paralyzed()
+        p_queue_member.Enqueue("f_Paralyze", 0.12)
     endIf
-
-    if p_SETTLER.Exists()
-        code_return = p_SETTLER.f_Enforce()
-        if code_return < 0
-            return code_return
-        endIf
-    endIf
-
-    p_queue_member.Enqueue("p_Outfit")
-    p_queue_member.Enqueue("p_Token")
-    p_queue_member.Enqueue("p_Member")
+    p_queue_member.Enqueue("p_Token", 0.12)
+    p_queue_member.Enqueue("p_Member", 0.12)
     if p_is_thrall
-        p_queue_member.Enqueue("p_Enthrall")
+        p_queue_member.Enqueue("p_Enthrall", 0.12)
     endIf
-    p_queue_member.Enqueue("p_Style")
-    p_queue_member.Enqueue("p_Vitalize")
+    p_queue_member.Enqueue("p_Style", 0.12)
+    p_queue_member.Enqueue("p_Vitalize", 0.12)
 
     return p_CODES.SUCCESS
 endFunction
@@ -783,6 +781,8 @@ int function Unthrall()
 
     p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_THRALL)
     p_ref_actor.EvaluatePackage()
+
+    p_Unthrall()
 
     p_is_thrall = false
 
@@ -1309,8 +1309,22 @@ bool function Is_Vitalized_Invulnerable()
     return p_code_vitality == p_CODES.IS_INVULNERABLE
 endFunction
 
+bool function Is_Paralyzed()
+    return Is_Immobile() && p_IMMOBILE.Is_Paralyzed()
+endFunction
+
 function Summon(int distance = 60, int angle = 0)
+    bool has_enabled_ai = p_ref_actor.IsAIEnabled()
+
+    if !has_enabled_ai
+        p_ref_actor.EnableAI(true)
+    endIf
+    
     p_ACTORS.Move_To(p_ref_actor, p_CONSTS.ACTOR_PLAYER, distance, angle)
+
+    if !has_enabled_ai
+        p_ref_actor.EnableAI(false)
+    endIf
 endFunction
 
 function Summon_Ahead()
@@ -1322,7 +1336,7 @@ function Summon_Behind()
 endFunction
 
 ; Update Methods
-event u_0_1_0()
+event On_u_0_1_0()
     p_OUTFIT = p_CONSTS.FORMLIST_OUTFITS.GetAt(p_ID_ALIAS) as Outfit
     if Exists()
         p_Destroy_Outfits()
@@ -1330,16 +1344,13 @@ event u_0_1_0()
     endIf
 endEvent
 
-event u_0_1_1()
+event On_u_0_1_1()
     p_Create_Queues()
     p_outfit2_member.MoveTo(p_CONSTS.MARKER_STORAGE)
     p_prev_outfit2_member.MoveTo(p_CONSTS.MARKER_STORAGE)
-
-    p_SETTLER.u_0_1_1()
-    p_IMMOBILE.u_0_1_1()
 endEvent
 
-event u_0_1_2()
+event On_u_0_1_2()
     if Exists()
         p_VARS.auto_outfit = true
         p_Destroy_Outfits()
@@ -1347,12 +1358,34 @@ event u_0_1_2()
     endIf
 endEvent
 
-; Events
-event On_Queue_Member()
-    string str_message = p_queue_member.Dequeue()
+event On_u_0_1_3()
+    if Exists()
+        if !p_queue_member
+            p_Create_Queues()
+        endIf
+        if !p_container2_pack
+            p_Create_Containers()
+        endIf
+        if !p_outfit2_member
+            p_Create_Outfits()
+        endIf
+    endIf
+endEvent
 
-    if str_message == "p_Token"
+; Events
+event On_Queue_Member(string str_message)
+    if str_message == "p_Outfit"
+        p_Outfit()
+    elseIf str_message == "f_Paralyze"
+        p_IMMOBILE.f_Paralyze()
+    elseIf str_message == "p_Token"
         p_Token()
+        if Is_Settler()
+            p_SETTLER.f_Token()
+        endIf
+        if Is_Immobile()
+            p_IMMOBILE.f_Token()
+        endIf
     elseIf str_message == "p_Member"
         p_Member()
     elseIf str_message == "p_Enthrall"
@@ -1361,9 +1394,9 @@ event On_Queue_Member()
         p_Style()
     elseIf str_message == "p_Vitalize"
         p_Vitalize()
-    elseIf str_message == "p_Outfit"
-        p_Outfit()
     endIf
+
+    p_queue_member.Dequeue()
 endEvent
 
 event On_Members_Unmember()
@@ -1374,6 +1407,7 @@ endEvent
 
 event On_Load_Mod()
     if Exists()
+        Enforce()
         p_Rename_Containers(Get_Name())
         p_Rename_Outfits(Get_Name())
     endIf

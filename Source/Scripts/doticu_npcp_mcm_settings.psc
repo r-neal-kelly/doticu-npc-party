@@ -1,8 +1,10 @@
 Scriptname doticu_npcp_mcm_settings extends Quest
 
 ; Private Constants
+doticu_npcp_consts  p_CONSTS                        = none
 doticu_npcp_codes   p_CODES                         = none
 doticu_npcp_vars    p_VARS                          = none
+doticu_npcp_keys    p_KEYS                          = none
 doticu_npcp_mcm     p_MCM                           = none
 
 ; Private Variables
@@ -14,11 +16,17 @@ int                 p_option_auto_style             =   -1
 int                 p_option_auto_vitality          =   -1
 int                 p_option_auto_resurrect         =   -1
 int                 p_option_auto_outfit            =   -1
+int                 p_option_key_fs_summon_all      =   -1
+int                 p_option_key_fs_summon_mobile   =   -1
+int                 p_option_key_fs_summon_immobile =   -1
+int                 p_option_key_m_toggle_paralyzed =   -1
 
 ; Friend Methods
 function f_Link(doticu_npcp_data DATA)
+    p_CONSTS = DATA.CONSTS
     p_CODES = DATA.CODES
     p_VARS = DATA.VARS
+    p_KEYS = DATA.MODS.CONTROL.KEYS
     p_MCM = DATA.MODS.CONTROL.MCM
 endFunction
 
@@ -43,6 +51,9 @@ endFunction
 function f_On_Option_Input_Accept(int id_option, string str_input)
 endFunction
 
+function f_On_Option_Keymap_Change(int id_option, int code_key, string str_conflict_control, string str_conflict_mod)
+endFunction
+
 function f_On_Option_Highlight(int id_option)
 endFunction
 
@@ -54,101 +65,163 @@ auto state p_STATE_SETTINGS
 
         p_MCM.SetTitleText(" Settings ")
 
-        p_MCM.AddHeaderOption(" General ")
+        p_MCM.AddHeaderOption(" Cloning ")
         p_MCM.AddEmptyOption()
         p_option_force_clone_unique = p_MCM.AddToggleOption("Force Clone Unique NPCs", p_VARS.force_clone_unique)
         p_option_force_unclone_unique = p_MCM.AddToggleOption("Force Unclone Unique NPCs", p_VARS.force_unclone_unique)
         p_option_force_clone_generic = p_MCM.AddToggleOption("Force Clone Generic NPCs", p_VARS.force_clone_generic)
         p_option_force_unclone_generic = p_MCM.AddToggleOption("Force Unclone Generic NPCs", p_VARS.force_unclone_generic)
+        p_MCM.AddEmptyOption()
+        p_MCM.AddEmptyOption()
+
+        p_MCM.AddHeaderOption(" Autos ")
+        p_MCM.AddEmptyOption()
         if p_VARS.auto_style == p_CODES.IS_DEFAULT
-            p_option_auto_style = p_MCM.AddTextOption("Auto Style", " Default ")
+            p_option_auto_style = p_MCM.AddTextOption("Auto Style", p_CONSTS.STR_MCM_DEFAULT)
         elseIf p_VARS.auto_style == p_CODES.IS_WARRIOR
-            p_option_auto_style = p_MCM.AddTextOption("Auto Style", " Warrior ")
+            p_option_auto_style = p_MCM.AddTextOption("Auto Style", p_CONSTS.STR_MCM_WARRIOR)
         elseIf p_VARS.auto_style == p_CODES.IS_MAGE
-            p_option_auto_style = p_MCM.AddTextOption("Auto Style", " Mage ")
+            p_option_auto_style = p_MCM.AddTextOption("Auto Style", p_CONSTS.STR_MCM_MAGE)
         elseIf p_VARS.auto_style == p_CODES.IS_ARCHER
-            p_option_auto_style = p_MCM.AddTextOption("Auto Style", " Archer ")
+            p_option_auto_style = p_MCM.AddTextOption("Auto Style", p_CONSTS.STR_MCM_ARCHER)
         endIf
         if p_VARS.auto_vitality == p_CODES.IS_MORTAL
-            p_option_auto_vitality = p_MCM.AddTextOption("Auto Vitality", " Mortal ")
+            p_option_auto_vitality = p_MCM.AddTextOption("Auto Vitality", p_CONSTS.STR_MCM_MORTAL)
         elseIf p_VARS.auto_vitality == p_CODES.IS_PROTECTED
-            p_option_auto_vitality = p_MCM.AddTextOption("Auto Style", " Protected ")
+            p_option_auto_vitality = p_MCM.AddTextOption("Auto Style", p_CONSTS.STR_MCM_PROTECTED)
         elseIf p_VARS.auto_vitality == p_CODES.IS_ESSENTIAL
-            p_option_auto_vitality = p_MCM.AddTextOption("Auto Style", " Essential ")
+            p_option_auto_vitality = p_MCM.AddTextOption("Auto Style", p_CONSTS.STR_MCM_ESSENTIAL)
         elseIf p_VARS.auto_vitality == p_CODES.IS_INVULNERABLE
-            p_option_auto_vitality = p_MCM.AddTextOption("Auto Style", " Invulnerable ")
+            p_option_auto_vitality = p_MCM.AddTextOption("Auto Style", p_CONSTS.STR_MCM_INVULNERABLE)
         endIf
         p_option_auto_resurrect = p_MCM.AddToggleOption("Auto Resurrect Followers", p_VARS.auto_resurrect)
         p_option_auto_outfit = p_MCM.AddToggleOption("Auto Outfit", p_VARS.auto_outfit)
-
         p_MCM.AddEmptyOption()
         p_MCM.AddEmptyOption()
 
         p_MCM.AddHeaderOption(" Hotkeys ")
         p_MCM.AddEmptyOption()
+        p_option_key_fs_summon_all = p_MCM.AddKeymapOption(" Followers: Summon All ", p_VARS.key_fs_summon_all, p_MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_fs_summon_mobile = p_MCM.AddKeymapOption(" Followers: Summon Mobile ", p_VARS.key_fs_summon_mobile, p_MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_fs_summon_immobile = p_MCM.AddKeymapOption(" Followers: Summon Immobile ", p_VARS.key_fs_summon_immobile, p_MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_m_toggle_paralyzed = p_MCM.AddKeymapOption(" Member: Toggle Paralyzed ", p_VARS.key_toggle_paralyzed, p_MCM.OPTION_FLAG_WITH_UNMAP)
+        p_MCM.AddEmptyOption()
+        p_MCM.AddEmptyOption()
     endFunction
 
     function f_On_Option_Select(int id_option)
+        bool do_update = false
+        bool dont_update = true
+
         if id_option == p_option_force_clone_unique
             p_VARS.force_clone_unique = !p_VARS.force_clone_unique
+            p_MCM.SetToggleOptionValue(p_option_force_clone_unique, p_VARS.force_clone_unique, do_update)
         elseIf id_option == p_option_force_clone_generic
             p_VARS.force_clone_generic = !p_VARS.force_clone_generic
+            p_MCM.SetToggleOptionValue(p_option_force_clone_generic, p_VARS.force_clone_generic, do_update)
         elseIf id_option == p_option_force_unclone_unique
             p_VARS.force_unclone_unique = !p_VARS.force_unclone_unique
+            p_MCM.SetToggleOptionValue(p_option_force_unclone_unique, p_VARS.force_unclone_unique, do_update)
         elseIf id_option == p_option_force_unclone_generic
             p_VARS.force_unclone_generic = !p_VARS.force_unclone_generic
+            p_MCM.SetToggleOptionValue(p_option_force_unclone_generic, p_VARS.force_unclone_generic, do_update)
         elseIf id_option == p_option_auto_style
             if p_VARS.auto_style == p_CODES.IS_DEFAULT
                 p_VARS.auto_style = p_CODES.IS_WARRIOR
+                p_MCM.SetTextOptionValue(p_option_auto_style, p_CONSTS.STR_MCM_WARRIOR, do_update)
             elseIf p_VARS.auto_style == p_CODES.IS_WARRIOR
                 p_VARS.auto_style = p_CODES.IS_MAGE
+                p_MCM.SetTextOptionValue(p_option_auto_style, p_CONSTS.STR_MCM_MAGE, do_update)
             elseIf p_VARS.auto_style == p_CODES.IS_MAGE
                 p_VARS.auto_style = p_CODES.IS_ARCHER
+                p_MCM.SetTextOptionValue(p_option_auto_style, p_CONSTS.STR_MCM_ARCHER, do_update)
             elseIf p_VARS.auto_style == p_CODES.IS_ARCHER
                 p_VARS.auto_style = p_CODES.IS_DEFAULT
+                p_MCM.SetTextOptionValue(p_option_auto_style, p_CONSTS.STR_MCM_DEFAULT, do_update)
             endIf
         elseIf id_option == p_option_auto_vitality
             if p_VARS.auto_vitality == p_CODES.IS_MORTAL
                 p_VARS.auto_vitality = p_CODES.IS_PROTECTED
+                p_MCM.SetTextOptionValue(p_option_auto_vitality, p_CONSTS.STR_MCM_PROTECTED, do_update)
             elseIf p_VARS.auto_vitality == p_CODES.IS_PROTECTED
                 p_VARS.auto_vitality = p_CODES.IS_ESSENTIAL
+                p_MCM.SetTextOptionValue(p_option_auto_vitality, p_CONSTS.STR_MCM_ESSENTIAL, do_update)
             elseIf p_VARS.auto_vitality == p_CODES.IS_ESSENTIAL
                 p_VARS.auto_vitality = p_CODES.IS_INVULNERABLE
+                p_MCM.SetTextOptionValue(p_option_auto_vitality, p_CONSTS.STR_MCM_INVULNERABLE, do_update)
             elseIf p_VARS.auto_vitality == p_CODES.IS_INVULNERABLE
                 p_VARS.auto_vitality = p_CODES.IS_MORTAL
+                p_MCM.SetTextOptionValue(p_option_auto_vitality, p_CONSTS.STR_MCM_MORTAL, do_update)
             endIf
         elseIf id_option == p_option_auto_resurrect
             p_VARS.auto_resurrect = !p_VARS.auto_resurrect
+            p_MCM.SetToggleOptionValue(p_option_auto_resurrect, p_VARS.auto_resurrect, do_update)
         elseIf id_option == p_option_auto_outfit
             p_VARS.auto_outfit = !p_VARS.auto_outfit
+            p_MCM.SetToggleOptionValue(p_option_auto_outfit, p_VARS.auto_outfit, do_update)
         endIf
-        p_MCM.ForcePageReset()
+
+        f_On_Option_Highlight(id_option); doesn't seem to work.
+    endFunction
+
+    function f_On_Option_Keymap_Change(int id_option, int code_key, string str_conflict_control, string str_conflict_mod)
+        bool do_update = false
+        bool dont_update = true
+        string str_conflict_message
+
+        if code_key > -1 && str_conflict_control
+            str_conflict_message = "This conflicts with '" + str_conflict_control + "'"
+            if str_conflict_mod
+                str_conflict_message += " in the mod '" + str_conflict_mod + "'"
+            else
+                str_conflict_message += " in vanilla Skyrim"
+            endIf
+            if !p_MCM.ShowMessage(str_conflict_message, true)
+                return
+            endIf
+        endIf
+
+        ; we need to check that in our mod, a key isn't set to multiple commands...except if the modifier is different...
+
+        if id_option == p_option_key_fs_summon_all
+            p_VARS.key_fs_summon_all = code_key
+        elseIf id_option == p_option_key_fs_summon_mobile
+            p_VARS.key_fs_summon_mobile = code_key
+        elseIf id_option == p_option_key_fs_summon_immobile
+            p_VARS.key_fs_summon_immobile = code_key
+        elseIf id_option == p_option_key_m_toggle_paralyzed
+            p_VARS.key_toggle_paralyzed = code_key
+        endIf
+
+        p_KEYS.Update_Keys()
+        p_MCM.SetKeymapOptionValue(id_option, code_key, do_update)
+        f_On_Option_Highlight(id_option)
     endFunction
 
     function f_On_Option_Highlight(int id_option)
         if id_option == p_option_force_clone_unique
             if p_VARS.force_clone_unique
-                p_MCM.SetInfoText("Forces a clone to become a member instead of its original unique npc.")
+                p_MCM.SetInfoText("Only a clone of a unique npc can become a member, and not the unique npc.")
             else
-                p_MCM.SetInfoText("Allows a unique npc to become a member instead of its clone.")
+                p_MCM.SetInfoText("Allows a unique npc to become a member as well as its clone.")
             endIf
         elseIf id_option == p_option_force_clone_generic
             if p_VARS.force_clone_generic
-                p_MCM.SetInfoText("Forces a clone to become a member instead of its original generic npc.")
+                p_MCM.SetInfoText("Only a clone of a generic npc can become a member, and not the generic npc.")
             else
-                p_MCM.SetInfoText("Allows a generic npc to become a member instead of its clone.")
+                p_MCM.SetInfoText("Allows a generic npc to become a member as well as its clone.")
             endIf
         elseIf id_option == p_option_force_unclone_unique
             if p_VARS.force_unclone_unique
-                p_MCM.SetInfoText("Forces a clone of a unique npc to be destroyed when unmembered.")
+                p_MCM.SetInfoText("Forces a clone of a unique npc to be uncloned instead of unmembered.")
             else
-                p_MCM.SetInfoText("Allows a clone of a unique npc to still exist when unmembered.")
+                p_MCM.SetInfoText("Allows a clone of a unique npc to be unmembered or uncloned.")
             endIf
         elseIf id_option == p_option_force_unclone_generic
             if p_VARS.force_unclone_generic
-                p_MCM.SetInfoText("Forces a clone of a generic npc to be destroyed when unmembered.")
+                p_MCM.SetInfoText("Forces a clone of a generic npc to be uncloned instead of unmembered.")
             else
-                p_MCM.SetInfoText("Allows a clone of a generic npc to still exist when unmembered.")
+                p_MCM.SetInfoText("Allows a clone of a generic npc to be unmembered or uncloned.")
             endIf
         elseIf id_option == p_option_auto_style
             if p_VARS.auto_style == p_CODES.IS_DEFAULT
@@ -178,9 +251,9 @@ auto state p_STATE_SETTINGS
             endIf
         elseIf id_option == p_option_auto_outfit
             if p_VARS.auto_outfit
-                p_MCM.SetInfoText("Members will automatically dress for the right occasion.")
+                p_MCM.SetInfoText("Members will automatically dress for each activity.")
             else
-                p_MCM.SetInfoText("Members will not automatically dress for the right occasion.")
+                p_MCM.SetInfoText("Members will not automatically dress for each activity.")
             endIf
         endIf
     endFunction

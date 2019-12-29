@@ -101,7 +101,11 @@ endFunction
 
 ; Private Methods
 int function p_Get_Alias_ID(Actor ref_actor)
-    return ref_actor.GetItemCount(p_CONSTS.TOKEN_FOLLOWER) - 1
+    if !ref_actor
+        return -1
+    else
+        return ref_actor.GetItemCount(p_CONSTS.TOKEN_FOLLOWER) - 1
+    endIf
 endFunction
 
 doticu_npcp_follower function p_Get_Follower(int id_alias)
@@ -136,6 +140,44 @@ bool function Has_Follower(Actor ref_actor)
     return p_ALIASES.Has_Alias(p_Get_Alias_ID(ref_actor), ref_actor)
 endFunction
 
+bool function Has_One_Mobile()
+    if Get_Count() < 1
+        return false
+    endIf
+
+    doticu_npcp_follower ref_follower
+    Alias[] arr_aliases = p_ALIASES.Get_Aliases()
+    int idx_arr = 0
+    while idx_arr < arr_aliases.length
+        ref_follower = arr_aliases[idx_arr] as doticu_npcp_follower
+        if ref_follower.Is_Mobile()
+            return true
+        endIf
+        idx_arr += 1
+    endWhile
+
+    return false
+endFunction
+
+bool function Has_One_Immobile()
+    if Get_Count() < 1
+        return false
+    endIf
+
+    doticu_npcp_follower ref_follower
+    Alias[] arr_aliases = p_ALIASES.Get_Aliases()
+    int idx_arr = 0
+    while idx_arr < arr_aliases.length
+        ref_follower = arr_aliases[idx_arr] as doticu_npcp_follower
+        if ref_follower.Is_Immobile()
+            return true
+        endIf
+        idx_arr += 1
+    endWhile
+
+    return false
+endFunction
+
 doticu_npcp_follower function Get_Follower(Actor ref_actor)
     return p_ALIASES.Get_Alias(p_Get_Alias_ID(ref_actor), ref_actor) as doticu_npcp_follower
 endFunction
@@ -145,6 +187,7 @@ Alias[] function Get_Aliases_Sorted(int idx_from = 0, int idx_to_ex = -1)
 endFunction
 
 function Enforce()
+    ; this needs to be parallel
     doticu_npcp_follower ref_follower
     Alias[] arr_aliases = p_ALIASES.Get_Aliases()
     int idx_arr = 0
@@ -155,7 +198,11 @@ function Enforce()
     endWhile
 endFunction
 
-function Summon()
+int function Summon_All()
+    if Get_Count() < 1
+        return p_CODES.HASNT_FOLLOWER
+    endIf
+
     doticu_npcp_follower ref_follower
     Alias[] arr_aliases = p_ALIASES.Get_Aliases()
     int idx_arr = 0
@@ -172,9 +219,19 @@ function Summon()
         endIf
         idx_arr += 1
     endWhile
+
+    return p_CODES.SUCCESS
 endFunction
 
-function Summon_Mobile()
+int function Summon_Mobile()
+    if Get_Count() < 1
+        return p_CODES.HASNT_FOLLOWER
+    endIf
+
+    if !Has_One_Mobile()
+        return p_CODES.HASNT_MOBILE
+    endIf
+
     doticu_npcp_follower ref_follower
     Alias[] arr_aliases = p_ALIASES.Get_Aliases()
     int idx_arr = 0
@@ -195,9 +252,19 @@ function Summon_Mobile()
         endIf
         idx_arr += 1
     endWhile
+
+    return p_CODES.SUCCESS
 endFunction
 
-function Summon_Immobile()
+int function Summon_Immobile()
+    if Get_Count() < 1
+        return p_CODES.HASNT_FOLLOWER
+    endIf
+
+    if !Has_One_Immobile()
+        return p_CODES.HASNT_IMMOBILE
+    endIf
+
     doticu_npcp_follower ref_follower
     Alias[] arr_aliases = p_ALIASES.Get_Aliases()
     int idx_arr = 0
@@ -218,6 +285,8 @@ function Summon_Immobile()
         endIf
         idx_arr += 1
     endWhile
+
+    return p_CODES.SUCCESS
 endFunction
 
 function Settle()

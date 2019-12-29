@@ -100,10 +100,6 @@ function Close_Menus()
     endWhile
 endFunction
 
-function Open_MCM()
-    ; I have no good idea how to get this to happen!
-endFunction
-
 bool function Is_Mod_Installed(string name_mod)
     return Game.GetModByName(name_mod) != 255
 endFunction

@@ -49,7 +49,11 @@ endFunction
 
 ; Private Methods
 int function p_Get_Alias_ID(Actor ref_actor)
-    return ref_actor.GetItemCount(p_CONSTS.TOKEN_MEMBER) - 1
+    if !ref_actor
+        return -1
+    else
+        return ref_actor.GetItemCount(p_CONSTS.TOKEN_MEMBER) - 1
+    endIf
 endFunction
 
 doticu_npcp_member function p_Get_Member(int id_alias)
@@ -169,6 +173,22 @@ doticu_npcp_member function Get_Member(Actor ref_actor)
     return p_ALIASES.Get_Alias(p_Get_Alias_ID(ref_actor), ref_actor) as doticu_npcp_member
 endFunction
 
+doticu_npcp_settler function Get_Settler(Actor ref_actor)
+    if Has_Member(ref_actor)
+        return Get_Member(ref_actor).Get_Settler()
+    else
+        return none
+    endIf
+endFunction
+
+doticu_npcp_immobile function Get_Immobile(Actor ref_actor)
+    if Has_Member(ref_actor)
+        return Get_Member(ref_actor).Get_Immobile()
+    else
+        return none
+    endIf
+endFunction
+
 Alias[] function Get_Aliases_Sorted(int idx_from = 0, int idx_to_ex = -1)
     return p_ALIASES.Get_Aliases_Sorted(idx_from, idx_to_ex)
 endFunction
@@ -233,6 +253,12 @@ endFunction
 
 function u_0_1_2()
     while !p_Send_Members("doticu_npcp_members_u_0_1_2")
+        Utility.Wait(0.25)
+    endWhile
+endFunction
+
+function u_0_1_3()
+    while !p_Send_Members("doticu_npcp_members_u_0_1_3")
         Utility.Wait(0.25)
     endWhile
 endFunction

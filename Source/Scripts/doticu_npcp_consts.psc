@@ -14,6 +14,7 @@ MiscObject                  p_TOKEN_BANISHED                        = none
 MiscObject                  p_TOKEN_GENERIC                         = none
 MiscObject                  p_TOKEN_THRALL                          = none
 MiscObject                  p_TOKEN_GREETER                         = none
+MiscObject                  p_TOKEN_PARALYZED                       = none
 MiscObject                  p_TOKEN_STYLE_DEFAULT                   = none
 MiscObject                  p_TOKEN_STYLE_WARRIOR                   = none
 MiscObject                  p_TOKEN_STYLE_MAGE                      = none
@@ -61,7 +62,7 @@ endProperty
 
 int property VERSION_PATCH
     int function Get()
-        return 2; set manually upon each release
+        return 3; set manually upon each release
     endFunction
 endProperty
 
@@ -204,6 +205,17 @@ MiscObject property TOKEN_GREETER
     function Set(MiscObject val)
         if p_TOKEN_GREETER == none
             p_TOKEN_GREETER = val
+        endIf
+    endFunction
+endProperty
+
+MiscObject property TOKEN_PARALYZED
+    MiscObject function Get()
+        return p_TOKEN_PARALYZED
+    endFunction
+    function Set(MiscObject val)
+        if p_TOKEN_PARALYZED == none
+            p_TOKEN_PARALYZED = val
         endIf
     endFunction
 endProperty
@@ -538,24 +550,33 @@ Weapon property WEAPON_BLANK
     endFunction
 endProperty
 
-string property STR_HEALTH      = "Health"      autoReadOnly hidden
-string property STR_MAGICKA     = "Magicka"     autoReadOnly hidden
-string property STR_STAMINA     = "Stamina"     autoReadOnly hidden
-string property STR_ONE_HANDED  = "OneHanded"   autoReadOnly hidden
-string property STR_TWO_HANDED  = "TwoHanded"   autoReadOnly hidden
-string property STR_BLOCK       = "Block"       autoReadOnly hidden
-string property STR_HEAVY_ARMOR = "HeavyArmor"  autoReadOnly hidden
-string property STR_LIGHT_ARMOR = "LightArmor"  autoReadOnly hidden
-string property STR_SMITHING    = "Smithing"    autoReadOnly hidden
-string property STR_DESTRUCTION = "Destruction" autoReadOnly hidden
-string property STR_RESTORATION = "Restoration" autoReadOnly hidden
-string property STR_CONJURATION = "Conjuration" autoReadOnly hidden
-string property STR_ALTERATION  = "Alteration"  autoReadOnly hidden
-string property STR_ILLUSION    = "Illusion"    autoReadOnly hidden
-string property STR_ENCHANTING  = "Enchanting"  autoReadOnly hidden
-string property STR_MARKSMAN    = "Marksman"    autoReadOnly hidden
-string property STR_SNEAK       = "Sneak"       autoReadOnly hidden
-string property STR_ALCHEMY     = "Alchemy"     autoReadOnly hidden
-string property STR_LOCKPICKING = "Lockpicking" autoReadOnly hidden
-string property STR_PICKPOCKET  = "Pickpocket"  autoReadOnly hidden
-string property STR_SPEECHCRAFT = "Speechcraft" autoReadOnly hidden
+string property STR_HEALTH              = "Health"          autoReadOnly hidden
+string property STR_MAGICKA             = "Magicka"         autoReadOnly hidden
+string property STR_STAMINA             = "Stamina"         autoReadOnly hidden
+string property STR_ONE_HANDED          = "OneHanded"       autoReadOnly hidden
+string property STR_TWO_HANDED          = "TwoHanded"       autoReadOnly hidden
+string property STR_BLOCK               = "Block"           autoReadOnly hidden
+string property STR_HEAVY_ARMOR         = "HeavyArmor"      autoReadOnly hidden
+string property STR_LIGHT_ARMOR         = "LightArmor"      autoReadOnly hidden
+string property STR_SMITHING            = "Smithing"        autoReadOnly hidden
+string property STR_DESTRUCTION         = "Destruction"     autoReadOnly hidden
+string property STR_RESTORATION         = "Restoration"     autoReadOnly hidden
+string property STR_CONJURATION         = "Conjuration"     autoReadOnly hidden
+string property STR_ALTERATION          = "Alteration"      autoReadOnly hidden
+string property STR_ILLUSION            = "Illusion"        autoReadOnly hidden
+string property STR_ENCHANTING          = "Enchanting"      autoReadOnly hidden
+string property STR_MARKSMAN            = "Marksman"        autoReadOnly hidden
+string property STR_SNEAK               = "Sneak"           autoReadOnly hidden
+string property STR_ALCHEMY             = "Alchemy"         autoReadOnly hidden
+string property STR_LOCKPICKING         = "Lockpicking"     autoReadOnly hidden
+string property STR_PICKPOCKET          = "Pickpocket"      autoReadOnly hidden
+string property STR_SPEECHCRAFT         = "Speechcraft"     autoReadOnly hidden
+
+string property STR_MCM_DEFAULT         = " Default "       autoReadOnly hidden
+String property STR_MCM_WARRIOR         = " Warrior "       autoReadOnly hidden
+String property STR_MCM_MAGE            = " Mage "          autoReadOnly hidden
+String property STR_MCM_ARCHER          = " Archer "        autoReadOnly hidden
+string property STR_MCM_MORTAL          = " Mortal "        autoReadOnly hidden
+String property STR_MCM_PROTECTED       = " Protected "     autoReadOnly hidden
+String property STR_MCM_ESSENTIAL       = " Essential "     autoReadOnly hidden
+String property STR_MCM_INVULNERABLE    = " Invulnerable "  autoReadOnly hidden

@@ -13,6 +13,7 @@ int         p_buffer_write      =     0
 int         p_buffer_read       =     0
 int         p_buffer_used       =     0
 bool        p_will_update       = false
+string      p_str_message       =    ""
 
 ; Friend Methods
 function f_Link(doticu_npcp_data DATA)
@@ -45,25 +46,13 @@ function f_Destroy()
 endFunction
 
 ; Private Methods
-bool function p_Write(string str_message, float float_interval = -1.0, bool allow_repeat = false)
+function p_Write(string str_message, float float_wait_before = -1.0, bool allow_repeat = false)
     if Is_Full()
-        return false
-    endIf
-
-    if str_message == ""
-        return false
-    endIf
-
-    if !allow_repeat && p_Has_Message(str_message)
-        return false
-    endIf
-
-    if float_interval <= 0.0
-        float_interval = p_INTERVAL_DEFAULT
+        return
     endIf
 
     p_MESSAGES[p_buffer_write] = str_message
-    p_INTERVALS[p_buffer_write] = float_interval
+    p_INTERVALS[p_buffer_write] = float_wait_before
 
     p_buffer_write += 1
     if p_buffer_write == p_BUFFER_MAX
@@ -71,8 +60,6 @@ bool function p_Write(string str_message, float float_interval = -1.0, bool allo
     endIf
 
     p_buffer_used += 1
-
-    return true
 endFunction
 
 int function p_Read()
@@ -115,6 +102,8 @@ bool function p_Send_Queue()
         return false
     endIf
 
+    ModEvent.PushString(handle, p_str_message)
+
     if !ModEvent.Send(handle)
         ModEvent.Release(handle)
         return false
@@ -124,22 +113,41 @@ bool function p_Send_Queue()
 endFunction
 
 ; Public Methods
-function Enqueue(string str_message, float float_interval = -1.0, bool allow_repeat = false)
-    if p_Write(str_message, float_interval, allow_repeat) && !p_will_update
+function Enqueue(string str_message, float float_wait_before = -1.0, bool allow_repeat = false)
+    if Is_Full()
+        return
+    endIf
+
+    if str_message == ""
+        return
+    endIf
+
+    if !allow_repeat && p_Has_Message(str_message)
+        return
+    endIf
+
+    if float_wait_before <= 0.0
+        float_wait_before = p_INTERVAL_DEFAULT
+    endIf
+
+    p_Write(str_message, float_wait_before, allow_repeat)
+
+    if !p_will_update
         p_will_update = true
-        RegisterForSingleUpdate(float_interval)
+        p_str_message = str_message
+        RegisterForSingleUpdate(float_wait_before)
     endIf
 endFunction
 
-string function Dequeue()
+function Dequeue()
     if Is_Empty()
         p_will_update = false
-        return ""
+        p_str_message = ""
     else
         int idx_buffer = p_Read()
         p_will_update = true
+        p_str_message = p_MESSAGES[idx_buffer]
         RegisterForSingleUpdate(p_INTERVALS[idx_buffer])
-        return p_MESSAGES[idx_buffer]
     endIf
 endFunction
 
@@ -149,6 +157,7 @@ function Flush()
     p_buffer_read = 0
     p_buffer_used = 0
     p_will_update = false
+    p_str_message = ""
 endFunction
 
 bool function Is_Empty()

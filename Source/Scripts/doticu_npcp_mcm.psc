@@ -138,6 +138,20 @@ event OnOptionInputAccept(int id_option, string str_input)
     endIf
 endEvent
 
+event OnOptionKeymapChange(int id_option, int code_key, string str_conflict_control, string str_conflict_mod)
+    if CurrentPage == p_STR_FOLLOWERS
+        p_MCM_FOLLOWERS.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
+    elseIf CurrentPage == p_STR_MEMBERS
+        p_MCM_MEMBERS.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
+    elseIf CurrentPage == p_STR_FILTER
+        p_MCM_FILTER.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
+    elseIf CurrentPage == p_STR_SETTINGS
+        p_MCM_SETTINGS.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
+    elseIf CurrentPage == p_STR_LOG
+        p_MCM_LOG.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
+    endIf
+endEvent
+
 event OnOptionHighlight(int id_option)
     if CurrentPage == p_STR_FOLLOWERS
         p_MCM_FOLLOWERS.f_On_Option_Highlight(id_option)

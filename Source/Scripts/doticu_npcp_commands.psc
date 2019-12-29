@@ -191,42 +191,6 @@ function p_Notify_On_Resettle(int code_return, string str_name)
     endIf
 endFunction
 
-function p_Notify_On_Immobilize(int code_return, string str_name)
-    if code_return == p_CODES.SUCCESS
-        p_LOGS.Create_Note(str_name + " will stop moving.")
-    elseIf code_return == p_CODES.HASNT_SPACE_MEMBER
-        p_LOGS.Create_Note("No room for " + str_name + " to become an immobile member.")
-    elseIf code_return == p_CODES.CANT_RESURRECT
-        p_LOGS.Create_Note(str_name + " can't be revived, and so can't be immobilized.")
-    elseIf code_return == p_CODES.ISNT_ACTOR
-        p_LOGS.Create_Note("That can't become an immobile member.")
-    elseIf code_return == p_CODES.ISNT_MEMBER
-        p_LOGS.Create_Note(str_name + " isn't a member, and so can't be immobilized.")
-    elseIf code_return == p_CODES.IS_IMMOBILE
-        p_LOGS.Create_Note(str_name + " is already immobile.")
-    else
-        p_LOGS.Create_Error("It's unknown why " + str_name + " can't be immobilized.")
-    endIf
-endFunction
-
-function p_Notify_On_Mobilize(int code_return, string str_name)
-    if code_return == p_CODES.SUCCESS
-        p_LOGS.Create_Note(str_name + " will start moving.")
-    elseIf code_return == p_CODES.HASNT_SPACE_MEMBER
-        p_LOGS.Create_Note("No room for " + str_name + " to become a mobile member.")
-    elseIf code_return == p_CODES.CANT_RESURRECT
-        p_LOGS.Create_Note(str_name + " can't be revived, and so can't be mobilized.")
-    elseIf code_return == p_CODES.ISNT_ACTOR
-        p_LOGS.Create_Note("That can't become a mobile member.")
-    elseIf code_return == p_CODES.ISNT_MEMBER
-        p_LOGS.Create_Note(str_name + " isn't a member, and so can't be mobilized.")
-    elseIf code_return == p_CODES.ISNT_IMMOBILE
-        p_LOGS.Create_Note(str_name + " is already mobile.")
-    else
-        p_LOGS.Create_Error("It's unknown why " + str_name + " can't be mobilized.")
-    endIf
-endFunction
-
 function p_Notify_On_Enthrall(int code_return, string str_name)
     if code_return == p_CODES.SUCCESS
         p_LOGS.Create_Note(str_name + " is now enthralled.")
@@ -264,6 +228,78 @@ function p_Notify_On_Unthrall(int code_return, string str_name)
         p_LOGS.Create_Note(str_name + " is already unthralled.")
     else
         p_LOGS.Create_Error("It's unknown why " + str_name + " can't be unthralled.")
+    endIf
+endFunction
+
+function p_Notify_On_Immobilize(int code_return, string str_name)
+    if code_return == p_CODES.SUCCESS
+        p_LOGS.Create_Note(str_name + " will stop moving.")
+    elseIf code_return == p_CODES.HASNT_SPACE_MEMBER
+        p_LOGS.Create_Note("No room for " + str_name + " to become an immobile member.")
+    elseIf code_return == p_CODES.CANT_RESURRECT
+        p_LOGS.Create_Note(str_name + " can't be revived, and so can't be immobilized.")
+    elseIf code_return == p_CODES.ISNT_ACTOR
+        p_LOGS.Create_Note("That can't become an immobile member.")
+    elseIf code_return == p_CODES.ISNT_MEMBER
+        p_LOGS.Create_Note(str_name + " isn't a member, and so can't be immobilized.")
+    elseIf code_return == p_CODES.IS_IMMOBILE
+        p_LOGS.Create_Note(str_name + " is already immobile.")
+    else
+        p_LOGS.Create_Error("It's unknown why " + str_name + " can't be immobilized.")
+    endIf
+endFunction
+
+function p_Notify_On_Mobilize(int code_return, string str_name)
+    if code_return == p_CODES.SUCCESS
+        p_LOGS.Create_Note(str_name + " will start moving.")
+    elseIf code_return == p_CODES.HASNT_SPACE_MEMBER
+        p_LOGS.Create_Note("No room for " + str_name + " to become a mobile member.")
+    elseIf code_return == p_CODES.CANT_RESURRECT
+        p_LOGS.Create_Note(str_name + " can't be revived, and so can't be mobilized.")
+    elseIf code_return == p_CODES.ISNT_ACTOR
+        p_LOGS.Create_Note("That can't become a mobile member.")
+    elseIf code_return == p_CODES.ISNT_MEMBER
+        p_LOGS.Create_Note(str_name + " isn't a member, and so can't be mobilized.")
+    elseIf code_return == p_CODES.ISNT_IMMOBILE
+        p_LOGS.Create_Note(str_name + " is already mobile.")
+    else
+        p_LOGS.Create_Error("It's unknown why " + str_name + " can't be mobilized.")
+    endIf
+endFunction
+
+function p_Notify_On_Paralyze(int code_return, string str_name)
+    if code_return == p_CODES.SUCCESS
+        p_LOGS.Create_Note(str_name + " will be paralyzed.")
+    elseIf code_return == p_CODES.HASNT_SPACE_MEMBER
+        p_LOGS.Create_Note("No room for " + str_name + " to become an immobile and paralyzed member.")
+    elseIf code_return == p_CODES.CANT_RESURRECT
+        p_LOGS.Create_Note(str_name + " can't be revived, and so can't become an immobile and paralyzed member.")
+    elseIf code_return == p_CODES.ISNT_ACTOR
+        p_LOGS.Create_Note("That can't become an immobile and paralyzed member.")
+    elseIf code_return == p_CODES.ISNT_MEMBER
+        p_LOGS.Create_Note(str_name + " isn't a member, and so can't be immobile and paralyzed.")
+    elseIf code_return == p_CODES.IS_PARALYZED
+        p_LOGS.Create_Note(str_name + " is already paralyzed.")
+    else
+        p_LOGS.Create_Error("It's unknown why " + str_name + " can't be immobile and paralyzed.")
+    endIf
+endFunction
+
+function p_Notify_On_Unparalyze(int code_return, string str_name)
+    if code_return == p_CODES.SUCCESS
+        p_LOGS.Create_Note(str_name + " will no longer be paralyzed.")
+    elseIf code_return == p_CODES.HASNT_SPACE_MEMBER
+        p_LOGS.Create_Note("No room for " + str_name + " to become an immobile and unparalyzed member.")
+    elseIf code_return == p_CODES.CANT_RESURRECT
+        p_LOGS.Create_Note(str_name + " can't be revived, and so can't become an immobile and unparalyzed member.")
+    elseIf code_return == p_CODES.ISNT_ACTOR
+        p_LOGS.Create_Note("That can't become an immobile and unparalyzed member.")
+    elseIf code_return == p_CODES.ISNT_MEMBER
+        p_LOGS.Create_Note(str_name + " isn't a member, and so can't be immobile and unparalyzed.")
+    elseIf code_return == p_CODES.ISNT_PARALYZED
+        p_LOGS.Create_Note(str_name + " wasn't paralyzed.")
+    else
+        p_LOGS.Create_Error("It's unknown why " + str_name + " can't stop being paralyzed.")
     endIf
 endFunction
 
@@ -408,6 +444,40 @@ function p_Notify_On_Unsneak(int code_return, string str_name)
         p_LOGS.Create_Note(str_name + " wasn't sneaking.")
     else
         p_LOGS.Create_Error("It's unknown why " + str_name + " can't stop sneaking.")
+    endIf
+endFunction
+
+function p_Notify_On_Followers_Summon_All(int code_return)
+    if code_return == p_CODES.SUCCESS
+        p_LOGS.Create_Note("Summoned all followers.")
+    elseIf code_return == p_CODES.HASNT_FOLLOWER
+        p_LOGS.Create_Note("No followers to summon.")
+    else
+        p_LOGS.Create_Error("Could not summon all followers. " + code_return)
+    endIf
+endFunction
+
+function p_Notify_On_Followers_Summon_Mobile(int code_return)
+    if code_return == p_CODES.SUCCESS
+        p_LOGS.Create_Note("Summoned all mobile followers.")
+    elseIf code_return == p_CODES.HASNT_FOLLOWER
+        p_LOGS.Create_Note("No followers to summon.")
+    elseIf code_return == p_CODES.HASNT_MOBILE
+        p_LOGS.Create_Note("No mobile followers to summon.")
+    else
+        p_LOGS.Create_Error("Could not summon mobile followers. " + code_return)
+    endIf
+endFunction
+
+function p_Notify_On_Followers_Summon_Immobile(int code_return)
+    if code_return == p_CODES.SUCCESS
+        p_LOGS.Create_Note("Summoned all immobile followers.")
+    elseIf code_return == p_CODES.HASNT_FOLLOWER
+        p_LOGS.Create_Note("No followers to summon.")
+    elseIf code_return == p_CODES.HASNT_IMMOBILE
+        p_LOGS.Create_Note("No immobile followers to summon.")
+    else
+        p_LOGS.Create_Error("Could not summon immobile followers. " + code_return)
     endIf
 endFunction
 
@@ -604,6 +674,48 @@ function Resettle(Actor ref_actor, bool do_create)
     p_Notify_On_Resettle(ref_settler.Resettle(), str_name)
 endFunction
 
+function Enthrall(Actor ref_actor, bool do_create)
+    int code_return
+    string str_name = p_ACTORS.Get_Name(ref_actor)
+
+    if do_create && !p_Members.Has_Member(ref_actor)
+        code_return = p_MEMBERS.Create_Member(ref_actor)
+        if code_return < 0
+            p_Notify_On_Enthrall(code_return, str_name)
+            return
+        endIf
+    endIf
+
+    doticu_npcp_member ref_member = p_MEMBERS.Get_Member(ref_actor)
+    if !ref_member
+        p_Notify_On_Enthrall(p_CODES.HASNT_MEMBER, str_name)
+        return
+    endIf
+
+    p_Notify_On_Enthrall(ref_member.Enthrall(), str_name)
+endFunction
+
+function Unthrall(Actor ref_actor, bool do_create)
+    int code_return
+    string str_name = p_ACTORS.Get_Name(ref_actor)
+
+    if do_create && !p_Members.Has_Member(ref_actor)
+        code_return = p_MEMBERS.Create_Member(ref_actor)
+        if code_return < 0
+            p_Notify_On_Unthrall(code_return, str_name)
+            return
+        endIf
+    endIf
+
+    doticu_npcp_member ref_member = p_MEMBERS.Get_Member(ref_actor)
+    if !ref_member
+        p_Notify_On_Unthrall(p_CODES.HASNT_MEMBER, str_name)
+        return
+    endIf
+
+    p_Notify_On_Unthrall(ref_member.Unthrall(), str_name)
+endFunction
+
 function Immobilize(Actor ref_actor, bool do_create)
     int code_return
     string str_name = p_ACTORS.Get_Name(ref_actor)
@@ -646,46 +758,74 @@ function Mobilize(Actor ref_actor, bool do_create)
     p_Notify_On_Mobilize(ref_member.Mobilize(), str_name)
 endFunction
 
-function Enthrall(Actor ref_actor, bool do_create)
+function Paralyze(Actor ref_actor, bool do_create)
     int code_return
     string str_name = p_ACTORS.Get_Name(ref_actor)
 
     if do_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
         if code_return < 0
-            p_Notify_On_Enthrall(code_return, str_name)
+            p_Notify_On_Paralyze(code_return, str_name)
             return
         endIf
     endIf
 
     doticu_npcp_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        p_Notify_On_Enthrall(p_CODES.HASNT_MEMBER, str_name)
+        p_Notify_On_Paralyze(p_CODES.HASNT_MEMBER, str_name)
         return
     endIf
 
-    p_Notify_On_Enthrall(ref_member.Enthrall(), str_name)
+    if do_create && !ref_member.Is_Immobile()
+        code_return = ref_member.Immobilize()
+        if code_return < 0
+            p_Notify_On_Paralyze(code_return, str_name)
+            return
+        endIf
+    endIf
+
+    doticu_npcp_immobile ref_immobile = ref_member.Get_Immobile()
+    if !ref_immobile
+        p_Notify_On_Paralyze(p_CODES.ISNT_IMMOBILE, str_name)
+        return
+    endIf
+    
+    p_Notify_On_Paralyze(ref_immobile.Paralyze(), str_name)
 endFunction
 
-function Unthrall(Actor ref_actor, bool do_create)
+function Unparalyze(Actor ref_actor, bool do_create)
     int code_return
     string str_name = p_ACTORS.Get_Name(ref_actor)
 
     if do_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
         if code_return < 0
-            p_Notify_On_Unthrall(code_return, str_name)
+            p_Notify_On_Unparalyze(code_return, str_name)
             return
         endIf
     endIf
 
     doticu_npcp_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        p_Notify_On_Unthrall(p_CODES.HASNT_MEMBER, str_name)
+        p_Notify_On_Unparalyze(p_CODES.HASNT_MEMBER, str_name)
         return
     endIf
 
-    p_Notify_On_Unthrall(ref_member.Unthrall(), str_name)
+    if do_create && !ref_member.Is_Immobile()
+        code_return = ref_member.Immobilize()
+        if code_return < 0
+            p_Notify_On_Unparalyze(code_return, str_name)
+            return
+        endIf
+    endIf
+
+    doticu_npcp_immobile ref_immobile = ref_member.Get_Immobile()
+    if !ref_immobile
+        p_Notify_On_Unparalyze(p_CODES.ISNT_IMMOBILE, str_name)
+        return
+    endIf
+
+    p_Notify_On_Unparalyze(ref_immobile.Unparalyze(), str_name)
 endFunction
 
 function Style(Actor ref_actor, string str_style, bool do_create); may want int code_style instead
@@ -882,6 +1022,15 @@ function Toggle_Settler(Actor ref_actor)
     endIf
 endFunction
 
+function Toggle_Thrall(Actor ref_actor)
+    doticu_npcp_member ref_member = p_MEMBERS.Get_Member(ref_actor)
+    if ref_member && ref_member.Is_Thrall()
+        Unthrall(ref_actor, true)
+    else
+        Enthrall(ref_actor, true)
+    endIf
+endFunction
+
 function Toggle_Immobile(Actor ref_actor)
     doticu_npcp_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if ref_member && ref_member.Is_Immobile()
@@ -891,12 +1040,12 @@ function Toggle_Immobile(Actor ref_actor)
     endIf
 endFunction
 
-function Toggle_Thrall(Actor ref_actor)
-    doticu_npcp_member ref_member = p_MEMBERS.Get_Member(ref_actor)
-    if ref_member && ref_member.Is_Thrall()
-        Unthrall(ref_actor, true)
+function Toggle_Paralyzed(Actor ref_actor)
+    doticu_npcp_immobile ref_immobile = p_MEMBERS.Get_Immobile(ref_actor)
+    if ref_immobile && ref_immobile.Is_Paralyzed()
+        Unparalyze(ref_actor, true)
     else
-        Enthrall(ref_actor, true)
+        Paralyze(ref_actor, true)
     endIf
 endFunction
 
@@ -931,4 +1080,16 @@ function Cycle_Style(Actor ref_actor)
     elseIf ref_member.Is_Styled_Archer()
         Style(ref_actor, "default", false)
     endIf
+endFunction
+
+function Followers_Summon_All()
+    p_Notify_On_Followers_Summon_All(p_FOLLOWERS.Summon_All())
+endFunction
+
+function Followers_Summon_Mobile()
+    p_Notify_On_Followers_Summon_Mobile(p_FOLLOWERS.Summon_Mobile())
+endFunction
+
+function Followers_Summon_Immobile()
+    p_Notify_On_Followers_Summon_Immobile(p_FOLLOWERS.Summon_Immobile())
 endFunction

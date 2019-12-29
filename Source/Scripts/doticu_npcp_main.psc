@@ -61,6 +61,9 @@ function f_Version()
         if p_Is_Version_Less_Than(0, 1, 2)
             u_0_1_2()
         endIf
+        if p_Is_Version_Less_Than(0, 1, 3)
+            u_0_1_3()
+        endIf
 
         p_VARS.version_major = p_CONSTS.VERSION_MAJOR
         p_VARS.version_minor = p_CONSTS.VERSION_MINOR
@@ -76,15 +79,15 @@ function f_Load_Mod()
 
     DATA.Stop()
     while !DATA.Start()
-        Utility.Wait(0.5)
+        Utility.Wait(0.25)
     endWhile
 
     ;/DATA.MODS.CONTROL.Stop()
     while !DATA.MODS.CONTROL.Start()
-        Utility.Wait(0.5)
+        Utility.Wait(0.25)
     endWhile/;
 
-    f_Link()
+    f_Link(); if possible, these need to be done in parallel, one after another
     f_Register()
     f_Version()
 
@@ -136,6 +139,10 @@ function u_0_1_2()
     DATA.MODS.MEMBERS.u_0_1_2()
 endFunction
 
+function u_0_1_3()
+    DATA.MODS.MEMBERS.u_0_1_3()
+endFunction
+
 ; Events
 event OnInit()
     ; do checks to make sure SKSE and PapyrusUtil are running
@@ -164,7 +171,7 @@ event OnInit()
         Utility.Wait(1)
     endWhile
 
-    f_Link()
+    f_Link(); if possible, these need to be done in parallel, one after another
     f_Initialize()
     f_Register()
 

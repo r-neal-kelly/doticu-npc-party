@@ -250,7 +250,7 @@ endFunction
 
 function Ragdoll(Actor ref_actor)
     ; maybe should accept a timer, which can be done async or parallel
-    ref_actor.SetActorValue("Paralysis", 1)
+    ref_actor.SetActorValue("Paralysis", 1); should this come after the push?
     p_CONSTS.ACTOR_PLAYER.PushActorAway(ref_actor, 0.0)
 endFunction
 
