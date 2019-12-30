@@ -140,7 +140,7 @@ function Set(Actor ref_actor, bool keep_inventory = false)
         if !ref_form.IsPlayable()
             idx_forms += 1
         elseIf arr_leveled.Find(ref_form) > -1
-            ; we can't fully remove at this point, because the engine adds back 1 of every outfit item.
+            ; we can't fully remove at this point, because the engine adds back 1 of every outfit item automatically afterward.
             ref_actor.RemoveItem(ref_form, ref_actor.GetItemCount(ref_form) - 1, true, ref_container_temp); no 1, do leveled count
             idx_forms += 1
         else
@@ -149,7 +149,7 @@ function Set(Actor ref_actor, bool keep_inventory = false)
         endIf
     endWhile
 
-    ; updating the leveled list, which is attached to Outfit form, gives the engine the actual items
+    ; updating the leveled list, which is attached to Outfit form, is what gives the engine the actual items
     p_LEVELED.Revert()
     num_forms = self.GetNumItems()
     idx_forms = 0
@@ -162,10 +162,13 @@ function Set(Actor ref_actor, bool keep_inventory = false)
     ; the engine will ignore this call if it's the same outfit already equipped, so we use a different one
     ref_actor.SetOutfit(p_CONSTS.OUTFIT_EMPTY)
 
-    ; the engine will actually apply the outfit in the correct way, which we cannot do manually, and so here we are!
+    ; the engine will actually apply the outfit in the correct way now, which we cannot do manually
     ref_actor.SetOutfit(p_OUTFIT)
 
-    ; we remove everything playable. one of each outfit item is reapplied by engine, thus removing any possible dupes
+    ; without this, the next step has a high chance of crashing or freezing the game. so let the engine render first
+    Utility.Wait(0.1)
+
+    ; we remove everything playable, then one of each outfit item is reapplied by engine, thus removing any possible dupes
     ref_actor.RemoveAllItems(none, false, true)
 
     ; add back any discrepencies because the engine only automatically adds back one of each item

@@ -135,7 +135,7 @@ int function Paralyze()
 
     p_is_paralyzed = true
 
-    ;f_Paralyze() causes a crash if before outfitting
+    f_Paralyze()
 
     code_return = Enforce()
     if code_return < 0

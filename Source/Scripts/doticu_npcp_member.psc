@@ -499,17 +499,10 @@ int function Enforce()
         return p_CODES.ISNT_MEMBER
     endIf
 
-    if p_FOLLOWERS.Has_Follower(p_ref_actor)
-        code_return = p_Followers.Get_Follower(p_ref_actor).f_Enforce()
-        if code_return < 0
-            return code_return
-        endIf
-    endIf
-
-    p_queue_member.Enqueue("p_Outfit", 0.12)
     if Is_Paralyzed()
-        p_queue_member.Enqueue("f_Paralyze", 0.12)
+        p_queue_member.Enqueue("f_Paralyze", 0.3)
     endIf
+    p_queue_member.Enqueue("p_Outfit", 0.12)
     p_queue_member.Enqueue("p_Token", 0.12)
     p_queue_member.Enqueue("p_Member", 0.12)
     if p_is_thrall
@@ -517,6 +510,9 @@ int function Enforce()
     endIf
     p_queue_member.Enqueue("p_Style", 0.12)
     p_queue_member.Enqueue("p_Vitalize", 0.12)
+    if Is_Follower()
+        p_queue_member.Enqueue("Follower.F_Enforce", 0.12)
+    endIf
 
     return p_CODES.SUCCESS
 endFunction
@@ -554,6 +550,14 @@ doticu_npcp_immobile function Get_Immobile()
         return none
     else
         return p_IMMOBILE
+    endIf
+endFunction
+
+doticu_npcp_follower function Get_Follower()
+    if !Exists() || !Is_Follower()
+        return none
+    else
+        return p_FOLLOWERS.Get_Follower(p_ref_actor)
     endIf
 endFunction
 
@@ -1374,10 +1378,10 @@ endEvent
 
 ; Events
 event On_Queue_Member(string str_message)
-    if str_message == "p_Outfit"
-        p_Outfit()
-    elseIf str_message == "f_Paralyze"
+    if str_message == "f_Paralyze"
         p_IMMOBILE.f_Paralyze()
+    elseIf str_message == "p_Outfit"
+        p_Outfit()
     elseIf str_message == "p_Token"
         p_Token()
         if Is_Settler()
@@ -1394,6 +1398,8 @@ event On_Queue_Member(string str_message)
         p_Style()
     elseIf str_message == "p_Vitalize"
         p_Vitalize()
+    elseIf str_message == "Follower.F_Enforce"
+        Get_Follower().f_Enforce()
     endIf
 
     p_queue_member.Dequeue()
