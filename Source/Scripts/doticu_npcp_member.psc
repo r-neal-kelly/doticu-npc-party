@@ -150,26 +150,26 @@ int function f_Destroy()
     p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_MEMBER)
     p_ref_actor.EvaluatePackage()
 
+    p_queue_member.Flush(); I think this is the right spot
+
     if p_FOLLOWERS.Has_Follower(p_ref_actor)
-        code_return = Unfollow()
+        code_return = p_FOLLOWERS.f_Destroy_Follower(p_ref_actor)
         if code_return < 0
             return code_return
         endIf
     endIf
     if p_IMMOBILE.Exists()
-        code_return = Mobilize()
+        code_return = p_IMMOBILE.f_Destroy()
         if code_return < 0
             return code_return
         endIf
     endIf
     if p_SETTLER.Exists()
-        code_return = Unsettle()
+        code_return = p_SETTLER.f_Destroy()
         if code_return < 0
             return code_return
         endIf
     endIf
-
-    p_queue_member.Flush(); I think this is the right spot
 
     ;p_Unoutfit() Restore sets the original
     p_Unvitalize()
@@ -1399,7 +1399,9 @@ event On_Queue_Member(string str_message)
     elseIf str_message == "p_Vitalize"
         p_Vitalize()
     elseIf str_message == "Follower.F_Enforce"
-        Get_Follower().f_Enforce()
+        if p_FOLLOWERS.Has_Follower(p_ref_actor)
+            Get_Follower().f_Enforce()
+        endIf
     endIf
 
     p_queue_member.Dequeue()
@@ -1413,9 +1415,9 @@ endEvent
 
 event On_Load_Mod()
     if Exists()
-        Enforce()
         p_Rename_Containers(Get_Name())
         p_Rename_Outfits(Get_Name())
+        Enforce()
     endIf
 endEvent
 

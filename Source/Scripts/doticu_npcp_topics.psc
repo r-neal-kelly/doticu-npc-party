@@ -22,23 +22,23 @@ function Pack(ObjectReference ref_object)
 endFunction
 
 function Outfit_Member(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Outfit(ref_object as Actor, "member", false)
-endFunction
-
-function Outfit_Follower(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Outfit(ref_object as Actor, "follower", false)
-endFunction
-
-function Outfit_Immobile(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Outfit(ref_object as Actor, "immobile", false)
-endFunction
-
-function Outfit_Thrall(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Outfit(ref_object as Actor, "thrall", false)
+    (GetOwningQuest() as doticu_npcp_commands).Outfit_Member(ref_object as Actor, false)
 endFunction
 
 function Outfit_Settler(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Outfit(ref_object as Actor, "settler", false)
+    (GetOwningQuest() as doticu_npcp_commands).Outfit_Settler(ref_object as Actor, false)
+endFunction
+
+function Outfit_Thrall(ObjectReference ref_object)
+    (GetOwningQuest() as doticu_npcp_commands).Outfit_Thrall(ref_object as Actor, false)
+endFunction
+
+function Outfit_Follower(ObjectReference ref_object)
+    (GetOwningQuest() as doticu_npcp_commands).Outfit_Follower(ref_object as Actor, false)
+endFunction
+
+function Outfit_Immobile(ObjectReference ref_object)
+    (GetOwningQuest() as doticu_npcp_commands).Outfit_Immobile(ref_object as Actor, false)
 endFunction
 
 function Enthrall(ObjectReference ref_object)
@@ -50,35 +50,35 @@ function Unthrall(ObjectReference ref_object)
 endFunction
 
 function Style_Default(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Style(ref_object as Actor, "default", false)
+    (GetOwningQuest() as doticu_npcp_commands).Style_Default(ref_object as Actor, false)
 endFunction
 
 function Style_Warrior(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Style(ref_object as Actor, "warrior", false)
+    (GetOwningQuest() as doticu_npcp_commands).Style_Warrior(ref_object as Actor, false)
 endFunction
 
 function Style_Mage(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Style(ref_object as Actor, "mage", false)
+    (GetOwningQuest() as doticu_npcp_commands).Style_Mage(ref_object as Actor, false)
 endFunction
 
 function Style_Archer(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Style(ref_object as Actor, "archer", false)
+    (GetOwningQuest() as doticu_npcp_commands).Style_Archer(ref_object as Actor, false)
 endFunction
 
 function Vitality_Mortal(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Vitalize(ref_object as Actor, "mortal", false)
+    (GetOwningQuest() as doticu_npcp_commands).Vitalize_Mortal(ref_object as Actor, false)
 endFunction
 
 function Vitality_Protected(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Vitalize(ref_object as Actor, "protected", false)
+    (GetOwningQuest() as doticu_npcp_commands).Vitalize_Protected(ref_object as Actor, false)
 endFunction
 
 function Vitality_Essential(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Vitalize(ref_object as Actor, "essential", false)
+    (GetOwningQuest() as doticu_npcp_commands).Vitalize_Essential(ref_object as Actor, false)
 endFunction
 
 function Vitality_Invulnerable(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Vitalize(ref_object as Actor, "invulnerable", false)
+    (GetOwningQuest() as doticu_npcp_commands).Vitalize_Invulnerable(ref_object as Actor, false)
 endFunction
 
 ; Settler Topics

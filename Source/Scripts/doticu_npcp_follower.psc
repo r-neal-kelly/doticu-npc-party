@@ -76,6 +76,7 @@ endFunction
 function f_Register()
     ; registering mod events is global for each script on an object, and
     ; further, works for handlers labeled as function as well as event.
+    RegisterForModEvent("doticu_npcp_followers_enforce", "On_Followers_Enforce")
     RegisterForModEvent("doticu_npcp_followers_settle", "On_Followers_Settle")
     RegisterForModEvent("doticu_npcp_followers_unsettle", "On_Followers_Unsettle")
     RegisterForModEvent("doticu_npcp_followers_immobilize", "On_Followers_Immobilize")
@@ -296,7 +297,7 @@ endFunction
 function p_Sneak()
     ; if possible, I want this function to make the followers completely undetectable.
     ; maybe an invisibility spell without the visual effect, if possible? not sure
-    p_ref_actor.SetActorValue("SpeedMult", 140.0)
+    p_ref_actor.SetActorValue("SpeedMult", 160.0)
 endFunction
 
 function p_Unsneak()
@@ -677,36 +678,44 @@ bool function Is_Sneak()
     return p_is_sneak
 endFunction
 
+bool function Is_Unsneak()
+    return !p_is_sneak
+endFunction
+
 bool function Is_Settler()
-    return p_ref_member.Is_Settler()
+    return Exists() && p_ref_member.Is_Settler()
 endFunction
 
 bool function Is_Immobile()
-    return p_ref_member.Is_Immobile()
+    return Exists() && p_ref_member.Is_Immobile()
 endFunction
 
 bool function Is_Mobile()
-    return p_ref_member.Is_Mobile()
+    return Exists() && p_ref_member.Is_Mobile()
 endFunction
 
 bool function Is_Styled_Default()
-    return p_ref_member.Is_Styled_Default()
+    return Exists() && p_ref_member.Is_Styled_Default()
 endFunction
 
 bool function Is_Styled_Warrior()
-    return p_ref_member.Is_Styled_Warrior()
+    return Exists() && p_ref_member.Is_Styled_Warrior()
 endFunction
 
 bool function Is_Styled_Mage()
-    return p_ref_member.Is_Styled_Mage()
+    return Exists() && p_ref_member.Is_Styled_Mage()
 endFunction
 
 bool function Is_Styled_Archer()
-    return p_ref_member.Is_Styled_Archer()
+    return Exists() && p_ref_member.Is_Styled_Archer()
+endFunction
+
+bool function Is_Alive()
+    return Exists() && p_ACTORS.Is_Alive(p_ref_actor)
 endFunction
 
 bool function Is_Dead()
-    return p_ACTORS.Is_Dead(p_ref_actor)
+    return Exists() && p_ACTORS.Is_Dead(p_ref_actor)
 endFunction
 
 function Summon(int distance = 60, int angle = 0)
@@ -745,60 +754,6 @@ event On_Queue_Follower(string str_message)
     p_queue_follower.Dequeue()
 endEvent
 
-event On_Followers_Settle()
-    if Exists()
-        Settle()
-    endIf
-endEvent
-
-event On_Followers_Unsettle()
-    if Exists() && Is_Settler()
-        Unsettle()
-    endIf
-endEvent
-
-event On_Followers_Immobilize()
-    if Exists() && Is_Mobile()
-        Immobilize()
-    endIf
-endEvent
-
-event On_Followers_Mobilize()
-    if Exists() && Is_Immobile()
-        Mobilize()
-    endIf
-endEvent
-
-event On_Followers_Sneak()
-    if Exists() && !Is_Sneak()
-        Sneak()
-    endIf
-endEvent
-
-event On_Followers_Unsneak()
-    if Exists() && Is_Sneak()
-        Unsneak()
-    endIf
-endEvent
-
-event On_Followers_Unfollow()
-    if Exists()
-        Unfollow()
-    endIf
-endEvent
-
-event On_Followers_Unmember()
-    if Exists()
-        Unmember()
-    endIf
-endEvent
-
-event On_Followers_Resurrect()
-    if Exists() && Is_Dead()
-        Resurrect()
-    endIf
-endEvent
-
 event OnCombatStateChanged(Actor ref_target, int code_combat)
     if code_combat == p_CODES.COMBAT_NO
         if !Is_Dead()
@@ -811,3 +766,73 @@ event OnCombatStateChanged(Actor ref_target, int code_combat)
 endEvent
 
 ; need to add the catch up function, when player pulls out their weapon. but make it faster this time.
+
+event On_Followers_Enforce()
+    if Exists()
+        Enforce()
+        p_FOLLOWERS.f_Complete_Job()
+    endIf
+endEvent
+
+event On_Followers_Settle()
+    if Exists()
+        Settle()
+        p_FOLLOWERS.f_Complete_Job()
+    endIf
+endEvent
+
+event On_Followers_Unsettle()
+    if Exists() && Is_Settler()
+        Unsettle()
+        p_FOLLOWERS.f_Complete_Job()
+    endIf
+endEvent
+
+event On_Followers_Immobilize()
+    if Exists() && Is_Mobile()
+        Immobilize()
+        p_FOLLOWERS.f_Complete_Job()
+    endIf
+endEvent
+
+event On_Followers_Mobilize()
+    if Exists() && Is_Immobile()
+        Mobilize()
+        p_FOLLOWERS.f_Complete_Job()
+    endIf
+endEvent
+
+event On_Followers_Sneak()
+    if Exists() && !Is_Sneak()
+        Sneak()
+        p_FOLLOWERS.f_Complete_Job()
+    endIf
+endEvent
+
+event On_Followers_Unsneak()
+    if Exists() && Is_Sneak()
+        Unsneak()
+        p_FOLLOWERS.f_Complete_Job()
+    endIf
+endEvent
+
+event On_Followers_Unfollow()
+    if Exists()
+        Unfollow()
+        p_FOLLOWERS.f_Complete_Job()
+    endIf
+endEvent
+
+event On_Followers_Unmember()
+    if Exists()
+        Unmember()
+        p_FOLLOWERS.f_Complete_Job()
+    endIf
+endEvent
+
+event On_Followers_Resurrect()
+    if Exists() && Is_Dead()
+        Resurrect()
+        p_FOLLOWERS.f_Complete_Job()
+    endIf
+endEvent

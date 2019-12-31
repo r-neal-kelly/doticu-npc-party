@@ -28,9 +28,9 @@ int property key_fs_immobilize              =    -1 auto hidden;
 int property key_fs_mobilize                =    -1 auto hidden;
 int property key_fs_sneak                   =    -1 auto hidden;
 int property key_fs_unsneak                 =    -1 auto hidden;
+int property key_fs_resurrect               =    -1 auto hidden;
 int property key_fs_unfollow                =    -1 auto hidden;
 int property key_fs_unmember                =    -1 auto hidden;
-int property key_fs_resurrect               =    -1 auto hidden;
 ; maybe add toggles? maybe use modified to keep things consistent in default settings
 
 ; also, the cool idea to cycle through members so that they are easily visible. they are sent back where they came. (settler marker, editor loc, coords if in same cell)

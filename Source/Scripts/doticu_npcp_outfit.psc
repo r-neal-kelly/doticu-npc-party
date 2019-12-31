@@ -84,9 +84,7 @@ function Get(Actor ref_actor)
     endWhile
 endFunction
 
-function Set(Actor ref_actor, bool keep_inventory = false)
-    ObjectReference ref_container_temp
-    Form[] arr_leveled
+function Set(Actor ref_actor)
     int num_forms
     int idx_forms
     Form ref_form
@@ -110,44 +108,9 @@ function Set(Actor ref_actor, bool keep_inventory = false)
         endWhile
 
         if do_bail
-            ; make sure everything is equipped and rendered
-            p_ACTORS.Update_Equipment(ref_actor)
             return
         endIf
     endIf
-
-    ; So we can determine what items are in the currently equipped outfit
-    num_forms = p_LEVELED.GetNumForms()
-    arr_leveled = Utility.CreateFormArray(num_forms, none)
-    idx_forms = 0
-    while idx_forms < num_forms
-        arr_leveled[idx_forms] = p_LEVELED.GetNthForm(idx_forms)
-        idx_forms += 1
-    endWhile
-
-    ; the choice is here for the future, but in this mod, the pack and outfits replace the actor's inventory
-    if keep_inventory
-        ref_container_temp = p_CONTAINERS.Create_Temp()
-    else
-        ref_container_temp = none
-    endIf
-
-    ; backup playable inventory minus current outfit, so we can clear new items added, and without adding dupes
-    num_forms = ref_actor.GetNumItems()
-    idx_forms = 0
-    while idx_forms < num_forms
-        ref_form = ref_actor.GetNthForm(idx_forms)
-        if !ref_form.IsPlayable()
-            idx_forms += 1
-        elseIf arr_leveled.Find(ref_form) > -1
-            ; we can't fully remove at this point, because the engine adds back 1 of every outfit item automatically afterward.
-            ref_actor.RemoveItem(ref_form, ref_actor.GetItemCount(ref_form) - 1, true, ref_container_temp); no 1, do leveled count
-            idx_forms += 1
-        else
-            ref_actor.RemoveItem(ref_form, ref_actor.GetItemCount(ref_form), true, ref_container_temp)
-            num_forms -= 1
-        endIf
-    endWhile
 
     ; updating the leveled list, which is attached to Outfit form, is what gives the engine the actual items
     p_LEVELED.Revert()
@@ -165,8 +128,8 @@ function Set(Actor ref_actor, bool keep_inventory = false)
     ; the engine will actually apply the outfit in the correct way now, which we cannot do manually
     ref_actor.SetOutfit(p_OUTFIT)
 
-    ; without this, the next step has a high chance of crashing or freezing the game. so let the engine render first
-    Utility.Wait(0.1)
+    ; prevents the game from crashing or freezing around the next step
+    Utility.Wait(0.2)
 
     ; we remove everything playable, then one of each outfit item is reapplied by engine, thus removing any possible dupes
     ref_actor.RemoveAllItems(none, false, true)
@@ -182,9 +145,6 @@ function Set(Actor ref_actor, bool keep_inventory = false)
         endIf
         idx_forms += 1
     endWhile
-
-    ; if keeping inventory, we add back the original from backup
-    p_CONTAINERS.Take_All(ref_actor, ref_container_temp)
 
     ; make sure everything is equipped and rendered
     p_ACTORS.Update_Equipment(ref_actor)

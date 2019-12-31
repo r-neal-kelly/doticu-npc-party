@@ -1,13 +1,13 @@
 Scriptname doticu_npcp_commands extends Quest
 
 ; Private Constants
-doticu_npcp_consts      p_CONSTS    = none
-doticu_npcp_codes       p_CODES     = none
-doticu_npcp_vars        p_VARS      = none
-doticu_npcp_logs        p_LOGS      = none
-doticu_npcp_actors      p_ACTORS    = none
-doticu_npcp_members     p_MEMBERS   = none
-doticu_npcp_followers   p_FOLLOWERS = none
+doticu_npcp_consts      p_CONSTS    =  none
+doticu_npcp_codes       p_CODES     =  none
+doticu_npcp_vars        p_VARS      =  none
+doticu_npcp_logs        p_LOGS      =  none
+doticu_npcp_actors      p_ACTORS    =  none
+doticu_npcp_members     p_MEMBERS   =  none
+doticu_npcp_followers   p_FOLLOWERS =  none
 
 ; Friend Methods
 function f_Link(doticu_npcp_data DATA)
@@ -97,11 +97,19 @@ function p_Notify_On_Pack(int code_return, Actor ref_actor, string str_name)
     endIf
 endFunction
 
-function p_Notify_On_Outfit(int code_return, string str_name, string str_outfit)
-    if str_outfit == "immobile"
+function p_Notify_On_Outfit(int code_return, string str_name, int code_outfit)
+    string str_outfit
+
+    if code_outfit == p_CODES.IS_MEMBER
+        str_outfit = "a member"
+    elseIf code_outfit == p_CODES.IS_SETTLER
+        str_outfit = "a settler"
+    elseIf code_outfit == p_CODES.IS_THRALL
+        str_outfit = "a thrall"
+    elseIf code_outfit == p_CODES.IS_FOLLOWER
+        str_outfit = "a follower"
+    elseIf code_outfit == p_CODES.IS_IMMOBILE
         str_outfit = "an immobile"
-    else
-        str_outfit = "a " + str_outfit
     endIf
 
     if code_return == p_CODES.SUCCESS
@@ -303,13 +311,17 @@ function p_Notify_On_Unparalyze(int code_return, string str_name)
     endIf
 endFunction
 
-function p_Notify_On_Style(int code_return, string str_name, string str_style)
-    if str_style == "default"
+function p_Notify_On_Style(int code_return, string str_name, int code_style)
+    string str_style
+
+    if code_style == p_CODES.IS_DEFAULT
         str_style = "a default member"
-    elseIf str_style == "archer"
-        str_style = "an " + str_style
-    else
-        str_style = "a " + str_style
+    elseIf code_style == p_CODES.IS_WARRIOR
+        str_style = "a warrior"
+    elseIf code_style == p_CODES.IS_MAGE
+        str_style = "a mage"
+    elseIf code_style == p_CODES.IS_ARCHER
+        str_style = "an archer"
     endIf
 
     if code_return == p_CODES.SUCCESS
@@ -335,11 +347,17 @@ function p_Notify_On_Style(int code_return, string str_name, string str_style)
     endIf
 endFunction
 
-function p_Notify_On_Vitalize(int code_return, string str_name, string str_vitality)
-    if str_vitality == "essential" || str_vitality == "invulnerable"
-        str_vitality = "an " + str_vitality + " member"
-    else
-        str_vitality = "a " + str_vitality + " member"
+function p_Notify_On_Vitalize(int code_return, string str_name, int code_vitality)
+    string str_vitality
+
+    if code_vitality == p_CODES.IS_MORTAL
+        str_vitality = "a mortal member"
+    elseIf code_vitality == p_CODES.IS_PROTECTED
+        str_vitality = "a protected member"
+    elseIf code_vitality == p_CODES.IS_ESSENTIAL
+        str_vitality = "an essential member"
+    elseIf code_vitality == p_CODES.IS_INVULNERABLE
+        str_vitality = "an invulnerable member"
     endIf
 
     if code_return == p_CODES.SUCCESS
@@ -481,10 +499,103 @@ function p_Notify_On_Followers_Summon_Immobile(int code_return)
     endIf
 endFunction
 
-; Public Methods
-function Member(Actor ref_actor)
+function p_Notify_On_Followers_Summon_Mobile_Behind(int code_return)
+    if code_return == p_CODES.SUCCESS
+        p_LOGS.Create_Note("Summoned all mobile followers behind you.")
+    elseIf code_return == p_CODES.HASNT_FOLLOWER
+        p_LOGS.Create_Note("No followers to summon.")
+    elseIf code_return == p_CODES.HASNT_MOBILE
+        p_LOGS.Create_Note("No mobile followers to summon.")
+    else
+        p_LOGS.Create_Error("Could not summon mobile followers. " + code_return)
+    endIf
+endFunction
+
+function p_Notify_On_Followers_Settle(int code_return)
+    if code_return == p_CODES.SUCCESS
+        p_LOGS.Create_Note("All followers settle where they stand.")
+    elseIf code_return == p_CODES.HASNT_FOLLOWER
+        p_LOGS.Create_Note("No followers to settle.")
+    else
+        p_LOGS.Create_Error("Could not settle followers. " + code_return)
+    endIf
+endFunction
+
+function p_Notify_On_Followers_Unsettle(int code_return)
+    if code_return == p_CODES.SUCCESS
+        p_LOGS.Create_Note("All followers have unsettled.")
+    elseIf code_return == p_CODES.HASNT_FOLLOWER
+        p_LOGS.Create_Note("No followers to unsettle.")
+    elseIf code_return == p_CODES.HASNT_SETTLER
+        p_LOGS.Create_Note("No followers are already unsettled.")
+    else
+        p_LOGS.Create_Error("Could not unsettle followers. " + code_return)
+    endIf
+endFunction
+
+function p_Notify_On_Followers_Immobilize(int code_return)
+    if code_return == p_CODES.SUCCESS
+        p_LOGS.Create_Note("All followers have been immobilized.")
+    elseIf code_return == p_CODES.HASNT_FOLLOWER
+        p_LOGS.Create_Note("No followers to immobilize.")
+    elseIf code_return == p_CODES.HASNT_MOBILE
+        p_LOGS.Create_Note("All followers are already immobilized.")
+    else
+        p_LOGS.Create_Error("Could not immobilize followers. " + code_return)
+    endIf
+endFunction
+
+function p_Notify_On_Followers_Mobilize(int code_return)
+    if code_return == p_CODES.SUCCESS
+        p_LOGS.Create_Note("All followers have been mobilized.")
+    elseIf code_return == p_CODES.HASNT_FOLLOWER
+        p_LOGS.Create_Note("No followers to mobilize.")
+    elseIf code_return == p_CODES.HASNT_IMMOBILE
+        p_LOGS.Create_Note("All followers are already mobilized.")
+    else
+        p_LOGS.Create_Error("Could not mobilize followers. " + code_return)
+    endIf
+endFunction
+
+function p_Notify_On_Followers_Sneak(int code_return)
+    if code_return == p_CODES.SUCCESS
+        p_LOGS.Create_Note("All followers will sneak.")
+    elseIf code_return == p_CODES.HASNT_FOLLOWER
+        p_LOGS.Create_Note("No followers to sneak.")
+    elseIf code_return == p_CODES.HASNT_UNSNEAK
+        p_LOGS.Create_Note("All followers are already sneaking.")
+    else
+        p_LOGS.Create_Error("Could not make followers sneak. " + code_return)
+    endIf
+endFunction
+
+function p_Notify_On_Followers_Unsneak(int code_return)
+    if code_return == p_CODES.SUCCESS
+        p_LOGS.Create_Note("All followers will stop sneaking.")
+    elseIf code_return == p_CODES.HASNT_FOLLOWER
+        p_LOGS.Create_Note("No followers to stop sneaking.")
+    elseIf code_return == p_CODES.HASNT_SNEAK
+        p_LOGS.Create_Note("All followers are already not sneaking.")
+    else
+        p_LOGS.Create_Error("Could not make followers stop sneaking. " + code_return)
+    endIf
+endFunction
+
+function p_Notify_On_Followers_Resurrect(int code_return)
+    if code_return == p_CODES.SUCCESS
+        p_LOGS.Create_Note("All dead followers will resurrect.")
+    elseIf code_return == p_CODES.HASNT_FOLLOWER
+        p_LOGS.Create_Note("No followers to resurrect.")
+    elseIf code_return == p_CODES.HASNT_DEAD
+        p_LOGS.Create_Note("All followers are already alive.")
+    else
+        p_LOGS.Create_Error("Could not make followers resurrect. " + code_return)
+    endIf
+endFunction
+
+function p_Member(Actor ref_actor)
     if p_MEMBERS.Should_Clone_Actor(ref_actor)
-        Clone(ref_actor)
+        p_Clone(ref_actor)
         return
     endIf
 
@@ -494,9 +605,9 @@ function Member(Actor ref_actor)
     p_Notify_On_Member(p_MEMBERS.Create_Member(ref_actor), str_name)
 endFunction
 
-function Unmember(Actor ref_actor)
+function p_Unmember(Actor ref_actor)
     if p_MEMBERS.Should_Unclone_Member(p_MEMBERS.Get_Member(ref_actor))
-        Unclone(ref_actor)
+        p_Unclone(ref_actor)
         return
     endIf
 
@@ -506,7 +617,7 @@ function Unmember(Actor ref_actor)
     p_Notify_On_Unmember(p_MEMBERS.Destroy_Member(ref_actor), str_name)
 endFunction
 
-function Clone(Actor ref_actor)
+function p_Clone(Actor ref_actor)
     int code_return
     string str_name = p_ACTORS.Get_Name(ref_actor)
 
@@ -517,18 +628,18 @@ function Clone(Actor ref_actor)
     p_Notify_On_Clone(p_MEMBERS.Create_Member(ref_actor, true), str_name)
 endFunction
 
-function Unclone(Actor ref_actor)
+function p_Unclone(Actor ref_actor)
     int code_return
     string str_name = p_ACTORS.Get_Name(ref_actor)
 
     p_Notify_On_Unclone(p_MEMBERS.Destroy_Member(ref_actor, true), str_name)
 endFunction
 
-function Pack(Actor ref_actor, bool do_create)
+function p_Pack(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = p_ACTORS.Get_Name(ref_actor)
     
-    if do_create && !p_Members.Has_Member(ref_actor)
+    if auto_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
         if code_return < 0
             p_Notify_On_Pack(code_return, ref_actor, str_name)
@@ -545,45 +656,74 @@ function Pack(Actor ref_actor, bool do_create)
     p_Notify_On_Pack(ref_member.Pack(), ref_actor, str_name)
 endFunction
 
-function Outfit(Actor ref_actor, String str_outfit, bool do_create)
+function p_Outfit(Actor ref_actor, int code_outfit, bool auto_create)
     int code_return
     string str_name = p_ACTORS.Get_Name(ref_actor)
-    if str_outfit != "settler" && str_outfit != "immobile" && str_outfit != "follower" && str_outfit != "thrall"
-        str_outfit = "member"
+
+    if code_outfit != p_CODES.IS_MEMBER &&\
+        code_outfit != p_CODES.IS_SETTLER &&\
+        code_outfit != p_CODES.IS_THRALL &&\
+        code_outfit != p_CODES.IS_FOLLOWER &&\
+        code_outfit != p_CODES.IS_IMMOBILE
+        code_outfit = p_CODES.IS_MEMBER; eventually p_VARS.default_outfit
     endIf
     
-    if do_create && !p_Members.Has_Member(ref_actor)
+    if auto_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
         if code_return < 0
-            p_Notify_On_Outfit(code_return, str_name, str_outfit)
+            p_Notify_On_Outfit(code_return, str_name, code_outfit)
             return
         endIf
     endIf
 
     doticu_npcp_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        p_Notify_On_Outfit(p_CODES.HASNT_MEMBER, str_name, str_outfit)
+        p_Notify_On_Outfit(p_CODES.HASNT_MEMBER, str_name, code_outfit)
         return
     endIf
 
-    if str_outfit == "member"
-        p_Notify_On_Outfit(ref_member.Outfit_Member(), str_name, str_outfit)
-    elseIf str_outfit == "settler"
-        p_Notify_On_Outfit(ref_member.Outfit_Settler(), str_name, str_outfit)
-    elseIf str_outfit == "thrall"
-        p_Notify_On_Outfit(ref_member.Outfit_Thrall(), str_name, str_outfit)
-    elseIf str_outfit == "immobile"
-        p_Notify_On_Outfit(ref_member.Outfit_Immobile(), str_name, str_outfit)
-    elseIf str_outfit == "follower"
-        p_Notify_On_Outfit(ref_member.Outfit_Follower(), str_name, str_outfit)
+    if code_outfit == p_CODES.IS_MEMBER
+        p_Notify_On_Outfit(ref_member.Outfit_Member(), str_name, code_outfit)
+    elseIf code_outfit == p_CODES.IS_SETTLER
+        p_Notify_On_Outfit(ref_member.Outfit_Settler(), str_name, code_outfit)
+    elseIf code_outfit == p_CODES.IS_THRALL
+        p_Notify_On_Outfit(ref_member.Outfit_Thrall(), str_name, code_outfit)
+    elseIf code_outfit == p_CODES.IS_FOLLOWER
+        p_Notify_On_Outfit(ref_member.Outfit_Follower(), str_name, code_outfit)
+    elseIf code_outfit == p_CODES.IS_IMMOBILE
+        p_Notify_On_Outfit(ref_member.Outfit_Immobile(), str_name, code_outfit)
     endIf
 endFunction
 
-function Resurrect(Actor ref_actor, bool do_create)
+function p_Outfit_Member(Actor ref_actor, bool auto_create)
+    p_Outfit(ref_actor, p_CODES.IS_MEMBER, auto_create)
+endFunction
+
+function p_Outfit_Settler(Actor ref_actor, bool auto_create)
+    p_Outfit(ref_actor, p_CODES.IS_SETTLER, auto_create)
+endFunction
+
+function p_Outfit_Thrall(Actor ref_actor, bool auto_create)
+    p_Outfit(ref_actor, p_CODES.IS_THRALL, auto_create)
+endFunction
+
+function p_Outfit_Follower(Actor ref_actor, bool auto_create)
+    p_Outfit(ref_actor, p_CODES.IS_FOLLOWER, auto_create)
+endFunction
+
+function p_Outfit_Immobile(Actor ref_actor, bool auto_create)
+    p_Outfit(ref_actor, p_CODES.IS_IMMOBILE, auto_create)
+endFunction
+
+function p_Unoutfit(Actor ref_actor, bool auto_create)
+    ; can create a toggle between these two
+endFunction
+
+function p_Resurrect(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = p_ACTORS.Get_Name(ref_actor)
     
-    if do_create && !p_Members.Has_Member(ref_actor)
+    if auto_create && !p_Members.Has_Member(ref_actor)
         p_Notify_On_Resurrect(p_MEMBERS.Create_Member(ref_actor), str_name)
         return
     endIf
@@ -597,11 +737,11 @@ function Resurrect(Actor ref_actor, bool do_create)
     p_Notify_On_Resurrect(ref_member.Resurrect(), str_name)
 endFunction
 
-function Settle(Actor ref_actor, bool do_create)
+function p_Settle(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = p_ACTORS.Get_Name(ref_actor)
 
-    if do_create && !p_Members.Has_Member(ref_actor)
+    if auto_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
         if code_return < 0
             p_Notify_On_Settle(code_return, str_name)
@@ -618,11 +758,11 @@ function Settle(Actor ref_actor, bool do_create)
     p_Notify_On_Settle(ref_member.Settle(), str_name)
 endFunction
 
-function Unsettle(Actor ref_actor, bool do_create)
+function p_Unsettle(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = p_ACTORS.Get_Name(ref_actor)
 
-    if do_create && !p_Members.Has_Member(ref_actor)
+    if auto_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
         if code_return < 0
             p_Notify_On_Unsettle(code_return, str_name)
@@ -639,11 +779,11 @@ function Unsettle(Actor ref_actor, bool do_create)
     p_Notify_On_Unsettle(ref_member.Unsettle(), str_name)
 endFunction
 
-function Resettle(Actor ref_actor, bool do_create)
+function p_Resettle(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = p_ACTORS.Get_Name(ref_actor)
 
-    if do_create && !p_Members.Has_Member(ref_actor)
+    if auto_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
         if code_return < 0
             p_Notify_On_Resettle(code_return, str_name)
@@ -657,7 +797,7 @@ function Resettle(Actor ref_actor, bool do_create)
         return
     endIf
 
-    if do_create && !ref_member.Is_Settler()
+    if auto_create && !ref_member.Is_Settler()
         code_return = ref_member.Settle()
         if code_return < 0
             p_Notify_On_Resettle(code_return, str_name)
@@ -674,11 +814,11 @@ function Resettle(Actor ref_actor, bool do_create)
     p_Notify_On_Resettle(ref_settler.Resettle(), str_name)
 endFunction
 
-function Enthrall(Actor ref_actor, bool do_create)
+function p_Enthrall(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = p_ACTORS.Get_Name(ref_actor)
 
-    if do_create && !p_Members.Has_Member(ref_actor)
+    if auto_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
         if code_return < 0
             p_Notify_On_Enthrall(code_return, str_name)
@@ -695,11 +835,11 @@ function Enthrall(Actor ref_actor, bool do_create)
     p_Notify_On_Enthrall(ref_member.Enthrall(), str_name)
 endFunction
 
-function Unthrall(Actor ref_actor, bool do_create)
+function p_Unthrall(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = p_ACTORS.Get_Name(ref_actor)
 
-    if do_create && !p_Members.Has_Member(ref_actor)
+    if auto_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
         if code_return < 0
             p_Notify_On_Unthrall(code_return, str_name)
@@ -716,11 +856,11 @@ function Unthrall(Actor ref_actor, bool do_create)
     p_Notify_On_Unthrall(ref_member.Unthrall(), str_name)
 endFunction
 
-function Immobilize(Actor ref_actor, bool do_create)
+function p_Immobilize(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = p_ACTORS.Get_Name(ref_actor)
 
-    if do_create && !p_Members.Has_Member(ref_actor)
+    if auto_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
         if code_return < 0
             p_Notify_On_Immobilize(code_return, str_name)
@@ -737,11 +877,11 @@ function Immobilize(Actor ref_actor, bool do_create)
     p_Notify_On_Immobilize(ref_member.Immobilize(), str_name)
 endFunction
 
-function Mobilize(Actor ref_actor, bool do_create)
+function p_Mobilize(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = p_ACTORS.Get_Name(ref_actor)
 
-    if do_create && !p_Members.Has_Member(ref_actor)
+    if auto_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
         if code_return < 0
             p_Notify_On_Mobilize(code_return, str_name)
@@ -758,11 +898,11 @@ function Mobilize(Actor ref_actor, bool do_create)
     p_Notify_On_Mobilize(ref_member.Mobilize(), str_name)
 endFunction
 
-function Paralyze(Actor ref_actor, bool do_create)
+function p_Paralyze(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = p_ACTORS.Get_Name(ref_actor)
 
-    if do_create && !p_Members.Has_Member(ref_actor)
+    if auto_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
         if code_return < 0
             p_Notify_On_Paralyze(code_return, str_name)
@@ -776,7 +916,7 @@ function Paralyze(Actor ref_actor, bool do_create)
         return
     endIf
 
-    if do_create && !ref_member.Is_Immobile()
+    if auto_create && !ref_member.Is_Immobile()
         code_return = ref_member.Immobilize()
         if code_return < 0
             p_Notify_On_Paralyze(code_return, str_name)
@@ -793,11 +933,11 @@ function Paralyze(Actor ref_actor, bool do_create)
     p_Notify_On_Paralyze(ref_immobile.Paralyze(), str_name)
 endFunction
 
-function Unparalyze(Actor ref_actor, bool do_create)
+function p_Unparalyze(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = p_ACTORS.Get_Name(ref_actor)
 
-    if do_create && !p_Members.Has_Member(ref_actor)
+    if auto_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
         if code_return < 0
             p_Notify_On_Unparalyze(code_return, str_name)
@@ -811,7 +951,7 @@ function Unparalyze(Actor ref_actor, bool do_create)
         return
     endIf
 
-    if do_create && !ref_member.Is_Immobile()
+    if auto_create && !ref_member.Is_Immobile()
         code_return = ref_member.Immobilize()
         if code_return < 0
             p_Notify_On_Unparalyze(code_return, str_name)
@@ -828,75 +968,115 @@ function Unparalyze(Actor ref_actor, bool do_create)
     p_Notify_On_Unparalyze(ref_immobile.Unparalyze(), str_name)
 endFunction
 
-function Style(Actor ref_actor, string str_style, bool do_create); may want int code_style instead
+function p_Style(Actor ref_actor, int code_style, bool auto_create)
     int code_return
     string str_name = p_ACTORS.Get_Name(ref_actor)
-    if str_style != "warrior" && str_style != "mage" && str_style != "archer"
-        str_style = "default"
+
+    if code_style != p_CODES.IS_DEFAULT &&\
+        code_style != p_CODES.IS_WARRIOR &&\
+        code_style != p_CODES.IS_MAGE &&\
+        code_style != p_CODES.IS_ARCHER
+        code_style = p_VARS.auto_style; eventually p_VARS.default_style
     endIf
 
-    if do_create && !p_Members.Has_Member(ref_actor)
+    if auto_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
         if code_return < 0
-            p_Notify_On_Style(code_return, str_name, str_style)
+            p_Notify_On_Style(code_return, str_name, code_style)
             return
         endIf
     endIf
 
     doticu_npcp_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        p_Notify_On_Style(p_CODES.HASNT_MEMBER, str_name, str_style)
+        p_Notify_On_Style(p_CODES.HASNT_MEMBER, str_name, code_style)
         return
     endIf
 
-    if str_style == "warrior"
-        p_Notify_On_Style(ref_member.Style_Warrior(), str_name, str_style)
-    elseIf str_style == "mage"
-        p_Notify_On_Style(ref_member.Style_Mage(), str_name, str_style)
-    elseIf str_style == "archer"
-        p_Notify_On_Style(ref_member.Style_Archer(), str_name, str_style)
-    else
-        p_Notify_On_Style(ref_member.Style_Default(), str_name, str_style)
+    if code_style == p_CODES.IS_DEFAULT
+        p_Notify_On_Style(ref_member.Style_Default(), str_name, code_style)
+    elseIf code_style == p_CODES.IS_WARRIOR
+        p_Notify_On_Style(ref_member.Style_Warrior(), str_name, code_style)
+    elseIf code_style == p_CODES.IS_MAGE
+        p_Notify_On_Style(ref_member.Style_Mage(), str_name, code_style)
+    elseIf code_style == p_CODES.IS_ARCHER
+        p_Notify_On_Style(ref_member.Style_Archer(), str_name, code_style)
     endIf
 endFunction
 
-function Vitalize(Actor ref_actor, string str_vitality, bool do_create); may want int code_vitality instead
+function p_Style_Default(Actor ref_actor, bool auto_create)
+    p_Style(ref_actor, p_CODES.IS_DEFAULT, auto_create)
+endFunction
+
+function p_Style_Warrior(Actor ref_actor, bool auto_create)
+    p_Style(ref_actor, p_CODES.IS_WARRIOR, auto_create)
+endFunction
+
+function p_Style_Mage(Actor ref_actor, bool auto_create)
+    p_Style(ref_actor, p_CODES.IS_MAGE, auto_create)
+endFunction
+
+function p_Style_Archer(Actor ref_actor, bool auto_create)
+    p_Style(ref_actor, p_CODES.IS_ARCHER, auto_create)
+endFunction
+
+function p_Vitalize(Actor ref_actor, int code_vitality, bool auto_create)
     int code_return
     string str_name = p_ACTORS.Get_Name(ref_actor)
-    if str_vitality != "protected" && str_vitality != "essential" && str_vitality != "invulnerable"
-        str_vitality = "mortal"
+    
+    if code_vitality != p_CODES.IS_MORTAL &&\
+        code_vitality != p_CODES.IS_PROTECTED &&\
+        code_vitality != p_CODES.IS_ESSENTIAL &&\
+        code_vitality != p_CODES.IS_INVULNERABLE
+        code_vitality = p_VARS.auto_vitality; eventually p_VARS.default_vitality
     endIf
-
-    if do_create && !p_Members.Has_Member(ref_actor)
+    
+    if auto_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
         if code_return < 0
-            p_Notify_On_Vitalize(code_return, str_name, str_vitality)
+            p_Notify_On_Vitalize(code_return, str_name, code_vitality)
             return
         endIf
     endIf
 
     doticu_npcp_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        p_Notify_On_Vitalize(p_CODES.HASNT_MEMBER, str_name, str_vitality)
+        p_Notify_On_Vitalize(p_CODES.HASNT_MEMBER, str_name, code_vitality)
         return
     endIf
 
-    if str_vitality == "mortal"
-        p_Notify_On_Vitalize(ref_member.Vitalize_Mortal(), str_name, str_vitality)
-    elseIf str_vitality == "protected"
-        p_Notify_On_Vitalize(ref_member.Vitalize_Protected(), str_name, str_vitality)
-    elseIf str_vitality == "essential"
-        p_Notify_On_Vitalize(ref_member.Vitalize_Essential(), str_name, str_vitality)
-    elseIf str_vitality == "invulnerable"
-        p_Notify_On_Vitalize(ref_member.Vitalize_Invulnerable(), str_name, str_vitality)
+    if code_vitality == p_CODES.IS_MORTAL
+        p_Notify_On_Vitalize(ref_member.Vitalize_Mortal(), str_name, code_vitality)
+    elseIf code_vitality == p_CODES.IS_PROTECTED
+        p_Notify_On_Vitalize(ref_member.Vitalize_Protected(), str_name, code_vitality)
+    elseIf code_vitality == p_CODES.IS_ESSENTIAL
+        p_Notify_On_Vitalize(ref_member.Vitalize_Essential(), str_name, code_vitality)
+    elseIf code_vitality == p_CODES.IS_INVULNERABLE
+        p_Notify_On_Vitalize(ref_member.Vitalize_Invulnerable(), str_name, code_vitality)
     endIf
 endFunction
 
-function Follow(Actor ref_actor, bool do_create)
+function p_Vitalize_Mortal(Actor ref_actor, bool auto_create)
+    p_Vitalize(ref_actor, p_CODES.IS_MORTAL, auto_create)
+endFunction
+
+function p_Vitalize_Protected(Actor ref_actor, bool auto_create)
+    p_Vitalize(ref_actor, p_CODES.IS_PROTECTED, auto_create)
+endFunction
+
+function p_Vitalize_Essential(Actor ref_actor, bool auto_create)
+    p_Vitalize(ref_actor, p_CODES.IS_ESSENTIAL, auto_create)
+endFunction
+
+function p_Vitalize_Invulnerable(Actor ref_actor, bool auto_create)
+    p_Vitalize(ref_actor, p_CODES.IS_INVULNERABLE, auto_create)
+endFunction
+
+function p_Follow(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = p_ACTORS.Get_Name(ref_actor)
 
-    if do_create && !p_Members.Has_Member(ref_actor)
+    if auto_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
         if code_return < 0
             p_Notify_On_Follow(code_return, str_name)
@@ -913,11 +1093,11 @@ function Follow(Actor ref_actor, bool do_create)
     p_Notify_On_Follow(ref_member.Follow(), str_name)
 endFunction
 
-function Unfollow(Actor ref_actor, bool do_create)
+function p_Unfollow(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = p_ACTORS.Get_Name(ref_actor)
 
-    if do_create && !p_Members.Has_Member(ref_actor)
+    if auto_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
         if code_return < 0
             p_Notify_On_Unfollow(code_return, str_name)
@@ -934,11 +1114,11 @@ function Unfollow(Actor ref_actor, bool do_create)
     p_Notify_On_Unfollow(ref_member.Unfollow(), str_name)
 endFunction
 
-function Sneak(Actor ref_actor, bool do_create)
+function p_Sneak(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = p_ACTORS.Get_Name(ref_actor)
 
-    if do_create && !p_Members.Has_Member(ref_actor)
+    if auto_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
         if code_return < 0
             p_Notify_On_Sneak(code_return, str_name)
@@ -952,7 +1132,7 @@ function Sneak(Actor ref_actor, bool do_create)
         return
     endIf
 
-    if do_create && !ref_member.Is_Follower()
+    if auto_create && !ref_member.Is_Follower()
         code_return = ref_member.Follow()
         if code_return < 0
             p_Notify_On_Sneak(code_return, str_name)
@@ -969,11 +1149,11 @@ function Sneak(Actor ref_actor, bool do_create)
     p_Notify_On_Sneak(ref_follower.Sneak(), str_name)
 endFunction
 
-function Unsneak(Actor ref_actor, bool do_create)
+function p_Unsneak(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = p_ACTORS.Get_Name(ref_actor)
 
-    if do_create && !p_Members.Has_Member(ref_actor)
+    if auto_create && !p_Members.Has_Member(ref_actor)
         code_return = p_MEMBERS.Create_Member(ref_actor)
         if code_return < 0
             p_Notify_On_Unsneak(code_return, str_name)
@@ -987,7 +1167,7 @@ function Unsneak(Actor ref_actor, bool do_create)
         return
     endIf
 
-    if do_create && !ref_member.Is_Follower()
+    if auto_create && !ref_member.Is_Follower()
         code_return = ref_member.Follow()
         if code_return < 0
             p_Notify_On_Unsneak(code_return, str_name)
@@ -1004,92 +1184,624 @@ function Unsneak(Actor ref_actor, bool do_create)
     p_Notify_On_Unsneak(ref_follower.Unsneak(), str_name)
 endFunction
 
-function Toggle_Member(Actor ref_actor)
+function p_Toggle_Member(Actor ref_actor)
     doticu_npcp_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if ref_member
-        Unmember(ref_actor)
+        p_Unmember(ref_actor)
     else
-        Member(ref_actor)
+        p_Member(ref_actor)
     endIf
 endFunction
 
-function Toggle_Settler(Actor ref_actor)
+function p_Toggle_Settler(Actor ref_actor)
     doticu_npcp_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if ref_member && ref_member.Is_Settler()
-        Unsettle(ref_actor, true)
+        p_Unsettle(ref_actor, true)
     else
-        Settle(ref_actor, true)
+        p_Settle(ref_actor, true)
     endIf
 endFunction
 
-function Toggle_Thrall(Actor ref_actor)
+function p_Toggle_Thrall(Actor ref_actor)
     doticu_npcp_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if ref_member && ref_member.Is_Thrall()
-        Unthrall(ref_actor, true)
+        p_Unthrall(ref_actor, true)
     else
-        Enthrall(ref_actor, true)
+        p_Enthrall(ref_actor, true)
     endIf
 endFunction
 
-function Toggle_Immobile(Actor ref_actor)
+function p_Toggle_Immobile(Actor ref_actor)
     doticu_npcp_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if ref_member && ref_member.Is_Immobile()
-        Mobilize(ref_actor, true)
+        p_Mobilize(ref_actor, true)
     else
-        Immobilize(ref_actor, true)
+        p_Immobilize(ref_actor, true)
     endIf
 endFunction
 
-function Toggle_Paralyzed(Actor ref_actor)
+function p_Toggle_Paralyzed(Actor ref_actor)
     doticu_npcp_immobile ref_immobile = p_MEMBERS.Get_Immobile(ref_actor)
     if ref_immobile && ref_immobile.Is_Paralyzed()
-        Unparalyze(ref_actor, true)
+        p_Unparalyze(ref_actor, true)
     else
-        Paralyze(ref_actor, true)
+        p_Paralyze(ref_actor, true)
     endIf
 endFunction
 
-function Toggle_Follower(Actor ref_actor)
+function p_Toggle_Follower(Actor ref_actor)
     doticu_npcp_follower ref_follower = p_FOLLOWERS.Get_Follower(ref_actor)
     if ref_follower
-        Unfollow(ref_actor, true)
+        p_Unfollow(ref_actor, true)
     else
-        Follow(ref_actor, true)
+        p_Follow(ref_actor, true)
     endIf
 endFunction
 
-function Toggle_Sneak(Actor ref_actor)
+function p_Toggle_Sneak(Actor ref_actor)
     doticu_npcp_follower ref_follower = p_FOLLOWERS.Get_Follower(ref_actor)
     if ref_follower && ref_follower.Is_Sneak()
-        Unsneak(ref_actor, true)
+        p_Unsneak(ref_actor, true)
     else
-        Sneak(ref_actor, true)
+        p_Sneak(ref_actor, true)
     endIf
 endFunction
 
-function Cycle_Style(Actor ref_actor)
+function p_Cycle_Style(Actor ref_actor, bool auto_create)
     doticu_npcp_member ref_member = p_MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        Style(ref_actor, "default", true)
+        p_Style(ref_actor, p_VARS.auto_style, auto_create)
     elseIf ref_member.Is_Styled_Default()
-        Style(ref_actor, "warrior", false)
+        p_Style(ref_actor, p_CODES.IS_WARRIOR, auto_create)
     elseIf ref_member.Is_Styled_Warrior()
-        Style(ref_actor, "mage", false)
+        p_Style(ref_actor, p_CODES.IS_MAGE, auto_create)
     elseIf ref_member.Is_Styled_Mage()
-        Style(ref_actor, "archer", false)
+        p_Style(ref_actor, p_CODES.IS_ARCHER, auto_create)
     elseIf ref_member.Is_Styled_Archer()
-        Style(ref_actor, "default", false)
+        p_Style(ref_actor, p_CODES.IS_DEFAULT, auto_create)
     endIf
 endFunction
 
-function Followers_Summon_All()
+function p_Cycle_Vitality(Actor ref_actor, bool auto_create)
+    doticu_npcp_member ref_member = p_MEMBERS.Get_Member(ref_actor)
+    if !ref_member
+        p_Vitalize(ref_actor, p_VARS.auto_vitality, auto_create)
+    elseIf ref_member.Is_Vitalized_Mortal()
+        p_Vitalize(ref_actor, p_CODES.IS_PROTECTED, auto_create)
+    elseIf ref_member.Is_Vitalized_Protected()
+        p_Vitalize(ref_actor, p_CODES.IS_ESSENTIAL, auto_create)
+    elseIf ref_member.Is_Vitalized_Essential()
+        p_Vitalize(ref_actor, p_CODES.IS_INVULNERABLE, auto_create)
+    elseIf ref_member.Is_Vitalized_Invulnerable()
+        p_Vitalize(ref_actor, p_CODES.IS_MORTAL, auto_create)
+    endIf
+endFunction
+
+function p_Followers_Summon_All()
     p_Notify_On_Followers_Summon_All(p_FOLLOWERS.Summon_All())
 endFunction
 
-function Followers_Summon_Mobile()
+function p_Followers_Summon_Mobile()
     p_Notify_On_Followers_Summon_Mobile(p_FOLLOWERS.Summon_Mobile())
 endFunction
 
-function Followers_Summon_Immobile()
+function p_Followers_Summon_Immobile()
     p_Notify_On_Followers_Summon_Immobile(p_FOLLOWERS.Summon_Immobile())
 endFunction
+
+function p_Followers_Summon_Mobile_Behind()
+    p_Notify_On_Followers_Summon_Mobile_Behind(p_FOLLOWERS.Summon_Mobile_Behind())
+endFunction
+
+function p_Followers_Settle()
+    p_Notify_On_Followers_Settle(p_FOLLOWERS.Settle())
+endFunction
+
+function p_Followers_Unsettle()
+    p_Notify_On_Followers_Unsettle(p_FOLLOWERS.Unsettle())
+endFunction
+
+function p_Followers_Immobilize()
+    p_Notify_On_Followers_Immobilize(p_FOLLOWERS.Immobilize())
+endFunction
+
+function p_Followers_Mobilize()
+    p_Notify_On_Followers_Mobilize(p_FOLLOWERS.Mobilize())
+endFunction
+
+function p_Followers_Sneak()
+    p_Notify_On_Followers_Sneak(p_FOLLOWERS.Sneak())
+endFunction
+
+function p_Followers_Unsneak()
+    p_Notify_On_Followers_Unsneak(p_FOLLOWERS.Unsneak())
+endFunction
+
+function p_Followers_Resurrect()
+    p_Notify_On_Followers_Resurrect(p_FOLLOWERS.Resurrect())
+endFunction
+
+function p_Toggle_Followers_Settle()
+    if p_FOLLOWERS.Get_Count_Settler() > 0
+        p_Followers_Unsettle()
+    else
+        p_Followers_Settle()
+    endIf
+endFunction
+
+function p_Toggle_Followers_Immobilize()
+    if p_FOLLOWERS.Get_Count_Immobile() > 0
+        p_Followers_Mobilize()
+    else
+        p_Followers_Immobilize()
+    endIf
+endFunction
+
+function p_Toggle_Followers_Sneak()
+    if p_FOLLOWERS.Get_Count_Sneak() > 0
+        p_Followers_Unsneak()
+    else
+        p_Followers_Sneak()
+    endIf
+endFunction
+
+; Public Methods
+function Member(Actor ref_actor)
+    GotoState("p_STATE_BUSY")
+    p_Member(ref_actor)
+    GotoState("")
+endFunction
+
+function Unmember(Actor ref_actor)
+    GotoState("p_STATE_BUSY")
+    p_Unmember(ref_actor)
+    GotoState("")
+endFunction
+
+function Clone(Actor ref_actor)
+    GotoState("p_STATE_BUSY")
+    p_Clone(ref_actor)
+    GotoState("")
+endFunction
+
+function Unclone(Actor ref_actor)
+    GotoState("p_STATE_BUSY")
+    p_Unclone(ref_actor)
+    GotoState("")
+endFunction
+
+function Pack(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Pack(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Outfit_Member(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Outfit_Member(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Outfit_Settler(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Outfit_Settler(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Outfit_Thrall(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Outfit_Thrall(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Outfit_Follower(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Outfit_Follower(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Outfit_Immobile(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Outfit_Immobile(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Unoutfit(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Unoutfit(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Resurrect(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Resurrect(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Settle(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Settle(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Unsettle(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Unsettle(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Resettle(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Resettle(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Enthrall(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Enthrall(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Unthrall(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Unthrall(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Immobilize(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Immobilize(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Mobilize(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Mobilize(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Paralyze(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Paralyze(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Unparalyze(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Unparalyze(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Style_Default(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Style_Default(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Style_Warrior(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Style_Warrior(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Style_Mage(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Style_Mage(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Style_Archer(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Style_Archer(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Vitalize_Mortal(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Vitalize_Mortal(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Vitalize_Protected(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Vitalize_Protected(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Vitalize_Essential(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Vitalize_Essential(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Vitalize_Invulnerable(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Vitalize_Invulnerable(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Follow(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Follow(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Unfollow(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Unfollow(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Sneak(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Sneak(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Unsneak(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Unsneak(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Toggle_Member(Actor ref_actor)
+    GotoState("p_STATE_BUSY")
+    p_Toggle_Member(ref_actor)
+    GotoState("")
+endFunction
+
+function Toggle_Settler(Actor ref_actor)
+    GotoState("p_STATE_BUSY")
+    p_Toggle_Settler(ref_actor)
+    GotoState("")
+endFunction
+
+function Toggle_Thrall(Actor ref_actor)
+    GotoState("p_STATE_BUSY")
+    p_Toggle_Thrall(ref_actor)
+    GotoState("")
+endFunction
+
+function Toggle_Immobile(Actor ref_actor)
+    GotoState("p_STATE_BUSY")
+    p_Toggle_Immobile(ref_actor)
+    GotoState("")
+endFunction
+
+function Toggle_Paralyzed(Actor ref_actor)
+    GotoState("p_STATE_BUSY")
+    p_Toggle_Paralyzed(ref_actor)
+    GotoState("")
+endFunction
+
+function Toggle_Follower(Actor ref_actor)
+    GotoState("p_STATE_BUSY")
+    p_Toggle_Follower(ref_actor)
+    GotoState("")
+endFunction
+
+function Toggle_Sneak(Actor ref_actor)
+    GotoState("p_STATE_BUSY")
+    p_Toggle_Sneak(ref_actor)
+    GotoState("")
+endFunction
+
+function Cycle_Style(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Cycle_Style(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Cycle_Vitality(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Cycle_Vitality(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Followers_Summon_All()
+    GotoState("p_STATE_BUSY")
+    p_Followers_Summon_All()
+    GotoState("")
+endFunction
+
+function Followers_Summon_Mobile()
+    GotoState("p_STATE_BUSY")
+    p_Followers_Summon_Mobile()
+    GotoState("")
+endFunction
+
+function Followers_Summon_Immobile()
+    GotoState("p_STATE_BUSY")
+    p_Followers_Summon_Immobile()
+    GotoState("")
+endFunction
+
+function Followers_Summon_Mobile_Behind()
+    GotoState("p_STATE_BUSY")
+    p_Followers_Summon_Mobile_Behind()
+    GotoState("")
+endFunction
+
+function Followers_Settle()
+    GotoState("p_STATE_BUSY")
+    p_Followers_Settle()
+    GotoState("")
+endFunction
+
+function Followers_Unsettle()
+    GotoState("p_STATE_BUSY")
+    p_Followers_Unsettle()
+    GotoState("")
+endFunction
+
+function Followers_Immobilize()
+    GotoState("p_STATE_BUSY")
+    p_Followers_Immobilize()
+    GotoState("")
+endFunction
+
+function Followers_Mobilize()
+    GotoState("p_STATE_BUSY")
+    p_Followers_Mobilize()
+    GotoState("")
+endFunction
+
+function Followers_Sneak()
+    GotoState("p_STATE_BUSY")
+    p_Followers_Sneak()
+    GotoState("")
+endFunction
+
+function Followers_Unsneak()
+    GotoState("p_STATE_BUSY")
+    p_Followers_Unsneak()
+    GotoState("")
+endFunction
+
+function Followers_Resurrect()
+    GotoState("p_STATE_BUSY")
+    p_Followers_Resurrect()
+    GotoState("")
+endFunction
+
+function Toggle_Followers_Settle()
+    GotoState("p_STATE_BUSY")
+    p_Toggle_Followers_Settle()
+    GotoState("")
+endFunction
+
+function Toggle_Followers_Immobilize()
+    GotoState("p_STATE_BUSY")
+    p_Toggle_Followers_Immobilize()
+    GotoState("")
+endFunction
+
+function Toggle_Followers_Sneak()
+    GotoState("p_STATE_BUSY")
+    p_Toggle_Followers_Sneak()
+    GotoState("")
+endFunction
+
+; should have a "Member" and "Follower" summon cycle. Very mush desired, so it's easy to pick them out of all the names.
+
+; "all", "mobile", "immobile", follower cycle, etc, such that they each summon one after another
+
+; States
+state p_STATE_BUSY
+    function Member(Actor ref_actor)
+    endFunction
+    function Unmember(Actor ref_actor)
+    endFunction
+    function Clone(Actor ref_actor)
+    endFunction
+    function Unclone(Actor ref_actor)
+    endFunction
+    function Pack(Actor ref_actor, bool auto_create)
+    endFunction
+    function Outfit_Member(Actor ref_actor, bool auto_create)
+    endFunction
+    function Outfit_Settler(Actor ref_actor, bool auto_create)
+    endFunction
+    function Outfit_Thrall(Actor ref_actor, bool auto_create)
+    endFunction
+    function Outfit_Follower(Actor ref_actor, bool auto_create)
+    endFunction
+    function Outfit_Immobile(Actor ref_actor, bool auto_create)
+    endFunction
+    function Unoutfit(Actor ref_actor, bool auto_create)
+    endFunction
+    function Resurrect(Actor ref_actor, bool auto_create)
+    endFunction
+    function Settle(Actor ref_actor, bool auto_create)
+    endFunction
+    function Unsettle(Actor ref_actor, bool auto_create)
+    endFunction
+    function Resettle(Actor ref_actor, bool auto_create)
+    endFunction
+    function Enthrall(Actor ref_actor, bool auto_create)
+    endFunction
+    function Unthrall(Actor ref_actor, bool auto_create)
+    endFunction
+    function Immobilize(Actor ref_actor, bool auto_create)
+    endFunction
+    function Mobilize(Actor ref_actor, bool auto_create)
+    endFunction
+    function Paralyze(Actor ref_actor, bool auto_create)
+    endFunction
+    function Unparalyze(Actor ref_actor, bool auto_create)
+    endFunction
+    function Style_Default(Actor ref_actor, bool auto_create)
+    endFunction
+    function Style_Warrior(Actor ref_actor, bool auto_create)
+    endFunction
+    function Style_Mage(Actor ref_actor, bool auto_create)
+    endFunction
+    function Style_Archer(Actor ref_actor, bool auto_create)
+    endFunction
+    function Vitalize_Mortal(Actor ref_actor, bool auto_create)
+    endFunction
+    function Vitalize_Protected(Actor ref_actor, bool auto_create)
+    endFunction
+    function Vitalize_Essential(Actor ref_actor, bool auto_create)
+    endFunction
+    function Vitalize_Invulnerable(Actor ref_actor, bool auto_create)
+    endFunction
+    function Follow(Actor ref_actor, bool auto_create)
+    endFunction
+    function Unfollow(Actor ref_actor, bool auto_create)
+    endFunction
+    function Sneak(Actor ref_actor, bool auto_create)
+    endFunction
+    function Unsneak(Actor ref_actor, bool auto_create)
+    endFunction
+    
+    function Toggle_Member(Actor ref_actor)
+    endFunction
+    function Toggle_Settler(Actor ref_actor)
+    endFunction
+    function Toggle_Thrall(Actor ref_actor)
+    endFunction
+    function Toggle_Immobile(Actor ref_actor)
+    endFunction
+    function Toggle_Paralyzed(Actor ref_actor)
+    endFunction
+    function Toggle_Follower(Actor ref_actor)
+    endFunction
+    function Toggle_Sneak(Actor ref_actor)
+    endFunction
+    
+    function Cycle_Style(Actor ref_actor, bool auto_create)
+    endFunction
+    function Cycle_Vitality(Actor ref_actor, bool auto_create)
+    endFunction
+    
+    function Followers_Summon_All()
+    endFunction
+    function Followers_Summon_Mobile()
+    endFunction
+    function Followers_Summon_Immobile()
+    endFunction
+    function Followers_Summon_Mobile_Behind()
+    endFunction
+    function Followers_Settle()
+    endFunction
+    function Followers_Unsettle()
+    endFunction
+    function Followers_Immobilize()
+    endFunction
+    function Followers_Mobilize()
+    endFunction
+    function Followers_Sneak()
+    endFunction
+    function Followers_Unsneak()
+    endFunction
+    function Followers_Resurrect()
+    endFunction
+    
+    function Toggle_Followers_Settle()
+    endFunction
+    function Toggle_Followers_Immobilize()
+    endFunction
+    function Toggle_Followers_Sneak()
+    endFunction
+endState

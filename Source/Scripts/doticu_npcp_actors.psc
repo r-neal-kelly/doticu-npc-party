@@ -152,19 +152,23 @@ function Vitalize(Actor ref_actor, int code_vitality)
     if code_vitality == p_CODES.IS_MORTAL
         p_base_actor.SetProtected(false)
         p_base_actor.SetEssential(false)
-        p_base_actor.SetInvulnerable(false)
+        ;p_base_actor.SetInvulnerable(false)
+        ref_actor.SetGhost(false)
     elseIf code_vitality == p_CODES.IS_PROTECTED
         p_base_actor.SetProtected(true)
         p_base_actor.SetEssential(false)
-        p_base_actor.SetInvulnerable(false)
+        ;p_base_actor.SetInvulnerable(false)
+        ref_actor.SetGhost(false)
     elseIf code_vitality == p_CODES.IS_ESSENTIAL
         p_base_actor.SetProtected(false)
         p_base_actor.SetEssential(true)
-        p_base_actor.SetInvulnerable(false)
+        ;p_base_actor.SetInvulnerable(false)
+        ref_actor.SetGhost(false)
     elseIf code_vitality == p_CODES.IS_INVULNERABLE
         p_base_actor.SetProtected(false)
         p_base_actor.SetEssential(false)
-        p_base_actor.SetInvulnerable(true)
+        ;p_base_actor.SetInvulnerable(true)
+        ref_actor.SetGhost(true)
     endIf
 endFunction
 
@@ -207,20 +211,26 @@ bool function Has_Token(Actor ref_actor, MiscObject misc_token, int count_token 
 endFunction
 
 Actor function Clone(Actor ref_actor)
+    ; make Greet happen before waiting too long.
+
+    p_CONSTS.MARKER_CLONER.MoveTo(p_CONSTS.ACTOR_PLAYER, 1000.0, 1000.0, -1000.0)
+    
     Form ref_form = ref_actor.GetBaseObject() as Form
-    Actor ref_clone = p_CONSTS.ACTOR_PLAYER.PlaceAtMe(ref_form, 1, true, false) as Actor; persist, disable
+    Actor ref_clone = p_CONSTS.MARKER_CLONER.PlaceAtMe(ref_form, 1, true, false) as Actor; persist, disable
 
     if Is_Generic(ref_actor)
         while !p_Has_Same_Head(ref_actor, ref_clone); we may need to limit this to a couple hundred tries, because I ran into an infinite somehow. an unclonable?
             ref_clone.Disable()
             ref_clone.Delete()
-            ref_clone = p_CONSTS.ACTOR_PLAYER.PlaceAtMe(ref_form, 1, true, false) as Actor; persist, disable
+            ref_clone = p_CONSTS.MARKER_CLONER.PlaceAtMe(ref_form, 1, true, false) as Actor; persist, disable
         endWhile
     endIf
 
+    p_CONSTS.MARKER_CLONER.MoveTo(p_CONSTS.MARKER_STORAGE)
+
     Pacify(ref_clone)
     Set_Name(ref_clone, "Clone of " + Get_Name(ref_actor))
-    
+
     return ref_clone
 endFunction
 

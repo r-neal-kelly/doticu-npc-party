@@ -19,6 +19,14 @@ int                 p_option_auto_outfit            =   -1
 int                 p_option_key_fs_summon_all      =   -1
 int                 p_option_key_fs_summon_mobile   =   -1
 int                 p_option_key_fs_summon_immobile =   -1
+int                 p_option_key_fs_settle          =   -1
+int                 p_option_key_fs_unsettle        =   -1
+int                 p_option_key_fs_immobilize      =   -1
+int                 p_option_key_fs_mobilize        =   -1
+int                 p_option_key_fs_sneak           =   -1
+int                 p_option_key_fs_unsneak         =   -1
+int                 p_option_key_fs_resurrect       =   -1
+
 int                 p_option_key_m_toggle_paralyzed =   -1
 
 ; Friend Methods
@@ -74,10 +82,10 @@ auto state p_STATE_SETTINGS
         p_MCM.AddEmptyOption()
         p_MCM.AddEmptyOption()
 
-        p_MCM.AddHeaderOption(" Autos ")
+        p_MCM.AddHeaderOption(" Automatics "); eventually 'General'
         p_MCM.AddEmptyOption()
         if p_VARS.auto_style == p_CODES.IS_DEFAULT
-            p_option_auto_style = p_MCM.AddTextOption("Auto Style", p_CONSTS.STR_MCM_DEFAULT)
+            p_option_auto_style = p_MCM.AddTextOption("Auto Style", p_CONSTS.STR_MCM_DEFAULT); should be default instead of auto
         elseIf p_VARS.auto_style == p_CODES.IS_WARRIOR
             p_option_auto_style = p_MCM.AddTextOption("Auto Style", p_CONSTS.STR_MCM_WARRIOR)
         elseIf p_VARS.auto_style == p_CODES.IS_MAGE
@@ -86,7 +94,7 @@ auto state p_STATE_SETTINGS
             p_option_auto_style = p_MCM.AddTextOption("Auto Style", p_CONSTS.STR_MCM_ARCHER)
         endIf
         if p_VARS.auto_vitality == p_CODES.IS_MORTAL
-            p_option_auto_vitality = p_MCM.AddTextOption("Auto Vitality", p_CONSTS.STR_MCM_MORTAL)
+            p_option_auto_vitality = p_MCM.AddTextOption("Auto Vitality", p_CONSTS.STR_MCM_MORTAL); should be default instead of auto
         elseIf p_VARS.auto_vitality == p_CODES.IS_PROTECTED
             p_option_auto_vitality = p_MCM.AddTextOption("Auto Style", p_CONSTS.STR_MCM_PROTECTED)
         elseIf p_VARS.auto_vitality == p_CODES.IS_ESSENTIAL
@@ -99,12 +107,25 @@ auto state p_STATE_SETTINGS
         p_MCM.AddEmptyOption()
         p_MCM.AddEmptyOption()
 
-        p_MCM.AddHeaderOption(" Hotkeys ")
+        p_MCM.AddHeaderOption(" Hotkeys for All Followers ")
         p_MCM.AddEmptyOption()
         p_option_key_fs_summon_all = p_MCM.AddKeymapOption(" Followers: Summon All ", p_VARS.key_fs_summon_all, p_MCM.OPTION_FLAG_WITH_UNMAP)
         p_option_key_fs_summon_mobile = p_MCM.AddKeymapOption(" Followers: Summon Mobile ", p_VARS.key_fs_summon_mobile, p_MCM.OPTION_FLAG_WITH_UNMAP)
         p_option_key_fs_summon_immobile = p_MCM.AddKeymapOption(" Followers: Summon Immobile ", p_VARS.key_fs_summon_immobile, p_MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_fs_settle = p_MCM.AddKeymapOption(" Followers: Settle ", p_VARS.key_fs_settle, p_MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_fs_unsettle = p_MCM.AddKeymapOption(" Followers: Unsettle ", p_VARS.key_fs_unsettle, p_MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_fs_immobilize = p_MCM.AddKeymapOption(" Followers: Immobilize ", p_VARS.key_fs_immobilize, p_MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_fs_mobilize = p_MCM.AddKeymapOption(" Followers: Mobilize ", p_VARS.key_fs_mobilize, p_MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_fs_sneak = p_MCM.AddKeymapOption(" Followers: Sneak ", p_VARS.key_fs_sneak, p_MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_fs_unsneak = p_MCM.AddKeymapOption(" Followers: Unsneak ", p_VARS.key_fs_unsneak, p_MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_fs_resurrect = p_MCM.AddKeymapOption(" Followers: Resurrect ", p_VARS.key_fs_resurrect, p_MCM.OPTION_FLAG_WITH_UNMAP)
+        p_MCM.AddEmptyOption()
+        p_MCM.AddEmptyOption()
+
+        p_MCM.AddHeaderOption(" Hotkeys for One Follower/Member ")
+        p_MCM.AddEmptyOption()
         p_option_key_m_toggle_paralyzed = p_MCM.AddKeymapOption(" Member: Toggle Paralyzed ", p_VARS.key_toggle_paralyzed, p_MCM.OPTION_FLAG_WITH_UNMAP)
+        p_MCM.AddEmptyOption()
         p_MCM.AddEmptyOption()
         p_MCM.AddEmptyOption()
     endFunction
@@ -125,6 +146,7 @@ auto state p_STATE_SETTINGS
         elseIf id_option == p_option_force_unclone_generic
             p_VARS.force_unclone_generic = !p_VARS.force_unclone_generic
             p_MCM.SetToggleOptionValue(p_option_force_unclone_generic, p_VARS.force_unclone_generic, do_update)
+        
         elseIf id_option == p_option_auto_style
             if p_VARS.auto_style == p_CODES.IS_DEFAULT
                 p_VARS.auto_style = p_CODES.IS_WARRIOR
@@ -161,7 +183,8 @@ auto state p_STATE_SETTINGS
             p_MCM.SetToggleOptionValue(p_option_auto_outfit, p_VARS.auto_outfit, do_update)
         endIf
 
-        f_On_Option_Highlight(id_option); doesn't seem to work.
+        p_MCM.SetInfoText("Testing, can you see this?")
+        ;f_On_Option_Highlight(id_option); doesn't seem to work.
     endFunction
 
     function f_On_Option_Keymap_Change(int id_option, int code_key, string str_conflict_control, string str_conflict_mod)
@@ -189,6 +212,21 @@ auto state p_STATE_SETTINGS
             p_VARS.key_fs_summon_mobile = code_key
         elseIf id_option == p_option_key_fs_summon_immobile
             p_VARS.key_fs_summon_immobile = code_key
+        elseIf id_option == p_option_key_fs_settle
+            p_VARS.key_fs_settle = code_key
+        elseIf id_option == p_option_key_fs_unsettle
+            p_VARS.key_fs_unsettle = code_key
+        elseIf id_option == p_option_key_fs_immobilize
+            p_VARS.key_fs_immobilize = code_key
+        elseIf id_option == p_option_key_fs_mobilize
+            p_VARS.key_fs_mobilize = code_key
+        elseIf id_option == p_option_key_fs_sneak
+            p_VARS.key_fs_sneak = code_key
+        elseIf id_option == p_option_key_fs_unsneak
+            p_VARS.key_fs_unsneak = code_key
+        elseIf id_option == p_option_key_fs_resurrect
+            p_VARS.key_fs_resurrect = code_key
+        
         elseIf id_option == p_option_key_m_toggle_paralyzed
             p_VARS.key_toggle_paralyzed = code_key
         endIf
@@ -199,6 +237,7 @@ auto state p_STATE_SETTINGS
     endFunction
 
     function f_On_Option_Highlight(int id_option)
+        ; Cloning
         if id_option == p_option_force_clone_unique
             if p_VARS.force_clone_unique
                 p_MCM.SetInfoText("Only a clone of a unique npc can become a member, and not the unique npc.")
@@ -223,6 +262,8 @@ auto state p_STATE_SETTINGS
             else
                 p_MCM.SetInfoText("Allows a clone of a generic npc to be unmembered or uncloned.")
             endIf
+        
+        ; Automatics
         elseIf id_option == p_option_auto_style
             if p_VARS.auto_style == p_CODES.IS_DEFAULT
                 p_MCM.SetInfoText("When an npc becomes a member, they will fight how they wish.")
@@ -255,6 +296,28 @@ auto state p_STATE_SETTINGS
             else
                 p_MCM.SetInfoText("Members will not automatically dress for each activity.")
             endIf
+        
+        ; Hotkeys
+        elseIf id_option == p_option_key_fs_summon_all
+            p_MCM.SetInfoText("Summons all followers before you.")
+        elseIf id_option == p_option_key_fs_summon_mobile
+            p_MCM.SetInfoText("Summons only mobilized followers before you.")
+        elseIf id_option == p_option_key_fs_summon_immobile
+            p_MCM.SetInfoText("Summons only immobilized followers before you.")
+        elseIf id_option == p_option_key_fs_settle
+            p_MCM.SetInfoText("Causes all followers to settle or resettle where they are currently standing.")
+        elseIf id_option == p_option_key_fs_unsettle
+            p_MCM.SetInfoText("Causes all followers to no longer be settlers.")
+        elseIf id_option == p_option_key_fs_immobilize
+            p_MCM.SetInfoText("Causes all followers to become immobile.")
+        elseIf id_option == p_option_key_fs_mobilize
+            p_MCM.SetInfoText("Causes all followers to become mobile.")
+        elseIf id_option == p_option_key_fs_sneak
+            p_MCM.SetInfoText("Causes all followers to start sneaking.")
+        elseIf id_option == p_option_key_fs_unsneak
+            p_MCM.SetInfoText("Causes all followers to stop sneaking.")
+        elseIf id_option == p_option_key_fs_resurrect
+            p_MCM.SetInfoText("Causes all dead followers to resurrect.")
         endIf
     endFunction
 endState

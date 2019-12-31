@@ -28,6 +28,9 @@ int property HASNT_IMMOBILE             = -232 autoReadOnly
 int property HASNT_MOBILE               = -233 autoReadOnly
 int property HASNT_FOLLOWER             = -240 autoReadOnly
 int property HASNT_SNEAK                = -241 autoReadOnly
+int property HASNT_UNSNEAK              = -242 autoReadOnly
+int property HASNT_ALIVE                = -243 autoReadOnly
+int property HASNT_DEAD                 = -244 autoReadOnly
 
 int property IS_ALIVE                   = -301 autoReadOnly
 int property IS_DEAD                    = -302 autoReadOnly

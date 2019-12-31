@@ -4,6 +4,7 @@ Scriptname doticu_npcp_consts extends Quest
 Actor                       p_ACTOR_PLAYER                          = none
 Cell                        p_CELL_STORAGE                          = none
 ObjectReference             p_MARKER_STORAGE                        = none
+ObjectReference             p_MARKER_CLONER                         = none
 MiscObject                  p_TOKEN_MEMBER                          = none
 MiscObject                  p_TOKEN_SETTLER                         = none
 MiscObject                  p_TOKEN_FOLLOWER                        = none
@@ -95,6 +96,17 @@ ObjectReference property MARKER_STORAGE
     function Set(ObjectReference val)
         if p_MARKER_STORAGE == none
             p_MARKER_STORAGE = val
+        endIf
+    endFunction
+endProperty
+
+ObjectReference property MARKER_CLONER
+    ObjectReference function Get()
+        return p_MARKER_CLONER
+    endFunction
+    function Set(ObjectReference val)
+        if p_MARKER_CLONER == none
+            p_MARKER_CLONER = val
         endIf
     endFunction
 endProperty

@@ -55,14 +55,14 @@ function Update_Keys()
     if p_VARS.key_fs_unsneak > -1
         RegisterForKey(p_VARS.key_fs_unsneak)
     endIf
+    if p_VARS.key_fs_resurrect > -1
+        RegisterForKey(p_VARS.key_fs_resurrect)
+    endIf
     if p_VARS.key_fs_unfollow > -1
         RegisterForKey(p_VARS.key_fs_unfollow)
     endIf
     if p_VARS.key_fs_unmember > -1
         RegisterForKey(p_VARS.key_fs_unmember)
-    endIf
-    if p_VARS.key_fs_resurrect > -1
-        RegisterForKey(p_VARS.key_fs_resurrect)
     endIf
 
     if p_VARS.key_resurrect > -1
@@ -113,7 +113,7 @@ event On_Load_Mod()
 endEvent
 
 event OnKeyDown(int code_key)
-    if Utility.IsInMenuMode()
+    if Utility.IsInMenuMode() || UI.IsMenuOpen("Dialogue Menu")
         return
     endIf
     
@@ -130,13 +130,27 @@ event OnKeyDown(int code_key)
         p_COMMANDS.Followers_Summon_Mobile()
     elseIf code_key == p_VARS.key_fs_summon_immobile
         p_COMMANDS.Followers_Summon_Immobile()
+    elseIf code_key == p_VARS.key_fs_settle
+        p_COMMANDS.Followers_Settle()
+    elseIf code_key == p_VARS.key_fs_unsettle
+        p_COMMANDS.Followers_Unsettle()
+    elseIf code_key == p_VARS.key_fs_immobilize
+        p_COMMANDS.Followers_Immobilize()
+    elseIf code_key == p_VARS.key_fs_mobilize
+        p_COMMANDS.Followers_Mobilize()
+    elseIf code_key == p_VARS.key_fs_sneak
+        p_COMMANDS.Followers_Sneak()
+    elseIf code_key == p_VARS.key_fs_unsneak
+        p_COMMANDS.Followers_Unsneak()
+    elseIf code_key == p_VARS.key_fs_resurrect
+        p_COMMANDS.Followers_Resurrect()
     
     elseIf code_key == p_VARS.key_resurrect
         p_COMMANDS.Resurrect(ref_actor, true)
     elseIf code_key == p_VARS.key_pack
         p_COMMANDS.Pack(ref_actor, true)
-    elseIf code_key == p_VARS.key_outfit; this needs to be expanded to a cycle
-        p_COMMANDS.Outfit(ref_actor, "member", true)
+    elseIf code_key == p_VARS.key_outfit; this needs to be corrected
+        p_COMMANDS.Outfit_Member(ref_actor, true)
     
     elseIf code_key == p_VARS.key_toggle_member
         p_COMMANDS.Toggle_Member(ref_actor)
@@ -154,6 +168,6 @@ event OnKeyDown(int code_key)
         p_COMMANDS.Toggle_Sneak(ref_actor)
     
     elseIf code_key == p_VARS.key_cycle_style
-        p_COMMANDS.Cycle_Style(ref_actor)
+        p_COMMANDS.Cycle_Style(ref_actor, false)
     endIf
 endEvent
