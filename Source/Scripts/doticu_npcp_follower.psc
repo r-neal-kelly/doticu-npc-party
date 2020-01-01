@@ -1,6 +1,7 @@
 Scriptname doticu_npcp_follower extends ReferenceAlias
 
 ; Private Constants
+doticu_npcp_data        p_DATA                      =  none
 doticu_npcp_consts      p_CONSTS                    =  none
 doticu_npcp_codes       p_CODES                     =  none
 doticu_npcp_vars        p_VARS                      =  none
@@ -55,6 +56,7 @@ float                   p_prev_speechcraft          =  -1.0
 
 ; Friend Methods
 function f_Link(doticu_npcp_data DATA)
+    p_DATA = DATA
     p_CONSTS = DATA.CONSTS
     p_CODES = DATA.CODES
     p_VARS = DATA.VARS
@@ -64,8 +66,6 @@ function f_Link(doticu_npcp_data DATA)
     p_MEMBERS = DATA.MODS.MEMBERS
     p_FOLLOWERS = DATA.MODS.FOLLOWERS
     p_CONTROL = DATA.MODS.CONTROL
-
-    p_Link_Queues(DATA)
 endFunction
 
 function f_Initialize(int ID_ALIAS)
@@ -87,9 +87,8 @@ function f_Register()
     RegisterForModEvent("doticu_npcp_followers_unmember", "On_Followers_Unmember")
     RegisterForModEvent("doticu_npcp_followers_resurrect", "On_Followers_Resurrect")
     RegisterForModEvent("doticu_npcp_members_u_0_1_1", "On_u_0_1_1")
+    RegisterForModEvent("doticu_npcp_members_u_0_1_4", "On_u_0_1_4")
     RegisterForModEvent("doticu_npcp_queue_" + "follower_" + p_ID_ALIAS, "On_Queue_Follower")
-
-    p_Register_Queues()
 endFunction
 
 int function f_Create()
@@ -167,18 +166,6 @@ int function f_Enforce()
 endFunction
 
 ; Private Methods
-function p_Link_Queues(doticu_npcp_data DATA)
-    if p_queue_follower
-        p_queue_follower.f_Link(DATA)
-    endIf
-endFunction
-
-function p_Register_Queues()
-    if p_queue_follower
-        p_queue_follower.f_Register()
-    endIf
-endFunction
-
 function p_Create_Queues()
     p_queue_follower = p_QUEUES.Create("follower_" + p_ID_ALIAS, 32, 0.5)
 endFunction
@@ -675,11 +662,11 @@ int function Unclone()
 endFunction
 
 bool function Is_Sneak()
-    return p_is_sneak
+    return Exists() && p_is_sneak
 endFunction
 
 bool function Is_Unsneak()
-    return !p_is_sneak
+    return Exists() && !p_is_sneak
 endFunction
 
 bool function Is_Settler()
@@ -736,7 +723,13 @@ endFunction
 
 ; Update Methods
 event On_u_0_1_1()
-    p_Create_Queues()
+endEvent
+
+event On_u_0_1_4(Form form_data)
+    p_DATA = form_data as doticu_npcp_data
+    if Exists()
+        p_queue_follower.u_0_1_4(p_DATA)
+    endIf
 endEvent
 
 ; Events
@@ -765,74 +758,74 @@ event OnCombatStateChanged(Actor ref_target, int code_combat)
     endIf
 endEvent
 
-; need to add the catch up function, when player pulls out their weapon. but make it faster this time.
+; need to add the catch up function, when player pulls out their weapon. but make it parallel this time.
 
-event On_Followers_Enforce()
+event On_Followers_Enforce(Form form_tasklist)
     if Exists()
         Enforce()
-        p_FOLLOWERS.f_Complete_Job()
+        (form_tasklist as doticu_npcp_tasklist).Detask()
     endIf
 endEvent
 
-event On_Followers_Settle()
+event On_Followers_Settle(Form form_tasklist)
     if Exists()
         Settle()
-        p_FOLLOWERS.f_Complete_Job()
+        (form_tasklist as doticu_npcp_tasklist).Detask()
     endIf
 endEvent
 
-event On_Followers_Unsettle()
+event On_Followers_Unsettle(Form form_tasklist)
     if Exists() && Is_Settler()
         Unsettle()
-        p_FOLLOWERS.f_Complete_Job()
+        (form_tasklist as doticu_npcp_tasklist).Detask()
     endIf
 endEvent
 
-event On_Followers_Immobilize()
+event On_Followers_Immobilize(Form form_tasklist)
     if Exists() && Is_Mobile()
         Immobilize()
-        p_FOLLOWERS.f_Complete_Job()
+        (form_tasklist as doticu_npcp_tasklist).Detask()
     endIf
 endEvent
 
-event On_Followers_Mobilize()
+event On_Followers_Mobilize(Form form_tasklist)
     if Exists() && Is_Immobile()
         Mobilize()
-        p_FOLLOWERS.f_Complete_Job()
+        (form_tasklist as doticu_npcp_tasklist).Detask()
     endIf
 endEvent
 
-event On_Followers_Sneak()
-    if Exists() && !Is_Sneak()
+event On_Followers_Sneak(Form form_tasklist)
+    if Exists() && Is_Unsneak()
         Sneak()
-        p_FOLLOWERS.f_Complete_Job()
+        (form_tasklist as doticu_npcp_tasklist).Detask()
     endIf
 endEvent
 
-event On_Followers_Unsneak()
+event On_Followers_Unsneak(Form form_tasklist)
     if Exists() && Is_Sneak()
         Unsneak()
-        p_FOLLOWERS.f_Complete_Job()
+        (form_tasklist as doticu_npcp_tasklist).Detask()
     endIf
 endEvent
 
-event On_Followers_Unfollow()
-    if Exists()
-        Unfollow()
-        p_FOLLOWERS.f_Complete_Job()
-    endIf
-endEvent
-
-event On_Followers_Unmember()
-    if Exists()
-        Unmember()
-        p_FOLLOWERS.f_Complete_Job()
-    endIf
-endEvent
-
-event On_Followers_Resurrect()
+event On_Followers_Resurrect(Form form_tasklist)
     if Exists() && Is_Dead()
         Resurrect()
-        p_FOLLOWERS.f_Complete_Job()
+        (form_tasklist as doticu_npcp_tasklist).Detask()
+    endIf
+endEvent
+
+event On_Followers_Unfollow(Form form_tasklist)
+    if Exists()
+        Unfollow()
+        (form_tasklist as doticu_npcp_tasklist).Detask()
+    endIf
+endEvent
+
+event On_Followers_Unmember(Form form_tasklist)
+    if Exists()
+        Unmember()
+        (form_tasklist as doticu_npcp_tasklist).Detask()
     endIf
 endEvent

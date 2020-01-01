@@ -25,10 +25,7 @@ endFunction
 doticu_npcp_outfit function Create(Outfit form_outfit, string str_name = "Outfit")
     doticu_npcp_outfit ref_outfit = p_STORAGE.PlaceAtMe(p_CONTAINER_OUTFIT, 1, true, false) as doticu_npcp_outfit
 
-    ref_outfit.f_Link(p_DATA)
-    ref_outfit.f_Initialize(form_outfit)
-    ref_outfit.f_Register()
-    ref_outfit.f_Create(str_name)
+    ref_outfit.f_Create(p_DATA, form_outfit, str_name)
 
     return ref_outfit
 endFunction

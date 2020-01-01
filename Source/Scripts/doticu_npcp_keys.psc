@@ -21,7 +21,6 @@ endFunction
 
 function f_Register()
     Update_Keys()
-    RegisterForModEvent("doticu_npcp_load_mod", "On_Load_Mod")
 endFunction
 
 ; Public Methods
@@ -109,9 +108,6 @@ function Update_Keys()
 endFunction
 
 ; Events
-event On_Load_Mod()
-endEvent
-
 event OnKeyDown(int code_key)
     if Utility.IsInMenuMode() || UI.IsMenuOpen("Dialogue Menu")
         return

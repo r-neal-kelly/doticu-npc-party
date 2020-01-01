@@ -46,23 +46,12 @@ function f_Register()
     DATA.MODS.MEMBERS.f_Register()
     DATA.MODS.FOLLOWERS.f_Register()
     DATA.MODS.CONTROL.f_Register()
-
-    RegisterForModEvent("doticu_npcp_load_mod", "On_Load_Mod")
 endFunction
 
 function f_Version()
     if p_Is_Version_Less_Than(p_CONSTS.VERSION_MAJOR, p_CONSTS.VERSION_MINOR, p_CONSTS.VERSION_PATCH)
-        if p_Is_Version_Less_Than(0, 1, 0)
-            u_0_1_0()
-        endIf
-        if p_Is_Version_Less_Than(0, 1, 1)
-            u_0_1_1()
-        endIf
-        if p_Is_Version_Less_Than(0, 1, 2)
-            u_0_1_2()
-        endIf
-        if p_Is_Version_Less_Than(0, 1, 3)
-            u_0_1_3()
+        if p_Is_Version_Less_Than(0, 1, 4)
+            u_0_1_4()
         endIf
 
         p_VARS.version_major = p_CONSTS.VERSION_MAJOR
@@ -87,9 +76,11 @@ function f_Load_Mod()
         Utility.Wait(0.25)
     endWhile/;
 
-    f_Link(); if possible, these need to be done in parallel, one after another
+    f_Link()
     f_Register()
     f_Version()
+
+    ;Debug.Notification("LOADED (temp)")
 
     while !p_Send_Load_Mod()
         Utility.Wait(0.25)
@@ -125,22 +116,10 @@ bool function p_Send_Load_Mod()
 endFunction
 
 ; Update Methods
-function u_0_1_0()
-    DATA.MODS.MEMBERS.u_0_1_0()
-endFunction
-
-function u_0_1_1()
-    DATA.MODS.FUNCS.u_0_1_1()
-    DATA.MODS.MEMBERS.u_0_1_1()
-    DATA.MODS.FOLLOWERS.u_0_1_1()
-endFunction
-
-function u_0_1_2()
-    DATA.MODS.MEMBERS.u_0_1_2()
-endFunction
-
-function u_0_1_3()
-    DATA.MODS.MEMBERS.u_0_1_3()
+function u_0_1_4()
+    DATA.MODS.FUNCS.u_0_1_4(DATA)
+    DATA.MODS.MEMBERS.u_0_1_4(DATA)
+    DATA.MODS.FOLLOWERS.u_0_1_4(DATA)
 endFunction
 
 ; Events
@@ -176,7 +155,4 @@ event OnInit()
     f_Register()
 
     p_FUNCS.LOGS.Create_Note("Thank you for installing!")
-endEvent
-
-event On_Load_Mod()
 endEvent

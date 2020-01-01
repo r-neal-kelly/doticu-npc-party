@@ -207,11 +207,12 @@ function Untoken(Actor ref_actor, MiscObject misc_token)
 endFunction
 
 bool function Has_Token(Actor ref_actor, MiscObject misc_token, int count_token = 1)
-    return ref_actor.GetItemCount(misc_token) == count_token
+    return ref_actor && ref_actor.GetItemCount(misc_token) == count_token
 endFunction
 
 Actor function Clone(Actor ref_actor)
     ; make Greet happen before waiting too long.
+    ; can prob make this parallel with the jobs pattern
 
     p_CONSTS.MARKER_CLONER.MoveTo(p_CONSTS.ACTOR_PLAYER, 1000.0, 1000.0, -1000.0)
     
@@ -283,5 +284,96 @@ function Update_Equipment(Actor ref_actor)
 
     if !is_player_teammate
         ref_actor.SetPlayerTeammate(false, false)
+    endIf
+endFunction
+
+bool function Has_Faction(Actor ref_actor, Faction form_faction)
+    return ref_actor.IsInFaction(form_faction)
+endFunction
+
+bool function Has_Faction_Rank(Actor ref_actor, Faction form_faction, int rank)
+    return ref_actor.IsInFaction(form_faction) && ref_actor.GetFactionRank(form_faction) == rank
+endFunction
+
+function Add_Faction(Actor ref_actor, Faction form_faction, int rank = 0)
+    ref_actor.AddToFaction(form_faction)
+    ref_actor.SetFactionRank(form_faction, rank)
+endFunction
+
+function Remove_Faction(Actor ref_actor, Faction form_faction)
+    ref_actor.RemoveFromFaction(form_faction)
+endFunction
+
+int function Get_Faction_Rank(Actor ref_actor, Faction form_faction)
+    return ref_actor.GetFactionRank(form_faction)
+endFunction
+
+function Set_Faction_Rank(Actor ref_actor, Faction form_faction, int rank)
+    ref_actor.SetFactionRank(form_faction, rank)
+endFunction
+
+Faction[] function Get_Factions(Actor ref_actor, int min_rank = -128, int max_rank = 127)
+    return ref_actor.GetFactions(min_rank, max_rank)
+endFunction
+
+function Set_Factions(Actor ref_actor, Faction[] arr_factions, int[] arr_ranks = none)
+    Remove_Factions(ref_actor)
+    if arr_factions
+        Add_Factions(ref_actor, arr_factions, arr_ranks)
+    endIf
+endFunction
+
+int[] function Get_Faction_Ranks(Actor ref_actor, Faction[] arr_factions)
+    int[] arr_ranks = Utility.CreateIntArray(arr_factions.length)
+
+    int idx_factions = 0
+    int num_factions = arr_factions.length
+    while idx_factions < num_factions
+        arr_ranks[idx_factions] = ref_actor.GetFactionRank(arr_factions[idx_factions])
+        idx_factions += 1
+    endWhile
+endFunction
+
+function Set_Faction_Ranks(Actor ref_actor, Faction[] arr_factions, int[] arr_ranks = none)
+    if !arr_ranks || arr_factions.length != arr_ranks.length
+        arr_ranks = Utility.CreateIntArray(arr_factions.length, 0)
+    endIf
+
+    int idx_factions = 0
+    int num_factions = arr_factions.length
+    while idx_factions < num_factions
+        ref_actor.SetFactionRank(arr_factions[idx_factions], arr_ranks[idx_factions])
+        idx_factions += 1
+    endWhile
+endFunction
+
+function Add_Factions(Actor ref_actor, Faction[] arr_factions, int[] arr_ranks = none)
+    int idx_factions = 0
+    int num_factions = arr_factions.length
+
+    if arr_ranks
+        while idx_factions < num_factions
+            ref_actor.AddToFaction(arr_factions[idx_factions])
+            ref_actor.SetFactionRank(arr_factions[idx_factions], arr_ranks[idx_factions])
+            idx_factions += 1
+        endWhile
+    else
+        while idx_factions < num_factions
+            ref_actor.AddToFaction(arr_factions[idx_factions])
+            idx_factions += 1
+        endWhile
+    endIf
+endFunction
+
+function Remove_Factions(Actor ref_actor, Faction[] arr_factions = none)
+    if arr_factions
+        int idx_factions = 0
+        int num_factions = arr_factions.length
+        while idx_factions < num_factions
+            ref_actor.RemoveFromFaction(arr_factions[idx_factions])
+            idx_factions += 1
+        endWhile
+    else
+        ref_actor.RemoveFromAllFactions()
     endIf
 endFunction

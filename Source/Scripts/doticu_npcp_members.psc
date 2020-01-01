@@ -1,37 +1,38 @@
 Scriptname doticu_npcp_members extends Quest
 
 ; Private Constants
-doticu_npcp_consts  p_CONSTS    = none
-doticu_npcp_codes   p_CODES     = none
-doticu_npcp_vars    p_VARS      = none
-doticu_npcp_actors  p_ACTORS    = none
-doticu_npcp_aliases p_ALIASES   = none
+doticu_npcp_data        p_DATA      = none
+doticu_npcp_consts      p_CONSTS    = none
+doticu_npcp_codes       p_CODES     = none
+doticu_npcp_vars        p_VARS      = none
+doticu_npcp_actors      p_ACTORS    = none
+doticu_npcp_tasklists   p_TASKLISTS = none
+doticu_npcp_aliases     p_ALIASES   = none
+
+doticu_npcp_tasklist    p_TASKLIST  = none
 
 ; Friend Methods
 function f_Link(doticu_npcp_data DATA)
+    p_DATA = DATA
     p_CONSTS = DATA.CONSTS
     p_CODES = DATA.CODES
     p_VARS = DATA.VARS
     p_ACTORS = DATA.MODS.FUNCS.ACTORS
+    p_TASKLISTS = DATA.MODS.FUNCS.TASKLISTS
     p_ALIASES = (self as Quest) as doticu_npcp_aliases
 
-    p_ALIASES.f_Link(DATA); p_ALIASES is not init'd!
-
-    int idx_alias = 0
-    int max_aliases = GetNumAliases()
-    while idx_alias < max_aliases
-        (GetNthAlias(idx_alias) as doticu_npcp_member).f_Link(DATA)
-        idx_alias += 1
-    endWhile
+    p_ALIASES.f_Link(DATA)
 endFunction
 
 function f_Initialize()
     p_ALIASES.f_Initialize()
 
+    p_TASKLIST = p_TASKLISTS.Create()
+
     int idx_alias = 0
     int max_aliases = GetNumAliases()
     while idx_alias < max_aliases
-        (GetNthAlias(idx_alias) as doticu_npcp_member).f_Initialize(idx_alias)
+        (GetNthAlias(idx_alias) as doticu_npcp_member).f_Initialize(p_DATA, idx_alias)
         idx_alias += 1
     endWhile
 endFunction
@@ -66,6 +67,8 @@ bool function p_Send_Members(string str_event)
     if !handle
         return false
     endIf
+
+    ModEvent.PushForm(handle, p_DATA as Form)
 
     if !ModEvent.Send(handle)
         ModEvent.Release(handle)
@@ -259,6 +262,14 @@ endFunction
 
 function u_0_1_3()
     while !p_Send_Members("doticu_npcp_members_u_0_1_3")
+        Utility.Wait(0.25)
+    endWhile
+endFunction
+
+function u_0_1_4(doticu_npcp_data DATA)
+    p_DATA = DATA
+    p_TASKLIST = p_TASKLISTS.Create()
+    while !p_Send_Members("doticu_npcp_members_u_0_1_4")
         Utility.Wait(0.25)
     endWhile
 endFunction

@@ -33,10 +33,7 @@ endFunction
 doticu_npcp_container function Create(string str_name = "Container")
     doticu_npcp_container ref_container = p_STORAGE.PlaceAtMe(p_CONTAINER_EMPTY, 1, true, false) as doticu_npcp_container
 
-    ref_container.f_Link(p_DATA)
-    ref_container.f_Initialize()
-    ref_container.f_Register()
-    ref_container.f_Create(str_name)
+    ref_container.f_Create(p_DATA, str_name)
 
     return ref_container
 endFunction
@@ -47,7 +44,9 @@ endFunction
 
 ObjectReference function Create_Temp()
     ObjectReference ref_container = p_ACTOR_PLAYER.PlaceAtMe(p_CONTAINER_TEMP, 1, false, false)
+
     ref_container.SetActorOwner(p_ACTOR_PLAYER.GetActorBase())
+    
     return ref_container
 endFunction
 

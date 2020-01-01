@@ -18,21 +18,8 @@ doticu_npcp_queue       p_QUEUE_PLAYER  = none
 bool p_is_in_combat = false
 
 ; Friend Methods
-function f_Link(doticu_npcp_data DATA)
+function f_Initialize(doticu_npcp_data DATA)
     p_DATA = DATA
-    p_CONSTS = DATA.CONSTS
-    p_CODES = DATA.CODES
-    p_VARS = DATA.VARS
-    p_FUNCS = DATA.MODS.FUNCS
-    p_ACTORS = DATA.MODS.FUNCS.ACTORS
-    p_QUEUES = DATA.MODS.FUNCS.QUEUES
-    p_FOLLOWERS = DATA.MODS.FOLLOWERS
-    p_MAIN = DATA.MODS.MAIN
-
-    p_Link_Queues(DATA)
-endFunction
-
-function f_Initialize()
     p_REF_PLAYER = p_CONSTS.ACTOR_PLAYER
 
     p_Create_Queues()
@@ -40,8 +27,6 @@ endFunction
 
 function f_Register()
     RegisterForModEvent("doticu_npcp_queue_" + "player", "On_Queue_Player")
-
-    p_Register_Queues()
 endFunction
 
 function f_Begin_Combat()
@@ -70,18 +55,6 @@ function f_Try_End_Combat()
 endFunction
 
 ; Private Methods
-function p_Link_Queues(doticu_npcp_data DATA)
-    if p_QUEUE_PLAYER
-        p_QUEUE_PLAYER.f_Link(DATA)
-    endIf
-endFunction
-
-function p_Register_Queues()
-    if p_QUEUE_PLAYER
-        p_QUEUE_PLAYER.f_Register()
-    endIf
-endFunction
-
 function p_Create_Queues()
     p_QUEUE_PLAYER = p_QUEUES.Create("player", 32, 5.0)
 endFunction
@@ -102,6 +75,11 @@ endFunction
 ; Update Methods
 function u_0_1_1()
     p_Create_Queues()
+endFunction
+
+function u_0_1_4(doticu_npcp_data DATA)
+    p_DATA = DATA
+    p_QUEUE_PLAYER.u_0_1_4(p_DATA)
 endFunction
 
 ; Events

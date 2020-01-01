@@ -25,6 +25,7 @@ MiscObject                  p_TOKEN_VITALITY_PROTECTED              = none
 MiscObject                  p_TOKEN_VITALITY_ESSENTIAL              = none
 MiscObject                  p_TOKEN_VITALITY_INVULNERABLE           = none
 MiscObject                  p_MISC_QUEUE                            = none
+MiscObject                  p_MISC_TASKLIST                         = none
 GlobalVariable              p_GLOBAL_PLAYER_FOLLOWER_COUNT          = none
 GlobalVariable              p_GLOBAL_FORCE_CLONE_UNIQUE             = none
 GlobalVariable              p_GLOBAL_FORCE_CLONE_GENERIC            = none
@@ -63,7 +64,7 @@ endProperty
 
 int property VERSION_PATCH
     int function Get()
-        return 3; set manually upon each release
+        return 4; set manually upon each release
     endFunction
 endProperty
 
@@ -327,6 +328,17 @@ MiscObject property MISC_QUEUE
     function Set(MiscObject val)
         if p_MISC_QUEUE == none
             p_MISC_QUEUE = val
+        endIf
+    endFunction
+endProperty
+
+MiscObject property MISC_TASKLIST
+    MiscObject function Get()
+        return p_MISC_TASKLIST
+    endFunction
+    function Set(MiscObject val)
+        if p_MISC_TASKLIST == none
+            p_MISC_TASKLIST = val
         endIf
     endFunction
 endProperty

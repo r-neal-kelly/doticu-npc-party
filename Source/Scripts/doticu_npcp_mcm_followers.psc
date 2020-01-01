@@ -206,21 +206,21 @@ auto state p_STATE_FOLLOWERS
             elseIf idx_option == p_IDX_ALL_SUMMON_IMMOBILE
                 p_COMMANDS.Followers_Summon_Immobile()
             elseIf idx_option == p_IDX_ALL_IMMOBILIZE
-                p_FOLLOWERS.Immobilize()
+                p_COMMANDS.Followers_Immobilize()
             elseIf idx_option == p_IDX_ALL_MOBILIZE
-                p_FOLLOWERS.Mobilize()
+                p_COMMANDS.Followers_Mobilize()
             elseIf idx_option == p_IDX_ALL_SNEAK
-                p_FOLLOWERS.Sneak()
+                p_COMMANDS.Followers_Sneak()
             elseIf idx_option == p_IDX_ALL_UNSNEAK
-                p_FOLLOWERS.Unsneak()
+                p_COMMANDS.Followers_Unsneak()
             elseIf idx_option == p_IDX_ALL_SETTLE
-                p_FOLLOWERS.Settle()
+                p_COMMANDS.Followers_Settle()
             elseIf idx_option == p_IDX_ALL_UNSETTLE
-                p_FOLLOWERS.Unsettle()
+                p_COMMANDS.Followers_Unsettle()
             elseIf idx_option == p_IDX_ALL_UNFOLLOW
-                p_FOLLOWERS.Unfollow()
+                p_COMMANDS.Followers_Unfollow()
             elseIf idx_option == p_IDX_ALL_UNMEMBER
-                p_FOLLOWERS.Unmember()
+                p_COMMANDS.Followers_Unmember()
             endIf
             p_MCM.ForcePageReset()
         endIf

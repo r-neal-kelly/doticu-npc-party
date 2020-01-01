@@ -171,9 +171,9 @@ auto state p_STATE_LOGS
             p_MCM.SetInfoText("Clear All Errors")
         else
             int idx_entity = p_Get_Idx_Entity(id_option)
-            if id_option % 2 == 0
+            if id_option % 2 == 0 && p_arr_notes.length > 0
                 p_MCM.SetInfoText(p_arr_notes[idx_entity])
-            else
+            elseIf p_arr_errors.length > 0
                 p_MCM.SetInfoText(p_arr_errors[idx_entity])
             endIf
         endIf

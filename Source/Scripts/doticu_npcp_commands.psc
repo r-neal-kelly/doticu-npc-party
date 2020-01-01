@@ -439,7 +439,7 @@ function p_Notify_On_Sneak(int code_return, string str_name)
     elseIf code_return == p_CODES.IS_SNEAK
         p_LOGS.Create_Note(str_name + " is already sneaking.")
     else
-        p_LOGS.Create_Error("It's unknown why " + str_name + " can't start sneaking.")
+        p_LOGS.Create_Error("It's unknown why " + str_name + " can't start sneaking. " + code_return)
     endIf
 endFunction
 
@@ -461,7 +461,7 @@ function p_Notify_On_Unsneak(int code_return, string str_name)
     elseIf code_return == p_CODES.ISNT_SNEAK
         p_LOGS.Create_Note(str_name + " wasn't sneaking.")
     else
-        p_LOGS.Create_Error("It's unknown why " + str_name + " can't stop sneaking.")
+        p_LOGS.Create_Error("It's unknown why " + str_name + " can't stop sneaking. " + code_return)
     endIf
 endFunction
 
@@ -590,6 +590,26 @@ function p_Notify_On_Followers_Resurrect(int code_return)
         p_LOGS.Create_Note("All followers are already alive.")
     else
         p_LOGS.Create_Error("Could not make followers resurrect. " + code_return)
+    endIf
+endFunction
+
+function p_Notify_On_Followers_Unfollow(int code_return)
+    if code_return == p_CODES.SUCCESS
+        p_LOGS.Create_Note("All followers will no longer follow.")
+    elseIf code_return == p_CODES.HASNT_FOLLOWER
+        p_LOGS.Create_Note("No followers to unfollow.")
+    else
+        p_LOGS.Create_Error("Could not make followers stop following. " + code_return)
+    endIf
+endFunction
+
+function p_Notify_On_Followers_Unmember(int code_return)
+    if code_return == p_CODES.SUCCESS
+        p_LOGS.Create_Note("All followers are no longer members.")
+    elseIf code_return == p_CODES.HASNT_FOLLOWER
+        p_LOGS.Create_Note("No followers to unmember.")
+    else
+        p_LOGS.Create_Error("Could not unmember followers. " + code_return)
     endIf
 endFunction
 
@@ -1321,6 +1341,14 @@ function p_Followers_Resurrect()
     p_Notify_On_Followers_Resurrect(p_FOLLOWERS.Resurrect())
 endFunction
 
+function p_Followers_Unfollow()
+    p_Notify_On_Followers_Unfollow(p_FOLLOWERS.Unfollow())
+endFunction
+
+function p_Followers_Unmember()
+    p_Notify_On_Followers_Unmember(p_FOLLOWERS.Unmember())
+endFunction
+
 function p_Toggle_Followers_Settle()
     if p_FOLLOWERS.Get_Count_Settler() > 0
         p_Followers_Unsettle()
@@ -1664,6 +1692,18 @@ function Followers_Resurrect()
     GotoState("")
 endFunction
 
+function Followers_Unfollow()
+    GotoState("p_STATE_BUSY")
+    p_Followers_Unfollow()
+    GotoState("")
+endFunction
+
+function Followers_Unmember()
+    GotoState("p_STATE_BUSY")
+    p_Followers_Unmember()
+    GotoState("")
+endFunction
+
 function Toggle_Followers_Settle()
     GotoState("p_STATE_BUSY")
     p_Toggle_Followers_Settle()
@@ -1796,6 +1836,10 @@ state p_STATE_BUSY
     function Followers_Unsneak()
     endFunction
     function Followers_Resurrect()
+    endFunction
+    function Followers_Unfollow()
+    endFunction
+    function Followers_Unmember()
     endFunction
     
     function Toggle_Followers_Settle()

@@ -20,10 +20,7 @@ endFunction
 doticu_npcp_queue function Create(string str_namespace, int max_message = 32, float interval_default = 0.15)
     doticu_npcp_queue ref_queue = p_CONSTS.MARKER_STORAGE.PlaceAtMe(p_CONSTS.MISC_QUEUE as Form, 1, false, false) as doticu_npcp_queue
 
-    ref_queue.f_Link(p_DATA)
-    ref_queue.f_Initialize()
-    ref_queue.f_Register()
-    ref_queue.f_Create(str_namespace, max_message, interval_default)
+    ref_queue.f_Create(p_DATA, str_namespace, max_message, interval_default)
 
     return ref_queue
 endFunction
