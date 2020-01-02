@@ -1,21 +1,37 @@
 Scriptname doticu_npcp_perk_resurrect extends Perk hidden
 
-; Private Constants
-doticu_npcp_consts  p_CONSTS        = none
-doticu_npcp_actors  p_ACTORS        = none
-doticu_npcp_perks   p_PERKS         = none
+; Modules
+doticu_npcp_consts property CONSTS hidden
+    doticu_npcp_consts function Get()
+        return p_DATA.CONSTS
+    endFunction
+endProperty
+doticu_npcp_actors property ACTORS hidden
+    doticu_npcp_actors function Get()
+        return p_DATA.MODS.FUNCS.ACTORS
+    endFunction
+endProperty
+doticu_npcp_perks property PERKS hidden
+    doticu_npcp_perks function Get()
+        return p_DATA.MODS.FUNCS.PERKS
+    endFunction
+endProperty
 
-Actor               p_REF_PLAYER    = none
+; Private Constants
+doticu_npcp_data    p_DATA          = none
+
+; Private Variables
+bool                p_is_created    = false
 
 ; Friend Methods
-function f_Link(doticu_npcp_data DATA)
-    p_CONSTS = DATA.CONSTS
-    p_ACTORS = DATA.MODS.FUNCS.ACTORS
-    p_PERKS = DATA.MODS.FUNCS.PERKS
+function f_Create(doticu_npcp_data DATA)
+    p_DATA = DATA
+
+    p_is_created = true
 endFunction
 
-function f_Initialize()
-    p_REF_PLAYER = p_CONSTS.ACTOR_PLAYER
+function f_Destroy()
+    p_is_created = false
 endFunction
 
 function f_Register()
@@ -29,5 +45,5 @@ function Resurrect_Member(ObjectReference ref_target, Actor _)
         return
     endIf
 
-    p_ACTORS.Resurrect(ref_actor)
+    ACTORS.Resurrect(ref_actor)
 endFunction

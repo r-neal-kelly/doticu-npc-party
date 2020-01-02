@@ -1,12 +1,6 @@
 Scriptname doticu_npcp_outfit extends ObjectReference
 
-; Private Constants
-doticu_npcp_data    p_DATA      = none
-Outfit              p_OUTFIT    = none
-LeveledItem         p_LEVELED   = none
-int                 p_MAX_ITEMS =   64
-
-; Public Constants
+; Modules
 doticu_npcp_consts property CONSTS hidden
     doticu_npcp_consts function Get()
         return p_DATA.CONSTS
@@ -33,11 +27,24 @@ doticu_npcp_logs property LOGS hidden
     endFunction
 endProperty
 
+; Private Constants
+doticu_npcp_data    p_DATA          =  none
+Outfit              p_OUTFIT        =  none
+LeveledItem         p_LEVELED       =  none
+int                 p_MAX_ITEMS     =    -1
+
+; Private Variables
+bool                p_is_created    = false
+
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA, Outfit form_outfit, string str_name)
+function f_Create(doticu_npcp_data DATA, Outfit outfit_outfit, string str_name)
     p_DATA = DATA
-    p_OUTFIT = form_outfit
-    p_LEVELED = form_outfit.GetNthPart(0) as LeveledItem
+    p_OUTFIT = outfit_outfit
+    p_LEVELED = outfit_outfit.GetNthPart(0) as LeveledItem
+    p_MAX_ITEMS = 64
+
+    p_is_created = true
+    
     self.SetDisplayName(str_name, true)
     self.SetActorOwner(CONSTS.ACTOR_PLAYER.GetActorBase())
 endFunction
@@ -46,6 +53,11 @@ function f_Destroy()
     self.RemoveAllItems(CONSTS.ACTOR_PLAYER, false, true)
     self.Disable()
     self.Delete()
+
+    p_is_created = false
+endFunction
+
+function f_Register()
 endFunction
 
 ; Public Methods
@@ -220,6 +232,10 @@ endFunction
 
 ; Update Methods
 function u_0_1_4(doticu_npcp_data DATA)
+    p_DATA = DATA
+endFunction
+
+function u_0_1_5(doticu_npcp_data DATA)
     p_DATA = DATA
 endFunction
 

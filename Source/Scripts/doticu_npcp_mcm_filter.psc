@@ -1,16 +1,27 @@
 Scriptname doticu_npcp_mcm_filter extends Quest
 
+; Modules
+doticu_npcp_mcm property MCM hidden
+    doticu_npcp_mcm function Get()
+        return p_DATA.MODS.CONTROL.MCM
+    endFunction
+endProperty
+
 ; Private Constants
-doticu_npcp_mcm p_MCM   = none
+doticu_npcp_data    p_DATA          =  none
 
 ; Private Variables
+bool                p_is_created    = false
 
 ; Friend Methods
-function f_Link(doticu_npcp_data DATA)
-    p_MCM = DATA.MODS.CONTROL.MCM
+function f_Create(doticu_npcp_data DATA)
+    p_DATA = DATA
+
+    p_is_created = true
 endFunction
 
-function f_Initialize()
+function f_Destroy()
+    p_is_created = false
 endFunction
 
 function f_Register()

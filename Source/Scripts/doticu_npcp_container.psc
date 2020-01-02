@@ -1,9 +1,6 @@
 Scriptname doticu_npcp_container extends ObjectReference
 
-; Private Constants
-doticu_npcp_data    p_DATA  =  none
-
-; Public Constants
+; Modules
 doticu_npcp_consts property CONSTS hidden
     doticu_npcp_consts function Get()
         return p_DATA.CONSTS
@@ -15,9 +12,18 @@ doticu_npcp_containers property CONTAINERS hidden
     endFunction
 endProperty
 
+; Private Constants
+doticu_npcp_data    p_DATA          =  none
+
+; Private Variables
+bool                p_is_created    = false
+
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA, string str_name)
     p_DATA = DATA
+
+    p_is_created = true
+
     self.SetDisplayName(str_name, true)
     self.SetActorOwner(CONSTS.ACTOR_PLAYER.GetActorBase())
 endFunction
@@ -25,6 +31,11 @@ endFunction
 function f_Destroy()
     self.Disable()
     self.Delete()
+
+    p_is_created = false
+endFunction
+
+function f_Register()
 endFunction
 
 ; Public Methods

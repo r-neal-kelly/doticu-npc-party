@@ -1,10 +1,6 @@
 Scriptname doticu_npcp_immobile extends ReferenceAlias
 
-; Private Constants
-doticu_npcp_data    p_DATA              =  none
-int                 p_ID_ALIAS          =    -1
-
-; Public Constants
+; Modules
 doticu_npcp_consts property CONSTS hidden
     doticu_npcp_consts function Get()
         return p_DATA.CONSTS
@@ -20,49 +16,32 @@ doticu_npcp_actors property ACTORS hidden
         return p_DATA.MODS.FUNCS.ACTORS
     endFunction
 endProperty
-doticu_npcp_member property MEMBER hidden
-    doticu_npcp_member function Get()
-        return (self as ReferenceAlias) as doticu_npcp_member
-    endFunction
-endProperty
+
+; Private Constants
+doticu_npcp_data    p_DATA          =  none
 
 ; Private Variables
-bool                p_is_created        = false
-Actor               p_ref_actor         =  none
-bool                p_is_paralyzed      = false
+bool                p_is_created    = false
+int                 p_id_alias      =    -1
+Actor               p_ref_actor     =  none
+doticu_npcp_member  p_ref_member    =  none
+bool                p_is_paralyzed  = false
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA, int ID_ALIAS)
+function f_Create(doticu_npcp_data DATA, int id_alias)
     p_DATA = DATA
-    p_ID_ALIAS = ID_ALIAS
-endFunction
 
-int function f_Create()
-    int code_return
-
-    if Exists()
-        return CODES.IS_IMMOBILE
-    endIf
-    p_ref_actor = GetActorReference()
-    if !p_ref_actor
-        return CODES.ISNT_ACTOR
-    endIf
-    if !MEMBER.Exists()
-        return CODES.ISNT_MEMBER
-    endIf
     p_is_created = true
-
+    p_id_alias = id_alias
+    p_ref_actor = GetActorReference()
+    p_ref_member = (self as ReferenceAlias) as doticu_npcp_member
+    p_is_paralyzed = false
+    
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_IMMOBILE)
     p_ref_actor.EvaluatePackage()
-
-    return CODES.SUCCESS
 endFunction
 
-int function f_Destroy()
-    if !Exists()
-        return CODES.ISNT_IMMOBILE
-    endIf
-
+function f_Destroy()
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_IMMOBILE)
     p_ref_actor.EvaluatePackage()
 
@@ -72,10 +51,10 @@ int function f_Destroy()
     f_Untoken()
 
     p_is_paralyzed = false
+    p_ref_member = none
     p_ref_actor = none
+    p_id_alias = -1
     p_is_created = false
-
-    return CODES.SUCCESS
 endFunction
 
 ; Private Methods
@@ -113,7 +92,7 @@ endFunction
 
 ; Public Methods
 int function Enforce()
-    return MEMBER.Enforce()
+    return p_ref_member.Enforce()
 endFunction
 
 bool function Exists()
@@ -181,6 +160,10 @@ endFunction
 ; Update Methods
 function u_0_1_4(doticu_npcp_data DATA)
     p_DATA = DATA
+endFunction
+
+function u_0_1_5(doticu_npcp_data DATA)
+    p_ref_member = (self as ReferenceAlias) as doticu_npcp_member
 endFunction
 
 ; Events

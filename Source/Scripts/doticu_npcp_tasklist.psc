@@ -1,30 +1,38 @@
 Scriptname doticu_npcp_tasklist extends ObjectReference
 
 ; Private Constants
-doticu_npcp_data p_DATA = none
-
-; Public Constants
-doticu_npcp_data property DATA
-    doticu_npcp_data function Get()
-        return p_DATA
-    endFunction
-endProperty
+doticu_npcp_data    p_DATA                  =  none
 
 ; Private Variables
-float   p_default_wait_interval = -1.0
-float   p_default_wait_timeout  = -1.0
-int     p_num_tasks_total       =   -1
-int     p_num_tasks_complete    =   -1
+bool                p_is_created            = false
+float               p_default_wait_interval =  -1.0
+float               p_default_wait_timeout  =  -1.0
+int                 p_num_tasks_total       =    -1
+int                 p_num_tasks_complete    =    -1
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA, float wait_interval, float wait_timeout)
+    p_DATA = DATA
+
+    p_is_created = true
     p_default_wait_interval = wait_interval
     p_default_wait_timeout = wait_timeout
+    p_num_tasks_total = -1
+    p_num_tasks_complete = -1
 endFunction
 
 function f_Destroy()
     self.Disable()
     self.Delete()
+
+    p_num_tasks_complete = -1
+    p_num_tasks_total = -1
+    p_default_wait_timeout = -1.0
+    p_default_wait_interval = -1.0
+    p_is_created = false
+endFunction
+
+function f_Register()
 endFunction
 
 ; Private Methods

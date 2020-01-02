@@ -1,29 +1,49 @@
 Scriptname doticu_npcp_containers extends Quest
 
-; Private Constants
-doticu_npcp_data    p_DATA              = none
-doticu_npcp_consts  p_CONSTS            = none
-doticu_npcp_codes   p_CODES             = none
-doticu_npcp_funcs   p_FUNCS             = none
+; Modules
+doticu_npcp_consts property CONSTS hidden
+    doticu_npcp_consts function Get()
+        return p_DATA.CONSTS
+    endFunction
+endProperty
 
-ObjectReference     p_STORAGE           = none
-Actor               p_ACTOR_PLAYER      = none
-Container           p_CONTAINER_EMPTY   = none
-Container           p_CONTAINER_TEMP    = none
+; Public Constants
+ObjectReference property OBJECT_STORAGE hidden
+    ObjectReference function Get()
+        return CONSTS.MARKER_STORAGE
+    endFunction
+endProperty
+Actor property ACTOR_PLAYER hidden
+    Actor function Get()
+        return CONSTS.ACTOR_PLAYER
+    endFunction
+endProperty
+Container property CONTAINER_EMPTY hidden
+    Container function Get()
+        return CONSTS.CONTAINER_EMPTY
+    endFunction
+endProperty
+Container property CONTAINER_TEMP hidden
+    Container function Get()
+        return CONSTS.CONTAINER_TEMP
+    endFunction
+endProperty
+
+; Private Constants
+doticu_npcp_data    p_DATA          =  none
+
+; Private Variables
+bool                p_is_created    = false
 
 ; Friend Methods
-function f_Link(doticu_npcp_data DATA)
+function f_Create(doticu_npcp_data DATA)
     p_DATA = DATA
-    p_CONSTS = DATA.CONSTS
-    p_CODES = DATA.CODES
-    p_FUNCS = DATA.MODS.FUNCS
+
+    p_is_created = true
 endFunction
 
-function f_Initialize()
-    p_STORAGE = p_CONSTS.MARKER_STORAGE
-    p_ACTOR_PLAYER = p_CONSTS.ACTOR_PLAYER
-    p_CONTAINER_EMPTY = p_CONSTS.CONTAINER_EMPTY
-    p_CONTAINER_TEMP = p_CONSTS.CONTAINER_TEMP
+function f_Destroy()
+    p_is_created = false
 endFunction
 
 function f_Register()
@@ -31,9 +51,10 @@ endFunction
 
 ; Public Methods
 doticu_npcp_container function Create(string str_name = "Container")
-    doticu_npcp_container ref_container = p_STORAGE.PlaceAtMe(p_CONTAINER_EMPTY, 1, true, false) as doticu_npcp_container
+    doticu_npcp_container ref_container = OBJECT_STORAGE.PlaceAtMe(CONTAINER_EMPTY, 1, true, false) as doticu_npcp_container
 
     ref_container.f_Create(p_DATA, str_name)
+    ref_container.f_Register()
 
     return ref_container
 endFunction
@@ -43,15 +64,15 @@ function Destroy(doticu_npcp_container ref_container)
 endFunction
 
 ObjectReference function Create_Temp()
-    ObjectReference ref_container = p_ACTOR_PLAYER.PlaceAtMe(p_CONTAINER_TEMP, 1, false, false)
+    ObjectReference ref_container = ACTOR_PLAYER.PlaceAtMe(CONTAINER_TEMP, 1, false, false)
 
-    ref_container.SetActorOwner(p_ACTOR_PLAYER.GetActorBase())
+    ref_container.SetActorOwner(ACTOR_PLAYER.GetActorBase())
     
     return ref_container
 endFunction
 
 function Open(ObjectReference ref_container)
-    ref_container.Activate(p_ACTOR_PLAYER)
+    ref_container.Activate(ACTOR_PLAYER)
 endFunction
 
 string function Get_Name(ObjectReference ref_container)

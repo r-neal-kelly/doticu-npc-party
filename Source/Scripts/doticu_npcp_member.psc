@@ -1,11 +1,6 @@
 Scriptname doticu_npcp_member extends ReferenceAlias
 
-; Private Constants
-doticu_npcp_data        p_DATA                  =  none
-int                     p_ID_ALIAS              =    -1
-Outfit                  p_OUTFIT                =  none
-
-; Public Constants
+; Modules
 doticu_npcp_consts property CONSTS hidden
     doticu_npcp_consts function Get()
         return p_DATA.CONSTS
@@ -56,25 +51,22 @@ doticu_npcp_followers property FOLLOWERS hidden
         return p_DATA.MODS.FOLLOWERS
     endFunction
 endProperty
-doticu_npcp_settler property SETTLER hidden
-    doticu_npcp_settler function Get()
-        return (self as ReferenceAlias) as doticu_npcp_settler
-    endFunction
-endProperty
-doticu_npcp_immobile property IMMOBILE hidden
-    doticu_npcp_immobile function Get()
-        return (self as ReferenceAlias) as doticu_npcp_immobile
-    endFunction
-endProperty
+
+; Private Constants
+doticu_npcp_data        p_DATA                  =  none
 
 ; Private Variables
 bool                    p_is_created            = false
+int                     p_id_alias              =    -1
 Actor                   p_ref_actor             =  none
+doticu_npcp_settler     p_ref_settler           =  none
+doticu_npcp_immobile    p_ref_immobile          =  none
 bool                    p_is_clone              = false
 bool                    p_is_generic            = false
 bool                    p_is_thrall             = false
 int                     p_code_style            =    -1
 int                     p_code_vitality         =    -1
+Outfit                  p_outfit_member         =  none
 doticu_npcp_queue       p_queue_member          =  none
 doticu_npcp_container   p_container2_pack       =  none
 doticu_npcp_outfit      p_outfit2_member        =  none
@@ -88,106 +80,63 @@ int                     p_prev_vitality         =    -1
 doticu_npcp_outfit      p_prev_outfit2_member   =  none
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA, int ID_ALIAS)
+function f_Create(doticu_npcp_data DATA, int id_alias, bool is_clone)
+    GotoState("p_STATE_BUSY")
+    p_Create(DATA, id_alias, is_clone)
+    GotoState("")
+endFunction
+
+function p_Create(doticu_npcp_data DATA, int id_alias, bool is_clone)
     p_DATA = DATA
-    p_ID_ALIAS = ID_ALIAS
-    p_OUTFIT = CONSTS.FORMLIST_OUTFITS.GetAt(ID_ALIAS) as Outfit
-
-    SETTLER.f_Initialize(DATA, ID_ALIAS)
-    IMMOBILE.f_Initialize(DATA, ID_ALIAS)
-endFunction
-
-function f_Register()
-    ; registering mod events is global for each script on an object, and
-    ; further, works for handlers labeled as function as well as event.
-    RegisterForModEvent("doticu_npcp_load_mod", "On_Load_Mod")
-    RegisterForModEvent("doticu_npcp_members_unmember", "On_Members_Unmember")
-    RegisterForModEvent("doticu_npcp_members_u_0_1_0", "On_u_0_1_0")
-    RegisterForModEvent("doticu_npcp_members_u_0_1_1", "On_u_0_1_1")
-    RegisterForModEvent("doticu_npcp_members_u_0_1_2", "On_u_0_1_2")
-    RegisterForModEvent("doticu_npcp_members_u_0_1_3", "On_u_0_1_3")
-    RegisterForModEvent("doticu_npcp_members_u_0_1_4", "On_u_0_1_4")
-    RegisterForModEvent("doticu_npcp_queue_" + "member_" + p_ID_ALIAS, "On_Queue_Member")
-endFunction
-
-int function f_Create(bool is_a_clone)
-    int code_return
-
-    if Exists()
-        return CODES.IS_MEMBER
-    endIf
-    p_ref_actor = GetActorReference()
-    if !p_ref_actor
-        return CODES.ISNT_ACTOR
-    endIf
-    if ACTORS.Is_Dead(p_ref_actor)
-        ACTORS.Resurrect(p_ref_actor)
-        if ACTORS.Is_Dead(p_ref_actor)
-            return CODES.CANT_RESURRECT
-        endIf
-    endIf
 
     p_is_created = true
-    if is_a_clone
-        p_is_clone = is_a_clone
-    else
-        p_is_clone = false
-    endIf
-    if ACTORS.Is_Generic(p_ref_actor)
-        p_is_generic = true
-    else
-        p_is_generic = false
-    endIf
+    p_id_alias = id_alias
+    p_ref_actor = GetActorReference()
+    p_ref_settler = (self as ReferenceAlias) as doticu_npcp_settler
+    p_ref_immobile = (self as ReferenceAlias) as doticu_npcp_immobile
+    p_is_clone = is_clone
+    p_is_generic = ACTORS.Is_Generic(p_ref_actor)
+    p_is_thrall = false
     p_code_style = VARS.auto_style
     p_code_vitality = VARS.auto_vitality
+    p_outfit_member = CONSTS.FORMLIST_OUTFITS.GetAt(p_id_alias) as Outfit
 
-    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_MEMBER, p_ID_ALIAS + 1)
+    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_MEMBER, p_id_alias + 1)
     p_ref_actor.EvaluatePackage()
 
     p_Create_Queues()
-    p_Create_Containers()
-    p_Create_Outfits()
-    p_Backup()
-    
-    code_return = Enforce()
-    if code_return < 0
-        f_Destroy()
-        return code_return
-    endIf
 
-    return CODES.SUCCESS
+    if p_is_clone
+        p_queue_member.Enqueue("Member.p_Greet", 0.0)
+    endIf
+    p_queue_member.Enqueue("Member.p_Create_Containers", 0.12)
+    p_queue_member.Enqueue("Member.p_Create_Outfits", 0.12)
+    p_queue_member.Enqueue("Member.p_Backup", 0.12)
+
+    Enforce()
 endFunction
 
-int function f_Destroy()
-    int code_return
+function f_Destroy()
+    GotoState("p_STATE_BUSY")
+    p_Destroy()
+    GotoState("")
+endFunction
 
-    if !Exists()
-        return CODES.ISNT_MEMBER
-    endIf
-
+function p_Destroy()
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_MEMBER)
     p_ref_actor.EvaluatePackage()
 
-    p_queue_member.Flush(); I think this is the right spot
-
+    ; Rush before Flush to stop use of the queue
     if FOLLOWERS.Has_Follower(p_ref_actor)
-        code_return = FOLLOWERS.f_Destroy_Follower(p_ref_actor)
-        if code_return < 0
-            return code_return
-        endIf
+        p_queue_member.Rush("Follower.f_Destroy")
     endIf
-    if IMMOBILE.Exists()
-        code_return = IMMOBILE.f_Destroy()
-        if code_return < 0
-            return code_return
-        endIf
+    if p_ref_immobile.Exists()
+        p_queue_member.Rush("Immobile.f_Destroy")
     endIf
-    if SETTLER.Exists()
-        code_return = SETTLER.f_Destroy()
-        if code_return < 0
-            return code_return
-        endIf
+    if p_ref_settler.Exists()
+        p_queue_member.Rush("Settler.f_Destroy")
     endIf
+    p_queue_member.Flush()
 
     ;p_Unoutfit() Restore sets the original
     p_Unvitalize()
@@ -214,15 +163,27 @@ int function f_Destroy()
     p_outfit2_member = none
     p_container2_pack = none
     p_queue_member = none
+    p_outfit_member = none
     p_code_vitality = -1
     p_code_style = -1
     p_is_thrall = false
     p_is_generic = false
     p_is_clone = false
+    p_ref_immobile = none
+    p_ref_settler = none
     p_ref_actor = none
+    p_id_alias = -1
     p_is_created = false
+endFunction
 
-    return CODES.SUCCESS
+function f_Register()
+    ; registering mod events is global for each script on an object, and
+    ; further, works for handlers labeled as function as well as event.
+    RegisterForModEvent("doticu_npcp_load_mod", "On_Load_Mod")
+    RegisterForModEvent("doticu_npcp_members_unmember", "On_Members_Unmember")
+    RegisterForModEvent("doticu_npcp_members_u_0_1_4", "On_u_0_1_4")
+    RegisterForModEvent("doticu_npcp_members_u_0_1_5", "On_u_0_1_5")
+    p_Register_Queues()
 endFunction
 
 function f_Enqueue(string str_message, float float_interval = -1.0, bool allow_repeat = false)
@@ -231,11 +192,25 @@ endFunction
 
 ; Private Methods
 function p_Create_Queues()
-    p_queue_member = QUEUES.Create("member_" + p_ID_ALIAS, 32, 0.15)
+    p_queue_member = QUEUES.Create("member_" + p_id_alias, 32, 0.12)
+    p_Register_Queues()
 endFunction
 
 function p_Destroy_Queues()
-    QUEUES.Destroy(p_queue_member)
+    if p_queue_member
+        QUEUES.Destroy(p_queue_member)
+    endIf
+endFunction
+
+function p_Register_Queues()
+    if p_queue_member
+        p_queue_member.Register_Alias(self, "On_Queue_Member")
+    endIf
+endFunction
+
+function p_Greet()
+    ACTORS.Move_To(p_ref_actor, CONSTS.ACTOR_PLAYER, 60, 180)
+    ACTORS.Greet_Player(p_ref_actor)
 endFunction
 
 function p_Create_Containers()
@@ -255,25 +230,25 @@ endFunction
 function p_Create_Outfits()
     ; for settler, thrall, immobile, and follower, we can actually add some basic gear, so they are not naked.
     ; could be an option
-    p_outfit2_member = OUTFITS.Create(p_OUTFIT)
-    p_outfit2_settler = OUTFITS.Create(p_OUTFIT)
-    p_outfit2_thrall = OUTFITS.Create(p_OUTFIT)
-    p_outfit2_immobile = OUTFITS.Create(p_OUTFIT)
-    p_outfit2_follower = OUTFITS.Create(p_OUTFIT)
-    p_prev_outfit2_member = OUTFITS.Create(p_OUTFIT)
+    p_outfit2_member = OUTFITS.Create(p_outfit_member)
+    p_outfit2_settler = OUTFITS.Create(p_outfit_member)
+    p_outfit2_thrall = OUTFITS.Create(p_outfit_member)
+    p_outfit2_immobile = OUTFITS.Create(p_outfit_member)
+    p_outfit2_follower = OUTFITS.Create(p_outfit_member)
+    p_outfit2_current = p_outfit2_member
 
+    p_prev_outfit2_member = OUTFITS.Create(p_outfit_member)
+    
     p_Rename_Outfits(Get_Name())
 
     p_outfit2_member.Get(p_ref_actor)
-    p_prev_outfit2_member.Get(p_ref_actor)
-
     p_outfit2_member.Remove_Inventory(p_ref_actor, p_container2_pack)
-
-    p_outfit2_current = p_outfit2_member
+    p_prev_outfit2_member.Get(p_ref_actor)
 endFunction
 
 function p_Destroy_Outfits()
     OUTFITS.Destroy(p_prev_outfit2_member)
+
     OUTFITS.Destroy(p_outfit2_follower)
     OUTFITS.Destroy(p_outfit2_immobile)
     OUTFITS.Destroy(p_outfit2_thrall)
@@ -303,7 +278,7 @@ function p_Restore()
 endFunction
 
 function p_Token()
-    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_MEMBER, p_ID_ALIAS + 1)
+    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_MEMBER, p_id_alias + 1)
 
     if p_is_clone
         ACTORS.Token(p_ref_actor, CONSTS.TOKEN_CLONE)
@@ -323,26 +298,26 @@ function p_Token()
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_THRALL)
     endIf
 
-    if p_code_style == CODES.IS_WARRIOR
-        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
-    elseIf p_code_style == CODES.IS_MAGE
-        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
-    elseIf p_code_style == CODES.IS_ARCHER
-        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
-    else
+    if p_code_style == CODES.IS_DEFAULT
         ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
+    elseIf p_code_style == CODES.IS_WARRIOR
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
+        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
+    elseIf p_code_style == CODES.IS_MAGE
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
+        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
+    elseIf p_code_style == CODES.IS_ARCHER
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
+        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
     endIf
 
     if p_code_vitality == CODES.IS_MORTAL
@@ -464,14 +439,11 @@ int function Enforce()
     p_queue_member.Enqueue("p_Member", 0.12)
     if Is_Thrall()
         p_queue_member.Enqueue("p_Enthrall", 0.12)
-        ; just testing
-        p_queue_member.Enqueue("p_Enthrall", 0.12)
-        p_queue_member.Enqueue("p_Enthrall", 0.12)
     endIf
     p_queue_member.Enqueue("p_Style", 0.12)
     p_queue_member.Enqueue("p_Vitalize", 0.12)
     if Is_Follower()
-        p_queue_member.Enqueue("Follower.F_Enforce", 0.12)
+        p_queue_member.Enqueue("Follower.f_Enforce", 0.12)
     endIf
 
     return CODES.SUCCESS
@@ -498,18 +470,18 @@ Actor function Get_Actor()
 endFunction
 
 doticu_npcp_settler function Get_Settler()
-    if !Exists() || !SETTLER.Exists()
+    if !Exists() || !p_ref_settler.Exists()
         return none
     else
-        return SETTLER
+        return p_ref_settler
     endIf
 endFunction
 
 doticu_npcp_immobile function Get_Immobile()
-    if !Exists() || !IMMOBILE.Exists()
+    if !Exists() || !p_ref_immobile.Exists()
         return none
     else
-        return IMMOBILE
+        return p_ref_immobile
     endIf
 endFunction
 
@@ -561,10 +533,11 @@ int function Settle()
         return CODES.ISNT_MEMBER
     endIf
 
-    code_return = SETTLER.f_Create()
-    if code_return < 0
-        return code_return
+    if Is_Settler()
+        return CODES.IS_SETTLER
     endIf
+
+    p_queue_member.Rush("Settler.f_Create")
 
     code_return = Enforce()
     if code_return < 0
@@ -605,10 +578,11 @@ int function Unsettle()
         return CODES.ISNT_MEMBER
     endIf
 
-    code_return = SETTLER.f_Destroy()
-    if code_return < 0
-        return code_return
+    if !Is_Settler()
+        return CODES.ISNT_SETTLER
     endIf
+
+    p_queue_member.Rush("Settler.f_Destroy")
 
     code_return = Enforce()
     if code_return < 0
@@ -625,10 +599,11 @@ int function Immobilize()
         return CODES.ISNT_MEMBER
     endIf
 
-    code_return = IMMOBILE.f_Create()
-    if code_return < 0
-        return code_return
+    if Is_Immobile()
+        return CODES.IS_IMMOBILE
     endIf
+
+    p_queue_member.Rush("Immobile.f_Create")
 
     code_return = Enforce()
     if code_return < 0
@@ -1219,15 +1194,15 @@ bool function Is_Member()
 endFunction
 
 bool function Is_Settler()
-    return Exists() && SETTLER.Exists()
+    return Exists() && p_ref_settler.Exists()
 endFunction
 
 bool function Is_Immobile()
-    return Exists() && IMMOBILE.Exists()
+    return Exists() && p_ref_immobile.Exists()
 endFunction
 
 bool function Is_Mobile()
-    return Exists() && !IMMOBILE.Exists()
+    return Exists() && !p_ref_immobile.Exists()
 endFunction
 
 bool function Is_Follower()
@@ -1275,21 +1250,11 @@ bool function Is_Vitalized_Invulnerable()
 endFunction
 
 bool function Is_Paralyzed()
-    return Exists() && Is_Immobile() && IMMOBILE.Is_Paralyzed()
+    return Exists() && Is_Immobile() && p_ref_immobile.Is_Paralyzed()
 endFunction
 
 function Summon(int distance = 60, int angle = 0)
-    bool has_enabled_ai = p_ref_actor.IsAIEnabled()
-
-    if !has_enabled_ai
-        p_ref_actor.EnableAI(true)
-    endIf
-    
     ACTORS.Move_To(p_ref_actor, CONSTS.ACTOR_PLAYER, distance, angle)
-
-    if !has_enabled_ai
-        p_ref_actor.EnableAI(false)
-    endIf
 endFunction
 
 function Summon_Ahead()
@@ -1302,7 +1267,7 @@ endFunction
 
 ; Update Methods
 event On_u_0_1_0()
-    p_OUTFIT = CONSTS.FORMLIST_OUTFITS.GetAt(p_ID_ALIAS) as Outfit
+    p_outfit_member = CONSTS.FORMLIST_OUTFITS.GetAt(p_id_alias) as Outfit
     if Exists()
         p_Destroy_Outfits()
         p_Create_Outfits()
@@ -1348,31 +1313,64 @@ event On_u_0_1_4(Form form_data)
         p_outfit2_thrall.u_0_1_4(p_DATA)
         p_outfit2_immobile.u_0_1_4(p_DATA)
         p_outfit2_follower.u_0_1_4(p_DATA)
+        p_prev_outfit2_member.u_0_1_4(p_DATA)
     endIf
 
-    SETTLER.u_0_1_4(p_DATA)
-    IMMOBILE.u_0_1_4(p_DATA)
+    p_ref_settler.u_0_1_4(p_DATA)
+    p_ref_immobile.u_0_1_4(p_DATA)
 endEvent
+
+event On_u_0_1_5(Form form_data)
+    if Exists()
+        p_ref_settler = (self as ReferenceAlias) as doticu_npcp_settler
+        p_ref_immobile = (self as ReferenceAlias) as doticu_npcp_immobile
+        p_outfit_member = CONSTS.FORMLIST_OUTFITS.GetAt(p_id_alias) as Outfit
+
+        p_outfit2_member.u_0_1_5(p_DATA)
+        p_outfit2_settler.u_0_1_5(p_DATA)
+        p_outfit2_thrall.u_0_1_5(p_DATA)
+        p_outfit2_immobile.u_0_1_5(p_DATA)
+        p_outfit2_follower.u_0_1_5(p_DATA)
+        p_prev_outfit2_member.u_0_1_5(p_DATA)
+
+        if Is_Settler()
+            p_ref_settler.u_0_1_5(p_DATA)
+        endIf
+
+        if Is_Immobile()
+            p_ref_immobile.u_0_1_5(p_DATA)
+        endIf
+    endIf
+endEvent
+
+; Private States
+state p_STATE_BUSY
+    function f_Create(doticu_npcp_data DATA, int id_alias, bool is_clone)
+    endFunction
+    function f_Destroy()
+    endFunction
+
+    ; really ought to add all public methods, but it's difficult because so many
+    ; already have a private version. what really should be done is to make two
+    ; scripts per script, one implementation, and one interface. but I'm not sure
+    ; if that is too costly on the engine.
+endState
 
 ; Events
 event On_Queue_Member(string str_message)
-    if !Exists()
-        return
-    endIf
-
     if str_message == "f_Paralyze"
         if Is_Immobile()
-            IMMOBILE.f_Paralyze()
+            p_ref_immobile.f_Paralyze()
         endIf
     elseIf str_message == "p_Outfit"
         p_Outfit()
     elseIf str_message == "p_Token"
         p_Token()
         if Is_Settler()
-            SETTLER.f_Token()
+            p_ref_settler.f_Token()
         endIf
         if Is_Immobile()
-            IMMOBILE.f_Token()
+            p_ref_immobile.f_Token()
         endIf
     elseIf str_message == "p_Member"
         p_Member()
@@ -1382,14 +1380,43 @@ event On_Queue_Member(string str_message)
         p_Style()
     elseIf str_message == "p_Vitalize"
         p_Vitalize()
+    
+    elseIf str_message == "Member.p_Greet"
+        p_Greet()
+    elseIf str_message == "Member.p_Create_Containers"
+        p_Create_Containers()
+    elseIf str_message == "Member.p_Create_Outfits"
+        p_Create_Outfits()
+    elseIf str_message == "Member.p_Backup"
+        p_Backup()
+    
+    elseIf str_message == "Settler.f_Create"
+        if !Is_Settler()
+            p_ref_settler.f_Create(p_DATA, p_id_alias)
+        endIf
+    elseIf str_message == "Settler.f_Destroy"
+        if Is_Settler()
+            p_ref_settler.f_Destroy()
+        endIf
+    
+    elseIf str_message == "Immobile.f_Create"
+        if !Is_Immobile()
+            p_ref_immobile.f_Create(p_DATA, p_id_alias)
+        endIf
     elseIf str_message == "Immobile.f_Destroy"
         if Is_Immobile()
-            IMMOBILE.f_Destroy()
+            p_ref_immobile.f_Destroy()
         endIf
-    elseIf str_message == "Follower.F_Enforce"
+    
+    elseIf str_message == "Follower.f_Destroy"
+        if Is_Follower()
+            FOLLOWERS.f_Destroy_Follower(p_ref_actor)
+        endIf
+    elseIf str_message == "Follower.f_Enforce"
         if Is_Follower()
             Get_Follower().f_Enforce()
         endIf
+    
     endIf
 
     p_queue_member.Dequeue()

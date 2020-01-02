@@ -1,25 +1,35 @@
 Scriptname doticu_npcp_aliases extends Quest
 
-; Private Constants
-doticu_npcp_codes   p_CODES         = none
+; Modules
+doticu_npcp_codes property CODES hidden
+    doticu_npcp_codes function Get()
+        return p_DATA.CODES
+    endFunction
+endProperty
 
-int                 p_MAX_ALIASES   =   -1
+; Private Constants
+doticu_npcp_data    p_DATA          =  none
+int                 p_MAX_ALIASES   =    -1
 
 ; Private Variables
-int                 p_size_ids_used =   -1
-int                 p_size_ids_free =   -1
-int[]               p_arr_ids_used  = none
-int[]               p_arr_ids_free  = none
+bool                p_is_created    = false
+int                 p_size_ids_used =    -1
+int                 p_size_ids_free =    -1
+int[]               p_arr_ids_used  =  none
+int[]               p_arr_ids_free  =  none
 
 ; Friend Methods
-function f_Link(doticu_npcp_data DATA)
-    p_CODES = DATA.CODES
-endFunction
-
-function f_Initialize()
+function f_Create(doticu_npcp_data DATA)
+    p_DATA = DATA
     p_MAX_ALIASES = GetNumAliases()
 
+    p_is_created = true
     p_Create_ID_Arrays()
+endFunction
+
+function f_Destroy()
+    p_Destroy_ID_Arrays()
+    p_is_created = false
 endFunction
 
 function f_Register()
@@ -49,10 +59,17 @@ function p_Create_ID_Arrays()
     endWhile
 endFunction
 
+function p_Destroy_ID_Arrays()
+    p_arr_ids_free = none
+    p_arr_ids_used = none
+    p_size_ids_free = -1
+    p_size_ids_used = -1
+endFunction
+
 int function p_Create_ID()
     if p_size_ids_free <= 0 || p_size_ids_used >= p_arr_ids_used.length
         ; no ids are free
-        return p_CODES.FAILURE
+        return CODES.FAILURE
     endIf
 
     p_size_ids_free -= 1
@@ -67,13 +84,13 @@ endFunction
 int function p_Destroy_ID(int id)
     if p_size_ids_free >= p_arr_ids_free.length
         ; all ids are free
-        return p_CODES.FAILURE
+        return CODES.FAILURE
     endIf
 
     int idx_id_used = p_arr_ids_used.RFind(id, p_size_ids_used - 1)
     if idx_id_used < 0
         ; id was not in use
-        return p_CODES.FAILURE
+        return CODES.FAILURE
     endIf
 
     p_size_ids_used -= 1
@@ -90,7 +107,7 @@ int function p_Destroy_ID(int id)
         p_Create_ID_Arrays(); this may be temp
     endIf
 
-    return p_CODES.SUCCESS
+    return CODES.SUCCESS
 endFunction
 
 Actor function p_Get_Actor(int id_alias)
@@ -144,13 +161,13 @@ int function Create_Alias(Actor ref_actor)
     int code_return
 
     if !ref_actor
-        return p_CODES.ISNT_ACTOR
+        return CODES.ISNT_ACTOR
     endIf
     if p_Has_Actor(ref_actor)
-        return p_CODES.HAS_ACTOR
+        return CODES.HAS_ACTOR
     endIf
     if Is_Full()
-        return p_CODES.HASNT_SPACE
+        return CODES.HASNT_SPACE
     endIf
 
     code_return = p_Create_ID()
@@ -168,10 +185,10 @@ int function Destroy_Alias(int id_alias, Actor ref_actor)
     int code_return
 
     if !ref_actor
-        return p_CODES.ISNT_ACTOR
+        return CODES.ISNT_ACTOR
     endIf
     if !Has_Alias(id_alias, ref_actor)
-        return p_CODES.HASNT_ALIAS
+        return CODES.HASNT_ALIAS
     endIf
 
     f_Get_Alias(id_alias).Clear()
@@ -181,7 +198,7 @@ int function Destroy_Alias(int id_alias, Actor ref_actor)
         return code_return
     endIf
 
-    return p_CODES.SUCCESS
+    return CODES.SUCCESS
 endFunction
 
 bool function Has_Alias(int id_alias, Actor ref_actor)

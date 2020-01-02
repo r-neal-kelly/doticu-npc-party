@@ -1,28 +1,56 @@
 Scriptname doticu_npcp_player extends ReferenceAlias
 
-; Private Constants
-doticu_npcp_data        p_DATA          = none
-doticu_npcp_consts      p_CONSTS        = none
-doticu_npcp_codes       p_CODES         = none
-doticu_npcp_vars        p_VARS          = none
-doticu_npcp_funcs       p_FUNCS         = none
-doticu_npcp_actors      p_ACTORS        = none
-doticu_npcp_queues      p_QUEUES        = none
-doticu_npcp_followers   p_FOLLOWERS     = none
-doticu_npcp_main        p_MAIN          = none
+; Modules
+doticu_npcp_main property MAIN hidden
+    doticu_npcp_main function Get()
+        return p_DATA.MODS.MAIN
+    endFunction
+endProperty
+doticu_npcp_consts property CONSTS hidden
+    doticu_npcp_consts function Get()
+        return p_DATA.CONSTS
+    endFunction
+endProperty
+doticu_npcp_vars property VARS hidden
+    doticu_npcp_vars function Get()
+        return p_DATA.VARS
+    endFunction
+endProperty
+doticu_npcp_queues property QUEUES hidden
+    doticu_npcp_queues function Get()
+        return p_DATA.MODS.FUNCS.QUEUES
+    endFunction
+endProperty
+doticu_npcp_followers property FOLLOWERS hidden
+    doticu_npcp_followers function Get()
+        return p_DATA.MODS.FOLLOWERS
+    endFunction
+endProperty
 
-Actor                   p_REF_PLAYER    = none
-doticu_npcp_queue       p_QUEUE_PLAYER  = none
+; Private Constants
+doticu_npcp_data    p_DATA          =  none
 
 ; Private Variables
-bool p_is_in_combat = false
+bool                p_is_created    = false
+Actor               p_ref_player    =  none
+bool                p_is_in_combat  = false
+doticu_npcp_queue   p_queue_player  =  none
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA)
+function f_Create(doticu_npcp_data DATA)
     p_DATA = DATA
-    p_REF_PLAYER = p_CONSTS.ACTOR_PLAYER
 
-    p_Create_Queues()
+    p_is_created = true
+    p_ref_player = CONSTS.ACTOR_PLAYER
+    p_is_in_combat = false
+    p_queue_player = QUEUES.Create("player", 32, 5.0)
+endFunction
+
+function f_Destroy()
+    QUEUES.Destroy(p_queue_player)
+    p_is_in_combat = false
+    p_ref_player = none
+    p_is_created = false
 endFunction
 
 function f_Register()
@@ -32,23 +60,23 @@ endFunction
 function f_Begin_Combat()
     if !p_is_in_combat
         p_is_in_combat = true
-        p_QUEUE_PLAYER.Enqueue("f_Try_End_Combat()", 5.0)
+        p_queue_player.Enqueue("f_Try_End_Combat()", 5.0)
     endIf
 endFunction
 
 function f_End_Combat()
     if p_is_in_combat
         p_is_in_combat = false
-        p_QUEUE_PLAYER.Flush()
-        if p_VARS.auto_resurrect
-            p_FOLLOWERS.Resurrect()
+        p_queue_player.Flush()
+        if VARS.auto_resurrect
+            FOLLOWERS.Resurrect()
         endIf
     endIf
 endFunction
 
 function f_Try_End_Combat()
-    if p_REF_PLAYER.IsInCombat()
-        p_QUEUE_PLAYER.Enqueue("f_Try_End_Combat()", 5.0)
+    if p_ref_player.IsInCombat()
+        p_queue_player.Enqueue("f_Try_End_Combat()", 5.0)
     else
         f_End_Combat()
     endIf
@@ -56,20 +84,20 @@ endFunction
 
 ; Private Methods
 function p_Create_Queues()
-    p_QUEUE_PLAYER = p_QUEUES.Create("player", 32, 5.0)
+    
 endFunction
 
 function p_Destroy_Queues()
-    p_QUEUES.Destroy(p_QUEUE_PLAYER)
+    QUEUES.Destroy(p_queue_player)
 endFunction
 
 ; Public Methods
 function Add_Perk(Perk perk_to_add)
-    p_REF_PLAYER.AddPerk(perk_to_add)
+    p_ref_player.AddPerk(perk_to_add)
 endFunction
 
 function Remove_Perk(Perk perk_to_remove)
-    p_REF_PLAYER.RemovePerk(perk_to_remove)
+    p_ref_player.RemovePerk(perk_to_remove)
 endFunction
 
 ; Update Methods
@@ -79,12 +107,12 @@ endFunction
 
 function u_0_1_4(doticu_npcp_data DATA)
     p_DATA = DATA
-    p_QUEUE_PLAYER.u_0_1_4(p_DATA)
+    p_queue_player.u_0_1_4(p_DATA)
 endFunction
 
 ; Events
 event OnPlayerLoadGame()
-    p_MAIN.f_Load_Mod()
+    MAIN.f_Load_Mod()
 endEvent
 
 event On_Queue_Player(string str_message)
@@ -92,7 +120,7 @@ event On_Queue_Player(string str_message)
         f_Try_End_Combat()
     endIf
 
-    p_QUEUE_PLAYER.Dequeue()
+    p_queue_player.Dequeue()
 endEvent
 
 event OnActorAction(int code_action, Actor ref_activator, Form form_source, int slot)

@@ -1,31 +1,59 @@
 Scriptname doticu_npcp_actors extends Quest
 
+; Modules
+doticu_npcp_consts property CONSTS hidden
+    doticu_npcp_consts function Get()
+        return p_DATA.CONSTS
+    endFunction
+endProperty
+doticu_npcp_codes property CODES hidden
+    doticu_npcp_codes function Get()
+        return p_DATA.CODES
+    endFunction
+endProperty
+doticu_npcp_containers property CONTAINERS hidden
+    doticu_npcp_containers function Get()
+        return p_DATA.MODS.FUNCS.CONTAINERS
+    endFunction
+endProperty
+doticu_npcp_player property PLAYER
+    doticu_npcp_player function Get()
+        return GetAliasByName("player") as doticu_npcp_player
+    endFunction
+endProperty
+doticu_npcp_greeter property GREETER
+    doticu_npcp_greeter function Get()
+        return GetAliasByName("greeter") as doticu_npcp_greeter
+    endFunction
+endProperty
+
 ; Private Constants
-doticu_npcp_consts      p_CONSTS        = none
-doticu_npcp_codes       p_CODES         = none
-doticu_npcp_funcs       p_FUNCS         = none
-doticu_npcp_containers  p_CONTAINERS    = none
-doticu_npcp_outfits     p_OUTFITS       = none
-doticu_npcp_greeter     p_GREETER       = none
+doticu_npcp_data    p_DATA          =  none
+
+; Private Variables
+bool                p_is_created    = false
 
 ; Friend Methods
-function f_Link(doticu_npcp_data DATA)
-    p_CONSTS = DATA.CONSTS
-    p_CODES = DATA.CODES
-    p_FUNCS = DATA.MODS.FUNCS
-    p_CONTAINERS = DATA.MODS.FUNCS.CONTAINERS
-    p_OUTFITS = DATA.MODS.FUNCS.OUTFITS
-    p_GREETER = GetAliasByName("greeter") as doticu_npcp_greeter
+function f_Create(doticu_npcp_data DATA)
+    p_DATA = DATA
 
-    p_GREETER.f_Link(DATA)
+    p_is_created = true
+
+    PLAYER.f_Create(DATA)
 endFunction
 
-function f_Initialize()
-    p_Greeter.f_Initialize()
+function f_Destroy()
+    if GREETER.Exists()
+        GREETER.f_Destroy()
+    endIf
+    PLAYER.f_Destroy()
+
+    p_is_created = false
 endFunction
 
 function f_Register()
-    p_Greeter.f_Register()
+    PLAYER.f_Register()
+    GREETER.f_Register()
 endFunction
 
 ; Private Methods
@@ -52,11 +80,11 @@ endFunction
 
 ; Public Methods
 bool function Is_Alive(Actor ref_actor)
-    return !ref_actor.IsDead()
+    return ref_actor && !ref_actor.IsDead()
 endFunction
 
 bool function Is_Dead(Actor ref_actor)
-    return ref_actor.IsDead()
+    return ref_actor && ref_actor.IsDead()
 endFunction
 
 bool function Is_Sleeping(Actor ref_actor)
@@ -64,31 +92,35 @@ bool function Is_Sleeping(Actor ref_actor)
     ; 2 Not Sleeping, Wants to Sleep
     ; 3 Sleeping
     ; 4 Sleeping, Wants to Wake
-    return ref_actor.GetSleepState() == 3
+    return ref_actor && ref_actor.GetSleepState() == 3
 endFunction
 
 bool function Is_Unique(Actor ref_actor)
-    return ref_actor.GetActorBase().IsUnique()
+    return ref_actor && ref_actor.GetActorBase().IsUnique()
 endFunction
 
 bool function Is_Generic(Actor ref_actor)
-    return !ref_actor.GetActorBase().IsUnique()
+    return ref_actor && !ref_actor.GetActorBase().IsUnique()
 endFunction
 
 bool function Is_Vampire(Actor ref_actor)
-    return ref_actor.HasKeyword(p_CONSTS.KEYWORD_VAMPIRE)
+    return ref_actor && ref_actor.HasKeyword(CONSTS.KEYWORD_VAMPIRE)
 endFunction
 
 bool function Is_Male(Actor ref_actor)
-    return Get_Sex(ref_actor) == p_CODES.GENDER_MALE
+    return Get_Sex(ref_actor) == CODES.GENDER_MALE
 endFunction
 
 bool function Is_Female(Actor ref_actor)
-    return Get_Sex(ref_actor) == p_CODES.GENDER_FEMALE
+    return Get_Sex(ref_actor) == CODES.GENDER_FEMALE
 endFunction
 
 ActorBase function Get_Base(Actor ref_actor)
-    return ref_actor.GetActorBase()
+    if ref_actor
+        return ref_actor.GetActorBase()
+    else
+        return none
+    endIf
 endFunction
 
 string function Get_Name(Actor ref_actor)
@@ -121,7 +153,11 @@ function Set_Base_Name(Actor ref_actor, string str_name)
 endFunction
 
 int function Get_Sex(Actor ref_actor)
-    return Get_Base(ref_actor).GetSex()
+    if ref_actor
+        return Get_Base(ref_actor).GetSex()
+    else
+        return 1234567
+    endIf
 endFunction
 
 int function Get_Vitality(Actor ref_actor)
@@ -134,13 +170,13 @@ int function Get_Vitality(Actor ref_actor)
     endIf
 
     if p_base_actor.IsProtected()
-        return p_CODES.IS_PROTECTED
+        return CODES.IS_PROTECTED
     elseIf p_base_actor.IsEssential()
-        return p_CODES.IS_ESSENTIAL
+        return CODES.IS_ESSENTIAL
     elseIf p_base_actor.IsInvulnerable()
-        return p_CODES.IS_INVULNERABLE
+        return CODES.IS_INVULNERABLE
     else
-        return p_CODES.IS_MORTAL
+        return CODES.IS_MORTAL
     endIf
 endFunction
 
@@ -149,22 +185,22 @@ function Vitalize(Actor ref_actor, int code_vitality)
 
     ActorBase p_base_actor = Get_Base(ref_actor)
 
-    if code_vitality == p_CODES.IS_MORTAL
+    if code_vitality == CODES.IS_MORTAL
         p_base_actor.SetProtected(false)
         p_base_actor.SetEssential(false)
         ;p_base_actor.SetInvulnerable(false)
         ref_actor.SetGhost(false)
-    elseIf code_vitality == p_CODES.IS_PROTECTED
+    elseIf code_vitality == CODES.IS_PROTECTED
         p_base_actor.SetProtected(true)
         p_base_actor.SetEssential(false)
         ;p_base_actor.SetInvulnerable(false)
         ref_actor.SetGhost(false)
-    elseIf code_vitality == p_CODES.IS_ESSENTIAL
+    elseIf code_vitality == CODES.IS_ESSENTIAL
         p_base_actor.SetProtected(false)
         p_base_actor.SetEssential(true)
         ;p_base_actor.SetInvulnerable(false)
         ref_actor.SetGhost(false)
-    elseIf code_vitality == p_CODES.IS_INVULNERABLE
+    elseIf code_vitality == CODES.IS_INVULNERABLE
         p_base_actor.SetProtected(false)
         p_base_actor.SetEssential(false)
         ;p_base_actor.SetInvulnerable(true)
@@ -173,15 +209,15 @@ function Vitalize(Actor ref_actor, int code_vitality)
 endFunction
 
 function Resurrect(Actor ref_actor)
-    ObjectReference ref_container_temp = p_CONTAINERS.Create_Temp()
+    ObjectReference ref_container_temp = CONTAINERS.Create_Temp()
 
-    p_CONTAINERS.Take_All(ref_container_temp, ref_actor)
+    CONTAINERS.Take_All(ref_container_temp, ref_actor)
     ref_actor.Disable()
     ref_actor.Resurrect()
     Pacify(ref_actor)
     ref_actor.Enable()
-    p_CONTAINERS.Empty(ref_actor)
-    p_CONTAINERS.Take_All(ref_actor, ref_container_temp)
+    CONTAINERS.Empty(ref_actor)
+    CONTAINERS.Take_All(ref_actor, ref_container_temp)
     Update_Equipment(ref_actor)
 endFunction
 
@@ -214,20 +250,20 @@ Actor function Clone(Actor ref_actor)
     ; make Greet happen before waiting too long.
     ; can prob make this parallel with the jobs pattern
 
-    p_CONSTS.MARKER_CLONER.MoveTo(p_CONSTS.ACTOR_PLAYER, 1000.0, 1000.0, -1000.0)
+    CONSTS.MARKER_CLONER.MoveTo(CONSTS.ACTOR_PLAYER, 1000.0, 1000.0, -1000.0)
     
     Form ref_form = ref_actor.GetBaseObject() as Form
-    Actor ref_clone = p_CONSTS.MARKER_CLONER.PlaceAtMe(ref_form, 1, true, false) as Actor; persist, disable
+    Actor ref_clone = CONSTS.MARKER_CLONER.PlaceAtMe(ref_form, 1, true, false) as Actor; persist, disable
 
     if Is_Generic(ref_actor)
         while !p_Has_Same_Head(ref_actor, ref_clone); we may need to limit this to a couple hundred tries, because I ran into an infinite somehow. an unclonable?
             ref_clone.Disable()
             ref_clone.Delete()
-            ref_clone = p_CONSTS.MARKER_CLONER.PlaceAtMe(ref_form, 1, true, false) as Actor; persist, disable
+            ref_clone = CONSTS.MARKER_CLONER.PlaceAtMe(ref_form, 1, true, false) as Actor; persist, disable
         endWhile
     endIf
 
-    p_CONSTS.MARKER_CLONER.MoveTo(p_CONSTS.MARKER_STORAGE)
+    CONSTS.MARKER_CLONER.MoveTo(CONSTS.MARKER_STORAGE)
 
     Pacify(ref_clone)
     Set_Name(ref_clone, "Clone of " + Get_Name(ref_actor))
@@ -241,15 +277,32 @@ function Delete(Actor ref_actor)
 endFunction
 
 function Move_To(ObjectReference ref_subject, ObjectReference ref_object, int distance = 60, int angle = 0)
-    ; angle 0 == front of ref_object
+    Actor ref_actor = ref_subject as Actor
+    bool has_enabled_ai = ref_actor && ref_actor.IsAIEnabled()
     float object_angle_z = ref_object.GetAngleZ()
+
+    if !has_enabled_ai
+        ref_actor.EnableAI(true)
+    endIf
+
     ref_subject.MoveTo(ref_object, distance * Math.Sin(object_angle_z - angle), distance * Math.Cos(object_angle_z - angle), 0.0)
     ref_subject.SetAngle(0.0, 0.0, object_angle_z - 180 + angle)
+
+    if !has_enabled_ai
+        ref_actor.EnableAI(false)
+    endIf
 endFunction
 
 function Greet_Player(Actor ref_actor)
-    p_GREETER.f_Destroy()
-    p_GREETER.f_Create(ref_actor)
+    if !ref_actor
+        return
+    endIf
+
+    if GREETER.Exists()
+        GREETER.f_Destroy()
+    endIf
+
+    GREETER.f_Create(p_DATA, ref_actor)
 endFunction
 
 function Pacify(Actor ref_actor)
@@ -262,7 +315,7 @@ endFunction
 function Ragdoll(Actor ref_actor)
     ; maybe should accept a timer, which can be done async or parallel
     ref_actor.SetActorValue("Paralysis", 1); should this come after the push?
-    p_CONSTS.ACTOR_PLAYER.PushActorAway(ref_actor, 0.0)
+    CONSTS.ACTOR_PLAYER.PushActorAway(ref_actor, 0.0)
 endFunction
 
 function Unragdoll(Actor ref_actor)
@@ -279,8 +332,8 @@ function Update_Equipment(Actor ref_actor)
         ref_actor.SetPlayerTeammate(true, true)
     endIf
 
-    ref_actor.AddItem(p_CONSTS.WEAPON_BLANK, 1, true)
-    ref_actor.RemoveItem(p_CONSTS.WEAPON_BLANK, 1, true, none)
+    ref_actor.AddItem(CONSTS.WEAPON_BLANK, 1, true)
+    ref_actor.RemoveItem(CONSTS.WEAPON_BLANK, 1, true, none)
 
     if !is_player_teammate
         ref_actor.SetPlayerTeammate(false, false)

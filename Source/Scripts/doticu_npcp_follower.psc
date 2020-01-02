@@ -1,22 +1,50 @@
 Scriptname doticu_npcp_follower extends ReferenceAlias
 
+; Modules
+doticu_npcp_consts property CONSTS hidden
+    doticu_npcp_consts function Get()
+        return p_DATA.CONSTS
+    endFunction
+endProperty
+doticu_npcp_codes property CODES hidden
+    doticu_npcp_codes function Get()
+        return p_DATA.CODES
+    endFunction
+endProperty
+doticu_npcp_actors property ACTORS hidden
+    doticu_npcp_actors function Get()
+        return p_DATA.MODS.FUNCS.ACTORS
+    endFunction
+endProperty
+doticu_npcp_queues property QUEUES hidden
+    doticu_npcp_queues function Get()
+        return p_DATA.MODS.FUNCS.QUEUES
+    endFunction
+endProperty
+doticu_npcp_members property MEMBERS hidden
+    doticu_npcp_members function Get()
+        return p_DATA.MODS.MEMBERS
+    endFunction
+endProperty
+doticu_npcp_followers property FOLLOWERS hidden
+    doticu_npcp_followers function Get()
+        return p_DATA.MODS.FOLLOWERS
+    endFunction
+endProperty
+
+; Public Constants
+Actor property ACTOR_PLAYER hidden
+    Actor function Get()
+        return p_DATA.CONSTS.ACTOR_PLAYER
+    endFunction
+endProperty
+
 ; Private Constants
 doticu_npcp_data        p_DATA                      =  none
-doticu_npcp_consts      p_CONSTS                    =  none
-doticu_npcp_codes       p_CODES                     =  none
-doticu_npcp_vars        p_VARS                      =  none
-doticu_npcp_funcs       p_FUNCS                     =  none
-doticu_npcp_actors      p_ACTORS                    =  none
-doticu_npcp_queues      p_QUEUES                    =  none
-doticu_npcp_members     p_MEMBERS                   =  none
-doticu_npcp_followers   p_FOLLOWERS                 =  none
-doticu_npcp_control     p_CONTROL                   =  none
-
-Actor                   p_REF_PLAYER                =  none
-int                     p_ID_ALIAS                  =    -1
 
 ; Private Variables
 bool                    p_is_created                = false
+int                     p_id_alias                  =    -1
 Actor                   p_ref_actor                 =  none
 doticu_npcp_member      p_ref_member                =  none
 int                     p_style_follower            =    -1
@@ -55,77 +83,30 @@ float                   p_prev_pickpocket           =  -1.0
 float                   p_prev_speechcraft          =  -1.0
 
 ; Friend Methods
-function f_Link(doticu_npcp_data DATA)
+function f_Create(doticu_npcp_data DATA, int id_alias)
     p_DATA = DATA
-    p_CONSTS = DATA.CONSTS
-    p_CODES = DATA.CODES
-    p_VARS = DATA.VARS
-    p_FUNCS = DATA.MODS.FUNCS
-    p_ACTORS = DATA.MODS.FUNCS.ACTORS
-    p_QUEUES = DATA.MODS.FUNCS.QUEUES
-    p_MEMBERS = DATA.MODS.MEMBERS
-    p_FOLLOWERS = DATA.MODS.FOLLOWERS
-    p_CONTROL = DATA.MODS.CONTROL
-endFunction
 
-function f_Initialize(int ID_ALIAS)
-    p_REF_PLAYER = p_CONSTS.ACTOR_PLAYER
-    p_ID_ALIAS = ID_ALIAS
-endFunction
-
-function f_Register()
-    ; registering mod events is global for each script on an object, and
-    ; further, works for handlers labeled as function as well as event.
-    RegisterForModEvent("doticu_npcp_followers_enforce", "On_Followers_Enforce")
-    RegisterForModEvent("doticu_npcp_followers_settle", "On_Followers_Settle")
-    RegisterForModEvent("doticu_npcp_followers_unsettle", "On_Followers_Unsettle")
-    RegisterForModEvent("doticu_npcp_followers_immobilize", "On_Followers_Immobilize")
-    RegisterForModEvent("doticu_npcp_followers_mobilize", "On_Followers_Mobilize")
-    RegisterForModEvent("doticu_npcp_followers_sneak", "On_Followers_Sneak")
-    RegisterForModEvent("doticu_npcp_followers_unsneak", "On_Followers_Unsneak")
-    RegisterForModEvent("doticu_npcp_followers_unfollow", "On_Followers_Unfollow")
-    RegisterForModEvent("doticu_npcp_followers_unmember", "On_Followers_Unmember")
-    RegisterForModEvent("doticu_npcp_followers_resurrect", "On_Followers_Resurrect")
-    RegisterForModEvent("doticu_npcp_members_u_0_1_1", "On_u_0_1_1")
-    RegisterForModEvent("doticu_npcp_members_u_0_1_4", "On_u_0_1_4")
-    RegisterForModEvent("doticu_npcp_queue_" + "follower_" + p_ID_ALIAS, "On_Queue_Follower")
-endFunction
-
-int function f_Create()
-    int code_return
-
-    if Exists()
-        return p_CODES.IS_FOLLOWER
-    endIf
-    p_ref_actor = GetActorReference()
-    if !p_ref_actor
-        return p_CODES.ISNT_ACTOR
-    endIf
-    p_ref_member = p_MEMBERS.Get_Member(p_ref_actor)
-    if !p_ref_member
-        return p_CODES.ISNT_MEMBER
-    endIf
     p_is_created = true
+    p_id_alias = id_alias
+    p_ref_actor = GetActorReference()
+    p_ref_member = MEMBERS.Get_Member(p_ref_actor)
     p_style_follower = p_ref_member.Get_Style()
+    p_level_follower = -1
+    p_is_sneak = false
 
-    p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER, p_ID_ALIAS + 1)
+    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_FOLLOWER, p_id_alias + 1)
     p_ref_actor.EvaluatePackage()
 
     p_Create_Queues()
-    p_Backup()
 
-    return p_CODES.SUCCESS
+    p_queue_follower.Enqueue("Follower.p_Backup", 0.12)
 endFunction
 
-int function f_Destroy()
-    if !Exists()
-        return p_CODES.ISNT_FOLLOWER
-    endIf
-
-    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER)
+function f_Destroy()
+    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_FOLLOWER)
     p_ref_actor.EvaluatePackage()
 
-    p_queue_follower.Flush(); I think this is the right spot
+    p_queue_follower.Flush()
 
     if p_is_sneak
         p_Unsneak()
@@ -143,16 +124,33 @@ int function f_Destroy()
     p_style_follower = -1
     p_ref_member = none
     p_ref_actor = none
+    p_id_alias = -1
     p_is_created = false
+endFunction
 
-    return p_CODES.SUCCESS
+function f_Register()
+    ; registering mod events is global for each script on an object, and
+    ; further, works for handlers labeled as function as well as event.
+    RegisterForModEvent("doticu_npcp_followers_enforce", "On_Followers_Enforce")
+    RegisterForModEvent("doticu_npcp_followers_settle", "On_Followers_Settle")
+    RegisterForModEvent("doticu_npcp_followers_unsettle", "On_Followers_Unsettle")
+    RegisterForModEvent("doticu_npcp_followers_immobilize", "On_Followers_Immobilize")
+    RegisterForModEvent("doticu_npcp_followers_mobilize", "On_Followers_Mobilize")
+    RegisterForModEvent("doticu_npcp_followers_sneak", "On_Followers_Sneak")
+    RegisterForModEvent("doticu_npcp_followers_unsneak", "On_Followers_Unsneak")
+    RegisterForModEvent("doticu_npcp_followers_unfollow", "On_Followers_Unfollow")
+    RegisterForModEvent("doticu_npcp_followers_unmember", "On_Followers_Unmember")
+    RegisterForModEvent("doticu_npcp_followers_resurrect", "On_Followers_Resurrect")
+    RegisterForModEvent("doticu_npcp_members_u_0_1_1", "On_u_0_1_1")
+    RegisterForModEvent("doticu_npcp_members_u_0_1_4", "On_u_0_1_4")
+    p_Register_Queues()
 endFunction
 
 int function f_Enforce()
     int code_return
 
     if !Exists()
-        return p_CODES.ISNT_FOLLOWER
+        return CODES.ISNT_FOLLOWER
     endIf
 
     p_queue_follower.Enqueue("p_Token")
@@ -162,20 +160,29 @@ int function f_Enforce()
         p_queue_follower.Enqueue("p_Sneak")
     endIf
 
-    return p_CODES.SUCCESS
+    return CODES.SUCCESS
 endFunction
 
 ; Private Methods
 function p_Create_Queues()
-    p_queue_follower = p_QUEUES.Create("follower_" + p_ID_ALIAS, 32, 0.5)
+    p_queue_follower = QUEUES.Create("follower_" + p_id_alias, 32, 0.5)
+    p_Register_Queues()
 endFunction
 
 function p_Destroy_Queues()
-    p_QUEUES.Destroy(p_queue_follower)
+    if p_queue_follower
+        QUEUES.Destroy(p_queue_follower)
+    endIf
+endFunction
+
+function p_Register_Queues()
+    if p_queue_follower
+        p_queue_follower.Register_Alias(self, "On_Queue_Follower")
+    endIf
 endFunction
 
 function p_Backup(); this may need to be async
-    p_prev_relationship_rank = p_ref_actor.GetRelationshipRank(p_CONSTS.ACTOR_PLAYER)
+    p_prev_relationship_rank = p_ref_actor.GetRelationshipRank(CONSTS.ACTOR_PLAYER)
     p_prev_waiting_for_player = p_ref_actor.GetBaseActorValue("WaitingForPlayer")
     p_prev_aggression = p_ref_actor.GetBaseActorValue("Aggression")
     p_prev_confidence = p_ref_actor.GetBaseActorValue("Confidence")
@@ -183,51 +190,51 @@ function p_Backup(); this may need to be async
     p_prev_morality = p_ref_actor.GetBaseActorValue("Morality")
     p_prev_speed_mult = p_ref_actor.GetBaseActorValue("SpeedMult")
 
-    p_prev_health = p_ref_actor.GetBaseActorValue(p_CONSTS.STR_HEALTH)
-    p_prev_magicka = p_ref_actor.GetBaseActorValue(p_CONSTS.STR_MAGICKA)
-    p_prev_stamina = p_ref_actor.GetBaseActorValue(p_CONSTS.STR_STAMINA)
-    p_prev_one_handed = p_ref_actor.GetBaseActorValue(p_CONSTS.STR_ONE_HANDED)
-    p_prev_two_handed = p_ref_actor.GetBaseActorValue(p_CONSTS.STR_TWO_HANDED)
-    p_prev_block = p_ref_actor.GetBaseActorValue(p_CONSTS.STR_BLOCK)
-    p_prev_heavy_armor = p_ref_actor.GetBaseActorValue(p_CONSTS.STR_HEAVY_ARMOR)
-    p_prev_light_armor = p_ref_actor.GetBaseActorValue(p_CONSTS.STR_LIGHT_ARMOR)
-    p_prev_smithing = p_ref_actor.GetBaseActorValue(p_CONSTS.STR_SMITHING)
-    p_prev_destruction = p_ref_actor.GetBaseActorValue(p_CONSTS.STR_DESTRUCTION)
-    p_prev_restoration = p_ref_actor.GetBaseActorValue(p_CONSTS.STR_RESTORATION)
-    p_prev_conjuration = p_ref_actor.GetBaseActorValue(p_CONSTS.STR_CONJURATION)
-    p_prev_alteration = p_ref_actor.GetBaseActorValue(p_CONSTS.STR_ALTERATION)
-    p_prev_illusion = p_ref_actor.GetBaseActorValue(p_CONSTS.STR_ILLUSION)
-    p_prev_enchanting = p_ref_actor.GetBaseActorValue(p_CONSTS.STR_ENCHANTING)
-    p_prev_marksman = p_ref_actor.GetBaseActorValue(p_CONSTS.STR_MARKSMAN)
-    p_prev_sneak = p_ref_actor.GetBaseActorValue(p_CONSTS.STR_SNEAK)
-    p_prev_alchemy = p_ref_actor.GetBaseActorValue(p_CONSTS.STR_ALCHEMY)
-    p_prev_lockpicking = p_ref_actor.GetBaseActorValue(p_CONSTS.STR_LOCKPICKING)
-    p_prev_pickpocket = p_ref_actor.GetBaseActorValue(p_CONSTS.STR_PICKPOCKET)
-    p_prev_speechcraft = p_ref_actor.GetBaseActorValue(p_CONSTS.STR_SPEECHCRAFT)
+    p_prev_health = p_ref_actor.GetBaseActorValue(CONSTS.STR_HEALTH)
+    p_prev_magicka = p_ref_actor.GetBaseActorValue(CONSTS.STR_MAGICKA)
+    p_prev_stamina = p_ref_actor.GetBaseActorValue(CONSTS.STR_STAMINA)
+    p_prev_one_handed = p_ref_actor.GetBaseActorValue(CONSTS.STR_ONE_HANDED)
+    p_prev_two_handed = p_ref_actor.GetBaseActorValue(CONSTS.STR_TWO_HANDED)
+    p_prev_block = p_ref_actor.GetBaseActorValue(CONSTS.STR_BLOCK)
+    p_prev_heavy_armor = p_ref_actor.GetBaseActorValue(CONSTS.STR_HEAVY_ARMOR)
+    p_prev_light_armor = p_ref_actor.GetBaseActorValue(CONSTS.STR_LIGHT_ARMOR)
+    p_prev_smithing = p_ref_actor.GetBaseActorValue(CONSTS.STR_SMITHING)
+    p_prev_destruction = p_ref_actor.GetBaseActorValue(CONSTS.STR_DESTRUCTION)
+    p_prev_restoration = p_ref_actor.GetBaseActorValue(CONSTS.STR_RESTORATION)
+    p_prev_conjuration = p_ref_actor.GetBaseActorValue(CONSTS.STR_CONJURATION)
+    p_prev_alteration = p_ref_actor.GetBaseActorValue(CONSTS.STR_ALTERATION)
+    p_prev_illusion = p_ref_actor.GetBaseActorValue(CONSTS.STR_ILLUSION)
+    p_prev_enchanting = p_ref_actor.GetBaseActorValue(CONSTS.STR_ENCHANTING)
+    p_prev_marksman = p_ref_actor.GetBaseActorValue(CONSTS.STR_MARKSMAN)
+    p_prev_sneak = p_ref_actor.GetBaseActorValue(CONSTS.STR_SNEAK)
+    p_prev_alchemy = p_ref_actor.GetBaseActorValue(CONSTS.STR_ALCHEMY)
+    p_prev_lockpicking = p_ref_actor.GetBaseActorValue(CONSTS.STR_LOCKPICKING)
+    p_prev_pickpocket = p_ref_actor.GetBaseActorValue(CONSTS.STR_PICKPOCKET)
+    p_prev_speechcraft = p_ref_actor.GetBaseActorValue(CONSTS.STR_SPEECHCRAFT)
 endFunction
 
 function p_Restore()
-    p_ref_actor.SetActorValue(p_CONSTS.STR_SPEECHCRAFT, p_prev_speechcraft)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_PICKPOCKET, p_prev_pickpocket)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_LOCKPICKING, p_prev_lockpicking)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_ALCHEMY, p_prev_alchemy)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_SNEAK, p_prev_sneak)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_MARKSMAN, p_prev_marksman)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_ENCHANTING, p_prev_enchanting)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_ILLUSION, p_prev_illusion)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_ALTERATION, p_prev_alteration)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_CONJURATION, p_prev_conjuration)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_RESTORATION, p_prev_restoration)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_DESTRUCTION, p_prev_destruction)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_SMITHING, p_prev_smithing)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_LIGHT_ARMOR, p_prev_light_armor)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_HEAVY_ARMOR, p_prev_heavy_armor)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_BLOCK, p_prev_block)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_TWO_HANDED, p_prev_two_handed)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_ONE_HANDED, p_prev_one_handed)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_STAMINA, p_prev_stamina)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_MAGICKA, p_prev_magicka)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_HEALTH, p_prev_health)
+    p_ref_actor.SetActorValue(CONSTS.STR_SPEECHCRAFT, p_prev_speechcraft)
+    p_ref_actor.SetActorValue(CONSTS.STR_PICKPOCKET, p_prev_pickpocket)
+    p_ref_actor.SetActorValue(CONSTS.STR_LOCKPICKING, p_prev_lockpicking)
+    p_ref_actor.SetActorValue(CONSTS.STR_ALCHEMY, p_prev_alchemy)
+    p_ref_actor.SetActorValue(CONSTS.STR_SNEAK, p_prev_sneak)
+    p_ref_actor.SetActorValue(CONSTS.STR_MARKSMAN, p_prev_marksman)
+    p_ref_actor.SetActorValue(CONSTS.STR_ENCHANTING, p_prev_enchanting)
+    p_ref_actor.SetActorValue(CONSTS.STR_ILLUSION, p_prev_illusion)
+    p_ref_actor.SetActorValue(CONSTS.STR_ALTERATION, p_prev_alteration)
+    p_ref_actor.SetActorValue(CONSTS.STR_CONJURATION, p_prev_conjuration)
+    p_ref_actor.SetActorValue(CONSTS.STR_RESTORATION, p_prev_restoration)
+    p_ref_actor.SetActorValue(CONSTS.STR_DESTRUCTION, p_prev_destruction)
+    p_ref_actor.SetActorValue(CONSTS.STR_SMITHING, p_prev_smithing)
+    p_ref_actor.SetActorValue(CONSTS.STR_LIGHT_ARMOR, p_prev_light_armor)
+    p_ref_actor.SetActorValue(CONSTS.STR_HEAVY_ARMOR, p_prev_heavy_armor)
+    p_ref_actor.SetActorValue(CONSTS.STR_BLOCK, p_prev_block)
+    p_ref_actor.SetActorValue(CONSTS.STR_TWO_HANDED, p_prev_two_handed)
+    p_ref_actor.SetActorValue(CONSTS.STR_ONE_HANDED, p_prev_one_handed)
+    p_ref_actor.SetActorValue(CONSTS.STR_STAMINA, p_prev_stamina)
+    p_ref_actor.SetActorValue(CONSTS.STR_MAGICKA, p_prev_magicka)
+    p_ref_actor.SetActorValue(CONSTS.STR_HEALTH, p_prev_health)
 
     p_ref_actor.SetActorValue("SpeedMult", p_prev_speed_mult)
     p_ref_actor.SetActorValue("Morality", p_prev_morality)
@@ -238,26 +245,26 @@ function p_Restore()
 endFunction
 
 function p_Token()
-    p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER, p_ID_ALIAS + 1)
+    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_FOLLOWER, p_id_alias + 1)
     if p_is_sneak
-        p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER_SNEAK)
+        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_FOLLOWER_SNEAK)
     else
-        p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER_SNEAK)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_FOLLOWER_SNEAK)
     endIf
 
     p_ref_actor.EvaluatePackage()
 endFunction
 
 function p_Untoken()
-    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER_SNEAK)
-    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER)
+    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_FOLLOWER_SNEAK)
+    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_FOLLOWER)
 
     p_ref_actor.EvaluatePackage()
 endFunction
 
 function p_Follow()
-    p_CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(1)
-    p_ref_actor.SetRelationshipRank(p_CONSTS.ACTOR_PLAYER, 3)
+    CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(1)
+    p_ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, 3)
     p_ref_actor.SetPlayerTeammate(true, true)
     p_ref_actor.IgnoreFriendlyHits(true)
     p_ref_actor.SetNotShowOnStealthMeter(true)
@@ -278,7 +285,7 @@ function p_Unfollow()
     p_ref_actor.SetNotShowOnStealthMeter(false)
     p_ref_actor.IgnoreFriendlyHits(false)
     p_ref_actor.SetPlayerTeammate(false, false)
-    p_ref_actor.SetRelationshipRank(p_CONSTS.ACTOR_PLAYER, p_prev_relationship_rank)
+    p_ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, p_prev_relationship_rank)
 endFunction
 
 function p_Sneak()
@@ -293,7 +300,7 @@ endFunction
 
 function p_Level()
     int style_member = p_ref_member.Get_Style()
-    int level_player = p_CONSTS.ACTOR_PLAYER.GetLevel()
+    int level_player = CONSTS.ACTOR_PLAYER.GetLevel()
     if style_member == p_style_follower && level_player == p_level_follower
         return
     endIf
@@ -306,30 +313,30 @@ function p_Level()
     float max_skill = 100
     float min_skill = 0
 
-    float health        = p_prev_health         + p_REF_PLAYER.GetBaseActorValue(p_CONSTS.STR_HEALTH)       * modifier
-    float magicka       = p_prev_magicka        + p_REF_PLAYER.GetBaseActorValue(p_CONSTS.STR_MAGICKA)      * modifier
-    float stamina       = p_prev_stamina        + p_REF_PLAYER.GetBaseActorValue(p_CONSTS.STR_STAMINA)      * modifier
+    float health        = p_prev_health         + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_HEALTH)       * modifier
+    float magicka       = p_prev_magicka        + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_MAGICKA)      * modifier
+    float stamina       = p_prev_stamina        + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_STAMINA)      * modifier
 
-    float one_handed    = p_prev_one_handed     + p_REF_PLAYER.GetBaseActorValue(p_CONSTS.STR_ONE_HANDED)   * modifier
-    float two_handed    = p_prev_two_handed     + p_REF_PLAYER.GetBaseActorValue(p_CONSTS.STR_TWO_HANDED)   * modifier
-    float block         = p_prev_block          + p_REF_PLAYER.GetBaseActorValue(p_CONSTS.STR_BLOCK)        * modifier
-    float heavy_armor   = p_prev_heavy_armor    + p_REF_PLAYER.GetBaseActorValue(p_CONSTS.STR_HEAVY_ARMOR)  * modifier
-    float light_armor   = p_prev_light_armor    + p_REF_PLAYER.GetBaseActorValue(p_CONSTS.STR_LIGHT_ARMOR)  * modifier
-    float smithing      = p_prev_smithing       + p_REF_PLAYER.GetBaseActorValue(p_CONSTS.STR_SMITHING)     * modifier
+    float one_handed    = p_prev_one_handed     + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_ONE_HANDED)   * modifier
+    float two_handed    = p_prev_two_handed     + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_TWO_HANDED)   * modifier
+    float block         = p_prev_block          + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_BLOCK)        * modifier
+    float heavy_armor   = p_prev_heavy_armor    + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_HEAVY_ARMOR)  * modifier
+    float light_armor   = p_prev_light_armor    + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_LIGHT_ARMOR)  * modifier
+    float smithing      = p_prev_smithing       + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_SMITHING)     * modifier
 
-    float destruction   = p_prev_destruction    + p_REF_PLAYER.GetBaseActorValue(p_CONSTS.STR_DESTRUCTION)  * modifier
-    float restoration   = p_prev_restoration    + p_REF_PLAYER.GetBaseActorValue(p_CONSTS.STR_RESTORATION)  * modifier
-    float conjuration   = p_prev_conjuration    + p_REF_PLAYER.GetBaseActorValue(p_CONSTS.STR_CONJURATION)  * modifier
-    float alteration    = p_prev_alteration     + p_REF_PLAYER.GetBaseActorValue(p_CONSTS.STR_ALTERATION)   * modifier
-    float illusion      = p_prev_illusion       + p_REF_PLAYER.GetBaseActorValue(p_CONSTS.STR_ILLUSION)     * modifier
-    float enchanting    = p_prev_enchanting     + p_REF_PLAYER.GetBaseActorValue(p_CONSTS.STR_ENCHANTING)   * modifier
+    float destruction   = p_prev_destruction    + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_DESTRUCTION)  * modifier
+    float restoration   = p_prev_restoration    + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_RESTORATION)  * modifier
+    float conjuration   = p_prev_conjuration    + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_CONJURATION)  * modifier
+    float alteration    = p_prev_alteration     + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_ALTERATION)   * modifier
+    float illusion      = p_prev_illusion       + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_ILLUSION)     * modifier
+    float enchanting    = p_prev_enchanting     + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_ENCHANTING)   * modifier
 
-    float marksman      = p_prev_marksman       + p_REF_PLAYER.GetBaseActorValue(p_CONSTS.STR_MARKSMAN)     * modifier
-    float sneak         = p_prev_sneak          + p_REF_PLAYER.GetBaseActorValue(p_CONSTS.STR_SNEAK)        * modifier
-    float alchemy       = p_prev_alchemy        + p_REF_PLAYER.GetBaseActorValue(p_CONSTS.STR_ALCHEMY)      * modifier
-    float lockpicking   = p_prev_lockpicking    + p_REF_PLAYER.GetBaseActorValue(p_CONSTS.STR_LOCKPICKING)  * modifier
-    float pickpocket    = p_prev_pickpocket     + p_REF_PLAYER.GetBaseActorValue(p_CONSTS.STR_PICKPOCKET)   * modifier
-    float speechcraft   = p_prev_speechcraft    + p_REF_PLAYER.GetBaseActorValue(p_CONSTS.STR_SPEECHCRAFT)  * modifier
+    float marksman      = p_prev_marksman       + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_MARKSMAN)     * modifier
+    float sneak         = p_prev_sneak          + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_SNEAK)        * modifier
+    float alchemy       = p_prev_alchemy        + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_ALCHEMY)      * modifier
+    float lockpicking   = p_prev_lockpicking    + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_LOCKPICKING)  * modifier
+    float pickpocket    = p_prev_pickpocket     + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_PICKPOCKET)   * modifier
+    float speechcraft   = p_prev_speechcraft    + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_SPEECHCRAFT)  * modifier
 
     float level_player_modded = level_player * modifier
 
@@ -513,30 +520,30 @@ function p_Level()
         speechcraft = min_skill
     endIf
 
-    p_ref_actor.SetActorValue(p_CONSTS.STR_HEALTH, health)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_MAGICKA, magicka)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_STAMINA, stamina)
+    p_ref_actor.SetActorValue(CONSTS.STR_HEALTH, health)
+    p_ref_actor.SetActorValue(CONSTS.STR_MAGICKA, magicka)
+    p_ref_actor.SetActorValue(CONSTS.STR_STAMINA, stamina)
 
-    p_ref_actor.SetActorValue(p_CONSTS.STR_ONE_HANDED, one_handed)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_TWO_HANDED, two_handed)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_BLOCK, block)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_HEAVY_ARMOR, heavy_armor)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_LIGHT_ARMOR, light_armor)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_SMITHING, smithing)
+    p_ref_actor.SetActorValue(CONSTS.STR_ONE_HANDED, one_handed)
+    p_ref_actor.SetActorValue(CONSTS.STR_TWO_HANDED, two_handed)
+    p_ref_actor.SetActorValue(CONSTS.STR_BLOCK, block)
+    p_ref_actor.SetActorValue(CONSTS.STR_HEAVY_ARMOR, heavy_armor)
+    p_ref_actor.SetActorValue(CONSTS.STR_LIGHT_ARMOR, light_armor)
+    p_ref_actor.SetActorValue(CONSTS.STR_SMITHING, smithing)
 
-    p_ref_actor.SetActorValue(p_CONSTS.STR_DESTRUCTION, destruction)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_RESTORATION, restoration)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_CONJURATION, conjuration)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_ALTERATION, alteration)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_ILLUSION, illusion)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_ENCHANTING, enchanting)
+    p_ref_actor.SetActorValue(CONSTS.STR_DESTRUCTION, destruction)
+    p_ref_actor.SetActorValue(CONSTS.STR_RESTORATION, restoration)
+    p_ref_actor.SetActorValue(CONSTS.STR_CONJURATION, conjuration)
+    p_ref_actor.SetActorValue(CONSTS.STR_ALTERATION, alteration)
+    p_ref_actor.SetActorValue(CONSTS.STR_ILLUSION, illusion)
+    p_ref_actor.SetActorValue(CONSTS.STR_ENCHANTING, enchanting)
 
-    p_ref_actor.SetActorValue(p_CONSTS.STR_MARKSMAN, marksman)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_SNEAK, sneak)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_ALCHEMY, alchemy)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_LOCKPICKING, lockpicking)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_PICKPOCKET, pickpocket)
-    p_ref_actor.SetActorValue(p_CONSTS.STR_SPEECHCRAFT, speechcraft)
+    p_ref_actor.SetActorValue(CONSTS.STR_MARKSMAN, marksman)
+    p_ref_actor.SetActorValue(CONSTS.STR_SNEAK, sneak)
+    p_ref_actor.SetActorValue(CONSTS.STR_ALCHEMY, alchemy)
+    p_ref_actor.SetActorValue(CONSTS.STR_LOCKPICKING, lockpicking)
+    p_ref_actor.SetActorValue(CONSTS.STR_PICKPOCKET, pickpocket)
+    p_ref_actor.SetActorValue(CONSTS.STR_SPEECHCRAFT, speechcraft)
 endFunction
 
 function p_Unlevel()
@@ -579,14 +586,14 @@ int function Sneak()
     int code_return
 
     if !Exists()
-        return p_CODES.ISNT_FOLLOWER
+        return CODES.ISNT_FOLLOWER
     endIf
 
     if p_is_sneak
-        return p_CODES.IS_SNEAK
+        return CODES.IS_SNEAK
     endIf
 
-    p_ACTORS.Token(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER_SNEAK)
+    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_FOLLOWER_SNEAK)
     p_ref_actor.EvaluatePackage()
 
     p_is_sneak = true
@@ -596,21 +603,21 @@ int function Sneak()
         return code_return
     endIf
 
-    return p_CODES.SUCCESS
+    return CODES.SUCCESS
 endFunction
 
 int function Unsneak()
     int code_return
 
     if !Exists()
-        return p_CODES.ISNT_FOLLOWER
+        return CODES.ISNT_FOLLOWER
     endIf
 
     if !p_is_sneak
-        return p_CODES.ISNT_SNEAK
+        return CODES.ISNT_SNEAK
     endIf
 
-    p_ACTORS.Untoken(p_ref_actor, p_CONSTS.TOKEN_FOLLOWER_SNEAK)
+    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_FOLLOWER_SNEAK)
     p_ref_actor.EvaluatePackage()
 
     p_Unsneak()
@@ -622,7 +629,7 @@ int function Unsneak()
         return code_return
     endIf
 
-    return p_CODES.SUCCESS
+    return CODES.SUCCESS
 endFunction
 
 int function Unfollow()
@@ -698,11 +705,11 @@ bool function Is_Styled_Archer()
 endFunction
 
 bool function Is_Alive()
-    return Exists() && p_ACTORS.Is_Alive(p_ref_actor)
+    return Exists() && ACTORS.Is_Alive(p_ref_actor)
 endFunction
 
 bool function Is_Dead()
-    return Exists() && p_ACTORS.Is_Dead(p_ref_actor)
+    return Exists() && ACTORS.Is_Dead(p_ref_actor)
 endFunction
 
 function Summon(int distance = 60, int angle = 0)
@@ -742,19 +749,23 @@ event On_Queue_Follower(string str_message)
         p_Level()
     elseIf str_message == "p_Sneak"
         p_Sneak()
+
+    elseIf str_message == "Follower.p_Backup"
+        p_Backup()
+
     endIf
 
     p_queue_follower.Dequeue()
 endEvent
 
 event OnCombatStateChanged(Actor ref_target, int code_combat)
-    if code_combat == p_CODES.COMBAT_NO
+    if code_combat == CODES.COMBAT_NO
         if !Is_Dead()
-            p_FUNCS.PLAYER.f_End_Combat()
+            ACTORS.PLAYER.f_End_Combat()
         endIf
-    elseIf code_combat == p_CODES.COMBAT_YES
-        p_FUNCS.PLAYER.f_Begin_Combat()
-    elseIf code_combat == p_CODES.COMBAT_SEARCHING
+    elseIf code_combat == CODES.COMBAT_YES
+        ACTORS.PLAYER.f_Begin_Combat()
+    elseIf code_combat == CODES.COMBAT_SEARCHING
     endIf
 endEvent
 

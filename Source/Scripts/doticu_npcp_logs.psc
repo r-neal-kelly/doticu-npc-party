@@ -1,31 +1,49 @@
 Scriptname doticu_npcp_logs extends Quest
 
 ; Private Constants
-string[]    p_NOTES         = none
-string[]    p_ERRORS        = none
+doticu_npcp_data    p_DATA          =  none
+string[]            p_NOTES         =  none
+string[]            p_ERRORS        =  none
 
 ; Private Variables
-int         p_notes_pivot   =    0; will point at latest note
-int         p_notes_used    =    0
-int         p_notes_max     =   64
+bool                p_is_created    = false
 
-int         p_errors_pivot  =    0; will point at latest error
-int         p_errors_used   =    0
-int         p_errors_max    =   64
+int                 p_notes_pivot   =     0; will point at latest note
+int                 p_notes_used    =     0
+int                 p_notes_max     =    64
+
+int                 p_errors_pivot  =     0; will point at latest error
+int                 p_errors_used   =     0
+int                 p_errors_max    =    64
 
 ; Friend Methods
-function f_Link(doticu_npcp_data DATA)
-endFunction
-
-function f_Initialize()
+function f_Create(doticu_npcp_data DATA)
+    p_DATA = DATA
     p_NOTES = Utility.CreateStringArray(p_notes_max, "")
     p_ERRORS = Utility.CreateStringArray(p_errors_max, "")
+
+    p_is_created = true
 
     p_notes_pivot = p_NOTES.length - 1
     p_notes_used = 0
 
     p_errors_pivot = p_ERRORS.length - 1
     p_errors_used = 0
+endFunction
+
+function f_Destroy()
+    p_notes_pivot = 0
+    p_notes_used = 0
+    p_notes_max = 64
+
+    p_errors_pivot = 0
+    p_errors_used = 0
+    p_errors_max = 64
+
+    p_is_created = false
+
+    p_ERRORS = none
+    p_NOTES = none
 endFunction
 
 function f_Register()

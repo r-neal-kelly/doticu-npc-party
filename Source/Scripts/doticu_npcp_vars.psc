@@ -1,10 +1,22 @@
 Scriptname doticu_npcp_vars extends Quest
 
+; Modules
+doticu_npcp_consts property CONSTS hidden
+    doticu_npcp_consts function Get()
+        return p_DATA.CONSTS
+    endFunction
+endProperty
+doticu_npcp_codes property CODES hidden
+    doticu_npcp_codes function Get()
+        return p_DATA.CODES
+    endFunction
+endProperty
+
 ; Private Constants
-doticu_npcp_consts  p_CONSTS                =  none
-doticu_npcp_codes   p_CODES                 =  none
+doticu_npcp_data    p_DATA                  =  none
 
 ; Private Variables
+bool                p_is_created            = false
 int                 p_version_major         =    -1
 int                 p_version_minor         =    -1
 int                 p_version_patch         =    -1
@@ -92,9 +104,9 @@ bool property force_clone_unique hidden
     function Set(bool val)
         p_force_clone_unique = val
         if p_force_clone_unique
-            p_CONSTS.GLOBAL_FORCE_CLONE_UNIQUE.SetValue(1)
+            CONSTS.GLOBAL_FORCE_CLONE_UNIQUE.SetValue(1)
         else
-            p_CONSTS.GLOBAL_FORCE_CLONE_UNIQUE.SetValue(0)
+            CONSTS.GLOBAL_FORCE_CLONE_UNIQUE.SetValue(0)
         endIf
     endFunction
 endProperty
@@ -106,9 +118,9 @@ bool property force_clone_generic hidden
     function Set(bool val)
         p_force_clone_generic = val
         if p_force_clone_generic
-            p_CONSTS.GLOBAL_FORCE_CLONE_GENERIC.SetValue(1)
+            CONSTS.GLOBAL_FORCE_CLONE_GENERIC.SetValue(1)
         else
-            p_CONSTS.GLOBAL_FORCE_CLONE_GENERIC.SetValue(0)
+            CONSTS.GLOBAL_FORCE_CLONE_GENERIC.SetValue(0)
         endIf
     endFunction
 endProperty
@@ -120,9 +132,9 @@ bool property force_unclone_unique hidden
     function Set(bool val)
         p_force_unclone_unique = val
         if p_force_unclone_unique
-            p_CONSTS.GLOBAL_FORCE_UNCLONE_UNIQUE.SetValue(1)
+            CONSTS.GLOBAL_FORCE_UNCLONE_UNIQUE.SetValue(1)
         else
-            p_CONSTS.GLOBAL_FORCE_UNCLONE_UNIQUE.SetValue(0)
+            CONSTS.GLOBAL_FORCE_UNCLONE_UNIQUE.SetValue(0)
         endIf
     endFunction
 endProperty
@@ -134,9 +146,9 @@ bool property force_unclone_generic hidden
     function Set(bool val)
         p_force_unclone_generic = val
         if p_force_unclone_generic
-            p_CONSTS.GLOBAL_FORCE_UNCLONE_GENERIC.SetValue(1)
+            CONSTS.GLOBAL_FORCE_UNCLONE_GENERIC.SetValue(1)
         else
-            p_CONSTS.GLOBAL_FORCE_UNCLONE_GENERIC.SetValue(0)
+            CONSTS.GLOBAL_FORCE_UNCLONE_GENERIC.SetValue(0)
         endIf
     endFunction
 endProperty
@@ -187,26 +199,36 @@ bool property is_mcm_open hidden
 endProperty
 
 ; Friend Methods
-function f_Link(doticu_npcp_data DATA)
-    p_CONSTS = DATA.CONSTS
-    p_CODES = DATA.CODES
+function f_Create(doticu_npcp_data DATA)
+    p_DATA = DATA
+
+    p_is_created = true
+
+    Set_Defaults()
 endFunction
 
-function f_Initialize()
-    version_major = p_CONSTS.VERSION_MAJOR
-    version_minor = p_CONSTS.VERSION_MINOR
-    version_patch = p_CONSTS.VERSION_PATCH
+function f_Destroy()
+    Set_Defaults()
+    p_is_created = false
+endFunction
+
+function f_Register()
+endFunction
+
+; Public Methods
+function Set_Defaults()
+    version_major = CONSTS.VERSION_MAJOR
+    version_minor = CONSTS.VERSION_MINOR
+    version_patch = CONSTS.VERSION_PATCH
     force_clone_unique = false
     force_clone_generic = true
     force_unclone_unique = false
     force_unclone_generic = true
     auto_resurrect = true
     auto_outfit = true
-    auto_style = p_CODES.IS_DEFAULT; IS_DEFAULT, IS_WARRIOR, IS_MAGE, IS_ARCHER
-    auto_vitality = p_CODES.IS_PROTECTED; IS_MORTAL, IS_PROTECTED, IS_ESSENTIAL, IS_INVULNERABLE
+    auto_style = CODES.IS_DEFAULT; IS_DEFAULT, IS_WARRIOR, IS_MAGE, IS_ARCHER
+    auto_vitality = CODES.IS_PROTECTED; IS_MORTAL, IS_PROTECTED, IS_ESSENTIAL, IS_INVULNERABLE
+    is_mcm_open = false
 
     ; need to set keys here I think...
-endFunction
-
-function f_Register()
 endFunction

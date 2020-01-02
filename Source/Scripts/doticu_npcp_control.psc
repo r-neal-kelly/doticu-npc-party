@@ -1,48 +1,47 @@
 Scriptname doticu_npcp_control extends Quest
 
-; Private Constants
-doticu_npcp_commands    p_COMMANDS  = none
-doticu_npcp_keys        p_KEYS      = none
-doticu_npcp_mcm         p_MCM       = none
-
-; Public Constants
+; Modules
 doticu_npcp_commands property COMMANDS
     doticu_npcp_commands function Get()
-        return p_COMMANDS
+        return (self as Quest) as doticu_npcp_commands
     endFunction
 endProperty
-
 doticu_npcp_keys property KEYS
     doticu_npcp_keys function Get()
-        return p_KEYS
+        return (self as Quest) as doticu_npcp_keys
     endFunction
 endProperty
-
 doticu_npcp_mcm property MCM
     doticu_npcp_mcm function Get()
-        return p_MCM
+        return (self as Quest) as doticu_npcp_mcm
     endFunction
 endProperty
 
-; Friend Methods
-function f_Link(doticu_npcp_data DATA)
-    p_COMMANDS = (self as Quest) as doticu_npcp_commands
-    p_KEYS = (self as Quest) as doticu_npcp_keys
-    p_MCM = (self as Quest) as doticu_npcp_mcm
+; Private Constants
+doticu_npcp_data    p_DATA          =  none
 
-    p_COMMANDS.f_Link(DATA)
-    p_KEYS.f_Link(DATA)
-    p_MCM.f_Link(DATA)
+; Private Variables
+bool                p_is_created    = false
+
+; Friend Methods
+function f_Create(doticu_npcp_data DATA)
+    p_is_created = true
+
+    COMMANDS.f_Create(DATA)
+    KEYS.f_Create(DATA)
+    MCM.f_Create(DATA)
 endFunction
 
-function f_Initialize()
-    p_COMMANDS.f_Initialize()
-    p_KEYS.f_Initialize()
-    p_MCM.f_Initialize()
+function f_Destroy()
+    MCM.f_Destroy()
+    KEYS.f_Destroy()
+    COMMANDS.f_Destroy()
+    
+    p_is_created = false
 endFunction
 
 function f_Register()
-    p_COMMANDS.f_Register()
-    p_KEYS.f_Register()
-    p_MCM.f_Register()
+    COMMANDS.f_Register()
+    KEYS.f_Register()
+    MCM.f_Register()
 endFunction

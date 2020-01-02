@@ -10,12 +10,14 @@ float[]             p_INTERVALS         =  none
 string              p_STR_EVENT         =    ""
 
 ; Private Variables
+bool                p_is_created        = false
 int                 p_buffer_write      =     0
 int                 p_buffer_read       =     0
 int                 p_buffer_used       =     0
-bool                p_will_update       = false
 string              p_str_message       =    ""
 string              p_str_rush          =    ""
+bool                p_will_update       = false
+bool                p_will_rush         = false
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA, string str_namespace, int message_max = 32, float interval_default = 0.15)
@@ -23,19 +25,25 @@ function f_Create(doticu_npcp_data DATA, string str_namespace, int message_max =
     p_STR_NAMESPACE = str_namespace
     p_BUFFER_MAX = message_max
     p_INTERVAL_DEFAULT = interval_default
-    
     p_MESSAGES = Utility.CreateStringArray(p_BUFFER_MAX, "")
     p_INTERVALS = Utility.CreateFloatArray(p_BUFFER_MAX, 0.0)
-
     p_STR_EVENT = "doticu_npcp_queue"
     if p_STR_NAMESPACE != ""
         p_STR_EVENT = p_STR_EVENT + "_" + p_STR_NAMESPACE
     endIf
+
+    p_is_created = true
 endFunction
 
 function f_Destroy()
+    self.Flush()
     self.Disable()
     self.Delete()
+
+    p_is_created = false
+endFunction
+
+function f_Register()
 endFunction
 
 ; Private Methods
@@ -93,12 +101,7 @@ bool function p_Has_Rush()
 endFunction
 
 bool function p_Put_Rush(string str_rush)
-    if str_rush == ""
-        return false
-    endIf
-
     if p_Has_Rush()
-        ; could have a separate buffer that stores rushed messages instead
         return false
     endIf
 
@@ -125,6 +128,26 @@ bool function p_Send_Queue()
 endFunction
 
 ; Public Methods
+bool function Is_Empty()
+    return p_buffer_used == 0
+endFunction
+
+bool function Is_Full()
+    return p_buffer_used == p_buffer_max
+endFunction
+
+function Register_Form(Form ref_form, string str_handler)
+    ref_form.RegisterForModEvent(p_STR_EVENT, str_handler)
+endFunction
+
+function Register_Alias(ReferenceAlias ref_alias, string str_handler)
+    ref_alias.RegisterForModEvent(p_STR_EVENT, str_handler)
+endFunction
+
+function Register_Effect(ActiveMagicEffect ref_effect, string str_handler)
+    ref_effect.RegisterForModEvent(p_STR_EVENT, str_handler)
+endFunction
+
 function Enqueue(string str_message, float float_wait_before = -1.0, bool allow_repeat = false)
     if Is_Full()
         return
@@ -144,52 +167,68 @@ function Enqueue(string str_message, float float_wait_before = -1.0, bool allow_
 
     p_Write(str_message, float_wait_before, allow_repeat)
 
-    MiscUtil.PrintConsole("count: " + p_buffer_used)
-
     if !p_will_update
-        p_will_update = true
-        p_str_message = str_message
-        RegisterForSingleUpdate(float_wait_before)
+        Dequeue()
     endIf
 endFunction
 
 function Dequeue()
-    if Is_Empty()
-        p_will_update = false
-        p_str_message = ""
-    elseIf p_Has_Rush()
+    if p_Has_Rush()
+        p_will_update = true
+        p_will_rush = true
         p_str_message = p_str_rush
         p_str_rush = ""
         RegisterForSingleUpdate(0.0)
+    elseIf Is_Empty()
+        p_will_update = false
+        p_will_rush = false
+        p_str_message = ""
+        p_str_rush = ""
     else
         int idx_buffer = p_Read()
         p_will_update = true
+        p_will_rush = false
         p_str_message = p_MESSAGES[idx_buffer]
         RegisterForSingleUpdate(p_INTERVALS[idx_buffer])
     endIf
 endFunction
 
-bool function Rush(string str_rush)
+function Rush(string str_rush)
+    if str_rush == ""
+        return
+    endIf
+
     while !p_Put_Rush(str_rush)
+        ; if we completely block here, we could create a deadlock
+        Utility.Wait(0.01)
+    endWhile
+
+    if !p_will_update
+        Dequeue()
+    endIf
+
+    while p_will_rush
+        ; we need to wait for the Rush message to finish
         Utility.Wait(0.01)
     endWhile
 endFunction
 
 function Flush()
     UnregisterForUpdate()
+
     p_buffer_write = 0
     p_buffer_read = 0
     p_buffer_used = 0
+
+    if p_will_update
+        ; let an existing last message finish
+        Utility.Wait(0.01)
+    endIf
+
+    p_will_rush = false
     p_will_update = false
+    p_str_rush == ""
     p_str_message = ""
-endFunction
-
-bool function Is_Empty()
-    return p_buffer_used == 0
-endFunction
-
-bool function Is_Full()
-    return p_buffer_used == p_buffer_max
 endFunction
 
 ; Update Methods

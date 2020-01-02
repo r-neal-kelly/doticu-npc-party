@@ -4,9 +4,11 @@ Scriptname doticu_npcp_codes extends Quest
 int property SUCCESS                    =    0 autoReadOnly
 int property FAILURE                    =   -1 autoReadOnly
 int property STARTED                    =  -10 autoReadOnly
-int property STOPPED                    =  -20 autoReadOnly
-int property CREATED                    =  -30 autoReadOnly
-int property DESTROYED                  =  -40 autoReadOnly
+int property STOPPED                    =  -11 autoReadOnly
+int property CREATED                    =  -20 autoReadOnly
+int property DESTROYED                  =  -21 autoReadOnly
+int property READY                      =  -30 autoReadOnly
+int property BUSY                       =  -31 autoReadOnly
 
 int property HAS_SPACE                  = -100 autoReadOnly
 int property HAS_ACTOR                  = -110 autoReadOnly
@@ -70,6 +72,7 @@ int property ISNT_VAMPIRE               = -499 autoReadOnly
 int property CAN_RESURRECT              = -500 autoReadOnly
 
 int property CANT_RESURRECT             = -600 autoReadOnly
+int property CANT_CLONE                 = -605 autoReadOnly
 int property CANT_RENAME                = -610 autoReadOnly
 
 int property ACTION_WEAPON_SWING        =    0 autoReadOnly

@@ -1,10 +1,39 @@
 Scriptname doticu_npcp_main extends Quest
 
+; Modules
+doticu_npcp_consts property CONSTS hidden
+    doticu_npcp_consts function Get()
+        return p_DATA.CONSTS
+    endFunction
+endProperty
+doticu_npcp_vars property VARS hidden
+    doticu_npcp_vars function Get()
+        return p_DATA.VARS
+    endFunction
+endProperty
+doticu_npcp_funcs property FUNCS hidden
+    doticu_npcp_funcs function Get()
+        return p_DATA.MODS.FUNCS
+    endFunction
+endProperty
+doticu_npcp_members property MEMBERS hidden
+    doticu_npcp_members function Get()
+        return p_DATA.MODS.MEMBERS
+    endFunction
+endProperty
+doticu_npcp_followers property FOLLOWERS hidden
+    doticu_npcp_followers function Get()
+        return p_DATA.MODS.FOLLOWERS
+    endFunction
+endProperty
+doticu_npcp_control property CONTROL hidden
+    doticu_npcp_control function Get()
+        return p_DATA.MODS.CONTROL
+    endFunction
+endProperty
+
 ; Private Constants
-doticu_npcp_data    p_DATA      = none
-doticu_npcp_consts  p_CONSTS    = none
-doticu_npcp_vars    p_VARS      = none
-doticu_npcp_funcs   p_FUNCS     = none
+doticu_npcp_data    p_DATA  = none
 
 ; Public Constants
 doticu_npcp_data property DATA
@@ -19,64 +48,67 @@ doticu_npcp_data property DATA
 endProperty
 
 ; Friend Methods
-function f_Link()
-    DATA.f_Link(DATA)
-    DATA.MODS.FUNCS.f_Link(DATA)
-    DATA.MODS.MEMBERS.f_Link(DATA)
-    DATA.MODS.FOLLOWERS.f_Link(DATA)
-    DATA.MODS.CONTROL.f_Link(DATA)
-
-    p_DATA = DATA
-    p_CONSTS = DATA.CONSTS
-    p_VARS = DATA.VARS
-    p_FUNCS = DATA.MODS.FUNCS
-endFunction
-
-function f_Initialize()
-    DATA.f_Initialize()
-    DATA.MODS.FUNCS.f_Initialize()
-    DATA.MODS.MEMBERS.f_Initialize()
-    DATA.MODS.FOLLOWERS.f_Initialize()
-    DATA.MODS.CONTROL.f_Initialize()
+function f_Create()
+    DATA.f_Create(DATA)
+    VARS.f_Create(DATA)
+    FUNCS.f_Create(DATA)
+    MEMBERS.f_Create(DATA)
+    FOLLOWERS.f_Create(DATA)
+    CONTROL.f_Create(DATA)
 endFunction
 
 function f_Register()
     DATA.f_Register()
-    DATA.MODS.FUNCS.f_Register()
-    DATA.MODS.MEMBERS.f_Register()
-    DATA.MODS.FOLLOWERS.f_Register()
-    DATA.MODS.CONTROL.f_Register()
+    VARS.f_Register()
+    FUNCS.f_Register()
+    MEMBERS.f_Register()
+    FOLLOWERS.f_Register()
+    CONTROL.f_Register()
 endFunction
 
 function f_Version()
-    if p_Is_Version_Less_Than(p_CONSTS.VERSION_MAJOR, p_CONSTS.VERSION_MINOR, p_CONSTS.VERSION_PATCH)
+    if p_Is_Version_Less_Than(CONSTS.VERSION_MAJOR, CONSTS.VERSION_MINOR, CONSTS.VERSION_PATCH)
         if p_Is_Version_Less_Than(0, 1, 4)
             u_0_1_4()
         endIf
+        if p_Is_Version_Less_Than(0, 1, 5)
+            u_0_1_5()
+        endIf
 
-        p_VARS.version_major = p_CONSTS.VERSION_MAJOR
-        p_VARS.version_minor = p_CONSTS.VERSION_MINOR
-        p_VARS.version_patch = p_CONSTS.VERSION_PATCH
+        VARS.version_major = CONSTS.VERSION_MAJOR
+        VARS.version_minor = CONSTS.VERSION_MINOR
+        VARS.version_patch = CONSTS.VERSION_PATCH
 
-        string str_version = p_CONSTS.VERSION_MAJOR + "." + p_CONSTS.VERSION_MINOR + "." + p_CONSTS.VERSION_PATCH
-        p_FUNCS.LOGS.Create_Note("Running version " + str_version)
+        string str_version = CONSTS.VERSION_MAJOR + "." + CONSTS.VERSION_MINOR + "." + CONSTS.VERSION_PATCH
+        FUNCS.LOGS.Create_Note("Running version " + str_version)
     endIf
+endFunction
+
+function f_Init_Mod()
+    ; do checks to make sure SKSE and PapyrusUtil are running
+
+    DATA.Start()
+    VARS.Start()
+    FUNCS.Start()
+    MEMBERS.Start()
+    FOLLOWERS.Start()
+    CONTROL.Start()
+
+    f_Create()
+    f_Register()
+
+    FUNCS.LOGS.Create_Note("Thank you for installing!")
 endFunction
 
 function f_Load_Mod()
     ; do checks to make sure SKSE and PapyrusUtil are running
 
     DATA.Stop()
-    while !DATA.Start()
-        Utility.Wait(0.25)
-    endWhile
+    DATA.Start()
 
-    ;/DATA.MODS.CONTROL.Stop()
-    while !DATA.MODS.CONTROL.Start()
-        Utility.Wait(0.25)
-    endWhile/;
+    ;/CONTROL.Stop()
+    CONTROL.Start()/;
 
-    f_Link()
     f_Register()
     f_Version()
 
@@ -89,12 +121,12 @@ endFunction
 
 ; Private Methods
 bool function p_Is_Version_Less_Than(int major, int minor, int patch)
-    if p_VARS.version_major != major
-        return p_VARS.version_major < major
-    elseIf p_VARS.version_minor != minor
-        return p_VARS.version_minor < minor
-    elseIf p_VARS.version_patch != patch
-        return p_VARS.version_patch < patch
+    if VARS.version_major != major
+        return VARS.version_major < major
+    elseIf VARS.version_minor != minor
+        return VARS.version_minor < minor
+    elseIf VARS.version_patch != patch
+        return VARS.version_patch < patch
     else
         return false
     endIf
@@ -117,42 +149,22 @@ endFunction
 
 ; Update Methods
 function u_0_1_4()
-    DATA.MODS.FUNCS.u_0_1_4(DATA)
-    DATA.MODS.MEMBERS.u_0_1_4(DATA)
-    DATA.MODS.FOLLOWERS.u_0_1_4(DATA)
+    FUNCS.u_0_1_4(DATA)
+    MEMBERS.u_0_1_4(DATA)
+    FOLLOWERS.u_0_1_4(DATA)
+endFunction
+
+function u_0_1_5()
+    MEMBERS.u_0_1_5(DATA)
 endFunction
 
 ; Events
 event OnInit()
-    ; do checks to make sure SKSE and PapyrusUtil are running
-    
-    while !DATA.Start()
-        Utility.Wait(1)
-    endWhile
+    ; we don't want to init in this thread because
+    ; it won't wait for props to be filled
+    RegisterForSingleUpdate(0.01)
+endEvent
 
-    while !DATA.VARS.Start()
-        Utility.Wait(1)
-    endWhile
-
-    while !DATA.MODS.FUNCS.Start()
-        Utility.Wait(1)
-    endWhile
-
-    while !DATA.MODS.MEMBERS.Start()
-        Utility.Wait(1)
-    endWhile
-
-    while !DATA.MODS.FOLLOWERS.Start()
-        Utility.Wait(1)
-    endWhile
-
-    while !DATA.MODS.CONTROL.Start()
-        Utility.Wait(1)
-    endWhile
-
-    f_Link(); if possible, these need to be done in parallel, one after another
-    f_Initialize()
-    f_Register()
-
-    p_FUNCS.LOGS.Create_Note("Thank you for installing!")
+event OnUpdate()
+    f_Init_Mod()
 endEvent

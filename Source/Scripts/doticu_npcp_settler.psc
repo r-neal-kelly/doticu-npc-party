@@ -1,11 +1,6 @@
 Scriptname doticu_npcp_settler extends ReferenceAlias
 
-; Private Constants
-doticu_npcp_data    p_DATA          =  none
-int                 p_ID_ALIAS      =    -1
-ObjectReference     p_REF_MARKER    =  none
-
-; Public Constants
+; Modules
 doticu_npcp_consts property CONSTS hidden
     doticu_npcp_consts function Get()
         return p_DATA.CONSTS
@@ -26,61 +21,45 @@ doticu_npcp_members property MEMBERS hidden
         return p_DATA.MODS.MEMBERS
     endFunction
 endProperty
-doticu_npcp_member property MEMBER hidden
-    doticu_npcp_member function Get()
-        return (self as ReferenceAlias) as doticu_npcp_member
-    endFunction
-endProperty
+
+; Private Constants
+doticu_npcp_data    p_DATA          =  none
 
 ; Private Variables
 bool                p_is_created    = false
+int                 p_id_alias      =    -1
 Actor               p_ref_actor     =  none
+doticu_npcp_member  p_ref_member    =  none
+ObjectReference     p_ref_marker    =  none
 
 ; Friend Methods
-function f_Initialize(doticu_npcp_data DATA, int ID_ALIAS)
+function f_Create(doticu_npcp_data DATA, int id_alias)
     p_DATA = DATA
-    p_ID_ALIAS = ID_ALIAS
-    p_REF_MARKER = CONSTS.FORMLIST_MARKERS_SETTLER.GetAt(ID_ALIAS) as ObjectReference
-endFunction
 
-int function f_Create()
-    int code_return
-
-    if Exists()
-        return CODES.IS_SETTLER
-    endIf
-    p_ref_actor = GetActorReference()
-    if !p_ref_actor
-        return CODES.ISNT_ACTOR
-    endIf
-    if !MEMBER.Exists()
-        return CODES.ISNT_MEMBER
-    endIf
     p_is_created = true
+    p_id_alias = id_alias
+    p_ref_actor = GetActorReference()
+    p_ref_member = (self as ReferenceAlias) as doticu_npcp_member
+    p_ref_marker = CONSTS.FORMLIST_MARKERS_SETTLER.GetAt(p_id_alias) as ObjectReference
 
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_SETTLER)
     p_ref_actor.EvaluatePackage()
 
     p_Settle()
-
-    return CODES.SUCCESS
 endFunction
 
-int function f_Destroy()
-    if !Exists()
-        return CODES.ISNT_SETTLER
-    endIf
-
+function f_Destroy()
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_SETTLER)
     p_ref_actor.EvaluatePackage()
 
     p_Unsettle()
     f_Untoken()
 
+    p_ref_marker = none
+    p_ref_member = none
     p_ref_actor = none
+    p_id_alias = -1
     p_is_created = false
-
-    return CODES.SUCCESS
 endFunction
 
 ; Private Methods
@@ -97,16 +76,16 @@ function f_Untoken()
 endFunction
 
 function p_Settle()
-    p_REF_MARKER.MoveTo(p_ref_actor)
+    p_ref_marker.MoveTo(p_ref_actor)
 endFunction
 
 function p_Unsettle()
-    p_REF_MARKER.MoveToMyEditorLocation()
+    p_ref_marker.MoveToMyEditorLocation()
 endFunction
 
 ; Public Methods
 int function Enforce()
-    return MEMBER.Enforce()
+    return p_ref_member.Enforce()
 endFunction
 
 bool function Exists()
@@ -133,4 +112,9 @@ endFunction
 ; Update Methods
 function u_0_1_4(doticu_npcp_data DATA)
     p_DATA = DATA
+endFunction
+
+function u_0_1_5(doticu_npcp_data DATA)
+    p_ref_member = (self as ReferenceAlias) as doticu_npcp_member
+    p_ref_marker = CONSTS.FORMLIST_MARKERS_SETTLER.GetAt(p_id_alias) as ObjectReference
 endFunction

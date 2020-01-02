@@ -1,10 +1,13 @@
 Scriptname doticu_npcp_data extends Quest
 
 ; Private Constants
-doticu_npcp_consts  p_CONSTS    = none; static
-doticu_npcp_codes   p_CODES     = none; static
-doticu_npcp_mods    p_MODS      = none; static
-doticu_npcp_vars    p_VARS      = none; dynamic
+doticu_npcp_consts  p_CONSTS        =  none; static
+doticu_npcp_codes   p_CODES         =  none; static
+doticu_npcp_mods    p_MODS          =  none; static
+doticu_npcp_vars    p_VARS          =  none; dynamic
+
+; Private Variables
+bool                p_is_created    = false
 
 ; Public Constants
 doticu_npcp_consts property CONSTS
@@ -52,14 +55,13 @@ doticu_npcp_vars property VARS
 endProperty
 
 ; Friend Methods
-function f_Link(doticu_npcp_data DATA)
-    p_VARS.f_Link(DATA)
+function f_Create(doticu_npcp_data DATA)
+    p_is_created = true
 endFunction
 
-function f_Initialize()
-    p_VARS.f_Initialize()
+function f_Destroy()
+    p_is_created = false
 endFunction
 
 function f_Register()
-    p_VARS.f_Register()
 endFunction

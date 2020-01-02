@@ -1,47 +1,58 @@
 Scriptname doticu_npcp_followers extends Quest
 
-; Private Constants
-doticu_npcp_data        p_DATA      = none
-doticu_npcp_consts      p_CONSTS    = none
-doticu_npcp_codes       p_CODES     = none
-doticu_npcp_tasklists   p_TASKLISTS = none
-doticu_npcp_aliases     p_ALIASES   = none
+; Modules
+doticu_npcp_consts property CONSTS hidden
+    doticu_npcp_consts function Get()
+        return p_DATA.CONSTS
+    endFunction
+endProperty
+doticu_npcp_codes property CODES hidden
+    doticu_npcp_codes function Get()
+        return p_DATA.CODES
+    endFunction
+endProperty
+doticu_npcp_tasklists property TASKLISTS hidden
+    doticu_npcp_tasklists function Get()
+        return p_DATA.MODS.FUNCS.TASKLISTS
+    endFunction
+endProperty
+doticu_npcp_members property MEMBERS hidden
+    doticu_npcp_members function Get()
+        return p_DATA.MODS.MEMBERS
+    endFunction
+endProperty
+doticu_npcp_aliases property ALIASES hidden
+    doticu_npcp_aliases function Get()
+        return (self as Quest) as doticu_npcp_aliases
+    endFunction
+endProperty
 
-doticu_npcp_tasklist    p_TASKLIST  = none
+; Private Constants
+doticu_npcp_data        p_DATA          =  none
+
+; Private Variables
+bool                    p_is_created    = false
+doticu_npcp_tasklist    p_tasklist      =  none
 
 ; Friend Methods
-function f_Link(doticu_npcp_data DATA)
+function f_Create(doticu_npcp_data DATA)
     p_DATA = DATA
-    p_CONSTS = DATA.CONSTS
-    p_CODES = DATA.CODES
-    p_TASKLISTS = DATA.MODS.FUNCS.TASKLISTS
-    p_ALIASES = (self as Quest) as doticu_npcp_aliases
 
-    p_ALIASES.f_Link(DATA); p_ALIASES is not init'd!
+    p_is_created = true
+    p_tasklist = TASKLISTS.Create()
 
-    int idx_alias = 0
-    int max_aliases = GetNumAliases()
-    while idx_alias < max_aliases
-        (GetNthAlias(idx_alias) as doticu_npcp_follower).f_Link(DATA)
-        idx_alias += 1
-    endWhile
+    ALIASES.f_Create(DATA)
 endFunction
 
-function f_Initialize()
-    p_ALIASES.f_Initialize()
-
-    p_TASKLIST = p_TASKLISTS.Create()
-
-    int idx_alias = 0
-    int max_aliases = GetNumAliases()
-    while idx_alias < max_aliases
-        (GetNthAlias(idx_alias) as doticu_npcp_follower).f_Initialize(idx_alias)
-        idx_alias += 1
-    endWhile
+function f_Destroy()
+    ALIASES.f_Destroy()
+    
+    TASKLISTS.Destroy(p_tasklist)
+    p_is_created = false
 endFunction
 
 function f_Register()
-    p_ALIASES.f_Register()
+    ALIASES.f_Register()
 
     int idx_alias = 0
     int max_aliases = GetNumAliases()
@@ -54,45 +65,54 @@ endFunction
 int function f_Create_Follower(Actor ref_actor)
     int code_return
 
-    code_return = p_ALIASES.Create_Alias(ref_actor)
+    if !ref_actor
+        return CODES.ISNT_ACTOR
+    endIf
+
+    if ALIASES.Is_Full()
+        return CODES.HASNT_SPACE_FOLLOWER
+    endIf
+
+    if !MEMBERS.Has_Member(ref_actor)
+        return CODES.ISNT_MEMBER
+    endIf
+
+    code_return = ALIASES.Create_Alias(ref_actor)
     if code_return < 0
-        if code_return == p_CODES.HAS_ACTOR || code_return == p_CODES.HAS_ALIAS
-            return p_CODES.HAS_FOLLOWER
-        elseIf code_return == p_CODES.HASNT_SPACE
-            return p_CODES.HASNT_SPACE_FOLLOWER
+        if code_return == CODES.HAS_ACTOR || code_return == CODES.HAS_ALIAS
+            return CODES.HAS_FOLLOWER
+        elseIf code_return == CODES.HASNT_SPACE
+            return CODES.HASNT_SPACE_FOLLOWER
         else
             return code_return
         endIf
     endIf
     int id_alias = code_return
 
-    code_return = p_Get_Follower(id_alias).f_Create()
-    if code_return < 0
-        p_ALIASES.Destroy_Alias(id_alias, ref_actor)
-        return code_return
-    endIf
+    p_Get_Follower(id_alias).f_Create(p_DATA, id_alias)
 
     ; this value needs to be 1 whenever there is a follower
     ; because the engine won't update player teammates when 0
-    p_CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(1)
+    CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(1)
 
-    return p_CODES.SUCCESS
+    return CODES.SUCCESS
 endFunction
 
 int function f_Destroy_Follower(Actor ref_actor)
     int code_return
 
+    if !ref_actor
+        return CODES.ISNT_ACTOR
+    endIf
+
     int id_alias = p_Get_Alias_ID(ref_actor)
-    if !p_ALIASES.Has_Alias(id_alias, ref_actor)
-        return p_CODES.HASNT_FOLLOWER
+    if !ALIASES.Has_Alias(id_alias, ref_actor)
+        return CODES.HASNT_FOLLOWER
     endIf
 
-    code_return = p_Get_Follower(id_alias).f_Destroy()
-    if code_return < 0
-        return code_return
-    endIf
+    p_Get_Follower(id_alias).f_Destroy()
 
-    code_return = p_ALIASES.Destroy_Alias(id_alias, ref_actor)
+    code_return = ALIASES.Destroy_Alias(id_alias, ref_actor)
     if code_return < 0
         return code_return
     endIf
@@ -101,10 +121,10 @@ int function f_Destroy_Follower(Actor ref_actor)
         ; this would conflict with the vanilla system
         ; and any other mods that use it, except that we
         ; modify the vanilla system to force use of ours
-        p_CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(0)
+        CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(0)
     endIf
 
-    return p_CODES.SUCCESS
+    return CODES.SUCCESS
 endFunction
 
 ; Private Methods
@@ -112,12 +132,12 @@ int function p_Get_Alias_ID(Actor ref_actor)
     if !ref_actor
         return -1
     else
-        return ref_actor.GetItemCount(p_CONSTS.TOKEN_FOLLOWER) - 1
+        return ref_actor.GetItemCount(CONSTS.TOKEN_FOLLOWER) - 1
     endIf
 endFunction
 
 doticu_npcp_follower function p_Get_Follower(int id_alias)
-    return p_ALIASES.f_Get_Alias(id_alias) as doticu_npcp_follower
+    return ALIASES.f_Get_Alias(id_alias) as doticu_npcp_follower
 endFunction
 
 bool function p_Send_Followers(string str_event)
@@ -140,164 +160,164 @@ endFunction
 int function p_Enforce()
     int num_followers = Get_Count()
     if num_followers < 1
-        return p_CODES.HASNT_FOLLOWER
+        return CODES.HASNT_FOLLOWER
     endIf
 
-    if !p_TASKLIST.Execute(num_followers, "doticu_npcp_followers_enforce")
-        return p_CODES.FAILURE
+    if !p_tasklist.Execute(num_followers, "doticu_npcp_followers_enforce")
+        return CODES.FAILURE
     endIf
 
-    return p_CODES.SUCCESS
+    return CODES.SUCCESS
 endFunction
 
 int function p_Settle()
     int num_followers = Get_Count()
     if num_followers < 1
-        return p_CODES.HASNT_FOLLOWER
+        return CODES.HASNT_FOLLOWER
     endIf
 
-    if !p_TASKLIST.Execute(num_followers, "doticu_npcp_followers_settle")
-        return p_CODES.FAILURE
+    if !p_tasklist.Execute(num_followers, "doticu_npcp_followers_settle")
+        return CODES.FAILURE
     endIf
 
-    return p_CODES.SUCCESS
+    return CODES.SUCCESS
 endFunction
 
 int function p_Unsettle()
     if Get_Count() < 1
-        return p_CODES.HASNT_FOLLOWER
+        return CODES.HASNT_FOLLOWER
     endIf
 
     int num_settlers = Get_Count_Settler()
     if num_settlers < 1
-        return p_CODES.HASNT_SETTLER
+        return CODES.HASNT_SETTLER
     endIf
 
-    if !p_TASKLIST.Execute(num_settlers, "doticu_npcp_followers_unsettle")
-        return p_CODES.FAILURE
+    if !p_tasklist.Execute(num_settlers, "doticu_npcp_followers_unsettle")
+        return CODES.FAILURE
     endIf
 
-    return p_CODES.SUCCESS
+    return CODES.SUCCESS
 endFunction
 
 int function p_Immobilize()
     if Get_Count() < 1
-        return p_CODES.HASNT_FOLLOWER
+        return CODES.HASNT_FOLLOWER
     endIf
 
     int num_mobile = Get_Count_Mobile()
     if num_mobile < 1
-        return p_CODES.HASNT_MOBILE
+        return CODES.HASNT_MOBILE
     endIf
 
-    if !p_TASKLIST.Execute(num_mobile, "doticu_npcp_followers_immobilize")
-        return p_CODES.FAILURE
+    if !p_tasklist.Execute(num_mobile, "doticu_npcp_followers_immobilize")
+        return CODES.FAILURE
     endIf
 
-    return p_CODES.SUCCESS
+    return CODES.SUCCESS
 endFunction
 
 int function p_Mobilize()
     if Get_Count() < 1
-        return p_CODES.HASNT_FOLLOWER
+        return CODES.HASNT_FOLLOWER
     endIf
 
     int num_immobile = Get_Count_Immobile()
     if num_immobile < 1
-        return p_CODES.HASNT_IMMOBILE
+        return CODES.HASNT_IMMOBILE
     endIf
 
-    if !p_TASKLIST.Execute(num_immobile, "doticu_npcp_followers_mobilize")
-        return p_CODES.FAILURE
+    if !p_tasklist.Execute(num_immobile, "doticu_npcp_followers_mobilize")
+        return CODES.FAILURE
     endIf
 
-    return p_CODES.SUCCESS
+    return CODES.SUCCESS
 endFunction
 
 int function p_Sneak()
     if Get_Count() < 1
-        return p_CODES.HASNT_FOLLOWER
+        return CODES.HASNT_FOLLOWER
     endIf
 
     int num_unsneaks = Get_Count_Unsneak()
     if num_unsneaks < 1
-        return p_CODES.HASNT_UNSNEAK
+        return CODES.HASNT_UNSNEAK
     endIf
 
-    if !p_TASKLIST.Execute(num_unsneaks, "doticu_npcp_followers_sneak")
-        return p_CODES.FAILURE
+    if !p_tasklist.Execute(num_unsneaks, "doticu_npcp_followers_sneak")
+        return CODES.FAILURE
     endIf
 
-    return p_CODES.SUCCESS
+    return CODES.SUCCESS
 endFunction
 
 int function p_Unsneak()
     if Get_Count() < 1
-        return p_CODES.HASNT_FOLLOWER
+        return CODES.HASNT_FOLLOWER
     endIf
 
     int num_sneaks = Get_Count_Sneak()
     if num_sneaks < 1
-        return p_CODES.HASNT_SNEAK
+        return CODES.HASNT_SNEAK
     endIf
 
-    if !p_TASKLIST.Execute(num_sneaks, "doticu_npcp_followers_unsneak")
-        return p_CODES.FAILURE
+    if !p_tasklist.Execute(num_sneaks, "doticu_npcp_followers_unsneak")
+        return CODES.FAILURE
     endIf
 
-    return p_CODES.SUCCESS
+    return CODES.SUCCESS
 endFunction
 
 int function p_Resurrect()
     if Get_Count() < 1
-        return p_CODES.HASNT_FOLLOWER
+        return CODES.HASNT_FOLLOWER
     endIf
 
     int num_dead = Get_Count_Dead()
     if num_dead < 1
-        return p_CODES.HASNT_DEAD
+        return CODES.HASNT_DEAD
     endIf
 
-    if !p_TASKLIST.Execute(num_dead, "doticu_npcp_followers_resurrect")
-        return p_CODES.FAILURE
+    if !p_tasklist.Execute(num_dead, "doticu_npcp_followers_resurrect")
+        return CODES.FAILURE
     endIf
 
-    return p_CODES.SUCCESS
+    return CODES.SUCCESS
 endFunction
 
 int function p_Unfollow()
     int num_followers = Get_Count()
     if num_followers < 1
-        return p_CODES.HASNT_FOLLOWER
+        return CODES.HASNT_FOLLOWER
     endIf
 
-    if !p_TASKLIST.Execute(num_followers, "doticu_npcp_followers_unfollow")
-        return p_CODES.FAILURE
+    if !p_tasklist.Execute(num_followers, "doticu_npcp_followers_unfollow")
+        return CODES.FAILURE
     endIf
 
-    return p_CODES.SUCCESS
+    return CODES.SUCCESS
 endFunction
 
 int function p_Unmember()
     int num_followers = Get_Count()
     if num_followers < 1
-        return p_CODES.HASNT_FOLLOWER
+        return CODES.HASNT_FOLLOWER
     endIf
 
-    if !p_TASKLIST.Execute(num_followers, "doticu_npcp_followers_unmember")
-        return p_CODES.FAILURE
+    if !p_tasklist.Execute(num_followers, "doticu_npcp_followers_unmember")
+        return CODES.FAILURE
     endIf
 
-    return p_CODES.SUCCESS
+    return CODES.SUCCESS
 endFunction
 
 ; Public Methods
 int function Get_Max()
-    return p_ALIASES.Get_Max()
+    return ALIASES.Get_Max()
 endFunction
 
 int function Get_Count()
-    return p_ALIASES.Get_Count()
+    return ALIASES.Get_Count()
 endFunction
 
 int function Get_Count_Alive()
@@ -420,21 +440,21 @@ int function Get_Count_Unsneak()
 endFunction
 
 bool function Has_Follower(Actor ref_actor)
-    return p_ALIASES.Has_Alias(p_Get_Alias_ID(ref_actor), ref_actor)
+    return ALIASES.Has_Alias(p_Get_Alias_ID(ref_actor), ref_actor)
 endFunction
 
 doticu_npcp_follower function Get_Follower(Actor ref_actor)
-    return p_ALIASES.Get_Alias(p_Get_Alias_ID(ref_actor), ref_actor) as doticu_npcp_follower
+    return ALIASES.Get_Alias(p_Get_Alias_ID(ref_actor), ref_actor) as doticu_npcp_follower
 endFunction
 
 Alias[] function Get_Aliases_Sorted(int idx_from = 0, int idx_to_ex = -1)
-    return p_ALIASES.Get_Aliases_Sorted(idx_from, idx_to_ex)
+    return ALIASES.Get_Aliases_Sorted(idx_from, idx_to_ex)
 endFunction
 
 int function Summon_All(int distance = 120, int angle_start = 0, int angle_offset = 15)
     int count_followers = Get_Count()
     if count_followers < 1
-        return p_CODES.HASNT_FOLLOWER
+        return CODES.HASNT_FOLLOWER
     endIf
 
     int idx_aliases = 0
@@ -446,7 +466,7 @@ int function Summon_All(int distance = 120, int angle_start = 0, int angle_offse
             ref_follower = GetNthAlias(idx_aliases) as doticu_npcp_follower
             if ref_follower.Exists()
                 ref_follower.Summon(distance, angle_start)
-                return p_CODES.SUCCESS
+                return CODES.SUCCESS
             endIf
             idx_aliases += 1
         endWhile
@@ -468,17 +488,17 @@ int function Summon_All(int distance = 120, int angle_start = 0, int angle_offse
         idx_aliases += 1
     endWhile
 
-    return p_CODES.SUCCESS
+    return CODES.SUCCESS
 endFunction
 
 int function Summon_Mobile(int distance = 120, int angle_start = 0, int angle_offset = 15)
     if Get_Count() < 1
-        return p_CODES.HASNT_FOLLOWER
+        return CODES.HASNT_FOLLOWER
     endIf
 
     int count_mobile = Get_Count_Mobile()
     if count_mobile < 1
-        return p_CODES.HASNT_MOBILE
+        return CODES.HASNT_MOBILE
     endIf
 
     int idx_aliases = 0
@@ -490,7 +510,7 @@ int function Summon_Mobile(int distance = 120, int angle_start = 0, int angle_of
             ref_follower = GetNthAlias(idx_aliases) as doticu_npcp_follower
             if ref_follower.Is_Mobile()
                 ref_follower.Summon(distance, angle_start)
-                return p_CODES.SUCCESS
+                return CODES.SUCCESS
             endIf
             idx_aliases += 1
         endWhile
@@ -512,17 +532,17 @@ int function Summon_Mobile(int distance = 120, int angle_start = 0, int angle_of
         idx_aliases += 1
     endWhile
 
-    return p_CODES.SUCCESS
+    return CODES.SUCCESS
 endFunction
 
 int function Summon_Immobile(int distance = 120, int angle_start = 0, int angle_offset = 15)
     if Get_Count() < 1
-        return p_CODES.HASNT_FOLLOWER
+        return CODES.HASNT_FOLLOWER
     endIf
 
     int count_immobile = Get_Count_Immobile()
     if count_immobile < 1
-        return p_CODES.HASNT_IMMOBILE
+        return CODES.HASNT_IMMOBILE
     endIf
 
     int idx_aliases = 0
@@ -534,7 +554,7 @@ int function Summon_Immobile(int distance = 120, int angle_start = 0, int angle_
             ref_follower = GetNthAlias(idx_aliases) as doticu_npcp_follower
             if ref_follower.Is_Immobile()
                 ref_follower.Summon(distance, angle_start)
-                return p_CODES.SUCCESS
+                return CODES.SUCCESS
             endIf
             idx_aliases += 1
         endWhile
@@ -556,7 +576,7 @@ int function Summon_Immobile(int distance = 120, int angle_start = 0, int angle_
         idx_aliases += 1
     endWhile
 
-    return p_CODES.SUCCESS
+    return CODES.SUCCESS
 endFunction
 
 int function Summon_All_Behind()
@@ -650,7 +670,7 @@ endFunction
 
 function u_0_1_4(doticu_npcp_data DATA)
     p_DATA = DATA
-    p_TASKLIST = p_TASKLISTS.Create()
+    p_tasklist = TASKLISTS.Create()
     while !p_Send_Followers("doticu_npcp_members_u_0_1_4")
         Utility.Wait(0.25)
     endWhile
