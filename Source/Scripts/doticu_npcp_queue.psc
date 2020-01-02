@@ -136,6 +136,7 @@ bool function Is_Full()
     return p_buffer_used == p_buffer_max
 endFunction
 
+; for the three following, if we keep track of the objects, we can unregister for them on Destroy()
 function Register_Form(Form ref_form, string str_handler)
     ref_form.RegisterForModEvent(p_STR_EVENT, str_handler)
 endFunction

@@ -27,12 +27,18 @@ doticu_npcp_followers property FOLLOWERS hidden
     endFunction
 endProperty
 
+; Public Constants
+Actor property ACTOR_PLAYER hidden
+    Actor function Get()
+        return p_DATA.CONSTS.ACTOR_PLAYER
+    endFunction
+endProperty
+
 ; Private Constants
 doticu_npcp_data    p_DATA          =  none
 
 ; Private Variables
 bool                p_is_created    = false
-Actor               p_ref_player    =  none
 bool                p_is_in_combat  = false
 doticu_npcp_queue   p_queue_player  =  none
 
@@ -41,7 +47,6 @@ function f_Create(doticu_npcp_data DATA)
     p_DATA = DATA
 
     p_is_created = true
-    p_ref_player = CONSTS.ACTOR_PLAYER
     p_is_in_combat = false
     p_queue_player = QUEUES.Create("player", 32, 5.0)
 endFunction
@@ -49,12 +54,11 @@ endFunction
 function f_Destroy()
     QUEUES.Destroy(p_queue_player)
     p_is_in_combat = false
-    p_ref_player = none
     p_is_created = false
 endFunction
 
 function f_Register()
-    RegisterForModEvent("doticu_npcp_queue_" + "player", "On_Queue_Player")
+    p_queue_player.Register_Alias(self, "On_Queue_Player")
 endFunction
 
 function f_Begin_Combat()
@@ -75,7 +79,7 @@ function f_End_Combat()
 endFunction
 
 function f_Try_End_Combat()
-    if p_ref_player.IsInCombat()
+    if ACTOR_PLAYER.IsInCombat()
         p_queue_player.Enqueue("f_Try_End_Combat()", 5.0)
     else
         f_End_Combat()
@@ -93,11 +97,11 @@ endFunction
 
 ; Public Methods
 function Add_Perk(Perk perk_to_add)
-    p_ref_player.AddPerk(perk_to_add)
+    ACTOR_PLAYER.AddPerk(perk_to_add)
 endFunction
 
 function Remove_Perk(Perk perk_to_remove)
-    p_ref_player.RemovePerk(perk_to_remove)
+    ACTOR_PLAYER.RemovePerk(perk_to_remove)
 endFunction
 
 ; Update Methods

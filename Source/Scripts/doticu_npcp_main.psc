@@ -48,7 +48,73 @@ doticu_npcp_data property DATA
 endProperty
 
 ; Friend Methods
-function f_Create()
+function f_Init_Mod()
+    if !p_Has_Requires()
+        return
+    endIf
+
+    DATA.Start()
+    VARS.Start()
+    FUNCS.Start()
+    MEMBERS.Start()
+    FOLLOWERS.Start()
+    CONTROL.Start()
+
+    p_Create()
+    p_Register()
+
+    FUNCS.LOGS.Create_Note("Thank you for installing!")
+endFunction
+
+function f_Load_Mod()
+    if !p_Has_Requires()
+        return
+    endIf
+
+    DATA.Stop()
+    DATA.Start()
+
+    ;/CONTROL.Stop()
+    CONTROL.Start()/;
+
+    p_Register()
+    p_Version()
+
+    ;Debug.Notification("NPC Party: Loaded (Temp!)")
+
+    while !p_Send_Load_Mod()
+        Utility.Wait(0.25)
+    endWhile
+endFunction
+
+; Private Methods
+bool function p_Has_Requires()
+    if !SKSE.GetVersion()
+        Debug.MessageBox("NPC Party: SKSE is not installed. This mod will not function. Please install SKSE 2.0.17 or higher.")
+        return false
+    endIf
+
+    if SKSE.GetVersion() < 2 || SKSE.GetVersionMinor() < 0 || SKSE.GetVersionBeta() < 17
+        Debug.MessageBox("NPC Party: Running a version of SKSE older than 2.0.17. This mod may not function. Please update SKSE.")
+    elseIf SKSE.GetScriptVersionRelease() < 64
+        Debug.MessageBox("NPC Party: SKSE scripts are older than version 2.0.17. This mod may not function. Try to reinstall SKSE.")
+    endIf
+
+    if !PapyrusUtil.GetVersion()
+        Debug.MessageBox("NPC Party: PapyrusUtil is not installed. This mod will not function. Please install PapyrusUtil 3.8 or higher.")
+        return false
+    endIf
+
+    if PapyrusUtil.GetVersion() < 38
+        Debug.MessageBox("NPC Party: Running a version of PapyrusUtil older than 3.8. This mod may not function. Please update PapyrusUtil.")
+    elseIf PapyrusUtil.GetScriptVersion() < 38
+        Debug.MessageBox("NPC Party: PapyrusUtil scripts are older than version 3.8. This mod may not function. Try to reinstall PapyrusUtil.")
+    endIf
+
+    return true
+endFunction
+
+function p_Create()
     DATA.f_Create(DATA)
     VARS.f_Create(DATA)
     FUNCS.f_Create(DATA)
@@ -57,7 +123,7 @@ function f_Create()
     CONTROL.f_Create(DATA)
 endFunction
 
-function f_Register()
+function p_Register()
     DATA.f_Register()
     VARS.f_Register()
     FUNCS.f_Register()
@@ -66,7 +132,7 @@ function f_Register()
     CONTROL.f_Register()
 endFunction
 
-function f_Version()
+function p_Version()
     if p_Is_Version_Less_Than(CONSTS.VERSION_MAJOR, CONSTS.VERSION_MINOR, CONSTS.VERSION_PATCH)
         if p_Is_Version_Less_Than(0, 1, 4)
             u_0_1_4()
@@ -79,47 +145,10 @@ function f_Version()
         VARS.version_minor = CONSTS.VERSION_MINOR
         VARS.version_patch = CONSTS.VERSION_PATCH
 
-        string str_version = CONSTS.VERSION_MAJOR + "." + CONSTS.VERSION_MINOR + "." + CONSTS.VERSION_PATCH
-        FUNCS.LOGS.Create_Note("Running version " + str_version)
+        FUNCS.LOGS.Create_Note("Running version " + Get_Version_String())
     endIf
 endFunction
 
-function f_Init_Mod()
-    ; do checks to make sure SKSE and PapyrusUtil are running
-
-    DATA.Start()
-    VARS.Start()
-    FUNCS.Start()
-    MEMBERS.Start()
-    FOLLOWERS.Start()
-    CONTROL.Start()
-
-    f_Create()
-    f_Register()
-
-    FUNCS.LOGS.Create_Note("Thank you for installing!")
-endFunction
-
-function f_Load_Mod()
-    ; do checks to make sure SKSE and PapyrusUtil are running
-
-    DATA.Stop()
-    DATA.Start()
-
-    ;/CONTROL.Stop()
-    CONTROL.Start()/;
-
-    f_Register()
-    f_Version()
-
-    ;Debug.Notification("LOADED (temp)")
-
-    while !p_Send_Load_Mod()
-        Utility.Wait(0.25)
-    endWhile
-endFunction
-
-; Private Methods
 bool function p_Is_Version_Less_Than(int major, int minor, int patch)
     if VARS.version_major != major
         return VARS.version_major < major
@@ -145,6 +174,33 @@ bool function p_Send_Load_Mod()
     endIf
 
     return true
+endFunction
+
+; Public Methods
+int[] function Get_Version_Array()
+    int[] arr_version = new int[3]
+
+    arr_version[0] = CONSTS.VERSION_MAJOR
+    arr_version[1] = CONSTS.VERSION_MINOR
+    arr_version[2] = CONSTS.VERSION_PATCH
+
+    return arr_version
+endFunction
+
+string function Get_Version_String()
+    return CONSTS.VERSION_MAJOR + "." + CONSTS.VERSION_MINOR + "." + CONSTS.VERSION_PATCH
+endFunction
+
+int function Get_Version_Major()
+    return CONSTS.VERSION_MAJOR
+endFunction
+
+int function Get_Version_Minor()
+    return CONSTS.VERSION_MINOR
+endFunction
+
+int function Get_Version_Patch()
+    return CONSTS.VERSION_PATCH
 endFunction
 
 ; Update Methods
