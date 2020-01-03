@@ -210,7 +210,7 @@ endFunction
 
 ; Private Methods
 function p_Create_Queues()
-    p_queue_member = QUEUES.Create(p_str_namespace, 64, 0.1)
+    p_queue_member = QUEUES.Create("alias", 64, 0.1)
 endFunction
 
 function p_Destroy_Queues()

@@ -26,10 +26,14 @@ function f_Create(doticu_npcp_data DATA, string str_namespace, int message_max =
     p_DATA = DATA
     p_BUFFER_MAX = message_max
     p_INTERVAL_DEFAULT = interval_default
-    p_EVENT_DEFAULT = p_Get_Event(str_namespace)
     p_MESSAGES = Utility.CreateStringArray(p_BUFFER_MAX, "")
     p_INTERVALS = Utility.CreateFloatArray(p_BUFFER_MAX, 0.0)
     p_EVENTS = Utility.CreateStringArray(p_BUFFER_MAX, "")
+
+    p_EVENT_DEFAULT = "doticu_npcp_queue"
+    if str_namespace
+        p_EVENT_DEFAULT = p_EVENT_DEFAULT + "_" + str_namespace
+    endIf
     
     p_is_created = true
 endFunction
@@ -46,17 +50,15 @@ function f_Register()
 endFunction
 
 ; Private Methods
-string function p_Get_Event(string str_namespace = "__def__")
-    if str_namespace == "__def__" && p_EVENT_DEFAULT
+string function p_Get_Event(string str_namespace = "_default_")
+    if str_namespace == "_default_" || !str_namespace
         return p_EVENT_DEFAULT
-    elseIf str_namespace
-        return "doticu_npcp_queue" + "_" + str_namespace
     else
-        return "doticu_npcp_queue"
+        return p_EVENT_DEFAULT + "_" + str_namespace
     endIf
 endFunction
 
-function p_Write(string str_message, float float_wait_before = -1.0, string str_namespace = "__def__")
+function p_Write(string str_message, float float_wait_before = -1.0, string str_namespace = "_default_")
     if Is_Full()
         return
     endIf
@@ -143,25 +145,28 @@ bool function Is_Full()
 endFunction
 
 ; for the registers, if we keep track of the objects, we can unregister for them on Destroy()
-function Register_Form(Form ref_form, string str_handler, string str_namespace = "__def__")
+function Register_Form(Form ref_form, string str_handler, string str_namespace = "_default_")
     if Exists() && ref_form && str_handler
         ref_form.RegisterForModEvent(p_Get_Event(str_namespace), str_handler)
     endIf
 endFunction
 
-function Register_Alias(ReferenceAlias ref_alias, string str_handler, string str_namespace = "__def__")
+function Register_Alias(ReferenceAlias ref_alias, string str_handler, string str_namespace = "_default_")
     if Exists() && ref_alias && str_handler
         ref_alias.RegisterForModEvent(p_Get_Event(str_namespace), str_handler)
     endIf
 endFunction
 
-function Register_Effect(ActiveMagicEffect ref_effect, string str_handler, string str_namespace = "__def__")
+function Register_Effect(ActiveMagicEffect ref_effect, string str_handler, string str_namespace = "_default_")
     if Exists() && ref_effect && str_handler
         ref_effect.RegisterForModEvent(p_Get_Event(str_namespace), str_handler)
     endIf
 endFunction
 
-function Enqueue(string str_message, float float_wait_before = -1.0, string str_namespace = "__def__", bool allow_repeat = false)
+function Enqueue(string str_message, float float_wait_before = -1.0, string str_namespace = "_default_", bool allow_repeat = false)
+    ; this function should never unlock the instance,
+    ; so only internal functions can be allowed
+
     if Is_Full()
         return
     endIf
@@ -186,6 +191,9 @@ function Enqueue(string str_message, float float_wait_before = -1.0, string str_
 endFunction
 
 function Dequeue()
+    ; this function should never unlock the instance,
+    ; so only internal functions can be allowed
+
     if p_Has_Rush()
         p_will_update = true
         p_will_rush = true
@@ -211,13 +219,18 @@ function Dequeue()
     endIf
 endFunction
 
-function Rush(string str_rush, string str_namespace = "__def__")
+function Rush(string str_rush, string str_namespace = "_default_")
+    ; if we fully block anywhere during this, Enqueue and Dequeue may deadlock.
+    ; A state waiting Enqueue called within this stack frame would loop forever.
+
+    GotoState("p_STATE_RUSH")
+
     if str_rush == ""
         return
     endIf
 
     while p_Has_Rush()
-        ; if we completely block here, we could create a deadlock
+        ; we need to wait for the old Rush to finish.
         Utility.Wait(0.01)
     endWhile
 
@@ -230,22 +243,27 @@ function Rush(string str_rush, string str_namespace = "__def__")
     endIf
 
     while p_will_rush
-        ; we need to wait for the Rush message to finish
+        ; we need to wait for this new Rush message to finish
         Utility.Wait(0.01)
     endWhile
+
+    GotoState("")
 endFunction
 
 function Flush()
-    p_buffer_write = 0
+    ; should get exclusive execution away from Rush, in case of deadlock.
+    ; blocking Enqueue and Dequeue makes sure any messages are not skipped.
+
+    GotoState("p_STATE_FLUSH")
+
+    p_buffer_used = 0; this empties the queue
     p_buffer_read = 0
-    p_buffer_used = 0
+    p_buffer_write = 0
 
-    UnregisterForUpdate()
-
-    if p_will_update
-        ; let an existing last message finish
-        Utility.Wait(0.01)
-    endIf
+    while p_will_update || p_will_rush
+        ; let an already dispatched message finish
+        Utility.Wait(p_INTERVAL_DEFAULT)
+    endWhile
 
     p_will_rush = false
     p_will_update = false
@@ -253,12 +271,39 @@ function Flush()
     p_str_rush == ""
     p_str_event = ""
     p_str_message = ""
+
+    GotoState("")
 endFunction
 
 ; Update Methods
 function u_0_1_4(doticu_npcp_data DATA)
     p_DATA = DATA
 endFunction
+
+; Private States
+state p_STATE_RUSH
+    function Flush()
+        Utility.Wait(p_INTERVAL_DEFAULT)
+        Flush()
+    endFunction
+endState
+
+state p_STATE_FLUSH
+    function Enqueue(string str_message, float float_wait_before = -1.0, string str_namespace = "_default_", bool allow_repeat = false)
+        Utility.Wait(p_INTERVAL_DEFAULT)
+        Enqueue(str_message, float_wait_before, str_namespace, allow_repeat)
+    endFunction
+
+    ; always allow Dequeue()
+
+    function Rush(string str_rush, string str_namespace = "_default_")
+        Utility.Wait(p_INTERVAL_DEFAULT)
+        Rush(str_rush, str_namespace)
+    endFunction
+
+    function Flush()
+    endFunction
+endState
 
 ; Events
 event OnUpdate()
