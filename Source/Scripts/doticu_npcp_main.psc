@@ -94,7 +94,7 @@ bool function p_Has_Requires()
         return false
     endIf
 
-    if SKSE.GetVersion() < 2 || SKSE.GetVersionMinor() < 0 || SKSE.GetVersionBeta() < 17
+    if Is_SKSE_Less_Than(2, 0, 17)
         Debug.MessageBox("NPC Party: Running a version of SKSE older than 2.0.17. This mod may not function. Please update SKSE.")
     elseIf SKSE.GetScriptVersionRelease() < 64
         Debug.MessageBox("NPC Party: SKSE scripts are older than version 2.0.17. This mod may not function. Try to reinstall SKSE.")
@@ -133,11 +133,11 @@ function p_Register()
 endFunction
 
 function p_Version()
-    if p_Is_Version_Less_Than(CONSTS.VERSION_MAJOR, CONSTS.VERSION_MINOR, CONSTS.VERSION_PATCH)
-        if p_Is_Version_Less_Than(0, 1, 4)
+    if Is_NPC_Party_Less_Than(CONSTS.VERSION_MAJOR, CONSTS.VERSION_MINOR, CONSTS.VERSION_PATCH)
+        if Is_NPC_Party_Less_Than(0, 1, 4)
             u_0_1_4()
         endIf
-        if p_Is_Version_Less_Than(0, 1, 5)
+        if Is_NPC_Party_Less_Than(0, 1, 5)
             u_0_1_5()
         endIf
 
@@ -146,18 +146,6 @@ function p_Version()
         VARS.version_patch = CONSTS.VERSION_PATCH
 
         FUNCS.LOGS.Create_Note("Running version " + Get_Version_String())
-    endIf
-endFunction
-
-bool function p_Is_Version_Less_Than(int major, int minor, int patch)
-    if VARS.version_major != major
-        return VARS.version_major < major
-    elseIf VARS.version_minor != minor
-        return VARS.version_minor < minor
-    elseIf VARS.version_patch != patch
-        return VARS.version_patch < patch
-    else
-        return false
     endIf
 endFunction
 
@@ -203,6 +191,26 @@ int function Get_Version_Patch()
     return CONSTS.VERSION_PATCH
 endFunction
 
+bool function Is_Version_Less_Than(int major, int minor, int patch, int min_major, int min_minor, int min_patch)
+    if major != min_major
+        return major < min_major
+    elseIf minor != min_minor
+        return minor < min_minor
+    elseIf patch != min_patch
+        return patch < min_patch
+    else
+        return false
+    endIf
+endFunction
+
+bool function Is_SKSE_Less_Than(int min_major, int min_minor, int min_patch)
+    return Is_Version_Less_Than(SKSE.GetVersion(), SKSE.GetVersionMinor(), SKSE.GetVersionBeta(), min_major, min_minor, min_patch)
+endFunction
+
+bool function Is_NPC_Party_Less_Than(int min_major, int min_minor, int min_patch)
+    return Is_Version_Less_Than(VARS.version_major, VARS.version_minor, VARS.version_patch, min_major, min_minor, min_patch)
+endFunction
+
 ; Update Methods
 function u_0_1_4()
     FUNCS.u_0_1_4(DATA)
@@ -217,7 +225,7 @@ endFunction
 ; Events
 event OnInit()
     ; we don't want to init in this thread because
-    ; it won't wait for props to be filled
+    ; it won't wait for properties to be filled
     RegisterForSingleUpdate(0.01)
 endEvent
 

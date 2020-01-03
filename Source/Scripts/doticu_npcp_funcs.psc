@@ -1,37 +1,37 @@
 Scriptname doticu_npcp_funcs extends Quest
 
 ; Modules
-doticu_npcp_logs property LOGS
+doticu_npcp_logs property LOGS hidden
     doticu_npcp_logs function Get()
         return (self as Quest) as doticu_npcp_logs
     endFunction
 endProperty
-doticu_npcp_queues property QUEUES
+doticu_npcp_queues property QUEUES hidden
     doticu_npcp_queues function Get()
         return (self as Quest) as doticu_npcp_queues
     endFunction
 endProperty
-doticu_npcp_tasklists property TASKLISTS
+doticu_npcp_tasklists property TASKLISTS hidden
     doticu_npcp_tasklists function Get()
         return (self as Quest) as doticu_npcp_tasklists
     endFunction
 endProperty
-doticu_npcp_containers property CONTAINERS
+doticu_npcp_containers property CONTAINERS hidden
     doticu_npcp_containers function Get()
         return (self as Quest) as doticu_npcp_containers
     endFunction
 endProperty
-doticu_npcp_outfits property OUTFITS
+doticu_npcp_outfits property OUTFITS hidden
     doticu_npcp_outfits function Get()
         return (self as Quest) as doticu_npcp_outfits
     endFunction
 endProperty
-doticu_npcp_actors property ACTORS
+doticu_npcp_actors property ACTORS hidden
     doticu_npcp_actors function Get()
         return (self as Quest) as doticu_npcp_actors
     endFunction
 endProperty
-doticu_npcp_perks property PERKS
+doticu_npcp_perks property PERKS hidden
     doticu_npcp_perks function Get()
         return (self as Quest) as doticu_npcp_perks
     endFunction
