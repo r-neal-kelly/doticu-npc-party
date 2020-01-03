@@ -32,10 +32,27 @@ doticu_npcp_followers property FOLLOWERS hidden
     endFunction
 endProperty
 
+; Friend Constants
+doticu_npcp_queue property f_QUEUE hidden
+    doticu_npcp_queue function Get()
+        return p_ref_member.f_QUEUE
+    endFunction
+endProperty
+
 ; Public Constants
 Actor property ACTOR_PLAYER hidden
     Actor function Get()
         return p_DATA.CONSTS.ACTOR_PLAYER
+    endFunction
+endProperty
+float property MAX_SPEED_SNEAK hidden
+    float function Get()
+        return 160.0
+    endFunction
+endProperty
+float property MAX_SPEED_UNSNEAK hidden
+    float function Get()
+        return 130.0
     endFunction
 endProperty
 
@@ -47,10 +64,10 @@ bool                    p_is_created                = false
 int                     p_id_alias                  =    -1
 Actor                   p_ref_actor                 =  none
 doticu_npcp_member      p_ref_member                =  none
+string                  p_str_namespace             =    ""
 int                     p_style_follower            =    -1
 int                     p_level_follower            =    -1
 bool                    p_is_sneak                  = false
-doticu_npcp_queue       p_queue_follower            =  none
 
 int                     p_prev_relationship_rank    =    -1
 float                   p_prev_waiting_for_player   =  -1.0
@@ -90,6 +107,7 @@ function f_Create(doticu_npcp_data DATA, int id_alias)
     p_id_alias = id_alias
     p_ref_actor = GetActorReference()
     p_ref_member = MEMBERS.Get_Member(p_ref_actor)
+    p_str_namespace = "follower_" + p_id_alias
     p_style_follower = p_ref_member.Get_Style()
     p_level_follower = -1
     p_is_sneak = false
@@ -97,16 +115,14 @@ function f_Create(doticu_npcp_data DATA, int id_alias)
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_FOLLOWER, p_id_alias + 1)
     p_ref_actor.EvaluatePackage()
 
-    p_Create_Queues()
+    p_Register_Queues()
 
-    p_queue_follower.Enqueue("Follower.p_Backup", 0.12)
+    p_Enqueue("Follower.Backup", 0.1)
 endFunction
 
 function f_Destroy()
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_FOLLOWER)
     p_ref_actor.EvaluatePackage()
-
-    p_queue_follower.Flush()
 
     if p_is_sneak
         p_Unsneak()
@@ -116,12 +132,11 @@ function f_Destroy()
     p_Untoken()
     
     p_Restore()
-    p_Destroy_Queues()
 
-    p_queue_follower = none
     p_is_sneak = false
     p_level_follower = -1
     p_style_follower = -1
+    p_str_namespace = ""
     p_ref_member = none
     p_ref_actor = none
     p_id_alias = -1
@@ -143,45 +158,33 @@ function f_Register()
     RegisterForModEvent("doticu_npcp_followers_resurrect", "On_Followers_Resurrect")
     RegisterForModEvent("doticu_npcp_members_u_0_1_1", "On_u_0_1_1")
     RegisterForModEvent("doticu_npcp_members_u_0_1_4", "On_u_0_1_4")
+
     p_Register_Queues()
 endFunction
 
-int function f_Enforce()
-    int code_return
-
-    if !Exists()
-        return CODES.ISNT_FOLLOWER
+function f_Enforce()
+    p_Enqueue("Follower.Token", 0.1)
+    p_Enqueue("Follower.Follow", 0.1)
+    p_Enqueue("Follower.Level", 0.1)
+    if Is_Sneak()
+        p_Enqueue("Follower.Sneak", 0.1)
     endIf
-
-    p_queue_follower.Enqueue("p_Token")
-    p_queue_follower.Enqueue("p_Follow")
-    p_queue_follower.Enqueue("p_Level")
-    if p_is_sneak
-        p_queue_follower.Enqueue("p_Sneak")
-    endIf
-
-    return CODES.SUCCESS
 endFunction
 
 ; Private Methods
-function p_Create_Queues()
-    p_queue_follower = QUEUES.Create("follower_" + p_id_alias, 32, 0.5)
-    p_Register_Queues()
-endFunction
-
-function p_Destroy_Queues()
-    if p_queue_follower
-        QUEUES.Destroy(p_queue_follower)
-    endIf
-endFunction
-
 function p_Register_Queues()
-    if p_queue_follower
-        p_queue_follower.Register_Alias(self, "On_Queue_Follower")
-    endIf
+    f_QUEUE.Register_Alias(self, "On_Queue_Follower", p_str_namespace)
 endFunction
 
-function p_Backup(); this may need to be async
+function p_Enqueue(string str_message, float float_interval = -1.0, bool allow_repeat = false)
+    f_QUEUE.Enqueue(str_message, float_interval, p_str_namespace, allow_repeat)
+endFunction
+
+function p_Rush(string str_message)
+    f_QUEUE.Rush(str_message, p_str_namespace)
+endFunction
+
+function p_Backup()
     p_prev_relationship_rank = p_ref_actor.GetRelationshipRank(CONSTS.ACTOR_PLAYER)
     p_prev_waiting_for_player = p_ref_actor.GetBaseActorValue("WaitingForPlayer")
     p_prev_aggression = p_ref_actor.GetBaseActorValue("Aggression")
@@ -274,7 +277,7 @@ function p_Follow()
     p_ref_actor.SetActorValue("Confidence", 4.0)
     p_ref_actor.SetActorValue("Assistance", 2.0); this may need to go on Member
     p_ref_actor.SetActorValue("Morality", 0.0)
-    p_ref_actor.SetActorValue("SpeedMult", 120.0)
+    p_ref_actor.SetActorValue("SpeedMult", MAX_SPEED_UNSNEAK)
 
     ; we still need to disable the vanilla follower dialogue. Probably just add an never true condition to the quest data tab.
 
@@ -291,11 +294,11 @@ endFunction
 function p_Sneak()
     ; if possible, I want this function to make the followers completely undetectable.
     ; maybe an invisibility spell without the visual effect, if possible? not sure
-    p_ref_actor.SetActorValue("SpeedMult", 160.0)
+    p_ref_actor.SetActorValue("SpeedMult", MAX_SPEED_SNEAK)
 endFunction
 
 function p_Unsneak()
-    p_ref_actor.SetActorValue("SpeedMult", 120.0)
+    p_ref_actor.SetActorValue("SpeedMult", MAX_SPEED_UNSNEAK)
 endFunction
 
 function p_Level()
@@ -734,28 +737,26 @@ endEvent
 
 event On_u_0_1_4(Form form_data)
     p_DATA = form_data as doticu_npcp_data
-    if Exists()
-        p_queue_follower.u_0_1_4(p_DATA)
-    endIf
 endEvent
 
 ; Events
 event On_Queue_Follower(string str_message)
-    if str_message == "p_Token"
-        p_Token()
-    elseIf str_message == "p_Follow"
-        p_Follow()
-    elseIf str_message == "p_Level"
-        p_Level()
-    elseIf str_message == "p_Sneak"
-        p_Sneak()
+    if false
 
-    elseIf str_message == "Follower.p_Backup"
+    elseIf str_message == "Follower.Backup"
         p_Backup()
+    elseIf str_message == "Follower.Token"
+        p_Token()
+    elseIf str_message == "Follower.Follow"
+        p_Follow()
+    elseIf str_message == "Follower.Level"
+        p_Level()
+    elseIf str_message == "Follower.Sneak"
+        p_Sneak()
 
     endIf
 
-    p_queue_follower.Dequeue()
+    f_QUEUE.Dequeue()
 endEvent
 
 event OnCombatStateChanged(Actor ref_target, int code_combat)

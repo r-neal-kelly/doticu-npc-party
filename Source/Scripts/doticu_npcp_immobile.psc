@@ -17,6 +17,13 @@ doticu_npcp_actors property ACTORS hidden
     endFunction
 endProperty
 
+; Friend Constants
+doticu_npcp_queue property f_QUEUE hidden
+    doticu_npcp_queue function Get()
+        return p_ref_member.f_QUEUE
+    endFunction
+endProperty
+
 ; Private Constants
 doticu_npcp_data    p_DATA          =  none
 
@@ -25,6 +32,7 @@ bool                p_is_created    = false
 int                 p_id_alias      =    -1
 Actor               p_ref_actor     =  none
 doticu_npcp_member  p_ref_member    =  none
+string              p_str_namespace =    ""
 bool                p_is_paralyzed  = false
 
 ; Friend Methods
@@ -35,10 +43,13 @@ function f_Create(doticu_npcp_data DATA, int id_alias)
     p_id_alias = id_alias
     p_ref_actor = GetActorReference()
     p_ref_member = (self as ReferenceAlias) as doticu_npcp_member
+    p_str_namespace = "immobile_" + p_id_alias
     p_is_paralyzed = false
     
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_IMMOBILE)
     p_ref_actor.EvaluatePackage()
+
+    p_Register_Queues()
 endFunction
 
 function f_Destroy()
@@ -46,19 +57,41 @@ function f_Destroy()
     p_ref_actor.EvaluatePackage()
 
     if p_is_paralyzed
-        f_Unparalyze()
+        p_Unparalyze()
     endIf
-    f_Untoken()
+    p_Untoken()
 
     p_is_paralyzed = false
+    p_str_namespace = ""
     p_ref_member = none
     p_ref_actor = none
     p_id_alias = -1
     p_is_created = false
 endFunction
 
+function f_Register()
+    p_Register_Queues()
+endFunction
+
+function f_Enforce()
+    p_Enqueue("Immobile.Token", 0.1)
+    p_Enqueue("Immobile.Paralyze", 0.1)
+endFunction
+
 ; Private Methods
-function f_Token()
+function p_Register_Queues()
+    f_QUEUE.Register_Alias(self, "On_Queue_Immobile", p_str_namespace)
+endFunction
+
+function p_Enqueue(string str_message, float float_interval = -1.0, bool allow_repeat = false)
+    f_QUEUE.Enqueue(str_message, float_interval, p_str_namespace, allow_repeat)
+endFunction
+
+function p_Rush(string str_message)
+    f_QUEUE.Rush(str_message, p_str_namespace)
+endFunction
+
+function p_Token()
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_IMMOBILE)
 
     if Is_Paralyzed()
@@ -70,14 +103,14 @@ function f_Token()
     p_ref_actor.EvaluatePackage()
 endFunction
 
-function f_Untoken()
+function p_Untoken()
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_PARALYZED)
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_IMMOBILE)
 
     p_ref_actor.EvaluatePackage()
 endFunction
 
-function f_Paralyze()
+function p_Paralyze()
     if !Is_Paralyzed()
         return
     endIf
@@ -85,7 +118,7 @@ function f_Paralyze()
     p_ref_actor.EnableAI(false)
 endFunction
 
-function f_Unparalyze()
+function p_Unparalyze()
     p_ref_actor.EnableAI(true)
     Debug.SendAnimationEvent(p_ref_actor, "IdleForceDefaultState"); go to cached current animation
 endFunction
@@ -119,7 +152,7 @@ int function Paralyze()
 
     p_is_paralyzed = true
 
-    f_Paralyze()
+    p_Paralyze()
 
     code_return = Enforce()
     if code_return < 0
@@ -143,7 +176,7 @@ int function Unparalyze()
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_PARALYZED)
     p_ref_actor.EvaluatePackage()
 
-    f_Unparalyze()
+    p_Unparalyze()
 
     p_is_paralyzed = false
 
@@ -167,16 +200,29 @@ function u_0_1_5(doticu_npcp_data DATA)
 endFunction
 
 ; Events
+event On_Queue_Immobile(string str_message)
+    if false
+
+    elseIf str_message == "Immobile.Token"
+        p_Token()
+    elseIf str_message == "Immobile.Paralyze"
+        p_Paralyze()
+    
+    endIf
+
+    f_QUEUE.Dequeue()
+endEvent
+
 event On_Load_Mod()
     if Exists() && Is_Paralyzed()
-        f_Unparalyze()
-        f_Paralyze()
+        p_Unparalyze()
+        p_Paralyze()
     endIf
 endEvent
 
 event OnLoad()
     if Exists() && Is_Paralyzed()
-        f_Unparalyze()
-        f_Paralyze()
+        p_Unparalyze()
+        p_Paralyze()
     endIf
 endEvent

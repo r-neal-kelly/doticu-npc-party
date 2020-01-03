@@ -52,6 +52,13 @@ doticu_npcp_followers property FOLLOWERS hidden
     endFunction
 endProperty
 
+; Friend Constants
+doticu_npcp_queue property f_QUEUE hidden
+    doticu_npcp_queue function Get()
+        return p_queue_member
+    endFunction
+endProperty
+
 ; Private Constants
 doticu_npcp_data        p_DATA                  =  none
 
@@ -61,11 +68,13 @@ int                     p_id_alias              =    -1
 Actor                   p_ref_actor             =  none
 doticu_npcp_settler     p_ref_settler           =  none
 doticu_npcp_immobile    p_ref_immobile          =  none
+string                  p_str_namespace         =    ""
 bool                    p_is_clone              = false
 bool                    p_is_generic            = false
 bool                    p_is_thrall             = false
 int                     p_code_style            =    -1
 int                     p_code_vitality         =    -1
+int                     p_queue_code_return     =     0
 Outfit                  p_outfit_member         =  none
 doticu_npcp_queue       p_queue_member          =  none
 doticu_npcp_container   p_container2_pack       =  none
@@ -94,24 +103,27 @@ function p_Create(doticu_npcp_data DATA, int id_alias, bool is_clone)
     p_ref_actor = GetActorReference()
     p_ref_settler = (self as ReferenceAlias) as doticu_npcp_settler
     p_ref_immobile = (self as ReferenceAlias) as doticu_npcp_immobile
+    p_str_namespace = "member_" + p_id_alias
     p_is_clone = is_clone
     p_is_generic = ACTORS.Is_Generic(p_ref_actor)
     p_is_thrall = false
     p_code_style = VARS.auto_style
     p_code_vitality = VARS.auto_vitality
+    p_queue_code_return = 0
     p_outfit_member = CONSTS.FORMLIST_OUTFITS.GetAt(p_id_alias) as Outfit
 
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_MEMBER, p_id_alias + 1)
     p_ref_actor.EvaluatePackage()
 
     p_Create_Queues()
+    p_Register_Queues()
 
     if p_is_clone
-        p_queue_member.Enqueue("Member.p_Greet", 0.0)
+        p_Enqueue("Member.Greet", 0.0)
     endIf
-    p_queue_member.Enqueue("Member.p_Create_Containers", 0.12)
-    p_queue_member.Enqueue("Member.p_Create_Outfits", 0.12)
-    p_queue_member.Enqueue("Member.p_Backup", 0.12)
+    p_Enqueue("Member.Create_Containers", 0.1)
+    p_Enqueue("Member.Create_Outfits", 0.1)
+    p_Enqueue("Member.Backup", 0.1)
 
     Enforce()
 endFunction
@@ -128,13 +140,13 @@ function p_Destroy()
 
     ; Rush before Flush to stop use of the queue
     if FOLLOWERS.Has_Follower(p_ref_actor)
-        p_queue_member.Rush("Follower.f_Destroy")
+        p_Rush("Follower.Destroy")
     endIf
     if p_ref_immobile.Exists()
-        p_queue_member.Rush("Immobile.f_Destroy")
+        p_Rush("Immobile.Destroy")
     endIf
     if p_ref_settler.Exists()
-        p_queue_member.Rush("Settler.f_Destroy")
+        p_Rush("Settler.Destroy")
     endIf
     p_queue_member.Flush()
 
@@ -164,11 +176,13 @@ function p_Destroy()
     p_container2_pack = none
     p_queue_member = none
     p_outfit_member = none
+    p_queue_code_return = 0
     p_code_vitality = -1
     p_code_style = -1
     p_is_thrall = false
     p_is_generic = false
     p_is_clone = false
+    p_str_namespace = ""
     p_ref_immobile = none
     p_ref_settler = none
     p_ref_actor = none
@@ -183,29 +197,36 @@ function f_Register()
     RegisterForModEvent("doticu_npcp_members_unmember", "On_Members_Unmember")
     RegisterForModEvent("doticu_npcp_members_u_0_1_4", "On_u_0_1_4")
     RegisterForModEvent("doticu_npcp_members_u_0_1_5", "On_u_0_1_5")
-    p_Register_Queues()
-endFunction
 
-function f_Enqueue(string str_message, float float_interval = -1.0, bool allow_repeat = false)
-    p_queue_member.Enqueue(str_message, float_interval, allow_repeat)
+    p_Register_Queues()
+
+    if Is_Settler()
+        p_ref_settler.f_Register()
+    endIf
+    if Is_Immobile()
+        p_ref_immobile.f_Register()
+    endIf
 endFunction
 
 ; Private Methods
 function p_Create_Queues()
-    p_queue_member = QUEUES.Create("member_" + p_id_alias, 32, 0.12)
-    p_Register_Queues()
+    p_queue_member = QUEUES.Create(p_str_namespace, 64, 0.1)
 endFunction
 
 function p_Destroy_Queues()
-    if p_queue_member
-        QUEUES.Destroy(p_queue_member)
-    endIf
+    QUEUES.Destroy(p_queue_member)
 endFunction
 
 function p_Register_Queues()
-    if p_queue_member
-        p_queue_member.Register_Alias(self, "On_Queue_Member")
-    endIf
+    f_QUEUE.Register_Alias(self, "On_Queue_Member", p_str_namespace)
+endFunction
+
+function p_Enqueue(string str_message, float float_interval = -1.0, bool allow_repeat = false)
+    f_QUEUE.Enqueue(str_message, float_interval, p_str_namespace, allow_repeat)
+endFunction
+
+function p_Rush(string str_message)
+    f_QUEUE.Rush(str_message, p_str_namespace)
 endFunction
 
 function p_Greet()
@@ -430,20 +451,25 @@ int function Enforce()
         return CODES.ISNT_MEMBER
     endIf
 
-    ; maybe we can remove all of the bools here, but make sure they are in queue!
-    if Is_Paralyzed()
-        p_queue_member.Enqueue("f_Paralyze", 0.12)
-    endIf
-    p_queue_member.Enqueue("p_Outfit", 0.12)
-    p_queue_member.Enqueue("p_Token", 0.12)
-    p_queue_member.Enqueue("p_Member", 0.12)
+    p_Enqueue("Member.Outfit", 0.1)
+    p_Enqueue("Member.Token", 0.1)
+    p_Enqueue("Member.Member", 0.1)
     if Is_Thrall()
-        p_queue_member.Enqueue("p_Enthrall", 0.12)
+        p_Enqueue("Member.Enthrall", 0.1)
     endIf
-    p_queue_member.Enqueue("p_Style", 0.12)
-    p_queue_member.Enqueue("p_Vitalize", 0.12)
+    p_Enqueue("Member.Style", 0.1)
+    p_Enqueue("Member.Vitalize", 0.1)
+
+    if Is_Settler()
+        p_ref_settler.f_Enforce()
+    endIf
+
+    if Is_Immobile()
+        p_ref_immobile.f_Enforce()
+    endIf
+
     if Is_Follower()
-        p_queue_member.Enqueue("Follower.f_Enforce", 0.12)
+        Get_Follower().f_Enforce()
     endIf
 
     return CODES.SUCCESS
@@ -537,7 +563,7 @@ int function Settle()
         return CODES.IS_SETTLER
     endIf
 
-    p_queue_member.Rush("Settler.f_Create")
+    p_Rush("Settler.Create")
 
     code_return = Enforce()
     if code_return < 0
@@ -582,7 +608,7 @@ int function Unsettle()
         return CODES.ISNT_SETTLER
     endIf
 
-    p_queue_member.Rush("Settler.f_Destroy")
+    p_Rush("Settler.Destroy")
 
     code_return = Enforce()
     if code_return < 0
@@ -603,7 +629,7 @@ int function Immobilize()
         return CODES.IS_IMMOBILE
     endIf
 
-    p_queue_member.Rush("Immobile.f_Create")
+    p_Rush("Immobile.Create")
 
     code_return = Enforce()
     if code_return < 0
@@ -624,7 +650,7 @@ int function Mobilize()
         return CODES.ISNT_IMMOBILE
     endIf
 
-    p_queue_member.Rush("Immobile.f_Destroy")
+    p_Rush("Immobile.Destroy")
 
     code_return = Enforce()
     if code_return < 0
@@ -641,9 +667,9 @@ int function Follow()
         return CODES.ISNT_MEMBER
     endIf
 
-    code_return = FOLLOWERS.f_Create_Follower(p_ref_actor)
-    if code_return < 0
-        return code_return
+    p_Rush("Follower.Create")
+    if p_queue_code_return < 0
+        return p_queue_code_return
     endIf
 
     code_return = Enforce()
@@ -661,11 +687,13 @@ int function Unfollow()
         return CODES.ISNT_MEMBER
     endIf
 
-    ; should check to see if is a follower, even though it's redundant
+    if !Is_Follower()
+        return CODES.ISNT_FOLLOWER
+    endIf
 
-    code_return = FOLLOWERS.f_Destroy_Follower(p_ref_actor)
-    if code_return < 0
-        return code_return
+    p_Rush("Follower.Destroy")
+    if p_queue_code_return < 0
+        return p_queue_code_return
     endIf
 
     code_return = Enforce()
@@ -1358,68 +1386,56 @@ endState
 
 ; Events
 event On_Queue_Member(string str_message)
-    if str_message == "f_Paralyze"
-        if Is_Immobile()
-            p_ref_immobile.f_Paralyze()
-        endIf
-    elseIf str_message == "p_Outfit"
-        p_Outfit()
-    elseIf str_message == "p_Token"
-        p_Token()
-        if Is_Settler()
-            p_ref_settler.f_Token()
-        endIf
-        if Is_Immobile()
-            p_ref_immobile.f_Token()
-        endIf
-    elseIf str_message == "p_Member"
-        p_Member()
-    elseIf str_message == "p_Enthrall"
-        p_Enthrall()
-    elseIf str_message == "p_Style"
-        p_Style()
-    elseIf str_message == "p_Vitalize"
-        p_Vitalize()
+    if false
     
-    elseIf str_message == "Member.p_Greet"
+    elseIf str_message == "Member.Greet"
         p_Greet()
-    elseIf str_message == "Member.p_Create_Containers"
+    elseIf str_message == "Member.Create_Containers"
         p_Create_Containers()
-    elseIf str_message == "Member.p_Create_Outfits"
+    elseIf str_message == "Member.Create_Outfits"
         p_Create_Outfits()
-    elseIf str_message == "Member.p_Backup"
+    elseIf str_message == "Member.Backup"
         p_Backup()
-    
-    elseIf str_message == "Settler.f_Create"
+    elseIf str_message == "Member.Token"
+        p_Token()
+    elseIf str_message == "Member.Member"
+        p_Member()
+    elseIf str_message == "Member.Outfit"
+        p_Outfit()
+    elseIf str_message == "Member.Enthrall"
+        p_Enthrall()
+    elseIf str_message == "Member.Style"
+        p_Style()
+    elseIf str_message == "Member.Vitalize"
+        p_Vitalize()
+    elseIf str_message == "Settler.Create"
         if !Is_Settler()
             p_ref_settler.f_Create(p_DATA, p_id_alias)
         endIf
-    elseIf str_message == "Settler.f_Destroy"
+    elseIf str_message == "Settler.Destroy"
         if Is_Settler()
             p_ref_settler.f_Destroy()
         endIf
-    
-    elseIf str_message == "Immobile.f_Create"
+    elseIf str_message == "Immobile.Create"
         if !Is_Immobile()
             p_ref_immobile.f_Create(p_DATA, p_id_alias)
         endIf
-    elseIf str_message == "Immobile.f_Destroy"
+    elseIf str_message == "Immobile.Destroy"
         if Is_Immobile()
             p_ref_immobile.f_Destroy()
         endIf
-    
-    elseIf str_message == "Follower.f_Destroy"
-        if Is_Follower()
-            FOLLOWERS.f_Destroy_Follower(p_ref_actor)
+    elseIf str_message == "Follower.Create"
+        if !Is_Follower()
+            p_queue_code_return = FOLLOWERS.f_Create_Follower(p_ref_actor)
         endIf
-    elseIf str_message == "Follower.f_Enforce"
+    elseIf str_message == "Follower.Destroy"
         if Is_Follower()
-            Get_Follower().f_Enforce()
+            p_queue_code_return = FOLLOWERS.f_Destroy_Follower(p_ref_actor)
         endIf
     
     endIf
 
-    p_queue_member.Dequeue()
+    f_QUEUE.Dequeue()
 endEvent
 
 event On_Members_Unmember()

@@ -225,6 +225,8 @@ Alias[] function Get_Aliases(int idx_from = 0, int idx_to_ex = -1)
         return Utility.CreateAliasArray(0, none)
     endIf
 
+    ; should probably used PapyrusUtil's funcs to copy, it's native and thus faster
+
     Alias[] arr_aliases = Utility.CreateAliasArray(size_arr_aliases, none)
     
     int idx_orig = idx_from

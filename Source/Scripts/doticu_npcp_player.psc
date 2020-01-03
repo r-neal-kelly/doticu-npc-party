@@ -64,7 +64,7 @@ endFunction
 function f_Begin_Combat()
     if !p_is_in_combat
         p_is_in_combat = true
-        p_queue_player.Enqueue("f_Try_End_Combat()", 5.0)
+        p_queue_player.Enqueue("Try_End_Combat", 5.0)
     endIf
 endFunction
 
@@ -80,7 +80,7 @@ endFunction
 
 function f_Try_End_Combat()
     if ACTOR_PLAYER.IsInCombat()
-        p_queue_player.Enqueue("f_Try_End_Combat()", 5.0)
+        p_queue_player.Enqueue("Try_End_Combat", 5.0)
     else
         f_End_Combat()
     endIf
@@ -120,7 +120,7 @@ event OnPlayerLoadGame()
 endEvent
 
 event On_Queue_Player(string str_message)
-    if str_message == "f_Try_End_Combat()"
+    if str_message == "Try_End_Combat"
         f_Try_End_Combat()
     endIf
 

@@ -54,11 +54,12 @@ endFunction
 function f_Register()
     ALIASES.f_Register()
 
-    int idx_alias = 0
-    int max_aliases = GetNumAliases()
-    while idx_alias < max_aliases
-        (GetNthAlias(idx_alias) as doticu_npcp_follower).f_Register()
-        idx_alias += 1
+    Alias[] arr_aliases = ALIASES.Get_Aliases(); gets only used aliases. might want to change the name!
+    int idx_aliases = 0
+    int num_aliases = arr_aliases.length
+    while idx_aliases < num_aliases
+        (arr_aliases[idx_aliases] as doticu_npcp_follower).f_Register()
+        idx_aliases += 1
     endWhile
 endFunction
 
@@ -89,7 +90,9 @@ int function f_Create_Follower(Actor ref_actor)
     endIf
     int id_alias = code_return
 
-    p_Get_Follower(id_alias).f_Create(p_DATA, id_alias)
+    doticu_npcp_follower ref_follower = p_Get_Follower(id_alias)
+    ref_follower.f_Create(p_DATA, id_alias)
+    ref_follower.f_Register()
 
     ; this value needs to be 1 whenever there is a follower
     ; because the engine won't update player teammates when 0
