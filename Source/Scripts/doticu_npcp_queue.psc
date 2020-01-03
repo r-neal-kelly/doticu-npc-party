@@ -273,9 +273,11 @@ function Rush(string str_rush, string str_namespace = "_default_")
     GotoState("")
 endFunction
 
-function Flush()
+function Flush(bool do_wait = true)
     ; should get exclusive execution away from Rush, in case of deadlock.
     ; blocking Enqueue and Dequeue makes sure any messages are not skipped.
+    ; also, waiting for a message that may never be dequeued is a deadlock
+    ; so when destroying an object that would otherwise dequeue, don't wait
 
     GotoState("p_STATE_FLUSH")
 
@@ -283,10 +285,12 @@ function Flush()
     p_buffer_read = 0
     p_buffer_write = 0
 
-    while p_will_update || p_will_rush
-        ; let an already dispatched message finish
-        Utility.Wait(p_INTERVAL_DEFAULT)
-    endWhile
+    if do_wait
+        while p_will_update || p_will_rush
+            ; let an already dispatched message finish
+            Utility.Wait(p_INTERVAL_DEFAULT)
+        endWhile
+    endIf
 
     p_will_rush = false
     p_will_update = false
@@ -336,9 +340,9 @@ endFunction
 
 ; Private States
 state p_STATE_RUSH
-    function Flush()
+    function Flush(bool do_wait = true)
         Utility.Wait(p_INTERVAL_DEFAULT)
-        Flush()
+        Flush(do_wait)
     endFunction
 
     function Pause()
@@ -360,7 +364,7 @@ state p_STATE_FLUSH
         Rush(str_rush, str_namespace)
     endFunction
 
-    function Flush()
+    function Flush(bool do_wait = true)
     endFunction
 
     function Pause()
@@ -380,9 +384,9 @@ state p_STATE_PAUSE
         Rush(str_rush, str_namespace)
     endFunction
 
-    function Flush()
+    function Flush(bool do_wait = true)
         Utility.Wait(p_INTERVAL_DEFAULT)
-        Flush()
+        Flush(do_wait)
     endFunction
 endState
 

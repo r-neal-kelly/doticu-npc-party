@@ -624,6 +624,10 @@ int function Unsettle()
 
     p_Rush("Settler.Destroy")
 
+    ; we need to get rid of any old messages
+    ; else a deadlock may occur on next Rush
+    f_QUEUE.Flush(false)
+
     code_return = Enforce()
     if code_return < 0
         return code_return
@@ -665,6 +669,10 @@ int function Mobilize()
     endIf
 
     p_Rush("Immobile.Destroy")
+
+    ; we need to get rid of any old messages
+    ; else a deadlock may occur on next Rush
+    f_QUEUE.Flush(false)
 
     code_return = Enforce()
     if code_return < 0
@@ -709,6 +717,10 @@ int function Unfollow()
     if p_queue_code_return < 0
         return p_queue_code_return
     endIf
+
+    ; we need to get rid of any old messages
+    ; else a deadlock may occur on next Rush
+    f_QUEUE.Flush(false)
 
     code_return = Enforce()
     if code_return < 0

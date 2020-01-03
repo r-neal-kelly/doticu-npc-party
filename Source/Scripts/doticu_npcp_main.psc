@@ -49,6 +49,8 @@ endProperty
 
 ; Friend Methods
 function f_Init_Mod()
+    Utility.Wait(1); just in case of any engine bugs, like AddItem
+
     if !p_Has_Requires()
         return
     endIf
@@ -67,6 +69,8 @@ function f_Init_Mod()
 endFunction
 
 function f_Load_Mod()
+    Utility.Wait(1); just in case of any engine bugs, like AddItem
+
     if !p_Has_Requires()
         return
     endIf

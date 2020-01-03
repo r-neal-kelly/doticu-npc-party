@@ -169,10 +169,12 @@ function Set(Actor ref_actor, bool do_force = false)
     ref_actor.SetOutfit(p_OUTFIT)
 
     ; prevents the game from crashing or freezing around the next step
-    Utility.Wait(0.2); still getting crashes and freezes. This seems like it's just not going to work. I don't think we can detect when rendering is done here
+    ;Utility.Wait(0.2); still getting crashes and freezes. This seems like it's just not going to work. I don't think we can detect when rendering is done here
+    ; it's possible making the queue more all-encompassing has cured this problem?
 
     ; we remove everything playable, then one of each outfit item is reapplied by engine, thus removing any possible dupes
     ref_actor.RemoveAllItems(none, false, true); maybe instead of removing everything, we can just remove weapons and reapply them.
+    ; it's possible that giving it a temp container might avoid any freezing or crashing.
 
     ; add back any discrepencies because the engine only automatically adds back one of each item
     num_forms = self.GetNumItems()
@@ -186,10 +188,13 @@ function Set(Actor ref_actor, bool do_force = false)
         idx_forms += 1
     endWhile
 
-    ; need to make sure that a clone doesn't get the same outfit. so check actor playables. if no match, send through func again with do_force == true
-
     ; make sure everything is equipped and rendered
     ACTORS.Update_Equipment(ref_actor)
+
+    ; need to make sure that a clone doesn't get the same outfit. so check actor playables. if no match, send through func again with do_force == true
+    if p_Has_Changed(ref_actor)
+        Set(ref_actor, true)
+    endIf
 endFunction
 
 function Remove_Inventory(Actor ref_actor, ObjectReference ref_container = none)
