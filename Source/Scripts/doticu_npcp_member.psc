@@ -138,17 +138,15 @@ function p_Destroy()
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_MEMBER)
     p_ref_actor.EvaluatePackage()
 
-    ; Rush before Flush to stop use of the queue
-    if FOLLOWERS.Has_Follower(p_ref_actor)
-        p_Rush("Follower.Destroy")
+    if Is_Follower()
+        FOLLOWERS.f_Destroy_Follower(p_ref_actor)
     endIf
-    if p_ref_immobile.Exists()
-        p_Rush("Immobile.Destroy")
+    if Is_Immobile()
+        p_ref_immobile.f_Destroy()
     endIf
-    if p_ref_settler.Exists()
-        p_Rush("Settler.Destroy")
+    if Is_Settler()
+        p_ref_settler.f_Destroy()
     endIf
-    p_queue_member.Flush()
 
     ;p_Unoutfit() Restore sets the original
     p_Unvitalize()
@@ -205,6 +203,17 @@ function f_Register()
     endIf
     if Is_Immobile()
         p_ref_immobile.f_Register()
+    endIf
+endFunction
+
+function f_Unregister()
+    UnregisterForAllModEvents()
+
+    if Is_Settler()
+        p_ref_settler.f_Unregister()
+    endIf
+    if Is_Immobile()
+        p_ref_immobile.f_Unregister()
     endIf
 endFunction
 
@@ -443,6 +452,10 @@ function p_Unoutfit()
     p_outfit2_current = none
 endFunction
 
+function p_Resurrect()
+    ACTORS.Resurrect(p_ref_actor)
+endFunction
+
 ; Public Methods
 int function Enforce()
     int code_return
@@ -451,9 +464,9 @@ int function Enforce()
         return CODES.ISNT_MEMBER
     endIf
 
+    p_Enqueue("Member.Member", 0.1)
     p_Enqueue("Member.Outfit", 0.1)
     p_Enqueue("Member.Token", 0.1)
-    p_Enqueue("Member.Member", 0.1)
     if Is_Thrall()
         p_Enqueue("Member.Enthrall", 0.1)
     endIf
@@ -584,6 +597,7 @@ int function Resettle()
         return CODES.ISNT_SETTLER
     endIf
 
+    ; Settler will handle queue.
     code_return = Get_Settler().Resettle()
     if code_return < 0
         return code_return
@@ -723,6 +737,7 @@ int function Enthrall()
     p_ref_actor.EvaluatePackage()
 
     p_is_thrall = true
+    p_Rush("Member.Enthrall")
 
     code_return = Enforce()
     if code_return < 0
@@ -750,9 +765,8 @@ int function Unthrall()
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_THRALL)
     p_ref_actor.EvaluatePackage()
 
-    p_Unthrall()
-
     p_is_thrall = false
+    p_Rush("Member.Unthrall")
 
     code_return = Enforce()
     if code_return < 0
@@ -773,10 +787,14 @@ int function Resurrect()
         return CODES.IS_ALIVE
     endIf
 
-    ACTORS.Resurrect(p_ref_actor)
+    p_Rush("Member.Resurrect")
 
     if ACTORS.Is_Dead(p_ref_actor)
         return CODES.CANT_RESURRECT
+    endIf
+
+    if Is_Follower()
+        Get_Follower().Relevel()
     endIf
 
     code_return = Enforce()
@@ -810,11 +828,13 @@ int function Style_Default()
         return CODES.IS_DEFAULT
     endIf
 
+    f_QUEUE.Pause()
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
     p_ref_actor.EvaluatePackage()
+    f_QUEUE.Unpause()
 
     p_code_style = CODES.IS_DEFAULT
 
@@ -837,11 +857,13 @@ int function Style_Warrior()
         return CODES.IS_WARRIOR
     endIf
 
+    f_QUEUE.Pause()
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
     p_ref_actor.EvaluatePackage()
+    f_QUEUE.Unpause()
 
     p_code_style = CODES.IS_WARRIOR
 
@@ -864,11 +886,13 @@ int function Style_Mage()
         return CODES.IS_MAGE
     endIf
 
+    f_QUEUE.Pause()
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
     p_ref_actor.EvaluatePackage()
+    f_QUEUE.Unpause()
 
     p_code_style = CODES.IS_MAGE
 
@@ -891,11 +915,13 @@ int function Style_Archer()
         return CODES.IS_ARCHER
     endIf
 
+    f_QUEUE.Pause()
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
     p_ref_actor.EvaluatePackage()
+    f_QUEUE.Unpause()
 
     p_code_style = CODES.IS_ARCHER
 
@@ -1403,11 +1429,19 @@ event On_Queue_Member(string str_message)
     elseIf str_message == "Member.Outfit"
         p_Outfit()
     elseIf str_message == "Member.Enthrall"
-        p_Enthrall()
+        if Is_Thrall()
+            p_Enthrall()
+        endIf
+    elseIf str_message == "Member.Unthrall"
+        if !Is_Thrall()
+            p_Unthrall()
+        endIf
     elseIf str_message == "Member.Style"
         p_Style()
     elseIf str_message == "Member.Vitalize"
         p_Vitalize()
+    elseIf str_message == "Member.Resurrect"
+        p_Resurrect()
     elseIf str_message == "Settler.Create"
         if !Is_Settler()
             p_ref_settler.f_Create(p_DATA, p_id_alias)

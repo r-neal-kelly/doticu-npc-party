@@ -73,9 +73,15 @@ function f_Register()
     p_Register_Queues()
 endFunction
 
+function f_Unregister()
+    UnregisterForAllModEvents()
+endFunction
+
 function f_Enforce()
     p_Enqueue("Immobile.Token", 0.1)
-    p_Enqueue("Immobile.Paralyze", 0.1)
+    if Is_Paralyzed()
+        p_Enqueue("Immobile.Paralyze", 0.1)
+    endIf
 endFunction
 
 ; Private Methods
@@ -111,16 +117,17 @@ function p_Untoken()
 endFunction
 
 function p_Paralyze()
-    if !Is_Paralyzed()
-        return
-    endIf
-
     p_ref_actor.EnableAI(false)
 endFunction
 
 function p_Unparalyze()
     p_ref_actor.EnableAI(true)
+endFunction
+
+function p_Reparalyze()
+    p_Unparalyze()
     Debug.SendAnimationEvent(p_ref_actor, "IdleForceDefaultState"); go to cached current animation
+    p_Paralyze()
 endFunction
 
 ; Public Methods
@@ -136,6 +143,10 @@ bool function Is_Paralyzed()
     return Exists() && p_is_paralyzed
 endFunction
 
+bool function Is_Unparalyzed()
+    return Exists() && !p_is_paralyzed
+endFunction
+
 int function Paralyze()
     int code_return
 
@@ -148,11 +159,11 @@ int function Paralyze()
     endIf
 
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_PARALYZED)
+    p_ref_actor.EnableAI(false)
     p_ref_actor.EvaluatePackage()
 
     p_is_paralyzed = true
-
-    p_Paralyze()
+    p_Rush("Immobile.Paralyze")
 
     code_return = Enforce()
     if code_return < 0
@@ -174,11 +185,11 @@ int function Unparalyze()
     endIf
 
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_PARALYZED)
+    p_ref_actor.EnableAI(true)
     p_ref_actor.EvaluatePackage()
 
-    p_Unparalyze()
-
     p_is_paralyzed = false
+    p_Rush("Immobile.Unparalyze")
 
     code_return = Enforce()
     if code_return < 0
@@ -206,7 +217,13 @@ event On_Queue_Immobile(string str_message)
     elseIf str_message == "Immobile.Token"
         p_Token()
     elseIf str_message == "Immobile.Paralyze"
-        p_Paralyze()
+        If Is_Paralyzed()
+            p_Paralyze()
+        endIf
+    elseIf str_message == "Immobile.Unparalyze"
+        if Is_Unparalyzed()
+            p_Unparalyze()
+        endIf
     
     endIf
 
@@ -215,14 +232,12 @@ endEvent
 
 event On_Load_Mod()
     if Exists() && Is_Paralyzed()
-        p_Unparalyze()
-        p_Paralyze()
+        p_Reparalyze()
     endIf
 endEvent
 
 event OnLoad()
     if Exists() && Is_Paralyzed()
-        p_Unparalyze()
-        p_Paralyze()
+        p_Reparalyze()
     endIf
 endEvent

@@ -113,7 +113,9 @@ int function f_Destroy_Follower(Actor ref_actor)
         return CODES.HASNT_FOLLOWER
     endIf
 
-    p_Get_Follower(id_alias).f_Destroy()
+    doticu_npcp_follower ref_follower = p_Get_Follower(id_alias)
+    ref_follower.f_Unregister()
+    ref_follower.f_Destroy()
 
     code_return = ALIASES.Destroy_Alias(id_alias, ref_actor)
     if code_return < 0

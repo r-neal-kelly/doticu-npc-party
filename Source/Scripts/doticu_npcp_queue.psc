@@ -14,6 +14,7 @@ bool                p_is_created        = false
 int                 p_buffer_write      =     0
 int                 p_buffer_read       =     0
 int                 p_buffer_used       =     0
+int                 p_backup_used       =    -1
 string              p_str_message       =    ""
 string              p_str_event         =    ""
 string              p_str_rush          =    ""
@@ -144,6 +145,10 @@ bool function Is_Full()
     return p_buffer_used == p_buffer_max
 endFunction
 
+bool function Is_Paused()
+    return p_backup_used != -1
+endFunction
+
 ; for the registers, if we keep track of the objects, we can unregister for them on Destroy()
 function Register_Form(Form ref_form, string str_handler, string str_namespace = "_default_")
     if Exists() && ref_form && str_handler
@@ -160,6 +165,24 @@ endFunction
 function Register_Effect(ActiveMagicEffect ref_effect, string str_handler, string str_namespace = "_default_")
     if Exists() && ref_effect && str_handler
         ref_effect.RegisterForModEvent(p_Get_Event(str_namespace), str_handler)
+    endIf
+endFunction
+
+function Unregister_Form(Form ref_form, string str_namespace = "_default_")
+    if Exists() && ref_form
+        ref_form.UnregisterForModEvent(p_Get_Event(str_namespace))
+    endIf
+endFunction
+
+function Unregister_Alias(ReferenceAlias ref_alias, string str_namespace = "_default_")
+    if Exists() && ref_alias
+        ref_alias.UnregisterForModEvent(p_Get_Event(str_namespace))
+    endIf
+endFunction
+
+function Unregister_Effect(ActiveMagicEffect ref_effect, string str_namespace = "_default_")
+    if Exists() && ref_effect
+        ref_effect.UnregisterForModEvent(p_Get_Event(str_namespace))
     endIf
 endFunction
 
@@ -275,6 +298,37 @@ function Flush()
     GotoState("")
 endFunction
 
+function Pause()
+    ; so we can do sync ops without causing any deadlocks with queued funcs
+    
+    if Is_Paused()
+        return
+    endIf
+
+    GotoState("p_STATE_PAUSE")
+
+    p_backup_used = p_buffer_used
+    p_buffer_used = 0; this empties the queue
+
+    while p_will_update || p_will_rush
+        ; let an already dispatched message finish
+        Utility.Wait(p_INTERVAL_DEFAULT)
+    endWhile
+endFunction
+
+function Unpause()
+    if !Is_Paused()
+        return
+    endIf
+
+    p_buffer_used = p_backup_used
+    p_backup_used = -1
+
+    Dequeue()
+
+    GotoState("")
+endFunction
+
 ; Update Methods
 function u_0_1_4(doticu_npcp_data DATA)
     p_DATA = DATA
@@ -285,6 +339,11 @@ state p_STATE_RUSH
     function Flush()
         Utility.Wait(p_INTERVAL_DEFAULT)
         Flush()
+    endFunction
+
+    function Pause()
+        Utility.Wait(p_INTERVAL_DEFAULT)
+        Pause()
     endFunction
 endState
 
@@ -302,6 +361,28 @@ state p_STATE_FLUSH
     endFunction
 
     function Flush()
+    endFunction
+
+    function Pause()
+        Utility.Wait(p_INTERVAL_DEFAULT)
+        Pause()
+    endFunction
+endState
+
+state p_STATE_PAUSE
+    function Enqueue(string str_message, float float_wait_before = -1.0, string str_namespace = "_default_", bool allow_repeat = false)
+        Utility.Wait(p_INTERVAL_DEFAULT)
+        Enqueue(str_message, float_wait_before, str_namespace, allow_repeat)
+    endFunction
+
+    function Rush(string str_rush, string str_namespace = "_default_")
+        Utility.Wait(p_INTERVAL_DEFAULT)
+        Rush(str_rush, str_namespace)
+    endFunction
+
+    function Flush()
+        Utility.Wait(p_INTERVAL_DEFAULT)
+        Flush()
     endFunction
 endState
 

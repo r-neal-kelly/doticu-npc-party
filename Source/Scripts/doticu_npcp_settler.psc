@@ -77,6 +77,10 @@ function f_Register()
     p_Register_Queues()
 endFunction
 
+function f_Unregister()
+    UnregisterForAllModEvents()
+endFunction
+
 function f_Enforce()
     p_Enqueue("Settler.Token", 0.1)
 endFunction
@@ -130,7 +134,7 @@ int function Resettle()
         return CODES.ISNT_SETTLER
     endIf
 
-    p_Settle()
+    p_Rush("Settler.Settle")
 
     code_return = Enforce()
     if code_return < 0
@@ -156,6 +160,8 @@ event On_Queue_Settler(string str_message)
         
     elseIf str_message == "Settler.Token"
         p_Token()
+    elseIf str_message == "Settler.Settle"
+        p_Settle()
     
     endIf
 

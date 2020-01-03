@@ -166,6 +166,7 @@ int function p_Destroy_Member(Actor ref_actor, bool destroy_clone = false)
     doticu_npcp_member ref_member = p_Get_Member(id_alias)
     bool is_clone = ref_member.Is_Clone()
 
+    ref_member.f_Unregister()
     ref_member.f_Destroy()
 
     code_return = ALIASES.Destroy_Alias(id_alias, ref_actor)

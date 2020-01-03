@@ -112,7 +112,10 @@ function f_Create(doticu_npcp_data DATA, int id_alias)
     p_level_follower = -1
     p_is_sneak = false
 
+    ; these are here just so the user sees some changes as soon as possible
+    ; the rest of the work is delayed in the queue, primarily through f_Enforce
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_FOLLOWER, p_id_alias + 1)
+    p_ref_actor.SetPlayerTeammate(true, true)
     p_ref_actor.EvaluatePackage()
 
     p_Register_Queues()
@@ -160,6 +163,10 @@ function f_Register()
     RegisterForModEvent("doticu_npcp_members_u_0_1_4", "On_u_0_1_4")
 
     p_Register_Queues()
+endFunction
+
+function f_Unregister()
+    UnregisterForAllModEvents()
 endFunction
 
 function f_Enforce()
@@ -550,6 +557,7 @@ function p_Level()
 endFunction
 
 function p_Unlevel()
+    p_level_follower = -1
 endFunction
 
 ; Public Methods
@@ -600,6 +608,7 @@ int function Sneak()
     p_ref_actor.EvaluatePackage()
 
     p_is_sneak = true
+    p_Rush("Follower.Sneak")
 
     code_return = Enforce()
     if code_return < 0
@@ -623,9 +632,29 @@ int function Unsneak()
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_FOLLOWER_SNEAK)
     p_ref_actor.EvaluatePackage()
 
-    p_Unsneak()
-
     p_is_sneak = false
+    p_Rush("Follower.Unsneak")
+
+    code_return = Enforce()
+    if code_return < 0
+        return code_return
+    endIf
+
+    return CODES.SUCCESS
+endFunction
+
+int function Relevel()
+    int code_return
+
+    if !Exists()
+        return CODES.ISNT_FOLLOWER
+    endIf
+
+    f_QUEUE.Pause()
+    p_Unlevel()
+    f_QUEUE.Unpause()
+
+    p_Enqueue("Follower.Level")
 
     code_return = Enforce()
     if code_return < 0
@@ -752,7 +781,13 @@ event On_Queue_Follower(string str_message)
     elseIf str_message == "Follower.Level"
         p_Level()
     elseIf str_message == "Follower.Sneak"
-        p_Sneak()
+        if Is_Sneak()
+            p_Sneak()
+        endIf
+    elseIf str_message == "Follower.Unsneak"
+        if Is_Unsneak()
+            p_Unsneak()
+        endIf
 
     endIf
 

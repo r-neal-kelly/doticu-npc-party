@@ -60,6 +60,42 @@ endFunction
 function f_Register()
 endFunction
 
+; Private Methods
+bool function p_Has_Changed(Actor ref_actor)
+    int num_forms
+    int idx_forms
+    Form ref_form
+    int num_items
+
+    if p_LEVELED.GetNumForms() != self.GetNumItems()
+        return true
+    endIf
+
+    idx_forms = 0
+    num_forms = p_LEVELED.GetNumForms()
+    while idx_forms < num_forms
+        ref_form = p_LEVELED.GetNthForm(idx_forms)
+        num_items = p_LEVELED.GetNthCount(idx_forms)
+        if num_items != self.GetItemCount(ref_form)
+            return true
+        endIf
+        idx_forms += 1
+    endWhile
+
+    idx_forms = 0
+    num_forms = ref_actor.GetNumItems()
+    while idx_forms < num_forms
+        ref_form = ref_actor.GetNthForm(idx_forms)
+        num_items = ref_actor.GetItemCount(ref_form)
+        if ref_form.IsPlayable() && num_items != self.GetItemCount(ref_form)
+            return true
+        endIf
+        idx_forms += 1
+    endWhile
+
+    return false
+endFunction
+
 ; Public Methods
 string function Get_Name()
     return self.GetDisplayName()
@@ -110,28 +146,10 @@ function Set(Actor ref_actor, bool do_force = false)
     int idx_forms
     Form ref_form
     int num_items
-    bool do_bail
-
-    ; if don't force, check to make sure outfit is now different, else bail
-    ; I would also like this to be able to check if the actor has additional items they shouldn't
-    if !do_force && p_LEVELED.GetNumForms() == self.GetNumItems()
-        num_forms = p_LEVELED.GetNumForms()
-        idx_forms = 0
-        do_bail = true
-        while do_bail && idx_forms < num_forms
-            ref_form = p_LEVELED.GetNthForm(idx_forms)
-            num_items = p_LEVELED.GetNthCount(idx_forms)
-            if num_items != self.GetItemCount(ref_form)
-                do_bail = false
-            elseIf num_items != ref_actor.GetItemCount(ref_form)
-                do_bail = false
-            endIf
-            idx_forms += 1
-        endWhile
-
-        if do_bail
-            return
-        endIf
+    
+    ; if not forcing, there is no reason to re-oufit when neither the oufit container or the actor inventory has changed
+    if !do_force && !p_Has_Changed(ref_actor)
+        return
     endIf
 
     ; updating the leveled list, which is attached to Outfit form, is what gives the engine the actual items
