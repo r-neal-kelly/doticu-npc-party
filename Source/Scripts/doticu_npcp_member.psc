@@ -119,11 +119,11 @@ function p_Create(doticu_npcp_data DATA, int id_alias, bool is_clone)
     p_Register_Queues()
 
     if p_is_clone
-        p_Enqueue("Member.Greet", 0.0)
+        p_Enqueue("Member.Greet")
     endIf
-    p_Enqueue("Member.Create_Containers", 0.1)
-    p_Enqueue("Member.Create_Outfits", 0.1)
-    p_Enqueue("Member.Backup", 0.1)
+    p_Enqueue("Member.Create_Containers")
+    p_Enqueue("Member.Create_Outfits")
+    p_Enqueue("Member.Backup")
 
     Enforce()
 endFunction
@@ -137,6 +137,9 @@ endFunction
 function p_Destroy()
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_MEMBER)
     p_ref_actor.EvaluatePackage()
+
+    f_QUEUE.Flush(true)
+    f_QUEUE.Pause()
 
     if Is_Follower()
         FOLLOWERS.f_Destroy_Follower(p_ref_actor)
@@ -266,14 +269,14 @@ function p_Create_Outfits()
     p_outfit2_immobile = OUTFITS.Create(p_outfit_member)
     p_outfit2_follower = OUTFITS.Create(p_outfit_member)
     p_outfit2_current = p_outfit2_member
-
-    p_prev_outfit2_member = OUTFITS.Create(p_outfit_member)
     
     p_Rename_Outfits(Get_Name())
 
     p_outfit2_member.Get(p_ref_actor)
     p_outfit2_member.Remove_Inventory(p_ref_actor, p_container2_pack)
-    p_prev_outfit2_member.Get(p_ref_actor)
+
+    p_prev_outfit2_member = OUTFITS.Create(p_outfit_member)
+    p_prev_outfit2_member.Copy(p_outfit2_member)
 endFunction
 
 function p_Destroy_Outfits()
@@ -464,14 +467,14 @@ int function Enforce()
         return CODES.ISNT_MEMBER
     endIf
 
-    p_Enqueue("Member.Member", 0.1)
-    p_Enqueue("Member.Outfit", 0.1)
-    p_Enqueue("Member.Token", 0.1)
+    p_Enqueue("Member.Member")
+    p_Enqueue("Member.Outfit")
+    p_Enqueue("Member.Token")
     if Is_Thrall()
-        p_Enqueue("Member.Enthrall", 0.1)
+        p_Enqueue("Member.Enthrall")
     endIf
-    p_Enqueue("Member.Style", 0.1)
-    p_Enqueue("Member.Vitalize", 0.1)
+    p_Enqueue("Member.Style")
+    p_Enqueue("Member.Vitalize")
 
     if Is_Settler()
         p_ref_settler.f_Enforce()
@@ -849,6 +852,7 @@ int function Style_Default()
     f_QUEUE.Unpause()
 
     p_code_style = CODES.IS_DEFAULT
+    p_Rush("Member.Style")
 
     code_return = Enforce()
     if code_return < 0
@@ -878,6 +882,7 @@ int function Style_Warrior()
     f_QUEUE.Unpause()
 
     p_code_style = CODES.IS_WARRIOR
+    p_Rush("Member.Style")
 
     code_return = Enforce()
     if code_return < 0
@@ -907,6 +912,7 @@ int function Style_Mage()
     f_QUEUE.Unpause()
 
     p_code_style = CODES.IS_MAGE
+    p_Rush("Member.Style")
 
     code_return = Enforce()
     if code_return < 0
@@ -936,6 +942,7 @@ int function Style_Archer()
     f_QUEUE.Unpause()
 
     p_code_style = CODES.IS_ARCHER
+    p_Rush("Member.Style")
 
     code_return = Enforce()
     if code_return < 0
@@ -975,6 +982,7 @@ int function Vitalize_Mortal()
     p_ref_actor.EvaluatePackage()
 
     p_code_vitality = CODES.IS_MORTAL
+    p_Rush("Member.Vitalize")
 
     code_return = Enforce()
     if code_return < 0
@@ -1002,6 +1010,7 @@ int function Vitalize_Protected()
     p_ref_actor.EvaluatePackage()
 
     p_code_vitality = CODES.IS_PROTECTED
+    p_Rush("Member.Vitalize")
 
     code_return = Enforce()
     if code_return < 0
@@ -1029,6 +1038,7 @@ int function Vitalize_Essential()
     p_ref_actor.EvaluatePackage()
 
     p_code_vitality = CODES.IS_ESSENTIAL
+    p_Rush("Member.Vitalize")
 
     code_return = Enforce()
     if code_return < 0
@@ -1056,6 +1066,7 @@ int function Vitalize_Invulnerable()
     p_ref_actor.EvaluatePackage()
 
     p_code_vitality = CODES.IS_INVULNERABLE
+    p_Rush("Member.Vitalize")
 
     code_return = Enforce()
     if code_return < 0
@@ -1106,7 +1117,9 @@ int function Outfit_Member()
 
     p_outfit2_member.Put()
     Utility.Wait(0.1)
+
     p_outfit2_current = p_outfit2_member
+    p_Enqueue("Member.Outfit")
 
     code_return = Enforce()
     if code_return < 0
@@ -1125,7 +1138,9 @@ int function Outfit_Settler()
 
     p_outfit2_settler.Put()
     Utility.Wait(0.1)
+
     p_outfit2_current = p_outfit2_settler
+    p_Enqueue("Member.Outfit")
 
     code_return = Enforce()
     if code_return < 0
@@ -1144,7 +1159,9 @@ int function Outfit_Thrall()
 
     p_outfit2_thrall.Put()
     Utility.Wait(0.1)
+
     p_outfit2_current = p_outfit2_thrall
+    p_Enqueue("Member.Outfit")
 
     code_return = Enforce()
     if code_return < 0
@@ -1163,7 +1180,9 @@ int function Outfit_Immobile()
 
     p_outfit2_immobile.Put()
     Utility.Wait(0.1)
+
     p_outfit2_current = p_outfit2_immobile
+    p_Enqueue("Member.Outfit")
 
     code_return = Enforce()
     if code_return < 0
@@ -1182,7 +1201,9 @@ int function Outfit_Follower()
 
     p_outfit2_follower.Put()
     Utility.Wait(0.1)
+
     p_outfit2_current = p_outfit2_follower
+    p_Enqueue("Member.Outfit")
 
     code_return = Enforce()
     if code_return < 0
@@ -1199,7 +1220,7 @@ int function Unoutfit()
         return CODES.ISNT_MEMBER
     endIf
     
-    p_Unoutfit(); this needs to be worked out better
+    p_Rush("Member.Unoutfit"); this needs to be worked out better
 
     code_return = Enforce()
     if code_return < 0
@@ -1230,7 +1251,8 @@ int function Clone()
         return CODES.ISNT_MEMBER
     endIf
 
-    return MEMBERS.Create_Member(p_ref_actor, true)
+    p_Rush("Member.Clone")
+    return p_queue_code_return
 endFunction
 
 int function Unclone()
@@ -1440,6 +1462,8 @@ event On_Queue_Member(string str_message)
         p_Member()
     elseIf str_message == "Member.Outfit"
         p_Outfit()
+    elseIf str_message == "Member.Unoutfit"
+        p_Unoutfit()
     elseIf str_message == "Member.Enthrall"
         if Is_Thrall()
             p_Enthrall()
@@ -1454,6 +1478,8 @@ event On_Queue_Member(string str_message)
         p_Vitalize()
     elseIf str_message == "Member.Resurrect"
         p_Resurrect()
+    elseIf str_message == "Member.Clone"
+        p_queue_code_return = MEMBERS.Create_Member(p_ref_actor, true)
     elseIf str_message == "Settler.Create"
         if !Is_Settler()
             p_ref_settler.f_Create(p_DATA, p_id_alias)

@@ -40,6 +40,7 @@ function f_Create(doticu_npcp_data DATA, string str_namespace, int message_max =
 endFunction
 
 function f_Destroy()
+    self.Unpause()
     self.Flush()
     self.Disable()
     self.Delete()
@@ -246,11 +247,11 @@ function Rush(string str_rush, string str_namespace = "_default_")
     ; if we fully block anywhere during this, Enqueue and Dequeue may deadlock.
     ; A state waiting Enqueue called within this stack frame would loop forever.
 
-    GotoState("p_STATE_RUSH")
-
     if str_rush == ""
         return
     endIf
+
+    GotoState("p_STATE_RUSH")
 
     while p_Has_Rush()
         ; we need to wait for the old Rush to finish.
