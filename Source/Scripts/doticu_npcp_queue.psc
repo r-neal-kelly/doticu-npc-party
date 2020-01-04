@@ -8,6 +8,8 @@ string              p_EVENT_DEFAULT     =    ""
 string[]            p_MESSAGES          =  none
 float[]             p_INTERVALS         =  none
 string[]            p_EVENTS            =  none
+Form[]              p_FORMS             =  none
+bool[]              p_BOOLS             =  none
 
 ; Private Variables
 bool                p_is_created        = false
@@ -17,13 +19,15 @@ int                 p_buffer_used       =     0
 int                 p_backup_used       =    -1
 string              p_str_message       =    ""
 string              p_str_event         =    ""
+Form                p_event_form        =  none
+bool                p_event_bool        = false
 string              p_str_rush          =    ""
 string              p_str_rush_event    =    ""
 bool                p_will_update       = false
 bool                p_will_rush         = false
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA, string str_namespace, int message_max = 32, float interval_default = 0.15)
+function f_Create(doticu_npcp_data DATA, string str_namespace, int message_max = 64, float interval_default = 0.1)
     p_DATA = DATA
     p_BUFFER_MAX = message_max
     p_INTERVAL_DEFAULT = interval_default
@@ -60,10 +64,12 @@ string function p_Get_Event(string str_namespace = "_default_")
     endIf
 endFunction
 
-function p_Write(string str_message, float float_wait_before = -1.0, string str_namespace = "_default_")
+int function p_Write(string str_message, float float_wait_before = -1.0, string str_namespace = "_default_")
     if Is_Full()
-        return
+        return -1
     endIf
+
+    int idx_buffer = p_buffer_write
 
     p_MESSAGES[p_buffer_write] = str_message
     p_INTERVALS[p_buffer_write] = float_wait_before
@@ -75,6 +81,8 @@ function p_Write(string str_message, float float_wait_before = -1.0, string str_
     endIf
 
     p_buffer_used += 1
+
+    return idx_buffer
 endFunction
 
 int function p_Read()
@@ -124,6 +132,12 @@ bool function p_Send_Queue()
     endIf
 
     ModEvent.PushString(handle, p_str_message)
+    if p_FORMS
+        ModEvent.PushForm(handle, p_event_form)
+    endIf
+    if p_BOOLS
+        ModEvent.PushBool(handle, p_event_bool)
+    endIf
 
     if !ModEvent.Send(handle)
         ModEvent.Release(handle)
@@ -187,19 +201,23 @@ function Unregister_Effect(ActiveMagicEffect ref_effect, string str_namespace = 
     endIf
 endFunction
 
+function Use_Forms()
+    if !p_FORMS
+        p_FORMS = Utility.CreateFormArray(p_BUFFER_MAX, none)
+    endIf
+endFunction
+
+function Use_Bools()
+    if !p_BOOLS
+        p_BOOLS = Utility.CreateBoolArray(p_BUFFER_MAX, none)
+    endIf
+endFunction
+
 function Enqueue(string str_message, float float_wait_before = -1.0, string str_namespace = "_default_", bool allow_repeat = false)
     ; this function should never unlock the instance,
     ; so only internal functions can be allowed
 
-    if Is_Full()
-        return
-    endIf
-
-    if str_message == ""
-        return
-    endIf
-
-    if !allow_repeat && p_Has_Message(str_message)
+    if Is_Full() || str_message == "" || (!allow_repeat && p_Has_Message(str_message))
         return
     endIf
 
@@ -208,6 +226,31 @@ function Enqueue(string str_message, float float_wait_before = -1.0, string str_
     endIf
 
     p_Write(str_message, float_wait_before, str_namespace)
+
+    if !p_will_update
+        Dequeue()
+    endIf
+endFunction
+
+function Enqueue_Form_Bool(string str_message, Form form_form, bool bool_bool, float float_wait_before = -1.0, string str_namespace = "_default_", bool allow_repeat = false)
+    if Is_Full() || str_message == "" || (!allow_repeat && p_Has_Message(str_message))
+        return
+    endIf
+
+    if !p_FORMS
+        Use_Forms()
+    endIf
+    if !p_BOOLS
+        Use_Bools()
+    endIf
+
+    if float_wait_before <= 0.0
+        float_wait_before = p_INTERVAL_DEFAULT
+    endIf
+
+    int idx_write = p_Write(str_message, float_wait_before, str_namespace)
+    p_FORMS[idx_write] = form_form
+    p_BOOLS[idx_write] = bool_bool
 
     if !p_will_update
         Dequeue()
@@ -239,6 +282,12 @@ function Dequeue()
         p_will_rush = false
         p_str_message = p_MESSAGES[idx_buffer]
         p_str_event = p_EVENTS[idx_buffer]
+        if p_FORMS
+            p_event_form = p_FORMS[idx_buffer]
+        endIf
+        if p_BOOLS
+            p_event_bool = p_BOOLS[idx_buffer]
+        endIf
         RegisterForSingleUpdate(p_INTERVALS[idx_buffer])
     endIf
 endFunction
@@ -358,6 +407,11 @@ state p_STATE_FLUSH
         Enqueue(str_message, float_wait_before, str_namespace, allow_repeat)
     endFunction
 
+    function Enqueue_Form_Bool(string str_message, Form form_form, bool bool_bool, float float_wait_before = -1.0, string str_namespace = "_default_", bool allow_repeat = false)
+        Utility.Wait(p_INTERVAL_DEFAULT)
+        Enqueue_Form_Bool(str_message, form_form, bool_bool, float_wait_before, str_namespace, allow_repeat)
+    endFunction
+
     ; always allow Dequeue()
 
     function Rush(string str_rush, string str_namespace = "_default_")
@@ -378,6 +432,11 @@ state p_STATE_PAUSE
     function Enqueue(string str_message, float float_wait_before = -1.0, string str_namespace = "_default_", bool allow_repeat = false)
         Utility.Wait(p_INTERVAL_DEFAULT)
         Enqueue(str_message, float_wait_before, str_namespace, allow_repeat)
+    endFunction
+
+    function Enqueue_Form_Bool(string str_message, Form form_form, bool bool_bool, float float_wait_before = -1.0, string str_namespace = "_default_", bool allow_repeat = false)
+        Utility.Wait(p_INTERVAL_DEFAULT)
+        Enqueue_Form_Bool(str_message, form_form, bool_bool, float_wait_before, str_namespace, allow_repeat)
     endFunction
 
     function Rush(string str_rush, string str_namespace = "_default_")

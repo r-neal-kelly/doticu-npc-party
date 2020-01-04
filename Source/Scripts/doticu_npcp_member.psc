@@ -1341,16 +1341,16 @@ bool function Is_Paralyzed()
     return Exists() && Is_Immobile() && p_ref_immobile.Is_Paralyzed()
 endFunction
 
-function Summon(int distance = 60, int angle = 0)
+function Summon(int distance = 120, int angle = 0)
     ACTORS.Move_To(p_ref_actor, CONSTS.ACTOR_PLAYER, distance, angle)
 endFunction
 
 function Summon_Ahead()
-    Summon(60, 0)
+    Summon(120, 0)
 endFunction
 
 function Summon_Behind()
-    Summon(60, 180)
+    Summon(120, 180)
 endFunction
 
 ; Update Methods

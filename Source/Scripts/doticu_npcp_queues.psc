@@ -40,7 +40,7 @@ function f_Register()
 endFunction
 
 ; Public Methods
-doticu_npcp_queue function Create(string str_namespace, int max_message = 32, float interval_default = 0.15)
+doticu_npcp_queue function Create(string str_namespace, int max_message = 64, float interval_default = 0.1)
     doticu_npcp_queue ref_queue = OBJECT_STORAGE.PlaceAtMe(MISC_QUEUE as Form, 1, false, false) as doticu_npcp_queue
 
     ref_queue.f_Create(p_DATA, str_namespace, max_message, interval_default)

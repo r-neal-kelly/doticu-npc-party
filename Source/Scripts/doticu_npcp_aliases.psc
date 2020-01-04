@@ -7,6 +7,13 @@ doticu_npcp_codes property CODES hidden
     endFunction
 endProperty
 
+; Public Constants
+int property MAX_ALIASES hidden
+    int function Get()
+        return GetNumAliases()
+    endFunction
+endProperty
+
 ; Private Constants
 doticu_npcp_data    p_DATA          =  none
 int                 p_MAX_ALIASES   =    -1
@@ -17,6 +24,7 @@ int                 p_size_ids_used =    -1
 int                 p_size_ids_free =    -1
 int[]               p_arr_ids_used  =  none
 int[]               p_arr_ids_free  =  none
+bool                p_is_used_dirty = false
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
@@ -69,7 +77,7 @@ endFunction
 int function p_Create_ID()
     if p_size_ids_free <= 0 || p_size_ids_used >= p_arr_ids_used.length
         ; no ids are free
-        return CODES.FAILURE
+        return CODES.HASNT_SPACE
     endIf
 
     p_size_ids_free -= 1
@@ -78,36 +86,99 @@ int function p_Create_ID()
     p_arr_ids_used[p_size_ids_used] = id
     p_size_ids_used += 1
 
+    p_is_used_dirty = true
+
     return id
 endFunction
 
 int function p_Destroy_ID(int id)
     if p_size_ids_free >= p_arr_ids_free.length
         ; all ids are free
-        return CODES.FAILURE
+        return CODES.SUCCESS
     endIf
 
     int idx_id_used = p_arr_ids_used.RFind(id, p_size_ids_used - 1)
     if idx_id_used < 0
         ; id was not in use
-        return CODES.FAILURE
+        return CODES.HASNT_ID
     endIf
 
     p_size_ids_used -= 1
     if idx_id_used != p_size_ids_used
         ; id found was not last element, so defrag array
         p_arr_ids_used[idx_id_used] = p_arr_ids_used[p_size_ids_used]
+        p_is_used_dirty = true
     endIf
     p_arr_ids_used[p_size_ids_used] = -1
     
     p_arr_ids_free[p_size_ids_free] = id
     p_size_ids_free += 1
 
-    if p_size_ids_used < 1
-        p_Create_ID_Arrays(); this may be temp
+    if p_size_ids_used < 1; this may be temp
+        p_Create_ID_Arrays()
+        p_is_used_dirty = false
     endIf
 
     return CODES.SUCCESS
+endFunction
+
+function p_Sort_Used(bool do_force = false)
+    if !do_force && !p_is_used_dirty
+        ; already sorted
+        return
+    endIf
+
+    ; we should do the sorting in another thread, but only one thread.
+    
+    string[] arr_names = p_Get_Used_Names_IDs(); we could use an if chain with sorting algorithm
+    int [] arr_ids = Utility.CreateIntArray(p_MAX_ALIASES, -1)
+    string str_name
+    int len_str_name
+    int idx_alias
+
+    PapyrusUtil.SortStringArray(arr_names)
+
+    int idx_names = 0
+    while idx_names < arr_names.length
+        str_name = arr_names[idx_names]
+        len_str_name = StringUtil.GetLength(str_name)
+        idx_alias = StringUtil.Substring(str_name, len_str_name - 3, 3) as int
+
+        arr_ids[idx_names] = idx_alias
+
+        idx_names += 1
+    endWhile
+
+    p_arr_ids_used = arr_ids
+    p_is_used_dirty = false
+endFunction
+
+string[] function p_Get_Used_Names_IDs()
+    string[] arr_names = Utility.CreateStringArray(p_size_ids_used, "")
+    int idx_alias
+    string str_idx
+    int len_str_idx
+    Actor ref_actor
+
+    int idx_used = 0
+    while idx_used < p_size_ids_used
+        idx_alias = p_arr_ids_used[idx_used]
+        str_idx = idx_alias as string
+        len_str_idx = StringUtil.GetLength(str_idx)
+
+        if len_str_idx == 1
+            str_idx = "00" + str_idx
+        elseIf len_str_idx == 2
+            str_idx = "0" + str_idx
+        endIf
+
+        ref_actor = (GetNthAlias(idx_alias) as ReferenceAlias).GetActorReference()
+        arr_names[idx_used] = ref_actor.GetDisplayName() + str_idx
+
+        idx_used += 1
+    endWhile
+
+    return arr_names
 endFunction
 
 Actor function p_Get_Actor(int id_alias)
@@ -137,23 +208,6 @@ bool function p_Has_Actor(Actor ref_actor)
     endWhile
 
     return false
-endFunction
-
-function p_Sort_IDs_Used()
-    ; this can be checked against a private bool to see
-    ; if p_arr_ids_used is dirty, which it is whenever
-    ; a new member is added. This would be called
-    ; everytime before using Get_Aliases(), so it should
-    ; be in that func or in an update after adding a member.
-    ; there may be problems with syncronizing things in the
-    ; latter, so need to read up on papyrus multi-threading.
-    ; either way, this func will completely replace
-    ; p_arr_ids_used with an entirely new array if dirty
-
-    ; it may sort the arr using one of two algoritms:
-    ; either papryusutil or an in house quicksort,
-    ; which if we actually do the latter, it will be
-    ; super slow in papyrus.
 endFunction
 
 ; Public Methods
@@ -213,7 +267,7 @@ ReferenceAlias function Get_Alias(int id_alias, Actor ref_actor)
     endIf
 endFunction
 
-Alias[] function Get_Aliases(int idx_from = 0, int idx_to_ex = -1)
+Alias[] function Get_Used(int idx_from = 0, int idx_to_ex = -1)
     if idx_from < 0
         idx_from = 0
     endIf
@@ -240,9 +294,16 @@ Alias[] function Get_Aliases(int idx_from = 0, int idx_to_ex = -1)
     return arr_aliases
 endFunction
 
-Alias[] function Get_Aliases_Sorted(int idx_from = 0, int idx_to_ex = -1)
-    p_Sort_IDs_Used()
-    return Get_Aliases(idx_from, idx_to_ex)
+Alias[] function Get_Used_Sorted(int idx_from = 0, int idx_to_ex = -1)
+    p_Sort_Used(false)
+    return Get_Used(idx_from, idx_to_ex)
+endFunction
+
+function Sort_Used()
+    ; the idea here is that the user of the aliases knows better when to sort than this module does
+    ; we could pass an alogrithm argument.
+    ; also, we could just set the flag as dirty
+    p_Sort_Used(true)
 endFunction
 
 bool function Is_Full()
@@ -256,3 +317,7 @@ endFunction
 int function Get_Max()
     return p_MAX_ALIASES
 endFunction
+
+state p_STATE_BUSY
+    ; I think we will need to protect operations like sorting, just in case
+endState

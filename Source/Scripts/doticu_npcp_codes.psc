@@ -22,6 +22,7 @@ int property HAS_SNEAK                  = -170 autoReadOnly
 int property HASNT_SPACE                = -200 autoReadOnly
 int property HASNT_SPACE_MEMBER         = -201 autoReadOnly
 int property HASNT_SPACE_FOLLOWER       = -202 autoReadOnly
+int property HASNT_ID                   = -203 autoReadOnly
 int property HASNT_ACTOR                = -210 autoReadOnly
 int property HASNT_ALIAS                = -220 autoReadOnly
 int property HASNT_MEMBER               = -230 autoReadOnly

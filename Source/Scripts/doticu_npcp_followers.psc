@@ -54,7 +54,7 @@ endFunction
 function f_Register()
     ALIASES.f_Register()
 
-    Alias[] arr_aliases = ALIASES.Get_Aliases(); gets only used aliases. might want to change the name!
+    Alias[] arr_aliases = ALIASES.Get_Used()
     int idx_aliases = 0
     int num_aliases = arr_aliases.length
     while idx_aliases < num_aliases
@@ -452,8 +452,12 @@ doticu_npcp_follower function Get_Follower(Actor ref_actor)
     return ALIASES.Get_Alias(p_Get_Alias_ID(ref_actor), ref_actor) as doticu_npcp_follower
 endFunction
 
-Alias[] function Get_Aliases_Sorted(int idx_from = 0, int idx_to_ex = -1)
-    return ALIASES.Get_Aliases_Sorted(idx_from, idx_to_ex)
+Alias[] function Get_Followers_Sorted(int idx_from = 0, int idx_to_ex = -1)
+    return ALIASES.Get_Used_Sorted(idx_from, idx_to_ex)
+endFunction
+
+function Sort_Followers()
+    ALIASES.Sort_Used()
 endFunction
 
 int function Summon_All(int distance = 120, int angle_start = 0, int angle_offset = 15)

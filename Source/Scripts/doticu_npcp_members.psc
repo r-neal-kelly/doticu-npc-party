@@ -59,7 +59,7 @@ endFunction
 function f_Register()
     ALIASES.f_Register()
 
-    Alias[] arr_aliases = ALIASES.Get_Aliases(); gets only used aliases. might want to change the name!
+    Alias[] arr_aliases = ALIASES.Get_Used(); gets only used aliases. might want to change the name!
     int idx_aliases = 0
     int num_aliases = arr_aliases.length
     while idx_aliases < num_aliases
@@ -232,13 +232,17 @@ doticu_npcp_immobile function Get_Immobile(Actor ref_actor)
     endIf
 endFunction
 
-Alias[] function Get_Aliases_Sorted(int idx_from = 0, int idx_to_ex = -1)
-    return ALIASES.Get_Aliases_Sorted(idx_from, idx_to_ex)
+Alias[] function Get_Members_Sorted(int idx_from = 0, int idx_to_ex = -1)
+    return ALIASES.Get_Used_Sorted(idx_from, idx_to_ex)
+endFunction
+
+function Sort_Members()
+    ALIASES.Sort_Used()
 endFunction
 
 function Enforce()
     doticu_npcp_member ref_member
-    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    Alias[] arr_aliases = ALIASES.Get_Used()
     int idx_arr = 0
     while idx_arr < arr_aliases.length
         ref_member = arr_aliases[idx_arr] as doticu_npcp_member

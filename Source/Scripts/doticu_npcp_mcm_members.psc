@@ -158,7 +158,7 @@ auto state p_STATE_MEMBERS
         int idx_from = p_MEMBERS_PER_PAGE * p_curr_page
         int idx_to_ex = idx_from + p_MEMBERS_PER_PAGE
         int idx = 0
-        p_arr_aliases = MEMBERS.Get_Aliases_Sorted(idx_from, idx_to_ex)
+        p_arr_aliases = MEMBERS.Get_Members_Sorted(idx_from, idx_to_ex)
         while idx < p_arr_aliases.length
             doticu_npcp_member ref_member = p_arr_aliases[idx] as doticu_npcp_member
             MCM.AddMenuOption(ref_member.Get_Name(), "...")
@@ -212,20 +212,24 @@ auto state p_STATE_MEMBERS
     function f_On_Option_Menu_Accept(int id_option, int idx_option)
         int idx_entity = p_Get_Idx_Entity(id_option)
         doticu_npcp_member ref_member = p_arr_aliases[idx_entity] as doticu_npcp_member
+        Actor ref_actor = ref_member.Get_Actor()
+
+        ; if we can put these actions in a queue, then we can do them
+        ; in order after the menu is closes, without freezing up the menu
 
         if idx_option == p_IDX_SUMMON
-            ref_member.Summon()
+            COMMANDS.Summon(ref_actor)
         elseIf idx_option == p_IDX_FOLLOW
             if ref_member.Is_Follower()
-                ref_member.Unfollow()
+                COMMANDS.Unfollow(ref_actor, false)
             else
-                ref_member.Follow()
+                COMMANDS.Follow(ref_actor, false)
             endIf
         elseIf idx_option == p_IDX_IMMOBILIZE
             if ref_member.Is_Immobile()
-                ref_member.Mobilize()
+                COMMANDS.Mobilize(ref_actor, false)
             else
-                ref_member.Immobilize()
+                COMMANDS.Immobilize(ref_actor, false)
             endIf
         elseIf idx_option == p_IDX_MORE
             p_ref_member = ref_member
@@ -352,6 +356,7 @@ state p_STATE_MEMBER
         if id_option == p_option_rename
             if str_input != ""
                 p_ref_member.Set_Name(str_input)
+                MEMBERS.Sort_Members(); hard to see how to make parallel
                 MCM.ForcePageReset()
             endIf
         endIf
