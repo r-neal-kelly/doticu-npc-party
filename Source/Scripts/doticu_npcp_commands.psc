@@ -6,6 +6,11 @@ doticu_npcp_queues property QUEUES hidden
         return p_DATA.MODS.FUNCS.QUEUES
     endFunction
 endProperty
+doticu_npcp_members property MEMBERS hidden
+    doticu_npcp_members function Get()
+        return p_DATA.MODS.MEMBERS
+    endFunction
+endProperty
 doticu_npcp_commands_p property PRIVATE hidden
     doticu_npcp_commands_p function Get()
         return (self as Quest) as doticu_npcp_commands_p
@@ -52,16 +57,22 @@ function p_Enqueue(string str_message, Actor ref_actor, bool opt_bool = false)
 endFunction
 
 ; Public Methods
-function Member(Actor ref_actor)
+function Member_Sync(Actor ref_actor)
     GotoState("p_STATE_BUSY")
-    p_Enqueue("Member", ref_actor)
+    PRIVATE.Member(ref_actor)
     GotoState("")
+endFunction
+
+function Member_Async(Actor ref_actor)
+    p_Enqueue("Member", ref_actor)
+    p_queue_commands.Excise("Unmember")
 endFunction
 
 function Unmember(Actor ref_actor)
     GotoState("p_STATE_BUSY")
     p_Enqueue("Unmember", ref_actor)
     GotoState("")
+    ; I would like this one to wait before returning, because of how dialogue menus work.
 endFunction
 
 function Clone(Actor ref_actor)
@@ -74,6 +85,7 @@ function Unclone(Actor ref_actor)
     GotoState("p_STATE_BUSY")
     p_Enqueue("Unclone", ref_actor)
     GotoState("")
+    ; I would like this one to wait before returning, because of how dialogue menus work.
 endFunction
 
 function Pack(Actor ref_actor, bool auto_create)
@@ -154,16 +166,26 @@ function Unthrall(Actor ref_actor, bool auto_create)
     GotoState("")
 endFunction
 
-function Immobilize(Actor ref_actor, bool auto_create)
+function Immobilize_Sync(Actor ref_actor, bool auto_create)
     GotoState("p_STATE_BUSY")
-    p_Enqueue("Immobilize", ref_actor, auto_create)
+    PRIVATE.Immobilize(ref_actor, auto_create)
     GotoState("")
 endFunction
 
-function Mobilize(Actor ref_actor, bool auto_create)
+function Immobilize_Async(Actor ref_actor, bool auto_create)
+    p_Enqueue("Immobilize", ref_actor, auto_create)
+    p_queue_commands.Excise("Mobilize")
+endFunction
+
+function Mobilize_Sync(Actor ref_actor, bool auto_create)
     GotoState("p_STATE_BUSY")
-    p_Enqueue("Mobilize", ref_actor, auto_create)
+    PRIVATE.Mobilize(ref_actor, auto_create)
     GotoState("")
+endFunction
+
+function Mobilize_Async(Actor ref_actor, bool auto_create)
+    p_Enqueue("Mobilize", ref_actor, auto_create)
+    p_queue_commands.Excise("Immobilize")
 endFunction
 
 function Paralyze(Actor ref_actor, bool auto_create)
@@ -416,7 +438,7 @@ endFunction
 
 ; States
 state p_STATE_BUSY
-    function Member(Actor ref_actor)
+    function Member_Sync(Actor ref_actor)
     endFunction
     function Unmember(Actor ref_actor)
     endFunction
@@ -450,9 +472,9 @@ state p_STATE_BUSY
     endFunction
     function Unthrall(Actor ref_actor, bool auto_create)
     endFunction
-    function Immobilize(Actor ref_actor, bool auto_create)
+    function Immobilize_Sync(Actor ref_actor, bool auto_create)
     endFunction
-    function Mobilize(Actor ref_actor, bool auto_create)
+    function Mobilize_Sync(Actor ref_actor, bool auto_create)
     endFunction
     function Paralyze(Actor ref_actor, bool auto_create)
     endFunction
@@ -544,7 +566,7 @@ endState
 event On_Queue_Commands(string str_message, Form form_actor, bool auto_create)
     Actor ref_actor = form_actor as Actor
 
-    if false
+    if p_queue_commands.Should_Cancel()
 
     elseIf str_message == "Member"
         PRIVATE.Member(ref_actor)

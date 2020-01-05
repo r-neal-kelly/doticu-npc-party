@@ -36,6 +36,8 @@ FormList                    p_FORMLIST_OUTFITS                      = none
 Faction                     p_FACTION_MEMBER                        = none
 Faction                     p_FACTION_DLC1_THRALL                   = none
 Faction                     p_FACTION_DLC1_VAMPIRE_FEED_NO_CRIME    = none
+Faction                     p_FACTION_WI_NO_BODY_CLEANUP            = none
+Faction                     p_FACTION_CURRENT_FOLLOWER              = none
 Perk                        p_PERK_VAMPIRE_FEED                     = none
 Perk                        p_PERK_KISS_THRALL                      = none
 Perk                        p_PERK_KILL_ESSENTIAL                   = none
@@ -453,6 +455,28 @@ Faction property FACTION_DLC1_VAMPIRE_FEED_NO_CRIME
     endFunction
 endProperty
 
+Faction property FACTION_WI_NO_BODY_CLEANUP
+    Faction function Get()
+        return p_FACTION_WI_NO_BODY_CLEANUP
+    endFunction
+    function Set(Faction val)
+        if p_FACTION_WI_NO_BODY_CLEANUP == none
+            p_FACTION_WI_NO_BODY_CLEANUP = val
+        endIf
+    endFunction
+endProperty
+
+Faction property FACTION_CURRENT_FOLLOWER
+    Faction function Get()
+        return p_FACTION_CURRENT_FOLLOWER
+    endFunction
+    function Set(Faction val)
+        if p_FACTION_CURRENT_FOLLOWER == none
+            p_FACTION_CURRENT_FOLLOWER = val
+        endIf
+    endFunction
+endProperty
+
 Perk property PERK_VAMPIRE_FEED
     Perk function Get()
         return p_PERK_VAMPIRE_FEED
@@ -596,6 +620,14 @@ string property STR_LOCKPICKING         = "Lockpicking"     autoReadOnly hidden
 string property STR_PICKPOCKET          = "Pickpocket"      autoReadOnly hidden
 string property STR_SPEECHCRAFT         = "Speechcraft"     autoReadOnly hidden
 
+string property STR_MCM_OUTFIT          = " Outfit "        autoReadOnly hidden
+string property STR_MCM_MEMBER          = " Member "        autoReadOnly hidden
+string property STR_MCM_SETTLER         = " Settler "       autoReadOnly hidden
+string property STR_MCM_THRALL          = " Thrall "        autoReadOnly hidden
+string property STR_MCM_IMMOBILE        = " Immobile "      autoReadOnly hidden
+string property STR_MCM_FOLLOWER        = " Follower "      autoReadOnly hidden
+string property STR_MCM_IMMOBILIZE      = " Immobilize "    autoReadOnly hidden
+string property STR_MCM_MOBILIZE        = " Mobilize "      autoReadOnly hidden
 string property STR_MCM_DEFAULT         = " Default "       autoReadOnly hidden
 String property STR_MCM_WARRIOR         = " Warrior "       autoReadOnly hidden
 String property STR_MCM_MAGE            = " Mage "          autoReadOnly hidden

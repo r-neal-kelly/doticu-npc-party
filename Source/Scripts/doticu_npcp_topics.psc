@@ -2,7 +2,7 @@ Scriptname doticu_npcp_topics extends TopicInfo hidden
 
 ; Member Topics
 function Member(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Member(ref_object as Actor)
+    (GetOwningQuest() as doticu_npcp_commands).Member_Sync(ref_object as Actor)
 endFunction
 
 function Unmember(ObjectReference ref_object)
@@ -96,11 +96,11 @@ endFunction
 
 ; Immobile Topics
 function Immobilize(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Immobilize(ref_object as Actor, false)
+    (GetOwningQuest() as doticu_npcp_commands).Immobilize_Sync(ref_object as Actor, false)
 endFunction
 
 function Mobilize(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Mobilize(ref_object as Actor, false)
+    (GetOwningQuest() as doticu_npcp_commands).Mobilize_Sync(ref_object as Actor, false)
 endFunction
 
 ; Follower Topics

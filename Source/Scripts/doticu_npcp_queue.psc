@@ -164,6 +164,10 @@ bool function Is_Paused()
     return p_backup_used != -1
 endFunction
 
+bool function Should_Cancel()
+    return p_str_message == ""
+endFunction
+
 ; for the registers, if we keep track of the objects, we can unregister for them on Destroy()
 function Register_Form(Form ref_form, string str_handler, string str_namespace = "_default_")
     if Exists() && ref_form && str_handler
@@ -262,6 +266,9 @@ function Dequeue()
     ; so only internal functions can be allowed
 
     if p_Has_Rush()
+        if !p_str_rush
+            return
+        endIf
         p_will_update = true
         p_will_rush = true
         p_str_message = p_str_rush
@@ -278,6 +285,12 @@ function Dequeue()
         p_str_rush_event = ""
     else
         int idx_buffer = p_Read()
+        while !p_MESSAGES[idx_buffer] && !Is_Empty()
+            idx_buffer = p_Read()
+        endWhile
+        if !p_MESSAGES[idx_buffer]
+            return
+        endIf
         p_will_update = true
         p_will_rush = false
         p_str_message = p_MESSAGES[idx_buffer]
@@ -290,6 +303,28 @@ function Dequeue()
         endIf
         RegisterForSingleUpdate(p_INTERVALS[idx_buffer])
     endIf
+endFunction
+
+function Excise(string str_message)
+    if Is_Empty()
+        return
+    endIf
+
+    if p_str_message == str_message
+        p_str_message = ""
+    endIf
+
+    if p_str_rush == str_message
+        p_str_rush = ""
+    endIf
+
+    int idx = p_buffer_read
+    while idx < p_buffer_write
+        if p_MESSAGES[idx] == str_message
+            p_MESSAGES[idx] = ""
+        endIf
+        idx += 1
+    endWhile
 endFunction
 
 function Rush(string str_rush, string str_namespace = "_default_")

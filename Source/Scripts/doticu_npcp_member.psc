@@ -87,6 +87,8 @@ doticu_npcp_outfit      p_outfit2_current       =  none
 
 int                     p_prev_vitality         =    -1
 doticu_npcp_outfit      p_prev_outfit2_member   =  none
+Faction[]               p_prev_factions         =  none
+int[]                   p_prev_faction_ranks    =  none
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA, int id_alias, bool is_clone)
@@ -165,6 +167,8 @@ function p_Destroy()
     p_Destroy_Containers()
     p_Destroy_Queues()
 
+    p_prev_faction_ranks = none
+    p_prev_factions = none
     p_prev_outfit2_member = none
     p_prev_vitality = -1
 
@@ -301,9 +305,13 @@ function p_Backup()
     ; backup if was in current follower faction
     ; to stop infighting, use a member package that just ignores combat.
     p_prev_vitality = ACTORS.Get_Vitality(p_ref_actor)
+    p_prev_factions = ACTORS.Get_Factions(p_ref_actor)
+    p_prev_faction_ranks = ACTORS.Get_Faction_Ranks(p_ref_actor, p_prev_factions)
 endFunction
 
 function p_Restore()
+    ACTORS.Set_Factions(p_ref_actor, p_prev_factions, p_prev_faction_ranks)
+
     p_prev_outfit2_member.Set(p_ref_actor); instead of this, we might set the outfit to GetOutfit on base actor.
 
     ACTORS.Vitalize(p_ref_actor, p_prev_vitality)
@@ -396,7 +404,8 @@ function p_Untoken()
 endFunction
 
 function p_Member()
-    ; remove from current follower faction!
+    p_ref_actor.RemoveFromFaction(CONSTS.FACTION_CURRENT_FOLLOWER)
+    p_ref_actor.RemoveFromFaction(CONSTS.FACTION_WI_NO_BODY_CLEANUP)
     p_ref_actor.AddToFaction(CONSTS.FACTION_MEMBER)
     p_ref_actor.SetActorValue("Aggression", 0)
 endFunction
@@ -404,6 +413,7 @@ endFunction
 function p_Unmember()
     p_ref_actor.SetActorValue("Aggression", 0)
     p_ref_actor.RemoveFromFaction(CONSTS.FACTION_MEMBER)
+    ; Restore resets factions
 endFunction
 
 function p_Enthrall()

@@ -16,7 +16,7 @@ endProperty
 doticu_npcp_data    p_DATA                  =  none
 
 int                 p_HEADERS_PER_PAGE      =     4
-int                 p_STRINGS_PER_PAGE      =    20
+int                 p_STRINGS_PER_PAGE      =     8
 
 ; Private Variables
 bool                p_is_created            = false
@@ -114,7 +114,6 @@ auto state p_STATE_LOGS
 
         MCM.SetCursorPosition(2)
         MCM.SetCursorFillMode(MCM.TOP_TO_BOTTOM)
-
         MCM.AddHeaderOption("Notes ")
 
         int idx_notes = 0
@@ -123,14 +122,17 @@ auto state p_STATE_LOGS
             idx_notes += 1
         endWhile
 
+        MCM.SetCursorPosition(4 + p_STRINGS_PER_PAGE * 2)
+        MCM.SetCursorFillMode(MCM.TOP_TO_BOTTOM)
+        MCM.AddHeaderOption("")
         if notes_count > 0
-            MCM.AddHeaderOption("")
-            p_option_clear_notes    =  MCM.AddTextOption("                        Clear Notes", "")
+            p_option_clear_notes = MCM.AddTextOption("                        Clear Notes", "")
+        else
+            p_option_clear_notes = MCM.AddTextOption("                        Clear Notes", "", MCM.OPTION_FLAG_DISABLED)
         endIf
 
         int errors_idx_from = p_STRINGS_PER_PAGE * p_pages_curr
         int errors_idx_to_ex = errors_idx_from + p_STRINGS_PER_PAGE
-        int errors_slice_idx = 0
         p_arr_errors = LOGS.Get_Errors(errors_idx_from, errors_idx_to_ex)
 
         MCM.SetCursorPosition(3)
@@ -144,9 +146,13 @@ auto state p_STATE_LOGS
             idx_errors += 1
         endWhile
 
+        MCM.SetCursorPosition(5 + p_STRINGS_PER_PAGE * 2)
+        MCM.SetCursorFillMode(MCM.TOP_TO_BOTTOM)
+        MCM.AddHeaderOption("")
         if errors_count > 0
-            MCM.AddHeaderOption("")
             p_option_clear_errors = MCM.AddTextOption("                         Clear Errors", "")
+        else
+            p_option_clear_errors = MCM.AddTextOption("                         Clear Errors", "", MCM.OPTION_FLAG_DISABLED)
         endIf
     endFunction
 

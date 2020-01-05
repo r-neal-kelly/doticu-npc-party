@@ -61,6 +61,23 @@ function f_Register()
 endFunction
 
 ; Private Methods
+function p_Try_Stability(Actor ref_actor, int tries = 12, float interval = 0.05)
+    int num_tries = 0
+    int num_items = 0
+
+    num_tries = 0
+    num_items = ref_actor.GetNumItems()
+    while num_tries < 6
+        Utility.Wait(0.03)
+        if num_items != ref_actor.GetNumItems()
+            num_items = ref_actor.GetNumItems()
+            num_tries = 0
+        else
+            num_tries += 1
+        endIf
+    endWhile
+endFunction
+
 bool function p_Has_Changed(Actor ref_actor)
     int num_forms
     int idx_forms
@@ -127,6 +144,9 @@ function Get(Actor ref_actor)
     Form ref_form
     int num_items
 
+    ; we wait until the actor's inventory shows some stability
+    p_Try_Stability(ref_actor)
+
     ; we refresh the cache
     self.RemoveAllItems(CONSTS.ACTOR_PLAYER, false, true)
     p_LEVELED.Revert()
@@ -136,7 +156,7 @@ function Get(Actor ref_actor)
     num_forms = ref_actor.GetNumItems()
     while idx_forms < num_forms
         ref_form = ref_actor.GetNthForm(idx_forms)
-        if OUTFITS.Is_Valid_Item(ref_form) && ref_actor.IsEquipped(ref_form)
+        if ref_form && OUTFITS.Is_Valid_Item(ref_form) && ref_actor.IsEquipped(ref_form)
             num_items = ref_actor.GetItemCount(ref_form)
             self.AddItem(ref_form, num_items, true)
             p_LEVELED.AddForm(ref_form, 1, num_items)
@@ -151,6 +171,9 @@ function Set(Actor ref_actor, bool do_force = false)
     Form ref_form
     int num_items
     ObjectReference ref_trash
+
+    ; we wait until the actor's inventory shows some stability
+    p_Try_Stability(ref_actor)
     
     ; if not forcing, there is no reason to re-oufit when neither the oufit container or the actor inventory has changed
     if !do_force && !p_Has_Changed(ref_actor)
@@ -195,6 +218,7 @@ function Set(Actor ref_actor, bool do_force = false)
     endWhile
 
     ; need to make sure that a clone doesn't get the same outfit, so send through until it matches the container
+    Utility.Wait(0.1)
     Set(ref_actor)
 endFunction
 
@@ -204,6 +228,9 @@ function Remove_Inventory(Actor ref_actor, ObjectReference ref_container = none)
     int num_forms
     Form ref_form
     int num_items
+
+    ; we wait until the actor's inventory shows some stability
+    p_Try_Stability(ref_actor)
 
     ; copy inventory minus current outfit
     if ref_container

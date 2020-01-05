@@ -16,6 +16,11 @@ doticu_npcp_funcs property FUNCS hidden
         return p_DATA.MODS.FUNCS
     endFunction
 endProperty
+doticu_npcp_actors property ACTORS hidden
+    doticu_npcp_actors function Get()
+        return p_DATA.MODS.FUNCS.ACTORS
+    endFunction
+endProperty
 doticu_npcp_members property MEMBERS hidden
     doticu_npcp_members function Get()
         return p_DATA.MODS.MEMBERS
@@ -33,44 +38,58 @@ doticu_npcp_mcm property MCM hidden
 endProperty
 
 ; Private Constants
-doticu_npcp_data    p_DATA                  =  none
+doticu_npcp_data    p_DATA                      =  none
 
-int                 p_VIEW_MEMBERS          =     0
-int                 p_VIEW_MEMBER           =     1
+int                 p_VIEW_MEMBERS              =     0
+int                 p_VIEW_MEMBER               =     1
 
-int                 p_HEADERS_PER_PAGE      =     4
-int                 p_MEMBERS_PER_PAGE      =    20
+int                 p_HEADERS_PER_PAGE          =     4
+int                 p_MEMBERS_PER_PAGE          =    20
 
-int                 p_COMMANDS_PER_MEMBER   =     4
-int                 p_IDX_SUMMON            =     0
-int                 p_IDX_FOLLOW            =     1
-int                 p_IDX_IMMOBILIZE        =     2
-int                 p_IDX_MORE              =     3
+int                 p_COMMANDS_PER_MEMBER       =     4
+int                 p_IDX_SUMMON                =     0
+int                 p_IDX_FOLLOW                =     1
+int                 p_IDX_IMMOBILIZE            =     2
+int                 p_IDX_MORE                  =     3
 
 ; Private Variables
-bool                p_is_created            = false
+bool                p_is_created                = false
 
-int                 p_curr_view             =     0
-int                 p_curr_page             =     0
-int                 p_count_pages           =    -1
-Alias[]             p_arr_aliases           =  none
-doticu_npcp_member  p_ref_member            =  none
-int                 p_idx_member            =    -1
-int                 p_options_offset        =    -1
+int                 p_curr_view                 =     0
+int                 p_curr_page                 =     0
+int                 p_count_pages               =    -1
+Alias[]             p_arr_aliases               =  none
+doticu_npcp_member  p_ref_member                =  none
+int                 p_idx_member                =    -1
+int                 p_options_offset            =    -1
 
-int                 p_option_rename         =    -1
-int                 p_option_back           =    -1
-int                 p_option_prev           =    -1
-int                 p_option_next           =    -1
+bool                p_is_immobile               = false
 
-int                 p_option_pack           =    -1
-int                 p_option_clone          =    -1
-int                 p_option_unclone        =    -1
-int                 p_option_unmember       =    -1
+int                 p_option_rename             =    -1
+int                 p_option_back               =    -1
+int                 p_option_prev               =    -1
+int                 p_option_next               =    -1
 
-int                 p_option_health         =    -1
-int                 p_option_magicka        =    -1
-int                 p_option_stamina        =    -1
+int                 p_option_pack               =    -1
+int                 p_option_outfit             =    -1
+int                 p_option_resurrect          =    -1
+int                 p_option_settle             =    -1
+int                 p_option_unsettle           =    -1
+int                 p_option_enthrall           =    -1
+int                 p_option_immobilize         =    -1
+int                 p_option_mobilize           =    -1
+int                 p_option_paralyze           =    -1
+int                 p_option_follow             =    -1
+int                 p_option_sneak              =    -1
+int                 p_option_style              =    -1
+int                 p_option_vitalize           =    -1
+int                 p_option_clone              =    -1
+int                 p_option_unclone            =    -1
+int                 p_option_unmember           =    -1
+
+int                 p_option_health             =    -1
+int                 p_option_magicka            =    -1
+int                 p_option_stamina            =    -1
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
@@ -214,9 +233,6 @@ auto state p_STATE_MEMBERS
         doticu_npcp_member ref_member = p_arr_aliases[idx_entity] as doticu_npcp_member
         Actor ref_actor = ref_member.Get_Actor()
 
-        ; if we can put these actions in a queue, then we can do them
-        ; in order after the menu is closes, without freezing up the menu
-
         if idx_option == p_IDX_SUMMON
             COMMANDS.Summon(ref_actor)
         elseIf idx_option == p_IDX_FOLLOW
@@ -227,9 +243,9 @@ auto state p_STATE_MEMBERS
             endIf
         elseIf idx_option == p_IDX_IMMOBILIZE
             if ref_member.Is_Immobile()
-                COMMANDS.Mobilize(ref_actor, false)
+                COMMANDS.Mobilize_Async(ref_actor, false)
             else
-                COMMANDS.Immobilize(ref_actor, false)
+                COMMANDS.Immobilize_Async(ref_actor, false)
             endIf
         elseIf idx_option == p_IDX_MORE
             p_ref_member = ref_member
@@ -267,6 +283,7 @@ state p_STATE_MEMBER
         endIf
 
         string str_member_name = p_ref_member.Get_Name()
+        p_is_immobile = p_ref_member.Is_Immobile()
 
         MCM.SetCursorPosition(0)
         MCM.SetCursorFillMode(MCM.LEFT_TO_RIGHT)
@@ -282,17 +299,28 @@ state p_STATE_MEMBER
             p_option_prev = MCM.AddTextOption("                      Previous Member", "", MCM.OPTION_FLAG_DISABLED)
             p_option_next = MCM.AddTextOption("                        Next Member", "", MCM.OPTION_FLAG_DISABLED)
         endIf
+        p_options_offset = p_option_rename
 
         MCM.SetCursorPosition(4)
         MCM.SetCursorFillMode(MCM.TOP_TO_BOTTOM)
 
         MCM.AddHeaderOption("Commands: ")
         p_option_pack = MCM.AddTextOption(" Pack ", "")
-        p_option_clone  = MCM.AddTextOption(" Clone ", "")
-        if p_ref_member.Is_Clone()
-            p_option_unclone  = MCM.AddTextOption(" Unclone ", "")
+        p_option_outfit = MCM.AddMenuOption(CONSTS.STR_MCM_OUTFIT, "")
+
+        if p_is_immobile
+            p_option_immobilize = MCM.AddTextOption(CONSTS.STR_MCM_IMMOBILIZE, "", MCM.OPTION_FLAG_DISABLED)
+            p_option_mobilize = MCM.AddTextOption(CONSTS.STR_MCM_MOBILIZE, "")
         else
-            p_option_unclone  = MCM.AddTextOption(" Unclone ", "", MCM.OPTION_FLAG_DISABLED)
+            p_option_immobilize = MCM.AddTextOption(CONSTS.STR_MCM_IMMOBILIZE, "")
+            p_option_mobilize = MCM.AddTextOption(CONSTS.STR_MCM_MOBILIZE, "", MCM.OPTION_FLAG_DISABLED)
+        endif
+
+        p_option_clone = MCM.AddTextOption(" Clone ", "")
+        if p_ref_member.Is_Clone()
+            p_option_unclone = MCM.AddTextOption(" Unclone ", "")
+        else
+            p_option_unclone = MCM.AddTextOption(" Unclone ", "", MCM.OPTION_FLAG_DISABLED)
         endIf
         if !MEMBERS.Should_Unclone_Member(p_ref_member)
             p_option_unmember = MCM.AddTextOption(" Unmember ", "")
@@ -311,6 +339,8 @@ state p_STATE_MEMBER
     endFunction
 
     function f_On_Option_Select(int id_option)
+        Actor ref_actor = p_ref_member.Get_Actor()
+
         if id_option == p_option_back
             p_ref_member = none
             p_idx_member = -1
@@ -335,6 +365,16 @@ state p_STATE_MEMBER
         elseIf id_option == p_option_pack
             FUNCS.Close_Menus()
             p_ref_member.Pack()
+        elseIf id_option == p_option_immobilize
+            COMMANDS.Immobilize_Async(ref_actor, false)
+            MCM.SetOptionFlags(p_option_immobilize, MCM.OPTION_FLAG_DISABLED, true)
+            MCM.SetOptionFlags(p_option_mobilize, MCM.OPTION_FLAG_NONE, false)
+            p_is_immobile = !p_is_immobile
+        elseIf id_option == p_option_mobilize
+            COMMANDS.Mobilize_Async(ref_actor, false)
+            MCM.SetOptionFlags(p_option_immobilize, MCM.OPTION_FLAG_NONE, true)
+            MCM.SetOptionFlags(p_option_mobilize, MCM.OPTION_FLAG_DISABLED, false)
+            p_is_immobile = !p_is_immobile
         elseIf id_option == p_option_clone
             p_ref_member.Clone()
         elseIf id_option == p_option_unclone
@@ -349,6 +389,70 @@ state p_STATE_MEMBER
             p_idx_member = -1
             p_curr_view = p_VIEW_MEMBERS
             MCM.ForcePageReset()
+        endIf
+    endFunction
+
+    function f_On_Option_Menu_Open(int id_option)
+        if id_option == p_option_outfit
+            if ACTORS.Is_Vampire(CONSTS.ACTOR_PLAYER)
+                string[] arr_options = Utility.CreateStringArray(5, "")
+
+                arr_options[0] = CONSTS.STR_MCM_MEMBER
+                arr_options[1] = CONSTS.STR_MCM_SETTLER
+                arr_options[2] = CONSTS.STR_MCM_THRALL
+                arr_options[3] = CONSTS.STR_MCM_FOLLOWER
+                arr_options[4] = CONSTS.STR_MCM_IMMOBILE
+
+                MCM.SetMenuDialogOptions(arr_options)
+            else
+                string[] arr_options = Utility.CreateStringArray(4, "")
+
+                arr_options[0] = CONSTS.STR_MCM_MEMBER
+                arr_options[1] = CONSTS.STR_MCM_SETTLER
+                arr_options[2] = CONSTS.STR_MCM_FOLLOWER
+                arr_options[3] = CONSTS.STR_MCM_IMMOBILE
+
+                MCM.SetMenuDialogOptions(arr_options)
+            endIf
+        endIf
+    endFunction
+    
+    function f_On_Option_Menu_Accept(int id_option, int idx_option)
+        Actor ref_actor = p_ref_member.Get_Actor()
+
+        if id_option == p_option_outfit
+            if ACTORS.Is_Vampire(CONSTS.ACTOR_PLAYER)
+                if idx_option == 0
+                    FUNCS.Close_Menus()
+                    COMMANDS.Outfit_Member(ref_actor, false)
+                elseIf idx_option == 1
+                    FUNCS.Close_Menus()
+                    COMMANDS.Outfit_Settler(ref_actor, false)
+                elseIf idx_option == 2
+                    FUNCS.Close_Menus()
+                    COMMANDS.Outfit_Thrall(ref_actor, false)
+                elseIf idx_option == 3
+                    FUNCS.Close_Menus()
+                    COMMANDS.Outfit_Follower(ref_actor, false)
+                elseIf idx_option == 4
+                    FUNCS.Close_Menus()
+                    COMMANDS.Outfit_Immobile(ref_actor, false)
+                endIf
+            else
+                if idx_option == 0
+                    FUNCS.Close_Menus()
+                    COMMANDS.Outfit_Member(ref_actor, false)
+                elseIf idx_option == 1
+                    FUNCS.Close_Menus()
+                    COMMANDS.Outfit_Settler(ref_actor, false)
+                elseIf idx_option == 2
+                    FUNCS.Close_Menus()
+                    COMMANDS.Outfit_Follower(ref_actor, false)
+                elseIf idx_option == 3
+                    FUNCS.Close_Menus()
+                    COMMANDS.Outfit_Immobile(ref_actor, false)
+                endIf
+            endIf
         endIf
     endFunction
 
@@ -371,6 +475,12 @@ state p_STATE_MEMBER
             MCM.SetInfoText("Go to the Next Member")
         elseIf id_option == p_option_pack
             MCM.SetInfoText("Pack items in this member's inventory.")
+        elseIf id_option == p_option_outfit
+            MCM.SetInfoText("Choose what this npc will wear in one of their outfits.")
+        elseIf id_option == p_option_immobilize
+            MCM.SetInfoText("Immobilize " + p_ref_member.Get_Name())
+        elseIf id_option == p_option_mobilize
+            MCM.SetInfoText("Mobilize " + p_ref_member.Get_Name())
         elseIf id_option == p_option_rename
             MCM.SetInfoText("Rename this member.")
         elseIf id_option == p_option_clone
