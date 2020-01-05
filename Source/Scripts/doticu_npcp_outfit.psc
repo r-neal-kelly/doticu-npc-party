@@ -61,14 +61,14 @@ function f_Register()
 endFunction
 
 ; Private Methods
-function p_Try_Stability(Actor ref_actor, int tries = 12, float interval = 0.05)
+function p_Try_Stability(Actor ref_actor, int max_tries = 12, float float_interval = 0.1)
     int num_tries = 0
     int num_items = 0
 
     num_tries = 0
     num_items = ref_actor.GetNumItems()
-    while num_tries < 6
-        Utility.Wait(0.03)
+    while num_tries < max_tries
+        Utility.Wait(float_interval)
         if num_items != ref_actor.GetNumItems()
             num_items = ref_actor.GetNumItems()
             num_tries = 0
@@ -156,7 +156,7 @@ function Get(Actor ref_actor)
     num_forms = ref_actor.GetNumItems()
     while idx_forms < num_forms
         ref_form = ref_actor.GetNthForm(idx_forms)
-        if ref_form && OUTFITS.Is_Valid_Item(ref_form) && ref_actor.IsEquipped(ref_form)
+        if OUTFITS.Is_Valid_Item(ref_form) && ref_actor.IsEquipped(ref_form)
             num_items = ref_actor.GetItemCount(ref_form)
             self.AddItem(ref_form, num_items, true)
             p_LEVELED.AddForm(ref_form, 1, num_items)

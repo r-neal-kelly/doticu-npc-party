@@ -405,7 +405,7 @@ endFunction
 
 function p_Member()
     p_ref_actor.RemoveFromFaction(CONSTS.FACTION_CURRENT_FOLLOWER)
-    p_ref_actor.RemoveFromFaction(CONSTS.FACTION_WI_NO_BODY_CLEANUP)
+    p_ref_actor.AddToFaction(CONSTS.FACTION_WI_NO_BODY_CLEANUP)
     p_ref_actor.AddToFaction(CONSTS.FACTION_MEMBER)
     p_ref_actor.SetActorValue("Aggression", 0)
 endFunction

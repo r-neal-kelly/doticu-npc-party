@@ -65,5 +65,5 @@ endFunction
 
 bool function Is_Valid_Item(Form form_item)
     ;return form_item.IsPlayable() && (form_item as Armor || form_item as Weapon)
-    return form_item.IsPlayable(); allows arrows and torches, but maybe allows to many other things
+    return form_item && form_item.IsPlayable(); allows arrows and torches, but maybe allows to many other things
 endFunction
