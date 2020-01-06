@@ -106,15 +106,15 @@ endFunction
 function Outfit(int code_return, string str_name, int code_outfit)
     string str_outfit
 
-    if code_outfit == CODES.IS_MEMBER
+    if code_outfit == CODES.OUTFIT_MEMBER
         str_outfit = "a member"
-    elseIf code_outfit == CODES.IS_SETTLER
+    elseIf code_outfit == CODES.OUTFIT_SETTLER
         str_outfit = "a settler"
-    elseIf code_outfit == CODES.IS_THRALL
+    elseIf code_outfit == CODES.OUTFIT_THRALL
         str_outfit = "a thrall"
-    elseIf code_outfit == CODES.IS_FOLLOWER
+    elseIf code_outfit == CODES.OUTFIT_FOLLOWER
         str_outfit = "a follower"
-    elseIf code_outfit == CODES.IS_IMMOBILE
+    elseIf code_outfit == CODES.OUTFIT_IMMOBILE
         str_outfit = "an immobile"
     endIf
 

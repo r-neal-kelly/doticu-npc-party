@@ -444,6 +444,21 @@ int function Get_Count_Unsneak()
     return count
 endFunction
 
+bool function Are_In_Combat()
+    Alias[] arr_aliases = ALIASES.Get_Used()
+    int idx_aliases = 0
+    int num_aliases = arr_aliases.length
+
+    while idx_aliases < num_aliases
+        if (arr_aliases[idx_aliases] as doticu_npcp_follower).Is_In_Combat()
+            return true
+        endIf
+        idx_aliases += 1
+    endWhile
+
+    return false
+endFunction
+
 bool function Has_Follower(Actor ref_actor)
     return ALIASES.Has_Alias(p_Get_Alias_ID(ref_actor), ref_actor)
 endFunction

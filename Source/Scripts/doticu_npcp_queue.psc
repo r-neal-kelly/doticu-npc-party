@@ -358,11 +358,9 @@ function Rush(string str_rush, string str_namespace = "_default_")
     GotoState("")
 endFunction
 
-function Flush(bool do_wait = true)
+function Flush()
     ; should get exclusive execution away from Rush, in case of deadlock.
     ; blocking Enqueue and Dequeue makes sure any messages are not skipped.
-    ; also, waiting for a message that may never be dequeued is a deadlock
-    ; so when destroying an object that would otherwise dequeue, don't wait
 
     GotoState("p_STATE_FLUSH")
 
@@ -370,12 +368,14 @@ function Flush(bool do_wait = true)
     p_buffer_read = 0
     p_buffer_write = 0
 
-    if do_wait
+    ; ran into infinite recursion with PLAYER. I think it just wasn't dequeing one last time, which unsets will_update
+    ; but I don't know how that is possible unless Dequeue was never given a chance to run
+    ;/if do_wait
         while p_will_update || p_will_rush
             ; let an already dispatched message finish
             Utility.Wait(p_INTERVAL_DEFAULT)
         endWhile
-    endIf
+    endIf/;
 
     p_will_rush = false
     p_will_update = false
@@ -425,9 +425,9 @@ endFunction
 
 ; Private States
 state p_STATE_RUSH
-    function Flush(bool do_wait = true)
+    function Flush()
         Utility.Wait(p_INTERVAL_DEFAULT)
-        Flush(do_wait)
+        Flush()
     endFunction
 
     function Pause()
@@ -454,7 +454,7 @@ state p_STATE_FLUSH
         Rush(str_rush, str_namespace)
     endFunction
 
-    function Flush(bool do_wait = true)
+    function Flush()
     endFunction
 
     function Pause()
@@ -479,9 +479,9 @@ state p_STATE_PAUSE
         Rush(str_rush, str_namespace)
     endFunction
 
-    function Flush(bool do_wait = true)
+    function Flush()
         Utility.Wait(p_INTERVAL_DEFAULT)
-        Flush(do_wait)
+        Flush()
     endFunction
 endState
 

@@ -62,37 +62,45 @@ function f_Register()
 endFunction
 
 function f_Begin_Combat()
-    if !p_is_in_combat
+    ; there is no way for PLAYER to know when they are
+    ; in combat! so we have followers tell PLAYER to begin
+    if p_is_in_combat == false
         p_is_in_combat = true
-        p_queue_player.Enqueue("Try_End_Combat", 5.0)
-    endIf
-endFunction
 
-function f_End_Combat()
-    if p_is_in_combat
-        p_is_in_combat = false
-        p_queue_player.Flush()
-        if VARS.auto_resurrect
-            FOLLOWERS.Resurrect()
-        endIf
-    endIf
-endFunction
-
-function f_Try_End_Combat()
-    if ACTOR_PLAYER.IsInCombat()
         p_queue_player.Enqueue("Try_End_Combat", 5.0)
-    else
-        f_End_Combat()
+
+        ; here we can put functions at the beginning of battle
+
     endIf
 endFunction
 
 ; Private Methods
-function p_Create_Queues()
-    
+function p_Try_End_Combat()
+    ; because all followers may actually die in battle,
+    ; and their combat state will not indicate whether
+    ; the player is actually in battle, we have a looping
+    ; queue set instead
+    if ACTOR_PLAYER.IsInCombat() || FOLLOWERS.Are_In_Combat()
+        p_queue_player.Enqueue("Try_End_Combat", 5.0)
+    else
+        p_End_Combat()
+    endIf
 endFunction
 
-function p_Destroy_Queues()
-    QUEUES.Destroy(p_queue_player)
+function p_End_Combat()
+    ; the whole point of this is so that we can have behavior
+    ; after a battle ends, e.g. resurrecting followers automatically
+    if p_is_in_combat == true
+        p_is_in_combat = false
+
+        p_queue_player.Flush()
+
+        ; here we can put functions at the end of battle
+        if VARS.auto_resurrect
+            FOLLOWERS.Resurrect()
+        endIf
+
+    endIf
 endFunction
 
 ; Public Methods
@@ -106,7 +114,6 @@ endFunction
 
 ; Update Methods
 function u_0_1_1()
-    p_Create_Queues()
 endFunction
 
 function u_0_1_4(doticu_npcp_data DATA)
@@ -120,8 +127,11 @@ event OnPlayerLoadGame()
 endEvent
 
 event On_Queue_Player(string str_message)
-    if str_message == "Try_End_Combat"
-        f_Try_End_Combat()
+    if p_queue_player.Should_Cancel()
+
+    elseIf str_message == "Try_End_Combat"
+        p_Try_End_Combat()
+
     endIf
 
     p_queue_player.Dequeue()

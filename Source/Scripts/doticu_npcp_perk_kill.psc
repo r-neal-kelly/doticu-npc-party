@@ -6,9 +6,19 @@ doticu_npcp_consts property CONSTS hidden
         return p_DATA.CONSTS
     endFunction
 endProperty
+doticu_npcp_actors property ACTORS hidden
+    doticu_npcp_actors function Get()
+        return p_DATA.MODS.FUNCS.ACTORS
+    endFunction
+endProperty
 doticu_npcp_perks property PERKS hidden
     doticu_npcp_perks function Get()
         return p_DATA.MODS.FUNCS.PERKS
+    endFunction
+endProperty
+doticu_npcp_members property MEMBERS hidden
+    doticu_npcp_members function Get()
+        return p_DATA.MODS.MEMBERS
     endFunction
 endProperty
 
@@ -34,4 +44,5 @@ endFunction
 
 ; Public Methods
 function Kill_Essential(ObjectReference ref_target, Actor _)
+    ACTORS.Kill(ref_target as Actor)
 endFunction

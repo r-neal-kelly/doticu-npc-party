@@ -115,9 +115,13 @@ bool function Is_Female(Actor ref_actor)
     return Get_Sex(ref_actor) == CODES.GENDER_FEMALE
 endFunction
 
+bool function Is_Essential(Actor ref_actor)
+    return ref_actor.IsEssential()
+endFunction
+
 ActorBase function Get_Base(Actor ref_actor)
     if ref_actor
-        return ref_actor.GetActorBase()
+        return ref_actor.GetActorBase(); should this be leveled base?
     else
         return none
     endIf
@@ -208,11 +212,37 @@ function Vitalize(Actor ref_actor, int code_vitality)
     endIf
 endFunction
 
+function Essentialize(Actor ref_actor)
+    ActorBase p_base_actor = Get_Base(ref_actor)
+    p_base_actor.SetEssential(true)
+endFunction
+
+function Unessentialize(Actor ref_actor)
+    ActorBase p_base_actor = Get_Base(ref_actor)
+    p_base_actor.SetEssential(false)
+endFunction
+
+function Kill(Actor ref_actor)
+    bool is_essential = Is_Essential(ref_actor)
+
+    if is_essential
+        Unessentialize(ref_actor)
+    endIf
+
+    ref_actor.Kill(none)
+    ;ref_actor.DamageActorValue(CONSTS.STR_HEALTH, -1000000.0)
+
+    if is_essential
+        Essentialize(ref_actor)
+    endIf
+endFunction
+
 function Resurrect(Actor ref_actor)
     ObjectReference ref_container_temp = CONTAINERS.Create_Temp()
 
     CONTAINERS.Take_All(ref_container_temp, ref_actor)
     ref_actor.Disable()
+    ref_actor.SetCriticalStage(CODES.CRITICAL_NONE)
     ref_actor.Resurrect()
     Pacify(ref_actor)
     ref_actor.Enable()

@@ -130,12 +130,13 @@ function Outfit(Actor ref_actor, int code_outfit, bool auto_create)
     int code_return
     string str_name = ACTORS.Get_Name(ref_actor)
 
-    if code_outfit != CODES.IS_MEMBER &&\
-        code_outfit != CODES.IS_SETTLER &&\
-        code_outfit != CODES.IS_THRALL &&\
-        code_outfit != CODES.IS_FOLLOWER &&\
-        code_outfit != CODES.IS_IMMOBILE
-        code_outfit = CODES.IS_MEMBER; eventually VARS.default_outfit
+    if code_outfit != CODES.OUTFIT_MEMBER &&\
+        code_outfit != CODES.OUTFIT_SETTLER &&\
+        code_outfit != CODES.OUTFIT_THRALL &&\
+        code_outfit != CODES.OUTFIT_FOLLOWER &&\
+        code_outfit != CODES.OUTFIT_IMMOBILE &&\
+        code_outfit != CODES.OUTFIT_CURRENT
+        code_outfit = CODES.OUTFIT_MEMBER; eventually VARS.default_outfit
     endIf
     
     if auto_create && !MEMBERS.Has_Member(ref_actor)
@@ -152,37 +153,31 @@ function Outfit(Actor ref_actor, int code_outfit, bool auto_create)
         return
     endIf
 
-    if code_outfit == CODES.IS_MEMBER
-        NOTES.Outfit(ref_member.Outfit_Member(), str_name, code_outfit)
-    elseIf code_outfit == CODES.IS_SETTLER
-        NOTES.Outfit(ref_member.Outfit_Settler(), str_name, code_outfit)
-    elseIf code_outfit == CODES.IS_THRALL
-        NOTES.Outfit(ref_member.Outfit_Thrall(), str_name, code_outfit)
-    elseIf code_outfit == CODES.IS_FOLLOWER
-        NOTES.Outfit(ref_member.Outfit_Follower(), str_name, code_outfit)
-    elseIf code_outfit == CODES.IS_IMMOBILE
-        NOTES.Outfit(ref_member.Outfit_Immobile(), str_name, code_outfit)
-    endIf
+    NOTES.Outfit(ref_member.Outfit(code_outfit), str_name, code_outfit)
 endFunction
 
 function Outfit_Member(Actor ref_actor, bool auto_create)
-    Outfit(ref_actor, CODES.IS_MEMBER, auto_create)
+    Outfit(ref_actor, CODES.OUTFIT_MEMBER, auto_create)
 endFunction
 
 function Outfit_Settler(Actor ref_actor, bool auto_create)
-    Outfit(ref_actor, CODES.IS_SETTLER, auto_create)
+    Outfit(ref_actor, CODES.OUTFIT_SETTLER, auto_create)
 endFunction
 
 function Outfit_Thrall(Actor ref_actor, bool auto_create)
-    Outfit(ref_actor, CODES.IS_THRALL, auto_create)
+    Outfit(ref_actor, CODES.OUTFIT_THRALL, auto_create)
 endFunction
 
 function Outfit_Follower(Actor ref_actor, bool auto_create)
-    Outfit(ref_actor, CODES.IS_FOLLOWER, auto_create)
+    Outfit(ref_actor, CODES.OUTFIT_FOLLOWER, auto_create)
 endFunction
 
 function Outfit_Immobile(Actor ref_actor, bool auto_create)
-    Outfit(ref_actor, CODES.IS_IMMOBILE, auto_create)
+    Outfit(ref_actor, CODES.OUTFIT_IMMOBILE, auto_create)
+endFunction
+
+function Outfit_Current(Actor ref_actor, bool auto_create)
+    Outfit(ref_actor, CODES.OUTFIT_CURRENT, auto_create)
 endFunction
 
 function Unoutfit(Actor ref_actor, bool auto_create)

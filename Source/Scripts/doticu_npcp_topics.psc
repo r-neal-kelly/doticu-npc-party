@@ -21,6 +21,10 @@ function Pack(ObjectReference ref_object)
     (GetOwningQuest() as doticu_npcp_commands).Pack(ref_object as Actor, false)
 endFunction
 
+function Outfit_Current(ObjectReference ref_object)
+    (GetOwningQuest() as doticu_npcp_commands).Outfit_Current(ref_object as Actor, false)
+endFunction
+
 function Outfit_Member(ObjectReference ref_object)
     (GetOwningQuest() as doticu_npcp_commands).Outfit_Member(ref_object as Actor, false)
 endFunction

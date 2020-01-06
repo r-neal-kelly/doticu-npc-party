@@ -33,7 +33,7 @@ A follower framework for The Elder Scrolls V: Skyrim Special Edition
 - [Amazing Follower Tweaks](https://www.nexusmods.com/skyrimspecialedition/mods/6656) developers! Your mod is a great inspiration for how a follower framework can be fun and easy to use for the player.
 - [My Home is Your Home](https://www.nexusmods.com/skyrimspecialedition/mods/20227) developers for such a wonderful idea, and the methods with which you implement it.
 - [Dress Up Lover's NPC Outfit Changer](https://www.nexusmods.com/skyrimspecialedition/mods/28736) developer kuroko137 for inspiring me with your awesome mod to make my own outfit management.
-- [Simple NPC Outfit Manager](https://www.nexusmods.com/skyrimspecialedition/mods/15211) developer confusedchim, for showing how simple it is.
+- [Simple NPC Outfit Manager](https://www.nexusmods.com/skyrimspecialedition/mods/15211) developer confusedchim, for showing the basics of how to get outfits to work.
 - [OldMansBeard](https://forums.nexusmods.com/index.php?/user/3897072-oldmansbeard/) for helping me [reuse vanilla voices](https://forums.nexusmods.com/index.php?/topic/8223653-reusing-voice-files/) without copying and redistributing them
 - [cumbrianlad](https://forums.nexusmods.com/index.php?/user/31338325-cumbrianlad/) for a [discussion on persistent references](https://forums.nexusmods.com/index.php?/topic/8082738-is-512-persistent-actor-references-bad/), and how this can take a toll on the player's gameplay
 - and every one else who has helped me directly or indirectly, should I fail to mention you!

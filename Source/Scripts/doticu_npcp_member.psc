@@ -140,7 +140,7 @@ function p_Destroy()
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_MEMBER)
     p_ref_actor.EvaluatePackage()
 
-    f_QUEUE.Flush(true)
+    f_QUEUE.Flush()
     f_QUEUE.Pause()
 
     if Is_Follower()
@@ -561,6 +561,24 @@ int function Get_Vitality()
     endIf
 endFunction
 
+int function Get_Outfit()
+    if !Exists()
+        return -1
+    else
+        if p_outfit2_current == p_outfit2_member
+            return CODES.OUTFIT_MEMBER
+        elseIf p_outfit2_current == p_outfit2_settler
+            return CODES.OUTFIT_SETTLER
+        elseIf p_outfit2_current == p_outfit2_thrall
+            return CODES.OUTFIT_THRALL
+        elseIf p_outfit2_current == p_outfit2_follower
+            return CODES.OUTFIT_FOLLOWER
+        elseIf p_outfit2_current == p_outfit2_immobile
+            return CODES.OUTFIT_IMMOBILE
+        endIf
+    endIf
+endFunction
+
 int function Set_Name(string str_name)
     if !Exists()
         return CODES.ISNT_MEMBER
@@ -639,7 +657,7 @@ int function Unsettle()
 
     ; we need to get rid of any old messages
     ; else a deadlock may occur on next Rush
-    f_QUEUE.Flush(false)
+    f_QUEUE.Flush()
 
     code_return = Enforce()
     if code_return < 0
@@ -685,7 +703,7 @@ int function Mobilize()
 
     ; we need to get rid of any old messages
     ; else a deadlock may occur on next Rush
-    f_QUEUE.Flush(false)
+    f_QUEUE.Flush()
 
     code_return = Enforce()
     if code_return < 0
@@ -733,7 +751,7 @@ int function Unfollow()
 
     ; we need to get rid of any old messages
     ; else a deadlock may occur on next Rush
-    f_QUEUE.Flush(false)
+    f_QUEUE.Flush()
 
     code_return = Enforce()
     if code_return < 0
@@ -1105,16 +1123,18 @@ int function Pack()
 endFunction
 
 int function Outfit(int code_outfit)
-    if code_outfit == CODES.IS_MEMBER
+    if code_outfit == CODES.OUTFIT_MEMBER
         return Outfit_Member()
-    elseIf code_outfit == CODES.IS_SETTLER
+    elseIf code_outfit == CODES.OUTFIT_SETTLER
         return Outfit_Settler()
-    elseIf code_outfit == CODES.IS_THRALL
+    elseIf code_outfit == CODES.OUTFIT_THRALL
         return Outfit_Thrall()
-    elseIf code_outfit == CODES.IS_IMMOBILE
+    elseIf code_outfit == CODES.OUTFIT_IMMOBILE
         return Outfit_Immobile()
-    elseIf code_outfit == CODES.IS_FOLLOWER
+    elseIf code_outfit == CODES.OUTFIT_FOLLOWER
         return Outfit_Follower()
+    elseIf code_outfit == CODES.OUTFIT_CURRENT
+        return Outfit_Current()
     endIf
 endFunction
 
@@ -1213,6 +1233,26 @@ int function Outfit_Follower()
     Utility.Wait(0.1)
 
     p_outfit2_current = p_outfit2_follower
+    p_Enqueue("Member.Outfit")
+
+    code_return = Enforce()
+    if code_return < 0
+        return code_return
+    endIf
+
+    return CODES.SUCCESS
+endFunction
+
+int function Outfit_Current()
+    int code_return
+    
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+
+    p_outfit2_current.Put()
+    Utility.Wait(0.1)
+
     p_Enqueue("Member.Outfit")
 
     code_return = Enforce()
@@ -1351,6 +1391,10 @@ bool function Is_Paralyzed()
     return Exists() && Is_Immobile() && p_ref_immobile.Is_Paralyzed()
 endFunction
 
+bool function Is_In_Combat()
+    return Exists() && p_ref_actor.IsInCombat()
+endFunction
+
 function Summon(int distance = 120, int angle = 0)
     ACTORS.Move_To(p_ref_actor, CONSTS.ACTOR_PLAYER, distance, angle)
 endFunction
@@ -1438,6 +1482,12 @@ event On_u_0_1_5(Form form_data)
         if Is_Immobile()
             p_ref_immobile.u_0_1_5(p_DATA)
         endIf
+    endIf
+endEvent
+
+event On_u_0_2_1(Form form_data)
+    if Exists()
+
     endIf
 endEvent
 

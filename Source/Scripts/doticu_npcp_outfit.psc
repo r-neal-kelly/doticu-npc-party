@@ -61,7 +61,7 @@ function f_Register()
 endFunction
 
 ; Private Methods
-function p_Try_Stability(Actor ref_actor, int max_tries = 12, float float_interval = 0.1)
+function p_Wait_For_Stability(Actor ref_actor, int max_tries = 12, float float_interval = 0.1)
     int num_tries = 0
     int num_items = 0
 
@@ -145,7 +145,7 @@ function Get(Actor ref_actor)
     int num_items
 
     ; we wait until the actor's inventory shows some stability
-    p_Try_Stability(ref_actor)
+    p_Wait_For_Stability(ref_actor, 12, 0.1)
 
     ; we refresh the cache
     self.RemoveAllItems(CONSTS.ACTOR_PLAYER, false, true)
@@ -173,7 +173,7 @@ function Set(Actor ref_actor, bool do_force = false)
     ObjectReference ref_trash
 
     ; we wait until the actor's inventory shows some stability
-    p_Try_Stability(ref_actor)
+    p_Wait_For_Stability(ref_actor, 7, 0.7)
     
     ; if not forcing, there is no reason to re-oufit when neither the oufit container or the actor inventory has changed
     if !do_force && !p_Has_Changed(ref_actor)
@@ -218,7 +218,6 @@ function Set(Actor ref_actor, bool do_force = false)
     endWhile
 
     ; need to make sure that a clone doesn't get the same outfit, so send through until it matches the container
-    Utility.Wait(0.1)
     Set(ref_actor)
 endFunction
 
@@ -230,7 +229,7 @@ function Remove_Inventory(Actor ref_actor, ObjectReference ref_container = none)
     int num_items
 
     ; we wait until the actor's inventory shows some stability
-    p_Try_Stability(ref_actor)
+    p_Wait_For_Stability(ref_actor, 7, 0.7)
 
     ; copy inventory minus current outfit
     if ref_container

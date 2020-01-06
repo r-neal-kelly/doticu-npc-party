@@ -94,6 +94,12 @@ function Pack(Actor ref_actor, bool auto_create)
     GotoState("")
 endFunction
 
+function Outfit_Current(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    p_Enqueue("Outfit_Current", ref_actor, auto_create)
+    GotoState("")
+endFunction
+
 function Outfit_Member(Actor ref_actor, bool auto_create)
     GotoState("p_STATE_BUSY")
     p_Enqueue("Outfit_Member", ref_actor, auto_create)
@@ -578,6 +584,8 @@ event On_Queue_Commands(string str_message, Form form_actor, bool auto_create)
         PRIVATE.Unclone(ref_actor)
     elseIf str_message == "Pack"
         PRIVATE.Pack(ref_actor, auto_create)
+    elseIf str_message == "Outfit_Current"
+        PRIVATE.Outfit_Current(ref_actor, auto_create)
     elseIf str_message == "Outfit_Member"
         PRIVATE.Outfit_Member(ref_actor, auto_create)
     elseIf str_message == "Outfit_Settler"

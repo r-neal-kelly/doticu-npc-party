@@ -736,6 +736,10 @@ bool function Is_Styled_Archer()
     return Exists() && p_ref_member.Is_Styled_Archer()
 endFunction
 
+bool function Is_In_Combat()
+    return Exists() && p_ref_member.Is_In_Combat()
+endFunction
+
 bool function Is_Alive()
     return Exists() && ACTORS.Is_Alive(p_ref_actor)
 endFunction
@@ -796,12 +800,11 @@ endEvent
 
 event OnCombatStateChanged(Actor ref_target, int code_combat)
     if code_combat == CODES.COMBAT_NO
-        if !Is_Dead()
-            ACTORS.PLAYER.f_End_Combat()
-        endIf
+        
     elseIf code_combat == CODES.COMBAT_YES
         ACTORS.PLAYER.f_Begin_Combat()
     elseIf code_combat == CODES.COMBAT_SEARCHING
+
     endIf
 endEvent
 
