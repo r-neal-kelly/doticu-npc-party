@@ -316,6 +316,23 @@ int function p_Unmember()
     return CODES.SUCCESS
 endFunction
 
+int function p_Catch_Up()
+    if Get_Count() < 1
+        return CODES.HASNT_FOLLOWER
+    endIf
+
+    int num_mobile = Get_Count_Mobile()
+    if num_mobile < 1
+        return CODES.HASNT_MOBILE
+    endIf
+
+    if !p_tasklist.Execute(num_mobile, "doticu_npcp_followers_catch_up")
+        return CODES.FAILURE
+    endIf
+
+    return CODES.SUCCESS
+endFunction
+
 ; Public Methods
 int function Get_Max()
     return ALIASES.Get_Max()
@@ -476,38 +493,31 @@ function Sort_Followers()
 endFunction
 
 int function Summon_All(int distance = 120, int angle_start = 0, int angle_offset = 15)
-    int count_followers = Get_Count()
-    if count_followers < 1
+    int num_followers = Get_Count()
+    if num_followers < 1
         return CODES.HASNT_FOLLOWER
     endIf
 
+    Alias[] arr_aliases = ALIASES.Get_Used()
     int idx_aliases = 0
-    int max_aliases = Get_Max()
+    int num_aliases = arr_aliases.length
     doticu_npcp_follower ref_follower
 
-    if count_followers == 1
-        while idx_aliases < max_aliases
-            ref_follower = GetNthAlias(idx_aliases) as doticu_npcp_follower
-            if ref_follower.Exists()
-                ref_follower.Summon(distance, angle_start)
-                return CODES.SUCCESS
-            endIf
-            idx_aliases += 1
-        endWhile
+    if num_followers == 1
+        (arr_aliases[0] as doticu_npcp_follower).Summon(distance, angle_start)
+        return CODES.SUCCESS
     endIf
 
     int angle_even = angle_start
     int angle_odd = angle_start
-    while idx_aliases < max_aliases
-        ref_follower = GetNthAlias(idx_aliases) as doticu_npcp_follower
-        if ref_follower.Exists()
-            if idx_aliases % 2 == 0
-                angle_even += angle_offset
-                ref_follower.Summon(distance, angle_even)
-            else
-                angle_odd -= angle_offset
-                ref_follower.Summon(distance, angle_odd)
-            endIf
+    while idx_aliases < num_aliases
+        ref_follower = arr_aliases[idx_aliases] as doticu_npcp_follower
+        if idx_aliases % 2 == 0
+            angle_even += angle_offset
+            ref_follower.Summon(distance, angle_even)
+        else
+            angle_odd -= angle_offset
+            ref_follower.Summon(distance, angle_odd)
         endIf
         idx_aliases += 1
     endWhile
@@ -525,33 +535,30 @@ int function Summon_Mobile(int distance = 120, int angle_start = 0, int angle_of
         return CODES.HASNT_MOBILE
     endIf
 
+    Alias[] arr_aliases = ALIASES.Get_Used()
     int idx_aliases = 0
-    int max_aliases = Get_Max()
+    int num_aliases = arr_aliases.length
     doticu_npcp_follower ref_follower
 
     if count_mobile == 1
-        while idx_aliases < max_aliases
-            ref_follower = GetNthAlias(idx_aliases) as doticu_npcp_follower
-            if ref_follower.Is_Mobile()
-                ref_follower.Summon(distance, angle_start)
-                return CODES.SUCCESS
-            endIf
-            idx_aliases += 1
-        endWhile
+        (arr_aliases[0] as doticu_npcp_follower).Summon(distance, angle_start)
+        return CODES.SUCCESS
     endIf
 
     int angle_even = angle_start
     int angle_odd = angle_start
-    while idx_aliases < max_aliases
-        ref_follower = GetNthAlias(idx_aliases) as doticu_npcp_follower
+    int count_summon = 0
+    while idx_aliases < num_aliases
+        ref_follower = arr_aliases[idx_aliases] as doticu_npcp_follower
         if ref_follower.Is_Mobile()
-            if idx_aliases % 2 == 0
+            if count_summon % 2 == 0
                 angle_even += angle_offset
                 ref_follower.Summon(distance, angle_even)
             else
                 angle_odd -= angle_offset
                 ref_follower.Summon(distance, angle_odd)
             endIf
+            count_summon += 1
         endIf
         idx_aliases += 1
     endWhile
@@ -569,33 +576,30 @@ int function Summon_Immobile(int distance = 120, int angle_start = 0, int angle_
         return CODES.HASNT_IMMOBILE
     endIf
 
+    Alias[] arr_aliases = ALIASES.Get_Used()
     int idx_aliases = 0
-    int max_aliases = Get_Max()
+    int num_aliases = arr_aliases.length
     doticu_npcp_follower ref_follower
 
     if count_immobile == 1
-        while idx_aliases < max_aliases
-            ref_follower = GetNthAlias(idx_aliases) as doticu_npcp_follower
-            if ref_follower.Is_Immobile()
-                ref_follower.Summon(distance, angle_start)
-                return CODES.SUCCESS
-            endIf
-            idx_aliases += 1
-        endWhile
+        (arr_aliases[0] as doticu_npcp_follower).Summon(distance, angle_start)
+        return CODES.SUCCESS
     endIf
 
     int angle_even = angle_start
     int angle_odd = angle_start
-    while idx_aliases < max_aliases
-        ref_follower = GetNthAlias(idx_aliases) as doticu_npcp_follower
+    int count_summon = 0
+    while idx_aliases < num_aliases
+        ref_follower = arr_aliases[idx_aliases] as doticu_npcp_follower
         if ref_follower.Is_Immobile()
-            if idx_aliases % 2 == 0
+            if count_summon % 2 == 0
                 angle_even += angle_offset
                 ref_follower.Summon(distance, angle_even)
             else
                 angle_odd -= angle_offset
                 ref_follower.Summon(distance, angle_odd)
             endIf
+            count_summon += 1
         endIf
         idx_aliases += 1
     endWhile
@@ -685,6 +689,13 @@ int function Unmember()
     return code_return
 endFunction
 
+int function Catch_Up()
+    GotoState("p_STATE_BUSY")
+    int code_return = p_Catch_Up()
+    GotoState("")
+    return code_return
+endFunction
+
 ; Update Methods
 function u_0_1_1()
     while !p_Send_Followers("doticu_npcp_members_u_0_1_1")
@@ -721,5 +732,7 @@ state p_STATE_BUSY
     int function Unfollow()
     endFunction
     int function Unmember()
+    endFunction
+    int function Catch_Up()
     endFunction
 endState

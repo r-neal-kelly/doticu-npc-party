@@ -1399,12 +1399,12 @@ function Summon(int distance = 120, int angle = 0)
     ACTORS.Move_To(p_ref_actor, CONSTS.ACTOR_PLAYER, distance, angle)
 endFunction
 
-function Summon_Ahead()
-    Summon(120, 0)
+function Summon_Ahead(int distance = 120)
+    Summon(distance, 0)
 endFunction
 
-function Summon_Behind()
-    Summon(120, 180)
+function Summon_Behind(int distance = 120)
+    Summon(distance, 180)
 endFunction
 
 ; Update Methods

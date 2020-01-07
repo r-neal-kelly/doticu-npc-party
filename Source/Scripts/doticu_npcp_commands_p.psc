@@ -153,6 +153,10 @@ function Outfit(Actor ref_actor, int code_outfit, bool auto_create)
         return
     endIf
 
+    if code_outfit == CODES.OUTFIT_CURRENT
+        code_outfit = ref_member.Get_Outfit()
+    endIf
+
     NOTES.Outfit(ref_member.Outfit(code_outfit), str_name, code_outfit)
 endFunction
 

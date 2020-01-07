@@ -137,5 +137,18 @@ event On_Queue_Player(string str_message)
     p_queue_player.Dequeue()
 endEvent
 
+event OnCellAttach()
+    FOLLOWERS.Catch_Up()
+endEvent
+
+event OnCellDetached()
+    FOLLOWERS.Catch_Up()
+endEvent
+
+event OnCellLoad()
+    FOLLOWERS.Catch_Up()
+endEvent
+
 event OnActorAction(int code_action, Actor ref_activator, Form form_source, int slot)
+
 endEvent

@@ -213,13 +213,13 @@ function Vitalize(Actor ref_actor, int code_vitality)
 endFunction
 
 function Essentialize(Actor ref_actor)
-    ActorBase p_base_actor = Get_Base(ref_actor)
-    p_base_actor.SetEssential(true)
+    ActorBase base_actor = Get_Base(ref_actor)
+    base_actor.SetEssential(true)
 endFunction
 
 function Unessentialize(Actor ref_actor)
-    ActorBase p_base_actor = Get_Base(ref_actor)
-    p_base_actor.SetEssential(false)
+    ActorBase base_actor = Get_Base(ref_actor)
+    base_actor.SetEssential(false)
 endFunction
 
 function Kill(Actor ref_actor)
@@ -320,6 +320,30 @@ function Move_To(ObjectReference ref_subject, ObjectReference ref_object, int di
 
     if !has_enabled_ai
         ref_actor.EnableAI(false)
+    endIf
+endFunction
+
+bool function Is_Near_Player(Actor ref_actor, int max_distance = 1024)
+    Actor ref_player = CONSTS.ACTOR_PLAYER
+    Cell cell_player = ref_player.GetParentCell()
+    Cell cell_actor = ref_actor.GetParentCell()
+
+    if cell_player && cell_player.IsInterior() || cell_actor && cell_actor.IsInterior()
+        if cell_player == cell_actor
+            if ref_player.GetDistance(ref_actor) > max_distance
+                return false
+            else
+                return true
+            endIf
+        else
+            return false
+        endIf
+    else
+        if ref_player.GetDistance(ref_actor) > max_distance
+            return false
+        else
+            return true
+        endIf
     endIf
 endFunction
 

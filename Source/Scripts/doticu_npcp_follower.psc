@@ -159,6 +159,7 @@ function f_Register()
     RegisterForModEvent("doticu_npcp_followers_unfollow", "On_Followers_Unfollow")
     RegisterForModEvent("doticu_npcp_followers_unmember", "On_Followers_Unmember")
     RegisterForModEvent("doticu_npcp_followers_resurrect", "On_Followers_Resurrect")
+    RegisterForModEvent("doticu_npcp_followers_catch_up", "On_Followers_Catch_Up")
     RegisterForModEvent("doticu_npcp_members_u_0_1_1", "On_u_0_1_1")
     RegisterForModEvent("doticu_npcp_members_u_0_1_4", "On_u_0_1_4")
 
@@ -664,6 +665,27 @@ int function Relevel()
     return CODES.SUCCESS
 endFunction
 
+int function Catch_Up()
+    int code_return
+
+    if !Exists()
+        return CODES.ISNT_FOLLOWER
+    endIf
+
+    f_QUEUE.Pause()
+    if !ACTORS.Is_Near_Player(p_ref_actor)
+        Summon_Behind()
+    endIf
+    f_QUEUE.Unpause()
+
+    code_return = Enforce()
+    if code_return < 0
+        return code_return
+    endIf
+
+    return CODES.SUCCESS
+endFunction
+
 int function Unfollow()
     return p_ref_member.Unfollow()
 endFunction
@@ -809,6 +831,7 @@ event OnCombatStateChanged(Actor ref_target, int code_combat)
 endEvent
 
 ; need to add the catch up function, when player pulls out their weapon. but make it parallel this time.
+; it's RegisterForActorAction
 
 event On_Followers_Enforce(Form form_tasklist)
     if Exists()
@@ -876,6 +899,13 @@ endEvent
 event On_Followers_Unmember(Form form_tasklist)
     if Exists()
         Unmember()
+        (form_tasklist as doticu_npcp_tasklist).Detask()
+    endIf
+endEvent
+
+event On_Followers_Catch_Up(Form form_tasklist)
+    if Exists()
+        Catch_Up()
         (form_tasklist as doticu_npcp_tasklist).Detask()
     endIf
 endEvent
