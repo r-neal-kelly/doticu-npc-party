@@ -7,13 +7,6 @@ doticu_npcp_codes property CODES hidden
     endFunction
 endProperty
 
-; Public Constants
-int property MAX_ALIASES hidden
-    int function Get()
-        return GetNumAliases()
-    endFunction
-endProperty
-
 ; Private Constants
 doticu_npcp_data    p_DATA          =  none
 int                 p_MAX_ALIASES   =    -1
@@ -25,6 +18,8 @@ int                 p_size_ids_free =    -1
 int[]               p_arr_ids_used  =  none
 int[]               p_arr_ids_free  =  none
 bool                p_is_used_dirty = false
+int                 p_size_actors   =    -1
+Form[]              p_arr_actors    =  none
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
@@ -33,9 +28,11 @@ function f_Create(doticu_npcp_data DATA)
 
     p_is_created = true
     p_Create_ID_Arrays()
+    p_Create_Actor_Array()
 endFunction
 
 function f_Destroy()
+    p_Destroy_Actor_Array()
     p_Destroy_ID_Arrays()
     p_is_created = false
 endFunction
@@ -57,6 +54,7 @@ function p_Create_ID_Arrays()
     p_size_ids_free = p_MAX_ALIASES
     p_arr_ids_used = Utility.CreateIntArray(p_MAX_ALIASES, -1)
     p_arr_ids_free = Utility.CreateIntArray(p_MAX_ALIASES, -1)
+    p_is_used_dirty = false
     
     int idx_ids_free = 0
     int val_ids_free = p_MAX_ALIASES - 1
@@ -68,6 +66,7 @@ function p_Create_ID_Arrays()
 endFunction
 
 function p_Destroy_ID_Arrays()
+    p_is_used_dirty = false
     p_arr_ids_free = none
     p_arr_ids_used = none
     p_size_ids_free = -1
@@ -154,6 +153,11 @@ function p_Sort_Used(bool do_force = false)
 endFunction
 
 string[] function p_Get_Used_Names_IDs()
+    ; we need to sort our members, and the only way to do that in Papyrus
+    ; is to create a looping sort, which is extremely slow. So we outsource.
+    ; And without any means to define the behavior of the outsourced func,
+    ; we resort to sorting a string, which can be modified in papyrus quickly
+
     string[] arr_names = Utility.CreateStringArray(p_size_ids_used, "")
     int idx_alias
     string str_idx
@@ -181,6 +185,62 @@ string[] function p_Get_Used_Names_IDs()
     return arr_names
 endFunction
 
+function p_Create_Actor_Array()
+    p_size_actors = 0
+    p_arr_actors = Utility.CreateFormArray(p_MAX_ALIASES, none)
+endFunction
+
+function p_Destroy_Actor_Array()
+    p_arr_actors = none
+    p_size_actors = -1
+endFunction
+
+int function p_Push_Actor(Actor ref_actor)
+    if !ref_actor
+        return CODES.ISNT_ACTOR
+    endIf
+
+    if p_size_actors >= p_arr_actors.length
+        return CODES.HASNT_SPACE
+    endIf
+
+    p_arr_actors[p_size_actors] = ref_actor as Form
+    p_size_actors += 1
+
+    return CODES.SUCCESS
+endFunction
+
+int function p_Remove_Actor(Actor ref_actor)
+    if !ref_actor
+        return CODES.ISNT_ACTOR
+    endIf
+
+    int idx_actor = p_arr_actors.Find(ref_actor as Form)
+    if idx_actor < 0
+        return CODES.HASNT_ACTOR
+    endIf
+
+    p_size_actors -= 1
+    if idx_actor != p_size_actors
+        ; id found was not last element, so defrag array
+        p_arr_actors[idx_actor] = p_arr_actors[p_size_actors]
+    endIf
+    p_arr_actors[p_size_actors] = none
+
+    return CODES.SUCCESS
+endFunction
+
+bool function p_Has_Actor(Actor ref_actor)
+    ; this is why we have p_arr_actors, so we can outsource
+    ; lookup in C++. Papyrus loops are extremely slow!
+
+    if ref_actor
+        return p_arr_actors.Find(ref_actor as Form) > -1
+    else
+        return false
+    endIf
+endFunction
+
 Actor function p_Get_Actor(int id_alias)
     ReferenceAlias ref_alias = f_Get_Alias(id_alias)
     if !ref_alias
@@ -190,26 +250,6 @@ Actor function p_Get_Actor(int id_alias)
     endIf
 endFunction
 
-bool function p_Has_Actor(Actor ref_actor)
-    if !ref_actor
-        return false
-    endIf
-
-    int idx_ids_used = 0
-    int idx_alias
-    ReferenceAlias ref_alias
-    while idx_ids_used < p_size_ids_used
-        idx_alias = p_arr_ids_used[idx_ids_used]
-        ref_alias = GetNthAlias(idx_alias) as ReferenceAlias
-        if ref_alias && ref_alias.GetActorReference() == ref_actor
-            return true
-        endIf
-        idx_ids_used += 1
-    endWhile
-
-    return false
-endFunction
-
 ; Public Methods
 int function Create_Alias(Actor ref_actor)
     int code_return
@@ -217,9 +257,11 @@ int function Create_Alias(Actor ref_actor)
     if !ref_actor
         return CODES.ISNT_ACTOR
     endIf
+
     if p_Has_Actor(ref_actor)
         return CODES.HAS_ACTOR
     endIf
+
     if Is_Full()
         return CODES.HASNT_SPACE
     endIf
@@ -230,8 +272,13 @@ int function Create_Alias(Actor ref_actor)
     endIf
     int id_alias = code_return
 
-    f_Get_Alias(id_alias).ForceRefTo(ref_actor)
+    code_return = p_Push_Actor(ref_actor)
+    if code_return < 0
+        return code_return
+    endIf
 
+    f_Get_Alias(id_alias).ForceRefTo(ref_actor)
+    
     return id_alias
 endFunction
 
@@ -241,11 +288,17 @@ int function Destroy_Alias(int id_alias, Actor ref_actor)
     if !ref_actor
         return CODES.ISNT_ACTOR
     endIf
+
     if !Has_Alias(id_alias, ref_actor)
         return CODES.HASNT_ALIAS
     endIf
 
     f_Get_Alias(id_alias).Clear()
+
+    code_return = p_Remove_Actor(ref_actor)
+    if code_return < 0
+        return code_return
+    endIf
 
     code_return = p_Destroy_ID(id_alias)
     if code_return < 0
@@ -415,3 +468,15 @@ endFunction
 state p_STATE_BUSY
     ; I think we will need to protect operations like sorting, just in case
 endState
+
+; Events
+event On_Load_Mod()
+    ;/if !p_arr_actors
+        p_Create_Actor_Array()
+        int idx_used = 0
+        while idx_used < p_size_ids_used
+            p_Push_Actor((GetNthAlias(p_arr_ids_used[idx_used]) as ReferenceAlias).GetActorReference())
+            idx_used += 1
+        endWhile
+    endIf/;
+endEvent

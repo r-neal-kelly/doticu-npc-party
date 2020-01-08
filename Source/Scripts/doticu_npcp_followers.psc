@@ -16,6 +16,11 @@ doticu_npcp_tasklists property TASKLISTS hidden
         return p_DATA.MODS.FUNCS.TASKLISTS
     endFunction
 endProperty
+doticu_npcp_actors property ACTORS hidden
+    doticu_npcp_actors function Get()
+        return p_DATA.MODS.FUNCS.ACTORS
+    endFunction
+endProperty
 doticu_npcp_members property MEMBERS hidden
     doticu_npcp_members function Get()
         return p_DATA.MODS.MEMBERS
@@ -68,6 +73,10 @@ int function f_Create_Follower(Actor ref_actor)
 
     if !ref_actor
         return CODES.ISNT_ACTOR
+    endIf
+
+    if ACTORS.Has_Token(ref_actor, CONSTS.TOKEN_FOLLOWER)
+        return CODES.HAS_FOLLOWER
     endIf
 
     if ALIASES.Is_Full()
