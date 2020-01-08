@@ -418,11 +418,6 @@ function Unpause()
     GotoState("")
 endFunction
 
-; Update Methods
-function u_0_1_4(doticu_npcp_data DATA)
-    p_DATA = DATA
-endFunction
-
 ; Private States
 state p_STATE_RUSH
     function Flush()

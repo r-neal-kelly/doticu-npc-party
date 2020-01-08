@@ -59,7 +59,7 @@ endFunction
 function f_Register()
     ALIASES.f_Register()
 
-    Alias[] arr_aliases = ALIASES.Get_Used()
+    Alias[] arr_aliases = ALIASES.Get_Aliases()
     int idx_aliases = 0
     int num_aliases = arr_aliases.length
     while idx_aliases < num_aliases
@@ -471,7 +471,7 @@ int function Get_Count_Unsneak()
 endFunction
 
 bool function Are_In_Combat()
-    Alias[] arr_aliases = ALIASES.Get_Used()
+    Alias[] arr_aliases = ALIASES.Get_Aliases()
     int idx_aliases = 0
     int num_aliases = arr_aliases.length
 
@@ -493,12 +493,12 @@ doticu_npcp_follower function Get_Follower(Actor ref_actor)
     return ALIASES.Get_Alias(p_Get_Alias_ID(ref_actor), ref_actor) as doticu_npcp_follower
 endFunction
 
-Alias[] function Get_Followers_Sorted(int idx_from = 0, int idx_to_ex = -1)
-    return ALIASES.Get_Used_Sorted(idx_from, idx_to_ex)
+Alias[] function Get_Followers(int idx_from = 0, int idx_to_ex = -1)
+    return ALIASES.Get_Aliases(idx_from, idx_to_ex)
 endFunction
 
 function Sort_Followers()
-    ALIASES.Sort_Used()
+    ALIASES.Sort_Aliases()
 endFunction
 
 int function Summon_All(int distance = 120, int angle_start = 0, int angle_offset = 17)
@@ -507,7 +507,7 @@ int function Summon_All(int distance = 120, int angle_start = 0, int angle_offse
         return CODES.HASNT_FOLLOWER
     endIf
 
-    Alias[] arr_aliases = ALIASES.Get_Used()
+    Alias[] arr_aliases = ALIASES.Get_Aliases()
     int idx_aliases = 0
     int num_aliases = arr_aliases.length
     doticu_npcp_follower ref_follower
@@ -544,7 +544,7 @@ int function Summon_Mobile(int distance = 120, int angle_start = 0, int angle_of
         return CODES.HASNT_MOBILE
     endIf
 
-    Alias[] arr_aliases = ALIASES.Get_Used()
+    Alias[] arr_aliases = ALIASES.Get_Aliases()
     int idx_aliases = 0
     int num_aliases = arr_aliases.length
     doticu_npcp_follower ref_follower
@@ -585,7 +585,7 @@ int function Summon_Immobile(int distance = 120, int angle_start = 0, int angle_
         return CODES.HASNT_IMMOBILE
     endIf
 
-    Alias[] arr_aliases = ALIASES.Get_Used()
+    Alias[] arr_aliases = ALIASES.Get_Aliases()
     int idx_aliases = 0
     int num_aliases = arr_aliases.length
     doticu_npcp_follower ref_follower
@@ -706,18 +706,8 @@ int function Catch_Up()
 endFunction
 
 ; Update Methods
-function u_0_1_1()
-    while !p_Send_Followers("doticu_npcp_members_u_0_1_1")
-        Utility.Wait(0.25)
-    endWhile
-endFunction
-
-function u_0_1_4(doticu_npcp_data DATA)
-    p_DATA = DATA
-    p_tasklist = TASKLISTS.Create()
-    while !p_Send_Followers("doticu_npcp_members_u_0_1_4")
-        Utility.Wait(0.25)
-    endWhile
+function u_0_2_1(doticu_npcp_data DATA)
+    ; as slow as it may be, use a loop so that loading the game is quicker
 endFunction
 
 ; State

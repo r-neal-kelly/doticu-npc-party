@@ -35,6 +35,17 @@ endProperty
 ; Private Constants
 doticu_npcp_data        p_DATA              =  none
 
+int property p_DISPLAY_DISTANCE
+    int function Get()
+        return 120
+    endFunction
+endProperty
+int property p_DISPLAY_SPREAD
+    int function Get()
+        return 24
+    endFunction
+endProperty
+
 ; Private Variables
 bool                    p_is_created        = false
 bool                    p_are_displayed     = false
@@ -71,7 +82,7 @@ endFunction
 function f_Register()
     ALIASES.f_Register()
 
-    Alias[] arr_aliases = ALIASES.Get_Used(); gets only used aliases. might want to change the name!
+    Alias[] arr_aliases = ALIASES.Get_Aliases()
     int idx_aliases = 0
     int num_aliases = arr_aliases.length
     while idx_aliases < num_aliases
@@ -252,17 +263,17 @@ doticu_npcp_immobile function Get_Immobile(Actor ref_actor)
     endIf
 endFunction
 
-Alias[] function Get_Members_Sorted(int idx_from = 0, int idx_to_ex = -1)
-    return ALIASES.Get_Used_Sorted(idx_from, idx_to_ex)
+Alias[] function Get_Members(int idx_from = 0, int idx_to_ex = -1)
+    return ALIASES.Get_Aliases(idx_from, idx_to_ex)
 endFunction
 
 function Sort_Members()
-    ALIASES.Sort_Used()
+    ALIASES.Sort_Aliases()
 endFunction
 
 function Enforce()
     doticu_npcp_member ref_member
-    Alias[] arr_aliases = ALIASES.Get_Used()
+    Alias[] arr_aliases = ALIASES.Get_Aliases()
     int idx_arr = 0
     while idx_arr < arr_aliases.length
         ref_member = arr_aliases[idx_arr] as doticu_npcp_member
@@ -318,13 +329,13 @@ int function Display_Start(Actor ref_actor, int num_display)
         return CODES.OUT_OF_BOUNDS
     endIf
 
-    int idx_used = ALIASES.Get_Used_Idx(p_Get_Alias_ID(ref_actor))
-    if idx_used < 0
-        idx_used = 0
+    int idx_alias = ALIASES.Get_Alias_Idx(p_Get_Alias_ID(ref_actor))
+    if idx_alias < 0
+        idx_alias = 0
     endIf
 
     p_are_displayed = true
-    p_idx_display = idx_used
+    p_idx_display = idx_alias
     p_num_display = num_display
 
     p_marker_display.MoveTo(CONSTS.ACTOR_PLAYER)
@@ -340,8 +351,8 @@ int function Display_Stop()
         return CODES.ISNT_DISPLAY
     endIf
 
-    Alias[] arr_prev = ALIASES.Get_Prev_Used(p_idx_display, p_num_display)
-    Alias[] arr_next = ALIASES.Get_Next_Used(p_idx_display, p_num_display)
+    Alias[] arr_prev = ALIASES.Get_Prev_Aliases(p_idx_display, p_num_display)
+    Alias[] arr_next = ALIASES.Get_Next_Aliases(p_idx_display, p_num_display)
 
     p_Undisplay_Aliases(arr_prev)
     p_Undisplay_Aliases(arr_next)
@@ -360,13 +371,13 @@ int function Display_Next()
         return CODES.ISNT_DISPLAY
     endIf
 
-    Alias[] arr_prev = ALIASES.Get_Prev_Used(p_idx_display, p_num_display)
-    Alias[] arr_next = ALIASES.Get_Next_Used(p_idx_display, p_num_display)
+    Alias[] arr_prev = ALIASES.Get_Prev_Aliases(p_idx_display, p_num_display)
+    Alias[] arr_next = ALIASES.Get_Next_Aliases(p_idx_display, p_num_display)
     
     p_Undisplay_Aliases(arr_prev)
-    p_Display_Aliases(arr_next, 120, 22)
+    p_Display_Aliases(arr_next, p_DISPLAY_DISTANCE, p_DISPLAY_SPREAD)
 
-    p_idx_display = ALIASES.Get_Relative_Used_Idx(p_idx_display + p_num_display)
+    p_idx_display = ALIASES.Get_Relative_Alias_Idx(p_idx_display + p_num_display)
 
     return CODES.SUCCESS
 endFunction
@@ -376,13 +387,13 @@ int function Display_Previous()
         return CODES.ISNT_DISPLAY
     endIf
 
-    p_idx_display = ALIASES.Get_Relative_Used_Idx(p_idx_display - p_num_display)
+    p_idx_display = ALIASES.Get_Relative_Alias_Idx(p_idx_display - p_num_display)
 
-    Alias[] arr_prev = ALIASES.Get_Prev_Used(p_idx_display, p_num_display)
-    Alias[] arr_next = ALIASES.Get_Next_Used(p_idx_display, p_num_display)
+    Alias[] arr_prev = ALIASES.Get_Prev_Aliases(p_idx_display, p_num_display)
+    Alias[] arr_next = ALIASES.Get_Next_Aliases(p_idx_display, p_num_display)
     
     p_Undisplay_Aliases(arr_next)
-    p_Display_Aliases(arr_prev, 120, 22)
+    p_Display_Aliases(arr_prev, p_DISPLAY_DISTANCE, p_DISPLAY_SPREAD)
 
     return CODES.SUCCESS
 endFunction
@@ -423,18 +434,8 @@ function p_Undisplay_Aliases(Alias[] arr_aliases)
 endFunction
 
 ; Update Methods
-function u_0_1_4(doticu_npcp_data DATA)
-    p_DATA = DATA
-    p_tasklist = TASKLISTS.Create()
-    while !p_Send_Members("doticu_npcp_members_u_0_1_4")
-        Utility.Wait(0.25)
-    endWhile
-endFunction
-
-function u_0_1_5(doticu_npcp_data DATA)
-    while !p_Send_Members("doticu_npcp_members_u_0_1_5")
-        Utility.Wait(0.25)
-    endWhile
+function u_0_2_1(doticu_npcp_data DATA)
+    ; as slow as it may be, use a loop so that loading the game is quicker
 endFunction
 
 ; Private States

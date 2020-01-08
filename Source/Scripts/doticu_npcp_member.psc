@@ -90,6 +90,7 @@ int                     p_prev_vitality         =    -1
 doticu_npcp_outfit      p_prev_outfit2_member   =  none
 Faction[]               p_prev_factions         =  none
 int[]                   p_prev_faction_ranks    =  none
+Faction                 p_prev_faction_crime    =  none
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA, int id_alias, bool is_clone)
@@ -120,7 +121,7 @@ function p_Create(doticu_npcp_data DATA, int id_alias, bool is_clone)
     p_ref_actor.EvaluatePackage()
 
     p_Create_Queues()
-    p_Register_Queues()
+    p_Register_Queues(); currently needed because we Enqueue in this func
 
     if p_is_clone
         p_Enqueue("Member.Greet")
@@ -169,6 +170,7 @@ function p_Destroy()
     p_Destroy_Containers()
     p_Destroy_Queues()
 
+    p_prev_faction_crime = none
     p_prev_faction_ranks = none
     p_prev_factions = none
     p_prev_outfit2_member = none
@@ -201,10 +203,9 @@ endFunction
 function f_Register()
     ; registering mod events is global for each script on an object, and
     ; further, works for handlers labeled as function as well as event.
+
     RegisterForModEvent("doticu_npcp_load_mod", "On_Load_Mod")
     RegisterForModEvent("doticu_npcp_members_unmember", "On_Members_Unmember")
-    RegisterForModEvent("doticu_npcp_members_u_0_1_4", "On_u_0_1_4")
-    RegisterForModEvent("doticu_npcp_members_u_0_1_5", "On_u_0_1_5")
 
     p_Register_Queues()
 
@@ -310,15 +311,16 @@ function p_Backup()
     p_prev_vitality = ACTORS.Get_Vitality(p_ref_actor)
     p_prev_factions = ACTORS.Get_Factions(p_ref_actor)
     p_prev_faction_ranks = ACTORS.Get_Faction_Ranks(p_ref_actor, p_prev_factions)
+    p_prev_faction_crime = p_ref_actor.GetCrimeFaction()
 endFunction
 
 function p_Restore()
     ACTORS.Set_Factions(p_ref_actor, p_prev_factions, p_prev_faction_ranks)
+    p_ref_actor.SetCrimeFaction(p_prev_faction_crime)
 
     p_prev_outfit2_member.Set(p_ref_actor); instead of this, we might set the outfit to GetOutfit on base actor.
 
     ACTORS.Vitalize(p_ref_actor, p_prev_vitality)
-    ; put in current follower faction if they were in there
 endFunction
 
 function p_Token()
@@ -1448,88 +1450,8 @@ function Summon_Behind(int distance = 120)
 endFunction
 
 ; Update Methods
-event On_u_0_1_0()
-    p_outfit_member = CONSTS.FORMLIST_OUTFITS.GetAt(p_id_alias) as Outfit
-    if Exists()
-        p_Destroy_Outfits()
-        p_Create_Outfits()
-    endIf
-endEvent
-
-event On_u_0_1_1()
-    p_Create_Queues()
-    p_outfit2_member.MoveTo(CONSTS.MARKER_STORAGE)
-    p_prev_outfit2_member.MoveTo(CONSTS.MARKER_STORAGE)
-endEvent
-
-event On_u_0_1_2()
-    if Exists()
-        VARS.auto_outfit = true
-        p_Destroy_Outfits()
-        p_Create_Outfits()
-    endIf
-endEvent
-
-event On_u_0_1_3()
-    if Exists()
-        if !p_queue_member
-            p_Create_Queues()
-        endIf
-        if !p_container2_pack
-            p_Create_Containers()
-        endIf
-        if !p_outfit2_member
-            p_Create_Outfits()
-        endIf
-    endIf
-endEvent
-
-event On_u_0_1_4(Form form_data)
-    if Exists()
-        p_queue_member.u_0_1_4(p_DATA)
-
-        p_container2_pack.u_0_1_4(p_DATA)
-
-        p_outfit2_member.u_0_1_4(p_DATA)
-        p_outfit2_settler.u_0_1_4(p_DATA)
-        p_outfit2_thrall.u_0_1_4(p_DATA)
-        p_outfit2_immobile.u_0_1_4(p_DATA)
-        p_outfit2_follower.u_0_1_4(p_DATA)
-        p_prev_outfit2_member.u_0_1_4(p_DATA)
-    endIf
-
-    p_ref_settler.u_0_1_4(p_DATA)
-    p_ref_immobile.u_0_1_4(p_DATA)
-endEvent
-
-event On_u_0_1_5(Form form_data)
-    if Exists()
-        p_ref_settler = (self as ReferenceAlias) as doticu_npcp_settler
-        p_ref_immobile = (self as ReferenceAlias) as doticu_npcp_immobile
-        p_outfit_member = CONSTS.FORMLIST_OUTFITS.GetAt(p_id_alias) as Outfit
-
-        p_outfit2_member.u_0_1_5(p_DATA)
-        p_outfit2_settler.u_0_1_5(p_DATA)
-        p_outfit2_thrall.u_0_1_5(p_DATA)
-        p_outfit2_immobile.u_0_1_5(p_DATA)
-        p_outfit2_follower.u_0_1_5(p_DATA)
-        p_prev_outfit2_member.u_0_1_5(p_DATA)
-
-        if Is_Settler()
-            p_ref_settler.u_0_1_5(p_DATA)
-        endIf
-
-        if Is_Immobile()
-            p_ref_immobile.u_0_1_5(p_DATA)
-        endIf
-    endIf
-endEvent
-
-event On_u_0_2_1(Form form_data)
-    if Exists()
-
-    endIf
-endEvent
+function u_0_2_1(doticu_npcp_data DATA)
+endFunction
 
 ; Private States
 state p_STATE_BUSY
@@ -1620,7 +1542,7 @@ event On_Load_Mod()
     if Exists()
         p_Rename_Containers(Get_Name())
         p_Rename_Outfits(Get_Name())
-        Enforce()
+        Enforce(); this might be overkill?
     endIf
 endEvent
 

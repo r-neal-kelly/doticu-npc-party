@@ -149,6 +149,7 @@ endFunction
 function f_Register()
     ; registering mod events is global for each script on an object, and
     ; further, works for handlers labeled as function as well as event.
+    
     RegisterForModEvent("doticu_npcp_followers_enforce", "On_Followers_Enforce")
     RegisterForModEvent("doticu_npcp_followers_settle", "On_Followers_Settle")
     RegisterForModEvent("doticu_npcp_followers_unsettle", "On_Followers_Unsettle")
@@ -160,8 +161,6 @@ function f_Register()
     RegisterForModEvent("doticu_npcp_followers_unmember", "On_Followers_Unmember")
     RegisterForModEvent("doticu_npcp_followers_resurrect", "On_Followers_Resurrect")
     RegisterForModEvent("doticu_npcp_followers_catch_up", "On_Followers_Catch_Up")
-    RegisterForModEvent("doticu_npcp_members_u_0_1_1", "On_u_0_1_1")
-    RegisterForModEvent("doticu_npcp_members_u_0_1_4", "On_u_0_1_4")
 
     p_Register_Queues()
 endFunction
@@ -787,12 +786,8 @@ function Resurrect()
 endFunction
 
 ; Update Methods
-event On_u_0_1_1()
-endEvent
-
-event On_u_0_1_4(Form form_data)
-    p_DATA = form_data as doticu_npcp_data
-endEvent
+function u_0_2_1(doticu_npcp_data DATA)
+endFunction
 
 ; Events
 event On_Queue_Follower(string str_message)

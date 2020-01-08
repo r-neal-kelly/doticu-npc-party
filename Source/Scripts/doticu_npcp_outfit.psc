@@ -259,15 +259,6 @@ function Unset(Actor ref_actor)
     ref_container_temp.RemoveAllItems(self, false, true)
 endFunction
 
-; Update Methods
-function u_0_1_4(doticu_npcp_data DATA)
-    p_DATA = DATA
-endFunction
-
-function u_0_1_5(doticu_npcp_data DATA)
-    p_DATA = DATA
-endFunction
-
 ; Events
 event OnItemAdded(Form form_item, int count_item, ObjectReference ref_item, ObjectReference ref_container_source)
     if self.GetNumItems() >= p_MAX_ITEMS

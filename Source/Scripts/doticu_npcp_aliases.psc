@@ -129,7 +129,7 @@ function p_Sort_Used(bool do_force = false)
 
     ; we should do the sorting in another thread, but only one thread.
     
-    string[] arr_names = p_Get_Used_Names_IDs(); we could use an if chain with sorting algorithm
+    string[] arr_names = p_Get_Used_Names_IDs(); we could use an if chain with sorting algorithm and funcs
     int [] arr_ids = Utility.CreateIntArray(p_MAX_ALIASES, -1)
     string str_name
     int len_str_name
@@ -320,27 +320,21 @@ ReferenceAlias function Get_Alias(int id_alias, Actor ref_actor)
     endIf
 endFunction
 
-Alias function Get_Used_Alias(int idx_used)
-    if idx_used < 0 || idx_used >= p_size_ids_used
-        return none
-    else
-        return GetNthAlias(p_arr_ids_used[idx_used])
-    endIf
-endFunction
+Alias[] function Get_Aliases(int idx_from = 0, int idx_to_ex = -1)
+    p_Sort_Used()
 
-Alias[] function Get_Used(int idx_from = 0, int idx_to_ex = -1)
     if idx_from < 0
         idx_from = 0
     endIf
+
     if idx_to_ex > p_size_ids_used || idx_to_ex < 0
         idx_to_ex = p_size_ids_used
     endIf
+
     int size_arr_aliases = idx_to_ex - idx_from
     if size_arr_aliases <= 0
         return Utility.CreateAliasArray(0, none)
     endIf
-
-    ; should probably used PapyrusUtil's funcs to copy, it's native and thus faster
 
     Alias[] arr_aliases = Utility.CreateAliasArray(size_arr_aliases, none)
     
@@ -355,12 +349,7 @@ Alias[] function Get_Used(int idx_from = 0, int idx_to_ex = -1)
     return arr_aliases
 endFunction
 
-Alias[] function Get_Used_Sorted(int idx_from = 0, int idx_to_ex = -1)
-    p_Sort_Used(false)
-    return Get_Used(idx_from, idx_to_ex)
-endFunction
-
-Alias[] function Get_Next_Used(int idx_in, int num_next)
+Alias[] function Get_Next_Aliases(int idx_in, int num_next)
     ; returns the next number of aliases, from low to high, including the idx_start
 
     if idx_in < 0
@@ -392,7 +381,7 @@ Alias[] function Get_Next_Used(int idx_in, int num_next)
     return arr_copy
 endFunction
 
-Alias[] function Get_Prev_Used(int idx_ex, int num_prev)
+Alias[] function Get_Prev_Aliases(int idx_ex, int num_prev)
     ; returns the previous number of aliases, from low to high, excluding end
 
     if idx_ex < 0
@@ -427,8 +416,9 @@ Alias[] function Get_Prev_Used(int idx_ex, int num_prev)
     return arr_copy
 endFunction
 
-int function Get_Used_Idx(int id_alias)
+int function Get_Alias_Idx(int id_alias)
     int idx_used = p_arr_ids_used.Find(id_alias)
+
     if idx_used > -1 && idx_used < p_size_ids_used
         return idx_used
     else
@@ -436,7 +426,9 @@ int function Get_Used_Idx(int id_alias)
     endIf
 endFunction
 
-int function Get_Relative_Used_Idx(int idx_used)
+int function Get_Relative_Alias_Idx(int idx_alias)
+    int idx_used = idx_alias
+    
     if idx_used < 0
         idx_used = p_size_ids_used + idx_used
     elseIf idx_used >= p_size_ids_used
@@ -446,10 +438,7 @@ int function Get_Relative_Used_Idx(int idx_used)
     return idx_used
 endFunction
 
-function Sort_Used()
-    ; the idea here is that the user of the aliases knows better when to sort than this module does
-    ; we could pass an alogrithm argument.
-    ; also, we could just set the flag as dirty
+function Sort_Aliases(int code_algorithm = -1)
     p_Sort_Used(true)
 endFunction
 
@@ -468,15 +457,3 @@ endFunction
 state p_STATE_BUSY
     ; I think we will need to protect operations like sorting, just in case
 endState
-
-; Events
-event On_Load_Mod()
-    ;/if !p_arr_actors
-        p_Create_Actor_Array()
-        int idx_used = 0
-        while idx_used < p_size_ids_used
-            p_Push_Actor((GetNthAlias(p_arr_ids_used[idx_used]) as ReferenceAlias).GetActorReference())
-            idx_used += 1
-        endWhile
-    endIf/;
-endEvent

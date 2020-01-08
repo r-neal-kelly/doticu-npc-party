@@ -137,7 +137,7 @@ auto state p_STATE_FOLLOWERS
 
         int idx = 0
         int cursor = p_HEADERS_PER_PAGE
-        p_arr_aliases = FOLLOWERS.Get_Followers_Sorted()
+        p_arr_aliases = FOLLOWERS.Get_Followers()
         while idx < p_arr_aliases.length
             doticu_npcp_follower ref_follower = p_arr_aliases[idx] as doticu_npcp_follower
 

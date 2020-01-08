@@ -177,7 +177,7 @@ auto state p_STATE_MEMBERS
         int idx_from = p_MEMBERS_PER_PAGE * p_curr_page
         int idx_to_ex = idx_from + p_MEMBERS_PER_PAGE
         int idx = 0
-        p_arr_aliases = MEMBERS.Get_Members_Sorted(idx_from, idx_to_ex)
+        p_arr_aliases = MEMBERS.Get_Members(idx_from, idx_to_ex)
         while idx < p_arr_aliases.length
             doticu_npcp_member ref_member = p_arr_aliases[idx] as doticu_npcp_member
             MCM.AddMenuOption(ref_member.Get_Name(), "...")

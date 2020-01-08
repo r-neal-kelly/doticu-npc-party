@@ -149,14 +149,6 @@ int function Resettle()
 endFunction
 
 ; Update Methods
-function u_0_1_4(doticu_npcp_data DATA)
-    p_DATA = DATA
-endFunction
-
-function u_0_1_5(doticu_npcp_data DATA)
-    p_ref_member = (self as ReferenceAlias) as doticu_npcp_member
-    p_ref_marker = CONSTS.FORMLIST_MARKERS_SETTLER.GetAt(p_id_alias) as ObjectReference
-endFunction
 
 ; Events
 event On_Queue_Settler(string str_message)

@@ -112,15 +112,6 @@ function Remove_Perk(Perk perk_to_remove)
     ACTOR_PLAYER.RemovePerk(perk_to_remove)
 endFunction
 
-; Update Methods
-function u_0_1_1()
-endFunction
-
-function u_0_1_4(doticu_npcp_data DATA)
-    p_DATA = DATA
-    p_queue_player.u_0_1_4(p_DATA)
-endFunction
-
 ; Events
 event OnPlayerLoadGame()
     MAIN.f_Load_Mod()

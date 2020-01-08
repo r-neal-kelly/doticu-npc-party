@@ -202,13 +202,6 @@ endFunction
 ; maybe a ragdoll func?
 
 ; Update Methods
-function u_0_1_4(doticu_npcp_data DATA)
-    p_DATA = DATA
-endFunction
-
-function u_0_1_5(doticu_npcp_data DATA)
-    p_ref_member = (self as ReferenceAlias) as doticu_npcp_member
-endFunction
 
 ; Events
 event On_Queue_Immobile(string str_message)

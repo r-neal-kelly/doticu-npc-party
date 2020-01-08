@@ -84,7 +84,7 @@ function f_Load_Mod()
     p_Register()
     p_Version()
 
-    ;Debug.Notification("NPC Party: Loaded (Temp!)")
+    Debug.Notification("NPC Party: Loaded (Temp!)")
 
     while !p_Send_Load_Mod()
         Utility.Wait(0.25)
@@ -138,11 +138,8 @@ endFunction
 
 function p_Version()
     if Is_NPC_Party_Less_Than(CONSTS.VERSION_MAJOR, CONSTS.VERSION_MINOR, CONSTS.VERSION_PATCH)
-        if Is_NPC_Party_Less_Than(0, 1, 4)
-            u_0_1_4()
-        endIf
-        if Is_NPC_Party_Less_Than(0, 1, 5)
-            u_0_1_5()
+        if Is_NPC_Party_Less_Than(0, 2, 1)
+            u_0_2_1()
         endIf
 
         VARS.version_major = CONSTS.VERSION_MAJOR
@@ -216,14 +213,7 @@ bool function Is_NPC_Party_Less_Than(int min_major, int min_minor, int min_patch
 endFunction
 
 ; Update Methods
-function u_0_1_4()
-    FUNCS.u_0_1_4(DATA)
-    MEMBERS.u_0_1_4(DATA)
-    FOLLOWERS.u_0_1_4(DATA)
-endFunction
-
-function u_0_1_5()
-    MEMBERS.u_0_1_5(DATA)
+function u_0_2_1()
 endFunction
 
 ; Events

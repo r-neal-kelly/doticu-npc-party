@@ -74,8 +74,3 @@ endFunction
 function Empty()
     return CONTAINERS.Empty(self)
 endFunction
-
-; Update Methods
-function u_0_1_4(doticu_npcp_data DATA)
-    p_DATA = DATA
-endFunction

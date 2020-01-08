@@ -485,21 +485,21 @@ function Members_Display_Start(int code_return, string str_name)
     elseIf code_return == CODES.SUCCESS
         LOGS.Create_Note("Display mode has been started.")
     elseIf code_return == CODES.IS_DISPLAY
-        LOGS.Create_Note("Display is already started.")
+        LOGS.Create_Note("Display has already been started.")
     elseIf code_return == CODES.HASNT_MEMBER
-        LOGS.Create_Note("No members to start displaying.")
+        LOGS.Create_Note("No members to start a display with.")
     elseIf code_return == CODES.OUT_OF_BOUNDS
         LOGS.Create_Error("Can not display that amount of members.")
     else
-        LOGS.Create_Error("Could not start display.")
+        LOGS.Create_Error("Could not start a display.")
     endIf
 endFunction
 
 function Members_Display_Stop(int code_return)
     if code_return == CODES.SUCCESS
-        LOGS.Create_Note("Display is now stopped.")
+        LOGS.Create_Note("Display has now been stopped.")
     elseIf code_return == CODES.ISNT_DISPLAY
-        LOGS.Create_Note("Display is already stopped.")
+        LOGS.Create_Note("Display has already stopped.")
     else
         LOGS.Create_Error("Could not stop display.")
     endIf
@@ -509,7 +509,7 @@ function Members_Display_Next(int code_return)
     if code_return == CODES.SUCCESS
         LOGS.Create_Note("Displaying next members.")
     elseIf code_return == CODES.ISNT_DISPLAY
-        LOGS.Create_Note("You need to start up display first.")
+        LOGS.Create_Note("You need to start up a display first.")
     else
         LOGS.Create_Error("Could not display the next members. " + code_return)
     endIf
@@ -519,7 +519,7 @@ function Members_Display_Previous(int code_return)
     if code_return == CODES.SUCCESS
         LOGS.Create_Note("Displying previous members.")
     elseIf code_return == CODES.ISNT_DISPLAY
-        LOGS.Create_Note("You need to start up display first.")
+        LOGS.Create_Note("You need to start up a display first.")
     else
         LOGS.Create_Error("Could not display the previous members. " + code_return)
     endIf

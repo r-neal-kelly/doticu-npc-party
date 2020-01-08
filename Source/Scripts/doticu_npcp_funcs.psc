@@ -92,8 +92,3 @@ endFunction
 bool function Is_Mod_Installed(string name_mod)
     return Game.GetModByName(name_mod) != 255
 endFunction
-
-; Update Methods
-function u_0_1_4(doticu_npcp_data DATA)
-    TASKLISTS.f_Create(DATA)
-endFunction
