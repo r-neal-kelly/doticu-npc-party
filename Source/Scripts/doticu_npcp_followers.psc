@@ -492,7 +492,7 @@ function Sort_Followers()
     ALIASES.Sort_Used()
 endFunction
 
-int function Summon_All(int distance = 120, int angle_start = 0, int angle_offset = 15)
+int function Summon_All(int distance = 120, int angle_start = 0, int angle_offset = 17)
     int num_followers = Get_Count()
     if num_followers < 1
         return CODES.HASNT_FOLLOWER
@@ -525,7 +525,7 @@ int function Summon_All(int distance = 120, int angle_start = 0, int angle_offse
     return CODES.SUCCESS
 endFunction
 
-int function Summon_Mobile(int distance = 120, int angle_start = 0, int angle_offset = 15)
+int function Summon_Mobile(int distance = 120, int angle_start = 0, int angle_offset = 17)
     if Get_Count() < 1
         return CODES.HASNT_FOLLOWER
     endIf
@@ -566,7 +566,7 @@ int function Summon_Mobile(int distance = 120, int angle_start = 0, int angle_of
     return CODES.SUCCESS
 endFunction
 
-int function Summon_Immobile(int distance = 120, int angle_start = 0, int angle_offset = 15)
+int function Summon_Immobile(int distance = 120, int angle_start = 0, int angle_offset = 17)
     if Get_Count() < 1
         return CODES.HASNT_FOLLOWER
     endIf

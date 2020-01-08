@@ -75,6 +75,7 @@ bool                    p_is_thrall             = false
 int                     p_code_style            =    -1
 int                     p_code_vitality         =    -1
 int                     p_queue_code_return     =     0
+ObjectReference         p_marker_display        =  none
 Outfit                  p_outfit_member         =  none
 doticu_npcp_queue       p_queue_member          =  none
 doticu_npcp_container   p_container2_pack       =  none
@@ -112,6 +113,7 @@ function p_Create(doticu_npcp_data DATA, int id_alias, bool is_clone)
     p_code_style = VARS.auto_style
     p_code_vitality = VARS.auto_vitality
     p_queue_code_return = 0
+    p_marker_display = none
     p_outfit_member = CONSTS.FORMLIST_OUTFITS.GetAt(p_id_alias) as Outfit
 
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_MEMBER, p_id_alias + 1)
@@ -181,6 +183,7 @@ function p_Destroy()
     p_container2_pack = none
     p_queue_member = none
     p_outfit_member = none
+    p_marker_display = none
     p_queue_code_return = 0
     p_code_vitality = -1
     p_code_style = -1
@@ -1276,6 +1279,43 @@ int function Unoutfit()
     if code_return < 0
         return code_return
     endIf
+
+    return CODES.SUCCESS
+endFunction
+
+int function Display(ObjectReference ref_marker, int distance, int angle)
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+
+    if ACTORS.Has_Token(p_ref_actor, CONSTS.TOKEN_DISPLAY)
+        return CODES.IS_DISPLAY
+    endIf
+
+    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_DISPLAY)
+
+    p_marker_display = p_ref_actor.PlaceAtMe(CONSTS.STATIC_MARKER_X)
+
+    ;Summon(distance, angle)
+    ACTORS.Move_To(p_ref_actor as ObjectReference, ref_marker, distance, angle)
+
+    return CODES.SUCCESS
+endFunction
+
+int function Undisplay()
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+
+    if !ACTORS.Has_Token(p_ref_actor, CONSTS.TOKEN_DISPLAY)
+        return CODES.ISNT_DISPLAY
+    endIf
+
+    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_DISPLAY)
+
+    p_ref_actor.MoveTo(p_marker_display)
+
+    p_marker_display = none
 
     return CODES.SUCCESS
 endFunction

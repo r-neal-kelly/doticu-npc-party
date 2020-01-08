@@ -28,31 +28,38 @@ doticu_npcp_mcm property MCM hidden
 endProperty
 
 ; Private Constants
-doticu_npcp_data    p_DATA                          =  none
+doticu_npcp_data    p_DATA                              =  none
 
 ; Private Variables
-bool                p_is_created                    = false
+bool                p_is_created                        = false
 
-int                 p_option_force_clone_unique     =    -1
-int                 p_option_force_clone_generic    =    -1
-int                 p_option_force_unclone_unique   =    -1
-int                 p_option_force_unclone_generic  =    -1
-int                 p_option_auto_style             =    -1
-int                 p_option_auto_vitality          =    -1
-int                 p_option_auto_resurrect         =    -1
-int                 p_option_auto_outfit            =    -1
-int                 p_option_key_fs_summon_all      =    -1
-int                 p_option_key_fs_summon_mobile   =    -1
-int                 p_option_key_fs_summon_immobile =    -1
-int                 p_option_key_fs_settle          =    -1
-int                 p_option_key_fs_unsettle        =    -1
-int                 p_option_key_fs_immobilize      =    -1
-int                 p_option_key_fs_mobilize        =    -1
-int                 p_option_key_fs_sneak           =    -1
-int                 p_option_key_fs_unsneak         =    -1
-int                 p_option_key_fs_resurrect       =    -1
+int                 p_option_force_clone_unique         =    -1
+int                 p_option_force_clone_generic        =    -1
+int                 p_option_force_unclone_unique       =    -1
+int                 p_option_force_unclone_generic      =    -1
+int                 p_option_auto_style                 =    -1
+int                 p_option_auto_vitality              =    -1
+int                 p_option_auto_resurrect             =    -1
+int                 p_option_auto_outfit                =    -1
 
-int                 p_option_key_m_toggle_paralyzed =    -1
+int                 p_option_key_fs_summon_all          =    -1
+int                 p_option_key_fs_summon_mobile       =    -1
+int                 p_option_key_fs_summon_immobile     =    -1
+int                 p_option_key_fs_settle              =    -1
+int                 p_option_key_fs_unsettle            =    -1
+int                 p_option_key_fs_immobilize          =    -1
+int                 p_option_key_fs_mobilize            =    -1
+int                 p_option_key_fs_sneak               =    -1
+int                 p_option_key_fs_unsneak             =    -1
+int                 p_option_key_fs_resurrect           =    -1
+
+int                 p_option_key_ms_display_start       =    -1
+int                 p_option_key_ms_display_stop        =    -1
+int                 p_option_key_ms_display_previous    =    -1
+int                 p_option_key_ms_display_next        =    -1
+int                 p_option_key_ms_toggle_display      =    -1
+
+int                 p_option_key_m_toggle_paralyzed     =    -1
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
@@ -144,6 +151,15 @@ auto state p_STATE_SETTINGS
         p_option_key_fs_unsneak = MCM.AddKeymapOption(" Unsneak ", VARS.key_fs_unsneak, MCM.OPTION_FLAG_WITH_UNMAP)
         p_option_key_fs_resurrect = MCM.AddKeymapOption(" Resurrect ", VARS.key_fs_resurrect, MCM.OPTION_FLAG_WITH_UNMAP)
         MCM.AddEmptyOption()
+        MCM.AddEmptyOption()
+
+        MCM.AddHeaderOption(" Hotkeys for All Members ")
+        MCM.AddEmptyOption()
+        p_option_key_ms_display_start = MCM.AddKeymapOption(" Start Display ", VARS.key_ms_display_start, MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_ms_display_stop = MCM.AddKeymapOption(" Stop Display ", VARS.key_ms_display_stop, MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_ms_display_previous = MCM.AddKeymapOption(" Previous Display ", VARS.key_ms_display_previous, MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_ms_display_next = MCM.AddKeymapOption(" Next Display ", VARS.key_ms_display_next, MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_ms_toggle_display = MCM.AddKeymapOption(" Toggle Display ", VARS.key_ms_toggle_display, MCM.OPTION_FLAG_WITH_UNMAP)
         MCM.AddEmptyOption()
 
         MCM.AddHeaderOption(" Hotkeys for One Follower/Member ")
@@ -250,6 +266,17 @@ auto state p_STATE_SETTINGS
             VARS.key_fs_unsneak = code_key
         elseIf id_option == p_option_key_fs_resurrect
             VARS.key_fs_resurrect = code_key
+
+        elseIf id_option == p_option_key_ms_display_start
+            VARS.key_ms_display_start = code_key
+        elseIf id_option == p_option_key_ms_display_stop
+            VARS.key_ms_display_stop = code_key
+        elseIf id_option == p_option_key_ms_display_previous
+            VARS.key_ms_display_previous = code_key
+        elseIf id_option == p_option_key_ms_display_next
+            VARS.key_ms_display_next = code_key
+        elseIf id_option == p_option_key_ms_toggle_display
+            VARS.key_ms_toggle_display = code_key
         
         elseIf id_option == p_option_key_m_toggle_paralyzed
             VARS.key_toggle_paralyzed = code_key
@@ -342,6 +369,20 @@ auto state p_STATE_SETTINGS
             MCM.SetInfoText("Causes all followers to stop sneaking.")
         elseIf id_option == p_option_key_fs_resurrect
             MCM.SetInfoText("Causes all dead followers to resurrect.")
+
+        elseIf id_option == p_option_key_ms_display_start
+            MCM.SetInfoText("Will start a display of members.")
+        elseIf id_option == p_option_key_ms_display_stop
+            MCM.SetInfoText("Will stop a display of members.")
+        elseIf id_option == p_option_key_ms_display_previous
+            MCM.SetInfoText("Will rotate members backward on display.")
+        elseIf id_option == p_option_key_ms_display_next
+            MCM.SetInfoText("Will rotate members forward on the display.")
+        elseIf id_option == p_option_key_ms_toggle_display
+            MCM.SetInfoText("Toggles a member display.")
+
+        elseIf id_option == p_option_key_m_toggle_paralyzed
+            MCM.SetInfoText("Causes a member to become paralyzed.")
         endIf
     endFunction
 endState

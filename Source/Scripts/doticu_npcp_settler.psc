@@ -85,6 +85,10 @@ function f_Enforce()
     p_Enqueue("Settler.Token", 0.1)
 endFunction
 
+function f_Return()
+    ACTORS.Move_To(p_ref_actor, p_ref_marker)
+endFunction
+
 ; Private Methods
 function p_Register_Queues()
     f_QUEUE.Register_Alias(self, "On_Queue_Settler", p_str_namespace)

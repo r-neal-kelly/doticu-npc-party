@@ -341,6 +341,38 @@ function Cycle_Vitality(Actor ref_actor, bool auto_create)
 endFunction
 
 
+function Members_Display_Start(Actor ref_actor)
+    GotoState("p_STATE_BUSY")
+    p_Enqueue("Members_Display_Start", ref_actor)
+    GotoState("")
+endFunction
+
+function Members_Display_Stop()
+    GotoState("p_STATE_BUSY")
+    p_Enqueue("Members_Display_Stop", none)
+    GotoState("")
+endFunction
+
+function Members_Display_Next()
+    GotoState("p_STATE_BUSY")
+    p_Enqueue("Members_Display_Next", none)
+    GotoState("")
+endFunction
+
+function Members_Display_Previous()
+    GotoState("p_STATE_BUSY")
+    p_Enqueue("Members_Display_Previous", none)
+    GotoState("")
+endFunction
+
+
+function Toggle_Members_Display(Actor ref_actor)
+    GotoState("p_STATE_BUSY")
+    p_Enqueue("Toggle_Members_Display", ref_actor)
+    GotoState("")
+endFunction
+
+
 function Followers_Summon_All()
     GotoState("p_STATE_BUSY")
     p_Enqueue("Followers_Summon_All", none)
@@ -532,6 +564,18 @@ state p_STATE_BUSY
     endFunction
     function Cycle_Vitality(Actor ref_actor, bool auto_create)
     endFunction
+
+    function Members_Display_Start(Actor ref_actor)
+    endFunction
+    function Members_Display_Stop()
+    endFunction
+    function Members_Display_Next()
+    endFunction
+    function Members_Display_Previous()
+    endFunction
+
+    function Toggle_Members_Display(Actor ref_actor)
+    endFunction
     
     function Followers_Summon_All()
     endFunction
@@ -664,6 +708,18 @@ event On_Queue_Commands(string str_message, Form form_actor, bool auto_create)
         PRIVATE.Cycle_Style(ref_actor, auto_create)
     elseIf str_message == "Cycle_Vitality"
         PRIVATE.Cycle_Vitality(ref_actor, auto_create)
+
+    elseIf str_message == "Members_Display_Start"
+        PRIVATE.Members_Display_Start(ref_actor)
+    elseIf str_message == "Members_Display_Stop"
+        PRIVATE.Members_Display_Stop()
+    elseIf str_message == "Members_Display_Next"
+        PRIVATE.Members_Display_Next()
+    elseIf str_message == "Members_Display_Previous"
+        PRIVATE.Members_Display_Previous()
+
+    elseIf str_message == "Toggle_Members_Display"
+        PRIVATE.Toggle_Members_Display(ref_actor)
     
     elseIf str_message == "Followers_Summon_All"
         PRIVATE.Followers_Summon_All()

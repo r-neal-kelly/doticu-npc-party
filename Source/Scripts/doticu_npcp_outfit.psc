@@ -103,6 +103,9 @@ bool function p_Has_Changed(Actor ref_actor)
     num_forms = ref_actor.GetNumItems()
     while idx_forms < num_forms
         ref_form = ref_actor.GetNthForm(idx_forms)
+        if !ref_form
+            return true
+        endIf
         num_items = ref_actor.GetItemCount(ref_form)
         if ref_form.IsPlayable() && num_items != self.GetItemCount(ref_form)
             return true
@@ -145,7 +148,7 @@ function Get(Actor ref_actor)
     int num_items
 
     ; we wait until the actor's inventory shows some stability
-    p_Wait_For_Stability(ref_actor, 12, 0.1)
+    p_Wait_For_Stability(ref_actor, 7, 0.1)
 
     ; we refresh the cache
     self.RemoveAllItems(CONSTS.ACTOR_PLAYER, false, true)
@@ -173,7 +176,7 @@ function Set(Actor ref_actor, bool do_force = false)
     ObjectReference ref_trash
 
     ; we wait until the actor's inventory shows some stability
-    p_Wait_For_Stability(ref_actor, 7, 0.7)
+    p_Wait_For_Stability(ref_actor, 7, 0.5)
     
     ; if not forcing, there is no reason to re-oufit when neither the oufit container or the actor inventory has changed
     if !do_force && !p_Has_Changed(ref_actor)
@@ -229,7 +232,7 @@ function Remove_Inventory(Actor ref_actor, ObjectReference ref_container = none)
     int num_items
 
     ; we wait until the actor's inventory shows some stability
-    p_Wait_For_Stability(ref_actor, 7, 0.7)
+    p_Wait_For_Stability(ref_actor, 7, 0.5)
 
     ; copy inventory minus current outfit
     if ref_container

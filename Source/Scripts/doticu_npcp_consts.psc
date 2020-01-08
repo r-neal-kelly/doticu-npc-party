@@ -3,6 +3,7 @@ Scriptname doticu_npcp_consts extends Quest
 ; Private Constants
 Actor                       p_ACTOR_PLAYER                          = none
 Cell                        p_CELL_STORAGE                          = none
+Static                      p_STATIC_MARKER_X                       = none
 ObjectReference             p_MARKER_STORAGE                        = none
 ObjectReference             p_MARKER_CLONER                         = none
 MiscObject                  p_TOKEN_MEMBER                          = none
@@ -12,6 +13,7 @@ MiscObject                  p_TOKEN_FOLLOWER_SNEAK                  = none
 MiscObject                  p_TOKEN_IMMOBILE                        = none
 MiscObject                  p_TOKEN_CLONE                           = none
 MiscObject                  p_TOKEN_BANISHED                        = none
+MiscObject                  p_TOKEN_DISPLAY                         = none
 MiscObject                  p_TOKEN_GENERIC                         = none
 MiscObject                  p_TOKEN_THRALL                          = none
 MiscObject                  p_TOKEN_GREETER                         = none
@@ -88,6 +90,17 @@ Cell property CELL_STORAGE
     function Set(Cell val)
         if p_CELL_STORAGE == none
             p_CELL_STORAGE = val
+        endIf
+    endFunction
+endProperty
+
+Static property STATIC_MARKER_X
+    Static function Get()
+        return p_STATIC_MARKER_X
+    endFunction
+    function Set(Static val)
+        if p_STATIC_MARKER_X == none
+            p_STATIC_MARKER_X = val
         endIf
     endFunction
 endProperty
@@ -187,6 +200,17 @@ MiscObject property TOKEN_BANISHED
     function Set(MiscObject val)
         if p_TOKEN_BANISHED == none
             p_TOKEN_BANISHED = val
+        endIf
+    endFunction
+endProperty
+
+MiscObject property TOKEN_DISPLAY
+    MiscObject function Get()
+        return p_TOKEN_DISPLAY
+    endFunction
+    function Set(MiscObject val)
+        if p_TOKEN_DISPLAY == none
+            p_TOKEN_DISPLAY = val
         endIf
     endFunction
 endProperty

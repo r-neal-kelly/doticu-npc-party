@@ -9,6 +9,7 @@ int property CREATED                        =   -20 autoReadOnly
 int property DESTROYED                      =   -21 autoReadOnly
 int property READY                          =   -30 autoReadOnly
 int property BUSY                           =   -31 autoReadOnly
+int property OUT_OF_BOUNDS                  =   -99 autoReadOnly
 
 int property HAS_SPACE                      =  -100 autoReadOnly
 int property HAS_ACTOR                      =  -110 autoReadOnly
@@ -56,6 +57,7 @@ int property IS_MAGE                        =  -382 autoReadOnly
 int property IS_ARCHER                      =  -383 autoReadOnly
 int property IS_GREETER                     =  -390 autoReadOnly
 int property IS_VAMPIRE                     =  -399 autoReadOnly
+int property IS_DISPLAY                     = -3400 autoReadOnly
 
 int property ISNT_ACTOR                     =  -400 autoReadOnly
 int property ISNT_ALIAS                     =  -410 autoReadOnly
@@ -69,6 +71,7 @@ int property ISNT_THRALL                    =  -470 autoReadOnly
 int property ISNT_CLONE                     =  -480 autoReadOnly
 int property ISNT_GREETER                   =  -490 autoReadOnly
 int property ISNT_VAMPIRE                   =  -499 autoReadOnly
+int property ISNT_DISPLAY                   = -4400 autoReadOnly
 
 int property CAN_RESURRECT                  =  -500 autoReadOnly
 

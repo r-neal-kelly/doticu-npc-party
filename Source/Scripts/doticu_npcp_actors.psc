@@ -306,7 +306,7 @@ function Delete(Actor ref_actor)
     ref_actor.Delete()
 endFunction
 
-function Move_To(ObjectReference ref_subject, ObjectReference ref_object, int distance = 60, int angle = 0)
+function Move_To(ObjectReference ref_subject, ObjectReference ref_object, int distance = 120, int angle = 0)
     Actor ref_actor = ref_subject as Actor
     bool has_enabled_ai = ref_actor && ref_actor.IsAIEnabled()
     float object_angle_z = ref_object.GetAngleZ()
@@ -316,7 +316,7 @@ function Move_To(ObjectReference ref_subject, ObjectReference ref_object, int di
     endIf
 
     ref_subject.MoveTo(ref_object, distance * Math.Sin(object_angle_z - angle), distance * Math.Cos(object_angle_z - angle), 0.0)
-    ref_subject.SetAngle(0.0, 0.0, object_angle_z - 180 + angle)
+    ref_subject.SetAngle(0.0, 0.0, object_angle_z - 180 - angle)
 
     if !has_enabled_ai
         ref_actor.EnableAI(false)

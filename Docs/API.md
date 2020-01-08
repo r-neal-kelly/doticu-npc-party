@@ -62,6 +62,12 @@ An extension of the Actor class that acts as a simple helper, and more important
         function Move_To(ObjectReference ref_subject, ObjectReference ref_object, int distance = 60, int angle = 0)
         function Greet_Player(Actor ref_actor)
 
+### : `doticu_npcp_outfits`
+The constructor for `doticu_npcp_outfit` items.
+
+#### : : *`doticu_npcp_outfit`*
+A dynamically created `Container` instance that can be used to enforce an `Actor` to wear only the items within itself, including any weapons. The `Player` decides what items can go in the container. The container itself is dynamic, but its constructor must be passed an `Outfit` form that contains a single `LeveledItem`, preferably one that is empty. Both forms must be static in the .esp, and so the number of outfits that can be used at one time is limited. But the number of npcs that the outfit can be used with is unlimited, so any number of NPCs can wear the same outfit. And further, any number of `doticu_npcp_outfit`s can use the same Outfit and LeveledItem without overwriting another doticu_npcp_outfit, because the container reference keeps the state. However, only one doticu_npcp_outfit can be rendered on screen at a time. Any number of npc clones, which normally cannot wear different outfits, can be made to wear different outfits with one doticu_npcp_outfit per clone. The enforcement is left up to the caller however.
+
 ---
 
 ## The `MEMBERS` Module

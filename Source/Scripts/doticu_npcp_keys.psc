@@ -74,6 +74,22 @@ function Update_Keys()
         RegisterForKey(VARS.key_fs_unmember)
     endIf
 
+    if VARS.key_ms_display_start > -1
+        RegisterForKey(VARS.key_ms_display_start)
+    endIf
+    if VARS.key_ms_display_stop > -1
+        RegisterForKey(VARS.key_ms_display_stop)
+    endIf
+    if VARS.key_ms_display_next > -1
+        RegisterForKey(VARS.key_ms_display_next)
+    endIf
+    if VARS.key_ms_display_previous > -1
+        RegisterForKey(VARS.key_ms_display_previous)
+    endIf
+    if VARS.key_ms_toggle_display > -1
+        RegisterForKey(VARS.key_ms_toggle_display)
+    endIf
+
     if VARS.key_resurrect > -1
         RegisterForKey(VARS.key_resurrect)
     endIf
@@ -150,6 +166,17 @@ event OnKeyDown(int code_key)
         COMMANDS.Followers_Unsneak()
     elseIf code_key == VARS.key_fs_resurrect
         COMMANDS.Followers_Resurrect()
+
+    elseIf code_key == VARS.key_ms_display_start
+        COMMANDS.Members_Display_Start(ref_actor)
+    elseIf code_Key == VARS.key_ms_display_stop
+        COMMANDS.Members_Display_Stop()
+    elseIf code_key == VARS.key_ms_display_next
+        COMMANDS.Members_Display_Next()
+    elseIf code_key == VARS.key_ms_display_previous
+        COMMANDS.Members_Display_Previous()
+    elseIf code_key == VARS.key_ms_toggle_display
+        COMMANDS.Toggle_Members_Display(ref_actor)
     
     elseIf code_key == VARS.key_resurrect
         COMMANDS.Resurrect(ref_actor, true)

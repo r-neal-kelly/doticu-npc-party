@@ -267,6 +267,14 @@ ReferenceAlias function Get_Alias(int id_alias, Actor ref_actor)
     endIf
 endFunction
 
+Alias function Get_Used_Alias(int idx_used)
+    if idx_used < 0 || idx_used >= p_size_ids_used
+        return none
+    else
+        return GetNthAlias(p_arr_ids_used[idx_used])
+    endIf
+endFunction
+
 Alias[] function Get_Used(int idx_from = 0, int idx_to_ex = -1)
     if idx_from < 0
         idx_from = 0
@@ -297,6 +305,92 @@ endFunction
 Alias[] function Get_Used_Sorted(int idx_from = 0, int idx_to_ex = -1)
     p_Sort_Used(false)
     return Get_Used(idx_from, idx_to_ex)
+endFunction
+
+Alias[] function Get_Next_Used(int idx_in, int num_next)
+    ; returns the next number of aliases, from low to high, including the idx_start
+
+    if idx_in < 0
+        idx_in = 0
+    elseIf idx_in >= p_size_ids_used
+        idx_in = p_size_ids_used - 1
+    endIf
+
+    if num_next > p_size_ids_used
+        num_next = p_size_ids_used
+    endIf
+
+    int idx_used = idx_in
+
+    Alias[] arr_copy = Utility.CreateAliasArray(num_next, none)
+    int idx_copy = 0
+
+    while idx_copy < num_next
+        arr_copy[idx_copy] = GetNthAlias(p_arr_ids_used[idx_used])
+
+        idx_used += 1
+        if idx_used >= p_size_ids_used
+            idx_used = 0
+        endIf
+
+        idx_copy += 1
+    endWhile
+
+    return arr_copy
+endFunction
+
+Alias[] function Get_Prev_Used(int idx_ex, int num_prev)
+    ; returns the previous number of aliases, from low to high, excluding end
+
+    if idx_ex < 0
+        idx_ex = 0
+    elseIf idx_ex > p_size_ids_used
+        idx_ex = p_size_ids_used
+    endIf
+
+    if num_prev > p_size_ids_used
+        num_prev = p_size_ids_used
+    endIf
+
+    int idx_used = idx_ex - num_prev
+    if idx_used < 0
+        idx_used = idx_used + p_size_ids_used
+    endIf
+
+    Alias[] arr_copy = Utility.CreateAliasArray(num_prev, none)
+    int idx_copy = 0
+
+    while idx_copy < num_prev
+        arr_copy[idx_copy] = GetNthAlias(p_arr_ids_used[idx_used])
+
+        idx_used += 1
+        if idx_used >= p_size_ids_used
+            idx_used = 0
+        endIf
+
+        idx_copy += 1
+    endWhile
+
+    return arr_copy
+endFunction
+
+int function Get_Used_Idx(int id_alias)
+    int idx_used = p_arr_ids_used.Find(id_alias)
+    if idx_used > -1 && idx_used < p_size_ids_used
+        return idx_used
+    else
+        return -1
+    endIf
+endFunction
+
+int function Get_Relative_Used_Idx(int idx_used)
+    if idx_used < 0
+        idx_used = p_size_ids_used + idx_used
+    elseIf idx_used >= p_size_ids_used
+        idx_used = idx_used - p_size_ids_used
+    endIf
+
+    return idx_used
 endFunction
 
 function Sort_Used()

@@ -45,6 +45,12 @@ int property key_fs_unfollow                =    -1 auto hidden;
 int property key_fs_unmember                =    -1 auto hidden;
 ; maybe add toggles? maybe use modified to keep things consistent in default settings
 
+int property key_ms_display_start           =    -1 auto hidden;
+int property key_ms_display_stop            =    -1 auto hidden;
+int property key_ms_display_next            =    -1 auto hidden;
+int property key_ms_display_previous        =    -1 auto hidden;
+int property key_ms_toggle_display          =    -1 auto hidden;
+
 ; also, the cool idea to cycle through members so that they are easily visible. they are sent back where they came. (settler marker, editor loc, coords if in same cell)
 
 int property key_resurrect                  =   200 auto hidden; Up Arrow

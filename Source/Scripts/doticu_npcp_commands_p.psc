@@ -761,6 +761,36 @@ function Cycle_Vitality(Actor ref_actor, bool auto_create)
     endIf
 endFunction
 
+function Members_Display_Start(Actor ref_actor)
+    int code_return
+    string str_name = ACTORS.Get_Name(ref_actor)
+
+    NOTES.Members_Display_Start(MEMBERS.Display_Start(ref_actor, 5), str_name); use VARS for num
+endFunction
+
+function Members_Display_Stop()
+    NOTES.Members_Display_Stop(MEMBERS.Display_Stop())
+endFunction
+
+function Members_Display_Next()
+    NOTES.Members_Display_Next(MEMBERS.Display_Next())
+endFunction
+
+function Members_Display_Previous()
+    NOTES.Members_Display_Previous(MEMBERS.Display_Previous())
+endFunction
+
+function Toggle_Members_Display(Actor ref_actor)
+    if ref_actor && MEMBERS.Are_Displayed()
+        Members_Display_Stop()
+        Members_Display_Start(ref_actor)
+    elseIf MEMBERS.Are_Displayed()
+        Members_Display_Stop()
+    else
+        Members_Display_Start(ref_actor)
+    endIf
+endFunction
+
 function Followers_Summon_All()
     NOTES.Followers_Summon_All(FOLLOWERS.Summon_All())
 endFunction

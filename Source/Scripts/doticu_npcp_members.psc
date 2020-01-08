@@ -33,17 +33,25 @@ doticu_npcp_aliases property ALIASES hidden
 endProperty
 
 ; Private Constants
-doticu_npcp_data        p_DATA          =  none
+doticu_npcp_data        p_DATA              =  none
 
 ; Private Variables
-bool                    p_is_created    = false
-doticu_npcp_tasklist    p_tasklist      =  none
+bool                    p_is_created        = false
+bool                    p_are_displayed     = false
+int                     p_idx_display       =    -1
+int                     p_num_display       =    -1
+ObjectReference         p_marker_display    =  none
+doticu_npcp_tasklist    p_tasklist          =  none
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
     p_DATA = DATA
 
     p_is_created = true
+    p_are_displayed = false
+    p_idx_display = -1
+    p_num_display = -1
+    p_marker_display = CONSTS.MARKER_STORAGE.PlaceAtMe(CONSTS.STATIC_MARKER_X)
     p_tasklist = TASKLISTS.Create()
 
     ALIASES.f_Create(DATA)
@@ -53,6 +61,10 @@ function f_Destroy()
     ALIASES.f_Destroy()
 
     TASKLISTS.Destroy(p_tasklist)
+    p_marker_display = none
+    p_num_display = -1
+    p_idx_display = -1
+    p_are_displayed = false
     p_is_created = false
 endFunction
 
@@ -212,6 +224,10 @@ bool function Has_Member(Actor ref_actor)
     return ALIASES.Has_Alias(p_Get_Alias_ID(ref_actor), ref_actor)
 endFunction
 
+bool function Are_Displayed()
+    return p_are_displayed
+endFunction
+
 doticu_npcp_member function Get_Member(Actor ref_actor)
     return ALIASES.Get_Alias(p_Get_Alias_ID(ref_actor), ref_actor) as doticu_npcp_member
 endFunction
@@ -283,6 +299,124 @@ endFunction
 
 bool function Should_Unclone_Member(doticu_npcp_member ref_member)
     return ref_member && ref_member.Is_Clone() && Should_Unclone_Actor(ref_member.Get_Actor())
+endFunction
+
+int function Display_Start(Actor ref_actor, int num_display)
+    if Are_Displayed()
+        return CODES.IS_DISPLAY
+    endIf
+
+    if Get_Count() < 1
+        return CODES.HASNT_MEMBER
+    endIf
+
+    if num_display < 1 || num_display > 8; put this in VARS
+        return CODES.OUT_OF_BOUNDS
+    endIf
+
+    int idx_used = ALIASES.Get_Used_Idx(p_Get_Alias_ID(ref_actor))
+    if idx_used < 0
+        idx_used = 0
+    endIf
+
+    p_are_displayed = true
+    p_idx_display = idx_used
+    p_num_display = num_display
+
+    ;p_marker_display = CONSTS.MARKER_STORAGE.PlaceAtMe(CONSTS.STATIC_MARKER_X)
+    p_marker_display.MoveTo(CONSTS.ACTOR_PLAYER)
+
+    ; to make sure there is no ambiguity with idxs, we go ahead and render Next
+    Display_Next()
+
+    return CODES.SUCCESS
+endFunction
+
+int function Display_Stop()
+    if !Are_Displayed()
+        return CODES.ISNT_DISPLAY
+    endIf
+
+    Alias[] arr_prev = ALIASES.Get_Prev_Used(p_idx_display, p_num_display)
+    Alias[] arr_next = ALIASES.Get_Next_Used(p_idx_display, p_num_display)
+
+    p_Undisplay_Aliases(arr_prev)
+    p_Undisplay_Aliases(arr_next)
+
+    p_marker_display.MoveTo(CONSTS.MARKER_STORAGE)
+
+    p_num_display = -1
+    p_idx_display = -1
+    p_are_displayed = false
+
+    return CODES.SUCCESS
+endFunction
+
+int function Display_Next()
+    if !Are_Displayed()
+        return CODES.ISNT_DISPLAY
+    endIf
+
+    Alias[] arr_prev = ALIASES.Get_Prev_Used(p_idx_display, p_num_display)
+    Alias[] arr_next = ALIASES.Get_Next_Used(p_idx_display, p_num_display)
+    
+    p_Undisplay_Aliases(arr_prev)
+    p_Display_Aliases(arr_next, 120, 22)
+
+    p_idx_display = ALIASES.Get_Relative_Used_Idx(p_idx_display + p_num_display)
+
+    return CODES.SUCCESS
+endFunction
+
+int function Display_Previous()
+    if !Are_Displayed()
+        return CODES.ISNT_DISPLAY
+    endIf
+
+    p_idx_display = ALIASES.Get_Relative_Used_Idx(p_idx_display - p_num_display)
+
+    Alias[] arr_prev = ALIASES.Get_Prev_Used(p_idx_display, p_num_display)
+    Alias[] arr_next = ALIASES.Get_Next_Used(p_idx_display, p_num_display)
+    
+    p_Undisplay_Aliases(arr_next)
+    p_Display_Aliases(arr_prev, 120, 22)
+
+    return CODES.SUCCESS
+endFunction
+
+function p_Display_Aliases(Alias[] arr_aliases, int distance, int angle_offset)
+    int idx_aliases = 0
+    int num_aliases = arr_aliases.length
+    int median = Math.Ceiling(num_aliases / 2)
+    int angle = angle_offset * median
+
+    if num_aliases % 2 == 0
+        while idx_aliases < num_aliases
+            (arr_aliases[idx_aliases] as doticu_npcp_member).Display(p_marker_display, distance, angle)
+            idx_aliases += 1
+            if idx_aliases == median
+                angle -= angle_offset * 2
+            else
+                angle -= angle_offset
+            endIf
+        endWhile
+    else
+        while idx_aliases < num_aliases
+            (arr_aliases[idx_aliases] as doticu_npcp_member).Display(p_marker_display, distance, angle)
+            idx_aliases += 1
+            angle -= angle_offset
+        endWhile
+    endIf
+endFunction
+
+function p_Undisplay_Aliases(Alias[] arr_aliases)
+    int idx_aliases = 0
+    int num_aliases = arr_aliases.length
+
+    while idx_aliases < num_aliases
+        (arr_aliases[idx_aliases] as doticu_npcp_member).Undisplay()
+        idx_aliases += 1
+    endWhile
 endFunction
 
 ; Update Methods
