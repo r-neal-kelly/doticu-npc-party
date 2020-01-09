@@ -17,12 +17,14 @@ doticu_npcp_data    p_DATA          =  none
 
 ; Private Variables
 bool                p_is_created    = false
+string              p_str_name      =    ""
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA, string str_name)
     p_DATA = DATA
 
     p_is_created = true
+    p_str_name = ""
 
     self.SetDisplayName(str_name, true)
     self.SetActorOwner(CONSTS.ACTOR_PLAYER.GetActorBase())
@@ -32,6 +34,7 @@ function f_Destroy()
     self.Disable()
     self.Delete()
 
+    p_str_name = ""
     p_is_created = false
 endFunction
 
@@ -40,15 +43,17 @@ endFunction
 
 ; Public Methods
 function Open()
+    CONTAINERS.Set_Name(self, p_str_name)
     return CONTAINERS.Open(self)
 endFunction
 
 string function Get_Name()
-    return CONTAINERS.Get_Name(self)
+    return p_str_name
 endFunction
 
 function Set_Name(string str_name)
-    return CONTAINERS.Set_Name(self, str_name)
+    p_str_name = str_name
+    self.SetDisplayName(p_str_name, true)
 endFunction
 
 int function Count_Items()

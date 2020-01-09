@@ -35,6 +35,7 @@ int                 p_MAX_ITEMS     =    -1
 
 ; Private Variables
 bool                p_is_created    = false
+string              p_str_name      =    ""
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA, Outfit outfit_outfit, string str_name)
@@ -44,6 +45,7 @@ function f_Create(doticu_npcp_data DATA, Outfit outfit_outfit, string str_name)
     p_MAX_ITEMS = 64
 
     p_is_created = true
+    p_str_name = ""
     
     self.SetDisplayName(str_name, true)
     self.SetActorOwner(CONSTS.ACTOR_PLAYER.GetActorBase())
@@ -54,6 +56,7 @@ function f_Destroy()
     self.Disable()
     self.Delete()
 
+    p_str_name = ""
     p_is_created = false
 endFunction
 
@@ -118,11 +121,12 @@ endFunction
 
 ; Public Methods
 string function Get_Name()
-    return self.GetDisplayName()
+    return p_str_name
 endFunction
 
 function Set_Name(string str_name)
-    self.SetDisplayName(str_name, true)
+    p_str_name = str_name
+    self.SetDisplayName(p_str_name, true)
 endFunction
 
 int function Get_Items_Count()
@@ -138,6 +142,7 @@ function Copy(doticu_npcp_outfit ref_outfit)
 endFunction
 
 function Put()
+    self.SetDisplayName(p_str_name, true)
     self.Activate(CONSTS.ACTOR_PLAYER)
 endFunction
 

@@ -70,6 +70,8 @@ function f_Destroy()
 endFunction
 
 function f_Register()
+    RegisterForModEvent("doticu_npcp_load_mod", "On_Load_Mod")
+    
     p_Register_Queues()
 endFunction
 

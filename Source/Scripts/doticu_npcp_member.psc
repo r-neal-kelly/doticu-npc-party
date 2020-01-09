@@ -204,7 +204,6 @@ function f_Register()
     ; registering mod events is global for each script on an object, and
     ; further, works for handlers labeled as function as well as event.
 
-    RegisterForModEvent("doticu_npcp_load_mod", "On_Load_Mod")
     RegisterForModEvent("doticu_npcp_members_unmember", "On_Members_Unmember")
 
     p_Register_Queues()
@@ -212,6 +211,7 @@ function f_Register()
     if Is_Settler()
         p_ref_settler.f_Register()
     endIf
+
     if Is_Immobile()
         p_ref_immobile.f_Register()
     endIf
@@ -256,7 +256,7 @@ endFunction
 
 function p_Create_Containers()
     p_container2_pack = CONTAINERS.Create()
-    p_Rename_Containers(Get_Name())
+    p_Name_Containers(Get_Name())
 endFunction
 
 function p_Destroy_Containers()
@@ -264,8 +264,8 @@ function p_Destroy_Containers()
     CONTAINERS.Destroy(p_container2_pack)
 endFunction
 
-function p_Rename_Containers(string str_name_member)
-    p_container2_pack.Set_Name(str_name_member + "'s Pack")
+function p_Name_Containers(string str_member_name)
+    p_container2_pack.Set_Name(str_member_name + "'s Pack")
 endFunction
 
 function p_Create_Outfits()
@@ -277,8 +277,8 @@ function p_Create_Outfits()
     p_outfit2_immobile = OUTFITS.Create(p_outfit_member)
     p_outfit2_follower = OUTFITS.Create(p_outfit_member)
     p_outfit2_current = p_outfit2_member
-    
-    p_Rename_Outfits(Get_Name())
+
+    p_Name_Outfits(Get_Name())
 
     p_outfit2_member.Get(p_ref_actor)
     p_outfit2_member.Remove_Inventory(p_ref_actor, p_container2_pack)
@@ -297,12 +297,12 @@ function p_Destroy_Outfits()
     OUTFITS.Destroy(p_outfit2_member)
 endFunction
 
-function p_Rename_Outfits(string str_name_member)
-    p_outfit2_member.Set_Name(str_name_member + "'s Member Outfit")
-    p_outfit2_settler.Set_Name(str_name_member + "'s Settler Outfit")
-    p_outfit2_thrall.Set_Name(str_name_member + "'s Thrall Outfit")
-    p_outfit2_immobile.Set_Name(str_name_member + "'s Immobile Outfit")
-    p_outfit2_follower.Set_Name(str_name_member + "'s Follower Outfit")
+function p_Name_Outfits(string str_member_name)
+    p_outfit2_member.Set_Name(str_member_name + "'s Member Outfit")
+    p_outfit2_settler.Set_Name(str_member_name + "'s Settler Outfit")
+    p_outfit2_thrall.Set_Name(str_member_name + "'s Thrall Outfit")
+    p_outfit2_immobile.Set_Name(str_member_name + "'s Immobile Outfit")
+    p_outfit2_follower.Set_Name(str_member_name + "'s Follower Outfit")
 endFunction
 
 function p_Backup()
@@ -595,8 +595,8 @@ int function Set_Name(string str_name)
         return CODES.CANT_RENAME
     endIf
 
-    p_Rename_Containers(str_name)
-    p_Rename_Outfits(str_name)
+    p_Name_Containers(str_name)
+    p_Name_Outfits(str_name)
 
     return CODES.SUCCESS
 endFunction
@@ -1115,7 +1115,7 @@ int function Pack()
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
-    
+
     p_container2_pack.Open()
     Utility.Wait(0.1)
 
@@ -1538,20 +1538,13 @@ event On_Members_Unmember()
     endIf
 endEvent
 
-event On_Load_Mod()
-    if Exists()
-        p_Rename_Containers(Get_Name())
-        p_Rename_Outfits(Get_Name())
-        Enforce(); this might be overkill?
-    endIf
-endEvent
-
 event OnActivate(ObjectReference ref_activator)
     Enforce()
     ; maybe we could also pop up some basic stats on screen?
 endEvent
 
 event OnLoad()
+    ; does not work on game load
     Enforce()
 endEvent
 
