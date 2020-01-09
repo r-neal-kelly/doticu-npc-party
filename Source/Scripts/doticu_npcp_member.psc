@@ -117,20 +117,22 @@ function p_Create(doticu_npcp_data DATA, int id_alias, bool is_clone)
     p_marker_display = none
     p_outfit_member = CONSTS.FORMLIST_OUTFITS.GetAt(p_id_alias) as Outfit
 
-    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_MEMBER, p_id_alias + 1)
-    p_ref_actor.EvaluatePackage()
-
+    p_Create_Containers()
     p_Create_Queues()
-    p_Register_Queues(); currently needed because we Enqueue in this func
+    p_Backup()
+    
+    p_Token()
+    p_Member()
+    p_Style()
+    p_Vitalize()
 
     if p_is_clone
-        p_Enqueue("Member.Greet")
+        ACTORS.Move_To(p_ref_actor, CONSTS.ACTOR_PLAYER, 60, 180)
+        ACTORS.Greet_Player(p_ref_actor)
     endIf
-    p_Enqueue("Member.Create_Containers")
-    p_Enqueue("Member.Create_Outfits")
-    p_Enqueue("Member.Backup")
 
-    Enforce()
+    p_Register_Queues()
+    p_Enqueue("Member.Create_Outfits")
 endFunction
 
 function f_Destroy()
@@ -249,11 +251,6 @@ function p_Rush(string str_message)
     f_QUEUE.Rush(str_message, p_str_namespace)
 endFunction
 
-function p_Greet()
-    ACTORS.Move_To(p_ref_actor, CONSTS.ACTOR_PLAYER, 60, 180)
-    ACTORS.Greet_Player(p_ref_actor)
-endFunction
-
 function p_Create_Containers()
     p_container2_pack = CONTAINERS.Create()
     p_Name_Containers(Get_Name())
@@ -306,8 +303,7 @@ function p_Name_Outfits(string str_member_name)
 endFunction
 
 function p_Backup()
-    ; backup if was in current follower faction
-    ; to stop infighting, use a member package that just ignores combat.
+    ; let Outfit be backed up in Create_Outfits, so that it can be run after this async
     p_prev_vitality = ACTORS.Get_Vitality(p_ref_actor)
     p_prev_factions = ACTORS.Get_Factions(p_ref_actor)
     p_prev_faction_ranks = ACTORS.Get_Faction_Ranks(p_ref_actor, p_prev_factions)
@@ -1469,15 +1465,9 @@ endState
 ; Events
 event On_Queue_Member(string str_message)
     if false
-    
-    elseIf str_message == "Member.Greet"
-        p_Greet()
-    elseIf str_message == "Member.Create_Containers"
-        p_Create_Containers()
+
     elseIf str_message == "Member.Create_Outfits"
         p_Create_Outfits()
-    elseIf str_message == "Member.Backup"
-        p_Backup()
     elseIf str_message == "Member.Token"
         p_Token()
     elseIf str_message == "Member.Member"

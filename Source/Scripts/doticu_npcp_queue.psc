@@ -418,6 +418,10 @@ function Unpause()
     GotoState("")
 endFunction
 
+; I think the problem with many of these is that once a thread enters the stack frame of a recursive wait,
+; it can't leave it even when the state of the function is changed to something else. It will just always
+; recurse infinitely.
+
 ; Private States
 state p_STATE_RUSH
     function Flush()

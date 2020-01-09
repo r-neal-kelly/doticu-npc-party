@@ -80,9 +80,9 @@ function f_Unregister()
 endFunction
 
 function f_Enforce()
-    p_Enqueue("Immobile.Token", 0.1)
+    p_Enqueue("Immobile.Token")
     if Is_Paralyzed()
-        p_Enqueue("Immobile.Paralyze", 0.1)
+        p_Enqueue("Immobile.Paralyze")
     endIf
 endFunction
 

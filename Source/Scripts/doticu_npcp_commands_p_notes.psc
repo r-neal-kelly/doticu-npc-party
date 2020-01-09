@@ -71,7 +71,7 @@ function Clone(int code_return, string str_name)
     elseIf code_return == CODES.ISNT_ACTOR
         LOGS.Create_Note("A clone of this can't be made a member.")
     else
-        LOGS.Create_Error("It's unknown why a clone of" + str_name + " can't be a member.")
+        LOGS.Create_Error("It's unknown why a clone of " + str_name + " can't be a member. " + code_return)
     endIf
 endFunction
 

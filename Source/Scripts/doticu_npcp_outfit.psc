@@ -64,23 +64,6 @@ function f_Register()
 endFunction
 
 ; Private Methods
-function p_Wait_For_Stability(Actor ref_actor, int max_tries = 12, float float_interval = 0.1)
-    int num_tries = 0
-    int num_items = 0
-
-    num_tries = 0
-    num_items = ref_actor.GetNumItems()
-    while num_tries < max_tries
-        Utility.Wait(float_interval)
-        if num_items != ref_actor.GetNumItems()
-            num_items = ref_actor.GetNumItems()
-            num_tries = 0
-        else
-            num_tries += 1
-        endIf
-    endWhile
-endFunction
-
 bool function p_Has_Changed(Actor ref_actor)
     int num_forms
     int idx_forms
@@ -152,9 +135,6 @@ function Get(Actor ref_actor)
     Form ref_form
     int num_items
 
-    ; we wait until the actor's inventory shows some stability
-    p_Wait_For_Stability(ref_actor, 7, 0.1)
-
     ; we refresh the cache
     self.RemoveAllItems(CONSTS.ACTOR_PLAYER, false, true)
     p_LEVELED.Revert()
@@ -179,9 +159,6 @@ function Set(Actor ref_actor, bool do_force = false)
     Form ref_form
     int num_items
     ObjectReference ref_trash
-
-    ; we wait until the actor's inventory shows some stability
-    p_Wait_For_Stability(ref_actor, 7, 0.5)
     
     ; if not forcing, there is no reason to re-oufit when neither the oufit container or the actor inventory has changed
     if !do_force && !p_Has_Changed(ref_actor)
@@ -236,9 +213,6 @@ function Remove_Inventory(Actor ref_actor, ObjectReference ref_container = none)
     Form ref_form
     int num_items
 
-    ; we wait until the actor's inventory shows some stability
-    p_Wait_For_Stability(ref_actor, 7, 0.5)
-
     ; copy inventory minus current outfit
     if ref_container
         idx_forms = 0
@@ -253,7 +227,7 @@ function Remove_Inventory(Actor ref_actor, ObjectReference ref_container = none)
     endIf
     
     ; removes any non-outfit items and makes sure outfit is properly equipped
-    Set(ref_actor)
+    Set(ref_actor, true)
 endFunction
 
 function Unset(Actor ref_actor)

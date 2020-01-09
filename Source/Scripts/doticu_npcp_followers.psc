@@ -75,10 +75,6 @@ int function f_Create_Follower(Actor ref_actor)
         return CODES.ISNT_ACTOR
     endIf
 
-    if ACTORS.Has_Token(ref_actor, CONSTS.TOKEN_FOLLOWER)
-        return CODES.HAS_FOLLOWER
-    endIf
-
     if ALIASES.Is_Full()
         return CODES.HASNT_SPACE_FOLLOWER
     endIf

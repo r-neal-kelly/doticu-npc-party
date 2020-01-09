@@ -277,24 +277,28 @@ bool function Has_Token(Actor ref_actor, MiscObject misc_token, int count_token 
 endFunction
 
 Actor function Clone(Actor ref_actor)
-    ; make Greet happen before waiting too long.
     ; can prob make this parallel with the jobs pattern
 
     CONSTS.MARKER_CLONER.MoveTo(CONSTS.ACTOR_PLAYER, 1000.0, 1000.0, -1000.0)
     
     Form ref_form = ref_actor.GetBaseObject() as Form
     Actor ref_clone = CONSTS.MARKER_CLONER.PlaceAtMe(ref_form, 1, true, false) as Actor; persist, disable
+    ref_clone.EnableAI(false)
+    ref_clone.MoveTo(CONSTS.MARKER_CLONER)
 
     if Is_Generic(ref_actor)
         while !p_Has_Same_Head(ref_actor, ref_clone); we may need to limit this to a couple hundred tries, because I ran into an infinite somehow. an unclonable?
             ref_clone.Disable()
             ref_clone.Delete()
             ref_clone = CONSTS.MARKER_CLONER.PlaceAtMe(ref_form, 1, true, false) as Actor; persist, disable
+            ref_clone.EnableAI(false)
+            ref_clone.MoveTo(CONSTS.MARKER_CLONER)
         endWhile
     endIf
 
     CONSTS.MARKER_CLONER.MoveTo(CONSTS.MARKER_STORAGE)
 
+    ref_clone.EnableAI(true)
     Pacify(ref_clone)
     Set_Name(ref_clone, "Clone of " + Get_Name(ref_actor))
 
@@ -483,4 +487,29 @@ function Remove_Factions(Actor ref_actor, Faction[] arr_factions = none)
     else
         ref_actor.RemoveFromAllFactions()
     endIf
+endFunction
+
+function Print_Inventory(Actor ref_actor)
+    string str_inventory = ""
+    int idx_forms = 0
+    int num_forms = ref_actor.GetNumItems()
+    Form form_form
+    int num_form
+
+    str_inventory += "[ "
+
+    while idx_forms < num_forms
+        form_form = ref_actor.GetNthForm(idx_forms)
+        if form_form
+            num_form = ref_actor.GetItemCount(form_form)
+            str_inventory += form_form.GetName() + " (" + num_form + "),"
+        else
+            str_inventory += "none (0),"
+        endIf
+        idx_forms += 1
+    endWhile
+
+    str_inventory += " ]\n"
+
+    MiscUtil.PrintConsole(str_inventory)
 endFunction

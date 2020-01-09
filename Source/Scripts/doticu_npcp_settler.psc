@@ -82,7 +82,7 @@ function f_Unregister()
 endFunction
 
 function f_Enforce()
-    p_Enqueue("Settler.Token", 0.1)
+    p_Enqueue("Settler.Token")
 endFunction
 
 function f_Return()

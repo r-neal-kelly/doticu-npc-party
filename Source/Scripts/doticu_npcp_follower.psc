@@ -120,7 +120,7 @@ function f_Create(doticu_npcp_data DATA, int id_alias)
 
     p_Register_Queues()
 
-    p_Enqueue("Follower.Backup", 0.1)
+    p_Enqueue("Follower.Backup")
 endFunction
 
 function f_Destroy()
@@ -170,11 +170,11 @@ function f_Unregister()
 endFunction
 
 function f_Enforce()
-    p_Enqueue("Follower.Token", 0.1)
-    p_Enqueue("Follower.Follow", 0.1)
-    p_Enqueue("Follower.Level", 0.1)
+    p_Enqueue("Follower.Token")
+    p_Enqueue("Follower.Follow")
+    p_Enqueue("Follower.Level")
     if Is_Sneak()
-        p_Enqueue("Follower.Sneak", 0.1)
+        p_Enqueue("Follower.Sneak")
     endIf
 endFunction
 

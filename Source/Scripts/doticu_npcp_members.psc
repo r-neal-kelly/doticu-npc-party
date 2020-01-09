@@ -128,10 +128,6 @@ int function p_Create_Member(Actor ref_actor, bool do_clone = false)
         return CODES.ISNT_ACTOR
     endIf
 
-    if ACTORS.Has_Token(ref_actor, CONSTS.TOKEN_MEMBER)
-        return CODES.HAS_MEMBER
-    endIf
-
     if ALIASES.Is_Full()
         ; cloning can be slow, so check first
         return CODES.HASNT_SPACE_MEMBER
