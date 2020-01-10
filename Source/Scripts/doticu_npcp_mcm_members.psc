@@ -107,6 +107,12 @@ endFunction
 function f_On_Option_Menu_Accept(int id_option, int idx_option)
 endFunction
 
+function f_On_Option_Slider_Open(int id_option)
+endFunction
+
+function f_On_Option_Slider_Accept(int id_option, float float_value)
+endFunction
+
 function f_On_Option_Input_Accept(int id_option, string str_input)
 endFunction
 

@@ -55,9 +55,10 @@ int                 p_option_key_fs_resurrect           =    -1
 
 int                 p_option_key_ms_display_start       =    -1
 int                 p_option_key_ms_display_stop        =    -1
+int                 p_option_key_ms_toggle_display      =    -1
+int                 p_option_slider_ms_display          =    -1
 int                 p_option_key_ms_display_previous    =    -1
 int                 p_option_key_ms_display_next        =    -1
-int                 p_option_key_ms_toggle_display      =    -1
 
 int                 p_option_key_m_toggle_paralyzed     =    -1
 
@@ -85,6 +86,12 @@ function f_On_Option_Menu_Open(int id_option)
 endFunction
 
 function f_On_Option_Menu_Accept(int id_option, int idx_option)
+endFunction
+
+function f_On_Option_Slider_Open(int id_option)
+endFunction
+
+function f_On_Option_Slider_Accept(int id_option, float float_value)
 endFunction
 
 function f_On_Option_Input_Accept(int id_option, string str_input)
@@ -157,9 +164,11 @@ auto state p_STATE_SETTINGS
         MCM.AddEmptyOption()
         p_option_key_ms_display_start = MCM.AddKeymapOption(" Start Display ", VARS.key_ms_display_start, MCM.OPTION_FLAG_WITH_UNMAP)
         p_option_key_ms_display_stop = MCM.AddKeymapOption(" Stop Display ", VARS.key_ms_display_stop, MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_ms_toggle_display = MCM.AddKeymapOption(" Toggle Display ", VARS.key_ms_toggle_display, MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_slider_ms_display = MCM.AddSliderOption(" Number per Cycle ", VARS.num_display, " {0} per ")
         p_option_key_ms_display_previous = MCM.AddKeymapOption(" Previous Display ", VARS.key_ms_display_previous, MCM.OPTION_FLAG_WITH_UNMAP)
         p_option_key_ms_display_next = MCM.AddKeymapOption(" Next Display ", VARS.key_ms_display_next, MCM.OPTION_FLAG_WITH_UNMAP)
-        p_option_key_ms_toggle_display = MCM.AddKeymapOption(" Toggle Display ", VARS.key_ms_toggle_display, MCM.OPTION_FLAG_WITH_UNMAP)
+        MCM.AddEmptyOption()
         MCM.AddEmptyOption()
 
         MCM.AddHeaderOption(" Hotkeys for One Follower/Member ")
@@ -225,6 +234,21 @@ auto state p_STATE_SETTINGS
 
         MCM.SetInfoText("Testing, can you see this?")
         ;f_On_Option_Highlight(id_option); doesn't seem to work.
+    endFunction
+
+    function f_On_Option_Slider_Open(int id_option)
+        if id_option == p_option_slider_ms_display
+            MCM.SetSliderDialogStartValue(VARS.num_display as float)
+            MCM.SetSliderDialogDefaultValue(CONSTS.DEFAULT_DISPLAY as float)
+            MCM.SetSliderDialogRange(CONSTS.MIN_DISPLAY as float, CONSTS.MAX_DISPLAY as float)
+            MCM.SetSliderDialogInterval(1.0)
+        endIf
+    endFunction
+
+    function f_On_Option_Slider_Accept(int id_option, float float_value)
+        if id_option == p_option_slider_ms_display
+            VARS.num_display = float_value as int
+        endIf
     endFunction
 
     function f_On_Option_Keymap_Change(int id_option, int code_key, string str_conflict_control, string str_conflict_mod)

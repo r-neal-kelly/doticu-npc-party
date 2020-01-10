@@ -68,7 +68,25 @@ endProperty
 
 int property VERSION_PATCH
     int function Get()
-        return 0; set manually upon each release
+        return 1; set manually upon each release
+    endFunction
+endProperty
+
+int property MIN_DISPLAY
+    int function Get()
+        return 1
+    endFunction
+endProperty
+
+int property MAX_DISPLAY
+    int function Get()
+        return 8
+    endFunction
+endProperty
+
+int property DEFAULT_DISPLAY
+    int function Get()
+        return 5
     endFunction
 endProperty
 

@@ -765,7 +765,7 @@ function Members_Display_Start(Actor ref_actor)
     int code_return
     string str_name = ACTORS.Get_Name(ref_actor)
 
-    NOTES.Members_Display_Start(MEMBERS.Display_Start(ref_actor, 5), str_name); use VARS for num
+    NOTES.Members_Display_Start(MEMBERS.Display_Start(ref_actor), str_name)
 endFunction
 
 function Members_Display_Stop()

@@ -151,6 +151,34 @@ event OnOptionMenuAccept(int id_option, int idx_option)
     endIf
 endEvent
 
+event OnOptionSliderOpen(int id_option)
+    if CurrentPage == p_STR_FOLLOWERS
+        MCM_FOLLOWERS.f_On_Option_Slider_Open(id_option)
+    elseIf CurrentPage == p_STR_MEMBERS
+        MCM_MEMBERS.f_On_Option_Slider_Open(id_option)
+    elseIf CurrentPage == p_STR_FILTER
+        MCM_FILTER.f_On_Option_Slider_Open(id_option)
+    elseIf CurrentPage == p_STR_SETTINGS
+        MCM_SETTINGS.f_On_Option_Slider_Open(id_option)
+    elseIf CurrentPage == p_STR_LOG
+        MCM_LOG.f_On_Option_Slider_Open(id_option)
+    endIf
+endEvent
+
+event OnOptionSliderAccept(int id_option, float float_value)
+    if CurrentPage == p_STR_FOLLOWERS
+        MCM_FOLLOWERS.f_On_Option_Slider_Accept(id_option, float_value)
+    elseIf CurrentPage == p_STR_MEMBERS
+        MCM_MEMBERS.f_On_Option_Slider_Accept(id_option, float_value)
+    elseIf CurrentPage == p_STR_FILTER
+        MCM_FILTER.f_On_Option_Slider_Accept(id_option, float_value)
+    elseIf CurrentPage == p_STR_SETTINGS
+        MCM_SETTINGS.f_On_Option_Slider_Accept(id_option, float_value)
+    elseIf CurrentPage == p_STR_LOG
+        MCM_LOG.f_On_Option_Slider_Accept(id_option, float_value)
+    endIf
+endEvent
+
 event OnOptionInputAccept(int id_option, string str_input)
     if CurrentPage == p_STR_FOLLOWERS
         MCM_FOLLOWERS.f_On_Option_Input_Accept(id_option, str_input)

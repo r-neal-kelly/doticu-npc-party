@@ -28,6 +28,7 @@ bool                p_auto_resurrect        = false
 bool                p_auto_outfit           = false
 int                 p_auto_style            =    -1
 int                 p_auto_vitality         =    -1
+int                 p_num_display           =    -1
 bool                p_is_mcm_open           = false
 
 ; Public Variables
@@ -195,6 +196,15 @@ int property auto_vitality hidden
     endFunction
 endProperty
 
+int property num_display hidden
+    int function Get()
+        return p_num_display
+    endFunction
+    function Set(int val)
+        p_num_display = val
+    endFunction
+endProperty
+
 bool property is_mcm_open hidden
     bool function Get()
         return p_is_mcm_open
@@ -234,7 +244,13 @@ function Set_Defaults()
     auto_outfit = true
     auto_style = CODES.IS_DEFAULT; IS_DEFAULT, IS_WARRIOR, IS_MAGE, IS_ARCHER
     auto_vitality = CODES.IS_PROTECTED; IS_MORTAL, IS_PROTECTED, IS_ESSENTIAL, IS_INVULNERABLE
+    num_display = 5
     is_mcm_open = false
 
     ; need to set keys here I think...
+endFunction
+
+; Update Methods
+function u_0_3_1()
+    num_display = CONSTS.DEFAULT_DISPLAY
 endFunction

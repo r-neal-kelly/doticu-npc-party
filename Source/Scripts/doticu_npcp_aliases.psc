@@ -55,6 +55,10 @@ function f_Register()
 endFunction
 
 int function f_ID_To_Idx(int id_alias)
+    if id_alias < 0 || id_alias >= p_MAX_ALIASES
+        return -1
+    endIf
+
     int idx_id_alias = p_arr_used.Find(id_alias)
 
     if idx_id_alias > -1
@@ -209,6 +213,8 @@ function p_Sort()
     Alias base_alias
     Actor ref_actor
 
+    ; PapyrusUtil crashes if we send it a string array that has any "" in it
+    ; else we could just sort p_arr_names directly and save some cycles
     string[] arr_names_copy = PapyrusUtil.SliceStringArray(p_arr_names, 0, p_num_names - 1)
     PapyrusUtil.SortStringArray(arr_names_copy)
 
