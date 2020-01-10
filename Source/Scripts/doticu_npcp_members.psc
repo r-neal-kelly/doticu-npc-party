@@ -259,12 +259,22 @@ doticu_npcp_immobile function Get_Immobile(Actor ref_actor)
     endIf
 endFunction
 
+doticu_npcp_member function Get_Next_Member(doticu_npcp_member ref_member)
+    Actor ref_actor = ref_member.Get_Actor()
+    return ALIASES.Get_Next_Alias(p_Get_Alias_ID(ref_actor), ref_actor) as doticu_npcp_member
+endFunction
+
+doticu_npcp_member function Get_Prev_Member(doticu_npcp_member ref_member)
+    Actor ref_actor = ref_member.Get_Actor()
+    return ALIASES.Get_Prev_Alias(p_Get_Alias_ID(ref_actor), ref_actor) as doticu_npcp_member
+endFunction
+
 Alias[] function Get_Members(int idx_from = 0, int idx_to_ex = -1)
     return ALIASES.Get_Aliases(idx_from, idx_to_ex)
 endFunction
 
-function Sort_Members()
-    ALIASES.Sort_Aliases()
+int function Update_Name(int id_alias)
+    return ALIASES.Update_Name(id_alias)
 endFunction
 
 function Enforce()
@@ -325,7 +335,7 @@ int function Display_Start(Actor ref_actor, int num_display)
         return CODES.OUT_OF_BOUNDS
     endIf
 
-    int idx_alias = ALIASES.Get_Alias_Idx(p_Get_Alias_ID(ref_actor))
+    int idx_alias = ALIASES.f_ID_To_Idx(p_Get_Alias_ID(ref_actor))
     if idx_alias < 0
         idx_alias = 0
     endIf
@@ -373,7 +383,7 @@ int function Display_Next()
     p_Undisplay_Aliases(arr_prev)
     p_Display_Aliases(arr_next, p_DISPLAY_DISTANCE, p_DISPLAY_SPREAD)
 
-    p_idx_display = ALIASES.Get_Relative_Alias_Idx(p_idx_display + p_num_display)
+    p_idx_display = ALIASES.f_To_Relative_Idx(p_idx_display + p_num_display)
 
     return CODES.SUCCESS
 endFunction
@@ -383,7 +393,7 @@ int function Display_Previous()
         return CODES.ISNT_DISPLAY
     endIf
 
-    p_idx_display = ALIASES.Get_Relative_Alias_Idx(p_idx_display - p_num_display)
+    p_idx_display = ALIASES.f_To_Relative_Idx(p_idx_display - p_num_display)
 
     Alias[] arr_prev = ALIASES.Get_Prev_Aliases(p_idx_display, p_num_display)
     Alias[] arr_next = ALIASES.Get_Next_Aliases(p_idx_display, p_num_display)
@@ -430,8 +440,9 @@ function p_Undisplay_Aliases(Alias[] arr_aliases)
 endFunction
 
 ; Update Methods
-function u_0_2_1(doticu_npcp_data DATA)
-    ; as slow as it may be, use a loop so that loading the game is quicker
+function u_0_3_0()
+    ALIASES.u_0_3_0()
+    f_Register()
 endFunction
 
 ; Private States

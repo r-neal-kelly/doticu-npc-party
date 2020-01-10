@@ -590,7 +590,19 @@ doticu_npcp_settler function Get_Settler()
 endFunction
 
 int function Set_Name(string str_name)
-    return p_ref_member.Set_Name(str_name)
+    int code_return
+
+    code_return = p_ref_member.Set_Name(str_name)
+    if code_return < 0
+        return code_return
+    endIf
+
+    code_return = FOLLOWERS.Update_Name(p_id_alias)
+    if code_return < 0
+        return code_return
+    endIf
+
+    return CODES.SUCCESS
 endFunction
 
 int function Sneak()

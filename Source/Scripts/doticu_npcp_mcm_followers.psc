@@ -329,7 +329,6 @@ state p_STATE_FOLLOWER
         if id_option == p_option_rename
             if str_input != ""
                 p_ref_follower.Set_Name(str_input)
-                FOLLOWERS.Sort_Followers(); hard to see how to make parallel
                 MCM.ForcePageReset()
             endIf
         endIf

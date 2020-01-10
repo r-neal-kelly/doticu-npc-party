@@ -56,17 +56,14 @@ function p_Enqueue(string str_message, Actor ref_actor, bool opt_bool = false)
     p_queue_commands.Enqueue_Form_Bool(str_message, ref_actor as Form, opt_bool, 0.1)
 endFunction
 
-; Public Methods
-function Member_Sync(Actor ref_actor)
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Member(ref_actor)
-    GotoState("")
+function p_Excise(string str_message)
+    p_queue_commands.Excise(str_message)
 endFunction
 
-function Member_Async(Actor ref_actor)
-    p_Enqueue("Member", ref_actor)
-    p_queue_commands.Excise("Unmember")
-endFunction
+; Public Methods
+
+
+
 
 function Unmember(Actor ref_actor)
     GotoState("p_STATE_BUSY")
@@ -278,11 +275,9 @@ function Unsneak(Actor ref_actor, bool auto_create)
     GotoState("")
 endFunction
 
-function Summon(Actor ref_actor)
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Summon", ref_actor)
-    GotoState("")
-endFunction
+
+
+
 
 
 function Toggle_Member(Actor ref_actor)
@@ -470,6 +465,30 @@ function Toggle_Followers_Sneak()
     GotoState("")
 endFunction
 
+; Public Methods (Sync)
+function Member_Sync(Actor ref_actor)
+    GotoState("p_STATE_BUSY")
+    PRIVATE.Member(ref_actor)
+    GotoState("")
+endFunction
+
+function Summon_Sync(Actor ref_actor)
+    GotoState("p_STATE_BUSY")
+    PRIVATE.Summon(ref_actor)
+    GotoState("")
+endFunction
+
+; Public Methods (Async)
+function Member_Async(Actor ref_actor)
+    p_Enqueue("Member", ref_actor)
+    p_Excise("Unmember")
+endFunction
+
+function Summon_Async(Actor ref_actor)
+    p_Enqueue("Summon", ref_actor)
+    p_Excise("Banish"); not used currently
+endFunction
+
 ; should have a "Member" and "Follower" summon cycle. Very mush desired, so it's easy to pick them out of all the names.
 
 ; "all", "mobile", "immobile", follower cycle, etc, such that they each summon one after another
@@ -542,7 +561,7 @@ state p_STATE_BUSY
     endFunction
     function Unsneak(Actor ref_actor, bool auto_create)
     endFunction
-    function Summon(Actor ref_actor)
+    function Summon_Sync(Actor ref_actor)
     endFunction
     
     function Toggle_Member(Actor ref_actor)

@@ -581,6 +581,8 @@ int function Get_Outfit()
 endFunction
 
 int function Set_Name(string str_name)
+    int code_return
+
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -594,6 +596,11 @@ int function Set_Name(string str_name)
     p_Name_Containers(str_name)
     p_Name_Outfits(str_name)
 
+    code_return = MEMBERS.Update_Name(p_id_alias)
+    if code_return < 0
+        return code_return
+    endIf
+    
     return CODES.SUCCESS
 endFunction
 

@@ -62,7 +62,7 @@ endProperty
 
 int property VERSION_MINOR
     int function Get()
-        return 2; set manually upon each release
+        return 3; set manually upon each release
     endFunction
 endProperty
 
@@ -644,7 +644,9 @@ string property STR_LOCKPICKING         = "Lockpicking"     autoReadOnly hidden
 string property STR_PICKPOCKET          = "Pickpocket"      autoReadOnly hidden
 string property STR_SPEECHCRAFT         = "Speechcraft"     autoReadOnly hidden
 
+string property STR_MCM_SUMMON          = " Summon "        autoReadOnly hidden
 string property STR_MCM_OUTFIT          = " Outfit "        autoReadOnly hidden
+string property STR_MCM_CURRENT         = " Current "       autoReadOnly hidden
 string property STR_MCM_MEMBER          = " Member "        autoReadOnly hidden
 string property STR_MCM_SETTLER         = " Settler "       autoReadOnly hidden
 string property STR_MCM_THRALL          = " Thrall "        autoReadOnly hidden

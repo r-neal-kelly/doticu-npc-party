@@ -489,12 +489,22 @@ doticu_npcp_follower function Get_Follower(Actor ref_actor)
     return ALIASES.Get_Alias(p_Get_Alias_ID(ref_actor), ref_actor) as doticu_npcp_follower
 endFunction
 
+doticu_npcp_follower function Get_Next_Follower(doticu_npcp_follower ref_follower)
+    Actor ref_actor = ref_follower.Get_Actor()
+    return ALIASES.Get_Next_Alias(p_Get_Alias_ID(ref_actor), ref_actor) as doticu_npcp_follower
+endFunction
+
+doticu_npcp_follower function Get_Prev_Follower(doticu_npcp_follower ref_follower)
+    Actor ref_actor = ref_follower.Get_Actor()
+    return ALIASES.Get_Prev_Alias(p_Get_Alias_ID(ref_actor), ref_actor) as doticu_npcp_follower
+endFunction
+
 Alias[] function Get_Followers(int idx_from = 0, int idx_to_ex = -1)
     return ALIASES.Get_Aliases(idx_from, idx_to_ex)
 endFunction
 
-function Sort_Followers()
-    ALIASES.Sort_Aliases()
+int function Update_Name(int id_alias)
+    return ALIASES.Update_Name(id_alias)
 endFunction
 
 int function Summon_All(int distance = 120, int angle_start = 0, int angle_offset = 17)
@@ -702,8 +712,9 @@ int function Catch_Up()
 endFunction
 
 ; Update Methods
-function u_0_2_1(doticu_npcp_data DATA)
-    ; as slow as it may be, use a loop so that loading the game is quicker
+function u_0_3_0()
+    ALIASES.u_0_3_0()
+    f_Register()
 endFunction
 
 ; State

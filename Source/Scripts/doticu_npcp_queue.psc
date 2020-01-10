@@ -225,7 +225,7 @@ function Enqueue(string str_message, float float_wait_before = -1.0, string str_
         return
     endIf
 
-    if float_wait_before <= 0.0
+    if float_wait_before < 0.0
         float_wait_before = p_INTERVAL_DEFAULT
     endIf
 
@@ -248,7 +248,7 @@ function Enqueue_Form_Bool(string str_message, Form form_form, bool bool_bool, f
         Use_Bools()
     endIf
 
-    if float_wait_before <= 0.0
+    if float_wait_before < 0.0
         float_wait_before = p_INTERVAL_DEFAULT
     endIf
 

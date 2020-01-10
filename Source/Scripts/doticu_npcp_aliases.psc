@@ -13,13 +13,27 @@ int                 p_MAX_ALIASES   =    -1
 
 ; Private Variables
 bool                p_is_created    = false
+
+int                 p_num_used      =    -1
+int[]               p_arr_used      =  none
+
+int                 p_num_free      =    -1
+int[]               p_arr_free      =  none
+
+int                 p_num_aliases   =    -1
+Alias[]             p_arr_aliases   =  none
+
+int                 p_num_actors    =    -1
+Form[]              p_arr_actors    =  none
+
+int                 p_num_names     =    -1
+string[]            p_arr_names     =  none
+
+; to be deleted.
 int                 p_size_ids_used =    -1
 int                 p_size_ids_free =    -1
 int[]               p_arr_ids_used  =  none
 int[]               p_arr_ids_free  =  none
-bool                p_is_used_dirty = false
-int                 p_size_actors   =    -1
-Form[]              p_arr_actors    =  none
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
@@ -27,20 +41,40 @@ function f_Create(doticu_npcp_data DATA)
     p_MAX_ALIASES = GetNumAliases()
 
     p_is_created = true
-    p_Create_ID_Arrays()
-    p_Create_Actor_Array()
+
+    p_Create_Arrays()
 endFunction
 
 function f_Destroy()
-    p_Destroy_Actor_Array()
-    p_Destroy_ID_Arrays()
+    p_Destroy_Arrays()
+
     p_is_created = false
 endFunction
 
 function f_Register()
 endFunction
 
-ReferenceAlias function f_Get_Alias(int id_alias)
+int function f_ID_To_Idx(int id_alias)
+    int idx_id_alias = p_arr_used.Find(id_alias)
+
+    if idx_id_alias > -1
+        return idx_id_alias
+    else
+        return -1
+    endIf
+endFunction
+
+int function f_To_Relative_Idx(int idx_alias)
+    if idx_alias < 0
+        idx_alias = p_num_aliases + idx_alias
+    elseIf idx_alias >= p_num_aliases
+        idx_alias = idx_alias - p_num_aliases
+    endIf
+
+    return idx_alias
+endFunction
+
+ReferenceAlias function f_Get_Alias(int id_alias); can this be removed somehow?
     if -1 < id_alias && id_alias < p_MAX_ALIASES
         return GetNthAlias(id_alias) as ReferenceAlias
     else
@@ -49,191 +83,151 @@ ReferenceAlias function f_Get_Alias(int id_alias)
 endFunction
 
 ; Private Methods
-function p_Create_ID_Arrays()
-    p_size_ids_used = 0
-    p_size_ids_free = p_MAX_ALIASES
-    p_arr_ids_used = Utility.CreateIntArray(p_MAX_ALIASES, -1)
-    p_arr_ids_free = Utility.CreateIntArray(p_MAX_ALIASES, -1)
-    p_is_used_dirty = false
+function p_Create_Arrays()
+    p_num_used = 0
+    p_arr_used = Utility.CreateIntArray(p_MAX_ALIASES, -1)
+
+    p_num_free = p_MAX_ALIASES
+    p_arr_free = Utility.CreateIntArray(p_MAX_ALIASES, -1)
+
+    p_num_aliases = 0
+    p_arr_aliases = Utility.CreateAliasArray(p_MAX_ALIASES, none)
+
+    p_num_actors = 0
+    p_arr_actors = Utility.CreateFormArray(p_MAX_ALIASES, none)
+
+    p_num_names = 0
+    p_arr_names = Utility.CreateStringArray(p_MAX_ALIASES, "")
     
-    int idx_ids_free = 0
-    int val_ids_free = p_MAX_ALIASES - 1
-    while idx_ids_free < p_MAX_ALIASES
-        p_arr_ids_free[idx_ids_free] = val_ids_free
-        idx_ids_free += 1
-        val_ids_free -= 1
+    int idx_free = 0
+    int idx_alias = p_MAX_ALIASES
+    while idx_free < p_MAX_ALIASES
+        idx_alias -= 1
+        p_arr_free[idx_free] = idx_alias
+        idx_free += 1
     endWhile
 endFunction
 
-function p_Destroy_ID_Arrays()
-    p_is_used_dirty = false
-    p_arr_ids_free = none
-    p_arr_ids_used = none
-    p_size_ids_free = -1
-    p_size_ids_used = -1
+function p_Destroy_Arrays()
+    p_arr_names = none
+    p_num_names = -1
+
+    p_arr_actors = none
+    p_num_actors = -1
+
+    p_arr_aliases = none
+    p_num_aliases = -1
+
+    p_arr_free = none
+    p_num_free = -1
+
+    p_arr_used = none
+    p_num_used = -1
 endFunction
 
-int function p_Create_ID()
-    if p_size_ids_free <= 0 || p_size_ids_used >= p_arr_ids_used.length
-        ; no ids are free
+string function p_Stringify_ID(int id_alias, Actor ref_actor)
+    string str_id_alias = id_alias as string
+    int len_id_alias = StringUtil.GetLength(str_id_alias)
+
+    if len_id_alias == 1
+        str_id_alias = "000" + str_id_alias
+    elseIf len_id_alias == 2
+        str_id_alias = "00" + str_id_alias
+    elseIf len_id_alias == 3
+        str_id_alias = "0" + str_id_alias
+    endIf
+
+    return ref_actor.GetDisplayName() + str_id_alias
+endFunction
+
+int function p_Unstringify_ID(string str_id_alias)
+    int len_id_alias = StringUtil.GetLength(str_id_alias)
+    return StringUtil.Substring(str_id_alias, len_id_alias - 4, 4) as int
+endFunction
+
+int function p_Create_ID(Actor ref_actor)
+    if p_num_free <= 0 || p_num_used >= p_MAX_ALIASES
         return CODES.HASNT_SPACE
     endIf
 
-    p_size_ids_free -= 1
-    int id = p_arr_ids_free[p_size_ids_free]
+    p_num_free -= 1
+    int id_alias = p_arr_free[p_num_free]
 
-    p_arr_ids_used[p_size_ids_used] = id
-    p_size_ids_used += 1
+    p_arr_used[p_num_used] = id_alias
+    p_num_used += 1
 
-    p_is_used_dirty = true
+    p_arr_aliases[p_num_aliases] = GetNthAlias(id_alias)
+    p_num_aliases += 1
 
-    return id
+    p_arr_actors[p_num_actors] = ref_actor
+    p_num_actors += 1
+
+    p_arr_names[p_num_names] = p_Stringify_ID(id_alias, ref_actor)
+    p_num_names += 1
+
+    return id_alias
 endFunction
 
-int function p_Destroy_ID(int id)
-    if p_size_ids_free >= p_arr_ids_free.length
-        ; all ids are free
+int function p_Destroy_ID(int id_alias)
+    if p_num_free >= p_MAX_ALIASES
         return CODES.SUCCESS
     endIf
 
-    int idx_id_used = p_arr_ids_used.RFind(id, p_size_ids_used - 1)
-    if idx_id_used < 0
-        ; id was not in use
+    int idx_id = p_arr_used.RFind(id_alias, p_num_used - 1)
+    if idx_id < 0
         return CODES.HASNT_ID
     endIf
 
-    p_size_ids_used -= 1
-    if idx_id_used != p_size_ids_used
-        ; id found was not last element, so defrag array
-        p_arr_ids_used[idx_id_used] = p_arr_ids_used[p_size_ids_used]
-        p_is_used_dirty = true
-    endIf
-    p_arr_ids_used[p_size_ids_used] = -1
-    
-    p_arr_ids_free[p_size_ids_free] = id
-    p_size_ids_free += 1
+    p_num_used -= 1
+    p_num_aliases -= 1
+    p_num_actors -= 1
+    p_num_names -= 1
 
-    if p_size_ids_used < 1; this may be temp
-        p_Create_ID_Arrays()
-        p_is_used_dirty = false
+    if idx_id != p_num_used
+        ; idx_id was not last idx, so defrag arrays
+        p_arr_used[idx_id] = p_arr_used[p_num_used]
+        p_arr_aliases[idx_id] = p_arr_aliases[p_num_aliases]
+        p_arr_actors[idx_id] = p_arr_actors[p_num_actors]
+        p_arr_names[idx_id] = p_arr_names[p_num_names]
     endIf
+
+    p_arr_used[p_num_used] = -1
+    p_arr_aliases[p_num_aliases] = none
+    p_arr_actors[p_num_actors] = none
+    p_arr_names[p_num_names] = ""
+    
+    p_arr_free[p_num_free] = id_alias
+    p_num_free += 1
 
     return CODES.SUCCESS
 endFunction
 
-function p_Sort_Used(bool do_force = false)
-    if !do_force && !p_is_used_dirty
-        ; already sorted
-        return
-    endIf
-
-    ; we should do the sorting in another thread, but only one thread.
-    
-    string[] arr_names = p_Get_Used_Names_IDs(); we could use an if chain with sorting algorithm and funcs
-    int [] arr_ids = Utility.CreateIntArray(p_MAX_ALIASES, -1)
-    string str_name
-    int len_str_name
-    int idx_alias
-
-    PapyrusUtil.SortStringArray(arr_names)
-
-    int idx_names = 0
-    while idx_names < arr_names.length
-        str_name = arr_names[idx_names]
-        len_str_name = StringUtil.GetLength(str_name)
-        idx_alias = StringUtil.Substring(str_name, len_str_name - 3, 3) as int
-
-        arr_ids[idx_names] = idx_alias
-
-        idx_names += 1
-    endWhile
-
-    p_arr_ids_used = arr_ids
-    p_is_used_dirty = false
-endFunction
-
-string[] function p_Get_Used_Names_IDs()
-    ; we need to sort our members, and the only way to do that in Papyrus
-    ; is to create a looping sort, which is extremely slow. So we outsource.
-    ; And without any means to define the behavior of the outsourced func,
-    ; we resort to sorting a string, which can be modified in papyrus quickly
-
-    string[] arr_names = Utility.CreateStringArray(p_size_ids_used, "")
-    int idx_alias
-    string str_idx
-    int len_str_idx
+function p_Sort()
+    int idx_id = 0
+    string str_id
+    int id_alias
+    Alias base_alias
     Actor ref_actor
 
-    int idx_used = 0
-    while idx_used < p_size_ids_used
-        idx_alias = p_arr_ids_used[idx_used]
-        str_idx = idx_alias as string
-        len_str_idx = StringUtil.GetLength(str_idx)
+    string[] arr_names_copy = PapyrusUtil.SliceStringArray(p_arr_names, 0, p_num_names - 1)
+    PapyrusUtil.SortStringArray(arr_names_copy)
 
-        if len_str_idx == 1
-            str_idx = "00" + str_idx
-        elseIf len_str_idx == 2
-            str_idx = "0" + str_idx
-        endIf
+    while idx_id < p_num_names
+        str_id = arr_names_copy[idx_id]
+        id_alias = p_Unstringify_ID(str_id); may need to inline
+        base_alias = GetNthAlias(id_alias)
+        ref_actor = (base_alias as ReferenceAlias).GetActorReference()
 
-        ref_actor = (GetNthAlias(idx_alias) as ReferenceAlias).GetActorReference()
-        arr_names[idx_used] = ref_actor.GetDisplayName() + str_idx
+        p_arr_used[idx_id] = id_alias
+        p_arr_aliases[idx_id] = base_alias
+        p_arr_actors[idx_id] = ref_actor
+        p_arr_names[idx_id] = str_id
 
-        idx_used += 1
+        idx_id += 1
     endWhile
-
-    return arr_names
-endFunction
-
-function p_Create_Actor_Array()
-    p_size_actors = 0
-    p_arr_actors = Utility.CreateFormArray(p_MAX_ALIASES, none)
-endFunction
-
-function p_Destroy_Actor_Array()
-    p_arr_actors = none
-    p_size_actors = -1
-endFunction
-
-int function p_Push_Actor(Actor ref_actor)
-    if !ref_actor
-        return CODES.ISNT_ACTOR
-    endIf
-
-    if p_size_actors >= p_arr_actors.length
-        return CODES.HASNT_SPACE
-    endIf
-
-    p_arr_actors[p_size_actors] = ref_actor as Form
-    p_size_actors += 1
-
-    return CODES.SUCCESS
-endFunction
-
-int function p_Remove_Actor(Actor ref_actor)
-    if !ref_actor
-        return CODES.ISNT_ACTOR
-    endIf
-
-    int idx_actor = p_arr_actors.Find(ref_actor as Form)
-    if idx_actor < 0
-        return CODES.HASNT_ACTOR
-    endIf
-
-    p_size_actors -= 1
-    if idx_actor != p_size_actors
-        ; id found was not last element, so defrag array
-        p_arr_actors[idx_actor] = p_arr_actors[p_size_actors]
-    endIf
-    p_arr_actors[p_size_actors] = none
-
-    return CODES.SUCCESS
 endFunction
 
 bool function p_Has_Actor(Actor ref_actor)
-    ; this is why we have p_arr_actors, so we can outsource
-    ; lookup in C++. Papyrus loops are extremely slow!
-
     if ref_actor
         return p_arr_actors.Find(ref_actor as Form) > -1
     else
@@ -242,11 +236,20 @@ bool function p_Has_Actor(Actor ref_actor)
 endFunction
 
 Actor function p_Get_Actor(int id_alias)
-    ReferenceAlias ref_alias = f_Get_Alias(id_alias)
-    if !ref_alias
-        return none
+    int idx_id = f_ID_To_Idx(id_alias)
+    if idx_id > -1
+        return p_arr_actors[idx_id] as Actor
     else
-        return ref_alias.GetActorReference()
+        return none
+    endIf
+endFunction
+
+ReferenceAlias function p_Get_Alias(int id_alias)
+    int idx_id = f_ID_To_Idx(id_alias)
+    if idx_id > -1
+        return p_arr_aliases[idx_id] as ReferenceAlias
+    else
+        return none
     endIf
 endFunction
 
@@ -266,18 +269,15 @@ int function Create_Alias(Actor ref_actor)
         return CODES.HASNT_SPACE
     endIf
 
-    code_return = p_Create_ID()
+    code_return = p_Create_ID(ref_actor)
     if code_return < 0
         return code_return
     endIf
     int id_alias = code_return
 
-    code_return = p_Push_Actor(ref_actor)
-    if code_return < 0
-        return code_return
-    endIf
-
     f_Get_Alias(id_alias).ForceRefTo(ref_actor)
+
+    p_Sort()
     
     return id_alias
 endFunction
@@ -295,21 +295,44 @@ int function Destroy_Alias(int id_alias, Actor ref_actor)
 
     f_Get_Alias(id_alias).Clear()
 
-    code_return = p_Remove_Actor(ref_actor)
-    if code_return < 0
-        return code_return
-    endIf
-
     code_return = p_Destroy_ID(id_alias)
     if code_return < 0
         return code_return
     endIf
 
+    p_Sort()
+
     return CODES.SUCCESS
 endFunction
 
+int function Update_Name(int id_alias)
+    int idx_id = f_ID_To_Idx(id_alias)
+
+    if idx_id < 0
+        return CODES.HASNT_ID
+    endIf
+
+    p_arr_names[idx_id] = p_Stringify_ID(id_alias, p_arr_actors[idx_id] as Actor)
+
+    p_Sort()
+
+    return CODES.SUCCESS
+endFunction
+
+bool function Is_Full()
+    return p_num_free <= 0
+endFunction
+
+int function Get_Count()
+    return p_num_used
+endFunction
+
+int function Get_Max()
+    return p_MAX_ALIASES
+endFunction
+
 bool function Has_Alias(int id_alias, Actor ref_actor)
-    return ref_actor != none && p_Get_Actor(id_alias) == ref_actor
+    return ref_actor && p_Get_Actor(id_alias) == ref_actor
 endFunction
 
 ReferenceAlias function Get_Alias(int id_alias, Actor ref_actor)
@@ -320,33 +343,41 @@ ReferenceAlias function Get_Alias(int id_alias, Actor ref_actor)
     endIf
 endFunction
 
-Alias[] function Get_Aliases(int idx_from = 0, int idx_to_ex = -1)
-    p_Sort_Used()
+ReferenceAlias function Get_Next_Alias(int id_alias, Actor ref_actor)
+    if !Has_Alias(id_alias, ref_actor)
+        return none
+    endIf
 
+    int idx_alias_next = f_To_Relative_Idx(f_ID_To_Idx(id_alias) + 1)
+
+    return p_arr_aliases[idx_alias_next] as ReferenceAlias
+endFunction
+
+ReferenceAlias function Get_Prev_Alias(int id_alias, Actor ref_actor)
+    if !Has_Alias(id_alias, ref_actor)
+        return none
+    endIf
+
+    int idx_alias_prev = f_To_Relative_Idx(f_ID_To_Idx(id_alias) - 1)
+
+    return p_arr_aliases[idx_alias_prev] as ReferenceAlias
+endFunction
+
+Alias[] function Get_Aliases(int idx_from = 0, int idx_to_ex = -1)
     if idx_from < 0
         idx_from = 0
     endIf
 
-    if idx_to_ex > p_size_ids_used || idx_to_ex < 0
-        idx_to_ex = p_size_ids_used
+    if idx_to_ex > p_num_aliases || idx_to_ex < 0
+        idx_to_ex = p_num_aliases
     endIf
 
-    int size_arr_aliases = idx_to_ex - idx_from
-    if size_arr_aliases <= 0
-        return Utility.CreateAliasArray(0, none)
+    int idx_to_in = idx_to_ex - 1
+    if idx_to_in < 0
+        idx_to_in = 0
     endIf
 
-    Alias[] arr_aliases = Utility.CreateAliasArray(size_arr_aliases, none)
-    
-    int idx_orig = idx_from
-    int idx_copy = 0
-    while idx_orig < idx_to_ex
-        arr_aliases[idx_copy] = GetNthAlias(p_arr_ids_used[idx_orig])
-        idx_orig += 1
-        idx_copy += 1
-    endWhile
-
-    return arr_aliases
+    return PapyrusUtil.SliceAliasArray(p_arr_aliases, idx_from, idx_to_in)
 endFunction
 
 Alias[] function Get_Next_Aliases(int idx_in, int num_next)
@@ -354,25 +385,25 @@ Alias[] function Get_Next_Aliases(int idx_in, int num_next)
 
     if idx_in < 0
         idx_in = 0
-    elseIf idx_in >= p_size_ids_used
-        idx_in = p_size_ids_used - 1
+    elseIf idx_in >= p_num_aliases
+        idx_in = p_num_aliases - 1
     endIf
 
-    if num_next > p_size_ids_used
-        num_next = p_size_ids_used
+    if num_next > p_num_aliases
+        num_next = p_num_aliases
     endIf
 
-    int idx_used = idx_in
+    int idx_aliases = idx_in
 
     Alias[] arr_copy = Utility.CreateAliasArray(num_next, none)
     int idx_copy = 0
 
     while idx_copy < num_next
-        arr_copy[idx_copy] = GetNthAlias(p_arr_ids_used[idx_used])
+        arr_copy[idx_copy] = p_arr_aliases[idx_aliases]
 
-        idx_used += 1
-        if idx_used >= p_size_ids_used
-            idx_used = 0
+        idx_aliases += 1
+        if idx_aliases >= p_num_aliases
+            idx_aliases = 0
         endIf
 
         idx_copy += 1
@@ -386,28 +417,28 @@ Alias[] function Get_Prev_Aliases(int idx_ex, int num_prev)
 
     if idx_ex < 0
         idx_ex = 0
-    elseIf idx_ex > p_size_ids_used
-        idx_ex = p_size_ids_used
+    elseIf idx_ex > p_num_aliases
+        idx_ex = p_num_aliases
     endIf
 
-    if num_prev > p_size_ids_used
-        num_prev = p_size_ids_used
+    if num_prev > p_num_aliases
+        num_prev = p_num_aliases
     endIf
 
-    int idx_used = idx_ex - num_prev
-    if idx_used < 0
-        idx_used = idx_used + p_size_ids_used
+    int idx_aliases = idx_ex - num_prev
+    if idx_aliases < 0
+        idx_aliases = idx_aliases + p_num_aliases
     endIf
 
     Alias[] arr_copy = Utility.CreateAliasArray(num_prev, none)
     int idx_copy = 0
 
     while idx_copy < num_prev
-        arr_copy[idx_copy] = GetNthAlias(p_arr_ids_used[idx_used])
+        arr_copy[idx_copy] = p_arr_aliases[idx_aliases]
 
-        idx_used += 1
-        if idx_used >= p_size_ids_used
-            idx_used = 0
+        idx_aliases += 1
+        if idx_aliases >= p_num_aliases
+            idx_aliases = 0
         endIf
 
         idx_copy += 1
@@ -416,44 +447,45 @@ Alias[] function Get_Prev_Aliases(int idx_ex, int num_prev)
     return arr_copy
 endFunction
 
-int function Get_Alias_Idx(int id_alias)
-    int idx_used = p_arr_ids_used.Find(id_alias)
+; Update Methods
+function u_0_3_0()
+    p_Create_Arrays()
 
-    if idx_used > -1 && idx_used < p_size_ids_used
-        return idx_used
-    else
-        return -1
-    endIf
+    p_num_used = p_size_ids_used
+    p_num_free = p_size_ids_free
+    p_num_aliases = p_num_used
+    p_num_actors = p_num_used
+    p_num_names = p_num_used
+
+    int idx_id
+    int id_alias
+    Alias base_alias
+    Actor ref_actor
+
+    idx_id = 0
+    while idx_id < p_size_ids_used
+        id_alias = p_arr_ids_used[idx_id]
+        base_alias = GetNthAlias(id_alias)
+        ref_actor = (base_alias as ReferenceAlias).GetActorReference()
+
+        p_arr_used[idx_id] = id_alias
+        p_arr_aliases[idx_id] = base_alias
+        p_arr_actors[idx_id] = ref_actor
+        p_arr_names[idx_id] = p_Stringify_ID(id_alias, ref_actor)
+
+        idx_id += 1
+    endWhile
+
+    idx_id = 0
+    while idx_id < p_size_ids_free
+        p_arr_free[idx_id] = p_arr_ids_free[idx_id]
+
+        idx_id += 1
+    endWhile
+
+    ;p_size_ids_used = -1
+    ;p_arr_ids_used = none
+
+    ;p_size_ids_free = -1
+    ;p_arr_ids_free = none
 endFunction
-
-int function Get_Relative_Alias_Idx(int idx_alias)
-    int idx_used = idx_alias
-    
-    if idx_used < 0
-        idx_used = p_size_ids_used + idx_used
-    elseIf idx_used >= p_size_ids_used
-        idx_used = idx_used - p_size_ids_used
-    endIf
-
-    return idx_used
-endFunction
-
-function Sort_Aliases(int code_algorithm = -1)
-    p_Sort_Used(true)
-endFunction
-
-bool function Is_Full()
-    return p_size_ids_free <= 0
-endFunction
-
-int function Get_Count()
-    return p_size_ids_used
-endFunction
-
-int function Get_Max()
-    return p_MAX_ALIASES
-endFunction
-
-state p_STATE_BUSY
-    ; I think we will need to protect operations like sorting, just in case
-endState

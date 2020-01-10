@@ -40,27 +40,16 @@ endProperty
 ; Private Constants
 doticu_npcp_data    p_DATA                      =  none
 
-int                 p_VIEW_MEMBERS              =     0
-int                 p_VIEW_MEMBER               =     1
-
 int                 p_HEADERS_PER_PAGE          =     4
 int                 p_MEMBERS_PER_PAGE          =    20
-
-int                 p_COMMANDS_PER_MEMBER       =     4
-int                 p_IDX_SUMMON                =     0
-int                 p_IDX_FOLLOW                =     1
-int                 p_IDX_IMMOBILIZE            =     2
-int                 p_IDX_MORE                  =     3
 
 ; Private Variables
 bool                p_is_created                = false
 
-int                 p_curr_view                 =     0
 int                 p_curr_page                 =     0
-int                 p_count_pages               =    -1
+int                 p_num_pages                 =    -1
 Alias[]             p_arr_aliases               =  none
 doticu_npcp_member  p_ref_member                =  none
-int                 p_idx_member                =    -1
 int                 p_options_offset            =    -1
 
 bool                p_is_immobile               = false
@@ -70,6 +59,7 @@ int                 p_option_back               =    -1
 int                 p_option_prev               =    -1
 int                 p_option_next               =    -1
 
+int                 p_option_summon             =    -1
 int                 p_option_pack               =    -1
 int                 p_option_outfit             =    -1
 int                 p_option_resurrect          =    -1
@@ -133,15 +123,21 @@ endFunction
 int function p_Get_Idx_Command(int id_option, int idx_entity)
 endFunction
 
+function p_View_Members()
+    p_ref_member = none
+    GotoState("p_STATE_MEMBERS")
+    MCM.ForcePageReset()
+endFunction
+
+function p_View_Member(int idx_member)
+    p_ref_member = p_arr_aliases[idx_member] as doticu_npcp_member
+    GotoState("p_STATE_MEMBER")
+    MCM.ForcePageReset()
+endFunction
+
 ; Private States
 auto state p_STATE_MEMBERS
     function f_Build_Page()
-        if p_curr_view == p_VIEW_MEMBER
-            GotoState("p_STATE_MEMBER")
-            f_Build_Page()
-            return
-        endIf
-
         MCM.SetCursorPosition(0)
         MCM.SetCursorFillMode(MCM.LEFT_TO_RIGHT)
 
@@ -157,9 +153,9 @@ auto state p_STATE_MEMBERS
             return
         endIf
 
-        p_count_pages = Math.Ceiling(count_members / (p_MEMBERS_PER_PAGE as float))
+        p_num_pages = Math.Ceiling(count_members / (p_MEMBERS_PER_PAGE as float))
         str_count_members = "Members: " + count_members + "/" + max_members
-        str_count_pages = "Page: " + (p_curr_page + 1) + "/" + p_count_pages
+        str_count_pages = "Page: " + (p_curr_page + 1) + "/" + p_num_pages
         MCM.SetTitleText(str_count_members + ", " + str_count_pages)
 
         if count_members > p_MEMBERS_PER_PAGE
@@ -180,7 +176,7 @@ auto state p_STATE_MEMBERS
         p_arr_aliases = MEMBERS.Get_Members(idx_from, idx_to_ex)
         while idx < p_arr_aliases.length
             doticu_npcp_member ref_member = p_arr_aliases[idx] as doticu_npcp_member
-            MCM.AddMenuOption(ref_member.Get_Name(), "...")
+            MCM.AddTextOption(ref_member.Get_Name(), "...")
             idx += 1
         endWhile
     endFunction
@@ -192,66 +188,20 @@ auto state p_STATE_MEMBERS
     function f_On_Option_Select(int id_option)
         if id_option == p_option_prev
             if p_curr_page == 0
-                p_curr_page = p_count_pages - 1
+                p_curr_page = p_num_pages - 1
             else
                 p_curr_page -= 1
             endIf
+            MCM.ForcePageReset()
         elseIf id_option == p_option_next
-            if p_curr_page == p_count_pages - 1
+            if p_curr_page == p_num_pages - 1
                 p_curr_page = 0
             else
                 p_curr_page += 1
             endIf
-        endIf
-
-        MCM.ForcePageReset()
-    endFunction
-
-    function f_On_Option_Menu_Open(int id_option)
-        int idx_entity = p_Get_Idx_Entity(id_option)
-        doticu_npcp_member ref_member = p_arr_aliases[idx_entity] as doticu_npcp_member
-        string[] arr_options = Utility.CreateStringArray(p_COMMANDS_PER_MEMBER, "")
-
-        arr_options[p_IDX_SUMMON] = " Summon "
-        if ref_member.Is_Follower()
-            arr_options[p_IDX_FOLLOW] = " Unfollow "
-        else
-            arr_options[p_IDX_FOLLOW] = " Follow "
-        endIf
-        if ref_member.Is_Immobile()
-            arr_options[p_IDX_IMMOBILIZE] = " Mobilize "
-        else
-            arr_options[p_IDX_IMMOBILIZE] = " Immobilize "
-        endIf
-        arr_options[p_IDX_MORE] = " More... "
-
-        MCM.SetMenuDialogOptions(arr_options)
-    endFunction
-
-    function f_On_Option_Menu_Accept(int id_option, int idx_option)
-        int idx_entity = p_Get_Idx_Entity(id_option)
-        doticu_npcp_member ref_member = p_arr_aliases[idx_entity] as doticu_npcp_member
-        Actor ref_actor = ref_member.Get_Actor()
-
-        if idx_option == p_IDX_SUMMON
-            COMMANDS.Summon(ref_actor)
-        elseIf idx_option == p_IDX_FOLLOW
-            if ref_member.Is_Follower()
-                COMMANDS.Unfollow(ref_actor, false)
-            else
-                COMMANDS.Follow(ref_actor, false)
-            endIf
-        elseIf idx_option == p_IDX_IMMOBILIZE
-            if ref_member.Is_Immobile()
-                COMMANDS.Mobilize_Async(ref_actor, false)
-            else
-                COMMANDS.Immobilize_Async(ref_actor, false)
-            endIf
-        elseIf idx_option == p_IDX_MORE
-            p_ref_member = ref_member
-            p_idx_member = idx_entity
-            p_curr_view = p_VIEW_MEMBER
             MCM.ForcePageReset()
+        else
+            p_View_Member(p_Get_Idx_Entity(id_option))
         endIf
     endFunction
     
@@ -266,7 +216,7 @@ auto state p_STATE_MEMBERS
             string str_name = ref_member.Get_Name()
             MCM.SetInfoText("Opens the member menu for " + str_name)
             ; this should show more about the member, like race, gender, style, and stats!!!
-            ; whether is dead, healthly, etc.
+            ; whether is dead, healthly, etc. quick stats in other words
         endIf
     endFunction
 endState
@@ -274,11 +224,7 @@ endState
 state p_STATE_MEMBER
     function f_Build_Page()
         if !p_ref_member || !p_ref_member.Exists()
-            p_curr_view = p_VIEW_MEMBERS
-        endIf
-        if p_curr_view == p_VIEW_MEMBERS
-            GotoState("p_STATE_MEMBERS")
-            f_Build_Page()
+            p_View_Members()
             return
         endIf
 
@@ -305,6 +251,8 @@ state p_STATE_MEMBER
         MCM.SetCursorFillMode(MCM.TOP_TO_BOTTOM)
 
         MCM.AddHeaderOption("Commands: ")
+
+        p_option_summon = MCM.AddTextOption(CONSTS.STR_MCM_SUMMON, "")
         p_option_pack = MCM.AddTextOption(" Pack ", "")
         p_option_outfit = MCM.AddMenuOption(CONSTS.STR_MCM_OUTFIT, "")
 
@@ -342,29 +290,18 @@ state p_STATE_MEMBER
         Actor ref_actor = p_ref_member.Get_Actor()
 
         if id_option == p_option_back
-            p_ref_member = none
-            p_idx_member = -1
-            p_curr_view = p_VIEW_MEMBERS
-            MCM.ForcePageReset()
+            p_View_Members()
         elseIf id_option == p_option_prev
-            if p_idx_member == 0
-                p_idx_member = p_arr_aliases.length - 1
-            else
-                p_idx_member -= 1
-            endIf
-            p_ref_member = p_arr_aliases[p_idx_member] as doticu_npcp_member
+            p_ref_member = MEMBERS.Get_Prev_Member(p_ref_member)
             MCM.ForcePageReset()
         elseIf id_option == p_option_next
-            if p_idx_member == p_arr_aliases.length - 1
-                p_idx_member = 0
-            else
-                p_idx_member += 1
-            endIf
-            p_ref_member = p_arr_aliases[p_idx_member] as doticu_npcp_member
+            p_ref_member = MEMBERS.Get_Next_Member(p_ref_member)
             MCM.ForcePageReset()
+        elseIf id_option == p_option_summon
+            COMMANDS.Summon_Async(ref_actor)
         elseIf id_option == p_option_pack
             FUNCS.Close_Menus()
-            p_ref_member.Pack()
+            COMMANDS.Pack(ref_actor, false)
         elseIf id_option == p_option_immobilize
             COMMANDS.Immobilize_Async(ref_actor, false)
             MCM.SetOptionFlags(p_option_immobilize, MCM.OPTION_FLAG_DISABLED, true)
@@ -379,16 +316,10 @@ state p_STATE_MEMBER
             p_ref_member.Clone()
         elseIf id_option == p_option_unclone
             p_ref_member.Unclone()
-            p_ref_member = none
-            p_idx_member = -1
-            p_curr_view = p_VIEW_MEMBERS
-            MCM.ForcePageReset()
+            p_View_Members()
         elseIf id_option == p_option_unmember
             p_ref_member.Unmember()
-            p_ref_member = none
-            p_idx_member = -1
-            p_curr_view = p_VIEW_MEMBERS
-            MCM.ForcePageReset()
+            p_View_Members()
         endIf
     endFunction
 
@@ -397,20 +328,22 @@ state p_STATE_MEMBER
             if ACTORS.Is_Vampire(CONSTS.ACTOR_PLAYER)
                 string[] arr_options = Utility.CreateStringArray(5, "")
 
-                arr_options[0] = CONSTS.STR_MCM_MEMBER
-                arr_options[1] = CONSTS.STR_MCM_SETTLER
-                arr_options[2] = CONSTS.STR_MCM_THRALL
-                arr_options[3] = CONSTS.STR_MCM_FOLLOWER
-                arr_options[4] = CONSTS.STR_MCM_IMMOBILE
+                arr_options[0] = CONSTS.STR_MCM_CURRENT
+                arr_options[1] = CONSTS.STR_MCM_MEMBER
+                arr_options[2] = CONSTS.STR_MCM_SETTLER
+                arr_options[3] = CONSTS.STR_MCM_THRALL
+                arr_options[4] = CONSTS.STR_MCM_FOLLOWER
+                arr_options[5] = CONSTS.STR_MCM_IMMOBILE
 
                 MCM.SetMenuDialogOptions(arr_options)
             else
                 string[] arr_options = Utility.CreateStringArray(4, "")
 
-                arr_options[0] = CONSTS.STR_MCM_MEMBER
-                arr_options[1] = CONSTS.STR_MCM_SETTLER
-                arr_options[2] = CONSTS.STR_MCM_FOLLOWER
-                arr_options[3] = CONSTS.STR_MCM_IMMOBILE
+                arr_options[0] = CONSTS.STR_MCM_CURRENT
+                arr_options[1] = CONSTS.STR_MCM_MEMBER
+                arr_options[2] = CONSTS.STR_MCM_SETTLER
+                arr_options[3] = CONSTS.STR_MCM_FOLLOWER
+                arr_options[4] = CONSTS.STR_MCM_IMMOBILE
 
                 MCM.SetMenuDialogOptions(arr_options)
             endIf
@@ -424,31 +357,37 @@ state p_STATE_MEMBER
             if ACTORS.Is_Vampire(CONSTS.ACTOR_PLAYER)
                 if idx_option == 0
                     FUNCS.Close_Menus()
-                    COMMANDS.Outfit_Member(ref_actor, false)
+                    COMMANDS.Outfit_Current(ref_actor, false)
                 elseIf idx_option == 1
                     FUNCS.Close_Menus()
-                    COMMANDS.Outfit_Settler(ref_actor, false)
+                    COMMANDS.Outfit_Member(ref_actor, false)
                 elseIf idx_option == 2
                     FUNCS.Close_Menus()
-                    COMMANDS.Outfit_Thrall(ref_actor, false)
+                    COMMANDS.Outfit_Settler(ref_actor, false)
                 elseIf idx_option == 3
                     FUNCS.Close_Menus()
-                    COMMANDS.Outfit_Follower(ref_actor, false)
+                    COMMANDS.Outfit_Thrall(ref_actor, false)
                 elseIf idx_option == 4
+                    FUNCS.Close_Menus()
+                    COMMANDS.Outfit_Follower(ref_actor, false)
+                elseIf idx_option == 5
                     FUNCS.Close_Menus()
                     COMMANDS.Outfit_Immobile(ref_actor, false)
                 endIf
             else
                 if idx_option == 0
                     FUNCS.Close_Menus()
-                    COMMANDS.Outfit_Member(ref_actor, false)
+                    COMMANDS.Outfit_Current(ref_actor, false)
                 elseIf idx_option == 1
                     FUNCS.Close_Menus()
-                    COMMANDS.Outfit_Settler(ref_actor, false)
+                    COMMANDS.Outfit_Member(ref_actor, false)
                 elseIf idx_option == 2
                     FUNCS.Close_Menus()
-                    COMMANDS.Outfit_Follower(ref_actor, false)
+                    COMMANDS.Outfit_Settler(ref_actor, false)
                 elseIf idx_option == 3
+                    FUNCS.Close_Menus()
+                    COMMANDS.Outfit_Follower(ref_actor, false)
+                elseIf idx_option == 4
                     FUNCS.Close_Menus()
                     COMMANDS.Outfit_Immobile(ref_actor, false)
                 endIf
@@ -460,7 +399,6 @@ state p_STATE_MEMBER
         if id_option == p_option_rename
             if str_input != ""
                 p_ref_member.Set_Name(str_input)
-                MEMBERS.Sort_Members(); hard to see how to make parallel
                 MCM.ForcePageReset()
             endIf
         endIf
