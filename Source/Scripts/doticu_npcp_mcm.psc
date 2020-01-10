@@ -34,6 +34,8 @@ endProperty
 
 ; Private Constants
 doticu_npcp_data    p_DATA          =  none
+
+string              p_STR_DEFAULT   =    ""
 string              p_STR_FOLLOWERS =    ""
 string              p_STR_MEMBERS   =    ""
 string              p_STR_FILTER    =    ""
@@ -42,10 +44,13 @@ string              p_STR_LOG       =    ""
 
 ; Private Variables
 bool                p_is_created    = false
+string              p_str_curr_page =    ""
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
     p_DATA = DATA
+
+    p_STR_DEFAULT   =             ""
     p_STR_FOLLOWERS = "   Followers"
     p_STR_MEMBERS   = "     Members"
     p_STR_FILTER    = "      Filter"
@@ -53,6 +58,7 @@ function f_Create(doticu_npcp_data DATA)
     p_STR_LOG       = "         Log"
 
     p_is_created = true
+    p_str_curr_page = p_STR_SETTINGS; or a help page? or a stats page?
 
     MCM_FOLLOWERS.f_Create(DATA)
     MCM_MEMBERS.f_Create(DATA)
@@ -80,6 +86,10 @@ function f_Register()
 endFunction
 
 ; Events
+event OnConfigInit()
+    ModName = " NPC Party"
+endEvent
+
 event OnConfigOpen()
     VARS.is_mcm_open = true
 
@@ -96,127 +106,177 @@ event OnConfigClose()
 endEvent
 
 event OnPageReset(string str_page)
-    if str_page == p_STR_FOLLOWERS
+    string str_curr_page = str_page
+    if str_curr_page == p_STR_DEFAULT
+        str_curr_page = p_str_curr_page
+    endIf
+
+    if str_curr_page == p_STR_FOLLOWERS
+        p_str_curr_page = p_STR_FOLLOWERS
         MCM_FOLLOWERS.f_Build_Page()
-    elseIf str_page == p_STR_MEMBERS
+    elseIf str_curr_page == p_STR_MEMBERS
+        p_str_curr_page = p_STR_MEMBERS
         MCM_MEMBERS.f_Build_Page()
-    elseIf str_page == p_STR_FILTER
+    elseIf str_curr_page == p_STR_FILTER
+        p_str_curr_page = p_STR_FILTER
         MCM_FILTER.f_Build_Page()
-    elseIf str_page == p_STR_SETTINGS
+    elseIf str_curr_page == p_STR_SETTINGS
+        p_str_curr_page = p_STR_SETTINGS
         MCM_SETTINGS.f_Build_Page()
-    elseIf str_page == p_STR_LOG
+    elseIf str_curr_page == p_STR_LOG
+        p_str_curr_page = p_STR_LOG
         MCM_LOG.f_Build_Page()
     endIf
 endEvent
 
 event OnOptionSelect(int id_option)
-    if CurrentPage == p_STR_FOLLOWERS
+    string str_curr_page = CurrentPage
+    if str_curr_page == p_STR_DEFAULT
+        str_curr_page = p_str_curr_page
+    endIf
+
+    if str_curr_page == p_STR_FOLLOWERS
         MCM_FOLLOWERS.f_On_Option_Select(id_option)
-    elseIf CurrentPage == p_STR_MEMBERS
+    elseIf str_curr_page == p_STR_MEMBERS
         MCM_MEMBERS.f_On_Option_Select(id_option)
-    elseIf CurrentPage == p_STR_FILTER
+    elseIf str_curr_page == p_STR_FILTER
         MCM_FILTER.f_On_Option_Select(id_option)
-    elseIf CurrentPage == p_STR_SETTINGS
+    elseIf str_curr_page == p_STR_SETTINGS
         MCM_SETTINGS.f_On_Option_Select(id_option)
-    elseIf CurrentPage == p_STR_LOG
+    elseIf str_curr_page == p_STR_LOG
         MCM_LOG.f_On_Option_Select(id_option)
     endIf
 endEvent
 
 event OnOptionMenuOpen(int id_option)
-    if CurrentPage == p_STR_FOLLOWERS
+    string str_curr_page = CurrentPage
+    if str_curr_page == p_STR_DEFAULT
+        str_curr_page = p_str_curr_page
+    endIf
+
+    if str_curr_page == p_STR_FOLLOWERS
         MCM_FOLLOWERS.f_On_Option_Menu_Open(id_option)
-    elseIf CurrentPage == p_STR_MEMBERS
+    elseIf str_curr_page == p_STR_MEMBERS
         MCM_MEMBERS.f_On_Option_Menu_Open(id_option)
-    elseIf CurrentPage == p_STR_FILTER
+    elseIf str_curr_page == p_STR_FILTER
         MCM_FILTER.f_On_Option_Menu_Open(id_option)
-    elseIf CurrentPage == p_STR_SETTINGS
+    elseIf str_curr_page == p_STR_SETTINGS
         MCM_SETTINGS.f_On_Option_Menu_Open(id_option)
-    elseIf CurrentPage == p_STR_LOG
+    elseIf str_curr_page == p_STR_LOG
         MCM_LOG.f_On_Option_Menu_Open(id_option)
     endIf
 endEvent
 
 event OnOptionMenuAccept(int id_option, int idx_option)
-    if CurrentPage == p_STR_FOLLOWERS
+    string str_curr_page = CurrentPage
+    if str_curr_page == p_STR_DEFAULT
+        str_curr_page = p_str_curr_page
+    endIf
+
+    if str_curr_page == p_STR_FOLLOWERS
         MCM_FOLLOWERS.f_On_Option_Menu_Accept(id_option, idx_option)
-    elseIf CurrentPage == p_STR_MEMBERS
+    elseIf str_curr_page == p_STR_MEMBERS
         MCM_MEMBERS.f_On_Option_Menu_Accept(id_option, idx_option)
-    elseIf CurrentPage == p_STR_FILTER
+    elseIf str_curr_page == p_STR_FILTER
         MCM_FILTER.f_On_Option_Menu_Accept(id_option, idx_option)
-    elseIf CurrentPage == p_STR_SETTINGS
+    elseIf str_curr_page == p_STR_SETTINGS
         MCM_SETTINGS.f_On_Option_Menu_Accept(id_option, idx_option)
-    elseIf CurrentPage == p_STR_LOG
+    elseIf str_curr_page == p_STR_LOG
         MCM_LOG.f_On_Option_Menu_Accept(id_option, idx_option)
     endIf
 endEvent
 
 event OnOptionSliderOpen(int id_option)
-    if CurrentPage == p_STR_FOLLOWERS
+    string str_curr_page = CurrentPage
+    if str_curr_page == p_STR_DEFAULT
+        str_curr_page = p_str_curr_page
+    endIf
+
+    if str_curr_page == p_STR_FOLLOWERS
         MCM_FOLLOWERS.f_On_Option_Slider_Open(id_option)
-    elseIf CurrentPage == p_STR_MEMBERS
+    elseIf str_curr_page == p_STR_MEMBERS
         MCM_MEMBERS.f_On_Option_Slider_Open(id_option)
-    elseIf CurrentPage == p_STR_FILTER
+    elseIf str_curr_page == p_STR_FILTER
         MCM_FILTER.f_On_Option_Slider_Open(id_option)
-    elseIf CurrentPage == p_STR_SETTINGS
+    elseIf str_curr_page == p_STR_SETTINGS
         MCM_SETTINGS.f_On_Option_Slider_Open(id_option)
-    elseIf CurrentPage == p_STR_LOG
+    elseIf str_curr_page == p_STR_LOG
         MCM_LOG.f_On_Option_Slider_Open(id_option)
     endIf
 endEvent
 
 event OnOptionSliderAccept(int id_option, float float_value)
-    if CurrentPage == p_STR_FOLLOWERS
+    string str_curr_page = CurrentPage
+    if str_curr_page == p_STR_DEFAULT
+        str_curr_page = p_str_curr_page
+    endIf
+
+    if str_curr_page == p_STR_FOLLOWERS
         MCM_FOLLOWERS.f_On_Option_Slider_Accept(id_option, float_value)
-    elseIf CurrentPage == p_STR_MEMBERS
+    elseIf str_curr_page == p_STR_MEMBERS
         MCM_MEMBERS.f_On_Option_Slider_Accept(id_option, float_value)
-    elseIf CurrentPage == p_STR_FILTER
+    elseIf str_curr_page == p_STR_FILTER
         MCM_FILTER.f_On_Option_Slider_Accept(id_option, float_value)
-    elseIf CurrentPage == p_STR_SETTINGS
+    elseIf str_curr_page == p_STR_SETTINGS
         MCM_SETTINGS.f_On_Option_Slider_Accept(id_option, float_value)
-    elseIf CurrentPage == p_STR_LOG
+    elseIf str_curr_page == p_STR_LOG
         MCM_LOG.f_On_Option_Slider_Accept(id_option, float_value)
     endIf
 endEvent
 
 event OnOptionInputAccept(int id_option, string str_input)
-    if CurrentPage == p_STR_FOLLOWERS
+    string str_curr_page = CurrentPage
+    if str_curr_page == p_STR_DEFAULT
+        str_curr_page = p_str_curr_page
+    endIf
+    
+    if str_curr_page == p_STR_FOLLOWERS
         MCM_FOLLOWERS.f_On_Option_Input_Accept(id_option, str_input)
-    elseIf CurrentPage == p_STR_MEMBERS
+    elseIf str_curr_page == p_STR_MEMBERS
         MCM_MEMBERS.f_On_Option_Input_Accept(id_option, str_input)
-    elseIf CurrentPage == p_STR_FILTER
+    elseIf str_curr_page == p_STR_FILTER
         MCM_FILTER.f_On_Option_Input_Accept(id_option, str_input)
-    elseIf CurrentPage == p_STR_SETTINGS
+    elseIf str_curr_page == p_STR_SETTINGS
         MCM_SETTINGS.f_On_Option_Input_Accept(id_option, str_input)
-    elseIf CurrentPage == p_STR_LOG
+    elseIf str_curr_page == p_STR_LOG
         MCM_LOG.f_On_Option_Input_Accept(id_option, str_input)
     endIf
 endEvent
 
 event OnOptionKeymapChange(int id_option, int code_key, string str_conflict_control, string str_conflict_mod)
-    if CurrentPage == p_STR_FOLLOWERS
+    string str_curr_page = CurrentPage
+    if str_curr_page == p_STR_DEFAULT
+        str_curr_page = p_str_curr_page
+    endIf
+
+    if str_curr_page == p_STR_FOLLOWERS
         MCM_FOLLOWERS.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
-    elseIf CurrentPage == p_STR_MEMBERS
+    elseIf str_curr_page == p_STR_MEMBERS
         MCM_MEMBERS.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
-    elseIf CurrentPage == p_STR_FILTER
+    elseIf str_curr_page == p_STR_FILTER
         MCM_FILTER.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
-    elseIf CurrentPage == p_STR_SETTINGS
+    elseIf str_curr_page == p_STR_SETTINGS
         MCM_SETTINGS.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
-    elseIf CurrentPage == p_STR_LOG
+    elseIf str_curr_page == p_STR_LOG
         MCM_LOG.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
     endIf
 endEvent
 
 event OnOptionHighlight(int id_option)
-    if CurrentPage == p_STR_FOLLOWERS
+    string str_curr_page = CurrentPage
+    if str_curr_page == p_STR_DEFAULT
+        str_curr_page = p_str_curr_page
+    endIf
+
+    if str_curr_page == p_STR_FOLLOWERS
         MCM_FOLLOWERS.f_On_Option_Highlight(id_option)
-    elseIf CurrentPage == p_STR_MEMBERS
+    elseIf str_curr_page == p_STR_MEMBERS
         MCM_MEMBERS.f_On_Option_Highlight(id_option)
-    elseIf CurrentPage == p_STR_FILTER
+    elseIf str_curr_page == p_STR_FILTER
         MCM_FILTER.f_On_Option_Highlight(id_option)
-    elseIf CurrentPage == p_STR_SETTINGS
+    elseIf str_curr_page == p_STR_SETTINGS
         MCM_SETTINGS.f_On_Option_Highlight(id_option)
-    elseIf CurrentPage == p_STR_LOG
+    elseIf str_curr_page == p_STR_LOG
         MCM_LOG.f_On_Option_Highlight(id_option)
     endIf
 endEvent

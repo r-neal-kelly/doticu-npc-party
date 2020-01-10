@@ -129,6 +129,10 @@ endFunction
 int function p_Get_Idx_Command(int id_option, int idx_entity)
 endFunction
 
+string function p_Format_Title(string str_members, string str_pages)
+    return str_members + "               " + str_pages
+endFunction
+
 function p_View_Members()
     p_ref_member = none
     GotoState("p_STATE_MEMBERS")
@@ -154,15 +158,15 @@ auto state p_STATE_MEMBERS
         if count_members == 0
             str_count_members = "Members: 0/" + max_members
             str_count_pages = "Page: 1/1"
-            MCM.SetTitleText(str_count_members + ", " + str_count_pages)
-            ; should add a no members option(s)
+            MCM.SetTitleText(p_Format_Title(str_count_members, str_count_pages))
+            MCM.AddHeaderOption(" No Members ")
             return
         endIf
 
         p_num_pages = Math.Ceiling(count_members / (p_MEMBERS_PER_PAGE as float))
         str_count_members = "Members: " + count_members + "/" + max_members
         str_count_pages = "Page: " + (p_curr_page + 1) + "/" + p_num_pages
-        MCM.SetTitleText(str_count_members + ", " + str_count_pages)
+        MCM.SetTitleText(p_Format_Title(str_count_members, str_count_pages))
 
         if count_members > p_MEMBERS_PER_PAGE
             p_option_prev = MCM.AddTextOption("                     Go to Previous Page", "")

@@ -130,6 +130,7 @@ auto state p_STATE_FOLLOWERS
         int max_followers = FOLLOWERS.Get_Max()
         if count_followers == 0
             MCM.SetTitleText("Followers: 0/" + max_followers)
+            MCM.AddHeaderOption(" No Followers ")
             return
         endIf
 

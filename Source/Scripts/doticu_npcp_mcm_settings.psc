@@ -165,7 +165,7 @@ auto state p_STATE_SETTINGS
         p_option_key_ms_display_start = MCM.AddKeymapOption(" Start Display ", VARS.key_ms_display_start, MCM.OPTION_FLAG_WITH_UNMAP)
         p_option_key_ms_display_stop = MCM.AddKeymapOption(" Stop Display ", VARS.key_ms_display_stop, MCM.OPTION_FLAG_WITH_UNMAP)
         p_option_key_ms_toggle_display = MCM.AddKeymapOption(" Toggle Display ", VARS.key_ms_toggle_display, MCM.OPTION_FLAG_WITH_UNMAP)
-        p_option_slider_ms_display = MCM.AddSliderOption(" Number per Cycle ", VARS.num_display, " {0} per ")
+        p_option_slider_ms_display = MCM.AddSliderOption(" Number per Cycle ", VARS.num_display, " {0} ")
         p_option_key_ms_display_previous = MCM.AddKeymapOption(" Previous Display ", VARS.key_ms_display_previous, MCM.OPTION_FLAG_WITH_UNMAP)
         p_option_key_ms_display_next = MCM.AddKeymapOption(" Next Display ", VARS.key_ms_display_next, MCM.OPTION_FLAG_WITH_UNMAP)
         MCM.AddEmptyOption()
@@ -248,6 +248,7 @@ auto state p_STATE_SETTINGS
     function f_On_Option_Slider_Accept(int id_option, float float_value)
         if id_option == p_option_slider_ms_display
             VARS.num_display = float_value as int
+            MCM.SetSliderOptionValue(id_option, VARS.num_display, " {0} ", false)
         endIf
     endFunction
 

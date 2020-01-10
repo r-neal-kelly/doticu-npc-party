@@ -77,6 +77,10 @@ endFunction
 int function p_Get_Idx_Entity(int id_option)
 endFunction
 
+string function p_Format_Title(string str_notes, string str_pages, string str_errors)
+    return str_notes + "         " + str_pages + "         " + str_errors
+endFunction
+
 ; Private States
 auto state p_STATE_LOGS
     function f_Build_Page()
@@ -88,7 +92,7 @@ auto state p_STATE_LOGS
         string str_errors = "Errors: " + errors_count + "/" + errors_max
 
         if notes_count == 0 && errors_count == 0
-            MCM.SetTitleText(str_notes + "         " + "Page 1/1" + "         " + str_errors)
+            MCM.SetTitleText(p_Format_Title(str_notes, "Page 1/1", str_errors))
             return
         endIf
 
@@ -100,7 +104,7 @@ auto state p_STATE_LOGS
         
         string str_pages = "Pages: " + (p_pages_curr + 1) + "/" + p_pages_count
 
-        MCM.SetTitleText(str_notes + "         " + str_pages + "         " + str_errors)
+        MCM.SetTitleText(p_Format_Title(str_notes, str_pages, str_errors))
 
         MCM.SetCursorPosition(0)
         MCM.SetCursorFillMode(MCM.LEFT_TO_RIGHT)
