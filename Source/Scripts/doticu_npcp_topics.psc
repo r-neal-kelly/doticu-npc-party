@@ -87,15 +87,15 @@ endFunction
 
 ; Settler Topics
 function Settle(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Settle(ref_object as Actor, false)
-endFunction
-
-function Unsettle(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Unsettle(ref_object as Actor, false)
+    (GetOwningQuest() as doticu_npcp_commands).Settle_Sync(ref_object as Actor, false)
 endFunction
 
 function Resettle(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Resettle(ref_object as Actor, false)
+    (GetOwningQuest() as doticu_npcp_commands).Resettle_Sync(ref_object as Actor, false)
+endFunction
+
+function Unsettle(ObjectReference ref_object)
+    (GetOwningQuest() as doticu_npcp_commands).Unsettle_Sync(ref_object as Actor, false)
 endFunction
 
 ; Immobile Topics

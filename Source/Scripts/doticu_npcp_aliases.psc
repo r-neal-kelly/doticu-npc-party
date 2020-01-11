@@ -13,6 +13,7 @@ int                 p_MAX_ALIASES   =    -1
 
 ; Private Variables
 bool                p_is_created    = false
+bool                p_should_sort   = false
 
 int                 p_num_used      =    -1
 int[]               p_arr_used      =  none
@@ -58,6 +59,8 @@ int function f_ID_To_Idx(int id_alias)
     if id_alias < 0 || id_alias >= p_MAX_ALIASES
         return -1
     endIf
+
+    p_Sort(); this might be temp and we can make a func in here for Display Start
 
     int idx_id_alias = p_arr_used.Find(id_alias)
 
@@ -207,6 +210,10 @@ int function p_Destroy_ID(int id_alias)
 endFunction
 
 function p_Sort()
+    if !p_should_sort
+        return
+    endIf
+
     int idx_id = 0
     string str_id
     int id_alias
@@ -231,6 +238,8 @@ function p_Sort()
 
         idx_id += 1
     endWhile
+
+    p_should_sort = false
 endFunction
 
 bool function p_Has_Actor(Actor ref_actor)
@@ -283,7 +292,7 @@ int function Create_Alias(Actor ref_actor)
 
     f_Get_Alias(id_alias).ForceRefTo(ref_actor)
 
-    p_Sort()
+    p_should_sort = true
     
     return id_alias
 endFunction
@@ -306,7 +315,7 @@ int function Destroy_Alias(int id_alias, Actor ref_actor)
         return code_return
     endIf
 
-    p_Sort()
+    p_should_sort = true
 
     return CODES.SUCCESS
 endFunction
@@ -320,7 +329,7 @@ int function Update_Name(int id_alias)
 
     p_arr_names[idx_id] = p_Stringify_ID(id_alias, p_arr_actors[idx_id] as Actor)
 
-    p_Sort()
+    p_should_sort = true
 
     return CODES.SUCCESS
 endFunction
@@ -354,6 +363,8 @@ ReferenceAlias function Get_Next_Alias(int id_alias, Actor ref_actor)
         return none
     endIf
 
+    p_Sort()
+
     int idx_alias_next = f_To_Relative_Idx(f_ID_To_Idx(id_alias) + 1)
 
     return p_arr_aliases[idx_alias_next] as ReferenceAlias
@@ -363,6 +374,8 @@ ReferenceAlias function Get_Prev_Alias(int id_alias, Actor ref_actor)
     if !Has_Alias(id_alias, ref_actor)
         return none
     endIf
+
+    p_Sort()
 
     int idx_alias_prev = f_To_Relative_Idx(f_ID_To_Idx(id_alias) - 1)
 
@@ -387,6 +400,8 @@ Alias[] function Get_Aliases(int idx_from = 0, int idx_to_ex = -1)
         idx_to_in = 0
     endIf
 
+    p_Sort()
+
     return PapyrusUtil.SliceAliasArray(p_arr_aliases, idx_from, idx_to_in)
 endFunction
 
@@ -404,6 +419,8 @@ Alias[] function Get_Next_Aliases(int idx_in, int num_next)
     endIf
 
     int idx_aliases = idx_in
+
+    p_Sort()
 
     Alias[] arr_copy = Utility.CreateAliasArray(num_next, none)
     int idx_copy = 0
@@ -439,6 +456,8 @@ Alias[] function Get_Prev_Aliases(int idx_ex, int num_prev)
     if idx_aliases < 0
         idx_aliases = idx_aliases + p_num_aliases
     endIf
+
+    p_Sort()
 
     Alias[] arr_copy = Utility.CreateAliasArray(num_prev, none)
     int idx_copy = 0

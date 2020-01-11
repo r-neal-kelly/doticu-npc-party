@@ -317,7 +317,7 @@ function p_Level()
     p_style_follower = style_member
     p_level_follower = level_player
 
-    float modifier = 0.67 - (level_player * 0.003); maybe use Math.Log to get a more fair equation for higher levels
+    float modifier = 0.67 - (Math.Log(level_player) * 0.067)
     float max_attribute = 1000
     float min_attribute = 100
     float max_skill = 100

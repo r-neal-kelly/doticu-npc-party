@@ -53,6 +53,7 @@ doticu_npcp_member  p_ref_member                =  none
 int                 p_options_offset            =    -1
 
 bool                p_is_immobile               = false
+bool                p_is_settler                = false
 
 int                 p_option_rename             =    -1
 int                 p_option_back               =    -1
@@ -64,6 +65,7 @@ int                 p_option_pack               =    -1
 int                 p_option_outfit             =    -1
 int                 p_option_resurrect          =    -1
 int                 p_option_settle             =    -1
+int                 p_option_resettle           =    -1
 int                 p_option_unsettle           =    -1
 int                 p_option_enthrall           =    -1
 int                 p_option_immobilize         =    -1
@@ -240,6 +242,7 @@ state p_STATE_MEMBER
 
         string str_member_name = p_ref_member.Get_Name()
         p_is_immobile = p_ref_member.Is_Immobile()
+        p_is_settler = p_ref_member.Is_Settler()
 
         MCM.SetCursorPosition(0)
         MCM.SetCursorFillMode(MCM.LEFT_TO_RIGHT)
@@ -268,10 +271,20 @@ state p_STATE_MEMBER
 
         if p_is_immobile
             p_option_immobilize = MCM.AddTextOption(CONSTS.STR_MCM_IMMOBILIZE, "", MCM.OPTION_FLAG_DISABLED)
-            p_option_mobilize = MCM.AddTextOption(CONSTS.STR_MCM_MOBILIZE, "")
+            p_option_mobilize = MCM.AddTextOption(CONSTS.STR_MCM_MOBILIZE, "", MCM.OPTION_FLAG_NONE)
         else
-            p_option_immobilize = MCM.AddTextOption(CONSTS.STR_MCM_IMMOBILIZE, "")
+            p_option_immobilize = MCM.AddTextOption(CONSTS.STR_MCM_IMMOBILIZE, "", MCM.OPTION_FLAG_NONE)
             p_option_mobilize = MCM.AddTextOption(CONSTS.STR_MCM_MOBILIZE, "", MCM.OPTION_FLAG_DISABLED)
+        endif
+
+        if p_is_settler
+            p_option_settle = MCM.AddTextOption(CONSTS.STR_MCM_SETTLE, "", MCM.OPTION_FLAG_DISABLED)
+            p_option_resettle = MCM.AddTextOption(CONSTS.STR_MCM_RESETTLE, "", MCM.OPTION_FLAG_NONE)
+            p_option_unsettle = MCM.AddTextOption(CONSTS.STR_MCM_UNSETTLE, "", MCM.OPTION_FLAG_NONE)
+        else
+            p_option_settle = MCM.AddTextOption(CONSTS.STR_MCM_SETTLE, "", MCM.OPTION_FLAG_NONE)
+            p_option_resettle = MCM.AddTextOption(CONSTS.STR_MCM_RESETTLE, "", MCM.OPTION_FLAG_DISABLED)
+            p_option_unsettle = MCM.AddTextOption(CONSTS.STR_MCM_UNSETTLE, "", MCM.OPTION_FLAG_DISABLED)
         endif
 
         p_option_clone = MCM.AddTextOption(" Clone ", "")
@@ -322,6 +335,24 @@ state p_STATE_MEMBER
             MCM.SetOptionFlags(p_option_immobilize, MCM.OPTION_FLAG_NONE, true)
             MCM.SetOptionFlags(p_option_mobilize, MCM.OPTION_FLAG_DISABLED, false)
             p_is_immobile = !p_is_immobile
+        elseIf id_option == p_option_settle
+            COMMANDS.Settle_Async(ref_actor, false)
+            MCM.SetOptionFlags(p_option_settle, MCM.OPTION_FLAG_DISABLED, true)
+            MCM.SetOptionFlags(p_option_resettle, MCM.OPTION_FLAG_NONE, true)
+            MCM.SetOptionFlags(p_option_unsettle, MCM.OPTION_FLAG_NONE, false)
+            p_is_settler = true
+        elseIf id_option == p_option_resettle
+            COMMANDS.Resettle_Async(ref_actor, false)
+            MCM.SetOptionFlags(p_option_settle, MCM.OPTION_FLAG_DISABLED, true)
+            MCM.SetOptionFlags(p_option_resettle, MCM.OPTION_FLAG_NONE, true)
+            MCM.SetOptionFlags(p_option_unsettle, MCM.OPTION_FLAG_NONE, false)
+            p_is_settler = true
+        elseIf id_option == p_option_unsettle
+            COMMANDS.Unsettle_Async(ref_actor, false)
+            MCM.SetOptionFlags(p_option_settle, MCM.OPTION_FLAG_NONE, true)
+            MCM.SetOptionFlags(p_option_resettle, MCM.OPTION_FLAG_DISABLED, true)
+            MCM.SetOptionFlags(p_option_unsettle, MCM.OPTION_FLAG_DISABLED, false)
+            p_is_settler = false
         elseIf id_option == p_option_clone
             p_ref_member.Clone()
         elseIf id_option == p_option_unclone

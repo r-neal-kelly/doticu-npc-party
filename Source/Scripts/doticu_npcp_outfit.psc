@@ -176,10 +176,12 @@ function Set(Actor ref_actor, bool do_force = false)
     endWhile
 
     ; the engine will ignore this call if it's the same outfit already equipped, so we use a different one
-    ref_actor.SetOutfit(CONSTS.OUTFIT_EMPTY)
+    ;ref_actor.SetOutfit(CONSTS.OUTFIT_EMPTY)
+    ref_actor.GetLeveledActorBase().SetOutfit(CONSTS.OUTFIT_EMPTY)
 
     ; the engine will actually apply the outfit in the correct way now, which we cannot do manually
-    ref_actor.SetOutfit(p_OUTFIT)
+    ;ref_actor.SetOutfit(p_OUTFIT)
+    ref_actor.GetLeveledActorBase().SetOutfit(p_OUTFIT)
 
     ; the trash container is necessary for the next step, it keeps the engine from crashing or freezing!
     ref_trash = CONTAINERS.Create_Temp()

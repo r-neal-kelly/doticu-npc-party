@@ -139,23 +139,7 @@ function Resurrect(Actor ref_actor, bool auto_create)
     GotoState("")
 endFunction
 
-function Settle(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Settle", ref_actor, auto_create)
-    GotoState("")
-endFunction
 
-function Unsettle(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Unsettle", ref_actor, auto_create)
-    GotoState("")
-endFunction
-
-function Resettle(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Resettle", ref_actor, auto_create)
-    GotoState("")
-endFunction
 
 function Enthrall(Actor ref_actor, bool auto_create)
     GotoState("p_STATE_BUSY")
@@ -465,6 +449,10 @@ function Toggle_Followers_Sneak()
     GotoState("")
 endFunction
 
+
+
+
+
 ; Public Methods (Sync)
 function Member_Sync(Actor ref_actor)
     GotoState("p_STATE_BUSY")
@@ -478,6 +466,24 @@ function Summon_Sync(Actor ref_actor)
     GotoState("")
 endFunction
 
+function Settle_Sync(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    PRIVATE.Settle(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Resettle_Sync(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    PRIVATE.Resettle(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Unsettle_Sync(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    PRIVATE.Unsettle(ref_actor, auto_create)
+    GotoState("")
+endFunction
+
 ; Public Methods (Async)
 function Member_Async(Actor ref_actor)
     p_Enqueue("Member", ref_actor)
@@ -487,6 +493,24 @@ endFunction
 function Summon_Async(Actor ref_actor)
     p_Enqueue("Summon", ref_actor)
     p_Excise("Banish"); not used currently
+endFunction
+
+function Settle_Async(Actor ref_actor, bool auto_create)
+    p_Enqueue("Settle", ref_actor, auto_create)
+    p_Excise("Unsettle")
+    p_Excise("Resettle")
+endFunction
+
+function Resettle_Async(Actor ref_actor, bool auto_create)
+    p_Enqueue("Resettle", ref_actor, auto_create)
+    p_Excise("Settle")
+    p_Excise("Unsettle")
+endFunction
+
+function Unsettle_Async(Actor ref_actor, bool auto_create)
+    p_Enqueue("Unsettle", ref_actor, auto_create)
+    p_Excise("Settle")
+    p_Excise("Resettle")
 endFunction
 
 ; should have a "Member" and "Follower" summon cycle. Very mush desired, so it's easy to pick them out of all the names.
@@ -519,11 +543,11 @@ state p_STATE_BUSY
     endFunction
     function Resurrect(Actor ref_actor, bool auto_create)
     endFunction
-    function Settle(Actor ref_actor, bool auto_create)
+    function Settle_Sync(Actor ref_actor, bool auto_create)
     endFunction
-    function Unsettle(Actor ref_actor, bool auto_create)
+    function Resettle_Sync(Actor ref_actor, bool auto_create)
     endFunction
-    function Resettle(Actor ref_actor, bool auto_create)
+    function Unsettle_Sync(Actor ref_actor, bool auto_create)
     endFunction
     function Enthrall(Actor ref_actor, bool auto_create)
     endFunction
@@ -665,10 +689,10 @@ event On_Queue_Commands(string str_message, Form form_actor, bool auto_create)
         PRIVATE.Resurrect(ref_actor, auto_create)
     elseIf str_message == "Settle"
         PRIVATE.Settle(ref_actor, auto_create)
-    elseIf str_message == "Unsettle"
-        PRIVATE.Unsettle(ref_actor, auto_create)
     elseIf str_message == "Resettle"
         PRIVATE.Resettle(ref_actor, auto_create)
+    elseIf str_message == "Unsettle"
+        PRIVATE.Unsettle(ref_actor, auto_create)
     elseIf str_message == "Enthrall"
         PRIVATE.Enthrall(ref_actor, auto_create)
     elseIf str_message == "Unthrall"
