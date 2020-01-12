@@ -16,6 +16,16 @@ doticu_npcp_perks property PERKS hidden
         return p_DATA.MODS.FUNCS.PERKS
     endFunction
 endProperty
+doticu_npcp_members property MEMBERS hidden
+    doticu_npcp_members function Get()
+        return p_DATA.MODS.MEMBERS
+    endFunction
+endProperty
+doticu_npcp_commands property COMMANDS hidden
+    doticu_npcp_commands function Get()
+        return p_DATA.MODS.CONTROL.COMMANDS
+    endFunction
+endProperty
 
 ; Private Constants
 doticu_npcp_data    p_DATA          = none
@@ -45,5 +55,9 @@ function Resurrect_Member(ObjectReference ref_target, Actor _)
         return
     endIf
 
-    ACTORS.Resurrect(ref_actor)
+    if !MEMBERS.Has_Member(ref_actor)
+        return
+    endIf
+
+    COMMANDS.Resurrect_Async(ref_actor, false)
 endFunction

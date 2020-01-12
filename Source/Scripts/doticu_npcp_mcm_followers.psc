@@ -25,12 +25,9 @@ endProperty
 ; Private Constants
 doticu_npcp_data        p_DATA                      =  none
 
-int                     p_VIEW_FOLLOWERS            =     0
-int                     p_VIEW_FOLLOWER             =     1
-
 int                     p_HEADERS_PER_PAGE          =     2
 
-int                     p_COMMANDS_PER_PAGE         =    11
+int                     p_COMMANDS_IN_MENU         =    11
 int                     p_IDX_ALL_SUMMON_ALL        =     0
 int                     p_IDX_ALL_SUMMON_MOBILE     =     1
 int                     p_IDX_ALL_SUMMON_IMMOBILE   =     2
@@ -52,10 +49,8 @@ int                     p_IDX_MORE                  =     3
 ; Private Variables
 bool                    p_is_created                = false
 
-int                     p_curr_view                 =     0
 Alias[]                 p_arr_aliases               =  none
 doticu_npcp_follower    p_ref_follower              =  none
-int                     p_idx_follower              =    -1
 int                     p_options_offset            =    -1
 
 int                     p_option_menu               =    -1
@@ -114,15 +109,21 @@ endFunction
 int function p_Get_Idx_Command(int id_option, int idx_entity)
 endFunction
 
+function p_View_Followers()
+    p_ref_follower = none
+    GotoState("p_STATE_FOLLOWERS")
+    MCM.ForcePageReset()
+endFunction
+
+function p_View_Follower(int idx_follower)
+    p_ref_follower = p_arr_aliases[idx_follower] as doticu_npcp_follower
+    GotoState("p_STATE_FOLLOWER")
+    MCM.ForcePageReset()
+endFunction
+
 ; Private States
 auto state p_STATE_FOLLOWERS
     function f_Build_Page()
-        if p_curr_view == p_VIEW_FOLLOWER
-            GotoState("p_STATE_FOLLOWER")
-            f_Build_Page()
-            return
-        endIf
-
         MCM.SetCursorPosition(0)
         MCM.SetCursorFillMode(MCM.LEFT_TO_RIGHT)
 
@@ -150,7 +151,7 @@ auto state p_STATE_FOLLOWERS
 
             MCM.SetCursorPosition(cursor)
 
-            MCM.AddHeaderOption(ref_follower.Get_Name())
+            MCM.AddHeaderOption(ref_follower.Get_Name() + " ")
             MCM.AddTextOption("   Summon", "")
             if ref_follower.Is_Immobile()
                 MCM.AddTextOption("   Mobilize", "")
@@ -187,27 +188,25 @@ auto state p_STATE_FOLLOWERS
         int idx_entity = p_Get_Idx_Entity(id_option)
         int idx_command = p_Get_Idx_Command(id_option, idx_entity)
         doticu_npcp_follower ref_follower = p_arr_aliases[idx_entity] as doticu_npcp_follower
+        Actor ref_actor = ref_follower.Get_Actor()
 
         if idx_command == p_IDX_SUMMON
-            ref_follower.Summon_Ahead()
+            COMMANDS.Summon_Async(ref_actor)
         elseIf idx_command == p_IDX_IMMOBILIZE
             if ref_follower.Is_Immobile()
-                ref_follower.Mobilize()
+                COMMANDS.Mobilize_Async(ref_actor, false)
             else
-                ref_follower.Immobilize()
+                COMMANDS.Immobilize_Async(ref_actor, false)
             endIf
-            MCM.ForcePageReset()
+            MCM.ForcePageReset(); wasteful
         elseIf idx_command == p_IDX_MORE
-            p_ref_follower = ref_follower
-            p_idx_follower = idx_entity
-            p_curr_view = p_VIEW_FOLLOWER
-            MCM.ForcePageReset()
+            p_View_Follower(idx_entity)
         endIf
     endFunction
 
     function f_On_Option_Menu_Open(int id_option)
         if id_option == p_option_menu
-            string[] arr_options = Utility.CreateStringArray(p_COMMANDS_PER_PAGE, "")
+            string[] arr_options = Utility.CreateStringArray(p_COMMANDS_IN_MENU, "")
 
             arr_options[p_IDX_ALL_SUMMON_ALL] = " Summon All "
             arr_options[p_IDX_ALL_SUMMON_MOBILE] = " Summon Mobile "
@@ -266,11 +265,7 @@ endState
 state p_STATE_FOLLOWER
     function f_Build_Page()
         if !p_ref_follower || !p_ref_follower.Exists()
-            p_curr_view = p_VIEW_FOLLOWERS
-        endIf
-        if p_curr_view == p_VIEW_FOLLOWERS
-            GotoState("p_STATE_FOLLOWERS")
-            f_Build_Page()
+            p_View_Followers()
             return
         endIf
 
@@ -299,36 +294,22 @@ state p_STATE_FOLLOWER
     endFunction
 
     function f_On_Option_Select(int id_option)
+        Actor ref_actor = p_ref_follower.Get_Actor()
+
         if id_option == p_option_back
-            p_ref_follower = none
-            p_idx_follower = -1
-            p_curr_view = p_VIEW_FOLLOWERS
-            MCM.ForcePageReset()
+            p_View_Followers()
         elseIf id_option == p_option_prev
-            if p_idx_follower == 0
-                p_idx_follower = p_arr_aliases.length - 1
-            else
-                p_idx_follower -= 1
-            endIf
-            p_ref_follower = p_arr_aliases[p_idx_follower] as doticu_npcp_follower
+            p_ref_follower = FOLLOWERS.Get_Prev_Follower(p_ref_follower)
             MCM.ForcePageReset()
         elseIf id_option == p_option_next
-            if p_idx_follower == p_arr_aliases.length - 1
-                p_idx_follower = 0
-            else
-                p_idx_follower += 1
-            endIf
-            p_ref_follower = p_arr_aliases[p_idx_follower] as doticu_npcp_follower
+            p_ref_follower = FOLLOWERS.Get_Next_Follower(p_ref_follower)
             MCM.ForcePageReset()
         elseIf id_option == p_option_pack
             FUNCS.Close_Menus()
-            p_ref_follower.Pack()
+            COMMANDS.Pack(ref_actor, false)
         elseIf id_option == p_option_unfollow
-            p_ref_follower.Unfollow()
-            p_ref_follower = none
-            p_idx_follower = -1
-            p_curr_view = p_VIEW_FOLLOWERS
-            MCM.ForcePageReset()
+            COMMANDS.Unfollow_Sync(ref_actor, false)
+            p_View_Followers()
         endIf
     endFunction
 

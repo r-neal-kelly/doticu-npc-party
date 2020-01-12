@@ -717,12 +717,12 @@ int function Unsettle()
     return p_ref_member.Unsettle()
 endFunction
 
-int function Immobilize()
-    return p_ref_member.Immobilize()
+int function Immobilize(int code_exec)
+    return p_ref_member.Immobilize(code_exec)
 endFunction
 
-int function Mobilize()
-    return p_ref_member.Mobilize()
+int function Mobilize(int code_exec)
+    return p_ref_member.Mobilize(code_exec)
 endFunction
 
 int function Unmember()
@@ -863,14 +863,14 @@ endEvent
 
 event On_Followers_Immobilize(Form form_tasklist)
     if Exists() && Is_Mobile()
-        Immobilize()
+        Immobilize(CODES.DO_SYNC)
         (form_tasklist as doticu_npcp_tasklist).Detask()
     endIf
 endEvent
 
 event On_Followers_Mobilize(Form form_tasklist)
     if Exists() && Is_Immobile()
-        Mobilize()
+        Mobilize(CODES.DO_SYNC)
         (form_tasklist as doticu_npcp_tasklist).Detask()
     endIf
 endEvent

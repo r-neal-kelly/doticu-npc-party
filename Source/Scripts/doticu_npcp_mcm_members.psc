@@ -52,7 +52,6 @@ Alias[]             p_arr_aliases               =  none
 doticu_npcp_member  p_ref_member                =  none
 int                 p_options_offset            =    -1
 
-bool                p_is_immobile               = false
 bool                p_is_settler                = false
 
 int                 p_option_rename             =    -1
@@ -241,7 +240,6 @@ state p_STATE_MEMBER
         endIf
 
         string str_member_name = p_ref_member.Get_Name()
-        p_is_immobile = p_ref_member.Is_Immobile()
         p_is_settler = p_ref_member.Is_Settler()
 
         MCM.SetCursorPosition(0)
@@ -269,7 +267,7 @@ state p_STATE_MEMBER
         p_option_pack = MCM.AddTextOption(" Pack ", "")
         p_option_outfit = MCM.AddMenuOption(CONSTS.STR_MCM_OUTFIT, "")
 
-        if p_is_immobile
+        if p_ref_member.Is_Immobile()
             p_option_immobilize = MCM.AddTextOption(CONSTS.STR_MCM_IMMOBILIZE, "", MCM.OPTION_FLAG_DISABLED)
             p_option_mobilize = MCM.AddTextOption(CONSTS.STR_MCM_MOBILIZE, "", MCM.OPTION_FLAG_NONE)
         else
@@ -326,15 +324,13 @@ state p_STATE_MEMBER
             FUNCS.Close_Menus()
             COMMANDS.Pack(ref_actor, false)
         elseIf id_option == p_option_immobilize
-            COMMANDS.Immobilize_Async(ref_actor, false)
+            COMMANDS.Immobilize_Sync(ref_actor, false)
             MCM.SetOptionFlags(p_option_immobilize, MCM.OPTION_FLAG_DISABLED, true)
             MCM.SetOptionFlags(p_option_mobilize, MCM.OPTION_FLAG_NONE, false)
-            p_is_immobile = !p_is_immobile
         elseIf id_option == p_option_mobilize
-            COMMANDS.Mobilize_Async(ref_actor, false)
+            COMMANDS.Mobilize_Sync(ref_actor, false)
             MCM.SetOptionFlags(p_option_immobilize, MCM.OPTION_FLAG_NONE, true)
             MCM.SetOptionFlags(p_option_mobilize, MCM.OPTION_FLAG_DISABLED, false)
-            p_is_immobile = !p_is_immobile
         elseIf id_option == p_option_settle
             COMMANDS.Settle_Async(ref_actor, false)
             MCM.SetOptionFlags(p_option_settle, MCM.OPTION_FLAG_DISABLED, true)
@@ -354,12 +350,14 @@ state p_STATE_MEMBER
             MCM.SetOptionFlags(p_option_unsettle, MCM.OPTION_FLAG_DISABLED, false)
             p_is_settler = false
         elseIf id_option == p_option_clone
-            p_ref_member.Clone()
+            COMMANDS.Clone_Async(ref_actor)
         elseIf id_option == p_option_unclone
-            p_ref_member.Unclone()
+            ;p_ref_member.Unclone()
+            COMMANDS.Unclone_Sync(ref_actor)
             p_View_Members()
         elseIf id_option == p_option_unmember
-            p_ref_member.Unmember()
+            ;p_ref_member.Unmember()
+            COMMANDS.Unmember_Sync(ref_actor)
             p_View_Members()
         endIf
     endFunction

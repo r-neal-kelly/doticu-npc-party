@@ -79,6 +79,9 @@ int property CANT_RESURRECT                 =  -600 autoReadOnly
 int property CANT_CLONE                     =  -605 autoReadOnly
 int property CANT_RENAME                    =  -610 autoReadOnly
 
+int property DO_SYNC                        =  -700 autoReadOnly
+int property DO_ASYNC                       =  -701 autoReadOnly
+
 int property ACTION_WEAPON_SWING            =     0 autoReadOnly
 int property ACTION_SPELL_CAST              =     1 autoReadOnly
 int property ACTION_SPELL_FIRE              =     2 autoReadOnly

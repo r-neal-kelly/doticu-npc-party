@@ -518,3 +518,56 @@ function u_0_3_0()
     ;p_size_ids_free = -1
     ;p_arr_ids_free = none
 endFunction
+
+function u_0_4_0()
+    ; backup old cache
+    int max_aliases_old = p_MAX_ALIASES
+
+    int num_used_old = p_num_used
+    int[] arr_used_old = p_arr_used
+
+    int num_free_old = p_num_free
+    int[] arr_free_old = p_arr_free
+
+    int num_aliases_old = p_num_aliases
+    Alias[] arr_aliases_old = p_arr_aliases
+
+    int num_actors_old = p_num_actors
+    Form[] arr_actors_old = p_arr_actors
+
+    int num_names_old = p_num_names
+    string[] arr_names_old = p_arr_names
+
+    ; re-init cache
+    p_MAX_ALIASES = GetNumAliases()
+    p_Create_Arrays()
+
+    ; fill in the used arrays
+    int idx_id = 0
+    while idx_id < num_used_old
+        p_arr_used[idx_id] = arr_used_old[idx_id]
+        p_arr_aliases[idx_id] = arr_aliases_old[idx_id]
+        p_arr_actors[idx_id] = arr_actors_old[idx_id]
+        p_arr_names[idx_id] = arr_names_old[idx_id]
+        idx_id += 1
+    endWhile
+
+    ; set correct nums
+    p_num_used = num_used_old
+    p_num_aliases = num_aliases_old
+    p_num_actors = num_actors_old
+    p_num_names = num_names_old
+
+    ; because free array has ids backwards...
+    p_num_free = p_MAX_ALIASES - max_aliases_old; the num of new aliases
+
+    int idx_free_old = 0
+    int idx_free_new = p_num_free
+    while idx_free_old < arr_free_old.length
+        p_arr_free[idx_free_new] = arr_free_old[idx_free_old]
+        idx_free_old += 1
+        idx_free_new += 1
+    endWhile
+
+    p_num_free += num_free_old
+endFunction

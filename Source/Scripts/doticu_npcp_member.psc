@@ -72,6 +72,7 @@ string                  p_str_namespace         =    ""
 bool                    p_is_clone              = false
 bool                    p_is_generic            = false
 bool                    p_is_thrall             = false
+bool                    p_is_executing          = false
 int                     p_code_style            =    -1
 int                     p_code_vitality         =    -1
 int                     p_queue_code_return     =     0
@@ -111,6 +112,7 @@ function p_Create(doticu_npcp_data DATA, int id_alias, bool is_clone)
     p_is_clone = is_clone
     p_is_generic = ACTORS.Is_Generic(p_ref_actor)
     p_is_thrall = false
+    p_is_executing = false
     p_code_style = VARS.auto_style
     p_code_vitality = VARS.auto_vitality
     p_queue_code_return = 0
@@ -191,6 +193,7 @@ function p_Destroy()
     p_queue_code_return = 0
     p_code_vitality = -1
     p_code_style = -1
+    p_is_executing = false
     p_is_thrall = false
     p_is_generic = false
     p_is_clone = false
@@ -231,6 +234,17 @@ function f_Unregister()
 endFunction
 
 ; Private Methods
+function p_Start_Executing()
+    while p_is_executing
+        Utility.Wait(0.01)
+    endWhile
+    p_is_executing = true
+endFunction
+
+function p_Stop_Executing()
+    p_is_executing = false
+endFunction
+
 function p_Create_Queues()
     p_queue_member = QUEUES.Create("alias", 64, 0.1)
 endFunction
@@ -675,7 +689,7 @@ int function Unsettle()
     return CODES.SUCCESS
 endFunction
 
-int function Immobilize()
+int function Immobilize(int code_exec)
     int code_return
 
     if !Exists()
@@ -686,7 +700,13 @@ int function Immobilize()
         return CODES.IS_IMMOBILE
     endIf
 
-    p_Rush("Immobile.Create")
+    if code_exec == CODES.DO_ASYNC
+        p_Enqueue("Immobile.Create")
+    else
+        p_Start_Executing()
+        p_ref_immobile.f_Create(p_DATA, p_id_alias)
+        p_Stop_Executing()
+    endIf
 
     code_return = Enforce()
     if code_return < 0
@@ -696,7 +716,7 @@ int function Immobilize()
     return CODES.SUCCESS
 endFunction
 
-int function Mobilize()
+int function Mobilize(int code_exec)
     int code_return
 
     if !Exists()
@@ -707,11 +727,35 @@ int function Mobilize()
         return CODES.ISNT_IMMOBILE
     endIf
 
-    p_Rush("Immobile.Destroy")
+    if code_exec == CODES.DO_ASYNC
+        p_Enqueue("Immobile.Destroy")
+    else
+        p_Start_Executing()
+        p_ref_immobile.f_Destroy()
+        p_Stop_Executing()
+    endIf
 
-    ; we need to get rid of any old messages
-    ; else a deadlock may occur on next Rush
-    f_QUEUE.Flush()
+    code_return = Enforce()
+    if code_return < 0
+        return code_return
+    endIf
+
+    return CODES.SUCCESS
+endFunction
+
+int function Follow_Sync()
+    int code_return
+
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+
+    p_Start_Executing()
+    code_return = FOLLOWERS.f_Create_Follower(p_ref_actor)
+    p_Stop_Executing()
+    if code_return < 0
+        return code_return
+    endIf
 
     code_return = Enforce()
     if code_return < 0
@@ -731,6 +775,32 @@ int function Follow()
     p_Rush("Follower.Create")
     if p_queue_code_return < 0
         return p_queue_code_return
+    endIf
+
+    code_return = Enforce()
+    if code_return < 0
+        return code_return
+    endIf
+
+    return CODES.SUCCESS
+endFunction
+
+int function Unfollow_Sync()
+    int code_return
+
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+
+    if !Is_Follower()
+        return CODES.ISNT_FOLLOWER
+    endIf
+
+    p_Start_Executing()
+    code_return = FOLLOWERS.f_Destroy_Follower(p_ref_actor)
+    p_Stop_Executing()
+    if code_return < 0
+        return code_return
     endIf
 
     code_return = Enforce()
@@ -1471,6 +1541,8 @@ endState
 
 ; Events
 event On_Queue_Member(string str_message)
+    p_Start_Executing()
+
     if false
 
     elseIf str_message == "Member.Create_Outfits"
@@ -1527,6 +1599,8 @@ event On_Queue_Member(string str_message)
     endIf
 
     f_QUEUE.Dequeue()
+
+    p_Stop_Executing()
 endEvent
 
 event On_Members_Unmember()

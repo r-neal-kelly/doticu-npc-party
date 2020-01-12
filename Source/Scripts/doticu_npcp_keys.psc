@@ -141,11 +141,8 @@ event OnKeyDown(int code_key)
     
     Actor ref_actor = Game.GetCurrentCrosshairRef() as Actor
 
-    ; need to cancel if in menu mode, because we don't want crap to happen when in console or menu!
+    ; can add a 'Yell' command to topics, so that all funcs can be used in dialogue, e.g. "Summon All"
 
-    ; can add a 'Yell' command to topics, so that all funcs can be used in dialogue
-
-    ; these should be sent to commands for notes!
     if code_key == VARS.key_fs_summon_all
         COMMANDS.Followers_Summon_All()
     elseIf code_key == VARS.key_fs_summon_mobile
@@ -179,7 +176,7 @@ event OnKeyDown(int code_key)
         COMMANDS.Toggle_Members_Display(ref_actor)
     
     elseIf code_key == VARS.key_resurrect
-        COMMANDS.Resurrect(ref_actor, true)
+        COMMANDS.Resurrect_Async(ref_actor, true)
     elseIf code_key == VARS.key_pack
         COMMANDS.Pack(ref_actor, true)
     elseIf code_key == VARS.key_outfit; this needs to be corrected

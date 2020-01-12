@@ -319,6 +319,8 @@ bool function Should_Unclone_Member(doticu_npcp_member ref_member)
     return ref_member && ref_member.Is_Clone() && Should_Unclone_Actor(ref_member.Get_Actor())
 endFunction
 
+; would also like a display that skips followers, has only followers, etc. for immobile, settler, etc.
+; this is getting into filter territory with aliases. need to work that out
 int function Display_Start(Actor ref_actor)
     if Are_Displayed()
         return CODES.IS_DISPLAY
@@ -433,6 +435,11 @@ endFunction
 ; Update Methods
 function u_0_3_0()
     ALIASES.u_0_3_0()
+    f_Register()
+endFunction
+
+function u_0_4_0()
+    ALIASES.u_0_4_0()
     f_Register()
 endFunction
 

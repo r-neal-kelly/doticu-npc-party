@@ -1,20 +1,22 @@
 Scriptname doticu_npcp_topics extends TopicInfo hidden
 
+; need to investigate if this script is always loaded or instanstiated as needed.
+
 ; Member Topics
 function Member(ObjectReference ref_object)
     (GetOwningQuest() as doticu_npcp_commands).Member_Sync(ref_object as Actor)
 endFunction
 
 function Unmember(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Unmember(ref_object as Actor)
+    (GetOwningQuest() as doticu_npcp_commands).Unmember_Sync(ref_object as Actor)
 endFunction
 
 function Clone(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Clone(ref_object as Actor)
+    (GetOwningQuest() as doticu_npcp_commands).Clone_Sync(ref_object as Actor)
 endFunction
 
 function Unclone(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Unclone(ref_object as Actor)
+    (GetOwningQuest() as doticu_npcp_commands).Unclone_Sync(ref_object as Actor)
 endFunction
 
 function Pack(ObjectReference ref_object)
@@ -46,11 +48,11 @@ function Outfit_Immobile(ObjectReference ref_object)
 endFunction
 
 function Enthrall(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Enthrall(ref_object as Actor, false)
+    (GetOwningQuest() as doticu_npcp_commands).Enthrall_Sync(ref_object as Actor, false)
 endFunction
 
 function Unthrall(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Unthrall(ref_object as Actor, false)
+    (GetOwningQuest() as doticu_npcp_commands).Unthrall_Sync(ref_object as Actor, false)
 endFunction
 
 function Style_Default(ObjectReference ref_object)
@@ -109,17 +111,17 @@ endFunction
 
 ; Follower Topics
 function Follow(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Follow(ref_object as Actor, false)
+    (GetOwningQuest() as doticu_npcp_commands).Follow_Sync(ref_object as Actor, false)
 endFunction
 
 function Unfollow(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Unfollow(ref_object as Actor, false)
+    (GetOwningQuest() as doticu_npcp_commands).Unfollow_Sync(ref_object as Actor, false)
 endFunction
 
 function Sneak(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Sneak(ref_object as Actor, false)
+    (GetOwningQuest() as doticu_npcp_commands).Sneak_Sync(ref_object as Actor, false)
 endFunction
 
 function Unsneak(ObjectReference ref_object)
-    (GetOwningQuest() as doticu_npcp_commands).Unsneak(ref_object as Actor, false)
+    (GetOwningQuest() as doticu_npcp_commands).Unsneak_Sync(ref_object as Actor, false)
 endFunction

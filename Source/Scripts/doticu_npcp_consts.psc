@@ -62,13 +62,13 @@ endProperty
 
 int property VERSION_MINOR
     int function Get()
-        return 3; set manually upon each release
+        return 4; set manually upon each release
     endFunction
 endProperty
 
 int property VERSION_PATCH
     int function Get()
-        return 1; set manually upon each release
+        return 0; set manually upon each release
     endFunction
 endProperty
 

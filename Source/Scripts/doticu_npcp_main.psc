@@ -84,7 +84,7 @@ function f_Load_Mod()
     p_Register()
     p_Version()
 
-    Debug.Notification("NPC Party: Loaded (Temp!)")
+    Debug.Notification("NPC Party: Loaded (Temp!)"); temp
 
     while !p_Send_Load_Mod()
         Utility.Wait(0.25)
@@ -143,6 +143,9 @@ function p_Version()
         endIf
         if Is_NPC_Party_Less_Than(0, 3, 1)
             u_0_3_1()
+        endIf
+        if Is_NPC_Party_Less_Than(0, 4, 0)
+            u_0_4_0()
         endIf
 
         VARS.version_major = CONSTS.VERSION_MAJOR
@@ -223,6 +226,10 @@ endFunction
 
 function u_0_3_1()
     VARS.u_0_3_1()
+endFunction
+
+function u_0_4_0()
+    MEMBERS.u_0_4_0()
 endFunction
 
 ; Events

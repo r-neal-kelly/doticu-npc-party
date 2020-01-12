@@ -397,7 +397,7 @@ function Pause()
     GotoState("p_STATE_PAUSE")
 
     p_backup_used = p_buffer_used
-    p_buffer_used = 0; this empties the queue
+    p_buffer_used = 0; this stops the queue
 
     while p_will_update || p_will_rush
         ; let an already dispatched message finish

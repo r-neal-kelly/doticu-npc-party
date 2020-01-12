@@ -325,7 +325,7 @@ function Unthrall(Actor ref_actor, bool auto_create)
     NOTES.Unthrall(ref_member.Unthrall(), str_name)
 endFunction
 
-function Immobilize(Actor ref_actor, bool auto_create)
+function Immobilize(int code_exec, Actor ref_actor, bool auto_create)
     int code_return
     string str_name = ACTORS.Get_Name(ref_actor)
 
@@ -343,10 +343,10 @@ function Immobilize(Actor ref_actor, bool auto_create)
         return
     endIf
 
-    NOTES.Immobilize(ref_member.Immobilize(), str_name)
+    NOTES.Immobilize(ref_member.Immobilize(code_exec), str_name)
 endFunction
 
-function Mobilize(Actor ref_actor, bool auto_create)
+function Mobilize(int code_exec, Actor ref_actor, bool auto_create)
     int code_return
     string str_name = ACTORS.Get_Name(ref_actor)
 
@@ -364,7 +364,7 @@ function Mobilize(Actor ref_actor, bool auto_create)
         return
     endIf
 
-    NOTES.Mobilize(ref_member.Mobilize(), str_name)
+    NOTES.Mobilize(ref_member.Mobilize(code_exec), str_name)
 endFunction
 
 function Paralyze(Actor ref_actor, bool auto_create)
@@ -386,7 +386,7 @@ function Paralyze(Actor ref_actor, bool auto_create)
     endIf
 
     if auto_create && !ref_member.Is_Immobile()
-        code_return = ref_member.Immobilize()
+        code_return = ref_member.Immobilize(CODES.DO_SYNC); temp code_exec
         if code_return < 0
             NOTES.Paralyze(code_return, str_name)
             return
@@ -421,7 +421,7 @@ function Unparalyze(Actor ref_actor, bool auto_create)
     endIf
 
     if auto_create && !ref_member.Is_Immobile()
-        code_return = ref_member.Immobilize()
+        code_return = ref_member.Immobilize(CODES.DO_SYNC); temp code_exec
         if code_return < 0
             NOTES.Unparalyze(code_return, str_name)
             return
@@ -562,6 +562,27 @@ function Follow(Actor ref_actor, bool auto_create)
     NOTES.Follow(ref_member.Follow(), str_name)
 endFunction
 
+function Unfollow_Sync(Actor ref_actor, bool auto_create)
+    int code_return
+    string str_name = ACTORS.Get_Name(ref_actor)
+
+    if auto_create && !MEMBERS.Has_Member(ref_actor)
+        code_return = MEMBERS.Create_Member(ref_actor)
+        if code_return < 0
+            NOTES.Unfollow(code_return, str_name)
+            return
+        endIf
+    endIf
+
+    doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
+    if !ref_member
+        NOTES.Unfollow(CODES.HASNT_MEMBER, str_name)
+        return
+    endIf
+
+    NOTES.Unfollow(ref_member.Unfollow_Sync(), str_name)
+endFunction
+
 function Unfollow(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = ACTORS.Get_Name(ref_actor)
@@ -695,12 +716,12 @@ function Toggle_Thrall(Actor ref_actor)
     endIf
 endFunction
 
-function Toggle_Immobile(Actor ref_actor)
+function Toggle_Immobile(int code_exec, Actor ref_actor)
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if ref_member && ref_member.Is_Immobile()
-        Mobilize(ref_actor, true)
+        Mobilize(code_exec, ref_actor, true)
     else
-        Immobilize(ref_actor, true)
+        Immobilize(code_exec, ref_actor, true)
     endIf
 endFunction
 
