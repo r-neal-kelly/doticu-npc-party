@@ -36,6 +36,8 @@ endFunction
 function Member(int code_return, string str_name)
     if code_return == CODES.SUCCESS
         LOGS.Create_Note(str_name + " is now a member.")
+    elseIf code_return == CODES.CANT_CLONE
+        LOGS.Create_Note(str_name + " could not be cloned. Try to manually member them.")
     elseIf code_return == CODES.HASNT_SPACE_MEMBER
         LOGS.Create_Note("No room for " + str_name + " to become a member.")
     elseIf code_return == CODES.CANT_RESURRECT
@@ -64,6 +66,8 @@ endFunction
 function Clone(int code_return, string str_name)
     if code_return == CODES.SUCCESS
         LOGS.Create_Note("A clone of " + str_name + " is now a member.")
+    elseIf code_return == CODES.CANT_CLONE
+        LOGS.Create_Note(str_name + " could not be cloned. Try to manually member them.")
     elseIf code_return == CODES.HASNT_SPACE_MEMBER
         LOGS.Create_Note("No room for a clone of " + str_name + " to be a member.")
     elseIf code_return == CODES.CANT_RESURRECT

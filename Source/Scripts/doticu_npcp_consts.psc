@@ -62,7 +62,7 @@ endProperty
 
 int property VERSION_MINOR
     int function Get()
-        return 4; set manually upon each release
+        return 5; set manually upon each release
     endFunction
 endProperty
 

@@ -322,7 +322,7 @@ state p_STATE_MEMBER
             COMMANDS.Summon_Async(ref_actor)
         elseIf id_option == p_option_pack
             FUNCS.Close_Menus()
-            COMMANDS.Pack(ref_actor, false)
+            COMMANDS.Pack_Sync(ref_actor, false)
         elseIf id_option == p_option_immobilize
             COMMANDS.Immobilize_Sync(ref_actor, false)
             MCM.SetOptionFlags(p_option_immobilize, MCM.OPTION_FLAG_DISABLED, true)
@@ -396,39 +396,39 @@ state p_STATE_MEMBER
             if ACTORS.Is_Vampire(CONSTS.ACTOR_PLAYER)
                 if idx_option == 0
                     FUNCS.Close_Menus()
-                    COMMANDS.Outfit_Current(ref_actor, false)
+                    COMMANDS.Outfit_Current_Sync(ref_actor, false)
                 elseIf idx_option == 1
                     FUNCS.Close_Menus()
-                    COMMANDS.Outfit_Member(ref_actor, false)
+                    COMMANDS.Outfit_Member_Sync(ref_actor, false)
                 elseIf idx_option == 2
                     FUNCS.Close_Menus()
-                    COMMANDS.Outfit_Settler(ref_actor, false)
+                    COMMANDS.Outfit_Settler_Sync(ref_actor, false)
                 elseIf idx_option == 3
                     FUNCS.Close_Menus()
-                    COMMANDS.Outfit_Thrall(ref_actor, false)
+                    COMMANDS.Outfit_Thrall_Sync(ref_actor, false)
                 elseIf idx_option == 4
                     FUNCS.Close_Menus()
-                    COMMANDS.Outfit_Follower(ref_actor, false)
+                    COMMANDS.Outfit_Follower_Sync(ref_actor, false)
                 elseIf idx_option == 5
                     FUNCS.Close_Menus()
-                    COMMANDS.Outfit_Immobile(ref_actor, false)
+                    COMMANDS.Outfit_Immobile_Sync(ref_actor, false)
                 endIf
             else
                 if idx_option == 0
                     FUNCS.Close_Menus()
-                    COMMANDS.Outfit_Current(ref_actor, false)
+                    COMMANDS.Outfit_Current_Sync(ref_actor, false)
                 elseIf idx_option == 1
                     FUNCS.Close_Menus()
-                    COMMANDS.Outfit_Member(ref_actor, false)
+                    COMMANDS.Outfit_Member_Sync(ref_actor, false)
                 elseIf idx_option == 2
                     FUNCS.Close_Menus()
-                    COMMANDS.Outfit_Settler(ref_actor, false)
+                    COMMANDS.Outfit_Settler_Sync(ref_actor, false)
                 elseIf idx_option == 3
                     FUNCS.Close_Menus()
-                    COMMANDS.Outfit_Follower(ref_actor, false)
+                    COMMANDS.Outfit_Follower_Sync(ref_actor, false)
                 elseIf idx_option == 4
                     FUNCS.Close_Menus()
-                    COMMANDS.Outfit_Immobile(ref_actor, false)
+                    COMMANDS.Outfit_Immobile_Sync(ref_actor, false)
                 endIf
             endIf
         endIf

@@ -178,24 +178,24 @@ event OnKeyDown(int code_key)
     elseIf code_key == VARS.key_resurrect
         COMMANDS.Resurrect_Async(ref_actor, true)
     elseIf code_key == VARS.key_pack
-        COMMANDS.Pack(ref_actor, true)
-    elseIf code_key == VARS.key_outfit; this needs to be corrected
-        COMMANDS.Outfit_Member(ref_actor, true)
+        COMMANDS.Pack_Sync(ref_actor, true)
+    elseIf code_key == VARS.key_outfit; this may need to be corrected
+        COMMANDS.Outfit_Current_Sync(ref_actor, true)
     
     elseIf code_key == VARS.key_toggle_member
-        COMMANDS.Toggle_Member(ref_actor)
+        COMMANDS.Toggle_Member_Sync(ref_actor)
     elseIf code_key == VARS.key_toggle_settler
-        COMMANDS.Toggle_Settler(ref_actor)
+        COMMANDS.Toggle_Settler_Sync(ref_actor)
     elseIf code_key == VARS.key_toggle_enthrall
-        COMMANDS.Toggle_Thrall(ref_actor)
+        COMMANDS.Toggle_Thrall_Sync(ref_actor)
     elseIf code_key == VARS.key_toggle_immobile
-        COMMANDS.Toggle_Immobile(ref_actor)
+        COMMANDS.Toggle_Immobile_Sync(ref_actor)
     elseIf code_key == VARS.key_toggle_paralyzed
-        COMMANDS.Toggle_Paralyzed(ref_actor)
+        COMMANDS.Toggle_Paralyzed_Sync(ref_actor)
     elseIf code_key == VARS.key_toggle_follower
-        COMMANDS.Toggle_Follower(ref_actor)
+        COMMANDS.Toggle_Follower_Sync(ref_actor)
     elseIf code_key == VARS.key_toggle_sneak
-        COMMANDS.Toggle_Sneak(ref_actor)
+        COMMANDS.Toggle_Sneak_Sync(ref_actor)
     
     elseIf code_key == VARS.key_cycle_style
         COMMANDS.Cycle_Style(ref_actor, false)

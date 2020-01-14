@@ -277,32 +277,64 @@ bool function Has_Token(Actor ref_actor, MiscObject misc_token, int count_token 
 endFunction
 
 Actor function Clone(Actor ref_actor)
-    ; can prob make this parallel with the jobs pattern
+    ActorBase base_actor = ref_actor.GetBaseObject() as ActorBase
+    Form base_form = base_actor as Form
+    Actor ref_clone = none
 
-    CONSTS.MARKER_CLONER.MoveTo(CONSTS.ACTOR_PLAYER, 1000.0, 1000.0, -1000.0)
-    
-    Form ref_form = ref_actor.GetBaseObject() as Form
-    Actor ref_clone = CONSTS.MARKER_CLONER.PlaceAtMe(ref_form, 1, true, false) as Actor; persist, disable
-    ref_clone.EnableAI(false)
-    ref_clone.MoveTo(CONSTS.MARKER_CLONER)
+    CONSTS.MARKER_CLONER.MoveTo(ref_actor, 0.0, 0.0, 0.0)
 
-    if Is_Generic(ref_actor)
-        while !p_Has_Same_Head(ref_actor, ref_clone); we may need to limit this to a couple hundred tries, because I ran into an infinite somehow. an unclonable?
-            ref_clone.Disable()
-            ref_clone.Delete()
-            ref_clone = CONSTS.MARKER_CLONER.PlaceAtMe(ref_form, 1, true, false) as Actor; persist, disable
-            ref_clone.EnableAI(false)
-            ref_clone.MoveTo(CONSTS.MARKER_CLONER)
+    if Is_Unique(ref_actor)
+        ref_clone = CONSTS.MARKER_CLONER.PlaceAtMe(base_form, 1, true, false) as Actor; persist, disable
+        ref_clone.MoveTo(CONSTS.MARKER_CLONER)
+        ref_clone.EnableAI(false)
+    else
+        ; can prob make this parallel with the jobs pattern
+        int code_mode = 4
+        int num_tries = 0
+        int max_tries = 300
+        while num_tries < max_tries
+            if code_mode == 4
+                ref_clone = CONSTS.MARKER_CLONER.PlaceAtMe(base_form, 1, true, false) as Actor; persist, disable
+                ref_clone.MoveTo(CONSTS.MARKER_CLONER)
+                ref_clone.EnableAI(false)
+            else
+                ref_clone = CONSTS.MARKER_CLONER.PlaceActorAtMe(base_actor, code_mode, none); can't persist!
+                ref_clone.MoveTo(CONSTS.MARKER_CLONER)
+                ref_clone.EnableAI(false)
+            endIf
+
+            if p_Has_Same_Head(ref_actor, ref_clone)
+                num_tries = max_tries; break
+            else
+                ref_clone.Disable()
+                ref_clone.Delete()
+                ref_clone = none
+
+                code_mode -= 1
+                if code_mode < 0
+                    code_mode = 4
+                endIf
+
+                num_tries += 1
+            endIf
         endWhile
+        ; maybe we should try to make the clone persistent with a quest object or something.
+        ; we would have to make a quest that contains refs to quest tokens, and according to
+        ; the wiki, putting that in any container makes it so that the engine will not delete
+        ; that container, which means actors too. this can be done retroactively
     endIf
 
     CONSTS.MARKER_CLONER.MoveTo(CONSTS.MARKER_STORAGE)
 
-    ref_clone.EnableAI(true)
-    Pacify(ref_clone)
-    Set_Name(ref_clone, "Clone of " + Get_Name(ref_actor))
+    if !ref_clone
+        return none
+    else
+        ref_clone.EnableAI(true)
+        Pacify(ref_clone)
+        Set_Name(ref_clone, "Clone of " + Get_Name(ref_actor))
 
-    return ref_clone
+        return ref_clone
+    endIf
 endFunction
 
 function Delete(Actor ref_actor)
@@ -427,8 +459,8 @@ Faction[] function Get_Factions(Actor ref_actor, int min_rank = -128, int max_ra
     return ref_actor.GetFactions(min_rank, max_rank)
 endFunction
 
-function Set_Factions(Actor ref_actor, Faction[] arr_factions, int[] arr_ranks = none)
-    Remove_Factions(ref_actor)
+function Set_Factions(Actor ref_actor, Faction[] arr_factions, int[] arr_ranks); arr_ranks = none
+    ref_actor.RemoveFromAllFactions()
     if arr_factions
         Add_Factions(ref_actor, arr_factions, arr_ranks)
     endIf
@@ -445,7 +477,7 @@ int[] function Get_Faction_Ranks(Actor ref_actor, Faction[] arr_factions)
     endWhile
 endFunction
 
-function Set_Faction_Ranks(Actor ref_actor, Faction[] arr_factions, int[] arr_ranks = none)
+function Set_Faction_Ranks(Actor ref_actor, Faction[] arr_factions, int[] arr_ranks); arr_ranks = none
     if !arr_ranks || arr_factions.length != arr_ranks.length
         arr_ranks = Utility.CreateIntArray(arr_factions.length, 0)
     endIf
@@ -458,7 +490,7 @@ function Set_Faction_Ranks(Actor ref_actor, Faction[] arr_factions, int[] arr_ra
     endWhile
 endFunction
 
-function Add_Factions(Actor ref_actor, Faction[] arr_factions, int[] arr_ranks = none)
+function Add_Factions(Actor ref_actor, Faction[] arr_factions, int[] arr_ranks); arr_ranks = none
     int idx_factions = 0
     int num_factions = arr_factions.length
 
@@ -476,17 +508,13 @@ function Add_Factions(Actor ref_actor, Faction[] arr_factions, int[] arr_ranks =
     endIf
 endFunction
 
-function Remove_Factions(Actor ref_actor, Faction[] arr_factions = none)
-    if arr_factions
-        int idx_factions = 0
-        int num_factions = arr_factions.length
-        while idx_factions < num_factions
-            ref_actor.RemoveFromFaction(arr_factions[idx_factions])
-            idx_factions += 1
-        endWhile
-    else
-        ref_actor.RemoveFromAllFactions()
-    endIf
+function Remove_Factions(Actor ref_actor, Faction[] arr_factions)
+    int idx_factions = 0
+    int num_factions = arr_factions.length
+    while idx_factions < num_factions
+        ref_actor.RemoveFromFaction(arr_factions[idx_factions])
+        idx_factions += 1
+    endWhile
 endFunction
 
 function Print_Inventory(Actor ref_actor)

@@ -44,7 +44,6 @@ function f_Create(doticu_npcp_data DATA, string str_namespace, int message_max =
 endFunction
 
 function f_Destroy()
-    self.Unpause()
     self.Flush()
     self.Disable()
     self.Delete()
@@ -387,37 +386,6 @@ function Flush()
     GotoState("")
 endFunction
 
-function Pause()
-    ; so we can do sync ops without causing any deadlocks with queued funcs
-    
-    if Is_Paused()
-        return
-    endIf
-
-    GotoState("p_STATE_PAUSE")
-
-    p_backup_used = p_buffer_used
-    p_buffer_used = 0; this stops the queue
-
-    while p_will_update || p_will_rush
-        ; let an already dispatched message finish
-        Utility.Wait(p_INTERVAL_DEFAULT)
-    endWhile
-endFunction
-
-function Unpause()
-    if !Is_Paused()
-        return
-    endIf
-
-    p_buffer_used = p_backup_used
-    p_backup_used = -1
-
-    Dequeue()
-
-    GotoState("")
-endFunction
-
 ; I think the problem with many of these is that once a thread enters the stack frame of a recursive wait,
 ; it can't leave it even when the state of the function is changed to something else. It will just always
 ; recurse infinitely.
@@ -425,62 +393,22 @@ endFunction
 ; Private States
 state p_STATE_RUSH
     function Flush()
-        Utility.Wait(p_INTERVAL_DEFAULT)
-        Flush()
-    endFunction
-
-    function Pause()
-        Utility.Wait(p_INTERVAL_DEFAULT)
-        Pause()
     endFunction
 endState
 
 state p_STATE_FLUSH
     function Enqueue(string str_message, float float_wait_before = -1.0, string str_namespace = "_default_", bool allow_repeat = false)
-        Utility.Wait(p_INTERVAL_DEFAULT)
-        Enqueue(str_message, float_wait_before, str_namespace, allow_repeat)
     endFunction
 
     function Enqueue_Form_Bool(string str_message, Form form_form, bool bool_bool, float float_wait_before = -1.0, string str_namespace = "_default_", bool allow_repeat = false)
-        Utility.Wait(p_INTERVAL_DEFAULT)
-        Enqueue_Form_Bool(str_message, form_form, bool_bool, float_wait_before, str_namespace, allow_repeat)
     endFunction
 
     ; always allow Dequeue()
 
     function Rush(string str_rush, string str_namespace = "_default_")
-        Utility.Wait(p_INTERVAL_DEFAULT)
-        Rush(str_rush, str_namespace)
     endFunction
 
     function Flush()
-    endFunction
-
-    function Pause()
-        Utility.Wait(p_INTERVAL_DEFAULT)
-        Pause()
-    endFunction
-endState
-
-state p_STATE_PAUSE
-    function Enqueue(string str_message, float float_wait_before = -1.0, string str_namespace = "_default_", bool allow_repeat = false)
-        Utility.Wait(p_INTERVAL_DEFAULT)
-        Enqueue(str_message, float_wait_before, str_namespace, allow_repeat)
-    endFunction
-
-    function Enqueue_Form_Bool(string str_message, Form form_form, bool bool_bool, float float_wait_before = -1.0, string str_namespace = "_default_", bool allow_repeat = false)
-        Utility.Wait(p_INTERVAL_DEFAULT)
-        Enqueue_Form_Bool(str_message, form_form, bool_bool, float_wait_before, str_namespace, allow_repeat)
-    endFunction
-
-    function Rush(string str_rush, string str_namespace = "_default_")
-        Utility.Wait(p_INTERVAL_DEFAULT)
-        Rush(str_rush, str_namespace)
-    endFunction
-
-    function Flush()
-        Utility.Wait(p_INTERVAL_DEFAULT)
-        Flush()
     endFunction
 endState
 

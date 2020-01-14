@@ -132,7 +132,6 @@ function f_Destroy()
     endIf
     p_Unlevel()
     p_Unfollow()
-    p_Untoken()
     
     p_Restore()
 
@@ -169,12 +168,22 @@ function f_Unregister()
     UnregisterForAllModEvents()
 endFunction
 
+function f_Lock_Resources()
+    p_ref_member.f_Lock_Resources()
+endFunction
+
+function f_Unlock_Resources()
+    p_ref_member.f_Unlock_Resources()
+endFunction
+
 function f_Enforce()
     p_Enqueue("Follower.Token")
     p_Enqueue("Follower.Follow")
     p_Enqueue("Follower.Level")
     if Is_Sneak()
         p_Enqueue("Follower.Sneak")
+    else
+        p_Enqueue("Follower.Unsneak")
     endIf
 endFunction
 
@@ -192,6 +201,8 @@ function p_Rush(string str_message)
 endFunction
 
 function p_Backup()
+    f_Lock_Resources()
+
     p_prev_relationship_rank = p_ref_actor.GetRelationshipRank(CONSTS.ACTOR_PLAYER)
     p_prev_waiting_for_player = p_ref_actor.GetBaseActorValue("WaitingForPlayer")
     p_prev_aggression = p_ref_actor.GetBaseActorValue("Aggression")
@@ -221,9 +232,13 @@ function p_Backup()
     p_prev_lockpicking = p_ref_actor.GetBaseActorValue(CONSTS.STR_LOCKPICKING)
     p_prev_pickpocket = p_ref_actor.GetBaseActorValue(CONSTS.STR_PICKPOCKET)
     p_prev_speechcraft = p_ref_actor.GetBaseActorValue(CONSTS.STR_SPEECHCRAFT)
+
+    f_Unlock_Resources()
 endFunction
 
 function p_Restore()
+    f_Lock_Resources()
+
     p_ref_actor.SetActorValue(CONSTS.STR_SPEECHCRAFT, p_prev_speechcraft)
     p_ref_actor.SetActorValue(CONSTS.STR_PICKPOCKET, p_prev_pickpocket)
     p_ref_actor.SetActorValue(CONSTS.STR_LOCKPICKING, p_prev_lockpicking)
@@ -252,66 +267,84 @@ function p_Restore()
     p_ref_actor.SetActorValue("Confidence", p_prev_confidence)
     p_ref_actor.SetActorValue("Aggression", 0.0)
     p_ref_actor.SetActorValue("WaitingForPlayer", p_prev_waiting_for_player)
-endFunction
 
-function p_Token()
-    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_FOLLOWER, p_id_alias + 1)
-    if p_is_sneak
-        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_FOLLOWER_SNEAK)
-    else
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_FOLLOWER_SNEAK)
-    endIf
-
-    p_ref_actor.EvaluatePackage()
-endFunction
-
-function p_Untoken()
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_FOLLOWER_SNEAK)
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_FOLLOWER)
-
-    p_ref_actor.EvaluatePackage()
+    f_Unlock_Resources()
 endFunction
 
 function p_Follow()
-    CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(1)
-    p_ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, 3)
-    p_ref_actor.SetPlayerTeammate(true, true)
-    p_ref_actor.IgnoreFriendlyHits(true)
-    p_ref_actor.SetNotShowOnStealthMeter(true)
-    ;p_ref_actor.AllowPCDialogue(true)
-    p_ref_actor.SetActorValue("WaitingForPlayer", 0.0)
-    p_ref_actor.SetActorValue("Aggression", 0.0)
-    p_ref_actor.SetActorValue("Confidence", 4.0)
-    p_ref_actor.SetActorValue("Assistance", 2.0); this may need to go on Member
-    p_ref_actor.SetActorValue("Morality", 0.0)
-    p_ref_actor.SetActorValue("SpeedMult", MAX_SPEED_UNSNEAK)
+    f_Lock_Resources()
 
-    ; we still need to disable the vanilla follower dialogue. Probably just add an never true condition to the quest data tab.
+        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_FOLLOWER, p_id_alias + 1)
 
-    ; we also need to figure out how to deal with traps
+        CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(1)
+        p_ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, 3)
+        p_ref_actor.SetPlayerTeammate(true, true)
+        p_ref_actor.IgnoreFriendlyHits(true)
+        p_ref_actor.SetNotShowOnStealthMeter(true)
+        ;p_ref_actor.AllowPCDialogue(true)
+        p_ref_actor.SetActorValue("WaitingForPlayer", 0.0)
+        p_ref_actor.SetActorValue("Aggression", 0.0)
+        p_ref_actor.SetActorValue("Confidence", 4.0)
+        p_ref_actor.SetActorValue("Assistance", 2.0); this may need to go on Member
+        p_ref_actor.SetActorValue("Morality", 0.0)
+        p_ref_actor.SetActorValue("SpeedMult", MAX_SPEED_UNSNEAK)
+
+        ; we also need to figure out how to deal with traps
+
+        p_ref_actor.EvaluatePackage()
+
+    f_Unlock_Resources()
 endFunction
 
 function p_Unfollow()
-    p_ref_actor.SetNotShowOnStealthMeter(false)
-    p_ref_actor.IgnoreFriendlyHits(false)
-    p_ref_actor.SetPlayerTeammate(false, false)
-    p_ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, p_prev_relationship_rank)
+    f_Lock_Resources()
+
+        p_ref_actor.SetNotShowOnStealthMeter(false)
+        p_ref_actor.IgnoreFriendlyHits(false)
+        p_ref_actor.SetPlayerTeammate(false, false)
+        p_ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, p_prev_relationship_rank)
+
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_FOLLOWER)
+
+        p_ref_actor.EvaluatePackage()
+
+    f_Unlock_Resources()
 endFunction
 
 function p_Sneak()
-    ; if possible, I want this function to make the followers completely undetectable.
-    ; maybe an invisibility spell without the visual effect, if possible? not sure
-    p_ref_actor.SetActorValue("SpeedMult", MAX_SPEED_SNEAK)
+    f_Lock_Resources()
+
+        ; if possible, I want this function to make the followers completely undetectable.
+        ; maybe an invisibility spell without the visual effect, if possible? not sure
+
+        p_is_sneak = true
+
+        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_FOLLOWER_SNEAK)
+
+        p_ref_actor.SetActorValue("SpeedMult", MAX_SPEED_SNEAK)
+
+    f_Unlock_Resources()
 endFunction
 
 function p_Unsneak()
-    p_ref_actor.SetActorValue("SpeedMult", MAX_SPEED_UNSNEAK)
+    f_Lock_Resources()
+
+        p_ref_actor.SetActorValue("SpeedMult", MAX_SPEED_UNSNEAK)
+
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_FOLLOWER_SNEAK)
+
+        p_is_sneak = false
+
+    f_Unlock_Resources()
 endFunction
 
 function p_Level()
+    f_Lock_Resources()
+
     int style_member = p_ref_member.Get_Style()
     int level_player = CONSTS.ACTOR_PLAYER.GetLevel()
     if style_member == p_style_follower && level_player == p_level_follower
+        f_Unlock_Resources()
         return
     endIf
     p_style_follower = style_member
@@ -554,10 +587,21 @@ function p_Level()
     p_ref_actor.SetActorValue(CONSTS.STR_LOCKPICKING, lockpicking)
     p_ref_actor.SetActorValue(CONSTS.STR_PICKPOCKET, pickpocket)
     p_ref_actor.SetActorValue(CONSTS.STR_SPEECHCRAFT, speechcraft)
+
+    f_Unlock_Resources()
 endFunction
 
 function p_Unlevel()
-    p_level_follower = -1
+    f_Lock_Resources()
+
+        p_level_follower = -1
+
+    f_Unlock_Resources()
+endFunction
+
+function p_Relevel()
+    p_Unlevel()
+    p_Level()
 endFunction
 
 ; Public Methods
@@ -585,10 +629,6 @@ doticu_npcp_member function Get_Member()
     endIf
 endFunction
 
-doticu_npcp_settler function Get_Settler()
-    return p_ref_member.Get_Settler()
-endFunction
-
 int function Set_Name(string str_name)
     int code_return
 
@@ -605,72 +645,57 @@ int function Set_Name(string str_name)
     return CODES.SUCCESS
 endFunction
 
-int function Sneak()
+int function Sneak(int code_exec)
     int code_return
 
     if !Exists()
         return CODES.ISNT_FOLLOWER
     endIf
 
-    if p_is_sneak
+    if Is_Sneak()
         return CODES.IS_SNEAK
     endIf
 
-    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_FOLLOWER_SNEAK)
-    p_ref_actor.EvaluatePackage()
-
-    p_is_sneak = true
-    p_Rush("Follower.Sneak")
-
-    code_return = Enforce()
-    if code_return < 0
-        return code_return
+    if code_exec == CODES.DO_ASYNC
+        p_Enqueue("Follower.Sneak")
+    else
+        p_Sneak()
     endIf
 
     return CODES.SUCCESS
 endFunction
 
-int function Unsneak()
+int function Unsneak(int code_exec)
     int code_return
 
     if !Exists()
         return CODES.ISNT_FOLLOWER
     endIf
 
-    if !p_is_sneak
+    if Is_Unsneak()
         return CODES.ISNT_SNEAK
     endIf
 
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_FOLLOWER_SNEAK)
-    p_ref_actor.EvaluatePackage()
-
-    p_is_sneak = false
-    p_Rush("Follower.Unsneak")
-
-    code_return = Enforce()
-    if code_return < 0
-        return code_return
+    if code_exec == CODES.DO_ASYNC
+        p_Enqueue("Follower.Unsneak")
+    else
+        p_Unsneak()
     endIf
 
     return CODES.SUCCESS
 endFunction
 
-int function Relevel()
+int function Relevel(int code_exec)
     int code_return
 
     if !Exists()
         return CODES.ISNT_FOLLOWER
     endIf
 
-    f_QUEUE.Pause()
-    p_Unlevel()
-    f_QUEUE.Unpause()
-
-    p_Enqueue("Follower.Level")
-
-    code_return = Enforce()
-    if code_return < 0
-        return code_return
+    if code_exec == CODES.DO_ASYNC
+        p_Enqueue("Follower.Relevel")
+    else
+        p_Relevel()
     endIf
 
     return CODES.SUCCESS
@@ -683,11 +708,9 @@ int function Catch_Up()
         return CODES.ISNT_FOLLOWER
     endIf
 
-    f_QUEUE.Pause()
     if !ACTORS.Is_Near_Player(p_ref_actor)
         Summon_Behind()
     endIf
-    f_QUEUE.Unpause()
 
     code_return = Enforce()
     if code_return < 0
@@ -697,24 +720,24 @@ int function Catch_Up()
     return CODES.SUCCESS
 endFunction
 
-int function Unfollow()
-    return p_ref_member.Unfollow()
+int function Unfollow(int code_exec)
+    return p_ref_member.Unfollow(code_exec)
 endFunction
 
-int function Pack()
-    return p_ref_member.Pack()
+int function Pack(int code_exec)
+    return p_ref_member.Pack(code_exec)
 endFunction
 
-int function Settle()
+int function Settle(int code_exec)
     if Is_Settler()
-        return p_ref_member.Resettle()
+        return p_ref_member.Resettle(code_exec)
     else
-        return p_ref_member.Settle()
+        return p_ref_member.Settle(code_exec)
     endIf
 endFunction
 
-int function Unsettle()
-    return p_ref_member.Unsettle()
+int function Unsettle(int code_exec)
+    return p_ref_member.Unsettle(code_exec)
 endFunction
 
 int function Immobilize(int code_exec)
@@ -793,12 +816,8 @@ function Summon_Behind()
     p_ref_member.Summon_Behind()
 endFunction
 
-function Resurrect()
-    p_ref_member.Resurrect()
-endFunction
-
-; Update Methods
-function u_0_2_1(doticu_npcp_data DATA)
+function Resurrect(int code_exec)
+    p_ref_member.Resurrect(code_exec)
 endFunction
 
 ; Events
@@ -807,20 +826,16 @@ event On_Queue_Follower(string str_message)
 
     elseIf str_message == "Follower.Backup"
         p_Backup()
-    elseIf str_message == "Follower.Token"
-        p_Token()
     elseIf str_message == "Follower.Follow"
         p_Follow()
     elseIf str_message == "Follower.Level"
         p_Level()
+    elseIf str_message == "Follower.Relevel"
+        p_Relevel()
     elseIf str_message == "Follower.Sneak"
-        if Is_Sneak()
-            p_Sneak()
-        endIf
+        p_Sneak()
     elseIf str_message == "Follower.Unsneak"
-        if Is_Unsneak()
-            p_Unsneak()
-        endIf
+        p_Unsneak()
 
     endIf
 
@@ -837,6 +852,10 @@ event OnCombatStateChanged(Actor ref_target, int code_combat)
     endIf
 endEvent
 
+event OnDeath(Actor ref_killer)
+    p_Unlevel()
+endEvent
+
 ; need to add the catch up function, when player pulls out their weapon. but make it parallel this time.
 ; it's RegisterForActorAction
 
@@ -849,14 +868,14 @@ endEvent
 
 event On_Followers_Settle(Form form_tasklist)
     if Exists()
-        Settle()
+        Settle(CODES.DO_SYNC)
         (form_tasklist as doticu_npcp_tasklist).Detask()
     endIf
 endEvent
 
 event On_Followers_Unsettle(Form form_tasklist)
     if Exists() && Is_Settler()
-        Unsettle()
+        Unsettle(CODES.DO_SYNC)
         (form_tasklist as doticu_npcp_tasklist).Detask()
     endIf
 endEvent
@@ -877,28 +896,28 @@ endEvent
 
 event On_Followers_Sneak(Form form_tasklist)
     if Exists() && Is_Unsneak()
-        Sneak()
+        Sneak(CODES.DO_SYNC)
         (form_tasklist as doticu_npcp_tasklist).Detask()
     endIf
 endEvent
 
 event On_Followers_Unsneak(Form form_tasklist)
     if Exists() && Is_Sneak()
-        Unsneak()
+        Unsneak(CODES.DO_SYNC)
         (form_tasklist as doticu_npcp_tasklist).Detask()
     endIf
 endEvent
 
 event On_Followers_Resurrect(Form form_tasklist)
     if Exists() && Is_Dead()
-        Resurrect()
+        Resurrect(CODES.DO_SYNC)
         (form_tasklist as doticu_npcp_tasklist).Detask()
     endIf
 endEvent
 
 event On_Followers_Unfollow(Form form_tasklist)
     if Exists()
-        Unfollow()
+        Unfollow(CODES.DO_SYNC)
         (form_tasklist as doticu_npcp_tasklist).Detask()
     endIf
 endEvent

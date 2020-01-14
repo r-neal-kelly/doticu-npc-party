@@ -306,7 +306,7 @@ state p_STATE_FOLLOWER
             MCM.ForcePageReset()
         elseIf id_option == p_option_pack
             FUNCS.Close_Menus()
-            COMMANDS.Pack(ref_actor, false)
+            COMMANDS.Pack_Sync(ref_actor, false)
         elseIf id_option == p_option_unfollow
             COMMANDS.Unfollow_Sync(ref_actor, false)
             p_View_Followers()

@@ -95,6 +95,8 @@ bool function p_Has_Changed(Actor ref_actor)
         num_items = ref_actor.GetItemCount(ref_form)
         if ref_form.IsPlayable() && num_items != self.GetItemCount(ref_form)
             return true
+        elseIf !ref_form.IsPlayable() && ref_actor.IsEquipped(ref_form)
+            return true
         endIf
         idx_forms += 1
     endWhile
@@ -183,13 +185,16 @@ function Set(Actor ref_actor, bool do_force = false)
     ;ref_actor.SetOutfit(p_OUTFIT)
     ref_actor.GetLeveledActorBase().SetOutfit(p_OUTFIT)
 
-    ; the trash container is necessary for the next step, it keeps the engine from crashing or freezing!
+    ; the trash container is necessary because it keeps the engine from crashing or freezing when removing actor's items!
     ref_trash = CONTAINERS.Create_Temp()
 
     ; some items may be duplicates and not match the container's count. we can't remove one manually, so we remove all.
     ref_actor.RemoveAllItems(ref_trash, false, true)
 
-    ; make sure everything is equipped and rendered. adds back one of each outfit item just removed
+    ; we have to manually delete any non-playable items that are equipped. we leave everything else because they may be tokens
+    Delete_Unplayable_Equipment(ref_actor)
+
+    ; make sure everything is equipped and rendered. automatically adds back one of each outfit item just removed
     ACTORS.Update_Equipment(ref_actor)
 
     ; add back any discrepencies because the engine only automatically adds back one of each item
@@ -221,7 +226,7 @@ function Remove_Inventory(Actor ref_actor, ObjectReference ref_container = none)
         num_forms = ref_actor.GetNumItems()
         while idx_forms < num_forms
             ref_form = ref_actor.GetNthForm(idx_forms)
-            if ref_form.IsPlayable() && !self.GetItemCount(ref_form)
+            if ref_form && ref_form.IsPlayable() && !self.GetItemCount(ref_form)
                 ref_container.AddItem(ref_form, ref_actor.GetItemCount(ref_form), true)
             endIf
             idx_forms += 1
@@ -230,6 +235,35 @@ function Remove_Inventory(Actor ref_actor, ObjectReference ref_container = none)
     
     ; removes any non-outfit items and makes sure outfit is properly equipped
     Set(ref_actor, true)
+endFunction
+
+function Delete_Unplayable_Equipment(Actor ref_actor)
+    int idx_forms
+    int num_forms
+    Form ref_form
+    int num_items
+    ObjectReference ref_trash = CONTAINERS.Create_Temp()
+
+    ; we have to copy one of each unplayable equipped item, because when one is removed, they are all uneqipped
+    idx_forms = 0
+    num_forms = ref_actor.GetNumItems()
+    while idx_forms < num_forms
+        ref_form = ref_actor.GetNthForm(idx_forms)
+        if ref_form && !ref_form.IsPlayable() && ref_actor.IsEquipped(ref_form)
+            ref_trash.AddItem(ref_form, 1, true)
+        endIf
+        idx_forms += 1
+    endWhile
+
+    ; then we can actually remove them
+    idx_forms = 0
+    num_forms = ref_trash.GetNumItems()
+    while idx_forms < num_forms
+        ref_form = ref_trash.GetNthForm(idx_forms)
+        num_items = ref_actor.GetItemCount(ref_form)
+        ref_actor.RemoveItem(ref_form, num_items, true, ref_trash)
+        idx_forms += 1
+    endWhile
 endFunction
 
 function Unset(Actor ref_actor)

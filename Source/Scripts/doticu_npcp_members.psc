@@ -120,6 +120,7 @@ endFunction
 
 int function p_Create_Member(Actor ref_actor, bool do_clone = false)
     int code_return
+    bool was_dead = false
 
     if !ref_actor
         return CODES.ISNT_ACTOR
@@ -141,6 +142,7 @@ int function p_Create_Member(Actor ref_actor, bool do_clone = false)
         endIf
     else
         if ACTORS.Is_Dead(ref_actor)
+            was_dead = true
             ACTORS.Resurrect(ref_actor)
             if ACTORS.Is_Dead(ref_actor)
                 return CODES.CANT_RESURRECT
@@ -152,6 +154,8 @@ int function p_Create_Member(Actor ref_actor, bool do_clone = false)
     if code_return < 0
         if do_clone
             ACTORS.Delete(ref_actor)
+        elseIf was_dead
+            ACTORS.Kill(ref_actor)
         endIf
 
         if code_return == CODES.HAS_ACTOR || code_return == CODES.HAS_ALIAS
@@ -238,22 +242,6 @@ endFunction
 
 doticu_npcp_member function Get_Member(Actor ref_actor)
     return ALIASES.Get_Alias(p_Get_Alias_ID(ref_actor), ref_actor) as doticu_npcp_member
-endFunction
-
-doticu_npcp_settler function Get_Settler(Actor ref_actor)
-    if Has_Member(ref_actor)
-        return Get_Member(ref_actor).Get_Settler()
-    else
-        return none
-    endIf
-endFunction
-
-doticu_npcp_immobile function Get_Immobile(Actor ref_actor)
-    if Has_Member(ref_actor)
-        return Get_Member(ref_actor).Get_Immobile()
-    else
-        return none
-    endIf
 endFunction
 
 doticu_npcp_member function Get_Next_Member(doticu_npcp_member ref_member)
