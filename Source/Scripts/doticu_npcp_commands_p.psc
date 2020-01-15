@@ -619,6 +619,41 @@ function Unsneak(int code_exec, Actor ref_actor, bool auto_create)
     NOTES.Unsneak(ref_follower.Unsneak(code_exec), str_name)
 endFunction
 
+function Relevel(int code_exec, Actor ref_actor, bool auto_create)
+    int code_return
+    string str_name = ACTORS.Get_Name(ref_actor)
+
+    if auto_create && !MEMBERS.Has_Member(ref_actor)
+        code_return = MEMBERS.Create_Member(ref_actor)
+        if code_return < 0
+            NOTES.Relevel(code_return, str_name)
+            return
+        endIf
+    endIf
+
+    doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
+    if !ref_member
+        NOTES.Relevel(CODES.HASNT_MEMBER, str_name)
+        return
+    endIf
+
+    if auto_create && !ref_member.Is_Follower()
+        code_return = ref_member.Follow(code_exec)
+        if code_return < 0
+            NOTES.Relevel(code_return, str_name)
+            return
+        endIf
+    endIf
+
+    doticu_npcp_follower ref_follower = FOLLOWERS.Get_Follower(ref_actor)
+    if !ref_follower
+        NOTES.Relevel(CODES.HASNT_FOLLOWER, str_name)
+        return
+    endIf
+
+    NOTES.Relevel(ref_follower.Relevel(code_exec), str_name)
+endFunction
+
 function Summon(Actor ref_actor)
     int code_return
     string str_name = ACTORS.Get_Name(ref_actor)

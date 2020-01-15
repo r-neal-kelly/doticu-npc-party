@@ -347,6 +347,10 @@ int function Get_Count()
     return ALIASES.Get_Count()
 endFunction
 
+bool function Will_Sort()
+    return ALIASES.Will_Sort()
+endFunction
+
 int function Get_Count_Alive()
     int count = 0
     int max_aliases = Get_Max()
@@ -503,8 +507,13 @@ Alias[] function Get_Followers(int idx_from = 0, int idx_to_ex = -1)
     return ALIASES.Get_Aliases(idx_from, idx_to_ex)
 endFunction
 
-int function Update_Name(int id_alias)
+int function Update_Name(Actor ref_actor)
+    int id_alias = p_Get_Alias_ID(ref_actor)
     return ALIASES.Update_Name(id_alias)
+endFunction
+
+function Sort()
+    ALIASES.Sort()
 endFunction
 
 int function Summon_All(int distance = 120, int angle_start = 0, int angle_offset = 17)

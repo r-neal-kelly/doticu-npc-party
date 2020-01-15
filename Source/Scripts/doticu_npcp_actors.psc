@@ -121,7 +121,15 @@ endFunction
 
 ActorBase function Get_Base(Actor ref_actor)
     if ref_actor
-        return ref_actor.GetActorBase(); should this be leveled base?
+        return ref_actor.GetActorBase()
+    else
+        return none
+    endIf
+endFunction
+
+ActorBase function Get_Leveled_Base(Actor ref_actor)
+    if ref_actor
+        return ref_actor.GetLeveledActorBase()
     else
         return none
     endIf
@@ -187,38 +195,51 @@ endFunction
 function Vitalize(Actor ref_actor, int code_vitality)
     ; maybe we can do more to make this affect only instances, instead of base
 
-    ActorBase p_base_actor = Get_Base(ref_actor)
+    ActorBase base_actor
+    if Is_Unique(ref_actor)
+        base_actor = Get_Base(ref_actor)
+    else
+        base_actor = Get_Leveled_Base(ref_actor)
+    endIf
 
     if code_vitality == CODES.IS_MORTAL
-        p_base_actor.SetProtected(false)
-        p_base_actor.SetEssential(false)
-        ;p_base_actor.SetInvulnerable(false)
-        ref_actor.SetGhost(false)
+        base_actor.SetProtected(false)
+        base_actor.SetEssential(false)
+        base_actor.SetInvulnerable(false)
     elseIf code_vitality == CODES.IS_PROTECTED
-        p_base_actor.SetProtected(true)
-        p_base_actor.SetEssential(false)
-        ;p_base_actor.SetInvulnerable(false)
-        ref_actor.SetGhost(false)
+        base_actor.SetProtected(true)
+        base_actor.SetEssential(false)
+        base_actor.SetInvulnerable(false)
     elseIf code_vitality == CODES.IS_ESSENTIAL
-        p_base_actor.SetProtected(false)
-        p_base_actor.SetEssential(true)
-        ;p_base_actor.SetInvulnerable(false)
-        ref_actor.SetGhost(false)
+        base_actor.SetProtected(false)
+        base_actor.SetEssential(true)
+        base_actor.SetInvulnerable(false)
     elseIf code_vitality == CODES.IS_INVULNERABLE
-        p_base_actor.SetProtected(false)
-        p_base_actor.SetEssential(false)
-        ;p_base_actor.SetInvulnerable(true)
-        ref_actor.SetGhost(true)
+        base_actor.SetProtected(false)
+        base_actor.SetEssential(false)
+        base_actor.SetInvulnerable(true)
     endIf
 endFunction
 
 function Essentialize(Actor ref_actor)
-    ActorBase base_actor = Get_Base(ref_actor)
+    ActorBase base_actor
+    if Is_Unique(ref_actor)
+        base_actor = Get_Base(ref_actor)
+    else
+        base_actor = Get_Leveled_Base(ref_actor)
+    endIf
+
     base_actor.SetEssential(true)
 endFunction
 
 function Unessentialize(Actor ref_actor)
-    ActorBase base_actor = Get_Base(ref_actor)
+    ActorBase base_actor
+    if Is_Unique(ref_actor)
+        base_actor = Get_Base(ref_actor)
+    else
+        base_actor = Get_Leveled_Base(ref_actor)
+    endIf
+
     base_actor.SetEssential(false)
 endFunction
 
@@ -230,7 +251,6 @@ function Kill(Actor ref_actor)
     endIf
 
     ref_actor.Kill(none)
-    ;ref_actor.DamageActorValue(CONSTS.STR_HEALTH, -1000000.0)
 
     if is_essential
         Essentialize(ref_actor)

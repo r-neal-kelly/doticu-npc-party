@@ -38,10 +38,23 @@ doticu_npcp_mcm property MCM hidden
 endProperty
 
 ; Private Constants
-doticu_npcp_data    p_DATA                      =  none
+doticu_npcp_data    p_DATA  =  none
 
-int                 p_HEADERS_PER_PAGE          =     4
-int                 p_MEMBERS_PER_PAGE          =    20
+int property p_HEADERS_PER_PAGE hidden
+    int function Get()
+        return 4
+    endFunction
+endProperty
+int property p_MEMBERS_PER_PAGE hidden
+    int function Get()
+        return 20
+    endFunction
+endProperty
+string property p_STR_PLEASE_WAIT hidden
+    string function Get()
+        return " Please wait, sorting members... "
+    endFunction
+endProperty
 
 ; Private Variables
 bool                p_is_created                = false
@@ -52,8 +65,6 @@ Alias[]             p_arr_aliases               =  none
 doticu_npcp_member  p_ref_member                =  none
 int                 p_options_offset            =    -1
 
-bool                p_is_settler                = false
-
 int                 p_option_rename             =    -1
 int                 p_option_back               =    -1
 int                 p_option_prev               =    -1
@@ -62,7 +73,6 @@ int                 p_option_next               =    -1
 int                 p_option_summon             =    -1
 int                 p_option_pack               =    -1
 int                 p_option_outfit             =    -1
-int                 p_option_resurrect          =    -1
 int                 p_option_settle             =    -1
 int                 p_option_resettle           =    -1
 int                 p_option_unsettle           =    -1
@@ -70,10 +80,15 @@ int                 p_option_enthrall           =    -1
 int                 p_option_immobilize         =    -1
 int                 p_option_mobilize           =    -1
 int                 p_option_paralyze           =    -1
+int                 p_option_unparalyze         =    -1
 int                 p_option_follow             =    -1
+int                 p_option_unfollow           =    -1
 int                 p_option_sneak              =    -1
+int                 p_option_unsneak            =    -1
 int                 p_option_style              =    -1
 int                 p_option_vitalize           =    -1
+int                 p_option_relevel            =    -1
+int                 p_option_resurrect          =    -1
 int                 p_option_clone              =    -1
 int                 p_option_unclone            =    -1
 int                 p_option_unmember           =    -1
@@ -81,6 +96,27 @@ int                 p_option_unmember           =    -1
 int                 p_option_health             =    -1
 int                 p_option_magicka            =    -1
 int                 p_option_stamina            =    -1
+
+int                 p_option_skill_one_handed   =    -1
+int                 p_option_skill_two_handed   =    -1
+int                 p_option_skill_block        =    -1
+int                 p_option_skill_heavy_armor  =    -1
+int                 p_option_skill_light_armor  =    -1
+int                 p_option_skill_smithing     =    -1
+
+int                 p_option_skill_destruction  =    -1
+int                 p_option_skill_restoration  =    -1
+int                 p_option_skill_conjuration  =    -1
+int                 p_option_skill_alteration   =    -1
+int                 p_option_skill_illusion     =    -1
+int                 p_option_skill_enchanting   =    -1
+
+int                 p_option_skill_marksman     =    -1
+int                 p_option_skill_sneak        =    -1
+int                 p_option_skill_alchemy      =    -1
+int                 p_option_skill_lockpicking  =    -1
+int                 p_option_skill_pickpocket   =    -1
+int                 p_option_skill_speechcraft  =    -1
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
@@ -130,7 +166,9 @@ endFunction
 int function p_Get_Idx_Command(int id_option, int idx_entity)
 endFunction
 
-string function p_Format_Title(string str_members, string str_pages)
+string function p_Format_Title(int num_members, int idx_page, int num_pages)
+    string str_members = "Members: " + num_members + "/" + MEMBERS.Get_Max()
+    string str_pages = "Page: " + (idx_page + 1) + "/" + num_pages
     return str_members + "               " + str_pages
 endFunction
 
@@ -152,24 +190,19 @@ auto state p_STATE_MEMBERS
         MCM.SetCursorPosition(0)
         MCM.SetCursorFillMode(MCM.LEFT_TO_RIGHT)
 
-        int count_members = MEMBERS.Get_Count()
-        int max_members = MEMBERS.Get_Max()
+        int num_members = MEMBERS.Get_Count()
         string str_count_members
         string str_count_pages
-        if count_members == 0
-            str_count_members = "Members: 0/" + max_members
-            str_count_pages = "Page: 1/1"
-            MCM.SetTitleText(p_Format_Title(str_count_members, str_count_pages))
+        if num_members == 0
+            MCM.SetTitleText(p_Format_Title(0, 0, 1))
             MCM.AddHeaderOption(" No Members ")
             return
         endIf
 
-        p_num_pages = Math.Ceiling(count_members / (p_MEMBERS_PER_PAGE as float))
-        str_count_members = "Members: " + count_members + "/" + max_members
-        str_count_pages = "Page: " + (p_curr_page + 1) + "/" + p_num_pages
-        MCM.SetTitleText(p_Format_Title(str_count_members, str_count_pages))
+        p_num_pages = Math.Ceiling(num_members / (p_MEMBERS_PER_PAGE as float))
+        MCM.SetTitleText(p_Format_Title(num_members, p_curr_page, p_num_pages))
 
-        if count_members > p_MEMBERS_PER_PAGE
+        if num_members > p_MEMBERS_PER_PAGE
             p_option_prev = MCM.AddTextOption("                     Go to Previous Page", "")
             p_option_next = MCM.AddTextOption("                       Go to Next Page", "")
         else
@@ -240,7 +273,7 @@ state p_STATE_MEMBER
         endIf
 
         string str_member_name = p_ref_member.Get_Name()
-        p_is_settler = p_ref_member.Is_Settler()
+        Actor ref_actor = p_ref_member.Get_Actor()
 
         MCM.SetCursorPosition(0)
         MCM.SetCursorFillMode(MCM.LEFT_TO_RIGHT)
@@ -264,18 +297,12 @@ state p_STATE_MEMBER
         MCM.AddHeaderOption("Commands: ")
 
         p_option_summon = MCM.AddTextOption(CONSTS.STR_MCM_SUMMON, "")
+
         p_option_pack = MCM.AddTextOption(" Pack ", "")
+
         p_option_outfit = MCM.AddMenuOption(CONSTS.STR_MCM_OUTFIT, "")
 
-        if p_ref_member.Is_Immobile()
-            p_option_immobilize = MCM.AddTextOption(CONSTS.STR_MCM_IMMOBILIZE, "", MCM.OPTION_FLAG_DISABLED)
-            p_option_mobilize = MCM.AddTextOption(CONSTS.STR_MCM_MOBILIZE, "", MCM.OPTION_FLAG_NONE)
-        else
-            p_option_immobilize = MCM.AddTextOption(CONSTS.STR_MCM_IMMOBILIZE, "", MCM.OPTION_FLAG_NONE)
-            p_option_mobilize = MCM.AddTextOption(CONSTS.STR_MCM_MOBILIZE, "", MCM.OPTION_FLAG_DISABLED)
-        endif
-
-        if p_is_settler
+        if p_ref_member.Is_Settler()
             p_option_settle = MCM.AddTextOption(CONSTS.STR_MCM_SETTLE, "", MCM.OPTION_FLAG_DISABLED)
             p_option_resettle = MCM.AddTextOption(CONSTS.STR_MCM_RESETTLE, "", MCM.OPTION_FLAG_NONE)
             p_option_unsettle = MCM.AddTextOption(CONSTS.STR_MCM_UNSETTLE, "", MCM.OPTION_FLAG_NONE)
@@ -285,12 +312,56 @@ state p_STATE_MEMBER
             p_option_unsettle = MCM.AddTextOption(CONSTS.STR_MCM_UNSETTLE, "", MCM.OPTION_FLAG_DISABLED)
         endif
 
+        if p_ref_member.Is_Immobile()
+            p_option_immobilize = MCM.AddTextOption(CONSTS.STR_MCM_IMMOBILIZE, "", MCM.OPTION_FLAG_DISABLED)
+            p_option_mobilize = MCM.AddTextOption(CONSTS.STR_MCM_MOBILIZE, "", MCM.OPTION_FLAG_NONE)
+        else
+            p_option_immobilize = MCM.AddTextOption(CONSTS.STR_MCM_IMMOBILIZE, "", MCM.OPTION_FLAG_NONE)
+            p_option_mobilize = MCM.AddTextOption(CONSTS.STR_MCM_MOBILIZE, "", MCM.OPTION_FLAG_DISABLED)
+        endif
+
+        if p_ref_member.Is_Paralyzed()
+            p_option_paralyze = MCM.AddTextOption(CONSTS.STR_MCM_PARALYZE, "", MCM.OPTION_FLAG_DISABLED)
+            p_option_unparalyze = MCM.AddTextOption(CONSTS.STR_MCM_UNPARALYZE, "", MCM.OPTION_FLAG_NONE)
+        else
+            p_option_paralyze = MCM.AddTextOption(CONSTS.STR_MCM_PARALYZE, "", MCM.OPTION_FLAG_NONE)
+            p_option_unparalyze = MCM.AddTextOption(CONSTS.STR_MCM_UNPARALYZE, "", MCM.OPTION_FLAG_DISABLED)
+        endif
+
+        if p_ref_member.Is_Follower()
+            p_option_follow = MCM.AddTextOption(CONSTS.STR_MCM_FOLLOW, "", MCM.OPTION_FLAG_DISABLED)
+            p_option_unfollow = MCM.AddTextOption(CONSTS.STR_MCM_UNFOLLOW, "", MCM.OPTION_FLAG_NONE)
+
+            if p_ref_member.Is_Sneak()
+                p_option_sneak = MCM.AddTextOption(CONSTS.STR_MCM_SNEAK, "", MCM.OPTION_FLAG_DISABLED)
+                p_option_unsneak = MCM.AddTextOption(CONSTS.STR_MCM_UNSNEAK, "", MCM.OPTION_FLAG_NONE)
+            else
+                p_option_sneak = MCM.AddTextOption(CONSTS.STR_MCM_SNEAK, "", MCM.OPTION_FLAG_NONE)
+                p_option_unsneak = MCM.AddTextOption(CONSTS.STR_MCM_UNSNEAK, "", MCM.OPTION_FLAG_DISABLED)
+            endIf
+
+            p_option_relevel = MCM.AddTextOption(CONSTS.STR_MCM_RELEVEL, "", MCM.OPTION_FLAG_NONE)
+        else
+            p_option_follow = MCM.AddTextOption(CONSTS.STR_MCM_FOLLOW, "", MCM.OPTION_FLAG_NONE)
+            p_option_unfollow = MCM.AddTextOption(CONSTS.STR_MCM_UNFOLLOW, "", MCM.OPTION_FLAG_DISABLED)
+
+            p_option_relevel = MCM.AddTextOption(CONSTS.STR_MCM_RELEVEL, "", MCM.OPTION_FLAG_DISABLED)
+        endif
+
+        if p_ref_member.Is_Dead()
+            p_option_resurrect = MCM.AddTextOption(CONSTS.STR_MCM_RESURRECT, "", MCM.OPTION_FLAG_NONE)
+        else
+            p_option_resurrect = MCM.AddTextOption(CONSTS.STR_MCM_RESURRECT, "", MCM.OPTION_FLAG_DISABLED)
+        endIf
+
         p_option_clone = MCM.AddTextOption(" Clone ", "")
+
         if p_ref_member.Is_Clone()
             p_option_unclone = MCM.AddTextOption(" Unclone ", "")
         else
             p_option_unclone = MCM.AddTextOption(" Unclone ", "", MCM.OPTION_FLAG_DISABLED)
         endIf
+
         if !MEMBERS.Should_Unclone_Member(p_ref_member)
             p_option_unmember = MCM.AddTextOption(" Unmember ", "")
         else
@@ -300,29 +371,84 @@ state p_STATE_MEMBER
         MCM.SetCursorPosition(5)
         MCM.SetCursorFillMode(MCM.TOP_TO_BOTTOM)
 
-        Actor ref_actor = p_ref_member.Get_Actor()
+        
         MCM.AddHeaderOption("Statistics: ")
+
         p_option_health = MCM.AddTextOption(" Health: ", ref_actor.GetActorValue(CONSTS.STR_HEALTH) as int)
         p_option_magicka = MCM.AddTextOption(" Magicka: ", ref_actor.GetActorValue(CONSTS.STR_MAGICKA) as int)
         p_option_stamina = MCM.AddTextOption(" Stamina: ", ref_actor.GetActorValue(CONSTS.STR_STAMINA) as int)
+
+        p_option_skill_one_handed = MCM.AddTextOption(" One Handed: ", ref_actor.GetActorValue(CONSTS.STR_ONE_HANDED) as int)
+        p_option_skill_two_handed = MCM.AddTextOption(" Two Handed: ", ref_actor.GetActorValue(CONSTS.STR_TWO_HANDED) as int)
+        p_option_skill_block = MCM.AddTextOption(" Block: ", ref_actor.GetActorValue(CONSTS.STR_BLOCK) as int)
+        p_option_skill_heavy_armor = MCM.AddTextOption(" Heavy Armor: ", ref_actor.GetActorValue(CONSTS.STR_HEAVY_ARMOR) as int)
+        p_option_skill_light_armor = MCM.AddTextOption(" Light Armor: ", ref_actor.GetActorValue(CONSTS.STR_LIGHT_ARMOR) as int)
+        p_option_skill_smithing = MCM.AddTextOption(" Smithing: ", ref_actor.GetActorValue(CONSTS.STR_SMITHING) as int)
+
+        p_option_skill_destruction = MCM.AddTextOption(" Destruction: ", ref_actor.GetActorValue(CONSTS.STR_DESTRUCTION) as int)
+        p_option_skill_restoration = MCM.AddTextOption(" Restoration: ", ref_actor.GetActorValue(CONSTS.STR_RESTORATION) as int)
+        p_option_skill_conjuration = MCM.AddTextOption(" Conjuration: ", ref_actor.GetActorValue(CONSTS.STR_CONJURATION) as int)
+        p_option_skill_alteration = MCM.AddTextOption(" Alteration: ", ref_actor.GetActorValue(CONSTS.STR_ALTERATION) as int)
+        p_option_skill_illusion = MCM.AddTextOption(" Illusion: ", ref_actor.GetActorValue(CONSTS.STR_ILLUSION) as int)
+        p_option_skill_enchanting = MCM.AddTextOption(" Enchanting: ", ref_actor.GetActorValue(CONSTS.STR_ENCHANTING) as int)
+
+        p_option_skill_marksman = MCM.AddTextOption(" Marksman: ", ref_actor.GetActorValue(CONSTS.STR_MARKSMAN) as int)
+        p_option_skill_sneak = MCM.AddTextOption(" Sneak: ", ref_actor.GetActorValue(CONSTS.STR_SNEAK) as int)
+        p_option_skill_alchemy = MCM.AddTextOption(" Alchemy: ", ref_actor.GetActorValue(CONSTS.STR_ALCHEMY) as int)
+        p_option_skill_lockpicking = MCM.AddTextOption(" Lockpicking: ", ref_actor.GetActorValue(CONSTS.STR_LOCKPICKING) as int)
+        p_option_skill_pickpocket = MCM.AddTextOption(" Pickpocket: ", ref_actor.GetActorValue(CONSTS.STR_PICKPOCKET) as int)
+        p_option_skill_speechcraft = MCM.AddTextOption(" Speechcraft: ", ref_actor.GetActorValue(CONSTS.STR_SPEECHCRAFT) as int)
     endFunction
 
     function f_On_Option_Select(int id_option)
         Actor ref_actor = p_ref_member.Get_Actor()
 
-        if id_option == p_option_back
+        if false
+
+        elseIf id_option == p_option_back
+            if MEMBERS.Will_Sort()
+                MCM.SetTitleText(p_STR_PLEASE_WAIT)
+            endIf
             p_View_Members()
         elseIf id_option == p_option_prev
+            if MEMBERS.Will_Sort()
+                MCM.SetTitleText(p_STR_PLEASE_WAIT)
+            endIf
             p_ref_member = MEMBERS.Get_Prev_Member(p_ref_member)
             MCM.ForcePageReset()
         elseIf id_option == p_option_next
+            if MEMBERS.Will_Sort()
+                MCM.SetTitleText(p_STR_PLEASE_WAIT)
+            endIf
             p_ref_member = MEMBERS.Get_Next_Member(p_ref_member)
             MCM.ForcePageReset()
+
         elseIf id_option == p_option_summon
-            COMMANDS.Summon_Async(ref_actor)
+            MCM.SetOptionFlags(p_option_summon, MCM.OPTION_FLAG_DISABLED, false)
+            COMMANDS.Summon_Sync(ref_actor)
+            MCM.SetOptionFlags(p_option_summon, MCM.OPTION_FLAG_NONE, false)
         elseIf id_option == p_option_pack
+            MCM.SetOptionFlags(p_option_pack, MCM.OPTION_FLAG_DISABLED, false)
             FUNCS.Close_Menus()
             COMMANDS.Pack_Sync(ref_actor, false)
+
+        elseIf id_option == p_option_settle
+            COMMANDS.Settle_Sync(ref_actor, false)
+            MCM.SetOptionFlags(p_option_settle, MCM.OPTION_FLAG_DISABLED, true)
+            MCM.SetOptionFlags(p_option_resettle, MCM.OPTION_FLAG_NONE, true)
+            MCM.SetOptionFlags(p_option_unsettle, MCM.OPTION_FLAG_NONE, false)
+        elseIf id_option == p_option_resettle
+            MCM.SetOptionFlags(p_option_resettle, MCM.OPTION_FLAG_DISABLED, false)
+            COMMANDS.Resettle_Sync(ref_actor, false)
+            MCM.SetOptionFlags(p_option_settle, MCM.OPTION_FLAG_DISABLED, true)
+            MCM.SetOptionFlags(p_option_resettle, MCM.OPTION_FLAG_NONE, true)
+            MCM.SetOptionFlags(p_option_unsettle, MCM.OPTION_FLAG_NONE, false)
+        elseIf id_option == p_option_unsettle
+            COMMANDS.Unsettle_Sync(ref_actor, false)
+            MCM.SetOptionFlags(p_option_settle, MCM.OPTION_FLAG_NONE, true)
+            MCM.SetOptionFlags(p_option_resettle, MCM.OPTION_FLAG_DISABLED, true)
+            MCM.SetOptionFlags(p_option_unsettle, MCM.OPTION_FLAG_DISABLED, false)
+
         elseIf id_option == p_option_immobilize
             COMMANDS.Immobilize_Sync(ref_actor, false)
             MCM.SetOptionFlags(p_option_immobilize, MCM.OPTION_FLAG_DISABLED, true)
@@ -331,41 +457,66 @@ state p_STATE_MEMBER
             COMMANDS.Mobilize_Sync(ref_actor, false)
             MCM.SetOptionFlags(p_option_immobilize, MCM.OPTION_FLAG_NONE, true)
             MCM.SetOptionFlags(p_option_mobilize, MCM.OPTION_FLAG_DISABLED, false)
-        elseIf id_option == p_option_settle
-            COMMANDS.Settle_Async(ref_actor, false)
-            MCM.SetOptionFlags(p_option_settle, MCM.OPTION_FLAG_DISABLED, true)
-            MCM.SetOptionFlags(p_option_resettle, MCM.OPTION_FLAG_NONE, true)
-            MCM.SetOptionFlags(p_option_unsettle, MCM.OPTION_FLAG_NONE, false)
-            p_is_settler = true
-        elseIf id_option == p_option_resettle
-            COMMANDS.Resettle_Async(ref_actor, false)
-            MCM.SetOptionFlags(p_option_settle, MCM.OPTION_FLAG_DISABLED, true)
-            MCM.SetOptionFlags(p_option_resettle, MCM.OPTION_FLAG_NONE, true)
-            MCM.SetOptionFlags(p_option_unsettle, MCM.OPTION_FLAG_NONE, false)
-            p_is_settler = true
-        elseIf id_option == p_option_unsettle
-            COMMANDS.Unsettle_Async(ref_actor, false)
-            MCM.SetOptionFlags(p_option_settle, MCM.OPTION_FLAG_NONE, true)
-            MCM.SetOptionFlags(p_option_resettle, MCM.OPTION_FLAG_DISABLED, true)
-            MCM.SetOptionFlags(p_option_unsettle, MCM.OPTION_FLAG_DISABLED, false)
-            p_is_settler = false
+
+        elseIf id_option == p_option_paralyze
+            COMMANDS.Paralyze_Sync(ref_actor, false)
+            MCM.SetOptionFlags(p_option_paralyze, MCM.OPTION_FLAG_DISABLED, true)
+            MCM.SetOptionFlags(p_option_unparalyze, MCM.OPTION_FLAG_NONE, false)
+        elseIf id_option == p_option_unparalyze
+            COMMANDS.Unparalyze_Sync(ref_actor, false)
+            MCM.SetOptionFlags(p_option_paralyze, MCM.OPTION_FLAG_NONE, true)
+            MCM.SetOptionFlags(p_option_unparalyze, MCM.OPTION_FLAG_DISABLED, false)
+
+        elseIf id_option == p_option_follow
+            COMMANDS.Follow_Sync(ref_actor, false)
+            MCM.SetOptionFlags(p_option_follow, MCM.OPTION_FLAG_DISABLED, true)
+            MCM.SetOptionFlags(p_option_unfollow, MCM.OPTION_FLAG_NONE, false)
+        elseIf id_option == p_option_unfollow
+            COMMANDS.Unfollow_Sync(ref_actor, false)
+            MCM.SetOptionFlags(p_option_follow, MCM.OPTION_FLAG_NONE, true)
+            MCM.SetOptionFlags(p_option_unfollow, MCM.OPTION_FLAG_DISABLED, false)
+
+        elseIf id_option == p_option_sneak
+            COMMANDS.Sneak_Sync(ref_actor, false)
+            MCM.SetOptionFlags(p_option_sneak, MCM.OPTION_FLAG_DISABLED, true)
+            MCM.SetOptionFlags(p_option_unsneak, MCM.OPTION_FLAG_NONE, false)
+        elseIf id_option == p_option_unsneak
+            COMMANDS.Unsneak_Sync(ref_actor, false)
+            MCM.SetOptionFlags(p_option_sneak, MCM.OPTION_FLAG_NONE, true)
+            MCM.SetOptionFlags(p_option_unsneak, MCM.OPTION_FLAG_DISABLED, false)
+
+        elseIf id_option == p_option_relevel
+            MCM.SetOptionFlags(p_option_relevel, MCM.OPTION_FLAG_DISABLED, false)
+            COMMANDS.Relevel_Sync(ref_actor, false)
+            MCM.SetOptionFlags(p_option_relevel, MCM.OPTION_FLAG_NONE, false)
+        
+        elseIf id_option == p_option_resurrect
+            MCM.SetOptionFlags(p_option_resurrect, MCM.OPTION_FLAG_DISABLED, false)
+            COMMANDS.Resurrect_Sync(ref_actor, false)
+            MCM.SetOptionFlags(p_option_resurrect, MCM.OPTION_FLAG_NONE, false)
+            MCM.SetTextOptionValue(p_option_health, ref_actor.GetActorValue(CONSTS.STR_HEALTH) as int, true)
+            MCM.SetTextOptionValue(p_option_magicka, ref_actor.GetActorValue(CONSTS.STR_MAGICKA) as int, true)
+            MCM.SetTextOptionValue(p_option_stamina, ref_actor.GetActorValue(CONSTS.STR_STAMINA) as int, false)
         elseIf id_option == p_option_clone
+            MCM.SetOptionFlags(p_option_clone, MCM.OPTION_FLAG_DISABLED, false)
             COMMANDS.Clone_Async(ref_actor)
+            MCM.SetOptionFlags(p_option_clone, MCM.OPTION_FLAG_NONE, false)
         elseIf id_option == p_option_unclone
-            ;p_ref_member.Unclone()
+            MCM.SetOptionFlags(p_option_unclone, MCM.OPTION_FLAG_DISABLED, false)
             COMMANDS.Unclone_Sync(ref_actor)
             p_View_Members()
         elseIf id_option == p_option_unmember
-            ;p_ref_member.Unmember()
+            MCM.SetOptionFlags(p_option_unmember, MCM.OPTION_FLAG_DISABLED, false)
             COMMANDS.Unmember_Sync(ref_actor)
             p_View_Members()
+
         endIf
     endFunction
 
     function f_On_Option_Menu_Open(int id_option)
         if id_option == p_option_outfit
             if ACTORS.Is_Vampire(CONSTS.ACTOR_PLAYER)
-                string[] arr_options = Utility.CreateStringArray(5, "")
+                string[] arr_options = Utility.CreateStringArray(6, "")
 
                 arr_options[0] = CONSTS.STR_MCM_CURRENT
                 arr_options[1] = CONSTS.STR_MCM_MEMBER
@@ -376,7 +527,7 @@ state p_STATE_MEMBER
 
                 MCM.SetMenuDialogOptions(arr_options)
             else
-                string[] arr_options = Utility.CreateStringArray(4, "")
+                string[] arr_options = Utility.CreateStringArray(5, "")
 
                 arr_options[0] = CONSTS.STR_MCM_CURRENT
                 arr_options[1] = CONSTS.STR_MCM_MEMBER
@@ -444,28 +595,56 @@ state p_STATE_MEMBER
     endFunction
 
     function f_On_Option_Highlight(int id_option)
-        if id_option == p_option_back
+        if false
+
+        elseIf id_option == p_option_rename
+            MCM.SetInfoText("Rename this member.")
+        elseIf id_option == p_option_back
             MCM.SetInfoText("Go back to Members")
         elseIf id_option == p_option_prev
             MCM.SetInfoText("Go to the Previous Member")
         elseIf id_option == p_option_next
             MCM.SetInfoText("Go to the Next Member")
+
         elseIf id_option == p_option_pack
             MCM.SetInfoText("Pack items in this member's inventory.")
         elseIf id_option == p_option_outfit
             MCM.SetInfoText("Choose what this npc will wear in one of their outfits.")
+
+        elseIf id_option == p_option_settle
+            MCM.SetInfoText("Settle " + p_ref_member.Get_Name())
+        elseIf id_option == p_option_resettle
+            MCM.SetInfoText("Resettle " + p_ref_member.Get_Name())
+        elseIf id_option == p_option_unsettle
+            MCM.SetInfoText("Unsettle " + p_ref_member.Get_Name())
+
         elseIf id_option == p_option_immobilize
             MCM.SetInfoText("Immobilize " + p_ref_member.Get_Name())
         elseIf id_option == p_option_mobilize
             MCM.SetInfoText("Mobilize " + p_ref_member.Get_Name())
-        elseIf id_option == p_option_rename
-            MCM.SetInfoText("Rename this member.")
+
+        elseIf id_option == p_option_paralyze
+            MCM.SetInfoText("Paralyze " + p_ref_member.Get_Name())
+        elseIf id_option == p_option_unparalyze
+            MCM.SetInfoText("Unparalyze " + p_ref_member.Get_Name())
+
+        elseIf id_option == p_option_follow
+            MCM.SetInfoText("Have " + p_ref_member.Get_Name() + " follow you.")
+        elseIf id_option == p_option_unfollow
+            MCM.SetInfoText("Have " + p_ref_member.Get_Name() + " stop following you.")
+        
+        elseIf id_option == p_option_sneak
+            MCM.SetInfoText("Have " + p_ref_member.Get_Name() + " sneak.")
+        elseIf id_option == p_option_sneak
+            MCM.SetInfoText("Have " + p_ref_member.Get_Name() + " stop sneaking.")
+
         elseIf id_option == p_option_clone
             MCM.SetInfoText("Clone this member.")
         elseIf id_option == p_option_unclone
             MCM.SetInfoText("Unclone and unmember this member.")
         elseIf id_option == p_option_unmember
             MCM.SetInfoText("Unmember this member.")
+
         endIf
     endFunction
 endState

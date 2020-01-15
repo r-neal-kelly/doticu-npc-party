@@ -66,6 +66,7 @@ doticu_npcp_data        p_DATA                  =  none
 bool                    p_is_created            = false
 int                     p_id_alias              =    -1
 Actor                   p_ref_actor             =  none
+Actor                   p_ref_actor_orig        =  none
 string                  p_str_namespace         =    ""
 bool                    p_is_clone              = false
 bool                    p_is_generic            = false
@@ -96,18 +97,19 @@ int[]                   p_prev_faction_ranks    =  none
 Faction                 p_prev_faction_crime    =  none
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA, int id_alias, bool is_clone)
+function f_Create(doticu_npcp_data DATA, int id_alias, bool is_clone, Actor ref_actor_orig)
     GotoState("p_STATE_BUSY")
-    p_Create(DATA, id_alias, is_clone)
+    p_Create(DATA, id_alias, is_clone, ref_actor_orig)
     GotoState("")
 endFunction
 
-function p_Create(doticu_npcp_data DATA, int id_alias, bool is_clone)
+function p_Create(doticu_npcp_data DATA, int id_alias, bool is_clone, Actor ref_actor_orig)
     p_DATA = DATA
 
     p_is_created = true
     p_id_alias = id_alias
     p_ref_actor = GetActorReference()
+    p_ref_actor_orig = ref_actor_orig
     p_str_namespace = "member_" + p_id_alias
     p_is_clone = is_clone
     p_is_generic = ACTORS.Is_Generic(p_ref_actor)
@@ -295,7 +297,15 @@ function p_Create_Outfits()
         p_outfit2_current = p_outfit2_member
 
         p_outfit2_member.Get(p_ref_actor)
-        p_outfit2_member.Remove_Inventory(p_ref_actor, p_container2_pack)
+        p_outfit2_member.Remove_Inventory(p_ref_actor, p_container2_pack); also applies oufit
+
+        if p_ref_actor_orig && ACTORS.Is_Alive(p_ref_actor_orig) && !MEMBERS.Has_Member(p_ref_actor_orig)
+            ; this is to ensure that original npcs are putting on their outfits.
+            ; it only works for a direct parent, and not the original of an original.
+            ; it's a cheap and gameplay friendly work-around for a crappy bug
+            ; that happens when a different outfit form has the same/a similar outfit
+            p_outfit2_member.Fix_Actor(p_ref_actor_orig)
+        endIf
 
         p_prev_outfit2_member = OUTFITS.Create(p_outfit_member)
         p_prev_outfit2_member.Copy(p_outfit2_member)
@@ -380,6 +390,12 @@ function p_Member()
         p_ref_actor.AddToFaction(CONSTS.FACTION_MEMBER)
         p_ref_actor.SetActorValue("Aggression", 0)
 
+        ; the quick and dirty way. can take away from gameplay though!
+        ;/if p_ref_actor_orig && ACTORS.Is_Alive(p_ref_actor_orig) && !MEMBERS.Has_Member(p_ref_actor_orig)
+            ; this is to ensure that original npcs are putting on their outfits.
+            p_ref_actor_orig.SetPlayerTeammate(true)
+        endIf/;
+
         p_ref_actor.EvaluatePackage()
 
     f_Unlock_Resources()
@@ -404,8 +420,6 @@ endFunction
 function p_Settle()
     f_Lock_Resources()
 
-        p_is_settler = true
-
         ACTORS.Token(p_ref_actor, CONSTS.TOKEN_SETTLER)
 
         p_marker_settler.MoveTo(p_ref_actor)
@@ -422,8 +436,6 @@ function p_Unsettle()
 
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_SETTLER)
 
-        p_is_settler = false
-
         p_ref_actor.EvaluatePackage()
 
     f_Unlock_Resources()
@@ -431,8 +443,6 @@ endFunction
 
 function p_Enthrall()
     f_Lock_Resources()
-
-        p_is_thrall = true
 
         ACTORS.Token(p_ref_actor, CONSTS.TOKEN_THRALL)
 
@@ -450,8 +460,6 @@ function p_Unthrall()
 
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_THRALL)
 
-        p_is_thrall = false
-
         p_ref_actor.EvaluatePackage()
 
     f_Unlock_Resources()
@@ -459,8 +467,6 @@ endFunction
 
 function p_Immobilize()
     f_Lock_Resources()
-
-        p_is_immobile = true
 
         ACTORS.Token(p_ref_actor, CONSTS.TOKEN_IMMOBILE)
 
@@ -474,8 +480,6 @@ function p_Mobilize()
 
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_IMMOBILE)
 
-        p_is_immobile = false
-
         p_ref_actor.EvaluatePackage()
 
     f_Unlock_Resources()
@@ -484,13 +488,18 @@ endFunction
 function p_Paralyze()
     f_Lock_Resources()
 
-        p_is_paralyzed = true
-
         ACTORS.Token(p_ref_actor, CONSTS.TOKEN_PARALYZED)
+
+        ObjectReference ref_marker = p_ref_actor.PlaceAtMe(CONSTS.STATIC_MARKER_X)
+        ref_marker.MoveTo(p_ref_actor)
     
         p_ref_actor.EnableAI(false)
+        p_ref_actor.SetGhost(true)
+        p_ref_actor.AllowPCDialogue(false)
 
         p_ref_actor.EvaluatePackage()
+
+        p_ref_actor.MoveTo(ref_marker)
 
     f_Unlock_Resources()
 endFunction
@@ -498,11 +507,11 @@ endFunction
 function p_Unparalyze()
     f_Lock_Resources()
     
+        p_ref_actor.AllowPCDialogue(true)
+        p_ref_actor.SetGhost(false)
         p_ref_actor.EnableAI(true)
 
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_PARALYZED)
-
-        p_is_paralyzed = false
 
         p_ref_actor.EvaluatePackage()
 
@@ -512,18 +521,21 @@ endFunction
 function p_Reparalyze()
     p_Unparalyze()
 
-        f_Lock_Resources()
+    f_Lock_Resources()
 
         Debug.SendAnimationEvent(p_ref_actor, "IdleForceDefaultState"); go to cached current animation
-    
-        f_Unlock_Resources()
+        Utility.Wait(0.1)
+
+    f_Unlock_Resources()
 
     p_Paralyze()
 endFunction
 
 function p_Set_Style(int code_style)
     f_Lock_Resources()
+
         p_code_style = code_style
+
     f_Unlock_Resources()
 endFunction
 
@@ -572,7 +584,9 @@ endFunction
 
 function p_Set_Vitality(int code_vitality)
     f_Lock_Resources()
+
         p_code_vitality = code_vitality
+
     f_Unlock_Resources()
 endFunction
 
@@ -627,7 +641,6 @@ function p_Put_Outfit(doticu_npcp_outfit ref_outfit2)
         p_outfit2_current = ref_outfit2
 
         p_outfit2_current.Put()
-        Utility.Wait(0.1)
 
     f_Unlock_Resources()
 endFunction
@@ -654,6 +667,14 @@ function p_Outfit()
         endIf
 
         p_outfit2_current.Set(p_ref_actor)
+
+        if p_ref_actor_orig && ACTORS.Is_Alive(p_ref_actor_orig) && !MEMBERS.Has_Member(p_ref_actor_orig)
+            ; this is to ensure that original npcs are putting on their outfits.
+            ; it only works for a direct parent, and not the original of an original.
+            ; it's a cheap and gameplay friendly work-around for a crappy bug
+            ; that happens when a different outfit form has the same/a similar outfit
+            p_outfit2_current.Fix_Actor(p_ref_actor_orig)
+        endIf
 
         p_ref_actor.EvaluatePackage()
 
@@ -733,7 +754,7 @@ int function Enforce()
     endIf
     p_Enqueue("Member.Style")
     p_Enqueue("Member.Vitalize")
-    p_Enqueue("Member.Outfit"); maybe we shouldn't always enforce this, but only in strategic paths
+    p_Enqueue("Member.Outfit"); maybe we shouldn't always enforce this, but only in strategic paths?
 
     if Is_Follower()
         Get_Follower().f_Enforce()
@@ -820,9 +841,16 @@ int function Set_Name(string str_name)
     p_Name_Containers(str_name)
     p_Name_Outfits(str_name)
 
-    code_return = MEMBERS.Update_Name(p_id_alias)
+    code_return = MEMBERS.Update_Name(p_ref_actor)
     if code_return < 0
         return code_return
+    endIf
+
+    if Is_Follower()
+        code_return = FOLLOWERS.Update_Name(p_ref_actor)
+        if code_return < 0
+            return code_return
+        endIf
     endIf
     
     return CODES.SUCCESS
@@ -839,11 +867,15 @@ int function Settle(int code_exec)
         return CODES.IS_SETTLER
     endIf
 
+    p_is_settler = true
+
     if code_exec == CODES.DO_ASYNC
         p_Enqueue("Member.Settle")
     else
         p_Settle()
     endIf
+
+    p_Enqueue("Member.Outfit")
 
     return CODES.SUCCESS
 endFunction
@@ -865,6 +897,8 @@ int function Resettle(int code_exec)
         p_Settle()
     endIf
 
+    p_Enqueue("Member.Outfit")
+
     return CODES.SUCCESS
 endFunction
 
@@ -879,11 +913,71 @@ int function Unsettle(int code_exec)
         return CODES.ISNT_SETTLER
     endIf
 
+    p_is_settler = false
+
     if code_exec == CODES.DO_ASYNC
         p_Enqueue("Member.Unsettle")
     else
         p_Unsettle()
     endIf
+
+    p_Enqueue("Member.Outfit")
+
+    return CODES.SUCCESS
+endFunction
+
+int function Enthrall(int code_exec)
+    int code_return
+
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+
+    if !ACTORS.Is_Vampire(CONSTS.ACTOR_PLAYER)
+        return CODES.ISNT_VAMPIRE
+    endIf
+
+    if Is_Thrall()
+        return CODES.IS_THRALL
+    endIf
+
+    p_is_thrall = true
+
+    if code_exec == CODES.DO_ASYNC
+        p_Enqueue("Member.Enthrall")
+    else
+        p_Enthrall()
+    endIf
+
+    p_Enqueue("Member.Outfit")
+
+    return CODES.SUCCESS
+endFunction
+
+int function Unthrall(int code_exec)
+    int code_return
+
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+
+    if !ACTORS.Is_Vampire(CONSTS.ACTOR_PLAYER)
+        return CODES.ISNT_VAMPIRE
+    endIf
+
+    if !Is_Thrall()
+        return CODES.ISNT_THRALL
+    endIf
+
+    p_is_thrall = false
+
+    if code_exec == CODES.DO_ASYNC
+        p_Enqueue("Member.Unthrall")
+    else
+        p_Unthrall()
+    endIf
+
+    p_Enqueue("Member.Outfit")
 
     return CODES.SUCCESS
 endFunction
@@ -899,11 +993,15 @@ int function Immobilize(int code_exec)
         return CODES.IS_IMMOBILE
     endIf
 
+    p_is_immobile = true
+
     if code_exec == CODES.DO_ASYNC
         p_Enqueue("Member.Immobilize")
     else
         p_Immobilize()
     endIf
+
+    p_Enqueue("Member.Outfit")
 
     return CODES.SUCCESS
 endFunction
@@ -919,11 +1017,15 @@ int function Mobilize(int code_exec)
         return CODES.ISNT_IMMOBILE
     endIf
 
+    p_is_immobile = false
+
     if code_exec == CODES.DO_ASYNC
         p_Enqueue("Member.Mobilize")
     else
         p_Mobilize()
     endIf
+
+    p_Enqueue("Member.Outfit")
 
     return CODES.SUCCESS
 endFunction
@@ -938,6 +1040,8 @@ int function Paralyze(int code_exec)
     if Is_Paralyzed()
         return CODES.IS_PARALYZED
     endIf
+
+    p_is_paralyzed = true
 
     if code_exec == CODES.DO_ASYNC
         p_Enqueue("Member.Paralyze")
@@ -958,6 +1062,8 @@ int function Unparalyze(int code_exec)
     if !Is_Paralyzed()
         return CODES.ISNT_PARALYZED
     endIf
+
+    p_is_paralyzed = false
 
     if code_exec == CODES.DO_ASYNC
         p_Enqueue("Member.Unparalyze")
@@ -991,6 +1097,8 @@ int function Follow(int code_exec)
         endIf
     endIf
 
+    p_Enqueue("Member.Outfit")
+
     return CODES.SUCCESS
 endFunction
 
@@ -1017,53 +1125,7 @@ int function Unfollow(int code_exec)
         endIf
     endIf
 
-    return CODES.SUCCESS
-endFunction
-
-int function Enthrall(int code_exec)
-    int code_return
-
-    if !Exists()
-        return CODES.ISNT_MEMBER
-    endIf
-
-    if !ACTORS.Is_Vampire(CONSTS.ACTOR_PLAYER)
-        return CODES.ISNT_VAMPIRE
-    endIf
-
-    if Is_Thrall()
-        return CODES.IS_THRALL
-    endIf
-
-    if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Enthrall")
-    else
-        p_Enthrall()
-    endIf
-
-    return CODES.SUCCESS
-endFunction
-
-int function Unthrall(int code_exec)
-    int code_return
-
-    if !Exists()
-        return CODES.ISNT_MEMBER
-    endIf
-
-    if !ACTORS.Is_Vampire(CONSTS.ACTOR_PLAYER)
-        return CODES.ISNT_VAMPIRE
-    endIf
-
-    if !Is_Thrall()
-        return CODES.ISNT_THRALL
-    endIf
-
-    if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Unthrall")
-    else
-        p_Unthrall()
-    endIf
+    p_Enqueue("Member.Outfit")
 
     return CODES.SUCCESS
 endFunction
@@ -1509,6 +1571,9 @@ endFunction
 
 function Summon(int distance = 120, int angle = 0)
     ACTORS.Move_To(p_ref_actor, CONSTS.ACTOR_PLAYER, distance, angle)
+    if Is_Paralyzed()
+        p_Reparalyze()
+    endIf
 endFunction
 
 function Summon_Ahead(int distance = 120)
@@ -1559,6 +1624,14 @@ bool function Is_Unparalyzed()
     return Exists() && !p_is_paralyzed
 endFunction
 
+bool function Is_Sneak()
+    return Is_Follower() && Get_Follower().Is_Sneak()
+endFunction
+
+bool function Is_Unsneak()
+    return Is_Follower() && Get_Follower().Is_Unsneak()
+endFunction
+
 bool function Is_Follower()
     return Exists() && FOLLOWERS.Has_Follower(p_ref_actor)
 endFunction
@@ -1595,13 +1668,21 @@ bool function Is_Vitalized_Invulnerable()
     return Exists() && p_code_vitality == CODES.IS_INVULNERABLE
 endFunction
 
+bool function Is_Alive()
+    return Exists() && ACTORS.Is_Alive(p_ref_actor)
+endFunction
+
+bool function Is_Dead()
+    return Exists() && ACTORS.Is_Dead(p_ref_actor)
+endFunction
+
 bool function Is_In_Combat()
     return Exists() && p_ref_actor.IsInCombat()
 endFunction
 
 ; Private States
 state p_STATE_BUSY
-    function f_Create(doticu_npcp_data DATA, int id_alias, bool is_clone)
+    function f_Create(doticu_npcp_data DATA, int id_alias, bool is_clone, Actor ref_actor_orig)
     endFunction
     function f_Destroy()
     endFunction
@@ -1627,21 +1708,37 @@ event On_Queue_Member(string str_message)
     elseIf str_message == "Member.Unoutfit"
         p_Unoutfit()
     elseIf str_message == "Member.Settle"
-        p_Settle()
+        if Is_Settler()
+            p_Settle()
+        endIf
     elseIf str_message == "Member.Unsettle"
-        p_Unsettle()
+        if !Is_Settler()
+            p_Unsettle()
+        endIf
     elseIf str_message == "Member.Enthrall"
-        p_Enthrall()
+        if Is_Thrall()
+            p_Enthrall()
+        endIf
     elseIf str_message == "Member.Unthrall"
-        p_Unthrall()
+        if !Is_Thrall()
+            p_Unthrall()
+        endIf
     elseIf str_message == "Member.Immobilize"
-        p_Immobilize()
+        if Is_Immobile()
+            p_Immobilize()
+        endIf
     elseIf str_message == "Member.Mobilize"
-        p_Mobilize()
+        if Is_Mobile()
+            p_Mobilize()
+        endIf
     elseIf str_message == "Member.Paralyze"
-        p_Paralyze()
+        if Is_Paralyzed()
+            p_Paralyze()
+        endIf
     elseIf str_message == "Member.Unparalyze"
-        p_Unparalyze()
+        if Is_Unparalyzed()
+            p_Unparalyze()
+        endIf
     elseIf str_message == "Member.Style"
         p_Style()
     elseIf str_message == "Member.Vitalize"
@@ -1672,6 +1769,9 @@ event OnActivate(ObjectReference ref_activator)
 endEvent
 
 event OnLoad()
+    if Is_Paralyzed()
+        p_Reparalyze()
+    endIf
     Enforce()
 endEvent
 
@@ -1682,8 +1782,11 @@ event On_Load_Mod()
 endEvent
 
 event OnCombatStateChanged(Actor ref_target, int code_combat)
-    if ref_target == CONSTS.ACTOR_PLAYER || ACTORS.Has_Token(ref_target, CONSTS.TOKEN_MEMBER)
+    if ref_target == CONSTS.ACTOR_PLAYER
         ACTORS.Pacify(p_ref_actor)
+    elseIf ACTORS.Has_Token(ref_target, CONSTS.TOKEN_MEMBER)
+        ACTORS.Pacify(p_ref_actor)
+        ACTORS.Pacify(ref_target)
     endIf
 
     if code_combat == CODES.COMBAT_NO

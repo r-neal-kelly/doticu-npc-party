@@ -149,6 +149,7 @@ function f_Register()
     ; registering mod events is global for each script on an object, and
     ; further, works for handlers labeled as function as well as event.
     
+    RegisterForModEvent("doticu_npcp_load_mod", "On_Load_Mod")
     RegisterForModEvent("doticu_npcp_followers_enforce", "On_Followers_Enforce")
     RegisterForModEvent("doticu_npcp_followers_settle", "On_Followers_Settle")
     RegisterForModEvent("doticu_npcp_followers_unsettle", "On_Followers_Unsettle")
@@ -317,8 +318,6 @@ function p_Sneak()
         ; if possible, I want this function to make the followers completely undetectable.
         ; maybe an invisibility spell without the visual effect, if possible? not sure
 
-        p_is_sneak = true
-
         ACTORS.Token(p_ref_actor, CONSTS.TOKEN_FOLLOWER_SNEAK)
 
         p_ref_actor.SetActorValue("SpeedMult", MAX_SPEED_SNEAK)
@@ -332,8 +331,6 @@ function p_Unsneak()
         p_ref_actor.SetActorValue("SpeedMult", MAX_SPEED_UNSNEAK)
 
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_FOLLOWER_SNEAK)
-
-        p_is_sneak = false
 
     f_Unlock_Resources()
 endFunction
@@ -637,11 +634,6 @@ int function Set_Name(string str_name)
         return code_return
     endIf
 
-    code_return = FOLLOWERS.Update_Name(p_id_alias)
-    if code_return < 0
-        return code_return
-    endIf
-
     return CODES.SUCCESS
 endFunction
 
@@ -655,6 +647,8 @@ int function Sneak(int code_exec)
     if Is_Sneak()
         return CODES.IS_SNEAK
     endIf
+
+    p_is_sneak = true
 
     if code_exec == CODES.DO_ASYNC
         p_Enqueue("Follower.Sneak")
@@ -675,6 +669,8 @@ int function Unsneak(int code_exec)
     if Is_Unsneak()
         return CODES.ISNT_SNEAK
     endIf
+
+    p_is_sneak = false
 
     if code_exec == CODES.DO_ASYNC
         p_Enqueue("Follower.Unsneak")
@@ -833,9 +829,13 @@ event On_Queue_Follower(string str_message)
     elseIf str_message == "Follower.Relevel"
         p_Relevel()
     elseIf str_message == "Follower.Sneak"
-        p_Sneak()
+        if Is_Sneak()
+            p_Sneak()
+        endIf
     elseIf str_message == "Follower.Unsneak"
-        p_Unsneak()
+        if Is_Unsneak()
+            p_Unsneak()
+        endIf
 
     endIf
 
@@ -858,6 +858,12 @@ endEvent
 
 ; need to add the catch up function, when player pulls out their weapon. but make it parallel this time.
 ; it's RegisterForActorAction
+
+event On_Load_Mod()
+    if Exists()
+        p_Follow()
+    endIf
+endEvent
 
 event On_Followers_Enforce(Form form_tasklist)
     if Exists()

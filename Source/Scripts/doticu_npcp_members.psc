@@ -121,6 +121,7 @@ endFunction
 int function p_Create_Member(Actor ref_actor, bool do_clone = false)
     int code_return
     bool was_dead = false
+    Actor ref_actor_orig = ref_actor
 
     if !ref_actor
         return CODES.ISNT_ACTOR
@@ -136,6 +137,7 @@ int function p_Create_Member(Actor ref_actor, bool do_clone = false)
     endIf
 
     if do_clone
+        ref_actor_orig = ref_actor
         ref_actor = ACTORS.Clone(ref_actor)
         if !ref_actor
             return CODES.CANT_CLONE
@@ -169,7 +171,7 @@ int function p_Create_Member(Actor ref_actor, bool do_clone = false)
     int id_alias = code_return
 
     doticu_npcp_member ref_member = p_Get_Member(id_alias)
-    ref_member.f_Create(p_DATA, id_alias, do_clone)
+    ref_member.f_Create(p_DATA, id_alias, do_clone, ref_actor_orig)
     ref_member.f_Register()
 
     return CODES.SUCCESS
@@ -232,6 +234,10 @@ int function Get_Max()
     return ALIASES.Get_Max()
 endFunction
 
+bool function Will_Sort()
+    return ALIASES.Will_Sort()
+endFunction
+
 bool function Has_Member(Actor ref_actor)
     return ALIASES.Has_Alias(p_Get_Alias_ID(ref_actor), ref_actor)
 endFunction
@@ -258,8 +264,13 @@ Alias[] function Get_Members(int idx_from = 0, int idx_to_ex = -1)
     return ALIASES.Get_Aliases(idx_from, idx_to_ex)
 endFunction
 
-int function Update_Name(int id_alias)
+int function Update_Name(Actor ref_actor)
+    int id_alias = p_Get_Alias_ID(ref_actor)
     return ALIASES.Update_Name(id_alias)
+endFunction
+
+function Sort()
+    ALIASES.Sort()
 endFunction
 
 function Enforce()
@@ -325,6 +336,7 @@ int function Display_Start(Actor ref_actor)
 
     p_are_displayed = true
     p_idx_display = idx_alias
+    ALIASES.Disable_Sort()
 
     p_marker_display.MoveTo(CONSTS.ACTOR_PLAYER)
 
@@ -347,6 +359,7 @@ int function Display_Stop()
 
     p_marker_display.MoveTo(CONSTS.MARKER_STORAGE)
 
+    ALIASES.Enable_Sort()
     p_idx_display = -1
     p_are_displayed = false
 

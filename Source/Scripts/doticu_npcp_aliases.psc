@@ -13,6 +13,7 @@ int                 p_MAX_ALIASES   =    -1
 
 ; Private Variables
 bool                p_is_created    = false
+bool                p_can_sort      = false
 bool                p_should_sort   = false
 
 int                 p_num_used      =    -1
@@ -42,6 +43,8 @@ function f_Create(doticu_npcp_data DATA)
     p_MAX_ALIASES = GetNumAliases()
 
     p_is_created = true
+    p_can_sort = true
+    p_should_sort = false
 
     p_Create_Arrays()
 endFunction
@@ -87,6 +90,14 @@ ReferenceAlias function f_Get_Alias(int id_alias); can this be removed somehow?
     else
         return none
     endIf
+endFunction
+
+function Enable_Sort()
+    p_can_sort = true
+endFunction
+
+function Disable_Sort()
+    p_can_sort = false
 endFunction
 
 ; Private Methods
@@ -210,7 +221,7 @@ int function p_Destroy_ID(int id_alias)
 endFunction
 
 function p_Sort()
-    if !p_should_sort
+    if !Will_Sort()
         return
     endIf
 
@@ -334,8 +345,16 @@ int function Update_Name(int id_alias)
     return CODES.SUCCESS
 endFunction
 
+function Sort()
+    p_Sort()
+endFunction
+
 bool function Is_Full()
     return p_num_free <= 0
+endFunction
+
+bool function Will_Sort()
+    return p_can_sort && p_should_sort
 endFunction
 
 int function Get_Count()

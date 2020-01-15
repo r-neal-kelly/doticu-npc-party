@@ -67,7 +67,7 @@ function Clone(int code_return, string str_name)
     if code_return == CODES.SUCCESS
         LOGS.Create_Note("A clone of " + str_name + " is now a member.")
     elseIf code_return == CODES.CANT_CLONE
-        LOGS.Create_Note(str_name + " could not be cloned. Try to manually member them.")
+        LOGS.Create_Note(str_name + " could not be cloned. Try to clone again, or manually member them.")
     elseIf code_return == CODES.HASNT_SPACE_MEMBER
         LOGS.Create_Note("No room for a clone of " + str_name + " to be a member.")
     elseIf code_return == CODES.CANT_RESURRECT
@@ -480,6 +480,14 @@ function Summon(int code_return, string str_name)
         LOGS.Create_Note(str_name + " has been summoned.")
     elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
         LOGS.Create_Note(str_name + " isn't a member, and so can't be summoned.")
+    endIf
+endFunction
+
+function Relevel(int code_return, string str_name)
+    if code_return == CODES.SUCCESS
+        LOGS.Create_Note(str_name + " has been releveled.")
+    elseIf code_return == CODES.ISNT_FOLLOWER || code_return == CODES.HASNT_FOLLOWER
+        LOGS.Create_Note(str_name + " isn't a follow, and so can't be leveled.")
     endIf
 endFunction
 
