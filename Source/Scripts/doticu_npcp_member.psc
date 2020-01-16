@@ -205,6 +205,7 @@ function p_Destroy()
     p_is_generic = false
     p_is_clone = false
     p_str_namespace = ""
+    p_ref_actor_orig = none
     p_ref_actor = none
     p_id_alias = -1
     p_is_created = false
@@ -288,7 +289,6 @@ function p_Create_Outfits()
     f_Lock_Resources()
 
         ; for settler, thrall, immobile, and follower, we can actually add some basic gear, so they are not naked.
-        ; could be an option
         p_outfit2_member = OUTFITS.Create(p_outfit_member)
         p_outfit2_settler = OUTFITS.Create(p_outfit_member)
         p_outfit2_thrall = OUTFITS.Create(p_outfit_member)
@@ -297,13 +297,20 @@ function p_Create_Outfits()
         p_outfit2_current = p_outfit2_member
 
         p_outfit2_member.Get(p_ref_actor)
-        p_outfit2_member.Remove_Inventory(p_ref_actor, p_container2_pack); also applies oufit
+        p_outfit2_member.Transfer_Inventory(p_ref_actor, p_container2_pack)
+
+    f_Unlock_Resources()
+
+    p_Outfit()
+
+    f_Lock_Resources()
 
         if p_ref_actor_orig && ACTORS.Is_Alive(p_ref_actor_orig) && !MEMBERS.Has_Member(p_ref_actor_orig)
             ; this is to ensure that original npcs are putting on their outfits.
             ; it only works for a direct parent, and not the original of an original.
             ; it's a cheap and gameplay friendly work-around for a crappy bug
-            ; that happens when a different outfit form has the same/a similar outfit
+            ; that happens when a different outfit form has the same or similar
+            ; items to those already in use. something about how the engine adds items
             p_outfit2_member.Fix_Actor(p_ref_actor_orig)
         endIf
 
@@ -389,12 +396,6 @@ function p_Member()
         p_ref_actor.AddToFaction(CONSTS.FACTION_WI_NO_BODY_CLEANUP)
         p_ref_actor.AddToFaction(CONSTS.FACTION_MEMBER)
         p_ref_actor.SetActorValue("Aggression", 0)
-
-        ; the quick and dirty way. can take away from gameplay though!
-        ;/if p_ref_actor_orig && ACTORS.Is_Alive(p_ref_actor_orig) && !MEMBERS.Has_Member(p_ref_actor_orig)
-            ; this is to ensure that original npcs are putting on their outfits.
-            p_ref_actor_orig.SetPlayerTeammate(true)
-        endIf/;
 
         p_ref_actor.EvaluatePackage()
 
@@ -667,14 +668,6 @@ function p_Outfit()
         endIf
 
         p_outfit2_current.Set(p_ref_actor)
-
-        if p_ref_actor_orig && ACTORS.Is_Alive(p_ref_actor_orig) && !MEMBERS.Has_Member(p_ref_actor_orig)
-            ; this is to ensure that original npcs are putting on their outfits.
-            ; it only works for a direct parent, and not the original of an original.
-            ; it's a cheap and gameplay friendly work-around for a crappy bug
-            ; that happens when a different outfit form has the same/a similar outfit
-            p_outfit2_current.Fix_Actor(p_ref_actor_orig)
-        endIf
 
         p_ref_actor.EvaluatePackage()
 
@@ -1804,3 +1797,9 @@ event OnItemAdded(Form form_item, int count_item, ObjectReference ref_item, Obje
         LOGS.Create_Error("You can only put items into a member's pack or one of their outfits.")
     endIf
 endEvent
+
+;/event OnObjectEquipped(Form form_item, ObjectReference ref_object)
+    if p_outfit2_current.GetItemCount(form_item) < 1
+        p_Outfit()
+    endIf
+endEvent/;

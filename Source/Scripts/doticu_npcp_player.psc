@@ -21,6 +21,11 @@ doticu_npcp_queues property QUEUES hidden
         return p_DATA.MODS.FUNCS.QUEUES
     endFunction
 endProperty
+doticu_npcp_actors property ACTORS hidden
+    doticu_npcp_actors function Get()
+        return p_DATA.MODS.FUNCS.ACTORS
+    endFunction
+endProperty
 doticu_npcp_followers property FOLLOWERS hidden
     doticu_npcp_followers function Get()
         return p_DATA.MODS.FOLLOWERS
@@ -49,6 +54,8 @@ function f_Create(doticu_npcp_data DATA)
     p_is_created = true
     p_is_in_combat = false
     p_queue_player = QUEUES.Create("player", 32, 5.0)
+
+    ACTOR_PLAYER.AddSpell(CONSTS.ABILITY_CELL, false)
 endFunction
 
 function f_Destroy()
@@ -103,6 +110,20 @@ function p_End_Combat()
     endIf
 endFunction
 
+function p_Update_Outfits(Cell cell_curr)
+    int idx_actors = cell_curr.GetNumRefs(43)
+    while idx_actors > 0
+        idx_actors -= 1
+        Actor ref_actor = cell_curr.GetNthRef(idx_actors, 43) as Actor
+        if ref_actor && ref_actor != ACTOR_PLAYER && !ref_actor.IsPlayerTeammate() && ref_actor.GetWornForm(0x00000004) == none
+            ref_actor.SetPlayerTeammate(true, true)
+            ref_actor.AddItem(CONSTS.WEAPON_BLANK, 1, true)
+            ref_actor.RemoveItem(CONSTS.WEAPON_BLANK, 1, true, none)
+            ref_actor.SetPlayerTeammate(false, false)
+        endIf
+    endWhile
+endFunction
+
 ; Public Methods
 function Add_Perk(Perk perk_to_add)
     ACTOR_PLAYER.AddPerk(perk_to_add)
@@ -114,7 +135,13 @@ endFunction
 
 ; Events
 event OnPlayerLoadGame()
+    p_Update_Outfits(ACTOR_PLAYER.GetParentCell())
     MAIN.f_Load_Mod()
+endEvent
+
+event On_Cell_Change(Cell cell_new)
+    p_Update_Outfits(cell_new)
+    FOLLOWERS.Catch_Up()
 endEvent
 
 event On_Queue_Player(string str_message)
@@ -126,18 +153,6 @@ event On_Queue_Player(string str_message)
     endIf
 
     p_queue_player.Dequeue()
-endEvent
-
-event OnCellAttach()
-    FOLLOWERS.Catch_Up()
-endEvent
-
-event OnCellDetached()
-    FOLLOWERS.Catch_Up()
-endEvent
-
-event OnCellLoad()
-    FOLLOWERS.Catch_Up()
 endEvent
 
 event OnActorAction(int code_action, Actor ref_activator, Form form_source, int slot)

@@ -26,6 +26,7 @@ A follower framework for The Elder Scrolls V: Skyrim Special Edition
 
 ## Thank You:
 - [Bethesda](https://bethesda.net) for Skryim, which is such an endearing masterpiece.
+- [SKSE Team](http://skse.silverlock.org/) for their extender, which has extended the life of the game itself.
 - [SSEEdit/TesVEdit/xEdit Team](https://github.com/TES5Edit/TES5Edit) for such an amazing [tool](https://www.nexusmods.com/skyrimspecialedition/mods/164)
 - [Mod Organizer 2 Team](https://github.com/ModOrganizer2) for your indespensible [program](https://www.nexusmods.com/skyrimspecialedition/mods/6194)
 - [joelday](https://github.com/joelday) for [papyrus-lang](https://github.com/joelday/papyrus-lang) and the excellent [guide](https://github.com/joelday/papyrus-lang/wiki/Using-Mod-Organizer-2) on how to use the Creation Kit with Mod Organizer 2

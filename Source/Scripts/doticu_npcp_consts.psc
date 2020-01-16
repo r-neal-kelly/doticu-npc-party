@@ -6,6 +6,8 @@ Cell                        p_CELL_STORAGE                          = none
 Static                      p_STATIC_MARKER_X                       = none
 ObjectReference             p_MARKER_STORAGE                        = none
 ObjectReference             p_MARKER_CLONER                         = none
+ObjectReference             p_MARKER_CELL                           = none
+Spell                       p_ABILITY_CELL                          = none
 MiscObject                  p_TOKEN_MEMBER                          = none
 MiscObject                  p_TOKEN_SETTLER                         = none
 MiscObject                  p_TOKEN_FOLLOWER                        = none
@@ -141,6 +143,28 @@ ObjectReference property MARKER_CLONER
     function Set(ObjectReference val)
         if p_MARKER_CLONER == none
             p_MARKER_CLONER = val
+        endIf
+    endFunction
+endProperty
+
+ObjectReference property MARKER_CELL
+    ObjectReference function Get()
+        return p_MARKER_CELL
+    endFunction
+    function Set(ObjectReference val)
+        if p_MARKER_CELL == none
+            p_MARKER_CELL = val
+        endIf
+    endFunction
+endProperty
+
+Spell property ABILITY_CELL
+    Spell function Get()
+        return p_ABILITY_CELL
+    endFunction
+    function Set(Spell val)
+        if p_ABILITY_CELL == none
+            p_ABILITY_CELL = val
         endIf
     endFunction
 endProperty
