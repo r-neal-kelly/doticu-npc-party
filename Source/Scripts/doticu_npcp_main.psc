@@ -66,6 +66,10 @@ function f_Init_Mod()
     p_Register()
 
     FUNCS.LOGS.Create_Note("Thank you for installing!")
+
+    while !p_Send("doticu_npcp_init_mod")
+        Utility.Wait(0.25)
+    endWhile
 endFunction
 
 function f_Load_Mod()
@@ -86,7 +90,7 @@ function f_Load_Mod()
 
     Debug.Notification("NPC Party: Loaded (Temp!)"); temp
 
-    while !p_Send_Load_Mod()
+    while !p_Send("doticu_npcp_load_mod")
         Utility.Wait(0.25)
     endWhile
 endFunction
@@ -156,8 +160,8 @@ function p_Version()
     endIf
 endFunction
 
-bool function p_Send_Load_Mod()
-    int handle = ModEvent.Create("doticu_npcp_load_mod")
+bool function p_Send(string str_event)
+    int handle = ModEvent.Create(str_event)
 
     if !handle
         return false

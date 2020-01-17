@@ -30,6 +30,7 @@ MiscObject                  p_TOKEN_VITALITY_ESSENTIAL              = none
 MiscObject                  p_TOKEN_VITALITY_INVULNERABLE           = none
 MiscObject                  p_MISC_QUEUE                            = none
 MiscObject                  p_MISC_TASKLIST                         = none
+MiscObject                  p_MISC_VECTOR_FORM                      = none
 GlobalVariable              p_GLOBAL_PLAYER_FOLLOWER_COUNT          = none
 GlobalVariable              p_GLOBAL_FORCE_CLONE_UNIQUE             = none
 GlobalVariable              p_GLOBAL_FORCE_CLONE_GENERIC            = none
@@ -407,6 +408,17 @@ MiscObject property MISC_TASKLIST
     function Set(MiscObject val)
         if p_MISC_TASKLIST == none
             p_MISC_TASKLIST = val
+        endIf
+    endFunction
+endProperty
+
+MiscObject property MISC_VECTOR_FORM
+    MiscObject function Get()
+        return p_MISC_VECTOR_FORM
+    endFunction
+    function Set(MiscObject val)
+        if p_MISC_VECTOR_FORM == none
+            p_MISC_VECTOR_FORM = val
         endIf
     endFunction
 endProperty

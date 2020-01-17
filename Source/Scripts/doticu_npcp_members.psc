@@ -21,6 +21,11 @@ doticu_npcp_actors property ACTORS hidden
         return p_DATA.MODS.FUNCS.ACTORS
     endFunction
 endProperty
+doticu_npcp_cloner property CLONER hidden
+    doticu_npcp_cloner function Get()
+        return p_DATA.MODS.FUNCS.CLONER
+    endFunction
+endProperty
 doticu_npcp_tasklists property TASKLISTS hidden
     doticu_npcp_tasklists function Get()
         return p_DATA.MODS.FUNCS.TASKLISTS
@@ -138,7 +143,7 @@ int function p_Create_Member(Actor ref_actor, bool do_clone = false)
 
     if do_clone
         ref_actor_orig = ref_actor
-        ref_actor = ACTORS.Clone(ref_actor)
+        ref_actor = CLONER.Create(ref_actor)
         if !ref_actor
             return CODES.CANT_CLONE
         endIf
@@ -177,7 +182,7 @@ int function p_Create_Member(Actor ref_actor, bool do_clone = false)
     return CODES.SUCCESS
 endFunction
 
-int function p_Destroy_Member(Actor ref_actor, bool destroy_clone = false)
+int function p_Destroy_Member(Actor ref_actor, bool delete_clone = false)
     int code_return
 
     if !ref_actor
@@ -201,11 +206,11 @@ int function p_Destroy_Member(Actor ref_actor, bool destroy_clone = false)
     endIf
 
     if Should_Unclone_Actor(ref_actor)
-        destroy_clone = true
+        delete_clone = true
     endIf
 
-    if destroy_clone
-        ACTORS.Delete(ref_actor)
+    if is_clone
+        CLONER.Destroy(ref_actor, delete_clone)
     endIf
 
     return CODES.SUCCESS
@@ -219,9 +224,9 @@ int function Create_Member(Actor ref_actor, bool do_clone = false)
     return code_return
 endFunction
 
-int function Destroy_Member(Actor ref_actor, bool destroy_clone = false)
+int function Destroy_Member(Actor ref_actor, bool delete_clone = false)
     GotoState("p_STATE_BUSY")
-    int code_return = p_Destroy_Member(ref_actor, destroy_clone)
+    int code_return = p_Destroy_Member(ref_actor, delete_clone)
     GotoState("")
     return code_return
 endFunction
@@ -449,7 +454,7 @@ state p_STATE_BUSY
     int function Create_Member(Actor ref_actor, bool do_clone = false)
         return CODES.BUSY
     endFunction
-    int function Destroy_Member(Actor ref_actor, bool destroy_clone = false)
+    int function Destroy_Member(Actor ref_actor, bool delete_clone = false)
         return CODES.BUSY
     endFunction
 endState

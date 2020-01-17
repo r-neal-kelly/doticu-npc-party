@@ -704,7 +704,7 @@ int function Catch_Up()
         return CODES.ISNT_FOLLOWER
     endIf
 
-    if !ACTORS.Is_Near_Player(p_ref_actor)
+    if !ACTORS.Is_Near_Player(p_ref_actor, 2048)
         Summon_Behind()
     endIf
 

@@ -66,7 +66,6 @@ doticu_npcp_data        p_DATA                  =  none
 bool                    p_is_created            = false
 int                     p_id_alias              =    -1
 Actor                   p_ref_actor             =  none
-Actor                   p_ref_actor_orig        =  none
 string                  p_str_namespace         =    ""
 bool                    p_is_clone              = false
 bool                    p_is_generic            = false
@@ -109,7 +108,6 @@ function p_Create(doticu_npcp_data DATA, int id_alias, bool is_clone, Actor ref_
     p_is_created = true
     p_id_alias = id_alias
     p_ref_actor = GetActorReference()
-    p_ref_actor_orig = ref_actor_orig
     p_str_namespace = "member_" + p_id_alias
     p_is_clone = is_clone
     p_is_generic = ACTORS.Is_Generic(p_ref_actor)
@@ -205,7 +203,6 @@ function p_Destroy()
     p_is_generic = false
     p_is_clone = false
     p_str_namespace = ""
-    p_ref_actor_orig = none
     p_ref_actor = none
     p_id_alias = -1
     p_is_created = false
@@ -304,15 +301,6 @@ function p_Create_Outfits()
     p_Outfit()
 
     f_Lock_Resources()
-
-        if p_ref_actor_orig && ACTORS.Is_Alive(p_ref_actor_orig) && !MEMBERS.Has_Member(p_ref_actor_orig)
-            ; this is to ensure that original npcs are putting on their outfits.
-            ; it only works for a direct parent, and not the original of an original.
-            ; it's a cheap and gameplay friendly work-around for a crappy bug
-            ; that happens when a different outfit form has the same or similar
-            ; items to those already in use. something about how the engine adds items
-            p_outfit2_member.Fix_Actor(p_ref_actor_orig)
-        endIf
 
         p_prev_outfit2_member = OUTFITS.Create(p_outfit_member)
         p_prev_outfit2_member.Copy(p_outfit2_member)
@@ -668,6 +656,7 @@ function p_Outfit()
         endIf
 
         p_outfit2_current.Set(p_ref_actor)
+        p_outfit2_current.Update_Base(p_ref_actor)
 
         p_ref_actor.EvaluatePackage()
 

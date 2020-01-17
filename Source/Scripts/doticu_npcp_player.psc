@@ -54,8 +54,6 @@ function f_Create(doticu_npcp_data DATA)
     p_is_created = true
     p_is_in_combat = false
     p_queue_player = QUEUES.Create("player", 32, 5.0)
-
-    ACTOR_PLAYER.AddSpell(CONSTS.ABILITY_CELL, false)
 endFunction
 
 function f_Destroy()
@@ -66,6 +64,7 @@ endFunction
 
 function f_Register()
     p_queue_player.Register_Alias(self, "On_Queue_Player")
+    RegisterForModEvent("doticu_npcp_init_mod", "On_Init_Mod")
 endFunction
 
 function f_Begin_Combat()
@@ -134,13 +133,17 @@ function Remove_Perk(Perk perk_to_remove)
 endFunction
 
 ; Events
+event On_Init_Mod()
+    ACTOR_PLAYER.AddSpell(CONSTS.ABILITY_CELL, false)
+endEvent
+
 event OnPlayerLoadGame()
-    p_Update_Outfits(ACTOR_PLAYER.GetParentCell())
+    ;p_Update_Outfits(ACTOR_PLAYER.GetParentCell()); maybe put this behind a bool
     MAIN.f_Load_Mod()
 endEvent
 
 event On_Cell_Change(Cell cell_new)
-    p_Update_Outfits(cell_new)
+    ;p_Update_Outfits(cell_new); maybe put this behind a bool
     FOLLOWERS.Catch_Up()
 endEvent
 

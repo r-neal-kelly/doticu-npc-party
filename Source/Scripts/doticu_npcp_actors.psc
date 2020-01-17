@@ -56,28 +56,6 @@ function f_Register()
     GREETER.f_Register()
 endFunction
 
-; Private Methods
-bool function p_Has_Same_Head(Actor ref_actor_1, Actor ref_actor_2)
-    ActorBase ref_base_1 = ref_actor_1.GetLeveledActorBase(); returns unleveled base too
-    ActorBase ref_base_2 = ref_actor_2.GetLeveledActorBase()
-    int int_slots_1 = ref_base_1.GetNumHeadParts()
-    int int_slots_2 = ref_base_2.GetNumHeadParts()
-
-    if int_slots_1 != int_slots_2
-        return false
-    endIf
-
-    int int_slot_idx = 0
-    while int_slot_idx < int_slots_1
-        if ref_base_1.GetNthHeadPart(int_slot_idx) != ref_base_2.GetNthHeadPart(int_slot_idx)
-            return false
-        endIf
-        int_slot_idx += 1
-    endWhile
-
-    return true
-endFunction
-
 ; Public Methods
 bool function Is_Alive(Actor ref_actor)
     return ref_actor && !ref_actor.IsDead()
@@ -294,67 +272,6 @@ endFunction
 
 bool function Has_Token(Actor ref_actor, MiscObject misc_token, int count_token = 1)
     return ref_actor && ref_actor.GetItemCount(misc_token) == count_token
-endFunction
-
-Actor function Clone(Actor ref_actor)
-    ActorBase base_actor = ref_actor.GetBaseObject() as ActorBase
-    Form base_form = base_actor as Form
-    Actor ref_clone = none
-
-    CONSTS.MARKER_CLONER.MoveTo(ref_actor, 0.0, 0.0, 0.0)
-
-    if Is_Unique(ref_actor)
-        ref_clone = CONSTS.MARKER_CLONER.PlaceAtMe(base_form, 1, true, false) as Actor; persist, disable
-        ref_clone.MoveTo(CONSTS.MARKER_CLONER)
-        ref_clone.EnableAI(false)
-    else
-        ; can prob make this parallel with the jobs pattern
-        int code_mode = 4
-        int num_tries = 0
-        int max_tries = 300
-        while num_tries < max_tries
-            if code_mode == 4
-                ref_clone = CONSTS.MARKER_CLONER.PlaceAtMe(base_form, 1, true, false) as Actor; persist, disable
-                ref_clone.MoveTo(CONSTS.MARKER_CLONER)
-                ref_clone.EnableAI(false)
-            else
-                ref_clone = CONSTS.MARKER_CLONER.PlaceActorAtMe(base_actor, code_mode, none); can't persist!
-                ref_clone.MoveTo(CONSTS.MARKER_CLONER)
-                ref_clone.EnableAI(false)
-            endIf
-
-            if p_Has_Same_Head(ref_actor, ref_clone)
-                num_tries = max_tries; break
-            else
-                ref_clone.Disable()
-                ref_clone.Delete()
-                ref_clone = none
-
-                code_mode -= 1
-                if code_mode < 0
-                    code_mode = 4
-                endIf
-
-                num_tries += 1
-            endIf
-        endWhile
-        ; maybe we should try to make the clone persistent with a quest object or something.
-        ; we would have to make a quest that contains refs to quest tokens, and according to
-        ; the wiki, putting that in any container makes it so that the engine will not delete
-        ; that container, which means actors too. this can be done retroactively
-    endIf
-
-    CONSTS.MARKER_CLONER.MoveTo(CONSTS.MARKER_STORAGE)
-
-    if !ref_clone
-        return none
-    else
-        ref_clone.EnableAI(true)
-        Pacify(ref_clone)
-        Set_Name(ref_clone, "Clone of " + Get_Name(ref_actor))
-
-        return ref_clone
-    endIf
 endFunction
 
 function Delete(Actor ref_actor)

@@ -6,6 +6,11 @@ doticu_npcp_logs property LOGS hidden
         return (self as Quest) as doticu_npcp_logs
     endFunction
 endProperty
+doticu_npcp_vectors property VECTORS hidden
+    doticu_npcp_vectors function Get()
+        return (self as Quest) as doticu_npcp_vectors
+    endFunction
+endProperty
 doticu_npcp_queues property QUEUES hidden
     doticu_npcp_queues function Get()
         return (self as Quest) as doticu_npcp_queues
@@ -31,6 +36,11 @@ doticu_npcp_actors property ACTORS hidden
         return (self as Quest) as doticu_npcp_actors
     endFunction
 endProperty
+doticu_npcp_cloner property CLONER hidden
+    doticu_npcp_cloner function Get()
+        return (self as Quest) as doticu_npcp_cloner
+    endFunction
+endProperty
 doticu_npcp_perks property PERKS hidden
     doticu_npcp_perks function Get()
         return (self as Quest) as doticu_npcp_perks
@@ -50,21 +60,25 @@ function f_Create(doticu_npcp_data DATA)
     p_is_created = true
 
     LOGS.f_Create(p_DATA)
+    VECTORS.f_Create(p_DATA)
     QUEUES.f_Create(p_DATA)
     TASKLISTS.f_Create(p_DATA)
     CONTAINERS.f_Create(p_DATA)
     OUTFITS.f_Create(p_DATA)
     ACTORS.f_Create(p_DATA)
+    CLONER.f_Create(p_DATA)
     PERKS.f_Create(p_DATA)
 endFunction
 
 function f_Destroy()
     PERKS.f_Destroy()
+    CLONER.f_Destroy()
     ACTORS.f_Destroy()
     OUTFITS.f_Destroy()
     CONTAINERS.f_Destroy()
     TASKLISTS.f_Destroy()
     QUEUES.f_Destroy()
+    VECTORS.f_Destroy()
     LOGS.f_Destroy()
 
     p_is_created = false
@@ -72,11 +86,13 @@ endFunction
 
 function f_Register()
     LOGS.f_Register()
+    VECTORS.f_Register()
     QUEUES.f_Register()
     TASKLISTS.f_Register()
     CONTAINERS.f_Register()
     OUTFITS.f_Register()
     ACTORS.f_Register()
+    CLONER.f_Register()
     PERKS.f_Register()
 endFunction
 
