@@ -412,6 +412,12 @@ function Vitalize_Invulnerable_Sync(Actor ref_actor, bool auto_create)
     GotoState("")
 endFunction
 
+function Move_Sync(Actor ref_actor)
+    GotoState("p_STATE_BUSY")
+    PRIVATE.Move(ref_actor)
+    GotoState("")
+endFunction
+
 function Summon_Sync(Actor ref_actor)
     GotoState("p_STATE_BUSY")
     PRIVATE.Summon(ref_actor)
@@ -684,6 +690,8 @@ state p_STATE_BUSY
     function Vitalize_Invulnerable_Sync(Actor ref_actor, bool auto_create)
     endFunction
 
+    function Move_Sync(Actor ref_actor)
+    endFunction
     function Summon_Sync(Actor ref_actor)
     endFunction
     function Resurrect_Sync(Actor ref_actor, bool auto_create)

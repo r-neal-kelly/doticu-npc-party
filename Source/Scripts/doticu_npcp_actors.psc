@@ -26,6 +26,11 @@ doticu_npcp_greeter property GREETER
         return GetAliasByName("greeter") as doticu_npcp_greeter
     endFunction
 endProperty
+doticu_npcp_movee property MOVEE
+    doticu_npcp_movee function Get()
+        return GetAliasByName("movee") as doticu_npcp_movee
+    endFunction
+endProperty
 
 ; Private Constants
 doticu_npcp_data    p_DATA          =  none
@@ -43,6 +48,9 @@ function f_Create(doticu_npcp_data DATA)
 endFunction
 
 function f_Destroy()
+    if MOVEE.Exists()
+        MOVEE.f_Destroy()
+    endIf
     if GREETER.Exists()
         GREETER.f_Destroy()
     endIf
@@ -53,7 +61,22 @@ endFunction
 
 function f_Register()
     PLAYER.f_Register()
-    GREETER.f_Register()
+    if GREETER.Exists()
+        GREETER.f_Register()
+    endIf
+    if MOVEE.Exists()
+        MOVEE.f_Register()
+    endIf
+endFunction
+
+function f_Unregister()
+    if MOVEE.Exists()
+        MOVEE.f_Unregister()
+    endIf
+    if GREETER.Exists()
+        GREETER.f_Unregister()
+    endIf
+    PLAYER.f_Unregister()
 endFunction
 
 ; Public Methods
@@ -330,6 +353,24 @@ function Greet_Player(Actor ref_actor)
     endIf
 
     GREETER.f_Create(p_DATA, ref_actor)
+endFunction
+
+int function Toggle_Move(Actor ref_actor)
+    if !MOVEE.Exists()
+        if !ref_actor
+            return CODES.ISNT_ACTOR
+        endIf
+
+        MOVEE.f_Create(p_DATA, ref_actor)
+        MOVEE.f_Register()
+
+        return CODES.STARTED
+    else
+        MOVEE.f_Unregister()
+        MOVEE.f_Destroy()
+
+        return CODES.STOPPED
+    endIf
 endFunction
 
 function Pacify(Actor ref_actor)

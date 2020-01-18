@@ -16,6 +16,7 @@ MiscObject                  p_TOKEN_IMMOBILE                        = none
 MiscObject                  p_TOKEN_CLONE                           = none
 MiscObject                  p_TOKEN_BANISHED                        = none
 MiscObject                  p_TOKEN_DISPLAY                         = none
+MiscObject                  p_TOKEN_MOVEE                           = none
 MiscObject                  p_TOKEN_GENERIC                         = none
 MiscObject                  p_TOKEN_THRALL                          = none
 MiscObject                  p_TOKEN_GREETER                         = none
@@ -65,7 +66,7 @@ endProperty
 
 int property VERSION_MINOR
     int function Get()
-        return 5; set manually upon each release
+        return 6; set manually upon each release
     endFunction
 endProperty
 
@@ -254,6 +255,17 @@ MiscObject property TOKEN_DISPLAY
     function Set(MiscObject val)
         if p_TOKEN_DISPLAY == none
             p_TOKEN_DISPLAY = val
+        endIf
+    endFunction
+endProperty
+
+MiscObject property TOKEN_MOVEE
+    MiscObject function Get()
+        return p_TOKEN_MOVEE
+    endFunction
+    function set(MiscObject val)
+        if p_TOKEN_MOVEE == none
+            p_TOKEN_MOVEE = val
         endIf
     endFunction
 endProperty

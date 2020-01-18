@@ -29,12 +29,36 @@ doticu_npcp_data    p_DATA  =  none
 
 ; Private Methods
 function p_Create()
-    Utility.Wait(0.01); is this really necessary? test.
+    Cell cell_new = CONSTS.ACTOR_PLAYER.GetParentCell()
+    Cell cell_old = CONSTS.MARKER_CELL.GetParentCell()
+
+    Utility.Wait(0.01)
     CONSTS.MARKER_CELL.MoveTo(CONSTS.ACTOR_PLAYER)
-    PLAYER.On_Cell_Change(CONSTS.MARKER_CELL.GetParentCell())
+
+    while !p_Send_Cell_Change(cell_new, cell_old)
+        Utility.Wait(0.1)
+    endWhile
 endFunction
 
 function p_Destroy()
+endFunction
+
+bool function p_Send_Cell_Change(Cell cell_new, Cell cell_old)
+    int handle = ModEvent.Create("doticu_npcp_cell_change")
+
+    if !handle
+        return false
+    endIf
+
+    ModEvent.PushForm(handle, cell_new as Form)
+    ModEvent.PushForm(handle, cell_old as Form)
+
+    if !ModEvent.Send(handle)
+        ModEvent.Release(handle)
+        return false
+    endIf
+
+    return true
 endFunction
 
 ; Events

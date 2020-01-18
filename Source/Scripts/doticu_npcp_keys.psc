@@ -6,6 +6,16 @@ doticu_npcp_vars property VARS hidden
         return p_DATA.VARS
     endFunction
 endProperty
+doticu_npcp_funcs property FUNCS hidden
+    doticu_npcp_funcs function Get()
+        return p_DATA.MODS.FUNCS
+    endFunction
+endProperty
+doticu_npcp_actors property ACTORS hidden
+    doticu_npcp_actors function Get()
+        return p_DATA.MODS.FUNCS.ACTORS
+    endFunction
+endProperty
 doticu_npcp_commands property COMMANDS hidden
     doticu_npcp_commands function Get()
         return p_DATA.MODS.CONTROL.COMMANDS
@@ -37,6 +47,7 @@ endFunction
 function Update_Keys()
     UnregisterForAllKeys()
 
+    ; Followers
     if VARS.key_fs_summon_all > -1
         RegisterForKey(VARS.key_fs_summon_all)
     endIf
@@ -74,6 +85,7 @@ function Update_Keys()
         RegisterForKey(VARS.key_fs_unmember)
     endIf
 
+    ; Display
     if VARS.key_ms_display_start > -1
         RegisterForKey(VARS.key_ms_display_start)
     endIf
@@ -90,6 +102,14 @@ function Update_Keys()
         RegisterForKey(VARS.key_ms_toggle_display)
     endIf
 
+    ; Move
+    if VARS.key_move_toggle
+        RegisterForKey(VARS.key_move_toggle)
+    endIf
+    ACTORS.MOVEE.Update_Keys()
+
+
+
     if VARS.key_resurrect > -1
         RegisterForKey(VARS.key_resurrect)
     endIf
@@ -99,6 +119,8 @@ function Update_Keys()
     if VARS.key_outfit > -1
         RegisterForKey(VARS.key_outfit)
     endIf
+
+
 
     if VARS.key_toggle_member > -1
         RegisterForKey(VARS.key_toggle_member)
@@ -135,7 +157,7 @@ endFunction
 
 ; Events
 event OnKeyDown(int code_key)
-    if Utility.IsInMenuMode() || UI.IsMenuOpen("Dialogue Menu")
+    if !FUNCS.Can_Use_Keys()
         return
     endIf
     
@@ -143,7 +165,10 @@ event OnKeyDown(int code_key)
 
     ; can add a 'Yell' command to topics, so that all funcs can be used in dialogue, e.g. "Summon All"
 
-    if code_key == VARS.key_fs_summon_all
+    if false
+
+    ; Followers
+    elseIf code_key == VARS.key_fs_summon_all
         COMMANDS.Followers_Summon_All()
     elseIf code_key == VARS.key_fs_summon_mobile
         COMMANDS.Followers_Summon_Mobile()
@@ -164,6 +189,7 @@ event OnKeyDown(int code_key)
     elseIf code_key == VARS.key_fs_resurrect
         COMMANDS.Followers_Resurrect()
 
+    ; Display
     elseIf code_key == VARS.key_ms_display_start
         COMMANDS.Members_Display_Start(ref_actor)
     elseIf code_Key == VARS.key_ms_display_stop
@@ -174,6 +200,12 @@ event OnKeyDown(int code_key)
         COMMANDS.Members_Display_Previous()
     elseIf code_key == VARS.key_ms_toggle_display
         COMMANDS.Toggle_Members_Display(ref_actor)
+
+    ; Move
+    elseIf code_key == VARS.key_move_toggle
+        COMMANDS.Move_Sync(ref_actor)
+
+        
     
     elseIf code_key == VARS.key_resurrect
         COMMANDS.Resurrect_Async(ref_actor, true)

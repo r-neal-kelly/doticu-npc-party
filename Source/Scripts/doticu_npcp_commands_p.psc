@@ -654,6 +654,13 @@ function Relevel(int code_exec, Actor ref_actor, bool auto_create)
     NOTES.Relevel(ref_follower.Relevel(code_exec), str_name)
 endFunction
 
+function Move(Actor ref_actor)
+    int code_return
+    string str_name = ACTORS.Get_Name(ref_actor)
+
+    NOTES.Move(ACTORS.Toggle_Move(ref_actor), str_name)
+endFunction
+
 function Summon(Actor ref_actor)
     int code_return
     string str_name = ACTORS.Get_Name(ref_actor)

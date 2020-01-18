@@ -65,6 +65,10 @@ endFunction
 function f_Register()
     p_queue_player.Register_Alias(self, "On_Queue_Player")
     RegisterForModEvent("doticu_npcp_init_mod", "On_Init_Mod")
+    RegisterForModEvent("doticu_npcp_cell_change", "On_Cell_Change")
+endFunction
+
+function f_Unregister()
 endFunction
 
 function f_Begin_Combat()
@@ -142,7 +146,7 @@ event OnPlayerLoadGame()
     MAIN.f_Load_Mod()
 endEvent
 
-event On_Cell_Change(Cell cell_new)
+event On_Cell_Change(Form cell_new, Form cell_old)
     ;p_Update_Outfits(cell_new); maybe put this behind a bool
     FOLLOWERS.Catch_Up()
 endEvent

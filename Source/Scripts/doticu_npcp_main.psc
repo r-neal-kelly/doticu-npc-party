@@ -151,6 +151,9 @@ function p_Version()
         if Is_NPC_Party_Less_Than(0, 4, 0)
             u_0_4_0()
         endIf
+        if Is_NPC_Party_Less_Than(0, 6, 0)
+            u_0_6_0()
+        endIf
 
         VARS.version_major = CONSTS.VERSION_MAJOR
         VARS.version_minor = CONSTS.VERSION_MINOR
@@ -234,6 +237,9 @@ endFunction
 
 function u_0_4_0()
     MEMBERS.u_0_4_0()
+endFunction
+
+function u_0_6_0()
 endFunction
 
 ; Events

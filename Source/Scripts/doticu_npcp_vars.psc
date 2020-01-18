@@ -32,44 +32,50 @@ int                 p_num_display           =    -1
 bool                p_is_mcm_open           = false
 
 ; Public Variables
-int property key_fs_summon_all              =    -1 auto hidden;
-int property key_fs_summon_mobile           =    -1 auto hidden;
-int property key_fs_summon_immobile         =    -1 auto hidden;
-int property key_fs_settle                  =    -1 auto hidden;
-int property key_fs_unsettle                =    -1 auto hidden;
-int property key_fs_immobilize              =    -1 auto hidden;
-int property key_fs_mobilize                =    -1 auto hidden;
-int property key_fs_sneak                   =    -1 auto hidden;
-int property key_fs_unsneak                 =    -1 auto hidden;
-int property key_fs_resurrect               =    -1 auto hidden;
-int property key_fs_unfollow                =    -1 auto hidden;
-int property key_fs_unmember                =    -1 auto hidden;
+int property key_fs_summon_all              =    -1 auto hidden
+int property key_fs_summon_mobile           =    -1 auto hidden
+int property key_fs_summon_immobile         =    -1 auto hidden
+int property key_fs_settle                  =    -1 auto hidden
+int property key_fs_unsettle                =    -1 auto hidden
+int property key_fs_immobilize              =    -1 auto hidden
+int property key_fs_mobilize                =    -1 auto hidden
+int property key_fs_sneak                   =    -1 auto hidden
+int property key_fs_unsneak                 =    -1 auto hidden
+int property key_fs_resurrect               =    -1 auto hidden
+int property key_fs_unfollow                =    -1 auto hidden
+int property key_fs_unmember                =    -1 auto hidden
 ; maybe add toggles? maybe use modified to keep things consistent in default settings
 
-int property key_ms_display_start           =    -1 auto hidden;
-int property key_ms_display_stop            =    -1 auto hidden;
-int property key_ms_display_next            =    -1 auto hidden;
-int property key_ms_display_previous        =    -1 auto hidden;
-int property key_ms_toggle_display          =    -1 auto hidden;
+int property key_ms_display_start           =    -1 auto hidden
+int property key_ms_display_stop            =    -1 auto hidden
+int property key_ms_display_next            =    -1 auto hidden
+int property key_ms_display_previous        =    -1 auto hidden
+int property key_ms_toggle_display          =    -1 auto hidden
 
 ; also, the cool idea to cycle through members so that they are easily visible. they are sent back where they came. (settler marker, editor loc, coords if in same cell)
 
-int property key_resurrect                  =   200 auto hidden; Up Arrow
-int property key_pack                       =    -1 auto hidden;
-int property key_outfit                     =    24 auto hidden; O
+int property key_resurrect                  =    -1 auto hidden
+int property key_pack                       =    -1 auto hidden
+int property key_outfit                     =    -1 auto hidden
+
+int property key_move_toggle                =    -1 auto hidden
+int property key_move_farther               =    -1 auto hidden
+int property key_move_nearer                =    -1 auto hidden
+int property key_move_rotate_right          =    -1 auto hidden
+int property key_move_rotate_left           =    -1 auto hidden
 
 int property key_toggle_member              =    78 auto hidden; NUM+
-int property key_toggle_clone               =    -1 auto hidden;
+int property key_toggle_clone               =    -1 auto hidden
 int property key_toggle_settler             =    82 auto hidden; NUM0
 int property key_toggle_enthrall            =    73 auto hidden; NUM9
 int property key_toggle_immobile            =    83 auto hidden; NUM.
-int property key_toggle_paralyzed           =    -1 auto hidden;
+int property key_toggle_paralyzed           =    -1 auto hidden
 int property key_toggle_follower            =    55 auto hidden; NUM*
 int property key_toggle_sneak               =    74 auto hidden; NUM-
 
-int property key_cycle_outfit               =    -1 auto hidden;
-int property key_cycle_style                =    43 auto hidden; Back Slash
-int property key_cycle_vitality             =    -1 auto hidden;
+int property key_cycle_outfit               =    -1 auto hidden
+int property key_cycle_style                =    -1 auto hidden
+int property key_cycle_vitality             =    -1 auto hidden
 
 int property version_major hidden
     int function Get()

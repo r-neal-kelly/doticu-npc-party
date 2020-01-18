@@ -2,15 +2,28 @@
 A follower framework for The Elder Scrolls V: Skyrim Special Edition
 
 ## Features:
-- the power to enlist any humaniod npc (other creatures may come later)
-- the ability to clone any humaniod npc (to avoid conflicts with other scripts)
-- every member can be made to settle in another part of the game world
-- any member can be made completely immobile, so they never go anywhere
-- members can be a warrior, a mage, an archer, or classless (other classes may come later)
-- each member can be made successively immortal or kept as mortal and resurrectable
-- vampires can enthrall members (making them a vampire in their clan may come later)
-- a comprehensive dialogue menu to manage each individual member
-- an exhaustive MCM menu to manage all members and settings
+- upto **512** npcs can be members
+- upto **16** members can actively follow you around at a time
+- **clones** of any unique npc, and even generic npcs like guards, bandits, etc.
+- every member can individually be:
+  - a **settler** of any part of the world, making it their home
+  - an **immobile** who never leaves their location
+  - a **warrior**, **mage**, **archer**, or classless
+  - **mortal**, **protected**, **essential**, or **invulnerable**
+  - **resurrected** should they ever die
+  - and for vampire players only, a willing **thrall**
+- several **outfits** are customizable for each individual member
+- a comprehensive dialogue menu can be used to command individual members and followers
+- an exhaustive MCM menu that has:
+  - a **member manager**, with every member individually listed and commandable
+  - a **follower manager**, with commands for individuals or even the entire team
+  - **settings** where you can customize your experience
+  - a **logger**, that keeps track of recent notes and any rare errors
+- a **display** function, which successively summons each member in a cycle, so you can literally see your members
+- lots of **hotkeys** can be set for your favorite commands
+
+### Future Features May Include:
+- a **filter** for members
 
 ## Requires:
 - [Skyrim SE 1.5.97+](https://store.steampowered.com/app/489830/The_Elder_Scrolls_V_Skyrim_Special_Edition/)

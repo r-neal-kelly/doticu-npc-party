@@ -60,6 +60,12 @@ int                 p_option_slider_ms_display          =    -1
 int                 p_option_key_ms_display_previous    =    -1
 int                 p_option_key_ms_display_next        =    -1
 
+int                 p_option_key_move_toggle            =    -1
+int                 p_option_key_move_farther           =    -1
+int                 p_option_key_move_nearer            =    -1
+int                 p_option_key_move_rotate_right      =    -1
+int                 p_option_key_move_rotate_left       =    -1
+
 int                 p_option_key_m_toggle_paralyzed     =    -1
 
 ; Friend Methods
@@ -111,19 +117,10 @@ auto state p_STATE_SETTINGS
 
         MCM.SetTitleText(" Settings ")
 
-        MCM.AddHeaderOption(" Cloning ")
-        MCM.AddEmptyOption()
-        p_option_force_clone_unique = MCM.AddToggleOption("Force Clone Unique NPCs", VARS.force_clone_unique)
-        p_option_force_unclone_unique = MCM.AddToggleOption("Force Unclone Unique NPCs", VARS.force_unclone_unique)
-        p_option_force_clone_generic = MCM.AddToggleOption("Force Clone Generic NPCs", VARS.force_clone_generic)
-        p_option_force_unclone_generic = MCM.AddToggleOption("Force Unclone Generic NPCs", VARS.force_unclone_generic)
-        MCM.AddEmptyOption()
-        MCM.AddEmptyOption()
-
-        MCM.AddHeaderOption(" Automatics "); eventually 'General'
+        MCM.AddHeaderOption(" General ")
         MCM.AddEmptyOption()
         if VARS.auto_style == CODES.IS_DEFAULT
-            p_option_auto_style = MCM.AddTextOption("Auto Style", CONSTS.STR_MCM_DEFAULT); should be default instead of auto
+            p_option_auto_style = MCM.AddTextOption("Auto Style", CONSTS.STR_MCM_DEFAULT); maybe default instead of auto?
         elseIf VARS.auto_style == CODES.IS_WARRIOR
             p_option_auto_style = MCM.AddTextOption("Auto Style", CONSTS.STR_MCM_WARRIOR)
         elseIf VARS.auto_style == CODES.IS_MAGE
@@ -132,7 +129,7 @@ auto state p_STATE_SETTINGS
             p_option_auto_style = MCM.AddTextOption("Auto Style", CONSTS.STR_MCM_ARCHER)
         endIf
         if VARS.auto_vitality == CODES.IS_MORTAL
-            p_option_auto_vitality = MCM.AddTextOption("Auto Vitality", CONSTS.STR_MCM_MORTAL); should be default instead of auto
+            p_option_auto_vitality = MCM.AddTextOption("Auto Vitality", CONSTS.STR_MCM_MORTAL); maybe default instead of auto?
         elseIf VARS.auto_vitality == CODES.IS_PROTECTED
             p_option_auto_vitality = MCM.AddTextOption("Auto Style", CONSTS.STR_MCM_PROTECTED)
         elseIf VARS.auto_vitality == CODES.IS_ESSENTIAL
@@ -145,7 +142,38 @@ auto state p_STATE_SETTINGS
         MCM.AddEmptyOption()
         MCM.AddEmptyOption()
 
-        MCM.AddHeaderOption(" Hotkeys for All Followers ")
+        MCM.AddHeaderOption(" Cloning ")
+        MCM.AddEmptyOption()
+        p_option_force_clone_unique = MCM.AddToggleOption("Force Clone Unique NPCs", VARS.force_clone_unique)
+        p_option_force_unclone_unique = MCM.AddToggleOption("Force Unclone Unique NPCs", VARS.force_unclone_unique)
+        p_option_force_clone_generic = MCM.AddToggleOption("Force Clone Generic NPCs", VARS.force_clone_generic)
+        p_option_force_unclone_generic = MCM.AddToggleOption("Force Unclone Generic NPCs", VARS.force_unclone_generic)
+        MCM.AddEmptyOption()
+        MCM.AddEmptyOption()
+
+        MCM.AddHeaderOption(" Displaying ")
+        MCM.AddEmptyOption()
+        p_option_key_ms_display_start = MCM.AddKeymapOption(" Start Display ", VARS.key_ms_display_start, MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_ms_display_stop = MCM.AddKeymapOption(" Stop Display ", VARS.key_ms_display_stop, MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_ms_toggle_display = MCM.AddKeymapOption(" Toggle Display ", VARS.key_ms_toggle_display, MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_slider_ms_display = MCM.AddSliderOption(" Number per Cycle ", VARS.num_display, " {0} ")
+        p_option_key_ms_display_previous = MCM.AddKeymapOption(" Previous Display ", VARS.key_ms_display_previous, MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_ms_display_next = MCM.AddKeymapOption(" Next Display ", VARS.key_ms_display_next, MCM.OPTION_FLAG_WITH_UNMAP)
+        MCM.AddEmptyOption()
+        MCM.AddEmptyOption()
+
+        MCM.AddHeaderOption(" Moving ")
+        MCM.AddEmptyOption()
+        p_option_key_move_toggle = MCM.AddKeymapOption(" Toggle Move ", VARS.key_move_toggle, MCM.OPTION_FLAG_WITH_UNMAP)
+        MCM.AddEmptyOption()
+        p_option_key_move_nearer = MCM.AddKeymapOption(" Move Nearer ", VARS.key_move_nearer, MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_move_farther = MCM.AddKeymapOption(" Move Farther ", VARS.key_move_farther, MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_move_rotate_left = MCM.AddKeymapOption(" Rotate Left ", VARS.key_move_rotate_left, MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_move_rotate_right = MCM.AddKeymapOption(" Rotate Right ", VARS.key_move_rotate_right, MCM.OPTION_FLAG_WITH_UNMAP)
+        MCM.AddEmptyOption()
+        MCM.AddEmptyOption()
+
+        MCM.AddHeaderOption(" All Followers ")
         MCM.AddEmptyOption()
         p_option_key_fs_summon_all = MCM.AddKeymapOption(" Summon All ", VARS.key_fs_summon_all, MCM.OPTION_FLAG_WITH_UNMAP)
         p_option_key_fs_summon_mobile = MCM.AddKeymapOption(" Summon Mobile ", VARS.key_fs_summon_mobile, MCM.OPTION_FLAG_WITH_UNMAP)
@@ -160,18 +188,7 @@ auto state p_STATE_SETTINGS
         MCM.AddEmptyOption()
         MCM.AddEmptyOption()
 
-        MCM.AddHeaderOption(" Hotkeys for All Members ")
-        MCM.AddEmptyOption()
-        p_option_key_ms_display_start = MCM.AddKeymapOption(" Start Display ", VARS.key_ms_display_start, MCM.OPTION_FLAG_WITH_UNMAP)
-        p_option_key_ms_display_stop = MCM.AddKeymapOption(" Stop Display ", VARS.key_ms_display_stop, MCM.OPTION_FLAG_WITH_UNMAP)
-        p_option_key_ms_toggle_display = MCM.AddKeymapOption(" Toggle Display ", VARS.key_ms_toggle_display, MCM.OPTION_FLAG_WITH_UNMAP)
-        p_option_slider_ms_display = MCM.AddSliderOption(" Number per Cycle ", VARS.num_display, " {0} ")
-        p_option_key_ms_display_previous = MCM.AddKeymapOption(" Previous Display ", VARS.key_ms_display_previous, MCM.OPTION_FLAG_WITH_UNMAP)
-        p_option_key_ms_display_next = MCM.AddKeymapOption(" Next Display ", VARS.key_ms_display_next, MCM.OPTION_FLAG_WITH_UNMAP)
-        MCM.AddEmptyOption()
-        MCM.AddEmptyOption()
-
-        MCM.AddHeaderOption(" Hotkeys for One Follower/Member ")
+        MCM.AddHeaderOption(" One Follower/Member ")
         MCM.AddEmptyOption()
         p_option_key_m_toggle_paralyzed = MCM.AddKeymapOption(" Toggle Paralyzed ", VARS.key_toggle_paralyzed, MCM.OPTION_FLAG_WITH_UNMAP)
         MCM.AddEmptyOption()
@@ -183,7 +200,9 @@ auto state p_STATE_SETTINGS
         bool do_update = false
         bool dont_update = true
 
-        if id_option == p_option_force_clone_unique
+        if false
+
+        elseIf id_option == p_option_force_clone_unique
             VARS.force_clone_unique = !VARS.force_clone_unique
             MCM.SetToggleOptionValue(p_option_force_clone_unique, VARS.force_clone_unique, do_update)
         elseIf id_option == p_option_force_clone_generic
@@ -302,6 +321,17 @@ auto state p_STATE_SETTINGS
             VARS.key_ms_display_next = code_key
         elseIf id_option == p_option_key_ms_toggle_display
             VARS.key_ms_toggle_display = code_key
+        
+        elseIf id_option == p_option_key_move_toggle
+            VARS.key_move_toggle = code_key
+        elseIf id_option == p_option_key_move_farther
+            VARS.key_move_farther = code_key
+        elseIf id_option == p_option_key_move_nearer
+            VARS.key_move_nearer = code_key
+        elseIf id_option == p_option_key_move_rotate_right
+            VARS.key_move_rotate_right = code_key
+        elseIf id_option == p_option_key_move_rotate_left
+            VARS.key_move_rotate_left = code_key
         
         elseIf id_option == p_option_key_m_toggle_paralyzed
             VARS.key_toggle_paralyzed = code_key

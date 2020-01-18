@@ -491,6 +491,16 @@ function Relevel(int code_return, string str_name)
     endIf
 endFunction
 
+function Move(int code_return, string str_name)
+    if code_return == CODES.STARTED
+        LOGS.Create_Note("Moving " + str_name + ".")
+    elseIf code_return == CODES.STOPPED
+        LOGS.Create_Note("Stopped moving npc.")
+    elseIf code_return == CODES.ISNT_ACTOR
+        LOGS.Create_Note("Can only move actors.")
+    endIf
+endFunction
+
 function Members_Display_Start(int code_return, string str_name)
     if code_return == CODES.SUCCESS && str_name
         LOGS.Create_Note("Display mode will now start with " + str_name + ".")

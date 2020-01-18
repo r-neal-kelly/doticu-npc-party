@@ -354,9 +354,12 @@ Actor function Create(Actor ref_actor)
 endFunction
 
 function Destroy(Actor ref_clone, bool do_delete)
-    p_Remove_Clone(ref_clone)
-
+    ; a clone is only removed when deleting, and if
+    ; not deleting at all, it is added to originals.
+    ; this allows for a list of all clones, and for
+    ; clones allowed to exist to have their outfits
     if do_delete
+        p_Remove_Clone(ref_clone)
         ref_clone.Disable()
         ref_clone.Delete()
     else
@@ -377,7 +380,6 @@ endFunction
 Form[] function Get_Originals(Actor ref_actor)
     int idx_bases = p_vec_bases.Find(ACTORS.Get_Base(ref_actor) as Form)
     if idx_bases < 0
-        LOGS.Create_Error("CLONER.Get_Originals() failed to find base_actor")
         return Utility.CreateFormArray(0, none)
     endIf
 
@@ -399,7 +401,6 @@ endFunction
 Form[] function Get_Clones(Actor ref_actor)
     int idx_bases = p_vec_bases.Find(ACTORS.Get_Base(ref_actor) as Form)
     if idx_bases < 0
-        LOGS.Create_Error("CLONER.Get_Clones() failed to find base_actor")
         return Utility.CreateFormArray(0, none)
     endIf
 

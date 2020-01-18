@@ -54,6 +54,9 @@ endFunction
 function f_Register()
 endFunction
 
+function f_Unregister()
+endFunction
+
 ; Public Methods
 bool function Exists()
     return p_is_created
