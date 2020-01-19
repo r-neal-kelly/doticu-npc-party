@@ -13,6 +13,7 @@ int                 p_MAX_ALIASES   =    -1
 
 ; Private Variables
 bool                p_is_created    = false
+bool                p_is_locked     = false
 bool                p_can_sort      = false
 bool                p_should_sort   = false
 
@@ -43,6 +44,7 @@ function f_Create(doticu_npcp_data DATA)
     p_MAX_ALIASES = GetNumAliases()
 
     p_is_created = true
+    p_is_locked = false
     p_can_sort = true
     p_should_sort = false
 
@@ -52,6 +54,9 @@ endFunction
 function f_Destroy()
     p_Destroy_Arrays()
 
+    p_should_sort = false
+    p_can_sort = true
+    p_is_locked = false
     p_is_created = false
 endFunction
 
@@ -92,15 +97,23 @@ ReferenceAlias function f_Get_Alias(int id_alias); can this be removed somehow?
     endIf
 endFunction
 
-function Enable_Sort()
-    p_can_sort = true
-endFunction
-
-function Disable_Sort()
-    p_can_sort = false
-endFunction
-
 ; Private Methods
+function p_Lock()
+    while p_is_locked
+        Utility.Wait(0.01)
+    endWhile
+    p_is_locked = true
+endFunction
+
+function p_Unlock()
+    p_is_locked = false
+endFunction
+
+int function p_Unlock_Return_Int(int val)
+    p_Unlock()
+    return val
+endFunction
+
 function p_Create_Arrays()
     p_num_used = 0
     p_arr_used = Utility.CreateIntArray(p_MAX_ALIASES, -1)
@@ -279,54 +292,74 @@ ReferenceAlias function p_Get_Alias(int id_alias)
     endIf
 endFunction
 
+bool function p_Is_Full()
+    return p_num_free <= 0
+endFunction
+
+bool function p_Has_Alias(int id_alias, Actor ref_actor)
+    return ref_actor && p_Get_Actor(id_alias) == ref_actor
+endFunction
+
+int function p_Get_Count()
+    return p_num_used
+endFunction
+
 ; Public Methods
 int function Create_Alias(Actor ref_actor)
-    int code_return
+    p_Lock()
 
-    if !ref_actor
-        return CODES.ISNT_ACTOR
-    endIf
+        int code_return
 
-    if p_Has_Actor(ref_actor)
-        return CODES.HAS_ACTOR
-    endIf
+        if !ref_actor
+            return p_Unlock_Return_Int(CODES.ISNT_ACTOR)
+        endIf
 
-    if Is_Full()
-        return CODES.HASNT_SPACE
-    endIf
+        if p_Has_Actor(ref_actor)
+            return p_Unlock_Return_Int(CODES.HAS_ACTOR)
+        endIf
 
-    code_return = p_Create_ID(ref_actor)
-    if code_return < 0
-        return code_return
-    endIf
-    int id_alias = code_return
+        if p_Is_Full()
+            return p_Unlock_Return_Int(CODES.HASNT_SPACE)
+        endIf
 
-    f_Get_Alias(id_alias).ForceRefTo(ref_actor)
+        code_return = p_Create_ID(ref_actor)
+        if code_return < 0
+            return p_Unlock_Return_Int(code_return)
+        endIf
+        int id_alias = code_return
 
-    p_should_sort = true
+        (GetNthAlias(id_alias) as ReferenceAlias).ForceRefTo(ref_actor)
+
+        p_should_sort = true
+
+    p_Unlock()
     
     return id_alias
 endFunction
 
 int function Destroy_Alias(int id_alias, Actor ref_actor)
-    int code_return
+    p_Lock()
 
-    if !ref_actor
-        return CODES.ISNT_ACTOR
-    endIf
+        int code_return
 
-    if !Has_Alias(id_alias, ref_actor)
-        return CODES.HASNT_ALIAS
-    endIf
+        if !ref_actor
+            return p_Unlock_Return_Int(CODES.ISNT_ACTOR)
+        endIf
 
-    f_Get_Alias(id_alias).Clear()
+        if !p_Has_Alias(id_alias, ref_actor)
+            return p_Unlock_Return_Int(CODES.HASNT_ALIAS)
+        endIf
 
-    code_return = p_Destroy_ID(id_alias)
-    if code_return < 0
-        return code_return
-    endIf
+        (GetNthAlias(id_alias) as ReferenceAlias).Clear()
 
-    p_should_sort = true
+        code_return = p_Destroy_ID(id_alias)
+        if code_return < 0
+            return p_Unlock_Return_Int(code_return)
+        endIf
+
+        p_should_sort = true
+
+    p_Unlock()
 
     return CODES.SUCCESS
 endFunction
@@ -349,16 +382,32 @@ function Sort()
     p_Sort()
 endFunction
 
-bool function Is_Full()
-    return p_num_free <= 0
-endFunction
-
 bool function Will_Sort()
     return p_can_sort && p_should_sort
 endFunction
 
+function Enable_Sort()
+    p_can_sort = true
+endFunction
+
+function Disable_Sort()
+    p_can_sort = false
+endFunction
+
+bool function Is_Full()
+    p_Lock()
+        bool res = p_Is_Full()
+    p_Unlock()
+
+    return res
+endFunction
+
 int function Get_Count()
-    return p_num_used
+    p_Lock()
+        int res = p_Get_Count()
+    p_Unlock()
+    
+    return res
 endFunction
 
 int function Get_Max()
@@ -366,11 +415,15 @@ int function Get_Max()
 endFunction
 
 bool function Has_Alias(int id_alias, Actor ref_actor)
-    return ref_actor && p_Get_Actor(id_alias) == ref_actor
+    p_Lock()
+        bool res = p_Has_Alias(id_alias, ref_actor)
+    p_Unlock()
+
+    return res
 endFunction
 
 ReferenceAlias function Get_Alias(int id_alias, Actor ref_actor)
-    if Has_Alias(id_alias, ref_actor)
+    if p_Has_Alias(id_alias, ref_actor)
         return f_Get_Alias(id_alias)
     else
         return none
@@ -378,7 +431,7 @@ ReferenceAlias function Get_Alias(int id_alias, Actor ref_actor)
 endFunction
 
 ReferenceAlias function Get_Next_Alias(int id_alias, Actor ref_actor)
-    if !Has_Alias(id_alias, ref_actor)
+    if !p_Has_Alias(id_alias, ref_actor)
         return none
     endIf
 
@@ -390,7 +443,7 @@ ReferenceAlias function Get_Next_Alias(int id_alias, Actor ref_actor)
 endFunction
 
 ReferenceAlias function Get_Prev_Alias(int id_alias, Actor ref_actor)
-    if !Has_Alias(id_alias, ref_actor)
+    if !p_Has_Alias(id_alias, ref_actor)
         return none
     endIf
 

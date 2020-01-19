@@ -54,7 +54,7 @@ endFunction
 function Unmember(int code_return, string str_name)
     if code_return == CODES.SUCCESS
         LOGS.Create_Note(str_name + " is no longer a member.")
-    elseIf code_return == CODES.HASNT_MEMBER
+    elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
         LOGS.Create_Note(str_name + " was already not a member.")
     elseIf code_return == CODES.ISNT_ACTOR
         LOGS.Create_Note("That can't be unmembered.")
@@ -82,10 +82,12 @@ endFunction
 function Unclone(int code_return, string str_name)
     if code_return == CODES.SUCCESS
         LOGS.Create_Note(str_name + " is no longer a member and was uncloned.")
-    elseIf code_return == CODES.HASNT_MEMBER
-        LOGS.Create_Note(str_name + " was already not a member and can't be uncloned.")
     elseIf code_return == CODES.ISNT_ACTOR
         LOGS.Create_Note("That can't be unmembered or uncloned.")
+    elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
+        LOGS.Create_Note(str_name + " was already not a member and can't be uncloned.")
+    elseIf code_return == CODES.ISNT_CLONE
+        LOGS.Create_Note(str_name + " is not a clone.")
     else
         LOGS.Create_Error("It's unknown why " + str_name + " can't be unmembered and uncloned.")
     endIf
@@ -164,7 +166,7 @@ function Settle(int code_return, string str_name)
         LOGS.Create_Note(str_name + " can't be revived, and so can't be a settled member.")
     elseIf code_return == CODES.ISNT_ACTOR
         LOGS.Create_Note("That can't become a settled member.")
-    elseIf code_return == CODES.ISNT_MEMBER
+    elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
         LOGS.Create_Note(str_name + " isn't a member, and so can't settle here.")
     elseIf code_return == CODES.IS_SETTLER
         LOGS.Create_Note(str_name + " is already settled elsewhere.")
@@ -182,7 +184,7 @@ function Unsettle(int code_return, string str_name)
         LOGS.Create_Note(str_name + " can't be revived, and so can't be an unsettled member.")
     elseIf code_return == CODES.ISNT_ACTOR
         LOGS.Create_Note("That can't become an unsettled member.")
-    elseIf code_return == CODES.ISNT_MEMBER
+    elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
         LOGS.Create_Note(str_name + " isn't a member, and so can't unsettle.")
     elseIf code_return == CODES.ISNT_SETTLER
         LOGS.Create_Note(str_name + " isn't settled.")
@@ -200,7 +202,7 @@ function Resettle(int code_return, string str_name)
         LOGS.Create_Note(str_name + " can't be revived, and so can't become a resettled member.")
     elseIf code_return == CODES.ISNT_ACTOR
         LOGS.Create_Note("That can't become a resettled member.")
-    elseIf code_return == CODES.ISNT_MEMBER
+    elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
         LOGS.Create_Note(str_name + " isn't a member, and so can't resettle.")
     elseIf code_return == CODES.ISNT_SETTLER
         LOGS.Create_Note(str_name + " isn't a settler, and so can't resettle.")
@@ -220,7 +222,7 @@ function Enthrall(int code_return, string str_name)
         LOGS.Create_Note("Only a vampire can enthrall a member.")
     elseIf code_return == CODES.ISNT_ACTOR
         LOGS.Create_Note("That can't become an enthralled member.")
-    elseIf code_return == CODES.ISNT_MEMBER
+    elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
         LOGS.Create_Note(str_name + " isn't a member, and so can't be enthralled.")
     elseIf code_return == CODES.IS_IMMOBILE
         LOGS.Create_Note(str_name + " is already enthralled.")
@@ -240,7 +242,7 @@ function Unthrall(int code_return, string str_name)
         LOGS.Create_Note("Only a vampire can unthrall a member.")
     elseIf code_return == CODES.ISNT_ACTOR
         LOGS.Create_Note("That can't become an unthralled member.")
-    elseIf code_return == CODES.ISNT_MEMBER
+    elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
         LOGS.Create_Note(str_name + " isn't a member, and so can't be unthralled.")
     elseIf code_return == CODES.ISNT_IMMOBILE
         LOGS.Create_Note(str_name + " is already unthralled.")
@@ -258,7 +260,7 @@ function Immobilize(int code_return, string str_name)
         LOGS.Create_Note(str_name + " can't be revived, and so can't be immobilized.")
     elseIf code_return == CODES.ISNT_ACTOR
         LOGS.Create_Note("That can't become an immobile member.")
-    elseIf code_return == CODES.ISNT_MEMBER
+    elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
         LOGS.Create_Note(str_name + " isn't a member, and so can't be immobilized.")
     elseIf code_return == CODES.IS_IMMOBILE
         LOGS.Create_Note(str_name + " is already immobile.")
@@ -276,7 +278,7 @@ function Mobilize(int code_return, string str_name)
         LOGS.Create_Note(str_name + " can't be revived, and so can't be mobilized.")
     elseIf code_return == CODES.ISNT_ACTOR
         LOGS.Create_Note("That can't become a mobile member.")
-    elseIf code_return == CODES.ISNT_MEMBER
+    elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
         LOGS.Create_Note(str_name + " isn't a member, and so can't be mobilized.")
     elseIf code_return == CODES.ISNT_IMMOBILE
         LOGS.Create_Note(str_name + " is already mobile.")
@@ -294,7 +296,7 @@ function Paralyze(int code_return, string str_name)
         LOGS.Create_Note(str_name + " can't be revived, and so can't become an immobile and paralyzed member.")
     elseIf code_return == CODES.ISNT_ACTOR
         LOGS.Create_Note("That can't become an immobile and paralyzed member.")
-    elseIf code_return == CODES.ISNT_MEMBER
+    elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
         LOGS.Create_Note(str_name + " isn't a member, and so can't be immobile and paralyzed.")
     elseIf code_return == CODES.IS_PARALYZED
         LOGS.Create_Note(str_name + " is already paralyzed.")
@@ -312,7 +314,7 @@ function Unparalyze(int code_return, string str_name)
         LOGS.Create_Note(str_name + " can't be revived, and so can't become an immobile and unparalyzed member.")
     elseIf code_return == CODES.ISNT_ACTOR
         LOGS.Create_Note("That can't become an immobile and unparalyzed member.")
-    elseIf code_return == CODES.ISNT_MEMBER
+    elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
         LOGS.Create_Note(str_name + " isn't a member, and so can't be immobile and unparalyzed.")
     elseIf code_return == CODES.ISNT_PARALYZED
         LOGS.Create_Note(str_name + " wasn't paralyzed.")
@@ -342,7 +344,7 @@ function Style(int code_return, string str_name, int code_style)
         LOGS.Create_Note(str_name + " can't be revived, and so can't become " + str_style + ".")
     elseIf code_return == CODES.ISNT_ACTOR
         LOGS.Create_Note("That can't become " + str_style + ".")
-    elseIf code_return == CODES.ISNT_MEMBER
+    elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
         LOGS.Create_Note(str_name + " isn't a member, and so can't be " + str_style + ".")
     elseIf code_return == CODES.IS_DEFAULT
         LOGS.Create_Note(str_name + " is already " + str_style + ".")
@@ -378,7 +380,7 @@ function Vitalize(int code_return, string str_name, int code_vitality)
         LOGS.Create_Note(str_name + " can't be revived, and so can't become " + str_vitality + ".")
     elseIf code_return == CODES.ISNT_ACTOR
         LOGS.Create_Note("That can't become " + str_vitality + ".")
-    elseIf code_return == CODES.ISNT_MEMBER
+    elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
         LOGS.Create_Note(str_name + " isn't a member, and so can't be " + str_vitality + ".")
     elseIf code_return == CODES.IS_DEFAULT
         LOGS.Create_Note(str_name + " is already " + str_vitality + ".")
@@ -404,7 +406,7 @@ function Follow(int code_return, string str_name)
         LOGS.Create_Note(str_name + " can't be revived, and so can't become a follower.")
     elseIf code_return == CODES.ISNT_ACTOR
         LOGS.Create_Note("That can't become a member or a follower.")
-    elseIf code_return == CODES.ISNT_MEMBER
+    elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
         LOGS.Create_Note(str_name + " isn't a member, and so can't start following.")
     elseIf code_return == CODES.IS_FOLLOWER
         LOGS.Create_Note(str_name + " is already following.")
@@ -422,7 +424,7 @@ function Unfollow(int code_return, string str_name)
         LOGS.Create_Note(str_name + " can't be revived, and so can't become a non-following member.")
     elseIf code_return == CODES.ISNT_ACTOR
         LOGS.Create_Note("That can't become a member or a non-following member.")
-    elseIf code_return == CODES.ISNT_MEMBER
+    elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
         LOGS.Create_Note(str_name + " isn't a member, and so can't stop following.")
     elseIf code_return == CODES.ISNT_FOLLOWER
         LOGS.Create_Note(str_name + " wasn't following.")
@@ -442,7 +444,7 @@ function Sneak(int code_return, string str_name)
         LOGS.Create_Note(str_name + " can't be revived, and so can't become a sneaking follower.")
     elseIf code_return == CODES.ISNT_ACTOR
         LOGS.Create_Note("That can't become a member or a sneaking follower.")
-    elseIf code_return == CODES.ISNT_MEMBER
+    elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
         LOGS.Create_Note(str_name + " isn't a member, and so can't start sneaking.")
     elseIf code_return == CODES.ISNT_FOLLOWER
         LOGS.Create_Note(str_name + " isn't a follower, and so can't start sneaking.")
@@ -464,7 +466,7 @@ function Unsneak(int code_return, string str_name)
         LOGS.Create_Note(str_name + " can't be revived, and so can't become an unsneaking follower.")
     elseIf code_return == CODES.ISNT_ACTOR
         LOGS.Create_Note("That can't become a member or an unsneaking follower.")
-    elseIf code_return == CODES.ISNT_MEMBER
+    elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
         LOGS.Create_Note(str_name + " isn't a member, and so can't stop sneaking.")
     elseIf code_return == CODES.ISNT_FOLLOWER
         LOGS.Create_Note(str_name + " isn't a follower, and so can't stop sneaking.")
@@ -508,7 +510,7 @@ function Members_Display_Start(int code_return, string str_name)
         LOGS.Create_Note("Display mode has been started.")
     elseIf code_return == CODES.IS_DISPLAY
         LOGS.Create_Note("Display has already been started.")
-    elseIf code_return == CODES.HASNT_MEMBER
+    elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
         LOGS.Create_Note("No members to start a display with.")
     elseIf code_return == CODES.OUT_OF_BOUNDS
         LOGS.Create_Error("Can not display that amount of members.")

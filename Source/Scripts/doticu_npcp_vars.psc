@@ -31,7 +31,7 @@ int                 p_auto_vitality         =    -1
 int                 p_num_display           =    -1
 bool                p_is_mcm_open           = false
 
-; Public Variables
+; Followers
 int property key_fs_summon_all              =    -1 auto hidden
 int property key_fs_summon_mobile           =    -1 auto hidden
 int property key_fs_summon_immobile         =    -1 auto hidden
@@ -44,35 +44,35 @@ int property key_fs_unsneak                 =    -1 auto hidden
 int property key_fs_resurrect               =    -1 auto hidden
 int property key_fs_unfollow                =    -1 auto hidden
 int property key_fs_unmember                =    -1 auto hidden
-; maybe add toggles? maybe use modified to keep things consistent in default settings
 
-int property key_ms_display_start           =    -1 auto hidden
-int property key_ms_display_stop            =    -1 auto hidden
+; Members Display
+int property key_ms_toggle_display          =    -1 auto hidden
 int property key_ms_display_next            =    -1 auto hidden
 int property key_ms_display_previous        =    -1 auto hidden
-int property key_ms_toggle_display          =    -1 auto hidden
 
-; also, the cool idea to cycle through members so that they are easily visible. they are sent back where they came. (settler marker, editor loc, coords if in same cell)
-
-int property key_resurrect                  =    -1 auto hidden
-int property key_pack                       =    -1 auto hidden
-int property key_outfit                     =    -1 auto hidden
-
+; Actors Move
 int property key_move_toggle                =    -1 auto hidden
 int property key_move_farther               =    -1 auto hidden
 int property key_move_nearer                =    -1 auto hidden
 int property key_move_rotate_right          =    -1 auto hidden
 int property key_move_rotate_left           =    -1 auto hidden
 
-int property key_toggle_member              =    78 auto hidden; NUM+
-int property key_toggle_clone               =    -1 auto hidden
-int property key_toggle_settler             =    82 auto hidden; NUM0
-int property key_toggle_enthrall            =    73 auto hidden; NUM9
-int property key_toggle_immobile            =    83 auto hidden; NUM.
-int property key_toggle_paralyzed           =    -1 auto hidden
-int property key_toggle_follower            =    55 auto hidden; NUM*
-int property key_toggle_sneak               =    74 auto hidden; NUM-
+; Member/Follower Toggles
+int property key_m_toggle_member            =    -1 auto hidden
+int property key_m_toggle_clone             =    -1 auto hidden
+int property key_m_toggle_settler           =    -1 auto hidden
+int property key_m_toggle_thrall            =    -1 auto hidden
+int property key_m_toggle_immobile          =    -1 auto hidden
+int property key_m_toggle_paralyzed         =    -1 auto hidden
+int property key_m_toggle_follower          =    -1 auto hidden
+int property key_m_toggle_sneak             =    -1 auto hidden
 
+; Member/Follower
+int property key_resurrect                  =    -1 auto hidden
+int property key_pack                       =    -1 auto hidden
+int property key_outfit                     =    -1 auto hidden
+
+; Member/Follower Cycles
 int property key_cycle_outfit               =    -1 auto hidden
 int property key_cycle_style                =    -1 auto hidden
 int property key_cycle_vitality             =    -1 auto hidden
@@ -252,8 +252,6 @@ function Set_Defaults()
     auto_vitality = CODES.IS_PROTECTED; IS_MORTAL, IS_PROTECTED, IS_ESSENTIAL, IS_INVULNERABLE
     num_display = 5
     is_mcm_open = false
-
-    ; need to set keys here I think...
 endFunction
 
 ; Update Methods

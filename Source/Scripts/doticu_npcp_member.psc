@@ -484,7 +484,8 @@ function p_Paralyze()
     
         p_ref_actor.EnableAI(false)
         p_ref_actor.SetGhost(true)
-        p_ref_actor.AllowPCDialogue(false)
+        ;p_ref_actor.AllowPCDialogue(false)
+        p_ref_actor.BlockActivation(true); not sure if this will allow perk menu
 
         p_ref_actor.EvaluatePackage()
 
@@ -496,7 +497,8 @@ endFunction
 function p_Unparalyze()
     f_Lock_Resources()
     
-        p_ref_actor.AllowPCDialogue(true)
+        p_ref_actor.BlockActivation(false)
+        ;p_ref_actor.AllowPCDialogue(true)
         p_ref_actor.SetGhost(false)
         p_ref_actor.EnableAI(true)
 
@@ -513,7 +515,8 @@ function p_Reparalyze()
     f_Lock_Resources()
 
         Debug.SendAnimationEvent(p_ref_actor, "IdleForceDefaultState"); go to cached current animation
-        Utility.Wait(0.1)
+        p_ref_actor.WaitForAnimationEvent("IdleForceDefaultState")
+        ;Utility.Wait(0.1)
 
     f_Unlock_Resources()
 
@@ -1786,9 +1789,3 @@ event OnItemAdded(Form form_item, int count_item, ObjectReference ref_item, Obje
         LOGS.Create_Error("You can only put items into a member's pack or one of their outfits.")
     endIf
 endEvent
-
-;/event OnObjectEquipped(Form form_item, ObjectReference ref_object)
-    if p_outfit2_current.GetItemCount(form_item) < 1
-        p_Outfit()
-    endIf
-endEvent/;

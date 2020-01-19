@@ -136,6 +136,13 @@ function Remove_Perk(Perk perk_to_remove)
     ACTOR_PLAYER.RemovePerk(perk_to_remove)
 endFunction
 
+; Update Methods
+function u_0_6_0()
+    p_queue_player = QUEUES.Create("player", 32, 5.0)
+    p_queue_player.Register_Alias(self, "On_Queue_Player")
+    p_is_in_combat = false
+endFunction
+
 ; Events
 event On_Init_Mod()
     ACTOR_PLAYER.AddSpell(CONSTS.ABILITY_CELL, false)
@@ -148,12 +155,13 @@ endEvent
 
 event On_Cell_Change(Form cell_new, Form cell_old)
     ;p_Update_Outfits(cell_new); maybe put this behind a bool
+    Debug.Trace("FOLLOWERS exists: " + (FOLLOWERS != none))
     FOLLOWERS.Catch_Up()
 endEvent
 
 event On_Queue_Player(string str_message)
     if p_queue_player.Should_Cancel()
-
+        
     elseIf str_message == "Try_End_Combat"
         p_Try_End_Combat()
 

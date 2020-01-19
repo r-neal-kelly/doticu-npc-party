@@ -112,3 +112,13 @@ endFunction
 bool function Is_Mod_Installed(string name_mod)
     return Game.GetModByName(name_mod) != 255
 endFunction
+
+; Update Methods
+function u_0_6_0()
+    VECTORS.f_Create(p_DATA)
+    CLONER.f_Create(p_DATA)
+    VECTORS.f_Register()
+    CLONER.f_Register()
+
+    ACTORS.PLAYER.u_0_6_0()
+endFunction

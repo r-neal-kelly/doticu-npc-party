@@ -4,26 +4,31 @@ A follower framework for The Elder Scrolls V: Skyrim Special Edition
 ## Features:
 - upto **512** npcs can be members
 - upto **16** members can actively follow you around at a time
-- **clones** of any unique npc, and even generic npcs like guards, bandits, etc.
+- **clones** of any unique npc, and even generic npcs like guards, bandits, and more can join your party
 - every member can individually be:
-  - a **settler** of any part of the world, making it their home
-  - an **immobile** who never leaves their location
-  - a **warrior**, **mage**, **archer**, or classless
-  - **mortal**, **protected**, **essential**, or **invulnerable**
-  - **resurrected** should they ever die
-  - and for vampire players only, a willing **thrall**
-- several **outfits** are customizable for each individual member
+  - a **settler** in any part of the world, making it their home
+  - an **immobile** who never leaves their location and waits for you to come back to them
+  - a **warrior**, **mage**, **archer**, or classless teammate
+  - **mortal**, **protected**, **essential**, or **invulnerable**, you decide their fate
+  - **resurrected** if ever they should die
+  - and for vampire players only, a willing **thrall** who will sustain you
+- several **outfits** are customizable for each individual member and can be set to change automatically or manually, whichever you choose
 - a comprehensive dialogue menu can be used to command individual members and followers
-- an exhaustive MCM menu that has:
+- an exhaustive SkyUI MCM menu that has:
   - a **member manager**, with every member individually listed and commandable
   - a **follower manager**, with commands for individuals or even the entire team
   - **settings** where you can customize your experience
-  - a **logger**, that keeps track of recent notes and any rare errors
-- a **display** function, which successively summons each member in a cycle, so you can literally see your members
-- lots of **hotkeys** can be set for your favorite commands
+  - a **logger** that keeps track of recent notes and any rare errors
+- a **display** function, which successively summons each member in a cycle, so you can literally see your members. This means you don't have to remember the names for all your teammates
+- **hotkeys** you can set for your favorite commands
+- **moveable npcs** for when they get in your way, you can literally pick them up and move them where you will
 
 ### Future Features May Include:
-- a **filter** for members
+- a filter to sort through all your members
+- more vanilla dialogues attached to responses
+- a "Yell" dialogue to command all followers
+- an option to have followers talk more
+- and perhaps more member slots!
 
 ## Requires:
 - [Skyrim SE 1.5.97+](https://store.steampowered.com/app/489830/The_Elder_Scrolls_V_Skyrim_Special_Edition/)
@@ -33,9 +38,12 @@ A follower framework for The Elder Scrolls V: Skyrim Special Edition
 
 (Some older versions of the above may work with my mod, but they are not supported.)
 
+## Compatibility:
+- there are possible issues that may occur when using another follower framework at the same time as this one. One of the goals of this mod was to touch as few vanilla assests as possible, so you are encouraged to try it out if you wish
+- this should be compatibile with most if not all custom follower mods
+
 ## Recommended:
 - [Mod Organizer 2](https://www.nexusmods.com/skyrimspecialedition/mods/6194) for all your modding needs
-
 
 ## Thank You:
 - [Bethesda](https://bethesda.net) for Skryim, which is such an endearing masterpiece.

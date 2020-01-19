@@ -142,15 +142,6 @@ endFunction
 
 function p_Version()
     if Is_NPC_Party_Less_Than(CONSTS.VERSION_MAJOR, CONSTS.VERSION_MINOR, CONSTS.VERSION_PATCH)
-        if Is_NPC_Party_Less_Than(0, 3, 0)
-            u_0_3_0()
-        endIf
-        if Is_NPC_Party_Less_Than(0, 3, 1)
-            u_0_3_1()
-        endIf
-        if Is_NPC_Party_Less_Than(0, 4, 0)
-            u_0_4_0()
-        endIf
         if Is_NPC_Party_Less_Than(0, 6, 0)
             u_0_6_0()
         endIf
@@ -226,20 +217,8 @@ bool function Is_NPC_Party_Less_Than(int min_major, int min_minor, int min_patch
 endFunction
 
 ; Update Methods
-function u_0_3_0()
-    MEMBERS.u_0_3_0()
-    FOLLOWERS.u_0_3_0()
-endFunction
-
-function u_0_3_1()
-    VARS.u_0_3_1()
-endFunction
-
-function u_0_4_0()
-    MEMBERS.u_0_4_0()
-endFunction
-
 function u_0_6_0()
+    FUNCS.u_0_6_0()
 endFunction
 
 ; Events

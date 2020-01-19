@@ -112,21 +112,13 @@ function f_Create(doticu_npcp_data DATA, int id_alias)
     p_level_follower = -1
     p_is_sneak = false
 
-    ; these are here just so the user sees some changes as soon as possible
-    ; the rest of the work is delayed in the queue, primarily through f_Enforce
-    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_FOLLOWER, p_id_alias + 1)
-    p_ref_actor.SetPlayerTeammate(true, true)
-    p_ref_actor.EvaluatePackage()
+    p_Backup()
 
-    p_Register_Queues()
-
-    p_Enqueue("Follower.Backup")
+    p_Follow()
+    p_Level()
 endFunction
 
 function f_Destroy()
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_FOLLOWER)
-    p_ref_actor.EvaluatePackage()
-
     if p_is_sneak
         p_Unsneak()
     endIf
@@ -178,7 +170,6 @@ function f_Unlock_Resources()
 endFunction
 
 function f_Enforce()
-    p_Enqueue("Follower.Token")
     p_Enqueue("Follower.Follow")
     p_Enqueue("Follower.Level")
     if Is_Sneak()
@@ -204,35 +195,35 @@ endFunction
 function p_Backup()
     f_Lock_Resources()
 
-    p_prev_relationship_rank = p_ref_actor.GetRelationshipRank(CONSTS.ACTOR_PLAYER)
-    p_prev_waiting_for_player = p_ref_actor.GetBaseActorValue("WaitingForPlayer")
-    p_prev_aggression = p_ref_actor.GetBaseActorValue("Aggression")
-    p_prev_confidence = p_ref_actor.GetBaseActorValue("Confidence")
-    p_prev_assistance = p_ref_actor.GetBaseActorValue("Assistance"); this may need to go on Member
-    p_prev_morality = p_ref_actor.GetBaseActorValue("Morality")
-    p_prev_speed_mult = p_ref_actor.GetBaseActorValue("SpeedMult")
+        p_prev_relationship_rank = p_ref_actor.GetRelationshipRank(CONSTS.ACTOR_PLAYER)
+        p_prev_waiting_for_player = p_ref_actor.GetBaseActorValue("WaitingForPlayer")
+        p_prev_aggression = p_ref_actor.GetBaseActorValue("Aggression")
+        p_prev_confidence = p_ref_actor.GetBaseActorValue("Confidence")
+        p_prev_assistance = p_ref_actor.GetBaseActorValue("Assistance"); this may need to go on Member
+        p_prev_morality = p_ref_actor.GetBaseActorValue("Morality")
+        p_prev_speed_mult = p_ref_actor.GetBaseActorValue("SpeedMult")
 
-    p_prev_health = p_ref_actor.GetBaseActorValue(CONSTS.STR_HEALTH)
-    p_prev_magicka = p_ref_actor.GetBaseActorValue(CONSTS.STR_MAGICKA)
-    p_prev_stamina = p_ref_actor.GetBaseActorValue(CONSTS.STR_STAMINA)
-    p_prev_one_handed = p_ref_actor.GetBaseActorValue(CONSTS.STR_ONE_HANDED)
-    p_prev_two_handed = p_ref_actor.GetBaseActorValue(CONSTS.STR_TWO_HANDED)
-    p_prev_block = p_ref_actor.GetBaseActorValue(CONSTS.STR_BLOCK)
-    p_prev_heavy_armor = p_ref_actor.GetBaseActorValue(CONSTS.STR_HEAVY_ARMOR)
-    p_prev_light_armor = p_ref_actor.GetBaseActorValue(CONSTS.STR_LIGHT_ARMOR)
-    p_prev_smithing = p_ref_actor.GetBaseActorValue(CONSTS.STR_SMITHING)
-    p_prev_destruction = p_ref_actor.GetBaseActorValue(CONSTS.STR_DESTRUCTION)
-    p_prev_restoration = p_ref_actor.GetBaseActorValue(CONSTS.STR_RESTORATION)
-    p_prev_conjuration = p_ref_actor.GetBaseActorValue(CONSTS.STR_CONJURATION)
-    p_prev_alteration = p_ref_actor.GetBaseActorValue(CONSTS.STR_ALTERATION)
-    p_prev_illusion = p_ref_actor.GetBaseActorValue(CONSTS.STR_ILLUSION)
-    p_prev_enchanting = p_ref_actor.GetBaseActorValue(CONSTS.STR_ENCHANTING)
-    p_prev_marksman = p_ref_actor.GetBaseActorValue(CONSTS.STR_MARKSMAN)
-    p_prev_sneak = p_ref_actor.GetBaseActorValue(CONSTS.STR_SNEAK)
-    p_prev_alchemy = p_ref_actor.GetBaseActorValue(CONSTS.STR_ALCHEMY)
-    p_prev_lockpicking = p_ref_actor.GetBaseActorValue(CONSTS.STR_LOCKPICKING)
-    p_prev_pickpocket = p_ref_actor.GetBaseActorValue(CONSTS.STR_PICKPOCKET)
-    p_prev_speechcraft = p_ref_actor.GetBaseActorValue(CONSTS.STR_SPEECHCRAFT)
+        p_prev_health = p_ref_actor.GetBaseActorValue(CONSTS.STR_HEALTH)
+        p_prev_magicka = p_ref_actor.GetBaseActorValue(CONSTS.STR_MAGICKA)
+        p_prev_stamina = p_ref_actor.GetBaseActorValue(CONSTS.STR_STAMINA)
+        p_prev_one_handed = p_ref_actor.GetBaseActorValue(CONSTS.STR_ONE_HANDED)
+        p_prev_two_handed = p_ref_actor.GetBaseActorValue(CONSTS.STR_TWO_HANDED)
+        p_prev_block = p_ref_actor.GetBaseActorValue(CONSTS.STR_BLOCK)
+        p_prev_heavy_armor = p_ref_actor.GetBaseActorValue(CONSTS.STR_HEAVY_ARMOR)
+        p_prev_light_armor = p_ref_actor.GetBaseActorValue(CONSTS.STR_LIGHT_ARMOR)
+        p_prev_smithing = p_ref_actor.GetBaseActorValue(CONSTS.STR_SMITHING)
+        p_prev_destruction = p_ref_actor.GetBaseActorValue(CONSTS.STR_DESTRUCTION)
+        p_prev_restoration = p_ref_actor.GetBaseActorValue(CONSTS.STR_RESTORATION)
+        p_prev_conjuration = p_ref_actor.GetBaseActorValue(CONSTS.STR_CONJURATION)
+        p_prev_alteration = p_ref_actor.GetBaseActorValue(CONSTS.STR_ALTERATION)
+        p_prev_illusion = p_ref_actor.GetBaseActorValue(CONSTS.STR_ILLUSION)
+        p_prev_enchanting = p_ref_actor.GetBaseActorValue(CONSTS.STR_ENCHANTING)
+        p_prev_marksman = p_ref_actor.GetBaseActorValue(CONSTS.STR_MARKSMAN)
+        p_prev_sneak = p_ref_actor.GetBaseActorValue(CONSTS.STR_SNEAK)
+        p_prev_alchemy = p_ref_actor.GetBaseActorValue(CONSTS.STR_ALCHEMY)
+        p_prev_lockpicking = p_ref_actor.GetBaseActorValue(CONSTS.STR_LOCKPICKING)
+        p_prev_pickpocket = p_ref_actor.GetBaseActorValue(CONSTS.STR_PICKPOCKET)
+        p_prev_speechcraft = p_ref_actor.GetBaseActorValue(CONSTS.STR_SPEECHCRAFT)
 
     f_Unlock_Resources()
 endFunction
@@ -240,34 +231,34 @@ endFunction
 function p_Restore()
     f_Lock_Resources()
 
-    p_ref_actor.SetActorValue(CONSTS.STR_SPEECHCRAFT, p_prev_speechcraft)
-    p_ref_actor.SetActorValue(CONSTS.STR_PICKPOCKET, p_prev_pickpocket)
-    p_ref_actor.SetActorValue(CONSTS.STR_LOCKPICKING, p_prev_lockpicking)
-    p_ref_actor.SetActorValue(CONSTS.STR_ALCHEMY, p_prev_alchemy)
-    p_ref_actor.SetActorValue(CONSTS.STR_SNEAK, p_prev_sneak)
-    p_ref_actor.SetActorValue(CONSTS.STR_MARKSMAN, p_prev_marksman)
-    p_ref_actor.SetActorValue(CONSTS.STR_ENCHANTING, p_prev_enchanting)
-    p_ref_actor.SetActorValue(CONSTS.STR_ILLUSION, p_prev_illusion)
-    p_ref_actor.SetActorValue(CONSTS.STR_ALTERATION, p_prev_alteration)
-    p_ref_actor.SetActorValue(CONSTS.STR_CONJURATION, p_prev_conjuration)
-    p_ref_actor.SetActorValue(CONSTS.STR_RESTORATION, p_prev_restoration)
-    p_ref_actor.SetActorValue(CONSTS.STR_DESTRUCTION, p_prev_destruction)
-    p_ref_actor.SetActorValue(CONSTS.STR_SMITHING, p_prev_smithing)
-    p_ref_actor.SetActorValue(CONSTS.STR_LIGHT_ARMOR, p_prev_light_armor)
-    p_ref_actor.SetActorValue(CONSTS.STR_HEAVY_ARMOR, p_prev_heavy_armor)
-    p_ref_actor.SetActorValue(CONSTS.STR_BLOCK, p_prev_block)
-    p_ref_actor.SetActorValue(CONSTS.STR_TWO_HANDED, p_prev_two_handed)
-    p_ref_actor.SetActorValue(CONSTS.STR_ONE_HANDED, p_prev_one_handed)
-    p_ref_actor.SetActorValue(CONSTS.STR_STAMINA, p_prev_stamina)
-    p_ref_actor.SetActorValue(CONSTS.STR_MAGICKA, p_prev_magicka)
-    p_ref_actor.SetActorValue(CONSTS.STR_HEALTH, p_prev_health)
+        p_ref_actor.SetActorValue(CONSTS.STR_SPEECHCRAFT, p_prev_speechcraft)
+        p_ref_actor.SetActorValue(CONSTS.STR_PICKPOCKET, p_prev_pickpocket)
+        p_ref_actor.SetActorValue(CONSTS.STR_LOCKPICKING, p_prev_lockpicking)
+        p_ref_actor.SetActorValue(CONSTS.STR_ALCHEMY, p_prev_alchemy)
+        p_ref_actor.SetActorValue(CONSTS.STR_SNEAK, p_prev_sneak)
+        p_ref_actor.SetActorValue(CONSTS.STR_MARKSMAN, p_prev_marksman)
+        p_ref_actor.SetActorValue(CONSTS.STR_ENCHANTING, p_prev_enchanting)
+        p_ref_actor.SetActorValue(CONSTS.STR_ILLUSION, p_prev_illusion)
+        p_ref_actor.SetActorValue(CONSTS.STR_ALTERATION, p_prev_alteration)
+        p_ref_actor.SetActorValue(CONSTS.STR_CONJURATION, p_prev_conjuration)
+        p_ref_actor.SetActorValue(CONSTS.STR_RESTORATION, p_prev_restoration)
+        p_ref_actor.SetActorValue(CONSTS.STR_DESTRUCTION, p_prev_destruction)
+        p_ref_actor.SetActorValue(CONSTS.STR_SMITHING, p_prev_smithing)
+        p_ref_actor.SetActorValue(CONSTS.STR_LIGHT_ARMOR, p_prev_light_armor)
+        p_ref_actor.SetActorValue(CONSTS.STR_HEAVY_ARMOR, p_prev_heavy_armor)
+        p_ref_actor.SetActorValue(CONSTS.STR_BLOCK, p_prev_block)
+        p_ref_actor.SetActorValue(CONSTS.STR_TWO_HANDED, p_prev_two_handed)
+        p_ref_actor.SetActorValue(CONSTS.STR_ONE_HANDED, p_prev_one_handed)
+        p_ref_actor.SetActorValue(CONSTS.STR_STAMINA, p_prev_stamina)
+        p_ref_actor.SetActorValue(CONSTS.STR_MAGICKA, p_prev_magicka)
+        p_ref_actor.SetActorValue(CONSTS.STR_HEALTH, p_prev_health)
 
-    p_ref_actor.SetActorValue("SpeedMult", p_prev_speed_mult)
-    p_ref_actor.SetActorValue("Morality", p_prev_morality)
-    p_ref_actor.SetActorValue("Assistance", p_prev_assistance); this may need to go on Member
-    p_ref_actor.SetActorValue("Confidence", p_prev_confidence)
-    p_ref_actor.SetActorValue("Aggression", 0.0)
-    p_ref_actor.SetActorValue("WaitingForPlayer", p_prev_waiting_for_player)
+        p_ref_actor.SetActorValue("SpeedMult", p_prev_speed_mult)
+        p_ref_actor.SetActorValue("Morality", p_prev_morality)
+        p_ref_actor.SetActorValue("Assistance", p_prev_assistance); this may need to go on Member
+        p_ref_actor.SetActorValue("Confidence", p_prev_confidence)
+        p_ref_actor.SetActorValue("Aggression", 0.0)
+        p_ref_actor.SetActorValue("WaitingForPlayer", p_prev_waiting_for_player)
 
     f_Unlock_Resources()
 endFunction
@@ -322,6 +313,8 @@ function p_Sneak()
 
         p_ref_actor.SetActorValue("SpeedMult", MAX_SPEED_SNEAK)
 
+        p_ref_actor.EvaluatePackage()
+
     f_Unlock_Resources()
 endFunction
 
@@ -331,6 +324,8 @@ function p_Unsneak()
         p_ref_actor.SetActorValue("SpeedMult", MAX_SPEED_UNSNEAK)
 
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_FOLLOWER_SNEAK)
+
+        p_ref_actor.EvaluatePackage()
 
     f_Unlock_Resources()
 endFunction
@@ -820,8 +815,6 @@ endFunction
 event On_Queue_Follower(string str_message)
     if false
 
-    elseIf str_message == "Follower.Backup"
-        p_Backup()
     elseIf str_message == "Follower.Follow"
         p_Follow()
     elseIf str_message == "Follower.Level"

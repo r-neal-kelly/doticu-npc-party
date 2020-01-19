@@ -102,6 +102,17 @@ function Unclone(Actor ref_actor)
     int code_return
     string str_name = ACTORS.Get_Name(ref_actor)
 
+    doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
+    if !ref_member
+        NOTES.Unclone(CODES.HASNT_MEMBER, str_name)
+        return
+    endIf
+
+    if !ref_member.Is_Clone()
+        NOTES.Unclone(CODES.ISNT_CLONE, str_name)
+        return
+    endIf
+
     NOTES.Unclone(MEMBERS.Destroy_Member(ref_actor, true), str_name)
 endFunction
 
@@ -682,6 +693,15 @@ function Toggle_Member(Actor ref_actor)
         Unmember(ref_actor)
     else
         Member(ref_actor)
+    endIf
+endFunction
+
+function Toggle_Clone(Actor ref_actor)
+    doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
+    if ref_member && ref_member.Is_Clone()
+        Unclone(ref_actor)
+    else
+        Clone(ref_actor)
     endIf
 endFunction
 

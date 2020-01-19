@@ -16,7 +16,6 @@ bool                p_is_created        = false
 int                 p_buffer_write      =     0
 int                 p_buffer_read       =     0
 int                 p_buffer_used       =     0
-int                 p_backup_used       =    -1
 string              p_str_message       =    ""
 string              p_str_event         =    ""
 Form                p_event_form        =  none
@@ -157,10 +156,6 @@ endFunction
 
 bool function Is_Full()
     return p_buffer_used == p_buffer_max
-endFunction
-
-bool function Is_Paused()
-    return p_backup_used != -1
 endFunction
 
 bool function Should_Cancel()

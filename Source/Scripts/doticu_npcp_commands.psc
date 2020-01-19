@@ -436,6 +436,12 @@ function Toggle_Member_Sync(Actor ref_actor)
     GotoState("")
 endFunction
 
+function Toggle_Clone_Sync(Actor ref_actor)
+    GotoState("p_STATE_BUSY")
+    PRIVATE.Toggle_Clone(ref_actor)
+    GotoState("")
+endFunction
+
 function Toggle_Settler_Sync(Actor ref_actor)
     GotoState("p_STATE_BUSY")
     PRIVATE.Toggle_Settler(CODES.DO_SYNC, ref_actor)
@@ -619,6 +625,32 @@ function Resurrect_Async(Actor ref_actor, bool auto_create)
     PRIVATE.Resurrect(CODES.DO_ASYNC, ref_actor, auto_create)
 endFunction
 
+
+
+function Toggle_Settler_Async(Actor ref_actor)
+    PRIVATE.Toggle_Settler(CODES.DO_ASYNC, ref_actor)
+endFunction
+
+function Toggle_Thrall_Async(Actor ref_actor)
+    PRIVATE.Toggle_Thrall(CODES.DO_ASYNC, ref_actor)
+endFunction
+
+function Toggle_Immobile_Async(Actor ref_actor)
+    PRIVATE.Toggle_Immobile(CODES.DO_ASYNC, ref_actor)
+endFunction
+
+function Toggle_Paralyzed_Async(Actor ref_actor)
+    PRIVATE.Toggle_Paralyzed(CODES.DO_ASYNC, ref_actor)
+endFunction
+
+function Toggle_Follower_Async(Actor ref_actor)
+    PRIVATE.Toggle_Follower(CODES.DO_ASYNC, ref_actor)
+endFunction
+
+function Toggle_Sneak_Async(Actor ref_actor)
+    PRIVATE.Toggle_Sneak(CODES.DO_ASYNC, ref_actor)
+endFunction
+
 ; "all", "mobile", "immobile", follower cycle, etc, such that they each summon one after another
 
 ; Private States
@@ -699,6 +731,8 @@ state p_STATE_BUSY
 
     function Toggle_Member_Sync(Actor ref_actor)
     endFunction
+    function Toggle_Clone_Sync(Actor ref_actor)
+    endFunction
     function Toggle_Settler_Sync(Actor ref_actor)
     endFunction
     function Toggle_Thrall_Sync(Actor ref_actor)
@@ -766,7 +800,8 @@ endState
 
 ; Events
 event On_Queue_Commands(string str_message, Form form_actor, bool auto_create)
-    ; this queue should be separated into two, one for members, one for followers
+    ; this queue should be separated into two, one for members, one for followers,
+    ; and removed from this module
     Actor ref_actor = form_actor as Actor
 
     if p_queue_commands.Should_Cancel()

@@ -85,12 +85,9 @@ function Update_Keys()
         RegisterForKey(VARS.key_fs_unmember)
     endIf
 
-    ; Display
-    if VARS.key_ms_display_start > -1
-        RegisterForKey(VARS.key_ms_display_start)
-    endIf
-    if VARS.key_ms_display_stop > -1
-        RegisterForKey(VARS.key_ms_display_stop)
+    ; Members Display
+    if VARS.key_ms_toggle_display > -1
+        RegisterForKey(VARS.key_ms_toggle_display)
     endIf
     if VARS.key_ms_display_next > -1
         RegisterForKey(VARS.key_ms_display_next)
@@ -98,18 +95,14 @@ function Update_Keys()
     if VARS.key_ms_display_previous > -1
         RegisterForKey(VARS.key_ms_display_previous)
     endIf
-    if VARS.key_ms_toggle_display > -1
-        RegisterForKey(VARS.key_ms_toggle_display)
-    endIf
 
-    ; Move
+    ; Actors Move
     if VARS.key_move_toggle
         RegisterForKey(VARS.key_move_toggle)
     endIf
     ACTORS.MOVEE.Update_Keys()
 
-
-
+    ; Member/Follower
     if VARS.key_resurrect > -1
         RegisterForKey(VARS.key_resurrect)
     endIf
@@ -120,30 +113,33 @@ function Update_Keys()
         RegisterForKey(VARS.key_outfit)
     endIf
 
+    ; Member/Follower Toggles
+    if VARS.key_m_toggle_member > -1
+        RegisterForKey(VARS.key_m_toggle_member)
+    endIf
+    if VARS.key_m_toggle_clone > -1
+        RegisterForKey(VARS.key_m_toggle_clone)
+    endIf
+    if VARS.key_m_toggle_settler > -1
+        RegisterForKey(VARS.key_m_toggle_settler)
+    endIf
+    if VARS.key_m_toggle_thrall > -1
+        RegisterForKey(VARS.key_m_toggle_thrall)
+    endIf
+    if VARS.key_m_toggle_immobile > -1
+        RegisterForKey(VARS.key_m_toggle_immobile)
+    endIf
+    if VARS.key_m_toggle_paralyzed > -1
+        RegisterForKey(VARS.key_m_toggle_paralyzed)
+    endIf
+    if VARS.key_m_toggle_follower > -1
+        RegisterForKey(VARS.key_m_toggle_follower)
+    endIf
+    if VARS.key_m_toggle_sneak > -1
+        RegisterForKey(VARS.key_m_toggle_sneak)
+    endIf
 
-
-    if VARS.key_toggle_member > -1
-        RegisterForKey(VARS.key_toggle_member)
-    endIf
-    if VARS.key_toggle_settler > -1
-        RegisterForKey(VARS.key_toggle_settler)
-    endIf
-    if VARS.key_toggle_enthrall > -1
-        RegisterForKey(VARS.key_toggle_enthrall)
-    endIf
-    if VARS.key_toggle_immobile > -1
-        RegisterForKey(VARS.key_toggle_immobile)
-    endIf
-    if VARS.key_toggle_paralyzed > -1
-        RegisterForKey(VARS.key_toggle_paralyzed)
-    endIf
-    if VARS.key_toggle_follower > -1
-        RegisterForKey(VARS.key_toggle_follower)
-    endIf
-    if VARS.key_toggle_sneak > -1
-        RegisterForKey(VARS.key_toggle_sneak)
-    endIf
-
+    ; Member/Follower Cycles
     if VARS.key_cycle_style > -1
         RegisterForKey(VARS.key_cycle_style)
     endIf
@@ -189,46 +185,45 @@ event OnKeyDown(int code_key)
     elseIf code_key == VARS.key_fs_resurrect
         COMMANDS.Followers_Resurrect()
 
-    ; Display
-    elseIf code_key == VARS.key_ms_display_start
-        COMMANDS.Members_Display_Start(ref_actor)
-    elseIf code_Key == VARS.key_ms_display_stop
-        COMMANDS.Members_Display_Stop()
+    ; Members Display
+    elseIf code_key == VARS.key_ms_toggle_display
+        COMMANDS.Toggle_Members_Display(ref_actor)
     elseIf code_key == VARS.key_ms_display_next
         COMMANDS.Members_Display_Next()
     elseIf code_key == VARS.key_ms_display_previous
         COMMANDS.Members_Display_Previous()
-    elseIf code_key == VARS.key_ms_toggle_display
-        COMMANDS.Toggle_Members_Display(ref_actor)
 
-    ; Move
+    ; Actors Move
     elseIf code_key == VARS.key_move_toggle
         COMMANDS.Move_Sync(ref_actor)
 
-        
-    
+    ; Member/Follower
     elseIf code_key == VARS.key_resurrect
         COMMANDS.Resurrect_Async(ref_actor, true)
     elseIf code_key == VARS.key_pack
         COMMANDS.Pack_Sync(ref_actor, true)
-    elseIf code_key == VARS.key_outfit; this may need to be corrected
+    elseIf code_key == VARS.key_outfit
         COMMANDS.Outfit_Current_Sync(ref_actor, true)
     
-    elseIf code_key == VARS.key_toggle_member
+    ; Member/Follower Toggles
+    elseIf code_key == VARS.key_m_toggle_member
         COMMANDS.Toggle_Member_Sync(ref_actor)
-    elseIf code_key == VARS.key_toggle_settler
-        COMMANDS.Toggle_Settler_Sync(ref_actor)
-    elseIf code_key == VARS.key_toggle_enthrall
-        COMMANDS.Toggle_Thrall_Sync(ref_actor)
-    elseIf code_key == VARS.key_toggle_immobile
-        COMMANDS.Toggle_Immobile_Sync(ref_actor)
-    elseIf code_key == VARS.key_toggle_paralyzed
-        COMMANDS.Toggle_Paralyzed_Sync(ref_actor)
-    elseIf code_key == VARS.key_toggle_follower
-        COMMANDS.Toggle_Follower_Sync(ref_actor)
-    elseIf code_key == VARS.key_toggle_sneak
-        COMMANDS.Toggle_Sneak_Sync(ref_actor)
+    elseIf code_key == VARS.key_m_toggle_clone
+        COMMANDS.Toggle_Clone_Sync(ref_actor)
+    elseIf code_key == VARS.key_m_toggle_settler
+        COMMANDS.Toggle_Settler_Async(ref_actor)
+    elseIf code_key == VARS.key_m_toggle_thrall
+        COMMANDS.Toggle_Thrall_Async(ref_actor)
+    elseIf code_key == VARS.key_m_toggle_immobile
+        COMMANDS.Toggle_Immobile_Async(ref_actor)
+    elseIf code_key == VARS.key_m_toggle_paralyzed
+        COMMANDS.Toggle_Paralyzed_Async(ref_actor)
+    elseIf code_key == VARS.key_m_toggle_follower
+        COMMANDS.Toggle_Follower_Async(ref_actor)
+    elseIf code_key == VARS.key_m_toggle_sneak
+        COMMANDS.Toggle_Sneak_Async(ref_actor)
     
+    ; Member/Follower Cycles
     elseIf code_key == VARS.key_cycle_style
         COMMANDS.Cycle_Style(ref_actor, false)
     endIf

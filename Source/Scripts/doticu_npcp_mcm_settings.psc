@@ -53,8 +53,6 @@ int                 p_option_key_fs_sneak               =    -1
 int                 p_option_key_fs_unsneak             =    -1
 int                 p_option_key_fs_resurrect           =    -1
 
-int                 p_option_key_ms_display_start       =    -1
-int                 p_option_key_ms_display_stop        =    -1
 int                 p_option_key_ms_toggle_display      =    -1
 int                 p_option_slider_ms_display          =    -1
 int                 p_option_key_ms_display_previous    =    -1
@@ -66,7 +64,14 @@ int                 p_option_key_move_nearer            =    -1
 int                 p_option_key_move_rotate_right      =    -1
 int                 p_option_key_move_rotate_left       =    -1
 
+int                 p_option_key_m_toggle_member        =    -1
+int                 p_option_key_m_toggle_clone         =    -1
+int                 p_option_key_m_toggle_settler       =    -1
+int                 p_option_key_m_toggle_thrall        =    -1
+int                 p_option_key_m_toggle_immobile      =    -1
 int                 p_option_key_m_toggle_paralyzed     =    -1
+int                 p_option_key_m_toggle_follower      =    -1
+int                 p_option_key_m_toggle_sneak         =    -1
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
@@ -153,8 +158,6 @@ auto state p_STATE_SETTINGS
 
         MCM.AddHeaderOption(" Displaying ")
         MCM.AddEmptyOption()
-        p_option_key_ms_display_start = MCM.AddKeymapOption(" Start Display ", VARS.key_ms_display_start, MCM.OPTION_FLAG_WITH_UNMAP)
-        p_option_key_ms_display_stop = MCM.AddKeymapOption(" Stop Display ", VARS.key_ms_display_stop, MCM.OPTION_FLAG_WITH_UNMAP)
         p_option_key_ms_toggle_display = MCM.AddKeymapOption(" Toggle Display ", VARS.key_ms_toggle_display, MCM.OPTION_FLAG_WITH_UNMAP)
         p_option_slider_ms_display = MCM.AddSliderOption(" Number per Cycle ", VARS.num_display, " {0} ")
         p_option_key_ms_display_previous = MCM.AddKeymapOption(" Previous Display ", VARS.key_ms_display_previous, MCM.OPTION_FLAG_WITH_UNMAP)
@@ -190,8 +193,14 @@ auto state p_STATE_SETTINGS
 
         MCM.AddHeaderOption(" One Follower/Member ")
         MCM.AddEmptyOption()
-        p_option_key_m_toggle_paralyzed = MCM.AddKeymapOption(" Toggle Paralyzed ", VARS.key_toggle_paralyzed, MCM.OPTION_FLAG_WITH_UNMAP)
-        MCM.AddEmptyOption()
+        p_option_key_m_toggle_member = MCM.AddKeymapOption(" Toggle Member ", VARS.key_m_toggle_member, MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_m_toggle_clone = MCM.AddKeymapOption(" Toggle Clone ", VARS.key_m_toggle_clone, MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_m_toggle_settler = MCM.AddKeymapOption(" Toggle Settler ", VARS.key_m_toggle_settler, MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_m_toggle_thrall = MCM.AddKeymapOption(" Toggle Thrall ", VARS.key_m_toggle_thrall, MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_m_toggle_immobile = MCM.AddKeymapOption(" Toggle Immobile ", VARS.key_m_toggle_immobile, MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_m_toggle_paralyzed = MCM.AddKeymapOption(" Toggle Paralyzed ", VARS.key_m_toggle_paralyzed, MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_m_toggle_follower = MCM.AddKeymapOption(" Toggle Follower ", VARS.key_m_toggle_follower, MCM.OPTION_FLAG_WITH_UNMAP)
+        p_option_key_m_toggle_sneak = MCM.AddKeymapOption(" Toggle Sneak ", VARS.key_m_toggle_sneak, MCM.OPTION_FLAG_WITH_UNMAP)
         MCM.AddEmptyOption()
         MCM.AddEmptyOption()
     endFunction
@@ -202,19 +211,7 @@ auto state p_STATE_SETTINGS
 
         if false
 
-        elseIf id_option == p_option_force_clone_unique
-            VARS.force_clone_unique = !VARS.force_clone_unique
-            MCM.SetToggleOptionValue(p_option_force_clone_unique, VARS.force_clone_unique, do_update)
-        elseIf id_option == p_option_force_clone_generic
-            VARS.force_clone_generic = !VARS.force_clone_generic
-            MCM.SetToggleOptionValue(p_option_force_clone_generic, VARS.force_clone_generic, do_update)
-        elseIf id_option == p_option_force_unclone_unique
-            VARS.force_unclone_unique = !VARS.force_unclone_unique
-            MCM.SetToggleOptionValue(p_option_force_unclone_unique, VARS.force_unclone_unique, do_update)
-        elseIf id_option == p_option_force_unclone_generic
-            VARS.force_unclone_generic = !VARS.force_unclone_generic
-            MCM.SetToggleOptionValue(p_option_force_unclone_generic, VARS.force_unclone_generic, do_update)
-        
+        ; General
         elseIf id_option == p_option_auto_style
             if VARS.auto_style == CODES.IS_DEFAULT
                 VARS.auto_style = CODES.IS_WARRIOR
@@ -249,10 +246,22 @@ auto state p_STATE_SETTINGS
         elseIf id_option == p_option_auto_outfit
             VARS.auto_outfit = !VARS.auto_outfit
             MCM.SetToggleOptionValue(p_option_auto_outfit, VARS.auto_outfit, do_update)
-        endIf
 
-        MCM.SetInfoText("Testing, can you see this?")
-        ;f_On_Option_Highlight(id_option); doesn't seem to work.
+        ; Cloning
+        elseIf id_option == p_option_force_clone_unique
+            VARS.force_clone_unique = !VARS.force_clone_unique
+            MCM.SetToggleOptionValue(p_option_force_clone_unique, VARS.force_clone_unique, do_update)
+        elseIf id_option == p_option_force_clone_generic
+            VARS.force_clone_generic = !VARS.force_clone_generic
+            MCM.SetToggleOptionValue(p_option_force_clone_generic, VARS.force_clone_generic, do_update)
+        elseIf id_option == p_option_force_unclone_unique
+            VARS.force_unclone_unique = !VARS.force_unclone_unique
+            MCM.SetToggleOptionValue(p_option_force_unclone_unique, VARS.force_unclone_unique, do_update)
+        elseIf id_option == p_option_force_unclone_generic
+            VARS.force_unclone_generic = !VARS.force_unclone_generic
+            MCM.SetToggleOptionValue(p_option_force_unclone_generic, VARS.force_unclone_generic, do_update)
+
+        endIf
     endFunction
 
     function f_On_Option_Slider_Open(int id_option)
@@ -290,7 +299,10 @@ auto state p_STATE_SETTINGS
 
         ; we need to check that in our mod, a key isn't set to multiple commands...except if the modifier is different...
 
-        if id_option == p_option_key_fs_summon_all
+        if false
+
+        ; Followers
+        elseIf id_option == p_option_key_fs_summon_all
             VARS.key_fs_summon_all = code_key
         elseIf id_option == p_option_key_fs_summon_mobile
             VARS.key_fs_summon_mobile = code_key
@@ -311,17 +323,15 @@ auto state p_STATE_SETTINGS
         elseIf id_option == p_option_key_fs_resurrect
             VARS.key_fs_resurrect = code_key
 
-        elseIf id_option == p_option_key_ms_display_start
-            VARS.key_ms_display_start = code_key
-        elseIf id_option == p_option_key_ms_display_stop
-            VARS.key_ms_display_stop = code_key
+        ; Members Display
+        elseIf id_option == p_option_key_ms_toggle_display
+            VARS.key_ms_toggle_display = code_key
         elseIf id_option == p_option_key_ms_display_previous
             VARS.key_ms_display_previous = code_key
         elseIf id_option == p_option_key_ms_display_next
             VARS.key_ms_display_next = code_key
-        elseIf id_option == p_option_key_ms_toggle_display
-            VARS.key_ms_toggle_display = code_key
         
+        ; Actors Move
         elseIf id_option == p_option_key_move_toggle
             VARS.key_move_toggle = code_key
         elseIf id_option == p_option_key_move_farther
@@ -333,8 +343,24 @@ auto state p_STATE_SETTINGS
         elseIf id_option == p_option_key_move_rotate_left
             VARS.key_move_rotate_left = code_key
         
+        ; Member/Follower Toggles
+        elseIf id_option == p_option_key_m_toggle_member
+            VARS.key_m_toggle_member = code_key
+        elseIf id_option == p_option_key_m_toggle_clone
+            VARS.key_m_toggle_clone = code_key
+        elseIf id_option == p_option_key_m_toggle_settler
+            VARS.key_m_toggle_settler = code_key
+        elseIf id_option == p_option_key_m_toggle_thrall
+            VARS.key_m_toggle_thrall = code_key
+        elseIf id_option == p_option_key_m_toggle_immobile
+            VARS.key_m_toggle_immobile = code_key
         elseIf id_option == p_option_key_m_toggle_paralyzed
-            VARS.key_toggle_paralyzed = code_key
+            VARS.key_m_toggle_paralyzed = code_key
+        elseIf id_option == p_option_key_m_toggle_follower
+            VARS.key_m_toggle_follower = code_key
+        elseIf id_option == p_option_key_m_toggle_sneak
+            VARS.key_m_toggle_sneak = code_key
+
         endIf
 
         KEYS.Update_Keys()
@@ -343,33 +369,9 @@ auto state p_STATE_SETTINGS
     endFunction
 
     function f_On_Option_Highlight(int id_option)
-        ; Cloning
-        if id_option == p_option_force_clone_unique
-            if VARS.force_clone_unique
-                MCM.SetInfoText("Only a clone of a unique npc can become a member, and not the unique npc.")
-            else
-                MCM.SetInfoText("Allows a unique npc to become a member as well as its clone.")
-            endIf
-        elseIf id_option == p_option_force_clone_generic
-            if VARS.force_clone_generic
-                MCM.SetInfoText("Only a clone of a generic npc can become a member, and not the generic npc.")
-            else
-                MCM.SetInfoText("Allows a generic npc to become a member as well as its clone.")
-            endIf
-        elseIf id_option == p_option_force_unclone_unique
-            if VARS.force_unclone_unique
-                MCM.SetInfoText("Forces a clone of a unique npc to be uncloned instead of unmembered.")
-            else
-                MCM.SetInfoText("Allows a clone of a unique npc to be unmembered or uncloned.")
-            endIf
-        elseIf id_option == p_option_force_unclone_generic
-            if VARS.force_unclone_generic
-                MCM.SetInfoText("Forces a clone of a generic npc to be uncloned instead of unmembered.")
-            else
-                MCM.SetInfoText("Allows a clone of a generic npc to be unmembered or uncloned.")
-            endIf
-        
-        ; Automatics
+        if false
+
+        ; General
         elseIf id_option == p_option_auto_style
             if VARS.auto_style == CODES.IS_DEFAULT
                 MCM.SetInfoText("When an npc becomes a member, they will fight how they wish.")
@@ -402,8 +404,34 @@ auto state p_STATE_SETTINGS
             else
                 MCM.SetInfoText("Members will not automatically dress for each activity.")
             endIf
+
+        ; Cloning
+        elseIf id_option == p_option_force_clone_unique
+            if VARS.force_clone_unique
+                MCM.SetInfoText("Only a clone of a unique npc can become a member, and not the unique npc.")
+            else
+                MCM.SetInfoText("Allows a unique npc to become a member as well as its clone.")
+            endIf
+        elseIf id_option == p_option_force_clone_generic
+            if VARS.force_clone_generic
+                MCM.SetInfoText("Only a clone of a generic npc can become a member, and not the generic npc.")
+            else
+                MCM.SetInfoText("Allows a generic npc to become a member as well as its clone.")
+            endIf
+        elseIf id_option == p_option_force_unclone_unique
+            if VARS.force_unclone_unique
+                MCM.SetInfoText("Forces a clone of a unique npc to be uncloned instead of unmembered.")
+            else
+                MCM.SetInfoText("Allows a clone of a unique npc to be unmembered or uncloned.")
+            endIf
+        elseIf id_option == p_option_force_unclone_generic
+            if VARS.force_unclone_generic
+                MCM.SetInfoText("Forces a clone of a generic npc to be uncloned instead of unmembered.")
+            else
+                MCM.SetInfoText("Allows a clone of a generic npc to be unmembered or uncloned.")
+            endIf
         
-        ; Hotkeys
+        ; Followers Hotkeys
         elseIf id_option == p_option_key_fs_summon_all
             MCM.SetInfoText("Summons all followers before you.")
         elseIf id_option == p_option_key_fs_summon_mobile
@@ -425,19 +453,32 @@ auto state p_STATE_SETTINGS
         elseIf id_option == p_option_key_fs_resurrect
             MCM.SetInfoText("Causes all dead followers to resurrect.")
 
-        elseIf id_option == p_option_key_ms_display_start
-            MCM.SetInfoText("Will start a display of members.")
-        elseIf id_option == p_option_key_ms_display_stop
-            MCM.SetInfoText("Will stop a display of members.")
+        ; Members Display Hotkeys
+        elseIf id_option == p_option_key_ms_toggle_display
+            MCM.SetInfoText("Toggles a member display.")
         elseIf id_option == p_option_key_ms_display_previous
             MCM.SetInfoText("Will rotate members backward on display.")
         elseIf id_option == p_option_key_ms_display_next
             MCM.SetInfoText("Will rotate members forward on the display.")
-        elseIf id_option == p_option_key_ms_toggle_display
-            MCM.SetInfoText("Toggles a member display.")
-
+        
+        ; Member/Follower Toggles Hotkeys
+        elseIf id_option == p_option_key_m_toggle_member
+            MCM.SetInfoText("Causes an npc to be membered or unmembered.")
+        elseIf id_option == p_option_key_m_toggle_clone
+            MCM.SetInfoText("Causes an npc to be cloned or uncloned. The npc will become a member if they are not already.")
+        elseIf id_option == p_option_key_m_toggle_settler
+            MCM.SetInfoText("Causes an npc to be settled or unsettled. The npc will become a member if they are not already.")
+        elseIf id_option == p_option_key_m_toggle_thrall
+            MCM.SetInfoText("Causes an npc to be enthralled or unthralled. The npc will become a member if they are not already.")
+        elseIf id_option == p_option_key_m_toggle_immobile
+            MCM.SetInfoText("Causes an npc to be immobile or mobile. The npc will become a member if they are not already.")
         elseIf id_option == p_option_key_m_toggle_paralyzed
-            MCM.SetInfoText("Causes a member to become paralyzed.")
+            MCM.SetInfoText("Causes an npc to be paralyzed or unparalyzed. The npc will become a member if they are not already.")
+        elseIf id_option == p_option_key_m_toggle_follower
+            MCM.SetInfoText("Causes an npc to follower or unfollow. The npc will become a member if they are not already.")
+        elseIf id_option == p_option_key_m_toggle_sneak
+            MCM.SetInfoText("Causes an npc to sneak or unsneak. The npc will become a member and a follower if they are not already.")
+
         endIf
     endFunction
 endState
