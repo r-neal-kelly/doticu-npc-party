@@ -1,3 +1,7 @@
+;/
+    Copyright © 2020 r-neal-kelly, aka doticu
+/;
+
 Scriptname doticu_npcp_vector_form extends ObjectReference
 
 ; Private Constants
@@ -42,6 +46,7 @@ endFunction
 
 function f_Destroy()
     p_grow_rate = 0.0
+    p_item_fill = none
     p_max_forms = 0
     p_num_forms = 0
     ;p_arr_forms = none; throws!
@@ -57,9 +62,9 @@ function p_Grow()
     if max_forms <= p_max_forms
         max_forms = p_max_forms + 1
     endIf
-
-    p_arr_forms = Utility.ResizeFormArray(p_arr_forms, max_forms, p_item_fill)
     p_max_forms = max_forms
+
+    p_arr_forms = Utility.ResizeFormArray(p_arr_forms, p_max_forms, p_item_fill)
 endFunction
 
 ; Public Methods

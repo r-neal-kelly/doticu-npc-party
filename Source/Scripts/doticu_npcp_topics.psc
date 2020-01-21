@@ -1,3 +1,7 @@
+;/
+    Copyright © 2020 r-neal-kelly, aka doticu
+/;
+
 Scriptname doticu_npcp_topics extends TopicInfo hidden
 
 ; need to investigate if this script is always loaded or instanstiated as needed.

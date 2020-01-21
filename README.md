@@ -21,13 +21,13 @@ A follower framework for The Elder Scrolls V: Skyrim Special Edition
   - a **logger** that keeps track of recent notes and any rare errors
 - a **display** function, which successively summons each member in a cycle, so you can literally see your members. This means you don't have to remember the names for all your teammates
 - **hotkeys** you can set for your favorite commands
-- **moveable npcs** for when they get in your way, you can literally pick them up and move them where you will
+- **movable npcs** for when they get in your way, you can literally pick them up and move them where you will
 
 ### Future Features May Include:
 - a filter to sort through all your members
-- more vanilla dialogues attached to responses
+- more vanilla dialogue spoken by members
 - a "Yell" dialogue to command all followers
-- an option to have followers talk more
+- a "Banish" command, which sends a member away
 - and perhaps more member slots!
 
 ## Requires:
@@ -39,8 +39,8 @@ A follower framework for The Elder Scrolls V: Skyrim Special Edition
 (Some older versions of the above may work with my mod, but they are not supported.)
 
 ## Compatibility:
-- there are possible issues that may occur when using another follower framework at the same time as this one. One of the goals of this mod was to touch as few vanilla assests as possible, so you are encouraged to try it out if you wish
-- this should be compatibile with most if not all custom follower mods
+- there are possible issues that may occur when using another follower framework at the same time as this one. One of the goals of this mod was to touch as few vanilla assets as possible, but no promises can be made regarding compatibility with other frameworks
+- this should be compatible with most if not all custom follower mods
 
 ## Recommended:
 - [Mod Organizer 2](https://www.nexusmods.com/skyrimspecialedition/mods/6194) for all your modding needs
@@ -48,7 +48,7 @@ A follower framework for The Elder Scrolls V: Skyrim Special Edition
 ## Thank You:
 - [Bethesda](https://bethesda.net) for Skryim, which is such an endearing masterpiece.
 - [SSEEdit/TesVEdit/xEdit Team](https://github.com/TES5Edit/TES5Edit) for such an amazing [tool](https://www.nexusmods.com/skyrimspecialedition/mods/164).
-- [Mod Organizer 2 Team](https://github.com/ModOrganizer2) for your indespensible [program](https://www.nexusmods.com/skyrimspecialedition/mods/6194).
+- [Mod Organizer 2 Team](https://github.com/ModOrganizer2) for your indispensable [program](https://www.nexusmods.com/skyrimspecialedition/mods/6194).
 - [SKSE Team](http://skse.silverlock.org/) for their extender, which has extended the life of the game itself.
 - [SkyUI Team](https://github.com/schlangster/skyui) for not only the [mod](https://www.nexusmods.com/skyrimspecialedition/mods/12604) and the MCM menu, but also for the fairly good [wiki](https://github.com/schlangster/skyui/wiki/MCM-API-Reference) that goes along with it.
 - [PapyrusUtil Team](https://www.nexusmods.com/skyrimspecialedition/mods/13048) for their work and especially their sorting functions, which are wonderfully useful and yet lacking in vanilla Papyrus.
