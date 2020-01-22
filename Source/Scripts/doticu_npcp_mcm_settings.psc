@@ -91,6 +91,9 @@ endFunction
 function f_Register()
 endFunction
 
+function f_Unregister()
+endFunction
+
 function f_Build_Page()
 endFunction
 
@@ -140,11 +143,11 @@ auto state p_STATE_SETTINGS
         if VARS.auto_vitality == CODES.IS_MORTAL
             p_option_auto_vitality = MCM.AddTextOption("Auto Vitality", CONSTS.STR_MCM_MORTAL); maybe default instead of auto?
         elseIf VARS.auto_vitality == CODES.IS_PROTECTED
-            p_option_auto_vitality = MCM.AddTextOption("Auto Style", CONSTS.STR_MCM_PROTECTED)
+            p_option_auto_vitality = MCM.AddTextOption("Auto Vitality", CONSTS.STR_MCM_PROTECTED)
         elseIf VARS.auto_vitality == CODES.IS_ESSENTIAL
-            p_option_auto_vitality = MCM.AddTextOption("Auto Style", CONSTS.STR_MCM_ESSENTIAL)
+            p_option_auto_vitality = MCM.AddTextOption("Auto Vitality", CONSTS.STR_MCM_ESSENTIAL)
         elseIf VARS.auto_vitality == CODES.IS_INVULNERABLE
-            p_option_auto_vitality = MCM.AddTextOption("Auto Style", CONSTS.STR_MCM_INVULNERABLE)
+            p_option_auto_vitality = MCM.AddTextOption("Auto Vitality", CONSTS.STR_MCM_INVULNERABLE)
         endIf
         p_option_auto_resurrect = MCM.AddToggleOption("Auto Resurrect Followers", VARS.auto_resurrect)
         p_option_auto_outfit = MCM.AddToggleOption("Auto Outfit", VARS.auto_outfit)

@@ -136,3 +136,8 @@ int property VITALITY_MORTAL                = -1000 autoReadOnly
 int property VITALITY_PROTECTED             = -2000 autoReadOnly
 int property VITALITY_ESSENTIAL             = -3000 autoReadOnly
 int property VITALITY_INVULNERABLE          = -4000 autoReadOnly
+
+int property VIEW_MEMBERS                   = -1000 autoReadOnly
+int property VIEW_FOLLOWERS                 = -1100 autoReadOnly
+int property VIEW_MEMBER                    = -1200 autoReadOnly
+int property VIEW_FOLLOWER                  = -1300 autoReadOnly
