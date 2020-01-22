@@ -298,13 +298,13 @@ function f_On_Option_Select(int id_option)
             if MEMBERS.Will_Sort()
                 MCM.SetTitleText(p_STR_PLEASE_WAIT)
             endIf
-            p_ref_member = MEMBERS.Get_Prev_Member(p_ref_member)
+            MCM.MCM_MEMBERS.f_View_Member(MEMBERS.Get_Prev_Member(p_ref_member))
             MCM.ForcePageReset()
         elseIf p_code_view == CODES.VIEW_FOLLOWER
             if FOLLOWERS.Will_Sort()
                 MCM.SetTitleText(p_STR_PLEASE_WAIT)
             endIf
-            p_ref_member = FOLLOWERS.Get_Prev_Follower(p_ref_member.Get_Follower()).Get_Member()
+            MCM.MCM_FOLLOWERS.f_View_Follower(FOLLOWERS.Get_Prev_Follower(p_ref_member.Get_Follower()))
             MCM.ForcePageReset()
         endIf
     elseIf id_option == p_option_next
@@ -312,15 +312,16 @@ function f_On_Option_Select(int id_option)
             if MEMBERS.Will_Sort()
                 MCM.SetTitleText(p_STR_PLEASE_WAIT)
             endIf
-            p_ref_member = MEMBERS.Get_Next_Member(p_ref_member)
+            MCM.MCM_MEMBERS.f_View_Member(MEMBERS.Get_Next_Member(p_ref_member))
             MCM.ForcePageReset()
         elseIf p_code_view == CODES.VIEW_FOLLOWER
             if FOLLOWERS.Will_Sort()
                 MCM.SetTitleText(p_STR_PLEASE_WAIT)
             endIf
-            p_ref_member = FOLLOWERS.Get_Next_Follower(p_ref_member.Get_Follower()).Get_Member()
+            MCM.MCM_FOLLOWERS.f_View_Follower(FOLLOWERS.Get_Next_Follower(p_ref_member.Get_Follower()))
             MCM.ForcePageReset()
         endIf
+
     elseIf id_option == p_option_summon
         MCM.SetOptionFlags(p_option_summon, MCM.OPTION_FLAG_DISABLED, false)
         COMMANDS.Summon_Sync(ref_actor)
@@ -402,6 +403,7 @@ function f_On_Option_Select(int id_option)
         MCM.SetOptionFlags(p_option_clone, MCM.OPTION_FLAG_DISABLED, false)
         COMMANDS.Clone_Async(ref_actor)
         MCM.SetOptionFlags(p_option_clone, MCM.OPTION_FLAG_NONE, false)
+        
     elseIf id_option == p_option_unclone
         MCM.SetOptionFlags(p_option_unclone, MCM.OPTION_FLAG_DISABLED, false)
         COMMANDS.Unclone_Sync(ref_actor)

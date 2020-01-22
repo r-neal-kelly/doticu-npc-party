@@ -133,15 +133,6 @@ string function f_Get_Current_Page()
     return p_str_curr_page
 endFunction
 
-; Update Methods
-function u_0_6_1()
-    MCM_MEMBER.f_Create(p_DATA)
-    MCM_MEMBER.f_Register()
-    MCM_MEMBERS.GotoState("")
-    MCM_FOLLOWERS.GotoState("")
-    MCM_LOG.GotoState("")
-endFunction
-
 ; Events
 event OnConfigInit()
     ModName = " NPC Party"

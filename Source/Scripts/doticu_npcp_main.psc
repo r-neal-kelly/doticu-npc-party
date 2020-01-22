@@ -87,7 +87,8 @@ function f_Load_Mod()
     DATA.Start()
 
     ;/CONTROL.Stop()
-    CONTROL.Start()/;
+    CONTROL.Start()
+    CONTROL.f_Create(DATA)/;
 
     p_Register()
     p_Version()
@@ -229,7 +230,12 @@ function u_0_6_0()
 endFunction
 
 function u_0_6_1()
-    CONTROL.MCM.u_0_6_1()
+    ;CONTROL.f_Unregister()
+    CONTROL.f_Destroy()
+    CONTROL.Stop()
+    CONTROL.Start()
+    CONTROL.f_Create(DATA)
+    CONTROL.f_Register()
 endFunction
 
 ; Events
