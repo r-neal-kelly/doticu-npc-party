@@ -107,11 +107,6 @@ function f_Create(doticu_npcp_data DATA, Actor ref_actor)
     ForceRefTo(p_ref_actor)
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_MOVEE)
     p_ref_actor.EvaluatePackage()
-    ;/p_ref_actor.Disable()
-    p_ref_actor.Enable()
-    while !p_ref_actor.Is3DLoaded()
-        Utility.Wait(0.1)
-    endWhile/;
     p_ref_actor.SetActorValue("Paralysis", 1)
 
     RegisterForSingleUpdate(0.0)

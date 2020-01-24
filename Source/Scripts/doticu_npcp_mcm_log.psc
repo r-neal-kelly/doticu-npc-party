@@ -177,6 +177,9 @@ endFunction
 function f_On_Option_Keymap_Change(int id_option, int code_key, string str_conflict_control, string str_conflict_mod)
 endFunction
 
+function f_On_Option_Default(int id_option)
+endFunction
+
 ; Private Methods
 string function p_Format_Title(int num_notes, int num_errors)
     string str_notes = "Notes: " + num_notes + "/" + LOGS.Get_Note_Max()

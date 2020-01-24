@@ -21,18 +21,6 @@ doticu_npcp_vars property VARS hidden
     endFunction
 endProperty
 
-; Public Constants
-ObjectReference property OBJECT_STORAGE hidden
-    ObjectReference function Get()
-        return CONSTS.MARKER_STORAGE
-    endFunction
-endProperty
-Container property CONTAINER_OUTFIT hidden
-    Container function Get()
-        return CONSTS.CONTAINER_OUTFIT
-    endFunction
-endProperty
-
 ; Private Constants
 doticu_npcp_data        p_DATA          =  none
 
@@ -53,9 +41,9 @@ endFunction
 function f_Register()
 endFunction
 
-; Public Methods
-doticu_npcp_outfit function Create(Outfit form_outfit, string str_name = "Outfit")
-    doticu_npcp_outfit ref_outfit = OBJECT_STORAGE.PlaceAtMe(CONTAINER_OUTFIT, 1, true, false) as doticu_npcp_outfit
+; Private Methods
+doticu_npcp_outfit function p_Create(Container form_container, Outfit form_outfit, string str_name)
+    doticu_npcp_outfit ref_outfit = CONSTS.MARKER_STORAGE.PlaceAtMe(form_container, 1, false, false) as doticu_npcp_outfit
 
     ref_outfit.f_Create(p_DATA, form_outfit, str_name)
     ref_outfit.f_Register()
@@ -63,11 +51,27 @@ doticu_npcp_outfit function Create(Outfit form_outfit, string str_name = "Outfit
     return ref_outfit
 endFunction
 
-function Destroy(doticu_npcp_outfit ref_outfit)
-    ref_outfit.f_Destroy()
+; Public Methods
+doticu_npcp_outfit function Create(Outfit form_outfit, string str_name = "Outfit")
+    return p_Create(CONSTS.CONTAINER_OUTFIT, form_outfit, str_name)
 endFunction
 
-bool function Is_Valid_Item(Form form_item)
-    ;return form_item.IsPlayable() && (form_item as Armor || form_item as Weapon)
-    return form_item && form_item.IsPlayable(); allows arrows and torches, but maybe allows to many other things
+doticu_npcp_outfit function Create_Settler(Outfit form_outfit, string str_name = "Settler Outfit")
+    return p_Create(CONSTS.CONTAINER_OUTFIT_SETTLER, form_outfit, str_name)
+endFunction
+
+doticu_npcp_outfit function Create_Thrall(Outfit form_outfit, string str_name = "Thrall Outfit")
+    return p_Create(CONSTS.CONTAINER_OUTFIT_THRALL, form_outfit, str_name)
+endFunction
+
+doticu_npcp_outfit function Create_Immobile(Outfit form_outfit, string str_name = "Immobile Outfit")
+    return p_Create(CONSTS.CONTAINER_OUTFIT_IMMOBILE, form_outfit, str_name)
+endFunction
+
+doticu_npcp_outfit function Create_Follower(Outfit form_outfit, string str_name = "Follower Outfit")
+    return p_Create(CONSTS.CONTAINER_OUTFIT_FOLLOWER, form_outfit, str_name)
+endFunction
+
+function Destroy(doticu_npcp_outfit ref_outfit)
+    ref_outfit.f_Destroy()
 endFunction

@@ -232,6 +232,13 @@ function f_On_Option_Keymap_Change(int id_option, int code_key, string str_confl
     endIf
 endFunction
 
+function f_On_Option_Default(int id_option)
+    if p_code_view == CODES.VIEW_MEMBER
+        MCM.MCM_MEMBER.f_On_Option_Default(id_option)
+        return
+    endIf
+endFunction
+
 ; Private Methods
 string function p_Format_Title(int num_members, int idx_page, int num_pages)
     string str_members = "Members: " + num_members + "/" + MEMBERS.Get_Max()

@@ -121,7 +121,11 @@ bool function Is_Female(Actor ref_actor)
 endFunction
 
 bool function Is_Essential(Actor ref_actor)
-    return ref_actor.IsEssential()
+    if Is_Unique(ref_actor)
+        return ref_actor.IsEssential()
+    else
+        return Get_Base(ref_actor).IsEssential() || Get_Leveled_Base(ref_actor).IsEssential()
+    endIf
 endFunction
 
 ActorBase function Get_Base(Actor ref_actor)
@@ -197,55 +201,20 @@ int function Get_Vitality(Actor ref_actor)
     endIf
 endFunction
 
-function Vitalize(Actor ref_actor, int code_vitality)
-    ; maybe we can do more to make this affect only instances, instead of base
-
-    ActorBase base_actor
-    if Is_Unique(ref_actor)
-        base_actor = Get_Base(ref_actor)
-    else
-        base_actor = Get_Leveled_Base(ref_actor)
-    endIf
-
-    if code_vitality == CODES.IS_MORTAL
-        base_actor.SetProtected(false)
-        base_actor.SetEssential(false)
-        base_actor.SetInvulnerable(false)
-    elseIf code_vitality == CODES.IS_PROTECTED
-        base_actor.SetProtected(true)
-        base_actor.SetEssential(false)
-        base_actor.SetInvulnerable(false)
-    elseIf code_vitality == CODES.IS_ESSENTIAL
-        base_actor.SetProtected(false)
-        base_actor.SetEssential(true)
-        base_actor.SetInvulnerable(false)
-    elseIf code_vitality == CODES.IS_INVULNERABLE
-        base_actor.SetProtected(false)
-        base_actor.SetEssential(false)
-        base_actor.SetInvulnerable(true)
-    endIf
-endFunction
-
 function Essentialize(Actor ref_actor)
-    ActorBase base_actor
-    if Is_Unique(ref_actor)
-        base_actor = Get_Base(ref_actor)
-    else
-        base_actor = Get_Leveled_Base(ref_actor)
-    endIf
+    Get_Base(ref_actor).SetEssential(true)
 
-    base_actor.SetEssential(true)
+    if Is_Generic(ref_actor)
+        Get_Leveled_Base(ref_actor).SetEssential(true)
+    endIf
 endFunction
 
 function Unessentialize(Actor ref_actor)
-    ActorBase base_actor
-    if Is_Unique(ref_actor)
-        base_actor = Get_Base(ref_actor)
-    else
-        base_actor = Get_Leveled_Base(ref_actor)
-    endIf
+    Get_Base(ref_actor).SetEssential(false)
 
-    base_actor.SetEssential(false)
+    if Is_Generic(ref_actor)
+        Get_Leveled_Base(ref_actor).SetEssential(false)
+    endIf
 endFunction
 
 function Kill(Actor ref_actor)

@@ -92,8 +92,10 @@ bool function p_Has_Changed(Actor ref_actor)
     num_forms = p_LEVELED.GetNumForms()
     while idx_forms < num_forms
         ref_form = p_LEVELED.GetNthForm(idx_forms)
-        num_items = p_LEVELED.GetNthCount(idx_forms)
-        if num_items != self.GetItemCount(ref_form)
+        num_items = self.GetItemCount(ref_form)
+        if p_LEVELED.GetNthCount(idx_forms) != num_items
+            return true
+        elseIf ref_actor.GetItemCount(ref_form) != num_items
             return true
         endIf
         idx_forms += 1
@@ -106,8 +108,7 @@ bool function p_Has_Changed(Actor ref_actor)
         if !ref_form
             return true
         endIf
-        num_items = ref_actor.GetItemCount(ref_form)
-        if ref_form.IsPlayable() && num_items != self.GetItemCount(ref_form)
+        if ref_form.IsPlayable() && self.GetItemCount(ref_form) <= 0
             return true
         elseIf !ref_form.IsPlayable() && ref_actor.IsEquipped(ref_form)
             return true
@@ -146,25 +147,30 @@ function Put()
     Utility.Wait(0.1)
 endFunction
 
-function Get(Actor ref_actor)
+function Get(Actor ref_actor, ObjectReference ref_inventory)
     int idx_forms
     int num_forms
     Form ref_form
     int num_items
 
-    ; we refresh the cache
+    ; should always refresh cache before defining it
     self.RemoveAllItems(CONSTS.ACTOR_PLAYER, false, true)
     p_LEVELED.Revert()
 
-    ; then copy what is valid and equipped, which is how we define outfit, instead of using GetOutfit
+    ; instead of using GetOutfit, we get what is playable and equipped,
+    ; and store non-equipment in inventory to separate it from outfit
     idx_forms = 0
     num_forms = ref_actor.GetNumItems()
     while idx_forms < num_forms
         ref_form = ref_actor.GetNthForm(idx_forms)
-        if OUTFITS.Is_Valid_Item(ref_form) && ref_actor.IsEquipped(ref_form)
+        if ref_form && ref_form.IsPlayable()
             num_items = ref_actor.GetItemCount(ref_form)
-            self.AddItem(ref_form, num_items, true)
-            p_LEVELED.AddForm(ref_form, 1, num_items)
+            if ref_actor.IsEquipped(ref_form)
+                self.AddItem(ref_form, num_items, true)
+                p_LEVELED.AddForm(ref_form, 1, num_items)
+            else
+                ref_inventory.AddItem(ref_form, num_items, true)
+            endIf
         endIf
         idx_forms += 1
     endWhile
@@ -190,9 +196,6 @@ function Set(Actor ref_actor, bool do_force = false)
         p_LEVELED.AddForm(ref_form, 1, self.GetItemCount(ref_form))
         idx_forms += 1
     endWhile
-    
-    ; the engine may ignore this call if it's the same outfit form already equipped, so we use a different one
-    ;ref_actor.SetOutfit(CONSTS.OUTFIT_EMPTY)
 
     ; the engine will actually apply the outfit in the correct way now, which we cannot do manually
     ref_actor.SetOutfit(p_OUTFIT)
@@ -223,27 +226,6 @@ function Set(Actor ref_actor, bool do_force = false)
 
     ; need to make sure that a clone doesn't get the same outfit, so send through until it gets its own
     Set(ref_actor)
-endFunction
-
-function Transfer_Inventory(Actor ref_actor, ObjectReference ref_container = none)
-    Form[] arr_leveled
-    int idx_forms
-    int num_forms
-    Form ref_form
-    int num_items
-
-    ; copy inventory minus current outfit
-    if ref_container
-        idx_forms = 0
-        num_forms = ref_actor.GetNumItems()
-        while idx_forms < num_forms
-            ref_form = ref_actor.GetNthForm(idx_forms)
-            if ref_form && ref_form.IsPlayable() && !self.GetItemCount(ref_form)
-                ref_container.AddItem(ref_form, ref_actor.GetItemCount(ref_form), true)
-            endIf
-            idx_forms += 1
-        endWhile
-    endIf
 endFunction
 
 function Delete_Unplayable_Equipment(Actor ref_actor)
@@ -294,8 +276,8 @@ endFunction
 event OnItemAdded(Form form_item, int count_item, ObjectReference ref_item, ObjectReference ref_container_source)
     if self.GetNumItems() >= p_MAX_ITEMS
         LOGS.Create_Note("Can only have upto "+ p_MAX_ITEMS +" items in an outfit.")
-    elseIf !OUTFITS.Is_Valid_Item(form_item)
+    elseIf !form_item || !form_item.IsPlayable()
         self.RemoveItem(form_item, count_item, true, ref_container_source)
-        LOGS.Create_Note("Can only add armor or weapons to an outfit.")
+        LOGS.Create_Note("Cannot add that item to an outfit.")
     endIf
 endEvent

@@ -5,6 +5,11 @@
 Scriptname doticu_npcp_keys extends Quest
 
 ; Modules
+doticu_npcp_consts property CONSTS hidden
+    doticu_npcp_consts function Get()
+        return p_DATA.CONSTS
+    endFunction
+endProperty
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
         return p_DATA.VARS
@@ -90,8 +95,8 @@ function Update_Keys()
     endIf
 
     ; Members Display
-    if VARS.key_ms_toggle_display > -1
-        RegisterForKey(VARS.key_ms_toggle_display)
+    if VARS.key_ms_display_toggle > -1
+        RegisterForKey(VARS.key_ms_display_toggle)
     endIf
     if VARS.key_ms_display_next > -1
         RegisterForKey(VARS.key_ms_display_next)
@@ -155,6 +160,213 @@ function Update_Keys()
     endIf
 endFunction
 
+string function Get_Control(int code_key)
+    if false
+
+    ; Followers
+    elseIf code_key == VARS.key_fs_summon_all
+        return CONSTS.STR_KEY_FS_SUMMON_ALL
+    elseIf code_key == VARS.key_fs_summon_mobile
+        return CONSTS.STR_KEY_FS_SUMMON_MOBILE
+    elseIf code_key == VARS.key_fs_summon_immobile
+        return CONSTS.STR_KEY_FS_SUMMON_IMMOBILE
+    elseIf code_key == VARS.key_fs_settle
+        return CONSTS.STR_KEY_FS_SETTLE
+    elseIf code_key == VARS.key_fs_unsettle
+        return CONSTS.STR_KEY_FS_UNSETTLE
+    elseIf code_key == VARS.key_fs_immobilize
+        return CONSTS.STR_KEY_FS_IMMOBILIZE
+    elseIf code_key == VARS.key_fs_mobilize
+        return CONSTS.STR_KEY_FS_MOBILIZE
+    elseIf code_key == VARS.key_fs_sneak
+        return CONSTS.STR_KEY_FS_SNEAK
+    elseIf code_key == VARS.key_fs_unsneak
+        return CONSTS.STR_KEY_FS_UNSNEAK
+    elseIf code_key == VARS.key_fs_resurrect
+        return CONSTS.STR_KEY_FS_RESURRECT
+
+    ; Members Display
+    elseIf code_key == VARS.key_ms_display_toggle
+        return CONSTS.STR_KEY_MS_DISPLAY_TOGGLE
+    elseIf code_key == VARS.key_ms_display_next
+        return CONSTS.STR_KEY_MS_DISPLAY_NEXT
+    elseIf code_key == VARS.key_ms_display_previous
+        return CONSTS.STR_KEY_MS_DISPLAY_PREVIOUS
+
+    ; Actors Move
+    elseIf code_key == VARS.key_move_toggle
+        return CONSTS.STR_KEY_MOVE_TOGGLE
+    elseIf code_key == VARS.key_move_farther
+        return CONSTS.STR_KEY_MOVE_FARTHER
+    elseIf code_key == VARS.key_move_nearer
+        return CONSTS.STR_KEY_MOVE_NEARER
+    elseIf code_key == VARS.key_move_rotate_right
+        return CONSTS.STR_KEY_MOVE_ROTATE_RIGHT
+    elseIf code_key == VARS.key_move_rotate_left
+        return CONSTS.STR_KEY_MOVE_ROTATE_LEFT
+
+    ; Member/Follower Toggles
+    elseIf code_key == VARS.key_m_toggle_member
+        return CONSTS.STR_KEY_M_TOGGLE_MEMBER
+    elseIf code_key == VARS.key_m_toggle_clone
+        return CONSTS.STR_KEY_M_TOGGLE_CLONE
+    elseIf code_key == VARS.key_m_toggle_settler
+        return CONSTS.STR_KEY_M_TOGGLE_SETTLER
+    elseIf code_key == VARS.key_m_toggle_thrall
+        return CONSTS.STR_KEY_M_TOGGLE_THRALL
+    elseIf code_key == VARS.key_m_toggle_immobile
+        return CONSTS.STR_KEY_M_TOGGLE_IMMOBILE
+    elseIf code_key == VARS.key_m_toggle_paralyzed
+        return CONSTS.STR_KEY_M_TOGGLE_PARALYZED
+    elseIf code_key == VARS.key_m_toggle_follower
+        return CONSTS.STR_KEY_M_TOGGLE_FOLLOWER
+    elseIf code_key == VARS.key_m_toggle_sneak
+        return CONSTS.STR_KEY_M_TOGGLE_SNEAK
+    
+    else
+        return ""
+
+    endIf
+endFunction
+
+int function Get_Key(string str_control)
+    if false
+
+    ; Followers
+    elseIf str_control == CONSTS.STR_KEY_FS_SUMMON_ALL
+        return VARS.key_fs_summon_all
+    elseIf str_control == CONSTS.STR_KEY_FS_SUMMON_MOBILE
+        return VARS.key_fs_summon_mobile
+    elseIf str_control == CONSTS.STR_KEY_FS_SUMMON_IMMOBILE
+        return VARS.key_fs_summon_immobile
+    elseIf str_control == CONSTS.STR_KEY_FS_SETTLE
+        return VARS.key_fs_settle
+    elseIf str_control == CONSTS.STR_KEY_FS_UNSETTLE
+        return VARS.key_fs_unsettle
+    elseIf str_control == CONSTS.STR_KEY_FS_IMMOBILIZE
+        return VARS.key_fs_immobilize
+    elseIf str_control == CONSTS.STR_KEY_FS_MOBILIZE
+        return VARS.key_fs_mobilize
+    elseIf str_control == CONSTS.STR_KEY_FS_SNEAK
+        return VARS.key_fs_sneak
+    elseIf str_control == CONSTS.STR_KEY_FS_UNSNEAK
+        return VARS.key_fs_unsneak
+    elseIf str_control == CONSTS.STR_KEY_FS_RESURRECT
+        return VARS.key_fs_resurrect
+
+    ; Members Display
+    elseIf str_control == CONSTS.STR_KEY_MS_DISPLAY_TOGGLE
+        return VARS.key_ms_display_toggle
+    elseIf str_control == CONSTS.STR_KEY_MS_DISPLAY_NEXT
+        return VARS.key_ms_display_next
+    elseIf str_control == CONSTS.STR_KEY_MS_DISPLAY_PREVIOUS
+        return VARS.key_ms_display_previous
+
+    ; Actors Move
+    elseIf str_control == CONSTS.STR_KEY_MOVE_TOGGLE
+        return VARS.key_move_toggle
+    elseIf str_control == CONSTS.STR_KEY_MOVE_FARTHER
+        return VARS.key_move_farther
+    elseIf str_control == CONSTS.STR_KEY_MOVE_NEARER
+        return VARS.key_move_nearer
+    elseIf str_control == CONSTS.STR_KEY_MOVE_ROTATE_RIGHT
+        return VARS.key_move_rotate_right
+    elseIf str_control == CONSTS.STR_KEY_MOVE_ROTATE_LEFT
+        return VARS.key_move_rotate_left
+
+    ; Member/Follower Toggles
+    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_MEMBER
+        return VARS.key_m_toggle_member
+    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_CLONE
+        return VARS.key_m_toggle_clone
+    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_SETTLER
+        return VARS.key_m_toggle_settler
+    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_THRALL
+        return VARS.key_m_toggle_thrall
+    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_IMMOBILE
+        return VARS.key_m_toggle_immobile
+    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_PARALYZED
+        return VARS.key_m_toggle_paralyzed
+    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_FOLLOWER
+        return VARS.key_m_toggle_follower
+    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_SNEAK
+        return VARS.key_m_toggle_sneak
+        
+    else
+        return -1
+    
+    endIf
+endFunction
+
+int function Get_Key_Default(string str_control)
+    if false
+
+    ; Followers
+    elseIf str_control == CONSTS.STR_KEY_FS_SUMMON_ALL
+        return CONSTS.KEY_DEF_FS_SUMMON_ALL
+    elseIf str_control == CONSTS.STR_KEY_FS_SUMMON_MOBILE
+        return CONSTS.KEY_DEF_FS_SUMMON_MOBILE
+    elseIf str_control == CONSTS.STR_KEY_FS_SUMMON_IMMOBILE
+        return CONSTS.KEY_DEF_FS_SUMMON_IMMOBILE
+    elseIf str_control == CONSTS.STR_KEY_FS_SETTLE
+        return CONSTS.KEY_DEF_FS_SETTLE
+    elseIf str_control == CONSTS.STR_KEY_FS_UNSETTLE
+        return CONSTS.KEY_DEF_FS_UNSETTLE
+    elseIf str_control == CONSTS.STR_KEY_FS_IMMOBILIZE
+        return CONSTS.KEY_DEF_FS_IMMOBILIZE
+    elseIf str_control == CONSTS.STR_KEY_FS_MOBILIZE
+        return CONSTS.KEY_DEF_FS_MOBILIZE
+    elseIf str_control == CONSTS.STR_KEY_FS_SNEAK
+        return CONSTS.KEY_DEF_FS_SNEAK
+    elseIf str_control == CONSTS.STR_KEY_FS_UNSNEAK
+        return CONSTS.KEY_DEF_FS_UNSNEAK
+    elseIf str_control == CONSTS.STR_KEY_FS_RESURRECT
+        return CONSTS.KEY_DEF_FS_RESURRECT
+    
+    ; Members Display
+    elseIf str_control == CONSTS.STR_KEY_MS_DISPLAY_TOGGLE
+        return CONSTS.KEY_DEF_MS_DISPLAY_TOGGLE
+    elseIf str_control == CONSTS.STR_KEY_MS_DISPLAY_PREVIOUS
+        return CONSTS.KEY_DEF_MS_DISPLAY_PREVIOUS
+    elseIf str_control == CONSTS.STR_KEY_MS_DISPLAY_NEXT
+        return CONSTS.KEY_DEF_MS_DISPLAY_NEXT
+    
+    ; Actors Move
+    elseIf str_control == CONSTS.STR_KEY_MOVE_TOGGLE
+        return CONSTS.KEY_DEF_MOVE_TOGGLE
+    elseIf str_control == CONSTS.STR_KEY_MOVE_FARTHER
+        return CONSTS.KEY_DEF_MOVE_FARTHER
+    elseIf str_control == CONSTS.STR_KEY_MOVE_NEARER
+        return CONSTS.KEY_DEF_MOVE_NEARER
+    elseIf str_control == CONSTS.STR_KEY_MOVE_ROTATE_RIGHT
+        return CONSTS.KEY_DEF_MOVE_ROTATE_RIGHT
+    elseIf str_control == CONSTS.STR_KEY_MOVE_ROTATE_LEFT
+        return CONSTS.KEY_DEF_MOVE_ROTATE_LEFT
+    
+    ; Member/Follower Toggles
+    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_MEMBER
+        return CONSTS.KEY_DEF_M_TOGGLE_MEMBER
+    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_CLONE
+        return CONSTS.KEY_DEF_M_TOGGLE_CLONE
+    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_SETTLER
+        return CONSTS.KEY_DEF_M_TOGGLE_SETTLER
+    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_THRALL
+        return CONSTS.KEY_DEF_M_TOGGLE_THRALL
+    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_IMMOBILE
+        return CONSTS.KEY_DEF_M_TOGGLE_IMMOBILE
+    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_PARALYZED
+        return CONSTS.KEY_DEF_M_TOGGLE_PARALYZED
+    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_FOLLOWER
+        return CONSTS.KEY_DEF_M_TOGGLE_FOLLOWER
+    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_SNEAK
+        return CONSTS.KEY_DEF_M_TOGGLE_SNEAK
+            
+    else
+        return -1
+        
+    endIf
+endFunction
+
 ; Events
 event OnKeyDown(int code_key)
     if !FUNCS.Can_Use_Keys()
@@ -190,7 +402,7 @@ event OnKeyDown(int code_key)
         COMMANDS.Followers_Resurrect()
 
     ; Members Display
-    elseIf code_key == VARS.key_ms_toggle_display
+    elseIf code_key == VARS.key_ms_display_toggle
         COMMANDS.Toggle_Members_Display(ref_actor)
     elseIf code_key == VARS.key_ms_display_next
         COMMANDS.Members_Display_Next()
@@ -200,14 +412,6 @@ event OnKeyDown(int code_key)
     ; Actors Move
     elseIf code_key == VARS.key_move_toggle
         COMMANDS.Move_Sync(ref_actor)
-
-    ; Member/Follower
-    elseIf code_key == VARS.key_resurrect
-        COMMANDS.Resurrect_Async(ref_actor, true)
-    elseIf code_key == VARS.key_pack
-        COMMANDS.Pack_Sync(ref_actor, true)
-    elseIf code_key == VARS.key_outfit
-        COMMANDS.Outfit_Current_Sync(ref_actor, true)
     
     ; Member/Follower Toggles
     elseIf code_key == VARS.key_m_toggle_member
@@ -226,6 +430,14 @@ event OnKeyDown(int code_key)
         COMMANDS.Toggle_Follower_Async(ref_actor)
     elseIf code_key == VARS.key_m_toggle_sneak
         COMMANDS.Toggle_Sneak_Async(ref_actor)
+
+    ; Member/Follower
+    elseIf code_key == VARS.key_resurrect
+        COMMANDS.Resurrect_Async(ref_actor, true)
+    elseIf code_key == VARS.key_pack
+        COMMANDS.Pack_Sync(ref_actor, true)
+    elseIf code_key == VARS.key_outfit
+        COMMANDS.Outfit_Current_Sync(ref_actor, true)
     
     ; Member/Follower Cycles
     elseIf code_key == VARS.key_cycle_style

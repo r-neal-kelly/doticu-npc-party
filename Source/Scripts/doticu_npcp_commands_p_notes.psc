@@ -386,13 +386,13 @@ function Vitalize(int code_return, string str_name, int code_vitality)
         LOGS.Create_Note("That can't become " + str_vitality + ".")
     elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
         LOGS.Create_Note(str_name + " isn't a member, and so can't be " + str_vitality + ".")
-    elseIf code_return == CODES.IS_DEFAULT
+    elseIf code_return == CODES.IS_MORTAL
         LOGS.Create_Note(str_name + " is already " + str_vitality + ".")
-    elseIf code_return == CODES.IS_WARRIOR
+    elseIf code_return == CODES.IS_PROTECTED
         LOGS.Create_Note(str_name + " is already " + str_vitality + ".")
-    elseIf code_return == CODES.IS_MAGE
+    elseIf code_return == CODES.IS_ESSENTIAL
         LOGS.Create_Note(str_name + " is already " + str_vitality + ".")
-    elseIf code_return == CODES.IS_ARCHER
+    elseIf code_return == CODES.IS_INVULNERABLE
         LOGS.Create_Note(str_name + " is already " + str_vitality + ".")
     else
         LOGS.Create_Error("It's unknown why " + str_name + " can't be " + str_vitality + ".")

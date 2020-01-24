@@ -150,8 +150,8 @@ function p_Version()
         if Is_NPC_Party_Less_Than(0, 6, 0)
             u_0_6_0()
         endIf
-        if Is_NPC_Party_Less_Than(0, 6, 1)
-            u_0_6_1()
+        if Is_NPC_Party_Less_Than(0, 6, 2)
+            u_0_6_2()
         endIf
 
         VARS.version_major = CONSTS.VERSION_MAJOR
@@ -229,7 +229,7 @@ function u_0_6_0()
     FUNCS.u_0_6_0()
 endFunction
 
-function u_0_6_1()
+function u_0_6_2()
     ;CONTROL.f_Unregister()
     CONTROL.f_Destroy()
     CONTROL.Stop()

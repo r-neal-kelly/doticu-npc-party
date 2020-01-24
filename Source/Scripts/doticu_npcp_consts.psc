@@ -52,11 +52,16 @@ Perk                        p_PERK_VAMPIRE_FEED                     = none
 Perk                        p_PERK_KISS_THRALL                      = none
 Perk                        p_PERK_KILL_ESSENTIAL                   = none
 Perk                        p_PERK_RESURRECT_MEMBER                 = none
+Perk                        p_PERK_UNPARALYZE                       = none
 PlayerVampireQuestScript    p_SCRIPT_PLAYER_VAMPIRE_QUEST           = none
 Keyword                     p_KEYWORD_VAMPIRE                       = none
 Container                   p_CONTAINER_EMPTY                       = none
 Container                   p_CONTAINER_TEMP                        = none
 Container                   p_CONTAINER_OUTFIT                      = none
+Container                   p_CONTAINER_OUTFIT_SETTLER              = none
+Container                   p_CONTAINER_OUTFIT_THRALL               = none
+Container                   p_CONTAINER_OUTFIT_IMMOBILE             = none
+Container                   p_CONTAINER_OUTFIT_FOLLOWER             = none
 Outfit                      p_OUTFIT_EMPTY                          = none
 Outfit                      p_OUTFIT_TEMPLATE                       = none
 Weapon                      p_WEAPON_BLANK                          = none
@@ -76,7 +81,7 @@ endProperty
 
 int property VERSION_PATCH
     int function Get()
-        return 1; set manually upon each release
+        return 2; set manually upon each release
     endFunction
 endProperty
 
@@ -615,6 +620,17 @@ Perk property PERK_RESURRECT_MEMBER
     endFunction
 endProperty
 
+Perk property PERK_UNPARALYZE
+    Perk function Get()
+        return p_PERK_UNPARALYZE
+    endFunction
+    function Set(Perk val)
+        if p_PERK_UNPARALYZE == none
+            p_PERK_UNPARALYZE = val
+        endIf
+    endFunction
+endProperty
+
 PlayerVampireQuestScript property SCRIPT_PLAYER_VAMPIRE_QUEST
     PlayerVampireQuestScript function Get()
         return p_SCRIPT_PLAYER_VAMPIRE_QUEST
@@ -670,6 +686,50 @@ Container property CONTAINER_OUTFIT
     endFunction
 endProperty
 
+Container property CONTAINER_OUTFIT_SETTLER
+    Container function Get()
+        return p_CONTAINER_OUTFIT_SETTLER
+    endFunction
+    function Set(Container val)
+        if p_CONTAINER_OUTFIT_SETTLER == none
+            p_CONTAINER_OUTFIT_SETTLER = val
+        endIf
+    endFunction
+endProperty
+
+Container property CONTAINER_OUTFIT_THRALL
+    Container function Get()
+        return p_CONTAINER_OUTFIT_THRALL
+    endFunction
+    function Set(Container val)
+        if p_CONTAINER_OUTFIT_THRALL == none
+            p_CONTAINER_OUTFIT_THRALL = val
+        endIf
+    endFunction
+endProperty
+
+Container property CONTAINER_OUTFIT_IMMOBILE
+    Container function Get()
+        return p_CONTAINER_OUTFIT_IMMOBILE
+    endFunction
+    function Set(Container val)
+        if p_CONTAINER_OUTFIT_IMMOBILE == none
+            p_CONTAINER_OUTFIT_IMMOBILE = val
+        endIf
+    endFunction
+endProperty
+
+Container property CONTAINER_OUTFIT_FOLLOWER
+    Container function Get()
+        return p_CONTAINER_OUTFIT_FOLLOWER
+    endFunction
+    function Set(Container val)
+        if p_CONTAINER_OUTFIT_FOLLOWER == none
+            p_CONTAINER_OUTFIT_FOLLOWER = val
+        endIf
+    endFunction
+endProperty
+
 Outfit property OUTFIT_EMPTY
     Outfit function Get()
         return p_OUTFIT_EMPTY
@@ -692,54 +752,115 @@ Weapon property WEAPON_BLANK
     endFunction
 endProperty
 
-string property STR_HEALTH              = "Health"          autoReadOnly hidden
-string property STR_MAGICKA             = "Magicka"         autoReadOnly hidden
-string property STR_STAMINA             = "Stamina"         autoReadOnly hidden
-string property STR_ONE_HANDED          = "OneHanded"       autoReadOnly hidden
-string property STR_TWO_HANDED          = "TwoHanded"       autoReadOnly hidden
-string property STR_BLOCK               = "Block"           autoReadOnly hidden
-string property STR_HEAVY_ARMOR         = "HeavyArmor"      autoReadOnly hidden
-string property STR_LIGHT_ARMOR         = "LightArmor"      autoReadOnly hidden
-string property STR_SMITHING            = "Smithing"        autoReadOnly hidden
-string property STR_DESTRUCTION         = "Destruction"     autoReadOnly hidden
-string property STR_RESTORATION         = "Restoration"     autoReadOnly hidden
-string property STR_CONJURATION         = "Conjuration"     autoReadOnly hidden
-string property STR_ALTERATION          = "Alteration"      autoReadOnly hidden
-string property STR_ILLUSION            = "Illusion"        autoReadOnly hidden
-string property STR_ENCHANTING          = "Enchanting"      autoReadOnly hidden
-string property STR_MARKSMAN            = "Marksman"        autoReadOnly hidden
-string property STR_SNEAK               = "Sneak"           autoReadOnly hidden
-string property STR_ALCHEMY             = "Alchemy"         autoReadOnly hidden
-string property STR_LOCKPICKING         = "Lockpicking"     autoReadOnly hidden
-string property STR_PICKPOCKET          = "Pickpocket"      autoReadOnly hidden
-string property STR_SPEECHCRAFT         = "Speechcraft"     autoReadOnly hidden
+string property STR_HEALTH                  = "Health"                      autoReadOnly hidden
+string property STR_MAGICKA                 = "Magicka"                     autoReadOnly hidden
+string property STR_STAMINA                 = "Stamina"                     autoReadOnly hidden
+string property STR_ONE_HANDED              = "OneHanded"                   autoReadOnly hidden
+string property STR_TWO_HANDED              = "TwoHanded"                   autoReadOnly hidden
+string property STR_BLOCK                   = "Block"                       autoReadOnly hidden
+string property STR_HEAVY_ARMOR             = "HeavyArmor"                  autoReadOnly hidden
+string property STR_LIGHT_ARMOR             = "LightArmor"                  autoReadOnly hidden
+string property STR_SMITHING                = "Smithing"                    autoReadOnly hidden
+string property STR_DESTRUCTION             = "Destruction"                 autoReadOnly hidden
+string property STR_RESTORATION             = "Restoration"                 autoReadOnly hidden
+string property STR_CONJURATION             = "Conjuration"                 autoReadOnly hidden
+string property STR_ALTERATION              = "Alteration"                  autoReadOnly hidden
+string property STR_ILLUSION                = "Illusion"                    autoReadOnly hidden
+string property STR_ENCHANTING              = "Enchanting"                  autoReadOnly hidden
+string property STR_MARKSMAN                = "Marksman"                    autoReadOnly hidden
+string property STR_SNEAK                   = "Sneak"                       autoReadOnly hidden
+string property STR_ALCHEMY                 = "Alchemy"                     autoReadOnly hidden
+string property STR_LOCKPICKING             = "Lockpicking"                 autoReadOnly hidden
+string property STR_PICKPOCKET              = "Pickpocket"                  autoReadOnly hidden
+string property STR_SPEECHCRAFT             = "Speechcraft"                 autoReadOnly hidden
 
-string property STR_MCM_SUMMON          = " Summon "        autoReadOnly hidden
-string property STR_MCM_OUTFIT          = " Outfit "        autoReadOnly hidden
-string property STR_MCM_CURRENT         = " Current "       autoReadOnly hidden
-string property STR_MCM_MEMBER          = " Member "        autoReadOnly hidden
-string property STR_MCM_SETTLER         = " Settler "       autoReadOnly hidden
-string property STR_MCM_THRALL          = " Thrall "        autoReadOnly hidden
-string property STR_MCM_IMMOBILE        = " Immobile "      autoReadOnly hidden
-string property STR_MCM_FOLLOWER        = " Follower "      autoReadOnly hidden
-string property STR_MCM_SETTLE          = " Settle "        autoReadOnly hidden
-string property STR_MCM_RESETTLE        = " Resettle "      autoReadOnly hidden
-string property STR_MCM_UNSETTLE        = " Unsettle "      autoReadOnly hidden
-string property STR_MCM_IMMOBILIZE      = " Immobilize "    autoReadOnly hidden
-string property STR_MCM_MOBILIZE        = " Mobilize "      autoReadOnly hidden
-string property STR_MCM_PARALYZE        = " Paralyze "      autoReadOnly hidden
-string property STR_MCM_UNPARALYZE      = " Unparalyze "    autoReadOnly hidden
-string property STR_MCM_FOLLOW          = " Follow "        autoReadOnly hidden
-string property STR_MCM_UNFOLLOW        = " Unfollow "      autoReadOnly hidden
-string property STR_MCM_SNEAK           = " Sneak "         autoReadOnly hidden
-string property STR_MCM_UNSNEAK         = " Unsneak "       autoReadOnly hidden
-string property STR_MCM_RELEVEL         = " Relevel "       autoReadOnly hidden
-string property STR_MCM_RESURRECT       = " Resurrect "     autoReadOnly hidden
-string property STR_MCM_DEFAULT         = " Default "       autoReadOnly hidden
-String property STR_MCM_WARRIOR         = " Warrior "       autoReadOnly hidden
-String property STR_MCM_MAGE            = " Mage "          autoReadOnly hidden
-String property STR_MCM_ARCHER          = " Archer "        autoReadOnly hidden
-string property STR_MCM_MORTAL          = " Mortal "        autoReadOnly hidden
-String property STR_MCM_PROTECTED       = " Protected "     autoReadOnly hidden
-String property STR_MCM_ESSENTIAL       = " Essential "     autoReadOnly hidden
-String property STR_MCM_INVULNERABLE    = " Invulnerable "  autoReadOnly hidden
+string property STR_MCM_SUMMON              = " Summon "                    autoReadOnly hidden
+string property STR_MCM_OUTFIT              = " Outfit "                    autoReadOnly hidden
+string property STR_MCM_CURRENT             = " Current "                   autoReadOnly hidden
+string property STR_MCM_MEMBER              = " Member "                    autoReadOnly hidden
+string property STR_MCM_SETTLER             = " Settler "                   autoReadOnly hidden
+string property STR_MCM_THRALL              = " Thrall "                    autoReadOnly hidden
+string property STR_MCM_IMMOBILE            = " Immobile "                  autoReadOnly hidden
+string property STR_MCM_FOLLOWER            = " Follower "                  autoReadOnly hidden
+string property STR_MCM_SETTLE              = " Settle "                    autoReadOnly hidden
+string property STR_MCM_RESETTLE            = " Resettle "                  autoReadOnly hidden
+string property STR_MCM_UNSETTLE            = " Unsettle "                  autoReadOnly hidden
+string property STR_MCM_IMMOBILIZE          = " Immobilize "                autoReadOnly hidden
+string property STR_MCM_MOBILIZE            = " Mobilize "                  autoReadOnly hidden
+string property STR_MCM_PARALYZE            = " Paralyze "                  autoReadOnly hidden
+string property STR_MCM_UNPARALYZE          = " Unparalyze "                autoReadOnly hidden
+string property STR_MCM_FOLLOW              = " Follow "                    autoReadOnly hidden
+string property STR_MCM_UNFOLLOW            = " Unfollow "                  autoReadOnly hidden
+string property STR_MCM_SNEAK               = " Sneak "                     autoReadOnly hidden
+string property STR_MCM_UNSNEAK             = " Unsneak "                   autoReadOnly hidden
+string property STR_MCM_RELEVEL             = " Relevel "                   autoReadOnly hidden
+string property STR_MCM_RESURRECT           = " Resurrect "                 autoReadOnly hidden
+string property STR_MCM_DEFAULT             = " Default "                   autoReadOnly hidden
+string property STR_MCM_WARRIOR             = " Warrior "                   autoReadOnly hidden
+string property STR_MCM_MAGE                = " Mage "                      autoReadOnly hidden
+string property STR_MCM_ARCHER              = " Archer "                    autoReadOnly hidden
+string property STR_MCM_MORTAL              = " Mortal "                    autoReadOnly hidden
+string property STR_MCM_PROTECTED           = " Protected "                 autoReadOnly hidden
+string property STR_MCM_ESSENTIAL           = " Essential "                 autoReadOnly hidden
+string property STR_MCM_INVULNERABLE        = " Invulnerable "              autoReadOnly hidden
+
+string property STR_KEY_FS_SUMMON_ALL       = "Summon All Followers"        autoReadOnly hidden
+string property STR_KEY_FS_SUMMON_MOBILE    = "Summon Mobile Followers"     autoReadOnly hidden
+string property STR_KEY_FS_SUMMON_IMMOBILE  = "Summon Immobile Followers"   autoReadOnly hidden
+string property STR_KEY_FS_SETTLE           = "Settle Followers"            autoReadOnly hidden
+string property STR_KEY_FS_UNSETTLE         = "Unsettle Followers"          autoReadOnly hidden
+string property STR_KEY_FS_IMMOBILIZE       = "Immobilize Followers"        autoReadOnly hidden
+string property STR_KEY_FS_MOBILIZE         = "Mobilize Followers"          autoReadOnly hidden
+string property STR_KEY_FS_SNEAK            = "Sneak Followers"             autoReadOnly hidden
+string property STR_KEY_FS_UNSNEAK          = "Unsneak Followers"           autoReadOnly hidden
+string property STR_KEY_FS_RESURRECT        = "Resurrect Followers"         autoReadOnly hidden
+
+string property STR_KEY_MS_DISPLAY_TOGGLE   = "Toggle Member Display"       autoReadOnly hidden
+string property STR_KEY_MS_DISPLAY_PREVIOUS = "Display Previous Members"    autoReadOnly hidden
+string property STR_KEY_MS_DISPLAY_NEXT     = "Display Next Members"        autoReadOnly hidden
+
+string property STR_KEY_MOVE_TOGGLE         = "Toggle Move"                 autoReadOnly hidden
+string property STR_KEY_MOVE_FARTHER        = "Move Farther"                autoReadOnly hidden
+string property STR_KEY_MOVE_NEARER         = "Move Nearer"                 autoReadOnly hidden
+string property STR_KEY_MOVE_ROTATE_RIGHT   = "Rotate Right"                autoReadOnly hidden
+string property STR_KEY_MOVE_ROTATE_LEFT    = "Rotate Left"                 autoReadOnly hidden
+
+string property STR_KEY_M_TOGGLE_MEMBER     = "Toggle Member"               autoReadOnly hidden
+string property STR_KEY_M_TOGGLE_CLONE      = "Toggle Clone"                autoReadOnly hidden
+string property STR_KEY_M_TOGGLE_SETTLER    = "Toggle Settler"              autoReadOnly hidden
+string property STR_KEY_M_TOGGLE_THRALL     = "Toggle Thrall"               autoReadOnly hidden
+string property STR_KEY_M_TOGGLE_IMMOBILE   = "Toggle Immobile"             autoReadOnly hidden
+string property STR_KEY_M_TOGGLE_PARALYZED  = "Toggle Paralyzed"            autoReadOnly hidden
+string property STR_KEY_M_TOGGLE_FOLLOWER   = "Toggle Follower"             autoReadOnly hidden
+string property STR_KEY_M_TOGGLE_SNEAK      = "Toggle Sneak"                autoReadOnly hidden
+
+
+int property KEY_DEF_FS_SUMMON_ALL          =  53   autoReadOnly hidden; Forward Slash
+int property KEY_DEF_FS_SUMMON_MOBILE       =  51   autoReadOnly hidden; Comma
+int property KEY_DEF_FS_SUMMON_IMMOBILE     =  52   autoReadOnly hidden; Period
+int property KEY_DEF_FS_SETTLE              =  39   autoReadOnly hidden; Semicolon
+int property KEY_DEF_FS_UNSETTLE            =  40   autoReadOnly hidden; Apostrophe
+int property KEY_DEF_FS_IMMOBILIZE          =  13   autoReadOnly hidden; Equals
+int property KEY_DEF_FS_MOBILIZE            =  12   autoReadOnly hidden; Minus
+int property KEY_DEF_FS_SNEAK               =  10   autoReadOnly hidden; 9
+int property KEY_DEF_FS_UNSNEAK             =  11   autoReadOnly hidden; 0
+int property KEY_DEF_FS_RESURRECT           =  14   autoReadOnly hidden; Backspace
+
+int property KEY_DEF_MS_DISPLAY_TOGGLE      =  43   autoReadOnly hidden; Back Slash
+int property KEY_DEF_MS_DISPLAY_PREVIOUS    =  26   autoReadOnly hidden; Left Bracket
+int property KEY_DEF_MS_DISPLAY_NEXT        =  27   autoReadOnly hidden; Right Bracket
+
+int property KEY_DEF_MOVE_TOGGLE            =  56   autoReadOnly hidden; Left Alt
+int property KEY_DEF_MOVE_FARTHER           = 200   autoReadOnly hidden; Up Arrow
+int property KEY_DEF_MOVE_NEARER            = 208   autoReadOnly hidden; Down Arrow
+int property KEY_DEF_MOVE_ROTATE_RIGHT      = 205   autoReadOnly hidden; Right Arrow
+int property KEY_DEF_MOVE_ROTATE_LEFT       = 203   autoReadOnly hidden; Left Arrow
+
+int property KEY_DEF_M_TOGGLE_MEMBER        =  78   autoReadOnly hidden; NUM+
+int property KEY_DEF_M_TOGGLE_CLONE         = 156   autoReadOnly hidden; NUM Enter
+int property KEY_DEF_M_TOGGLE_SETTLER       =  82   autoReadOnly hidden; NUM0
+int property KEY_DEF_M_TOGGLE_THRALL        =  73   autoReadOnly hidden; NUM9
+int property KEY_DEF_M_TOGGLE_IMMOBILE      =  83   autoReadOnly hidden; NUM.
+int property KEY_DEF_M_TOGGLE_PARALYZED     = 181   autoReadOnly hidden; NUM/
+int property KEY_DEF_M_TOGGLE_FOLLOWER      =  55   autoReadOnly hidden; NUM*
+int property KEY_DEF_M_TOGGLE_SNEAK         =  74   autoReadOnly hidden; NUM-

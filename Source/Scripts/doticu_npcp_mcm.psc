@@ -10,6 +10,11 @@ doticu_npcp_vars property VARS hidden
         return p_DATA.VARS
     endFunction
 endProperty
+doticu_npcp_keys property KEYS hidden
+    doticu_npcp_keys function Get()
+        return p_DATA.MODS.CONTROL.KEYS
+    endFunction
+endProperty
 doticu_npcp_mcm_followers property MCM_FOLLOWERS
     doticu_npcp_mcm_followers function Get()
         return (self as Quest) as doticu_npcp_mcm_followers
@@ -131,6 +136,12 @@ endFunction
 
 string function f_Get_Current_Page()
     return p_str_curr_page
+endFunction
+
+; Public Methods
+string function GetCustomControl(int code_key)
+    ; even though this is overridden, MCM will still return lower conflicts
+    return KEYS.Get_Control(code_key)
 endFunction
 
 ; Events
@@ -280,6 +291,20 @@ event OnOptionKeymapChange(int id_option, int code_key, string str_conflict_cont
         MCM_SETTINGS.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
     elseIf p_str_curr_page == PAGE_LOG
         MCM_LOG.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
+    endIf
+endEvent
+
+event OnOptionDefault(int id_option)
+    if p_str_curr_page == PAGE_FOLLOWERS
+        MCM_FOLLOWERS.f_On_Option_Default(id_option)
+    elseIf p_str_curr_page == PAGE_MEMBERS
+        MCM_MEMBERS.f_On_Option_Default(id_option)
+    elseIf p_str_curr_page == PAGE_FILTER
+        MCM_FILTER.f_On_Option_Default(id_option)
+    elseIf p_str_curr_page == PAGE_SETTINGS
+        MCM_SETTINGS.f_On_Option_Default(id_option)
+    elseIf p_str_curr_page == PAGE_LOG
+        MCM_LOG.f_On_Option_Default(id_option)
     endIf
 endEvent
 

@@ -559,6 +559,9 @@ endFunction
 function f_On_Option_Keymap_Change(int id_option, int code_key, string str_conflict_control, string str_conflict_mod)
 endFunction
 
+function f_On_Option_Default(int id_option)
+endFunction
+
 ; Private Methods
 function p_Go_Back()
     if p_code_view == CODES.VIEW_MEMBER

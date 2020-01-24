@@ -30,6 +30,7 @@ bool                p_force_unclone_unique  = false
 bool                p_force_unclone_generic = false
 bool                p_auto_resurrect        = false
 bool                p_auto_outfit           = false
+bool                p_fill_outfits          = false
 int                 p_auto_style            =    -1
 int                 p_auto_vitality         =    -1
 int                 p_num_display           =    -1
@@ -50,7 +51,7 @@ int property key_fs_unfollow                =    -1 auto hidden
 int property key_fs_unmember                =    -1 auto hidden
 
 ; Members Display
-int property key_ms_toggle_display          =    -1 auto hidden
+int property key_ms_display_toggle          =    -1 auto hidden
 int property key_ms_display_next            =    -1 auto hidden
 int property key_ms_display_previous        =    -1 auto hidden
 
@@ -188,6 +189,15 @@ bool property auto_outfit hidden
     endFunction
 endProperty
 
+bool property fill_outfits hidden
+    bool function Get()
+        return p_fill_outfits
+    endFunction
+    function Set(bool val)
+        p_fill_outfits = val
+    endFunction
+endProperty
+
 int property auto_style hidden
     int function Get()
         return p_auto_style
@@ -252,6 +262,7 @@ function Set_Defaults()
     force_unclone_generic = true
     auto_resurrect = true
     auto_outfit = true
+    fill_outfits = true
     auto_style = CODES.IS_DEFAULT; IS_DEFAULT, IS_WARRIOR, IS_MAGE, IS_ARCHER
     auto_vitality = CODES.IS_PROTECTED; IS_MORTAL, IS_PROTECTED, IS_ESSENTIAL, IS_INVULNERABLE
     num_display = 5

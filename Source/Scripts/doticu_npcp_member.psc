@@ -127,8 +127,9 @@ function p_Create(doticu_npcp_data DATA, int id_alias, bool is_clone, Actor ref_
     p_marker_display = none
     p_outfit_member = CONSTS.FORMLIST_OUTFITS.GetAt(p_id_alias) as Outfit
 
-    p_Create_Containers()
     p_Create_Queues()
+    p_Create_Containers()
+    p_Create_Outfits()
     p_Backup()
     
     p_Member()
@@ -141,7 +142,7 @@ function p_Create(doticu_npcp_data DATA, int id_alias, bool is_clone, Actor ref_
     endIf
 
     p_Register_Queues()
-    p_Enqueue("Member.Create_Outfits")
+    p_Enqueue("Member.Outfit")
 endFunction
 
 function f_Destroy()
@@ -289,22 +290,23 @@ endFunction
 function p_Create_Outfits()
     f_Lock_Resources()
 
-        ; for settler, thrall, immobile, and follower, we can actually add some basic gear, so they are not naked.
         p_outfit2_member = OUTFITS.Create(p_outfit_member)
-        p_outfit2_settler = OUTFITS.Create(p_outfit_member)
-        p_outfit2_thrall = OUTFITS.Create(p_outfit_member)
-        p_outfit2_immobile = OUTFITS.Create(p_outfit_member)
-        p_outfit2_follower = OUTFITS.Create(p_outfit_member)
+
+        if VARS.fill_outfits
+            p_outfit2_member.Get(p_ref_actor, p_container2_pack)
+
+            p_outfit2_settler = OUTFITS.Create_Settler(p_outfit_member)
+            p_outfit2_thrall = OUTFITS.Create_Thrall(p_outfit_member)
+            p_outfit2_immobile = OUTFITS.Create_Immobile(p_outfit_member)
+            p_outfit2_follower = OUTFITS.Create_Follower(p_outfit_member)
+        else
+            p_outfit2_settler = OUTFITS.Create(p_outfit_member)
+            p_outfit2_thrall = OUTFITS.Create(p_outfit_member)
+            p_outfit2_immobile = OUTFITS.Create(p_outfit_member)
+            p_outfit2_follower = OUTFITS.Create(p_outfit_member)
+        endIf
+
         p_outfit2_current = p_outfit2_member
-
-        p_outfit2_member.Get(p_ref_actor)
-        p_outfit2_member.Transfer_Inventory(p_ref_actor, p_container2_pack)
-
-    f_Unlock_Resources()
-
-    p_Outfit()
-
-    f_Lock_Resources()
 
         p_prev_outfit2_member = OUTFITS.Create(p_outfit_member)
         p_prev_outfit2_member.Copy(p_outfit2_member)
@@ -358,8 +360,6 @@ function p_Restore()
         p_ref_actor.SetCrimeFaction(p_prev_faction_crime)
 
         p_prev_outfit2_member.Set(p_ref_actor); instead of this, we might set the outfit to GetOutfit on base actor.
-
-        ACTORS.Vitalize(p_ref_actor, p_prev_vitality)
 
     f_Unlock_Resources()
 endFunction
@@ -611,8 +611,6 @@ function p_Vitalize()
             ACTORS.Token(p_ref_actor, CONSTS.TOKEN_VITALITY_INVULNERABLE)
         endIf
 
-        ACTORS.Vitalize(p_ref_actor, p_code_vitality)
-
         p_ref_actor.EvaluatePackage()
 
     f_Unlock_Resources()
@@ -663,7 +661,7 @@ function p_Outfit()
         endIf
 
         p_outfit2_current.Set(p_ref_actor)
-        p_outfit2_current.Update_Base(p_ref_actor)
+        p_prev_outfit2_member.Update_Base(p_ref_actor)
 
         p_ref_actor.EvaluatePackage()
 
@@ -690,6 +688,8 @@ function p_Resurrect()
         p_ref_actor.EvaluatePackage()
 
     f_Unlock_Resources()
+
+    p_Outfit()
 endFunction
 
 function p_Rename(string str_name)
@@ -743,7 +743,7 @@ int function Enforce()
     endIf
     p_Enqueue("Member.Style")
     p_Enqueue("Member.Vitalize")
-    p_Enqueue("Member.Outfit"); maybe we shouldn't always enforce this, but only in strategic paths?
+    p_Enqueue("Member.Outfit")
 
     if Is_Follower()
         Get_Follower().f_Enforce()
@@ -1622,6 +1622,7 @@ bool function Is_Unsneak()
 endFunction
 
 bool function Is_Follower()
+    ; we might want to check a bool to avoid any latency issues
     return Exists() && FOLLOWERS.Has_Follower(p_ref_actor)
 endFunction
 
@@ -1686,8 +1687,6 @@ endState
 event On_Queue_Member(string str_message)
     if p_queue_member.Should_Cancel()
 
-    elseIf str_message == "Member.Create_Outfits"
-        p_Create_Outfits()
     elseIf str_message == "Member.Member"
         p_Member()
     elseIf str_message == "Member.Pack"
@@ -1752,11 +1751,6 @@ event On_Members_Unmember()
     endIf
 endEvent
 
-event OnActivate(ObjectReference ref_activator)
-    Enforce()
-    ; maybe we could also pop up some basic stats on screen?
-endEvent
-
 event OnLoad()
     if Is_Paralyzed()
         p_Reparalyze()
@@ -1767,6 +1761,23 @@ endEvent
 event On_Load_Mod()
     if Is_Paralyzed()
         p_Reparalyze()
+    endIf
+endEvent
+
+event OnActivate(ObjectReference ref_activator)
+    Enforce()
+    ; maybe we could also pop up some basic stats on screen?
+endEvent
+
+event OnHit(ObjectReference ref_attacker, Form _, Projectile __, bool ___, bool ____, bool _____, bool ______)
+    if !p_ref_actor.IsDead() && p_ref_actor.GetActorValue(CONSTS.STR_HEALTH) <= 0
+        if p_code_vitality == CODES.IS_MORTAL || p_code_vitality == CODES.IS_PROTECTED && ref_attacker == CONSTS.ACTOR_PLAYER
+            Clear()
+            ACTORS.Kill(p_ref_actor)
+            ForceRefTo(p_ref_actor)
+        endIf
+    elseIf p_code_vitality == CODES.IS_INVULNERABLE
+        p_ref_actor.RestoreActorValue(CONSTS.STR_HEALTH, 99999)
     endIf
 endEvent
 

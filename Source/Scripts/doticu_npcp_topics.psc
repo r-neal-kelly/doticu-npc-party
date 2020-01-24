@@ -113,6 +113,10 @@ function Mobilize(ObjectReference ref_object)
     (GetOwningQuest() as doticu_npcp_commands).Mobilize_Sync(ref_object as Actor, false)
 endFunction
 
+function Paralyze(ObjectReference ref_object)
+    (GetOwningQuest() as doticu_npcp_commands).Paralyze_Sync(ref_object as Actor, false)
+endFunction
+
 ; Follower Topics
 function Follow(ObjectReference ref_object)
     (GetOwningQuest() as doticu_npcp_commands).Follow_Sync(ref_object as Actor, false)

@@ -270,6 +270,13 @@ function f_On_Option_Keymap_Change(int id_option, int code_key, string str_confl
     endIf
 endFunction
 
+function f_On_Option_Default(int id_option)
+    if p_code_view == CODES.VIEW_FOLLOWER
+        MCM.MCM_MEMBER.f_On_Option_Default(id_option)
+        return
+    endIf
+endFunction
+
 ; Private Methods
 int function p_Get_Idx_Entity(int id_option)
     int id_option_norm = id_option - p_options_offset - p_HEADERS_PER_PAGE

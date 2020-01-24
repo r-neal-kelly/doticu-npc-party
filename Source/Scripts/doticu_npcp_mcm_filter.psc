@@ -34,9 +34,6 @@ endFunction
 function f_Unregister()
 endFunction
 
-function f_Build_Page()
-endFunction
-
 function f_On_Option_Select(int id_option)
 endFunction
 
@@ -58,7 +55,17 @@ endFunction
 function f_On_Option_Keymap_Change(int id_option, int code_key, string str_conflict_control, string str_conflict_mod)
 endFunction
 
+function f_On_Option_Default(int id_option)
+endFunction
+
 function f_On_Option_Highlight(int id_option)
+endFunction
+
+; should be able to request an array with filter variables
+; and maybe should cache it, but it gets complicated at that point
+; but it's slow without it. there are options, but this will wait
+function f_Build_Page()
+    MCM.SetTitleText(" Filter ")
 endFunction
 
 ; Private Methods
@@ -67,13 +74,3 @@ endFunction
 
 int function p_Get_Idx_Command(int id_option, int idx_entity)
 endFunction
-
-; Private States
-auto state p_STATE_FILTER
-    ; should be able to request an array with filter variables
-    ; and maybe should cache it, but it gets complicated at that point
-    ; but it's slow without it. there are options, but this will wait
-    function f_Build_Page()
-        MCM.SetTitleText(" Filter ")
-    endFunction
-endState
