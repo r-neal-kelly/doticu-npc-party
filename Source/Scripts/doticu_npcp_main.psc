@@ -153,6 +153,9 @@ function p_Version()
         if Is_NPC_Party_Less_Than(0, 6, 2)
             u_0_6_2()
         endIf
+        if Is_NPC_Party_Less_Than(0, 6, 3)
+            u_0_6_3()
+        endIf
 
         VARS.version_major = CONSTS.VERSION_MAJOR
         VARS.version_minor = CONSTS.VERSION_MINOR
@@ -236,6 +239,9 @@ function u_0_6_2()
     CONTROL.Start()
     CONTROL.f_Create(DATA)
     CONTROL.f_Register()
+endFunction
+
+function u_0_6_3()
 endFunction
 
 ; Events

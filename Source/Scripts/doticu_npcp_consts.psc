@@ -50,8 +50,7 @@ Faction                     p_FACTION_WI_NO_BODY_CLEANUP            = none
 Faction                     p_FACTION_CURRENT_FOLLOWER              = none
 Perk                        p_PERK_VAMPIRE_FEED                     = none
 Perk                        p_PERK_KISS_THRALL                      = none
-Perk                        p_PERK_KILL_ESSENTIAL                   = none
-Perk                        p_PERK_RESURRECT_MEMBER                 = none
+Perk                        p_PERK_RESURRECT                        = none
 Perk                        p_PERK_UNPARALYZE                       = none
 PlayerVampireQuestScript    p_SCRIPT_PLAYER_VAMPIRE_QUEST           = none
 Keyword                     p_KEYWORD_VAMPIRE                       = none
@@ -598,24 +597,13 @@ Perk property PERK_KISS_THRALL
     endFunction
 endProperty
 
-Perk property PERK_KILL_ESSENTIAL
+Perk property PERK_RESURRECT
     Perk function Get()
-        return p_PERK_KILL_ESSENTIAL
+        return p_PERK_RESURRECT
     endFunction
     function Set(Perk val)
-        if p_PERK_KILL_ESSENTIAL == none
-            p_PERK_KILL_ESSENTIAL = val
-        endIf
-    endFunction
-endProperty
-
-Perk property PERK_RESURRECT_MEMBER
-    Perk function Get()
-        return p_PERK_RESURRECT_MEMBER
-    endFunction
-    function Set(Perk val)
-        if p_PERK_RESURRECT_MEMBER == none
-            p_PERK_RESURRECT_MEMBER = val
+        if p_PERK_RESURRECT == none
+            p_PERK_RESURRECT = val
         endIf
     endFunction
 endProperty

@@ -15,14 +15,9 @@ doticu_npcp_perk_kiss property KISS
         return p_DATA.CONSTS.PERK_KISS_THRALL as doticu_npcp_perk_kiss
     endFunction
 endProperty
-doticu_npcp_perk_kill property KILL
-    doticu_npcp_perk_kill function Get()
-        return p_DATA.CONSTS.PERK_KILL_ESSENTIAL as doticu_npcp_perk_kill
-    endFunction
-endProperty
 doticu_npcp_perk_resurrect property RESURRECT
     doticu_npcp_perk_resurrect function Get()
-        return p_DATA.CONSTS.PERK_RESURRECT_MEMBER as doticu_npcp_perk_resurrect
+        return p_DATA.CONSTS.PERK_RESURRECT as doticu_npcp_perk_resurrect
     endFunction
 endProperty
 doticu_npcp_perk_unparalyze property UNPARALYZE
@@ -44,12 +39,10 @@ function f_Create(doticu_npcp_data DATA)
     p_is_created = true
 
     Add_Perk(CONSTS.PERK_KISS_THRALL)
-    Add_Perk(CONSTS.PERK_KILL_ESSENTIAL)
-    Add_Perk(CONSTS.PERK_RESURRECT_MEMBER)
+    Add_Perk(CONSTS.PERK_RESURRECT)
     Add_Perk(CONSTS.PERK_UNPARALYZE)
 
     KISS.f_Create(p_DATA)
-    KILL.f_Create(p_DATA)
     RESURRECT.f_Create(p_DATA)
     UNPARALYZE.f_Create(p_DATA)
 endFunction
@@ -57,12 +50,10 @@ endFunction
 function f_Destroy()
     UNPARALYZE.f_Destroy()
     RESURRECT.f_Destroy()
-    KILL.f_Destroy()
     KISS.f_Destroy()
 
     Remove_Perk(CONSTS.PERK_UNPARALYZE)
-    Remove_Perk(CONSTS.PERK_RESURRECT_MEMBER)
-    Remove_Perk(CONSTS.PERK_KILL_ESSENTIAL)
+    Remove_Perk(CONSTS.PERK_RESURRECT)
     Remove_Perk(CONSTS.PERK_KISS_THRALL)
 
     p_is_created = false
@@ -70,7 +61,6 @@ endFunction
 
 function f_Register()
     KISS.f_Register()
-    KILL.f_Register()
     RESURRECT.f_Register()
     UNPARALYZE.f_Register()
 endFunction
