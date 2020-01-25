@@ -257,9 +257,9 @@ function Set_Defaults()
     version_minor = CONSTS.VERSION_MINOR
     version_patch = CONSTS.VERSION_PATCH
     force_clone_unique = false
-    force_clone_generic = true
+    force_clone_generic = false
     force_unclone_unique = false
-    force_unclone_generic = true
+    force_unclone_generic = false
     auto_resurrect = true
     auto_outfit = true
     fill_outfits = true

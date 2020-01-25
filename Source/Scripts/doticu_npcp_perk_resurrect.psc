@@ -63,5 +63,5 @@ function Resurrect_Member(ObjectReference ref_target, Actor _)
         return
     endIf
 
-    COMMANDS.Resurrect_Async(ref_actor, false)
+    COMMANDS.Resurrect_Sync(ref_actor, false); async has the message appear faster
 endFunction

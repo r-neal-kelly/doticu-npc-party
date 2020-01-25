@@ -1765,8 +1765,15 @@ event On_Load_Mod()
 endEvent
 
 event OnActivate(ObjectReference ref_activator)
-    Enforce()
     ; maybe we could also pop up some basic stats on screen?
+
+    if Is_Alive()
+        Enforce()
+    else
+        ;p_outfit2_current.Put()
+        ;p_ref_actor.OpenInventory(true)
+        ; maybe we could use a func within outfit that will help to update if armor is removed
+    endIf
 endEvent
 
 event OnHit(ObjectReference ref_attacker, Form _, Projectile __, bool ___, bool ____, bool _____, bool ______)
