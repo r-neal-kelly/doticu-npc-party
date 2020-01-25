@@ -25,9 +25,9 @@ doticu_npcp_actors property ACTORS hidden
         return p_DATA.MODS.FUNCS.ACTORS
     endFunction
 endProperty
-doticu_npcp_cloner property CLONER hidden
-    doticu_npcp_cloner function Get()
-        return p_DATA.MODS.FUNCS.CLONER
+doticu_npcp_npcs property NPCS hidden
+    doticu_npcp_npcs function Get()
+        return p_DATA.MODS.FUNCS.NPCS
     endFunction
 endProperty
 doticu_npcp_tasklists property TASKLISTS hidden
@@ -147,7 +147,7 @@ int function p_Create_Member(Actor ref_actor, bool do_clone = false)
 
     if do_clone
         ref_actor_orig = ref_actor
-        ref_actor = CLONER.Create(ref_actor)
+        ref_actor = NPCS.Clone(ref_actor)
         if !ref_actor
             return CODES.CANT_CLONE
         endIf
@@ -159,6 +159,7 @@ int function p_Create_Member(Actor ref_actor, bool do_clone = false)
                 return CODES.CANT_RESURRECT
             endIf
         endIf
+        NPCS.Register(ref_actor)
     endIf
 
     code_return = ALIASES.Create_Alias(ref_actor)
@@ -213,8 +214,8 @@ int function p_Destroy_Member(Actor ref_actor, bool delete_clone = false)
         delete_clone = true
     endIf
 
-    if is_clone
-        CLONER.Destroy(ref_actor, delete_clone)
+    if is_clone && delete_clone
+        NPCS.Unclone(ref_actor)
     endIf
 
     return CODES.SUCCESS
@@ -440,17 +441,6 @@ function p_Undisplay_Aliases(Alias[] arr_aliases)
         (arr_aliases[idx_aliases] as doticu_npcp_member).Undisplay()
         idx_aliases += 1
     endWhile
-endFunction
-
-; Update Methods
-function u_0_3_0()
-    ALIASES.u_0_3_0()
-    f_Register()
-endFunction
-
-function u_0_4_0()
-    ALIASES.u_0_4_0()
-    f_Register()
 endFunction
 
 ; Private States

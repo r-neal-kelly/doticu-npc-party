@@ -2,7 +2,9 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 /;
 
-Scriptname doticu_npcp_cloner extends Quest
+; we can do a lookup of the base/face of a potential member, to see if we already have them
+
+Scriptname doticu_npcp_npcs extends Quest
 
 ; Modules
 doticu_npcp_consts property CONSTS hidden
@@ -42,6 +44,7 @@ doticu_npcp_data        p_DATA              =  none
 ; Private Variable
 bool                    p_is_created        = false
 doticu_npcp_vector_form p_vec_bases         =  none
+doticu_npcp_vector_form p_vec_outfits       =  none
 doticu_npcp_vector_form p_vec_vec_origs     =  none
 doticu_npcp_vector_form p_vec_vec_clones    =  none
 
@@ -51,6 +54,7 @@ function f_Create(doticu_npcp_data DATA)
 
     p_is_created = true
     p_vec_bases = VECTORS.Create_Form_Vector(8, none, 1.5)
+    p_vec_outfits = VECTORS.Create_Form_Vector(8, none, 1.5)
     p_vec_vec_origs = VECTORS.Create_Form_Vector(8, none, 1.5)
     p_vec_vec_clones = VECTORS.Create_Form_Vector(8, none, 1.5)
 endFunction
@@ -58,6 +62,7 @@ endFunction
 function f_Destroy()
     VECTORS.Destroy_Form_Vector(p_vec_vec_clones)
     VECTORS.Destroy_Form_Vector(p_vec_vec_origs)
+    VECTORS.Destroy_Form_Vector(p_vec_outfits)
     VECTORS.Destroy_Form_Vector(p_vec_bases)
     p_is_created = false
 endFunction
@@ -66,21 +71,6 @@ function f_Register()
 endFunction
 
 ; Private Methods
-function p_Print(Actor ref_actor)
-    int idx_bases = p_vec_bases.Find(ACTORS.Get_Base(ref_actor) as Form)
-    if idx_bases < 0
-        LOGS.Create_Error("CLONER.f_Print() failed to find base_actor")
-        return
-    endIf
-
-    MiscUtil.PrintConsole(" \n")
-    MiscUtil.PrintConsole("Vec_Bases: " + p_vec_bases.Get_Array())
-    MiscUtil.PrintConsole("Vec_Vec_Origs: " + p_vec_vec_origs.Get_Array())
-    MiscUtil.PrintConsole("Vec_Vec_Clones: " + p_vec_vec_clones.Get_Array())
-    MiscUtil.PrintConsole("Vec_Origs: " + (p_vec_vec_origs.At(idx_bases) as doticu_npcp_vector_form).Get_Array())
-    MiscUtil.PrintConsole("Vec_Clones: " + (p_vec_vec_clones.At(idx_bases) as doticu_npcp_vector_form).Get_Array())
-endFunction
-
 bool function p_Has_Base(Actor ref_actor)
     return p_vec_bases.Find(ACTORS.Get_Base(ref_actor) as Form) > -1
 endFunction
@@ -106,6 +96,7 @@ endFunction
 bool function p_Add_Base(Actor ref_actor)
     if !p_Has_Base(ref_actor)
         p_vec_bases.Push(ACTORS.Get_Base(ref_actor) as Form)
+        p_vec_outfits.Push(ACTORS.Get_Leveled_Base(ref_actor).GetOutfit() as Form); generic only has outfit on leveled
         p_vec_vec_origs.Push(VECTORS.Create_Form_Vector(1, none, 1.5) as Form)
         p_vec_vec_clones.Push(VECTORS.Create_Form_Vector(1, none, 1.5) as Form)
         return true
@@ -118,6 +109,7 @@ bool function p_Remove_Base(Actor ref_actor)
     int idx_bases = p_vec_bases.Find(ACTORS.Get_Base(ref_actor) as Form)
     if idx_bases > -1
         p_vec_bases.Remove_At_Unstable(idx_bases)
+        p_vec_outfits.Remove_At_Unstable(idx_bases)
         p_vec_vec_origs.Remove_At_Unstable(idx_bases)
         p_vec_vec_clones.Remove_At_Unstable(idx_bases)
         return true
@@ -164,15 +156,19 @@ bool function p_Add_Original(Actor ref_actor)
     Form form_ref = ref_actor as Form
     doticu_npcp_vector_form vec_origs
 
+    if !p_Has_Base(ref_actor)
+        p_Add_Base(ref_actor)
+    endIf
+
     int idx_bases = p_vec_bases.Find(form_base)
     if idx_bases < 0
-        LOGS.Create_Error("CLONER.f_Add_Original() failed to find base_actor")
+        LOGS.Create_Error("NPCS.f_Add_Original() failed to find base_actor")
         return false
     endIf
 
     vec_origs = p_vec_vec_origs.At(idx_bases) as doticu_npcp_vector_form
     if !vec_origs
-        LOGS.Create_Error("CLONER.f_Add_Original() failed to find vec_origs")
+        LOGS.Create_Error("NPCS.f_Add_Original() failed to find vec_origs")
         return false
     endIf
 
@@ -189,15 +185,19 @@ bool function p_Add_Clone(Actor ref_clone)
     Form form_ref = ref_clone as Form
     doticu_npcp_vector_form vec_clones
 
+    if !p_Has_Base(ref_clone)
+        p_Add_Base(ref_clone)
+    endIf
+
     int idx_bases = p_vec_bases.Find(form_base)
     if idx_bases < 0
-        LOGS.Create_Error("CLONER.f_Add_Clone() failed to find base_actor")
+        LOGS.Create_Error("NPCS.f_Add_Clone() failed to find base_actor")
         return false
     endIf
 
     vec_clones = p_vec_vec_clones.At(idx_bases) as doticu_npcp_vector_form
     if !vec_clones
-        LOGS.Create_Error("CLONER.f_Add_Clone() failed to find vec_clones")
+        LOGS.Create_Error("NPCS.f_Add_Clone() failed to find vec_clones")
         return false
     endIf
 
@@ -216,13 +216,13 @@ bool function p_Remove_Original(Actor ref_actor)
 
     int idx_bases = p_vec_bases.Find(form_base)
     if idx_bases < 0
-        LOGS.Create_Error("CLONER.f_Remove_Original() failed to find base_actor")
+        LOGS.Create_Error("NPCS.f_Remove_Original() failed to find base_actor")
         return false
     endIf
 
     vec_origs = p_vec_vec_origs.At(idx_bases) as doticu_npcp_vector_form
     if !vec_origs
-        LOGS.Create_Error("CLONER.f_Remove_Original() failed to find vec_origs")
+        LOGS.Create_Error("NPCS.f_Remove_Original() failed to find vec_origs")
         return false
     endIf
 
@@ -242,13 +242,13 @@ bool function p_Remove_Clone(Actor ref_clone)
 
     int idx_bases = p_vec_bases.Find(form_base)
     if idx_bases < 0
-        LOGS.Create_Error("CLONER.f_Remove_Clone() failed to find base_actor")
+        LOGS.Create_Error("NPCS.f_Remove_Clone() failed to find base_actor")
         return false
     endIf
 
     vec_clones = p_vec_vec_clones.At(idx_bases) as doticu_npcp_vector_form
     if !vec_clones
-        LOGS.Create_Error("CLONER.f_Remove_Clone() failed to find vec_clones")
+        LOGS.Create_Error("NPCS.f_Remove_Clone() failed to find vec_clones")
         return false
     endIf
 
@@ -259,6 +259,24 @@ bool function p_Remove_Clone(Actor ref_clone)
     else
         return false
     endIf
+endFunction
+
+function p_Update_Outfits(Outfit base_outfit, Form[] arr_actors)
+    if arr_actors.length == 1 && arr_actors[0] == none
+        return
+    endIf
+
+    int idx_actors = arr_actors.length
+    Actor ref_actor
+    
+    while idx_actors > 0
+        idx_actors -= 1
+        ref_actor = arr_actors[idx_actors] as Actor
+        if ACTORS.Is_Alive(ref_actor) && !MEMBERS.Has_Member(ref_actor)
+            ref_actor.SetOutfit(CONSTS.OUTFIT_EMPTY)
+            ref_actor.SetOutfit(base_outfit)
+        endIf
+    endWhile
 endFunction
 
 bool function p_Has_Same_Head(Actor ref_actor_1, Actor ref_actor_2)
@@ -344,96 +362,118 @@ Actor function p_Clone(Actor ref_actor)
 endFunction
 
 ; Public Methods
-Actor function Create(Actor ref_actor)
+bool function Exists()
+    return p_is_created
+endFunction
+
+function Register(Actor ref_actor)
+    if !ref_actor || Is_Clone(ref_actor)
+        return
+    endIf
+
+    p_Add_Original(ref_actor)
+endFunction
+
+function Unregister(Actor ref_actor); unused atm
+    if !Is_Original(ref_actor)
+        return
+    endIf
+
+    p_Remove_Original(ref_actor)
+    p_Cleanup_Base(ref_actor)
+endFunction
+
+Actor function Clone(Actor ref_actor)
+    if !ref_actor
+        return none
+    endIf
+
     Actor ref_clone = p_Clone(ref_actor)
     if !ref_clone
         return none
     endIf
 
-    p_Add_Base(ref_actor)
     p_Add_Original(ref_actor)
     p_Add_Clone(ref_clone)
 
     return ref_clone
 endFunction
 
-function Destroy(Actor ref_clone, bool do_delete)
-    ; a clone is only removed when deleting, and if
-    ; not deleting at all, it is added to originals.
-    ; this allows for a list of all clones, and for
-    ; clones allowed to exist to have their outfits
-    if do_delete
-        p_Remove_Clone(ref_clone)
-        ref_clone.Disable()
-        ref_clone.Delete()
-    else
-        p_Add_Original(ref_clone)
+function Unclone(Actor ref_clone)
+    if !Is_Clone(ref_clone)
+        return
     endIf
 
-    p_Cleanup_Base(ref_clone)
+    ref_clone.Disable()
+    ref_clone.Delete()
+
+    p_Cleanup_Base(ref_clone); automatically removes deleted actors
 endFunction
 
 bool function Is_Original(Actor ref_actor)
-    return p_Has_Original(ref_actor)
+    return ref_actor && p_Has_Original(ref_actor)
 endFunction
 
 bool function Is_Clone(Actor ref_actor)
-    return p_Has_Clone(ref_actor)
+    return ref_actor && p_Has_Clone(ref_actor)
 endFunction
 
 Form[] function Get_Originals(Actor ref_actor)
     int idx_bases = p_vec_bases.Find(ACTORS.Get_Base(ref_actor) as Form)
     if idx_bases < 0
-        return Utility.CreateFormArray(0, none)
+        return Utility.CreateFormArray(1, none)
     endIf
 
     doticu_npcp_vector_form vec_origs = p_vec_vec_origs.At(idx_bases) as doticu_npcp_vector_form
     if !vec_origs
-        LOGS.Create_Error("CLONER.Get_Originals() failed to find vec_origs")
-        return Utility.CreateFormArray(0, none)
+        LOGS.Create_Error("NPCS.Get_Originals() failed to find vec_origs")
+        return Utility.CreateFormArray(1, none)
     endIf
 
-    Form[] arr_origs = vec_origs.Get_Array()
-    if !arr_origs
-        LOGS.Create_Error("CLONER.Get_Originals() failed to vec_origs.Get_Array()")
-        return Utility.CreateFormArray(0, none)
-    endIf
-
-    return arr_origs
+    return vec_origs.Get_Array()
 endFunction
 
 Form[] function Get_Clones(Actor ref_actor)
     int idx_bases = p_vec_bases.Find(ACTORS.Get_Base(ref_actor) as Form)
     if idx_bases < 0
-        return Utility.CreateFormArray(0, none)
+        return Utility.CreateFormArray(1, none)
     endIf
 
     doticu_npcp_vector_form vec_clones = p_vec_vec_clones.At(idx_bases) as doticu_npcp_vector_form
     if !vec_clones
-        LOGS.Create_Error("CLONER.Get_Clones() failed to find vec_clones")
-        return Utility.CreateFormArray(0, none)
+        LOGS.Create_Error("NPCS.Get_Clones() failed to find vec_clones")
+        return Utility.CreateFormArray(1, none)
     endIf
 
-    Form[] arr_clones = vec_clones.Get_Array()
-    if !arr_clones
-        LOGS.Create_Error("CLONER.Get_Clones() failed to vec_origs.Get_Array()")
-        return Utility.CreateFormArray(0, none)
-    endIf
-
-    return arr_clones
+    return vec_clones.Get_Array()
 endFunction
 
-function Update_Outfit(Actor ref_actor, Outfit form_outfit)
+Outfit function Get_Base_Outfit(Actor ref_actor)
+    int idx_bases = p_vec_bases.Find(ACTORS.Get_Base(ref_actor) as Form)
+    if idx_bases > -1
+        return p_vec_outfits.At(idx_bases) as Outfit
+    else
+        return none
+    endIf
+endFunction
+
+function Set_Base_Outfit(Actor ref_actor, Outfit val_outfit)
+    int idx_bases = p_vec_bases.Find(ACTORS.Get_Base(ref_actor) as Form)
+    if idx_bases > -1
+        p_vec_outfits.Set(idx_bases, val_outfit as Form)
+    endIf
+endFunction
+
+function Update_Outfits(Actor ref_actor)
+    ; this is to ensure that npcs who have been cloned are putting on their outfits. there
+    ; is a bug in the engine which sticks and causes cloned npcs to be naked when they
+    ; are given a new outfit form that has any of the same items as the previous one.
+    ; also, this allows us to dress non-members with their default outfits
+    Outfit base_outfit = Get_Base_Outfit(ref_actor)
     Form[] arr_origs = Get_Originals(ref_actor)
-    int idx_origs = arr_origs.length
-    while idx_origs > 0
-        idx_origs -= 1
-        ref_actor = arr_origs[idx_origs] as Actor
-        if ref_actor.IsDeleted()
-            p_Remove_Original(ref_actor)
-        elseIf ACTORS.Is_Alive(ref_actor) && !MEMBERS.Has_Member(ref_actor)
-            ref_actor.SetOutfit(CONSTS.OUTFIT_EMPTY)
-            ref_actor.SetOutfit(form_outfit)
-        endIf
-    endWhile
+    Form[] arr_clones = Get_Clones(ref_actor)
+
+    p_Cleanup_Base(ref_actor)
+    p_Update_Outfits(base_outfit, arr_origs)
+    p_Update_Outfits(base_outfit, arr_clones)
 endFunction

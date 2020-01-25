@@ -40,9 +40,9 @@ doticu_npcp_actors property ACTORS hidden
         return (self as Quest) as doticu_npcp_actors
     endFunction
 endProperty
-doticu_npcp_cloner property CLONER hidden
-    doticu_npcp_cloner function Get()
-        return (self as Quest) as doticu_npcp_cloner
+doticu_npcp_npcs property NPCS hidden
+    doticu_npcp_npcs function Get()
+        return (self as Quest) as doticu_npcp_npcs
     endFunction
 endProperty
 doticu_npcp_perks property PERKS hidden
@@ -70,13 +70,13 @@ function f_Create(doticu_npcp_data DATA)
     CONTAINERS.f_Create(p_DATA)
     OUTFITS.f_Create(p_DATA)
     ACTORS.f_Create(p_DATA)
-    CLONER.f_Create(p_DATA)
+    NPCS.f_Create(p_DATA)
     PERKS.f_Create(p_DATA)
 endFunction
 
 function f_Destroy()
     PERKS.f_Destroy()
-    CLONER.f_Destroy()
+    NPCS.f_Destroy()
     ACTORS.f_Destroy()
     OUTFITS.f_Destroy()
     CONTAINERS.f_Destroy()
@@ -96,7 +96,7 @@ function f_Register()
     CONTAINERS.f_Register()
     OUTFITS.f_Register()
     ACTORS.f_Register()
-    CLONER.f_Register()
+    NPCS.f_Register()
     PERKS.f_Register()
 endFunction
 
@@ -115,14 +115,4 @@ endFunction
 
 bool function Is_Mod_Installed(string name_mod)
     return Game.GetModByName(name_mod) != 255
-endFunction
-
-; Update Methods
-function u_0_6_0()
-    VECTORS.f_Create(p_DATA)
-    CLONER.f_Create(p_DATA)
-    VECTORS.f_Register()
-    CLONER.f_Register()
-
-    ACTORS.PLAYER.u_0_6_0()
 endFunction

@@ -74,13 +74,13 @@ endProperty
 
 int property VERSION_MINOR
     int function Get()
-        return 6; set manually upon each release
+        return 7; set manually upon each release
     endFunction
 endProperty
 
 int property VERSION_PATCH
     int function Get()
-        return 2; set manually upon each release
+        return 0; set manually upon each release
     endFunction
 endProperty
 
@@ -763,6 +763,7 @@ string property STR_PICKPOCKET              = "Pickpocket"                  auto
 string property STR_SPEECHCRAFT             = "Speechcraft"                 autoReadOnly hidden
 
 string property STR_MCM_SUMMON              = " Summon "                    autoReadOnly hidden
+string property STR_MCM_PACK                = " Pack "                      autoReadOnly hidden
 string property STR_MCM_OUTFIT              = " Outfit "                    autoReadOnly hidden
 string property STR_MCM_CURRENT             = " Current "                   autoReadOnly hidden
 string property STR_MCM_MEMBER              = " Member "                    autoReadOnly hidden
@@ -779,7 +780,7 @@ string property STR_MCM_PARALYZE            = " Paralyze "                  auto
 string property STR_MCM_UNPARALYZE          = " Unparalyze "                autoReadOnly hidden
 string property STR_MCM_FOLLOW              = " Follow "                    autoReadOnly hidden
 string property STR_MCM_UNFOLLOW            = " Unfollow "                  autoReadOnly hidden
-string property STR_MCM_SNEAK               = " Sneak "                     autoReadOnly hidden
+;string property STR_MCM_SNEAK               = " Sneak "                     autoReadOnly hidden; defined below
 string property STR_MCM_UNSNEAK             = " Unsneak "                   autoReadOnly hidden
 string property STR_MCM_RELEVEL             = " Relevel "                   autoReadOnly hidden
 string property STR_MCM_RESURRECT           = " Resurrect "                 autoReadOnly hidden
@@ -791,6 +792,31 @@ string property STR_MCM_MORTAL              = " Mortal "                    auto
 string property STR_MCM_PROTECTED           = " Protected "                 autoReadOnly hidden
 string property STR_MCM_ESSENTIAL           = " Essential "                 autoReadOnly hidden
 string property STR_MCM_INVULNERABLE        = " Invulnerable "              autoReadOnly hidden
+string property STR_MCM_CLONE               = " Clone "                     autoReadOnly hidden
+string property STR_MCM_UNCLONE             = " Unclone "                   autoReadOnly hidden
+string property STR_MCM_UNMEMBER            = " Unmember "                  autoReadOnly hidden
+
+string property STR_MCM_HEALTH              = " Health "                    autoReadOnly hidden
+string property STR_MCM_MAGICKA             = " Magicka "                   autoReadOnly hidden
+string property STR_MCM_STAMINA             = " Stamina "                   autoReadOnly hidden
+string property STR_MCM_ONE_HANDED          = " One Handed "                autoReadOnly hidden
+string property STR_MCM_TWO_HANDED          = " Two Handed "                autoReadOnly hidden
+string property STR_MCM_BLOCK               = " Block "                     autoReadOnly hidden
+string property STR_MCM_HEAVY_ARMOR         = " Heavy Armor "               autoReadOnly hidden
+string property STR_MCM_LIGHT_ARMOR         = " Light Armor "               autoReadOnly hidden
+string property STR_MCM_SMITHING            = " Smithing "                  autoReadOnly hidden
+string property STR_MCM_DESTRUCTION         = " Destruction "               autoReadOnly hidden
+string property STR_MCM_RESTORATION         = " Restoration "               autoReadOnly hidden
+string property STR_MCM_CONJURATION         = " Conjuration "               autoReadOnly hidden
+string property STR_MCM_ALTERATION          = " Alteration "                autoReadOnly hidden
+string property STR_MCM_ILLUSION            = " Illusion "                  autoReadOnly hidden
+string property STR_MCM_ENCHANTING          = " Enchanting "                autoReadOnly hidden
+string property STR_MCM_MARKSMAN            = " Marksman "                  autoReadOnly hidden
+string property STR_MCM_SNEAK               = " Sneak "                     autoReadOnly hidden
+string property STR_MCM_ALCHEMY             = " Alchemy "                   autoReadOnly hidden
+string property STR_MCM_LOCKPICKING         = " Lockpicking "               autoReadOnly hidden
+string property STR_MCM_PICKPOCKET          = " Pickpocket "                autoReadOnly hidden
+string property STR_MCM_SPEECHCRAFT         = " Speechcraft "               autoReadOnly hidden
 
 string property STR_KEY_FS_SUMMON_ALL       = "Summon All Followers"        autoReadOnly hidden
 string property STR_KEY_FS_SUMMON_MOBILE    = "Summon Mobile Followers"     autoReadOnly hidden

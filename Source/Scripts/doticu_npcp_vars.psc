@@ -268,8 +268,3 @@ function Set_Defaults()
     num_display = 5
     is_mcm_open = false
 endFunction
-
-; Update Methods
-function u_0_3_1()
-    num_display = CONSTS.DEFAULT_DISPLAY
-endFunction

@@ -147,14 +147,8 @@ endFunction
 
 function p_Version()
     if Is_NPC_Party_Less_Than(CONSTS.VERSION_MAJOR, CONSTS.VERSION_MINOR, CONSTS.VERSION_PATCH)
-        if Is_NPC_Party_Less_Than(0, 6, 0)
-            u_0_6_0()
-        endIf
-        if Is_NPC_Party_Less_Than(0, 6, 2)
-            u_0_6_2()
-        endIf
-        if Is_NPC_Party_Less_Than(0, 6, 3)
-            u_0_6_3()
+        if Is_NPC_Party_Less_Than(0, 7, 0)
+            u_0_7_0()
         endIf
 
         VARS.version_major = CONSTS.VERSION_MAJOR
@@ -228,20 +222,9 @@ bool function Is_NPC_Party_Less_Than(int min_major, int min_minor, int min_patch
 endFunction
 
 ; Update Methods
-function u_0_6_0()
-    FUNCS.u_0_6_0()
-endFunction
-
-function u_0_6_2()
-    ;CONTROL.f_Unregister()
-    CONTROL.f_Destroy()
-    CONTROL.Stop()
-    CONTROL.Start()
-    CONTROL.f_Create(DATA)
-    CONTROL.f_Register()
-endFunction
-
-function u_0_6_3()
+function u_0_7_0()
+    FUNCS.NPCS.f_Create(DATA)
+    FUNCS.NPCS.f_Register()
 endFunction
 
 ; Events

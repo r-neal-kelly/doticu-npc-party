@@ -724,12 +724,6 @@ int function Catch_Up()
     return code_return
 endFunction
 
-; Update Methods
-function u_0_3_0()
-    ALIASES.u_0_3_0()
-    f_Register()
-endFunction
-
 ; State
 state p_STATE_BUSY
     int function Enforce()

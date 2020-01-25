@@ -25,6 +25,11 @@ doticu_npcp_actors property ACTORS hidden
         return p_DATA.MODS.FUNCS.ACTORS
     endFunction
 endProperty
+doticu_npcp_npcs property NPCS hidden
+    doticu_npcp_npcs function Get()
+        return p_DATA.MODS.FUNCS.NPCS
+    endFunction
+endProperty
 doticu_npcp_containers property CONTAINERS hidden
     doticu_npcp_containers function Get()
         return p_DATA.MODS.FUNCS.CONTAINERS
@@ -94,7 +99,6 @@ doticu_npcp_outfit      p_outfit2_follower      =  none
 doticu_npcp_outfit      p_outfit2_current       =  none
 
 int                     p_prev_vitality         =    -1
-doticu_npcp_outfit      p_prev_outfit2_member   =  none
 Faction[]               p_prev_factions         =  none
 int[]                   p_prev_faction_ranks    =  none
 Faction                 p_prev_faction_crime    =  none
@@ -183,7 +187,6 @@ function p_Destroy()
     p_prev_faction_crime = none
     ;p_prev_faction_ranks = none; the engine wont set an array to none!
     ;p_prev_factions = none; ""
-    p_prev_outfit2_member = none
     p_prev_vitality = -1
 
     p_outfit2_current = none
@@ -308,9 +311,6 @@ function p_Create_Outfits()
 
         p_outfit2_current = p_outfit2_member
 
-        p_prev_outfit2_member = OUTFITS.Create(p_outfit_member)
-        p_prev_outfit2_member.Copy(p_outfit2_member)
-
     f_Unlock_Resources()
 
     p_Name_Outfits(Get_Name())
@@ -319,7 +319,6 @@ endFunction
 function p_Destroy_Outfits()
     f_Lock_Resources()
 
-        OUTFITS.Destroy(p_prev_outfit2_member)
         OUTFITS.Destroy(p_outfit2_follower)
         OUTFITS.Destroy(p_outfit2_immobile)
         OUTFITS.Destroy(p_outfit2_thrall)
@@ -344,7 +343,6 @@ endFunction
 function p_Backup()
     f_Lock_Resources()
 
-        ; let Outfit be backed up in Create_Outfits, so that it can be run after this async
         p_prev_vitality = ACTORS.Get_Vitality(p_ref_actor)
         p_prev_factions = ACTORS.Get_Factions(p_ref_actor)
         p_prev_faction_ranks = ACTORS.Get_Faction_Ranks(p_ref_actor, p_prev_factions)
@@ -359,7 +357,8 @@ function p_Restore()
         ACTORS.Set_Factions(p_ref_actor, p_prev_factions, p_prev_faction_ranks)
         p_ref_actor.SetCrimeFaction(p_prev_faction_crime)
 
-        p_prev_outfit2_member.Set(p_ref_actor); instead of this, we might set the outfit to GetOutfit on base actor.
+        p_ref_actor.SetOutfit(CONSTS.OUTFIT_EMPTY)
+        p_ref_actor.SetOutfit(NPCS.Get_Base_Outfit(p_ref_actor))
 
     f_Unlock_Resources()
 endFunction
@@ -661,7 +660,8 @@ function p_Outfit()
         endIf
 
         p_outfit2_current.Set(p_ref_actor)
-        p_prev_outfit2_member.Update_Base(p_ref_actor)
+
+        NPCS.Update_Outfits(p_ref_actor)
 
         p_ref_actor.EvaluatePackage()
 

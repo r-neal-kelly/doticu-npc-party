@@ -28,7 +28,7 @@ Form                p_item_fill             =  none
 float               p_grow_rate             =   0.0
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA, int init_size = 0, Form item_fill = none, float grow_rate = 1.5)
+function f_Create(doticu_npcp_data DATA, int init_max = 0, Form item_fill = none, float grow_rate = 1.5)
     p_DATA = DATA
 
     if grow_rate < 1.0
@@ -37,9 +37,9 @@ function f_Create(doticu_npcp_data DATA, int init_size = 0, Form item_fill = non
     endIf
 
     p_is_created = true
-    p_arr_forms = Utility.CreateFormArray(init_size, item_fill)
+    p_arr_forms = Utility.CreateFormArray(init_max, item_fill)
     p_num_forms = 0
-    p_max_forms = init_size
+    p_max_forms = init_max
     p_item_fill = item_fill
     p_grow_rate = grow_rate
 endFunction
@@ -69,7 +69,11 @@ endFunction
 
 ; Public Methods
 Form[] function Get_Array()
-    return PapyrusUtil.SliceFormArray(p_arr_forms, 0, p_num_forms - 1)
+    if p_num_forms > 0
+        return PapyrusUtil.SliceFormArray(p_arr_forms, 0, p_num_forms - 1)
+    else
+        return Utility.CreateFormArray(1, none)
+    endIf
 endFunction
 
 function Push(Form item)
@@ -137,4 +141,13 @@ endFunction
 function Fit()
     p_arr_forms = Get_Array()
     p_max_forms = p_num_forms
+endFunction
+
+function Print()
+    if p_num_forms > 0
+        MiscUtil.PrintConsole(Get_Array())
+    else
+        Form[] arr_empty
+        MiscUtil.PrintConsole(arr_empty)
+    endIf
 endFunction

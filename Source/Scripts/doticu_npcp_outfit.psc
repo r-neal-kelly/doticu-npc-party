@@ -15,11 +15,6 @@ doticu_npcp_actors property ACTORS hidden
         return p_DATA.MODS.FUNCS.ACTORS
     endFunction
 endProperty
-doticu_npcp_cloner property CLONER hidden
-    doticu_npcp_cloner function Get()
-        return p_DATA.MODS.FUNCS.CLONER
-    endFunction
-endProperty
 doticu_npcp_containers property CONTAINERS hidden
     doticu_npcp_containers function Get()
         return p_DATA.MODS.FUNCS.CONTAINERS
@@ -255,13 +250,6 @@ function Delete_Unplayable_Equipment(Actor ref_actor)
         ref_actor.RemoveItem(ref_form, num_items, true, ref_trash)
         idx_forms += 1
     endWhile
-endFunction
-
-function Update_Base(Actor ref_actor)
-    ; this is to ensure that npcs who have been cloned are putting on their outfits. there
-    ; is a bug in the engine which sticks and causes cloned npcs to be naked when they
-    ; are given a new outfit form that has any of the same items as the previous one.
-    CLONER.Update_Outfit(ref_actor, p_OUTFIT)
 endFunction
 
 function Unset(Actor ref_actor)

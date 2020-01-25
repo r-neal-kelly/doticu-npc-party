@@ -139,7 +139,7 @@ function f_Build_Page()
     MCM.AddHeaderOption(" Outfitting ")
     MCM.AddEmptyOption()
     p_option_auto_outfit = MCM.AddToggleOption("Auto Outfit", VARS.auto_outfit)
-    p_option_fill_outfits = MCM.AddTOggleOption("Fill Outfits", VARS.fill_outfits)
+    p_option_fill_outfits = MCM.AddToggleOption("Fill Outfits", VARS.fill_outfits)
     MCM.AddEmptyOption()
     MCM.AddEmptyOption()
 
