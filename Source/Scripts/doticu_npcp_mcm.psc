@@ -72,6 +72,26 @@ string property PAGE_LOG hidden
         return " Log "
     endFunction
 endProperty
+bool property DO_UPDATE hidden
+    bool function Get()
+        return false
+    endFunction
+endProperty
+bool property DONT_UPDATE hidden
+    bool function Get()
+        return true
+    endFunction
+endProperty
+int property FLAG_ENABLE hidden
+    int function Get()
+        return OPTION_FLAG_NONE
+    endFunction
+endProperty
+int property FLAG_DISABLE hidden
+    int function Get()
+        return OPTION_FLAG_DISABLED
+    endFunction
+endProperty
 
 ; Private Constants
 doticu_npcp_data    p_DATA              =  none
@@ -136,6 +156,14 @@ endFunction
 
 string function f_Get_Current_Page()
     return p_str_curr_page
+endFunction
+
+function f_Enable(int id_option, bool bool_update)
+    SetOptionFlags(id_option, FLAG_ENABLE, bool_update)
+endFunction
+
+function f_Disable(int id_option, bool bool_update)
+    SetOptionFlags(id_option, FLAG_DISABLE, bool_update)
 endFunction
 
 ; Public Methods

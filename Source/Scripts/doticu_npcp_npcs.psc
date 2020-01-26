@@ -17,6 +17,11 @@ doticu_npcp_codes property CODES hidden
         return p_DATA.CODES
     endFunction
 endProperty
+doticu_npcp_vars property VARS hidden
+    doticu_npcp_vars function Get()
+        return p_DATA.VARS
+    endFunction
+endProperty
 doticu_npcp_vectors property VECTORS hidden
     doticu_npcp_vectors function Get()
         return p_DATA.MODS.FUNCS.VECTORS
@@ -395,6 +400,11 @@ Actor function Clone(Actor ref_actor)
 
     p_Add_Original(ref_actor)
     p_Add_Clone(ref_clone)
+
+    if VARS.clone_outfit == CODES.OUTFIT_BASE
+        ref_clone.SetOutfit(CONSTS.OUTFIT_EMPTY)
+        ref_clone.SetOutfit(Get_Base_Outfit(ref_clone))
+    endIf
 
     return ref_clone
 endFunction

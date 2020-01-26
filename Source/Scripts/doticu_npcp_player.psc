@@ -152,7 +152,6 @@ endEvent
 
 event On_Cell_Change(Form cell_new, Form cell_old)
     ;p_Update_Outfits(cell_new); maybe put this behind a bool
-    Debug.Trace("FOLLOWERS exists: " + (FOLLOWERS != none))
     FOLLOWERS.Catch_Up()
 endEvent
 

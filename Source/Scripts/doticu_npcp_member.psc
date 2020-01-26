@@ -383,9 +383,12 @@ function p_Member()
             ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_THRALL)
         endIf
 
+        p_ref_actor.RemoveFromFaction(CONSTS.FACTION_POTENTIAL_FOLLOWER)
         p_ref_actor.RemoveFromFaction(CONSTS.FACTION_CURRENT_FOLLOWER)
         p_ref_actor.AddToFaction(CONSTS.FACTION_WI_NO_BODY_CLEANUP)
         p_ref_actor.AddToFaction(CONSTS.FACTION_MEMBER)
+        p_ref_actor.SetCrimeFaction(none)
+
         p_ref_actor.SetActorValue("Aggression", 0)
 
         p_ref_actor.EvaluatePackage()
@@ -397,6 +400,7 @@ function p_Unmember()
     f_Lock_Resources()
 
         p_ref_actor.SetActorValue("Aggression", 0)
+        
         p_ref_actor.RemoveFromFaction(CONSTS.FACTION_MEMBER)
 
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_THRALL)
@@ -642,7 +646,7 @@ function p_Outfit()
     f_Lock_Resources()
 
         if VARS.auto_outfit
-            if Is_Immobile()
+            if Is_Immobile() && VARS.auto_immobile_outfit
                 p_outfit2_current = p_outfit2_immobile
             elseIf Is_Follower()
                 p_outfit2_current = p_outfit2_follower
@@ -1770,9 +1774,8 @@ event OnActivate(ObjectReference ref_activator)
     if Is_Alive()
         Enforce()
     else
-        ;p_outfit2_current.Put()
-        ;p_ref_actor.OpenInventory(true)
-        ; maybe we could use a func within outfit that will help to update if armor is removed
+        p_outfit2_current.Put()
+        p_Outfit()
     endIf
 endEvent
 

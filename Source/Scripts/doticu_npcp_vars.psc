@@ -21,19 +21,32 @@ doticu_npcp_data    p_DATA                  =  none
 
 ; Private Variables
 bool                p_is_created            = false
+
 int                 p_version_major         =    -1
 int                 p_version_minor         =    -1
 int                 p_version_patch         =    -1
+
 bool                p_force_clone_unique    = false
 bool                p_force_clone_generic   = false
 bool                p_force_unclone_unique  = false
 bool                p_force_unclone_generic = false
+int                 p_clone_outfit          =    -1
+
 bool                p_auto_resurrect        = false
+
 bool                p_auto_outfit           = false
 bool                p_fill_outfits          = false
+bool                p_auto_immobile_outfit  = false
+int                 p_percent_body          =    -1
+int                 p_percent_feet          =    -1
+int                 p_percent_hands         =    -1
+int                 p_percent_head          =    -1
+
 int                 p_auto_style            =    -1
 int                 p_auto_vitality         =    -1
+
 int                 p_num_display           =    -1
+
 bool                p_is_mcm_open           = false
 
 ; Followers
@@ -171,6 +184,15 @@ bool property force_unclone_generic hidden
     endFunction
 endProperty
 
+int property clone_outfit hidden
+    int function Get()
+        return p_clone_outfit
+    endFunction
+    function Set(int val)
+        p_clone_outfit = val
+    endFunction
+endProperty
+
 bool property auto_resurrect hidden
     bool function Get()
         return p_auto_resurrect
@@ -195,6 +217,75 @@ bool property fill_outfits hidden
     endFunction
     function Set(bool val)
         p_fill_outfits = val
+    endFunction
+endProperty
+
+bool property auto_immobile_outfit hidden
+    bool function Get()
+        return p_auto_immobile_outfit
+    endFunction
+    function Set(bool val)
+        p_auto_immobile_outfit = val
+    endFunction
+endProperty
+
+int property percent_body hidden
+    int function Get()
+        return p_percent_body
+    endFunction
+    function Set(int val)
+        if val < 0
+            val = 0
+        elseIf val > 100
+            val = 100
+        endIf
+        p_percent_body = val
+        CONSTS.GLOBAL_PERCENT_NO_BODY.SetValue(100 - val)
+    endFunction
+endProperty
+
+int property percent_feet hidden
+    int function Get()
+        return p_percent_feet
+    endFunction
+    function Set(int val)
+        if val < 0
+            val = 0
+        elseIf val > 100
+            val = 100
+        endIf
+        p_percent_feet = val
+        CONSTS.GLOBAL_PERCENT_NO_FEET.SetValue(100 - val)
+    endFunction
+endProperty
+
+int property percent_hands hidden
+    int function Get()
+        return p_percent_hands
+    endFunction
+    function Set(int val)
+        if val < 0
+            val = 0
+        elseIf val > 100
+            val = 100
+        endIf
+        p_percent_hands = val
+        CONSTS.GLOBAL_PERCENT_NO_HANDS.SetValue(100 - val)
+    endFunction
+endProperty
+
+int property percent_head hidden
+    int function Get()
+        return p_percent_head
+    endFunction
+    function Set(int val)
+        if val < 0
+            val = 0
+        elseIf val > 100
+            val = 100
+        endIf
+        p_percent_head = val
+        CONSTS.GLOBAL_PERCENT_NO_HEAD.SetValue(100 - val)
     endFunction
 endProperty
 
@@ -256,15 +347,27 @@ function Set_Defaults()
     version_major = CONSTS.VERSION_MAJOR
     version_minor = CONSTS.VERSION_MINOR
     version_patch = CONSTS.VERSION_PATCH
+
     force_clone_unique = false
     force_clone_generic = false
     force_unclone_unique = false
     force_unclone_generic = false
+    clone_outfit = CODES.OUTFIT_BASE; OUTFIT_BASE, OUTFIT_REFERENCE
+
     auto_resurrect = true
+
     auto_outfit = true
     fill_outfits = true
+    auto_immobile_outfit = false
+    percent_body = CONSTS.DEFAULT_PERCENT_BODY
+    percent_feet = CONSTS.DEFAULT_PERCENT_FEET
+    percent_hands = CONSTS.DEFAULT_PERCENT_HANDS
+    percent_head = CONSTS.DEFAULT_PERCENT_HEAD
+
     auto_style = CODES.IS_DEFAULT; IS_DEFAULT, IS_WARRIOR, IS_MAGE, IS_ARCHER
     auto_vitality = CODES.IS_PROTECTED; IS_MORTAL, IS_PROTECTED, IS_ESSENTIAL, IS_INVULNERABLE
+
     num_display = 5
+
     is_mcm_open = false
 endFunction

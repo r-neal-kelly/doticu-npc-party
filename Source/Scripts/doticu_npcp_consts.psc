@@ -41,6 +41,11 @@ GlobalVariable              p_GLOBAL_FORCE_CLONE_UNIQUE             = none
 GlobalVariable              p_GLOBAL_FORCE_CLONE_GENERIC            = none
 GlobalVariable              p_GLOBAL_FORCE_UNCLONE_UNIQUE           = none
 GlobalVariable              p_GLOBAL_FORCE_UNCLONE_GENERIC          = none
+GlobalVariable              p_GLOBAL_IS_INSTALLED                   = none
+GlobalVariable              p_GLOBAL_PERCENT_NO_BODY                = none
+GlobalVariable              p_GLOBAL_PERCENT_NO_FEET                = none
+GlobalVariable              p_GLOBAL_PERCENT_NO_HANDS               = none
+GlobalVariable              p_GLOBAL_PERCENT_NO_HEAD                = none
 FormList                    p_FORMLIST_MARKERS_SETTLER              = none
 FormList                    p_FORMLIST_OUTFITS                      = none
 Faction                     p_FACTION_MEMBER                        = none
@@ -48,6 +53,7 @@ Faction                     p_FACTION_DLC1_THRALL                   = none
 Faction                     p_FACTION_DLC1_VAMPIRE_FEED_NO_CRIME    = none
 Faction                     p_FACTION_WI_NO_BODY_CLEANUP            = none
 Faction                     p_FACTION_CURRENT_FOLLOWER              = none
+Faction                     p_FACTION_POTENTIAL_FOLLOWER            = none
 Perk                        p_PERK_VAMPIRE_FEED                     = none
 Perk                        p_PERK_KISS_THRALL                      = none
 Perk                        p_PERK_RESURRECT                        = none
@@ -80,7 +86,7 @@ endProperty
 
 int property VERSION_PATCH
     int function Get()
-        return 0; set manually upon each release
+        return 1; set manually upon each release
     endFunction
 endProperty
 
@@ -498,6 +504,61 @@ GlobalVariable property GLOBAL_FORCE_UNCLONE_GENERIC
     endFunction
 endProperty
 
+GlobalVariable property GLOBAL_IS_INSTALLED
+    GlobalVariable function Get()
+        return p_GLOBAL_IS_INSTALLED
+    endFunction
+    function Set(GlobalVariable val)
+        if p_GLOBAL_IS_INSTALLED == none
+            p_GLOBAL_IS_INSTALLED = val
+        endIf
+    endFunction
+endProperty
+
+GlobalVariable property GLOBAL_PERCENT_NO_BODY
+    GlobalVariable function Get()
+        return p_GLOBAL_PERCENT_NO_BODY
+    endFunction
+    function Set(GlobalVariable val)
+        if p_GLOBAL_PERCENT_NO_BODY == none
+            p_GLOBAL_PERCENT_NO_BODY = val
+        endIf
+    endFunction
+endProperty
+
+GlobalVariable property GLOBAL_PERCENT_NO_FEET
+    GlobalVariable function Get()
+        return p_GLOBAL_PERCENT_NO_FEET
+    endFunction
+    function Set(GlobalVariable val)
+        if p_GLOBAL_PERCENT_NO_FEET == none
+            p_GLOBAL_PERCENT_NO_FEET = val
+        endIf
+    endFunction
+endProperty
+
+GlobalVariable property GLOBAL_PERCENT_NO_HANDS
+    GlobalVariable function Get()
+        return p_GLOBAL_PERCENT_NO_HANDS
+    endFunction
+    function Set(GlobalVariable val)
+        if p_GLOBAL_PERCENT_NO_HANDS == none
+            p_GLOBAL_PERCENT_NO_HANDS = val
+        endIf
+    endFunction
+endProperty
+
+GlobalVariable property GLOBAL_PERCENT_NO_HEAD
+    GlobalVariable function Get()
+        return p_GLOBAL_PERCENT_NO_HEAD
+    endFunction
+    function Set(GlobalVariable val)
+        if p_GLOBAL_PERCENT_NO_HEAD == none
+            p_GLOBAL_PERCENT_NO_HEAD = val
+        endIf
+    endFunction
+endProperty
+
 Formlist property FORMLIST_MARKERS_SETTLER
     Formlist function Get()
         return p_FORMLIST_MARKERS_SETTLER
@@ -571,6 +632,17 @@ Faction property FACTION_CURRENT_FOLLOWER
     function Set(Faction val)
         if p_FACTION_CURRENT_FOLLOWER == none
             p_FACTION_CURRENT_FOLLOWER = val
+        endIf
+    endFunction
+endProperty
+
+Faction property FACTION_POTENTIAL_FOLLOWER
+    Faction function Get()
+        return p_FACTION_POTENTIAL_FOLLOWER
+    endFunction
+    function Set(Faction val)
+        if p_FACTION_POTENTIAL_FOLLOWER == none
+            p_FACTION_POTENTIAL_FOLLOWER = val
         endIf
     endFunction
 endProperty
@@ -798,6 +870,8 @@ string property STR_MCM_INVULNERABLE        = " Invulnerable "              auto
 string property STR_MCM_CLONE               = " Clone "                     autoReadOnly hidden
 string property STR_MCM_UNCLONE             = " Unclone "                   autoReadOnly hidden
 string property STR_MCM_UNMEMBER            = " Unmember "                  autoReadOnly hidden
+string property STR_MCM_BASE                = " Base "                      autoReadOnly hidden
+string property STR_MCM_REFERENCE           = " Reference "                 autoReadOnly hidden
 
 string property STR_MCM_HEALTH              = " Health "                    autoReadOnly hidden
 string property STR_MCM_MAGICKA             = " Magicka "                   autoReadOnly hidden
@@ -881,3 +955,8 @@ int property KEY_DEF_M_TOGGLE_IMMOBILE      =  83   autoReadOnly hidden; NUM.
 int property KEY_DEF_M_TOGGLE_PARALYZED     = 181   autoReadOnly hidden; NUM/
 int property KEY_DEF_M_TOGGLE_FOLLOWER      =  55   autoReadOnly hidden; NUM*
 int property KEY_DEF_M_TOGGLE_SNEAK         =  74   autoReadOnly hidden; NUM-
+
+int property DEFAULT_PERCENT_BODY           = 100   autoReadOnly hidden
+int property DEFAULT_PERCENT_FEET           =  90   autoReadOnly hidden
+int property DEFAULT_PERCENT_HANDS          =  90   autoReadOnly hidden
+int property DEFAULT_PERCENT_HEAD           =  50   autoReadOnly hidden

@@ -38,9 +38,10 @@ A follower framework for The Elder Scrolls V: Skyrim Special Edition
 
 (Some older versions of the above may work with my mod, but they are not supported.)
 
-## Compatibility:
-- there are possible issues that may occur when using another follower framework at the same time as this one. One of the goals of this mod was to touch as few vanilla assets as possible, but no promises can be made regarding compatibility with other frameworks
-- this should be compatible with most if not all custom follower mods
+## Incompatibilities:
+- One of the goals of this mod was to touch as few vanilla assets as possible. The primary assets that have been touched, as of right now, are dialogue topics.
+- so there will be some incompatibilities with Relationship Dialogue Overhaul because many "Follow me" dialogues will conflict.
+- it's extremely likely that this follower framework will conflict with any other follower framework. It is advised to use only one framework at a time
 
 ## Recommended:
 - [Mod Organizer 2](https://www.nexusmods.com/skyrimspecialedition/mods/6194) for all your modding needs

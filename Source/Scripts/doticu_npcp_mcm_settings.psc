@@ -31,6 +31,28 @@ doticu_npcp_mcm property MCM hidden
     endFunction
 endProperty
 
+; Public Constants
+bool property DO_UPDATE hidden
+    bool function Get()
+        return MCM.DO_UPDATE
+    endFunction
+endProperty
+bool property DONT_UPDATE hidden
+    bool function Get()
+        return MCM.DONT_UPDATE
+    endFunction
+endProperty
+int property FLAG_ENABLE hidden
+    int function Get()
+        return MCM.FLAG_ENABLE
+    endFunction
+endProperty
+int property FLAG_DISABLE hidden
+    int function Get()
+        return MCM.FLAG_DISABLE
+    endFunction
+endProperty
+
 ; Private Constants
 doticu_npcp_data    p_DATA                              =  none
 
@@ -41,12 +63,18 @@ int                 p_option_force_clone_unique         =    -1
 int                 p_option_force_clone_generic        =    -1
 int                 p_option_force_unclone_unique       =    -1
 int                 p_option_force_unclone_generic      =    -1
+int                 p_option_clone_outfit               =    -1
 int                 p_option_auto_style                 =    -1
 int                 p_option_auto_vitality              =    -1
 int                 p_option_auto_resurrect             =    -1
 
 int                 p_option_auto_outfit                =    -1
 int                 p_option_fill_outfits               =    -1
+int                 p_option_auto_immobile_outfit       =    -1
+int                 p_option_slider_percent_body        =    -1
+int                 p_option_slider_percent_feet        =    -1
+int                 p_option_slider_percent_hands       =    -1
+int                 p_option_slider_percent_head        =    -1
 
 int                 p_option_key_fs_summon_all          =    -1
 int                 p_option_key_fs_summon_mobile       =    -1
@@ -133,13 +161,31 @@ function f_Build_Page()
     p_option_force_unclone_unique = MCM.AddToggleOption("Force Unclone Unique NPCs", VARS.force_unclone_unique)
     p_option_force_clone_generic = MCM.AddToggleOption("Force Clone Generic NPCs", VARS.force_clone_generic)
     p_option_force_unclone_generic = MCM.AddToggleOption("Force Unclone Generic NPCs", VARS.force_unclone_generic)
+    if VARS.clone_outfit == CODES.OUTFIT_BASE
+        p_option_clone_outfit = MCM.AddTextOption("Clone Outfit", CONSTS.STR_MCM_BASE)
+    elseIf VARS.clone_outfit == CODES.OUTFIT_REFERENCE
+        p_option_clone_outfit = MCM.AddTextOption("Clone Outfit", CONSTS.STR_MCM_REFERENCE)
+    endIf
+    MCM.AddEmptyOption()
     MCM.AddEmptyOption()
     MCM.AddEmptyOption()
 
     MCM.AddHeaderOption(" Outfitting ")
     MCM.AddEmptyOption()
     p_option_auto_outfit = MCM.AddToggleOption("Auto Outfit", VARS.auto_outfit)
+    if VARS.auto_outfit
+        p_option_auto_immobile_outfit = MCM.AddToggleOption("Auto Immobile Outfit", VARS.auto_immobile_outfit, FLAG_ENABLE)
+    else
+        p_option_auto_immobile_outfit = MCM.AddToggleOption("Auto Immobile Outfit", VARS.auto_immobile_outfit, FLAG_DISABLE)
+    endIf
     p_option_fill_outfits = MCM.AddToggleOption("Fill Outfits", VARS.fill_outfits)
+    MCM.AddEmptyOption()
+    if VARS.fill_outfits
+        p_option_slider_percent_body = MCM.AddSliderOption(" Fill Body Percent ", VARS.percent_body, " {0}% ")
+        p_option_slider_percent_feet = MCM.AddSliderOption(" Fill Feet Percent ", VARS.percent_feet, " {0}% ")
+        p_option_slider_percent_hands = MCM.AddSliderOption(" Fill Hands Percent ", VARS.percent_hands, " {0}% ")
+        p_option_slider_percent_head = MCM.AddSliderOption(" Fill Head Percent ", VARS.percent_head, " {0}% ")
+    endIf
     MCM.AddEmptyOption()
     MCM.AddEmptyOption()
 
@@ -193,82 +239,146 @@ function f_Build_Page()
 endFunction
 
 function f_On_Option_Select(int id_option)
-    bool do_update = false
-    bool dont_update = true
-
     if false
 
     ; General
     elseIf id_option == p_option_auto_style
         if VARS.auto_style == CODES.IS_DEFAULT
             VARS.auto_style = CODES.IS_WARRIOR
-            MCM.SetTextOptionValue(p_option_auto_style, CONSTS.STR_MCM_WARRIOR, do_update)
+            MCM.SetTextOptionValue(p_option_auto_style, CONSTS.STR_MCM_WARRIOR)
         elseIf VARS.auto_style == CODES.IS_WARRIOR
             VARS.auto_style = CODES.IS_MAGE
-            MCM.SetTextOptionValue(p_option_auto_style, CONSTS.STR_MCM_MAGE, do_update)
+            MCM.SetTextOptionValue(p_option_auto_style, CONSTS.STR_MCM_MAGE)
         elseIf VARS.auto_style == CODES.IS_MAGE
             VARS.auto_style = CODES.IS_ARCHER
-            MCM.SetTextOptionValue(p_option_auto_style, CONSTS.STR_MCM_ARCHER, do_update)
+            MCM.SetTextOptionValue(p_option_auto_style, CONSTS.STR_MCM_ARCHER)
         elseIf VARS.auto_style == CODES.IS_ARCHER
             VARS.auto_style = CODES.IS_DEFAULT
-            MCM.SetTextOptionValue(p_option_auto_style, CONSTS.STR_MCM_DEFAULT, do_update)
+            MCM.SetTextOptionValue(p_option_auto_style, CONSTS.STR_MCM_DEFAULT)
         endIf
     elseIf id_option == p_option_auto_vitality
         if VARS.auto_vitality == CODES.IS_MORTAL
             VARS.auto_vitality = CODES.IS_PROTECTED
-            MCM.SetTextOptionValue(p_option_auto_vitality, CONSTS.STR_MCM_PROTECTED, do_update)
+            MCM.SetTextOptionValue(p_option_auto_vitality, CONSTS.STR_MCM_PROTECTED)
         elseIf VARS.auto_vitality == CODES.IS_PROTECTED
             VARS.auto_vitality = CODES.IS_ESSENTIAL
-            MCM.SetTextOptionValue(p_option_auto_vitality, CONSTS.STR_MCM_ESSENTIAL, do_update)
+            MCM.SetTextOptionValue(p_option_auto_vitality, CONSTS.STR_MCM_ESSENTIAL)
         elseIf VARS.auto_vitality == CODES.IS_ESSENTIAL
             VARS.auto_vitality = CODES.IS_INVULNERABLE
-            MCM.SetTextOptionValue(p_option_auto_vitality, CONSTS.STR_MCM_INVULNERABLE, do_update)
+            MCM.SetTextOptionValue(p_option_auto_vitality, CONSTS.STR_MCM_INVULNERABLE)
         elseIf VARS.auto_vitality == CODES.IS_INVULNERABLE
             VARS.auto_vitality = CODES.IS_MORTAL
-            MCM.SetTextOptionValue(p_option_auto_vitality, CONSTS.STR_MCM_MORTAL, do_update)
+            MCM.SetTextOptionValue(p_option_auto_vitality, CONSTS.STR_MCM_MORTAL)
         endIf
     elseIf id_option == p_option_auto_resurrect
         VARS.auto_resurrect = !VARS.auto_resurrect
-        MCM.SetToggleOptionValue(p_option_auto_resurrect, VARS.auto_resurrect, do_update)
+        MCM.SetToggleOptionValue(p_option_auto_resurrect, VARS.auto_resurrect)
 
     ; Cloning
     elseIf id_option == p_option_force_clone_unique
         VARS.force_clone_unique = !VARS.force_clone_unique
-        MCM.SetToggleOptionValue(p_option_force_clone_unique, VARS.force_clone_unique, do_update)
+        MCM.SetToggleOptionValue(p_option_force_clone_unique, VARS.force_clone_unique)
     elseIf id_option == p_option_force_clone_generic
         VARS.force_clone_generic = !VARS.force_clone_generic
-        MCM.SetToggleOptionValue(p_option_force_clone_generic, VARS.force_clone_generic, do_update)
+        MCM.SetToggleOptionValue(p_option_force_clone_generic, VARS.force_clone_generic)
     elseIf id_option == p_option_force_unclone_unique
         VARS.force_unclone_unique = !VARS.force_unclone_unique
-        MCM.SetToggleOptionValue(p_option_force_unclone_unique, VARS.force_unclone_unique, do_update)
+        MCM.SetToggleOptionValue(p_option_force_unclone_unique, VARS.force_unclone_unique)
     elseIf id_option == p_option_force_unclone_generic
         VARS.force_unclone_generic = !VARS.force_unclone_generic
-        MCM.SetToggleOptionValue(p_option_force_unclone_generic, VARS.force_unclone_generic, do_update)
+        MCM.SetToggleOptionValue(p_option_force_unclone_generic, VARS.force_unclone_generic)
+    elseIf id_option == p_option_clone_outfit
+        if VARS.clone_outfit == CODES.OUTFIT_BASE
+            VARS.clone_outfit = CODES.OUTFIT_REFERENCE
+            MCM.SetTextOptionValue(p_option_clone_outfit, CONSTS.STR_MCM_REFERENCE)
+        elseIf VARS.clone_outfit == CODES.OUTFIT_REFERENCE
+            VARS.clone_outfit = CODES.OUTFIT_BASE
+            MCM.SetTextOptionValue(p_option_clone_outfit, CONSTS.STR_MCM_BASE)
+        endIf
 
     ; Outfitting
     elseIf id_option == p_option_auto_outfit
         VARS.auto_outfit = !VARS.auto_outfit
-        MCM.SetToggleOptionValue(p_option_auto_outfit, VARS.auto_outfit, do_update)
+        MCM.SetToggleOptionValue(p_option_auto_outfit, VARS.auto_outfit)
+        if VARS.auto_outfit
+            MCM.SetOptionFlags(p_option_auto_immobile_outfit, FLAG_ENABLE, DO_UPDATE)
+        else
+            MCM.SetOptionFlags(p_option_auto_immobile_outfit, FLAG_DISABLE, DO_UPDATE)
+        endIf
+    elseIf id_option == p_option_auto_immobile_outfit
+        VARS.auto_immobile_outfit = !VARS.auto_immobile_outfit
+        MCM.SetToggleOptionValue(p_option_auto_immobile_outfit, VARS.auto_immobile_outfit)
     elseIf id_option == p_option_fill_outfits
         VARS.fill_outfits = !VARS.fill_outfits
-        MCM.SetToggleOptionValue(p_option_fill_outfits, VARS.fill_outfits, do_update)
+        MCM.SetToggleOptionValue(p_option_fill_outfits, VARS.fill_outfits)
+        if VARS.fill_outfits
+            MCM.f_Enable(p_option_slider_percent_body, DONT_UPDATE)
+            MCM.f_Enable(p_option_slider_percent_feet, DONT_UPDATE)
+            MCM.f_Enable(p_option_slider_percent_hands, DONT_UPDATE)
+            MCM.f_Enable(p_option_slider_percent_head, DO_UPDATE)
+        else
+            MCM.f_Disable(p_option_slider_percent_body, DONT_UPDATE)
+            MCM.f_Disable(p_option_slider_percent_feet, DONT_UPDATE)
+            MCM.f_Disable(p_option_slider_percent_hands, DONT_UPDATE)
+            MCM.f_Disable(p_option_slider_percent_head, DO_UPDATE)
+        endIf
 
     endIf
 endFunction
 
 function f_On_Option_Slider_Open(int id_option)
-    if id_option == p_option_slider_ms_display
+    if false
+
+    elseIf id_option == p_option_slider_percent_body
+        MCM.SetSliderDialogStartValue(VARS.percent_body as float)
+        MCM.SetSliderDialogDefaultValue(CONSTS.DEFAULT_PERCENT_BODY as float)
+        MCM.SetSliderDialogRange(0 as float, 100 as float)
+        MCM.SetSliderDialogInterval(1.0)
+    elseIf id_option == p_option_slider_percent_feet
+        MCM.SetSliderDialogStartValue(VARS.percent_feet as float)
+        MCM.SetSliderDialogDefaultValue(CONSTS.DEFAULT_PERCENT_FEET as float)
+        MCM.SetSliderDialogRange(0 as float, 100 as float)
+        MCM.SetSliderDialogInterval(1.0)
+    elseIf id_option == p_option_slider_percent_hands
+        MCM.SetSliderDialogStartValue(VARS.percent_hands as float)
+        MCM.SetSliderDialogDefaultValue(CONSTS.DEFAULT_PERCENT_HANDS as float)
+        MCM.SetSliderDialogRange(0 as float, 100 as float)
+        MCM.SetSliderDialogInterval(1.0)
+    elseIf id_option == p_option_slider_percent_head
+        MCM.SetSliderDialogStartValue(VARS.percent_head as float)
+        MCM.SetSliderDialogDefaultValue(CONSTS.DEFAULT_PERCENT_HEAD as float)
+        MCM.SetSliderDialogRange(0 as float, 100 as float)
+        MCM.SetSliderDialogInterval(1.0)
+
+    elseIf id_option == p_option_slider_ms_display
         MCM.SetSliderDialogStartValue(VARS.num_display as float)
         MCM.SetSliderDialogDefaultValue(CONSTS.DEFAULT_DISPLAY as float)
         MCM.SetSliderDialogRange(CONSTS.MIN_DISPLAY as float, CONSTS.MAX_DISPLAY as float)
         MCM.SetSliderDialogInterval(1.0)
+
     endIf
 endFunction
 
 function f_On_Option_Slider_Accept(int id_option, float float_value)
-    if id_option == p_option_slider_ms_display
+    if false
+
+    elseIf id_option == p_option_slider_percent_body
+        VARS.percent_body = float_value as int
+        MCM.SetSliderOptionValue(id_option, VARS.percent_body, " {0}% ", DO_UPDATE)
+    elseIf id_option == p_option_slider_percent_feet
+        VARS.percent_feet = float_value as int
+        MCM.SetSliderOptionValue(id_option, VARS.percent_feet, " {0}% ", DO_UPDATE)
+    elseIf id_option == p_option_slider_percent_hands
+        VARS.percent_hands = float_value as int
+        MCM.SetSliderOptionValue(id_option, VARS.percent_hands, " {0}% ", DO_UPDATE)
+    elseIf id_option == p_option_slider_percent_head
+        VARS.percent_head = float_value as int
+        MCM.SetSliderOptionValue(id_option, VARS.percent_head, " {0}% ", DO_UPDATE)
+
+    elseIf id_option == p_option_slider_ms_display
         VARS.num_display = float_value as int
-        MCM.SetSliderOptionValue(id_option, VARS.num_display, " {0} ", false)
+        MCM.SetSliderOptionValue(id_option, VARS.num_display, " {0} ", DO_UPDATE)
+
     endIf
 endFunction
 
@@ -565,6 +675,12 @@ function f_On_Option_Highlight(int id_option)
         else
             MCM.SetInfoText("Allows a clone of a generic npc to be unmembered or uncloned.")
         endIf
+    elseIf id_option == p_option_clone_outfit
+        if VARS.clone_outfit == CODES.OUTFIT_BASE
+            MCM.SetInfoText("A clone of an npc will receive their default outfit.")
+        elseIf VARS.clone_outfit == CODES.OUTFIT_REFERENCE
+            MCM.SetInfoText("A clone of an npc will receive their current outfit.")
+        endIf
 
     ; Outfitting
     elseIf id_option == p_option_auto_outfit
@@ -573,12 +689,26 @@ function f_On_Option_Highlight(int id_option)
         else
             MCM.SetInfoText("Members will not automatically dress for each activity.")
         endIf
+    elseIf id_option == p_option_auto_immobile_outfit
+        if VARS.auto_immobile_outfit
+            MCM.SetInfoText("When auto outfitting, members will equip their immobile outfit when applicable.")
+        else
+            MCM.SetInfoText("When auto outfitting, members will never equip their immobile outfit even when applicable.")
+        endIf
     elseIf id_option == p_option_fill_outfits
         if VARS.fill_outfits
             MCM.SetInfoText("Members will automatically receive items for each outfit.")
         else
             MCM.SetInfoText("Members will not automatically receive items for each outfit, and will be naked until you equip them.")
         endIf
+    elseIf id_option == p_option_slider_percent_body
+        MCM.SetInfoText("The percent chance that member outfits will be filled with an item that fits on their body.")
+    elseIf id_option == p_option_slider_percent_feet
+        MCM.SetInfoText("The percent chance that member outfits will be filled with an item that fits on their feet.")
+    elseIf id_option == p_option_slider_percent_hands
+        MCM.SetInfoText("The percent chance that member outfits will be filled with an item that fits on their hands.")
+    elseIf id_option == p_option_slider_percent_head
+        MCM.SetInfoText("The percent chance that member outfits will be filled with an item that fits on their head.")
     
     ; Followers Hotkeys
     elseIf id_option == p_option_key_fs_summon_all

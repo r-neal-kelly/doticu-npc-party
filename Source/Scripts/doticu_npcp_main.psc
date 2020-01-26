@@ -69,6 +69,7 @@ function f_Init_Mod()
     p_Create()
     p_Register()
 
+    DATA.CONSTS.GLOBAL_IS_INSTALLED.SetValue(1)
     FUNCS.LOGS.Create_Note("Thank you for installing!")
 
     while !p_Send("doticu_npcp_init_mod")
@@ -93,7 +94,7 @@ function f_Load_Mod()
     p_Register()
     p_Version()
 
-    Debug.Notification("NPC Party: Loaded (Temp!)"); temp
+    ;Debug.Notification("NPC Party: Loaded (Temp!)"); temp
 
     while !p_Send("doticu_npcp_load_mod")
         Utility.Wait(0.25)
@@ -149,6 +150,9 @@ function p_Version()
     if Is_NPC_Party_Less_Than(CONSTS.VERSION_MAJOR, CONSTS.VERSION_MINOR, CONSTS.VERSION_PATCH)
         if Is_NPC_Party_Less_Than(0, 7, 0)
             u_0_7_0()
+        endIf
+        if Is_NPC_Party_Less_Than(0, 7, 1)
+            u_0_7_1()
         endIf
 
         VARS.version_major = CONSTS.VERSION_MAJOR
@@ -225,6 +229,15 @@ endFunction
 function u_0_7_0()
     FUNCS.NPCS.f_Create(DATA)
     FUNCS.NPCS.f_Register()
+endFunction
+
+function u_0_7_1()
+    DATA.CONSTS.GLOBAL_IS_INSTALLED.SetValue(1)
+    VARS.clone_outfit = DATA.CODES.OUTFIT_BASE
+    VARS.percent_body = DATA.CONSTS.DEFAULT_PERCENT_BODY
+    VARS.percent_feet = DATA.CONSTS.DEFAULT_PERCENT_FEET
+    VARS.percent_hands = DATA.CONSTS.DEFAULT_PERCENT_HANDS
+    VARS.percent_head = DATA.CONSTS.DEFAULT_PERCENT_HEAD
 endFunction
 
 ; Events

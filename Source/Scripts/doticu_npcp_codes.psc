@@ -120,6 +120,8 @@ int property MOTION_FIXED                   =     5 autoReadOnly
 int property MOTION_THIN_BOX_INERTIA        =     6 autoReadOnly
 int property MOTION_CHARACTER               =     7 autoReadOnly
 
+int property OUTFIT_BASE                    =  -100 autoReadOnly
+int property OUTFIT_REFERENCE               =  -200 autoReadOnly
 int property OUTFIT_MEMBER                  = -1000 autoReadOnly
 int property OUTFIT_SETTLER                 = -2000 autoReadOnly
 int property OUTFIT_THRALL                  = -3000 autoReadOnly

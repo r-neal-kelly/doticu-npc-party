@@ -114,7 +114,44 @@ bool function p_Has_Changed(Actor ref_actor)
     return false
 endFunction
 
+function p_Set_Dead(Actor ref_actor)
+    int idx_forms
+    int num_forms
+    Form ref_form
+    int num_items_outfit
+    int num_items_actor
+    ObjectReference ref_trash = CONTAINERS.Create_Temp()
+
+    ; we copy one of each item, because it's dangerous to remove them within a loop
+    idx_forms = 0
+    num_forms = ref_actor.GetNumItems()
+    while idx_forms < num_forms
+        ref_form = ref_actor.GetNthForm(idx_forms)
+        if ref_form && ref_actor.IsEquipped(ref_form)
+            ref_trash.AddItem(ref_form, 1, true)
+        endIf
+        idx_forms += 1
+    endWhile
+
+    ; remove any items no longer in outfit, but the engine won't equip anything new
+    idx_forms = 0
+    num_forms = ref_trash.GetNumItems()
+    while idx_forms < num_forms
+        ref_form = ref_trash.GetNthForm(idx_forms)
+        num_items_outfit = self.GetItemCount(ref_form)
+        num_items_actor = ref_actor.GetItemCount(ref_form)
+        if num_items_actor > num_items_outfit
+            ref_actor.RemoveItem(ref_form, num_items_actor - num_items_outfit, true, ref_trash)
+        endIf
+        idx_forms += 1
+    endWhile
+endFunction
+
 ; Public Methods
+bool function Exists()
+    return p_is_created
+endFunction
+
 string function Get_Name()
     return p_str_name
 endFunction
@@ -192,6 +229,11 @@ function Set(Actor ref_actor, bool do_force = false)
         idx_forms += 1
     endWhile
 
+    ; we would get into an infinite loop if we don't handle this case separately
+    if ref_actor.IsDead()
+        return p_Set_Dead(ref_actor)
+    endIf
+
     ; the engine will actually apply the outfit in the correct way now, which we cannot do manually
     ref_actor.SetOutfit(p_OUTFIT)
 
@@ -262,6 +304,10 @@ endFunction
 
 ; Events
 event OnItemAdded(Form form_item, int count_item, ObjectReference ref_item, ObjectReference ref_container_source)
+    if !Exists()
+        return
+    endIf
+
     if self.GetNumItems() >= p_MAX_ITEMS
         LOGS.Create_Note("Can only have upto "+ p_MAX_ITEMS +" items in an outfit.")
     elseIf !form_item || !form_item.IsPlayable()

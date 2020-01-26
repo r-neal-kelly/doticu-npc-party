@@ -49,22 +49,22 @@ endProperty
 ; Public Constants
 bool property DO_UPDATE hidden
     bool function Get()
-        return false
+        return MCM.DO_UPDATE
     endFunction
 endProperty
 bool property DONT_UPDATE hidden
     bool function Get()
-        return true
+        return MCM.DONT_UPDATE
     endFunction
 endProperty
 int property FLAG_ENABLE hidden
     int function Get()
-        return MCM.OPTION_FLAG_NONE
+        return MCM.FLAG_ENABLE
     endFunction
 endProperty
 int property FLAG_DISABLE hidden
     int function Get()
-        return MCM.OPTION_FLAG_DISABLED
+        return MCM.FLAG_DISABLE
     endFunction
 endProperty
 
@@ -151,6 +151,14 @@ function f_Register()
 endFunction
 
 function f_Unregister()
+endFunction
+
+function f_Enable(int id_option, bool bool_update)
+    return MCM.f_Enable(id_option, bool_update)
+endFunction
+
+function f_Disable(int id_option, bool bool_update)
+    return MCM.f_Disable(id_option, bool_update)
 endFunction
 
 function f_Build_Page(int code_view, doticu_npcp_member ref_member)
@@ -248,51 +256,51 @@ function f_On_Option_Select(int id_option)
         endIf
 
     elseIf id_option == p_option_summon
-        p_Disable(p_option_summon, DO_UPDATE)
+        f_Disable(p_option_summon, DO_UPDATE)
         COMMANDS.Summon_Sync(ref_actor)
         p_Update_Commands()
     elseIf id_option == p_option_pack
-        p_Disable(p_option_pack, DO_UPDATE)
+        f_Disable(p_option_pack, DO_UPDATE)
         FUNCS.Close_Menus()
         COMMANDS.Pack_Sync(ref_actor, false)
 
     elseIf id_option == p_option_settle
-        p_Disable(p_option_settle, DO_UPDATE)
+        f_Disable(p_option_settle, DO_UPDATE)
         COMMANDS.Settle_Sync(ref_actor, false)
         p_Update_Commands()
     elseIf id_option == p_option_resettle
-        p_Disable(p_option_resettle, DO_UPDATE)
+        f_Disable(p_option_resettle, DO_UPDATE)
         COMMANDS.Resettle_Sync(ref_actor, false)
         p_Update_Commands()
     elseIf id_option == p_option_unsettle
-        p_Disable(p_option_unsettle, DO_UPDATE)
+        f_Disable(p_option_unsettle, DO_UPDATE)
         COMMANDS.Unsettle_Sync(ref_actor, false)
         p_Update_Commands()
 
     elseIf id_option == p_option_immobilize
-        p_Disable(p_option_immobilize, DO_UPDATE)
+        f_Disable(p_option_immobilize, DO_UPDATE)
         COMMANDS.Immobilize_Sync(ref_actor, false)
         p_Update_Commands()
     elseIf id_option == p_option_mobilize
-        p_Disable(p_option_mobilize, DO_UPDATE)
+        f_Disable(p_option_mobilize, DO_UPDATE)
         COMMANDS.Mobilize_Sync(ref_actor, false)
         p_Update_Commands()
 
     elseIf id_option == p_option_paralyze
-        p_Disable(p_option_paralyze, DO_UPDATE)
+        f_Disable(p_option_paralyze, DO_UPDATE)
         COMMANDS.Paralyze_Sync(ref_actor, false)
         p_Update_Commands()
     elseIf id_option == p_option_unparalyze
-        p_Disable(p_option_unparalyze, DO_UPDATE)
+        f_Disable(p_option_unparalyze, DO_UPDATE)
         COMMANDS.Unparalyze_Sync(ref_actor, false)
         p_Update_Commands()
 
     elseIf id_option == p_option_follow
-        p_Disable(p_option_follow, DO_UPDATE)
+        f_Disable(p_option_follow, DO_UPDATE)
         COMMANDS.Follow_Sync(ref_actor, false)
         p_Update_Commands()
     elseIf id_option == p_option_unfollow
-        p_Disable(p_option_unfollow, DO_UPDATE)
+        f_Disable(p_option_unfollow, DO_UPDATE)
         COMMANDS.Unfollow_Sync(ref_actor, false)
         if p_code_view == CODES.VIEW_MEMBER
             p_Update_Commands()
@@ -301,16 +309,16 @@ function f_On_Option_Select(int id_option)
         endIf
 
     elseIf id_option == p_option_sneak
-        p_Disable(p_option_sneak, DO_UPDATE)
+        f_Disable(p_option_sneak, DO_UPDATE)
         COMMANDS.Sneak_Sync(ref_actor, false)
         p_Update_Commands()
     elseIf id_option == p_option_unsneak
-        p_Disable(p_option_unsneak, DO_UPDATE)
+        f_Disable(p_option_unsneak, DO_UPDATE)
         COMMANDS.Unsneak_Sync(ref_actor, false)
         p_Update_Commands()
 
     elseIf id_option == p_option_relevel
-        p_Disable(p_option_relevel, DO_UPDATE)
+        f_Disable(p_option_relevel, DO_UPDATE)
         COMMANDS.Relevel_Sync(ref_actor, false)
         p_Update_Commands()
         p_Update_Statistics()
@@ -348,21 +356,21 @@ function f_On_Option_Select(int id_option)
         endIf
     
     elseIf id_option == p_option_resurrect
-        p_Disable(p_option_resurrect, DO_UPDATE)
+        f_Disable(p_option_resurrect, DO_UPDATE)
         COMMANDS.Resurrect_Sync(ref_actor, false)
         p_Update_Commands()
         p_Update_Statistics()
 
     elseIf id_option == p_option_clone
-        p_Disable(p_option_clone, DO_UPDATE)
+        f_Disable(p_option_clone, DO_UPDATE)
         COMMANDS.Clone_Async(ref_actor)
         p_Update_Commands()
     elseIf id_option == p_option_unclone
-        p_Disable(p_option_unclone, DO_UPDATE)
+        f_Disable(p_option_unclone, DO_UPDATE)
         COMMANDS.Unclone_Sync(ref_actor)
         p_Go_Back()
     elseIf id_option == p_option_unmember
-        p_Disable(p_option_unmember, DO_UPDATE)
+        f_Disable(p_option_unmember, DO_UPDATE)
         COMMANDS.Unmember_Sync(ref_actor)
         p_Go_Back()
 
@@ -634,57 +642,57 @@ function p_Build_Commands()
 endFunction
 
 function p_Update_Commands()
-    p_Enable(p_option_summon, DONT_UPDATE)
-    p_Enable(p_option_pack, DONT_UPDATE)
-    p_Enable(p_option_outfit, DONT_UPDATE)
+    f_Enable(p_option_summon, DONT_UPDATE)
+    f_Enable(p_option_pack, DONT_UPDATE)
+    f_Enable(p_option_outfit, DONT_UPDATE)
 
     if p_ref_member.Is_Settler()
-        p_Disable(p_option_settle, DONT_UPDATE)
-        p_Enable(p_option_resettle, DONT_UPDATE)
-        p_Enable(p_option_unsettle, DONT_UPDATE)
+        f_Disable(p_option_settle, DONT_UPDATE)
+        f_Enable(p_option_resettle, DONT_UPDATE)
+        f_Enable(p_option_unsettle, DONT_UPDATE)
     else
-        p_Enable(p_option_settle, DONT_UPDATE)
-        p_Disable(p_option_resettle, DONT_UPDATE)
-        p_Disable(p_option_unsettle, DONT_UPDATE)
+        f_Enable(p_option_settle, DONT_UPDATE)
+        f_Disable(p_option_resettle, DONT_UPDATE)
+        f_Disable(p_option_unsettle, DONT_UPDATE)
     endif
 
     if p_ref_member.Is_Immobile()
-        p_Disable(p_option_immobilize, DONT_UPDATE)
-        p_Enable(p_option_mobilize, DONT_UPDATE)
+        f_Disable(p_option_immobilize, DONT_UPDATE)
+        f_Enable(p_option_mobilize, DONT_UPDATE)
     else
-        p_Enable(p_option_immobilize, DONT_UPDATE)
-        p_Disable(p_option_mobilize, DONT_UPDATE)
+        f_Enable(p_option_immobilize, DONT_UPDATE)
+        f_Disable(p_option_mobilize, DONT_UPDATE)
     endif
 
     if p_ref_member.Is_Paralyzed()
-        p_Disable(p_option_paralyze, DONT_UPDATE)
-        p_Enable(p_option_unparalyze, DONT_UPDATE)
+        f_Disable(p_option_paralyze, DONT_UPDATE)
+        f_Enable(p_option_unparalyze, DONT_UPDATE)
     else
-        p_Enable(p_option_paralyze, DONT_UPDATE)
-        p_Disable(p_option_unparalyze, DONT_UPDATE)
+        f_Enable(p_option_paralyze, DONT_UPDATE)
+        f_Disable(p_option_unparalyze, DONT_UPDATE)
     endif
 
     if p_ref_member.Is_Follower()
-        p_Disable(p_option_follow, DONT_UPDATE)
-        p_Enable(p_option_unfollow, DONT_UPDATE)
+        f_Disable(p_option_follow, DONT_UPDATE)
+        f_Enable(p_option_unfollow, DONT_UPDATE)
 
         if p_ref_member.Is_Sneak()
-            p_Disable(p_option_sneak, DONT_UPDATE)
-            p_Enable(p_option_unsneak, DONT_UPDATE)
+            f_Disable(p_option_sneak, DONT_UPDATE)
+            f_Enable(p_option_unsneak, DONT_UPDATE)
         else
-            p_Enable(p_option_sneak, DONT_UPDATE)
-            p_Disable(p_option_unsneak, DONT_UPDATE)
+            f_Enable(p_option_sneak, DONT_UPDATE)
+            f_Disable(p_option_unsneak, DONT_UPDATE)
         endIf
 
-        p_Enable(p_option_relevel, DONT_UPDATE)
+        f_Enable(p_option_relevel, DONT_UPDATE)
     else
-        p_Enable(p_option_follow, DONT_UPDATE)
-        p_Disable(p_option_unfollow, DONT_UPDATE)
+        f_Enable(p_option_follow, DONT_UPDATE)
+        f_Disable(p_option_unfollow, DONT_UPDATE)
 
-        p_Disable(p_option_sneak, DONT_UPDATE)
-        p_Disable(p_option_unsneak, DONT_UPDATE)
+        f_Disable(p_option_sneak, DONT_UPDATE)
+        f_Disable(p_option_unsneak, DONT_UPDATE)
 
-        p_Disable(p_option_relevel, DONT_UPDATE)
+        f_Disable(p_option_relevel, DONT_UPDATE)
     endif
 
     int code_style = p_ref_member.Get_Style()
@@ -710,25 +718,25 @@ function p_Update_Commands()
     endIf
 
     if p_ref_member.Is_Dead()
-        p_Enable(p_option_resurrect, DONT_UPDATE)
+        f_Enable(p_option_resurrect, DONT_UPDATE)
     else
-        p_Disable(p_option_resurrect, DONT_UPDATE)
+        f_Disable(p_option_resurrect, DONT_UPDATE)
     endIf
 
-    p_Enable(p_option_clone, DONT_UPDATE)
+    f_Enable(p_option_clone, DONT_UPDATE)
     if p_ref_member.Is_Clone()
-        p_Enable(p_option_unclone, DONT_UPDATE)
+        f_Enable(p_option_unclone, DONT_UPDATE)
     else
-        p_Disable(p_option_unclone, DONT_UPDATE)
+        f_Disable(p_option_unclone, DONT_UPDATE)
     endIf
 
     if MEMBERS.Should_Unclone_Member(p_ref_member)
-        p_Disable(p_option_unmember, DONT_UPDATE)
+        f_Disable(p_option_unmember, DONT_UPDATE)
     else
-        p_Enable(p_option_unmember, DONT_UPDATE)
+        f_Enable(p_option_unmember, DONT_UPDATE)
     endIf
 
-    p_Enable(p_option_rename, DO_UPDATE)
+    f_Enable(p_option_rename, DO_UPDATE)
 endFunction
 
 function p_Build_Statistics()
@@ -803,12 +811,4 @@ function p_Go_Back()
         MCM.MCM_FOLLOWERS.f_View_Followers()
         MCM.ForcePageReset()
     endIf
-endFunction
-
-function p_Enable(int id_option, bool bool_update)
-    MCM.SetOptionFlags(id_option, FLAG_ENABLE, bool_update)
-endFunction
-
-function p_Disable(int id_option, bool bool_update)
-    MCM.SetOptionFlags(id_option, FLAG_DISABLE, bool_update)
 endFunction
