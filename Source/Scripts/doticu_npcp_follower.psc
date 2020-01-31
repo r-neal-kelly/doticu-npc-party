@@ -72,14 +72,12 @@ string                  p_str_namespace             =    ""
 int                     p_style_follower            =    -1
 int                     p_level_follower            =    -1
 bool                    p_is_sneak                  = false
+bool                    p_is_catching_up            = false
 
 int                     p_prev_relationship_rank    =    -1
 float                   p_prev_waiting_for_player   =  -1.0
-float                   p_prev_aggression           =  -1.0
-float                   p_prev_confidence           =  -1.0
-float                   p_prev_assistance           =  -1.0; this may need to go on Member
-float                   p_prev_morality             =  -1.0
 float                   p_prev_speed_mult           =  -1.0
+bool                    p_prev_faction_bard_no_auto = false
 
 float                   p_prev_health               =  -1.0
 float                   p_prev_magicka              =  -1.0
@@ -109,14 +107,16 @@ function f_Create(doticu_npcp_data DATA, int id_alias)
 
     p_is_created = true
     p_id_alias = id_alias
-    p_ref_actor = GetActorReference()
+    p_ref_actor = GetActorReference() as Actor
     p_ref_member = MEMBERS.Get_Member(p_ref_actor)
     p_str_namespace = "follower_" + p_id_alias
     p_style_follower = p_ref_member.Get_Style()
     p_level_follower = -1
     p_is_sneak = false
+    p_is_catching_up = false
 
     p_Backup()
+    ACTORS.Stop_If_Playing_Music(p_ref_actor)
 
     p_Follow()
     p_Level()
@@ -131,6 +131,12 @@ function f_Destroy()
     
     p_Restore()
 
+    p_prev_faction_bard_no_auto = false
+    p_prev_speed_mult =  -1.0
+    p_prev_waiting_for_player =  -1.0
+    p_prev_relationship_rank =    -1
+
+    p_is_catching_up = false
     p_is_sneak = false
     p_level_follower = -1
     p_style_follower = -1
@@ -158,10 +164,13 @@ function f_Register()
     RegisterForModEvent("doticu_npcp_followers_resurrect", "On_Followers_Resurrect")
     RegisterForModEvent("doticu_npcp_followers_catch_up", "On_Followers_Catch_Up")
 
+    RegisterForActorAction(CODES.ACTION_DRAW_END)
+
     p_Register_Queues()
 endFunction
 
 function f_Unregister()
+    UnregisterForActorAction(CODES.ACTION_DRAW_END)
     UnregisterForAllModEvents()
 endFunction
 
@@ -201,11 +210,8 @@ function p_Backup()
 
         p_prev_relationship_rank = p_ref_actor.GetRelationshipRank(CONSTS.ACTOR_PLAYER)
         p_prev_waiting_for_player = p_ref_actor.GetBaseActorValue("WaitingForPlayer")
-        p_prev_aggression = p_ref_actor.GetBaseActorValue("Aggression")
-        p_prev_confidence = p_ref_actor.GetBaseActorValue("Confidence")
-        p_prev_assistance = p_ref_actor.GetBaseActorValue("Assistance"); this may need to go on Member
-        p_prev_morality = p_ref_actor.GetBaseActorValue("Morality")
         p_prev_speed_mult = p_ref_actor.GetBaseActorValue("SpeedMult")
+        p_prev_faction_bard_no_auto = p_ref_actor.IsInFaction(CONSTS.FACTION_BARD_SINGER_NO_AUTOSTART)
 
         p_prev_health = p_ref_actor.GetBaseActorValue(CONSTS.STR_HEALTH)
         p_prev_magicka = p_ref_actor.GetBaseActorValue(CONSTS.STR_MAGICKA)
@@ -257,11 +263,10 @@ function p_Restore()
         p_ref_actor.SetActorValue(CONSTS.STR_MAGICKA, p_prev_magicka)
         p_ref_actor.SetActorValue(CONSTS.STR_HEALTH, p_prev_health)
 
+        if p_prev_faction_bard_no_auto
+            p_ref_actor.AddToFaction(CONSTS.FACTION_BARD_SINGER_NO_AUTOSTART)
+        endIf
         p_ref_actor.SetActorValue("SpeedMult", p_prev_speed_mult)
-        p_ref_actor.SetActorValue("Morality", p_prev_morality)
-        p_ref_actor.SetActorValue("Assistance", p_prev_assistance); this may need to go on Member
-        p_ref_actor.SetActorValue("Confidence", p_prev_confidence)
-        p_ref_actor.SetActorValue("Aggression", 0.0)
         p_ref_actor.SetActorValue("WaitingForPlayer", p_prev_waiting_for_player)
 
     f_Unlock_Resources()
@@ -273,19 +278,16 @@ function p_Follow()
         ACTORS.Token(p_ref_actor, CONSTS.TOKEN_FOLLOWER, p_id_alias + 1)
 
         CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(1)
-        p_ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, 3)
+
+        p_ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, 3); maybe we can do away with this, because it affects the base state of npcs
         p_ref_actor.SetPlayerTeammate(true, true)
         p_ref_actor.IgnoreFriendlyHits(true)
         p_ref_actor.SetNotShowOnStealthMeter(true)
-        ;p_ref_actor.AllowPCDialogue(true)
-        p_ref_actor.SetActorValue("WaitingForPlayer", 0.0)
-        p_ref_actor.SetActorValue("Aggression", 0.0)
-        p_ref_actor.SetActorValue("Confidence", 4.0)
-        p_ref_actor.SetActorValue("Assistance", 2.0); this may need to go on Member
-        p_ref_actor.SetActorValue("Morality", 0.0)
-        p_ref_actor.SetActorValue("SpeedMult", MAX_SPEED_UNSNEAK)
 
-        ; we also need to figure out how to deal with traps
+        p_ref_actor.AddToFaction(CONSTS.FACTION_BARD_SINGER_NO_AUTOSTART); may need to clear a quest's alias too?
+
+        p_ref_actor.SetActorValue("WaitingForPlayer", 0.0); we don't use the vanilla wait, but immobilize
+        p_ref_actor.SetActorValue("SpeedMult", MAX_SPEED_UNSNEAK)
 
         p_ref_actor.EvaluatePackage()
 
@@ -294,6 +296,8 @@ endFunction
 
 function p_Unfollow()
     f_Lock_Resources()
+
+        p_ref_actor.RemoveFromFaction(CONSTS.FACTION_BARD_SINGER_NO_AUTOSTART)
 
         p_ref_actor.SetNotShowOnStealthMeter(false)
         p_ref_actor.IgnoreFriendlyHits(false)
@@ -697,20 +701,25 @@ int function Relevel(int code_exec)
 endFunction
 
 int function Catch_Up()
-    int code_return
+    if p_is_catching_up
+        return CODES.SUCCESS
+    endIf
 
     if !Exists()
         return CODES.ISNT_FOLLOWER
     endIf
 
-    if !ACTORS.Is_Near_Player(p_ref_actor, 2048)
-        Summon_Behind()
+    if Is_Immobile() || Is_Paralyzed()
+        return CODES.CANT_CATCH_UP
     endIf
 
-    code_return = Enforce()
-    if code_return < 0
-        return code_return
+    p_is_catching_up = true
+
+    if !ACTORS.Is_Near_Player(p_ref_actor, 4096)
+        Summon_Behind(150)
     endIf
+
+    p_is_catching_up = false
 
     return CODES.SUCCESS
 endFunction
@@ -771,6 +780,10 @@ bool function Is_Mobile()
     return Exists() && p_ref_member.Is_Mobile()
 endFunction
 
+bool function Is_Paralyzed()
+    return Exists() && p_ref_member.Is_Paralyzed()
+endFunction
+
 bool function Is_Styled_Default()
     return Exists() && p_ref_member.Is_Styled_Default()
 endFunction
@@ -803,12 +816,12 @@ function Summon(int distance = 60, int angle = 0)
     p_ref_member.Summon(distance, angle)
 endFunction
 
-function Summon_Ahead()
-    p_ref_member.Summon_Ahead()
+function Summon_Ahead(int distance = 120)
+    p_ref_member.Summon_Ahead(distance)
 endFunction
 
-function Summon_Behind()
-    p_ref_member.Summon_Behind()
+function Summon_Behind(int distance = 120)
+    p_ref_member.Summon_Behind(distance)
 endFunction
 
 function Resurrect(int code_exec)
@@ -853,8 +866,11 @@ event OnDeath(Actor ref_killer)
     p_Unlevel()
 endEvent
 
-; need to add the catch up function, when player pulls out their weapon. but make it parallel this time.
-; it's RegisterForActorAction
+event OnActorAction(int code_action, Actor ref_actor, Form form_source, int slot)
+    if code_action == CODES.ACTION_DRAW_END
+        Catch_Up()
+    endIf
+endEvent
 
 event On_Load_Mod()
     if Exists()
@@ -932,9 +948,8 @@ event On_Followers_Unmember(Form form_tasklist)
     endIf
 endEvent
 
-event On_Followers_Catch_Up(Form form_tasklist)
+event On_Followers_Catch_Up()
     if Exists()
         Catch_Up()
-        (form_tasklist as doticu_npcp_tasklist).Detask()
     endIf
 endEvent

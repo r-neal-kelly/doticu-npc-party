@@ -348,26 +348,25 @@ function Set_Defaults()
     version_minor = CONSTS.VERSION_MINOR
     version_patch = CONSTS.VERSION_PATCH
 
+    auto_style = CODES.IS_DEFAULT; IS_DEFAULT, IS_WARRIOR, IS_MAGE, IS_ARCHER
+    auto_vitality = CODES.IS_PROTECTED; IS_MORTAL, IS_PROTECTED, IS_ESSENTIAL, IS_INVULNERABLE
+    auto_resurrect = true
+
     force_clone_unique = false
     force_clone_generic = false
     force_unclone_unique = false
     force_unclone_generic = false
     clone_outfit = CODES.OUTFIT_BASE; OUTFIT_BASE, OUTFIT_REFERENCE
 
-    auto_resurrect = true
-
-    auto_outfit = true
-    fill_outfits = true
+    auto_outfit = false
     auto_immobile_outfit = false
+    fill_outfits = true
     percent_body = CONSTS.DEFAULT_PERCENT_BODY
     percent_feet = CONSTS.DEFAULT_PERCENT_FEET
     percent_hands = CONSTS.DEFAULT_PERCENT_HANDS
     percent_head = CONSTS.DEFAULT_PERCENT_HEAD
 
-    auto_style = CODES.IS_DEFAULT; IS_DEFAULT, IS_WARRIOR, IS_MAGE, IS_ARCHER
-    auto_vitality = CODES.IS_PROTECTED; IS_MORTAL, IS_PROTECTED, IS_ESSENTIAL, IS_INVULNERABLE
+    num_display = CONSTS.DEFAULT_DISPLAY
 
-    num_display = 5
-
-    is_mcm_open = false
+    is_mcm_open = false; not really used.
 endFunction

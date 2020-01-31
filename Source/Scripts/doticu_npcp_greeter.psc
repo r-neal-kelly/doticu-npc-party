@@ -39,13 +39,10 @@ function f_Create(doticu_npcp_data DATA, Actor ref_actor)
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_GREETER)
     ACTORS.Pacify(p_ref_actor)
 
-    UnregisterForCrosshairRef()
-    RegisterForCrosshairRef()
+    RegisterForSingleUpdate(0.0)
 endFunction
 
 function f_Destroy()
-    UnregisterForCrosshairRef()
-
     ACTORS.Pacify(p_ref_actor)
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_GREETER)
     Clear()
@@ -67,8 +64,11 @@ bool function Exists()
 endFunction
 
 ; Events
-event OnCrosshairRefChange(ObjectReference ref_target)
-    if ref_target == p_ref_actor
+event OnUpdate()
+    while Exists() && !p_ref_actor.IsInDialogueWithPlayer()
+        Utility.Wait(0.5)
+    endWhile
+    if Exists()
         f_Destroy()
     endIf
 endEvent

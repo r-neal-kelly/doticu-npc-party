@@ -208,6 +208,17 @@ function Toggle_Followers_Sneak()
     GotoState("")
 endFunction
 
+function Outfit_Show(Actor ref_actor)
+    PRIVATE.Outfit_Show(ref_actor)
+endFunction
+
+function Style_Show(Actor ref_actor)
+    PRIVATE.Style_Show(ref_actor)
+endFunction
+
+function Vitality_Show(Actor ref_actor)
+    PRIVATE.Vitality_Show(ref_actor)
+endFunction
 
 
 

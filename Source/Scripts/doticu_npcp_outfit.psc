@@ -58,9 +58,12 @@ function f_Create(doticu_npcp_data DATA, Outfit outfit_outfit, string str_name)
     
     self.SetDisplayName(str_name, true)
     self.SetActorOwner(CONSTS.ACTOR_PLAYER.GetActorBase())
+
+    p_LEVELED.Revert()
 endFunction
 
 function f_Destroy()
+    p_LEVELED.Revert()
     self.RemoveAllItems(CONSTS.ACTOR_PLAYER, false, true)
     self.Disable()
     self.Delete()
@@ -185,9 +188,9 @@ function Get(Actor ref_actor, ObjectReference ref_inventory)
     Form ref_form
     int num_items
 
-    ; should always refresh cache before defining it
+    ; should always refresh cache before defining it, but not
+    ; the leveled list, because we always do it on a Set
     self.RemoveAllItems(CONSTS.ACTOR_PLAYER, false, true)
-    p_LEVELED.Revert()
 
     ; instead of using GetOutfit, we get what is playable and equipped,
     ; and store non-equipment in inventory to separate it from outfit
@@ -199,7 +202,6 @@ function Get(Actor ref_actor, ObjectReference ref_inventory)
             num_items = ref_actor.GetItemCount(ref_form)
             if ref_actor.IsEquipped(ref_form)
                 self.AddItem(ref_form, num_items, true)
-                p_LEVELED.AddForm(ref_form, 1, num_items)
             else
                 ref_inventory.AddItem(ref_form, num_items, true)
             endIf
@@ -241,7 +243,7 @@ function Set(Actor ref_actor, bool do_force = false)
     ref_trash = CONTAINERS.Create_Temp()
 
     ; some items may be duplicates and not match the container's count. we can't remove one manually, so we remove all.
-    ref_actor.RemoveAllItems(ref_trash, false, true)
+    ref_actor.RemoveAllItems(ref_trash, false, false); maybe move quest items somewhere else? but can't put in temp!
 
     ; we have to manually delete any non-playable items that are equipped. we leave everything else because they may be tokens
     Delete_Unplayable_Equipment(ref_actor)

@@ -316,6 +316,32 @@ bool function Is_Near_Player(Actor ref_actor, int max_distance = 1024)
     endIf
 endFunction
 
+function Stop_If_Playing_Music(Actor ref_actor)
+    BardSongsScript script = CONSTS.QUEST_BARD_SONGS as BardSongsScript
+
+    if script.BardSongs_Bard.GetActorReference() == ref_actor
+        script.StopAllSongs()
+        script.BardSongs_Bard.Clear()
+        ref_actor.Disable()
+        ref_actor.Enable()
+    elseIf script.BardSongs_Bard2.GetActorReference() == ref_actor
+        script.StopAllSongs()
+        script.BardSongs_Bard2.Clear()
+        ref_actor.Disable()
+        ref_actor.Enable()
+    elseIf script.BardSongsInstrumental_Bard.GetActorReference() == ref_actor
+        script.StopAllSongs()
+        script.BardSongsInstrumental_Bard.Clear()
+        ref_actor.Disable()
+        ref_actor.Enable()
+    elseIf script.BardSongsInstrumental_Bard2.GetActorReference() == ref_actor
+        script.StopAllSongs()
+        script.BardSongsInstrumental_Bard2.Clear()
+        ref_actor.Disable()
+        ref_actor.Enable()
+    endIf
+endFunction
+
 function Greet_Player(Actor ref_actor)
     if !ref_actor
         return

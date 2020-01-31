@@ -50,6 +50,8 @@ function Member(int code_return, string str_name)
         LOGS.Create_Note(str_name + " is already a member.")
     elseIf code_return == CODES.ISNT_ACTOR
         LOGS.Create_Note("That can't become a member.")
+    elseIf code_return == CODES.IS_CHILD
+        LOGS.Create_Note("A child cannot become a member.")
     else
         LOGS.Create_Error("It's unknown why " + str_name + " can't be a member: " + code_return)
     endIf
@@ -63,7 +65,7 @@ function Unmember(int code_return, string str_name)
     elseIf code_return == CODES.ISNT_ACTOR
         LOGS.Create_Note("That can't be unmembered.")
     else
-        LOGS.Create_Error("It's unknown why " + str_name + " can't be unmembered.")
+        LOGS.Create_Error("It's unknown why " + str_name + " can't be unmembered: " + code_return)
     endIf
 endFunction
 
@@ -78,8 +80,10 @@ function Clone(int code_return, string str_name)
         LOGS.Create_Note(str_name + " can't be revived, can't be cloned, and can't become a member.")
     elseIf code_return == CODES.ISNT_ACTOR
         LOGS.Create_Note("A clone of this can't be made a member.")
+    elseIf code_return == CODES.IS_CHILD
+        LOGS.Create_Note("A child cannot be cloned.")
     else
-        LOGS.Create_Error("It's unknown why a clone of " + str_name + " can't be a member. " + code_return)
+        LOGS.Create_Error("It's unknown why a clone of " + str_name + " can't be a member: " + code_return)
     endIf
 endFunction
 
@@ -93,7 +97,7 @@ function Unclone(int code_return, string str_name)
     elseIf code_return == CODES.ISNT_CLONE
         LOGS.Create_Note(str_name + " is not a clone.")
     else
-        LOGS.Create_Error("It's unknown why " + str_name + " can't be unmembered and uncloned.")
+        LOGS.Create_Error("It's unknown why " + str_name + " can't be unmembered and uncloned: " + code_return)
     endIf
 endFunction
 
@@ -109,7 +113,7 @@ function Pack(int code_return, string str_name)
     elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
         LOGS.Create_Note(str_name + " isn't a member, and so can't carry a pack.")
     else
-        LOGS.Create_Error("It's unknown why " + str_name + " can't carry the pack.")
+        LOGS.Create_Error("It's unknown why " + str_name + " can't carry the pack: " + code_return)
     endIf
 endFunction
 
@@ -139,7 +143,7 @@ function Outfit(int code_return, string str_name, int code_outfit)
     elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
         LOGS.Create_Note(str_name + " isn't a member, and so can't be outfitted.")
     else
-        LOGS.Create_Error("It's unknown why " + str_name + " can't be outfitted as " + str_outfit + ".")
+        LOGS.Create_Error("It's unknown why " + str_name + " can't be outfitted as " + str_outfit + ": " + code_return)
     endIf
 endFunction
 
@@ -157,7 +161,7 @@ function Resurrect(int code_return, string str_name)
     elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
         LOGS.Create_Note(str_name + " isn't a member, and so can't be resurrected.")
     else
-        LOGS.Create_Error("It's unknown why " + str_name + " can't be resurrected.")
+        LOGS.Create_Error("It's unknown why " + str_name + " can't be resurrected: " + code_return)
     endIf
 endFunction
 
@@ -175,7 +179,7 @@ function Settle(int code_return, string str_name)
     elseIf code_return == CODES.IS_SETTLER
         LOGS.Create_Note(str_name + " is already settled elsewhere.")
     else
-        LOGS.Create_Error("It's unknown why " + str_name + " can't settle here.")
+        LOGS.Create_Error("It's unknown why " + str_name + " can't settle here: " + code_return)
     endIf
 endFunction
 
@@ -193,7 +197,7 @@ function Unsettle(int code_return, string str_name)
     elseIf code_return == CODES.ISNT_SETTLER
         LOGS.Create_Note(str_name + " isn't settled.")
     else
-        LOGS.Create_Error("It's unknown why " + str_name + " can't unsettle.")
+        LOGS.Create_Error("It's unknown why " + str_name + " can't unsettle: " + code_return)
     endIf
 endFunction
 
@@ -211,7 +215,7 @@ function Resettle(int code_return, string str_name)
     elseIf code_return == CODES.ISNT_SETTLER
         LOGS.Create_Note(str_name + " isn't a settler, and so can't resettle.")
     else
-        LOGS.Create_Error("It's unknown why " + str_name + " can't resettle.")
+        LOGS.Create_Error("It's unknown why " + str_name + " can't resettle: " + code_return)
     endIf
 endFunction
 
@@ -231,7 +235,7 @@ function Enthrall(int code_return, string str_name)
     elseIf code_return == CODES.IS_IMMOBILE
         LOGS.Create_Note(str_name + " is already enthralled.")
     else
-        LOGS.Create_Error("It's unknown why " + str_name + " can't be enthralled.")
+        LOGS.Create_Error("It's unknown why " + str_name + " can't be enthralled: " + code_return)
     endIf
 endFunction
 
@@ -251,7 +255,7 @@ function Unthrall(int code_return, string str_name)
     elseIf code_return == CODES.ISNT_IMMOBILE
         LOGS.Create_Note(str_name + " is already unthralled.")
     else
-        LOGS.Create_Error("It's unknown why " + str_name + " can't be unthralled.")
+        LOGS.Create_Error("It's unknown why " + str_name + " can't be unthralled: " + code_return)
     endIf
 endFunction
 
@@ -269,7 +273,7 @@ function Immobilize(int code_return, string str_name)
     elseIf code_return == CODES.IS_IMMOBILE
         LOGS.Create_Note(str_name + " is already immobile.")
     else
-        LOGS.Create_Error("It's unknown why " + str_name + " can't be immobilized.")
+        LOGS.Create_Error("It's unknown why " + str_name + " can't be immobilized: " + code_return)
     endIf
 endFunction
 
@@ -287,7 +291,7 @@ function Mobilize(int code_return, string str_name)
     elseIf code_return == CODES.ISNT_IMMOBILE
         LOGS.Create_Note(str_name + " is already mobile.")
     else
-        LOGS.Create_Error("It's unknown why " + str_name + " can't be mobilized.")
+        LOGS.Create_Error("It's unknown why " + str_name + " can't be mobilized: " + code_return)
     endIf
 endFunction
 
@@ -305,7 +309,7 @@ function Paralyze(int code_return, string str_name)
     elseIf code_return == CODES.IS_PARALYZED
         LOGS.Create_Note(str_name + " is already paralyzed.")
     else
-        LOGS.Create_Error("It's unknown why " + str_name + " can't be immobile and paralyzed.")
+        LOGS.Create_Error("It's unknown why " + str_name + " can't be immobile and paralyzed: " + code_return)
     endIf
 endFunction
 
@@ -323,7 +327,7 @@ function Unparalyze(int code_return, string str_name)
     elseIf code_return == CODES.ISNT_PARALYZED
         LOGS.Create_Note(str_name + " wasn't paralyzed.")
     else
-        LOGS.Create_Error("It's unknown why " + str_name + " can't stop being paralyzed.")
+        LOGS.Create_Error("It's unknown why " + str_name + " can't stop being paralyzed: " + code_return)
     endIf
 endFunction
 
@@ -359,7 +363,7 @@ function Style(int code_return, string str_name, int code_style)
     elseIf code_return == CODES.IS_ARCHER
         LOGS.Create_Note(str_name + " is already " + str_style + ".")
     else
-        LOGS.Create_Error("It's unknown why " + str_name + " can't be " + str_style + ".")
+        LOGS.Create_Error("It's unknown why " + str_name + " can't be " + str_style + ": " + code_return)
     endIf
 endFunction
 
@@ -395,7 +399,7 @@ function Vitalize(int code_return, string str_name, int code_vitality)
     elseIf code_return == CODES.IS_INVULNERABLE
         LOGS.Create_Note(str_name + " is already " + str_vitality + ".")
     else
-        LOGS.Create_Error("It's unknown why " + str_name + " can't be " + str_vitality + ".")
+        LOGS.Create_Error("It's unknown why " + str_name + " can't be " + str_vitality + ": " + code_return)
     endIf
 endFunction
 
@@ -415,7 +419,7 @@ function Follow(int code_return, string str_name)
     elseIf code_return == CODES.IS_FOLLOWER
         LOGS.Create_Note(str_name + " is already following.")
     else
-        LOGS.Create_Error("It's unknown why " + str_name + " can't start following.")
+        LOGS.Create_Error("It's unknown why " + str_name + " can't start following: " + code_return)
     endIf
 endFunction
 
@@ -433,7 +437,7 @@ function Unfollow(int code_return, string str_name)
     elseIf code_return == CODES.ISNT_FOLLOWER
         LOGS.Create_Note(str_name + " wasn't following.")
     else
-        LOGS.Create_Error("It's unknown why " + str_name + " can't stop following.")
+        LOGS.Create_Error("It's unknown why " + str_name + " can't stop following: " + code_return)
     endIf
 endFunction
 
@@ -455,7 +459,7 @@ function Sneak(int code_return, string str_name)
     elseIf code_return == CODES.IS_SNEAK
         LOGS.Create_Note(str_name + " is already sneaking.")
     else
-        LOGS.Create_Error("It's unknown why " + str_name + " can't start sneaking. " + code_return)
+        LOGS.Create_Error("It's unknown why " + str_name + " can't start sneaking: " + code_return)
     endIf
 endFunction
 
@@ -477,7 +481,7 @@ function Unsneak(int code_return, string str_name)
     elseIf code_return == CODES.ISNT_SNEAK
         LOGS.Create_Note(str_name + " wasn't sneaking.")
     else
-        LOGS.Create_Error("It's unknown why " + str_name + " can't stop sneaking. " + code_return)
+        LOGS.Create_Error("It's unknown why " + str_name + " can't stop sneaking: " + code_return)
     endIf
 endFunction
 
@@ -519,7 +523,7 @@ function Members_Display_Start(int code_return, string str_name)
     elseIf code_return == CODES.OUT_OF_BOUNDS
         LOGS.Create_Error("Can not display that amount of members.")
     else
-        LOGS.Create_Error("Could not start a display.")
+        LOGS.Create_Error("Could not start a display: " + code_return)
     endIf
 endFunction
 
@@ -529,7 +533,7 @@ function Members_Display_Stop(int code_return)
     elseIf code_return == CODES.ISNT_DISPLAY
         LOGS.Create_Note("Display has already stopped.")
     else
-        LOGS.Create_Error("Could not stop display.")
+        LOGS.Create_Error("Could not stop display: " + code_return)
     endIf
 endFunction
 
@@ -539,7 +543,7 @@ function Members_Display_Next(int code_return)
     elseIf code_return == CODES.ISNT_DISPLAY
         LOGS.Create_Note("You need to start up a display first.")
     else
-        LOGS.Create_Error("Could not display the next members. " + code_return)
+        LOGS.Create_Error("Could not display the next members: " + code_return)
     endIf
 endFunction
 
@@ -549,7 +553,7 @@ function Members_Display_Previous(int code_return)
     elseIf code_return == CODES.ISNT_DISPLAY
         LOGS.Create_Note("You need to start up a display first.")
     else
-        LOGS.Create_Error("Could not display the previous members. " + code_return)
+        LOGS.Create_Error("Could not display the previous members: " + code_return)
     endIf
 endFunction
 
@@ -559,7 +563,7 @@ function Followers_Summon_All(int code_return)
     elseIf code_return == CODES.HASNT_FOLLOWER
         LOGS.Create_Note("No followers to summon.")
     else
-        LOGS.Create_Error("Could not summon all followers. " + code_return)
+        LOGS.Create_Error("Could not summon all followers: " + code_return)
     endIf
 endFunction
 
@@ -571,7 +575,7 @@ function Followers_Summon_Mobile(int code_return)
     elseIf code_return == CODES.HASNT_MOBILE
         LOGS.Create_Note("No mobile followers to summon.")
     else
-        LOGS.Create_Error("Could not summon mobile followers. " + code_return)
+        LOGS.Create_Error("Could not summon mobile followers: " + code_return)
     endIf
 endFunction
 
@@ -583,7 +587,7 @@ function Followers_Summon_Immobile(int code_return)
     elseIf code_return == CODES.HASNT_IMMOBILE
         LOGS.Create_Note("No immobile followers to summon.")
     else
-        LOGS.Create_Error("Could not summon immobile followers. " + code_return)
+        LOGS.Create_Error("Could not summon immobile followers: " + code_return)
     endIf
 endFunction
 
@@ -595,7 +599,7 @@ function Followers_Summon_Mobile_Behind(int code_return)
     elseIf code_return == CODES.HASNT_MOBILE
         LOGS.Create_Note("No mobile followers to summon.")
     else
-        LOGS.Create_Error("Could not summon mobile followers. " + code_return)
+        LOGS.Create_Error("Could not summon mobile followers: " + code_return)
     endIf
 endFunction
 
@@ -605,7 +609,7 @@ function Followers_Settle(int code_return)
     elseIf code_return == CODES.HASNT_FOLLOWER
         LOGS.Create_Note("No followers to settle.")
     else
-        LOGS.Create_Error("Could not settle followers. " + code_return)
+        LOGS.Create_Error("Could not settle followers: " + code_return)
     endIf
 endFunction
 
@@ -617,7 +621,7 @@ function Followers_Unsettle(int code_return)
     elseIf code_return == CODES.HASNT_SETTLER
         LOGS.Create_Note("No followers are already unsettled.")
     else
-        LOGS.Create_Error("Could not unsettle followers. " + code_return)
+        LOGS.Create_Error("Could not unsettle followers: " + code_return)
     endIf
 endFunction
 
@@ -629,7 +633,7 @@ function Followers_Immobilize(int code_return)
     elseIf code_return == CODES.HASNT_MOBILE
         LOGS.Create_Note("All followers are already immobilized.")
     else
-        LOGS.Create_Error("Could not immobilize followers. " + code_return)
+        LOGS.Create_Error("Could not immobilize followers: " + code_return)
     endIf
 endFunction
 
@@ -641,7 +645,7 @@ function Followers_Mobilize(int code_return)
     elseIf code_return == CODES.HASNT_IMMOBILE
         LOGS.Create_Note("All followers are already mobilized.")
     else
-        LOGS.Create_Error("Could not mobilize followers. " + code_return)
+        LOGS.Create_Error("Could not mobilize followers: " + code_return)
     endIf
 endFunction
 
@@ -653,7 +657,7 @@ function Followers_Sneak(int code_return)
     elseIf code_return == CODES.HASNT_UNSNEAK
         LOGS.Create_Note("All followers are already sneaking.")
     else
-        LOGS.Create_Error("Could not make followers sneak. " + code_return)
+        LOGS.Create_Error("Could not make followers sneak: " + code_return)
     endIf
 endFunction
 
@@ -665,7 +669,7 @@ function Followers_Unsneak(int code_return)
     elseIf code_return == CODES.HASNT_SNEAK
         LOGS.Create_Note("All followers are already not sneaking.")
     else
-        LOGS.Create_Error("Could not make followers stop sneaking. " + code_return)
+        LOGS.Create_Error("Could not make followers stop sneaking: " + code_return)
     endIf
 endFunction
 
@@ -677,7 +681,7 @@ function Followers_Resurrect(int code_return)
     elseIf code_return == CODES.HASNT_DEAD
         LOGS.Create_Note("All followers are already alive.")
     else
-        LOGS.Create_Error("Could not make followers resurrect. " + code_return)
+        LOGS.Create_Error("Could not make followers resurrect: " + code_return)
     endIf
 endFunction
 
@@ -687,7 +691,7 @@ function Followers_Unfollow(int code_return)
     elseIf code_return == CODES.HASNT_FOLLOWER
         LOGS.Create_Note("No followers to unfollow.")
     else
-        LOGS.Create_Error("Could not make followers stop following. " + code_return)
+        LOGS.Create_Error("Could not make followers stop following: " + code_return)
     endIf
 endFunction
 
@@ -697,6 +701,6 @@ function Followers_Unmember(int code_return)
     elseIf code_return == CODES.HASNT_FOLLOWER
         LOGS.Create_Note("No followers to unmember.")
     else
-        LOGS.Create_Error("Could not unmember followers. " + code_return)
+        LOGS.Create_Error("Could not unmember followers: " + code_return)
     endIf
 endFunction

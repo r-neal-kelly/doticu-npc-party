@@ -45,6 +45,10 @@ endFunction
 doticu_npcp_outfit function p_Create(Container form_container, Outfit form_outfit, string str_name)
     doticu_npcp_outfit ref_outfit = CONSTS.MARKER_STORAGE.PlaceAtMe(CONSTS.CONTAINER_OUTFIT, 1, false, false) as doticu_npcp_outfit
 
+    if !VARS.fill_outfits
+        form_container == CONSTS.CONTAINER_OUTFIT
+    endIf
+
     if form_container != CONSTS.CONTAINER_OUTFIT
         ; there is a horrible bug where a container that spawns with a leveled list inside
         ; miscounts GetItemCount when the player is not in the same cell it spawned in. so
@@ -80,5 +84,7 @@ doticu_npcp_outfit function Create_Follower(Outfit form_outfit, string str_name 
 endFunction
 
 function Destroy(doticu_npcp_outfit ref_outfit)
-    ref_outfit.f_Destroy()
+    if ref_outfit
+        ref_outfit.f_Destroy()
+    endIf
 endFunction

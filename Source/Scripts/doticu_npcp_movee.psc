@@ -207,14 +207,14 @@ function p_Move()
     endIf
 
     if p_do_rotate_left && !p_do_rotate_right
-        p_movee_ang -= p_ROTATE_UNIT
-        if p_movee_ang < 0.0
-            p_movee_ang = 360.0
-        endIf
-    elseIf p_do_rotate_right && !p_do_rotate_left
         p_movee_ang += p_ROTATE_UNIT
         if p_movee_ang > 360.0
             p_movee_ang = 0.0
+        endIf
+    elseIf p_do_rotate_right && !p_do_rotate_left
+        p_movee_ang -= p_ROTATE_UNIT
+        if p_movee_ang < 0.0
+            p_movee_ang = 360.0
         endIf
     endIf
 

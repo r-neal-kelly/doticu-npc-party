@@ -36,12 +36,6 @@ Form[]              p_arr_actors    =  none
 int                 p_num_names     =    -1
 string[]            p_arr_names     =  none
 
-; to be deleted.
-int                 p_size_ids_used =    -1
-int                 p_size_ids_free =    -1
-int[]               p_arr_ids_used  =  none
-int[]               p_arr_ids_free  =  none
-
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
     p_DATA = DATA
@@ -387,7 +381,7 @@ function Sort()
 endFunction
 
 bool function Will_Sort()
-    return p_can_sort && p_should_sort
+    return p_can_sort && p_should_sort && p_num_used > 1
 endFunction
 
 function Enable_Sort()
@@ -553,48 +547,6 @@ Alias[] function Get_Prev_Aliases(int idx_ex, int num_prev)
 endFunction
 
 ; Update Methods
-function u_0_3_0()
-    p_Create_Arrays()
-
-    p_num_used = p_size_ids_used
-    p_num_free = p_size_ids_free
-    p_num_aliases = p_num_used
-    p_num_actors = p_num_used
-    p_num_names = p_num_used
-
-    int idx_id
-    int id_alias
-    Alias base_alias
-    Actor ref_actor
-
-    idx_id = 0
-    while idx_id < p_size_ids_used
-        id_alias = p_arr_ids_used[idx_id]
-        base_alias = GetNthAlias(id_alias)
-        ref_actor = (base_alias as ReferenceAlias).GetActorReference()
-
-        p_arr_used[idx_id] = id_alias
-        p_arr_aliases[idx_id] = base_alias
-        p_arr_actors[idx_id] = ref_actor
-        p_arr_names[idx_id] = p_Stringify_ID(id_alias, ref_actor)
-
-        idx_id += 1
-    endWhile
-
-    idx_id = 0
-    while idx_id < p_size_ids_free
-        p_arr_free[idx_id] = p_arr_ids_free[idx_id]
-
-        idx_id += 1
-    endWhile
-
-    ;p_size_ids_used = -1
-    ;p_arr_ids_used = none
-
-    ;p_size_ids_free = -1
-    ;p_arr_ids_free = none
-endFunction
-
 function u_0_4_0()
     ; backup old cache
     int max_aliases_old = p_MAX_ALIASES

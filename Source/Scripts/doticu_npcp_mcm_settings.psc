@@ -133,38 +133,38 @@ function f_Build_Page()
     MCM.AddHeaderOption(" General ")
     MCM.AddEmptyOption()
     if VARS.auto_style == CODES.IS_DEFAULT
-        p_option_auto_style = MCM.AddTextOption("Auto Style", CONSTS.STR_MCM_DEFAULT); maybe default instead of auto?
+        p_option_auto_style = MCM.AddTextOption(" New Member Style ", CONSTS.STR_MCM_DEFAULT)
     elseIf VARS.auto_style == CODES.IS_WARRIOR
-        p_option_auto_style = MCM.AddTextOption("Auto Style", CONSTS.STR_MCM_WARRIOR)
+        p_option_auto_style = MCM.AddTextOption(" New Member Style ", CONSTS.STR_MCM_WARRIOR)
     elseIf VARS.auto_style == CODES.IS_MAGE
-        p_option_auto_style = MCM.AddTextOption("Auto Style", CONSTS.STR_MCM_MAGE)
+        p_option_auto_style = MCM.AddTextOption(" New Member Style ", CONSTS.STR_MCM_MAGE)
     elseIf VARS.auto_style == CODES.IS_ARCHER
-        p_option_auto_style = MCM.AddTextOption("Auto Style", CONSTS.STR_MCM_ARCHER)
+        p_option_auto_style = MCM.AddTextOption(" New Member Style ", CONSTS.STR_MCM_ARCHER)
     endIf
     if VARS.auto_vitality == CODES.IS_MORTAL
-        p_option_auto_vitality = MCM.AddTextOption("Auto Vitality", CONSTS.STR_MCM_MORTAL); maybe default instead of auto?
+        p_option_auto_vitality = MCM.AddTextOption(" New Member Vitality ", CONSTS.STR_MCM_MORTAL)
     elseIf VARS.auto_vitality == CODES.IS_PROTECTED
-        p_option_auto_vitality = MCM.AddTextOption("Auto Vitality", CONSTS.STR_MCM_PROTECTED)
+        p_option_auto_vitality = MCM.AddTextOption(" New Member Vitality ", CONSTS.STR_MCM_PROTECTED)
     elseIf VARS.auto_vitality == CODES.IS_ESSENTIAL
-        p_option_auto_vitality = MCM.AddTextOption("Auto Vitality", CONSTS.STR_MCM_ESSENTIAL)
+        p_option_auto_vitality = MCM.AddTextOption(" New Member Vitality ", CONSTS.STR_MCM_ESSENTIAL)
     elseIf VARS.auto_vitality == CODES.IS_INVULNERABLE
-        p_option_auto_vitality = MCM.AddTextOption("Auto Vitality", CONSTS.STR_MCM_INVULNERABLE)
+        p_option_auto_vitality = MCM.AddTextOption(" New Member Vitality ", CONSTS.STR_MCM_INVULNERABLE)
     endIf
-    p_option_auto_resurrect = MCM.AddToggleOption("Auto Resurrect Followers", VARS.auto_resurrect)
+    p_option_auto_resurrect = MCM.AddToggleOption(" Auto Resurrect Followers ", VARS.auto_resurrect)
     MCM.AddEmptyOption()
     MCM.AddEmptyOption()
     MCM.AddEmptyOption()
 
     MCM.AddHeaderOption(" Cloning ")
     MCM.AddEmptyOption()
-    p_option_force_clone_unique = MCM.AddToggleOption("Force Clone Unique NPCs", VARS.force_clone_unique)
-    p_option_force_unclone_unique = MCM.AddToggleOption("Force Unclone Unique NPCs", VARS.force_unclone_unique)
-    p_option_force_clone_generic = MCM.AddToggleOption("Force Clone Generic NPCs", VARS.force_clone_generic)
-    p_option_force_unclone_generic = MCM.AddToggleOption("Force Unclone Generic NPCs", VARS.force_unclone_generic)
+    p_option_force_clone_unique = MCM.AddToggleOption(" Force Clone Unique NPCs ", VARS.force_clone_unique)
+    p_option_force_unclone_unique = MCM.AddToggleOption(" Force Unclone Unique NPCs ", VARS.force_unclone_unique)
+    p_option_force_clone_generic = MCM.AddToggleOption(" Force Clone Generic NPCs ", VARS.force_clone_generic)
+    p_option_force_unclone_generic = MCM.AddToggleOption(" Force Unclone Generic NPCs ", VARS.force_unclone_generic)
     if VARS.clone_outfit == CODES.OUTFIT_BASE
-        p_option_clone_outfit = MCM.AddTextOption("Clone Outfit", CONSTS.STR_MCM_BASE)
+        p_option_clone_outfit = MCM.AddTextOption(" New Clone Outfit ", CONSTS.STR_MCM_BASE)
     elseIf VARS.clone_outfit == CODES.OUTFIT_REFERENCE
-        p_option_clone_outfit = MCM.AddTextOption("Clone Outfit", CONSTS.STR_MCM_REFERENCE)
+        p_option_clone_outfit = MCM.AddTextOption(" New Clone Outfit ", CONSTS.STR_MCM_REFERENCE)
     endIf
     MCM.AddEmptyOption()
     MCM.AddEmptyOption()
@@ -172,19 +172,19 @@ function f_Build_Page()
 
     MCM.AddHeaderOption(" Outfitting ")
     MCM.AddEmptyOption()
-    p_option_auto_outfit = MCM.AddToggleOption("Auto Outfit", VARS.auto_outfit)
+    p_option_auto_outfit = MCM.AddToggleOption(" Auto Change Outfits ", VARS.auto_outfit)
     if VARS.auto_outfit
-        p_option_auto_immobile_outfit = MCM.AddToggleOption("Auto Immobile Outfit", VARS.auto_immobile_outfit, FLAG_ENABLE)
+        p_option_auto_immobile_outfit = MCM.AddToggleOption(" Use Auto Immobile ", VARS.auto_immobile_outfit, FLAG_ENABLE)
     else
-        p_option_auto_immobile_outfit = MCM.AddToggleOption("Auto Immobile Outfit", VARS.auto_immobile_outfit, FLAG_DISABLE)
+        p_option_auto_immobile_outfit = MCM.AddToggleOption(" Use Auto Immobile ", VARS.auto_immobile_outfit, FLAG_DISABLE)
     endIf
-    p_option_fill_outfits = MCM.AddToggleOption("Fill Outfits", VARS.fill_outfits)
+    p_option_fill_outfits = MCM.AddToggleOption(" Auto Fill Outfits ", VARS.fill_outfits)
     MCM.AddEmptyOption()
     if VARS.fill_outfits
-        p_option_slider_percent_body = MCM.AddSliderOption(" Fill Body Percent ", VARS.percent_body, " {0}% ")
-        p_option_slider_percent_feet = MCM.AddSliderOption(" Fill Feet Percent ", VARS.percent_feet, " {0}% ")
-        p_option_slider_percent_hands = MCM.AddSliderOption(" Fill Hands Percent ", VARS.percent_hands, " {0}% ")
-        p_option_slider_percent_head = MCM.AddSliderOption(" Fill Head Percent ", VARS.percent_head, " {0}% ")
+        p_option_slider_percent_body = MCM.AddSliderOption(" Fill Body Chance ", VARS.percent_body, " {0}% ")
+        p_option_slider_percent_feet = MCM.AddSliderOption(" Fill Feet Chance ", VARS.percent_feet, " {0}% ")
+        p_option_slider_percent_hands = MCM.AddSliderOption(" Fill Hands Chance ", VARS.percent_hands, " {0}% ")
+        p_option_slider_percent_head = MCM.AddSliderOption(" Fill Head Chance ", VARS.percent_head, " {0}% ")
     endIf
     MCM.AddEmptyOption()
     MCM.AddEmptyOption()
@@ -192,9 +192,9 @@ function f_Build_Page()
     MCM.AddHeaderOption(" Displaying ")
     MCM.AddEmptyOption()
     p_option_key_ms_display_toggle = MCM.AddKeymapOption(" Toggle Display ", VARS.key_ms_display_toggle, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_slider_ms_display = MCM.AddSliderOption(" Number per Cycle ", VARS.num_display, " {0} ")
-    p_option_key_ms_display_previous = MCM.AddKeymapOption(" Previous Display ", VARS.key_ms_display_previous, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_key_ms_display_next = MCM.AddKeymapOption(" Next Display ", VARS.key_ms_display_next, MCM.OPTION_FLAG_WITH_UNMAP)
+    p_option_slider_ms_display = MCM.AddSliderOption(" Members per Cycle ", VARS.num_display, " {0} ")
+    p_option_key_ms_display_previous = MCM.AddKeymapOption(" Previous Members ", VARS.key_ms_display_previous, MCM.OPTION_FLAG_WITH_UNMAP)
+    p_option_key_ms_display_next = MCM.AddKeymapOption(" Next Members ", VARS.key_ms_display_next, MCM.OPTION_FLAG_WITH_UNMAP)
     MCM.AddEmptyOption()
     MCM.AddEmptyOption()
 
@@ -204,8 +204,8 @@ function f_Build_Page()
     MCM.AddEmptyOption()
     p_option_key_move_nearer = MCM.AddKeymapOption(" Move Nearer ", VARS.key_move_nearer, MCM.OPTION_FLAG_WITH_UNMAP)
     p_option_key_move_farther = MCM.AddKeymapOption(" Move Farther ", VARS.key_move_farther, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_key_move_rotate_left = MCM.AddKeymapOption(" Rotate Left ", VARS.key_move_rotate_left, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_key_move_rotate_right = MCM.AddKeymapOption(" Rotate Right ", VARS.key_move_rotate_right, MCM.OPTION_FLAG_WITH_UNMAP)
+    p_option_key_move_rotate_left = MCM.AddKeymapOption(" Rotate Clockwise ", VARS.key_move_rotate_left, MCM.OPTION_FLAG_WITH_UNMAP)
+    p_option_key_move_rotate_right = MCM.AddKeymapOption(" Rotate Counter-Clockwise ", VARS.key_move_rotate_right, MCM.OPTION_FLAG_WITH_UNMAP)
     MCM.AddEmptyOption()
     MCM.AddEmptyOption()
 
@@ -383,15 +383,26 @@ function f_On_Option_Slider_Accept(int id_option, float float_value)
 endFunction
 
 function f_On_Option_Keymap_Change(int id_option, int code_key, string str_conflict_control, string str_conflict_mod)
-    string str_conflict_message
+    ; not safe to do anything with a false control
+    string str_control = p_Get_Control(id_option)
+    if !str_control
+        return
+    endIf
 
+    ; this avoids false positive conflicts
+    if KEYS.Get_Key(str_control) == code_key
+        return
+    endIf
+
+    ; we ask the user to deal with the conflict
     if code_key > -1 && str_conflict_control
-        str_conflict_message = "This conflicts with '" + str_conflict_control + "'"
+        string str_conflict_message = "This conflicts with '" + str_conflict_control + "'"
         if str_conflict_mod
-            str_conflict_message += " in the mod '" + str_conflict_mod + "'"
+            str_conflict_message += " in the mod '" + str_conflict_mod + "'."
         else
-            str_conflict_message += " in vanilla Skyrim"
+            str_conflict_message += " in vanilla Skyrim."
         endIf
+        str_conflict_message += " Set key anyway?"
         if !MCM.ShowMessage(str_conflict_message, true)
             return
         endIf
@@ -472,144 +483,148 @@ function f_On_Option_Keymap_Change(int id_option, int code_key, string str_confl
 endFunction
 
 function f_On_Option_Default(int id_option)
+    ; not safe to do anything with a false control
+    string str_control = p_Get_Control(id_option)
+    if !str_control
+        return
+    endIf
+    
     if false
-
-    ; need to deal with the case that the var is already the constant. just quit silently.
 
     ; Followers
     elseIf id_option == p_option_key_fs_summon_all
-        if p_Can_Set_Key(CONSTS.KEY_DEF_FS_SUMMON_ALL)
+        if p_Can_Set_Key(CONSTS.STR_KEY_FS_SUMMON_ALL, CONSTS.KEY_DEF_FS_SUMMON_ALL)
             VARS.key_fs_summon_all = CONSTS.KEY_DEF_FS_SUMMON_ALL
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_FS_SUMMON_ALL, false)
         endIf
     elseIf id_option == p_option_key_fs_summon_mobile
-        if p_Can_Set_Key(CONSTS.KEY_DEF_FS_SUMMON_MOBILE)
+        if p_Can_Set_Key(CONSTS.STR_KEY_FS_SUMMON_MOBILE, CONSTS.KEY_DEF_FS_SUMMON_MOBILE)
             VARS.key_fs_summon_mobile = CONSTS.KEY_DEF_FS_SUMMON_MOBILE
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_FS_SUMMON_MOBILE, false)
         endIf
     elseIf id_option == p_option_key_fs_summon_immobile
-        if p_Can_Set_Key(CONSTS.KEY_DEF_FS_SUMMON_IMMOBILE)
+        if p_Can_Set_Key(CONSTS.STR_KEY_FS_SUMMON_IMMOBILE, CONSTS.KEY_DEF_FS_SUMMON_IMMOBILE)
             VARS.key_fs_summon_immobile = CONSTS.KEY_DEF_FS_SUMMON_IMMOBILE
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_FS_SUMMON_IMMOBILE, false)
         endIf
     elseIf id_option == p_option_key_fs_settle
-        if p_Can_Set_Key(CONSTS.KEY_DEF_FS_SETTLE)
+        if p_Can_Set_Key(CONSTS.STR_KEY_FS_SETTLE, CONSTS.KEY_DEF_FS_SETTLE)
             VARS.key_fs_settle = CONSTS.KEY_DEF_FS_SETTLE
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_FS_SETTLE, false)
         endIf
     elseIf id_option == p_option_key_fs_unsettle
-        if p_Can_Set_Key(CONSTS.KEY_DEF_FS_UNSETTLE)
+        if p_Can_Set_Key(CONSTS.STR_KEY_FS_UNSETTLE, CONSTS.KEY_DEF_FS_UNSETTLE)
             VARS.key_fs_unsettle = CONSTS.KEY_DEF_FS_UNSETTLE
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_FS_UNSETTLE, false)
         endIf
     elseIf id_option == p_option_key_fs_immobilize
-        if p_Can_Set_Key(CONSTS.KEY_DEF_FS_IMMOBILIZE)
+        if p_Can_Set_Key(CONSTS.STR_KEY_FS_IMMOBILIZE, CONSTS.KEY_DEF_FS_IMMOBILIZE)
             VARS.key_fs_immobilize = CONSTS.KEY_DEF_FS_IMMOBILIZE
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_FS_IMMOBILIZE, false)
         endIf
     elseIf id_option == p_option_key_fs_mobilize
-        if p_Can_Set_Key(CONSTS.KEY_DEF_FS_MOBILIZE)
+        if p_Can_Set_Key(CONSTS.STR_KEY_FS_MOBILIZE, CONSTS.KEY_DEF_FS_MOBILIZE)
             VARS.key_fs_mobilize = CONSTS.KEY_DEF_FS_MOBILIZE
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_FS_MOBILIZE, false)
         endIf
     elseIf id_option == p_option_key_fs_sneak
-        if p_Can_Set_Key(CONSTS.KEY_DEF_FS_SNEAK)
+        if p_Can_Set_Key(CONSTS.STR_KEY_FS_SNEAK, CONSTS.KEY_DEF_FS_SNEAK)
             VARS.key_fs_sneak = CONSTS.KEY_DEF_FS_SNEAK
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_FS_SNEAK, false)
         endIf
     elseIf id_option == p_option_key_fs_unsneak
-        if p_Can_Set_Key(CONSTS.KEY_DEF_FS_UNSNEAK)
+        if p_Can_Set_Key(CONSTS.STR_KEY_FS_UNSNEAK, CONSTS.KEY_DEF_FS_UNSNEAK)
             VARS.key_fs_unsneak = CONSTS.KEY_DEF_FS_UNSNEAK
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_FS_UNSNEAK, false)
         endIf
     elseIf id_option == p_option_key_fs_resurrect
-        if p_Can_Set_Key(CONSTS.KEY_DEF_FS_RESURRECT)
+        if p_Can_Set_Key(CONSTS.STR_KEY_FS_RESURRECT, CONSTS.KEY_DEF_FS_RESURRECT)
             VARS.key_fs_resurrect = CONSTS.KEY_DEF_FS_RESURRECT
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_FS_RESURRECT, false)
         endIf
 
     ; Members Display
     elseIf id_option == p_option_key_ms_display_toggle
-        if p_Can_Set_Key(CONSTS.KEY_DEF_MS_DISPLAY_TOGGLE)
+        if p_Can_Set_Key(CONSTS.STR_KEY_MS_DISPLAY_TOGGLE, CONSTS.KEY_DEF_MS_DISPLAY_TOGGLE)
             VARS.key_ms_display_toggle = CONSTS.KEY_DEF_MS_DISPLAY_TOGGLE
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_MS_DISPLAY_TOGGLE, false)
         endIf
     elseIf id_option == p_option_key_ms_display_previous
-        if p_Can_Set_Key(CONSTS.KEY_DEF_MS_DISPLAY_PREVIOUS)
+        if p_Can_Set_Key(CONSTS.STR_KEY_MS_DISPLAY_PREVIOUS, CONSTS.KEY_DEF_MS_DISPLAY_PREVIOUS)
             VARS.key_ms_display_previous = CONSTS.KEY_DEF_MS_DISPLAY_PREVIOUS
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_MS_DISPLAY_PREVIOUS, false)
         endIf
     elseIf id_option == p_option_key_ms_display_next
-        if p_Can_Set_Key(CONSTS.KEY_DEF_MS_DISPLAY_NEXT)
+        if p_Can_Set_Key(CONSTS.STR_KEY_MS_DISPLAY_NEXT, CONSTS.KEY_DEF_MS_DISPLAY_NEXT)
             VARS.key_ms_display_next = CONSTS.KEY_DEF_MS_DISPLAY_NEXT
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_MS_DISPLAY_NEXT, false)
         endIf
     
     ; Actors Move
     elseIf id_option == p_option_key_move_toggle
-        if p_Can_Set_Key(CONSTS.KEY_DEF_MOVE_TOGGLE)
+        if p_Can_Set_Key(CONSTS.STR_KEY_MOVE_TOGGLE, CONSTS.KEY_DEF_MOVE_TOGGLE)
             VARS.key_move_toggle = CONSTS.KEY_DEF_MOVE_TOGGLE
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_MOVE_TOGGLE, false)
         endIf
     elseIf id_option == p_option_key_move_farther
-        if p_Can_Set_Key(CONSTS.KEY_DEF_MOVE_FARTHER)
+        if p_Can_Set_Key(CONSTS.STR_KEY_MOVE_FARTHER, CONSTS.KEY_DEF_MOVE_FARTHER)
             VARS.key_move_farther = CONSTS.KEY_DEF_MOVE_FARTHER
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_MOVE_FARTHER, false)
         endIf
     elseIf id_option == p_option_key_move_nearer
-        if p_Can_Set_Key(CONSTS.KEY_DEF_MOVE_NEARER)
+        if p_Can_Set_Key(CONSTS.STR_KEY_MOVE_NEARER, CONSTS.KEY_DEF_MOVE_NEARER)
             VARS.key_move_nearer = CONSTS.KEY_DEF_MOVE_NEARER
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_MOVE_NEARER, false)
         endIf
     elseIf id_option == p_option_key_move_rotate_right
-        if p_Can_Set_Key(CONSTS.KEY_DEF_MOVE_ROTATE_RIGHT)
+        if p_Can_Set_Key(CONSTS.STR_KEY_MOVE_ROTATE_RIGHT, CONSTS.KEY_DEF_MOVE_ROTATE_RIGHT)
             VARS.key_move_rotate_right = CONSTS.KEY_DEF_MOVE_ROTATE_RIGHT
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_MOVE_ROTATE_RIGHT, false)
         endIf
     elseIf id_option == p_option_key_move_rotate_left
-        if p_Can_Set_Key(CONSTS.KEY_DEF_MOVE_ROTATE_LEFT)
+        if p_Can_Set_Key(CONSTS.STR_KEY_MOVE_ROTATE_LEFT, CONSTS.KEY_DEF_MOVE_ROTATE_LEFT)
             VARS.key_move_rotate_left = CONSTS.KEY_DEF_MOVE_ROTATE_LEFT
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_MOVE_ROTATE_LEFT, false)
         endIf
     
     ; Member/Follower Toggles
     elseIf id_option == p_option_key_m_toggle_member
-        if p_Can_Set_Key(CONSTS.KEY_DEF_M_TOGGLE_MEMBER)
+        if p_Can_Set_Key(CONSTS.STR_KEY_M_TOGGLE_MEMBER, CONSTS.KEY_DEF_M_TOGGLE_MEMBER)
             VARS.key_m_toggle_member = CONSTS.KEY_DEF_M_TOGGLE_MEMBER
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_M_TOGGLE_MEMBER, false)
         endIf
     elseIf id_option == p_option_key_m_toggle_clone
-        if p_Can_Set_Key(CONSTS.KEY_DEF_M_TOGGLE_CLONE)
+        if p_Can_Set_Key(CONSTS.STR_KEY_M_TOGGLE_CLONE, CONSTS.KEY_DEF_M_TOGGLE_CLONE)
             VARS.key_m_toggle_clone = CONSTS.KEY_DEF_M_TOGGLE_CLONE
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_M_TOGGLE_CLONE, false)
         endIf
     elseIf id_option == p_option_key_m_toggle_settler
-        if p_Can_Set_Key(CONSTS.KEY_DEF_M_TOGGLE_SETTLER)
+        if p_Can_Set_Key(CONSTS.STR_KEY_M_TOGGLE_SETTLER, CONSTS.KEY_DEF_M_TOGGLE_SETTLER)
             VARS.key_m_toggle_settler = CONSTS.KEY_DEF_M_TOGGLE_SETTLER
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_M_TOGGLE_SETTLER, false)
         endIf
     elseIf id_option == p_option_key_m_toggle_thrall
-        if p_Can_Set_Key(CONSTS.KEY_DEF_M_TOGGLE_THRALL)
+        if p_Can_Set_Key(CONSTS.STR_KEY_M_TOGGLE_THRALL, CONSTS.KEY_DEF_M_TOGGLE_THRALL)
             VARS.key_m_toggle_thrall = CONSTS.KEY_DEF_M_TOGGLE_THRALL
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_M_TOGGLE_THRALL, false)
         endIf
     elseIf id_option == p_option_key_m_toggle_immobile
-        if p_Can_Set_Key(CONSTS.KEY_DEF_M_TOGGLE_IMMOBILE)
+        if p_Can_Set_Key(CONSTS.STR_KEY_M_TOGGLE_IMMOBILE, CONSTS.KEY_DEF_M_TOGGLE_IMMOBILE)
             VARS.key_m_toggle_immobile = CONSTS.KEY_DEF_M_TOGGLE_IMMOBILE
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_M_TOGGLE_IMMOBILE, false)
         endIf
     elseIf id_option == p_option_key_m_toggle_paralyzed
-        if p_Can_Set_Key(CONSTS.KEY_DEF_M_TOGGLE_PARALYZED)
+        if p_Can_Set_Key(CONSTS.STR_KEY_M_TOGGLE_PARALYZED, CONSTS.KEY_DEF_M_TOGGLE_PARALYZED)
             VARS.key_m_toggle_paralyzed = CONSTS.KEY_DEF_M_TOGGLE_PARALYZED
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_M_TOGGLE_PARALYZED, false)
         endIf
     elseIf id_option == p_option_key_m_toggle_follower
-        if p_Can_Set_Key(CONSTS.KEY_DEF_M_TOGGLE_FOLLOWER)
+        if p_Can_Set_Key(CONSTS.STR_KEY_M_TOGGLE_FOLLOWER, CONSTS.KEY_DEF_M_TOGGLE_FOLLOWER)
             VARS.key_m_toggle_follower = CONSTS.KEY_DEF_M_TOGGLE_FOLLOWER
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_M_TOGGLE_FOLLOWER, false)
         endIf
     elseIf id_option == p_option_key_m_toggle_sneak
-        if p_Can_Set_Key(CONSTS.KEY_DEF_M_TOGGLE_SNEAK)
+        if p_Can_Set_Key(CONSTS.STR_KEY_M_TOGGLE_SNEAK, CONSTS.KEY_DEF_M_TOGGLE_SNEAK)
             VARS.key_m_toggle_sneak = CONSTS.KEY_DEF_M_TOGGLE_SNEAK
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_M_TOGGLE_SNEAK, false)
         endIf
@@ -677,9 +692,9 @@ function f_On_Option_Highlight(int id_option)
         endIf
     elseIf id_option == p_option_clone_outfit
         if VARS.clone_outfit == CODES.OUTFIT_BASE
-            MCM.SetInfoText("A clone of an npc will receive their default outfit.")
+            MCM.SetInfoText("A clone will receive the base outfit of the original npc.")
         elseIf VARS.clone_outfit == CODES.OUTFIT_REFERENCE
-            MCM.SetInfoText("A clone of an npc will receive their current outfit.")
+            MCM.SetInfoText("A clone will receive the current outfit of the original npc.")
         endIf
 
     ; Outfitting
@@ -702,15 +717,37 @@ function f_On_Option_Highlight(int id_option)
             MCM.SetInfoText("Members will not automatically receive items for each outfit, and will be naked until you equip them.")
         endIf
     elseIf id_option == p_option_slider_percent_body
-        MCM.SetInfoText("The percent chance that member outfits will be filled with an item that fits on their body.")
+        MCM.SetInfoText("The chance that outfits will get items that fit on the body.")
     elseIf id_option == p_option_slider_percent_feet
-        MCM.SetInfoText("The percent chance that member outfits will be filled with an item that fits on their feet.")
+        MCM.SetInfoText("The chance that outfits will get items that fit on the feet.")
     elseIf id_option == p_option_slider_percent_hands
-        MCM.SetInfoText("The percent chance that member outfits will be filled with an item that fits on their hands.")
+        MCM.SetInfoText("The chance that outfits will get items that fit on the hands.")
     elseIf id_option == p_option_slider_percent_head
-        MCM.SetInfoText("The percent chance that member outfits will be filled with an item that fits on their head.")
+        MCM.SetInfoText("The chance that outfits will get items that fit on the head.")
+
+    ; Displaying
+    elseIf id_option == p_option_key_ms_display_toggle
+        MCM.SetInfoText("Toggles a member display.")
+    elseIf id_option == p_option_slider_ms_display
+        MCM.SetInfoText("The number of members which will be summoned at a time during a display.")
+    elseIf id_option == p_option_key_ms_display_previous
+        MCM.SetInfoText("Will loop through the previous members on display.")
+    elseIf id_option == p_option_key_ms_display_next
+        MCM.SetInfoText("Will loop through the next members on display.")
+
+    ; Moving
+    elseIf id_option == p_option_key_move_toggle
+        MCM.SetInfoText("Toggles the act of moving an npc.")
+    elseIf id_option == p_option_key_move_farther
+        MCM.SetInfoText("While moving an npc, this will make them go farther away from you.")
+    elseIf id_option == p_option_key_move_nearer
+        MCM.SetInfoText("While moving an npc, this will make them come closer to you.")
+    elseIf id_option == p_option_key_move_rotate_left
+        MCM.SetInfoText("While moving an npc, this will make them turn clockwise.")
+    elseIf id_option == p_option_key_move_rotate_right
+        MCM.SetInfoText("While moving an npc, this will make them turn counter-clockwise.")
     
-    ; Followers Hotkeys
+    ; All Followers
     elseIf id_option == p_option_key_fs_summon_all
         MCM.SetInfoText("Summons all followers before you.")
     elseIf id_option == p_option_key_fs_summon_mobile
@@ -731,28 +768,8 @@ function f_On_Option_Highlight(int id_option)
         MCM.SetInfoText("Causes all followers to stop sneaking.")
     elseIf id_option == p_option_key_fs_resurrect
         MCM.SetInfoText("Causes all dead followers to resurrect.")
-
-    ; Display Hotkeys
-    elseIf id_option == p_option_key_ms_display_toggle
-        MCM.SetInfoText("Toggles a member display.")
-    elseIf id_option == p_option_key_ms_display_previous
-        MCM.SetInfoText("Will rotate members backward on display.")
-    elseIf id_option == p_option_key_ms_display_next
-        MCM.SetInfoText("Will rotate members forward on the display.")
-
-    ; Move Hotkeys
-    elseIf id_option == p_option_key_move_toggle
-        MCM.SetInfoText("Toggles the act of moving an npc.")
-    elseIf id_option == p_option_key_move_farther
-        MCM.SetInfoText("While moving an npc, this will make them go farther away from you.")
-    elseIf id_option == p_option_key_move_nearer
-        MCM.SetInfoText("While moving an npc, this will make them come closer to you.")
-    elseIf id_option == p_option_key_move_rotate_right
-        MCM.SetInfoText("While moving an npc, this will make them turn counter-clockwise.")
-    elseIf id_option == p_option_key_move_rotate_left
-        MCM.SetInfoText("While moving an npc, this will make them turn clockwise.")
     
-    ; Member/Follower Toggle Hotkeys
+    ; One Follower/Member
     elseIf id_option == p_option_key_m_toggle_member
         MCM.SetInfoText("Causes an npc to be membered or unmembered.")
     elseIf id_option == p_option_key_m_toggle_clone
@@ -766,7 +783,7 @@ function f_On_Option_Highlight(int id_option)
     elseIf id_option == p_option_key_m_toggle_paralyzed
         MCM.SetInfoText("Causes an npc to be paralyzed or unparalyzed. The npc will become a member if they are not already.")
     elseIf id_option == p_option_key_m_toggle_follower
-        MCM.SetInfoText("Causes an npc to follower or unfollow. The npc will become a member if they are not already.")
+        MCM.SetInfoText("Causes an npc to follow or unfollow. The npc will become a member if they are not already.")
     elseIf id_option == p_option_key_m_toggle_sneak
         MCM.SetInfoText("Causes an npc to sneak or unsneak. The npc will become a member and a follower if they are not already.")
 
@@ -783,14 +800,82 @@ function f_On_Option_Input_Accept(int id_option, string str_input)
 endFunction
 
 ; Private Methods
-bool function p_Can_Set_Key(int code_key)
-    string str_control = MCM.GetCustomControl(code_key)
+string function p_Get_Control(int id_option)
+    if false
 
-    if !str_control
+    ; Followers
+    elseIf id_option == p_option_key_fs_summon_all
+        return CONSTS.STR_KEY_FS_SUMMON_ALL
+    elseIf id_option == p_option_key_fs_summon_mobile
+        return CONSTS.STR_KEY_FS_SUMMON_MOBILE
+    elseIf id_option == p_option_key_fs_summon_immobile
+        return CONSTS.STR_KEY_FS_SUMMON_IMMOBILE
+    elseIf id_option == p_option_key_fs_settle
+        return CONSTS.STR_KEY_FS_SETTLE
+    elseIf id_option == p_option_key_fs_unsettle
+        return CONSTS.STR_KEY_FS_UNSETTLE
+    elseIf id_option == p_option_key_fs_immobilize
+        return CONSTS.STR_KEY_FS_IMMOBILIZE
+    elseIf id_option == p_option_key_fs_mobilize
+        return CONSTS.STR_KEY_FS_MOBILIZE
+    elseIf id_option == p_option_key_fs_sneak
+        return CONSTS.STR_KEY_FS_SNEAK
+    elseIf id_option == p_option_key_fs_unsneak
+        return CONSTS.STR_KEY_FS_UNSNEAK
+    elseIf id_option == p_option_key_fs_resurrect
+        return CONSTS.STR_KEY_FS_RESURRECT
+
+    ; Members Display
+    elseIf id_option == p_option_key_ms_display_toggle
+        return CONSTS.STR_KEY_MS_DISPLAY_TOGGLE
+    elseIf id_option == p_option_key_ms_display_previous
+        return CONSTS.STR_KEY_MS_DISPLAY_PREVIOUS
+    elseIf id_option == p_option_key_ms_display_next
+        return CONSTS.STR_KEY_MS_DISPLAY_NEXT
+    
+    ; Actors Move
+    elseIf id_option == p_option_key_move_toggle
+        return CONSTS.STR_KEY_MOVE_TOGGLE
+    elseIf id_option == p_option_key_move_farther
+        return CONSTS.STR_KEY_MOVE_FARTHER
+    elseIf id_option == p_option_key_move_nearer
+        return CONSTS.STR_KEY_MOVE_NEARER
+    elseIf id_option == p_option_key_move_rotate_right
+        return CONSTS.STR_KEY_MOVE_ROTATE_RIGHT
+    elseIf id_option == p_option_key_move_rotate_left
+        return CONSTS.STR_KEY_MOVE_ROTATE_LEFT
+    
+    ; Member/Follower Toggles
+    elseIf id_option == p_option_key_m_toggle_member
+        return CONSTS.STR_KEY_M_TOGGLE_MEMBER
+    elseIf id_option == p_option_key_m_toggle_clone
+        return CONSTS.STR_KEY_M_TOGGLE_CLONE
+    elseIf id_option == p_option_key_m_toggle_settler
+        return CONSTS.STR_KEY_M_TOGGLE_SETTLER
+    elseIf id_option == p_option_key_m_toggle_thrall
+        return CONSTS.STR_KEY_M_TOGGLE_THRALL
+    elseIf id_option == p_option_key_m_toggle_immobile
+        return CONSTS.STR_KEY_M_TOGGLE_IMMOBILE
+    elseIf id_option == p_option_key_m_toggle_paralyzed
+        return CONSTS.STR_KEY_M_TOGGLE_PARALYZED
+    elseIf id_option == p_option_key_m_toggle_follower
+        return CONSTS.STR_KEY_M_TOGGLE_FOLLOWER
+    elseIf id_option == p_option_key_m_toggle_sneak
+        return CONSTS.STR_KEY_M_TOGGLE_SNEAK
+
+    else
+        return ""
+
+    endIf
+endFunction
+
+bool function p_Can_Set_Key(string str_control, int code_key)
+    string str_control_conflict = MCM.GetCustomControl(code_key)
+    if str_control_conflict && KEYS.Get_Key(str_control) != code_key
+        return MCM.ShowMessage("This conflicts with '" + str_control_conflict + "'. Set key anyway?", true)
+    else
         return true
     endIf
-
-    return MCM.ShowMessage("This conflicts with '" + str_control + "'. Set key anyway?", true)
 endFunction
 
 function p_Set_Default_Keys()

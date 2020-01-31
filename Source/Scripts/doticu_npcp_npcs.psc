@@ -32,6 +32,11 @@ doticu_npcp_actors property ACTORS hidden
         return p_DATA.MODS.FUNCS.ACTORS
     endFunction
 endProperty
+doticu_npcp_containers property CONTAINERS hidden
+    doticu_npcp_containers function Get()
+        return p_DATA.MODS.FUNCS.CONTAINERS
+    endFunction
+endProperty
 doticu_npcp_logs property LOGS hidden
     doticu_npcp_logs function Get()
         return p_DATA.MODS.FUNCS.LOGS
@@ -398,12 +403,39 @@ Actor function Clone(Actor ref_actor)
         return none
     endIf
 
+    ; this also gets the base actor and outfit should they not be in the system
     p_Add_Original(ref_actor)
     p_Add_Clone(ref_clone)
 
-    if VARS.clone_outfit == CODES.OUTFIT_BASE
-        ref_clone.SetOutfit(CONSTS.OUTFIT_EMPTY)
+    ; sometimes a crash occurs when a clone receives two of the same weapon
+    ; and then a call to SetOutfit??? e.g. Sinmir. probably has something
+    ; to do with outfits that contain weapons. setting base outfit before
+    ; cloning does't seem to stop it.
+    ObjectReference ref_temp = CONTAINERS.Create_Temp()
+    ref_clone.RemoveAllItems(ref_temp, false, false)
+
+    ; it helps to clear the outfit before trying to normalize items
+    ; *without* this, sometimes a clone will appear totally naked
+    ref_clone.SetOutfit(CONSTS.OUTFIT_EMPTY)
+
+    doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
+    if !ref_member || VARS.clone_outfit == CODES.OUTFIT_BASE
+        ; this correctly sets their inventory so they won't lack anything
+        ref_temp.RemoveAllItems(ref_clone, false, false); hopefully this won't cause a crash down the line
+
+        ; actually sets the outfit
         ref_clone.SetOutfit(Get_Base_Outfit(ref_clone))
+
+        ; sometimes they won't equip their gear
+        ACTORS.Update_Equipment(ref_clone)
+
+        ; sometimes we get duped weapons
+    elseIf VARS.clone_outfit == CODES.OUTFIT_REFERENCE
+        ; we don't reset inventory, because we want exactly what
+        ; is in the outfit, which may or may not have weapons
+        ref_clone.SetOutfit(ref_member.Get_Base_Outfit())
+
+        ; we are still getting duped weapons atm, but would have to loop
     endIf
 
     return ref_clone

@@ -95,10 +95,6 @@ function Clone(Actor ref_actor)
     int code_return
     string str_name = ACTORS.Get_Name(ref_actor)
 
-    if ACTORS.Is_Generic(ref_actor)
-        LOGS.Create_Note("Please wait, cloning may take a while.", false)
-    endIf
-
     NOTES.Clone(MEMBERS.Create_Member(ref_actor, true), str_name)
 endFunction
 
@@ -896,5 +892,64 @@ function Toggle_Followers_Sneak()
         Followers_Unsneak()
     else
         Followers_Sneak()
+    endIf
+endFunction
+
+function Outfit_Show(Actor ref_actor)
+    doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
+
+    if !ref_member
+        return
+    endIf
+
+    int code_outfit = ref_member.Get_Outfit()
+    if code_outfit == CODES.OUTFIT_MEMBER
+        LOGS.Create_Note("Wearing Member ", false)
+    elseIf code_outfit == CODES.OUTFIT_SETTLER
+        LOGS.Create_Note("Wearing Settler ", false)
+    elseIf code_outfit == CODES.OUTFIT_THRALL
+        LOGS.Create_Note("Wearing Thrall ", false)
+    elseIf code_outfit == CODES.OUTFIT_FOLLOWER
+        LOGS.Create_Note("Wearing Follower ", false)
+    elseIf code_outfit == CODES.OUTFIT_IMMOBILE
+        LOGS.Create_Note("Wearing Immobile ", false)
+    endIf
+endFunction
+
+function Style_Show(Actor ref_actor)
+    doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
+
+    if !ref_member
+        return
+    endIf
+
+    int code_style = ref_member.Get_Style()
+    if code_style == CODES.IS_DEFAULT
+        LOGS.Create_Note("Is Default ", false)
+    elseIf code_style == CODES.IS_WARRIOR
+        LOGS.Create_Note("Is Warrior ", false)
+    elseIf code_style == CODES.IS_MAGE
+        LOGS.Create_Note("Is Mage ", false)
+    elseIf code_style == CODES.IS_ARCHER
+        LOGS.Create_Note("Is Archer ", false)
+    endIf
+endFunction
+
+function Vitality_Show(Actor ref_actor)
+    doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
+
+    if !ref_member
+        return
+    endIf
+
+    int code_vitality = ref_member.Get_Vitality()
+    if code_vitality == CODES.IS_MORTAL
+        LOGS.Create_Note("Is Mortal ", false)
+    elseIf code_vitality == CODES.IS_PROTECTED
+        LOGS.Create_Note("Is Protected ", false)
+    elseIf code_vitality == CODES.IS_ESSENTIAL
+        LOGS.Create_Note("Is Essential ", false)
+    elseIf code_vitality == CODES.IS_INVULNERABLE
+        LOGS.Create_Note("Is Invulnerable ", false)
     endIf
 endFunction

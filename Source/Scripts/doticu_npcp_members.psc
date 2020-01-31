@@ -35,6 +35,11 @@ doticu_npcp_tasklists property TASKLISTS hidden
         return p_DATA.MODS.FUNCS.TASKLISTS
     endFunction
 endProperty
+doticu_npcp_logs property LOGS hidden
+    doticu_npcp_logs function Get()
+        return p_DATA.MODS.FUNCS.LOGS
+    endFunction
+endProperty
 doticu_npcp_aliases property ALIASES hidden
     doticu_npcp_aliases function Get()
         return (self as Quest) as doticu_npcp_aliases
@@ -127,13 +132,18 @@ bool function p_Send_Members(string str_event)
     return true
 endFunction
 
-int function p_Create_Member(Actor ref_actor, bool do_clone = false)
+; Public Methods
+int function Create_Member(Actor ref_actor, bool do_clone = false)
     int code_return
     bool was_dead = false
     Actor ref_actor_orig = ref_actor
 
     if !ref_actor
         return CODES.ISNT_ACTOR
+    endIf
+
+    if ref_actor.IsChild()
+        return CODES.IS_CHILD
     endIf
 
     if ALIASES.Is_Full()
@@ -146,12 +156,20 @@ int function p_Create_Member(Actor ref_actor, bool do_clone = false)
     endIf
 
     if do_clone
+        if ACTORS.Is_Unique(ref_actor)
+            LOGS.Create_Note("Adding clone to members...", false)
+        else
+            LOGS.Create_Note("Adding clone to members, please wait...", false)
+        endIf
+
         ref_actor_orig = ref_actor
         ref_actor = NPCS.Clone(ref_actor)
         if !ref_actor
             return CODES.CANT_CLONE
         endIf
     else
+        LOGS.Create_Note("Adding to members...", false)
+
         if ACTORS.Is_Dead(ref_actor)
             was_dead = true
             ACTORS.Resurrect(ref_actor)
@@ -187,7 +205,7 @@ int function p_Create_Member(Actor ref_actor, bool do_clone = false)
     return CODES.SUCCESS
 endFunction
 
-int function p_Destroy_Member(Actor ref_actor, bool delete_clone = false)
+int function Destroy_Member(Actor ref_actor, bool delete_clone = false)
     int code_return
 
     if !ref_actor
@@ -219,21 +237,6 @@ int function p_Destroy_Member(Actor ref_actor, bool delete_clone = false)
     endIf
 
     return CODES.SUCCESS
-endFunction
-
-; Public Methods
-int function Create_Member(Actor ref_actor, bool do_clone = false)
-    GotoState("p_STATE_BUSY")
-    int code_return = p_Create_Member(ref_actor, do_clone)
-    GotoState("")
-    return code_return
-endFunction
-
-int function Destroy_Member(Actor ref_actor, bool delete_clone = false)
-    GotoState("p_STATE_BUSY")
-    int code_return = p_Destroy_Member(ref_actor, delete_clone)
-    GotoState("")
-    return code_return
 endFunction
 
 int function Get_Count()
@@ -442,13 +445,3 @@ function p_Undisplay_Aliases(Alias[] arr_aliases)
         idx_aliases += 1
     endWhile
 endFunction
-
-; Private States
-state p_STATE_BUSY
-    int function Create_Member(Actor ref_actor, bool do_clone = false)
-        return CODES.BUSY
-    endFunction
-    int function Destroy_Member(Actor ref_actor, bool delete_clone = false)
-        return CODES.BUSY
-    endFunction
-endState

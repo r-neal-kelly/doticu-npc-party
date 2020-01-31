@@ -3,6 +3,32 @@ https://github.com/r-neal-kelly/doticu-npc-party
 
 Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)
 https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+(Please make sure to read the actual license, as my comments are not a substitute.)
+The "Attribution-NonCommercial-ShareAlike 4.0 International" license allows you to 
+modify, update, port, and reupload my mod anywhere at anytime. To do so, you must 
+give me credit for my work, not use my work for the purpose of making money, and 
+license your derivatives under the same license.
+
+A little explanation is in order. Some mods can't be updated or reused because the 
+license is very restrictive, and obtaining permission from the copyright holder is 
+too difficult. For instance, when a mod author leaves the community and is never 
+heard from again, there is nothing we can legally do to use their mod, even if we 
+believe in our hearts that they would want us to carry on their work. However with 
+this license, if I were to disappear, or even if I were to delete my mod, you have 
+the right to use, copy, update, upload, reupload, modify, or make derivatives of it 
+forever, because this license is irrevocable. That does not mean that every future 
+version of my mod will have the same license. But it does mean that you have the 
+right to use this version of my mod and I can't take that away from you.
+
+In regards to the NonCommercial aspect of the license, there is a good article about 
+it at https://wiki.creativecommons.org/wiki/NonCommercial_interpretation.
+
+The purpose of this license is to make sure that the mod is always available for free, 
+that you give me credit, don't use it to directly make money, and you license any 
+derivatives you make with the same license, whether that be an update, a translation, 
+a new mod that uses it, or what have you. Thank you for reading!
+
 https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.txt
 
 Attribution-NonCommercial-ShareAlike 4.0 International

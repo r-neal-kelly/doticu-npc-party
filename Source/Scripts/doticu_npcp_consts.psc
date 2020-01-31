@@ -54,6 +54,7 @@ Faction                     p_FACTION_DLC1_VAMPIRE_FEED_NO_CRIME    = none
 Faction                     p_FACTION_WI_NO_BODY_CLEANUP            = none
 Faction                     p_FACTION_CURRENT_FOLLOWER              = none
 Faction                     p_FACTION_POTENTIAL_FOLLOWER            = none
+Faction                     p_FACTION_BARD_SINGER_NO_AUTOSTART      = none
 Perk                        p_PERK_VAMPIRE_FEED                     = none
 Perk                        p_PERK_KISS_THRALL                      = none
 Perk                        p_PERK_RESURRECT                        = none
@@ -69,45 +70,10 @@ Container                   p_CONTAINER_OUTFIT_IMMOBILE             = none
 Container                   p_CONTAINER_OUTFIT_FOLLOWER             = none
 Outfit                      p_OUTFIT_EMPTY                          = none
 Outfit                      p_OUTFIT_TEMPLATE                       = none
+Quest                       p_QUEST_BARD_SONGS                      = none
 Weapon                      p_WEAPON_BLANK                          = none
 
 ; Public Constants
-int property VERSION_MAJOR
-    int function Get()
-        return 0; set manually upon each release
-    endFunction
-endProperty
-
-int property VERSION_MINOR
-    int function Get()
-        return 7; set manually upon each release
-    endFunction
-endProperty
-
-int property VERSION_PATCH
-    int function Get()
-        return 1; set manually upon each release
-    endFunction
-endProperty
-
-int property MIN_DISPLAY
-    int function Get()
-        return 1
-    endFunction
-endProperty
-
-int property MAX_DISPLAY
-    int function Get()
-        return 8
-    endFunction
-endProperty
-
-int property DEFAULT_DISPLAY
-    int function Get()
-        return 5
-    endFunction
-endProperty
-
 Actor property ACTOR_PLAYER
     Actor function Get()
         return p_ACTOR_PLAYER
@@ -647,6 +613,17 @@ Faction property FACTION_POTENTIAL_FOLLOWER
     endFunction
 endProperty
 
+Faction property FACTION_BARD_SINGER_NO_AUTOSTART
+    Faction function Get()
+        return p_FACTION_BARD_SINGER_NO_AUTOSTART
+    endFunction
+    function Set(Faction val)
+        if p_FACTION_BARD_SINGER_NO_AUTOSTART == none
+            p_FACTION_BARD_SINGER_NO_AUTOSTART = val
+        endIf
+    endFunction
+endProperty
+
 Perk property PERK_VAMPIRE_FEED
     Perk function Get()
         return p_PERK_VAMPIRE_FEED
@@ -801,6 +778,17 @@ Outfit property OUTFIT_EMPTY
     endFunction
 endProperty
 
+Quest property QUEST_BARD_SONGS
+    Quest function Get()
+        return p_QUEST_BARD_SONGS
+    endFunction
+    function Set(Quest val)
+        if p_QUEST_BARD_SONGS == none
+            p_QUEST_BARD_SONGS = val
+        endIf
+    endFunction
+endProperty
+
 Weapon property WEAPON_BLANK
     Weapon function Get()
         return p_WEAPON_BLANK
@@ -811,6 +799,49 @@ Weapon property WEAPON_BLANK
         endIf
     endFunction
 endProperty
+
+int property VERSION_MAJOR                  =     0 autoReadOnly hidden; set manually upon each release
+int property VERSION_MINOR                  =     7 autoReadOnly hidden; set manually upon each release
+int property VERSION_PATCH                  =     3 autoReadOnly hidden; set manually upon each release
+
+int property MIN_DISPLAY                    =     1 autoReadOnly hidden
+int property MAX_DISPLAY                    =     8 autoReadOnly hidden
+int property DEFAULT_DISPLAY                =     5 autoReadOnly hidden
+
+int property DEFAULT_PERCENT_BODY           =   100 autoReadOnly hidden
+int property DEFAULT_PERCENT_FEET           =    90 autoReadOnly hidden
+int property DEFAULT_PERCENT_HANDS          =    90 autoReadOnly hidden
+int property DEFAULT_PERCENT_HEAD           =    50 autoReadOnly hidden
+
+int property KEY_DEF_FS_SUMMON_ALL          =    53 autoReadOnly hidden; Forward Slash
+int property KEY_DEF_FS_SUMMON_MOBILE       =    51 autoReadOnly hidden; Comma
+int property KEY_DEF_FS_SUMMON_IMMOBILE     =    52 autoReadOnly hidden; Period
+int property KEY_DEF_FS_SETTLE              =    39 autoReadOnly hidden; Semicolon
+int property KEY_DEF_FS_UNSETTLE            =    40 autoReadOnly hidden; Apostrophe
+int property KEY_DEF_FS_IMMOBILIZE          =    13 autoReadOnly hidden; Equals
+int property KEY_DEF_FS_MOBILIZE            =    12 autoReadOnly hidden; Minus
+int property KEY_DEF_FS_SNEAK               =    10 autoReadOnly hidden; 9
+int property KEY_DEF_FS_UNSNEAK             =    11 autoReadOnly hidden; 0
+int property KEY_DEF_FS_RESURRECT           =    14 autoReadOnly hidden; Backspace
+
+int property KEY_DEF_MS_DISPLAY_TOGGLE      =    43 autoReadOnly hidden; Back Slash
+int property KEY_DEF_MS_DISPLAY_PREVIOUS    =    26 autoReadOnly hidden; Left Bracket
+int property KEY_DEF_MS_DISPLAY_NEXT        =    27 autoReadOnly hidden; Right Bracket
+
+int property KEY_DEF_MOVE_TOGGLE            =    56 autoReadOnly hidden; Left Alt
+int property KEY_DEF_MOVE_FARTHER           =   200 autoReadOnly hidden; Up Arrow
+int property KEY_DEF_MOVE_NEARER            =   208 autoReadOnly hidden; Down Arrow
+int property KEY_DEF_MOVE_ROTATE_RIGHT      =   205 autoReadOnly hidden; Right Arrow
+int property KEY_DEF_MOVE_ROTATE_LEFT       =   203 autoReadOnly hidden; Left Arrow
+
+int property KEY_DEF_M_TOGGLE_MEMBER        =    78 autoReadOnly hidden; NUM+
+int property KEY_DEF_M_TOGGLE_CLONE         =   156 autoReadOnly hidden; NUM Enter
+int property KEY_DEF_M_TOGGLE_SETTLER       =    82 autoReadOnly hidden; NUM0
+int property KEY_DEF_M_TOGGLE_THRALL        =    73 autoReadOnly hidden; NUM9
+int property KEY_DEF_M_TOGGLE_IMMOBILE      =    83 autoReadOnly hidden; NUM.
+int property KEY_DEF_M_TOGGLE_PARALYZED     =   181 autoReadOnly hidden; NUM/
+int property KEY_DEF_M_TOGGLE_FOLLOWER      =    55 autoReadOnly hidden; NUM*
+int property KEY_DEF_M_TOGGLE_SNEAK         =    74 autoReadOnly hidden; NUM-
 
 string property STR_HEALTH                  = "Health"                      autoReadOnly hidden
 string property STR_MAGICKA                 = "Magicka"                     autoReadOnly hidden
@@ -924,39 +955,3 @@ string property STR_KEY_M_TOGGLE_IMMOBILE   = "Toggle Immobile"             auto
 string property STR_KEY_M_TOGGLE_PARALYZED  = "Toggle Paralyzed"            autoReadOnly hidden
 string property STR_KEY_M_TOGGLE_FOLLOWER   = "Toggle Follower"             autoReadOnly hidden
 string property STR_KEY_M_TOGGLE_SNEAK      = "Toggle Sneak"                autoReadOnly hidden
-
-
-int property KEY_DEF_FS_SUMMON_ALL          =  53   autoReadOnly hidden; Forward Slash
-int property KEY_DEF_FS_SUMMON_MOBILE       =  51   autoReadOnly hidden; Comma
-int property KEY_DEF_FS_SUMMON_IMMOBILE     =  52   autoReadOnly hidden; Period
-int property KEY_DEF_FS_SETTLE              =  39   autoReadOnly hidden; Semicolon
-int property KEY_DEF_FS_UNSETTLE            =  40   autoReadOnly hidden; Apostrophe
-int property KEY_DEF_FS_IMMOBILIZE          =  13   autoReadOnly hidden; Equals
-int property KEY_DEF_FS_MOBILIZE            =  12   autoReadOnly hidden; Minus
-int property KEY_DEF_FS_SNEAK               =  10   autoReadOnly hidden; 9
-int property KEY_DEF_FS_UNSNEAK             =  11   autoReadOnly hidden; 0
-int property KEY_DEF_FS_RESURRECT           =  14   autoReadOnly hidden; Backspace
-
-int property KEY_DEF_MS_DISPLAY_TOGGLE      =  43   autoReadOnly hidden; Back Slash
-int property KEY_DEF_MS_DISPLAY_PREVIOUS    =  26   autoReadOnly hidden; Left Bracket
-int property KEY_DEF_MS_DISPLAY_NEXT        =  27   autoReadOnly hidden; Right Bracket
-
-int property KEY_DEF_MOVE_TOGGLE            =  56   autoReadOnly hidden; Left Alt
-int property KEY_DEF_MOVE_FARTHER           = 200   autoReadOnly hidden; Up Arrow
-int property KEY_DEF_MOVE_NEARER            = 208   autoReadOnly hidden; Down Arrow
-int property KEY_DEF_MOVE_ROTATE_RIGHT      = 205   autoReadOnly hidden; Right Arrow
-int property KEY_DEF_MOVE_ROTATE_LEFT       = 203   autoReadOnly hidden; Left Arrow
-
-int property KEY_DEF_M_TOGGLE_MEMBER        =  78   autoReadOnly hidden; NUM+
-int property KEY_DEF_M_TOGGLE_CLONE         = 156   autoReadOnly hidden; NUM Enter
-int property KEY_DEF_M_TOGGLE_SETTLER       =  82   autoReadOnly hidden; NUM0
-int property KEY_DEF_M_TOGGLE_THRALL        =  73   autoReadOnly hidden; NUM9
-int property KEY_DEF_M_TOGGLE_IMMOBILE      =  83   autoReadOnly hidden; NUM.
-int property KEY_DEF_M_TOGGLE_PARALYZED     = 181   autoReadOnly hidden; NUM/
-int property KEY_DEF_M_TOGGLE_FOLLOWER      =  55   autoReadOnly hidden; NUM*
-int property KEY_DEF_M_TOGGLE_SNEAK         =  74   autoReadOnly hidden; NUM-
-
-int property DEFAULT_PERCENT_BODY           = 100   autoReadOnly hidden
-int property DEFAULT_PERCENT_FEET           =  90   autoReadOnly hidden
-int property DEFAULT_PERCENT_HANDS          =  90   autoReadOnly hidden
-int property DEFAULT_PERCENT_HEAD           =  50   autoReadOnly hidden

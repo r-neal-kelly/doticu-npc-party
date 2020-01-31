@@ -161,8 +161,6 @@ bool function p_Send_Followers(string str_event)
         return false
     endIf
 
-    ModEvent.PushForm(handle, p_DATA as Form)
-
     if !ModEvent.Send(handle)
         ModEvent.Release(handle)
         return false
@@ -335,9 +333,9 @@ int function p_Catch_Up()
         return CODES.HASNT_MOBILE
     endIf
 
-    if !p_tasklist.Execute(num_mobile, "doticu_npcp_followers_catch_up")
-        return CODES.FAILURE
-    endIf
+    while !p_Send_Followers("doticu_npcp_followers_catch_up")
+        Utility.Wait(0.1)
+    endWhile
 
     return CODES.SUCCESS
 endFunction

@@ -27,6 +27,10 @@ function Pack(ObjectReference ref_object)
     (GetOwningQuest() as doticu_npcp_commands).Pack_Sync(ref_object as Actor, false)
 endFunction
 
+function Outfit_Show(ObjectReference ref_object)
+    (GetOwningQuest() as doticu_npcp_commands).Outfit_Show(ref_object as Actor)
+endFunction
+
 function Outfit_Current(ObjectReference ref_object)
     (GetOwningQuest() as doticu_npcp_commands).Outfit_Current_Sync(ref_object as Actor, false)
 endFunction
@@ -59,6 +63,10 @@ function Unthrall(ObjectReference ref_object)
     (GetOwningQuest() as doticu_npcp_commands).Unthrall_Sync(ref_object as Actor, false)
 endFunction
 
+function Style_Show(ObjectReference ref_object)
+    (GetOwningQuest() as doticu_npcp_commands).Style_Show(ref_object as Actor)
+endFunction
+
 function Style_Default(ObjectReference ref_object)
     (GetOwningQuest() as doticu_npcp_commands).Style_Default_Sync(ref_object as Actor, false)
 endFunction
@@ -73,6 +81,10 @@ endFunction
 
 function Style_Archer(ObjectReference ref_object)
     (GetOwningQuest() as doticu_npcp_commands).Style_Archer_Sync(ref_object as Actor, false)
+endFunction
+
+function Vitality_Show(ObjectReference ref_object)
+    (GetOwningQuest() as doticu_npcp_commands).Vitality_Show(ref_object as Actor)
 endFunction
 
 function Vitality_Mortal(ObjectReference ref_object)

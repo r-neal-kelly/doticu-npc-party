@@ -62,13 +62,15 @@ int property IS_ARCHER                      =  -383 autoReadOnly
 int property IS_GREETER                     =  -390 autoReadOnly
 int property IS_VAMPIRE                     =  -399 autoReadOnly
 int property IS_DISPLAY                     = -3400 autoReadOnly
+int property IS_CHILD                       = -3410 autoReadOnly
 
 int property ISNT_ACTOR                     =  -400 autoReadOnly
 int property ISNT_ALIAS                     =  -410 autoReadOnly
 int property ISNT_MEMBER                    =  -420 autoReadOnly
 int property ISNT_SETTLER                   =  -430 autoReadOnly
 int property ISNT_IMMOBILE                  =  -440 autoReadOnly
-int property ISNT_PARALYZED                 =  -441 autoReadOnly
+int property ISNT_MOBILE                    =  -441 autoReadOnly
+int property ISNT_PARALYZED                 =  -442 autoReadOnly
 int property ISNT_FOLLOWER                  =  -450 autoReadOnly
 int property ISNT_SNEAK                     =  -460 autoReadOnly
 int property ISNT_THRALL                    =  -470 autoReadOnly
@@ -82,6 +84,7 @@ int property CAN_RESURRECT                  =  -500 autoReadOnly
 int property CANT_RESURRECT                 =  -600 autoReadOnly
 int property CANT_CLONE                     =  -605 autoReadOnly
 int property CANT_RENAME                    =  -610 autoReadOnly
+int property CANT_CATCH_UP                  =  -615 autoReadOnly
 
 int property DO_SYNC                        =  -700 autoReadOnly
 int property DO_ASYNC                       =  -701 autoReadOnly
