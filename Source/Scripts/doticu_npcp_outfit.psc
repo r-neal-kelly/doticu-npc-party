@@ -40,7 +40,12 @@ endProperty
 doticu_npcp_data    p_DATA          =  none
 Outfit              p_OUTFIT        =  none
 LeveledItem         p_LEVELED       =  none
-int                 p_MAX_ITEMS     =    -1
+
+int property p_MAX_ITEMS hidden
+    int function Get()
+        return 16
+    endFunction
+endProperty
 
 ; Private Variables
 bool                p_is_created    = false
@@ -51,7 +56,6 @@ function f_Create(doticu_npcp_data DATA, Outfit outfit_outfit, string str_name)
     p_DATA = DATA
     p_OUTFIT = outfit_outfit
     p_LEVELED = outfit_outfit.GetNthPart(0) as LeveledItem
-    p_MAX_ITEMS = 64
 
     p_is_created = true
     p_str_name = ""
@@ -321,7 +325,8 @@ event OnItemAdded(Form form_item, int count_item, ObjectReference ref_item, Obje
     endIf
 
     if self.GetNumItems() >= p_MAX_ITEMS
-        LOGS.Create_Note("Can only have upto "+ p_MAX_ITEMS +" items in an outfit.")
+        self.RemoveItem(form_item, count_item, true, ref_container_source)
+        LOGS.Create_Note("Can only have so many items in an outfit.")
     elseIf !form_item || !form_item.IsPlayable()
         self.RemoveItem(form_item, count_item, true, ref_container_source)
         LOGS.Create_Note("Cannot add that item to an outfit.")
