@@ -23,10 +23,21 @@ endProperty
 
 ; Private Constants
 doticu_npcp_data    p_DATA          =  none
+float property p_WAIT_TIME hidden
+    float function Get()
+        return 0.5
+    endFunction
+endProperty
+float property p_MAX_WAIT_TIME hidden
+    float function Get()
+        return 10.0; 60.0
+    endFunction
+endProperty
 
 ; Private Variable
 bool                p_is_created    = false
 Actor               p_ref_actor     =  none
+float               p_time_waited   =   0.0
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA, Actor ref_actor)
@@ -34,6 +45,7 @@ function f_Create(doticu_npcp_data DATA, Actor ref_actor)
 
     p_is_created = true
     p_ref_actor = ref_actor
+    p_time_waited = 0.0
 
     ForceRefTo(p_ref_actor)
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_GREETER)
@@ -48,6 +60,7 @@ function f_Destroy()
     Clear()
     p_ref_actor.EvaluatePackage()
 
+    p_time_waited = 0.0
     p_ref_actor = none
     p_is_created = false
 endFunction
@@ -66,7 +79,11 @@ endFunction
 ; Events
 event OnUpdate()
     while Exists() && !p_ref_actor.IsInDialogueWithPlayer()
-        Utility.Wait(0.5)
+        if p_time_waited >= p_MAX_WAIT_TIME
+            f_Destroy()
+        endIf
+        Utility.Wait(p_WAIT_TIME)
+        p_time_waited += p_WAIT_TIME
     endWhile
     if Exists()
         f_Destroy()

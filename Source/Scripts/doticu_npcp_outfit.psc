@@ -117,7 +117,68 @@ bool function p_Has_Changed(Actor ref_actor)
     return false
 endFunction
 
-function p_Set_Dead(Actor ref_actor)
+bool function p_Set(Actor ref_actor, bool do_force = false, int loops = 0)
+    int idx_forms
+    int num_forms
+    Form ref_form
+    int num_items
+    ObjectReference ref_trash
+
+    if !do_force && !p_Has_Changed(ref_actor)
+        return true
+    elseIf loops > 3
+        return false
+    else
+        loops += 1
+    endIf
+
+    ; updating the leveled list, which is attached to Outfit form, is what gives the engine the actual items
+    p_LEVELED.Revert()
+    num_forms = self.GetNumItems()
+    idx_forms = 0
+    while idx_forms < num_forms
+        ref_form = self.GetNthForm(idx_forms)
+        p_LEVELED.AddForm(ref_form, 1, self.GetItemCount(ref_form))
+        idx_forms += 1
+    endWhile
+
+    ; we would get into an infinite loop if we don't handle this case separately
+    if ref_actor.IsDead()
+        return p_Set_Dead(ref_actor)
+    endIf
+
+    ; the engine will actually apply the outfit in the correct way now, which we cannot do manually
+    ref_actor.SetOutfit(p_OUTFIT)
+
+    ; the trash container is necessary because it keeps the engine from crashing or freezing when removing actor's items!
+    ref_trash = CONTAINERS.Create_Temp()
+
+    ; some items may be duplicates and not match the container's count. we can't remove one manually, so we remove all.
+    ref_actor.RemoveAllItems(ref_trash, false, false); maybe move quest items somewhere else? but can't put in temp!
+
+    ; we have to manually delete any non-playable items that are equipped. we leave everything else because they may be tokens
+    Delete_Unplayable_Equipment(ref_actor)
+
+    ; add back any discrepencies because the engine only automatically adds back one of each item
+    idx_forms = 0
+    num_forms = self.GetNumItems()
+    while idx_forms < num_forms
+        ref_form = self.GetNthForm(idx_forms)
+        num_items = self.GetItemCount(ref_form)
+        if num_items > 1
+            ref_actor.AddItem(ref_form, num_items - 1, true)
+        endIf
+        idx_forms += 1
+    endWhile
+
+    ; make sure everything is equipped and rendered.
+    ACTORS.Update_Equipment(ref_actor)
+
+    ; need to make sure that a clone doesn't get the same outfit, so send through until it gets its own
+    return p_Set(ref_actor, false, loops)
+endFunction
+
+bool function p_Set_Dead(Actor ref_actor)
     int idx_forms
     int num_forms
     Form ref_form
@@ -148,6 +209,8 @@ function p_Set_Dead(Actor ref_actor)
         endIf
         idx_forms += 1
     endWhile
+
+    return true
 endFunction
 
 ; Public Methods
@@ -210,61 +273,8 @@ function Get(Actor ref_actor, ObjectReference ref_inventory)
     endWhile
 endFunction
 
-function Set(Actor ref_actor, bool do_force = false)
-    int idx_forms
-    int num_forms
-    Form ref_form
-    int num_items
-    ObjectReference ref_trash
-
-    if !do_force && !p_Has_Changed(ref_actor)
-        return
-    endIf
-
-    ; updating the leveled list, which is attached to Outfit form, is what gives the engine the actual items
-    p_LEVELED.Revert()
-    num_forms = self.GetNumItems()
-    idx_forms = 0
-    while idx_forms < num_forms
-        ref_form = self.GetNthForm(idx_forms)
-        p_LEVELED.AddForm(ref_form, 1, self.GetItemCount(ref_form))
-        idx_forms += 1
-    endWhile
-
-    ; we would get into an infinite loop if we don't handle this case separately
-    if ref_actor.IsDead()
-        return p_Set_Dead(ref_actor)
-    endIf
-
-    ; the engine will actually apply the outfit in the correct way now, which we cannot do manually
-    ref_actor.SetOutfit(p_OUTFIT)
-
-    ; the trash container is necessary because it keeps the engine from crashing or freezing when removing actor's items!
-    ref_trash = CONTAINERS.Create_Temp()
-
-    ; some items may be duplicates and not match the container's count. we can't remove one manually, so we remove all.
-    ref_actor.RemoveAllItems(ref_trash, false, false); maybe move quest items somewhere else? but can't put in temp!
-
-    ; we have to manually delete any non-playable items that are equipped. we leave everything else because they may be tokens
-    Delete_Unplayable_Equipment(ref_actor)
-
-    ; add back any discrepencies because the engine only automatically adds back one of each item
-    idx_forms = 0
-    num_forms = self.GetNumItems()
-    while idx_forms < num_forms
-        ref_form = self.GetNthForm(idx_forms)
-        num_items = self.GetItemCount(ref_form)
-        if num_items > 1
-            ref_actor.AddItem(ref_form, num_items - 1, true)
-        endIf
-        idx_forms += 1
-    endWhile
-
-    ; make sure everything is equipped and rendered.
-    ACTORS.Update_Equipment(ref_actor)
-
-    ; need to make sure that a clone doesn't get the same outfit, so send through until it gets its own
-    Set(ref_actor)
+bool function Set(Actor ref_actor, bool do_force = false)
+    return p_Set(ref_actor, do_force)
 endFunction
 
 function Delete_Unplayable_Equipment(Actor ref_actor)
