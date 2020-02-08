@@ -224,8 +224,11 @@ endFunction
 
 ; Update Methods
 function u_0_7_5()
-    DATA.MODS.FUNCS.PERKS.u_0_7_5()
     DATA.MODS.FUNCS.NPCS.u_0_7_5()
+endFunction
+
+function u_0_7_6()
+    DATA.MODS.FUNCS.PERKS.u_0_7_6()
 endFunction
 
 ; Events

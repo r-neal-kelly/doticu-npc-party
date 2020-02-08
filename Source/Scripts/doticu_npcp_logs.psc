@@ -203,3 +203,7 @@ function Clear_Errors()
     p_errors_pivot = p_ERRORS.length - 1
     p_errors_used = 0
 endFunction
+
+function Print(string str)
+    MiscUtil.PrintConsole("NPC Party: " + str)
+endFunction

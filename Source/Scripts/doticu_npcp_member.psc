@@ -1827,7 +1827,7 @@ event OnLoad()
     if Is_Paralyzed()
         p_Reparalyze()
     endIf
-    Enforce()
+    Enforce(); I think I would like to force outfit here. quicker
 endEvent
 
 event On_Load_Mod()

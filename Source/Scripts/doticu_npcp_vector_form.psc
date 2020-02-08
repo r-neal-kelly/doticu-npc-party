@@ -49,7 +49,7 @@ function f_Destroy()
     p_item_fill = none
     p_max_forms = 0
     p_num_forms = 0
-    ;p_arr_forms = none; throws!
+    p_arr_forms = Utility.CreateFormArray(1, none); p_arr_forms = none throws!
     p_is_created = false
 endFunction
 

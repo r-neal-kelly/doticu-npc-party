@@ -45,23 +45,23 @@ function f_Create(doticu_npcp_data DATA)
 
     Add_Perk(CONSTS.PERK_KISS_THRALL)
     Add_Perk(CONSTS.PERK_RESURRECT)
-    Add_Perk(CONSTS.PERK_REANIMATE)
+    ;Add_Perk(CONSTS.PERK_REANIMATE)
     Add_Perk(CONSTS.PERK_UNPARALYZE)
 
     KISS.f_Create(p_DATA)
     RESURRECT.f_Create(p_DATA)
-    REANIMATE.f_Create(p_DATA)
+    ;REANIMATE.f_Create(p_DATA)
     UNPARALYZE.f_Create(p_DATA)
 endFunction
 
 function f_Destroy()
     UNPARALYZE.f_Destroy()
-    REANIMATE.f_Destroy()
+    ;REANIMATE.f_Destroy()
     RESURRECT.f_Destroy()
     KISS.f_Destroy()
 
     Remove_Perk(CONSTS.PERK_UNPARALYZE)
-    Remove_Perk(CONSTS.PERK_REANIMATE)
+    ;Remove_Perk(CONSTS.PERK_REANIMATE)
     Remove_Perk(CONSTS.PERK_RESURRECT)
     Remove_Perk(CONSTS.PERK_KISS_THRALL)
 
@@ -71,7 +71,7 @@ endFunction
 function f_Register()
     KISS.f_Register()
     RESURRECT.f_Register()
-    REANIMATE.f_Register()
+    ;REANIMATE.f_Register()
     UNPARALYZE.f_Register()
 endFunction
 
@@ -85,7 +85,8 @@ function Remove_Perk(Perk perk_to_remove)
 endFunction
 
 ; Update Methods
-function u_0_7_5()
+function u_0_7_6()
+    ; don't forget to uncomment REANIMATE above
     Add_Perk(CONSTS.PERK_REANIMATE)
     REANIMATE.f_Create(p_DATA)
     REANIMATE.f_Register()

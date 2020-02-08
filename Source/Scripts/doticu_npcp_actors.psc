@@ -472,6 +472,7 @@ bool function Has_Same_Head(Actor ref_actor_1, Actor ref_actor_2)
 endFunction
 
 Actor function Clone(Actor ref_actor, ObjectReference ref_marker, bool do_persist = true, bool do_disable = false)
+    ; the user of this function is responsible for making sure the clone's outfit is in order
     if !ref_actor || !ref_marker
         return none
     endIf
@@ -485,7 +486,6 @@ Actor function Clone(Actor ref_actor, ObjectReference ref_marker, bool do_persis
     ref_clone.MoveTo(ref_marker)
     Pacify(ref_clone)
     Set_Name(ref_clone, "Clone of " + Get_Name(ref_actor))
-    OUTFITS.Outfit_Clone(ref_clone, ref_actor)
     
     return ref_clone
 endFunction
