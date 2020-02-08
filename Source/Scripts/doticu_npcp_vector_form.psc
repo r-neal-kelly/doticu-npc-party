@@ -143,6 +143,10 @@ function Fit()
     p_max_forms = p_num_forms
 endFunction
 
+function Empty()
+    p_num_forms = 0
+endFunction
+
 function Print()
     if p_num_forms > 0
         MiscUtil.PrintConsole(Get_Array())

@@ -47,7 +47,6 @@ GlobalVariable              p_GLOBAL_PERCENT_NO_FEET                = none
 GlobalVariable              p_GLOBAL_PERCENT_NO_HANDS               = none
 GlobalVariable              p_GLOBAL_PERCENT_NO_HEAD                = none
 FormList                    p_FORMLIST_MARKERS_SETTLER              = none
-FormList                    p_FORMLIST_OUTFITS                      = none
 Faction                     p_FACTION_MEMBER                        = none
 Faction                     p_FACTION_DLC1_THRALL                   = none
 Faction                     p_FACTION_DLC1_VAMPIRE_FEED_NO_CRIME    = none
@@ -58,6 +57,7 @@ Faction                     p_FACTION_BARD_SINGER_NO_AUTOSTART      = none
 Perk                        p_PERK_VAMPIRE_FEED                     = none
 Perk                        p_PERK_KISS_THRALL                      = none
 Perk                        p_PERK_RESURRECT                        = none
+Perk                        p_PERK_REANIMATE                        = none
 Perk                        p_PERK_UNPARALYZE                       = none
 PlayerVampireQuestScript    p_SCRIPT_PLAYER_VAMPIRE_QUEST           = none
 Keyword                     p_KEYWORD_VAMPIRE                       = none
@@ -69,8 +69,8 @@ Container                   p_CONTAINER_OUTFIT_THRALL               = none
 Container                   p_CONTAINER_OUTFIT_IMMOBILE             = none
 Container                   p_CONTAINER_OUTFIT_FOLLOWER             = none
 Outfit                      p_OUTFIT_EMPTY                          = none
-Outfit                      p_OUTFIT_TEMPLATE                       = none
 Quest                       p_QUEST_BARD_SONGS                      = none
+VoiceType                   p_VOICE_FEMALE_COWARD                   = none
 Weapon                      p_WEAPON_BLANK                          = none
 
 ; Public Constants
@@ -536,17 +536,6 @@ Formlist property FORMLIST_MARKERS_SETTLER
     endFunction
 endProperty
 
-Formlist property FORMLIST_OUTFITS
-    Formlist function Get()
-        return p_FORMLIST_OUTFITS
-    endFunction
-    function Set(Formlist val)
-        if p_FORMLIST_OUTFITS == none
-            p_FORMLIST_OUTFITS = val
-        endIf
-    endFunction
-endProperty
-
 Faction property FACTION_MEMBER
     Faction function Get()
         return p_FACTION_MEMBER
@@ -653,6 +642,17 @@ Perk property PERK_RESURRECT
     function Set(Perk val)
         if p_PERK_RESURRECT == none
             p_PERK_RESURRECT = val
+        endIf
+    endFunction
+endProperty
+
+Perk property PERK_REANIMATE
+    Perk function Get()
+        return p_PERK_REANIMATE
+    endFunction
+    function Set(Perk val)
+        if p_PERK_REANIMATE == none
+            p_PERK_REANIMATE = val
         endIf
     endFunction
 endProperty
@@ -800,9 +800,20 @@ Weapon property WEAPON_BLANK
     endFunction
 endProperty
 
+VoiceType property VOICE_FEMALE_COWARD
+    VoiceType function Get()
+        return p_VOICE_FEMALE_COWARD
+    endFunction
+    function Set(VoiceType val)
+        if p_VOICE_FEMALE_COWARD == none
+            p_VOICE_FEMALE_COWARD = val
+        endIf
+    endFunction
+endProperty
+
 int property VERSION_MAJOR                  =     0 autoReadOnly hidden; set manually upon each release
 int property VERSION_MINOR                  =     7 autoReadOnly hidden; set manually upon each release
-int property VERSION_PATCH                  =     4 autoReadOnly hidden; set manually upon each release
+int property VERSION_PATCH                  =     5 autoReadOnly hidden; set manually upon each release
 
 int property MIN_DISPLAY                    =     1 autoReadOnly hidden
 int property MAX_DISPLAY                    =     8 autoReadOnly hidden
@@ -877,6 +888,7 @@ string property STR_MCM_SETTLER             = " Settler "                   auto
 string property STR_MCM_THRALL              = " Thrall "                    autoReadOnly hidden
 string property STR_MCM_IMMOBILE            = " Immobile "                  autoReadOnly hidden
 string property STR_MCM_FOLLOWER            = " Follower "                  autoReadOnly hidden
+string property STR_MCM_VANILLA             = " Vanilla "                   autoReadOnly hidden
 string property STR_MCM_SETTLE              = " Settle "                    autoReadOnly hidden
 string property STR_MCM_RESETTLE            = " Resettle "                  autoReadOnly hidden
 string property STR_MCM_UNSETTLE            = " Unsettle "                  autoReadOnly hidden
@@ -886,7 +898,6 @@ string property STR_MCM_PARALYZE            = " Paralyze "                  auto
 string property STR_MCM_UNPARALYZE          = " Unparalyze "                autoReadOnly hidden
 string property STR_MCM_FOLLOW              = " Follow "                    autoReadOnly hidden
 string property STR_MCM_UNFOLLOW            = " Unfollow "                  autoReadOnly hidden
-;string property STR_MCM_SNEAK               = " Sneak "                     autoReadOnly hidden; defined below
 string property STR_MCM_UNSNEAK             = " Unsneak "                   autoReadOnly hidden
 string property STR_MCM_RELEVEL             = " Relevel "                   autoReadOnly hidden
 string property STR_MCM_RESURRECT           = " Resurrect "                 autoReadOnly hidden

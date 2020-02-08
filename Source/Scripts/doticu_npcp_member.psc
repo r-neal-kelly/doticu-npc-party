@@ -77,7 +77,6 @@ int                     p_id_alias              =    -1
 Actor                   p_ref_actor             =  none
 string                  p_str_namespace         =    ""
 bool                    p_is_clone              = false
-bool                    p_is_generic            = false
 bool                    p_is_settler            = false
 bool                    p_is_thrall             = false
 bool                    p_is_immobile           = false
@@ -88,7 +87,7 @@ int                     p_code_vitality         =    -1
 int                     p_queue_code_return     =     0
 ObjectReference         p_marker_settler        =  none
 ObjectReference         p_marker_display        =  none
-Outfit                  p_outfit_member         =  none
+Outfit                  p_outfit_vanilla        =  none
 doticu_npcp_queue       p_queue_member          =  none
 doticu_npcp_container   p_container2_pack       =  none
 doticu_npcp_outfit      p_outfit2_member        =  none
@@ -96,7 +95,10 @@ doticu_npcp_outfit      p_outfit2_settler       =  none
 doticu_npcp_outfit      p_outfit2_thrall        =  none
 doticu_npcp_outfit      p_outfit2_immobile      =  none
 doticu_npcp_outfit      p_outfit2_follower      =  none
+doticu_npcp_outfit      p_outfit2_vanilla       =  none
+doticu_npcp_outfit      p_outfit2_default       =  none
 doticu_npcp_outfit      p_outfit2_current       =  none
+doticu_npcp_outfit      p_outfit2_previous      =  none
 
 Faction[]               p_prev_factions         =  none
 int[]                   p_prev_faction_ranks    =  none
@@ -121,7 +123,6 @@ function p_Create(doticu_npcp_data DATA, int id_alias, bool is_clone, Actor ref_
     p_ref_actor = GetActorReference()
     p_str_namespace = "member_" + p_id_alias
     p_is_clone = is_clone
-    p_is_generic = ACTORS.Is_Generic(p_ref_actor)
     p_is_settler = false
     p_is_thrall = false
     p_is_immobile = false
@@ -132,7 +133,6 @@ function p_Create(doticu_npcp_data DATA, int id_alias, bool is_clone, Actor ref_
     p_queue_code_return = 0
     p_marker_settler = CONSTS.FORMLIST_MARKERS_SETTLER.GetAt(p_id_alias) as ObjectReference
     p_marker_display = none
-    p_outfit_member = CONSTS.FORMLIST_OUTFITS.GetAt(p_id_alias) as Outfit
 
     p_Create_Queues()
     p_Create_Containers()
@@ -166,7 +166,6 @@ function p_Destroy()
         FOLLOWERS.f_Destroy_Follower(p_ref_actor)
     endIf
 
-    ;p_Unoutfit() Restore sets the original
     p_Unvitalize()
     p_Unstyle()
     if Is_Paralyzed()
@@ -196,7 +195,10 @@ function p_Destroy()
     ;p_prev_faction_ranks = none; the engine wont set an array to none!
     ;p_prev_factions = none; ""
 
+    p_outfit2_previous = none
     p_outfit2_current = none
+    p_outfit2_default = none
+    p_outfit2_vanilla = none
     p_outfit2_follower = none
     p_outfit2_immobile = none
     p_outfit2_thrall = none
@@ -204,7 +206,6 @@ function p_Destroy()
     p_outfit2_member = none
     p_container2_pack = none
     p_queue_member = none
-    p_outfit_member = none
     p_marker_display = none
     p_marker_settler = none
     p_queue_code_return = 0
@@ -215,7 +216,6 @@ function p_Destroy()
     p_is_immobile = false
     p_is_thrall = false
     p_is_settler = false
-    p_is_generic = false
     p_is_clone = false
     p_str_namespace = ""
     p_ref_actor = none
@@ -290,7 +290,7 @@ endFunction
 function p_Create_Outfit()
     f_Lock_Resources()
 
-        p_outfit2_member = OUTFITS.Create(p_outfit_member)
+        p_outfit2_member = OUTFITS.Create()
         if VARS.fill_outfits
             p_outfit2_member.Get(p_ref_actor, p_container2_pack)
         else
@@ -304,6 +304,12 @@ endFunction
 function p_Destroy_Outfits()
     f_Lock_Resources()
 
+        if p_outfit2_default
+            OUTFITS.Destroy(p_outfit2_default)
+        endIf
+        if p_outfit2_vanilla
+            OUTFITS.Destroy(p_outfit2_vanilla)
+        endIf
         if p_outfit2_immobile
             OUTFITS.Destroy(p_outfit2_immobile)
         endIf
@@ -347,10 +353,7 @@ function p_Restore()
         ACTORS.Set_Factions(p_ref_actor, p_prev_factions, p_prev_faction_ranks)
         p_ref_actor.SetCrimeFaction(p_prev_faction_crime)
 
-        if Is_Alive()
-            p_ref_actor.SetOutfit(CONSTS.OUTFIT_EMPTY)
-            p_ref_actor.SetOutfit(NPCS.Get_Base_Outfit(p_ref_actor))
-        endIf
+        OUTFITS.Restore_Actor(p_ref_actor)
 
     f_Unlock_Resources()
 endFunction
@@ -364,7 +367,7 @@ function p_Member()
         else
             ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_CLONE)
         endIf
-        if p_is_generic
+        if ACTORS.Is_Generic(p_ref_actor)
             ACTORS.Token(p_ref_actor, CONSTS.TOKEN_GENERIC)
         else
             ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_GENERIC)
@@ -632,28 +635,41 @@ function p_Put_Outfit(int code_outfit)
             p_outfit2_current = p_outfit2_member
         elseIf code_outfit == CODES.OUTFIT_SETTLER
             if !p_outfit2_settler
-                p_outfit2_settler = OUTFITS.Create_Settler(p_outfit_member)
+                p_outfit2_settler = OUTFITS.Create_Settler()
             endIf
             p_outfit2_settler.Set_Name(Get_Name() + "'s Settler Outfit")
             p_outfit2_current = p_outfit2_settler
         elseIf code_outfit == CODES.OUTFIT_THRALL
             if !p_outfit2_thrall
-                p_outfit2_thrall = OUTFITS.Create_Thrall(p_outfit_member)
+                p_outfit2_thrall = OUTFITS.Create_Thrall()
             endIf
             p_outfit2_thrall.Set_Name(Get_Name() + "'s Thrall Outfit")
             p_outfit2_current = p_outfit2_thrall
         elseIf code_outfit == CODES.OUTFIT_FOLLOWER
             if !p_outfit2_follower
-                p_outfit2_follower = OUTFITS.Create_Follower(p_outfit_member)
+                p_outfit2_follower = OUTFITS.Create_Follower()
             endIf
             p_outfit2_follower.Set_Name(Get_Name() + "'s Follower Outfit")
             p_outfit2_current = p_outfit2_follower
         elseIf code_outfit == CODES.OUTFIT_IMMOBILE
             if !p_outfit2_immobile
-                p_outfit2_immobile = OUTFITS.Create_Immobile(p_outfit_member)
+                p_outfit2_immobile = OUTFITS.Create_Immobile()
             endIf
             p_outfit2_immobile.Set_Name(Get_Name() + "'s Immobile Outfit")
             p_outfit2_current = p_outfit2_immobile
+        elseIf code_outfit == CODES.OUTFIT_VANILLA
+            if !p_outfit2_vanilla
+                p_outfit2_vanilla = OUTFITS.Create_Vanilla()
+            endIf
+            p_outfit2_vanilla.Set_Name(Get_Name() + "'s Vanilla Outfit")
+            p_outfit2_current = p_outfit2_vanilla
+        elseIf code_outfit == CODES.OUTFIT_DEFAULT
+            if !p_outfit2_default
+                p_outfit2_default = OUTFITS.Create_Default()
+                p_outfit2_default.Get_Default(p_ref_actor)
+            endIf
+            p_outfit2_default.Set_Name(Get_Name() + "'s Default Outfit")
+            p_outfit2_current = p_outfit2_default
         endIf
 
         p_outfit2_current.Put()
@@ -664,25 +680,27 @@ endFunction
 function p_Outfit()
     f_Lock_Resources()
 
+        ; if we ever allow manual outfit switching without having to put, we need to make sure the oufit is created
+
         if VARS.auto_outfit
             if Is_Immobile() && VARS.auto_immobile_outfit
                 if !p_outfit2_immobile
-                    p_outfit2_immobile = OUTFITS.Create_Immobile(p_outfit_member)
+                    p_outfit2_immobile = OUTFITS.Create_Immobile()
                 endIf
                 p_outfit2_current = p_outfit2_immobile
             elseIf Is_Follower()
                 if !p_outfit2_follower
-                    p_outfit2_follower = OUTFITS.Create_Follower(p_outfit_member)
+                    p_outfit2_follower = OUTFITS.Create_Follower()
                 endIf
                 p_outfit2_current = p_outfit2_follower
             elseIf Is_Thrall()
                 if !p_outfit2_thrall
-                    p_outfit2_thrall = OUTFITS.Create_Thrall(p_outfit_member)
+                    p_outfit2_thrall = OUTFITS.Create_Thrall()
                 endIf
                 p_outfit2_current = p_outfit2_thrall
             elseIf Is_Settler()
                 if !p_outfit2_settler
-                    p_outfit2_settler = OUTFITS.Create_Settler(p_outfit_member)
+                    p_outfit2_settler = OUTFITS.Create_Settler()
                 endIf
                 p_outfit2_current = p_outfit2_settler
             else
@@ -694,21 +712,14 @@ function p_Outfit()
             p_outfit2_current = p_outfit2_member
         endIf
 
+        if p_outfit2_previous != p_outfit2_current
+            p_outfit2_current.Cache_Outfit(p_ref_actor)
+            p_outfit2_previous = p_outfit2_current
+        endIf
+
         p_outfit2_current.Set(p_ref_actor)
 
-        NPCS.Update_Outfits(p_ref_actor)
-
-        p_ref_actor.EvaluatePackage()
-
-    f_Unlock_Resources()
-endFunction
-
-function p_Unoutfit()
-    f_Lock_Resources()
-
-        ; this is not really helpful atm
-        p_outfit2_member.Unset(p_ref_actor)
-        p_outfit2_current = none
+        OUTFITS.Update_Base(p_ref_actor)
 
         p_ref_actor.EvaluatePackage()
 
@@ -846,12 +857,16 @@ int function Get_Outfit()
             return CODES.OUTFIT_FOLLOWER
         elseIf p_outfit2_current == p_outfit2_immobile
             return CODES.OUTFIT_IMMOBILE
+        elseIf p_outfit2_current == p_outfit2_vanilla
+            return CODES.OUTFIT_VANILLA
+        elseIf p_outfit2_current == p_outfit2_default
+            return CODES.OUTFIT_DEFAULT
         endIf
     endIf
 endFunction
 
-Outfit function Get_Base_Outfit()
-    return p_outfit_member
+doticu_npcp_outfit function Get_Current_Outfit2()
+    return p_outfit2_current
 endFunction
 
 int function Set_Name(string str_name)
@@ -1399,6 +1414,10 @@ int function Outfit(int code_exec, int code_outfit)
         return Outfit_Follower(code_exec)
     elseIf code_outfit == CODES.OUTFIT_CURRENT
         return Outfit_Current(code_exec)
+    elseIf code_outfit == CODES.OUTFIT_VANILLA
+        return Outfit_Vanilla(code_exec)
+    elseIf code_outfit == CODES.OUTFIT_DEFAULT
+        return Outfit_Default(code_exec)
     endIf
 endFunction
 
@@ -1504,17 +1523,35 @@ int function Outfit_Current(int code_exec)
     return CODES.SUCCESS
 endFunction
 
-int function Unoutfit(int code_exec)
+int function Outfit_Vanilla(int code_exec)
     int code_return
     
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
-    
+
+    p_Put_Outfit(CODES.OUTFIT_VANILLA)
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Unoutfit")
+        p_Enqueue("Member.Outfit")
     else
-        p_Unoutfit()
+        p_Outfit()
+    endIf
+
+    return CODES.SUCCESS
+endFunction
+
+int function Outfit_Default(int code_exec)
+    int code_return
+    
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+
+    p_Put_Outfit(CODES.OUTFIT_DEFAULT)
+    if code_exec == CODES.DO_ASYNC
+        p_Enqueue("Member.Outfit")
+    else
+        p_Outfit()
     endIf
 
     return CODES.SUCCESS
@@ -1615,11 +1652,11 @@ bool function Is_Member()
 endFunction
 
 bool function Is_Unique()
-    return Exists() && !p_is_generic
+    return Exists() && ACTORS.Is_Unique(p_ref_actor)
 endFunction
 
 bool function Is_Generic()
-    return Exists() && p_is_generic
+    return Exists() && ACTORS.Is_Generic(p_ref_actor)
 endFunction
 
 bool function Is_Clone()
@@ -1730,8 +1767,6 @@ event On_Queue_Member(string str_message)
         p_Pack()
     elseIf str_message == "Member.Outfit"
         p_Outfit()
-    elseIf str_message == "Member.Unoutfit"
-        p_Unoutfit()
     elseIf str_message == "Member.Settle"
         if Is_Settler()
             p_Settle()
@@ -1802,7 +1837,7 @@ event On_Load_Mod()
 endEvent
 
 event OnActivate(ObjectReference ref_activator)
-    ; maybe we could also pop up some basic stats on screen?
+    ; maybe we could also pop up some basic stats on screen? but make it a command or something
 
     if Is_Alive()
         Enforce()
@@ -1813,6 +1848,7 @@ event OnActivate(ObjectReference ref_activator)
 endEvent
 
 event OnHit(ObjectReference ref_attacker, Form _, Projectile __, bool ___, bool ____, bool _____, bool ______)
+    ; we did have a stack dump related to this function once. might keep an eye on it
     if !p_ref_actor.IsDead() && p_ref_actor.GetActorValue(CONSTS.STR_HEALTH) <= 0
         if p_code_vitality == CODES.IS_MORTAL || p_code_vitality == CODES.IS_PROTECTED && ref_attacker == CONSTS.ACTOR_PLAYER
             Clear()

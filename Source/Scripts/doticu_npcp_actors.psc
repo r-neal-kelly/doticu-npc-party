@@ -20,6 +20,11 @@ doticu_npcp_containers property CONTAINERS hidden
         return p_DATA.MODS.FUNCS.CONTAINERS
     endFunction
 endProperty
+doticu_npcp_outfits property OUTFITS hidden
+    doticu_npcp_outfits function Get()
+        return p_DATA.MODS.FUNCS.OUTFITS
+    endFunction
+endProperty
 doticu_npcp_player property PLAYER
     doticu_npcp_player function Get()
         return GetAliasByName("player") as doticu_npcp_player
@@ -108,6 +113,14 @@ bool function Is_Generic(Actor ref_actor)
     return ref_actor && !ref_actor.GetActorBase().IsUnique()
 endFunction
 
+bool function Is_Leveled(Actor ref_actor)
+    return ref_actor && ref_actor.GetLeveledActorBase() != ref_actor.GetActorBase()
+endFunction
+
+bool function Is_Unleveled(Actor ref_actor)
+    return ref_actor && ref_actor.GetLeveledActorBase() == ref_actor.GetActorBase()
+endFunction
+
 bool function Is_Vampire(Actor ref_actor)
     return ref_actor && ref_actor.HasKeyword(CONSTS.KEYWORD_VAMPIRE)
 endFunction
@@ -121,24 +134,41 @@ bool function Is_Female(Actor ref_actor)
 endFunction
 
 bool function Is_Essential(Actor ref_actor)
-    if Is_Unique(ref_actor)
-        return ref_actor.IsEssential()
-    else
+    if Is_Leveled(ref_actor)
         return Get_Base(ref_actor).IsEssential() || Get_Leveled_Base(ref_actor).IsEssential()
+    else
+        return ref_actor.IsEssential()
     endIf
 endFunction
 
 ActorBase function Get_Base(Actor ref_actor)
     if ref_actor
+        ; never returns a dynamic leveled nor template base. can return a static leveled npc base
         return ref_actor.GetActorBase()
     else
         return none
     endIf
 endFunction
 
-ActorBase function Get_Leveled_Base(Actor ref_actor)
+ActorBase function Get_Leveled_Base(Actor ref_actor); Get_Dynamic_Base
     if ref_actor
+        ; returns regular or template base for unleveled. returns dynamic base for leveled
         return ref_actor.GetLeveledActorBase()
+    else
+        return none
+    endIf
+endFunction
+
+ActorBase function Get_Real_Base(Actor ref_actor); Get_Template_Base
+    if ref_actor
+        ; only returns an actual actor base, never a leveled static or leveled dynamic
+        ActorBase base_actor = ref_actor.GetActorBase()
+        ActorBase leveled_actor = ref_actor.GetLeveledActorBase()
+        if base_actor != leveled_actor; Is_Leveled
+            return leveled_actor.GetTemplate()
+        else
+            return base_actor
+        endIf
     else
         return none
     endIf
@@ -181,14 +211,27 @@ int function Get_Sex(Actor ref_actor)
     endIf
 endFunction
 
-int function Get_Vitality(Actor ref_actor)
-    ActorBase p_base_actor
-
-    if Is_Unique(ref_actor)
-        p_base_actor = ref_actor.GetActorBase()
+Outfit function Get_Base_Outfit(Actor ref_actor)
+    if ref_actor
+        ; leveled have the outfit on leveled base only.
+        ; GetLeveledActorBase() returns regular or template base for unleveled.
+        return ref_actor.GetLeveledActorBase().GetOutfit()
     else
-        p_base_actor = ref_actor.GetLeveledActorBAse()
+        return none
     endIf
+endFunction
+
+function Set_Base_Outfit(Actor ref_actor, Outfit outfit_base)
+    if ref_actor && outfit_base
+        ; leveled have the outfit on leveled base only.
+        ; GetLeveledActorBase() returns regular or template base for unleveled.
+        ; does not immediately affect the ref_actor's outfit (except if is player teammate?)
+        ref_actor.GetLeveledActorBase().SetOutfit(outfit_base)
+    endIf
+endFunction
+
+int function Get_Vitality(Actor ref_actor)
+    ActorBase p_base_actor = ref_actor.GetLeveledActorBase()
 
     if p_base_actor.IsProtected()
         return CODES.IS_PROTECTED
@@ -204,7 +247,7 @@ endFunction
 function Essentialize(Actor ref_actor)
     Get_Base(ref_actor).SetEssential(true)
 
-    if Is_Generic(ref_actor)
+    if Is_Leveled(ref_actor)
         Get_Leveled_Base(ref_actor).SetEssential(true)
     endIf
 endFunction
@@ -212,7 +255,7 @@ endFunction
 function Unessentialize(Actor ref_actor)
     Get_Base(ref_actor).SetEssential(false)
 
-    if Is_Generic(ref_actor)
+    if Is_Leveled(ref_actor)
         Get_Leveled_Base(ref_actor).SetEssential(false)
     endIf
 endFunction
@@ -405,6 +448,46 @@ function Update_Equipment(Actor ref_actor)
     if !is_player_teammate
         ref_actor.SetPlayerTeammate(false, false)
     endIf
+endFunction
+
+bool function Has_Same_Head(Actor ref_actor_1, Actor ref_actor_2)
+    ActorBase ref_base_1 = ref_actor_1.GetLeveledActorBase(); returns unleveled base too
+    ActorBase ref_base_2 = ref_actor_2.GetLeveledActorBase()
+    int int_slots_1 = ref_base_1.GetNumHeadParts()
+    int int_slots_2 = ref_base_2.GetNumHeadParts()
+
+    if int_slots_1 != int_slots_2
+        return false
+    endIf
+
+    int int_slot_idx = 0
+    while int_slot_idx < int_slots_1
+        if ref_base_1.GetNthHeadPart(int_slot_idx) != ref_base_2.GetNthHeadPart(int_slot_idx)
+            return false
+        endIf
+        int_slot_idx += 1
+    endWhile
+
+    return true
+endFunction
+
+Actor function Clone(Actor ref_actor, ObjectReference ref_marker, bool do_persist = true, bool do_disable = false)
+    if !ref_actor || !ref_marker
+        return none
+    endIf
+
+    ; this saves an enormous amount of time, rather than having to loop through PlaceActorAtMe
+    Actor ref_clone = ref_marker.PlaceAtMe(Get_Real_Base(ref_actor) as Form, 1, do_persist, do_disable) as Actor
+    if !ref_clone
+        return none
+    endIf
+
+    ref_clone.MoveTo(ref_marker)
+    Pacify(ref_clone)
+    Set_Name(ref_clone, "Clone of " + Get_Name(ref_actor))
+    OUTFITS.Outfit_Clone(ref_clone, ref_actor)
+    
+    return ref_clone
 endFunction
 
 bool function Has_Faction(Actor ref_actor, Faction form_faction)

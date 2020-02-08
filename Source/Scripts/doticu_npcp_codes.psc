@@ -131,6 +131,8 @@ int property OUTFIT_THRALL                  = -3000 autoReadOnly
 int property OUTFIT_FOLLOWER                = -4000 autoReadOnly
 int property OUTFIT_IMMOBILE                = -5000 autoReadOnly
 int property OUTFIT_CURRENT                 = -6000 autoReadOnly
+int property OUTFIT_VANILLA                 = -7000 autoReadOnly
+int property OUTFIT_DEFAULT                 = -8000 autoReadOnly
 
 int property STYLE_DEFAULT                  = -1000 autoReadOnly
 int property STYLE_WARRIOR                  = -2000 autoReadOnly

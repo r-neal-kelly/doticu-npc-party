@@ -146,7 +146,9 @@ function Outfit(int code_exec, Actor ref_actor, int code_outfit, bool auto_creat
         code_outfit != CODES.OUTFIT_THRALL &&\
         code_outfit != CODES.OUTFIT_FOLLOWER &&\
         code_outfit != CODES.OUTFIT_IMMOBILE &&\
-        code_outfit != CODES.OUTFIT_CURRENT
+        code_outfit != CODES.OUTFIT_CURRENT &&\
+        code_outfit != CODES.OUTFIT_VANILLA &&\
+        code_outfit != CODES.OUTFIT_DEFAULT
         code_outfit = CODES.OUTFIT_MEMBER; eventually VARS.default_outfit
     endIf
     
@@ -195,8 +197,12 @@ function Outfit_Current(int code_exec, Actor ref_actor, bool auto_create)
     Outfit(code_exec, ref_actor, CODES.OUTFIT_CURRENT, auto_create)
 endFunction
 
-function Unoutfit(int code_exec, Actor ref_actor, bool auto_create)
-    ; can create a toggle between these two
+function Outfit_Vanilla(int code_exec, Actor ref_actor, bool auto_create)
+    Outfit(code_exec, ref_actor, CODES.OUTFIT_VANILLA, auto_create)
+endFunction
+
+function Outfit_Default(int code_exec, Actor ref_actor, bool auto_create)
+    Outfit(code_exec, ref_actor, CODES.OUTFIT_DEFAULT, auto_create)
 endFunction
 
 function Resurrect(int code_exec, Actor ref_actor, bool auto_create)
@@ -913,6 +919,10 @@ function Outfit_Show(Actor ref_actor)
         LOGS.Create_Note("Wearing Follower ", false)
     elseIf code_outfit == CODES.OUTFIT_IMMOBILE
         LOGS.Create_Note("Wearing Immobile ", false)
+    elseIf code_outfit == CODES.OUTFIT_VANILLA
+        LOGS.Create_Note("Wearing Vanilla ", false)
+    elseIf code_outfit == CODES.OUTFIT_DEFAULT
+        LOGS.Create_Note("Wearing Default ", false)
     endIf
 endFunction
 

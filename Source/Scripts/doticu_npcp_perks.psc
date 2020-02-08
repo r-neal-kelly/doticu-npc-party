@@ -20,6 +20,11 @@ doticu_npcp_perk_resurrect property RESURRECT
         return p_DATA.CONSTS.PERK_RESURRECT as doticu_npcp_perk_resurrect
     endFunction
 endProperty
+doticu_npcp_perk_reanimate property REANIMATE
+    doticu_npcp_perk_reanimate function Get()
+        return p_DATA.CONSTS.PERK_REANIMATE as doticu_npcp_perk_reanimate
+    endFunction
+endProperty
 doticu_npcp_perk_unparalyze property UNPARALYZE
     doticu_npcp_perk_unparalyze function Get()
         return p_DATA.CONSTS.PERK_UNPARALYZE as doticu_npcp_perk_unparalyze
@@ -40,19 +45,23 @@ function f_Create(doticu_npcp_data DATA)
 
     Add_Perk(CONSTS.PERK_KISS_THRALL)
     Add_Perk(CONSTS.PERK_RESURRECT)
+    Add_Perk(CONSTS.PERK_REANIMATE)
     Add_Perk(CONSTS.PERK_UNPARALYZE)
 
     KISS.f_Create(p_DATA)
     RESURRECT.f_Create(p_DATA)
+    REANIMATE.f_Create(p_DATA)
     UNPARALYZE.f_Create(p_DATA)
 endFunction
 
 function f_Destroy()
     UNPARALYZE.f_Destroy()
+    REANIMATE.f_Destroy()
     RESURRECT.f_Destroy()
     KISS.f_Destroy()
 
     Remove_Perk(CONSTS.PERK_UNPARALYZE)
+    Remove_Perk(CONSTS.PERK_REANIMATE)
     Remove_Perk(CONSTS.PERK_RESURRECT)
     Remove_Perk(CONSTS.PERK_KISS_THRALL)
 
@@ -62,6 +71,7 @@ endFunction
 function f_Register()
     KISS.f_Register()
     RESURRECT.f_Register()
+    REANIMATE.f_Register()
     UNPARALYZE.f_Register()
 endFunction
 
@@ -72,4 +82,11 @@ endFunction
 
 function Remove_Perk(Perk perk_to_remove)
     CONSTS.ACTOR_PLAYER.RemovePerk(perk_to_remove)
+endFunction
+
+; Update Methods
+function u_0_7_5()
+    Add_Perk(CONSTS.PERK_REANIMATE)
+    REANIMATE.f_Create(p_DATA)
+    REANIMATE.f_Register()
 endFunction

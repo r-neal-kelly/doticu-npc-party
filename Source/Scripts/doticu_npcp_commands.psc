@@ -373,9 +373,15 @@ function Outfit_Immobile_Sync(Actor ref_actor, bool auto_create)
     GotoState("")
 endFunction
 
-function Unoutfit_Sync(Actor ref_actor, bool auto_create)
+function Outfit_Vanilla_Sync(Actor ref_actor, bool auto_create)
     GotoState("p_STATE_BUSY")
-    PRIVATE.Unoutfit(CODES.DO_SYNC, ref_actor, auto_create)
+    PRIVATE.Outfit_Vanilla(CODES.DO_SYNC, ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Outfit_Default_Sync(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    PRIVATE.Outfit_Default(CODES.DO_SYNC, ref_actor, auto_create)
     GotoState("")
 endFunction
 
@@ -594,10 +600,6 @@ function Outfit_Immobile_Async(Actor ref_actor, bool auto_create)
     PRIVATE.Outfit_Immobile(CODES.DO_ASYNC, ref_actor, auto_create)
 endFunction
 
-function Unoutfit_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Unoutfit(CODES.DO_ASYNC, ref_actor, auto_create)
-endFunction
-
 function Style_Default_Async(Actor ref_actor, bool auto_create)
     PRIVATE.Style_Default(CODES.DO_ASYNC, ref_actor, auto_create)
 endFunction
@@ -718,7 +720,9 @@ state p_STATE_BUSY
     endFunction
     function Outfit_Immobile_Sync(Actor ref_actor, bool auto_create)
     endFunction
-    function Unoutfit_Sync(Actor ref_actor, bool auto_create)
+    function Outfit_Vanilla_Sync(Actor ref_actor, bool auto_create)
+    endFunction
+    function Outfit_Default_Sync(Actor ref_actor, bool auto_create)
     endFunction
     function Style_Default_Sync(Actor ref_actor, bool auto_create)
     endFunction

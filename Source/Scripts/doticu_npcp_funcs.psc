@@ -116,3 +116,12 @@ endFunction
 bool function Is_Mod_Installed(string name_mod)
     return Game.GetModByName(name_mod) != 255
 endFunction
+
+bool function Maybe_Quest_Item(Form form_item)
+    ObjectReference ref_item = form_item as ObjectReference
+    if ref_item && ref_item.GetNumReferenceAliases() > 0
+        return true
+    else
+        return false
+    endIf
+endFunction

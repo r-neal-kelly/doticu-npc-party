@@ -55,6 +55,14 @@ function Outfit_Immobile(ObjectReference ref_object)
     (GetOwningQuest() as doticu_npcp_commands).Outfit_Immobile_Sync(ref_object as Actor, false)
 endFunction
 
+function Outfit_Vanilla(ObjectReference ref_object)
+    (GetOwningQuest() as doticu_npcp_commands).Outfit_Vanilla_Sync(ref_object as Actor, false)
+endFunction
+
+function Outfit_Default(ObjectReference ref_object)
+    (GetOwningQuest() as doticu_npcp_commands).Outfit_Default_Sync(ref_object as Actor, false)
+endFunction
+
 function Enthrall(ObjectReference ref_object)
     (GetOwningQuest() as doticu_npcp_commands).Enthrall_Sync(ref_object as Actor, false)
 endFunction

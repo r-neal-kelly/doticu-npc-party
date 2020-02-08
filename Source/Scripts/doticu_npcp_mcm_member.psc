@@ -382,7 +382,7 @@ function f_On_Option_Menu_Open(int id_option)
 
     elseIf id_option == p_option_outfit
         if ACTORS.Is_Vampire(CONSTS.ACTOR_PLAYER)
-            string[] arr_options = Utility.CreateStringArray(6, "")
+            string[] arr_options = Utility.CreateStringArray(8, "")
 
             arr_options[0] = CONSTS.STR_MCM_CURRENT
             arr_options[1] = CONSTS.STR_MCM_MEMBER
@@ -390,16 +390,20 @@ function f_On_Option_Menu_Open(int id_option)
             arr_options[3] = CONSTS.STR_MCM_THRALL
             arr_options[4] = CONSTS.STR_MCM_FOLLOWER
             arr_options[5] = CONSTS.STR_MCM_IMMOBILE
+            arr_options[6] = CONSTS.STR_MCM_VANILLA
+            arr_options[7] = CONSTS.STR_MCM_DEFAULT
 
             MCM.SetMenuDialogOptions(arr_options)
         else
-            string[] arr_options = Utility.CreateStringArray(5, "")
+            string[] arr_options = Utility.CreateStringArray(7, "")
 
             arr_options[0] = CONSTS.STR_MCM_CURRENT
             arr_options[1] = CONSTS.STR_MCM_MEMBER
             arr_options[2] = CONSTS.STR_MCM_SETTLER
             arr_options[3] = CONSTS.STR_MCM_FOLLOWER
             arr_options[4] = CONSTS.STR_MCM_IMMOBILE
+            arr_options[5] = CONSTS.STR_MCM_VANILLA
+            arr_options[6] = CONSTS.STR_MCM_DEFAULT
 
             MCM.SetMenuDialogOptions(arr_options)
         endIf
@@ -430,6 +434,12 @@ function f_On_Option_Menu_Accept(int id_option, int idx_option)
             elseIf idx_option == 5
                 FUNCS.Close_Menus()
                 COMMANDS.Outfit_Immobile_Sync(ref_actor, false)
+            elseIf idx_option == 6
+                FUNCS.Close_Menus()
+                COMMANDS.Outfit_Vanilla_Sync(ref_actor, false)
+            elseIf idx_option == 7
+                FUNCS.Close_Menus()
+                COMMANDS.Outfit_Default_Sync(ref_actor, false)
             endIf
         else
             if idx_option == 0
@@ -447,6 +457,12 @@ function f_On_Option_Menu_Accept(int id_option, int idx_option)
             elseIf idx_option == 4
                 FUNCS.Close_Menus()
                 COMMANDS.Outfit_Immobile_Sync(ref_actor, false)
+            elseIf idx_option == 5
+                FUNCS.Close_Menus()
+                COMMANDS.Outfit_Vanilla_Sync(ref_actor, false)
+            elseIf idx_option == 6
+                FUNCS.Close_Menus()
+                COMMANDS.Outfit_Default_Sync(ref_actor, false)
             endIf
         endIf
     endIf

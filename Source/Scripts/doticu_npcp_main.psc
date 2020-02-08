@@ -148,11 +148,8 @@ endFunction
 
 function p_Version()
     if Is_NPC_Party_Less_Than(CONSTS.VERSION_MAJOR, CONSTS.VERSION_MINOR, CONSTS.VERSION_PATCH)
-        if Is_NPC_Party_Less_Than(0, 7, 0)
-            u_0_7_0()
-        endIf
-        if Is_NPC_Party_Less_Than(0, 7, 1)
-            u_0_7_1()
+        if Is_NPC_Party_Less_Than(0, 7, 5)
+            u_0_7_5()
         endIf
 
         VARS.version_major = CONSTS.VERSION_MAJOR
@@ -226,18 +223,9 @@ bool function Is_NPC_Party_Less_Than(int min_major, int min_minor, int min_patch
 endFunction
 
 ; Update Methods
-function u_0_7_0()
-    FUNCS.NPCS.f_Create(DATA)
-    FUNCS.NPCS.f_Register()
-endFunction
-
-function u_0_7_1()
-    DATA.CONSTS.GLOBAL_IS_INSTALLED.SetValue(1)
-    VARS.clone_outfit = DATA.CODES.OUTFIT_BASE
-    VARS.percent_body = DATA.CONSTS.DEFAULT_PERCENT_BODY
-    VARS.percent_feet = DATA.CONSTS.DEFAULT_PERCENT_FEET
-    VARS.percent_hands = DATA.CONSTS.DEFAULT_PERCENT_HANDS
-    VARS.percent_head = DATA.CONSTS.DEFAULT_PERCENT_HEAD
+function u_0_7_5()
+    DATA.MODS.FUNCS.PERKS.u_0_7_5()
+    DATA.MODS.FUNCS.NPCS.u_0_7_5()
 endFunction
 
 ; Events

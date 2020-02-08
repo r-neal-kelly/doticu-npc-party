@@ -73,7 +73,7 @@ function Clone(int code_return, string str_name)
     if code_return == CODES.SUCCESS
         LOGS.Create_Note("A clone of " + str_name + " is now a member.")
     elseIf code_return == CODES.CANT_CLONE
-        LOGS.Create_Note(str_name + " could not be cloned. Try to clone again, or manually member them.")
+        LOGS.Create_Note(str_name + " could not be cloned.")
     elseIf code_return == CODES.HASNT_SPACE_MEMBER
         LOGS.Create_Note("No room for a clone of " + str_name + " to be a member.")
     elseIf code_return == CODES.CANT_RESURRECT
@@ -130,6 +130,10 @@ function Outfit(int code_return, string str_name, int code_outfit)
         str_outfit = "a follower"
     elseIf code_outfit == CODES.OUTFIT_IMMOBILE
         str_outfit = "an immobile"
+    elseIf code_outfit == CODES.OUTFIT_VANILLA
+        str_outfit = "a vanilla npc"
+    elseIf code_outfit == CODES.OUTFIT_DEFAULT
+        str_outfit = "a default npc"
     endIf
 
     if code_return == CODES.SUCCESS
