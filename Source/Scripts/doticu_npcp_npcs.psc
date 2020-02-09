@@ -400,6 +400,11 @@ function Set_Base_Outfit(Actor ref_actor, Outfit val_outfit)
     endIf
 endFunction
 
+Outfit function Get_Default_Outfit(Actor ref_actor)
+    ; just an easy place to change this if we need to
+    return Get_Base_Outfit(ref_actor)
+endFunction
+
 ObjectReference function Get_Default_Cache(Actor ref_actor)
     int idx_bases = p_vec_bases.Find(ACTORS.Get_Real_Base(ref_actor) as Form)
     if idx_bases > -1
@@ -494,8 +499,6 @@ function u_0_7_5()
             ActorBase orig_base = ACTORS.Get_Real_Base(orig_ref)
 
             ; so we can start off on the right foot in the new outfit algorithm.
-            ; without this, any base actor with one of our outfits will not
-            ; immediately change if the "vanilla" outfit is selected
             ACTORS.Set_Base_Outfit(orig_ref, base_outfit)
 
             ; we add base in each loop, because there is no other way to know if each orig and clone has the same real base.
@@ -503,9 +506,11 @@ function u_0_7_5()
             if !p_vec_bases.Has(orig_base as Form)
                 ; a disabled clone can still have their inventory checked and accouted for
                 Actor orig_clone = ACTORS.Clone(orig_ref, CONSTS.ACTOR_PLAYER, false, true)
-                ObjectReference orig_default = OUTFITS.Get_Default_Cache(orig_clone, base_outfit)
+                OUTFITS.Outfit_Clone_Default(orig_clone, base_outfit)
 
+                ObjectReference orig_default = OUTFITS.Get_Default_Cache(orig_clone, base_outfit)
                 orig_clone.Delete()
+
                 p_vec_bases.Push(orig_base as Form)
                 p_vec_outfits.Push(base_outfit as Form)
                 p_vec_defaults.Push(orig_default as Form)
@@ -538,8 +543,6 @@ function u_0_7_5()
             ActorBase clone_base = ACTORS.Get_Real_Base(clone_ref)
 
             ; so we can start off on the right foot in the new outfit algorithm.
-            ; without this, any base actor with one of our outfits will not
-            ; immediately change if the "vanilla" outfit is selected
             ACTORS.Set_Base_Outfit(clone_ref, base_outfit)
 
             ; we add base in each loop, because there is no other way to know if each orig and clone has the same real base.
@@ -547,9 +550,11 @@ function u_0_7_5()
             if !p_vec_bases.Has(clone_base as Form)
                 ; a disabled clone can still have their inventory checked and accouted for
                 Actor clone_clone = ACTORS.Clone(clone_ref, CONSTS.ACTOR_PLAYER, false, true)
-                ObjectReference clone_default = OUTFITS.Get_Default_Cache(clone_clone, base_outfit)
+                OUTFITS.Outfit_Clone_Default(clone_clone, base_outfit)
 
+                ObjectReference clone_default = OUTFITS.Get_Default_Cache(clone_clone, base_outfit)
                 clone_clone.Delete()
+
                 p_vec_bases.Push(clone_base as Form)
                 p_vec_outfits.Push(base_outfit as Form)
                 p_vec_defaults.Push(clone_default as Form)

@@ -54,7 +54,7 @@ This mod is currently in beta testing. You may run into a few hiccups every now 
 
 # 
 ## Compatibility
-One of the goals of this mod was to touch as few vanilla assets as possible, but no promises can be made regarding compatibility. Currently, the vanilla follower system has been disabled, and the consequences have not been fully tested. There will be issues with other full-scale follower frameworks being used at the same time. Custom followers who use the vanilla system will need to use the framework. If they don't use the vanilla system, they may be fully compatible alongside the framework. Other outfitting mods will be incompatible when trying to alter a member's outfit, but an option to turn outfitting off in NPC Party is being considered, so that you can use whatever system you want to.
+One of the goals of this mod was to touch as few vanilla assets as possible, but no promises can be made regarding compatibility. Currently, the vanilla follower system has been disabled, and the consequences have not been fully tested. There will be issues with other full-scale follower frameworks being used at the same time. Custom followers who use the vanilla system will need to use the framework. If they don't use the vanilla system, they may be fully compatible alongside the framework. Other outfitting mods are now compatible when using a member's "Vanilla" outfit.
 
 # 
 ## Conclusion
@@ -79,6 +79,7 @@ I hope that this mod changes your follower experience for the better. My goal wa
 - [Creation Kit Wiki](https://www.creationkit.com/index.php?title=Main_Page) for the wealth of knowledge with which this mod was made.
 - [GitHub](https://github.com) for giving my codebase a place to live online.
 - [NexusMods](https://www.nexusmods.com/) for such a great site, and for hosting my mod!
+- beta testers, for your interest, bug reports, and suggestions to make this mod better and better.
 - my family, for giving me the time, space, and sustenance to make this mod.
 - and every one else who has helped me directly or indirectly, if I have failed to mention you!
 

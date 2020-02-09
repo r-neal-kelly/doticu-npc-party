@@ -125,3 +125,28 @@ bool function Maybe_Quest_Item(Form form_item)
         return false
     endIf
 endFunction
+
+function Print_Contents(ObjectReference ref_object)
+    string str_contents = ""
+    int idx_forms = 0
+    int num_forms = ref_object.GetNumItems()
+    Form form_form
+    int num_form
+
+    str_contents += "[ "
+
+    while idx_forms < num_forms
+        form_form = ref_object.GetNthForm(idx_forms)
+        if form_form
+            num_form = ref_object.GetItemCount(form_form)
+            str_contents += form_form.GetName() + " (" + num_form + "),"
+        else
+            str_contents += "none (0),"
+        endIf
+        idx_forms += 1
+    endWhile
+
+    str_contents += " ]\n"
+
+    MiscUtil.PrintConsole(str_contents)
+endFunction

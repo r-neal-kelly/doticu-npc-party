@@ -15,6 +15,11 @@ doticu_npcp_codes property CODES hidden
         return p_DATA.CODES
     endFunction
 endProperty
+doticu_npcp_funcs property FUNCS hidden
+    doticu_npcp_funcs function Get()
+        return p_DATA.MODS.FUNCS
+    endFunction
+endProperty
 doticu_npcp_actors property ACTORS hidden
     doticu_npcp_actors function Get()
         return p_DATA.MODS.FUNCS.ACTORS
@@ -90,11 +95,6 @@ bool function p_Has_Changed(Actor ref_actor)
     Form form_item
     int num_items
 
-    if !p_cache_outfit || !p_cache_self
-        Cache_Outfit(ref_actor)
-        Cache_Self()
-    endIf
-
     ; ref_actor may have items that aren't in the oufit
     idx_forms = 0
     num_forms = ref_actor.GetNumItems()
@@ -105,6 +105,15 @@ bool function p_Has_Changed(Actor ref_actor)
             if form_item.IsPlayable() || ref_actor.IsEquipped(form_item)
                 ; any playable item is fair game, but only equipped unplayables are accounted for
                 if p_cache_outfit.GetItemCount(form_item) < 1 && p_cache_self.GetItemCount(form_item) < 1
+                    ;/MiscUtil.PrintConsole("ref actor has items not in outfit")
+                    MiscUtil.PrintConsole(form_item.GetName())
+                    MiscUtil.PrintConsole("Actor Cache: ")
+                    FUNCS.Print_Contents(ref_actor)
+                    MiscUtil.PrintConsole("Outfit Cache: ")
+                    FUNCS.Print_Contents(p_cache_outfit)
+                    MiscUtil.PrintConsole("Self Cache: ")
+                    FUNCS.Print_Contents(p_cache_self)/;
+
                     return true
                 endIf
             endIf
@@ -118,6 +127,14 @@ bool function p_Has_Changed(Actor ref_actor)
     while idx_forms < num_forms
         form_item = p_cache_outfit.GetNthForm(idx_forms)
         if ref_actor.GetItemCount(form_item) != p_cache_outfit.GetItemCount(form_item)
+            ;/MiscUtil.PrintConsole("ref actor and outfit cache mismatch")
+            MiscUtil.PrintConsole(form_item.GetName())
+            MiscUtil.PrintConsole("actor: " + ref_actor.GetItemCount(form_item) + ", outfit: " + p_cache_outfit.GetItemCount(form_item))
+            MiscUtil.PrintConsole("Actor Cache: ")
+            FUNCS.Print_Contents(ref_actor)
+            MiscUtil.PrintConsole("Outfit Cache: ")
+            FUNCS.Print_Contents(p_cache_outfit)/;
+
             return true
         endIf
         idx_forms += 1
@@ -128,6 +145,14 @@ bool function p_Has_Changed(Actor ref_actor)
     while idx_forms < num_forms
         form_item = p_cache_self.GetNthForm(idx_forms)
         if ref_actor.GetItemCount(form_item) != p_cache_self.GetItemCount(form_item)
+            ;/MiscUtil.PrintConsole("ref actor and self cache mismatch")
+            MiscUtil.PrintConsole(form_item.GetName())
+            MiscUtil.PrintConsole("actor: " + ref_actor.GetItemCount(form_item) + ", self: " + p_cache_self.GetItemCount(form_item))
+            MiscUtil.PrintConsole("Actor Cache: ")
+            FUNCS.Print_Contents(ref_actor)
+            MiscUtil.PrintConsole("Self Cache: ")
+            FUNCS.Print_Contents(p_cache_self)/;
+
             return true
         endIf
         idx_forms += 1
@@ -137,7 +162,7 @@ bool function p_Has_Changed(Actor ref_actor)
 endFunction
 
 function p_Set(Actor ref_actor, bool do_force = false)
-    ; we still need to handle Set_Dead case!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ; we still need to handle Set_Dead case properly!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     bool is_teammate = ref_actor.IsPlayerTeammate()
     int idx_forms
     int num_forms
@@ -145,11 +170,17 @@ function p_Set(Actor ref_actor, bool do_force = false)
     int num_items
     ObjectReference ref_junk = CONTAINERS.Create_Temp()
 
+    ; just in case
+    if !p_cache_outfit || !p_cache_self
+        Cache_Outfit(ref_actor, none)
+        Cache_Self()
+    endIf
+
     if ACTORS.Is_Dead(ref_actor) || !do_force && !p_Has_Changed(ref_actor)
-        MiscUtil.PrintConsole("will not outfit")
+        ;MiscUtil.PrintConsole("will not outfit")
         return
     endIf
-    MiscUtil.PrintConsole("will outfit")
+    ;MiscUtil.PrintConsole("will outfit")
 
     ; this will stop the actor from rendering while we manage its inventory
     ref_actor.SetPlayerTeammate(false)
@@ -278,23 +309,16 @@ function Put()
     Cache_Self()
 endFunction
 
-function Cache_Outfit(Actor ref_actor)
+function Cache_Outfit(Actor ref_actor, Outfit outfit_)
     int idx_forms
     int num_forms
     Form form_item
 
+    ; make sure this exists
     p_cache_outfit = CONTAINERS.Create_Temp()
-
-    Outfit outfit_
-    if p_code_create == CODES.OUTFIT_VANILLA
-        outfit_ = ACTORS.Get_Base_Outfit(ref_actor)
-    elseIf p_code_create == CODES.OUTFIT_DEFAULT
-        outfit_ = NPCS.Get_Base_Outfit(ref_actor)
-    endIf
 
     if !outfit_
         ; there is nothing to cache for pure outfit2s
-        ; or else the actor has no outfit
         return
     endIf
 
@@ -318,6 +342,7 @@ function Cache_Self()
     int num_items
     ObjectReference ref_item
 
+    ; make sure this exists
     p_cache_self = CONTAINERS.Create_Temp()
 
     ; we don't want to combine the vanilla outfit items with outfit2's
@@ -386,16 +411,10 @@ function Get_Default(Actor ref_actor)
 endFunction
 
 function Set(Actor ref_actor, bool do_force = false)
-    if !ref_actor
-        return
+    if ref_actor
+        p_Set(ref_actor, do_force)
+        ACTORS.Set_Base_Outfit(ref_actor, NPCS.Get_Default_Outfit(ref_actor))
     endIf
-
-    ; by keeping and restoring the cache, we can offer the vanilla outfit and any mod that changes it
-    Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(ref_actor)
-
-    p_Set(ref_actor, do_force)
-    
-    ACTORS.Set_Base_Outfit(ref_actor, outfit_vanilla)
 endFunction
 
 ; Events

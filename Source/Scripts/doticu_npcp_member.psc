@@ -133,6 +133,7 @@ function p_Create(doticu_npcp_data DATA, int id_alias, bool is_clone, Actor ref_
     p_queue_code_return = 0
     p_marker_settler = CONSTS.FORMLIST_MARKERS_SETTLER.GetAt(p_id_alias) as ObjectReference
     p_marker_display = none
+    p_outfit_vanilla = NPCS.Get_Base_Outfit(p_ref_actor)
 
     p_Create_Queues()
     p_Create_Containers()
@@ -206,6 +207,7 @@ function p_Destroy()
     p_outfit2_member = none
     p_container2_pack = none
     p_queue_member = none
+    p_outfit_vanilla = none
     p_marker_display = none
     p_marker_settler = none
     p_queue_code_return = 0
@@ -679,7 +681,6 @@ endFunction
 
 function p_Outfit()
     f_Lock_Resources()
-
         ; if we ever allow manual outfit switching without having to put, we need to make sure the oufit is created
 
         if VARS.auto_outfit
@@ -708,16 +709,29 @@ function p_Outfit()
             endIf
         endIf
 
+        ; just in case
         if !p_outfit2_current
             p_outfit2_current = p_outfit2_member
         endIf
-
-        if p_outfit2_previous != p_outfit2_current
-            p_outfit2_current.Cache_Outfit(p_ref_actor)
-            p_outfit2_previous = p_outfit2_current
+        if !p_outfit_vanilla
+            p_outfit_vanilla = NPCS.Get_Base_Outfit(p_ref_actor)
         endIf
 
-        p_outfit2_current.Set(p_ref_actor)
+        if p_outfit2_previous != p_outfit2_current
+            if p_outfit2_current == p_outfit2_vanilla
+                p_outfit2_current.Cache_Outfit(p_ref_actor, p_outfit_vanilla)
+            elseIf p_outfit2_current == p_outfit2_default
+                p_outfit2_current.Cache_Outfit(p_ref_actor, NPCS.Get_Base_Outfit(p_ref_actor))
+            endIf
+            p_outfit2_previous = p_outfit2_current
+            p_outfit2_current.Set(p_ref_actor, true)
+        elseIf ACTORS.Get_Base_Outfit(p_ref_actor) != NPCS.Get_Default_Outfit(p_ref_actor)
+            ; we don't auto change to vanilla here at this time, although we could
+            ; it's just that what if this reference was not the intended target?
+            p_outfit2_current.Set(p_ref_actor, true)
+        else
+            p_outfit2_current.Set(p_ref_actor)
+        endIf
 
         OUTFITS.Update_Base(p_ref_actor)
 
@@ -759,7 +773,7 @@ function p_Pack()
 endFunction
 
 ; Public Methods
-int function Enforce()
+int function Enforce(bool do_outfit = true)
     int code_return
 
     if !Exists()
@@ -790,7 +804,9 @@ int function Enforce()
     endIf
     p_Enqueue("Member.Style")
     p_Enqueue("Member.Vitalize")
-    p_Enqueue("Member.Outfit")
+    if do_outfit
+        p_Enqueue("Member.Outfit")
+    endIf
 
     if Is_Follower()
         Get_Follower().f_Enforce()
@@ -1827,7 +1843,10 @@ event OnLoad()
     if Is_Paralyzed()
         p_Reparalyze()
     endIf
-    Enforce(); I think I would like to force outfit here. quicker
+    f_Lock_Resources()
+        p_outfit2_current.Set(p_ref_actor, true)
+    f_Unlock_Resources()
+    Enforce()
 endEvent
 
 event On_Load_Mod()
@@ -1840,7 +1859,27 @@ event OnActivate(ObjectReference ref_activator)
     ; maybe we could also pop up some basic stats on screen? but make it a command or something
 
     if Is_Alive()
-        Enforce()
+        Enforce(false)
+        ; instead of polling, we might be able to set up a package that happens only when in dialogue
+        ; and wait for the Package change or end event to let us know dialogue is over.
+        while Exists() && p_ref_actor && p_ref_actor.IsInDialogueWithPlayer()
+            Utility.Wait(2)
+        endWhile
+
+        Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(p_ref_actor)
+        if outfit_vanilla
+            ; what about when we the vanilla outfit is set to the default?
+            if outfit_vanilla != NPCS.Get_Default_Outfit(p_ref_actor)
+                p_outfit_vanilla = outfit_vanilla
+                if !p_outfit2_vanilla
+                    p_outfit2_vanilla = OUTFITS.Create_Vanilla()
+                endIf
+                p_outfit2_vanilla.Cache_Outfit(p_ref_actor, p_outfit_vanilla)
+                p_outfit2_current = p_outfit2_vanilla
+            endIf
+        endIf
+        
+        p_Outfit()
     else
         p_outfit2_current.Put()
         p_Outfit()

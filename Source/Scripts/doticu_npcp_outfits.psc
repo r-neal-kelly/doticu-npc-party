@@ -192,9 +192,6 @@ ObjectReference function Get_Default_Cache(Actor ref_actor, Outfit outfit_defaul
 endFunction
 
 function Outfit_Clone(Actor ref_clone, Actor ref_original)
-    ; we need to be able to restore cache after updating outfits
-    Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(ref_original)
-
     ; sometimes a crash occurs when a clone receives two of the same weapon
     ; and then a call to SetOutfit??? e.g. Sinmir. probably has something
     ; to do with outfits that contain weapons. setting base outfit before
@@ -202,16 +199,13 @@ function Outfit_Clone(Actor ref_clone, Actor ref_original)
     ObjectReference ref_temp = CONTAINERS.Create_Temp()
     ref_clone.RemoveAllItems(ref_temp, false, false)
 
-    ; it helps to clear the outfit before trying to normalize items
-    ; *without* this, sometimes a clone will appear totally naked
-    ref_clone.SetOutfit(CONSTS.OUTFIT_EMPTY)
-
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_original)
     if !ref_member || VARS.clone_outfit == CODES.OUTFIT_BASE
+        ; it helps to clear the outfit before trying to normalize items
+        ; *without* this, sometimes a clone will appear totally naked
+        ref_clone.SetOutfit(CONSTS.OUTFIT_EMPTY)
+
         Outfit outfit_base = NPCS.Get_Base_Outfit(ref_clone)
-        if !outfit_base
-            outfit_base = outfit_vanilla
-        endIf
         if outfit_base
             ; this correctly sets their inventory so they won't lack anything
             ref_temp.RemoveAllItems(ref_clone, false, false); hopefully this won't cause a crash down the line
@@ -232,7 +226,25 @@ function Outfit_Clone(Actor ref_clone, Actor ref_original)
         ; we are still getting duped weapons atm, but would have to loop
     endIf
 
-    ACTORS.Set_Base_Outfit(ref_original, outfit_vanilla)
+    ; we do both just in case, because they may not share the same outfit base
+    ACTORS.Set_Base_Outfit(ref_original, NPCS.Get_Default_Outfit(ref_original))
+    ACTORS.Set_Base_Outfit(ref_clone, NPCS.Get_Default_Outfit(ref_clone))
+endFunction
+
+function Outfit_Clone_Default(Actor ref_clone, Outfit outfit_default)
+    if !ref_clone || !outfit_default
+        return
+    endIf
+
+    ; can help to prevent crash with clones
+    ObjectReference ref_temp = CONTAINERS.Create_Temp()
+    ref_clone.RemoveAllItems(ref_temp, false, false)
+    ;ref_temp.RemoveAllItems(ref_clone, false, false)
+
+    ref_clone.SetOutfit(CONSTS.OUTFIT_EMPTY)
+    ref_clone.SetOutfit(outfit_default)
+
+    ACTORS.Update_Equipment(ref_clone)
 endFunction
 
 function Update_Base(Actor ref_actor)
@@ -243,9 +255,6 @@ function Update_Base(Actor ref_actor)
 
     Outfit base_outfit = NPCS.Get_Base_Outfit(ref_actor)
     if base_outfit
-        ; we need to be able to restore cache after updating outfits
-        Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(ref_actor)
-    
         Form[] arr_origs = NPCS.Get_Originals(ref_actor)
         Form[] arr_clones = NPCS.Get_Clones(ref_actor)
 
@@ -255,22 +264,17 @@ function Update_Base(Actor ref_actor)
         p_Update_Actors(arr_origs, base_outfit)
         p_Update_Actors(arr_clones, base_outfit)
 
-        ACTORS.Set_Base_Outfit(ref_actor, outfit_vanilla)
+        ACTORS.Set_Base_Outfit(ref_actor, NPCS.Get_Default_Outfit(ref_actor))
     endIf
 endFunction
 
 function Restore_Actor(Actor ref_actor)
     if ACTORS.Is_Alive(ref_actor)
         Outfit outfit_default = NPCS.Get_Base_Outfit(ref_actor)
-
         if outfit_default
-            ; we need to be able to restore cache after updating outfits
-            Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(ref_actor)
-        
             ref_actor.SetOutfit(CONSTS.OUTFIT_EMPTY)
             ref_actor.SetOutfit(outfit_default)
-
-            ACTORS.Set_Base_Outfit(ref_actor, outfit_vanilla)
+            ACTORS.Set_Base_Outfit(ref_actor, NPCS.Get_Default_Outfit(ref_actor))
         endIf
     endIf
 endFunction
