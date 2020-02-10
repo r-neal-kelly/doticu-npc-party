@@ -83,25 +83,6 @@ doticu_npcp_outfit function p_Create(Container form_container, string str_name, 
     return ref_outfit
 endFunction
 
-function p_Update_Actors(Form[] arr_actors, Outfit outfit_)
-    ; can't have an array with length 0, so we check
-    if arr_actors.length == 1 && arr_actors[0] == none
-        return
-    endIf
-
-    int idx_actors = arr_actors.length
-    Actor ref_actor
-    
-    while idx_actors > 0
-        idx_actors -= 1
-        ref_actor = arr_actors[idx_actors] as Actor
-        if ACTORS.Is_Alive(ref_actor) && !MEMBERS.Has_Member(ref_actor)
-            ref_actor.SetOutfit(CONSTS.OUTFIT_EMPTY)
-            ref_actor.SetOutfit(outfit_)
-        endIf
-    endWhile
-endFunction
-
 ; Public Methods
 doticu_npcp_outfit function Create(string str_name = "Outfit")
     return p_Create(CONSTS.CONTAINER_OUTFIT, str_name)
@@ -201,12 +182,12 @@ function Outfit_Clone(Actor ref_clone, Actor ref_original)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_original)
     if !ref_member || VARS.clone_outfit == CODES.OUTFIT_BASE
-        ; it helps to clear the outfit before trying to normalize items
-        ; *without* this, sometimes a clone will appear totally naked
-        ref_clone.SetOutfit(CONSTS.OUTFIT_EMPTY)
-
         Outfit outfit_base = NPCS.Get_Base_Outfit(ref_clone)
         if outfit_base
+            ; it helps to clear the outfit before trying to normalize items
+            ; *without* this, sometimes a clone will appear totally naked
+            ref_clone.SetOutfit(CONSTS.OUTFIT_EMPTY)
+
             ; this correctly sets their inventory so they won't lack anything
             ref_temp.RemoveAllItems(ref_clone, false, false); hopefully this won't cause a crash down the line
 
@@ -219,11 +200,8 @@ function Outfit_Clone(Actor ref_clone, Actor ref_original)
             ; sometimes we get duped weapons
         endIf
     elseIf VARS.clone_outfit == CODES.OUTFIT_REFERENCE
-        ; we don't reset inventory, because we want exactly what
-        ; is in the outfit, which may or may not have weapons
+        ; we may want to try to create an outfit based on the ref_actor, instead of ref_member
         ref_member.Get_Current_Outfit2().Set(ref_clone)
-
-        ; we are still getting duped weapons atm, but would have to loop
     endIf
 
     ; we do both just in case, because they may not share the same outfit base
@@ -245,27 +223,6 @@ function Outfit_Clone_Default(Actor ref_clone, Outfit outfit_default)
     ref_clone.SetOutfit(outfit_default)
 
     ACTORS.Update_Equipment(ref_clone)
-endFunction
-
-function Update_Base(Actor ref_actor)
-    ; this is to ensure that npcs who have been cloned are putting on their outfits. there
-    ; is a bug in the engine which sticks and causes cloned npcs to be naked when they
-    ; are given a new outfit form that has any of the same items as the previous one.
-    ; also, this allows us to dress non-members with their default outfits
-
-    Outfit base_outfit = NPCS.Get_Base_Outfit(ref_actor)
-    if base_outfit
-        Form[] arr_origs = NPCS.Get_Originals(ref_actor)
-        Form[] arr_clones = NPCS.Get_Clones(ref_actor)
-
-        ; in here, we may be able to opt for updating with cached base or current vanilla
-
-        NPCS.Cleanup_Base(ref_actor)
-        p_Update_Actors(arr_origs, base_outfit)
-        p_Update_Actors(arr_clones, base_outfit)
-
-        ACTORS.Set_Base_Outfit(ref_actor, NPCS.Get_Default_Outfit(ref_actor))
-    endIf
 endFunction
 
 function Restore_Actor(Actor ref_actor)

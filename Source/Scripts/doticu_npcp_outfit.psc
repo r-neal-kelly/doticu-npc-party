@@ -105,14 +105,14 @@ bool function p_Has_Changed(Actor ref_actor)
             if form_item.IsPlayable() || ref_actor.IsEquipped(form_item)
                 ; any playable item is fair game, but only equipped unplayables are accounted for
                 if p_cache_outfit.GetItemCount(form_item) < 1 && p_cache_self.GetItemCount(form_item) < 1
-                    ;/MiscUtil.PrintConsole("ref actor has items not in outfit")
+                    MiscUtil.PrintConsole("ref actor has items not in outfit")
                     MiscUtil.PrintConsole(form_item.GetName())
                     MiscUtil.PrintConsole("Actor Cache: ")
                     FUNCS.Print_Contents(ref_actor)
                     MiscUtil.PrintConsole("Outfit Cache: ")
                     FUNCS.Print_Contents(p_cache_outfit)
                     MiscUtil.PrintConsole("Self Cache: ")
-                    FUNCS.Print_Contents(p_cache_self)/;
+                    FUNCS.Print_Contents(p_cache_self)
 
                     return true
                 endIf
@@ -126,14 +126,14 @@ bool function p_Has_Changed(Actor ref_actor)
     num_forms = p_cache_outfit.GetNumItems()
     while idx_forms < num_forms
         form_item = p_cache_outfit.GetNthForm(idx_forms)
-        if ref_actor.GetItemCount(form_item) != p_cache_outfit.GetItemCount(form_item)
-            ;/MiscUtil.PrintConsole("ref actor and outfit cache mismatch")
+        if ref_actor.GetItemCount(form_item) != p_cache_outfit.GetItemCount(form_item) + p_cache_self.GetItemCount(form_item)
+            MiscUtil.PrintConsole("ref actor and outfit cache mismatch")
             MiscUtil.PrintConsole(form_item.GetName())
             MiscUtil.PrintConsole("actor: " + ref_actor.GetItemCount(form_item) + ", outfit: " + p_cache_outfit.GetItemCount(form_item))
             MiscUtil.PrintConsole("Actor Cache: ")
             FUNCS.Print_Contents(ref_actor)
             MiscUtil.PrintConsole("Outfit Cache: ")
-            FUNCS.Print_Contents(p_cache_outfit)/;
+            FUNCS.Print_Contents(p_cache_outfit)
 
             return true
         endIf
@@ -144,14 +144,14 @@ bool function p_Has_Changed(Actor ref_actor)
     num_forms = p_cache_self.GetNumItems()
     while idx_forms < num_forms
         form_item = p_cache_self.GetNthForm(idx_forms)
-        if ref_actor.GetItemCount(form_item) != p_cache_self.GetItemCount(form_item)
-            ;/MiscUtil.PrintConsole("ref actor and self cache mismatch")
+        if ref_actor.GetItemCount(form_item) != p_cache_outfit.GetItemCount(form_item) + p_cache_self.GetItemCount(form_item)
+            MiscUtil.PrintConsole("ref actor and self cache mismatch")
             MiscUtil.PrintConsole(form_item.GetName())
             MiscUtil.PrintConsole("actor: " + ref_actor.GetItemCount(form_item) + ", self: " + p_cache_self.GetItemCount(form_item))
             MiscUtil.PrintConsole("Actor Cache: ")
             FUNCS.Print_Contents(ref_actor)
             MiscUtil.PrintConsole("Self Cache: ")
-            FUNCS.Print_Contents(p_cache_self)/;
+            FUNCS.Print_Contents(p_cache_self)
 
             return true
         endIf
@@ -171,8 +171,10 @@ function p_Set(Actor ref_actor, bool do_force = false)
     ObjectReference ref_junk = CONTAINERS.Create_Temp()
 
     ; just in case
-    if !p_cache_outfit || !p_cache_self
+    if !p_cache_outfit
         Cache_Outfit(ref_actor, none)
+    endIf
+    if !p_cache_self
         Cache_Self()
     endIf
 
@@ -426,7 +428,8 @@ event OnItemAdded(Form form_item, int count_item, ObjectReference ref_item, Obje
     if self.GetNumItems() >= p_MAX_ITEMS
         self.RemoveItem(form_item, count_item, true, ref_container_source)
         LOGS.Create_Note("Can only have so many items in an outfit.")
-    elseIf !form_item || !form_item.IsPlayable()
+    elseIf !form_item || p_code_create != CODES.OUTFIT_DEFAULT && !form_item.IsPlayable()
+        ; now we let unplayables into default
         self.RemoveItem(form_item, count_item, true, ref_container_source)
         LOGS.Create_Note("Cannot add that item to an outfit.")
     endIf

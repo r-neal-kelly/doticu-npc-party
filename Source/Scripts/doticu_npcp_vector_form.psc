@@ -87,7 +87,9 @@ endFunction
 Form function Pop()
     if p_num_forms > 0
         p_num_forms -= 1
-        return p_arr_forms[p_num_forms]
+        Form form_item = p_arr_forms[p_num_forms]
+        p_arr_forms[p_num_forms] = p_item_fill
+        return form_item
     else
         return none
     endIf
@@ -97,6 +99,7 @@ function Remove_At_Unstable(int idx)
     if idx > -1 && idx < p_num_forms
         p_num_forms -= 1
         p_arr_forms[idx] = p_arr_forms[p_num_forms]
+        p_arr_forms[p_num_forms] = p_item_fill
     else
         return none
     endIf
@@ -145,6 +148,7 @@ endFunction
 
 function Empty()
     p_num_forms = 0
+    p_arr_forms = Utility.CreateFormArray(p_max_forms, p_item_fill)
 endFunction
 
 function Print()

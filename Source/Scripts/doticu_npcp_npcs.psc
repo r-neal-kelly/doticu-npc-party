@@ -278,6 +278,39 @@ bool function p_Remove_Clone(Actor ref_clone)
     endIf
 endFunction
 
+function p_Cleanup_Base(Actor ref_actor)
+    int idx_bases = p_vec_bases.Find(ACTORS.Get_Real_Base(ref_actor) as Form)
+    doticu_npcp_vector_form vec_origs
+    doticu_npcp_vector_form vec_clones
+
+    if idx_bases > -1
+        vec_origs = p_vec_vec_origs.At(idx_bases) as doticu_npcp_vector_form
+        vec_clones = p_vec_vec_clones.At(idx_bases) as doticu_npcp_vector_form
+
+        int idx_origs = 0
+        while idx_origs < vec_origs.num
+            if (vec_origs.At(idx_origs) as Actor).IsDeleted()
+                vec_origs.Remove_At_Unstable(idx_origs)
+            else
+                idx_origs += 1
+            endIf
+        endWhile
+
+        int idx_clones = 0
+        while idx_clones < vec_clones.num
+            if (vec_clones.At(idx_clones) as Actor).IsDeleted()
+                vec_clones.Remove_At_Unstable(idx_clones)
+            else
+                idx_clones += 1
+            endIf
+        endWhile
+
+        if vec_origs.num == 0 && vec_clones.num == 0
+            p_Remove_Base(ref_actor)
+        endIf
+    endIf
+endFunction
+
 Actor function p_Clone(Actor ref_actor)
     CONSTS.MARKER_CLONER.MoveTo(ref_actor, 0.0, 0.0, 0.0)
     Actor ref_clone = ACTORS.Clone(ref_actor, CONSTS.MARKER_CLONER)
@@ -306,7 +339,7 @@ function Unregister(Actor ref_actor); unused atm
     endIf
 
     p_Remove_Original(ref_actor)
-    Cleanup_Base(ref_actor)
+    p_Cleanup_Base(ref_actor)
 endFunction
 
 Actor function Clone(Actor ref_actor)
@@ -343,7 +376,7 @@ function Unclone(Actor ref_clone)
     ref_clone.Disable()
     ref_clone.Delete()
 
-    Cleanup_Base(ref_clone); automatically removes deleted actors
+    p_Cleanup_Base(ref_clone); automatically removes deleted actors
 endFunction
 
 bool function Is_Original(Actor ref_actor)
@@ -414,45 +447,15 @@ ObjectReference function Get_Default_Cache(Actor ref_actor)
     endIf
 endFunction
 
-function Cleanup_Base(Actor ref_actor)
-    int idx_bases = p_vec_bases.Find(ACTORS.Get_Real_Base(ref_actor) as Form)
-    doticu_npcp_vector_form vec_origs
-    doticu_npcp_vector_form vec_clones
-
-    if idx_bases > -1
-        vec_origs = p_vec_vec_origs.At(idx_bases) as doticu_npcp_vector_form
-        vec_clones = p_vec_vec_clones.At(idx_bases) as doticu_npcp_vector_form
-
-        int idx_origs = 0
-        while idx_origs < vec_origs.num
-            if (vec_origs.At(idx_origs) as Actor).IsDeleted()
-                vec_origs.Remove_At_Unstable(idx_origs)
-            else
-                idx_origs += 1
-            endIf
-        endWhile
-
-        int idx_clones = 0
-        while idx_clones < vec_clones.num
-            if (vec_clones.At(idx_clones) as Actor).IsDeleted()
-                vec_clones.Remove_At_Unstable(idx_clones)
-            else
-                idx_clones += 1
-            endIf
-        endWhile
-
-        if vec_origs.num == 0 && vec_clones.num == 0
-            p_Remove_Base(ref_actor)
-        endIf
-    endIf
-endFunction
-
 ; Update Methods
 function u_0_7_5()
     ; 1. set the outfit of every npc to their default outfit, so vanilla outfit is ready
     ; 2. recache with more accurate base
     ; 3. create a default for each npc base we store
     ; 4. remove any clones that leaked into original slots
+
+    ; so this can be changed to only keep clones and maybe no originals or only originals who are members.
+    ; the bug is not really an issue in our mod anymore and not even in my favorite outfitting mod, so meh.
 
     doticu_npcp_vector_form old_vec_bases       = p_vec_bases
     doticu_npcp_vector_form old_vec_outfits     = p_vec_outfits

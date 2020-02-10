@@ -69,44 +69,45 @@ doticu_npcp_queue property f_QUEUE hidden
 endProperty
 
 ; Private Constants
-doticu_npcp_data        p_DATA                  =  none
+doticu_npcp_data        p_DATA                      =  none
 
 ; Private Variables
-bool                    p_is_created            = false
-int                     p_id_alias              =    -1
-Actor                   p_ref_actor             =  none
-string                  p_str_namespace         =    ""
-bool                    p_is_clone              = false
-bool                    p_is_settler            = false
-bool                    p_is_thrall             = false
-bool                    p_is_immobile           = false
-bool                    p_is_paralyzed          = false
-bool                    p_is_executing          = false
-int                     p_code_style            =    -1
-int                     p_code_vitality         =    -1
-int                     p_queue_code_return     =     0
-ObjectReference         p_marker_settler        =  none
-ObjectReference         p_marker_display        =  none
-Outfit                  p_outfit_vanilla        =  none
-doticu_npcp_queue       p_queue_member          =  none
-doticu_npcp_container   p_container2_pack       =  none
-doticu_npcp_outfit      p_outfit2_member        =  none
-doticu_npcp_outfit      p_outfit2_settler       =  none
-doticu_npcp_outfit      p_outfit2_thrall        =  none
-doticu_npcp_outfit      p_outfit2_immobile      =  none
-doticu_npcp_outfit      p_outfit2_follower      =  none
-doticu_npcp_outfit      p_outfit2_vanilla       =  none
-doticu_npcp_outfit      p_outfit2_default       =  none
-doticu_npcp_outfit      p_outfit2_current       =  none
-doticu_npcp_outfit      p_outfit2_previous      =  none
+bool                    p_is_created                = false
+int                     p_id_alias                  =    -1
+Actor                   p_ref_actor                 =  none
+string                  p_str_namespace             =    ""
+bool                    p_is_clone                  = false
+bool                    p_is_settler                = false
+bool                    p_is_thrall                 = false
+bool                    p_is_immobile               = false
+bool                    p_is_paralyzed              = false
+bool                    p_is_executing              = false
+bool                    p_do_outfit_vanilla         = false
+int                     p_code_style                =    -1
+int                     p_code_vitality             =    -1
+int                     p_queue_code_return         =     0
+ObjectReference         p_marker_settler            =  none
+ObjectReference         p_marker_display            =  none
+Outfit                  p_outfit_vanilla            =  none
+doticu_npcp_queue       p_queue_member              =  none
+doticu_npcp_container   p_container2_pack           =  none
+doticu_npcp_outfit      p_outfit2_member            =  none
+doticu_npcp_outfit      p_outfit2_settler           =  none
+doticu_npcp_outfit      p_outfit2_thrall            =  none
+doticu_npcp_outfit      p_outfit2_immobile          =  none
+doticu_npcp_outfit      p_outfit2_follower          =  none
+doticu_npcp_outfit      p_outfit2_vanilla           =  none
+doticu_npcp_outfit      p_outfit2_default           =  none
+doticu_npcp_outfit      p_outfit2_current           =  none
+doticu_npcp_outfit      p_outfit2_previous          =  none
 
-Faction[]               p_prev_factions         =  none
-int[]                   p_prev_faction_ranks    =  none
-Faction                 p_prev_faction_crime    =  none
-float                   p_prev_aggression       =   0.0
-float                   p_prev_confidence       =   0.0
-float                   p_prev_assistance       =   0.0
-float                   p_prev_morality         =   0.0
+Faction[]               p_prev_factions             =  none
+int[]                   p_prev_faction_ranks        =  none
+Faction                 p_prev_faction_crime        =  none
+float                   p_prev_aggression           =   0.0
+float                   p_prev_confidence           =   0.0
+float                   p_prev_assistance           =   0.0
+float                   p_prev_morality             =   0.0
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA, int id_alias, bool is_clone, Actor ref_actor_orig)
@@ -128,12 +129,13 @@ function p_Create(doticu_npcp_data DATA, int id_alias, bool is_clone, Actor ref_
     p_is_immobile = false
     p_is_paralyzed = false
     p_is_executing = false
+    p_do_outfit_vanilla = false
     p_code_style = VARS.auto_style
     p_code_vitality = VARS.auto_vitality
     p_queue_code_return = 0
     p_marker_settler = CONSTS.FORMLIST_MARKERS_SETTLER.GetAt(p_id_alias) as ObjectReference
     p_marker_display = none
-    p_outfit_vanilla = NPCS.Get_Base_Outfit(p_ref_actor)
+    p_outfit_vanilla = NPCS.Get_Default_Outfit(p_ref_actor)
 
     p_Create_Queues()
     p_Create_Containers()
@@ -213,6 +215,7 @@ function p_Destroy()
     p_queue_code_return = 0
     p_code_vitality = -1
     p_code_style = -1
+    p_do_outfit_vanilla = false
     p_is_executing = false
     p_is_paralyzed = false
     p_is_immobile = false
@@ -681,6 +684,9 @@ endFunction
 
 function p_Outfit()
     f_Lock_Resources()
+        Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(p_ref_actor)
+        Outfit outfit_default = NPCS.Get_Default_Outfit(p_ref_actor)
+
         ; if we ever allow manual outfit switching without having to put, we need to make sure the oufit is created
 
         if VARS.auto_outfit
@@ -714,26 +720,35 @@ function p_Outfit()
             p_outfit2_current = p_outfit2_member
         endIf
         if !p_outfit_vanilla
-            p_outfit_vanilla = NPCS.Get_Base_Outfit(p_ref_actor)
+            p_outfit_vanilla = outfit_default
         endIf
 
         if p_outfit2_previous != p_outfit2_current
             if p_outfit2_current == p_outfit2_vanilla
                 p_outfit2_current.Cache_Outfit(p_ref_actor, p_outfit_vanilla)
             elseIf p_outfit2_current == p_outfit2_default
-                p_outfit2_current.Cache_Outfit(p_ref_actor, NPCS.Get_Base_Outfit(p_ref_actor))
+                p_outfit2_current.Cache_Outfit(p_ref_actor, outfit_default)
             endIf
             p_outfit2_previous = p_outfit2_current
             p_outfit2_current.Set(p_ref_actor, true)
-        elseIf ACTORS.Get_Base_Outfit(p_ref_actor) != NPCS.Get_Default_Outfit(p_ref_actor)
-            ; we don't auto change to vanilla here at this time, although we could
-            ; it's just that what if this reference was not the intended target?
+        elseIf p_do_outfit_vanilla && outfit_vanilla != p_outfit_vanilla
+            p_do_outfit_vanilla = false
+            p_outfit_vanilla = outfit_vanilla
+            if !p_outfit2_vanilla
+                p_outfit2_vanilla = OUTFITS.Create_Vanilla()
+            endIf
+            p_outfit2_current = p_outfit2_vanilla
+            p_outfit2_current.Cache_Outfit(p_ref_actor, p_outfit_vanilla)
             p_outfit2_current.Set(p_ref_actor, true)
         else
             p_outfit2_current.Set(p_ref_actor)
         endIf
 
-        OUTFITS.Update_Base(p_ref_actor)
+        if p_ref_actor.IsInDialogueWithPlayer()
+            ; we are setting this so that we can see if a mod changes it.
+            ; look at the OnActivate event in this type
+            ACTORS.Set_Base_Outfit(p_ref_actor, CONSTS.OUTFIT_EMPTY)
+        endIf
 
         p_ref_actor.EvaluatePackage()
 
@@ -1860,26 +1875,27 @@ event OnActivate(ObjectReference ref_activator)
 
     if Is_Alive()
         Enforce(false)
+        ; we are setting this so that we can see if a mod changes it.
+        ; without this, we cannot know if the mod changed the outfit
+        ; to the current outfit
+        ACTORS.Set_Base_Outfit(p_ref_actor, CONSTS.OUTFIT_EMPTY)
+
         ; instead of polling, we might be able to set up a package that happens only when in dialogue
         ; and wait for the Package change or end event to let us know dialogue is over.
         while Exists() && p_ref_actor && p_ref_actor.IsInDialogueWithPlayer()
             Utility.Wait(2)
         endWhile
 
-        Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(p_ref_actor)
-        if outfit_vanilla
-            ; what about when we the vanilla outfit is set to the default?
-            if outfit_vanilla != NPCS.Get_Default_Outfit(p_ref_actor)
-                p_outfit_vanilla = outfit_vanilla
-                if !p_outfit2_vanilla
-                    p_outfit2_vanilla = OUTFITS.Create_Vanilla()
-                endIf
-                p_outfit2_vanilla.Cache_Outfit(p_ref_actor, p_outfit_vanilla)
-                p_outfit2_current = p_outfit2_vanilla
-            endIf
+        if ACTORS.Get_Base_Outfit(p_ref_actor) != CONSTS.OUTFIT_EMPTY
+            p_do_outfit_vanilla = true
         endIf
-        
+
+        ; this will always put the current base outfit back to what it should be
+        ; so we don't need to worry about it.
         p_Outfit()
+
+        ; just to be sure
+        ACTORS.Set_Base_Outfit(p_ref_actor, NPCS.Get_Default_Outfit(p_ref_actor))
     else
         p_outfit2_current.Put()
         p_Outfit()
