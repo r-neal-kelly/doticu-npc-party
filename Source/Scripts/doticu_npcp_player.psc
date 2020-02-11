@@ -117,20 +117,6 @@ function p_End_Combat()
     endIf
 endFunction
 
-function p_Update_Outfits(Cell cell_curr)
-    int idx_actors = cell_curr.GetNumRefs(43)
-    while idx_actors > 0
-        idx_actors -= 1
-        Actor ref_actor = cell_curr.GetNthRef(idx_actors, 43) as Actor
-        if ref_actor && ref_actor != ACTOR_PLAYER && !ref_actor.IsPlayerTeammate() && ref_actor.GetWornForm(0x00000004) == none
-            ref_actor.SetPlayerTeammate(true, true)
-            ref_actor.AddItem(CONSTS.WEAPON_BLANK, 1, true)
-            ref_actor.RemoveItem(CONSTS.WEAPON_BLANK, 1, true, none)
-            ref_actor.SetPlayerTeammate(false, false)
-        endIf
-    endWhile
-endFunction
-
 ; Public Methods
 function Add_Perk(Perk perk_to_add)
     ACTOR_PLAYER.AddPerk(perk_to_add)
@@ -151,7 +137,6 @@ event OnPlayerLoadGame()
 endEvent
 
 event On_Cell_Change(Form cell_new, Form cell_old)
-    ;p_Update_Outfits(cell_new); maybe put this behind a bool
     FOLLOWERS.Catch_Up()
 endEvent
 
@@ -164,8 +149,4 @@ event On_Queue_Player(string str_message)
     endIf
 
     p_queue_player.Dequeue()
-endEvent
-
-event OnActorAction(int code_action, Actor ref_activator, Form form_source, int slot)
-
 endEvent

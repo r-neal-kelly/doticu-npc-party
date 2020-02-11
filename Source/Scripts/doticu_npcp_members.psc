@@ -232,7 +232,12 @@ int function Destroy_Member(Actor ref_actor, bool delete_clone = false)
         delete_clone = true
     endIf
 
-    if is_clone && delete_clone
+    if !is_clone
+        ; we only keep originals that are members
+        NPCS.Unregister(ref_actor)
+    elseIf is_clone && delete_clone
+        ; we don't remove a clone unless we also delete them
+        ; so we know what clones have been made with the mod
         NPCS.Unclone(ref_actor)
     endIf
 

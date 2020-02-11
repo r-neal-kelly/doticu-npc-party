@@ -15,6 +15,11 @@ doticu_npcp_codes property CODES hidden
         return p_DATA.CODES
     endFunction
 endProperty
+doticu_npcp_vars property VARS hidden
+    doticu_npcp_vars function Get()
+        return p_DATA.VARS
+    endFunction
+endProperty
 doticu_npcp_actors property ACTORS hidden
     doticu_npcp_actors function Get()
         return p_DATA.MODS.FUNCS.ACTORS
@@ -853,6 +858,10 @@ event On_Queue_Follower(string str_message)
 endEvent
 
 event OnCombatStateChanged(Actor ref_target, int code_combat)
+    if VARS.is_updating
+        return
+    endIf
+
     if code_combat == CODES.COMBAT_NO
         
     elseIf code_combat == CODES.COMBAT_YES
@@ -863,10 +872,18 @@ event OnCombatStateChanged(Actor ref_target, int code_combat)
 endEvent
 
 event OnDeath(Actor ref_killer)
+    if VARS.is_updating
+        return
+    endIf
+
     p_Unlevel()
 endEvent
 
 event OnActorAction(int code_action, Actor ref_actor, Form form_source, int slot)
+    if VARS.is_updating
+        return
+    endIf
+
     if code_action == CODES.ACTION_DRAW_END
         Catch_Up()
     endIf

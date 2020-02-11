@@ -207,3 +207,7 @@ endFunction
 function Print(string str)
     MiscUtil.PrintConsole("NPC Party: " + str)
 endFunction
+
+function Notify_Is_Updating()
+    Debug.Notification("NPC Party: " + "Currently updating, please wait...")
+endFunction

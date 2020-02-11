@@ -20,6 +20,11 @@ doticu_npcp_vars property VARS hidden
         return p_DATA.VARS
     endFunction
 endProperty
+doticu_npcp_funcs property FUNCS hidden
+    doticu_npcp_funcs function Get()
+        return p_DATA.MODS.FUNCS
+    endFunction
+endProperty
 doticu_npcp_containers property CONTAINERS hidden
     doticu_npcp_containers function Get()
         return p_DATA.MODS.FUNCS.CONTAINERS
@@ -172,66 +177,98 @@ ObjectReference function Get_Default_Cache(Actor ref_actor, Outfit outfit_defaul
     return ref_cache
 endFunction
 
-function Outfit_Clone(Actor ref_clone, Actor ref_original)
-    ; sometimes a crash occurs when a clone receives two of the same weapon
-    ; and then a call to SetOutfit??? e.g. Sinmir. probably has something
-    ; to do with outfits that contain weapons. setting base outfit before
-    ; cloning does't seem to stop it.
-    ObjectReference ref_temp = CONTAINERS.Create_Temp()
-    ref_clone.RemoveAllItems(ref_temp, false, false)
-
-    doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_original)
-    if !ref_member || VARS.clone_outfit == CODES.OUTFIT_BASE
-        Outfit outfit_base = NPCS.Get_Base_Outfit(ref_clone)
-        if outfit_base
-            ; it helps to clear the outfit before trying to normalize items
-            ; *without* this, sometimes a clone will appear totally naked
-            ref_clone.SetOutfit(CONSTS.OUTFIT_EMPTY)
-
-            ; this correctly sets their inventory so they won't lack anything
-            ref_temp.RemoveAllItems(ref_clone, false, false); hopefully this won't cause a crash down the line
-
-            ; actually sets the outfit
-            ref_clone.SetOutfit(outfit_base)
-
-            ; sometimes they won't equip their gear
-            ACTORS.Update_Equipment(ref_clone)
-
-            ; sometimes we get duped weapons
-        endIf
-    elseIf VARS.clone_outfit == CODES.OUTFIT_REFERENCE
-        ; we may want to try to create an outfit based on the ref_actor, instead of ref_member
-        ref_member.Get_Current_Outfit2().Set(ref_clone)
-    endIf
-
-    ; we do both just in case, because they may not share the same outfit base
-    ACTORS.Set_Base_Outfit(ref_original, NPCS.Get_Default_Outfit(ref_original))
-    ACTORS.Set_Base_Outfit(ref_clone, NPCS.Get_Default_Outfit(ref_clone))
-endFunction
-
-function Outfit_Clone_Default(Actor ref_clone, Outfit outfit_default)
-    if !ref_clone || !outfit_default
+function Outfit_Vanilla(Actor ref_actor, Outfit outfit_vanilla)
+    if !ref_actor || !outfit_vanilla
         return
     endIf
 
     ; can help to prevent crash with clones
     ObjectReference ref_temp = CONTAINERS.Create_Temp()
-    ref_clone.RemoveAllItems(ref_temp, false, false)
-    ;ref_temp.RemoveAllItems(ref_clone, false, false)
+    ref_actor.RemoveAllItems(ref_temp, false, false)
+    
+    ref_actor.SetOutfit(CONSTS.OUTFIT_EMPTY)
+    ref_actor.SetOutfit(outfit_vanilla)
 
+    ACTORS.Update_Equipment(ref_actor)
+
+    ref_temp.RemoveAllItems(ref_actor, false, false)
+endFunction
+
+function Outfit_Clone(Actor ref_clone, Actor ref_actor)
+    if !ref_clone || !ref_actor
+        return
+    endIf
+
+    bool is_teammate = ref_clone.IsPlayerTeammate()
+    int idx_forms
+    Form form_item
+    ObjectReference ref_item
+    ObjectReference ref_junk = CONTAINERS.Create_Temp()
+
+    ; this will stop the actor from rendering while we manage its inventory
+    ref_clone.SetPlayerTeammate(false, false)
+
+    ; this way no items will automatically be added back when we remove them
     ref_clone.SetOutfit(CONSTS.OUTFIT_EMPTY)
-    ref_clone.SetOutfit(outfit_default)
 
-    ACTORS.Update_Equipment(ref_clone)
+    ; it's error prone to remove items from actor unless they are cached
+    idx_forms = ref_clone.GetNumItems()
+    while idx_forms > 0
+        idx_forms -= 1
+        form_item = ref_clone.GetNthForm(idx_forms)
+        if form_item && !(form_item as ObjectReference)
+            ; we completely avoid any references and leave them alone.
+            if form_item.IsPlayable() || ref_clone.IsEquipped(form_item)
+                ; any playable item is fair game, but only equipped unplayables are accounted for
+                ref_junk.AddItem(form_item, ref_clone.GetItemCount(form_item), true)
+            endIf
+        endIf
+    endWhile
+
+    ; cleaning up the inventory of any junk is essential to controlling the outfit
+    idx_forms = ref_junk.GetNumItems()
+    while idx_forms > 0
+        idx_forms -= 1
+        form_item = ref_junk.GetNthForm(idx_forms)
+        ref_clone.RemoveItem(form_item, ref_junk.GetItemCount(form_item), true, ref_junk)
+    endWhile
+
+    ; we just need what's currently equipped on actor
+    idx_forms = ref_actor.GetNumItems()
+    while idx_forms > 0
+        idx_forms -= 1
+        form_item = ref_actor.GetNthForm(idx_forms)
+        ref_item = form_item as ObjectReference
+        if ref_item
+            ; we cannot risk removing a quest item, etc.
+            form_item = ref_item.GetBaseObject()
+        endIf
+        if form_item && ref_actor.IsEquipped(form_item)
+            ref_clone.AddItem(form_item, ref_actor.GetItemCount(form_item) - ref_clone.GetItemCount(form_item), true)
+        endIf
+    endWhile
+
+    ; doing this allows us to render all at once, which is far more efficient
+    ref_clone.SetPlayerTeammate(true, true)
+    ref_clone.AddItem(CONSTS.WEAPON_BLANK, 1, true)
+    ref_clone.RemoveItem(CONSTS.WEAPON_BLANK, 1, true, none)
+
+    ; make sure to restore render status
+    if !is_teammate
+        ref_clone.SetPlayerTeammate(false, false)
+    endIf
+
+    ; make sure that the base is set to have the vanilla algorithm in place
+    ACTORS.Set_Base_Outfit(ref_clone, NPCS.Get_Default_Outfit(ref_clone))
 endFunction
 
 function Restore_Actor(Actor ref_actor)
     if ACTORS.Is_Alive(ref_actor)
-        Outfit outfit_default = NPCS.Get_Base_Outfit(ref_actor)
+        Outfit outfit_default = NPCS.Get_Default_Outfit(ref_actor)
         if outfit_default
             ref_actor.SetOutfit(CONSTS.OUTFIT_EMPTY)
             ref_actor.SetOutfit(outfit_default)
-            ACTORS.Set_Base_Outfit(ref_actor, NPCS.Get_Default_Outfit(ref_actor))
+            ACTORS.Set_Base_Outfit(ref_actor, outfit_default)
         endIf
     endIf
 endFunction

@@ -185,7 +185,7 @@ function p_Set(Actor ref_actor, bool do_force = false)
     ;MiscUtil.PrintConsole("will outfit")
 
     ; this will stop the actor from rendering while we manage its inventory
-    ref_actor.SetPlayerTeammate(false)
+    ref_actor.SetPlayerTeammate(false, false)
 
     ; this way no items will automatically be added back when we remove them
     ref_actor.SetOutfit(CONSTS.OUTFIT_EMPTY)
@@ -241,7 +241,7 @@ function p_Set(Actor ref_actor, bool do_force = false)
 
     ; make sure to restore render status
     if !is_teammate
-        ref_actor.SetPlayerTeammate(false)
+        ref_actor.SetPlayerTeammate(false, false)
     endIf
 endFunction
 
@@ -367,29 +367,29 @@ endFunction
 
 function Get(Actor ref_actor, ObjectReference ref_inventory)
     int idx_forms
-    int num_forms
-    Form ref_form
+    Form form_item
     int num_items
+    ObjectReference ref_item
 
-    ; should always refresh cache before defining it, but not
-    ; the leveled list, because we always do it on a Set
     self.RemoveAllItems(CONSTS.ACTOR_PLAYER, false, true)
 
-    ; instead of using GetOutfit, we get what is playable and equipped,
-    ; and store non-equipment in inventory to separate it from outfit
-    idx_forms = 0
-    num_forms = ref_actor.GetNumItems()
-    while idx_forms < num_forms
-        ref_form = ref_actor.GetNthForm(idx_forms)
-        if ref_form && ref_form.IsPlayable()
-            num_items = ref_actor.GetItemCount(ref_form)
-            if ref_actor.IsEquipped(ref_form)
-                self.AddItem(ref_form, num_items, true)
+    idx_forms = ref_actor.GetNumItems()
+    while idx_forms > 0
+        idx_forms -= 1
+        form_item = ref_actor.GetNthForm(idx_forms)
+        ref_item = form_item as ObjectReference
+        if ref_item
+            ; we cannot risk removing a quest item, etc.
+            form_item = ref_item.GetBaseObject()
+        endIf
+        if form_item && form_item.IsPlayable()
+            num_items = ref_actor.GetItemCount(form_item)
+            if ref_actor.IsEquipped(form_item)
+                self.AddItem(form_item, num_items, true)
             else
-                ref_inventory.AddItem(ref_form, num_items, true)
+                ref_inventory.AddItem(form_item, num_items, true)
             endIf
         endIf
-        idx_forms += 1
     endWhile
 endFunction
 

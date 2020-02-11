@@ -15,6 +15,11 @@ doticu_npcp_queues property QUEUES hidden
         return p_DATA.MODS.FUNCS.QUEUES
     endFunction
 endProperty
+doticu_npcp_logs property LOGS hidden
+    doticu_npcp_logs function Get()
+        return p_DATA.MODS.FUNCS.LOGS
+    endFunction
+endProperty
 doticu_npcp_members property MEMBERS hidden
     doticu_npcp_members function Get()
         return p_DATA.MODS.MEMBERS
@@ -670,6 +675,70 @@ endFunction
 
 ; "all", "mobile", "immobile", follower cycle, etc, such that they each summon one after another
 
+; Events
+event On_Queue_Commands(string str_message, Form form_actor, bool auto_create)
+    ; this queue should be separated into two, one for members, one for followers,
+    ; and removed from this module
+    Actor ref_actor = form_actor as Actor
+
+    if p_queue_commands.Should_Cancel()
+    
+    elseIf str_message == "Cycle_Style"
+        PRIVATE.Cycle_Style(ref_actor, auto_create)
+    elseIf str_message == "Cycle_Vitality"
+        PRIVATE.Cycle_Vitality(ref_actor, auto_create)
+
+    elseIf str_message == "Members_Display_Start"
+        PRIVATE.Members_Display_Start(ref_actor)
+    elseIf str_message == "Members_Display_Stop"
+        PRIVATE.Members_Display_Stop()
+    elseIf str_message == "Members_Display_Next"
+        PRIVATE.Members_Display_Next()
+    elseIf str_message == "Members_Display_Previous"
+        PRIVATE.Members_Display_Previous()
+
+    elseIf str_message == "Toggle_Members_Display"
+        PRIVATE.Toggle_Members_Display(ref_actor)
+    
+    elseIf str_message == "Followers_Summon_All"
+        PRIVATE.Followers_Summon_All()
+    elseIf str_message == "Followers_Summon_Mobile"
+        PRIVATE.Followers_Summon_Mobile()
+    elseIf str_message == "Followers_Summon_Immobile"
+        PRIVATE.Followers_Summon_Immobile()
+    elseIf str_message == "Followers_Summon_Mobile_Behind"
+        PRIVATE.Followers_Summon_Mobile_Behind()
+    elseIf str_message == "Followers_Settle"
+        PRIVATE.Followers_Settle()
+    elseIf str_message == "Followers_Unsettle"
+        PRIVATE.Followers_Unsettle()
+    elseIf str_message == "Followers_Immobilize"
+        PRIVATE.Followers_Immobilize()
+    elseIf str_message == "Followers_Mobilize"
+        PRIVATE.Followers_Mobilize()
+    elseIf str_message == "Followers_Sneak"
+        PRIVATE.Followers_Sneak()
+    elseIf str_message == "Followers_Unsneak"
+        PRIVATE.Followers_Unsneak()
+    elseIf str_message == "Followers_Resurrect"
+        PRIVATE.Followers_Resurrect()
+    elseIf str_message == "Followers_Unfollow"
+        PRIVATE.Followers_Unfollow()
+    elseIf str_message == "Followers_Unmember"
+        PRIVATE.Followers_Unmember()
+    
+    elseIf str_message == "Toggle_Followers_Settle"
+        PRIVATE.Toggle_Followers_Settle()
+    elseIf str_message == "Toggle_Followers_Immobilize"
+        PRIVATE.Toggle_Followers_Immobilize()
+    elseIf str_message == "Toggle_Followers_Sneak"
+        PRIVATE.Toggle_Followers_Sneak()
+    
+    endIf
+
+    p_queue_commands.Dequeue()
+endEvent
+
 ; Private States
 state p_STATE_BUSY
     function Member_Sync(Actor ref_actor)
@@ -817,66 +886,347 @@ state p_STATE_BUSY
     endFunction
 endState
 
-; Events
-event On_Queue_Commands(string str_message, Form form_actor, bool auto_create)
-    ; this queue should be separated into two, one for members, one for followers,
-    ; and removed from this module
-    Actor ref_actor = form_actor as Actor
-
-    if p_queue_commands.Should_Cancel()
-    
-    elseIf str_message == "Cycle_Style"
-        PRIVATE.Cycle_Style(ref_actor, auto_create)
-    elseIf str_message == "Cycle_Vitality"
-        PRIVATE.Cycle_Vitality(ref_actor, auto_create)
-
-    elseIf str_message == "Members_Display_Start"
-        PRIVATE.Members_Display_Start(ref_actor)
-    elseIf str_message == "Members_Display_Stop"
-        PRIVATE.Members_Display_Stop()
-    elseIf str_message == "Members_Display_Next"
-        PRIVATE.Members_Display_Next()
-    elseIf str_message == "Members_Display_Previous"
-        PRIVATE.Members_Display_Previous()
-
-    elseIf str_message == "Toggle_Members_Display"
-        PRIVATE.Toggle_Members_Display(ref_actor)
-    
-    elseIf str_message == "Followers_Summon_All"
-        PRIVATE.Followers_Summon_All()
-    elseIf str_message == "Followers_Summon_Mobile"
-        PRIVATE.Followers_Summon_Mobile()
-    elseIf str_message == "Followers_Summon_Immobile"
-        PRIVATE.Followers_Summon_Immobile()
-    elseIf str_message == "Followers_Summon_Mobile_Behind"
-        PRIVATE.Followers_Summon_Mobile_Behind()
-    elseIf str_message == "Followers_Settle"
-        PRIVATE.Followers_Settle()
-    elseIf str_message == "Followers_Unsettle"
-        PRIVATE.Followers_Unsettle()
-    elseIf str_message == "Followers_Immobilize"
-        PRIVATE.Followers_Immobilize()
-    elseIf str_message == "Followers_Mobilize"
-        PRIVATE.Followers_Mobilize()
-    elseIf str_message == "Followers_Sneak"
-        PRIVATE.Followers_Sneak()
-    elseIf str_message == "Followers_Unsneak"
-        PRIVATE.Followers_Unsneak()
-    elseIf str_message == "Followers_Resurrect"
-        PRIVATE.Followers_Resurrect()
-    elseIf str_message == "Followers_Unfollow"
-        PRIVATE.Followers_Unfollow()
-    elseIf str_message == "Followers_Unmember"
-        PRIVATE.Followers_Unmember()
-    
-    elseIf str_message == "Toggle_Followers_Settle"
-        PRIVATE.Toggle_Followers_Settle()
-    elseIf str_message == "Toggle_Followers_Immobilize"
-        PRIVATE.Toggle_Followers_Immobilize()
-    elseIf str_message == "Toggle_Followers_Sneak"
-        PRIVATE.Toggle_Followers_Sneak()
-    
-    endIf
-
-    p_queue_commands.Dequeue()
-endEvent
+state f_STATE_UPDATING
+    function Cycle_Style(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Cycle_Vitality(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Members_Display_Start(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Members_Display_Stop()
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Members_Display_Next()
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Members_Display_Previous()
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Toggle_Members_Display(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Followers_Summon_All()
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Followers_Summon_Mobile()
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Followers_Summon_Immobile()
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Followers_Summon_Mobile_Behind()
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Followers_Settle()
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Followers_Unsettle()
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Followers_Immobilize()
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Followers_Mobilize()
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Followers_Sneak()
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Followers_Unsneak()
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Followers_Resurrect()
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Followers_Unfollow()
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Followers_Unmember()
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Toggle_Followers_Settle()
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Toggle_Followers_Immobilize()
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Toggle_Followers_Sneak()
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Outfit_Show(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Style_Show(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Vitality_Show(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Member_Sync(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Unmember_Sync(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Clone_Sync(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Unclone_Sync(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Settle_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Unsettle_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Resettle_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Enthrall_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Unthrall_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Immobilize_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Mobilize_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Paralyze_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Unparalyze_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Follow_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Unfollow_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Sneak_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Unsneak_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Relevel_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Pack_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Outfit_Current_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Outfit_Member_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Outfit_Settler_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Outfit_Thrall_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Outfit_Follower_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Outfit_Immobile_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Outfit_Vanilla_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Outfit_Default_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Style_Default_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Style_Warrior_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Style_Mage_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Style_Archer_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Vitalize_Mortal_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Vitalize_Protected_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Vitalize_Essential_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Vitalize_Invulnerable_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Move_Sync(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Summon_Sync(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Resurrect_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Toggle_Member_Sync(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Toggle_Clone_Sync(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Toggle_Settler_Sync(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Toggle_Thrall_Sync(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Toggle_Immobile_Sync(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Toggle_Paralyzed_Sync(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Toggle_Follower_Sync(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Toggle_Sneak_Sync(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Member_Async(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Unmember_Async(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Clone_Async(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Unclone_Async(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Settle_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Unsettle_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Resettle_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Enthrall_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Unthrall_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Immobilize_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Mobilize_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Paralyze_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Unparalyze_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Follow_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Unfollow_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Sneak_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Unsneak_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Relevel_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Pack_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Outfit_Current_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Outfit_Member_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Outfit_Settler_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Outfit_Thrall_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Outfit_Follower_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Outfit_Immobile_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Style_Default_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Style_Warrior_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Style_Mage_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Style_Archer_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Vitalize_Mortal_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Vitalize_Protected_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Vitalize_Essential_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Vitalize_Invulnerable_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Summon_Async(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Resurrect_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Toggle_Settler_Async(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Toggle_Thrall_Async(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Toggle_Immobile_Async(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Toggle_Paralyzed_Async(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Toggle_Follower_Async(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Toggle_Sneak_Async(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    event On_Queue_Commands(string str_message, Form form_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endEvent
+endState

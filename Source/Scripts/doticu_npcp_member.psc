@@ -731,7 +731,7 @@ function p_Outfit()
             endIf
             p_outfit2_previous = p_outfit2_current
             p_outfit2_current.Set(p_ref_actor, true)
-        elseIf p_do_outfit_vanilla && outfit_vanilla != p_outfit_vanilla
+        elseIf p_do_outfit_vanilla && outfit_vanilla && outfit_vanilla != CONSTS.OUTFIT_EMPTY && outfit_vanilla != p_outfit_vanilla
             p_do_outfit_vanilla = false
             p_outfit_vanilla = outfit_vanilla
             if !p_outfit2_vanilla
@@ -785,6 +785,13 @@ function p_Pack()
         Utility.Wait(0.1)
 
     f_Unlock_Resources()
+endFunction
+
+int function p_Clone()
+f_Lock_Resources()
+    int code_return = MEMBERS.Create_Member(p_ref_actor, true)
+f_Unlock_Resources()
+    return code_return
 endFunction
 
 ; Public Methods
@@ -1645,8 +1652,7 @@ int function Clone()
         return CODES.ISNT_MEMBER
     endIf
 
-    p_Rush("Member.Clone")
-    return p_queue_code_return
+    return p_Clone()
 endFunction
 
 int function Unclone()
@@ -1836,8 +1842,6 @@ event On_Queue_Member(string str_message)
         p_Vitalize()
     elseIf str_message == "Member.Resurrect"
         p_Resurrect()
-    elseIf str_message == "Member.Clone"
-        p_queue_code_return = MEMBERS.Create_Member(p_ref_actor, true)
     elseIf str_message == "Follower.Create"
         p_queue_code_return = FOLLOWERS.f_Create_Follower(p_ref_actor)
     elseIf str_message == "Follower.Destroy"
@@ -1854,7 +1858,17 @@ event On_Members_Unmember()
     endIf
 endEvent
 
+event On_Load_Mod()
+    if Is_Paralyzed()
+        p_Reparalyze()
+    endIf
+endEvent
+
 event OnLoad()
+    if VARS.is_updating || !Exists()
+        return
+    endIf
+
     if Is_Paralyzed()
         p_Reparalyze()
     endIf
@@ -1864,13 +1878,11 @@ event OnLoad()
     Enforce()
 endEvent
 
-event On_Load_Mod()
-    if Is_Paralyzed()
-        p_Reparalyze()
-    endIf
-endEvent
-
 event OnActivate(ObjectReference ref_activator)
+    if VARS.is_updating
+        return
+    endIf
+
     ; maybe we could also pop up some basic stats on screen? but make it a command or something
 
     if Is_Alive()
@@ -1886,15 +1898,15 @@ event OnActivate(ObjectReference ref_activator)
             Utility.Wait(2)
         endWhile
 
+f_Lock_Resources()
         if ACTORS.Get_Base_Outfit(p_ref_actor) != CONSTS.OUTFIT_EMPTY
             p_do_outfit_vanilla = true
         endIf
+f_Unlock_Resources()
 
-        ; this will always put the current base outfit back to what it should be
-        ; so we don't need to worry about it.
         p_Outfit()
 
-        ; just to be sure
+        ; we have to set this back here because p_Outfit will not while in dialogue
         ACTORS.Set_Base_Outfit(p_ref_actor, NPCS.Get_Default_Outfit(p_ref_actor))
     else
         p_outfit2_current.Put()
@@ -1903,6 +1915,10 @@ event OnActivate(ObjectReference ref_activator)
 endEvent
 
 event OnHit(ObjectReference ref_attacker, Form _, Projectile __, bool ___, bool ____, bool _____, bool ______)
+    if VARS.is_updating
+        return
+    endIf
+
     ; we did have a stack dump related to this function once. might keep an eye on it
     if !p_ref_actor.IsDead() && p_ref_actor.GetActorValue(CONSTS.STR_HEALTH) <= 0
         if p_code_vitality == CODES.IS_MORTAL || p_code_vitality == CODES.IS_PROTECTED && ref_attacker == CONSTS.ACTOR_PLAYER
@@ -1916,6 +1932,10 @@ event OnHit(ObjectReference ref_attacker, Form _, Projectile __, bool ___, bool 
 endEvent
 
 event OnCombatStateChanged(Actor ref_target, int code_combat)
+    if VARS.is_updating
+        return
+    endIf
+
     if ref_target == CONSTS.ACTOR_PLAYER
         ACTORS.Pacify(p_ref_actor)
     elseIf ACTORS.Has_Token(ref_target, CONSTS.TOKEN_MEMBER)
@@ -1933,6 +1953,10 @@ event OnCombatStateChanged(Actor ref_target, int code_combat)
 endEvent
 
 event OnItemAdded(Form form_item, int count_item, ObjectReference ref_item, ObjectReference ref_container_source)
+    if VARS.is_updating
+        return
+    endIf
+    
     if ref_container_source == CONSTS.ACTOR_PLAYER
         p_ref_actor.RemoveItem(form_item, count_item, true, ref_container_source)
         LOGS.Create_Error("You can only put items into a member's pack or one of their outfits.")

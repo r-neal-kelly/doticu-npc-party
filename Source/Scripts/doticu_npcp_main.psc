@@ -148,6 +148,8 @@ endFunction
 
 function p_Version()
     if Is_NPC_Party_Less_Than(CONSTS.VERSION_MAJOR, CONSTS.VERSION_MINOR, CONSTS.VERSION_PATCH)
+        p_Start_Updating()
+
         if Is_NPC_Party_Less_Than(0, 7, 5)
             u_0_7_5()
         endIf
@@ -157,7 +159,19 @@ function p_Version()
         VARS.version_patch = CONSTS.VERSION_PATCH
 
         FUNCS.LOGS.Create_Note("Running version " + Get_Version_String())
+
+        p_Stop_Updating()
     endIf
+endFunction
+
+function p_Start_Updating()
+    VARS.is_updating = true
+    CONTROL.f_Start_Updating()
+endFunction
+
+function p_Stop_Updating()
+    CONTROL.f_Stop_Updating()
+    VARS.is_updating = false
 endFunction
 
 bool function p_Send(string str_event)

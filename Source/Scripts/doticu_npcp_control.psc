@@ -49,3 +49,14 @@ function f_Register()
     KEYS.f_Register()
     MCM.f_Register()
 endFunction
+
+function f_Unregister()
+endFunction
+
+function f_Start_Updating()
+    COMMANDS.GotoState("f_STATE_UPDATING")
+endFunction
+
+function f_Stop_Updating()
+    COMMANDS.GotoState("")
+endFunction
