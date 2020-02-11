@@ -725,9 +725,9 @@ function p_Outfit()
 
         if p_outfit2_previous != p_outfit2_current
             if p_outfit2_current == p_outfit2_vanilla
-                p_outfit2_current.Cache_Outfit(p_ref_actor, p_outfit_vanilla)
+                p_outfit2_current.Cache_Outfit(p_outfit_vanilla)
             elseIf p_outfit2_current == p_outfit2_default
-                p_outfit2_current.Cache_Outfit(p_ref_actor, outfit_default)
+                p_outfit2_current.Cache_Outfit(outfit_default)
             endIf
             p_outfit2_previous = p_outfit2_current
             p_outfit2_current.Set(p_ref_actor, true)
@@ -738,7 +738,7 @@ function p_Outfit()
                 p_outfit2_vanilla = OUTFITS.Create_Vanilla()
             endIf
             p_outfit2_current = p_outfit2_vanilla
-            p_outfit2_current.Cache_Outfit(p_ref_actor, p_outfit_vanilla)
+            p_outfit2_current.Cache_Outfit(p_outfit_vanilla)
             p_outfit2_current.Set(p_ref_actor, true)
         else
             p_outfit2_current.Set(p_ref_actor)

@@ -133,7 +133,6 @@ ObjectReference function Get_Default_Cache(Actor ref_actor, Outfit outfit_defaul
     ; in unvanilla outfits because the player can't manipulate them
 
     int idx_forms
-    int num_forms
     Form form_item
     int num_items
     ObjectReference ref_item
@@ -143,21 +142,21 @@ ObjectReference function Get_Default_Cache(Actor ref_actor, Outfit outfit_defaul
     if outfit_default
         ; we cache because if anything in actor inventory is in here, we can
         ; ignore it as we use the outfit_default itself in the outfit algorithm
-        idx_forms = 0
-        num_forms = outfit_default.GetNumParts()
-        while idx_forms < num_forms
+        idx_forms = outfit_default.GetNumParts()
+        while idx_forms > 0
+            idx_forms -= 1
             form_item = outfit_default.GetNthPart(idx_forms)
             ref_outfit.AddItem(form_item, 1, true); will expand LeveledItems!
-            idx_forms += 1
         endWhile
     endIf
 
     ; we basically want every item in the inventory that is not an outfit item yet equips
-    idx_forms = 0
-    num_forms = ref_actor.GetNumItems()
-    while idx_forms < num_forms
+    idx_forms = ref_actor.GetNumItems()
+    while idx_forms > 0
+        idx_forms -= 1
         form_item = ref_actor.GetNthForm(idx_forms)
         if form_item
+            ; we need to work with this form before it might be changed
             num_items = ref_actor.GetItemCount(form_item)
             ref_item = form_item as ObjectReference
             if ref_item
@@ -165,13 +164,12 @@ ObjectReference function Get_Default_Cache(Actor ref_actor, Outfit outfit_defaul
                 form_item = ref_item.GetBaseObject()
             endIf
             if ref_outfit.GetItemCount(form_item) < 1
-                if (form_item as Armor) || (form_item as Weapon) || (form_item as Ammo)
+                if form_item as Armor || form_item as Weapon || form_item as Ammo
                     ; we don't bother with Light, or other possible equips
                     ref_cache.AddItem(form_item, num_items, true)
                 endIf
             endIf
         endIf
-        idx_forms += 1
     endWhile
 
     return ref_cache
@@ -182,16 +180,60 @@ function Outfit_Vanilla(Actor ref_actor, Outfit outfit_vanilla)
         return
     endIf
 
-    ; can help to prevent crash with clones
+    int idx_forms
+    Form form_item
+    int num_items
+    ObjectReference ref_item
+    ObjectReference ref_weapons = CONTAINERS.Create_Temp()
     ObjectReference ref_temp = CONTAINERS.Create_Temp()
+    bool is_teammate = ref_actor.IsPlayerTeammate()
+
+    ; we need to cache weapons because crash prevention deletes them
+    idx_forms = ref_actor.GetNumItems()
+    while idx_forms > 0
+        idx_forms -= 1
+        form_item = ref_actor.GetNthForm(idx_forms)
+        if form_item
+            ; we need to work with this form before it might be changed
+            num_items = ref_actor.GetItemCount(form_item)
+            ref_item = form_item as ObjectReference
+            if ref_item
+                ; we cannot risk removing a quest item, etc.
+                form_item = ref_item.GetBaseObject()
+            endIf
+            if form_item as Weapon || form_item as Ammo
+                ref_weapons.AddItem(form_item, num_items, true)
+            endIf
+        endIf
+    endWhile
+
+    ; seems to prevent crashes with clones and weapons...?
     ref_actor.RemoveAllItems(ref_temp, false, false)
+    ref_temp.RemoveAllItems(ref_actor, false, false)
+
+    ; this will stop the actor from rendering while we manage its inventory
+    ref_actor.SetPlayerTeammate(false, false)
     
     ref_actor.SetOutfit(CONSTS.OUTFIT_EMPTY)
     ref_actor.SetOutfit(outfit_vanilla)
 
-    ACTORS.Update_Equipment(ref_actor)
+    ; add weapons back before render
+    idx_forms = ref_weapons.GetNumItems()
+    while idx_forms > 0
+        idx_forms -= 1
+        form_item = ref_weapons.GetNthForm(idx_forms)
+        ref_actor.AddItem(form_item, ref_weapons.GetItemCount(form_item), true)
+    endWhile
 
-    ref_temp.RemoveAllItems(ref_actor, false, false)
+    ; doing this allows us to render all at once, which is far more efficient
+    ref_actor.SetPlayerTeammate(true, true)
+    ref_actor.AddItem(CONSTS.WEAPON_BLANK, 1, true)
+    ref_actor.RemoveItem(CONSTS.WEAPON_BLANK, 1, true, none)
+
+    ; make sure to restore render status
+    if !is_teammate
+        ref_actor.SetPlayerTeammate(false, false)
+    endIf
 endFunction
 
 function Outfit_Clone(Actor ref_clone, Actor ref_actor)
@@ -199,11 +241,13 @@ function Outfit_Clone(Actor ref_clone, Actor ref_actor)
         return
     endIf
 
-    bool is_teammate = ref_clone.IsPlayerTeammate()
     int idx_forms
     Form form_item
+    int num_items
     ObjectReference ref_item
+    bool is_equipped
     ObjectReference ref_junk = CONTAINERS.Create_Temp()
+    bool is_teammate = ref_clone.IsPlayerTeammate()
 
     ; this will stop the actor from rendering while we manage its inventory
     ref_clone.SetPlayerTeammate(false, false)
@@ -238,13 +282,18 @@ function Outfit_Clone(Actor ref_clone, Actor ref_actor)
     while idx_forms > 0
         idx_forms -= 1
         form_item = ref_actor.GetNthForm(idx_forms)
-        ref_item = form_item as ObjectReference
-        if ref_item
-            ; we cannot risk removing a quest item, etc.
-            form_item = ref_item.GetBaseObject()
-        endIf
-        if form_item && ref_actor.IsEquipped(form_item)
-            ref_clone.AddItem(form_item, ref_actor.GetItemCount(form_item) - ref_clone.GetItemCount(form_item), true)
+        if form_item
+            ; we need to work with this form before it might be changed
+            num_items = ref_actor.GetItemCount(form_item)
+            is_equipped = ref_actor.IsEquipped(form_item)
+            ref_item = form_item as ObjectReference
+            if ref_item
+                ; we cannot risk removing a quest item, etc.
+                form_item = ref_item.GetBaseObject()
+            endIf
+            if is_equipped
+                ref_clone.AddItem(form_item, num_items - ref_clone.GetItemCount(form_item), true)
+            endIf
         endIf
     endWhile
 

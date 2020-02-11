@@ -90,15 +90,13 @@ endFunction
 
 ; Private Methods
 bool function p_Has_Changed(Actor ref_actor)
-    int num_forms
     int idx_forms
     Form form_item
-    int num_items
 
     ; ref_actor may have items that aren't in the oufit
-    idx_forms = 0
-    num_forms = ref_actor.GetNumItems()
-    while idx_forms < num_forms
+    idx_forms = ref_actor.GetNumItems()
+    while idx_forms > 0
+        idx_forms -= 1
         form_item = ref_actor.GetNthForm(idx_forms)
         if form_item && !(form_item as ObjectReference)
             ; we completely avoid any references and leave them alone.
@@ -118,13 +116,12 @@ bool function p_Has_Changed(Actor ref_actor)
                 endIf
             endIf
         endIf
-        idx_forms += 1
     endWhile
 
     ; ref_actor may be missing items that are in the outfit
-    idx_forms = 0
-    num_forms = p_cache_outfit.GetNumItems()
-    while idx_forms < num_forms
+    idx_forms = p_cache_outfit.GetNumItems()
+    while idx_forms > 0
+        idx_forms -= 1
         form_item = p_cache_outfit.GetNthForm(idx_forms)
         if ref_actor.GetItemCount(form_item) != p_cache_outfit.GetItemCount(form_item) + p_cache_self.GetItemCount(form_item)
             MiscUtil.PrintConsole("ref actor and outfit cache mismatch")
@@ -137,12 +134,11 @@ bool function p_Has_Changed(Actor ref_actor)
 
             return true
         endIf
-        idx_forms += 1
     endWhile
 
-    idx_forms = 0
-    num_forms = p_cache_self.GetNumItems()
-    while idx_forms < num_forms
+    idx_forms = p_cache_self.GetNumItems()
+    while idx_forms > 0
+        idx_forms -= 1
         form_item = p_cache_self.GetNthForm(idx_forms)
         if ref_actor.GetItemCount(form_item) != p_cache_outfit.GetItemCount(form_item) + p_cache_self.GetItemCount(form_item)
             MiscUtil.PrintConsole("ref actor and self cache mismatch")
@@ -155,34 +151,33 @@ bool function p_Has_Changed(Actor ref_actor)
 
             return true
         endIf
-        idx_forms += 1
     endWhile
 
     return false
 endFunction
 
 function p_Set(Actor ref_actor, bool do_force = false)
-    ; we still need to handle Set_Dead case properly!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    bool is_teammate = ref_actor.IsPlayerTeammate()
     int idx_forms
-    int num_forms
     Form form_item
     int num_items
+    bool is_teammate = ref_actor.IsPlayerTeammate()
     ObjectReference ref_junk = CONTAINERS.Create_Temp()
 
     ; just in case
     if !p_cache_outfit
-        Cache_Outfit(ref_actor, none)
+        Cache_Outfit(none)
     endIf
     if !p_cache_self
         Cache_Self()
     endIf
 
-    if ACTORS.Is_Dead(ref_actor) || !do_force && !p_Has_Changed(ref_actor)
-        ;MiscUtil.PrintConsole("will not outfit")
+    if ACTORS.Is_Dead(ref_actor)
+        return p_Set_Dead(ref_actor)
+    endIf
+
+    if !do_force && !p_Has_Changed(ref_actor)
         return
     endIf
-    ;MiscUtil.PrintConsole("will outfit")
 
     ; this will stop the actor from rendering while we manage its inventory
     ref_actor.SetPlayerTeammate(false, false)
@@ -191,9 +186,9 @@ function p_Set(Actor ref_actor, bool do_force = false)
     ref_actor.SetOutfit(CONSTS.OUTFIT_EMPTY)
 
     ; it's error prone to remove items from actor unless they are cached
-    idx_forms = 0
-    num_forms = ref_actor.GetNumItems()
-    while idx_forms < num_forms
+    idx_forms = ref_actor.GetNumItems()
+    while idx_forms > 0
+        idx_forms -= 1
         form_item = ref_actor.GetNthForm(idx_forms)
         if form_item && !(form_item as ObjectReference)
             ; we completely avoid any references and leave them alone.
@@ -202,36 +197,32 @@ function p_Set(Actor ref_actor, bool do_force = false)
                 ref_junk.AddItem(form_item, ref_actor.GetItemCount(form_item), true)
             endIf
         endIf
-        idx_forms += 1
     endWhile
 
     ; cleaning up the inventory of any junk is essential to controlling the outfit
-    idx_forms = 0
-    num_forms = ref_junk.GetNumItems()
-    while idx_forms < num_forms
+    idx_forms = ref_junk.GetNumItems()
+    while idx_forms > 0
+        idx_forms -= 1
         form_item = ref_junk.GetNthForm(idx_forms)
         num_items = ref_junk.GetItemCount(form_item)
         ref_actor.RemoveItem(form_item, num_items, true, ref_junk)
-        idx_forms += 1
     endWhile
 
     ; and now we can cleanly add all the outfit items
-    idx_forms = 0
-    num_forms = p_cache_outfit.GetNumItems()
-    while idx_forms < num_forms
+    idx_forms = p_cache_outfit.GetNumItems()
+    while idx_forms > 0
+        idx_forms -= 1
         form_item = p_cache_outfit.GetNthForm(idx_forms)
         num_items = p_cache_outfit.GetItemCount(form_item)
         ref_actor.AddItem(form_item, num_items, true)
-        idx_forms += 1
     endWhile
 
-    idx_forms = 0
-    num_forms = p_cache_self.GetNumItems()
-    while idx_forms < num_forms
+    idx_forms = p_cache_self.GetNumItems()
+    while idx_forms > 0
+        idx_forms -= 1
         form_item = p_cache_self.GetNthForm(idx_forms)
         num_items = p_cache_self.GetItemCount(form_item)
         ref_actor.AddItem(form_item, num_items, true)
-        idx_forms += 1
     endWhile
 
     ; doing this allows us to render all at once, which is far more efficient
@@ -247,34 +238,20 @@ endFunction
 
 function p_Set_Dead(Actor ref_actor)
     int idx_forms
-    int num_forms
-    Form ref_form
-    int num_items_outfit
-    int num_items_actor
+    Form form_item
     ObjectReference ref_trash = CONTAINERS.Create_Temp()
 
-    ; we copy one of each item, because it's dangerous to remove them within a loop
-    idx_forms = 0
-    num_forms = ref_actor.GetNumItems()
-    while idx_forms < num_forms
-        ref_form = ref_actor.GetNthForm(idx_forms)
-        if ref_form && ref_actor.IsEquipped(ref_form)
-            ref_trash.AddItem(ref_form, 1, true)
+    ; the engine won't equip new items, so we only remove items no longer in cache_self or cache_outfit
+    idx_forms = ref_actor.GetNumItems()
+    while idx_forms > 0
+        idx_forms -= 1
+        form_item = ref_actor.GetNthForm(idx_forms)
+        if form_item && form_item.IsPlayable() && !(form_item as ObjectReference)
+            ; the player can't remove unplayable items and we cannot risk removing a quest item, etc.
+            if p_cache_self.GetItemCount(form_item) < 1 && p_cache_outfit.GetItemCount(form_item) < 1
+                ref_actor.RemoveItem(form_item, ref_actor.GetItemCount(form_item), true, ref_trash)
+            endIf
         endIf
-        idx_forms += 1
-    endWhile
-
-    ; remove any items no longer in outfit, but the engine won't equip anything new
-    idx_forms = 0
-    num_forms = ref_trash.GetNumItems()
-    while idx_forms < num_forms
-        ref_form = ref_trash.GetNthForm(idx_forms)
-        num_items_outfit = self.GetItemCount(ref_form)
-        num_items_actor = ref_actor.GetItemCount(ref_form)
-        if num_items_actor > num_items_outfit
-            ref_actor.RemoveItem(ref_form, num_items_actor - num_items_outfit, true, ref_trash)
-        endIf
-        idx_forms += 1
     endWhile
 endFunction
 
@@ -300,10 +277,6 @@ int function Get_Item_Count(Form form_item)
     return self.GetItemCount(form_item)
 endFunction
 
-function Copy(doticu_npcp_outfit ref_outfit)
-    CONTAINERS.Copy(self, ref_outfit)
-endFunction
-
 function Put()
     self.SetDisplayName(p_str_name, true)
     self.Activate(CONSTS.ACTOR_PLAYER)
@@ -311,9 +284,8 @@ function Put()
     Cache_Self()
 endFunction
 
-function Cache_Outfit(Actor ref_actor, Outfit outfit_)
+function Cache_Outfit(Outfit outfit_)
     int idx_forms
-    int num_forms
     Form form_item
 
     ; make sure this exists
@@ -328,18 +300,16 @@ function Cache_Outfit(Actor ref_actor, Outfit outfit_)
     ; because it always adds items that are out of the player's control.
     ; our custom outfits will probably never have anything unplayable
     ; but we'll allow unplayable items in others' outfits
-    idx_forms = 0
-    num_forms = outfit_.GetNumParts()
-    while idx_forms < num_forms
+    idx_forms = outfit_.GetNumParts()
+    while idx_forms > 0
+        idx_forms -= 1
         form_item = outfit_.GetNthPart(idx_forms)
         p_cache_outfit.AddItem(form_item, 1, true); will expand LeveledItems!
-        idx_forms += 1
     endWhile
 endFunction
 
 function Cache_Self()
     int idx_forms
-    int num_forms
     Form form_item
     int num_items
     ObjectReference ref_item
@@ -350,18 +320,20 @@ function Cache_Self()
     ; we don't want to combine the vanilla outfit items with outfit2's
     ; because we don't want to get different leveled items every time
     ; outfit2 changes.
-    idx_forms = 0
-    num_forms = self.GetNumItems()
-    while idx_forms < num_forms
+    idx_forms = self.GetNumItems()
+    while idx_forms > 0
+        idx_forms -= 1
         form_item = self.GetNthForm(idx_forms)
-        num_items = self.GetItemCount(form_item)
-        ref_item = form_item as ObjectReference
-        if ref_item
-            ; we cannot risk removing a quest item, etc.
-            form_item = ref_item.GetBaseObject()
+        if form_item
+            ; we need to work with this form before it might be changed
+            num_items = self.GetItemCount(form_item)
+            ref_item = form_item as ObjectReference
+            if ref_item
+                ; we cannot risk removing a quest item, etc.
+                form_item = ref_item.GetBaseObject()
+            endIf
+            p_cache_self.AddItem(form_item, num_items, true)
         endIf
-        p_cache_self.AddItem(form_item, num_items, true)
-        idx_forms += 1
     endWhile
 endFunction
 
@@ -369,6 +341,7 @@ function Get(Actor ref_actor, ObjectReference ref_inventory)
     int idx_forms
     Form form_item
     int num_items
+    bool is_equipped
     ObjectReference ref_item
 
     self.RemoveAllItems(CONSTS.ACTOR_PLAYER, false, true)
@@ -377,17 +350,21 @@ function Get(Actor ref_actor, ObjectReference ref_inventory)
     while idx_forms > 0
         idx_forms -= 1
         form_item = ref_actor.GetNthForm(idx_forms)
-        ref_item = form_item as ObjectReference
-        if ref_item
-            ; we cannot risk removing a quest item, etc.
-            form_item = ref_item.GetBaseObject()
-        endIf
-        if form_item && form_item.IsPlayable()
+        if form_item
+            ; we need to work with this form before it might be changed
             num_items = ref_actor.GetItemCount(form_item)
-            if ref_actor.IsEquipped(form_item)
-                self.AddItem(form_item, num_items, true)
-            else
-                ref_inventory.AddItem(form_item, num_items, true)
+            is_equipped = ref_actor.IsEquipped(form_item)
+            ref_item = form_item as ObjectReference
+            if ref_item
+                ; we cannot risk removing a quest item, etc.
+                form_item = ref_item.GetBaseObject()
+            endIf
+            if form_item.IsPlayable()
+                if is_equipped
+                    self.AddItem(form_item, num_items, true)
+                else
+                    ref_inventory.AddItem(form_item, num_items, true)
+                endIf
             endIf
         endIf
     endWhile
@@ -395,19 +372,17 @@ endFunction
 
 function Get_Default(Actor ref_actor)
     int idx_forms
-    int num_forms
     Form form_item
     int num_items
 
     ObjectReference ref_defaults = NPCS.Get_Default_Cache(ref_actor)
     if ref_defaults
-        idx_forms = 0
-        num_forms = ref_defaults.GetNumItems()
-        while idx_forms < num_forms
+        idx_forms = ref_defaults.GetNumItems()
+        while idx_forms > 0
+            idx_forms -= 1
             form_item = ref_defaults.GetNthForm(idx_forms)
             num_items = ref_defaults.GetItemCount(form_item)
             self.AddItem(form_item, num_items, true)
-            idx_forms += 1
         endWhile
     endIf
 endFunction
