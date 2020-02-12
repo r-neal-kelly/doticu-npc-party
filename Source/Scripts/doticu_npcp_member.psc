@@ -684,9 +684,6 @@ endFunction
 
 function p_Outfit()
     f_Lock_Resources()
-        Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(p_ref_actor)
-        Outfit outfit_default = NPCS.Get_Default_Outfit(p_ref_actor)
-
         ; if we ever allow manual outfit switching without having to put, we need to make sure the oufit is created
 
         if VARS.auto_outfit
@@ -720,20 +717,19 @@ function p_Outfit()
             p_outfit2_current = p_outfit2_member
         endIf
         if !p_outfit_vanilla
-            p_outfit_vanilla = outfit_default
+            p_outfit_vanilla = NPCS.Get_Default_Outfit(p_ref_actor)
         endIf
 
         if p_outfit2_previous != p_outfit2_current
             if p_outfit2_current == p_outfit2_vanilla
                 p_outfit2_current.Cache_Outfit(p_outfit_vanilla)
             elseIf p_outfit2_current == p_outfit2_default
-                p_outfit2_current.Cache_Outfit(outfit_default)
+                p_outfit2_current.Cache_Outfit(NPCS.Get_Default_Outfit(p_ref_actor))
             endIf
             p_outfit2_previous = p_outfit2_current
             p_outfit2_current.Set(p_ref_actor, true)
-        elseIf p_do_outfit_vanilla && outfit_vanilla && outfit_vanilla != CONSTS.OUTFIT_EMPTY && outfit_vanilla != p_outfit_vanilla
+        elseIf p_do_outfit_vanilla
             p_do_outfit_vanilla = false
-            p_outfit_vanilla = outfit_vanilla
             if !p_outfit2_vanilla
                 p_outfit2_vanilla = OUTFITS.Create_Vanilla()
             endIf
@@ -742,12 +738,6 @@ function p_Outfit()
             p_outfit2_current.Set(p_ref_actor, true)
         else
             p_outfit2_current.Set(p_ref_actor)
-        endIf
-
-        if p_ref_actor.IsInDialogueWithPlayer()
-            ; we are setting this so that we can see if a mod changes it.
-            ; look at the OnActivate event in this type
-            ACTORS.Set_Base_Outfit(p_ref_actor, CONSTS.OUTFIT_EMPTY)
         endIf
 
         p_ref_actor.EvaluatePackage()
@@ -905,6 +895,16 @@ endFunction
 
 doticu_npcp_outfit function Get_Current_Outfit2()
     return p_outfit2_current
+endFunction
+
+Outfit function Get_Vanilla_Outfit()
+    return p_outfit_vanilla
+endFunction
+
+function Set_Vanilla_Outfit(Outfit outfit_vanilla)
+    if outfit_vanilla
+        p_outfit_vanilla = outfit_vanilla
+    endIf
 endFunction
 
 int function Set_Name(string str_name)
@@ -1879,18 +1879,28 @@ event OnLoad()
 endEvent
 
 event OnActivate(ObjectReference ref_activator)
-    if VARS.is_updating
+    if VARS.is_updating || !Exists()
         return
     endIf
 
     ; maybe we could also pop up some basic stats on screen? but make it a command or something
 
     if Is_Alive()
+        int tries
+        Outfit outfit_vanilla_start
+        Outfit outfit_vanilla_stop
+
+f_Lock_Resources()
+        tries = 0; just to make sure, we don't want a deadlock
+        outfit_vanilla_start = ACTORS.Get_Base_Outfit(p_ref_actor)
+        while tries < 5 && outfit_vanilla_start == CONSTS.OUTFIT_TEMP
+            tries += 1
+            Utility.Wait(0.1)
+            outfit_vanilla_start = ACTORS.Get_Base_Outfit(p_ref_actor)
+        endWhile
+f_Unlock_Resources()
+
         Enforce(false)
-        ; we are setting this so that we can see if a mod changes it.
-        ; without this, we cannot know if the mod changed the outfit
-        ; to the current outfit
-        ACTORS.Set_Base_Outfit(p_ref_actor, CONSTS.OUTFIT_EMPTY)
 
         ; instead of polling, we might be able to set up a package that happens only when in dialogue
         ; and wait for the Package change or end event to let us know dialogue is over.
@@ -1899,15 +1909,25 @@ event OnActivate(ObjectReference ref_activator)
         endWhile
 
 f_Lock_Resources()
-        if ACTORS.Get_Base_Outfit(p_ref_actor) != CONSTS.OUTFIT_EMPTY
-            p_do_outfit_vanilla = true
+        tries = 0; just to make sure, we don't want a deadlock
+        outfit_vanilla_stop = ACTORS.Get_Base_Outfit(p_ref_actor)
+        while tries < 5 && outfit_vanilla_stop == CONSTS.OUTFIT_TEMP
+            tries += 1
+            Utility.Wait(0.1)
+            outfit_vanilla_stop = ACTORS.Get_Base_Outfit(p_ref_actor)
+        endWhile
+
+        if outfit_vanilla_start && outfit_vanilla_stop && p_outfit_vanilla
+            if outfit_vanilla_start != outfit_vanilla_stop && outfit_vanilla_stop != CONSTS.OUTFIT_TEMP
+                if p_outfit_vanilla != outfit_vanilla_stop
+                    p_do_outfit_vanilla = true
+                    p_outfit_vanilla = outfit_vanilla_stop
+                endIf
+            endIf
         endIf
 f_Unlock_Resources()
 
         p_Outfit()
-
-        ; we have to set this back here because p_Outfit will not while in dialogue
-        ACTORS.Set_Base_Outfit(p_ref_actor, NPCS.Get_Default_Outfit(p_ref_actor))
     else
         p_outfit2_current.Put()
         p_Outfit()

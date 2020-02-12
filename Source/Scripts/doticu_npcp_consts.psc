@@ -69,6 +69,7 @@ Container                   p_CONTAINER_OUTFIT_THRALL               = none
 Container                   p_CONTAINER_OUTFIT_IMMOBILE             = none
 Container                   p_CONTAINER_OUTFIT_FOLLOWER             = none
 Outfit                      p_OUTFIT_EMPTY                          = none
+Outfit                      p_OUTFIT_TEMP                           = none
 Quest                       p_QUEST_BARD_SONGS                      = none
 VoiceType                   p_VOICE_FEMALE_COWARD                   = none
 Weapon                      p_WEAPON_BLANK                          = none
@@ -778,6 +779,17 @@ Outfit property OUTFIT_EMPTY
     endFunction
 endProperty
 
+Outfit property OUTFIT_TEMP
+    Outfit function Get()
+        return p_OUTFIT_TEMP
+    endFunction
+    function Set(Outfit val)
+        if p_OUTFIT_TEMP == none
+            p_OUTFIT_TEMP = val
+        endIf
+    endFunction
+endProperty
+
 Quest property QUEST_BARD_SONGS
     Quest function Get()
         return p_QUEST_BARD_SONGS
@@ -813,7 +825,7 @@ endProperty
 
 int property VERSION_MAJOR                  =     0 autoReadOnly hidden; set manually upon each release
 int property VERSION_MINOR                  =     7 autoReadOnly hidden; set manually upon each release
-int property VERSION_PATCH                  =     5 autoReadOnly hidden; set manually upon each release
+int property VERSION_PATCH                  =     6 autoReadOnly hidden; set manually upon each release
 
 int property MIN_DISPLAY                    =     1 autoReadOnly hidden
 int property MAX_DISPLAY                    =     8 autoReadOnly hidden

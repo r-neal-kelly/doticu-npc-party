@@ -349,8 +349,13 @@ bool function Register(Actor ref_actor)
         return false
     endIf
 
+    Outfit base_outfit = ACTORS.Get_Base_Outfit(ref_actor)
+    if !base_outfit
+        base_outfit = CONSTS.OUTFIT_EMPTY
+    endIf
+
 p_Lock()
-    p_Add_Base(ref_actor, ACTORS.Get_Base_Outfit(ref_actor))
+    p_Add_Base(ref_actor, base_outfit)
     bool did_register = p_Add_Original(ref_actor)
 p_Unlock()
 
@@ -380,11 +385,14 @@ Actor function Clone(Actor ref_actor)
         return none
     endIf
 
-    ; we want the clone to get the leveled and not template outfit, so use ref_actor
-    ; if the ref is a member, getting default can assure we don't get the empty outfit
+    ; we want the clone to get the leveled and not template outfit, so use ref_actor.
+    ; if the ref is a member, getting default can assure we don't get the temp outfit
     Outfit outfit_base = Get_Default_Outfit(ref_actor)
     if !outfit_base
         outfit_base = ACTORS.Get_Base_Outfit(ref_actor)
+    endIf
+    if !outfit_base
+        outfit_base = CONSTS.OUTFIT_EMPTY
     endIf
 
 p_Lock()
@@ -399,23 +407,10 @@ p_Unlock()
         return none
     endIf
 
-    ; these need to be called after outfit_base has been added to the system
     if VARS.clone_outfit == CODES.OUTFIT_BASE
         OUTFITS.Outfit_Vanilla(ref_clone, outfit_base)
-        ACTORS.Set_Base_Outfit(ref_actor, outfit_base)
     elseIf VARS.clone_outfit == CODES.OUTFIT_REFERENCE
         OUTFITS.Outfit_Clone(ref_clone, ref_actor)
-    endIf
-
-    ; this is to assist in determing a mod changing the vanilla outfit in doticu_npcp_member
-    ; must pass ref_actor because if they are leveled, they will not share the base with clone
-    ; we pass clone first, because if it isn't different will be correctly overwritten
-    if MEMBERS.Has_Member(ref_actor) && ref_actor.IsInDialogueWithPlayer()
-        ACTORS.Set_Base_Outfit(ref_clone, outfit_base)
-        ACTORS.Set_Base_Outfit(ref_actor, CONSTS.OUTFIT_EMPTY)
-    else
-        ACTORS.Set_Base_Outfit(ref_clone, outfit_base)
-        ACTORS.Set_Base_Outfit(ref_actor, outfit_base)
     endIf
 
     return ref_clone
@@ -521,8 +516,8 @@ p_Unlock()
 endFunction
 
 ; Update Methods
-function u_0_7_5()
-    ; 1. set the outfit of every npc to their default outfit, so vanilla outfit is ready
+function u_0_7_6()
+    ; 1. set the vanilla outfit for each member
     ; 2. recache with more accurate base
     ; 3. create a default cache for each npc base we store
     ; 4. remove any clones that leaked into original slots
@@ -560,12 +555,15 @@ p_Lock()
 
     string str_message = "NPC Party: This update may take several minutes. "
     str_message += "Open the console to monitor progress!\n"
-    str_message += "Estimate: " + ((num_actors / 60 + 1) as int) + " minutes."
+    str_message += "Estimate: " + ((num_actors / 50 + 1) as int) + " minutes."
     Debug.MessageBox(str_message)
 
     idx_bases = 0
     while idx_bases < num_bases
         Outfit base_outfit = arr_outfits[idx_bases] as Outfit
+        if !base_outfit
+            base_outfit = CONSTS.OUTFIT_EMPTY
+        endIf
 
         ; we now only keep originals that are members, because we no longer need originals to work around an engine bug
         doticu_npcp_vector_form vec_origs = arr_vec_origs[idx_bases] as doticu_npcp_vector_form
@@ -574,12 +572,12 @@ p_Lock()
         int num_origs = vec_origs.num
         while idx_origs < num_origs
             Actor orig_ref = arr_origs[idx_origs] as Actor
+            doticu_npcp_member orig_member = MEMBERS.Get_Member(orig_ref)
 
-            if MEMBERS.Has_Member(orig_ref)
+            if orig_member
+                orig_member.Set_Vanilla_Outfit(base_outfit)
+
                 ActorBase orig_base = ACTORS.Get_Real_Base(orig_ref)
-
-                ; so we can start off on the right foot in the new outfit algorithm.
-                ACTORS.Set_Base_Outfit(orig_ref, base_outfit)
 
                 ; we add base in each loop, because there is no other way to know if each orig and clone has the same real base.
                 ; we don't use p_Add_Base() because we want the clone to help define the default cache
@@ -624,8 +622,10 @@ p_Lock()
             Actor clone_ref = arr_clones[idx_clones] as Actor
             ActorBase clone_base = ACTORS.Get_Real_Base(clone_ref)
 
-            ; so we can start off on the right foot in the new outfit algorithm.
-            ACTORS.Set_Base_Outfit(clone_ref, base_outfit)
+            doticu_npcp_member clone_member = MEMBERS.Get_Member(clone_ref)
+            if clone_member
+                clone_member.Set_Vanilla_Outfit(base_outfit)
+            endIf
 
             ; we add base in each loop, because there is no other way to know if each orig and clone has the same real base.
             ; we don't use p_Add_Base() because we want the clone to help define the default cache

@@ -214,7 +214,7 @@ function Outfit_Vanilla(Actor ref_actor, Outfit outfit_vanilla)
     ; this will stop the actor from rendering while we manage its inventory
     ref_actor.SetPlayerTeammate(false, false)
     
-    ref_actor.SetOutfit(CONSTS.OUTFIT_EMPTY)
+    ref_actor.SetOutfit(CONSTS.OUTFIT_TEMP)
     ref_actor.SetOutfit(outfit_vanilla)
 
     ; add weapons back before render
@@ -248,12 +248,13 @@ function Outfit_Clone(Actor ref_clone, Actor ref_actor)
     bool is_equipped
     ObjectReference ref_junk = CONTAINERS.Create_Temp()
     bool is_teammate = ref_clone.IsPlayerTeammate()
+    Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(ref_clone)
 
     ; this will stop the actor from rendering while we manage its inventory
     ref_clone.SetPlayerTeammate(false, false)
 
     ; this way no items will automatically be added back when we remove them
-    ref_clone.SetOutfit(CONSTS.OUTFIT_EMPTY)
+    ref_clone.SetOutfit(CONSTS.OUTFIT_TEMP)
 
     ; it's error prone to remove items from actor unless they are cached
     idx_forms = ref_clone.GetNumItems()
@@ -308,16 +309,17 @@ function Outfit_Clone(Actor ref_clone, Actor ref_actor)
     endIf
 
     ; make sure that the base is set to have the vanilla algorithm in place
-    ACTORS.Set_Base_Outfit(ref_clone, NPCS.Get_Default_Outfit(ref_clone))
+    ACTORS.Set_Base_Outfit(ref_clone, outfit_vanilla)
 endFunction
 
 function Restore_Actor(Actor ref_actor)
     if ACTORS.Is_Alive(ref_actor)
-        Outfit outfit_default = NPCS.Get_Default_Outfit(ref_actor)
-        if outfit_default
-            ref_actor.SetOutfit(CONSTS.OUTFIT_EMPTY)
-            ref_actor.SetOutfit(outfit_default)
-            ACTORS.Set_Base_Outfit(ref_actor, outfit_default)
+        ; we could make an option to set the default or the vanilla outfit.
+        ;Outfit outfit_default = NPCS.Get_Default_Outfit(ref_actor)
+        Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(ref_actor)
+        if outfit_vanilla
+            ref_actor.SetOutfit(CONSTS.OUTFIT_TEMP)
+            ref_actor.SetOutfit(outfit_vanilla)
         endIf
     endIf
 endFunction

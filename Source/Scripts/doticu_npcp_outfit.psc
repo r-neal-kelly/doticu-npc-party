@@ -103,14 +103,14 @@ bool function p_Has_Changed(Actor ref_actor)
             if form_item.IsPlayable() || ref_actor.IsEquipped(form_item)
                 ; any playable item is fair game, but only equipped unplayables are accounted for
                 if p_cache_outfit.GetItemCount(form_item) < 1 && p_cache_self.GetItemCount(form_item) < 1
-                    MiscUtil.PrintConsole("ref actor has items not in outfit")
+                    ;/MiscUtil.PrintConsole("ref actor has items not in outfit")
                     MiscUtil.PrintConsole(form_item.GetName())
                     MiscUtil.PrintConsole("Actor Cache: ")
                     FUNCS.Print_Contents(ref_actor)
                     MiscUtil.PrintConsole("Outfit Cache: ")
                     FUNCS.Print_Contents(p_cache_outfit)
                     MiscUtil.PrintConsole("Self Cache: ")
-                    FUNCS.Print_Contents(p_cache_self)
+                    FUNCS.Print_Contents(p_cache_self)/;
 
                     return true
                 endIf
@@ -124,13 +124,13 @@ bool function p_Has_Changed(Actor ref_actor)
         idx_forms -= 1
         form_item = p_cache_outfit.GetNthForm(idx_forms)
         if ref_actor.GetItemCount(form_item) != p_cache_outfit.GetItemCount(form_item) + p_cache_self.GetItemCount(form_item)
-            MiscUtil.PrintConsole("ref actor and outfit cache mismatch")
+            ;/MiscUtil.PrintConsole("ref actor and outfit cache mismatch")
             MiscUtil.PrintConsole(form_item.GetName())
             MiscUtil.PrintConsole("actor: " + ref_actor.GetItemCount(form_item) + ", outfit: " + p_cache_outfit.GetItemCount(form_item))
             MiscUtil.PrintConsole("Actor Cache: ")
             FUNCS.Print_Contents(ref_actor)
             MiscUtil.PrintConsole("Outfit Cache: ")
-            FUNCS.Print_Contents(p_cache_outfit)
+            FUNCS.Print_Contents(p_cache_outfit)/;
 
             return true
         endIf
@@ -141,13 +141,13 @@ bool function p_Has_Changed(Actor ref_actor)
         idx_forms -= 1
         form_item = p_cache_self.GetNthForm(idx_forms)
         if ref_actor.GetItemCount(form_item) != p_cache_outfit.GetItemCount(form_item) + p_cache_self.GetItemCount(form_item)
-            MiscUtil.PrintConsole("ref actor and self cache mismatch")
+            ;/MiscUtil.PrintConsole("ref actor and self cache mismatch")
             MiscUtil.PrintConsole(form_item.GetName())
             MiscUtil.PrintConsole("actor: " + ref_actor.GetItemCount(form_item) + ", self: " + p_cache_self.GetItemCount(form_item))
             MiscUtil.PrintConsole("Actor Cache: ")
             FUNCS.Print_Contents(ref_actor)
             MiscUtil.PrintConsole("Self Cache: ")
-            FUNCS.Print_Contents(p_cache_self)
+            FUNCS.Print_Contents(p_cache_self)/;
 
             return true
         endIf
@@ -183,7 +183,7 @@ function p_Set(Actor ref_actor, bool do_force = false)
     ref_actor.SetPlayerTeammate(false, false)
 
     ; this way no items will automatically be added back when we remove them
-    ref_actor.SetOutfit(CONSTS.OUTFIT_EMPTY)
+    ref_actor.SetOutfit(CONSTS.OUTFIT_TEMP)
 
     ; it's error prone to remove items from actor unless they are cached
     idx_forms = ref_actor.GetNumItems()
@@ -389,8 +389,9 @@ endFunction
 
 function Set(Actor ref_actor, bool do_force = false)
     if ref_actor
+        Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(ref_actor)
         p_Set(ref_actor, do_force)
-        ACTORS.Set_Base_Outfit(ref_actor, NPCS.Get_Default_Outfit(ref_actor))
+        ACTORS.Set_Base_Outfit(ref_actor, outfit_vanilla)
     endIf
 endFunction
 
@@ -404,7 +405,7 @@ event OnItemAdded(Form form_item, int count_item, ObjectReference ref_item, Obje
         self.RemoveItem(form_item, count_item, true, ref_container_source)
         LOGS.Create_Note("Can only have so many items in an outfit.")
     elseIf !form_item || p_code_create != CODES.OUTFIT_DEFAULT && !form_item.IsPlayable()
-        ; now we let unplayables into default
+        ; now we let unplayables into default outfit's self container
         self.RemoveItem(form_item, count_item, true, ref_container_source)
         LOGS.Create_Note("Cannot add that item to an outfit.")
     endIf

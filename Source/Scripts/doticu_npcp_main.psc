@@ -150,8 +150,8 @@ function p_Version()
     if Is_NPC_Party_Less_Than(CONSTS.VERSION_MAJOR, CONSTS.VERSION_MINOR, CONSTS.VERSION_PATCH)
         p_Start_Updating()
 
-        if Is_NPC_Party_Less_Than(0, 7, 5)
-            u_0_7_5()
+        if Is_NPC_Party_Less_Than(0, 7, 6)
+            u_0_7_6()
         endIf
 
         VARS.version_major = CONSTS.VERSION_MAJOR
@@ -237,12 +237,12 @@ bool function Is_NPC_Party_Less_Than(int min_major, int min_minor, int min_patch
 endFunction
 
 ; Update Methods
-function u_0_7_5()
-    DATA.MODS.FUNCS.NPCS.u_0_7_5()
+function u_0_7_6()
+    DATA.MODS.FUNCS.NPCS.u_0_7_6()
 endFunction
 
-function u_0_7_6()
-    DATA.MODS.FUNCS.PERKS.u_0_7_6()
+function u_0_7_7()
+    DATA.MODS.FUNCS.PERKS.u_0_7_7()
 endFunction
 
 ; Events
