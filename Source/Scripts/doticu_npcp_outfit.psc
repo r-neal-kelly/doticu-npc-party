@@ -93,13 +93,19 @@ bool function p_Has_Changed(Actor ref_actor)
     int idx_forms
     Form form_item
 
+    ; we need to make sure that the current outfit is equipped, because a mod may have changed it
+    if ACTORS.Get_Base_Outfit(ref_actor).GetNthPart(0) != CONSTS.ARMOR_BLANK
+        return true
+    endIf
+
     ; ref_actor may have items that aren't in the oufit
     idx_forms = ref_actor.GetNumItems()
     while idx_forms > 0
         idx_forms -= 1
         form_item = ref_actor.GetNthForm(idx_forms)
-        if form_item && !(form_item as ObjectReference)
+        if form_item && !(form_item as ObjectReference) && form_item != CONSTS.ARMOR_BLANK as Form
             ; we completely avoid any references and leave them alone.
+            ; we need to keep the linchpin to avoid engine refreshing outfit.
             if form_item.IsPlayable() || ref_actor.IsEquipped(form_item)
                 ; any playable item is fair game, but only equipped unplayables are accounted for
                 if p_cache_outfit.GetItemCount(form_item) < 1 && p_cache_self.GetItemCount(form_item) < 1
@@ -157,12 +163,6 @@ bool function p_Has_Changed(Actor ref_actor)
 endFunction
 
 function p_Set(Actor ref_actor, bool do_force = false)
-    int idx_forms
-    Form form_item
-    int num_items
-    bool is_teammate = ref_actor.IsPlayerTeammate()
-    ObjectReference ref_junk = CONTAINERS.Create_Temp()
-
     ; just in case
     if !p_cache_outfit
         Cache_Outfit(none)
@@ -172,25 +172,38 @@ function p_Set(Actor ref_actor, bool do_force = false)
     endIf
 
     if ACTORS.Is_Dead(ref_actor)
-        return p_Set_Dead(ref_actor)
-    endIf
-
-    if !do_force && !p_Has_Changed(ref_actor)
+        p_Set_Dead(ref_actor)
         return
     endIf
 
+    if !do_force && !p_Has_Changed(ref_actor)
+        ACTORS.Update_Equipment(ref_actor)
+        return
+    endIf
+
+    int idx_forms
+    Form form_item
+    bool is_teammate = ref_actor.IsPlayerTeammate()
+    ObjectReference ref_junk = CONTAINERS.Create_Temp()
+
+NPCS.Lock_Base(ref_actor)
+    ; this ensures that our modded outfit is worn. we need that blank armor
+    if ACTORS.Get_Base_Outfit(ref_actor).GetNthPart(0) != CONSTS.ARMOR_BLANK
+        NPCS.Set_Current_Outfit(ref_actor, CONSTS.OUTFIT_EMPTY)
+        ref_actor.SetOutfit(NPCS.Get_Current_Outfit(ref_actor))
+        NPCS.Set_Current_Outfit(ref_actor, NPCS.Get_Default_Outfit(ref_actor))
+    endIf
+NPCS.Unlock_Base(ref_actor)
+
     ; this will stop the actor from rendering while we manage its inventory
     ref_actor.SetPlayerTeammate(false, false)
-
-    ; this way no items will automatically be added back when we remove them
-    ref_actor.SetOutfit(CONSTS.OUTFIT_TEMP)
 
     ; it's error prone to remove items from actor unless they are cached
     idx_forms = ref_actor.GetNumItems()
     while idx_forms > 0
         idx_forms -= 1
         form_item = ref_actor.GetNthForm(idx_forms)
-        if form_item && !(form_item as ObjectReference)
+        if form_item && !(form_item as ObjectReference) && form_item != CONSTS.ARMOR_BLANK as Form
             ; we completely avoid any references and leave them alone.
             if form_item.IsPlayable() || ref_actor.IsEquipped(form_item)
                 ; any playable item is fair game, but only equipped unplayables are accounted for
@@ -204,8 +217,7 @@ function p_Set(Actor ref_actor, bool do_force = false)
     while idx_forms > 0
         idx_forms -= 1
         form_item = ref_junk.GetNthForm(idx_forms)
-        num_items = ref_junk.GetItemCount(form_item)
-        ref_actor.RemoveItem(form_item, num_items, true, ref_junk)
+        ref_actor.RemoveItem(form_item, ref_junk.GetItemCount(form_item), true, ref_junk)
     endWhile
 
     ; and now we can cleanly add all the outfit items
@@ -213,16 +225,14 @@ function p_Set(Actor ref_actor, bool do_force = false)
     while idx_forms > 0
         idx_forms -= 1
         form_item = p_cache_outfit.GetNthForm(idx_forms)
-        num_items = p_cache_outfit.GetItemCount(form_item)
-        ref_actor.AddItem(form_item, num_items, true)
+        ref_actor.AddItem(form_item, p_cache_outfit.GetItemCount(form_item), true)
     endWhile
 
     idx_forms = p_cache_self.GetNumItems()
     while idx_forms > 0
         idx_forms -= 1
         form_item = p_cache_self.GetNthForm(idx_forms)
-        num_items = p_cache_self.GetItemCount(form_item)
-        ref_actor.AddItem(form_item, num_items, true)
+        ref_actor.AddItem(form_item, p_cache_self.GetItemCount(form_item), true)
     endWhile
 
     ; doing this allows us to render all at once, which is far more efficient
@@ -234,6 +244,9 @@ function p_Set(Actor ref_actor, bool do_force = false)
     if !is_teammate
         ref_actor.SetPlayerTeammate(false, false)
     endIf
+
+    ref_junk.Disable()
+    ref_junk.Delete()
 endFunction
 
 function p_Set_Dead(Actor ref_actor)
@@ -253,6 +266,9 @@ function p_Set_Dead(Actor ref_actor)
             endIf
         endIf
     endWhile
+
+    ref_trash.Disable()
+    ref_trash.Delete()
 endFunction
 
 ; Public Methods
@@ -284,14 +300,18 @@ function Put()
     Cache_Self()
 endFunction
 
-function Cache_Outfit(Outfit outfit_)
+function Cache_Outfit(Outfit outfit_vanilla)
     int idx_forms
     Form form_item
 
     ; make sure this exists
+    if p_cache_outfit
+        p_cache_outfit.Disable()
+        p_cache_outfit.Delete()
+    endIf
     p_cache_outfit = CONTAINERS.Create_Temp()
 
-    if !outfit_
+    if !outfit_vanilla
         ; there is nothing to cache for pure outfit2s
         return
     endIf
@@ -300,10 +320,10 @@ function Cache_Outfit(Outfit outfit_)
     ; because it always adds items that are out of the player's control.
     ; our custom outfits will probably never have anything unplayable
     ; but we'll allow unplayable items in others' outfits
-    idx_forms = outfit_.GetNumParts()
+    idx_forms = outfit_vanilla.GetNumParts()
     while idx_forms > 0
         idx_forms -= 1
-        form_item = outfit_.GetNthPart(idx_forms)
+        form_item = outfit_vanilla.GetNthPart(idx_forms)
         p_cache_outfit.AddItem(form_item, 1, true); will expand LeveledItems!
     endWhile
 endFunction
@@ -315,6 +335,10 @@ function Cache_Self()
     ObjectReference ref_item
 
     ; make sure this exists
+    if p_cache_self
+        p_cache_self.Disable()
+        p_cache_self.Delete()
+    endIf
     p_cache_self = CONTAINERS.Create_Temp()
 
     ; we don't want to combine the vanilla outfit items with outfit2's
@@ -389,9 +413,7 @@ endFunction
 
 function Set(Actor ref_actor, bool do_force = false)
     if ref_actor
-        Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(ref_actor)
         p_Set(ref_actor, do_force)
-        ACTORS.Set_Base_Outfit(ref_actor, outfit_vanilla)
     endIf
 endFunction
 

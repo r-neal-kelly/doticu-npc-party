@@ -141,9 +141,9 @@ bool function Is_Essential(Actor ref_actor)
     endIf
 endFunction
 
-ActorBase function Get_Base(Actor ref_actor)
+ActorBase function Get_Base(Actor ref_actor); Get_Static_Base
     if ref_actor
-        ; never returns a dynamic leveled nor template base. can return a static leveled npc base
+        ; only returns a real or static leveled base, never a dynamic leveled base
         return ref_actor.GetActorBase()
     else
         return none
@@ -152,16 +152,16 @@ endFunction
 
 ActorBase function Get_Leveled_Base(Actor ref_actor); Get_Dynamic_Base
     if ref_actor
-        ; returns regular or template base for unleveled. returns dynamic base for leveled
+        ; only returns a real or dynamic leveled base, never a static leveled base
         return ref_actor.GetLeveledActorBase()
     else
         return none
     endIf
 endFunction
 
-ActorBase function Get_Real_Base(Actor ref_actor); Get_Template_Base
+ActorBase function Get_Real_Base(Actor ref_actor)
     if ref_actor
-        ; only returns an actual actor base, never a leveled static or leveled dynamic
+        ; only returns a real base, never a static or dynamic leveled base
         ActorBase base_actor = ref_actor.GetActorBase()
         ActorBase leveled_actor = ref_actor.GetLeveledActorBase()
         if base_actor != leveled_actor; Is_Leveled
@@ -214,7 +214,7 @@ endFunction
 Outfit function Get_Base_Outfit(Actor ref_actor)
     if ref_actor
         ; leveled have the outfit on leveled base only.
-        ; GetLeveledActorBase() returns regular or template base for unleveled.
+        ; GetLeveledActorBase() returns real base for unleveled/template.
         return ref_actor.GetLeveledActorBase().GetOutfit()
     else
         return none
@@ -224,8 +224,8 @@ endFunction
 function Set_Base_Outfit(Actor ref_actor, Outfit outfit_base)
     if ref_actor && outfit_base
         ; leveled have the outfit on leveled base only.
-        ; GetLeveledActorBase() returns regular or template base for unleveled.
-        ; does not immediately affect the ref_actor's outfit (except if is player teammate?)
+        ; GetLeveledActorBase() returns real base for unleveled/template.
+        ; does not immediately affect the ref_actor's outfit
         ref_actor.GetLeveledActorBase().SetOutfit(outfit_base)
     endIf
 endFunction
@@ -286,6 +286,9 @@ function Resurrect(Actor ref_actor)
     CONTAINERS.Empty(ref_actor)
     CONTAINERS.Take_All(ref_actor, ref_container_temp)
     Update_Equipment(ref_actor)
+
+    ref_container_temp.Disable()
+    ref_container_temp.Delete()
 endFunction
 
 function Open_Inventory(Actor ref_actor)

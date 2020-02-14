@@ -172,6 +172,9 @@ ObjectReference function Get_Default_Cache(Actor ref_actor, Outfit outfit_defaul
         endIf
     endWhile
 
+    ref_outfit.Disable()
+    ref_outfit.Delete()
+
     return ref_cache
 endFunction
 
@@ -234,9 +237,16 @@ function Outfit_Vanilla(Actor ref_actor, Outfit outfit_vanilla)
     if !is_teammate
         ref_actor.SetPlayerTeammate(false, false)
     endIf
+
+    ref_weapons.Disable()
+    ref_weapons.Delete()
+    ref_temp.Disable()
+    ref_temp.Delete()
 endFunction
 
 function Outfit_Clone(Actor ref_clone, Actor ref_actor)
+    ; we assume that the clone was made through doticu_npcp_npcs
+
     if !ref_clone || !ref_actor
         return
     endIf
@@ -248,55 +258,65 @@ function Outfit_Clone(Actor ref_clone, Actor ref_actor)
     bool is_equipped
     ObjectReference ref_junk = CONTAINERS.Create_Temp()
     bool is_teammate = ref_clone.IsPlayerTeammate()
-    Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(ref_clone)
+
+NPCS.Lock_Base(ref_actor)
+    ; this ensures that our modded outfit is worn. we need that blank armor
+    if ACTORS.Get_Base_Outfit(ref_actor).GetNthPart(0) != CONSTS.ARMOR_BLANK
+        NPCS.Set_Current_Outfit(ref_actor, CONSTS.OUTFIT_EMPTY)
+        ref_actor.SetOutfit(NPCS.Get_Current_Outfit(ref_actor))
+        NPCS.Set_Current_Outfit(ref_actor, NPCS.Get_Default_Outfit(ref_actor))
+    endIf
+NPCS.Unlock_Base(ref_actor)
 
     ; this will stop the actor from rendering while we manage its inventory
     ref_clone.SetPlayerTeammate(false, false)
 
-    ; this way no items will automatically be added back when we remove them
-    ref_clone.SetOutfit(CONSTS.OUTFIT_TEMP)
-
-    ; it's error prone to remove items from actor unless they are cached
-    idx_forms = ref_clone.GetNumItems()
-    while idx_forms > 0
-        idx_forms -= 1
-        form_item = ref_clone.GetNthForm(idx_forms)
-        if form_item && !(form_item as ObjectReference)
-            ; we completely avoid any references and leave them alone.
-            if form_item.IsPlayable() || ref_clone.IsEquipped(form_item)
-                ; any playable item is fair game, but only equipped unplayables are accounted for
-                ref_junk.AddItem(form_item, ref_clone.GetItemCount(form_item), true)
+    if VARS.clone_outfit == CODES.OUTFIT_BASE
+        ref_actor.RemoveItem(CONSTS.ARMOR_BLANK, ref_actor.GetItemCount(CONSTS.ARMOR_BLANK), true, ref_junk)
+        ref_actor.RemoveAllItems(ref_junk, false, false)
+    elseIf VARS.clone_outfit == CODES.OUTFIT_REFERENCE
+        ; it's error prone to remove items from actor unless they are cached
+        idx_forms = ref_clone.GetNumItems()
+        while idx_forms > 0
+            idx_forms -= 1
+            form_item = ref_clone.GetNthForm(idx_forms)
+            if form_item && !(form_item as ObjectReference)
+                ; we completely avoid any references and leave them alone.
+                if form_item.IsPlayable() || ref_clone.IsEquipped(form_item)
+                    ; any playable item is fair game, but only equipped unplayables are accounted for
+                    ref_junk.AddItem(form_item, ref_clone.GetItemCount(form_item), true)
+                endIf
             endIf
-        endIf
-    endWhile
+        endWhile
 
-    ; cleaning up the inventory of any junk is essential to controlling the outfit
-    idx_forms = ref_junk.GetNumItems()
-    while idx_forms > 0
-        idx_forms -= 1
-        form_item = ref_junk.GetNthForm(idx_forms)
-        ref_clone.RemoveItem(form_item, ref_junk.GetItemCount(form_item), true, ref_junk)
-    endWhile
+        ; cleaning up the inventory of any junk is essential to controlling the outfit
+        idx_forms = ref_junk.GetNumItems()
+        while idx_forms > 0
+            idx_forms -= 1
+            form_item = ref_junk.GetNthForm(idx_forms)
+            ref_clone.RemoveItem(form_item, ref_junk.GetItemCount(form_item), true, ref_junk)
+        endWhile
 
-    ; we just need what's currently equipped on actor
-    idx_forms = ref_actor.GetNumItems()
-    while idx_forms > 0
-        idx_forms -= 1
-        form_item = ref_actor.GetNthForm(idx_forms)
-        if form_item
-            ; we need to work with this form before it might be changed
-            num_items = ref_actor.GetItemCount(form_item)
-            is_equipped = ref_actor.IsEquipped(form_item)
-            ref_item = form_item as ObjectReference
-            if ref_item
-                ; we cannot risk removing a quest item, etc.
-                form_item = ref_item.GetBaseObject()
+        ; we just need what's currently equipped on actor
+        idx_forms = ref_actor.GetNumItems()
+        while idx_forms > 0
+            idx_forms -= 1
+            form_item = ref_actor.GetNthForm(idx_forms)
+            if form_item
+                ; we need to work with this form before it might be changed
+                num_items = ref_actor.GetItemCount(form_item)
+                is_equipped = ref_actor.IsEquipped(form_item)
+                ref_item = form_item as ObjectReference
+                if ref_item
+                    ; we cannot risk removing a quest item, etc.
+                    form_item = ref_item.GetBaseObject()
+                endIf
+                if is_equipped
+                    ref_clone.AddItem(form_item, num_items - ref_clone.GetItemCount(form_item), true)
+                endIf
             endIf
-            if is_equipped
-                ref_clone.AddItem(form_item, num_items - ref_clone.GetItemCount(form_item), true)
-            endIf
-        endIf
-    endWhile
+        endWhile    
+    endIf
 
     ; doing this allows us to render all at once, which is far more efficient
     ref_clone.SetPlayerTeammate(true, true)
@@ -308,18 +328,6 @@ function Outfit_Clone(Actor ref_clone, Actor ref_actor)
         ref_clone.SetPlayerTeammate(false, false)
     endIf
 
-    ; make sure that the base is set to have the vanilla algorithm in place
-    ACTORS.Set_Base_Outfit(ref_clone, outfit_vanilla)
-endFunction
-
-function Restore_Actor(Actor ref_actor)
-    if ACTORS.Is_Alive(ref_actor)
-        ; we could make an option to set the default or the vanilla outfit.
-        ;Outfit outfit_default = NPCS.Get_Default_Outfit(ref_actor)
-        Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(ref_actor)
-        if outfit_vanilla
-            ref_actor.SetOutfit(CONSTS.OUTFIT_TEMP)
-            ref_actor.SetOutfit(outfit_vanilla)
-        endIf
-    endIf
+    ref_junk.Disable()
+    ref_junk.Delete()
 endFunction

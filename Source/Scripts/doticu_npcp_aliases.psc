@@ -424,7 +424,12 @@ ReferenceAlias function Get_Alias(int id_alias, Actor ref_actor)
     if p_Has_Alias(id_alias, ref_actor)
         return f_Get_Alias(id_alias)
     else
-        return none
+        id_alias = p_arr_actors.Find(ref_actor)
+        if id_alias > -1
+            return f_Get_Alias(id_alias)
+        else
+            return none
+        endIf
     endIf
 endFunction
 

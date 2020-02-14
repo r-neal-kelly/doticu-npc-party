@@ -85,7 +85,7 @@ function Remove_Perk(Perk perk_to_remove)
 endFunction
 
 ; Update Methods
-function u_0_7_7()
+function u_0_8_1()
     ; don't forget to uncomment REANIMATE above
     Add_Perk(CONSTS.PERK_REANIMATE)
     REANIMATE.f_Create(p_DATA)

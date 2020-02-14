@@ -71,6 +71,18 @@ endProperty
 ; Private Constants
 doticu_npcp_data        p_DATA                      =  none
 
+Outfit property p_OUTFIT_MEMBER hidden
+    Outfit function Get()
+        return CONSTS.FORMLIST_OUTFITS_MEMBER.GetAt(p_id_alias) as Outfit
+    endFunction
+endProperty
+
+LeveledItem property p_LEVELED_OUTFIT hidden
+    LeveledItem function Get()
+        return p_OUTFIT_MEMBER.GetNthPart(1) as LeveledItem
+    endFunction
+endProperty
+
 ; Private Variables
 bool                    p_is_created                = false
 int                     p_id_alias                  =    -1
@@ -358,7 +370,8 @@ function p_Restore()
         ACTORS.Set_Factions(p_ref_actor, p_prev_factions, p_prev_faction_ranks)
         p_ref_actor.SetCrimeFaction(p_prev_faction_crime)
 
-        OUTFITS.Restore_Actor(p_ref_actor)
+        p_outfit2_default.Cache_Outfit(NPCS.Get_Default_Outfit(p_ref_actor))
+        p_outfit2_default.Set(p_ref_actor, true)
 
     f_Unlock_Resources()
 endFunction
@@ -682,7 +695,7 @@ function p_Put_Outfit(int code_outfit)
     f_Unlock_Resources()
 endFunction
 
-function p_Outfit()
+function p_Outfit(bool do_force = false)
     f_Lock_Resources()
         ; if we ever allow manual outfit switching without having to put, we need to make sure the oufit is created
 
@@ -720,6 +733,8 @@ function p_Outfit()
             p_outfit_vanilla = NPCS.Get_Default_Outfit(p_ref_actor)
         endIf
 
+        ; whenever p_outfit_vanilla is changed, we need to fill it in NPCS, unless we keep the default outfit.
+
         if p_outfit2_previous != p_outfit2_current
             if p_outfit2_current == p_outfit2_vanilla
                 p_outfit2_current.Cache_Outfit(p_outfit_vanilla)
@@ -737,7 +752,7 @@ function p_Outfit()
             p_outfit2_current.Cache_Outfit(p_outfit_vanilla)
             p_outfit2_current.Set(p_ref_actor, true)
         else
-            p_outfit2_current.Set(p_ref_actor)
+            p_outfit2_current.Set(p_ref_actor, do_force)
         endIf
 
         p_ref_actor.EvaluatePackage()
@@ -1872,10 +1887,9 @@ event OnLoad()
     if Is_Paralyzed()
         p_Reparalyze()
     endIf
-    f_Lock_Resources()
-        p_outfit2_current.Set(p_ref_actor, true)
-    f_Unlock_Resources()
-    Enforce()
+    p_Outfit()
+
+    Enforce(false)
 endEvent
 
 event OnActivate(ObjectReference ref_activator)
@@ -1886,21 +1900,9 @@ event OnActivate(ObjectReference ref_activator)
     ; maybe we could also pop up some basic stats on screen? but make it a command or something
 
     if Is_Alive()
-        int tries
-        Outfit outfit_vanilla_start
-        Outfit outfit_vanilla_stop
-
-f_Lock_Resources()
-        tries = 0; just to make sure, we don't want a deadlock
-        outfit_vanilla_start = ACTORS.Get_Base_Outfit(p_ref_actor)
-        while tries < 5 && outfit_vanilla_start == CONSTS.OUTFIT_TEMP
-            tries += 1
-            Utility.Wait(0.1)
-            outfit_vanilla_start = ACTORS.Get_Base_Outfit(p_ref_actor)
-        endWhile
-f_Unlock_Resources()
-
         Enforce(false)
+
+        Outfit outfit_vanilla_start = ACTORS.Get_Base_Outfit(p_ref_actor)
 
         ; instead of polling, we might be able to set up a package that happens only when in dialogue
         ; and wait for the Package change or end event to let us know dialogue is over.
@@ -1908,24 +1910,19 @@ f_Unlock_Resources()
             Utility.Wait(2)
         endWhile
 
-f_Lock_Resources()
-        tries = 0; just to make sure, we don't want a deadlock
-        outfit_vanilla_stop = ACTORS.Get_Base_Outfit(p_ref_actor)
-        while tries < 5 && outfit_vanilla_stop == CONSTS.OUTFIT_TEMP
-            tries += 1
-            Utility.Wait(0.1)
-            outfit_vanilla_stop = ACTORS.Get_Base_Outfit(p_ref_actor)
-        endWhile
+        Outfit outfit_vanilla_stop = ACTORS.Get_Base_Outfit(p_ref_actor)
 
         if outfit_vanilla_start && outfit_vanilla_stop && p_outfit_vanilla
-            if outfit_vanilla_start != outfit_vanilla_stop && outfit_vanilla_stop != CONSTS.OUTFIT_TEMP
+            if outfit_vanilla_start != outfit_vanilla_stop && outfit_vanilla_stop != p_OUTFIT_MEMBER
                 if p_outfit_vanilla != outfit_vanilla_stop
+f_Lock_Resources()
                     p_do_outfit_vanilla = true
                     p_outfit_vanilla = outfit_vanilla_stop
+                    ;ACTORS.Set_Base_Outfit(p_ref_actor, NPCS.Get_Current_Outfit(p_ref_actor))
+f_Unlock_Resources()
                 endIf
             endIf
         endIf
-f_Unlock_Resources()
 
         p_Outfit()
     else
@@ -1969,16 +1966,5 @@ event OnCombatStateChanged(Actor ref_target, int code_combat)
 
     elseIf code_combat == CODES.COMBAT_SEARCHING
         
-    endIf
-endEvent
-
-event OnItemAdded(Form form_item, int count_item, ObjectReference ref_item, ObjectReference ref_container_source)
-    if VARS.is_updating
-        return
-    endIf
-    
-    if ref_container_source == CONSTS.ACTOR_PLAYER
-        p_ref_actor.RemoveItem(form_item, count_item, true, ref_container_source)
-        LOGS.Create_Error("You can only put items into a member's pack or one of their outfits.")
     endIf
 endEvent

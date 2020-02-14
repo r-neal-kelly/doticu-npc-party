@@ -47,6 +47,8 @@ GlobalVariable              p_GLOBAL_PERCENT_NO_FEET                = none
 GlobalVariable              p_GLOBAL_PERCENT_NO_HANDS               = none
 GlobalVariable              p_GLOBAL_PERCENT_NO_HEAD                = none
 FormList                    p_FORMLIST_MARKERS_SETTLER              = none
+FormList                    p_FORMLIST_OUTFITS_MEMBER               = none
+FormList                    p_FORMLIST_NONE                         = none
 Faction                     p_FACTION_MEMBER                        = none
 Faction                     p_FACTION_DLC1_THRALL                   = none
 Faction                     p_FACTION_DLC1_VAMPIRE_FEED_NO_CRIME    = none
@@ -73,6 +75,8 @@ Outfit                      p_OUTFIT_TEMP                           = none
 Quest                       p_QUEST_BARD_SONGS                      = none
 VoiceType                   p_VOICE_FEMALE_COWARD                   = none
 Weapon                      p_WEAPON_BLANK                          = none
+Armor                       p_ARMOR_BLANK                           = none
+Key                         p_KEY_LOCK                              = none
 
 ; Public Constants
 Actor property ACTOR_PLAYER
@@ -537,6 +541,28 @@ Formlist property FORMLIST_MARKERS_SETTLER
     endFunction
 endProperty
 
+Formlist property FORMLIST_OUTFITS_MEMBER
+    Formlist function Get()
+        return p_FORMLIST_OUTFITS_MEMBER
+    endFunction
+    function Set(Formlist val)
+        if p_FORMLIST_OUTFITS_MEMBER == none
+            p_FORMLIST_OUTFITS_MEMBER = val
+        endIf
+    endFunction
+endProperty
+
+Formlist property FORMLIST_NONE
+    Formlist function Get()
+        return p_FORMLIST_NONE
+    endFunction
+    function Set(Formlist val)
+        if p_FORMLIST_NONE == none
+            p_FORMLIST_NONE = val
+        endIf
+    endFunction
+endProperty
+
 Faction property FACTION_MEMBER
     Faction function Get()
         return p_FACTION_MEMBER
@@ -812,6 +838,17 @@ Weapon property WEAPON_BLANK
     endFunction
 endProperty
 
+Armor property ARMOR_BLANK
+    Armor function Get()
+        return p_ARMOR_BLANK
+    endFunction
+    function Set(Armor val)
+        if p_ARMOR_BLANK == none
+            p_ARMOR_BLANK = val
+        endIf
+    endFunction
+endProperty
+
 VoiceType property VOICE_FEMALE_COWARD
     VoiceType function Get()
         return p_VOICE_FEMALE_COWARD
@@ -823,9 +860,20 @@ VoiceType property VOICE_FEMALE_COWARD
     endFunction
 endProperty
 
+Key property KEY_LOCK
+    Key function Get()
+        return p_KEY_LOCK
+    endFunction
+    function Set(Key val)
+        if p_KEY_LOCK == none
+            p_KEY_LOCK = val
+        endIf
+    endFunction
+endProperty
+
 int property VERSION_MAJOR                  =     0 autoReadOnly hidden; set manually upon each release
-int property VERSION_MINOR                  =     7 autoReadOnly hidden; set manually upon each release
-int property VERSION_PATCH                  =     6 autoReadOnly hidden; set manually upon each release
+int property VERSION_MINOR                  =     8 autoReadOnly hidden; set manually upon each release
+int property VERSION_PATCH                  =     0 autoReadOnly hidden; set manually upon each release
 
 int property MIN_DISPLAY                    =     1 autoReadOnly hidden
 int property MAX_DISPLAY                    =     8 autoReadOnly hidden
