@@ -296,6 +296,10 @@ function Open_Inventory(Actor ref_actor)
 endFunction
 
 function Token(Actor ref_actor, MiscObject misc_token, int count_token = 1)
+    if !ref_actor || !misc_token
+        return
+    endIf
+
     int curr_count_token = ref_actor.GetItemCount(misc_token)
     if curr_count_token != count_token
         if curr_count_token > 0
@@ -306,6 +310,10 @@ function Token(Actor ref_actor, MiscObject misc_token, int count_token = 1)
 endFunction
 
 function Untoken(Actor ref_actor, MiscObject misc_token)
+    if !ref_actor || !misc_token
+        return
+    endIf
+    
     int curr_count_token = ref_actor.GetItemCount(misc_token)
     if curr_count_token > 0
         ref_actor.RemoveItem(misc_token, curr_count_token, true)
@@ -419,6 +427,10 @@ int function Toggle_Move(Actor ref_actor)
 endFunction
 
 function Pacify(Actor ref_actor)
+    if !ref_actor
+        return
+    endIf
+
     ref_actor.SetActorValue("Aggression", 0)
     ref_actor.StopCombat()
     ref_actor.StopCombatAlarm()

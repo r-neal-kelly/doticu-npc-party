@@ -232,13 +232,14 @@ int function Destroy_Member(Actor ref_actor, bool delete_clone = false)
         delete_clone = true
     endIf
 
-    if !is_clone
-        ; we only keep originals that are members
-        NPCS.Unregister(ref_actor)
-    elseIf is_clone && delete_clone
-        ; we don't remove a clone unless we also delete them
-        ; so we know what clones have been made with the mod
+    ; this must be done after alias destruction/unmember
+    if is_clone && delete_clone
+        ; also unregsiters
         NPCS.Unclone(ref_actor)
+    else
+        ; even though we don't remove clones from the
+        ; system we still need to unregister them
+        NPCS.Unregister(ref_actor)
     endIf
 
     return CODES.SUCCESS

@@ -421,6 +421,10 @@ bool function Has_Alias(int id_alias, Actor ref_actor)
 endFunction
 
 ReferenceAlias function Get_Alias(int id_alias, Actor ref_actor)
+    if !ref_actor
+        return none
+    endIf
+    
     if p_Has_Alias(id_alias, ref_actor)
         return f_Get_Alias(id_alias)
     else

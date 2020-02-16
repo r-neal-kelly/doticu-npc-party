@@ -58,7 +58,10 @@ function f_Destroy()
     ACTORS.Pacify(p_ref_actor)
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_GREETER)
     Clear()
-    p_ref_actor.EvaluatePackage()
+
+    if p_ref_actor
+        p_ref_actor.EvaluatePackage()
+    endIf
 
     p_time_waited = 0.0
     p_ref_actor = none

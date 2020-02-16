@@ -71,18 +71,6 @@ endProperty
 ; Private Constants
 doticu_npcp_data        p_DATA                      =  none
 
-Outfit property p_OUTFIT_MEMBER hidden
-    Outfit function Get()
-        return CONSTS.FORMLIST_OUTFITS_MEMBER.GetAt(p_id_alias) as Outfit
-    endFunction
-endProperty
-
-LeveledItem property p_LEVELED_OUTFIT hidden
-    LeveledItem function Get()
-        return p_OUTFIT_MEMBER.GetNthPart(1) as LeveledItem
-    endFunction
-endProperty
-
 ; Private Variables
 bool                    p_is_created                = false
 int                     p_id_alias                  =    -1
@@ -314,6 +302,7 @@ function p_Create_Outfit()
             p_ref_actor.RemoveAllItems(p_container2_pack, false, true)
         endIf
         p_outfit2_current = p_outfit2_member
+        p_outfit2_previous = p_outfit2_current
 
     f_Unlock_Resources()
 endFunction
@@ -369,9 +358,6 @@ function p_Restore()
 
         ACTORS.Set_Factions(p_ref_actor, p_prev_factions, p_prev_faction_ranks)
         p_ref_actor.SetCrimeFaction(p_prev_faction_crime)
-
-        p_outfit2_default.Cache_Outfit(NPCS.Get_Default_Outfit(p_ref_actor))
-        p_outfit2_default.Set(p_ref_actor, true)
 
     f_Unlock_Resources()
 endFunction
@@ -733,23 +719,33 @@ function p_Outfit(bool do_force = false)
             p_outfit_vanilla = NPCS.Get_Default_Outfit(p_ref_actor)
         endIf
 
-        ; whenever p_outfit_vanilla is changed, we need to fill it in NPCS, unless we keep the default outfit.
+NPCS.Lock_Base(p_ref_actor)
+        ; we need to lock so that one ref at a time can do this check. we don't want
+        ; every ref to get the new outfit, or we may be changing outfit on another ref
+        Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(p_ref_actor)
+        Outfit outfit_current = NPCS.Get_Current_Outfit(p_ref_actor)
+        if outfit_vanilla != outfit_current && p_outfit_vanilla != outfit_vanilla
+            p_outfit_vanilla = outfit_vanilla
+            p_do_outfit_vanilla = true
+            ACTORS.Set_Base_Outfit(p_ref_actor, outfit_current)
+        endIf
+NPCS.Unlock_Base(p_ref_actor)
 
-        if p_outfit2_previous != p_outfit2_current
-            if p_outfit2_current == p_outfit2_vanilla
-                p_outfit2_current.Cache_Outfit(p_outfit_vanilla)
-            elseIf p_outfit2_current == p_outfit2_default
-                p_outfit2_current.Cache_Outfit(NPCS.Get_Default_Outfit(p_ref_actor))
-            endIf
-            p_outfit2_previous = p_outfit2_current
-            p_outfit2_current.Set(p_ref_actor, true)
-        elseIf p_do_outfit_vanilla
+        if p_do_outfit_vanilla
             p_do_outfit_vanilla = false
             if !p_outfit2_vanilla
                 p_outfit2_vanilla = OUTFITS.Create_Vanilla()
             endIf
             p_outfit2_current = p_outfit2_vanilla
             p_outfit2_current.Cache_Outfit(p_outfit_vanilla)
+            p_outfit2_current.Set(p_ref_actor, true)
+        elseIf p_outfit2_previous != p_outfit2_current
+            if p_outfit2_current == p_outfit2_vanilla
+                p_outfit2_current.Cache_Outfit(p_outfit_vanilla)
+            elseIf p_outfit2_current == p_outfit2_default
+                p_outfit2_current.Cache_Outfit(NPCS.Get_Default_Outfit(p_ref_actor))
+            endIf
+            p_outfit2_previous = p_outfit2_current
             p_outfit2_current.Set(p_ref_actor, true)
         else
             p_outfit2_current.Set(p_ref_actor, do_force)
@@ -1874,6 +1870,8 @@ event On_Members_Unmember()
 endEvent
 
 event On_Load_Mod()
+    ; OnLoad() is not always called, if the npc was loaded upon game exit.
+    ; so we do the extra check here, because paralysis doesn't stick
     if Is_Paralyzed()
         p_Reparalyze()
     endIf
@@ -1887,9 +1885,22 @@ event OnLoad()
     if Is_Paralyzed()
         p_Reparalyze()
     endIf
-    p_Outfit()
+    
+    if Is_Follower()
+        ; when a player teammate, the engine doesn't force the entire outfit on them.
+        ; we go ahead and do checks, just in case something has been added by script
+        p_Outfit()
+    else
+        ; we go ahead and run a quick update because the engine doesn't auto equip
+        ; non-outfit items on non-teammates. it's faster than checking first
+        ACTORS.Update_Equipment(p_ref_actor)
 
-    Enforce(false)
+        ; as a regular member, who is not a player teammate, the full outfit will be
+        ; forced on them when reenabled, but not always on load, so we do the checks
+        p_Outfit()
+    endIf
+
+    Enforce(false); enforce everything but outfit
 endEvent
 
 event OnActivate(ObjectReference ref_activator)
@@ -1902,29 +1913,20 @@ event OnActivate(ObjectReference ref_activator)
     if Is_Alive()
         Enforce(false)
 
-        Outfit outfit_vanilla_start = ACTORS.Get_Base_Outfit(p_ref_actor)
-
         ; instead of polling, we might be able to set up a package that happens only when in dialogue
         ; and wait for the Package change or end event to let us know dialogue is over.
         while Exists() && p_ref_actor && p_ref_actor.IsInDialogueWithPlayer()
+            ; we could do an outfit in here if we detect vanilla change
+            ; we might also have npcp commands start up this func if it
+            ; wasn't already called. it would lead to more consistency.
             Utility.Wait(2)
         endWhile
 
-        Outfit outfit_vanilla_stop = ACTORS.Get_Base_Outfit(p_ref_actor)
-
-        if outfit_vanilla_start && outfit_vanilla_stop && p_outfit_vanilla
-            if outfit_vanilla_start != outfit_vanilla_stop && outfit_vanilla_stop != p_OUTFIT_MEMBER
-                if p_outfit_vanilla != outfit_vanilla_stop
-f_Lock_Resources()
-                    p_do_outfit_vanilla = true
-                    p_outfit_vanilla = outfit_vanilla_stop
-                    ;ACTORS.Set_Base_Outfit(p_ref_actor, NPCS.Get_Current_Outfit(p_ref_actor))
-f_Unlock_Resources()
-                endIf
-            endIf
+        ; it's entirely possible that the ref may no longer be a member at this
+        ; point through dialogue selections. so we need to check to avoid error
+        if Exists()
+            p_Outfit()
         endIf
-
-        p_Outfit()
     else
         p_outfit2_current.Put()
         p_Outfit()
@@ -1963,7 +1965,7 @@ event OnCombatStateChanged(Actor ref_target, int code_combat)
     if code_combat == CODES.COMBAT_NO
         Enforce()
     elseIf code_combat == CODES.COMBAT_YES
-
+        ;Enforce(false); no outfitting, too slow
     elseIf code_combat == CODES.COMBAT_SEARCHING
         
     endIf

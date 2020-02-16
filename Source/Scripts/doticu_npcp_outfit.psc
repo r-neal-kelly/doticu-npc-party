@@ -35,6 +35,11 @@ doticu_npcp_containers property CONTAINERS hidden
         return p_DATA.MODS.FUNCS.CONTAINERS
     endFunction
 endProperty
+doticu_npcp_outfits property OUTFITS hidden
+    doticu_npcp_outfits function Get()
+        return p_DATA.MODS.FUNCS.OUTFITS
+    endFunction
+endProperty
 doticu_npcp_logs property LOGS hidden
     doticu_npcp_logs function Get()
         return p_DATA.MODS.FUNCS.LOGS
@@ -184,41 +189,23 @@ function p_Set(Actor ref_actor, bool do_force = false)
     int idx_forms
     Form form_item
     bool is_teammate = ref_actor.IsPlayerTeammate()
-    ObjectReference ref_junk = CONTAINERS.Create_Temp()
 
 NPCS.Lock_Base(ref_actor)
-    ; this ensures that our modded outfit is worn. we need that blank armor
-    if ACTORS.Get_Base_Outfit(ref_actor).GetNthPart(0) != CONSTS.ARMOR_BLANK
-        NPCS.Set_Current_Outfit(ref_actor, CONSTS.OUTFIT_EMPTY)
-        ref_actor.SetOutfit(NPCS.Get_Current_Outfit(ref_actor))
-        NPCS.Set_Current_Outfit(ref_actor, NPCS.Get_Default_Outfit(ref_actor))
+    ; this ensures that our modded outfit is worn. we need that blank armor.
+    ; we can speed up this check by looking for blank armor on the base outfit 
+    Outfit outfit_current = NPCS.Get_Current_Outfit(ref_actor)
+    if ACTORS.Get_Base_Outfit(ref_actor) != outfit_current
+        ref_actor.SetOutfit(CONSTS.OUTFIT_TEMP)
+        ref_actor.SetOutfit(outfit_current)
     endIf
 NPCS.Unlock_Base(ref_actor)
 
     ; this will stop the actor from rendering while we manage its inventory
     ref_actor.SetPlayerTeammate(false, false)
 
-    ; it's error prone to remove items from actor unless they are cached
-    idx_forms = ref_actor.GetNumItems()
-    while idx_forms > 0
-        idx_forms -= 1
-        form_item = ref_actor.GetNthForm(idx_forms)
-        if form_item && !(form_item as ObjectReference) && form_item != CONSTS.ARMOR_BLANK as Form
-            ; we completely avoid any references and leave them alone.
-            if form_item.IsPlayable() || ref_actor.IsEquipped(form_item)
-                ; any playable item is fair game, but only equipped unplayables are accounted for
-                ref_junk.AddItem(form_item, ref_actor.GetItemCount(form_item), true)
-            endIf
-        endIf
-    endWhile
-
-    ; cleaning up the inventory of any junk is essential to controlling the outfit
-    idx_forms = ref_junk.GetNumItems()
-    while idx_forms > 0
-        idx_forms -= 1
-        form_item = ref_junk.GetNthForm(idx_forms)
-        ref_actor.RemoveItem(form_item, ref_junk.GetItemCount(form_item), true, ref_junk)
-    endWhile
+    ; this will completely wipe the inventory of everything but tokens
+    ; it may be a hit on performace to call out to this function. will see
+    OUTFITS.Remove_Junk(ref_actor)
 
     ; and now we can cleanly add all the outfit items
     idx_forms = p_cache_outfit.GetNumItems()
@@ -244,9 +231,6 @@ NPCS.Unlock_Base(ref_actor)
     if !is_teammate
         ref_actor.SetPlayerTeammate(false, false)
     endIf
-
-    ref_junk.Disable()
-    ref_junk.Delete()
 endFunction
 
 function p_Set_Dead(Actor ref_actor)

@@ -54,7 +54,9 @@ doticu_npcp_vector_form function Create_Form_Vector(int init_max = 0, Form item_
 endFunction
 
 function Destroy_Form_Vector(doticu_npcp_vector_form ref_vec)
-    ref_vec.f_Destroy()
-    ref_vec.Disable()
-    ref_vec.Delete()
+    if ref_vec
+        ref_vec.f_Destroy()
+        ref_vec.Disable()
+        ref_vec.Delete()
+    endIf
 endFunction
