@@ -2,10 +2,14 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include <ShlObj.h>
+#include "common/IDebugLog.h"
+
 #include "skse64/PluginAPI.h"
 #include "doticu_npcp.h"
 
 // Variables
+static IDebugLog gLog;
 static PluginHandle g_handle_plugin = kPluginHandle_Invalid;
 static SKSEPapyrusInterface *g_papyrus = NULL;
 
@@ -23,6 +27,9 @@ extern "C" {
     }
 
     bool SKSEPlugin_Load(const SKSEInterface *skse) {
+        // this is what allows use to use _MESSAGE and friends.
+        gLog.OpenRelative(CSIDL_MYDOCUMENTS, "\\My Games\\Skyrim Special Edition\\SKSE\\doticu_npcp.log");
+
         g_papyrus = (SKSEPapyrusInterface *)skse->QueryInterface(kInterface_Papyrus);
 
         bool did_work = g_papyrus->Register(doticu_npcp::Register_Functions);
