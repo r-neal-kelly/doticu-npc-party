@@ -719,7 +719,7 @@ function p_Outfit(bool do_force = false)
             p_outfit_vanilla = NPCS.Get_Default_Outfit(p_ref_actor)
         endIf
 
-NPCS.Lock_Base(p_ref_actor)
+;/NPCS.Lock_Base(p_ref_actor)
         ; we need to lock so that one ref at a time can do this check. we don't want
         ; every ref to get the new outfit, or we may be changing outfit on another ref
         Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(p_ref_actor)
@@ -729,7 +729,7 @@ NPCS.Lock_Base(p_ref_actor)
             p_do_outfit_vanilla = true
             ACTORS.Set_Base_Outfit(p_ref_actor, outfit_current)
         endIf
-NPCS.Unlock_Base(p_ref_actor)
+NPCS.Unlock_Base(p_ref_actor)/;
 
         if p_do_outfit_vanilla
             p_do_outfit_vanilla = false

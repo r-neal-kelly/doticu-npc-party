@@ -294,6 +294,10 @@ function p_Set_Base_Outfit(int idx_bases, Outfit outfit_vanilla)
     (p_vec_bases.At(idx_bases) as ActorBase).SetOutfit(outfit_vanilla)
 endFunction
 
+function Set_Reference_Outfit(int idx_bases, Outfit outfit_vanilla)
+    ; this will be useful when updating refs to avoid the horrid outfit bug
+endFunction
+
 bool function p_Has_Base(Actor ref_actor)
     return p_vec_bases.Find(ACTORS.Get_Real_Base(ref_actor) as Form) > -1
 endFunction
@@ -431,7 +435,7 @@ function p_Try_Create_Current_Outfit(int idx_bases)
         return
     endIf
 
-    ; don't forget to actually set the current outfit on base!
+    ; don't forget to actually set the current outfit in system!
     p_vec_outfits_curr.Set(idx_bases, outfit_current)
 endFunction
 
@@ -1065,6 +1069,15 @@ p_Lock()
         idx_members -= 1
         ref_member = arr_members[idx_members] as doticu_npcp_member
         ref_actor = ref_member.Get_Actor()
+
+        ; so we really need to set the default outfit for every npc in here, because they could
+        ; be naked after we've deleted all the outfits from our mod's previous version
+
+        ; seriously considering going back to just the one method and abandoning hybrid, because
+        ; of the terrible outfit bug which is not really fixable on my end so far as I know.
+        ; both of my favorite outfitting mods, which both use the custom vanilla outfit method
+        ; cause the bug just as mine does. it's deeply embedded within the engine and only SKSE
+        ; has hopes of accessing it, or perhaps engine fixes.
 
         ; it's possible that someone uninstalled a mod with the actor and they are now none
         if ref_actor

@@ -325,3 +325,43 @@ function Remove_Junk(Actor ref_actor)
     ref_junk.Disable()
     ref_junk.Delete()
 endFunction
+
+function Remove_Junk_Except(Actor ref_actor, Form form_exception)
+    int idx_forms
+    Form form_item
+    ObjectReference ref_junk = CONTAINERS.Create_Temp()
+
+    ; we add and remove a item so that the outfit has been filled by the engine once.
+    ; this can happen if the base outfit for this ref is set but was never rendered.
+    ref_actor.AddItem(CONSTS.WEAPON_BLANK, 1, true)
+    ref_actor.RemoveItem(CONSTS.WEAPON_BLANK, 1, true)
+
+    ; it's error prone to remove items from actor unless they are cached
+    idx_forms = ref_actor.GetNumItems()
+    while idx_forms > 0
+        idx_forms -= 1
+        form_item = ref_actor.GetNthForm(idx_forms)
+        if form_item && !(form_item as ObjectReference) && form_item != form_exception
+            ; we completely avoid any references and leave them alone. we must leave blank armor for no reset
+            if form_item.IsPlayable() || ref_actor.IsEquipped(form_item)
+                ; any playable item is fair game, but only equipped unplayables are accounted
+                ; for because some unplayable items are tokens from this mod and other mods
+                ref_junk.AddItem(form_item, ref_actor.GetItemCount(form_item), true)
+            endIf
+        endIf
+    endWhile
+
+    ; cleaning up the inventory of any junk is essential to controlling the outfit
+    idx_forms = ref_junk.GetNumItems()
+    while idx_forms > 0
+        idx_forms -= 1
+        form_item = ref_junk.GetNthForm(idx_forms)
+        ref_actor.RemoveItem(form_item, ref_junk.GetItemCount(form_item), true, ref_junk)
+    endWhile
+
+    ref_actor.RemoveItem(form_exception, ref_actor.GetItemCount(form_exception) - 1, true, ref_junk)
+
+    ; it doesn't hurt to cleanup manullay, especially if you don't trust the garbage collector to do its **** job
+    ref_junk.Disable()
+    ref_junk.Delete()
+endFunction

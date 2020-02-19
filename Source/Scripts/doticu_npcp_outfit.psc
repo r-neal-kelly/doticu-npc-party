@@ -61,6 +61,7 @@ string                  p_str_name          =    ""
 int                     p_code_create       =     0; OUTFIT_VANILLA, OUTFIT_DEFAULT
 ObjectReference         p_cache_outfit      =  none
 ObjectReference         p_cache_self        =  none
+Form                    p_form_linchpin     =  none
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA, string str_name, int code_create = 0)
@@ -94,7 +95,7 @@ function f_Register()
 endFunction
 
 ; Private Methods
-bool function p_Has_Changed(Actor ref_actor)
+bool function p_Has_Changed_Old(Actor ref_actor)
     int idx_forms
     Form form_item
 
@@ -167,7 +168,7 @@ bool function p_Has_Changed(Actor ref_actor)
     return false
 endFunction
 
-function p_Set(Actor ref_actor, bool do_force = false)
+function p_Set_Old(Actor ref_actor, bool do_force = false)
     ; just in case
     if !p_cache_outfit
         Cache_Outfit(none)
@@ -181,7 +182,7 @@ function p_Set(Actor ref_actor, bool do_force = false)
         return
     endIf
 
-    if !do_force && !p_Has_Changed(ref_actor)
+    if !do_force && !p_Has_Changed_Old(ref_actor)
         ACTORS.Update_Equipment(ref_actor)
         return
     endIf
@@ -226,6 +227,166 @@ NPCS.Unlock_Base(ref_actor)
     ref_actor.SetPlayerTeammate(true, true)
     ref_actor.AddItem(CONSTS.WEAPON_BLANK, 1, true)
     ref_actor.RemoveItem(CONSTS.WEAPON_BLANK, 1, true, none)
+
+    ; make sure to restore render status
+    if !is_teammate
+        ref_actor.SetPlayerTeammate(false, false)
+    endIf
+endFunction
+
+function p_Set_Linchpin(Actor ref_actor)
+    int idx_forms
+    int idx_forms_temp
+    Form form_item
+
+NPCS.Lock_Base(ref_actor)
+    Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(ref_actor)
+    ref_actor.SetOutfit(CONSTS.OUTFIT_TEMP)
+FUNCS.Print_Contents(ref_actor)
+    idx_forms_temp = ref_actor.GetNumItems()
+    ref_actor.SetOutfit(outfit_vanilla)
+FUNCS.Print_Contents(ref_actor)
+    idx_forms = ref_actor.GetNumItems()
+NPCS.Unlock_Base(ref_actor)
+
+    p_form_linchpin = none
+    while idx_forms > idx_forms_temp
+        idx_forms -= 1
+        form_item = ref_actor.GetNthForm(idx_forms)
+        if form_item as Armor && ref_actor.IsEquipped(form_item)
+            p_form_linchpin = form_item
+            return
+        endIf
+    endWhile
+endFunction
+
+bool function p_Has_Changed_New(Actor ref_actor)
+    ; I think the most important thing is if the actor has something equipped that not's in either cache.
+    int idx_forms
+    Form form_item
+
+    if  ref_actor.IsEquipped(p_form_linchpin) && \
+        p_cache_outfit.GetItemCount(p_form_linchpin) < 1 && \
+        p_cache_self.GetItemCount(p_form_linchpin) < 1
+        return true
+    endIf
+
+    ; ref_actor may have items that aren't in the oufit
+    idx_forms = ref_actor.GetNumItems()
+    while idx_forms > 0
+        idx_forms -= 1
+        form_item = ref_actor.GetNthForm(idx_forms)
+        if form_item && !(form_item as ObjectReference) && form_item != p_form_linchpin
+            ; we completely avoid any references and leave them alone.
+            ; we need to keep the linchpin to avoid engine refreshing outfit.
+            if form_item.IsPlayable() || ref_actor.IsEquipped(form_item)
+                ; any playable item is fair game, but only equipped unplayables are accounted for
+                if p_cache_outfit.GetItemCount(form_item) < 1 && p_cache_self.GetItemCount(form_item) < 1
+                    return true
+                endIf
+            endIf
+        endIf
+    endWhile
+
+    ; ref_actor may be missing items that are in the outfit
+    idx_forms = p_cache_outfit.GetNumItems()
+    while idx_forms > 0
+        idx_forms -= 1
+        form_item = p_cache_outfit.GetNthForm(idx_forms)
+        if ref_actor.GetItemCount(form_item) != p_cache_outfit.GetItemCount(form_item) + p_cache_self.GetItemCount(form_item)
+            return true
+        endIf
+    endWhile
+
+    idx_forms = p_cache_self.GetNumItems()
+    while idx_forms > 0
+        idx_forms -= 1
+        form_item = p_cache_self.GetNthForm(idx_forms)
+        if ref_actor.GetItemCount(form_item) != p_cache_outfit.GetItemCount(form_item) + p_cache_self.GetItemCount(form_item)
+            return true
+        endIf
+    endWhile
+
+    return false
+endFunction
+
+function p_Set_New(Actor ref_actor, bool do_force = false)
+    ; just in case
+    if !p_cache_outfit
+        Cache_Outfit(none)
+    endIf
+    if !p_cache_self
+        Cache_Self()
+    endIf
+
+    if ACTORS.Is_Dead(ref_actor)
+        p_Set_Dead(ref_actor)
+        return
+    endIf
+
+    if !p_form_linchpin
+        p_Set_Linchpin(ref_actor)
+    endIf
+MiscUtil.PrintConsole(p_form_linchpin + " " + p_form_linchpin.GetName())
+
+    if !do_force && !p_Has_Changed_New(ref_actor)
+        return
+    endIf
+
+    int idx_forms
+    Form form_item
+    bool is_teammate = ref_actor.IsPlayerTeammate()
+
+    ; this will stop the actor from rendering non-outfit items while we manage its inventory
+    ref_actor.SetPlayerTeammate(false, false)
+
+    OUTFITS.Remove_Junk_Except(ref_actor, p_form_linchpin)
+
+    ; and now we can cleanly add all the outfit items
+    idx_forms = p_cache_outfit.GetNumItems()
+    while idx_forms > 0
+        idx_forms -= 1
+        form_item = p_cache_outfit.GetNthForm(idx_forms)
+        if form_item == p_form_linchpin
+            ref_actor.AddItem(form_item, p_cache_outfit.GetItemCount(form_item) - 1, true)
+        else
+            ref_actor.AddItem(form_item, p_cache_outfit.GetItemCount(form_item), true)
+        endIf
+    endWhile
+
+    idx_forms = p_cache_self.GetNumItems()
+    while idx_forms > 0
+        idx_forms -= 1
+        form_item = p_cache_self.GetNthForm(idx_forms)
+        if form_item == p_form_linchpin
+            ref_actor.AddItem(form_item, p_cache_self.GetItemCount(form_item) - 1, true)
+        else
+            ref_actor.AddItem(form_item, p_cache_self.GetItemCount(form_item), true)
+        endIf
+    endWhile
+
+    bool disabled_linchpin = false
+    int slot_mask
+    if p_cache_outfit.GetItemCount(p_form_linchpin) < 1 && p_cache_self.GetItemCount(p_form_linchpin) < 1
+NPCS.Lock_Base(ref_actor)
+        slot_mask = (p_form_linchpin as Armor).GetSlotMask()
+        (p_form_linchpin as Armor).SetSlotMask(0)
+NPCS.Unlock_Base(ref_actor)
+        disabled_linchpin = true
+    endIf
+
+    ref_actor.UnequipItemEx(p_form_linchpin)
+
+    ; doing this allows us to render all at once, which is far more efficient
+    ref_actor.SetPlayerTeammate(true, true)
+    ref_actor.AddItem(CONSTS.WEAPON_BLANK, 1, true)
+    ref_actor.RemoveItem(CONSTS.WEAPON_BLANK, 1, true, none)
+
+    if disabled_linchpin
+NPCS.Lock_Base(ref_actor)
+        (p_form_linchpin as Armor).SetSlotMask(slot_mask)
+NPCS.Unlock_Base(ref_actor)
+    endIf
 
     ; make sure to restore render status
     if !is_teammate
@@ -397,7 +558,7 @@ endFunction
 
 function Set(Actor ref_actor, bool do_force = false)
     if ref_actor
-        p_Set(ref_actor, do_force)
+        p_Set_Old(ref_actor, do_force)
     endIf
 endFunction
 

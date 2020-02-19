@@ -30,6 +30,16 @@ doticu_npcp_actors property ACTORS hidden
         return p_DATA.MODS.FUNCS.ACTORS
     endFunction
 endProperty
+doticu_npcp_npcs property NPCS hidden
+    doticu_npcp_npcs function Get()
+        return p_DATA.MODS.FUNCS.NPCS
+    endFunction
+endProperty
+doticu_npcp_members property MEMBERS hidden
+    doticu_npcp_members function Get()
+        return p_DATA.MODS.MEMBERS
+    endFunction
+endProperty
 doticu_npcp_followers property FOLLOWERS hidden
     doticu_npcp_followers function Get()
         return p_DATA.MODS.FOLLOWERS
@@ -132,7 +142,6 @@ event On_Init_Mod()
 endEvent
 
 event OnPlayerLoadGame()
-    ;p_Update_Outfits(ACTOR_PLAYER.GetParentCell()); maybe put this behind a bool
     MAIN.f_Load_Mod()
 endEvent
 
