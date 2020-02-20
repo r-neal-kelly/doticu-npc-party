@@ -1899,7 +1899,7 @@ event OnLoad()
 
         ; as a regular member, who is not a player teammate, the full outfit will be
         ; forced on them when reenabled, but not always on load, so we do the checks
-        p_Outfit()
+        ;p_Outfit()
     endIf
 
     Enforce(false); enforce everything but outfit

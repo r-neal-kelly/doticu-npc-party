@@ -204,7 +204,7 @@ NPCS.Unlock_Base(ref_actor)
     ; render
     ACTORS.Update_Equipment(ref_actor)
 
-    ; don't trust the garbage collector
+    ; help the garbage collector
     ref_temp.Disable()
     ref_temp.Delete()
 
@@ -318,7 +318,7 @@ function Remove_Junk(Actor ref_actor)
         ref_actor.RemoveItem(form_item, ref_junk.GetItemCount(form_item), true, ref_junk)
     endWhile
 
-    ; it doesn't hurt to cleanup manullay, especially if you don't trust the garbage collector to do its **** job
+    ; it doesn't hurt to cleanup manually
     ref_junk.Disable()
     ref_junk.Delete()
 endFunction

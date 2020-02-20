@@ -56,9 +56,6 @@ endFunction
 function Update_Keys()
     UnregisterForAllKeys()
 
-    ; temp
-    RegisterForKey(22); U
-
     ; Followers
     if VARS.key_fs_summon_all > -1
         RegisterForKey(VARS.key_fs_summon_all)
@@ -377,15 +374,6 @@ event OnKeyDown(int code_key)
     endIf
     
     Actor ref_actor = Game.GetCurrentCrosshairRef() as Actor
-
-    ; temp
-    if code_key == 22; U
-        ;Outfit outfit_current = ref_actor.GetLeveledActorBase().GetOutfit()
-        ref_actor.SetOutfit(CONSTS.OUTFIT_TEMP)
-        ref_actor.SetOutfit(p_DATA.MODS.FUNCS.NPCS.Get_Default_Outfit(ref_actor))
-        ;ref_actor.GetLeveledActorBase().SetOutfit(CONSTS.OUTFIT_TEMP)
-        Debug.Notification("switching to default outfit.")
-    endIf
 
     ; can add a 'Yell' command to topics, so that all funcs can be used in dialogue, e.g. "Summon All"
 

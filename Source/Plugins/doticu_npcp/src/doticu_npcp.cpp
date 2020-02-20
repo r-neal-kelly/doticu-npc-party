@@ -2,12 +2,15 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "skse64/GameExtraData.h"
+#include "skse64/GameRTTI.h"
+#include "skse64/PapyrusActor.h"
 #include "doticu_npcp.h"
 
 namespace doticu_npcp {
 
     void Outfit_Add_Item(StaticFunctionTag *, BGSOutfit *outfit, TESForm *form_item) {
-        // changes are lost when the outfit is requipped, but not on load save game
+        // changes are NOT lost on load game, but they are lost after changing outfits.
         if (!outfit || !form_item) {
             return;
         }
@@ -21,10 +24,12 @@ namespace doticu_npcp {
         if (idx_item < 0) {
             arr_items->Push(form_item);
         }
+
+        // we could try TESForm MarkChanged to see if that keeps changing outfits
     }
 
     void Outfit_Remove_Item(StaticFunctionTag *, BGSOutfit *outfit, TESForm *form_item) {
-        // changes are lost when the outfit is requipped, but not on load save game
+        // changes are NOT lost on load game, but they are lost after changing outfits.
         if (!outfit || !form_item) {
             return;
         }
@@ -39,6 +44,8 @@ namespace doticu_npcp {
             // as long as it's greater than -1, it should be fine to cast to unsigned
             arr_items->Remove((UInt64)idx_item);
         }
+
+        // we could try TESForm MarkChanged to see if that keeps changing outfits
     }
 
     void ActorBase_Set_Outfit(TESNPC *base_actor, BGSOutfit *outfit, bool is_sleep_outfit) {
@@ -46,6 +53,7 @@ namespace doticu_npcp {
             return;
         }
         
+        // this may cause a leak, not sure.
         if (is_sleep_outfit) {
             base_actor->sleepOutfit = outfit;
         } else {
@@ -60,6 +68,7 @@ namespace doticu_npcp {
 
         // this is the leveled/real base which carries the outfits
         TESNPC *base_actor = (TESNPC *)ref_actor->baseForm;
+        // this may cause a leak, not sure.
         if (is_sleep_outfit) {
             base_actor->sleepOutfit = outfit;
         } else {
@@ -67,17 +76,59 @@ namespace doticu_npcp {
         }
 
         // passing true keeps items that were previously in inventory.
-        // using this does indeed fix the horrible outfit bug but it
-        // sometimes keeps items that are equipped over the default
+        // using this does indeed avoid the horrible outfit bug.
         ref_actor->ResetInventory(true);
 
-        // you can use GetNumForms and GetNthForm to traverse ref_actor inventory
-        // you can get the ExtraContainerChanges, see either of the above's implementation
-        // use the ExtraContainerChanges to get the InventoryEntryData and see if 'isItemWorn'
-        // and you can check if the item is in outfit by finding it in array
+        tArray<TESForm *> *arr_outfit_items = &outfit->armorOrLeveledItemArray;
+        if (!arr_outfit_items) {
+            return;
+        }
 
-        // now how to remove it? it might be way more efficient to just try and go through it all myself.
-        // I'm really surprise how complicated the inventory system is
+        // we make sure everything in outfit is equipped, because the actor may have better equipment
+        UInt64 idx = 0;
+        TESForm *form_outfit_item;
+        while (idx < arr_outfit_items->count) {
+            arr_outfit_items->GetNthItem(idx, form_outfit_item);
+            if (form_outfit_item) {
+                papyrusActor::EquipItemEx(ref_actor, form_outfit_item, 0, false, false);
+            }
+            idx += 1;
+        }
+
+        return;
+
+
+
+        // I'm really surprised how complicated the inventory system is. I'm leaving this here to learn more later.
+        // extraData appears to be a list of of BSExtraData, which is a base-class of ExtraContainerChanges.
+        // if I understand correctly, this object is used to add stuff in addition to the base container of ref.
+        // GetByType finds the BSExtraData in the list that we are looking for in particular.
+        ExtraContainerChanges *container_changes = (ExtraContainerChanges *)(ref_actor->extraData.GetByType(kExtraData_ContainerChanges));
+        if (!container_changes) {
+            return;
+        }
+
+        // this is a list of all the different items that are in the extra container, as far as I understand
+        tList<InventoryEntryData> *list_entries = container_changes->data->objList;
+        if (!list_entries) {
+            return;
+        }
+
+        // it's interesting that the print out shows some of the forms multiple times.
+        // I understand there is some kind of split between items in the inventory, but
+        // it is not at all clear to me how that works.
+        tList<InventoryEntryData>::Iterator it = list_entries->Begin();
+        while (!it.End()) {
+            InventoryEntryData *entry = it.Get();
+            TESForm *form = entry->type;
+            TESFullName *full_name = DYNAMIC_CAST(form, TESForm, TESFullName);
+
+            _MESSAGE("    %s, is_playable: %d", full_name->name.data, form->IsPlayable());
+
+            ++it;
+        }
+
+        //InventoryEntryData *entry_data = container_changes->data->FindItemEntry();
 
         return;
     }

@@ -234,12 +234,12 @@ function p_Remove_Base(int idx_bases)
     Outfit outfit_default = p_vec_outfits_def.At(idx_bases) as Outfit
     doticu_npcp.Outfit_Remove_Item(outfit_default, CONSTS.ARMOR_BLANK as Form)
     
-    ; just in case the garbage collector doesn't feel like doing its job
+    ; just in case the garbage collector doesn't do it
     ObjectReference cache_default = p_vec_caches_def.At(idx_bases) as ObjectReference
     cache_default.Disable()
     cache_default.Delete()
     
-    ; if it's not obvious, I don't trust the garbage collector
+    ; help the garbage collecter
     doticu_npcp_vector_form vec_clones = p_vec_vec_clones.At(idx_bases) as doticu_npcp_vector_form
     doticu_npcp_vector_form vec_origs = p_vec_vec_origs.At(idx_bases) as doticu_npcp_vector_form
     if vec_clones
@@ -647,7 +647,7 @@ function u_0_8_0()
     ; 6. set the vanilla outfit for each member
 
 ; make sure there are no public calls to doticu_npcp_npcs while Locked
-p_Lock()
+;p_Lock()
 
     doticu_npcp_vector_form old_vec_bases       = p_vec_bases
     doticu_npcp_vector_form old_vec_outfits     = p_vec_outfits
@@ -816,12 +816,12 @@ p_Lock()
         if ref_actor
             ; we're checking that every member is currently a part of the system, in 
             ; the unexpected case that one was missed somehow in the previous version
-
             if ref_member.Is_Clone() && !p_Has_Clone(ref_actor)
                 LOGS.Print("    re-registering " + ref_member.Get_Name())
 
+                ActorBase base_actor = ACTORS.Get_Real_Base(ref_actor)
                 Outfit outfit_vanilla
-                if !p_vec_bases.Has(ACTORS.Get_Real_Base(ref_actor) as Form)
+                if !p_vec_bases.Has(base_actor as Form)
                     ; we are using a clone because it will get more accurate default items.
                     ; a disabled clone can still have their inventory checked and accouted for.
                     outfit_vanilla = ACTORS.Get_Base_Outfit(ref_actor)
@@ -834,7 +834,8 @@ p_Lock()
                     p_Add_Base(ref_clone, outfit_vanilla)
                     ref_clone.Delete()
                 else
-                    outfit_vanilla = Get_Default_Outfit(ref_actor)
+                    idx_bases = p_vec_bases.Find(base_actor as Form)
+                    outfit_vanilla = p_vec_outfits_def.At(idx_bases) as Outfit
                 endIf
 
                 p_Add_Clone(ref_actor)
@@ -842,8 +843,9 @@ p_Lock()
             elseIf !ref_member.Is_Clone() && !p_Has_Original(ref_actor)
                 LOGS.Print("    re-registering " + ref_member.Get_Name())
 
+                ActorBase base_actor = ACTORS.Get_Real_Base(ref_actor)
                 Outfit outfit_vanilla
-                if !p_vec_bases.Has(ACTORS.Get_Real_Base(ref_actor) as Form)
+                if !p_vec_bases.Has(base_actor as Form)
                     ; we are using a clone because it will get more accurate default items.
                     ; a disabled clone can still have their inventory checked and accouted for.
                     outfit_vanilla = ACTORS.Get_Base_Outfit(ref_actor)
@@ -856,7 +858,8 @@ p_Lock()
                     p_Add_Base(ref_clone, outfit_vanilla)
                     ref_clone.Delete()
                 else
-                    outfit_vanilla = Get_Default_Outfit(ref_actor)
+                    idx_bases = p_vec_bases.Find(base_actor as Form)
+                    outfit_vanilla = p_vec_outfits_def.At(idx_bases) as Outfit
                 endIf
 
                 p_Add_Original(ref_actor)
@@ -868,5 +871,5 @@ p_Lock()
     LOGS.Print("completed update.")
     Debug.MessageBox("NPC Party: The update has been completed. You should save your game. Thank you for waiting!")
 
-p_Unlock()
+;p_Unlock()
 endFunction

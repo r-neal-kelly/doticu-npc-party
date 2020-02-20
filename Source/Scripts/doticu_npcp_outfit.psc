@@ -310,7 +310,9 @@ function Cache_Outfit(Outfit outfit_vanilla)
     while idx_forms > 0
         idx_forms -= 1
         form_item = outfit_vanilla.GetNthPart(idx_forms)
-        p_cache_outfit.AddItem(form_item, 1, true); will expand LeveledItems!
+        if form_item != CONSTS.ARMOR_BLANK as Form
+            p_cache_outfit.AddItem(form_item, 1, true); will expand LeveledItems!
+        endIf
     endWhile
 endFunction
 
