@@ -8,8 +8,6 @@
 #include "skse64/PluginAPI.h"
 #include "doticu_npcp.h"
 
-// Variables
-static IDebugLog gLog;
 static PluginHandle g_handle_plugin = kPluginHandle_Invalid;
 static SKSEPapyrusInterface *g_papyrus = NULL;
 
@@ -34,9 +32,9 @@ extern "C" {
 
         bool did_work = g_papyrus->Register(doticu_npcp::Register_Functions);
         if (did_work) {
-            _MESSAGE("Did work.");
+            _MESSAGE("Added functions.");
         } else {
-            _MESSAGE("Didn't work.");
+            _MESSAGE("Couldn't add functions.");
         }
         
         return true;

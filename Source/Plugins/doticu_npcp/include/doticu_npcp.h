@@ -7,11 +7,17 @@
 #include "skse64/PapyrusArgs.h"
 #include "skse64/PapyrusVM.h"
 #include "skse64/PapyrusNativeFunctions.h"
+#include "skse64/GameForms.h"
+#include "skse64/GameReferences.h"
+
+static IDebugLog gLog;
 
 namespace doticu_npcp {
 
-    // we can only use certain types, SInt32 is one of them.
-    SInt32 Add_Ints(StaticFunctionTag *, SInt32 x, SInt32 y);
+    void Outfit_Add_Item(StaticFunctionTag *, BGSOutfit *outfit, TESForm *form_item);
+    void Outfit_Remove_Item(StaticFunctionTag *, BGSOutfit *outfit, TESForm *form_item);
+    void ActorBase_Set_Outfit(TESNPC *base_actor, BGSOutfit *outfit, bool is_sleep_outfit = false);
+    void Actor_Set_Outfit(Actor *ref_actor, BGSOutfit *outfit, bool is_sleep_outfit = false);
 
     bool Register_Functions(VMClassRegistry *registry);
 

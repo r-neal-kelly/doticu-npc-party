@@ -12,16 +12,6 @@ doticu_npcp_consts property CONSTS hidden
         return p_DATA.CONSTS
     endFunction
 endProperty
-doticu_npcp_codes property CODES hidden
-    doticu_npcp_codes function Get()
-        return p_DATA.CODES
-    endFunction
-endProperty
-doticu_npcp_vars property VARS hidden
-    doticu_npcp_vars function Get()
-        return p_DATA.VARS
-    endFunction
-endProperty
 doticu_npcp_vectors property VECTORS hidden
     doticu_npcp_vectors function Get()
         return p_DATA.MODS.FUNCS.VECTORS
@@ -61,9 +51,6 @@ doticu_npcp_vector_form p_vec_vec_origs     =  none; vecs of original members
 doticu_npcp_vector_form p_vec_vec_clones    =  none; vecs of cloned npcs, members or not
 doticu_npcp_vector_form p_vec_caches_def    =  none; caches of extra default stuff
 doticu_npcp_vector_form p_vec_outfits_def   =  none; default vanilla outfits
-doticu_npcp_vector_form p_vec_outfits_curr  =  none; current vanilla outfits which can be modified
-
-doticu_npcp_vector_form p_vec_outfits_pool  =  none; a pool of current vanilla outfits not in use (not a part of the system)
 
 ; to be deleted in a future release
 doticu_npcp_vector_form p_vec_outfits       =  none; default vanilla outfits --> p_vec_outfits_def
@@ -81,22 +68,15 @@ function f_Create(doticu_npcp_data DATA, int init_max = 8)
     p_vec_vec_clones = VECTORS.Create_Form_Vector(init_max, none, 1.5)
     p_vec_caches_def = VECTORS.Create_Form_Vector(init_max, none, 1.5)
     p_vec_outfits_def = VECTORS.Create_Form_Vector(init_max, none, 1.5)
-    p_vec_outfits_curr = VECTORS.Create_Form_Vector(init_max, none, 1.5)
-
-    p_Create_Outfits_Pool()
 endFunction
 
 function f_Destroy()
-    p_Destroy_Outfits_Pool()
-    VECTORS.Destroy_Form_Vector(p_vec_outfits_curr)
     VECTORS.Destroy_Form_Vector(p_vec_outfits_def)
     p_Destroy_Default_Caches()
     p_Destroy_NPC_Vectors()
     VECTORS.Destroy_Form_Vector(p_vec_locks)
     VECTORS.Destroy_Form_Vector(p_vec_bases)
 
-    p_vec_outfits_pool = none
-    p_vec_outfits_curr = none
     p_vec_outfits_def = none
     p_vec_caches_def = none
     p_vec_vec_clones = none
@@ -180,124 +160,6 @@ function p_Destroy_Default_Caches()
     VECTORS.Destroy_Form_Vector(p_vec_caches_def)
 endFunction
 
-function p_Create_Outfits_Pool()
-    ; so every base actor in the system gets an outfit. this means that
-    ; most of them will not be used at one time. if we remove the curr
-    ; outfit from an unmembered clone, then we should be guarenteed to
-    ; always have enough for actual members. It's an edge case as most
-    ; of these will probably not be used. however it needs to be minded
-    Formlist formlist_outfits_member = CONSTS.FORMLIST_OUTFITS_MEMBER
-    p_vec_outfits_pool = VECTORS.Create_Form_Vector(512, none, 1.0)
-
-    int idx_formlist = formlist_outfits_member.GetSize()
-    Outfit outfit_pool
-    while idx_formlist > 0
-        idx_formlist -= 1
-        outfit_pool = formlist_outfits_member.GetAt(idx_formlist) as Outfit
-        p_vec_outfits_pool.Push(outfit_pool as Form)
-    endWhile
-endFunction
-
-function p_Destroy_Outfits_Pool()
-    ; we go ahead and revert all leveleditems in outfits_member
-    Formlist formlist_outfits_member = CONSTS.FORMLIST_OUTFITS_MEMBER
-
-    int idx_formlist = formlist_outfits_member.GetSize()
-    Outfit outfit_pool
-    while idx_formlist > 0
-        idx_formlist -= 1
-        outfit_pool = formlist_outfits_member.GetAt(idx_formlist) as Outfit
-        (outfit_pool.GetNthPart(1) as LeveledItem).Revert()
-    endWhile
-
-    VECTORS.Destroy_Form_Vector(p_vec_outfits_pool)
-endFunction
-
-Outfit function p_Create_Current_Outfit(Outfit outfit_default)
-    if !outfit_default
-        return none
-    endIf
-
-    Outfit outfit_current = p_vec_outfits_pool.Pop() as Outfit
-    if !outfit_current
-        return none
-    endIf
-
-    p_Fill_Current_Outfit(outfit_current, outfit_default)
-
-    return outfit_current
-endFunction
-
-function p_Destroy_Current_Outfit(Outfit outfit_current)
-    if !outfit_current
-        return
-    endIf
-
-    LeveledItem leveled_outfit = outfit_current.GetNthPart(1) as LeveledItem
-    if !leveled_outfit
-        return
-    endIf
-
-    leveled_outfit.Revert()
-
-    p_vec_outfits_pool.Push(outfit_current)
-endFunction
-
-function p_Fill_Current_Outfit(Outfit outfit_current, Outfit outfit_vanilla)
-    if !outfit_current || !outfit_vanilla
-        return
-    endIf
-
-    LeveledItem leveled_outfit = outfit_current.GetNthPart(1) as LeveledItem
-    if !leveled_outfit
-        return
-    endIf
-
-    leveled_outfit.Revert()
-
-    int idx_forms = outfit_vanilla.GetNumParts()
-    Form form_item
-    while idx_forms > 0
-        idx_forms -= 1
-        form_item = outfit_vanilla.GetNthPart(idx_forms)
-        leveled_outfit.AddForm(form_item, 1, 1)
-    endWhile
-endFunction
-
-function p_Set_Base_Outfit(int idx_bases, Outfit outfit_vanilla)
-    if idx_bases < 0 || idx_bases >= p_vec_bases.num || !outfit_vanilla
-        return
-    endIf
-
-    ; because we need to set the real base and any leveled bases, we just do all originals
-    doticu_npcp_vector_form vec_origs = p_vec_vec_origs.At(idx_bases) as doticu_npcp_vector_form
-    if vec_origs
-        int idx_origs = vec_origs.num
-        while idx_origs > 0
-            idx_origs -= 1
-            ACTORS.Set_Base_Outfit(vec_origs.At(idx_origs) as Actor, outfit_vanilla)
-        endWhile
-    endIf
-
-    ; a previous version had clones made from the static leveled base, so do this anyway
-    doticu_npcp_vector_form vec_clones = p_vec_vec_clones.At(idx_bases) as doticu_npcp_vector_form
-    if vec_clones
-        int idx_clones = vec_clones.num
-        while idx_clones > 0
-            idx_clones -= 1
-            ACTORS.Set_Base_Outfit(vec_clones.At(idx_clones) as Actor, outfit_vanilla)
-        endWhile
-    endIf
-
-    ; we need to manually set the outfit base also, in case there were no actors to do it through
-    ; otherwise it might be left at the current outfit that was last used with base, a big no-no!
-    (p_vec_bases.At(idx_bases) as ActorBase).SetOutfit(outfit_vanilla)
-endFunction
-
-function Set_Reference_Outfit(int idx_bases, Outfit outfit_vanilla)
-    ; this will be useful when updating refs to avoid the horrid outfit bug
-endFunction
-
 bool function p_Has_Base(Actor ref_actor)
     return p_vec_bases.Find(ACTORS.Get_Real_Base(ref_actor) as Form) > -1
 endFunction
@@ -330,20 +192,10 @@ bool function p_Has_Clone(Actor ref_clone)
     endIf
 endFunction
 
-bool function p_Is_Base_Locked(Actor ref_actor)
-    int idx_bases = p_vec_bases.Find(ACTORS.Get_Real_Base(ref_actor) as Form)
-    if idx_bases > -1
-        return (p_vec_locks.At(idx_bases) as Key) != none
-    else
-        return false
-    endIf
-endFunction
-
 bool function p_Add_Base(Actor ref_actor, Outfit outfit_default)
     ; either the real base or the leveled base carries the outfit. we track the real base.
     ; the real base is used by unleveled npcs, and the dynamic leveled base by leveled npcs.
     ; so a template clone of a leveled becomes unleveled and no longer has the dynamic base.
-    ; we set the outfit_current for a real base once and all dynamic bases individually.
 
     if !p_Has_Base(ref_actor)
         ; we accept only the real base, not the static or dynamic leveled base
@@ -352,13 +204,21 @@ bool function p_Add_Base(Actor ref_actor, Outfit outfit_default)
         ; this is useful for when a npc has default equipment not found in their vanilla outfit
         ObjectReference cache_default = OUTFITS.Get_Default_Cache(ref_actor, outfit_default)
 
+        ; we use an SKSE plugin to avoid triggering a horrible bug that happens when an npc is
+        ; outfitted with a new outfit form that contains any of the same items in the previous
+        ; outfit form. It can go unnoticed when there are no clones of the npc, but if there
+        ; are clones it becomes readily apparent there is a problem, because other refs of the same
+        ; base become naked. both of my favorite outfitting mods also contain this bug, and there
+        ; is no good work-around in Papyrus alone. So we modify the default outfit to achieve
+        ; our algorithm.
+        doticu_npcp.Outfit_Add_Item(outfit_default, CONSTS.ARMOR_BLANK as Form)
+
         p_vec_bases.Push(base_actor as Form)
         p_vec_locks.Push(none); none means it's unlocked
         p_vec_vec_origs.Push(none); set when adding original
         p_vec_vec_clones.Push(none); set when adding clone
         p_vec_caches_def.Push(cache_default as Form)
         p_vec_outfits_def.Push(outfit_default as Form)
-        p_vec_outfits_curr.Push(none); set when adding members
         return true
     else
         return false
@@ -370,12 +230,9 @@ function p_Remove_Base(int idx_bases)
         return
     endIf
 
-    ; we need to make sure to return the outfit_current to the pool
-    p_Destroy_Current_Outfit(p_vec_outfits_curr.At(idx_bases) as Outfit)
-        
-    ; we can't leave untracked actors with our custom vanilla outfits, because they are reused
-    ; they can also cause a crash later if they are ever registered as the default outfit for base
-    p_Set_Base_Outfit(idx_bases, p_vec_outfits_def.At(idx_bases) as Outfit)
+    ; we should remove our token item from the outfit so that it goes back to vanilla
+    Outfit outfit_default = p_vec_outfits_def.At(idx_bases) as Outfit
+    doticu_npcp.Outfit_Remove_Item(outfit_default, CONSTS.ARMOR_BLANK as Form)
     
     ; just in case the garbage collector doesn't feel like doing its job
     ObjectReference cache_default = p_vec_caches_def.At(idx_bases) as ObjectReference
@@ -392,7 +249,6 @@ function p_Remove_Base(int idx_bases)
         VECTORS.Destroy_Form_Vector(vec_origs)
     endIf
     
-    p_vec_outfits_curr.Remove_At_Unstable(idx_bases)
     p_vec_outfits_def.Remove_At_Unstable(idx_bases)
     p_vec_caches_def.Remove_At_Unstable(idx_bases)
     p_vec_vec_clones.Remove_At_Unstable(idx_bases)
@@ -416,80 +272,6 @@ function p_Try_Remove_Base(int idx_bases)
     endIf
 endFunction
 
-function p_Try_Create_Current_Outfit(int idx_bases)
-    if idx_bases < 0 || idx_bases >= p_vec_bases.num
-        return
-    endIf
-
-    if p_vec_outfits_curr.At(idx_bases) != none
-        ; already created previously
-        return
-    endIf
-
-    ; this allows us to utilitize our outfitting algorithm with any member tagged with this base in the system
-    Outfit outfit_current = p_Create_Current_Outfit(p_vec_outfits_def.At(idx_bases) as Outfit)
-    if outfit_current == none
-        ; this should never be able to happen as long as we have as many outfits as there are members
-        ; we make sure by using the try methods, that any outfit not used by a base is freed.
-        ; that is to say, no loose clones get to use the outfit nor need to, but only bases with members
-        return
-    endIf
-
-    ; don't forget to actually set the current outfit in system!
-    p_vec_outfits_curr.Set(idx_bases, outfit_current)
-endFunction
-
-function p_Try_Destroy_Current_Outfit(int idx_bases)
-    ; we need to try and free any base that doesn't have a member so it can be reused.
-    ; a base in the system can have free standing clones, but they don't need the outfit
-
-    if idx_bases < 0 || idx_bases >= p_vec_bases.num
-        return
-    endIf
-
-    ; if there are any originals in the system, it's because they are members, so we can't delete
-    doticu_npcp_vector_form vec_origs = p_vec_vec_origs.At(idx_bases) as doticu_npcp_vector_form
-    if vec_origs
-        if vec_origs.num > 0
-            return
-        endIf
-    endIf
-
-    ; if there is a single member in clones, we need to keep the current outfit on this base
-    doticu_npcp_vector_form vec_clones = p_vec_vec_clones.At(idx_bases) as doticu_npcp_vector_form
-    if vec_clones
-        int idx_clones = vec_clones.num
-        while idx_clones > 0
-            idx_clones -= 1
-            if MEMBERS.Has_Member(vec_clones.At(idx_clones) as Actor)
-                return
-            endIf
-        endWhile
-    endIf
-
-    ; at this point we can destroy, and we need to make sure we unset current from vec
-    p_Destroy_Current_Outfit(p_vec_outfits_curr.At(idx_bases) as Outfit)
-    p_vec_outfits_curr.Set(idx_bases, none)
-
-    ; we should set the default for this base.
-    p_Set_Base_Outfit(idx_bases, p_vec_outfits_def.At(idx_bases) as Outfit)
-endFunction
-
-function p_Restore_Original_Outfit(Actor ref_actor, int idx_bases)
-    ; leveled actors have a different outfit base than what we store,
-    ; so we can't unset it later. we might as well reset unleveleds too.
-
-    if idx_bases < 0 || idx_bases >= p_vec_bases.num
-        return
-    endIf
-
-    if ACTORS.Is_Leveled(ref_actor)
-        OUTFITS.Outfit_Vanilla(ref_actor, p_vec_outfits_def.At(idx_bases) as Outfit)
-    else
-        OUTFITS.Outfit_Vanilla(ref_actor, p_vec_outfits_curr.At(idx_bases) as Outfit)
-    endIf
-endFunction
-
 bool function p_Add_Original(Actor ref_actor)
     Form form_actor = ref_actor as Form
 
@@ -500,14 +282,10 @@ bool function p_Add_Original(Actor ref_actor)
         return false; can't register
     endIf
 
-    ; a clone made by us cannot be an original, and though we keep them in the system, if a clone
-    ; is passed as ref_actor to become a member, we need to create current outfit, as it may not exist
+    ; a clone made by us cannot be an original, and we keep them in the system when unregistered
     doticu_npcp_vector_form vec_clones = p_vec_vec_clones.At(idx_bases) as doticu_npcp_vector_form
     if vec_clones && vec_clones.Has(form_actor)
-        ; we dynamically allocate current outfits and need to make sure none are leaked
-        p_Try_Create_Current_Outfit(idx_bases)
-
-        return true; registered as clone
+        return true; already registered as clone
     endIf
 
     ; we dynamically create vec_origs, so make sure it exists
@@ -519,9 +297,6 @@ bool function p_Add_Original(Actor ref_actor)
 
     ; we never allow duplicates
     if !vec_origs.Has(form_actor)
-        ; we dynamically allocate current outfits and need to make sure none are leaked
-        p_Try_Create_Current_Outfit(idx_bases)
-
         vec_origs.Push(form_actor)
 
         return true; now registered
@@ -555,9 +330,6 @@ bool function p_Add_Clone(Actor ref_clone)
 
     ; we never allow duplicates
     if !vec_clones.Has(form_clone)
-        ; we dynamically allocate current outfits and need to make sure none are leaked
-        p_Try_Create_Current_Outfit(idx_bases)
-
         vec_clones.Push(form_clone)
 
         return true; now registered
@@ -579,12 +351,6 @@ bool function p_Unregister(Actor ref_actor)
     ; because they are not being uncloned. we will keep track of all clones that we make
     doticu_npcp_vector_form vec_clones = p_vec_vec_clones.At(idx_bases) as doticu_npcp_vector_form
     if vec_clones && vec_clones.Has(form_actor)
-        p_Restore_Original_Outfit(ref_actor, idx_bases)
-
-        ; we dynamically allocate current outfits and need to make sure none are leaked.
-        ; by the time this is called, the clone should already be unmembered
-        p_Try_Destroy_Current_Outfit(idx_bases)
-
         return true; unregistered clone
     endIf
 
@@ -596,12 +362,7 @@ bool function p_Unregister(Actor ref_actor)
 
     int idx_origs = vec_origs.Find(form_actor)
     if idx_origs > -1
-        p_Restore_Original_Outfit(ref_actor, idx_bases)
-
         vec_origs.Remove_At_Unstable(idx_origs)
-
-        ; we dynamically allocate current outfits and need to make sure none are leaked
-        p_Try_Destroy_Current_Outfit(idx_bases)
 
         ; we dynamically allocate vectors, so we need to try and free
         if vec_origs.num < 1
@@ -641,14 +402,10 @@ bool function p_Unclone(Actor ref_clone)
 
     int idx_clones = vec_clones.Find(form_clone)
     if idx_clones > -1
-        ; we don't bother restoring an outfit because this clone is about to be deleted.
         ; we don't remove a clone unless we also delete them and vice versa
         vec_clones.Remove_At_Unstable(idx_clones)
         ref_clone.Disable()
         ref_clone.Delete()
-
-        ; we dynamically allocate current outfits and need to make sure none are leaked
-        p_Try_Destroy_Current_Outfit(idx_bases)
 
         ; we dynamically allocate vectors, so we need to try and free
         if vec_clones.num < 1
@@ -812,7 +569,9 @@ Outfit function Get_Default_Outfit(Actor ref_actor)
 p_Lock()
     int idx_bases = p_vec_bases.Find(form_base_actor)
     if idx_bases > -1
-        return p_Unlock_Pass_Outfit(p_vec_outfits_def.At(idx_bases) as Outfit)
+        Outfit outfit_default = p_vec_outfits_def.At(idx_bases) as Outfit
+        doticu_npcp.Outfit_Add_Item(outfit_default, CONSTS.ARMOR_BLANK as Form)
+        return p_Unlock_Pass_Outfit(outfit_default)
     else
         return p_Unlock_Pass_Outfit(none)
     endIf
@@ -825,28 +584,6 @@ p_Lock()
     int idx_bases = p_vec_bases.Find(form_base_actor)
     if idx_bases > -1
         p_vec_outfits_def.Set(idx_bases, val_outfit as Form)
-    endIf
-p_Unlock()
-endFunction
-
-Outfit function Get_Current_Outfit(Actor ref_actor)
-    Form form_base = ACTORS.Get_Real_Base(ref_actor) as Form
-p_Lock()
-    int idx_bases = p_vec_bases.Find(form_base)
-    if idx_bases > -1
-        return p_Unlock_Pass_Outfit(p_vec_outfits_curr.At(idx_bases) as Outfit)
-    else
-        return p_Unlock_Pass_Outfit(none)
-    endIf
-p_Unlock()
-endFunction
-
-function Set_Current_Outfit(Actor ref_actor, Outfit outfit_vanilla)
-    Form form_base = ACTORS.Get_Real_Base(ref_actor) as Form
-p_Lock()
-    int idx_bases = p_vec_bases.Find(form_base)
-    if idx_bases > -1
-        p_Fill_Current_Outfit(p_vec_outfits_curr.At(idx_bases) as Outfit, outfit_vanilla)
     endIf
 p_Unlock()
 endFunction
@@ -898,16 +635,13 @@ function Print_System()
 
     LOGS.Print("p_vec_outfits_def:")
     p_vec_outfits_def.Print()
-
-    LOGS.Print("p_vec_outfits_curr:")
-    p_vec_outfits_curr.Print()
 endFunction
 
 ; Update Methods
 function u_0_8_0()
     ; 1. recreate system with more accurate bases
     ; 2. create a default cache for each base
-    ; 3. create a current oufit for each base
+    ; 3. reset the default outfit for each base/leveled actor
     ; 4. remove any clones that leaked into originals
     ; 5. remove any non-member originals from the system
     ; 6. set the vanilla outfit for each member
@@ -966,11 +700,15 @@ p_Lock()
         int num_origs = vec_origs.num
         while idx_origs < num_origs
             Actor orig_ref = arr_origs[idx_origs] as Actor
-            doticu_npcp_member orig_member = MEMBERS.Get_Member(orig_ref)
+
+            ; we really need to set the default outfit for each npc, because they could
+            ; be naked after we delete all the outfits from the mod's previous version
+            orig_ref.SetOutfit(base_outfit)
 
             ; it's entirely possible that someone uninstalled a mod with the actor and the actor will be none
             ; we now only keep originals that are members, because we no longer need originals to work around an engine bug
-            if orig_ref && orig_member
+            doticu_npcp_member orig_member = MEMBERS.Get_Member(orig_ref)
+            if orig_member
                 orig_member.Set_Vanilla_Outfit(base_outfit)
 
                 if !p_vec_bases.Has(ACTORS.Get_Real_Base(orig_ref) as Form)
@@ -1011,6 +749,10 @@ p_Lock()
         int num_clones = vec_clones.num
         while idx_clones < num_clones
             Actor clone_ref = arr_clones[idx_clones] as Actor
+
+            ; we really need to set the default outfit for each npc, because they could
+            ; be naked after we delete all the outfits from the mod's previous version
+            clone_ref.SetOutfit(base_outfit)
 
             ; it's entirely possible that someone uninstalled a mod with the actor and the actor will be none
             if clone_ref
@@ -1069,15 +811,6 @@ p_Lock()
         idx_members -= 1
         ref_member = arr_members[idx_members] as doticu_npcp_member
         ref_actor = ref_member.Get_Actor()
-
-        ; so we really need to set the default outfit for every npc in here, because they could
-        ; be naked after we've deleted all the outfits from our mod's previous version
-
-        ; seriously considering going back to just the one method and abandoning hybrid, because
-        ; of the terrible outfit bug which is not really fixable on my end so far as I know.
-        ; both of my favorite outfitting mods, which both use the custom vanilla outfit method
-        ; cause the bug just as mine does. it's deeply embedded within the engine and only SKSE
-        ; has hopes of accessing it, or perhaps engine fixes.
 
         ; it's possible that someone uninstalled a mod with the actor and they are now none
         if ref_actor

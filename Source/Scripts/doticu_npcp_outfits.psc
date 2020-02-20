@@ -225,18 +225,13 @@ function Outfit_Clone(Actor ref_clone, Actor ref_orig)
     bool is_equipped
     bool is_teammate = ref_clone.IsPlayerTeammate()
 
-    ; this ensures that our modded outfit is worn. we need that blank armor
-    ; it also avoids an engine bug that leaves the original naked
-    Outfit outfit_current = NPCS.Get_Current_Outfit(ref_orig)
+    ; this ensures that our modded outfit is worn. we need that blank armor.
+    ; we may have to remove all current outfit items to make sure that the engine refreshes
 NPCS.Lock_Base(ref_orig)
-    if ACTORS.Is_Unleveled(ref_orig) && !MEMBERS.Has_Member(ref_orig)
-        ref_orig.SetOutfit(CONSTS.OUTFIT_TEMP)
-        ref_orig.SetOutfit(outfit_current)
+    if !ref_clone.IsEquipped(CONSTS.ARMOR_BLANK)
+        Outfit outfit_default = NPCS.Get_Default_Outfit(ref_clone)
         ref_clone.SetOutfit(CONSTS.OUTFIT_TEMP)
-        ref_clone.SetOutfit(outfit_current)
-    elseIf !ref_clone.IsEquipped(CONSTS.ARMOR_BLANK)
-        ref_clone.SetOutfit(CONSTS.OUTFIT_TEMP)
-        ref_clone.SetOutfit(outfit_current)
+        ref_clone.SetOutfit(outfit_default)
     endIf
 NPCS.Unlock_Base(ref_orig)
 
@@ -253,7 +248,9 @@ NPCS.Unlock_Base(ref_orig)
         while idx_forms > 0
             idx_forms -= 1
             form_item = outfit_default.GetNthPart(idx_forms)
-            ref_clone.AddItem(form_item, 1, true); will expand LeveledItems!
+            if form_item != CONSTS.ARMOR_BLANK as Form
+                ref_clone.AddItem(form_item, 1, true); will expand LeveledItems!
+            endIf
         endWhile
     elseIf VARS.clone_outfit == CODES.OUTFIT_REFERENCE
         ; we just need what's currently equipped on actor
@@ -320,46 +317,6 @@ function Remove_Junk(Actor ref_actor)
         form_item = ref_junk.GetNthForm(idx_forms)
         ref_actor.RemoveItem(form_item, ref_junk.GetItemCount(form_item), true, ref_junk)
     endWhile
-
-    ; it doesn't hurt to cleanup manullay, especially if you don't trust the garbage collector to do its **** job
-    ref_junk.Disable()
-    ref_junk.Delete()
-endFunction
-
-function Remove_Junk_Except(Actor ref_actor, Form form_exception)
-    int idx_forms
-    Form form_item
-    ObjectReference ref_junk = CONTAINERS.Create_Temp()
-
-    ; we add and remove a item so that the outfit has been filled by the engine once.
-    ; this can happen if the base outfit for this ref is set but was never rendered.
-    ref_actor.AddItem(CONSTS.WEAPON_BLANK, 1, true)
-    ref_actor.RemoveItem(CONSTS.WEAPON_BLANK, 1, true)
-
-    ; it's error prone to remove items from actor unless they are cached
-    idx_forms = ref_actor.GetNumItems()
-    while idx_forms > 0
-        idx_forms -= 1
-        form_item = ref_actor.GetNthForm(idx_forms)
-        if form_item && !(form_item as ObjectReference) && form_item != form_exception
-            ; we completely avoid any references and leave them alone. we must leave blank armor for no reset
-            if form_item.IsPlayable() || ref_actor.IsEquipped(form_item)
-                ; any playable item is fair game, but only equipped unplayables are accounted
-                ; for because some unplayable items are tokens from this mod and other mods
-                ref_junk.AddItem(form_item, ref_actor.GetItemCount(form_item), true)
-            endIf
-        endIf
-    endWhile
-
-    ; cleaning up the inventory of any junk is essential to controlling the outfit
-    idx_forms = ref_junk.GetNumItems()
-    while idx_forms > 0
-        idx_forms -= 1
-        form_item = ref_junk.GetNthForm(idx_forms)
-        ref_actor.RemoveItem(form_item, ref_junk.GetItemCount(form_item), true, ref_junk)
-    endWhile
-
-    ref_actor.RemoveItem(form_exception, ref_actor.GetItemCount(form_exception) - 1, true, ref_junk)
 
     ; it doesn't hurt to cleanup manullay, especially if you don't trust the garbage collector to do its **** job
     ref_junk.Disable()

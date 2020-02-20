@@ -4,5 +4,5 @@
 
 Scriptname doticu_npcp hidden
 
-; My first function in my first SKSE plugin. what a ride!
-int function Add_Ints(int x, int y) global native
+function Outfit_Add_Item(Outfit outfit_outfit, Form form_item) global native
+function Outfit_Remove_Item(Outfit outfit_outfit, Form form_item) global native

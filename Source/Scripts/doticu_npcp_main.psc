@@ -87,21 +87,12 @@ function f_Load_Mod()
     DATA.Stop()
     DATA.Start()
 
-    ;/CONTROL.Stop()
-    CONTROL.Start()
-    CONTROL.f_Create(DATA)/;
-
     p_Register()
     p_Version()
-
-    ;Debug.Notification("NPC Party: Loaded (Temp!)"); temp
 
     while !p_Send("doticu_npcp_load_mod")
         Utility.Wait(0.25)
     endWhile
-
-    ; temp
-    MiscUtil.PrintConsole(doticu_npcp.Add_Ints(1, 2))
 endFunction
 
 ; Private Methods
