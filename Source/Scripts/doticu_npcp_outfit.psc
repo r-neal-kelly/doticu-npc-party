@@ -198,7 +198,9 @@ NPCS.Lock_Base(ref_actor)
     ; we can speed up this check by looking for blank armor on the base outfit 
     Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(ref_actor)
     Outfit outfit_default = NPCS.Get_Default_Outfit(ref_actor)
-    if outfit_vanilla != outfit_default || ref_actor.GetItemCount(CONSTS.ARMOR_BLANK) < 1
+    if outfit_vanilla != outfit_default || !ref_actor.IsEquipped(CONSTS.ARMOR_BLANK)
+        ; IsEquipped might be too harsh, but I think it might be necessary,
+        ; instead of just check to see if they have the blank armor at all
         ref_actor.SetOutfit(CONSTS.OUTFIT_TEMP)
         doticu_npcp.Outfit_Add_Item(outfit_default, CONSTS.ARMOR_BLANK as Form)
         ref_actor.SetOutfit(outfit_default)
@@ -228,6 +230,10 @@ NPCS.Unlock_Base(ref_actor)
     endWhile
 
     ; doing this allows us to render all at once, which is far more efficient
+    while !p_DATA.VARS.is_updating && Utility.IsInMenuMode()
+        ; we wait so that the render actually happens.
+        Utility.Wait(0.1)
+    endWhile
     ref_actor.SetPlayerTeammate(true, true)
     ref_actor.AddItem(CONSTS.WEAPON_BLANK, 1, true)
     ref_actor.RemoveItem(CONSTS.WEAPON_BLANK, 1, true, none)

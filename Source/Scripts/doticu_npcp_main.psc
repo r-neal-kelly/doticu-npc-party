@@ -230,6 +230,12 @@ bool function Is_NPC_Party_Less_Than(int min_major, int min_minor, int min_patch
     return Is_Version_Less_Than(VARS.version_major, VARS.version_minor, VARS.version_patch, min_major, min_minor, min_patch)
 endFunction
 
+bool function Is_Ready()
+    return  VARS.version_major == CONSTS.VERSION_MAJOR && \
+            VARS.version_minor == CONSTS.VERSION_MINOR && \
+            VARS.version_patch == CONSTS.VERSION_PATCH
+endFunction
+
 ; Update Methods
 function u_0_8_0()
     DATA.MODS.FUNCS.NPCS.u_0_8_0()

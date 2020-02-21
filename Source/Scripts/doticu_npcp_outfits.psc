@@ -290,6 +290,11 @@ function Remove_Junk(Actor ref_actor)
     Form form_item
     ObjectReference ref_junk = CONTAINERS.Create_Temp()
 
+    ; this checks to make sure the actor will not render extra inventory, as an optimization
+    if ref_actor.IsPlayerTeammate()
+        ref_actor.SetPlayerTeammate(false, false)
+    endIf
+
     ; we add and remove a item so that the outfit has been filled by the engine once.
     ; this can happen if the base outfit for this ref is set but was never rendered.
     ref_actor.AddItem(CONSTS.WEAPON_BLANK, 1, true)

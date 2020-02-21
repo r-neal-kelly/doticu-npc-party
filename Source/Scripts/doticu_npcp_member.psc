@@ -5,6 +5,11 @@
 Scriptname doticu_npcp_member extends ReferenceAlias
 
 ; Modules
+doticu_npcp_main property MAIN hidden
+    doticu_npcp_main function Get()
+        return p_DATA.MODS.MAIN
+    endFunction
+endProperty
 doticu_npcp_consts property CONSTS hidden
     doticu_npcp_consts function Get()
         return p_DATA.CONSTS
@@ -719,19 +724,22 @@ function p_Outfit(bool do_force = false)
             p_outfit_vanilla = NPCS.Get_Default_Outfit(p_ref_actor)
         endIf
 
+        ; if it's already been set elsewhere, there's not bother
+        if !p_do_outfit_vanilla
 NPCS.Lock_Base(p_ref_actor)
-        ; we need to lock so that one ref at a time can do this check. we don't want
-        ; every ref to get the new outfit, or we may be changing outfit on another ref
-        Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(p_ref_actor)
-        Outfit outfit_default = NPCS.Get_Default_Outfit(p_ref_actor)
-        if outfit_vanilla != outfit_default
-            if p_outfit_vanilla != outfit_vanilla
+            ; we need to lock so that one ref at a time can do this check. we don't want
+            ; every ref to get the new outfit, or we may be changing outfit on another ref
+            Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(p_ref_actor)
+            Outfit outfit_default = NPCS.Get_Default_Outfit(p_ref_actor)
+NPCS.Unlock_Base(p_ref_actor)
+            if outfit_vanilla && outfit_vanilla != outfit_default && p_outfit_vanilla != outfit_vanilla
+                ; one drawback of this method is that there is no way to tell if the default
+                ; outfit has been selected through an outfit mod. It adds a lot of complication
+                ; to try and handle that atm.
                 p_outfit_vanilla = outfit_vanilla
                 p_do_outfit_vanilla = true
             endIf
-            ACTORS.Set_Base_Outfit(p_ref_actor, outfit_default)
         endIf
-NPCS.Unlock_Base(p_ref_actor)
 
         if p_do_outfit_vanilla
             p_do_outfit_vanilla = false
@@ -1880,7 +1888,7 @@ event On_Load_Mod()
 endEvent
 
 event OnLoad()
-    if VARS.is_updating || !Exists()
+    if !MAIN.Is_Ready() || !Exists()
         return
     endIf
 

@@ -113,6 +113,10 @@ bool function Can_Use_Keys()
     return !Utility.IsInMenuMode() && !UI.IsMenuOpen("Dialogue Menu")
 endFunction
 
+bool function Can_Render()
+    return !Utility.IsInMenuMode()
+endFunction
+
 bool function Is_Mod_Installed(string name_mod)
     return Game.GetModByName(name_mod) != 255
 endFunction

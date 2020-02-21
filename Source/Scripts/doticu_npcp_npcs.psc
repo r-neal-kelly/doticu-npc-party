@@ -721,10 +721,7 @@ function u_0_8_0()
                 endIf
 
                 orig_member.Set_Vanilla_Outfit(base_outfit)
-
-                if orig_member.Is_Follower()
-                    orig_member.p_Outfit(true)
-                endIf
+                ACTORS.Set_Base_Outfit(orig_ref, base_outfit)
             elseIf orig_ref
                 ; we really need to set the default outfit for each npc, because they could
                 ; be naked after we delete all the outfits from the mod's previous version
@@ -766,9 +763,7 @@ function u_0_8_0()
                 doticu_npcp_member clone_member = MEMBERS.Get_Member(clone_ref)
                 if clone_member
                     clone_member.Set_Vanilla_Outfit(base_outfit)
-                    if clone_member.Is_Follower()
-                        clone_member.p_Outfit(true)
-                    endIf
+                    ACTORS.Set_Base_Outfit(clone_ref, base_outfit)
                 else
                     ; we really need to set the default outfit for each npc, because they could
                     ; be naked after we delete all the outfits from the mod's previous version
@@ -863,6 +858,7 @@ function u_0_8_0()
 
                 p_Add_Original(ref_actor)
                 ref_member.Set_Vanilla_Outfit(outfit_vanilla)
+                ACTORS.Set_Base_Outfit(ref_actor, outfit_vanilla)
             endIf
         endIf
     endWhile

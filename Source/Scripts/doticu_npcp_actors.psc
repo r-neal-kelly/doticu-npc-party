@@ -452,6 +452,11 @@ endFunction
 
 function Update_Equipment(Actor ref_actor)
     bool is_player_teammate = ref_actor.IsPlayerTeammate()
+
+    while !p_DATA.VARS.is_updating && Utility.IsInMenuMode()
+        ; we wait so that the render actually happens.
+        Utility.Wait(0.1)
+    endWhile
     
     if !is_player_teammate
         ref_actor.SetPlayerTeammate(true, true)
