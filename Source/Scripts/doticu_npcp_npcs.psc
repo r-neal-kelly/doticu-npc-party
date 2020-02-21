@@ -570,7 +570,7 @@ p_Lock()
     int idx_bases = p_vec_bases.Find(form_base_actor)
     if idx_bases > -1
         Outfit outfit_default = p_vec_outfits_def.At(idx_bases) as Outfit
-        doticu_npcp.Outfit_Add_Item(outfit_default, CONSTS.ARMOR_BLANK as Form)
+        ;doticu_npcp.Outfit_Add_Item(outfit_default, CONSTS.ARMOR_BLANK as Form); causes an undefined instance
         return p_Unlock_Pass_Outfit(outfit_default)
     else
         return p_Unlock_Pass_Outfit(none)
@@ -646,9 +646,6 @@ function u_0_8_0()
     ; 5. remove any non-member originals from the system
     ; 6. set the vanilla outfit for each member
 
-; make sure there are no public calls to doticu_npcp_npcs while Locked
-;p_Lock()
-
     doticu_npcp_vector_form old_vec_bases       = p_vec_bases
     doticu_npcp_vector_form old_vec_outfits     = p_vec_outfits
     doticu_npcp_vector_form old_vec_vec_origs   = p_vec_vec_origs
@@ -701,16 +698,9 @@ function u_0_8_0()
         while idx_origs < num_origs
             Actor orig_ref = arr_origs[idx_origs] as Actor
 
-            ; we really need to set the default outfit for each npc, because they could
-            ; be naked after we delete all the outfits from the mod's previous version
-            orig_ref.SetOutfit(base_outfit)
-
-            ; it's entirely possible that someone uninstalled a mod with the actor and the actor will be none
             ; we now only keep originals that are members, because we no longer need originals to work around an engine bug
             doticu_npcp_member orig_member = MEMBERS.Get_Member(orig_ref)
             if orig_member
-                orig_member.Set_Vanilla_Outfit(base_outfit)
-
                 if !p_vec_bases.Has(ACTORS.Get_Real_Base(orig_ref) as Form)
                     ; we are using a clone because it will get more accurate default items.
                     ; a disabled clone can still have their inventory checked and accouted for.
@@ -729,6 +719,16 @@ function u_0_8_0()
                 else
                     p_Add_Original(orig_ref)
                 endIf
+
+                orig_member.Set_Vanilla_Outfit(base_outfit)
+
+                if orig_member.Is_Follower()
+                    orig_member.p_Outfit(true)
+                endIf
+            elseIf orig_ref
+                ; we really need to set the default outfit for each npc, because they could
+                ; be naked after we delete all the outfits from the mod's previous version
+                orig_ref.SetOutfit(base_outfit)
             endIf
 
             idx_actors += 1
@@ -750,17 +750,8 @@ function u_0_8_0()
         while idx_clones < num_clones
             Actor clone_ref = arr_clones[idx_clones] as Actor
 
-            ; we really need to set the default outfit for each npc, because they could
-            ; be naked after we delete all the outfits from the mod's previous version
-            clone_ref.SetOutfit(base_outfit)
-
             ; it's entirely possible that someone uninstalled a mod with the actor and the actor will be none
             if clone_ref
-                doticu_npcp_member clone_member = MEMBERS.Get_Member(clone_ref)
-                if clone_member
-                    clone_member.Set_Vanilla_Outfit(base_outfit)
-                endIf
-
                 if !p_vec_bases.Has(ACTORS.Get_Real_Base(clone_ref) as Form)
                     ; we are using a clone because it will get more accurate default items.
                     ; a disabled clone can still have their inventory checked and accouted for.
@@ -771,6 +762,18 @@ function u_0_8_0()
                 endIf
     
                 p_Add_Clone(clone_ref)
+
+                doticu_npcp_member clone_member = MEMBERS.Get_Member(clone_ref)
+                if clone_member
+                    clone_member.Set_Vanilla_Outfit(base_outfit)
+                    if clone_member.Is_Follower()
+                        clone_member.p_Outfit(true)
+                    endIf
+                else
+                    ; we really need to set the default outfit for each npc, because they could
+                    ; be naked after we delete all the outfits from the mod's previous version
+                    clone_ref.SetOutfit(base_outfit)
+                endIf
             endIf
 
             idx_actors += 1
@@ -817,8 +820,6 @@ function u_0_8_0()
             ; we're checking that every member is currently a part of the system, in 
             ; the unexpected case that one was missed somehow in the previous version
             if ref_member.Is_Clone() && !p_Has_Clone(ref_actor)
-                LOGS.Print("    re-registering " + ref_member.Get_Name())
-
                 ActorBase base_actor = ACTORS.Get_Real_Base(ref_actor)
                 Outfit outfit_vanilla
                 if !p_vec_bases.Has(base_actor as Form)
@@ -841,8 +842,6 @@ function u_0_8_0()
                 p_Add_Clone(ref_actor)
                 ref_member.Set_Vanilla_Outfit(outfit_vanilla)
             elseIf !ref_member.Is_Clone() && !p_Has_Original(ref_actor)
-                LOGS.Print("    re-registering " + ref_member.Get_Name())
-
                 ActorBase base_actor = ACTORS.Get_Real_Base(ref_actor)
                 Outfit outfit_vanilla
                 if !p_vec_bases.Has(base_actor as Form)
@@ -870,6 +869,4 @@ function u_0_8_0()
 
     LOGS.Print("completed update.")
     Debug.MessageBox("NPC Party: The update has been completed. You should save your game. Thank you for waiting!")
-
-;p_Unlock()
 endFunction

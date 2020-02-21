@@ -102,6 +102,8 @@ bool function p_Has_Changed(Actor ref_actor)
     ; we need to make sure that the default outfit is equipped, because a mod may have changed it
     if ACTORS.Get_Base_Outfit(ref_actor) != NPCS.Get_Default_Outfit(ref_actor)
         return true
+    elseIf ref_actor.GetItemCount(CONSTS.ARMOR_BLANK as Form) < 1
+        return true
     endIf
 
     ; ref_actor may have items that aren't in the oufit
@@ -196,8 +198,9 @@ NPCS.Lock_Base(ref_actor)
     ; we can speed up this check by looking for blank armor on the base outfit 
     Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(ref_actor)
     Outfit outfit_default = NPCS.Get_Default_Outfit(ref_actor)
-    if outfit_vanilla != outfit_default
+    if outfit_vanilla != outfit_default || ref_actor.GetItemCount(CONSTS.ARMOR_BLANK) < 1
         ref_actor.SetOutfit(CONSTS.OUTFIT_TEMP)
+        doticu_npcp.Outfit_Add_Item(outfit_default, CONSTS.ARMOR_BLANK as Form)
         ref_actor.SetOutfit(outfit_default)
     endIf
 NPCS.Unlock_Base(ref_actor)

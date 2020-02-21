@@ -12,17 +12,21 @@ namespace doticu_npcp {
     void Outfit_Add_Item(StaticFunctionTag *, BGSOutfit *outfit, TESForm *form_item) {
         // changes are NOT lost on load game, but they are lost after changing outfits.
         if (!outfit || !form_item) {
+            _MESSAGE("    Outfit_Add_Item: missing param");
             return;
         }
 
         tArray<TESForm *> *arr_items = &outfit->armorOrLeveledItemArray;
         if (!arr_items) {
+            _MESSAGE("    Outfit_Add_Item: outfit is missing armorOrLeveledItemArray");
             return;
         }
 
         SInt64 idx_item = arr_items->GetItemIndex(form_item);
         if (idx_item < 0) {
             arr_items->Push(form_item);
+        } else {
+            _MESSAGE("    Outfit_Add_Item: already contains form");
         }
 
         // we could try TESForm MarkChanged to see if that keeps changing outfits
