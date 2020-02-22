@@ -101,7 +101,7 @@ int property version_major hidden
         return p_version_major
     endFunction
     function Set(int val)
-        if p_version_major < val
+        if val > -1
             p_version_major = val
         endIf
     endFunction
@@ -112,7 +112,7 @@ int property version_minor hidden
         return p_version_minor
     endFunction
     function Set(int val)
-        if p_version_minor < val
+        if val > -1
             p_version_minor = val
         endIf
     endFunction
@@ -123,7 +123,7 @@ int property version_patch hidden
         return p_version_patch
     endFunction
     function Set(int val)
-        if p_version_patch < val
+        if val > -1
             p_version_patch = val
         endIf
     endFunction

@@ -728,24 +728,6 @@ function p_Outfit(bool do_force = false)
             p_outfit_vanilla = NPCS.Get_Default_Outfit(p_ref_actor)
         endIf
 
-        ; if it's already been set elsewhere, there's not bother
-        if !p_do_outfit_vanilla
-NPCS.Lock_Base(p_ref_actor)
-            ; we need to lock so that one ref at a time can do this check. we don't want
-            ; every ref to get the new outfit, or we may be changing outfit on another ref
-            Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(p_ref_actor)
-            Outfit outfit_default = NPCS.Get_Default_Outfit(p_ref_actor)
-            if outfit_vanilla && outfit_vanilla != outfit_default
-                ; one drawback of this method is that there is no way to tell if the default
-                ; outfit has been selected through an outfit mod. We set the base outfit so
-                ; that another ref doesn't detect the change
-                ACTORS.Set_Base_Outfit(p_ref_actor, outfit_default)
-                p_outfit_vanilla = outfit_vanilla
-                p_do_outfit_vanilla = true
-            endIf
-NPCS.Unlock_Base(p_ref_actor)
-        endIf
-
         if p_do_outfit_vanilla
             p_do_outfit_vanilla = false
             if !p_outfit2_vanilla
@@ -1890,9 +1872,6 @@ event On_Load_Mod()
     if Is_Paralyzed()
         p_Reparalyze()
     endIf
-
-    ; this may not be needed here.
-    p_ref_actor.SetPlayerTeammate(true, true)
 endEvent
 
 event OnLoad()
@@ -1903,20 +1882,8 @@ event OnLoad()
     if Is_Paralyzed()
         p_Reparalyze()
     endIf
-    
-    ;/if Is_Follower()
-        ; when a player teammate, the engine doesn't force the entire outfit on them.
-        ; we go ahead and do checks, just in case something has been added by script
-        p_Outfit()
-    else
-        ; we go ahead and run a quick update because the engine doesn't auto equip
-        ; non-outfit items on non-teammates. it's faster than checking first
-        ACTORS.Update_Equipment(p_ref_actor)
 
-        ; as a regular member, who is not a player teammate, the full outfit will be
-        ; forced on them when reenabled, but not always on load, so we do the checks
-        p_Outfit()
-    endIf/;
+    p_Outfit()
 
     Enforce(false); enforce everything but outfit
 endEvent
@@ -1929,6 +1896,7 @@ event OnActivate(ObjectReference ref_activator)
     ; maybe we could also pop up some basic stats on screen? but make it a command or something
 
     if Is_Alive()
+        p_Outfit()
         Enforce(false)
 
         ; instead of polling, we might be able to set up a package that happens only when in dialogue
@@ -1943,7 +1911,21 @@ event OnActivate(ObjectReference ref_activator)
         ; it's entirely possible that the ref may no longer be a member at this
         ; point through dialogue selections. so we need to check to avoid error
         if Exists()
-            p_Outfit()
+            ; we need to lock so that one ref at a time can do this check. we don't want
+            ; every ref to get the new outfit, or we may be changing outfit on another ref.
+            ; for the same reason we only check right after dialgoue, so the mod must have changed it by now.
+NPCS.Lock_Base(p_ref_actor)
+            Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(p_ref_actor)
+            Outfit outfit_default = NPCS.Get_Default_Outfit(p_ref_actor)
+            ACTORS.Set_Base_Outfit(p_ref_actor, outfit_default)
+NPCS.Unlock_Base(p_ref_actor)
+            if outfit_vanilla && outfit_vanilla != outfit_default
+                ; one drawback of this method is that there is no way to tell if the default
+                ; outfit has been selected through an outfit mod.
+                p_outfit_vanilla = outfit_vanilla
+                p_do_outfit_vanilla = true
+                p_Outfit()
+            endIf
         endIf
     else
         p_outfit2_current.Put()
