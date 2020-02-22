@@ -812,6 +812,9 @@ function u_0_8_0()
 
         ; it's possible that someone uninstalled a mod with the actor and they are now none
         if ref_actor
+            ; we now treat all members to this so that they update their outfits correctly.
+            ref_actor.SetPlayerTeammate(true, true)
+
             ; we're checking that every member is currently a part of the system, in 
             ; the unexpected case that one was missed somehow in the previous version
             if ref_member.Is_Clone() && !p_Has_Clone(ref_actor)

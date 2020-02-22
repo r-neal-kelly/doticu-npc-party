@@ -398,6 +398,8 @@ function p_Member()
         p_ref_actor.SetActorValue("Assistance", 2.0)
         p_ref_actor.SetActorValue("Morality", 0.0)
 
+        p_ref_actor.SetPlayerTeammate(true, true)
+
         p_ref_actor.EvaluatePackage()
 
     f_Unlock_Resources()
@@ -405,6 +407,8 @@ endFunction
 
 function p_Unmember()
     f_Lock_Resources()
+
+        p_ref_actor.SetPlayerTeammate(false, false)
 
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_THRALL)
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_GENERIC)
@@ -1886,6 +1890,9 @@ event On_Load_Mod()
     if Is_Paralyzed()
         p_Reparalyze()
     endIf
+
+    ; this may not be needed here.
+    p_ref_actor.SetPlayerTeammate(true, true)
 endEvent
 
 event OnLoad()
@@ -1897,7 +1904,7 @@ event OnLoad()
         p_Reparalyze()
     endIf
     
-    if Is_Follower()
+    ;/if Is_Follower()
         ; when a player teammate, the engine doesn't force the entire outfit on them.
         ; we go ahead and do checks, just in case something has been added by script
         p_Outfit()
@@ -1909,7 +1916,7 @@ event OnLoad()
         ; as a regular member, who is not a player teammate, the full outfit will be
         ; forced on them when reenabled, but not always on load, so we do the checks
         p_Outfit()
-    endIf
+    endIf/;
 
     Enforce(false); enforce everything but outfit
 endEvent

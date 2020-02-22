@@ -285,7 +285,7 @@ function p_Follow()
         CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(1)
 
         p_ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, 3); maybe we can do away with this, because it affects the base state of npcs
-        p_ref_actor.SetPlayerTeammate(true, true)
+        ;p_ref_actor.SetPlayerTeammate(true, true)
         p_ref_actor.IgnoreFriendlyHits(true)
         p_ref_actor.SetNotShowOnStealthMeter(true)
 
@@ -306,7 +306,7 @@ function p_Unfollow()
 
         p_ref_actor.SetNotShowOnStealthMeter(false)
         p_ref_actor.IgnoreFriendlyHits(false)
-        p_ref_actor.SetPlayerTeammate(false, false)
+        ;p_ref_actor.SetPlayerTeammate(false, false)
         p_ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, p_prev_relationship_rank)
 
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_FOLLOWER)
