@@ -731,14 +731,15 @@ NPCS.Lock_Base(p_ref_actor)
             ; every ref to get the new outfit, or we may be changing outfit on another ref
             Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(p_ref_actor)
             Outfit outfit_default = NPCS.Get_Default_Outfit(p_ref_actor)
-NPCS.Unlock_Base(p_ref_actor)
-            if outfit_vanilla && outfit_vanilla != outfit_default && p_outfit_vanilla != outfit_vanilla
+            if outfit_vanilla && outfit_vanilla != outfit_default
                 ; one drawback of this method is that there is no way to tell if the default
-                ; outfit has been selected through an outfit mod. It adds a lot of complication
-                ; to try and handle that atm.
+                ; outfit has been selected through an outfit mod. We set the base outfit so
+                ; that another ref doesn't detect the change
+                ACTORS.Set_Base_Outfit(p_ref_actor, outfit_default)
                 p_outfit_vanilla = outfit_vanilla
                 p_do_outfit_vanilla = true
             endIf
+NPCS.Unlock_Base(p_ref_actor)
         endIf
 
         if p_do_outfit_vanilla
