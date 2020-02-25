@@ -117,6 +117,7 @@ bool function p_Has_Changed(Actor ref_actor)
             if form_item.IsPlayable() || ref_actor.IsEquipped(form_item)
                 ; any playable item is fair game, but only equipped unplayables are accounted for
                 if p_cache_outfit.GetItemCount(form_item) < 1 && p_cache_self.GetItemCount(form_item) < 1
+
                     ;/MiscUtil.PrintConsole("ref actor has items not in outfit")
                     MiscUtil.PrintConsole(form_item.GetName())
                     MiscUtil.PrintConsole("Actor Cache: ")
@@ -138,6 +139,7 @@ bool function p_Has_Changed(Actor ref_actor)
         idx_forms -= 1
         form_item = p_cache_outfit.GetNthForm(idx_forms)
         if ref_actor.GetItemCount(form_item) != p_cache_outfit.GetItemCount(form_item) + p_cache_self.GetItemCount(form_item)
+
             ;/MiscUtil.PrintConsole("ref actor and outfit cache mismatch")
             MiscUtil.PrintConsole(form_item.GetName())
             MiscUtil.PrintConsole("actor: " + ref_actor.GetItemCount(form_item) + ", outfit: " + p_cache_outfit.GetItemCount(form_item))
@@ -155,6 +157,7 @@ bool function p_Has_Changed(Actor ref_actor)
         idx_forms -= 1
         form_item = p_cache_self.GetNthForm(idx_forms)
         if ref_actor.GetItemCount(form_item) != p_cache_outfit.GetItemCount(form_item) + p_cache_self.GetItemCount(form_item)
+
             ;/MiscUtil.PrintConsole("ref actor and self cache mismatch")
             MiscUtil.PrintConsole(form_item.GetName())
             MiscUtil.PrintConsole("actor: " + ref_actor.GetItemCount(form_item) + ", self: " + p_cache_self.GetItemCount(form_item))
@@ -198,12 +201,14 @@ NPCS.Lock_Base(ref_actor)
     ; we can speed up this check by looking for blank armor on the base outfit 
     Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(ref_actor)
     Outfit outfit_default = NPCS.Get_Default_Outfit(ref_actor)
-    if outfit_vanilla != outfit_default || !ref_actor.IsEquipped(CONSTS.ARMOR_BLANK)
+    if !ref_actor.IsEquipped(CONSTS.ARMOR_BLANK)
         ; IsEquipped might be too harsh, but I think it might be necessary,
         ; instead of just check to see if they have the blank armor at all
         ref_actor.SetOutfit(CONSTS.OUTFIT_TEMP)
         doticu_npcp.Outfit_Add_Item(outfit_default, CONSTS.ARMOR_BLANK as Form)
         ref_actor.SetOutfit(outfit_default)
+    elseIf outfit_vanilla != outfit_default
+        ACTORS.Set_Base_Outfit(ref_actor, outfit_default)
     endIf
 NPCS.Unlock_Base(ref_actor)
 

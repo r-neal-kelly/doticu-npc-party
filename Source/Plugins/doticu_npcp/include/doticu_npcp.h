@@ -16,7 +16,6 @@ namespace doticu_npcp {
 
     void Outfit_Add_Item(StaticFunctionTag *, BGSOutfit *outfit, TESForm *form_item);
     void Outfit_Remove_Item(StaticFunctionTag *, BGSOutfit *outfit, TESForm *form_item);
-    void ActorBase_Set_Outfit(TESNPC *base_actor, BGSOutfit *outfit, bool is_sleep_outfit = false);
     void Actor_Set_Outfit(Actor *ref_actor, BGSOutfit *outfit, bool is_sleep_outfit = false);
 
     bool Register_Functions(VMClassRegistry *registry);

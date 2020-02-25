@@ -25,11 +25,7 @@ namespace doticu_npcp {
         SInt64 idx_item = arr_items->GetItemIndex(form_item);
         if (idx_item < 0) {
             arr_items->Push(form_item);
-        } else {
-            _MESSAGE("    Outfit_Add_Item: already contains form");
         }
-
-        // we could try TESForm MarkChanged to see if that keeps changing outfits
     }
 
     void Outfit_Remove_Item(StaticFunctionTag *, BGSOutfit *outfit, TESForm *form_item) {
@@ -48,21 +44,6 @@ namespace doticu_npcp {
             // as long as it's greater than -1, it should be fine to cast to unsigned
             arr_items->Remove((UInt64)idx_item);
         }
-
-        // we could try TESForm MarkChanged to see if that keeps changing outfits
-    }
-
-    void ActorBase_Set_Outfit(TESNPC *base_actor, BGSOutfit *outfit, bool is_sleep_outfit) {
-        if (!base_actor || !outfit) {
-            return;
-        }
-        
-        // this may cause a leak, not sure.
-        if (is_sleep_outfit) {
-            base_actor->sleepOutfit = outfit;
-        } else {
-            base_actor->defaultOutfit = outfit;
-        }
     }
 
     void Actor_Set_Outfit(Actor *ref_actor, BGSOutfit *outfit, bool is_sleep_outfit) {
@@ -70,9 +51,11 @@ namespace doticu_npcp {
             return;
         }
 
-        // this is the leveled/real base which carries the outfits
+        // this is the leveled/real base which carries the outfits.
+        // this will not save the base oufit after a full game-load.
+        // quick tests have shown that allowing the original ActorBase.SetOutfit()
+        // does not cause the outfit bug. It's something in the original ObjectReference.SetOutfit()
         TESNPC *base_actor = (TESNPC *)ref_actor->baseForm;
-        // this may cause a leak, not sure.
         if (is_sleep_outfit) {
             base_actor->sleepOutfit = outfit;
         } else {
@@ -98,6 +81,9 @@ namespace doticu_npcp {
             }
             idx += 1;
         }
+
+        // it would be nice to unequip everything that doesn't belong in outfit as well.
+        // but that requires looping over actor inventory, out of my knowledge right noe
 
         return;
 
@@ -148,11 +134,6 @@ namespace doticu_npcp {
                                                                                   "doticu_npcp",
                                                                                   doticu_npcp::Outfit_Remove_Item,
                                                                                   registry));
-        registry->RegisterFunction(
-            new NativeFunction2 <TESNPC, void, BGSOutfit *, bool>("SetOutfit",
-                                                                  "ActorBase",
-                                                                  doticu_npcp::ActorBase_Set_Outfit,
-                                                                  registry));
         registry->RegisterFunction(
             new NativeFunction2 <Actor, void, BGSOutfit *, bool>("SetOutfit",
                                                                  "Actor",

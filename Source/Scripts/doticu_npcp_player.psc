@@ -143,6 +143,12 @@ endEvent
 
 event OnPlayerLoadGame()
     MAIN.f_Load_Mod()
+
+    if !ACTOR_PLAYER.IsInCombat() && !FOLLOWERS.Are_In_Combat()
+        ; for some reason, p_is_in_combat sometimes gets stuck to true
+        ; and so we never get auto resurrect, which sucks.
+        p_End_Combat()
+    endIf
 endEvent
 
 event On_Cell_Change(Form cell_new, Form cell_old)
