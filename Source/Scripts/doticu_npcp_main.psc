@@ -241,8 +241,8 @@ function u_0_8_0()
     DATA.MODS.FUNCS.NPCS.u_0_8_0()
 endFunction
 
-function u_0_8_1()
-    DATA.MODS.FUNCS.PERKS.u_0_8_1()
+function u_0_8_2()
+    DATA.MODS.FUNCS.PERKS.u_0_8_2()
 endFunction
 
 ; Events
