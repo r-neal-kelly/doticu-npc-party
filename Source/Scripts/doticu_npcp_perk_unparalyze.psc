@@ -36,6 +36,9 @@ endFunction
 function f_Register()
 endFunction
 
+function f_Unregister()
+endFunction
+
 ; Public Methods
 function Unparalyze(ObjectReference ref_target, Actor _)
     Actor ref_actor = ref_target as Actor

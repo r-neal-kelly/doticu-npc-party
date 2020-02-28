@@ -169,6 +169,24 @@ function Resurrect(int code_return, string str_name)
     endIf
 endFunction
 
+function Reanimate(int code_return, string str_name)
+    if code_return == CODES.SUCCESS
+        LOGS.Create_Note(str_name + " has been reanimated.")
+    elseIf code_return == CODES.HASNT_SPACE_MEMBER
+        LOGS.Create_Note("No room for " + str_name + " to be a reanimated member.")
+    elseIf code_return == CODES.CANT_RESURRECT
+        LOGS.Create_Note(str_name + " can't be reanimated, and so can't be a new member.")
+    elseIf code_return == CODES.IS_ALIVE
+        LOGS.Create_Note(str_name + " is alive and can't be reanimated.")
+    elseIf code_return == CODES.ISNT_ACTOR
+        LOGS.Create_Note("That can't become a reanimated member.")
+    elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
+        LOGS.Create_Note(str_name + " isn't a member, and so can't be reanimated.")
+    else
+        LOGS.Create_Error("It's unknown why " + str_name + " can't be reanimated: " + code_return)
+    endIf
+endFunction
+
 function Settle(int code_return, string str_name)
     if code_return == CODES.SUCCESS
         LOGS.Create_Note(str_name + " will settle here.")

@@ -96,10 +96,14 @@ ReferenceAlias function f_Get_Alias(int id_alias); can this be removed somehow?
 endFunction
 
 ; Private Methods
-function p_Lock()
-    while p_is_locked
+function p_Lock(float timeout = 15.0)
+    float time_waited = 0.0
+
+    while p_is_locked && time_waited < timeout
         Utility.Wait(0.01)
+        time_waited += 0.01
     endWhile
+    
     p_is_locked = true
 endFunction
 

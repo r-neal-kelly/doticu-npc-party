@@ -94,10 +94,14 @@ function f_Unregister()
 endFunction
 
 ; Private Methods
-function p_Lock()
-    while p_is_locked
+function p_Lock(float timeout = 15.0)
+    float time_waited = 0.0
+
+    while p_is_locked && time_waited < timeout
         Utility.Wait(0.01)
+        time_waited += 0.01
     endWhile
+
     p_is_locked = true
 endFunction
 
@@ -600,12 +604,16 @@ p_Lock()
 p_Unlock()
 endFunction
 
-function Lock_Base(Actor ref_actor)
+function Lock_Base(Actor ref_actor, float timeout = 15.0)
     int idx_bases = p_vec_bases.Find(ACTORS.Get_Real_Base(ref_actor) as Form)
     if idx_bases > -1
-        while (p_vec_locks.At(idx_bases) as Key) != none
+        float time_waited = 0.0
+
+        while (p_vec_locks.At(idx_bases) as Key) != none && time_waited < timeout
             Utility.Wait(0.01)
+            time_waited += 0.01
         endWhile
+
         p_vec_locks.Set(idx_bases, CONSTS.KEY_LOCK as Form)
     endIf
 endFunction

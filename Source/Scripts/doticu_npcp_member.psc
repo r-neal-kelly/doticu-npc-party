@@ -86,6 +86,7 @@ bool                    p_is_settler                = false
 bool                    p_is_thrall                 = false
 bool                    p_is_immobile               = false
 bool                    p_is_paralyzed              = false
+bool                    p_is_reanimated             = false
 bool                    p_is_executing              = false
 bool                    p_do_outfit_vanilla         = false
 int                     p_code_style                =    -1
@@ -179,6 +180,9 @@ function p_Destroy()
     if Is_Paralyzed()
         p_Unparalyze()
     endIf
+    if Is_Reanimated()
+        p_Deanimate()
+    endIf
     if Is_Immobile()
         p_Mobilize()
     endIf
@@ -247,10 +251,14 @@ function f_Unregister()
     UnregisterForAllModEvents()
 endFunction
 
-function f_Lock_Resources()
-    while p_is_executing
+function f_Lock_Resources(float timeout = 15.0)
+    float time_waited = 0.0
+
+    while p_is_executing && time_waited < timeout
         Utility.Wait(0.01)
+        time_waited += 0.01
     endWhile
+
     p_is_executing = true
 endFunction
 
@@ -281,508 +289,548 @@ function p_Rush(string str_message)
 endFunction
 
 function p_Create_Containers()
-    f_Lock_Resources()
+f_Lock_Resources()
 
-        p_container2_pack = CONTAINERS.Create()
+    p_container2_pack = CONTAINERS.Create()
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 endFunction
 
 function p_Destroy_Containers()
-    f_Lock_Resources()
+f_Lock_Resources()
     
-        p_container2_pack.RemoveAllItems(CONSTS.ACTOR_PLAYER, false, true)
-        CONTAINERS.Destroy(p_container2_pack)
+    p_container2_pack.RemoveAllItems(CONSTS.ACTOR_PLAYER, false, true)
+    CONTAINERS.Destroy(p_container2_pack)
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 endFunction
 
 function p_Create_Outfit()
-    f_Lock_Resources()
+f_Lock_Resources()
 
-        p_outfit2_member = OUTFITS.Create()
-        if VARS.fill_outfits
-            p_outfit2_member.Get(p_ref_actor, p_container2_pack)
-        else
-            p_ref_actor.RemoveAllItems(p_container2_pack, false, true)
-        endIf
-        p_outfit2_current = p_outfit2_member
-        p_outfit2_previous = p_outfit2_current
+    p_outfit2_member = OUTFITS.Create()
+    if VARS.fill_outfits
+        p_outfit2_member.Get(p_ref_actor, p_container2_pack)
+    else
+        p_ref_actor.RemoveAllItems(p_container2_pack, false, true)
+    endIf
+    p_outfit2_current = p_outfit2_member
+    p_outfit2_previous = p_outfit2_current
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 endFunction
 
 function p_Destroy_Outfits()
-    f_Lock_Resources()
+f_Lock_Resources()
 
-        if p_outfit2_default
-            OUTFITS.Destroy(p_outfit2_default)
-        endIf
-        if p_outfit2_vanilla
-            OUTFITS.Destroy(p_outfit2_vanilla)
-        endIf
-        if p_outfit2_immobile
-            OUTFITS.Destroy(p_outfit2_immobile)
-        endIf
-        if p_outfit2_follower
-            OUTFITS.Destroy(p_outfit2_follower)
-        endIf
-        if p_outfit2_thrall
-            OUTFITS.Destroy(p_outfit2_thrall)
-        endIf
-        if p_outfit2_settler
-            OUTFITS.Destroy(p_outfit2_settler)
-        endIf
-        OUTFITS.Destroy(p_outfit2_member)
+    if p_outfit2_default
+        OUTFITS.Destroy(p_outfit2_default)
+    endIf
+    if p_outfit2_vanilla
+        OUTFITS.Destroy(p_outfit2_vanilla)
+    endIf
+    if p_outfit2_immobile
+        OUTFITS.Destroy(p_outfit2_immobile)
+    endIf
+    if p_outfit2_follower
+        OUTFITS.Destroy(p_outfit2_follower)
+    endIf
+    if p_outfit2_thrall
+        OUTFITS.Destroy(p_outfit2_thrall)
+    endIf
+    if p_outfit2_settler
+        OUTFITS.Destroy(p_outfit2_settler)
+    endIf
+    OUTFITS.Destroy(p_outfit2_member)
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 endFunction
 
 function p_Backup()
-    f_Lock_Resources()
+f_Lock_Resources()
 
-        p_prev_factions = ACTORS.Get_Factions(p_ref_actor)
-        p_prev_faction_ranks = ACTORS.Get_Faction_Ranks(p_ref_actor, p_prev_factions)
-        p_prev_faction_crime = p_ref_actor.GetCrimeFaction()
+    p_prev_factions = ACTORS.Get_Factions(p_ref_actor)
+    p_prev_faction_ranks = ACTORS.Get_Faction_Ranks(p_ref_actor, p_prev_factions)
+    p_prev_faction_crime = p_ref_actor.GetCrimeFaction()
 
-        p_prev_aggression = p_ref_actor.GetBaseActorValue("Aggression")
-        p_prev_confidence = p_ref_actor.GetBaseActorValue("Confidence")
-        p_prev_assistance = p_ref_actor.GetBaseActorValue("Assistance")
-        p_prev_morality = p_ref_actor.GetBaseActorValue("Morality")
+    p_prev_aggression = p_ref_actor.GetBaseActorValue("Aggression")
+    p_prev_confidence = p_ref_actor.GetBaseActorValue("Confidence")
+    p_prev_assistance = p_ref_actor.GetBaseActorValue("Assistance")
+    p_prev_morality = p_ref_actor.GetBaseActorValue("Morality")
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 endFunction
 
 function p_Restore()
-    f_Lock_Resources()
+f_Lock_Resources()
 
-        p_ref_actor.SetActorValue("Morality", p_prev_morality)
-        p_ref_actor.SetActorValue("Assistance", p_prev_assistance)
-        p_ref_actor.SetActorValue("Confidence", p_prev_confidence)
-        p_ref_actor.SetActorValue("Aggression", 0.0)
+    p_ref_actor.SetActorValue("Morality", p_prev_morality)
+    p_ref_actor.SetActorValue("Assistance", p_prev_assistance)
+    p_ref_actor.SetActorValue("Confidence", p_prev_confidence)
+    p_ref_actor.SetActorValue("Aggression", 0.0)
 
-        ACTORS.Set_Factions(p_ref_actor, p_prev_factions, p_prev_faction_ranks)
-        p_ref_actor.SetCrimeFaction(p_prev_faction_crime)
+    ACTORS.Set_Factions(p_ref_actor, p_prev_factions, p_prev_faction_ranks)
+    p_ref_actor.SetCrimeFaction(p_prev_faction_crime)
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 endFunction
 
 function p_Member()
-    f_Lock_Resources()
+f_Lock_Resources()
 
-        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_MEMBER, p_id_alias + 1)
-        if p_is_clone
-            ACTORS.Token(p_ref_actor, CONSTS.TOKEN_CLONE)
-        else
-            ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_CLONE)
-        endIf
-        if ACTORS.Is_Generic(p_ref_actor)
-            ACTORS.Token(p_ref_actor, CONSTS.TOKEN_GENERIC)
-        else
-            ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_GENERIC)
-        endIf
-        if p_is_thrall
-            ACTORS.Token(p_ref_actor, CONSTS.TOKEN_THRALL)
-        else
-            ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_THRALL)
-        endIf
+    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_MEMBER, p_id_alias + 1)
+    if p_is_clone
+        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_CLONE)
+    else
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_CLONE)
+    endIf
+    if ACTORS.Is_Generic(p_ref_actor)
+        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_GENERIC)
+    else
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_GENERIC)
+    endIf
+    if p_is_thrall
+        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_THRALL)
+    else
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_THRALL)
+    endIf
 
-        p_ref_actor.RemoveFromFaction(CONSTS.FACTION_POTENTIAL_FOLLOWER)
-        p_ref_actor.RemoveFromFaction(CONSTS.FACTION_CURRENT_FOLLOWER); we want to separate state for each reference
-        p_ref_actor.AddToFaction(CONSTS.FACTION_WI_NO_BODY_CLEANUP)
-        p_ref_actor.AddToFaction(CONSTS.FACTION_MEMBER)
-        p_ref_actor.SetCrimeFaction(none)
+    p_ref_actor.RemoveFromFaction(CONSTS.FACTION_POTENTIAL_FOLLOWER)
+    p_ref_actor.RemoveFromFaction(CONSTS.FACTION_CURRENT_FOLLOWER); we want to separate state for each reference
+    p_ref_actor.AddToFaction(CONSTS.FACTION_WI_NO_BODY_CLEANUP)
+    p_ref_actor.AddToFaction(CONSTS.FACTION_MEMBER)
+    p_ref_actor.SetCrimeFaction(none)
 
-        p_ref_actor.SetActorValue("Aggression", 0.0)
-        p_ref_actor.SetActorValue("Confidence", 4.0)
-        p_ref_actor.SetActorValue("Assistance", 2.0)
-        p_ref_actor.SetActorValue("Morality", 0.0)
+    p_ref_actor.SetActorValue("Aggression", 0.0)
+    p_ref_actor.SetActorValue("Confidence", 4.0)
+    p_ref_actor.SetActorValue("Assistance", 2.0)
+    p_ref_actor.SetActorValue("Morality", 0.0)
 
-        p_ref_actor.SetPlayerTeammate(true, true)
+    p_ref_actor.SetPlayerTeammate(true, true)
 
-        p_ref_actor.EvaluatePackage()
+    p_ref_actor.EvaluatePackage()
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 endFunction
 
 function p_Unmember()
-    f_Lock_Resources()
+f_Lock_Resources()
 
-        p_ref_actor.SetPlayerTeammate(false, false)
+    p_ref_actor.SetPlayerTeammate(false, false)
 
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_THRALL)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_GENERIC)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_CLONE)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_MEMBER)
+    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_THRALL)
+    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_GENERIC)
+    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_CLONE)
+    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_MEMBER)
 
-        ; Restore() handles the rest
+    ; Restore() handles the rest
 
-        p_ref_actor.EvaluatePackage()
+    p_ref_actor.EvaluatePackage()
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 endFunction
 
 function p_Settle()
-    f_Lock_Resources()
+f_Lock_Resources()
 
-        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_SETTLER)
+    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_SETTLER)
 
-        p_marker_settler.MoveTo(p_ref_actor)
+    p_marker_settler.MoveTo(p_ref_actor)
 
-        p_ref_actor.EvaluatePackage()
+    p_ref_actor.EvaluatePackage()
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 endFunction
 
 function p_Unsettle()
-    f_Lock_Resources()
+f_Lock_Resources()
 
-        p_marker_settler.MoveToMyEditorLocation()
+    p_marker_settler.MoveToMyEditorLocation()
 
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_SETTLER)
+    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_SETTLER)
 
-        p_ref_actor.EvaluatePackage()
+    p_ref_actor.EvaluatePackage()
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 endFunction
 
 function p_Enthrall()
-    f_Lock_Resources()
+f_Lock_Resources()
 
-        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_THRALL)
+    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_THRALL)
 
-        p_ref_actor.AddToFaction(CONSTS.FACTION_DLC1_VAMPIRE_FEED_NO_CRIME)
+    p_ref_actor.AddToFaction(CONSTS.FACTION_DLC1_VAMPIRE_FEED_NO_CRIME)
 
-        p_ref_actor.EvaluatePackage()
+    p_ref_actor.EvaluatePackage()
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 endFunction
 
 function p_Unthrall()
-    f_Lock_Resources()
+f_Lock_Resources()
 
-        p_ref_actor.RemoveFromFaction(CONSTS.FACTION_DLC1_VAMPIRE_FEED_NO_CRIME)
+    p_ref_actor.RemoveFromFaction(CONSTS.FACTION_DLC1_VAMPIRE_FEED_NO_CRIME)
 
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_THRALL)
+    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_THRALL)
 
-        p_ref_actor.EvaluatePackage()
+    p_ref_actor.EvaluatePackage()
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 endFunction
 
 function p_Immobilize()
-    f_Lock_Resources()
+f_Lock_Resources()
 
-        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_IMMOBILE)
+    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_IMMOBILE)
 
-        p_ref_actor.EvaluatePackage()
+    p_ref_actor.EvaluatePackage()
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 endFunction
 
 function p_Mobilize()
-    f_Lock_Resources()
+f_Lock_Resources()
 
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_IMMOBILE)
+    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_IMMOBILE)
 
-        p_ref_actor.EvaluatePackage()
+    p_ref_actor.EvaluatePackage()
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 endFunction
 
 function p_Paralyze()
-    f_Lock_Resources()
+f_Lock_Resources()
 
-        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_PARALYZED)
+    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_PARALYZED)
 
-        ObjectReference ref_marker = p_ref_actor.PlaceAtMe(CONSTS.STATIC_MARKER_X)
-        ref_marker.MoveTo(p_ref_actor)
+    ObjectReference ref_marker = p_ref_actor.PlaceAtMe(CONSTS.STATIC_MARKER_X)
+    ref_marker.MoveTo(p_ref_actor)
     
-        p_ref_actor.EnableAI(false)
-        p_ref_actor.SetGhost(true)
-        p_ref_actor.BlockActivation(true)
+    p_ref_actor.EnableAI(false)
+    p_ref_actor.SetGhost(true)
+    p_ref_actor.BlockActivation(true)
 
-        p_ref_actor.EvaluatePackage()
+    p_ref_actor.EvaluatePackage()
 
-        p_ref_actor.MoveTo(ref_marker)
+    p_ref_actor.MoveTo(ref_marker)
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 endFunction
 
 function p_Unparalyze()
-    f_Lock_Resources()
+f_Lock_Resources()
     
-        p_ref_actor.BlockActivation(false)
-        p_ref_actor.SetGhost(false)
-        p_ref_actor.EnableAI(true)
+    p_ref_actor.BlockActivation(false)
+    p_ref_actor.SetGhost(false)
+    p_ref_actor.EnableAI(true)
 
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_PARALYZED)
+    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_PARALYZED)
 
-        ;p_ref_actor.EvaluatePackage(); resets animation
+    ;p_ref_actor.EvaluatePackage(); resets animation
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 endFunction
 
 function p_Reparalyze()
     p_Unparalyze()
 
-    f_Lock_Resources()
+f_Lock_Resources()
 
-        Debug.SendAnimationEvent(p_ref_actor, "IdleForceDefaultState"); go to cached animation? FNIS?
-        ;Debug.SendAnimationEvent(p_ref_actor, "IdleCiceroDance1")
-        ;p_ref_actor.WaitForAnimationEvent("done")
-        Utility.Wait(0.1)
+    Debug.SendAnimationEvent(p_ref_actor, "IdleForceDefaultState"); go to cached animation? FNIS?
+    ;Debug.SendAnimationEvent(p_ref_actor, "IdleCiceroDance1")
+    ;p_ref_actor.WaitForAnimationEvent("done")
+    Utility.Wait(0.1)
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 
     p_Paralyze()
 endFunction
 
 function p_Set_Style(int code_style)
-    f_Lock_Resources()
+f_Lock_Resources()
 
-        p_code_style = code_style
+    p_code_style = code_style
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 endFunction
 
 function p_Style()
-    f_Lock_Resources()
+f_Lock_Resources()
 
-        if p_code_style == CODES.IS_DEFAULT
-            ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
-            ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
-            ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
-            ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
-        elseIf p_code_style == CODES.IS_WARRIOR
-            ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
-            ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
-            ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
-            ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
-        elseIf p_code_style == CODES.IS_MAGE
-            ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
-            ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
-            ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
-            ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
-        elseIf p_code_style == CODES.IS_ARCHER
-            ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
-            ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
-            ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
-            ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
-        endIf
+    if p_code_style == CODES.IS_DEFAULT
+        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
+    elseIf p_code_style == CODES.IS_WARRIOR
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
+        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
+    elseIf p_code_style == CODES.IS_MAGE
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
+        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
+    elseIf p_code_style == CODES.IS_ARCHER
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
+        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
+    endIf
 
-        p_ref_actor.EvaluatePackage()
+    p_ref_actor.EvaluatePackage()
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 endFunction
 
 function p_Unstyle()
-    f_Lock_Resources()
+f_Lock_Resources()
 
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
+    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
+    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
+    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
+    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
 
-        p_ref_actor.EvaluatePackage()
+    p_ref_actor.EvaluatePackage()
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 endFunction
 
 function p_Set_Vitality(int code_vitality)
-    f_Lock_Resources()
+f_Lock_Resources()
 
-        p_code_vitality = code_vitality
+    p_code_vitality = code_vitality
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 endFunction
 
 function p_Vitalize()
-    f_Lock_Resources()
+f_Lock_Resources()
 
-        if p_code_vitality == CODES.IS_MORTAL
-            ACTORS.Token(p_ref_actor, CONSTS.TOKEN_VITALITY_MORTAL)
-            ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_PROTECTED)
-            ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_ESSENTIAL)
-            ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_INVULNERABLE)
-        elseIf p_code_vitality == CODES.IS_PROTECTED
-            ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_MORTAL)
-            ACTORS.Token(p_ref_actor, CONSTS.TOKEN_VITALITY_PROTECTED)
-            ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_ESSENTIAL)
-            ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_INVULNERABLE)
-        elseIf p_code_vitality == CODES.IS_ESSENTIAL
-            ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_MORTAL)
-            ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_PROTECTED)
-            ACTORS.Token(p_ref_actor, CONSTS.TOKEN_VITALITY_ESSENTIAL)
-            ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_INVULNERABLE)
-        elseIf p_code_vitality == CODES.IS_INVULNERABLE
-            ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_MORTAL)
-            ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_PROTECTED)
-            ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_ESSENTIAL)
-            ACTORS.Token(p_ref_actor, CONSTS.TOKEN_VITALITY_INVULNERABLE)
-        endIf
+    if p_code_vitality == CODES.IS_MORTAL
+        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_VITALITY_MORTAL)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_PROTECTED)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_ESSENTIAL)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_INVULNERABLE)
+    elseIf p_code_vitality == CODES.IS_PROTECTED
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_MORTAL)
+        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_VITALITY_PROTECTED)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_ESSENTIAL)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_INVULNERABLE)
+    elseIf p_code_vitality == CODES.IS_ESSENTIAL
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_MORTAL)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_PROTECTED)
+        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_VITALITY_ESSENTIAL)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_INVULNERABLE)
+    elseIf p_code_vitality == CODES.IS_INVULNERABLE
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_MORTAL)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_PROTECTED)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_ESSENTIAL)
+        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_VITALITY_INVULNERABLE)
+    endIf
 
-        p_ref_actor.EvaluatePackage()
+    p_ref_actor.EvaluatePackage()
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 endFunction
 
 function p_Unvitalize()
-    f_Lock_Resources()
+f_Lock_Resources()
 
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_INVULNERABLE)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_ESSENTIAL)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_PROTECTED)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_MORTAL)
+    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_INVULNERABLE)
+    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_ESSENTIAL)
+    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_PROTECTED)
+    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_MORTAL)
 
-        p_ref_actor.EvaluatePackage()
+    p_ref_actor.EvaluatePackage()
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 endFunction
 
 function p_Put_Outfit(int code_outfit)
-    f_Lock_Resources()
+f_Lock_Resources()
 
-        if code_outfit == CODES.OUTFIT_MEMBER
-            p_outfit2_member.Set_Name(Get_Name() + "'s Member Outfit")
-            p_outfit2_current = p_outfit2_member
-        elseIf code_outfit == CODES.OUTFIT_SETTLER
-            if !p_outfit2_settler
-                p_outfit2_settler = OUTFITS.Create_Settler()
-            endIf
-            p_outfit2_settler.Set_Name(Get_Name() + "'s Settler Outfit")
-            p_outfit2_current = p_outfit2_settler
-        elseIf code_outfit == CODES.OUTFIT_THRALL
-            if !p_outfit2_thrall
-                p_outfit2_thrall = OUTFITS.Create_Thrall()
-            endIf
-            p_outfit2_thrall.Set_Name(Get_Name() + "'s Thrall Outfit")
-            p_outfit2_current = p_outfit2_thrall
-        elseIf code_outfit == CODES.OUTFIT_FOLLOWER
-            if !p_outfit2_follower
-                p_outfit2_follower = OUTFITS.Create_Follower()
-            endIf
-            p_outfit2_follower.Set_Name(Get_Name() + "'s Follower Outfit")
-            p_outfit2_current = p_outfit2_follower
-        elseIf code_outfit == CODES.OUTFIT_IMMOBILE
-            if !p_outfit2_immobile
-                p_outfit2_immobile = OUTFITS.Create_Immobile()
-            endIf
-            p_outfit2_immobile.Set_Name(Get_Name() + "'s Immobile Outfit")
-            p_outfit2_current = p_outfit2_immobile
-        elseIf code_outfit == CODES.OUTFIT_VANILLA
-            if !p_outfit2_vanilla
-                p_outfit2_vanilla = OUTFITS.Create_Vanilla()
-            endIf
-            p_outfit2_vanilla.Set_Name(Get_Name() + "'s Vanilla Outfit")
-            p_outfit2_current = p_outfit2_vanilla
-        elseIf code_outfit == CODES.OUTFIT_DEFAULT
-            if !p_outfit2_default
-                p_outfit2_default = OUTFITS.Create_Default()
-                p_outfit2_default.Get_Default(p_ref_actor)
-            endIf
-            p_outfit2_default.Set_Name(Get_Name() + "'s Default Outfit")
-            p_outfit2_current = p_outfit2_default
+    if code_outfit == CODES.OUTFIT_MEMBER
+        p_outfit2_member.Set_Name(Get_Name() + "'s Member Outfit")
+        p_outfit2_current = p_outfit2_member
+    elseIf code_outfit == CODES.OUTFIT_SETTLER
+        if !p_outfit2_settler
+            p_outfit2_settler = OUTFITS.Create_Settler()
         endIf
+        p_outfit2_settler.Set_Name(Get_Name() + "'s Settler Outfit")
+        p_outfit2_current = p_outfit2_settler
+    elseIf code_outfit == CODES.OUTFIT_THRALL
+        if !p_outfit2_thrall
+            p_outfit2_thrall = OUTFITS.Create_Thrall()
+        endIf
+        p_outfit2_thrall.Set_Name(Get_Name() + "'s Thrall Outfit")
+        p_outfit2_current = p_outfit2_thrall
+    elseIf code_outfit == CODES.OUTFIT_FOLLOWER
+        if !p_outfit2_follower
+            p_outfit2_follower = OUTFITS.Create_Follower()
+        endIf
+        p_outfit2_follower.Set_Name(Get_Name() + "'s Follower Outfit")
+        p_outfit2_current = p_outfit2_follower
+    elseIf code_outfit == CODES.OUTFIT_IMMOBILE
+        if !p_outfit2_immobile
+            p_outfit2_immobile = OUTFITS.Create_Immobile()
+        endIf
+        p_outfit2_immobile.Set_Name(Get_Name() + "'s Immobile Outfit")
+        p_outfit2_current = p_outfit2_immobile
+    elseIf code_outfit == CODES.OUTFIT_VANILLA
+        if !p_outfit2_vanilla
+            p_outfit2_vanilla = OUTFITS.Create_Vanilla()
+        endIf
+        p_outfit2_vanilla.Set_Name(Get_Name() + "'s Vanilla Outfit")
+        p_outfit2_current = p_outfit2_vanilla
+    elseIf code_outfit == CODES.OUTFIT_DEFAULT
+        if !p_outfit2_default
+            p_outfit2_default = OUTFITS.Create_Default()
+            p_outfit2_default.Get_Default(p_ref_actor)
+        endIf
+        p_outfit2_default.Set_Name(Get_Name() + "'s Default Outfit")
+        p_outfit2_current = p_outfit2_default
+    endIf
 
-        p_outfit2_current.Put()
+    p_outfit2_current.Put()
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 endFunction
 
 function p_Outfit(bool do_force = false)
-    f_Lock_Resources()
-        ; if we ever allow manual outfit switching without having to put, we need to make sure the oufit is created
+f_Lock_Resources()
+    ; if we ever allow manual outfit switching without having to put, we need to make sure the oufit is created
 
-        if VARS.auto_outfit
-            if Is_Immobile() && VARS.auto_immobile_outfit
-                if !p_outfit2_immobile
-                    p_outfit2_immobile = OUTFITS.Create_Immobile()
-                endIf
-                p_outfit2_current = p_outfit2_immobile
-            elseIf Is_Follower()
-                if !p_outfit2_follower
-                    p_outfit2_follower = OUTFITS.Create_Follower()
-                endIf
-                p_outfit2_current = p_outfit2_follower
-            elseIf Is_Thrall()
-                if !p_outfit2_thrall
-                    p_outfit2_thrall = OUTFITS.Create_Thrall()
-                endIf
-                p_outfit2_current = p_outfit2_thrall
-            elseIf Is_Settler()
-                if !p_outfit2_settler
-                    p_outfit2_settler = OUTFITS.Create_Settler()
-                endIf
-                p_outfit2_current = p_outfit2_settler
-            else
-                p_outfit2_current = p_outfit2_member
+    if VARS.auto_outfit
+        if Is_Immobile() && VARS.auto_immobile_outfit
+            if !p_outfit2_immobile
+                p_outfit2_immobile = OUTFITS.Create_Immobile()
             endIf
-        endIf
-
-        ; just in case
-        if !p_outfit2_current
+            p_outfit2_current = p_outfit2_immobile
+        elseIf Is_Follower()
+            if !p_outfit2_follower
+                p_outfit2_follower = OUTFITS.Create_Follower()
+            endIf
+            p_outfit2_current = p_outfit2_follower
+        elseIf Is_Thrall()
+            if !p_outfit2_thrall
+                p_outfit2_thrall = OUTFITS.Create_Thrall()
+            endIf
+            p_outfit2_current = p_outfit2_thrall
+        elseIf Is_Settler()
+            if !p_outfit2_settler
+                p_outfit2_settler = OUTFITS.Create_Settler()
+            endIf
+            p_outfit2_current = p_outfit2_settler
+        else
             p_outfit2_current = p_outfit2_member
         endIf
-        if !p_outfit_vanilla
-            p_outfit_vanilla = NPCS.Get_Default_Outfit(p_ref_actor)
-        endIf
+    endIf
 
-        if p_do_outfit_vanilla
-            p_do_outfit_vanilla = false
-            if !p_outfit2_vanilla
-                p_outfit2_vanilla = OUTFITS.Create_Vanilla()
-            endIf
-            p_outfit2_current = p_outfit2_vanilla
+    ; just in case
+    if !p_outfit2_current
+        p_outfit2_current = p_outfit2_member
+    endIf
+    if !p_outfit_vanilla
+        p_outfit_vanilla = NPCS.Get_Default_Outfit(p_ref_actor)
+    endIf
+
+    if p_do_outfit_vanilla
+        p_do_outfit_vanilla = false
+        if !p_outfit2_vanilla
+            p_outfit2_vanilla = OUTFITS.Create_Vanilla()
+        endIf
+        p_outfit2_previous = p_outfit2_current
+        p_outfit2_current = p_outfit2_vanilla
+        p_outfit2_current.Cache_Outfit(p_outfit_vanilla)
+        p_outfit2_current.Set(p_ref_actor, true)
+    elseIf p_outfit2_previous != p_outfit2_current
+        if p_outfit2_current == p_outfit2_vanilla
             p_outfit2_current.Cache_Outfit(p_outfit_vanilla)
-            p_outfit2_current.Set(p_ref_actor, true)
-        elseIf p_outfit2_previous != p_outfit2_current
-            if p_outfit2_current == p_outfit2_vanilla
-                p_outfit2_current.Cache_Outfit(p_outfit_vanilla)
-            elseIf p_outfit2_current == p_outfit2_default
-                p_outfit2_current.Cache_Outfit(NPCS.Get_Default_Outfit(p_ref_actor))
-            endIf
-            p_outfit2_previous = p_outfit2_current
-            p_outfit2_current.Set(p_ref_actor, true)
-        else
-            p_outfit2_current.Set(p_ref_actor, do_force)
+        elseIf p_outfit2_current == p_outfit2_default
+            p_outfit2_current.Cache_Outfit(NPCS.Get_Default_Outfit(p_ref_actor))
         endIf
+        p_outfit2_previous = p_outfit2_current
+        p_outfit2_current.Set(p_ref_actor, true)
+    else
+        p_outfit2_current.Set(p_ref_actor, do_force)
+    endIf
 
-        p_ref_actor.EvaluatePackage()
+    p_ref_actor.EvaluatePackage()
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 endFunction
 
 function p_Resurrect()
-    f_Lock_Resources()
+f_Lock_Resources()
 
-        ACTORS.Resurrect(p_ref_actor)
+    ACTORS.Resurrect(p_ref_actor)
 
-        p_ref_actor.EvaluatePackage()
+    p_ref_actor.EvaluatePackage()
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 
     p_Outfit()
 endFunction
 
+function p_Reanimate()
+f_Lock_Resources()
+
+    ACTORS.Resurrect(p_ref_actor)
+
+    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_REANIMATED)
+
+    ; can't set unconscious, messes up their ai pretty badly
+    ; it would be cool if we could change how they walk.
+    ; we probably need to check that they have an appropiate voice type, so we gets moans even for modded npcs
+    ; the voice may need to be reset on each game load. and each npc load, because i doubt it sticks
+    ; we of course want to change how their skin looks, make it more grey, perhaps add some bone matter?
+    ; need to use an ability on them I think. also needs to be recast each game load I think, and npc load
+    ; we may be able to put the ability on alias, which I think doesn't require for us to recast it each load
+    ; look into the susanna the wicked shirt, could be reused in shader? also, there may be a shader in dlc1
+
+    p_is_reanimated = true
+
+    p_ref_actor.EvaluatePackage()
+
+f_Unlock_Resources()
+
+    p_Outfit()
+endFunction
+
+function p_Deanimate()
+f_Lock_Resources()
+
+    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_REANIMATED)
+
+    Clear()
+    ACTORS.Kill(p_ref_actor)
+    ForceRefTo(p_ref_actor)
+
+    p_is_reanimated = false
+
+f_Unlock_Resources()
+endFunction
+
 function p_Rename(string str_name)
-    f_Lock_Resources()
+f_Lock_Resources()
 
-        ACTORS.Set_Name(p_ref_actor, str_name)
+    ACTORS.Set_Name(p_ref_actor, str_name)
 
-        p_ref_actor.EvaluatePackage()
+    p_ref_actor.EvaluatePackage()
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 endfunction
 
 function p_Pack()
-    f_Lock_Resources()
+f_Lock_Resources()
 
-        p_container2_pack.Set_Name(Get_Name() + "'s Pack")
-        p_container2_pack.Open()
-        Utility.Wait(0.1)
+    p_container2_pack.Set_Name(Get_Name() + "'s Pack")
+    p_container2_pack.Open()
+    Utility.Wait(0.1)
 
-    f_Unlock_Resources()
+f_Unlock_Resources()
 endFunction
 
 int function p_Clone()
@@ -817,6 +865,11 @@ int function Enforce(bool do_outfit = true)
     else
         p_Enqueue("Member.Mobilize")
     endIf
+    ;/if Is_Reanimate()
+        p_Enqueue("Member.Reanimate")
+    else
+        p_Enqueue("Member.Deanimate")
+    endIf/;
     if Is_Paralyzed()
         p_Enqueue("Member.Paralyze")
     else
@@ -1218,8 +1271,6 @@ int function Unfollow(int code_exec)
 endFunction
 
 int function Resurrect(int code_exec)
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1235,6 +1286,27 @@ int function Resurrect(int code_exec)
     endIf
 
     Enforce()
+
+    return CODES.SUCCESS
+endFunction
+
+int function Reanimate(int code_exec)
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+
+    if ACTORS.Is_Alive(p_ref_actor)
+        return CODES.IS_ALIVE
+    endIf
+
+    if code_exec == CODES.DO_ASYNC
+        p_Enqueue("Member.Reanimate")
+    else
+        p_Reanimate()
+    endIf
+
+    p_Outfit()
+    Enforce(false)
 
     return CODES.SUCCESS
 endFunction
@@ -1732,6 +1804,10 @@ bool function Is_Unparalyzed()
     return Exists() && !p_is_paralyzed
 endFunction
 
+bool function Is_Reanimated()
+    return Exists() && p_is_reanimated
+endFunction
+
 bool function Is_Sneak()
     return Is_Follower() && Get_Follower().Is_Sneak()
 endFunction
@@ -1850,6 +1926,8 @@ event On_Queue_Member(string str_message)
         p_Vitalize()
     elseIf str_message == "Member.Resurrect"
         p_Resurrect()
+    elseIf str_message == "Member.Reanimate"
+        p_Reanimate()
     elseIf str_message == "Follower.Create"
         p_queue_code_return = FOLLOWERS.f_Create_Follower(p_ref_actor)
     elseIf str_message == "Follower.Destroy"

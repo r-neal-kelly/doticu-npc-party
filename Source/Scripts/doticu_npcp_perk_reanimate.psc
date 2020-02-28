@@ -51,6 +51,9 @@ endFunction
 function f_Register()
 endFunction
 
+function f_Unregister()
+endFunction
+
 ; Public Methods
 function Reanimate_Member(ObjectReference ref_target, Actor _)
     Actor ref_actor = ref_target as Actor
@@ -63,7 +66,5 @@ function Reanimate_Member(ObjectReference ref_target, Actor _)
         return
     endIf
 
-    COMMANDS.Resurrect_Sync(ref_actor, false); async has the message appear faster
-    ; temp testing after here
-    ; can't set unconscious, messes up their ai pretty badly
+    COMMANDS.Reanimate_Sync(ref_actor, true); async has the message appear faster
 endFunction

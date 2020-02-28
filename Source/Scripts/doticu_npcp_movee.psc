@@ -158,10 +158,14 @@ function f_Unregister()
 endFunction
 
 ; Private Methods
-function p_Lock_Script()
-    while p_is_executing
+function p_Lock_Script(float timeout = 15.0)
+    float time_waited = 0.0
+
+    while p_is_executing && time_waited < timeout
         Utility.Wait(0.01)
+        time_waited += 0.01
     endWhile
+
     p_is_executing = true
 endFunction
 

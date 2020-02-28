@@ -198,21 +198,19 @@ function p_Set(Actor ref_actor, bool do_force = false)
 
 NPCS.Lock_Base(ref_actor)
     ; this ensures that our modded outfit is worn. we need that blank armor.
-    ; we can speed up this check by looking for blank armor on the base outfit 
-    Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(ref_actor)
     Outfit outfit_default = NPCS.Get_Default_Outfit(ref_actor)
     if !ref_actor.IsEquipped(CONSTS.ARMOR_BLANK)
-        ; IsEquipped might be too harsh, but I think it might be necessary,
-        ; instead of just check to see if they have the blank armor at all
         ref_actor.SetOutfit(CONSTS.OUTFIT_TEMP)
         doticu_npcp.Outfit_Add_Item(outfit_default, CONSTS.ARMOR_BLANK as Form)
-        ref_actor.SetOutfit(outfit_default)
-    elseIf outfit_vanilla != outfit_default
-        ACTORS.Set_Base_Outfit(ref_actor, outfit_default)
+        ref_actor.SetOutfit(outfit_default)   
     endIf
+    ; this ensures that the outfit will be saved. using Outfit_Add_Item can
+    ; cause the engine not to save the base outfit and it resets on hard-load
+    ACTORS.Set_Base_Outfit(ref_actor, outfit_default)
 NPCS.Unlock_Base(ref_actor)
 
     ; this will stop the actor from rendering while we manage its inventory
+    ; although it does not stop rendering when outfit items are removed
     ref_actor.SetPlayerTeammate(false, false)
 
     ; this will completely wipe the inventory of everything but tokens

@@ -29,6 +29,7 @@ MiscObject                  p_TOKEN_STYLE_DEFAULT                   = none
 MiscObject                  p_TOKEN_STYLE_WARRIOR                   = none
 MiscObject                  p_TOKEN_STYLE_MAGE                      = none
 MiscObject                  p_TOKEN_STYLE_ARCHER                    = none
+MiscObject                  p_TOKEN_REANIMATED                      = none
 MiscObject                  p_TOKEN_VITALITY_MORTAL                 = none
 MiscObject                  p_TOKEN_VITALITY_PROTECTED              = none
 MiscObject                  p_TOKEN_VITALITY_ESSENTIAL              = none
@@ -75,6 +76,7 @@ VoiceType                   p_VOICE_FEMALE_COWARD                   = none
 Weapon                      p_WEAPON_BLANK                          = none
 Armor                       p_ARMOR_BLANK                           = none
 Key                         p_KEY_LOCK                              = none
+Quest                       p_QUEST_DIALOGUE_REANIMATED             = none
 
 ; Public Constants
 Actor property ACTOR_PLAYER
@@ -337,6 +339,17 @@ MiscObject property TOKEN_STYLE_ARCHER
     function Set(MiscObject val)
         if p_TOKEN_STYLE_ARCHER == none
             p_TOKEN_STYLE_ARCHER = val
+        endIf
+    endFunction
+endProperty
+
+MiscObject property TOKEN_REANIMATED
+    MiscObject function Get()
+        return p_TOKEN_REANIMATED
+    endFunction
+    function Set(MiscObject val)
+        if p_TOKEN_REANIMATED == none
+            p_TOKEN_REANIMATED = val
         endIf
     endFunction
 endProperty
@@ -799,6 +812,17 @@ Quest property QUEST_BARD_SONGS
     function Set(Quest val)
         if p_QUEST_BARD_SONGS == none
             p_QUEST_BARD_SONGS = val
+        endIf
+    endFunction
+endProperty
+
+Quest property QUEST_DIALOGUE_REANIMATED
+    Quest function Get()
+        return p_QUEST_DIALOGUE_REANIMATED
+    endFunction
+    function Set(Quest val)
+        if p_QUEST_DIALOGUE_REANIMATED == none
+            p_QUEST_DIALOGUE_REANIMATED = val
         endIf
     endFunction
 endProperty

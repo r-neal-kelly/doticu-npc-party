@@ -66,6 +66,8 @@ function f_Init_Mod()
     FOLLOWERS.Start()
     CONTROL.Start()
 
+    DATA.CONSTS.QUEST_DIALOGUE_REANIMATED.Start()
+
     p_Create()
     p_Register()
 
@@ -146,6 +148,9 @@ function p_Version()
 
         if Is_NPC_Party_Less_Than(0, 8, 0)
             u_0_8_0()
+        endIf
+        if Is_NPC_Party_Less_Than(0, 8, 2)
+            u_0_8_2()
         endIf
 
         VARS.version_major = CONSTS.VERSION_MAJOR
@@ -242,6 +247,8 @@ function u_0_8_0()
 endFunction
 
 function u_0_8_2()
+    DATA.CONSTS.QUEST_DIALOGUE_REANIMATED.Start()
+
     DATA.MODS.FUNCS.PERKS.u_0_8_2()
 endFunction
 

@@ -46,6 +46,9 @@ endFunction
 function f_Register()
 endFunction
 
+function f_Unregister()
+endFunction
+
 ; Public Methods
 function Kiss_Thrall(ObjectReference ref_target, Actor _)
     Actor ref_thrall = ref_target as Actor

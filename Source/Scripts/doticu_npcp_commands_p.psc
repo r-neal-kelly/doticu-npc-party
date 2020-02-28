@@ -223,6 +223,24 @@ function Resurrect(int code_exec, Actor ref_actor, bool auto_create)
     NOTES.Resurrect(ref_member.Resurrect(code_exec), str_name)
 endFunction
 
+function Reanimate(int code_exec, Actor ref_actor, bool auto_create)
+    int code_return
+    string str_name = ACTORS.Get_Name(ref_actor)
+
+    if auto_create && !MEMBERS.Has_Member(ref_actor)
+        NOTES.Reanimate(MEMBERS.Create_Member(ref_actor), str_name)
+        return
+    endIf
+
+    doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
+    if !ref_member
+        NOTES.Reanimate(CODES.HASNT_MEMBER, str_name)
+        return
+    endIf
+
+    NOTES.Reanimate(ref_member.Reanimate(code_exec), str_name)
+endFunction
+
 function Settle(int code_exec, Actor ref_actor, bool auto_create)
     int code_return
     string str_name = ACTORS.Get_Name(ref_actor)
