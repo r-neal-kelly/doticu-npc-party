@@ -67,6 +67,7 @@ function f_Init_Mod()
     CONTROL.Start()
 
     DATA.CONSTS.QUEST_DIALOGUE_REANIMATED.Start()
+    DATA.CONSTS.QUEST_DIALOGUE_THRALL.Start()
 
     p_Create()
     p_Register()
@@ -248,6 +249,7 @@ endFunction
 
 function u_0_8_2()
     DATA.CONSTS.QUEST_DIALOGUE_REANIMATED.Start()
+    DATA.CONSTS.QUEST_DIALOGUE_THRALL.Start()
 
     DATA.MODS.FUNCS.PERKS.u_0_8_2()
 endFunction

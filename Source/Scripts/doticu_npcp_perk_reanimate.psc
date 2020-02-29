@@ -62,9 +62,5 @@ function Reanimate_Member(ObjectReference ref_target, Actor _)
         return
     endIf
 
-    if !MEMBERS.Has_Member(ref_actor)
-        return
-    endIf
-
-    COMMANDS.Reanimate_Sync(ref_actor, true); async has the message appear faster
+    COMMANDS.Reanimate_Sync(ref_actor, true)
 endFunction

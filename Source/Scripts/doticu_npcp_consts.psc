@@ -77,6 +77,7 @@ Weapon                      p_WEAPON_BLANK                          = none
 Armor                       p_ARMOR_BLANK                           = none
 Key                         p_KEY_LOCK                              = none
 Quest                       p_QUEST_DIALOGUE_REANIMATED             = none
+Quest                       p_QUEST_DIALOGUE_THRALL                 = none
 
 ; Public Constants
 Actor property ACTOR_PLAYER
@@ -823,6 +824,17 @@ Quest property QUEST_DIALOGUE_REANIMATED
     function Set(Quest val)
         if p_QUEST_DIALOGUE_REANIMATED == none
             p_QUEST_DIALOGUE_REANIMATED = val
+        endIf
+    endFunction
+endProperty
+
+Quest property QUEST_DIALOGUE_THRALL
+    Quest function Get()
+        return p_QUEST_DIALOGUE_THRALL
+    endFunction
+    function Set(Quest val)
+        if p_QUEST_DIALOGUE_THRALL == none
+            p_QUEST_DIALOGUE_THRALL = val
         endIf
     endFunction
 endProperty

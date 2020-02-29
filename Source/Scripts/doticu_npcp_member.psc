@@ -251,12 +251,12 @@ function f_Unregister()
     UnregisterForAllModEvents()
 endFunction
 
-function f_Lock_Resources(float timeout = 15.0)
+function f_Lock_Resources(float timeout = 10.0, float interval = 0.1)
     float time_waited = 0.0
 
     while p_is_executing && time_waited < timeout
-        Utility.Wait(0.01)
-        time_waited += 0.01
+        Utility.Wait(interval)
+        time_waited += interval
     endWhile
 
     p_is_executing = true
@@ -770,8 +770,6 @@ f_Lock_Resources()
     p_ref_actor.EvaluatePackage()
 
 f_Unlock_Resources()
-
-    p_Outfit()
 endFunction
 
 function p_Reanimate()
@@ -795,8 +793,6 @@ f_Lock_Resources()
     p_ref_actor.EvaluatePackage()
 
 f_Unlock_Resources()
-
-    p_Outfit()
 endFunction
 
 function p_Deanimate()
@@ -1285,8 +1281,6 @@ int function Resurrect(int code_exec)
         p_Resurrect()
     endIf
 
-    Enforce()
-
     return CODES.SUCCESS
 endFunction
 
@@ -1304,9 +1298,6 @@ int function Reanimate(int code_exec)
     else
         p_Reanimate()
     endIf
-
-    p_Outfit()
-    Enforce(false)
 
     return CODES.SUCCESS
 endFunction
