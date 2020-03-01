@@ -155,7 +155,6 @@ endFunction
 function f_Register()
     ; registering mod events is global for each script on an object, and
     ; further, works for handlers labeled as function as well as event.
-    
     RegisterForModEvent("doticu_npcp_load_mod", "On_Load_Mod")
     RegisterForModEvent("doticu_npcp_followers_enforce", "On_Followers_Enforce")
     RegisterForModEvent("doticu_npcp_followers_settle", "On_Followers_Settle")

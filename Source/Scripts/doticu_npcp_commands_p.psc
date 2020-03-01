@@ -208,8 +208,9 @@ endFunction
 function Resurrect(int code_exec, Actor ref_actor, bool auto_create)
     int code_return
     string str_name = ACTORS.Get_Name(ref_actor)
-    
+
     if auto_create && !MEMBERS.Has_Member(ref_actor)
+        ; creating a member automatically resurrects them
         NOTES.Resurrect(MEMBERS.Create_Member(ref_actor), str_name)
         return
     endIf
@@ -219,7 +220,7 @@ function Resurrect(int code_exec, Actor ref_actor, bool auto_create)
         NOTES.Resurrect(CODES.HASNT_MEMBER, str_name)
         return
     endIf
-
+    
     NOTES.Resurrect(ref_member.Resurrect(code_exec), str_name)
 endFunction
 
@@ -228,8 +229,11 @@ function Reanimate(int code_exec, Actor ref_actor, bool auto_create)
     string str_name = ACTORS.Get_Name(ref_actor)
 
     if auto_create && !MEMBERS.Has_Member(ref_actor)
-        NOTES.Reanimate(MEMBERS.Create_Member(ref_actor), str_name)
-        return
+        code_return = MEMBERS.Create_Member(ref_actor)
+        if code_return < 0
+            NOTES.Reanimate(code_return, str_name)
+            return
+        endIf
     endIf
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)

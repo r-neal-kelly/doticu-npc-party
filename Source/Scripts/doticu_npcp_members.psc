@@ -136,7 +136,6 @@ endFunction
 int function Create_Member(Actor ref_actor, bool do_clone = false)
     int code_return
     bool was_dead = false
-    Actor ref_actor_orig = ref_actor
 
     if !ref_actor
         return CODES.ISNT_ACTOR
@@ -147,7 +146,7 @@ int function Create_Member(Actor ref_actor, bool do_clone = false)
     endIf
 
     if ALIASES.Is_Full()
-        ; cloning can be slow, so check first
+        ; check first so we don't have to unclone
         return CODES.HASNT_SPACE_MEMBER
     endIf
 
@@ -162,7 +161,6 @@ int function Create_Member(Actor ref_actor, bool do_clone = false)
             LOGS.Create_Note("Adding clone to members, please wait...", false)
         endIf
 
-        ref_actor_orig = ref_actor
         ref_actor = NPCS.Clone(ref_actor)
         if !ref_actor
             return CODES.CANT_CLONE
@@ -199,7 +197,7 @@ int function Create_Member(Actor ref_actor, bool do_clone = false)
     int id_alias = code_return
 
     doticu_npcp_member ref_member = p_Get_Member(id_alias)
-    ref_member.f_Create(p_DATA, id_alias, do_clone, ref_actor_orig)
+    ref_member.f_Create(p_DATA, id_alias, do_clone)
     ref_member.f_Register()
 
     return CODES.SUCCESS

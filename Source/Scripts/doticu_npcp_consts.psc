@@ -78,6 +78,7 @@ Armor                       p_ARMOR_BLANK                           = none
 Key                         p_KEY_LOCK                              = none
 Quest                       p_QUEST_DIALOGUE_REANIMATED             = none
 Quest                       p_QUEST_DIALOGUE_THRALL                 = none
+EffectShader                p_SHADER_REANIMATE_FX                   = none
 
 ; Public Constants
 Actor property ACTOR_PLAYER
@@ -883,9 +884,20 @@ Key property KEY_LOCK
     endFunction
 endProperty
 
+EffectShader property SHADER_REANIMATE_FX
+    EffectShader function Get()
+        return p_SHADER_REANIMATE_FX
+    endFunction
+    function Set(EffectShader val)
+        if p_SHADER_REANIMATE_FX == none
+            p_SHADER_REANIMATE_FX = val
+        endIf
+    endFunction
+endProperty
+
 int property VERSION_MAJOR                  =     0 autoReadOnly hidden; set manually upon each release
 int property VERSION_MINOR                  =     8 autoReadOnly hidden; set manually upon each release
-int property VERSION_PATCH                  =     1 autoReadOnly hidden; set manually upon each release
+int property VERSION_PATCH                  =     2 autoReadOnly hidden; set manually upon each release
 
 int property MIN_DISPLAY                    =     1 autoReadOnly hidden
 int property MAX_DISPLAY                    =     8 autoReadOnly hidden

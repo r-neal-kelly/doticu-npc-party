@@ -275,21 +275,80 @@ function Kill(Actor ref_actor)
 endFunction
 
 function Resurrect(Actor ref_actor)
+    ; we back up everything on actor because Resurrect() resets their inventory
     ObjectReference ref_container_temp = CONTAINERS.Create_Temp()
-
     CONTAINERS.Take_All(ref_container_temp, ref_actor)
-    ref_actor.Disable()
+
+    ; Resurrect() moved them a little bit and other actions can contribute to leaving the original position
+    ObjectReference ref_marker = ref_actor.PlaceAtMe(CONSTS.STATIC_MARKER_X, 1, false, false)
+
+    ; we hide the resurrection because the actor starts standing by default
+    ; we could try playing a laying down animation to see if that would help.
+    ref_actor.SetAlpha(0, false)
     ref_actor.SetCriticalStage(CODES.CRITICAL_NONE)
     ref_actor.Resurrect()
+    Utility.Wait(0.1); stops the body from being caught in the ground
+    ref_actor.EnableAI(false)
+    ref_actor.MoveTo(ref_marker, 0.0, 0.0, 1.5, true)
+    ref_actor.EnableAI(true)
+    CONSTS.ACTOR_PLAYER.PushActorAway(ref_actor, 0.0001)
     Pacify(ref_actor)
-    ref_actor.Enable()
+    ref_actor.SetAlpha(1, true)
+
+    ; restore the inventory to maintain state tokens and gear
     CONTAINERS.Empty(ref_actor)
     CONTAINERS.Take_All(ref_actor, ref_container_temp)
     Update_Equipment(ref_actor)
 
+    ; just in case the garbage collector doesn't do it
+    ref_marker.Disable()
+    ref_marker.Delete()
     ref_container_temp.Disable()
     ref_container_temp.Delete()
 endFunction
+
+;/function Reanimate(Actor ref_actor)
+    ; we back up everything on actor because Resurrect() resets their inventory
+    ObjectReference ref_container_temp = CONTAINERS.Create_Temp()
+    CONTAINERS.Take_All(ref_container_temp, ref_actor)
+
+    ; Resurrect() moved them a little bit and other actions can contribute to leaving the original position
+    ObjectReference ref_marker = ref_actor.PlaceAtMe(CONSTS.STATIC_MARKER_X, 1, false, false)
+
+    ; we hide the resurrection because the actor starts standing by default
+    ; we could try playing a laying down animation to see if that would help.
+    ;ref_actor.SetAlpha(0, false)
+    ref_actor.SetCriticalStage(CODES.CRITICAL_NONE)
+    ref_actor.Resurrect()
+    ;Utility.Wait(0.1); stops the body from being caught in the ground
+    ;ref_actor.EnableAI(false)
+    ref_actor.MoveTo(ref_marker, 0.0, 0.0, 1.5, true)
+    ;ref_actor.EnableAI(true)
+    ;CONSTS.ACTOR_PLAYER.PushActorAway(ref_actor, 0.0001)
+    Debug.SendAnimationEvent(ref_actor, "RagdollInstant")
+    Utility.Wait(0.1)
+    Debug.SendAnimationEvent(ref_actor, "ReanimateStart")
+    Utility.Wait(2)
+    Debug.SendAnimationEvent(ref_actor, "Reanimated")
+    Utility.Wait(0.1)
+    Debug.SendAnimationEvent(ref_actor, "ReanimateExit")
+    Utility.Wait(0.1)
+    Debug.SendAnimationEvent(ref_actor, "IdleForceDefaultState")
+    Utility.Wait(0.1)
+    Pacify(ref_actor)
+    ;ref_actor.SetAlpha(1, true)
+
+    ; restore the inventory to maintain state tokens and gear
+    CONTAINERS.Empty(ref_actor)
+    CONTAINERS.Take_All(ref_actor, ref_container_temp)
+    Update_Equipment(ref_actor)
+
+    ; just in case the garbage collector doesn't do it
+    ref_marker.Disable()
+    ref_marker.Delete()
+    ref_container_temp.Disable()
+    ref_container_temp.Delete()
+endFunction/;
 
 function Open_Inventory(Actor ref_actor)
     ref_actor.OpenInventory(true)

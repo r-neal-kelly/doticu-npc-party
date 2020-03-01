@@ -77,6 +77,7 @@ endProperty
 doticu_npcp_data        p_DATA                      =  none
 
 ; Private Variables
+bool                    p_is_executing              = false
 bool                    p_is_created                = false
 int                     p_id_alias                  =    -1
 Actor                   p_ref_actor                 =  none
@@ -87,7 +88,6 @@ bool                    p_is_thrall                 = false
 bool                    p_is_immobile               = false
 bool                    p_is_paralyzed              = false
 bool                    p_is_reanimated             = false
-bool                    p_is_executing              = false
 bool                    p_do_outfit_vanilla         = false
 int                     p_code_style                =    -1
 int                     p_code_vitality             =    -1
@@ -116,13 +116,9 @@ float                   p_prev_assistance           =   0.0
 float                   p_prev_morality             =   0.0
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA, int id_alias, bool is_clone, Actor ref_actor_orig)
-    GotoState("p_STATE_BUSY")
-    p_Create(DATA, id_alias, is_clone, ref_actor_orig)
-    GotoState("")
-endFunction
+function f_Create(doticu_npcp_data DATA, int id_alias, bool is_clone)
+f_Lock_Resources()
 
-function p_Create(doticu_npcp_data DATA, int id_alias, bool is_clone, Actor ref_actor_orig)
     p_DATA = DATA
 
     p_is_created = true
@@ -134,7 +130,8 @@ function p_Create(doticu_npcp_data DATA, int id_alias, bool is_clone, Actor ref_
     p_is_thrall = false
     p_is_immobile = false
     p_is_paralyzed = false
-    p_is_executing = false
+    p_is_reanimated = false
+    
     p_do_outfit_vanilla = false
     p_code_style = VARS.auto_style
     p_code_vitality = VARS.auto_vitality
@@ -144,9 +141,12 @@ function p_Create(doticu_npcp_data DATA, int id_alias, bool is_clone, Actor ref_
     p_outfit_vanilla = NPCS.Get_Default_Outfit(p_ref_actor)
 
     p_Create_Queues()
+    p_Register_Queues()
     p_Create_Containers()
     p_Create_Outfit()
     p_Backup()
+
+f_Unlock_Resources()
     
     p_Member()
     p_Style()
@@ -158,17 +158,10 @@ function p_Create(doticu_npcp_data DATA, int id_alias, bool is_clone, Actor ref_
         ACTORS.Greet_Player(p_ref_actor)
     endIf
 
-    p_Register_Queues()
     p_Enqueue("Member.Outfit")
 endFunction
 
 function f_Destroy()
-    GotoState("p_STATE_BUSY")
-    p_Destroy()
-    GotoState("")
-endFunction
-
-function p_Destroy()
     f_QUEUE.Flush()
 
     if Is_Follower()
@@ -180,9 +173,6 @@ function p_Destroy()
     if Is_Paralyzed()
         p_Unparalyze()
     endIf
-    if Is_Reanimated()
-        p_Deanimate()
-    endIf
     if Is_Immobile()
         p_Mobilize()
     endIf
@@ -193,6 +183,12 @@ function p_Destroy()
         p_Unsettle()
     endIf
     p_Unmember()
+    if Is_Reanimated()
+        p_Deanimate()
+        p_Kill()
+    endIf
+
+f_Lock_Resources()
 
     p_Restore()
     p_Destroy_Outfits()
@@ -204,8 +200,8 @@ function p_Destroy()
     p_prev_confidence = 0.0
     p_prev_aggression = 0.0
     p_prev_faction_crime = none
-    ;p_prev_faction_ranks = none; the engine wont set an array to none!
-    ;p_prev_factions = none; ""
+    p_prev_faction_ranks = new int[1]
+    p_prev_factions = new Faction[1]
 
     p_outfit2_previous = none
     p_outfit2_current = none
@@ -225,7 +221,7 @@ function p_Destroy()
     p_code_vitality = -1
     p_code_style = -1
     p_do_outfit_vanilla = false
-    p_is_executing = false
+    p_is_reanimated = false
     p_is_paralyzed = false
     p_is_immobile = false
     p_is_thrall = false
@@ -235,12 +231,13 @@ function p_Destroy()
     p_ref_actor = none
     p_id_alias = -1
     p_is_created = false
+
+f_Unlock_Resources()
 endFunction
 
 function f_Register()
     ; registering mod events is global for each script on an object, and
     ; further, works for handlers labeled as function as well as event.
-
     RegisterForModEvent("doticu_npcp_load_mod", "On_Load_Mod")
     RegisterForModEvent("doticu_npcp_members_unmember", "On_Members_Unmember")
 
@@ -248,6 +245,7 @@ function f_Register()
 endFunction
 
 function f_Unregister()
+    ; this covers queue registration also I believe
     UnregisterForAllModEvents()
 endFunction
 
@@ -289,25 +287,15 @@ function p_Rush(string str_message)
 endFunction
 
 function p_Create_Containers()
-f_Lock_Resources()
-
     p_container2_pack = CONTAINERS.Create()
-
-f_Unlock_Resources()
 endFunction
 
 function p_Destroy_Containers()
-f_Lock_Resources()
-    
     p_container2_pack.RemoveAllItems(CONSTS.ACTOR_PLAYER, false, true)
     CONTAINERS.Destroy(p_container2_pack)
-
-f_Unlock_Resources()
 endFunction
 
 function p_Create_Outfit()
-f_Lock_Resources()
-
     p_outfit2_member = OUTFITS.Create()
     if VARS.fill_outfits
         p_outfit2_member.Get(p_ref_actor, p_container2_pack)
@@ -316,13 +304,9 @@ f_Lock_Resources()
     endIf
     p_outfit2_current = p_outfit2_member
     p_outfit2_previous = p_outfit2_current
-
-f_Unlock_Resources()
 endFunction
 
 function p_Destroy_Outfits()
-f_Lock_Resources()
-
     if p_outfit2_default
         OUTFITS.Destroy(p_outfit2_default)
     endIf
@@ -342,13 +326,9 @@ f_Lock_Resources()
         OUTFITS.Destroy(p_outfit2_settler)
     endIf
     OUTFITS.Destroy(p_outfit2_member)
-
-f_Unlock_Resources()
 endFunction
 
 function p_Backup()
-f_Lock_Resources()
-
     p_prev_factions = ACTORS.Get_Factions(p_ref_actor)
     p_prev_faction_ranks = ACTORS.Get_Faction_Ranks(p_ref_actor, p_prev_factions)
     p_prev_faction_crime = p_ref_actor.GetCrimeFaction()
@@ -357,13 +337,9 @@ f_Lock_Resources()
     p_prev_confidence = p_ref_actor.GetBaseActorValue("Confidence")
     p_prev_assistance = p_ref_actor.GetBaseActorValue("Assistance")
     p_prev_morality = p_ref_actor.GetBaseActorValue("Morality")
-
-f_Unlock_Resources()
 endFunction
 
 function p_Restore()
-f_Lock_Resources()
-
     p_ref_actor.SetActorValue("Morality", p_prev_morality)
     p_ref_actor.SetActorValue("Assistance", p_prev_assistance)
     p_ref_actor.SetActorValue("Confidence", p_prev_confidence)
@@ -371,8 +347,6 @@ f_Lock_Resources()
 
     ACTORS.Set_Factions(p_ref_actor, p_prev_factions, p_prev_faction_ranks)
     p_ref_actor.SetCrimeFaction(p_prev_faction_crime)
-
-f_Unlock_Resources()
 endFunction
 
 function p_Member()
@@ -765,30 +739,49 @@ endFunction
 function p_Resurrect()
 f_Lock_Resources()
 
+    ; because we handle enforcement in OnLoad, and OnLoad is trigged
+    ; when reenabling, and because ACTORS.Resurrect, reenables, we
+    ; don't need to do any enforcement in here
     ACTORS.Resurrect(p_ref_actor)
 
-    p_ref_actor.EvaluatePackage()
+f_Unlock_Resources()
+
+    if Is_Reanimated()
+        p_Deanimate()
+    endIf
+endFunction
+
+function p_Kill()
+f_Lock_Resources()
+
+    ; we clear it just to make sure that their default essential
+    ; status doesn't get in the way of their dying
+    Clear()
+    ACTORS.Kill(p_ref_actor)
+    ForceRefTo(p_ref_actor)
 
 f_Unlock_Resources()
+
+    ; we call the event handler ourselves because the actor
+    ; is not filled on death
+    OnDeath(none)
 endFunction
 
 function p_Reanimate()
 f_Lock_Resources()
 
-    ACTORS.Resurrect(p_ref_actor)
-
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_REANIMATED)
+
+    ; we could have an option for what shader is player, including none
+    ; we go ahead and make sure that the shader is stopped so we don't stack them
+    CONSTS.SHADER_REANIMATE_FX.Stop(p_ref_actor)
+    CONSTS.SHADER_REANIMATE_FX.Play(p_ref_actor, -1.0)
 
     ; can't set unconscious, messes up their ai pretty badly
     ; it would be cool if we could change how they walk.
     ; we probably need to check that they have an appropiate voice type, so we gets moans even for modded npcs
     ; the voice may need to be reset on each game load. and each npc load, because i doubt it sticks
-    ; we of course want to change how their skin looks, make it more grey, perhaps add some bone matter?
-    ; need to use an ability on them I think. also needs to be recast each game load I think, and npc load
-    ; we may be able to put the ability on alias, which I think doesn't require for us to recast it each load
     ; look into the susanna the wicked shirt, could be reused in shader? also, there may be a shader in dlc1
-
-    p_is_reanimated = true
 
     p_ref_actor.EvaluatePackage()
 
@@ -798,13 +791,9 @@ endFunction
 function p_Deanimate()
 f_Lock_Resources()
 
+    CONSTS.SHADER_REANIMATE_FX.Stop(p_ref_actor)
+
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_REANIMATED)
-
-    Clear()
-    ACTORS.Kill(p_ref_actor)
-    ForceRefTo(p_ref_actor)
-
-    p_is_reanimated = false
 
 f_Unlock_Resources()
 endFunction
@@ -861,11 +850,11 @@ int function Enforce(bool do_outfit = true)
     else
         p_Enqueue("Member.Mobilize")
     endIf
-    ;/if Is_Reanimate()
+    if Is_Reanimated()
         p_Enqueue("Member.Reanimate")
     else
         p_Enqueue("Member.Deanimate")
-    endIf/;
+    endIf
     if Is_Paralyzed()
         p_Enqueue("Member.Paralyze")
     else
@@ -1289,14 +1278,42 @@ int function Reanimate(int code_exec)
         return CODES.ISNT_MEMBER
     endIf
 
-    if ACTORS.Is_Alive(p_ref_actor)
-        return CODES.IS_ALIVE
+    ; we set this here for the queue to check
+    p_is_reanimated = true
+
+    ; we resurrect in here so that it's easier to enforce reanimation later.
+    ; we accept an already alive member to make it easier on creation, but maybe not once we make a dedicated Create_Reanimated()
+    if Is_Dead()
+        p_Resurrect()
     endIf
 
     if code_exec == CODES.DO_ASYNC
+        ; instead of using queue, we could just make a new thread manually
         p_Enqueue("Member.Reanimate")
     else
         p_Reanimate()
+    endIf
+
+    return CODES.SUCCESS
+endFunction
+
+int function Deanimate(int code_exec)
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+
+    ; we set this here for the queue to check
+    p_is_reanimated = false
+
+    ; we kill in here so that it's easier to enforce reanimation later.
+    if Is_Alive()
+        p_Kill()
+    endIf
+
+    if code_exec == CODES.DO_ASYNC
+        p_Enqueue("Member.Deanimate")
+    else
+        p_Deanimate()
     endIf
 
     return CODES.SUCCESS
@@ -1799,6 +1816,10 @@ bool function Is_Reanimated()
     return Exists() && p_is_reanimated
 endFunction
 
+bool function Isnt_Reanimated()
+    return Exists() && !p_is_reanimated
+endFunction
+
 bool function Is_Sneak()
     return Is_Follower() && Get_Follower().Is_Sneak()
 endFunction
@@ -1856,19 +1877,6 @@ bool function Is_In_Combat()
     return Exists() && p_ref_actor.IsInCombat()
 endFunction
 
-; Private States
-state p_STATE_BUSY
-    function f_Create(doticu_npcp_data DATA, int id_alias, bool is_clone, Actor ref_actor_orig)
-    endFunction
-    function f_Destroy()
-    endFunction
-
-    ; really ought to add all public methods, but it's difficult because so many
-    ; already have a private version. what really should be done is to make two
-    ; scripts per script, one implementation, and one interface. but I'm not sure
-    ; if that is too costly on the engine.
-endState
-
 ; Events
 event On_Queue_Member(string str_message)
     if p_queue_member.Should_Cancel()
@@ -1911,14 +1919,20 @@ event On_Queue_Member(string str_message)
         if Is_Unparalyzed()
             p_Unparalyze()
         endIf
+    elseIf str_message == "Member.Reanimate"
+        if Is_Reanimated()
+            p_Reanimate()
+        endIf
+    elseIf str_message == "Member.Deanimate"
+        if Isnt_Reanimated()
+            p_Deanimate()
+        endIf
     elseIf str_message == "Member.Style"
         p_Style()
     elseIf str_message == "Member.Vitalize"
         p_Vitalize()
     elseIf str_message == "Member.Resurrect"
         p_Resurrect()
-    elseIf str_message == "Member.Reanimate"
-        p_Reanimate()
     elseIf str_message == "Follower.Create"
         p_queue_code_return = FOLLOWERS.f_Create_Follower(p_ref_actor)
     elseIf str_message == "Follower.Destroy"
@@ -2010,9 +2024,7 @@ event OnHit(ObjectReference ref_attacker, Form _, Projectile __, bool ___, bool 
     ; we did have a stack dump related to this function once. might keep an eye on it
     if !p_ref_actor.IsDead() && p_ref_actor.GetActorValue(CONSTS.STR_HEALTH) <= 0
         if p_code_vitality == CODES.IS_MORTAL || p_code_vitality == CODES.IS_PROTECTED && ref_attacker == CONSTS.ACTOR_PLAYER
-            Clear()
-            ACTORS.Kill(p_ref_actor)
-            ForceRefTo(p_ref_actor)
+            p_Kill()
         endIf
     elseIf p_code_vitality == CODES.IS_INVULNERABLE
         p_ref_actor.RestoreActorValue(CONSTS.STR_HEALTH, 99999)
@@ -2037,5 +2049,11 @@ event OnCombatStateChanged(Actor ref_target, int code_combat)
         ;Enforce(false); no outfitting, too slow
     elseIf code_combat == CODES.COMBAT_SEARCHING
         
+    endIf
+endEvent
+
+event OnDeath(Actor ref_killer)
+    if Is_Reanimated()
+        p_Deanimate()
     endIf
 endEvent
