@@ -739,16 +739,13 @@ endFunction
 function p_Resurrect()
 f_Lock_Resources()
 
-    ; because we handle enforcement in OnLoad, and OnLoad is trigged
-    ; when reenabling, and because ACTORS.Resurrect, reenables, we
-    ; don't need to do any enforcement in here
+    ; no longer triggers an OnLoad()
     ACTORS.Resurrect(p_ref_actor)
 
 f_Unlock_Resources()
 
-    if Is_Reanimated()
-        p_Deanimate()
-    endIf
+    ; OnLoad checks a lot of state that can be removed on the death of the actor.
+    OnLoad()
 endFunction
 
 function p_Kill()
@@ -795,6 +792,8 @@ f_Lock_Resources()
 
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_REANIMATED)
 
+    p_ref_actor.EvaluatePackage()
+
 f_Unlock_Resources()
 endFunction
 
@@ -831,6 +830,9 @@ int function Enforce(bool do_outfit = true)
 
     if !Exists()
         return CODES.ISNT_MEMBER
+    endIf
+    if Is_Dead()
+        return CODES.IS_DEAD
     endIf
 
     p_Enqueue("Member.Token")
@@ -1281,16 +1283,17 @@ int function Reanimate(int code_exec)
     ; we set this here for the queue to check
     p_is_reanimated = true
 
-    ; we resurrect in here so that it's easier to enforce reanimation later.
     ; we accept an already alive member to make it easier on creation, but maybe not once we make a dedicated Create_Reanimated()
-    if Is_Dead()
-        p_Resurrect()
-    endIf
-
     if code_exec == CODES.DO_ASYNC
         ; instead of using queue, we could just make a new thread manually
+        if Is_Dead()
+            p_Enqueue("Member.Resurrect")
+        endIf
         p_Enqueue("Member.Reanimate")
     else
+        if Is_Dead()
+            p_Resurrect()
+        endIf
         p_Reanimate()
     endIf
 
@@ -1305,14 +1308,15 @@ int function Deanimate(int code_exec)
     ; we set this here for the queue to check
     p_is_reanimated = false
 
-    ; we kill in here so that it's easier to enforce reanimation later.
-    if Is_Alive()
-        p_Kill()
-    endIf
-
     if code_exec == CODES.DO_ASYNC
+        if Is_Alive()
+            p_Enqueue("Member.Kill")
+        endIf
         p_Enqueue("Member.Deanimate")
     else
+        if Is_Alive()
+            p_Kill()
+        endIf
         p_Deanimate()
     endIf
 
@@ -1927,12 +1931,18 @@ event On_Queue_Member(string str_message)
         if Isnt_Reanimated()
             p_Deanimate()
         endIf
+    elseIf str_message == "Member.Resurrect"
+        if Is_Dead()
+            p_Resurrect()
+        endIf
+    elseIf str_message == "Member.Kill"
+        if Is_Alive()
+            p_Kill()
+        endIf
     elseIf str_message == "Member.Style"
         p_Style()
     elseIf str_message == "Member.Vitalize"
         p_Vitalize()
-    elseIf str_message == "Member.Resurrect"
-        p_Resurrect()
     elseIf str_message == "Follower.Create"
         p_queue_code_return = FOLLOWERS.f_Create_Follower(p_ref_actor)
     elseIf str_message == "Follower.Destroy"
@@ -2046,7 +2056,7 @@ event OnCombatStateChanged(Actor ref_target, int code_combat)
     if code_combat == CODES.COMBAT_NO
         Enforce()
     elseIf code_combat == CODES.COMBAT_YES
-        ;Enforce(false); no outfitting, too slow
+
     elseIf code_combat == CODES.COMBAT_SEARCHING
         
     endIf
@@ -2056,4 +2066,6 @@ event OnDeath(Actor ref_killer)
     if Is_Reanimated()
         p_Deanimate()
     endIf
+
+    f_QUEUE.Flush()
 endEvent

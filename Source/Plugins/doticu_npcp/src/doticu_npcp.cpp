@@ -54,8 +54,9 @@ namespace doticu_npcp {
         // this is the leveled/real base which carries the outfits.
         // this will not save the base oufit after a full game-load.
         // quick tests have shown that allowing the original ActorBase.SetOutfit()
-        // does not cause the outfit bug. It's something in the original ObjectReference.SetOutfit()
-        TESNPC *base_actor = (TESNPC *)ref_actor->baseForm;
+        // does not cause the outfit bug. It's something in Actor.SetOutfit()
+        //TESNPC *base_actor = (TESNPC *)ref_actor->baseForm;
+        TESNPC *base_actor = DYNAMIC_CAST(ref_actor->baseForm, TESForm, TESNPC);
         if (is_sleep_outfit) {
             base_actor->sleepOutfit = outfit;
         } else {
