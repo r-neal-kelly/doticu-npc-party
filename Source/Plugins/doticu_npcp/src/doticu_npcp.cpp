@@ -197,12 +197,18 @@ namespace doticu_npcp {
         }
     }
 
-    int Compare_Aliases(const void *ptr_alias_a, const void *ptr_alias_b) {
+    int Compare_Aliases(const void *ptr_item_a, const void *ptr_item_b) {
+        BGSBaseAlias *ptr_alias_a = *(BGSBaseAlias **)ptr_item_a;
+        BGSBaseAlias *ptr_alias_b = *(BGSBaseAlias **)ptr_item_b;
+        if (!ptr_alias_a || !ptr_alias_b) {
+            // if just one is NULL, then the non-NULL will be put ahead
+            return ptr_alias_b - ptr_alias_a;
+        }
+
         VMClassRegistry *ptr_registry = (*g_skyrimVM)->GetClassRegistry();
         IObjectHandlePolicy *ptr_policy = ptr_registry->GetHandlePolicy();
-
-        Object_Handle hnd_alias_a(ptr_registry, ptr_policy, kFormType_Alias, *(BGSBaseAlias **)ptr_alias_a);
-        Object_Handle hnd_alias_b(ptr_registry, ptr_policy, kFormType_Alias, *(BGSBaseAlias **)ptr_alias_b);
+        Object_Handle hnd_alias_a(ptr_registry, ptr_policy, kFormType_Alias, ptr_alias_a);
+        Object_Handle hnd_alias_b(ptr_registry, ptr_policy, kFormType_Alias, ptr_alias_b);
 
         Actor *ptr_actor_a = Get_Alias_Actor(&hnd_alias_a);
         Actor *ptr_actor_b = Get_Alias_Actor(&hnd_alias_b);
