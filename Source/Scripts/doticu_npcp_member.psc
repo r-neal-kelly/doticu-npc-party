@@ -87,6 +87,7 @@ bool                    p_is_settler                = false
 bool                    p_is_thrall                 = false
 bool                    p_is_immobile               = false
 bool                    p_is_paralyzed              = false
+bool                    p_is_mannequin              = false
 bool                    p_is_reanimated             = false
 bool                    p_do_outfit_vanilla         = false
 int                     p_code_style                =    -1
@@ -94,6 +95,7 @@ int                     p_code_vitality             =    -1
 int                     p_queue_code_return         =     0
 ObjectReference         p_marker_settler            =  none
 ObjectReference         p_marker_display            =  none
+ObjectReference         p_marker_mannequin          =  none
 Outfit                  p_outfit_vanilla            =  none
 doticu_npcp_queue       p_queue_member              =  none
 doticu_npcp_container   p_container2_pack           =  none
@@ -130,6 +132,7 @@ f_Lock_Resources()
     p_is_thrall = false
     p_is_immobile = false
     p_is_paralyzed = false
+    p_is_mannequin = false
     p_is_reanimated = false
     
     p_do_outfit_vanilla = false
@@ -138,6 +141,7 @@ f_Lock_Resources()
     p_queue_code_return = 0
     p_marker_settler = CONSTS.FORMLIST_MARKERS_SETTLER.GetAt(p_id_alias) as ObjectReference
     p_marker_display = none
+    p_marker_mannequin = none
     p_outfit_vanilla = NPCS.Get_Default_Outfit(p_ref_actor)
 
     p_Create_Queues()
@@ -170,6 +174,9 @@ function f_Destroy()
 
     p_Unvitalize()
     p_Unstyle()
+    if Is_Mannequin()
+        p_Unmannequinize()
+    endIf
     if Is_Paralyzed()
         p_Unparalyze()
     endIf
@@ -215,6 +222,7 @@ f_Lock_Resources()
     p_container2_pack = none
     p_queue_member = none
     p_outfit_vanilla = none
+    p_marker_mannequin = none
     p_marker_display = none
     p_marker_settler = none
     p_queue_code_return = 0
@@ -222,6 +230,7 @@ f_Lock_Resources()
     p_code_style = -1
     p_do_outfit_vanilla = false
     p_is_reanimated = false
+    p_is_mannequin = false
     p_is_paralyzed = false
     p_is_immobile = false
     p_is_thrall = false
@@ -494,9 +503,11 @@ endFunction
 function p_Unparalyze()
 f_Lock_Resources()
     
-    p_ref_actor.BlockActivation(false)
-    p_ref_actor.SetGhost(false)
-    p_ref_actor.EnableAI(true)
+    if !Is_Mannequin()
+        p_ref_actor.BlockActivation(false)
+        p_ref_actor.SetGhost(false)
+        p_ref_actor.EnableAI(true)
+    endIf
 
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_PARALYZED)
 
@@ -506,6 +517,10 @@ f_Unlock_Resources()
 endFunction
 
 function p_Reparalyze()
+    if !Is_Paralyzed() || Is_Mannequin()
+        return
+    endIf
+
     p_Unparalyze()
 
 f_Lock_Resources()
@@ -518,6 +533,66 @@ f_Lock_Resources()
 f_Unlock_Resources()
 
     p_Paralyze()
+endFunction
+
+function p_Mannequinize()
+    if !Is_Mannequin()
+        return
+    endIf
+
+f_Lock_Resources()
+
+    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_MANNEQUIN)
+
+    p_ref_actor.EnableAI(false)
+    p_ref_actor.SetGhost(true)
+    p_ref_actor.BlockActivation(true)
+
+    p_ref_actor.MoveTo(p_marker_mannequin)
+    p_ref_actor.Disable()
+    p_ref_actor.Enable()
+
+    p_ref_actor.EvaluatePackage()
+
+f_Unlock_Resources()
+
+    if Is_Follower()
+        Unfollow(CODES.DO_ASYNC)
+    endIf
+endFunction
+
+function p_Unmannequinize()
+f_Lock_Resources()
+    
+    if !Is_Paralyzed()
+        p_ref_actor.BlockActivation(false)
+        p_ref_actor.SetGhost(false)
+        p_ref_actor.EnableAI(true)
+    endIf
+
+    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_MANNEQUIN)
+
+f_Unlock_Resources()
+endFunction
+
+function p_Remannequinize()
+    if !Is_Mannequin()
+        return
+    endIf
+    
+f_Lock_Resources()
+
+    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_MANNEQUIN)
+
+    p_ref_actor.EnableAI(false)
+    p_ref_actor.SetGhost(true)
+    p_ref_actor.BlockActivation(true)
+
+    p_ref_actor.MoveTo(p_marker_mannequin)
+
+    p_ref_actor.EvaluatePackage()
+
+f_Unlock_Resources()
 endFunction
 
 function p_Set_Style(int code_style)
@@ -826,6 +901,12 @@ endFunction
 
 ; Public Methods
 int function Enforce(bool do_outfit = true)
+    ; I would like to redesign this execution method to use a single function that uses wait signals
+    ; and locks to control asyncronicity instead of the queue. further, I want the one function to
+    ; contain the logic necessary to evoke the behaviors. the problem is that I suspect it will be
+    ; slow and possible even slower than using the queue. but it would be nice because it's hard to
+    ; handle certain cases where certain state must be in place or not in place. some behaviors share
+    ; state, such as Paralyze and Mannequin, which both need disabled ai
     int code_return
 
     if !Exists()
@@ -861,6 +942,11 @@ int function Enforce(bool do_outfit = true)
         p_Enqueue("Member.Paralyze")
     else
         p_Enqueue("Member.Unparalyze")
+    endIf
+    if Is_Mannequin()
+        p_Enqueue("Member.Remannequinize")
+    else
+        p_Enqueue("Member.Unmannequinize")
     endIf
     p_Enqueue("Member.Style")
     p_Enqueue("Member.Vitalize")
@@ -1196,6 +1282,52 @@ int function Unparalyze(int code_exec)
         p_Enqueue("Member.Unparalyze")
     else
         p_Unparalyze()
+    endIf
+
+    return CODES.SUCCESS
+endFunction
+
+int function Mannequinize(int code_exec, ObjectReference ref_marker)
+    int code_return
+
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+
+    if Is_Mannequin()
+        return CODES.IS_MANNEQUIN
+    endIf
+
+    p_is_mannequin = true
+    p_marker_mannequin = ref_marker
+
+    if code_exec == CODES.DO_ASYNC
+        p_Enqueue("Member.Mannequinize")
+    else
+        p_Mannequinize()
+    endIf
+
+    return CODES.SUCCESS
+endFunction
+
+int function Unmannequinize(int code_exec)
+    int code_return
+
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+
+    if !Is_Mannequin()
+        return CODES.ISNT_MANNEQUIN
+    endIf
+
+    p_marker_mannequin = none
+    p_is_mannequin = false
+
+    if code_exec == CODES.DO_ASYNC
+        p_Enqueue("Member.Unmannequinize")
+    else
+        p_Unmannequinize()
     endIf
 
     return CODES.SUCCESS
@@ -1762,10 +1894,14 @@ int function Unclone()
 endFunction
 
 function Summon(int distance = 120, int angle = 0)
-    ACTORS.Move_To(p_ref_actor, CONSTS.ACTOR_PLAYER, distance, angle)
-    if Is_Paralyzed()
-        p_Reparalyze()
+    ; we don't allow mannequins to be removed, until they are unmannequinized
+    if Is_Mannequin()
+        return
     endIf
+
+    ACTORS.Move_To(p_ref_actor, CONSTS.ACTOR_PLAYER, distance, angle)
+
+    p_Reparalyze()
 endFunction
 
 function Summon_Ahead(int distance = 120)
@@ -1814,6 +1950,10 @@ endFunction
 
 bool function Is_Unparalyzed()
     return Exists() && !p_is_paralyzed
+endFunction
+
+bool function Is_Mannequin()
+    return Exists() && p_is_mannequin
 endFunction
 
 bool function Is_Reanimated()
@@ -1923,6 +2063,16 @@ event On_Queue_Member(string str_message)
         if Is_Unparalyzed()
             p_Unparalyze()
         endIf
+    elseIf str_message == "Member.Mannequinize"
+        if Is_Mannequin()
+            p_Mannequinize()
+        endIf
+    elseIf str_message == "Member.Unmannequinize"
+        if !Is_Mannequin()
+            p_Unmannequinize()
+        endIf
+    elseIf str_message == "Member.Remannequinize"
+        p_Remannequinize()
     elseIf str_message == "Member.Reanimate"
         if Is_Reanimated()
             p_Reanimate()
@@ -1962,7 +2112,9 @@ endEvent
 event On_Load_Mod()
     ; OnLoad() is not always called, if the npc was loaded upon game exit.
     ; so we do the extra check here, because paralysis doesn't stick
-    if Is_Paralyzed()
+
+    if p_ref_actor.Is3DLoaded()
+        p_Remannequinize()
         p_Reparalyze()
     endIf
 endEvent
@@ -1972,9 +2124,8 @@ event OnLoad()
         return
     endIf
 
-    if Is_Paralyzed()
-        p_Reparalyze()
-    endIf
+    p_Remannequinize()
+    p_Reparalyze()
 
     p_Outfit()
 

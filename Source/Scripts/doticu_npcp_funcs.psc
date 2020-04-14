@@ -50,6 +50,11 @@ doticu_npcp_perks property PERKS hidden
         return (self as Quest) as doticu_npcp_perks
     endFunction
 endProperty
+doticu_npcp_mannequins property MANNEQUINS hidden
+    doticu_npcp_mannequins function Get()
+        return (self as Quest) as doticu_npcp_mannequins
+    endFunction
+endProperty
 
 ; Private Constants
 doticu_npcp_data    p_DATA          =  none
@@ -72,9 +77,11 @@ function f_Create(doticu_npcp_data DATA)
     ACTORS.f_Create(p_DATA)
     NPCS.f_Create(p_DATA)
     PERKS.f_Create(p_DATA)
+    MANNEQUINS.f_Create(p_DATA)
 endFunction
 
 function f_Destroy()
+    MANNEQUINS.f_Destroy()
     PERKS.f_Destroy()
     NPCS.f_Destroy()
     ACTORS.f_Destroy()
@@ -98,6 +105,7 @@ function f_Register()
     ACTORS.f_Register()
     NPCS.f_Register()
     PERKS.f_Register()
+    MANNEQUINS.f_Register()
 endFunction
 
 ; Public Methods
@@ -153,4 +161,10 @@ function Print_Contents(ObjectReference ref_object)
     str_contents += " ]\n"
 
     MiscUtil.PrintConsole(str_contents)
+endFunction
+
+; Update Methods
+function u_0_8_3()
+    MANNEQUINS.f_Create(p_DATA)
+    MANNEQUINS.f_Register()
 endFunction

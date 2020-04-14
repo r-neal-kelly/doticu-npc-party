@@ -462,7 +462,14 @@ Actor function Clone(Actor ref_actor)
         return none
     endIf
 
-    CONSTS.MARKER_CLONER.MoveTo(ref_actor, 0.0, 0.0, 0.0)
+    ; if their ai is disabled, it's probable that moving the marker too close to them
+    ; will cause them to move, and that may be unwanted if they are paralyzed and positioned.
+    if ref_actor.IsAIEnabled() && ACTORS.Is_Near_Player(ref_actor, 1024)
+        CONSTS.MARKER_CLONER.MoveTo(ref_actor, 0.0, 0.0, 0.0)
+    else
+        CONSTS.MARKER_CLONER.MoveTo(CONSTS.ACTOR_PLAYER, 0.0, 0.0, 0.0)
+    endIf
+
     Actor ref_clone = ACTORS.Clone(ref_actor, CONSTS.MARKER_CLONER)
     CONSTS.MARKER_CLONER.MoveTo(CONSTS.MARKER_STORAGE)
     if !ref_clone

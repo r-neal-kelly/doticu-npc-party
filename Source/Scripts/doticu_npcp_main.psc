@@ -153,6 +153,9 @@ function p_Version()
         if Is_NPC_Party_Less_Than(0, 8, 2)
             u_0_8_2()
         endIf
+        if Is_NPC_Party_Less_Than(0, 8, 3)
+            u_0_8_3()
+        endIf
 
         VARS.version_major = CONSTS.VERSION_MAJOR
         VARS.version_minor = CONSTS.VERSION_MINOR
@@ -252,6 +255,11 @@ function u_0_8_2()
     DATA.CONSTS.QUEST_DIALOGUE_THRALL.Start()
 
     DATA.MODS.FUNCS.PERKS.u_0_8_2()
+endFunction
+
+function u_0_8_3()
+    FUNCS.u_0_8_3()
+    CONTROL.MCM.u_0_8_3()
 endFunction
 
 ; Events

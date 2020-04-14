@@ -2,6 +2,8 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+//#include <algorithm>
+#include <cstring>
 #include "skse64/GameExtraData.h"
 #include "skse64/GameRTTI.h"
 #include "skse64/PapyrusActor.h"
@@ -53,6 +55,7 @@ namespace doticu_npcp {
 
         // this is the leveled/real base which carries the outfits.
         // Thank you to Ian Patterson of SKSE for how to save the outfit!
+        // Also, we're doing a dynamic cast, rather than static for TESNPC, because the library does
         TESNPC *base_actor = DYNAMIC_CAST(ref_actor->baseForm, TESForm, TESNPC);
         if (is_sleep_outfit) {
             base_actor->sleepOutfit = outfit;
@@ -123,6 +126,109 @@ namespace doticu_npcp {
         return;
     }
 
+    class Object_Handle {
+    public:
+        Object_Handle() {};
+        Object_Handle(VMClassRegistry *ptr_registry, IObjectHandlePolicy *ptr_policy, UInt32 type, void *data) {
+            p_ptr_registry = ptr_registry;
+            p_ptr_policy = ptr_policy;
+            p_type = type;
+            p_hnd = p_ptr_policy->Create(p_type, data);
+        }
+        ~Object_Handle() {
+            if (Is_Valid()) {
+                p_ptr_policy->Release(p_hnd);
+            }
+        }
+        UInt64 Val() {
+            return p_hnd;
+        }
+        VMClassRegistry *Registry() {
+            return p_ptr_registry;
+        }
+        IObjectHandlePolicy *Policy() {
+            return p_ptr_policy;
+        }
+        bool Is_Valid() {
+            return p_hnd != p_ptr_policy->GetInvalidHandle();
+        }
+    private:
+        VMClassRegistry *p_ptr_registry;
+        IObjectHandlePolicy *p_ptr_policy;
+        UInt32 p_type;
+        UInt64 p_hnd;
+    };
+
+    Actor *Get_Alias_Actor(Object_Handle *hnd_object) {
+        class Functor_Get_Variable : public IForEachScriptObjectFunctor {
+        public:
+            Functor_Get_Variable(Object_Handle *hnd_object, BSFixedString *str_variable) {
+                p_hnd_object = hnd_object;
+                p_str_variable = str_variable;
+            }
+            ~Functor_Get_Variable() {}
+            virtual bool Visit(VMScriptInstance *ptr_script, void *) {
+                SInt32 idx_variable = CALL_MEMBER_FN(ptr_script->classInfo, GetVariable)(p_str_variable);
+                if (idx_variable > -1) {
+                    p_hnd_object->Registry()->ExtractValue(p_hnd_object->Val(), &ptr_script->classInfo->name, idx_variable, &p_vm_variable);
+                    return false; // stop iterating
+                } else {
+                    return true; // keep iterating
+                }
+            }
+            VMValue *Val() {
+                return &p_vm_variable;
+            }
+        private:
+            Object_Handle * p_hnd_object;
+            BSFixedString *p_str_variable;
+            VMValue p_vm_variable;
+        };
+
+        BSFixedString str_variable("p_ref_actor");
+        Functor_Get_Variable functor(hnd_object, &str_variable);
+        hnd_object->Registry()->VisitScripts(hnd_object->Val(), &functor);
+
+        VMValue *vm_actor = functor.Val();
+        if (vm_actor->GetUnmangledType() == VMValue::kType_Identifier) {
+            return (Actor *)hnd_object->Policy()->Resolve(kFormType_Character, vm_actor->data.id->GetHandle());
+        } else {
+            return NULL;
+        }
+    }
+
+    int Compare_Aliases(const void *ptr_alias_a, const void *ptr_alias_b) {
+        VMClassRegistry *ptr_registry = (*g_skyrimVM)->GetClassRegistry();
+        IObjectHandlePolicy *ptr_policy = ptr_registry->GetHandlePolicy();
+
+        Object_Handle hnd_alias_a(ptr_registry, ptr_policy, kFormType_Alias, *(BGSBaseAlias **)ptr_alias_a);
+        Object_Handle hnd_alias_b(ptr_registry, ptr_policy, kFormType_Alias, *(BGSBaseAlias **)ptr_alias_b);
+
+        Actor *ptr_actor_a = Get_Alias_Actor(&hnd_alias_a);
+        Actor *ptr_actor_b = Get_Alias_Actor(&hnd_alias_b);
+
+        BSFixedString str_actor_a = CALL_MEMBER_FN(ptr_actor_a, GetReferenceName)();
+        BSFixedString str_actor_b = CALL_MEMBER_FN(ptr_actor_b, GetReferenceName)();
+
+        return strcmp(str_actor_a.data, str_actor_b.data);
+    }
+
+    VMResultArray<BGSBaseAlias *> Sort_Aliases(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr_aliases) {
+        UInt32 idx_aliases = 0;
+        UInt32 num_aliases = arr_aliases.Length();
+        VMResultArray<BGSBaseAlias *> arr_return;
+        arr_return.reserve(num_aliases);
+        BGSBaseAlias *ptr_alias;
+        while (idx_aliases < num_aliases) {
+            arr_aliases.Get(&ptr_alias, idx_aliases);
+            arr_return.push_back(ptr_alias);
+            idx_aliases += 1;
+        }
+        qsort(&arr_return[0], num_aliases, sizeof(BGSBaseAlias *), Compare_Aliases);
+
+        return arr_return;
+    }
+
     bool Register_Functions(VMClassRegistry *registry) {
         registry->RegisterFunction(
             new NativeFunction2 <StaticFunctionTag, void, BGSOutfit *, TESForm *>("Outfit_Add_Item",
@@ -139,6 +245,11 @@ namespace doticu_npcp {
                                                                  "Actor",
                                                                  doticu_npcp::Actor_Set_Outfit,
                                                                  registry));
+        registry->RegisterFunction(
+            new NativeFunction1 <StaticFunctionTag, VMResultArray<BGSBaseAlias *>, VMArray<BGSBaseAlias *>>("Sort_Aliases",
+                                                                                                            "doticu_npcp",
+                                                                                                            doticu_npcp::Sort_Aliases,
+                                                                                                            registry));
 
         return true;
     }

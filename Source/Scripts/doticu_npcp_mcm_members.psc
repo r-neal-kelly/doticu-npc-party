@@ -183,8 +183,10 @@ function f_On_Option_Highlight(int id_option)
     else
         int idx_entity = p_Get_Idx_Entity(id_option)
         doticu_npcp_member ref_member = p_arr_aliases[idx_entity] as doticu_npcp_member
+        Actor ref_actor = ref_member.Get_Actor()
         string str_name = ref_member.Get_Name()
-        MCM.SetInfoText("Opens the member menu for " + str_name)
+        string str_race = ref_actor.GetRace().GetName()
+        MCM.SetInfoText("Opens the member menu for " + str_name + ".\n" + "Race: " + str_race)
         ; this should show more about the member, like race, gender, style, and stats!!!
         ; whether is dead, healthly, etc. quick stats in other words
     endIf

@@ -7,8 +7,10 @@
 #include "skse64/PapyrusArgs.h"
 #include "skse64/PapyrusVM.h"
 #include "skse64/PapyrusNativeFunctions.h"
+#include "skse64/PapyrusValue.h"
 #include "skse64/GameForms.h"
 #include "skse64/GameReferences.h"
+#include "skse64/GlobalLocks.h"
 
 static IDebugLog gLog;
 

@@ -25,6 +25,7 @@ MiscObject                  p_TOKEN_GENERIC                         = none
 MiscObject                  p_TOKEN_THRALL                          = none
 MiscObject                  p_TOKEN_GREETER                         = none
 MiscObject                  p_TOKEN_PARALYZED                       = none
+MiscObject                  p_TOKEN_MANNEQUIN                       = none
 MiscObject                  p_TOKEN_STYLE_DEFAULT                   = none
 MiscObject                  p_TOKEN_STYLE_WARRIOR                   = none
 MiscObject                  p_TOKEN_STYLE_MAGE                      = none
@@ -48,6 +49,7 @@ GlobalVariable              p_GLOBAL_PERCENT_NO_FEET                = none
 GlobalVariable              p_GLOBAL_PERCENT_NO_HANDS               = none
 GlobalVariable              p_GLOBAL_PERCENT_NO_HEAD                = none
 FormList                    p_FORMLIST_MARKERS_SETTLER              = none
+FormList                    p_FORMLIST_MARKERS_EXPO_CELL            = none
 Faction                     p_FACTION_MEMBER                        = none
 Faction                     p_FACTION_DLC1_THRALL                   = none
 Faction                     p_FACTION_DLC1_VAMPIRE_FEED_NO_CRIME    = none
@@ -301,6 +303,17 @@ MiscObject property TOKEN_PARALYZED
     endFunction
 endProperty
 
+MiscObject property TOKEN_MANNEQUIN
+    MiscObject function Get()
+        return p_TOKEN_MANNEQUIN
+    endFunction
+    function Set(MiscObject val)
+        if p_TOKEN_MANNEQUIN == none
+            p_TOKEN_MANNEQUIN = val
+        endIf
+    endFunction
+endProperty
+
 MiscObject property TOKEN_STYLE_DEFAULT
     MiscObject function Get()
         return p_TOKEN_STYLE_DEFAULT
@@ -550,6 +563,17 @@ Formlist property FORMLIST_MARKERS_SETTLER
     function Set(Formlist val)
         if p_FORMLIST_MARKERS_SETTLER == none
             p_FORMLIST_MARKERS_SETTLER = val
+        endIf
+    endFunction
+endProperty
+
+Formlist property FORMLIST_MARKERS_EXPO_CELL
+    Formlist function Get()
+        return p_FORMLIST_MARKERS_EXPO_CELL
+    endFunction
+    function Set(Formlist val)
+        if p_FORMLIST_MARKERS_EXPO_CELL == none
+            p_FORMLIST_MARKERS_EXPO_CELL = val
         endIf
     endFunction
 endProperty
@@ -897,7 +921,7 @@ endProperty
 
 int property VERSION_MAJOR                  =     0 autoReadOnly hidden; set manually upon each release
 int property VERSION_MINOR                  =     8 autoReadOnly hidden; set manually upon each release
-int property VERSION_PATCH                  =     2 autoReadOnly hidden; set manually upon each release
+int property VERSION_PATCH                  =     3 autoReadOnly hidden; set manually upon each release
 
 int property MIN_DISPLAY                    =     1 autoReadOnly hidden
 int property MAX_DISPLAY                    =     8 autoReadOnly hidden
@@ -937,6 +961,9 @@ int property KEY_DEF_M_TOGGLE_IMMOBILE      =    83 autoReadOnly hidden; NUM.
 int property KEY_DEF_M_TOGGLE_PARALYZED     =   181 autoReadOnly hidden; NUM/
 int property KEY_DEF_M_TOGGLE_FOLLOWER      =    55 autoReadOnly hidden; NUM*
 int property KEY_DEF_M_TOGGLE_SNEAK         =    74 autoReadOnly hidden; NUM-
+
+int property KEY_DEF_N_HAS_BASE             =    24 autoReadOnly hidden; O
+int property KEY_DEF_N_COUNT_BASE           =    24 autoReadOnly hidden; O
 
 string property STR_HEALTH                  = "Health"                      autoReadOnly hidden
 string property STR_MAGICKA                 = "Magicka"                     autoReadOnly hidden
@@ -998,6 +1025,7 @@ string property STR_MCM_UNCLONE             = " Unclone "                   auto
 string property STR_MCM_UNMEMBER            = " Unmember "                  autoReadOnly hidden
 string property STR_MCM_BASE                = " Base "                      autoReadOnly hidden
 string property STR_MCM_REFERENCE           = " Reference "                 autoReadOnly hidden
+string property STR_MCM_RACE                = " Race "                      autoReadOnly hidden
 
 string property STR_MCM_HEALTH              = " Health "                    autoReadOnly hidden
 string property STR_MCM_MAGICKA             = " Magicka "                   autoReadOnly hidden
@@ -1050,3 +1078,6 @@ string property STR_KEY_M_TOGGLE_IMMOBILE   = "Toggle Immobile"             auto
 string property STR_KEY_M_TOGGLE_PARALYZED  = "Toggle Paralyzed"            autoReadOnly hidden
 string property STR_KEY_M_TOGGLE_FOLLOWER   = "Toggle Follower"             autoReadOnly hidden
 string property STR_KEY_M_TOGGLE_SNEAK      = "Toggle Sneak"                autoReadOnly hidden
+
+string property STR_KEY_N_HAS_BASE          = "Has Base"                    autoReadOnly hidden
+string property STR_KEY_N_COUNT_BASE        = "Count Base"                  autoReadOnly hidden

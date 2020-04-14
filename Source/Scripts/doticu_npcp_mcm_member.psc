@@ -131,6 +131,7 @@ int                 p_option_skill_alchemy      =    -1
 int                 p_option_skill_lockpicking  =    -1
 int                 p_option_skill_pickpocket   =    -1
 int                 p_option_skill_speechcraft  =    -1
+int                 p_option_race               =    -1
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
@@ -782,6 +783,8 @@ function p_Build_Statistics()
     p_option_skill_lockpicking  = MCM.AddTextOption(CONSTS.STR_MCM_LOCKPICKING, ref_actor.GetActorValue(CONSTS.STR_LOCKPICKING) as int)
     p_option_skill_pickpocket   = MCM.AddTextOption(CONSTS.STR_MCM_PICKPOCKET,  ref_actor.GetActorValue(CONSTS.STR_PICKPOCKET)  as int)
     p_option_skill_speechcraft  = MCM.AddTextOption(CONSTS.STR_MCM_SPEECHCRAFT, ref_actor.GetActorValue(CONSTS.STR_SPEECHCRAFT) as int)
+
+    p_option_race               = MCM.AddTextOption(CONSTS.STR_MCM_RACE,        ref_actor.GetRace().GetName()                         )
 endFunction
 
 function p_Update_Statistics()
@@ -810,7 +813,9 @@ function p_Update_Statistics()
     MCM.SetTextOptionValue(p_option_skill_alchemy,      ref_actor.GetActorValue(CONSTS.STR_ALCHEMY)     as int,  true)
     MCM.SetTextOptionValue(p_option_skill_lockpicking,  ref_actor.GetActorValue(CONSTS.STR_LOCKPICKING) as int,  true)
     MCM.SetTextOptionValue(p_option_skill_pickpocket,   ref_actor.GetActorValue(CONSTS.STR_PICKPOCKET)  as int,  true)
-    MCM.SetTextOptionValue(p_option_skill_speechcraft,  ref_actor.GetActorValue(CONSTS.STR_SPEECHCRAFT) as int, false)
+    MCM.SetTextOptionValue(p_option_skill_speechcraft,  ref_actor.GetActorValue(CONSTS.STR_SPEECHCRAFT) as int,  true)
+
+    MCM.SetTextOptionValue(p_option_race,               ref_actor.GetRace().GetName()                         , false)
 endFunction
 
 function p_Go_Back()

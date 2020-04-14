@@ -307,10 +307,9 @@ function Remove_Junk(Actor ref_actor)
         form_item = ref_actor.GetNthForm(idx_forms)
         if form_item && !(form_item as ObjectReference) && form_item != CONSTS.ARMOR_BLANK as Form
             ; we completely avoid any references and leave them alone. we must leave blank armor for no reset
-            if form_item.IsPlayable() || ref_actor.IsEquipped(form_item)
-                ; any playable item is fair game, but only equipped unplayables are accounted
-                ; for because some unplayable items are tokens from this mod and other mods
-                ref_junk.AddItem(form_item, ref_actor.GetItemCount(form_item), true)
+            if form_item.IsPlayable() || form_item as Armor || form_item as Weapon || form_item as Ammo
+                ; any playable item is fair game, but we leave misc tokens from this mod and other mods alone
+                ref_junk.AddItem(form_item, 1, true)
             endIf
         endIf
     endWhile
@@ -320,7 +319,7 @@ function Remove_Junk(Actor ref_actor)
     while idx_forms > 0
         idx_forms -= 1
         form_item = ref_junk.GetNthForm(idx_forms)
-        ref_actor.RemoveItem(form_item, ref_junk.GetItemCount(form_item), true, ref_junk)
+        ref_actor.RemoveItem(form_item, ref_actor.GetItemCount(form_item), true, ref_junk)
     endWhile
 
     ; it doesn't hurt to cleanup manually

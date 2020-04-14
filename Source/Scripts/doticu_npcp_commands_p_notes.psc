@@ -530,6 +530,8 @@ function Move(int code_return, string str_name)
         LOGS.Create_Note("Stopped moving npc.")
     elseIf code_return == CODES.ISNT_ACTOR
         LOGS.Create_Note("Can only move actors.")
+    elseIf code_return == CODES.IS_MANNEQUIN
+        LOGS.Create_Note("Can't move mannequins.")
     endIf
 endFunction
 

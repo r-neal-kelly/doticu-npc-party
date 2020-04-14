@@ -472,6 +472,11 @@ int function Toggle_Move(Actor ref_actor)
         if !ref_actor
             return CODES.ISNT_ACTOR
         endIf
+        
+        doticu_npcp_member ref_member = p_DATA.MODS.MEMBERS.Get_Member(ref_actor)
+        if ref_member.Is_Mannequin()
+            return CODES.IS_MANNEQUIN
+        endIf
 
         MOVEE.f_Create(p_DATA, ref_actor)
         MOVEE.f_Register()

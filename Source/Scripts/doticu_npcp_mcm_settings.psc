@@ -107,6 +107,9 @@ int                 p_option_key_m_toggle_paralyzed     =    -1
 int                 p_option_key_m_toggle_follower      =    -1
 int                 p_option_key_m_toggle_sneak         =    -1
 
+int                 p_option_key_n_has_base             =    -1
+int                 p_option_key_n_count_base           =    -1
+
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
     p_DATA = DATA
@@ -234,6 +237,13 @@ function f_Build_Page()
     p_option_key_m_toggle_paralyzed = MCM.AddKeymapOption(" Toggle Paralyzed ", VARS.key_m_toggle_paralyzed, MCM.OPTION_FLAG_WITH_UNMAP)
     p_option_key_m_toggle_follower = MCM.AddKeymapOption(" Toggle Follower ", VARS.key_m_toggle_follower, MCM.OPTION_FLAG_WITH_UNMAP)
     p_option_key_m_toggle_sneak = MCM.AddKeymapOption(" Toggle Sneak ", VARS.key_m_toggle_sneak, MCM.OPTION_FLAG_WITH_UNMAP)
+    MCM.AddEmptyOption()
+    MCM.AddEmptyOption()
+
+    MCM.AddHeaderOption(" One NPC ")
+    MCM.AddEmptyOption()
+    p_option_key_n_has_base = MCM.AddKeymapOption(" Has Base ", VARS.key_n_has_base, MCM.OPTION_FLAG_WITH_UNMAP)
+    p_option_key_n_count_base = MCM.AddKeymapOption(" Count Base ", VARS.key_n_count_base, MCM.OPTION_FLAG_WITH_UNMAP)
     MCM.AddEmptyOption()
     MCM.AddEmptyOption()
 endFunction
@@ -471,6 +481,10 @@ function f_On_Option_Keymap_Change(int id_option, int code_key, string str_confl
         VARS.key_m_toggle_follower = code_key
     elseIf id_option == p_option_key_m_toggle_sneak
         VARS.key_m_toggle_sneak = code_key
+    elseIf id_option == p_option_key_n_has_base
+        VARS.key_n_has_base = code_key
+    elseIf id_option == p_option_key_n_count_base
+        VARS.key_n_count_base = code_key
 
     else
         return
@@ -627,6 +641,18 @@ function f_On_Option_Default(int id_option)
         if p_Can_Set_Key(CONSTS.STR_KEY_M_TOGGLE_SNEAK, CONSTS.KEY_DEF_M_TOGGLE_SNEAK)
             VARS.key_m_toggle_sneak = CONSTS.KEY_DEF_M_TOGGLE_SNEAK
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_M_TOGGLE_SNEAK, false)
+        endIf
+
+    ; One NPC
+    elseIf id_option == p_option_key_n_has_base
+        if p_Can_Set_Key(CONSTS.STR_KEY_N_HAS_BASE, CONSTS.KEY_DEF_N_HAS_BASE)
+            VARS.key_n_has_base = CONSTS.KEY_DEF_N_HAS_BASE
+            MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_N_HAS_BASE, false)
+        endIf
+    elseIf id_option == p_option_key_n_count_base
+        if p_Can_Set_Key(CONSTS.STR_KEY_N_COUNT_BASE, CONSTS.KEY_DEF_N_COUNT_BASE)
+            VARS.key_n_count_base = CONSTS.KEY_DEF_N_COUNT_BASE
+            MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_N_COUNT_BASE, false)
         endIf
 
     endIf
@@ -787,6 +813,12 @@ function f_On_Option_Highlight(int id_option)
     elseIf id_option == p_option_key_m_toggle_sneak
         MCM.SetInfoText("Causes an npc to sneak or unsneak. The npc will become a member and a follower if they are not already.")
 
+    ; One NPC
+    elseIf id_option == p_option_key_n_has_base
+        MCM.SetInfoText("Shows whether or not you have a member with the same base as this npc.")
+    elseIf id_option == p_option_key_n_count_base
+        MCM.SetInfoText("Shows how many members you have with the same base as this npc.")
+
     endIf
 endFunction
 
@@ -862,6 +894,12 @@ string function p_Get_Control(int id_option)
         return CONSTS.STR_KEY_M_TOGGLE_FOLLOWER
     elseIf id_option == p_option_key_m_toggle_sneak
         return CONSTS.STR_KEY_M_TOGGLE_SNEAK
+
+    ; One NPC
+    elseIf id_option == p_option_key_n_has_base
+        return CONSTS.STR_KEY_N_HAS_BASE
+    elseIf id_option == p_option_key_n_count_base
+        return CONSTS.STR_KEY_N_COUNT_BASE
 
     else
         return ""

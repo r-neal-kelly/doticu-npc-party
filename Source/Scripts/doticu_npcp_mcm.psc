@@ -35,6 +35,11 @@ doticu_npcp_mcm_filter property MCM_FILTER
         return (self as Quest) as doticu_npcp_mcm_filter
     endFunction
 endProperty
+doticu_npcp_mcm_expo property MCM_EXPO
+    doticu_npcp_mcm_expo function Get()
+        return (self as Quest) as doticu_npcp_mcm_expo
+    endFunction
+endProperty
 doticu_npcp_mcm_settings property MCM_SETTINGS
     doticu_npcp_mcm_settings function Get()
         return (self as Quest) as doticu_npcp_mcm_settings
@@ -60,6 +65,11 @@ endProperty
 string property PAGE_FILTER hidden
     string function Get()
         return " Filter "
+    endFunction
+endProperty
+string property PAGE_EXPO hidden
+    string function Get()
+        return " Expo "
     endFunction
 endProperty
 string property PAGE_SETTINGS hidden
@@ -115,6 +125,7 @@ function f_Create(doticu_npcp_data DATA)
     MCM_MEMBERS.f_Create(DATA)
     MCM_MEMBER.f_Create(DATA)
     MCM_FILTER.f_Create(DATA)
+    MCM_EXPO.f_Create(DATA)
     MCM_SETTINGS.f_Create(DATA)
     MCM_LOG.f_Create(DATA)
 endFunction
@@ -122,6 +133,7 @@ endFunction
 function f_Destroy()
     MCM_LOG.f_Destroy()
     MCM_SETTINGS.f_Destroy()
+    MCM_EXPO.f_Destroy()
     MCM_FILTER.f_Destroy()
     MCM_MEMBER.f_Destroy()
     MCM_MEMBERS.f_Destroy()
@@ -135,6 +147,7 @@ function f_Register()
     MCM_MEMBERS.f_Register()
     MCM_MEMBER.f_Register()
     MCM_FILTER.f_Register()
+    MCM_EXPO.f_Register()
     MCM_SETTINGS.f_Register()
     MCM_LOG.f_Register()
 endFunction
@@ -142,6 +155,7 @@ endFunction
 function f_Unregister()
     MCM_LOG.f_Unregister()
     MCM_SETTINGS.f_Unregister()
+    MCM_EXPO.f_Unregister()
     MCM_FILTER.f_Unregister()
     MCM_MEMBER.f_Unregister()
     MCM_MEMBERS.f_Unregister()
@@ -168,7 +182,7 @@ endFunction
 
 ; Public Methods
 string function GetCustomControl(int code_key)
-    ; even though this is overridden, MCM will still return lower conflicts
+    ; even though this is overridden, MCM will still return conflicts from vanilla and other mods
     return KEYS.Get_Control(code_key)
 endFunction
 
@@ -180,12 +194,13 @@ endEvent
 event OnConfigOpen()
     VARS.is_mcm_open = true
 
-    Pages = Utility.CreateStringArray(4, "")
+    Pages = Utility.CreateStringArray(5, "")
     Pages[0] = PAGE_FOLLOWERS
     Pages[1] = PAGE_MEMBERS
     ;Pages[2] = PAGE_FILTER
-    Pages[2] = PAGE_SETTINGS
-    Pages[3] = PAGE_LOG
+    Pages[2] = PAGE_EXPO
+    Pages[3] = PAGE_SETTINGS
+    Pages[4] = PAGE_LOG
 endEvent
 
 event OnConfigClose()
@@ -199,6 +214,7 @@ event OnPageReset(string str_page)
     endIf
 
     if p_is_custom_page
+        ; override for programmatic page changes
         str_page = p_str_curr_page
         p_is_custom_page = false
     endIf
@@ -212,6 +228,9 @@ event OnPageReset(string str_page)
     elseIf str_page == PAGE_FILTER
         p_str_curr_page = str_page
         MCM_FILTER.f_Build_Page()
+    elseIf str_page == PAGE_EXPO
+        p_str_curr_page = str_page
+        MCM_EXPO.f_Build_Page()
     elseIf str_page == PAGE_SETTINGS
         p_str_curr_page = str_page
         MCM_SETTINGS.f_Build_Page()
@@ -231,6 +250,8 @@ event OnOptionSelect(int id_option)
         MCM_MEMBERS.f_On_Option_Select(id_option)
     elseIf p_str_curr_page == PAGE_FILTER
         MCM_FILTER.f_On_Option_Select(id_option)
+    elseIf p_str_curr_page == PAGE_EXPO
+        MCM_EXPO.f_On_Option_Select(id_option)
     elseIf p_str_curr_page == PAGE_SETTINGS
         MCM_SETTINGS.f_On_Option_Select(id_option)
     elseIf p_str_curr_page == PAGE_LOG
@@ -245,6 +266,8 @@ event OnOptionMenuOpen(int id_option)
         MCM_MEMBERS.f_On_Option_Menu_Open(id_option)
     elseIf p_str_curr_page == PAGE_FILTER
         MCM_FILTER.f_On_Option_Menu_Open(id_option)
+    elseIf p_str_curr_page == PAGE_EXPO
+        MCM_EXPO.f_On_Option_Menu_Open(id_option)
     elseIf p_str_curr_page == PAGE_SETTINGS
         MCM_SETTINGS.f_On_Option_Menu_Open(id_option)
     elseIf p_str_curr_page == PAGE_LOG
@@ -259,6 +282,8 @@ event OnOptionMenuAccept(int id_option, int idx_option)
         MCM_MEMBERS.f_On_Option_Menu_Accept(id_option, idx_option)
     elseIf p_str_curr_page == PAGE_FILTER
         MCM_FILTER.f_On_Option_Menu_Accept(id_option, idx_option)
+    elseIf p_str_curr_page == PAGE_EXPO
+        MCM_EXPO.f_On_Option_Menu_Accept(id_option, idx_option)
     elseIf p_str_curr_page == PAGE_SETTINGS
         MCM_SETTINGS.f_On_Option_Menu_Accept(id_option, idx_option)
     elseIf p_str_curr_page == PAGE_LOG
@@ -273,6 +298,8 @@ event OnOptionSliderOpen(int id_option)
         MCM_MEMBERS.f_On_Option_Slider_Open(id_option)
     elseIf p_str_curr_page == PAGE_FILTER
         MCM_FILTER.f_On_Option_Slider_Open(id_option)
+    elseIf p_str_curr_page == PAGE_EXPO
+        MCM_EXPO.f_On_Option_Slider_Open(id_option)
     elseIf p_str_curr_page == PAGE_SETTINGS
         MCM_SETTINGS.f_On_Option_Slider_Open(id_option)
     elseIf p_str_curr_page == PAGE_LOG
@@ -287,6 +314,8 @@ event OnOptionSliderAccept(int id_option, float float_value)
         MCM_MEMBERS.f_On_Option_Slider_Accept(id_option, float_value)
     elseIf p_str_curr_page == PAGE_FILTER
         MCM_FILTER.f_On_Option_Slider_Accept(id_option, float_value)
+    elseIf p_str_curr_page == PAGE_EXPO
+        MCM_EXPO.f_On_Option_Slider_Accept(id_option, float_value)
     elseIf p_str_curr_page == PAGE_SETTINGS
         MCM_SETTINGS.f_On_Option_Slider_Accept(id_option, float_value)
     elseIf p_str_curr_page == PAGE_LOG
@@ -301,6 +330,8 @@ event OnOptionInputAccept(int id_option, string str_input)
         MCM_MEMBERS.f_On_Option_Input_Accept(id_option, str_input)
     elseIf p_str_curr_page == PAGE_FILTER
         MCM_FILTER.f_On_Option_Input_Accept(id_option, str_input)
+    elseIf p_str_curr_page == PAGE_EXPO
+        MCM_EXPO.f_On_Option_Input_Accept(id_option, str_input)
     elseIf p_str_curr_page == PAGE_SETTINGS
         MCM_SETTINGS.f_On_Option_Input_Accept(id_option, str_input)
     elseIf p_str_curr_page == PAGE_LOG
@@ -315,6 +346,8 @@ event OnOptionKeymapChange(int id_option, int code_key, string str_conflict_cont
         MCM_MEMBERS.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
     elseIf p_str_curr_page == PAGE_FILTER
         MCM_FILTER.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
+    elseIf p_str_curr_page == PAGE_EXPO
+        MCM_EXPO.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
     elseIf p_str_curr_page == PAGE_SETTINGS
         MCM_SETTINGS.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
     elseIf p_str_curr_page == PAGE_LOG
@@ -329,6 +362,8 @@ event OnOptionDefault(int id_option)
         MCM_MEMBERS.f_On_Option_Default(id_option)
     elseIf p_str_curr_page == PAGE_FILTER
         MCM_FILTER.f_On_Option_Default(id_option)
+    elseIf p_str_curr_page == PAGE_EXPO
+        MCM_EXPO.f_On_Option_Default(id_option)
     elseIf p_str_curr_page == PAGE_SETTINGS
         MCM_SETTINGS.f_On_Option_Default(id_option)
     elseIf p_str_curr_page == PAGE_LOG
@@ -343,9 +378,17 @@ event OnOptionHighlight(int id_option)
         MCM_MEMBERS.f_On_Option_Highlight(id_option)
     elseIf p_str_curr_page == PAGE_FILTER
         MCM_FILTER.f_On_Option_Highlight(id_option)
+    elseIf p_str_curr_page == PAGE_EXPO
+        MCM_EXPO.f_On_Option_Highlight(id_option)
     elseIf p_str_curr_page == PAGE_SETTINGS
         MCM_SETTINGS.f_On_Option_Highlight(id_option)
     elseIf p_str_curr_page == PAGE_LOG
         MCM_LOG.f_On_Option_Highlight(id_option)
     endIf
 endEvent
+
+; Update Methods
+function u_0_8_3()
+    MCM_EXPO.f_Create(p_DATA)
+    MCM_EXPO.f_Register()
+endFunction
