@@ -453,7 +453,7 @@ event OnKeyDown(int code_key)
     elseIf code_key == VARS.key_m_toggle_paralyzed
         COMMANDS.Toggle_Paralyzed_Async(ref_actor)
     elseIf code_key == VARS.key_m_toggle_follower
-        COMMANDS.Toggle_Follower_Async(ref_actor)
+        COMMANDS.Toggle_Follower_Sync(ref_actor)
     elseIf code_key == VARS.key_m_toggle_sneak
         COMMANDS.Toggle_Sneak_Async(ref_actor)
 

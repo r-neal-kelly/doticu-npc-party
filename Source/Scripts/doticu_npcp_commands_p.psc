@@ -546,7 +546,7 @@ function Vitalize_Invulnerable(int code_exec, Actor ref_actor, bool auto_create)
     Vitalize(code_exec, ref_actor, CODES.IS_INVULNERABLE, auto_create)
 endFunction
 
-function Follow(int code_exec, Actor ref_actor, bool auto_create)
+function Follow(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = ACTORS.Get_Name(ref_actor)
 
@@ -564,10 +564,10 @@ function Follow(int code_exec, Actor ref_actor, bool auto_create)
         return
     endIf
 
-    NOTES.Follow(ref_member.Follow(code_exec), str_name)
+    NOTES.Follow(ref_member.Follow(), str_name)
 endFunction
 
-function Unfollow(int code_exec, Actor ref_actor, bool auto_create)
+function Unfollow(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = ACTORS.Get_Name(ref_actor)
 
@@ -585,7 +585,7 @@ function Unfollow(int code_exec, Actor ref_actor, bool auto_create)
         return
     endIf
 
-    NOTES.Unfollow(ref_member.Unfollow(code_exec), str_name)
+    NOTES.Unfollow(ref_member.Unfollow(), str_name)
 endFunction
 
 function Sneak(int code_exec, Actor ref_actor, bool auto_create)
@@ -607,7 +607,7 @@ function Sneak(int code_exec, Actor ref_actor, bool auto_create)
     endIf
 
     if auto_create && !ref_member.Is_Follower()
-        code_return = ref_member.Follow(code_exec)
+        code_return = ref_member.Follow()
         if code_return < 0
             NOTES.Sneak(code_return, str_name)
             return
@@ -642,7 +642,7 @@ function Unsneak(int code_exec, Actor ref_actor, bool auto_create)
     endIf
 
     if auto_create && !ref_member.Is_Follower()
-        code_return = ref_member.Follow(code_exec)
+        code_return = ref_member.Follow()
         if code_return < 0
             NOTES.Unsneak(code_return, str_name)
             return
@@ -677,7 +677,7 @@ function Relevel(int code_exec, Actor ref_actor, bool auto_create)
     endIf
 
     if auto_create && !ref_member.Is_Follower()
-        code_return = ref_member.Follow(code_exec)
+        code_return = ref_member.Follow()
         if code_return < 0
             NOTES.Relevel(code_return, str_name)
             return
@@ -769,12 +769,12 @@ function Toggle_Paralyzed(int code_exec, Actor ref_actor)
     endIf
 endFunction
 
-function Toggle_Follower(int code_exec, Actor ref_actor)
+function Toggle_Follower(Actor ref_actor)
     doticu_npcp_follower ref_follower = FOLLOWERS.Get_Follower(ref_actor)
     if ref_follower
-        Unfollow(code_exec, ref_actor, true)
+        Unfollow(ref_actor, true)
     else
-        Follow(code_exec, ref_actor, true)
+        Follow(ref_actor, true)
     endIf
 endFunction
 

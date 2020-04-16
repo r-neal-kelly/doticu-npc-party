@@ -24,10 +24,7 @@ string              p_str_message       =    ""
 string              p_str_event         =    ""
 Form                p_event_form        =  none
 bool                p_event_bool        = false
-string              p_str_rush          =    ""
-string              p_str_rush_event    =    ""
 bool                p_will_update       = false
-bool                p_will_rush         = false
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA, string str_namespace, int message_max = 64, float interval_default = 0.1)
@@ -109,8 +106,6 @@ bool function p_Has_Message(string str_message)
         return false
     endIf
 
-    ; should we check p_str_rush?
-
     int idx = p_buffer_read
     while idx < p_buffer_write
         if p_MESSAGES[idx] == str_message
@@ -120,10 +115,6 @@ bool function p_Has_Message(string str_message)
     endWhile
 
     return false
-endFunction
-
-bool function p_Has_Rush()
-    return p_str_rush != ""
 endFunction
 
 bool function p_Send_Queue()
@@ -260,27 +251,12 @@ function Enqueue_Form_Bool(string str_message, Form form_form, bool bool_bool, f
 endFunction
 
 function Dequeue()
-    ; this function should never unlock the instance,
-    ; so only internal functions can be allowed
-
-    if p_Has_Rush()
-        if !p_str_rush
-            return
-        endIf
-        p_will_update = true
-        p_will_rush = true
-        p_str_message = p_str_rush
-        p_str_event = p_str_rush_event
-        p_str_rush = ""
-        p_str_rush_event = ""
-        RegisterForSingleUpdate(0.0)
-    elseIf Is_Empty()
+    ; this function can never unlock the instance,
+    ; so only allows functions on this object (self)
+    if Is_Empty()
         p_will_update = false
-        p_will_rush = false
         p_str_message = ""
         p_str_event = ""
-        p_str_rush = ""
-        p_str_rush_event = ""
     else
         int idx_buffer = p_Read()
         while !p_MESSAGES[idx_buffer] && !Is_Empty()
@@ -290,7 +266,6 @@ function Dequeue()
             return
         endIf
         p_will_update = true
-        p_will_rush = false
         p_str_message = p_MESSAGES[idx_buffer]
         p_str_event = p_EVENTS[idx_buffer]
         if p_FORMS
@@ -312,10 +287,6 @@ function Excise(string str_message)
         p_str_message = ""
     endIf
 
-    if p_str_rush == str_message
-        p_str_rush = ""
-    endIf
-
     int idx = p_buffer_read
     while idx < p_buffer_write
         if p_MESSAGES[idx] == str_message
@@ -325,60 +296,15 @@ function Excise(string str_message)
     endWhile
 endFunction
 
-function Rush(string str_rush, string str_namespace = "_default_")
-    ; if we fully block anywhere during this, Enqueue and Dequeue may deadlock.
-    ; A state waiting Enqueue called within this stack frame would loop forever.
-
-    if str_rush == ""
-        return
-    endIf
-
-    GotoState("p_STATE_RUSH")
-
-    while p_Has_Rush()
-        ; we need to wait for the old Rush to finish.
-        Utility.Wait(0.01)
-    endWhile
-
-    p_will_rush = true
-    p_str_rush = str_rush
-    p_str_rush_event = p_Get_Event(str_namespace)
-
-    if !p_will_update
-        Dequeue()
-    endIf
-
-    while p_will_rush
-        ; we need to wait for this new Rush message to finish
-        Utility.Wait(0.01)
-    endWhile
-
-    GotoState("")
-endFunction
-
 function Flush()
-    ; should get exclusive execution away from Rush, in case of deadlock.
     ; blocking Enqueue and Dequeue makes sure any messages are not skipped.
-
     GotoState("p_STATE_FLUSH")
 
     p_buffer_used = 0; this empties the queue
     p_buffer_read = 0
     p_buffer_write = 0
 
-    ; ran into infinite recursion with PLAYER. I think it just wasn't dequeing one last time, which unsets will_update
-    ; but I don't know how that is possible unless Dequeue was never given a chance to run
-    ;/if do_wait
-        while p_will_update || p_will_rush
-            ; let an already dispatched message finish
-            Utility.Wait(p_INTERVAL_DEFAULT)
-        endWhile
-    endIf/;
-
-    p_will_rush = false
     p_will_update = false
-    p_str_rush_event = ""
-    p_str_rush == ""
     p_str_event = ""
     p_str_message = ""
 
@@ -390,21 +316,11 @@ endFunction
 ; recurse infinitely.
 
 ; Private States
-state p_STATE_RUSH
-    function Flush()
-    endFunction
-endState
-
 state p_STATE_FLUSH
     function Enqueue(string str_message, float float_wait_before = -1.0, string str_namespace = "_default_", bool allow_repeat = false)
     endFunction
 
     function Enqueue_Form_Bool(string str_message, Form form_form, bool bool_bool, float float_wait_before = -1.0, string str_namespace = "_default_", bool allow_repeat = false)
-    endFunction
-
-    ; always allow Dequeue()
-
-    function Rush(string str_rush, string str_namespace = "_default_")
     endFunction
 
     function Flush()

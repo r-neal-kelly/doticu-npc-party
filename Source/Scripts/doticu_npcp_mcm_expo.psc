@@ -71,6 +71,11 @@ function f_Build_Page()
     else
         p_option_north = MCM.AddTextOption("                              N", "", MCM.FLAG_DISABLE)
     endIf
+    if p_curr_column < MANNEQUINS.MAX_COLUMNS
+        p_option_east = MCM.AddTextOption("                              E", "")
+    else
+        p_option_east = MCM.AddTextOption("                              E", "", MCM.FLAG_DISABLE)
+    endIf
     if p_curr_row > 1
         p_option_south = MCM.AddTextOption("                              S", "")
     else
@@ -80,11 +85,6 @@ function f_Build_Page()
         p_option_west = MCM.AddTextOption("                              W", "")
     else
         p_option_west = MCM.AddTextOption("                              W", "", MCM.FLAG_DISABLE)
-    endIf
-    if p_curr_column < MANNEQUINS.MAX_COLUMNS
-        p_option_east = MCM.AddTextOption("                              E", "")
-    else
-        p_option_east = MCM.AddTextOption("                              E", "", MCM.FLAG_DISABLE)
     endIf
 
     MCM.AddHeaderOption("")

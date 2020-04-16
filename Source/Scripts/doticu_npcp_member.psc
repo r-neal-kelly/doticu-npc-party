@@ -92,7 +92,6 @@ bool                    p_is_reanimated             = false
 bool                    p_do_outfit_vanilla         = false
 int                     p_code_style                =    -1
 int                     p_code_vitality             =    -1
-int                     p_queue_code_return         =     0
 ObjectReference         p_marker_settler            =  none
 ObjectReference         p_marker_display            =  none
 ObjectReference         p_marker_mannequin          =  none
@@ -138,7 +137,6 @@ f_Lock_Resources()
     p_do_outfit_vanilla = false
     p_code_style = VARS.auto_style
     p_code_vitality = VARS.auto_vitality
-    p_queue_code_return = 0
     p_marker_settler = CONSTS.FORMLIST_MARKERS_SETTLER.GetAt(p_id_alias) as ObjectReference
     p_marker_display = none
     p_marker_mannequin = none
@@ -225,7 +223,6 @@ f_Lock_Resources()
     p_marker_mannequin = none
     p_marker_display = none
     p_marker_settler = none
-    p_queue_code_return = 0
     p_code_vitality = -1
     p_code_style = -1
     p_do_outfit_vanilla = false
@@ -288,11 +285,6 @@ endFunction
 
 function p_Enqueue(string str_message, float float_interval = -1.0, bool allow_repeat = false)
     f_QUEUE.Enqueue(str_message, float_interval, p_str_namespace, allow_repeat)
-endFunction
-
-function p_Rush(string str_message)
-    f_QUEUE.Rush(str_message, p_str_namespace)
-    f_QUEUE.Flush()
 endFunction
 
 function p_Create_Containers()
@@ -557,7 +549,7 @@ f_Lock_Resources()
 f_Unlock_Resources()
 
     if Is_Follower()
-        Unfollow(CODES.DO_ASYNC)
+        Unfollow()
     endIf
 endFunction
 
@@ -1333,7 +1325,7 @@ int function Unmannequinize(int code_exec)
     return CODES.SUCCESS
 endFunction
 
-int function Follow(int code_exec)
+int function Follow()
     int code_return
 
     if !Exists()
@@ -1344,16 +1336,9 @@ int function Follow(int code_exec)
         return CODES.IS_FOLLOWER
     endIf
 
-    if code_exec == CODES.DO_ASYNC
-        p_Rush("Follower.Create")
-        if p_queue_code_return < 0
-            return p_queue_code_return
-        endIf
-    else
-        code_return = FOLLOWERS.f_Create_Follower(p_ref_actor)
-        if code_return < 0
-            return code_return
-        endIf
+    code_return = FOLLOWERS.f_Create_Follower(p_ref_actor)
+    if code_return < 0
+        return code_return
     endIf
 
     p_Enqueue("Member.Outfit")
@@ -1361,7 +1346,7 @@ int function Follow(int code_exec)
     return CODES.SUCCESS
 endFunction
 
-int function Unfollow(int code_exec)
+int function Unfollow()
     int code_return
 
     if !Exists()
@@ -1372,16 +1357,9 @@ int function Unfollow(int code_exec)
         return CODES.ISNT_FOLLOWER
     endIf
 
-    if code_exec == CODES.DO_ASYNC
-        p_Rush("Follower.Destroy")
-        if p_queue_code_return < 0
-            return p_queue_code_return
-        endIf
-    else
-        code_return = FOLLOWERS.f_Destroy_Follower(p_ref_actor)
-        if code_return < 0
-            return code_return
-        endIf
+    code_return = FOLLOWERS.f_Destroy_Follower(p_ref_actor)
+    if code_return < 0
+        return code_return
     endIf
 
     p_Enqueue("Member.Outfit")
@@ -2093,10 +2071,6 @@ event On_Queue_Member(string str_message)
         p_Style()
     elseIf str_message == "Member.Vitalize"
         p_Vitalize()
-    elseIf str_message == "Follower.Create"
-        p_queue_code_return = FOLLOWERS.f_Create_Follower(p_ref_actor)
-    elseIf str_message == "Follower.Destroy"
-        p_queue_code_return = FOLLOWERS.f_Destroy_Follower(p_ref_actor)
     
     endIf
 
@@ -2220,3 +2194,12 @@ event OnDeath(Actor ref_killer)
 
     f_QUEUE.Flush()
 endEvent
+
+; Update Methods
+function u_0_8_3()
+    if Exists()
+        QUEUES.Destroy(p_queue_member)
+        p_queue_member = QUEUES.Create("alias", 64, 0.1)
+        p_queue_member.Register_Alias(self, "On_Queue_Member", p_str_namespace)
+    endIf
+endFunction

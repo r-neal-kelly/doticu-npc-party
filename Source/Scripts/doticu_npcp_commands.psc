@@ -308,13 +308,13 @@ endFunction
 
 function Follow_Sync(Actor ref_actor, bool auto_create)
     GotoState("p_STATE_BUSY")
-    PRIVATE.Follow(CODES.DO_SYNC, ref_actor, auto_create)
+    PRIVATE.Follow(ref_actor, auto_create)
     GotoState("")
 endFunction
 
 function Unfollow_Sync(Actor ref_actor, bool auto_create)
     GotoState("p_STATE_BUSY")
-    PRIVATE.Unfollow(CODES.DO_SYNC, ref_actor, auto_create)
+    PRIVATE.Unfollow(ref_actor, auto_create)
     GotoState("")
 endFunction
 
@@ -500,7 +500,7 @@ endFunction
 
 function Toggle_Follower_Sync(Actor ref_actor)
     GotoState("p_STATE_BUSY")
-    PRIVATE.Toggle_Follower(CODES.DO_SYNC, ref_actor)
+    PRIVATE.Toggle_Follower(ref_actor)
     GotoState("")
 endFunction
 
@@ -561,14 +561,6 @@ endFunction
 
 function Unparalyze_Async(Actor ref_actor, bool auto_create)
     PRIVATE.Unparalyze(CODES.DO_ASYNC, ref_actor, auto_create)
-endFunction
-
-function Follow_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Follow(CODES.DO_ASYNC, ref_actor, auto_create)
-endFunction
-
-function Unfollow_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Unfollow(CODES.DO_ASYNC, ref_actor, auto_create)
 endFunction
 
 function Sneak_Async(Actor ref_actor, bool auto_create)
@@ -669,10 +661,6 @@ endFunction
 
 function Toggle_Paralyzed_Async(Actor ref_actor)
     PRIVATE.Toggle_Paralyzed(CODES.DO_ASYNC, ref_actor)
-endFunction
-
-function Toggle_Follower_Async(Actor ref_actor)
-    PRIVATE.Toggle_Follower(CODES.DO_ASYNC, ref_actor)
 endFunction
 
 function Toggle_Sneak_Async(Actor ref_actor)
@@ -1153,12 +1141,6 @@ state f_STATE_UPDATING
     function Unparalyze_Async(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Follow_Async(Actor ref_actor, bool auto_create)
-        LOGS.Notify_Is_Updating()
-    endFunction
-    function Unfollow_Async(Actor ref_actor, bool auto_create)
-        LOGS.Notify_Is_Updating()
-    endFunction
     function Sneak_Async(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
@@ -1229,9 +1211,6 @@ state f_STATE_UPDATING
         LOGS.Notify_Is_Updating()
     endFunction
     function Toggle_Paralyzed_Async(Actor ref_actor)
-        LOGS.Notify_Is_Updating()
-    endFunction
-    function Toggle_Follower_Async(Actor ref_actor)
         LOGS.Notify_Is_Updating()
     endFunction
     function Toggle_Sneak_Async(Actor ref_actor)

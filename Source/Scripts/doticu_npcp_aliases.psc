@@ -478,3 +478,19 @@ Alias[] function Get_Prev_Aliases(int idx_ex, int num_prev)
 
     return arr_copy
 endFunction
+
+; Update Methods
+int                 p_num_used      =    -1
+int                 p_num_actors    =    -1
+int                 p_num_names     =    -1
+int[]               p_arr_used      =  none
+Form[]              p_arr_actors    =  none
+string[]            p_arr_names     =  none
+function u_0_8_3()
+    p_num_used = -1
+    p_num_actors = -1
+    p_num_names = -1
+    p_arr_used = Utility.CreateIntArray(1, 0)
+    p_arr_actors = Utility.CreateFormArray(1, none)
+    p_arr_names = Utility.CreateStringArray(1, "")
+endFunction

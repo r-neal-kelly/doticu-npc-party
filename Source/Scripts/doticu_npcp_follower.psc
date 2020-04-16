@@ -205,10 +205,6 @@ function p_Enqueue(string str_message, float float_interval = -1.0, bool allow_r
     f_QUEUE.Enqueue(str_message, float_interval, p_str_namespace, allow_repeat)
 endFunction
 
-function p_Rush(string str_message)
-    f_QUEUE.Rush(str_message, p_str_namespace)
-endFunction
-
 function p_Backup()
 f_Lock_Resources()
 
@@ -728,8 +724,8 @@ int function Catch_Up()
     return CODES.SUCCESS
 endFunction
 
-int function Unfollow(int code_exec)
-    return p_ref_member.Unfollow(code_exec)
+int function Unfollow()
+    return p_ref_member.Unfollow()
 endFunction
 
 int function Pack(int code_exec)
@@ -952,7 +948,7 @@ endEvent
 
 event On_Followers_Unfollow(Form form_tasklist)
     if Exists()
-        Unfollow(CODES.DO_SYNC)
+        Unfollow()
         (form_tasklist as doticu_npcp_tasklist).Detask()
     endIf
 endEvent

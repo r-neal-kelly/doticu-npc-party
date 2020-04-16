@@ -62,8 +62,6 @@ function f_On_Option_Highlight(int id_option)
 endFunction
 
 ; should be able to request an array with filter variables
-; and maybe should cache it, but it gets complicated at that point
-; but it's slow without it. there are options, but this will wait
 function f_Build_Page()
     MCM.SetTitleText(" Filter ")
 endFunction
