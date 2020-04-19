@@ -80,6 +80,7 @@ endProperty
 ; Private Variables
 bool                p_is_created                = false
 int                 p_code_view                 =     0
+
 doticu_npcp_member  p_ref_member                =  none
 
 int                 p_option_rename             =    -1
@@ -162,36 +163,40 @@ function f_Disable(int id_option, bool bool_update)
     return MCM.f_Disable(id_option, bool_update)
 endFunction
 
-function f_Build_Page(int code_view, doticu_npcp_member ref_member)
-    p_code_view = code_view
-    p_ref_member = ref_member
-    if !p_ref_member || !p_ref_member.Exists()
-        if p_code_view == CODES.VIEW_MEMBER
-            MCM.MCM_MEMBERS.f_View_Members()
-            MCM.MCM_MEMBERS.f_Build_Page()
-        elseIf p_code_view == CODES.VIEW_FOLLOWER
-            MCM.MCM_FOLLOWERS.f_View_Followers()
-            MCM.MCM_FOLLOWERS.f_Build_Page()
-        endIf
-        return
-    endIf
+function f_View_Members_Member(doticu_npcp_member ref_member)
+    p_code_view = CODES.VIEW_MEMBERS_MEMBER
 
+    p_ref_member = ref_member
+endFunction
+
+function f_View_Filter_Members_Member(doticu_npcp_member ref_member)
+    p_code_view = CODES.VIEW_FILTER_MEMBERS_MEMBER
+
+    p_ref_member = ref_member
+endFunction
+
+function f_View_Followers_Member(doticu_npcp_member ref_member)
+    p_code_view = CODES.VIEW_FOLLOWERS_MEMBER
+
+    p_ref_member = ref_member
+endFunction
+
+function f_Build_Page()
     string str_name = p_ref_member.Get_Name()
-    Actor ref_actor = p_ref_member.Get_Actor()
 
     MCM.SetCursorPosition(0)
     MCM.SetCursorFillMode(MCM.LEFT_TO_RIGHT)
 
-    if p_code_view == CODES.VIEW_MEMBER
+    if p_code_view == CODES.VIEW_MEMBERS_MEMBER || p_code_view == CODES.VIEW_FILTER_MEMBERS_MEMBER
         MCM.SetTitleText("Member: " + str_name)
-    elseIf p_code_view == CODES.VIEW_FOLLOWER
+    elseIf p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
         MCM.SetTitleText("Follower: " + str_name)
     endIf
 
     p_option_rename = MCM.AddInputOption(str_name + " ", " Rename ")
     p_option_back = MCM.AddTextOption("                            Go Back", "")
 
-    if p_code_view == CODES.VIEW_MEMBER
+    if p_code_view == CODES.VIEW_MEMBERS_MEMBER || p_code_view == CODES.VIEW_FILTER_MEMBERS_MEMBER
         if MEMBERS.Get_Count() > 1
             p_option_prev = MCM.AddTextOption("                      Previous Member", "")
             p_option_next = MCM.AddTextOption("                        Next Member", "")
@@ -199,7 +204,7 @@ function f_Build_Page(int code_view, doticu_npcp_member ref_member)
             p_option_prev = MCM.AddTextOption("                      Previous Member", "", FLAG_DISABLE)
             p_option_next = MCM.AddTextOption("                        Next Member", "", FLAG_DISABLE)
         endIf
-    elseIf p_code_view == CODES.VIEW_FOLLOWER
+    elseIf p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
         if FOLLOWERS.Get_Count() > 1
             p_option_prev = MCM.AddTextOption("                      Previous Follower", "")
             p_option_next = MCM.AddTextOption("                        Next Follower", "")
@@ -228,31 +233,19 @@ function f_On_Option_Select(int id_option)
     elseIf id_option == p_option_back
         p_Go_Back()
     elseIf id_option == p_option_prev
-        if p_code_view == CODES.VIEW_MEMBER
-            if MEMBERS.Will_Sort()
-                MCM.SetTitleText(p_STR_PLEASE_WAIT)
-            endIf
-            MCM.MCM_MEMBERS.f_View_Member(MEMBERS.Get_Prev_Member(p_ref_member))
+        if p_code_view == CODES.VIEW_MEMBERS_MEMBER || p_code_view == CODES.VIEW_FILTER_MEMBERS_MEMBER
+            MCM.MCM_MEMBERS.f_Request_Prev_Member()
             MCM.ForcePageReset()
-        elseIf p_code_view == CODES.VIEW_FOLLOWER
-            if FOLLOWERS.Will_Sort()
-                MCM.SetTitleText(p_STR_PLEASE_WAIT)
-            endIf
-            MCM.MCM_FOLLOWERS.f_View_Follower(FOLLOWERS.Get_Prev_Follower(p_ref_member.Get_Follower()))
+        elseIf p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+            MCM.MCM_FOLLOWERS.f_Request_Prev_Member()
             MCM.ForcePageReset()
         endIf
     elseIf id_option == p_option_next
-        if p_code_view == CODES.VIEW_MEMBER
-            if MEMBERS.Will_Sort()
-                MCM.SetTitleText(p_STR_PLEASE_WAIT)
-            endIf
-            MCM.MCM_MEMBERS.f_View_Member(MEMBERS.Get_Next_Member(p_ref_member))
+        if p_code_view == CODES.VIEW_MEMBERS_MEMBER || p_code_view == CODES.VIEW_FILTER_MEMBERS_MEMBER
+            MCM.MCM_MEMBERS.f_Request_Next_Member()
             MCM.ForcePageReset()
-        elseIf p_code_view == CODES.VIEW_FOLLOWER
-            if FOLLOWERS.Will_Sort()
-                MCM.SetTitleText(p_STR_PLEASE_WAIT)
-            endIf
-            MCM.MCM_FOLLOWERS.f_View_Follower(FOLLOWERS.Get_Next_Follower(p_ref_member.Get_Follower()))
+        elseIf p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+            MCM.MCM_FOLLOWERS.f_Request_Next_Member()
             MCM.ForcePageReset()
         endIf
 
@@ -303,10 +296,10 @@ function f_On_Option_Select(int id_option)
     elseIf id_option == p_option_unfollow
         f_Disable(p_option_unfollow, DO_UPDATE)
         COMMANDS.Unfollow_Sync(ref_actor, false)
-        if p_code_view == CODES.VIEW_MEMBER
-            p_Update_Commands()
-        elseIf p_code_view == CODES.VIEW_FOLLOWER
+        if p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
             p_Go_Back()
+        else
+            p_Update_Commands()
         endIf
 
     elseIf id_option == p_option_sneak
@@ -819,17 +812,14 @@ function p_Update_Statistics()
 endFunction
 
 function p_Go_Back()
-    if p_code_view == CODES.VIEW_MEMBER
-        if MEMBERS.Will_Sort()
-            MCM.SetTitleText(p_STR_PLEASE_WAIT)
-        endIf
-        MCM.MCM_MEMBERS.f_View_Members()
+    if p_code_view == CODES.VIEW_MEMBERS_MEMBER
+        MCM.MCM_MEMBERS.f_Review_Members()
         MCM.ForcePageReset()
-    elseIf p_code_view == CODES.VIEW_FOLLOWER
-        if FOLLOWERS.Will_Sort()
-            MCM.SetTitleText(p_STR_PLEASE_WAIT)
-        endIf
-        MCM.MCM_FOLLOWERS.f_View_Followers()
+    elseIf p_code_view == CODES.VIEW_FILTER_MEMBERS_MEMBER
+        MCM.MCM_MEMBERS.f_Review_Filter_Members()
+        MCM.ForcePageReset()
+    elseIf p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+        MCM.MCM_FOLLOWERS.f_Review_Followers()
         MCM.ForcePageReset()
     endIf
 endFunction

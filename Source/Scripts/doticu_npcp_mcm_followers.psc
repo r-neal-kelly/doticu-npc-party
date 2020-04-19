@@ -58,11 +58,14 @@ int                     p_IDX_MORE                  =     3
 ; Private Variables
 bool                    p_is_created                = false
 int                     p_code_view                 =     0
-doticu_npcp_follower    p_ref_follower              =  none
 
 Alias[]                 p_arr_aliases               =  none
-int                     p_options_offset            =    -1
+doticu_npcp_member      p_ref_member                =  none
 
+bool                    p_do_prev_member            = false
+bool                    p_do_next_member            = false
+
+int                     p_options_offset            =    -1
 int                     p_option_menu               =    -1
 
 ; Friend Methods
@@ -82,20 +85,22 @@ endFunction
 function f_Unregister()
 endFunction
 
-function f_View_Followers()
+function f_Review_Followers()
     p_code_view = CODES.VIEW_FOLLOWERS
-    p_ref_follower = none
+    p_ref_member = none
 endFunction
 
-function f_View_Follower(doticu_npcp_follower ref_follower)
-    p_code_view = CODES.VIEW_FOLLOWER
-    p_ref_follower = ref_follower
+function f_Request_Prev_Member()
+    p_do_prev_member = true
+endFunction
+
+function f_Request_Next_Member()
+    p_do_next_member = true
 endFunction
 
 function f_Build_Page()
-    if p_code_view == CODES.VIEW_FOLLOWER
-        MCM.MCM_MEMBER.f_Build_Page(CODES.VIEW_FOLLOWER, p_ref_follower.Get_Member())
-        return
+    if p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+        return p_Goto_Followers_Member(p_ref_member, true)
     endIf
 
     MCM.SetCursorPosition(0)
@@ -145,9 +150,8 @@ function f_Build_Page()
 endFunction
 
 function f_On_Option_Select(int id_option)
-    if p_code_view == CODES.VIEW_FOLLOWER
-        MCM.MCM_MEMBER.f_On_Option_Select(id_option)
-        return
+    if p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+        return MCM.MCM_MEMBER.f_On_Option_Select(id_option)
     endIf
 
     int idx_entity = p_Get_Idx_Entity(id_option)
@@ -165,15 +169,13 @@ function f_On_Option_Select(int id_option)
         endIf
         MCM.ForcePageReset(); wasteful
     elseIf idx_command == p_IDX_MORE
-        f_View_Follower(ref_follower)
-        MCM.ForcePageReset()
+        return p_Goto_Followers_Member(ref_follower.Get_Member())
     endIf
 endFunction
 
 function f_On_Option_Menu_Open(int id_option)
-    if p_code_view == CODES.VIEW_FOLLOWER
-        MCM.MCM_MEMBER.f_On_Option_Menu_Open(id_option)
-        return
+    if p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+        return MCM.MCM_MEMBER.f_On_Option_Menu_Open(id_option)
     endIf
 
     if id_option == p_option_menu
@@ -196,9 +198,8 @@ function f_On_Option_Menu_Open(int id_option)
 endFunction
 
 function f_On_Option_Menu_Accept(int id_option, int idx_option)
-    if p_code_view == CODES.VIEW_FOLLOWER
-        MCM.MCM_MEMBER.f_On_Option_Menu_Accept(id_option, idx_option)
-        return
+    if p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+        return MCM.MCM_MEMBER.f_On_Option_Menu_Accept(id_option, idx_option)
     endIf
 
     if id_option == p_option_menu
@@ -230,9 +231,8 @@ function f_On_Option_Menu_Accept(int id_option, int idx_option)
 endFunction
 
 function f_On_Option_Highlight(int id_option)
-    if p_code_view == CODES.VIEW_FOLLOWER
-        MCM.MCM_MEMBER.f_On_Option_Highlight(id_option)
-        return
+    if p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+        return MCM.MCM_MEMBER.f_On_Option_Highlight(id_option)
     endIf
 
     if id_option == p_option_menu
@@ -243,41 +243,83 @@ function f_On_Option_Highlight(int id_option)
 endFunction
 
 function f_On_Option_Slider_Open(int id_option)
-    if p_code_view == CODES.VIEW_FOLLOWER
-        MCM.MCM_MEMBER.f_On_Option_Slider_Open(id_option)
-        return
+    if p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+        return MCM.MCM_MEMBER.f_On_Option_Slider_Open(id_option)
     endIf
 endFunction
 
 function f_On_Option_Slider_Accept(int id_option, float float_value)
-    if p_code_view == CODES.VIEW_FOLLOWER
-        MCM.MCM_MEMBER.f_On_Option_Slider_Accept(id_option, float_value)
-        return
+    if p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+        return MCM.MCM_MEMBER.f_On_Option_Slider_Accept(id_option, float_value)
     endIf
 endFunction
 
 function f_On_Option_Input_Accept(int id_option, string str_input)
-    if p_code_view == CODES.VIEW_FOLLOWER
-        MCM.MCM_MEMBER.f_On_Option_Input_Accept(id_option, str_input)
-        return
+    if p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+        return MCM.MCM_MEMBER.f_On_Option_Input_Accept(id_option, str_input)
     endIf
 endFunction
 
 function f_On_Option_Keymap_Change(int id_option, int code_key, string str_conflict_control, string str_conflict_mod)
-    if p_code_view == CODES.VIEW_FOLLOWER
-        MCM.MCM_MEMBER.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
-        return
+    if p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+        return MCM.MCM_MEMBER.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
     endIf
 endFunction
 
 function f_On_Option_Default(int id_option)
-    if p_code_view == CODES.VIEW_FOLLOWER
-        MCM.MCM_MEMBER.f_On_Option_Default(id_option)
-        return
+    if p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+        return MCM.MCM_MEMBER.f_On_Option_Default(id_option)
     endIf
 endFunction
 
 ; Private Methods
+doticu_npcp_member function p_Get_Prev_Member(doticu_npcp_member ref_member)
+    int idx_alias = p_arr_aliases.Find(ref_member.Get_Follower() as Alias)
+    if idx_alias > -1
+        if idx_alias == 0
+            return (p_arr_aliases[p_arr_aliases.length - 1] as doticu_npcp_follower).Get_Member()
+        else
+            return (p_arr_aliases[idx_alias - 1] as doticu_npcp_follower).Get_Member()
+        endIf
+    else
+        return ref_member
+    endIf
+endFunction
+
+doticu_npcp_member function p_Get_Next_Member(doticu_npcp_member ref_member)
+    int idx_alias = p_arr_aliases.Find(ref_member.Get_Follower() as Alias)
+    if idx_alias > -1
+        if idx_alias == p_arr_aliases.length - 1
+            return (p_arr_aliases[0] as doticu_npcp_follower).Get_Member()
+        else
+            return (p_arr_aliases[idx_alias + 1] as doticu_npcp_follower).Get_Member()
+        endIf
+    else
+        return ref_member
+    endIf
+endFunction
+
+function p_Goto_Followers_Member(doticu_npcp_member ref_member, bool is_building = false)
+    if is_building
+        if p_do_prev_member
+            ref_member = p_Get_Prev_Member(ref_member)
+            p_ref_member = ref_member
+            p_do_prev_member = false
+        elseIf p_do_next_member
+            ref_member = p_Get_Next_Member(ref_member)
+            p_ref_member = ref_member
+            p_do_next_member = false
+        endIf
+        MCM.MCM_MEMBER.f_View_Followers_Member(ref_member)
+        MCM.MCM_MEMBER.f_Build_Page()
+    else
+        p_code_view = CODES.VIEW_FOLLOWERS_MEMBER
+        p_ref_member = ref_member
+        MCM.MCM_MEMBER.f_View_Followers_Member(ref_member)
+        MCM.ForcePageReset()
+    endIf
+endFunction
+
 int function p_Get_Idx_Entity(int id_option)
     int id_option_norm = id_option - p_options_offset - p_HEADERS_PER_PAGE
     int idx_entity = Math.Floor(id_option_norm / (p_COMMANDS_PER_FOLLOWER * 2)) * 2

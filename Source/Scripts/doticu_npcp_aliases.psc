@@ -386,26 +386,13 @@ ReferenceAlias function Get_Prev_Alias(int id_alias, Actor ref_actor)
 endFunction
 
 Alias[] function Get_Aliases(int idx_from = 0, int idx_to_ex = -1)
-    if idx_from < 0
-        idx_from = 0
-    endIf
-
     if idx_to_ex > p_num_aliases || idx_to_ex < 0
         idx_to_ex = p_num_aliases
     endIf
 
-    if idx_to_ex - idx_from < 1
-        return Utility.CreateAliasArray(0, none)
-    endIf
-
-    int idx_to_in = idx_to_ex - 1
-    if idx_to_in < 0
-        idx_to_in = 0
-    endIf
-
     p_Sort()
-
-    return PapyrusUtil.SliceAliasArray(p_arr_aliases, idx_from, idx_to_in)
+    
+    return doticu_npcp.Aliases_Slice(p_arr_aliases, idx_from, idx_to_ex)
 endFunction
 
 Alias[] function Get_Next_Aliases(int idx_in, int num_next)

@@ -5,6 +5,11 @@
 Scriptname doticu_npcp_mcm extends SKI_ConfigBase
 
 ; Modules
+doticu_npcp_codes property CODES hidden
+    doticu_npcp_codes function Get()
+        return p_DATA.CODES
+    endFunction
+endProperty
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
         return p_DATA.VARS
@@ -194,13 +199,13 @@ endEvent
 event OnConfigOpen()
     VARS.is_mcm_open = true
 
-    Pages = Utility.CreateStringArray(5, "")
+    Pages = Utility.CreateStringArray(6, "")
     Pages[0] = PAGE_FOLLOWERS
     Pages[1] = PAGE_MEMBERS
-    ;Pages[2] = PAGE_FILTER
-    Pages[2] = PAGE_EXPO
-    Pages[3] = PAGE_SETTINGS
-    Pages[4] = PAGE_LOG
+    Pages[2] = PAGE_FILTER
+    Pages[3] = PAGE_EXPO
+    Pages[4] = PAGE_SETTINGS
+    Pages[5] = PAGE_LOG
 endEvent
 
 event OnConfigClose()
@@ -224,6 +229,7 @@ event OnPageReset(string str_page)
         MCM_FOLLOWERS.f_Build_Page()
     elseIf str_page == PAGE_MEMBERS
         p_str_curr_page = str_page
+        MCM_MEMBERS.f_View_Members(p_DATA.MODS.MEMBERS.Get_Members())
         MCM_MEMBERS.f_Build_Page()
     elseIf str_page == PAGE_FILTER
         p_str_curr_page = str_page

@@ -148,5 +148,8 @@ int property VITALITY_INVULNERABLE          = -4000 autoReadOnly
 
 int property VIEW_MEMBERS                   = -1000 autoReadOnly
 int property VIEW_FOLLOWERS                 = -1100 autoReadOnly
-int property VIEW_MEMBER                    = -1200 autoReadOnly
-int property VIEW_FOLLOWER                  = -1300 autoReadOnly
+int property VIEW_MEMBERS_MEMBER            = -1200 autoReadOnly
+int property VIEW_FOLLOWERS_MEMBER          = -1300 autoReadOnly
+int property VIEW_FILTER                    = -2000 autoReadOnly
+int property VIEW_FILTER_MEMBERS            = -2010 autoReadOnly
+int property VIEW_FILTER_MEMBERS_MEMBER     = -2020 autoReadOnly
