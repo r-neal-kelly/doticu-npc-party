@@ -94,6 +94,7 @@ endProperty
 bool                    p_is_created        = false
 Alias[]                 p_arr_mannequins    =  none
 String[]                p_arr_cell_names    =  none
+ObjectReference         p_marker_teleport   =  none
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
@@ -102,6 +103,7 @@ function f_Create(doticu_npcp_data DATA)
     p_is_created = true
     p_arr_mannequins = Utility.CreateAliasArray(p_MAX_MANNEQUINS, none)
     p_arr_cell_names = Utility.CreateStringArray(p_MAX_CELLS, "")
+    p_marker_teleport = none
 endFunction
 
 function f_Destroy()
@@ -249,7 +251,16 @@ function Set_Cell_Name(int column, int row, string str_name)
     p_arr_cell_names[idx_cell_names] = str_name
 endFunction
 
-function Move_Player_To(int column, int row)
+function Move_Player(int column, int row)
+    if !Is_Player_In_Expo()
+        if p_marker_teleport
+            p_marker_teleport.Disable()
+            p_marker_teleport.Delete()
+            p_marker_teleport = none
+        endIf
+        p_marker_teleport = CONSTS.ACTOR_PLAYER.PlaceAtMe(CONSTS.STATIC_MARKER_X, 1, false, false)
+    endIf
+
     if column < 1
         column = 1
     endIf
@@ -268,4 +279,30 @@ function Move_Player_To(int column, int row)
 
     int idx_cell = column * MAX_ROWS + row
     CONSTS.ACTOR_PLAYER.MoveTo(CONSTS.FORMLIST_MARKERS_EXPO_CELL.GetAt(idx_cell) as ObjectReference)
+endFunction
+
+function Remove_Player()
+    if Is_Player_In_Expo() && p_marker_teleport
+        CONSTS.ACTOR_PLAYER.MoveTo(p_marker_teleport)
+        p_marker_teleport.Disable()
+        p_marker_teleport.Delete()
+        p_marker_teleport = none
+    endIf
+endFunction
+
+function Move_Player_To_Antechamber()
+    if !Is_Player_In_Expo()
+        if p_marker_teleport
+            p_marker_teleport.Disable()
+            p_marker_teleport.Delete()
+            p_marker_teleport = none
+        endIf
+        p_marker_teleport = CONSTS.ACTOR_PLAYER.PlaceAtMe(CONSTS.STATIC_MARKER_X, 1, false, false)
+    endIf
+
+    CONSTS.ACTOR_PLAYER.MoveTo(CONSTS.MARKER_EXPO_ANTECHAMBER)
+endFunction
+
+bool function Is_Player_In_Expo()
+    return CONSTS.ACTOR_PLAYER.IsInLocation(CONSTS.LOCATION_EXPO)
 endFunction

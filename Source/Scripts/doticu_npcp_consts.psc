@@ -11,6 +11,7 @@ Static                      p_STATIC_MARKER_X                       = none
 ObjectReference             p_MARKER_STORAGE                        = none
 ObjectReference             p_MARKER_CLONER                         = none
 ObjectReference             p_MARKER_CELL                           = none
+ObjectReference             p_MARKER_EXPO_ANTECHAMBER               = none
 Spell                       p_ABILITY_CELL                          = none
 MiscObject                  p_TOKEN_MEMBER                          = none
 MiscObject                  p_TOKEN_SETTLER                         = none
@@ -81,6 +82,7 @@ Key                         p_KEY_LOCK                              = none
 Quest                       p_QUEST_DIALOGUE_REANIMATED             = none
 Quest                       p_QUEST_DIALOGUE_THRALL                 = none
 EffectShader                p_SHADER_REANIMATE_FX                   = none
+Location                    p_LOCATION_EXPO                         = none
 
 ; Public Constants
 Actor property ACTOR_PLAYER
@@ -145,6 +147,17 @@ ObjectReference property MARKER_CELL
     function Set(ObjectReference val)
         if p_MARKER_CELL == none
             p_MARKER_CELL = val
+        endIf
+    endFunction
+endProperty
+
+ObjectReference property MARKER_EXPO_ANTECHAMBER
+    ObjectReference function Get()
+        return p_MARKER_EXPO_ANTECHAMBER
+    endFunction
+    function Set(ObjectReference val)
+        if p_MARKER_EXPO_ANTECHAMBER == none
+            p_MARKER_EXPO_ANTECHAMBER = val
         endIf
     endFunction
 endProperty
@@ -915,6 +928,17 @@ EffectShader property SHADER_REANIMATE_FX
     function Set(EffectShader val)
         if p_SHADER_REANIMATE_FX == none
             p_SHADER_REANIMATE_FX = val
+        endIf
+    endFunction
+endProperty
+
+Location property LOCATION_EXPO
+    Location function Get()
+        return p_LOCATION_EXPO
+    endFunction
+    function Set(Location val)
+        if p_LOCATION_EXPO == none
+            p_LOCATION_EXPO = val
         endIf
     endFunction
 endProperty
