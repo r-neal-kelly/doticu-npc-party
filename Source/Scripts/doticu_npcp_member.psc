@@ -83,6 +83,7 @@ int                     p_id_alias                  =    -1
 Actor                   p_ref_actor                 =  none
 string                  p_str_namespace             =    ""
 bool                    p_is_clone                  = false
+bool                    p_is_follower               = false
 bool                    p_is_settler                = false
 bool                    p_is_thrall                 = false
 bool                    p_is_immobile               = false
@@ -127,6 +128,7 @@ f_Lock_Resources()
     p_ref_actor = GetActorReference()
     p_str_namespace = "member_" + p_id_alias
     p_is_clone = is_clone
+    p_is_follower = false
     p_is_settler = false
     p_is_thrall = false
     p_is_immobile = false
@@ -232,6 +234,7 @@ f_Lock_Resources()
     p_is_immobile = false
     p_is_thrall = false
     p_is_settler = false
+    p_is_follower = false
     p_is_clone = false
     p_str_namespace = ""
     p_ref_actor = none
@@ -1341,6 +1344,8 @@ int function Follow()
         return code_return
     endIf
 
+    p_is_follower = true
+
     p_Enqueue("Member.Outfit")
 
     return CODES.SUCCESS
@@ -1361,6 +1366,8 @@ int function Unfollow()
     if code_return < 0
         return code_return
     endIf
+
+    p_is_follower = false
 
     p_Enqueue("Member.Outfit")
 
@@ -1951,8 +1958,7 @@ bool function Is_Unsneak()
 endFunction
 
 bool function Is_Follower()
-    ; we might want to check a bool to avoid any latency issues
-    return Exists() && FOLLOWERS.Has_Follower(p_ref_actor)
+    return Exists() && p_is_follower
 endFunction
 
 bool function Is_Styled_Default()
@@ -2198,8 +2204,14 @@ endEvent
 ; Update Methods
 function u_0_8_3()
     if Exists()
+        ; in case any deadlocks were encountered.
         QUEUES.Destroy(p_queue_member)
         p_queue_member = QUEUES.Create("alias", 64, 0.1)
         p_queue_member.Register_Alias(self, "On_Queue_Member", p_str_namespace)
+
+        ; so that we can easily filter followers
+        if FOLLOWERS.Has_Follower(p_ref_actor)
+            p_is_follower = true
+        endIf
     endIf
 endFunction

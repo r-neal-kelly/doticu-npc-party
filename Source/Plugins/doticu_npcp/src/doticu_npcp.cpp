@@ -232,12 +232,23 @@ namespace doticu_npcp {
         }
     }
 
-    UInt64 Alias_Is_Follower(BGSBaseAlias *ptr_alias) {
-    }
-
     UInt64 Alias_Is_Clone(BGSBaseAlias *ptr_alias) {
         Object_Handle hnd_alias(kFormType_Alias, ptr_alias);
         BSFixedString str_variable("p_is_clone");
+        Functor_Get_Object_Value functor(&hnd_alias, &str_variable);
+        hnd_alias.Registry()->VisitScripts(hnd_alias.Val(), &functor);
+
+        VMValue *vm_actor = functor.Ptr();
+        if (vm_actor->GetUnmangledType() == VMValue::kType_Bool) {
+            return vm_actor->data.b ? 1 : 0;
+        } else {
+            return -1;
+        }
+    }
+
+    UInt64 Alias_Is_Follower(BGSBaseAlias *ptr_alias) {
+        Object_Handle hnd_alias(kFormType_Alias, ptr_alias);
+        BSFixedString str_variable("p_is_follower");
         Functor_Get_Object_Value functor(&hnd_alias, &str_variable);
         hnd_alias.Registry()->VisitScripts(hnd_alias.Val(), &functor);
 
@@ -461,6 +472,9 @@ namespace doticu_npcp {
         IS_THRALL,
         ISNT_THRALL,
 
+        IS_SNEAK,
+        ISNT_SNEAK,
+
         IS_PARALYZED,
         ISNT_PARALYZED,
 
@@ -519,6 +533,11 @@ namespace doticu_npcp {
             idx_flags = IS_THRALL;
         } else if (_stricmp(str_flag.data, "ISNT_THRALL") == 0) {
             idx_flags = ISNT_THRALL;
+
+        } else if (_stricmp(str_flag.data, "IS_SNEAK") == 0) {
+            idx_flags = IS_SNEAK;
+        } else if (_stricmp(str_flag.data, "ISNT_SNEAK") == 0) {
+            idx_flags = ISNT_SNEAK;
 
         } else if (_stricmp(str_flag.data, "IS_PARALYZED") == 0) {
             idx_flags = IS_PARALYZED;
@@ -587,7 +606,6 @@ namespace doticu_npcp {
             arr_aliases.Get(&ptr_base_alias, idx_aliases);
             ptr_vec_read->push_back(ptr_base_alias);
         }
-        _MESSAGE("size after copy: %d", ptr_vec_read->size());
 
         // SEX
         if (str_sex && str_sex.data[0] != 0) {
@@ -617,7 +635,6 @@ namespace doticu_npcp {
             }
             SWAP_BUFFERS;
         }
-        _MESSAGE("size after sex: %d", ptr_vec_read->size());
 
         // RACE
         if (str_race && str_race.data[0] != 0) {
@@ -632,9 +649,8 @@ namespace doticu_npcp {
             }
             SWAP_BUFFERS;
         }
-        _MESSAGE("size after race: %d", ptr_vec_read->size());
 
-        // IS_ALIVE
+        // ALIVE/DEAD
         if (Bit_Is_Set(int_flags, IS_ALIVE)) {
             for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
                 ptr_base_alias = ptr_vec_read->at(idx);
@@ -645,7 +661,6 @@ namespace doticu_npcp {
             }
             SWAP_BUFFERS;
         }
-        // IS_DEAD
         if (Bit_Is_Set(int_flags, IS_DEAD)) {
             for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
                 ptr_base_alias = ptr_vec_read->at(idx);
@@ -656,9 +671,8 @@ namespace doticu_npcp {
             }
             SWAP_BUFFERS;
         }
-        _MESSAGE("size after alive/dead: %d", ptr_vec_read->size());
 
-        // IS_ORIGINAL
+        // ORIGINAL/CLONE
         if (Bit_Is_Set(int_flags, IS_ORIGINAL)) {
             for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
                 ptr_base_alias = ptr_vec_read->at(idx);
@@ -668,7 +682,6 @@ namespace doticu_npcp {
             }
             SWAP_BUFFERS;
         }
-        // IS_CLONE
         if (Bit_Is_Set(int_flags, IS_CLONE)) {
             for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
                 ptr_base_alias = ptr_vec_read->at(idx);
@@ -678,9 +691,28 @@ namespace doticu_npcp {
             }
             SWAP_BUFFERS;
         }
-        _MESSAGE("size after original/clone: %d", ptr_vec_read->size());
 
-        // IS_SETTLER
+        // FOLLOWER
+        if (Bit_Is_Set(int_flags, IS_FOLLOWER)) {
+            for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
+                ptr_base_alias = ptr_vec_read->at(idx);
+                if (Alias_Is_Follower(ptr_base_alias) == 1) {
+                    ptr_vec_write->push_back(ptr_base_alias);
+                }
+            }
+            SWAP_BUFFERS;
+        }
+        if (Bit_Is_Set(int_flags, ISNT_FOLLOWER)) {
+            for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
+                ptr_base_alias = ptr_vec_read->at(idx);
+                if (Alias_Is_Follower(ptr_base_alias) == 0) {
+                    ptr_vec_write->push_back(ptr_base_alias);
+                }
+            }
+            SWAP_BUFFERS;
+        }
+
+        // SETTLER
         if (Bit_Is_Set(int_flags, IS_SETTLER)) {
             for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
                 ptr_base_alias = ptr_vec_read->at(idx);
@@ -690,7 +722,6 @@ namespace doticu_npcp {
             }
             SWAP_BUFFERS;
         }
-        // ISNT_SETTLER
         if (Bit_Is_Set(int_flags, ISNT_SETTLER)) {
             for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
                 ptr_base_alias = ptr_vec_read->at(idx);
@@ -700,9 +731,8 @@ namespace doticu_npcp {
             }
             SWAP_BUFFERS;
         }
-        _MESSAGE("size after settler: %d", ptr_vec_read->size());
 
-        // IS_IMMOBILE
+        // IMMOBILE
         if (Bit_Is_Set(int_flags, IS_IMMOBILE)) {
             for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
                 ptr_base_alias = ptr_vec_read->at(idx);
@@ -712,7 +742,6 @@ namespace doticu_npcp {
             }
             SWAP_BUFFERS;
         }
-        // ISNT_IMMOBILE
         if (Bit_Is_Set(int_flags, ISNT_IMMOBILE)) {
             for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
                 ptr_base_alias = ptr_vec_read->at(idx);
@@ -722,9 +751,8 @@ namespace doticu_npcp {
             }
             SWAP_BUFFERS;
         }
-        _MESSAGE("size after immobile: %d", ptr_vec_read->size());
 
-        // IS_THRALL
+        // THRALL
         if (Bit_Is_Set(int_flags, IS_THRALL)) {
             for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
                 ptr_base_alias = ptr_vec_read->at(idx);
@@ -734,7 +762,6 @@ namespace doticu_npcp {
             }
             SWAP_BUFFERS;
         }
-        // ISNT_THRALL
         if (Bit_Is_Set(int_flags, ISNT_THRALL)) {
             for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
                 ptr_base_alias = ptr_vec_read->at(idx);
@@ -744,9 +771,8 @@ namespace doticu_npcp {
             }
             SWAP_BUFFERS;
         }
-        _MESSAGE("size after thrall: %d", ptr_vec_read->size());
 
-        // IS_PARALYZED
+        // PARALYZED
         if (Bit_Is_Set(int_flags, IS_PARALYZED)) {
             for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
                 ptr_base_alias = ptr_vec_read->at(idx);
@@ -756,7 +782,6 @@ namespace doticu_npcp {
             }
             SWAP_BUFFERS;
         }
-        // ISNT_PARALYZED
         if (Bit_Is_Set(int_flags, ISNT_PARALYZED)) {
             for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
                 ptr_base_alias = ptr_vec_read->at(idx);
@@ -766,9 +791,8 @@ namespace doticu_npcp {
             }
             SWAP_BUFFERS;
         }
-        _MESSAGE("size after paralyzed: %d", ptr_vec_read->size());
 
-        // IS_MANNEQUIN
+        // MANNEQUIN
         if (Bit_Is_Set(int_flags, IS_MANNEQUIN)) {
             for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
                 ptr_base_alias = ptr_vec_read->at(idx);
@@ -778,7 +802,6 @@ namespace doticu_npcp {
             }
             SWAP_BUFFERS;
         }
-        // ISNT_MANNEQUIN
         if (Bit_Is_Set(int_flags, ISNT_MANNEQUIN)) {
             for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
                 ptr_base_alias = ptr_vec_read->at(idx);
@@ -788,9 +811,8 @@ namespace doticu_npcp {
             }
             SWAP_BUFFERS;
         }
-        _MESSAGE("size after mannequin: %d", ptr_vec_read->size());
 
-        // IS_REANIMATED
+        // REANIMATED
         if (Bit_Is_Set(int_flags, IS_REANIMATED)) {
             for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
                 ptr_base_alias = ptr_vec_read->at(idx);
@@ -800,7 +822,6 @@ namespace doticu_npcp {
             }
             SWAP_BUFFERS;
         }
-        // ISNT_REANIMATED
         if (Bit_Is_Set(int_flags, ISNT_REANIMATED)) {
             for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
                 ptr_base_alias = ptr_vec_read->at(idx);
@@ -810,7 +831,6 @@ namespace doticu_npcp {
             }
             SWAP_BUFFERS;
         }
-        _MESSAGE("size after reanimated: %d", ptr_vec_read->size());
 
         return *ptr_vec_read;
 

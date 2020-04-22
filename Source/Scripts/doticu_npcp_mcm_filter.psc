@@ -45,6 +45,10 @@ int                 p_int_original_clone        =       0
 int                 p_option_is_original        =      -1
 int                 p_option_is_clone           =      -1
 
+int                 p_int_follower              =       0
+int                 p_option_is_follower        =      -1
+int                 p_option_isnt_follower      =      -1
+
 int                 p_int_settler               =       0
 int                 p_option_is_settler         =      -1
 int                 p_option_isnt_settler       =      -1
@@ -115,6 +119,9 @@ function f_Build_Page()
     p_option_is_original = MCM.AddToggleOption(" Is Original ", p_int_original_clone == 1)
     p_option_is_clone = MCM.AddToggleOption(" Is Clone ", p_int_original_clone == -1)
 
+    p_option_is_follower = MCM.AddToggleOption(" Is Follower ", p_int_follower == 1)
+    p_option_isnt_follower = MCM.AddToggleOption(" Isnt Follower ", p_int_follower == -1)
+
     p_option_is_settler = MCM.AddToggleOption(" Is Settler ", p_int_settler == 1)
     p_option_isnt_settler = MCM.AddToggleOption(" Isnt Settler ", p_int_settler == -1)
 
@@ -181,6 +188,24 @@ function f_On_Option_Select(int id_option)
         endIf
         MCM.SetToggleOptionValue(p_option_is_original, p_int_original_clone == 1, MCM.DONT_UPDATE)
         MCM.SetToggleOptionValue(p_option_is_clone, p_int_original_clone == -1, MCM.DO_UPDATE)
+
+    ; Follower
+    elseIf id_option == p_option_is_follower
+        if p_int_follower == 1
+            p_int_follower = 0
+        else
+            p_int_follower = 1
+        endIf
+        MCM.SetToggleOptionValue(p_option_is_follower, p_int_follower == 1, MCM.DONT_UPDATE)
+        MCM.SetToggleOptionValue(p_option_isnt_follower, p_int_follower == -1, MCM.DO_UPDATE)
+    elseIf id_option == p_option_isnt_follower
+        if p_int_follower == -1
+            p_int_follower = 0
+        else
+            p_int_follower = -1
+        endIf
+        MCM.SetToggleOptionValue(p_option_is_follower, p_int_follower == 1, MCM.DONT_UPDATE)
+        MCM.SetToggleOptionValue(p_option_isnt_follower, p_int_follower == -1, MCM.DO_UPDATE)
 
     ; Settler
     elseIf id_option == p_option_is_settler
@@ -422,6 +447,12 @@ function p_Goto_Filter_Members()
         p_int_arg_flags = doticu_npcp.FIlter_Flag(p_int_arg_flags, "SET", "IS_ORIGINAL")
     elseIf p_int_original_clone == -1
         p_int_arg_flags = doticu_npcp.FIlter_Flag(p_int_arg_flags, "SET", "IS_CLONE")
+    endIf
+
+    if p_int_follower == 1
+        p_int_arg_flags = doticu_npcp.FIlter_Flag(p_int_arg_flags, "SET", "IS_FOLLOWER")
+    elseIf p_int_follower == -1
+        p_int_arg_flags = doticu_npcp.FIlter_Flag(p_int_arg_flags, "SET", "ISNT_FOLLOWER")
     endIf
 
     if p_int_settler == 1

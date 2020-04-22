@@ -187,10 +187,12 @@ function f_Build_Page()
     MCM.SetCursorPosition(0)
     MCM.SetCursorFillMode(MCM.LEFT_TO_RIGHT)
 
-    if p_code_view == CODES.VIEW_MEMBERS_MEMBER || p_code_view == CODES.VIEW_FILTER_MEMBERS_MEMBER
+    if p_code_view == CODES.VIEW_MEMBERS_MEMBER
         MCM.SetTitleText("Member: " + str_name)
     elseIf p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
         MCM.SetTitleText("Follower: " + str_name)
+    elseIf p_code_view == CODES.VIEW_FILTER_MEMBERS_MEMBER
+        MCM.SetTitleText("Filter: " + str_name)
     endIf
 
     p_option_rename = MCM.AddInputOption(str_name + " ", " Rename ")
