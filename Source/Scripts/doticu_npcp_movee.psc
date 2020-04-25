@@ -113,9 +113,13 @@ function f_Create(doticu_npcp_data DATA, Actor ref_actor)
 endFunction
 
 function f_Destroy()
+    if !Exists()
+        return
+    endIf
+
     p_is_created = false
 
-    p_Lock_Script()
+p_Lock()
 
     p_ref_actor.StopTranslation()
     if p_is_airborne
@@ -140,7 +144,7 @@ function f_Destroy()
     p_is_executing = false
     p_is_created = false
 
-    p_Unlock_Script()
+p_Unlock()
 endFunction
 
 function f_Register()
@@ -158,7 +162,7 @@ function f_Unregister()
 endFunction
 
 ; Private Methods
-function p_Lock_Script(float timeout = 15.0)
+function p_Lock(float timeout = 15.0)
     float time_waited = 0.0
 
     while p_is_executing && time_waited < timeout
@@ -169,7 +173,7 @@ function p_Lock_Script(float timeout = 15.0)
     p_is_executing = true
 endFunction
 
-function p_Unlock_Script()
+function p_Unlock()
     p_is_executing = false
 endFunction
 
@@ -189,6 +193,10 @@ bool function p_Send(string str_event)
 endFunction
 
 function p_Move()
+    if !Exists()
+        return
+    endIf
+
     float p_player_pos_x = p_ref_player.GetPositionX()
     float p_player_pos_y = p_ref_player.GetPositionY()
     float p_player_pos_z = p_ref_player.GetPositionZ()
@@ -268,16 +276,16 @@ endFunction
 
 ; Events
 event OnUpdate()
-    p_Lock_Script()
+p_Lock()
 
-        while Exists()
-            if p_ref_actor.Is3DLoaded()
-                p_Move()
-            endIf
-            Utility.Wait(p_UPDATE_INTERVAL)
-        endWhile
+    while Exists()
+        if p_ref_actor.Is3DLoaded()
+            p_Move()
+        endIf
+        Utility.Wait(p_UPDATE_INTERVAL)
+    endWhile
 
-    p_Unlock_Script()
+p_Unlock()
 endEvent
 
 event OnKeyDown(int code_key)
@@ -301,7 +309,11 @@ event OnKeyUp(int code_key, float hold_time)
         return
     endIf
 
-    if code_key == VARS.key_move_farther
+    if false
+
+    elseIf code_key == VARS.key_move_toggle
+        ACTORS.Toggle_Move(p_ref_actor); calls f_Destroy()
+    elseIf code_key == VARS.key_move_farther
         p_do_distance_farther = false
     elseIf code_key == VARS.key_move_nearer
         p_do_distance_nearer = false
@@ -309,6 +321,7 @@ event OnKeyUp(int code_key, float hold_time)
         p_do_rotate_right = false
     elseIf code_key == VARS.key_move_rotate_left
         p_do_rotate_left = false
+        
     endIf
 endEvent
 

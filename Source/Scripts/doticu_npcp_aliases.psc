@@ -474,10 +474,21 @@ int[]               p_arr_used      =  none
 Form[]              p_arr_actors    =  none
 string[]            p_arr_names     =  none
 function u_0_8_3()
+    ; these variables are no longer needed, and should be
+    ; truncated to save space in the save file.
     p_num_used = -1
     p_num_actors = -1
     p_num_names = -1
     p_arr_used = Utility.CreateIntArray(1, 0)
     p_arr_actors = Utility.CreateFormArray(1, none)
     p_arr_names = Utility.CreateStringArray(1, "")
+
+    ; we need to rebuild the arrays to take into account the new aliases
+    if p_MAX_ALIASES != GetNumAliases()
+        p_MAX_ALIASES = GetNumAliases()
+        p_arr_aliases = Utility.ResizeAliasArray(p_arr_aliases, p_MAX_ALIASES, none)
+
+        p_num_free = p_MAX_ALIASES - p_arr_free.length + p_num_free
+        p_arr_free = doticu_npcp.Array_Update_Free(p_arr_free, p_MAX_ALIASES)
+    endIf
 endFunction

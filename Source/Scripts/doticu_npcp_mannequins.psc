@@ -55,11 +55,11 @@ doticu_npcp_members property MEMBERS hidden
 endProperty
 
 ; Private Constants
-doticu_npcp_data        p_DATA              =  none
+doticu_npcp_data p_DATA =  none
 
 int property p_MAX_MANNEQUINS hidden
     int function Get()
-        return 512
+        return 1024
     endFunction
 endProperty
 int property p_MAX_MANNEQUINS_PER_CELL hidden
@@ -74,14 +74,14 @@ int property p_MAX_MANNEQUINS_PER_COLUMN hidden
 endProperty
 int property p_MAX_CELLS hidden
     int function Get()
-        return 32
+        return 64
     endFunction
 endProperty
 
 ; Public Constants
 int property MAX_COLUMNS hidden
     int function Get()
-        return 4
+        return 8
     endFunction
 endProperty
 int property MAX_ROWS hidden

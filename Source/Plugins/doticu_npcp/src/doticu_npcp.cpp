@@ -863,6 +863,25 @@ namespace doticu_npcp {
         return vec_slice;
     }
 
+    VMResultArray<UInt32> Array_Update_Free(StaticFunctionTag *, VMArray<UInt32> arr_free, UInt32 size_new) {
+        // the free array has all quest alias ids backwards. we add all the new ids at the front,
+        // and just copy the old onto the back. the caller will need to update the working pointer.
+        VMResultArray<UInt32> vec_free;
+        vec_free.reserve(size_new);
+
+        UInt32 size_old = arr_free.Length();
+        UInt32 int_free = size_new - 1; // alias ids are 0 based indexes
+        for (u64 idx = 0, size_diff = size_new - size_old; idx < size_diff; idx += 1, int_free -= 1) {
+            vec_free.push_back(int_free);
+        }
+        for (u64 idx = 0; idx < size_old; idx += 1) {
+            arr_free.Get(&int_free, idx);
+            vec_free.push_back(int_free);
+        }
+
+        return vec_free;
+    }
+
     bool Register_Functions(VMClassRegistry *registry) {
         registry->RegisterFunction(
             new NativeFunction2 <StaticFunctionTag, void, BGSOutfit *, TESForm *>(
@@ -921,6 +940,14 @@ namespace doticu_npcp {
                 "Aliases_Slice",
                 "doticu_npcp",
                 doticu_npcp::Aliases_Slice,
+                registry)
+        );
+
+        registry->RegisterFunction(
+            new NativeFunction2 <StaticFunctionTag, VMResultArray<UInt32>, VMArray<UInt32>, UInt32>(
+                "Array_Update_Free",
+                "doticu_npcp",
+                doticu_npcp::Array_Update_Free,
                 registry)
         );
 
