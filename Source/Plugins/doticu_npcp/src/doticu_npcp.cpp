@@ -7,6 +7,7 @@
 #include "skse64/GameExtraData.h"
 #include "skse64/GameRTTI.h"
 #include "skse64/PapyrusActor.h"
+#include "skse64/GameAPI.h"
 #include "doticu_npcp.h"
 
 namespace doticu_npcp {
@@ -882,6 +883,39 @@ namespace doticu_npcp {
         return vec_free;
     }
 
+    VMResultArray<TESForm *> Array_Form_Slice(StaticFunctionTag *, VMArray<TESForm *> arr_forms, UInt32 idx_from, UInt32 idx_to_ex) {
+        VMResultArray<TESForm *> vec_slice;
+        UInt32 len_forms = arr_forms.Length();
+
+        if (idx_from < 0) {
+            idx_from = 0;
+        }
+        if (idx_from > len_forms) {
+            idx_from = len_forms;
+        }
+        if (idx_to_ex > len_forms || idx_to_ex < 0) {
+            idx_to_ex = len_forms;
+        }
+
+        s64 num_elems = idx_to_ex - idx_from;
+        if (num_elems < 1) {
+            vec_slice.push_back(NULL); // may want to send back empty vec
+        } else {
+            TESForm *ptr_elem;
+            vec_slice.reserve(num_elems);
+            for (u64 idx = idx_from, idx_end = idx_to_ex; idx < idx_end; idx += 1) {
+                arr_forms.Get(&ptr_elem, idx);
+                vec_slice.push_back(ptr_elem);
+            }
+        }
+
+        return vec_slice;
+    }
+
+    void Print(StaticFunctionTag *, BSFixedString str) {
+        Console_Print(str.data);
+    }
+
     bool Register_Functions(VMClassRegistry *registry) {
         registry->RegisterFunction(
             new NativeFunction2 <StaticFunctionTag, void, BGSOutfit *, TESForm *>(
@@ -948,6 +982,22 @@ namespace doticu_npcp {
                 "Array_Update_Free",
                 "doticu_npcp",
                 doticu_npcp::Array_Update_Free,
+                registry)
+        );
+
+        registry->RegisterFunction(
+            new NativeFunction3 <StaticFunctionTag, VMResultArray<TESForm *>, VMArray<TESForm *>, UInt32, UInt32>(
+                "Array_Form_Slice",
+                "doticu_npcp",
+                doticu_npcp::Array_Form_Slice,
+                registry)
+        );
+
+        registry->RegisterFunction(
+            new NativeFunction1 <StaticFunctionTag, void, BSFixedString>(
+                "Print",
+                "doticu_npcp",
+                doticu_npcp::Print,
                 registry)
         );
 

@@ -143,6 +143,8 @@ function f_Build_Page()
         p_option_auto_style = MCM.AddTextOption(" New Member Style ", CONSTS.STR_MCM_MAGE)
     elseIf VARS.auto_style == CODES.IS_ARCHER
         p_option_auto_style = MCM.AddTextOption(" New Member Style ", CONSTS.STR_MCM_ARCHER)
+    elseIf VARS.auto_style == CODES.IS_COWARD
+        p_option_auto_style = MCM.AddTextOption(" New Member Style ", CONSTS.STR_MCM_COWARD)
     endIf
     if VARS.auto_vitality == CODES.IS_MORTAL
         p_option_auto_vitality = MCM.AddTextOption(" New Member Vitality ", CONSTS.STR_MCM_MORTAL)
@@ -263,6 +265,9 @@ function f_On_Option_Select(int id_option)
             VARS.auto_style = CODES.IS_ARCHER
             MCM.SetTextOptionValue(p_option_auto_style, CONSTS.STR_MCM_ARCHER)
         elseIf VARS.auto_style == CODES.IS_ARCHER
+            VARS.auto_style = CODES.IS_COWARD
+            MCM.SetTextOptionValue(p_option_auto_style, CONSTS.STR_MCM_COWARD)
+        elseIf VARS.auto_style == CODES.IS_COWARD
             VARS.auto_style = CODES.IS_DEFAULT
             MCM.SetTextOptionValue(p_option_auto_style, CONSTS.STR_MCM_DEFAULT)
         endIf
@@ -673,6 +678,8 @@ function f_On_Option_Highlight(int id_option)
             MCM.SetInfoText("When an npc becomes a member, they will fight as a mage.")
         elseIf VARS.auto_style == CODES.IS_ARCHER
             MCM.SetInfoText("When an npc becomes a member, they will fight as an archer.")
+        elseIf VARS.auto_style == CODES.IS_COWARD
+            MCM.SetInfoText("When an npc becomes a member, they will fight as a coward.")
         endIf
     elseIf id_option == p_option_auto_vitality
         if VARS.auto_vitality == CODES.IS_MORTAL

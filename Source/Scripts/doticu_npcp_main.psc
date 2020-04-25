@@ -37,7 +37,7 @@ doticu_npcp_control property CONTROL hidden
 endProperty
 
 ; Private Constants
-doticu_npcp_data    p_DATA  = none
+doticu_npcp_data p_DATA = none
 
 ; Public Constants
 doticu_npcp_data property DATA
@@ -109,17 +109,6 @@ bool function p_Has_Requires()
         Debug.MessageBox("NPC Party: Running a version of SKSE older than 2.0.17. This mod may not function. Please update SKSE.")
     elseIf SKSE.GetScriptVersionRelease() < 64
         Debug.MessageBox("NPC Party: SKSE scripts are older than version 2.0.17. This mod may not function. Try to reinstall SKSE.")
-    endIf
-
-    if !PapyrusUtil.GetVersion()
-        Debug.MessageBox("NPC Party: PapyrusUtil is not installed. This mod will not function. Please install PapyrusUtil 3.8 or higher.")
-        return false
-    endIf
-
-    if PapyrusUtil.GetVersion() < 38
-        Debug.MessageBox("NPC Party: Running a version of PapyrusUtil older than 3.8. This mod may not function. Please update PapyrusUtil.")
-    elseIf PapyrusUtil.GetScriptVersion() < 38
-        Debug.MessageBox("NPC Party: PapyrusUtil scripts are older than version 3.8. This mod may not function. Try to reinstall PapyrusUtil.")
     endIf
 
     return true

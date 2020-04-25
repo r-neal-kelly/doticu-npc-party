@@ -160,7 +160,7 @@ function Print_Contents(ObjectReference ref_object)
 
     str_contents += " ]\n"
 
-    MiscUtil.PrintConsole(str_contents)
+    doticu_npcp.Print(str_contents)
 endFunction
 
 ; Update Methods

@@ -15,3 +15,7 @@ Alias[] function Filter_Aliases(Alias[] arr_aliases, string str_sex, string str_
 Alias[] function Aliases_Slice(Alias[] arr_aliases, int idx_from, int idx_to_ex) native global
 
 int[] function Array_Update_Free(int[] arr_free, int size_new) native global
+
+Form[] function Array_Form_Slice(Form[] arr_form, int idx_from, int idx_to_ex) native global
+
+function Print(string str) native global

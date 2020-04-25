@@ -640,5 +640,5 @@ function Print_Inventory(Actor ref_actor)
 
     str_inventory += " ]\n"
 
-    MiscUtil.PrintConsole(str_inventory)
+    doticu_npcp.Print(str_inventory)
 endFunction

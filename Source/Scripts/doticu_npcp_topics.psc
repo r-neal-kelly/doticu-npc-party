@@ -91,6 +91,10 @@ function Style_Archer(ObjectReference ref_object)
     (GetOwningQuest() as doticu_npcp_commands).Style_Archer_Sync(ref_object as Actor, false)
 endFunction
 
+function Style_Coward(ObjectReference ref_object)
+    (GetOwningQuest() as doticu_npcp_commands).Style_Coward_Sync(ref_object as Actor, false)
+endFunction
+
 function Vitality_Show(ObjectReference ref_object)
     (GetOwningQuest() as doticu_npcp_commands).Vitality_Show(ref_object as Actor)
 endFunction

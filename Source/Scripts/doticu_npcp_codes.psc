@@ -60,6 +60,7 @@ int property IS_DEFAULT                     =  -380 autoReadOnly
 int property IS_WARRIOR                     =  -381 autoReadOnly
 int property IS_MAGE                        =  -382 autoReadOnly
 int property IS_ARCHER                      =  -383 autoReadOnly
+int property IS_COWARD                      =  -384 autoReadOnly
 int property IS_GREETER                     =  -390 autoReadOnly
 int property IS_VAMPIRE                     =  -399 autoReadOnly
 int property IS_DISPLAY                     = -3400 autoReadOnly
@@ -140,6 +141,7 @@ int property STYLE_DEFAULT                  = -1000 autoReadOnly
 int property STYLE_WARRIOR                  = -2000 autoReadOnly
 int property STYLE_MAGE                     = -3000 autoReadOnly
 int property STYLE_ARCHER                   = -4000 autoReadOnly
+int property STYLE_COWARD                   = -5000 autoReadOnly
 
 int property VITALITY_MORTAL                = -1000 autoReadOnly
 int property VITALITY_PROTECTED             = -2000 autoReadOnly

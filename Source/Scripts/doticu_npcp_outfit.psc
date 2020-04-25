@@ -51,7 +51,7 @@ doticu_npcp_data        p_DATA          =  none
 
 int property p_MAX_ITEMS hidden
     int function Get()
-        return 16
+        return 16; might be able to increase this, especially if we can move outfitting to c++
     endFunction
 endProperty
 
@@ -61,7 +61,6 @@ string                  p_str_name          =    ""
 int                     p_code_create       =     0; OUTFIT_VANILLA, OUTFIT_DEFAULT
 ObjectReference         p_cache_outfit      =  none
 ObjectReference         p_cache_self        =  none
-Form                    p_form_linchpin     =  none
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA, string str_name, int code_create = 0)
@@ -118,13 +117,13 @@ bool function p_Has_Changed(Actor ref_actor)
                 ; any playable item is fair game, but only equipped unplayables are accounted for
                 if p_cache_outfit.GetItemCount(form_item) < 1 && p_cache_self.GetItemCount(form_item) < 1
 
-                    ;/MiscUtil.PrintConsole("ref actor has items not in outfit")
-                    MiscUtil.PrintConsole(form_item.GetName())
-                    MiscUtil.PrintConsole("Actor Cache: ")
+                    ;/doticu_npcp.Print("ref actor has items not in outfit")
+                    doticu_npcp.Print(form_item.GetName())
+                    doticu_npcp.Print("Actor Cache: ")
                     FUNCS.Print_Contents(ref_actor)
-                    MiscUtil.PrintConsole("Outfit Cache: ")
+                    doticu_npcp.Print("Outfit Cache: ")
                     FUNCS.Print_Contents(p_cache_outfit)
-                    MiscUtil.PrintConsole("Self Cache: ")
+                    doticu_npcp.Print("Self Cache: ")
                     FUNCS.Print_Contents(p_cache_self)/;
 
                     return true
@@ -140,12 +139,12 @@ bool function p_Has_Changed(Actor ref_actor)
         form_item = p_cache_outfit.GetNthForm(idx_forms)
         if ref_actor.GetItemCount(form_item) != p_cache_outfit.GetItemCount(form_item) + p_cache_self.GetItemCount(form_item)
 
-            ;/MiscUtil.PrintConsole("ref actor and outfit cache mismatch")
-            MiscUtil.PrintConsole(form_item.GetName())
-            MiscUtil.PrintConsole("actor: " + ref_actor.GetItemCount(form_item) + ", outfit: " + p_cache_outfit.GetItemCount(form_item))
-            MiscUtil.PrintConsole("Actor Cache: ")
+            ;/doticu_npcp.Print("ref actor and outfit cache mismatch")
+            doticu_npcp.Print(form_item.GetName())
+            doticu_npcp.Print("actor: " + ref_actor.GetItemCount(form_item) + ", outfit: " + p_cache_outfit.GetItemCount(form_item))
+            doticu_npcp.Print("Actor Cache: ")
             FUNCS.Print_Contents(ref_actor)
-            MiscUtil.PrintConsole("Outfit Cache: ")
+            doticu_npcp.Print("Outfit Cache: ")
             FUNCS.Print_Contents(p_cache_outfit)/;
 
             return true
@@ -158,12 +157,12 @@ bool function p_Has_Changed(Actor ref_actor)
         form_item = p_cache_self.GetNthForm(idx_forms)
         if ref_actor.GetItemCount(form_item) != p_cache_outfit.GetItemCount(form_item) + p_cache_self.GetItemCount(form_item)
 
-            ;/MiscUtil.PrintConsole("ref actor and self cache mismatch")
-            MiscUtil.PrintConsole(form_item.GetName())
-            MiscUtil.PrintConsole("actor: " + ref_actor.GetItemCount(form_item) + ", self: " + p_cache_self.GetItemCount(form_item))
-            MiscUtil.PrintConsole("Actor Cache: ")
+            ;/doticu_npcp.Print("ref actor and self cache mismatch")
+            doticu_npcp.Print(form_item.GetName())
+            doticu_npcp.Print("actor: " + ref_actor.GetItemCount(form_item) + ", self: " + p_cache_self.GetItemCount(form_item))
+            doticu_npcp.Print("Actor Cache: ")
             FUNCS.Print_Contents(ref_actor)
-            MiscUtil.PrintConsole("Self Cache: ")
+            doticu_npcp.Print("Self Cache: ")
             FUNCS.Print_Contents(p_cache_self)/;
 
             return true
@@ -214,7 +213,6 @@ NPCS.Unlock_Base(ref_actor)
     ref_actor.SetPlayerTeammate(false, false)
 
     ; this will completely wipe the inventory of everything but tokens
-    ; it may be a hit on performace to call out to this function. will see
     OUTFITS.Remove_Junk(ref_actor)
 
     ; and now we can cleanly add all the outfit items

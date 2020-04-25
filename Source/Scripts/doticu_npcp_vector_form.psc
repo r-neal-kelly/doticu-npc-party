@@ -70,7 +70,7 @@ endFunction
 ; Public Methods
 Form[] function Get_Array()
     if p_num_forms > 0
-        return PapyrusUtil.SliceFormArray(p_arr_forms, 0, p_num_forms - 1)
+        return doticu_npcp.Array_Form_Slice(p_arr_forms, 0, p_num_forms)
     else
         return Utility.CreateFormArray(1, none)
     endIf
@@ -153,9 +153,9 @@ endFunction
 
 function Print()
     if p_num_forms > 0
-        MiscUtil.PrintConsole(Get_Array())
+        doticu_npcp.Print(Get_Array())
     else
         Form[] arr_empty
-        MiscUtil.PrintConsole(arr_empty)
+        doticu_npcp.Print(arr_empty)
     endIf
 endFunction

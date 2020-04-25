@@ -414,6 +414,12 @@ function Style_Archer_Sync(Actor ref_actor, bool auto_create)
     GotoState("")
 endFunction
 
+function Style_Coward_Sync(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    PRIVATE.Style_Coward(CODES.DO_SYNC, ref_actor, auto_create)
+    GotoState("")
+endFunction
+
 function Vitalize_Mortal_Sync(Actor ref_actor, bool auto_create)
     GotoState("p_STATE_BUSY")
     PRIVATE.Vitalize_Mortal(CODES.DO_SYNC, ref_actor, auto_create)
@@ -619,6 +625,10 @@ function Style_Archer_Async(Actor ref_actor, bool auto_create)
     PRIVATE.Style_Archer(CODES.DO_ASYNC, ref_actor, auto_create)
 endFunction
 
+function Style_Coward_Async(Actor ref_actor, bool auto_create)
+    PRIVATE.Style_Coward(CODES.DO_ASYNC, ref_actor, auto_create)
+endFunction
+
 function Vitalize_Mortal_Async(Actor ref_actor, bool auto_create)
     PRIVATE.Vitalize_Mortal(CODES.DO_ASYNC, ref_actor, auto_create)
 endFunction
@@ -794,6 +804,8 @@ state p_STATE_BUSY
     function Style_Mage_Sync(Actor ref_actor, bool auto_create)
     endFunction
     function Style_Archer_Sync(Actor ref_actor, bool auto_create)
+    endFunction
+    function Style_Coward_Sync(Actor ref_actor, bool auto_create)
     endFunction
     function Vitalize_Mortal_Sync(Actor ref_actor, bool auto_create)
     endFunction
@@ -1054,6 +1066,9 @@ state f_STATE_UPDATING
     function Style_Archer_Sync(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
+    function Style_Coward_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
     function Vitalize_Mortal_Sync(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
@@ -1181,6 +1196,9 @@ state f_STATE_UPDATING
         LOGS.Notify_Is_Updating()
     endFunction
     function Style_Archer_Async(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Style_Coward_Async(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
     function Vitalize_Mortal_Async(Actor ref_actor, bool auto_create)

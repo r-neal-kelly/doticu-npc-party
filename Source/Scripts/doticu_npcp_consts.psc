@@ -31,6 +31,7 @@ MiscObject                  p_TOKEN_STYLE_DEFAULT                   = none
 MiscObject                  p_TOKEN_STYLE_WARRIOR                   = none
 MiscObject                  p_TOKEN_STYLE_MAGE                      = none
 MiscObject                  p_TOKEN_STYLE_ARCHER                    = none
+MiscObject                  p_TOKEN_STYLE_COWARD                    = none
 MiscObject                  p_TOKEN_REANIMATED                      = none
 MiscObject                  p_TOKEN_VITALITY_MORTAL                 = none
 MiscObject                  p_TOKEN_VITALITY_PROTECTED              = none
@@ -367,6 +368,17 @@ MiscObject property TOKEN_STYLE_ARCHER
     function Set(MiscObject val)
         if p_TOKEN_STYLE_ARCHER == none
             p_TOKEN_STYLE_ARCHER = val
+        endIf
+    endFunction
+endProperty
+
+MiscObject property TOKEN_STYLE_COWARD
+    MiscObject function Get()
+        return p_TOKEN_STYLE_COWARD
+    endFunction
+    function Set(MiscObject val)
+        if p_TOKEN_STYLE_COWARD == none
+            p_TOKEN_STYLE_COWARD = val
         endIf
     endFunction
 endProperty
@@ -1040,6 +1052,7 @@ string property STR_MCM_DEFAULT             = " Default "                   auto
 string property STR_MCM_WARRIOR             = " Warrior "                   autoReadOnly hidden
 string property STR_MCM_MAGE                = " Mage "                      autoReadOnly hidden
 string property STR_MCM_ARCHER              = " Archer "                    autoReadOnly hidden
+string property STR_MCM_COWARD              = " Coward "                    autoReadOnly hidden
 string property STR_MCM_MORTAL              = " Mortal "                    autoReadOnly hidden
 string property STR_MCM_PROTECTED           = " Protected "                 autoReadOnly hidden
 string property STR_MCM_ESSENTIAL           = " Essential "                 autoReadOnly hidden

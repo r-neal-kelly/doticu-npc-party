@@ -205,7 +205,7 @@ function Clear_Errors()
 endFunction
 
 function Print(string str)
-    MiscUtil.PrintConsole("NPC Party: " + str)
+    doticu_npcp.Print("NPC Party: " + str)
 endFunction
 
 function Notify_Is_Updating()

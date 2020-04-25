@@ -280,11 +280,10 @@ f_Lock_Resources()
     CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(1)
 
     p_ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, 3); maybe we can do away with this, because it affects the base state of npcs
-    ;p_ref_actor.SetPlayerTeammate(true, true)
     p_ref_actor.IgnoreFriendlyHits(true)
     p_ref_actor.SetNotShowOnStealthMeter(true)
 
-    p_ref_actor.AddToFaction(CONSTS.FACTION_BARD_SINGER_NO_AUTOSTART); may need to clear a quest's alias too?
+    p_ref_actor.AddToFaction(CONSTS.FACTION_BARD_SINGER_NO_AUTOSTART)
 
     p_ref_actor.SetActorValue("WaitingForPlayer", 0.0); we don't use the vanilla wait, but immobilize
     p_ref_actor.SetActorValue("SpeedMult", MAX_SPEED_UNSNEAK)
@@ -301,7 +300,6 @@ f_Lock_Resources()
 
     p_ref_actor.SetNotShowOnStealthMeter(false)
     p_ref_actor.IgnoreFriendlyHits(false)
-    ;p_ref_actor.SetPlayerTeammate(false, false)
     p_ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, p_prev_relationship_rank)
 
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_FOLLOWER)
@@ -798,6 +796,10 @@ endFunction
 
 bool function Is_Styled_Archer()
     return Exists() && p_ref_member.Is_Styled_Archer()
+endFunction
+
+bool function Is_Styled_Coward()
+    return Exists() && p_ref_member.Is_Styled_Coward()
 endFunction
 
 bool function Is_In_Combat()

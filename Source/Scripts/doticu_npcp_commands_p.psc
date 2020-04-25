@@ -449,7 +449,8 @@ function Style(int code_exec, Actor ref_actor, int code_style, bool auto_create)
     if code_style != CODES.IS_DEFAULT &&\
         code_style != CODES.IS_WARRIOR &&\
         code_style != CODES.IS_MAGE &&\
-        code_style != CODES.IS_ARCHER
+        code_style != CODES.IS_ARCHER &&\
+        code_style != CODES.IS_COWARD
         code_style = VARS.auto_style; eventually VARS.default_style
     endIf
 
@@ -475,6 +476,8 @@ function Style(int code_exec, Actor ref_actor, int code_style, bool auto_create)
         NOTES.Style(ref_member.Style_Mage(code_exec), str_name, code_style)
     elseIf code_style == CODES.IS_ARCHER
         NOTES.Style(ref_member.Style_Archer(code_exec), str_name, code_style)
+    elseIf code_style == CODES.IS_COWARD
+        NOTES.Style(ref_member.Style_Coward(code_exec), str_name, code_style)
     endIf
 endFunction
 
@@ -492,6 +495,10 @@ endFunction
 
 function Style_Archer(int code_exec, Actor ref_actor, bool auto_create)
     Style(code_exec, ref_actor, CODES.IS_ARCHER, auto_create)
+endFunction
+
+function Style_Coward(int code_exec, Actor ref_actor, bool auto_create)
+    Style(code_exec, ref_actor, CODES.IS_COWARD, auto_create)
 endFunction
 
 function Vitalize(int code_exec, Actor ref_actor, int code_vitality, bool auto_create)
@@ -710,9 +717,7 @@ function Summon(Actor ref_actor)
         return
     endIf
 
-    ref_member.Summon()
-
-    NOTES.Summon(CODES.SUCCESS, str_name)
+    NOTES.Summon(ref_member.Summon(), str_name)
 endFunction
 
 function Toggle_Member(Actor ref_actor)
@@ -798,6 +803,8 @@ function Cycle_Style(Actor ref_actor, bool auto_create)
     elseIf ref_member.Is_Styled_Mage()
         Style(CODES.DO_ASYNC, ref_actor, CODES.IS_ARCHER, auto_create)
     elseIf ref_member.Is_Styled_Archer()
+        Style(CODES.DO_ASYNC, ref_actor, CODES.IS_COWARD, auto_create)
+    elseIf ref_member.Is_Styled_Coward()
         Style(CODES.DO_ASYNC, ref_actor, CODES.IS_DEFAULT, auto_create)
     endIf
 endFunction
@@ -964,6 +971,8 @@ function Style_Show(Actor ref_actor)
         LOGS.Create_Note("Is Mage ", false)
     elseIf code_style == CODES.IS_ARCHER
         LOGS.Create_Note("Is Archer ", false)
+    elseIf code_style == CODES.IS_COWARD
+        LOGS.Create_Note("Is Coward ", false)
     endIf
 endFunction
 

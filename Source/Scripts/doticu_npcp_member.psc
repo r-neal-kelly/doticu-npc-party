@@ -384,6 +384,10 @@ f_Lock_Resources()
     p_ref_actor.SetActorValue("Assistance", 2.0)
     p_ref_actor.SetActorValue("Morality", 0.0)
 
+    ; we never use the vanilla wait system, and have disabled it
+    ; so this makes sure that a member doesn't get stuck
+    p_ref_actor.SetActorValue("WaitingForPlayer", 0.0)
+
     p_ref_actor.SetPlayerTeammate(true, true)
 
     p_ref_actor.EvaluatePackage()
@@ -606,21 +610,31 @@ f_Lock_Resources()
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_COWARD)
     elseIf p_code_style == CODES.IS_WARRIOR
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
         ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_COWARD)
     elseIf p_code_style == CODES.IS_MAGE
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
         ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_COWARD)
     elseIf p_code_style == CODES.IS_ARCHER
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
         ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_COWARD)
+    elseIf p_code_style == CODES.IS_COWARD
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
+        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
+        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_COWARD)
     endIf
 
     p_ref_actor.EvaluatePackage()
@@ -631,6 +645,7 @@ endFunction
 function p_Unstyle()
 f_Lock_Resources()
 
+    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_COWARD)
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
@@ -1449,6 +1464,8 @@ int function Style(int code_exec, int code_style)
         return Style_Mage(code_exec)
     elseIf code_style == CODES.IS_ARCHER
         return Style_Archer(code_exec)
+    elseIf code_style == CODES.IS_COWARD
+        return Style_Coward(code_exec)
     endIf
 endFunction
 
@@ -1527,6 +1544,27 @@ int function Style_Archer(int code_exec)
     endIf
 
     p_Set_Style(CODES.IS_ARCHER)
+    if code_exec == CODES.DO_ASYNC
+        p_Enqueue("Member.Style")
+    else
+        p_Style()
+    endIf
+
+    return CODES.SUCCESS
+endFunction
+
+int function Style_Coward(int code_exec)
+    int code_return
+
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+
+    if Get_Style() == CODES.IS_COWARD
+        return CODES.IS_COWARD
+    endIf
+
+    p_Set_Style(CODES.IS_COWARD)
     if code_exec == CODES.DO_ASYNC
         p_Enqueue("Member.Style")
     else
@@ -1819,6 +1857,9 @@ int function Display(ObjectReference ref_marker, int distance, int angle)
 
     ACTORS.Move_To(p_ref_actor as ObjectReference, ref_marker, distance, angle)
 
+    p_Remannequinize()
+    p_Reparalyze()
+
     return CODES.SUCCESS
 endFunction
 
@@ -1878,23 +1919,26 @@ int function Unclone()
     return MEMBERS.Destroy_Member(p_ref_actor, true)
 endFunction
 
-function Summon(int distance = 120, int angle = 0)
+int function Summon(int distance = 120, int angle = 0)
     ; we don't allow mannequins to be removed, until they are unmannequinized
     if Is_Mannequin()
-        return
+        return CODES.IS_MANNEQUIN
     endIf
 
     ACTORS.Move_To(p_ref_actor, CONSTS.ACTOR_PLAYER, distance, angle)
 
+    p_Remannequinize()
     p_Reparalyze()
+
+    return CODES.SUCCESS
 endFunction
 
-function Summon_Ahead(int distance = 120)
-    Summon(distance, 0)
+int function Summon_Ahead(int distance = 120)
+    return Summon(distance, 0)
 endFunction
 
-function Summon_Behind(int distance = 120)
-    Summon(distance, 180)
+int function Summon_Behind(int distance = 120)
+    return Summon(distance, 180)
 endFunction
 
 bool function Is_Member()
@@ -1975,6 +2019,10 @@ endFunction
 
 bool function Is_Styled_Archer()
     return Exists() && p_code_style == CODES.IS_ARCHER
+endFunction
+
+bool function Is_Styled_Coward()
+    return Exists() && p_code_style == CODES.IS_COWARD
 endFunction
 
 bool function Is_Vitalized_Mortal()

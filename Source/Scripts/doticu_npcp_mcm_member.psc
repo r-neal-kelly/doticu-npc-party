@@ -331,6 +331,9 @@ function f_On_Option_Select(int id_option)
             COMMANDS.Style_Archer_Sync(ref_actor, false)
             p_Update_Commands()
         elseIf code_style == CODES.IS_ARCHER
+            COMMANDS.Style_Coward_Sync(ref_actor, false)
+            p_Update_Commands()
+        elseIf code_style == CODES.IS_COWARD
             COMMANDS.Style_Default_Sync(ref_actor, false)
             p_Update_Commands()
         endIf
@@ -620,6 +623,8 @@ function p_Build_Commands()
         p_option_style = MCM.AddTextOption(CONSTS.STR_MCM_STYLE, CONSTS.STR_MCM_MAGE)
     elseIf code_style == CODES.IS_ARCHER
         p_option_style = MCM.AddTextOption(CONSTS.STR_MCM_STYLE, CONSTS.STR_MCM_ARCHER)
+    elseIf code_style == CODES.IS_COWARD
+        p_option_style = MCM.AddTextOption(CONSTS.STR_MCM_STYLE, CONSTS.STR_MCM_COWARD)
     endIf
 
     int code_vitality = p_ref_member.Get_Vitality()
@@ -716,6 +721,8 @@ function p_Update_Commands()
         MCM.SetTextOptionValue(p_option_style, CONSTS.STR_MCM_MAGE, DONT_UPDATE)
     elseIf code_style == CODES.IS_ARCHER
         MCM.SetTextOptionValue(p_option_style, CONSTS.STR_MCM_ARCHER, DONT_UPDATE)
+    elseIf code_style == CODES.IS_COWARD
+        MCM.SetTextOptionValue(p_option_style, CONSTS.STR_MCM_COWARD, DONT_UPDATE)
     endIf
 
     int code_vitality = p_ref_member.Get_Vitality()

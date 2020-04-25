@@ -30,7 +30,6 @@ It can be tough to manage all my followers, as I always end up getting a lot of 
 - [Skyrim SE 1.5.97+](https://store.steampowered.com/app/489830/The_Elder_Scrolls_V_Skyrim_Special_Edition/)
 - [SKSE 2.0.17+](https://skse.silverlock.org/)
 - [SkyUI 5.2SE+](https://www.nexusmods.com/skyrimspecialedition/mods/12604)
-- [PapyrusUtil 3.8+](https://www.nexusmods.com/skyrimspecialedition/mods/13048)
 
 # 
 ## Members and Followers
