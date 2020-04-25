@@ -6,7 +6,7 @@ It can be tough to manage all my followers, as I always end up getting a lot of 
 # *NPC Party*
 
 ## Features
-- a pool of **512 members**
+- a pool of **1024 members**
 - up to **16 followers** at a time
 - **clones** of humanoid NPCs
 - a **pack** per member to carry your items
@@ -17,13 +17,14 @@ It can be tough to manage all my followers, as I always end up getting a lot of 
 - numerous **hotkeys**
 - **settlers** who will live where you tell them to
 - **immobile** members who will stay where you leave them
-- **warriors**, **mages**, **archers**, and **classless** teammates
-- **mortal**, **protected**, **essential**, or **invulnerable** followers
+- **warriors**, **mages**, **archers**, **cowards**, and **classless** teammates
+- **mortal**, **protected**, **essential**, and **invulnerable** followers
+- life-like **mannequins** to show of your armor
 - and **thralls** to sustain vampire players
 - they can be **renamed** to whatever you want
 - **summoned** to wherever you are
 - **moved** out of the way
-- **displayed** as you cycle through members
+- **displayed** in the expo hall or on command
 - and they **level** as you level
 
 ## Requires
@@ -33,27 +34,27 @@ It can be tough to manage all my followers, as I always end up getting a lot of 
 
 # 
 ## Members and Followers
-A member is an NPC that is managed by the framework, and a follower is an active member who will travel with you and fight for you. You can have up to 512 managed NPCs at a time, and up to 16 followers at a time. Whenever you please, you can switch out followers for different members by using the MCM menu. No longer will you have to go searching for a lost follower! It's as easy as clicking a few buttons and they will come to you. Members and Followers are the bread and butter of NPC Party, and you'll see these terms used often.
+A member is an NPC that is managed by the framework, and a follower is an active member who will travel with you and fight for you. You can have up to 1024 members and 16 followers at a time. Whenever you please, you can switch out followers for other members by using the MCM menu. No longer will you have to go searching for a lost follower! It's as easy as clicking a few buttons and they will come to you.
 
 # 
 ## Clones
-Cloning NPCs allows for less conflicts with other mods and also vanilla Skyrim, because any changes made to an original NPC can lead to a bug. Even though in the vanilla game, a clone can still cause conflicts, this framework has solved many of the traditional problems with cloning. Now clones can change more while altering the original NPC less. Additionally, cloning an exact lookalike of a generic NPC, such as a town guard or bandit, is now possible with this framework. Cloning gives you more stable followers and copies of NPCs, whether they be unique or generic, friend or foe.
+Cloning NPCs allows for less conflicts with other mods and even vanilla Skyrim. Though a clone can still cause conflicts, by using them this framework changes more while altering original NPCs less. Additionally, cloning an exact lookalike of a generic NPC, such as a town guard or bandit, is now possible. Cloning gives you more stable followers and copies of NPCs, whether they be unique or generic, friend or foe.
 
 # 
 ## Packs and Outfits
-It is frustrating when follower's randomly add items to their inventory, or when they equip things you only want them to carry. With NPC Party, each member has a separate pack, which acts as their basic inventory, and they will never equip anything within it. They also have several outfits that are their own containers, which will not randomly fill up with junk. Each member will consistently wear what you tell them to. Optionally their outfits can be filled with equipment, or start out empty. You may also have members automatically change their outfit depending on their role. Both original and cloned NPCs within the framework have their own pack and outfits. Only items that are in each individual outfit are equipped, while the items in their pack remain untouched.
+It is frustrating when follower's randomly add items to their inventory, or when they equip things you only want them to carry. With NPC Party, each member has a separate pack, which acts as their inventory, and they never equip anything inside it. They have several outfits on the side, which will not randomly fill up with junk. Each member will consistently wear what you tell them to. Optionally their outfits can be filled with equipment, or start out empty. You may also have members automatically change their outfit depending on their role. Both original and cloned NPCs within the framework have their own pack and outfits, so there's no cross-contamination. Only items that are in each individual outfit are equipped, while the items in their pack remain untouched.
 
 # 
 ## Style and Vitality
-Followers can be styled as a warrior, a mage, an archer, or fight however they choose. A follower's style effects their in-game attributes and skills as well as what weapons they are most likely to use. Vitality is the state of their vulnerability in combat. If they are mortal they may die at the hands of your enemies. Protected status shields them from outright death, except should you be the one to deal the final blow. Essential status will keep even you from killing them, but they will take a knee when they run out of health. And Invulnerable status speaks for itself. Style and Vitality gracefully allow you to change how your followers handle combat and allow you to get the most fun out of the framework.
+Followers can be styled as a warrior, a mage, an archer, a coward, or fight however they choose. A follower's style effects their in-game attributes and skills as well as what weapons they are most likely to use. Vitality is the state of their vulnerability in combat. If they are mortal they may die at the hands of your enemies. Protected status shields them from outright death, except should you be the one to deal the final blow. Essential status will keep even you from killing them, but they will take a knee when they run out of health. And Invulnerable status speaks for itself. Style and Vitality gracefully allow you to change how your followers handle combat and allow you to get the most out of your members.
 
 # 
 ## Beta
-This mod is currently in beta testing. You may run into a few hiccups every now and then, including slow execution, unpolished features, unexpected behaviors, and sometimes even outright bugs. I hope to resolve any issues and bring the mod out of beta into version 1.0.0. Mid-game updates are supported in the mod and will be the usual method. But sometimes updating may require a fresh save game. Also, there is currently no uninstall feature. Just uninstalling the mod is not the end of one's save game, but it will leave behind data that is no longer in use. This and several other features are being planned.
+This mod is currently in beta testing. You may run into a few hiccups every now and then, including slow execution, unpolished features, unexpected behaviors, and sometimes even outright bugs. I hope to resolve any issues and bring the mod out of beta into version 1.0.0. Mid-game updates are supported in the mod and will be the usual method. But sometimes updating may require a fresh save game. Also, there is currently no uninstall feature. Just uninstalling the mod is not the end of one's save game, but it will leave behind data that is no longer in use.
 
 # 
 ## Compatibility
-One of the goals of this mod was to touch as few vanilla assets as possible, but no promises can be made regarding compatibility. Currently, the vanilla follower system has been disabled, and the consequences have not been fully tested. There will be issues with other full-scale follower frameworks being used at the same time. Custom followers who use the vanilla system will need to use the framework. If they don't use the vanilla system, they may be fully compatible alongside the framework. Other outfitting mods are now compatible when using a member's "Vanilla" outfit.
+One of the goals of this mod was to touch as few vanilla assets as possible, but no promises can be made regarding compatibility. Currently, the vanilla follower system has been disabled, and the consequences have not been fully tested. There will be issues with other full-scale follower frameworks being used at the same time. Custom followers who use the vanilla system will need to use the framework. If they don't use the vanilla system, they may be fully compatible alongside the framework. Outfitting mods are compatible when using a member's "Vanilla" outfit.
 
 # 
 ## Conclusion
@@ -75,6 +76,7 @@ I hope that this mod changes your follower experience for the better. My goal wa
 - [fireundubh](https://github.com/fireundubh) for your parallel papyrus compiler [pyro](https://github.com/fireundubh/pyro) and the [wiki](https://wiki.fireundubh.com/pyro) that goes with it.
 - OldMansBeard for helping me [reuse vanilla voices](https://forums.nexusmods.com/index.php?/topic/8223653-reusing-voice-files/) without copying and redistributing them.
 - cumbrianlad for a [discussion on persistent references](https://forums.nexusmods.com/index.php?/topic/8082738-is-512-persistent-actor-references-bad/), and how this can take a toll on the player's gameplay.
+- Ian Patterson of the SKSE Team for telling me how to save outfits on a form in the SKSE plugin.
 - [Creation Kit Wiki](https://www.creationkit.com/index.php?title=Main_Page) for the wealth of knowledge with which this mod was made.
 - [GitHub](https://github.com) for giving my codebase a place to live online.
 - [NexusMods](https://www.nexusmods.com/) for such a great site, and for hosting my mod!
