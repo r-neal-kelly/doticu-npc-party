@@ -320,14 +320,6 @@ function Disable_Sort()
     p_can_sort = false
 endFunction
 
-bool function Is_Full()
-    p_Lock()
-        bool res = p_Is_Full()
-    p_Unlock()
-
-    return res
-endFunction
-
 int function Get_Count()
     p_Lock()
         int res = p_Get_Count()

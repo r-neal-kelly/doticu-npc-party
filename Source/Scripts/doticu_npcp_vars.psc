@@ -46,6 +46,7 @@ int                 p_auto_style            =    -1
 int                 p_auto_vitality         =    -1
 
 int                 p_num_display           =    -1
+int                 p_max_members           =    -1
 
 bool                p_is_updating           = false
 bool                p_is_mcm_open           = false
@@ -321,6 +322,15 @@ int property num_display hidden
     endFunction
 endProperty
 
+int property max_members hidden
+    int function Get()
+        return p_max_members
+    endFunction
+    function Set(int val)
+        p_max_members = val
+    endFunction
+endProperty
+
 bool property is_updating hidden
     bool function Get()
         return p_is_updating
@@ -356,6 +366,9 @@ endFunction
 function f_Register()
 endFunction
 
+function f_Unregister()
+endFunction
+
 ; Public Methods
 function Set_Defaults()
     version_major = CONSTS.VERSION_MAJOR
@@ -381,7 +394,13 @@ function Set_Defaults()
     percent_head = CONSTS.DEFAULT_PERCENT_HEAD
 
     num_display = CONSTS.DEFAULT_DISPLAY
+    max_members = p_DATA.MODS.MEMBERS.GetNumAliases(); MEMBERS is not f_Create()'d yet, but this func can be called
 
     is_updating = false
     is_mcm_open = false; not really used.
+endFunction
+
+; Update Methods
+function u_0_8_3()
+    max_members = p_DATA.MODS.MEMBERS.GetNumAliases()
 endFunction

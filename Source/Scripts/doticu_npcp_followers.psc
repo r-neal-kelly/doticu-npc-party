@@ -79,7 +79,7 @@ int function f_Create_Follower(Actor ref_actor)
         return CODES.ISNT_ACTOR
     endIf
 
-    if ALIASES.Is_Full()
+    if Get_Count() >= Get_Max()
         return CODES.HASNT_SPACE_FOLLOWER
     endIf
 

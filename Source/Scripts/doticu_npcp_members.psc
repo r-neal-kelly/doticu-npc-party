@@ -145,7 +145,7 @@ int function Create_Member(Actor ref_actor, bool do_clone = false)
         return CODES.IS_CHILD
     endIf
 
-    if ALIASES.Is_Full()
+    if Get_Count() >= Get_Max()
         ; check first so we don't have to unclone
         return CODES.HASNT_SPACE_MEMBER
     endIf
@@ -248,6 +248,10 @@ int function Get_Count()
 endFunction
 
 int function Get_Max()
+    return VARS.max_members
+endFunction
+
+int function Get_Real_Max()
     return ALIASES.Get_Max()
 endFunction
 

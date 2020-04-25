@@ -20,6 +20,11 @@ doticu_npcp_vars property VARS hidden
         return p_DATA.VARS
     endFunction
 endProperty
+doticu_npcp_members property MEMBERS hidden
+    doticu_npcp_members function Get()
+        return p_DATA.MODS.MEMBERS
+    endFunction
+endProperty
 doticu_npcp_keys property KEYS hidden
     doticu_npcp_keys function Get()
         return p_DATA.MODS.CONTROL.KEYS
@@ -67,6 +72,7 @@ int                 p_option_clone_outfit               =    -1
 int                 p_option_auto_style                 =    -1
 int                 p_option_auto_vitality              =    -1
 int                 p_option_auto_resurrect             =    -1
+int                 p_option_slider_max_members         =    -1
 
 int                 p_option_auto_outfit                =    -1
 int                 p_option_fill_outfits               =    -1
@@ -156,7 +162,7 @@ function f_Build_Page()
         p_option_auto_vitality = MCM.AddTextOption(" New Member Vitality ", CONSTS.STR_MCM_INVULNERABLE)
     endIf
     p_option_auto_resurrect = MCM.AddToggleOption(" Auto Resurrect Followers ", VARS.auto_resurrect)
-    MCM.AddEmptyOption()
+    p_option_slider_max_members = MCM.AddSliderOption(" Max Members ", VARS.max_members, " {0} ")
     MCM.AddEmptyOption()
     MCM.AddEmptyOption()
 
@@ -344,6 +350,12 @@ endFunction
 function f_On_Option_Slider_Open(int id_option)
     if false
 
+    elseIf id_option == p_option_slider_max_members
+        MCM.SetSliderDialogStartValue(VARS.max_members as float)
+        MCM.SetSliderDialogDefaultValue(MEMBERS.Get_Real_Max() as float)
+        MCM.SetSliderDialogRange(MEMBERS.Get_Count() as float, MEMBERS.Get_Real_Max() as float)
+        MCM.SetSliderDialogInterval(1.0)
+
     elseIf id_option == p_option_slider_percent_body
         MCM.SetSliderDialogStartValue(VARS.percent_body as float)
         MCM.SetSliderDialogDefaultValue(CONSTS.DEFAULT_PERCENT_BODY as float)
@@ -376,6 +388,10 @@ endFunction
 
 function f_On_Option_Slider_Accept(int id_option, float float_value)
     if false
+
+    elseIf id_option == p_option_slider_max_members
+        VARS.max_members = float_value as int
+        MCM.SetSliderOptionValue(id_option, VARS.max_members, " {0} ", DO_UPDATE)
 
     elseIf id_option == p_option_slider_percent_body
         VARS.percent_body = float_value as int
@@ -697,6 +713,8 @@ function f_On_Option_Highlight(int id_option)
         else
             MCM.SetInfoText("Followers will not automatically resurrect after each battle.")
         endIf
+    elseIf id_option == p_option_slider_max_members
+        MCM.SetInfoText("A limiter for the amount of members you can have.")
 
     ; Cloning
     elseIf id_option == p_option_force_clone_unique

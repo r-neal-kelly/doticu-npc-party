@@ -247,6 +247,7 @@ function u_0_8_2()
 endFunction
 
 function u_0_8_3()
+    VARS.u_0_8_3()
     FUNCS.u_0_8_3()
     MEMBERS.ALIASES.u_0_8_3()
     FOLLOWERS.ALIASES.u_0_8_3()
