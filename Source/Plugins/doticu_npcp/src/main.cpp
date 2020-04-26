@@ -8,8 +8,6 @@
 #include "skse64/PluginAPI.h"
 #include "doticu_npcp.h"
 
-#define DOTICU_NPCP_PRINT_PREFIX "doticu_npcp: "
-
 static PluginHandle g_handle_plugin = kPluginHandle_Invalid;
 static SKSEPapyrusInterface *g_papyrus = NULL;
 

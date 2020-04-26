@@ -69,13 +69,7 @@ int property FLAG_DISABLE hidden
 endProperty
 
 ; Private Constants
-doticu_npcp_data    p_DATA  =  none
-
-string property p_STR_PLEASE_WAIT hidden
-    string function Get()
-        return " Please wait, sorting... "
-    endFunction
-endProperty
+doticu_npcp_data    p_DATA                      =  none
 
 ; Private Variables
 bool                p_is_created                = false
@@ -103,6 +97,7 @@ int                 p_option_follow             =    -1
 int                 p_option_unfollow           =    -1
 int                 p_option_sneak              =    -1
 int                 p_option_unsneak            =    -1
+int                 p_option_rating             =    -1
 int                 p_option_style              =    -1
 int                 p_option_vitalize           =    -1
 int                 p_option_relevel            =    -1
@@ -319,6 +314,31 @@ function f_On_Option_Select(int id_option)
         p_Update_Commands()
         p_Update_Statistics()
 
+    elseIf id_option == p_option_rating
+        int int_rating = p_ref_member.Get_Rating()
+        if false
+
+        elseIf int_rating == 0
+            p_ref_member.Set_Rating(1)
+            p_Update_Commands()
+        elseIf int_rating == 1
+            p_ref_member.Set_Rating(2)
+            p_Update_Commands()
+        elseIf int_rating == 2
+            p_ref_member.Set_Rating(3)
+            p_Update_Commands()
+        elseIf int_rating == 3
+            p_ref_member.Set_Rating(4)
+            p_Update_Commands()
+        elseIf int_rating == 4
+            p_ref_member.Set_Rating(5)
+            p_Update_Commands()
+        elseIf int_rating == 5
+            p_ref_member.Set_Rating(0)
+            p_Update_Commands()
+
+        endIf
+
     elseIf id_option == p_option_style
         int code_style = p_ref_member.Get_Style()
         if code_style == CODES.IS_DEFAULT
@@ -529,6 +549,8 @@ function f_On_Option_Highlight(int id_option)
     elseIf id_option == p_option_relevel
         MCM.SetInfoText("Recalculates the stats of " + str_name + ", but only if it's needed. Auto checks before each battle.")
 
+    elseIf id_option == p_option_rating
+        MCM.SetInfoText("Rate this member. Causes them to sort higher, and can be used in the filter.")
     elseIf id_option == p_option_style
         MCM.SetInfoText("Change the fighting style of this member.")
     elseIf id_option == p_option_vitalize
@@ -613,6 +635,8 @@ function p_Build_Commands()
 
         p_option_relevel = MCM.AddTextOption(CONSTS.STR_MCM_RELEVEL, "", FLAG_DISABLE)
     endif
+
+    p_option_rating = MCM.AddTextOption(CONSTS.STR_MCM_RATING, p_ref_member.Get_Rating_Stars())
 
     int code_style = p_ref_member.Get_Style()
     if code_style == CODES.IS_DEFAULT
@@ -711,6 +735,8 @@ function p_Update_Commands()
 
         f_Disable(p_option_relevel, DONT_UPDATE)
     endif
+
+    MCM.SetTextOptionValue(p_option_rating, p_ref_member.Get_Rating_Stars(), DONT_UPDATE)
 
     int code_style = p_ref_member.Get_Style()
     if code_style == CODES.IS_DEFAULT

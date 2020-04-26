@@ -1028,6 +1028,7 @@ string property STR_MCM_PACK                = " Pack "                      auto
 string property STR_MCM_OUTFIT              = " Outfit "                    autoReadOnly hidden
 string property STR_MCM_STYLE               = " Style "                     autoReadOnly hidden
 string property STR_MCM_VITALIZE            = " Vitalize "                  autoReadOnly hidden
+string property STR_MCM_RATING              = " Rating "                    autoReadOnly hidden
 string property STR_MCM_VITALITY            = " Vitality "                  autoReadOnly hidden
 string property STR_MCM_CURRENT             = " Current "                   autoReadOnly hidden
 string property STR_MCM_MEMBER              = " Member "                    autoReadOnly hidden

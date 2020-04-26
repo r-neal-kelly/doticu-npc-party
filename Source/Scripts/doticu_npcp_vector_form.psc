@@ -70,7 +70,7 @@ endFunction
 ; Public Methods
 Form[] function Get_Array()
     if p_num_forms > 0
-        return doticu_npcp.Array_Form_Slice(p_arr_forms, 0, p_num_forms)
+        return doticu_npcp.Forms_Slice(p_arr_forms, 0, p_num_forms)
     else
         return Utility.CreateFormArray(1, none)
     endIf

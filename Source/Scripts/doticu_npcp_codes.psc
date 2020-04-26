@@ -81,6 +81,7 @@ int property ISNT_CLONE                     =  -480 autoReadOnly
 int property ISNT_GREETER                   =  -490 autoReadOnly
 int property ISNT_VAMPIRE                   =  -499 autoReadOnly
 int property ISNT_DISPLAY                   = -4400 autoReadOnly
+int property ISNT_RATING                    = -4500 autoReadOnly
 
 int property CAN_RESURRECT                  =  -500 autoReadOnly
 

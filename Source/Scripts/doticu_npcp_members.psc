@@ -346,9 +346,8 @@ Alias[] function Get_Members(int idx_from = 0, int idx_to_ex = -1)
     return ALIASES.Get_Aliases(idx_from, idx_to_ex)
 endFunction
 
-int function Update_Name(Actor ref_actor)
-    int id_alias = p_Get_Alias_ID(ref_actor)
-    return ALIASES.Update_Name(id_alias)
+function Request_Sort()
+    ALIASES.Request_Sort()
 endFunction
 
 function Sort()

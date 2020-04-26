@@ -176,7 +176,11 @@ function p_Sort()
         return
     endIf
 
-    p_arr_aliases = doticu_npcp.Sort_Aliases(p_arr_aliases)
+    if (self as Quest) as doticu_npcp_members
+        p_arr_aliases = doticu_npcp.Aliases_Sort(p_arr_aliases, "RATING_NAME_CASELESS")
+    else
+        p_arr_aliases = doticu_npcp.Aliases_Sort(p_arr_aliases, "NAME_CASELESS")
+    endIf
     
     p_should_sort = false
 endFunction
@@ -292,18 +296,6 @@ int function Destroy_Alias(int id_alias, Actor ref_actor)
     return CODES.SUCCESS
 endFunction
 
-int function Update_Name(int id_alias)
-    int idx_alias = f_ID_To_Idx(id_alias)
-
-    if idx_alias < 0
-        return CODES.HASNT_ID
-    endIf
-
-    p_should_sort = true
-
-    return CODES.SUCCESS
-endFunction
-
 function Sort()
     p_Sort()
 endFunction
@@ -318,6 +310,10 @@ endFunction
 
 function Disable_Sort()
     p_can_sort = false
+endFunction
+
+function Request_Sort()
+    p_should_sort = true
 endFunction
 
 int function Get_Count()
@@ -481,6 +477,6 @@ function u_0_8_3()
         p_arr_aliases = Utility.ResizeAliasArray(p_arr_aliases, p_MAX_ALIASES, none)
 
         p_num_free = p_MAX_ALIASES - p_arr_free.length + p_num_free
-        p_arr_free = doticu_npcp.Array_Update_Free(p_arr_free, p_MAX_ALIASES)
+        p_arr_free = doticu_npcp.Aliases_Update_Free(p_arr_free, p_MAX_ALIASES)
     endIf
 endFunction

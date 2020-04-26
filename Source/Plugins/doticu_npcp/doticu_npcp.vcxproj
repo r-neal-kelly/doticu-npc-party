@@ -136,6 +136,12 @@
   <ItemGroup>
     <ClCompile Include="src\doticu_npcp.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\alias.cpp" />
+    <ClCompile Include="src\outfit.cpp" />
+    <ClCompile Include="src\actor.cpp" />
+    <ClCompile Include="src\forms.cpp" />
+    <ClCompile Include="src\aliases.cpp" />
+    <ClCompile Include="src\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\doticu_npcp.h" />

@@ -93,6 +93,7 @@ bool                    p_is_reanimated             = false
 bool                    p_do_outfit_vanilla         = false
 int                     p_code_style                =    -1
 int                     p_code_vitality             =    -1
+int                     p_int_rating                =     0
 ObjectReference         p_marker_settler            =  none
 ObjectReference         p_marker_display            =  none
 ObjectReference         p_marker_mannequin          =  none
@@ -139,6 +140,7 @@ f_Lock_Resources()
     p_do_outfit_vanilla = false
     p_code_style = VARS.auto_style
     p_code_vitality = VARS.auto_vitality
+    p_int_rating = 0
     p_marker_settler = CONSTS.FORMLIST_MARKERS_SETTLER.GetAt(p_id_alias) as ObjectReference
     p_marker_display = none
     p_marker_mannequin = none
@@ -225,6 +227,7 @@ f_Lock_Resources()
     p_marker_mannequin = none
     p_marker_display = none
     p_marker_settler = none
+    p_int_rating = 0
     p_code_vitality = -1
     p_code_style = -1
     p_do_outfit_vanilla = false
@@ -1064,16 +1067,10 @@ int function Set_Name(string str_name)
         return CODES.CANT_RENAME
     endIf
 
-    code_return = MEMBERS.Update_Name(p_ref_actor)
-    if code_return < 0
-        return code_return
-    endIf
+    MEMBERS.Request_Sort()
 
     if Is_Follower()
-        code_return = FOLLOWERS.Update_Name(p_ref_actor)
-        if code_return < 0
-            return code_return
-        endIf
+        FOLLOWERS.Request_Sort()
     endIf
     
     return CODES.SUCCESS
@@ -1840,6 +1837,59 @@ int function Outfit_Default(int code_exec)
     endIf
 
     return CODES.SUCCESS
+endFunction
+
+int function Get_Rating()
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+
+    return p_int_rating
+endFunction
+
+int function Set_Rating(int int_rating)
+    int code_return
+
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+
+    if int_rating < 0 || int_rating > 5
+        return CODES.ISNT_RATING
+    endIf
+
+    p_int_rating = int_rating
+    
+    MEMBERS.Request_Sort()
+
+    if Is_Follower()
+        FOLLOWERS.Request_Sort()
+    endIf
+
+    return CODES.SUCCESS
+endFunction
+
+string function Get_Rating_Stars()
+    if !Exists()
+        return ""
+    endIf
+
+    if false
+
+    elseIf p_int_rating == 0
+        return ""
+    elseIf p_int_rating == 1
+        return "*"
+    elseIf p_int_rating == 2
+        return "**"
+    elseIf p_int_rating == 3
+        return "***"
+    elseIf p_int_rating == 4
+        return "****"
+    elseIf p_int_rating == 5
+        return "*****"
+    
+    endIf
 endFunction
 
 int function Display(ObjectReference ref_marker, int distance, int angle)

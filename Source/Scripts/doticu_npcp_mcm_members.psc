@@ -269,19 +269,22 @@ function f_On_Option_Highlight(int id_option)
 
         string str_name = ref_member.Get_Name()
 
-        string str_sex
+        string str_sex = "Sex:"
         if ACTORS.Is_Male(ref_actor)
-            str_sex = " Male"
+            str_sex += " Male"
         elseIf ACTORS.Is_Female(ref_actor)
-            str_sex = " Female"
+            str_sex += " Female"
         else
-            str_sex = " None"
+            str_sex += " None"
         endIf
 
-        string str_race = ref_actor.GetRace().GetName()
+        string str_race = "Race: " + ref_actor.GetRace().GetName()
+
+        string str_rating = "Rating: " + ref_member.Get_Rating_Stars(); make into astericks prob.
 
         string str_info = "Opens the member menu for " + str_name + ".\n"
-        str_info += "Sex:" + str_sex + ", Race: " + str_race
+        str_info += str_sex + ", " + str_race + "\n"
+        str_info += str_rating
 
         MCM.SetInfoText(str_info)
         ; this should show more about the member, style, and stats!!!
