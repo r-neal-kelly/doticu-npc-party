@@ -10,6 +10,11 @@ doticu_npcp_codes property CODES hidden
         return p_DATA.CODES
     endFunction
 endProperty
+doticu_npcp_vars property VARS hidden
+    doticu_npcp_vars function Get()
+        return p_DATA.VARS
+    endFunction
+endProperty
 
 ; Private Constants
 doticu_npcp_data    p_DATA          =  none
@@ -50,6 +55,18 @@ function f_Destroy()
 endFunction
 
 function f_Register()
+p_Lock()
+    p_MAX_ALIASES = GetNumAliases()
+
+    p_num_aliases = doticu_npcp.Aliases_Get_Used_Count(self)
+    p_arr_aliases = doticu_npcp.Aliases_Get_Used(self)
+
+    p_num_free = doticu_npcp.Aliases_Get_Free_Count(self)
+    p_arr_free = doticu_npcp.Aliases_Get_Free_IDs(self)
+p_Unlock()
+
+    Request_Sort()
+    Sort()
 endFunction
 
 int function f_ID_To_Idx(int id_alias)
@@ -177,9 +194,9 @@ function p_Sort()
     endIf
 
     if (self as Quest) as doticu_npcp_members
-        p_arr_aliases = doticu_npcp.Aliases_Sort(p_arr_aliases, "RATING_NAME_CASELESS")
+        p_arr_aliases = doticu_npcp.Aliases_Sort(p_arr_aliases, VARS.str_sort_members)
     else
-        p_arr_aliases = doticu_npcp.Aliases_Sort(p_arr_aliases, "NAME_CASELESS")
+        p_arr_aliases = doticu_npcp.Aliases_Sort(p_arr_aliases, VARS.str_sort_followers)
     endIf
     
     p_should_sort = false
@@ -470,13 +487,4 @@ function u_0_8_3()
     p_arr_used = Utility.CreateIntArray(1, 0)
     p_arr_actors = Utility.CreateFormArray(1, none)
     p_arr_names = Utility.CreateStringArray(1, "")
-
-    ; we need to rebuild the arrays to take into account the new aliases
-    if p_MAX_ALIASES != GetNumAliases()
-        p_MAX_ALIASES = GetNumAliases()
-        p_arr_aliases = Utility.ResizeAliasArray(p_arr_aliases, p_MAX_ALIASES, none)
-
-        p_num_free = p_MAX_ALIASES - p_arr_free.length + p_num_free
-        p_arr_free = doticu_npcp.Aliases_Update_Free(p_arr_free, p_MAX_ALIASES)
-    endIf
 endFunction

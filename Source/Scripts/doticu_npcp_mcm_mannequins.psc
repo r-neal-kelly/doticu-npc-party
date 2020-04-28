@@ -136,7 +136,7 @@ auto state STATE_MANNEQUINS
 function f_Build_Page()
     p_code_view = CODES.VIEW_MANNEQUINS
 
-    MCM.SetTitleText(" Expo ")
+    MCM.SetTitleText(" Mannequins ")
 
     ; Header
     MCM.SetCursorFillMode(MCM.LEFT_TO_RIGHT)
@@ -248,7 +248,7 @@ function f_Build_Page()
     p_code_view = CODES.VIEW_MANNEQUINS_CELL
     p_curr_members = MANNEQUINS.Get_Mannequins(p_curr_column, p_curr_row)
     
-    MCM.SetTitleText("Expo: C " + p_curr_column + ", R " + p_curr_row)
+    MCM.SetTitleText("Mannequins in Expo: C " + p_curr_column + ", R " + p_curr_row)
     
     ; Header
     MCM.SetCursorPosition(0)

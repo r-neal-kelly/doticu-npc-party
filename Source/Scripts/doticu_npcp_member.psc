@@ -276,6 +276,10 @@ function f_Unlock_Resources()
     p_is_executing = false
 endFunction
 
+int function f_Get_ID()
+    return p_id_alias
+endFunction
+
 ; Private Methods
 function p_Create_Queues()
     p_queue_member = QUEUES.Create("alias", 64, 0.1)

@@ -531,23 +531,92 @@ namespace doticu_npcp {
         return _stricmp((const char *)*(BSFixedString **)ptr_item_a, (const char *)*(BSFixedString **)ptr_item_b);
     }
 
-    VMResultArray<UInt32> Aliases_Update_Free(StaticFunctionTag *, VMArray<UInt32> arr_free, UInt32 size_new) {
-        // the free array has all quest alias ids backwards. we add all the new ids at the front,
-        // and just copy the old onto the back. the caller will need to update the working pointer.
-        VMResultArray<UInt32> vec_free;
-        vec_free.reserve(size_new);
-
-        UInt32 size_old = arr_free.Length();
-        UInt32 int_free = size_new - 1; // alias ids are 0 based indexes
-        for (u64 idx = 0, size_diff = size_new - size_old; idx < size_diff; idx += 1, int_free -= 1) {
-            vec_free.push_back(int_free);
+    VMResultArray<BGSBaseAlias *> Aliases_Get_Used(StaticFunctionTag *, TESQuest *ref_quest) {
+        VMResultArray<BGSBaseAlias *> vec_aliases;
+        if (ref_quest == NULL) {
+            return vec_aliases;
         }
-        for (u64 idx = 0; idx < size_old; idx += 1) {
-            arr_free.Get(&int_free, idx);
-            vec_free.push_back(int_free);
+
+        tArray<BGSBaseAlias *> *ptr_aliases = &ref_quest->aliases;
+        vec_aliases.reserve(ptr_aliases->count);
+
+        BGSBaseAlias *ptr_alias;
+        for (u64 idx = 0; idx < ptr_aliases->count; idx += 1) {
+            ptr_aliases->GetNthItem(idx, ptr_alias);
+
+            if (Alias_Is_Created(ptr_alias) && Alias_Get_Actor(ptr_alias)) {
+                vec_aliases.push_back(ptr_alias);
+            }
+        }
+
+        while (vec_aliases.size() < ptr_aliases->count) {
+            vec_aliases.push_back(NULL);
+        }
+
+        return vec_aliases;
+    }
+
+    VMResultArray<SInt32> Aliases_Get_Free_IDs(StaticFunctionTag *, TESQuest *ref_quest) {
+        VMResultArray<SInt32> vec_free;
+        if (ref_quest == NULL) {
+            return vec_free;
+        }
+
+        tArray<BGSBaseAlias *> *ptr_aliases = &ref_quest->aliases;
+        vec_free.reserve(ptr_aliases->count);
+
+        BGSBaseAlias *ptr_alias;
+        for (s64 idx = ptr_aliases->count - 1; idx >= 0; idx -= 1) {
+            ptr_aliases->GetNthItem(idx, ptr_alias);
+
+            if (!Alias_Is_Created(ptr_alias) || !Alias_Get_Actor(ptr_alias)) {
+                vec_free.push_back(ptr_alias->aliasId);
+            }
+        }
+
+        while (vec_free.size() < ptr_aliases->count) {
+            vec_free.push_back(-1);
         }
 
         return vec_free;
+    }
+
+    UInt32 Aliases_Get_Used_Count(StaticFunctionTag *, TESQuest *ref_quest) {
+        UInt32 count = 0;
+        if (ref_quest == NULL) {
+            return count;
+        }
+
+        tArray<BGSBaseAlias *> *ptr_aliases = &ref_quest->aliases;
+        BGSBaseAlias *ptr_alias;
+        for (u64 idx = 0; idx < ptr_aliases->count; idx += 1) {
+            ptr_aliases->GetNthItem(idx, ptr_alias);
+
+            if (Alias_Is_Created(ptr_alias) && Alias_Get_Actor(ptr_alias)) {
+                count += 1;
+            }
+        }
+
+        return count;
+    }
+
+    UInt32 Aliases_Get_Free_Count(StaticFunctionTag *, TESQuest *ref_quest) {
+        UInt32 count = 0;
+        if (ref_quest == NULL) {
+            return count;
+        }
+
+        tArray<BGSBaseAlias *> *ptr_aliases = &ref_quest->aliases;
+        BGSBaseAlias *ptr_alias;
+        for (u64 idx = 0; idx < ptr_aliases->count; idx += 1) {
+            ptr_aliases->GetNthItem(idx, ptr_alias);
+
+            if (!Alias_Is_Created(ptr_alias) || !Alias_Get_Actor(ptr_alias)) {
+                count += 1;
+            }
+        }
+
+        return count;
     }
 
 }

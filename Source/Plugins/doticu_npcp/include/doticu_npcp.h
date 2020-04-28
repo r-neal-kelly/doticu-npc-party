@@ -5,6 +5,7 @@
 #pragma once
 
 #include <cstring>
+#include <algorithm>
 
 #include "skse64/GameAPI.h"
 #include "skse64/GameExtraData.h"
@@ -197,6 +198,8 @@ namespace doticu_npcp {
             if (p_vm_value.GetUnmangledType() != VMValue::kType_Identifier) {
                 _MESSAGE("not an actor, %s:%d", __FILE__, __LINE__);
                 return NULL;
+            } else if (!p_vm_value.data.id) {
+                return NULL;
             } else {
                 return (Actor *)p_hnd_object->Policy()->Resolve(kFormType_Character, p_vm_value.data.id->GetHandle());
             }
@@ -212,6 +215,7 @@ namespace doticu_npcp {
     // alias.cpp
     Actor *Alias_Get_Actor(BGSBaseAlias *ptr_alias);
     SInt32 Alias_Get_Rating(BGSBaseAlias *ptr_alias);
+    bool Alias_Is_Created(BGSBaseAlias *ptr_alias);
     bool Alias_Is_Original(BGSBaseAlias *ptr_alias);
     bool Alias_Is_Clone(BGSBaseAlias *ptr_alias);
     bool Alias_Is_Follower(BGSBaseAlias *ptr_alias);
@@ -228,7 +232,10 @@ namespace doticu_npcp {
     VMResultArray<BGSBaseAlias *> Aliases_Filter(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr_aliases, BSFixedString str_sex, BSFixedString str_race, UInt32 int_flags);
     UInt32 Aliases_Filter_Flag(StaticFunctionTag *, UInt32 int_flags, BSFixedString str_command, BSFixedString str_flag);
     VMResultArray<BSFixedString> Aliases_Get_Race_Names(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr_aliases);
-    VMResultArray<UInt32> Aliases_Update_Free(StaticFunctionTag *, VMArray<UInt32> arr_free, UInt32 size_new);
+    VMResultArray<BGSBaseAlias *> Aliases_Get_Used(StaticFunctionTag *, TESQuest *ref_quest);
+    VMResultArray<SInt32> Aliases_Get_Free_IDs(StaticFunctionTag *, TESQuest *ref_quest);
+    UInt32 Aliases_Get_Used_Count(StaticFunctionTag *, TESQuest *ref_quest);
+    UInt32 Aliases_Get_Free_Count(StaticFunctionTag *, TESQuest *ref_quest);
 
     // forms.cpp
     VMResultArray<TESForm *> Forms_Slice(StaticFunctionTag *, VMArray<TESForm *> arr, UInt32 idx_from, UInt32 idx_to_ex);

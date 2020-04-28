@@ -32,6 +32,9 @@ bool                p_force_unclone_unique  = false
 bool                p_force_unclone_generic = false
 int                 p_clone_outfit          =    -1
 
+string              p_str_sort_members      =    ""
+String              p_str_sort_followers    =    ""
+
 bool                p_auto_resurrect        = false
 
 bool                p_auto_outfit           = false
@@ -349,6 +352,24 @@ bool property is_mcm_open hidden
     endFunction
 endProperty
 
+string property str_sort_members hidden
+    string function Get()
+        return p_str_sort_members
+    endFunction
+    function Set(string val)
+        p_str_sort_members = val
+    endFunction
+endProperty
+
+string property str_sort_followers hidden
+    string function Get()
+        return p_str_sort_followers
+    endFunction
+    function Set(string val)
+        p_str_sort_followers = val
+    endFunction
+endProperty
+
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
     p_DATA = DATA
@@ -393,6 +414,9 @@ function Set_Defaults()
     percent_hands = CONSTS.DEFAULT_PERCENT_HANDS
     percent_head = CONSTS.DEFAULT_PERCENT_HEAD
 
+    str_sort_members = "NAME"
+    str_sort_followers = "NAME"
+
     num_display = CONSTS.DEFAULT_DISPLAY
     max_members = p_DATA.MODS.MEMBERS.GetNumAliases(); MEMBERS is not f_Create()'d yet, but this func can be called
 
@@ -403,4 +427,7 @@ endFunction
 ; Update Methods
 function u_0_8_3()
     max_members = p_DATA.MODS.MEMBERS.GetNumAliases()
+
+    str_sort_members = "NAME"
+    str_sort_followers = "NAME"
 endFunction

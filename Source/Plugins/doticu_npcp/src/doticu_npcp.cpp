@@ -55,10 +55,31 @@ namespace doticu_npcp {
                 registry)
         );
         registry->RegisterFunction(
-            new NativeFunction2 <StaticFunctionTag, VMResultArray<UInt32>, VMArray<UInt32>, UInt32>(
-                "Aliases_Update_Free",
+            new NativeFunction1 <StaticFunctionTag, VMResultArray<BGSBaseAlias *>, TESQuest *>(
+                "Aliases_Get_Used",
                 "doticu_npcp",
-                doticu_npcp::Aliases_Update_Free,
+                doticu_npcp::Aliases_Get_Used,
+                registry)
+        );
+        registry->RegisterFunction(
+            new NativeFunction1 <StaticFunctionTag, VMResultArray<SInt32>, TESQuest *>(
+                "Aliases_Get_Free_IDs",
+                "doticu_npcp",
+                doticu_npcp::Aliases_Get_Free_IDs,
+                registry)
+        );
+        registry->RegisterFunction(
+            new NativeFunction1 <StaticFunctionTag, UInt32, TESQuest *>(
+                "Aliases_Get_Used_Count",
+                "doticu_npcp",
+                doticu_npcp::Aliases_Get_Used_Count,
+                registry)
+        );
+        registry->RegisterFunction(
+            new NativeFunction1 <StaticFunctionTag, UInt32, TESQuest *>(
+                "Aliases_Get_Free_Count",
+                "doticu_npcp",
+                doticu_npcp::Aliases_Get_Free_Count,
                 registry)
         );
 

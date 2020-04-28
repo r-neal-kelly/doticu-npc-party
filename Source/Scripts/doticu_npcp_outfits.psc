@@ -72,6 +72,9 @@ endFunction
 ; Private Methods
 doticu_npcp_outfit function p_Create(Container form_container, string str_name, int code_create = 0)
     doticu_npcp_outfit ref_outfit = CONSTS.MARKER_STORAGE.PlaceAtMe(CONSTS.CONTAINER_OUTFIT, 1, false, false) as doticu_npcp_outfit
+    
+    ; this, for some unknown reason, prevents a rare ctd!!!
+    Utility.Wait(0.1)
 
     if VARS.fill_outfits && form_container != CONSTS.CONTAINER_OUTFIT
         ; there is a horrible bug where a container that spawns with a leveled list inside

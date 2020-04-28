@@ -16,6 +16,11 @@ namespace doticu_npcp {
         return Object_Value(&hnd_alias, "p_int_rating").As_Int();
     }
 
+    bool Alias_Is_Created(BGSBaseAlias *ptr_alias) {
+        Object_Handle hnd_alias(kFormType_Alias, ptr_alias);
+        return Object_Value(&hnd_alias, "p_is_created").As_Bool();
+    }
+
     bool Alias_Is_Original(BGSBaseAlias *ptr_alias) {
         Object_Handle hnd_alias(kFormType_Alias, ptr_alias);
         return !Object_Value(&hnd_alias, "p_is_clone").As_Bool();

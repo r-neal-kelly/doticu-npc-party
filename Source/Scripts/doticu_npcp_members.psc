@@ -93,6 +93,11 @@ endFunction
 function f_Register()
     ALIASES.f_Register()
 
+    ; just in case, see ALIASES.f_Register()
+    if VARS.max_members < Get_Count()
+        VARS.max_members = Get_Count()
+    endIf
+
     Alias[] arr_aliases = ALIASES.Get_Aliases()
     int idx_aliases = 0
     int num_aliases = arr_aliases.length

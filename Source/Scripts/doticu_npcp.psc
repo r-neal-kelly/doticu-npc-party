@@ -10,7 +10,10 @@ Alias[] function Aliases_Sort(Alias[] arr_aliases, string str_algorithm = "") na
 Alias[] function Aliases_Filter(Alias[] arr_aliases, string str_sex, string str_race, int int_flags) native global
 int function Aliases_Filter_Flag(int int_flags, string str_command, string str_flag) native global
 string[] function Aliases_Get_Race_Names(Alias[] arr_aliases) native global
-int[] function Aliases_Update_Free(int[] arr_free, int size_new) native global
+Alias[] function Aliases_Get_Used(Quest ref_quest) native global
+int[] function Aliases_Get_Free_IDs(Quest ref_quest) native global
+int function Aliases_Get_Used_Count(Quest ref_quest) native global
+int function Aliases_Get_Free_Count(Quest ref_quest) native global
 
 ; forms
 Form[] function Forms_Slice(Form[] arr_forms, int idx_from, int idx_to_ex) native global

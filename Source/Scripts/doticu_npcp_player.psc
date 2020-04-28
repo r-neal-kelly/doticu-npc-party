@@ -144,9 +144,13 @@ endEvent
 event OnPlayerLoadGame()
     MAIN.f_Load_Mod()
 
+    ; just in case it somehow gets stuck, which has happened before
+    ACTOR_PLAYER.RemoveSpell(CONSTS.ABILITY_CELL)
+    ACTOR_PLAYER.AddSpell(CONSTS.ABILITY_CELL, false)
+
     if !ACTOR_PLAYER.IsInCombat() && !FOLLOWERS.Are_In_Combat()
         ; for some reason, p_is_in_combat sometimes gets stuck to true
-        ; and so we never get auto resurrect, which sucks.
+        ; and so we never get auto resurrect, so this resets it.
         p_End_Combat()
     endIf
 endEvent

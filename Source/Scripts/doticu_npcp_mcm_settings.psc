@@ -82,6 +82,9 @@ int                 p_option_slider_percent_feet        =    -1
 int                 p_option_slider_percent_hands       =    -1
 int                 p_option_slider_percent_head        =    -1
 
+int                 p_option_sort_members               =    -1
+int                 p_option_sort_followers             =    -1
+
 int                 p_option_key_fs_summon_all          =    -1
 int                 p_option_key_fs_summon_mobile       =    -1
 int                 p_option_key_fs_summon_immobile     =    -1
@@ -197,6 +200,13 @@ function f_Build_Page()
         p_option_slider_percent_hands = MCM.AddSliderOption(" Fill Hands Chance ", VARS.percent_hands, " {0}% ")
         p_option_slider_percent_head = MCM.AddSliderOption(" Fill Head Chance ", VARS.percent_head, " {0}% ")
     endIf
+    MCM.AddEmptyOption()
+    MCM.AddEmptyOption()
+
+    MCM.AddHeaderOption(" Sorting ")
+    MCM.AddEmptyOption()
+    p_option_sort_members = MCM.AddTextOption(" Members Algorithm ", VARS.str_sort_members)
+    p_option_sort_followers = MCM.AddTextOption(" Followers Algorithm ", VARS.str_sort_followers)
     MCM.AddEmptyOption()
     MCM.AddEmptyOption()
 
@@ -344,6 +354,35 @@ function f_On_Option_Select(int id_option)
             MCM.f_Disable(p_option_slider_percent_head, DO_UPDATE)
         endIf
 
+    ; Sorting
+    elseIf id_option == p_option_sort_members
+        if false
+
+        elseIf VARS.str_sort_members == "NAME"
+            VARS.str_sort_members = "NAME_CASELESS"
+        elseIf VARS.str_sort_members == "NAME_CASELESS"
+            VARS.str_sort_members = "RATING_NAME"
+        elseIf VARS.str_sort_members == "RATING_NAME"
+            VARS.str_sort_members = "RATING_NAME_CASELESS"
+        elseIf VARS.str_sort_members == "RATING_NAME_CASELESS"
+            VARS.str_sort_members = "NAME"
+        else
+            VARS.str_sort_members = "NAME"
+
+        endIf
+        MCM.SetTextOptionValue(p_option_sort_members, VARS.str_sort_members)
+    elseIf id_option == p_option_sort_followers
+        if false
+
+        elseIf VARS.str_sort_followers == "NAME"
+            VARS.str_sort_followers = "NAME_CASELESS"
+        elseIf VARS.str_sort_followers == "NAME_CASELESS"
+            VARS.str_sort_followers = "NAME"
+        else
+            VARS.str_sort_followers = "NAME"
+
+        endIf
+        MCM.SetTextOptionValue(p_option_sort_followers, VARS.str_sort_followers)
     endIf
 endFunction
 
@@ -775,6 +814,12 @@ function f_On_Option_Highlight(int id_option)
         MCM.SetInfoText("The chance that outfits will get items that fit on the hands.")
     elseIf id_option == p_option_slider_percent_head
         MCM.SetInfoText("The chance that outfits will get items that fit on the head.")
+
+    ; Sorting
+    elseIf id_option == p_option_sort_members
+        MCM.SetInfoText("The algorithm that is used to sort members. CASELESS ignores capitals.")
+    elseIf id_option == p_option_sort_followers
+        MCM.SetInfoText("The algorithm that is used to sort followers. CASELESS ignores capitals.")
 
     ; Displaying
     elseIf id_option == p_option_key_ms_display_toggle
