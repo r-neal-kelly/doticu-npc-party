@@ -25,6 +25,11 @@ doticu_npcp_members property MEMBERS hidden
         return p_DATA.MODS.MEMBERS
     endFunction
 endProperty
+doticu_npcp_followers property FOLLOWERS hidden
+    doticu_npcp_followers function Get()
+        return p_DATA.MODS.FOLLOWERS
+    endFunction
+endProperty
 doticu_npcp_keys property KEYS hidden
     doticu_npcp_keys function Get()
         return p_DATA.MODS.CONTROL.KEYS
@@ -371,6 +376,7 @@ function f_On_Option_Select(int id_option)
 
         endIf
         MCM.SetTextOptionValue(p_option_sort_members, VARS.str_sort_members)
+        MEMBERS.Request_Sort()
     elseIf id_option == p_option_sort_followers
         if false
 
@@ -383,6 +389,7 @@ function f_On_Option_Select(int id_option)
 
         endIf
         MCM.SetTextOptionValue(p_option_sort_followers, VARS.str_sort_followers)
+        FOLLOWERS.Request_Sort()
     endIf
 endFunction
 

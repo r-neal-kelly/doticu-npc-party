@@ -264,8 +264,19 @@ function f_On_Option_Highlight(int id_option)
         MCM.SetInfoText("Go to the Next Page")
     else
         int idx_entity = p_Get_Idx_Entity(id_option)
+        if idx_entity < 0 || idx_entity >= p_arr_aliases_slice.length
+            return
+        endIf
+
         doticu_npcp_member ref_member = p_arr_aliases_slice[idx_entity] as doticu_npcp_member
+        if !ref_member
+            return
+        endIf
+
         Actor ref_actor = ref_member.Get_Actor()
+        if !ref_actor
+            return
+        endIf
 
         string str_name = ref_member.Get_Name()
 
@@ -280,11 +291,12 @@ function f_On_Option_Highlight(int id_option)
 
         string str_race = "Race: " + ref_actor.GetRace().GetName()
 
-        string str_rating = "Rating: " + ref_member.Get_Rating_Stars(); make into astericks prob.
-
         string str_info = "Opens the member menu for " + str_name + ".\n"
         str_info += str_sex + ", " + str_race + "\n"
-        str_info += str_rating
+
+        if ref_member.Get_Rating() > 0
+            str_info += "Rating: " + ref_member.Get_Rating_Stars()
+        endIf
 
         MCM.SetInfoText(str_info)
         ; this should show more about the member, style, and stats!!!
@@ -444,6 +456,11 @@ endFunction
 string function p_Format_Title(int num_members, int idx_page, int num_pages)
     string str_members = "Members: " + num_members + "/" + MEMBERS.Get_Max()
     string str_pages = "Page: " + (idx_page + 1) + "/" + num_pages
+
+    if p_code_view == CODES.VIEW_FILTER_MEMBERS
+        str_members = "Filtered " + str_members
+    endIf
+
     return str_members + "               " + str_pages
 endFunction
 

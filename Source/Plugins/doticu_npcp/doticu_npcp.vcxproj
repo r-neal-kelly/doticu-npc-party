@@ -145,6 +145,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\doticu_npcp.h" />
+    <ClInclude Include="include\aliases.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />

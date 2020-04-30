@@ -2,6 +2,8 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 /;
 
+; should probably destroy this script, it's hardly useful at all
+
 Scriptname doticu_npcp_container extends ObjectReference
 
 ; Modules

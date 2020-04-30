@@ -44,6 +44,9 @@
     <ClInclude Include="include\doticu_npcp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\aliases.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def">

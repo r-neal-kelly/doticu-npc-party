@@ -29,13 +29,24 @@ bool                p_is_created                =   false
 int                 p_code_view                 =       0
 int                 p_int_arg_flags             =       0
 string[]            p_arr_race_names            =    none
+string[]            p_arr_initial_letters       =    none
+
+int                 p_option_filter             =      -1
 
 string              p_str_arg_sex               =      ""
-string              p_str_arg_race              =      ""
 string              p_str_view_sex              = " Any "
-string              p_str_view_race             = " Any "
 int                 p_option_sex                =      -1
+
+string              p_str_arg_race              =      ""
+string              p_str_view_race             = " Any "
 int                 p_option_race               =      -1
+
+string              p_str_arg_initial_letter    =      ""
+string              p_str_view_initial_letter   = " Any "
+int                 p_option_initial_letter     =      -1
+
+string              p_str_arg_search            =      ""
+int                 p_option_search             =      -1
 
 int                 p_int_alive_dead            =       0
 int                 p_option_is_alive           =      -1
@@ -72,8 +83,6 @@ int                 p_option_isnt_mannequin     =      -1
 int                 p_int_reanimated            =       0
 int                 p_option_is_reanimated      =      -1
 int                 p_option_isnt_reanimated    =      -1
-
-int                 p_option_filter             =      -1
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
@@ -112,6 +121,12 @@ function f_Build_Page()
 
     p_option_sex = MCM.AddMenuOption(" Sex ", p_str_view_sex)
     p_option_race = MCM.AddMenuOption(" Race ", p_str_view_race)
+    if p_str_arg_search == ""
+        p_option_initial_letter = MCM.AddMenuOption(" Initial Letter ", p_str_view_initial_letter, MCM.FLAG_ENABLE)
+    else
+        p_option_initial_letter = MCM.AddMenuOption(" Initial Letter ", p_str_view_initial_letter, MCM.FLAG_DISABLE)
+    endIf
+    p_option_search = MCM.AddInputOption(" Search ", p_str_arg_search)
 
     p_option_is_alive = MCM.AddToggleOption(" Is Alive ", p_int_alive_dead == 1)
     p_option_is_dead = MCM.AddToggleOption(" Is Dead ", p_int_alive_dead == -1)
@@ -139,6 +154,7 @@ function f_Build_Page()
 
     p_option_is_reanimated= MCM.AddToggleOption(" Is Reanimated ", p_int_reanimated == 1)
     p_option_isnt_reanimated = MCM.AddToggleOption(" Isnt Reanimated ", p_int_reanimated == -1)
+
 endFunction
 
 function f_On_Option_Select(int id_option)
@@ -334,6 +350,7 @@ function f_On_Option_Menu_Open(int id_option)
         arr_options[3] = " None "
 
         MCM.SetMenuDialogOptions(arr_options)
+        MCM.SetMenuDialogDefaultIndex(0)
 
     elseIf id_option == p_option_race
         p_arr_race_names = doticu_npcp.Aliases_Get_Race_Names(MEMBERS.Get_Members())
@@ -355,6 +372,29 @@ function f_On_Option_Menu_Open(int id_option)
         endWhile
 
         MCM.SetMenuDialogOptions(arr_options)
+        MCM.SetMenuDialogDefaultIndex(0)
+
+    elseIf id_option == p_option_initial_letter
+        p_arr_initial_letters = doticu_npcp.Aliases_Get_Initial_Letters(MEMBERS.Get_Members())
+
+        int num_letters
+        if p_arr_initial_letters[0] == ""
+            num_letters = 0
+        else
+            num_letters = p_arr_initial_letters.length
+        endIf
+
+        string[] arr_options = Utility.CreateStringArray(num_letters + 1, "")
+        arr_options[0] = " Any "
+
+        int idx_letters = 0
+        while idx_letters < num_letters
+            arr_options[idx_letters + 1] = p_arr_initial_letters[idx_letters]
+            idx_letters += 1
+        endWhile
+
+        MCM.SetMenuDialogOptions(arr_options)
+        MCM.SetMenuDialogDefaultIndex(0)
 
     endIf
 endFunction
@@ -367,7 +407,8 @@ function f_On_Option_Menu_Accept(int id_option, int idx_option)
     if false
 
     elseIf id_option == p_option_sex
-        if false
+        if idx_option < 0
+
         elseIf idx_option == 0
             p_str_arg_sex = ""
             p_str_view_sex = " Any "
@@ -380,19 +421,54 @@ function f_On_Option_Menu_Accept(int id_option, int idx_option)
         elseIf idx_option == 3
             p_str_arg_sex = "None"
             p_str_view_sex = " None "
+
         endIf
-        MCM.SetMenuOptionValue(id_option, p_str_view_sex, false)
+        MCM.SetMenuOptionValue(id_option, p_str_view_sex, MCM.DO_UPDATE)
 
     elseIf id_option == p_option_race
-        if false
+        if idx_option < 0
+
         elseIf idx_option == 0
             p_str_arg_race = ""
             p_str_view_race = " Any "
         else
             p_str_arg_race = p_arr_race_names[idx_option - 1]
             p_str_view_race = p_str_arg_race
+
         endIf
-        MCM.SetMenuOptionValue(id_option, p_str_view_race, false)
+        MCM.SetMenuOptionValue(id_option, p_str_view_race, MCM.DO_UPDATE)
+
+    elseIf id_option == p_option_initial_letter
+        if idx_option < 0
+
+        elseIf idx_option == 0
+            p_str_arg_initial_letter = ""
+            p_str_view_initial_letter = " Any "
+        else
+            p_str_arg_initial_letter = p_arr_initial_letters[idx_option - 1]
+            p_str_view_initial_letter = p_str_arg_initial_letter
+
+        endIf
+        MCM.SetMenuOptionValue(id_option, p_str_view_initial_letter, MCM.DO_UPDATE)
+
+    endIf
+endFunction
+
+function f_On_Option_Input_Accept(int id_option, string str_input)
+    if p_code_view == CODES.VIEW_FILTER_MEMBERS
+        return MCM.MCM_MEMBERS.f_On_Option_Input_Accept(id_option, str_input)
+    endIf
+
+    if false
+
+    elseIf id_option == p_option_search
+        if str_input == ""
+            MCM.f_Enable(p_option_initial_letter, MCM.DONT_UPDATE)
+        else
+            MCM.f_Disable(p_option_initial_letter, MCM.DONT_UPDATE)
+        endIf
+        p_str_arg_search = str_input
+        MCM.SetInputOptionValue(p_option_search, p_str_arg_search, MCM.DO_UPDATE)
 
     endIf
 endFunction
@@ -400,6 +476,63 @@ endFunction
 function f_On_Option_Highlight(int id_option)
     if p_code_view == CODES.VIEW_FILTER_MEMBERS
         return MCM.MCM_MEMBERS.f_On_Option_Highlight(id_option)
+    endIf
+
+    if false
+    
+    elseIf id_option == p_option_filter
+        MCM.SetInfoText("Execute the filter with all the currently selected options.")
+    elseIf id_option == p_option_sex
+        MCM.SetInfoText("Find members with this sex.")
+    elseIf id_option == p_option_race
+        MCM.SetInfoText("Find members with this race.")
+    elseIf id_option == p_option_initial_letter
+        MCM.SetInfoText("Find members whose name starts with this letter.")
+    elseIf id_option == p_option_search
+        MCM.SetInfoText("Find members whose name contains this input. (If just one character, it looks only at the start of the name.)")
+    elseIf id_option == p_option_is_alive
+        MCM.SetInfoText("Find members who are alive.")
+    elseIf id_option == p_option_is_dead
+        MCM.SetInfoText("Find members who are dead.")
+    elseIf id_option == p_option_is_original
+        MCM.SetInfoText("Find members who are original, as opposed to clones.")
+    elseIf id_option == p_option_is_clone
+        MCM.SetInfoText("Find members who are clones, as opposed to originals.")
+    elseIf id_option == p_option_is_follower
+        MCM.SetInfoText("Find members who are followers.")
+    elseIf id_option == p_option_isnt_follower
+        MCM.SetInfoText("Find members who are not followers.")
+    elseIf id_option == p_option_is_settler
+        MCM.SetInfoText("Find members who are settlers.")
+    elseIf id_option == p_option_isnt_settler
+        MCM.SetInfoText("Find members who are not settlers.")
+    elseIf id_option == p_option_is_immobile
+        MCM.SetInfoText("Find members who are immobile.")
+    elseIf id_option == p_option_isnt_immobile
+        MCM.SetInfoText("Find members who are not immobile.")
+    elseIf id_option == p_option_is_thrall
+        MCM.SetInfoText("Find members who are thralls.")
+    elseIf id_option == p_option_isnt_thrall
+        MCM.SetInfoText("Find members who are not thralls.")
+    elseIf id_option == p_option_is_paralyzed
+        MCM.SetInfoText("Find members who are paralyzed.")
+    elseIf id_option == p_option_isnt_paralyzed
+        MCM.SetInfoText("Find members who are not paralyzed.")
+    elseIf id_option == p_option_is_mannequin
+        MCM.SetInfoText("Find members who are mannequins.")
+    elseIf id_option == p_option_isnt_mannequin
+        MCM.SetInfoText("Find members who are not mannequins.")
+    elseIf id_option == p_option_is_reanimated
+        MCM.SetInfoText("Find members who are reanimated.")
+    elseIf id_option == p_option_isnt_reanimated
+        MCM.SetInfoText("Find members who are not reanimated.")
+
+    endIf
+endFunction
+
+function f_On_Option_Default(int id_option)
+    if p_code_view == CODES.VIEW_FILTER_MEMBERS
+        return MCM.MCM_MEMBERS.f_On_Option_Default(id_option)
     endIf
 endFunction
 
@@ -415,26 +548,19 @@ function f_On_Option_Slider_Accept(int id_option, float float_value)
     endIf
 endFunction
 
-function f_On_Option_Input_Accept(int id_option, string str_input)
-    if p_code_view == CODES.VIEW_FILTER_MEMBERS
-        return MCM.MCM_MEMBERS.f_On_Option_Input_Accept(id_option, str_input)
-    endIf
-endFunction
-
 function f_On_Option_Keymap_Change(int id_option, int code_key, string str_conflict_control, string str_conflict_mod)
     if p_code_view == CODES.VIEW_FILTER_MEMBERS
         return MCM.MCM_MEMBERS.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
     endIf
 endFunction
 
-function f_On_Option_Default(int id_option)
-    if p_code_view == CODES.VIEW_FILTER_MEMBERS
-        return MCM.MCM_MEMBERS.f_On_Option_Default(id_option)
-    endIf
-endFunction
-
 ; Private Methods
 function p_Goto_Filter_Members()
+    string str_arg_search = p_str_arg_search
+    if str_arg_search == ""
+        str_arg_search = p_str_arg_initial_letter
+    endIf
+
     p_int_arg_flags = 0
 
     if p_int_alive_dead == 1
@@ -491,7 +617,7 @@ function p_Goto_Filter_Members()
         p_int_arg_flags = doticu_npcp.Aliases_Filter_Flag(p_int_arg_flags, "SET", "ISNT_REANIMATED")
     endIf
 
-    Alias[] arr_filter = doticu_npcp.Aliases_Filter(MEMBERS.Get_Members(), p_str_arg_sex, p_str_arg_race, p_int_arg_flags)
+    Alias[] arr_filter = doticu_npcp.Aliases_Filter(MEMBERS.Get_Members(), p_str_arg_sex, p_str_arg_race, str_arg_search, p_int_arg_flags)
 
     MCM.MCM_MEMBERS.f_View_Filter_Members(arr_filter)
     MCM.MCM_MEMBERS.f_Build_Page()

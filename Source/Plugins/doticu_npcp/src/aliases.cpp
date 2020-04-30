@@ -2,7 +2,7 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
-#include "doticu_npcp.h"
+#include "aliases.h"
 
 namespace doticu_npcp {
 
@@ -35,14 +35,13 @@ namespace doticu_npcp {
         return vec_slice;
     }
 
-    int Aliases_Sort_Compare_Name(const void *ptr_item_a, const void *ptr_item_b);
-    int Aliases_Sort_Compare_Name_Caseless(const void *ptr_item_a, const void *ptr_item_b);
-    int Aliases_Sort_Compare_Rating_Name(const void *ptr_item_a, const void *ptr_item_b);
-    int Aliases_Sort_Compare_Rating_Name_Caseless(const void *ptr_item_a, const void *ptr_item_b);
     VMResultArray<BGSBaseAlias *> Aliases_Sort(StaticFunctionTag *,
                                                VMArray<BGSBaseAlias *> arr_aliases,
                                                BSFixedString str_algorithm // NAME, NAME_CASELESS, RATING_NAME, RATING_NAME_CASELESS
     ) {
+        // I want to be able to sort by race next
+        // also add reverse options.
+
         UInt32 idx_aliases = 0;
         UInt32 num_aliases = arr_aliases.Length();
         BGSBaseAlias *ptr_alias;
@@ -135,23 +134,11 @@ namespace doticu_npcp {
         }
     }
 
-    enum Filter_Flags {
-        IS_ALIVE, IS_DEAD,
-        IS_ORIGINAL, IS_CLONE,
-        IS_UNIQUE, IS_GENERIC,
-        IS_FOLLOWER, ISNT_FOLLOWER,
-        IS_SETTLER, ISNT_SETTLER,
-        IS_IMMOBILE, ISNT_IMMOBILE,
-        IS_THRALL, ISNT_THRALL,
-        IS_SNEAK, ISNT_SNEAK,
-        IS_PARALYZED, ISNT_PARALYZED,
-        IS_MANNEQUIN, ISNT_MANNEQUIN,
-        IS_REANIMATED, ISNT_REANIMATED
-    };
     VMResultArray<BGSBaseAlias *> Aliases_Filter(StaticFunctionTag *,
                                                  VMArray<BGSBaseAlias *> arr_aliases,
                                                  BSFixedString str_sex, // "male", "female", "none"
                                                  BSFixedString str_race,
+                                                 BSFixedString str_search,
                                                  UInt32 int_flags
     ) {
         // what about style and vitality?
@@ -216,6 +203,28 @@ namespace doticu_npcp {
                 if (ptr_ref_actor) {
                     if (_stricmp(ptr_ref_actor->race->fullName.name.data, str_race.data) == 0) {
                         ptr_vec_write->push_back(ptr_base_alias);
+                    }
+                }
+            }
+            SWAP_BUFFERS;
+        }
+
+        // SEARCH
+        if (str_search && str_search.data[0] != 0) {
+            BSFixedString str_name;
+            for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
+                ptr_base_alias = ptr_vec_read->at(idx);
+                ptr_ref_actor = Alias_Get_Actor(ptr_base_alias);
+                if (ptr_ref_actor) {
+                    str_name = CALL_MEMBER_FN(ptr_ref_actor, GetReferenceName)();
+                    if (strlen(str_search.data) > 1) {
+                        if (String_Contains_Caseless(str_name.data, str_search.data)) {
+                            ptr_vec_write->push_back(ptr_base_alias);
+                        }
+                    } else {
+                        if (String_Starts_With_Caseless(str_name.data, str_search.data)) {
+                            ptr_vec_write->push_back(ptr_base_alias);
+                        }
                     }
                 }
             }
@@ -408,6 +417,28 @@ namespace doticu_npcp {
 
         #undef SWAP_BUFFERS
     }
+    bool String_Starts_With_Caseless(const char *str_a, const char *str_b) {
+        char char_a;
+        char char_b;
+        for (u64 idx = 0; str_b[idx] != 0; idx += 1) {
+            char_a = tolower(str_a[idx]);
+            char_b = tolower(str_b[idx]);
+            if (char_a == 0 || char_a != char_b) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+    bool String_Contains_Caseless(const char *str_a, const char *str_b) {
+        for (u64 idx = 0; str_a[idx] != 0; idx += 1) {
+            if (String_Starts_With_Caseless(str_a + idx, str_b)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
     UInt32 Aliases_Filter_Flag(StaticFunctionTag *, UInt32 int_flags, BSFixedString str_command, BSFixedString str_flag) {
         s64 idx_flags = -1;
         if (false) {
@@ -490,7 +521,6 @@ namespace doticu_npcp {
         }
     }
 
-    int Aliases_Get_Race_Names_Compare(const void *ptr_item_a, const void *ptr_item_b);
     VMResultArray<BSFixedString> Aliases_Get_Race_Names(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr_aliases) {
         size_t idx_aliases;
         size_t num_aliases;
@@ -529,6 +559,55 @@ namespace doticu_npcp {
     }
     int Aliases_Get_Race_Names_Compare(const void *ptr_item_a, const void *ptr_item_b) {
         return _stricmp((const char *)*(BSFixedString **)ptr_item_a, (const char *)*(BSFixedString **)ptr_item_b);
+    }
+
+    VMResultArray<BSFixedString> Aliases_Get_Initial_Letters(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr_aliases) {
+        BGSBaseAlias *ptr_alias;
+        Actor *ptr_actor;
+        BSFixedString str_actor_name;
+        
+        std::vector<char> vec_letters;
+        char letter;
+        bool has_letter;
+
+        for (u64 idx_aliases = 0, num_aliases = arr_aliases.Length(); idx_aliases < num_aliases; idx_aliases += 1) {
+            arr_aliases.Get(&ptr_alias, idx_aliases);
+
+            ptr_actor = Alias_Get_Actor(ptr_alias);
+            if (ptr_actor) {
+                str_actor_name = CALL_MEMBER_FN(ptr_actor, GetReferenceName)();
+                letter = str_actor_name.data[0];
+
+                has_letter = false;
+                for (u64 idx_letters = 0, num_letters = vec_letters.size(); idx_letters < num_letters; idx_letters += 1) {
+                    if (vec_letters[idx_letters] == letter) {
+                        has_letter = true;
+                        break;
+                    }
+                }
+
+                if (!has_letter) {
+                    vec_letters.push_back(letter);
+                }
+            }
+        }
+
+        qsort(vec_letters.data(), vec_letters.size(), sizeof(char), Aliases_Get_Initial_Letters_Compare);
+
+        VMResultArray<BSFixedString> vec_initial_letters;
+        BSFixedString str_initial_letter;
+        vec_initial_letters.reserve(vec_letters.size());
+        char str[2] = { 0, 0 };
+
+        for (u64 idx_letters = 0, num_letters = vec_letters.size(); idx_letters < num_letters; idx_letters += 1) {
+            str[0] = vec_letters[idx_letters];
+            vec_initial_letters.push_back(BSFixedString(str));
+        }
+
+        return vec_initial_letters;
+    }
+    int Aliases_Get_Initial_Letters_Compare(const void *ptr_item_a, const void *ptr_item_b) {
+        return *(char *)ptr_item_a - *(char *)ptr_item_b;
     }
 
     VMResultArray<BGSBaseAlias *> Aliases_Get_Used(StaticFunctionTag *, TESQuest *ref_quest) {

@@ -397,6 +397,10 @@ f_Lock_Resources()
 
     p_ref_actor.SetPlayerTeammate(true, true)
 
+    if !p_ref_actor.GetRace().AllowPCDialogue()
+        p_ref_actor.AllowPCDialogue(true)
+    endIf
+
     p_ref_actor.EvaluatePackage()
 
 f_Unlock_Resources()
@@ -404,6 +408,10 @@ endFunction
 
 function p_Unmember()
 f_Lock_Resources()
+
+    if !p_ref_actor.GetRace().AllowPCDialogue()
+        p_ref_actor.AllowPCDialogue(false)
+    endIf
 
     p_ref_actor.SetPlayerTeammate(false, false)
 
@@ -2222,9 +2230,14 @@ event OnActivate(ObjectReference ref_activator)
     ; maybe we could also pop up some basic stats on screen? but make it a command or something
 
     if Is_Alive()
+        ; this should allow the player to talk with npcs that don't normally talk, or refuse to
+        if !p_ref_actor.IsInDialogueWithPlayer() && p_ref_actor.IsAIEnabled()
+            ACTORS.Greet_Player(p_ref_actor)
+        endIf
+
         p_Outfit()
         Enforce(false)
-
+        
         ; instead of polling, we might be able to set up a package that happens only when in dialogue
         ; and wait for the Package change or end event to let us know dialogue is over.
         while Exists() && p_ref_actor && p_ref_actor.IsInDialogueWithPlayer()

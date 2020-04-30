@@ -57,6 +57,9 @@ endFunction
 doticu_npcp_container function Create(string str_name = "Container")
     doticu_npcp_container ref_container = OBJECT_STORAGE.PlaceAtMe(CONTAINER_EMPTY, 1, true, false) as doticu_npcp_container
 
+    ; this can prevent a ctd
+    Utility.Wait(0.1)
+
     ref_container.f_Create(p_DATA, str_name)
     ref_container.f_Register()
 

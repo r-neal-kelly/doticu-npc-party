@@ -229,9 +229,10 @@ namespace doticu_npcp {
     // aliases.cpp
     VMResultArray<BGSBaseAlias *> Aliases_Slice(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr, UInt32 idx_from, UInt32 idx_to_ex);
     VMResultArray<BGSBaseAlias *> Aliases_Sort(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr_aliases, BSFixedString str_algorithm);
-    VMResultArray<BGSBaseAlias *> Aliases_Filter(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr_aliases, BSFixedString str_sex, BSFixedString str_race, UInt32 int_flags);
+    VMResultArray<BGSBaseAlias *> Aliases_Filter(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr_aliases, BSFixedString str_sex, BSFixedString str_race, BSFixedString str_search, UInt32 int_flags);
     UInt32 Aliases_Filter_Flag(StaticFunctionTag *, UInt32 int_flags, BSFixedString str_command, BSFixedString str_flag);
     VMResultArray<BSFixedString> Aliases_Get_Race_Names(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr_aliases);
+    VMResultArray<BSFixedString> Aliases_Get_Initial_Letters(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr_aliases);
     VMResultArray<BGSBaseAlias *> Aliases_Get_Used(StaticFunctionTag *, TESQuest *ref_quest);
     VMResultArray<SInt32> Aliases_Get_Free_IDs(StaticFunctionTag *, TESQuest *ref_quest);
     UInt32 Aliases_Get_Used_Count(StaticFunctionTag *, TESQuest *ref_quest);
