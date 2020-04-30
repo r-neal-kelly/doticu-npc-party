@@ -698,4 +698,23 @@ namespace doticu_npcp {
         return count;
     }
 
+    UInt32 Aliases_Count_Mannequins(StaticFunctionTag *, TESQuest *ref_quest) {
+        UInt32 count = 0;
+        if (ref_quest == NULL) {
+            return count;
+        }
+
+        tArray<BGSBaseAlias *> *ptr_aliases = &ref_quest->aliases;
+        BGSBaseAlias *ptr_alias;
+        for (u64 idx = 0; idx < ptr_aliases->count; idx += 1) {
+            ptr_aliases->GetNthItem(idx, ptr_alias);
+
+            if (Alias_Is_Created(ptr_alias) && Alias_Is_Mannequin(ptr_alias)) {
+                count += 1;
+            }
+        }
+
+        return count;
+    }
+
 }

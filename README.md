@@ -16,15 +16,15 @@ It can be tough to manage all my followers, as I always end up getting a lot of 
 - an **MCM menu**
 - numerous **hotkeys**
 - **settlers** who will live where you tell them to
-- **immobile** members who will stay where you leave them
+- **immobile** members who will stay where they are
 - **warriors**, **mages**, **archers**, **cowards**, and **classless** teammates
 - **mortal**, **protected**, **essential**, and **invulnerable** followers
-- life-like **mannequins** to show of your armor
 - and **thralls** to sustain vampire players
 - they can be **renamed** to whatever you want
 - **summoned** to wherever you are
 - **moved** out of the way
-- **displayed** in the expo hall or on command
+- turned into **mannequins** to show off your armor
+- **displayed** on command
 - and they **level** as you level
 
 ## Requires

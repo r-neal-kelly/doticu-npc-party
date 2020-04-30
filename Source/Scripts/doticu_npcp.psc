@@ -15,6 +15,7 @@ Alias[] function Aliases_Get_Used(Quest ref_quest) native global
 int[] function Aliases_Get_Free_IDs(Quest ref_quest) native global
 int function Aliases_Get_Used_Count(Quest ref_quest) native global
 int function Aliases_Get_Free_Count(Quest ref_quest) native global
+int function Aliases_Count_Mannequins(Quest ref_quest) native global
 
 ; forms
 Form[] function Forms_Slice(Form[] arr_forms, int idx_from, int idx_to_ex) native global

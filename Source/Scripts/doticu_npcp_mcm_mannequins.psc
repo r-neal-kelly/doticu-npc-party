@@ -36,7 +36,12 @@ doticu_npcp_data    p_DATA  =  none
 
 int property p_HEADERS_IN_MANNEQUINS hidden
     int function Get()
-        return 4; must be even
+        return 6; must be even
+    endFunction
+endProperty
+int property p_COLUMNS_PER_PAGE hidden
+    int function Get()
+        return 2
     endFunction
 endProperty
 int property p_OPTIONS_PER_COLUMN hidden
@@ -44,6 +49,7 @@ int property p_OPTIONS_PER_COLUMN hidden
         return MANNEQUINS.MAX_ROWS + 1; includes the header for each column
     endFunction
 endProperty
+
 int property p_HEADERS_IN_MANNEQUINS_CELL hidden
     int function Get()
         return 6
@@ -54,13 +60,19 @@ endProperty
 bool                p_is_created                = false
 int                 p_code_view                 =    -1
 
+int                 p_idx_page                  =     0
+int                 p_num_pages                 =    -1
+
 int                 p_curr_column               =     1
 int                 p_curr_row                  =     1
 Alias[]             p_curr_members              =  none
+doticu_npcp_member  p_ref_member                =  none
 
 int                 p_options_offset            =    -1
 int                 p_option_enter              =    -1
 int                 p_option_exit               =    -1
+int                 p_option_prev               =    -1
+int                 p_option_next               =    -1
 int                 p_option_name               =    -1
 int                 p_option_back               =    -1
 int                 p_option_north_1            =    -1
@@ -86,6 +98,10 @@ function f_Register()
 endFunction
 
 function f_Unregister()
+endFunction
+
+function f_Review_Mannequins()
+    p_code_view = CODES.VIEW_MANNEQUINS_CELL
 endFunction
 
 function f_Build_Page()
@@ -119,64 +135,88 @@ function f_On_Option_Default(int id_option)
 endFunction
 
 ; Private Methods
-int function p_Get_Cursor_Column(int idx_column)
-endFunction
-
 int function p_Get_Idx_Entity(int id_option)
 endFunction
 
-int function p_Get_Idx_Command(int id_option, int idx_entity)
+int function p_Get_Column(int id_option)
+endFunction
+
+int function p_Get_Row(int id_option)
 endFunction
 
 function p_Fill_Cell_Column(int idx_to_ex)
+endFunction
+
+function p_Goto_Mannequins_Member()
 endFunction
 
 ; States
 auto state STATE_MANNEQUINS
 function f_Build_Page()
     p_code_view = CODES.VIEW_MANNEQUINS
+    p_num_pages = Math.Ceiling(MANNEQUINS.MAX_COLUMNS / p_COLUMNS_PER_PAGE)
+    if p_idx_page < 0 || p_idx_page >= p_num_pages
+        p_idx_page = 0
+    endIf
 
-    MCM.SetTitleText(" Mannequins ")
+    ; Title
+    string str_mannequins = "Mannequins: " + MANNEQUINS.Get_Count() + "/" + MANNEQUINS.Get_Max()
+    string str_pages = "Page: " + (p_idx_page + 1) + "/" + p_num_pages
+    MCM.SetTitleText(str_mannequins + "               " + str_pages)
 
     ; Header
     MCM.SetCursorFillMode(MCM.LEFT_TO_RIGHT)
     MCM.SetCursorPosition(0)
 
     if MANNEQUINS.Is_Player_In_Expo()
-        p_option_enter =    MCM.AddTextOption("                              Enter", "", MCM.FLAG_DISABLE)
-        p_option_exit =     MCM.AddTextOption("                              Exit", "", MCM.FLAG_ENABLE)
+        p_option_enter =    MCM.AddTextOption("                      Enter Antechamber", "", MCM.FLAG_DISABLE)
+        p_option_exit =     MCM.AddTextOption("                            Exit Expo", "", MCM.FLAG_ENABLE)
     else
-        p_option_enter =    MCM.AddTextOption("                              Enter", "", MCM.FLAG_ENABLE)
-        p_option_exit =     MCM.AddTextOption("                              Exit", "", MCM.FLAG_DISABLE)
+        p_option_enter =    MCM.AddTextOption("                      Enter Antechamber", "", MCM.FLAG_ENABLE)
+        p_option_exit =     MCM.AddTextOption("                            Exit Expo", "", MCM.FLAG_DISABLE)
     endIf
+    if MANNEQUINS.MAX_COLUMNS > p_COLUMNS_PER_PAGE
+        p_option_prev =     MCM.AddTextOption("                     Go to Previous Page", "")
+        p_option_next =     MCM.AddTextOption("                       Go to Next Page", "")
+    else
+        p_option_prev =     MCM.AddTextOption("                     Go to Previous Page", "", MCM.FLAG_DISABLE)
+        p_option_next =     MCM.AddTextOption("                       Go to Next Page", "", MCM.FLAG_DISABLE)
+    endIf
+    MCM.AddHeaderOption("")
+    MCM.AddHeaderOption("")
     p_options_offset = p_option_enter
-    MCM.AddHeaderOption("")
-    MCM.AddHeaderOption("")
 
     ; Body
     MCM.SetCursorFillMode(MCM.TOP_TO_BOTTOM)
 
     int idx_column
+    int idx_column_end
     int idx_row
-    string str_cell_coords
     string str_cell_name
 
-    idx_column = 0
-    while idx_column < MANNEQUINS.MAX_COLUMNS
-        MCM.SetCursorPosition(p_Get_Cursor_Column(idx_column))
+    idx_column = (p_idx_page * p_COLUMNS_PER_PAGE) + 1
+    idx_column_end = idx_column + p_COLUMNS_PER_PAGE - 1
+    if idx_column_end > MANNEQUINS.MAX_COLUMNS
+        idx_column_end = MANNEQUINS.MAX_COLUMNS
+    endIf
 
-        idx_row = 0
-        while idx_row < MANNEQUINS.MAX_ROWS
-            str_cell_name = MANNEQUINS.Get_Cell_Name(idx_column + 1, idx_row + 1)
+    while idx_column <= idx_column_end
+        if idx_column % 2 == 0; is even
+            MCM.SetCursorPosition(p_HEADERS_IN_MANNEQUINS + 1)
+        else; is odd
+            MCM.SetCursorPosition(p_HEADERS_IN_MANNEQUINS)
+        endIf
+
+        idx_row = MANNEQUINS.MAX_ROWS
+        while idx_row > 0
+            str_cell_name = MANNEQUINS.Get_Cell_Name(idx_column, idx_row)
             if str_cell_name
-                str_cell_coords = "C " + (idx_column + 1) + ", R " + (idx_row + 1)
-                MCM.AddTextOption(str_cell_coords + ": " + str_cell_name, "...")
+                MCM.AddTextOption("C " + idx_column + ", R " + idx_row + ": " + str_cell_name, "...")
             else
-                str_cell_coords = "Column " + (idx_column + 1) + ", Row " + (idx_row + 1)
-                MCM.AddTextOption(str_cell_coords, "...")
+                MCM.AddTextOption("Column " + idx_column + ", Row " + idx_row, "...")
             endIf
 
-            idx_row += 1
+            idx_row -= 1
         endWhile
 
         MCM.AddHeaderOption("")
@@ -189,16 +229,35 @@ function f_On_Option_Select(int id_option)
     if false
 
     elseIf id_option == p_option_enter
+        MCM.f_Disable(id_option, MCM.DO_UPDATE)
         FUNCS.Close_Menus()
         MANNEQUINS.Move_Player_To_Antechamber()
     elseIf id_option == p_option_exit
+        MCM.f_Disable(id_option, MCM.DO_UPDATE)
         FUNCS.Close_Menus()
         MANNEQUINS.Remove_Player()
+
+    elseIf id_option == p_option_prev
+        MCM.f_Disable(id_option, MCM.DO_UPDATE)
+        if p_idx_page == 0
+            p_idx_page = p_num_pages - 1
+        else
+            p_idx_page -= 1
+        endIf
+        MCM.ForcePageReset()
+    elseIf id_option == p_option_next
+        MCM.f_Disable(id_option, MCM.DO_UPDATE)
+        if p_idx_page == p_num_pages - 1
+            p_idx_page = 0
+        else
+            p_idx_page += 1
+        endIf
+        MCM.ForcePageReset()
+
     else
-        int idx_entity = p_Get_Idx_Entity(id_option)
-        int idx_command = p_Get_Idx_Command(id_option, idx_entity)
-        p_curr_column = idx_entity + 1
-        p_curr_row = idx_command + 1
+        MCM.f_Disable(id_option, MCM.DO_UPDATE)
+        p_curr_column = p_Get_Column(id_option)
+        p_curr_row = p_Get_Row(id_option)
         GotoState("STATE_MANNEQUINS_CELL")
         MCM.ForcePageReset()
 
@@ -213,42 +272,50 @@ function f_On_Option_Highlight(int id_option)
     elseIf id_option == p_option_exit
         MCM.SetInfoText("Teleport back to Tamriel.")
     else
-        int idx_entity = p_Get_Idx_Entity(id_option)
-        int idx_command = p_Get_Idx_Command(id_option, idx_entity)
-        MCM.SetInfoText("Open the menu for Column " + (idx_entity + 1) + ", Row " + (idx_command + 1) + ".")
+        MCM.SetInfoText("Open the menu for Column " + p_Get_Column(id_option) + ", Row " + p_Get_Row(id_option) + ".")
 
     endIf
 endFunction
 
-int function p_Get_Cursor_Column(int idx_column)
-    if idx_column % 2 == 0; is even
-        return p_OPTIONS_PER_COLUMN * idx_column + p_HEADERS_IN_MANNEQUINS
+int function p_Get_Column(int id_option)
+    int id_option_norm = id_option - p_options_offset - p_HEADERS_IN_MANNEQUINS
+    ; Page 0
+    ; 0 == 1, 1 == 2
+    ; 2 == 1, 3 == 2
+    ; 4 == 1, 5 == 2
+    ; ...
+    ; Page 1
+    ; 0 == 3, 1 == 4
+    ; 2 == 3, 3 == 4
+    ; 4 == 3, 5 == 4
+    ; ...
+    if id_option_norm % 2 == 0; is even
+        return (p_idx_page * p_COLUMNS_PER_PAGE) + 1
     else; is odd
-        return p_OPTIONS_PER_COLUMN * (idx_column - 1) + 1 + p_HEADERS_IN_MANNEQUINS
+        return (p_idx_page * p_COLUMNS_PER_PAGE) + 2
     endIf
 endFunction
 
-int function p_Get_Idx_Entity(int id_option)
+int function p_Get_Row(int id_option)
     int id_option_norm = id_option - p_options_offset - p_HEADERS_IN_MANNEQUINS
-    int idx_entity = Math.Floor(id_option_norm / (p_OPTIONS_PER_COLUMN * 2)) * 2
-    if id_option_norm % 2 == 1
-        idx_entity += 1
-    endIf
-    return idx_entity
-endFunction
-
-int function p_Get_Idx_Command(int id_option, int idx_entity)
-    int id_option_norm = id_option - p_options_offset - p_HEADERS_IN_MANNEQUINS
-    return Math.Floor(id_option_norm / 2) - Math.Floor(idx_entity / 2) * p_OPTIONS_PER_COLUMN
+    ; 0 == 8, 1 == 8
+    ; 2 == 7, 3 == 7
+    ; 4 == 6, 5 == 6
+    ; ...
+    return 8 - Math.Floor(id_option_norm / 2)
 endFunction
 endState
 
 state STATE_MANNEQUINS_CELL
 function f_Build_Page()
+    if p_code_view == CODES.VIEW_MANNEQUINS_MEMBER
+        return p_Goto_Mannequins_Member()
+    endIf
+
     p_code_view = CODES.VIEW_MANNEQUINS_CELL
     p_curr_members = MANNEQUINS.Get_Mannequins(p_curr_column, p_curr_row)
     
-    MCM.SetTitleText("Mannequins in Expo: C " + p_curr_column + ", R " + p_curr_row)
+    MCM.SetTitleText("Mannequins: C " + p_curr_column + ", R " + p_curr_row)
     
     ; Header
     MCM.SetCursorPosition(0)
@@ -256,17 +323,17 @@ function f_Build_Page()
     
     p_option_name = MCM.AddInputOption(MANNEQUINS.Get_Cell_Name(p_curr_column, p_curr_row), " Detail ")
     p_option_back =     MCM.AddTextOption("                              Go Back", "")
-    p_option_enter =    MCM.AddTextOption("                              Enter", "")
+    p_option_enter =    MCM.AddTextOption("                              Enter Cell", "")
     if MANNEQUINS.Is_Player_In_Expo()
-        p_option_exit = MCM.AddTextOption("                              Exit", "", MCM.FLAG_ENABLE)
+        p_option_exit = MCM.AddTextOption("                              Exit Expo", "", MCM.FLAG_ENABLE)
     else
-        p_option_exit = MCM.AddTextOption("                              Exit", "", MCM.FLAG_DISABLE)
+        p_option_exit = MCM.AddTextOption("                              Exit Expo", "", MCM.FLAG_DISABLE)
     endIf
     MCM.AddHeaderOption("")
     MCM.AddHeaderOption("")
+    p_options_offset = p_option_name
     
     ; Body
-    ; we need to make each member clickable and send them to doticu_npcp_mcm_member
     MCM.SetCursorPosition(p_HEADERS_IN_MANNEQUINS_CELL)
     MCM.SetCursorFillMode(MCM.TOP_TO_BOTTOM)
     p_Fill_Cell_Column(8)
@@ -309,34 +376,54 @@ function f_Build_Page()
 endFunction
 
 function f_On_Option_Select(int id_option)
+    if p_code_view == CODES.VIEW_MANNEQUINS_MEMBER
+        return MCM.MCM_MEMBER.f_On_Option_Select(id_option)
+    endIf
+
     if false
 
     elseIf id_option == p_option_back
+        MCM.f_Disable(id_option, MCM.DO_UPDATE)
         GotoState("STATE_MANNEQUINS")
         MCM.ForcePageReset()
     elseIf id_option == p_option_enter
+        MCM.f_Disable(id_option, MCM.DO_UPDATE)
         FUNCS.Close_Menus()
         MANNEQUINS.Move_Player(p_curr_column, p_curr_row)
     elseIf id_option == p_option_exit
+        MCM.f_Disable(id_option, MCM.DO_UPDATE)
         FUNCS.Close_Menus()
         MANNEQUINS.Remove_Player()
     elseIf id_option == p_option_north_1 || id_option == p_option_north_2
+        MCM.f_Disable(id_option, MCM.DO_UPDATE)
         p_curr_row += 1
         MCM.ForcePageReset()
     elseIf id_option == p_option_south_1 || id_option == p_option_south_2
+        MCM.f_Disable(id_option, MCM.DO_UPDATE)
         p_curr_row -= 1
         MCM.ForcePageReset()
     elseIf id_option == p_option_west
+        MCM.f_Disable(id_option, MCM.DO_UPDATE)
         p_curr_column -= 1
         MCM.ForcePageReset()
     elseIf id_option == p_option_east
+        MCM.f_Disable(id_option, MCM.DO_UPDATE)
         p_curr_column += 1
+        MCM.ForcePageReset()
+    else
+        MCM.f_Disable(id_option, MCM.DO_UPDATE)
+        p_code_view = CODES.VIEW_MANNEQUINS_MEMBER
+        p_ref_member = p_curr_members[p_Get_Idx_Entity(id_option)] as doticu_npcp_member
         MCM.ForcePageReset()
 
     endIf
 endFunction
 
 function f_On_Option_Input_Accept(int id_option, string str_input)
+    if p_code_view == CODES.VIEW_MANNEQUINS_MEMBER
+        return MCM.MCM_MEMBER.f_On_Option_Input_Accept(id_option, str_input)
+    endIf
+
     if false
 
     elseIf id_option == p_option_name
@@ -347,6 +434,10 @@ function f_On_Option_Input_Accept(int id_option, string str_input)
 endFunction
 
 function f_On_Option_Highlight(int id_option)
+    if p_code_view == CODES.VIEW_MANNEQUINS_MEMBER
+        return MCM.MCM_MEMBER.f_On_Option_Highlight(id_option)
+    endIf
+
     if false
 
     elseIf id_option == p_option_back
@@ -369,6 +460,55 @@ function f_On_Option_Highlight(int id_option)
     endIf
 endFunction
 
+function f_On_Option_Menu_Open(int id_option)
+    if p_code_view == CODES.VIEW_MANNEQUINS_MEMBER
+        return MCM.MCM_MEMBER.f_On_Option_Menu_Open(id_option)
+    endIf
+endFunction
+
+function f_On_Option_Menu_Accept(int id_option, int idx_option)
+    if p_code_view == CODES.VIEW_MANNEQUINS_MEMBER
+        return MCM.MCM_MEMBER.f_On_Option_Menu_Accept(id_option, idx_option)
+    endIf
+endFunction
+
+function f_On_Option_Slider_Open(int id_option)
+    if p_code_view == CODES.VIEW_MANNEQUINS_MEMBER
+        return MCM.MCM_MEMBER.f_On_Option_Slider_Open(id_option)
+    endIf
+endFunction
+
+function f_On_Option_Slider_Accept(int id_option, float float_value)
+    if p_code_view == CODES.VIEW_MANNEQUINS_MEMBER
+        return MCM.MCM_MEMBER.f_On_Option_Slider_Accept(id_option, float_value)
+    endIf
+endFunction
+
+function f_On_Option_Keymap_Change(int id_option, int code_key, string str_conflict_control, string str_conflict_mod)
+    if p_code_view == CODES.VIEW_MANNEQUINS_MEMBER
+        return MCM.MCM_MEMBER.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
+    endIf
+endFunction
+
+function f_On_Option_Default(int id_option)
+    if p_code_view == CODES.VIEW_MANNEQUINS_MEMBER
+        return MCM.MCM_MEMBER.f_On_Option_Default(id_option)
+    endIf
+endFunction
+
+int function p_Get_Idx_Entity(int id_option)
+    int id_option_norm = id_option - p_options_offset - p_HEADERS_IN_MANNEQUINS_CELL
+    ; 0 == 7, 1 == 15
+    ; 2 == 6, 3 == 14
+    ; 4 == 5, 5 == 13
+    ; ...
+    int idx_entity = 8 - (Math.Floor(id_option_norm / 2) + 1)
+    if id_option_norm % 2 == 1
+        idx_entity += 8
+    endIf
+    return idx_entity
+endFunction
+
 function p_Fill_Cell_Column(int idx_to_ex)
     int idx_from = idx_to_ex - 8
     doticu_npcp_member ref_member
@@ -382,5 +522,10 @@ function p_Fill_Cell_Column(int idx_to_ex)
             MCM.AddTextOption("EMPTY ", "", MCM.FLAG_DISABLE)
         endIf
     endWhile
+endFunction
+
+function p_Goto_Mannequins_Member()
+    MCM.MCM_MEMBER.f_View_Mannequins_Member(p_ref_member)
+    MCM.MCM_MEMBER.f_Build_Page()
 endFunction
 endState

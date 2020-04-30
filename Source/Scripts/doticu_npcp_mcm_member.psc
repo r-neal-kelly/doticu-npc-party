@@ -176,6 +176,12 @@ function f_View_Followers_Member(doticu_npcp_member ref_member)
     p_ref_member = ref_member
 endFunction
 
+function f_View_Mannequins_Member(doticu_npcp_member ref_member)
+    p_code_view = CODES.VIEW_MANNEQUINS_MEMBER
+
+    p_ref_member = ref_member
+endFunction
+
 function f_Build_Page()
     string str_name = p_ref_member.Get_Name()
 
@@ -188,6 +194,8 @@ function f_Build_Page()
         MCM.SetTitleText("Follower: " + str_name)
     elseIf p_code_view == CODES.VIEW_FILTER_MEMBERS_MEMBER
         MCM.SetTitleText("Filtered Member: " + str_name)
+    elseIf p_code_view == CODES.VIEW_MANNEQUINS_MEMBER
+        MCM.SetTitleText("Mannequin: " + str_name)
     endIf
 
     p_option_rename = MCM.AddInputOption(str_name + " ", " Rename ")
@@ -858,6 +866,9 @@ function p_Go_Back()
         MCM.ForcePageReset()
     elseIf p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
         MCM.MCM_FOLLOWERS.f_Review_Followers()
+        MCM.ForcePageReset()
+    elseIf p_code_view == CODES.VIEW_MANNEQUINS_MEMBER
+        MCM.MCM_MANNEQUINS.f_Review_Mannequins()
         MCM.ForcePageReset()
     endIf
 endFunction

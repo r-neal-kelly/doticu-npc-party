@@ -188,8 +188,8 @@ function f_Build_Page()
         p_option_prev = MCM.AddTextOption("                     Go to Previous Page", "")
         p_option_next = MCM.AddTextOption("                       Go to Next Page", "")
     else
-        p_option_prev = MCM.AddTextOption("                     Go to Previous Page", "", MCM.OPTION_FLAG_DISABLED)
-        p_option_next = MCM.AddTextOption("                       Go to Next Page", "", MCM.OPTION_FLAG_DISABLED)
+        p_option_prev = MCM.AddTextOption("                     Go to Previous Page", "", MCM.FLAG_DISABLE)
+        p_option_next = MCM.AddTextOption("                       Go to Next Page", "", MCM.FLAG_DISABLE)
     endIf
 
     if p_code_view == CODES.VIEW_FILTER_MEMBERS

@@ -237,6 +237,7 @@ namespace doticu_npcp {
     VMResultArray<SInt32> Aliases_Get_Free_IDs(StaticFunctionTag *, TESQuest *ref_quest);
     UInt32 Aliases_Get_Used_Count(StaticFunctionTag *, TESQuest *ref_quest);
     UInt32 Aliases_Get_Free_Count(StaticFunctionTag *, TESQuest *ref_quest);
+    UInt32 Aliases_Count_Mannequins(StaticFunctionTag *, TESQuest *ref_quest);
 
     // forms.cpp
     VMResultArray<TESForm *> Forms_Slice(StaticFunctionTag *, VMArray<TESForm *> arr, UInt32 idx_from, UInt32 idx_to_ex);

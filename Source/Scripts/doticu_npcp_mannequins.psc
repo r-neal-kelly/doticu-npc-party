@@ -57,11 +57,6 @@ endProperty
 ; Private Constants
 doticu_npcp_data p_DATA =  none
 
-int property p_MAX_MANNEQUINS hidden
-    int function Get()
-        return 1024
-    endFunction
-endProperty
 int property p_MAX_MANNEQUINS_PER_CELL hidden
     int function Get()
         return 16
@@ -79,6 +74,11 @@ int property p_MAX_CELLS hidden
 endProperty
 
 ; Public Constants
+int property MAX_MANNEQUINS hidden
+    int function Get()
+        return 1024
+    endFunction
+endProperty
 int property MAX_COLUMNS hidden
     int function Get()
         return 8
@@ -101,7 +101,7 @@ function f_Create(doticu_npcp_data DATA)
     p_DATA = DATA
 
     p_is_created = true
-    p_arr_mannequins = Utility.CreateAliasArray(p_MAX_MANNEQUINS, none)
+    p_arr_mannequins = Utility.CreateAliasArray(MAX_MANNEQUINS, none)
     p_arr_cell_names = Utility.CreateStringArray(p_MAX_CELLS, "")
     p_marker_teleport = none
 endFunction
@@ -121,7 +121,7 @@ endFunction
 
 ; Public Methods
 int function Toggle_Mannequin(int id_mannequin, doticu_npcp_mannequin ref_activator)
-    if id_mannequin < 0 || id_mannequin >= p_MAX_MANNEQUINS
+    if id_mannequin < 0 || id_mannequin >= MAX_MANNEQUINS
         return CODES.FAILURE
     endIf
     if !ref_activator
@@ -152,7 +152,7 @@ int function Toggle_Mannequin(int id_mannequin, doticu_npcp_mannequin ref_activa
 endFunction
 
 int function Refresh_Mannequin(int id_mannequin, doticu_npcp_mannequin ref_activator)
-    if id_mannequin < 0 || id_mannequin >= p_MAX_MANNEQUINS
+    if id_mannequin < 0 || id_mannequin >= MAX_MANNEQUINS
         return CODES.FAILURE
     endIf
     if !ref_activator
@@ -305,4 +305,12 @@ endFunction
 
 bool function Is_Player_In_Expo()
     return CONSTS.ACTOR_PLAYER.IsInLocation(CONSTS.LOCATION_EXPO)
+endFunction
+
+int function Get_Count()
+    return doticu_npcp.Aliases_Count_Mannequins(MEMBERS)
+endFunction
+
+int function Get_Max()
+    return MAX_MANNEQUINS
 endFunction

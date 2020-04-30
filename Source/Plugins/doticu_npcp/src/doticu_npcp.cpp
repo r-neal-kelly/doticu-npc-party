@@ -89,6 +89,13 @@ namespace doticu_npcp {
                 doticu_npcp::Aliases_Get_Free_Count,
                 registry)
         );
+        registry->RegisterFunction(
+            new NativeFunction1 <StaticFunctionTag, UInt32, TESQuest *>(
+                "Aliases_Count_Mannequins",
+                "doticu_npcp",
+                doticu_npcp::Aliases_Count_Mannequins,
+                registry)
+        );
 
         // forms.cpp
         registry->RegisterFunction(

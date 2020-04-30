@@ -158,3 +158,4 @@ int property VIEW_FILTER_MEMBERS            = -2010 autoReadOnly
 int property VIEW_FILTER_MEMBERS_MEMBER     = -2020 autoReadOnly
 int property VIEW_MANNEQUINS                = -3000 autoReadOnly
 int property VIEW_MANNEQUINS_CELL           = -3001 autoReadOnly
+int property VIEW_MANNEQUINS_MEMBER         = -3002 autoReadOnly
