@@ -32,28 +32,29 @@ doticu_npcp_mcm property MCM hidden
 endProperty
 
 ; Private Constants
-doticu_npcp_data        p_DATA                      =  none
+doticu_npcp_data        p_DATA                          =  none
 
-int                     p_HEADERS_PER_PAGE          =     2
+int property            p_HEADERS_PER_PAGE              =     2 autoReadOnly hidden
 
-int                     p_COMMANDS_IN_MENU          =    11
-int                     p_IDX_ALL_SUMMON_ALL        =     0
-int                     p_IDX_ALL_SUMMON_MOBILE     =     1
-int                     p_IDX_ALL_SUMMON_IMMOBILE   =     2
-int                     p_IDX_ALL_IMMOBILIZE        =     3
-int                     p_IDX_ALL_MOBILIZE          =     4
-int                     p_IDX_ALL_SNEAK             =     5
-int                     p_IDX_ALL_UNSNEAK           =     6
-int                     p_IDX_ALL_SETTLE            =     7
-int                     p_IDX_ALL_UNSETTLE          =     8
-int                     p_IDX_ALL_UNFOLLOW          =     9
-int                     p_IDX_ALL_UNMEMBER          =    10
+int property            p_COMMANDS_IN_MENU              =    11 autoReadOnly hidden
+int property            p_COMMAND_ALL_SUMMON_ALL        =     0 autoReadOnly hidden
+int property            p_COMMAND_ALL_SUMMON_MOBILE     =     1 autoReadOnly hidden
+int property            p_COMMAND_ALL_SUMMON_IMMOBILE   =     2 autoReadOnly hidden
+int property            p_COMMAND_ALL_IMMOBILIZE        =     3 autoReadOnly hidden
+int property            p_COMMAND_ALL_MOBILIZE          =     4 autoReadOnly hidden
+int property            p_COMMAND_ALL_SNEAK             =     5 autoReadOnly hidden
+int property            p_COMMAND_ALL_UNSNEAK           =     6 autoReadOnly hidden
+int property            p_COMMAND_ALL_SETTLE            =     7 autoReadOnly hidden
+int property            p_COMMAND_ALL_UNSETTLE          =     8 autoReadOnly hidden
+int property            p_COMMAND_ALL_UNFOLLOW          =     9 autoReadOnly hidden
+int property            p_COMMAND_ALL_UNMEMBER          =    10 autoReadOnly hidden
 
-int                     p_COMMANDS_PER_FOLLOWER     =     4; includes the name
-int                     p_IDX_NAME                  =     0
-int                     p_IDX_SUMMON                =     1
-int                     p_IDX_IMMOBILIZE            =     2
-int                     p_IDX_MORE                  =     3
+int property            p_COMMANDS_PER_FOLLOWER         =     5 autoReadOnly hidden; count must include the name header
+int property            p_COMMAND_ONE_NAME              =     0 autoReadOnly hidden
+int property            p_COMMAND_ONE_SUMMON            =     1 autoReadOnly hidden
+int property            p_COMMAND_ONE_PACK              =     2 autoReadOnly hidden
+int property            p_COMMAND_ONE_IMMOBILIZE        =     3 autoReadOnly hidden
+int property            p_COMMAND_ONE_MORE              =     4 autoReadOnly hidden
 
 ; Private Variables
 bool                    p_is_created                = false
@@ -132,6 +133,7 @@ function f_Build_Page()
 
         MCM.AddHeaderOption(ref_follower.Get_Name() + " ")
         MCM.AddTextOption("   Summon", "")
+        MCM.AddTextOption("   Pack", "")
         if ref_follower.Is_Immobile()
             MCM.AddTextOption("   Mobilize", "")
         else
@@ -155,21 +157,39 @@ function f_On_Option_Select(int id_option)
     endIf
 
     int idx_entity = p_Get_Idx_Entity(id_option)
+    if idx_entity < 0 || idx_entity >= p_arr_aliases.length
+        return
+    endIf
     int idx_command = p_Get_Idx_Command(id_option, idx_entity)
+
     doticu_npcp_follower ref_follower = p_arr_aliases[idx_entity] as doticu_npcp_follower
     Actor ref_actor = ref_follower.Get_Actor()
 
-    if idx_command == p_IDX_SUMMON
-        COMMANDS.Summon_Async(ref_actor)
-    elseIf idx_command == p_IDX_IMMOBILIZE
+    if false
+
+    elseIf idx_command == p_COMMAND_ONE_SUMMON
+        MCM.f_Disable(id_option, MCM.DO_UPDATE)
+        COMMANDS.Summon_Async(ref_actor); maybe make this sync instead?
+        MCM.f_Enable(id_option, MCM.DO_UPDATE)
+
+    elseIf idx_command == p_COMMAND_ONE_PACK
+        MCM.f_Disable(id_option, MCM.DO_UPDATE)
+        FUNCS.Close_Menus()
+        COMMANDS.Pack_Sync(ref_actor, false)
+
+    elseIf idx_command == p_COMMAND_ONE_IMMOBILIZE
+        MCM.f_Disable(id_option, MCM.DO_UPDATE)
         if ref_follower.Is_Immobile()
             COMMANDS.Mobilize_Async(ref_actor, false)
         else
             COMMANDS.Immobilize_Async(ref_actor, false)
         endIf
-        MCM.ForcePageReset(); wasteful
-    elseIf idx_command == p_IDX_MORE
+        MCM.ForcePageReset()
+
+    elseIf idx_command == p_COMMAND_ONE_MORE
+        MCM.f_Disable(id_option, MCM.DO_UPDATE)
         return p_Goto_Followers_Member(ref_follower.Get_Member())
+
     endIf
 endFunction
 
@@ -181,17 +201,17 @@ function f_On_Option_Menu_Open(int id_option)
     if id_option == p_option_menu
         string[] arr_options = Utility.CreateStringArray(p_COMMANDS_IN_MENU, "")
 
-        arr_options[p_IDX_ALL_SUMMON_ALL] = " Summon All "
-        arr_options[p_IDX_ALL_SUMMON_MOBILE] = " Summon Mobile "
-        arr_options[p_IDX_ALL_SUMMON_IMMOBILE] = " Summon Immobile "
-        arr_options[p_IDX_ALL_IMMOBILIZE] = " Immobilize "
-        arr_options[p_IDX_ALL_MOBILIZE] = " Mobilize "
-        arr_options[p_IDX_ALL_SNEAK] = " Sneak "
-        arr_options[p_IDX_ALL_UNSNEAK] = " Unsneak "
-        arr_options[p_IDX_ALL_SETTLE] = " Settle "
-        arr_options[p_IDX_ALL_UNSETTLE] = " Unsettle "
-        arr_options[p_IDX_ALL_UNFOLLOW] = " Unfollow "
-        arr_options[p_IDX_ALL_UNMEMBER] = " Unmember "
+        arr_options[p_COMMAND_ALL_SUMMON_ALL] = " Summon All "
+        arr_options[p_COMMAND_ALL_SUMMON_MOBILE] = " Summon Mobile "
+        arr_options[p_COMMAND_ALL_SUMMON_IMMOBILE] = " Summon Immobile "
+        arr_options[p_COMMAND_ALL_IMMOBILIZE] = " Immobilize "
+        arr_options[p_COMMAND_ALL_MOBILIZE] = " Mobilize "
+        arr_options[p_COMMAND_ALL_SNEAK] = " Sneak "
+        arr_options[p_COMMAND_ALL_UNSNEAK] = " Unsneak "
+        arr_options[p_COMMAND_ALL_SETTLE] = " Settle "
+        arr_options[p_COMMAND_ALL_UNSETTLE] = " Unsettle "
+        arr_options[p_COMMAND_ALL_UNFOLLOW] = " Unfollow "
+        arr_options[p_COMMAND_ALL_UNMEMBER] = " Unmember "
 
         MCM.SetMenuDialogOptions(arr_options)
     endIf
@@ -203,27 +223,27 @@ function f_On_Option_Menu_Accept(int id_option, int idx_option)
     endIf
 
     if id_option == p_option_menu
-        if idx_option == p_IDX_ALL_SUMMON_ALL
+        if idx_option == p_COMMAND_ALL_SUMMON_ALL
             COMMANDS.Followers_Summon_All()
-        elseIf idx_option == p_IDX_ALL_SUMMON_MOBILE
+        elseIf idx_option == p_COMMAND_ALL_SUMMON_MOBILE
             COMMANDS.Followers_Summon_Mobile()
-        elseIf idx_option == p_IDX_ALL_SUMMON_IMMOBILE
+        elseIf idx_option == p_COMMAND_ALL_SUMMON_IMMOBILE
             COMMANDS.Followers_Summon_Immobile()
-        elseIf idx_option == p_IDX_ALL_IMMOBILIZE
+        elseIf idx_option == p_COMMAND_ALL_IMMOBILIZE
             COMMANDS.Followers_Immobilize()
-        elseIf idx_option == p_IDX_ALL_MOBILIZE
+        elseIf idx_option == p_COMMAND_ALL_MOBILIZE
             COMMANDS.Followers_Mobilize()
-        elseIf idx_option == p_IDX_ALL_SNEAK
+        elseIf idx_option == p_COMMAND_ALL_SNEAK
             COMMANDS.Followers_Sneak()
-        elseIf idx_option == p_IDX_ALL_UNSNEAK
+        elseIf idx_option == p_COMMAND_ALL_UNSNEAK
             COMMANDS.Followers_Unsneak()
-        elseIf idx_option == p_IDX_ALL_SETTLE
+        elseIf idx_option == p_COMMAND_ALL_SETTLE
             COMMANDS.Followers_Settle()
-        elseIf idx_option == p_IDX_ALL_UNSETTLE
+        elseIf idx_option == p_COMMAND_ALL_UNSETTLE
             COMMANDS.Followers_Unsettle()
-        elseIf idx_option == p_IDX_ALL_UNFOLLOW
+        elseIf idx_option == p_COMMAND_ALL_UNFOLLOW
             COMMANDS.Followers_Unfollow()
-        elseIf idx_option == p_IDX_ALL_UNMEMBER
+        elseIf idx_option == p_COMMAND_ALL_UNMEMBER
             COMMANDS.Followers_Unmember()
         endIf
         MCM.ForcePageReset()
@@ -236,9 +256,33 @@ function f_On_Option_Highlight(int id_option)
     endIf
 
     if id_option == p_option_menu
-        MCM.SetInfoText("Command all followers.")
+        MCM.SetInfoText("Open the menu to command all followers.")
     else
+        int idx_entity = p_Get_Idx_Entity(id_option)
+        if idx_entity < 0 || idx_entity >= p_arr_aliases.length
+            return
+        endIf
+        int idx_command = p_Get_Idx_Command(id_option, idx_entity)
 
+        doticu_npcp_follower ref_follower = p_arr_aliases[idx_entity] as doticu_npcp_follower
+        string name_follower = ref_follower.Get_Name()
+
+        if false
+
+        elseIf idx_command == p_COMMAND_ONE_SUMMON
+            MCM.SetInfoText("Summon " + name_follower + " to you.")
+        elseIf idx_command == p_COMMAND_ONE_PACK
+            MCM.SetInfoText("Open the pack of " + name_follower + ".")
+        elseIf idx_command == p_COMMAND_ONE_IMMOBILIZE
+            if ref_follower.Is_Immobile()
+                MCM.SetInfoText("Mobilize " + name_follower + ".")
+            else
+                MCM.SetInfoText("Immobilize " + name_follower + ".")
+            endIf
+        elseIf idx_command == p_COMMAND_ONE_MORE
+            MCM.SetInfoText("Open the follower menu of " + name_follower + ".")
+
+        endIf
     endIf
 endFunction
 

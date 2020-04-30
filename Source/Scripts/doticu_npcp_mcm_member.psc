@@ -187,7 +187,7 @@ function f_Build_Page()
     elseIf p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
         MCM.SetTitleText("Follower: " + str_name)
     elseIf p_code_view == CODES.VIEW_FILTER_MEMBERS_MEMBER
-        MCM.SetTitleText("Filter: " + str_name)
+        MCM.SetTitleText("Filtered Member: " + str_name)
     endIf
 
     p_option_rename = MCM.AddInputOption(str_name + " ", " Rename ")
@@ -228,8 +228,10 @@ function f_On_Option_Select(int id_option)
     if false
 
     elseIf id_option == p_option_back
+        f_Disable(id_option, DO_UPDATE)
         p_Go_Back()
     elseIf id_option == p_option_prev
+        f_Disable(id_option, DO_UPDATE)
         if p_code_view == CODES.VIEW_MEMBERS_MEMBER || p_code_view == CODES.VIEW_FILTER_MEMBERS_MEMBER
             MCM.MCM_MEMBERS.f_Request_Prev_Member()
             MCM.ForcePageReset()
@@ -238,6 +240,7 @@ function f_On_Option_Select(int id_option)
             MCM.ForcePageReset()
         endIf
     elseIf id_option == p_option_next
+        f_Disable(id_option, DO_UPDATE)
         if p_code_view == CODES.VIEW_MEMBERS_MEMBER || p_code_view == CODES.VIEW_FILTER_MEMBERS_MEMBER
             MCM.MCM_MEMBERS.f_Request_Next_Member()
             MCM.ForcePageReset()

@@ -1889,7 +1889,7 @@ string function Get_Rating_Stars()
     if false
 
     elseIf p_int_rating == 0
-        return ""
+        return "-"
     elseIf p_int_rating == 1
         return "*"
     elseIf p_int_rating == 2

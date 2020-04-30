@@ -168,8 +168,8 @@ function f_Build_Page()
         MCM.SetTitleText(p_Format_Title(0, 0, 1))
 
         if p_code_view == CODES.VIEW_FILTER_MEMBERS
-            p_option_title = MCM.AddEmptyOption()
-            p_option_back = MCM.AddTextOption("                          Go Back", "")
+            p_option_title = MCM.AddTextOption(MCM.MCM_FILTER.f_Get_Filter_String(), "")
+            p_option_back = MCM.AddTextOption("                            Go Back", "")
         endIf
 
         MCM.AddHeaderOption(" No Members ")
@@ -180,8 +180,8 @@ function f_Build_Page()
     MCM.SetTitleText(p_Format_Title(p_arr_aliases.length, p_idx_page, p_num_pages))
 
     if p_code_view == CODES.VIEW_FILTER_MEMBERS
-        p_option_title = MCM.AddEmptyOption()
-        p_option_back = MCM.AddTextOption("                          Go Back", "")
+        p_option_title = MCM.AddTextOption(MCM.MCM_FILTER.f_Get_Filter_String(), "")
+        p_option_back = MCM.AddTextOption("                            Go Back", "")
     endIf
 
     if p_arr_aliases.length > p_MEMBERS_PER_PAGE
@@ -217,9 +217,11 @@ function f_On_Option_Select(int id_option)
     if false
 
     elseIf id_option == p_option_back && p_code_view == CODES.VIEW_FILTER_MEMBERS
+        MCM.f_Disable(id_option, MCM.DO_UPDATE)
         p_Go_Back()
 
     elseIf id_option == p_option_prev
+        MCM.f_Disable(id_option, MCM.DO_UPDATE)
         if p_idx_page == 0
             p_idx_page = p_num_pages - 1
         else
@@ -232,6 +234,7 @@ function f_On_Option_Select(int id_option)
         endIf
         MCM.ForcePageReset()
     elseIf id_option == p_option_next
+        MCM.f_Disable(id_option, MCM.DO_UPDATE)
         if p_idx_page == p_num_pages - 1
             p_idx_page = 0
         else
@@ -244,12 +247,14 @@ function f_On_Option_Select(int id_option)
         endIf
         MCM.ForcePageReset()
 
-    else
+    elseIf id_option >= p_options_offset + p_HEADERS_PER_PAGE
+        MCM.f_Disable(id_option, MCM.DO_UPDATE)
         if p_code_view == CODES.VIEW_MEMBERS
             p_Goto_Members_Member(p_arr_aliases_slice[p_Get_Idx_Entity(id_option)] as doticu_npcp_member)
         elseIf p_code_view == CODES.VIEW_FILTER_MEMBERS
             p_Goto_Filter_Members_Member(p_arr_aliases_slice[p_Get_Idx_Entity(id_option)] as doticu_npcp_member)
         endIf
+
     endIf
 endFunction
 
@@ -258,7 +263,11 @@ function f_On_Option_Highlight(int id_option)
         return MCM.MCM_MEMBER.f_On_Option_Highlight(id_option)
     endIf
 
-    if id_option == p_option_prev
+    if false
+
+    elseIf id_option == p_option_back && p_code_view == CODES.VIEW_FILTER_MEMBERS
+        MCM.SetInfoText("Got back to the filter menu.")
+    elseIf id_option == p_option_prev
         MCM.SetInfoText("Go to the Previous Page")
     elseIf id_option == p_option_next
         MCM.SetInfoText("Go to the Next Page")
@@ -301,6 +310,7 @@ function f_On_Option_Highlight(int id_option)
         MCM.SetInfoText(str_info)
         ; this should show more about the member, style, and stats!!!
         ; whether is dead, healthly, etc.
+
     endIf
 endFunction
 
