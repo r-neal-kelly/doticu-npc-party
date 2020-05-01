@@ -115,24 +115,24 @@ function f_Unregister()
 endFunction
 
 function f_View_Members(Alias[] arr_aliases)
-    if p_code_view != CODES.VIEW_MEMBERS_MEMBER
+    if p_ref_member_members
+        p_code_view = CODES.VIEW_MEMBERS_MEMBER
+    else
         p_code_view = CODES.VIEW_MEMBERS
     endIf
 
     p_View(arr_aliases, p_idx_page_members, p_ref_member_members)
-
-    p_ref_member_members = p_ref_member
     p_idx_page_members = p_idx_page
 endFunction
 
 function f_View_Filter_Members(Alias[] arr_aliases)
-    if p_code_view != CODES.VIEW_FILTER_MEMBERS_MEMBER
+    if p_ref_member_filter_members
+        p_code_view = CODES.VIEW_FILTER_MEMBERS_MEMBER
+    else
         p_code_view = CODES.VIEW_FILTER_MEMBERS
     endIf
 
     p_View(arr_aliases, p_idx_page_filter_members, p_ref_member_filter_members)
-
-    p_ref_member_filter_members = p_ref_member
     p_idx_page_filter_members = p_idx_page
 endFunction
 
@@ -154,11 +154,35 @@ function f_Request_Next_Member()
     p_do_next_member = true
 endFunction
 
+bool function f_Is_Valid_Member(doticu_npcp_member ref_member)
+    if !ref_member || !ref_member.Exists() || p_arr_aliases.Find(ref_member) < 0
+        return false
+    else
+        return true
+    endIf
+endFunction
+
 function f_Build_Page()
+    if p_do_prev_member
+        p_ref_member = p_Get_Prev_Member(p_ref_member)
+        p_do_prev_member = false
+    elseIf p_do_next_member
+        p_ref_member = p_Get_Next_Member(p_ref_member)
+        p_do_next_member = false
+    endIf
+
     if p_code_view == CODES.VIEW_MEMBERS_MEMBER
-        return p_Goto_Members_Member(p_ref_member_members, true)
+        if f_Is_Valid_Member(p_ref_member)
+            return p_Build_Members_Member()
+        else
+            f_Review_Members()
+        endIf
     elseIf p_code_view == CODES.VIEW_FILTER_MEMBERS_MEMBER
-        return p_Goto_Filter_Members_Member(p_ref_member_filter_members, true)
+        if f_Is_Valid_Member(p_ref_member)
+            return p_Build_Filter_Members_Member()
+        else
+            f_Review_Filter_Members()
+        endIf
     endIf
 
     MCM.SetCursorPosition(0)
@@ -249,11 +273,15 @@ function f_On_Option_Select(int id_option)
 
     elseIf id_option >= p_options_offset + p_HEADERS_PER_PAGE
         MCM.f_Disable(id_option, MCM.DO_UPDATE)
+        p_ref_member = p_arr_aliases_slice[p_Get_Idx_Entity(id_option)] as doticu_npcp_member
         if p_code_view == CODES.VIEW_MEMBERS
-            p_Goto_Members_Member(p_arr_aliases_slice[p_Get_Idx_Entity(id_option)] as doticu_npcp_member)
+            p_code_view = CODES.VIEW_MEMBERS_MEMBER
+            p_ref_member_members = p_ref_member
         elseIf p_code_view == CODES.VIEW_FILTER_MEMBERS
-            p_Goto_Filter_Members_Member(p_arr_aliases_slice[p_Get_Idx_Entity(id_option)] as doticu_npcp_member)
+            p_code_view = CODES.VIEW_FILTER_MEMBERS_MEMBER
+            p_ref_member_filter_members = p_ref_member
         endIf
+        MCM.ForcePageReset()
 
     endIf
 endFunction
@@ -373,7 +401,7 @@ doticu_npcp_member function p_Get_Prev_Member(doticu_npcp_member ref_member)
             return p_arr_aliases[idx_alias - 1] as doticu_npcp_member
         endIf
     else
-        return ref_member
+        return p_arr_aliases[0] as doticu_npcp_member
     endIf
 endFunction
 
@@ -386,50 +414,20 @@ doticu_npcp_member function p_Get_Next_Member(doticu_npcp_member ref_member)
             return p_arr_aliases[idx_alias + 1] as doticu_npcp_member
         endIf
     else
-        return ref_member
+        return p_arr_aliases[p_arr_aliases.length - 1] as doticu_npcp_member
     endIf
 endFunction
 
-function p_Goto_Members_Member(doticu_npcp_member ref_member, bool is_building = false)
-    if is_building
-        if p_do_prev_member
-            ref_member = p_Get_Prev_Member(ref_member)
-            p_ref_member_members = ref_member
-            p_do_prev_member = false
-        elseIf p_do_next_member
-            ref_member = p_Get_Next_Member(ref_member)
-            p_ref_member_members = ref_member
-            p_do_next_member = false
-        endIf
-        MCM.MCM_MEMBER.f_View_Members_Member(ref_member)
-        MCM.MCM_MEMBER.f_Build_Page()
-    else
-        p_code_view = CODES.VIEW_MEMBERS_MEMBER
-        p_ref_member_members = ref_member
-        MCM.MCM_MEMBER.f_View_Members_Member(ref_member)
-        MCM.ForcePageReset()
-    endIf
+function p_Build_Members_Member()
+    p_ref_member_members = p_ref_member
+    MCM.MCM_MEMBER.f_View_Members_Member(p_ref_member)
+    MCM.MCM_MEMBER.f_Build_Page()
 endFunction
 
-function p_Goto_Filter_Members_Member(doticu_npcp_member ref_member, bool is_building = false)
-    if is_building
-        if p_do_prev_member
-            ref_member = p_Get_Prev_Member(ref_member)
-            p_ref_member_filter_members = ref_member
-            p_do_prev_member = false
-        elseIf p_do_next_member
-            ref_member = p_Get_Next_Member(ref_member)
-            p_ref_member_filter_members = ref_member
-            p_do_next_member = false
-        endIf
-        MCM.MCM_MEMBER.f_View_Filter_Members_Member(ref_member)
-        MCM.MCM_MEMBER.f_Build_Page()
-    else
-        p_code_view = CODES.VIEW_FILTER_MEMBERS_MEMBER
-        p_ref_member_filter_members = ref_member
-        MCM.MCM_MEMBER.f_View_Filter_Members_Member(ref_member); not necessary?
-        MCM.ForcePageReset()
-    endIf
+function p_Build_Filter_Members_Member()
+    p_ref_member_filter_members = p_ref_member
+    MCM.MCM_MEMBER.f_View_Filter_Members_Member(p_ref_member)
+    MCM.MCM_MEMBER.f_Build_Page()
 endFunction
 
 function p_Go_Back()
@@ -440,24 +438,20 @@ function p_Go_Back()
 endFunction
 
 function p_View(Alias[] arr_aliases, int idx_page, doticu_npcp_member ref_member)
-    ; must refresh to keep in sync
     p_arr_aliases = arr_aliases
 
-    ; must refresh to keep in sync
     if p_arr_aliases[0] == none
         p_num_pages = 0
     else
         p_num_pages = Math.Ceiling(p_arr_aliases.length / (p_MEMBERS_PER_PAGE as float))
     endIf
 
-    ; this one can retain state if applicable
     if idx_page >= p_num_pages || idx_page < 0
         p_idx_page = 0
     else
         p_idx_page = idx_page
     endIf
     
-    ; must refresh to keep in sync
     if p_arr_aliases[0] == none
         p_arr_aliases_slice = p_arr_aliases
     else
@@ -466,7 +460,6 @@ function p_View(Alias[] arr_aliases, int idx_page, doticu_npcp_member ref_member
         p_arr_aliases_slice = doticu_npcp.Aliases_Slice(p_arr_aliases, idx_from, idx_to_ex)
     endIf
 
-    ; this one can retain state if applicable
     p_ref_member = ref_member
 endFunction
 

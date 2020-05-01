@@ -99,9 +99,21 @@ function f_Request_Next_Member()
     p_do_next_member = true
 endFunction
 
+bool function f_Is_Valid_Member(doticu_npcp_member ref_member)
+    if !ref_member || !ref_member.Exists() || !ref_member.Is_Follower()
+        return false
+    else
+        return true
+    endIf
+endFunction
+
 function f_Build_Page()
     if p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
-        return p_Goto_Followers_Member(p_ref_member, true)
+        if f_Is_Valid_Member(p_ref_member)
+            return p_Goto_Followers_Member(p_ref_member, true)
+        else
+            f_Review_Followers()
+        endIf
     endIf
 
     MCM.SetCursorPosition(0)
