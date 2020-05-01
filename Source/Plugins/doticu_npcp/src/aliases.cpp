@@ -136,22 +136,74 @@ namespace doticu_npcp {
 
     VMResultArray<BGSBaseAlias *> Aliases_Filter(StaticFunctionTag *,
                                                  VMArray<BGSBaseAlias *> arr_aliases,
-                                                 BSFixedString str_sex, // "male", "female", "none"
-                                                 BSFixedString str_race,
-                                                 BSFixedString str_search,
-                                                 UInt32 int_flags
+                                                 VMArray<BSFixedString> arr_strings,
+                                                 VMArray<SInt32> arr_ints
     ) {
-        // what about style and vitality?
+        // we pack arguments to make the function signature less cluttered and more easily extendable
+        BSFixedString str_sex;      // = "" ("male", "female", "none", or "" for any)
+        BSFixedString str_race;     // = "" (exposed by game, "" for any)
+        BSFixedString str_search;   // = "" (user input, "" for no search)
+        SInt32 int_style;           // = 0 (exposed by doticu_npcp_codes, 0+ for any)
+        SInt32 int_vitality;        // = 0 (exposed by doticu_npcp_codes, 0+ for any)
+        SInt32 int_rating;          // = -1 (exposed by doticu_npcp_member, -1 or less for any, 0 is no rating)
+        UInt32 int_flags;           // = 0 (constructed with Aliases_Filter_Flag, 0 for no flags)
 
+        u64 len_arr_strings = arr_strings.Length();
+        if (len_arr_strings > 0) {
+            arr_strings.Get(&str_sex, 0);
+        }
+        if (len_arr_strings > 1) {
+            arr_strings.Get(&str_race, 1);
+        }
+        if (len_arr_strings > 2) {
+            arr_strings.Get(&str_search, 2);
+        }
+
+        u64 len_arr_ints = arr_ints.Length();
+        if (len_arr_ints > 0) {
+            arr_ints.Get(&int_style, 0);
+        }
+        if (len_arr_ints > 1) {
+            arr_ints.Get(&int_vitality, 1);
+        }
+        if (len_arr_ints > 2) {
+            arr_ints.Get(&int_rating, 2);
+        }
+        if (len_arr_ints > 3) {
+            // just in case of any weirdness when bit-shifting
+            SInt32 int_flags_signed;
+            arr_ints.Get(&int_flags_signed, 3);
+            int_flags = (UInt32)int_flags_signed;
+        }
+
+        // we filter the read buffer into the write buffer, and then swap them after each pass.
+        // macros keep it more understandable, and less error prone. they are undef'd at the end of func
         VMResultArray<BGSBaseAlias *> vec_buffer_a;
         VMResultArray<BGSBaseAlias *> vec_buffer_b;
         VMResultArray<BGSBaseAlias *> *ptr_vec_read = &vec_buffer_a;
         VMResultArray<BGSBaseAlias *> *ptr_vec_write = &vec_buffer_b;
         VMResultArray<BGSBaseAlias *> *ptr_vec_temp;
-
         BGSBaseAlias *ptr_base_alias;
-        TESNPC *ptr_base_actor;
         Actor *ptr_ref_actor;
+
+        #define FOR_EACH                                    \
+        for (                                               \
+            u64 it_idx = 0, it_size = ptr_vec_read->size(); \
+            it_idx < it_size;                               \
+            it_idx += 1                                     \
+        )
+
+        #define READ_ALIAS (                            \
+            ptr_base_alias = ptr_vec_read->at(it_idx)   \
+        )
+
+        #define READ_ACTOR (                                \
+            ptr_ref_actor = Alias_Get_Actor(ptr_base_alias) \
+        )
+
+        #define WRITE_ALIAS (                           \
+            ptr_vec_write->push_back(ptr_base_alias)    \
+        )
 
         #define SWAP_BUFFERS                \
         M                                   \
@@ -161,16 +213,15 @@ namespace doticu_npcp {
             ptr_vec_write->clear();         \
         W
 
+        // we copy aliases into read buffer up front to start the pattern without handling VMArray's
+        // different methods on first pass. this means we can rearrange filter passes more robustly
         for (u64 idx_aliases = 0, num_aliases = arr_aliases.Length(); idx_aliases < num_aliases; idx_aliases += 1) {
             arr_aliases.Get(&ptr_base_alias, idx_aliases);
             ptr_vec_read->push_back(ptr_base_alias);
         }
-
+        
         // SEX
-        if (str_sex && str_sex.data[0] != 0) {
-            // the form may not be correct! it would be nice to verify with body model,
-            // but I haven't figured that out yet, or if it's even possible in SKSE.
-
+        if (str_sex.data && str_sex.data[0] != 0) {
             s64 int_sex_target;
             if (_stricmp(str_sex.data, "male") == 0) {
                 int_sex_target = 0;
@@ -182,13 +233,14 @@ namespace doticu_npcp {
                 int_sex_target = -2;
             }
 
-            for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
-                ptr_base_alias = ptr_vec_read->at(idx);
-                ptr_ref_actor = Alias_Get_Actor(ptr_base_alias);
+            // the form may not be correct! it would be nice to verify with body model,
+            // but I haven't figured that out yet, or if it's even possible in SKSE.
+            FOR_EACH {
+                READ_ALIAS;
+                READ_ACTOR;
                 if (ptr_ref_actor) {
-                    ptr_base_actor = (TESNPC *)ptr_ref_actor->baseForm;
-                    if (CALL_MEMBER_FN(ptr_base_actor, GetSex)() == int_sex_target) {
-                        ptr_vec_write->push_back(ptr_base_alias);
+                    if (CALL_MEMBER_FN((TESNPC *)ptr_ref_actor->baseForm, GetSex)() == int_sex_target) {
+                        WRITE_ALIAS;
                     }
                 }
             }
@@ -196,13 +248,13 @@ namespace doticu_npcp {
         }
 
         // RACE
-        if (str_race && str_race.data[0] != 0) {
-            for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
-                ptr_base_alias = ptr_vec_read->at(idx);
-                ptr_ref_actor = Alias_Get_Actor(ptr_base_alias);
+        if (str_race.data && str_race.data[0] != 0) {
+            FOR_EACH {
+                READ_ALIAS;
+                READ_ACTOR;
                 if (ptr_ref_actor) {
                     if (_stricmp(ptr_ref_actor->race->fullName.name.data, str_race.data) == 0) {
-                        ptr_vec_write->push_back(ptr_base_alias);
+                        WRITE_ALIAS;
                     }
                 }
             }
@@ -210,20 +262,20 @@ namespace doticu_npcp {
         }
 
         // SEARCH
-        if (str_search && str_search.data[0] != 0) {
+        if (str_search.data && str_search.data[0] != 0) {
             BSFixedString str_name;
-            for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
-                ptr_base_alias = ptr_vec_read->at(idx);
-                ptr_ref_actor = Alias_Get_Actor(ptr_base_alias);
+            FOR_EACH {
+                READ_ALIAS;
+                READ_ACTOR;
                 if (ptr_ref_actor) {
                     str_name = CALL_MEMBER_FN(ptr_ref_actor, GetReferenceName)();
                     if (strlen(str_search.data) > 1) {
                         if (String_Contains_Caseless(str_name.data, str_search.data)) {
-                            ptr_vec_write->push_back(ptr_base_alias);
+                            WRITE_ALIAS;
                         }
                     } else {
                         if (String_Starts_With_Caseless(str_name.data, str_search.data)) {
-                            ptr_vec_write->push_back(ptr_base_alias);
+                            WRITE_ALIAS;
                         }
                     }
                 }
@@ -231,183 +283,207 @@ namespace doticu_npcp {
             SWAP_BUFFERS;
         }
 
-        // ALIVE/DEAD
+        // STYLE
+        if (int_style < 0) {
+            FOR_EACH {
+                READ_ALIAS;
+                if (Alias_Get_Style(ptr_base_alias) == int_style) {
+                    WRITE_ALIAS;
+                }
+            }
+            SWAP_BUFFERS;
+        }
+
+        // VITALITY
+        if (int_vitality < 0) {
+            FOR_EACH {
+                READ_ALIAS;
+                if (Alias_Get_Vitality(ptr_base_alias) == int_vitality) {
+                    WRITE_ALIAS;
+                }
+            }
+            SWAP_BUFFERS;
+        }
+
+        // RATING
+        if (int_rating > -1) {
+            FOR_EACH {
+                READ_ALIAS;
+                if (Alias_Get_Rating(ptr_base_alias) == int_rating) {
+                    WRITE_ALIAS;
+                }
+            }
+            SWAP_BUFFERS;
+        }
+
+        // FLAG ALIVE/DEAD
         if (Bit_Is_Set(int_flags, IS_ALIVE)) {
-            for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
-                ptr_base_alias = ptr_vec_read->at(idx);
-                ptr_ref_actor = Alias_Get_Actor(ptr_base_alias);
-                if (!ptr_ref_actor->IsDead(1)) {
-                    ptr_vec_write->push_back(ptr_base_alias);
+            FOR_EACH {
+                READ_ALIAS;
+                READ_ACTOR;
+                if (ptr_ref_actor && !ptr_ref_actor->IsDead(1)) {
+                    WRITE_ALIAS;
                 }
             }
             SWAP_BUFFERS;
-        }
-        if (Bit_Is_Set(int_flags, IS_DEAD)) {
-            for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
-                ptr_base_alias = ptr_vec_read->at(idx);
-                ptr_ref_actor = Alias_Get_Actor(ptr_base_alias);
-                if (ptr_ref_actor->IsDead(1)) {
-                    ptr_vec_write->push_back(ptr_base_alias);
+        } else if (Bit_Is_Set(int_flags, IS_DEAD)) {
+            FOR_EACH {
+                READ_ALIAS;
+                READ_ACTOR;
+                if (ptr_ref_actor && ptr_ref_actor->IsDead(1)) {
+                    WRITE_ALIAS;
                 }
             }
             SWAP_BUFFERS;
         }
 
-        // ORIGINAL/CLONE
+        // FLAG ORIGINAL/CLONE
         if (Bit_Is_Set(int_flags, IS_ORIGINAL)) {
-            for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
-                ptr_base_alias = ptr_vec_read->at(idx);
+            FOR_EACH {
+                READ_ALIAS;
                 if (Alias_Is_Original(ptr_base_alias)) {
-                    ptr_vec_write->push_back(ptr_base_alias);
+                    WRITE_ALIAS;
                 }
             }
             SWAP_BUFFERS;
-        }
-        if (Bit_Is_Set(int_flags, IS_CLONE)) {
-            for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
-                ptr_base_alias = ptr_vec_read->at(idx);
+        } else if (Bit_Is_Set(int_flags, IS_CLONE)) {
+            FOR_EACH {
+                READ_ALIAS;
                 if (Alias_Is_Clone(ptr_base_alias)) {
-                    ptr_vec_write->push_back(ptr_base_alias);
+                    WRITE_ALIAS;
                 }
             }
             SWAP_BUFFERS;
         }
 
-        // FOLLOWER
+        // FLAG FOLLOWER
         if (Bit_Is_Set(int_flags, IS_FOLLOWER)) {
-            for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
-                ptr_base_alias = ptr_vec_read->at(idx);
+            FOR_EACH {
+                READ_ALIAS;
                 if (Alias_Is_Follower(ptr_base_alias)) {
-                    ptr_vec_write->push_back(ptr_base_alias);
+                    WRITE_ALIAS;
                 }
             }
             SWAP_BUFFERS;
-        }
-        if (Bit_Is_Set(int_flags, ISNT_FOLLOWER)) {
-            for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
-                ptr_base_alias = ptr_vec_read->at(idx);
+        } else if (Bit_Is_Set(int_flags, ISNT_FOLLOWER)) {
+            FOR_EACH {
+                READ_ALIAS;
                 if (!Alias_Is_Follower(ptr_base_alias)) {
-                    ptr_vec_write->push_back(ptr_base_alias);
+                    WRITE_ALIAS;
                 }
             }
             SWAP_BUFFERS;
         }
 
-        // SETTLER
+        // FLAG SETTLER
         if (Bit_Is_Set(int_flags, IS_SETTLER)) {
-            for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
-                ptr_base_alias = ptr_vec_read->at(idx);
+            FOR_EACH {
+                READ_ALIAS;
                 if (Alias_Is_Settler(ptr_base_alias)) {
-                    ptr_vec_write->push_back(ptr_base_alias);
+                    WRITE_ALIAS;
                 }
             }
             SWAP_BUFFERS;
-        }
-        if (Bit_Is_Set(int_flags, ISNT_SETTLER)) {
-            for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
-                ptr_base_alias = ptr_vec_read->at(idx);
+        } else if (Bit_Is_Set(int_flags, ISNT_SETTLER)) {
+            FOR_EACH {
+                READ_ALIAS;
                 if (!Alias_Is_Settler(ptr_base_alias)) {
-                    ptr_vec_write->push_back(ptr_base_alias);
+                    WRITE_ALIAS;
                 }
             }
             SWAP_BUFFERS;
         }
 
-        // IMMOBILE
+        // FLAG IMMOBILE
         if (Bit_Is_Set(int_flags, IS_IMMOBILE)) {
-            for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
-                ptr_base_alias = ptr_vec_read->at(idx);
+            FOR_EACH {
+                READ_ALIAS;
                 if (Alias_Is_Immobile(ptr_base_alias)) {
-                    ptr_vec_write->push_back(ptr_base_alias);
+                    WRITE_ALIAS;
                 }
             }
             SWAP_BUFFERS;
-        }
-        if (Bit_Is_Set(int_flags, ISNT_IMMOBILE)) {
-            for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
-                ptr_base_alias = ptr_vec_read->at(idx);
+        } else if (Bit_Is_Set(int_flags, ISNT_IMMOBILE)) {
+            FOR_EACH {
+                READ_ALIAS;
                 if (!Alias_Is_Immobile(ptr_base_alias)) {
-                    ptr_vec_write->push_back(ptr_base_alias);
+                    WRITE_ALIAS;
                 }
             }
             SWAP_BUFFERS;
         }
 
-        // THRALL
+        // FLAG THRALL
         if (Bit_Is_Set(int_flags, IS_THRALL)) {
-            for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
-                ptr_base_alias = ptr_vec_read->at(idx);
+            FOR_EACH {
+                READ_ALIAS;
                 if (Alias_Is_Thrall(ptr_base_alias)) {
-                    ptr_vec_write->push_back(ptr_base_alias);
+                    WRITE_ALIAS;
                 }
             }
             SWAP_BUFFERS;
-        }
-        if (Bit_Is_Set(int_flags, ISNT_THRALL)) {
-            for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
-                ptr_base_alias = ptr_vec_read->at(idx);
+        } else if (Bit_Is_Set(int_flags, ISNT_THRALL)) {
+            FOR_EACH {
+                READ_ALIAS;
                 if (!Alias_Is_Thrall(ptr_base_alias)) {
-                    ptr_vec_write->push_back(ptr_base_alias);
+                    WRITE_ALIAS;
                 }
             }
             SWAP_BUFFERS;
         }
 
-        // PARALYZED
+        // FLAG PARALYZED
         if (Bit_Is_Set(int_flags, IS_PARALYZED)) {
-            for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
-                ptr_base_alias = ptr_vec_read->at(idx);
+            FOR_EACH {
+                READ_ALIAS;
                 if (Alias_Is_Paralyzed(ptr_base_alias)) {
-                    ptr_vec_write->push_back(ptr_base_alias);
+                    WRITE_ALIAS;
                 }
             }
             SWAP_BUFFERS;
-        }
-        if (Bit_Is_Set(int_flags, ISNT_PARALYZED)) {
-            for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
-                ptr_base_alias = ptr_vec_read->at(idx);
+        } else if (Bit_Is_Set(int_flags, ISNT_PARALYZED)) {
+            FOR_EACH {
+                READ_ALIAS;
                 if (!Alias_Is_Paralyzed(ptr_base_alias)) {
-                    ptr_vec_write->push_back(ptr_base_alias);
+                    WRITE_ALIAS;
                 }
             }
             SWAP_BUFFERS;
         }
 
-        // MANNEQUIN
+        // FLAG MANNEQUIN
         if (Bit_Is_Set(int_flags, IS_MANNEQUIN)) {
-            for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
-                ptr_base_alias = ptr_vec_read->at(idx);
+            FOR_EACH {
+                READ_ALIAS;
                 if (Alias_Is_Mannequin(ptr_base_alias)) {
-                    ptr_vec_write->push_back(ptr_base_alias);
+                    WRITE_ALIAS;
                 }
             }
             SWAP_BUFFERS;
-        }
-        if (Bit_Is_Set(int_flags, ISNT_MANNEQUIN)) {
-            for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
-                ptr_base_alias = ptr_vec_read->at(idx);
+        } else if (Bit_Is_Set(int_flags, ISNT_MANNEQUIN)) {
+            FOR_EACH {
+                READ_ALIAS;
                 if (!Alias_Is_Mannequin(ptr_base_alias)) {
-                    ptr_vec_write->push_back(ptr_base_alias);
+                    WRITE_ALIAS;
                 }
             }
             SWAP_BUFFERS;
         }
 
-        // REANIMATED
+        // FLAG REANIMATED
         if (Bit_Is_Set(int_flags, IS_REANIMATED)) {
-            for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
-                ptr_base_alias = ptr_vec_read->at(idx);
+            FOR_EACH {
+                READ_ALIAS;
                 if (Alias_Is_Reanimated(ptr_base_alias)) {
-                    ptr_vec_write->push_back(ptr_base_alias);
+                    WRITE_ALIAS;
                 }
             }
             SWAP_BUFFERS;
-        }
-        if (Bit_Is_Set(int_flags, ISNT_REANIMATED)) {
-            for (u64 idx = 0, size = ptr_vec_read->size(); idx < size; idx += 1) {
-                ptr_base_alias = ptr_vec_read->at(idx);
+        } else if (Bit_Is_Set(int_flags, ISNT_REANIMATED)) {
+            FOR_EACH {
+                READ_ALIAS;
                 if (!Alias_Is_Reanimated(ptr_base_alias)) {
-                    ptr_vec_write->push_back(ptr_base_alias);
+                    WRITE_ALIAS;
                 }
             }
             SWAP_BUFFERS;
@@ -416,6 +492,10 @@ namespace doticu_npcp {
         return *ptr_vec_read;
 
         #undef SWAP_BUFFERS
+        #undef WRITE_ALIAS
+        #undef READ_ACTOR
+        #undef READ_ALIAS
+        #undef FOR_EACH
     }
     bool String_Starts_With_Caseless(const char *str_a, const char *str_b) {
         char char_a;
@@ -439,6 +519,8 @@ namespace doticu_npcp {
 
         return false;
     }
+
+    // we use strings to avoid both programs having to know the actual flags, which is more error prone and harder to keep up to date
     UInt32 Aliases_Filter_Flag(StaticFunctionTag *, UInt32 int_flags, BSFixedString str_command, BSFixedString str_flag) {
         s64 idx_flags = -1;
         if (false) {

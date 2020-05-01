@@ -281,35 +281,8 @@ function f_On_Option_Highlight(int id_option)
         if !ref_member
             return
         endIf
-
-        Actor ref_actor = ref_member.Get_Actor()
-        if !ref_actor
-            return
-        endIf
-
-        string str_name = ref_member.Get_Name()
-
-        string str_sex = "Sex:"
-        if ACTORS.Is_Male(ref_actor)
-            str_sex += " Male"
-        elseIf ACTORS.Is_Female(ref_actor)
-            str_sex += " Female"
-        else
-            str_sex += " None"
-        endIf
-
-        string str_race = "Race: " + ref_actor.GetRace().GetName()
-
-        string str_info = "Opens the member menu for " + str_name + ".\n"
-        str_info += str_sex + ", " + str_race + "\n"
-
-        if ref_member.Get_Rating() > 0
-            str_info += "Rating: " + ref_member.Get_Rating_Stars()
-        endIf
-
-        MCM.SetInfoText(str_info)
-        ; this should show more about the member, style, and stats!!!
-        ; whether is dead, healthly, etc.
+        
+        MCM.SetInfoText("Opens the member menu for " + ref_member.Get_Name() + ".\n" + Get_Info_String(ref_member))
 
     endIf
 endFunction
@@ -354,6 +327,40 @@ function f_On_Option_Default(int id_option)
     if p_code_view == CODES.VIEW_MEMBERS_MEMBER || p_code_view == CODES.VIEW_FILTER_MEMBERS_MEMBER
         return MCM.MCM_MEMBER.f_On_Option_Default(id_option)
     endIf
+endFunction
+
+; Public Methdos
+string function Get_Info_String(doticu_npcp_member ref_member)
+    if !ref_member
+        return ""
+    endIf
+
+    Actor ref_actor = ref_member.Get_Actor()
+    if !ref_actor
+        return ""
+    endIf
+
+    string str_sex = "Sex:"
+    if ACTORS.Is_Male(ref_actor)
+        str_sex += " Male"
+    elseIf ACTORS.Is_Female(ref_actor)
+        str_sex += " Female"
+    else
+        str_sex += " None"
+    endIf
+
+    string str_race = "Race: " + ref_actor.GetRace().GetName()
+
+    string str_info = str_sex + ", " + str_race + "\n"
+
+    if ref_member.Get_Rating() > 0
+        str_info += "Rating: " + ref_member.Get_Rating_Stars()
+    endIf
+
+    ; this should show more about the member, style, and stats!!!
+    ; whether is dead, healthly, etc.
+
+    return str_info
 endFunction
 
 ; Private Methods

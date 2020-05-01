@@ -138,6 +138,7 @@ int property OUTFIT_CURRENT                 = -6000 autoReadOnly
 int property OUTFIT_VANILLA                 = -7000 autoReadOnly
 int property OUTFIT_DEFAULT                 = -8000 autoReadOnly
 
+; STYLE AND VITALITY codes are to replace certain IS_ codes
 int property STYLE_DEFAULT                  = -1000 autoReadOnly
 int property STYLE_WARRIOR                  = -2000 autoReadOnly
 int property STYLE_MAGE                     = -3000 autoReadOnly

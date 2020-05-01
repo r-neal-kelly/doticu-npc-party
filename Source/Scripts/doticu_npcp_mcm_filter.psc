@@ -29,7 +29,6 @@ bool                p_is_created                =   false
 int                 p_code_view                 =       0
 int                 p_int_arg_flags             =       0
 string[]            p_arr_race_names            =    none
-string[]            p_arr_initial_letters       =    none
 string              p_str_view_filter           =      ""
 
 int                 p_option_filter             =      -1
@@ -42,9 +41,17 @@ string              p_str_arg_race              =      ""
 string              p_str_view_race             = " Any "
 int                 p_option_race               =      -1
 
-string              p_str_arg_initial_letter    =      ""
-string              p_str_view_initial_letter   = " Any "
-int                 p_option_initial_letter     =      -1
+int                 p_int_arg_style             =       0
+string              p_str_view_style            = " Any "
+int                 p_option_style              =      -1
+
+int                 p_int_arg_vitality          =       0
+string              p_str_view_vitality         = " Any "
+int                 p_option_vitality           =      -1
+
+int                 p_int_arg_rating            =      -1
+string              p_str_view_rating           = " Any "
+int                 p_option_rating             =      -1
 
 string              p_str_arg_search            =      ""
 int                 p_option_search             =      -1
@@ -126,13 +133,16 @@ function f_Build_Page()
 
     p_option_sex = MCM.AddMenuOption(" Sex ", p_str_view_sex)
     p_option_race = MCM.AddMenuOption(" Race ", p_str_view_race)
-    if p_str_arg_search == ""
-        p_option_initial_letter = MCM.AddMenuOption(" Initial Letter ", p_str_view_initial_letter, MCM.FLAG_ENABLE)
-    else
-        p_option_initial_letter = MCM.AddMenuOption(" Initial Letter ", p_str_view_initial_letter, MCM.FLAG_DISABLE)
-    endIf
+
+    p_option_style = MCM.AddMenuOption(" Style ", p_str_view_style)
+    p_option_vitality = MCM.AddMenuOption(" Vitality ", p_str_view_vitality)
+
+    p_option_rating = MCM.AddMenuOption(" Rating ", p_str_view_rating)
     p_option_search = MCM.AddInputOption(" Search ", p_str_arg_search)
 
+    MCM.AddHeaderOption("")
+    MCM.AddHeaderOption("")
+    
     p_option_is_alive = MCM.AddToggleOption(" Is Alive ", p_int_alive_dead == 1)
     p_option_is_dead = MCM.AddToggleOption(" Is Dead ", p_int_alive_dead == -1)
 
@@ -380,24 +390,41 @@ function f_On_Option_Menu_Open(int id_option)
         MCM.SetMenuDialogOptions(arr_options)
         MCM.SetMenuDialogDefaultIndex(0)
 
-    elseIf id_option == p_option_initial_letter
-        p_arr_initial_letters = doticu_npcp.Aliases_Get_Initial_Letters(MEMBERS.Get_Members())
+    elseIf id_option == p_option_style
+        string[] arr_options = Utility.CreateStringArray(6, "")
 
-        int num_letters
-        if p_arr_initial_letters[0] == ""
-            num_letters = 0
-        else
-            num_letters = p_arr_initial_letters.length
-        endIf
-
-        string[] arr_options = Utility.CreateStringArray(num_letters + 1, "")
         arr_options[0] = " Any "
+        arr_options[1] = " Default "
+        arr_options[2] = " Warrior "
+        arr_options[3] = " Mage "
+        arr_options[4] = " Archer "
+        arr_options[5] = " Coward "
 
-        int idx_letters = 0
-        while idx_letters < num_letters
-            arr_options[idx_letters + 1] = p_arr_initial_letters[idx_letters]
-            idx_letters += 1
-        endWhile
+        MCM.SetMenuDialogOptions(arr_options)
+        MCM.SetMenuDialogDefaultIndex(0)
+    
+    elseIf id_option == p_option_vitality
+        string[] arr_options = Utility.CreateStringArray(5, "")
+
+        arr_options[0] = " Any "
+        arr_options[1] = " Mortal "
+        arr_options[2] = " Protected "
+        arr_options[3] = " Essential "
+        arr_options[4] = " Invulnerable "
+
+        MCM.SetMenuDialogOptions(arr_options)
+        MCM.SetMenuDialogDefaultIndex(0)
+
+    elseIf id_option == p_option_rating
+        string[] arr_options = Utility.CreateStringArray(7, "")
+
+        arr_options[0] = " Any "
+        arr_options[1] = " - "
+        arr_options[2] = " * "
+        arr_options[3] = " ** "
+        arr_options[4] = " *** "
+        arr_options[5] = " **** "
+        arr_options[6] = " ***** "
 
         MCM.SetMenuDialogOptions(arr_options)
         MCM.SetMenuDialogDefaultIndex(0)
@@ -444,18 +471,80 @@ function f_On_Option_Menu_Accept(int id_option, int idx_option)
         endIf
         MCM.SetMenuOptionValue(id_option, p_str_view_race, MCM.DO_UPDATE)
 
-    elseIf id_option == p_option_initial_letter
+    elseIf id_option == p_option_style
         if idx_option < 0
 
         elseIf idx_option == 0
-            p_str_arg_initial_letter = ""
-            p_str_view_initial_letter = " Any "
-        else
-            p_str_arg_initial_letter = p_arr_initial_letters[idx_option - 1]
-            p_str_view_initial_letter = p_str_arg_initial_letter
+            p_int_arg_style = 0
+            p_str_view_style = " Any "
+        elseIf idx_option == 1
+            p_int_arg_style = CODES.IS_DEFAULT
+            p_str_view_style = " Default "
+        elseIf idx_option == 2
+            p_int_arg_style = CODES.IS_WARRIOR
+            p_str_view_style = " Warrior "
+        elseIf idx_option == 3
+            p_int_arg_style = CODES.IS_MAGE
+            p_str_view_style = " Mage "
+        elseIf idx_option == 4
+            p_int_arg_style = CODES.IS_ARCHER
+            p_str_view_style = " Archer "
+        elseIf idx_option == 5
+            p_int_arg_style = CODES.IS_COWARD
+            p_str_view_style = " Coward "
 
         endIf
-        MCM.SetMenuOptionValue(id_option, p_str_view_initial_letter, MCM.DO_UPDATE)
+        MCM.SetMenuOptionValue(id_option, p_str_view_style, MCM.DO_UPDATE)
+
+    elseIf id_option == p_option_vitality
+        if idx_option < 0
+
+        elseIf idx_option == 0
+            p_int_arg_vitality = 0
+            p_str_view_vitality = " Any "
+        elseIf idx_option == 1
+            p_int_arg_vitality = CODES.IS_MORTAL
+            p_str_view_vitality = " Mortal "
+        elseIf idx_option == 2
+            p_int_arg_vitality = CODES.IS_PROTECTED
+            p_str_view_vitality = " Protected "
+        elseIf idx_option == 3
+            p_int_arg_vitality = CODES.IS_ESSENTIAL
+            p_str_view_vitality = " Essential "
+        elseIf idx_option == 4
+            p_int_arg_vitality = CODES.IS_INVULNERABLE
+            p_str_view_vitality = " Invulnerable "
+
+        endIf
+        MCM.SetMenuOptionValue(id_option, p_str_view_vitality, MCM.DO_UPDATE)
+
+    elseIf id_option == p_option_rating
+        if idx_option < 0
+
+        elseIf idx_option == 0
+            p_int_arg_rating = -1
+            p_str_view_rating = " Any "
+        elseIf idx_option == 1
+            p_int_arg_rating = 0
+            p_str_view_rating = " - "
+        elseIf idx_option == 2
+            p_int_arg_rating = 1
+            p_str_view_rating = " * "
+        elseIf idx_option == 3
+            p_int_arg_rating = 2
+            p_str_view_rating = " ** "
+        elseIf idx_option == 4
+            p_int_arg_rating = 3
+            p_str_view_rating = " *** "
+        elseIf idx_option == 5
+            p_int_arg_rating = 4
+            p_str_view_rating = " **** "
+        elseIf idx_option == 6
+            p_int_arg_rating = 5
+            p_str_view_rating = " ***** "
+
+        endIf
+        MCM.SetMenuOptionValue(id_option, p_str_view_rating, MCM.DO_UPDATE)
 
     endIf
 endFunction
@@ -468,11 +557,6 @@ function f_On_Option_Input_Accept(int id_option, string str_input)
     if false
 
     elseIf id_option == p_option_search
-        if str_input == ""
-            MCM.f_Enable(p_option_initial_letter, MCM.DONT_UPDATE)
-        else
-            MCM.f_Disable(p_option_initial_letter, MCM.DONT_UPDATE)
-        endIf
         p_str_arg_search = str_input
         MCM.SetInputOptionValue(p_option_search, p_str_arg_search, MCM.DO_UPDATE)
 
@@ -492,8 +576,12 @@ function f_On_Option_Highlight(int id_option)
         MCM.SetInfoText("Find members with this sex.")
     elseIf id_option == p_option_race
         MCM.SetInfoText("Find members with this race.")
-    elseIf id_option == p_option_initial_letter
-        MCM.SetInfoText("Find members whose name starts with this letter.")
+    elseIf id_option == p_option_style
+        MCM.SetInfoText("Find members with this style.")
+    elseIf id_option == p_option_vitality
+        MCM.SetInfoText("Find members with this vitality.")
+    elseIf id_option == p_option_rating
+        MCM.SetInfoText("Find members with this rating.")
     elseIf id_option == p_option_search
         MCM.SetInfoText("Find members whose name contains this input. (If just one character, it only looks at the start of the name.)")
     elseIf id_option == p_option_is_alive
@@ -501,7 +589,7 @@ function f_On_Option_Highlight(int id_option)
     elseIf id_option == p_option_is_dead
         MCM.SetInfoText("Find members who are dead.")
     elseIf id_option == p_option_is_original
-        MCM.SetInfoText("Find members who are original, as opposed to clones.")
+        MCM.SetInfoText("Find members who are originals, as opposed to clones.")
     elseIf id_option == p_option_is_clone
         MCM.SetInfoText("Find members who are clones, as opposed to originals.")
     elseIf id_option == p_option_is_follower
@@ -570,7 +658,6 @@ function p_Concat_Filter_String_Param(string str_param)
 endFunction
 
 function p_Goto_Filter_Members()
-    string str_arg_search = ""
     p_str_view_filter = ""
     p_int_arg_flags = 0
 
@@ -580,12 +667,17 @@ function p_Goto_Filter_Members()
     if p_str_arg_race
         p_Concat_Filter_String_Param(p_str_view_race)
     endIf
+    if p_int_arg_style < 0
+        p_Concat_Filter_String_Param(p_str_view_style)
+    endIf
+    if p_int_arg_vitality < 0
+        p_Concat_Filter_String_Param(p_str_view_vitality)
+    endIf
+    if p_int_arg_rating > -1
+        p_Concat_Filter_String_Param(p_str_view_rating)
+    endIf
     if p_str_arg_search
-        str_arg_search = p_str_arg_search
         p_Concat_Filter_String_Param("'" + p_str_arg_search + "'")
-    elseIf p_str_arg_initial_letter
-        str_arg_search = p_str_arg_initial_letter
-        p_Concat_Filter_String_Param("'" + p_str_arg_initial_letter + "'")
     endIf
 
     if p_int_alive_dead == 1
@@ -664,7 +756,11 @@ function p_Goto_Filter_Members()
         p_str_view_filter = " All Members "
     endIf
 
-    Alias[] arr_filter = doticu_npcp.Aliases_Filter(MEMBERS.Get_Members(), p_str_arg_sex, p_str_arg_race, str_arg_search, p_int_arg_flags)
+    Alias[] arr_filter = doticu_npcp.Aliases_Filter( \
+        MEMBERS.Get_Members(), \
+        doticu_npcp.Aliases_Filter_Strings(p_str_arg_sex, p_str_arg_race, p_str_arg_search), \
+        doticu_npcp.Aliases_Filter_Ints(p_int_arg_style, p_int_arg_vitality, p_int_arg_rating, p_int_arg_flags) \
+    )
 
     MCM.MCM_MEMBERS.f_View_Filter_Members(arr_filter)
     MCM.MCM_MEMBERS.f_Build_Page()

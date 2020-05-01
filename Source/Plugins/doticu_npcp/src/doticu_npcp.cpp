@@ -34,7 +34,7 @@ namespace doticu_npcp {
                 registry)
         );
         registry->RegisterFunction(
-            new NativeFunction5 <StaticFunctionTag, VMResultArray<BGSBaseAlias *>, VMArray<BGSBaseAlias *>, BSFixedString, BSFixedString, BSFixedString, UInt32>(
+            new NativeFunction3 <StaticFunctionTag, VMResultArray<BGSBaseAlias *>, VMArray<BGSBaseAlias *>, VMArray<BSFixedString>, VMArray<SInt32>>(
                 "Aliases_Filter",
                 "doticu_npcp",
                 doticu_npcp::Aliases_Filter,

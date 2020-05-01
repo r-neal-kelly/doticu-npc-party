@@ -11,6 +11,16 @@ namespace doticu_npcp {
         return Object_Value(&hnd_alias, "p_ref_actor").As_Actor();
     }
 
+    SInt32 Alias_Get_Style(BGSBaseAlias *ptr_alias) {
+        Object_Handle hnd_alias(kFormType_Alias, ptr_alias);
+        return Object_Value(&hnd_alias, "p_code_style").As_Int();
+    }
+
+    SInt32 Alias_Get_Vitality(BGSBaseAlias *ptr_alias) {
+        Object_Handle hnd_alias(kFormType_Alias, ptr_alias);
+        return Object_Value(&hnd_alias, "p_code_vitality").As_Int();
+    }
+
     SInt32 Alias_Get_Rating(BGSBaseAlias *ptr_alias) {
         Object_Handle hnd_alias(kFormType_Alias, ptr_alias);
         return Object_Value(&hnd_alias, "p_int_rating").As_Int();

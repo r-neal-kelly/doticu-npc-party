@@ -214,6 +214,8 @@ namespace doticu_npcp {
 
     // alias.cpp
     Actor *Alias_Get_Actor(BGSBaseAlias *ptr_alias);
+    SInt32 Alias_Get_Style(BGSBaseAlias *ptr_alias);
+    SInt32 Alias_Get_Vitality(BGSBaseAlias *ptr_alias);
     SInt32 Alias_Get_Rating(BGSBaseAlias *ptr_alias);
     bool Alias_Is_Created(BGSBaseAlias *ptr_alias);
     bool Alias_Is_Original(BGSBaseAlias *ptr_alias);
@@ -229,7 +231,7 @@ namespace doticu_npcp {
     // aliases.cpp
     VMResultArray<BGSBaseAlias *> Aliases_Slice(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr, UInt32 idx_from, UInt32 idx_to_ex);
     VMResultArray<BGSBaseAlias *> Aliases_Sort(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr_aliases, BSFixedString str_algorithm);
-    VMResultArray<BGSBaseAlias *> Aliases_Filter(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr_aliases, BSFixedString str_sex, BSFixedString str_race, BSFixedString str_search, UInt32 int_flags);
+    VMResultArray<BGSBaseAlias *> Aliases_Filter(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr_aliases, VMArray<BSFixedString> arr_strings, VMArray<SInt32> arr_ints);
     UInt32 Aliases_Filter_Flag(StaticFunctionTag *, UInt32 int_flags, BSFixedString str_command, BSFixedString str_flag);
     VMResultArray<BSFixedString> Aliases_Get_Race_Names(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr_aliases);
     VMResultArray<BSFixedString> Aliases_Get_Initial_Letters(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr_aliases);
