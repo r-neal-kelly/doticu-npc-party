@@ -456,6 +456,12 @@ function Summon_Sync(Actor ref_actor)
     GotoState("")
 endFunction
 
+function Goto_Sync(Actor ref_actor)
+    GotoState("p_STATE_BUSY")
+    PRIVATE.Goto(ref_actor)
+    GotoState("")
+endFunction
+
 function Resurrect_Sync(Actor ref_actor, bool auto_create)
     GotoState("p_STATE_BUSY")
     PRIVATE.Resurrect(CODES.DO_SYNC, ref_actor, auto_create)
@@ -820,6 +826,8 @@ state p_STATE_BUSY
     endFunction
     function Summon_Sync(Actor ref_actor)
     endFunction
+    function Goto_Sync(Actor ref_actor)
+    endFunction
     function Resurrect_Sync(Actor ref_actor, bool auto_create)
     endFunction
     function Reanimate_Sync(Actor ref_actor, bool auto_create)
@@ -1085,6 +1093,9 @@ state f_STATE_UPDATING
         LOGS.Notify_Is_Updating()
     endFunction
     function Summon_Sync(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Goto_Sync(Actor ref_actor)
         LOGS.Notify_Is_Updating()
     endFunction
     function Resurrect_Sync(Actor ref_actor, bool auto_create)

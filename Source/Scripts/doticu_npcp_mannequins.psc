@@ -117,7 +117,27 @@ endFunction
 function f_Unregister()
 endFunction
 
+function f_Try_Set_Teleport(doticu_npcp_member ref_member)
+    if Is_Member_In_Expo(ref_member)
+        p_Try_Set_Teleport()
+    endIf
+endFunction
+
 ; Private Methods
+function p_Try_Set_Teleport()
+    if !Is_Player_In_Expo()
+        p_Try_Unset_Teleport()
+        p_marker_teleport = CONSTS.ACTOR_PLAYER.PlaceAtMe(CONSTS.STATIC_MARKER_X, 1, false, false)
+    endIf
+endFunction
+
+function p_Try_Unset_Teleport()
+    if p_marker_teleport
+        p_marker_teleport.Disable()
+        p_marker_teleport.Delete()
+        p_marker_teleport = none
+    endIf
+endFunction
 
 ; Public Methods
 int function Toggle_Mannequin(int id_mannequin, doticu_npcp_mannequin ref_activator)
@@ -251,15 +271,8 @@ function Set_Cell_Name(int column, int row, string str_name)
     p_arr_cell_names[idx_cell_names] = str_name
 endFunction
 
-function Move_Player(int column, int row)
-    if !Is_Player_In_Expo()
-        if p_marker_teleport
-            p_marker_teleport.Disable()
-            p_marker_teleport.Delete()
-            p_marker_teleport = none
-        endIf
-        p_marker_teleport = CONSTS.ACTOR_PLAYER.PlaceAtMe(CONSTS.STATIC_MARKER_X, 1, false, false)
-    endIf
+function Move_Player_To_Cell(int column, int row)
+    p_Try_Set_Teleport()
 
     if column < 1
         column = 1
@@ -282,29 +295,28 @@ function Move_Player(int column, int row)
 endFunction
 
 function Remove_Player()
-    if Is_Player_In_Expo() && p_marker_teleport
-        CONSTS.ACTOR_PLAYER.MoveTo(p_marker_teleport)
-        p_marker_teleport.Disable()
-        p_marker_teleport.Delete()
-        p_marker_teleport = none
+    if Is_Player_In_Expo()
+        if p_marker_teleport
+            CONSTS.ACTOR_PLAYER.MoveTo(p_marker_teleport)
+            p_Try_Unset_Teleport()
+        else
+            CONSTS.ACTOR_PLAYER.MoveTo(CONSTS.MARKER_GOTO_SAFE)
+        endIf
     endIf
 endFunction
 
 function Move_Player_To_Antechamber()
-    if !Is_Player_In_Expo()
-        if p_marker_teleport
-            p_marker_teleport.Disable()
-            p_marker_teleport.Delete()
-            p_marker_teleport = none
-        endIf
-        p_marker_teleport = CONSTS.ACTOR_PLAYER.PlaceAtMe(CONSTS.STATIC_MARKER_X, 1, false, false)
-    endIf
+    p_Try_Set_Teleport()
 
     CONSTS.ACTOR_PLAYER.MoveTo(CONSTS.MARKER_EXPO_ANTECHAMBER)
 endFunction
 
 bool function Is_Player_In_Expo()
     return CONSTS.ACTOR_PLAYER.IsInLocation(CONSTS.LOCATION_EXPO)
+endFunction
+
+bool function Is_Member_In_Expo(doticu_npcp_member ref_member)
+    return ref_member && ref_member.Exists() && ref_member.Get_Actor().IsInLocation(CONSTS.LOCATION_EXPO)
 endFunction
 
 int function Get_Expo_Count()

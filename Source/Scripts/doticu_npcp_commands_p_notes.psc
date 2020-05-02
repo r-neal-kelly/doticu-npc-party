@@ -514,12 +514,26 @@ endFunction
 function Summon(int code_return, string str_name)
     if code_return == CODES.SUCCESS
         LOGS.Create_Note(str_name + " has been summoned.")
-    elseIf code_return == CODES.IS_MANNEQUIN
-        LOGS.Create_Note(str_name + " is a mannequin, and so wasn't summoned.")
+    elseIf code_return == CODES.ISNT_ACTOR
+        LOGS.Create_Note("Can only summon actors.")
     elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
         LOGS.Create_Note(str_name + " isn't a member, and so can't be summoned.")
+    elseIf code_return == CODES.IS_MANNEQUIN
+        LOGS.Create_Note(str_name + " is a mannequin, and so wasn't summoned.")
     else
         LOGS.Create_Note("It is unknown why " + str_name + " can not be summoned: " + code_return)
+    endIf
+endFunction
+
+function Goto(int code_return, string str_name)
+    if code_return == CODES.SUCCESS
+        LOGS.Create_Note("You have gone to " + str_name)
+    elseIf code_return == CODES.ISNT_ACTOR
+        LOGS.Create_Note("Can only go to actors.")
+    elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
+        LOGS.Create_Note(str_name + " isn't a member, and so can't be gone to.")
+    else
+        LOGS.Create_Note("It is unknown why " + str_name + " can not be gone to: " + code_return)
     endIf
 endFunction
 

@@ -35,6 +35,11 @@ doticu_npcp_npcs property NPCS hidden
         return p_DATA.MODS.FUNCS.NPCS
     endFunction
 endProperty
+doticu_npcp_mannequins property MANNEQUINS hidden
+    doticu_npcp_mannequins function Get()
+        return p_DATA.MODS.FUNCS.MANNEQUINS
+    endFunction
+endProperty
 doticu_npcp_containers property CONTAINERS hidden
     doticu_npcp_containers function Get()
         return p_DATA.MODS.FUNCS.CONTAINERS
@@ -1982,6 +1987,10 @@ int function Unclone()
 endFunction
 
 int function Summon(int distance = 120, int angle = 0)
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+
     ; we don't allow mannequins to be removed, until they are unmannequinized
     if Is_Mannequin()
         return CODES.IS_MANNEQUIN
@@ -1989,7 +1998,7 @@ int function Summon(int distance = 120, int angle = 0)
 
     ACTORS.Move_To(p_ref_actor, CONSTS.ACTOR_PLAYER, distance, angle)
 
-    p_Remannequinize()
+    p_Remannequinize(); this is what's causing them to not appear on display call, they are automatically moved back where they came from
     p_Reparalyze()
 
     return CODES.SUCCESS
@@ -2001,6 +2010,22 @@ endFunction
 
 int function Summon_Behind(int distance = 120)
     return Summon(distance, 180)
+endFunction
+
+int function Goto(int distance = 120, int angle = 0)
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+
+    ; this is done so that we can exit expo gracefully
+    MANNEQUINS.f_Try_Set_Teleport(self)
+
+    ACTORS.Move_To(CONSTS.ACTOR_PLAYER, p_ref_actor, distance, angle)
+
+    p_Remannequinize()
+    p_Reparalyze()
+
+    return CODES.SUCCESS
 endFunction
 
 bool function Is_Member()

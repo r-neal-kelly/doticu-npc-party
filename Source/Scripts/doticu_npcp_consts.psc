@@ -12,6 +12,7 @@ ObjectReference             p_MARKER_STORAGE                        = none
 ObjectReference             p_MARKER_CLONER                         = none
 ObjectReference             p_MARKER_CELL                           = none
 ObjectReference             p_MARKER_EXPO_ANTECHAMBER               = none
+ObjectReference             p_MARKER_GOTO_SAFE                      = none
 Spell                       p_ABILITY_CELL                          = none
 MiscObject                  p_TOKEN_MEMBER                          = none
 MiscObject                  p_TOKEN_SETTLER                         = none
@@ -159,6 +160,17 @@ ObjectReference property MARKER_EXPO_ANTECHAMBER
     function Set(ObjectReference val)
         if p_MARKER_EXPO_ANTECHAMBER == none
             p_MARKER_EXPO_ANTECHAMBER = val
+        endIf
+    endFunction
+endProperty
+
+ObjectReference property MARKER_GOTO_SAFE
+    ObjectReference function Get()
+        return p_MARKER_GOTO_SAFE
+    endFunction
+    function Set(ObjectReference val)
+        if p_MARKER_GOTO_SAFE == none
+            p_MARKER_GOTO_SAFE = val
         endIf
     endFunction
 endProperty
@@ -1024,6 +1036,7 @@ string property STR_PICKPOCKET              = "Pickpocket"                  auto
 string property STR_SPEECHCRAFT             = "Speechcraft"                 autoReadOnly hidden
 
 string property STR_MCM_SUMMON              = " Summon "                    autoReadOnly hidden
+string property STR_MCM_GOTO                = " Goto "                      autoReadOnly hidden
 string property STR_MCM_PACK                = " Pack "                      autoReadOnly hidden
 string property STR_MCM_OUTFIT              = " Outfit "                    autoReadOnly hidden
 string property STR_MCM_STYLE               = " Style "                     autoReadOnly hidden

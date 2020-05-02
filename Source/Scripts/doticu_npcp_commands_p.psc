@@ -720,6 +720,19 @@ function Summon(Actor ref_actor)
     NOTES.Summon(ref_member.Summon(), str_name)
 endFunction
 
+function Goto(Actor ref_actor)
+    if !ref_actor
+        return NOTES.Goto(CODES.ISNT_ACTOR, "")
+    endIf
+
+    doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
+    if !ref_member
+        return NOTES.Goto(CODES.HASNT_MEMBER, ACTORS.Get_Name(ref_actor))
+    endIf
+
+    NOTES.Goto(ref_member.Goto(), ref_member.Get_Name())
+endFunction
+
 function Toggle_Member(Actor ref_actor)
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if ref_member

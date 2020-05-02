@@ -405,7 +405,7 @@ function f_On_Option_Select(int id_option)
     elseIf id_option == p_option_enter
         MCM.f_Disable(id_option, MCM.DO_UPDATE)
         FUNCS.Close_Menus()
-        MANNEQUINS.Move_Player(p_curr_column, p_curr_row)
+        MANNEQUINS.Move_Player_To_Cell(p_curr_column, p_curr_row)
     elseIf id_option == p_option_exit
         MCM.f_Disable(id_option, MCM.DO_UPDATE)
         FUNCS.Close_Menus()

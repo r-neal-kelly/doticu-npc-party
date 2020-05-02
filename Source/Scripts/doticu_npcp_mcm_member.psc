@@ -83,6 +83,7 @@ int                 p_option_prev               =    -1
 int                 p_option_next               =    -1
 
 int                 p_option_summon             =    -1
+int                 p_option_goto               =    -1
 int                 p_option_pack               =    -1
 int                 p_option_outfit             =    -1
 int                 p_option_settle             =    -1
@@ -258,11 +259,15 @@ function f_On_Option_Select(int id_option)
         endIf
 
     elseIf id_option == p_option_summon
-        f_Disable(p_option_summon, DO_UPDATE)
+        f_Disable(id_option, DO_UPDATE)
         COMMANDS.Summon_Sync(ref_actor)
         p_Update_Commands()
+    elseIf id_option == p_option_goto
+        f_Disable(id_option, DO_UPDATE)
+        FUNCS.Close_Menus()
+        COMMANDS.Goto_Sync(ref_actor)
     elseIf id_option == p_option_pack
-        f_Disable(p_option_pack, DO_UPDATE)
+        f_Disable(id_option, DO_UPDATE)
         FUNCS.Close_Menus()
         COMMANDS.Pack_Sync(ref_actor, false)
 
@@ -508,10 +513,6 @@ function f_On_Option_Input_Accept(int id_option, string str_input)
 endFunction
 
 function f_On_Option_Highlight(int id_option)
-    if p_ref_member == none
-        Debug.Notification("got the mcm highlight bug, what did you do?")
-    endIf
-
     string str_name = p_ref_member.Get_Name()
 
     if false
@@ -525,6 +526,10 @@ function f_On_Option_Highlight(int id_option)
     elseIf id_option == p_option_next
         MCM.SetInfoText("Go to the Next Member")
 
+    elseIf id_option == p_option_summon
+        MCM.SetInfoText("Summon this member to you.")
+    elseIf id_option == p_option_goto
+        MCM.SetInfoText("Goto this member.")
     elseIf id_option == p_option_pack
         MCM.SetInfoText("Pack items in this member's inventory.")
     elseIf id_option == p_option_outfit
@@ -595,6 +600,7 @@ function p_Build_Commands()
     ; the lib in not capable, so we have to type out logic here too
 
     p_option_summon = MCM.AddTextOption(CONSTS.STR_MCM_SUMMON, "", FLAG_ENABLE)
+    p_option_goto = MCM.AddTextOption(CONSTS.STR_MCM_GOTO, "", FLAG_ENABLE)
     p_option_pack = MCM.AddTextOption(CONSTS.STR_MCM_PACK, "", FLAG_ENABLE)
     p_option_outfit = MCM.AddMenuOption(CONSTS.STR_MCM_OUTFIT, "", FLAG_ENABLE)
 
@@ -695,6 +701,7 @@ endFunction
 
 function p_Update_Commands()
     f_Enable(p_option_summon, DONT_UPDATE)
+    f_Enable(p_option_goto, DONT_UPDATE)
     f_Enable(p_option_pack, DONT_UPDATE)
     f_Enable(p_option_outfit, DONT_UPDATE)
 
