@@ -311,7 +311,7 @@ endState
 
 state STATE_MANNEQUINS_CELL
 bool function f_Is_Valid_Member(doticu_npcp_member ref_member)
-    if !ref_member || !ref_member.Exists() || p_curr_members.Find(ref_member) < 0
+    if !ref_member || !ref_member.Exists() || !ref_member.Is_Mannequin() || p_curr_members.Find(ref_member) < 0
         return false
     else
         return true
@@ -319,6 +319,8 @@ bool function f_Is_Valid_Member(doticu_npcp_member ref_member)
 endFunction
 
 function f_Build_Page()
+    p_curr_members = MANNEQUINS.Get_Mannequins(p_curr_column, p_curr_row)
+
     if p_code_view == CODES.VIEW_MANNEQUINS_MEMBER
         if f_Is_Valid_Member(p_ref_member)
             return p_Goto_Mannequins_Member()
@@ -328,7 +330,6 @@ function f_Build_Page()
     endIf
 
     p_code_view = CODES.VIEW_MANNEQUINS_CELL
-    p_curr_members = MANNEQUINS.Get_Mannequins(p_curr_column, p_curr_row)
     
     ; Title
     MCM.SetTitleText("Mannequins: C " + p_curr_column + ", R " + p_curr_row)

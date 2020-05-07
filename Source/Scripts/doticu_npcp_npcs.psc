@@ -234,7 +234,8 @@ function p_Remove_Base(int idx_bases)
         return
     endIf
 
-    ; we should remove our token item from the outfit so that it goes back to vanilla
+    ; we should remove our token item from the outfit so that it goes back to vanilla.
+    ; even if another base is using this outfit, it it readded each time a reference is outfitted
     Outfit outfit_default = p_vec_outfits_def.At(idx_bases) as Outfit
     doticu_npcp.Outfit_Remove_Item(outfit_default, CONSTS.ARMOR_BLANK as Form)
     
@@ -581,7 +582,6 @@ p_Lock()
     int idx_bases = p_vec_bases.Find(form_base_actor)
     if idx_bases > -1
         Outfit outfit_default = p_vec_outfits_def.At(idx_bases) as Outfit
-        ;doticu_npcp.Outfit_Add_Item(outfit_default, CONSTS.ARMOR_BLANK as Form); causes an undefined instance
         return p_Unlock_Pass_Outfit(outfit_default)
     else
         return p_Unlock_Pass_Outfit(none)
@@ -594,6 +594,9 @@ function Set_Default_Outfit(Actor ref_actor, Outfit val_outfit)
 p_Lock()
     int idx_bases = p_vec_bases.Find(form_base_actor)
     if idx_bases > -1
+        ; we remove the blank armor just as we do when a base is unregistered. it gets added back by outfitter if needed
+        doticu_npcp.Outfit_Remove_Item(p_vec_outfits_def.At(idx_bases) as Outfit, CONSTS.ARMOR_BLANK as Form)
+        doticu_npcp.Outfit_Add_Item(val_outfit, CONSTS.ARMOR_BLANK as Form)
         p_vec_outfits_def.Set(idx_bases, val_outfit as Form)
     endIf
 p_Unlock()

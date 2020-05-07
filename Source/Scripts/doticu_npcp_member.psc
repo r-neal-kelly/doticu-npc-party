@@ -607,7 +607,10 @@ f_Lock_Resources()
     p_ref_actor.SetGhost(true)
     p_ref_actor.BlockActivation(true)
 
-    p_ref_actor.MoveTo(p_marker_mannequin)
+    ; this allows the mannequin to be called on display
+    if !p_marker_display
+        p_ref_actor.MoveTo(p_marker_mannequin)
+    endIf
 
     p_ref_actor.EvaluatePackage()
 
@@ -1943,6 +1946,8 @@ int function Undisplay()
 
     p_ref_actor.MoveTo(p_marker_display)
 
+    p_marker_display.Disable()
+    p_marker_display.Delete()
     p_marker_display = none
 
     return CODES.SUCCESS
@@ -1998,7 +2003,7 @@ int function Summon(int distance = 120, int angle = 0)
 
     ACTORS.Move_To(p_ref_actor, CONSTS.ACTOR_PLAYER, distance, angle)
 
-    p_Remannequinize(); this is what's causing them to not appear on display call, they are automatically moved back where they came from
+    p_Remannequinize()
     p_Reparalyze()
 
     return CODES.SUCCESS
@@ -2252,8 +2257,6 @@ event OnActivate(ObjectReference ref_activator)
         return
     endIf
 
-    ; maybe we could also pop up some basic stats on screen? but make it a command or something
-
     if Is_Alive()
         ; this should allow the player to talk with npcs that don't normally talk, or refuse to
         if !p_ref_actor.IsInDialogueWithPlayer() && p_ref_actor.IsAIEnabled()
@@ -2281,6 +2284,7 @@ event OnActivate(ObjectReference ref_activator)
 NPCS.Lock_Base(p_ref_actor)
             Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(p_ref_actor)
             Outfit outfit_default = NPCS.Get_Default_Outfit(p_ref_actor)
+            ; we reset the default, which allows outfitter to detect when the base npc outfit has been changed on a non-member, and update it
             ACTORS.Set_Base_Outfit(p_ref_actor, outfit_default)
 NPCS.Unlock_Base(p_ref_actor)
             if outfit_vanilla && outfit_vanilla != outfit_default

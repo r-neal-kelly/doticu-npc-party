@@ -58,11 +58,11 @@ function f_Register()
 p_Lock()
     p_MAX_ALIASES = GetNumAliases()
 
-    p_num_aliases = doticu_npcp.Aliases_Get_Used_Count(self)
-    p_arr_aliases = doticu_npcp.Aliases_Get_Used(self)
+    p_num_aliases = doticu_npcp.Quest_Count_Used_Aliases(self)
+    p_arr_aliases = doticu_npcp.Quest_Get_Used_Aliases(self)
 
-    p_num_free = doticu_npcp.Aliases_Get_Free_Count(self)
-    p_arr_free = doticu_npcp.Aliases_Get_Free_IDs(self)
+    p_num_free = doticu_npcp.Quest_Count_Free_Aliases(self)
+    p_arr_free = doticu_npcp.Quest_Get_Free_Alias_IDs(self)
 p_Unlock()
 
     Request_Sort()

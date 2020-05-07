@@ -4,21 +4,17 @@
 
 #pragma once
 
-#include <cctype>
-#include "doticu_npcp.h"
+#include "skse64/GameForms.h"
+#include "skse64/PapyrusArgs.h"
 
-namespace doticu_npcp {
+#include "utils.h"
+#include "string2.h"
+#include "papyrus.h"
+#include "alias.h"
 
-    int Aliases_Sort_Compare_Name(const void *ptr_item_a, const void *ptr_item_b);
-    int Aliases_Sort_Compare_Name_Caseless(const void *ptr_item_a, const void *ptr_item_b);
-    int Aliases_Sort_Compare_Rating_Name(const void *ptr_item_a, const void *ptr_item_b);
-    int Aliases_Sort_Compare_Rating_Name_Caseless(const void *ptr_item_a, const void *ptr_item_b);
+namespace doticu_npcp { namespace Aliases {
 
-    int Aliases_Get_Race_Names_Compare(const void *ptr_item_a, const void *ptr_item_b);
-
-    int Aliases_Get_Initial_Letters_Compare(const void *ptr_item_a, const void *ptr_item_b);
-
-    enum Aliases_Filter_Flags {
+    enum Filter_Flags {
         IS_ALIVE, IS_DEAD,
         IS_ORIGINAL, IS_CLONE,
         IS_UNIQUE, IS_GENERIC,
@@ -32,6 +28,23 @@ namespace doticu_npcp {
         IS_REANIMATED, ISNT_REANIMATED
     };
 
-    bool String_Starts_With_Caseless(const char *str_a, const char *str_b);
-    bool String_Contains_Caseless(const char *str_a, const char *str_b);
-}
+    int Compare_Name(const void *ptr_item_a, const void *ptr_item_b);
+    int Compare_Name_Caseless(const void *ptr_item_a, const void *ptr_item_b);
+    int Compare_Rating_Name(const void *ptr_item_a, const void *ptr_item_b);
+    int Compare_Rating_Name_Caseless(const void *ptr_item_a, const void *ptr_item_b);
+
+    int Compare_Race_Names(const void *ptr_item_a, const void *ptr_item_b);
+
+}}
+
+namespace doticu_npcp { namespace Aliases { namespace Exports {
+
+    VMResultArray<BGSBaseAlias *> Slice(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr, UInt32 idx_from, UInt32 idx_to_ex);
+    VMResultArray<BGSBaseAlias *> Sort(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr_aliases, BSFixedString str_algorithm);
+    VMResultArray<BGSBaseAlias *> Filter(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr_aliases, VMArray<BSFixedString> arr_strings, VMArray<SInt32> arr_ints);
+    UInt32 Filter_Flag(StaticFunctionTag *, UInt32 int_flags, BSFixedString str_command, BSFixedString str_flag);
+    VMResultArray<BSFixedString> Get_Race_Names(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr_aliases);
+
+    bool Register(VMClassRegistry *registry);
+
+}}}

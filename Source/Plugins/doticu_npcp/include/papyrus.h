@@ -1,87 +1,45 @@
 /*
-    Copyright Â© 2020 r-neal-kelly, aka doticu
+    Copyright © 2020 r-neal-kelly, aka doticu
 */
 
 #pragma once
 
-#include <cstring>
-#include <algorithm>
-
-#include "skse64/GameAPI.h"
-#include "skse64/GameExtraData.h"
-#include "skse64/GameForms.h"
 #include "skse64/GameReferences.h"
-#include "skse64/GameRTTI.h"
-#include "skse64/PapyrusActor.h"
-#include "skse64/PapyrusArgs.h"
-#include "skse64/PapyrusNativeFunctions.h"
-#include "skse64/PapyrusValue.h"
+#include "skse64/PapyrusInterfaces.h"
 #include "skse64/PapyrusVM.h"
 
-#define M \
-    do {
+#include "utils.h"
 
-#define W \
-    } while (0)
+namespace doticu_npcp { namespace Papyrus {
 
-#define Bit_Set(BITS, BIT_IDX) \
-    ( (BITS) |=  ( (1llu) << (BIT_IDX) ) )
-
-#define Bit_Unset(BITS, BIT_IDX) \
-    ( (BITS) &= ~( (1llu) << (BIT_IDX) ) )
-
-#define Bit_Is_Set(BITS, BIT_IDX) \
-    ( (1llu) &   ( (BITS) >> (BIT_IDX) ) )
-
-#define Bit_Toggle(BITS, BIT_IDX) \
-    ( (BITS) ^=  ( (1llu) << (BIT_IDX) ) )
-
-#define Bit_Clear(BITS)\
-    ( (BITS) = 0 )
-
-#define DOTICU_NPCP_PRINT_PREFIX "doticu_npcp: "
-
-typedef uint8_t u8;
-typedef uint16_t u16;
-typedef uint32_t u32;
-typedef uint64_t u64;
-typedef int8_t s8;
-typedef int16_t s16;
-typedef int32_t s32;
-typedef int64_t s64;
-
-static IDebugLog gLog;
-
-namespace doticu_npcp {
-
-    class Object_Handle {
+    class Handle {
     private:
-        VMClassRegistry *p_ptr_registry;
+        VMClassRegistry * p_ptr_registry;
         IObjectHandlePolicy *p_ptr_policy;
         UInt32 p_type;
         UInt64 p_hnd;
 
     public:
         // ctors, dtors
-        Object_Handle(VMClassRegistry *ptr_registry, IObjectHandlePolicy *ptr_policy, UInt32 type, void *data) {
+        Handle(VMClassRegistry *ptr_registry, IObjectHandlePolicy *ptr_policy, UInt32 type, void *data) {
             p_ptr_registry = ptr_registry;
             p_ptr_policy = ptr_policy;
             p_type = type;
             p_hnd = p_ptr_policy->Create(p_type, data);
         }
-        Object_Handle(UInt32 type, void *data) {
+        Handle(UInt32 type, void *data) {
             p_ptr_registry = (*g_skyrimVM)->GetClassRegistry();
             p_ptr_policy = p_ptr_registry->GetHandlePolicy();
             p_type = type;
             p_hnd = p_ptr_policy->Create(p_type, data);
         }
-        Object_Handle() {
+        Handle() {
             p_ptr_registry = (*g_skyrimVM)->GetClassRegistry();
             p_ptr_policy = p_ptr_registry->GetHandlePolicy();
             p_type = 0;
             p_hnd = p_ptr_policy->GetInvalidHandle();
         }
-        ~Object_Handle() {
+        ~Handle() {
             if (Exists()) {
                 p_ptr_policy->Release(p_hnd);
             }
@@ -109,15 +67,15 @@ namespace doticu_npcp {
         }
     };
 
-    class Object_Value {
+    class Value {
     private:
-        Object_Handle *p_hnd_object;
+        Handle * p_hnd_object;
         BSFixedString p_str_value;
         VMValue p_vm_value;
 
     public:
         // ctors, dtors
-        Object_Value(Object_Handle *hnd_object, const char *str_value) {
+        Value(Handle *hnd_object, const char *str_value) {
             p_hnd_object = hnd_object;
             p_str_value = BSFixedString(str_value);
             if (!p_hnd_object || !p_hnd_object->Exists()) {
@@ -126,7 +84,7 @@ namespace doticu_npcp {
 
             class Functor : public IForEachScriptObjectFunctor {
             private:
-                BSFixedString *p_str_value;
+                BSFixedString * p_str_value;
                 VMScriptInstance *p_ptr_script;
                 SInt32 p_idx_value = -1;
             public:
@@ -156,7 +114,7 @@ namespace doticu_npcp {
             } functor(&p_str_value);
 
             p_hnd_object->Registry()->VisitScripts(p_hnd_object->Val(), &functor);
-            
+
             VMScriptInstance *ptr_script = functor.Script();
             if (!ptr_script) {
                 _MESSAGE("not a script, %s:%d", __FILE__, __LINE__);
@@ -206,49 +164,34 @@ namespace doticu_npcp {
         }
     };
 
-    // doticu_npcp.cpp
-    bool Register_Functions(VMClassRegistry *registry);
+    template <typename Type>
+    VMResultArray<Type> Array_Slice(VMArray<Type> *arr, UInt32 idx_from, UInt32 idx_to_ex, Type val_null) {
+        VMResultArray<Type> vec_slice;
+        UInt32 len_forms = arr->Length();
 
-    // actor.cpp
-    void Actor_Set_Outfit(Actor *ref_actor, BGSOutfit *outfit, bool is_sleep_outfit);
+        if (idx_from < 0) {
+            idx_from = 0;
+        }
+        if (idx_from > len_forms) {
+            idx_from = len_forms;
+        }
+        if (idx_to_ex > len_forms || idx_to_ex < 0) {
+            idx_to_ex = len_forms;
+        }
 
-    // alias.cpp
-    Actor *Alias_Get_Actor(BGSBaseAlias *ptr_alias);
-    SInt32 Alias_Get_Style(BGSBaseAlias *ptr_alias);
-    SInt32 Alias_Get_Vitality(BGSBaseAlias *ptr_alias);
-    SInt32 Alias_Get_Rating(BGSBaseAlias *ptr_alias);
-    bool Alias_Is_Created(BGSBaseAlias *ptr_alias);
-    bool Alias_Is_Original(BGSBaseAlias *ptr_alias);
-    bool Alias_Is_Clone(BGSBaseAlias *ptr_alias);
-    bool Alias_Is_Follower(BGSBaseAlias *ptr_alias);
-    bool Alias_Is_Settler(BGSBaseAlias *ptr_alias);
-    bool Alias_Is_Immobile(BGSBaseAlias *ptr_alias);
-    bool Alias_Is_Thrall(BGSBaseAlias *ptr_alias);
-    bool Alias_Is_Paralyzed(BGSBaseAlias *ptr_alias);
-    bool Alias_Is_Mannequin(BGSBaseAlias *ptr_alias);
-    bool Alias_Is_Reanimated(BGSBaseAlias *ptr_alias);
+        s64 num_elems = idx_to_ex - idx_from;
+        if (num_elems < 1) {
+            vec_slice.push_back(val_null); // may want to send back empty vec
+        } else {
+            Type elem;
+            vec_slice.reserve(num_elems);
+            for (u64 idx = idx_from, idx_end = idx_to_ex; idx < idx_end; idx += 1) {
+                arr->Get(&elem, idx);
+                vec_slice.push_back(elem);
+            }
+        }
 
-    // aliases.cpp
-    VMResultArray<BGSBaseAlias *> Aliases_Slice(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr, UInt32 idx_from, UInt32 idx_to_ex);
-    VMResultArray<BGSBaseAlias *> Aliases_Sort(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr_aliases, BSFixedString str_algorithm);
-    VMResultArray<BGSBaseAlias *> Aliases_Filter(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr_aliases, VMArray<BSFixedString> arr_strings, VMArray<SInt32> arr_ints);
-    UInt32 Aliases_Filter_Flag(StaticFunctionTag *, UInt32 int_flags, BSFixedString str_command, BSFixedString str_flag);
-    VMResultArray<BSFixedString> Aliases_Get_Race_Names(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr_aliases);
-    VMResultArray<BSFixedString> Aliases_Get_Initial_Letters(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr_aliases);
-    VMResultArray<BGSBaseAlias *> Aliases_Get_Used(StaticFunctionTag *, TESQuest *ref_quest);
-    VMResultArray<SInt32> Aliases_Get_Free_IDs(StaticFunctionTag *, TESQuest *ref_quest);
-    UInt32 Aliases_Get_Used_Count(StaticFunctionTag *, TESQuest *ref_quest);
-    UInt32 Aliases_Get_Free_Count(StaticFunctionTag *, TESQuest *ref_quest);
-    UInt32 Aliases_Count_Mannequins(StaticFunctionTag *, TESQuest *ref_quest);
+        return vec_slice;
+    }
 
-    // forms.cpp
-    VMResultArray<TESForm *> Forms_Slice(StaticFunctionTag *, VMArray<TESForm *> arr, UInt32 idx_from, UInt32 idx_to_ex);
-
-    // outfit.cpp
-    void Outfit_Add_Item(StaticFunctionTag *, BGSOutfit *outfit, TESForm *form_item);
-    void Outfit_Remove_Item(StaticFunctionTag *, BGSOutfit *outfit, TESForm *form_item);
-
-    // utils.cpp
-    void Print(StaticFunctionTag *, BSFixedString str);
-
-}
+}}

@@ -94,88 +94,12 @@ function f_Register()
 endFunction
 
 ; Private Methods
-bool function p_Has_Changed(Actor ref_actor)
-    int idx_forms
-    Form form_item
-
-    ; we need to make sure that the default outfit is equipped, because a mod may have changed it
-    if ACTORS.Get_Base_Outfit(ref_actor) != NPCS.Get_Default_Outfit(ref_actor)
-        return true
-    elseIf ref_actor.GetItemCount(CONSTS.ARMOR_BLANK as Form) < 1
-        return true
-    endIf
-
-    ; ref_actor may have items that aren't in the oufit
-    idx_forms = ref_actor.GetNumItems()
-    while idx_forms > 0
-        idx_forms -= 1
-        form_item = ref_actor.GetNthForm(idx_forms)
-        if form_item && !(form_item as ObjectReference) && form_item != CONSTS.ARMOR_BLANK as Form
-            ; we completely avoid any references and leave them alone.
-            ; we need to keep the linchpin to avoid engine refreshing outfit.
-            if form_item.IsPlayable() || ref_actor.IsEquipped(form_item)
-                ; any playable item is fair game, but only equipped unplayables are accounted for
-                if p_cache_outfit.GetItemCount(form_item) < 1 && p_cache_self.GetItemCount(form_item) < 1
-
-                    ;/doticu_npcp.Print("ref actor has items not in outfit")
-                    doticu_npcp.Print(form_item.GetName())
-                    doticu_npcp.Print("Actor Cache: ")
-                    FUNCS.Print_Contents(ref_actor)
-                    doticu_npcp.Print("Outfit Cache: ")
-                    FUNCS.Print_Contents(p_cache_outfit)
-                    doticu_npcp.Print("Self Cache: ")
-                    FUNCS.Print_Contents(p_cache_self)/;
-
-                    return true
-                endIf
-            endIf
-        endIf
-    endWhile
-
-    ; ref_actor may be missing items that are in the outfit
-    idx_forms = p_cache_outfit.GetNumItems()
-    while idx_forms > 0
-        idx_forms -= 1
-        form_item = p_cache_outfit.GetNthForm(idx_forms)
-        if ref_actor.GetItemCount(form_item) != p_cache_outfit.GetItemCount(form_item) + p_cache_self.GetItemCount(form_item)
-
-            ;/doticu_npcp.Print("ref actor and outfit cache mismatch")
-            doticu_npcp.Print(form_item.GetName())
-            doticu_npcp.Print("actor: " + ref_actor.GetItemCount(form_item) + ", outfit: " + p_cache_outfit.GetItemCount(form_item))
-            doticu_npcp.Print("Actor Cache: ")
-            FUNCS.Print_Contents(ref_actor)
-            doticu_npcp.Print("Outfit Cache: ")
-            FUNCS.Print_Contents(p_cache_outfit)/;
-
-            return true
-        endIf
-    endWhile
-
-    idx_forms = p_cache_self.GetNumItems()
-    while idx_forms > 0
-        idx_forms -= 1
-        form_item = p_cache_self.GetNthForm(idx_forms)
-        if ref_actor.GetItemCount(form_item) != p_cache_outfit.GetItemCount(form_item) + p_cache_self.GetItemCount(form_item)
-
-            ;/doticu_npcp.Print("ref actor and self cache mismatch")
-            doticu_npcp.Print(form_item.GetName())
-            doticu_npcp.Print("actor: " + ref_actor.GetItemCount(form_item) + ", self: " + p_cache_self.GetItemCount(form_item))
-            doticu_npcp.Print("Actor Cache: ")
-            FUNCS.Print_Contents(ref_actor)
-            doticu_npcp.Print("Self Cache: ")
-            FUNCS.Print_Contents(p_cache_self)/;
-
-            return true
-        endIf
-    endWhile
-
-    return false
-endFunction
-
 function p_Set(Actor ref_actor, bool do_force = false)
     ; just in case
     if !p_cache_outfit
         Cache_Outfit(none)
+    elseIf p_code_create != CODES.OUTFIT_VANILLA && p_code_create != CODES.OUTFIT_DEFAULT
+        Decache_Outfit()
     endIf
     if !p_cache_self
         Cache_Self()
@@ -186,49 +110,44 @@ function p_Set(Actor ref_actor, bool do_force = false)
         return
     endIf
 
-    if !do_force && !p_Has_Changed(ref_actor)
+NPCS.Lock_Base(ref_actor)
+    Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(ref_actor)
+    Outfit outfit_default = NPCS.Get_Default_Outfit(ref_actor)
+
+    if outfit_vanilla && outfit_vanilla != outfit_default
+        NPCS.Set_Default_Outfit(ref_actor, outfit_vanilla)
+        outfit_default = outfit_vanilla
+
+        doticu_npcp.Outfit_Add_Item(outfit_vanilla, CONSTS.ARMOR_BLANK as Form)
+        ref_actor.SetOutfit(outfit_vanilla)
+        do_force = true
+    elseIf !ref_actor.IsEquipped(CONSTS.ARMOR_BLANK)
+        ; it's imperative that ARMOR_BLANK be on the outfit and equipped before further ops
+        doticu_npcp.Outfit_Add_Item(outfit_vanilla, CONSTS.ARMOR_BLANK as Form)
+        ref_actor.SetOutfit(outfit_vanilla)
+        do_force = true
+    else
+        ; just in case it was changed before this ref was updated
+        ACTORS.Set_Base_Outfit(ref_actor, outfit_default)
+    endIf
+NPCS.Unlock_Base(ref_actor)
+
+    if !do_force && !doticu_npcp.Actor_Has_Changed_Outfit(ref_actor, p_cache_outfit, p_cache_self, CONSTS.ARMOR_BLANK as Form)
         ACTORS.Update_Equipment(ref_actor)
         return
     endIf
 
-    int idx_forms
-    Form form_item
-    bool is_teammate = ref_actor.IsPlayerTeammate()
-
-NPCS.Lock_Base(ref_actor)
-    ; this ensures that our modded outfit is worn. we need that blank armor.
-    Outfit outfit_default = NPCS.Get_Default_Outfit(ref_actor)
-    if !ref_actor.IsEquipped(CONSTS.ARMOR_BLANK)
-        ref_actor.SetOutfit(CONSTS.OUTFIT_TEMP)
-        doticu_npcp.Outfit_Add_Item(outfit_default, CONSTS.ARMOR_BLANK as Form)
-        ref_actor.SetOutfit(outfit_default)   
-    endIf
-    ; this ensures that the outfit will be saved. using Outfit_Add_Item can
-    ; cause the engine not to save the base outfit and it resets on hard-load
-    ACTORS.Set_Base_Outfit(ref_actor, outfit_default)
-NPCS.Unlock_Base(ref_actor)
-
     ; this will stop the actor from rendering while we manage its inventory
-    ; although it does not stop rendering when outfit items are removed
+    bool is_teammate = ref_actor.IsPlayerTeammate()
     ref_actor.SetPlayerTeammate(false, false)
 
-    ; this will completely wipe the inventory of everything but tokens
-    OUTFITS.Remove_Junk(ref_actor)
+    ; we add and remove a item so that the outfit has been filled by the engine once.
+    ; this can happen if the base outfit for this ref is set but was never rendered.
+    ref_actor.AddItem(CONSTS.WEAPON_BLANK, 1, true)
+    ref_actor.RemoveItem(CONSTS.WEAPON_BLANK, 1, true)
 
-    ; and now we can cleanly add all the outfit items
-    idx_forms = p_cache_outfit.GetNumItems()
-    while idx_forms > 0
-        idx_forms -= 1
-        form_item = p_cache_outfit.GetNthForm(idx_forms)
-        ref_actor.AddItem(form_item, p_cache_outfit.GetItemCount(form_item), true)
-    endWhile
-
-    idx_forms = p_cache_self.GetNumItems()
-    while idx_forms > 0
-        idx_forms -= 1
-        form_item = p_cache_self.GetNthForm(idx_forms)
-        ref_actor.AddItem(form_item, p_cache_self.GetItemCount(form_item), true)
-    endWhile
+    ; does all the heavy lifting of removing unfit items and adding outfit items
+    doticu_npcp.Actor_Refresh_Outfit(ref_actor, p_cache_outfit, p_cache_self, CONSTS.ARMOR_BLANK as Form)
 
     ; doing this allows us to render all at once, which is far more efficient
     while !p_DATA.VARS.is_updating && Utility.IsInMenuMode()
@@ -352,11 +271,23 @@ function Cache_Self()
             ref_item = form_item as ObjectReference
             if ref_item
                 ; we cannot risk removing a quest item, etc.
+                ; we could use ref_item.GetReferenceAliases() to determine if it is possibly a quest item
                 form_item = ref_item.GetBaseObject()
             endIf
             p_cache_self.AddItem(form_item, num_items, true)
         endIf
     endWhile
+endFunction
+
+function Decache_Outfit()
+    ; somehow we are getting outfit2s that have stuff in their vanilla outfit cache when they never should
+    if p_cache_outfit.GetNumItems() != 0
+        if p_cache_outfit
+            p_cache_outfit.Disable()
+            p_cache_outfit.Delete()
+        endIf
+        p_cache_outfit = CONTAINERS.Create_Temp()
+    endIf
 endFunction
 
 function Get(Actor ref_actor, ObjectReference ref_inventory)
@@ -413,6 +344,17 @@ function Set(Actor ref_actor, bool do_force = false)
     if ref_actor
         p_Set(ref_actor, do_force)
     endIf
+endFunction
+
+function Print()
+    doticu_npcp.Print("self:")
+    FUNCS.Print_Contents(self)
+    
+    doticu_npcp.Print("p_cache_self:")
+    FUNCS.Print_Contents(p_cache_self)
+
+    doticu_npcp.Print("p_cache_outfit:")
+    FUNCS.Print_Contents(p_cache_outfit)
 endFunction
 
 ; Events

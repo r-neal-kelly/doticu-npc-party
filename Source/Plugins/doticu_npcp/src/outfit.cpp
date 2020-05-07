@@ -2,11 +2,11 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
-#include "doticu_npcp.h"
+#include "outfit.h"
 
-namespace doticu_npcp {
+namespace doticu_npcp { namespace Outfit { namespace Exports {
 
-    void Outfit_Add_Item(StaticFunctionTag *, BGSOutfit *outfit, TESForm *form_item) {
+    void Add_Item(StaticFunctionTag *, BGSOutfit *outfit, TESForm *form_item) {
         // changes are NOT lost on load game, but they are lost after changing outfits.
         if (!outfit || !form_item) {
             _MESSAGE("    Outfit_Add_Item: missing param");
@@ -25,7 +25,7 @@ namespace doticu_npcp {
         }
     }
 
-    void Outfit_Remove_Item(StaticFunctionTag *, BGSOutfit *outfit, TESForm *form_item) {
+    void Remove_Item(StaticFunctionTag *, BGSOutfit *outfit, TESForm *form_item) {
         // changes are NOT lost on load game, but they are lost after changing outfits.
         if (!outfit || !form_item) {
             return;
@@ -43,4 +43,23 @@ namespace doticu_npcp {
         }
     }
 
-}
+    bool Register(VMClassRegistry *registry) {
+        registry->RegisterFunction(
+            new NativeFunction2 <StaticFunctionTag, void, BGSOutfit *, TESForm *>(
+                "Outfit_Add_Item",
+                "doticu_npcp",
+                Add_Item,
+                registry)
+        );
+        registry->RegisterFunction(
+            new NativeFunction2 <StaticFunctionTag, void, BGSOutfit *, TESForm *>(
+                "Outfit_Remove_Item",
+                "doticu_npcp",
+                Remove_Item,
+                registry)
+        );
+
+        return true;
+    }
+
+}}}
