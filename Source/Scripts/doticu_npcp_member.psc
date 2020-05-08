@@ -838,7 +838,7 @@ f_Lock_Resources()
         p_outfit2_previous = p_outfit2_current
         p_outfit2_current.Set(p_ref_actor, true)
     else
-        ; this is just a way to do asynconous updating for 0.9.0
+        ; this is just a way to do asyncronous updating for 0.9.0
         if p_outfit2_current == p_outfit2_vanilla
             p_outfit2_current.Try_Cache_Vanilla(p_outfit_vanilla)
         elseIf p_outfit2_current == p_outfit2_default
@@ -2238,9 +2238,12 @@ event On_Members_Unmember()
 endEvent
 
 event On_Load_Mod()
+    if !MAIN.Is_Ready() || !Exists()
+        return
+    endIf
+    
     ; OnLoad() is not always called, if the npc was loaded upon game exit.
     ; so we do the extra check here, because paralysis doesn't stick
-
     if p_ref_actor.Is3DLoaded()
         p_Remannequinize()
         p_Reparalyze()

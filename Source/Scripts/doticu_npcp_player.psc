@@ -80,6 +80,7 @@ function f_Register()
     p_queue_player.Register_Alias(self, "On_Queue_Player")
     RegisterForModEvent("doticu_npcp_init_mod", "On_Init_Mod")
     RegisterForModEvent("doticu_npcp_cell_change", "On_Cell_Change")
+    RegisterForControl("Sneak")
 endFunction
 
 function f_Unregister()
@@ -127,6 +128,23 @@ function p_End_Combat()
     endIf
 endFunction
 
+bool function p_Send_Player_Sneak()
+    int handle = ModEvent.Create("doticu_npcp_player_sneak")
+
+    if !handle
+        return false
+    endIf
+
+    ModEvent.PushBool(handle, ACTOR_PLAYER.IsSneaking())
+
+    if !ModEvent.Send(handle)
+        ModEvent.Release(handle)
+        return false
+    endIf
+
+    return true
+endFunction
+
 ; Public Methods
 function Add_Perk(Perk perk_to_add)
     ACTOR_PLAYER.AddPerk(perk_to_add)
@@ -144,14 +162,26 @@ endEvent
 event OnPlayerLoadGame()
     MAIN.f_Load_Mod()
 
+    while !p_Send_Player_Sneak()
+        Utility.Wait(0.25)
+    endWhile
+
     ; just in case it somehow gets stuck, which has happened before
     ACTOR_PLAYER.RemoveSpell(CONSTS.ABILITY_CELL)
     ACTOR_PLAYER.AddSpell(CONSTS.ABILITY_CELL, false)
 
     if !ACTOR_PLAYER.IsInCombat() && !FOLLOWERS.Are_In_Combat()
         ; for some reason, p_is_in_combat sometimes gets stuck to true
-        ; and so we never get auto resurrect, so this resets it.
+        ; and so we never get auto resurrect, but this resets it.
         p_End_Combat()
+    endIf
+endEvent
+
+event OnControlDown(string str_control)
+    if str_control == "Sneak"
+        while !p_Send_Player_Sneak()
+            Utility.Wait(0.25)
+        endWhile
     endIf
 endEvent
 

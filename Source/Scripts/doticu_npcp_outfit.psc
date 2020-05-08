@@ -206,13 +206,13 @@ function Put()
 endFunction
 
 function Cache_Vanilla_Static(Outfit outfit_vanilla)
-    ; this should just copy what the actor has equipped at this point, as our Set_Outfit function is fantastic
-    ; that way it won't revel the outfit items and the user will get what they saw the first time!
-    ; the skse function should be in Object_Ref, just "Copy" I guess
+    ; this should just copy what the actor has equipped at this point, because our Set_Outfit improves the original.
+    ; this way it won't relevel the outfit items and the user will get what they saw the first time
     if !outfit_vanilla
         return
     endIf
 
+    ; make sure this container is persistent from now on.
     if p_cache_vanilla
         p_cache_vanilla.Disable()
         p_cache_vanilla.Delete()
@@ -237,6 +237,7 @@ function Cache_Vanilla_Dynamic(Actor ref_actor)
         return
     endIf
 
+    ; make sure this container is persistent from now on.
     ; we add one item to make sure certain fields in c++ have been allocated
     if p_cache_vanilla
         p_cache_vanilla.Disable()
@@ -248,12 +249,12 @@ function Cache_Vanilla_Dynamic(Actor ref_actor)
 
     ; not only does this do the heavy lifting, but it caches what the actor is wearing
     ; so that when a vanilla outfit change happens, leveled items wont be calc'd twice.
-    ; also, we can trust in our override of Actor.SetOutfit, and we won't get non-outfit items
+    ; also, we can trust more in our override of Actor.SetOutfit, and we won't get non-outfit items
     doticu_npcp.Actor_Cache_Worn(ref_actor, p_cache_vanilla, CONSTS.ARMOR_BLANK)
 endFunction
 
 function Try_Cache_Vanilla(Outfit outfit_vanilla)
-    ; this is just a way to do asynconous updating for 0.9.0
+    ; this is just a way to do asyncronous updating for 0.9.0
     if !p_cache_vanilla && (p_code_create == CODES.OUTFIT_VANILLA || p_code_create == CODES.OUTFIT_DEFAULT)
         p_cache_vanilla = CONTAINERS.Create_Persistent()
         Cache_Vanilla_Static(outfit_vanilla)

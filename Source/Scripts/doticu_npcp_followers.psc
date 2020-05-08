@@ -565,11 +565,6 @@ int function Summon_Mobile(int distance = 120, int angle_start = 0, int angle_of
     int num_aliases = arr_aliases.length
     doticu_npcp_follower ref_follower
 
-    if count_mobile == 1
-        (arr_aliases[0] as doticu_npcp_follower).Summon(distance, angle_start)
-        return CODES.SUCCESS
-    endIf
-
     int angle_even = angle_start
     int angle_odd = angle_start
     int count_summon = 0
@@ -605,11 +600,6 @@ int function Summon_Immobile(int distance = 120, int angle_start = 0, int angle_
     int idx_aliases = 0
     int num_aliases = arr_aliases.length
     doticu_npcp_follower ref_follower
-
-    if count_immobile == 1
-        (arr_aliases[0] as doticu_npcp_follower).Summon(distance, angle_start)
-        return CODES.SUCCESS
-    endIf
 
     int angle_even = angle_start
     int angle_odd = angle_start

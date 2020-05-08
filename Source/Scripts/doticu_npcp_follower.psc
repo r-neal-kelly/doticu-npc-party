@@ -167,6 +167,7 @@ function f_Register()
     RegisterForModEvent("doticu_npcp_followers_unmember", "On_Followers_Unmember")
     RegisterForModEvent("doticu_npcp_followers_resurrect", "On_Followers_Resurrect")
     RegisterForModEvent("doticu_npcp_followers_catch_up", "On_Followers_Catch_Up")
+    RegisterForModEvent("doticu_npcp_player_sneak", "On_Player_Sneak")
 
     RegisterForActorAction(CODES.ACTION_DRAW_END)
 
@@ -312,12 +313,11 @@ endFunction
 function p_Sneak()
 f_Lock_Resources()
 
-    ; if possible, I want this function to make the followers completely undetectable.
-    ; maybe an invisibility spell without the visual effect, if possible? not sure
-
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_FOLLOWER_SNEAK)
 
     p_ref_actor.SetActorValue("SpeedMult", MAX_SPEED_SNEAK)
+
+    p_ref_actor.AddSpell(CONSTS.ABILITY_SNEAK)
 
     p_ref_actor.EvaluatePackage()
 
@@ -326,6 +326,10 @@ endFunction
 
 function p_Unsneak()
 f_Lock_Resources()
+
+    if !CONSTS.ACTOR_PLAYER.IsSneaking()
+        p_ref_actor.RemoveSpell(CONSTS.ABILITY_SNEAK)
+    endIf
 
     p_ref_actor.SetActorValue("SpeedMult", MAX_SPEED_UNSNEAK)
 
@@ -889,6 +893,9 @@ endEvent
 event On_Load_Mod()
     if Exists()
         p_Follow()
+        if Is_Sneak()
+            p_Sneak()
+        endIf
     endIf
 endEvent
 
@@ -965,5 +972,15 @@ endEvent
 event On_Followers_Catch_Up()
     if Exists()
         Catch_Up()
+    endIf
+endEvent
+
+event On_Player_Sneak(bool is_sneaking)
+    if is_sneaking
+        p_ref_actor.AddSpell(CONSTS.ABILITY_SNEAK)
+    else
+        if !Is_Sneak()
+            p_ref_actor.RemoveSpell(CONSTS.ABILITY_SNEAK)
+        endIf
     endIf
 endEvent

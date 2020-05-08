@@ -2,8 +2,6 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 /;
 
-; we can do a lookup of the base/face of a potential member, to see if we already have them
-
 Scriptname doticu_npcp_npcs extends Quest
 
 ; Modules
@@ -51,10 +49,6 @@ doticu_npcp_vector_form p_vec_vec_origs     =  none; vecs of original members
 doticu_npcp_vector_form p_vec_vec_clones    =  none; vecs of cloned npcs, members or not
 doticu_npcp_vector_form p_vec_caches_def    =  none; caches of extra default stuff
 doticu_npcp_vector_form p_vec_outfits_def   =  none; default vanilla outfits
-
-; to be deleted in a future release
-doticu_npcp_vector_form p_vec_outfits       =  none; default vanilla outfits --> p_vec_outfits_def
-doticu_npcp_vector_form p_vec_defaults      =  none; caches of extra default stuff --> p_vec_caches_def
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA, int init_max = 8)

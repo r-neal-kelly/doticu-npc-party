@@ -14,6 +14,7 @@ ObjectReference             p_MARKER_CELL                           = none
 ObjectReference             p_MARKER_EXPO_ANTECHAMBER               = none
 ObjectReference             p_MARKER_GOTO_SAFE                      = none
 Spell                       p_ABILITY_CELL                          = none
+Spell                       p_ABILITY_SNEAK                         = none
 MiscObject                  p_TOKEN_MEMBER                          = none
 MiscObject                  p_TOKEN_SETTLER                         = none
 MiscObject                  p_TOKEN_FOLLOWER                        = none
@@ -182,6 +183,17 @@ Spell property ABILITY_CELL
     function Set(Spell val)
         if p_ABILITY_CELL == none
             p_ABILITY_CELL = val
+        endIf
+    endFunction
+endProperty
+
+Spell property ABILITY_SNEAK
+    Spell function Get()
+        return p_ABILITY_SNEAK
+    endFunction
+    function Set(Spell val)
+        if p_ABILITY_SNEAK == none
+            p_ABILITY_SNEAK = val
         endIf
     endFunction
 endProperty
