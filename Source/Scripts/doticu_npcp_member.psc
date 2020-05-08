@@ -825,17 +825,25 @@ f_Lock_Resources()
         endIf
         p_outfit2_previous = p_outfit2_current
         p_outfit2_current = p_outfit2_vanilla
-        p_outfit2_current.Cache_Outfit(p_outfit_vanilla)
+        p_outfit2_current.Cache_Vanilla_Dynamic(p_ref_actor)
         p_outfit2_current.Set(p_ref_actor, true)
     elseIf p_outfit2_previous != p_outfit2_current
         if p_outfit2_current == p_outfit2_vanilla
-            p_outfit2_current.Cache_Outfit(p_outfit_vanilla)
+            ; maybe we can make this a setting, because it makes it easy to relevel the same outfit
+            ; it has to be static because the actor is not likely wearing the outfit or the items
+            ;p_outfit2_current.Cache_Vanilla_Static(p_outfit_vanilla)
         elseIf p_outfit2_current == p_outfit2_default
-            p_outfit2_current.Cache_Outfit(NPCS.Get_Default_Outfit(p_ref_actor))
+            p_outfit2_current.Cache_Vanilla_Static(NPCS.Get_Default_Outfit(p_ref_actor))
         endIf
         p_outfit2_previous = p_outfit2_current
         p_outfit2_current.Set(p_ref_actor, true)
     else
+        ; this is just a way to do asynconous updating for 0.9.0
+        if p_outfit2_current == p_outfit2_vanilla
+            p_outfit2_current.Try_Cache_Vanilla(p_outfit_vanilla)
+        elseIf p_outfit2_current == p_outfit2_default
+            p_outfit2_current.Try_Cache_Vanilla(NPCS.Get_Default_Outfit(p_ref_actor))
+        endIf
         p_outfit2_current.Set(p_ref_actor, do_force)
     endIf
 
@@ -2284,12 +2292,13 @@ event OnActivate(ObjectReference ref_activator)
 NPCS.Lock_Base(p_ref_actor)
             Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(p_ref_actor)
             Outfit outfit_default = NPCS.Get_Default_Outfit(p_ref_actor)
-            ; we reset the default, which allows outfitter to detect when the base npc outfit has been changed on a non-member, and update it
+            ; we reset the default, so outfitter doesn't detect the base npc outfit has been changed, and set the default on NPCS
             ACTORS.Set_Base_Outfit(p_ref_actor, outfit_default)
 NPCS.Unlock_Base(p_ref_actor)
             if outfit_vanilla && outfit_vanilla != outfit_default
                 ; one drawback of this method is that there is no way to tell if the default
-                ; outfit has been selected through an outfit mod.
+                ; outfit has been selected through an outfit mod. we could rig something through
+                ; Set_Outfit in c++, but prob. not worth it atm
                 p_outfit_vanilla = outfit_vanilla
                 p_do_outfit_vanilla = true
                 p_Outfit()

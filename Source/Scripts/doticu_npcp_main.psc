@@ -136,9 +136,6 @@ function p_Version()
     if Is_NPC_Party_Less_Than(CONSTS.VERSION_MAJOR, CONSTS.VERSION_MINOR, CONSTS.VERSION_PATCH)
         p_Start_Updating()
 
-        if Is_NPC_Party_Less_Than(0, 8, 0)
-            u_0_8_0()
-        endIf
         if Is_NPC_Party_Less_Than(0, 8, 2)
             u_0_8_2()
         endIf
@@ -235,10 +232,6 @@ bool function Is_Ready()
 endFunction
 
 ; Update Methods
-function u_0_8_0()
-    DATA.MODS.FUNCS.NPCS.u_0_8_0()
-endFunction
-
 function u_0_8_2()
     DATA.CONSTS.QUEST_DIALOGUE_REANIMATED.Start()
     DATA.CONSTS.QUEST_DIALOGUE_THRALL.Start()

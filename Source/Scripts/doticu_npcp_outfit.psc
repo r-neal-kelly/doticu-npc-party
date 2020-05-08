@@ -59,8 +59,7 @@ endProperty
 bool                    p_is_created        = false
 string                  p_str_name          =    ""
 int                     p_code_create       =     0; OUTFIT_VANILLA, OUTFIT_DEFAULT
-ObjectReference         p_cache_outfit      =  none
-ObjectReference         p_cache_self        =  none
+ObjectReference         p_cache_vanilla     =  none
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA, string str_name, int code_create = 0)
@@ -69,20 +68,20 @@ function f_Create(doticu_npcp_data DATA, string str_name, int code_create = 0)
     p_is_created = true
     p_str_name = str_name
     p_code_create = code_create
-    p_cache_outfit = none
-    p_cache_self = none
+    p_cache_vanilla = none
     
     self.SetDisplayName(p_str_name, true)
     self.SetActorOwner(CONSTS.ACTOR_PLAYER.GetActorBase())
 endFunction
 
 function f_Destroy()
-    self.RemoveAllItems(CONSTS.ACTOR_PLAYER, false, true); this needs to be set to an optional place
-    self.Disable()
-    self.Delete()
+    ; this needs to be setting to an optional place, prob. a community chest
+    self.RemoveAllItems(CONSTS.ACTOR_PLAYER, false, true)
 
-    p_cache_self = none
-    p_cache_outfit = none
+    p_cache_vanilla.Disable()
+    p_cache_vanilla.Delete()
+
+    p_cache_vanilla = none
     p_code_create = 0
     p_str_name = ""
     p_is_created = false
@@ -95,19 +94,8 @@ endFunction
 
 ; Private Methods
 function p_Set(Actor ref_actor, bool do_force = false)
-    ; just in case
-    if !p_cache_outfit
-        Cache_Outfit(none)
-    elseIf p_code_create != CODES.OUTFIT_VANILLA && p_code_create != CODES.OUTFIT_DEFAULT
-        Decache_Outfit()
-    endIf
-    if !p_cache_self
-        Cache_Self()
-    endIf
-
     if ACTORS.Is_Dead(ref_actor)
-        p_Set_Dead(ref_actor)
-        return
+        return p_Set_Dead(ref_actor)
     endIf
 
 NPCS.Lock_Base(ref_actor)
@@ -132,9 +120,8 @@ NPCS.Lock_Base(ref_actor)
     endIf
 NPCS.Unlock_Base(ref_actor)
 
-    if !do_force && !doticu_npcp.Actor_Has_Changed_Outfit(ref_actor, p_cache_outfit, p_cache_self, CONSTS.ARMOR_BLANK as Form)
-        ACTORS.Update_Equipment(ref_actor)
-        return
+    if !do_force && !doticu_npcp.Actor_Has_Changed_Outfit(ref_actor, p_cache_vanilla, self, CONSTS.ARMOR_BLANK as Form)
+        return ACTORS.Update_Equipment(ref_actor)
     endIf
 
     ; this will stop the actor from rendering while we manage its inventory
@@ -146,8 +133,18 @@ NPCS.Unlock_Base(ref_actor)
     ref_actor.AddItem(CONSTS.WEAPON_BLANK, 1, true)
     ref_actor.RemoveItem(CONSTS.WEAPON_BLANK, 1, true)
 
+    ; for right now, we are just throwing away removed items, but we could store them instead
+    ; we add one item to make sure certain fields in c++ have been allocated
+    ObjectReference ref_junk = CONTAINERS.Create_Temp()
+    ref_junk.AddItem(CONSTS.WEAPON_BLANK, 1, true)
+    ref_junk.RemoveItem(CONSTS.WEAPON_BLANK, 1, true)
+
     ; does all the heavy lifting of removing unfit items and adding outfit items
-    doticu_npcp.Actor_Refresh_Outfit(ref_actor, p_cache_outfit, p_cache_self, CONSTS.ARMOR_BLANK as Form)
+    doticu_npcp.Actor_Refresh_Outfit(ref_actor, p_cache_vanilla, self, CONSTS.ARMOR_BLANK as Form, ref_junk)
+
+    ; it doesn't hurt to cleanup manually
+    ref_junk.Disable()
+    ref_junk.Delete()
 
     ; doing this allows us to render all at once, which is far more efficient
     while !p_DATA.VARS.is_updating && Utility.IsInMenuMode()
@@ -165,25 +162,19 @@ NPCS.Unlock_Base(ref_actor)
 endFunction
 
 function p_Set_Dead(Actor ref_actor)
-    int idx_forms
-    Form form_item
-    ObjectReference ref_trash = CONTAINERS.Create_Temp()
+    ; for right now, we are just throwing away removed items, but we could store them instead
+    ; we add one item to make sure certain fields in c++ have been allocated
+    ObjectReference ref_junk = CONTAINERS.Create_Temp()
+    ref_junk.AddItem(CONSTS.WEAPON_BLANK, 1, true)
+    ref_junk.RemoveItem(CONSTS.WEAPON_BLANK, 1, true)
 
-    ; the engine won't equip new items, so we only remove items no longer in cache_self or cache_outfit
-    idx_forms = ref_actor.GetNumItems()
-    while idx_forms > 0
-        idx_forms -= 1
-        form_item = ref_actor.GetNthForm(idx_forms)
-        if form_item && form_item.IsPlayable() && !(form_item as ObjectReference)
-            ; the player can't remove unplayable items and we cannot risk removing a quest item, etc.
-            if p_cache_self.GetItemCount(form_item) < 1 && p_cache_outfit.GetItemCount(form_item) < 1
-                ref_actor.RemoveItem(form_item, ref_actor.GetItemCount(form_item), true, ref_trash)
-            endIf
-        endIf
-    endWhile
+    ; does all the heavy lifting of removing unfit items and adding outfit items
+    ; the engine won't equip new items, so we only remove items no longer in self or cache_outfit
+    doticu_npcp.Actor_Refresh_Outfit_Dead(ref_actor, p_cache_vanilla, self, CONSTS.ARMOR_BLANK as Form, ref_junk)
 
-    ref_trash.Disable()
-    ref_trash.Delete()
+    ; it doesn't hurt to cleanup manually
+    ref_junk.Disable()
+    ref_junk.Delete()
 endFunction
 
 ; Public Methods
@@ -212,81 +203,60 @@ function Put()
     self.SetDisplayName(p_str_name, true)
     self.Activate(CONSTS.ACTOR_PLAYER)
     Utility.Wait(0.1)
-    Cache_Self()
 endFunction
 
-function Cache_Outfit(Outfit outfit_vanilla)
-    int idx_forms
-    Form form_item
-
-    ; make sure this exists
-    if p_cache_outfit
-        p_cache_outfit.Disable()
-        p_cache_outfit.Delete()
-    endIf
-    p_cache_outfit = CONTAINERS.Create_Temp()
-
+function Cache_Vanilla_Static(Outfit outfit_vanilla)
+    ; this should just copy what the actor has equipped at this point, as our Set_Outfit function is fantastic
+    ; that way it won't revel the outfit items and the user will get what they saw the first time!
+    ; the skse function should be in Object_Ref, just "Copy" I guess
     if !outfit_vanilla
-        ; there is nothing to cache for pure outfit2s
         return
     endIf
 
-    ; the idea is to form the outfit ourselves and avoid SetOutfit
-    ; because it always adds items that are out of the player's control.
-    ; our custom outfits will probably never have anything unplayable
-    ; but we'll allow unplayable items in others' outfits
-    idx_forms = outfit_vanilla.GetNumParts()
+    if p_cache_vanilla
+        p_cache_vanilla.Disable()
+        p_cache_vanilla.Delete()
+    endIf
+    p_cache_vanilla = CONTAINERS.Create_Persistent()
+
+    ; it's nice to have vanilla leveled items cached so they remain unchanged
+    ; this is also an avenue to getting unplayable items into the outfit
+    int idx_forms = outfit_vanilla.GetNumParts()
+    Form form_item
     while idx_forms > 0
         idx_forms -= 1
         form_item = outfit_vanilla.GetNthPart(idx_forms)
         if form_item != CONSTS.ARMOR_BLANK as Form
-            p_cache_outfit.AddItem(form_item, 1, true); will expand LeveledItems!
+            p_cache_vanilla.AddItem(form_item, 1, true); will expand LeveledItems!
         endIf
     endWhile
 endFunction
 
-function Cache_Self()
-    int idx_forms
-    Form form_item
-    int num_items
-    ObjectReference ref_item
-
-    ; make sure this exists
-    if p_cache_self
-        p_cache_self.Disable()
-        p_cache_self.Delete()
+function Cache_Vanilla_Dynamic(Actor ref_actor)
+    if !ref_actor
+        return
     endIf
-    p_cache_self = CONTAINERS.Create_Temp()
 
-    ; we don't want to combine the vanilla outfit items with outfit2's
-    ; because we don't want to get different leveled items every time
-    ; outfit2 changes.
-    idx_forms = self.GetNumItems()
-    while idx_forms > 0
-        idx_forms -= 1
-        form_item = self.GetNthForm(idx_forms)
-        if form_item
-            ; we need to work with this form before it might be changed
-            num_items = self.GetItemCount(form_item)
-            ref_item = form_item as ObjectReference
-            if ref_item
-                ; we cannot risk removing a quest item, etc.
-                ; we could use ref_item.GetReferenceAliases() to determine if it is possibly a quest item
-                form_item = ref_item.GetBaseObject()
-            endIf
-            p_cache_self.AddItem(form_item, num_items, true)
-        endIf
-    endWhile
+    ; we add one item to make sure certain fields in c++ have been allocated
+    if p_cache_vanilla
+        p_cache_vanilla.Disable()
+        p_cache_vanilla.Delete()
+    endIf
+    p_cache_vanilla = CONTAINERS.Create_Persistent()
+    p_cache_vanilla.AddItem(CONSTS.WEAPON_BLANK, 1, true)
+    p_cache_vanilla.RemoveItem(CONSTS.WEAPON_BLANK, 1, true)
+
+    ; not only does this do the heavy lifting, but it caches what the actor is wearing
+    ; so that when a vanilla outfit change happens, leveled items wont be calc'd twice.
+    ; also, we can trust in our override of Actor.SetOutfit, and we won't get non-outfit items
+    doticu_npcp.Actor_Cache_Worn(ref_actor, p_cache_vanilla, CONSTS.ARMOR_BLANK)
 endFunction
 
-function Decache_Outfit()
-    ; somehow we are getting outfit2s that have stuff in their vanilla outfit cache when they never should
-    if p_cache_outfit.GetNumItems() != 0
-        if p_cache_outfit
-            p_cache_outfit.Disable()
-            p_cache_outfit.Delete()
-        endIf
-        p_cache_outfit = CONTAINERS.Create_Temp()
+function Try_Cache_Vanilla(Outfit outfit_vanilla)
+    ; this is just a way to do asynconous updating for 0.9.0
+    if !p_cache_vanilla && (p_code_create == CODES.OUTFIT_VANILLA || p_code_create == CODES.OUTFIT_DEFAULT)
+        p_cache_vanilla = CONTAINERS.Create_Persistent()
+        Cache_Vanilla_Static(outfit_vanilla)
     endIf
 endFunction
 
@@ -328,6 +298,8 @@ function Get_Default(Actor ref_actor)
     Form form_item
     int num_items
 
+    ; wait. can't we just have an skse function tell us what the default base container items are? we can certainly
+    ; add those back without having to cache in that case.
     ObjectReference ref_defaults = NPCS.Get_Default_Cache(ref_actor)
     if ref_defaults
         idx_forms = ref_defaults.GetNumItems()
@@ -349,12 +321,9 @@ endFunction
 function Print()
     doticu_npcp.Print("self:")
     FUNCS.Print_Contents(self)
-    
-    doticu_npcp.Print("p_cache_self:")
-    FUNCS.Print_Contents(p_cache_self)
 
-    doticu_npcp.Print("p_cache_outfit:")
-    FUNCS.Print_Contents(p_cache_outfit)
+    doticu_npcp.Print("p_cache_vanilla:")
+    FUNCS.Print_Contents(p_cache_vanilla)
 endFunction
 
 ; Events

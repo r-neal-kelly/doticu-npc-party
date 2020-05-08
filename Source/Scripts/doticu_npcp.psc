@@ -6,7 +6,9 @@ Scriptname doticu_npcp hidden
 
 ; Actor
 bool function Actor_Has_Changed_Outfit(Actor ref_actor, ObjectReference ref_outfit, ObjectReference ref_outfit2, Form linchpin) native global
-function Actor_Refresh_Outfit(Actor ref_actor, ObjectReference ref_outfit, ObjectReference ref_outfit2, Form linchpin) native global
+function Actor_Refresh_Outfit(Actor ref_actor, ObjectReference ref_outfit, ObjectReference ref_outfit2, Form linchpin, ObjectReference ref_removals) native global
+function Actor_Refresh_Outfit_Dead(Actor ref_actor, ObjectReference ref_outfit, ObjectReference ref_outfit2, Form linchpin, ObjectReference ref_removals) native global
+function Actor_Cache_Worn(Actor ref_actor, ObjectReference ref_cache, Form linchpin) native global
 
 ; Aliases
 Alias[] function Aliases_Slice(Alias[] arr_aliases, int idx_from, int idx_to_ex) native global

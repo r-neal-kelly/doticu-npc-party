@@ -73,6 +73,20 @@ endFunction
 ObjectReference function Create_Temp()
     ObjectReference ref_container = ACTOR_PLAYER.PlaceAtMe(CONTAINER_TEMP, 1, false, false)
 
+    ; this may prevent a ctd like the others
+    Utility.Wait(0.1)
+
+    ref_container.SetActorOwner(ACTOR_PLAYER.GetActorBase())
+    
+    return ref_container
+endFunction
+
+ObjectReference function Create_Persistent()
+    ObjectReference ref_container = ACTOR_PLAYER.PlaceAtMe(CONTAINER_TEMP, 1, true, false)
+    
+    ; this may prevent a ctd like the others
+    Utility.Wait(0.1)
+
     ref_container.SetActorOwner(ACTOR_PLAYER.GetActorBase())
     
     return ref_container

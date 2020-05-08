@@ -21,6 +21,20 @@ namespace doticu_npcp { namespace Object_Ref {
         std::vector<TESForm *> forms;
         std::vector<s64> counts;
 
+        TESForm *Form(s64 idx) {
+            if (idx > -1 && idx < forms.size()) {
+                return forms[idx];
+            } else {
+                return NULL;
+            }
+        }
+        s64 Count(s64 idx) {
+            if (idx > -1 && idx < counts.size()) {
+                return counts[idx];
+            } else {
+                return 0;
+            }
+        }
         s64 Count(TESForm *ref_form) {
             s64 idx = Vector::Index_Of(forms, ref_form);
             if (idx > -1) {
@@ -29,9 +43,47 @@ namespace doticu_npcp { namespace Object_Ref {
                 return 0;
             }
         }
-
+        u64 Size() {
+            return forms.size();
+        }
+        s64 Idx(TESForm *ref_form) {
+            return Vector::Index_Of(forms, ref_form);
+        }
         bool Has(TESForm *ref_form) {
             return Vector::Index_Of(forms, ref_form) > -1;
+        }
+
+        void Increment(TESForm *ref_form, s64 count) {
+            if (count > 0) {
+                s64 idx = Vector::Index_Of(forms, ref_form);
+                if (idx > -1) {
+                    counts[idx] += count;
+                }
+            }
+        }
+        void Decrement(TESForm *ref_form, s64 count) {
+            if (count > 0) {
+                s64 idx = Vector::Index_Of(forms, ref_form);
+                if (idx > -1) {
+                    counts[idx] -= count;
+                    if (counts[idx] < 0) {
+                        counts[idx] = 0;
+                    }
+                }
+            }
+        }
+        void Increment(s64 idx, s64 count) {
+            if (idx > -1 && idx < counts.size() && count > 0) {
+                counts[idx] += count;
+            }
+        }
+        void Decrement(s64 idx, s64 count) {
+            if (idx > -1 && idx < counts.size() && count > 0) {
+                counts[idx] -= count;
+                if (counts[idx] < 0) {
+                    counts[idx] = 0;
+                }
+            }
         }
     };
 
@@ -45,7 +97,10 @@ namespace doticu_npcp { namespace Object_Ref {
 
     void Add_Item(TESObjectREFR *ref_object, TESForm *ref_form, SInt32 count);
     void Remove_Item(TESObjectREFR *ref_object, TESForm *ref_form, SInt32 count);
+    void Remove_Item(TESObjectREFR *ref_object, TESForm *ref_form, SInt32 count, TESObjectREFR *ref_other);
     void Remove_All_Items(TESObjectREFR *ref_object);
+
+    void Log_Items(TESObjectREFR *ref_object);
 
 }}
 

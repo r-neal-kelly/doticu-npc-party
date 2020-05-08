@@ -123,10 +123,19 @@ endFunction
 function Destroy(doticu_npcp_outfit ref_outfit)
     if ref_outfit
         ref_outfit.f_Destroy()
+        ref_outfit.Disable()
+        ref_outfit.Delete()
     endIf
 endFunction
 
 ObjectReference function Get_Default_Cache(Actor ref_actor, Outfit outfit_default)
+    ; TODO:
+    ; wait. can't we just have an skse function tell us what the default base container items are? we can certainly
+    ; add those back without having to cache in that case. that means we could delete default cache array from NPCS
+    ; make sure to skip leveled items I think, but look into it more? in any case, we prob. can't leave them as they
+    ; are in NPCS, because they were made with CONTAINER.Create_Temp() upto this point, and that did not appear to be safe
+
+
     ; the point of this function is to have a goto container that
     ; has most of the loose outfit items on an npc. it's intended
     ; to be created the first time they are added into the system.
@@ -140,7 +149,7 @@ ObjectReference function Get_Default_Cache(Actor ref_actor, Outfit outfit_defaul
     int num_items
     ObjectReference ref_item
     ObjectReference ref_outfit = CONTAINERS.Create_Temp()
-    ObjectReference ref_cache = CONTAINERS.Create_Temp()
+    ObjectReference ref_cache = CONTAINERS.Create_Persistent()
 
     if outfit_default
         ; we cache because if anything in actor inventory is in here, we can
@@ -177,153 +186,48 @@ ObjectReference function Get_Default_Cache(Actor ref_actor, Outfit outfit_defaul
 
     ref_outfit.Disable()
     ref_outfit.Delete()
+    ref_outfit = none
 
     return ref_cache
 endFunction
 
-function Outfit_Vanilla(Actor ref_actor, Outfit outfit_vanilla)
-    if !ref_actor
-        return
-    endIf
-    if !outfit_vanilla
-        outfit_vanilla = CONSTS.OUTFIT_EMPTY
-    endIf
-
-    ObjectReference ref_temp = CONTAINERS.Create_Temp()
-
-    ; seems to prevent a potential crash. Sinmir in Whiterun can be a consistent testcase
-    ref_actor.RemoveAllItems(ref_temp, false, false)
-    ref_temp.RemoveAllItems(ref_actor, false, false)
-
-NPCS.Lock_Base(ref_actor)
-    ; make sure the outfit is set first
-    ref_actor.SetOutfit(CONSTS.OUTFIT_TEMP)
-    ref_actor.SetOutfit(outfit_vanilla)
-NPCS.Unlock_Base(ref_actor)
-
-    ; make sure that they get all their default items, in case some went missing with crash prevention
-    ref_actor.ResetInventory()
-
-    ; render
-    ACTORS.Update_Equipment(ref_actor)
-
-    ; help the garbage collector
-    ref_temp.Disable()
-    ref_temp.Delete()
-
-    return
-endFunction
-
 function Outfit_Clone(Actor ref_clone, Actor ref_orig)
-    ; we assume that the clone was freshly made through doticu_npcp_npcs
-
     if !ref_clone || !ref_orig
         return
     endIf
 
-    int idx_forms
-    Form form_item
-    int num_items
-    ObjectReference ref_item
-    bool is_equipped
-    bool is_teammate = ref_clone.IsPlayerTeammate()
+    ; we add one item to make sure certain fields in c++ have been allocated
+    ObjectReference ref_junk = CONTAINERS.Create_Temp()
+    ref_junk.AddItem(CONSTS.WEAPON_BLANK, 1, true)
+    ref_junk.RemoveItem(CONSTS.WEAPON_BLANK, 1, true)
 
-    ; this ensures that our modded outfit is worn. we need that blank armor.
-    ; we may have to remove all current outfit items to make sure that the engine refreshes
+    ; this may prevent crashing, when the engine reuses a ptr on orig then frees it later
+    ref_clone.RemoveAllItems(ref_junk, false, false)
+
+    ; this ensures that our modded outfit is worn, including the blank armor.
+    ; this also fufills VARS.clone_outfit == CODES.OUTFIT_BASE
 NPCS.Lock_Base(ref_orig)
-    if !ref_clone.IsEquipped(CONSTS.ARMOR_BLANK)
-        Outfit outfit_default = NPCS.Get_Default_Outfit(ref_clone)
-        ref_clone.SetOutfit(CONSTS.OUTFIT_TEMP)
-        ref_clone.SetOutfit(outfit_default)
-    endIf
+    ref_clone.SetOutfit(NPCS.Get_Default_Outfit(ref_clone))
 NPCS.Unlock_Base(ref_orig)
 
-    ; this will stop the actor from rendering while we manage its inventory
-    ref_clone.SetPlayerTeammate(false, false)
-
-    ; this will completely wipe the inventory of everything but tokens
-    Remove_Junk(ref_clone)
-
-    if VARS.clone_outfit == CODES.OUTFIT_BASE
-        ; we need what's in the default outfit
-        Outfit outfit_default = NPCS.Get_Default_Outfit(ref_clone)
-        idx_forms = outfit_default.GetNumParts()
-        while idx_forms > 0
-            idx_forms -= 1
-            form_item = outfit_default.GetNthPart(idx_forms)
-            if form_item != CONSTS.ARMOR_BLANK as Form
-                ref_clone.AddItem(form_item, 1, true); will expand LeveledItems!
-            endIf
-        endWhile
-    elseIf VARS.clone_outfit == CODES.OUTFIT_REFERENCE
-        ; we just need what's currently equipped on actor
-        idx_forms = ref_orig.GetNumItems()
-        while idx_forms > 0
-            idx_forms -= 1
-            form_item = ref_orig.GetNthForm(idx_forms)
-            if form_item
-                ; we need to work with this form before it might be changed
-                num_items = ref_orig.GetItemCount(form_item)
-                is_equipped = ref_orig.IsEquipped(form_item)
-                ref_item = form_item as ObjectReference
-                if ref_item
-                    ; we cannot risk removing a quest item, etc.
-                    form_item = ref_item.GetBaseObject()
-                endIf
-                if is_equipped
-                    ref_clone.AddItem(form_item, num_items - ref_clone.GetItemCount(form_item), true)
-                endIf
-            endIf
-        endWhile    
-    endIf
-
-    ; doing this allows us to render all at once, which is far more efficient
-    ref_clone.SetPlayerTeammate(true, true)
-    ref_clone.AddItem(CONSTS.WEAPON_BLANK, 1, true)
-    ref_clone.RemoveItem(CONSTS.WEAPON_BLANK, 1, true, none)
-
-    ; make sure to restore render status
-    if !is_teammate
+    if VARS.clone_outfit == CODES.OUTFIT_REFERENCE
+        ; this will stop the actor from rendering while we manage its inventory
+        bool is_teammate = ref_clone.IsPlayerTeammate()
         ref_clone.SetPlayerTeammate(false, false)
-    endIf
-endFunction
 
-function Remove_Junk(Actor ref_actor)
-    int idx_forms
-    Form form_item
-    ObjectReference ref_junk = CONTAINERS.Create_Temp()
+        ; does all the heavy lifting of removing unfit items and adding outfit items
+        doticu_npcp.Actor_Refresh_Outfit(ref_clone, none, ref_orig, CONSTS.ARMOR_BLANK as Form, ref_junk)
 
-    ; this checks to make sure the actor will not render extra inventory, as an optimization
-    if ref_actor.IsPlayerTeammate()
-        ref_actor.SetPlayerTeammate(false, false)
-    endIf
+        ; doing this allows us to render all at once, which is far more efficient
+        ref_clone.SetPlayerTeammate(true, true)
+        ref_clone.AddItem(CONSTS.WEAPON_BLANK, 1, true)
+        ref_clone.RemoveItem(CONSTS.WEAPON_BLANK, 1, true, none)
 
-    ; we add and remove a item so that the outfit has been filled by the engine once.
-    ; this can happen if the base outfit for this ref is set but was never rendered.
-    ref_actor.AddItem(CONSTS.WEAPON_BLANK, 1, true)
-    ref_actor.RemoveItem(CONSTS.WEAPON_BLANK, 1, true)
-
-    ; it's error prone to remove items from actor unless they are cached
-    idx_forms = ref_actor.GetNumItems()
-    while idx_forms > 0
-        idx_forms -= 1
-        form_item = ref_actor.GetNthForm(idx_forms)
-        if form_item && !(form_item as ObjectReference) && form_item != CONSTS.ARMOR_BLANK as Form
-            ; we completely avoid any references and leave them alone. we must leave blank armor for no reset
-            if form_item.IsPlayable() || form_item as Armor || form_item as Weapon || form_item as Ammo
-                ; any playable item is fair game, but we leave misc tokens from this mod and other mods alone
-                ref_junk.AddItem(form_item, 1, true)
-            endIf
+        ; make sure to restore render status
+        if !is_teammate
+            ref_clone.SetPlayerTeammate(false, false)
         endIf
-    endWhile
-
-    ; cleaning up the inventory of any junk is essential to controlling the outfit
-    idx_forms = ref_junk.GetNumItems()
-    while idx_forms > 0
-        idx_forms -= 1
-        form_item = ref_junk.GetNthForm(idx_forms)
-        ref_actor.RemoveItem(form_item, ref_actor.GetItemCount(form_item), true, ref_junk)
-    endWhile
+    endIf
 
     ; it doesn't hurt to cleanup manually
     ref_junk.Disable()

@@ -51,7 +51,7 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
         }
 
         // passing true keeps items that were previously in inventory.
-        // it also stops aliased actors from becoming unaliased!
+        // passing false makes actors become unaliased!
         // using this does indeed avoid the horrible outfit bug.
         ref_actor->ResetInventory(true);
 
@@ -95,8 +95,13 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
         // and the other is a super class of the vanilla outfit, which has items in addition to the BGSOutfit items
         // the linchpin is a form in the BGSOutfit, which must never be removed, to stop the engine from altering the inventory
 
-        if (!ref_actor || !ref_outfit || !ref_outfit2 || !ref_linchpin) {
+        // we allow no ref_outfit, because it's only used by outfit2s that carry vanilla outfit caches
+        if (!ref_actor || !ref_outfit2 || !ref_linchpin) {
             _ERROR("Has_Outfit_Changed: invalid args");
+            if (ref_actor) {
+                _MESSAGE("    actor_name: %s", CALL_MEMBER_FN(ref_actor, GetReferenceName)());
+                _MESSAGE("    ref_actor: %p, ref_outfit: %p, ref_outfit2: %p, ref_linchpin: %p", ref_actor, ref_outfit, ref_outfit2, ref_linchpin);
+            }
             return false;
         }
 
@@ -138,9 +143,22 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
         return false;
     }
 
-    void Refresh_Outfit(StaticFunctionTag *, Actor *ref_actor, TESObjectREFR *ref_outfit, TESObjectREFR *ref_outfit2, TESForm *ref_linchpin) {
-        if (!ref_actor || !ref_outfit || !ref_outfit2 || !ref_linchpin) {
+    void Refresh_Outfit(StaticFunctionTag *,
+                        Actor *ref_actor,
+                        TESObjectREFR *ref_outfit,
+                        TESObjectREFR *ref_outfit2,
+                        TESForm *ref_linchpin,
+                        TESObjectREFR *ref_removals
+    ) {
+        // we allow no ref_outfit, because it's only used by outfit2s that carry vanilla outfit caches
+        if (!ref_actor || !ref_outfit2 || !ref_linchpin) {
             _ERROR("Refresh_Outfit: invalid args");
+            return;
+        }
+        if (!ref_removals) {
+            // although we have an overriden function setup to handle no removal container
+            // I think it's best if we enforce usage of it at this time, to avoid potential leaks
+            _ERROR("must have a removal container");
             return;
         }
 
@@ -149,26 +167,100 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
         Object_Ref::Items items_outfit = Object_Ref::Get_Items(ref_outfit);
         Object_Ref::Items items_outfit2 = Object_Ref::Get_Items(ref_outfit2);
 
-        // we wipe the inventory of everything but token (usually unplayable) items
-        for (u64 idx = 0, size = items_actor.forms.size(); idx < size; idx += 1) {
-            TESForm *form = items_actor.forms[idx];
+        // we wipe the inventory of everything but token (usually unplayable) items and outfit items within their counts
+        for (u64 idx = 0, size = items_actor.Size(); idx < size; idx += 1) {
+            TESForm *form = items_actor.Form(idx);
             if (form && form->formType != kFormType_Reference && form != ref_linchpin) {
                 // we completely avoid any references and leave them alone
                 // we need to keep the linchpin to avoid the engine refreshing outfit
                 if (form->IsPlayable() || form->IsArmor() || form->IsWeapon() || form->IsAmmo()) {
                     // any playable item is fair game, but any armor, weapons, and ammo have got to go
-                    Object_Ref::Remove_Item(ref_actor_obj, form, items_actor.counts[idx]);
+                    s64 count_to_remove = items_actor.Count(idx) - (items_outfit.Count(form) + items_outfit2.Count(form));
+                    if (count_to_remove > 0) {
+                        Object_Ref::Remove_Item(ref_actor_obj, form, count_to_remove, ref_removals);
+                        items_actor.Decrement(idx, count_to_remove);
+                    }
                 }
             }
         }
 
-        // and now we can cleanly add outfit items.
-        for (u64 idx = 0, size = items_outfit.forms.size(); idx < size; idx += 1) {
-            Object_Ref::Add_Item(ref_actor_obj, items_outfit.forms[idx], items_outfit.counts[idx]);
+        // now we need to add however many items were missing
+        for (u64 idx = 0, size = items_outfit.Size(); idx < size; idx += 1) {
+            TESForm *form = items_outfit.Form(idx);
+            s64 idx_items_actor = items_actor.Idx(form);
+            s64 count_to_add = (items_outfit.Count(idx) + items_outfit2.Count(form)) - items_actor.Count(idx_items_actor);
+            if (count_to_add > 0) {
+                Object_Ref::Add_Item(ref_actor_obj, form, count_to_add);
+                items_actor.Increment(idx_items_actor, count_to_add);
+            }
         }
 
-        for (u64 idx = 0, size = items_outfit2.forms.size(); idx < size; idx += 1) {
-            Object_Ref::Add_Item(ref_actor_obj, items_outfit2.forms[idx], items_outfit2.counts[idx]);
+        // we may want to check that form is not an object ref and try to getbaseobject
+        for (u64 idx = 0, size = items_outfit2.Size(); idx < size; idx += 1) {
+            TESForm *form = items_outfit2.Form(idx);
+            s64 idx_items_actor = items_actor.Idx(form);
+            s64 count_to_add = (items_outfit.Count(form) + items_outfit2.Count(idx)) - items_actor.Count(idx_items_actor);
+            if (count_to_add > 0) {
+                Object_Ref::Add_Item(ref_actor_obj, form, count_to_add);
+                items_actor.Increment(idx_items_actor, count_to_add);
+            }
+        }
+    }
+
+    void Refresh_Outfit_Dead(StaticFunctionTag *,
+                             Actor *ref_actor,
+                             TESObjectREFR *ref_outfit,
+                             TESObjectREFR *ref_outfit2,
+                             TESForm *ref_linchpin,
+                             TESObjectREFR *ref_removals
+    ) {
+        // we allow no ref_outfit, because it's only used by outfit2s that carry vanilla outfit caches
+        if (!ref_actor || !ref_outfit2 || !ref_linchpin) {
+            _ERROR("Refresh_Outfit_Dead: invalid args");
+            return;
+        }
+        if (!ref_removals) {
+            // although we have an overriden function setup to handle no removal container
+            // I think it's best if we enforce usage of it at this time, to avoid potential leaks
+            _ERROR("must have a removal container");
+            return;
+        }
+
+        TESObjectREFR *ref_actor_obj = DYNAMIC_CAST(ref_actor, Actor, TESObjectREFR);
+        Object_Ref::Items items_actor = Object_Ref::Get_Items(ref_actor_obj);
+        Object_Ref::Items items_outfit = Object_Ref::Get_Items(ref_outfit);
+        Object_Ref::Items items_outfit2 = Object_Ref::Get_Items(ref_outfit2);
+
+        // we wipe the inventory of everything but token (usually unplayable) items and outfit items within their counts
+        for (u64 idx = 0, size = items_actor.Size(); idx < size; idx += 1) {
+            TESForm *form = items_actor.Form(idx);
+            if (form && form->formType != kFormType_Reference && form->IsPlayable() && form != ref_linchpin) {
+                // we completely avoid any references and leave them alone
+                // we leave any unplayables alone, as they may be tokens
+                // we need to keep the linchpin to avoid the engine refreshing outfit
+                if (!items_outfit.Has(form) && !items_outfit2.Has(form)) {
+                    // any non outfit form must be removed
+                    s64 count_to_remove = items_actor.Count(idx);
+                    if (count_to_remove > 0) {
+                        Object_Ref::Remove_Item(ref_actor_obj, form, count_to_remove, ref_removals);
+                    }
+                }
+            }
+        }
+    }
+
+    void Cache_Worn(StaticFunctionTag *, Actor *ref_actor, TESObjectREFR *ref_cache, TESForm *ref_linchpin) {
+        if (!ref_actor || !ref_cache || !ref_linchpin) {
+            _ERROR("Cache_Worn: invalid args");
+            return;
+        }
+
+        Object_Ref::Items items_actor = Object_Ref::Get_Items(DYNAMIC_CAST(ref_actor, Actor, TESObjectREFR));
+        for (u64 idx = 0, size = items_actor.Size(); idx < size; idx += 1) {
+            TESForm *form = items_actor.Form(idx);
+            if (form && form->formType != kFormType_Reference && form != ref_linchpin && Is_Worn(ref_actor, form)) {
+                Object_Ref::Add_Item(ref_cache, form, items_actor.Count(idx));
+            }
         }
     }
 
@@ -188,10 +280,24 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
                 registry)
         );
         registry->RegisterFunction(
-            new NativeFunction4 <StaticFunctionTag, void, Actor *, TESObjectREFR *, TESObjectREFR *, TESForm *>(
+            new NativeFunction5 <StaticFunctionTag, void, Actor *, TESObjectREFR *, TESObjectREFR *, TESForm *, TESObjectREFR *>(
                 "Actor_Refresh_Outfit",
                 "doticu_npcp",
                 Refresh_Outfit,
+                registry)
+        );
+        registry->RegisterFunction(
+            new NativeFunction5 <StaticFunctionTag, void, Actor *, TESObjectREFR *, TESObjectREFR *, TESForm *, TESObjectREFR *>(
+                "Actor_Refresh_Outfit_Dead",
+                "doticu_npcp",
+                Refresh_Outfit_Dead,
+                registry)
+        );
+        registry->RegisterFunction(
+            new NativeFunction3 <StaticFunctionTag, void, Actor *, TESObjectREFR *, TESForm *>(
+                "Actor_Cache_Worn",
+                "doticu_npcp",
+                Cache_Worn,
                 registry)
         );
 
