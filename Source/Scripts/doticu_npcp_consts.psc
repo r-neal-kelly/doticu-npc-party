@@ -15,6 +15,7 @@ ObjectReference             p_MARKER_EXPO_ANTECHAMBER               = none
 ObjectReference             p_MARKER_GOTO_SAFE                      = none
 Spell                       p_ABILITY_CELL                          = none
 Spell                       p_ABILITY_SNEAK                         = none
+Spell                       p_ABILITY_RETREAT                       = none
 MiscObject                  p_TOKEN_MEMBER                          = none
 MiscObject                  p_TOKEN_SETTLER                         = none
 MiscObject                  p_TOKEN_FOLLOWER                        = none
@@ -29,6 +30,7 @@ MiscObject                  p_TOKEN_THRALL                          = none
 MiscObject                  p_TOKEN_GREETER                         = none
 MiscObject                  p_TOKEN_PARALYZED                       = none
 MiscObject                  p_TOKEN_MANNEQUIN                       = none
+MiscObject                  p_TOKEN_RETREATER                       = none
 MiscObject                  p_TOKEN_STYLE_DEFAULT                   = none
 MiscObject                  p_TOKEN_STYLE_WARRIOR                   = none
 MiscObject                  p_TOKEN_STYLE_MAGE                      = none
@@ -198,6 +200,17 @@ Spell property ABILITY_SNEAK
     endFunction
 endProperty
 
+Spell property ABILITY_RETREAT
+    Spell function Get()
+        return p_ABILITY_RETREAT
+    endFunction
+    function Set(Spell val)
+        if p_ABILITY_RETREAT == none
+            p_ABILITY_RETREAT = val
+        endIf
+    endFunction
+endProperty
+
 MiscObject property TOKEN_MEMBER
     MiscObject function Get()
         return p_TOKEN_MEMBER
@@ -348,6 +361,17 @@ MiscObject property TOKEN_MANNEQUIN
     function Set(MiscObject val)
         if p_TOKEN_MANNEQUIN == none
             p_TOKEN_MANNEQUIN = val
+        endIf
+    endFunction
+endProperty
+
+MiscObject property TOKEN_RETREATER
+    MiscObject function Get()
+        return p_TOKEN_RETREATER
+    endFunction
+    function Set(MiscObject val)
+        if p_TOKEN_RETREATER == none
+            p_TOKEN_RETREATER = val
         endIf
     endFunction
 endProperty

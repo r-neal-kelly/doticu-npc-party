@@ -280,6 +280,23 @@ int function p_Unsneak()
     return CODES.SUCCESS
 endFunction
 
+int function p_Unretreat()
+    if Get_Count() < 1
+        return CODES.HASNT_FOLLOWER
+    endIf
+
+    int num_retreaters = Get_Count_Retreaters()
+    if num_retreaters < 1
+        return CODES.HASNT_RETREATER
+    endIf
+
+    if !p_tasklist.Execute(num_retreaters, "doticu_npcp_followers_unretreat")
+        return CODES.FAILURE
+    endIf
+
+    return CODES.SUCCESS
+endFunction
+
 int function p_Resurrect()
     if Get_Count() < 1
         return CODES.HASNT_FOLLOWER
@@ -319,23 +336,6 @@ int function p_Unmember()
     if !p_tasklist.Execute(num_followers, "doticu_npcp_followers_unmember")
         return CODES.FAILURE
     endIf
-
-    return CODES.SUCCESS
-endFunction
-
-int function p_Catch_Up()
-    if Get_Count() < 1
-        return CODES.HASNT_FOLLOWER
-    endIf
-
-    int num_mobile = Get_Count_Mobile()
-    if num_mobile < 1
-        return CODES.HASNT_MOBILE
-    endIf
-
-    while !p_Send_Followers("doticu_npcp_followers_catch_up")
-        Utility.Wait(0.1)
-    endWhile
 
     return CODES.SUCCESS
 endFunction
@@ -464,6 +464,23 @@ int function Get_Count_Unsneak()
     while idx_aliases < max_aliases
         ref_follower = GetNthAlias(idx_aliases) as doticu_npcp_follower
         if ref_follower.Is_Unsneak()
+            count += 1
+        endIf
+        idx_aliases += 1
+    endWhile
+
+    return count
+endFunction
+
+int function Get_Count_Retreaters()
+    int count = 0
+    int max_aliases = Get_Max()
+    int idx_aliases = 0
+    doticu_npcp_follower ref_follower
+
+    while idx_aliases < max_aliases
+        ref_follower = GetNthAlias(idx_aliases) as doticu_npcp_follower
+        if ref_follower.Is_Retreater()
             count += 1
         endIf
         idx_aliases += 1
@@ -683,6 +700,13 @@ int function Unsneak()
     return code_return
 endFunction
 
+int function Unretreat()
+    GotoState("p_STATE_BUSY")
+    int code_return = p_Unretreat()
+    GotoState("")
+    return code_return
+endFunction
+
 int function Resurrect()
     GotoState("p_STATE_BUSY")
     int code_return = p_Resurrect()
@@ -704,13 +728,6 @@ int function Unmember()
     return code_return
 endFunction
 
-int function Catch_Up()
-    GotoState("p_STATE_BUSY")
-    int code_return = p_Catch_Up()
-    GotoState("")
-    return code_return
-endFunction
-
 ; State
 state p_STATE_BUSY
     int function Enforce()
@@ -727,12 +744,12 @@ state p_STATE_BUSY
     endFunction
     int function Unsneak()
     endFunction
+    int function Unretreat()
+    endFunction
     int function Resurrect()
     endFunction
     int function Unfollow()
     endFunction
     int function Unmember()
-    endFunction
-    int function Catch_Up()
     endFunction
 endState

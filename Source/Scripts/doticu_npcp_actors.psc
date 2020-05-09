@@ -345,6 +345,17 @@ function Delete(Actor ref_actor)
     ref_actor.Delete()
 endFunction
 
+function Apply_Ability(Actor ref_actor, Spell ability)
+    ; it's necessary to remove it before adding it back, because
+    ; the engine simply will not do everything correctly otherwise
+    ref_actor.RemoveSpell(ability)
+    ref_actor.AddSpell(ability, false)
+endFunction
+
+function Unapply_Ability(Actor ref_actor, Spell ability)
+    ref_actor.RemoveSpell(ability)
+endFunction
+
 function Move_To(ObjectReference ref_subject, ObjectReference ref_object, int distance = 120, int angle = 0)
     Actor ref_actor = ref_subject as Actor
     bool has_enabled_ai = ref_actor && ref_actor.IsAIEnabled()

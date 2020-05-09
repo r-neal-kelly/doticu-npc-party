@@ -80,7 +80,6 @@ function f_Register()
     p_queue_player.Register_Alias(self, "On_Queue_Player")
     RegisterForModEvent("doticu_npcp_init_mod", "On_Init_Mod")
     RegisterForModEvent("doticu_npcp_cell_change", "On_Cell_Change")
-    RegisterForControl("Sneak")
 endFunction
 
 function f_Unregister()
@@ -124,25 +123,9 @@ function p_End_Combat()
         if VARS.auto_resurrect
             FOLLOWERS.Resurrect()
         endIf
+        FOLLOWERS.Enforce()
 
     endIf
-endFunction
-
-bool function p_Send_Player_Sneak()
-    int handle = ModEvent.Create("doticu_npcp_player_sneak")
-
-    if !handle
-        return false
-    endIf
-
-    ModEvent.PushBool(handle, ACTOR_PLAYER.IsSneaking())
-
-    if !ModEvent.Send(handle)
-        ModEvent.Release(handle)
-        return false
-    endIf
-
-    return true
 endFunction
 
 ; Public Methods
@@ -154,21 +137,20 @@ function Remove_Perk(Perk perk_to_remove)
     ACTOR_PLAYER.RemovePerk(perk_to_remove)
 endFunction
 
+bool function Is_Party_In_Combat()
+    return p_is_in_combat
+endFunction
+
 ; Events
 event On_Init_Mod()
-    ACTOR_PLAYER.AddSpell(CONSTS.ABILITY_CELL, false)
+    ACTORS.Apply_Ability(ACTOR_PLAYER, CONSTS.ABILITY_CELL)
 endEvent
 
 event OnPlayerLoadGame()
     MAIN.f_Load_Mod()
 
-    while !p_Send_Player_Sneak()
-        Utility.Wait(0.25)
-    endWhile
-
     ; just in case it somehow gets stuck, which has happened before
-    ACTOR_PLAYER.RemoveSpell(CONSTS.ABILITY_CELL)
-    ACTOR_PLAYER.AddSpell(CONSTS.ABILITY_CELL, false)
+    ACTORS.Apply_Ability(ACTOR_PLAYER, CONSTS.ABILITY_CELL)
 
     if !ACTOR_PLAYER.IsInCombat() && !FOLLOWERS.Are_In_Combat()
         ; for some reason, p_is_in_combat sometimes gets stuck to true
@@ -177,16 +159,8 @@ event OnPlayerLoadGame()
     endIf
 endEvent
 
-event OnControlDown(string str_control)
-    if str_control == "Sneak"
-        while !p_Send_Player_Sneak()
-            Utility.Wait(0.25)
-        endWhile
-    endIf
-endEvent
-
 event On_Cell_Change(Form cell_new, Form cell_old)
-    FOLLOWERS.Catch_Up()
+    ACTORS.Apply_Ability(ACTOR_PLAYER, CONSTS.ABILITY_CELL)
 endEvent
 
 event On_Queue_Player(string str_message)

@@ -25,6 +25,11 @@ doticu_npcp_actors property ACTORS hidden
         return p_DATA.MODS.FUNCS.ACTORS
     endFunction
 endProperty
+doticu_npcp_player property PLAYER hidden
+    doticu_npcp_player function Get()
+        return p_DATA.MODS.FUNCS.ACTORS.PLAYER
+    endFunction
+endProperty
 doticu_npcp_queues property QUEUES hidden
     doticu_npcp_queues function Get()
         return p_DATA.MODS.FUNCS.QUEUES
@@ -77,6 +82,7 @@ string                  p_str_namespace             =    ""
 int                     p_style_follower            =    -1
 int                     p_level_follower            =    -1
 bool                    p_is_sneak                  = false
+bool                    p_is_retreater              = false
 bool                    p_is_catching_up            = false
 
 int                     p_prev_relationship_rank    =    -1
@@ -118,6 +124,7 @@ function f_Create(doticu_npcp_data DATA, int id_alias)
     p_style_follower = p_ref_member.Get_Style()
     p_level_follower = -1
     p_is_sneak = false
+    p_is_retreater = false
     p_is_catching_up = false
 
     p_Backup()
@@ -128,6 +135,9 @@ function f_Create(doticu_npcp_data DATA, int id_alias)
 endFunction
 
 function f_Destroy()
+    if p_is_retreater
+        p_Unretreat()
+    endIf
     if p_is_sneak
         p_Unsneak()
     endIf
@@ -142,6 +152,7 @@ function f_Destroy()
     p_prev_relationship_rank =    -1
 
     p_is_catching_up = false
+    p_is_retreater = false
     p_is_sneak = false
     p_level_follower = -1
     p_style_follower = -1
@@ -156,6 +167,7 @@ function f_Register()
     ; registering mod events is global for each script on an object, and
     ; further, works for handlers labeled as function as well as event.
     RegisterForModEvent("doticu_npcp_load_mod", "On_Load_Mod")
+    RegisterForModEvent("doticu_npcp_cell_change", "On_Cell_Change")
     RegisterForModEvent("doticu_npcp_followers_enforce", "On_Followers_Enforce")
     RegisterForModEvent("doticu_npcp_followers_settle", "On_Followers_Settle")
     RegisterForModEvent("doticu_npcp_followers_unsettle", "On_Followers_Unsettle")
@@ -163,11 +175,10 @@ function f_Register()
     RegisterForModEvent("doticu_npcp_followers_mobilize", "On_Followers_Mobilize")
     RegisterForModEvent("doticu_npcp_followers_sneak", "On_Followers_Sneak")
     RegisterForModEvent("doticu_npcp_followers_unsneak", "On_Followers_Unsneak")
+    RegisterForModEvent("doticu_npcp_followers_unretreat", "On_Followers_Unretreat")
     RegisterForModEvent("doticu_npcp_followers_unfollow", "On_Followers_Unfollow")
     RegisterForModEvent("doticu_npcp_followers_unmember", "On_Followers_Unmember")
     RegisterForModEvent("doticu_npcp_followers_resurrect", "On_Followers_Resurrect")
-    RegisterForModEvent("doticu_npcp_followers_catch_up", "On_Followers_Catch_Up")
-    RegisterForModEvent("doticu_npcp_player_sneak", "On_Player_Sneak")
 
     RegisterForActorAction(CODES.ACTION_DRAW_END)
 
@@ -194,6 +205,11 @@ function f_Enforce()
         p_Enqueue("Follower.Sneak")
     else
         p_Enqueue("Follower.Unsneak")
+    endIf
+    if Is_Retreater()
+        p_Retreat()
+    else
+        p_Unretreat()
     endIf
 endFunction
 
@@ -278,9 +294,14 @@ f_Lock_Resources()
 
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_FOLLOWER, p_id_alias + 1)
 
+    ACTORS.Apply_Ability(p_ref_actor, CONSTS.ABILITY_SNEAK)
+
     CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(1)
 
-    p_ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, 3); maybe we can do away with this, because it affects the base state of npcs
+    ; we can't do away with this, because it controls dialogue api in mods.
+    ; however, maybe we could set it dynamically somehow?
+    p_ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, 3)
+
     p_ref_actor.IgnoreFriendlyHits(true)
     p_ref_actor.SetNotShowOnStealthMeter(true)
 
@@ -303,6 +324,8 @@ f_Lock_Resources()
     p_ref_actor.IgnoreFriendlyHits(false)
     p_ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, p_prev_relationship_rank)
 
+    ACTORS.Unapply_Ability(p_ref_actor, CONSTS.ABILITY_SNEAK)
+
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_FOLLOWER)
 
     p_ref_actor.EvaluatePackage()
@@ -317,8 +340,6 @@ f_Lock_Resources()
 
     p_ref_actor.SetActorValue("SpeedMult", MAX_SPEED_SNEAK)
 
-    p_ref_actor.AddSpell(CONSTS.ABILITY_SNEAK)
-
     p_ref_actor.EvaluatePackage()
 
 f_Unlock_Resources()
@@ -327,13 +348,40 @@ endFunction
 function p_Unsneak()
 f_Lock_Resources()
 
-    if !CONSTS.ACTOR_PLAYER.IsSneaking()
-        p_ref_actor.RemoveSpell(CONSTS.ABILITY_SNEAK)
-    endIf
-
     p_ref_actor.SetActorValue("SpeedMult", MAX_SPEED_UNSNEAK)
 
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_FOLLOWER_SNEAK)
+
+    p_ref_actor.EvaluatePackage()
+
+f_Unlock_Resources()
+endFunction
+
+function p_Retreat()
+doticu_npcp.Print("p_Retreat()")
+f_Lock_Resources()
+
+    ; add a spell that immediately causes invisibility
+    ACTORS.Apply_Ability(p_ref_actor, CONSTS.ABILITY_RETREAT)
+
+    ; this will cause a package change, where ref ignores combat
+    ACTORS.TOKEN(p_ref_actor, CONSTS.TOKEN_RETREATER)
+
+    ; make sure there is no fighting
+    ACTORS.Pacify(p_ref_actor)
+
+    p_ref_actor.EvaluatePackage()
+
+f_Unlock_Resources()
+endFunction
+
+function p_Unretreat()
+doticu_npcp.Print("p_Unretreat()")
+f_Lock_Resources()
+
+    ACTORS.UNTOKEN(p_ref_actor, CONSTS.TOKEN_RETREATER)
+
+    ACTORS.Unapply_Ability(p_ref_actor, CONSTS.ABILITY_RETREAT)
 
     p_ref_actor.EvaluatePackage()
 
@@ -686,6 +734,30 @@ int function Unsneak(int code_exec)
     return CODES.SUCCESS
 endFunction
 
+int function Retreat()
+    if !Exists()
+        return CODES.ISNT_FOLLOWER
+    endIf
+
+    p_is_retreater = true
+
+    p_Retreat()
+
+    return CODES.SUCCESS
+endFunction
+
+int function Unretreat()
+    if !Exists()
+        return CODES.ISNT_FOLLOWER
+    endIf
+
+    p_is_retreater = false
+
+    p_Unretreat()
+
+    return CODES.SUCCESS
+endFunction
+
 int function Relevel(int code_exec)
     int code_return
 
@@ -702,6 +774,7 @@ int function Relevel(int code_exec)
     return CODES.SUCCESS
 endFunction
 
+; this whole function should probably be private, as no one else needs to call it anymore
 int function Catch_Up()
     if p_is_catching_up
         return CODES.SUCCESS
@@ -711,7 +784,7 @@ int function Catch_Up()
         return CODES.ISNT_FOLLOWER
     endIf
 
-    if Is_Immobile() || Is_Paralyzed()
+    if Is_Immobile() || Is_Paralyzed() || Is_Mannequin()
         return CODES.CANT_CATCH_UP
     endIf
 
@@ -770,6 +843,10 @@ bool function Is_Unsneak()
     return Exists() && !p_is_sneak
 endFunction
 
+bool function Is_Retreater()
+    return Exists() && p_is_retreater
+endFunction
+
 bool function Is_Settler()
     return Exists() && p_ref_member.Is_Settler()
 endFunction
@@ -784,6 +861,10 @@ endFunction
 
 bool function Is_Paralyzed()
     return Exists() && p_ref_member.Is_Paralyzed()
+endFunction
+
+bool function Is_Mannequin()
+    return Exists() && p_ref_member.Is_Mannequin()
 endFunction
 
 bool function Is_Styled_Default()
@@ -864,7 +945,7 @@ event OnCombatStateChanged(Actor ref_target, int code_combat)
     endIf
 
     if code_combat == CODES.COMBAT_NO
-        
+        ; see p_End_Combat() in doticu_npcp_player for Enforce()
     elseIf code_combat == CODES.COMBAT_YES
         ACTORS.PLAYER.f_Begin_Combat()
     elseIf code_combat == CODES.COMBAT_SEARCHING
@@ -892,6 +973,16 @@ endEvent
 
 event On_Load_Mod()
     if Exists()
+        p_Follow()
+        if Is_Sneak()
+            p_Sneak()
+        endIf
+    endIf
+endEvent
+
+event On_Cell_Change(Form cell_new, Form cell_old)
+    if Exists()
+        Catch_Up()
         p_Follow()
         if Is_Sneak()
             p_Sneak()
@@ -948,6 +1039,13 @@ event On_Followers_Unsneak(Form form_tasklist)
     endIf
 endEvent
 
+event On_Followers_Unretreat(Form form_tasklist)
+    if Exists() && Is_Retreater()
+        Unretreat()
+        (form_tasklist as doticu_npcp_tasklist).Detask()
+    endIf
+endEvent
+
 event On_Followers_Resurrect(Form form_tasklist)
     if Exists() && Is_Dead()
         Resurrect(CODES.DO_SYNC)
@@ -966,21 +1064,5 @@ event On_Followers_Unmember(Form form_tasklist)
     if Exists()
         Unmember()
         (form_tasklist as doticu_npcp_tasklist).Detask()
-    endIf
-endEvent
-
-event On_Followers_Catch_Up()
-    if Exists()
-        Catch_Up()
-    endIf
-endEvent
-
-event On_Player_Sneak(bool is_sneaking)
-    if is_sneaking
-        p_ref_actor.AddSpell(CONSTS.ABILITY_SNEAK)
-    else
-        if !Is_Sneak()
-            p_ref_actor.RemoveSpell(CONSTS.ABILITY_SNEAK)
-        endIf
     endIf
 endEvent

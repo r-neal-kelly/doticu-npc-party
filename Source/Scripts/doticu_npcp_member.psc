@@ -396,7 +396,7 @@ f_Lock_Resources()
     p_ref_actor.SetActorValue("Assistance", 2.0)
     p_ref_actor.SetActorValue("Morality", 0.0)
 
-    ; we never use the vanilla wait system, and have disabled it
+    ; we don't use the vanilla wait system, and have disabled it
     ; so this makes sure that a member doesn't get stuck
     p_ref_actor.SetActorValue("WaitingForPlayer", 0.0)
 
@@ -2338,6 +2338,11 @@ event OnCombatStateChanged(Actor ref_target, int code_combat)
     elseIf ACTORS.Has_Token(ref_target, CONSTS.TOKEN_MEMBER)
         ACTORS.Pacify(p_ref_actor)
         ACTORS.Pacify(ref_target)
+    endIf
+
+    if Is_Follower()
+        ; see OnCombatStateChanged in doticu_npcp_follower
+        return
     endIf
 
     if code_combat == CODES.COMBAT_NO
