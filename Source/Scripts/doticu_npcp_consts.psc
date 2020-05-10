@@ -14,8 +14,8 @@ ObjectReference             p_MARKER_CELL                           = none
 ObjectReference             p_MARKER_EXPO_ANTECHAMBER               = none
 ObjectReference             p_MARKER_GOTO_SAFE                      = none
 Spell                       p_ABILITY_CELL                          = none
-Spell                       p_ABILITY_SNEAK                         = none
 Spell                       p_ABILITY_RETREAT                       = none
+MagicEffect                 p_EFFECT_RETREAT                        = none
 MiscObject                  p_TOKEN_MEMBER                          = none
 MiscObject                  p_TOKEN_SETTLER                         = none
 MiscObject                  p_TOKEN_FOLLOWER                        = none
@@ -189,17 +189,6 @@ Spell property ABILITY_CELL
     endFunction
 endProperty
 
-Spell property ABILITY_SNEAK
-    Spell function Get()
-        return p_ABILITY_SNEAK
-    endFunction
-    function Set(Spell val)
-        if p_ABILITY_SNEAK == none
-            p_ABILITY_SNEAK = val
-        endIf
-    endFunction
-endProperty
-
 Spell property ABILITY_RETREAT
     Spell function Get()
         return p_ABILITY_RETREAT
@@ -207,6 +196,17 @@ Spell property ABILITY_RETREAT
     function Set(Spell val)
         if p_ABILITY_RETREAT == none
             p_ABILITY_RETREAT = val
+        endIf
+    endFunction
+endProperty
+
+MagicEffect property EFFECT_RETREAT
+    MagicEffect function Get()
+        return p_EFFECT_RETREAT
+    endFunction
+    function Set(MagicEffect val)
+        if p_EFFECT_RETREAT == none
+            p_EFFECT_RETREAT = val
         endIf
     endFunction
 endProperty

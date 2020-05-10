@@ -2,6 +2,8 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 /;
 
+; how hard would it be to move the loop and math to c++?
+
 Scriptname doticu_npcp_movee extends ReferenceAlias
 
 ; Modules

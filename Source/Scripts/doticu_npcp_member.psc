@@ -2238,6 +2238,7 @@ event On_Members_Unmember()
 endEvent
 
 event On_Load_Mod()
+    ; is this really callable before Is_Ready? That's a mistake if so
     if !MAIN.Is_Ready() || !Exists()
         return
     endIf

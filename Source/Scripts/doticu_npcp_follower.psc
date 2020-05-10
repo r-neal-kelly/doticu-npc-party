@@ -168,6 +168,8 @@ function f_Register()
     ; further, works for handlers labeled as function as well as event.
     RegisterForModEvent("doticu_npcp_load_mod", "On_Load_Mod")
     RegisterForModEvent("doticu_npcp_cell_change", "On_Cell_Change")
+    RegisterForModEvent("doticu_npcp_party_combat", "On_Party_Combat")
+    RegisterForModEvent("doticu_npcp_player_sneak", "On_Player_Sneak")
     RegisterForModEvent("doticu_npcp_followers_enforce", "On_Followers_Enforce")
     RegisterForModEvent("doticu_npcp_followers_settle", "On_Followers_Settle")
     RegisterForModEvent("doticu_npcp_followers_unsettle", "On_Followers_Unsettle")
@@ -294,8 +296,6 @@ f_Lock_Resources()
 
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_FOLLOWER, p_id_alias + 1)
 
-    ACTORS.Apply_Ability(p_ref_actor, CONSTS.ABILITY_SNEAK)
-
     CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(1)
 
     ; we can't do away with this, because it controls dialogue api in mods.
@@ -323,8 +323,6 @@ f_Lock_Resources()
     p_ref_actor.SetNotShowOnStealthMeter(false)
     p_ref_actor.IgnoreFriendlyHits(false)
     p_ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, p_prev_relationship_rank)
-
-    ACTORS.Unapply_Ability(p_ref_actor, CONSTS.ABILITY_SNEAK)
 
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_FOLLOWER)
 
@@ -358,14 +356,16 @@ f_Unlock_Resources()
 endFunction
 
 function p_Retreat()
-doticu_npcp.Print("p_Retreat()")
 f_Lock_Resources()
-
-    ; add a spell that immediately causes invisibility
-    ACTORS.Apply_Ability(p_ref_actor, CONSTS.ABILITY_RETREAT)
 
     ; this will cause a package change, where ref ignores combat
     ACTORS.TOKEN(p_ref_actor, CONSTS.TOKEN_RETREATER)
+
+    ; add a spell that immediately causes invisibility.
+    ; sometimes it won't work correctly, so check that it does
+    while !p_ref_actor.HasMagicEffect(CONSTS.EFFECT_RETREAT)
+        ACTORS.Apply_Ability(p_ref_actor, CONSTS.ABILITY_RETREAT)
+    endWhile
 
     ; make sure there is no fighting
     ACTORS.Pacify(p_ref_actor)
@@ -376,12 +376,11 @@ f_Unlock_Resources()
 endFunction
 
 function p_Unretreat()
-doticu_npcp.Print("p_Unretreat()")
 f_Lock_Resources()
 
-    ACTORS.UNTOKEN(p_ref_actor, CONSTS.TOKEN_RETREATER)
-
     ACTORS.Unapply_Ability(p_ref_actor, CONSTS.ABILITY_RETREAT)
+
+    ACTORS.UNTOKEN(p_ref_actor, CONSTS.TOKEN_RETREATER)
 
     p_ref_actor.EvaluatePackage()
 
@@ -987,6 +986,31 @@ event On_Cell_Change(Form cell_new, Form cell_old)
         if Is_Sneak()
             p_Sneak()
         endIf
+    endIf
+endEvent
+
+event On_Party_Combat(bool is_in_combat)
+    if Exists()
+        if is_in_combat && CONSTS.ACTOR_PLAYER.IsSneaking()
+            Retreat()
+        else
+            ; could make this optional
+            ;/if Is_Retreater()
+                Unretreat()
+            endIf/;
+            Enforce()
+        endIf
+    endIf
+endEvent
+
+; we could also reset the spell while the follower is in combat and simply remove it after battle is done
+; might not work as well when loading the game in the middle of a battle, but it could work
+event On_Player_Sneak(bool is_sneaking)
+    if Exists()
+        if is_sneaking && PLAYER.Is_Party_In_Combat()
+            Retreat()
+        endIf
+        ; the effect itself will call Unretreat when player unsneaks
     endIf
 endEvent
 

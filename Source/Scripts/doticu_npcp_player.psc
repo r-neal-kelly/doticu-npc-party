@@ -80,6 +80,7 @@ function f_Register()
     p_queue_player.Register_Alias(self, "On_Queue_Player")
     RegisterForModEvent("doticu_npcp_init_mod", "On_Init_Mod")
     RegisterForModEvent("doticu_npcp_cell_change", "On_Cell_Change")
+    RegisterForControl("Sneak")
 endFunction
 
 function f_Unregister()
@@ -92,6 +93,10 @@ function f_Begin_Combat()
         p_is_in_combat = true
 
         p_queue_player.Enqueue("Try_End_Combat", 5.0)
+
+        while !p_Send_Party_Combat()
+            Utility.Wait(0.5)
+        endWhile
 
         ; here we can put functions at the beginning of battle
 
@@ -118,14 +123,51 @@ function p_End_Combat()
         p_is_in_combat = false
 
         p_queue_player.Flush()
+        
+        while !p_Send_Party_Combat()
+            Utility.Wait(0.5)
+        endWhile
 
         ; here we can put functions at the end of battle
         if VARS.auto_resurrect
             FOLLOWERS.Resurrect()
         endIf
-        FOLLOWERS.Enforce()
+        ;FOLLOWERS.Enforce()
 
     endIf
+endFunction
+
+bool function p_Send_Party_Combat()
+    int handle = ModEvent.Create("doticu_npcp_party_combat")
+    if !handle
+        return false
+    endIf
+
+    ModEvent.PushBool(handle, p_is_in_combat)
+
+    if !ModEvent.Send(handle)
+        ModEvent.Release(handle)
+        return false
+    endIf
+
+    return true
+endFunction
+
+bool function p_Send_Player_Sneak()
+    int handle = ModEvent.Create("doticu_npcp_player_sneak")
+
+    if !handle
+        return false
+    endIf
+
+    ModEvent.PushBool(handle, ACTOR_PLAYER.IsSneaking())
+
+    if !ModEvent.Send(handle)
+        ModEvent.Release(handle)
+        return false
+    endIf
+
+    return true
 endFunction
 
 ; Public Methods
@@ -156,6 +198,14 @@ event OnPlayerLoadGame()
         ; for some reason, p_is_in_combat sometimes gets stuck to true
         ; and so we never get auto resurrect, but this resets it.
         p_End_Combat()
+    endIf
+endEvent
+
+event OnControlDown(string str_control)
+    if str_control == "Sneak"
+        while !p_Send_Player_Sneak()
+            Utility.Wait(0.25)
+        endWhile
     endIf
 endEvent
 

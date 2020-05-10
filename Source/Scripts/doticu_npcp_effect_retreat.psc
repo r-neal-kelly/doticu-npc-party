@@ -10,13 +10,16 @@ doticu_npcp_consts property CONSTS hidden
         return p_DATA.CONSTS
     endFunction
 endProperty
-
+doticu_npcp_codes property CODES hidden
+    doticu_npcp_codes function Get()
+        return p_DATA.CODES
+    endFunction
+endProperty
 doticu_npcp_actors property ACTORS hidden
     doticu_npcp_actors function Get()
         return p_DATA.MODS.FUNCS.ACTORS
     endFunction
 endProperty
-
 doticu_npcp_followers property FOLLOWERS hidden
     doticu_npcp_followers function Get()
         return p_DATA.MODS.FOLLOWERS
@@ -49,19 +52,21 @@ event OnEffectStart(Actor ref_target, Actor ref_caster)
 endEvent
 
 event OnEffectFinish(Actor ref_target, Actor ref_caster)
-    ; it's too unstable to rely on having magic effect as a condition, so this is a must
+    ; just in case there is a false finish
     if !CONSTS.ACTOR_PLAYER.IsSneaking()
         FOLLOWERS.Get_Follower(ref_target).Unretreat()
+    else
+        ;FOLLOWERS.Get_Follower(ref_target).Retreat()
+        while !p_ref_actor.HasMagicEffect(CONSTS.EFFECT_RETREAT)
+            ACTORS.Apply_Ability(p_ref_actor, CONSTS.ABILITY_RETREAT)
+        endWhile
     endIf
-
-    ; make sure ABILITY_SNEAK magic effect is primed
-    ACTORS.Apply_Ability(ref_target, CONSTS.ABILITY_SNEAK)
 
     p_ref_actor = none
 endEvent
 
-event OnHit(ObjectReference ref_attacker, Form _, Projectile __, bool ___, bool ____, bool _____, bool ______)
-    ACTORS.Pacify(p_ref_actor)
+event OnCombatStateChanged(Actor ref_target, int code_combat)
+    if code_combat > 0
+        ACTORS.Pacify(p_ref_actor)
+    endIf
 endEvent
-
-; see OnEffectStart in doticu_npcp_effect_sneak
