@@ -77,8 +77,17 @@ ObjectReference function Create_Temp()
     Utility.Wait(0.1)
 
     ref_container.SetActorOwner(ACTOR_PLAYER.GetActorBase())
+
+    ; to make sure certain fields in c++ have been allocated for our plugin
+    ref_container.AddItem(CONSTS.WEAPON_BLANK, 1, true)
+    ref_container.RemoveItem(CONSTS.WEAPON_BLANK, 1, true)
     
     return ref_container
+endFunction
+
+function Destroy_Temp(ObjectReference ref_container)
+    ref_container.Disable()
+    ref_container.Delete()
 endFunction
 
 ObjectReference function Create_Persistent()
@@ -88,8 +97,17 @@ ObjectReference function Create_Persistent()
     Utility.Wait(0.1)
 
     ref_container.SetActorOwner(ACTOR_PLAYER.GetActorBase())
+
+    ; to make sure certain fields in c++ have been allocated for our plugin
+    ref_container.AddItem(CONSTS.WEAPON_BLANK, 1, true)
+    ref_container.RemoveItem(CONSTS.WEAPON_BLANK, 1, true)
     
     return ref_container
+endFunction
+
+function Destroy_Persistent(ObjectReference ref_container)
+    ref_container.Disable()
+    ref_container.Delete()
 endFunction
 
 function Open(ObjectReference ref_container)

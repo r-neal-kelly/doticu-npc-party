@@ -5,10 +5,11 @@
 Scriptname doticu_npcp hidden
 
 ; Actor
-bool function Actor_Has_Changed_Outfit(Actor ref_actor, ObjectReference ref_outfit, ObjectReference ref_outfit2, Form linchpin) native global
-function Actor_Refresh_Outfit(Actor ref_actor, ObjectReference ref_outfit, ObjectReference ref_outfit2, Form linchpin, ObjectReference ref_removals) native global
-function Actor_Refresh_Outfit_Dead(Actor ref_actor, ObjectReference ref_outfit, ObjectReference ref_outfit2, Form linchpin, ObjectReference ref_removals) native global
-function Actor_Cache_Worn(Actor ref_actor, ObjectReference ref_cache, Form linchpin) native global
+bool function Actor_Has_Outfit2(Actor ref_actor, Form linchpin, ObjectReference vanilla, ObjectReference custom) native global
+function Actor_Set_Outfit2(Actor ref_actor, Form linchpin, ObjectReference vanilla, ObjectReference custom, ObjectReference trash, ObjectReference transfer) native global
+function Actor_Set_Outfit2_Dead(Actor ref_actor, Form lichpin, ObjectReference vanilla, ObjectReference custom, ObjectReference trash, ObjectReference transfer) native global
+function Actor_Cache_Worn(Actor ref_actor, Form form_linchpin, ObjectReference ref_cache_out) native global
+function Actor_Test() native global
 
 ; Aliases
 Alias[] function Aliases_Slice(Alias[] arr_aliases, int idx_from, int idx_to_ex) native global
@@ -38,7 +39,7 @@ string[] function Aliases_Get_Race_Names(Alias[] arr_aliases) native global
 Form[] function Forms_Slice(Form[] arr_forms, int idx_from, int idx_to_ex) native global
 
 ; Object_Ref
-function Object_Ref_Log_Items(ObjectReference ref_object) native global
+function Object_Ref_Log_XContainer(ObjectReference ref_object) native global
 
 ; Outfit
 function Outfit_Add_Item(Outfit outfit_outfit, Form form_item) native global

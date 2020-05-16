@@ -180,7 +180,8 @@ function Remove_Perk(Perk perk_to_remove)
 endFunction
 
 bool function Is_Party_In_Combat()
-    return p_is_in_combat
+    ;return p_is_in_combat
+    return ACTOR_PLAYER.IsInCombat() || FOLLOWERS.Are_In_Combat()
 endFunction
 
 ; Events

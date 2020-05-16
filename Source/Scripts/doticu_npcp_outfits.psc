@@ -196,19 +196,23 @@ function Outfit_Clone(Actor ref_clone, Actor ref_orig)
         return
     endIf
 
-    ; we add one item to make sure certain fields in c++ have been allocated
+    ; this may prevent crashing, when the engine copies a ptr on orig and frees it
+    ; RemoveAllItems does not remove unplayable items, so tokens are copied and left
+    ; until member funcs clear it.
     ObjectReference ref_junk = CONTAINERS.Create_Temp()
-    ref_junk.AddItem(CONSTS.WEAPON_BLANK, 1, true)
-    ref_junk.RemoveItem(CONSTS.WEAPON_BLANK, 1, true)
-
-    ; this may prevent crashing, when the engine reuses a ptr on orig then frees it later
     ref_clone.RemoveAllItems(ref_junk, false, false)
 
     ; this ensures that our modded outfit is worn, including the blank armor.
     ; this also fufills VARS.clone_outfit == CODES.OUTFIT_BASE
-NPCS.Lock_Base(ref_orig)
-    ref_clone.SetOutfit(NPCS.Get_Default_Outfit(ref_clone))
-NPCS.Unlock_Base(ref_orig)
+NPCS.Lock_Base(ref_clone)
+    Outfit outfit_default = NPCS.Get_Default_Outfit(ref_clone)
+    doticu_npcp.Outfit_Add_Item(outfit_default, CONSTS.ARMOR_BLANK)
+    ref_clone.SetOutfit(outfit_default)
+NPCS.Unlock_Base(ref_clone)
+
+    ; to make sure certain fields in c++ have been allocated
+    ref_clone.AddItem(CONSTS.WEAPON_BLANK, 1, true)
+    ref_clone.RemoveItem(CONSTS.WEAPON_BLANK, 1, true)
 
     if VARS.clone_outfit == CODES.OUTFIT_REFERENCE
         ; this will stop the actor from rendering while we manage its inventory
@@ -216,7 +220,9 @@ NPCS.Unlock_Base(ref_orig)
         ref_clone.SetPlayerTeammate(false, false)
 
         ; does all the heavy lifting of removing unfit items and adding outfit items
-        doticu_npcp.Actor_Refresh_Outfit(ref_clone, none, ref_orig, CONSTS.ARMOR_BLANK as Form, ref_junk)
+        ObjectReference ref_transfer = CONTAINERS.Create_Temp()
+        doticu_npcp.Actor_Set_Outfit2(ref_clone, CONSTS.ARMOR_BLANK, none, ref_orig, ref_junk, ref_transfer)
+        CONTAINERS.Destroy_Temp(ref_transfer)
 
         ; doing this allows us to render all at once, which is far more efficient
         ref_clone.SetPlayerTeammate(true, true)
@@ -230,6 +236,5 @@ NPCS.Unlock_Base(ref_orig)
     endIf
 
     ; it doesn't hurt to cleanup manually
-    ref_junk.Disable()
-    ref_junk.Delete()
+    CONTAINERS.Destroy_Temp(ref_junk)
 endFunction

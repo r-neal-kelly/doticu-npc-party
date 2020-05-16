@@ -4,6 +4,18 @@
 
 #include "quest.h"
 
+namespace doticu_npcp { namespace Quest {
+
+    const char *Get_Name(TESQuest *quest) {
+        if (!quest) {
+            return "";
+        }
+
+        return (DYNAMIC_CAST(quest, TESQuest, TESFullName))->name.data;
+    }
+
+}}
+
 namespace doticu_npcp { namespace Quest { namespace Exports {
 
     VMResultArray<BGSBaseAlias *> Get_Used_Aliases(StaticFunctionTag *, TESQuest *ref_quest) {

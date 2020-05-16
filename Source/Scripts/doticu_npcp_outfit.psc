@@ -104,15 +104,13 @@ NPCS.Lock_Base(ref_actor)
 
     if outfit_vanilla && outfit_vanilla != outfit_default
         NPCS.Set_Default_Outfit(ref_actor, outfit_vanilla)
-        outfit_default = outfit_vanilla
-
-        doticu_npcp.Outfit_Add_Item(outfit_vanilla, CONSTS.ARMOR_BLANK as Form)
+        doticu_npcp.Outfit_Add_Item(outfit_vanilla, CONSTS.ARMOR_BLANK)
         ref_actor.SetOutfit(outfit_vanilla)
         do_force = true
     elseIf !ref_actor.IsEquipped(CONSTS.ARMOR_BLANK)
         ; it's imperative that ARMOR_BLANK be on the outfit and equipped before further ops
-        doticu_npcp.Outfit_Add_Item(outfit_vanilla, CONSTS.ARMOR_BLANK as Form)
-        ref_actor.SetOutfit(outfit_vanilla)
+        doticu_npcp.Outfit_Add_Item(outfit_default, CONSTS.ARMOR_BLANK)
+        ref_actor.SetOutfit(outfit_default)
         do_force = true
     else
         ; just in case it was changed before this ref was updated
@@ -120,7 +118,8 @@ NPCS.Lock_Base(ref_actor)
     endIf
 NPCS.Unlock_Base(ref_actor)
 
-    if !do_force && !doticu_npcp.Actor_Has_Changed_Outfit(ref_actor, p_cache_vanilla, self, CONSTS.ARMOR_BLANK as Form)
+    ; it's so fast, visually unnoticeable, and Has_Outfit2 is so hard to execute, that maybe we should always just reoutfit?
+    if !do_force && doticu_npcp.Actor_Has_Outfit2(ref_actor, CONSTS.ARMOR_BLANK, p_cache_vanilla, self)
         return ACTORS.Update_Equipment(ref_actor)
     endIf
 
@@ -130,21 +129,17 @@ NPCS.Unlock_Base(ref_actor)
 
     ; we add and remove a item so that the outfit has been filled by the engine once.
     ; this can happen if the base outfit for this ref is set but was never rendered.
-    ref_actor.AddItem(CONSTS.WEAPON_BLANK, 1, true)
-    ref_actor.RemoveItem(CONSTS.WEAPON_BLANK, 1, true)
-
-    ; for right now, we are just throwing away removed items, but we could store them instead
-    ; we add one item to make sure certain fields in c++ have been allocated
-    ObjectReference ref_junk = CONTAINERS.Create_Temp()
-    ref_junk.AddItem(CONSTS.WEAPON_BLANK, 1, true)
-    ref_junk.RemoveItem(CONSTS.WEAPON_BLANK, 1, true)
-
+    ;ref_actor.AddItem(CONSTS.WEAPON_BLANK, 1, true)
+    ;ref_actor.RemoveItem(CONSTS.WEAPON_BLANK, 1, true)
+    
     ; does all the heavy lifting of removing unfit items and adding outfit items
-    doticu_npcp.Actor_Refresh_Outfit(ref_actor, p_cache_vanilla, self, CONSTS.ARMOR_BLANK as Form, ref_junk)
+    ObjectReference ref_trash = CONTAINERS.Create_Temp()
+    ObjectReference ref_transfer = CONTAINERS.Create_Temp()
+    doticu_npcp.Actor_Set_Outfit2(ref_actor, CONSTS.ARMOR_BLANK, p_cache_vanilla, self, ref_trash, ref_transfer)
 
     ; it doesn't hurt to cleanup manually
-    ref_junk.Disable()
-    ref_junk.Delete()
+    CONTAINERS.Destroy_Temp(ref_trash)
+    CONTAINERS.Destroy_Temp(ref_transfer)
 
     ; doing this allows us to render all at once, which is far more efficient
     while !p_DATA.VARS.is_updating && Utility.IsInMenuMode()
@@ -162,19 +157,16 @@ NPCS.Unlock_Base(ref_actor)
 endFunction
 
 function p_Set_Dead(Actor ref_actor)
-    ; for right now, we are just throwing away removed items, but we could store them instead
-    ; we add one item to make sure certain fields in c++ have been allocated
-    ObjectReference ref_junk = CONTAINERS.Create_Temp()
-    ref_junk.AddItem(CONSTS.WEAPON_BLANK, 1, true)
-    ref_junk.RemoveItem(CONSTS.WEAPON_BLANK, 1, true)
+    ObjectReference ref_trash = CONTAINERS.Create_Temp()
+    ObjectReference ref_transfer = CONTAINERS.Create_Temp()
 
     ; does all the heavy lifting of removing unfit items and adding outfit items
     ; the engine won't equip new items, so we only remove items no longer in self or cache_outfit
-    doticu_npcp.Actor_Refresh_Outfit_Dead(ref_actor, p_cache_vanilla, self, CONSTS.ARMOR_BLANK as Form, ref_junk)
+    doticu_npcp.Actor_Set_Outfit2_Dead(ref_actor, CONSTS.ARMOR_BLANK, p_cache_vanilla, self, ref_trash, ref_transfer)
 
     ; it doesn't hurt to cleanup manually
-    ref_junk.Disable()
-    ref_junk.Delete()
+    CONTAINERS.Destroy_Temp(ref_trash)
+    CONTAINERS.Destroy_Temp(ref_transfer)
 endFunction
 
 ; Public Methods
@@ -250,7 +242,7 @@ function Cache_Vanilla_Dynamic(Actor ref_actor)
     ; not only does this do the heavy lifting, but it caches what the actor is wearing
     ; so that when a vanilla outfit change happens, leveled items wont be calc'd twice.
     ; also, we can trust more in our override of Actor.SetOutfit, and we won't get non-outfit items
-    doticu_npcp.Actor_Cache_Worn(ref_actor, p_cache_vanilla, CONSTS.ARMOR_BLANK)
+    doticu_npcp.Actor_Cache_Worn(ref_actor, CONSTS.ARMOR_BLANK, p_cache_vanilla)
 endFunction
 
 function Try_Cache_Vanilla(Outfit outfit_vanilla)
@@ -262,6 +254,7 @@ function Try_Cache_Vanilla(Outfit outfit_vanilla)
 endFunction
 
 function Get(Actor ref_actor, ObjectReference ref_inventory)
+    ; this ought to be done in c++ now, to make accurate copies, etc.
     int idx_forms
     Form form_item
     int num_items

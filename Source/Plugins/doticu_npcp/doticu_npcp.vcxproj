@@ -149,8 +149,11 @@
     <ClCompile Include="src\object_ref.cpp" />
     <ClCompile Include="src\form.cpp" />
     <ClCompile Include="src\quest.cpp" />
+    <ClCompile Include="src\xentry.cpp" />
     <ClCompile Include="src\string2.cpp" />
     <ClCompile Include="src\utils.cpp" />
+    <ClCompile Include="src\xdata.cpp" />
+    <ClCompile Include="src\xlist.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\aliases.h" />
@@ -158,6 +161,7 @@
     <ClInclude Include="include\actor2.h" />
     <ClInclude Include="include\alias.h" />
     <ClInclude Include="include\forms.h" />
+    <ClInclude Include="include\xentry.h" />
     <ClInclude Include="include\outfit.h" />
     <ClInclude Include="include\papyrus.h" />
     <ClInclude Include="include\quest.h" />
@@ -165,6 +169,9 @@
     <ClInclude Include="include\vector.h" />
     <ClInclude Include="include\utils.h" />
     <ClInclude Include="include\object_ref.h" />
+    <ClInclude Include="include\xdata.h" />
+    <ClInclude Include="include\xlist.h" />
+    <ClInclude Include="include\types.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
