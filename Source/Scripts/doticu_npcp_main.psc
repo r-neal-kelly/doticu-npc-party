@@ -105,10 +105,15 @@ bool function p_Has_Requires()
         return false
     endIf
 
-    if Is_SKSE_Less_Than(2, 0, 17)
+    if Is_SKSE_Version_Less_Than(2, 0, 17)
         Debug.MessageBox("NPC Party: Running a version of SKSE older than 2.0.17. This mod may not function. Please update SKSE.")
     elseIf SKSE.GetScriptVersionRelease() < 64
         Debug.MessageBox("NPC Party: SKSE scripts are older than version 2.0.17. This mod may not function. Try to reinstall SKSE.")
+    endIf
+
+    if Is_NPC_Party_Version_Less_Than(0, 8, 2)
+        Debug.MessageBox("NPC Party: Running a version of NPC Party older than 0.8.2. Update to 0.8.2 before trying any later updates.")
+        return false
     endIf
 
     return true
@@ -133,14 +138,13 @@ function p_Register()
 endFunction
 
 function p_Version()
-    if Is_NPC_Party_Less_Than(CONSTS.VERSION_MAJOR, CONSTS.VERSION_MINOR, CONSTS.VERSION_PATCH)
+    if Is_NPC_Party_Version_Less_Than(CONSTS.VERSION_MAJOR, CONSTS.VERSION_MINOR, CONSTS.VERSION_PATCH)
         p_Start_Updating()
 
-        if Is_NPC_Party_Less_Than(0, 8, 2)
-            u_0_8_2()
-        endIf
-        if Is_NPC_Party_Less_Than(0, 8, 3)
-            u_0_8_3()
+        if Is_NPC_Party_Version_Less_Than(0, 9, 0)
+            if !Is_NPC_Party_Version(0, 8, 3); already updated
+                u_0_9_0()
+            endIf
         endIf
 
         VARS.version_major = CONSTS.VERSION_MAJOR
@@ -217,12 +221,16 @@ bool function Is_Version_Less_Than(int major, int minor, int patch, int min_majo
     endIf
 endFunction
 
-bool function Is_SKSE_Less_Than(int min_major, int min_minor, int min_patch)
+bool function Is_SKSE_Version_Less_Than(int min_major, int min_minor, int min_patch)
     return Is_Version_Less_Than(SKSE.GetVersion(), SKSE.GetVersionMinor(), SKSE.GetVersionBeta(), min_major, min_minor, min_patch)
 endFunction
 
-bool function Is_NPC_Party_Less_Than(int min_major, int min_minor, int min_patch)
+bool function Is_NPC_Party_Version_Less_Than(int min_major, int min_minor, int min_patch)
     return Is_Version_Less_Than(VARS.version_major, VARS.version_minor, VARS.version_patch, min_major, min_minor, min_patch)
+endFunction
+
+bool function Is_NPC_Party_Version(int major, int minor, int patch)
+    return VARS.version_major == major && VARS.version_minor == minor && VARS.version_patch == patch
 endFunction
 
 bool function Is_Ready()
@@ -232,20 +240,13 @@ bool function Is_Ready()
 endFunction
 
 ; Update Methods
-function u_0_8_2()
-    DATA.CONSTS.QUEST_DIALOGUE_REANIMATED.Start()
-    DATA.CONSTS.QUEST_DIALOGUE_THRALL.Start()
-
-    DATA.MODS.FUNCS.PERKS.u_0_8_2()
-endFunction
-
-function u_0_8_3()
-    VARS.u_0_8_3()
-    FUNCS.u_0_8_3()
-    MEMBERS.ALIASES.u_0_8_3()
-    FOLLOWERS.ALIASES.u_0_8_3()
-    MEMBERS.u_0_8_3()
-    CONTROL.MCM.u_0_8_3()
+function u_0_9_0()
+    VARS.u_0_9_0()
+    FUNCS.u_0_9_0()
+    MEMBERS.ALIASES.u_0_9_0()
+    FOLLOWERS.ALIASES.u_0_9_0()
+    MEMBERS.u_0_9_0()
+    CONTROL.MCM.u_0_9_0()
 endFunction
 
 ; Events

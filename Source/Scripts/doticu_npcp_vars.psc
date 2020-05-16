@@ -425,7 +425,7 @@ function Set_Defaults()
 endFunction
 
 ; Update Methods
-function u_0_8_3()
+function u_0_9_0()
     max_members = p_DATA.MODS.MEMBERS.GetNumAliases()
 
     str_sort_members = "NAME"

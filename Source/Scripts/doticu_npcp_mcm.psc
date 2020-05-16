@@ -394,7 +394,7 @@ event OnOptionHighlight(int id_option)
 endEvent
 
 ; Update Methods
-function u_0_8_3()
+function u_0_9_0()
     MCM_MANNEQUINS.f_Create(p_DATA)
     MCM_MANNEQUINS.f_Register()
 endFunction

@@ -520,12 +520,12 @@ function p_Undisplay_Aliases(Alias[] arr_aliases)
 endFunction
 
 ; Update Methods
-function u_0_8_3()
+function u_0_9_0()
     Alias[] arr_aliases = ALIASES.Get_Aliases()
     int idx_aliases = 0
     int num_aliases = arr_aliases.length
     while idx_aliases < num_aliases
-        (arr_aliases[idx_aliases] as doticu_npcp_member).u_0_8_3()
+        (arr_aliases[idx_aliases] as doticu_npcp_member).u_0_9_0()
         idx_aliases += 1
     endWhile
 endFunction

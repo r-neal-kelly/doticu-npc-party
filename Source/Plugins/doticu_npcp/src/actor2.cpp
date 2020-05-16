@@ -92,123 +92,6 @@ namespace doticu_npcp { namespace Actor2 {
         return;
     }
 
-    bool Has_Outfit2(Actor *actor,
-                     TESForm *linchpin,
-                     TESObjectREFR *vanilla,
-                     TESObjectREFR *custom
-    ) {
-        if (!actor || !linchpin) {
-            _ERROR("Actor2::Has_Outfit2: Invalid args.");
-            return false;
-        }
-
-        if (!Object_Ref::Is_Worn(actor, linchpin)) {
-            return false;
-        }
-
-        XContainer_t *xcontainer_actor = Object_Ref::Get_XContainer(actor);
-        if (!xcontainer_actor) {
-            _ERROR("Actor2::Has_Outfit2: Unable to get XContainer.");
-            return false;
-        }
-
-        for (XEntries_t::Iterator it_xentry_actor = xcontainer_actor->data->objList->Begin(); !it_xentry_actor.End(); ++it_xentry_actor) {
-            XEntry_t *xentry_actor = it_xentry_actor.Get();
-            if (!xentry_actor || !xentry_actor->type || xentry_actor->type == linchpin) {
-                continue;
-            }
-
-            TESForm *form_actor = xentry_actor->type;
-            if (!form_actor->IsPlayable() && !form_actor->IsArmor() && !form_actor->IsWeapon() && !form_actor->IsAmmo()) {
-                continue;
-            }
-
-            XEntry_t *xentry_vanilla = Object_Ref::Get_XEntry(vanilla, form_actor);
-            XEntry_t *xentry_custom = Object_Ref::Get_XEntry(custom, form_actor);
-            if (XEntry::Get_Count(xentry_actor) > 0 && !xentry_vanilla && !xentry_custom) {
-                return false;
-            }
-
-            u64 count_xlists_tagged = 0;
-            u64 count_xlists_untagged = 0;
-            if (xentry_actor->extendDataList) {
-                for (XLists_t::Iterator it_xlist_actor = xentry_actor->extendDataList->Begin(); !it_xlist_actor.End(); ++it_xlist_actor) {
-                    XList_t *xlist_actor = it_xlist_actor.Get();
-                    if (!xlist_actor) {
-                        continue;
-                    }
-
-                    if (XList::Is_Quest_Item(xlist_actor)) {
-                        count_xlists_untagged += XList::Get_Count(xlist_actor);
-                    } else if (XList::Has_Outfit2_Flag(xlist_actor)) {
-                        if (XList::Can_Copy(xlist_actor) &&
-                            !XEntry::Get_XList(xentry_vanilla, xlist_actor, false) &&
-                            !XEntry::Get_XList(xentry_custom, xlist_actor, false)
-                            ) {
-                            return false;
-                        }
-                        count_xlists_tagged += XList::Get_Count(xlist_actor);
-                    } else {
-                        return false;
-                    }
-                }
-            }
-
-            if (Object_Ref::Get_Entry_Count(actor, form_actor) != count_xlists_tagged + count_xlists_untagged) {
-                return false;
-            } else if (Object_Ref::Get_Entry_Count(vanilla, form_actor) + Object_Ref::Get_Entry_Count(custom, form_actor) != count_xlists_tagged) {
-                return false;
-            }
-
-        }
-
-        return Has_Outfit2_Partition(actor, linchpin, vanilla) && Has_Outfit2_Partition(actor, linchpin, custom);
-    }
-
-    bool Has_Outfit2_Partition(Actor *actor,
-                               TESForm *linchpin,
-                               TESObjectREFR *outfit2_partition
-    ) {
-        if (!actor || !linchpin) {
-            _ERROR("Actor2::Has_Outfit2_Partition: Invalid args.");
-            return false;
-        }
-
-        XContainer_t *xcontainer_outfit = Object_Ref::Get_XContainer(outfit2_partition);
-        if (!xcontainer_outfit) {
-            return true;
-        }
-
-        for (XEntries_t::Iterator it_xentry_outfit = xcontainer_outfit->data->objList->Begin(); !it_xentry_outfit.End(); ++it_xentry_outfit) {
-            XEntry_t *xentry_outfit = it_xentry_outfit.Get();
-            if (!xentry_outfit || !xentry_outfit->type || xentry_outfit->type == linchpin) {
-                continue;
-            }
-            TESForm *form_outfit = xentry_outfit->type;
-
-            XEntry_t *xentry_actor = Object_Ref::Get_XEntry(actor, form_outfit, false);
-            if (!xentry_actor) {
-                return false;
-            }
-
-            if (xentry_outfit->extendDataList) {
-                for (XLists_t::Iterator it_xlist_outfit = xentry_outfit->extendDataList->Begin(); !it_xlist_outfit.End(); ++it_xlist_outfit) {
-                    XList_t *xlist_outfit = it_xlist_outfit.Get();
-                    if (!xlist_outfit) {
-                        continue;
-                    }
-
-                    XList_t *xlist_actor = XEntry::Get_XList(xentry_actor, xlist_outfit, true);
-                    if (!xlist_actor || XList::Get_Count(xlist_outfit) != XList::Get_Count(xlist_actor)) {
-                        return false;
-                    }
-                }
-            }
-        }
-
-        return true;
-    }
-
     void Set_Outfit2(Actor *actor,
                      TESForm *linchpin, // an item that when present, stops the engine from adding unwanted items to actor
                      TESObjectREFR *vanilla, // a cache of pre-calculated vanilla outfit items (can be null)
@@ -221,17 +104,13 @@ namespace doticu_npcp { namespace Actor2 {
             return;
         }
 
-        // this creates xcontainer_actor if necessary.
-        if (!Object_Ref::Is_Worn(actor, linchpin)) {
-            _MESSAGE("equipping linchpin");
-            papyrusActor::EquipItemEx(actor, linchpin, 0, false, false);
-        }
-        XEntry::Set_Count(Object_Ref::Get_XEntry(actor, linchpin), 1);
-
         XContainer_t *xcontainer_actor = Object_Ref::Get_XContainer(actor);
         if (!xcontainer_actor) {
+            _ERROR("Actor2::Set_Outfit2: Unable to get actor XContainer.");
             return;
         }
+
+        XEntry::Set_Count(Object_Ref::Get_XEntry(actor, linchpin), 1);
 
         std::vector<XEntry_t *> vec_xentries_destroy;
         vec_xentries_destroy.reserve(4);
@@ -567,20 +446,120 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
+    // this copies and splits playable items into two containers, one for equipment and the other for everything else
+    void Cache_Inventory(Actor *actor,
+                         TESForm *linchpin,
+                         TESObjectREFR *worn_out,
+                         TESObjectREFR *pack_out
+    ) {
+        if (!actor || !linchpin || !worn_out || !pack_out) {
+            _ERROR("Actor2::Cache_Inventory: Invalid args.");
+            return;
+        }
+
+        XContainer_t *xcontainer_actor = Object_Ref::Get_XContainer(actor);
+        if (!xcontainer_actor) {
+            _ERROR("Actor2::Cache_Inventory: Could not get actor xcontainer.");
+            return;
+        }
+
+        XContainer_t *xcontainer_worn = Object_Ref::Get_XContainer(worn_out);
+        if (!xcontainer_worn) {
+            _ERROR("Actor2::Cache_Inventory: Could not get worn xcontainer.");
+            return;
+        }
+
+        XContainer_t *xcontainer_pack = Object_Ref::Get_XContainer(pack_out);
+        if (!xcontainer_pack) {
+            _ERROR("Actor2::Cache_Inventory: Could not get pack xcontainer.");
+            return;
+        }
+
+        for (XEntries_t::Iterator it_xentry_actor = xcontainer_actor->data->objList->Begin(); !it_xentry_actor.End(); ++it_xentry_actor) {
+            XEntry_t *xentry_actor = it_xentry_actor.Get();
+            if (!xentry_actor || !xentry_actor->type || xentry_actor->type == linchpin) {
+                continue;
+            }
+
+            TESForm *form_actor = xentry_actor->type;
+            if (!form_actor->IsPlayable()) {
+                continue;
+            }
+
+            u64 count_xlists_actor = 0;
+            if (xentry_actor->extendDataList) {
+                std::vector<XList_t *> vec_xlists_worn;
+                std::vector<XList_t *> vec_xlists_pack;
+                vec_xlists_worn.reserve(2);
+                vec_xlists_pack.reserve(2);
+
+                for (XLists_t::Iterator it_xlist_actor = xentry_actor->extendDataList->Begin(); !it_xlist_actor.End(); ++it_xlist_actor) {
+                    XList_t *xlist_actor = it_xlist_actor.Get();
+                    if (!xlist_actor) {
+                        continue;
+                    }
+
+                    count_xlists_actor += XList::Get_Count(xlist_actor);
+
+                    if (XList::Is_Worn(xlist_actor)) {
+                        vec_xlists_worn.push_back(xlist_actor);
+                    } else {
+                        vec_xlists_pack.push_back(xlist_actor);
+                    }
+                }
+
+                if (vec_xlists_worn.size() > 0) {
+                    XEntry_t *xentry_worn = Object_Ref::Get_XEntry(worn_out, form_actor, true);
+                    if (!xentry_worn) {
+                        continue;
+                    }
+
+                    for (u64 idx = 0, size = vec_xlists_worn.size(); idx < size; idx += 1) {
+                        XList_t *xlist_worn = vec_xlists_worn[idx];
+                        XList_t *xlist_copy = XList::Copy(xlist_worn);
+                        if (xlist_copy) {
+                            XEntry::Add_XList(xentry_worn, xlist_copy);
+                        } else {
+                            XEntry::Inc_Count(xentry_worn, XList::Get_Count(xlist_worn));
+                        }
+                    }
+                }
+
+                if (vec_xlists_pack.size() > 0) {
+                    XEntry_t *xentry_pack = Object_Ref::Get_XEntry(pack_out, form_actor, true);
+                    if (!xentry_pack) {
+                        continue;
+                    }
+
+                    for (u64 idx = 0, size = vec_xlists_pack.size(); idx < size; idx += 1) {
+                        XList_t *xlist_pack = vec_xlists_pack[idx];
+                        XList_t *xlist_copy = XList::Copy(xlist_pack);
+                        if (xlist_copy) {
+                            XEntry::Add_XList(xentry_pack, xlist_copy);
+                        } else {
+                            XEntry::Inc_Count(xentry_pack, XList::Get_Count(xlist_pack));
+                        }
+                    }
+                }
+            }
+
+            u64 count_remaining = Object_Ref::Get_BEntry_Count(actor, form_actor) + XEntry::Get_Count(xentry_actor) - count_xlists_actor;
+            if (count_remaining > 0) {
+                XEntry_t *xentry_pack = Object_Ref::Get_XEntry(pack_out, form_actor, true);
+                if (xentry_pack) {
+                    XEntry::Inc_Count(xentry_pack, count_remaining);
+                }
+            }
+        }
+    }
+
 }}
 
 namespace doticu_npcp { namespace Actor2 { namespace Exports {
 
-    bool Has_Outfit2(StaticFunctionTag *,
-                     Actor *actor,
-                     TESForm *linchpin,
-                     TESObjectREFR *vanilla,
-                     TESObjectREFR *custom
-    ) {
-        return Actor2::Has_Outfit2(actor, linchpin, vanilla, custom);
-    }
-
-    void Set_Outfit2(StaticFunctionTag *,
+    void Set_Outfit2(VMClassRegistry* registry,
+                     UInt32 id_stack,
+                     StaticFunctionTag *,
                      Actor *actor,
                      TESForm *linchpin,
                      TESObjectREFR *vanilla,
@@ -596,12 +575,12 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
         _MESSAGE("\nCustom Partition:");
         Object_Ref::Log_XContainer(custom);
 
-        _MESSAGE("\nActor Before:");
+        _MESSAGE("\nActor Before Set:");
         Object_Ref::Log_XContainer(actor);
 
         Actor2::Set_Outfit2(actor, linchpin, vanilla, custom, trash, transfer);
 
-        _MESSAGE("\nActor After:");
+        _MESSAGE("\nActor After Set:");
         Object_Ref::Log_XContainer(actor);
 
         _MESSAGE("\nTrash:");
@@ -610,6 +589,7 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
         _MESSAGE("\nTransfer:");
         Object_Ref::Log_XContainer(transfer);
     }
+
     void Set_Outfit2_Dead(StaticFunctionTag *,
                           Actor *actor,
                           TESForm *linchpin,
@@ -629,8 +609,27 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
         return Actor2::Cache_Worn(actor, linchpin, cache_out);
     }
 
-    void Test(VMClassRegistry* registry, UInt32 stack_id, StaticFunctionTag*) {
-        _MESSAGE("stack_id: %i", stack_id);
+    void Cache_Inventory(StaticFunctionTag *,
+                         Actor *actor,
+                         TESForm *linchpin,
+                         TESObjectREFR *worn_out,
+                         TESObjectREFR *pack_out
+    ) {
+        return Actor2::Cache_Inventory(actor, linchpin, worn_out, pack_out);
+
+        _MESSAGE("\nWorn Before:");
+        Object_Ref::Log_XContainer(worn_out);
+
+        _MESSAGE("\nPack Before:");
+        Object_Ref::Log_XContainer(pack_out);
+
+        Actor2::Cache_Inventory(actor, linchpin, worn_out, pack_out);
+
+        _MESSAGE("\nWorn After:");
+        Object_Ref::Log_XContainer(worn_out);
+
+        _MESSAGE("\nPack After:");
+        Object_Ref::Log_XContainer(pack_out);
     }
 
     bool Register(VMClassRegistry *registry) {
@@ -639,13 +638,6 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
                 "SetOutfit",
                 "Actor",
                 Actor2::Set_Outfit,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction4 <StaticFunctionTag, bool, Actor *, TESForm *, TESObjectREFR *, TESObjectREFR *>(
-                "Actor_Has_Outfit2",
-                "doticu_npcp",
-                Actor2::Exports::Has_Outfit2,
                 registry)
         );
         registry->RegisterFunction(
@@ -670,10 +662,10 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
                 registry)
         );
         registry->RegisterFunction(
-            new NativeFunction0 <StaticFunctionTag, void>(
-                "Actor_Test",
+            new NativeFunction4 <StaticFunctionTag, void, Actor *, TESForm *, TESObjectREFR *, TESObjectREFR *>(
+                "Actor_Cache_Inventory",
                 "doticu_npcp",
-                Actor2::Exports::Test,
+                Actor2::Exports::Cache_Inventory,
                 registry)
         );
 

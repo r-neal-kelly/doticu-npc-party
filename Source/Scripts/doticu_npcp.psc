@@ -5,11 +5,10 @@
 Scriptname doticu_npcp hidden
 
 ; Actor
-bool function Actor_Has_Outfit2(Actor ref_actor, Form linchpin, ObjectReference vanilla, ObjectReference custom) native global
 function Actor_Set_Outfit2(Actor ref_actor, Form linchpin, ObjectReference vanilla, ObjectReference custom, ObjectReference trash, ObjectReference transfer) native global
 function Actor_Set_Outfit2_Dead(Actor ref_actor, Form lichpin, ObjectReference vanilla, ObjectReference custom, ObjectReference trash, ObjectReference transfer) native global
 function Actor_Cache_Worn(Actor ref_actor, Form form_linchpin, ObjectReference ref_cache_out) native global
-function Actor_Test() native global
+function Actor_Cache_Inventory(Actor ref_actor, Form form_linchpin, ObjectReference ref_worn_out, ObjectReference ref_pack_out) native global
 
 ; Aliases
 Alias[] function Aliases_Slice(Alias[] arr_aliases, int idx_from, int idx_to_ex) native global

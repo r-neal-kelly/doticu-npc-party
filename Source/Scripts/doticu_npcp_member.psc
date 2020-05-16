@@ -780,7 +780,7 @@ f_Lock_Resources()
 f_Unlock_Resources()
 endFunction
 
-function p_Outfit(bool do_force = false)
+function p_Outfit()
 f_Lock_Resources()
     ; if we ever allow manual outfit switching without having to put, we need to make sure the oufit is created
 
@@ -826,7 +826,7 @@ f_Lock_Resources()
         p_outfit2_previous = p_outfit2_current
         p_outfit2_current = p_outfit2_vanilla
         p_outfit2_current.Cache_Vanilla_Dynamic(p_ref_actor)
-        p_outfit2_current.Set(p_ref_actor, true)
+        p_outfit2_current.Set(p_ref_actor, p_container2_pack)
     elseIf p_outfit2_previous != p_outfit2_current
         if p_outfit2_current == p_outfit2_vanilla
             ; maybe we can make this a setting, because it makes it easy to relevel the same outfit
@@ -836,7 +836,7 @@ f_Lock_Resources()
             p_outfit2_current.Cache_Vanilla_Static(NPCS.Get_Default_Outfit(p_ref_actor))
         endIf
         p_outfit2_previous = p_outfit2_current
-        p_outfit2_current.Set(p_ref_actor, true)
+        p_outfit2_current.Set(p_ref_actor, p_container2_pack)
     else
         ; this is just a way to do asyncronous updating for 0.9.0
         if p_outfit2_current == p_outfit2_vanilla
@@ -844,7 +844,7 @@ f_Lock_Resources()
         elseIf p_outfit2_current == p_outfit2_default
             p_outfit2_current.Try_Cache_Vanilla(NPCS.Get_Default_Outfit(p_ref_actor))
         endIf
-        p_outfit2_current.Set(p_ref_actor, do_force)
+        p_outfit2_current.Set(p_ref_actor, p_container2_pack)
     endIf
 
     p_ref_actor.EvaluatePackage()
@@ -2364,7 +2364,7 @@ event OnDeath(Actor ref_killer)
 endEvent
 
 ; Update Methods
-function u_0_8_3()
+function u_0_9_0()
     if Exists()
         ; in case any deadlocks were encountered.
         QUEUES.Destroy(p_queue_member)

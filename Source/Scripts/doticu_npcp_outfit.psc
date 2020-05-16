@@ -51,7 +51,7 @@ doticu_npcp_data        p_DATA          =  none
 
 int property p_MAX_ITEMS hidden
     int function Get()
-        return 16; might be able to increase this, especially if we can move outfitting to c++
+        return 16; might be able to increase this, now that we have moved outfitting to c++
     endFunction
 endProperty
 
@@ -93,9 +93,9 @@ function f_Register()
 endFunction
 
 ; Private Methods
-function p_Set(Actor ref_actor, bool do_force = false)
+function p_Set(Actor ref_actor, ObjectReference ref_pack)
     if ACTORS.Is_Dead(ref_actor)
-        return p_Set_Dead(ref_actor)
+        return p_Set_Dead(ref_actor, ref_pack)
     endIf
 
 NPCS.Lock_Base(ref_actor)
@@ -106,36 +106,27 @@ NPCS.Lock_Base(ref_actor)
         NPCS.Set_Default_Outfit(ref_actor, outfit_vanilla)
         doticu_npcp.Outfit_Add_Item(outfit_vanilla, CONSTS.ARMOR_BLANK)
         ref_actor.SetOutfit(outfit_vanilla)
-        do_force = true
     elseIf !ref_actor.IsEquipped(CONSTS.ARMOR_BLANK)
         ; it's imperative that ARMOR_BLANK be on the outfit and equipped before further ops
         doticu_npcp.Outfit_Add_Item(outfit_default, CONSTS.ARMOR_BLANK)
         ref_actor.SetOutfit(outfit_default)
-        do_force = true
     else
         ; just in case it was changed before this ref was updated
         ACTORS.Set_Base_Outfit(ref_actor, outfit_default)
     endIf
 NPCS.Unlock_Base(ref_actor)
 
-    ; it's so fast, visually unnoticeable, and Has_Outfit2 is so hard to execute, that maybe we should always just reoutfit?
-    if !do_force && doticu_npcp.Actor_Has_Outfit2(ref_actor, CONSTS.ARMOR_BLANK, p_cache_vanilla, self)
-        return ACTORS.Update_Equipment(ref_actor)
-    endIf
-
     ; this will stop the actor from rendering while we manage its inventory
     bool is_teammate = ref_actor.IsPlayerTeammate()
     ref_actor.SetPlayerTeammate(false, false)
-
-    ; we add and remove a item so that the outfit has been filled by the engine once.
-    ; this can happen if the base outfit for this ref is set but was never rendered.
-    ;ref_actor.AddItem(CONSTS.WEAPON_BLANK, 1, true)
-    ;ref_actor.RemoveItem(CONSTS.WEAPON_BLANK, 1, true)
     
     ; does all the heavy lifting of removing unfit items and adding outfit items
     ObjectReference ref_trash = CONTAINERS.Create_Temp()
     ObjectReference ref_transfer = CONTAINERS.Create_Temp()
     doticu_npcp.Actor_Set_Outfit2(ref_actor, CONSTS.ARMOR_BLANK, p_cache_vanilla, self, ref_trash, ref_transfer)
+
+    ; we currently move transfer items to pack, but this could eventually end up in a community chest
+    ref_transfer.RemoveAllItems(ref_pack, false, true)
 
     ; it doesn't hurt to cleanup manually
     CONTAINERS.Destroy_Temp(ref_trash)
@@ -156,7 +147,10 @@ NPCS.Unlock_Base(ref_actor)
     endIf
 endFunction
 
-function p_Set_Dead(Actor ref_actor)
+function p_Set_Dead(Actor ref_actor, ObjectReference ref_pack)
+    ; I need to revisit this and try to make it work better.
+    return
+
     ObjectReference ref_trash = CONTAINERS.Create_Temp()
     ObjectReference ref_transfer = CONTAINERS.Create_Temp()
 
@@ -164,9 +158,14 @@ function p_Set_Dead(Actor ref_actor)
     ; the engine won't equip new items, so we only remove items no longer in self or cache_outfit
     doticu_npcp.Actor_Set_Outfit2_Dead(ref_actor, CONSTS.ARMOR_BLANK, p_cache_vanilla, self, ref_trash, ref_transfer)
 
+    ; we currently move transfer items to pack, but this could eventually end up in a community chest
+    ref_transfer.RemoveAllItems(ref_pack, false, true)
+
     ; it doesn't hurt to cleanup manually
     CONTAINERS.Destroy_Temp(ref_trash)
     CONTAINERS.Destroy_Temp(ref_transfer)
+
+    ; maybe try addremove an item to update actor container?
 endFunction
 
 ; Public Methods
@@ -253,38 +252,17 @@ function Try_Cache_Vanilla(Outfit outfit_vanilla)
     endIf
 endFunction
 
-function Get(Actor ref_actor, ObjectReference ref_inventory)
-    ; this ought to be done in c++ now, to make accurate copies, etc.
-    int idx_forms
-    Form form_item
-    int num_items
-    bool is_equipped
-    ObjectReference ref_item
-
+function Get(Actor ref_actor, ObjectReference ref_pack)
+    ; this should be moved to community chests
     self.RemoveAllItems(CONSTS.ACTOR_PLAYER, false, true)
 
-    idx_forms = ref_actor.GetNumItems()
-    while idx_forms > 0
-        idx_forms -= 1
-        form_item = ref_actor.GetNthForm(idx_forms)
-        if form_item
-            ; we need to work with this form before it might be changed
-            num_items = ref_actor.GetItemCount(form_item)
-            is_equipped = ref_actor.IsEquipped(form_item)
-            ref_item = form_item as ObjectReference
-            if ref_item
-                ; we cannot risk removing a quest item, etc.
-                form_item = ref_item.GetBaseObject()
-            endIf
-            if form_item.IsPlayable()
-                if is_equipped
-                    self.AddItem(form_item, num_items, true)
-                else
-                    ref_inventory.AddItem(form_item, num_items, true)
-                endIf
-            endIf
-        endIf
-    endWhile
+    ; to make sure c++ has allocated xcontainers
+    self.AddItem(CONSTS.WEAPON_BLANK, 1, true)
+    self.RemoveItem(CONSTS.WEAPON_BLANK, 1, true, none)
+    ref_pack.AddItem(CONSTS.WEAPON_BLANK, 1, true)
+    ref_pack.RemoveItem(CONSTS.WEAPON_BLANK, 1, true, none)
+
+    doticu_npcp.Actor_Cache_Inventory(ref_actor, CONSTS.ARMOR_BLANK, self, ref_pack)
 endFunction
 
 function Get_Default(Actor ref_actor)
@@ -306,18 +284,10 @@ function Get_Default(Actor ref_actor)
     endIf
 endFunction
 
-function Set(Actor ref_actor, bool do_force = false)
+function Set(Actor ref_actor, ObjectReference ref_pack)
     if ref_actor
-        p_Set(ref_actor, do_force)
+        p_Set(ref_actor, ref_pack)
     endIf
-endFunction
-
-function Print()
-    doticu_npcp.Print("self:")
-    FUNCS.Print_Contents(self)
-
-    doticu_npcp.Print("p_cache_vanilla:")
-    FUNCS.Print_Contents(p_cache_vanilla)
 endFunction
 
 ; Events

@@ -478,7 +478,7 @@ int                 p_num_names     =    -1
 int[]               p_arr_used      =  none
 Form[]              p_arr_actors    =  none
 string[]            p_arr_names     =  none
-function u_0_8_3()
+function u_0_9_0()
     ; these variables are no longer needed, and should be
     ; truncated to save space in the save file.
     p_num_used = -1

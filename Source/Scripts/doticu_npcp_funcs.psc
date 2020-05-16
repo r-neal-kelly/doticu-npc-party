@@ -164,7 +164,7 @@ function Print_Contents(ObjectReference ref_object)
 endFunction
 
 ; Update Methods
-function u_0_8_3()
+function u_0_9_0()
     MANNEQUINS.f_Create(p_DATA)
     MANNEQUINS.f_Register()
 endFunction
