@@ -220,9 +220,7 @@ NPCS.Unlock_Base(ref_clone)
         ref_clone.SetPlayerTeammate(false, false)
 
         ; does all the heavy lifting of removing unfit items and adding outfit items
-        ObjectReference ref_transfer = CONTAINERS.Create_Temp()
-        doticu_npcp.Actor_Set_Outfit2(ref_clone, CONSTS.ARMOR_BLANK, none, ref_orig, ref_junk, ref_transfer)
-        CONTAINERS.Destroy_Temp(ref_transfer)
+        doticu_npcp.Actor_Set_Outfit2(ref_clone, CONSTS.ARMOR_BLANK, none, ref_orig, ref_junk)
 
         ; doing this allows us to render all at once, which is far more efficient
         ref_clone.SetPlayerTeammate(true, true)
@@ -235,6 +233,5 @@ NPCS.Unlock_Base(ref_clone)
         endIf
     endIf
 
-    ; it doesn't hurt to cleanup manually
     CONTAINERS.Destroy_Temp(ref_junk)
 endFunction

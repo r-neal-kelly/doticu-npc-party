@@ -13,6 +13,8 @@ namespace doticu_npcp { namespace XData {
 
     ExtraCount *Create_Count(UInt32 count);
     ExtraOwnership *Create_Ownership(TESForm *owner);
+    ExtraReferenceHandle *Create_Reference_Handle(TESObjectREFR *obj);
+    void Destroy(XData_t *xdata);
 
     ExtraCount *Copy_Count(ExtraCount *xdata);
     ExtraHealth *Copy_Health(ExtraHealth *xdata);

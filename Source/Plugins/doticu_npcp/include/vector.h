@@ -18,4 +18,9 @@ namespace doticu_npcp { namespace Vector {
         return -1;
     }
 
+    template <typename T>
+    bool Has(std::vector<T> &vec, T &item) {
+        return Index_Of<T>(vec, item) > -1;
+    }
+
 }}

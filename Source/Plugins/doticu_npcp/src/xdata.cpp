@@ -208,6 +208,24 @@ namespace doticu_npcp { namespace XData {
         return xdata;
     }
 
+    ExtraReferenceHandle *Create_Reference_Handle(TESObjectREFR *obj) {
+        ExtraReferenceHandle *xdata = ExtraReferenceHandle::Create();
+        ASSERT(xdata);
+
+        xdata->handle = obj->CreateRefHandle();
+
+        return xdata;
+    }
+
+    void Destroy(XData_t *xdata) {
+        if (!xdata) {
+            return;
+        }
+
+        // this apparently does delete the xdata the correct way.
+        xdata->~BSExtraData();
+    }
+
     ExtraCount *Copy_Count(ExtraCount *xdata) {
         ExtraCount *xdata_new = ExtraCount::Create();
         ASSERT(xdata_new);

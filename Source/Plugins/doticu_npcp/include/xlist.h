@@ -15,8 +15,11 @@
 namespace doticu_npcp { namespace XList {
 
     XList_t *Create();
+    void Destroy(XList_t *xlist);
 
     XList_t *Copy(XList_t *xlist);
+
+    u64 Clean_For_Move(XList_t *xlist, TESObjectREFR *ref_to);
 
     UInt32 Get_Count(XList_t *xlist);
     void Set_Count(XList_t *xlist, UInt32 count);

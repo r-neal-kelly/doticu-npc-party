@@ -78,8 +78,10 @@ function f_Destroy()
     ; this needs to be setting to an optional place, prob. a community chest
     self.RemoveAllItems(CONSTS.ACTOR_PLAYER, false, true)
 
-    p_cache_vanilla.Disable()
-    p_cache_vanilla.Delete()
+    if p_cache_vanilla
+        p_cache_vanilla.Disable()
+        p_cache_vanilla.Delete()
+    endIf
 
     p_cache_vanilla = none
     p_code_create = 0
@@ -95,7 +97,8 @@ endFunction
 ; Private Methods
 function p_Set(Actor ref_actor, ObjectReference ref_pack)
     if ACTORS.Is_Dead(ref_actor)
-        return p_Set_Dead(ref_actor, ref_pack)
+        ; we might redo this some time, but right now, we're cutting it.
+        return
     endIf
 
 NPCS.Lock_Base(ref_actor)
@@ -121,15 +124,9 @@ NPCS.Unlock_Base(ref_actor)
     ref_actor.SetPlayerTeammate(false, false)
     
     ; does all the heavy lifting of removing unfit items and adding outfit items
-    ObjectReference ref_trash = CONTAINERS.Create_Temp()
     ObjectReference ref_transfer = CONTAINERS.Create_Temp()
-    doticu_npcp.Actor_Set_Outfit2(ref_actor, CONSTS.ARMOR_BLANK, p_cache_vanilla, self, ref_trash, ref_transfer)
-
-    ; we currently move transfer items to pack, but this could eventually end up in a community chest
-    ref_transfer.RemoveAllItems(ref_pack, false, true)
-
-    ; it doesn't hurt to cleanup manually
-    CONTAINERS.Destroy_Temp(ref_trash)
+    doticu_npcp.Actor_Set_Outfit2(ref_actor, CONSTS.ARMOR_BLANK, p_cache_vanilla, self, ref_transfer)
+    ref_transfer.RemoveAllItems(ref_pack, true, true)
     CONTAINERS.Destroy_Temp(ref_transfer)
 
     ; doing this allows us to render all at once, which is far more efficient
@@ -145,27 +142,6 @@ NPCS.Unlock_Base(ref_actor)
     if !is_teammate
         ref_actor.SetPlayerTeammate(false, false)
     endIf
-endFunction
-
-function p_Set_Dead(Actor ref_actor, ObjectReference ref_pack)
-    ; I need to revisit this and try to make it work better.
-    return
-
-    ObjectReference ref_trash = CONTAINERS.Create_Temp()
-    ObjectReference ref_transfer = CONTAINERS.Create_Temp()
-
-    ; does all the heavy lifting of removing unfit items and adding outfit items
-    ; the engine won't equip new items, so we only remove items no longer in self or cache_outfit
-    doticu_npcp.Actor_Set_Outfit2_Dead(ref_actor, CONSTS.ARMOR_BLANK, p_cache_vanilla, self, ref_trash, ref_transfer)
-
-    ; we currently move transfer items to pack, but this could eventually end up in a community chest
-    ref_transfer.RemoveAllItems(ref_pack, false, true)
-
-    ; it doesn't hurt to cleanup manually
-    CONTAINERS.Destroy_Temp(ref_trash)
-    CONTAINERS.Destroy_Temp(ref_transfer)
-
-    ; maybe try addremove an item to update actor container?
 endFunction
 
 ; Public Methods
@@ -262,30 +238,23 @@ function Get(Actor ref_actor, ObjectReference ref_pack)
     ref_pack.AddItem(CONSTS.WEAPON_BLANK, 1, true)
     ref_pack.RemoveItem(CONSTS.WEAPON_BLANK, 1, true, none)
 
-    doticu_npcp.Actor_Cache_Inventory(ref_actor, CONSTS.ARMOR_BLANK, self, ref_pack)
+    doticu_npcp.Actor_Cache_Inventory(ref_actor, CONSTS.ARMOR_BLANK, self, ref_pack); maybe buffer with ref_transfer
 endFunction
 
 function Get_Default(Actor ref_actor)
-    int idx_forms
-    Form form_item
-    int num_items
+    ObjectReference ref_default = CONTAINERS.Create_Temp()
+    ObjectReference ref_trash = CONTAINERS.Create_Temp()
 
-    ; wait. can't we just have an skse function tell us what the default base container items are? we can certainly
-    ; add those back without having to cache in that case.
-    ObjectReference ref_defaults = NPCS.Get_Default_Cache(ref_actor)
-    if ref_defaults
-        idx_forms = ref_defaults.GetNumItems()
-        while idx_forms > 0
-            idx_forms -= 1
-            form_item = ref_defaults.GetNthForm(idx_forms)
-            num_items = ref_defaults.GetItemCount(form_item)
-            self.AddItem(form_item, num_items, true)
-        endWhile
-    endIf
+    doticu_npcp.Actor_Cache_Static_Inventory(ref_actor, CONSTS.ARMOR_BLANK, ref_default)
+    doticu_npcp.Object_Ref_Remove_Unwearable(ref_default, ref_trash)
+    ref_default.RemoveAllItems(self, false, true)
+
+    CONTAINERS.Destroy_Temp(ref_default)
+    CONTAINERS.Destroy_Temp(ref_trash)
 endFunction
 
 function Set(Actor ref_actor, ObjectReference ref_pack)
-    if ref_actor
+    if ref_actor && ref_pack
         p_Set(ref_actor, ref_pack)
     endIf
 endFunction

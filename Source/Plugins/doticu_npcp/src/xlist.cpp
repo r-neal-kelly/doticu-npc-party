@@ -27,6 +27,21 @@ namespace doticu_npcp { namespace XList {
         return xlist;
     }
 
+    void Destroy(XList_t *xlist) {
+        if (!xlist) {
+            return;
+        }
+
+        for (XData_t *xdata = xlist->m_data, *xdata_destroy; xdata != NULL;) {
+            xdata_destroy = xdata;
+            xdata = xdata->next;
+            XData::Destroy(xdata_destroy);
+        }
+
+        Heap_Free(xlist->m_presence);
+        Heap_Free(xlist);
+    }
+
     // this does copy count
     XList_t *Copy(XList_t *xlist) {
         if (!xlist) {
@@ -55,6 +70,59 @@ namespace doticu_npcp { namespace XList {
         }
 
         return xlist_new;
+    }
+
+    // certain xdata cannot be moved to another container without creating issues, e.g. worn. Others are just unneeded.
+    u64 Clean_For_Move(XList_t *xlist, TESObjectREFR *ref_to) {
+        if (!xlist || !Object_Ref::Get_XContainer(ref_to)) {
+            return 0;
+        }
+        
+        s64 count_xdatas = 0;
+        std::vector<XData_t *> vec_xdatas_to_destroy;
+        for (XData_t *xdata = xlist->m_data; xdata != NULL; xdata = xdata->next) {
+            u64 type = xdata->GetType();
+
+            if (type == kExtraData_ReferenceHandle) {
+                ExtraReferenceHandle *xref = (ExtraReferenceHandle *)xdata;
+                TESObjectREFR *obj = xref->GetReference();
+                if (!obj) {
+                    vec_xdatas_to_destroy.push_back(xdata);
+                } else {
+                    // CreateRefHandle seems to return an already in use handle if it can, so there is no need to release.
+                    // we do not need to IncRef on new container and DecRef on old, that's apparently not how it works.
+                    ExtraReferenceHandle *xref_obj = (ExtraReferenceHandle *)obj->extraData.GetByType(kExtraData_ReferenceHandle);
+                    if (xref_obj) {
+                        xref_obj->handle = ref_to->CreateRefHandle();
+                    } else {
+                        obj->extraData.Add(kExtraData_ReferenceHandle, XData::Create_Reference_Handle(ref_to));
+                    }
+                }
+            } else if (type == kExtraData_Ownership) {
+                ExtraOwnership *xownership = (ExtraOwnership *)xdata;
+                if (!xownership->owner) {
+                    vec_xdatas_to_destroy.push_back(xdata);
+                }
+            } else if (type == kExtraData_Worn ||
+                       type == kExtraData_WornLeft ||
+                       type == kExtraData_OutfitItem ||
+                       type == kExtraData_LeveledItem ||
+                       type == kExtraData_CannotWear ||
+                       type == kExtraData_ShouldWear) {
+                // kExtraData_LeveledItemBase?
+                vec_xdatas_to_destroy.push_back(xdata);
+            }
+
+            count_xdatas += 1;
+        }
+
+        for (u64 idx = 0, size = vec_xdatas_to_destroy.size(); idx < size; idx += 1) {
+            XData_t *xdata = vec_xdatas_to_destroy[idx];
+            xlist->Remove(xdata->GetType(), xdata);
+            XData::Destroy(xdata);
+        }
+
+        return count_xdatas - vec_xdatas_to_destroy.size();
     }
 
     UInt32 Get_Count(XList_t *xlist) {
@@ -128,6 +196,10 @@ namespace doticu_npcp { namespace XList {
     }
 
     bool Can_Copy(XList_t *xlist) {
+        if (!xlist) {
+            return false;
+        }
+
         return xlist->HasType(kExtraData_Health) || xlist->HasType(kExtraData_Enchantment) || xlist->HasType(kExtraData_Charge);
     }
 

@@ -63,6 +63,10 @@ doticu_npcp_container function Create(string str_name = "Container")
     ref_container.f_Create(p_DATA, str_name)
     ref_container.f_Register()
 
+    ; to make sure certain fields in c++ have been allocated for our plugin
+    ref_container.AddItem(CONSTS.WEAPON_BLANK, 1, true)
+    ref_container.RemoveItem(CONSTS.WEAPON_BLANK, 1, true)
+
     return ref_container
 endFunction
 

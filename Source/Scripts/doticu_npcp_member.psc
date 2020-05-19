@@ -831,7 +831,7 @@ f_Lock_Resources()
         if p_outfit2_current == p_outfit2_vanilla
             ; maybe we can make this a setting, because it makes it easy to relevel the same outfit
             ; it has to be static because the actor is not likely wearing the outfit or the items
-            ;p_outfit2_current.Cache_Vanilla_Static(p_outfit_vanilla)
+            p_outfit2_current.Cache_Vanilla_Static(p_outfit_vanilla)
         elseIf p_outfit2_current == p_outfit2_default
             p_outfit2_current.Cache_Vanilla_Static(NPCS.Get_Default_Outfit(p_ref_actor))
         endIf

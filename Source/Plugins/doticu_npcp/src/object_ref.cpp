@@ -71,6 +71,60 @@ namespace doticu_npcp { namespace Object_Ref {
         return NULL;
     }
 
+    void Add_XEntry(TESObjectREFR *obj, XEntry_t *xentry_add) {
+        if (!obj || !xentry_add) {
+            return;
+        }
+
+        XContainer_t *xcontainer_obj = Get_XContainer(obj);
+        if (!xcontainer_obj) {
+            _ERROR("Object_Ref::Add_XEntry: Cannot get obj xcontainer.");
+            return;
+        }
+
+        TESForm *form = xentry_add->type;
+        if (!form) {
+            return;
+        }
+
+        XEntry_t *xentry_obj = Get_XEntry(obj, form, false);
+        if (xentry_obj) {
+            if (xentry_add->countDelta < 1) {
+                _ERROR("Object_Ref::Add_XEntry: Cannot merge a negative or empty xentry.");
+                return;
+            }
+
+            if (xentry_add->extendDataList) {
+                std::vector<XList_t *>vec_xlists_add;
+                vec_xlists_add.reserve(xentry_add->extendDataList->Count());
+
+                for (XLists_t::Iterator it_xlist_add = xentry_add->extendDataList->Begin(); !it_xlist_add.End(); ++it_xlist_add) {
+                    XList_t *xlist_add = it_xlist_add.Get();
+                    if (xlist_add) {
+                        vec_xlists_add.push_back(xlist_add);
+                    }
+                }
+
+                for (u64 idx = 0, size = vec_xlists_add.size(); idx < size; idx += 1) {
+                    XList_t *xlist_add = vec_xlists_add[idx];
+                    XEntry::Remove_XList(xentry_add, xlist_add);
+                    XEntry::Add_XList(xentry_obj, xlist_add);
+                }
+            }
+
+            XEntry::Inc_Count(xentry_obj, XEntry::Get_Count(xentry_add));
+
+            XEntry::Destroy(xentry_add);
+        } else {
+            if (xentry_add->countDelta < 1 && Get_BEntry_Count(obj, form) < 1) {
+                _ERROR("Object_Ref::Add_XEntry: Cannot add a useless negative or empty xentry.");
+                return;
+            }
+
+            xcontainer_obj->data->objList->Insert(xentry_add);
+        }
+    }
+
     void Remove_XEntry(TESObjectREFR *obj, XEntry_t *xentry) {
         if (!obj || !xentry) {
             return;
@@ -97,6 +151,55 @@ namespace doticu_npcp { namespace Object_Ref {
 
     bool Has_XEntry(TESObjectREFR *obj, TESForm *form) {
         return Get_XEntry(obj, form, false) != NULL;
+    }
+
+    void Move_Entry(TESObjectREFR *from, TESObjectREFR *to, TESForm *form) {
+        if (!from || !to || !form) {
+            return;
+        }
+
+        XContainer_t *xcontainer_from = Get_XContainer(from);
+        if (!xcontainer_from) {
+            _ERROR("Object_Ref::Move_XEntry: Could not get xcontainer_from.");
+            return;
+        }
+
+        XContainer_t *xcontainer_to = Get_XContainer(to);
+        if (!xcontainer_to) {
+            _ERROR("Object_Ref::Move_XEntry: Could not get xcontainer_to.");
+            return;
+        }
+
+        XEntry_t *xentry_from = Get_XEntry(from, form);
+        u64 count_bentry_from = Get_BEntry_Count(from, form);
+        if (xentry_from) {
+            u64 count_xentry_from = XEntry::Get_Count(xentry_from);
+            if (count_xentry_from == 0 && count_bentry_from == 0) {
+                Object_Ref::Remove_XEntry(from, xentry_from);
+                XEntry::Destroy(xentry_from);
+                return;
+            }
+
+            if (count_xentry_from == 0 - count_bentry_from) {
+                return;
+            }
+
+            Object_Ref::Remove_XEntry(from, xentry_from);
+
+            if (count_bentry_from > 0) {
+                XEntry::Inc_Count(xentry_from, count_bentry_from);
+                Object_Ref::Add_XEntry(from, XEntry::Create(form, 0 - count_bentry_from));
+            }
+
+            Object_Ref::Add_XEntry(to, xentry_from);
+        } else if (count_bentry_from > 0) {
+            Object_Ref::Add_XEntry(from, XEntry::Create(form, 0 - count_bentry_from));
+            Object_Ref::Add_XEntry(to, XEntry::Create(form, count_bentry_from));
+        }
+    }
+
+    void Move_XList(TESObjectREFR *from, TESObjectREFR *to, TESForm *form, XList_t *xlist) {
+        return XEntry::Move_XList(Get_XEntry(from, form), Get_XEntry(to, form), xlist, to);
     }
 
     // need to study if a BContainer can have multiple entries of the same form or not. confer with editor.
@@ -198,6 +301,65 @@ namespace doticu_npcp { namespace Object_Ref {
         return XEntry::Is_Worn(Get_XEntry(obj, form));
     }
 
+    void Remove_Unwearable(TESObjectREFR *obj, TESObjectREFR *other) {
+        if (!obj || !other) {
+            _ERROR("Object_Ref::Remove_Unwearable: Invalid args.");
+            return;
+        }
+
+        XContainer_t *xcontainer_other = Object_Ref::Get_XContainer(other);
+        if (!xcontainer_other) {
+            _ERROR("Object_Ref::Remove_Unwearable: Could not get other xcontainer.");
+            return;
+        }
+
+        std::vector<TESForm *> vec_forms_remove;
+        vec_forms_remove.reserve(4);
+
+        XContainer_t *xcontainer_obj = Object_Ref::Get_XContainer(obj);
+        if (xcontainer_obj) {
+            for (XEntries_t::Iterator it_xentry_obj = xcontainer_obj->data->objList->Begin(); !it_xentry_obj.End(); ++it_xentry_obj) {
+                XEntry_t *xentry_obj = it_xentry_obj.Get();
+                if (!xentry_obj || !xentry_obj->type) {
+                    continue;
+                }
+
+                TESForm *form_obj = xentry_obj->type;
+                if (form_obj->IsArmor() || form_obj->IsWeapon() || form_obj->IsAmmo()) {
+                    continue;
+                }
+
+                vec_forms_remove.push_back(form_obj);
+            }
+        }
+
+        BContainer_t *bcontainer_obj = Object_Ref::Get_BContainer(obj);
+        if (bcontainer_obj) {
+            for (u64 idx = 0; idx < bcontainer_obj->numEntries; idx += 1) {
+                BEntry_t *bentry_obj = bcontainer_obj->entries[idx];
+                if (!bentry_obj || !bentry_obj->form || bentry_obj->count < 1) {
+                    continue;
+                }
+
+                TESForm *form_obj = bentry_obj->form;
+                if (form_obj->formType == kFormType_LeveledItem || form_obj->IsArmor() || form_obj->IsWeapon() || form_obj->IsAmmo()) {
+                    continue;
+                }
+
+                if (!Vector::Has<TESForm *>(vec_forms_remove, form_obj)) {
+                    vec_forms_remove.push_back(form_obj);
+                }
+            }
+        }
+
+        if (vec_forms_remove.size() > 0) {
+            for (u64 idx = 0, size = vec_forms_remove.size(); idx < size; idx += 1) {
+                TESForm *form_remove = vec_forms_remove[idx];
+                Object_Ref::Move_Entry(obj, other, form_remove);
+            }
+        }
+    }
+
     void Log_XContainer(TESObjectREFR *ref_object) {
         if (!ref_object) {
             _MESSAGE("Log_XContainer: Not an object.");
@@ -228,16 +390,27 @@ namespace doticu_npcp { namespace Object_Ref {
 
 namespace doticu_npcp { namespace Object_Ref { namespace Exports {
 
+    void Remove_Unwearable(StaticFunctionTag *, TESObjectREFR *obj, TESObjectREFR *other) {
+        return Object_Ref::Remove_Unwearable(obj, other);
+    }
+
     void Log_XContainer(StaticFunctionTag *, TESObjectREFR *ref_object) {
-        return doticu_npcp::Object_Ref::Log_XContainer(ref_object);
+        return Object_Ref::Log_XContainer(ref_object);
     }
 
     bool Register(VMClassRegistry *registry) {
         registry->RegisterFunction(
+            new NativeFunction2 <StaticFunctionTag, void, TESObjectREFR *, TESObjectREFR *>(
+                "Object_Ref_Remove_Unwearable",
+                "doticu_npcp",
+                Object_Ref::Exports::Remove_Unwearable,
+                registry)
+        );
+        registry->RegisterFunction(
             new NativeFunction1 <StaticFunctionTag, void, TESObjectREFR *>(
                 "Object_Ref_Log_XContainer",
                 "doticu_npcp",
-                Log_XContainer,
+                Object_Ref::Exports::Log_XContainer,
                 registry)
         );
 

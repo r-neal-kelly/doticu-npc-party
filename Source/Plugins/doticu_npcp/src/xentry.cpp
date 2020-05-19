@@ -29,12 +29,10 @@ namespace doticu_npcp { namespace XEntry {
         }
 
         if (xentry->extendDataList) {
-            if (xentry->extendDataList->Count() > 0) {
-                // we currently don't support destroying xlists, because we can't destroy their xdata
-                return;
-            } else {
-                xentry->extendDataList->Delete();
+            for (XLists_t::Iterator it_xlist = xentry->extendDataList->Begin(); !it_xlist.End(); ++it_xlist) {
+                XList::Destroy(it_xlist.Get());
             }
+            xentry->extendDataList->Delete();
         }
 
         xentry->extendDataList = NULL;
@@ -74,30 +72,6 @@ namespace doticu_npcp { namespace XEntry {
         }
 
         xentry->countDelta -= dec;
-    }
-
-    u64 Get_XLists_Count(XEntry_t *xentry) {
-        if (!xentry || !xentry->extendDataList) {
-            return 0;
-        }
-
-        u64 count_xlists = 0;
-        for (XLists_t::Iterator it_xlist = xentry->extendDataList->Begin(); !it_xlist.End(); ++it_xlist) {
-            XList_t *xlist = it_xlist.Get();
-            count_xlists += XList::Get_Count(xlist);
-        }
-
-        return count_xlists;
-    }
-
-    void Set_XList_Count(XEntry_t *xentry, XList_t *xlist, u64 count) {
-        if (!xentry || !xlist || count < 1) {
-            // if the count < 1, then the xlist should be deleted.
-            return;
-        }
-
-        xentry->countDelta += count - XList::Get_Count(xlist);
-        XList::Set_Count(xlist, count);
     }
 
     void Add_XList(XEntry_t *xentry, XList_t *xlist) {
@@ -171,6 +145,25 @@ namespace doticu_npcp { namespace XEntry {
 
     bool Has_XList(XEntry_t *xentry, XList_t *xlist_similar, bool with_outfit2_flag) {
         return Get_XList(xentry, xlist_similar, with_outfit2_flag) != NULL;
+    }
+
+    void Move_XList(XEntry_t *from, XEntry_t *to, XList_t *xlist, TESObjectREFR *ref_to) {
+        if (!from || !to || !xlist || !ref_to) {
+            return;
+        }
+
+        Remove_XList(from, xlist);
+
+        u64 count_xdata = XList::Clean_For_Move(xlist, ref_to);
+        if (count_xdata == 0) {
+            Inc_Count(to, 1);
+            XList::Destroy(xlist);
+        } else if (count_xdata == 1 && xlist->m_data->GetType() == kExtraData_Count) {
+            Inc_Count(to, XList::Get_Count(xlist));
+            XList::Destroy(xlist);
+        } else {
+            Add_XList(to, xlist);
+        }
     }
 
     bool Is_Worn(XEntry_t *xentry) {
