@@ -48,6 +48,7 @@ function Outfit_Remove_Item(Outfit outfit_outfit, Form form_item) native global
 ; Quest
 Alias[] function Quest_Get_Used_Aliases(Quest ref_quest) native global
 int[] function Quest_Get_Free_Alias_IDs(Quest ref_quest) native global
+Alias[] function Quest_Get_3D_Loaded_Aliases(Quest ref_quest) native global
 int function Quest_Count_Used_Aliases(Quest ref_quest) native global
 int function Quest_Count_Free_Aliases(Quest ref_quest) native global
 int function Quest_Count_Mannequins(Quest ref_quest) native global

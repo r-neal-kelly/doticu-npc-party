@@ -45,9 +45,7 @@ endFunction
 
 function f_Destroy()
     self.Flush()
-    self.Disable()
-    self.Delete()
-
+    
     p_is_created = false
 endFunction
 

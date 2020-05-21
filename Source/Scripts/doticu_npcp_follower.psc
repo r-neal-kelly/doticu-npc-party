@@ -20,6 +20,11 @@ doticu_npcp_vars property VARS hidden
         return p_DATA.VARS
     endFunction
 endProperty
+doticu_npcp_funcs property FUNCS hidden
+    doticu_npcp_funcs function Get()
+        return p_DATA.MODS.FUNCS
+    endFunction
+endProperty
 doticu_npcp_actors property ACTORS hidden
     doticu_npcp_actors function Get()
         return p_DATA.MODS.FUNCS.ACTORS
@@ -30,11 +35,6 @@ doticu_npcp_player property PLAYER hidden
         return p_DATA.MODS.FUNCS.ACTORS.PLAYER
     endFunction
 endProperty
-doticu_npcp_queues property QUEUES hidden
-    doticu_npcp_queues function Get()
-        return p_DATA.MODS.FUNCS.QUEUES
-    endFunction
-endProperty
 doticu_npcp_members property MEMBERS hidden
     doticu_npcp_members function Get()
         return p_DATA.MODS.MEMBERS
@@ -43,13 +43,6 @@ endProperty
 doticu_npcp_followers property FOLLOWERS hidden
     doticu_npcp_followers function Get()
         return p_DATA.MODS.FOLLOWERS
-    endFunction
-endProperty
-
-; Friend Constants
-doticu_npcp_queue property f_QUEUE hidden
-    doticu_npcp_queue function Get()
-        return p_ref_member.f_QUEUE
     endFunction
 endProperty
 
@@ -78,7 +71,6 @@ bool                    p_is_created                = false
 int                     p_id_alias                  =    -1
 Actor                   p_ref_actor                 =  none
 doticu_npcp_member      p_ref_member                =  none
-string                  p_str_namespace             =    ""
 int                     p_style_follower            =    -1
 int                     p_level_follower            =    -1
 bool                    p_is_sneak                  = false
@@ -120,7 +112,6 @@ function f_Create(doticu_npcp_data DATA, int id_alias)
     p_id_alias = id_alias
     p_ref_actor = GetActorReference() as Actor
     p_ref_member = MEMBERS.Get_Member(p_ref_actor)
-    p_str_namespace = "follower_" + p_id_alias
     p_style_follower = p_ref_member.Get_Style()
     p_level_follower = -1
     p_is_sneak = false
@@ -156,7 +147,6 @@ function f_Destroy()
     p_is_sneak = false
     p_level_follower = -1
     p_style_follower = -1
-    p_str_namespace = ""
     p_ref_member = none
     p_ref_actor = none
     p_id_alias = -1
@@ -166,7 +156,6 @@ endFunction
 function f_Register()
     ; registering mod events is global for each script on an object, and
     ; further, works for handlers labeled as function as well as event.
-    RegisterForModEvent("doticu_npcp_load_mod", "On_Load_Mod")
     RegisterForModEvent("doticu_npcp_cell_change", "On_Cell_Change")
     RegisterForModEvent("doticu_npcp_party_combat", "On_Party_Combat")
     RegisterForModEvent("doticu_npcp_player_sneak", "On_Player_Sneak")
@@ -183,8 +172,6 @@ function f_Register()
     RegisterForModEvent("doticu_npcp_followers_resurrect", "On_Followers_Resurrect")
 
     RegisterForActorAction(CODES.ACTION_DRAW_END)
-
-    p_Register_Queues()
 endFunction
 
 function f_Unregister()
@@ -201,29 +188,24 @@ function f_Unlock_Resources()
 endFunction
 
 function f_Enforce()
-    p_Enqueue("Follower.Follow")
-    p_Enqueue("Follower.Level")
-    if Is_Sneak()
-        p_Enqueue("Follower.Sneak")
-    else
-        p_Enqueue("Follower.Unsneak")
-    endIf
+    p_Follow()
+
     if Is_Retreater()
         p_Retreat()
     else
         p_Unretreat()
     endIf
+
+    if Is_Sneak()
+        p_Sneak()
+    else
+        p_Unsneak()
+    endIf
+
+    p_Level()
 endFunction
 
 ; Private Methods
-function p_Register_Queues()
-    f_QUEUE.Register_Alias(self, "On_Queue_Follower", p_str_namespace)
-endFunction
-
-function p_Enqueue(string str_message, float float_interval = -1.0, bool allow_repeat = false)
-    f_QUEUE.Enqueue(str_message, float_interval, p_str_namespace, allow_repeat)
-endFunction
-
 function p_Backup()
 f_Lock_Resources()
 
@@ -653,6 +635,16 @@ function p_Relevel()
     p_Level()
 endFunction
 
+bool function p_Send(string str_event, string str_handler)
+    str_event += p_id_alias
+
+    f_Lock_Resources()
+        RegisterForModEvent(str_event, str_handler)
+        FUNCS.Send(str_event, 0.25, 5.0)
+        UnregisterForModEvent(str_event)
+    f_Unlock_Resources()
+endFunction
+
 ; Public Methods
 int function Enforce()
     return p_ref_member.Enforce()
@@ -679,9 +671,8 @@ doticu_npcp_member function Get_Member()
 endFunction
 
 int function Set_Name(string str_name)
-    int code_return
 
-    code_return = p_ref_member.Set_Name(str_name)
+    int code_return = p_ref_member.Set_Name(str_name)
     if code_return < 0
         return code_return
     endIf
@@ -690,8 +681,6 @@ int function Set_Name(string str_name)
 endFunction
 
 int function Sneak(int code_exec)
-    int code_return
-
     if !Exists()
         return CODES.ISNT_FOLLOWER
     endIf
@@ -703,17 +692,20 @@ int function Sneak(int code_exec)
     p_is_sneak = true
 
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Follower.Sneak")
+        p_Send("doticu_npcp_follower_sneak", "On_Sneak")
     else
         p_Sneak()
     endIf
 
     return CODES.SUCCESS
 endFunction
+event On_Sneak()
+    if Is_Sneak()
+        p_Sneak()
+    endIf
+endEvent
 
 int function Unsneak(int code_exec)
-    int code_return
-
     if !Exists()
         return CODES.ISNT_FOLLOWER
     endIf
@@ -725,13 +717,18 @@ int function Unsneak(int code_exec)
     p_is_sneak = false
 
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Follower.Unsneak")
+        p_Send("doticu_npcp_follower_unsneak", "On_Unsneak")
     else
         p_Unsneak()
     endIf
 
     return CODES.SUCCESS
 endFunction
+event On_Unsneak()
+    if Is_Unsneak()
+        p_Unsneak()
+    endIf
+endEvent
 
 int function Retreat()
     if !Exists()
@@ -758,20 +755,21 @@ int function Unretreat()
 endFunction
 
 int function Relevel(int code_exec)
-    int code_return
-
     if !Exists()
         return CODES.ISNT_FOLLOWER
     endIf
 
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Follower.Relevel")
+        p_Send("doticu_npcp_follower_relevel", "On_Relevel")
     else
         p_Relevel()
     endIf
 
     return CODES.SUCCESS
 endFunction
+event On_Relevel()
+    p_Relevel()
+endEvent
 
 ; this whole function should probably be private, as no one else needs to call it anymore
 int function Catch_Up()
@@ -915,29 +913,6 @@ function Resurrect(int code_exec)
 endFunction
 
 ; Events
-event On_Queue_Follower(string str_message)
-    if false
-
-    elseIf str_message == "Follower.Follow"
-        p_Follow()
-    elseIf str_message == "Follower.Level"
-        p_Level()
-    elseIf str_message == "Follower.Relevel"
-        p_Relevel()
-    elseIf str_message == "Follower.Sneak"
-        if Is_Sneak()
-            p_Sneak()
-        endIf
-    elseIf str_message == "Follower.Unsneak"
-        if Is_Unsneak()
-            p_Unsneak()
-        endIf
-
-    endIf
-
-    f_QUEUE.Dequeue()
-endEvent
-
 event OnCombatStateChanged(Actor ref_target, int code_combat)
     if VARS.is_updating
         return
@@ -967,15 +942,6 @@ event OnActorAction(int code_action, Actor ref_actor, Form form_source, int slot
 
     if code_action == CODES.ACTION_DRAW_END
         Catch_Up()
-    endIf
-endEvent
-
-event On_Load_Mod()
-    if Exists()
-        p_Follow()
-        if Is_Sneak()
-            p_Sneak()
-        endIf
     endIf
 endEvent
 

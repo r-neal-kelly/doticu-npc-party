@@ -2,7 +2,9 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "types.h"
 #include "quest.h"
+#include "object_ref.h"
 
 namespace doticu_npcp { namespace Quest {
 
@@ -65,6 +67,31 @@ namespace doticu_npcp { namespace Quest { namespace Exports {
         }
 
         return vec_free;
+    }
+
+    VMResultArray<BGSBaseAlias *> Get_3D_Loaded_Aliases(StaticFunctionTag *, TESQuest *ref_quest) {
+        VMResultArray<BGSBaseAlias *> vec_loaded;
+
+        if (!ref_quest) {
+            return vec_loaded;
+        }
+        
+        for (u64 idx = 0, size = ref_quest->aliases.count; idx < size; idx += 1) {
+            BGSBaseAlias *alias;
+            ref_quest->aliases.GetNthItem(idx, alias);
+            if (!alias) {
+                continue;
+            }
+
+            Actor *actor = Alias::Get_Actor(alias);
+            if (!actor || !actor->loadedState) {
+                continue;
+            }
+
+            vec_loaded.push_back(alias);
+        }
+
+        return vec_loaded;
     }
 
     UInt32 Count_Used_Aliases(StaticFunctionTag *, TESQuest *ref_quest) {
@@ -135,6 +162,13 @@ namespace doticu_npcp { namespace Quest { namespace Exports {
                 "Quest_Get_Free_Alias_IDs",
                 "doticu_npcp",
                 Get_Free_Alias_IDs,
+                registry)
+        );
+        registry->RegisterFunction(
+            new NativeFunction1 <StaticFunctionTag, VMResultArray<BGSBaseAlias *>, TESQuest *>(
+                "Quest_Get_3D_Loaded_Aliases",
+                "doticu_npcp",
+                Get_3D_Loaded_Aliases,
                 registry)
         );
         registry->RegisterFunction(

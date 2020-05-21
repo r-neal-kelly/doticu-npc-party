@@ -55,4 +55,7 @@ endFunction
 
 function Destroy(doticu_npcp_queue ref_queue)
     ref_queue.f_Destroy()
+
+    ref_queue.Disable()
+    ref_queue.Delete()
 endFunction

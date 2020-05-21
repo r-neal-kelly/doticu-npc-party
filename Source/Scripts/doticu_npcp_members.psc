@@ -98,13 +98,7 @@ function f_Register()
         VARS.max_members = Get_Count()
     endIf
 
-    Alias[] arr_aliases = ALIASES.Get_Aliases()
-    int idx_aliases = 0
-    int num_aliases = arr_aliases.length
-    while idx_aliases < num_aliases
-        (arr_aliases[idx_aliases] as doticu_npcp_member).f_Register()
-        idx_aliases += 1
-    endWhile
+    RegisterForModEvent("doticu_npcp_load_mod", "On_Load_Mod")
 endFunction
 
 ; Private Methods
@@ -370,12 +364,6 @@ function Enforce()
     endWhile
 endFunction
 
-function Unmember()
-    while !p_Send_Members("doticu_npcp_members_unmember")
-        Utility.Wait(0.25)
-    endWhile
-endFunction
-
 bool function Should_Clone_Actor(Actor ref_actor)
     if !ref_actor
         return false
@@ -518,6 +506,16 @@ function p_Undisplay_Aliases(Alias[] arr_aliases)
         idx_aliases += 1
     endWhile
 endFunction
+
+; Events
+event On_Load_Mod()
+    Alias[] arr_aliases_loaded = doticu_npcp.Quest_Get_3D_Loaded_Aliases(self)
+    int idx_aliases = 0
+    while idx_aliases < arr_aliases_loaded.length
+        (arr_aliases_loaded[idx_aliases] as doticu_npcp_member).Enforce_Async()
+        idx_aliases += 1
+    endWhile
+endEvent
 
 ; Update Methods
 function u_0_9_0()

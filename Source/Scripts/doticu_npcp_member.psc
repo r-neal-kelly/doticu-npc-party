@@ -25,6 +25,11 @@ doticu_npcp_vars property VARS hidden
         return p_DATA.VARS
     endFunction
 endProperty
+doticu_npcp_funcs property FUNCS hidden
+    doticu_npcp_funcs function Get()
+        return p_DATA.MODS.FUNCS
+    endFunction
+endProperty
 doticu_npcp_actors property ACTORS hidden
     doticu_npcp_actors function Get()
         return p_DATA.MODS.FUNCS.ACTORS
@@ -43,11 +48,6 @@ endProperty
 doticu_npcp_containers property CONTAINERS hidden
     doticu_npcp_containers function Get()
         return p_DATA.MODS.FUNCS.CONTAINERS
-    endFunction
-endProperty
-doticu_npcp_queues property QUEUES hidden
-    doticu_npcp_queues function Get()
-        return p_DATA.MODS.FUNCS.QUEUES
     endFunction
 endProperty
 doticu_npcp_outfits property OUTFITS hidden
@@ -71,13 +71,6 @@ doticu_npcp_followers property FOLLOWERS hidden
     endFunction
 endProperty
 
-; Friend Constants
-doticu_npcp_queue property f_QUEUE hidden
-    doticu_npcp_queue function Get()
-        return p_queue_member
-    endFunction
-endProperty
-
 ; Private Constants
 doticu_npcp_data        p_DATA                      =  none
 
@@ -86,7 +79,6 @@ bool                    p_is_executing              = false
 bool                    p_is_created                = false
 int                     p_id_alias                  =    -1
 Actor                   p_ref_actor                 =  none
-string                  p_str_namespace             =    ""
 bool                    p_is_clone                  = false
 bool                    p_is_follower               = false
 bool                    p_is_settler                = false
@@ -103,7 +95,6 @@ ObjectReference         p_marker_settler            =  none
 ObjectReference         p_marker_display            =  none
 ObjectReference         p_marker_mannequin          =  none
 Outfit                  p_outfit_vanilla            =  none
-doticu_npcp_queue       p_queue_member              =  none
 doticu_npcp_container   p_container2_pack           =  none
 doticu_npcp_outfit      p_outfit2_member            =  none
 doticu_npcp_outfit      p_outfit2_settler           =  none
@@ -132,7 +123,6 @@ f_Lock_Resources()
     p_is_created = true
     p_id_alias = id_alias
     p_ref_actor = GetActorReference()
-    p_str_namespace = "member_" + p_id_alias
     p_is_clone = is_clone
     p_is_follower = false
     p_is_settler = false
@@ -151,8 +141,6 @@ f_Lock_Resources()
     p_marker_mannequin = none
     p_outfit_vanilla = NPCS.Get_Default_Outfit(p_ref_actor)
 
-    p_Create_Queues()
-    p_Register_Queues()
     p_Create_Containers()
     p_Create_Outfit()
     p_Backup()
@@ -162,19 +150,16 @@ f_Unlock_Resources()
     p_Member()
     p_Style()
     p_Vitalize()
+    p_Outfit()
 
     ; has to happen after p_Member() because it needs
     ; to have the token for the full dialogue
     if p_is_clone
         ACTORS.Greet_Player(p_ref_actor)
     endIf
-
-    p_Enqueue("Member.Outfit")
 endFunction
 
 function f_Destroy()
-    f_QUEUE.Flush()
-
     if Is_Follower()
         FOLLOWERS.f_Destroy_Follower(p_ref_actor)
     endIf
@@ -207,7 +192,6 @@ f_Lock_Resources()
     p_Restore()
     p_Destroy_Outfits()
     p_Destroy_Containers()
-    p_Destroy_Queues()
 
     p_prev_morality = 0.0
     p_prev_assistance = 0.0
@@ -227,7 +211,6 @@ f_Lock_Resources()
     p_outfit2_settler = none
     p_outfit2_member = none
     p_container2_pack = none
-    p_queue_member = none
     p_outfit_vanilla = none
     p_marker_mannequin = none
     p_marker_display = none
@@ -244,7 +227,6 @@ f_Lock_Resources()
     p_is_settler = false
     p_is_follower = false
     p_is_clone = false
-    p_str_namespace = ""
     p_ref_actor = none
     p_id_alias = -1
     p_is_created = false
@@ -253,12 +235,6 @@ f_Unlock_Resources()
 endFunction
 
 function f_Register()
-    ; registering mod events is global for each script on an object, and
-    ; further, works for handlers labeled as function as well as event.
-    RegisterForModEvent("doticu_npcp_load_mod", "On_Load_Mod")
-    RegisterForModEvent("doticu_npcp_members_unmember", "On_Members_Unmember")
-
-    p_Register_Queues()
 endFunction
 
 function f_Unregister()
@@ -286,22 +262,6 @@ int function f_Get_ID()
 endFunction
 
 ; Private Methods
-function p_Create_Queues()
-    p_queue_member = QUEUES.Create("alias", 64, 0.1)
-endFunction
-
-function p_Destroy_Queues()
-    QUEUES.Destroy(p_queue_member)
-endFunction
-
-function p_Register_Queues()
-    f_QUEUE.Register_Alias(self, "On_Queue_Member", p_str_namespace)
-endFunction
-
-function p_Enqueue(string str_message, float float_interval = -1.0, bool allow_repeat = false)
-    f_QUEUE.Enqueue(str_message, float_interval, p_str_namespace, allow_repeat)
-endFunction
-
 function p_Create_Containers()
     p_container2_pack = CONTAINERS.Create()
 endFunction
@@ -940,59 +900,68 @@ f_Unlock_Resources()
     return code_return
 endFunction
 
-; Public Methods
-int function Enforce(bool do_outfit = true)
-    ; I would like to redesign this execution method to use a single function that uses wait signals
-    ; and locks to control asyncronicity instead of the queue. further, I want the one function to
-    ; contain the logic necessary to evoke the behaviors. the problem is that I suspect it will be
-    ; slow and possible even slower than using the queue. but it would be nice because it's hard to
-    ; handle certain cases where certain state must be in place or not in place. some behaviors share
-    ; state, such as Paralyze and Mannequin, which both need disabled ai
-    int code_return
+function p_Send(string str_event, string str_handler)
+    str_event += p_id_alias
 
+f_Lock_Resources()
+    RegisterForModEvent(str_event, str_handler)
+    FUNCS.Send(str_event, 0.25, 5.0)
+    UnregisterForModEvent(str_event)
+f_Unlock_Resources()
+endFunction
+
+; Public Methods
+int function Enforce()
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
+
     if Is_Dead()
         return CODES.IS_DEAD
     endIf
 
-    p_Enqueue("Member.Token")
-    p_Enqueue("Member.Member")
-    if Is_Settler()
-        p_Enqueue("Member.Settle")
-    else
-        p_Enqueue("Member.Unsettle")
-    endIf
-    if Is_Thrall()
-        p_Enqueue("Member.Enthrall")
-    else
-        p_Enqueue("Member.Unthrall")
-    endIf
-    if Is_Immobile()
-        p_Enqueue("Member.Immobilize")
-    else
-        p_Enqueue("Member.Mobilize")
-    endIf
-    if Is_Reanimated()
-        p_Enqueue("Member.Reanimate")
-    else
-        p_Enqueue("Member.Deanimate")
-    endIf
     if Is_Paralyzed()
-        p_Enqueue("Member.Paralyze")
+        p_Reparalyze()
     else
-        p_Enqueue("Member.Unparalyze")
+        p_Unparalyze()
     endIf
+
     if Is_Mannequin()
-        p_Enqueue("Member.Remannequinize")
+        p_Remannequinize()
     else
-        p_Enqueue("Member.Unmannequinize")
+        p_Unmannequinize()
     endIf
-    p_Enqueue("Member.Style")
-    p_Enqueue("Member.Vitalize")
-    if do_outfit
-        p_Enqueue("Member.Outfit")
+
+    p_Outfit()
+
+    p_Member()
+
+    p_Style()
+
+    p_Vitalize()
+
+    if Is_Immobile()
+        p_Immobilize()
+    else
+        p_Mobilize()
+    endIf
+
+    if Is_Reanimated()
+        p_Reanimate()
+    else
+        p_Deanimate()
+    endIf
+
+    if Is_Settler()
+        p_Settle()
+    else
+        p_Unsettle()
+    endIf
+
+    if Is_Thrall()
+        p_Enthrall()
+    else
+        p_Unthrall()
     endIf
 
     if Is_Follower()
@@ -1001,6 +970,13 @@ int function Enforce(bool do_outfit = true)
 
     return CODES.SUCCESS
 endFunction
+
+function Enforce_Async()
+    p_Send("doticu_npcp_member_enforce", "On_Enforce")
+endFunction
+event On_Enforce()
+    Enforce()
+endEvent
 
 bool function Exists()
     return p_is_created
@@ -1083,8 +1059,6 @@ function Set_Vanilla_Outfit(Outfit outfit_vanilla)
 endFunction
 
 int function Set_Name(string str_name)
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1105,8 +1079,6 @@ int function Set_Name(string str_name)
 endFunction
 
 int function Settle(int code_exec)
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1118,19 +1090,22 @@ int function Settle(int code_exec)
     p_is_settler = true
 
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Settle")
+        p_Send("doticu_npcp_member_settle", "On_Settle")
     else
         p_Settle()
     endIf
 
-    p_Enqueue("Member.Outfit")
+    p_Outfit()
 
     return CODES.SUCCESS
 endFunction
+event On_Settle()
+    if Is_Settler()
+        p_Settle()
+    endIf
+endEvent
 
 int function Resettle(int code_exec)
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1140,19 +1115,17 @@ int function Resettle(int code_exec)
     endIf
 
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Settle")
+        p_Send("doticu_npcp_member_settle", "On_Settle")
     else
         p_Settle()
     endIf
 
-    p_Enqueue("Member.Outfit")
+    p_Outfit()
 
     return CODES.SUCCESS
 endFunction
 
 int function Unsettle(int code_exec)
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1164,19 +1137,22 @@ int function Unsettle(int code_exec)
     p_is_settler = false
 
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Unsettle")
+        p_Send("doticu_npcp_member_unsettle", "On_Unsettle")
     else
         p_Unsettle()
     endIf
 
-    p_Enqueue("Member.Outfit")
+    p_Outfit()
 
     return CODES.SUCCESS
 endFunction
+event On_Unsettle()
+    if Isnt_Settler()
+        p_Unsettle()
+    endIf
+endEvent
 
 int function Enthrall(int code_exec)
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1192,19 +1168,22 @@ int function Enthrall(int code_exec)
     p_is_thrall = true
 
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Enthrall")
+        p_Send("doticu_npcp_member_enthrall", "On_Enthrall")
     else
         p_Enthrall()
     endIf
 
-    p_Enqueue("Member.Outfit")
+    p_Outfit()
 
     return CODES.SUCCESS
 endFunction
+event On_Enthrall()
+    if Is_Thrall()
+        p_Enthrall()
+    endIf
+endEvent
 
 int function Unthrall(int code_exec)
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1220,19 +1199,22 @@ int function Unthrall(int code_exec)
     p_is_thrall = false
 
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Unthrall")
+        p_Send("doticu_npcp_member_unthrall", "On_Unthrall")
     else
         p_Unthrall()
     endIf
 
-    p_Enqueue("Member.Outfit")
+    p_Outfit()
 
     return CODES.SUCCESS
 endFunction
+event On_Unthrall()
+    if Isnt_Thrall()
+        p_Unthrall()
+    endIf
+endEvent
 
 int function Immobilize(int code_exec)
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1244,19 +1226,22 @@ int function Immobilize(int code_exec)
     p_is_immobile = true
 
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Immobilize")
+        p_Send("doticu_npcp_member_immobilize", "On_Immobilize")
     else
         p_Immobilize()
     endIf
 
-    p_Enqueue("Member.Outfit")
+    p_Outfit()
 
     return CODES.SUCCESS
 endFunction
+event On_Immobilize()
+    if Is_Immobile()
+        p_Immobilize()
+    endIf
+endEvent
 
 int function Mobilize(int code_exec)
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1268,19 +1253,22 @@ int function Mobilize(int code_exec)
     p_is_immobile = false
 
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Mobilize")
+        p_Send("doticu_npcp_member_mobilize", "On_Mobilize")
     else
         p_Mobilize()
     endIf
 
-    p_Enqueue("Member.Outfit")
+    p_Outfit()
 
     return CODES.SUCCESS
 endFunction
+event On_Mobilize()
+    if Is_Mobile()
+        p_Mobilize()
+    endIf
+endEvent
 
 int function Paralyze(int code_exec)
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1292,17 +1280,20 @@ int function Paralyze(int code_exec)
     p_is_paralyzed = true
 
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Paralyze")
+        p_Send("doticu_npcp_member_paralyze", "On_Paralyze")
     else
         p_Paralyze()
     endIf
 
     return CODES.SUCCESS
 endFunction
+event On_Paralyze()
+    if Is_Paralyzed()
+        p_Paralyze()
+    endIf
+endEvent
 
 int function Unparalyze(int code_exec)
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1314,17 +1305,20 @@ int function Unparalyze(int code_exec)
     p_is_paralyzed = false
 
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Unparalyze")
+        p_Send("doticu_npcp_member_unparalyze", "On_Unparalyze")
     else
         p_Unparalyze()
     endIf
 
     return CODES.SUCCESS
 endFunction
+event On_Unparalyze()
+    if Is_Unparalyzed()
+        p_Unparalyze()
+    endIf
+endEvent
 
 int function Mannequinize(int code_exec, ObjectReference ref_marker)
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1337,17 +1331,20 @@ int function Mannequinize(int code_exec, ObjectReference ref_marker)
     p_marker_mannequin = ref_marker
 
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Mannequinize")
+        p_Send("doticu_npcp_member_mannequinize", "On_Mannequinize")
     else
         p_Mannequinize()
     endIf
 
     return CODES.SUCCESS
 endFunction
+event On_Mannequinize()
+    if Is_Mannequin()
+        p_Mannequinize()
+    endIf
+endEvent
 
 int function Unmannequinize(int code_exec)
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1360,17 +1357,20 @@ int function Unmannequinize(int code_exec)
     p_is_mannequin = false
 
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Unmannequinize")
+        p_Send("doticu_npcp_member_unmannequinize", "On_Unmannequinize")
     else
         p_Unmannequinize()
     endIf
 
     return CODES.SUCCESS
 endFunction
+event On_Unmannequinize()
+    if Isnt_Mannequin()
+        p_Unmannequinize()
+    endIf
+endEvent
 
 int function Follow()
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1379,21 +1379,19 @@ int function Follow()
         return CODES.IS_FOLLOWER
     endIf
 
-    code_return = FOLLOWERS.f_Create_Follower(p_ref_actor)
+    int code_return = FOLLOWERS.f_Create_Follower(p_ref_actor)
     if code_return < 0
         return code_return
     endIf
 
     p_is_follower = true
 
-    p_Enqueue("Member.Outfit")
+    p_Outfit()
 
     return CODES.SUCCESS
 endFunction
 
 int function Unfollow()
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1402,14 +1400,14 @@ int function Unfollow()
         return CODES.ISNT_FOLLOWER
     endIf
 
-    code_return = FOLLOWERS.f_Destroy_Follower(p_ref_actor)
+    int code_return = FOLLOWERS.f_Destroy_Follower(p_ref_actor)
     if code_return < 0
         return code_return
     endIf
 
     p_is_follower = false
 
-    p_Enqueue("Member.Outfit")
+    p_Outfit()
 
     return CODES.SUCCESS
 endFunction
@@ -1424,13 +1422,18 @@ int function Resurrect(int code_exec)
     endIf
 
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Resurrect")
+        p_Send("doticu_npcp_member_resurrect", "On_Resurrect")
     else
         p_Resurrect()
     endIf
 
     return CODES.SUCCESS
 endFunction
+event On_Resurrect()
+    if Is_Dead()
+        p_Resurrect()
+    endIf
+endEvent
 
 int function Reanimate(int code_exec)
     if !Exists()
@@ -1442,11 +1445,7 @@ int function Reanimate(int code_exec)
 
     ; we accept an already alive member to make it easier on creation, but maybe not once we make a dedicated Create_Reanimated()
     if code_exec == CODES.DO_ASYNC
-        ; instead of using queue, we could just make a new thread manually
-        if Is_Dead()
-            p_Enqueue("Member.Resurrect")
-        endIf
-        p_Enqueue("Member.Reanimate")
+        p_Send("doticu_npcp_member_reanimate", "On_Reanimate")
     else
         if Is_Dead()
             p_Resurrect()
@@ -1456,6 +1455,14 @@ int function Reanimate(int code_exec)
 
     return CODES.SUCCESS
 endFunction
+event On_Reanimate()
+    if Is_Reanimated()
+        if Is_Dead()
+            p_Resurrect()
+        endIf
+        p_Reanimate()
+    endIf
+endEvent
 
 int function Deanimate(int code_exec)
     if !Exists()
@@ -1466,10 +1473,7 @@ int function Deanimate(int code_exec)
     p_is_reanimated = false
 
     if code_exec == CODES.DO_ASYNC
-        if Is_Alive()
-            p_Enqueue("Member.Kill")
-        endIf
-        p_Enqueue("Member.Deanimate")
+        p_Send("doticu_npcp_member_deanimate", "On_Deanimate")
     else
         if Is_Alive()
             p_Kill()
@@ -1479,6 +1483,14 @@ int function Deanimate(int code_exec)
 
     return CODES.SUCCESS
 endFunction
+event On_Deanimate()
+    if Isnt_Reanimated()
+        if Is_Alive()
+            p_Kill()
+        endIf
+        p_Deanimate()
+    endIf
+endEvent
 
 int function Style(int code_exec, int code_style)
     if code_style == CODES.IS_DEFAULT
@@ -1493,10 +1505,11 @@ int function Style(int code_exec, int code_style)
         return Style_Coward(code_exec)
     endIf
 endFunction
+event On_Style()
+    p_Style()
+endEvent
 
 int function Style_Default(int code_exec)
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1507,7 +1520,7 @@ int function Style_Default(int code_exec)
 
     p_Set_Style(CODES.IS_DEFAULT)
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Style")
+        p_Send("doticu_npcp_member_style", "On_Style")
     else
         p_Style()
     endIf
@@ -1516,8 +1529,6 @@ int function Style_Default(int code_exec)
 endFunction
 
 int function Style_Warrior(int code_exec)
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1528,7 +1539,7 @@ int function Style_Warrior(int code_exec)
 
     p_Set_Style(CODES.IS_WARRIOR)
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Style")
+        p_Send("doticu_npcp_member_style", "On_Style")
     else
         p_Style()
     endIf
@@ -1537,8 +1548,6 @@ int function Style_Warrior(int code_exec)
 endFunction
 
 int function Style_Mage(int code_exec)
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1549,7 +1558,7 @@ int function Style_Mage(int code_exec)
 
     p_Set_Style(CODES.IS_MAGE)
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Style")
+        p_Send("doticu_npcp_member_style", "On_Style")
     else
         p_Style()
     endIf
@@ -1558,8 +1567,6 @@ int function Style_Mage(int code_exec)
 endFunction
 
 int function Style_Archer(int code_exec)
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1570,7 +1577,7 @@ int function Style_Archer(int code_exec)
 
     p_Set_Style(CODES.IS_ARCHER)
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Style")
+        p_Send("doticu_npcp_member_style", "On_Style")
     else
         p_Style()
     endIf
@@ -1579,8 +1586,6 @@ int function Style_Archer(int code_exec)
 endFunction
 
 int function Style_Coward(int code_exec)
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1591,7 +1596,7 @@ int function Style_Coward(int code_exec)
 
     p_Set_Style(CODES.IS_COWARD)
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Style")
+        p_Send("doticu_npcp_member_style", "On_Style")
     else
         p_Style()
     endIf
@@ -1610,10 +1615,11 @@ int function Vitalize(int code_exec, int code_vitality)
         return Vitalize_Invulnerable(code_exec)
     endIf
 endFunction
+event On_Vitalize()
+    p_Vitalize()
+endEvent
 
 int function Vitalize_Mortal(int code_exec)
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1624,7 +1630,7 @@ int function Vitalize_Mortal(int code_exec)
 
     p_Set_Vitality(CODES.IS_MORTAL)
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Vitalize")
+        p_Send("doticu_npcp_member_vitalize", "On_Vitalize")
     else
         p_Vitalize()
     endIf
@@ -1633,8 +1639,6 @@ int function Vitalize_Mortal(int code_exec)
 endFunction
 
 int function Vitalize_Protected(int code_exec)
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1645,7 +1649,7 @@ int function Vitalize_Protected(int code_exec)
 
     p_Set_Vitality(CODES.IS_PROTECTED)
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Vitalize")
+        p_Send("doticu_npcp_member_vitalize", "On_Vitalize")
     else
         p_Vitalize()
     endIf
@@ -1654,8 +1658,6 @@ int function Vitalize_Protected(int code_exec)
 endFunction
 
 int function Vitalize_Essential(int code_exec)
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1666,7 +1668,7 @@ int function Vitalize_Essential(int code_exec)
 
     p_Set_Vitality(CODES.IS_ESSENTIAL)
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Vitalize")
+        p_Send("doticu_npcp_member_vitalize", "On_Vitalize")
     else
         p_Vitalize()
     endIf
@@ -1675,8 +1677,6 @@ int function Vitalize_Essential(int code_exec)
 endFunction
 
 int function Vitalize_Invulnerable(int code_exec)
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1687,7 +1687,7 @@ int function Vitalize_Invulnerable(int code_exec)
 
     p_Set_Vitality(CODES.IS_INVULNERABLE)
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Vitalize")
+        p_Send("doticu_npcp_member_vitalize", "On_Vitalize")
     else
         p_Vitalize()
     endIf
@@ -1696,20 +1696,21 @@ int function Vitalize_Invulnerable(int code_exec)
 endFunction
 
 int function Pack(int code_exec)
-    int code_return
-    
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
 
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Pack")
+        p_Send("doticu_npcp_member_pack", "On_Pack")
     else
         p_Pack()
     endIf
 
     return CODES.SUCCESS
 endFunction
+event On_Pack()
+    p_Pack()
+endEvent
 
 int function Outfit(int code_exec, int code_outfit)
     if code_outfit == CODES.OUTFIT_MEMBER
@@ -1730,17 +1731,18 @@ int function Outfit(int code_exec, int code_outfit)
         return Outfit_Default(code_exec)
     endIf
 endFunction
+event On_Outfit()
+    p_Outfit()
+endEvent
 
 int function Outfit_Member(int code_exec)
-    int code_return
-    
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
 
     p_Put_Outfit(CODES.OUTFIT_MEMBER)
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Outfit")
+        p_Send("doticu_npcp_member_outfit", "On_Outfit")
     else
         p_Outfit()
     endIf
@@ -1749,15 +1751,13 @@ int function Outfit_Member(int code_exec)
 endFunction
 
 int function Outfit_Settler(int code_exec)
-    int code_return
-    
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
 
     p_Put_Outfit(CODES.OUTFIT_SETTLER)
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Outfit")
+        p_Send("doticu_npcp_member_outfit", "On_Outfit")
     else
         p_Outfit()
     endIf
@@ -1766,15 +1766,13 @@ int function Outfit_Settler(int code_exec)
 endFunction
 
 int function Outfit_Thrall(int code_exec)
-    int code_return
-    
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
 
     p_Put_Outfit(CODES.OUTFIT_THRALL)
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Outfit")
+        p_Send("doticu_npcp_member_outfit", "On_Outfit")
     else
         p_Outfit()
     endIf
@@ -1783,15 +1781,13 @@ int function Outfit_Thrall(int code_exec)
 endFunction
 
 int function Outfit_Immobile(int code_exec)
-    int code_return
-    
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
 
     p_Put_Outfit(CODES.OUTFIT_IMMOBILE)
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Outfit")
+        p_Send("doticu_npcp_member_outfit", "On_Outfit")
     else
         p_Outfit()
     endIf
@@ -1800,15 +1796,13 @@ int function Outfit_Immobile(int code_exec)
 endFunction
 
 int function Outfit_Follower(int code_exec)
-    int code_return
-    
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
 
     p_Put_Outfit(CODES.OUTFIT_FOLLOWER)
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Outfit")
+        p_Send("doticu_npcp_member_outfit", "On_Outfit")
     else
         p_Outfit()
     endIf
@@ -1817,15 +1811,13 @@ int function Outfit_Follower(int code_exec)
 endFunction
 
 int function Outfit_Current(int code_exec)
-    int code_return
-    
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
 
     p_Put_Outfit(CODES.OUTFIT_CURRENT)
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Outfit")
+        p_Send("doticu_npcp_member_outfit", "On_Outfit")
     else
         p_Outfit()
     endIf
@@ -1834,15 +1826,13 @@ int function Outfit_Current(int code_exec)
 endFunction
 
 int function Outfit_Vanilla(int code_exec)
-    int code_return
-    
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
 
     p_Put_Outfit(CODES.OUTFIT_VANILLA)
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Outfit")
+        p_Send("doticu_npcp_member_outfit", "On_Outfit")
     else
         p_Outfit()
     endIf
@@ -1851,15 +1841,13 @@ int function Outfit_Vanilla(int code_exec)
 endFunction
 
 int function Outfit_Default(int code_exec)
-    int code_return
-    
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
 
     p_Put_Outfit(CODES.OUTFIT_DEFAULT)
     if code_exec == CODES.DO_ASYNC
-        p_Enqueue("Member.Outfit")
+        p_Send("doticu_npcp_member_outfit", "On_Outfit")
     else
         p_Outfit()
     endIf
@@ -1876,8 +1864,6 @@ int function Get_Rating()
 endFunction
 
 int function Set_Rating(int int_rating)
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1962,8 +1948,6 @@ int function Undisplay()
 endFunction
 
 int function Unmember()
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1976,8 +1960,6 @@ int function Unmember()
 endFunction
 
 int function Clone()
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1986,8 +1968,6 @@ int function Clone()
 endFunction
 
 int function Unclone()
-    int code_return
-
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -2053,6 +2033,10 @@ bool function Is_Generic()
     return Exists() && ACTORS.Is_Generic(p_ref_actor)
 endFunction
 
+bool function Is_Original()
+    return Exists() && !p_is_clone
+endFunction
+
 bool function Is_Clone()
     return Exists() && p_is_clone
 endFunction
@@ -2061,8 +2045,16 @@ bool function Is_Settler()
     return Exists() && p_is_settler
 endFunction
 
+bool function Isnt_Settler()
+    return Exists() && !p_is_settler
+endFunction
+
 bool function Is_Thrall()
     return Exists() && p_is_thrall
+endFunction
+
+bool function Isnt_Thrall()
+    return Exists() && !p_is_thrall
 endFunction
 
 bool function Is_Immobile()
@@ -2083,6 +2075,10 @@ endFunction
 
 bool function Is_Mannequin()
     return Exists() && p_is_mannequin
+endFunction
+
+bool function Isnt_Mannequin()
+    return Exists() && !p_is_mannequin
 endFunction
 
 bool function Is_Reanimated()
@@ -2154,114 +2150,12 @@ bool function Is_In_Combat()
 endFunction
 
 ; Events
-event On_Queue_Member(string str_message)
-    if p_queue_member.Should_Cancel()
-
-    elseIf str_message == "Member.Member"
-        p_Member()
-    elseIf str_message == "Member.Pack"
-        p_Pack()
-    elseIf str_message == "Member.Outfit"
-        p_Outfit()
-    elseIf str_message == "Member.Settle"
-        if Is_Settler()
-            p_Settle()
-        endIf
-    elseIf str_message == "Member.Unsettle"
-        if !Is_Settler()
-            p_Unsettle()
-        endIf
-    elseIf str_message == "Member.Enthrall"
-        if Is_Thrall()
-            p_Enthrall()
-        endIf
-    elseIf str_message == "Member.Unthrall"
-        if !Is_Thrall()
-            p_Unthrall()
-        endIf
-    elseIf str_message == "Member.Immobilize"
-        if Is_Immobile()
-            p_Immobilize()
-        endIf
-    elseIf str_message == "Member.Mobilize"
-        if Is_Mobile()
-            p_Mobilize()
-        endIf
-    elseIf str_message == "Member.Paralyze"
-        if Is_Paralyzed()
-            p_Paralyze()
-        endIf
-    elseIf str_message == "Member.Unparalyze"
-        if Is_Unparalyzed()
-            p_Unparalyze()
-        endIf
-    elseIf str_message == "Member.Mannequinize"
-        if Is_Mannequin()
-            p_Mannequinize()
-        endIf
-    elseIf str_message == "Member.Unmannequinize"
-        if !Is_Mannequin()
-            p_Unmannequinize()
-        endIf
-    elseIf str_message == "Member.Remannequinize"
-        p_Remannequinize()
-    elseIf str_message == "Member.Reanimate"
-        if Is_Reanimated()
-            p_Reanimate()
-        endIf
-    elseIf str_message == "Member.Deanimate"
-        if Isnt_Reanimated()
-            p_Deanimate()
-        endIf
-    elseIf str_message == "Member.Resurrect"
-        if Is_Dead()
-            p_Resurrect()
-        endIf
-    elseIf str_message == "Member.Kill"
-        if Is_Alive()
-            p_Kill()
-        endIf
-    elseIf str_message == "Member.Style"
-        p_Style()
-    elseIf str_message == "Member.Vitalize"
-        p_Vitalize()
-    
-    endIf
-
-    f_QUEUE.Dequeue()
-endEvent
-
-event On_Members_Unmember()
-    if Exists()
-        Unmember()
-    endIf
-endEvent
-
-event On_Load_Mod()
-    ; is this really callable before Is_Ready? That's a mistake if so
-    if !MAIN.Is_Ready() || !Exists()
-        return
-    endIf
-    
-    ; OnLoad() is not always called, if the npc was loaded upon game exit.
-    ; so we do the extra check here, because paralysis doesn't stick
-    if p_ref_actor.Is3DLoaded()
-        p_Remannequinize()
-        p_Reparalyze()
-    endIf
-endEvent
-
 event OnLoad()
-    if !MAIN.Is_Ready() || !Exists()
+    if !MAIN.Is_Ready()
         return
     endIf
 
-    p_Remannequinize()
-    p_Reparalyze()
-
-    p_Outfit()
-
-    Enforce(false); enforce everything but outfit
+    Enforce()
 endEvent
 
 event OnActivate(ObjectReference ref_activator)
@@ -2275,8 +2169,7 @@ event OnActivate(ObjectReference ref_activator)
             ACTORS.Greet_Player(p_ref_actor)
         endIf
 
-        p_Outfit()
-        Enforce(false)
+        Enforce()
         
         ; instead of polling, we might be able to set up a package that happens only when in dialogue
         ; and wait for the Package change or end event to let us know dialogue is over.
@@ -2359,17 +2252,17 @@ event OnDeath(Actor ref_killer)
     if Is_Reanimated()
         p_Deanimate()
     endIf
-
-    f_QUEUE.Flush()
 endEvent
 
 ; Update Methods
+doticu_npcp_queue p_queue_member = none
 function u_0_9_0()
     if Exists()
-        ; in case any deadlocks were encountered.
-        QUEUES.Destroy(p_queue_member)
-        p_queue_member = QUEUES.Create("alias", 64, 0.1)
-        p_queue_member.Register_Alias(self, "On_Queue_Member", p_str_namespace)
+        if p_queue_member
+            p_queue_member.Disable()
+            p_queue_member.Delete()
+            p_queue_member = none
+        endIf
 
         ; so that we can easily filter followers
         if FOLLOWERS.Has_Follower(p_ref_actor)

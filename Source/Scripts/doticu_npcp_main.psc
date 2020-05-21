@@ -75,9 +75,7 @@ function f_Init_Mod()
     DATA.CONSTS.GLOBAL_IS_INSTALLED.SetValue(1)
     FUNCS.LOGS.Create_Note("Thank you for installing!")
 
-    while !p_Send("doticu_npcp_init_mod")
-        Utility.Wait(0.25)
-    endWhile
+    FUNCS.Send("doticu_npcp_init_mod")
 endFunction
 
 function f_Load_Mod()
@@ -93,9 +91,7 @@ function f_Load_Mod()
     p_Register()
     p_Version()
 
-    while !p_Send("doticu_npcp_load_mod")
-        Utility.Wait(0.25)
-    endWhile
+    FUNCS.Send("doticu_npcp_load_mod")
 endFunction
 
 ; Private Methods

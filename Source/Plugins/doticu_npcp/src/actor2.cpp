@@ -452,6 +452,8 @@ namespace doticu_npcp { namespace Actor2 {
                 AddItem_Native(registry, id_stack, cache_out, form_actor, bentry_actor->count, true);
             }
         }
+
+        //registry->ResumeStack(id_stack, NULL);
     }
 
 }}

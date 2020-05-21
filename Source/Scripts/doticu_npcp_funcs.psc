@@ -129,15 +129,6 @@ bool function Is_Mod_Installed(string name_mod)
     return Game.GetModByName(name_mod) != 255
 endFunction
 
-bool function Maybe_Quest_Item(Form form_item)
-    ObjectReference ref_item = form_item as ObjectReference
-    if ref_item && ref_item.GetNumReferenceAliases() > 0
-        return true
-    else
-        return false
-    endIf
-endFunction
-
 function Print_Contents(ObjectReference ref_object)
     string str_contents = ""
     int idx_forms = 0
@@ -161,6 +152,23 @@ function Print_Contents(ObjectReference ref_object)
     str_contents += " ]\n"
 
     doticu_npcp.Print(str_contents)
+endFunction
+
+function Send(string str_event, float interval = 0.25, float timeout = 5.0)
+    float time_waited = 0.0
+    while time_waited < timeout
+        int handle = ModEvent.Create(str_event)
+        if handle
+            if ModEvent.Send(handle)
+                return
+            else
+                ModEvent.Release(handle)
+            endIf
+        endIf
+
+        Utility.Wait(interval)
+        time_waited += interval
+    endWhile
 endFunction
 
 ; Update Methods
