@@ -54,5 +54,9 @@ doticu_npcp_tasklist function Create(float wait_interval = 0.25, float wait_time
 endFunction
 
 function Destroy(doticu_npcp_tasklist ref_tasklist)
-    ref_tasklist.f_Destroy()
+    if ref_tasklist
+        ref_tasklist.f_Destroy()
+        ref_tasklist.Disable()
+        ref_tasklist.Delete()
+    endIf
 endFunction

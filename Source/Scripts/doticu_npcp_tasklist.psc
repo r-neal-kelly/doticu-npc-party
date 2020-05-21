@@ -4,6 +4,13 @@
 
 Scriptname doticu_npcp_tasklist extends ObjectReference
 
+; Modules
+doticu_npcp_funcs property FUNCS hidden
+    doticu_npcp_funcs function Get()
+        return p_DATA.MODS.FUNCS
+    endFunction
+endProperty
+
 ; Private Constants
 doticu_npcp_data    p_DATA                  =  none
 
@@ -26,9 +33,6 @@ function f_Create(doticu_npcp_data DATA, float wait_interval, float wait_timeout
 endFunction
 
 function f_Destroy()
-    self.Disable()
-    self.Delete()
-
     p_num_tasks_complete = -1
     p_num_tasks_total = -1
     p_default_wait_timeout = -1.0
@@ -56,34 +60,14 @@ bool function p_Start(int num_tasks)
 endFunction
 
 bool function p_Send(string str_event)
-    int handle = ModEvent.Create(str_event)
-
+    int handle = FUNCS.Get_Event_Handle(str_event)
     if !handle
         return false
     endIf
 
     ModEvent.PushForm(handle, self as Form)
 
-    if !ModEvent.Send(handle)
-        ModEvent.Release(handle)
-        return false
-    endIf
-
-    return true
-endFunction
-
-bool function p_Send_Int(string str_event, int int_val)
-    int handle = ModEvent.Create(str_event)
-
-    if !handle
-        return false
-    endIf
-
-    ModEvent.PushForm(handle, self as Form)
-    ModEvent.PushInt(handle, int_val)
-
-    if !ModEvent.Send(handle)
-        ModEvent.Release(handle)
+    if !FUNCS.Send_Event_Handle(handle)
         return false
     endIf
 
@@ -124,36 +108,9 @@ bool function Execute(int num_tasks, string str_event, float wait_interval = -1.
         return false
     endIf
 
-    while !p_Send(str_event)
-        Utility.Wait(wait_interval)
-    endWhile
-
-    if !p_Wait(wait_interval, wait_timeout)
+    if !p_Send(str_event)
         return false
     endIf
-
-    return true
-endFunction
-
-bool function Loop(int num_tasks, string str_event, float wait_interval = -1.0, float wait_timeout = -1.0)
-    if wait_interval < 0
-        wait_interval = p_default_wait_interval
-    endIf
-    if wait_timeout < 0
-        wait_timeout = p_default_wait_timeout
-    endIf
-
-    if !p_Start(num_tasks)
-        return false
-    endIf
-
-    int int_task = 0
-    while int_task < num_tasks
-        while !p_Send_Int(str_event, int_task)
-            Utility.Wait(wait_interval)
-        endWhile
-        int_task += 1
-    endWhile
 
     if !p_Wait(wait_interval, wait_timeout)
         return false

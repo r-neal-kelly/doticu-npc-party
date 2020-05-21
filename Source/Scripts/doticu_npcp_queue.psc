@@ -4,6 +4,13 @@
 
 Scriptname doticu_npcp_queue extends ObjectReference
 
+; Modules
+doticu_npcp_funcs property FUNCS hidden
+    doticu_npcp_funcs function Get()
+        return p_DATA.MODS.FUNCS
+    endFunction
+endProperty
+
 ; Private Constants
 doticu_npcp_data    p_DATA              =  none
 int                 p_BUFFER_MAX        =    -1
@@ -115,11 +122,10 @@ bool function p_Has_Message(string str_message)
     return false
 endFunction
 
-bool function p_Send_Queue()
-    int handle = ModEvent.Create(p_str_event)
-
+function p_Send_Queue()
+    int handle = FUNCS.Get_Event_Handle(p_str_event, p_INTERVAL_DEFAULT)
     if !handle
-        return false
+        return
     endIf
 
     ModEvent.PushString(handle, p_str_message)
@@ -130,12 +136,7 @@ bool function p_Send_Queue()
         ModEvent.PushBool(handle, p_event_bool)
     endIf
 
-    if !ModEvent.Send(handle)
-        ModEvent.Release(handle)
-        return false
-    endIf
-
-    return true
+    FUNCS.Send_Event_Handle(handle, p_INTERVAL_DEFAULT)
 endFunction
 
 ; Public Methods
@@ -327,7 +328,5 @@ endState
 
 ; Events
 event OnUpdate()
-    while !p_Send_Queue()
-        Utility.Wait(p_INTERVAL_DEFAULT)
-    endWhile
+    p_Send_Queue()
 endEvent

@@ -2,7 +2,7 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 /;
 
-; should probably destroy this script, it's hardly useful at all
+; this type is not to be used, and will be deleted at 1.0.0 or before
 
 Scriptname doticu_npcp_container extends ObjectReference
 
@@ -37,9 +37,6 @@ function f_Create(doticu_npcp_data DATA, string str_name)
 endFunction
 
 function f_Destroy()
-    self.Disable()
-    self.Delete()
-
     p_str_name = ""
     p_is_created = false
 endFunction

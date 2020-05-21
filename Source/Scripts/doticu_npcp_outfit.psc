@@ -59,7 +59,7 @@ endProperty
 bool                    p_is_created        = false
 string                  p_str_name          =    ""
 int                     p_code_create       =     0; OUTFIT_VANILLA, OUTFIT_DEFAULT
-ObjectReference         p_cache_vanilla     =  none
+ObjectReference         p_cache_base        =  none
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA, string str_name, int code_create = 0)
@@ -68,7 +68,7 @@ function f_Create(doticu_npcp_data DATA, string str_name, int code_create = 0)
     p_is_created = true
     p_str_name = str_name
     p_code_create = code_create
-    p_cache_vanilla = none
+    p_cache_base = none
     
     self.SetDisplayName(p_str_name, true)
     self.SetActorOwner(CONSTS.ACTOR_PLAYER.GetActorBase())
@@ -78,12 +78,12 @@ function f_Destroy()
     ; this needs to be setting to an optional place, prob. a community chest
     self.RemoveAllItems(CONSTS.ACTOR_PLAYER, false, true)
 
-    if p_cache_vanilla
-        p_cache_vanilla.Disable()
-        p_cache_vanilla.Delete()
+    if p_cache_base
+        p_cache_base.Disable()
+        p_cache_base.Delete()
     endIf
 
-    p_cache_vanilla = none
+    p_cache_base = none
     p_code_create = 0
     p_str_name = ""
     p_is_created = false
@@ -125,7 +125,7 @@ NPCS.Unlock_Base(ref_actor)
     
     ; does all the heavy lifting of removing unfit items and adding outfit items
     ObjectReference ref_transfer = CONTAINERS.Create_Temp()
-    doticu_npcp.Actor_Set_Outfit2(ref_actor, CONSTS.ARMOR_BLANK, p_cache_vanilla, self, ref_transfer)
+    doticu_npcp.Actor_Set_Outfit2(ref_actor, CONSTS.ARMOR_BLANK, p_cache_base, self, ref_transfer)
     ref_transfer.RemoveAllItems(ref_pack, true, true)
     CONTAINERS.Destroy_Temp(ref_transfer)
 
@@ -180,11 +180,11 @@ function Cache_Vanilla_Static(Outfit outfit_vanilla)
     endIf
 
     ; make sure this container is persistent from now on.
-    if p_cache_vanilla
-        p_cache_vanilla.Disable()
-        p_cache_vanilla.Delete()
+    if p_cache_base
+        p_cache_base.Disable()
+        p_cache_base.Delete()
     endIf
-    p_cache_vanilla = CONTAINERS.Create_Persistent()
+    p_cache_base = CONTAINERS.Create_Perm()
 
     ; it's nice to have vanilla leveled items cached so they remain unchanged
     ; this is also an avenue to getting unplayable items into the outfit
@@ -194,7 +194,7 @@ function Cache_Vanilla_Static(Outfit outfit_vanilla)
         idx_forms -= 1
         form_item = outfit_vanilla.GetNthPart(idx_forms)
         if form_item != CONSTS.ARMOR_BLANK as Form
-            p_cache_vanilla.AddItem(form_item, 1, true); will expand LeveledItems!
+            p_cache_base.AddItem(form_item, 1, true); will expand LeveledItems!
         endIf
     endWhile
 endFunction
@@ -206,24 +206,24 @@ function Cache_Vanilla_Dynamic(Actor ref_actor)
 
     ; make sure this container is persistent from now on.
     ; we add one item to make sure certain fields in c++ have been allocated
-    if p_cache_vanilla
-        p_cache_vanilla.Disable()
-        p_cache_vanilla.Delete()
+    if p_cache_base
+        p_cache_base.Disable()
+        p_cache_base.Delete()
     endIf
-    p_cache_vanilla = CONTAINERS.Create_Persistent()
-    p_cache_vanilla.AddItem(CONSTS.WEAPON_BLANK, 1, true)
-    p_cache_vanilla.RemoveItem(CONSTS.WEAPON_BLANK, 1, true)
+    p_cache_base = CONTAINERS.Create_Perm()
+    p_cache_base.AddItem(CONSTS.WEAPON_BLANK, 1, true)
+    p_cache_base.RemoveItem(CONSTS.WEAPON_BLANK, 1, true)
 
     ; not only does this do the heavy lifting, but it caches what the actor is wearing
     ; so that when a vanilla outfit change happens, leveled items wont be calc'd twice.
     ; also, we can trust more in our override of Actor.SetOutfit, and we won't get non-outfit items
-    doticu_npcp.Actor_Cache_Worn(ref_actor, CONSTS.ARMOR_BLANK, p_cache_vanilla)
+    doticu_npcp.Actor_Cache_Worn(ref_actor, CONSTS.ARMOR_BLANK, p_cache_base)
 endFunction
 
 function Try_Cache_Vanilla(Outfit outfit_vanilla)
     ; this is just a way to do asyncronous updating for 0.9.0
-    if !p_cache_vanilla && (p_code_create == CODES.OUTFIT_VANILLA || p_code_create == CODES.OUTFIT_DEFAULT)
-        p_cache_vanilla = CONTAINERS.Create_Persistent()
+    if !p_cache_base && (p_code_create == CODES.OUTFIT_VANILLA || p_code_create == CODES.OUTFIT_DEFAULT)
+        p_cache_base = CONTAINERS.Create_Perm()
         Cache_Vanilla_Static(outfit_vanilla)
     endIf
 endFunction

@@ -10,6 +10,11 @@ doticu_npcp_consts property CONSTS hidden
         return p_DATA.CONSTS
     endFunction
 endProperty
+doticu_npcp_funcs property FUNCS hidden
+    doticu_npcp_funcs function Get()
+        return p_DATA.MODS.FUNCS
+    endFunction
+endProperty
 doticu_npcp_player property PLAYER hidden
     doticu_npcp_player function Get()
         return p_DATA.MODS.FUNCS.ACTORS.PLAYER
@@ -29,7 +34,7 @@ doticu_npcp_data property DATA
 endProperty
 
 ; Private Constants
-doticu_npcp_data    p_DATA  =  none
+doticu_npcp_data p_DATA = none
 
 ; Private Methods
 function p_Create()
@@ -39,30 +44,22 @@ function p_Create()
     Utility.Wait(0.01)
     CONSTS.MARKER_CELL.MoveTo(CONSTS.ACTOR_PLAYER)
 
-    while !p_Send_Cell_Change(cell_new, cell_old)
-        Utility.Wait(0.1)
-    endWhile
+    p_Send_Cell_Change(cell_new, cell_old)
 endFunction
 
 function p_Destroy()
 endFunction
 
-bool function p_Send_Cell_Change(Cell cell_new, Cell cell_old)
-    int handle = ModEvent.Create("doticu_npcp_cell_change")
-
+function p_Send_Cell_Change(Cell cell_new, Cell cell_old)
+    int handle = FUNCS.Get_Event_Handle("doticu_npcp_cell_change")
     if !handle
-        return false
+        return
     endIf
 
     ModEvent.PushForm(handle, cell_new as Form)
     ModEvent.PushForm(handle, cell_old as Form)
 
-    if !ModEvent.Send(handle)
-        ModEvent.Release(handle)
-        return false
-    endIf
-
-    return true
+    FUNCS.Send_Event_Handle(handle)
 endFunction
 
 ; Events

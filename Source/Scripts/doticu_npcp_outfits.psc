@@ -71,7 +71,7 @@ endFunction
 
 ; Private Methods
 doticu_npcp_outfit function p_Create(Container form_container, string str_name, int code_create = 0)
-    doticu_npcp_outfit ref_outfit = CONSTS.MARKER_STORAGE.PlaceAtMe(CONSTS.CONTAINER_OUTFIT, 1, false, false) as doticu_npcp_outfit
+    doticu_npcp_outfit ref_outfit = CONSTS.MARKER_STORAGE.PlaceAtMe(CONSTS.CONTAINER_OUTFIT, 1, true, false) as doticu_npcp_outfit
     
     ; this can prevent a ctd
     Utility.Wait(0.1)
@@ -126,69 +126,6 @@ function Destroy(doticu_npcp_outfit ref_outfit)
         ref_outfit.Disable()
         ref_outfit.Delete()
     endIf
-endFunction
-
-ObjectReference function Get_Default_Cache(Actor ref_actor, Outfit outfit_default)
-    ; TODO:
-    ; wait. can't we just have an skse function tell us what the default base container items are? we can certainly
-    ; add those back without having to cache in that case. that means we could delete default cache array from NPCS
-    ; make sure to skip leveled items I think, but look into it more? in any case, we prob. can't leave them as they
-    ; are in NPCS, because they were made with CONTAINER.Create_Temp() upto this point, and that did not appear to be safe
-
-
-    ; the point of this function is to have a goto container that
-    ; has most of the loose outfit items on an npc. it's intended
-    ; to be created the first time they are added into the system.
-    ; part of the reason we are doing this is because some npcs
-    ; don't have default outfits, especially follower mods.
-    ; sometimes they have unplayable equipment, and this is removed
-    ; in unvanilla outfits because the player can't manipulate them
-
-    int idx_forms
-    Form form_item
-    int num_items
-    ObjectReference ref_item
-    ObjectReference ref_outfit = CONTAINERS.Create_Temp()
-    ObjectReference ref_cache = CONTAINERS.Create_Persistent()
-
-    if outfit_default
-        ; we cache because if anything in actor inventory is in here, we can
-        ; ignore it as we use the outfit_default itself in the outfit algorithm
-        idx_forms = outfit_default.GetNumParts()
-        while idx_forms > 0
-            idx_forms -= 1
-            form_item = outfit_default.GetNthPart(idx_forms)
-            ref_outfit.AddItem(form_item, 1, true); will expand LeveledItems!
-        endWhile
-    endIf
-
-    ; we basically want every item in the inventory that is not an outfit item yet equips
-    idx_forms = ref_actor.GetNumItems()
-    while idx_forms > 0
-        idx_forms -= 1
-        form_item = ref_actor.GetNthForm(idx_forms)
-        if form_item
-            ; we need to work with this form before it might be changed
-            num_items = ref_actor.GetItemCount(form_item)
-            ref_item = form_item as ObjectReference
-            if ref_item
-                ; we cannot risk removing a quest item, etc.
-                form_item = ref_item.GetBaseObject()
-            endIf
-            if ref_outfit.GetItemCount(form_item) < 1 && form_item != CONSTS.ARMOR_BLANK as Form
-                if form_item as Armor || form_item as Weapon || form_item as Ammo
-                    ; we don't bother with Light, or other possible equips
-                    ref_cache.AddItem(form_item, num_items, true)
-                endIf
-            endIf
-        endIf
-    endWhile
-
-    ref_outfit.Disable()
-    ref_outfit.Delete()
-    ref_outfit = none
-
-    return ref_cache
 endFunction
 
 function Outfit_Clone(Actor ref_clone, Actor ref_orig)

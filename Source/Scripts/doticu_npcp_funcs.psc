@@ -154,7 +154,7 @@ function Print_Contents(ObjectReference ref_object)
     doticu_npcp.Print(str_contents)
 endFunction
 
-function Send(string str_event, float interval = 0.25, float timeout = 5.0)
+function Send_Event(string str_event, float interval = 0.25, float timeout = 5.0)
     float time_waited = 0.0
     while time_waited < timeout
         int handle = ModEvent.Create(str_event)
@@ -171,8 +171,40 @@ function Send(string str_event, float interval = 0.25, float timeout = 5.0)
     endWhile
 endFunction
 
+int function Get_Event_Handle(string str_event, float interval = 0.25, float timeout = 5.0)
+    float time_waited = 0.0
+    while time_waited < timeout
+        int handle = ModEvent.Create(str_event)
+        if handle
+            return handle
+        endIf
+
+        Utility.Wait(interval)
+        time_waited += interval
+    endWhile
+
+    return 0
+endFunction
+
+function Send_Event_Handle(int handle, float interval = 0.25, float timeout = 5.0)
+    float time_waited = 0.0
+    while time_waited < timeout
+        if ModEvent.Send(handle)
+            return
+        endIf
+
+        Utility.Wait(interval)
+        time_waited += interval
+    endWhile
+
+    ModEvent.Release(handle)
+endFunction
+
 ; Update Methods
 function u_0_9_0()
+    ACTORS.PLAYER.u_0_9_0()
+    NPCS.u_0_9_0()
+
     MANNEQUINS.f_Create(p_DATA)
     MANNEQUINS.f_Register()
 endFunction

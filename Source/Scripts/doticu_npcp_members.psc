@@ -114,23 +114,6 @@ doticu_npcp_member function p_Get_Member(int id_alias)
     return ALIASES.f_Get_Alias(id_alias) as doticu_npcp_member
 endFunction
 
-bool function p_Send_Members(string str_event)
-    int handle = ModEvent.Create(str_event)
-
-    if !handle
-        return false
-    endIf
-
-    ModEvent.PushForm(handle, p_DATA as Form)
-
-    if !ModEvent.Send(handle)
-        ModEvent.Release(handle)
-        return false
-    endIf
-
-    return true
-endFunction
-
 ; Public Methods
 int function Create_Member(Actor ref_actor, bool do_clone = false)
     int code_return
@@ -522,8 +505,18 @@ function u_0_9_0()
     Alias[] arr_aliases = ALIASES.Get_Aliases()
     int idx_aliases = 0
     int num_aliases = arr_aliases.length
+    int prev_percent = -1
+    int curr_percent = -1
+
     while idx_aliases < num_aliases
+        curr_percent = (idx_aliases * 100 / num_aliases) as int
+        if prev_percent != curr_percent
+            doticu_npcp.Print("%%" + curr_percent)
+            prev_percent = curr_percent
+        endIf
+        
         (arr_aliases[idx_aliases] as doticu_npcp_member).u_0_9_0()
+        
         idx_aliases += 1
     endWhile
 endFunction

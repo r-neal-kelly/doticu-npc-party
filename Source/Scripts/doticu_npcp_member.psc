@@ -95,7 +95,7 @@ ObjectReference         p_marker_settler            =  none
 ObjectReference         p_marker_display            =  none
 ObjectReference         p_marker_mannequin          =  none
 Outfit                  p_outfit_vanilla            =  none
-doticu_npcp_container   p_container2_pack           =  none
+ObjectReference         p_container_pack            =  none
 doticu_npcp_outfit      p_outfit2_member            =  none
 doticu_npcp_outfit      p_outfit2_settler           =  none
 doticu_npcp_outfit      p_outfit2_thrall            =  none
@@ -141,7 +141,7 @@ f_Lock_Resources()
     p_marker_mannequin = none
     p_outfit_vanilla = NPCS.Get_Default_Outfit(p_ref_actor)
 
-    p_Create_Containers()
+    p_Create_Container()
     p_Create_Outfit()
     p_Backup()
 
@@ -210,7 +210,7 @@ f_Lock_Resources()
     p_outfit2_thrall = none
     p_outfit2_settler = none
     p_outfit2_member = none
-    p_container2_pack = none
+    p_container_pack = none
     p_outfit_vanilla = none
     p_marker_mannequin = none
     p_marker_display = none
@@ -262,21 +262,21 @@ int function f_Get_ID()
 endFunction
 
 ; Private Methods
-function p_Create_Containers()
-    p_container2_pack = CONTAINERS.Create()
+function p_Create_Container()
+    p_container_pack = CONTAINERS.Create_Perm()
 endFunction
 
 function p_Destroy_Containers()
-    p_container2_pack.RemoveAllItems(CONSTS.ACTOR_PLAYER, false, true)
-    CONTAINERS.Destroy(p_container2_pack)
+    p_container_pack.RemoveAllItems(CONSTS.ACTOR_PLAYER, true, true)
+    CONTAINERS.Destroy_Perm(p_container_pack)
 endFunction
 
 function p_Create_Outfit()
     p_outfit2_member = OUTFITS.Create()
     if VARS.fill_outfits
-        p_outfit2_member.Get(p_ref_actor, p_container2_pack)
+        p_outfit2_member.Get(p_ref_actor, p_container_pack)
     else
-        p_ref_actor.RemoveAllItems(p_container2_pack, false, true)
+        p_ref_actor.RemoveAllItems(p_container_pack, true, false)
     endIf
     p_outfit2_current = p_outfit2_member
     p_outfit2_previous = p_outfit2_current
@@ -786,7 +786,7 @@ f_Lock_Resources()
         p_outfit2_previous = p_outfit2_current
         p_outfit2_current = p_outfit2_vanilla
         p_outfit2_current.Cache_Vanilla_Dynamic(p_ref_actor)
-        p_outfit2_current.Set(p_ref_actor, p_container2_pack)
+        p_outfit2_current.Set(p_ref_actor, p_container_pack)
     elseIf p_outfit2_previous != p_outfit2_current
         if p_outfit2_current == p_outfit2_vanilla
             ; maybe we can make this a setting, because it makes it easy to relevel the same outfit
@@ -796,7 +796,7 @@ f_Lock_Resources()
             p_outfit2_current.Cache_Vanilla_Static(NPCS.Get_Default_Outfit(p_ref_actor))
         endIf
         p_outfit2_previous = p_outfit2_current
-        p_outfit2_current.Set(p_ref_actor, p_container2_pack)
+        p_outfit2_current.Set(p_ref_actor, p_container_pack)
     else
         ; this is just a way to do asyncronous updating for 0.9.0
         if p_outfit2_current == p_outfit2_vanilla
@@ -804,7 +804,7 @@ f_Lock_Resources()
         elseIf p_outfit2_current == p_outfit2_default
             p_outfit2_current.Try_Cache_Vanilla(NPCS.Get_Default_Outfit(p_ref_actor))
         endIf
-        p_outfit2_current.Set(p_ref_actor, p_container2_pack)
+        p_outfit2_current.Set(p_ref_actor, p_container_pack)
     endIf
 
     p_ref_actor.EvaluatePackage()
@@ -886,9 +886,8 @@ endfunction
 function p_Pack()
 f_Lock_Resources()
 
-    p_container2_pack.Set_Name(Get_Name() + "'s Pack")
-    p_container2_pack.Open()
-    Utility.Wait(0.1)
+    CONTAINERS.Set_Name(p_container_pack, Get_Name() + "'s Pack")
+    CONTAINERS.Open(p_container_pack)
 
 f_Unlock_Resources()
 endFunction
@@ -900,12 +899,12 @@ f_Unlock_Resources()
     return code_return
 endFunction
 
-function p_Send(string str_event, string str_handler)
-    str_event += p_id_alias
+function p_Async(string str_func)
+    string str_event = "doticu_npcp_member_async_" + p_id_alias
 
 f_Lock_Resources()
-    RegisterForModEvent(str_event, str_handler)
-    FUNCS.Send(str_event, 0.25, 5.0)
+    RegisterForModEvent(str_event, str_func)
+    FUNCS.Send_Event(str_event, 0.25, 5.0)
     UnregisterForModEvent(str_event)
 f_Unlock_Resources()
 endFunction
@@ -972,7 +971,7 @@ int function Enforce()
 endFunction
 
 function Enforce_Async()
-    p_Send("doticu_npcp_member_enforce", "On_Enforce")
+    p_Async("On_Enforce")
 endFunction
 event On_Enforce()
     Enforce()
@@ -1090,7 +1089,7 @@ int function Settle(int code_exec)
     p_is_settler = true
 
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_settle", "On_Settle")
+        p_Async("On_Settle")
     else
         p_Settle()
     endIf
@@ -1115,7 +1114,7 @@ int function Resettle(int code_exec)
     endIf
 
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_settle", "On_Settle")
+        p_Async("On_Settle")
     else
         p_Settle()
     endIf
@@ -1137,7 +1136,7 @@ int function Unsettle(int code_exec)
     p_is_settler = false
 
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_unsettle", "On_Unsettle")
+        p_Async("On_Unsettle")
     else
         p_Unsettle()
     endIf
@@ -1168,7 +1167,7 @@ int function Enthrall(int code_exec)
     p_is_thrall = true
 
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_enthrall", "On_Enthrall")
+        p_Async("On_Enthrall")
     else
         p_Enthrall()
     endIf
@@ -1199,7 +1198,7 @@ int function Unthrall(int code_exec)
     p_is_thrall = false
 
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_unthrall", "On_Unthrall")
+        p_Async("On_Unthrall")
     else
         p_Unthrall()
     endIf
@@ -1226,7 +1225,7 @@ int function Immobilize(int code_exec)
     p_is_immobile = true
 
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_immobilize", "On_Immobilize")
+        p_Async("On_Immobilize")
     else
         p_Immobilize()
     endIf
@@ -1253,7 +1252,7 @@ int function Mobilize(int code_exec)
     p_is_immobile = false
 
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_mobilize", "On_Mobilize")
+        p_Async("On_Mobilize")
     else
         p_Mobilize()
     endIf
@@ -1280,7 +1279,7 @@ int function Paralyze(int code_exec)
     p_is_paralyzed = true
 
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_paralyze", "On_Paralyze")
+        p_Async("On_Paralyze")
     else
         p_Paralyze()
     endIf
@@ -1305,7 +1304,7 @@ int function Unparalyze(int code_exec)
     p_is_paralyzed = false
 
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_unparalyze", "On_Unparalyze")
+        p_Async("On_Unparalyze")
     else
         p_Unparalyze()
     endIf
@@ -1331,7 +1330,7 @@ int function Mannequinize(int code_exec, ObjectReference ref_marker)
     p_marker_mannequin = ref_marker
 
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_mannequinize", "On_Mannequinize")
+        p_Async("On_Mannequinize")
     else
         p_Mannequinize()
     endIf
@@ -1357,7 +1356,7 @@ int function Unmannequinize(int code_exec)
     p_is_mannequin = false
 
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_unmannequinize", "On_Unmannequinize")
+        p_Async("On_Unmannequinize")
     else
         p_Unmannequinize()
     endIf
@@ -1422,7 +1421,7 @@ int function Resurrect(int code_exec)
     endIf
 
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_resurrect", "On_Resurrect")
+        p_Async("On_Resurrect")
     else
         p_Resurrect()
     endIf
@@ -1445,7 +1444,7 @@ int function Reanimate(int code_exec)
 
     ; we accept an already alive member to make it easier on creation, but maybe not once we make a dedicated Create_Reanimated()
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_reanimate", "On_Reanimate")
+        p_Async("On_Reanimate")
     else
         if Is_Dead()
             p_Resurrect()
@@ -1473,7 +1472,7 @@ int function Deanimate(int code_exec)
     p_is_reanimated = false
 
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_deanimate", "On_Deanimate")
+        p_Async("On_Deanimate")
     else
         if Is_Alive()
             p_Kill()
@@ -1520,7 +1519,7 @@ int function Style_Default(int code_exec)
 
     p_Set_Style(CODES.IS_DEFAULT)
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_style", "On_Style")
+        p_Async("On_Style")
     else
         p_Style()
     endIf
@@ -1539,7 +1538,7 @@ int function Style_Warrior(int code_exec)
 
     p_Set_Style(CODES.IS_WARRIOR)
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_style", "On_Style")
+        p_Async("On_Style")
     else
         p_Style()
     endIf
@@ -1558,7 +1557,7 @@ int function Style_Mage(int code_exec)
 
     p_Set_Style(CODES.IS_MAGE)
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_style", "On_Style")
+        p_Async("On_Style")
     else
         p_Style()
     endIf
@@ -1577,7 +1576,7 @@ int function Style_Archer(int code_exec)
 
     p_Set_Style(CODES.IS_ARCHER)
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_style", "On_Style")
+        p_Async("On_Style")
     else
         p_Style()
     endIf
@@ -1596,7 +1595,7 @@ int function Style_Coward(int code_exec)
 
     p_Set_Style(CODES.IS_COWARD)
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_style", "On_Style")
+        p_Async("On_Style")
     else
         p_Style()
     endIf
@@ -1630,7 +1629,7 @@ int function Vitalize_Mortal(int code_exec)
 
     p_Set_Vitality(CODES.IS_MORTAL)
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_vitalize", "On_Vitalize")
+        p_Async("On_Vitalize")
     else
         p_Vitalize()
     endIf
@@ -1649,7 +1648,7 @@ int function Vitalize_Protected(int code_exec)
 
     p_Set_Vitality(CODES.IS_PROTECTED)
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_vitalize", "On_Vitalize")
+        p_Async("On_Vitalize")
     else
         p_Vitalize()
     endIf
@@ -1668,7 +1667,7 @@ int function Vitalize_Essential(int code_exec)
 
     p_Set_Vitality(CODES.IS_ESSENTIAL)
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_vitalize", "On_Vitalize")
+        p_Async("On_Vitalize")
     else
         p_Vitalize()
     endIf
@@ -1687,7 +1686,7 @@ int function Vitalize_Invulnerable(int code_exec)
 
     p_Set_Vitality(CODES.IS_INVULNERABLE)
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_vitalize", "On_Vitalize")
+        p_Async("On_Vitalize")
     else
         p_Vitalize()
     endIf
@@ -1695,13 +1694,14 @@ int function Vitalize_Invulnerable(int code_exec)
     return CODES.SUCCESS
 endFunction
 
+; can this one actually be async?
 int function Pack(int code_exec)
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
 
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_pack", "On_Pack")
+        p_Async("On_Pack")
     else
         p_Pack()
     endIf
@@ -1742,7 +1742,7 @@ int function Outfit_Member(int code_exec)
 
     p_Put_Outfit(CODES.OUTFIT_MEMBER)
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_outfit", "On_Outfit")
+        p_Async("On_Outfit")
     else
         p_Outfit()
     endIf
@@ -1757,7 +1757,7 @@ int function Outfit_Settler(int code_exec)
 
     p_Put_Outfit(CODES.OUTFIT_SETTLER)
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_outfit", "On_Outfit")
+        p_Async("On_Outfit")
     else
         p_Outfit()
     endIf
@@ -1772,7 +1772,7 @@ int function Outfit_Thrall(int code_exec)
 
     p_Put_Outfit(CODES.OUTFIT_THRALL)
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_outfit", "On_Outfit")
+        p_Async("On_Outfit")
     else
         p_Outfit()
     endIf
@@ -1787,7 +1787,7 @@ int function Outfit_Immobile(int code_exec)
 
     p_Put_Outfit(CODES.OUTFIT_IMMOBILE)
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_outfit", "On_Outfit")
+        p_Async("On_Outfit")
     else
         p_Outfit()
     endIf
@@ -1802,7 +1802,7 @@ int function Outfit_Follower(int code_exec)
 
     p_Put_Outfit(CODES.OUTFIT_FOLLOWER)
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_outfit", "On_Outfit")
+        p_Async("On_Outfit")
     else
         p_Outfit()
     endIf
@@ -1817,7 +1817,7 @@ int function Outfit_Current(int code_exec)
 
     p_Put_Outfit(CODES.OUTFIT_CURRENT)
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_outfit", "On_Outfit")
+        p_Async("On_Outfit")
     else
         p_Outfit()
     endIf
@@ -1832,7 +1832,7 @@ int function Outfit_Vanilla(int code_exec)
 
     p_Put_Outfit(CODES.OUTFIT_VANILLA)
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_outfit", "On_Outfit")
+        p_Async("On_Outfit")
     else
         p_Outfit()
     endIf
@@ -1847,7 +1847,7 @@ int function Outfit_Default(int code_exec)
 
     p_Put_Outfit(CODES.OUTFIT_DEFAULT)
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_member_outfit", "On_Outfit")
+        p_Async("On_Outfit")
     else
         p_Outfit()
     endIf
@@ -2256,13 +2256,15 @@ endEvent
 
 ; Update Methods
 doticu_npcp_queue p_queue_member = none
+doticu_npcp_container p_container2_pack = none
 function u_0_9_0()
     if Exists()
-        if p_queue_member
-            p_queue_member.Disable()
-            p_queue_member.Delete()
-            p_queue_member = none
-        endIf
+        p_queue_member.Disable()
+        p_queue_member.Delete()
+        p_queue_member = none
+
+        p_container_pack = p_container2_pack
+        p_container2_pack = none
 
         ; so that we can easily filter followers
         if FOLLOWERS.Has_Follower(p_ref_actor)

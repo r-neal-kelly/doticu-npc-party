@@ -11,28 +11,6 @@ doticu_npcp_consts property CONSTS hidden
     endFunction
 endProperty
 
-; Public Constants
-ObjectReference property OBJECT_STORAGE hidden
-    ObjectReference function Get()
-        return CONSTS.MARKER_STORAGE
-    endFunction
-endProperty
-Actor property ACTOR_PLAYER hidden
-    Actor function Get()
-        return CONSTS.ACTOR_PLAYER
-    endFunction
-endProperty
-Container property CONTAINER_EMPTY hidden
-    Container function Get()
-        return CONSTS.CONTAINER_EMPTY
-    endFunction
-endProperty
-Container property CONTAINER_TEMP hidden
-    Container function Get()
-        return CONSTS.CONTAINER_TEMP
-    endFunction
-endProperty
-
 ; Private Constants
 doticu_npcp_data    p_DATA          =  none
 
@@ -54,33 +32,13 @@ function f_Register()
 endFunction
 
 ; Public Methods
-doticu_npcp_container function Create(string str_name = "Container")
-    doticu_npcp_container ref_container = OBJECT_STORAGE.PlaceAtMe(CONTAINER_EMPTY, 1, true, false) as doticu_npcp_container
-
-    ; this can prevent a ctd
-    Utility.Wait(0.1)
-
-    ref_container.f_Create(p_DATA, str_name)
-    ref_container.f_Register()
-
-    ; to make sure certain fields in c++ have been allocated for our plugin
-    ref_container.AddItem(CONSTS.WEAPON_BLANK, 1, true)
-    ref_container.RemoveItem(CONSTS.WEAPON_BLANK, 1, true)
-
-    return ref_container
-endFunction
-
-function Destroy(doticu_npcp_container ref_container)
-    ref_container.f_Destroy()
-endFunction
-
 ObjectReference function Create_Temp()
-    ObjectReference ref_container = ACTOR_PLAYER.PlaceAtMe(CONTAINER_TEMP, 1, false, false)
+    ObjectReference ref_container = CONSTS.ACTOR_PLAYER.PlaceAtMe(CONSTS.CONTAINER_EMPTY, 1, false, false)
 
     ; this may prevent a ctd like the others
     Utility.Wait(0.1)
 
-    ref_container.SetActorOwner(ACTOR_PLAYER.GetActorBase())
+    ref_container.SetActorOwner(CONSTS.ACTOR_PLAYER.GetActorBase())
 
     ; to make sure certain fields in c++ have been allocated for our plugin
     ref_container.AddItem(CONSTS.WEAPON_BLANK, 1, true)
@@ -94,13 +52,13 @@ function Destroy_Temp(ObjectReference ref_container)
     ref_container.Delete()
 endFunction
 
-ObjectReference function Create_Persistent()
-    ObjectReference ref_container = ACTOR_PLAYER.PlaceAtMe(CONTAINER_TEMP, 1, true, false)
+ObjectReference function Create_Perm()
+    ObjectReference ref_container = CONSTS.MARKER_STORAGE.PlaceAtMe(CONSTS.CONTAINER_EMPTY, 1, true, false)
     
     ; this may prevent a ctd like the others
     Utility.Wait(0.1)
 
-    ref_container.SetActorOwner(ACTOR_PLAYER.GetActorBase())
+    ref_container.SetActorOwner(CONSTS.ACTOR_PLAYER.GetActorBase())
 
     ; to make sure certain fields in c++ have been allocated for our plugin
     ref_container.AddItem(CONSTS.WEAPON_BLANK, 1, true)
@@ -109,13 +67,14 @@ ObjectReference function Create_Persistent()
     return ref_container
 endFunction
 
-function Destroy_Persistent(ObjectReference ref_container)
+function Destroy_Perm(ObjectReference ref_container)
     ref_container.Disable()
     ref_container.Delete()
 endFunction
 
 function Open(ObjectReference ref_container)
-    ref_container.Activate(ACTOR_PLAYER)
+    ref_container.Activate(CONSTS.ACTOR_PLAYER)
+    Utility.Wait(0.1)
 endFunction
 
 string function Get_Name(ObjectReference ref_container)

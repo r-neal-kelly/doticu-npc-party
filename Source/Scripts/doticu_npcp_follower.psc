@@ -635,12 +635,12 @@ function p_Relevel()
     p_Level()
 endFunction
 
-bool function p_Send(string str_event, string str_handler)
-    str_event += p_id_alias
+bool function p_Async(string str_func)
+    string str_event = "doticu_npcp_follower_async_" + p_id_alias
 
     f_Lock_Resources()
-        RegisterForModEvent(str_event, str_handler)
-        FUNCS.Send(str_event, 0.25, 5.0)
+        RegisterForModEvent(str_event, str_func)
+        FUNCS.Send_Event(str_event, 0.25, 5.0)
         UnregisterForModEvent(str_event)
     f_Unlock_Resources()
 endFunction
@@ -692,7 +692,7 @@ int function Sneak(int code_exec)
     p_is_sneak = true
 
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_follower_sneak", "On_Sneak")
+        p_Async("On_Sneak")
     else
         p_Sneak()
     endIf
@@ -717,7 +717,7 @@ int function Unsneak(int code_exec)
     p_is_sneak = false
 
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_follower_unsneak", "On_Unsneak")
+        p_Async("On_Unsneak")
     else
         p_Unsneak()
     endIf
@@ -760,7 +760,7 @@ int function Relevel(int code_exec)
     endIf
 
     if code_exec == CODES.DO_ASYNC
-        p_Send("doticu_npcp_follower_relevel", "On_Relevel")
+        p_Async("On_Relevel")
     else
         p_Relevel()
     endIf

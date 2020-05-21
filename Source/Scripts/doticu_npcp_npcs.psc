@@ -47,7 +47,6 @@ doticu_npcp_vector_form p_vec_bases         =  none; the real base of a npc, our
 doticu_npcp_vector_form p_vec_locks         =  none; for parallel processing
 doticu_npcp_vector_form p_vec_vec_origs     =  none; vecs of original members
 doticu_npcp_vector_form p_vec_vec_clones    =  none; vecs of cloned npcs, members or not
-doticu_npcp_vector_form p_vec_caches_def    =  none; caches of extra default stuff
 doticu_npcp_vector_form p_vec_outfits_def   =  none; default vanilla outfits
 
 ; Friend Methods
@@ -60,19 +59,16 @@ function f_Create(doticu_npcp_data DATA, int init_max = 8)
     p_vec_locks = VECTORS.Create_Form_Vector(init_max, none, 1.5)
     p_vec_vec_origs = VECTORS.Create_Form_Vector(init_max, none, 1.5)
     p_vec_vec_clones = VECTORS.Create_Form_Vector(init_max, none, 1.5)
-    p_vec_caches_def = VECTORS.Create_Form_Vector(init_max, none, 1.5)
     p_vec_outfits_def = VECTORS.Create_Form_Vector(init_max, none, 1.5)
 endFunction
 
 function f_Destroy()
     VECTORS.Destroy_Form_Vector(p_vec_outfits_def)
-    p_Destroy_Default_Caches()
     p_Destroy_NPC_Vectors()
     VECTORS.Destroy_Form_Vector(p_vec_locks)
     VECTORS.Destroy_Form_Vector(p_vec_bases)
 
     p_vec_outfits_def = none
-    p_vec_caches_def = none
     p_vec_vec_clones = none
     p_vec_vec_origs = none
     p_vec_locks = none
@@ -144,20 +140,6 @@ function p_Destroy_NPC_Vectors()
     VECTORS.Destroy_Form_Vector(p_vec_vec_clones)
 endFunction
 
-function p_Destroy_Default_Caches()
-    ; it doesn't hurt to make sure the each cache is deleted.
-    int idx_caches_def = p_vec_caches_def.num
-    ObjectReference ref_cache_def
-    while idx_caches_def > 0
-        idx_caches_def -= 1
-        ref_cache_def = p_vec_caches_def.At(idx_caches_def) as ObjectReference
-        ref_cache_def.Disable()
-        ref_cache_def.Delete()
-    endWhile
-
-    VECTORS.Destroy_Form_Vector(p_vec_caches_def)
-endFunction
-
 bool function p_Has_Base(Actor ref_actor)
     return p_vec_bases.Find(ACTORS.Get_Real_Base(ref_actor) as Form) > -1
 endFunction
@@ -199,9 +181,6 @@ bool function p_Add_Base(Actor ref_actor, Outfit outfit_default)
         ; we accept only the real base, not the static or dynamic leveled base
         ActorBase base_actor = ACTORS.Get_Real_Base(ref_actor)
 
-        ; this is useful for when a npc has default equipment not found in their vanilla outfit
-        ObjectReference cache_default = OUTFITS.Get_Default_Cache(ref_actor, outfit_default)
-
         ; we use an SKSE plugin to avoid triggering a horrible bug that happens when an npc is
         ; outfitted with a new outfit form that contains any of the same items in the previous
         ; outfit form. It can go unnoticed when there are no clones of the npc, but if there
@@ -215,7 +194,6 @@ bool function p_Add_Base(Actor ref_actor, Outfit outfit_default)
         p_vec_locks.Push(none); none means it's unlocked
         p_vec_vec_origs.Push(none); set when adding original
         p_vec_vec_clones.Push(none); set when adding clone
-        p_vec_caches_def.Push(cache_default as Form)
         p_vec_outfits_def.Push(outfit_default as Form)
         return true
     else
@@ -233,11 +211,6 @@ function p_Remove_Base(int idx_bases)
     Outfit outfit_default = p_vec_outfits_def.At(idx_bases) as Outfit
     doticu_npcp.Outfit_Remove_Item(outfit_default, CONSTS.ARMOR_BLANK as Form)
     
-    ; just in case the garbage collector doesn't do it
-    ObjectReference cache_default = p_vec_caches_def.At(idx_bases) as ObjectReference
-    cache_default.Disable()
-    cache_default.Delete()
-    
     ; help the garbage collecter
     doticu_npcp_vector_form vec_clones = p_vec_vec_clones.At(idx_bases) as doticu_npcp_vector_form
     doticu_npcp_vector_form vec_origs = p_vec_vec_origs.At(idx_bases) as doticu_npcp_vector_form
@@ -249,7 +222,6 @@ function p_Remove_Base(int idx_bases)
     endIf
     
     p_vec_outfits_def.Remove_At_Unstable(idx_bases)
-    p_vec_caches_def.Remove_At_Unstable(idx_bases)
     p_vec_vec_clones.Remove_At_Unstable(idx_bases)
     p_vec_vec_origs.Remove_At_Unstable(idx_bases)
     p_vec_locks.Remove_At_Unstable(idx_bases)
@@ -597,18 +569,6 @@ p_Lock()
 p_Unlock()
 endFunction
 
-ObjectReference function Get_Default_Cache(Actor ref_actor)
-    Form form_base_actor = ACTORS.Get_Real_Base(ref_actor) as Form
-p_Lock()
-    int idx_bases = p_vec_bases.Find(form_base_actor)
-    if idx_bases > -1
-        return p_Unlock_Pass_Object_Ref(p_vec_caches_def.At(idx_bases) as ObjectReference)
-    else
-        return p_Unlock_Pass_Object_Ref(none)
-    endIf
-p_Unlock()
-endFunction
-
 function Lock_Base(Actor ref_actor, float timeout = 15.0)
     int idx_bases = p_vec_bases.Find(ACTORS.Get_Real_Base(ref_actor) as Form)
     if idx_bases > -1
@@ -643,9 +603,15 @@ function Print_System()
     LOGS.Print("p_vec_vec_clones:")
     p_vec_vec_clones.Print()
 
-    LOGS.Print("p_vec_caches_def:")
-    p_vec_caches_def.Print()
-
     LOGS.Print("p_vec_outfits_def:")
     p_vec_outfits_def.Print()
+endFunction
+
+; Update Methods
+doticu_npcp_vector_form p_vec_caches_def = none
+function u_0_9_0()
+    if p_vec_caches_def
+        ; because we removed the form from .esp that the containers were instanced from, we don't need to delete them.
+        VECTORS.Destroy_Form_Vector(p_vec_caches_def)
+    endIf
 endFunction

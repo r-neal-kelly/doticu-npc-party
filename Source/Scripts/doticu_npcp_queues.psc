@@ -54,8 +54,9 @@ doticu_npcp_queue function Create(string str_namespace, int max_message = 64, fl
 endFunction
 
 function Destroy(doticu_npcp_queue ref_queue)
-    ref_queue.f_Destroy()
-
-    ref_queue.Disable()
-    ref_queue.Delete()
+    if ref_queue
+        ref_queue.f_Destroy()
+        ref_queue.Disable()
+        ref_queue.Delete()
+    endIf
 endFunction

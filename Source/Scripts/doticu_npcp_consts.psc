@@ -71,7 +71,6 @@ Perk                        p_PERK_UNPARALYZE                       = none
 PlayerVampireQuestScript    p_SCRIPT_PLAYER_VAMPIRE_QUEST           = none
 Keyword                     p_KEYWORD_VAMPIRE                       = none
 Container                   p_CONTAINER_EMPTY                       = none
-Container                   p_CONTAINER_TEMP                        = none
 Container                   p_CONTAINER_OUTFIT                      = none
 Container                   p_CONTAINER_OUTFIT_SETTLER              = none
 Container                   p_CONTAINER_OUTFIT_THRALL               = none
@@ -812,17 +811,6 @@ Container property CONTAINER_EMPTY
     function Set(Container val)
         if p_CONTAINER_EMPTY == none
             p_CONTAINER_EMPTY = val
-        endIf
-    endFunction
-endProperty
-
-Container property CONTAINER_TEMP
-    Container function Get()
-        return p_CONTAINER_TEMP
-    endFunction
-    function Set(Container val)
-        if p_CONTAINER_TEMP == none
-            p_CONTAINER_TEMP = val
         endIf
     endFunction
 endProperty

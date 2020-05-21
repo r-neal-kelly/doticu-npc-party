@@ -20,9 +20,9 @@ doticu_npcp_vars property VARS hidden
         return p_DATA.VARS
     endFunction
 endProperty
-doticu_npcp_queues property QUEUES hidden
-    doticu_npcp_queues function Get()
-        return p_DATA.MODS.FUNCS.QUEUES
+doticu_npcp_funcs property FUNCS hidden
+    doticu_npcp_funcs function Get()
+        return p_DATA.MODS.FUNCS
     endFunction
 endProperty
 doticu_npcp_actors property ACTORS hidden
@@ -58,8 +58,8 @@ doticu_npcp_data    p_DATA          =  none
 
 ; Private Variables
 bool                p_is_created    = false
+bool                p_is_locked     = false
 bool                p_is_in_combat  = false
-doticu_npcp_queue   p_queue_player  =  none
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
@@ -67,17 +67,14 @@ function f_Create(doticu_npcp_data DATA)
 
     p_is_created = true
     p_is_in_combat = false
-    p_queue_player = QUEUES.Create("player", 32, 5.0)
 endFunction
 
 function f_Destroy()
-    QUEUES.Destroy(p_queue_player)
     p_is_in_combat = false
     p_is_created = false
 endFunction
 
 function f_Register()
-    p_queue_player.Register_Alias(self, "On_Queue_Player")
     RegisterForModEvent("doticu_npcp_init_mod", "On_Init_Mod")
     RegisterForModEvent("doticu_npcp_cell_change", "On_Cell_Change")
     RegisterForControl("Sneak")
@@ -92,25 +89,47 @@ function f_Begin_Combat()
     if p_is_in_combat == false
         p_is_in_combat = true
 
-        p_queue_player.Enqueue("Try_End_Combat", 5.0)
-
-        while !p_Send_Party_Combat()
-            Utility.Wait(0.5)
-        endWhile
-
-        ; here we can put functions at the beginning of battle
-
+        p_Send_Party_Combat()
+        
+        Utility.Wait(5.0)
+        p_Async("p_Try_End_Combat")
     endIf
 endFunction
 
 ; Private Methods
+function p_Lock(float interval = 0.2, float timeout = 5.0)
+    float time_waited = 0.0
+
+    while p_is_locked && time_waited < timeout
+        Utility.Wait(interval)
+        time_waited += interval
+    endWhile
+
+    p_is_locked = true
+endFunction
+
+function p_Unlock()
+    p_is_locked = false
+endFunction
+
+function p_Async(string str_func)
+    string str_event = "doticu_npcp_player_async"
+
+p_Lock()
+    RegisterForModEvent(str_event, str_func)
+    FUNCS.Send_Event(str_event, 0.25, 1.0)
+    UnregisterForModEvent(str_event)
+p_Unlock()
+endFunction
+
 function p_Try_End_Combat()
     ; because all followers may actually die in battle,
     ; and their combat state will not indicate whether
     ; the player is actually in battle, we have a looping
     ; queue set instead
     if ACTOR_PLAYER.IsInCombat() || FOLLOWERS.Are_In_Combat()
-        p_queue_player.Enqueue("Try_End_Combat", 5.0)
+        Utility.Wait(5.0)
+        p_Async("p_Try_End_Combat")
     else
         p_End_Combat()
     endIf
@@ -121,53 +140,36 @@ function p_End_Combat()
     ; after a battle ends, e.g. resurrecting followers automatically
     if p_is_in_combat == true
         p_is_in_combat = false
-
-        p_queue_player.Flush()
         
-        while !p_Send_Party_Combat()
-            Utility.Wait(0.5)
-        endWhile
+        p_Send_Party_Combat()
 
-        ; here we can put functions at the end of battle
         if VARS.auto_resurrect
             FOLLOWERS.Resurrect()
         endIf
-        ;FOLLOWERS.Enforce()
 
     endIf
 endFunction
 
-bool function p_Send_Party_Combat()
-    int handle = ModEvent.Create("doticu_npcp_party_combat")
+function p_Send_Party_Combat()
+    int handle = FUNCS.Get_Event_Handle("doticu_npcp_party_combat")
     if !handle
-        return false
+        return
     endIf
 
     ModEvent.PushBool(handle, p_is_in_combat)
 
-    if !ModEvent.Send(handle)
-        ModEvent.Release(handle)
-        return false
-    endIf
-
-    return true
+    FUNCS.Send_Event_Handle(handle)
 endFunction
 
-bool function p_Send_Player_Sneak()
-    int handle = ModEvent.Create("doticu_npcp_player_sneak")
-
+function p_Send_Player_Sneak()
+    int handle = FUNCS.Get_Event_Handle("doticu_npcp_player_sneak")
     if !handle
-        return false
+        return
     endIf
 
     ModEvent.PushBool(handle, ACTOR_PLAYER.IsSneaking())
 
-    if !ModEvent.Send(handle)
-        ModEvent.Release(handle)
-        return false
-    endIf
-
-    return true
+    FUNCS.Send_Event_Handle(handle)
 endFunction
 
 ; Public Methods
@@ -204,9 +206,7 @@ endEvent
 
 event OnControlDown(string str_control)
     if str_control == "Sneak"
-        while !p_Send_Player_Sneak()
-            Utility.Wait(0.25)
-        endWhile
+        p_Send_Player_Sneak()
     endIf
 endEvent
 
@@ -214,13 +214,12 @@ event On_Cell_Change(Form cell_new, Form cell_old)
     ACTORS.Apply_Ability(ACTOR_PLAYER, CONSTS.ABILITY_CELL)
 endEvent
 
-event On_Queue_Player(string str_message)
-    if p_queue_player.Should_Cancel()
-        
-    elseIf str_message == "Try_End_Combat"
-        p_Try_End_Combat()
-
+; Update Methods
+doticu_npcp_queue p_queue_player = none
+function u_0_9_0()
+    if p_queue_player
+        p_queue_player.Disable()
+        p_queue_player.Delete()
+        p_queue_player = none
     endIf
-
-    p_queue_player.Dequeue()
-endEvent
+endFunction

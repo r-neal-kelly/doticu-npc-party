@@ -179,21 +179,6 @@ function p_Unlock()
     p_is_executing = false
 endFunction
 
-bool function p_Send(string str_event)
-    int handle = ModEvent.Create(str_event)
-
-    if !handle
-        return false
-    endIf
-
-    if !ModEvent.Send(handle)
-        ModEvent.Release(handle)
-        return false
-    endIf
-
-    return true
-endFunction
-
 function p_Move()
     if !Exists()
         return

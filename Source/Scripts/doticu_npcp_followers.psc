@@ -154,21 +154,6 @@ doticu_npcp_follower function p_Get_Follower(int id_alias)
     return ALIASES.f_Get_Alias(id_alias) as doticu_npcp_follower
 endFunction
 
-bool function p_Send_Followers(string str_event)
-    int handle = ModEvent.Create(str_event)
-
-    if !handle
-        return false
-    endIf
-
-    if !ModEvent.Send(handle)
-        ModEvent.Release(handle)
-        return false
-    endIf
-
-    return true
-endFunction
-
 int function p_Enforce()
     int num_followers = Get_Count()
     if num_followers < 1

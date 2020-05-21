@@ -75,7 +75,7 @@ function f_Init_Mod()
     DATA.CONSTS.GLOBAL_IS_INSTALLED.SetValue(1)
     FUNCS.LOGS.Create_Note("Thank you for installing!")
 
-    FUNCS.Send("doticu_npcp_init_mod")
+    FUNCS.Send_Event("doticu_npcp_init_mod")
 endFunction
 
 function f_Load_Mod()
@@ -91,7 +91,7 @@ function f_Load_Mod()
     p_Register()
     p_Version()
 
-    FUNCS.Send("doticu_npcp_load_mod")
+    FUNCS.Send_Event("doticu_npcp_load_mod")
 endFunction
 
 ; Private Methods
@@ -163,21 +163,6 @@ function p_Stop_Updating()
     VARS.is_updating = false
 endFunction
 
-bool function p_Send(string str_event)
-    int handle = ModEvent.Create(str_event)
-
-    if !handle
-        return false
-    endIf
-
-    if !ModEvent.Send(handle)
-        ModEvent.Release(handle)
-        return false
-    endIf
-
-    return true
-endFunction
-
 ; Public Methods
 int[] function Get_Version_Array()
     int[] arr_version = new int[3]
@@ -237,12 +222,14 @@ endFunction
 
 ; Update Methods
 function u_0_9_0()
+doticu_npcp.Print("beginning update...")
     VARS.u_0_9_0()
     FUNCS.u_0_9_0()
     MEMBERS.ALIASES.u_0_9_0()
     FOLLOWERS.ALIASES.u_0_9_0()
     MEMBERS.u_0_9_0()
     CONTROL.MCM.u_0_9_0()
+doticu_npcp.Print("done updating.")
 endFunction
 
 ; Events
