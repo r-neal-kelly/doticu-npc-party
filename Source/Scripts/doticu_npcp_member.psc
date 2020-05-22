@@ -75,7 +75,7 @@ endProperty
 doticu_npcp_data        p_DATA                      =  none
 
 ; Private Variables
-bool                    p_is_executing              = false
+bool                    p_is_locked                 = false
 bool                    p_is_created                = false
 int                     p_id_alias                  =    -1
 Actor                   p_ref_actor                 =  none
@@ -116,7 +116,7 @@ float                   p_prev_morality             =   0.0
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA, int id_alias, bool is_clone)
-f_Lock_Resources()
+p_Lock()
 
     p_DATA = DATA
 
@@ -145,7 +145,7 @@ f_Lock_Resources()
     p_Create_Outfit()
     p_Backup()
 
-f_Unlock_Resources()
+p_Unlock()
     
     p_Member()
     p_Style()
@@ -187,7 +187,7 @@ function f_Destroy()
         p_Kill()
     endIf
 
-f_Lock_Resources()
+p_Lock()
 
     p_Restore()
     p_Destroy_Outfits()
@@ -231,7 +231,7 @@ f_Lock_Resources()
     p_id_alias = -1
     p_is_created = false
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function f_Register()
@@ -242,26 +242,26 @@ function f_Unregister()
     UnregisterForAllModEvents()
 endFunction
 
-function f_Lock_Resources(float timeout = 10.0, float interval = 0.1)
-    float time_waited = 0.0
-
-    while p_is_executing && time_waited < timeout
-        Utility.Wait(interval)
-        time_waited += interval
-    endWhile
-
-    p_is_executing = true
-endFunction
-
-function f_Unlock_Resources()
-    p_is_executing = false
-endFunction
-
 int function f_Get_ID()
     return p_id_alias
 endFunction
 
 ; Private Methods
+function p_Lock(float interval = 0.2, float timeout = 6.0)
+    float time_waited = 0.0
+
+    while p_is_locked && time_waited < timeout
+        Utility.Wait(interval)
+        time_waited += interval
+    endWhile
+
+    p_is_locked = true
+endFunction
+
+function p_Unlock()
+    p_is_locked = false
+endFunction
+
 function p_Create_Container()
     p_container_pack = CONTAINERS.Create_Perm()
 endFunction
@@ -326,7 +326,7 @@ function p_Restore()
 endFunction
 
 function p_Member()
-f_Lock_Resources()
+p_Lock()
 
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_MEMBER, p_id_alias + 1)
     if p_is_clone
@@ -368,11 +368,11 @@ f_Lock_Resources()
 
     p_ref_actor.EvaluatePackage()
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Unmember()
-f_Lock_Resources()
+p_Lock()
 
     if !p_ref_actor.GetRace().AllowPCDialogue()
         p_ref_actor.AllowPCDialogue(false)
@@ -389,11 +389,11 @@ f_Lock_Resources()
 
     p_ref_actor.EvaluatePackage()
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Settle()
-f_Lock_Resources()
+p_Lock()
 
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_SETTLER)
 
@@ -401,11 +401,11 @@ f_Lock_Resources()
 
     p_ref_actor.EvaluatePackage()
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Unsettle()
-f_Lock_Resources()
+p_Lock()
 
     p_marker_settler.MoveToMyEditorLocation()
 
@@ -413,11 +413,11 @@ f_Lock_Resources()
 
     p_ref_actor.EvaluatePackage()
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Enthrall()
-f_Lock_Resources()
+p_Lock()
 
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_THRALL)
 
@@ -425,11 +425,11 @@ f_Lock_Resources()
 
     p_ref_actor.EvaluatePackage()
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Unthrall()
-f_Lock_Resources()
+p_Lock()
 
     p_ref_actor.RemoveFromFaction(CONSTS.FACTION_DLC1_VAMPIRE_FEED_NO_CRIME)
 
@@ -437,31 +437,31 @@ f_Lock_Resources()
 
     p_ref_actor.EvaluatePackage()
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Immobilize()
-f_Lock_Resources()
+p_Lock()
 
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_IMMOBILE)
 
     p_ref_actor.EvaluatePackage()
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Mobilize()
-f_Lock_Resources()
+p_Lock()
 
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_IMMOBILE)
 
     p_ref_actor.EvaluatePackage()
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Paralyze()
-f_Lock_Resources()
+p_Lock()
 
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_PARALYZED)
 
@@ -476,11 +476,11 @@ f_Lock_Resources()
 
     p_ref_actor.MoveTo(ref_marker)
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Unparalyze()
-f_Lock_Resources()
+p_Lock()
     
     if !Is_Mannequin()
         p_ref_actor.BlockActivation(false)
@@ -492,7 +492,7 @@ f_Lock_Resources()
 
     ;p_ref_actor.EvaluatePackage(); resets animation
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Reparalyze()
@@ -502,14 +502,14 @@ function p_Reparalyze()
 
     p_Unparalyze()
 
-f_Lock_Resources()
+p_Lock()
 
     Debug.SendAnimationEvent(p_ref_actor, "IdleForceDefaultState"); go to cached animation? FNIS?
     ;Debug.SendAnimationEvent(p_ref_actor, "IdleCiceroDance1")
     ;p_ref_actor.WaitForAnimationEvent("done")
     Utility.Wait(0.1)
 
-f_Unlock_Resources()
+p_Unlock()
 
     p_Paralyze()
 endFunction
@@ -519,7 +519,7 @@ function p_Mannequinize()
         return
     endIf
 
-f_Lock_Resources()
+p_Lock()
 
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_MANNEQUIN)
 
@@ -533,7 +533,7 @@ f_Lock_Resources()
 
     p_ref_actor.EvaluatePackage()
 
-f_Unlock_Resources()
+p_Unlock()
 
     if Is_Follower()
         Unfollow()
@@ -541,7 +541,7 @@ f_Unlock_Resources()
 endFunction
 
 function p_Unmannequinize()
-f_Lock_Resources()
+p_Lock()
     
     if !Is_Paralyzed()
         p_ref_actor.BlockActivation(false)
@@ -551,7 +551,7 @@ f_Lock_Resources()
 
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_MANNEQUIN)
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Remannequinize()
@@ -559,7 +559,7 @@ function p_Remannequinize()
         return
     endIf
     
-f_Lock_Resources()
+p_Lock()
 
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_MANNEQUIN)
 
@@ -574,19 +574,19 @@ f_Lock_Resources()
 
     p_ref_actor.EvaluatePackage()
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Set_Style(int code_style)
-f_Lock_Resources()
+p_Lock()
 
     p_code_style = code_style
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Style()
-f_Lock_Resources()
+p_Lock()
 
     if p_code_style == CODES.IS_DEFAULT
         ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
@@ -622,11 +622,11 @@ f_Lock_Resources()
 
     p_ref_actor.EvaluatePackage()
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Unstyle()
-f_Lock_Resources()
+p_Lock()
 
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_COWARD)
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
@@ -636,19 +636,19 @@ f_Lock_Resources()
 
     p_ref_actor.EvaluatePackage()
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Set_Vitality(int code_vitality)
-f_Lock_Resources()
+p_Lock()
 
     p_code_vitality = code_vitality
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Vitalize()
-f_Lock_Resources()
+p_Lock()
 
     if p_code_vitality == CODES.IS_MORTAL
         ACTORS.Token(p_ref_actor, CONSTS.TOKEN_VITALITY_MORTAL)
@@ -674,11 +674,11 @@ f_Lock_Resources()
 
     p_ref_actor.EvaluatePackage()
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Unvitalize()
-f_Lock_Resources()
+p_Lock()
 
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_INVULNERABLE)
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_ESSENTIAL)
@@ -687,11 +687,11 @@ f_Lock_Resources()
 
     p_ref_actor.EvaluatePackage()
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Put_Outfit(int code_outfit)
-f_Lock_Resources()
+p_Lock()
 
     if code_outfit == CODES.OUTFIT_MEMBER
         p_outfit2_member.Set_Name(Get_Name() + "'s Member Outfit")
@@ -737,11 +737,11 @@ f_Lock_Resources()
 
     p_outfit2_current.Put()
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Outfit()
-f_Lock_Resources()
+p_Lock()
     ; if we ever allow manual outfit switching without having to put, we need to make sure the oufit is created
 
     if VARS.auto_outfit
@@ -809,23 +809,23 @@ f_Lock_Resources()
 
     p_ref_actor.EvaluatePackage()
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Resurrect()
-f_Lock_Resources()
+p_Lock()
 
     ; no longer triggers an OnLoad()
     ACTORS.Resurrect(p_ref_actor)
 
-f_Unlock_Resources()
+p_Unlock()
 
     ; OnLoad checks a lot of state that can be removed on the death of the actor.
     OnLoad()
 endFunction
 
 function p_Kill()
-f_Lock_Resources()
+p_Lock()
 
     ; we clear it just to make sure that their default essential
     ; status doesn't get in the way of their dying
@@ -833,7 +833,7 @@ f_Lock_Resources()
     ACTORS.Kill(p_ref_actor)
     ForceRefTo(p_ref_actor)
 
-f_Unlock_Resources()
+p_Unlock()
 
     ; we call the event handler ourselves because the actor
     ; is not filled on death
@@ -841,7 +841,7 @@ f_Unlock_Resources()
 endFunction
 
 function p_Reanimate()
-f_Lock_Resources()
+p_Lock()
 
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_REANIMATED)
 
@@ -858,11 +858,11 @@ f_Lock_Resources()
 
     p_ref_actor.EvaluatePackage()
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Deanimate()
-f_Lock_Resources()
+p_Lock()
 
     CONSTS.SHADER_REANIMATE_FX.Stop(p_ref_actor)
 
@@ -870,53 +870,55 @@ f_Lock_Resources()
 
     p_ref_actor.EvaluatePackage()
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Rename(string str_name)
-f_Lock_Resources()
+p_Lock()
 
     ACTORS.Set_Name(p_ref_actor, str_name)
 
     p_ref_actor.EvaluatePackage()
 
-f_Unlock_Resources()
+p_Unlock()
 endfunction
 
 function p_Pack()
-f_Lock_Resources()
+p_Lock()
 
     CONTAINERS.Set_Name(p_container_pack, Get_Name() + "'s Pack")
     CONTAINERS.Open(p_container_pack)
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 int function p_Clone()
-f_Lock_Resources()
+p_Lock()
     int code_return = MEMBERS.Create_Member(p_ref_actor, true)
-f_Unlock_Resources()
+p_Unlock()
     return code_return
 endFunction
 
 function p_Async(string str_func)
     string str_event = "doticu_npcp_member_async_" + p_id_alias
 
-f_Lock_Resources()
+p_Lock()
     RegisterForModEvent(str_event, str_func)
     FUNCS.Send_Event(str_event, 0.25, 5.0)
     UnregisterForModEvent(str_event)
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 ; Public Methods
-int function Enforce()
-    if !Exists()
-        return CODES.ISNT_MEMBER
+function Enforce()
+    if !Exists() || Is_Dead()
+        return
     endIf
 
-    if Is_Dead()
-        return CODES.IS_DEAD
+    if Is_Immobile()
+        p_Immobilize()
+    else
+        p_Mobilize()
     endIf
 
     if Is_Paralyzed()
@@ -931,6 +933,17 @@ int function Enforce()
         p_Unmannequinize()
     endIf
 
+    if Is_Reanimated()
+        p_Reanimate()
+    else
+        p_Deanimate()
+    endIf
+
+    Utility.Wait(0.1)
+    if !Exists() || Is_Dead()
+        return
+    endIf
+
     p_Outfit()
 
     p_Member()
@@ -939,16 +952,9 @@ int function Enforce()
 
     p_Vitalize()
 
-    if Is_Immobile()
-        p_Immobilize()
-    else
-        p_Mobilize()
-    endIf
-
-    if Is_Reanimated()
-        p_Reanimate()
-    else
-        p_Deanimate()
+    Utility.Wait(0.1)
+    if !Exists() || Is_Dead()
+        return
     endIf
 
     if Is_Settler()
@@ -966,8 +972,6 @@ int function Enforce()
     if Is_Follower()
         Get_Follower().f_Enforce()
     endIf
-
-    return CODES.SUCCESS
 endFunction
 
 function Enforce_Async()
@@ -1326,6 +1330,10 @@ int function Mannequinize(int code_exec, ObjectReference ref_marker)
         return CODES.IS_MANNEQUIN
     endIf
 
+    if !ref_marker
+        return CODES.HASNT_MARKER
+    endIf
+
     p_is_mannequin = true
     p_marker_mannequin = ref_marker
 
@@ -1376,6 +1384,10 @@ int function Follow()
 
     if Is_Follower()
         return CODES.IS_FOLLOWER
+    endIf
+
+    if Is_Mannequin()
+        return CODES.IS_MANNEQUIN
     endIf
 
     int code_return = FOLLOWERS.f_Create_Follower(p_ref_actor)

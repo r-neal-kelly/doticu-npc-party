@@ -245,6 +245,31 @@ function Reanimate(int code_exec, Actor ref_actor, bool auto_create)
     NOTES.Reanimate(ref_member.Reanimate(code_exec), str_name)
 endFunction
 
+function Mannequinize(int code_exec, Actor ref_actor, ObjectReference ref_marker, bool auto_create)
+    if auto_create && !MEMBERS.Has_Member(ref_actor)
+        int code_return = MEMBERS.Create_Member(ref_actor)
+        if code_return < 0
+            return NOTES.Mannequinize(code_return, ACTORS.Get_Name(ref_actor))
+        endIf
+    endIf
+
+    doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
+    if !ref_member
+        return NOTES.Mannequinize(CODES.HASNT_MEMBER, ACTORS.Get_Name(ref_actor))
+    endIf
+
+    NOTES.Mannequinize(ref_member.Mannequinize(code_exec, ref_marker), ACTORS.Get_Name(ref_actor))
+endFunction
+
+function Unmannequinize(int code_exec, Actor ref_actor)
+    doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
+    if !ref_member
+        return NOTES.Unmannequinize(CODES.HASNT_MEMBER, ACTORS.Get_Name(ref_actor))
+    endIf
+
+    NOTES.Unmannequinize(ref_member.Unmannequinize(code_exec), ACTORS.Get_Name(ref_actor))
+endFunction
+
 function Settle(int code_exec, Actor ref_actor, bool auto_create)
     int code_return
     string str_name = ACTORS.Get_Name(ref_actor)
@@ -802,6 +827,15 @@ function Toggle_Sneak(int code_exec, Actor ref_actor)
         Unsneak(code_exec, ref_actor, true)
     else
         Sneak(code_exec, ref_actor, true)
+    endIf
+endFunction
+
+function Toggle_Mannequin(int code_exec, Actor ref_actor, ObjectReference ref_marker)
+    doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
+    if ref_member && ref_member.Is_Mannequin()
+        Mannequinize(code_exec, ref_actor, ref_marker, true)
+    else
+        Unmannequinize(code_exec, ref_actor)
     endIf
 endFunction
 

@@ -23,11 +23,13 @@ int property HAS_SETTLER                    =  -140 autoReadOnly
 int property HAS_IMMOBILE                   =  -150 autoReadOnly
 int property HAS_FOLLOWER                   =  -160 autoReadOnly
 int property HAS_SNEAK                      =  -170 autoReadOnly
+int property HAS_MANNEQUIN                  =  -180 autoReadOnly
 
 int property HASNT_SPACE                    =  -200 autoReadOnly
 int property HASNT_SPACE_MEMBER             =  -201 autoReadOnly
 int property HASNT_SPACE_FOLLOWER           =  -202 autoReadOnly
 int property HASNT_ID                       =  -203 autoReadOnly
+int property HASNT_MARKER                   =  -204 autoReadOnly
 int property HASNT_ACTOR                    =  -210 autoReadOnly
 int property HASNT_ALIAS                    =  -220 autoReadOnly
 int property HASNT_MEMBER                   =  -230 autoReadOnly
@@ -40,6 +42,7 @@ int property HASNT_UNSNEAK                  =  -242 autoReadOnly
 int property HASNT_ALIVE                    =  -243 autoReadOnly
 int property HASNT_DEAD                     =  -244 autoReadOnly
 int property HASNT_RETREATER                =  -245 autoReadOnly
+int property HASNT_MANNEQUIN                =  -246 autoReadOnly
 
 int property IS_ALIVE                       =  -301 autoReadOnly
 int property IS_DEAD                        =  -302 autoReadOnly

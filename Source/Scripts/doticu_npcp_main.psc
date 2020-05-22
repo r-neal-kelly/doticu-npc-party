@@ -107,8 +107,10 @@ bool function p_Has_Requires()
         Debug.MessageBox("NPC Party: SKSE scripts are older than version 2.0.17. This mod may not function. Try to reinstall SKSE.")
     endIf
 
-    if Is_NPC_Party_Version_Less_Than(0, 8, 2)
-        Debug.MessageBox("NPC Party: Running a version of NPC Party older than 0.8.2. Update to 0.8.2 before trying any later updates.")
+    if DATA.CONSTS.GLOBAL_IS_INSTALLED.GetValue() > 0 && Is_NPC_Party_Version_Less_Than(0, 8, 2)
+        Debug.MessageBox("NPC Party: This save has a version of NPC Party older than 0.8.2. " + \
+                         "The current version will not currently work on this save. " +         \
+                         "Exit without saving and update to version 0.8.2 before trying again.")
         return false
     endIf
 
@@ -138,7 +140,7 @@ function p_Version()
         p_Start_Updating()
 
         if Is_NPC_Party_Version_Less_Than(0, 9, 0)
-            if !Is_NPC_Party_Version(0, 8, 3); already updated
+            if !Is_NPC_Party_Version(0, 8, 3); this in-house version was incrementally updated
                 u_0_9_0()
             endIf
         endIf
@@ -222,14 +224,29 @@ endFunction
 
 ; Update Methods
 function u_0_9_0()
-doticu_npcp.Print("beginning update...")
+    Debug.MessageBox(                                           \
+        "NPC Party: This update may take a couple minutes, " +  \
+        "depending on how many members you have. " +            \
+        "Open the console to monitor progress!"                 \
+    )
+
+    FUNCS.LOGS.Notify_Is_Updating()
+
+    FUNCS.LOGS.Print("Beginning update...")
+
     VARS.u_0_9_0()
     FUNCS.u_0_9_0()
     MEMBERS.ALIASES.u_0_9_0()
     FOLLOWERS.ALIASES.u_0_9_0()
     MEMBERS.u_0_9_0()
     CONTROL.MCM.u_0_9_0()
-doticu_npcp.Print("done updating.")
+
+    FUNCS.LOGS.Print("Done updating.")
+
+    Debug.MessageBox(                                       \
+        "NPC Party: The update has been completed. " +      \
+        "You should save your game. Thank you for waiting!" \
+    )
 endFunction
 
 ; Events

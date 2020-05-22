@@ -67,6 +67,7 @@ endProperty
 doticu_npcp_data        p_DATA                      =  none
 
 ; Private Variables
+bool                    p_is_locked                 = false
 bool                    p_is_created                = false
 int                     p_id_alias                  =    -1
 Actor                   p_ref_actor                 =  none
@@ -108,6 +109,7 @@ float                   p_prev_speechcraft          =  -1.0
 function f_Create(doticu_npcp_data DATA, int id_alias)
     p_DATA = DATA
 
+p_Lock()
     p_is_created = true
     p_id_alias = id_alias
     p_ref_actor = GetActorReference() as Actor
@@ -117,6 +119,7 @@ function f_Create(doticu_npcp_data DATA, int id_alias)
     p_is_sneak = false
     p_is_retreater = false
     p_is_catching_up = false
+p_Unlock()
 
     p_Backup()
     ACTORS.Stop_If_Playing_Music(p_ref_actor)
@@ -137,6 +140,7 @@ function f_Destroy()
     
     p_Restore()
 
+p_Lock()
     p_prev_faction_bard_no_auto = false
     p_prev_speed_mult =  -1.0
     p_prev_waiting_for_player =  -1.0
@@ -151,6 +155,7 @@ function f_Destroy()
     p_ref_actor = none
     p_id_alias = -1
     p_is_created = false
+p_Unlock()
 endFunction
 
 function f_Register()
@@ -159,7 +164,6 @@ function f_Register()
     RegisterForModEvent("doticu_npcp_cell_change", "On_Cell_Change")
     RegisterForModEvent("doticu_npcp_party_combat", "On_Party_Combat")
     RegisterForModEvent("doticu_npcp_player_sneak", "On_Player_Sneak")
-    RegisterForModEvent("doticu_npcp_followers_enforce", "On_Followers_Enforce")
     RegisterForModEvent("doticu_npcp_followers_settle", "On_Followers_Settle")
     RegisterForModEvent("doticu_npcp_followers_unsettle", "On_Followers_Unsettle")
     RegisterForModEvent("doticu_npcp_followers_immobilize", "On_Followers_Immobilize")
@@ -179,21 +183,25 @@ function f_Unregister()
     UnregisterForAllModEvents()
 endFunction
 
-function f_Lock_Resources()
-    p_ref_member.f_Lock_Resources()
-endFunction
-
-function f_Unlock_Resources()
-    p_ref_member.f_Unlock_Resources()
-endFunction
-
 function f_Enforce()
+    if !Exists() || Is_Dead()
+        return
+    endIf
+
     p_Follow()
+
+    if !Exists() || Is_Dead()
+        return
+    endIf
 
     if Is_Retreater()
         p_Retreat()
     else
         p_Unretreat()
+    endIf
+
+    if !Exists() || Is_Dead()
+        return
     endIf
 
     if Is_Sneak()
@@ -202,12 +210,31 @@ function f_Enforce()
         p_Unsneak()
     endIf
 
+    if !Exists() || Is_Dead()
+        return
+    endIf
+
     p_Level()
 endFunction
 
 ; Private Methods
+function p_Lock(float interval = 0.2, float timeout = 6.0)
+    float time_waited = 0.0
+
+    while p_is_locked && time_waited < timeout
+        Utility.Wait(interval)
+        time_waited += interval
+    endWhile
+
+    p_is_locked = true
+endFunction
+
+function p_Unlock()
+    p_is_locked = false
+endFunction
+
 function p_Backup()
-f_Lock_Resources()
+p_Lock()
 
     p_prev_relationship_rank = p_ref_actor.GetRelationshipRank(CONSTS.ACTOR_PLAYER)
     p_prev_waiting_for_player = p_ref_actor.GetBaseActorValue("WaitingForPlayer")
@@ -236,11 +263,11 @@ f_Lock_Resources()
     p_prev_pickpocket = p_ref_actor.GetBaseActorValue(CONSTS.STR_PICKPOCKET)
     p_prev_speechcraft = p_ref_actor.GetBaseActorValue(CONSTS.STR_SPEECHCRAFT)
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Restore()
-f_Lock_Resources()
+p_Lock()
 
     p_ref_actor.SetActorValue(CONSTS.STR_SPEECHCRAFT, p_prev_speechcraft)
     p_ref_actor.SetActorValue(CONSTS.STR_PICKPOCKET, p_prev_pickpocket)
@@ -270,11 +297,11 @@ f_Lock_Resources()
     p_ref_actor.SetActorValue("SpeedMult", p_prev_speed_mult)
     p_ref_actor.SetActorValue("WaitingForPlayer", p_prev_waiting_for_player)
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Follow()
-f_Lock_Resources()
+p_Lock()
 
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_FOLLOWER, p_id_alias + 1)
 
@@ -294,11 +321,11 @@ f_Lock_Resources()
 
     p_ref_actor.EvaluatePackage()
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Unfollow()
-f_Lock_Resources()
+p_Lock()
 
     p_ref_actor.RemoveFromFaction(CONSTS.FACTION_BARD_SINGER_NO_AUTOSTART)
 
@@ -310,11 +337,11 @@ f_Lock_Resources()
 
     p_ref_actor.EvaluatePackage()
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Sneak()
-f_Lock_Resources()
+p_Lock()
 
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_FOLLOWER_SNEAK)
 
@@ -322,11 +349,11 @@ f_Lock_Resources()
 
     p_ref_actor.EvaluatePackage()
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Unsneak()
-f_Lock_Resources()
+p_Lock()
 
     p_ref_actor.SetActorValue("SpeedMult", MAX_SPEED_UNSNEAK)
 
@@ -334,11 +361,11 @@ f_Lock_Resources()
 
     p_ref_actor.EvaluatePackage()
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Retreat()
-f_Lock_Resources()
+p_Lock()
 
     ; this will cause a package change, where ref ignores combat
     ACTORS.TOKEN(p_ref_actor, CONSTS.TOKEN_RETREATER)
@@ -354,11 +381,11 @@ f_Lock_Resources()
 
     p_ref_actor.EvaluatePackage()
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Unretreat()
-f_Lock_Resources()
+p_Lock()
 
     ACTORS.Unapply_Ability(p_ref_actor, CONSTS.ABILITY_RETREAT)
 
@@ -366,16 +393,16 @@ f_Lock_Resources()
 
     p_ref_actor.EvaluatePackage()
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Level()
-f_Lock_Resources()
+p_Lock()
 
     int style_member = p_ref_member.Get_Style()
     int level_player = CONSTS.ACTOR_PLAYER.GetLevel()
     if style_member == p_style_follower && level_player == p_level_follower
-        f_Unlock_Resources()
+p_Unlock()
         return
     endIf
     p_style_follower = style_member
@@ -619,15 +646,15 @@ f_Lock_Resources()
     p_ref_actor.SetActorValue(CONSTS.STR_PICKPOCKET, pickpocket)
     p_ref_actor.SetActorValue(CONSTS.STR_SPEECHCRAFT, speechcraft)
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Unlevel()
-f_Lock_Resources()
+p_Lock()
 
     p_level_follower = -1
 
-f_Unlock_Resources()
+p_Unlock()
 endFunction
 
 function p_Relevel()
@@ -638,16 +665,16 @@ endFunction
 bool function p_Async(string str_func)
     string str_event = "doticu_npcp_follower_async_" + p_id_alias
 
-    f_Lock_Resources()
-        RegisterForModEvent(str_event, str_func)
-        FUNCS.Send_Event(str_event, 0.25, 5.0)
-        UnregisterForModEvent(str_event)
-    f_Unlock_Resources()
+p_Lock()
+    RegisterForModEvent(str_event, str_func)
+    FUNCS.Send_Event(str_event, 0.25, 5.0)
+    UnregisterForModEvent(str_event)
+p_Unlock()
 endFunction
 
 ; Public Methods
-int function Enforce()
-    return p_ref_member.Enforce()
+function Enforce()
+    p_ref_member.Enforce()
 endFunction
 
 bool function Exists()
@@ -977,13 +1004,6 @@ event On_Player_Sneak(bool is_sneaking)
             Retreat()
         endIf
         ; the effect itself will call Unretreat when player unsneaks
-    endIf
-endEvent
-
-event On_Followers_Enforce(Form form_tasklist)
-    if Exists()
-        Enforce()
-        (form_tasklist as doticu_npcp_tasklist).Detask()
     endIf
 endEvent
 

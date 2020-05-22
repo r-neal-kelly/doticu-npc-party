@@ -48,9 +48,19 @@ doticu_npcp_codes property CODES hidden
         return p_DATA.CODES
     endFunction
 endProperty
+doticu_npcp_logs property LOGS hidden
+    doticu_npcp_logs function Get()
+        return p_DATA.MODS.FUNCS.LOGS
+    endFunction
+endProperty
 doticu_npcp_members property MEMBERS hidden
     doticu_npcp_members function Get()
         return p_DATA.MODS.MEMBERS
+    endFunction
+endProperty
+doticu_npcp_commands property COMMANDS hidden
+    doticu_npcp_commands function Get()
+        return p_DATA.MODS.CONTROL.COMMANDS
     endFunction
 endProperty
 
@@ -140,51 +150,91 @@ function p_Try_Unset_Teleport()
 endFunction
 
 ; Public Methods
-int function Toggle_Mannequin(int id_mannequin, doticu_npcp_mannequin ref_activator)
-    if id_mannequin < 0 || id_mannequin >= MAX_MANNEQUINS
-        return CODES.FAILURE
-    endIf
-    if !ref_activator
-        return CODES.FAILURE
+function Expo(int code_exec, int id_expoee, ObjectReference ref_marker, bool auto_create)
+    if id_expoee < 0 || id_expoee >= MAX_MANNEQUINS
+        return LOGS.Create_Note("Invalid Expo ID.")
     endIf
 
-    doticu_npcp_member ref_member = p_arr_mannequins[id_mannequin] as doticu_npcp_member
+    if !ref_marker
+        return LOGS.Create_Note("Invalid Expo marker.")
+    endIf
+
+    doticu_npcp_member ref_member = p_arr_mannequins[id_expoee] as doticu_npcp_member
     if ref_member && ref_member.Is_Mannequin()
-        ref_member.Unmannequinize(CODES.DO_SYNC)
-        p_arr_mannequins[id_mannequin] = none
-        return CODES.SUCCESS
+        return LOGS.Create_Note("Expo ID already in use.")
     endIf
 
-    Actor ref_actor = Game.FindClosestActorFromRef(ref_activator.MARKER, 32)
+    Actor ref_actor = Game.FindClosestActorFromRef(ref_marker, 48); 32
     if !ref_actor || ref_actor == CONSTS.ACTOR_PLAYER
-        return CODES.FAILURE
+        return LOGS.Create_Note("Move NPC onto pedestal.")
     endIf
 
     ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        return CODES.ISNT_MEMBER
+        if auto_create
+            int code_return = MEMBERS.Create_Member(ref_actor)
+            if code_return < 0
+                LOGS.Create_Note("Could not create Expo Member.")
+            endIf
+        else
+            return LOGS.Create_Note("Not a Member to Expo.")
+        endIf
     endIf
-    p_arr_mannequins[id_mannequin] = ref_member
 
-    ref_member.Mannequinize(CODES.DO_SYNC, ref_activator.MARKER)
+    p_arr_mannequins[id_expoee] = ref_member
 
-    return CODES.SUCCESS
+    ref_member.Mannequinize(code_exec, ref_marker)
+
+    return LOGS.Create_Note(ref_member.Get_Name() + " will now be a mannequin.")
 endFunction
 
-int function Refresh_Mannequin(int id_mannequin, doticu_npcp_mannequin ref_activator)
-    if id_mannequin < 0 || id_mannequin >= MAX_MANNEQUINS
-        return CODES.FAILURE
-    endIf
-    if !ref_activator
-        return CODES.FAILURE
+function Unexpo(int code_exec, int id_expoee)
+    if id_expoee < 0 || id_expoee >= MAX_MANNEQUINS
+        return LOGS.Create_Note("Invalid Expo ID.")
     endIf
 
-    doticu_npcp_member ref_member = p_arr_mannequins[id_mannequin] as doticu_npcp_member
+    doticu_npcp_member ref_member = p_arr_mannequins[id_expoee] as doticu_npcp_member
+    if !ref_member || ref_member.Isnt_Mannequin()
+        p_arr_mannequins[id_expoee] = none
+        return LOGS.Create_Note("No mannequin on pedestal.")
+    endIf
+
+    p_arr_mannequins[id_expoee] = none
+
+    ref_member.Unmannequinize(code_exec)
+
+    return LOGS.Create_Note(ref_member.Get_Name() + " will no longer be a mannequin.")
+endFunction
+
+bool function Is_ID_Used(int id_expoee)
+    if id_expoee < 0 || id_expoee >= MAX_MANNEQUINS
+        return false
+    endIf
+
+    return p_arr_mannequins[id_expoee] != none
+endFunction
+
+bool function Is_ID_Free(int id_expoee)
+    if id_expoee < 0 || id_expoee >= MAX_MANNEQUINS
+        return false
+    endIf
+
+    return p_arr_mannequins[id_expoee] == none
+endFunction
+
+function Refresh_Mannequin(int id_expoee, ObjectReference ref_marker)
+    if id_expoee < 0 || id_expoee >= MAX_MANNEQUINS
+        return
+    endIf
+
+    if !ref_marker
+        return
+    endIf
+
+    doticu_npcp_member ref_member = p_arr_mannequins[id_expoee] as doticu_npcp_member
     if ref_member
-        ref_member.Get_Actor().MoveTo(ref_activator.MARKER)
+        ref_member.Get_Actor().MoveTo(ref_marker)
     endIf
-
-    return CODES.SUCCESS
 endFunction
 
 Alias[] function Get_Mannequins(int column = 1, int row = 1, int idx_from = 0, int idx_to_ex = -1)

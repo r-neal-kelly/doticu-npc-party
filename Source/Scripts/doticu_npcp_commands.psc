@@ -20,6 +20,11 @@ doticu_npcp_logs property LOGS hidden
         return p_DATA.MODS.FUNCS.LOGS
     endFunction
 endProperty
+doticu_npcp_mannequins property MANNEQUINS hidden
+    doticu_npcp_mannequins function Get()
+        return p_DATA.MODS.FUNCS.MANNEQUINS
+    endFunction
+endProperty
 doticu_npcp_members property MEMBERS hidden
     doticu_npcp_members function Get()
         return p_DATA.MODS.MEMBERS
@@ -474,6 +479,30 @@ function Reanimate_Sync(Actor ref_actor, bool auto_create)
     GotoState("")
 endFunction
 
+function Mannequinize_Sync(Actor ref_actor, ObjectReference ref_marker, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    PRIVATE.Mannequinize(CODES.DO_SYNC, ref_actor, ref_marker, auto_create)
+    GotoState("")
+endFunction
+
+function Unmannequinize_Sync(Actor ref_actor)
+    GotoState("p_STATE_BUSY")
+    PRIVATE.Unmannequinize(CODES.DO_SYNC, ref_actor)
+    GotoState("")
+endFunction
+
+function Expo_Sync(int id_expoee, ObjectReference ref_marker, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    MANNEQUINS.Expo(CODES.DO_SYNC, id_expoee, ref_marker, auto_create)
+    GotoState("")
+endFunction
+
+function Unexpo_Sync(int id_expoee)
+    GotoState("p_STATE_BUSY")
+    MANNEQUINS.Unexpo(CODES.DO_SYNC, id_expoee)
+    GotoState("")
+endFunction
+
 function Toggle_Member_Sync(Actor ref_actor)
     GotoState("p_STATE_BUSY")
     PRIVATE.Toggle_Member(ref_actor)
@@ -519,6 +548,22 @@ endFunction
 function Toggle_Sneak_Sync(Actor ref_actor)
     GotoState("p_STATE_BUSY")
     PRIVATE.Toggle_Sneak(CODES.DO_SYNC, ref_actor)
+    GotoState("")
+endFunction
+
+function Toggle_Mannequin_Sync(Actor ref_actor, ObjectReference ref_marker)
+    GotoState("p_STATE_BUSY")
+    PRIVATE.Toggle_Mannequin(CODES.DO_SYNC, ref_actor, ref_marker)
+    GotoState("")
+endFunction
+
+function Toggle_Expoee_Sync(int id_expoee, ObjectReference ref_marker)
+    GotoState("p_STATE_BUSY")
+    if MANNEQUINS.Is_ID_Free(id_expoee)
+        MANNEQUINS.Expo(CODES.DO_SYNC, id_expoee, ref_marker, true)
+    else
+        MANNEQUINS.Unexpo(CODES.DO_SYNC, id_expoee)
+    endIf
     GotoState("")
 endFunction
 
@@ -833,6 +878,15 @@ state p_STATE_BUSY
     function Reanimate_Sync(Actor ref_actor, bool auto_create)
     endFunction
 
+    function Mannequinize_Sync(Actor ref_actor, ObjectReference ref_marker, bool auto_create)
+    endFunction
+    function Unmannequinize_Sync(Actor ref_actor)
+    endFunction
+    function Expo_Sync(int id_mannequin, ObjectReference ref_marker, bool auto_create)
+    endFunction
+    function Unexpo_Sync(int id_mannequin)
+    endFunction
+
     function Toggle_Member_Sync(Actor ref_actor)
     endFunction
     function Toggle_Clone_Sync(Actor ref_actor)
@@ -848,6 +902,10 @@ state p_STATE_BUSY
     function Toggle_Follower_Sync(Actor ref_actor)
     endFunction
     function Toggle_Sneak_Sync(Actor ref_actor)
+    endFunction
+    function Toggle_Mannequin_Sync(Actor ref_actor, ObjectReference ref_marker)
+    endFunction
+    function Toggle_Expoee_Sync(int id_expoee, ObjectReference ref_marker)
     endFunction
     
     function Cycle_Style(Actor ref_actor, bool auto_create)
@@ -1104,6 +1162,18 @@ state f_STATE_UPDATING
     function Reanimate_Sync(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
+    function Mannequinize_Sync(Actor ref_actor, ObjectReference ref_marker, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Unmannequinize_Sync(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Expo_Sync(int id_mannequin, ObjectReference ref_marker, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Unexpo_Sync(int id_mannequin)
+        LOGS.Notify_Is_Updating()
+    endFunction
     function Toggle_Member_Sync(Actor ref_actor)
         LOGS.Notify_Is_Updating()
     endFunction
@@ -1126,6 +1196,12 @@ state f_STATE_UPDATING
         LOGS.Notify_Is_Updating()
     endFunction
     function Toggle_Sneak_Sync(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Toggle_Mannequin_Sync(Actor ref_actor, ObjectReference ref_marker)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Toggle_Expoee_Sync(int id_expoee, ObjectReference ref_marker)
         LOGS.Notify_Is_Updating()
     endFunction
     function Member_Async(Actor ref_actor)

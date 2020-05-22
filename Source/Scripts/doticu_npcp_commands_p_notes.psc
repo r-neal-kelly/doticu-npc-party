@@ -187,6 +187,40 @@ function Reanimate(int code_return, string str_name)
     endIf
 endFunction
 
+function Mannequinize(int code_return, string str_name)
+    if code_return == CODES.SUCCESS
+        LOGS.Create_Note(str_name + " has been turned into a mannequin.")
+    elseIf code_return == CODES.HASNT_SPACE_MEMBER
+        LOGS.Create_Note("No room for " + str_name + " to be a mannequin.")
+    elseIf code_return == CODES.CANT_RESURRECT
+        LOGS.Create_Note(str_name + " can't be resurrected, and so can't be a mannequin.")
+    elseIf code_return == CODES.ISNT_ACTOR
+        LOGS.Create_Note("That can't become a mannequin.")
+    elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
+        LOGS.Create_Note(str_name + " isn't a member, and so can't be a mannequin.")
+    elseIf code_return == CODES.IS_MANNEQUIN
+        LOGS.Create_Note(str_name + " is already a mannequin.")
+    elseIf code_return == CODES.HASNT_MARKER
+        LOGS.Create_Note(str_name + " doesn't have a valid mannequin marker.")
+    else
+        LOGS.Create_Error("It's unknown why " + str_name + " can't be mannequinized: " + code_return)
+    endIf
+endFunction
+
+function Unmannequinize(int code_return, string str_name)
+    if code_return == CODES.SUCCESS
+        LOGS.Create_Note(str_name + " is no longer a mannequin.")
+    elseIf code_return == CODES.ISNT_ACTOR
+        LOGS.Create_Note("That isn't an npc.")
+    elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
+        LOGS.Create_Note(str_name + " isn't a member.")
+    elseIf code_return == CODES.ISNT_MANNEQUIN
+        LOGS.Create_Note(str_name + " isn't a mannequin.")
+    else
+        LOGS.Create_Error("It's unknown why " + str_name + " can't be unmannequinized: " + code_return)
+    endIf
+endFunction
+
 function Settle(int code_return, string str_name)
     if code_return == CODES.SUCCESS
         LOGS.Create_Note(str_name + " will settle here.")
@@ -444,6 +478,8 @@ function Follow(int code_return, string str_name)
         LOGS.Create_Note(str_name + " isn't a member, and so can't start following.")
     elseIf code_return == CODES.IS_FOLLOWER
         LOGS.Create_Note(str_name + " is already following.")
+    elseIf code_return == CODES.IS_MANNEQUIN
+        LOGS.Create_Note(str_name + " is a mannequin and cannot follow.")
     else
         LOGS.Create_Error("It's unknown why " + str_name + " can't start following: " + code_return)
     endIf

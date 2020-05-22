@@ -181,14 +181,14 @@ namespace doticu_npcp { namespace Papyrus {
 
         s64 num_elems = idx_to_ex - idx_from;
         if (num_elems < 1) {
-            vec_slice.push_back(val_null); // may want to send back empty vec
-        } else {
-            Type elem;
-            vec_slice.reserve(num_elems);
-            for (u64 idx = idx_from, idx_end = idx_to_ex; idx < idx_end; idx += 1) {
-                arr->Get(&elem, idx);
-                vec_slice.push_back(elem);
-            }
+            return vec_slice;
+        }
+
+        Type elem;
+        vec_slice.reserve(num_elems);
+        for (u64 idx = idx_from, idx_end = idx_to_ex; idx < idx_end; idx += 1) {
+            arr->Get(&elem, idx);
+            vec_slice.push_back(elem);
         }
 
         return vec_slice;

@@ -154,19 +154,6 @@ doticu_npcp_follower function p_Get_Follower(int id_alias)
     return ALIASES.f_Get_Alias(id_alias) as doticu_npcp_follower
 endFunction
 
-int function p_Enforce()
-    int num_followers = Get_Count()
-    if num_followers < 1
-        return CODES.HASNT_FOLLOWER
-    endIf
-
-    if !p_tasklist.Execute(num_followers, "doticu_npcp_followers_enforce")
-        return CODES.FAILURE
-    endIf
-
-    return CODES.SUCCESS
-endFunction
-
 int function p_Settle()
     int num_followers = Get_Count()
     if num_followers < 1
@@ -636,13 +623,6 @@ int function Summon_Immobile_Behind()
     Summon_Immobile(120, 180)
 endFunction
 
-int function Enforce()
-    GotoState("p_STATE_BUSY")
-    int code_return = p_Enforce()
-    GotoState("")
-    return code_return
-endFunction
-
 int function Settle()
     GotoState("p_STATE_BUSY")
     int code_return = p_Settle()
@@ -715,8 +695,6 @@ endFunction
 
 ; State
 state p_STATE_BUSY
-    int function Enforce()
-    endFunction
     int function Settle()
     endFunction
     int function Unsettle()

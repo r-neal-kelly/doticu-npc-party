@@ -15,6 +15,11 @@ doticu_npcp_mannequins property MANNEQUINS hidden
         return p_DATA.MODS.FUNCS.MANNEQUINS
     endFunction
 endProperty
+doticu_npcp_commands property COMMANDS hidden
+    doticu_npcp_commands function Get()
+        return p_DATA.MODS.CONTROL.COMMANDS
+    endFunction
+endProperty
 
 ; Private Constants
 doticu_npcp_data    p_DATA      = none
@@ -62,12 +67,12 @@ event OnActivate(ObjectReference ref_activator)
     endIf
 
     GotoState("STATE_BUSY")
-    MANNEQUINS.Toggle_Mannequin(ID, self); we want notes, so turn into commands
+    COMMANDS.Toggle_Expoee_Sync(ID, MARKER)
     GotoState("")
 endEvent
 
 event OnLoad()
-    MANNEQUINS.Refresh_Mannequin(ID, self); we want notes, so turn into commands
+    MANNEQUINS.Refresh_Mannequin(ID, self)
 endEvent
 
 ; States

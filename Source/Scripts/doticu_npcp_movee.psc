@@ -123,6 +123,10 @@ function f_Destroy()
 
 p_Lock()
 
+    if !p_ref_actor.Is3DLoaded()
+        p_Reload()
+    endIf
+
     p_ref_actor.StopTranslation()
     if p_is_airborne
         p_ref_player.PushActorAway(p_ref_actor, 0.0)
@@ -231,8 +235,19 @@ function p_Move()
         movee_pos_z = p_player_pos_z
     endIf
 
-    p_ref_actor.StopTranslation()
-    p_ref_actor.TranslateTo(movee_pos_x, movee_pos_y, movee_pos_z, 0.0, 0.0, p_movee_ang, p_SPEED, p_SPEED)
+    if p_ref_actor.Is3DLoaded()
+        p_ref_actor.StopTranslation()
+        p_ref_actor.TranslateTo(movee_pos_x, movee_pos_y, movee_pos_z, 0.0, 0.0, p_movee_ang, p_SPEED, p_SPEED)
+    endif
+endFunction
+
+function p_Reload()
+    p_ref_actor.SetActorValue("Paralysis", 0)
+    ACTORS.Move_To(p_ref_actor, CONSTS.ACTOR_PLAYER, p_movee_pos as int)
+    while !p_ref_actor.Is3DLoaded()
+        Utility.Wait(0.2)
+    endWhile
+    p_ref_actor.SetActorValue("Paralysis", 1)
 endFunction
 
 ; Public Methods
@@ -268,6 +283,8 @@ p_Lock()
     while Exists()
         if p_ref_actor.Is3DLoaded()
             p_Move()
+        else
+            p_Reload()
         endIf
         Utility.Wait(p_UPDATE_INTERVAL)
     endWhile
@@ -313,6 +330,5 @@ event OnKeyUp(int code_key, float hold_time)
 endEvent
 
 event On_Cell_Change(Form cell_new, Form cell_old)
-    p_ref_actor.MoveTo(p_ref_player)
-    p_movee_ang = p_ref_actor.GetAngleZ()
+    p_Reload()
 endEvent

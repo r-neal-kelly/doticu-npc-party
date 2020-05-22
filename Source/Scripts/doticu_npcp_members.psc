@@ -247,26 +247,22 @@ endFunction
 
 bool function Has_Base(Actor ref_actor)
     Form[] arr_origs = NPCS.Get_Originals(ref_actor)
-    if !(arr_origs.length == 1 && arr_origs[0] == none)
-        int idx_origs = arr_origs.length
-        while idx_origs > 0
-            idx_origs -= 1
-            if Has_Member(arr_origs[idx_origs] as Actor)
-                return true
-            endIf
-        endWhile
-    endIf
+    int idx_origs = arr_origs.length
+    while idx_origs > 0
+        idx_origs -= 1
+        if Has_Member(arr_origs[idx_origs] as Actor)
+            return true
+        endIf
+    endWhile
 
     Form[] arr_clones = NPCS.Get_Clones(ref_actor)
-    if !(arr_clones.length == 1 && arr_clones[0] == none)
-        int idx_clones = arr_clones.length
-        while idx_clones > 0
-            idx_clones -= 1
-            if Has_Member(arr_clones[idx_clones] as Actor)
-                return true
-            endIf
-        endWhile
-    endIf
+    int idx_clones = arr_clones.length
+    while idx_clones > 0
+        idx_clones -= 1
+        if Has_Member(arr_clones[idx_clones] as Actor)
+            return true
+        endIf
+    endWhile
 
     return false
 endFunction
@@ -275,33 +271,29 @@ int function Get_Base_Count(Actor ref_actor)
     int num_members = 0
 
     Form[] arr_origs = NPCS.Get_Originals(ref_actor)
-    if !(arr_origs.length == 1 && arr_origs[0] == none)
-        int idx_origs = arr_origs.length
-        Form form_orig
-        while idx_origs > 0
-            idx_origs -= 1
-            form_orig = arr_origs[idx_origs]
-            if Has_Member(form_orig as Actor)
-                num_members += 1
-            endIf
-        endWhile
-    endIf
+    int idx_origs = arr_origs.length
+    Form form_orig
+    while idx_origs > 0
+        idx_origs -= 1
+        form_orig = arr_origs[idx_origs]
+        if Has_Member(form_orig as Actor)
+            num_members += 1
+        endIf
+    endWhile
 
     Form[] arr_clones = NPCS.Get_Clones(ref_actor)
-    if !(arr_clones.length == 1 && arr_clones[0] == none)
-        int idx_clones = arr_clones.length
-        Form form_clone
-        while idx_clones > 0
-            idx_clones -= 1
-            form_clone = arr_clones[idx_clones]
-            if Has_Member(form_clone as Actor)
-                ; we don't want to count the same member twice
-                if arr_origs.Find(form_clone) < 0
-                    num_members += 1
-                endIf
+    int idx_clones = arr_clones.length
+    Form form_clone
+    while idx_clones > 0
+        idx_clones -= 1
+        form_clone = arr_clones[idx_clones]
+        if Has_Member(form_clone as Actor)
+            ; we don't want to count the same member twice
+            if arr_origs.Find(form_clone) < 0
+                num_members += 1
             endIf
-        endWhile
-    endIf
+        endIf
+    endWhile
 
     return num_members
 endFunction
@@ -334,17 +326,6 @@ endFunction
 
 function Sort()
     ALIASES.Sort()
-endFunction
-
-function Enforce()
-    doticu_npcp_member ref_member
-    Alias[] arr_aliases = ALIASES.Get_Aliases()
-    int idx_arr = 0
-    while idx_arr < arr_aliases.length
-        ref_member = arr_aliases[idx_arr] as doticu_npcp_member
-        ref_member.Enforce()
-        idx_arr += 1
-    endWhile
 endFunction
 
 bool function Should_Clone_Actor(Actor ref_actor)
@@ -511,7 +492,7 @@ function u_0_9_0()
     while idx_aliases < num_aliases
         curr_percent = (idx_aliases * 100 / num_aliases) as int
         if prev_percent != curr_percent
-            doticu_npcp.Print("%%" + curr_percent)
+            LOGS.Print("%%" + curr_percent)
             prev_percent = curr_percent
         endIf
         
@@ -519,4 +500,6 @@ function u_0_9_0()
         
         idx_aliases += 1
     endWhile
+
+    LOGS.Print("%%100")
 endFunction

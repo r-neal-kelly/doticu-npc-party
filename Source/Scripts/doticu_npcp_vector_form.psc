@@ -69,11 +69,7 @@ endFunction
 
 ; Public Methods
 Form[] function Get_Array()
-    if p_num_forms > 0
-        return doticu_npcp.Forms_Slice(p_arr_forms, 0, p_num_forms)
-    else
-        return Utility.CreateFormArray(1, none)
-    endIf
+    return doticu_npcp.Forms_Slice(p_arr_forms, 0, p_num_forms)
 endFunction
 
 function Push(Form item)
@@ -142,7 +138,11 @@ int function Find(Form item)
 endFunction
 
 function Fit()
-    p_arr_forms = Get_Array()
+    if p_num_forms > 0
+        p_arr_forms = Get_Array()
+    else
+        p_arr_forms = Utility.CreateFormArray(1, none)
+    endIf
     p_max_forms = p_num_forms
 endFunction
 
@@ -152,10 +152,5 @@ function Empty()
 endFunction
 
 function Print()
-    if p_num_forms > 0
-        doticu_npcp.Print(Get_Array())
-    else
-        Form[] arr_empty
-        doticu_npcp.Print(arr_empty)
-    endIf
+    doticu_npcp.Print(Get_Array())
 endFunction
