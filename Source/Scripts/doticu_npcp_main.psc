@@ -128,8 +128,8 @@ bool function p_Has_Requires()
 
     if DATA.CONSTS.GLOBAL_IS_INSTALLED.GetValue() > 0 && Is_NPC_Party_Version_Less_Than(0, 8, 2)
         Debug.MessageBox("NPC Party: This save has a version of NPC Party older than 0.8.2. " + \
-                         "The current version will not currently work on this save. " +         \
-                         "Exit WITHOUT saving then update to version 0.8.2 before trying again.")
+                         "The new version you are running will not work on this save yet. " + \
+                         "Exit without saving, and then update to version 0.8.2 before trying again.")
         return false
     endIf
 
@@ -246,7 +246,8 @@ function u_0_9_0()
     Debug.MessageBox(                                           \
         "NPC Party: This update may take a couple minutes, " +  \
         "depending on how many members you have. " +            \
-        "Open the console to monitor progress!"                 \
+        "Open the console to monitor progress!\n" +             \
+        "(Push the '~' key to open the console.)"               \
     )
 
     FUNCS.LOGS.Notify_Is_Updating()
