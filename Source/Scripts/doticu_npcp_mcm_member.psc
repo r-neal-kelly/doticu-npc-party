@@ -513,6 +513,10 @@ function f_On_Option_Input_Accept(int id_option, string str_input)
 endFunction
 
 function f_On_Option_Highlight(int id_option)
+    if !p_ref_member
+        return
+    endIf
+    
     string str_name = p_ref_member.Get_Name()
 
     if false
@@ -559,11 +563,13 @@ function f_On_Option_Highlight(int id_option)
     
     elseIf id_option == p_option_sneak
         MCM.SetInfoText("Have " + str_name + " sneak.")
-    elseIf id_option == p_option_sneak
+    elseIf id_option == p_option_unsneak
         MCM.SetInfoText("Have " + str_name + " stop sneaking.")
 
     elseIf id_option == p_option_relevel
         MCM.SetInfoText("Recalculates the stats of " + str_name + ", but only if it's needed. Auto checks before each battle.")
+    elseIf id_option == p_option_resurrect
+        MCM.SetInfoText("Resurrect this dead member.")
 
     elseIf id_option == p_option_rating
         MCM.SetInfoText("Rate this member. Causes them to sort higher, and can be used in the filter.")

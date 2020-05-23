@@ -72,7 +72,7 @@ event OnActivate(ObjectReference ref_activator)
 endEvent
 
 event OnLoad()
-    MANNEQUINS.Refresh_Mannequin(ID, self)
+    MANNEQUINS.Refresh_Mannequin(ID, MARKER)
 endEvent
 
 ; States

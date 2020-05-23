@@ -15,6 +15,11 @@ doticu_npcp_codes property CODES hidden
         return p_DATA.CODES
     endFunction
 endProperty
+doticu_npcp_funcs property FUNCS hidden
+    doticu_npcp_funcs function Get()
+        return p_DATA.MODS.FUNCS
+    endFunction
+endProperty
 doticu_npcp_containers property CONTAINERS hidden
     doticu_npcp_containers function Get()
         return p_DATA.MODS.FUNCS.CONTAINERS
@@ -287,7 +292,7 @@ function Resurrect(Actor ref_actor)
     ref_actor.SetAlpha(0, false)
     ref_actor.SetCriticalStage(CODES.CRITICAL_NONE)
     ref_actor.Resurrect()
-    Utility.Wait(0.1); stops the body from being caught in the ground
+    FUNCS.Wait(0.1); stops the body from being caught in the ground
     ref_actor.EnableAI(false)
     ref_actor.MoveTo(ref_marker, 0.0, 0.0, 1.5, true)
     ref_actor.EnableAI(true)
@@ -487,7 +492,7 @@ function Update_Equipment(Actor ref_actor)
 
     while !p_DATA.VARS.is_updating && Utility.IsInMenuMode()
         ; we wait so that the render actually happens.
-        Utility.Wait(0.1)
+        FUNCS.Wait(0.1)
     endWhile
     
     if !is_player_teammate

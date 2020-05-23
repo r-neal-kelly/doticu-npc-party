@@ -91,7 +91,7 @@ function f_Begin_Combat()
 
         p_Send_Party_Combat()
         
-        Utility.Wait(5.0)
+        FUNCS.Wait(5.0)
         p_Async("p_Try_End_Combat")
     endIf
 endFunction
@@ -101,7 +101,7 @@ function p_Lock(float interval = 0.2, float timeout = 5.0)
     float time_waited = 0.0
 
     while p_is_locked && time_waited < timeout
-        Utility.Wait(interval)
+        FUNCS.Wait(interval)
         time_waited += interval
     endWhile
 
@@ -128,7 +128,7 @@ function p_Try_End_Combat()
     ; the player is actually in battle, we have a looping
     ; queue set instead
     if ACTOR_PLAYER.IsInCombat() || FOLLOWERS.Are_In_Combat()
-        Utility.Wait(5.0)
+        FUNCS.Wait(5.0)
         p_Async("p_Try_End_Combat")
     else
         p_End_Combat()

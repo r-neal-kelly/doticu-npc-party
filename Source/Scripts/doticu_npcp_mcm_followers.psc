@@ -330,6 +330,10 @@ endFunction
 
 ; Private Methods
 doticu_npcp_member function p_Get_Prev_Member(doticu_npcp_member ref_member)
+    if !p_arr_aliases
+        return ref_member
+    endIf
+
     int idx_alias = p_arr_aliases.Find(ref_member.Get_Follower() as Alias)
     if idx_alias > -1
         if idx_alias == 0
@@ -343,6 +347,10 @@ doticu_npcp_member function p_Get_Prev_Member(doticu_npcp_member ref_member)
 endFunction
 
 doticu_npcp_member function p_Get_Next_Member(doticu_npcp_member ref_member)
+    if !p_arr_aliases
+        return ref_member
+    endIf
+    
     int idx_alias = p_arr_aliases.Find(ref_member.Get_Follower() as Alias)
     if idx_alias > -1
         if idx_alias == p_arr_aliases.length - 1

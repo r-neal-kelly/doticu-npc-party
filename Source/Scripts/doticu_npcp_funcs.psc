@@ -166,7 +166,7 @@ function Send_Event(string str_event, float interval = 0.25, float timeout = 5.0
             endIf
         endIf
 
-        Utility.Wait(interval)
+        Wait(interval)
         time_waited += interval
     endWhile
 endFunction
@@ -179,7 +179,7 @@ int function Get_Event_Handle(string str_event, float interval = 0.25, float tim
             return handle
         endIf
 
-        Utility.Wait(interval)
+        Wait(interval)
         time_waited += interval
     endWhile
 
@@ -193,11 +193,19 @@ function Send_Event_Handle(int handle, float interval = 0.25, float timeout = 5.
             return
         endIf
 
-        Utility.Wait(interval)
+        Wait(interval)
         time_waited += interval
     endWhile
 
     ModEvent.Release(handle)
+endFunction
+
+function Wait(float seconds)
+    Utility.WaitMenuMode(seconds)
+endFunction
+
+function Wait_Out_Of_Menu(float seconds)
+    Utility.Wait(seconds)
 endFunction
 
 ; Update Methods

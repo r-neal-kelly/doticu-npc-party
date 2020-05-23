@@ -10,6 +10,11 @@ doticu_npcp_consts property CONSTS hidden
         return p_DATA.CONSTS
     endFunction
 endProperty
+doticu_npcp_funcs property FUNCS hidden
+    doticu_npcp_funcs function Get()
+        return p_DATA.MODS.FUNCS
+    endFunction
+endProperty
 
 ; Private Constants
 doticu_npcp_data    p_DATA          =  none
@@ -35,8 +40,8 @@ endFunction
 ObjectReference function Create_Temp()
     ObjectReference ref_container = CONSTS.ACTOR_PLAYER.PlaceAtMe(CONSTS.CONTAINER_EMPTY, 1, false, false)
 
-    ; this may prevent a ctd like the others
-    Utility.Wait(0.1)
+    ; this can prevent a ctd
+    FUNCS.Wait(0.1)
 
     ref_container.SetActorOwner(CONSTS.ACTOR_PLAYER.GetActorBase())
 
@@ -55,8 +60,8 @@ endFunction
 ObjectReference function Create_Perm()
     ObjectReference ref_container = CONSTS.MARKER_STORAGE.PlaceAtMe(CONSTS.CONTAINER_EMPTY, 1, true, false)
     
-    ; this may prevent a ctd like the others
-    Utility.Wait(0.1)
+    ; this can prevent a ctd
+    FUNCS.Wait(0.1)
 
     ref_container.SetActorOwner(CONSTS.ACTOR_PLAYER.GetActorBase())
 
@@ -74,7 +79,7 @@ endFunction
 
 function Open(ObjectReference ref_container)
     ref_container.Activate(CONSTS.ACTOR_PLAYER)
-    Utility.Wait(0.1)
+    FUNCS.Wait(0.1)
 endFunction
 
 string function Get_Name(ObjectReference ref_container)

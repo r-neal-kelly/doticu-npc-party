@@ -133,14 +133,15 @@ int property MOTION_CHARACTER               =     7 autoReadOnly
 
 int property OUTFIT_BASE                    =  -100 autoReadOnly
 int property OUTFIT_REFERENCE               =  -200 autoReadOnly
-int property OUTFIT_MEMBER                  = -1000 autoReadOnly
-int property OUTFIT_SETTLER                 = -2000 autoReadOnly
-int property OUTFIT_THRALL                  = -3000 autoReadOnly
-int property OUTFIT_FOLLOWER                = -4000 autoReadOnly
-int property OUTFIT_IMMOBILE                = -5000 autoReadOnly
-int property OUTFIT_CURRENT                 = -6000 autoReadOnly
-int property OUTFIT_VANILLA                 = -7000 autoReadOnly
-int property OUTFIT_DEFAULT                 = -8000 autoReadOnly
+
+int property OUTFIT2_CURRENT                =  -100 autoReadOnly
+int property OUTFIT2_MEMBER                 = -1000 autoReadOnly
+int property OUTFIT2_SETTLER                = -2000 autoReadOnly
+int property OUTFIT2_THRALL                 = -3000 autoReadOnly
+int property OUTFIT2_FOLLOWER               = -4000 autoReadOnly
+int property OUTFIT2_IMMOBILE               = -5000 autoReadOnly
+int property OUTFIT2_VANILLA                = -7000 autoReadOnly
+int property OUTFIT2_DEFAULT                = -8000 autoReadOnly
 
 ; STYLE AND VITALITY codes are to replace certain IS_ codes
 int property STYLE_DEFAULT                  = -1000 autoReadOnly

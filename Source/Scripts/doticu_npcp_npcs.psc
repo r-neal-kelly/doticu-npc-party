@@ -10,6 +10,11 @@ doticu_npcp_consts property CONSTS hidden
         return p_DATA.CONSTS
     endFunction
 endProperty
+doticu_npcp_funcs property FUNCS hidden
+    doticu_npcp_funcs function Get()
+        return p_DATA.MODS.FUNCS
+    endFunction
+endProperty
 doticu_npcp_vectors property VECTORS hidden
     doticu_npcp_vectors function Get()
         return p_DATA.MODS.FUNCS.VECTORS
@@ -88,7 +93,7 @@ function p_Lock(float timeout = 15.0)
     float time_waited = 0.0
 
     while p_is_locked && time_waited < timeout
-        Utility.Wait(0.01)
+        FUNCS.Wait(0.01)
         time_waited += 0.01
     endWhile
 
@@ -477,6 +482,10 @@ bool function Unregister(Actor ref_actor)
         return false
     endIf
 
+    ; not sure if this is the best place
+    Outfit outfit_base = Get_Default_Outfit(ref_actor)
+    ref_actor.SetOutfit(outfit_base)
+
 p_Lock()
     return p_Unlock_Pass_Bool(p_Unregister(ref_actor))
 p_Unlock()
@@ -575,7 +584,7 @@ function Lock_Base(Actor ref_actor, float timeout = 15.0)
         float time_waited = 0.0
 
         while (p_vec_locks.At(idx_bases) as Key) != none && time_waited < timeout
-            Utility.Wait(0.01)
+            FUNCS.Wait(0.01)
             time_waited += 0.01
         endWhile
 

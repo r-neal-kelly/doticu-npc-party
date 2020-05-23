@@ -47,10 +47,10 @@ doticu_npcp_members property MEMBERS hidden
 endProperty
 
 ; Private Constants
-doticu_npcp_data        p_DATA          =  none
+doticu_npcp_data    p_DATA          =  none
 
 ; Private Variables
-bool                    p_is_created    = false
+bool                p_is_created    = false
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
@@ -74,15 +74,15 @@ doticu_npcp_outfit function p_Create(Container form_container, string str_name, 
     doticu_npcp_outfit ref_outfit = CONSTS.MARKER_STORAGE.PlaceAtMe(CONSTS.CONTAINER_OUTFIT, 1, true, false) as doticu_npcp_outfit
     
     ; this can prevent a ctd
-    Utility.Wait(0.1)
+    FUNCS.Wait(0.1)
 
     if VARS.fill_outfits && form_container != CONSTS.CONTAINER_OUTFIT
         ; there is a horrible bug where a container that spawns with a leveled list inside
         ; miscounts GetItemCount when the player is not in the same cell it spawned in. so
         ; we spawn items in variant outfits in a temp container and move them to the outfit
         ObjectReference ref_temp = CONSTS.ACTOR_PLAYER.PlaceAtMe(form_container, 1, false, false)
-        Utility.Wait(0.1); trying this to see if it spawns all items now
-        ref_temp.RemoveAllItems(ref_outfit, false, true)
+        FUNCS.Wait(0.1)
+        ref_temp.RemoveAllItems(ref_outfit, false, true); we should make a c++ call to make sure that all items are removed?
     endIf
 
     ref_outfit.f_Create(p_DATA, str_name, code_create)
@@ -113,11 +113,11 @@ doticu_npcp_outfit function Create_Follower(string str_name = "Follower Outfit")
 endFunction
 
 doticu_npcp_outfit function Create_Vanilla(string str_name = "Vanilla Outfit")
-    return p_Create(CONSTS.CONTAINER_OUTFIT, str_name, CODES.OUTFIT_VANILLA)
+    return p_Create(CONSTS.CONTAINER_OUTFIT, str_name, CODES.OUTFIT2_VANILLA)
 endFunction
 
 doticu_npcp_outfit function Create_Default(string str_name = "Default Outfit")
-    return p_Create(CONSTS.CONTAINER_OUTFIT, str_name, CODES.OUTFIT_DEFAULT)
+    return p_Create(CONSTS.CONTAINER_OUTFIT, str_name, CODES.OUTFIT2_DEFAULT)
 endFunction
 
 function Destroy(doticu_npcp_outfit ref_outfit)

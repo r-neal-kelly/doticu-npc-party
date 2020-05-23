@@ -41,7 +41,7 @@ function p_Create()
     Cell cell_new = CONSTS.ACTOR_PLAYER.GetParentCell()
     Cell cell_old = CONSTS.MARKER_CELL.GetParentCell()
 
-    Utility.Wait(0.01)
+    FUNCS.Wait(0.01)
     CONSTS.MARKER_CELL.MoveTo(CONSTS.ACTOR_PLAYER)
 
     p_Send_Cell_Change(cell_new, cell_old)

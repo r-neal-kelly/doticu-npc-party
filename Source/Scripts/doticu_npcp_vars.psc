@@ -421,7 +421,7 @@ function Set_Defaults()
     max_members = p_DATA.MODS.MEMBERS.GetNumAliases(); MEMBERS is not f_Create()'d yet, but this func can be called
 
     is_updating = false
-    is_mcm_open = false; not really used.
+    is_mcm_open = false
 endFunction
 
 ; Update Methods

@@ -15,6 +15,11 @@ doticu_npcp_vars property VARS hidden
         return p_DATA.VARS
     endFunction
 endProperty
+doticu_npcp_funcs property FUNCS hidden
+    doticu_npcp_funcs function Get()
+        return p_DATA.MODS.FUNCS
+    endFunction
+endProperty
 
 ; Private Constants
 doticu_npcp_data    p_DATA          =  none
@@ -111,7 +116,7 @@ function p_Lock(float timeout = 15.0)
     float time_waited = 0.0
 
     while p_is_locked && time_waited < timeout
-        Utility.Wait(0.01)
+        FUNCS.Wait(0.01)
         time_waited += 0.01
     endWhile
     

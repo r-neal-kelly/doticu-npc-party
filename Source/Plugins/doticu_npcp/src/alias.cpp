@@ -18,6 +18,10 @@ namespace doticu_npcp { namespace Alias {
         Papyrus::Handle hnd_alias(kFormType_Alias, ptr_alias);
         return Papyrus::Value(&hnd_alias, "p_code_vitality").As_Int();
     }
+    SInt32 Get_Outfit2(BGSBaseAlias *ptr_alias) {
+        Papyrus::Handle hnd_alias(kFormType_Alias, ptr_alias);
+        return Papyrus::Value(&hnd_alias, "p_code_outfit2").As_Int();
+    }
     SInt32 Get_Rating(BGSBaseAlias *ptr_alias) {
         Papyrus::Handle hnd_alias(kFormType_Alias, ptr_alias);
         return Papyrus::Value(&hnd_alias, "p_int_rating").As_Int();

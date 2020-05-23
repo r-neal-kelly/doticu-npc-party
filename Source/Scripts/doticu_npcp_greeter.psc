@@ -15,6 +15,11 @@ doticu_npcp_codes property CODES hidden
         return p_DATA.CODES
     endFunction
 endProperty
+doticu_npcp_funcs property FUNCS hidden
+    doticu_npcp_funcs function Get()
+        return p_DATA.MODS.FUNCS
+    endFunction
+endProperty
 doticu_npcp_actors property ACTORS hidden
     doticu_npcp_actors function Get()
         return p_DATA.MODS.FUNCS.ACTORS
@@ -85,7 +90,7 @@ event OnUpdate()
         if p_time_waited >= p_MAX_WAIT_TIME
             f_Destroy()
         endIf
-        Utility.Wait(p_WAIT_TIME)
+        FUNCS.Wait(p_WAIT_TIME)
         p_time_waited += p_WAIT_TIME
     endWhile
     if Exists()

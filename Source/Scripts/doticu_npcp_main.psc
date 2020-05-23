@@ -53,7 +53,7 @@ endProperty
 
 ; Friend Methods
 function f_Init_Mod()
-    Utility.Wait(1); just in case of any engine bugs, like AddItem
+    FUNCS.Wait_Out_Of_Menu(1); just in case of any engine bugs, like AddItem
 
     if !p_Has_Requires()
         return
@@ -79,7 +79,7 @@ function f_Init_Mod()
 endFunction
 
 function f_Load_Mod()
-    Utility.Wait(1); just in case of any engine bugs, like AddItem
+    FUNCS.Wait_Out_Of_Menu(1); just in case of any engine bugs, like AddItem
 
     if !p_Has_Requires()
         return

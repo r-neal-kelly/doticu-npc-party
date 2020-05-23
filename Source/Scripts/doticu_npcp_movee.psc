@@ -172,7 +172,7 @@ function p_Lock(float timeout = 15.0)
     float time_waited = 0.0
 
     while p_is_executing && time_waited < timeout
-        Utility.Wait(0.01)
+        FUNCS.Wait_Out_Of_Menu(0.01)
         time_waited += 0.01
     endWhile
 
@@ -245,7 +245,7 @@ function p_Reload()
     p_ref_actor.SetActorValue("Paralysis", 0)
     ACTORS.Move_To(p_ref_actor, CONSTS.ACTOR_PLAYER, p_movee_pos as int)
     while !p_ref_actor.Is3DLoaded()
-        Utility.Wait(0.2)
+        FUNCS.Wait_Out_Of_Menu(0.2)
     endWhile
     p_ref_actor.SetActorValue("Paralysis", 1)
 endFunction
@@ -286,7 +286,7 @@ p_Lock()
         else
             p_Reload()
         endIf
-        Utility.Wait(p_UPDATE_INTERVAL)
+        FUNCS.Wait_Out_Of_Menu(p_UPDATE_INTERVAL)
     endWhile
 
 p_Unlock()

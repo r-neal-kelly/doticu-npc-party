@@ -81,7 +81,7 @@ bool function p_Wait(float wait_interval, float wait_timeout)
 
     float wait_total = 0.0
     while wait_total < wait_timeout && p_num_tasks_complete != p_num_tasks_total
-        Utility.Wait(wait_interval)
+        FUNCS.Wait(wait_interval)
         wait_total += wait_interval
     endWhile
 

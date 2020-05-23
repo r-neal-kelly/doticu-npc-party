@@ -117,22 +117,22 @@ function Pack(int code_return, string str_name)
     endIf
 endFunction
 
-function Outfit(int code_return, string str_name, int code_outfit)
+function Outfit(int code_return, string str_name, int code_outfit2)
     string str_outfit
 
-    if code_outfit == CODES.OUTFIT_MEMBER
+    if code_outfit2 == CODES.OUTFIT2_MEMBER
         str_outfit = "a member"
-    elseIf code_outfit == CODES.OUTFIT_SETTLER
+    elseIf code_outfit2 == CODES.OUTFIT2_SETTLER
         str_outfit = "a settler"
-    elseIf code_outfit == CODES.OUTFIT_THRALL
+    elseIf code_outfit2 == CODES.OUTFIT2_THRALL
         str_outfit = "a thrall"
-    elseIf code_outfit == CODES.OUTFIT_FOLLOWER
+    elseIf code_outfit2 == CODES.OUTFIT2_FOLLOWER
         str_outfit = "a follower"
-    elseIf code_outfit == CODES.OUTFIT_IMMOBILE
+    elseIf code_outfit2 == CODES.OUTFIT2_IMMOBILE
         str_outfit = "an immobile"
-    elseIf code_outfit == CODES.OUTFIT_VANILLA
+    elseIf code_outfit2 == CODES.OUTFIT2_VANILLA
         str_outfit = "a vanilla npc"
-    elseIf code_outfit == CODES.OUTFIT_DEFAULT
+    elseIf code_outfit2 == CODES.OUTFIT2_DEFAULT
         str_outfit = "a default npc"
     endIf
 

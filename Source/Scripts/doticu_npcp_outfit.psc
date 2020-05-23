@@ -15,6 +15,11 @@ doticu_npcp_codes property CODES hidden
         return p_DATA.CODES
     endFunction
 endProperty
+doticu_npcp_vars property VARS hidden
+    doticu_npcp_vars function Get()
+        return p_DATA.VARS
+    endFunction
+endProperty
 doticu_npcp_funcs property FUNCS hidden
     doticu_npcp_funcs function Get()
         return p_DATA.MODS.FUNCS
@@ -58,7 +63,7 @@ endProperty
 ; Private Variables
 bool                    p_is_created        = false
 string                  p_str_name          =    ""
-int                     p_code_create       =     0; OUTFIT_VANILLA, OUTFIT_DEFAULT
+int                     p_code_create       =     0; OUTFIT2_VANILLA, OUTFIT2_DEFAULT
 ObjectReference         p_cache_base        =  none
 
 ; Friend Methods
@@ -104,7 +109,6 @@ function p_Set(Actor ref_actor, ObjectReference ref_pack)
 NPCS.Lock_Base(ref_actor)
     Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(ref_actor)
     Outfit outfit_default = NPCS.Get_Default_Outfit(ref_actor)
-
     if outfit_vanilla && outfit_vanilla != outfit_default
         NPCS.Set_Default_Outfit(ref_actor, outfit_vanilla)
         doticu_npcp.Outfit_Add_Item(outfit_vanilla, CONSTS.ARMOR_BLANK)
@@ -122,7 +126,7 @@ NPCS.Unlock_Base(ref_actor)
     ; this will stop the actor from rendering while we manage its inventory
     bool is_teammate = ref_actor.IsPlayerTeammate()
     ref_actor.SetPlayerTeammate(false, false)
-    
+
     ; does all the heavy lifting of removing unfit items and adding outfit items
     ObjectReference ref_transfer = CONTAINERS.Create_Temp()
     doticu_npcp.Actor_Set_Outfit2(ref_actor, CONSTS.ARMOR_BLANK, p_cache_base, self, ref_transfer)
@@ -130,10 +134,6 @@ NPCS.Unlock_Base(ref_actor)
     CONTAINERS.Destroy_Temp(ref_transfer)
 
     ; doing this allows us to render all at once, which is far more efficient
-    while !p_DATA.VARS.is_updating && Utility.IsInMenuMode()
-        ; we wait so that the render actually happens.
-        Utility.Wait(0.1)
-    endWhile
     ref_actor.SetPlayerTeammate(true, true)
     ref_actor.AddItem(CONSTS.WEAPON_BLANK, 1, true)
     ref_actor.RemoveItem(CONSTS.WEAPON_BLANK, 1, true, none)
@@ -169,7 +169,7 @@ endFunction
 function Put()
     self.SetDisplayName(p_str_name, true)
     self.Activate(CONSTS.ACTOR_PLAYER)
-    Utility.Wait(0.1)
+    FUNCS.Wait_Out_Of_Menu(0.1)
 endFunction
 
 function Cache_Vanilla_Static(Outfit outfit_vanilla)
@@ -222,7 +222,7 @@ endFunction
 
 function Try_Cache_Vanilla(Outfit outfit_vanilla)
     ; this is just a way to do asyncronous updating for 0.9.0
-    if !p_cache_base && (p_code_create == CODES.OUTFIT_VANILLA || p_code_create == CODES.OUTFIT_DEFAULT)
+    if !p_cache_base && (p_code_create == CODES.OUTFIT2_VANILLA || p_code_create == CODES.OUTFIT2_DEFAULT)
         p_cache_base = CONTAINERS.Create_Perm()
         Cache_Vanilla_Static(outfit_vanilla)
     endIf
@@ -268,7 +268,7 @@ event OnItemAdded(Form form_item, int count_item, ObjectReference ref_item, Obje
     if self.GetNumItems() >= p_MAX_ITEMS
         self.RemoveItem(form_item, count_item, true, ref_container_source)
         LOGS.Create_Note("Can only have so many items in an outfit.")
-    elseIf !form_item || p_code_create != CODES.OUTFIT_DEFAULT && !form_item.IsPlayable()
+    elseIf !form_item || p_code_create != CODES.OUTFIT2_DEFAULT && !form_item.IsPlayable()
         ; now we let unplayables into default outfit's self container
         self.RemoveItem(form_item, count_item, true, ref_container_source)
         LOGS.Create_Note("Cannot add that item to an outfit.")

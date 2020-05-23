@@ -222,7 +222,7 @@ function p_Lock(float interval = 0.2, float timeout = 6.0)
     float time_waited = 0.0
 
     while p_is_locked && time_waited < timeout
-        Utility.Wait(interval)
+        FUNCS.Wait(interval)
         time_waited += interval
     endWhile
 

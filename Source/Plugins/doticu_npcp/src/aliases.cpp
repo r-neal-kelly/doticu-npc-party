@@ -129,6 +129,7 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
         BSFixedString str_search;   // = "" (user input, "" for no search)
         SInt32 int_style;           // = 0 (exposed by doticu_npcp_codes, 0+ for any)
         SInt32 int_vitality;        // = 0 (exposed by doticu_npcp_codes, 0+ for any)
+        SInt32 int_outfit2;         // = 0 (exposed by doticu_npcp_codes, 0+ for any)
         SInt32 int_rating;          // = -1 (exposed by doticu_npcp_member, -1 or less for any, 0 is no rating)
         UInt32 int_flags;           // = 0 (constructed with Aliases_Filter_Flag, 0 for no flags)
 
@@ -151,12 +152,15 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
             arr_ints.Get(&int_vitality, 1);
         }
         if (len_arr_ints > 2) {
-            arr_ints.Get(&int_rating, 2);
+            arr_ints.Get(&int_outfit2, 2);
         }
         if (len_arr_ints > 3) {
+            arr_ints.Get(&int_rating, 3);
+        }
+        if (len_arr_ints > 4) {
             // just in case of any weirdness when bit-shifting
             SInt32 int_flags_signed;
-            arr_ints.Get(&int_flags_signed, 3);
+            arr_ints.Get(&int_flags_signed, 4);
             int_flags = (UInt32)int_flags_signed;
         }
 
@@ -170,23 +174,27 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
         BGSBaseAlias *ptr_base_alias;
         Actor *ptr_ref_actor;
 
-        #define FOR_EACH                                    \
+        #define FOR_EACH()                                  \
         for (                                               \
             u64 it_idx = 0, it_size = ptr_vec_read->size(); \
             it_idx < it_size;                               \
             it_idx += 1                                     \
         )
 
-        #define READ_ALIAS (                            \
-            ptr_base_alias = ptr_vec_read->at(it_idx)   \
+        #define ALIAS ptr_base_alias
+
+        #define ACTOR ptr_ref_actor
+
+        #define READ_ALIAS (                    \
+            ALIAS = ptr_vec_read->at(it_idx)    \
         )
 
-        #define READ_ACTOR (                                    \
-            ptr_ref_actor = Alias::Get_Actor(ptr_base_alias)    \
+        #define READ_ACTOR (                \
+            ACTOR = Alias::Get_Actor(ALIAS) \
         )
 
-        #define WRITE_ALIAS (                           \
-            ptr_vec_write->push_back(ptr_base_alias)    \
+        #define WRITE_ALIAS (               \
+            ptr_vec_write->push_back(ALIAS) \
         )
 
         #define SWAP_BUFFERS                \
@@ -219,28 +227,28 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
 
             // the form may not be correct! it would be nice to verify with body model,
             // but I haven't figured that out yet, or if it's even possible in SKSE.
-            FOR_EACH{
+            FOR_EACH() {
                 READ_ALIAS;
-            READ_ACTOR;
-            if (ptr_ref_actor) {
-                if (CALL_MEMBER_FN((TESNPC *)ptr_ref_actor->baseForm, GetSex)() == int_sex_target) {
-                    WRITE_ALIAS;
+                READ_ACTOR;
+                if (ACTOR) {
+                    if (CALL_MEMBER_FN((TESNPC *)ACTOR->baseForm, GetSex)() == int_sex_target) {
+                        WRITE_ALIAS;
+                    }
                 }
-            }
             }
             SWAP_BUFFERS;
         }
 
         // RACE
         if (str_race.data && str_race.data[0] != 0) {
-            FOR_EACH{
+            FOR_EACH() {
                 READ_ALIAS;
-            READ_ACTOR;
-            if (ptr_ref_actor) {
-                if (_stricmp(ptr_ref_actor->race->fullName.name.data, str_race.data) == 0) {
-                    WRITE_ALIAS;
+                READ_ACTOR;
+                if (ACTOR) {
+                    if (_stricmp(ACTOR->race->fullName.name.data, str_race.data) == 0) {
+                        WRITE_ALIAS;
+                    }
                 }
-            }
             }
             SWAP_BUFFERS;
         }
@@ -248,227 +256,238 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
         // SEARCH
         if (str_search.data && str_search.data[0] != 0) {
             BSFixedString str_name;
-            FOR_EACH{
+            FOR_EACH() {
                 READ_ALIAS;
-            READ_ACTOR;
-            if (ptr_ref_actor) {
-                str_name = CALL_MEMBER_FN(ptr_ref_actor, GetReferenceName)();
-                if (strlen(str_search.data) > 1) {
-                    if (String2::Contains_Caseless(str_name.data, str_search.data)) {
-                        WRITE_ALIAS;
-                    }
-                } else {
-                    if (String2::Starts_With_Caseless(str_name.data, str_search.data)) {
-                        WRITE_ALIAS;
+                READ_ACTOR;
+                if (ACTOR) {
+                    str_name = CALL_MEMBER_FN(ACTOR, GetReferenceName)();
+                    if (strlen(str_search.data) > 1) {
+                        if (String2::Contains_Caseless(str_name.data, str_search.data)) {
+                            WRITE_ALIAS;
+                        }
+                    } else {
+                        if (String2::Starts_With_Caseless(str_name.data, str_search.data)) {
+                            WRITE_ALIAS;
+                        }
                     }
                 }
-            }
             }
             SWAP_BUFFERS;
         }
 
         // STYLE
         if (int_style < 0) {
-            FOR_EACH{
+            FOR_EACH() {
                 READ_ALIAS;
-            if (Alias::Get_Style(ptr_base_alias) == int_style) {
-                WRITE_ALIAS;
-            }
+                if (Alias::Get_Style(ALIAS) == int_style) {
+                    WRITE_ALIAS;
+                }
             }
             SWAP_BUFFERS;
         }
 
         // VITALITY
         if (int_vitality < 0) {
-            FOR_EACH{
+            FOR_EACH() {
                 READ_ALIAS;
-            if (Alias::Get_Vitality(ptr_base_alias) == int_vitality) {
-                WRITE_ALIAS;
+                if (Alias::Get_Vitality(ALIAS) == int_vitality) {
+                    WRITE_ALIAS;
+                }
             }
+            SWAP_BUFFERS;
+        }
+
+        // OUTFIT
+        if (int_outfit2 < 0) {
+            FOR_EACH() {
+                READ_ALIAS;
+                if (Alias::Get_Outfit2(ALIAS) == int_outfit2) {
+                    WRITE_ALIAS;
+                }
             }
             SWAP_BUFFERS;
         }
 
         // RATING
         if (int_rating > -1) {
-            FOR_EACH{
+            FOR_EACH() {
                 READ_ALIAS;
-            if (Alias::Get_Rating(ptr_base_alias) == int_rating) {
-                WRITE_ALIAS;
-            }
+                if (Alias::Get_Rating(ALIAS) == int_rating) {
+                    WRITE_ALIAS;
+                }
             }
             SWAP_BUFFERS;
         }
 
         // FLAG ALIVE/DEAD
         if (Bit_Is_Set(int_flags, IS_ALIVE)) {
-            FOR_EACH{
+            FOR_EACH() {
                 READ_ALIAS;
-            READ_ACTOR;
-            if (ptr_ref_actor && !ptr_ref_actor->IsDead(1)) {
-                WRITE_ALIAS;
-            }
+                READ_ACTOR;
+                if (ACTOR && !ACTOR->IsDead(1)) {
+                    WRITE_ALIAS;
+                }
             }
             SWAP_BUFFERS;
         } else if (Bit_Is_Set(int_flags, IS_DEAD)) {
-            FOR_EACH{
+            FOR_EACH() {
                 READ_ALIAS;
-            READ_ACTOR;
-            if (ptr_ref_actor && ptr_ref_actor->IsDead(1)) {
-                WRITE_ALIAS;
-            }
+                READ_ACTOR;
+                if (ACTOR && ACTOR->IsDead(1)) {
+                    WRITE_ALIAS;
+                }
             }
             SWAP_BUFFERS;
         }
 
         // FLAG ORIGINAL/CLONE
         if (Bit_Is_Set(int_flags, IS_ORIGINAL)) {
-            FOR_EACH{
+            FOR_EACH() {
                 READ_ALIAS;
-            if (Alias::Is_Original(ptr_base_alias)) {
-                WRITE_ALIAS;
-            }
+                if (Alias::Is_Original(ALIAS)) {
+                    WRITE_ALIAS;
+                }
             }
             SWAP_BUFFERS;
         } else if (Bit_Is_Set(int_flags, IS_CLONE)) {
-            FOR_EACH{
+            FOR_EACH() {
                 READ_ALIAS;
-            if (Alias::Is_Clone(ptr_base_alias)) {
-                WRITE_ALIAS;
-            }
+                if (Alias::Is_Clone(ALIAS)) {
+                    WRITE_ALIAS;
+                }
             }
             SWAP_BUFFERS;
         }
 
         // FLAG FOLLOWER
         if (Bit_Is_Set(int_flags, IS_FOLLOWER)) {
-            FOR_EACH{
+            FOR_EACH() {
                 READ_ALIAS;
-            if (Alias::Is_Follower(ptr_base_alias)) {
-                WRITE_ALIAS;
-            }
+                if (Alias::Is_Follower(ALIAS)) {
+                    WRITE_ALIAS;
+                }
             }
             SWAP_BUFFERS;
         } else if (Bit_Is_Set(int_flags, ISNT_FOLLOWER)) {
-            FOR_EACH{
+            FOR_EACH() {
                 READ_ALIAS;
-            if (!Alias::Is_Follower(ptr_base_alias)) {
-                WRITE_ALIAS;
-            }
+                if (!Alias::Is_Follower(ALIAS)) {
+                    WRITE_ALIAS;
+                }
             }
             SWAP_BUFFERS;
         }
 
         // FLAG SETTLER
         if (Bit_Is_Set(int_flags, IS_SETTLER)) {
-            FOR_EACH{
+            FOR_EACH() {
                 READ_ALIAS;
-            if (Alias::Is_Settler(ptr_base_alias)) {
-                WRITE_ALIAS;
-            }
+                if (Alias::Is_Settler(ALIAS)) {
+                    WRITE_ALIAS;
+                }
             }
             SWAP_BUFFERS;
         } else if (Bit_Is_Set(int_flags, ISNT_SETTLER)) {
-            FOR_EACH{
+            FOR_EACH() {
                 READ_ALIAS;
-            if (!Alias::Is_Settler(ptr_base_alias)) {
-                WRITE_ALIAS;
-            }
+                if (!Alias::Is_Settler(ALIAS)) {
+                    WRITE_ALIAS;
+                }
             }
             SWAP_BUFFERS;
         }
 
         // FLAG IMMOBILE
         if (Bit_Is_Set(int_flags, IS_IMMOBILE)) {
-            FOR_EACH{
+            FOR_EACH() {
                 READ_ALIAS;
-            if (Alias::Is_Immobile(ptr_base_alias)) {
-                WRITE_ALIAS;
-            }
+                if (Alias::Is_Immobile(ALIAS)) {
+                    WRITE_ALIAS;
+                }
             }
             SWAP_BUFFERS;
         } else if (Bit_Is_Set(int_flags, ISNT_IMMOBILE)) {
-            FOR_EACH{
+            FOR_EACH() {
                 READ_ALIAS;
-            if (!Alias::Is_Immobile(ptr_base_alias)) {
-                WRITE_ALIAS;
-            }
+                if (!Alias::Is_Immobile(ALIAS)) {
+                    WRITE_ALIAS;
+                }
             }
             SWAP_BUFFERS;
         }
 
         // FLAG THRALL
         if (Bit_Is_Set(int_flags, IS_THRALL)) {
-            FOR_EACH{
+            FOR_EACH() {
                 READ_ALIAS;
-            if (Alias::Is_Thrall(ptr_base_alias)) {
-                WRITE_ALIAS;
-            }
+                if (Alias::Is_Thrall(ALIAS)) {
+                    WRITE_ALIAS;
+                }
             }
             SWAP_BUFFERS;
         } else if (Bit_Is_Set(int_flags, ISNT_THRALL)) {
-            FOR_EACH{
+            FOR_EACH() {
                 READ_ALIAS;
-            if (!Alias::Is_Thrall(ptr_base_alias)) {
-                WRITE_ALIAS;
-            }
+                if (!Alias::Is_Thrall(ALIAS)) {
+                    WRITE_ALIAS;
+                }
             }
             SWAP_BUFFERS;
         }
 
         // FLAG PARALYZED
         if (Bit_Is_Set(int_flags, IS_PARALYZED)) {
-            FOR_EACH{
+            FOR_EACH() {
                 READ_ALIAS;
-            if (Alias::Is_Paralyzed(ptr_base_alias)) {
-                WRITE_ALIAS;
-            }
+                if (Alias::Is_Paralyzed(ALIAS)) {
+                    WRITE_ALIAS;
+                }
             }
             SWAP_BUFFERS;
         } else if (Bit_Is_Set(int_flags, ISNT_PARALYZED)) {
-            FOR_EACH{
+            FOR_EACH() {
                 READ_ALIAS;
-            if (!Alias::Is_Paralyzed(ptr_base_alias)) {
-                WRITE_ALIAS;
-            }
+                if (!Alias::Is_Paralyzed(ALIAS)) {
+                    WRITE_ALIAS;
+                }
             }
             SWAP_BUFFERS;
         }
 
         // FLAG MANNEQUIN
         if (Bit_Is_Set(int_flags, IS_MANNEQUIN)) {
-            FOR_EACH{
+            FOR_EACH() {
                 READ_ALIAS;
-            if (Alias::Is_Mannequin(ptr_base_alias)) {
-                WRITE_ALIAS;
-            }
+                if (Alias::Is_Mannequin(ALIAS)) {
+                    WRITE_ALIAS;
+                }
             }
             SWAP_BUFFERS;
         } else if (Bit_Is_Set(int_flags, ISNT_MANNEQUIN)) {
-            FOR_EACH{
+            FOR_EACH() {
                 READ_ALIAS;
-            if (!Alias::Is_Mannequin(ptr_base_alias)) {
-                WRITE_ALIAS;
-            }
+                if (!Alias::Is_Mannequin(ALIAS)) {
+                    WRITE_ALIAS;
+                }
             }
             SWAP_BUFFERS;
         }
 
         // FLAG REANIMATED
         if (Bit_Is_Set(int_flags, IS_REANIMATED)) {
-            FOR_EACH{
+            FOR_EACH() {
                 READ_ALIAS;
-            if (Alias::Is_Reanimated(ptr_base_alias)) {
-                WRITE_ALIAS;
-            }
+                if (Alias::Is_Reanimated(ALIAS)) {
+                    WRITE_ALIAS;
+                }
             }
             SWAP_BUFFERS;
         } else if (Bit_Is_Set(int_flags, ISNT_REANIMATED)) {
-            FOR_EACH{
+            FOR_EACH() {
                 READ_ALIAS;
-            if (!Alias::Is_Reanimated(ptr_base_alias)) {
-                WRITE_ALIAS;
-            }
+                if (!Alias::Is_Reanimated(ALIAS)) {
+                    WRITE_ALIAS;
+                }
             }
             SWAP_BUFFERS;
         }
@@ -479,6 +498,8 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
         #undef WRITE_ALIAS
         #undef READ_ACTOR
         #undef READ_ALIAS
+        #undef ACTOR
+        #undef ALIAS
         #undef FOR_EACH
     }
 

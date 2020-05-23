@@ -188,7 +188,7 @@ function f_Build_Page()
     MCM.SetCursorPosition(0)
     MCM.SetCursorFillMode(MCM.LEFT_TO_RIGHT)
 
-    if p_arr_aliases[0] == none
+    if !p_arr_aliases
         MCM.SetTitleText(p_Format_Title(0, 0, 1))
 
         if p_code_view == CODES.VIEW_FILTER_MEMBERS
@@ -272,8 +272,13 @@ function f_On_Option_Select(int id_option)
         MCM.ForcePageReset()
 
     elseIf id_option >= p_options_offset + p_HEADERS_PER_PAGE
+        int idx_entity = p_Get_Idx_Entity(id_option)
+        if idx_entity < 0 || idx_entity >= p_arr_aliases_slice.length
+            return
+        endIf
+
         MCM.f_Disable(id_option, MCM.DO_UPDATE)
-        p_ref_member = p_arr_aliases_slice[p_Get_Idx_Entity(id_option)] as doticu_npcp_member
+        p_ref_member = p_arr_aliases_slice[idx_entity] as doticu_npcp_member
         if p_code_view == CODES.VIEW_MEMBERS
             p_code_view = CODES.VIEW_MEMBERS_MEMBER
             p_ref_member_members = p_ref_member
@@ -440,7 +445,7 @@ endFunction
 function p_View(Alias[] arr_aliases, int idx_page, doticu_npcp_member ref_member)
     p_arr_aliases = arr_aliases
 
-    if p_arr_aliases[0] == none
+    if !p_arr_aliases
         p_num_pages = 0
     else
         p_num_pages = Math.Ceiling(p_arr_aliases.length / (p_MEMBERS_PER_PAGE as float))
@@ -452,7 +457,7 @@ function p_View(Alias[] arr_aliases, int idx_page, doticu_npcp_member ref_member
         p_idx_page = idx_page
     endIf
     
-    if p_arr_aliases[0] == none
+    if !p_arr_aliases
         p_arr_aliases_slice = p_arr_aliases
     else
         int idx_from = p_MEMBERS_PER_PAGE * p_idx_page

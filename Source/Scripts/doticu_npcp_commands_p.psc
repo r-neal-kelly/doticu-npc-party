@@ -137,72 +137,72 @@ function Pack(int code_exec, Actor ref_actor, bool auto_create)
     NOTES.Pack(ref_member.Pack(code_exec), str_name)
 endFunction
 
-function Outfit(int code_exec, Actor ref_actor, int code_outfit, bool auto_create)
+function Outfit(int code_exec, Actor ref_actor, int code_outfit2, bool auto_create)
     int code_return
     string str_name = ACTORS.Get_Name(ref_actor)
 
-    if code_outfit != CODES.OUTFIT_MEMBER &&\
-        code_outfit != CODES.OUTFIT_SETTLER &&\
-        code_outfit != CODES.OUTFIT_THRALL &&\
-        code_outfit != CODES.OUTFIT_FOLLOWER &&\
-        code_outfit != CODES.OUTFIT_IMMOBILE &&\
-        code_outfit != CODES.OUTFIT_CURRENT &&\
-        code_outfit != CODES.OUTFIT_VANILLA &&\
-        code_outfit != CODES.OUTFIT_DEFAULT
-        code_outfit = CODES.OUTFIT_MEMBER; eventually VARS.default_outfit
+    if code_outfit2 != CODES.OUTFIT2_MEMBER &&\
+        code_outfit2 != CODES.OUTFIT2_SETTLER &&\
+        code_outfit2 != CODES.OUTFIT2_THRALL &&\
+        code_outfit2 != CODES.OUTFIT2_FOLLOWER &&\
+        code_outfit2 != CODES.OUTFIT2_IMMOBILE &&\
+        code_outfit2 != CODES.OUTFIT2_CURRENT &&\
+        code_outfit2 != CODES.OUTFIT2_VANILLA &&\
+        code_outfit2 != CODES.OUTFIT2_DEFAULT
+        code_outfit2 = CODES.OUTFIT2_MEMBER; eventually VARS.default_outfit
     endIf
     
     if auto_create && !MEMBERS.Has_Member(ref_actor)
         code_return = MEMBERS.Create_Member(ref_actor)
         if code_return < 0
-            NOTES.Outfit(code_return, str_name, code_outfit)
+            NOTES.Outfit(code_return, str_name, code_outfit2)
             return
         endIf
     endIf
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Outfit(CODES.HASNT_MEMBER, str_name, code_outfit)
+        NOTES.Outfit(CODES.HASNT_MEMBER, str_name, code_outfit2)
         return
     endIf
 
-    if code_outfit == CODES.OUTFIT_CURRENT
-        code_outfit = ref_member.Get_Outfit()
+    if code_outfit2 == CODES.OUTFIT2_CURRENT
+        code_outfit2 = ref_member.Get_Outfit2()
     endIf
 
-    NOTES.Outfit(ref_member.Outfit(code_exec, code_outfit), str_name, code_outfit)
+    NOTES.Outfit(ref_member.Outfit(code_exec, code_outfit2), str_name, code_outfit2)
 endFunction
 
 function Outfit_Member(int code_exec, Actor ref_actor, bool auto_create)
-    Outfit(code_exec, ref_actor, CODES.OUTFIT_MEMBER, auto_create)
+    Outfit(code_exec, ref_actor, CODES.OUTFIT2_MEMBER, auto_create)
 endFunction
 
 function Outfit_Settler(int code_exec, Actor ref_actor, bool auto_create)
-    Outfit(code_exec, ref_actor, CODES.OUTFIT_SETTLER, auto_create)
+    Outfit(code_exec, ref_actor, CODES.OUTFIT2_SETTLER, auto_create)
 endFunction
 
 function Outfit_Thrall(int code_exec, Actor ref_actor, bool auto_create)
-    Outfit(code_exec, ref_actor, CODES.OUTFIT_THRALL, auto_create)
+    Outfit(code_exec, ref_actor, CODES.OUTFIT2_THRALL, auto_create)
 endFunction
 
 function Outfit_Follower(int code_exec, Actor ref_actor, bool auto_create)
-    Outfit(code_exec, ref_actor, CODES.OUTFIT_FOLLOWER, auto_create)
+    Outfit(code_exec, ref_actor, CODES.OUTFIT2_FOLLOWER, auto_create)
 endFunction
 
 function Outfit_Immobile(int code_exec, Actor ref_actor, bool auto_create)
-    Outfit(code_exec, ref_actor, CODES.OUTFIT_IMMOBILE, auto_create)
+    Outfit(code_exec, ref_actor, CODES.OUTFIT2_IMMOBILE, auto_create)
 endFunction
 
 function Outfit_Current(int code_exec, Actor ref_actor, bool auto_create)
-    Outfit(code_exec, ref_actor, CODES.OUTFIT_CURRENT, auto_create)
+    Outfit(code_exec, ref_actor, CODES.OUTFIT2_CURRENT, auto_create)
 endFunction
 
 function Outfit_Vanilla(int code_exec, Actor ref_actor, bool auto_create)
-    Outfit(code_exec, ref_actor, CODES.OUTFIT_VANILLA, auto_create)
+    Outfit(code_exec, ref_actor, CODES.OUTFIT2_VANILLA, auto_create)
 endFunction
 
 function Outfit_Default(int code_exec, Actor ref_actor, bool auto_create)
-    Outfit(code_exec, ref_actor, CODES.OUTFIT_DEFAULT, auto_create)
+    Outfit(code_exec, ref_actor, CODES.OUTFIT2_DEFAULT, auto_create)
 endFunction
 
 function Resurrect(int code_exec, Actor ref_actor, bool auto_create)
@@ -984,20 +984,20 @@ function Outfit_Show(Actor ref_actor)
         return
     endIf
 
-    int code_outfit = ref_member.Get_Outfit()
-    if code_outfit == CODES.OUTFIT_MEMBER
+    int code_outfit2 = ref_member.Get_Outfit2()
+    if code_outfit2 == CODES.OUTFIT2_MEMBER
         LOGS.Create_Note("Wearing Member ", false)
-    elseIf code_outfit == CODES.OUTFIT_SETTLER
+    elseIf code_outfit2 == CODES.OUTFIT2_SETTLER
         LOGS.Create_Note("Wearing Settler ", false)
-    elseIf code_outfit == CODES.OUTFIT_THRALL
+    elseIf code_outfit2 == CODES.OUTFIT2_THRALL
         LOGS.Create_Note("Wearing Thrall ", false)
-    elseIf code_outfit == CODES.OUTFIT_FOLLOWER
+    elseIf code_outfit2 == CODES.OUTFIT2_FOLLOWER
         LOGS.Create_Note("Wearing Follower ", false)
-    elseIf code_outfit == CODES.OUTFIT_IMMOBILE
+    elseIf code_outfit2 == CODES.OUTFIT2_IMMOBILE
         LOGS.Create_Note("Wearing Immobile ", false)
-    elseIf code_outfit == CODES.OUTFIT_VANILLA
+    elseIf code_outfit2 == CODES.OUTFIT2_VANILLA
         LOGS.Create_Note("Wearing Vanilla ", false)
-    elseIf code_outfit == CODES.OUTFIT_DEFAULT
+    elseIf code_outfit2 == CODES.OUTFIT2_DEFAULT
         LOGS.Create_Note("Wearing Default ", false)
     endIf
 endFunction

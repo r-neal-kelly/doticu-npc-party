@@ -49,6 +49,10 @@ int                 p_int_arg_vitality          =       0
 string              p_str_view_vitality         = " Any "
 int                 p_option_vitality           =      -1
 
+int                 p_int_arg_outfit2           =       0
+string              p_str_view_outfit2          = " Any "
+int                 p_option_outfit2            =      -1
+
 int                 p_int_arg_rating            =      -1
 string              p_str_view_rating           = " Any "
 int                 p_option_rating             =      -1
@@ -127,7 +131,7 @@ function f_Build_Page()
     MCM.SetTitleText(" Filter ")
 
     p_option_filter = MCM.AddTextOption(" Run Filter ", "")
-    MCM.AddEmptyOption()
+    p_option_search = MCM.AddInputOption(" Search ", p_str_arg_search)
     MCM.AddHeaderOption("")
     MCM.AddHeaderOption("")
 
@@ -137,9 +141,9 @@ function f_Build_Page()
     p_option_style = MCM.AddMenuOption(" Style ", p_str_view_style)
     p_option_vitality = MCM.AddMenuOption(" Vitality ", p_str_view_vitality)
 
+    p_option_outfit2 = MCM.AddMenuOption(" Outfit ", p_str_view_outfit2)
     p_option_rating = MCM.AddMenuOption(" Rating ", p_str_view_rating)
-    p_option_search = MCM.AddInputOption(" Search ", p_str_arg_search)
-
+    
     MCM.AddHeaderOption("")
     MCM.AddHeaderOption("")
     
@@ -415,6 +419,21 @@ function f_On_Option_Menu_Open(int id_option)
         MCM.SetMenuDialogOptions(arr_options)
         MCM.SetMenuDialogDefaultIndex(0)
 
+    elseIf id_option == p_option_outfit2
+        string[] arr_options = Utility.CreateStringArray(8, "")
+
+        arr_options[0] = " Any "
+        arr_options[1] = " Member "
+        arr_options[2] = " Settler "
+        arr_options[3] = " Thrall "
+        arr_options[4] = " Immobile "
+        arr_options[5] = " Follower "
+        arr_options[6] = " Vanilla "
+        arr_options[7] = " Default "
+
+        MCM.SetMenuDialogOptions(arr_options)
+        MCM.SetMenuDialogDefaultIndex(0)
+
     elseIf id_option == p_option_rating
         string[] arr_options = Utility.CreateStringArray(7, "")
 
@@ -518,6 +537,37 @@ function f_On_Option_Menu_Accept(int id_option, int idx_option)
         endIf
         MCM.SetMenuOptionValue(id_option, p_str_view_vitality, MCM.DO_UPDATE)
 
+    elseIf id_option == p_option_outfit2
+        if idx_option < 0
+
+        elseIf idx_option == 0
+            p_int_arg_outfit2 = 0
+            p_str_view_outfit2 = " Any "
+        elseIf idx_option == 1
+            p_int_arg_outfit2 = CODES.OUTFIT2_MEMBER
+            p_str_view_outfit2 = " Member "
+        elseIf idx_option == 2
+            p_int_arg_outfit2 = CODES.OUTFIT2_SETTLER
+            p_str_view_outfit2 = " Settler "
+        elseIf idx_option == 3
+            p_int_arg_outfit2 = CODES.OUTFIT2_THRALL
+            p_str_view_outfit2 = " Thrall "
+        elseIf idx_option == 4
+            p_int_arg_outfit2 = CODES.OUTFIT2_IMMOBILE
+            p_str_view_outfit2 = " Immobile "
+        elseIf idx_option == 5
+            p_int_arg_outfit2 = CODES.OUTFIT2_FOLLOWER
+            p_str_view_outfit2 = " Follower "
+        elseIf idx_option == 6
+            p_int_arg_outfit2 = CODES.OUTFIT2_VANILLA
+            p_str_view_outfit2 = " Vanilla "
+        elseIf idx_option == 7
+            p_int_arg_outfit2 = CODES.OUTFIT2_DEFAULT
+            p_str_view_outfit2 = " Default "
+
+        endIf
+        MCM.SetMenuOptionValue(id_option, p_str_view_outfit2, MCM.DO_UPDATE)
+
     elseIf id_option == p_option_rating
         if idx_option < 0
 
@@ -580,6 +630,8 @@ function f_On_Option_Highlight(int id_option)
         MCM.SetInfoText("Find members with this style.")
     elseIf id_option == p_option_vitality
         MCM.SetInfoText("Find members with this vitality.")
+    elseIf id_option == p_option_outfit2
+        MCM.SetInfoText("Find members wearing this outfit.")
     elseIf id_option == p_option_rating
         MCM.SetInfoText("Find members with this rating.")
     elseIf id_option == p_option_search
@@ -673,6 +725,9 @@ function p_Goto_Filter_Members()
     if p_int_arg_vitality < 0
         p_Concat_Filter_String_Param(p_str_view_vitality)
     endIf
+    if p_int_arg_outfit2 < 0
+        p_Concat_Filter_String_Param(p_str_view_outfit2)
+    endIf
     if p_int_arg_rating > -1
         p_Concat_Filter_String_Param(p_str_view_rating)
     endIf
@@ -759,7 +814,7 @@ function p_Goto_Filter_Members()
     Alias[] arr_filter = doticu_npcp.Aliases_Filter( \
         MEMBERS.Get_Members(), \
         doticu_npcp.Aliases_Filter_Strings(p_str_arg_sex, p_str_arg_race, p_str_arg_search), \
-        doticu_npcp.Aliases_Filter_Ints(p_int_arg_style, p_int_arg_vitality, p_int_arg_rating, p_int_arg_flags) \
+        doticu_npcp.Aliases_Filter_Ints(p_int_arg_style, p_int_arg_vitality, p_int_arg_outfit2, p_int_arg_rating, p_int_arg_flags) \
     )
 
     MCM.MCM_MEMBERS.f_View_Filter_Members(arr_filter)
