@@ -37,7 +37,8 @@ doticu_npcp_control property CONTROL hidden
 endProperty
 
 ; Private Constants
-doticu_npcp_data p_DATA = none
+doticu_npcp_data    p_DATA                      =  none
+bool                p_will_init_or_load_0_9_0   = false
 
 ; Public Constants
 doticu_npcp_data property DATA
@@ -51,9 +52,21 @@ doticu_npcp_data property DATA
     endFunction
 endProperty
 
+bool property WILL_INIT_OR_LOAD_0_9_0
+    bool function Get()
+        return p_will_init_or_load_0_9_0
+    endFunction
+endProperty
+
 ; Friend Methods
 function f_Init_Mod()
-    FUNCS.Wait_Out_Of_Menu(1); just in case of any engine bugs, like AddItem
+    ; this lets a contingency update method know whether to startup or not
+    ; to be removed in next update.
+    p_will_init_or_load_0_9_0 = true
+
+    ; just in case of any engine bugs, like AddItem, which may not work
+    ; during the first second of the game, see wiki
+    FUNCS.Wait_Out_Of_Menu(1)
 
     if !p_Has_Requires()
         return
@@ -79,7 +92,13 @@ function f_Init_Mod()
 endFunction
 
 function f_Load_Mod()
-    FUNCS.Wait_Out_Of_Menu(1); just in case of any engine bugs, like AddItem
+    ; this lets a contingency update method know whether to startup or not
+    ; to be removed in next update.
+    p_will_init_or_load_0_9_0 = true
+
+    ; just in case of any engine bugs, like AddItem, which may not work
+    ; during the first second of the game, see wiki
+    FUNCS.Wait_Out_Of_Menu(1)
 
     if !p_Has_Requires()
         return
@@ -110,7 +129,7 @@ bool function p_Has_Requires()
     if DATA.CONSTS.GLOBAL_IS_INSTALLED.GetValue() > 0 && Is_NPC_Party_Version_Less_Than(0, 8, 2)
         Debug.MessageBox("NPC Party: This save has a version of NPC Party older than 0.8.2. " + \
                          "The current version will not currently work on this save. " +         \
-                         "Exit without saving and update to version 0.8.2 before trying again.")
+                         "Exit WITHOUT saving then update to version 0.8.2 before trying again.")
         return false
     endIf
 

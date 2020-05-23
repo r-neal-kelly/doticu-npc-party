@@ -1,5 +1,5 @@
 # doticu-npc-party
-*A follower framework for The Elder Scrolls V: Skyrim Special Edition that allows you to manage and keep track of hundreds of NPCs.*
+*A follower framework for The Elder Scrolls V: Skyrim Special Edition that allows you to manage and keep track of a thousand NPCs.*
 
 It can be tough to manage all my followers, as I always end up getting a lot of them. It's hard to know: who is a follower, how many do I have, how can I easily switch one out for another, where can I find them, and why can't I have more? In order to handle all the followers, I knew I needed to use a follower framework, a mod that manages multiple followers at a time. But what mods are available? How many do they allow? How well do they manage my followers? And to what extent? With all the quirks of managing, outfitting, cloning, resurrecting, and more, I realized that I really wanted something that can handle a *lot* of followers. So I set out to make:
 
