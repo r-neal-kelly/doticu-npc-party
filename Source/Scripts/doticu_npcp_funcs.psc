@@ -186,11 +186,11 @@ int function Get_Event_Handle(string str_event, float interval = 0.25, float tim
     return 0
 endFunction
 
-function Send_Event_Handle(int handle, float interval = 0.25, float timeout = 5.0)
+bool function Send_Event_Handle(int handle, float interval = 0.25, float timeout = 5.0)
     float time_waited = 0.0
     while time_waited < timeout
         if ModEvent.Send(handle)
-            return
+            return true
         endIf
 
         Wait(interval)
@@ -198,6 +198,8 @@ function Send_Event_Handle(int handle, float interval = 0.25, float timeout = 5.
     endWhile
 
     ModEvent.Release(handle)
+
+    return false
 endFunction
 
 function Wait(float seconds)

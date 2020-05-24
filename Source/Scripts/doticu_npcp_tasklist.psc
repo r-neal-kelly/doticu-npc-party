@@ -46,10 +46,12 @@ endFunction
 ; Private Methods
 bool function p_Start(int num_tasks)
     if p_num_tasks_total > 0
+        p_Flush()
         return false
     endIf
 
     if num_tasks < 1
+        p_Flush()
         return false
     endIf
 
@@ -62,12 +64,14 @@ endFunction
 bool function p_Send(string str_event)
     int handle = FUNCS.Get_Event_Handle(str_event)
     if !handle
+        p_Flush()
         return false
     endIf
 
     ModEvent.PushForm(handle, self as Form)
 
     if !FUNCS.Send_Event_Handle(handle)
+        p_Flush()
         return false
     endIf
 
@@ -85,14 +89,18 @@ bool function p_Wait(float wait_interval, float wait_timeout)
         wait_total += wait_interval
     endWhile
 
-    p_num_tasks_total = -1
-    p_num_tasks_complete = -1
+    p_Flush()
 
     if wait_total >= wait_timeout
         return false
     else
         return true
     endIf
+endFunction
+
+function p_Flush()
+    p_num_tasks_total = -1
+    p_num_tasks_complete = -1
 endFunction
 
 ; Public Methods

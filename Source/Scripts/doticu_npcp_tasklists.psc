@@ -44,7 +44,7 @@ function f_Register()
 endFunction
 
 ; Public Methods
-doticu_npcp_tasklist function Create(float wait_interval = 0.25, float wait_timeout = 24.0)
+doticu_npcp_tasklist function Create(float wait_interval = 0.25, float wait_timeout = 16.0)
     doticu_npcp_tasklist ref_tasklist = OBJECT_STORAGE.PlaceAtMe(MISC_TASKLIST, 1, false, false) as doticu_npcp_tasklist
     
     ref_tasklist.f_Create(p_DATA, wait_interval, wait_timeout)
