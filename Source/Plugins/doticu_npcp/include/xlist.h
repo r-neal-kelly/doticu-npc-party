@@ -25,7 +25,7 @@ namespace doticu_npcp { namespace XList {
     void Set_Count(XList_t *xlist, UInt32 count);
     void Inc_Count(XList_t *xlist, UInt32 inc);
 
-    bool Is_Same(XList_t *xlist_a, XList_t *xlist_b);
+    bool Is_Similar(XList_t *xlist_a, XList_t *xlist_b);
     bool Can_Copy(XList_t *xlist);
     bool Is_Worn(XList_t *xlist);
     bool Is_Outfit_Item(XList_t *xlist);

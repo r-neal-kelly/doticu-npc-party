@@ -32,6 +32,8 @@ namespace doticu_npcp { namespace XList {
             return;
         }
 
+        //BSReadAndWriteLocker locker(&xlist->m_lock);
+
         for (XData_t *xdata = xlist->m_data, *xdata_destroy; xdata != NULL;) {
             xdata_destroy = xdata;
             xdata = xdata->next;
@@ -59,13 +61,13 @@ namespace doticu_npcp { namespace XList {
 
         for (XData_t *xdata = xlist->m_data; xdata != NULL; xdata = xdata->next) {
             if (xdata->GetType() == kExtraData_Health) {
-                xlist_new->Add(kExtraData_Health, XData::Copy_Health((ExtraHealth *)xdata));
+                xlist_new->Add(kExtraData_Health, XData::Copy_Health((ExtraHealth *)xdata, &xlist->m_lock));
             } else if (xdata->GetType() == kExtraData_Enchantment) {
-                xlist_new->Add(kExtraData_Enchantment, XData::Copy_Enchantment((ExtraEnchantment *)xdata));
+                xlist_new->Add(kExtraData_Enchantment, XData::Copy_Enchantment((ExtraEnchantment *)xdata, &xlist->m_lock));
             } else if (xdata->GetType() == kExtraData_Charge) {
-                xlist_new->Add(kExtraData_Charge, XData::Copy_Charge((ExtraCharge *)xdata));
+                xlist_new->Add(kExtraData_Charge, XData::Copy_Charge((ExtraCharge *)xdata, &xlist->m_lock));
             } else if (xdata->GetType() == kExtraData_Count) {
-                xlist_new->Add(kExtraData_Count, XData::Copy_Count((ExtraCount *)xdata));
+                xlist_new->Add(kExtraData_Count, XData::Copy_Count((ExtraCount *)xdata, &xlist->m_lock));
             }
         }
 
@@ -85,7 +87,9 @@ namespace doticu_npcp { namespace XList {
 
             if (type == kExtraData_ReferenceHandle) {
                 ExtraReferenceHandle *xref = (ExtraReferenceHandle *)xdata;
+                //BSReadLocker xlist_locker(&xlist->m_lock);
                 TESObjectREFR *obj = xref->GetReference();
+                //xlist_locker.~BSReadLocker();
                 if (!obj) {
                     vec_xdatas_to_destroy.push_back(xdata);
                 } else {
@@ -93,6 +97,7 @@ namespace doticu_npcp { namespace XList {
                     // we do not need to IncRef on new container and DecRef on old, that's apparently not how it works.
                     ExtraReferenceHandle *xref_obj = (ExtraReferenceHandle *)obj->extraData.GetByType(kExtraData_ReferenceHandle);
                     if (xref_obj) {
+                        //BSReadAndWriteLocker xlist_obj_locker(&obj->extraData.m_lock);
                         xref_obj->handle = ref_to->CreateRefHandle();
                     } else {
                         obj->extraData.Add(kExtraData_ReferenceHandle, XData::Create_Reference_Handle(ref_to));
@@ -100,6 +105,7 @@ namespace doticu_npcp { namespace XList {
                 }
             } else if (type == kExtraData_Ownership) {
                 ExtraOwnership *xownership = (ExtraOwnership *)xdata;
+                //BSReadLocker xlist_locker(&xlist->m_lock);
                 if (!xownership->owner) {
                     vec_xdatas_to_destroy.push_back(xdata);
                 }
@@ -132,6 +138,7 @@ namespace doticu_npcp { namespace XList {
 
         ExtraCount *xcount = (ExtraCount *)xlist->GetByType(kExtraData_Count);
         if (xcount) {
+            //BSReadLocker locker(&xlist->m_lock);
             return xcount->count;
         } else {
             // it's always assumed to be one if there is no count.
@@ -148,6 +155,7 @@ namespace doticu_npcp { namespace XList {
 
         ExtraCount *xcount = (ExtraCount *)xlist->GetByType(kExtraData_Count);
         if (xcount) {
+            //BSReadAndWriteLocker(&xlist->m_lock);
             xcount->count = count;
         } else {
             // it's always assumed to be one if there is no count.
@@ -164,6 +172,7 @@ namespace doticu_npcp { namespace XList {
 
         ExtraCount *xcount = (ExtraCount *)xlist->GetByType(kExtraData_Count);
         if (xcount) {
+            //BSReadAndWriteLocker(&xlist->m_lock);
             xcount->count += inc;
         } else {
             // it's always assumed to be one if there is no count.
@@ -171,24 +180,30 @@ namespace doticu_npcp { namespace XList {
         }
     }
 
-    bool Is_Same(XList_t *xlist_a, XList_t *xlist_b) {
+    bool Is_Similar(XList_t *xlist_a, XList_t *xlist_b) {
         if (!xlist_a || !xlist_b) {
             return false;
         }
 
         if (!XData::Is_Same_Health(
             (ExtraHealth *)xlist_a->GetByType(kExtraData_Health),
-            (ExtraHealth *)xlist_b->GetByType(kExtraData_Health))) {
+            (ExtraHealth *)xlist_b->GetByType(kExtraData_Health),
+            &xlist_a->m_lock,
+            &xlist_b->m_lock)) {
             return false;
         }
         if (!XData::Is_Same_Enchantment(
             (ExtraEnchantment *)xlist_a->GetByType(kExtraData_Enchantment),
-            (ExtraEnchantment *)xlist_b->GetByType(kExtraData_Enchantment))) {
+            (ExtraEnchantment *)xlist_b->GetByType(kExtraData_Enchantment),
+            &xlist_a->m_lock,
+            &xlist_b->m_lock)) {
             return false;
         }
         if (!XData::Is_Same_Charge(
             (ExtraCharge *)xlist_a->GetByType(kExtraData_Charge),
-            (ExtraCharge *)xlist_b->GetByType(kExtraData_Charge))) {
+            (ExtraCharge *)xlist_b->GetByType(kExtraData_Charge),
+            &xlist_a->m_lock,
+            &xlist_b->m_lock)) {
             return false;
         }
 
@@ -237,6 +252,7 @@ namespace doticu_npcp { namespace XList {
             return false;
         }
 
+        //BSReadLocker locker(&xlist->m_lock);
         TESObjectREFR *ref = xref->GetReference();
         if (!ref) {
             return false;
@@ -257,6 +273,7 @@ namespace doticu_npcp { namespace XList {
         
         ExtraOwnership *xownership = (ExtraOwnership *)xlist->GetByType(kExtraData_Ownership);
         if (xownership) {
+            //BSReadAndWriteLocker locker(&xlist->m_lock);
             xownership->owner = (*g_thePlayer)->baseForm;
         } else {
             xlist->Add(kExtraData_Ownership, XData::Create_Ownership((*g_thePlayer)->baseForm));
@@ -268,8 +285,12 @@ namespace doticu_npcp { namespace XList {
         }
 
         ExtraOwnership *xownership = (ExtraOwnership *)xlist->GetByType(kExtraData_Ownership);
-        
-        return xownership && xownership->owner == (*g_thePlayer)->baseForm;
+        if (xownership) {
+            //BSReadLocker locker(&xlist->m_lock);
+            return xownership->owner == (*g_thePlayer)->baseForm;
+        } else {
+            return false;
+        }
     }
 
     void Log(XList_t *xlist, const std::string str_indent) {

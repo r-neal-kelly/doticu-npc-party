@@ -226,28 +226,35 @@ namespace doticu_npcp { namespace XData {
         xdata->~BSExtraData();
     }
 
-    ExtraCount *Copy_Count(ExtraCount *xdata) {
+    ExtraCount *Copy_Count(ExtraCount *xdata, BSReadWriteLock *xlist_lock) {
+        /*if (!xdata || !xlist_lock) {
+            return NULL;
+        }*/
+
         ExtraCount *xdata_new = ExtraCount::Create();
         ASSERT(xdata_new);
 
+        //BSReadLocker locker(xlist_lock);
         xdata_new->count = xdata->count;
 
         return xdata_new;
     }
 
-    ExtraHealth *Copy_Health(ExtraHealth *xdata) {
+    ExtraHealth *Copy_Health(ExtraHealth *xdata, BSReadWriteLock *xlist_lock) {
         ExtraHealth *xdata_new = ExtraHealth::Create();
         ASSERT(xdata_new);
 
+        //BSReadLocker locker(xlist_lock);
         xdata_new->health = xdata->health;
 
         return xdata_new;
     }
 
-    ExtraEnchantment *Copy_Enchantment(ExtraEnchantment *xdata) {
+    ExtraEnchantment *Copy_Enchantment(ExtraEnchantment *xdata, BSReadWriteLock *xlist_lock) {
         ExtraEnchantment *xdata_new = ExtraEnchantment::Create();
         ASSERT(xdata_new);
 
+        //BSReadLocker locker(xlist_lock);
         xdata_new->enchant = xdata->enchant; // do we need to copy this? probably not.
         xdata_new->maxCharge = xdata->maxCharge;
         xdata_new->unk0E = xdata->unk0E;
@@ -255,19 +262,21 @@ namespace doticu_npcp { namespace XData {
         return xdata_new;
     }
 
-    ExtraCharge *Copy_Charge(ExtraCharge *xdata) {
+    ExtraCharge *Copy_Charge(ExtraCharge *xdata, BSReadWriteLock *xlist_lock) {
         ExtraCharge *xdata_new = ExtraCharge::Create();
         ASSERT(xdata_new);
 
+        //BSReadLocker locker(xlist_lock);
         xdata_new->charge = xdata->charge;
 
         return xdata_new;
     }
 
-    ExtraTextDisplayData *Copy_Text_Display(ExtraTextDisplayData *xdata) {
+    ExtraTextDisplayData *Copy_Text_Display(ExtraTextDisplayData *xdata, BSReadWriteLock *xlist_lock) {
         ExtraTextDisplayData *xdata_new = ExtraTextDisplayData::Create();
         ASSERT(xdata_new);
 
+        //BSReadLocker locker(xlist_lock);
         xdata_new->name = xdata->name;
         xdata_new->message = xdata->message;
         xdata_new->owner = xdata->owner;
@@ -278,35 +287,41 @@ namespace doticu_npcp { namespace XData {
         return xdata_new;
     }
 
-    bool Is_Same_Health(ExtraHealth *xdata_a, ExtraHealth *xdata_b) {
+    bool Is_Same_Health(ExtraHealth *xdata_a, ExtraHealth *xdata_b, BSReadWriteLock *xlist_lock_a, BSReadWriteLock *xlist_lock_b) {
         if (!xdata_a && !xdata_b) {
             return true;
         } else if (!xdata_a || !xdata_b) {
             return false;
         }
 
+        //BSReadLocker locker_a(xlist_lock_a);
+        //BSReadLocker locker_b(xlist_lock_b);
         return xdata_a->health == xdata_b->health;
     }
 
-    bool Is_Same_Enchantment(ExtraEnchantment *xdata_a, ExtraEnchantment *xdata_b) {
+    bool Is_Same_Enchantment(ExtraEnchantment *xdata_a, ExtraEnchantment *xdata_b, BSReadWriteLock *xlist_lock_a, BSReadWriteLock *xlist_lock_b) {
         if (!xdata_a && !xdata_b) {
             return true;
         } else if (!xdata_a || !xdata_b) {
             return false;
         }
 
+        //BSReadLocker locker_a(xlist_lock_a);
+        //BSReadLocker locker_b(xlist_lock_b);
         return xdata_a->enchant == xdata_b->enchant &&
             xdata_a->maxCharge == xdata_b->maxCharge &&
             xdata_a->unk0E == xdata_b->unk0E; // is this one necessary?
     }
 
-    bool Is_Same_Charge(ExtraCharge *xdata_a, ExtraCharge *xdata_b) {
+    bool Is_Same_Charge(ExtraCharge *xdata_a, ExtraCharge *xdata_b, BSReadWriteLock *xlist_lock_a, BSReadWriteLock *xlist_lock_b) {
         if (!xdata_a && !xdata_b) {
             return true;
         } else if (!xdata_a || !xdata_b) {
             return false;
         }
 
+        //BSReadLocker locker_a(xlist_lock_a);
+        //BSReadLocker locker_b(xlist_lock_b);
         return xdata_a->charge == xdata_b->charge;
     }
 

@@ -127,14 +127,14 @@ namespace doticu_npcp { namespace XEntry {
         if (with_outfit2_flag) {
             for (XLists_t::Iterator it = xentry->extendDataList->Begin(); !it.End(); ++it) {
                 XList_t *xlist = it.Get();
-                if (XList::Has_Outfit2_Flag(xlist) && XList::Is_Same(xlist, xlist_similar)) {
+                if (XList::Has_Outfit2_Flag(xlist) && XList::Is_Similar(xlist, xlist_similar)) {
                     return xlist;
                 }
             }
         } else {
             for (XLists_t::Iterator it = xentry->extendDataList->Begin(); !it.End(); ++it) {
                 XList_t *xlist = it.Get();
-                if (XList::Is_Same(xlist, xlist_similar)) {
+                if (XList::Is_Similar(xlist, xlist_similar)) {
                     return xlist;
                 }
             }

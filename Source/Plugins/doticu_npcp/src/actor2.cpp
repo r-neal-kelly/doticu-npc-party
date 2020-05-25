@@ -133,6 +133,13 @@ namespace doticu_npcp { namespace Actor2 {
                         continue;
                     }
 
+                    if (static_cast<s32>(XList::Get_Count(xlist_actor)) < 0) {
+                        _MESSAGE("Actor2::Set_Outfit2: Encountered xlist that could overflow xentry. Setting count to 1!:");
+                        _MESSAGE("Actor: %s, Custom: %s, Form: %s", Get_Name(actor), Object_Ref::Get_Name(custom), Form::Get_Name(form_actor));
+                        XList::Log(xlist_actor, "");
+                        XList::Set_Count(xlist_actor, 1);
+                    }
+
                     if (XList::Is_Quest_Item(xlist_actor)) {
                         count_in_xlists_kept += XList::Get_Count(xlist_actor);
                     } else if (!form_actor->IsPlayable() || XList::Is_Outfit_Item(xlist_actor) || XList::Has_Outfit2_Flag(xlist_actor)) {
@@ -281,6 +288,13 @@ namespace doticu_npcp { namespace Actor2 {
                     continue;
                 }
 
+                if (static_cast<s32>(XList::Get_Count(xlist_actor)) < 0) {
+                    _MESSAGE("Actor2::Cache_Worn: Encountered xlist that could overflow xentry. Setting count to 1!:");
+                    _MESSAGE("Actor: %s, Form: %s", Get_Name(actor), Form::Get_Name(xentry_actor->type));
+                    XList::Log(xlist_actor, "");
+                    XList::Set_Count(xlist_actor, 1);
+                }
+
                 if (XList::Is_Worn(xlist_actor)) {
                     vec_xlists_worn.push_back(xlist_actor);
                 }
@@ -348,6 +362,13 @@ namespace doticu_npcp { namespace Actor2 {
                         XList_t *xlist_actor = it_xlist_actor.Get();
                         if (!xlist_actor) {
                             continue;
+                        }
+
+                        if (static_cast<s32>(XList::Get_Count(xlist_actor)) < 0) {
+                            _MESSAGE("Actor2::Cache_Inventory: Encountered xlist that could overflow xentry. Setting count to 1!:");
+                            _MESSAGE("Actor: %s, Form: %s", Get_Name(actor), Form::Get_Name(xentry_actor->type));
+                            XList::Log(xlist_actor, "");
+                            XList::Set_Count(xlist_actor, 1);
                         }
 
                         count_xlists_actor += XList::Get_Count(xlist_actor);
