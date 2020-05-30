@@ -48,6 +48,11 @@ doticu_npcp_codes property CODES hidden
         return p_DATA.CODES
     endFunction
 endProperty
+doticu_npcp_vars property VARS hidden
+    doticu_npcp_vars function Get()
+        return p_DATA.VARS
+    endFunction
+endProperty
 doticu_npcp_logs property LOGS hidden
     doticu_npcp_logs function Get()
         return p_DATA.MODS.FUNCS.LOGS
@@ -61,6 +66,11 @@ endProperty
 doticu_npcp_commands property COMMANDS hidden
     doticu_npcp_commands function Get()
         return p_DATA.MODS.CONTROL.COMMANDS
+    endFunction
+endProperty
+doticu_npcp_keys property KEYS hidden
+    doticu_npcp_keys function Get()
+        return p_DATA.MODS.CONTROL.KEYS
     endFunction
 endProperty
 
@@ -164,9 +174,13 @@ function Expo(int code_exec, int id_expoee, ObjectReference ref_marker, bool aut
         return LOGS.Create_Note("Expo ID already in use.")
     endIf
 
-    Actor ref_actor = Game.FindClosestActorFromRef(ref_marker, 48); 32
+    Actor ref_actor = Game.FindClosestActorFromRef(ref_marker, 48)
     if !ref_actor || ref_actor == CONSTS.ACTOR_PLAYER
-        return LOGS.Create_Note("Move NPC onto pedestal.")
+        LOGS.Create_Note("Move NPC onto pedestal.")
+        if !KEYS.Is_Active(VARS.key_move_toggle)
+            LOGS.Create_Note("(You can set a hotkey for 'Toggle Move' in Settings.)")
+        endIf
+        return
     endIf
 
     ref_member = MEMBERS.Get_Member(ref_actor)

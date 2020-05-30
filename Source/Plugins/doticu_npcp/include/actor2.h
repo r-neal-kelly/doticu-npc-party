@@ -27,6 +27,8 @@ namespace doticu_npcp { namespace Actor2 {
     void Cache_Inventory(Actor *actor, TESForm *linchpin, TESObjectREFR *worn_out, TESObjectREFR *pack_out);
     void Cache_Static_Inventory(VMClassRegistry* registry, UInt32 id_stack, Actor *actor, TESForm *linchpin, TESObjectREFR *cache_out);
 
+    bool Has_Same_Head(Actor *actor_a, Actor *actor_b);
+
 }}
 
 namespace doticu_npcp { namespace Actor2 { namespace Exports {

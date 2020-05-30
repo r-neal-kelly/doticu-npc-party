@@ -13,8 +13,8 @@ function Actor_Cache_Static_Inventory(Actor ref_actor, Form form_linchpin, Objec
 ; Aliases
 Alias[] function Aliases_Slice(Alias[] arr_aliases, int idx_from, int idx_to_ex) native global
 Alias[] function Aliases_Sort(Alias[] arr_aliases, string str_algorithm = "") native global
-
 Alias[] function Aliases_Filter(Alias[] arr_aliases, string[] arr_strings, int[] arr_ints) native global
+int function Aliases_Filter_Flag(int int_flags, string str_command, string str_flag) native global
 string[] function Aliases_Filter_Strings(string str_sex = "", string str_race = "", string str_search = "") global
     string[] arr_strings = new string[3]
     arr_strings[0] = str_sex
@@ -31,12 +31,18 @@ int[] function Aliases_Filter_Ints(int int_style = 0, int int_vitality = 0, int 
     arr_ints[4] = int_flags
     return arr_ints
 endFunction
-int function Aliases_Filter_Flag(int int_flags, string str_command, string str_flag) native global
 
 string[] function Aliases_Get_Race_Names(Alias[] arr_aliases) native global
+bool function Aliases_Has_Head(Alias[] arr_aliases, ActorBase base_with_head) native global
+int function Aliases_Count_Heads(Alias[] arr_aliases, ActorBase base_with_head, bool do_print = false) native global
 
 ; Forms
 Form[] function Forms_Slice(Form[] arr_forms, int idx_from, int idx_to_ex) native global
+
+; Game
+string[] function Game_Get_Male_Vanilla_Voice_Names() native global
+string[] function Game_Get_Female_Vanilla_Voice_Names() native global
+VoiceType function Game_Get_Voice_By_Name(string str_name) native global
 
 ; Object_Ref
 function Object_Ref_Remove_Unwearable(ObjectReference ref_obj, ObjectReference ref_other) native global

@@ -1423,6 +1423,13 @@ event On_Unmannequinize()
     endIf
 endEvent
 
+int function Revoice()
+    ; the problem is that we would have to change the voice on the actor base. so maybe put in npcs?
+endFunction
+
+int function Unrevoice()
+endFunction
+
 int function Follow()
     if !Exists()
         return CODES.ISNT_MEMBER

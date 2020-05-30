@@ -123,6 +123,8 @@ int                 p_option_key_m_toggle_sneak         =    -1
 
 int                 p_option_key_n_has_base             =    -1
 int                 p_option_key_n_count_base           =    -1
+int                 p_option_key_n_has_head             =    -1
+int                 p_option_key_n_count_heads          =    -1
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
@@ -267,8 +269,11 @@ function f_Build_Page()
     MCM.AddEmptyOption()
     p_option_key_n_has_base = MCM.AddKeymapOption(" Has Base ", VARS.key_n_has_base, MCM.OPTION_FLAG_WITH_UNMAP)
     p_option_key_n_count_base = MCM.AddKeymapOption(" Count Base ", VARS.key_n_count_base, MCM.OPTION_FLAG_WITH_UNMAP)
-    MCM.AddEmptyOption()
-    MCM.AddEmptyOption()
+    p_option_key_n_has_head = MCM.AddKeymapOption(" Has Head ", VARS.key_n_has_head, MCM.OPTION_FLAG_WITH_UNMAP)
+    p_option_key_n_count_heads = MCM.AddKeymapOption(" Count Heads ", VARS.key_n_count_heads, MCM.OPTION_FLAG_WITH_UNMAP)
+    ;MCM.AddEmptyOption()
+    ;MCM.AddEmptyOption()
+    ;MCM.AddEmptyOption()
 endFunction
 
 function f_On_Option_Select(int id_option)
@@ -552,6 +557,10 @@ function f_On_Option_Keymap_Change(int id_option, int code_key, string str_confl
         VARS.key_n_has_base = code_key
     elseIf id_option == p_option_key_n_count_base
         VARS.key_n_count_base = code_key
+    elseIf id_option == p_option_key_n_has_head
+        VARS.key_n_has_head = code_key
+    elseIf id_option == p_option_key_n_count_heads
+        VARS.key_n_count_heads = code_key
 
     else
         return
@@ -720,6 +729,16 @@ function f_On_Option_Default(int id_option)
         if p_Can_Set_Key(CONSTS.STR_KEY_N_COUNT_BASE, CONSTS.KEY_DEF_N_COUNT_BASE)
             VARS.key_n_count_base = CONSTS.KEY_DEF_N_COUNT_BASE
             MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_N_COUNT_BASE, false)
+        endIf
+    elseIf id_option == p_option_key_n_has_head
+        if p_Can_Set_Key(CONSTS.STR_KEY_N_HAS_HEAD, CONSTS.KEY_DEF_N_HAS_HEAD)
+            VARS.key_n_has_head = CONSTS.KEY_DEF_N_HAS_HEAD
+            MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_N_HAS_HEAD, false)
+        endIf
+    elseIf id_option == p_option_key_n_count_heads
+        if p_Can_Set_Key(CONSTS.STR_KEY_N_COUNT_HEADS, CONSTS.KEY_DEF_N_COUNT_HEADS)
+            VARS.key_n_count_heads = CONSTS.KEY_DEF_N_COUNT_HEADS
+            MCM.SetKeymapOptionValue(id_option, CONSTS.KEY_DEF_N_COUNT_HEADS, false)
         endIf
 
     endIf
@@ -895,6 +914,10 @@ function f_On_Option_Highlight(int id_option)
         MCM.SetInfoText("Shows whether or not you have a member with the same base as this npc.")
     elseIf id_option == p_option_key_n_count_base
         MCM.SetInfoText("Shows how many members you have with the same base as this npc.")
+    elseIf id_option == p_option_key_n_has_head
+        MCM.SetInfoText("Shows whether or not you have a member with the same head and face.")
+    elseIf id_option == p_option_key_n_count_heads
+        MCM.SetInfoText("Show how many members you have with the same head and face.")
 
     endIf
 endFunction
@@ -977,6 +1000,10 @@ string function p_Get_Control(int id_option)
         return CONSTS.STR_KEY_N_HAS_BASE
     elseIf id_option == p_option_key_n_count_base
         return CONSTS.STR_KEY_N_COUNT_BASE
+    elseIf id_option == p_option_key_n_has_head
+        return CONSTS.STR_KEY_N_HAS_HEAD
+    elseIf id_option == p_option_key_n_count_heads
+        return CONSTS.STR_KEY_N_COUNT_HEADS
 
     else
         return ""

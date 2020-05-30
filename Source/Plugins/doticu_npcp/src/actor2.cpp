@@ -3,6 +3,7 @@
 */
 
 #include "actor2.h"
+#include "actor_base2.h"
 #include "outfit.h"
 
 namespace doticu_npcp { namespace Actor2 {
@@ -142,7 +143,10 @@ namespace doticu_npcp { namespace Actor2 {
 
                     if (XList::Is_Quest_Item(xlist_actor)) {
                         count_in_xlists_kept += XList::Get_Count(xlist_actor);
-                    } else if (!form_actor->IsPlayable() || XList::Is_Outfit_Item(xlist_actor) || XList::Has_Outfit2_Flag(xlist_actor)) {
+                    } else if (!form_actor->IsPlayable() ||
+                               XList::Is_Outfit_Item(xlist_actor) ||
+                               XList::Is_Leveled_Item(xlist_actor) ||
+                               XList::Has_Outfit2_Flag(xlist_actor)) {
                         vec_xlists_trash.push_back(xlist_actor);
                     } else {
                         vec_xlists_transfer.push_back(xlist_actor);
@@ -475,6 +479,17 @@ namespace doticu_npcp { namespace Actor2 {
         }
 
         //registry->ResumeStack(id_stack, NULL);
+    }
+
+    bool Has_Same_Head(Actor *actor_a, Actor *actor_b) {
+        if (!actor_a || !actor_b) {
+            return false;
+        }
+
+        TESNPC *actor_base_a = DYNAMIC_CAST(actor_a->baseForm, TESForm, TESNPC);
+        TESNPC *actor_base_b = DYNAMIC_CAST(actor_b->baseForm, TESForm, TESNPC);
+        
+        return Actor_Base2::Has_Same_Head(actor_base_a, actor_base_b);
     }
 
 }}

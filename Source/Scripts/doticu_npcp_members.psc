@@ -298,6 +298,14 @@ int function Get_Base_Count(Actor ref_actor)
     return num_members
 endFunction
 
+bool function Has_Head(Actor ref_actor)
+    return doticu_npcp.Aliases_Has_Head(ALIASES.Get_Aliases(), ref_actor.GetLeveledActorBase())
+endFunction
+
+int function Get_Head_Count(Actor ref_actor, bool do_print = false)
+    return doticu_npcp.Aliases_Count_Heads(ALIASES.Get_Aliases(), ref_actor.GetLeveledActorBase(), do_print)
+endFunction
+
 bool function Are_Displayed()
     return p_are_displayed
 endFunction

@@ -946,7 +946,7 @@ event OnCombatStateChanged(Actor ref_target, int code_combat)
     endIf
 
     if code_combat == CODES.COMBAT_NO
-        ; see p_End_Combat() in doticu_npcp_player for Enforce()
+        
     elseIf code_combat == CODES.COMBAT_YES
         ACTORS.PLAYER.f_Begin_Combat()
     elseIf code_combat == CODES.COMBAT_SEARCHING

@@ -1036,6 +1036,8 @@ int property KEY_DEF_M_TOGGLE_SNEAK         =    74 autoReadOnly hidden; NUM-
 
 int property KEY_DEF_N_HAS_BASE             =    24 autoReadOnly hidden; O
 int property KEY_DEF_N_COUNT_BASE           =    24 autoReadOnly hidden; O
+int property KEY_DEF_N_HAS_HEAD             =    24 autoReadOnly hidden; O
+int property KEY_DEF_N_COUNT_HEADS          =    24 autoReadOnly hidden; O
 
 string property STR_HEALTH                  = "Health"                      autoReadOnly hidden
 string property STR_MAGICKA                 = "Magicka"                     autoReadOnly hidden
@@ -1156,3 +1158,5 @@ string property STR_KEY_M_TOGGLE_SNEAK      = "Toggle Sneak"                auto
 
 string property STR_KEY_N_HAS_BASE          = "Has Base"                    autoReadOnly hidden
 string property STR_KEY_N_COUNT_BASE        = "Count Base"                  autoReadOnly hidden
+string property STR_KEY_N_HAS_HEAD          = "Has Head"                    autoReadOnly hidden
+string property STR_KEY_N_COUNT_HEADS       = "Count Heads"                 autoReadOnly hidden

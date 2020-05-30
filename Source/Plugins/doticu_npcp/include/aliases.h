@@ -35,6 +35,9 @@ namespace doticu_npcp { namespace Aliases {
 
     int Compare_Race_Names(const void *ptr_item_a, const void *ptr_item_b);
 
+    bool Has_Head(VMArray<BGSBaseAlias *> aliases, TESNPC *base_with_head);
+    SInt32 Count_Heads(VMArray<BGSBaseAlias *> aliases, TESNPC *base_with_head, bool do_print = false);
+
 }}
 
 namespace doticu_npcp { namespace Aliases { namespace Exports {
@@ -44,6 +47,9 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
     VMResultArray<BGSBaseAlias *> Filter(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr_aliases, VMArray<BSFixedString> arr_strings, VMArray<SInt32> arr_ints);
     UInt32 Filter_Flag(StaticFunctionTag *, UInt32 int_flags, BSFixedString str_command, BSFixedString str_flag);
     VMResultArray<BSFixedString> Get_Race_Names(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr_aliases);
+
+    bool Has_Head(StaticFunctionTag *, VMArray<BGSBaseAlias *> aliases, TESNPC *base_with_head);
+    SInt32 Count_Heads(StaticFunctionTag *, VMArray<BGSBaseAlias *> aliases, TESNPC *base_with_head, bool do_print = false);
 
     bool Register(VMClassRegistry *registry);
 

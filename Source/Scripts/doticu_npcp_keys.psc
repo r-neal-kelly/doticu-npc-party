@@ -53,6 +53,10 @@ function f_Register()
 endFunction
 
 ; Public Methods
+bool function Is_Active(int code_key)
+    return code_key > -1
+endFunction
+
 function Update_Keys()
     UnregisterForAllKeys()
 
@@ -106,7 +110,7 @@ function Update_Keys()
     endIf
 
     ; Actors Move
-    if VARS.key_move_toggle
+    if VARS.key_move_toggle > -1
         RegisterForKey(VARS.key_move_toggle)
     endIf
     ACTORS.MOVEE.Update_Keys()
@@ -154,6 +158,12 @@ function Update_Keys()
     endIf
     if VARS.key_n_count_base > -1
         RegisterForKey(VARS.key_n_count_base)
+    endIf
+    if VARS.key_n_has_head > -1
+        RegisterForKey(VARS.key_n_has_head)
+    endIf
+    if VARS.key_n_count_heads > -1
+        RegisterForKey(VARS.key_n_count_heads)
     endIf
 
     ; Member/Follower Cycles
@@ -236,6 +246,10 @@ string function Get_Control(int code_key)
         return CONSTS.STR_KEY_N_HAS_BASE
     elseIf code_key == VARS.key_n_count_base
         return CONSTS.STR_KEY_N_COUNT_BASE
+    elseIf code_key == VARS.key_n_has_head
+        return CONSTS.STR_KEY_N_HAS_HEAD
+    elseIf code_key == VARS.key_n_count_heads
+        return CONSTS.STR_KEY_N_COUNT_HEADS
     
     else
         return ""
@@ -311,6 +325,10 @@ int function Get_Key(string str_control)
         return VARS.key_n_has_base
     elseIf str_control == CONSTS.STR_KEY_N_COUNT_BASE
         return VARS.key_n_count_base
+    elseIf str_control == CONSTS.STR_KEY_N_HAS_HEAD
+        return VARS.key_n_has_head
+    elseIf str_control == CONSTS.STR_KEY_N_COUNT_HEADS
+        return VARS.key_n_count_heads
         
     else
         return -1
@@ -386,6 +404,10 @@ int function Get_Key_Default(string str_control)
         return CONSTS.KEY_DEF_N_HAS_BASE
     elseIf str_control == CONSTS.STR_KEY_N_COUNT_BASE
         return CONSTS.KEY_DEF_N_COUNT_BASE
+    elseIf str_control == CONSTS.STR_KEY_N_HAS_HEAD
+        return CONSTS.KEY_DEF_N_HAS_HEAD
+    elseIf str_control == CONSTS.STR_KEY_N_COUNT_HEADS
+        return CONSTS.KEY_DEF_N_COUNT_HEADS
 
     else
         return -1
@@ -463,9 +485,9 @@ event OnKeyDown(int code_key)
         if ref_actor == none
             p_DATA.MODS.FUNCS.LOGS.Create_Note("That is not an NPC.", false)
         elseIf p_DATA.MODS.MEMBERS.Has_Base(ref_actor)
-            p_DATA.MODS.FUNCS.LOGS.Create_Note("You have this base.", false)
+            p_DATA.MODS.FUNCS.LOGS.Create_Note("Yes, you have this base.", false)
         else
-            p_DATA.MODS.FUNCS.LOGS.Create_Note("You don't have this base.", false)
+            p_DATA.MODS.FUNCS.LOGS.Create_Note("No, you don't have this base.", false)
         endIf
     elseIf code_key == VARS.key_n_count_base
         ; put in Commands also
@@ -474,6 +496,21 @@ event OnKeyDown(int code_key)
         else
             int num_members = p_DATA.MODS.MEMBERS.Get_Base_Count(ref_actor)
             p_DATA.MODS.FUNCS.LOGS.Create_Note("You have " + num_members + " of this base.", false)
+        endIf
+    elseif code_key == VARS.key_n_has_head
+        if ref_actor == none
+            p_DATA.MODS.FUNCS.LOGS.Create_Note("That is not an NPC.", false)
+        elseIf p_DATA.MODS.MEMBERS.Has_Head(ref_actor)
+            p_DATA.MODS.FUNCS.LOGS.Create_Note("Yes, you have this head and face.", false)
+        else
+            p_DATA.MODS.FUNCS.LOGS.Create_Note("No, you don't have this head and face.", false)
+        endIf
+    elseIf code_key == VARS.key_n_count_heads
+        if ref_actor == none
+            p_DATA.MODS.FUNCS.LOGS.Create_Note("That is not an NPC.", false)
+        else
+            int num_heads = p_DATA.MODS.MEMBERS.Get_Head_Count(ref_actor)
+            p_DATA.MODS.FUNCS.LOGS.Create_Note("You have " + num_heads + " with this head and face.", false)
         endIf
 
     ; Member/Follower

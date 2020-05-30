@@ -98,6 +98,8 @@ int property key_outfit                     =    -1 auto hidden
 ; One NPC
 int property key_n_has_base                 =    -1 auto hidden
 int property key_n_count_base               =    -1 auto hidden
+int property key_n_has_head                 =    -1 auto hidden
+int property key_n_count_heads              =    -1 auto hidden
 
 ; Member/Follower Cycles
 int property key_cycle_outfit               =    -1 auto hidden

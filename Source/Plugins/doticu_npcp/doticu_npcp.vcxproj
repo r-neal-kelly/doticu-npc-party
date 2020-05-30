@@ -140,6 +140,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\actor_base2.cpp" />
+    <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\alias.cpp" />
     <ClCompile Include="src\outfit.cpp" />
@@ -156,11 +158,13 @@
     <ClCompile Include="src\xlist.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\actor_base2.h" />
     <ClInclude Include="include\aliases.h" />
     <ClInclude Include="include\form.h" />
     <ClInclude Include="include\actor2.h" />
     <ClInclude Include="include\alias.h" />
     <ClInclude Include="include\forms.h" />
+    <ClInclude Include="include\game.h" />
     <ClInclude Include="include\xentry.h" />
     <ClInclude Include="include\outfit.h" />
     <ClInclude Include="include\papyrus.h" />
