@@ -1451,7 +1451,9 @@ int function Follow()
         return CODES.IS_MANNEQUIN
     endIf
 
+p_Lock()
     int code_return = FOLLOWERS.f_Create_Follower(p_ref_actor)
+p_Unlock()
     if code_return < 0
         return code_return
     endIf
@@ -1472,7 +1474,9 @@ int function Unfollow()
         return CODES.ISNT_FOLLOWER
     endIf
 
+p_Lock()
     int code_return = FOLLOWERS.f_Destroy_Follower(p_ref_actor)
+p_Unlock()
     if code_return < 0
         return code_return
     endIf

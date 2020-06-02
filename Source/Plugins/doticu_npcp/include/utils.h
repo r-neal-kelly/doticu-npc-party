@@ -37,6 +37,11 @@ W
 #define Bit_Clear(BITS)\
     ( (BITS) = 0 )
 
+// set manually upon each release
+#define DOTICU_NPCP_VERSION_MAJOR 0
+#define DOTICU_NPCP_VERSION_MINOR 9
+#define DOTICU_NPCP_VERSION_PATCH 1
+
 #define DOTICU_NPCP_PRINT_PREFIX "doticu_npcp: "
 
 namespace doticu_npcp {
@@ -60,6 +65,7 @@ namespace doticu_npcp { namespace Utils {
 
 namespace doticu_npcp { namespace Utils { namespace Exports {
 
+    VMResultArray<SInt32> Get_Plugin_Version(StaticFunctionTag *);
     void Print(StaticFunctionTag *, BSFixedString str);
     void Log(StaticFunctionTag *, BSFixedString str);
 

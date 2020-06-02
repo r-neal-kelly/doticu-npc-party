@@ -824,7 +824,9 @@ int function Catch_Up()
 endFunction
 
 int function Unfollow()
-    return p_ref_member.Unfollow()
+p_Lock()
+    p_ref_member.Unfollow()
+p_Unlock()
 endFunction
 
 int function Pack(int code_exec)

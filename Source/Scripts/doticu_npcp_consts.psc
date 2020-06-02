@@ -1632,7 +1632,7 @@ endProperty
 
 int property VERSION_MAJOR                  =     0 autoReadOnly hidden; set manually upon each release
 int property VERSION_MINOR                  =     9 autoReadOnly hidden; set manually upon each release
-int property VERSION_PATCH                  =     0 autoReadOnly hidden; set manually upon each release
+int property VERSION_PATCH                  =     1 autoReadOnly hidden; set manually upon each release
 
 int property MIN_DISPLAY                    =     1 autoReadOnly hidden
 int property MAX_DISPLAY                    =     8 autoReadOnly hidden

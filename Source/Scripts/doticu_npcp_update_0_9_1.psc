@@ -2,7 +2,7 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 /;
 
-Scriptname doticu_npcp_update_0_9_0 extends Quest
+Scriptname doticu_npcp_update_0_9_1 extends Quest
 
 ; Modules
 doticu_npcp_main property MAIN hidden
@@ -46,7 +46,7 @@ endEvent
 event OnUpdate()
     FUNCS.Wait(5)
 
-    if !MAIN.WILL_INIT_OR_LOAD_0_9_0 && MAIN.Is_NPC_Party_Version_Less_Than(0, 9, 0)
+    if !MAIN.WILL_INIT_OR_LOAD_0_9_1 && MAIN.Is_NPC_Party_Version_Less_Than(0, 9, 1)
         PLAYER.OnPlayerLoadGame()
     endIf
 endEvent
