@@ -19,7 +19,7 @@
 namespace doticu_npcp { namespace Object_Ref {
 
     BContainer_t *Get_BContainer(TESObjectREFR *obj);
-    XContainer_t *Get_XContainer(TESObjectREFR *obj);
+    XContainer_t *Get_XContainer(TESObjectREFR *obj, bool do_create = false);
 
     BEntry_t *Get_BEntry(TESObjectREFR *obj, TESForm *form);
     XEntry_t *Get_XEntry(TESObjectREFR *obj, TESForm *form, bool do_create = false);
@@ -43,7 +43,7 @@ namespace doticu_npcp { namespace Object_Ref {
     bool Is_Worn(TESObjectREFR *obj, TESForm *form);
 
     void Remove_Unwearable(TESObjectREFR *obj, TESObjectREFR *other);
-
+    void Categorize(TESObjectREFR *ref_object);
     void Log_XContainer(TESObjectREFR *ref_object);
 
 }}
@@ -51,7 +51,7 @@ namespace doticu_npcp { namespace Object_Ref {
 namespace doticu_npcp { namespace Object_Ref { namespace Exports {
 
     void Remove_Unwearable(StaticFunctionTag *, TESObjectREFR *obj, TESObjectREFR *other);
-
+    void Categorize(StaticFunctionTag *, TESObjectREFR *ref_object);
     void Log_XContainer(StaticFunctionTag *, TESObjectREFR *ref_object);
 
     bool Register(VMClassRegistry *registry);

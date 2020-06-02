@@ -5,6 +5,11 @@
 Scriptname doticu_npcp_funcs extends Quest
 
 ; Modules
+doticu_npcp_consts property CONSTS hidden
+    doticu_npcp_consts function Get()
+        return p_DATA.CONSTS
+    endFunction
+endProperty
 doticu_npcp_logs property LOGS hidden
     doticu_npcp_logs function Get()
         return (self as Quest) as doticu_npcp_logs

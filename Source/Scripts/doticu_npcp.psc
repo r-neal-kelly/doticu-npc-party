@@ -46,6 +46,7 @@ VoiceType function Game_Get_Voice_By_Name(string str_name) native global
 
 ; Object_Ref
 function Object_Ref_Remove_Unwearable(ObjectReference ref_obj, ObjectReference ref_other) native global
+function Object_Ref_Categorize(ObjectReference ref_obj) native global
 function Object_Ref_Log_XContainer(ObjectReference ref_object) native global
 
 ; Outfit

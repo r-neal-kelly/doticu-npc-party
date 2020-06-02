@@ -166,6 +166,44 @@ namespace doticu_npcp { namespace XEntry {
         }
     }
 
+    void Clean_XLists(XEntry_t *xentry, TESObjectREFR *ref_container) {
+        if (!xentry || !xentry->extendDataList || !ref_container) {
+            return;
+        }
+
+        std::vector<XList_t *> vec_xlists;
+        for (XLists_t::Iterator it_xlist = xentry->extendDataList->Begin(); !it_xlist.End(); ++it_xlist) {
+            XList_t *xlist = it_xlist.Get();
+            if (!xlist) {
+                continue;
+            }
+
+            vec_xlists.push_back(xlist);
+        }
+
+        for (u64 idx = 0, size = vec_xlists.size(); idx < size; idx += 1) {
+            XList_t *xlist = vec_xlists[idx];
+            u64 count_xdata = XList::Clean_For_Move(xlist, ref_container);
+            if (count_xdata == 0) {
+                Remove_XList(xentry, xlist);
+                Inc_Count(xentry, 1);
+                XList::Destroy(xlist);
+            } else if (count_xdata == 1 && xlist->m_data->GetType() == kExtraData_Count) {
+                Remove_XList(xentry, xlist);
+                Inc_Count(xentry, XList::Get_Count(xlist));
+                XList::Destroy(xlist);
+            }
+        }
+    }
+
+    bool Has_An_XList(XEntry_t *xentry) {
+        if (xentry) {
+            return false;
+        }
+
+        return xentry->extendDataList->Count() > 0;
+    }
+
     bool Is_Worn(XEntry_t *xentry) {
         if (!xentry || !xentry->extendDataList) {
             return false;

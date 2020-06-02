@@ -151,6 +151,7 @@
     <ClCompile Include="src\object_ref.cpp" />
     <ClCompile Include="src\form.cpp" />
     <ClCompile Include="src\quest.cpp" />
+    <ClCompile Include="src\xcontainer.cpp" />
     <ClCompile Include="src\xentry.cpp" />
     <ClCompile Include="src\string2.cpp" />
     <ClCompile Include="src\utils.cpp" />
@@ -165,6 +166,7 @@
     <ClInclude Include="include\alias.h" />
     <ClInclude Include="include\forms.h" />
     <ClInclude Include="include\game.h" />
+    <ClInclude Include="include\xcontainer.h" />
     <ClInclude Include="include\xentry.h" />
     <ClInclude Include="include\outfit.h" />
     <ClInclude Include="include\papyrus.h" />

@@ -85,6 +85,7 @@ int                 p_option_next               =    -1
 int                 p_option_summon             =    -1
 int                 p_option_goto               =    -1
 int                 p_option_pack               =    -1
+int                 p_option_stash              =    -1
 int                 p_option_outfit             =    -1
 int                 p_option_settle             =    -1
 int                 p_option_resettle           =    -1
@@ -270,6 +271,10 @@ function f_On_Option_Select(int id_option)
         f_Disable(id_option, DO_UPDATE)
         FUNCS.Close_Menus()
         COMMANDS.Pack_Sync(ref_actor, false)
+    elseIf id_option == p_option_stash
+        f_Disable(id_option, DO_UPDATE)
+        p_ref_member.Stash()
+        p_Update_Commands()
 
     elseIf id_option == p_option_settle
         f_Disable(p_option_settle, DO_UPDATE)
@@ -536,6 +541,8 @@ function f_On_Option_Highlight(int id_option)
         MCM.SetInfoText("Goto this member.")
     elseIf id_option == p_option_pack
         MCM.SetInfoText("Pack items in this member's inventory.")
+    elseIf id_option == p_option_stash
+        MCM.SetInfoText("Stash all of the items in the member's pack, into community chests.")
     elseIf id_option == p_option_outfit
         MCM.SetInfoText("Choose what this npc will wear in one of their outfits.")
 
@@ -608,6 +615,7 @@ function p_Build_Commands()
     p_option_summon = MCM.AddTextOption(CONSTS.STR_MCM_SUMMON, "", FLAG_ENABLE)
     p_option_goto = MCM.AddTextOption(CONSTS.STR_MCM_GOTO, "", FLAG_ENABLE)
     p_option_pack = MCM.AddTextOption(CONSTS.STR_MCM_PACK, "", FLAG_ENABLE)
+    p_option_stash = MCM.AddTextOption(" Stash ", "", FLAG_ENABLE)
     p_option_outfit = MCM.AddMenuOption(CONSTS.STR_MCM_OUTFIT, "", FLAG_ENABLE)
 
     if p_ref_member.Is_Settler()
@@ -709,6 +717,7 @@ function p_Update_Commands()
     f_Enable(p_option_summon, DONT_UPDATE)
     f_Enable(p_option_goto, DONT_UPDATE)
     f_Enable(p_option_pack, DONT_UPDATE)
+    f_Enable(p_option_stash, DONT_UPDATE)
     f_Enable(p_option_outfit, DONT_UPDATE)
 
     if p_ref_member.Is_Settler()

@@ -51,6 +51,15 @@ namespace doticu_npcp { namespace String2 {
 
         return true;
     }
+
+    bool Starts_With_Caseless(const char *str, const char chr) {
+        if (!str) {
+            return false;
+        }
+
+        return tolower(str[0]) == tolower(chr);
+    }
+
     bool Contains_Caseless(const char *str_a, const char *str_b) {
         for (u64 idx = 0; str_a[idx] != 0; idx += 1) {
             if (Starts_With_Caseless(str_a + idx, str_b)) {

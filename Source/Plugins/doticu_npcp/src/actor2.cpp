@@ -2,6 +2,8 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "skse64_common/Relocation.h" // temp
+
 #include "actor2.h"
 #include "actor_base2.h"
 #include "outfit.h"

@@ -74,7 +74,7 @@ namespace doticu_npcp { namespace XList {
         return xlist_new;
     }
 
-    // certain xdata cannot be moved to another container without creating issues, e.g. worn. Others are just unneeded.
+    // certain xdata cannot be moved to another container without creating issues, e.g. worn, leveleditem. Others are just unneeded.
     u64 Clean_For_Move(XList_t *xlist, TESObjectREFR *ref_to) {
         if (!xlist || !Object_Ref::Get_XContainer(ref_to)) {
             return 0;

@@ -2,8 +2,10 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "game.h"
 #include "object_ref.h"
 #include "quest.h"
+#include "xcontainer.h"
 
 namespace doticu_npcp { namespace Object_Ref {
 
@@ -15,13 +17,23 @@ namespace doticu_npcp { namespace Object_Ref {
         }
     }
 
-    XContainer_t *Get_XContainer(TESObjectREFR *obj) {
+    XContainer_t *Get_XContainer(TESObjectREFR *obj, bool do_create) {
         if (!obj) {
             return NULL;
         }
 
         XContainer_t *xcontainer = (XContainer_t *)obj->extraData.GetByType(kExtraData_ContainerChanges);
         if (xcontainer && xcontainer->data && xcontainer->data->objList) {
+            return xcontainer;
+        } else if (do_create) {
+            if (!xcontainer) {
+                xcontainer = XContainer::Create(obj);
+                obj->extraData.Add(kExtraData_ContainerChanges, xcontainer);
+            } else if (!xcontainer->data) {
+                xcontainer->data = XContainer::Create_Data(obj);
+            } else {
+                xcontainer->data->objList = XContainer::Create_Data_Entries();
+            }
             return xcontainer;
         } else {
             return NULL;
@@ -180,11 +192,12 @@ namespace doticu_npcp { namespace Object_Ref {
                 return;
             }
 
-            if (count_xentry_from == 0 - count_bentry_from) {
+            if (count_xentry_from <= 0 - count_bentry_from) {
                 return;
             }
 
             Object_Ref::Remove_XEntry(from, xentry_from);
+            XEntry::Clean_XLists(xentry_from, to);
 
             if (count_bentry_from > 0) {
                 XEntry::Inc_Count(xentry_from, count_bentry_from);
@@ -247,7 +260,12 @@ namespace doticu_npcp { namespace Object_Ref {
             return "";
         }
 
-        return CALL_MEMBER_FN(ref_object, GetReferenceName)();
+        const char *name = CALL_MEMBER_FN(ref_object, GetReferenceName)();
+        if (!name) {
+            return "";
+        }
+
+        return name;
     }
 
     const char *Get_Name(TESObjectREFR *ref_object) {
@@ -360,6 +378,62 @@ namespace doticu_npcp { namespace Object_Ref {
         }
     }
 
+    void Categorize(TESObjectREFR *obj) {
+        if (!obj) {
+            _MESSAGE("Object_Ref::Categorize: Missing ref_object.");
+            return;
+        }
+
+        std::vector<TESForm *> vec_forms_move;
+
+        XContainer_t *xcontainer_obj = Object_Ref::Get_XContainer(obj);
+        if (xcontainer_obj) {
+            for (XEntries_t::Iterator it_xentry_obj = xcontainer_obj->data->objList->Begin(); !it_xentry_obj.End(); ++it_xentry_obj) {
+                XEntry_t *xentry_obj = it_xentry_obj.Get();
+                if (!xentry_obj || !xentry_obj->type) {
+                    continue;
+                }
+
+                TESForm *form_obj = xentry_obj->type;
+                if (!form_obj->IsPlayable()) {
+                    continue;
+                }
+
+                vec_forms_move.push_back(form_obj);
+            }
+        }
+
+        BContainer_t *bcontainer_obj = Object_Ref::Get_BContainer(obj);
+        if (bcontainer_obj) {
+            for (u64 idx = 0; idx < bcontainer_obj->numEntries; idx += 1) {
+                BEntry_t *bentry_obj = bcontainer_obj->entries[idx];
+                if (!bentry_obj || !bentry_obj->form || bentry_obj->count < 1) {
+                    continue;
+                }
+
+                TESForm *form_obj = bentry_obj->form;
+                if (form_obj->formType == kFormType_LeveledItem || !form_obj->IsPlayable()) {
+                    continue;
+                }
+
+                if (!Vector::Has<TESForm *>(vec_forms_move, form_obj)) {
+                    vec_forms_move.push_back(form_obj);
+                }
+            }
+        }
+
+        for (u64 idx = 0, size = vec_forms_move.size(); idx < size; idx += 1) {
+            TESForm *form_move = vec_forms_move[idx];
+
+            TESObjectREFR *category = Game::Get_NPCP_Category(form_move);
+            if (!category) {
+                continue;
+            }
+
+            Object_Ref::Move_Entry(obj, category, form_move);
+        }
+    }
+
     void Log_XContainer(TESObjectREFR *ref_object) {
         if (!ref_object) {
             _MESSAGE("Log_XContainer: Not an object.");
@@ -394,6 +468,10 @@ namespace doticu_npcp { namespace Object_Ref { namespace Exports {
         return Object_Ref::Remove_Unwearable(obj, other);
     }
 
+    void Categorize(StaticFunctionTag *, TESObjectREFR *obj) {
+        return Object_Ref::Categorize(obj);
+    }
+
     void Log_XContainer(StaticFunctionTag *, TESObjectREFR *ref_object) {
         return Object_Ref::Log_XContainer(ref_object);
     }
@@ -403,14 +481,21 @@ namespace doticu_npcp { namespace Object_Ref { namespace Exports {
             new NativeFunction2 <StaticFunctionTag, void, TESObjectREFR *, TESObjectREFR *>(
                 "Object_Ref_Remove_Unwearable",
                 "doticu_npcp",
-                Object_Ref::Exports::Remove_Unwearable,
+                Exports::Remove_Unwearable,
+                registry)
+        );
+        registry->RegisterFunction(
+            new NativeFunction1 <StaticFunctionTag, void, TESObjectREFR *>(
+                "Object_Ref_Categorize",
+                "doticu_npcp",
+                Exports::Categorize,
                 registry)
         );
         registry->RegisterFunction(
             new NativeFunction1 <StaticFunctionTag, void, TESObjectREFR *>(
                 "Object_Ref_Log_XContainer",
                 "doticu_npcp",
-                Object_Ref::Exports::Log_XContainer,
+                Exports::Log_XContainer,
                 registry)
         );
 

@@ -966,6 +966,14 @@ p_Lock()
 p_Unlock()
 endFunction
 
+function p_Stash()
+p_Lock()
+
+    doticu_npcp.Object_Ref_Categorize(p_container_pack)
+
+p_Unlock()
+endFunction
+
 int function p_Clone()
 p_Lock()
     int code_return = MEMBERS.Create_Member(p_ref_actor, true)
@@ -1776,6 +1784,16 @@ endFunction
 event On_Pack()
     p_Pack()
 endEvent
+
+int function Stash()
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+
+    p_Stash()
+
+    return CODES.SUCCESS
+endFunction
 
 int function Outfit(int code_exec, int code_outfit2)
     if code_outfit2 == CODES.OUTFIT2_MEMBER

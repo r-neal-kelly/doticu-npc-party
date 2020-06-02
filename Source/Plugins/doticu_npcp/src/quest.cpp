@@ -13,7 +13,12 @@ namespace doticu_npcp { namespace Quest {
             return "";
         }
 
-        return (DYNAMIC_CAST(quest, TESQuest, TESFullName))->name.data;
+        TESFullName *full_name = DYNAMIC_CAST(quest, TESQuest, TESFullName);
+        if (!full_name || !full_name->name || !full_name->name.data) {
+            return "";
+        }
+
+        return full_name->name.data;
     }
 
 }}

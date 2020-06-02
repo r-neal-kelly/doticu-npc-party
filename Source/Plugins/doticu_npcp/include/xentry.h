@@ -26,6 +26,8 @@ namespace doticu_npcp { namespace XEntry {
     XList_t *Get_XList(XEntry_t *xentry, XList_t *xlist_similar, bool with_outfit2_flag);
     bool Has_XList(XEntry_t *xentry, XList_t *xlist_similar, bool with_outfit2_flag);
     void Move_XList(XEntry_t *from, XEntry_t *to, XList_t *xlist, TESObjectREFR *ref_to);
+    void Clean_XLists(XEntry_t *xentry, TESObjectREFR *ref_container);
+    bool Has_An_XList(XEntry_t *xentry);
 
     bool Is_Worn(XEntry_t *xentry);
 

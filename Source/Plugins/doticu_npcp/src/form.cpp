@@ -154,12 +154,12 @@ const char *arr_str_form_types[143] = {
 namespace doticu_npcp { namespace Form {
 
     const char *Get_Name(TESForm *ref_form) {
-        TESFullName *str_full_name = DYNAMIC_CAST(ref_form, TESForm, TESFullName);
-        if (str_full_name && str_full_name->name) {
-            return str_full_name->name.data;
-        } else {
-            return NULL;
+        TESFullName *full_name = DYNAMIC_CAST(ref_form, TESForm, TESFullName);
+        if (!full_name || !full_name->name || !full_name->name.data) {
+            return "";
         }
+
+        return full_name->name.data;
     }
 
     const char *Get_Type_String(TESForm *ref_form) {
@@ -168,6 +168,19 @@ namespace doticu_npcp { namespace Form {
         } else {
             return "INVALID_FORM";
         }
+    }
+
+    bool Has_Keyword(TESForm *form, BGSKeyword *keyword) {
+        if (!form || !keyword) {
+            return false;
+        }
+
+        BGSKeywordForm *keywords = DYNAMIC_CAST(form, TESForm, BGSKeywordForm);
+        if (!keywords) {
+            return false;
+        }
+
+        return keywords->HasKeyword(keyword);
     }
 
 }}

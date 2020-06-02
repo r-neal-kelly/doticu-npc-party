@@ -9,6 +9,7 @@
 #include "actor2.h"
 #include "aliases.h"
 #include "forms.h"
+#include "game.h"
 #include "object_ref.h"
 #include "outfit.h"
 #include "quest.h"
@@ -18,6 +19,7 @@ bool Register_Functions(VMClassRegistry *registry) {
     doticu_npcp::Actor2::Exports::Register(registry);
     doticu_npcp::Aliases::Exports::Register(registry);
     doticu_npcp::Forms::Exports::Register(registry);
+    doticu_npcp::Game::Exports::Register(registry);
     doticu_npcp::Object_Ref::Exports::Register(registry);
     doticu_npcp::Outfit::Exports::Register(registry);
     doticu_npcp::Quest::Exports::Register(registry);
