@@ -455,7 +455,7 @@ function Destroy_Menu()
     if !p_ref_menu
         return
     endIf
-    
+
     p_ref_menu.Disable()
     p_ref_menu.Delete()
 endFunction
