@@ -142,7 +142,7 @@ bool function p_Has_Requires()
     endIf
 
     int[] plugin_version = doticu_npcp.Get_Plugin_Version()
-    if !Is_NPC_Party_Version(plugin_version[0], plugin_version[1], plugin_version[2])
+    if CONSTS.VERSION_MAJOR != plugin_version[0] || CONSTS.VERSION_MINOR != plugin_version[1] || CONSTS.VERSION_PATCH != plugin_version[2]
         Debug.MessageBox("NPC Party: The NPC Party plugin doesn't match the current version. " + \
                          "The plugin has not been correctly installed or correctly updated. " + \
                          "Exit without saving, and make sure everything is installed correctly before trying again.")

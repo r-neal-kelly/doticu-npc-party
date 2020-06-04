@@ -117,6 +117,18 @@ function Pack(int code_return, string str_name)
     endIf
 endFunction
 
+function Stash(int code_return, string str_name)
+    if code_return == CODES.SUCCESS
+        LOGS.Create_Note(str_name + " has stashed away the contents of their pack.")
+    elseIf code_return == CODES.ISNT_ACTOR
+        LOGS.Create_Note("That is not an actor, and cannot stash anything.")
+    elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
+        LOGS.Create_Note(str_name + " isn't a member and cannot stash their pack.")
+    else
+        LOGS.Create_Error("It's unknown why " + str_name + " can't stash their pack: " + code_return)
+    endIf
+endFunction
+
 function Outfit(int code_return, string str_name, int code_outfit2)
     string str_outfit
 
@@ -752,6 +764,16 @@ function Followers_Unsneak(int code_return)
         LOGS.Create_Note("All followers are already not sneaking.")
     else
         LOGS.Create_Error("Could not make followers stop sneaking: " + code_return)
+    endIf
+endFunction
+
+function Followers_Stash(int code_return)
+    if code_return == CODES.SUCCESS
+        LOGS.Create_Note("All followers have stashed their packs away.")
+    elseIf code_return == CODES.HASNT_FOLLOWER
+        LOGS.Create_Note("No followers to stash packs.")
+    else
+        LOGS.Create_Error("Followers could not stash their packs: " + code_return)
     endIf
 endFunction
 

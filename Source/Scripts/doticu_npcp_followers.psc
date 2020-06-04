@@ -252,6 +252,17 @@ int function p_Unsneak()
     return CODES.SUCCESS
 endFunction
 
+int function p_Stash()
+    int num_followers = Get_Count()
+    if num_followers < 1
+        return CODES.HASNT_FOLLOWER
+    endIf
+
+    doticu_npcp.Followers_Stash(self)
+
+    return CODES.SUCCESS
+endFunction
+
 int function p_Unretreat()
     if Get_Count() < 1
         return CODES.HASNT_FOLLOWER
@@ -661,6 +672,13 @@ endFunction
 int function Unsneak()
     GotoState("p_STATE_BUSY")
     int code_return = p_Unsneak()
+    GotoState("")
+    return code_return
+endFunction
+
+int function Stash()
+    GotoState("p_STATE_BUSY")
+    int code_return = p_Stash()
     GotoState("")
     return code_return
 endFunction

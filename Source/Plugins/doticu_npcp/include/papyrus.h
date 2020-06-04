@@ -162,6 +162,26 @@ namespace doticu_npcp { namespace Papyrus {
                 return (Actor *)p_hnd_object->Policy()->Resolve(kFormType_Character, p_vm_value.data.id->GetHandle());
             }
         }
+        BGSBaseAlias *As_Alias() {
+            if (p_vm_value.GetUnmangledType() != VMValue::kType_Identifier) {
+                _MESSAGE("not an alias, %s:%d", __FILE__, __LINE__);
+                return NULL;
+            } else if (!p_vm_value.data.id) {
+                return NULL;
+            } else {
+                return (BGSBaseAlias *)p_hnd_object->Policy()->Resolve(kFormType_Alias, p_vm_value.data.id->GetHandle());
+            }
+        }
+        TESObjectREFR *As_Object() {
+            if (p_vm_value.GetUnmangledType() != VMValue::kType_Identifier) {
+                _MESSAGE("not an object, %s:%d", __FILE__, __LINE__);
+                return NULL;
+            } else if (!p_vm_value.data.id) {
+                return NULL;
+            } else {
+                return (TESObjectREFR *)p_hnd_object->Policy()->Resolve(kFormType_Reference, p_vm_value.data.id->GetHandle());
+            }
+        }
     };
 
     template <typename Type>

@@ -75,6 +75,17 @@ int                 p_option_potions        =    -1
 int                 p_option_poisons        =    -1
 int                 p_option_food           =    -1
 
+int                 p_option_ammo           =    -1
+int                 p_option_ingredients    =    -1
+int                 p_option_soulgems       =    -1
+int                 p_option_scrolls        =    -1
+int                 p_option_metals         =    -1
+int                 p_option_leather        =    -1
+int                 p_option_gems           =    -1
+int                 p_option_clutter        =    -1
+int                 p_option_keys           =    -1
+int                 p_option_others         =    -1
+
 int                 p_option_spell_tomes    =    -1
 int                 p_option_recipes        =    -1
 int                 p_option_books_a        =    -1
@@ -104,18 +115,6 @@ int                 p_option_books_x        =    -1
 int                 p_option_books_y        =    -1
 int                 p_option_books_z        =    -1
 int                 p_option_books          =    -1
-
-int                 p_option_metals         =    -1
-int                 p_option_leather        =    -1
-int                 p_option_gems           =    -1
-int                 p_option_clutter        =    -1
-
-int                 p_option_ammo           =    -1
-int                 p_option_ingredients    =    -1
-int                 p_option_scrolls        =    -1
-int                 p_option_soulgems       =    -1
-int                 p_option_keys           =    -1
-int                 p_option_others         =    -1
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
@@ -173,8 +172,8 @@ function f_Build_Page()
     MCM.AddEmptyOption()
     p_option_ammo = MCM.AddTextOption(" Ammo ", "")
     p_option_ingredients = MCM.AddTextOption(" Ingredients ", "")
-    p_option_scrolls = MCM.AddTextOption(" Scrolls ", "")
     p_option_soulgems = MCM.AddTextOption(" Soulgems ", "")
+    p_option_scrolls = MCM.AddTextOption(" Scrolls ", "")
     p_option_metals = MCM.AddTextOption(" Metals ", "")
     p_option_leather = MCM.AddTextOption(" Leather ", "")
     p_option_gems = MCM.AddTextOption(" Gems ", "")
@@ -186,7 +185,6 @@ function f_Build_Page()
     MCM.AddEmptyOption()
     p_option_spell_tomes = MCM.AddTextOption(" Spell Tomes ", "")
     p_option_recipes = MCM.AddTextOption(" Recipes ", "")
-    p_option_books = MCM.AddTextOption(" # ", "")
     p_option_books_a = MCM.AddTextOption(" A ", "")
     p_option_books_b = MCM.AddTextOption(" B ", "")
     p_option_books_c = MCM.AddTextOption(" C ", "")
@@ -213,6 +211,7 @@ function f_Build_Page()
     p_option_books_x = MCM.AddTextOption(" X ", "")
     p_option_books_y = MCM.AddTextOption(" Y ", "")
     p_option_books_z = MCM.AddTextOption(" Z ", "")
+    p_option_books = MCM.AddTextOption(" # ", "")
     MCM.AddEmptyOption()
 endFunction
 
@@ -239,7 +238,7 @@ function f_On_Option_Select(int id_option)
     elseIf id_option == p_option_staves
         p_Open(CONSTS.CATEGORY_STAVES, " Staves ")
     elseIf id_option == p_option_weapons
-        p_Open(CONSTS.CATEGORY_WEAPONS, " Others ")
+        p_Open(CONSTS.CATEGORY_WEAPONS, " Other Weapons ")
 
     ; Armor
     elseIf id_option == p_option_light_armor
@@ -260,6 +259,28 @@ function f_On_Option_Select(int id_option)
         p_Open(CONSTS.CATEGORY_POISONS, " Poisons ")
     elseIf id_option == p_option_food
         p_Open(CONSTS.CATEGORY_FOOD, " Food ")
+
+    ; Misc
+    elseIf id_option == p_option_ammo
+        p_Open(CONSTS.CATEGORY_AMMO, " Ammo ")
+    elseIf id_option == p_option_ingredients
+        p_Open(CONSTS.CATEGORY_INGREDIENTS, " Ingredients ")
+    elseIf id_option == p_option_soulgems
+        p_Open(CONSTS.CATEGORY_SOULGEMS, " Soulgems ")
+    elseIf id_option == p_option_scrolls
+        p_Open(CONSTS.CATEGORY_SCROLLS, " Scrolls ")
+    elseIf id_option == p_option_metals
+        p_Open(CONSTS.CATEGORY_METALS, " Metals ")
+    elseIf id_option == p_option_leather
+        p_Open(CONSTS.CATEGORY_LEATHER, " Leather ")
+    elseIf id_option == p_option_gems
+        p_Open(CONSTS.CATEGORY_GEMS, " Gems ")
+    elseIf id_option == p_option_clutter
+        p_Open(CONSTS.CATEGORY_CLUTTER, " Clutter ")
+    elseIf id_option == p_option_keys
+        p_Open(CONSTS.CATEGORY_KEYS, " Keys ")
+    elseIf id_option == p_option_others
+        p_Open(CONSTS.CATEGORY_OTHERS, " Other Misc ")
 
     ; Books
     elseIf id_option == p_option_spell_tomes
@@ -319,29 +340,7 @@ function f_On_Option_Select(int id_option)
     elseIf id_option == p_option_books_z
         p_Open(CONSTS.CATEGORY_BOOKS_Z, " Books Z ")
     elseIf id_option == p_option_books
-        p_Open(CONSTS.CATEGORY_BOOKS, " Others ")
-
-    ; Misc
-    elseIf id_option == p_option_metals
-        p_Open(CONSTS.CATEGORY_METALS, " Metals ")
-    elseIf id_option == p_option_leather
-        p_Open(CONSTS.CATEGORY_LEATHER, " Leather ")
-    elseIf id_option == p_option_gems
-        p_Open(CONSTS.CATEGORY_GEMS, " Gems ")
-    elseIf id_option == p_option_clutter
-        p_Open(CONSTS.CATEGORY_CLUTTER, " Clutter ")
-    elseIf id_option == p_option_ammo
-        p_Open(CONSTS.CATEGORY_AMMO, " Ammo ")
-    elseIf id_option == p_option_ingredients
-        p_Open(CONSTS.CATEGORY_INGREDIENTS, " Ingredients ")
-    elseIf id_option == p_option_scrolls
-        p_Open(CONSTS.CATEGORY_SCROLLS, " Scrolls ")
-    elseIf id_option == p_option_soulgems
-        p_Open(CONSTS.CATEGORY_SOULGEMS, " Soulgems ")
-    elseIf id_option == p_option_keys
-        p_Open(CONSTS.CATEGORY_KEYS, " Keys ")
-    elseIf id_option == p_option_others
-        p_Open(CONSTS.CATEGORY_OTHERS, " Others ")
+        p_Open(CONSTS.CATEGORY_BOOKS, " Books # ")
 
     endIf
 endFunction
@@ -373,7 +372,6 @@ endFunction
 ; Private Methods
 function p_Open(ObjectReference ref_container, string str_name)
     FUNCS.Close_Menus()
-    ; need to name the chest
     CONTAINERS.Set_Name(ref_container, str_name)
     CONTAINERS.Open(ref_container)
 endFunction

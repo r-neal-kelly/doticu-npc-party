@@ -141,9 +141,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\actor_base2.cpp" />
+    <ClCompile Include="src\follower.cpp" />
+    <ClCompile Include="src\followers.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\alias.cpp" />
+    <ClCompile Include="src\member.cpp" />
     <ClCompile Include="src\outfit.cpp" />
     <ClCompile Include="src\actor2.cpp" />
     <ClCompile Include="src\forms.cpp" />
@@ -161,11 +164,14 @@
   <ItemGroup>
     <ClInclude Include="include\actor_base2.h" />
     <ClInclude Include="include\aliases.h" />
+    <ClInclude Include="include\followers.h" />
     <ClInclude Include="include\form.h" />
     <ClInclude Include="include\actor2.h" />
     <ClInclude Include="include\alias.h" />
     <ClInclude Include="include\forms.h" />
     <ClInclude Include="include\game.h" />
+    <ClInclude Include="include\follower.h" />
+    <ClInclude Include="include\member.h" />
     <ClInclude Include="include\xcontainer.h" />
     <ClInclude Include="include\xentry.h" />
     <ClInclude Include="include\outfit.h" />

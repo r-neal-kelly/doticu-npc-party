@@ -181,6 +181,12 @@ function Followers_Unsneak()
     GotoState("")
 endFunction
 
+function Followers_Stash()
+    GotoState("p_STATE_BUSY")
+    PRIVATE.Followers_Stash()
+    GotoState("")
+endFunction
+
 function Followers_Resurrect()
     GotoState("p_STATE_BUSY")
     p_Enqueue("Followers_Resurrect", none)
@@ -344,6 +350,12 @@ endFunction
 function Pack_Sync(Actor ref_actor, bool auto_create)
     GotoState("p_STATE_BUSY")
     PRIVATE.Pack(CODES.DO_SYNC, ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Stash(Actor ref_actor)
+    GotoState("p_STATE_BUSY")
+    PRIVATE.Stash(ref_actor)
     GotoState("")
 endFunction
 
@@ -834,6 +846,8 @@ state p_STATE_BUSY
     endFunction
     function Pack_Sync(Actor ref_actor, bool auto_create)
     endFunction
+    function Stash(Actor ref_actor)
+    endFunction
     function Outfit_Member_Sync(Actor ref_actor, bool auto_create)
     endFunction
     function Outfit_Settler_Sync(Actor ref_actor, bool auto_create)
@@ -945,6 +959,8 @@ state p_STATE_BUSY
     endFunction
     function Followers_Unsneak()
     endFunction
+    function Followers_Stash()
+    endFunction
     function Followers_Resurrect()
     endFunction
     function Followers_Unfollow()
@@ -1010,6 +1026,9 @@ state f_STATE_UPDATING
         LOGS.Notify_Is_Updating()
     endFunction
     function Followers_Unsneak()
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Followers_Stash()
         LOGS.Notify_Is_Updating()
     endFunction
     function Followers_Resurrect()
@@ -1094,6 +1113,9 @@ state f_STATE_UPDATING
         LOGS.Notify_Is_Updating()
     endFunction
     function Pack_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Stash(Actor ref_actor)
         LOGS.Notify_Is_Updating()
     endFunction
     function Outfit_Current_Sync(Actor ref_actor, bool auto_create)

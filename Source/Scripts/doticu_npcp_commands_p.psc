@@ -137,6 +137,15 @@ function Pack(int code_exec, Actor ref_actor, bool auto_create)
     NOTES.Pack(ref_member.Pack(code_exec), str_name)
 endFunction
 
+function Stash(Actor ref_actor)
+    doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
+    if !ref_member
+        return NOTES.Stash(CODES.HASNT_MEMBER, ref_member.Get_Name())
+    endIf
+
+    NOTES.Stash(ref_member.Stash(), ref_member.Get_Name())
+endFunction
+
 function Outfit(int code_exec, Actor ref_actor, int code_outfit2, bool auto_create)
     int code_return
     string str_name = ACTORS.Get_Name(ref_actor)
@@ -939,6 +948,10 @@ endFunction
 
 function Followers_Unsneak()
     NOTES.Followers_Unsneak(FOLLOWERS.Unsneak())
+endFunction
+
+function Followers_Stash()
+    NOTES.Followers_Stash(FOLLOWERS.Stash())
 endFunction
 
 function Followers_Resurrect()

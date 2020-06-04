@@ -115,6 +115,10 @@ function Vitality_Invulnerable(ObjectReference ref_object)
     (GetOwningQuest() as doticu_npcp_commands).Vitalize_Invulnerable_Sync(ref_object as Actor, false)
 endFunction
 
+function Stash(ObjectReference ref_object)
+    (GetOwningQuest() as doticu_npcp_commands).Stash(ref_object as Actor)
+endFunction
+
 ; Settler Topics
 function Settle(ObjectReference ref_object)
     (GetOwningQuest() as doticu_npcp_commands).Settle_Sync(ref_object as Actor, false)

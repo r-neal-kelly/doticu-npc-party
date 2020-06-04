@@ -51,6 +51,7 @@ doticu_npcp_data    p_DATA          =  none
 
 ; Private Variables
 bool                p_is_created    = false
+Actor               p_ref_menu      =  none
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
@@ -438,6 +439,25 @@ function Greet_Player(Actor ref_actor)
     endIf
 
     GREETER.f_Create(p_DATA, ref_actor)
+endFunction
+
+function Create_Menu()
+    if p_ref_menu
+        Destroy_Menu()
+    endIf
+
+    p_ref_menu = CONSTS.ACTOR_PLAYER.PlaceAtMe(CONSTS.ACTOR_BASE_MENU, 1, false, true) as Actor
+    FUNCS.ACTORS.Move_To(p_ref_menu, CONSTS.ACTOR_PLAYER)
+    p_ref_menu.Enable()
+endFunction
+
+function Destroy_Menu()
+    if !p_ref_menu
+        return
+    endIf
+    
+    p_ref_menu.Disable()
+    p_ref_menu.Delete()
 endFunction
 
 int function Toggle_Move(Actor ref_actor)

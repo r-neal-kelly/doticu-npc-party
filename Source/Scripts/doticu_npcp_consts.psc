@@ -6,6 +6,7 @@ Scriptname doticu_npcp_consts extends Quest
 
 ; Private Constants
 Actor                       p_ACTOR_PLAYER                          = none
+ActorBase                   p_ACTOR_BASE_MENU                       = none
 Cell                        p_CELL_STORAGE                          = none
 Static                      p_STATIC_MARKER_X                       = none
 ObjectReference             p_MARKER_STORAGE                        = none
@@ -159,6 +160,17 @@ Actor property ACTOR_PLAYER
     function Set(Actor val)
         if p_ACTOR_PLAYER == none
             p_ACTOR_PLAYER = val
+        endIf
+    endFunction
+endProperty
+
+ActorBase property ACTOR_BASE_MENU
+    ActorBase function Get()
+        return p_ACTOR_BASE_MENU
+    endFunction
+    function Set(ActorBase val)
+        if p_ACTOR_BASE_MENU == none
+            p_ACTOR_BASE_MENU = val
         endIf
     endFunction
 endProperty
@@ -1643,6 +1655,10 @@ int property DEFAULT_PERCENT_FEET           =    90 autoReadOnly hidden
 int property DEFAULT_PERCENT_HANDS          =    90 autoReadOnly hidden
 int property DEFAULT_PERCENT_HEAD           =    50 autoReadOnly hidden
 
+int property KEY_DEF_G_MODIFIER             =    29 autoReadOnly hidden; Left Control
+int property KEY_DEF_G_DIALOGUE_MENU        =    34 autoReadOnly hidden; G
+
+int property KEY_DEF_FS_MODIFIER            =    29 autoReadOnly hidden; Left Control
 int property KEY_DEF_FS_SUMMON_ALL          =    53 autoReadOnly hidden; Forward Slash
 int property KEY_DEF_FS_SUMMON_MOBILE       =    51 autoReadOnly hidden; Comma
 int property KEY_DEF_FS_SUMMON_IMMOBILE     =    52 autoReadOnly hidden; Period
@@ -1654,16 +1670,12 @@ int property KEY_DEF_FS_SNEAK               =    10 autoReadOnly hidden; 9
 int property KEY_DEF_FS_UNSNEAK             =    11 autoReadOnly hidden; 0
 int property KEY_DEF_FS_RESURRECT           =    14 autoReadOnly hidden; Backspace
 
+int property KEY_DEF_MS_MODIFIER            =    29 autoReadOnly hidden; Left Control
 int property KEY_DEF_MS_DISPLAY_TOGGLE      =    43 autoReadOnly hidden; Back Slash
 int property KEY_DEF_MS_DISPLAY_PREVIOUS    =    26 autoReadOnly hidden; Left Bracket
 int property KEY_DEF_MS_DISPLAY_NEXT        =    27 autoReadOnly hidden; Right Bracket
 
-int property KEY_DEF_MOVE_TOGGLE            =    56 autoReadOnly hidden; Left Alt
-int property KEY_DEF_MOVE_FARTHER           =   200 autoReadOnly hidden; Up Arrow
-int property KEY_DEF_MOVE_NEARER            =   208 autoReadOnly hidden; Down Arrow
-int property KEY_DEF_MOVE_ROTATE_RIGHT      =   205 autoReadOnly hidden; Right Arrow
-int property KEY_DEF_MOVE_ROTATE_LEFT       =   203 autoReadOnly hidden; Left Arrow
-
+int property KEY_DEF_M_MODIFIER             =    29 autoReadOnly hidden; Left Control
 int property KEY_DEF_M_TOGGLE_MEMBER        =    78 autoReadOnly hidden; NUM+
 int property KEY_DEF_M_TOGGLE_CLONE         =   156 autoReadOnly hidden; NUM Enter
 int property KEY_DEF_M_TOGGLE_SETTLER       =    82 autoReadOnly hidden; NUM0
@@ -1673,6 +1685,12 @@ int property KEY_DEF_M_TOGGLE_PARALYZED     =   181 autoReadOnly hidden; NUM/
 int property KEY_DEF_M_TOGGLE_FOLLOWER      =    55 autoReadOnly hidden; NUM*
 int property KEY_DEF_M_TOGGLE_SNEAK         =    74 autoReadOnly hidden; NUM-
 
+int property KEY_DEF_N_MODIFIER             =    29 autoReadOnly hidden; Left Control
+int property KEY_DEF_MOVE_TOGGLE            =    56 autoReadOnly hidden; Left Alt
+int property KEY_DEF_MOVE_FARTHER           =   200 autoReadOnly hidden; Up Arrow
+int property KEY_DEF_MOVE_NEARER            =   208 autoReadOnly hidden; Down Arrow
+int property KEY_DEF_MOVE_ROTATE_RIGHT      =   205 autoReadOnly hidden; Right Arrow
+int property KEY_DEF_MOVE_ROTATE_LEFT       =   203 autoReadOnly hidden; Left Arrow
 int property KEY_DEF_N_HAS_BASE             =    24 autoReadOnly hidden; O
 int property KEY_DEF_N_COUNT_BASE           =    24 autoReadOnly hidden; O
 int property KEY_DEF_N_HAS_HEAD             =    24 autoReadOnly hidden; O
@@ -1765,6 +1783,10 @@ string property STR_MCM_LOCKPICKING         = " Lockpicking "               auto
 string property STR_MCM_PICKPOCKET          = " Pickpocket "                autoReadOnly hidden
 string property STR_MCM_SPEECHCRAFT         = " Speechcraft "               autoReadOnly hidden
 
+string property STR_KEY_G_MODIFIER          = "General Modifier"            autoReadOnly hidden
+string property STR_KEY_G_DIALOGUE_MENU     = "Open General Menu"           autoReadOnly hidden
+
+string property STR_KEY_FS_MODIFIER         = "Followers Modifier"          autoReadOnly hidden
 string property STR_KEY_FS_SUMMON_ALL       = "Summon All Followers"        autoReadOnly hidden
 string property STR_KEY_FS_SUMMON_MOBILE    = "Summon Mobile Followers"     autoReadOnly hidden
 string property STR_KEY_FS_SUMMON_IMMOBILE  = "Summon Immobile Followers"   autoReadOnly hidden
@@ -1776,16 +1798,12 @@ string property STR_KEY_FS_SNEAK            = "Sneak Followers"             auto
 string property STR_KEY_FS_UNSNEAK          = "Unsneak Followers"           autoReadOnly hidden
 string property STR_KEY_FS_RESURRECT        = "Resurrect Followers"         autoReadOnly hidden
 
+string property STR_KEY_MS_MODIFIER         = "Members Modifier"            autoReadOnly hidden
 string property STR_KEY_MS_DISPLAY_TOGGLE   = "Toggle Member Display"       autoReadOnly hidden
 string property STR_KEY_MS_DISPLAY_PREVIOUS = "Display Previous Members"    autoReadOnly hidden
 string property STR_KEY_MS_DISPLAY_NEXT     = "Display Next Members"        autoReadOnly hidden
 
-string property STR_KEY_MOVE_TOGGLE         = "Toggle Move"                 autoReadOnly hidden
-string property STR_KEY_MOVE_FARTHER        = "Move Farther"                autoReadOnly hidden
-string property STR_KEY_MOVE_NEARER         = "Move Nearer"                 autoReadOnly hidden
-string property STR_KEY_MOVE_ROTATE_RIGHT   = "Rotate Right"                autoReadOnly hidden
-string property STR_KEY_MOVE_ROTATE_LEFT    = "Rotate Left"                 autoReadOnly hidden
-
+string property STR_KEY_M_MODIFIER          = "Member/Follower Modifier"    autoReadOnly hidden
 string property STR_KEY_M_TOGGLE_MEMBER     = "Toggle Member"               autoReadOnly hidden
 string property STR_KEY_M_TOGGLE_CLONE      = "Toggle Clone"                autoReadOnly hidden
 string property STR_KEY_M_TOGGLE_SETTLER    = "Toggle Settler"              autoReadOnly hidden
@@ -1795,6 +1813,12 @@ string property STR_KEY_M_TOGGLE_PARALYZED  = "Toggle Paralyzed"            auto
 string property STR_KEY_M_TOGGLE_FOLLOWER   = "Toggle Follower"             autoReadOnly hidden
 string property STR_KEY_M_TOGGLE_SNEAK      = "Toggle Sneak"                autoReadOnly hidden
 
+string property STR_KEY_N_MODIFIER          = "NPC Modifier"                autoReadOnly hidden
+string property STR_KEY_MOVE_TOGGLE         = "Toggle Move"                 autoReadOnly hidden
+string property STR_KEY_MOVE_FARTHER        = "Move Farther"                autoReadOnly hidden
+string property STR_KEY_MOVE_NEARER         = "Move Nearer"                 autoReadOnly hidden
+string property STR_KEY_MOVE_ROTATE_RIGHT   = "Rotate Right"                autoReadOnly hidden
+string property STR_KEY_MOVE_ROTATE_LEFT    = "Rotate Left"                 autoReadOnly hidden
 string property STR_KEY_N_HAS_BASE          = "Has Base"                    autoReadOnly hidden
 string property STR_KEY_N_COUNT_BASE        = "Count Base"                  autoReadOnly hidden
 string property STR_KEY_N_HAS_HEAD          = "Has Head"                    autoReadOnly hidden

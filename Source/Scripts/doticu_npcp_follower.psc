@@ -824,13 +824,15 @@ int function Catch_Up()
 endFunction
 
 int function Unfollow()
-p_Lock()
-    p_ref_member.Unfollow()
-p_Unlock()
+    return p_ref_member.Unfollow()
 endFunction
 
 int function Pack(int code_exec)
     return p_ref_member.Pack(code_exec)
+endFunction
+
+int function Stash()
+    return p_ref_member.Stash()
 endFunction
 
 int function Settle(int code_exec)
