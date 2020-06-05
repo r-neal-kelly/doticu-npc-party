@@ -104,8 +104,11 @@ int function f_To_Relative_Idx(int idx_alias)
 endFunction
 
 ReferenceAlias function f_Get_Alias(int id_alias); can this be removed?
-    if -1 < id_alias && id_alias < p_MAX_ALIASES
-        return GetNthAlias(id_alias) as ReferenceAlias
+    if id_alias > -1 && id_alias < p_MAX_ALIASES
+p_Lock()
+        ReferenceAlias ref_alias = GetNthAlias(id_alias) as ReferenceAlias
+p_Unlock()
+        return ref_alias
     else
         return none
     endIf
@@ -351,9 +354,9 @@ int function Get_Max()
 endFunction
 
 bool function Has_Alias(int id_alias, Actor ref_actor)
-    p_Lock()
-        bool res = p_Has_Alias(id_alias, ref_actor)
-    p_Unlock()
+p_Lock()
+    bool res = p_Has_Alias(id_alias, ref_actor)
+p_Unlock()
 
     return res
 endFunction

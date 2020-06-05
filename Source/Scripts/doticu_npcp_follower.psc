@@ -142,9 +142,9 @@ function f_Destroy()
 
 p_Lock()
     p_prev_faction_bard_no_auto = false
-    p_prev_speed_mult =  -1.0
-    p_prev_waiting_for_player =  -1.0
-    p_prev_relationship_rank =    -1
+    p_prev_speed_mult = -1.0
+    p_prev_waiting_for_player = -1.0
+    p_prev_relationship_rank = -1
 
     p_is_catching_up = false
     p_is_retreater = false
@@ -184,13 +184,13 @@ function f_Unregister()
 endFunction
 
 function f_Enforce()
-    if !Exists() || Is_Dead()
+    if !Exists()
         return
     endIf
 
     p_Follow()
 
-    if !Exists() || Is_Dead()
+    if !Exists()
         return
     endIf
 
@@ -200,7 +200,7 @@ function f_Enforce()
         p_Unretreat()
     endIf
 
-    if !Exists() || Is_Dead()
+    if !Exists()
         return
     endIf
 
@@ -210,7 +210,7 @@ function f_Enforce()
         p_Unsneak()
     endIf
 
-    if !Exists() || Is_Dead()
+    if !Exists()
         return
     endIf
 

@@ -12,65 +12,93 @@
 namespace doticu_npcp { namespace Aliases {
 
     int Compare_Name(const void *ptr_item_a, const void *ptr_item_b) {
-        BGSBaseAlias *ptr_alias_a = *(BGSBaseAlias **)ptr_item_a;
-        BGSBaseAlias *ptr_alias_b = *(BGSBaseAlias **)ptr_item_b;
-        if (!ptr_alias_a || !ptr_alias_b) {
+        BGSBaseAlias *alias_a = *(BGSBaseAlias **)ptr_item_a;
+        BGSBaseAlias *alias_b = *(BGSBaseAlias **)ptr_item_b;
+        if (!alias_a || !alias_b) {
             // if just one is NULL, then the non-NULL will be put ahead
-            return ptr_alias_b - ptr_alias_a;
+            return alias_b - alias_a;
         }
 
-        BSFixedString str_actor_a = CALL_MEMBER_FN(Alias::Get_Actor(ptr_alias_a), GetReferenceName)();
-        BSFixedString str_actor_b = CALL_MEMBER_FN(Alias::Get_Actor(ptr_alias_b), GetReferenceName)();
+        Actor *actor_a = Alias::Get_Actor(alias_a);
+        Actor *actor_b = Alias::Get_Actor(alias_b);
+        if (!actor_a || !actor_b) {
+            // if just one is NULL, then the non-NULL will be put ahead
+            return actor_b - actor_a;
+        }
+
+        BSFixedString str_actor_a = CALL_MEMBER_FN(actor_a, GetReferenceName)();
+        BSFixedString str_actor_b = CALL_MEMBER_FN(actor_b, GetReferenceName)();
 
         return strcmp(str_actor_a.data, str_actor_b.data);
     }
     int Compare_Name_Caseless(const void *ptr_item_a, const void *ptr_item_b) {
-        BGSBaseAlias *ptr_alias_a = *(BGSBaseAlias **)ptr_item_a;
-        BGSBaseAlias *ptr_alias_b = *(BGSBaseAlias **)ptr_item_b;
-        if (!ptr_alias_a || !ptr_alias_b) {
+        BGSBaseAlias *alias_a = *(BGSBaseAlias **)ptr_item_a;
+        BGSBaseAlias *alias_b = *(BGSBaseAlias **)ptr_item_b;
+        if (!alias_a || !alias_b) {
             // if just one is NULL, then the non-NULL will be put ahead
-            return ptr_alias_b - ptr_alias_a;
+            return alias_b - alias_a;
         }
 
-        BSFixedString str_actor_a = CALL_MEMBER_FN(Alias::Get_Actor(ptr_alias_a), GetReferenceName)();
-        BSFixedString str_actor_b = CALL_MEMBER_FN(Alias::Get_Actor(ptr_alias_b), GetReferenceName)();
+        Actor *actor_a = Alias::Get_Actor(alias_a);
+        Actor *actor_b = Alias::Get_Actor(alias_b);
+        if (!actor_a || !actor_b) {
+            // if just one is NULL, then the non-NULL will be put ahead
+            return actor_b - actor_a;
+        }
+
+        BSFixedString str_actor_a = CALL_MEMBER_FN(actor_a, GetReferenceName)();
+        BSFixedString str_actor_b = CALL_MEMBER_FN(actor_b, GetReferenceName)();
 
         return _stricmp(str_actor_a.data, str_actor_b.data);
     }
     int Compare_Rating_Name(const void *ptr_item_a, const void *ptr_item_b) {
-        BGSBaseAlias *ptr_alias_a = *(BGSBaseAlias **)ptr_item_a;
-        BGSBaseAlias *ptr_alias_b = *(BGSBaseAlias **)ptr_item_b;
-        if (!ptr_alias_a || !ptr_alias_b) {
+        BGSBaseAlias *alias_a = *(BGSBaseAlias **)ptr_item_a;
+        BGSBaseAlias *alias_b = *(BGSBaseAlias **)ptr_item_b;
+        if (!alias_a || !alias_b) {
             // if just one is NULL, then the non-NULL will be put ahead
-            return ptr_alias_b - ptr_alias_a;
+            return alias_b - alias_a;
         }
 
-        SInt32 int_rating_a = Alias::Get_Rating(ptr_alias_a);
-        SInt32 int_rating_b = Alias::Get_Rating(ptr_alias_b);
+        Actor *actor_a = Alias::Get_Actor(alias_a);
+        Actor *actor_b = Alias::Get_Actor(alias_b);
+        if (!actor_a || !actor_b) {
+            // if just one is NULL, then the non-NULL will be put ahead
+            return actor_b - actor_a;
+        }
+
+        SInt32 int_rating_a = Alias::Get_Rating(alias_a);
+        SInt32 int_rating_b = Alias::Get_Rating(alias_b);
         if (int_rating_a != int_rating_b) {
             return int_rating_b - int_rating_a;
         } else {
-            BSFixedString str_actor_a = CALL_MEMBER_FN(Alias::Get_Actor(ptr_alias_a), GetReferenceName)();
-            BSFixedString str_actor_b = CALL_MEMBER_FN(Alias::Get_Actor(ptr_alias_b), GetReferenceName)();
+            BSFixedString str_actor_a = CALL_MEMBER_FN(actor_a, GetReferenceName)();
+            BSFixedString str_actor_b = CALL_MEMBER_FN(actor_b, GetReferenceName)();
 
             return strcmp(str_actor_a.data, str_actor_b.data);
         }
     }
     int Compare_Rating_Name_Caseless(const void *ptr_item_a, const void *ptr_item_b) {
-        BGSBaseAlias *ptr_alias_a = *(BGSBaseAlias **)ptr_item_a;
-        BGSBaseAlias *ptr_alias_b = *(BGSBaseAlias **)ptr_item_b;
-        if (!ptr_alias_a || !ptr_alias_b) {
+        BGSBaseAlias *alias_a = *(BGSBaseAlias **)ptr_item_a;
+        BGSBaseAlias *alias_b = *(BGSBaseAlias **)ptr_item_b;
+        if (!alias_a || !alias_b) {
             // if just one is NULL, then the non-NULL will be put ahead
-            return ptr_alias_b - ptr_alias_a;
+            return alias_b - alias_a;
         }
 
-        SInt32 int_rating_a = Alias::Get_Rating(ptr_alias_a);
-        SInt32 int_rating_b = Alias::Get_Rating(ptr_alias_b);
+        Actor *actor_a = Alias::Get_Actor(alias_a);
+        Actor *actor_b = Alias::Get_Actor(alias_b);
+        if (!actor_a || !actor_b) {
+            // if just one is NULL, then the non-NULL will be put ahead
+            return actor_b - actor_a;
+        }
+
+        SInt32 int_rating_a = Alias::Get_Rating(alias_a);
+        SInt32 int_rating_b = Alias::Get_Rating(alias_b);
         if (int_rating_a != int_rating_b) {
             return int_rating_b - int_rating_a;
         } else {
-            BSFixedString str_actor_a = CALL_MEMBER_FN(Alias::Get_Actor(ptr_alias_a), GetReferenceName)();
-            BSFixedString str_actor_b = CALL_MEMBER_FN(Alias::Get_Actor(ptr_alias_b), GetReferenceName)();
+            BSFixedString str_actor_a = CALL_MEMBER_FN(actor_a, GetReferenceName)();
+            BSFixedString str_actor_b = CALL_MEMBER_FN(actor_b, GetReferenceName)();
 
             return _stricmp(str_actor_a.data, str_actor_b.data);
         }
