@@ -46,6 +46,8 @@ namespace doticu_npcp { namespace Object_Ref {
     void Categorize(TESObjectREFR *ref_object);
     void Log_XContainer(TESObjectREFR *ref_object);
 
+    void Move_To_Orbit(TESObjectREFR *obj, TESObjectREFR *target, float radius, float angle_degree);
+
 }}
 
 namespace doticu_npcp { namespace Object_Ref { namespace Exports {

@@ -8,6 +8,7 @@
 #include "aliases.h"
 #include "actor_base2.h"
 #include "actor2.h"
+#include "member.h"
 
 namespace doticu_npcp { namespace Aliases {
 
@@ -19,8 +20,8 @@ namespace doticu_npcp { namespace Aliases {
             return alias_b - alias_a;
         }
 
-        Actor *actor_a = Alias::Get_Actor(alias_a);
-        Actor *actor_b = Alias::Get_Actor(alias_b);
+        Actor *actor_a = Member::Get_Actor(alias_a);
+        Actor *actor_b = Member::Get_Actor(alias_b);
         if (!actor_a || !actor_b) {
             // if just one is NULL, then the non-NULL will be put ahead
             return actor_b - actor_a;
@@ -39,8 +40,8 @@ namespace doticu_npcp { namespace Aliases {
             return alias_b - alias_a;
         }
 
-        Actor *actor_a = Alias::Get_Actor(alias_a);
-        Actor *actor_b = Alias::Get_Actor(alias_b);
+        Actor *actor_a = Member::Get_Actor(alias_a);
+        Actor *actor_b = Member::Get_Actor(alias_b);
         if (!actor_a || !actor_b) {
             // if just one is NULL, then the non-NULL will be put ahead
             return actor_b - actor_a;
@@ -59,15 +60,15 @@ namespace doticu_npcp { namespace Aliases {
             return alias_b - alias_a;
         }
 
-        Actor *actor_a = Alias::Get_Actor(alias_a);
-        Actor *actor_b = Alias::Get_Actor(alias_b);
+        Actor *actor_a = Member::Get_Actor(alias_a);
+        Actor *actor_b = Member::Get_Actor(alias_b);
         if (!actor_a || !actor_b) {
             // if just one is NULL, then the non-NULL will be put ahead
             return actor_b - actor_a;
         }
 
-        SInt32 int_rating_a = Alias::Get_Rating(alias_a);
-        SInt32 int_rating_b = Alias::Get_Rating(alias_b);
+        SInt32 int_rating_a = Member::Get_Rating(alias_a);
+        SInt32 int_rating_b = Member::Get_Rating(alias_b);
         if (int_rating_a != int_rating_b) {
             return int_rating_b - int_rating_a;
         } else {
@@ -85,15 +86,15 @@ namespace doticu_npcp { namespace Aliases {
             return alias_b - alias_a;
         }
 
-        Actor *actor_a = Alias::Get_Actor(alias_a);
-        Actor *actor_b = Alias::Get_Actor(alias_b);
+        Actor *actor_a = Member::Get_Actor(alias_a);
+        Actor *actor_b = Member::Get_Actor(alias_b);
         if (!actor_a || !actor_b) {
             // if just one is NULL, then the non-NULL will be put ahead
             return actor_b - actor_a;
         }
 
-        SInt32 int_rating_a = Alias::Get_Rating(alias_a);
-        SInt32 int_rating_b = Alias::Get_Rating(alias_b);
+        SInt32 int_rating_a = Member::Get_Rating(alias_a);
+        SInt32 int_rating_b = Member::Get_Rating(alias_b);
         if (int_rating_a != int_rating_b) {
             return int_rating_b - int_rating_a;
         } else {
@@ -120,7 +121,7 @@ namespace doticu_npcp { namespace Aliases {
                 continue;
             }
 
-            Actor *actor = Alias::Get_Actor(alias);
+            Actor *actor = Member::Get_Actor(alias);
             if (!actor) {
                 continue;
             }
@@ -151,7 +152,7 @@ namespace doticu_npcp { namespace Aliases {
                 continue;
             }
 
-            Actor *actor = Alias::Get_Actor(alias);
+            Actor *actor = Member::Get_Actor(alias);
             if (!actor) {
                 continue;
             }
@@ -284,8 +285,8 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
             ALIAS = ptr_vec_read->at(it_idx)    \
         )
 
-        #define READ_ACTOR (                \
-            ACTOR = Alias::Get_Actor(ALIAS) \
+        #define READ_ACTOR (                    \
+            ACTOR = Member::Get_Actor(ALIAS)    \
         )
 
         #define WRITE_ALIAS (               \
@@ -374,7 +375,7 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
         if (int_style < 0) {
             FOR_EACH() {
                 READ_ALIAS;
-                if (Alias::Get_Style(ALIAS) == int_style) {
+                if (Member::Get_Style(ALIAS) == int_style) {
                     WRITE_ALIAS;
                 }
             }
@@ -385,7 +386,7 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
         if (int_vitality < 0) {
             FOR_EACH() {
                 READ_ALIAS;
-                if (Alias::Get_Vitality(ALIAS) == int_vitality) {
+                if (Member::Get_Vitality(ALIAS) == int_vitality) {
                     WRITE_ALIAS;
                 }
             }
@@ -396,7 +397,7 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
         if (int_outfit2 < 0) {
             FOR_EACH() {
                 READ_ALIAS;
-                if (Alias::Get_Outfit2(ALIAS) == int_outfit2) {
+                if (Member::Get_Outfit2(ALIAS) == int_outfit2) {
                     WRITE_ALIAS;
                 }
             }
@@ -407,7 +408,7 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
         if (int_rating > -1) {
             FOR_EACH() {
                 READ_ALIAS;
-                if (Alias::Get_Rating(ALIAS) == int_rating) {
+                if (Member::Get_Rating(ALIAS) == int_rating) {
                     WRITE_ALIAS;
                 }
             }
@@ -439,7 +440,7 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
         if (Bit_Is_Set(int_flags, IS_ORIGINAL)) {
             FOR_EACH() {
                 READ_ALIAS;
-                if (Alias::Is_Original(ALIAS)) {
+                if (Member::Is_Original(ALIAS)) {
                     WRITE_ALIAS;
                 }
             }
@@ -447,7 +448,7 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
         } else if (Bit_Is_Set(int_flags, IS_CLONE)) {
             FOR_EACH() {
                 READ_ALIAS;
-                if (Alias::Is_Clone(ALIAS)) {
+                if (Member::Is_Clone(ALIAS)) {
                     WRITE_ALIAS;
                 }
             }
@@ -458,7 +459,7 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
         if (Bit_Is_Set(int_flags, IS_FOLLOWER)) {
             FOR_EACH() {
                 READ_ALIAS;
-                if (Alias::Is_Follower(ALIAS)) {
+                if (Member::Is_Follower(ALIAS)) {
                     WRITE_ALIAS;
                 }
             }
@@ -466,7 +467,7 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
         } else if (Bit_Is_Set(int_flags, ISNT_FOLLOWER)) {
             FOR_EACH() {
                 READ_ALIAS;
-                if (!Alias::Is_Follower(ALIAS)) {
+                if (!Member::Is_Follower(ALIAS)) {
                     WRITE_ALIAS;
                 }
             }
@@ -477,7 +478,7 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
         if (Bit_Is_Set(int_flags, IS_SETTLER)) {
             FOR_EACH() {
                 READ_ALIAS;
-                if (Alias::Is_Settler(ALIAS)) {
+                if (Member::Is_Settler(ALIAS)) {
                     WRITE_ALIAS;
                 }
             }
@@ -485,7 +486,7 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
         } else if (Bit_Is_Set(int_flags, ISNT_SETTLER)) {
             FOR_EACH() {
                 READ_ALIAS;
-                if (!Alias::Is_Settler(ALIAS)) {
+                if (!Member::Is_Settler(ALIAS)) {
                     WRITE_ALIAS;
                 }
             }
@@ -496,7 +497,7 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
         if (Bit_Is_Set(int_flags, IS_IMMOBILE)) {
             FOR_EACH() {
                 READ_ALIAS;
-                if (Alias::Is_Immobile(ALIAS)) {
+                if (Member::Is_Immobile(ALIAS)) {
                     WRITE_ALIAS;
                 }
             }
@@ -504,7 +505,7 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
         } else if (Bit_Is_Set(int_flags, ISNT_IMMOBILE)) {
             FOR_EACH() {
                 READ_ALIAS;
-                if (!Alias::Is_Immobile(ALIAS)) {
+                if (!Member::Is_Immobile(ALIAS)) {
                     WRITE_ALIAS;
                 }
             }
@@ -515,7 +516,7 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
         if (Bit_Is_Set(int_flags, IS_THRALL)) {
             FOR_EACH() {
                 READ_ALIAS;
-                if (Alias::Is_Thrall(ALIAS)) {
+                if (Member::Is_Thrall(ALIAS)) {
                     WRITE_ALIAS;
                 }
             }
@@ -523,7 +524,7 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
         } else if (Bit_Is_Set(int_flags, ISNT_THRALL)) {
             FOR_EACH() {
                 READ_ALIAS;
-                if (!Alias::Is_Thrall(ALIAS)) {
+                if (!Member::Is_Thrall(ALIAS)) {
                     WRITE_ALIAS;
                 }
             }
@@ -534,7 +535,7 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
         if (Bit_Is_Set(int_flags, IS_PARALYZED)) {
             FOR_EACH() {
                 READ_ALIAS;
-                if (Alias::Is_Paralyzed(ALIAS)) {
+                if (Member::Is_Paralyzed(ALIAS)) {
                     WRITE_ALIAS;
                 }
             }
@@ -542,7 +543,7 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
         } else if (Bit_Is_Set(int_flags, ISNT_PARALYZED)) {
             FOR_EACH() {
                 READ_ALIAS;
-                if (!Alias::Is_Paralyzed(ALIAS)) {
+                if (!Member::Is_Paralyzed(ALIAS)) {
                     WRITE_ALIAS;
                 }
             }
@@ -553,7 +554,7 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
         if (Bit_Is_Set(int_flags, IS_MANNEQUIN)) {
             FOR_EACH() {
                 READ_ALIAS;
-                if (Alias::Is_Mannequin(ALIAS)) {
+                if (Member::Is_Mannequin(ALIAS)) {
                     WRITE_ALIAS;
                 }
             }
@@ -561,7 +562,7 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
         } else if (Bit_Is_Set(int_flags, ISNT_MANNEQUIN)) {
             FOR_EACH() {
                 READ_ALIAS;
-                if (!Alias::Is_Mannequin(ALIAS)) {
+                if (!Member::Is_Mannequin(ALIAS)) {
                     WRITE_ALIAS;
                 }
             }
@@ -572,7 +573,7 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
         if (Bit_Is_Set(int_flags, IS_REANIMATED)) {
             FOR_EACH() {
                 READ_ALIAS;
-                if (Alias::Is_Reanimated(ALIAS)) {
+                if (Member::Is_Reanimated(ALIAS)) {
                     WRITE_ALIAS;
                 }
             }
@@ -580,7 +581,7 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
         } else if (Bit_Is_Set(int_flags, ISNT_REANIMATED)) {
             FOR_EACH() {
                 READ_ALIAS;
-                if (!Alias::Is_Reanimated(ALIAS)) {
+                if (!Member::Is_Reanimated(ALIAS)) {
                     WRITE_ALIAS;
                 }
             }
@@ -701,7 +702,7 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
 
         for (idx_aliases = 0, num_aliases = arr_aliases.Length(); idx_aliases < num_aliases; idx_aliases += 1) {
             arr_aliases.Get(&ptr_alias, idx_aliases);
-            ptr_actor = Alias::Get_Actor(ptr_alias);
+            ptr_actor = Member::Get_Actor(ptr_alias);
             if (ptr_actor) {
                 ptr_race_name = ptr_actor->race->fullName.name;
 

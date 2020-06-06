@@ -494,6 +494,44 @@ namespace doticu_npcp { namespace Actor2 {
         return Actor_Base2::Has_Same_Head(actor_base_a, actor_base_b);
     }
 
+    bool Is_Alive(Actor *actor) {
+        if (!actor) {
+            return false;
+        }
+
+        return !actor->IsDead(1);
+    }
+
+    bool Is_Dead(Actor *actor) {
+        if (!actor) {
+            return false;
+        }
+
+        return actor->IsDead(1);
+    }
+
+    bool Is_AI_Enabled(Actor *actor) {
+        if (!actor) {
+            return false;
+        }
+
+        return (actor->flags1 & Actor::kFlags_AIEnabled) == Actor::kFlags_AIEnabled;
+    }
+
+    void Move_To_Orbit(Actor *actor, TESObjectREFR *target, float radius, float angle_degree) {
+        if (!actor || !target) {
+            return;
+        }
+
+        Object_Ref::Move_To_Orbit(actor, target, radius, angle_degree);
+
+        if (!Is_AI_Enabled(actor)) {
+            // need to be careful, if they are on a horse. their extradata may have kExtraData_Horse as an indicator
+            // make sure to test once we have followers riding horses.
+            CALL_MEMBER_FN(actor, QueueNiNodeUpdate)(false);
+        }        
+    }
+
 }}
 
 namespace doticu_npcp { namespace Actor2 { namespace Exports {

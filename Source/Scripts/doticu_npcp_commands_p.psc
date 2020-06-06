@@ -911,7 +911,7 @@ function Toggle_Members_Display(Actor ref_actor)
 endFunction
 
 function Followers_Summon_All()
-    NOTES.Followers_Summon_All(FOLLOWERS.Summon_All())
+    NOTES.Followers_Summon_All(FOLLOWERS.Summon())
 endFunction
 
 function Followers_Summon_Mobile()
@@ -920,10 +920,6 @@ endFunction
 
 function Followers_Summon_Immobile()
     NOTES.Followers_Summon_Immobile(FOLLOWERS.Summon_Immobile())
-endFunction
-
-function Followers_Summon_Mobile_Behind()
-    NOTES.Followers_Summon_Mobile_Behind(FOLLOWERS.Summon_Mobile_Behind())
 endFunction
 
 function Followers_Settle()
@@ -967,7 +963,7 @@ function Followers_Unmember()
 endFunction
 
 function Toggle_Followers_Settle()
-    if FOLLOWERS.Get_Count_Settler() > 0
+    if FOLLOWERS.Get_Settler_Count() > 0
         Followers_Unsettle()
     else
         Followers_Settle()
@@ -975,7 +971,7 @@ function Toggle_Followers_Settle()
 endFunction
 
 function Toggle_Followers_Immobilize()
-    if FOLLOWERS.Get_Count_Immobile() > 0
+    if FOLLOWERS.Get_Immobile_Count() > 0
         Followers_Mobilize()
     else
         Followers_Immobilize()
@@ -983,7 +979,7 @@ function Toggle_Followers_Immobilize()
 endFunction
 
 function Toggle_Followers_Sneak()
-    if FOLLOWERS.Get_Count_Sneak() > 0
+    if FOLLOWERS.Get_Sneak_Count() > 0
         Followers_Unsneak()
     else
         Followers_Sneak()

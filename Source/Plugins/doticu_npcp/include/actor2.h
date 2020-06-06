@@ -29,6 +29,13 @@ namespace doticu_npcp { namespace Actor2 {
 
     bool Has_Same_Head(Actor *actor_a, Actor *actor_b);
 
+    bool Is_Alive(Actor *actor);
+    bool Is_Dead(Actor *actor);
+
+    bool Is_AI_Enabled(Actor *actor);
+
+    void Move_To_Orbit(Actor *obj, TESObjectREFR *target, float radius, float angle_degree);
+
 }}
 
 namespace doticu_npcp { namespace Actor2 { namespace Exports {

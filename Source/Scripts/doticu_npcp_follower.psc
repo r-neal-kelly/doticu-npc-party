@@ -72,9 +72,11 @@ bool                    p_is_created                = false
 int                     p_id_alias                  =    -1
 Actor                   p_ref_actor                 =  none
 doticu_npcp_member      p_ref_member                =  none
+Actor                   p_ref_horse                 =  none
 int                     p_style_follower            =    -1
 int                     p_level_follower            =    -1
 bool                    p_is_sneak                  = false
+bool                    p_is_saddler                = false
 bool                    p_is_retreater              = false
 bool                    p_is_catching_up            = false
 
@@ -114,6 +116,7 @@ p_Lock()
     p_id_alias = id_alias
     p_ref_actor = GetActorReference() as Actor
     p_ref_member = MEMBERS.Get_Member(p_ref_actor)
+    p_ref_horse = none
     p_style_follower = p_ref_member.Get_Style()
     p_level_follower = -1
     p_is_sneak = false
@@ -129,6 +132,8 @@ p_Unlock()
 endFunction
 
 function f_Destroy()
+    ; Saddler
+
     if p_is_retreater
         p_Unretreat()
     endIf
@@ -151,6 +156,7 @@ p_Lock()
     p_is_sneak = false
     p_level_follower = -1
     p_style_follower = -1
+    p_ref_horse = none
     p_ref_member = none
     p_ref_actor = none
     p_id_alias = -1
@@ -170,6 +176,8 @@ function f_Register()
     RegisterForModEvent("doticu_npcp_followers_mobilize", "On_Followers_Mobilize")
     RegisterForModEvent("doticu_npcp_followers_sneak", "On_Followers_Sneak")
     RegisterForModEvent("doticu_npcp_followers_unsneak", "On_Followers_Unsneak")
+    RegisterForModEvent("doticu_npcp_followers_saddle", "On_Followers_Saddle")
+    RegisterForModEvent("doticu_npcp_followers_unsaddle", "On_Followers_Unsaddle")
     RegisterForModEvent("doticu_npcp_followers_unretreat", "On_Followers_Unretreat")
     RegisterForModEvent("doticu_npcp_followers_unfollow", "On_Followers_Unfollow")
     RegisterForModEvent("doticu_npcp_followers_unmember", "On_Followers_Unmember")
@@ -209,6 +217,8 @@ function f_Enforce()
     else
         p_Unsneak()
     endIf
+
+    ; Saddler
 
     if !Exists()
         return
@@ -662,6 +672,50 @@ function p_Relevel()
     p_Level()
 endFunction
 
+function p_Saddle()
+p_Lock()
+
+    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_SADDLER)
+
+    if !p_ref_horse
+        p_ref_horse = p_ref_actor.PlaceAtMe(CONSTS.LEVELED_ACTOR_HORSES_SADDLED, 1, true, false) as Actor
+    endIf
+
+    if !p_ref_horse.IsEnabled()
+        p_ref_horse.Enable()
+    endIf
+
+    if p_ref_horse.IsDead()
+        p_ref_horse.Resurrect()
+    endIf
+
+    ; we need to support leveled bases (members) as opposed to real bases (clones) only
+    p_ref_horse.SetActorOwner(ACTORS.Get_Leveled_Base(p_ref_actor))
+
+    p_ref_actor.EvaluatePackage()
+
+p_Unlock()
+endFunction
+
+function p_Unsaddle()
+p_Lock()
+
+    ; IsOnMount
+    ; Dismount
+
+    if p_ref_actor.IsOnMount()
+        p_ref_actor.Dismount()
+    endIf
+
+    p_ref_horse.Disable()
+
+    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_SADDLER)
+
+    p_ref_actor.EvaluatePackage()
+
+p_Unlock()
+endFunction
+
 bool function p_Async(string str_func)
     string str_event = "doticu_npcp_follower_async_" + p_id_alias
 
@@ -756,6 +810,38 @@ event On_Unsneak()
         p_Unsneak()
     endIf
 endEvent
+
+int function Saddle()
+    if !Exists()
+        return CODES.ISNT_FOLLOWER
+    endIf
+
+    if Is_Saddler()
+        return CODES.IS_SADDLER
+    endIf
+
+    p_is_saddler = true
+
+    p_Saddle()
+
+    return CODES.SUCCESS
+endFunction
+
+int function Unsaddle()
+    if !Exists()
+        return CODES.ISNT_FOLLOWER
+    endIf
+
+    if Isnt_Saddler()
+        return CODES.ISNT_SADDLER
+    endIf
+
+    p_is_saddler = false
+
+    p_Unsaddle()
+
+    return CODES.SUCCESS
+endFunction
 
 int function Retreat()
     if !Exists()
@@ -869,6 +955,14 @@ endFunction
 
 bool function Is_Unsneak()
     return Exists() && !p_is_sneak
+endFunction
+
+bool function Is_Saddler()
+    return Exists() && p_is_saddler
+endFunction
+
+bool function Isnt_Saddler()
+    return Exists() && !p_is_saddler
 endFunction
 
 bool function Is_Retreater()
@@ -1049,6 +1143,20 @@ endEvent
 event On_Followers_Unsneak(Form form_tasklist)
     if Exists() && Is_Sneak()
         Unsneak(CODES.DO_SYNC)
+        (form_tasklist as doticu_npcp_tasklist).Detask()
+    endIf
+endEvent
+
+event On_Followers_Saddle(Form form_tasklist)
+    if Exists() && Isnt_Saddler()
+        Saddle()
+        (form_tasklist as doticu_npcp_tasklist).Detask()
+    endIf
+endEvent
+
+event On_Followers_Unsaddle(Form form_tasklist)
+    if Exists() && Is_Saddler()
+        Unsaddle()
         (form_tasklist as doticu_npcp_tasklist).Detask()
     endIf
 endEvent

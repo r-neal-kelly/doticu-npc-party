@@ -10,7 +10,6 @@
 
 #include "utils.h"
 #include "papyrus.h"
-#include "alias.h"
 
 namespace doticu_npcp { namespace Quest {
 

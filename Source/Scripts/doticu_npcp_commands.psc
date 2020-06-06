@@ -139,12 +139,6 @@ function Followers_Summon_Immobile()
     GotoState("")
 endFunction
 
-function Followers_Summon_Mobile_Behind()
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Followers_Summon_Mobile_Behind", none)
-    GotoState("")
-endFunction
-
 function Followers_Settle()
     GotoState("p_STATE_BUSY")
     p_Enqueue("Followers_Settle", none)
@@ -773,8 +767,6 @@ event On_Queue_Commands(string str_message, Form form_actor, bool auto_create)
         PRIVATE.Followers_Summon_Mobile()
     elseIf str_message == "Followers_Summon_Immobile"
         PRIVATE.Followers_Summon_Immobile()
-    elseIf str_message == "Followers_Summon_Mobile_Behind"
-        PRIVATE.Followers_Summon_Mobile_Behind()
     elseIf str_message == "Followers_Settle"
         PRIVATE.Followers_Settle()
     elseIf str_message == "Followers_Unsettle"
@@ -945,8 +937,6 @@ state p_STATE_BUSY
     endFunction
     function Followers_Summon_Immobile()
     endFunction
-    function Followers_Summon_Mobile_Behind()
-    endFunction
     function Followers_Settle()
     endFunction
     function Followers_Unsettle()
@@ -1005,9 +995,6 @@ state f_STATE_UPDATING
         LOGS.Notify_Is_Updating()
     endFunction
     function Followers_Summon_Immobile()
-        LOGS.Notify_Is_Updating()
-    endFunction
-    function Followers_Summon_Mobile_Behind()
         LOGS.Notify_Is_Updating()
     endFunction
     function Followers_Settle()

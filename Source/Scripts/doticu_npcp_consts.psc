@@ -7,6 +7,7 @@ Scriptname doticu_npcp_consts extends Quest
 ; Private Constants
 Actor                       p_ACTOR_PLAYER                          = none
 ActorBase                   p_ACTOR_BASE_MENU                       = none
+LeveledActor                p_LEVELED_ACTOR_HORSES_SADDLED          = none
 Cell                        p_CELL_STORAGE                          = none
 Static                      p_STATIC_MARKER_X                       = none
 ObjectReference             p_MARKER_STORAGE                        = none
@@ -32,6 +33,7 @@ MiscObject                  p_TOKEN_GREETER                         = none
 MiscObject                  p_TOKEN_PARALYZED                       = none
 MiscObject                  p_TOKEN_MANNEQUIN                       = none
 MiscObject                  p_TOKEN_RETREATER                       = none
+MiscObject                  p_TOKEN_SADDLER                         = none
 MiscObject                  p_TOKEN_STYLE_DEFAULT                   = none
 MiscObject                  p_TOKEN_STYLE_WARRIOR                   = none
 MiscObject                  p_TOKEN_STYLE_MAGE                      = none
@@ -171,6 +173,17 @@ ActorBase property ACTOR_BASE_MENU
     function Set(ActorBase val)
         if p_ACTOR_BASE_MENU == none
             p_ACTOR_BASE_MENU = val
+        endIf
+    endFunction
+endProperty
+
+LeveledActor property LEVELED_ACTOR_HORSES_SADDLED
+    LeveledActor function Get()
+        return p_LEVELED_ACTOR_HORSES_SADDLED
+    endFunction
+    function Set(LeveledActor val)
+        if p_LEVELED_ACTOR_HORSES_SADDLED == none
+            p_LEVELED_ACTOR_HORSES_SADDLED = val
         endIf
     endFunction
 endProperty
@@ -446,6 +459,17 @@ MiscObject property TOKEN_RETREATER
     function Set(MiscObject val)
         if p_TOKEN_RETREATER == none
             p_TOKEN_RETREATER = val
+        endIf
+    endFunction
+endProperty
+
+MiscObject property TOKEN_SADDLER
+    MiscObject function Get()
+        return p_TOKEN_SADDLER
+    endFunction
+    function Set(MiscObject val)
+        if p_TOKEN_SADDLER == none
+            p_TOKEN_SADDLER = val
         endIf
     endFunction
 endProperty

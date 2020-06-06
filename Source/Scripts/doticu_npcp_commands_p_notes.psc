@@ -685,18 +685,6 @@ function Followers_Summon_Immobile(int code_return)
     endIf
 endFunction
 
-function Followers_Summon_Mobile_Behind(int code_return)
-    if code_return == CODES.SUCCESS
-        LOGS.Create_Note("Summoned all mobile followers behind you.")
-    elseIf code_return == CODES.HASNT_FOLLOWER
-        LOGS.Create_Note("No followers to summon.")
-    elseIf code_return == CODES.HASNT_MOBILE
-        LOGS.Create_Note("No mobile followers to summon.")
-    else
-        LOGS.Create_Error("Could not summon mobile followers: " + code_return)
-    endIf
-endFunction
-
 function Followers_Settle(int code_return)
     if code_return == CODES.SUCCESS
         LOGS.Create_Note("All followers settle where they stand.")
@@ -748,7 +736,7 @@ function Followers_Sneak(int code_return)
         LOGS.Create_Note("All followers will sneak.")
     elseIf code_return == CODES.HASNT_FOLLOWER
         LOGS.Create_Note("No followers to sneak.")
-    elseIf code_return == CODES.HASNT_UNSNEAK
+    elseIf code_return == CODES.HASNT_NON_SNEAK
         LOGS.Create_Note("All followers are already sneaking.")
     else
         LOGS.Create_Error("Could not make followers sneak: " + code_return)

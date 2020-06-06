@@ -36,7 +36,7 @@ bool function Aliases_Has_Head(Alias[] arr_aliases, ActorBase base_with_head) na
 int function Aliases_Count_Heads(Alias[] arr_aliases, ActorBase base_with_head, bool do_print = false) native global
 
 ; Followers
-function Followers_Stash(Quest ref_quest) native global
+function Followers_Stash(Quest ref_followers) native global
 
 ; Forms
 Form[] function Forms_Slice(Form[] arr_forms, int idx_from, int idx_to_ex) native global

@@ -21,4 +21,8 @@ namespace doticu_npcp {
     typedef BaseExtraList           XList_t;
     typedef BSExtraData             XData_t;
 
+    typedef BGSBaseAlias            Member_t;
+    typedef TESQuest                Followers_t;
+    typedef BGSBaseAlias            Follower_t;
+
 }

@@ -578,14 +578,14 @@ p_Lock()
 p_Unlock()
 endFunction
 
-function Lock_Base(Actor ref_actor, float timeout = 15.0)
+function Lock_Base(Actor ref_actor, float timeout = 6.0, float interval = 0.5)
     int idx_bases = p_vec_bases.Find(ACTORS.Get_Real_Base(ref_actor) as Form)
     if idx_bases > -1
         float time_waited = 0.0
 
         while (p_vec_locks.At(idx_bases) as Key) != none && time_waited < timeout
-            FUNCS.Wait(0.01)
-            time_waited += 0.01
+            FUNCS.Wait(interval)
+            time_waited += interval
         endWhile
 
         p_vec_locks.Set(idx_bases, CONSTS.KEY_LOCK as Form)

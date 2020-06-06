@@ -111,6 +111,10 @@ function f_Load_Mod()
     p_Version()
 
     FUNCS.Send_Event("doticu_npcp_load_mod")
+
+    ; test
+    (FOLLOWERS.GetNthAlias(0) as doticu_npcp_follower).Saddle()
+    ; test
 endFunction
 
 ; Private Methods

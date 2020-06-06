@@ -142,6 +142,10 @@ int function f_Destroy_Follower(Actor ref_actor)
 endFunction
 
 ; Private Methods
+function p_Summon(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0) native
+function p_Summon_Mobile(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0) native
+function p_Summon_Immobile(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0) native
+
 int function p_Get_Alias_ID(Actor ref_actor)
     if !ref_actor
         return -1
@@ -172,7 +176,7 @@ int function p_Unsettle()
         return CODES.HASNT_FOLLOWER
     endIf
 
-    int num_settlers = Get_Count_Settler()
+    int num_settlers = Get_Settler_Count()
     if num_settlers < 1
         return CODES.HASNT_SETTLER
     endIf
@@ -189,7 +193,7 @@ int function p_Immobilize()
         return CODES.HASNT_FOLLOWER
     endIf
 
-    int num_mobile = Get_Count_Mobile()
+    int num_mobile = Get_Mobile_Count()
     if num_mobile < 1
         return CODES.HASNT_MOBILE
     endIf
@@ -206,7 +210,7 @@ int function p_Mobilize()
         return CODES.HASNT_FOLLOWER
     endIf
 
-    int num_immobile = Get_Count_Immobile()
+    int num_immobile = Get_Immobile_Count()
     if num_immobile < 1
         return CODES.HASNT_IMMOBILE
     endIf
@@ -223,12 +227,12 @@ int function p_Sneak()
         return CODES.HASNT_FOLLOWER
     endIf
 
-    int num_unsneaks = Get_Count_Unsneak()
-    if num_unsneaks < 1
-        return CODES.HASNT_UNSNEAK
+    int num_non_sneaks = Get_Non_Sneak_Count()
+    if num_non_sneaks < 1
+        return CODES.HASNT_NON_SNEAK
     endIf
 
-    if !p_tasklist.Execute(num_unsneaks, "doticu_npcp_followers_sneak")
+    if !p_tasklist.Execute(num_non_sneaks, "doticu_npcp_followers_sneak")
         return CODES.FAILURE
     endIf
 
@@ -240,12 +244,46 @@ int function p_Unsneak()
         return CODES.HASNT_FOLLOWER
     endIf
 
-    int num_sneaks = Get_Count_Sneak()
+    int num_sneaks = Get_Sneak_Count()
     if num_sneaks < 1
         return CODES.HASNT_SNEAK
     endIf
 
     if !p_tasklist.Execute(num_sneaks, "doticu_npcp_followers_unsneak")
+        return CODES.FAILURE
+    endIf
+
+    return CODES.SUCCESS
+endFunction
+
+int function p_Saddle()
+    if Get_Count() < 1
+        return CODES.HASNT_FOLLOWER
+    endIf
+
+    int num_non_saddlers = Get_Non_Saddler_Count()
+    if num_non_saddlers < 1
+        return CODES.HASNT_NON_SADDLER
+    endIf
+
+    if !p_tasklist.Execute(num_non_saddlers, "doticu_npcp_followers_saddle")
+        return CODES.FAILURE
+    endIf
+
+    return CODES.SUCCESS
+endFunction
+
+int function p_Unsaddle()
+    if Get_Count() < 1
+        return CODES.HASNT_FOLLOWER
+    endIf
+
+    int num_saddlers = Get_Saddler_Count()
+    if num_saddlers < 1
+        return CODES.HASNT_SADDLER
+    endIf
+
+    if !p_tasklist.Execute(num_saddlers, "doticu_npcp_followers_unsaddle")
         return CODES.FAILURE
     endIf
 
@@ -268,7 +306,7 @@ int function p_Unretreat()
         return CODES.HASNT_FOLLOWER
     endIf
 
-    int num_retreaters = Get_Count_Retreaters()
+    int num_retreaters = Get_Retreater_Count()
     if num_retreaters < 1
         return CODES.HASNT_RETREATER
     endIf
@@ -285,7 +323,7 @@ int function p_Resurrect()
         return CODES.HASNT_FOLLOWER
     endIf
 
-    int num_dead = Get_Count_Dead()
+    int num_dead = Get_Dead_Count()
     if num_dead < 1
         return CODES.HASNT_DEAD
     endIf
@@ -324,167 +362,28 @@ int function p_Unmember()
 endFunction
 
 ; Public Methods
+int function Get_Count() native
+int function Get_Alive_Count() native
+int function Get_Dead_Count() native
+int function Get_Mobile_Count() native
+int function Get_Immobile_Count() native
+int function Get_Settler_Count() native
+int function Get_Non_Settler_Count() native
+int function Get_Sneak_Count() native
+int function Get_Non_Sneak_Count() native
+int function Get_Saddler_Count() native
+int function Get_Non_Saddler_Count() native
+int function Get_Retreater_Count() native
+int function Get_Non_Retreater_Count() native
+
+bool function Are_In_Combat() native
+
 int function Get_Max()
     return ALIASES.Get_Max()
 endFunction
 
-int function Get_Count()
-    return ALIASES.Get_Count()
-endFunction
-
 bool function Will_Sort()
     return ALIASES.Will_Sort()
-endFunction
-
-int function Get_Count_Alive()
-    int count = 0
-    int max_aliases = Get_Max()
-    int idx_aliases = 0
-    doticu_npcp_follower ref_follower
-
-    while idx_aliases < max_aliases
-        ref_follower = GetNthAlias(idx_aliases) as doticu_npcp_follower
-        if ref_follower.Is_Alive()
-            count += 1
-        endIf
-        idx_aliases += 1
-    endWhile
-
-    return count
-endFunction
-
-int function Get_Count_Dead()
-    int count = 0
-    int max_aliases = Get_Max()
-    int idx_aliases = 0
-    doticu_npcp_follower ref_follower
-
-    while idx_aliases < max_aliases
-        ref_follower = GetNthAlias(idx_aliases) as doticu_npcp_follower
-        if ref_follower.Is_Dead()
-            count += 1
-        endIf
-        idx_aliases += 1
-    endWhile
-
-    return count
-endFunction
-
-int function Get_Count_Settler()
-    int count = 0
-    int max_aliases = Get_Max()
-    int idx_aliases = 0
-    doticu_npcp_follower ref_follower
-
-    while idx_aliases < max_aliases
-        ref_follower = GetNthAlias(idx_aliases) as doticu_npcp_follower
-        if ref_follower.Is_Settler()
-            count += 1
-        endIf
-        idx_aliases += 1
-    endWhile
-
-    return count
-endFunction
-
-int function Get_Count_Mobile()
-    int count = 0
-    int max_aliases = Get_Max()
-    int idx_aliases = 0
-    doticu_npcp_follower ref_follower
-
-    while idx_aliases < max_aliases
-        ref_follower = GetNthAlias(idx_aliases) as doticu_npcp_follower
-        if ref_follower.Is_Mobile()
-            count += 1
-        endIf
-        idx_aliases += 1
-    endWhile
-
-    return count
-endFunction
-
-int function Get_Count_Immobile()
-    int count = 0
-    int max_aliases = Get_Max()
-    int idx_aliases = 0
-    doticu_npcp_follower ref_follower
-
-    while idx_aliases < max_aliases
-        ref_follower = GetNthAlias(idx_aliases) as doticu_npcp_follower
-        if ref_follower.Is_Immobile()
-            count += 1
-        endIf
-        idx_aliases += 1
-    endWhile
-
-    return count
-endFunction
-
-int function Get_Count_Sneak()
-    int count = 0
-    int max_aliases = Get_Max()
-    int idx_aliases = 0
-    doticu_npcp_follower ref_follower
-
-    while idx_aliases < max_aliases
-        ref_follower = GetNthAlias(idx_aliases) as doticu_npcp_follower
-        if ref_follower.Is_Sneak()
-            count += 1
-        endIf
-        idx_aliases += 1
-    endWhile
-
-    return count
-endFunction
-
-int function Get_Count_Unsneak()
-    int count = 0
-    int max_aliases = Get_Max()
-    int idx_aliases = 0
-    doticu_npcp_follower ref_follower
-
-    while idx_aliases < max_aliases
-        ref_follower = GetNthAlias(idx_aliases) as doticu_npcp_follower
-        if ref_follower.Is_Unsneak()
-            count += 1
-        endIf
-        idx_aliases += 1
-    endWhile
-
-    return count
-endFunction
-
-int function Get_Count_Retreaters()
-    int count = 0
-    int max_aliases = Get_Max()
-    int idx_aliases = 0
-    doticu_npcp_follower ref_follower
-
-    while idx_aliases < max_aliases
-        ref_follower = GetNthAlias(idx_aliases) as doticu_npcp_follower
-        if ref_follower.Is_Retreater()
-            count += 1
-        endIf
-        idx_aliases += 1
-    endWhile
-
-    return count
-endFunction
-
-bool function Are_In_Combat()
-    Alias[] arr_aliases = ALIASES.Get_Aliases()
-    int idx_aliases = 0
-    int num_aliases = arr_aliases.length
-
-    while idx_aliases < num_aliases
-        if (arr_aliases[idx_aliases] as doticu_npcp_follower).Is_In_Combat()
-            return true
-        endIf
-        idx_aliases += 1
-    endWhile
-
-    return false
 endFunction
 
 bool function Has_Follower(Actor ref_actor)
@@ -517,121 +416,37 @@ function Sort()
     ALIASES.Sort()
 endFunction
 
-int function Summon_All(int distance = 120, int angle_start = 0, int angle_offset = 17)
+int function Summon(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0)
     int num_followers = Get_Count()
     if num_followers < 1
         return CODES.HASNT_FOLLOWER
     endIf
 
-    Alias[] arr_aliases = ALIASES.Get_Aliases()
-    int idx_aliases = 0
-    int num_aliases = arr_aliases.length
-    doticu_npcp_follower ref_follower
-
-    if num_followers == 1
-        (arr_aliases[0] as doticu_npcp_follower).Summon(distance, angle_start)
-        return CODES.SUCCESS
-    endIf
-
-    int angle_even = angle_start
-    int angle_odd = angle_start
-    while idx_aliases < num_aliases
-        ref_follower = arr_aliases[idx_aliases] as doticu_npcp_follower
-        if idx_aliases % 2 == 0
-            angle_even += angle_offset
-            ref_follower.Summon(distance, angle_even)
-        else
-            angle_odd -= angle_offset
-            ref_follower.Summon(distance, angle_odd)
-        endIf
-        idx_aliases += 1
-    endWhile
+    p_Summon(distance, angle_degree, interval_degree)
 
     return CODES.SUCCESS
 endFunction
 
-int function Summon_Mobile(int distance = 120, int angle_start = 0, int angle_offset = 17)
-    if Get_Count() < 1
+int function Summon_Mobile(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0)
+    int num_followers = Get_Count()
+    if num_followers < 1
         return CODES.HASNT_FOLLOWER
     endIf
 
-    int count_mobile = Get_Count_Mobile()
-    if count_mobile < 1
-        return CODES.HASNT_MOBILE
-    endIf
-
-    Alias[] arr_aliases = ALIASES.Get_Aliases()
-    int idx_aliases = 0
-    int num_aliases = arr_aliases.length
-    doticu_npcp_follower ref_follower
-
-    int angle_even = angle_start
-    int angle_odd = angle_start
-    int count_summon = 0
-    while idx_aliases < num_aliases
-        ref_follower = arr_aliases[idx_aliases] as doticu_npcp_follower
-        if ref_follower.Is_Mobile()
-            if count_summon % 2 == 0
-                angle_even += angle_offset
-                ref_follower.Summon(distance, angle_even)
-            else
-                angle_odd -= angle_offset
-                ref_follower.Summon(distance, angle_odd)
-            endIf
-            count_summon += 1
-        endIf
-        idx_aliases += 1
-    endWhile
+    p_Summon_Mobile(distance, angle_degree, interval_degree)
 
     return CODES.SUCCESS
 endFunction
 
-int function Summon_Immobile(int distance = 120, int angle_start = 0, int angle_offset = 17)
-    if Get_Count() < 1
+int function Summon_Immobile(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0)
+    int num_followers = Get_Count()
+    if num_followers < 1
         return CODES.HASNT_FOLLOWER
     endIf
 
-    int count_immobile = Get_Count_Immobile()
-    if count_immobile < 1
-        return CODES.HASNT_IMMOBILE
-    endIf
-
-    Alias[] arr_aliases = ALIASES.Get_Aliases()
-    int idx_aliases = 0
-    int num_aliases = arr_aliases.length
-    doticu_npcp_follower ref_follower
-
-    int angle_even = angle_start
-    int angle_odd = angle_start
-    int count_summon = 0
-    while idx_aliases < num_aliases
-        ref_follower = arr_aliases[idx_aliases] as doticu_npcp_follower
-        if ref_follower.Is_Immobile()
-            if count_summon % 2 == 0
-                angle_even += angle_offset
-                ref_follower.Summon(distance, angle_even)
-            else
-                angle_odd -= angle_offset
-                ref_follower.Summon(distance, angle_odd)
-            endIf
-            count_summon += 1
-        endIf
-        idx_aliases += 1
-    endWhile
+    p_Summon_Immobile(distance, angle_degree, interval_degree)
 
     return CODES.SUCCESS
-endFunction
-
-int function Summon_All_Behind()
-    Summon_All(120, 180)
-endFunction
-
-int function Summon_Mobile_Behind()
-    Summon_Mobile(120, 180)
-endFunction
-
-int function Summon_Immobile_Behind()
-    Summon_Immobile(120, 180)
 endFunction
 
 int function Settle()
@@ -672,6 +487,20 @@ endFunction
 int function Unsneak()
     GotoState("p_STATE_BUSY")
     int code_return = p_Unsneak()
+    GotoState("")
+    return code_return
+endFunction
+
+int function Saddle()
+    GotoState("p_STATE_BUSY")
+    int code_return = p_Saddle()
+    GotoState("")
+    return code_return
+endFunction
+
+int function Unsaddle()
+    GotoState("p_STATE_BUSY")
+    int code_return = p_Unsaddle()
     GotoState("")
     return code_return
 endFunction
@@ -724,6 +553,12 @@ state p_STATE_BUSY
     int function Sneak()
     endFunction
     int function Unsneak()
+    endFunction
+    int function Saddle()
+    endFunction
+    int function Unsaddle()
+    endFunction
+    int function Stash()
     endFunction
     int function Unretreat()
     endFunction

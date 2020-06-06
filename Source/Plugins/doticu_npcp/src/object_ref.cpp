@@ -460,6 +460,38 @@ namespace doticu_npcp { namespace Object_Ref {
         _MESSAGE("End of Log_XContainer.");
     }
 
+    void Move_To_Orbit(TESObjectREFR *obj, TESObjectREFR *target, float radius, float angle_degree) {
+        if (!obj || !target) {
+            return;
+        }
+
+        UInt32 target_handle = target->CreateRefHandle();
+        if (target_handle == *g_invalidRefHandle) {
+            return;
+        }
+
+        TESObjectCELL *target_cell = target->parentCell;
+        if (!target_cell) {
+            return;
+        }
+
+        TESWorldSpace *target_world = CALL_MEMBER_FN(target, GetWorldspace)();
+
+        float angle_radians = target->rot.z - (angle_degree * DOTICU_NPCP_PI / 180);
+        NiPoint3 obj_pos(
+            target->pos.x + radius * sin(angle_radians),
+            target->pos.y + radius * cos(angle_radians),
+            target->pos.z
+        );
+        NiPoint3 obj_rot(
+            0.0,
+            0.0,
+            target->rot.z + ((180 - angle_degree) * DOTICU_NPCP_PI / 180)
+        );
+
+        MoveRefrToPosition(obj, &target_handle, target_cell, target_world, &obj_pos, &obj_rot);
+    }
+
 }}
 
 namespace doticu_npcp { namespace Object_Ref { namespace Exports {

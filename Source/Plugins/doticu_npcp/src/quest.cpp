@@ -5,6 +5,7 @@
 #include "types.h"
 #include "quest.h"
 #include "object_ref.h"
+#include "member.h"
 
 namespace doticu_npcp { namespace Quest {
 
@@ -38,7 +39,7 @@ namespace doticu_npcp { namespace Quest { namespace Exports {
         for (u64 idx = 0; idx < ptr_aliases->count; idx += 1) {
             ptr_aliases->GetNthItem(idx, ptr_alias);
 
-            if (Alias::Is_Created(ptr_alias) && Alias::Get_Actor(ptr_alias)) {
+            if (Member::Is_Created(ptr_alias) && Member::Get_Actor(ptr_alias)) {
                 vec_aliases.push_back(ptr_alias);
             }
         }
@@ -62,7 +63,7 @@ namespace doticu_npcp { namespace Quest { namespace Exports {
         for (s64 idx = ptr_aliases->count - 1; idx >= 0; idx -= 1) {
             ptr_aliases->GetNthItem(idx, ptr_alias);
 
-            if (!Alias::Is_Created(ptr_alias) || !Alias::Get_Actor(ptr_alias)) {
+            if (!Member::Is_Created(ptr_alias) || !Member::Get_Actor(ptr_alias)) {
                 vec_free.push_back(ptr_alias->aliasId);
             }
         }
@@ -88,7 +89,7 @@ namespace doticu_npcp { namespace Quest { namespace Exports {
                 continue;
             }
 
-            Actor *actor = Alias::Get_Actor(alias);
+            Actor *actor = Member::Get_Actor(alias);
             if (!actor || !actor->loadedState) {
                 continue;
             }
@@ -110,7 +111,7 @@ namespace doticu_npcp { namespace Quest { namespace Exports {
         for (u64 idx = 0; idx < ptr_aliases->count; idx += 1) {
             ptr_aliases->GetNthItem(idx, ptr_alias);
 
-            if (Alias::Is_Created(ptr_alias) && Alias::Get_Actor(ptr_alias)) {
+            if (Member::Is_Created(ptr_alias) && Member::Get_Actor(ptr_alias)) {
                 count += 1;
             }
         }
@@ -128,7 +129,7 @@ namespace doticu_npcp { namespace Quest { namespace Exports {
         for (u64 idx = 0; idx < ptr_aliases->count; idx += 1) {
             ptr_aliases->GetNthItem(idx, ptr_alias);
 
-            if (!Alias::Is_Created(ptr_alias) || !Alias::Get_Actor(ptr_alias)) {
+            if (!Member::Is_Created(ptr_alias) || !Member::Get_Actor(ptr_alias)) {
                 count += 1;
             }
         }
@@ -146,7 +147,7 @@ namespace doticu_npcp { namespace Quest { namespace Exports {
         for (u64 idx = 0; idx < ptr_aliases->count; idx += 1) {
             ptr_aliases->GetNthItem(idx, ptr_alias);
 
-            if (Alias::Is_Created(ptr_alias) && Alias::Is_Mannequin(ptr_alias)) {
+            if (Member::Is_Created(ptr_alias) && Member::Is_Mannequin(ptr_alias)) {
                 count += 1;
             }
         }

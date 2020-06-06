@@ -22,6 +22,8 @@ M                                                                   \
     }                                                               \
 W
 
+#define DOTICU_NPCP_PI 3.141592741f
+
 #define Bit_Set(BITS, BIT_IDX) \
     ( (BITS) |=  ( (1llu) << (BIT_IDX) ) )
 
