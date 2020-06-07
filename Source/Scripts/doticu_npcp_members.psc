@@ -65,7 +65,6 @@ bool                    p_is_created        = false
 bool                    p_are_displayed     = false
 int                     p_idx_display       =    -1
 ObjectReference         p_marker_display    =  none
-doticu_npcp_tasklist    p_tasklist          =  none
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
@@ -75,7 +74,6 @@ function f_Create(doticu_npcp_data DATA)
     p_are_displayed = false
     p_idx_display = -1
     p_marker_display = CONSTS.MARKER_STORAGE.PlaceAtMe(CONSTS.STATIC_MARKER_X)
-    p_tasklist = TASKLISTS.Create()
 
     ALIASES.f_Create(DATA)
 endFunction
@@ -83,7 +81,6 @@ endFunction
 function f_Destroy()
     ALIASES.f_Destroy()
 
-    TASKLISTS.Destroy(p_tasklist)
     p_marker_display = none
     p_idx_display = -1
     p_are_displayed = false

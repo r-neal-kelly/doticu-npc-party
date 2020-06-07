@@ -9,6 +9,7 @@
 #include "skse64/PapyrusVM.h"
 
 #include "utils.h"
+#include "vector.h"
 
 namespace doticu_npcp { namespace Papyrus {
 
@@ -181,6 +182,39 @@ namespace doticu_npcp { namespace Papyrus {
             } else {
                 return (TESObjectREFR *)p_hnd_object->Policy()->Resolve(kFormType_Reference, p_vm_value.data.id->GetHandle());
             }
+        }
+    };
+
+    struct Scripts : public IForEachScriptObjectFunctor {
+        Papyrus::Handle handle;
+        std::vector<const char *> vec_names;
+        std::vector<VMScriptInstance *> vec_scripts;
+
+        Scripts(TESQuest *quest) {
+            handle = Papyrus::Handle(kFormType_Quest, quest);
+            handle.Registry()->VisitScripts(handle, this);
+        }
+
+        Scripts(BGSBaseAlias *alias) {
+            handle = Papyrus::Handle(kFormType_Alias, alias);
+            handle.Registry()->VisitScripts(handle, this);
+        }
+
+        virtual bool Visit(VMScriptInstance *script, void *) {
+            vec_names.push_back(script->classInfo->name.data);
+            vec_scripts.push_back(script);
+            //_MESSAGE("%s", script->classInfo->name.data);
+            return true;
+        }
+
+        VMScriptInstance *Get(const char *script_name) {
+            for (u64 idx = 0, size = vec_names.size(); idx < size; idx += 1) {
+                if (_stricmp(script_name, vec_names[idx]) == 0) {
+                    return vec_scripts[idx];
+                }
+            }
+
+            return NULL;
         }
     };
 

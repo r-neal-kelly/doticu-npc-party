@@ -127,6 +127,26 @@ bool function Execute(int num_tasks, string str_event, float wait_interval = -1.
     return true
 endFunction
 
+function Init(int num_tasks)
+    p_Flush()
+    p_Start(num_tasks)
+endFunction
+
+bool function Await(int num_tasks, float wait_interval = -1.0, float wait_timeout = -1.0)
+    if wait_interval < 0
+        wait_interval = p_default_wait_interval
+    endIf
+    if wait_timeout < 0
+        wait_timeout = p_default_wait_timeout
+    endIf
+
+    if !p_Wait(wait_interval, wait_timeout)
+        return false
+    endIf
+
+    return true
+endFunction
+
 function Detask()
     p_num_tasks_complete += 1
 endFunction

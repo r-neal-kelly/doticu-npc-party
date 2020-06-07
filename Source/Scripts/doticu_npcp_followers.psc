@@ -63,13 +63,7 @@ endFunction
 function f_Register()
     ALIASES.f_Register()
 
-    Alias[] arr_aliases = ALIASES.Get_Aliases()
-    int idx_aliases = 0
-    int num_aliases = arr_aliases.length
-    while idx_aliases < num_aliases
-        (arr_aliases[idx_aliases] as doticu_npcp_follower).f_Register()
-        idx_aliases += 1
-    endWhile
+    p_Register()
 endFunction
 
 int function f_Create_Follower(Actor ref_actor)
@@ -142,9 +136,37 @@ int function f_Destroy_Follower(Actor ref_actor)
 endFunction
 
 ; Private Methods
+function p_Register() native
 function p_Summon(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0) native
 function p_Summon_Mobile(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0) native
 function p_Summon_Immobile(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0) native
+function p_Stash() native
+function p_Resurrect(Form tasklist) native
+function p_Mobilize(Form tasklist) native
+function p_Immobilize(Form tasklist) native
+function p_Settle(Form tasklist) native
+function p_Unsettle(Form tasklist) native
+function p_Sneak(Form tasklist) native
+function p_Unsneak(Form tasklist) native
+function p_Saddle(Form tasklist) native
+function p_Unsaddle(Form tasklist) native
+function p_Retreat(Form tasklist) native
+function p_Unretreat(Form tasklist) native
+function p_Unfollow(Form tasklist) native
+function p_Unmember(Form tasklist) native
+
+function p_Busy()
+    GotoState("p_STATE_BUSY")
+endFunction
+
+function p_Ready()
+    GotoState("")
+endFunction
+
+int function p_Ready_Int(int val)
+    GotoState("")
+    return val
+endFunction
 
 int function p_Get_Alias_ID(Actor ref_actor)
     if !ref_actor
@@ -156,209 +178,6 @@ endFunction
 
 doticu_npcp_follower function p_Get_Follower(int id_alias)
     return ALIASES.f_Get_Alias(id_alias) as doticu_npcp_follower
-endFunction
-
-int function p_Settle()
-    int num_followers = Get_Count()
-    if num_followers < 1
-        return CODES.HASNT_FOLLOWER
-    endIf
-
-    if !p_tasklist.Execute(num_followers, "doticu_npcp_followers_settle")
-        return CODES.FAILURE
-    endIf
-
-    return CODES.SUCCESS
-endFunction
-
-int function p_Unsettle()
-    if Get_Count() < 1
-        return CODES.HASNT_FOLLOWER
-    endIf
-
-    int num_settlers = Get_Settler_Count()
-    if num_settlers < 1
-        return CODES.HASNT_SETTLER
-    endIf
-
-    if !p_tasklist.Execute(num_settlers, "doticu_npcp_followers_unsettle")
-        return CODES.FAILURE
-    endIf
-
-    return CODES.SUCCESS
-endFunction
-
-int function p_Immobilize()
-    if Get_Count() < 1
-        return CODES.HASNT_FOLLOWER
-    endIf
-
-    int num_mobile = Get_Mobile_Count()
-    if num_mobile < 1
-        return CODES.HASNT_MOBILE
-    endIf
-
-    if !p_tasklist.Execute(num_mobile, "doticu_npcp_followers_immobilize")
-        return CODES.FAILURE
-    endIf
-
-    return CODES.SUCCESS
-endFunction
-
-int function p_Mobilize()
-    if Get_Count() < 1
-        return CODES.HASNT_FOLLOWER
-    endIf
-
-    int num_immobile = Get_Immobile_Count()
-    if num_immobile < 1
-        return CODES.HASNT_IMMOBILE
-    endIf
-
-    if !p_tasklist.Execute(num_immobile, "doticu_npcp_followers_mobilize")
-        return CODES.FAILURE
-    endIf
-
-    return CODES.SUCCESS
-endFunction
-
-int function p_Sneak()
-    if Get_Count() < 1
-        return CODES.HASNT_FOLLOWER
-    endIf
-
-    int num_non_sneaks = Get_Non_Sneak_Count()
-    if num_non_sneaks < 1
-        return CODES.HASNT_NON_SNEAK
-    endIf
-
-    if !p_tasklist.Execute(num_non_sneaks, "doticu_npcp_followers_sneak")
-        return CODES.FAILURE
-    endIf
-
-    return CODES.SUCCESS
-endFunction
-
-int function p_Unsneak()
-    if Get_Count() < 1
-        return CODES.HASNT_FOLLOWER
-    endIf
-
-    int num_sneaks = Get_Sneak_Count()
-    if num_sneaks < 1
-        return CODES.HASNT_SNEAK
-    endIf
-
-    if !p_tasklist.Execute(num_sneaks, "doticu_npcp_followers_unsneak")
-        return CODES.FAILURE
-    endIf
-
-    return CODES.SUCCESS
-endFunction
-
-int function p_Saddle()
-    if Get_Count() < 1
-        return CODES.HASNT_FOLLOWER
-    endIf
-
-    int num_non_saddlers = Get_Non_Saddler_Count()
-    if num_non_saddlers < 1
-        return CODES.HASNT_NON_SADDLER
-    endIf
-
-    if !p_tasklist.Execute(num_non_saddlers, "doticu_npcp_followers_saddle")
-        return CODES.FAILURE
-    endIf
-
-    return CODES.SUCCESS
-endFunction
-
-int function p_Unsaddle()
-    if Get_Count() < 1
-        return CODES.HASNT_FOLLOWER
-    endIf
-
-    int num_saddlers = Get_Saddler_Count()
-    if num_saddlers < 1
-        return CODES.HASNT_SADDLER
-    endIf
-
-    if !p_tasklist.Execute(num_saddlers, "doticu_npcp_followers_unsaddle")
-        return CODES.FAILURE
-    endIf
-
-    return CODES.SUCCESS
-endFunction
-
-int function p_Stash()
-    int num_followers = Get_Count()
-    if num_followers < 1
-        return CODES.HASNT_FOLLOWER
-    endIf
-
-    doticu_npcp.Followers_Stash(self)
-
-    return CODES.SUCCESS
-endFunction
-
-int function p_Unretreat()
-    if Get_Count() < 1
-        return CODES.HASNT_FOLLOWER
-    endIf
-
-    int num_retreaters = Get_Retreater_Count()
-    if num_retreaters < 1
-        return CODES.HASNT_RETREATER
-    endIf
-
-    if !p_tasklist.Execute(num_retreaters, "doticu_npcp_followers_unretreat")
-        return CODES.FAILURE
-    endIf
-
-    return CODES.SUCCESS
-endFunction
-
-int function p_Resurrect()
-    if Get_Count() < 1
-        return CODES.HASNT_FOLLOWER
-    endIf
-
-    int num_dead = Get_Dead_Count()
-    if num_dead < 1
-        return CODES.HASNT_DEAD
-    endIf
-
-    if !p_tasklist.Execute(num_dead, "doticu_npcp_followers_resurrect")
-        return CODES.FAILURE
-    endIf
-
-    return CODES.SUCCESS
-endFunction
-
-int function p_Unfollow()
-    int num_followers = Get_Count()
-    if num_followers < 1
-        return CODES.HASNT_FOLLOWER
-    endIf
-
-    if !p_tasklist.Execute(num_followers, "doticu_npcp_followers_unfollow")
-        return CODES.FAILURE
-    endIf
-
-    return CODES.SUCCESS
-endFunction
-
-int function p_Unmember()
-    int num_followers = Get_Count()
-    if num_followers < 1
-        return CODES.HASNT_FOLLOWER
-    endIf
-
-    if !p_tasklist.Execute(num_followers, "doticu_npcp_followers_unmember")
-        return CODES.FAILURE
-    endIf
-
-    return CODES.SUCCESS
 endFunction
 
 ; Public Methods
@@ -417,138 +236,395 @@ function Sort()
 endFunction
 
 int function Summon(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0)
+p_Busy()
+
     int num_followers = Get_Count()
     if num_followers < 1
-        return CODES.HASNT_FOLLOWER
+        return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
     p_Summon(distance, angle_degree, interval_degree)
 
-    return CODES.SUCCESS
+    return p_Ready_Int(CODES.SUCCESS)
+
+p_Ready()
 endFunction
 
 int function Summon_Mobile(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0)
+p_Busy()
+
     int num_followers = Get_Count()
     if num_followers < 1
-        return CODES.HASNT_FOLLOWER
+        return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
     p_Summon_Mobile(distance, angle_degree, interval_degree)
 
-    return CODES.SUCCESS
+    return p_Ready_Int(CODES.SUCCESS)
+
+p_Ready()
 endFunction
 
 int function Summon_Immobile(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0)
+p_Busy()
+
     int num_followers = Get_Count()
     if num_followers < 1
-        return CODES.HASNT_FOLLOWER
+        return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
     p_Summon_Immobile(distance, angle_degree, interval_degree)
 
-    return CODES.SUCCESS
-endFunction
+    return p_Ready_Int(CODES.SUCCESS)
 
-int function Settle()
-    GotoState("p_STATE_BUSY")
-    int code_return = p_Settle()
-    GotoState("")
-    return code_return
-endFunction
-
-int function Unsettle()
-    GotoState("p_STATE_BUSY")
-    int code_return = p_Unsettle()
-    GotoState("")
-    return code_return
-endFunction
-
-int function Immobilize()
-    GotoState("p_STATE_BUSY")
-    int code_return = p_Immobilize()
-    GotoState("")
-    return code_return
-endFunction
-
-int function Mobilize()
-    GotoState("p_STATE_BUSY")
-    int code_return = p_Mobilize()
-    GotoState("")
-    return code_return
-endFunction
-
-int function Sneak()
-    GotoState("p_STATE_BUSY")
-    int code_return = p_Sneak()
-    GotoState("")
-    return code_return
-endFunction
-
-int function Unsneak()
-    GotoState("p_STATE_BUSY")
-    int code_return = p_Unsneak()
-    GotoState("")
-    return code_return
-endFunction
-
-int function Saddle()
-    GotoState("p_STATE_BUSY")
-    int code_return = p_Saddle()
-    GotoState("")
-    return code_return
-endFunction
-
-int function Unsaddle()
-    GotoState("p_STATE_BUSY")
-    int code_return = p_Unsaddle()
-    GotoState("")
-    return code_return
+p_Ready()
 endFunction
 
 int function Stash()
-    GotoState("p_STATE_BUSY")
-    int code_return = p_Stash()
-    GotoState("")
-    return code_return
-endFunction
+p_Busy()
 
-int function Unretreat()
-    GotoState("p_STATE_BUSY")
-    int code_return = p_Unretreat()
-    GotoState("")
-    return code_return
+    int num_followers = Get_Count()
+    if num_followers < 1
+        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+    endIf
+
+    p_Stash()
+
+    return p_Ready_Int(CODES.SUCCESS)
+
+p_Ready()
 endFunction
 
 int function Resurrect()
-    GotoState("p_STATE_BUSY")
-    int code_return = p_Resurrect()
-    GotoState("")
-    return code_return
+p_Busy()
+
+    if Get_Count() < 1
+        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+    endIf
+
+    int num_dead = Get_Dead_Count()
+    if num_dead < 1
+        return p_Ready_Int(CODES.HASNT_DEAD)
+    endIf
+
+    p_tasklist.Init(num_dead)
+
+    p_Resurrect(p_tasklist)
+
+    if !p_tasklist.Await(num_dead, 0.5, 10.0)
+        return p_Ready_Int(CODES.FAILURE)
+    endIf
+
+    return p_Ready_Int(CODES.SUCCESS)
+
+p_Ready()
+endFunction
+
+int function Mobilize()
+p_Busy()
+
+    if Get_Count() < 1
+        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+    endIf
+
+    int num_immobile = Get_Immobile_Count()
+    if num_immobile < 1
+        return p_Ready_Int(CODES.HASNT_IMMOBILE)
+    endIf
+
+    p_tasklist.Init(num_immobile)
+
+    p_Mobilize(p_tasklist)
+
+    if !p_tasklist.Await(num_immobile, 0.5, 10.0)
+        return p_Ready_Int(CODES.FAILURE)
+    endIf
+
+    return p_Ready_Int(CODES.SUCCESS)
+
+p_Ready()
+endFunction
+
+int function Immobilize()
+p_Busy()
+
+    if Get_Count() < 1
+        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+    endIf
+
+    int num_mobile = Get_Mobile_Count()
+    if num_mobile < 1
+        return p_Ready_Int(CODES.HASNT_MOBILE)
+    endIf
+
+    p_tasklist.Init(num_mobile)
+
+    p_Immobilize(p_tasklist)
+    
+    if !p_tasklist.Await(num_mobile, 0.5, 10.0)
+        return p_Ready_Int(CODES.FAILURE)
+    endIf
+
+    return p_Ready_Int(CODES.SUCCESS)
+
+p_Ready()
+endFunction
+
+int function Settle()
+p_Busy()
+
+    int num_followers = Get_Count()
+    if num_followers < 1
+        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+    endIf
+
+    p_tasklist.Init(num_followers)
+
+    p_Settle(p_tasklist)
+
+    if !p_tasklist.Await(num_followers, 0.5, 10.0)
+        return p_Ready_Int(CODES.FAILURE)
+    endIf
+
+    return p_Ready_Int(CODES.SUCCESS)
+
+p_Ready()
+endFunction
+
+int function Unsettle()
+p_Busy()
+
+    if Get_Count() < 1
+        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+    endIf
+
+    int num_settlers = Get_Settler_Count()
+    if num_settlers < 1
+        return p_Ready_Int(CODES.HASNT_SETTLER)
+    endIf
+
+    p_tasklist.Init(num_settlers)
+
+    p_Unsettle(p_tasklist)
+
+    if !p_tasklist.Await(num_settlers, 0.5, 10.0)
+        return p_Ready_Int(CODES.FAILURE)
+    endIf
+
+    return p_Ready_Int(CODES.SUCCESS)
+
+p_Ready()
+endFunction
+
+int function Sneak()
+p_Busy()
+
+    if Get_Count() < 1
+        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+    endIf
+
+    int num_non_sneaks = Get_Non_Sneak_Count()
+    if num_non_sneaks < 1
+        return p_Ready_Int(CODES.HASNT_NON_SNEAK)
+    endIf
+
+    p_tasklist.Init(num_non_sneaks)
+
+    p_Sneak(p_tasklist)
+
+    if !p_tasklist.Await(num_non_sneaks, 0.5, 10.0)
+        return p_Ready_Int(CODES.FAILURE)
+    endIf
+
+    return p_Ready_Int(CODES.SUCCESS)
+
+p_Ready()
+endFunction
+
+int function Unsneak()
+p_Busy()
+
+    if Get_Count() < 1
+        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+    endIf
+
+    int num_sneaks = Get_Sneak_Count()
+    if num_sneaks < 1
+        return p_Ready_Int(CODES.HASNT_SNEAK)
+    endIf
+
+    p_tasklist.Init(num_sneaks)
+
+    p_Unsneak(p_tasklist)
+
+    if !p_tasklist.Await(num_sneaks, 0.5, 10.0)
+        return p_Ready_Int(CODES.FAILURE)
+    endIf
+
+    return p_Ready_Int(CODES.SUCCESS)
+
+p_Ready()
+endFunction
+
+int function Saddle()
+p_Busy()
+
+    if Get_Count() < 1
+        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+    endIf
+
+    int num_non_saddlers = Get_Non_Saddler_Count()
+    if num_non_saddlers < 1
+        return p_Ready_Int(CODES.HASNT_NON_SADDLER)
+    endIf
+
+    p_tasklist.Init(num_non_saddlers)
+
+    p_Saddle(p_tasklist)
+
+    if !p_tasklist.Await(num_non_saddlers, 0.5, 10.0)
+        return p_Ready_Int(CODES.FAILURE)
+    endIf
+
+    return p_Ready_Int(CODES.SUCCESS)
+
+p_Ready()
+endFunction
+
+int function Unsaddle()
+p_Busy()
+
+    if Get_Count() < 1
+        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+    endIf
+
+    int num_saddlers = Get_Saddler_Count()
+    if num_saddlers < 1
+        return p_Ready_Int(CODES.HASNT_SADDLER)
+    endIf
+
+    p_tasklist.Init(num_saddlers)
+
+    p_Unsaddle(p_tasklist)
+
+    if !p_tasklist.Await(num_saddlers, 0.5, 10.0)
+        return p_Ready_Int(CODES.FAILURE)
+    endIf
+
+    return p_Ready_Int(CODES.SUCCESS)
+
+p_Ready()
+endFunction
+
+int function Retreat()
+p_Busy()
+    
+    if Get_Count() < 1
+        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+    endIf
+    
+    int num_non_retreaters = Get_Non_Retreater_Count()
+    if num_non_retreaters < 1
+        return p_Ready_Int(CODES.HASNT_NON_RETREATER)
+    endIf
+    
+    p_tasklist.Init(num_non_retreaters)
+    
+    p_Retreat(p_tasklist)
+    
+    if !p_tasklist.Await(num_non_retreaters, 0.5, 10.0)
+        return p_Ready_Int(CODES.FAILURE)
+    endIf
+    
+    return p_Ready_Int(CODES.SUCCESS)
+    
+p_Ready()
+endFunction
+
+int function Unretreat()
+p_Busy()
+
+    if Get_Count() < 1
+        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+    endIf
+
+    int num_retreaters = Get_Retreater_Count()
+    if num_retreaters < 1
+        return p_Ready_Int(CODES.HASNT_RETREATER)
+    endIf
+
+    p_tasklist.Init(num_retreaters)
+
+    p_Unretreat(p_tasklist)
+
+    if !p_tasklist.Await(num_retreaters, 0.5, 10.0)
+        return p_Ready_Int(CODES.FAILURE)
+    endIf
+
+    return p_Ready_Int(CODES.SUCCESS)
+
+p_Ready()
 endFunction
 
 int function Unfollow()
-    GotoState("p_STATE_BUSY")
-    int code_return = p_Unfollow()
-    GotoState("")
-    return code_return
+p_Busy()
+
+    int num_followers = Get_Count()
+    if num_followers < 1
+        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+    endIf
+
+    p_tasklist.Init(num_followers)
+
+    p_Unfollow(p_tasklist)
+
+    if !p_tasklist.Await(num_followers, 0.5, 15.0)
+        return p_Ready_Int(CODES.FAILURE)
+    endIf
+
+    return p_Ready_Int(CODES.SUCCESS)
+
+p_Ready()
 endFunction
 
 int function Unmember()
-    GotoState("p_STATE_BUSY")
-    int code_return = p_Unmember()
-    GotoState("")
-    return code_return
+p_Busy()
+
+    int num_followers = Get_Count()
+    if num_followers < 1
+        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+    endIf
+
+    p_tasklist.Init(num_followers)
+
+    p_Unmember(p_tasklist)
+
+    if !p_tasklist.Await(num_followers, 0.5, 15.0)
+        return p_Ready_Int(CODES.FAILURE)
+    endIf
+
+    return p_Ready_Int(CODES.SUCCESS)
+
+p_Ready()
 endFunction
 
 ; State
 state p_STATE_BUSY
-    int function Settle()
+    int function Summon(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0)
     endFunction
-    int function Unsettle()
+    int function Summon_Mobile(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0)
+    endFunction
+    int function Summon_Immobile(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0)
+    endFunction
+    int function Stash()
+    endFunction
+    int function Mobilize()
     endFunction
     int function Immobilize()
     endFunction
-    int function Mobilize()
+    int function Settle()
+    endFunction
+    int function Unsettle()
     endFunction
     int function Sneak()
     endFunction
@@ -558,7 +634,7 @@ state p_STATE_BUSY
     endFunction
     int function Unsaddle()
     endFunction
-    int function Stash()
+    int function Retreat()
     endFunction
     int function Unretreat()
     endFunction

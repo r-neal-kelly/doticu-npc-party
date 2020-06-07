@@ -9,6 +9,7 @@
 #include "string2.h"
 #include "form.h"
 #include "object_ref.h"
+#include "quest.h"
 
 namespace doticu_npcp { namespace Utils {
 

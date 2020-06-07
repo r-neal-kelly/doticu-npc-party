@@ -1152,7 +1152,7 @@ int function Settle(int code_exec)
         p_Settle()
     endIf
 
-    p_Outfit()
+    p_Async("On_Outfit")
 
     return CODES.SUCCESS
 endFunction
@@ -1177,7 +1177,7 @@ int function Resettle(int code_exec)
         p_Settle()
     endIf
 
-    p_Outfit()
+    p_Async("On_Outfit")
 
     return CODES.SUCCESS
 endFunction
@@ -1199,7 +1199,7 @@ int function Unsettle(int code_exec)
         p_Unsettle()
     endIf
 
-    p_Outfit()
+    p_Async("On_Outfit")
 
     return CODES.SUCCESS
 endFunction
@@ -1230,7 +1230,7 @@ int function Enthrall(int code_exec)
         p_Enthrall()
     endIf
 
-    p_Outfit()
+    p_Async("On_Outfit")
 
     return CODES.SUCCESS
 endFunction
@@ -1261,7 +1261,7 @@ int function Unthrall(int code_exec)
         p_Unthrall()
     endIf
 
-    p_Outfit()
+    p_Async("On_Outfit")
 
     return CODES.SUCCESS
 endFunction
@@ -1288,7 +1288,7 @@ int function Immobilize(int code_exec)
         p_Immobilize()
     endIf
 
-    p_Outfit()
+    p_Async("On_Outfit")
 
     return CODES.SUCCESS
 endFunction
@@ -1315,7 +1315,7 @@ int function Mobilize(int code_exec)
         p_Mobilize()
     endIf
 
-    p_Outfit()
+    p_Async("On_Outfit")
 
     return CODES.SUCCESS
 endFunction
@@ -1460,7 +1460,7 @@ p_Unlock()
 
     p_is_follower = true
 
-    p_Outfit()
+    p_Async("On_Outfit")
 
     return CODES.SUCCESS
 endFunction
@@ -1483,7 +1483,7 @@ p_Unlock()
 
     p_is_follower = false
 
-    p_Outfit()
+    p_Async("On_Outfit")
 
     return CODES.SUCCESS
 endFunction

@@ -42,7 +42,8 @@ int property HASNT_NON_SNEAK                =  -242 autoReadOnly
 int property HASNT_ALIVE                    =  -243 autoReadOnly
 int property HASNT_DEAD                     =  -244 autoReadOnly
 int property HASNT_RETREATER                =  -245 autoReadOnly
-int property HASNT_MANNEQUIN                =  -246 autoReadOnly
+int property HASNT_NON_RETREATER            =  -246 autoReadOnly
+int property HASNT_MANNEQUIN                =  -247 autoReadOnly
 int property HASNT_SADDLER                  =  -250 autoReadOnly
 int property HASNT_NON_SADDLER              =  -251 autoReadOnly
 

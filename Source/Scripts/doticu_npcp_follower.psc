@@ -170,18 +170,6 @@ function f_Register()
     RegisterForModEvent("doticu_npcp_cell_change", "On_Cell_Change")
     RegisterForModEvent("doticu_npcp_party_combat", "On_Party_Combat")
     RegisterForModEvent("doticu_npcp_player_sneak", "On_Player_Sneak")
-    RegisterForModEvent("doticu_npcp_followers_settle", "On_Followers_Settle")
-    RegisterForModEvent("doticu_npcp_followers_unsettle", "On_Followers_Unsettle")
-    RegisterForModEvent("doticu_npcp_followers_immobilize", "On_Followers_Immobilize")
-    RegisterForModEvent("doticu_npcp_followers_mobilize", "On_Followers_Mobilize")
-    RegisterForModEvent("doticu_npcp_followers_sneak", "On_Followers_Sneak")
-    RegisterForModEvent("doticu_npcp_followers_unsneak", "On_Followers_Unsneak")
-    RegisterForModEvent("doticu_npcp_followers_saddle", "On_Followers_Saddle")
-    RegisterForModEvent("doticu_npcp_followers_unsaddle", "On_Followers_Unsaddle")
-    RegisterForModEvent("doticu_npcp_followers_unretreat", "On_Followers_Unretreat")
-    RegisterForModEvent("doticu_npcp_followers_unfollow", "On_Followers_Unfollow")
-    RegisterForModEvent("doticu_npcp_followers_unmember", "On_Followers_Unmember")
-    RegisterForModEvent("doticu_npcp_followers_resurrect", "On_Followers_Resurrect")
 
     RegisterForActorAction(CODES.ACTION_DRAW_END)
 endFunction
@@ -969,6 +957,10 @@ bool function Is_Retreater()
     return Exists() && p_is_retreater
 endFunction
 
+bool function Isnt_Retreater()
+    return Exists() && !p_is_retreater
+endFunction
+
 bool function Is_Settler()
     return Exists() && p_ref_member.Is_Settler()
 endFunction
@@ -1105,86 +1097,119 @@ event On_Player_Sneak(bool is_sneaking)
     endIf
 endEvent
 
-event On_Followers_Settle(Form form_tasklist)
-    if Exists()
-        Settle(CODES.DO_SYNC)
-        (form_tasklist as doticu_npcp_tasklist).Detask()
-    endIf
-endEvent
-
-event On_Followers_Unsettle(Form form_tasklist)
-    if Exists() && Is_Settler()
-        Unsettle(CODES.DO_SYNC)
-        (form_tasklist as doticu_npcp_tasklist).Detask()
-    endIf
-endEvent
-
-event On_Followers_Immobilize(Form form_tasklist)
-    if Exists() && Is_Mobile()
-        Immobilize(CODES.DO_SYNC)
-        (form_tasklist as doticu_npcp_tasklist).Detask()
+event On_Followers_Resurrect(Form form_tasklist)
+    if Exists() && Is_Dead()
+        Resurrect(CODES.DO_SYNC)
+        if form_tasklist
+            (form_tasklist as doticu_npcp_tasklist).Detask()
+        endIf
     endIf
 endEvent
 
 event On_Followers_Mobilize(Form form_tasklist)
     if Exists() && Is_Immobile()
         Mobilize(CODES.DO_SYNC)
-        (form_tasklist as doticu_npcp_tasklist).Detask()
+        if form_tasklist
+            (form_tasklist as doticu_npcp_tasklist).Detask()
+        endIf
+    endIf
+endEvent
+
+event On_Followers_Immobilize(Form form_tasklist)
+    if Exists() && Is_Mobile()
+        Immobilize(CODES.DO_SYNC)
+        if form_tasklist
+            (form_tasklist as doticu_npcp_tasklist).Detask()
+        endIf
+    endIf
+endEvent
+
+event On_Followers_Settle(Form form_tasklist)
+    if Exists()
+        Settle(CODES.DO_SYNC)
+        if form_tasklist
+            (form_tasklist as doticu_npcp_tasklist).Detask()
+        endIf
+    endIf
+endEvent
+
+event On_Followers_Unsettle(Form form_tasklist)
+    if Exists() && Is_Settler()
+        Unsettle(CODES.DO_SYNC)
+        if form_tasklist
+            (form_tasklist as doticu_npcp_tasklist).Detask()
+        endIf
     endIf
 endEvent
 
 event On_Followers_Sneak(Form form_tasklist)
     if Exists() && Is_Unsneak()
         Sneak(CODES.DO_SYNC)
-        (form_tasklist as doticu_npcp_tasklist).Detask()
+        if form_tasklist
+            (form_tasklist as doticu_npcp_tasklist).Detask()
+        endIf
     endIf
 endEvent
 
 event On_Followers_Unsneak(Form form_tasklist)
     if Exists() && Is_Sneak()
         Unsneak(CODES.DO_SYNC)
-        (form_tasklist as doticu_npcp_tasklist).Detask()
+        if form_tasklist
+            (form_tasklist as doticu_npcp_tasklist).Detask()
+        endIf
     endIf
 endEvent
 
 event On_Followers_Saddle(Form form_tasklist)
     if Exists() && Isnt_Saddler()
         Saddle()
-        (form_tasklist as doticu_npcp_tasklist).Detask()
+        if form_tasklist
+            (form_tasklist as doticu_npcp_tasklist).Detask()
+        endIf
     endIf
 endEvent
 
 event On_Followers_Unsaddle(Form form_tasklist)
     if Exists() && Is_Saddler()
         Unsaddle()
-        (form_tasklist as doticu_npcp_tasklist).Detask()
+        if form_tasklist
+            (form_tasklist as doticu_npcp_tasklist).Detask()
+        endIf
+    endIf
+endEvent
+
+event On_Followers_Retreat(Form form_tasklist)
+    if Exists() && Isnt_Retreater()
+        Retreat()
+        if form_tasklist
+            (form_tasklist as doticu_npcp_tasklist).Detask()
+        endIf
     endIf
 endEvent
 
 event On_Followers_Unretreat(Form form_tasklist)
     if Exists() && Is_Retreater()
         Unretreat()
-        (form_tasklist as doticu_npcp_tasklist).Detask()
-    endIf
-endEvent
-
-event On_Followers_Resurrect(Form form_tasklist)
-    if Exists() && Is_Dead()
-        Resurrect(CODES.DO_SYNC)
-        (form_tasklist as doticu_npcp_tasklist).Detask()
+        if form_tasklist
+            (form_tasklist as doticu_npcp_tasklist).Detask()
+        endIf
     endIf
 endEvent
 
 event On_Followers_Unfollow(Form form_tasklist)
     if Exists()
         Unfollow()
-        (form_tasklist as doticu_npcp_tasklist).Detask()
+        if form_tasklist
+            (form_tasklist as doticu_npcp_tasklist).Detask()
+        endIf
     endIf
 endEvent
 
 event On_Followers_Unmember(Form form_tasklist)
     if Exists()
         Unmember()
-        (form_tasklist as doticu_npcp_tasklist).Detask()
+        if form_tasklist
+            (form_tasklist as doticu_npcp_tasklist).Detask()
+        endIf
     endIf
 endEvent
