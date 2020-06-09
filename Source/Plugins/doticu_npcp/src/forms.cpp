@@ -19,6 +19,8 @@ namespace doticu_npcp { namespace Forms { namespace Exports {
                 registry)
         );
 
+        _MESSAGE("Added Forms functions.");
+
         return true;
     }
 

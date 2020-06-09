@@ -165,17 +165,10 @@ p_Unlock()
 endFunction
 
 function f_Register()
-    ; registering mod events is global for each script on an object, and
-    ; further, works for handlers labeled as function as well as event.
     RegisterForModEvent("doticu_npcp_cell_change", "On_Cell_Change")
-    RegisterForModEvent("doticu_npcp_party_combat", "On_Party_Combat")
-    RegisterForModEvent("doticu_npcp_player_sneak", "On_Player_Sneak")
-
-    RegisterForActorAction(CODES.ACTION_DRAW_END)
 endFunction
 
 function f_Unregister()
-    UnregisterForActorAction(CODES.ACTION_DRAW_END)
     UnregisterForAllModEvents()
 endFunction
 
@@ -872,31 +865,6 @@ event On_Relevel()
     p_Relevel()
 endEvent
 
-; this whole function should probably be private, as no one else needs to call it anymore
-int function Catch_Up()
-    if p_is_catching_up
-        return CODES.SUCCESS
-    endIf
-
-    if !Exists()
-        return CODES.ISNT_FOLLOWER
-    endIf
-
-    if Is_Immobile() || Is_Paralyzed() || Is_Mannequin()
-        return CODES.CANT_CATCH_UP
-    endIf
-
-    p_is_catching_up = true
-
-    if !ACTORS.Is_Near_Player(p_ref_actor, 4096)
-        Summon_Behind(150)
-    endIf
-
-    p_is_catching_up = false
-
-    return CODES.SUCCESS
-endFunction
-
 int function Unfollow()
     return p_ref_member.Unfollow()
 endFunction
@@ -1052,19 +1020,8 @@ event OnDeath(Actor ref_killer)
     p_Unlevel()
 endEvent
 
-event OnActorAction(int code_action, Actor ref_actor, Form form_source, int slot)
-    if VARS.is_updating
-        return
-    endIf
-
-    if code_action == CODES.ACTION_DRAW_END
-        Catch_Up()
-    endIf
-endEvent
-
 event On_Cell_Change(Form cell_new, Form cell_old)
     if Exists()
-        Catch_Up()
         p_Follow()
         if Is_Sneak()
             p_Sneak()
@@ -1072,28 +1029,12 @@ event On_Cell_Change(Form cell_new, Form cell_old)
     endIf
 endEvent
 
-event On_Party_Combat(bool is_in_combat)
+event On_Followers_Enforce(Form form_tasklist)
     if Exists()
-        if is_in_combat && CONSTS.ACTOR_PLAYER.IsSneaking()
-            Retreat()
-        else
-            ; could make this optional
-            ;/if Is_Retreater()
-                Unretreat()
-            endIf/;
-            Enforce()
+        Enforce()
+        if form_tasklist
+            (form_tasklist as doticu_npcp_tasklist).Detask()
         endIf
-    endIf
-endEvent
-
-; we could also reset the spell while the follower is in combat and simply remove it after battle is done
-; might not work as well when loading the game in the middle of a battle, but it could work
-event On_Player_Sneak(bool is_sneaking)
-    if Exists()
-        if is_sneaking && PLAYER.Is_Party_In_Combat()
-            Retreat()
-        endIf
-        ; the effect itself will call Unretreat when player unsneaks
     endIf
 endEvent
 

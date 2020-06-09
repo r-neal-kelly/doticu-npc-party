@@ -2,6 +2,8 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "skse64/GameData.h"
+
 #include "follower.h"
 #include "followers.h"
 #include "member.h"
@@ -25,7 +27,6 @@ namespace doticu_npcp { namespace Followers {
         }
 
         BSFixedString name(event_name);
-
         struct Args : public IFunctionArguments {
             bool Copy(Output *output) { return true; }
         } args;
@@ -34,27 +35,22 @@ namespace doticu_npcp { namespace Followers {
     }
 
     static void Send_Followers(std::vector<Follower_t *> vec_followers, const char *event_name, TESForm *tasklist) {
-        if (vec_followers.size() < 1 || !event_name || !event_name[0] || !tasklist) {
+        if (vec_followers.size() < 1 || !event_name || !event_name[0]) {
             return;
         }
 
         BSFixedString name(event_name);
-
         struct Args : public IFunctionArguments {
             TESForm *m_tasklist;
-
             Args(TESForm *tasklist) {
                 m_tasklist = tasklist;
             }
-
             bool Copy(Output *output) {
-                VMClassRegistry *registry = (*g_skyrimVM)->GetClassRegistry();
-
+                output->Resize(1);
                 if (m_tasklist) {
-                    output->Resize(1);
-                    PackValue<TESForm>(output->Get(0), &m_tasklist, registry);
+                    PackValue<TESForm>(output->Get(0), &m_tasklist, (*g_skyrimVM)->GetClassRegistry());
                 } else {
-                    output->Resize(0);
+                    output->Get(0)->SetNone();
                 }
 
                 return true;
@@ -148,6 +144,26 @@ namespace doticu_npcp { namespace Followers {
         Summon(vec_followers, distance, angle_degree, interval_degree);
     }
 
+    void Catch_Up(Followers_t *followers) {
+        if (!followers) {
+            return;
+        }
+
+        Follower_t *follower;
+        for (u64 idx = 0, size = followers->aliases.count; idx < size; idx += 1) {
+            followers->aliases.GetNthItem(idx, follower);
+            if (!follower) {
+                continue;
+            }
+
+            if (!Follower::Exists(follower)) {
+                continue;
+            }
+
+            Follower::Catch_Up(follower);
+        }
+    }
+
     void Stash(Followers_t *followers) {
         if (!followers) {
             return;
@@ -171,6 +187,12 @@ namespace doticu_npcp { namespace Followers {
             }
 
             Object_Ref::Categorize(pack);
+        }
+    }
+
+    void Enforce(Followers_t *followers, TESForm *tasklist) {
+        if (followers) {
+            Send_Followers(Get(followers), "On_Followers_Enforce", tasklist);
         }
     }
 
@@ -426,6 +448,40 @@ namespace doticu_npcp { namespace Followers {
         return false;
     }
 
+    Followers_t *Get_Self() {
+        static Followers_t *followers = nullptr;
+
+        if (!followers) {
+            DataHandler *data_handler = DataHandler::GetSingleton();
+            if (!data_handler) {
+                _MESSAGE("Followers::Get_Self: Unable to get data_handler.");
+                return nullptr;
+            }
+
+            const ModInfo *mod_info = data_handler->LookupModByName("doticu_npc_party.esp");
+            if (!mod_info) {
+                _MESSAGE("Followers::Get_Self: Unable to get mod_info.");
+                return nullptr;
+            }
+
+            TESForm *form = LookupFormByID(mod_info->GetFormID(0x000D83));
+            if (!form) {
+                _MESSAGE("Followers::Get_Self: Unable to get quest form.");
+                return nullptr;
+            }
+
+            TESQuest *quest = DYNAMIC_CAST(form, TESForm, TESQuest);
+            if (!quest) {
+                _MESSAGE("Followers::Get_Self: Unable to get quest.");
+                return nullptr;
+            }
+
+            followers = quest;
+        }
+
+        return followers;
+    }
+
 }}
 
 namespace doticu_npcp { namespace Followers { namespace Exports {
@@ -461,9 +517,23 @@ namespace doticu_npcp { namespace Followers { namespace Exports {
         );
         registry->RegisterFunction(
             new NativeFunction0 <Followers_t, void>(
+                "p_Catch_Up",
+                "doticu_npcp_followers",
+                Followers::Catch_Up,
+                registry)
+        );
+        registry->RegisterFunction(
+            new NativeFunction0 <Followers_t, void>(
                 "p_Stash",
                 "doticu_npcp_followers",
                 Followers::Stash,
+                registry)
+        );
+        registry->RegisterFunction(
+            new NativeFunction1 <Followers_t, void, TESForm *>(
+                "p_Enforce",
+                "doticu_npcp_followers",
+                Followers::Enforce,
                 registry)
         );
         registry->RegisterFunction(
@@ -657,6 +727,8 @@ namespace doticu_npcp { namespace Followers { namespace Exports {
                 Followers::Are_In_Combat,
                 registry)
         );
+
+        _MESSAGE("Added Followers functions.");
 
         return true;
     }

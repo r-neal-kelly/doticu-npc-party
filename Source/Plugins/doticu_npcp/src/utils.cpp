@@ -40,6 +40,26 @@ namespace doticu_npcp { namespace Utils { namespace Exports {
         _MESSAGE(str.data);
     }
 
+    void Log_Cell(StaticFunctionTag *, TESObjectCELL *cell) {
+        if (!cell) {
+            return;
+        }
+
+        _MESSAGE("Cell: %s", cell->fullName.name.data);
+        _MESSAGE("    Data unk030:");
+        _MESSAGE("        UInt32 unk0: 0x%X", cell->unk030.unk0);
+        _MESSAGE("        UInt32 unk4: 0x%X", cell->unk030.unk4);
+        _MESSAGE("    Data unk038:");
+        _MESSAGE("        UInt32 unk0: 0x%X", cell->unk030.unk0);
+        _MESSAGE("        UInt32 unk4: 0x%X", cell->unk030.unk4);
+        _MESSAGE("    UInt16 unk040: 0x%X, (maybe) is interior: %i", cell->unk040, (cell->unk040 & 1) == 1);
+        _MESSAGE("    UInt16 unk042: 0x%X", cell->unk042);
+        _MESSAGE("    UInt8 unk044: 0x%X", cell->unk044);
+        _MESSAGE("    UInt8 unk045: 0x%X", cell->unk045);
+        _MESSAGE("    UInt8 unk046: 0x%X", cell->unk046);
+        _MESSAGE("    UInt8 pad047: 0x%X", cell->pad047);
+    }
+
     bool Register(VMClassRegistry *registry) {
         registry->RegisterFunction(
             new NativeFunction0 <StaticFunctionTag, VMResultArray<SInt32>>(
@@ -62,6 +82,15 @@ namespace doticu_npcp { namespace Utils { namespace Exports {
                 Exports::Log,
                 registry)
         );
+        registry->RegisterFunction(
+            new NativeFunction1 <StaticFunctionTag, void, TESObjectCELL *>(
+                "Log_Cell",
+                "doticu_npcp",
+                Exports::Log_Cell,
+                registry)
+        );
+
+        _MESSAGE("Added Utils functions.");
 
         return true;
     }

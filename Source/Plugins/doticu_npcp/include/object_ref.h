@@ -48,6 +48,9 @@ namespace doticu_npcp { namespace Object_Ref {
 
     void Move_To_Orbit(TESObjectREFR *obj, TESObjectREFR *target, float radius, float angle_degree);
 
+    float Get_Distance(TESObjectREFR *obj, TESObjectREFR *target);
+    bool Is_Near_Player(TESObjectREFR *obj, float max_radius = 4096);
+
 }}
 
 namespace doticu_npcp { namespace Object_Ref { namespace Exports {

@@ -15,6 +15,11 @@ doticu_npcp_consts property CONSTS hidden
         return p_DATA.CONSTS
     endFunction
 endProperty
+doticu_npcp_codes property CODES hidden
+    doticu_npcp_codes function Get()
+        return p_DATA.CODES
+    endFunction
+endProperty
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
         return p_DATA.VARS
@@ -66,11 +71,13 @@ function f_Create(doticu_npcp_data DATA)
     p_DATA = DATA
 
     p_is_created = true
+    p_is_locked = false
     p_is_in_combat = false
 endFunction
 
 function f_Destroy()
     p_is_in_combat = false
+    p_is_locked = false
     p_is_created = false
 endFunction
 
@@ -78,6 +85,7 @@ function f_Register()
     RegisterForModEvent("doticu_npcp_init_mod", "On_Init_Mod")
     RegisterForModEvent("doticu_npcp_cell_change", "On_Cell_Change")
     RegisterForControl("Sneak")
+    RegisterForActorAction(CODES.ACTION_DRAW_END)
 endFunction
 
 function f_Unregister()
@@ -89,7 +97,10 @@ function f_Begin_Combat()
     if p_is_in_combat == false
         p_is_in_combat = true
 
-        p_Send_Party_Combat()
+        FOLLOWERS.Catch_Up()
+        if ACTOR_PLAYER.IsSneaking()
+            FOLLOWERS.Retreat()
+        endIf
         
         FUNCS.Wait(5.0)
         p_Async("p_Try_End_Combat")
@@ -141,35 +152,13 @@ function p_End_Combat()
     if p_is_in_combat == true
         p_is_in_combat = false
         
-        p_Send_Party_Combat()
-
+        ;FOLLOWERS.Unretreat(); maybe make this optional?
+        FOLLOWERS.Enforce()
         if VARS.auto_resurrect
             FOLLOWERS.Resurrect()
         endIf
 
     endIf
-endFunction
-
-function p_Send_Party_Combat()
-    int handle = FUNCS.Get_Event_Handle("doticu_npcp_party_combat")
-    if !handle
-        return
-    endIf
-
-    ModEvent.PushBool(handle, p_is_in_combat)
-
-    FUNCS.Send_Event_Handle(handle)
-endFunction
-
-function p_Send_Player_Sneak()
-    int handle = FUNCS.Get_Event_Handle("doticu_npcp_player_sneak")
-    if !handle
-        return
-    endIf
-
-    ModEvent.PushBool(handle, ACTOR_PLAYER.IsSneaking())
-
-    FUNCS.Send_Event_Handle(handle)
 endFunction
 
 ; Public Methods
@@ -181,10 +170,7 @@ function Remove_Perk(Perk perk_to_remove)
     ACTOR_PLAYER.RemovePerk(perk_to_remove)
 endFunction
 
-bool function Is_Party_In_Combat()
-    ;return p_is_in_combat
-    return ACTOR_PLAYER.IsInCombat() || FOLLOWERS.Are_In_Combat()
-endFunction
+bool function Is_Party_In_Combat() native
 
 ; Events
 event On_Init_Mod()
@@ -197,7 +183,7 @@ event OnPlayerLoadGame()
     ; just in case it somehow gets stuck, which has happened before
     ACTORS.Apply_Ability(ACTOR_PLAYER, CONSTS.ABILITY_CELL)
 
-    if !ACTOR_PLAYER.IsInCombat() && !FOLLOWERS.Are_In_Combat()
+    if !Is_Party_In_Combat()
         ; for some reason, p_is_in_combat sometimes gets stuck to true
         ; and so we never get auto resurrect, but this resets it.
         p_End_Combat()
@@ -206,12 +192,25 @@ endEvent
 
 event OnControlDown(string str_control)
     if str_control == "Sneak"
-        p_Send_Player_Sneak()
+        if ACTOR_PLAYER.IsSneaking() && Is_Party_In_Combat()
+            FOLLOWERS.Retreat()
+        endIf
+    endIf
+endEvent
+
+event OnActorAction(int code_action, Actor ref_actor, Form form_source, int slot)
+    if ref_actor == ACTOR_PLAYER
+        if code_action == CODES.ACTION_DRAW_END
+            if !Is_Party_In_Combat()
+                FOLLOWERS.Catch_Up()
+            endIf
+        endIf
     endIf
 endEvent
 
 event On_Cell_Change(Form cell_new, Form cell_old)
     ACTORS.Apply_Ability(ACTOR_PLAYER, CONSTS.ABILITY_CELL)
+    FOLLOWERS.Catch_Up()
 endEvent
 
 ; Update Methods

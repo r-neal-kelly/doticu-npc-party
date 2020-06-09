@@ -199,6 +199,8 @@ namespace doticu_npcp { namespace Quest { namespace Exports {
                 registry)
         );
 
+        _MESSAGE("Added Quest functions.");
+
         return true;
     }
 

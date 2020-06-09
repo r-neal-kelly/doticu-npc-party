@@ -21,14 +21,21 @@ namespace doticu_npcp { namespace Follower {
     bool Is_Immobile(Follower_t *follower);
     bool Is_Settler(Follower_t *follower);
     bool Isnt_Settler(Follower_t *follower);
+    bool Is_Paralyzed(Follower_t *follower);
+    bool Isnt_Paralyzed(Follower_t *follower);
+    bool Is_Mannequin(Follower_t *follower);
+    bool Isnt_Mannequin(Follower_t *follower);
     bool Is_Sneak(Follower_t *follower);
     bool Isnt_Sneak(Follower_t *follower);
     bool Is_Saddler(Follower_t *follower);
     bool Isnt_Saddler(Follower_t *follower);
     bool Is_Retreater(Follower_t *follower);
     bool Isnt_Retreater(Follower_t *follower);
+    bool Exists(Follower_t *follower);
 
-    void Summon(Follower_t *follower, float distance = 120, float angle_degree = 0);
+    void Summon(Follower_t *follower, float distance = 140, float angle_degree = 0);
+    void Summon_Behind(Follower_t *follower, float distance = 140);
+    void Catch_Up(Follower_t *follower);
 
 }}
 

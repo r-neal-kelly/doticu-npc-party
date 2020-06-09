@@ -2,6 +2,8 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "skse64/GameData.h"
+
 #include "actor_base2.h"
 
 namespace doticu_npcp { namespace Actor_Base2 {
@@ -79,4 +81,39 @@ namespace doticu_npcp { namespace Actor_Base2 {
         return true;
     }
 
+    float Get_Max_Actor_Value(TESNPC *actor_base, BSFixedString name) {
+        if (!actor_base) {
+            return 0.0;
+        }
+
+        UInt32 id_value = LookupActorValueByName(name.data);
+        if (id_value >= ActorValueList::kNumActorValues) {
+            return 0.0;
+        }
+
+        return actor_base->actorValueOwner.GetMaximum(id_value);
+    }
+
 }}
+
+namespace doticu_npcp { namespace Actor_Base2 { namespace Exports {
+
+    float Get_Max_Actor_Value(StaticFunctionTag *, TESNPC *actor_base, BSFixedString name) {
+        return Actor_Base2::Get_Max_Actor_Value(actor_base, name);
+    }
+
+    bool Register(VMClassRegistry *registry) {
+        registry->RegisterFunction(
+            new NativeFunction2 <StaticFunctionTag, float, TESNPC *, BSFixedString>(
+                "Actor_Base2_Get_Max_Actor_Value",
+                "doticu_npcp",
+                Exports::Get_Max_Actor_Value,
+                registry)
+        );
+
+        _MESSAGE("Added Actor_Base2 functions.");
+
+        return true;
+    }
+
+}}}

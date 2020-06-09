@@ -140,7 +140,9 @@ function p_Register() native
 function p_Summon(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0) native
 function p_Summon_Mobile(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0) native
 function p_Summon_Immobile(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0) native
+function p_Catch_Up() native
 function p_Stash() native
+function p_Enforce(Form tasklist) native
 function p_Resurrect(Form tasklist) native
 function p_Mobilize(Form tasklist) native
 function p_Immobilize(Form tasklist) native
@@ -280,6 +282,21 @@ p_Busy()
 p_Ready()
 endFunction
 
+int function Catch_Up()
+p_Busy()
+
+    int num_followers = Get_Count()
+    if num_followers < 1
+        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+    endIf
+
+    p_Catch_Up()
+
+    return p_Ready_Int(CODES.SUCCESS)
+
+p_Ready()
+endFunction
+
 int function Stash()
 p_Busy()
 
@@ -289,6 +306,21 @@ p_Busy()
     endIf
 
     p_Stash()
+
+    return p_Ready_Int(CODES.SUCCESS)
+
+p_Ready()
+endFunction
+
+int function Enforce()
+p_Busy()
+
+    int num_followers = Get_Count()
+    if num_followers < 1
+        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+    endIf
+
+    p_Enforce(none)
 
     return p_Ready_Int(CODES.SUCCESS)
 

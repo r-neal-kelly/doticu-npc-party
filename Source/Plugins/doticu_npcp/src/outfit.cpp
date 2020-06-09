@@ -59,6 +59,8 @@ namespace doticu_npcp { namespace Outfit { namespace Exports {
                 registry)
         );
 
+        _MESSAGE("Added Outfit functions.");
+
         return true;
     }
 

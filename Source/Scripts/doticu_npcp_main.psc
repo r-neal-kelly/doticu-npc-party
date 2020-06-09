@@ -162,6 +162,8 @@ function p_Create()
 endFunction
 
 function p_Register()
+    ; registering mod events is global for each script on an object, and
+    ; further, works for handlers labeled as function as well as event.
     DATA.f_Register()
     VARS.f_Register()
     FUNCS.f_Register()

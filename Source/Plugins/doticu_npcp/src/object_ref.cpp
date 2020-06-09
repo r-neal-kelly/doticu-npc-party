@@ -2,6 +2,7 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "cell.h"
 #include "game.h"
 #include "object_ref.h"
 #include "quest.h"
@@ -492,6 +493,45 @@ namespace doticu_npcp { namespace Object_Ref {
         MoveRefrToPosition(obj, &target_handle, target_cell, target_world, &obj_pos, &obj_rot);
     }
 
+    float Get_Distance(TESObjectREFR *obj, TESObjectREFR *target) {
+        if (!obj || !target) {
+            return -1.0;
+        }
+
+        float obj_x = abs(obj->pos.x);
+        float target_x = abs(target->pos.x);
+        float dist_x;
+        if (obj_x > target_x) {
+            dist_x = obj_x - target_x;
+        } else {
+            dist_x = target_x - obj_x;
+        }
+
+        float obj_y = abs(obj->pos.y);
+        float target_y = abs(target->pos.y);
+        float dist_y;
+        if (obj_y > target_y) {
+            dist_y = obj_y - target_y;
+        } else {
+            dist_y = target_y - obj_y;
+        }
+
+        return sqrt(pow(dist_x, 2) + pow(dist_y, 2));
+    }
+
+    bool Is_Near_Player(TESObjectREFR *obj, float max_radius) {
+        Actor *actor_player = *g_thePlayer;
+        TESObjectCELL *cell_player = actor_player->parentCell;
+        TESObjectCELL *cell_obj = obj->parentCell;
+
+        if (Cell::Is_Interior(cell_player) && cell_player != cell_obj) {
+            return false;
+        }
+
+        float distance = Get_Distance(actor_player, obj);
+        return distance > 0 && distance <= max_radius;
+    }
+
 }}
 
 namespace doticu_npcp { namespace Object_Ref { namespace Exports {
@@ -530,6 +570,8 @@ namespace doticu_npcp { namespace Object_Ref { namespace Exports {
                 Exports::Log_XContainer,
                 registry)
         );
+
+        _MESSAGE("Added Object_Ref functions.");
 
         return true;
     }

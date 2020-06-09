@@ -658,6 +658,12 @@ p_Lock()
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_PROTECTED)
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_ESSENTIAL)
         ACTORS.Token(p_ref_actor, CONSTS.TOKEN_VITALITY_INVULNERABLE)
+
+        ; this is temp, as we are moving leveling to c++ and we will just relevel every enforce
+        p_ref_actor.SetActorValue("Health", doticu_npcp.Actor_Base2_Get_Max_Actor_Value(ACTORS.Get_Leveled_Base(p_ref_actor), "Health"))
+        if Is_Follower()
+            Get_Follower().Relevel(CODES.DO_ASYNC)
+        endIf
     endIf
 
     p_ref_actor.EvaluatePackage()
@@ -2310,20 +2316,12 @@ NPCS.Unlock_Base(p_ref_actor)
     endIf
 endEvent
 
-event OnHit(ObjectReference ref_attacker, Form _, Projectile __, bool ___, bool ____, bool _____, bool ______)
-    if VARS.is_updating
-        return
-    endIf
+; instead of restoring health for invulnerable, why don't we just set health regen really high for this member?
+event OnHit(ObjectReference ref_attacker, Form form_tool, Projectile ref_projectile, bool is_power, bool is_sneak, bool is_bash, bool is_blocked) native
 
-    ; we did have a stack dump related to this function once. might keep an eye on it
-    if !p_ref_actor.IsDead() && p_ref_actor.GetActorValue(CONSTS.STR_HEALTH) <= 0
-        if p_code_vitality == CODES.IS_MORTAL || p_code_vitality == CODES.IS_PROTECTED && ref_attacker == CONSTS.ACTOR_PLAYER
-            p_Kill()
-        endIf
-    elseIf p_code_vitality == CODES.IS_INVULNERABLE
-        p_ref_actor.RestoreActorValue(CONSTS.STR_HEALTH, 99999)
-    endIf
-endEvent
+function Restore_Health(float amount)
+    p_ref_actor.RestoreActorValue(CONSTS.STR_HEALTH, amount)
+endFunction
 
 event OnCombatStateChanged(Actor ref_target, int code_combat)
     if VARS.is_updating

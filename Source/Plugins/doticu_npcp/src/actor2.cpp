@@ -620,6 +620,8 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
                 registry)
         );
 
+        _MESSAGE("Added Actor2 functions.");
+
         return true;
     }
 

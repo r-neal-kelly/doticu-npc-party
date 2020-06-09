@@ -27,9 +27,15 @@ namespace doticu_npcp { namespace Member {
     bool Is_Settler(Member_t *member);
     bool Isnt_Settler(Member_t *member);
     bool Is_Thrall(Member_t *member);
+    bool Isnt_Thrall(Member_t *member);
     bool Is_Paralyzed(Member_t *member);
+    bool Isnt_Paralyzed(Member_t *member);
     bool Is_Mannequin(Member_t *member);
+    bool Isnt_Mannequin(Member_t *member);
     bool Is_Reanimated(Member_t *member);
+    bool Isnt_Reanimated(Member_t *member);
+
+    void On_Hit(Member_t *member);
 
 }}
 

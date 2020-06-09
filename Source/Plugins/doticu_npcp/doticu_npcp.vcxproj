@@ -141,6 +141,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\actor_base2.cpp" />
+    <ClCompile Include="src\cell.cpp" />
     <ClCompile Include="src\follower.cpp" />
     <ClCompile Include="src\followers.cpp" />
     <ClCompile Include="src\game.cpp" />
@@ -152,6 +153,7 @@
     <ClCompile Include="src\aliases.cpp" />
     <ClCompile Include="src\object_ref.cpp" />
     <ClCompile Include="src\form.cpp" />
+    <ClCompile Include="src\player.cpp" />
     <ClCompile Include="src\quest.cpp" />
     <ClCompile Include="src\xcontainer.cpp" />
     <ClCompile Include="src\xentry.cpp" />
@@ -163,6 +165,7 @@
   <ItemGroup>
     <ClInclude Include="include\actor_base2.h" />
     <ClInclude Include="include\aliases.h" />
+    <ClInclude Include="include\cell.h" />
     <ClInclude Include="include\followers.h" />
     <ClInclude Include="include\form.h" />
     <ClInclude Include="include\actor2.h" />
@@ -170,6 +173,7 @@
     <ClInclude Include="include\game.h" />
     <ClInclude Include="include\follower.h" />
     <ClInclude Include="include\member.h" />
+    <ClInclude Include="include\player.h" />
     <ClInclude Include="include\xcontainer.h" />
     <ClInclude Include="include\xentry.h" />
     <ClInclude Include="include\outfit.h" />

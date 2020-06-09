@@ -10,6 +10,9 @@ function Actor_Cache_Worn(Actor ref_actor, Form form_linchpin, ObjectReference r
 function Actor_Cache_Inventory(Actor ref_actor, Form form_linchpin, ObjectReference ref_worn_out, ObjectReference ref_pack_out) native global
 function Actor_Cache_Static_Inventory(Actor ref_actor, Form form_linchpin, ObjectREference ref_cache_out) native global
 
+; Actor_Base2
+float function Actor_Base2_Get_Max_Actor_Value(ActorBase actor_base, string value) native global
+
 ; Aliases
 Alias[] function Aliases_Slice(Alias[] arr_aliases, int idx_from, int idx_to_ex) native global
 Alias[] function Aliases_Sort(Alias[] arr_aliases, string str_algorithm = "") native global
@@ -64,3 +67,4 @@ int function Quest_Count_Mannequins(Quest ref_quest) native global
 int[] function Get_Plugin_Version() native global
 function Print(string str) native global
 function Log(string str) native global
+function Log_Cell(Cell ref_cell) native global
