@@ -81,12 +81,38 @@ namespace doticu_npcp { namespace Actor_Base2 {
         return true;
     }
 
-    float Get_Max_Actor_Value(TESNPC *actor_base, BSFixedString name) {
+    float Get_Actor_Value(TESNPC *actor_base, const char *name) {
+        if (!actor_base || !name || !name[0]) {
+            return 0.0;
+        }
+
+        UInt32 id_value = LookupActorValueByName(name);
+        if (id_value >= ActorValueList::kNumActorValues) {
+            return 0.0;
+        }
+
+        return actor_base->actorValueOwner.GetCurrent(id_value);
+    }
+
+    float Get_Base_Actor_Value(TESNPC *actor_base, const char *name) {
+        if (!actor_base || !name || !name[0]) {
+            return 0.0;
+        }
+
+        UInt32 id_value = LookupActorValueByName(name);
+        if (id_value >= ActorValueList::kNumActorValues) {
+            return 0.0;
+        }
+
+        return actor_base->actorValueOwner.GetBase(id_value);
+    }
+
+    float Get_Max_Actor_Value(TESNPC *actor_base, const char *name) {
         if (!actor_base) {
             return 0.0;
         }
 
-        UInt32 id_value = LookupActorValueByName(name.data);
+        UInt32 id_value = LookupActorValueByName(name);
         if (id_value >= ActorValueList::kNumActorValues) {
             return 0.0;
         }
@@ -98,19 +124,7 @@ namespace doticu_npcp { namespace Actor_Base2 {
 
 namespace doticu_npcp { namespace Actor_Base2 { namespace Exports {
 
-    float Get_Max_Actor_Value(StaticFunctionTag *, TESNPC *actor_base, BSFixedString name) {
-        return Actor_Base2::Get_Max_Actor_Value(actor_base, name);
-    }
-
     bool Register(VMClassRegistry *registry) {
-        registry->RegisterFunction(
-            new NativeFunction2 <StaticFunctionTag, float, TESNPC *, BSFixedString>(
-                "Actor_Base2_Get_Max_Actor_Value",
-                "doticu_npcp",
-                Exports::Get_Max_Actor_Value,
-                registry)
-        );
-
         _MESSAGE("Added Actor_Base2 functions.");
 
         return true;

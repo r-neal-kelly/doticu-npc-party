@@ -4,13 +4,7 @@
 
 #pragma once
 
-#include <string>
-
-#include "skse64/GameExtraData.h"
-
-#include "utils.h"
 #include "types.h"
-#include "xdata.h"
 
 namespace doticu_npcp { namespace XList {
 

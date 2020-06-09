@@ -3,6 +3,7 @@
 */
 
 #include "string2.h"
+#include "types.h"
 
 namespace doticu_npcp { namespace String2 {
 
@@ -71,3 +72,14 @@ namespace doticu_npcp { namespace String2 {
     }
 
 }}
+
+namespace doticu_npcp { namespace String2 { namespace Exports {
+
+    bool Register(VMClassRegistry *registry) {
+
+        _MESSAGE("Added String2 functions.");
+
+        return true;
+    }
+
+}}}

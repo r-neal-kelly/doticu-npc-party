@@ -102,7 +102,6 @@ int                 p_option_unsneak            =    -1
 int                 p_option_rating             =    -1
 int                 p_option_style              =    -1
 int                 p_option_vitalize           =    -1
-int                 p_option_relevel            =    -1
 int                 p_option_resurrect          =    -1
 int                 p_option_clone              =    -1
 int                 p_option_unclone            =    -1
@@ -328,12 +327,6 @@ function f_On_Option_Select(int id_option)
         f_Disable(p_option_unsneak, DO_UPDATE)
         COMMANDS.Unsneak_Sync(ref_actor, false)
         p_Update_Commands()
-
-    elseIf id_option == p_option_relevel
-        f_Disable(p_option_relevel, DO_UPDATE)
-        COMMANDS.Relevel_Sync(ref_actor, false)
-        p_Update_Commands()
-        p_Update_Statistics()
 
     elseIf id_option == p_option_rating
         int int_rating = p_ref_member.Get_Rating()
@@ -573,8 +566,6 @@ function f_On_Option_Highlight(int id_option)
     elseIf id_option == p_option_unsneak
         MCM.SetInfoText("Have " + str_name + " stop sneaking.")
 
-    elseIf id_option == p_option_relevel
-        MCM.SetInfoText("Recalculates the stats of " + str_name + ", but only if it's needed. Auto checks before each battle.")
     elseIf id_option == p_option_resurrect
         MCM.SetInfoText("Resurrect this dead member.")
 
@@ -655,16 +646,12 @@ function p_Build_Commands()
             p_option_sneak = MCM.AddTextOption(CONSTS.STR_MCM_SNEAK, "", FLAG_ENABLE)
             p_option_unsneak = MCM.AddTextOption(CONSTS.STR_MCM_UNSNEAK, "", FLAG_DISABLE)
         endIf
-
-        p_option_relevel = MCM.AddTextOption(CONSTS.STR_MCM_RELEVEL, "", FLAG_ENABLE)
     else
         p_option_follow = MCM.AddTextOption(CONSTS.STR_MCM_FOLLOW, "", FLAG_ENABLE)
         p_option_unfollow = MCM.AddTextOption(CONSTS.STR_MCM_UNFOLLOW, "", FLAG_DISABLE)
 
         p_option_sneak = MCM.AddTextOption(CONSTS.STR_MCM_SNEAK, "", FLAG_DISABLE)
         p_option_unsneak = MCM.AddTextOption(CONSTS.STR_MCM_UNSNEAK, "", FLAG_DISABLE)
-
-        p_option_relevel = MCM.AddTextOption(CONSTS.STR_MCM_RELEVEL, "", FLAG_DISABLE)
     endif
 
     p_option_rating = MCM.AddTextOption(CONSTS.STR_MCM_RATING, p_ref_member.Get_Rating_Stars())
@@ -757,16 +744,12 @@ function p_Update_Commands()
             f_Enable(p_option_sneak, DONT_UPDATE)
             f_Disable(p_option_unsneak, DONT_UPDATE)
         endIf
-
-        f_Enable(p_option_relevel, DONT_UPDATE)
     else
         f_Enable(p_option_follow, DONT_UPDATE)
         f_Disable(p_option_unfollow, DONT_UPDATE)
 
         f_Disable(p_option_sneak, DONT_UPDATE)
         f_Disable(p_option_unsneak, DONT_UPDATE)
-
-        f_Disable(p_option_relevel, DONT_UPDATE)
     endif
 
     MCM.SetTextOptionValue(p_option_rating, p_ref_member.Get_Rating_Stars(), DONT_UPDATE)
@@ -845,7 +828,7 @@ function p_Build_Statistics()
     p_option_skill_pickpocket   = MCM.AddTextOption(CONSTS.STR_MCM_PICKPOCKET,  ref_actor.GetActorValue(CONSTS.STR_PICKPOCKET)  as int)
     p_option_skill_speechcraft  = MCM.AddTextOption(CONSTS.STR_MCM_SPEECHCRAFT, ref_actor.GetActorValue(CONSTS.STR_SPEECHCRAFT) as int)
 
-    p_option_race               = MCM.AddTextOption(CONSTS.STR_MCM_RACE,        ref_actor.GetRace().GetName()                         )
+    p_option_race               = MCM.AddTextOption(CONSTS.STR_MCM_RACE,        ref_actor.GetRace().GetName())
 endFunction
 
 function p_Update_Statistics()

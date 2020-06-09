@@ -4,8 +4,13 @@
 
 #pragma once
 
-#include "utils.h"
-#include "papyrus.h"
+#include "types.h"
+
+namespace doticu_npcp { namespace Forms {
+
+
+
+}}
 
 namespace doticu_npcp { namespace Forms { namespace Exports {
 

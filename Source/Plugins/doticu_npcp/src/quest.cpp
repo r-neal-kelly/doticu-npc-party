@@ -2,10 +2,12 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
-#include "types.h"
-#include "quest.h"
-#include "object_ref.h"
+#include "skse64/GameRTTI.h"
+
 #include "member.h"
+#include "object_ref.h"
+#include "quest.h"
+#include "types.h"
 
 namespace doticu_npcp { namespace Quest {
 

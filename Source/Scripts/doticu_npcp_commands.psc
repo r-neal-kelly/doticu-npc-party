@@ -335,12 +335,6 @@ function Unsneak_Sync(Actor ref_actor, bool auto_create)
     GotoState("")
 endFunction
 
-function Relevel_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Relevel(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
-endFunction
-
 function Pack_Sync(Actor ref_actor, bool auto_create)
     GotoState("p_STATE_BUSY")
     PRIVATE.Pack(CODES.DO_SYNC, ref_actor, auto_create)
@@ -634,10 +628,6 @@ function Unsneak_Async(Actor ref_actor, bool auto_create)
     PRIVATE.Unsneak(CODES.DO_ASYNC, ref_actor, auto_create)
 endFunction
 
-function Relevel_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Relevel(CODES.DO_ASYNC, ref_actor, auto_create)
-endFunction
-
 function Pack_Async(Actor ref_actor, bool auto_create)
     PRIVATE.Pack(CODES.DO_ASYNC, ref_actor, auto_create)
 endFunction
@@ -833,8 +823,6 @@ state p_STATE_BUSY
     function Sneak_Sync(Actor ref_actor, bool auto_create)
     endFunction
     function Unsneak_Sync(Actor ref_actor, bool auto_create)
-    endFunction
-    function Relevel_Sync(Actor ref_actor, bool auto_create)
     endFunction
     function Pack_Sync(Actor ref_actor, bool auto_create)
     endFunction
@@ -1096,9 +1084,6 @@ state f_STATE_UPDATING
     function Unsneak_Sync(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Relevel_Sync(Actor ref_actor, bool auto_create)
-        LOGS.Notify_Is_Updating()
-    endFunction
     function Pack_Sync(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
@@ -1256,9 +1241,6 @@ state f_STATE_UPDATING
         LOGS.Notify_Is_Updating()
     endFunction
     function Unsneak_Async(Actor ref_actor, bool auto_create)
-        LOGS.Notify_Is_Updating()
-    endFunction
-    function Relevel_Async(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
     function Pack_Async(Actor ref_actor, bool auto_create)

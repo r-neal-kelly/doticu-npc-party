@@ -4,10 +4,13 @@
 
 #pragma once
 
-#include "skse64/GameForms.h"
-#include "skse64/PapyrusNativeFunctions.h"
+#include "types.h"
 
-#include "papyrus.h"
+namespace doticu_npcp { namespace Outfit {
+
+
+
+}}
 
 namespace doticu_npcp { namespace Outfit { namespace Exports {
 

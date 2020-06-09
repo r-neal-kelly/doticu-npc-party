@@ -4,12 +4,7 @@
 
 #pragma once
 
-#include "skse64/GameReferences.h"
-#include "skse64/PapyrusInterfaces.h"
-#include "skse64/PapyrusVM.h"
-
-#include "utils.h"
-#include "vector.h"
+#include "types.h"
 
 namespace doticu_npcp { namespace Papyrus {
 
@@ -249,3 +244,9 @@ namespace doticu_npcp { namespace Papyrus {
     }
 
 }}
+
+namespace doticu_npcp { namespace Papyrus { namespace Exports {
+
+    bool Register(VMClassRegistry *registry);
+
+}}}

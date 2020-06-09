@@ -2,8 +2,10 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
-#include "xentry.h"
 #include "form.h"
+#include "utils.h"
+#include "xentry.h"
+#include "xlist.h"
 
 namespace doticu_npcp { namespace XEntry {
 

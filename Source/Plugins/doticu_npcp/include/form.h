@@ -4,10 +4,7 @@
 
 #pragma once
 
-#include "skse64/GameForms.h"
-#include "skse64/GameRTTI.h"
-
-#include "utils.h"
+#include "types.h"
 
 namespace doticu_npcp { namespace Form {
 
@@ -16,3 +13,9 @@ namespace doticu_npcp { namespace Form {
     bool Has_Keyword(TESForm *form, BGSKeyword *keyword);
 
 }}
+
+namespace doticu_npcp { namespace Form { namespace Exports {
+
+    bool Register(VMClassRegistry *registry);
+
+}}}

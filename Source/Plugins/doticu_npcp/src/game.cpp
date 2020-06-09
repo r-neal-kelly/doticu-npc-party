@@ -5,10 +5,11 @@
 #include "skse64/GameData.h"
 #include "skse64/GameRTTI.h"
 
-#include "utils.h"
-#include "string2.h"
-#include "game.h"
 #include "form.h"
+#include "game.h"
+#include "string2.h"
+#include "types.h"
+#include "utils.h"
 
 namespace doticu_npcp { namespace Game {
 

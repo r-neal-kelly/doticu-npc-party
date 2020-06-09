@@ -4,12 +4,7 @@
 
 #pragma once
 
-#include "skse64/GameExtraData.h"
-
-#include "utils.h"
 #include "types.h"
-#include "xlist.h"
-#include "xdata.h"
 
 namespace doticu_npcp { namespace XEntry {
 

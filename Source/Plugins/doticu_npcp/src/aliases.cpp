@@ -4,11 +4,13 @@
 
 #include "skse64/GameRTTI.h"
 
-#include "utils.h"
-#include "aliases.h"
 #include "actor_base2.h"
 #include "actor2.h"
+#include "aliases.h"
 #include "member.h"
+#include "papyrus.h"
+#include "string2.h"
+#include "utils.h"
 
 namespace doticu_npcp { namespace Aliases {
 

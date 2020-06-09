@@ -638,6 +638,9 @@ endFunction
 function p_Vitalize()
 p_Lock()
 
+    ; because our invulnerability method changes health
+    doticu_npcp.Actor_Reset_Actor_Value(p_ref_actor, "Health")
+
     if p_code_vitality == CODES.IS_MORTAL
         ACTORS.Token(p_ref_actor, CONSTS.TOKEN_VITALITY_MORTAL)
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_PROTECTED)
@@ -658,12 +661,6 @@ p_Lock()
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_PROTECTED)
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_ESSENTIAL)
         ACTORS.Token(p_ref_actor, CONSTS.TOKEN_VITALITY_INVULNERABLE)
-
-        ; this is temp, as we are moving leveling to c++ and we will just relevel every enforce
-        p_ref_actor.SetActorValue("Health", doticu_npcp.Actor_Base2_Get_Max_Actor_Value(ACTORS.Get_Leveled_Base(p_ref_actor), "Health"))
-        if Is_Follower()
-            Get_Follower().Relevel(CODES.DO_ASYNC)
-        endIf
     endIf
 
     p_ref_actor.EvaluatePackage()
@@ -1589,6 +1586,9 @@ int function Style(int code_exec, int code_style)
 endFunction
 event On_Style()
     p_Style()
+    if Is_Follower()
+        Get_Follower().f_Relevel()
+    endIf
 endEvent
 
 int function Style_Default(int code_exec)
@@ -1605,6 +1605,9 @@ int function Style_Default(int code_exec)
         p_Async("On_Style")
     else
         p_Style()
+        if Is_Follower()
+            Get_Follower().f_Relevel()
+        endIf
     endIf
 
     return CODES.SUCCESS
@@ -1624,6 +1627,9 @@ int function Style_Warrior(int code_exec)
         p_Async("On_Style")
     else
         p_Style()
+        if Is_Follower()
+            Get_Follower().f_Relevel()
+        endIf
     endIf
 
     return CODES.SUCCESS
@@ -1643,6 +1649,9 @@ int function Style_Mage(int code_exec)
         p_Async("On_Style")
     else
         p_Style()
+        if Is_Follower()
+            Get_Follower().f_Relevel()
+        endIf
     endIf
 
     return CODES.SUCCESS
@@ -1662,6 +1671,9 @@ int function Style_Archer(int code_exec)
         p_Async("On_Style")
     else
         p_Style()
+        if Is_Follower()
+            Get_Follower().f_Relevel()
+        endIf
     endIf
 
     return CODES.SUCCESS
@@ -1681,6 +1693,9 @@ int function Style_Coward(int code_exec)
         p_Async("On_Style")
     else
         p_Style()
+        if Is_Follower()
+            Get_Follower().f_Relevel()
+        endIf
     endIf
 
     return CODES.SUCCESS
@@ -1699,6 +1714,9 @@ int function Vitalize(int code_exec, int code_vitality)
 endFunction
 event On_Vitalize()
     p_Vitalize()
+    if Is_Follower()
+        Get_Follower().f_Relevel()
+    endIf
 endEvent
 
 int function Vitalize_Mortal(int code_exec)
@@ -1715,6 +1733,9 @@ int function Vitalize_Mortal(int code_exec)
         p_Async("On_Vitalize")
     else
         p_Vitalize()
+        if Is_Follower()
+            Get_Follower().f_Relevel()
+        endIf
     endIf
 
     return CODES.SUCCESS
@@ -1734,6 +1755,9 @@ int function Vitalize_Protected(int code_exec)
         p_Async("On_Vitalize")
     else
         p_Vitalize()
+        if Is_Follower()
+            Get_Follower().f_Relevel()
+        endIf
     endIf
 
     return CODES.SUCCESS
@@ -1753,6 +1777,9 @@ int function Vitalize_Essential(int code_exec)
         p_Async("On_Vitalize")
     else
         p_Vitalize()
+        if Is_Follower()
+            Get_Follower().f_Relevel()
+        endIf
     endIf
 
     return CODES.SUCCESS
@@ -1772,6 +1799,9 @@ int function Vitalize_Invulnerable(int code_exec)
         p_Async("On_Vitalize")
     else
         p_Vitalize()
+        if Is_Follower()
+            Get_Follower().f_Relevel()
+        endIf
     endIf
 
     return CODES.SUCCESS

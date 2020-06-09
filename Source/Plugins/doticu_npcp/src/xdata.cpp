@@ -2,9 +2,9 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "utils.h"
 #include "xdata.h"
 
-// see GameBSExtraData.h
 const char *arr_str_xdata_types[180]{
     "kExtraData_None",
     "kExtraData_Havok",

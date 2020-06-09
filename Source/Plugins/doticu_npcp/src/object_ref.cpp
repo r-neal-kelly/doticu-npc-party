@@ -2,11 +2,17 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "skse64/GameRTTI.h"
+
 #include "cell.h"
+#include "form.h"
 #include "game.h"
 #include "object_ref.h"
 #include "quest.h"
+#include "utils.h"
+#include "vector.h"
 #include "xcontainer.h"
+#include "xentry.h"
 
 namespace doticu_npcp { namespace Object_Ref {
 
@@ -498,22 +504,18 @@ namespace doticu_npcp { namespace Object_Ref {
             return -1.0;
         }
 
-        float obj_x = abs(obj->pos.x);
-        float target_x = abs(target->pos.x);
         float dist_x;
-        if (obj_x > target_x) {
-            dist_x = obj_x - target_x;
+        if (obj->pos.x > target->pos.x) {
+            dist_x = obj->pos.x - target->pos.x;
         } else {
-            dist_x = target_x - obj_x;
+            dist_x = target->pos.x - obj->pos.x;
         }
 
-        float obj_y = abs(obj->pos.y);
-        float target_y = abs(target->pos.y);
         float dist_y;
-        if (obj_y > target_y) {
-            dist_y = obj_y - target_y;
+        if (obj->pos.y > target->pos.y) {
+            dist_y = obj->pos.y - target->pos.y;
         } else {
-            dist_y = target_y - obj_y;
+            dist_y = target->pos.y - obj->pos.y;
         }
 
         return sqrt(pow(dist_x, 2) + pow(dist_y, 2));

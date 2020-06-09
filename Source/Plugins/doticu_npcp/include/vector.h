@@ -6,6 +6,8 @@
 
 #include <vector>
 
+#include "types.h"
+
 namespace doticu_npcp { namespace Vector {
 
     template <typename T>

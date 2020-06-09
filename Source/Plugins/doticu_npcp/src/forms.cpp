@@ -3,6 +3,13 @@
 */
 
 #include "forms.h"
+#include "papyrus.h"
+
+namespace doticu_npcp { namespace Forms {
+
+
+
+}}
 
 namespace doticu_npcp { namespace Forms { namespace Exports {
 

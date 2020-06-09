@@ -6,33 +6,41 @@
 
 #include "skse64/PluginAPI.h"
 
-#include "actor2.h"
 #include "actor_base2.h"
+#include "actor2.h"
 #include "aliases.h"
+#include "cell.h"
 #include "follower.h"
 #include "followers.h"
+#include "form.h"
 #include "forms.h"
 #include "game.h"
 #include "member.h"
 #include "object_ref.h"
 #include "outfit.h"
+#include "papyrus.h"
 #include "player.h"
 #include "quest.h"
+#include "string2.h"
 #include "utils.h"
 
 bool Register_Functions(VMClassRegistry *registry) {
-    doticu_npcp::Actor2::Exports::Register(registry);
     doticu_npcp::Actor_Base2::Exports::Register(registry);
+    doticu_npcp::Actor2::Exports::Register(registry);
     doticu_npcp::Aliases::Exports::Register(registry);
+    doticu_npcp::Cell::Exports::Register(registry);
     doticu_npcp::Follower::Exports::Register(registry);
     doticu_npcp::Followers::Exports::Register(registry);
+    doticu_npcp::Form::Exports::Register(registry);
     doticu_npcp::Forms::Exports::Register(registry);
     doticu_npcp::Game::Exports::Register(registry);
     doticu_npcp::Member::Exports::Register(registry);
     doticu_npcp::Object_Ref::Exports::Register(registry);
     doticu_npcp::Outfit::Exports::Register(registry);
+    doticu_npcp::Papyrus::Exports::Register(registry);
     doticu_npcp::Player::Exports::Register(registry);
     doticu_npcp::Quest::Exports::Register(registry);
+    doticu_npcp::String2::Exports::Register(registry);
     doticu_npcp::Utils::Exports::Register(registry);
 
     _MESSAGE(DOTICU_NPCP_PRINT_PREFIX "Added all class functions.");

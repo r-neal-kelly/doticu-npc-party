@@ -4,9 +4,6 @@
 
 #pragma once
 
-#include "skse64/GameForms.h"
-#include "skse64/PapyrusNativeFunctions.h"
-
 #include "types.h"
 
 namespace doticu_npcp { namespace Follower {
@@ -36,6 +33,8 @@ namespace doticu_npcp { namespace Follower {
     void Summon(Follower_t *follower, float distance = 140, float angle_degree = 0);
     void Summon_Behind(Follower_t *follower, float distance = 140);
     void Catch_Up(Follower_t *follower);
+    void Level(Follower_t *follower);
+    void Unlevel(Follower_t *follower);
 
 }}
 

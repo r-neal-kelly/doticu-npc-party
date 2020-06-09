@@ -4,9 +4,7 @@
 
 #pragma once
 
-#include "common/IDebugLog.h"
-
-#include "skse64/PapyrusNativeFunctions.h"
+#include "types.h"
 
 #define M \
     do {
@@ -45,19 +43,6 @@ W
 #define DOTICU_NPCP_VERSION_PATCH 1
 
 #define DOTICU_NPCP_PRINT_PREFIX "doticu_npcp: "
-
-namespace doticu_npcp {
-
-    typedef uint8_t u8;
-    typedef uint16_t u16;
-    typedef uint32_t u32;
-    typedef uint64_t u64;
-    typedef int8_t s8;
-    typedef int16_t s16;
-    typedef int32_t s32;
-    typedef int64_t s64;
-
-}
 
 namespace doticu_npcp { namespace Utils {
 

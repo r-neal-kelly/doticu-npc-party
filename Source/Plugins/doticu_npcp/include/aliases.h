@@ -4,12 +4,7 @@
 
 #pragma once
 
-#include "skse64/GameForms.h"
-#include "skse64/PapyrusArgs.h"
-
-#include "utils.h"
-#include "string2.h"
-#include "papyrus.h"
+#include "types.h"
 
 namespace doticu_npcp { namespace Aliases {
 

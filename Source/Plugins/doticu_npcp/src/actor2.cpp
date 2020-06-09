@@ -2,11 +2,18 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
-#include "skse64_common/Relocation.h" // temp
+#include "skse64/GameData.h"
+#include "skse64/GameRTTI.h"
+#include "skse64/PapyrusActor.h"
 
-#include "actor2.h"
 #include "actor_base2.h"
+#include "actor2.h"
+#include "form.h"
+#include "object_ref.h"
 #include "outfit.h"
+#include "utils.h"
+#include "xentry.h"
+#include "xlist.h"
 
 namespace doticu_npcp { namespace Actor2 {
 
@@ -532,6 +539,119 @@ namespace doticu_npcp { namespace Actor2 {
         }        
     }
 
+    float Get_Actor_Value(Actor *actor, const char *name) {
+        if (!actor || !name || !name[0]) {
+            return 0.0;
+        }
+
+        UInt32 id_value = LookupActorValueByName(name);
+        if (id_value >= ActorValueList::kNumActorValues) {
+            return 0.0;
+        }
+
+        return actor->actorValueOwner.GetCurrent(id_value);
+    }
+
+    float Get_Base_Actor_Value(Actor *actor, const char *name) {
+        if (!actor || !name || !name[0]) {
+            return 0.0;
+        }
+
+        UInt32 id_value = LookupActorValueByName(name);
+        if (id_value >= ActorValueList::kNumActorValues) {
+            return 0.0;
+        }
+
+        return actor->actorValueOwner.GetBase(id_value);
+    }
+
+    float Get_Max_Actor_Value(Actor *actor, const char *name) {
+        if (!actor || !name || !name[0]) {
+            return 0.0;
+        }
+
+        UInt32 id_value = LookupActorValueByName(name);
+        if (id_value >= ActorValueList::kNumActorValues) {
+            return 0.0;
+        }
+
+        return actor->actorValueOwner.GetMaximum(id_value);
+    }
+
+    void Set_Actor_Value(Actor *actor, const char *name, float value) {
+        if (!actor || !name || !name[0]) {
+            return;
+        }
+
+        UInt32 id_value = LookupActorValueByName(name);
+        if (id_value >= ActorValueList::kNumActorValues) {
+            return;
+        }
+
+        actor->actorValueOwner.SetCurrent(id_value, value);
+    }
+
+    void Reset_Actor_Value(Actor *actor, const char *name) {
+        if (!actor || !name || !name[0]) {
+            return;
+        }
+
+        TESNPC *actor_base = DYNAMIC_CAST(actor->baseForm, TESForm, TESNPC);
+        if (!actor_base) {
+            return;
+        }
+
+        UInt32 id_value = LookupActorValueByName(name);
+        if (id_value >= ActorValueList::kNumActorValues) {
+            return;
+        }
+
+        Set_Actor_Value(actor, name, Actor_Base2::Get_Base_Actor_Value(actor_base, name));
+    }
+
+    void Log_Actor_Values(Actor *actor) {
+        if (!actor) {
+            return;
+        }
+
+        _MESSAGE("Logging Actor Values: %s", Get_Name(actor));
+
+        #define LOG_ACTOR_VALUE(NAME)                                   \
+        M                                                               \
+            _MESSAGE("    " NAME ": curr %10f, base %10f, max %10f",    \
+                     Get_Actor_Value(actor, NAME),                      \
+                     Get_Base_Actor_Value(actor, NAME),                 \
+                     Get_Max_Actor_Value(actor, NAME));                 \
+        W
+
+        LOG_ACTOR_VALUE("Health");
+        LOG_ACTOR_VALUE("Magicka");
+        LOG_ACTOR_VALUE("Stamina");
+
+        LOG_ACTOR_VALUE("OneHanded");
+        LOG_ACTOR_VALUE("TwoHanded");
+        LOG_ACTOR_VALUE("Block");
+        LOG_ACTOR_VALUE("HeavyArmor");
+        LOG_ACTOR_VALUE("LightArmor");
+        LOG_ACTOR_VALUE("Smithing");
+
+        LOG_ACTOR_VALUE("Destruction");
+        LOG_ACTOR_VALUE("Restoration");
+        LOG_ACTOR_VALUE("Conjuration");
+        LOG_ACTOR_VALUE("Alteration");
+        LOG_ACTOR_VALUE("Illusion");
+        LOG_ACTOR_VALUE("Enchanting");
+
+        LOG_ACTOR_VALUE("Marksman");
+        LOG_ACTOR_VALUE("Sneak");
+        LOG_ACTOR_VALUE("Alchemy");
+        LOG_ACTOR_VALUE("Lockpicking");
+        LOG_ACTOR_VALUE("Pickpocket");
+        LOG_ACTOR_VALUE("Speechcraft");
+
+        #undef LOG_ACTOR_VALUE
+    }
+
 }}
 
 namespace doticu_npcp { namespace Actor2 { namespace Exports {
@@ -583,6 +703,10 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
         return Actor2::Cache_Static_Inventory(registry, id_stack, actor, linchpin, cache_out);
     }
 
+    void Reset_Actor_Value(Selfless_t *, Actor *actor, BSFixedString name) {
+        return Actor2::Reset_Actor_Value(actor, name.data);
+    }
+
     bool Register(VMClassRegistry *registry) {
         registry->RegisterFunction(
             new NativeFunction2 <Actor, void, BGSOutfit *, bool>(
@@ -617,6 +741,13 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
                 "Actor_Cache_Static_Inventory",
                 "doticu_npcp",
                 Actor2::Exports::Cache_Static_Inventory,
+                registry)
+        );
+        registry->RegisterFunction(
+            new NativeFunction2 <StaticFunctionTag, void, Actor *, BSFixedString>(
+                "Actor_Reset_Actor_Value",
+                "doticu_npcp",
+                Actor2::Exports::Reset_Actor_Value,
                 registry)
         );
 

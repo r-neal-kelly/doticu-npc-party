@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "papyrus.h"
+#include "types.h"
 
 namespace doticu_npcp { namespace Actor_Base2 {
 
@@ -12,8 +12,9 @@ namespace doticu_npcp { namespace Actor_Base2 {
     TESObjectARMO *Get_Skin(TESNPC *actor_base);
     bool Has_Same_Head(TESNPC *actor_base_a, TESNPC *actor_base_b);
 
-    float Get_Max_Actor_Value(TESNPC *actor_base, BSFixedString name);
-
+    float Get_Actor_Value(TESNPC *actor_base, const char *name);
+    float Get_Base_Actor_Value(TESNPC *actor_base, const char *name);
+    float Get_Max_Actor_Value(TESNPC *actor_base, const char *name);
 }}
 
 namespace doticu_npcp { namespace Actor_Base2 { namespace Exports {

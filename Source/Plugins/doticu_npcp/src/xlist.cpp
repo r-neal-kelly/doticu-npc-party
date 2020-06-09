@@ -2,9 +2,11 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
-#include "xlist.h"
 #include "form.h"
 #include "object_ref.h"
+#include "utils.h"
+#include "xdata.h"
+#include "xlist.h"
 
 namespace doticu_npcp { namespace XList {
 

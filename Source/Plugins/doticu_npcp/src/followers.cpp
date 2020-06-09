@@ -3,12 +3,14 @@
 */
 
 #include "skse64/GameData.h"
+#include "skse64/GameRTTI.h"
 
 #include "follower.h"
 #include "followers.h"
 #include "member.h"
 #include "object_ref.h"
 #include "papyrus.h"
+#include "utils.h"
 
 namespace doticu_npcp { namespace Followers {
 

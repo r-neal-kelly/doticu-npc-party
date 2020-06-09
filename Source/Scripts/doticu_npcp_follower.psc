@@ -73,39 +73,14 @@ int                     p_id_alias                  =    -1
 Actor                   p_ref_actor                 =  none
 doticu_npcp_member      p_ref_member                =  none
 Actor                   p_ref_horse                 =  none
-int                     p_style_follower            =    -1
-int                     p_level_follower            =    -1
 bool                    p_is_sneak                  = false
 bool                    p_is_saddler                = false
 bool                    p_is_retreater              = false
-bool                    p_is_catching_up            = false
 
 int                     p_prev_relationship_rank    =    -1
 float                   p_prev_waiting_for_player   =  -1.0
 float                   p_prev_speed_mult           =  -1.0
 bool                    p_prev_faction_bard_no_auto = false
-
-float                   p_prev_health               =  -1.0
-float                   p_prev_magicka              =  -1.0
-float                   p_prev_stamina              =  -1.0
-float                   p_prev_one_handed           =  -1.0
-float                   p_prev_two_handed           =  -1.0
-float                   p_prev_block                =  -1.0
-float                   p_prev_heavy_armor          =  -1.0
-float                   p_prev_light_armor          =  -1.0
-float                   p_prev_smithing             =  -1.0
-float                   p_prev_destruction          =  -1.0
-float                   p_prev_restoration          =  -1.0
-float                   p_prev_conjuration          =  -1.0
-float                   p_prev_alteration           =  -1.0
-float                   p_prev_illusion             =  -1.0
-float                   p_prev_enchanting           =  -1.0
-float                   p_prev_marksman             =  -1.0
-float                   p_prev_sneak                =  -1.0
-float                   p_prev_alchemy              =  -1.0
-float                   p_prev_lockpicking          =  -1.0
-float                   p_prev_pickpocket           =  -1.0
-float                   p_prev_speechcraft          =  -1.0
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA, int id_alias)
@@ -117,18 +92,17 @@ p_Lock()
     p_ref_actor = GetActorReference() as Actor
     p_ref_member = MEMBERS.Get_Member(p_ref_actor)
     p_ref_horse = none
-    p_style_follower = p_ref_member.Get_Style()
-    p_level_follower = -1
     p_is_sneak = false
     p_is_retreater = false
-    p_is_catching_up = false
 p_Unlock()
 
     p_Backup()
     ACTORS.Stop_If_Playing_Music(p_ref_actor)
 
     p_Follow()
+p_Lock()
     p_Level()
+p_Unlock()
 endFunction
 
 function f_Destroy()
@@ -140,7 +114,9 @@ function f_Destroy()
     if p_is_sneak
         p_Unsneak()
     endIf
+p_Lock()
     p_Unlevel()
+p_Unlock()
     p_Unfollow()
     
     p_Restore()
@@ -151,11 +127,8 @@ p_Lock()
     p_prev_waiting_for_player = -1.0
     p_prev_relationship_rank = -1
 
-    p_is_catching_up = false
     p_is_retreater = false
     p_is_sneak = false
-    p_level_follower = -1
-    p_style_follower = -1
     p_ref_horse = none
     p_ref_member = none
     p_ref_actor = none
@@ -179,6 +152,10 @@ function f_Enforce()
 
     p_Follow()
 
+p_Lock()
+    p_Level()
+p_Unlock()
+
     if !Exists()
         return
     endIf
@@ -200,12 +177,12 @@ function f_Enforce()
     endIf
 
     ; Saddler
+endFunction
 
-    if !Exists()
-        return
-    endIf
-
+function f_Relevel()
+p_Lock()
     p_Level()
+p_Unlock()
 endFunction
 
 ; Private Methods
@@ -232,55 +209,11 @@ p_Lock()
     p_prev_speed_mult = p_ref_actor.GetBaseActorValue("SpeedMult")
     p_prev_faction_bard_no_auto = p_ref_actor.IsInFaction(CONSTS.FACTION_BARD_SINGER_NO_AUTOSTART)
 
-    p_prev_health = p_ref_actor.GetBaseActorValue(CONSTS.STR_HEALTH)
-    p_prev_magicka = p_ref_actor.GetBaseActorValue(CONSTS.STR_MAGICKA)
-    p_prev_stamina = p_ref_actor.GetBaseActorValue(CONSTS.STR_STAMINA)
-    p_prev_one_handed = p_ref_actor.GetBaseActorValue(CONSTS.STR_ONE_HANDED)
-    p_prev_two_handed = p_ref_actor.GetBaseActorValue(CONSTS.STR_TWO_HANDED)
-    p_prev_block = p_ref_actor.GetBaseActorValue(CONSTS.STR_BLOCK)
-    p_prev_heavy_armor = p_ref_actor.GetBaseActorValue(CONSTS.STR_HEAVY_ARMOR)
-    p_prev_light_armor = p_ref_actor.GetBaseActorValue(CONSTS.STR_LIGHT_ARMOR)
-    p_prev_smithing = p_ref_actor.GetBaseActorValue(CONSTS.STR_SMITHING)
-    p_prev_destruction = p_ref_actor.GetBaseActorValue(CONSTS.STR_DESTRUCTION)
-    p_prev_restoration = p_ref_actor.GetBaseActorValue(CONSTS.STR_RESTORATION)
-    p_prev_conjuration = p_ref_actor.GetBaseActorValue(CONSTS.STR_CONJURATION)
-    p_prev_alteration = p_ref_actor.GetBaseActorValue(CONSTS.STR_ALTERATION)
-    p_prev_illusion = p_ref_actor.GetBaseActorValue(CONSTS.STR_ILLUSION)
-    p_prev_enchanting = p_ref_actor.GetBaseActorValue(CONSTS.STR_ENCHANTING)
-    p_prev_marksman = p_ref_actor.GetBaseActorValue(CONSTS.STR_MARKSMAN)
-    p_prev_sneak = p_ref_actor.GetBaseActorValue(CONSTS.STR_SNEAK)
-    p_prev_alchemy = p_ref_actor.GetBaseActorValue(CONSTS.STR_ALCHEMY)
-    p_prev_lockpicking = p_ref_actor.GetBaseActorValue(CONSTS.STR_LOCKPICKING)
-    p_prev_pickpocket = p_ref_actor.GetBaseActorValue(CONSTS.STR_PICKPOCKET)
-    p_prev_speechcraft = p_ref_actor.GetBaseActorValue(CONSTS.STR_SPEECHCRAFT)
-
 p_Unlock()
 endFunction
 
 function p_Restore()
 p_Lock()
-
-    p_ref_actor.SetActorValue(CONSTS.STR_SPEECHCRAFT, p_prev_speechcraft)
-    p_ref_actor.SetActorValue(CONSTS.STR_PICKPOCKET, p_prev_pickpocket)
-    p_ref_actor.SetActorValue(CONSTS.STR_LOCKPICKING, p_prev_lockpicking)
-    p_ref_actor.SetActorValue(CONSTS.STR_ALCHEMY, p_prev_alchemy)
-    p_ref_actor.SetActorValue(CONSTS.STR_SNEAK, p_prev_sneak)
-    p_ref_actor.SetActorValue(CONSTS.STR_MARKSMAN, p_prev_marksman)
-    p_ref_actor.SetActorValue(CONSTS.STR_ENCHANTING, p_prev_enchanting)
-    p_ref_actor.SetActorValue(CONSTS.STR_ILLUSION, p_prev_illusion)
-    p_ref_actor.SetActorValue(CONSTS.STR_ALTERATION, p_prev_alteration)
-    p_ref_actor.SetActorValue(CONSTS.STR_CONJURATION, p_prev_conjuration)
-    p_ref_actor.SetActorValue(CONSTS.STR_RESTORATION, p_prev_restoration)
-    p_ref_actor.SetActorValue(CONSTS.STR_DESTRUCTION, p_prev_destruction)
-    p_ref_actor.SetActorValue(CONSTS.STR_SMITHING, p_prev_smithing)
-    p_ref_actor.SetActorValue(CONSTS.STR_LIGHT_ARMOR, p_prev_light_armor)
-    p_ref_actor.SetActorValue(CONSTS.STR_HEAVY_ARMOR, p_prev_heavy_armor)
-    p_ref_actor.SetActorValue(CONSTS.STR_BLOCK, p_prev_block)
-    p_ref_actor.SetActorValue(CONSTS.STR_TWO_HANDED, p_prev_two_handed)
-    p_ref_actor.SetActorValue(CONSTS.STR_ONE_HANDED, p_prev_one_handed)
-    p_ref_actor.SetActorValue(CONSTS.STR_STAMINA, p_prev_stamina)
-    p_ref_actor.SetActorValue(CONSTS.STR_MAGICKA, p_prev_magicka)
-    p_ref_actor.SetActorValue(CONSTS.STR_HEALTH, p_prev_health)
 
     if p_prev_faction_bard_no_auto
         p_ref_actor.AddToFaction(CONSTS.FACTION_BARD_SINGER_NO_AUTOSTART)
@@ -355,304 +288,6 @@ p_Lock()
 p_Unlock()
 endFunction
 
-function p_Retreat()
-p_Lock()
-
-    ; this will cause a package change, where ref ignores combat
-    ACTORS.TOKEN(p_ref_actor, CONSTS.TOKEN_RETREATER)
-
-    ; add a spell that immediately causes invisibility.
-    ; sometimes it won't work correctly, so check that it does
-    while !p_ref_actor.HasMagicEffect(CONSTS.EFFECT_RETREAT)
-        ACTORS.Apply_Ability(p_ref_actor, CONSTS.ABILITY_RETREAT)
-    endWhile
-
-    ; make sure there is no fighting
-    ACTORS.Pacify(p_ref_actor)
-
-    p_ref_actor.EvaluatePackage()
-
-p_Unlock()
-endFunction
-
-function p_Unretreat()
-p_Lock()
-
-    ACTORS.Unapply_Ability(p_ref_actor, CONSTS.ABILITY_RETREAT)
-
-    ACTORS.UNTOKEN(p_ref_actor, CONSTS.TOKEN_RETREATER)
-
-    p_ref_actor.EvaluatePackage()
-
-p_Unlock()
-endFunction
-
-function p_Level()
-p_Lock()
-
-    int style_member = p_ref_member.Get_Style()
-    int level_player = CONSTS.ACTOR_PLAYER.GetLevel()
-    if style_member == p_style_follower && level_player == p_level_follower
-p_Unlock()
-        return
-    endIf
-    p_style_follower = style_member
-    p_level_follower = level_player
-
-    float modifier = 0.67 - (Math.Log(level_player) * 0.067)
-    float max_attribute = 1000
-    float min_attribute = 100
-    float max_skill = 100
-    float min_skill = 0
-
-    float health        = p_prev_health         + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_HEALTH)       * modifier
-    float magicka       = p_prev_magicka        + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_MAGICKA)      * modifier
-    float stamina       = p_prev_stamina        + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_STAMINA)      * modifier
-
-    float one_handed    = p_prev_one_handed     + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_ONE_HANDED)   * modifier
-    float two_handed    = p_prev_two_handed     + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_TWO_HANDED)   * modifier
-    float block         = p_prev_block          + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_BLOCK)        * modifier
-    float heavy_armor   = p_prev_heavy_armor    + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_HEAVY_ARMOR)  * modifier
-    float light_armor   = p_prev_light_armor    + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_LIGHT_ARMOR)  * modifier
-    float smithing      = p_prev_smithing       + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_SMITHING)     * modifier
-
-    float destruction   = p_prev_destruction    + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_DESTRUCTION)  * modifier
-    float restoration   = p_prev_restoration    + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_RESTORATION)  * modifier
-    float conjuration   = p_prev_conjuration    + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_CONJURATION)  * modifier
-    float alteration    = p_prev_alteration     + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_ALTERATION)   * modifier
-    float illusion      = p_prev_illusion       + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_ILLUSION)     * modifier
-    float enchanting    = p_prev_enchanting     + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_ENCHANTING)   * modifier
-
-    float marksman      = p_prev_marksman       + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_MARKSMAN)     * modifier
-    float sneak         = p_prev_sneak          + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_SNEAK)        * modifier
-    float alchemy       = p_prev_alchemy        + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_ALCHEMY)      * modifier
-    float lockpicking   = p_prev_lockpicking    + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_LOCKPICKING)  * modifier
-    float pickpocket    = p_prev_pickpocket     + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_PICKPOCKET)   * modifier
-    float speechcraft   = p_prev_speechcraft    + ACTOR_PLAYER.GetBaseActorValue(CONSTS.STR_SPEECHCRAFT)  * modifier
-
-    float level_player_modded = level_player * modifier
-
-    if Is_Styled_Warrior()
-        health      += level_player * 4; find a better equation
-
-        one_handed  += level_player_modded
-        two_handed  += level_player_modded
-        block       += level_player_modded
-        heavy_armor += level_player_modded
-        light_armor += level_player_modded
-        smithing    += level_player_modded
-
-        destruction -= level_player_modded
-        restoration -= level_player_modded
-        conjuration -= level_player_modded
-        alteration  -= level_player_modded
-        illusion    -= level_player_modded
-        enchanting  -= level_player_modded
-
-        marksman    -= level_player_modded
-        sneak       -= level_player_modded
-        alchemy     -= level_player_modded
-        lockpicking -= level_player_modded
-        pickpocket  -= level_player_modded
-        speechcraft -= level_player_modded
-    elseIf Is_Styled_Mage()
-        magicka      += level_player * 4; find a better equation
-
-        one_handed  -= level_player_modded
-        two_handed  -= level_player_modded
-        block       -= level_player_modded
-        heavy_armor -= level_player_modded
-        light_armor -= level_player_modded
-        smithing    -= level_player_modded
-
-        destruction += level_player_modded
-        restoration += level_player_modded
-        conjuration += level_player_modded
-        alteration  += level_player_modded
-        illusion    += level_player_modded
-        enchanting  += level_player_modded
-
-        marksman    -= level_player_modded
-        sneak       -= level_player_modded
-        alchemy     -= level_player_modded
-        lockpicking -= level_player_modded
-        pickpocket  -= level_player_modded
-        speechcraft -= level_player_modded
-    elseIf Is_Styled_Archer()
-        stamina      += level_player * 4; find a better equation
-
-        one_handed  -= level_player_modded
-        two_handed  -= level_player_modded
-        block       -= level_player_modded
-        heavy_armor -= level_player_modded
-        light_armor -= level_player_modded
-        smithing    -= level_player_modded
-
-        destruction -= level_player_modded
-        restoration -= level_player_modded
-        conjuration -= level_player_modded
-        alteration  -= level_player_modded
-        illusion    -= level_player_modded
-        enchanting  -= level_player_modded
-
-        marksman    += level_player_modded
-        sneak       += level_player_modded
-        alchemy     += level_player_modded
-        lockpicking += level_player_modded
-        pickpocket  += level_player_modded
-        speechcraft += level_player_modded
-    endIf
-
-    if health > max_attribute
-        health = max_attribute
-    elseIf health < min_attribute
-        health = min_attribute
-    endIf
-    if magicka > max_attribute
-        magicka = max_attribute
-    elseIf magicka < min_attribute
-        magicka = min_attribute
-    endIf
-    if stamina > max_attribute
-        stamina = max_attribute
-    elseIf stamina < min_attribute
-        stamina = min_attribute
-    endIf
-
-    if one_handed > max_skill
-        one_handed = max_skill
-    elseIf one_handed < min_skill
-        one_handed = min_skill
-    endIf
-    if two_handed > max_skill
-        two_handed = max_skill
-    elseIf two_handed < min_skill
-        two_handed = min_skill
-    endIf
-    if block > max_skill
-        block = max_skill
-    elseIf block < min_skill
-        block = min_skill
-    endIf
-    if heavy_armor > max_skill
-        heavy_armor = max_skill
-    elseIf heavy_armor < min_skill
-        heavy_armor = min_skill
-    endIf
-    if light_armor > max_skill
-        light_armor = max_skill
-    elseIf light_armor < min_skill
-        light_armor = min_skill
-    endIf
-    if smithing > max_skill
-        smithing = max_skill
-    elseIf smithing < min_skill
-        smithing = min_skill
-    endIf
-
-    if destruction > max_skill
-        destruction = max_skill
-    elseIf destruction < min_skill
-        destruction = min_skill
-    endIf
-    if restoration > max_skill
-        restoration = max_skill
-    elseIf restoration < min_skill
-        restoration = min_skill
-    endIf
-    if conjuration > max_skill
-        conjuration = max_skill
-    elseIf conjuration < min_skill
-        conjuration = min_skill
-    endIf
-    if alteration > max_skill
-        alteration = max_skill
-    elseIf alteration < min_skill
-        alteration = min_skill
-    endIf
-    if illusion > max_skill
-        illusion = max_skill
-    elseIf illusion < min_skill
-        illusion = min_skill
-    endIf
-    if enchanting > max_skill
-        enchanting = max_skill
-    elseIf enchanting < min_skill
-        enchanting = min_skill
-    endIf
-
-    if marksman > max_skill
-        marksman = max_skill
-    elseIf marksman < min_skill
-        marksman = min_skill
-    endIf
-    if sneak > max_skill
-        sneak = max_skill
-    elseIf sneak < min_skill
-        sneak = min_skill
-    endIf
-    if alchemy > max_skill
-        alchemy = max_skill
-    elseIf alchemy < min_skill
-        alchemy = min_skill
-    endIf
-    if lockpicking > max_skill
-        lockpicking = max_skill
-    elseIf lockpicking < min_skill
-        lockpicking = min_skill
-    endIf
-    if pickpocket > max_skill
-        pickpocket = max_skill
-    elseIf pickpocket < min_skill
-        pickpocket = min_skill
-    endIf
-    if speechcraft > max_skill
-        speechcraft = max_skill
-    elseIf speechcraft < min_skill
-        speechcraft = min_skill
-    endIf
-
-    p_ref_actor.SetActorValue(CONSTS.STR_HEALTH, health)
-    p_ref_actor.SetActorValue(CONSTS.STR_MAGICKA, magicka)
-    p_ref_actor.SetActorValue(CONSTS.STR_STAMINA, stamina)
-
-    p_ref_actor.SetActorValue(CONSTS.STR_ONE_HANDED, one_handed)
-    p_ref_actor.SetActorValue(CONSTS.STR_TWO_HANDED, two_handed)
-    p_ref_actor.SetActorValue(CONSTS.STR_BLOCK, block)
-    p_ref_actor.SetActorValue(CONSTS.STR_HEAVY_ARMOR, heavy_armor)
-    p_ref_actor.SetActorValue(CONSTS.STR_LIGHT_ARMOR, light_armor)
-    p_ref_actor.SetActorValue(CONSTS.STR_SMITHING, smithing)
-
-    p_ref_actor.SetActorValue(CONSTS.STR_DESTRUCTION, destruction)
-    p_ref_actor.SetActorValue(CONSTS.STR_RESTORATION, restoration)
-    p_ref_actor.SetActorValue(CONSTS.STR_CONJURATION, conjuration)
-    p_ref_actor.SetActorValue(CONSTS.STR_ALTERATION, alteration)
-    p_ref_actor.SetActorValue(CONSTS.STR_ILLUSION, illusion)
-    p_ref_actor.SetActorValue(CONSTS.STR_ENCHANTING, enchanting)
-
-    p_ref_actor.SetActorValue(CONSTS.STR_MARKSMAN, marksman)
-    p_ref_actor.SetActorValue(CONSTS.STR_SNEAK, sneak)
-    p_ref_actor.SetActorValue(CONSTS.STR_ALCHEMY, alchemy)
-    p_ref_actor.SetActorValue(CONSTS.STR_LOCKPICKING, lockpicking)
-    p_ref_actor.SetActorValue(CONSTS.STR_PICKPOCKET, pickpocket)
-    p_ref_actor.SetActorValue(CONSTS.STR_SPEECHCRAFT, speechcraft)
-
-p_Unlock()
-endFunction
-
-function p_Unlevel()
-p_Lock()
-
-    p_level_follower = -1
-
-p_Unlock()
-endFunction
-
-function p_Relevel()
-    p_Unlevel()
-    p_Level()
-endFunction
-
 function p_Saddle()
 p_Lock()
 
@@ -696,6 +331,42 @@ p_Lock()
 
 p_Unlock()
 endFunction
+
+function p_Retreat()
+p_Lock()
+
+    ; this will cause a package change, where ref ignores combat
+    ACTORS.TOKEN(p_ref_actor, CONSTS.TOKEN_RETREATER)
+
+    ; add a spell that immediately causes invisibility.
+    ; sometimes it won't work correctly, so check that it does
+    while !p_ref_actor.HasMagicEffect(CONSTS.EFFECT_RETREAT)
+        ACTORS.Apply_Ability(p_ref_actor, CONSTS.ABILITY_RETREAT)
+    endWhile
+
+    ; make sure there is no fighting
+    ACTORS.Pacify(p_ref_actor)
+
+    p_ref_actor.EvaluatePackage()
+
+p_Unlock()
+endFunction
+
+function p_Unretreat()
+p_Lock()
+
+    ACTORS.Unapply_Ability(p_ref_actor, CONSTS.ABILITY_RETREAT)
+
+    ACTORS.UNTOKEN(p_ref_actor, CONSTS.TOKEN_RETREATER)
+
+    p_ref_actor.EvaluatePackage()
+
+p_Unlock()
+endFunction
+
+function p_Level() native
+
+function p_Unlevel() native
 
 bool function p_Async(string str_func)
     string str_event = "doticu_npcp_follower_async_" + p_id_alias
@@ -848,23 +519,6 @@ int function Unretreat()
     return CODES.SUCCESS
 endFunction
 
-int function Relevel(int code_exec)
-    if !Exists()
-        return CODES.ISNT_FOLLOWER
-    endIf
-
-    if code_exec == CODES.DO_ASYNC
-        p_Async("On_Relevel")
-    else
-        p_Relevel()
-    endIf
-
-    return CODES.SUCCESS
-endFunction
-event On_Relevel()
-    p_Relevel()
-endEvent
-
 int function Unfollow()
     return p_ref_member.Unfollow()
 endFunction
@@ -1010,14 +664,6 @@ event OnCombatStateChanged(Actor ref_target, int code_combat)
     elseIf code_combat == CODES.COMBAT_SEARCHING
 
     endIf
-endEvent
-
-event OnDeath(Actor ref_killer)
-    if VARS.is_updating
-        return
-    endIf
-
-    p_Unlevel()
 endEvent
 
 event On_Cell_Change(Form cell_new, Form cell_old)

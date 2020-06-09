@@ -153,8 +153,10 @@
     <ClCompile Include="src\aliases.cpp" />
     <ClCompile Include="src\object_ref.cpp" />
     <ClCompile Include="src\form.cpp" />
+    <ClCompile Include="src\papyrus.cpp" />
     <ClCompile Include="src\player.cpp" />
     <ClCompile Include="src\quest.cpp" />
+    <ClCompile Include="src\vector.cpp" />
     <ClCompile Include="src\xcontainer.cpp" />
     <ClCompile Include="src\xentry.cpp" />
     <ClCompile Include="src\string2.cpp" />

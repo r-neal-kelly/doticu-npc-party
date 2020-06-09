@@ -585,14 +585,6 @@ function Goto(int code_return, string str_name)
     endIf
 endFunction
 
-function Relevel(int code_return, string str_name)
-    if code_return == CODES.SUCCESS
-        LOGS.Create_Note(str_name + " has been releveled.")
-    elseIf code_return == CODES.ISNT_FOLLOWER || code_return == CODES.HASNT_FOLLOWER
-        LOGS.Create_Note(str_name + " isn't a follow, and so can't be leveled.")
-    endIf
-endFunction
-
 function Move(int code_return, string str_name)
     if code_return == CODES.STARTED
         LOGS.Create_Note("Moving " + str_name + ".")

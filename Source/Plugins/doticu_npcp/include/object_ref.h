@@ -4,17 +4,7 @@
 
 #pragma once
 
-#include "skse64/GameRTTI.h"
-#include "skse64/PapyrusActor.h"
-#include "skse64/PapyrusNativeFunctions.h"
-
-#include "utils.h"
-#include "vector.h"
-#include "papyrus.h"
-#include "form.h"
-#include "xentry.h"
-#include "xlist.h"
-#include "xdata.h"
+#include "types.h"
 
 namespace doticu_npcp { namespace Object_Ref {
 

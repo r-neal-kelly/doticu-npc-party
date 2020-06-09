@@ -6,7 +6,7 @@
 
 #include <cstring>
 
-#include "utils.h"
+#include "types.h"
 
 namespace doticu_npcp { namespace String2 {
 
@@ -20,3 +20,9 @@ namespace doticu_npcp { namespace String2 {
     bool Contains_Caseless(const char *str_a, const char *str_b);
 
 }}
+
+namespace doticu_npcp { namespace String2 { namespace Exports {
+
+    bool Register(VMClassRegistry *registry);
+
+}}}

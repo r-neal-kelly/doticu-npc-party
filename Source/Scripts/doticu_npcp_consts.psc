@@ -1767,7 +1767,6 @@ string property STR_MCM_UNPARALYZE          = " Unparalyze "                auto
 string property STR_MCM_FOLLOW              = " Follow "                    autoReadOnly hidden
 string property STR_MCM_UNFOLLOW            = " Unfollow "                  autoReadOnly hidden
 string property STR_MCM_UNSNEAK             = " Unsneak "                   autoReadOnly hidden
-string property STR_MCM_RELEVEL             = " Relevel "                   autoReadOnly hidden
 string property STR_MCM_RESURRECT           = " Resurrect "                 autoReadOnly hidden
 string property STR_MCM_DEFAULT             = " Default "                   autoReadOnly hidden
 string property STR_MCM_WARRIOR             = " Warrior "                   autoReadOnly hidden

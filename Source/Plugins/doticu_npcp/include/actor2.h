@@ -4,12 +4,7 @@
 
 #pragma once
 
-#include "skse64/GameReferences.h"
-#include "skse64/GameRTTI.h"
-#include "skse64/PapyrusActor.h"
-
-#include "papyrus.h"
-#include "object_ref.h"
+#include "types.h"
 
 namespace doticu_npcp { namespace Actor2 {
 
@@ -36,6 +31,13 @@ namespace doticu_npcp { namespace Actor2 {
 
     void Move_To_Orbit(Actor *obj, TESObjectREFR *target, float radius, float angle_degree);
 
+    float Get_Actor_Value(Actor *actor, const char *name);
+    float Get_Base_Actor_Value(Actor *actor, const char *name);
+    float Get_Max_Actor_Value(Actor *actor, const char *name);
+    void Set_Actor_Value(Actor *actor, const char *name, float value);
+    void Reset_Actor_Value(Actor *actor, const char *name);
+
+    void Log_Actor_Values(Actor *actor);
 }}
 
 namespace doticu_npcp { namespace Actor2 { namespace Exports {

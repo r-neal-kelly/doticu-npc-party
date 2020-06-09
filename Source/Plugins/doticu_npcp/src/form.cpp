@@ -2,9 +2,10 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "skse64/GameRTTI.h"
+
 #include "form.h"
 
-// see GameForms.h
 const char *arr_str_form_types[143] = {
     "kFormType_None",
     "kFormType_TES4",
@@ -184,3 +185,13 @@ namespace doticu_npcp { namespace Form {
     }
 
 }}
+
+namespace doticu_npcp { namespace Form { namespace Exports {
+
+    bool Register(VMClassRegistry *registry) {
+        _MESSAGE("Added Form functions.");
+
+        return true;
+    }
+
+}}}
