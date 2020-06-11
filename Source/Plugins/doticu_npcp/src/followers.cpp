@@ -730,8 +730,6 @@ namespace doticu_npcp { namespace Followers { namespace Exports {
                 registry)
         );
 
-        _MESSAGE("Added Followers functions.");
-
         return true;
     }
 

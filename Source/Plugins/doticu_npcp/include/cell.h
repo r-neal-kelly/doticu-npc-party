@@ -9,6 +9,7 @@
 namespace doticu_npcp { namespace Cell {
 
     bool Is_Interior(TESObjectCELL *cell);
+    bool Is_Exterior(TESObjectCELL *cell);
 
 }}
 

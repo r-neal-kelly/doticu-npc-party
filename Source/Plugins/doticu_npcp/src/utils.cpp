@@ -90,8 +90,6 @@ namespace doticu_npcp { namespace Utils { namespace Exports {
                 registry)
         );
 
-        _MESSAGE("Added Utils functions.");
-
         return true;
     }
 

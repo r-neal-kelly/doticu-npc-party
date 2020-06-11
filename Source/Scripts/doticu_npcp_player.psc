@@ -210,6 +210,14 @@ endEvent
 
 event On_Cell_Change(Form cell_new, Form cell_old)
     ACTORS.Apply_Ability(ACTOR_PLAYER, CONSTS.ABILITY_CELL)
+
+    ;temp
+    Cell new_cell = cell_new as cell
+    if new_cell.IsInterior() != doticu_npcp.Cell_Is_Interior(new_cell)
+        doticu_npcp.Log("cell is_interior mismatch: " + cell_new.GetName() + " " + cell_new); temp
+    endIf
+    ;
+
     FOLLOWERS.Catch_Up()
 endEvent
 

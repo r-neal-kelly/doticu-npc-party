@@ -13,6 +13,7 @@
 #include "vector.h"
 #include "xcontainer.h"
 #include "xentry.h"
+#include "xlist.h"
 
 namespace doticu_npcp { namespace Object_Ref {
 
@@ -467,6 +468,25 @@ namespace doticu_npcp { namespace Object_Ref {
         _MESSAGE("End of Log_XContainer.");
     }
 
+    void Log_XList(TESObjectREFR *obj) {
+        if (!obj) {
+            _MESSAGE("Log_XList: Not an object.");
+            return;
+        }
+
+        const char *name = Get_Name(obj);
+        if (name && name[0]) {
+            _MESSAGE("Logging XList: %s", name);
+        } else {
+            _MESSAGE("Logging XList: (no name)");
+        }
+
+        XList_t *xlist = &obj->extraData;
+        XList::Log(xlist, "    ");
+
+        _MESSAGE("End of XList.");
+    }
+
     void Move_To_Orbit(TESObjectREFR *obj, TESObjectREFR *target, float radius, float angle_degree) {
         if (!obj || !target) {
             return;
@@ -538,42 +558,51 @@ namespace doticu_npcp { namespace Object_Ref {
 
 namespace doticu_npcp { namespace Object_Ref { namespace Exports {
 
-    void Remove_Unwearable(StaticFunctionTag *, TESObjectREFR *obj, TESObjectREFR *other) {
+    void Remove_Unwearable(Selfless_t *, TESObjectREFR *obj, TESObjectREFR *other) {
         return Object_Ref::Remove_Unwearable(obj, other);
     }
 
-    void Categorize(StaticFunctionTag *, TESObjectREFR *obj) {
+    void Categorize(Selfless_t *, TESObjectREFR *obj) {
         return Object_Ref::Categorize(obj);
     }
 
-    void Log_XContainer(StaticFunctionTag *, TESObjectREFR *ref_object) {
+    void Log_XContainer(Selfless_t *, TESObjectREFR *ref_object) {
         return Object_Ref::Log_XContainer(ref_object);
+    }
+
+    void Log_XList(Selfless_t *, TESObjectREFR *obj) {
+        return Object_Ref::Log_XList(obj);
     }
 
     bool Register(VMClassRegistry *registry) {
         registry->RegisterFunction(
-            new NativeFunction2 <StaticFunctionTag, void, TESObjectREFR *, TESObjectREFR *>(
+            new NativeFunction2 <Selfless_t, void, TESObjectREFR *, TESObjectREFR *>(
                 "Object_Ref_Remove_Unwearable",
                 "doticu_npcp",
                 Exports::Remove_Unwearable,
                 registry)
         );
         registry->RegisterFunction(
-            new NativeFunction1 <StaticFunctionTag, void, TESObjectREFR *>(
+            new NativeFunction1 <Selfless_t, void, TESObjectREFR *>(
                 "Object_Ref_Categorize",
                 "doticu_npcp",
                 Exports::Categorize,
                 registry)
         );
         registry->RegisterFunction(
-            new NativeFunction1 <StaticFunctionTag, void, TESObjectREFR *>(
+            new NativeFunction1 <Selfless_t, void, TESObjectREFR *>(
                 "Object_Ref_Log_XContainer",
                 "doticu_npcp",
                 Exports::Log_XContainer,
                 registry)
         );
-
-        _MESSAGE("Added Object_Ref functions.");
+        registry->RegisterFunction(
+            new NativeFunction1 <Selfless_t, void, TESObjectREFR *>(
+                "Object_Ref_Log_XList",
+                "doticu_npcp",
+                Exports::Log_XList,
+                registry)
+        );
 
         return true;
     }

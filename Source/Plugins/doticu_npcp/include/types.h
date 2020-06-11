@@ -8,6 +8,7 @@
 #include "skse64/GameForms.h"
 #include "skse64/GameFormComponents.h"
 #include "skse64/PapyrusNativeFunctions.h"
+#include "skse64/PluginAPI.h"
 
 namespace doticu_npcp {
 

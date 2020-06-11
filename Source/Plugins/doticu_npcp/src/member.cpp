@@ -264,8 +264,6 @@ namespace doticu_npcp { namespace Member { namespace Exports {
                 registry)
         );
 
-        _MESSAGE("Added Member functions.");
-
         return true;
     }
 

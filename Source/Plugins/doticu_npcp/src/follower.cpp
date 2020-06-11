@@ -8,6 +8,7 @@
 
 #include "actor_base2.h"
 #include "actor2.h"
+#include "cell.h"
 #include "follower.h"
 #include "member.h"
 #include "object_ref.h"
@@ -18,7 +19,7 @@ namespace doticu_npcp { namespace Follower {
 
     Actor *Get_Actor(Follower_t *follower) {
         if (!follower) {
-            return NULL;
+            return nullptr;
         }
 
         Papyrus::Handle hnd_alias(kFormType_Alias, follower);
@@ -27,11 +28,20 @@ namespace doticu_npcp { namespace Follower {
 
     BGSBaseAlias *Get_Member(Follower_t *follower) {
         if (!follower) {
-            return NULL;
+            return nullptr;
         }
 
         Papyrus::Handle hnd(kFormType_Alias, follower);
         return Papyrus::Value(&hnd, "p_ref_member").As_Alias();
+    }
+
+    Actor *Get_Horse(Follower_t *follower) {
+        if (!follower) {
+            return nullptr;
+        }
+
+        Papyrus::Handle handle(kFormType_Alias, follower);
+        return Papyrus::Value(&handle, "p_ref_horse").As_Actor();
     }
 
     bool Is_Created(Follower_t *follower) {
@@ -193,22 +203,51 @@ namespace doticu_npcp { namespace Follower {
         return Is_Created(follower) && Get_Actor(follower);
     }
 
+    bool Is_Near_Player(Follower_t *follower) {
+        if (follower) {
+
+            Actor *follower_actor = Get_Actor(follower);
+            if (follower_actor) {
+
+                return Object_Ref::Is_Near_Player(follower_actor);
+            }
+        }
+    }
+
+    bool Isnt_Near_Player(Follower_t *follower) {
+        if (follower) {
+
+            Actor *follower_actor = Get_Actor(follower);
+            if (follower_actor) {
+
+                return !Object_Ref::Is_Near_Player(follower_actor);
+            }
+        }
+    }
+
     void Summon(Follower_t *follower, float distance, float angle_degree) {
-        if (!follower) {
-            return;
-        }
-
         Actor *follower_actor = Get_Actor(follower);
-        if (!follower_actor) {
-            return;
-        }
+        if (follower_actor) {
 
-        Actor *player_actor = *g_thePlayer;
-        if (!player_actor) {
-            return;
-        }
+            Actor *player_actor = *g_thePlayer;
+            if (player_actor) {
 
-        Actor2::Move_To_Orbit(follower_actor, player_actor, distance, angle_degree);
+                TESObjectCELL *player_cell = player_actor->parentCell;
+                if (player_cell && Cell::Is_Interior(player_cell) || Isnt_Saddler(follower)) {
+
+                    Actor2::Move_To_Orbit(follower_actor, player_actor, distance, angle_degree);
+                } else {
+
+                    Actor *follower_horse = Get_Horse(follower);
+                    if (follower_horse) {
+
+                        float saddler_distance = distance * 4;
+                        Actor2::Move_To_Orbit(follower_horse, player_actor, saddler_distance, angle_degree);
+                        Actor2::Move_To_Orbit(follower_actor, player_actor, saddler_distance, angle_degree - 10);
+                    }
+                }
+            }
+        }
     }
 
     void Summon_Behind(Follower_t *follower, float distance) {
@@ -230,19 +269,17 @@ namespace doticu_npcp { namespace Follower {
     }
 
     void Catch_Up(Follower_t *follower) {
-        if (!Exists(follower)) {
-            return;
-        }
+        if (Exists(follower) && Is_Mobile(follower) && Isnt_Paralyzed(follower) && Isnt_Mannequin(follower)) {
 
-        if (Is_Immobile(follower) || Is_Paralyzed(follower) || Is_Mannequin(follower)) {
-            return;
-        }
+            TESObjectCELL *player_cell = (*g_thePlayer)->parentCell;
+            if (player_cell && Cell::Is_Interior(player_cell) || Isnt_Saddler(follower)) {
 
-        if (Object_Ref::Is_Near_Player(Get_Actor(follower))) {
-            return;
-        }
+                if (Isnt_Near_Player(follower)) {
 
-        Summon_Behind(follower);
+                    Summon_Behind(follower);
+                }
+            }
+        }
     }
 
     void Level(Follower_t *follower) {
@@ -488,8 +525,6 @@ namespace doticu_npcp { namespace Follower { namespace Exports {
                 Follower::Unlevel,
                 registry)
         );
-
-        _MESSAGE("Added Follower functions.");
 
         return true;
     }

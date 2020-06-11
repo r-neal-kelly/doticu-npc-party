@@ -517,6 +517,14 @@ namespace doticu_npcp { namespace Actor2 {
         return actor->IsDead(1);
     }
 
+    bool Is_Loaded(Actor *actor) {
+        if (!actor) {
+            return false;
+        }
+
+        return actor->loadedState != nullptr;
+    }
+
     bool Is_AI_Enabled(Actor *actor) {
         if (!actor) {
             return false;
@@ -750,8 +758,6 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
                 Actor2::Exports::Reset_Actor_Value,
                 registry)
         );
-
-        _MESSAGE("Added Actor2 functions.");
 
         return true;
     }

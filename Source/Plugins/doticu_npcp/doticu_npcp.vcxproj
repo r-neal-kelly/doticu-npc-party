@@ -147,6 +147,7 @@
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\member.cpp" />
+    <ClCompile Include="src\members.cpp" />
     <ClCompile Include="src\outfit.cpp" />
     <ClCompile Include="src\actor2.cpp" />
     <ClCompile Include="src\forms.cpp" />
@@ -174,7 +175,9 @@
     <ClInclude Include="include\forms.h" />
     <ClInclude Include="include\game.h" />
     <ClInclude Include="include\follower.h" />
+    <ClInclude Include="include\main.h" />
     <ClInclude Include="include\member.h" />
+    <ClInclude Include="include\members.h" />
     <ClInclude Include="include\player.h" />
     <ClInclude Include="include\xcontainer.h" />
     <ClInclude Include="include\xentry.h" />

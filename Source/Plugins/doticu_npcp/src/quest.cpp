@@ -77,31 +77,6 @@ namespace doticu_npcp { namespace Quest { namespace Exports {
         return vec_free;
     }
 
-    VMResultArray<BGSBaseAlias *> Get_3D_Loaded_Aliases(StaticFunctionTag *, TESQuest *ref_quest) {
-        VMResultArray<BGSBaseAlias *> vec_loaded;
-
-        if (!ref_quest) {
-            return vec_loaded;
-        }
-        
-        for (u64 idx = 0, size = ref_quest->aliases.count; idx < size; idx += 1) {
-            BGSBaseAlias *alias;
-            ref_quest->aliases.GetNthItem(idx, alias);
-            if (!alias) {
-                continue;
-            }
-
-            Actor *actor = Member::Get_Actor(alias);
-            if (!actor || !actor->loadedState) {
-                continue;
-            }
-
-            vec_loaded.push_back(alias);
-        }
-
-        return vec_loaded;
-    }
-
     UInt32 Count_Used_Aliases(StaticFunctionTag *, TESQuest *ref_quest) {
         UInt32 count = 0;
         if (ref_quest == NULL) {
@@ -173,13 +148,6 @@ namespace doticu_npcp { namespace Quest { namespace Exports {
                 registry)
         );
         registry->RegisterFunction(
-            new NativeFunction1 <StaticFunctionTag, VMResultArray<BGSBaseAlias *>, TESQuest *>(
-                "Quest_Get_3D_Loaded_Aliases",
-                "doticu_npcp",
-                Get_3D_Loaded_Aliases,
-                registry)
-        );
-        registry->RegisterFunction(
             new NativeFunction1 <StaticFunctionTag, UInt32, TESQuest *>(
                 "Quest_Count_Used_Aliases",
                 "doticu_npcp",
@@ -200,8 +168,6 @@ namespace doticu_npcp { namespace Quest { namespace Exports {
                 Count_Mannequins,
                 registry)
         );
-
-        _MESSAGE("Added Quest functions.");
 
         return true;
     }

@@ -7,7 +7,7 @@ Scriptname doticu_npcp_consts extends Quest
 ; Private Constants
 Actor                       p_ACTOR_PLAYER                          = none
 ActorBase                   p_ACTOR_BASE_MENU                       = none
-LeveledActor                p_LEVELED_ACTOR_HORSES_SADDLED          = none
+LeveledActor                p_ACTOR_LEVELED_HORSE                   = none
 Cell                        p_CELL_STORAGE                          = none
 Static                      p_STATIC_MARKER_X                       = none
 ObjectReference             p_MARKER_STORAGE                        = none
@@ -177,13 +177,13 @@ ActorBase property ACTOR_BASE_MENU
     endFunction
 endProperty
 
-LeveledActor property LEVELED_ACTOR_HORSES_SADDLED
+LeveledActor property ACTOR_LEVELED_HORSE
     LeveledActor function Get()
-        return p_LEVELED_ACTOR_HORSES_SADDLED
+        return p_ACTOR_LEVELED_HORSE
     endFunction
     function Set(LeveledActor val)
-        if p_LEVELED_ACTOR_HORSES_SADDLED == none
-            p_LEVELED_ACTOR_HORSES_SADDLED = val
+        if p_ACTOR_LEVELED_HORSE == none
+            p_ACTOR_LEVELED_HORSE = val
         endIf
     endFunction
 endProperty

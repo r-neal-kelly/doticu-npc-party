@@ -503,8 +503,6 @@ namespace doticu_npcp { namespace Game { namespace Exports {
                 registry)
         );
 
-        _MESSAGE("Added Game functions.");
-
         return true;
     }
 

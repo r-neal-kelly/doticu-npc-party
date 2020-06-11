@@ -27,6 +27,7 @@ namespace doticu_npcp { namespace Actor2 {
     bool Is_Alive(Actor *actor);
     bool Is_Dead(Actor *actor);
 
+    bool Is_Loaded(Actor *actor);
     bool Is_AI_Enabled(Actor *actor);
 
     void Move_To_Orbit(Actor *obj, TESObjectREFR *target, float radius, float angle_degree);

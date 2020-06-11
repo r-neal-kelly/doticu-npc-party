@@ -20,12 +20,30 @@ namespace doticu_npcp { namespace Cell {
         return (cell->unk040 & f_CELL_IS_INTERIOR) == f_CELL_IS_INTERIOR;
     }
 
+    bool Is_Exterior(TESObjectCELL *cell) {
+        if (!cell) {
+            return false;
+        }
+
+        return (cell->unk040 & f_CELL_IS_INTERIOR) != f_CELL_IS_INTERIOR;
+    }
+
 }}
 
 namespace doticu_npcp { namespace Cell { namespace Exports {
 
+    bool Is_Interior(Selfless_t *, TESObjectCELL *cell) {
+        return Cell::Is_Interior(cell);
+    }
+
     bool Register(VMClassRegistry *registry) {
-        _MESSAGE("Added Cell functions.");
+        registry->RegisterFunction(
+            new NativeFunction1 <Selfless_t, bool, TESObjectCELL *>(
+                "Cell_Is_Interior",
+                "doticu_npcp",
+                Exports::Is_Interior,
+                registry)
+        );
 
         return true;
     }

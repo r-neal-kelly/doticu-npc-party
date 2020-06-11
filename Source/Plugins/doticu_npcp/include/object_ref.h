@@ -34,7 +34,8 @@ namespace doticu_npcp { namespace Object_Ref {
 
     void Remove_Unwearable(TESObjectREFR *obj, TESObjectREFR *other);
     void Categorize(TESObjectREFR *ref_object);
-    void Log_XContainer(TESObjectREFR *ref_object);
+    void Log_XContainer(TESObjectREFR *obj);
+    void Log_XList(TESObjectREFR *ref_object);
 
     void Move_To_Orbit(TESObjectREFR *obj, TESObjectREFR *target, float radius, float angle_degree);
 
@@ -44,10 +45,6 @@ namespace doticu_npcp { namespace Object_Ref {
 }}
 
 namespace doticu_npcp { namespace Object_Ref { namespace Exports {
-
-    void Remove_Unwearable(StaticFunctionTag *, TESObjectREFR *obj, TESObjectREFR *other);
-    void Categorize(StaticFunctionTag *, TESObjectREFR *ref_object);
-    void Log_XContainer(StaticFunctionTag *, TESObjectREFR *ref_object);
 
     bool Register(VMClassRegistry *registry);
 

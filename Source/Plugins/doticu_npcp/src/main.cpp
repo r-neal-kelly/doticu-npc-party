@@ -4,7 +4,7 @@
 
 #include <ShlObj.h>
 
-#include "skse64/PluginAPI.h"
+#include "skse64_common/skse_version.h"
 
 #include "actor_base2.h"
 #include "actor2.h"
@@ -15,7 +15,9 @@
 #include "form.h"
 #include "forms.h"
 #include "game.h"
+#include "main.h"
 #include "member.h"
+#include "members.h"
 #include "object_ref.h"
 #include "outfit.h"
 #include "papyrus.h"
@@ -24,53 +26,44 @@
 #include "string2.h"
 #include "utils.h"
 
-bool Register_Functions(VMClassRegistry *registry) {
-    doticu_npcp::Actor_Base2::Exports::Register(registry);
-    doticu_npcp::Actor2::Exports::Register(registry);
-    doticu_npcp::Aliases::Exports::Register(registry);
-    doticu_npcp::Cell::Exports::Register(registry);
-    doticu_npcp::Follower::Exports::Register(registry);
-    doticu_npcp::Followers::Exports::Register(registry);
-    doticu_npcp::Form::Exports::Register(registry);
-    doticu_npcp::Forms::Exports::Register(registry);
-    doticu_npcp::Game::Exports::Register(registry);
-    doticu_npcp::Member::Exports::Register(registry);
-    doticu_npcp::Object_Ref::Exports::Register(registry);
-    doticu_npcp::Outfit::Exports::Register(registry);
-    doticu_npcp::Papyrus::Exports::Register(registry);
-    doticu_npcp::Player::Exports::Register(registry);
-    doticu_npcp::Quest::Exports::Register(registry);
-    doticu_npcp::String2::Exports::Register(registry);
-    doticu_npcp::Utils::Exports::Register(registry);
+namespace doticu_npcp { namespace Main {
 
-    _MESSAGE(DOTICU_NPCP_PRINT_PREFIX "Added all class functions.");
+    bool Query_Plugin(const SKSEInterface *skse, PluginInfo *info);
+    bool Load_Plugin(const SKSEInterface *skse);
+    bool Register_Functions(VMClassRegistry *registry);
 
-    return true;
-}
+}}
 
-extern "C" {
+namespace doticu_npcp { namespace Main {
 
-    bool SKSEPlugin_Query(const SKSEInterface *skse, PluginInfo *info) {
+    bool Query_Plugin(const SKSEInterface *skse, PluginInfo *info) {
         if (!skse || !info) {
             return false;
         }
 
-        info->infoVersion = PluginInfo::kInfoVersion;
-        info->name = "doticu_npcp";
-        info->version = 1;
+        info->infoVersion = PluginInfo::kInfoVersion; // constant
+        info->name = "doticu_npcp"; // exposed to plugin query API
+        info->version = 1; // exposed to scripts
 
-        PluginHandle g_handle_plugin = skse->GetPluginHandle();
+        if (PACKED_SKSE_VERSION < MAKE_EXE_VERSION(2, 0, 17)) {
+            return false;
+        }
 
         return true;
     }
 
-    bool SKSEPlugin_Load(const SKSEInterface *skse) {
-        gLog.OpenRelative(CSIDL_MYDOCUMENTS, "\\My Games\\Skyrim Special Edition\\SKSE\\doticu_npcp.log");
+    bool Load_Plugin(const SKSEInterface *skse) {
+        g_skse = skse;
+        g_papyrus = (SKSEPapyrusInterface *)skse->QueryInterface(kInterface_Papyrus);
+        g_plugin_handle = skse->GetPluginHandle();
 
-        SKSEPapyrusInterface *g_papyrus = (SKSEPapyrusInterface *)skse->QueryInterface(kInterface_Papyrus);
+        if (!g_skse) {
+            _FATALERROR(DOTICU_NPCP_PRINT_PREFIX "Could not get skse interface.");
+            return false;
+        }
 
         if (!g_papyrus) {
-            _FATALERROR(DOTICU_NPCP_PRINT_PREFIX "Could not query papyrus interface.");
+            _FATALERROR(DOTICU_NPCP_PRINT_PREFIX "Could not get papyrus interface.");
             return false;
         }
 
@@ -78,6 +71,59 @@ extern "C" {
             _FATALERROR(DOTICU_NPCP_PRINT_PREFIX "Could not add Papyrus functions.");
             return false;
         }
+
+        g_log.OpenRelative(CSIDL_MYDOCUMENTS, "\\My Games\\Skyrim Special Edition\\SKSE\\doticu_npcp.log");
+
+        return true;
+    }
+
+    bool Register_Functions(VMClassRegistry *registry) {
+        #define REGISTER_NAMESPACE(NAMESPACE_)                                                  \
+        M                                                                                       \
+            if (!doticu_npcp::NAMESPACE_::Exports::Register(registry)) {                        \
+                _MESSAGE(DOTICU_NPCP_PRINT_PREFIX "Failed to add " #NAMESPACE_ " functions.");  \
+                return false;                                                                   \
+            } else {                                                                            \
+                _MESSAGE(DOTICU_NPCP_PRINT_PREFIX "Added " #NAMESPACE_ " functions.");          \
+            }                                                                                   \
+        W
+
+        REGISTER_NAMESPACE(Actor_Base2);
+        REGISTER_NAMESPACE(Actor2);
+        REGISTER_NAMESPACE(Aliases);
+        REGISTER_NAMESPACE(Cell);
+        REGISTER_NAMESPACE(Follower);
+        REGISTER_NAMESPACE(Followers);
+        REGISTER_NAMESPACE(Form);
+        REGISTER_NAMESPACE(Forms);
+        REGISTER_NAMESPACE(Game);
+        REGISTER_NAMESPACE(Member);
+        REGISTER_NAMESPACE(Members);
+        REGISTER_NAMESPACE(Object_Ref);
+        REGISTER_NAMESPACE(Outfit);
+        REGISTER_NAMESPACE(Papyrus);
+        REGISTER_NAMESPACE(Player);
+        REGISTER_NAMESPACE(Quest);
+        REGISTER_NAMESPACE(String2);
+        REGISTER_NAMESPACE(Utils);
+
+        _MESSAGE(DOTICU_NPCP_PRINT_PREFIX "Added all functions.");
+
+        return true;
+
+        #undef REGISTER_NAMESPACE
+    }
+
+}}
+
+extern "C" {
+
+    bool SKSEPlugin_Query(const SKSEInterface *skse, PluginInfo *info) {
+        return doticu_npcp::Main::Query_Plugin(skse, info);
+    }
+
+    bool SKSEPlugin_Load(const SKSEInterface *skse) {
+        return doticu_npcp::Main::Load_Plugin(skse);
     }
 
 }

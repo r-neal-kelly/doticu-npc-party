@@ -786,8 +786,6 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
                 registry)
         );
 
-        _MESSAGE("Added Aliases functions.");
-
         return true;
     }
 

@@ -13,9 +13,6 @@ namespace doticu_npcp { namespace Papyrus {
 namespace doticu_npcp { namespace Papyrus { namespace Exports {
 
     bool Register(VMClassRegistry *registry) {
-
-        _MESSAGE("Added Papyrus functions.");
-
         return true;
     }
 

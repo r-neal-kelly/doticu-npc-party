@@ -125,8 +125,6 @@ namespace doticu_npcp { namespace Actor_Base2 {
 namespace doticu_npcp { namespace Actor_Base2 { namespace Exports {
 
     bool Register(VMClassRegistry *registry) {
-        _MESSAGE("Added Actor_Base2 functions.");
-
         return true;
     }
 

@@ -24,8 +24,6 @@ namespace doticu_npcp { namespace Player { namespace Exports {
                 registry)
         );
 
-        _MESSAGE("Added Player functions.");
-
         return true;
     }
 

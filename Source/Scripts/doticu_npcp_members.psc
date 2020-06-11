@@ -99,6 +99,8 @@ function f_Register()
 endFunction
 
 ; Private Methods
+function p_Enforce_Loaded() native
+
 int function p_Get_Alias_ID(Actor ref_actor)
     if !ref_actor
         return -1
@@ -478,12 +480,7 @@ endFunction
 
 ; Events
 event On_Load_Mod()
-    Alias[] arr_aliases_loaded = doticu_npcp.Quest_Get_3D_Loaded_Aliases(self)
-    int idx_aliases = 0
-    while idx_aliases < arr_aliases_loaded.length
-        (arr_aliases_loaded[idx_aliases] as doticu_npcp_member).Enforce_Async()
-        idx_aliases += 1
-    endWhile
+    p_Enforce_Loaded()
 endEvent
 
 ; Update Methods

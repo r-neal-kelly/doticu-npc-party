@@ -189,8 +189,6 @@ namespace doticu_npcp { namespace Form {
 namespace doticu_npcp { namespace Form { namespace Exports {
 
     bool Register(VMClassRegistry *registry) {
-        _MESSAGE("Added Form functions.");
-
         return true;
     }
 

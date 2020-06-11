@@ -176,7 +176,11 @@ p_Unlock()
         p_Unsneak()
     endIf
 
-    ; Saddler
+    if Is_Saddler()
+        p_Saddle()
+    else
+        p_Unsaddle()
+    endIf
 endFunction
 
 function f_Relevel()
@@ -291,24 +295,37 @@ endFunction
 function p_Saddle()
 p_Lock()
 
+    if !p_ref_horse
+        p_ref_horse = CONSTS.MARKER_STORAGE.PlaceAtMe(CONSTS.ACTOR_LEVELED_HORSE, 1, true, true) as Actor
+    endIf
+
+    if CONSTS.ACTOR_PLAYER.GetParentCell().IsInterior()
+        p_Unlock()
+        return p_Unsaddle()
+    endIf
+
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_SADDLER)
 
-    if !p_ref_horse
-        p_ref_horse = p_ref_actor.PlaceAtMe(CONSTS.LEVELED_ACTOR_HORSES_SADDLED, 1, true, false) as Actor
-    endIf
-
-    if !p_ref_horse.IsEnabled()
-        p_ref_horse.Enable()
-    endIf
+    p_ref_horse.Enable()
 
     if p_ref_horse.IsDead()
         p_ref_horse.Resurrect()
     endIf
 
+    if !p_ref_actor.IsOnMount()
+        doticu_npcp.Print(p_id_alias + " moving horse")
+
+        ACTORS.Move_To(p_ref_horse, p_ref_actor, 120, 90)
+        p_ref_horse.Activate(p_ref_actor)
+    endIf
+    
     ; we need to support leveled bases (members) as opposed to real bases (clones) only
+    ; because this takes an actor base, we can't specify a reference clone in this manner.
+    ; so anything we can do to avoid the follower not being on the right horse is advisable
     p_ref_horse.SetActorOwner(ACTORS.Get_Leveled_Base(p_ref_actor))
 
     p_ref_actor.EvaluatePackage()
+    p_ref_horse.EvaluatePackage()
 
 p_Unlock()
 endFunction
@@ -316,14 +333,13 @@ endFunction
 function p_Unsaddle()
 p_Lock()
 
-    ; IsOnMount
-    ; Dismount
-
     if p_ref_actor.IsOnMount()
         p_ref_actor.Dismount()
     endIf
 
     p_ref_horse.Disable()
+
+    p_ref_horse.MoveTo(CONSTS.MARKER_STORAGE)
 
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_SADDLER)
 
@@ -671,6 +687,9 @@ event On_Cell_Change(Form cell_new, Form cell_old)
         p_Follow()
         if Is_Sneak()
             p_Sneak()
+        endIf
+        if Is_Saddler()
+            p_Saddle()
         endIf
     endIf
 endEvent

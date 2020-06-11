@@ -36,6 +36,9 @@ string[] function Aliases_Get_Race_Names(Alias[] arr_aliases) native global
 bool function Aliases_Has_Head(Alias[] arr_aliases, ActorBase base_with_head) native global
 int function Aliases_Count_Heads(Alias[] arr_aliases, ActorBase base_with_head, bool do_print = false) native global
 
+; Cell
+bool function Cell_Is_Interior(Cell ref_cell) native global
+
 ; Forms
 Form[] function Forms_Slice(Form[] arr_forms, int idx_from, int idx_to_ex) native global
 
@@ -48,6 +51,7 @@ VoiceType function Game_Get_Voice_By_Name(string str_name) native global
 function Object_Ref_Remove_Unwearable(ObjectReference ref_obj, ObjectReference ref_other) native global
 function Object_Ref_Categorize(ObjectReference ref_obj) native global
 function Object_Ref_Log_XContainer(ObjectReference ref_object) native global
+function Object_Ref_Log_XList(ObjectReference ref_object) native global
 
 ; Outfit
 function Outfit_Add_Item(Outfit outfit_outfit, Form form_item) native global
@@ -56,7 +60,6 @@ function Outfit_Remove_Item(Outfit outfit_outfit, Form form_item) native global
 ; Quest
 Alias[] function Quest_Get_Used_Aliases(Quest ref_quest) native global
 int[] function Quest_Get_Free_Alias_IDs(Quest ref_quest) native global
-Alias[] function Quest_Get_3D_Loaded_Aliases(Quest ref_quest) native global
 int function Quest_Count_Used_Aliases(Quest ref_quest) native global
 int function Quest_Count_Free_Aliases(Quest ref_quest) native global
 int function Quest_Count_Mannequins(Quest ref_quest) native global

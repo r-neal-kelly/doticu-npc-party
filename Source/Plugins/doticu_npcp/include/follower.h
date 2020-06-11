@@ -29,6 +29,8 @@ namespace doticu_npcp { namespace Follower {
     bool Is_Retreater(Follower_t *follower);
     bool Isnt_Retreater(Follower_t *follower);
     bool Exists(Follower_t *follower);
+    bool Is_Near_Player(Follower_t *follower);
+    bool Isnt_Near_Player(Follower_t *follower);
 
     void Summon(Follower_t *follower, float distance = 140, float angle_degree = 0);
     void Summon_Behind(Follower_t *follower, float distance = 140);
