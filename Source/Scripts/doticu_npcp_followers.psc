@@ -15,24 +15,24 @@ doticu_npcp_codes property CODES hidden
         return p_DATA.CODES
     endFunction
 endProperty
+doticu_npcp_vars property VARS hidden
+    doticu_npcp_vars function Get()
+        return p_DATA.VARS
+    endFunction
+endProperty
+doticu_npcp_funcs property FUNCS hidden
+    doticu_npcp_funcs function Get()
+        return p_DATA.MODS.FUNCS
+    endFunction
+endProperty
 doticu_npcp_tasklists property TASKLISTS hidden
     doticu_npcp_tasklists function Get()
         return p_DATA.MODS.FUNCS.TASKLISTS
     endFunction
 endProperty
-doticu_npcp_actors property ACTORS hidden
-    doticu_npcp_actors function Get()
-        return p_DATA.MODS.FUNCS.ACTORS
-    endFunction
-endProperty
 doticu_npcp_members property MEMBERS hidden
     doticu_npcp_members function Get()
         return p_DATA.MODS.MEMBERS
-    endFunction
-endProperty
-doticu_npcp_aliases property ALIASES hidden
-    doticu_npcp_aliases function Get()
-        return (self as Quest) as doticu_npcp_aliases
     endFunction
 endProperty
 
@@ -43,99 +43,7 @@ doticu_npcp_data        p_DATA          =  none
 bool                    p_is_created    = false
 doticu_npcp_tasklist    p_tasklist      =  none
 
-; Friend Methods
-function f_Create(doticu_npcp_data DATA)
-    p_DATA = DATA
-
-    p_is_created = true
-    p_tasklist = TASKLISTS.Create()
-
-    ALIASES.f_Create(DATA)
-endFunction
-
-function f_Destroy()
-    ALIASES.f_Destroy()
-    
-    TASKLISTS.Destroy(p_tasklist)
-    p_is_created = false
-endFunction
-
-function f_Register()
-    ALIASES.f_Register()
-
-    p_Register()
-endFunction
-
-int function f_Create_Follower(Actor ref_actor)
-    int code_return
-
-    if !ref_actor
-        return CODES.ISNT_ACTOR
-    endIf
-
-    if Get_Count() >= Get_Max()
-        return CODES.HASNT_SPACE_FOLLOWER
-    endIf
-
-    if !MEMBERS.Has_Member(ref_actor)
-        return CODES.ISNT_MEMBER
-    endIf
-
-    code_return = ALIASES.Create_Alias(ref_actor)
-    if code_return < 0
-        if code_return == CODES.HAS_ACTOR || code_return == CODES.HAS_ALIAS
-            return CODES.HAS_FOLLOWER
-        elseIf code_return == CODES.HASNT_SPACE
-            return CODES.HASNT_SPACE_FOLLOWER
-        else
-            return code_return
-        endIf
-    endIf
-    int id_alias = code_return
-
-    doticu_npcp_follower ref_follower = p_Get_Follower(id_alias)
-    ref_follower.f_Create(p_DATA, id_alias)
-    ref_follower.f_Register()
-
-    ; this value needs to be 1 whenever there is a follower
-    ; because the engine won't update player teammates when 0
-    CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(1)
-
-    return CODES.SUCCESS
-endFunction
-
-int function f_Destroy_Follower(Actor ref_actor)
-    int code_return
-
-    if !ref_actor
-        return CODES.ISNT_ACTOR
-    endIf
-
-    int id_alias = p_Get_Alias_ID(ref_actor)
-    if !ALIASES.Has_Alias(id_alias, ref_actor)
-        return CODES.HASNT_FOLLOWER
-    endIf
-
-    doticu_npcp_follower ref_follower = p_Get_Follower(id_alias)
-    ref_follower.f_Unregister()
-    ref_follower.f_Destroy()
-
-    code_return = ALIASES.Destroy_Alias(id_alias, ref_actor)
-    if code_return < 0
-        return code_return
-    endIf
-
-    if Get_Count() == 0
-        ; this would conflict with the vanilla system
-        ; and any other mods that use it, except that we
-        ; modify the vanilla system to force use of ours
-        CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(0)
-    endIf
-
-    return CODES.SUCCESS
-endFunction
-
-; Private Methods
+; Native Methods
 function p_Register() native
 function p_Summon(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0) native
 function p_Summon_Mobile(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0) native
@@ -157,6 +65,110 @@ function p_Unretreat(Form tasklist) native
 function p_Unfollow(Form tasklist) native
 function p_Unmember(Form tasklist) native
 
+Alias function p_ID_To_Follower(int id) native
+Alias function p_Actor_To_Follower(Actor ref_actor) native
+int function p_Actor_To_ID(Actor ref_actor) native
+
+Alias function p_Unused_Follower() native
+int function p_Unused_ID() native
+
+Alias[] function p_Sort_All(int from = 0, int to_exclusive = -1, string algorithm = "") native
+
+int function Max() native
+int function Count_All() native
+int function Count_Alive() native
+int function Count_Dead() native
+int function Count_Mobile() native
+int function Count_Immobile() native
+int function Count_Settlers() native
+int function Count_Non_Settlers() native
+int function Count_Sneaks() native
+int function Count_Non_Sneaks() native
+int function Count_Saddlers() native
+int function Count_Non_Saddlers() native
+int function Count_Retreaters() native
+int function Count_Non_Retreaters() native
+
+bool function Has_Space() native
+bool function Hasnt_Space() native
+bool function Are_In_Combat() native
+bool function Has_Actor(Actor ref_actor) native
+
+; Friend Methods
+function f_Create(doticu_npcp_data DATA)
+    p_DATA = DATA
+
+    p_is_created = true
+    p_tasklist = TASKLISTS.Create()
+endFunction
+
+function f_Destroy()
+    TASKLISTS.Destroy(p_tasklist)
+    p_is_created = false
+endFunction
+
+function f_Register()
+    p_Register()
+endFunction
+
+int function f_Create_Follower(Actor ref_actor)
+    if !ref_actor
+        return CODES.ISNT_ACTOR
+    endIf
+
+    if Hasnt_Space()
+        return CODES.HASNT_SPACE_FOLLOWER
+    endIf
+
+    if !MEMBERS.Has_Member(ref_actor)
+        return CODES.ISNT_MEMBER
+    endIf
+
+    if Has_Actor(ref_actor)
+        return CODES.HAS_FOLLOWER
+    endIf
+
+    int id_alias = p_Unused_ID()
+    if id_alias < 0
+        return CODES.FAILURE
+    endIf
+
+    doticu_npcp_follower ref_follower = p_ID_To_Follower(id_alias) as doticu_npcp_follower
+    ref_follower.f_Create(p_DATA, id_alias, ref_actor)
+    ref_follower.f_Register()
+
+    ; this value needs to be 1 whenever there is a follower
+    ; because the engine won't update player teammates when 0
+    CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(1)
+
+    return CODES.SUCCESS
+endFunction
+
+int function f_Destroy_Follower(Actor ref_actor)
+    if !ref_actor
+        return CODES.ISNT_ACTOR
+    endIf
+
+    int id_alias = p_Actor_To_ID(ref_actor)
+    if id_alias < 0
+        return CODES.HASNT_FOLLOWER
+    endIf
+
+    doticu_npcp_follower ref_follower = p_ID_To_Follower(id_alias) as doticu_npcp_follower
+    ref_follower.f_Unregister()
+    ref_follower.f_Destroy()
+
+    if Count_All() == 0
+        ; this would conflict with the vanilla system
+        ; and any other mods that use it, except that we
+        ; modify the vanilla system to force use of ours
+        CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(0)
+    endIf
+
+    return CODES.SUCCESS
+endFunction
+
+; Private Methods
 function p_Busy()
     GotoState("p_STATE_BUSY")
 endFunction
@@ -170,77 +182,19 @@ int function p_Ready_Int(int val)
     return val
 endFunction
 
-int function p_Get_Alias_ID(Actor ref_actor)
-    if !ref_actor
-        return -1
-    else
-        return ref_actor.GetItemCount(CONSTS.TOKEN_FOLLOWER) - 1
-    endIf
-endFunction
-
-doticu_npcp_follower function p_Get_Follower(int id_alias)
-    return ALIASES.f_Get_Alias(id_alias) as doticu_npcp_follower
-endFunction
-
 ; Public Methods
-int function Get_Count() native
-int function Get_Alive_Count() native
-int function Get_Dead_Count() native
-int function Get_Mobile_Count() native
-int function Get_Immobile_Count() native
-int function Get_Settler_Count() native
-int function Get_Non_Settler_Count() native
-int function Get_Sneak_Count() native
-int function Get_Non_Sneak_Count() native
-int function Get_Saddler_Count() native
-int function Get_Non_Saddler_Count() native
-int function Get_Retreater_Count() native
-int function Get_Non_Retreater_Count() native
-
-bool function Are_In_Combat() native
-
-int function Get_Max()
-    return ALIASES.Get_Max()
-endFunction
-
-bool function Will_Sort()
-    return ALIASES.Will_Sort()
-endFunction
-
-bool function Has_Follower(Actor ref_actor)
-    return ALIASES.Has_Alias(p_Get_Alias_ID(ref_actor), ref_actor)
-endFunction
-
 doticu_npcp_follower function Get_Follower(Actor ref_actor)
-    return ALIASES.Get_Alias(p_Get_Alias_ID(ref_actor), ref_actor) as doticu_npcp_follower
-endFunction
-
-doticu_npcp_follower function Get_Next_Follower(doticu_npcp_follower ref_follower)
-    Actor ref_actor = ref_follower.Get_Actor()
-    return ALIASES.Get_Next_Alias(p_Get_Alias_ID(ref_actor), ref_actor) as doticu_npcp_follower
-endFunction
-
-doticu_npcp_follower function Get_Prev_Follower(doticu_npcp_follower ref_follower)
-    Actor ref_actor = ref_follower.Get_Actor()
-    return ALIASES.Get_Prev_Alias(p_Get_Alias_ID(ref_actor), ref_actor) as doticu_npcp_follower
+    return p_Actor_To_Follower(ref_actor) as doticu_npcp_follower
 endFunction
 
 Alias[] function Get_Followers(int idx_from = 0, int idx_to_ex = -1)
-    return ALIASES.Get_Aliases(idx_from, idx_to_ex)
-endFunction
-
-function Request_Sort()
-    ALIASES.Request_Sort()
-endFunction
-
-function Sort()
-    ALIASES.Sort()
+    return p_Sort_All(idx_from, idx_to_ex, VARS.str_sort_followers)
 endFunction
 
 int function Summon(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0)
 p_Busy()
 
-    int num_followers = Get_Count()
+    int num_followers = Count_All()
     if num_followers < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
@@ -255,7 +209,7 @@ endFunction
 int function Summon_Mobile(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0)
 p_Busy()
 
-    int num_followers = Get_Count()
+    int num_followers = Count_All()
     if num_followers < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
@@ -270,7 +224,7 @@ endFunction
 int function Summon_Immobile(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0)
 p_Busy()
 
-    int num_followers = Get_Count()
+    int num_followers = Count_All()
     if num_followers < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
@@ -285,7 +239,7 @@ endFunction
 int function Catch_Up()
 p_Busy()
 
-    int num_followers = Get_Count()
+    int num_followers = Count_All()
     if num_followers < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
@@ -300,7 +254,7 @@ endFunction
 int function Stash()
 p_Busy()
 
-    int num_followers = Get_Count()
+    int num_followers = Count_All()
     if num_followers < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
@@ -315,7 +269,7 @@ endFunction
 int function Enforce()
 p_Busy()
 
-    int num_followers = Get_Count()
+    int num_followers = Count_All()
     if num_followers < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
@@ -330,11 +284,11 @@ endFunction
 int function Resurrect()
 p_Busy()
 
-    if Get_Count() < 1
+    if Count_All() < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
-    int num_dead = Get_Dead_Count()
+    int num_dead = Count_Dead()
     if num_dead < 1
         return p_Ready_Int(CODES.HASNT_DEAD)
     endIf
@@ -355,11 +309,11 @@ endFunction
 int function Mobilize()
 p_Busy()
 
-    if Get_Count() < 1
+    if Count_All() < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
-    int num_immobile = Get_Immobile_Count()
+    int num_immobile = Count_Immobile()
     if num_immobile < 1
         return p_Ready_Int(CODES.HASNT_IMMOBILE)
     endIf
@@ -380,11 +334,11 @@ endFunction
 int function Immobilize()
 p_Busy()
 
-    if Get_Count() < 1
+    if Count_All() < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
-    int num_mobile = Get_Mobile_Count()
+    int num_mobile = Count_Mobile()
     if num_mobile < 1
         return p_Ready_Int(CODES.HASNT_MOBILE)
     endIf
@@ -405,7 +359,7 @@ endFunction
 int function Settle()
 p_Busy()
 
-    int num_followers = Get_Count()
+    int num_followers = Count_All()
     if num_followers < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
@@ -426,11 +380,11 @@ endFunction
 int function Unsettle()
 p_Busy()
 
-    if Get_Count() < 1
+    if Count_All() < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
-    int num_settlers = Get_Settler_Count()
+    int num_settlers = Count_Settlers()
     if num_settlers < 1
         return p_Ready_Int(CODES.HASNT_SETTLER)
     endIf
@@ -451,11 +405,11 @@ endFunction
 int function Sneak()
 p_Busy()
 
-    if Get_Count() < 1
+    if Count_All() < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
-    int num_non_sneaks = Get_Non_Sneak_Count()
+    int num_non_sneaks = Count_Non_Sneaks()
     if num_non_sneaks < 1
         return p_Ready_Int(CODES.HASNT_NON_SNEAK)
     endIf
@@ -476,11 +430,11 @@ endFunction
 int function Unsneak()
 p_Busy()
 
-    if Get_Count() < 1
+    if Count_All() < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
-    int num_sneaks = Get_Sneak_Count()
+    int num_sneaks = Count_Sneaks()
     if num_sneaks < 1
         return p_Ready_Int(CODES.HASNT_SNEAK)
     endIf
@@ -501,11 +455,15 @@ endFunction
 int function Saddle()
 p_Busy()
 
-    if Get_Count() < 1
+    if CONSTS.ACTOR_PLAYER.GetParentCell().IsInterior()
+        return p_Ready_Int(CODES.IS_INTERIOR)
+    endIf
+
+    if Count_All() < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
-    int num_non_saddlers = Get_Non_Saddler_Count()
+    int num_non_saddlers = Count_Non_Saddlers()
     if num_non_saddlers < 1
         return p_Ready_Int(CODES.HASNT_NON_SADDLER)
     endIf
@@ -526,11 +484,11 @@ endFunction
 int function Unsaddle()
 p_Busy()
 
-    if Get_Count() < 1
+    if Count_All() < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
-    int num_saddlers = Get_Saddler_Count()
+    int num_saddlers = Count_Saddlers()
     if num_saddlers < 1
         return p_Ready_Int(CODES.HASNT_SADDLER)
     endIf
@@ -551,11 +509,11 @@ endFunction
 int function Retreat()
 p_Busy()
     
-    if Get_Count() < 1
+    if Count_All() < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
     
-    int num_non_retreaters = Get_Non_Retreater_Count()
+    int num_non_retreaters = Count_Non_Retreaters()
     if num_non_retreaters < 1
         return p_Ready_Int(CODES.HASNT_NON_RETREATER)
     endIf
@@ -576,11 +534,11 @@ endFunction
 int function Unretreat()
 p_Busy()
 
-    if Get_Count() < 1
+    if Count_All() < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
-    int num_retreaters = Get_Retreater_Count()
+    int num_retreaters = Count_Retreaters()
     if num_retreaters < 1
         return p_Ready_Int(CODES.HASNT_RETREATER)
     endIf
@@ -601,7 +559,7 @@ endFunction
 int function Unfollow()
 p_Busy()
 
-    int num_followers = Get_Count()
+    int num_followers = Count_All()
     if num_followers < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
@@ -622,7 +580,7 @@ endFunction
 int function Unmember()
 p_Busy()
 
-    int num_followers = Get_Count()
+    int num_followers = Count_All()
     if num_followers < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
@@ -677,3 +635,5 @@ state p_STATE_BUSY
     int function Unmember()
     endFunction
 endState
+
+; should have an update func that destroys aliases?

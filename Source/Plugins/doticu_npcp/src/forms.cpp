@@ -14,7 +14,7 @@ namespace doticu_npcp { namespace Forms {
 namespace doticu_npcp { namespace Forms { namespace Exports {
 
     VMResultArray<TESForm *> Slice(StaticFunctionTag *, VMArray<TESForm *> arr, UInt32 idx_from, UInt32 idx_to_ex) {
-        return Papyrus::Array_Slice<TESForm *>(&arr, idx_from, idx_to_ex, NULL);
+        return Papyrus::Slice_Array<TESForm *>(&arr, idx_from, idx_to_ex, NULL);
     }
 
     bool Register(VMClassRegistry *registry) {

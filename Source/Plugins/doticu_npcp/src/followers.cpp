@@ -2,11 +2,17 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include <mutex>
+#include <chrono>
+
 #include "skse64/GameData.h"
 #include "skse64/GameRTTI.h"
 
+#include "actor2.h"
+#include "aliases.h"
 #include "follower.h"
 #include "followers.h"
+#include "game.h"
 #include "member.h"
 #include "object_ref.h"
 #include "papyrus.h"
@@ -14,34 +20,38 @@
 
 namespace doticu_npcp { namespace Followers {
 
-    #define SEND_FOLLOWERS()                                                        \
+    static std::recursive_timed_mutex lock;
+
+    // ForceRefTo is found and callable on TESQuest
+    // Clear might be unlabeled on the virtual table of BGSBaseAlias
+
+    #define SEND(NAME_, ARGS_)                                                      \
     M                                                                               \
+        BSFixedString name(NAME_);                                                  \
         for (u64 idx = 0, size = vec_followers.size(); idx < size; idx += 1) {      \
             Follower_t *follower = vec_followers[idx];                              \
             Papyrus::Handle follower_handle(kFormType_Alias, follower);             \
-            follower_handle.Registry()->QueueEvent(follower_handle, &name, &args);  \
+            follower_handle.Registry()->QueueEvent(follower_handle, &name, &ARGS_); \
         }                                                                           \
     W
 
-    static void Send_Followers(std::vector<Follower_t *> vec_followers, const char *event_name) {
+    static void Send(std::vector<Follower_t *> vec_followers, const char *event_name) {
         if (vec_followers.size() < 1 || !event_name || !event_name[0]) {
             return;
         }
-
-        BSFixedString name(event_name);
+        
         struct Args : public IFunctionArguments {
             bool Copy(Output *output) { return true; }
         } args;
 
-        SEND_FOLLOWERS();
+        SEND(event_name, args);
     }
 
-    static void Send_Followers(std::vector<Follower_t *> vec_followers, const char *event_name, TESForm *tasklist) {
+    static void Send(std::vector<Follower_t *> vec_followers, const char *event_name, TESForm *tasklist) {
         if (vec_followers.size() < 1 || !event_name || !event_name[0]) {
             return;
         }
 
-        BSFixedString name(event_name);
         struct Args : public IFunctionArguments {
             TESForm *m_tasklist;
             Args(TESForm *tasklist) {
@@ -59,12 +69,14 @@ namespace doticu_npcp { namespace Followers {
             }
         } args(tasklist);
 
-        SEND_FOLLOWERS();
+        SEND(event_name, args);
     }
+
+    #undef SEND
 
     void Register(Followers_t *followers) {
         if (followers) {
-            Send_Followers(Get(followers), "f_Register");
+            Send(All(followers), "f_Register");
         }
     }
 
@@ -112,7 +124,7 @@ namespace doticu_npcp { namespace Followers {
             return;
         }
 
-        std::vector<Follower_t *> vec_followers = Get(followers);
+        std::vector<Follower_t *> vec_followers = All(followers);
         if (vec_followers.size() < 1) {
             return;
         }
@@ -125,7 +137,7 @@ namespace doticu_npcp { namespace Followers {
             return;
         }
 
-        std::vector<Follower_t *> vec_followers = Get_Mobile(followers);
+        std::vector<Follower_t *> vec_followers = Mobile(followers);
         if (vec_followers.size() < 1) {
             return;
         }
@@ -138,7 +150,7 @@ namespace doticu_npcp { namespace Followers {
             return;
         }
 
-        std::vector<Follower_t *> vec_followers = Get_Immobile(followers);
+        std::vector<Follower_t *> vec_followers = Immobile(followers);
         if (vec_followers.size() < 1) {
             return;
         }
@@ -152,7 +164,7 @@ namespace doticu_npcp { namespace Followers {
         }
 
         Follower_t *follower;
-        for (u64 idx = 0, size = followers->aliases.count; idx < size; idx += 1) {
+        for (u64 idx = 0, size = Followers::MAX; idx < size; idx += 1) {
             followers->aliases.GetNthItem(idx, follower);
             if (!follower) {
                 continue;
@@ -172,7 +184,7 @@ namespace doticu_npcp { namespace Followers {
         }
 
         Follower_t *follower;
-        for (u64 idx = 0, size = followers->aliases.count; idx < size; idx += 1) {
+        for (u64 idx = 0, size = Followers::MAX; idx < size; idx += 1) {
             followers->aliases.GetNthItem(idx, follower);
             if (!follower) {
                 continue;
@@ -194,239 +206,355 @@ namespace doticu_npcp { namespace Followers {
 
     void Enforce(Followers_t *followers, TESForm *tasklist) {
         if (followers) {
-            Send_Followers(Get(followers), "On_Followers_Enforce", tasklist);
+            Send(All(followers), "On_Followers_Enforce", tasklist);
         }
     }
 
     void Resurrect(Followers_t *followers, TESForm *tasklist) {
         if (followers) {
-            Send_Followers(Get_Dead(followers), "On_Followers_Resurrect", tasklist);
+            Send(Dead(followers), "On_Followers_Resurrect", tasklist);
         }
     }
 
     void Mobilize(Followers_t *followers, TESForm *tasklist) {
         if (followers) {
-            Send_Followers(Get_Immobile(followers), "On_Followers_Mobilize", tasklist);
+            Send(Immobile(followers), "On_Followers_Mobilize", tasklist);
         }
     }
 
     void Immobilize(Followers_t *followers, TESForm *tasklist) {
         if (followers) {
-            Send_Followers(Get_Mobile(followers), "On_Followers_Immobilize", tasklist);
+            Send(Mobile(followers), "On_Followers_Immobilize", tasklist);
         }
     }
 
     void Settle(Followers_t *followers, TESForm *tasklist) {
         if (followers) {
-            Send_Followers(Get(followers), "On_Followers_Settle", tasklist);
+            Send(All(followers), "On_Followers_Settle", tasklist);
         }
     }
 
     void Unsettle(Followers_t *followers, TESForm *tasklist) {
         if (followers) {
-            Send_Followers(Get_Settlers(followers), "On_Followers_Unsettle", tasklist);
+            Send(Settlers(followers), "On_Followers_Unsettle", tasklist);
         }
     }
 
     void Sneak(Followers_t *followers, TESForm *tasklist) {
         if (followers) {
-            Send_Followers(Get_Non_Sneaks(followers), "On_Followers_Sneak", tasklist);
+            Send(Non_Sneaks(followers), "On_Followers_Sneak", tasklist);
         }
     }
 
     void Unsneak(Followers_t *followers, TESForm *tasklist) {
         if (followers) {
-            Send_Followers(Get_Sneaks(followers), "On_Followers_Unsneak", tasklist);
+            Send(Sneaks(followers), "On_Followers_Unsneak", tasklist);
         }
     }
 
     void Saddle(Followers_t *followers, TESForm *tasklist) {
         if (followers) {
-            Send_Followers(Get_Non_Saddlers(followers), "On_Followers_Saddle", tasklist);
+            Send(Non_Saddlers(followers), "On_Followers_Saddle", tasklist);
         }
     }
 
     void Unsaddle(Followers_t *followers, TESForm *tasklist) {
         if (followers) {
-            Send_Followers(Get_Saddlers(followers), "On_Followers_Unsaddle", tasklist);
+            Send(Saddlers(followers), "On_Followers_Unsaddle", tasklist);
         }
     }
 
     void Retreat(Followers_t *followers, TESForm *tasklist) {
         if (followers) {
-            Send_Followers(Get_Non_Retreaters(followers), "On_Followers_Retreat", tasklist);
+            Send(Non_Retreaters(followers), "On_Followers_Retreat", tasklist);
         }
     }
 
     void Unretreat(Followers_t *followers, TESForm *tasklist) {
         if (followers) {
-            Send_Followers(Get_Retreaters(followers), "On_Followers_Unretreat", tasklist);
+            Send(Retreaters(followers), "On_Followers_Unretreat", tasklist);
         }
     }
 
     void Unfollow(Followers_t *followers, TESForm *tasklist) {
         if (followers) {
-            Send_Followers(Get(followers), "On_Followers_Unfollow", tasklist);
+            Send(All(followers), "On_Followers_Unfollow", tasklist);
         }
     }
 
     void Unmember(Followers_t *followers, TESForm *tasklist) {
         if (followers) {
-            Send_Followers(Get(followers), "On_Followers_Unmember", tasklist);
+            Send(All(followers), "On_Followers_Unmember", tasklist);
         }
     }
 
-    #define GET_COUNT(TEST_FOR_FOLLOWER)                                            \
-    M                                                                               \
-        if (!followers) {                                                           \
-            return -1;                                                              \
-        }                                                                           \
-                                                                                    \
-        SInt32 count = 0;                                                           \
-        Follower_t *follower;                                                       \
-        for (u64 idx = 0, size = followers->aliases.count; idx < size; idx += 1) {  \
-            followers->aliases.GetNthItem(idx, follower);                           \
-            if (!follower) {                                                        \
-                continue;                                                           \
-            }                                                                       \
-                                                                                    \
-            if (Follower::Is_Created(follower) &&                                   \
-                Follower::Get_Actor(follower) &&                                    \
-                TEST_FOR_FOLLOWER) {                                                \
-                count += 1;                                                         \
-            }                                                                       \
-        }                                                                           \
-                                                                                    \
-        return count;                                                               \
+    SInt32 Max(Followers_t *followers)
+    {
+        return Followers::MAX;
+    }
+
+    #define COUNT(TEST_FOR_FOLLOWER)                                        \
+    M                                                                       \
+        if (!followers) {                                                   \
+            return -1;                                                      \
+        }                                                                   \
+                                                                            \
+        SInt32 count = 0;                                                   \
+        Follower_t *follower;                                               \
+        for (u64 idx = 0, size = Followers::MAX; idx < size; idx += 1) {    \
+            followers->aliases.GetNthItem(idx, follower);                   \
+            if (!follower) {                                                \
+                continue;                                                   \
+            }                                                               \
+                                                                            \
+            if (Follower::Is_Created(follower) &&                           \
+                Follower::Get_Actor(follower) &&                            \
+                TEST_FOR_FOLLOWER(follower)) {                              \
+                count += 1;                                                 \
+            }                                                               \
+        }                                                                   \
+                                                                            \
+        return count;                                                       \
     W
 
-    SInt32 Get_Count(Followers_t *followers) {
-        GET_COUNT(true);
+    SInt32 Count_All(Followers_t *followers)
+    {
+        PRAGMA_PUSH_WARNING_DISABLE(4003);
+        COUNT();
+        PRAGMA_POP_WARNING();
     }
 
-    SInt32 Get_Alive_Count(Followers_t *followers) {
-        GET_COUNT(Follower::Is_Alive(follower));
+    SInt32 Count_Alive(Followers_t *followers) {
+        COUNT(Follower::Is_Alive);
     }
 
-    SInt32 Get_Dead_Count(Followers_t *followers) {
-        GET_COUNT(Follower::Is_Dead(follower));
+    SInt32 Count_Dead(Followers_t *followers) {
+        COUNT(Follower::Is_Dead);
     }
 
-    SInt32 Get_Mobile_Count(Followers_t *followers) {
-        GET_COUNT(Follower::Is_Mobile(follower));
+    SInt32 Count_Mobile(Followers_t *followers) {
+        COUNT(Follower::Is_Mobile);
     }
 
-    SInt32 Get_Immobile_Count(Followers_t *followers) {
-        GET_COUNT(Follower::Is_Immobile(follower));
+    SInt32 Count_Immobile(Followers_t *followers) {
+        COUNT(Follower::Is_Immobile);
     }
 
-    SInt32 Get_Settler_Count(Followers_t *followers) {
-        GET_COUNT(Follower::Is_Settler(follower));
+    SInt32 Count_Settlers(Followers_t *followers) {
+        COUNT(Follower::Is_Settler);
     }
 
-    SInt32 Get_Non_Settler_Count(Followers_t *followers) {
-        GET_COUNT(Follower::Isnt_Settler(follower));
+    SInt32 Count_Non_Settlers(Followers_t *followers) {
+        COUNT(Follower::Isnt_Settler);
     }
 
-    SInt32 Get_Sneak_Count(Followers_t *followers) {
-        GET_COUNT(Follower::Is_Sneak(follower));
+    SInt32 Count_Sneaks(Followers_t *followers) {
+        COUNT(Follower::Is_Sneak);
     }
 
-    SInt32 Get_Non_Sneak_Count(Followers_t *followers) {
-        GET_COUNT(Follower::Isnt_Sneak(follower));
+    SInt32 Count_Non_Sneaks(Followers_t *followers) {
+        COUNT(Follower::Isnt_Sneak);
     }
 
-    SInt32 Get_Saddler_Count(Followers_t *followers) {
-        GET_COUNT(Follower::Is_Saddler(follower));
+    SInt32 Count_Saddlers(Followers_t *followers) {
+        COUNT(Follower::Is_Saddler);
     }
 
-    SInt32 Get_Non_Saddler_Count(Followers_t *followers) {
-        GET_COUNT(Follower::Isnt_Saddler(follower));
+    SInt32 Count_Non_Saddlers(Followers_t *followers) {
+        COUNT(Follower::Isnt_Saddler);
     }
 
-    SInt32 Get_Retreater_Count(Followers_t *followers) {
-        GET_COUNT(Follower::Is_Retreater(follower));
+    SInt32 Count_Retreaters(Followers_t *followers) {
+        COUNT(Follower::Is_Retreater);
     }
 
-    SInt32 Get_Non_Retreater_Count(Followers_t *followers) {
-        GET_COUNT(Follower::Isnt_Retreater(follower));
+    SInt32 Count_Non_Retreaters(Followers_t *followers) {
+        COUNT(Follower::Isnt_Retreater);
     }
 
-    #define GET(TEST_FOR_FOLLOWER)                                                  \
-    M                                                                               \
-        VMResultArray<Follower_t *> vec_followers;                                  \
-                                                                                    \
-        if (!followers) {                                                           \
-            return vec_followers;                                                   \
-        }                                                                           \
-                                                                                    \
-        Follower_t *follower;                                                       \
-        for (u64 idx = 0, size = followers->aliases.count; idx < size; idx += 1) {  \
-            followers->aliases.GetNthItem(idx, follower);                           \
-            if (!follower) {                                                        \
-                continue;                                                           \
-            }                                                                       \
-                                                                                    \
-            if (Follower::Is_Created(follower) &&                                   \
-                Follower::Get_Actor(follower) &&                                    \
-                TEST_FOR_FOLLOWER) {                                                \
-                vec_followers.push_back(follower);                                  \
-            }                                                                       \
-        }                                                                           \
-                                                                                    \
-        return vec_followers;                                                       \
+    #undef COUNT
+
+    #define COPY(TEST_FOR_FOLLOWER)                                         \
+    M                                                                       \
+        VMResultArray<Follower_t *> vec_followers;                          \
+                                                                            \
+        if (!followers) {                                                   \
+            return vec_followers;                                           \
+        }                                                                   \
+                                                                            \
+        Follower_t *follower;                                               \
+        for (u64 idx = 0, size = Followers::MAX; idx < size; idx += 1) {    \
+            followers->aliases.GetNthItem(idx, follower);                   \
+            if (!follower) {                                                \
+                continue;                                                   \
+            }                                                               \
+                                                                            \
+            if (Follower::Is_Created(follower) &&                           \
+                Follower::Get_Actor(follower) &&                            \
+                TEST_FOR_FOLLOWER(follower)) {                              \
+                vec_followers.push_back(follower);                          \
+            }                                                               \
+        }                                                                   \
+                                                                            \
+        return vec_followers;                                               \
     W
 
-    VMResultArray<Follower_t *> Get(Followers_t *followers) {
-        GET(true);
+    VMResultArray<Follower_t *> All(Followers_t *followers) {
+        PRAGMA_PUSH_WARNING_DISABLE(4003);
+        COPY();
+        PRAGMA_POP_WARNING();
     }
 
-    VMResultArray<Follower_t *> Get_Alive(Followers_t *followers) {
-        GET(Follower::Is_Alive(follower));
+    VMResultArray<Follower_t *> Alive(Followers_t *followers) {
+        COPY(Follower::Is_Alive);
     }
 
-    VMResultArray<Follower_t *> Get_Dead(Followers_t *followers) {
-        GET(Follower::Is_Dead(follower));
+    VMResultArray<Follower_t *> Dead(Followers_t *followers) {
+        COPY(Follower::Is_Dead);
     }
 
-    VMResultArray<Follower_t *> Get_Mobile(Followers_t *followers) {
-        GET(Follower::Is_Mobile(follower));
+    VMResultArray<Follower_t *> Mobile(Followers_t *followers) {
+        COPY(Follower::Is_Mobile);
     }
 
-    VMResultArray<Follower_t *> Get_Immobile(Followers_t *followers) {
-        GET(Follower::Is_Immobile(follower));
+    VMResultArray<Follower_t *> Immobile(Followers_t *followers) {
+        COPY(Follower::Is_Immobile);
     }
 
-    VMResultArray<Follower_t *> Get_Settlers(Followers_t *followers) {
-        GET(Follower::Is_Settler(follower));
+    VMResultArray<Follower_t *> Settlers(Followers_t *followers) {
+        COPY(Follower::Is_Settler);
     }
 
-    VMResultArray<Follower_t *> Get_Non_Settlers(Followers_t *followers) {
-        GET(Follower::Isnt_Settler(follower));
+    VMResultArray<Follower_t *> Non_Settlers(Followers_t *followers) {
+        COPY(Follower::Isnt_Settler);
     }
 
-    VMResultArray<Follower_t *> Get_Sneaks(Followers_t *followers) {
-        GET(Follower::Is_Sneak(follower));
+    VMResultArray<Follower_t *> Sneaks(Followers_t *followers) {
+        COPY(Follower::Is_Sneak);
     }
 
-    VMResultArray<Follower_t *> Get_Non_Sneaks(Followers_t *followers) {
-        GET(Follower::Isnt_Sneak(follower));
+    VMResultArray<Follower_t *> Non_Sneaks(Followers_t *followers) {
+        COPY(Follower::Isnt_Sneak);
     }
 
-    VMResultArray<Follower_t *> Get_Saddlers(Followers_t *followers) {
-        GET(Follower::Is_Saddler(follower));
+    VMResultArray<Follower_t *> Saddlers(Followers_t *followers) {
+        COPY(Follower::Is_Saddler);
     }
 
-    VMResultArray<Follower_t *> Get_Non_Saddlers(Followers_t *followers) {
-        GET(Follower::Isnt_Saddler(follower));
+    VMResultArray<Follower_t *> Non_Saddlers(Followers_t *followers) {
+        COPY(Follower::Isnt_Saddler);
     }
 
-    VMResultArray<Follower_t *> Get_Retreaters(Followers_t *followers) {
-        GET(Follower::Is_Retreater(follower));
+    VMResultArray<Follower_t *> Retreaters(Followers_t *followers) {
+        COPY(Follower::Is_Retreater);
     }
 
-    VMResultArray<Follower_t *> Get_Non_Retreaters(Followers_t *followers) {
-        GET(Follower::Isnt_Retreater(follower));
+    VMResultArray<Follower_t *> Non_Retreaters(Followers_t *followers) {
+        COPY(Follower::Isnt_Retreater);
+    }
+
+    #undef COPY
+
+    VMResultArray<Follower_t *> Sort_All(Followers_t *followers, SInt32 from, SInt32 to_exclusive, BSFixedString algorithm)
+    {
+        return Papyrus::Slice_Vector(Aliases::Sort(All(followers), algorithm), from, to_exclusive);
+    }
+
+    Follower_t *ID_To_Follower(Followers_t *followers, SInt32 id)
+    {
+        if (followers && id > -1 && id < Followers::MAX)
+        {
+            Follower_t *follower;
+            followers->aliases.GetNthItem(id, follower);
+            return follower;
+        }
+
+        return nullptr;
+    }
+
+    Follower_t *Actor_To_Follower(Followers_t *followers, Actor *actor)
+    {
+        if (followers && actor)
+        {
+            ExtraAliasInstanceArray *xaliases = (ExtraAliasInstanceArray *)actor->extraData.GetByType(kExtraData_AliasInstanceArray);
+            if (xaliases)
+            {
+                for (u64 idx = 0, size = xaliases->aliases.count; idx < size; idx += 1)
+                {
+                    ExtraAliasInstanceArray::AliasInfo *info = xaliases->aliases[idx];
+                    if (info && info->quest == followers)
+                    {
+                        return info->alias;
+                    }
+                }
+            }
+        }
+
+        return nullptr;
+    }
+
+    SInt32 Actor_To_ID(Followers_t *followers, Actor *actor)
+    {
+        if (followers && actor)
+        {
+            Follower_t *follower = Actor_To_Follower(followers, actor);
+            if (follower)
+            {
+                s64 follower_idx = followers->aliases.GetItemIndex(follower);
+                if (follower_idx > -1 && follower_idx < Followers::MAX)
+                {
+                    return follower_idx;
+                }
+            }
+        }
+
+        return -1;
+    }
+
+    Follower_t *Unused_Follower(Followers_t *followers)
+    {
+        if (followers)
+        {
+            Follower_t *follower;
+            for (u64 idx = 0, size = Followers::MAX; idx < size; idx += 1)
+            {
+                followers->aliases.GetNthItem(idx, follower);
+                if (follower && !Follower::Exists(follower))
+                {
+                    return follower;
+                }
+            }
+        }
+
+        return nullptr;
+    }
+
+    SInt32 Unused_ID(Followers_t *followers)
+    {
+        if (followers)
+        {
+            Follower_t *follower;
+            for (u64 idx = 0, size = Followers::MAX; idx < size; idx += 1)
+            {
+                followers->aliases.GetNthItem(idx, follower);
+                if (follower && !Follower::Exists(follower))
+                {
+                    return idx;
+                }
+            }
+        }
+
+        return -1;
+    }
+
+    bool Has_Space(Followers_t *followers)
+    {
+        return Count_All(followers) < Followers::MAX;
+    }
+
+    bool Hasnt_Space(Followers_t *followers)
+    {
+        return Count_All(followers) >= Followers::MAX;
     }
 
     bool Are_In_Combat(Followers_t *followers) {
@@ -435,7 +563,7 @@ namespace doticu_npcp { namespace Followers {
         }
 
         Follower_t *follower;
-        for (u64 idx = 0, size = followers->aliases.count; idx < size; idx += 1) {
+        for (u64 idx = 0, size = Followers::MAX; idx < size; idx += 1) {
             followers->aliases.GetNthItem(idx, follower);
             if (!follower) {
                 continue;
@@ -450,285 +578,86 @@ namespace doticu_npcp { namespace Followers {
         return false;
     }
 
-    Followers_t *Get_Self() {
-        static Followers_t *followers = nullptr;
+    bool Has_Actor(Followers_t *followers, Actor *actor)
+    {
+        return followers && actor && Actor2::Is_Aliased_In_Quest(actor, followers);
+    }
 
-        if (!followers) {
-            DataHandler *data_handler = DataHandler::GetSingleton();
-            if (!data_handler) {
-                _MESSAGE("Followers::Get_Self: Unable to get data_handler.");
-                return nullptr;
-            }
-
-            const ModInfo *mod_info = data_handler->LookupModByName("doticu_npc_party.esp");
-            if (!mod_info) {
-                _MESSAGE("Followers::Get_Self: Unable to get mod_info.");
-                return nullptr;
-            }
-
-            TESForm *form = LookupFormByID(mod_info->GetFormID(0x000D83));
-            if (!form) {
-                _MESSAGE("Followers::Get_Self: Unable to get quest form.");
-                return nullptr;
-            }
-
-            TESQuest *quest = DYNAMIC_CAST(form, TESForm, TESQuest);
-            if (!quest) {
-                _MESSAGE("Followers::Get_Self: Unable to get quest.");
-                return nullptr;
-            }
-
-            followers = quest;
-        }
-
-        return followers;
+    Followers_t *Self() {
+        static Followers_t *followers;
+        return followers ? followers : followers = (Followers_t *)Game::Get_NPCP_Form(0x000D83);
     }
 
 }}
 
 namespace doticu_npcp { namespace Followers { namespace Exports {
 
-    bool Register(VMClassRegistry *registry) {
-        registry->RegisterFunction(
-            new NativeFunction0 <Followers_t, void>(
-                "p_Register",
-                "doticu_npcp_followers",
-                Followers::Register,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction3 <Followers_t, void, float, float, float>(
-                "p_Summon",
-                "doticu_npcp_followers",
-                Followers::Summon,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction3 <Followers_t, void, float, float, float>(
-                "p_Summon_Mobile",
-                "doticu_npcp_followers",
-                Followers::Summon_Mobile,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction3 <Followers_t, void, float, float, float>(
-                "p_Summon_Immobile",
-                "doticu_npcp_followers",
-                Followers::Summon_Immobile,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction0 <Followers_t, void>(
-                "p_Catch_Up",
-                "doticu_npcp_followers",
-                Followers::Catch_Up,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction0 <Followers_t, void>(
-                "p_Stash",
-                "doticu_npcp_followers",
-                Followers::Stash,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction1 <Followers_t, void, TESForm *>(
-                "p_Enforce",
-                "doticu_npcp_followers",
-                Followers::Enforce,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction1 <Followers_t, void, TESForm *>(
-                "p_Resurrect",
-                "doticu_npcp_followers",
-                Followers::Resurrect,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction1 <Followers_t, void, TESForm *>(
-                "p_Mobilize",
-                "doticu_npcp_followers",
-                Followers::Mobilize,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction1 <Followers_t, void, TESForm *>(
-                "p_Immobilize",
-                "doticu_npcp_followers",
-                Followers::Immobilize,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction1 <Followers_t, void, TESForm *>(
-                "p_Settle",
-                "doticu_npcp_followers",
-                Followers::Settle,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction1 <Followers_t, void, TESForm *>(
-                "p_Unsettle",
-                "doticu_npcp_followers",
-                Followers::Unsettle,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction1 <Followers_t, void, TESForm *>(
-                "p_Sneak",
-                "doticu_npcp_followers",
-                Followers::Sneak,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction1 <Followers_t, void, TESForm *>(
-                "p_Unsneak",
-                "doticu_npcp_followers",
-                Followers::Unsneak,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction1 <Followers_t, void, TESForm *>(
-                "p_Saddle",
-                "doticu_npcp_followers",
-                Followers::Saddle,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction1 <Followers_t, void, TESForm *>(
-                "p_Unsaddle",
-                "doticu_npcp_followers",
-                Followers::Unsaddle,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction1 <Followers_t, void, TESForm *>(
-                "p_Retreat",
-                "doticu_npcp_followers",
-                Followers::Retreat,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction1 <Followers_t, void, TESForm *>(
-                "p_Unretreat",
-                "doticu_npcp_followers",
-                Followers::Unretreat,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction1 <Followers_t, void, TESForm *>(
-                "p_Unfollow",
-                "doticu_npcp_followers",
-                Followers::Unfollow,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction1 <Followers_t, void, TESForm *>(
-                "p_Unmember",
-                "doticu_npcp_followers",
-                Followers::Unmember,
-                registry)
-        );
+    bool Register(VMClassRegistry *registry)
+    {
+        #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)                          \
+        M                                                                                       \
+            ADD_CLASS_METHOD("doticu_npcp_followers", Followers_t,                              \
+                             STR_FUNC_, ARG_NUM_, RETURN_, Followers::METHOD_, __VA_ARGS__);    \
+        W
 
-        registry->RegisterFunction(
-            new NativeFunction0 <Followers_t, SInt32>(
-                "Get_Count",
-                "doticu_npcp_followers",
-                Followers::Get_Count,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction0 <Followers_t, SInt32>(
-                "Get_Alive_Count",
-                "doticu_npcp_followers",
-                Followers::Get_Alive_Count,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction0 <Followers_t, SInt32>(
-                "Get_Dead_Count",
-                "doticu_npcp_followers",
-                Followers::Get_Dead_Count,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction0 <Followers_t, SInt32>(
-                "Get_Mobile_Count",
-                "doticu_npcp_followers",
-                Followers::Get_Mobile_Count,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction0 <Followers_t, SInt32>(
-                "Get_Immobile_Count",
-                "doticu_npcp_followers",
-                Followers::Get_Immobile_Count,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction0 <Followers_t, SInt32>(
-                "Get_Settler_Count",
-                "doticu_npcp_followers",
-                Followers::Get_Settler_Count,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction0 <Followers_t, SInt32>(
-                "Get_Non_Settler_Count",
-                "doticu_npcp_followers",
-                Followers::Get_Non_Settler_Count,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction0 <Followers_t, SInt32>(
-                "Get_Sneak_Count",
-                "doticu_npcp_followers",
-                Followers::Get_Sneak_Count,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction0 <Followers_t, SInt32>(
-                "Get_Non_Sneak_Count",
-                "doticu_npcp_followers",
-                Followers::Get_Non_Sneak_Count,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction0 <Followers_t, SInt32>(
-                "Get_Saddler_Count",
-                "doticu_npcp_followers",
-                Followers::Get_Saddler_Count,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction0 <Followers_t, SInt32>(
-                "Get_Non_Saddler_Count",
-                "doticu_npcp_followers",
-                Followers::Get_Non_Saddler_Count,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction0 <Followers_t, SInt32>(
-                "Get_Retreater_Count",
-                "doticu_npcp_followers",
-                Followers::Get_Retreater_Count,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction0 <Followers_t, SInt32>(
-                "Get_Non_Retreater_Count",
-                "doticu_npcp_followers",
-                Followers::Get_Non_Retreater_Count,
-                registry)
-        );
+        #define ADD_GLOBAL(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)                      \
+        M                                                                                   \
+            ADD_CLASS_METHOD("doticu_npcp", Selfless_t,                                     \
+                             STR_FUNC_, ARG_NUM_, RETURN_, Exports::METHOD_, __VA_ARGS__);  \
+        W
 
-        registry->RegisterFunction(
-            new NativeFunction0 <Followers_t, bool>(
-                "Are_In_Combat",
-                "doticu_npcp_followers",
-                Followers::Are_In_Combat,
-                registry)
-        );
+        ADD_METHOD("p_Register", 0, void, Register);
+        ADD_METHOD("p_Summon", 3, void, Summon, float, float, float);
+        ADD_METHOD("p_Summon_Mobile", 3, void, Summon_Mobile, float, float, float);
+        ADD_METHOD("p_Summon_Immobile", 3, void, Summon_Immobile, float, float, float);
+        ADD_METHOD("p_Catch_Up", 0, void, Catch_Up);
+        ADD_METHOD("p_Stash", 0, void, Stash);
+        ADD_METHOD("p_Enforce", 1, void, Enforce, TESForm *);
+        ADD_METHOD("p_Resurrect", 1, void, Resurrect, TESForm *);
+        ADD_METHOD("p_Mobilize", 1, void, Mobilize, TESForm *);
+        ADD_METHOD("p_Immobilize", 1, void, Immobilize, TESForm *);
+        ADD_METHOD("p_Settle", 1, void, Settle, TESForm *);
+        ADD_METHOD("p_Unsettle", 1, void, Unsettle, TESForm *);
+        ADD_METHOD("p_Sneak", 1, void, Sneak, TESForm *);
+        ADD_METHOD("p_Unsneak", 1, void, Unsneak, TESForm *);
+        ADD_METHOD("p_Saddle", 1, void, Saddle, TESForm *);
+        ADD_METHOD("p_Unsaddle", 1, void, Unsaddle, TESForm *);
+        ADD_METHOD("p_Retreat", 1, void, Retreat, TESForm *);
+        ADD_METHOD("p_Unretreat", 1, void, Unretreat, TESForm *);
+        ADD_METHOD("p_Unfollow", 1, void, Unfollow, TESForm *);
+        ADD_METHOD("p_Unmember", 1, void, Unmember, TESForm *);
+
+        ADD_METHOD("Max", 0, SInt32, Max);
+        ADD_METHOD("Count_All", 0, SInt32, Count_All);
+        ADD_METHOD("Count_Alive", 0, SInt32, Count_Alive);
+        ADD_METHOD("Count_Dead", 0, SInt32, Count_Dead);
+        ADD_METHOD("Count_Mobile", 0, SInt32, Count_Mobile);
+        ADD_METHOD("Count_Immobile", 0, SInt32, Count_Immobile);
+        ADD_METHOD("Count_Settlers", 0, SInt32, Count_Settlers);
+        ADD_METHOD("Count_Non_Settlers", 0, SInt32, Count_Non_Settlers);
+        ADD_METHOD("Count_Sneaks", 0, SInt32, Count_Sneaks);
+        ADD_METHOD("Count_Non_Sneaks", 0, SInt32, Count_Non_Sneaks);
+        ADD_METHOD("Count_Saddlers", 0, SInt32, Count_Saddlers);
+        ADD_METHOD("Count_Non_Saddlers", 0, SInt32, Count_Non_Saddlers);
+        ADD_METHOD("Count_Retreaters", 0, SInt32, Count_Retreaters);
+        ADD_METHOD("Count_Non_Retreaters", 0, SInt32, Count_Non_Retreaters);
+
+        ADD_METHOD("p_Sort_All", 3, VMResultArray<Follower_t *>, Sort_All, SInt32, SInt32, BSFixedString);
+
+        ADD_METHOD("p_ID_To_Follower", 1, Follower_t *, ID_To_Follower, SInt32);
+        ADD_METHOD("p_Actor_To_Follower", 1, Follower_t *, Actor_To_Follower, Actor *);
+        ADD_METHOD("p_Actor_To_ID", 1, SInt32, Actor_To_ID, Actor *);
+
+        ADD_METHOD("p_Unused_Follower", 0, Follower_t *, Unused_Follower);
+        ADD_METHOD("p_Unused_ID", 0, SInt32, Unused_ID);
+
+        ADD_METHOD("Has_Space", 0, bool, Has_Space);
+        ADD_METHOD("Hasnt_Space", 0, bool, Hasnt_Space);
+        ADD_METHOD("Are_In_Combat", 0, bool, Are_In_Combat);
+        ADD_METHOD("Has_Actor", 1, bool, Has_Actor, Actor *);
+
+        #undef ADD_METHOD
+        #undef ADD_GLOBAL
 
         return true;
     }

@@ -73,6 +73,8 @@ int property IS_GREETER                     =  -390 autoReadOnly
 int property IS_VAMPIRE                     =  -399 autoReadOnly
 int property IS_DISPLAY                     = -3400 autoReadOnly
 int property IS_CHILD                       = -3410 autoReadOnly
+int property IS_INTERIOR                    = -3800 autoReadOnly
+int property IS_EXTERIOR                    = -3810 autoReadOnly
 
 int property ISNT_ACTOR                     =  -400 autoReadOnly
 int property ISNT_ALIAS                     =  -410 autoReadOnly

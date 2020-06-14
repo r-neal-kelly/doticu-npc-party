@@ -533,6 +533,35 @@ namespace doticu_npcp { namespace Actor2 {
         return (actor->flags1 & Actor::kFlags_AIEnabled) == Actor::kFlags_AIEnabled;
     }
 
+    bool Is_Aliased_In_Quest(Actor *actor, TESQuest *quest)
+    {
+        if (actor && quest)
+        {
+            ExtraAliasInstanceArray *xaliases = (ExtraAliasInstanceArray *)actor->extraData.GetByType(kExtraData_AliasInstanceArray);
+            if (xaliases)
+            {
+                for (u64 idx = 0, size = xaliases->aliases.count; idx < size; idx += 1)
+                {
+                    ExtraAliasInstanceArray::AliasInfo *info = xaliases->aliases[idx];
+                    if (info && info->quest == quest)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     void Move_To_Orbit(Actor *actor, TESObjectREFR *target, float radius, float angle_degree) {
         if (!actor || !target) {
             return;
@@ -540,11 +569,13 @@ namespace doticu_npcp { namespace Actor2 {
 
         Object_Ref::Move_To_Orbit(actor, target, radius, angle_degree);
 
-        if (!Is_AI_Enabled(actor)) {
+        /*if (!Is_AI_Enabled(actor)) {
             // need to be careful, if they are on a horse. their extradata may have kExtraData_Horse as an indicator
             // make sure to test once we have followers riding horses.
             CALL_MEMBER_FN(actor, QueueNiNodeUpdate)(false);
-        }        
+        }*/
+
+        CALL_MEMBER_FN(actor, QueueNiNodeUpdate)(false);
     }
 
     float Get_Actor_Value(Actor *actor, const char *name) {

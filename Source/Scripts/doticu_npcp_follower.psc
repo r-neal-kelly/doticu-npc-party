@@ -72,7 +72,7 @@ bool                    p_is_created                = false
 int                     p_id_alias                  =    -1
 Actor                   p_ref_actor                 =  none
 doticu_npcp_member      p_ref_member                =  none
-Actor                   p_ref_horse                 =  none
+doticu_npcp_horse       p_ref_horse                 =  none
 bool                    p_is_sneak                  = false
 bool                    p_is_saddler                = false
 bool                    p_is_retreater              = false
@@ -83,13 +83,15 @@ float                   p_prev_speed_mult           =  -1.0
 bool                    p_prev_faction_bard_no_auto = false
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA, int id_alias)
+function f_Create(doticu_npcp_data DATA, int id_alias, Actor ref_actor)
     p_DATA = DATA
 
 p_Lock()
+    ForceRefTo(ref_actor)
+
     p_is_created = true
     p_id_alias = id_alias
-    p_ref_actor = GetActorReference() as Actor
+    p_ref_actor = ref_actor
     p_ref_member = MEMBERS.Get_Member(p_ref_actor)
     p_ref_horse = none
     p_is_sneak = false
@@ -106,8 +108,9 @@ p_Unlock()
 endFunction
 
 function f_Destroy()
-    ; Saddler
-
+    if p_is_saddler
+        p_Unsaddle()
+    endIf
     if p_is_retreater
         p_Unretreat()
     endIf
@@ -122,6 +125,10 @@ p_Unlock()
     p_Restore()
 
 p_Lock()
+    if p_ref_horse
+        p_Destroy_Horse()
+    endIf
+
     p_prev_faction_bard_no_auto = false
     p_prev_speed_mult = -1.0
     p_prev_waiting_for_player = -1.0
@@ -134,6 +141,8 @@ p_Lock()
     p_ref_actor = none
     p_id_alias = -1
     p_is_created = false
+
+    Clear()
 p_Unlock()
 endFunction
 
@@ -228,6 +237,21 @@ p_Lock()
 p_Unlock()
 endFunction
 
+function p_Create_Horse()
+    if !p_ref_horse
+        int id_horse = FOLLOWERS.Max() + p_id_alias
+        p_ref_horse = (FOLLOWERS.GetNthAlias(id_horse) as doticu_npcp_horse)
+        p_ref_horse.f_Create(p_DATA, id_horse, self)
+    endIf
+endFunction
+
+function p_Destroy_Horse()
+    if p_ref_horse
+        p_ref_horse.f_Destroy()
+        p_ref_horse = none
+    endIf
+endFunction
+
 function p_Follow()
 p_Lock()
 
@@ -296,36 +320,39 @@ function p_Saddle()
 p_Lock()
 
     if !p_ref_horse
-        p_ref_horse = CONSTS.MARKER_STORAGE.PlaceAtMe(CONSTS.ACTOR_LEVELED_HORSE, 1, true, true) as Actor
+        p_Create_Horse()
     endIf
 
     if CONSTS.ACTOR_PLAYER.GetParentCell().IsInterior()
-        p_Unlock()
+p_Unlock()
         return p_Unsaddle()
     endIf
 
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_SADDLER)
 
-    p_ref_horse.Enable()
+    Actor ref_horse = p_ref_horse.Get_Actor()
 
-    if p_ref_horse.IsDead()
-        p_ref_horse.Resurrect()
-    endIf
+    ref_horse.Enable()
 
-    if !p_ref_actor.IsOnMount()
-        doticu_npcp.Print(p_id_alias + " moving horse")
-
-        ACTORS.Move_To(p_ref_horse, p_ref_actor, 120, 90)
-        p_ref_horse.Activate(p_ref_actor)
-    endIf
-    
     ; we need to support leveled bases (members) as opposed to real bases (clones) only
     ; because this takes an actor base, we can't specify a reference clone in this manner.
     ; so anything we can do to avoid the follower not being on the right horse is advisable
-    p_ref_horse.SetActorOwner(ACTORS.Get_Leveled_Base(p_ref_actor))
+    ref_horse.SetActorOwner(ACTORS.Get_Leveled_Base(p_ref_actor))
+
+    if ref_horse.IsDead()
+        ref_horse.Resurrect()
+    endIf
+
+    if ref_horse.GetParentCell() != p_ref_actor.GetParentCell()
+        ACTORS.Move_To(ref_horse, p_ref_actor, 140, -90)
+    endIf
+
+    if !p_ref_actor.IsOnMount()
+        (CONSTS.FORMLIST_GLOBALS_SADDLER_IS_SITTING.GetAt(p_id_alias) as GlobalVariable).SetValue(0)
+    endIf
 
     p_ref_actor.EvaluatePackage()
-    p_ref_horse.EvaluatePackage()
+    ref_horse.EvaluatePackage()
 
 p_Unlock()
 endFunction
@@ -337,9 +364,11 @@ p_Lock()
         p_ref_actor.Dismount()
     endIf
 
-    p_ref_horse.Disable()
+    Actor ref_horse = p_ref_horse.Get_Actor()
 
-    p_ref_horse.MoveTo(CONSTS.MARKER_STORAGE)
+    ref_horse.Disable()
+
+    ref_horse.MoveTo(CONSTS.MARKER_STORAGE)
 
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_SADDLER)
 
@@ -395,6 +424,10 @@ p_Unlock()
 endFunction
 
 ; Public Methods
+int function ID()
+    return p_id_alias
+endFunction
+
 function Enforce()
     p_ref_member.Enforce()
 endFunction
@@ -479,7 +512,7 @@ event On_Unsneak()
     endIf
 endEvent
 
-int function Saddle()
+int function Saddle(int code_exec)
     if !Exists()
         return CODES.ISNT_FOLLOWER
     endIf
@@ -488,14 +521,27 @@ int function Saddle()
         return CODES.IS_SADDLER
     endIf
 
+    if p_ref_actor.GetParentCell().IsInterior()
+        return CODES.IS_INTERIOR
+    endIf
+
     p_is_saddler = true
 
-    p_Saddle()
+    if code_exec == CODES.DO_ASYNC
+        p_Async("On_Saddle")
+    else
+        p_Saddle()
+    endIf
 
     return CODES.SUCCESS
 endFunction
+event On_Saddle()
+    if Is_Saddler()
+        p_Saddle()
+    endIf
+endEvent
 
-int function Unsaddle()
+int function Unsaddle(int code_exec)
     if !Exists()
         return CODES.ISNT_FOLLOWER
     endIf
@@ -506,10 +552,19 @@ int function Unsaddle()
 
     p_is_saddler = false
 
-    p_Unsaddle()
+    if code_exec == CODES.DO_ASYNC
+        p_Async("On_Unsaddle")
+    else
+        p_Unsaddle()
+    endIf
 
     return CODES.SUCCESS
 endFunction
+event On_Unsaddle()
+    if Isnt_Saddler()
+        p_Unsaddle()
+    endIf
+endEvent
 
 int function Retreat()
     if !Exists()
@@ -688,9 +743,6 @@ event On_Cell_Change(Form cell_new, Form cell_old)
         if Is_Sneak()
             p_Sneak()
         endIf
-        if Is_Saddler()
-            p_Saddle()
-        endIf
     endIf
 endEvent
 
@@ -768,7 +820,7 @@ endEvent
 
 event On_Followers_Saddle(Form form_tasklist)
     if Exists() && Isnt_Saddler()
-        Saddle()
+        Saddle(CODES.DO_SYNC)
         if form_tasklist
             (form_tasklist as doticu_npcp_tasklist).Detask()
         endIf
@@ -777,7 +829,7 @@ endEvent
 
 event On_Followers_Unsaddle(Form form_tasklist)
     if Exists() && Is_Saddler()
-        Unsaddle()
+        Unsaddle(CODES.DO_SYNC)
         if form_tasklist
             (form_tasklist as doticu_npcp_tasklist).Detask()
         endIf

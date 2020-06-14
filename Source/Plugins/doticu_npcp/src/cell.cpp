@@ -8,35 +8,46 @@
 
 namespace doticu_npcp { namespace Cell {
 
-    enum {
+    enum
+    {
         f_CELL_IS_INTERIOR = 0x0001
     };
 
-    bool Is_Interior(TESObjectCELL *cell) {
-        if (!cell) {
+    bool Is_Interior(TESObjectCELL *cell)
+    {
+        if (cell)
+        {
+            return (cell->unk040 & f_CELL_IS_INTERIOR) == f_CELL_IS_INTERIOR;
+        }
+        else
+        {
             return false;
         }
-
-        return (cell->unk040 & f_CELL_IS_INTERIOR) == f_CELL_IS_INTERIOR;
     }
 
-    bool Is_Exterior(TESObjectCELL *cell) {
-        if (!cell) {
+    bool Is_Exterior(TESObjectCELL *cell)
+    {
+        if (cell)
+        {
+            return (cell->unk040 & f_CELL_IS_INTERIOR) != f_CELL_IS_INTERIOR;
+        }
+        else
+        {
             return false;
         }
-
-        return (cell->unk040 & f_CELL_IS_INTERIOR) != f_CELL_IS_INTERIOR;
     }
 
 }}
 
 namespace doticu_npcp { namespace Cell { namespace Exports {
 
-    bool Is_Interior(Selfless_t *, TESObjectCELL *cell) {
+    bool Is_Interior(Selfless_t *, TESObjectCELL *cell)
+    {
         return Cell::Is_Interior(cell);
     }
 
-    bool Register(VMClassRegistry *registry) {
+    bool Register(VMClassRegistry *registry)
+    {
         registry->RegisterFunction(
             new NativeFunction1 <Selfless_t, bool, TESObjectCELL *>(
                 "Cell_Is_Interior",

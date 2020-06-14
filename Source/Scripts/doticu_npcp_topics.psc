@@ -161,3 +161,11 @@ endFunction
 function Unsneak(ObjectReference ref_object)
     (GetOwningQuest() as doticu_npcp_commands).Unsneak_Sync(ref_object as Actor, false)
 endFunction
+
+function Saddle(ObjectReference ref_obj)
+    (GetOwningQuest() as doticu_npcp_commands).Saddle_Sync(ref_obj as Actor, false)
+endFunction
+
+function Unsaddle(ObjectReference ref_obj)
+    (GetOwningQuest() as doticu_npcp_commands).Unsaddle_Sync(ref_obj as Actor, false)
+endFunction

@@ -8,7 +8,7 @@
 namespace doticu_npcp { namespace Player {
 
     bool Is_Party_In_Combat(Player_t *player) {
-        return (*g_thePlayer)->IsInCombat() || Followers::Are_In_Combat(Followers::Get_Self());
+        return (*g_thePlayer)->IsInCombat() || Followers::Are_In_Combat(Followers::Self());
     }
 
 }}

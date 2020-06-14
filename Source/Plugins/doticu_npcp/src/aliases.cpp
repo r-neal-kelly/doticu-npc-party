@@ -173,12 +173,38 @@ namespace doticu_npcp { namespace Aliases {
         return count;
     }
 
+    VMResultArray<Alias_t *> Sort(VMResultArray<Alias_t *> aliases, const char *algorithm)
+    {
+        if (String2::Is_Same_Caseless(algorithm, "NAME"))
+        {
+            qsort(&aliases[0], aliases.size(), sizeof(Alias_t *), Compare_Name);
+        }
+        else if (String2::Is_Same_Caseless(algorithm, "NAME_CASELESS"))
+        {
+            qsort(&aliases[0], aliases.size(), sizeof(Alias_t *), Compare_Name_Caseless);
+        }
+        else if (String2::Is_Same_Caseless(algorithm, "RATING_NAME"))
+        {
+            qsort(&aliases[0], aliases.size(), sizeof(Alias_t *), Compare_Rating_Name);
+        }
+        else if (String2::Is_Same_Caseless(algorithm, "RATING_NAME_CASELESS"))
+        {
+            qsort(&aliases[0], aliases.size(), sizeof(Alias_t *), Compare_Rating_Name_Caseless);
+        }
+        else
+        {
+            qsort(&aliases[0], aliases.size(), sizeof(Alias_t *), Compare_Name);
+        }
+
+        return aliases;
+    }
+
 }}
 
 namespace doticu_npcp { namespace Aliases { namespace Exports {
 
     VMResultArray<BGSBaseAlias *> Slice(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr, UInt32 idx_from, UInt32 idx_to_ex) {
-        return Papyrus::Array_Slice<BGSBaseAlias *>(&arr, idx_from, idx_to_ex, NULL);
+        return Papyrus::Slice_Array<BGSBaseAlias *>(&arr, idx_from, idx_to_ex, NULL);
     }
 
     VMResultArray<BGSBaseAlias *> Sort(StaticFunctionTag *,

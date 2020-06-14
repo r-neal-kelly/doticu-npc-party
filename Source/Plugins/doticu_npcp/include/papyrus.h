@@ -214,7 +214,7 @@ namespace doticu_npcp { namespace Papyrus {
     };
 
     template <typename Type>
-    VMResultArray<Type> Array_Slice(VMArray<Type> *arr, UInt32 idx_from, UInt32 idx_to_ex, Type val_null) {
+    VMResultArray<Type> Slice_Array(VMArray<Type> *arr, UInt32 idx_from, UInt32 idx_to_ex, Type val_null) {
         VMResultArray<Type> vec_slice;
         UInt32 len_forms = arr->Length();
 
@@ -241,6 +241,38 @@ namespace doticu_npcp { namespace Papyrus {
         }
 
         return vec_slice;
+    }
+
+    template <typename Type>
+    VMResultArray<Type> Slice_Vector(VMResultArray<Type> vec, UInt32 from, UInt32 to_exclusive)
+    {
+        u64 vec_size = vec.size();
+        VMResultArray<Type> slice;
+
+        if (from < 0)
+        {
+            from = 0;
+        }
+        if (from > vec_size)
+        {
+            from = vec_size;
+        }
+        if (to_exclusive > vec_size || to_exclusive < 0)
+        {
+            to_exclusive = vec_size;
+        }
+
+        s64 slice_size = to_exclusive - from;
+        if (slice_size > 0)
+        {
+            slice.reserve(slice_size);
+            for (u64 idx = from; idx < to_exclusive; idx += 1)
+            {
+                slice.push_back(vec[idx]);
+            }
+        }
+
+        return slice;
     }
 
 }}

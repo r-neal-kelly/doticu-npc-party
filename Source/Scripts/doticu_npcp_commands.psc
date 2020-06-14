@@ -175,6 +175,18 @@ function Followers_Unsneak()
     GotoState("")
 endFunction
 
+function Followers_Saddle()
+    GotoState("p_STATE_BUSY")
+    p_Enqueue("Followers_Saddle", none)
+    GotoState("")
+endFunction
+
+function Followers_Unsaddle()
+    GotoState("p_STATE_BUSY")
+    p_Enqueue("Followers_Unsaddle", none)
+    GotoState("")
+endFunction
+
 function Followers_Stash()
     GotoState("p_STATE_BUSY")
     PRIVATE.Followers_Stash()
@@ -332,6 +344,18 @@ endFunction
 function Unsneak_Sync(Actor ref_actor, bool auto_create)
     GotoState("p_STATE_BUSY")
     PRIVATE.Unsneak(CODES.DO_SYNC, ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Saddle_Sync(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    PRIVATE.Saddle(CODES.DO_SYNC, ref_actor, auto_create)
+    GotoState("")
+endFunction
+
+function Unsaddle_Sync(Actor ref_actor, bool auto_create)
+    GotoState("p_STATE_BUSY")
+    PRIVATE.Unsaddle(CODES.DO_SYNC, ref_actor, auto_create)
     GotoState("")
 endFunction
 
@@ -769,6 +793,10 @@ event On_Queue_Commands(string str_message, Form form_actor, bool auto_create)
         PRIVATE.Followers_Sneak()
     elseIf str_message == "Followers_Unsneak"
         PRIVATE.Followers_Unsneak()
+    elseIf str_message == "Followers_Saddle"
+        PRIVATE.Followers_Saddle()
+    elseIf str_message == "Followers_Unsaddle"
+        PRIVATE.Followers_Unsaddle()
     elseIf str_message == "Followers_Resurrect"
         PRIVATE.Followers_Resurrect()
     elseIf str_message == "Followers_Unfollow"
@@ -823,6 +851,10 @@ state p_STATE_BUSY
     function Sneak_Sync(Actor ref_actor, bool auto_create)
     endFunction
     function Unsneak_Sync(Actor ref_actor, bool auto_create)
+    endFunction
+    function Saddle_Sync(Actor ref_actor, bool auto_create)
+    endFunction
+    function Unsaddle_Sync(Actor ref_actor, bool auto_create)
     endFunction
     function Pack_Sync(Actor ref_actor, bool auto_create)
     endFunction
@@ -937,6 +969,10 @@ state p_STATE_BUSY
     endFunction
     function Followers_Unsneak()
     endFunction
+    function Followers_Saddle()
+    endFunction
+    function Followers_Unsaddle()
+    endFunction
     function Followers_Stash()
     endFunction
     function Followers_Resurrect()
@@ -1001,6 +1037,12 @@ state f_STATE_UPDATING
         LOGS.Notify_Is_Updating()
     endFunction
     function Followers_Unsneak()
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Followers_Saddle()
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Followers_Unsaddle()
         LOGS.Notify_Is_Updating()
     endFunction
     function Followers_Stash()
@@ -1082,6 +1124,12 @@ state f_STATE_UPDATING
         LOGS.Notify_Is_Updating()
     endFunction
     function Unsneak_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Saddle_Sync(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Unsaddle_Sync(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
     function Pack_Sync(Actor ref_actor, bool auto_create)

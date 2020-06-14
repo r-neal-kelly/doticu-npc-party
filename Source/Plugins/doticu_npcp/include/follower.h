@@ -10,6 +10,8 @@ namespace doticu_npcp { namespace Follower {
 
     Actor *Get_Actor(Follower_t *follower);
     Member_t *Get_Member(Follower_t *follower);
+    Horse_t *Get_Horse(Follower_t *follower);
+    Actor *Horse_Actor(Follower_t *follower);
 
     bool Is_Created(Follower_t *follower);
     bool Is_Alive(Follower_t *follower);
@@ -29,14 +31,17 @@ namespace doticu_npcp { namespace Follower {
     bool Is_Retreater(Follower_t *follower);
     bool Isnt_Retreater(Follower_t *follower);
     bool Exists(Follower_t *follower);
-    bool Is_Near_Player(Follower_t *follower);
-    bool Isnt_Near_Player(Follower_t *follower);
+    bool Is_Near_Player(Follower_t *follower, float distance = 4096.0f);
+    bool Isnt_Near_Player(Follower_t *follower, float distance = 4096.0f);
+    bool Is_In_Interior_Cell(Follower_t *follower);
+    bool Is_In_Exterior_Cell(Follower_t *follower);
 
     void Summon(Follower_t *follower, float distance = 140, float angle_degree = 0);
     void Summon_Behind(Follower_t *follower, float distance = 140);
     void Catch_Up(Follower_t *follower);
     void Level(Follower_t *follower);
     void Unlevel(Follower_t *follower);
+    void Saddle(Follower_t *follower);
 
 }}
 

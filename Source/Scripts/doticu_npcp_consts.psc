@@ -59,6 +59,7 @@ GlobalVariable              p_GLOBAL_PERCENT_NO_HANDS               = none
 GlobalVariable              p_GLOBAL_PERCENT_NO_HEAD                = none
 FormList                    p_FORMLIST_MARKERS_SETTLER              = none
 FormList                    p_FORMLIST_MARKERS_EXPO_CELL            = none
+FormList                    p_FORMLIST_GLOBALS_SADDLER_IS_SITTING   = none
 Faction                     p_FACTION_MEMBER                        = none
 Faction                     p_FACTION_DLC1_THRALL                   = none
 Faction                     p_FACTION_DLC1_VAMPIRE_FEED_NO_CRIME    = none
@@ -745,6 +746,17 @@ Formlist property FORMLIST_MARKERS_EXPO_CELL
     function Set(Formlist val)
         if p_FORMLIST_MARKERS_EXPO_CELL == none
             p_FORMLIST_MARKERS_EXPO_CELL = val
+        endIf
+    endFunction
+endProperty
+
+Formlist property FORMLIST_GLOBALS_SADDLER_IS_SITTING
+    Formlist function Get()
+        return p_FORMLIST_GLOBALS_SADDLER_IS_SITTING
+    endFunction
+    function Set(Formlist val)
+        if p_FORMLIST_GLOBALS_SADDLER_IS_SITTING == none
+            p_FORMLIST_GLOBALS_SADDLER_IS_SITTING = val
         endIf
     endFunction
 endProperty

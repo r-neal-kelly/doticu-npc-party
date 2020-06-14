@@ -82,6 +82,12 @@ endFunction
 function Followers_Unsneak(ObjectReference ___)
     COMMANDS.Followers_Unsneak()
 endFunction
+function Followers_Saddle(ObjectReference ___)
+    COMMANDS.Followers_Saddle()
+endFunction
+function Followers_Unsaddle(ObjectReference ___)
+    COMMANDS.Followers_Unsaddle()
+endFunction
 function Followers_Unfollow(ObjectReference ___)
     COMMANDS.Followers_Unfollow()
 endFunction

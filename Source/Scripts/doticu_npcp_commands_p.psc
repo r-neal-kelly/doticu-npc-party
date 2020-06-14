@@ -699,6 +699,66 @@ function Unsneak(int code_exec, Actor ref_actor, bool auto_create)
     NOTES.Unsneak(ref_follower.Unsneak(code_exec), str_name)
 endFunction
 
+function Saddle(int code_exec, Actor ref_actor, bool auto_create)
+    string str_name = ACTORS.Get_Name(ref_actor)
+
+    if auto_create && !MEMBERS.Has_Member(ref_actor)
+        int code_return = MEMBERS.Create_Member(ref_actor)
+        if code_return < 0
+            return NOTES.Saddle(code_return, str_name)
+        endIf
+    endIf
+
+    doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
+    if !ref_member
+        return NOTES.Saddle(CODES.HASNT_MEMBER, str_name)
+    endIf
+
+    if auto_create && !ref_member.Is_Follower()
+        int code_return = ref_member.Follow()
+        if code_return < 0
+            return NOTES.Saddle(code_return, str_name)
+        endIf
+    endIf
+
+    doticu_npcp_follower ref_follower = FOLLOWERS.Get_Follower(ref_actor)
+    if !ref_follower
+        return NOTES.Saddle(CODES.HASNT_FOLLOWER, str_name)
+    endIf
+
+    NOTES.Saddle(ref_follower.Saddle(code_exec), str_name)
+endFunction
+
+function Unsaddle(int code_exec, Actor ref_actor, bool auto_create)
+    string str_name = ACTORS.Get_Name(ref_actor)
+
+    if auto_create && !MEMBERS.Has_Member(ref_actor)
+        int code_return = MEMBERS.Create_Member(ref_actor)
+        if code_return < 0
+            return NOTES.Unsaddle(code_return, str_name)
+        endIf
+    endIf
+
+    doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
+    if !ref_member
+        return NOTES.Unsaddle(CODES.HASNT_MEMBER, str_name)
+    endIf
+
+    if auto_create && !ref_member.Is_Follower()
+        int code_return = ref_member.Follow()
+        if code_return < 0
+            return NOTES.Unsaddle(code_return, str_name)
+        endIf
+    endIf
+
+    doticu_npcp_follower ref_follower = FOLLOWERS.Get_Follower(ref_actor)
+    if !ref_follower
+        return NOTES.Unsaddle(CODES.HASNT_FOLLOWER, str_name)
+    endIf
+
+    NOTES.Unsaddle(ref_follower.Unsaddle(code_exec), str_name)
+endFunction
+
 function Move(Actor ref_actor)
     int code_return
     string str_name = ACTORS.Get_Name(ref_actor)
@@ -911,6 +971,14 @@ function Followers_Unsneak()
     NOTES.Followers_Unsneak(FOLLOWERS.Unsneak())
 endFunction
 
+function Followers_Saddle()
+    NOTES.Followers_Saddle(FOLLOWERS.Saddle())
+endFunction
+
+function Followers_Unsaddle()
+    NOTES.Followers_Unsaddle(FOLLOWERS.Unsaddle())
+endFunction
+
 function Followers_Stash()
     NOTES.Followers_Stash(FOLLOWERS.Stash())
 endFunction
@@ -928,7 +996,7 @@ function Followers_Unmember()
 endFunction
 
 function Toggle_Followers_Settle()
-    if FOLLOWERS.Get_Settler_Count() > 0
+    if FOLLOWERS.Count_Settlers() > 0
         Followers_Unsettle()
     else
         Followers_Settle()
@@ -936,7 +1004,7 @@ function Toggle_Followers_Settle()
 endFunction
 
 function Toggle_Followers_Immobilize()
-    if FOLLOWERS.Get_Immobile_Count() > 0
+    if FOLLOWERS.Count_Immobile() > 0
         Followers_Mobilize()
     else
         Followers_Immobilize()
@@ -944,10 +1012,18 @@ function Toggle_Followers_Immobilize()
 endFunction
 
 function Toggle_Followers_Sneak()
-    if FOLLOWERS.Get_Sneak_Count() > 0
+    if FOLLOWERS.Count_Sneaks() > 0
         Followers_Unsneak()
     else
         Followers_Sneak()
+    endIf
+endFunction
+
+function Toggle_Followers_Saddle()
+    if FOLLOWERS.Count_Saddlers() > 0
+        Followers_Unsaddle()
+    else
+        Followers_Saddle()
     endIf
 endFunction
 

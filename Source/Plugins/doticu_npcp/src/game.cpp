@@ -13,6 +13,57 @@
 
 namespace doticu_npcp { namespace Game {
 
+    TESForm *Get_Form(UInt32 form_id)
+    {
+        return LookupFormByID(form_id);
+    }
+
+    TESForm *Get_Mod_Form(const char *mod_name, UInt32 lower_form_id)
+    {
+        static DataHandler *data_handler = DataHandler::GetSingleton();
+        if (data_handler)
+        {
+            const ModInfo *mod_info = data_handler->LookupModByName(mod_name);
+            if (mod_info)
+            {
+                return LookupFormByID(mod_info->GetFormID(lower_form_id));
+            }
+            else
+            {
+                _MESSAGE("Game::Get_Mod_Form: Unable to get mod_info.");
+                return nullptr;
+            }
+        }
+        else
+        {
+            _MESSAGE("Game::Get_Mod_Form: Unable to get data_handler.");
+            return nullptr;
+        }
+    }
+
+    TESForm *Get_NPCP_Form(UInt32 lower_form_id)
+    {
+        static DataHandler *data_handler = DataHandler::GetSingleton();
+        if (data_handler)
+        {
+            static const ModInfo *mod_info = data_handler->LookupModByName("doticu_npc_party.esp");
+            if (mod_info)
+            {
+                return LookupFormByID(mod_info->GetFormID(lower_form_id));
+            }
+            else
+            {
+                _MESSAGE("Game::Get_Mod_Form: Unable to get mod_info.");
+                return nullptr;
+            }
+        }
+        else
+        {
+            _MESSAGE("Game::Get_Mod_Form: Unable to get data_handler.");
+            return nullptr;
+        }
+    }
+
     VMResultArray<BSFixedString> Get_Male_Vanilla_Voice_Names() {
         VMResultArray<BSFixedString> results;
 

@@ -111,10 +111,6 @@ function f_Load_Mod()
     p_Version()
 
     FUNCS.Send_Event("doticu_npcp_load_mod")
-
-    ;temp
-    FOLLOWERS.Saddle()
-    ;
 endFunction
 
 ; Private Methods
@@ -283,7 +279,6 @@ function u_0_9_0()
     VARS.u_0_9_0()
     FUNCS.u_0_9_0()
     MEMBERS.ALIASES.u_0_9_0()
-    FOLLOWERS.ALIASES.u_0_9_0()
     MEMBERS.u_0_9_0()
     CONTROL.MCM.u_0_9_0()
 

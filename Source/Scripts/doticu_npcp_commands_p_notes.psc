@@ -508,7 +508,7 @@ function Unfollow(int code_return, string str_name)
         LOGS.Create_Note("That can't become a member or a non-following member.")
     elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
         LOGS.Create_Note(str_name + " isn't a member, and so can't stop following.")
-    elseIf code_return == CODES.ISNT_FOLLOWER
+    elseIf code_return == CODES.ISNT_FOLLOWER || code_return == CODES.HASNT_FOLLOWER
         LOGS.Create_Note(str_name + " wasn't following.")
     else
         LOGS.Create_Error("It's unknown why " + str_name + " can't stop following: " + code_return)
@@ -556,6 +556,52 @@ function Unsneak(int code_return, string str_name)
         LOGS.Create_Note(str_name + " wasn't sneaking.")
     else
         LOGS.Create_Error("It's unknown why " + str_name + " can't stop sneaking: " + code_return)
+    endIf
+endFunction
+
+function Saddle(int code_return, string str_name)
+    if code_return == CODES.SUCCESS
+        LOGS.Create_Note(str_name + " has saddled up.")
+    elseIf code_return == CODES.HASNT_SPACE_MEMBER
+        LOGS.Create_Note("No room for " + str_name + " to become a member or a saddled follower.")
+    elseIf code_return == CODES.HASNT_SPACE_FOLLOWER
+        LOGS.Create_Note("No room for " + str_name + " to become a saddled follower.")
+    elseIf code_return == CODES.CANT_RESURRECT
+        LOGS.Create_Note(str_name + " can't be revived, and so can't become a saddled follower.")
+    elseIf code_return == CODES.ISNT_ACTOR
+        LOGS.Create_Note("That can't become a member or a saddled follower.")
+    elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
+        LOGS.Create_Note(str_name + " isn't a member, and so can't saddle up.")
+    elseIf code_return == CODES.ISNT_FOLLOWER
+        LOGS.Create_Note(str_name + " isn't a follower, and so can't saddle up.")
+    elseIf code_return == CODES.IS_SADDLER
+        LOGS.Create_Note(str_name + " is already saddled up.")
+    elseIf code_return == CODES.IS_INTERIOR
+        LOGS.Create_Note(str_name + " cannot saddle up in an interior space.")
+    else
+        LOGS.Create_Error("It's unknown why " + str_name + " can't saddle up: " + code_return)
+    endIf
+endFunction
+
+function Unsaddle(int code_return, string str_name)
+    if code_return == CODES.SUCCESS
+        LOGS.Create_Note(str_name + " has unsaddled.")
+    elseIf code_return == CODES.HASNT_SPACE_MEMBER
+        LOGS.Create_Note("No room for " + str_name + " to become a member or an unsaddled follower.")
+    elseIf code_return == CODES.HASNT_SPACE_FOLLOWER
+        LOGS.Create_Note("No room for " + str_name + " to become an unsaddled follower.")
+    elseIf code_return == CODES.CANT_RESURRECT
+        LOGS.Create_Note(str_name + " can't be revived, and so can't become an unsaddled follower.")
+    elseIf code_return == CODES.ISNT_ACTOR
+        LOGS.Create_Note("That can't become a member or an unsaddled follower.")
+    elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
+        LOGS.Create_Note(str_name + " isn't a member, and so can't unsaddle.")
+    elseIf code_return == CODES.ISNT_FOLLOWER
+        LOGS.Create_Note(str_name + " isn't a follower, and so can't unsaddle.")
+    elseIf code_return == CODES.ISNT_SADDLER
+        LOGS.Create_Note(str_name + " wasn't saddled.")
+    else
+        LOGS.Create_Error("It's unknown why " + str_name + " can't unsaddle: " + code_return)
     endIf
 endFunction
 
@@ -744,6 +790,32 @@ function Followers_Unsneak(int code_return)
         LOGS.Create_Note("All followers are already not sneaking.")
     else
         LOGS.Create_Error("Could not make followers stop sneaking: " + code_return)
+    endIf
+endFunction
+
+function Followers_Saddle(int code_return)
+    if code_return == CODES.SUCCESS
+        LOGS.Create_Note("All followers will saddle up.")
+    elseIf code_return == CODES.IS_INTERIOR
+        LOGS.Create_Note("Followers cannot saddle up in an interior space.")
+    elseIf code_return == CODES.HASNT_FOLLOWER
+        LOGS.Create_Note("No followers to saddle up.")
+    elseIf code_return == CODES.HASNT_NON_SNEAK
+        LOGS.Create_Note("All followers are already saddled up.")
+    else
+        LOGS.Create_Error("Could not make followers saddle up: " + code_return)
+    endIf
+endFunction
+
+function Followers_Unsaddle(int code_return)
+    if code_return == CODES.SUCCESS
+        LOGS.Create_Note("All followers will unsaddle.")
+    elseIf code_return == CODES.HASNT_FOLLOWER
+        LOGS.Create_Note("No followers to unsaddle.")
+    elseIf code_return == CODES.HASNT_SNEAK
+        LOGS.Create_Note("All followers are already unsaddled.")
+    else
+        LOGS.Create_Error("Could not make followers unsaddle: " + code_return)
     endIf
 endFunction
 

@@ -60,6 +60,8 @@ namespace doticu_npcp { namespace Utils { namespace Exports {
         _MESSAGE("    UInt8 pad047: 0x%X", cell->pad047);
     }
 
+    
+
     bool Register(VMClassRegistry *registry) {
         registry->RegisterFunction(
             new NativeFunction0 <StaticFunctionTag, VMResultArray<SInt32>>(

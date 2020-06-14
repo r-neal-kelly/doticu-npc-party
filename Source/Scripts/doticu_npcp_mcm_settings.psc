@@ -299,7 +299,6 @@ function f_On_Option_Select(int id_option)
 
         endIf
         MCM.SetTextOptionValue(p_option_sort_followers, VARS.str_sort_followers)
-        FOLLOWERS.Request_Sort()
     endIf
 endFunction
 

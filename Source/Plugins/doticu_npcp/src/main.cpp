@@ -20,6 +20,7 @@
 #include "members.h"
 #include "object_ref.h"
 #include "outfit.h"
+#include "package.h"
 #include "papyrus.h"
 #include "player.h"
 #include "quest.h"
@@ -101,13 +102,14 @@ namespace doticu_npcp { namespace Main {
         REGISTER_NAMESPACE(Members);
         REGISTER_NAMESPACE(Object_Ref);
         REGISTER_NAMESPACE(Outfit);
+        REGISTER_NAMESPACE(Package);
         REGISTER_NAMESPACE(Papyrus);
         REGISTER_NAMESPACE(Player);
         REGISTER_NAMESPACE(Quest);
         REGISTER_NAMESPACE(String2);
         REGISTER_NAMESPACE(Utils);
 
-        _MESSAGE(DOTICU_NPCP_PRINT_PREFIX "Added all functions.");
+        _MESSAGE(DOTICU_NPCP_PRINT_PREFIX "Added all functions.\n");
 
         return true;
 

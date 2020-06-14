@@ -21,8 +21,10 @@ namespace doticu_npcp {
     typedef int32_t                 s32;
     typedef int64_t                 s64;
 
+    typedef BGSBaseAlias            Alias_t;
     typedef BGSBaseAlias            Player_t;
     typedef BGSBaseAlias            Member_t;
+    typedef BGSBaseAlias            Horse_t;
     typedef BGSBaseAlias            Follower_t;
     typedef TESQuest                Members_t;
     typedef TESQuest                Followers_t;

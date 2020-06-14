@@ -26,7 +26,7 @@ namespace doticu_npcp { namespace Follower {
         return Papyrus::Value(&hnd_alias, "p_ref_actor").As_Actor();
     }
 
-    BGSBaseAlias *Get_Member(Follower_t *follower) {
+    Member_t *Get_Member(Follower_t *follower) {
         if (!follower) {
             return nullptr;
         }
@@ -35,13 +35,28 @@ namespace doticu_npcp { namespace Follower {
         return Papyrus::Value(&hnd, "p_ref_member").As_Alias();
     }
 
-    Actor *Get_Horse(Follower_t *follower) {
+    Horse_t *Get_Horse(Follower_t *follower) {
         if (!follower) {
             return nullptr;
         }
 
         Papyrus::Handle handle(kFormType_Alias, follower);
-        return Papyrus::Value(&handle, "p_ref_horse").As_Actor();
+        return Papyrus::Value(&handle, "p_ref_horse").As_Alias();
+    }
+
+    Actor *Horse_Actor(Follower_t *follower)
+    {
+        if (follower)
+        {
+            Horse_t *horse = Get_Horse(follower);
+            if (horse)
+            {
+                Papyrus::Handle handle(kFormType_Alias, horse);
+                return Papyrus::Value(&handle, "p_ref_actor").As_Actor();
+            }
+        }
+
+        return nullptr;
     }
 
     bool Is_Created(Follower_t *follower) {
@@ -203,48 +218,74 @@ namespace doticu_npcp { namespace Follower {
         return Is_Created(follower) && Get_Actor(follower);
     }
 
-    bool Is_Near_Player(Follower_t *follower) {
-        if (follower) {
-
+    bool Is_Near_Player(Follower_t *follower, float distance) {
+        if (follower)
+        {
             Actor *follower_actor = Get_Actor(follower);
-            if (follower_actor) {
-
-                return Object_Ref::Is_Near_Player(follower_actor);
+            if (follower_actor)
+            {
+                return Object_Ref::Is_Near_Player(follower_actor, distance);
             }
         }
     }
 
-    bool Isnt_Near_Player(Follower_t *follower) {
-        if (follower) {
-
+    bool Isnt_Near_Player(Follower_t *follower, float distance) {
+        if (follower)
+        {
             Actor *follower_actor = Get_Actor(follower);
-            if (follower_actor) {
-
-                return !Object_Ref::Is_Near_Player(follower_actor);
+            if (follower_actor)
+            {
+                return !Object_Ref::Is_Near_Player(follower_actor, distance);
             }
         }
     }
 
-    void Summon(Follower_t *follower, float distance, float angle_degree) {
+    bool Is_In_Interior_Cell(Follower_t *follower)
+    {
         Actor *follower_actor = Get_Actor(follower);
-        if (follower_actor) {
+        if (follower_actor)
+        {
+            TESObjectCELL *follower_cell = follower_actor->parentCell;
+            return follower_cell && Cell::Is_Interior(follower_cell);
+        }
+        else
+        {
+            return false;
+        }
+    }
 
+    bool Is_In_Exterior_Cell(Follower_t *follower)
+    {
+        Actor *follower_actor = Get_Actor(follower);
+        if (follower_actor)
+        {
+            TESObjectCELL *follower_cell = follower_actor->parentCell;
+            return follower_cell && Cell::Is_Exterior(follower_cell);
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    void Summon(Follower_t *follower, float distance, float angle_degree)
+    {
+        Actor *follower_actor = Get_Actor(follower);
+        if (Is_Created(follower) && follower_actor)
+        {
             Actor *player_actor = *g_thePlayer;
-            if (player_actor) {
-
-                TESObjectCELL *player_cell = player_actor->parentCell;
-                if (player_cell && Cell::Is_Interior(player_cell) || Isnt_Saddler(follower)) {
-
+            if (player_actor)
+            {
+                Actor *follower_horse = Horse_Actor(follower);
+                if (follower_horse && Is_Saddler(follower) && Cell::Is_Exterior(player_actor->parentCell))
+                {
+                    Actor2::Move_To_Orbit(follower_horse, player_actor, distance * 4, angle_degree + 12);
+                    Actor2::Move_To_Orbit(follower_actor, player_actor, distance * 3.5, angle_degree);
+                    Saddle(follower);
+                }
+                else
+                {
                     Actor2::Move_To_Orbit(follower_actor, player_actor, distance, angle_degree);
-                } else {
-
-                    Actor *follower_horse = Get_Horse(follower);
-                    if (follower_horse) {
-
-                        float saddler_distance = distance * 4;
-                        Actor2::Move_To_Orbit(follower_horse, player_actor, saddler_distance, angle_degree);
-                        Actor2::Move_To_Orbit(follower_actor, player_actor, saddler_distance, angle_degree - 10);
-                    }
                 }
             }
         }
@@ -268,15 +309,24 @@ namespace doticu_npcp { namespace Follower {
         Actor2::Move_To_Orbit(follower_actor, player_actor, distance, 180);
     }
 
-    void Catch_Up(Follower_t *follower) {
-        if (Exists(follower) && Is_Mobile(follower) && Isnt_Paralyzed(follower) && Isnt_Mannequin(follower)) {
-
-            TESObjectCELL *player_cell = (*g_thePlayer)->parentCell;
-            if (player_cell && Cell::Is_Interior(player_cell) || Isnt_Saddler(follower)) {
-
-                if (Isnt_Near_Player(follower)) {
-
+    void Catch_Up(Follower_t *follower)
+    {
+        if (Exists(follower) && Is_Mobile(follower) && Isnt_Paralyzed(follower) && Isnt_Mannequin(follower))
+        {
+            if (Is_In_Interior_Cell(follower) || Isnt_Saddler(follower))
+            {
+                if (Isnt_Near_Player(follower))
+                {
                     Summon_Behind(follower);
+                }
+            }
+            else
+            {
+                Actor *follower_horse = Horse_Actor(follower);
+                if (follower_horse && !Object_Ref::Is_Near_Player(follower_horse, 8192.0f))
+                {
+                    Summon_Behind(follower, 1024.0f);
+                    Saddle(follower);
                 }
             }
         }
@@ -504,6 +554,23 @@ namespace doticu_npcp { namespace Follower {
         RESET_VALUE("Speechcraft");
 
         #undef RESET_VALUE
+    }
+
+    void Saddle(Follower_t *follower)
+    {
+        BSFixedString name("p_Saddle");
+
+        struct Args : public IFunctionArguments
+        {
+            bool Copy(Output *output)
+            {
+                return true;
+            }
+        }
+        args;
+
+        Papyrus::Handle follower_handle(kFormType_Alias, follower);
+        follower_handle.Registry()->QueueEvent(follower_handle, &name, &args);
     }
 
 }}

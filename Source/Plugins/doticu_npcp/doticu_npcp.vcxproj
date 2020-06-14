@@ -154,6 +154,7 @@
     <ClCompile Include="src\aliases.cpp" />
     <ClCompile Include="src\object_ref.cpp" />
     <ClCompile Include="src\form.cpp" />
+    <ClCompile Include="src\package.cpp" />
     <ClCompile Include="src\papyrus.cpp" />
     <ClCompile Include="src\player.cpp" />
     <ClCompile Include="src\quest.cpp" />
@@ -178,6 +179,7 @@
     <ClInclude Include="include\main.h" />
     <ClInclude Include="include\member.h" />
     <ClInclude Include="include\members.h" />
+    <ClInclude Include="include\package.h" />
     <ClInclude Include="include\player.h" />
     <ClInclude Include="include\xcontainer.h" />
     <ClInclude Include="include\xentry.h" />

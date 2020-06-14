@@ -211,7 +211,7 @@ function f_Build_Page()
             p_option_next = MCM.AddTextOption("                        Next Member", "", FLAG_DISABLE)
         endIf
     elseIf p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
-        if FOLLOWERS.Get_Count() > 1
+        if FOLLOWERS.Count_All() > 1
             p_option_prev = MCM.AddTextOption("                      Previous Follower", "")
             p_option_next = MCM.AddTextOption("                        Next Follower", "")
         else

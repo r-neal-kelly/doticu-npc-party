@@ -32,6 +32,8 @@ namespace doticu_npcp { namespace Aliases {
     bool Has_Head(VMArray<BGSBaseAlias *> aliases, TESNPC *base_with_head);
     SInt32 Count_Heads(VMArray<BGSBaseAlias *> aliases, TESNPC *base_with_head, bool do_print = false);
 
+    VMResultArray<Alias_t *> Sort(VMResultArray<Alias_t *> aliases, const char *algorithm);
+
 }}
 
 namespace doticu_npcp { namespace Aliases { namespace Exports {

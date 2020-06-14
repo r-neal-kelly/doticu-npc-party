@@ -119,8 +119,8 @@ function f_Build_Page()
     MCM.SetCursorPosition(0)
     MCM.SetCursorFillMode(MCM.LEFT_TO_RIGHT)
 
-    int count_followers = FOLLOWERS.Get_Count()
-    int max_followers = FOLLOWERS.Get_Max()
+    int count_followers = FOLLOWERS.Count_All()
+    int max_followers = FOLLOWERS.Max()
     if count_followers == 0
         MCM.SetTitleText("Followers: 0/" + max_followers)
         MCM.AddHeaderOption(" No Followers ")

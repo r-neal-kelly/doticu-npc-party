@@ -1123,10 +1123,6 @@ int function Set_Name(string str_name)
     endIf
 
     MEMBERS.Request_Sort()
-
-    if Is_Follower()
-        FOLLOWERS.Request_Sort()
-    endIf
     
     return CODES.SUCCESS
 endFunction
@@ -2008,10 +2004,6 @@ int function Set_Rating(int int_rating)
     
     MEMBERS.Request_Sort()
 
-    if Is_Follower()
-        FOLLOWERS.Request_Sort()
-    endIf
-
     return CODES.SUCCESS
 endFunction
 
@@ -2398,7 +2390,7 @@ function u_0_9_0()
     endIf
 
     ; so that we can easily filter followers
-    if FOLLOWERS.Has_Follower(p_ref_actor)
+    if FOLLOWERS.Has_Actor(p_ref_actor)
         p_is_follower = true
     endIf
 

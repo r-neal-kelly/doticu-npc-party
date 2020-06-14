@@ -8,6 +8,10 @@
 
 namespace doticu_npcp { namespace Game {
 
+    TESForm *Get_Form(UInt32 form_id);
+    TESForm *Get_Mod_Form(const char *mod_name, UInt32 lower_form_id);
+    TESForm *Get_NPCP_Form(UInt32 lower_form_id);
+
     VMResultArray<BSFixedString> Get_Male_Vanilla_Voice_Names();
     VMResultArray<BSFixedString> Get_Female_Vanilla_Voice_Names();
     BGSVoiceType *Get_Voice_By_Name(BSFixedString str_name);
