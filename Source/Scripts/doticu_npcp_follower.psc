@@ -333,6 +333,9 @@ p_Unlock()
     Actor ref_horse = p_ref_horse.Get_Actor()
 
     ref_horse.Enable()
+    ref_horse.IgnoreFriendlyHits(true)
+    ref_horse.SetNotShowOnStealthMeter(true)
+    ref_horse.AllowPCDialogue(false)
 
     ; we need to support leveled bases (members) as opposed to real bases (clones) only
     ; because this takes an actor base, we can't specify a reference clone in this manner.
@@ -364,11 +367,11 @@ p_Lock()
         p_ref_actor.Dismount()
     endIf
 
-    Actor ref_horse = p_ref_horse.Get_Actor()
-
-    ref_horse.Disable()
-
-    ref_horse.MoveTo(CONSTS.MARKER_STORAGE)
+    if p_ref_horse
+        Actor ref_horse = p_ref_horse.Get_Actor()
+        ref_horse.Disable()
+        ref_horse.MoveTo(CONSTS.MARKER_STORAGE)
+    endIf
 
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_SADDLER)
 

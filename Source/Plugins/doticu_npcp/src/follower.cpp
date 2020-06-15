@@ -17,58 +17,58 @@
 
 namespace doticu_npcp { namespace Follower {
 
-    Actor *Get_Actor(Follower_t *follower) {
-        if (!follower) {
+    Actor *Get_Actor(Follower_t *follower)
+    {
+        if (follower) {
+            return Papyrus::Variable(follower, "p_ref_actor").Actor();
+        } else {
             return nullptr;
         }
-
-        Papyrus::Handle hnd_alias(kFormType_Alias, follower);
-        return Papyrus::Value(&hnd_alias, "p_ref_actor").As_Actor();
     }
 
-    Member_t *Get_Member(Follower_t *follower) {
-        if (!follower) {
+    Member_t *Get_Member(Follower_t *follower)
+    {
+        if (follower) {
+            return Papyrus::Variable(follower, "p_ref_member").Alias();
+        } else {
             return nullptr;
         }
-
-        Papyrus::Handle hnd(kFormType_Alias, follower);
-        return Papyrus::Value(&hnd, "p_ref_member").As_Alias();
     }
 
-    Horse_t *Get_Horse(Follower_t *follower) {
-        if (!follower) {
+    Horse_t *Get_Horse(Follower_t *follower)
+    {
+        if (follower) {
+            return Papyrus::Variable(follower, "p_ref_horse").Alias();
+        } else {
             return nullptr;
         }
-
-        Papyrus::Handle handle(kFormType_Alias, follower);
-        return Papyrus::Value(&handle, "p_ref_horse").As_Alias();
     }
 
     Actor *Horse_Actor(Follower_t *follower)
     {
-        if (follower)
-        {
+        if (follower) {
             Horse_t *horse = Get_Horse(follower);
-            if (horse)
-            {
-                Papyrus::Handle handle(kFormType_Alias, horse);
-                return Papyrus::Value(&handle, "p_ref_actor").As_Actor();
+            if (horse) {
+                return Papyrus::Variable(horse, "p_ref_actor").Actor();
+            } else {
+                return nullptr;
             }
+        } else {
+            return nullptr;
         }
-
-        return nullptr;
     }
 
-    bool Is_Created(Follower_t *follower) {
-        if (!follower) {
+    bool Is_Created(Follower_t *follower)
+    {
+        if (follower) {
+            return Papyrus::Variable(follower, "p_is_created").Bool();
+        } else {
             return false;
         }
-
-        Papyrus::Handle hnd_alias(kFormType_Alias, follower);
-        return Papyrus::Value(&hnd_alias, "p_is_created").As_Bool();
     }
 
-    bool Is_Alive(Follower_t *follower) {
+    bool Is_Alive(Follower_t *follower)
+    {
         if (!follower) {
             return false;
         }
@@ -76,7 +76,8 @@ namespace doticu_npcp { namespace Follower {
         return Actor2::Is_Alive(Get_Actor(follower));
     }
 
-    bool Is_Dead(Follower_t *follower) {
+    bool Is_Dead(Follower_t *follower)
+    {
         if (!follower) {
             return false;
         }
@@ -84,7 +85,8 @@ namespace doticu_npcp { namespace Follower {
         return Actor2::Is_Dead(Get_Actor(follower));
     }
 
-    bool Is_Mobile(Follower_t *follower) {
+    bool Is_Mobile(Follower_t *follower)
+    {
         if (!follower) {
             return false;
         }
@@ -93,7 +95,8 @@ namespace doticu_npcp { namespace Follower {
         return Member::Is_Mobile(member);
     }
 
-    bool Is_Immobile(Follower_t *follower) {
+    bool Is_Immobile(Follower_t *follower)
+    {
         if (!follower) {
             return false;
         }
@@ -102,7 +105,8 @@ namespace doticu_npcp { namespace Follower {
         return Member::Is_Immobile(member);
     }
 
-    bool Is_Settler(Follower_t *follower) {
+    bool Is_Settler(Follower_t *follower)
+    {
         if (!follower) {
             return false;
         }
@@ -111,7 +115,8 @@ namespace doticu_npcp { namespace Follower {
         return Member::Is_Settler(member);
     }
 
-    bool Isnt_Settler(Follower_t *follower) {
+    bool Isnt_Settler(Follower_t *follower)
+    {
         if (!follower) {
             return false;
         }
@@ -120,7 +125,8 @@ namespace doticu_npcp { namespace Follower {
         return Member::Isnt_Settler(member);
     }
 
-    bool Is_Paralyzed(Follower_t *follower) {
+    bool Is_Paralyzed(Follower_t *follower)
+    {
         if (!follower) {
             return false;
         }
@@ -129,7 +135,8 @@ namespace doticu_npcp { namespace Follower {
         return Member::Is_Paralyzed(member);
     }
 
-    bool Isnt_Paralyzed(Follower_t *follower) {
+    bool Isnt_Paralyzed(Follower_t *follower)
+    {
         if (!follower) {
             return false;
         }
@@ -138,7 +145,8 @@ namespace doticu_npcp { namespace Follower {
         return Member::Isnt_Paralyzed(member);
     }
 
-    bool Is_Mannequin(Follower_t *follower) {
+    bool Is_Mannequin(Follower_t *follower)
+    {
         if (!follower) {
             return false;
         }
@@ -147,7 +155,8 @@ namespace doticu_npcp { namespace Follower {
         return Member::Is_Mannequin(member);
     }
 
-    bool Isnt_Mannequin(Follower_t *follower) {
+    bool Isnt_Mannequin(Follower_t *follower)
+    {
         if (!follower) {
             return false;
         }
@@ -156,66 +165,63 @@ namespace doticu_npcp { namespace Follower {
         return Member::Isnt_Mannequin(member);
     }
 
-    bool Is_Sneak(Follower_t *follower) {
-        if (!follower) {
+    bool Is_Sneak(Follower_t *follower)
+    {
+        if (follower) {
+            return Papyrus::Variable(follower, "p_is_sneak").Bool();
+        } else {
             return false;
         }
-
-        Papyrus::Handle hnd_alias(kFormType_Alias, follower);
-        return Papyrus::Value(&hnd_alias, "p_is_sneak").As_Bool();
     }
 
-    bool Isnt_Sneak(Follower_t *follower) {
-        if (!follower) {
+    bool Isnt_Sneak(Follower_t *follower)
+    {
+        if (follower) {
+            return !Papyrus::Variable(follower, "p_is_sneak").Bool();
+        } else {
             return false;
         }
-
-        Papyrus::Handle hnd_alias(kFormType_Alias, follower);
-        return !Papyrus::Value(&hnd_alias, "p_is_sneak").As_Bool();
     }
 
-    bool Is_Saddler(Follower_t *follower) {
-        if (!follower) {
+    bool Is_Saddler(Follower_t *follower)
+    {
+        if (follower) {
+            return Papyrus::Variable(follower, "p_is_saddler").Bool();
+        } else {
             return false;
         }
-
-        Papyrus::Handle hnd_alias(kFormType_Alias, follower);
-        return Papyrus::Value(&hnd_alias, "p_is_saddler").As_Bool();
     }
 
-    bool Isnt_Saddler(Follower_t *follower) {
-        if (!follower) {
+    bool Isnt_Saddler(Follower_t *follower)
+    {
+        if (follower) {
+            return !Papyrus::Variable(follower, "p_is_saddler").Bool();
+        } else {
             return false;
         }
-
-        Papyrus::Handle hnd_alias(kFormType_Alias, follower);
-        return !Papyrus::Value(&hnd_alias, "p_is_saddler").As_Bool();
     }
 
-    bool Is_Retreater(Follower_t *follower) {
-        if (!follower) {
+    bool Is_Retreater(Follower_t *follower)
+    {
+        if (follower) {
+            return Papyrus::Variable(follower, "p_is_retreater").Bool();
+        } else {
             return false;
         }
-
-        Papyrus::Handle hnd_alias(kFormType_Alias, follower);
-        return Papyrus::Value(&hnd_alias, "p_is_retreater").As_Bool();
     }
 
-    bool Isnt_Retreater(Follower_t *follower) {
-        if (!follower) {
+    bool Isnt_Retreater(Follower_t *follower)
+    {
+        if (follower) {
+            return !Papyrus::Variable(follower, "p_is_retreater").Bool();
+        } else {
             return false;
         }
-
-        Papyrus::Handle hnd_alias(kFormType_Alias, follower);
-        return !Papyrus::Value(&hnd_alias, "p_is_retreater").As_Bool();
     }
 
-    bool Exists(Follower_t *follower) {
-        if (!follower) {
-            return false;
-        }
-
-        return Is_Created(follower) && Get_Actor(follower);
+    bool Exists(Follower_t *follower)
+    {
+        return follower && Is_Created(follower) && Get_Actor(follower);
     }
 
     bool Is_Near_Player(Follower_t *follower, float distance) {
@@ -227,6 +233,8 @@ namespace doticu_npcp { namespace Follower {
                 return Object_Ref::Is_Near_Player(follower_actor, distance);
             }
         }
+
+        return false;
     }
 
     bool Isnt_Near_Player(Follower_t *follower, float distance) {
@@ -238,6 +246,8 @@ namespace doticu_npcp { namespace Follower {
                 return !Object_Ref::Is_Near_Player(follower_actor, distance);
             }
         }
+
+        return false;
     }
 
     bool Is_In_Interior_Cell(Follower_t *follower)
@@ -578,20 +588,25 @@ namespace doticu_npcp { namespace Follower {
 namespace doticu_npcp { namespace Follower { namespace Exports {
 
     bool Register(VMClassRegistry *registry) {
-        registry->RegisterFunction(
-            new NativeFunction0 <Follower_t, void>(
-                "p_Level",
-                "doticu_npcp_follower",
-                Follower::Level,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction0 <Follower_t, void>(
-                "p_Unlevel",
-                "doticu_npcp_follower",
-                Follower::Unlevel,
-                registry)
-        );
+        #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                               \
+            ADD_CLASS_METHOD("doticu_npcp_follower", Follower_t,        \
+                             STR_FUNC_, ARG_NUM_,                       \
+                             RETURN_, Follower::METHOD_, __VA_ARGS__);  \
+        W
+
+        #define ADD_GLOBAL(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                               \
+            ADD_CLASS_METHOD("doticu_npcp", Selfless_t,                 \
+                             STR_FUNC_, ARG_NUM_,                       \
+                             RETURN_, Exports::METHOD_, __VA_ARGS__);   \
+        W
+
+        ADD_METHOD("p_Level", 0, void, Level);
+        ADD_METHOD("p_Unlevel", 0, void, Unlevel);
+
+        #undef ADD_METHOD
+        #undef ADD_GLOBAL
 
         return true;
     }

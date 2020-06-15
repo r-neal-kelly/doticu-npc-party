@@ -192,7 +192,7 @@ namespace doticu_npcp { namespace XData {
 
     ExtraCount *Create_Count(UInt32 count) {
         ExtraCount *xdata = ExtraCount::Create();
-        Assert(xdata);
+        NPCP_Assert(xdata);
 
         xdata->count = count;
 
@@ -201,7 +201,7 @@ namespace doticu_npcp { namespace XData {
 
     ExtraOwnership *Create_Ownership(TESForm *owner) {
         ExtraOwnership *xdata = (ExtraOwnership *)XData_t::Create(sizeof(ExtraOwnership), s_ExtraOwnershipVtbl.GetUIntPtr());
-        Assert(xdata);
+        NPCP_Assert(xdata);
 
         xdata->owner = owner;
 
@@ -210,7 +210,7 @@ namespace doticu_npcp { namespace XData {
 
     ExtraReferenceHandle *Create_Reference_Handle(TESObjectREFR *obj) {
         ExtraReferenceHandle *xdata = ExtraReferenceHandle::Create();
-        Assert(xdata);
+        NPCP_Assert(xdata);
 
         xdata->handle = obj->CreateRefHandle();
 
@@ -232,7 +232,7 @@ namespace doticu_npcp { namespace XData {
         }*/
 
         ExtraCount *xdata_new = ExtraCount::Create();
-        Assert(xdata_new);
+        NPCP_Assert(xdata_new);
 
         //BSReadLocker locker(xlist_lock);
         xdata_new->count = xdata->count;
@@ -242,7 +242,7 @@ namespace doticu_npcp { namespace XData {
 
     ExtraHealth *Copy_Health(ExtraHealth *xdata, BSReadWriteLock *xlist_lock) {
         ExtraHealth *xdata_new = ExtraHealth::Create();
-        Assert(xdata_new);
+        NPCP_Assert(xdata_new);
 
         //BSReadLocker locker(xlist_lock);
         xdata_new->health = xdata->health;
@@ -252,7 +252,7 @@ namespace doticu_npcp { namespace XData {
 
     ExtraEnchantment *Copy_Enchantment(ExtraEnchantment *xdata, BSReadWriteLock *xlist_lock) {
         ExtraEnchantment *xdata_new = ExtraEnchantment::Create();
-        Assert(xdata_new);
+        NPCP_Assert(xdata_new);
 
         //BSReadLocker locker(xlist_lock);
         xdata_new->enchant = xdata->enchant; // do we need to copy this? probably not.
@@ -264,7 +264,7 @@ namespace doticu_npcp { namespace XData {
 
     ExtraCharge *Copy_Charge(ExtraCharge *xdata, BSReadWriteLock *xlist_lock) {
         ExtraCharge *xdata_new = ExtraCharge::Create();
-        Assert(xdata_new);
+        NPCP_Assert(xdata_new);
 
         //BSReadLocker locker(xlist_lock);
         xdata_new->charge = xdata->charge;
@@ -274,7 +274,7 @@ namespace doticu_npcp { namespace XData {
 
     ExtraTextDisplayData *Copy_Text_Display(ExtraTextDisplayData *xdata, BSReadWriteLock *xlist_lock) {
         ExtraTextDisplayData *xdata_new = ExtraTextDisplayData::Create();
-        Assert(xdata_new);
+        NPCP_Assert(xdata_new);
 
         //BSReadLocker locker(xlist_lock);
         xdata_new->name = xdata->name;

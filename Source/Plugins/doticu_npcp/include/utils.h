@@ -23,7 +23,7 @@ M                               \
     __pragma(warning(pop));     \
 W
 
-#define Assert(IS_TRUE)                                             \
+#define NPCP_Assert(IS_TRUE)                                        \
 M                                                                   \
     if (!(IS_TRUE)) {                                               \
         _MESSAGE("Asserted. Exiting Skyrim. Failed: %s", #IS_TRUE); \

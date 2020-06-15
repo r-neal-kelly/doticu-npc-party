@@ -30,6 +30,11 @@ doticu_npcp_commands property COMMANDS hidden
         return p_DATA.MODS.CONTROL.COMMANDS
     endFunction
 endProperty
+doticu_npcp_logs property LOGS hidden
+    doticu_npcp_logs function Get()
+        return p_DATA.MODS.FUNCS.LOGS
+    endFunction
+endProperty
 
 ; Private Constants
 doticu_npcp_data    p_DATA          =  none
@@ -522,34 +527,42 @@ event OnKeyDown(int code_key)
     elseIf code_key == VARS.key_n_has_base && Is_Modifier_Pressed(VARS.key_n_modifier)
         ; this should prob. be a func in commands
         if ref_actor == none
-            p_DATA.MODS.FUNCS.LOGS.Create_Note("That is not an NPC.", false)
+            LOGS.Create_Note("That is not an NPC.", false)
         elseIf p_DATA.MODS.MEMBERS.Has_Base(ref_actor)
-            p_DATA.MODS.FUNCS.LOGS.Create_Note("Yes, you have this base.", false)
+            LOGS.Create_Note("A member has the base of " + ACTORS.Get_Name(ref_actor) + ".", false)
         else
-            p_DATA.MODS.FUNCS.LOGS.Create_Note("No, you don't have this base.", false)
+            LOGS.Create_Note("No member has the base of " + ACTORS.Get_Name(ref_actor) + ".", false)
         endIf
     elseIf code_key == VARS.key_n_count_base && Is_Modifier_Pressed(VARS.key_n_modifier)
         ; put in Commands also
         if ref_actor == none
-            p_DATA.MODS.FUNCS.LOGS.Create_Note("That is not an NPC.", false)
+            LOGS.Create_Note("That is not an NPC.", false)
         else
             int num_members = p_DATA.MODS.MEMBERS.Get_Base_Count(ref_actor)
-            p_DATA.MODS.FUNCS.LOGS.Create_Note("You have " + num_members + " of this base.", false)
+            if num_members == 1
+                LOGS.Create_Note(num_members + " member has the base of " + ACTORS.Get_Name(ref_actor) + ".", false)
+            else
+                LOGS.Create_Note(num_members + " members have the base of " + ACTORS.Get_Name(ref_actor) + ".", false)
+            endIf
         endIf
     elseif code_key == VARS.key_n_has_head && Is_Modifier_Pressed(VARS.key_n_modifier)
         if ref_actor == none
-            p_DATA.MODS.FUNCS.LOGS.Create_Note("That is not an NPC.", false)
+            LOGS.Create_Note("That is not an NPC.", false)
         elseIf p_DATA.MODS.MEMBERS.Has_Head(ref_actor)
-            p_DATA.MODS.FUNCS.LOGS.Create_Note("Yes, you have this head and face.", false)
+            LOGS.Create_Note("A member looks like " + ACTORS.Get_Name(ref_actor) + ".", false)
         else
-            p_DATA.MODS.FUNCS.LOGS.Create_Note("No, you don't have this head and face.", false)
+            LOGS.Create_Note("No member looks like " + ACTORS.Get_Name(ref_actor) + ".", false)
         endIf
     elseIf code_key == VARS.key_n_count_heads && Is_Modifier_Pressed(VARS.key_n_modifier)
         if ref_actor == none
-            p_DATA.MODS.FUNCS.LOGS.Create_Note("That is not an NPC.", false)
+            LOGS.Create_Note("That is not an NPC.", false)
         else
             int num_heads = p_DATA.MODS.MEMBERS.Get_Head_Count(ref_actor)
-            p_DATA.MODS.FUNCS.LOGS.Create_Note("You have " + num_heads + " with this head and face.", false)
+            if num_heads == 1
+                LOGS.Create_Note(num_heads + " member looks like " + ACTORS.Get_Name(ref_actor) + ".", false)
+            else
+                LOGS.Create_Note(num_heads + " members look like " + ACTORS.Get_Name(ref_actor) + ".", false)
+            endIf
         endIf
 
     endIf

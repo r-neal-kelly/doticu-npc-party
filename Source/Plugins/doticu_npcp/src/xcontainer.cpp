@@ -12,7 +12,7 @@ namespace doticu_npcp { namespace XContainer {
     XContainer_t *Create(TESObjectREFR *owner) {
         const RelocPtr<uintptr_t> xcontainer_vtbl(0x0152F260);
         XContainer_t *xcontainer = (XContainer_t *)XData_t::Create(sizeof(XContainer_t), xcontainer_vtbl.GetUIntPtr());
-        Assert(xcontainer);
+        NPCP_Assert(xcontainer);
 
         xcontainer->data = Create_Data(owner);
 
@@ -22,7 +22,7 @@ namespace doticu_npcp { namespace XContainer {
     XContainer_t::Data *Create_Data(TESObjectREFR *owner) {
 
         XContainer_t::Data *data = (XContainer_t::Data *)Heap_Allocate(sizeof(XContainer_t::Data));
-        Assert(data);
+        NPCP_Assert(data);
 
         data->objList = Create_Data_Entries();
 
@@ -37,7 +37,7 @@ namespace doticu_npcp { namespace XContainer {
 
     XEntries_t *Create_Data_Entries() {
         XEntries_t *xentries = XEntries_t::Create();
-        Assert(xentries);
+        NPCP_Assert(xentries);
 
         return xentries;
     }

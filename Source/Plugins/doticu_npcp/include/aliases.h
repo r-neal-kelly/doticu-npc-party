@@ -38,7 +38,7 @@ namespace doticu_npcp { namespace Aliases {
 
 namespace doticu_npcp { namespace Aliases { namespace Exports {
 
-    VMResultArray<BGSBaseAlias *> Slice(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr, UInt32 idx_from, UInt32 idx_to_ex);
+    VMResultArray<BGSBaseAlias *> Slice(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr, SInt32 idx_from, SInt32 idx_to_ex);
     VMResultArray<BGSBaseAlias *> Sort(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr_aliases, BSFixedString str_algorithm);
     VMResultArray<BGSBaseAlias *> Filter(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr_aliases, VMArray<BSFixedString> arr_strings, VMArray<SInt32> arr_ints);
     UInt32 Filter_Flag(StaticFunctionTag *, UInt32 int_flags, BSFixedString str_command, BSFixedString str_flag);

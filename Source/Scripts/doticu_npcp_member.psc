@@ -2282,8 +2282,8 @@ event OnLoad()
     Enforce()
 endEvent
 
-event OnActivate(ObjectReference ref_activator)
-    if VARS.is_updating || !Exists()
+event OnActivate(ObjectReference activator_obj)
+    if VARS.is_updating || !Exists() || activator_obj != CONSTS.ACTOR_PLAYER
         return
     endIf
 

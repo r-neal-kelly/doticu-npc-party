@@ -21,11 +21,19 @@ namespace doticu_npcp {
     typedef int32_t                 s32;
     typedef int64_t                 s64;
 
+    typedef UInt32                  Form_Type_t;
+
+    typedef TESForm                 Form_t;
+    typedef TESQuest                Quest_t;
+    typedef TESObjectCELL           Cell_t;
+    typedef TESObjectREFR           Object_t;
+    typedef Actor                   Actor_t;
+
     typedef BGSBaseAlias            Alias_t;
     typedef BGSBaseAlias            Player_t;
     typedef BGSBaseAlias            Member_t;
-    typedef BGSBaseAlias            Horse_t;
     typedef BGSBaseAlias            Follower_t;
+    typedef BGSBaseAlias            Horse_t;
     typedef TESQuest                Members_t;
     typedef TESQuest                Followers_t;
 
@@ -39,7 +47,25 @@ namespace doticu_npcp {
     typedef ExtendDataList          XLists_t;
     typedef BaseExtraList           XList_t;
     typedef BSExtraData             XData_t;
+    typedef ExtraAliasInstanceArray XAliases_t;
 
     typedef StaticFunctionTag       Selfless_t;
 
 }
+
+namespace doticu_npcp { namespace Papyrus {
+
+    typedef VMClassRegistry         Registry_t;
+    typedef IObjectHandlePolicy     Policy_t;
+    typedef VMScriptInstance        Script_t;
+    typedef VMValue                 Variable_t;
+    typedef BSFixedString           String_t;
+    typedef SInt32                  Int_t;
+    typedef bool                    Bool_t;
+
+    typedef UInt64                  Handle_ID_t;
+
+    template <typename T> using     Array_t         = VMArray<T>;
+    template <typename T> using     Vector_t        = VMResultArray<T>;
+
+}}

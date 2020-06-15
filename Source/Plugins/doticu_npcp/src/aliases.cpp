@@ -203,8 +203,8 @@ namespace doticu_npcp { namespace Aliases {
 
 namespace doticu_npcp { namespace Aliases { namespace Exports {
 
-    VMResultArray<BGSBaseAlias *> Slice(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr, UInt32 idx_from, UInt32 idx_to_ex) {
-        return Papyrus::Slice_Array<BGSBaseAlias *>(&arr, idx_from, idx_to_ex, NULL);
+    VMResultArray<BGSBaseAlias *> Slice(StaticFunctionTag *, VMArray<BGSBaseAlias *> arr, SInt32 idx_from, SInt32 idx_to_ex) {
+        return Papyrus::Slice_Array<BGSBaseAlias *>(arr, idx_from, idx_to_ex);
     }
 
     VMResultArray<BGSBaseAlias *> Sort(StaticFunctionTag *,
@@ -763,7 +763,7 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
 
     bool Register(VMClassRegistry *registry) {
         registry->RegisterFunction(
-            new NativeFunction3 <StaticFunctionTag, VMResultArray<BGSBaseAlias *>, VMArray<BGSBaseAlias *>, UInt32, UInt32>(
+            new NativeFunction3 <StaticFunctionTag, VMResultArray<BGSBaseAlias *>, VMArray<BGSBaseAlias *>, SInt32, SInt32>(
                 "Aliases_Slice",
                 "doticu_npcp",
                 Slice,

@@ -462,28 +462,23 @@ namespace doticu_npcp { namespace Followers {
 
     Follower_t *ID_To_Follower(Followers_t *followers, SInt32 id)
     {
-        if (followers && id > -1 && id < Followers::MAX)
-        {
+        if (followers && id > -1 && id < Followers::MAX) {
             Follower_t *follower;
             followers->aliases.GetNthItem(id, follower);
             return follower;
+        } else {
+            return nullptr;
         }
-
-        return nullptr;
     }
 
     Follower_t *Actor_To_Follower(Followers_t *followers, Actor *actor)
     {
-        if (followers && actor)
-        {
-            ExtraAliasInstanceArray *xaliases = (ExtraAliasInstanceArray *)actor->extraData.GetByType(kExtraData_AliasInstanceArray);
-            if (xaliases)
-            {
-                for (u64 idx = 0, size = xaliases->aliases.count; idx < size; idx += 1)
-                {
-                    ExtraAliasInstanceArray::AliasInfo *info = xaliases->aliases[idx];
-                    if (info && info->quest == followers)
-                    {
+        if (followers && actor) {
+            XAliases_t *xaliases = (XAliases_t *)actor->extraData.GetByType(kExtraData_AliasInstanceArray);
+            if (xaliases) {
+                for (u64 idx = 0, size = xaliases->aliases.count; idx < size; idx += 1) {
+                    XAliases_t::AliasInfo *info = xaliases->aliases[idx];
+                    if (info && info->quest == followers) {
                         return info->alias;
                     }
                 }
@@ -495,14 +490,11 @@ namespace doticu_npcp { namespace Followers {
 
     SInt32 Actor_To_ID(Followers_t *followers, Actor *actor)
     {
-        if (followers && actor)
-        {
+        if (followers && actor) {
             Follower_t *follower = Actor_To_Follower(followers, actor);
-            if (follower)
-            {
+            if (follower) {
                 s64 follower_idx = followers->aliases.GetItemIndex(follower);
-                if (follower_idx > -1 && follower_idx < Followers::MAX)
-                {
+                if (follower_idx > -1 && follower_idx < Followers::MAX) {
                     return follower_idx;
                 }
             }
@@ -513,14 +505,11 @@ namespace doticu_npcp { namespace Followers {
 
     Follower_t *Unused_Follower(Followers_t *followers)
     {
-        if (followers)
-        {
-            Follower_t *follower;
-            for (u64 idx = 0, size = Followers::MAX; idx < size; idx += 1)
-            {
+        if (followers) {
+            for (u64 idx = 0, size = Followers::MAX; idx < size; idx += 1) {
+                Follower_t *follower;
                 followers->aliases.GetNthItem(idx, follower);
-                if (follower && !Follower::Exists(follower))
-                {
+                if (follower && !Follower::Exists(follower)) {
                     return follower;
                 }
             }
@@ -594,16 +583,18 @@ namespace doticu_npcp { namespace Followers { namespace Exports {
 
     bool Register(VMClassRegistry *registry)
     {
-        #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)                          \
-        M                                                                                       \
-            ADD_CLASS_METHOD("doticu_npcp_followers", Followers_t,                              \
-                             STR_FUNC_, ARG_NUM_, RETURN_, Followers::METHOD_, __VA_ARGS__);    \
+        #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                               \
+            ADD_CLASS_METHOD("doticu_npcp_followers", Followers_t,      \
+                             STR_FUNC_, ARG_NUM_,                       \
+                             RETURN_, Followers::METHOD_, __VA_ARGS__); \
         W
 
-        #define ADD_GLOBAL(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)                      \
-        M                                                                                   \
-            ADD_CLASS_METHOD("doticu_npcp", Selfless_t,                                     \
-                             STR_FUNC_, ARG_NUM_, RETURN_, Exports::METHOD_, __VA_ARGS__);  \
+        #define ADD_GLOBAL(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                               \
+            ADD_CLASS_METHOD("doticu_npcp", Selfless_t,                 \
+                             STR_FUNC_, ARG_NUM_,                       \
+                             RETURN_, Exports::METHOD_, __VA_ARGS__);   \
         W
 
         ADD_METHOD("p_Register", 0, void, Register);
