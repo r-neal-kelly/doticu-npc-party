@@ -184,6 +184,10 @@ function f_View_Mannequins_Member(doticu_npcp_member ref_member)
 endFunction
 
 function f_Build_Page()
+    if !p_ref_member
+        return
+    endIf
+    
     string str_name = p_ref_member.Get_Name()
 
     MCM.SetCursorPosition(0)
@@ -232,6 +236,10 @@ function f_Build_Page()
 endFunction
 
 function f_On_Option_Select(int id_option)
+    if !p_ref_member
+        return
+    endIf
+
     Actor ref_actor = p_ref_member.Get_Actor()
 
     if false
@@ -445,6 +453,10 @@ function f_On_Option_Menu_Open(int id_option)
 endFunction
 
 function f_On_Option_Menu_Accept(int id_option, int idx_option)
+    if !p_ref_member
+        return
+    endIf
+
     Actor ref_actor = p_ref_member.Get_Actor()
 
     if id_option == p_option_outfit
@@ -502,6 +514,10 @@ function f_On_Option_Menu_Accept(int id_option, int idx_option)
 endFunction
 
 function f_On_Option_Input_Accept(int id_option, string str_input)
+    if !p_ref_member
+        return
+    endIf
+
     if id_option == p_option_rename
         if str_input != ""
             p_ref_member.Set_Name(str_input)
@@ -600,6 +616,10 @@ endFunction
 
 ; Private Methods
 function p_Build_Commands()
+    if !p_ref_member
+        return
+    endIf
+
     ; unblessedly, we can't just call an update in the PageReset function,
     ; the lib in not capable, so we have to type out logic here too
 
@@ -701,6 +721,10 @@ function p_Build_Commands()
 endFunction
 
 function p_Update_Commands()
+    if !p_ref_member
+        return
+    endIf
+
     f_Enable(p_option_summon, DONT_UPDATE)
     f_Enable(p_option_goto, DONT_UPDATE)
     f_Enable(p_option_pack, DONT_UPDATE)
@@ -801,6 +825,10 @@ function p_Update_Commands()
 endFunction
 
 function p_Build_Statistics()
+    if !p_ref_member
+        return
+    endIf
+
     Actor ref_actor = p_ref_member.Get_Actor()
 
     p_option_health             = MCM.AddTextOption(CONSTS.STR_MCM_HEALTH,      ref_actor.GetActorValue(CONSTS.STR_HEALTH)      as int)
@@ -832,6 +860,10 @@ function p_Build_Statistics()
 endFunction
 
 function p_Update_Statistics()
+    if !p_ref_member
+        return
+    endIf
+
     Actor ref_actor = p_ref_member.Get_Actor()
 
     MCM.SetTextOptionValue(p_option_health,             ref_actor.GetActorValue(CONSTS.STR_HEALTH)      as int,  true)
