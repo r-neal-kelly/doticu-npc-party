@@ -213,12 +213,6 @@ function f_Disable(int id_option, bool bool_update)
     SetOptionFlags(id_option, FLAG_DISABLE, bool_update)
 endFunction
 
-; Public Methods
-string function GetCustomControl(int code_key)
-    ; even though this is overridden, MCM will still return conflicts from vanilla and other mods
-    return KEYS.Get_Control(code_key)
-endFunction
-
 ; Events
 event OnConfigInit()
     ModName = " NPC Party"

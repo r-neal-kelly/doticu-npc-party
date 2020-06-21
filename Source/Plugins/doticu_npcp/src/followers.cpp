@@ -10,6 +10,7 @@
 
 #include "actor2.h"
 #include "aliases.h"
+#include "consts.h"
 #include "follower.h"
 #include "followers.h"
 #include "game.h"
@@ -574,7 +575,7 @@ namespace doticu_npcp { namespace Followers {
 
     Followers_t *Self() {
         static Followers_t *followers;
-        return followers ? followers : followers = (Followers_t *)Game::Get_NPCP_Form(0x000D83);
+        return followers ? followers : followers = (Followers_t *)Game::Get_NPCP_Form(Consts::QUEST_FOLLOWERS);
     }
 
 }}

@@ -748,6 +748,10 @@ function Toggle_Sneak_Async(Actor ref_actor)
     PRIVATE.Toggle_Sneak(CODES.DO_ASYNC, ref_actor)
 endFunction
 
+function Toggle_Saddler_Async(Actor ref_actor)
+    PRIVATE.Toggle_Saddle(CODES.DO_ASYNC, ref_actor)
+endFunction
+
 ; "all", "mobile", "immobile", follower cycle, etc, such that they each summon one after another
 
 ; Events
@@ -1358,6 +1362,9 @@ state f_STATE_UPDATING
         LOGS.Notify_Is_Updating()
     endFunction
     function Toggle_Sneak_Async(Actor ref_actor)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Toggle_Saddler_Async(Actor ref_actor)
         LOGS.Notify_Is_Updating()
     endFunction
     event On_Queue_Commands(string str_message, Form form_actor, bool auto_create)

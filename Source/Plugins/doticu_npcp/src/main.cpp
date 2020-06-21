@@ -10,11 +10,13 @@
 #include "actor2.h"
 #include "aliases.h"
 #include "cell.h"
+#include "consts.h"
 #include "follower.h"
 #include "followers.h"
 #include "form.h"
 #include "forms.h"
 #include "game.h"
+#include "keys.h"
 #include "main.h"
 #include "member.h"
 #include "members.h"
@@ -26,18 +28,20 @@
 #include "quest.h"
 #include "string2.h"
 #include "utils.h"
+#include "vars.h"
 
 namespace doticu_npcp { namespace Main {
 
-    bool Query_Plugin(const SKSEInterface *skse, PluginInfo *info);
-    bool Load_Plugin(const SKSEInterface *skse);
-    bool Register_Functions(VMClassRegistry *registry);
+    bool Query_Plugin(const SKSEInterface* skse, PluginInfo* info);
+    bool Load_Plugin(const SKSEInterface* skse);
+    bool Register_Functions(Papyrus::Registry_t* registry);
 
 }}
 
 namespace doticu_npcp { namespace Main {
 
-    bool Query_Plugin(const SKSEInterface *skse, PluginInfo *info) {
+    bool Query_Plugin(const SKSEInterface* skse, PluginInfo* info)
+    {
         if (!skse || !info) {
             return false;
         }
@@ -53,9 +57,10 @@ namespace doticu_npcp { namespace Main {
         return true;
     }
 
-    bool Load_Plugin(const SKSEInterface *skse) {
+    bool Load_Plugin(const SKSEInterface* skse)
+    {
         g_skse = skse;
-        g_papyrus = (SKSEPapyrusInterface *)skse->QueryInterface(kInterface_Papyrus);
+        g_papyrus = (SKSEPapyrusInterface*)skse->QueryInterface(kInterface_Papyrus);
         g_plugin_handle = skse->GetPluginHandle();
 
         if (!g_skse) {
@@ -78,7 +83,8 @@ namespace doticu_npcp { namespace Main {
         return true;
     }
 
-    bool Register_Functions(VMClassRegistry *registry) {
+    bool Register_Functions(Papyrus::Registry_t* registry)
+    {
         #define REGISTER_NAMESPACE(NAMESPACE_)                                                  \
         M                                                                                       \
             if (!doticu_npcp::NAMESPACE_::Exports::Register(registry)) {                        \
@@ -93,11 +99,13 @@ namespace doticu_npcp { namespace Main {
         REGISTER_NAMESPACE(Actor2);
         REGISTER_NAMESPACE(Aliases);
         REGISTER_NAMESPACE(Cell);
+        REGISTER_NAMESPACE(Consts);
         REGISTER_NAMESPACE(Follower);
         REGISTER_NAMESPACE(Followers);
         REGISTER_NAMESPACE(Form);
         REGISTER_NAMESPACE(Forms);
         REGISTER_NAMESPACE(Game);
+        REGISTER_NAMESPACE(Keys);
         REGISTER_NAMESPACE(Member);
         REGISTER_NAMESPACE(Members);
         REGISTER_NAMESPACE(Object_Ref);
@@ -108,23 +116,26 @@ namespace doticu_npcp { namespace Main {
         REGISTER_NAMESPACE(Quest);
         REGISTER_NAMESPACE(String2);
         REGISTER_NAMESPACE(Utils);
+        REGISTER_NAMESPACE(Vars);
+
+        #undef REGISTER_NAMESPACE
 
         _MESSAGE(DOTICU_NPCP_PRINT_PREFIX "Added all functions.\n");
 
         return true;
-
-        #undef REGISTER_NAMESPACE
     }
 
 }}
 
 extern "C" {
 
-    bool SKSEPlugin_Query(const SKSEInterface *skse, PluginInfo *info) {
+    bool SKSEPlugin_Query(const SKSEInterface* skse, PluginInfo* info)
+    {
         return doticu_npcp::Main::Query_Plugin(skse, info);
     }
 
-    bool SKSEPlugin_Load(const SKSEInterface *skse) {
+    bool SKSEPlugin_Load(const SKSEInterface* skse)
+    {
         return doticu_npcp::Main::Load_Plugin(skse);
     }
 

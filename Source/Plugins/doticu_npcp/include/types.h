@@ -36,9 +36,12 @@ namespace doticu_npcp {
     typedef BGSBaseAlias            Horse_t;
     typedef TESQuest                Members_t;
     typedef TESQuest                Followers_t;
+    typedef TESQuest                Keys_t;
+    typedef TESQuest                Consts_t;
+    typedef TESQuest                Vars_t;
 
     typedef TESContainer            BContainer_t;
-    typedef TESContainer::Entry **  BEntries_t;
+    typedef TESContainer::Entry**   BEntries_t;
     typedef TESContainer::Entry     BEntry_t;
 
     typedef ExtraContainerChanges   XContainer_t;
@@ -62,6 +65,7 @@ namespace doticu_npcp { namespace Papyrus {
     typedef BSFixedString           String_t;
     typedef SInt32                  Int_t;
     typedef bool                    Bool_t;
+    typedef VMIdentifier            Entity_t;
 
     typedef UInt64                  Handle_ID_t;
 

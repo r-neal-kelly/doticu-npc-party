@@ -177,7 +177,7 @@ function Expo(int code_exec, int id_expoee, ObjectReference ref_marker, bool aut
     Actor ref_actor = Game.FindClosestActorFromRef(ref_marker, 48)
     if !ref_actor || ref_actor == CONSTS.ACTOR_PLAYER
         LOGS.Create_Note("Move NPC onto pedestal.")
-        if !KEYS.Is_Active(VARS.key_move_toggle)
+        if !KEYS.Is_Active(VARS.key_n_toggle_move)
             LOGS.Create_Note("(You can set a hotkey for 'Toggle Move' in Settings.)")
         endIf
         return

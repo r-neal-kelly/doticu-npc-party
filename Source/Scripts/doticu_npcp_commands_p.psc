@@ -864,6 +864,15 @@ function Toggle_Sneak(int code_exec, Actor ref_actor)
     endIf
 endFunction
 
+function Toggle_Saddle(int code_exec, Actor ref_actor)
+    doticu_npcp_follower ref_follower = FOLLOWERS.Get_Follower(ref_actor)
+    if ref_follower && ref_follower.Is_Saddler()
+        Unsaddle(code_exec, ref_actor, true)
+    else
+        Saddle(code_exec, ref_actor, true)
+    endIf
+endFunction
+
 function Toggle_Mannequin(int code_exec, Actor ref_actor, ObjectReference ref_marker)
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if ref_member && ref_member.Is_Mannequin()

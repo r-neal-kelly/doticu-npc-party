@@ -262,17 +262,17 @@ function Update_Keys()
         return
     endIf
 
-    if VARS.key_move_farther
-        RegisterForKey(VARS.key_move_farther)
+    if VARS.key_n_move_farther
+        RegisterForKey(VARS.key_n_move_farther)
     endIf
-    if VARS.key_move_nearer
-        RegisterForKey(VARS.key_move_nearer)
+    if VARS.key_n_move_nearer
+        RegisterForKey(VARS.key_n_move_nearer)
     endIf
-    if VARS.key_move_rotate_right
-        RegisterForKey(VARS.key_move_rotate_right)
+    if VARS.key_n_move_rotate_left
+        RegisterForKey(VARS.key_n_move_rotate_left)
     endIf
-    if VARS.key_move_rotate_left
-        RegisterForKey(VARS.key_move_rotate_left)
+    if VARS.key_n_move_rotate_right
+        RegisterForKey(VARS.key_n_move_rotate_right)
     endIf
 endFunction
 
@@ -297,14 +297,14 @@ event OnKeyDown(int code_key)
         return
     endIf
 
-    if code_key == VARS.key_move_farther
+    if code_key == VARS.key_n_move_farther
         p_do_distance_farther = true
-    elseIf code_key == VARS.key_move_nearer
+    elseIf code_key == VARS.key_n_move_nearer
         p_do_distance_nearer = true
-    elseIf code_key == VARS.key_move_rotate_right
-        p_do_rotate_right = true
-    elseIf code_key == VARS.key_move_rotate_left
+    elseIf code_key == VARS.key_n_move_rotate_left
         p_do_rotate_left = true
+    elseIf code_key == VARS.key_n_move_rotate_right
+        p_do_rotate_right = true
     endIf
 endEvent
 
@@ -313,19 +313,17 @@ event OnKeyUp(int code_key, float hold_time)
         return
     endIf
 
-    if false
-
-    elseIf code_key == VARS.key_move_toggle
+    if code_key == VARS.key_n_toggle_move && KEYS.Are_Mods_Pressed(CONSTS.KEY_N_TOGGLE_MOVE)
         ACTORS.Toggle_Move(p_ref_actor); calls f_Destroy()
-    elseIf code_key == VARS.key_move_farther
+    elseIf code_key == VARS.key_n_move_farther && KEYS.Are_Mods_Pressed(CONSTS.KEY_N_MOVE_FARTHER)
         p_do_distance_farther = false
-    elseIf code_key == VARS.key_move_nearer
+    elseIf code_key == VARS.key_n_move_nearer && KEYS.Are_Mods_Pressed(CONSTS.KEY_N_MOVE_NEARER)
         p_do_distance_nearer = false
-    elseIf code_key == VARS.key_move_rotate_right
-        p_do_rotate_right = false
-    elseIf code_key == VARS.key_move_rotate_left
+    elseIf code_key == VARS.key_n_move_rotate_left && KEYS.Are_Mods_Pressed(CONSTS.KEY_N_MOVE_ROTATE_LEFT)
         p_do_rotate_left = false
-        
+    elseIf code_key == VARS.key_n_move_rotate_right && KEYS.Are_Mods_Pressed(CONSTS.KEY_N_MOVE_ROTATE_RIGHT)
+        p_do_rotate_right = false
+
     endIf
 endEvent
 

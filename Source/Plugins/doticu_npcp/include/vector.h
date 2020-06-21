@@ -11,7 +11,8 @@
 namespace doticu_npcp { namespace Vector {
 
     template <typename T>
-    s64 Index_Of(std::vector<T> &vec, T &item) {
+    s64 Index_Of(std::vector<T> &vec, T &item)
+    {
         for (s64 idx = 0, size = vec.size(); idx < size; idx += 1) {
             if (vec[idx] == item) {
                 return idx;
@@ -21,7 +22,8 @@ namespace doticu_npcp { namespace Vector {
     }
 
     template <typename T>
-    bool Has(std::vector<T> &vec, T &item) {
+    bool Has(std::vector<T> &vec, T &item)
+    {
         return Index_Of<T>(vec, item) > -1;
     }
 

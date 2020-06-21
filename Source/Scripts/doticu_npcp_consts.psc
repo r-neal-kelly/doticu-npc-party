@@ -1691,47 +1691,6 @@ int property DEFAULT_PERCENT_FEET           =    90 autoReadOnly hidden
 int property DEFAULT_PERCENT_HANDS          =    90 autoReadOnly hidden
 int property DEFAULT_PERCENT_HEAD           =    50 autoReadOnly hidden
 
-int property KEY_DEF_G_MODIFIER             =    29 autoReadOnly hidden; Left Control
-int property KEY_DEF_G_DIALOGUE_MENU        =    34 autoReadOnly hidden; G
-
-int property KEY_DEF_FS_MODIFIER            =    29 autoReadOnly hidden; Left Control
-int property KEY_DEF_FS_SUMMON_ALL          =    53 autoReadOnly hidden; Forward Slash
-int property KEY_DEF_FS_SUMMON_MOBILE       =    51 autoReadOnly hidden; Comma
-int property KEY_DEF_FS_SUMMON_IMMOBILE     =    52 autoReadOnly hidden; Period
-int property KEY_DEF_FS_SETTLE              =    39 autoReadOnly hidden; Semicolon
-int property KEY_DEF_FS_UNSETTLE            =    40 autoReadOnly hidden; Apostrophe
-int property KEY_DEF_FS_IMMOBILIZE          =    13 autoReadOnly hidden; Equals
-int property KEY_DEF_FS_MOBILIZE            =    12 autoReadOnly hidden; Minus
-int property KEY_DEF_FS_SNEAK               =    10 autoReadOnly hidden; 9
-int property KEY_DEF_FS_UNSNEAK             =    11 autoReadOnly hidden; 0
-int property KEY_DEF_FS_RESURRECT           =    14 autoReadOnly hidden; Backspace
-
-int property KEY_DEF_MS_MODIFIER            =    29 autoReadOnly hidden; Left Control
-int property KEY_DEF_MS_DISPLAY_TOGGLE      =    43 autoReadOnly hidden; Back Slash
-int property KEY_DEF_MS_DISPLAY_PREVIOUS    =    26 autoReadOnly hidden; Left Bracket
-int property KEY_DEF_MS_DISPLAY_NEXT        =    27 autoReadOnly hidden; Right Bracket
-
-int property KEY_DEF_M_MODIFIER             =    29 autoReadOnly hidden; Left Control
-int property KEY_DEF_M_TOGGLE_MEMBER        =    78 autoReadOnly hidden; NUM+
-int property KEY_DEF_M_TOGGLE_CLONE         =   156 autoReadOnly hidden; NUM Enter
-int property KEY_DEF_M_TOGGLE_SETTLER       =    82 autoReadOnly hidden; NUM0
-int property KEY_DEF_M_TOGGLE_THRALL        =    73 autoReadOnly hidden; NUM9
-int property KEY_DEF_M_TOGGLE_IMMOBILE      =    83 autoReadOnly hidden; NUM.
-int property KEY_DEF_M_TOGGLE_PARALYZED     =   181 autoReadOnly hidden; NUM/
-int property KEY_DEF_M_TOGGLE_FOLLOWER      =    55 autoReadOnly hidden; NUM*
-int property KEY_DEF_M_TOGGLE_SNEAK         =    74 autoReadOnly hidden; NUM-
-
-int property KEY_DEF_N_MODIFIER             =    29 autoReadOnly hidden; Left Control
-int property KEY_DEF_MOVE_TOGGLE            =    56 autoReadOnly hidden; Left Alt
-int property KEY_DEF_MOVE_FARTHER           =   200 autoReadOnly hidden; Up Arrow
-int property KEY_DEF_MOVE_NEARER            =   208 autoReadOnly hidden; Down Arrow
-int property KEY_DEF_MOVE_ROTATE_RIGHT      =   205 autoReadOnly hidden; Right Arrow
-int property KEY_DEF_MOVE_ROTATE_LEFT       =   203 autoReadOnly hidden; Left Arrow
-int property KEY_DEF_N_HAS_BASE             =    24 autoReadOnly hidden; O
-int property KEY_DEF_N_COUNT_BASE           =    24 autoReadOnly hidden; O
-int property KEY_DEF_N_HAS_HEAD             =    24 autoReadOnly hidden; O
-int property KEY_DEF_N_COUNT_HEADS          =    24 autoReadOnly hidden; O
-
 string property STR_HEALTH                  = "Health"                      autoReadOnly hidden
 string property STR_MAGICKA                 = "Magicka"                     autoReadOnly hidden
 string property STR_STAMINA                 = "Stamina"                     autoReadOnly hidden
@@ -1818,43 +1777,48 @@ string property STR_MCM_LOCKPICKING         = " Lockpicking "               auto
 string property STR_MCM_PICKPOCKET          = " Pickpocket "                autoReadOnly hidden
 string property STR_MCM_SPEECHCRAFT         = " Speechcraft "               autoReadOnly hidden
 
-string property STR_KEY_G_MODIFIER          = "General Modifier"            autoReadOnly hidden
-string property STR_KEY_G_DIALOGUE_MENU     = "Open General Menu"           autoReadOnly hidden
+; Keys
+string property KEY_G_DIALOGUE_MENU         = "Global: Open Dialogue Menu"  autoReadOnly hidden
 
-string property STR_KEY_FS_MODIFIER         = "Followers Modifier"          autoReadOnly hidden
-string property STR_KEY_FS_SUMMON_ALL       = "Summon All Followers"        autoReadOnly hidden
-string property STR_KEY_FS_SUMMON_MOBILE    = "Summon Mobile Followers"     autoReadOnly hidden
-string property STR_KEY_FS_SUMMON_IMMOBILE  = "Summon Immobile Followers"   autoReadOnly hidden
-string property STR_KEY_FS_SETTLE           = "Settle Followers"            autoReadOnly hidden
-string property STR_KEY_FS_UNSETTLE         = "Unsettle Followers"          autoReadOnly hidden
-string property STR_KEY_FS_IMMOBILIZE       = "Immobilize Followers"        autoReadOnly hidden
-string property STR_KEY_FS_MOBILIZE         = "Mobilize Followers"          autoReadOnly hidden
-string property STR_KEY_FS_SNEAK            = "Sneak Followers"             autoReadOnly hidden
-string property STR_KEY_FS_UNSNEAK          = "Unsneak Followers"           autoReadOnly hidden
-string property STR_KEY_FS_RESURRECT        = "Resurrect Followers"         autoReadOnly hidden
+string property KEY_N_TOGGLE_MEMBER         = "NPC: Toggle Member"          autoReadOnly hidden
+string property KEY_N_TOGGLE_MOVE           = "NPC: Toggle Move"            autoReadOnly hidden
+string property KEY_N_MOVE_FARTHER          = "NPC: Move Farther"           autoReadOnly hidden
+string property KEY_N_MOVE_NEARER           = "NPC: Move Nearer"            autoReadOnly hidden
+string property KEY_N_MOVE_ROTATE_LEFT      = "NPC: Rotate Left"            autoReadOnly hidden
+string property KEY_N_MOVE_ROTATE_RIGHT     = "NPC: Rotate Right"           autoReadOnly hidden
+string property KEY_N_HAS_BASE              = "NPC: Has Base"               autoReadOnly hidden
+string property KEY_N_COUNT_BASE            = "NPC: Count Base"             autoReadOnly hidden
+string property KEY_N_HAS_HEAD              = "NPC: Has Head"               autoReadOnly hidden
+string property KEY_N_COUNT_HEADS           = "NPC: Count Heads"            autoReadOnly hidden
 
-string property STR_KEY_MS_MODIFIER         = "Members Modifier"            autoReadOnly hidden
-string property STR_KEY_MS_DISPLAY_TOGGLE   = "Toggle Member Display"       autoReadOnly hidden
-string property STR_KEY_MS_DISPLAY_PREVIOUS = "Display Previous Members"    autoReadOnly hidden
-string property STR_KEY_MS_DISPLAY_NEXT     = "Display Next Members"        autoReadOnly hidden
+string property KEY_M_TOGGLE_CLONE          = "Member: Toggle Clone"        autoReadOnly hidden
+string property KEY_M_TOGGLE_SETTLER        = "Member: Toggle Settler"      autoReadOnly hidden
+string property KEY_M_TOGGLE_THRALL         = "Member: Toggle Thrall"       autoReadOnly hidden
+string property KEY_M_TOGGLE_IMMOBILE       = "Member: Toggle Immobile"     autoReadOnly hidden
+string property KEY_M_TOGGLE_PARALYZED      = "Member: Toggle Paralyzed"    autoReadOnly hidden
+string property KEY_M_TOGGLE_FOLLOWER       = "Member: Toggle Follower"     autoReadOnly hidden
 
-string property STR_KEY_M_MODIFIER          = "Member/Follower Modifier"    autoReadOnly hidden
-string property STR_KEY_M_TOGGLE_MEMBER     = "Toggle Member"               autoReadOnly hidden
-string property STR_KEY_M_TOGGLE_CLONE      = "Toggle Clone"                autoReadOnly hidden
-string property STR_KEY_M_TOGGLE_SETTLER    = "Toggle Settler"              autoReadOnly hidden
-string property STR_KEY_M_TOGGLE_THRALL     = "Toggle Thrall"               autoReadOnly hidden
-string property STR_KEY_M_TOGGLE_IMMOBILE   = "Toggle Immobile"             autoReadOnly hidden
-string property STR_KEY_M_TOGGLE_PARALYZED  = "Toggle Paralyzed"            autoReadOnly hidden
-string property STR_KEY_M_TOGGLE_FOLLOWER   = "Toggle Follower"             autoReadOnly hidden
-string property STR_KEY_M_TOGGLE_SNEAK      = "Toggle Sneak"                autoReadOnly hidden
+string property KEY_F_TOGGLE_SNEAK          = "Follower: Toggle Sneak"      autoReadOnly hidden
+string property KEY_F_TOGGLE_SADDLER        = "Follower: Toggle Saddler"    autoReadOnly hidden
 
-string property STR_KEY_N_MODIFIER          = "NPC Modifier"                autoReadOnly hidden
-string property STR_KEY_MOVE_TOGGLE         = "Toggle Move"                 autoReadOnly hidden
-string property STR_KEY_MOVE_FARTHER        = "Move Farther"                autoReadOnly hidden
-string property STR_KEY_MOVE_NEARER         = "Move Nearer"                 autoReadOnly hidden
-string property STR_KEY_MOVE_ROTATE_RIGHT   = "Rotate Right"                autoReadOnly hidden
-string property STR_KEY_MOVE_ROTATE_LEFT    = "Rotate Left"                 autoReadOnly hidden
-string property STR_KEY_N_HAS_BASE          = "Has Base"                    autoReadOnly hidden
-string property STR_KEY_N_COUNT_BASE        = "Count Base"                  autoReadOnly hidden
-string property STR_KEY_N_HAS_HEAD          = "Has Head"                    autoReadOnly hidden
-string property STR_KEY_N_COUNT_HEADS       = "Count Heads"                 autoReadOnly hidden
+string property KEY_MS_TOGGLE_DISPLAY       = "Members: Toggle Display"     autoReadOnly hidden
+string property KEY_MS_DISPLAY_PREVIOUS     = "Members: Display Previous"   autoReadOnly hidden
+string property KEY_MS_DISPLAY_NEXT         = "Members: Display Next"       autoReadOnly hidden
+
+string property KEY_FS_SUMMON_ALL           = "Followers: Summon All"       autoReadOnly hidden
+string property KEY_FS_SUMMON_MOBILE        = "Followers: Summon Mobile"    autoReadOnly hidden
+string property KEY_FS_SUMMON_IMMOBILE      = "Followers: Summon Immobile"  autoReadOnly hidden
+string property KEY_FS_SETTLE               = "Followers: Settle"           autoReadOnly hidden
+string property KEY_FS_UNSETTLE             = "Followers: Unsettle"         autoReadOnly hidden
+string property KEY_FS_MOBILIZE             = "Followers: Mobilize"         autoReadOnly hidden
+string property KEY_FS_IMMOBILIZE           = "Followers: Immobilize"       autoReadOnly hidden
+string property KEY_FS_SNEAK                = "Followers: Sneak"            autoReadOnly hidden
+string property KEY_FS_UNSNEAK              = "Followers: Unsneak"          autoReadOnly hidden
+string property KEY_FS_SADDLE               = "Followers: Saddle"           autoReadOnly hidden
+string property KEY_FS_UNSADDLE             = "Followers: Unsaddle"         autoReadOnly hidden
+string property KEY_FS_RESURRECT            = "Followers: Resurrect"        autoReadOnly hidden
+
+; Public Methods
+function Log_Variables() native
+function Log_Defaults() native
+function Log_Properties() native

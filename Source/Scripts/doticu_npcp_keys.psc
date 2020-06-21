@@ -57,12 +57,16 @@ function f_Register()
     Update_Keys()
 endFunction
 
-; Private Methods
-bool function Is_Modifier_Pressed(int code_modifier)
-    return code_modifier < 0 || Input.IsKeyPressed(code_modifier)
-endFunction
-
 ; Public Methods
+int function Default_Value(string key) native
+int function Current_Value(string key) native
+int[] function Default_Mods(string key) native
+int[] function Current_Mods(string key) native
+string function Default_Mods_To_String(string key) native
+string function Current_Mods_To_String(string key) native
+string function Conflicting_Key(string key, int value, int mod_1, int mod_2, int mod_3) native
+bool function Are_Mods_Pressed(string key) native
+
 bool function Is_Active(int code_key)
     return code_key > -1
 endFunction
@@ -71,75 +75,32 @@ function Update_Keys()
     UnregisterForAllKeys()
 
     ; General
-    if VARS.key_g_modifier > -1
-        RegisterForKey(VARS.key_g_modifier)
-    endIf
     if VARS.key_g_dialogue_menu > -1
         RegisterForKey(VARS.key_g_dialogue_menu)
     endIf
 
-    ; All Followers
-    if VARS.key_fs_modifier > -1
-        RegisterForKey(VARS.key_fs_modifier)
+    ; NPC
+    if VARS.key_n_toggle_member > -1
+        RegisterForKey(VARS.key_n_toggle_member)
     endIf
-    if VARS.key_fs_summon_all > -1
-        RegisterForKey(VARS.key_fs_summon_all)
+    if VARS.key_n_toggle_move > -1
+        RegisterForKey(VARS.key_n_toggle_move)
     endIf
-    if VARS.key_fs_summon_mobile > -1
-        RegisterForKey(VARS.key_fs_summon_mobile)
+    ACTORS.MOVEE.Update_Keys()
+    if VARS.key_n_has_base > -1
+        RegisterForKey(VARS.key_n_has_base)
     endIf
-    if VARS.key_fs_summon_immobile > -1
-        RegisterForKey(VARS.key_fs_summon_immobile)
+    if VARS.key_n_count_base > -1
+        RegisterForKey(VARS.key_n_count_base)
     endIf
-    if VARS.key_fs_settle > -1
-        RegisterForKey(VARS.key_fs_settle)
+    if VARS.key_n_has_head > -1
+        RegisterForKey(VARS.key_n_has_head)
     endIf
-    if VARS.key_fs_unsettle > -1
-        RegisterForKey(VARS.key_fs_unsettle)
-    endIf
-    if VARS.key_fs_immobilize > -1
-        RegisterForKey(VARS.key_fs_immobilize)
-    endIf
-    if VARS.key_fs_mobilize > -1
-        RegisterForKey(VARS.key_fs_mobilize)
-    endIf
-    if VARS.key_fs_sneak > -1
-        RegisterForKey(VARS.key_fs_sneak)
-    endIf
-    if VARS.key_fs_unsneak > -1
-        RegisterForKey(VARS.key_fs_unsneak)
-    endIf
-    if VARS.key_fs_resurrect > -1
-        RegisterForKey(VARS.key_fs_resurrect)
-    endIf
-    if VARS.key_fs_unfollow > -1
-        RegisterForKey(VARS.key_fs_unfollow)
-    endIf
-    if VARS.key_fs_unmember > -1
-        RegisterForKey(VARS.key_fs_unmember)
+    if VARS.key_n_count_heads > -1
+        RegisterForKey(VARS.key_n_count_heads)
     endIf
 
-    ; All Members
-    if VARS.key_ms_modifier > -1
-        RegisterForKey(VARS.key_ms_modifier)
-    endIf
-    if VARS.key_ms_display_toggle > -1
-        RegisterForKey(VARS.key_ms_display_toggle)
-    endIf
-    if VARS.key_ms_display_next > -1
-        RegisterForKey(VARS.key_ms_display_next)
-    endIf
-    if VARS.key_ms_display_previous > -1
-        RegisterForKey(VARS.key_ms_display_previous)
-    endIf
-
-    ; One Member/Follower
-    if VARS.key_m_modifier > -1
-        RegisterForKey(VARS.key_m_modifier)
-    endIf
-    if VARS.key_m_toggle_member > -1
-        RegisterForKey(VARS.key_m_toggle_member)
-    endIf
+    ; Member
     if VARS.key_m_toggle_clone > -1
         RegisterForKey(VARS.key_m_toggle_clone)
     endIf
@@ -158,302 +119,68 @@ function Update_Keys()
     if VARS.key_m_toggle_follower > -1
         RegisterForKey(VARS.key_m_toggle_follower)
     endIf
-    if VARS.key_m_toggle_sneak > -1
-        RegisterForKey(VARS.key_m_toggle_sneak)
+
+    ; Follower
+    if VARS.key_f_toggle_sneak > -1
+        RegisterForKey(VARS.key_f_toggle_sneak)
+    endIf
+    if VARS.key_f_toggle_saddler > -1
+        RegisterForKey(VARS.key_f_toggle_saddler)
     endIf
 
-    ; One NPC
-    if VARS.key_n_modifier > -1
-        RegisterForKey(VARS.key_n_modifier)
+    ; Members
+    if VARS.key_ms_toggle_display > -1
+        RegisterForKey(VARS.key_ms_toggle_display)
     endIf
-    if VARS.key_move_toggle > -1
-        RegisterForKey(VARS.key_move_toggle)
+    if VARS.key_ms_display_previous > -1
+        RegisterForKey(VARS.key_ms_display_previous)
     endIf
-    ACTORS.MOVEE.Update_Keys()
-    if VARS.key_n_has_base > -1
-        RegisterForKey(VARS.key_n_has_base)
+    if VARS.key_ms_display_next > -1
+        RegisterForKey(VARS.key_ms_display_next)
     endIf
-    if VARS.key_n_count_base > -1
-        RegisterForKey(VARS.key_n_count_base)
+
+    ; Followers
+    if VARS.key_fs_summon_all > -1
+        RegisterForKey(VARS.key_fs_summon_all)
     endIf
-    if VARS.key_n_has_head > -1
-        RegisterForKey(VARS.key_n_has_head)
+    if VARS.key_fs_summon_mobile > -1
+        RegisterForKey(VARS.key_fs_summon_mobile)
     endIf
-    if VARS.key_n_count_heads > -1
-        RegisterForKey(VARS.key_n_count_heads)
+    if VARS.key_fs_summon_immobile > -1
+        RegisterForKey(VARS.key_fs_summon_immobile)
     endIf
-endFunction
-
-string function Get_Control(int code_key)
-    if false
-
-    ; General
-    elseIf code_key == VARS.key_g_modifier
-        return CONSTS.STR_KEY_G_MODIFIER
-    elseIf code_key == VARS.key_g_dialogue_menu
-        return CONSTS.STR_KEY_G_DIALOGUE_MENU
-
-    ; All Followers
-    elseIf code_key == VARS.key_fs_modifier
-        return CONSTS.STR_KEY_FS_MODIFIER
-    elseIf code_key == VARS.key_fs_summon_all
-        return CONSTS.STR_KEY_FS_SUMMON_ALL
-    elseIf code_key == VARS.key_fs_summon_mobile
-        return CONSTS.STR_KEY_FS_SUMMON_MOBILE
-    elseIf code_key == VARS.key_fs_summon_immobile
-        return CONSTS.STR_KEY_FS_SUMMON_IMMOBILE
-    elseIf code_key == VARS.key_fs_settle
-        return CONSTS.STR_KEY_FS_SETTLE
-    elseIf code_key == VARS.key_fs_unsettle
-        return CONSTS.STR_KEY_FS_UNSETTLE
-    elseIf code_key == VARS.key_fs_immobilize
-        return CONSTS.STR_KEY_FS_IMMOBILIZE
-    elseIf code_key == VARS.key_fs_mobilize
-        return CONSTS.STR_KEY_FS_MOBILIZE
-    elseIf code_key == VARS.key_fs_sneak
-        return CONSTS.STR_KEY_FS_SNEAK
-    elseIf code_key == VARS.key_fs_unsneak
-        return CONSTS.STR_KEY_FS_UNSNEAK
-    elseIf code_key == VARS.key_fs_resurrect
-        return CONSTS.STR_KEY_FS_RESURRECT
-
-    ; All Members
-    elseIf code_key == VARS.key_ms_modifier
-        return CONSTS.STR_KEY_MS_MODIFIER
-    elseIf code_key == VARS.key_ms_display_toggle
-        return CONSTS.STR_KEY_MS_DISPLAY_TOGGLE
-    elseIf code_key == VARS.key_ms_display_next
-        return CONSTS.STR_KEY_MS_DISPLAY_NEXT
-    elseIf code_key == VARS.key_ms_display_previous
-        return CONSTS.STR_KEY_MS_DISPLAY_PREVIOUS
-
-    ; One Member/Follower
-    elseIf code_key == VARS.key_m_modifier
-        return CONSTS.STR_KEY_M_MODIFIER
-    elseIf code_key == VARS.key_m_toggle_member
-        return CONSTS.STR_KEY_M_TOGGLE_MEMBER
-    elseIf code_key == VARS.key_m_toggle_clone
-        return CONSTS.STR_KEY_M_TOGGLE_CLONE
-    elseIf code_key == VARS.key_m_toggle_settler
-        return CONSTS.STR_KEY_M_TOGGLE_SETTLER
-    elseIf code_key == VARS.key_m_toggle_thrall
-        return CONSTS.STR_KEY_M_TOGGLE_THRALL
-    elseIf code_key == VARS.key_m_toggle_immobile
-        return CONSTS.STR_KEY_M_TOGGLE_IMMOBILE
-    elseIf code_key == VARS.key_m_toggle_paralyzed
-        return CONSTS.STR_KEY_M_TOGGLE_PARALYZED
-    elseIf code_key == VARS.key_m_toggle_follower
-        return CONSTS.STR_KEY_M_TOGGLE_FOLLOWER
-    elseIf code_key == VARS.key_m_toggle_sneak
-        return CONSTS.STR_KEY_M_TOGGLE_SNEAK
-
-    ; One NPC
-    elseIf code_key == VARS.key_n_modifier
-        return CONSTS.STR_KEY_N_MODIFIER
-    elseIf code_key == VARS.key_move_toggle
-        return CONSTS.STR_KEY_MOVE_TOGGLE
-    elseIf code_key == VARS.key_move_farther
-        return CONSTS.STR_KEY_MOVE_FARTHER
-    elseIf code_key == VARS.key_move_nearer
-        return CONSTS.STR_KEY_MOVE_NEARER
-    elseIf code_key == VARS.key_move_rotate_right
-        return CONSTS.STR_KEY_MOVE_ROTATE_RIGHT
-    elseIf code_key == VARS.key_move_rotate_left
-        return CONSTS.STR_KEY_MOVE_ROTATE_LEFT
-    elseIf code_key == VARS.key_n_has_base
-        return CONSTS.STR_KEY_N_HAS_BASE
-    elseIf code_key == VARS.key_n_count_base
-        return CONSTS.STR_KEY_N_COUNT_BASE
-    elseIf code_key == VARS.key_n_has_head
-        return CONSTS.STR_KEY_N_HAS_HEAD
-    elseIf code_key == VARS.key_n_count_heads
-        return CONSTS.STR_KEY_N_COUNT_HEADS
-    
-    else
-        return ""
-
+    if VARS.key_fs_settle > -1
+        RegisterForKey(VARS.key_fs_settle)
     endIf
-endFunction
-
-int function Get_Key(string str_control)
-    if false
-
-    ; General
-    elseIf str_control == CONSTS.STR_KEY_G_MODIFIER
-        return VARS.key_g_modifier
-    elseIf str_control == CONSTS.STR_KEY_G_DIALOGUE_MENU
-        return VARS.key_g_dialogue_menu
-
-    ; All Followers
-    elseIf str_control == CONSTS.STR_KEY_FS_MODIFIER
-        return VARS.key_fs_modifier
-    elseIf str_control == CONSTS.STR_KEY_FS_SUMMON_ALL
-        return VARS.key_fs_summon_all
-    elseIf str_control == CONSTS.STR_KEY_FS_SUMMON_MOBILE
-        return VARS.key_fs_summon_mobile
-    elseIf str_control == CONSTS.STR_KEY_FS_SUMMON_IMMOBILE
-        return VARS.key_fs_summon_immobile
-    elseIf str_control == CONSTS.STR_KEY_FS_SETTLE
-        return VARS.key_fs_settle
-    elseIf str_control == CONSTS.STR_KEY_FS_UNSETTLE
-        return VARS.key_fs_unsettle
-    elseIf str_control == CONSTS.STR_KEY_FS_IMMOBILIZE
-        return VARS.key_fs_immobilize
-    elseIf str_control == CONSTS.STR_KEY_FS_MOBILIZE
-        return VARS.key_fs_mobilize
-    elseIf str_control == CONSTS.STR_KEY_FS_SNEAK
-        return VARS.key_fs_sneak
-    elseIf str_control == CONSTS.STR_KEY_FS_UNSNEAK
-        return VARS.key_fs_unsneak
-    elseIf str_control == CONSTS.STR_KEY_FS_RESURRECT
-        return VARS.key_fs_resurrect
-
-    ; All Members
-    elseIf str_control == CONSTS.STR_KEY_MS_MODIFIER
-        return VARS.key_ms_modifier
-    elseIf str_control == CONSTS.STR_KEY_MS_DISPLAY_TOGGLE
-        return VARS.key_ms_display_toggle
-    elseIf str_control == CONSTS.STR_KEY_MS_DISPLAY_NEXT
-        return VARS.key_ms_display_next
-    elseIf str_control == CONSTS.STR_KEY_MS_DISPLAY_PREVIOUS
-        return VARS.key_ms_display_previous
-
-    ; One Member/Follower
-    elseIf str_control == CONSTS.STR_KEY_M_MODIFIER
-        return VARS.key_m_modifier
-    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_MEMBER
-        return VARS.key_m_toggle_member
-    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_CLONE
-        return VARS.key_m_toggle_clone
-    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_SETTLER
-        return VARS.key_m_toggle_settler
-    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_THRALL
-        return VARS.key_m_toggle_thrall
-    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_IMMOBILE
-        return VARS.key_m_toggle_immobile
-    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_PARALYZED
-        return VARS.key_m_toggle_paralyzed
-    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_FOLLOWER
-        return VARS.key_m_toggle_follower
-    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_SNEAK
-        return VARS.key_m_toggle_sneak
-
-    ; One NPC
-    elseIf str_control == CONSTS.STR_KEY_N_MODIFIER
-        return VARS.key_n_modifier
-    elseIf str_control == CONSTS.STR_KEY_MOVE_TOGGLE
-        return VARS.key_move_toggle
-    elseIf str_control == CONSTS.STR_KEY_MOVE_FARTHER
-        return VARS.key_move_farther
-    elseIf str_control == CONSTS.STR_KEY_MOVE_NEARER
-        return VARS.key_move_nearer
-    elseIf str_control == CONSTS.STR_KEY_MOVE_ROTATE_RIGHT
-        return VARS.key_move_rotate_right
-    elseIf str_control == CONSTS.STR_KEY_MOVE_ROTATE_LEFT
-        return VARS.key_move_rotate_left
-    elseIf str_control == CONSTS.STR_KEY_N_HAS_BASE
-        return VARS.key_n_has_base
-    elseIf str_control == CONSTS.STR_KEY_N_COUNT_BASE
-        return VARS.key_n_count_base
-    elseIf str_control == CONSTS.STR_KEY_N_HAS_HEAD
-        return VARS.key_n_has_head
-    elseIf str_control == CONSTS.STR_KEY_N_COUNT_HEADS
-        return VARS.key_n_count_heads
-        
-    else
-        return -1
-    
+    if VARS.key_fs_unsettle > -1
+        RegisterForKey(VARS.key_fs_unsettle)
     endIf
-endFunction
-
-int function Get_Key_Default(string str_control)
-    if false
-
-    ; General
-    elseIf str_control == CONSTS.STR_KEY_G_MODIFIER
-        return CONSTS.KEY_DEF_G_MODIFIER
-    elseIf str_control == CONSTS.STR_KEY_G_DIALOGUE_MENU
-        return CONSTS.KEY_DEF_G_DIALOGUE_MENU
-
-    ; All Followers
-    elseIf str_control == CONSTS.STR_KEY_FS_MODIFIER
-        return CONSTS.KEY_DEF_FS_MODIFIER
-    elseIf str_control == CONSTS.STR_KEY_FS_SUMMON_ALL
-        return CONSTS.KEY_DEF_FS_SUMMON_ALL
-    elseIf str_control == CONSTS.STR_KEY_FS_SUMMON_MOBILE
-        return CONSTS.KEY_DEF_FS_SUMMON_MOBILE
-    elseIf str_control == CONSTS.STR_KEY_FS_SUMMON_IMMOBILE
-        return CONSTS.KEY_DEF_FS_SUMMON_IMMOBILE
-    elseIf str_control == CONSTS.STR_KEY_FS_SETTLE
-        return CONSTS.KEY_DEF_FS_SETTLE
-    elseIf str_control == CONSTS.STR_KEY_FS_UNSETTLE
-        return CONSTS.KEY_DEF_FS_UNSETTLE
-    elseIf str_control == CONSTS.STR_KEY_FS_IMMOBILIZE
-        return CONSTS.KEY_DEF_FS_IMMOBILIZE
-    elseIf str_control == CONSTS.STR_KEY_FS_MOBILIZE
-        return CONSTS.KEY_DEF_FS_MOBILIZE
-    elseIf str_control == CONSTS.STR_KEY_FS_SNEAK
-        return CONSTS.KEY_DEF_FS_SNEAK
-    elseIf str_control == CONSTS.STR_KEY_FS_UNSNEAK
-        return CONSTS.KEY_DEF_FS_UNSNEAK
-    elseIf str_control == CONSTS.STR_KEY_FS_RESURRECT
-        return CONSTS.KEY_DEF_FS_RESURRECT
-    
-    ; All Members
-    elseIf str_control == CONSTS.STR_KEY_MS_MODIFIER
-        return CONSTS.KEY_DEF_MS_MODIFIER
-    elseIf str_control == CONSTS.STR_KEY_MS_DISPLAY_TOGGLE
-        return CONSTS.KEY_DEF_MS_DISPLAY_TOGGLE
-    elseIf str_control == CONSTS.STR_KEY_MS_DISPLAY_PREVIOUS
-        return CONSTS.KEY_DEF_MS_DISPLAY_PREVIOUS
-    elseIf str_control == CONSTS.STR_KEY_MS_DISPLAY_NEXT
-        return CONSTS.KEY_DEF_MS_DISPLAY_NEXT
-    
-    ; One Member/Follower
-    elseIf str_control == CONSTS.STR_KEY_M_MODIFIER
-        return CONSTS.KEY_DEF_M_MODIFIER
-    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_MEMBER
-        return CONSTS.KEY_DEF_M_TOGGLE_MEMBER
-    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_CLONE
-        return CONSTS.KEY_DEF_M_TOGGLE_CLONE
-    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_SETTLER
-        return CONSTS.KEY_DEF_M_TOGGLE_SETTLER
-    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_THRALL
-        return CONSTS.KEY_DEF_M_TOGGLE_THRALL
-    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_IMMOBILE
-        return CONSTS.KEY_DEF_M_TOGGLE_IMMOBILE
-    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_PARALYZED
-        return CONSTS.KEY_DEF_M_TOGGLE_PARALYZED
-    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_FOLLOWER
-        return CONSTS.KEY_DEF_M_TOGGLE_FOLLOWER
-    elseIf str_control == CONSTS.STR_KEY_M_TOGGLE_SNEAK
-        return CONSTS.KEY_DEF_M_TOGGLE_SNEAK
-
-    ; One NPC
-    elseIf str_control == CONSTS.STR_KEY_N_MODIFIER
-        return CONSTS.KEY_DEF_N_MODIFIER
-    elseIf str_control == CONSTS.STR_KEY_MOVE_TOGGLE
-        return CONSTS.KEY_DEF_MOVE_TOGGLE
-    elseIf str_control == CONSTS.STR_KEY_MOVE_FARTHER
-        return CONSTS.KEY_DEF_MOVE_FARTHER
-    elseIf str_control == CONSTS.STR_KEY_MOVE_NEARER
-        return CONSTS.KEY_DEF_MOVE_NEARER
-    elseIf str_control == CONSTS.STR_KEY_MOVE_ROTATE_RIGHT
-        return CONSTS.KEY_DEF_MOVE_ROTATE_RIGHT
-    elseIf str_control == CONSTS.STR_KEY_MOVE_ROTATE_LEFT
-        return CONSTS.KEY_DEF_MOVE_ROTATE_LEFT
-    elseIf str_control == CONSTS.STR_KEY_N_HAS_BASE
-        return CONSTS.KEY_DEF_N_HAS_BASE
-    elseIf str_control == CONSTS.STR_KEY_N_COUNT_BASE
-        return CONSTS.KEY_DEF_N_COUNT_BASE
-    elseIf str_control == CONSTS.STR_KEY_N_HAS_HEAD
-        return CONSTS.KEY_DEF_N_HAS_HEAD
-    elseIf str_control == CONSTS.STR_KEY_N_COUNT_HEADS
-        return CONSTS.KEY_DEF_N_COUNT_HEADS
-
-    else
-        return -1
-        
+    if VARS.key_fs_mobilize > -1
+        RegisterForKey(VARS.key_fs_mobilize)
+    endIf
+    if VARS.key_fs_immobilize > -1
+        RegisterForKey(VARS.key_fs_immobilize)
+    endIf
+    if VARS.key_fs_sneak > -1
+        RegisterForKey(VARS.key_fs_sneak)
+    endIf
+    if VARS.key_fs_unsneak > -1
+        RegisterForKey(VARS.key_fs_unsneak)
+    endIf
+    if VARS.key_fs_saddle > -1
+        RegisterForKey(VARS.key_fs_saddle)
+    endIf
+    if VARS.key_fs_unsaddle > -1
+        RegisterForKey(VARS.key_fs_unsaddle)
+    endIf
+    if VARS.key_fs_resurrect > -1
+        RegisterForKey(VARS.key_fs_resurrect)
+    endIf
+    if VARS.key_fs_unfollow > -1
+        RegisterForKey(VARS.key_fs_unfollow)
+    endIf
+    if VARS.key_fs_unmember > -1
+        RegisterForKey(VARS.key_fs_unmember)
     endIf
 endFunction
 
@@ -465,67 +192,18 @@ event OnKeyDown(int code_key)
     
     Actor ref_actor = Game.GetCurrentCrosshairRef() as Actor
 
-    ; add Followers sub menu to dialogue_menu, e.g. "Summon All"
-
     if false
 
     ; General
-    elseIf code_key == VARS.key_g_dialogue_menu && Is_Modifier_Pressed(VARS.key_g_modifier)
+    elseIf code_key == VARS.key_g_dialogue_menu && Are_Mods_Pressed(CONSTS.KEY_G_DIALOGUE_MENU)
         FUNCS.ACTORS.Create_Menu()
 
-    ; All Followers
-    elseIf code_key == VARS.key_fs_summon_all && Is_Modifier_Pressed(VARS.key_fs_modifier)
-        COMMANDS.Followers_Summon_All()
-    elseIf code_key == VARS.key_fs_summon_mobile && Is_Modifier_Pressed(VARS.key_fs_modifier)
-        COMMANDS.Followers_Summon_Mobile()
-    elseIf code_key == VARS.key_fs_summon_immobile && Is_Modifier_Pressed(VARS.key_fs_modifier)
-        COMMANDS.Followers_Summon_Immobile()
-    elseIf code_key == VARS.key_fs_settle && Is_Modifier_Pressed(VARS.key_fs_modifier)
-        COMMANDS.Followers_Settle()
-    elseIf code_key == VARS.key_fs_unsettle && Is_Modifier_Pressed(VARS.key_fs_modifier)
-        COMMANDS.Followers_Unsettle()
-    elseIf code_key == VARS.key_fs_immobilize && Is_Modifier_Pressed(VARS.key_fs_modifier)
-        COMMANDS.Followers_Immobilize()
-    elseIf code_key == VARS.key_fs_mobilize && Is_Modifier_Pressed(VARS.key_fs_modifier)
-        COMMANDS.Followers_Mobilize()
-    elseIf code_key == VARS.key_fs_sneak && Is_Modifier_Pressed(VARS.key_fs_modifier)
-        COMMANDS.Followers_Sneak()
-    elseIf code_key == VARS.key_fs_unsneak && Is_Modifier_Pressed(VARS.key_fs_modifier)
-        COMMANDS.Followers_Unsneak()
-    elseIf code_key == VARS.key_fs_resurrect && Is_Modifier_Pressed(VARS.key_fs_modifier)
-        COMMANDS.Followers_Resurrect()
-
-    ; All Members
-    elseIf code_key == VARS.key_ms_display_toggle && Is_Modifier_Pressed(VARS.key_ms_modifier)
-        COMMANDS.Toggle_Members_Display(ref_actor)
-    elseIf code_key == VARS.key_ms_display_next && Is_Modifier_Pressed(VARS.key_ms_modifier)
-        COMMANDS.Members_Display_Next()
-    elseIf code_key == VARS.key_ms_display_previous && Is_Modifier_Pressed(VARS.key_ms_modifier)
-        COMMANDS.Members_Display_Previous()
-    
-    ; One Member/Follower
-    elseIf code_key == VARS.key_m_toggle_member && Is_Modifier_Pressed(VARS.key_m_modifier)
+    ; NPC
+    elseIf code_key == VARS.key_n_toggle_member && Are_Mods_Pressed(CONSTS.KEY_N_TOGGLE_MEMBER)
         COMMANDS.Toggle_Member_Sync(ref_actor)
-    elseIf code_key == VARS.key_m_toggle_clone && Is_Modifier_Pressed(VARS.key_m_modifier)
-        COMMANDS.Toggle_Clone_Sync(ref_actor)
-    elseIf code_key == VARS.key_m_toggle_settler && Is_Modifier_Pressed(VARS.key_m_modifier)
-        COMMANDS.Toggle_Settler_Async(ref_actor)
-    elseIf code_key == VARS.key_m_toggle_thrall && Is_Modifier_Pressed(VARS.key_m_modifier)
-        COMMANDS.Toggle_Thrall_Async(ref_actor)
-    elseIf code_key == VARS.key_m_toggle_immobile && Is_Modifier_Pressed(VARS.key_m_modifier)
-        COMMANDS.Toggle_Immobile_Async(ref_actor)
-    elseIf code_key == VARS.key_m_toggle_paralyzed && Is_Modifier_Pressed(VARS.key_m_modifier)
-        COMMANDS.Toggle_Paralyzed_Async(ref_actor)
-    elseIf code_key == VARS.key_m_toggle_follower && Is_Modifier_Pressed(VARS.key_m_modifier)
-        COMMANDS.Toggle_Follower_Sync(ref_actor)
-    elseIf code_key == VARS.key_m_toggle_sneak && Is_Modifier_Pressed(VARS.key_m_modifier)
-        COMMANDS.Toggle_Sneak_Async(ref_actor)
-
-    ; One NPC
-    elseIf code_key == VARS.key_move_toggle && Is_Modifier_Pressed(VARS.key_n_modifier)
+    elseIf code_key == VARS.key_n_toggle_move && Are_Mods_Pressed(CONSTS.KEY_N_TOGGLE_MOVE)
         COMMANDS.Move_Sync(ref_actor)
-    elseIf code_key == VARS.key_n_has_base && Is_Modifier_Pressed(VARS.key_n_modifier)
-        ; this should prob. be a func in commands
+    elseIf code_key == VARS.key_n_has_base && Are_Mods_Pressed(CONSTS.KEY_N_HAS_BASE)
         if ref_actor == none
             LOGS.Create_Note("That is not an NPC.", false)
         elseIf p_DATA.MODS.MEMBERS.Has_Base(ref_actor)
@@ -533,8 +211,7 @@ event OnKeyDown(int code_key)
         else
             LOGS.Create_Note("No member has the base of " + ACTORS.Get_Name(ref_actor) + ".", false)
         endIf
-    elseIf code_key == VARS.key_n_count_base && Is_Modifier_Pressed(VARS.key_n_modifier)
-        ; put in Commands also
+    elseIf code_key == VARS.key_n_count_base && Are_Mods_Pressed(CONSTS.KEY_N_COUNT_BASE)
         if ref_actor == none
             LOGS.Create_Note("That is not an NPC.", false)
         else
@@ -545,7 +222,7 @@ event OnKeyDown(int code_key)
                 LOGS.Create_Note(num_members + " members have the base of " + ACTORS.Get_Name(ref_actor) + ".", false)
             endIf
         endIf
-    elseif code_key == VARS.key_n_has_head && Is_Modifier_Pressed(VARS.key_n_modifier)
+    elseif code_key == VARS.key_n_has_head && Are_Mods_Pressed(CONSTS.KEY_N_HAS_HEAD)
         if ref_actor == none
             LOGS.Create_Note("That is not an NPC.", false)
         elseIf p_DATA.MODS.MEMBERS.Has_Head(ref_actor)
@@ -553,7 +230,7 @@ event OnKeyDown(int code_key)
         else
             LOGS.Create_Note("No member looks like " + ACTORS.Get_Name(ref_actor) + ".", false)
         endIf
-    elseIf code_key == VARS.key_n_count_heads && Is_Modifier_Pressed(VARS.key_n_modifier)
+    elseIf code_key == VARS.key_n_count_heads && Are_Mods_Pressed(CONSTS.KEY_N_COUNT_HEADS)
         if ref_actor == none
             LOGS.Create_Note("That is not an NPC.", false)
         else
@@ -564,6 +241,60 @@ event OnKeyDown(int code_key)
                 LOGS.Create_Note(num_heads + " members look like " + ACTORS.Get_Name(ref_actor) + ".", false)
             endIf
         endIf
+
+    ; Member
+    elseIf code_key == VARS.key_m_toggle_clone && Are_Mods_Pressed(CONSTS.KEY_M_TOGGLE_CLONE)
+        COMMANDS.Toggle_Clone_Sync(ref_actor)
+    elseIf code_key == VARS.key_m_toggle_settler && Are_Mods_Pressed(CONSTS.KEY_M_TOGGLE_SETTLER)
+        COMMANDS.Toggle_Settler_Async(ref_actor)
+    elseIf code_key == VARS.key_m_toggle_thrall && Are_Mods_Pressed(CONSTS.KEY_M_TOGGLE_THRALL)
+        COMMANDS.Toggle_Thrall_Async(ref_actor)
+    elseIf code_key == VARS.key_m_toggle_immobile && Are_Mods_Pressed(CONSTS.KEY_M_TOGGLE_IMMOBILE)
+        COMMANDS.Toggle_Immobile_Async(ref_actor)
+    elseIf code_key == VARS.key_m_toggle_paralyzed && Are_Mods_Pressed(CONSTS.KEY_M_TOGGLE_PARALYZED)
+        COMMANDS.Toggle_Paralyzed_Async(ref_actor)
+    elseIf code_key == VARS.key_m_toggle_follower && Are_Mods_Pressed(CONSTS.KEY_M_TOGGLE_FOLLOWER)
+        COMMANDS.Toggle_Follower_Sync(ref_actor)
+
+    ; Follower
+    elseIf code_key == VARS.key_f_toggle_sneak && Are_Mods_Pressed(CONSTS.KEY_F_TOGGLE_SNEAK)
+        COMMANDS.Toggle_Sneak_Async(ref_actor)
+    elseIf code_key == VARS.key_f_toggle_saddler && Are_Mods_Pressed(CONSTS.KEY_F_TOGGLE_SADDLER)
+        COMMANDS.Toggle_Saddler_Async(ref_actor)
+
+    ; Members
+    elseIf code_key == VARS.key_ms_toggle_display && Are_Mods_Pressed(CONSTS.KEY_MS_TOGGLE_DISPLAY)
+        COMMANDS.Toggle_Members_Display(ref_actor)
+    elseIf code_key == VARS.key_ms_display_previous && Are_Mods_Pressed(CONSTS.KEY_MS_DISPLAY_PREVIOUS)
+        COMMANDS.Members_Display_Previous()
+    elseIf code_key == VARS.key_ms_display_next && Are_Mods_Pressed(CONSTS.KEY_MS_DISPLAY_NEXT)
+        COMMANDS.Members_Display_Next()
+
+    ; Followers
+    elseIf code_key == VARS.key_fs_summon_all && Are_Mods_Pressed(CONSTS.KEY_FS_SUMMON_ALL)
+        COMMANDS.Followers_Summon_All()
+    elseIf code_key == VARS.key_fs_summon_mobile && Are_Mods_Pressed(CONSTS.KEY_FS_SUMMON_MOBILE)
+        COMMANDS.Followers_Summon_Mobile()
+    elseIf code_key == VARS.key_fs_summon_immobile && Are_Mods_Pressed(CONSTS.KEY_FS_SUMMON_IMMOBILE)
+        COMMANDS.Followers_Summon_Immobile()
+    elseIf code_key == VARS.key_fs_settle && Are_Mods_Pressed(CONSTS.KEY_FS_SETTLE)
+        COMMANDS.Followers_Settle()
+    elseIf code_key == VARS.key_fs_unsettle && Are_Mods_Pressed(CONSTS.KEY_FS_UNSETTLE)
+        COMMANDS.Followers_Unsettle()
+    elseIf code_key == VARS.key_fs_mobilize && Are_Mods_Pressed(CONSTS.KEY_FS_MOBILIZE)
+        COMMANDS.Followers_Mobilize()
+    elseIf code_key == VARS.key_fs_immobilize && Are_Mods_Pressed(CONSTS.KEY_FS_IMMOBILIZE)
+        COMMANDS.Followers_Immobilize()
+    elseIf code_key == VARS.key_fs_sneak && Are_Mods_Pressed(CONSTS.KEY_FS_SNEAK)
+        COMMANDS.Followers_Sneak()
+    elseIf code_key == VARS.key_fs_unsneak && Are_Mods_Pressed(CONSTS.KEY_FS_UNSNEAK)
+        COMMANDS.Followers_Unsneak()
+    elseIf code_key == VARS.key_fs_saddle && Are_Mods_Pressed(CONSTS.KEY_FS_SADDLE)
+        COMMANDS.Followers_Saddle()
+    elseIf code_key == VARS.key_fs_unsaddle && Are_Mods_Pressed(CONSTS.KEY_FS_UNSADDLE)
+        COMMANDS.Followers_Unsaddle()
+    elseIf code_key == VARS.key_fs_resurrect && Are_Mods_Pressed(CONSTS.KEY_FS_RESURRECT)
+        COMMANDS.Followers_Resurrect()
 
     endIf
 endEvent

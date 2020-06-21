@@ -239,6 +239,202 @@ namespace doticu_npcp { namespace Papyrus {
         }
     };
 
+    class Script : public IForEachScriptObjectFunctor
+    {
+    public:
+        Handle m_handle;
+        const char* m_name = nullptr;
+        Script_t* m_script = nullptr;
+
+        Script(Form_t* form, const char* name)
+        {
+            m_handle = Papyrus::Handle(form);
+            m_name = name;
+            m_handle.Registry()->VisitScripts(m_handle, this);
+        }
+        Script(Alias_t* alias, const char* name)
+        {
+            m_handle = Papyrus::Handle(alias);
+            m_name = name;
+            m_handle.Registry()->VisitScripts(m_handle, this);
+        }
+
+        virtual bool Visit(Script_t* script, void*)
+        {
+            if (String2::Is_Same_Caseless(m_name, script->classInfo->name.data)) {
+                m_script = script;
+                return false; // break
+            } else {
+                return true; // continue
+            }
+        }
+
+        operator Script_t* ()
+        {
+            return m_script;
+        }
+
+        operator void* ()
+        {
+            return static_cast<void*>(m_script);
+        }
+    };
+
+    // a lot of the credit for deciphering these types goes to Ryan-rsm-McKenzie of CommonLibSSE
+    class Object
+    {
+    public:
+        class Info
+        {
+        public:
+            class Type_Info
+            {
+            public:
+                enum class Type_t : UInt64
+                {
+                    TYPE_NONE = 0,
+                    TYPE_OBJECT = 1,
+                    TYPE_STRING = 2,
+                    TYPE_INT = 3,
+                    TYPE_FLOAT = 4,
+                    TYPE_BOOL = 5,
+
+                    TYPE_NONE_ARRAY = 10,
+                    TYPE_OBJECT_ARRAY = 11,
+                    TYPE_STRING_ARRAY = 12,
+                    TYPE_INT_ARRAY = 13,
+                    TYPE_FLOAT_ARRAY = 14,
+                    TYPE_BOOL_ARRAY = 15
+                };
+
+                Type_t raw;
+
+                Type_t Type();
+                Object::Info* Object_Info();
+                String_t To_String();
+                bool Is_None();
+                bool Is_Object();
+                bool Is_String();
+                bool Is_Int();
+                bool Is_Float();
+                bool Is_Bool();
+                bool Is_None_Array();
+                bool Is_Object_Array();
+                bool Is_String_Array();
+                bool Is_Int_Array();
+                bool Is_Float_Array();
+                bool Is_Bool_Array();
+            };
+
+            struct Setting_t
+            {
+                UInt64 unk_00; // 00
+            };
+            STATIC_ASSERT(sizeof(Setting_t) == 0x8);
+
+            struct Variable_t
+            {
+                String_t name; // 00
+                Type_Info type; // 08
+            };
+            STATIC_ASSERT(sizeof(Variable_t) == 0x10);
+
+            struct Default_t
+            {
+                UInt32 variable_idx; // 00
+                UInt32 pad_04; // 04
+                Papyrus::Variable_t variable; // 08
+            };
+            STATIC_ASSERT(sizeof(Default_t) == 0x18);
+
+            struct Property_t
+            {
+                String_t name; // 00
+                String_t parent_name; // 08
+                String_t property_name; // 10
+                Type_Info type; // 18
+                UInt32 flags_20; // 20
+                UInt32 unk_24; // 24
+                IFunction* getter; // 28
+                IFunction* setter; // 30
+                UInt32 auto_var_idx; // 38
+                UInt32 flags_3C; // 3C
+                String_t unk_40; // 40
+            };
+            STATIC_ASSERT(sizeof(Property_t) == 0x48);
+
+            UInt32 ref_count; // 00
+            UInt32 pad_04; // 04
+            String_t name; // 08
+            Info* parent; // 10
+            String_t unk_18; // 18
+            UInt32 flags_20; // 20
+            UInt32 flags_24; // 24
+            UInt32 flags_28; // 28
+            UInt32 pad_2C; // 2C
+            UInt8* data; // 30
+
+            UInt64 Count_Settings();
+            UInt64 Count_Variables();
+            UInt64 Count_Defaults();
+            UInt64 Count_Properties();
+
+            Setting_t* Settings();
+            Variable_t* Variables();
+            Default_t* Defaults();
+            Property_t* Properties();
+
+            SInt64 Variable_Index(String_t variable_name);
+            SInt64 Property_Index(String_t property_name);
+            Property_t* Property(String_t property_name);
+
+            void Log();
+            void Log_Settings();
+            void Log_Variables();
+            void Log_Defaults();
+            void Log_Properties();
+        };
+        STATIC_ASSERT(sizeof(Info) == 0x38);
+
+        Handle m_handle;
+        Entity_t* m_obj = nullptr;
+        Info* m_info = nullptr;
+        Variable_t* m_vars = nullptr;
+
+    private:
+        void _Object(const char* class_name);
+
+    public:
+        Object(Form_t* form, const char* class_name);
+        Object(Alias_t* alias, const char* class_name);
+    
+        bool Is_Valid();
+
+        bool Read_Property(String_t property_name, Variable_t& in_variable);
+        bool Write_Property(String_t property_name, Variable_t& out_variable);
+
+        Variable_t* Property(String_t property_name);
+        Variable_t* Variable(String_t variable_name);
+
+        void Log_Variables();
+
+        operator Entity_t*();
+    };
+
+    class IFunction_Callback_Functor
+    {
+    public:
+        virtual ~IFunction_Callback_Functor() = default; // 00
+        virtual void operator()(Variable_t result) = 0; // 01
+        virtual bool Can_Save() { return false; } // 02
+        virtual void Entity(Papyrus::Entity_t** entity) = 0; // 03
+
+        UInt32 ref_count = 0; // 00
+        UInt32 pad_04 = 0; // 04
+    };
+
+    typedef IFunctionArguments IFunction_Arguments_Functor;
+
     template <typename Type>
     Vector_t<Type> Slice_Array(Array_t<Type> arr, SInt32 from, SInt32 to_exclusive)
     {
