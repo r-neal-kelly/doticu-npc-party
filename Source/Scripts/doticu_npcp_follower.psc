@@ -350,7 +350,8 @@ p_Unlock()
         ACTORS.Move_To(ref_horse, p_ref_actor, 140, -90)
     endIf
 
-    if !p_ref_actor.IsOnMount()
+    Actor mounted_actor = doticu_npcp.Actor_Get_Mounted_Actor(ref_horse)
+    if !mounted_actor || mounted_actor != p_ref_actor
         (CONSTS.FORMLIST_GLOBALS_SADDLER_IS_SITTING.GetAt(p_id_alias) as GlobalVariable).SetValue(0)
     endIf
 

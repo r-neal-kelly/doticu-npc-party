@@ -37,8 +37,9 @@ namespace doticu_npcp { namespace Actor2 {
     float Get_Max_Actor_Value(Actor *actor, const char *name);
     void Set_Actor_Value(Actor *actor, const char *name, float value);
     void Reset_Actor_Value(Actor *actor, const char *name);
-
     void Log_Actor_Values(Actor *actor);
+
+    Actor_t* Get_Mounted_Actor(Actor_t* horse);
 }}
 
 namespace doticu_npcp { namespace Actor2 { namespace Exports {

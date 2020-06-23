@@ -12,6 +12,7 @@
 #include "object_ref.h"
 #include "outfit.h"
 #include "utils.h"
+#include "xdata.h"
 #include "xentry.h"
 #include "xlist.h"
 
@@ -691,6 +692,22 @@ namespace doticu_npcp { namespace Actor2 {
         #undef LOG_ACTOR_VALUE
     }
 
+    Actor_t* Get_Mounted_Actor(Actor_t* horse)
+    {
+        if (horse) {
+            XData::XInteraction* xinteraction = (XData::XInteraction*)horse->extraData.GetByType(kExtraData_Interaction);
+            if (xinteraction && xinteraction->interaction) {
+                NiPointer<TESObjectREFR> interactor = nullptr;
+                LookupREFRByHandle(xinteraction->interaction->interactor_handle, interactor);
+                return (Actor_t*)(TESObjectREFR*)interactor;
+            } else {
+                return nullptr;
+            }
+        } else {
+            return nullptr;
+        }
+    }
+
 }}
 
 namespace doticu_npcp { namespace Actor2 { namespace Exports {
@@ -746,6 +763,11 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
         return Actor2::Reset_Actor_Value(actor, name.data);
     }
 
+    Actor_t* Get_Mounted_Actor(Selfless_t*, Actor_t* horse)
+    {
+        return Actor2::Get_Mounted_Actor(horse);
+    }
+
     bool Register(VMClassRegistry *registry) {
         registry->RegisterFunction(
             new NativeFunction2 <Actor, void, BGSOutfit *, bool>(
@@ -789,6 +811,15 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
                 Actor2::Exports::Reset_Actor_Value,
                 registry)
         );
+
+        #define ADD_GLOBAL(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                               \
+            ADD_CLASS_METHOD("doticu_npcp", Selfless_t,                 \
+                             STR_FUNC_, ARG_NUM_,                       \
+                             RETURN_, Exports::METHOD_, __VA_ARGS__);   \
+        W
+
+        ADD_GLOBAL("Actor_Get_Mounted_Actor", 1, Actor_t*, Get_Mounted_Actor, Actor_t*);
 
         return true;
     }

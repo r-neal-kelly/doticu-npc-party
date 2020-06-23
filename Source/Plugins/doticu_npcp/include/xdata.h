@@ -8,6 +8,34 @@
 
 namespace doticu_npcp { namespace XData {
 
+    class Interaction : public BSHandleRefObject
+    {
+    public:
+        Interaction();
+        virtual ~Interaction(); // 00
+
+        UInt32 interactee_handle; // 10
+        UInt32 interactor_handle; // 14
+        bool is_synced; // 18
+        UInt8 pad_19; // 19
+        UInt16 pad_1A; // 1A
+        UInt32 pad_1C; // 1C
+    };
+    STATIC_ASSERT(sizeof(Interaction) == 0x20);
+
+    class XInteraction : public BSExtraData
+    {
+    public:
+        XInteraction();
+        virtual ~XInteraction(); // 00
+
+        Interaction* interaction;
+    };
+    STATIC_ASSERT(sizeof(XInteraction) == 0x18);
+
+    void Create_Interaction(TESObjectREFR* interactee, TESObjectREFR* interactor, bool is_synced);
+    void Destroy_Interaction(TESObjectREFR* obj);
+
     ExtraCount *Create_Count(UInt32 count);
     ExtraOwnership *Create_Ownership(TESForm *owner);
     ExtraReferenceHandle *Create_Reference_Handle(TESObjectREFR *obj);

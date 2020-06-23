@@ -190,6 +190,9 @@ const char *arr_str_xdata_types[180]{
 
 namespace doticu_npcp { namespace XData {
 
+    const RelocPtr<uintptr_t> xinteraction_vtbl(0x0152F540);
+    const RelocPtr<uintptr_t> interaction_vtbl(0x0165EC98);
+
     ExtraCount *Create_Count(UInt32 count) {
         ExtraCount *xdata = ExtraCount::Create();
         NPCP_Assert(xdata);
@@ -197,6 +200,71 @@ namespace doticu_npcp { namespace XData {
         xdata->count = count;
 
         return xdata;
+    }
+
+    // not sure if all of this should belong in one place, but it may help with clarity?
+    void Create_Interaction(TESObjectREFR* interactee, TESObjectREFR* interactor, bool is_synced)
+    {
+        if (interactee && interactor) {
+            Interaction* interaction = (Interaction*)Heap_Allocate(sizeof(Interaction));
+            memset(interaction, 0, sizeof(Interaction));
+            ((uintptr_t*)interaction)[0] = interaction_vtbl.GetUIntPtr();
+            NPCP_Assert(interaction);
+
+            interaction->interactee_handle = interactee->CreateRefHandle();
+            interaction->IncRef();
+
+            interaction->interactor_handle = interactor->CreateRefHandle();
+            interaction->IncRef();
+
+            interaction->is_synced = is_synced;
+
+            Destroy_Interaction(interactee);
+            Destroy_Interaction(interactor);
+
+            XInteraction* xinteraction_a = (XInteraction*)XData_t::Create(sizeof(XInteraction), xinteraction_vtbl.GetUIntPtr());
+            XInteraction* xinteraction_b = (XInteraction*)XData_t::Create(sizeof(XInteraction), xinteraction_vtbl.GetUIntPtr());
+            NPCP_Assert(xinteraction_a && xinteraction_b);
+
+            xinteraction_a->interaction = interaction;
+            xinteraction_b->interaction = interaction;
+
+            interactee->extraData.Add(kExtraData_Interaction, xinteraction_a);
+            interactor->extraData.Add(kExtraData_Interaction, xinteraction_b);
+        }
+    }
+
+    void Destroy_Interaction(TESObjectREFR* obj_a)
+    {
+        if (obj_a) {
+            XInteraction* xinteraction_a = (XInteraction*)obj_a->extraData.GetByType(kExtraData_Interaction);
+            if (xinteraction_a) {
+                Interaction* interaction = xinteraction_a->interaction;
+                if (interaction) {
+                    TESObjectREFR* obj_b = nullptr;
+                    NiPointer<TESObjectREFR> interactee = nullptr;
+                    NiPointer<TESObjectREFR> interactor = nullptr;
+                    LookupREFRByHandle(interaction->interactee_handle, interactee);
+                    LookupREFRByHandle(interaction->interactor_handle, interactor);
+                    if (interactee && interactee != obj_a) {
+                        obj_b = interactee;
+                    } else if (interactor && interactor != obj_a) {
+                        obj_b = interactor;
+                    }
+                    if (obj_b) {
+                        XInteraction* xinteraction_b = (XInteraction*)obj_b->extraData.GetByType(kExtraData_Interaction);
+                        if (xinteraction_b) {
+                            obj_b->extraData.Remove(kExtraData_Interaction, xinteraction_b);
+                            ((XData_t*)xinteraction_b)->~BSExtraData();
+                        }
+                        interaction->DecRef();
+                    }
+                    interaction->DecRef();
+                }
+                obj_a->extraData.Remove(kExtraData_Interaction, xinteraction_a);
+                ((XData_t*)xinteraction_a)->~BSExtraData();
+            }
+        }
     }
 
     ExtraOwnership *Create_Ownership(TESForm *owner) {

@@ -315,7 +315,7 @@ namespace doticu_npcp { namespace XList {
                          XData::Get_Type_String(xdata),
                          Form::Get_Name(((ExtraOwnership *)xdata)->owner));
             } else if (xdata->GetType() == kExtraData_ReferenceHandle) {
-                TESObjectREFR *object = ((ExtraReferenceHandle *)xdata)->GetReference();
+                TESObjectREFR* object = ((ExtraReferenceHandle*)xdata)->GetReference();
                 if (object) {
                     _MESSAGE("%sxdata idx: %i, type: %s, name: %s, quest-item: %s, off-limits: %s",
                              str_indent.c_str(),
@@ -327,6 +327,33 @@ namespace doticu_npcp { namespace XList {
                     XList::Log(&object->extraData, std::string(str_indent).append("    "));
                 } else {
                     _MESSAGE("%sxdata idx: %i, type: %s, (null)",
+                             str_indent.c_str(),
+                             idx_xdata,
+                             XData::Get_Type_String(xdata));
+                }
+            } else if (xdata->GetType() == kExtraData_Interaction) {
+                XData::XInteraction* xinteraction = reinterpret_cast<XData::XInteraction*>(xdata);
+                if (xinteraction->interaction) {
+                    NiPointer<TESObjectREFR> interactee = nullptr;
+                    NiPointer<TESObjectREFR> interactor = nullptr;
+                    LookupREFRByHandle(xinteraction->interaction->interactee_handle, interactee);
+                    LookupREFRByHandle(xinteraction->interaction->interactor_handle, interactor);
+                    _MESSAGE("%sxdata idx: %i, type: %s, interacted: %p, interactor: %p, is_synced: %u, interaction %p",
+                             str_indent.c_str(),
+                             idx_xdata,
+                             XData::Get_Type_String(xdata),
+                             interactee,
+                             interactor,
+                             xinteraction->interaction->is_synced,
+                             xinteraction->interaction);
+                    uintptr_t _vtbl_addr = *(uintptr_t*)xinteraction->interaction;
+                    uintptr_t _vtbl_offset = _vtbl_addr - RelocationManager::s_baseAddr;
+                    _MESSAGE("            _vtbl: %p, offset: %p, ref_count: %u",
+                             _vtbl_addr,
+                             _vtbl_offset,
+                             xinteraction->interaction->GetRefCount());
+                } else {
+                    _MESSAGE("%sxdata idx: %i, type: %s, (invalid)",
                              str_indent.c_str(),
                              idx_xdata,
                              XData::Get_Type_String(xdata));

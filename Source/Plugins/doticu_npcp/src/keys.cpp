@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include "skse64/Hooks_DirectInput8Create.h"
-
 #include "consts.h"
 #include "game.h"
 #include "keys.h"
@@ -15,16 +13,6 @@
 #include "vars.h"
 
 namespace doticu_npcp { namespace Keys {
-
-    static bool Is_Key_Pressed(Int_t key)
-    {
-        return key > 0 && DIHookControl::GetSingleton().IsKeyPressed(key);
-    }
-
-    static bool Is_Mod_Pressed(Int_t mod)
-    {
-        return mod < 1 || DIHookControl::GetSingleton().IsKeyPressed(mod);
-    }
 
     class Key_System_t
     {
@@ -74,14 +62,6 @@ namespace doticu_npcp { namespace Keys {
                         variables += 1;
                     }
                 }
-            }
-
-            bool Are_Pressed()
-            {
-                return
-                    Is_Mod_Pressed(mod_1) &&
-                    Is_Mod_Pressed(mod_2) &&
-                    Is_Mod_Pressed(mod_3);
             }
 
             Vector_t<Int_t> Vector()
@@ -201,7 +181,7 @@ namespace doticu_npcp { namespace Keys {
             return -1;
         }
 
-        String_t Key(u64 idx)
+        String_t Key(idx_t idx)
         {
             if (idx > -1 && idx < Size()) {
                 return keys[idx];
@@ -235,7 +215,7 @@ namespace doticu_npcp { namespace Keys {
             }
         }
 
-        Int_t Current_Value(u64 idx)
+        Int_t Current_Value(idx_t idx)
         {
             if (idx > -1 && idx < Size()) {
                 Variable_t* variable = Vars::Property(Vars::Self(), var_names[idx]);
@@ -269,7 +249,7 @@ namespace doticu_npcp { namespace Keys {
             }
         }
 
-        Mods Current_Mods(u64 idx)
+        Mods Current_Mods(idx_t idx)
         {
             if (idx > -1 && idx < Size()) {
                 return Mods(var_mods[idx]);
@@ -465,11 +445,11 @@ namespace doticu_npcp { namespace Keys {
         Key_System_t& key_system = Key_System();
         Key_System_t::Mods mods = Key_System_t::Mods(mod_1, mod_2, mod_3);
 
-        for (u64 idx = 0, size = key_system.Size(); idx < size; idx += 1) {
+        for (idx_t idx = 0, size = key_system.Size(); idx < size; idx += 1) {
             String_t current_key = key_system.Key(idx);
             if (current_key != key) {
                 Int_t current_value = key_system.Current_Value(idx);
-                if (current_value != KEY_INVALID && current_value == value) {
+                if (current_value > 0 && current_value == value) {
                     Key_System_t::Mods current_mods = key_system.Current_Mods(idx);
                     if (current_mods == mods) {
                         return current_key;
@@ -479,12 +459,6 @@ namespace doticu_npcp { namespace Keys {
         }
 
         return "";
-    }
-
-    Bool_t Are_Mods_Pressed(Keys_t* keys, String_t key)
-    {
-        //_MESSAGE("Are_Mods_Pressed: key %s, pressed: %i", key, Key_System().Current_Mods(key).Are_Pressed());
-        return Key_System().Current_Mods(key).Are_Pressed();
     }
 
 }}
@@ -507,7 +481,6 @@ namespace doticu_npcp { namespace Keys { namespace Exports {
         ADD_METHOD("Default_Mods_To_String", 1, String_t, Default_Mods_To_String, String_t);
         ADD_METHOD("Current_Mods_To_String", 1, String_t, Current_Mods_To_String, String_t);
         ADD_METHOD("Conflicting_Key", 5, String_t, Conflicting_Key, String_t, Int_t, Int_t, Int_t, Int_t);
-        ADD_METHOD("Are_Mods_Pressed", 1, Bool_t, Are_Mods_Pressed, String_t);
 
         #undef ADD_METHOD
 

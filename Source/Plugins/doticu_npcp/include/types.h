@@ -20,6 +20,7 @@ namespace doticu_npcp {
     typedef int16_t                 s16;
     typedef int32_t                 s32;
     typedef int64_t                 s64;
+    typedef int64_t                 idx_t;
 
     typedef UInt32                  Form_Type_t;
 

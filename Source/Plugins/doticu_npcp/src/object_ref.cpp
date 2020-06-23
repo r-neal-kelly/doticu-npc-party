@@ -12,6 +12,7 @@
 #include "utils.h"
 #include "vector.h"
 #include "xcontainer.h"
+#include "xdata.h"
 #include "xentry.h"
 #include "xlist.h"
 

@@ -129,7 +129,6 @@ endFunction/;
 ; Events
 event OnActivate(ObjectReference activator_obj)
     Actor activator_actor = activator_obj as Actor
-    ;doticu_npcp.Print(p_id_alias + " activated.")
     if activator_actor && p_ref_follower.Get_Actor() == activator_actor
         (CONSTS.FORMLIST_GLOBALS_SADDLER_IS_SITTING.GetAt(p_ref_follower.ID()) as GlobalVariable).SetValue(1)
         activator_actor.EvaluatePackage()

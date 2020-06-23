@@ -487,7 +487,7 @@ function f_On_Option_Select(int id_option)
     endIf
 
     MCM.SetTextOptionValue(id_option, KEYS.Current_Mods_To_String(hotkey), false)
-    KEYS.Update_Keys()
+    KEYS.Update_Keys(); is this necessary for mods?
 endFunction
 
 function f_On_Option_Default(int id_option)

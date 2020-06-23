@@ -151,7 +151,6 @@ namespace doticu_npcp { namespace Keys {
     String_t Default_Mods_To_String(Keys_t* keys, String_t key);
     String_t Current_Mods_To_String(Keys_t* keys, String_t key);
     String_t Conflicting_Key(Keys_t* keys, String_t key, Int_t value, Int_t mod_1 = -1, Int_t mod_2 = -1, Int_t mod_3 = -1);
-    Bool_t Are_Mods_Pressed(Keys_t* keys, String_t key);
 
 }}
 

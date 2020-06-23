@@ -313,15 +313,15 @@ event OnKeyUp(int code_key, float hold_time)
         return
     endIf
 
-    if code_key == VARS.key_n_toggle_move && KEYS.Are_Mods_Pressed(CONSTS.KEY_N_TOGGLE_MOVE)
+    if code_key == VARS.key_n_toggle_move && KEYS.Are_Mods_Pressed(VARS.key_n_toggle_move_mods)
         ACTORS.Toggle_Move(p_ref_actor); calls f_Destroy()
-    elseIf code_key == VARS.key_n_move_farther && KEYS.Are_Mods_Pressed(CONSTS.KEY_N_MOVE_FARTHER)
+    elseIf code_key == VARS.key_n_move_farther && KEYS.Are_Mods_Pressed(VARS.key_n_move_farther_mods)
         p_do_distance_farther = false
-    elseIf code_key == VARS.key_n_move_nearer && KEYS.Are_Mods_Pressed(CONSTS.KEY_N_MOVE_NEARER)
+    elseIf code_key == VARS.key_n_move_nearer && KEYS.Are_Mods_Pressed(VARS.key_n_move_nearer_mods)
         p_do_distance_nearer = false
-    elseIf code_key == VARS.key_n_move_rotate_left && KEYS.Are_Mods_Pressed(CONSTS.KEY_N_MOVE_ROTATE_LEFT)
+    elseIf code_key == VARS.key_n_move_rotate_left && KEYS.Are_Mods_Pressed(VARS.key_n_move_rotate_left_mods)
         p_do_rotate_left = false
-    elseIf code_key == VARS.key_n_move_rotate_right && KEYS.Are_Mods_Pressed(CONSTS.KEY_N_MOVE_ROTATE_RIGHT)
+    elseIf code_key == VARS.key_n_move_rotate_right && KEYS.Are_Mods_Pressed(VARS.key_n_move_rotate_right_mods)
         p_do_rotate_right = false
 
     endIf
