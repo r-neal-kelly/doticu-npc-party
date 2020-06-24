@@ -60,9 +60,33 @@ namespace doticu_npcp { namespace Utils { namespace Exports {
         _MESSAGE("    UInt8 pad047: 0x%X", cell->pad047);
     }
 
-    
+    using Int_t = Papyrus::Int_t;
+    using Int_Vector_t = Papyrus::Int_Vector_t;
+
+    Int_Vector_t New_Int_Array(Selfless_t*, Int_t size = 0, Int_t fill = 0)
+    {
+        Int_Vector_t vec;
+
+        vec.reserve(size);
+        for (Int_t idx = 0; idx < size; idx += 1) {
+            vec.push_back(fill);
+        }
+
+        return vec;
+    }
 
     bool Register(VMClassRegistry *registry) {
+        #define ADD_GLOBAL(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                               \
+            ADD_CLASS_METHOD("doticu_npcp", Selfless_t,                 \
+                             STR_FUNC_, ARG_NUM_,                       \
+                             RETURN_, Exports::METHOD_, __VA_ARGS__);   \
+        W
+
+        ADD_GLOBAL("New_Int_Array", 2, Int_Vector_t, New_Int_Array, Int_t, Int_t);
+
+        #undef ADD_GLOBAL
+
         registry->RegisterFunction(
             new NativeFunction0 <StaticFunctionTag, VMResultArray<SInt32>>(
                 "Get_Plugin_Version",

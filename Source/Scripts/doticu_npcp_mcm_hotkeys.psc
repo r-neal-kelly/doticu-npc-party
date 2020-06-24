@@ -32,6 +32,8 @@ doticu_npcp_data    p_DATA                              =  none
 ; Private Variables
 bool                p_is_created                        = false
 
+int                 p_option_set_defaults               =    -1
+
 ; Global
 int                 p_option_g_dialogue_menu            =    -1
 
@@ -140,6 +142,9 @@ function f_Build_Page()
     MCM.SetCursorFillMode(MCM.LEFT_TO_RIGHT)
 
     MCM.SetTitleText(" Hotkeys ")
+
+    p_option_set_defaults = MCM.AddTextOption(" Set All Defaults ", "")
+    MCM.AddEmptyOption()
 
     MCM.AddHeaderOption(" Global ")
     MCM.AddEmptyOption()
@@ -292,212 +297,53 @@ function f_On_Option_Keymap_Change(int id_option, int value, string conflicting_
     endIf
 
     int[] mods = KEYS.Current_Mods(hotkey)
-    if !p_Can_Set_Hotkey(hotkey, value, mods[0], mods[1], mods[2])
-        return
+
+    if p_Can_Set_Hotkey(hotkey, value, mods[0], mods[1], mods[2])
+        p_Set_Hotkey_Value(id_option, hotkey, value)
     endIf
-
-    if false
-
-    ; Global
-    elseIf id_option == p_option_g_dialogue_menu
-        VARS.key_g_dialogue_menu = value
-
-    ; NPC
-    elseIf id_option == p_option_n_toggle_member
-        VARS.key_n_toggle_member = value
-    elseIf id_option == p_option_n_toggle_move
-        VARS.key_n_toggle_move = value
-    elseIf id_option == p_option_n_move_nearer
-        VARS.key_n_move_nearer = value
-    elseIf id_option == p_option_n_move_farther
-        VARS.key_n_move_farther = value
-    elseIf id_option == p_option_n_move_rotate_left
-        VARS.key_n_move_rotate_left = value
-    elseIf id_option == p_option_n_move_rotate_right
-        VARS.key_n_move_rotate_right = value
-    elseIf id_option == p_option_n_has_base
-        VARS.key_n_has_base = value
-    elseIf id_option == p_option_n_count_base
-        VARS.key_n_count_base = value
-    elseIf id_option == p_option_n_has_head
-        VARS.key_n_has_head = value
-    elseIf id_option == p_option_n_count_heads
-        VARS.key_n_count_heads = value
-
-    ; Member
-    elseIf id_option == p_option_m_toggle_clone
-        VARS.key_m_toggle_clone = value
-    elseIf id_option == p_option_m_toggle_settler
-        VARS.key_m_toggle_settler = value
-    elseIf id_option == p_option_m_toggle_thrall
-        VARS.key_m_toggle_thrall = value
-    elseIf id_option == p_option_m_toggle_immobile
-        VARS.key_m_toggle_immobile = value
-    elseIf id_option == p_option_m_toggle_paralyzed
-        VARS.key_m_toggle_paralyzed = value
-    elseIf id_option == p_option_m_toggle_follower
-        VARS.key_m_toggle_follower = value
-
-    ; Follower
-    elseIf id_option == p_option_f_toggle_sneak
-        VARS.key_f_toggle_sneak = value
-    elseIf id_option == p_option_f_toggle_saddler
-        VARS.key_f_toggle_saddler = value
-
-    ; Members
-    elseIf id_option == p_option_ms_toggle_display
-        VARS.key_ms_toggle_display = value
-    elseIf id_option == p_option_ms_display_previous
-        VARS.key_ms_display_previous = value
-    elseIf id_option == p_option_ms_display_next
-        VARS.key_ms_display_next = value
-
-    ; Followers
-    elseIf id_option == p_option_fs_summon_all
-        VARS.key_fs_summon_all = value
-    elseIf id_option == p_option_fs_summon_mobile
-        VARS.key_fs_summon_mobile = value
-    elseIf id_option == p_option_fs_summon_immobile
-        VARS.key_fs_summon_immobile = value
-    elseIf id_option == p_option_fs_settle
-        VARS.key_fs_settle = value
-    elseIf id_option == p_option_fs_unsettle
-        VARS.key_fs_unsettle = value
-    elseIf id_option == p_option_fs_immobilize
-        VARS.key_fs_immobilize = value
-    elseIf id_option == p_option_fs_mobilize
-        VARS.key_fs_mobilize = value
-    elseIf id_option == p_option_fs_sneak
-        VARS.key_fs_sneak = value
-    elseIf id_option == p_option_fs_unsneak
-        VARS.key_fs_unsneak = value
-    elseIf id_option == p_option_fs_saddle
-        VARS.key_fs_saddle = value
-    elseIf id_option == p_option_fs_unsaddle
-        VARS.key_fs_unsaddle = value
-    elseIf id_option == p_option_fs_resurrect
-        VARS.key_fs_resurrect = value
-
-    else
-        return
-
-    endIf
-
-    MCM.SetKeymapOptionValue(id_option, value, false)
-    KEYS.Update_Keys()
 endFunction
 
 function f_On_Option_Select(int id_option)
-    string hotkey = p_Mods_Option_to_Hotkey(id_option)
-    if !hotkey
-        return
-    endIf
-
-    int value = KEYS.Current_Value(hotkey)
-    int[] mods = p_Read_Pressed_Mods()
-    if !mods || !p_Can_Set_Hotkey(hotkey, value, mods[0], mods[1], mods[2])
-        return
-    endIf
-
-    if false
-
-    ; Global
-    elseIf id_option == p_option_g_dialogue_menu_mods
-        VARS.key_g_dialogue_menu_mods = mods
-
-    ; NPC
-    elseIf id_option == p_option_n_toggle_member_mods
-        VARS.key_n_toggle_member_mods = mods
-    elseIf id_option == p_option_n_toggle_move_mods
-        VARS.key_n_toggle_move_mods = mods
-    elseIf id_option == p_option_n_move_farther_mods
-        VARS.key_n_move_farther_mods = mods
-    elseIf id_option == p_option_n_move_nearer_mods
-        VARS.key_n_move_nearer_mods = mods
-    elseIf id_option == p_option_n_move_rotate_right_mods
-        VARS.key_n_move_rotate_right_mods = mods
-    elseIf id_option == p_option_n_move_rotate_left_mods
-        VARS.key_n_move_rotate_left_mods = mods
-    elseIf id_option == p_option_n_has_base_mods
-        VARS.key_n_has_base_mods = mods
-    elseIf id_option == p_option_n_count_base_mods
-        VARS.key_n_count_base_mods = mods
-    elseIf id_option == p_option_n_has_head_mods
-        VARS.key_n_has_head_mods = mods
-    elseIf id_option == p_option_n_count_heads_mods
-        VARS.key_n_count_heads_mods = mods
-
-    ; Member
-    elseIf id_option == p_option_m_toggle_clone_mods
-        VARS.key_m_toggle_clone_mods = mods
-    elseIf id_option == p_option_m_toggle_settler_mods
-        VARS.key_m_toggle_settler_mods = mods
-    elseIf id_option == p_option_m_toggle_thrall_mods
-        VARS.key_m_toggle_thrall_mods = mods
-    elseIf id_option == p_option_m_toggle_immobile_mods
-        VARS.key_m_toggle_immobile_mods = mods
-    elseIf id_option == p_option_m_toggle_paralyzed_mods
-        VARS.key_m_toggle_paralyzed_mods = mods
-    elseIf id_option == p_option_m_toggle_follower_mods
-        VARS.key_m_toggle_follower_mods = mods
-
-    ; Follower
-    elseIf id_option == p_option_f_toggle_sneak_mods
-        VARS.key_f_toggle_sneak_mods = mods
-    elseIf id_option == p_option_f_toggle_saddler_mods
-        VARS.key_f_toggle_saddler_mods = mods
-
-    ; Members
-    elseIf id_option == p_option_ms_toggle_display_mods
-        VARS.key_ms_toggle_display_mods = mods
-    elseIf id_option == p_option_ms_display_previous_mods
-        VARS.key_ms_display_previous_mods = mods
-    elseIf id_option == p_option_ms_display_next_mods
-        VARS.key_ms_display_next_mods = mods
-
-    ; Followers
-    elseIf id_option == p_option_fs_summon_all_mods
-        VARS.key_fs_summon_all_mods = mods
-    elseIf id_option == p_option_fs_summon_mobile_mods
-        VARS.key_fs_summon_mobile_mods = mods
-    elseIf id_option == p_option_fs_summon_immobile_mods
-        VARS.key_fs_summon_immobile_mods = mods
-    elseIf id_option == p_option_fs_settle_mods
-        VARS.key_fs_settle_mods = mods
-    elseIf id_option == p_option_fs_unsettle_mods
-        VARS.key_fs_unsettle_mods = mods
-    elseIf id_option == p_option_fs_immobilize_mods
-        VARS.key_fs_immobilize_mods = mods
-    elseIf id_option == p_option_fs_mobilize_mods
-        VARS.key_fs_mobilize_mods = mods
-    elseIf id_option == p_option_fs_sneak_mods
-        VARS.key_fs_sneak_mods = mods
-    elseIf id_option == p_option_fs_unsneak_mods
-        VARS.key_fs_unsneak_mods = mods
-    elseIf id_option == p_option_fs_saddle_mods
-        VARS.key_fs_saddle_mods = mods
-    elseIf id_option == p_option_fs_unsaddle_mods
-        VARS.key_fs_unsaddle_mods = mods
-    elseIf id_option == p_option_fs_resurrect_mods
-        VARS.key_fs_resurrect_mods = mods
-
+    if id_option == p_option_set_defaults
+        if MCM.ShowMessage("This will set all NPC Party hotkeys to their defaults.\n" + \
+                           "You will need to confirm any conflicts. Continue?", \
+                           true, " Yes ", " No ")
+            p_Set_Hotkey_Defaults()
+        endIf
     else
-        return
-
+        string hotkey = p_Mods_Option_to_Hotkey(id_option)
+        if !hotkey
+            return
+        endIf
+    
+        int value = KEYS.Current_Value(hotkey)
+        int[] mods = p_Read_Pressed_Mods(hotkey)
+        if mods.length > 0 && p_Can_Set_Hotkey(hotkey, value, mods[0], mods[1], mods[2])
+            p_Set_Hotkey_Mods(id_option, hotkey, mods)
+        endIf
     endIf
-
-    MCM.SetTextOptionValue(id_option, KEYS.Current_Mods_To_String(hotkey), false)
-    KEYS.Update_Keys(); is this necessary for mods?
 endFunction
 
 function f_On_Option_Default(int id_option)
+    if id_option == p_option_set_defaults
+        return
+    endIf
+
     string hotkey = p_Value_Option_To_Hotkey(id_option)
     if hotkey
-        p_Set_Default_Value(id_option, hotkey)
+        int value = KEYS.Default_Value(hotkey)
+        int[] mods = KEYS.Current_Mods(hotkey)
+        if p_Can_Set_Hotkey(hotkey, value, mods[0], mods[1], mods[2])
+            p_Set_Hotkey_Value(id_option, hotkey, value)
+        endIf
     else
-        hotkey = p_Mods_Option_to_Hotkey(id_option)
+        hotkey = p_Mods_Option_To_Hotkey(id_option)
         if hotkey
-            p_Set_Default_Mods(id_option, hotkey)
+            int value = KEYS.Current_Value(hotkey)
+            int[] mods = KEYS.Default_Mods(hotkey)
+            if p_Can_Set_Hotkey(hotkey, value, mods[0], mods[1], mods[2])
+                p_Set_Hotkey_Mods(id_option, hotkey, mods)
+            endIf
         endIf
     endIf
 endFunction
@@ -506,6 +352,9 @@ function f_On_Option_Highlight(int id_option)
     string hotkey_message = "Set a combination of modifier keys that must be pressed for this hotkey to work."
 
     if false
+
+    elseIf id_option == p_option_set_defaults
+        MCM.SetInfoText("Set all hotkeys to their defaults. Will also set modifiers.")
 
     ; Global
     elseIf id_option == p_option_g_dialogue_menu
@@ -852,35 +701,42 @@ string function p_Mods_Option_to_Hotkey(int id_option)
     endIf
 endFunction
 
-int[] function p_Read_Pressed_Mods()
-    if MCM.ShowMessage("Press and hold up to three keys and click enter. Cancel will leave the mods as they are.", true)
-        int[] mods = new int[3]
-        mods[0] = -1
-        mods[1] = -1
-        mods[2] = -1
+int[] function p_Read_Pressed_Mods(string hotkey)
+    int[] mods = new int[3]
+    mods[0] = -1
+    mods[1] = -1
+    mods[2] = -1
 
-        int size = Input.GetNumKeysPressed()
-        if size > 0
-            mods[0] = Input.GetNthKeyPressed(0)
+    if MCM.ShowMessage("Set or Unset mods?", true, " Set ", " Unset ")
+        if MCM.ShowMessage("Press and hold up to three keys and click enter. Cancel will leave the mods as they are.", true)
+            int size = Input.GetNumKeysPressed()
+            if size > 0
+                mods[0] = Input.GetNthKeyPressed(0)
+            endIf
+            if size > 1
+                mods[1] = Input.GetNthKeyPressed(1)
+            endIf
+            if size > 2
+                mods[2] = Input.GetNthKeyPressed(2)
+            endIf
+            return mods
+        else
+            return doticu_npcp.New_Int_Array(0)
         endIf
-        if size > 1
-            mods[1] = Input.GetNthKeyPressed(1)
-        endIf
-        if size > 2
-            mods[2] = Input.GetNthKeyPressed(2)
-        endIf
-
-        return mods
     else
-        return none
+        if MCM.ShowMessage("Are you sure you want to clear mods?", true)
+            return mods
+        else
+            return doticu_npcp.New_Int_Array(0)
+        endIf
     endIf
 endFunction
 
 bool function p_Can_Set_Hotkey(string hotkey, int value, int mod_1, int mod_2, int mod_3)
-    if value > -1
-        string npcp_conflict = KEYS.Conflicting_Key(hotkey, value, mod_1, mod_2, mod_3)
+    if value > 0
+        string npcp_conflict = KEYS.Conflicting_Hotkey(hotkey, value, mod_1, mod_2, mod_3)
         if npcp_conflict != ""
-            return MCM.ShowMessage("This conflicts with '" + npcp_conflict + "'. Set anyway?", true)
+            return MCM.ShowMessage("This conflicts with '" + npcp_conflict + "'. Set key anyway?", true)
         else
             string mcm_conflict = MCM.GetCustomControl(value)
             if mcm_conflict && KEYS.Current_Value(hotkey) != value
@@ -889,20 +745,12 @@ bool function p_Can_Set_Hotkey(string hotkey, int value, int mod_1, int mod_2, i
                 return true
             endIf
         endIf
+    else
+        return true
     endIf
 endFunction
 
-function p_Set_Default_Value(int id_option, string hotkey)
-    if !hotkey
-        return
-    endIf
-
-    int value = KEYS.Default_Value(hotkey)
-    int[] mods = KEYS.Current_Mods(hotkey)
-    if !p_Can_Set_Hotkey(hotkey, value, mods[0], mods[1], mods[2])
-        return
-    endIf
-
+function p_Set_Hotkey_Value(int id_option, string hotkey, int value, bool do_update_keys = true)
     if false
 
     ; Global
@@ -914,14 +762,14 @@ function p_Set_Default_Value(int id_option, string hotkey)
         VARS.key_n_toggle_member = value
     elseIf id_option == p_option_n_toggle_move
         VARS.key_n_toggle_move = value
-    elseIf id_option == p_option_n_move_farther
-        VARS.key_n_move_farther = value
     elseIf id_option == p_option_n_move_nearer
         VARS.key_n_move_nearer = value
-    elseIf id_option == p_option_n_move_rotate_right
-        VARS.key_n_move_rotate_right = value
+    elseIf id_option == p_option_n_move_farther
+        VARS.key_n_move_farther = value
     elseIf id_option == p_option_n_move_rotate_left
         VARS.key_n_move_rotate_left = value
+    elseIf id_option == p_option_n_move_rotate_right
+        VARS.key_n_move_rotate_right = value
     elseIf id_option == p_option_n_has_base
         VARS.key_n_has_base = value
     elseIf id_option == p_option_n_count_base
@@ -991,20 +839,13 @@ function p_Set_Default_Value(int id_option, string hotkey)
     endIf
 
     MCM.SetKeymapOptionValue(id_option, value, false)
-    KEYS.Update_Keys()
+
+    if do_update_keys
+        KEYS.Update_Keys()
+    endIf
 endFunction
 
-function p_Set_Default_Mods(int id_option, string hotkey)
-    if !hotkey
-        return
-    endIf
-
-    int value = KEYS.Current_Value(hotkey)
-    int[] mods = KEYS.Default_Mods(hotkey)
-    if !p_Can_Set_Hotkey(hotkey, value, mods[0], mods[1], mods[2])
-        return
-    endIf
-
+function p_Set_Hotkey_Mods(int id_option, string hotkey, int[] mods)
     if false
 
     ; Global
@@ -1093,9 +934,65 @@ function p_Set_Default_Mods(int id_option, string hotkey)
     endIf
 
     MCM.SetTextOptionValue(id_option, KEYS.Current_Mods_To_String(hotkey), false)
-    KEYS.Update_Keys()
 endFunction
 
-function p_Set_Default_Hotkeys()
-    ; this is supposed to default everythign
+function p_Set_Hotkey_Default(int id_value, int id_mods, string hotkey)
+    if hotkey
+        int value = KEYS.Default_Value(hotkey)
+        int[] mods = KEYS.Default_Mods(hotkey)
+        if p_Can_Set_Hotkey(hotkey, value, mods[0], mods[1], mods[2])
+            p_Set_Hotkey_Value(id_value, hotkey, value, false)
+            p_Set_Hotkey_Mods(id_mods, hotkey, mods)
+        endIf
+    endIf
+endFunction
+
+function p_Set_Hotkey_Defaults()
+    ; Global
+    p_Set_Hotkey_Default(p_option_g_dialogue_menu,      p_option_g_dialogue_menu_mods,      CONSTS.KEY_G_DIALOGUE_MENU)
+
+    ; NPC
+    p_Set_Hotkey_Default(p_option_n_toggle_member,      p_option_n_toggle_member_mods,      CONSTS.KEY_N_TOGGLE_MEMBER)
+    p_Set_Hotkey_Default(p_option_n_toggle_move,        p_option_n_toggle_move_mods,        CONSTS.KEY_N_TOGGLE_MOVE)
+    p_Set_Hotkey_Default(p_option_n_move_farther,       p_option_n_move_farther_mods,       CONSTS.KEY_N_MOVE_FARTHER)
+    p_Set_Hotkey_Default(p_option_n_move_nearer,        p_option_n_move_nearer_mods,        CONSTS.KEY_N_MOVE_NEARER)
+    p_Set_Hotkey_Default(p_option_n_move_rotate_right,  p_option_n_move_rotate_right_mods,  CONSTS.KEY_N_MOVE_ROTATE_RIGHT)
+    p_Set_Hotkey_Default(p_option_n_move_rotate_left,   p_option_n_move_rotate_left_mods,   CONSTS.KEY_N_MOVE_ROTATE_LEFT)
+    p_Set_Hotkey_Default(p_option_n_has_base,           p_option_n_has_base_mods,           CONSTS.KEY_N_HAS_BASE)
+    p_Set_Hotkey_Default(p_option_n_count_base,         p_option_n_count_base_mods,         CONSTS.KEY_N_COUNT_BASE)
+    p_Set_Hotkey_Default(p_option_n_has_head,           p_option_n_has_head_mods,           CONSTS.KEY_N_HAS_HEAD)
+    p_Set_Hotkey_Default(p_option_n_count_heads,        p_option_n_count_heads_mods,        CONSTS.KEY_N_COUNT_HEADS)
+
+    ; Member
+    p_Set_Hotkey_Default(p_option_m_toggle_clone,       p_option_m_toggle_clone_mods,       CONSTS.KEY_M_TOGGLE_CLONE)
+    p_Set_Hotkey_Default(p_option_m_toggle_settler,     p_option_m_toggle_settler_mods,     CONSTS.KEY_M_TOGGLE_SETTLER)
+    p_Set_Hotkey_Default(p_option_m_toggle_thrall,      p_option_m_toggle_thrall_mods,      CONSTS.KEY_M_TOGGLE_THRALL)
+    p_Set_Hotkey_Default(p_option_m_toggle_immobile,    p_option_m_toggle_immobile_mods,    CONSTS.KEY_M_TOGGLE_IMMOBILE)
+    p_Set_Hotkey_Default(p_option_m_toggle_paralyzed,   p_option_m_toggle_paralyzed_mods,   CONSTS.KEY_M_TOGGLE_PARALYZED)
+    p_Set_Hotkey_Default(p_option_m_toggle_follower,    p_option_m_toggle_follower_mods,    CONSTS.KEY_M_TOGGLE_FOLLOWER)
+
+    ; Follower
+    p_Set_Hotkey_Default(p_option_f_toggle_sneak,       p_option_f_toggle_sneak_mods,       CONSTS.KEY_F_TOGGLE_SNEAK)
+    p_Set_Hotkey_Default(p_option_f_toggle_saddler,     p_option_f_toggle_saddler_mods,     CONSTS.KEY_F_TOGGLE_SADDLER)
+
+    ; Members
+    p_Set_Hotkey_Default(p_option_ms_toggle_display,    p_option_ms_toggle_display_mods,    CONSTS.KEY_MS_TOGGLE_DISPLAY)
+    p_Set_Hotkey_Default(p_option_ms_display_previous,  p_option_ms_display_previous_mods,  CONSTS.KEY_MS_DISPLAY_PREVIOUS)
+    p_Set_Hotkey_Default(p_option_ms_display_next,      p_option_ms_display_next_mods,      CONSTS.KEY_MS_DISPLAY_NEXT)
+
+    ; Followers
+    p_Set_Hotkey_Default(p_option_fs_summon_all,        p_option_fs_summon_all_mods,        CONSTS.KEY_FS_SUMMON_ALL)
+    p_Set_Hotkey_Default(p_option_fs_summon_mobile,     p_option_fs_summon_mobile_mods,     CONSTS.KEY_FS_SUMMON_MOBILE)
+    p_Set_Hotkey_Default(p_option_fs_summon_immobile,   p_option_fs_summon_immobile_mods,   CONSTS.KEY_FS_SUMMON_IMMOBILE)
+    p_Set_Hotkey_Default(p_option_fs_settle,            p_option_fs_settle_mods,            CONSTS.KEY_FS_SETTLE)
+    p_Set_Hotkey_Default(p_option_fs_unsettle,          p_option_fs_unsettle_mods,          CONSTS.KEY_FS_UNSETTLE)
+    p_Set_Hotkey_Default(p_option_fs_mobilize,          p_option_fs_mobilize_mods,          CONSTS.KEY_FS_MOBILIZE)
+    p_Set_Hotkey_Default(p_option_fs_immobilize,        p_option_fs_immobilize_mods,        CONSTS.KEY_FS_IMMOBILIZE)
+    p_Set_Hotkey_Default(p_option_fs_sneak,             p_option_fs_sneak_mods,             CONSTS.KEY_FS_SNEAK)
+    p_Set_Hotkey_Default(p_option_fs_unsneak,           p_option_fs_unsneak_mods,           CONSTS.KEY_FS_UNSNEAK)
+    p_Set_Hotkey_Default(p_option_fs_saddle,            p_option_fs_saddle_mods,            CONSTS.KEY_FS_SADDLE)
+    p_Set_Hotkey_Default(p_option_fs_unsaddle,          p_option_fs_unsaddle_mods,          CONSTS.KEY_FS_UNSADDLE)
+    p_Set_Hotkey_Default(p_option_fs_resurrect,         p_option_fs_resurrect_mods,         CONSTS.KEY_FS_RESURRECT)
+
+    KEYS.Update_Keys()
 endFunction

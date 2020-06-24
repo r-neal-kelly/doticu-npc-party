@@ -800,7 +800,7 @@ function Followers_Saddle(int code_return)
         LOGS.Create_Note("Followers cannot saddle up in an interior space.")
     elseIf code_return == CODES.HASNT_FOLLOWER
         LOGS.Create_Note("No followers to saddle up.")
-    elseIf code_return == CODES.HASNT_NON_SNEAK
+    elseIf code_return == CODES.HASNT_NON_SADDLER
         LOGS.Create_Note("All followers are already saddled up.")
     else
         LOGS.Create_Error("Could not make followers saddle up: " + code_return)
@@ -812,7 +812,7 @@ function Followers_Unsaddle(int code_return)
         LOGS.Create_Note("All followers will unsaddle.")
     elseIf code_return == CODES.HASNT_FOLLOWER
         LOGS.Create_Note("No followers to unsaddle.")
-    elseIf code_return == CODES.HASNT_SNEAK
+    elseIf code_return == CODES.HASNT_SADDLER
         LOGS.Create_Note("All followers are already unsaddled.")
     else
         LOGS.Create_Error("Could not make followers unsaddle: " + code_return)

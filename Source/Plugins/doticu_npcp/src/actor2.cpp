@@ -570,12 +570,6 @@ namespace doticu_npcp { namespace Actor2 {
 
         Object_Ref::Move_To_Orbit(actor, target, radius, angle_degree);
 
-        /*if (!Is_AI_Enabled(actor)) {
-            // need to be careful, if they are on a horse. their extradata may have kExtraData_Horse as an indicator
-            // make sure to test once we have followers riding horses.
-            CALL_MEMBER_FN(actor, QueueNiNodeUpdate)(false);
-        }*/
-
         CALL_MEMBER_FN(actor, QueueNiNodeUpdate)(false);
     }
 
@@ -712,54 +706,28 @@ namespace doticu_npcp { namespace Actor2 {
 
 namespace doticu_npcp { namespace Actor2 { namespace Exports {
 
-    void Set_Outfit2(StaticFunctionTag *, Actor *actor, TESForm *linchpin, TESObjectREFR *vanilla, TESObjectREFR *custom, TESObjectREFR *transfer) {
+    void Set_Outfit2(Selfless_t*, Actor* actor, TESForm* linchpin, TESObjectREFR* vanilla, TESObjectREFR* custom, TESObjectREFR* transfer)
+    {
         return Actor2::Set_Outfit2(actor, linchpin, vanilla, custom, transfer);
-
-        _MESSAGE("\nVanilla Partition:");
-        Object_Ref::Log_XContainer(vanilla);
-
-        _MESSAGE("\nCustom Partition:");
-        Object_Ref::Log_XContainer(custom);
-
-        _MESSAGE("\nActor Before Set:");
-        Object_Ref::Log_XContainer(actor);
-
-        Actor2::Set_Outfit2(actor, linchpin, vanilla, custom, transfer);
-
-        _MESSAGE("\nActor After Set:");
-        Object_Ref::Log_XContainer(actor);
-
-        _MESSAGE("\nTransfer:");
-        Object_Ref::Log_XContainer(transfer);
     }
 
-    void Cache_Worn(StaticFunctionTag *, Actor *actor, TESForm *linchpin, TESObjectREFR *cache_out) {
+    void Cache_Worn(Selfless_t*, Actor* actor, TESForm* linchpin, TESObjectREFR* cache_out)
+    {
         return Actor2::Cache_Worn(actor, linchpin, cache_out);
     }
 
-    void Cache_Inventory(StaticFunctionTag *, Actor *actor, TESForm *linchpin, TESObjectREFR *worn_out, TESObjectREFR *pack_out) {
+    void Cache_Inventory(Selfless_t*, Actor* actor, TESForm* linchpin, TESObjectREFR* worn_out, TESObjectREFR* pack_out)
+    {
         return Actor2::Cache_Inventory(actor, linchpin, worn_out, pack_out);
-
-        _MESSAGE("\nWorn Before:");
-        Object_Ref::Log_XContainer(worn_out);
-
-        _MESSAGE("\nPack Before:");
-        Object_Ref::Log_XContainer(pack_out);
-
-        Actor2::Cache_Inventory(actor, linchpin, worn_out, pack_out);
-
-        _MESSAGE("\nWorn After:");
-        Object_Ref::Log_XContainer(worn_out);
-
-        _MESSAGE("\nPack After:");
-        Object_Ref::Log_XContainer(pack_out);
     }
 
-    void Cache_Static_Inventory(VMClassRegistry* registry, UInt32 id_stack, StaticFunctionTag *, Actor *actor, TESForm *linchpin, TESObjectREFR *cache_out) {
+    void Cache_Static_Inventory(VMClassRegistry* registry, UInt32 id_stack, Selfless_t*, Actor* actor, TESForm* linchpin, TESObjectREFR* cache_out)
+    {
         return Actor2::Cache_Static_Inventory(registry, id_stack, actor, linchpin, cache_out);
     }
 
-    void Reset_Actor_Value(Selfless_t *, Actor *actor, BSFixedString name) {
+    void Reset_Actor_Value(Selfless_t*, Actor* actor, BSFixedString name)
+    {
         return Actor2::Reset_Actor_Value(actor, name.data);
     }
 
@@ -768,49 +736,14 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
         return Actor2::Get_Mounted_Actor(horse);
     }
 
-    bool Register(VMClassRegistry *registry) {
-        registry->RegisterFunction(
-            new NativeFunction2 <Actor, void, BGSOutfit *, bool>(
-                "SetOutfit",
-                "Actor",
-                Actor2::Set_Outfit,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction5 <StaticFunctionTag, void, Actor *, TESForm *, TESObjectREFR *, TESObjectREFR *, TESObjectREFR *>(
-                "Actor_Set_Outfit2",
-                "doticu_npcp",
-                Actor2::Exports::Set_Outfit2,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction3 <StaticFunctionTag, void, Actor *, TESForm *, TESObjectREFR *>(
-                "Actor_Cache_Worn",
-                "doticu_npcp",
-                Actor2::Exports::Cache_Worn,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction4 <StaticFunctionTag, void, Actor *, TESForm *, TESObjectREFR *, TESObjectREFR *>(
-                "Actor_Cache_Inventory",
-                "doticu_npcp",
-                Actor2::Exports::Cache_Inventory,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction3 <StaticFunctionTag, void, Actor *, TESForm *, TESObjectREFR *>(
-                "Actor_Cache_Static_Inventory",
-                "doticu_npcp",
-                Actor2::Exports::Cache_Static_Inventory,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction2 <StaticFunctionTag, void, Actor *, BSFixedString>(
-                "Actor_Reset_Actor_Value",
-                "doticu_npcp",
-                Actor2::Exports::Reset_Actor_Value,
-                registry)
-        );
+    bool Register(VMClassRegistry* registry)
+    {
+        #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                               \
+            ADD_CLASS_METHOD("Actor", Actor,                            \
+                             STR_FUNC_, ARG_NUM_,                       \
+                             RETURN_, Actor2::METHOD_, __VA_ARGS__);    \
+        W
 
         #define ADD_GLOBAL(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
         M                                                               \
@@ -819,7 +752,17 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
                              RETURN_, Exports::METHOD_, __VA_ARGS__);   \
         W
 
+        ADD_METHOD("SetOutfit", 2, void, Set_Outfit, BGSOutfit*, bool);
+
+        ADD_GLOBAL("Actor_Set_Outfit2", 5, void, Set_Outfit2, Actor*, TESForm*, TESObjectREFR*, TESObjectREFR*, TESObjectREFR*);
+        ADD_GLOBAL("Actor_Cache_Worn", 3, void, Cache_Worn, Actor*, TESForm*, TESObjectREFR*);
+        ADD_GLOBAL("Actor_Cache_Inventory", 4, void, Cache_Inventory, Actor*, TESForm*, TESObjectREFR*, TESObjectREFR*);
+        ADD_GLOBAL("Actor_Cache_Static_Inventory", 3, void, Cache_Static_Inventory, Actor*, TESForm*, TESObjectREFR*);
+        ADD_GLOBAL("Actor_Reset_Actor_Value", 2, void, Reset_Actor_Value, Actor*, BSFixedString);
         ADD_GLOBAL("Actor_Get_Mounted_Actor", 1, Actor_t*, Get_Mounted_Actor, Actor_t*);
+
+        #undef ADD_METHOD
+        #undef ADD_GLOBAL
 
         return true;
     }

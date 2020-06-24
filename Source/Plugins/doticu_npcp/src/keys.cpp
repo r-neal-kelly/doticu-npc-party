@@ -4,6 +4,9 @@
 
 #pragma once
 
+#include "skse64/GameInput.h"
+#include "skse64/Hooks_DirectInput8Create.h"
+
 #include "consts.h"
 #include "game.h"
 #include "keys.h"
@@ -11,6 +14,7 @@
 #include "string2.h"
 #include "utils.h"
 #include "vars.h"
+#include "vector.h"
 
 namespace doticu_npcp { namespace Keys {
 
@@ -82,16 +86,18 @@ namespace doticu_npcp { namespace Keys {
 
                 if (mod_1 > 0) {
                     mods.append(Key_To_String(mod_1));
+                    if (mod_2 > 0) {
+                        mods.append(" + ");
+                        mods.append(Key_To_String(mod_2));
+                        if (mod_3 > 0) {
+                            mods.append(" + ");
+                            mods.append(Key_To_String(mod_3));
+                        }
+                    }
+                } else {
+                    mods.append("???");
                 }
-                if (mod_2 > 0) {
-                    mods.append(" + ");
-                    mods.append(Key_To_String(mod_2));
-                }
-                if (mod_3 > 0) {
-                    mods.append(" + ");
-                    mods.append(Key_To_String(mod_3));
-                }
-
+                
                 return String_t(mods.c_str());
             }
 
@@ -101,6 +107,21 @@ namespace doticu_npcp { namespace Keys {
                     mod_1 == rhs.mod_1 &&
                     mod_2 == rhs.mod_2 &&
                     mod_3 == rhs.mod_3;
+            }
+
+            size_t Size()
+            {
+                size_t count = 0;
+                if (mod_1 > 0) {
+                    count += 1;
+                }
+                if (mod_2 > 0) {
+                    count += 1;
+                }
+                if (mod_3 > 0) {
+                    count += 1;
+                }
+                return count;
             }
         };
 
@@ -118,54 +139,54 @@ namespace doticu_npcp { namespace Keys {
             defaults.reserve(64);
             default_mods.reserve(64);
 
-            #define KEY(NAME_, VAR_NAME_, DEFAULT_, ...)                \
-            M                                                           \
-                keys.push_back(NAME_);                                  \
-                var_names.push_back(VAR_NAME_);                         \
-                var_mods.push_back(VAR_NAME_ "_mods");                  \
-                defaults.push_back(DEFAULT_);                           \
-                default_mods.push_back(Mods(__VA_ARGS__));              \
+            #define KEY(NAME_, VAR_NAME_, DEFAULT_, ...)    \
+            M                                               \
+                keys.push_back(NAME_);                      \
+                var_names.push_back(VAR_NAME_);             \
+                var_mods.push_back(VAR_NAME_ "_mods");      \
+                defaults.push_back(DEFAULT_);               \
+                default_mods.push_back(Mods(__VA_ARGS__));  \
             W
 
-            KEY("Global: Open Dialogue Menu", "key_g_dialogue_menu", KEY_G, KEY_LEFT_CONTROL);
+            KEY("Global: Open Dialogue Menu",   "key_g_dialogue_menu",      KEY_G,                  KEY_LEFT_CONTROL);
 
-            KEY("NPC: Toggle Member", "key_n_toggle_member", KEY_NUM_PLUS, KEY_LEFT_CONTROL);
-            KEY("NPC: Toggle Move", "key_n_toggle_move", KEY_LEFT_ALT, KEY_LEFT_CONTROL);
-            KEY("NPC: Move Farther", "key_n_move_farther", KEY_UP_ARROW, KEY_LEFT_CONTROL);
-            KEY("NPC: Move Nearer", "key_n_move_nearer", KEY_DOWN_ARROW, KEY_LEFT_CONTROL);
-            KEY("NPC: Rotate Left", "key_n_move_rotate_left", KEY_LEFT_ARROW, KEY_LEFT_CONTROL);
-            KEY("NPC: Rotate Right", "key_n_move_rotate_right", KEY_RIGHT_ARROW, KEY_LEFT_CONTROL);
-            KEY("NPC: Has Base", "key_n_has_base", KEY_O, KEY_LEFT_CONTROL);
-            KEY("NPC: Count Base", "key_n_count_base", KEY_O, KEY_LEFT_CONTROL);
-            KEY("NPC: Has Head", "key_n_has_head", KEY_O, KEY_LEFT_CONTROL);
-            KEY("NPC: Count Heads", "key_n_count_heads", KEY_O, KEY_LEFT_CONTROL);
+            KEY("NPC: Toggle Member",           "key_n_toggle_member",      KEY_NUM_PLUS,           KEY_LEFT_CONTROL);
+            KEY("NPC: Toggle Move",             "key_n_toggle_move",        KEY_LEFT_ALT,           KEY_LEFT_CONTROL);
+            KEY("NPC: Move Farther",            "key_n_move_farther",       KEY_UP_ARROW);
+            KEY("NPC: Move Nearer",             "key_n_move_nearer",        KEY_DOWN_ARROW);
+            KEY("NPC: Rotate Left",             "key_n_move_rotate_left",   KEY_LEFT_ARROW);
+            KEY("NPC: Rotate Right",            "key_n_move_rotate_right",  KEY_RIGHT_ARROW);
+            KEY("NPC: Has Base",                "key_n_has_base",           KEY_RIGHT_SHIFT,        KEY_LEFT_CONTROL);
+            KEY("NPC: Count Base",              "key_n_count_base",         KEY_RIGHT_SHIFT,        KEY_LEFT_ALT);
+            KEY("NPC: Has Head",                "key_n_has_head",           KEY_ENTER,              KEY_LEFT_CONTROL);
+            KEY("NPC: Count Heads",             "key_n_count_heads",        KEY_ENTER,              KEY_LEFT_ALT);
 
-            KEY("Member: Toggle Clone", "key_m_toggle_clone", KEY_NUM_ENTER, KEY_LEFT_CONTROL);
-            KEY("Member: Toggle Settler", "key_m_toggle_settler", KEY_NUM_0, KEY_LEFT_CONTROL);
-            KEY("Member: Toggle Thrall", "key_m_toggle_thrall", KEY_NUM_9, KEY_LEFT_CONTROL);
-            KEY("Member: Toggle Immobile", "key_m_toggle_immobile", KEY_NUM_PERIOD, KEY_LEFT_CONTROL);
-            KEY("Member: Toggle Paralyzed", "key_m_toggle_paralyzed", KEY_FORWARD_SLASH, KEY_LEFT_CONTROL);
-            KEY("Member: Toggle Follower", "key_m_toggle_follower", KEY_NUM_ASTERISK, KEY_LEFT_CONTROL);
+            KEY("Member: Toggle Clone",         "key_m_toggle_clone",       KEY_NUM_ENTER,          KEY_LEFT_CONTROL);
+            KEY("Member: Toggle Settler",       "key_m_toggle_settler",     KEY_NUM_0,              KEY_LEFT_CONTROL);
+            KEY("Member: Toggle Thrall",        "key_m_toggle_thrall",      KEY_NUM_9,              KEY_LEFT_CONTROL);
+            KEY("Member: Toggle Immobile",      "key_m_toggle_immobile",    KEY_NUM_PERIOD,         KEY_LEFT_CONTROL);
+            KEY("Member: Toggle Paralyzed",     "key_m_toggle_paralyzed",   KEY_NUM_FORWARD_SLASH,  KEY_LEFT_CONTROL);
+            KEY("Member: Toggle Follower",      "key_m_toggle_follower",    KEY_NUM_ASTERISK,       KEY_LEFT_CONTROL);
 
-            KEY("Follower: Toggle Sneak", "key_f_toggle_sneak", KEY_NUM_MINUS, KEY_LEFT_CONTROL);
-            KEY("Follower: Toggle Saddler", "key_f_toggle_saddler", KEY_K, KEY_LEFT_CONTROL);
+            KEY("Follower: Toggle Sneak",       "key_f_toggle_sneak",       KEY_NUM_ASTERISK,       KEY_LEFT_ALT);
+            KEY("Follower: Toggle Saddler",     "key_f_toggle_saddler",     KEY_NUM_FORWARD_SLASH,  KEY_LEFT_ALT);
 
-            KEY("Members: Toggle Display", "key_ms_toggle_display", KEY_BACK_SLASH, KEY_LEFT_CONTROL);
-            KEY("Members: Display Previous", "key_ms_display_previous", KEY_LEFT_BRACKET, KEY_LEFT_CONTROL);
-            KEY("Members: Display Next", "key_ms_display_next", KEY_RIGHT_BRACKET, KEY_LEFT_CONTROL);
+            KEY("Members: Toggle Display",      "key_ms_toggle_display",    KEY_BACK_SLASH,         KEY_LEFT_CONTROL);
+            KEY("Members: Display Previous",    "key_ms_display_previous",  KEY_LEFT_BRACKET,       KEY_LEFT_CONTROL);
+            KEY("Members: Display Next",        "key_ms_display_next",      KEY_RIGHT_BRACKET,      KEY_LEFT_CONTROL);
 
-            KEY("Followers: Summon All", "key_fs_summon_all", KEY_FORWARD_SLASH, KEY_LEFT_CONTROL);
-            KEY("Followers: Summon Mobile", "key_fs_summon_mobile", KEY_COMMA, KEY_LEFT_CONTROL);
-            KEY("Followers: Summon Immobile", "key_fs_summon_immobile", KEY_PERIOD, KEY_LEFT_CONTROL);
-            KEY("Followers: Settle", "key_fs_settle", KEY_SEMICOLON, KEY_LEFT_CONTROL);
-            KEY("Followers: Unsettle", "key_fs_unsettle", KEY_APOSTROPHE, KEY_LEFT_CONTROL);
-            KEY("Followers: Mobilize", "key_fs_mobilize", KEY_MINUS, KEY_LEFT_CONTROL);
-            KEY("Followers: Immobilize", "key_fs_immobilize", KEY_EQUALS, KEY_LEFT_CONTROL);
-            KEY("Followers: Sneak", "key_fs_sneak", KEY_9, KEY_LEFT_CONTROL);
-            KEY("Followers: Unsneak", "key_fs_unsneak", KEY_0, KEY_LEFT_CONTROL);
-            KEY("Followers: Saddle", "key_fs_saddle", KEY_H, KEY_LEFT_CONTROL);
-            KEY("Followers: Unsaddle", "key_fs_unsaddle", KEY_B, KEY_LEFT_CONTROL);
-            KEY("Followers: Resurrect", "key_fs_resurrect", KEY_BACKSPACE, KEY_LEFT_CONTROL);
+            KEY("Followers: Summon All",        "key_fs_summon_all",        KEY_FORWARD_SLASH,      KEY_LEFT_CONTROL);
+            KEY("Followers: Summon Mobile",     "key_fs_summon_mobile",     KEY_FORWARD_SLASH);
+            KEY("Followers: Summon Immobile",   "key_fs_summon_immobile",   KEY_FORWARD_SLASH,      KEY_LEFT_ALT);
+            KEY("Followers: Settle",            "key_fs_settle",            KEY_0,                  KEY_LEFT_CONTROL);
+            KEY("Followers: Unsettle",          "key_fs_unsettle",          KEY_0,                  KEY_LEFT_ALT);
+            KEY("Followers: Mobilize",          "key_fs_mobilize",          KEY_EQUALS,             KEY_LEFT_CONTROL);
+            KEY("Followers: Immobilize",        "key_fs_immobilize",        KEY_EQUALS,             KEY_LEFT_ALT);
+            KEY("Followers: Sneak",             "key_fs_sneak",             KEY_MINUS,              KEY_LEFT_CONTROL);
+            KEY("Followers: Unsneak",           "key_fs_unsneak",           KEY_MINUS,              KEY_LEFT_ALT);
+            KEY("Followers: Saddle",            "key_fs_saddle",            KEY_H,                  KEY_LEFT_CONTROL);
+            KEY("Followers: Unsaddle",          "key_fs_unsaddle",          KEY_H,                  KEY_LEFT_ALT);
+            KEY("Followers: Resurrect",         "key_fs_resurrect",         KEY_BACKSPACE,          KEY_LEFT_CONTROL);
 
             #undef KEY
         }
@@ -181,7 +202,7 @@ namespace doticu_npcp { namespace Keys {
             return -1;
         }
 
-        String_t Key(idx_t idx)
+        String_t Hotkey(idx_t idx)
         {
             if (idx > -1 && idx < Size()) {
                 return keys[idx];
@@ -440,13 +461,13 @@ namespace doticu_npcp { namespace Keys {
         return Key_System().Current_Mods(key).String();
     }
 
-    String_t Conflicting_Key(Keys_t* keys, String_t key, Int_t value, Int_t mod_1, Int_t mod_2, Int_t mod_3)
+    String_t Conflicting_Hotkey(Keys_t* keys, String_t key, Int_t value, Int_t mod_1, Int_t mod_2, Int_t mod_3)
     {
         Key_System_t& key_system = Key_System();
         Key_System_t::Mods mods = Key_System_t::Mods(mod_1, mod_2, mod_3);
 
         for (idx_t idx = 0, size = key_system.Size(); idx < size; idx += 1) {
-            String_t current_key = key_system.Key(idx);
+            String_t current_key = key_system.Hotkey(idx);
             if (current_key != key) {
                 Int_t current_value = key_system.Current_Value(idx);
                 if (current_value > 0 && current_value == value) {
@@ -459,6 +480,34 @@ namespace doticu_npcp { namespace Keys {
         }
 
         return "";
+    }
+
+    String_t Pressed_Hotkey(Keys_t* self, Int_t value, Int_t pressed_1, Int_t pressed_2, Int_t pressed_3, Int_t pressed_4)
+    {
+        Key_System_t& key_system = Key_System();
+
+        std::vector<Int_t> pressed_keys({ pressed_1, pressed_2, pressed_3, pressed_4 });
+
+        String_t chosen_hotkey = "";
+        Int_t chosen_mods_size = -1;
+        for (idx_t idx = 0, size = key_system.Size(); idx < size; idx += 1) {
+            String_t current_hotkey = key_system.Hotkey(idx);
+            Int_t current_value = key_system.Current_Value(idx);
+            if (current_value == value) {
+                Key_System_t::Mods current_mods = key_system.Current_Mods(idx);
+                if (Vector::Has(pressed_keys, current_mods.mod_1) &&
+                    Vector::Has(pressed_keys, current_mods.mod_2) &&
+                    Vector::Has(pressed_keys, current_mods.mod_3)) {
+                    Int_t current_mods_size = current_mods.Size();
+                    if (current_mods_size > chosen_mods_size) {
+                        chosen_hotkey = current_hotkey;
+                        chosen_mods_size = current_mods_size;
+                    }
+                }
+            }
+        }
+        
+        return chosen_hotkey;
     }
 
 }}
@@ -480,7 +529,8 @@ namespace doticu_npcp { namespace Keys { namespace Exports {
         ADD_METHOD("Current_Mods", 1, Vector_t<Int_t>, Current_Mods, String_t);
         ADD_METHOD("Default_Mods_To_String", 1, String_t, Default_Mods_To_String, String_t);
         ADD_METHOD("Current_Mods_To_String", 1, String_t, Current_Mods_To_String, String_t);
-        ADD_METHOD("Conflicting_Key", 5, String_t, Conflicting_Key, String_t, Int_t, Int_t, Int_t, Int_t);
+        ADD_METHOD("Conflicting_Hotkey", 5, String_t, Conflicting_Hotkey, String_t, Int_t, Int_t, Int_t, Int_t);
+        ADD_METHOD("p_Pressed_Hotkey", 5, String_t, Pressed_Hotkey, Int_t, Int_t, Int_t, Int_t, Int_t);
 
         #undef ADD_METHOD
 

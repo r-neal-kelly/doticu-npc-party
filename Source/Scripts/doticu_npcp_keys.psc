@@ -57,26 +57,44 @@ function f_Register()
     Update_Keys()
 endFunction
 
-; Public Methods
+; Native Methods
 int function Default_Value(string key) native
 int function Current_Value(string key) native
 int[] function Default_Mods(string key) native
 int[] function Current_Mods(string key) native
 string function Default_Mods_To_String(string key) native
 string function Current_Mods_To_String(string key) native
-string function Conflicting_Key(string key, int value, int mod_1, int mod_2, int mod_3) native
-bool function Are_Mods_Pressed(int[] mods)
-    if mods
-        return (mods[0] < 1 || Input.IsKeyPressed(mods[0])) && \
-               (mods[1] < 1 || Input.IsKeyPressed(mods[1])) && \
-               (mods[2] < 1 || Input.IsKeyPressed(mods[2]))
-    else
-        return true
-    endIf
-endFunction
+string function Conflicting_Hotkey(string key, int value, int mod_1, int mod_2, int mod_3) native
+string function p_Pressed_Hotkey(int value, int pressed_1 = -1, int pressed_2 = -1, int pressed_3 = -1, int pressed_4 = -1) native
 
+; Public Methods
 bool function Is_Active(int code_key)
     return code_key > -1
+endFunction
+
+string function Pressed_Hotkey(int value)
+    int pressed_key_count = Input.GetNumKeysPressed()
+    if pressed_key_count >= 4
+        return p_Pressed_Hotkey(value,                      \
+                                Input.GetNthKeyPressed(0),  \
+                                Input.GetNthKeyPressed(1),  \
+                                Input.GetNthKeyPressed(2),  \
+                                Input.GetNthKeyPressed(3))
+    elseIf pressed_key_count == 3
+        return p_Pressed_Hotkey(value,                      \
+                                Input.GetNthKeyPressed(0),  \
+                                Input.GetNthKeyPressed(1),  \
+                            Input.GetNthKeyPressed(2))
+    elseIf pressed_key_count == 2
+        return p_Pressed_Hotkey(value,                      \
+                                Input.GetNthKeyPressed(0),  \
+                                Input.GetNthKeyPressed(1))
+    elseIf pressed_key_count == 1
+        return p_Pressed_Hotkey(value,                      \
+                                Input.GetNthKeyPressed(0))
+    else
+        return p_Pressed_Hotkey(value)
+    endIf
 endFunction
 
 function Update_Keys()
@@ -193,25 +211,25 @@ function Update_Keys()
 endFunction
 
 ; Events
-event OnKeyDown(int code_key)
+event OnKeyDown(int value)
     if !FUNCS.Can_Use_Keys()
         return
     endIf
-    
-    Actor ref_actor = Game.GetCurrentCrosshairRef() as Actor
 
-    if false
+    string pressed_hotkey = Pressed_Hotkey(value)
+    if !pressed_hotkey
 
     ; General
-    elseIf code_key == VARS.key_g_dialogue_menu && Are_Mods_Pressed(VARS.key_g_dialogue_menu_mods)
+    elseIf pressed_hotkey == CONSTS.KEY_G_DIALOGUE_MENU
         FUNCS.ACTORS.Create_Menu()
 
     ; NPC
-    elseIf code_key == VARS.key_n_toggle_member && Are_Mods_Pressed(VARS.key_n_toggle_member_mods)
-        COMMANDS.Toggle_Member_Sync(ref_actor)
-    elseIf code_key == VARS.key_n_toggle_move && Are_Mods_Pressed(VARS.key_n_toggle_move_mods)
-        COMMANDS.Move_Sync(ref_actor)
-    elseIf code_key == VARS.key_n_has_base && Are_Mods_Pressed(VARS.key_n_has_base_mods)
+    elseIf pressed_hotkey == CONSTS.KEY_N_TOGGLE_MEMBER
+        COMMANDS.Toggle_Member_Sync(Game.GetCurrentCrosshairRef() as Actor)
+    elseIf pressed_hotkey == CONSTS.KEY_N_TOGGLE_MOVE
+        COMMANDS.Move_Sync(Game.GetCurrentCrosshairRef() as Actor)
+    elseIf pressed_hotkey == CONSTS.KEY_N_HAS_BASE
+        Actor ref_actor = Game.GetCurrentCrosshairRef() as Actor
         if ref_actor == none
             LOGS.Create_Note("That is not an NPC.", false)
         elseIf p_DATA.MODS.MEMBERS.Has_Base(ref_actor)
@@ -219,7 +237,8 @@ event OnKeyDown(int code_key)
         else
             LOGS.Create_Note("No member has the base of " + ACTORS.Get_Name(ref_actor) + ".", false)
         endIf
-    elseIf code_key == VARS.key_n_count_base && Are_Mods_Pressed(VARS.key_n_count_base_mods)
+    elseIf pressed_hotkey == CONSTS.KEY_N_COUNT_BASE
+        Actor ref_actor = Game.GetCurrentCrosshairRef() as Actor
         if ref_actor == none
             LOGS.Create_Note("That is not an NPC.", false)
         else
@@ -230,7 +249,8 @@ event OnKeyDown(int code_key)
                 LOGS.Create_Note(num_members + " members have the base of " + ACTORS.Get_Name(ref_actor) + ".", false)
             endIf
         endIf
-    elseif code_key == VARS.key_n_has_head && Are_Mods_Pressed(VARS.key_n_has_head_mods)
+    elseif pressed_hotkey == CONSTS.KEY_N_HAS_HEAD
+        Actor ref_actor = Game.GetCurrentCrosshairRef() as Actor
         if ref_actor == none
             LOGS.Create_Note("That is not an NPC.", false)
         elseIf p_DATA.MODS.MEMBERS.Has_Head(ref_actor)
@@ -238,7 +258,8 @@ event OnKeyDown(int code_key)
         else
             LOGS.Create_Note("No member looks like " + ACTORS.Get_Name(ref_actor) + ".", false)
         endIf
-    elseIf code_key == VARS.key_n_count_heads && Are_Mods_Pressed(VARS.key_n_count_heads_mods)
+    elseIf pressed_hotkey == CONSTS.KEY_N_COUNT_HEADS
+        Actor ref_actor = Game.GetCurrentCrosshairRef() as Actor
         if ref_actor == none
             LOGS.Create_Note("That is not an NPC.", false)
         else
@@ -251,57 +272,57 @@ event OnKeyDown(int code_key)
         endIf
 
     ; Member
-    elseIf code_key == VARS.key_m_toggle_clone && Are_Mods_Pressed(VARS.key_m_toggle_clone_mods)
-        COMMANDS.Toggle_Clone_Sync(ref_actor)
-    elseIf code_key == VARS.key_m_toggle_settler && Are_Mods_Pressed(VARS.key_m_toggle_settler_mods)
-        COMMANDS.Toggle_Settler_Async(ref_actor)
-    elseIf code_key == VARS.key_m_toggle_thrall && Are_Mods_Pressed(VARS.key_m_toggle_thrall_mods)
-        COMMANDS.Toggle_Thrall_Async(ref_actor)
-    elseIf code_key == VARS.key_m_toggle_immobile && Are_Mods_Pressed(VARS.key_m_toggle_immobile_mods)
-        COMMANDS.Toggle_Immobile_Async(ref_actor)
-    elseIf code_key == VARS.key_m_toggle_paralyzed && Are_Mods_Pressed(VARS.key_m_toggle_paralyzed_mods)
-        COMMANDS.Toggle_Paralyzed_Async(ref_actor)
-    elseIf code_key == VARS.key_m_toggle_follower && Are_Mods_Pressed(VARS.key_m_toggle_follower_mods)
-        COMMANDS.Toggle_Follower_Sync(ref_actor)
+    elseIf pressed_hotkey == CONSTS.KEY_M_TOGGLE_CLONE
+        COMMANDS.Toggle_Clone_Sync(Game.GetCurrentCrosshairRef() as Actor)
+    elseIf pressed_hotkey == CONSTS.KEY_M_TOGGLE_SETTLER
+        COMMANDS.Toggle_Settler_Async(Game.GetCurrentCrosshairRef() as Actor)
+    elseIf pressed_hotkey == CONSTS.KEY_M_TOGGLE_THRALL
+        COMMANDS.Toggle_Thrall_Async(Game.GetCurrentCrosshairRef() as Actor)
+    elseIf pressed_hotkey == CONSTS.KEY_M_TOGGLE_IMMOBILE
+        COMMANDS.Toggle_Immobile_Async(Game.GetCurrentCrosshairRef() as Actor)
+    elseIf pressed_hotkey == CONSTS.KEY_M_TOGGLE_PARALYZED
+        COMMANDS.Toggle_Paralyzed_Async(Game.GetCurrentCrosshairRef() as Actor)
+    elseIf pressed_hotkey == CONSTS.KEY_M_TOGGLE_FOLLOWER
+        COMMANDS.Toggle_Follower_Sync(Game.GetCurrentCrosshairRef() as Actor)
 
     ; Follower
-    elseIf code_key == VARS.key_f_toggle_sneak && Are_Mods_Pressed(VARS.key_f_toggle_sneak_mods)
-        COMMANDS.Toggle_Sneak_Async(ref_actor)
-    elseIf code_key == VARS.key_f_toggle_saddler && Are_Mods_Pressed(VARS.key_f_toggle_saddler_mods)
-        COMMANDS.Toggle_Saddler_Async(ref_actor)
+    elseIf pressed_hotkey == CONSTS.KEY_F_TOGGLE_SNEAK
+        COMMANDS.Toggle_Sneak_Async(Game.GetCurrentCrosshairRef() as Actor)
+    elseIf pressed_hotkey == CONSTS.KEY_F_TOGGLE_SADDLER
+        COMMANDS.Toggle_Saddler_Async(Game.GetCurrentCrosshairRef() as Actor)
 
     ; Members
-    elseIf code_key == VARS.key_ms_toggle_display && Are_Mods_Pressed(VARS.key_ms_toggle_display_mods)
-        COMMANDS.Toggle_Members_Display(ref_actor)
-    elseIf code_key == VARS.key_ms_display_previous && Are_Mods_Pressed(VARS.key_ms_display_previous_mods)
+    elseIf pressed_hotkey == CONSTS.KEY_MS_TOGGLE_DISPLAY
+        COMMANDS.Toggle_Members_Display(Game.GetCurrentCrosshairRef() as Actor)
+    elseIf pressed_hotkey == CONSTS.KEY_MS_DISPLAY_PREVIOUS
         COMMANDS.Members_Display_Previous()
-    elseIf code_key == VARS.key_ms_display_next && Are_Mods_Pressed(VARS.key_ms_display_next_mods)
+    elseIf pressed_hotkey == CONSTS.KEY_MS_DISPLAY_NEXT
         COMMANDS.Members_Display_Next()
 
     ; Followers
-    elseIf code_key == VARS.key_fs_summon_all && Are_Mods_Pressed(VARS.key_fs_summon_all_mods)
+    elseIf pressed_hotkey == CONSTS.KEY_FS_SUMMON_ALL
         COMMANDS.Followers_Summon_All()
-    elseIf code_key == VARS.key_fs_summon_mobile && Are_Mods_Pressed(VARS.key_fs_summon_mobile_mods)
+    elseIf pressed_hotkey == CONSTS.KEY_FS_SUMMON_MOBILE
         COMMANDS.Followers_Summon_Mobile()
-    elseIf code_key == VARS.key_fs_summon_immobile && Are_Mods_Pressed(VARS.key_fs_summon_immobile_mods)
+    elseIf pressed_hotkey == CONSTS.KEY_FS_SUMMON_IMMOBILE
         COMMANDS.Followers_Summon_Immobile()
-    elseIf code_key == VARS.key_fs_settle && Are_Mods_Pressed(VARS.key_fs_settle_mods)
+    elseIf pressed_hotkey == CONSTS.KEY_FS_SETTLE
         COMMANDS.Followers_Settle()
-    elseIf code_key == VARS.key_fs_unsettle && Are_Mods_Pressed(VARS.key_fs_unsettle_mods)
+    elseIf pressed_hotkey == CONSTS.KEY_FS_UNSETTLE
         COMMANDS.Followers_Unsettle()
-    elseIf code_key == VARS.key_fs_mobilize && Are_Mods_Pressed(VARS.key_fs_mobilize_mods)
+    elseIf pressed_hotkey == CONSTS.KEY_FS_MOBILIZE
         COMMANDS.Followers_Mobilize()
-    elseIf code_key == VARS.key_fs_immobilize && Are_Mods_Pressed(VARS.key_fs_immobilize_mods)
+    elseIf pressed_hotkey == CONSTS.KEY_FS_IMMOBILIZE
         COMMANDS.Followers_Immobilize()
-    elseIf code_key == VARS.key_fs_sneak && Are_Mods_Pressed(VARS.key_fs_sneak_mods)
+    elseIf pressed_hotkey == CONSTS.KEY_FS_SNEAK
         COMMANDS.Followers_Sneak()
-    elseIf code_key == VARS.key_fs_unsneak && Are_Mods_Pressed(VARS.key_fs_unsneak_mods)
+    elseIf pressed_hotkey == CONSTS.KEY_FS_UNSNEAK
         COMMANDS.Followers_Unsneak()
-    elseIf code_key == VARS.key_fs_saddle && Are_Mods_Pressed(VARS.key_fs_saddle_mods)
+    elseIf pressed_hotkey == CONSTS.KEY_FS_SADDLE
         COMMANDS.Followers_Saddle()
-    elseIf code_key == VARS.key_fs_unsaddle && Are_Mods_Pressed(VARS.key_fs_unsaddle_mods)
+    elseIf pressed_hotkey == CONSTS.KEY_FS_UNSADDLE
         COMMANDS.Followers_Unsaddle()
-    elseIf code_key == VARS.key_fs_resurrect && Are_Mods_Pressed(VARS.key_fs_resurrect_mods)
+    elseIf pressed_hotkey == CONSTS.KEY_FS_RESURRECT
         COMMANDS.Followers_Resurrect()
 
     endIf

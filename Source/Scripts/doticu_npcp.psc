@@ -10,8 +10,6 @@ function Actor_Cache_Worn(Actor ref_actor, Form form_linchpin, ObjectReference r
 function Actor_Cache_Inventory(Actor ref_actor, Form form_linchpin, ObjectReference ref_worn_out, ObjectReference ref_pack_out) native global
 function Actor_Cache_Static_Inventory(Actor ref_actor, Form form_linchpin, ObjectREference ref_cache_out) native global
 function Actor_Reset_Actor_Value(Actor ref_actor, string name) native global
-function Actor_Mount_Horse(Actor ref_actor, Actor ref_horse) native global
-bool function Actor_Is_Mounted_On_Horse(Actor ref_actor, Actor ref_horse) native global
 Actor function Actor_Get_Mounted_Actor(Actor ref_horse) native global
 
 ; Aliases
@@ -72,3 +70,4 @@ int[] function Get_Plugin_Version() native global
 function Print(string str) native global
 function Log(string str) native global
 function Log_Cell(Cell ref_cell) native global
+int[] function New_Int_Array(int size = 0, int fill = 0) native global

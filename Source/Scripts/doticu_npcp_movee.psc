@@ -308,20 +308,21 @@ event OnKeyDown(int code_key)
     endIf
 endEvent
 
-event OnKeyUp(int code_key, float hold_time)
+event OnKeyUp(int value, float hold_time)
     if !FUNCS.Can_Use_Keys()
         return
     endIf
 
-    if code_key == VARS.key_n_toggle_move && KEYS.Are_Mods_Pressed(VARS.key_n_toggle_move_mods)
+    string pressed_key = KEYS.Pressed_Hotkey(value)
+    if pressed_key == CONSTS.KEY_N_TOGGLE_MOVE
         ACTORS.Toggle_Move(p_ref_actor); calls f_Destroy()
-    elseIf code_key == VARS.key_n_move_farther && KEYS.Are_Mods_Pressed(VARS.key_n_move_farther_mods)
+    elseIf pressed_key == CONSTS.KEY_N_MOVE_FARTHER
         p_do_distance_farther = false
-    elseIf code_key == VARS.key_n_move_nearer && KEYS.Are_Mods_Pressed(VARS.key_n_move_nearer_mods)
+    elseIf pressed_key == CONSTS.KEY_N_MOVE_NEARER
         p_do_distance_nearer = false
-    elseIf code_key == VARS.key_n_move_rotate_left && KEYS.Are_Mods_Pressed(VARS.key_n_move_rotate_left_mods)
+    elseIf pressed_key == CONSTS.KEY_N_MOVE_ROTATE_LEFT
         p_do_rotate_left = false
-    elseIf code_key == VARS.key_n_move_rotate_right && KEYS.Are_Mods_Pressed(VARS.key_n_move_rotate_right_mods)
+    elseIf pressed_key == CONSTS.KEY_N_MOVE_ROTATE_RIGHT
         p_do_rotate_right = false
 
     endIf

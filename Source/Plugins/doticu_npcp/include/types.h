@@ -73,4 +73,6 @@ namespace doticu_npcp { namespace Papyrus {
     template <typename T> using     Array_t         = VMArray<T>;
     template <typename T> using     Vector_t        = VMResultArray<T>;
 
+    typedef Vector_t<Int_t> Int_Vector_t;
+
 }}

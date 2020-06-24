@@ -150,7 +150,8 @@ namespace doticu_npcp { namespace Keys {
     Vector_t<Int_t> Current_Mods(Keys_t* keys, String_t key);
     String_t Default_Mods_To_String(Keys_t* keys, String_t key);
     String_t Current_Mods_To_String(Keys_t* keys, String_t key);
-    String_t Conflicting_Key(Keys_t* keys, String_t key, Int_t value, Int_t mod_1 = -1, Int_t mod_2 = -1, Int_t mod_3 = -1);
+    String_t Conflicting_Hotkey(Keys_t* keys, String_t key, Int_t value, Int_t mod_1 = -1, Int_t mod_2 = -1, Int_t mod_3 = -1);
+    String_t Pressed_Hotkey(Keys_t* self, Int_t value, Int_t pressed_1 = -1, Int_t pressed_2 = -1, Int_t pressed_3 = -1, Int_t pressed_4 = -1);
 
 }}
 
