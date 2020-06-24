@@ -43,6 +43,7 @@ endProperty
 
 ; Private Methods
 function p_Open_Chest(ObjectReference ref_container, string str_name)
+    doticu_npcp.Object_Ref_Categorize(CONSTS.CATEGORY_INPUT)
     CONTAINERS.Set_Name(ref_container, str_name)
     CONTAINERS.Open(ref_container)
 endFunction
@@ -95,6 +96,11 @@ function Followers_Unmember(ObjectReference ___)
     COMMANDS.Followers_Unmember()
 endFunction
 
+function Chests_Input(ObjectReference ___)
+    p_Open_Chest(CONSTS.CATEGORY_INPUT, " Input ")
+endFunction
+
+; Weapons
 function Chests_Weapons_Swords(ObjectReference ___)
     p_Open_Chest(CONSTS.CATEGORY_SWORDS, " Swords ")
 endFunction
@@ -116,16 +122,20 @@ endFunction
 function Chests_Weapons_Daggers(ObjectReference ___)
     p_Open_Chest(CONSTS.CATEGORY_DAGGERS, " Daggers ")
 endFunction
+function Chests_Weapons_Staves(ObjectReference ___)
+    p_Open_Chest(CONSTS.CATEGORY_STAVES, " Staves ")
+endFunction
 function Chests_Weapons_Bows(ObjectReference ___)
     p_Open_Chest(CONSTS.CATEGORY_BOWS, " Bows ")
 endFunction
-function Chests_Weapons_Staves(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_STAVES, " Staves ")
+function Chests_Weapons_Ammo(ObjectReference ___)
+    p_Open_Chest(CONSTS.CATEGORY_AMMO, " Ammo ")
 endFunction
 function Chests_Weapons_Others(ObjectReference ___)
     p_Open_Chest(CONSTS.CATEGORY_WEAPONS, " Other Weapons ")
 endFunction
 
+; Apparel
 function Chests_Apparel_Light_Armor(ObjectReference ___)
     p_Open_Chest(CONSTS.CATEGORY_LIGHT_ARMOR, " Light Armor ")
 endFunction
@@ -142,22 +152,21 @@ function Chests_Apparel_Clothes(ObjectReference ___)
     p_Open_Chest(CONSTS.CATEGORY_CLOTHES, " Clothes ")
 endFunction
 
+; Edibles
 function Chests_Edibles_Potions(ObjectReference ___)
     p_Open_Chest(CONSTS.CATEGORY_POTIONS, " Potions ")
 endFunction
 function Chests_Edibles_Poisons(ObjectReference ___)
     p_Open_Chest(CONSTS.CATEGORY_POISONS, " Poisons ")
 endFunction
+function Chests_Edibles_Ingredients(ObjectReference ___)
+    p_Open_Chest(CONSTS.CATEGORY_INGREDIENTS, " Ingredients ")
+endFunction
 function Chests_Edibles_Food(ObjectReference ___)
     p_Open_Chest(CONSTS.CATEGORY_FOOD, " Food ")
 endFunction
 
-function Chests_Misc_Ammo(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_AMMO, " Ammo ")
-endFunction
-function Chests_Misc_Ingredients(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_INGREDIENTS, " Ingredients ")
-endFunction
+; Misc
 function Chests_Misc_Soulgems(ObjectReference ___)
     p_Open_Chest(CONSTS.CATEGORY_SOULGEMS, " Soulgems ")
 endFunction
@@ -183,6 +192,7 @@ function Chests_Misc_Others(ObjectReference ___)
     p_Open_Chest(CONSTS.CATEGORY_OTHERS, " Other Misc ")
 endFunction
 
+; Books
 function Chests_Books_Spell_Tomes(ObjectReference ___)
     p_Open_Chest(CONSTS.CATEGORY_SPELL_TOMES, " Spell Tomes ")
 endFunction

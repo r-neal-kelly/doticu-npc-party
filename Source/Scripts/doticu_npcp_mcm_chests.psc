@@ -54,6 +54,8 @@ doticu_npcp_data    p_DATA                  =  none
 ; Private Variables
 bool                p_is_created            = false
 
+int                 p_option_input          =    -1
+
 int                 p_option_swords         =    -1
 int                 p_option_greatswords    =    -1
 int                 p_option_waraxes        =    -1
@@ -139,6 +141,13 @@ function f_Build_Page()
 
     MCM.SetTitleText(" Chests ")
 
+    MCM.AddHeaderOption(" Special ")
+    MCM.AddEmptyOption()
+    p_option_input = MCM.AddTextOption(" Input ", "")
+    MCM.AddEmptyOption()
+    MCM.AddEmptyOption()
+    MCM.AddEmptyOption()
+
     MCM.AddHeaderOption(" Weapons ")
     MCM.AddEmptyOption()
     p_option_swords = MCM.AddTextOption(" Swords ", "")
@@ -148,9 +157,13 @@ function f_Build_Page()
     p_option_maces = MCM.AddTextOption(" Maces ", "")
     p_option_warhammers = MCM.AddTextOption(" Warhammers ", "")
     p_option_daggers = MCM.AddTextOption(" Daggers ", "")
-    p_option_bows = MCM.AddTextOption(" Bows ", "")
     p_option_staves = MCM.AddTextOption(" Staves ", "")
+    p_option_bows = MCM.AddTextOption(" Bows ", "")
+    p_option_ammo = MCM.AddTextOption(" Ammo ", "")
     p_option_weapons = MCM.AddTextOption(" Others ", "")
+    MCM.AddEmptyOption()
+    MCM.AddEmptyOption()
+    MCM.AddEmptyOption()
 
     MCM.AddHeaderOption(" Apparel ")
     MCM.AddEmptyOption()
@@ -160,18 +173,20 @@ function f_Build_Page()
     p_option_jewelry = MCM.AddTextOption(" Jewelry ", "")
     p_option_clothes = MCM.AddTextOption(" Clothes ", "")
     MCM.AddEmptyOption()
+    MCM.AddEmptyOption()
+    MCM.AddEmptyOption()
 
     MCM.AddHeaderOption(" Edibles ")
     MCM.AddEmptyOption()
     p_option_potions = MCM.AddTextOption(" Potions ", "")
     p_option_poisons = MCM.AddTextOption(" Poisons ", "")
+    p_option_ingredients = MCM.AddTextOption(" Ingredients ", "")
     p_option_food = MCM.AddTextOption(" Food ", "")
+    MCM.AddEmptyOption()
     MCM.AddEmptyOption()
 
     MCM.AddHeaderOption(" Misc ")
     MCM.AddEmptyOption()
-    p_option_ammo = MCM.AddTextOption(" Ammo ", "")
-    p_option_ingredients = MCM.AddTextOption(" Ingredients ", "")
     p_option_soulgems = MCM.AddTextOption(" Soulgems ", "")
     p_option_scrolls = MCM.AddTextOption(" Scrolls ", "")
     p_option_metals = MCM.AddTextOption(" Metals ", "")
@@ -180,6 +195,8 @@ function f_Build_Page()
     p_option_clutter = MCM.AddTextOption(" Clutter ", "")
     p_option_keys = MCM.AddTextOption(" Keys ", "")
     p_option_others = MCM.AddTextOption(" Others ", "")
+    MCM.AddEmptyOption()
+    MCM.AddEmptyOption()
 
     MCM.AddHeaderOption(" Books ")
     MCM.AddEmptyOption()
@@ -218,6 +235,9 @@ endFunction
 function f_On_Option_Select(int id_option)
     if false
 
+    elseIf id_option == p_option_input
+        p_Open(CONSTS.CATEGORY_INPUT, " Input ")
+
     ; Weapons
     elseIf id_option == p_option_swords
         p_Open(CONSTS.CATEGORY_SWORDS, " Swords ")
@@ -233,10 +253,12 @@ function f_On_Option_Select(int id_option)
         p_Open(CONSTS.CATEGORY_WARHAMMERS, " Warhammers ")
     elseIf id_option == p_option_daggers
         p_Open(CONSTS.CATEGORY_DAGGERS, " Daggers ")
-    elseIf id_option == p_option_bows
-        p_Open(CONSTS.CATEGORY_BOWS, " Bows ")
     elseIf id_option == p_option_staves
         p_Open(CONSTS.CATEGORY_STAVES, " Staves ")
+    elseIf id_option == p_option_bows
+        p_Open(CONSTS.CATEGORY_BOWS, " Bows ")
+    elseIf id_option == p_option_ammo
+        p_Open(CONSTS.CATEGORY_AMMO, " Ammo ")
     elseIf id_option == p_option_weapons
         p_Open(CONSTS.CATEGORY_WEAPONS, " Other Weapons ")
 
@@ -257,14 +279,12 @@ function f_On_Option_Select(int id_option)
         p_Open(CONSTS.CATEGORY_POTIONS, " Potions ")
     elseIf id_option == p_option_poisons
         p_Open(CONSTS.CATEGORY_POISONS, " Poisons ")
+    elseIf id_option == p_option_ingredients
+        p_Open(CONSTS.CATEGORY_INGREDIENTS, " Ingredients ")
     elseIf id_option == p_option_food
         p_Open(CONSTS.CATEGORY_FOOD, " Food ")
 
     ; Misc
-    elseIf id_option == p_option_ammo
-        p_Open(CONSTS.CATEGORY_AMMO, " Ammo ")
-    elseIf id_option == p_option_ingredients
-        p_Open(CONSTS.CATEGORY_INGREDIENTS, " Ingredients ")
     elseIf id_option == p_option_soulgems
         p_Open(CONSTS.CATEGORY_SOULGEMS, " Soulgems ")
     elseIf id_option == p_option_scrolls
@@ -346,6 +366,12 @@ function f_On_Option_Select(int id_option)
 endFunction
 
 function f_On_Option_Highlight(int id_option)
+    if false
+
+    elseIf id_option == p_option_input
+        MCM.SetInfoText("Opens the input chest. The items contained therein will be sorted into each respective category.")
+
+    endIf
 endFunction
 
 function f_On_Option_Slider_Open(int id_option)
@@ -372,6 +398,7 @@ endFunction
 ; Private Methods
 function p_Open(ObjectReference ref_container, string str_name)
     FUNCS.Close_Menus()
+    doticu_npcp.Object_Ref_Categorize(CONSTS.CATEGORY_INPUT)
     CONTAINERS.Set_Name(ref_container, str_name)
     CONTAINERS.Open(ref_container)
 endFunction

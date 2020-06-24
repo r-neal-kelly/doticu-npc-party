@@ -85,6 +85,7 @@ doticu_npcp_outfit function p_Create(Container form_container, string str_name, 
         ref_temp.RemoveAllItems(ref_outfit, false, true); we should make a c++ call to make sure that all items are removed?
     endIf
 
+    CONTAINERS.Init_Container(ref_outfit)
     ref_outfit.f_Create(p_DATA, str_name, code_create)
     ref_outfit.f_Register()
 
@@ -148,8 +149,7 @@ NPCS.Lock_Base(ref_clone)
 NPCS.Unlock_Base(ref_clone)
 
     ; to make sure certain fields in c++ have been allocated
-    ref_clone.AddItem(CONSTS.WEAPON_BLANK, 1, true)
-    ref_clone.RemoveItem(CONSTS.WEAPON_BLANK, 1, true)
+    CONTAINERS.Init_Container(ref_clone)
 
     if VARS.clone_outfit == CODES.OUTFIT_REFERENCE
         ; this will stop the actor from rendering while we manage its inventory

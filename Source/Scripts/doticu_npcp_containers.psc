@@ -40,6 +40,8 @@ endFunction
 
 ; Private Methods
 function p_Init_Categories()
+    Init_Container(CONSTS.CATEGORY_INPUT)
+
     Init_Container(CONSTS.CATEGORY_SWORDS)
     Init_Container(CONSTS.CATEGORY_GREATSWORDS)
     Init_Container(CONSTS.CATEGORY_WARAXES)
@@ -47,8 +49,9 @@ function p_Init_Categories()
     Init_Container(CONSTS.CATEGORY_MACES)
     Init_Container(CONSTS.CATEGORY_WARHAMMERS)
     Init_Container(CONSTS.CATEGORY_DAGGERS)
-    Init_Container(CONSTS.CATEGORY_BOWS)
     Init_Container(CONSTS.CATEGORY_STAVES)
+    Init_Container(CONSTS.CATEGORY_BOWS)
+    Init_Container(CONSTS.CATEGORY_AMMO)
     Init_Container(CONSTS.CATEGORY_WEAPONS)
 
     Init_Container(CONSTS.CATEGORY_LIGHT_ARMOR)
@@ -59,6 +62,7 @@ function p_Init_Categories()
 
     Init_Container(CONSTS.CATEGORY_POTIONS)
     Init_Container(CONSTS.CATEGORY_POISONS)
+    Init_Container(CONSTS.CATEGORY_INGREDIENTS)
     Init_Container(CONSTS.CATEGORY_FOOD)
 
     Init_Container(CONSTS.CATEGORY_SPELL_TOMES)
@@ -95,8 +99,6 @@ function p_Init_Categories()
     Init_Container(CONSTS.CATEGORY_LEATHER)
     Init_Container(CONSTS.CATEGORY_GEMS)
     Init_Container(CONSTS.CATEGORY_CLUTTER)
-    Init_Container(CONSTS.CATEGORY_AMMO)
-    Init_Container(CONSTS.CATEGORY_INGREDIENTS)
     Init_Container(CONSTS.CATEGORY_SCROLLS)
     Init_Container(CONSTS.CATEGORY_SOULGEMS)
     Init_Container(CONSTS.CATEGORY_KEYS)
@@ -112,9 +114,7 @@ ObjectReference function Create_Temp()
 
     ref_container.SetActorOwner(CONSTS.ACTOR_PLAYER.GetActorBase())
 
-    ; to make sure certain fields in c++ have been allocated for our plugin
-    ref_container.AddItem(CONSTS.WEAPON_BLANK, 1, true)
-    ref_container.RemoveItem(CONSTS.WEAPON_BLANK, 1, true)
+    Init_Container(ref_container)
     
     return ref_container
 endFunction
@@ -132,9 +132,7 @@ ObjectReference function Create_Perm()
 
     ref_container.SetActorOwner(CONSTS.ACTOR_PLAYER.GetActorBase())
 
-    ; to make sure certain fields in c++ have been allocated for our plugin
-    ref_container.AddItem(CONSTS.WEAPON_BLANK, 1, true)
-    ref_container.RemoveItem(CONSTS.WEAPON_BLANK, 1, true)
+    Init_Container(ref_container)
     
     return ref_container
 endFunction
@@ -145,8 +143,9 @@ function Destroy_Perm(ObjectReference ref_container)
 endFunction
 
 function Init_Container(ObjectReference ref_container)
+    ; to make sure certain fields in c++ have been allocated for our plugin
     ref_container.AddItem(CONSTS.WEAPON_BLANK, 1, true)
-    ref_container.RemoveItem(CONSTS.WEAPON_BLANK, 1, true)
+    ref_container.RemoveItem(CONSTS.WEAPON_BLANK, 1, true, none)
 endFunction
 
 function Open(ObjectReference ref_container)
@@ -162,14 +161,8 @@ function Set_Name(ObjectReference ref_container, string str_name)
     ref_container.SetDisplayName(str_name, true)
 endFunction
 
-int function Count_Items(ObjectReference ref_container)
-    return ref_container.GetNumItems()
-endFunction
-
-int function Count_Item(ObjectReference ref_container, Form form_item)
-    return ref_container.GetItemCount(form_item)
-endFunction
-
+; Take_All and Empty should be deleted and replaced with C++ funcs. their usage seems to be in ACTORS.Resurrect only.
+; Object_Ref_Remove_All, Object_Ref_Remove_All_Playable
 function Take_All(ObjectReference ref_subject, ObjectReference ref_object)
     int num_forms
     int idx_forms
@@ -180,24 +173,6 @@ function Take_All(ObjectReference ref_subject, ObjectReference ref_object)
     endIf
 
     ref_object.RemoveAllItems(ref_subject, false, true)
-
-    num_forms = ref_object.GetNumItems()
-    idx_forms = 0
-    while idx_forms < num_forms
-        ref_form = ref_object.GetNthForm(idx_forms)
-        ref_subject.AddItem(ref_form, ref_object.GetItemCount(ref_form), true)
-        idx_forms += 1
-    endWhile
-endFunction
-
-function Take_All_Playable(ObjectReference ref_subject, ObjectReference ref_object)
-    ref_object.RemoveAllItems(ref_subject, false, true)
-endFunction
-
-function Copy(ObjectReference ref_subject, ObjectReference ref_object)
-    int num_forms
-    int idx_forms
-    Form ref_form
 
     num_forms = ref_object.GetNumItems()
     idx_forms = 0

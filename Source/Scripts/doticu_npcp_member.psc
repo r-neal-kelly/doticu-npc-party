@@ -278,7 +278,7 @@ endFunction
 function p_Destroy_Containers()
 p_Lock()
 
-    p_container_pack.RemoveAllItems(CONSTS.ACTOR_PLAYER, true, true)
+    doticu_npcp.Object_Ref_Categorize(p_container_pack)
     CONTAINERS.Destroy_Perm(p_container_pack)
 
 p_Unlock()
@@ -2331,7 +2331,6 @@ NPCS.Unlock_Base(p_ref_actor)
     endIf
 endEvent
 
-; instead of restoring health for invulnerable, why don't we just set health regen really high for this member?
 event OnHit(ObjectReference ref_attacker, Form form_tool, Projectile ref_projectile, bool is_power, bool is_sneak, bool is_bash, bool is_blocked) native
 
 function Restore_Health(float amount)

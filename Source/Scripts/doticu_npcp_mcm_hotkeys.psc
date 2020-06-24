@@ -33,6 +33,7 @@ doticu_npcp_data    p_DATA                              =  none
 bool                p_is_created                        = false
 
 int                 p_option_set_defaults               =    -1
+int                 p_option_unset_all                  =    -1
 
 ; Global
 int                 p_option_g_dialogue_menu            =    -1
@@ -143,7 +144,11 @@ function f_Build_Page()
 
     MCM.SetTitleText(" Hotkeys ")
 
+    MCM.AddHeaderOption(" Options ")
+    MCM.AddEmptyOption()
     p_option_set_defaults = MCM.AddTextOption(" Set All Defaults ", "")
+    p_option_unset_all = MCM.AddTextOption(" Unset All ", "")
+    MCM.AddEmptyOption()
     MCM.AddEmptyOption()
 
     MCM.AddHeaderOption(" Global ")
@@ -305,10 +310,14 @@ endFunction
 
 function f_On_Option_Select(int id_option)
     if id_option == p_option_set_defaults
-        if MCM.ShowMessage("This will set all NPC Party hotkeys to their defaults.\n" + \
+        if MCM.ShowMessage("This will set all NPC Party hotkeys to their defaults. " + \
                            "You will need to confirm any conflicts. Continue?", \
                            true, " Yes ", " No ")
             p_Set_Hotkey_Defaults()
+        endIf
+    elseIf id_option == p_option_unset_all
+        if MCM.ShowMessage("This will unset all NPC Party hotkeys. Continue?", true, " Yes ", " No ")
+            p_Unset_All_Hotkeys()
         endIf
     else
         string hotkey = p_Mods_Option_to_Hotkey(id_option)
@@ -325,7 +334,7 @@ function f_On_Option_Select(int id_option)
 endFunction
 
 function f_On_Option_Default(int id_option)
-    if id_option == p_option_set_defaults
+    if id_option == p_option_set_defaults || id_option == p_option_unset_all
         return
     endIf
 
@@ -355,6 +364,8 @@ function f_On_Option_Highlight(int id_option)
 
     elseIf id_option == p_option_set_defaults
         MCM.SetInfoText("Set all hotkeys to their defaults. Will also set modifiers.")
+    elseIf id_option == p_option_unset_all
+        MCM.SetInfoText("Unset all hotkeys so that they will no longer be usable. Unsets all modifier also.")
 
     ; Global
     elseIf id_option == p_option_g_dialogue_menu
@@ -993,6 +1004,65 @@ function p_Set_Hotkey_Defaults()
     p_Set_Hotkey_Default(p_option_fs_saddle,            p_option_fs_saddle_mods,            CONSTS.KEY_FS_SADDLE)
     p_Set_Hotkey_Default(p_option_fs_unsaddle,          p_option_fs_unsaddle_mods,          CONSTS.KEY_FS_UNSADDLE)
     p_Set_Hotkey_Default(p_option_fs_resurrect,         p_option_fs_resurrect_mods,         CONSTS.KEY_FS_RESURRECT)
+
+    KEYS.Update_Keys()
+endFunction
+
+function p_Unset_Hotkey(int id_value, int id_mods, string hotkey)
+    if hotkey
+        int value = -1
+        int[] mods = doticu_npcp.New_Int_Array(3, -1)
+        p_Set_Hotkey_Value(id_value, hotkey, value, false)
+        p_Set_Hotkey_Mods(id_mods, hotkey, mods)
+    endIf
+endFunction
+
+function p_Unset_All_Hotkeys()
+    ; Global
+    p_Unset_Hotkey(p_option_g_dialogue_menu,        p_option_g_dialogue_menu_mods,      CONSTS.KEY_G_DIALOGUE_MENU)
+
+    ; NPC
+    p_Unset_Hotkey(p_option_n_toggle_member,        p_option_n_toggle_member_mods,      CONSTS.KEY_N_TOGGLE_MEMBER)
+    p_Unset_Hotkey(p_option_n_toggle_move,          p_option_n_toggle_move_mods,        CONSTS.KEY_N_TOGGLE_MOVE)
+    p_Unset_Hotkey(p_option_n_move_farther,         p_option_n_move_farther_mods,       CONSTS.KEY_N_MOVE_FARTHER)
+    p_Unset_Hotkey(p_option_n_move_nearer,          p_option_n_move_nearer_mods,        CONSTS.KEY_N_MOVE_NEARER)
+    p_Unset_Hotkey(p_option_n_move_rotate_right,    p_option_n_move_rotate_right_mods,  CONSTS.KEY_N_MOVE_ROTATE_RIGHT)
+    p_Unset_Hotkey(p_option_n_move_rotate_left,     p_option_n_move_rotate_left_mods,   CONSTS.KEY_N_MOVE_ROTATE_LEFT)
+    p_Unset_Hotkey(p_option_n_has_base,             p_option_n_has_base_mods,           CONSTS.KEY_N_HAS_BASE)
+    p_Unset_Hotkey(p_option_n_count_base,           p_option_n_count_base_mods,         CONSTS.KEY_N_COUNT_BASE)
+    p_Unset_Hotkey(p_option_n_has_head,             p_option_n_has_head_mods,           CONSTS.KEY_N_HAS_HEAD)
+    p_Unset_Hotkey(p_option_n_count_heads,          p_option_n_count_heads_mods,        CONSTS.KEY_N_COUNT_HEADS)
+
+    ; Member
+    p_Unset_Hotkey(p_option_m_toggle_clone,         p_option_m_toggle_clone_mods,       CONSTS.KEY_M_TOGGLE_CLONE)
+    p_Unset_Hotkey(p_option_m_toggle_settler,       p_option_m_toggle_settler_mods,     CONSTS.KEY_M_TOGGLE_SETTLER)
+    p_Unset_Hotkey(p_option_m_toggle_thrall,        p_option_m_toggle_thrall_mods,      CONSTS.KEY_M_TOGGLE_THRALL)
+    p_Unset_Hotkey(p_option_m_toggle_immobile,      p_option_m_toggle_immobile_mods,    CONSTS.KEY_M_TOGGLE_IMMOBILE)
+    p_Unset_Hotkey(p_option_m_toggle_paralyzed,     p_option_m_toggle_paralyzed_mods,   CONSTS.KEY_M_TOGGLE_PARALYZED)
+    p_Unset_Hotkey(p_option_m_toggle_follower,      p_option_m_toggle_follower_mods,    CONSTS.KEY_M_TOGGLE_FOLLOWER)
+
+    ; Follower
+    p_Unset_Hotkey(p_option_f_toggle_sneak,         p_option_f_toggle_sneak_mods,       CONSTS.KEY_F_TOGGLE_SNEAK)
+    p_Unset_Hotkey(p_option_f_toggle_saddler,       p_option_f_toggle_saddler_mods,     CONSTS.KEY_F_TOGGLE_SADDLER)
+
+    ; Members
+    p_Unset_Hotkey(p_option_ms_toggle_display,      p_option_ms_toggle_display_mods,    CONSTS.KEY_MS_TOGGLE_DISPLAY)
+    p_Unset_Hotkey(p_option_ms_display_previous,    p_option_ms_display_previous_mods,  CONSTS.KEY_MS_DISPLAY_PREVIOUS)
+    p_Unset_Hotkey(p_option_ms_display_next,        p_option_ms_display_next_mods,      CONSTS.KEY_MS_DISPLAY_NEXT)
+
+    ; Followers
+    p_Unset_Hotkey(p_option_fs_summon_all,          p_option_fs_summon_all_mods,        CONSTS.KEY_FS_SUMMON_ALL)
+    p_Unset_Hotkey(p_option_fs_summon_mobile,       p_option_fs_summon_mobile_mods,     CONSTS.KEY_FS_SUMMON_MOBILE)
+    p_Unset_Hotkey(p_option_fs_summon_immobile,     p_option_fs_summon_immobile_mods,   CONSTS.KEY_FS_SUMMON_IMMOBILE)
+    p_Unset_Hotkey(p_option_fs_settle,              p_option_fs_settle_mods,            CONSTS.KEY_FS_SETTLE)
+    p_Unset_Hotkey(p_option_fs_unsettle,            p_option_fs_unsettle_mods,          CONSTS.KEY_FS_UNSETTLE)
+    p_Unset_Hotkey(p_option_fs_mobilize,            p_option_fs_mobilize_mods,          CONSTS.KEY_FS_MOBILIZE)
+    p_Unset_Hotkey(p_option_fs_immobilize,          p_option_fs_immobilize_mods,        CONSTS.KEY_FS_IMMOBILIZE)
+    p_Unset_Hotkey(p_option_fs_sneak,               p_option_fs_sneak_mods,             CONSTS.KEY_FS_SNEAK)
+    p_Unset_Hotkey(p_option_fs_unsneak,             p_option_fs_unsneak_mods,           CONSTS.KEY_FS_UNSNEAK)
+    p_Unset_Hotkey(p_option_fs_saddle,              p_option_fs_saddle_mods,            CONSTS.KEY_FS_SADDLE)
+    p_Unset_Hotkey(p_option_fs_unsaddle,            p_option_fs_unsaddle_mods,          CONSTS.KEY_FS_UNSADDLE)
+    p_Unset_Hotkey(p_option_fs_resurrect,           p_option_fs_resurrect_mods,         CONSTS.KEY_FS_RESURRECT)
 
     KEYS.Update_Keys()
 endFunction

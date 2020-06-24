@@ -155,6 +155,8 @@ ObjectReference             p_CATEGORY_SOULGEMS                     = none
 ObjectReference             p_CATEGORY_KEYS                         = none
 ObjectReference             p_CATEGORY_OTHERS                       = none
 
+ObjectReference             p_CATEGORY_INPUT                        = none
+
 ; Public Constants
 Actor property ACTOR_PLAYER
     Actor function Get()
@@ -1674,6 +1676,16 @@ ObjectReference property CATEGORY_OTHERS
     function Set(ObjectReference val)
         if p_CATEGORY_OTHERS == none
             p_CATEGORY_OTHERS = val
+        endIf
+    endFunction
+endProperty
+ObjectReference property CATEGORY_INPUT
+    ObjectReference function Get()
+        return p_CATEGORY_INPUT
+    endFunction
+    function Set(ObjectReference val)
+        if p_CATEGORY_INPUT == none
+            p_CATEGORY_INPUT = val
         endIf
     endFunction
 endProperty

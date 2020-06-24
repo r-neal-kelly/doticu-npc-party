@@ -80,8 +80,7 @@ function f_Create(doticu_npcp_data DATA, string str_name, int code_create = 0)
 endFunction
 
 function f_Destroy()
-    ; this needs to be setting to an optional place, prob. a community chest
-    self.RemoveAllItems(CONSTS.ACTOR_PLAYER, false, true)
+    doticu_npcp.Object_Ref_Categorize(self)
 
     if p_cache_base
         p_cache_base.Disable()
@@ -205,14 +204,11 @@ function Cache_Vanilla_Dynamic(Actor ref_actor)
     endIf
 
     ; make sure this container is persistent from now on.
-    ; we add one item to make sure certain fields in c++ have been allocated
     if p_cache_base
         p_cache_base.Disable()
         p_cache_base.Delete()
     endIf
     p_cache_base = CONTAINERS.Create_Perm()
-    p_cache_base.AddItem(CONSTS.WEAPON_BLANK, 1, true)
-    p_cache_base.RemoveItem(CONSTS.WEAPON_BLANK, 1, true)
 
     ; not only does this do the heavy lifting, but it caches what the actor is wearing
     ; so that when a vanilla outfit change happens, leveled items wont be calc'd twice.
@@ -229,15 +225,11 @@ function Try_Cache_Vanilla(Outfit outfit_vanilla)
 endFunction
 
 function Get(Actor ref_actor, ObjectReference ref_pack)
-    ; this should be moved to community chests
-    self.RemoveAllItems(CONSTS.ACTOR_PLAYER, false, true)
+    ; just to make sure c++ has allocated xcontainers
+    CONTAINERS.Init_Container(self)
+    CONTAINERS.Init_Container(ref_pack)
 
-    ; to make sure c++ has allocated xcontainers
-    self.AddItem(CONSTS.WEAPON_BLANK, 1, true)
-    self.RemoveItem(CONSTS.WEAPON_BLANK, 1, true, none)
-    ref_pack.AddItem(CONSTS.WEAPON_BLANK, 1, true)
-    ref_pack.RemoveItem(CONSTS.WEAPON_BLANK, 1, true, none)
-
+    doticu_npcp.Object_Ref_Categorize(self)
     doticu_npcp.Actor_Cache_Inventory(ref_actor, CONSTS.ARMOR_BLANK, self, ref_pack); maybe buffer with ref_transfer
 endFunction
 
