@@ -489,6 +489,40 @@ namespace doticu_npcp { namespace Followers {
         return nullptr;
     }
 
+    idx_t Actor_To_Alias_Idx(Followers_t* followers, Actor* actor)
+    {
+        if (followers && actor) {
+            XAliases_t* xaliases = (XAliases_t*)actor->extraData.GetByType(kExtraData_AliasInstanceArray);
+            if (xaliases) {
+                for (idx_t idx = 0, size = xaliases->aliases.count; idx < size; idx += 1) {
+                    XAliases_t::AliasInfo* info = xaliases->aliases[idx];
+                    if (info && info->quest == followers) {
+                        return followers->aliases.GetItemIndex(info->alias);
+                    }
+                }
+                return -1;
+            } else {
+                return -1;
+            }
+        } else {
+            return -1;
+        }
+    }
+
+    Horse_t* Actor_To_Horse(Followers_t* followers, Actor* horse)
+    {
+        if (followers && horse) {
+            idx_t alias_idx = Actor_To_Alias_Idx(followers, horse);
+            if (alias_idx >= Followers::MAX && alias_idx < Followers::MAX * 2) {
+                return followers->aliases[alias_idx];
+            } else {
+                return nullptr;
+            }
+        } else {
+            return nullptr;
+        }
+    }
+
     SInt32 Actor_To_ID(Followers_t *followers, Actor *actor)
     {
         if (followers && actor) {
@@ -502,6 +536,21 @@ namespace doticu_npcp { namespace Followers {
         }
 
         return -1;
+    }
+
+    Actor_t* Horse_Actor_To_Follower_Actor(Followers_t* followers, Actor_t* horse)
+    {
+        if (followers && horse) {
+            idx_t alias_idx = Actor_To_Alias_Idx(followers, horse);
+            if (alias_idx >= Followers::MAX && alias_idx < Followers::MAX * 2) {
+                Follower_t* follower = followers->aliases[alias_idx - Followers::MAX];
+                return Follower::Get_Actor(follower);
+            } else {
+                return nullptr;
+            }
+        } else {
+            return nullptr;
+        }
     }
 
     Follower_t *Unused_Follower(Followers_t *followers)
@@ -639,6 +688,7 @@ namespace doticu_npcp { namespace Followers { namespace Exports {
         ADD_METHOD("p_ID_To_Follower", 1, Follower_t *, ID_To_Follower, SInt32);
         ADD_METHOD("p_Actor_To_Follower", 1, Follower_t *, Actor_To_Follower, Actor *);
         ADD_METHOD("p_Actor_To_ID", 1, SInt32, Actor_To_ID, Actor *);
+        ADD_METHOD("Horse_Actor_To_Follower_Actor", 1, Actor_t*, Horse_Actor_To_Follower_Actor, Actor_t*);
 
         ADD_METHOD("p_Unused_Follower", 0, Follower_t *, Unused_Follower);
         ADD_METHOD("p_Unused_ID", 0, SInt32, Unused_ID);

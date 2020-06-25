@@ -66,6 +66,9 @@ namespace doticu_npcp { namespace Followers {
     Follower_t *ID_To_Follower(Followers_t *followers, SInt32 id);
     Follower_t *Actor_To_Follower(Followers_t *followers, Actor *actor);
     SInt32 Actor_To_ID(Followers_t *followers, Actor *actor);
+    idx_t Actor_To_Alias_Idx(Followers_t* followers, Actor* actor);
+    Horse_t* Actor_To_Horse(Followers_t* followers, Actor* horse);
+    Actor_t* Horse_Actor_To_Follower_Actor(Followers_t* followers, Actor_t* horse);
 
     Follower_t *Unused_Follower(Followers_t *followers);
     SInt32 Unused_ID(Followers_t *followers);

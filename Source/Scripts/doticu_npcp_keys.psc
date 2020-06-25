@@ -25,6 +25,11 @@ doticu_npcp_actors property ACTORS hidden
         return p_DATA.MODS.FUNCS.ACTORS
     endFunction
 endProperty
+doticu_npcp_followers property FOLLOWERS hidden
+    doticu_npcp_followers function Get()
+        return p_DATA.MODS.FOLLOWERS
+    endFunction
+endProperty
 doticu_npcp_commands property COMMANDS hidden
     doticu_npcp_commands function Get()
         return p_DATA.MODS.CONTROL.COMMANDS
@@ -66,6 +71,17 @@ string function Default_Mods_To_String(string key) native
 string function Current_Mods_To_String(string key) native
 string function Conflicting_Hotkey(string key, int value, int mod_1, int mod_2, int mod_3) native
 string function p_Pressed_Hotkey(int value, int pressed_1 = -1, int pressed_2 = -1, int pressed_3 = -1, int pressed_4 = -1) native
+
+; Private Methods
+Actor function Actor_In_Crosshair()
+    Actor ref_actor = Game.GetCurrentCrosshairRef() as Actor
+    Actor ref_follower = FOLLOWERS.Horse_Actor_To_Follower_Actor(ref_actor)
+    if ref_follower
+        return ref_follower
+    else
+        return ref_actor
+    endIf
+endFunction
 
 ; Public Methods
 bool function Is_Active(int code_key)
@@ -225,11 +241,11 @@ event OnKeyDown(int value)
 
     ; NPC
     elseIf pressed_hotkey == CONSTS.KEY_N_TOGGLE_MEMBER
-        COMMANDS.Toggle_Member_Sync(Game.GetCurrentCrosshairRef() as Actor)
+        COMMANDS.Toggle_Member_Sync(Actor_In_Crosshair())
     elseIf pressed_hotkey == CONSTS.KEY_N_TOGGLE_MOVE
-        COMMANDS.Move_Sync(Game.GetCurrentCrosshairRef() as Actor)
+        COMMANDS.Move_Sync(Actor_In_Crosshair())
     elseIf pressed_hotkey == CONSTS.KEY_N_HAS_BASE
-        Actor ref_actor = Game.GetCurrentCrosshairRef() as Actor
+        Actor ref_actor = Actor_In_Crosshair()
         if ref_actor == none
             LOGS.Create_Note("That is not an NPC.", false)
         elseIf p_DATA.MODS.MEMBERS.Has_Base(ref_actor)
@@ -238,7 +254,7 @@ event OnKeyDown(int value)
             LOGS.Create_Note("No member has the base of " + ACTORS.Get_Name(ref_actor) + ".", false)
         endIf
     elseIf pressed_hotkey == CONSTS.KEY_N_COUNT_BASE
-        Actor ref_actor = Game.GetCurrentCrosshairRef() as Actor
+        Actor ref_actor = Actor_In_Crosshair()
         if ref_actor == none
             LOGS.Create_Note("That is not an NPC.", false)
         else
@@ -250,7 +266,7 @@ event OnKeyDown(int value)
             endIf
         endIf
     elseif pressed_hotkey == CONSTS.KEY_N_HAS_HEAD
-        Actor ref_actor = Game.GetCurrentCrosshairRef() as Actor
+        Actor ref_actor = Actor_In_Crosshair()
         if ref_actor == none
             LOGS.Create_Note("That is not an NPC.", false)
         elseIf p_DATA.MODS.MEMBERS.Has_Head(ref_actor)
@@ -259,7 +275,7 @@ event OnKeyDown(int value)
             LOGS.Create_Note("No member looks like " + ACTORS.Get_Name(ref_actor) + ".", false)
         endIf
     elseIf pressed_hotkey == CONSTS.KEY_N_COUNT_HEADS
-        Actor ref_actor = Game.GetCurrentCrosshairRef() as Actor
+        Actor ref_actor = Actor_In_Crosshair()
         if ref_actor == none
             LOGS.Create_Note("That is not an NPC.", false)
         else
@@ -273,27 +289,27 @@ event OnKeyDown(int value)
 
     ; Member
     elseIf pressed_hotkey == CONSTS.KEY_M_TOGGLE_CLONE
-        COMMANDS.Toggle_Clone_Sync(Game.GetCurrentCrosshairRef() as Actor)
+        COMMANDS.Toggle_Clone_Sync(Actor_In_Crosshair())
     elseIf pressed_hotkey == CONSTS.KEY_M_TOGGLE_SETTLER
-        COMMANDS.Toggle_Settler_Async(Game.GetCurrentCrosshairRef() as Actor)
+        COMMANDS.Toggle_Settler_Async(Actor_In_Crosshair())
     elseIf pressed_hotkey == CONSTS.KEY_M_TOGGLE_THRALL
-        COMMANDS.Toggle_Thrall_Async(Game.GetCurrentCrosshairRef() as Actor)
+        COMMANDS.Toggle_Thrall_Async(Actor_In_Crosshair())
     elseIf pressed_hotkey == CONSTS.KEY_M_TOGGLE_IMMOBILE
-        COMMANDS.Toggle_Immobile_Async(Game.GetCurrentCrosshairRef() as Actor)
+        COMMANDS.Toggle_Immobile_Async(Actor_In_Crosshair())
     elseIf pressed_hotkey == CONSTS.KEY_M_TOGGLE_PARALYZED
-        COMMANDS.Toggle_Paralyzed_Async(Game.GetCurrentCrosshairRef() as Actor)
+        COMMANDS.Toggle_Paralyzed_Async(Actor_In_Crosshair())
     elseIf pressed_hotkey == CONSTS.KEY_M_TOGGLE_FOLLOWER
-        COMMANDS.Toggle_Follower_Sync(Game.GetCurrentCrosshairRef() as Actor)
+        COMMANDS.Toggle_Follower_Sync(Actor_In_Crosshair())
 
     ; Follower
     elseIf pressed_hotkey == CONSTS.KEY_F_TOGGLE_SNEAK
-        COMMANDS.Toggle_Sneak_Async(Game.GetCurrentCrosshairRef() as Actor)
+        COMMANDS.Toggle_Sneak_Async(Actor_In_Crosshair())
     elseIf pressed_hotkey == CONSTS.KEY_F_TOGGLE_SADDLER
-        COMMANDS.Toggle_Saddler_Async(Game.GetCurrentCrosshairRef() as Actor)
+        COMMANDS.Toggle_Saddler_Async(Actor_In_Crosshair())
 
     ; Members
     elseIf pressed_hotkey == CONSTS.KEY_MS_TOGGLE_DISPLAY
-        COMMANDS.Toggle_Members_Display(Game.GetCurrentCrosshairRef() as Actor)
+        COMMANDS.Toggle_Members_Display(Actor_In_Crosshair())
     elseIf pressed_hotkey == CONSTS.KEY_MS_DISPLAY_PREVIOUS
         COMMANDS.Members_Display_Previous()
     elseIf pressed_hotkey == CONSTS.KEY_MS_DISPLAY_NEXT

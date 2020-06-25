@@ -94,6 +94,8 @@ bool function Hasnt_Space() native
 bool function Are_In_Combat() native
 bool function Has_Actor(Actor ref_actor) native
 
+Actor function Horse_Actor_To_Follower_Actor(Actor ref_horse) native
+
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
     p_DATA = DATA
