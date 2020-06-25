@@ -109,6 +109,11 @@ namespace doticu_npcp { namespace Keys {
                     mod_3 == rhs.mod_3;
             }
 
+            bool Has(Int_t mod)
+            {
+                return mod == mod_1 || mod == mod_2 || mod == mod_3;
+            }
+
             size_t Size()
             {
                 size_t count = 0;
@@ -486,7 +491,23 @@ namespace doticu_npcp { namespace Keys {
     {
         Key_System_t& key_system = Key_System();
 
-        std::vector<Int_t> pressed_keys({ pressed_1, pressed_2, pressed_3, pressed_4 });
+        std::vector<Int_t> pressed_keys;
+        pressed_keys.reserve(3);
+        if (pressed_1 != value && pressed_keys.size() < 3) {
+            pressed_keys.push_back(pressed_1);
+        }
+        if (pressed_2 != value && pressed_keys.size() < 3) {
+            pressed_keys.push_back(pressed_2);
+        }
+        if (pressed_3 != value && pressed_keys.size() < 3) {
+            pressed_keys.push_back(pressed_3);
+        }
+        if (pressed_4 != value && pressed_keys.size() < 3) {
+            pressed_keys.push_back(pressed_4);
+        }
+        while (pressed_keys.size() < 3) {
+            pressed_keys.push_back(KEY_INVALID);
+        }
 
         String_t chosen_hotkey = "";
         Int_t chosen_mods_size = -1;
@@ -495,7 +516,10 @@ namespace doticu_npcp { namespace Keys {
             Int_t current_value = key_system.Current_Value(idx);
             if (current_value == value) {
                 Key_System_t::Mods current_mods = key_system.Current_Mods(idx);
-                if (Vector::Has(pressed_keys, current_mods.mod_1) &&
+                if (current_mods.Has(pressed_keys[0]) &&
+                    current_mods.Has(pressed_keys[1]) &&
+                    current_mods.Has(pressed_keys[2]) &&
+                    Vector::Has(pressed_keys, current_mods.mod_1) &&
                     Vector::Has(pressed_keys, current_mods.mod_2) &&
                     Vector::Has(pressed_keys, current_mods.mod_3)) {
                     Int_t current_mods_size = current_mods.Size();
@@ -530,7 +554,7 @@ namespace doticu_npcp { namespace Keys { namespace Exports {
         ADD_METHOD("Default_Mods_To_String", 1, String_t, Default_Mods_To_String, String_t);
         ADD_METHOD("Current_Mods_To_String", 1, String_t, Current_Mods_To_String, String_t);
         ADD_METHOD("Conflicting_Hotkey", 5, String_t, Conflicting_Hotkey, String_t, Int_t, Int_t, Int_t, Int_t);
-        ADD_METHOD("p_Pressed_Hotkey", 5, String_t, Pressed_Hotkey, Int_t, Int_t, Int_t, Int_t, Int_t);
+        ADD_METHOD("Pressed_Hotkey", 5, String_t, Pressed_Hotkey, Int_t, Int_t, Int_t, Int_t, Int_t);
 
         #undef ADD_METHOD
 

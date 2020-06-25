@@ -216,6 +216,11 @@ p_Busy()
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
+    int num_mobile = Count_Mobile()
+    if num_mobile < 1
+        return p_Ready_Int(CODES.HASNT_MOBILE)
+    endIf
+
     p_Summon_Mobile(distance, angle_degree, interval_degree)
 
     return p_Ready_Int(CODES.SUCCESS)
@@ -229,6 +234,11 @@ p_Busy()
     int num_followers = Count_All()
     if num_followers < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
+    endIf
+
+    int num_immobile = Count_Immobile()
+    if num_immobile < 1
+        return p_Ready_Int(CODES.HASNT_IMMOBILE)
     endIf
 
     p_Summon_Immobile(distance, angle_degree, interval_degree)

@@ -37,6 +37,7 @@ namespace doticu_npcp { namespace Follower {
     bool Is_In_Exterior_Cell(Follower_t *follower);
 
     void Summon(Follower_t *follower, float distance = 140, float angle_degree = 0);
+    void Summon_Ahead(Follower_t* follower, float distance = 140);
     void Summon_Behind(Follower_t *follower, float distance = 140);
     void Catch_Up(Follower_t *follower);
     void Level(Follower_t *follower);

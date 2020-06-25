@@ -9,6 +9,8 @@
 namespace doticu_npcp { namespace Player {
 
     bool Is_Party_In_Combat(Player_t *player);
+    bool Is_In_Interior_Cell();
+    bool Is_In_Exterior_Cell();
 
 }}
 

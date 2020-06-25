@@ -47,6 +47,12 @@ doticu_npcp_data    p_DATA          =  none
 ; Private Variables
 bool                p_is_created    = false
 
+bool                p_can_trigger   = false
+int                 p_pressed_1     =    -1
+int                 p_pressed_2     =    -1
+int                 p_pressed_3     =    -1
+int                 p_pressed_4     =    -1
+
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
     p_DATA = DATA
@@ -70,46 +76,24 @@ int[] function Current_Mods(string key) native
 string function Default_Mods_To_String(string key) native
 string function Current_Mods_To_String(string key) native
 string function Conflicting_Hotkey(string key, int value, int mod_1, int mod_2, int mod_3) native
-string function p_Pressed_Hotkey(int value, int pressed_1 = -1, int pressed_2 = -1, int pressed_3 = -1, int pressed_4 = -1) native
-
-; Private Methods
-Actor function Actor_In_Crosshair()
-    Actor ref_actor = Game.GetCurrentCrosshairRef() as Actor
-    Actor ref_follower = FOLLOWERS.Horse_Actor_To_Follower_Actor(ref_actor)
-    if ref_follower
-        return ref_follower
-    else
-        return ref_actor
-    endIf
-endFunction
+string function Pressed_Hotkey(int value, int pressed_1 = -1, int pressed_2 = -1, int pressed_3 = -1, int pressed_4 = -1) native
 
 ; Public Methods
 bool function Is_Active(int code_key)
     return code_key > -1
 endFunction
 
-string function Pressed_Hotkey(int value)
-    int pressed_key_count = Input.GetNumKeysPressed()
-    if pressed_key_count >= 4
-        return p_Pressed_Hotkey(value,                      \
-                                Input.GetNthKeyPressed(0),  \
-                                Input.GetNthKeyPressed(1),  \
-                                Input.GetNthKeyPressed(2),  \
-                                Input.GetNthKeyPressed(3))
-    elseIf pressed_key_count == 3
-        return p_Pressed_Hotkey(value,                      \
-                                Input.GetNthKeyPressed(0),  \
-                                Input.GetNthKeyPressed(1),  \
-                            Input.GetNthKeyPressed(2))
-    elseIf pressed_key_count == 2
-        return p_Pressed_Hotkey(value,                      \
-                                Input.GetNthKeyPressed(0),  \
-                                Input.GetNthKeyPressed(1))
-    elseIf pressed_key_count == 1
-        return p_Pressed_Hotkey(value,                      \
-                                Input.GetNthKeyPressed(0))
+Actor function Actor_In_Crosshair(bool allow_follower_horse = false)
+    Actor ref_actor = Game.GetCurrentCrosshairRef() as Actor
+    if allow_follower_horse
+        return ref_actor
     else
-        return p_Pressed_Hotkey(value)
+        Actor ref_follower = FOLLOWERS.Horse_Actor_To_Follower_Actor(ref_actor)
+        if ref_follower
+            return ref_follower
+        else
+            return ref_actor
+        endIf
     endIf
 endFunction
 
@@ -228,13 +212,53 @@ endFunction
 
 ; Events
 event OnKeyDown(int value)
+    if FUNCS.Can_Use_Keys()
+        ; This keeps OnKeyUp from firing multiple possible hotkeys
+        p_can_trigger = true
+
+        ; I think these should be cleared here instead of OnKeyUp
+        p_pressed_1 = -1
+        p_pressed_2 = -1
+        p_pressed_3 = -1
+        p_pressed_4 = -1
+    
+        int pressed_key_count = Input.GetNumKeysPressed()
+        if pressed_key_count >= 4
+            p_pressed_1 = Input.GetNthKeyPressed(0)
+            p_pressed_2 = Input.GetNthKeyPressed(1)
+            p_pressed_3 = Input.GetNthKeyPressed(2)
+            p_pressed_4 = Input.GetNthKeyPressed(3)
+        elseIf pressed_key_count == 3
+            p_pressed_1 = Input.GetNthKeyPressed(0)
+            p_pressed_2 = Input.GetNthKeyPressed(1)
+            p_pressed_3 = Input.GetNthKeyPressed(2)
+        elseIf pressed_key_count == 2
+            p_pressed_1 = Input.GetNthKeyPressed(0)
+            p_pressed_2 = Input.GetNthKeyPressed(1)
+        elseIf pressed_key_count == 1
+            p_pressed_1 = Input.GetNthKeyPressed(0)
+        endIf
+    endIf
+endEvent
+
+event OnKeyUp(int value, float hold_time)
     if !FUNCS.Can_Use_Keys()
         return
     endIf
 
-    string pressed_hotkey = Pressed_Hotkey(value)
-    if !pressed_hotkey
+    if !p_can_trigger
+        return
+    endIf
 
+    string pressed_hotkey = Pressed_Hotkey(value, p_pressed_1, p_pressed_2, p_pressed_3, p_pressed_4)
+    if !pressed_hotkey
+        return
+    endIf
+
+    p_can_trigger = false
+
+    if false
+        
     ; General
     elseIf pressed_hotkey == CONSTS.KEY_G_DIALOGUE_MENU
         FUNCS.ACTORS.Create_Menu()
@@ -243,7 +267,7 @@ event OnKeyDown(int value)
     elseIf pressed_hotkey == CONSTS.KEY_N_TOGGLE_MEMBER
         COMMANDS.Toggle_Member_Sync(Actor_In_Crosshair())
     elseIf pressed_hotkey == CONSTS.KEY_N_TOGGLE_MOVE
-        COMMANDS.Move_Sync(Actor_In_Crosshair())
+        COMMANDS.Move_Sync(Actor_In_Crosshair(true))
     elseIf pressed_hotkey == CONSTS.KEY_N_HAS_BASE
         Actor ref_actor = Actor_In_Crosshair()
         if ref_actor == none

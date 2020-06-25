@@ -417,7 +417,7 @@ function p_Level() native
 
 function p_Unlevel() native
 
-bool function p_Async(string str_func)
+function p_Async(string str_func)
     string str_event = "doticu_npcp_follower_async_" + p_id_alias
 
 p_Lock()

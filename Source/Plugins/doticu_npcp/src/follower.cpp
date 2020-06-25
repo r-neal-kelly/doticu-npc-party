@@ -13,6 +13,7 @@
 #include "member.h"
 #include "object_ref.h"
 #include "papyrus.h"
+#include "player.h"
 #include "utils.h"
 
 namespace doticu_npcp { namespace Follower {
@@ -301,6 +302,17 @@ namespace doticu_npcp { namespace Follower {
         }
     }
 
+    void Summon_Ahead(Follower_t* follower, float distance)
+    {
+        if (follower) {
+            Actor* follower_actor = Get_Actor(follower);
+            Actor* player_actor = *g_thePlayer;
+            if (follower_actor && player_actor) {
+                Actor2::Move_To_Orbit(follower_actor, player_actor, distance, 0);
+            }
+        }
+    }
+
     void Summon_Behind(Follower_t *follower, float distance) {
         if (!follower) {
             return;
@@ -319,23 +331,18 @@ namespace doticu_npcp { namespace Follower {
         Actor2::Move_To_Orbit(follower_actor, player_actor, distance, 180);
     }
 
-    void Catch_Up(Follower_t *follower)
+    void Catch_Up(Follower_t* follower)
     {
-        if (Exists(follower) && Is_Mobile(follower) && Isnt_Paralyzed(follower) && Isnt_Mannequin(follower))
-        {
-            if (Is_In_Interior_Cell(follower) || Isnt_Saddler(follower))
-            {
-                if (Isnt_Near_Player(follower))
-                {
+        if (Exists(follower) && Is_Mobile(follower) && Isnt_Paralyzed(follower) && Isnt_Mannequin(follower)) {
+            if (Player::Is_In_Interior_Cell() || Isnt_Saddler(follower)) {
+                if (Isnt_Near_Player(follower)) {
                     Summon_Behind(follower);
                 }
-            }
-            else
-            {
-                Actor *follower_horse = Horse_Actor(follower);
-                if (follower_horse && !Object_Ref::Is_Near_Player(follower_horse, 8192.0f))
-                {
-                    Summon_Behind(follower, 1024.0f);
+            } else {
+                Actor* follower_horse = Horse_Actor(follower);
+                if (follower_horse && !Object_Ref::Is_Near_Player(follower_horse, 8192.0f)) {
+                    //Summon_Ahead(follower, 1024.0f);
+                    Summon_Behind(follower);
                     Saddle(follower);
                 }
             }
