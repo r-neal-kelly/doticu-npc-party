@@ -11,6 +11,7 @@ It can be tough to manage all my followers, as I always end up getting a lot of 
 - **clones** of humanoid NPCs
 - a **pack** per member to carry your items
 - multiple **outfits** per member you can customize
+- **horses** for your followers to ride
 - **settings** to fine tune your experience
 - **dialogue** commands
 - an **MCM menu**
@@ -54,7 +55,7 @@ This mod is currently in beta testing. You may run into a few hiccups every now 
 
 # 
 ## Compatibility
-One of the goals of this mod was to touch as few vanilla assets as possible, but no promises can be made regarding compatibility. Currently, the vanilla follower system has been disabled, and the consequences have not been fully tested. There will be issues with other full-scale follower frameworks being used at the same time. Custom followers who use the vanilla system will need to use the framework. If they don't use the vanilla system, they may be fully compatible alongside the framework. Outfitting mods are compatible when using a member's "Vanilla" outfit.
+One of the goals of this mod was to touch as few vanilla assets as possible, but no promises can be made regarding compatibility. Currently, the vanilla follower system is enabled. However it does not mesh well with this mod. This is to be worked on before coming out of beta. There may be issues with other full-scale follower frameworks being used at the same time. Custom followers who do not use the vanilla system are likely fully compatible alongside the framework. Outfitting mods are compatible when using a member's "Vanilla" outfit.
 
 # 
 ## Conclusion
@@ -77,6 +78,7 @@ I hope that this mod changes your follower experience for the better. My goal wa
 - OldMansBeard for helping me [reuse vanilla voices](https://forums.nexusmods.com/index.php?/topic/8223653-reusing-voice-files/) without copying and redistributing them.
 - cumbrianlad for a [discussion on persistent references](https://forums.nexusmods.com/index.php?/topic/8082738-is-512-persistent-actor-references-bad/), and how this can take a toll on the player's gameplay.
 - Ian Patterson of the SKSE Team for telling me how to save outfits on a form in the SKSE plugin.
+- Ryan-rsm-McKenzie of [CommonLibSSE](https://github.com/Ryan-rsm-McKenzie/CommonLibSSE) for decompiling useful parts of the SkyrimSE engine.
 - [Creation Kit Wiki](https://www.creationkit.com/index.php?title=Main_Page) for the wealth of knowledge with which this mod was made.
 - [GitHub](https://github.com) for giving my codebase a place to live online.
 - [NexusMods](https://www.nexusmods.com/) for such a great site, and for hosting my mod!
