@@ -134,10 +134,6 @@ p_Unlock()
 endFunction
 
 function p_Try_End_Combat()
-    ; because all followers may actually die in battle,
-    ; and their combat state will not indicate whether
-    ; the player is actually in battle, we have a looping
-    ; queue set instead
     if ACTOR_PLAYER.IsInCombat() || FOLLOWERS.Are_In_Combat()
         FUNCS.Wait(5.0)
         p_Async("p_Try_End_Combat")
@@ -147,17 +143,16 @@ function p_Try_End_Combat()
 endFunction
 
 function p_End_Combat()
-    ; the whole point of this is so that we can have behavior
-    ; after a battle ends, e.g. resurrecting followers automatically
     if p_is_in_combat == true
         p_is_in_combat = false
         
-        ;FOLLOWERS.Unretreat(); maybe make this optional?
+        if !ACTOR_PLAYER.IsSneaking()
+            FOLLOWERS.Unretreat()
+        endIf
         FOLLOWERS.Enforce()
         if VARS.auto_resurrect
             FOLLOWERS.Resurrect()
         endIf
-
     endIf
 endFunction
 
@@ -194,6 +189,8 @@ event OnControlDown(string str_control)
     if str_control == "Sneak"
         if ACTOR_PLAYER.IsSneaking() && Is_Party_In_Combat()
             FOLLOWERS.Retreat()
+        else
+            FOLLOWERS.Unretreat()
         endIf
     endIf
 endEvent
@@ -210,7 +207,6 @@ endEvent
 
 event On_Cell_Change(Form cell_new, Form cell_old)
     ACTORS.Apply_Ability(ACTOR_PLAYER, CONSTS.ABILITY_CELL)
-    
     FOLLOWERS.Catch_Up()
 endEvent
 

@@ -382,6 +382,13 @@ p_Unlock()
 endFunction
 
 function p_Retreat()
+    ; this is kinda a hack to make sure that they don't get stuck as a retreater.
+    ; it becomes very obvious when they won't get on their horses for example
+    if !CONSTS.ACTOR_PLAYER.IsSneaking()
+        p_is_retreater = false
+        return p_Unretreat()
+    endIf
+
 p_Lock()
 
     ; this will cause a package change, where ref ignores combat

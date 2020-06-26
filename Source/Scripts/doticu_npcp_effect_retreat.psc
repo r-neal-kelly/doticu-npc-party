@@ -47,7 +47,6 @@ Actor p_ref_actor =  none
 ; Events
 event OnEffectStart(Actor ref_target, Actor ref_caster)
     p_ref_actor = ref_target
-
     ACTORS.Pacify(p_ref_actor)
 endEvent
 
@@ -56,17 +55,16 @@ event OnEffectFinish(Actor ref_target, Actor ref_caster)
     if !CONSTS.ACTOR_PLAYER.IsSneaking()
         FOLLOWERS.Get_Follower(ref_target).Unretreat()
     else
-        ;FOLLOWERS.Get_Follower(ref_target).Retreat()
-        while !p_ref_actor.HasMagicEffect(CONSTS.EFFECT_RETREAT)
-            ACTORS.Apply_Ability(p_ref_actor, CONSTS.ABILITY_RETREAT)
-        endWhile
+        FOLLOWERS.Get_Follower(ref_target).Retreat()
     endIf
 
     p_ref_actor = none
 endEvent
 
 event OnCombatStateChanged(Actor ref_target, int code_combat)
-    if code_combat > 0
-        ACTORS.Pacify(p_ref_actor)
+    p_ref_actor.StopCombatAlarm()
+    if ref_target
+        ref_target.StopCombat()
+        ref_target.EvaluatePackage()
     endIf
 endEvent

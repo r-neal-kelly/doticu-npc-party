@@ -42,16 +42,12 @@ doticu_npcp_logs property LOGS hidden
 endProperty
 
 ; Private Constants
-doticu_npcp_data    p_DATA          =  none
+doticu_npcp_data    p_DATA              =  none
 
 ; Private Variables
-bool                p_is_created    = false
+bool                p_is_created        = false
 
-bool                p_can_trigger   = false
-int                 p_pressed_1     =    -1
-int                 p_pressed_2     =    -1
-int                 p_pressed_3     =    -1
-int                 p_pressed_4     =    -1
+string              p_pressed_hotkey    =    ""
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
@@ -76,7 +72,9 @@ int[] function Current_Mods(string key) native
 string function Default_Mods_To_String(string key) native
 string function Current_Mods_To_String(string key) native
 string function Conflicting_Hotkey(string key, int value, int mod_1, int mod_2, int mod_3) native
-string function Pressed_Hotkey(int value, int pressed_1 = -1, int pressed_2 = -1, int pressed_3 = -1, int pressed_4 = -1) native
+string function Pressed_Hotkey(int value \
+                              ,int pressed_1 = -1, int pressed_2 = -1, int pressed_3 = -1, int pressed_4 = -1 \
+                              ,int pressed_5 = -1, int pressed_6 = -1, int pressed_7 = -1, int pressed_8 = -1) native
 
 ; Public Methods
 bool function Is_Active(int code_key)
@@ -213,30 +211,59 @@ endFunction
 ; Events
 event OnKeyDown(int value)
     if FUNCS.Can_Use_Keys()
-        ; This keeps OnKeyUp from firing multiple possible hotkeys
-        p_can_trigger = true
-
-        ; I think these should be cleared here instead of OnKeyUp
-        p_pressed_1 = -1
-        p_pressed_2 = -1
-        p_pressed_3 = -1
-        p_pressed_4 = -1
-    
         int pressed_key_count = Input.GetNumKeysPressed()
-        if pressed_key_count >= 4
-            p_pressed_1 = Input.GetNthKeyPressed(0)
-            p_pressed_2 = Input.GetNthKeyPressed(1)
-            p_pressed_3 = Input.GetNthKeyPressed(2)
-            p_pressed_4 = Input.GetNthKeyPressed(3)
-        elseIf pressed_key_count == 3
-            p_pressed_1 = Input.GetNthKeyPressed(0)
-            p_pressed_2 = Input.GetNthKeyPressed(1)
-            p_pressed_3 = Input.GetNthKeyPressed(2)
+        if pressed_key_count == 1
+            p_pressed_hotkey = Pressed_Hotkey(value, \
+                                              Input.GetNthKeyPressed(0))
         elseIf pressed_key_count == 2
-            p_pressed_1 = Input.GetNthKeyPressed(0)
-            p_pressed_2 = Input.GetNthKeyPressed(1)
-        elseIf pressed_key_count == 1
-            p_pressed_1 = Input.GetNthKeyPressed(0)
+            p_pressed_hotkey = Pressed_Hotkey(value, \
+                                              Input.GetNthKeyPressed(0), \
+                                              Input.GetNthKeyPressed(1))
+        elseIf pressed_key_count == 3
+            p_pressed_hotkey = Pressed_Hotkey(value, \
+                                              Input.GetNthKeyPressed(0), \
+                                              Input.GetNthKeyPressed(1), \
+                                              Input.GetNthKeyPressed(2))
+        elseIf pressed_key_count == 4
+            p_pressed_hotkey = Pressed_Hotkey(value, \
+                                              Input.GetNthKeyPressed(0), \
+                                              Input.GetNthKeyPressed(1), \
+                                              Input.GetNthKeyPressed(2), \
+                                              Input.GetNthKeyPressed(3))
+        elseIf pressed_key_count == 5
+            p_pressed_hotkey = Pressed_Hotkey(value, \
+                                              Input.GetNthKeyPressed(0), \
+                                              Input.GetNthKeyPressed(1), \
+                                              Input.GetNthKeyPressed(2), \
+                                              Input.GetNthKeyPressed(3), \
+                                              Input.GetNthKeyPressed(4))
+        elseIf pressed_key_count == 6
+            p_pressed_hotkey = Pressed_Hotkey(value, \
+                                              Input.GetNthKeyPressed(0), \
+                                              Input.GetNthKeyPressed(1), \
+                                              Input.GetNthKeyPressed(2), \
+                                              Input.GetNthKeyPressed(3), \
+                                              Input.GetNthKeyPressed(4), \
+                                              Input.GetNthKeyPressed(5))
+        elseIf pressed_key_count == 7
+            p_pressed_hotkey = Pressed_Hotkey(value, \
+                                              Input.GetNthKeyPressed(0), \
+                                              Input.GetNthKeyPressed(1), \
+                                              Input.GetNthKeyPressed(2), \
+                                              Input.GetNthKeyPressed(3), \
+                                              Input.GetNthKeyPressed(4), \
+                                              Input.GetNthKeyPressed(5), \
+                                              Input.GetNthKeyPressed(6))
+        elseIf pressed_key_count >= 8
+            p_pressed_hotkey = Pressed_Hotkey(value, \
+                                              Input.GetNthKeyPressed(0), \
+                                              Input.GetNthKeyPressed(1), \
+                                              Input.GetNthKeyPressed(2), \
+                                              Input.GetNthKeyPressed(3), \
+                                              Input.GetNthKeyPressed(4), \
+                                              Input.GetNthKeyPressed(5), \
+                                              Input.GetNthKeyPressed(6), \
+                                              Input.GetNthKeyPressed(7))
         endIf
     endIf
 endEvent
@@ -246,16 +273,11 @@ event OnKeyUp(int value, float hold_time)
         return
     endIf
 
-    if !p_can_trigger
-        return
-    endIf
-
-    string pressed_hotkey = Pressed_Hotkey(value, p_pressed_1, p_pressed_2, p_pressed_3, p_pressed_4)
+    string pressed_hotkey = p_pressed_hotkey
     if !pressed_hotkey
         return
     endIf
-
-    p_can_trigger = false
+    p_pressed_hotkey = ""
 
     if false
         
