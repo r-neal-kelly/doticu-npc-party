@@ -2,6 +2,7 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "actor2.h"
 #include "cell.h"
 #include "followers.h"
 #include "player.h"
@@ -33,6 +34,12 @@ namespace doticu_npcp { namespace Player {
         } else {
             return false;
         }
+    }
+
+    bool Is_On_Mount()
+    {
+        Actor_t* player_actor = *g_thePlayer;
+        return player_actor && Actor2::Is_On_Mount(player_actor);
     }
 
 }}

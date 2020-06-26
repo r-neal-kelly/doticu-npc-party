@@ -39,7 +39,9 @@ namespace doticu_npcp { namespace Actor2 {
     void Reset_Actor_Value(Actor *actor, const char *name);
     void Log_Actor_Values(Actor *actor);
 
+    Actor_t* Get_Mount(Actor_t* mounter);
     Actor_t* Get_Mounted_Actor(Actor_t* horse);
+    bool Is_On_Mount(Actor_t* actor);
 }}
 
 namespace doticu_npcp { namespace Actor2 { namespace Exports {

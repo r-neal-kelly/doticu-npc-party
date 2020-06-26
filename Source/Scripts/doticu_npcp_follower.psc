@@ -336,6 +336,7 @@ p_Unlock()
     ref_horse.IgnoreFriendlyHits(true)
     ref_horse.SetNotShowOnStealthMeter(true)
     ref_horse.AllowPCDialogue(false)
+    ref_horse.SetActorValue("SpeedMult", MAX_SPEED_UNSNEAK)
 
     ; we need to support leveled bases (members) as opposed to real bases (clones) only
     ; because this takes an actor base, we can't specify a reference clone in this manner.

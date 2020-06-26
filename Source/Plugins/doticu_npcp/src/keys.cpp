@@ -494,7 +494,7 @@ namespace doticu_npcp { namespace Keys {
         Key_System_t& key_system = Key_System();
 
         std::vector<Int_t> pressed_keys;
-        pressed_keys.reserve(7);
+        pressed_keys.reserve(8);
         if (pressed_1 != value) {
             pressed_keys.push_back(pressed_1);
         }

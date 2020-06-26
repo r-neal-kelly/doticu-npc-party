@@ -686,6 +686,22 @@ namespace doticu_npcp { namespace Actor2 {
         #undef LOG_ACTOR_VALUE
     }
 
+    Actor_t* Get_Mount(Actor_t* mounter)
+    {
+        if (mounter) {
+            XData::XInteraction* xinteraction = (XData::XInteraction*)mounter->extraData.GetByType(kExtraData_Interaction);
+            if (xinteraction && xinteraction->interaction) {
+                NiPointer<TESObjectREFR> interactee = nullptr;
+                LookupREFRByHandle(xinteraction->interaction->interactee_handle, interactee);
+                return (Actor_t*)(TESObjectREFR*)interactee;
+            } else {
+                return nullptr;
+            }
+        } else {
+            return nullptr;
+        }
+    }
+
     Actor_t* Get_Mounted_Actor(Actor_t* horse)
     {
         if (horse) {
@@ -700,6 +716,11 @@ namespace doticu_npcp { namespace Actor2 {
         } else {
             return nullptr;
         }
+    }
+
+    bool Is_On_Mount(Actor_t* actor)
+    {
+        return actor && Get_Mount(actor) != nullptr;
     }
 
 }}

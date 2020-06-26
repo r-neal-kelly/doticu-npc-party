@@ -340,9 +340,12 @@ namespace doticu_npcp { namespace Follower {
                 }
             } else {
                 Actor* follower_horse = Horse_Actor(follower);
-                if (follower_horse && !Object_Ref::Is_Near_Player(follower_horse, 8192.0f)) {
-                    //Summon_Ahead(follower, 1024.0f);
-                    Summon_Behind(follower);
+                if (follower_horse && !Object_Ref::Is_Near_Player(follower_horse, 10240.0f)) {
+                    if (Player::Is_On_Mount()) {
+                        Summon_Behind(follower, 1024.0f);
+                    } else {
+                        Summon_Behind(follower);
+                    }
                     Saddle(follower);
                 }
             }
