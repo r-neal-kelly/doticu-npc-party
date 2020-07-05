@@ -555,6 +555,13 @@ namespace doticu_npcp { namespace Object_Ref {
         return distance > 0 && distance <= max_radius;
     }
 
+    Reference_t* From_Handle(Reference_Handle_t handle)
+    {
+        NiPointer<Reference_t> reference = nullptr;
+        LookupREFRByHandle(handle, reference);
+        return static_cast<Reference_t*>(reference);
+    }
+
 }}
 
 namespace doticu_npcp { namespace Object_Ref { namespace Exports {

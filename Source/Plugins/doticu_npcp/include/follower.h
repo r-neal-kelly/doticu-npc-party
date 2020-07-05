@@ -4,9 +4,11 @@
 
 #pragma once
 
-#include "types.h"
+#include "papyrus.h"
 
 namespace doticu_npcp { namespace Follower {
+
+    using namespace Papyrus;
 
     Actor *Get_Actor(Follower_t *follower);
     Member_t *Get_Member(Follower_t *follower);
@@ -48,6 +50,6 @@ namespace doticu_npcp { namespace Follower {
 
 namespace doticu_npcp { namespace Follower { namespace Exports {
 
-    bool Register(VMClassRegistry *registry);
+    bool Register(Registry_t *registry);
 
 }}}

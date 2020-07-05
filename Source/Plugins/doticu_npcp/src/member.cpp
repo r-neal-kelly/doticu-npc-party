@@ -2,18 +2,147 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "alias.h"
+#include "member.h"
+
+namespace doticu_npcp { namespace Party { namespace Member {
+
+    String_t Class_Name()
+    {
+        static const String_t class_name = String_t("doticu_npcp_member");
+        return class_name;
+    }
+
+    Class_Info_t* Class_Info()
+    {
+        static Class_Info_t* object_info = Class_Info_t::Fetch(Class_Name());
+        return object_info;
+    }
+
+    Actor_t* Actor(Member_t* self)
+    {
+        static const String_t variable_name = String_t("p_ref_actor");
+
+        if (self) {
+            Variable_t* variable = Variable_t::Fetch(self, Class_Name(), variable_name);
+            if (variable) {
+                return variable->Actor();
+            } else {
+                return nullptr;
+            }
+        } else {
+            return nullptr;
+        }
+    }
+
+    void Log_Variable_Infos(Member_t* self)
+    {
+        Object_t* script = Object_t::Fetch(self, "doticu_npcp_member");
+        if (script) {
+            Class_Info_t* info = script->info;
+            while (info) {
+                info->Log_Variable_Infos();
+                info = info->parent != info ? info->parent : nullptr;
+            }
+        }
+    }
+
+}}}
+
+#include "utils.h"
+
+namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
+
+    Bool_t Register(Registry_t* registry)
+    {
+        #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                               \
+            ADD_CLASS_METHOD("doticu_npcp_member", Member_t,            \
+                             STR_FUNC_, ARG_NUM_,                       \
+                             RETURN_, Member::METHOD_, __VA_ARGS__);    \
+        W
+
+        ADD_METHOD("Actor", 0, Actor_t*, Actor);
+        ADD_METHOD("Log_Variable_Infos", 0, void, Log_Variable_Infos);
+
+        #undef ADD_METHOD
+
+        return true;
+    }
+
+}}}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #include "skse64/GameData.h"
 
 #include "actor2.h"
 #include "member.h"
 #include "papyrus.h"
 
+#include "papyrus.inl"
+
 namespace doticu_npcp { namespace Member {
+
+    String_t Class()
+    {
+        static const String_t class_name = String_t("doticu_npcp_member");
+        return class_name;
+    }
 
     Actor *Get_Actor(Member_t *member)
     {
+        static const String_t variable_name = String_t("p_ref_actor");
+
         if (member) {
-            return Papyrus::Variable(member, "p_ref_actor").Actor();
+            Variable_t* variable = Variable_t::Fetch(member, Class(), variable_name);
+            if (variable) {
+                return variable->Actor();
+            } else {
+                return nullptr;
+            }
         } else {
             return nullptr;
         }
@@ -21,8 +150,15 @@ namespace doticu_npcp { namespace Member {
 
     TESObjectREFR *Get_Pack(Member_t *member)
     {
+        static const String_t variable_name = String_t("p_container_pack");
+
         if (member) {
-            return Papyrus::Variable(member, "p_container_pack").Object();
+            Variable_t* variable = Variable_t::Fetch(member, Class(), variable_name);
+            if (variable) {
+                return variable->Reference();
+            } else {
+                return nullptr;
+            }
         } else {
             return nullptr;
         }
@@ -30,8 +166,15 @@ namespace doticu_npcp { namespace Member {
 
     SInt32 Get_Style(Member_t *member)
     {
+        static const String_t variable_name = String_t("p_code_style");
+
         if (member) {
-            return Papyrus::Variable(member, "p_code_style").Int();
+            Variable_t* variable = Variable_t::Fetch(member, Class(), variable_name);
+            if (variable) {
+                return variable->Int();
+            } else {
+                return 0;
+            }
         } else {
             return 0;
         }
@@ -39,8 +182,15 @@ namespace doticu_npcp { namespace Member {
 
     SInt32 Get_Vitality(Member_t *member)
     {
+        static const String_t variable_name = String_t("p_code_vitality");
+
         if (member) {
-            return Papyrus::Variable(member, "p_code_vitality").Int();
+            Variable_t* variable = Variable_t::Fetch(member, Class(), variable_name);
+            if (variable) {
+                return variable->Int();
+            } else {
+                return 0;
+            }
         } else {
             return 0;
         }
@@ -48,8 +198,15 @@ namespace doticu_npcp { namespace Member {
 
     SInt32 Get_Outfit2(Member_t *member)
     {
+        static const String_t variable_name = String_t("p_code_outfit2");
+
         if (member) {
-            return Papyrus::Variable(member, "p_code_outfit2").Int();
+            Variable_t* variable = Variable_t::Fetch(member, Class(), variable_name);
+            if (variable) {
+                return variable->Int();
+            } else {
+                return 0;
+            }
         } else {
             return 0;
         }
@@ -57,8 +214,15 @@ namespace doticu_npcp { namespace Member {
 
     SInt32 Get_Rating(Member_t *member)
     {
+        static const String_t variable_name = String_t("p_int_rating");
+
         if (member) {
-            return Papyrus::Variable(member, "p_int_rating").Int();
+            Variable_t* variable = Variable_t::Fetch(member, Class(), variable_name);
+            if (variable) {
+                return variable->Int();
+            } else {
+                return 0;
+            }
         } else {
             return 0;
         }
@@ -66,8 +230,15 @@ namespace doticu_npcp { namespace Member {
 
     bool Is_Created(Member_t *member)
     {
+        static const String_t variable_name = String_t("p_is_created");
+
         if (member) {
-            return Papyrus::Variable(member, "p_is_created").Bool();
+            Variable_t* variable = Variable_t::Fetch(member, Class(), variable_name);
+            if (variable) {
+                return variable->Bool();
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -75,8 +246,15 @@ namespace doticu_npcp { namespace Member {
 
     bool Is_Original(Member_t *member)
     {
+        static const String_t variable_name = String_t("p_is_clone");
+
         if (member) {
-            return !Papyrus::Variable(member, "p_is_clone").Bool();
+            Variable_t* variable = Variable_t::Fetch(member, Class(), variable_name);
+            if (variable) {
+                return !variable->Bool();
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -84,8 +262,15 @@ namespace doticu_npcp { namespace Member {
 
     bool Is_Clone(Member_t *member)
     {
+        static const String_t variable_name = String_t("p_is_clone");
+
         if (member) {
-            return Papyrus::Variable(member, "p_is_clone").Bool();
+            Variable_t* variable = Variable_t::Fetch(member, Class(), variable_name);
+            if (variable) {
+                return variable->Bool();
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -93,8 +278,15 @@ namespace doticu_npcp { namespace Member {
 
     bool Is_Follower(Member_t *member)
     {
+        static const String_t variable_name = String_t("p_is_follower");
+
         if (member) {
-            return Papyrus::Variable(member, "p_is_follower").Bool();
+            Variable_t* variable = Variable_t::Fetch(member, Class(), variable_name);
+            if (variable) {
+                return variable->Bool();
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -102,8 +294,15 @@ namespace doticu_npcp { namespace Member {
 
     bool Is_Mobile(Member_t *member)
     {
+        static const String_t variable_name = String_t("p_is_immobile");
+
         if (member) {
-            return !Papyrus::Variable(member, "p_is_immobile").Bool();
+            Variable_t* variable = Variable_t::Fetch(member, Class(), variable_name);
+            if (variable) {
+                return !variable->Bool();
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -111,8 +310,15 @@ namespace doticu_npcp { namespace Member {
 
     bool Is_Immobile(Member_t *member)
     {
+        static const String_t variable_name = String_t("p_is_immobile");
+
         if (member) {
-            return Papyrus::Variable(member, "p_is_immobile").Bool();
+            Variable_t* variable = Variable_t::Fetch(member, Class(), variable_name);
+            if (variable) {
+                return variable->Bool();
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -120,8 +326,15 @@ namespace doticu_npcp { namespace Member {
 
     bool Is_Settler(Member_t *member)
     {
+        static const String_t variable_name = String_t("p_is_settler");
+
         if (member) {
-            return Papyrus::Variable(member, "p_is_settler").Bool();
+            Variable_t* variable = Variable_t::Fetch(member, Class(), variable_name);
+            if (variable) {
+                return variable->Bool();
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -129,8 +342,15 @@ namespace doticu_npcp { namespace Member {
 
     bool Isnt_Settler(Member_t *member)
     {
+        static const String_t variable_name = String_t("p_is_settler");
+
         if (member) {
-            return !Papyrus::Variable(member, "p_is_settler").Bool();
+            Variable_t* variable = Variable_t::Fetch(member, Class(), variable_name);
+            if (variable) {
+                return !variable->Bool();
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -138,8 +358,15 @@ namespace doticu_npcp { namespace Member {
 
     bool Is_Thrall(Member_t *member)
     {
+        static const String_t variable_name = String_t("p_is_thrall");
+
         if (member) {
-            return Papyrus::Variable(member, "p_is_thrall").Bool();
+            Variable_t* variable = Variable_t::Fetch(member, Class(), variable_name);
+            if (variable) {
+                return variable->Bool();
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -147,8 +374,15 @@ namespace doticu_npcp { namespace Member {
 
     bool Isnt_Thrall(Member_t *member)
     {
+        static const String_t variable_name = String_t("p_is_thrall");
+
         if (member) {
-            return !Papyrus::Variable(member, "p_is_thrall").Bool();
+            Variable_t* variable = Variable_t::Fetch(member, Class(), variable_name);
+            if (variable) {
+                return !variable->Bool();
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -156,8 +390,15 @@ namespace doticu_npcp { namespace Member {
 
     bool Is_Paralyzed(Member_t *member)
     {
+        static const String_t variable_name = String_t("p_is_paralyzed");
+
         if (member) {
-            return Papyrus::Variable(member, "p_is_paralyzed").Bool();
+            Variable_t* variable = Variable_t::Fetch(member, Class(), variable_name);
+            if (variable) {
+                return variable->Bool();
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -165,8 +406,15 @@ namespace doticu_npcp { namespace Member {
 
     bool Isnt_Paralyzed(Member_t *member)
     {
+        static const String_t variable_name = String_t("p_is_paralyzed");
+
         if (member) {
-            return !Papyrus::Variable(member, "p_is_paralyzed").Bool();
+            Variable_t* variable = Variable_t::Fetch(member, Class(), variable_name);
+            if (variable) {
+                return !variable->Bool();
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -174,8 +422,15 @@ namespace doticu_npcp { namespace Member {
 
     bool Is_Mannequin(Member_t *member)
     {
+        static const String_t variable_name = String_t("p_is_mannequin");
+
         if (member) {
-            return Papyrus::Variable(member, "p_is_mannequin").Bool();
+            Variable_t* variable = Variable_t::Fetch(member, Class(), variable_name);
+            if (variable) {
+                return variable->Bool();
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -183,8 +438,15 @@ namespace doticu_npcp { namespace Member {
 
     bool Isnt_Mannequin(Member_t *member)
     {
+        static const String_t variable_name = String_t("p_is_mannequin");
+
         if (member) {
-            return !Papyrus::Variable(member, "p_is_mannequin").Bool();
+            Variable_t* variable = Variable_t::Fetch(member, Class(), variable_name);
+            if (variable) {
+                return !variable->Bool();
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -192,8 +454,15 @@ namespace doticu_npcp { namespace Member {
 
     bool Is_Reanimated(Member_t *member)
     {
+        static const String_t variable_name = String_t("p_is_reanimated");
+
         if (member) {
-            return Papyrus::Variable(member, "p_is_reanimated").Bool();
+            Variable_t* variable = Variable_t::Fetch(member, Class(), variable_name);
+            if (variable) {
+                return variable->Bool();
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -201,8 +470,15 @@ namespace doticu_npcp { namespace Member {
 
     bool Isnt_Reanimated(Member_t *member)
     {
+        static const String_t variable_name = String_t("p_is_reanimated");
+
         if (member) {
-            return !Papyrus::Variable(member, "p_is_reanimated").Bool();
+            Variable_t* variable = Variable_t::Fetch(member, Class(), variable_name);
+            if (variable) {
+                return !variable->Bool();
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -238,7 +514,7 @@ namespace doticu_npcp { namespace Member {
                 struct Args : public IFunctionArguments {
                     bool Copy(Output *output) { return true; }
                 } func_args;
-                Papyrus::Handle member_handle(kFormType_Alias, member);
+                Papyrus::Handle_t member_handle(member);
                 member_handle.Registry()->QueueEvent(member_handle, &func_name, &func_args);
             }
         } else if (member_vitality == IS_INVULNERABLE) {

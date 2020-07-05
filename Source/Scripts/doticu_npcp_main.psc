@@ -112,6 +112,9 @@ function f_Load_Mod()
 
     FUNCS.Send_Event("doticu_npcp_load_mod")
     doticu_npcp.Print("NPC Party has loaded.")
+
+    ; Testing
+    doticu_npcp.Run_Tests()
 endFunction
 
 ; Private Methods

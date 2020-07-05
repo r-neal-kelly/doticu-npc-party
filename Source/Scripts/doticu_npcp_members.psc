@@ -98,6 +98,9 @@ function f_Register()
     RegisterForModEvent("doticu_npcp_load_mod", "On_Load_Mod")
 endFunction
 
+; Native Methods
+ReferenceAlias function p_From_Actor(Actor ref_actor) native
+
 ; Private Methods
 function p_Enforce_Loaded() native
 
@@ -310,7 +313,7 @@ bool function Are_Displayed()
 endFunction
 
 doticu_npcp_member function Get_Member(Actor ref_actor)
-    return ALIASES.Get_Alias(p_Get_Alias_ID(ref_actor), ref_actor) as doticu_npcp_member
+    return p_From_Actor(ref_actor) as doticu_npcp_member
 endFunction
 
 doticu_npcp_member function Get_Next_Member(doticu_npcp_member ref_member)

@@ -16,6 +16,8 @@
 #include "vars.h"
 #include "vector.h"
 
+#include "papyrus.inl"
+
 namespace doticu_npcp { namespace Keys {
 
     class Key_System_t
@@ -33,7 +35,7 @@ namespace doticu_npcp { namespace Keys {
             {
             }
 
-            Mods(Array_t<Int_t> mods)
+            Mods(VMArray<Int_t> mods)
             {
                 u64 mods_size = mods.Length();
                 if (mods_size > 0) {
@@ -50,20 +52,17 @@ namespace doticu_npcp { namespace Keys {
             Mods(String_t mods_variable_name)
             {
                 Variable_t* variable = Vars::Property(Vars::Self(), mods_variable_name);
-                if (variable && variable->IsArray() && variable->data.arr) {
-                    u32 size = variable->data.arr->len;
-                    Variable_t* variables = variable->data.arr->GetData();
-                    if (size > 0) {
-                        mod_1 = variables->data.i;
-                        variables += 1;
+                if (variable && variable->type.Is_Int_Array() && variable->data.arr) {
+                    Array_t* arr = variable->data.arr;
+                    Variable_t* variables = variable->data.arr->Variables();
+                    if (arr->count > 0) {
+                        mod_1 = variables[0].Int();
                     }
-                    if (size > 1) {
-                        mod_2 = variables->data.i;
-                        variables += 1;
+                    if (arr->count > 1) {
+                        mod_2 = variables[1].Int();
                     }
-                    if (size > 2) {
-                        mod_3 = variables->data.i;
-                        variables += 1;
+                    if (arr->count > 2) {
+                        mod_3 = variables[2].Int();
                     }
                 }
             }
@@ -231,7 +230,7 @@ namespace doticu_npcp { namespace Keys {
             s64 idx = Index_Of(key);
             if (idx > -1) {
                 Variable_t* variable = Vars::Property(Vars::Self(), var_names[idx]);
-                if (variable && variable->type == Variable_t::kType_Int) {
+                if (variable && variable->type.Unmangled() == Type_t::INT) {
                     return variable->data.i;
                 } else {
                     return KEY_INVALID;
@@ -245,7 +244,7 @@ namespace doticu_npcp { namespace Keys {
         {
             if (idx > -1 && idx < Size()) {
                 Variable_t* variable = Vars::Property(Vars::Self(), var_names[idx]);
-                if (variable && variable->type == Variable_t::kType_Int) {
+                if (variable && variable->type.Unmangled() == Type_t::INT) {
                     return variable->data.i;
                 } else {
                     return -1;

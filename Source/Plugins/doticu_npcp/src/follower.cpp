@@ -16,12 +16,27 @@
 #include "player.h"
 #include "utils.h"
 
+#include "papyrus.inl"
+
 namespace doticu_npcp { namespace Follower {
+
+    String_t Class()
+    {
+        static const String_t class_name = String_t("doticu_npcp_follower");
+        return class_name;
+    }
 
     Actor *Get_Actor(Follower_t *follower)
     {
+        static const String_t variable_name = String_t("p_ref_actor");
+
         if (follower) {
-            return Papyrus::Variable(follower, "p_ref_actor").Actor();
+            Variable_t* variable = Variable_t::Fetch(follower, Class(), variable_name);
+            if (variable) {
+                return variable->Actor();
+            } else {
+                return nullptr;
+            }
         } else {
             return nullptr;
         }
@@ -29,8 +44,15 @@ namespace doticu_npcp { namespace Follower {
 
     Member_t *Get_Member(Follower_t *follower)
     {
+        static const String_t variable_name = String_t("p_ref_member");
+
         if (follower) {
-            return Papyrus::Variable(follower, "p_ref_member").Alias();
+            Variable_t* variable = Variable_t::Fetch(follower, Class(), variable_name);
+            if (variable) {
+                return variable->Alias();
+            } else {
+                return nullptr;
+            }
         } else {
             return nullptr;
         }
@@ -38,19 +60,33 @@ namespace doticu_npcp { namespace Follower {
 
     Horse_t *Get_Horse(Follower_t *follower)
     {
+        static const String_t variable_name = String_t("p_ref_horse");
+
         if (follower) {
-            return Papyrus::Variable(follower, "p_ref_horse").Alias();
+            Variable_t* variable = Variable_t::Fetch(follower, Class(), variable_name);
+            if (variable) {
+                return variable->Alias();
+            } else {
+                return nullptr;
+            }
         } else {
             return nullptr;
         }
     }
 
-    Actor *Horse_Actor(Follower_t *follower)
+    Actor *Horse_Actor(Follower_t *follower) // this needs to grab info from Horse type instead of direct
     {
+        static const String_t variable_name = String_t("p_ref_actor");
+
         if (follower) {
-            Horse_t *horse = Get_Horse(follower);
+            Horse_t* horse = Get_Horse(follower);
             if (horse) {
-                return Papyrus::Variable(horse, "p_ref_actor").Actor();
+                Variable_t* variable = Variable_t::Fetch(horse, "doticu_npcp_horse", variable_name);
+                if (variable) {
+                    return variable->Actor();
+                } else {
+                    return nullptr;
+                }
             } else {
                 return nullptr;
             }
@@ -61,8 +97,15 @@ namespace doticu_npcp { namespace Follower {
 
     bool Is_Created(Follower_t *follower)
     {
+        static const String_t variable_name = String_t("p_is_created");
+
         if (follower) {
-            return Papyrus::Variable(follower, "p_is_created").Bool();
+            Variable_t* variable = Variable_t::Fetch(follower, Class(), variable_name);
+            if (variable) {
+                return variable->Bool();
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -70,11 +113,11 @@ namespace doticu_npcp { namespace Follower {
 
     bool Is_Alive(Follower_t *follower)
     {
-        if (!follower) {
+        if (follower) {
+            return Actor2::Is_Alive(Get_Actor(follower));
+        } else {
             return false;
         }
-
-        return Actor2::Is_Alive(Get_Actor(follower));
     }
 
     bool Is_Dead(Follower_t *follower)
@@ -168,8 +211,15 @@ namespace doticu_npcp { namespace Follower {
 
     bool Is_Sneak(Follower_t *follower)
     {
+        static const String_t variable_name = String_t("p_is_sneak");
+
         if (follower) {
-            return Papyrus::Variable(follower, "p_is_sneak").Bool();
+            Variable_t* variable = Variable_t::Fetch(follower, Class(), variable_name);
+            if (variable) {
+                return variable->Bool();
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -177,8 +227,15 @@ namespace doticu_npcp { namespace Follower {
 
     bool Isnt_Sneak(Follower_t *follower)
     {
+        static const String_t variable_name = String_t("p_is_sneak");
+
         if (follower) {
-            return !Papyrus::Variable(follower, "p_is_sneak").Bool();
+            Variable_t* variable = Variable_t::Fetch(follower, Class(), variable_name);
+            if (variable) {
+                return !variable->Bool();
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -186,8 +243,15 @@ namespace doticu_npcp { namespace Follower {
 
     bool Is_Saddler(Follower_t *follower)
     {
+        static const String_t variable_name = String_t("p_is_saddler");
+
         if (follower) {
-            return Papyrus::Variable(follower, "p_is_saddler").Bool();
+            Variable_t* variable = Variable_t::Fetch(follower, Class(), variable_name);
+            if (variable) {
+                return variable->Bool();
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -195,8 +259,15 @@ namespace doticu_npcp { namespace Follower {
 
     bool Isnt_Saddler(Follower_t *follower)
     {
+        static const String_t variable_name = String_t("p_is_saddler");
+
         if (follower) {
-            return !Papyrus::Variable(follower, "p_is_saddler").Bool();
+            Variable_t* variable = Variable_t::Fetch(follower, Class(), variable_name);
+            if (variable) {
+                return !variable->Bool();
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -204,8 +275,15 @@ namespace doticu_npcp { namespace Follower {
 
     bool Is_Retreater(Follower_t *follower)
     {
+        static const String_t variable_name = String_t("p_is_retreater");
+
         if (follower) {
-            return Papyrus::Variable(follower, "p_is_retreater").Bool();
+            Variable_t* variable = Variable_t::Fetch(follower, Class(), variable_name);
+            if (variable) {
+                return variable->Bool();
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -213,8 +291,15 @@ namespace doticu_npcp { namespace Follower {
 
     bool Isnt_Retreater(Follower_t *follower)
     {
+        static const String_t variable_name = String_t("p_is_retreater");
+
         if (follower) {
-            return !Papyrus::Variable(follower, "p_is_retreater").Bool();
+            Variable_t* variable = Variable_t::Fetch(follower, Class(), variable_name);
+            if (variable) {
+                return !variable->Bool();
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -589,7 +674,7 @@ namespace doticu_npcp { namespace Follower {
         }
         args;
 
-        Papyrus::Handle follower_handle(kFormType_Alias, follower);
+        Papyrus::Handle_t follower_handle(follower);
         follower_handle.Registry()->QueueEvent(follower_handle, &name, &args);
     }
 

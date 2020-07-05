@@ -2,6 +2,86 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "aliases.h"
+
+namespace doticu_npcp { namespace Party { namespace Aliases {
+
+    Range_t<Alias_t**> Aliases(Aliases_t* self, UInt64 begin, UInt64 end)
+    {
+        if (self) {
+            if (self->aliases.count >= begin && self->aliases.count >= end) {
+                return {
+                    reinterpret_cast<Alias_t**>(self->aliases.entries + begin),
+                    reinterpret_cast<Alias_t**>(self->aliases.entries + end)
+                };
+            } else {
+                return {
+                    reinterpret_cast<Alias_t**>(self->aliases.entries),
+                    reinterpret_cast<Alias_t**>(self->aliases.entries)
+                };
+            }
+        } else {
+            return {
+                nullptr,
+                nullptr
+            };
+        }
+    }
+
+    Alias_t* From_Actor(Aliases_t* self, Actor_t* actor)
+    {
+        if (self && actor) {
+            XAliases_t* xaliases = static_cast<XAliases_t*>(actor->extraData.GetByType(kExtraData_AliasInstanceArray));
+            if (xaliases) {
+                for (u64 idx = 0, size = xaliases->aliases.count; idx < size; idx += 1) {
+                    XAliases_t::AliasInfo* info = xaliases->aliases[idx];
+                    if (info && info->quest == self) {
+                        return reinterpret_cast<Alias_t*>(info->alias);
+                    }
+                }
+                return nullptr;
+            } else {
+                return nullptr;
+            }
+        } else {
+            return nullptr;
+        }
+    }
+
+}}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #include "skse64/GameRTTI.h"
 
 #include "actor_base2.h"
@@ -816,3 +896,5 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
     }
 
 }}}
+
+

@@ -2,6 +2,84 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "aliases.h"
+#include "followers.h"
+
+namespace doticu_npcp { namespace Party { namespace Followers {
+
+    Range_t<UInt64> Indices(Followers_t* self)
+    {
+        return { BEGIN, END };
+    }
+
+    Range_t<Alias_t**> Aliases(Followers_t* self)
+    {
+        return Aliases::Aliases(self, BEGIN, END);
+    }
+
+    Range_t<Follower_t**> Followers(Followers_t* self)
+    {
+        return Aliases(self);
+    }
+
+    Follower_t* From_Actor(Followers_t* self, Actor_t* actor)
+    {
+        if (self && actor) {
+            Alias_t* alias = Aliases::From_Actor(self, actor);
+            if (alias) {
+                if (alias->id >= BEGIN && alias->id < END) {
+                    return alias;
+                } else {
+                    return nullptr;
+                }
+            } else {
+                return nullptr;
+            }
+        } else {
+            return nullptr;
+        }
+    }
+
+}}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #include <mutex>
 #include <chrono>
 
@@ -19,6 +97,8 @@
 #include "papyrus.h"
 #include "utils.h"
 
+#include "papyrus.inl"
+
 namespace doticu_npcp { namespace Followers {
 
     static std::recursive_timed_mutex lock;
@@ -31,7 +111,7 @@ namespace doticu_npcp { namespace Followers {
         BSFixedString name(NAME_);                                                  \
         for (u64 idx = 0, size = vec_followers.size(); idx < size; idx += 1) {      \
             Follower_t *follower = vec_followers[idx];                              \
-            Papyrus::Handle follower_handle(kFormType_Alias, follower);             \
+            Papyrus::Handle_t follower_handle(follower);             \
             follower_handle.Registry()->QueueEvent(follower_handle, &name, &ARGS_); \
         }                                                                           \
     W

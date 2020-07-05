@@ -5,217 +5,306 @@
 #pragma once
 
 #include "types.h"
-#include "string2.h"
 
 namespace doticu_npcp { namespace Papyrus {
 
-    class Handle
-    {
-    private:
-        Registry_t *m_registry = nullptr;
-        Policy_t *m_policy = nullptr;
-        Form_Type_t m_form_type = kFormType_None;
-        Handle_ID_t m_handle = 0;
-
+    // a lot of credit for deciphering these classes goes to Ryan-rsm-McKenzie of CommonLibSSE as well as the SKSE team
+    class Class_Info_t;
+    class Virtual_Machine_t { // Registry_t
     public:
-        Handle(Registry_t *registry, Policy_t *policy, Form_Type_t form_type, void *data)
-        {
-            m_registry = registry;
-            m_policy = policy;
-            m_form_type = form_type;
-            m_handle = m_policy->Create(m_form_type, data);
-        }
-        Handle(Form_Type_t form_type, void *data)
-        {
-            m_registry = (*g_skyrimVM)->GetClassRegistry();
-            m_policy = m_registry->GetHandlePolicy();
-            m_form_type = form_type;
-            m_handle = m_policy->Create(m_form_type, data);
-        }
-        Handle(Form_t *form)
-        {
-            m_registry = (*g_skyrimVM)->GetClassRegistry();
-            m_policy = m_registry->GetHandlePolicy();
-            m_form_type = form->formType;
-            m_handle = m_policy->Create(m_form_type, form);
-        }
-        Handle(Alias_t *alias)
-        {
-            m_registry = (*g_skyrimVM)->GetClassRegistry();
-            m_policy = m_registry->GetHandlePolicy();
-            m_form_type = kFormType_Alias;
-            m_handle = m_policy->Create(m_form_type, alias);
-        }
-        Handle()
-        {
-            m_registry = (*g_skyrimVM)->GetClassRegistry();
-            m_policy = m_registry->GetHandlePolicy();
-            m_form_type = kFormType_None;
-            m_handle = m_policy->GetInvalidHandle();
-        }
-        ~Handle()
-        {
-            if (Is_Valid()) {
-                m_policy->Release(m_handle);
-            }
-        }
+        static Virtual_Machine_t* Self();
 
-        Handle_ID_t ID() { return m_handle; }
-        Registry_t *Registry() { return m_registry; }
-        Policy_t *Policy() { return m_policy; }
-
-        bool Is_Valid() { return m_handle != m_policy->GetInvalidHandle(); }
-
-        operator Handle_ID_t() const { return m_handle; }
+        virtual ~Virtual_Machine_t(); // 00
+        virtual void _01(void); // 01
+        virtual void _02(void); // 02
+        virtual void _03(void); // 03
+        virtual void _04(void); // 04
+        virtual void _05(void); // 05
+        virtual void _06(void); // 06
+        virtual void _07(void); // 07
+        virtual void _08(void); // 08
+        virtual void Class_Info(String_t* class_name, Class_Info_t** info_out); // 09
     };
 
-    class Variable : public IForEachScriptObjectFunctor
-    {
-    private:
-        Handle m_handle;
-        const char *m_script_name = nullptr;
-        const char *m_variable_name = nullptr;
-        Variable_t m_variable;
-
+    class Handle_t {
     public:
-        Variable(Form_t *form, const char *script_name, const char *variable_name)
-        {
-            m_handle = Handle(form);
-            m_script_name = script_name && script_name[0] != 0 ? script_name : nullptr;
-            m_variable_name = variable_name;
-            m_handle.Registry()->VisitScripts(m_handle, this);
-        }
-        Variable(Alias_t *alias, const char *script_name, const char *variable_name)
-        {
-            m_handle = Handle(alias);
-            m_script_name = script_name && script_name[0] != 0 ? script_name : nullptr;
-            m_variable_name = variable_name;
-            m_handle.Registry()->VisitScripts(m_handle, this);
-        }
-        Variable(Form_t *form, const char *variable_name)
-        {
-            m_handle = Handle(form);
-            m_script_name = nullptr;
-            m_variable_name = variable_name;
-            m_handle.Registry()->VisitScripts(m_handle, this);
-        }
-        Variable(Alias_t *alias, const char *variable_name)
-        {
-            m_handle = Handle(alias);
-            m_script_name = nullptr;
-            m_variable_name = variable_name;
-            m_handle.Registry()->VisitScripts(m_handle, this);
-        }
+        static Registry_t* Registry();
+        static Policy_t* Policy();
 
-        virtual bool Visit(Script_t *script, void *)
-        {
-            if (script) {
-                if (!m_script_name || String2::Is_Same_Caseless(script->classInfo->name.data, m_script_name)) {
-                    String_t variable_name(m_variable_name);
-                    Int_t variable_idx = CALL_MEMBER_FN(script->classInfo, GetVariable)(&variable_name);
-                    if (variable_idx > -1) {
-                        m_handle.Registry()->ExtractValue(m_handle, &script->classInfo->name, variable_idx, &m_variable);
-                        return false; // break;
-                    } else {
-                        return true; // continue;
-                    }
-                } else {
-                    return true; // continue;
-                }
-            } else {
-                return true; // continue;
-            }
-        }
+        UInt64 handle = 0;
 
-        bool Is_None()
-        {
-            return m_variable.GetUnmangledType() == Variable_t::kType_None;
-        }
+        template <typename Type>
+        Handle_t(Type* instance);
+        Handle_t(Form_t* form);
+        Handle_t(UInt64 handle);
+        Handle_t();
+        ~Handle_t();
 
-        bool Isnt_None()
-        {
-            return m_variable.GetUnmangledType() != Variable_t::kType_None;
-        }
+        bool Is_Valid();
 
-        Bool_t Bool()
-        {
-            if (m_variable.GetUnmangledType() == Variable_t::kType_Bool) {
-                return m_variable.data.b;
-            } else {
-                return false;
-            }
-        }
-
-        Int_t Int()
-        {
-            if (m_variable.GetUnmangledType() == Variable_t::kType_Int) {
-                return m_variable.data.i;
-            } else {
-                return -1;
-            }
-        }
-
-        Actor_t *Actor()
-        {
-            if (m_variable.GetUnmangledType() == Variable_t::kType_Identifier) {
-                if (m_variable.data.id) {
-                    return static_cast<Actor_t *>(m_handle.Policy()->Resolve(
-                        kFormType_Character, m_variable.data.id->GetHandle()
-                    ));
-                } else {
-                    return nullptr;
-                }
-            } else {
-                return nullptr;
-            }
-        }
-
-        Alias_t *Alias()
-        {
-            if (m_variable.GetUnmangledType() == Variable_t::kType_Identifier) {
-                if (m_variable.data.id) {
-                    return static_cast<Alias_t *>(m_handle.Policy()->Resolve(
-                        kFormType_Alias, m_variable.data.id->GetHandle()
-                    ));
-                } else {
-                    return nullptr;
-                }
-            } else {
-                return nullptr;
-            }
-        }
-
-        Object_t *Object()
-        {
-            if (m_variable.GetUnmangledType() == Variable_t::kType_Identifier) {
-                if (m_variable.data.id) {
-                    return static_cast<Object_t *>(m_handle.Policy()->Resolve(
-                        kFormType_Reference, m_variable.data.id->GetHandle()
-                    ));
-                } else {
-                    return nullptr;
-                }
-            } else {
-                return nullptr;
-            }
-        }
+        operator UInt64();
     };
+    STATIC_ASSERT(sizeof(Handle_t) == 0x8);
+
+    class Class_Info_t;
+    class Type_t {
+    public:
+        enum : Type_e {
+            NONE = 0,
+            OBJECT = 1,
+            STRING = 2,
+            INT = 3,
+            FLOAT = 4,
+            BOOL = 5,
+
+            NONE_ARRAY = 10,
+            OBJECT_ARRAY = 11,
+            STRING_ARRAY = 12,
+            INT_ARRAY = 13,
+            FLOAT_ARRAY = 14,
+            BOOL_ARRAY = 15
+        };
+
+        UInt64 mangled;
+
+        Type_e Unmangled();
+        Class_Info_t* Class_Info();
+        String_t To_String();
+        bool Is_None();
+        bool Is_Object();
+        bool Is_String();
+        bool Is_Int();
+        bool Is_Float();
+        bool Is_Bool();
+        bool Is_None_Array();
+        bool Is_Object_Array();
+        bool Is_String_Array();
+        bool Is_Int_Array();
+        bool Is_Float_Array();
+        bool Is_Bool_Array();
+    };
+    STATIC_ASSERT(sizeof(Type_t) == 0x8);
+
+    class Variable_t;
+    class Array_t {
+    public:
+        UInt32 ref_count; // 00
+        UInt32 pad_04; // 04
+        Type_t type; // 08
+        UInt32 count; // 10
+        UInt32 pad_14; // 14
+        UInt64 lock; // 18
+        //Variable_t variables[0]; // 20
+
+        Variable_t* Variables();
+
+        // see VMArray, it's a wrapper of this object
+        // so you can add similar templated funcs.
+    };
+    STATIC_ASSERT(sizeof(Array_t) == 0x20);
+
+    class Object_t;
+    class Variable_t {
+    public:
+        static Registry_t* Registry();
+        static Policy_t* Policy();
+
+        template <typename Type>
+        static Variable_t* Fetch(Type* bsobject,
+                                 String_t class_name,
+                                 String_t variable_name);
+
+        Type_t type;
+        union Variable_u {
+            void* ptr;
+            Int_t i;
+            Float_t f;
+            Bool_t b;
+            Array_t* arr;
+            Object_t* obj;
+            String_t str;
+        } data;
+
+        Actor_t* Actor();
+        Alias_t* Alias();
+        Bool_t Bool();
+        Float_t Float();
+        Int_t Int();
+        Reference_t* Reference();
+    };
+    STATIC_ASSERT(sizeof(Variable_t) == 0x10);
+
+    class Class_Info_t {
+    public:
+        static Class_Info_t* Fetch(String_t class_name);
+
+        struct Setting_Info_t {
+            UInt64 unk_00; // 00
+        };
+        STATIC_ASSERT(sizeof(Setting_Info_t) == 0x8);
+
+        struct Variable_Info_t {
+            String_t name; // 00
+            Type_t type; // 08
+        };
+        STATIC_ASSERT(sizeof(Variable_Info_t) == 0x10);
+
+        struct Default_Info_t {
+            UInt32 variable_idx; // 00
+            UInt32 pad_04; // 04
+            Variable_t variable; // 08
+        };
+        STATIC_ASSERT(sizeof(Default_Info_t) == 0x18);
+
+        struct Property_Info_t {
+            String_t name; // 00
+            String_t parent_name; // 08
+            String_t property_name; // 10
+            Type_t type; // 18
+            UInt32 flags_20; // 20
+            UInt32 unk_24; // 24
+            IFunction* getter; // 28
+            IFunction* setter; // 30
+            UInt32 auto_var_idx; // 38
+            UInt32 flags_3C; // 3C
+            String_t unk_40; // 40
+        };
+        STATIC_ASSERT(sizeof(Property_Info_t) == 0x48);
+
+        UInt32 ref_count; // 00
+        UInt32 pad_04; // 04
+        String_t name; // 08
+        Class_Info_t* parent; // 10
+        String_t unk_18; // 18
+        UInt32 flags_20; // 20
+        UInt32 flags_24; // 24
+        UInt32 flags_28; // 28
+        UInt32 pad_2C; // 2C
+        UInt8* data; // 30
+
+        UInt64 Count_Setting_Infos();
+        UInt64 Count_Variable_Infos();
+        UInt64 Count_Default_Infos();
+        UInt64 Count_Property_Infos();
+
+        Setting_Info_t* Setting_Infos();
+        Variable_Info_t* Variable_Infos();
+        Default_Info_t* Default_Infos();
+        Property_Info_t* Property_Infos();
+
+        SInt64 Variable_Index(String_t variable_name);
+        SInt64 Property_Index(String_t property_name);
+        Property_Info_t* Property_Info(String_t property_name);
+
+        void Log();
+        //void Log_Setting_Infos();
+        void Log_Variable_Infos();
+        void Log_Default_Infos();
+        void Log_Property_Infos();
+    };
+    STATIC_ASSERT(sizeof(Class_Info_t) == 0x38);
+
+    class Object_t {
+    public:
+        template <typename Type>
+        static Object_t* Fetch(Type* bsobject, String_t class_name);
+
+        UInt64 unk_00; // 00
+        Class_Info_t* info; // 08
+        String_t unk_10; // 10
+        void* unk_18; // 18
+        volatile Handle_t handle; // 20
+        volatile SInt32 lock; // 28
+        UInt32 pad_2C; // 2C
+        //Variable_t variables[0]; // 30
+
+        Handle_t Handle();
+        Variable_t* Property(String_t property_name);
+        Variable_t* Variable(String_t variable_name);
+        Variable_t* Variables();
+
+        void Log_Variables();
+    };
+    STATIC_ASSERT(sizeof(Object_t) == 0x30);
+
+    class Function_t {
+    public:
+    };
+
+    class Alias_Base_t {
+    public:
+        enum {
+            kTypeID = kFormType_Alias
+        };
+
+        enum Flags : UInt32 {
+            // ...
+        };
+
+        enum Fill_Types : UInt16 {
+            CONDITION_FILL = 0,
+            FORCED_FILL = 1
+            // ...
+        };
+
+        virtual ~Alias_Base_t(); // 00
+        virtual bool Load(TESFile* file); // 01
+        virtual void Item(TESForm* form); // 02
+        virtual String_t Type(); // 03
+
+        // void* _vtbl; // 00
+        String_t name; // 08
+        Quest_t* quest; // 10
+        UInt32 id; // 18
+        UInt32 flags; // 1C
+        UInt16 fill_type; // 20
+        UInt16 pad_22; // 22
+        UInt32 pad_24; // 24
+    };
+    STATIC_ASSERT(sizeof(Alias_Base_t) == 0x28);
+
+    class Alias_Reference_t : public Alias_Base_t {
+    public:
+        enum {
+            kTypeID = kFormType_ReferenceAlias
+        };
+
+        struct Forced_Fill {
+            Reference_Handle_t ref_handle; // this never seems to be there...
+        };
+        STATIC_ASSERT(sizeof(Forced_Fill) == 0x4);
+
+        union Fill_u {
+            UInt64 padding[3];
+            Forced_Fill forced;
+        };
+        STATIC_ASSERT(sizeof(Fill_u) == 0x18);
+
+        virtual ~Alias_Reference_t(); // 00
+        virtual bool Load(TESFile* file) override; // 01
+        virtual void Item(TESForm* form) override; // 02
+        virtual String_t Type() override; // 03
+
+        Fill_u fill; // 28
+        void* conditions; // 40
+    };
+    STATIC_ASSERT(sizeof(Alias_Reference_t) == 0x48);
 
     class Scripts : public IForEachScriptObjectFunctor
     {
     public:
-        Handle handle;
+        Handle_t handle;
         std::vector<const char *> names;
         std::vector<Script_t *> scripts;
 
         Scripts(Form_t *form)
         {
-            handle = Papyrus::Handle(form);
+            handle = Papyrus::Handle_t(form);
             handle.Registry()->VisitScripts(handle, this);
         }
         Scripts(Alias_t *alias)
         {
-            handle = Papyrus::Handle(alias);
+            handle = Papyrus::Handle_t(alias);
             handle.Registry()->VisitScripts(handle, this);
         }
 
@@ -239,204 +328,8 @@ namespace doticu_npcp { namespace Papyrus {
         }
     };
 
-    class Script : public IForEachScriptObjectFunctor
-    {
-    public:
-        Handle m_handle;
-        const char* m_name = nullptr;
-        Script_t* m_script = nullptr;
-
-        Script(Form_t* form, const char* name)
-        {
-            m_handle = Papyrus::Handle(form);
-            m_name = name;
-            m_handle.Registry()->VisitScripts(m_handle, this);
-        }
-        Script(Alias_t* alias, const char* name)
-        {
-            m_handle = Papyrus::Handle(alias);
-            m_name = name;
-            m_handle.Registry()->VisitScripts(m_handle, this);
-        }
-
-        virtual bool Visit(Script_t* script, void*)
-        {
-            if (String2::Is_Same_Caseless(m_name, script->classInfo->name.data)) {
-                m_script = script;
-                return false; // break
-            } else {
-                return true; // continue
-            }
-        }
-
-        operator Script_t* ()
-        {
-            return m_script;
-        }
-
-        operator void* ()
-        {
-            return static_cast<void*>(m_script);
-        }
-    };
-
-    // a lot of the credit for deciphering these types goes to Ryan-rsm-McKenzie of CommonLibSSE
-    class Object
-    {
-    public:
-        class Info
-        {
-        public:
-            class Type_Info
-            {
-            public:
-                enum class Type_t : UInt64
-                {
-                    TYPE_NONE = 0,
-                    TYPE_OBJECT = 1,
-                    TYPE_STRING = 2,
-                    TYPE_INT = 3,
-                    TYPE_FLOAT = 4,
-                    TYPE_BOOL = 5,
-
-                    TYPE_NONE_ARRAY = 10,
-                    TYPE_OBJECT_ARRAY = 11,
-                    TYPE_STRING_ARRAY = 12,
-                    TYPE_INT_ARRAY = 13,
-                    TYPE_FLOAT_ARRAY = 14,
-                    TYPE_BOOL_ARRAY = 15
-                };
-
-                Type_t raw;
-
-                Type_t Type();
-                Object::Info* Object_Info();
-                String_t To_String();
-                bool Is_None();
-                bool Is_Object();
-                bool Is_String();
-                bool Is_Int();
-                bool Is_Float();
-                bool Is_Bool();
-                bool Is_None_Array();
-                bool Is_Object_Array();
-                bool Is_String_Array();
-                bool Is_Int_Array();
-                bool Is_Float_Array();
-                bool Is_Bool_Array();
-            };
-
-            struct Setting_t
-            {
-                UInt64 unk_00; // 00
-            };
-            STATIC_ASSERT(sizeof(Setting_t) == 0x8);
-
-            struct Variable_t
-            {
-                String_t name; // 00
-                Type_Info type; // 08
-            };
-            STATIC_ASSERT(sizeof(Variable_t) == 0x10);
-
-            struct Default_t
-            {
-                UInt32 variable_idx; // 00
-                UInt32 pad_04; // 04
-                Papyrus::Variable_t variable; // 08
-            };
-            STATIC_ASSERT(sizeof(Default_t) == 0x18);
-
-            struct Property_t
-            {
-                String_t name; // 00
-                String_t parent_name; // 08
-                String_t property_name; // 10
-                Type_Info type; // 18
-                UInt32 flags_20; // 20
-                UInt32 unk_24; // 24
-                IFunction* getter; // 28
-                IFunction* setter; // 30
-                UInt32 auto_var_idx; // 38
-                UInt32 flags_3C; // 3C
-                String_t unk_40; // 40
-            };
-            STATIC_ASSERT(sizeof(Property_t) == 0x48);
-
-            UInt32 ref_count; // 00
-            UInt32 pad_04; // 04
-            String_t name; // 08
-            Info* parent; // 10
-            String_t unk_18; // 18
-            UInt32 flags_20; // 20
-            UInt32 flags_24; // 24
-            UInt32 flags_28; // 28
-            UInt32 pad_2C; // 2C
-            UInt8* data; // 30
-
-            UInt64 Count_Settings();
-            UInt64 Count_Variables();
-            UInt64 Count_Defaults();
-            UInt64 Count_Properties();
-
-            Setting_t* Settings();
-            Variable_t* Variables();
-            Default_t* Defaults();
-            Property_t* Properties();
-
-            SInt64 Variable_Index(String_t variable_name);
-            SInt64 Property_Index(String_t property_name);
-            Property_t* Property(String_t property_name);
-
-            void Log();
-            void Log_Settings();
-            void Log_Variables();
-            void Log_Defaults();
-            void Log_Properties();
-        };
-        STATIC_ASSERT(sizeof(Info) == 0x38);
-
-        Handle m_handle;
-        Entity_t* m_obj = nullptr;
-        Info* m_info = nullptr;
-        Variable_t* m_vars = nullptr;
-
-    private:
-        void _Object(const char* class_name);
-
-    public:
-        Object(Form_t* form, const char* class_name);
-        Object(Alias_t* alias, const char* class_name);
-    
-        bool Is_Valid();
-
-        bool Read_Property(String_t property_name, Variable_t& in_variable);
-        bool Write_Property(String_t property_name, Variable_t& out_variable);
-
-        Variable_t* Property(String_t property_name);
-        Variable_t* Variable(String_t variable_name);
-
-        void Log_Variables();
-
-        operator Entity_t*();
-    };
-
-    class IFunction_Callback_Functor
-    {
-    public:
-        virtual ~IFunction_Callback_Functor() = default; // 00
-        virtual void operator()(Variable_t result) = 0; // 01
-        virtual bool Can_Save() { return false; } // 02
-        virtual void Entity(Papyrus::Entity_t** entity) = 0; // 03
-
-        UInt32 ref_count = 0; // 00
-        UInt32 pad_04 = 0; // 04
-    };
-
-    typedef IFunctionArguments IFunction_Arguments_Functor;
-
     template <typename Type>
-    Vector_t<Type> Slice_Array(Array_t<Type> arr, SInt32 from, SInt32 to_exclusive)
+    Vector_t<Type> Slice_Array(VMArray<Type> arr, SInt32 from, SInt32 to_exclusive)
     {
         Vector_t<Type> slice;
         u64 arr_size = arr.Length();

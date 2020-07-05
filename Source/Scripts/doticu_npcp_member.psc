@@ -251,6 +251,10 @@ int function f_Get_ID()
     return p_id_alias
 endFunction
 
+; Native Methods
+Actor function Actor() native
+function Log_Variable_Infos() native
+
 ; Private Methods
 function p_Lock(float interval = 0.2, float timeout = 6.0)
     float time_waited = 0.0

@@ -65,6 +65,9 @@ int function Quest_Count_Used_Aliases(Quest ref_quest) native global
 int function Quest_Count_Free_Aliases(Quest ref_quest) native global
 int function Quest_Count_Mannequins(Quest ref_quest) native global
 
+; Tests
+function Run_Tests() native global
+
 ; Utils
 int[] function Get_Plugin_Version() native global
 function Print(string str) native global

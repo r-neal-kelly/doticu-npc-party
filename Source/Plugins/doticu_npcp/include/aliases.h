@@ -4,6 +4,60 @@
 
 #pragma once
 
+#include "party.h"
+
+namespace doticu_npcp { namespace Party { namespace Aliases {
+
+    Range_t<Alias_t**> Aliases(Aliases_t* self, UInt64 begin, UInt64 end);
+
+    Alias_t* From_Actor(Aliases_t* self, Actor_t* actor);
+
+}}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #include "types.h"
 
 namespace doticu_npcp { namespace Aliases {

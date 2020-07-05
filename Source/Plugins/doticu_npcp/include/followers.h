@@ -4,6 +4,62 @@
 
 #pragma once
 
+#include "party.h"
+
+namespace doticu_npcp { namespace Party { namespace Followers {
+
+    constexpr UInt64 MAX = 16;
+    constexpr UInt64 BEGIN = 0;
+    constexpr UInt64 END = BEGIN + MAX;
+
+    Range_t<UInt64> Indices(Followers_t* self);
+    Range_t<Alias_t**> Aliases(Followers_t* self);
+    Range_t<Follower_t**> Followers(Followers_t* self);
+
+    Follower_t* From_Actor(Followers_t* self, Actor_t* actor);
+
+}}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #include "types.h"
 
 namespace doticu_npcp { namespace Followers {

@@ -4,11 +4,72 @@
 
 #pragma once
 
-#include "types.h"
+#include "party.h"
+
+namespace doticu_npcp { namespace Party { namespace Member {
+
+    String_t Class_Name();
+    Class_Info_t* Class_Info();
+
+    Actor_t* Actor(Member_t* self);
+
+}}}
+
+namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
+
+    Bool_t Register(Registry_t* registry);
+
+}}}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#include "papyrus.h"
 
 namespace doticu_npcp { namespace Member {
 
-    Actor *Get_Actor(Member_t *member);
+    using namespace Papyrus;
+
+    Actor* Get_Actor(Member_t* member);
     TESObjectREFR *Get_Pack(Member_t *member);
     SInt32 Get_Style(Member_t *member);
     SInt32 Get_Vitality(Member_t *member);

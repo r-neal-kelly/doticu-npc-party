@@ -12,6 +12,8 @@
 #include "utils.h"
 #include "vars.h"
 
+#include "papyrus.inl"
+
 using namespace doticu_npcp::Papyrus;
 
 namespace doticu_npcp { namespace Vars {
@@ -22,28 +24,46 @@ namespace doticu_npcp { namespace Vars {
         return vars ? vars : vars = (Vars_t*)Game::Get_NPCP_Form(Consts::QUEST_DATA_DYNAMIC);
     }
 
+    Object_t* Object()
+    {
+        static Object_t* object = Object_t::Fetch(Self(), "doticu_npcp_vars");
+        return object;
+    }
+
     Papyrus::Variable_t* Variable(Vars_t* self, Papyrus::String_t variable_name)
     {
-        Papyrus::Object vars(self, "doticu_npcp_vars");
-        return vars.Variable(variable_name);
+        Object_t* object = Object();
+        if (object) {
+            return object->Variable(variable_name);
+        } else {
+            return nullptr;
+        }
     }
 
     Papyrus::Variable_t* Property(Vars_t* self, Papyrus::String_t property_name)
     {
-        Papyrus::Object vars(self, "doticu_npcp_vars");
-        return vars.Property(property_name);
+        Object_t* object = Object();
+        if (object) {
+            return object->Property(property_name);
+        } else {
+            return nullptr;
+        }
     }
 
     void Log_Variables(Vars_t* self)
     {
-        Papyrus::Object vars(self, "doticu_npcp_vars");
-        vars.Log_Variables();
+        Object_t* object = Object();
+        if (object) {
+            object->Log_Variables();
+        }
     }
 
     void Log_Properties(Vars_t* self)
     {
-        Papyrus::Object vars(self, "doticu_npcp_vars");
-        vars.m_info->Log_Properties();
+        Object_t* object = Object();
+        if (object) {
+            object->info->Log_Property_Infos();
+        }
     }
 
 }}

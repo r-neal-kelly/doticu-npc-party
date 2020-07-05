@@ -99,6 +99,15 @@
     <ClCompile Include="src\consts.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\alias.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\horses.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\aliases.h">
@@ -188,11 +197,26 @@
     <ClInclude Include="include\consts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\alias.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\horses.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\tests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def">
       <Filter>Source Files</Filter>
     </None>
     <None Include="scripts\doticu_npcp.psc" />
+    <None Include="include\papyrus.inl">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

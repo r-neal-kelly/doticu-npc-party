@@ -24,9 +24,11 @@
 #include "outfit.h"
 #include "package.h"
 #include "papyrus.h"
+#include "party.h"
 #include "player.h"
 #include "quest.h"
 #include "string2.h"
+#include "tests.h"
 #include "utils.h"
 #include "vars.h"
 
@@ -115,8 +117,12 @@ namespace doticu_npcp { namespace Main {
         REGISTER_NAMESPACE(Player);
         REGISTER_NAMESPACE(Quest);
         REGISTER_NAMESPACE(String2);
+        REGISTER_NAMESPACE(Tests);
         REGISTER_NAMESPACE(Utils);
         REGISTER_NAMESPACE(Vars);
+
+        REGISTER_NAMESPACE(Party::Members);
+        REGISTER_NAMESPACE(Party::Member);
 
         #undef REGISTER_NAMESPACE
 
