@@ -325,7 +325,7 @@ event OnKeyUp(int value, float hold_time)
         if ref_actor == none
             LOGS.Create_Note("That is not an NPC.", false)
         else
-            int num_heads = p_DATA.MODS.MEMBERS.Get_Head_Count(ref_actor)
+            int num_heads = p_DATA.MODS.MEMBERS.Count_Heads(ref_actor)
             if num_heads == 1
                 LOGS.Create_Note(num_heads + " member looks like " + ACTORS.Get_Name(ref_actor) + ".", false)
             else

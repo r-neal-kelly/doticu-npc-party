@@ -109,7 +109,6 @@ namespace doticu_npcp { namespace Main {
         REGISTER_NAMESPACE(Game);
         REGISTER_NAMESPACE(Keys);
         REGISTER_NAMESPACE(Member);
-        REGISTER_NAMESPACE(Members);
         REGISTER_NAMESPACE(Object_Ref);
         REGISTER_NAMESPACE(Outfit);
         REGISTER_NAMESPACE(Package);

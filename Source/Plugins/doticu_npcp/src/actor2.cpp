@@ -518,12 +518,14 @@ namespace doticu_npcp { namespace Actor2 {
         return actor->IsDead(1);
     }
 
-    bool Is_Loaded(Actor *actor) {
-        if (!actor) {
-            return false;
-        }
+    bool Is_Loaded(Actor_t* actor)
+    {
+        return actor && actor->loadedState != nullptr;
+    }
 
-        return actor->loadedState != nullptr;
+    bool Is_Unloaded(Actor_t* actor)
+    {
+        return actor && actor->loadedState == nullptr;
     }
 
     bool Is_AI_Enabled(Actor *actor) {

@@ -30,7 +30,7 @@ namespace doticu_npcp { namespace Vars {
         return object;
     }
 
-    Papyrus::Variable_t* Variable(Vars_t* self, Papyrus::String_t variable_name)
+    Variable_t* Variable(String_t variable_name)
     {
         Object_t* object = Object();
         if (object) {
@@ -40,13 +40,23 @@ namespace doticu_npcp { namespace Vars {
         }
     }
 
-    Papyrus::Variable_t* Property(Vars_t* self, Papyrus::String_t property_name)
+    Variable_t* Property(String_t property_name)
     {
         Object_t* object = Object();
         if (object) {
             return object->Property(property_name);
         } else {
             return nullptr;
+        }
+    }
+
+    String_t String_Variable(String_t variable_name)
+    {
+        Variable_t* variable = Variable(variable_name);
+        if (variable) {
+            return variable->String();
+        } else {
+            return "";
         }
     }
 

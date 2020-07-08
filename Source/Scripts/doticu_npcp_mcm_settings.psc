@@ -307,8 +307,8 @@ function f_On_Option_Slider_Open(int id_option)
 
     elseIf id_option == p_option_slider_max_members
         MCM.SetSliderDialogStartValue(VARS.max_members as float)
-        MCM.SetSliderDialogDefaultValue(MEMBERS.Get_Real_Max() as float)
-        MCM.SetSliderDialogRange(MEMBERS.Get_Count() as float, MEMBERS.Get_Real_Max() as float)
+        MCM.SetSliderDialogDefaultValue(MEMBERS.Get_Max() as float)
+        MCM.SetSliderDialogRange(MEMBERS.Get_Count() as float, MEMBERS.Get_Max() as float)
         MCM.SetSliderDialogInterval(1.0)
 
     elseIf id_option == p_option_slider_percent_body

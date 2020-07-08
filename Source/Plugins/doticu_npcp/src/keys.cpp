@@ -51,7 +51,7 @@ namespace doticu_npcp { namespace Keys {
 
             Mods(String_t mods_variable_name)
             {
-                Variable_t* variable = Vars::Property(Vars::Self(), mods_variable_name);
+                Variable_t* variable = Vars::Property(mods_variable_name);
                 if (variable && variable->type.Is_Int_Array() && variable->data.arr) {
                     Array_t* arr = variable->data.arr;
                     Variable_t* variables = variable->data.arr->Variables();
@@ -229,7 +229,7 @@ namespace doticu_npcp { namespace Keys {
         {
             s64 idx = Index_Of(key);
             if (idx > -1) {
-                Variable_t* variable = Vars::Property(Vars::Self(), var_names[idx]);
+                Variable_t* variable = Vars::Property(var_names[idx]);
                 if (variable && variable->type.Unmangled() == Type_t::INT) {
                     return variable->data.i;
                 } else {
@@ -243,7 +243,7 @@ namespace doticu_npcp { namespace Keys {
         Int_t Current_Value(idx_t idx)
         {
             if (idx > -1 && idx < Size()) {
-                Variable_t* variable = Vars::Property(Vars::Self(), var_names[idx]);
+                Variable_t* variable = Vars::Property(var_names[idx]);
                 if (variable && variable->type.Unmangled() == Type_t::INT) {
                     return variable->data.i;
                 } else {

@@ -11,7 +11,22 @@ namespace doticu_npcp { namespace Party { namespace Member {
     String_t Class_Name();
     Class_Info_t* Class_Info();
 
+    Variable_t* Variable(Member_t* self, String_t variable_name);
+
     Actor_t* Actor(Member_t* self);
+    Int_t Rating(Member_t* self);
+    String_t Race_Name(Member_t* self);
+
+    Bool_t Is_Filled(Member_t* self);
+    Bool_t Is_Unfilled(Member_t* self);
+    Bool_t Is_Loaded(Member_t* self);
+    Bool_t Is_Unloaded(Member_t* self);
+    Bool_t Is_Created(Member_t* self);
+    Bool_t Is_Destroyed(Member_t* self);
+
+    Bool_t Has_Same_Head(Member_t* self, Actor_t* actor);
+
+    void Log_Variable_Infos(Member_t* self);
 
 }}}
 

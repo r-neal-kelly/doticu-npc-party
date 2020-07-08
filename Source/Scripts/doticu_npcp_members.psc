@@ -66,6 +66,30 @@ bool                    p_are_displayed     = false
 int                     p_idx_display       =    -1
 ObjectReference         p_marker_display    =  none
 
+; Native Methods
+Alias function p_From_ID(int unique_id) native
+Alias function p_From_Actor(Actor ref_actor) native
+
+bool function Has_Actor(Actor ref_actor) native
+bool function Hasnt_Actor(Actor ref_actor) native
+bool function Has_Head(Actor ref_actor) native
+bool function Hasnt_Head(Actor ref_actor) native
+
+int function Max() native
+int function Count_Filled() native
+int function Count_Unfilled() native
+int function Count_Loaded() native
+int function Count_Unloaded() native
+int function Count_Heads(Actor ref_actor) native
+
+Alias[] function Filled() native
+
+Alias[] function Sort_Filled(int begin, int end) native
+
+string[] function Race_Names() native
+
+function Enforce_Loaded() native
+
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
     p_DATA = DATA
@@ -91,19 +115,15 @@ function f_Register()
     ALIASES.f_Register()
 
     ; just in case, see ALIASES.f_Register()
-    if VARS.max_members < Get_Count()
-        VARS.max_members = Get_Count()
+    int filled_count = Count_Filled()
+    if VARS.max_members < filled_count
+        VARS.max_members = filled_count
     endIf
 
     RegisterForModEvent("doticu_npcp_load_mod", "On_Load_Mod")
 endFunction
 
-; Native Methods
-ReferenceAlias function p_From_Actor(Actor ref_actor) native
-
 ; Private Methods
-function p_Enforce_Loaded() native
-
 int function p_Get_Alias_ID(Actor ref_actor)
     if !ref_actor
         return -1
@@ -113,7 +133,7 @@ int function p_Get_Alias_ID(Actor ref_actor)
 endFunction
 
 doticu_npcp_member function p_Get_Member(int id_alias)
-    return ALIASES.f_Get_Alias(id_alias) as doticu_npcp_member
+    return p_From_ID(id_alias) as doticu_npcp_member
 endFunction
 
 ; Public Methods
@@ -129,7 +149,7 @@ int function Create_Member(Actor ref_actor, bool do_clone = false)
         return CODES.IS_CHILD
     endIf
 
-    if Get_Count() >= Get_Max()
+    if Count_Filled() >= Get_Limit()
         ; check first so we don't have to unclone
         return CODES.HASNT_SPACE_MEMBER
     endIf
@@ -193,11 +213,13 @@ int function Destroy_Member(Actor ref_actor, bool delete_clone = false)
     if !ref_actor
         return CODES.ISNT_ACTOR
     endIf
-    
-    int id_alias = p_Get_Alias_ID(ref_actor)
-    if !ALIASES.Has_Alias(id_alias, ref_actor)
+
+    if Hasnt_Actor(ref_actor)
         return CODES.HASNT_MEMBER
     endIf
+    
+    int id_alias = p_Get_Alias_ID(ref_actor)
+    
 
     doticu_npcp_member ref_member = p_Get_Member(id_alias)
     bool is_clone = ref_member.Is_Clone()
@@ -228,15 +250,15 @@ int function Destroy_Member(Actor ref_actor, bool delete_clone = false)
 endFunction
 
 int function Get_Count()
-    return ALIASES.Get_Count()
+    return Count_Filled()
 endFunction
 
-int function Get_Max()
+int function Get_Limit()
     return VARS.max_members
 endFunction
 
-int function Get_Real_Max()
-    return ALIASES.Get_Max()
+int function Get_Max()
+    return Max()
 endFunction
 
 bool function Will_Sort()
@@ -244,7 +266,7 @@ bool function Will_Sort()
 endFunction
 
 bool function Has_Member(Actor ref_actor)
-    return ALIASES.Has_Alias(p_Get_Alias_ID(ref_actor), ref_actor)
+    return Has_Actor(ref_actor)
 endFunction
 
 bool function Has_Base(Actor ref_actor)
@@ -300,14 +322,6 @@ int function Get_Base_Count(Actor ref_actor)
     return num_members
 endFunction
 
-bool function Has_Head(Actor ref_actor)
-    return doticu_npcp.Aliases_Has_Head(ALIASES.Get_Aliases(), ref_actor.GetLeveledActorBase())
-endFunction
-
-int function Get_Head_Count(Actor ref_actor, bool do_print = false)
-    return doticu_npcp.Aliases_Count_Heads(ALIASES.Get_Aliases(), ref_actor.GetLeveledActorBase(), do_print)
-endFunction
-
 bool function Are_Displayed()
     return p_are_displayed
 endFunction
@@ -326,8 +340,8 @@ doticu_npcp_member function Get_Prev_Member(doticu_npcp_member ref_member)
     return ALIASES.Get_Prev_Alias(p_Get_Alias_ID(ref_actor), ref_actor) as doticu_npcp_member
 endFunction
 
-Alias[] function Get_Members(int idx_from = 0, int idx_to_ex = -1)
-    return ALIASES.Get_Aliases(idx_from, idx_to_ex)
+Alias[] function Get_Members(int begin = 0, int end = -1)
+    return Sort_Filled(begin, end)
 endFunction
 
 function Request_Sort()
@@ -373,7 +387,7 @@ int function Display_Start(Actor ref_actor)
         return CODES.IS_DISPLAY
     endIf
 
-    if Get_Count() < 1
+    if Count_Filled() < 1
         return CODES.HASNT_MEMBER
     endIf
 
@@ -483,7 +497,7 @@ endFunction
 
 ; Events
 event On_Load_Mod()
-    p_Enforce_Loaded()
+    Enforce_Loaded()
 endEvent
 
 ; Update Methods

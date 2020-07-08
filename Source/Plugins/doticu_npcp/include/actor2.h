@@ -26,7 +26,8 @@ namespace doticu_npcp { namespace Actor2 {
 
     bool Is_Alive(Actor *actor);
     bool Is_Dead(Actor *actor);
-    bool Is_Loaded(Actor *actor);
+    bool Is_Loaded(Actor_t *actor);
+    bool Is_Unloaded(Actor_t* actor);
     bool Is_AI_Enabled(Actor *actor);
     bool Is_Aliased_In_Quest(Actor *actor, TESQuest *quest);
 
@@ -42,6 +43,7 @@ namespace doticu_npcp { namespace Actor2 {
     Actor_t* Get_Mount(Actor_t* mounter);
     Actor_t* Get_Mounted_Actor(Actor_t* horse);
     bool Is_On_Mount(Actor_t* actor);
+
 }}
 
 namespace doticu_npcp { namespace Actor2 { namespace Exports {

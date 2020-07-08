@@ -23,7 +23,9 @@ namespace doticu_npcp { namespace Papyrus {
         virtual void _06(void); // 06
         virtual void _07(void); // 07
         virtual void _08(void); // 08
-        virtual void Class_Info(String_t* class_name, Class_Info_t** info_out); // 09
+        virtual void Load_Class_Info(String_t* class_name, Class_Info_t** info_out); // 09, call Class_Info_t Free() after use
+        virtual void _0A(void); // 0A
+        virtual void Class_Info(String_t* class_name, Class_Info_t** info_out); // 0B, call Class_Info_t Free() after use
     };
 
     class Handle_t {
@@ -38,7 +40,6 @@ namespace doticu_npcp { namespace Papyrus {
         Handle_t(Form_t* form);
         Handle_t(UInt64 handle);
         Handle_t();
-        ~Handle_t();
 
         bool Is_Valid();
 
@@ -130,6 +131,7 @@ namespace doticu_npcp { namespace Papyrus {
         Bool_t Bool();
         Float_t Float();
         Int_t Int();
+        String_t String();
         Reference_t* Reference();
     };
     STATIC_ASSERT(sizeof(Variable_t) == 0x10);
@@ -195,6 +197,9 @@ namespace doticu_npcp { namespace Papyrus {
         SInt64 Variable_Index(String_t variable_name);
         SInt64 Property_Index(String_t property_name);
         Property_Info_t* Property_Info(String_t property_name);
+
+        void Hold();
+        void Free();
 
         void Log();
         //void Log_Setting_Infos();
@@ -329,7 +334,7 @@ namespace doticu_npcp { namespace Papyrus {
     };
 
     template <typename Type>
-    Vector_t<Type> Slice_Array(VMArray<Type> arr, SInt32 from, SInt32 to_exclusive)
+    Vector_t<Type> Slice_Array(VMArray<Type> arr, SInt32 from = 0, SInt32 to_exclusive = -1)
     {
         Vector_t<Type> slice;
         u64 arr_size = arr.Length();
@@ -358,7 +363,7 @@ namespace doticu_npcp { namespace Papyrus {
     }
 
     template <typename Type>
-    Vector_t<Type> Slice_Vector(Vector_t<Type> vec, SInt32 from, SInt32 to_exclusive)
+    Vector_t<Type> Slice_Vector(Vector_t<Type> vec, SInt32 from = 0, SInt32 to_exclusive = -1)
     {
         Vector_t<Type> slice;
         u64 vec_size = vec.size();

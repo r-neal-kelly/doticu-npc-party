@@ -15,7 +15,7 @@
 
 namespace doticu_npcp { namespace Tests {
 
-    #define ASSHURT(IS_TRUE_)                   \
+    #define ASSERTS(IS_TRUE_)                   \
     M                                           \
         if ( !(IS_TRUE_) ) {                    \
             return "failed '" #IS_TRUE_ "'";    \
@@ -27,7 +27,34 @@ namespace doticu_npcp { namespace Tests {
         using namespace Papyrus;
 
         Virtual_Machine_t* virtual_machine = Virtual_Machine_t::Self();
-        ASSHURT(virtual_machine != nullptr);
+        ASSERTS(virtual_machine != nullptr);
+
+        return "ok";
+    }
+
+    const char* Test_Class_Info()
+    {
+        using namespace Papyrus;
+
+        String_t class_name = String_t("doticu_npcp_members");
+        Class_Info_t* class_info = Class_Info_t::Fetch(class_name);
+        ASSERTS(class_info != nullptr);
+
+        UInt32 ref_count = class_info->ref_count;
+        for (size_t idx = 0; idx < 12; idx += 1) {
+            Class_Info_t* new_class_info = Class_Info_t::Fetch(class_name);
+            new_class_info->Free();
+            ASSERTS(new_class_info->ref_count == ref_count);
+        }
+
+        class_info->Free();
+
+        return "ok";
+    }
+
+    const char* Test_Object()
+    {
+        // we need to check whether or not we are incrementing ref when we fetch the object.
 
         return "ok";
     }
@@ -37,18 +64,28 @@ namespace doticu_npcp { namespace Tests {
         using namespace Papyrus;
 
         Members_t* members = Party::Members::Self();
-        ASSHURT(members != nullptr);
+        ASSERTS(members != nullptr);
 
         String_t class_name = Party::Members::Class_Name();
-        ASSHURT(class_name == String_t("doticu_npcp_members"));
+        ASSERTS(class_name == String_t("doticu_npcp_members"));
 
         Class_Info_t* class_info = Party::Members::Class_Info();
-        ASSHURT(class_info != nullptr);
+        ASSERTS(class_info != nullptr);
 
         Object_t* instance = Party::Members::Object();
-        ASSHURT(instance != nullptr);
+        ASSERTS(instance != nullptr);
 
-        ASSHURT(class_info == instance->info);
+        ASSERTS(class_info == instance->info);
+
+        /*for (size_t idx = 0, count = members->aliases.count; idx < count; idx += 1) {
+            Alias_Reference_t* alias = reinterpret_cast<Alias_Reference_t*>(members->aliases.entries[idx]);
+            _MESSAGE("%zu %s:", idx, alias->name);
+            _MESSAGE("    flags: %u", alias->flags);
+            _MESSAGE("    type: %s", alias->Type());
+            _MESSAGE("    fill_type: %u", alias->fill_type);
+            _MESSAGE("    fill_data: %u, %u, %u", alias->fill.padding[0], alias->fill.padding[1], alias->fill.padding[2]);
+            _MESSAGE("    conditions: %p", alias->conditions);
+        }*/
 
         return "ok";
     }
@@ -58,7 +95,7 @@ namespace doticu_npcp { namespace Tests {
         using namespace Papyrus;
 
         Followers_t* followers = Followers::Self();
-        ASSHURT(followers != nullptr);
+        ASSERTS(followers != nullptr);
 
         return "ok";
     }
@@ -68,10 +105,10 @@ namespace doticu_npcp { namespace Tests {
         using namespace Papyrus;
 
         String_t class_name = Party::Member::Class_Name();
-        ASSHURT(class_name == String_t("doticu_npcp_member"));
+        ASSERTS(class_name == String_t("doticu_npcp_member"));
 
         Class_Info_t* class_info = Party::Member::Class_Info();
-        ASSHURT(class_info != nullptr);
+        ASSERTS(class_info != nullptr);
 
         // get a member_alias and test against class_info
 
@@ -81,27 +118,27 @@ namespace doticu_npcp { namespace Tests {
     const char* Test_Papyrus_Handle()
     {
         Quest_t* quest = dynamic_cast<Quest_t*>(Followers::Self());
-        ASSHURT(quest != nullptr);
+        ASSERTS(quest != nullptr);
 
         Papyrus::Handle_t quest_handle(quest);
-        ASSHURT(quest_handle.Is_Valid());
+        ASSERTS(quest_handle.Is_Valid());
 
         Form_t* quest_form = dynamic_cast<Form_t*>(quest);
         Papyrus::Handle_t form_handle(quest_form);
-        ASSHURT(form_handle.Is_Valid());
-        ASSHURT(quest_handle == form_handle);
+        ASSERTS(form_handle.Is_Valid());
+        ASSERTS(quest_handle == form_handle);
 
         Alias_t* alias = quest->aliases.entries[0];
-        ASSHURT(alias != nullptr);
+        ASSERTS(alias != nullptr);
 
         Papyrus::Handle_t alias_handle(alias);
-        ASSHURT(alias_handle.Is_Valid());
-        ASSHURT(quest_handle != alias_handle);
+        ASSERTS(alias_handle.Is_Valid());
+        ASSERTS(quest_handle != alias_handle);
 
         return "ok";
     }
 
-    #undef ASSHURT
+    #undef ASSERTS
 
     void Run_Tests()
     {
@@ -113,6 +150,8 @@ namespace doticu_npcp { namespace Tests {
         _MESSAGE("Running Tests:");
 
         RUN_TEST(Test_Static_Values);
+        RUN_TEST(Test_Class_Info);
+        RUN_TEST(Test_Object);
         RUN_TEST(Test_Members);
         RUN_TEST(Test_Followers);
         RUN_TEST(Test_Member);

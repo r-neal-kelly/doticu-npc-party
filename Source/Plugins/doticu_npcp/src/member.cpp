@@ -2,8 +2,11 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "actor2.h"
+#include "actor_base2.h"
 #include "alias.h"
 #include "member.h"
+#include "utils.h"
 
 namespace doticu_npcp { namespace Party { namespace Member {
 
@@ -19,19 +22,115 @@ namespace doticu_npcp { namespace Party { namespace Member {
         return object_info;
     }
 
+    Variable_t* Variable(Member_t* self, String_t variable_name)
+    {
+        return Variable_t::Fetch(self, Class_Name(), variable_name);
+    }
+
     Actor_t* Actor(Member_t* self)
     {
         static const String_t variable_name = String_t("p_ref_actor");
 
-        if (self) {
-            Variable_t* variable = Variable_t::Fetch(self, Class_Name(), variable_name);
-            if (variable) {
-                return variable->Actor();
-            } else {
-                return nullptr;
-            }
+        Variable_t* const variable = Variable(self, variable_name);
+        if (self && variable) {
+            Actor_t* actor = variable->Actor();
+            return variable->Actor();
         } else {
             return nullptr;
+        }
+    }
+
+    Int_t Rating(Member_t* self)
+    {
+        static const String_t variable_name = String_t("p_int_rating");
+
+        Variable_t* const variable = Variable(self, variable_name);
+        if (self && variable) {
+            return variable->Int();
+        } else {
+            return 0;
+        }
+    }
+
+    String_t Race_Name(Member_t* self)
+    {
+        Actor_t* actor = Actor(self);
+        if (actor) {
+            return actor->race->fullName.name;
+        } else {
+            return "";
+        }
+    }
+
+    Bool_t Is_Filled(Member_t* self)
+    {
+        if (self) {
+            return Is_Created(self) && Actor(self) != nullptr;
+        } else {
+            return false;
+        }
+    }
+
+    Bool_t Is_Unfilled(Member_t* self)
+    {
+        if (self) {
+            return Is_Destroyed(self) || Actor(self) == nullptr;
+        } else {
+            return false;
+        }
+    }
+
+    Bool_t Is_Loaded(Member_t* self)
+    {
+        return self && Actor2::Is_Loaded(Actor(self));
+    }
+
+    Bool_t Is_Unloaded(Member_t* self)
+    {
+        return self && Actor2::Is_Unloaded(Actor(self));
+    }
+
+    Bool_t Is_Created(Member_t* self)
+    {
+        static const String_t variable_name = String_t("p_is_created");
+
+        Variable_t* const variable = Variable(self, variable_name);
+        if (self && variable) {
+            return variable->Bool();
+        } else {
+            return false;
+        }
+    }
+
+    Bool_t Is_Destroyed(Member_t* self)
+    {
+        static const String_t variable_name = String_t("p_is_created");
+
+        Variable_t* const variable = Variable(self, variable_name);
+        if (self && variable) {
+            return !variable->Bool();
+        } else {
+            return false;
+        }
+    }
+
+    Bool_t Has_Same_Head(Member_t* self, Actor_t* actor)
+    {
+        if (self && actor) {
+            Actor_t* alias_actor = Actor(self);
+            if (alias_actor && Is_Created(self)) {
+                Actor_Base_t* actor_base = static_cast<Actor_Base_t*>(actor->baseForm);
+                Actor_Base_t* alias_actor_base = static_cast<Actor_Base_t*>(alias_actor->baseForm);
+                if (actor_base && alias_actor_base && Actor_Base2::Has_Same_Head(actor_base, alias_actor_base)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return false;
         }
     }
 
@@ -63,6 +162,9 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
         W
 
         ADD_METHOD("Actor", 0, Actor_t*, Actor);
+
+
+
         ADD_METHOD("Log_Variable_Infos", 0, void, Log_Variable_Infos);
 
         #undef ADD_METHOD

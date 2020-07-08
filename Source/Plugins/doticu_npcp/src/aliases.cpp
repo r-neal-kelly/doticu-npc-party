@@ -28,6 +28,15 @@ namespace doticu_npcp { namespace Party { namespace Aliases {
         }
     }
 
+    Alias_t* From_ID(Aliases_t* self, Int_t unique_id)
+    {
+        if (self && unique_id > -1 && unique_id < self->aliases.count) {
+            return reinterpret_cast<Alias_t*>(self->aliases.entries[unique_id]);
+        } else {
+            return nullptr;
+        }
+    }
+
     Alias_t* From_Actor(Aliases_t* self, Actor_t* actor)
     {
         if (self && actor) {
@@ -185,72 +194,6 @@ namespace doticu_npcp { namespace Aliases {
 
             return _stricmp(str_actor_a.data, str_actor_b.data);
         }
-    }
-
-    int Compare_Race_Names(const void *ptr_item_a, const void *ptr_item_b) {
-        return _stricmp((const char *)*(BSFixedString **)ptr_item_a, (const char *)*(BSFixedString **)ptr_item_b);
-    }
-
-    bool Has_Head(VMArray<BGSBaseAlias *> aliases, TESNPC *base_with_head) {
-        if (!base_with_head) {
-            return false;
-        }
-
-        BGSBaseAlias *alias = NULL;
-        for (u64 idx = 0, size = aliases.Length(); idx < size; idx += 1) {
-            aliases.Get(&alias, idx);
-            if (!alias) {
-                continue;
-            }
-
-            Actor *actor = Member::Get_Actor(alias);
-            if (!actor) {
-                continue;
-            }
-
-            TESNPC *base = DYNAMIC_CAST(actor->baseForm, TESForm, TESNPC);
-            if (Actor_Base2::Has_Same_Head(base, base_with_head)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    SInt32 Count_Heads(VMArray<BGSBaseAlias *> aliases, TESNPC *base_with_head, bool do_print) {
-        if (!base_with_head) {
-            return -1;
-        }
-
-        if (do_print) {
-            Utils::Print("Count_Heads:");
-        }
-
-        SInt32 count = 0;
-        BGSBaseAlias *alias = NULL;
-        for (u64 idx = 0, size = aliases.Length(); idx < size; idx += 1) {
-            aliases.Get(&alias, idx);
-            if (!alias) {
-                continue;
-            }
-
-            Actor *actor = Member::Get_Actor(alias);
-            if (!actor) {
-                continue;
-            }
-
-            TESNPC *base = DYNAMIC_CAST(actor->baseForm, TESForm, TESNPC);
-            if (Actor_Base2::Has_Same_Head(base, base_with_head)) {
-                count += 1;
-                if (do_print) {
-                    std::string str_print("    ");
-                    str_print.append(Actor2::Get_Name(actor));
-                    Utils::Print(str_print.c_str());
-                }
-            }
-        }
-
-        return count;
     }
 
     VMResultArray<Alias_t *> Sort(VMResultArray<Alias_t *> aliases, const char *algorithm)
@@ -794,53 +737,6 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
         }
     }
 
-    VMResultArray<BSFixedString> Get_Race_Names(StaticFunctionTag *,
-                                                VMArray<BGSBaseAlias *> arr_aliases
-    ) {
-        size_t idx_aliases;
-        size_t num_aliases;
-        BGSBaseAlias *ptr_alias;
-        Actor *ptr_actor;
-        const char *ptr_race_name;
-
-        VMResultArray<BSFixedString> vec_race_names;
-        size_t idx_race_names;
-        size_t num_race_names;
-        bool has_race_name;
-
-        for (idx_aliases = 0, num_aliases = arr_aliases.Length(); idx_aliases < num_aliases; idx_aliases += 1) {
-            arr_aliases.Get(&ptr_alias, idx_aliases);
-            ptr_actor = Member::Get_Actor(ptr_alias);
-            if (ptr_actor) {
-                ptr_race_name = ptr_actor->race->fullName.name;
-
-                has_race_name = false;
-                for (idx_race_names = 0, num_race_names = vec_race_names.size(); idx_race_names < num_race_names; idx_race_names += 1) {
-                    if (_stricmp(vec_race_names[idx_race_names].data, ptr_race_name) == 0) {
-                        has_race_name = true;
-                        break;
-                    }
-                }
-
-                if (!has_race_name) {
-                    vec_race_names.push_back(ptr_race_name);
-                }
-            }
-        }
-
-        qsort(vec_race_names.data(), vec_race_names.size(), sizeof(BSFixedString), Compare_Race_Names);
-
-        return vec_race_names;
-    }
-
-    bool Has_Head(StaticFunctionTag *, VMArray<BGSBaseAlias *> aliases, TESNPC *base_with_head) {
-        return Aliases::Has_Head(aliases, base_with_head);
-    }
-
-    SInt32 Count_Heads(StaticFunctionTag *, VMArray<BGSBaseAlias *> aliases, TESNPC *base_with_head, bool do_print) {
-        return Aliases::Count_Heads(aliases, base_with_head, do_print);
-    }
-
     bool Register(VMClassRegistry *registry) {
         registry->RegisterFunction(
             new NativeFunction3 <StaticFunctionTag, VMResultArray<BGSBaseAlias *>, VMArray<BGSBaseAlias *>, SInt32, SInt32>(
@@ -870,31 +766,8 @@ namespace doticu_npcp { namespace Aliases { namespace Exports {
                 Filter_Flag,
                 registry)
         );
-        registry->RegisterFunction(
-            new NativeFunction1 <StaticFunctionTag, VMResultArray<BSFixedString>, VMArray<BGSBaseAlias *>>(
-                "Aliases_Get_Race_Names",
-                "doticu_npcp",
-                Get_Race_Names,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction2 <StaticFunctionTag, bool, VMArray<BGSBaseAlias *>, TESNPC *>(
-                "Aliases_Has_Head",
-                "doticu_npcp",
-                Exports::Has_Head,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction3 <StaticFunctionTag, SInt32, VMArray<BGSBaseAlias *>, TESNPC *, bool>(
-                "Aliases_Count_Heads",
-                "doticu_npcp",
-                Exports::Count_Heads,
-                registry)
-        );
 
         return true;
     }
 
 }}}
-
-

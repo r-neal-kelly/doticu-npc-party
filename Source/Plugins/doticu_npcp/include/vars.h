@@ -8,10 +8,14 @@
 
 namespace doticu_npcp { namespace Vars {
 
+    using namespace Papyrus;
+
     Vars_t* Self();
 
-    Papyrus::Variable_t* Variable(Vars_t* self, Papyrus::String_t variable_name);
-    Papyrus::Variable_t* Property(Vars_t* self, Papyrus::String_t property_name);
+    Variable_t* Variable(String_t variable_name);
+    Variable_t* Property(String_t property_name);
+
+    String_t String_Variable(String_t variable_name);
 
     void Log_Variables(Vars_t* self);
     void Log_Properties(Vars_t* self);

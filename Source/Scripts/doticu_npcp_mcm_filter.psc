@@ -373,7 +373,7 @@ function f_On_Option_Menu_Open(int id_option)
         MCM.SetMenuDialogDefaultIndex(0)
 
     elseIf id_option == p_option_race
-        p_arr_race_names = doticu_npcp.Aliases_Get_Race_Names(MEMBERS.Get_Members())
+        p_arr_race_names = MEMBERS.Race_Names()
 
         int num_race_names
         if p_arr_race_names[0] == ""

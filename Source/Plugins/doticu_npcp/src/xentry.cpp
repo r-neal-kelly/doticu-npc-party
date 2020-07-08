@@ -16,7 +16,7 @@ namespace doticu_npcp { namespace XEntry {
         }
 
         XEntry_t *entry = (XEntry_t *)Heap_Allocate(sizeof(XEntry_t));
-        NPCP_Assert(entry);
+        NPCP_ASSERT(entry);
 
         entry->type = form;
         entry->countDelta = count;

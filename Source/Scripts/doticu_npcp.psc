@@ -33,9 +33,6 @@ int[] function Aliases_Filter_Ints(int int_style = 0, int int_vitality = 0, int 
     arr_ints[4] = int_flags
     return arr_ints
 endFunction
-string[] function Aliases_Get_Race_Names(Alias[] arr_aliases) native global
-bool function Aliases_Has_Head(Alias[] arr_aliases, ActorBase base_with_head) native global
-int function Aliases_Count_Heads(Alias[] arr_aliases, ActorBase base_with_head, bool do_print = false) native global
 
 ; Cell
 bool function Cell_Is_Interior(Cell ref_cell) native global

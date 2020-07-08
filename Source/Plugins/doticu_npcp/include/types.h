@@ -30,6 +30,7 @@ namespace doticu_npcp {
     typedef TESObjectCELL           Cell_t;
     typedef TESObjectREFR           Reference_t;
     typedef Actor                   Actor_t;
+    typedef TESNPC                  Actor_Base_t;
 
     typedef BGSBaseAlias            Alias_t;
     typedef BGSBaseAlias            Player_t;

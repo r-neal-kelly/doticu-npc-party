@@ -15,7 +15,7 @@ namespace doticu_npcp { namespace Party {
     typedef Aliases_t           Followers_t;
     typedef Aliases_t           Horses_t;
 
-    typedef Alias_Reference_t   Alias_t;
+    typedef Alias_Base_t        Alias_t;
     typedef Alias_t             Member_t;
     typedef Alias_t             Follower_t;
     typedef Alias_t             Horse_t;
@@ -25,4 +25,5 @@ namespace doticu_npcp { namespace Party {
         Type begin;
         Type end;
     };
+
 }}

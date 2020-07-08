@@ -469,7 +469,7 @@ function p_View(Alias[] arr_aliases, int idx_page, doticu_npcp_member ref_member
 endFunction
 
 string function p_Format_Title(int num_members, int idx_page, int num_pages)
-    string str_members = "Members: " + num_members + "/" + MEMBERS.Get_Max()
+    string str_members = "Members: " + num_members + "/" + MEMBERS.Get_Limit()
     string str_pages = "Page: " + (idx_page + 1) + "/" + num_pages
 
     if p_code_view == CODES.VIEW_FILTER_MEMBERS

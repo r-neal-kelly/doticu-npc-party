@@ -190,7 +190,7 @@ doticu_npcp_follower function Get_Follower(Actor ref_actor)
 endFunction
 
 Alias[] function Get_Followers(int idx_from = 0, int idx_to_ex = -1)
-    return p_Sort_All(idx_from, idx_to_ex, VARS.str_sort_followers)
+    return p_Sort_All(idx_from, idx_to_ex, VARS.str_sort_followers); we need to attach this to the correct function in c++
 endFunction
 
 int function Summon(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0)

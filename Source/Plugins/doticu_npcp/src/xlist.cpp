@@ -12,12 +12,12 @@ namespace doticu_npcp { namespace XList {
 
     XList_t *Create() {
         XList_t *xlist = (XList_t *)Heap_Allocate(sizeof(XList_t));
-        NPCP_Assert(xlist);
+        NPCP_ASSERT(xlist);
 
         xlist->m_data = NULL;
 
         xlist->m_presence = (XList_t::PresenceBitfield *)Heap_Allocate(sizeof(XList_t::PresenceBitfield));
-        NPCP_Assert(xlist->m_presence);
+        NPCP_ASSERT(xlist->m_presence);
 
         u64 *bits = (u64 *)xlist->m_presence->bits;
         bits[0] = 0;

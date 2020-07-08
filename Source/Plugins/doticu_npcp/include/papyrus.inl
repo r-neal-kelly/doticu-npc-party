@@ -60,12 +60,15 @@ namespace doticu_npcp { namespace Papyrus {
     {
     }
 
-    inline Handle_t::~Handle_t()
+    // doing this causes a lot of warnings to pop up in the log.
+    // it does not seem to be necessary for our purposes.
+    /*inline Handle_t::~Handle_t()
     {
         if (Is_Valid()) {
+            
             Policy()->Release(handle);
         }
-    }
+    }*/
 
     inline bool Handle_t::Is_Valid()
     {
@@ -259,6 +262,15 @@ namespace doticu_npcp { namespace Papyrus {
         }
     }
 
+    inline String_t Variable_t::String()
+    {
+        if (type.Is_String()) {
+            return data.str;
+        } else {
+            return "";
+        }
+    }
+
     inline Reference_t* Variable_t::Reference()
     {
         if (type.Unmangled() == Type_t::OBJECT) {
@@ -279,7 +291,8 @@ namespace doticu_npcp { namespace Papyrus {
         Virtual_Machine_t* const virtual_machine = Virtual_Machine_t::Self();
         if (virtual_machine) {
             Class_Info_t* info_out = nullptr;
-            virtual_machine->Class_Info(&class_name, &info_out);
+            virtual_machine->Load_Class_Info(&class_name, &info_out);
+            //virtual_machine->Class_Info(&class_name, &info_out);
             return info_out;
         } else {
             return nullptr;
@@ -368,6 +381,16 @@ namespace doticu_npcp { namespace Papyrus {
         }
 
         return nullptr;
+    }
+
+    inline void Class_Info_t::Hold()
+    {
+        reinterpret_cast<VMClassInfo*>(this)->AddRef();
+    }
+
+    inline void Class_Info_t::Free()
+    {
+        reinterpret_cast<VMClassInfo*>(this)->Release();
     }
 
     inline void Class_Info_t::Log()
