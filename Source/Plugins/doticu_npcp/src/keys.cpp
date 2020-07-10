@@ -198,7 +198,7 @@ namespace doticu_npcp { namespace Keys {
         s64 Index_Of(String_t key)
         {
             for (u64 idx = 0, size = keys.size(); idx < size; idx += 1) {
-                if (keys[idx] == key) {
+                if (String2::Is_Same_Caseless(keys[idx], key)) {
                     return idx;
                 }
             }
@@ -472,7 +472,7 @@ namespace doticu_npcp { namespace Keys {
 
         for (idx_t idx = 0, size = key_system.Size(); idx < size; idx += 1) {
             String_t current_key = key_system.Hotkey(idx);
-            if (current_key != key) {
+            if (!String2::Is_Same_Caseless(current_key, key)) {
                 Int_t current_value = key_system.Current_Value(idx);
                 if (current_value > 0 && current_value == value) {
                     Key_System_t::Mods current_mods = key_system.Current_Mods(idx);

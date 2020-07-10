@@ -18,6 +18,7 @@
 #include "object_ref.h"
 #include "player.h"
 #include "cell.h"
+#include "string2.h"
 
 // ForceRefTo is found and callable on TESQuest
 // Clear might be unlabeled on the virtual table of BGSBaseAlias
@@ -78,61 +79,61 @@ namespace doticu_npcp { namespace Party {
         static const String_t IS_RETREATER = String_t("IS_RETREATER");
         static const String_t ISNT_RETREATER = String_t("ISNT_RETREATER");
 
-        if (flag_1 == IS_UNIQUE) {
+        if (String2::Is_Same_Caseless(flag_1, IS_UNIQUE)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::IS_UNIQUE);
-        } else if (flag_1 == IS_GENERIC) {
+        } else if (String2::Is_Same_Caseless(flag_1, IS_GENERIC)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::IS_GENERIC);
-        } else if (flag_1 == IS_LOADED) {
+        } else if (String2::Is_Same_Caseless(flag_1, IS_LOADED)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::IS_LOADED);
-        } else if (flag_1 == IS_UNLOADED) {
+        } else if (String2::Is_Same_Caseless(flag_1, IS_UNLOADED)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::IS_UNLOADED);
-        } else if (flag_1 == IS_ALIVE) {
+        } else if (String2::Is_Same_Caseless(flag_1, IS_ALIVE)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::IS_ALIVE);
-        } else if (flag_1 == IS_DEAD) {
+        } else if (String2::Is_Same_Caseless(flag_1, IS_DEAD)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::IS_DEAD);
-        } else if (flag_1 == IS_ORIGINAL) {
+        } else if (String2::Is_Same_Caseless(flag_1, IS_ORIGINAL)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::IS_ORIGINAL);
-        } else if (flag_1 == IS_CLONE) {
+        } else if (String2::Is_Same_Caseless(flag_1, IS_CLONE)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::IS_CLONE);
-        } else if (flag_1 == IS_MOBILE) {
+        } else if (String2::Is_Same_Caseless(flag_1, IS_MOBILE)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::IS_MOBILE);
-        } else if (flag_1 == IS_IMMOBILE) {
+        } else if (String2::Is_Same_Caseless(flag_1, IS_IMMOBILE)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::IS_IMMOBILE);
-        } else if (flag_1 == IS_SETTLER) {
+        } else if (String2::Is_Same_Caseless(flag_1, IS_SETTLER)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::IS_SETTLER);
-        } else if (flag_1 == ISNT_SETTLER) {
+        } else if (String2::Is_Same_Caseless(flag_1, ISNT_SETTLER)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::ISNT_SETTLER);
-        } else if (flag_1 == IS_THRALL) {
+        } else if (String2::Is_Same_Caseless(flag_1, IS_THRALL)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::IS_THRALL);
-        } else if (flag_1 == ISNT_THRALL) {
+        } else if (String2::Is_Same_Caseless(flag_1, ISNT_THRALL)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::ISNT_THRALL);
-        } else if (flag_1 == IS_PARALYZED) {
+        } else if (String2::Is_Same_Caseless(flag_1, IS_PARALYZED)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::IS_PARALYZED);
-        } else if (flag_1 == ISNT_PARALYZED) {
+        } else if (String2::Is_Same_Caseless(flag_1, ISNT_PARALYZED)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::ISNT_PARALYZED);
-        } else if (flag_1 == IS_MANNEQUIN) {
+        } else if (String2::Is_Same_Caseless(flag_1, IS_MANNEQUIN)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::IS_MANNEQUIN);
-        } else if (flag_1 == ISNT_MANNEQUIN) {
+        } else if (String2::Is_Same_Caseless(flag_1, ISNT_MANNEQUIN)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::ISNT_MANNEQUIN);
-        } else if (flag_1 == IS_REANIMATED) {
+        } else if (String2::Is_Same_Caseless(flag_1, IS_REANIMATED)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::IS_REANIMATED);
-        } else if (flag_1 == ISNT_REANIMATED) {
+        } else if (String2::Is_Same_Caseless(flag_1, ISNT_REANIMATED)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::ISNT_REANIMATED);
-        } else if (flag_1 == IS_FOLLOWER) {
+        } else if (String2::Is_Same_Caseless(flag_1, IS_FOLLOWER)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::IS_FOLLOWER);
-        } else if (flag_1 == ISNT_FOLLOWER) {
+        } else if (String2::Is_Same_Caseless(flag_1, ISNT_FOLLOWER)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::ISNT_FOLLOWER);
-        } else if (flag_1 == IS_SNEAK) {
+        } else if (String2::Is_Same_Caseless(flag_1, IS_SNEAK)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::IS_SNEAK);
-        } else if (flag_1 == ISNT_SNEAK) {
+        } else if (String2::Is_Same_Caseless(flag_1, ISNT_SNEAK)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::ISNT_SNEAK);
-        } else if (flag_1 == IS_SADDLER) {
+        } else if (String2::Is_Same_Caseless(flag_1, IS_SADDLER)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::IS_SADDLER);
-        } else if (flag_1 == ISNT_SADDLER) {
+        } else if (String2::Is_Same_Caseless(flag_1, ISNT_SADDLER)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::ISNT_SADDLER);
-        } else if (flag_1 == IS_RETREATER) {
+        } else if (String2::Is_Same_Caseless(flag_1, IS_RETREATER)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::IS_RETREATER);
-        } else if (flag_1 == ISNT_RETREATER) {
+        } else if (String2::Is_Same_Caseless(flag_1, ISNT_RETREATER)) {
             return Utils::Bit_On(flags_1, Filter_Flags_1::ISNT_RETREATER);
         } else {
             return flags_1;
@@ -459,11 +460,21 @@ namespace doticu_npcp { namespace Party {
         Range_t<Member_t**> members = Aliases();
         for (; members.begin < members.end; members.begin += 1) {
             Member_t* member = (*members.begin);
-            String_t race_name = member->Race();
-            if (!Vector::Has(race_names, race_name)) {
-                race_names.push_back(race_name);
+            if (member->Is_Filled()) {
+                String_t race_name = member->Race();
+                if (!String2::Is_Same_Caseless(race_name, "") && !Vector::Has(race_names, race_name)) {
+                    race_names.push_back(race_name);
+                }
             }
         }
+
+        auto sort = [](const void* item_a, const void* item_b) -> int
+        {
+            String_t race_a = item_a ? *(String_t*)item_a : "";
+            String_t race_b = item_b ? *(String_t*)item_b : "";
+            return _stricmp(race_a, race_b);
+        };
+        qsort(race_names.data(), race_names.size(), sizeof(String_t), sort);
 
         return race_names;
     }
@@ -486,7 +497,7 @@ namespace doticu_npcp { namespace Party {
 
     Vector_t<Member_t*> Members_t::Filter(Vector_t<String_t>* strings, Vector_t<Int_t>* ints, Int_t flags_1, Int_t flags_2)
     {
-        return Aliases_t::Filter<Member_t>(Aliases(), strings, ints, flags_1, flags_2);
+        return Sort(Aliases_t::Filter(Aliases(), strings, ints, flags_1, flags_2));
     }
 
     // Followers_t //
@@ -955,7 +966,7 @@ namespace doticu_npcp { namespace Party {
 
     void Followers_t::Send(Vector_t<Follower_t*> followers, String_t event_name)
     {
-        if (followers.size() > 0 && event_name != String_t("")) {
+        if (followers.size() > 0 && !String2::Is_Same_Caseless(event_name, "")) {
             struct Args : public IFunctionArguments {
                 bool Copy(Output* output)
                 {
@@ -973,7 +984,7 @@ namespace doticu_npcp { namespace Party {
 
     void Followers_t::Send(Vector_t<Follower_t*> followers, String_t event_name, Form_t* form_arg)
     {
-        if (followers.size() > 0 && event_name != String_t("") && form_arg != nullptr) {
+        if (followers.size() > 0 && !String2::Is_Same_Caseless(event_name, "") && form_arg != nullptr) {
             struct Args : public IFunctionArguments {
                 Form_t* m_form_arg;
                 Args(Form_t* form_arg)
@@ -1172,7 +1183,7 @@ namespace doticu_npcp { namespace Party {
 
     Vector_t<Follower_t*> Followers_t::Filter(Vector_t<String_t>* strings, Vector_t<Int_t>* ints, Int_t flags_1, Int_t flags_2)
     {
-        return Aliases_t::Filter<Follower_t>(Aliases(), strings, ints, flags_1, flags_2);
+        return Sort(Aliases_t::Filter(Aliases(), strings, ints, flags_1, flags_2));
     }
 
     // Horses_t //
@@ -2140,10 +2151,10 @@ namespace doticu_npcp { namespace Party {
 
     void Follower_t::Summon(float radius, float degree)
     {
+        Actor_t* player_actor = *g_thePlayer;
         Actor_t* follower_actor = Actor();
-        if (Is_Created() && follower_actor) {
-            Actor_t* player_actor = *g_thePlayer;
-            if (player_actor) {
+        if (player_actor && follower_actor && Is_Created()) {
+            if (Player::Is_In_Exterior_Cell() && Is_Saddler()) {
                 Horse_t* follower_horse = Horse();
                 Actor_t* follower_horse_actor = follower_horse ? follower_horse->Actor() : nullptr;
                 if (follower_horse_actor) {
@@ -2153,26 +2164,20 @@ namespace doticu_npcp { namespace Party {
                 } else {
                     Actor2::Move_To_Orbit(follower_actor, player_actor, radius, degree);
                 }
+            } else {
+                Actor2::Move_To_Orbit(follower_actor, player_actor, radius, degree);
             }
         }
     }
 
     void Follower_t::Summon_Ahead(float radius)
     {
-        Actor_t* follower_actor = Actor();
-        Actor_t* player_actor = *g_thePlayer;
-        if (follower_actor && player_actor) {
-            Actor2::Move_To_Orbit(follower_actor, player_actor, radius, 0);
-        }
+        Summon(radius, 0);
     }
 
     void Follower_t::Summon_Behind(float radius)
     {
-        Actor_t* follower_actor = Actor();
-        Actor_t* player_actor = *g_thePlayer;
-        if (follower_actor && player_actor) {
-            Actor2::Move_To_Orbit(follower_actor, player_actor, radius, 180);
-        }
+        Summon(radius, 180);
     }
 
     void Follower_t::Catch_Up()

@@ -88,36 +88,49 @@ function Cycle_Vitality(Actor ref_actor, bool auto_create)
     GotoState("")
 endFunction
 
-
 function Members_Display_Start(Actor ref_actor)
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Members_Display_Start", ref_actor)
-    GotoState("")
+    Debug.Notification("Display is disabled until the next update.")
+    return
+
+    ;GotoState("p_STATE_BUSY")
+    ;p_Enqueue("Members_Display_Start", ref_actor)
+    ;GotoState("")
 endFunction
 
 function Members_Display_Stop()
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Members_Display_Stop", none)
-    GotoState("")
+    Debug.Notification("Display is disabled until the next update.")
+    return
+
+    ;GotoState("p_STATE_BUSY")
+    ;p_Enqueue("Members_Display_Stop", none)
+    ;GotoState("")
 endFunction
 
 function Members_Display_Next()
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Members_Display_Next", none)
-    GotoState("")
+    Debug.Notification("Display is disabled until the next update.")
+    return
+
+    ;GotoState("p_STATE_BUSY")
+    ;p_Enqueue("Members_Display_Next", none)
+    ;GotoState("")
 endFunction
 
 function Members_Display_Previous()
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Members_Display_Previous", none)
-    GotoState("")
+    Debug.Notification("Display is disabled until the next update.")
+    return
+
+    ;GotoState("p_STATE_BUSY")
+    ;p_Enqueue("Members_Display_Previous", none)
+    ;GotoState("")
 endFunction
 
-
 function Toggle_Members_Display(Actor ref_actor)
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Toggle_Members_Display", ref_actor)
-    GotoState("")
+    Debug.Notification("Display is disabled until the next update.")
+    return
+
+    ;GotoState("p_STATE_BUSY")
+    ;p_Enqueue("Toggle_Members_Display", ref_actor)
+    ;GotoState("")
 endFunction
 
 

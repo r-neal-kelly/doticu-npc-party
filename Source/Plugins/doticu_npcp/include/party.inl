@@ -312,31 +312,30 @@ namespace doticu_npcp { namespace Party {
             String_t sex = strings_size > 0 ? strings->at(0) : ""; // "male", "female", "none", or "" for any
             String_t race = strings_size > 1 ? strings->at(1) : ""; // exposed by game, "" for any
             String_t search = strings_size > 2 ? strings->at(2) : ""; // user input, "" for no search
-            String_t none = String_t("");
 
-            if (sex != none) {
+            if (!String2::Is_Same_Caseless(sex, "")) {
                 for (size_t idx = 0, size = read->size(); idx < size; idx += 1) {
-                    Alias* alias = static_cast<Alias*>(read->at(idx));
-                    if (alias->Sex() == sex) {
+                    Alias* alias = read->at(idx);
+                    if (String2::Is_Same_Caseless(alias->Sex(), sex)) {
                         write->push_back(alias);
                     }
                 }
                 Swap();
             }
 
-            if (race != none) {
+            if (!String2::Is_Same_Caseless(race, "")) {
                 for (size_t idx = 0, size = read->size(); idx < size; idx += 1) {
-                    Alias* alias = static_cast<Alias*>(read->at(idx));
-                    if (alias->Race() == race) {
+                    Alias* alias = read->at(idx);
+                    if (String2::Is_Same_Caseless(alias->Race(), race)) {
                         write->push_back(alias);
                     }
                 }
                 Swap();
             }
 
-            if (search != none) {
+            if (!String2::Is_Same_Caseless(search, "")) {
                 for (size_t idx = 0, size = read->size(); idx < size; idx += 1) {
-                    Alias* alias = static_cast<Alias*>(read->at(idx));
+                    Alias* alias = read->at(idx);
                     if (strlen(search) > 1) {
                         if (String2::Contains_Caseless(alias->Reference_Name(), search)) {
                             write->push_back(alias);
@@ -360,7 +359,7 @@ namespace doticu_npcp { namespace Party {
 
             if (style < 0) {
                 for (size_t idx = 0, size = read->size(); idx < size; idx += 1) {
-                    Alias* alias = static_cast<Alias*>(read->at(idx));
+                    Alias* alias = read->at(idx);
                     if (alias->Style() == style) {
                         write->push_back(alias);
                     }
@@ -370,7 +369,7 @@ namespace doticu_npcp { namespace Party {
 
             if (vitality < 0) {
                 for (size_t idx = 0, size = read->size(); idx < size; idx += 1) {
-                    Alias* alias = static_cast<Alias*>(read->at(idx));
+                    Alias* alias = read->at(idx);
                     if (alias->Vitality() == vitality) {
                         write->push_back(alias);
                     }
@@ -380,7 +379,7 @@ namespace doticu_npcp { namespace Party {
 
             if (outfit2 < 0) {
                 for (size_t idx = 0, size = read->size(); idx < size; idx += 1) {
-                    Alias* alias = static_cast<Alias*>(read->at(idx));
+                    Alias* alias = read->at(idx);
                     if (alias->Outfit2() == outfit2) {
                         write->push_back(alias);
                     }
@@ -390,7 +389,7 @@ namespace doticu_npcp { namespace Party {
 
             if (rating > -1) {
                 for (size_t idx = 0, size = read->size(); idx < size; idx += 1) {
-                    Alias* alias = static_cast<Alias*>(read->at(idx));
+                    Alias* alias = read->at(idx);
                     if (alias->Rating() == rating) {
                         write->push_back(alias);
                     }
@@ -399,10 +398,10 @@ namespace doticu_npcp { namespace Party {
             }
         }
 
-        auto Filter_If = [&Swap, read, write](Bool_t(Alias::* is_func)()) -> void
+        auto Filter_If = [&Swap, &read, &write](Bool_t(Alias::* is_func)()) -> void
         {
             for (size_t idx = 0, size = read->size(); idx < size; idx += 1) {
-                Alias* alias = static_cast<Alias*>(read->at(idx));
+                Alias* alias = read->at(idx);
                 if ((alias->*is_func)()) {
                     write->push_back(alias);
                 }
@@ -500,7 +499,7 @@ namespace doticu_npcp { namespace Party {
 
         }
 
-        return *reinterpret_cast<Vector_t<Alias*>*>(read);
+        return *read;
     }
 
 }}

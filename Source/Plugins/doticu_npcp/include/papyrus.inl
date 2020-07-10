@@ -5,6 +5,7 @@
 #pragma once
 
 #include "papyrus.h"
+#include "string2.h"
 
 namespace doticu_npcp { namespace Papyrus {
 
@@ -351,7 +352,7 @@ namespace doticu_npcp { namespace Papyrus {
     {
         Variable_Info_t* variables = Variable_Infos();
         for (s64 idx = 0, size = Count_Variable_Infos(); idx < size; idx += 1) {
-            if (variables[idx].name == variable_name) {
+            if (String2::Is_Same_Caseless(variables[idx].name, variable_name)) {
                 return idx;
             }
         }
@@ -363,7 +364,7 @@ namespace doticu_npcp { namespace Papyrus {
     {
         Property_Info_t* properties = Property_Infos();
         for (s64 idx = 0, size = Count_Property_Infos(); idx < size; idx += 1) {
-            if (properties[idx].name == property_name) {
+            if (String2::Is_Same_Caseless(properties[idx].name, property_name)) {
                 return properties[idx].auto_var_idx;
             }
         }
@@ -375,7 +376,7 @@ namespace doticu_npcp { namespace Papyrus {
     {
         Property_Info_t* properties = Property_Infos();
         for (s64 idx = 0, size = Count_Property_Infos(); idx < size; idx += 1) {
-            if (properties[idx].name == property_name) {
+            if (String2::Is_Same_Caseless(properties[idx].name, property_name)) {
                 return &properties[idx];
             }
         }
