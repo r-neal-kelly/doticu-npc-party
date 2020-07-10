@@ -95,6 +95,8 @@ Alias[] function Unloaded() native
 
 Alias[] function Sort_Filled(int begin, int end) native
 
+Alias[] function Slice(Alias[] followers, int begin, int end) native
+
 function p_Register() native
 function p_Enforce() native
 function p_Resurrect() native

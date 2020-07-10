@@ -111,6 +111,8 @@ Alias[] function Filled() native
 
 Alias[] function Sort_Filled(int begin, int end) native
 
+Alias[] function Slice(Alias[] members, int begin, int end) native
+
 string[] function Race_Names() native
 
 function Enforce_Loaded() native

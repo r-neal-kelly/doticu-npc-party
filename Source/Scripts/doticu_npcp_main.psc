@@ -114,7 +114,7 @@ function f_Load_Mod()
     doticu_npcp.Print("NPC Party has loaded.")
 
     ; Testing
-    doticu_npcp.Run_Tests()
+    ;doticu_npcp.Run_Tests()
 endFunction
 
 ; Private Methods
@@ -282,7 +282,6 @@ function u_0_9_0()
 
     VARS.u_0_9_0()
     FUNCS.u_0_9_0()
-    MEMBERS.ALIASES.u_0_9_0()
     MEMBERS.u_0_9_0()
     CONTROL.MCM.u_0_9_0()
 

@@ -736,74 +736,74 @@ function p_Goto_Filter_Members()
     endIf
 
     if p_int_alive_dead == 1
-        p_int_arg_flags = doticu_npcp.Aliases_Filter_Flag(p_int_arg_flags, "SET", "IS_ALIVE")
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_ALIVE")
         p_Concat_Filter_String_Param("Alive")
     elseIf p_int_alive_dead == -1
-        p_int_arg_flags = doticu_npcp.Aliases_Filter_Flag(p_int_arg_flags, "SET", "IS_DEAD")
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_DEAD")
         p_Concat_Filter_String_Param("Dead")
     endIf
 
     if p_int_original_clone == 1
-        p_int_arg_flags = doticu_npcp.Aliases_Filter_Flag(p_int_arg_flags, "SET", "IS_ORIGINAL")
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_ORIGINAL")
         p_Concat_Filter_String_Param("Original")
     elseIf p_int_original_clone == -1
-        p_int_arg_flags = doticu_npcp.Aliases_Filter_Flag(p_int_arg_flags, "SET", "IS_CLONE")
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_CLONE")
         p_Concat_Filter_String_Param("Clone")
     endIf
 
     if p_int_follower == 1
-        p_int_arg_flags = doticu_npcp.Aliases_Filter_Flag(p_int_arg_flags, "SET", "IS_FOLLOWER")
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_FOLLOWER")
         p_Concat_Filter_String_Param("Follower")
     elseIf p_int_follower == -1
-        p_int_arg_flags = doticu_npcp.Aliases_Filter_Flag(p_int_arg_flags, "SET", "ISNT_FOLLOWER")
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_FOLLOWER")
         p_Concat_Filter_String_Param("!Follower")
     endIf
 
     if p_int_settler == 1
-        p_int_arg_flags = doticu_npcp.Aliases_Filter_Flag(p_int_arg_flags, "SET", "IS_SETTLER")
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_SETTLER")
         p_Concat_Filter_String_Param("Settler")
     elseIf p_int_settler == -1
-        p_int_arg_flags = doticu_npcp.Aliases_Filter_Flag(p_int_arg_flags, "SET", "ISNT_SETTLER")
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_SETTLER")
         p_Concat_Filter_String_Param("!Settler")
     endIf
 
     if p_int_immobile == 1
-        p_int_arg_flags = doticu_npcp.Aliases_Filter_Flag(p_int_arg_flags, "SET", "IS_IMMOBILE")
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_IMMOBILE")
         p_Concat_Filter_String_Param("Immobile")
     elseIf p_int_immobile == -1
-        p_int_arg_flags = doticu_npcp.Aliases_Filter_Flag(p_int_arg_flags, "SET", "ISNT_IMMOBILE")
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_IMMOBILE")
         p_Concat_Filter_String_Param("!Immobile")
     endIf
 
     if p_int_thrall == 1
-        p_int_arg_flags = doticu_npcp.Aliases_Filter_Flag(p_int_arg_flags, "SET", "IS_THRALL")
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_THRALL")
         p_Concat_Filter_String_Param("Thrall")
     elseIf p_int_thrall == -1
-        p_int_arg_flags = doticu_npcp.Aliases_Filter_Flag(p_int_arg_flags, "SET", "ISNT_THRALL")
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_THRALL")
         p_Concat_Filter_String_Param("!Thrall")
     endIf
 
     if p_int_paralyzed == 1
-        p_int_arg_flags = doticu_npcp.Aliases_Filter_Flag(p_int_arg_flags, "SET", "IS_PARALYZED")
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_PARALYZED")
         p_Concat_Filter_String_Param("Paralyzed")
     elseIf p_int_paralyzed == -1
-        p_int_arg_flags = doticu_npcp.Aliases_Filter_Flag(p_int_arg_flags, "SET", "ISNT_PARALYZED")
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_PARALYZED")
         p_Concat_Filter_String_Param("!Paralyzed")
     endIf
 
     if p_int_mannequin == 1
-        p_int_arg_flags = doticu_npcp.Aliases_Filter_Flag(p_int_arg_flags, "SET", "IS_MANNEQUIN")
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_MANNEQUIN")
         p_Concat_Filter_String_Param("Mannequin")
     elseIf p_int_mannequin == -1
-        p_int_arg_flags = doticu_npcp.Aliases_Filter_Flag(p_int_arg_flags, "SET", "ISNT_MANNEQUIN")
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_MANNEQUIN")
         p_Concat_Filter_String_Param("!Mannequin")
     endIf
 
     if p_int_reanimated == 1
-        p_int_arg_flags = doticu_npcp.Aliases_Filter_Flag(p_int_arg_flags, "SET", "IS_REANIMATED")
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_REANIMATED")
         p_Concat_Filter_String_Param("Reanimated")
     elseIf p_int_reanimated == -1
-        p_int_arg_flags = doticu_npcp.Aliases_Filter_Flag(p_int_arg_flags, "SET", "ISNT_REANIMATED")
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_REANIMATED")
         p_Concat_Filter_String_Param("!Reanimated")
     endIf
 
@@ -811,10 +811,10 @@ function p_Goto_Filter_Members()
         p_str_view_filter = " All Members "
     endIf
 
-    Alias[] arr_filter = doticu_npcp.Aliases_Filter( \
-        MEMBERS.Get_Members(), \
-        doticu_npcp.Aliases_Filter_Strings(p_str_arg_sex, p_str_arg_race, p_str_arg_search), \
-        doticu_npcp.Aliases_Filter_Ints(p_int_arg_style, p_int_arg_vitality, p_int_arg_outfit2, p_int_arg_rating, p_int_arg_flags) \
+    Alias[] arr_filter = MEMBERS.Filter( \
+        MEMBERS.Filter_Strings(p_str_arg_sex, p_str_arg_race, p_str_arg_search), \
+        MEMBERS.Filter_Ints(p_int_arg_style, p_int_arg_vitality, p_int_arg_outfit2, p_int_arg_rating), \
+        p_int_arg_flags, 0 \
     )
 
     MCM.MCM_MEMBERS.f_View_Filter_Members(arr_filter)

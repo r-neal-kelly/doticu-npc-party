@@ -2544,6 +2544,12 @@ namespace doticu_npcp { namespace Party { namespace Members { namespace Exports 
 
     Vector_t<Member_t*> Sort_Filled(Members_t* self, Int_t begin, Int_t end) FORWARD_VECTOR(Sort_Filled(begin, end), Member_t*);
 
+    Vector_t<Member_t*> Slice(Members_t* self, VMArray<Member_t*>members_array, Int_t begin, Int_t end)
+    {
+        Vector_t<Member_t*> members_vector = Slice_Array(members_array);
+        return self->Slice(members_vector, begin, end);
+    }
+
     Vector_t<String_t> Race_Names(Members_t* self) FORWARD_VECTOR(Race_Names(), String_t);
 
     void Enforce_Loaded(Members_t* self) FORWARD_VOID(Enforce_Loaded());
@@ -2623,6 +2629,8 @@ namespace doticu_npcp { namespace Party { namespace Members { namespace Exports 
 
         ADD_METHOD("Sort_Filled", 2, Vector_t<Member_t*>, Sort_Filled, Int_t, Int_t);
 
+        ADD_METHOD("Slice", 3, Vector_t<Member_t*>, Slice, VMArray<Member_t*>, Int_t, Int_t);
+
         ADD_METHOD("Race_Names", 0, Vector_t<String_t>, Race_Names);
 
         ADD_METHOD("Enforce_Loaded", 0, void, Enforce_Loaded);
@@ -2692,6 +2700,12 @@ namespace doticu_npcp { namespace Party { namespace Followers { namespace Export
     Vector_t<Follower_t*> Unloaded(Followers_t* self) FORWARD_VECTOR(Unloaded(), Follower_t*);
 
     Vector_t<Follower_t*> Sort_Filled(Followers_t* self, Int_t begin, Int_t end) FORWARD_VECTOR(Sort_Filled(begin, end), Follower_t*);
+
+    Vector_t<Follower_t*> Slice(Followers_t* self, VMArray<Follower_t*>followers_array, Int_t begin, Int_t end)
+    {
+        Vector_t<Follower_t*> followers_vector = Slice_Array(followers_array);
+        return self->Slice(followers_vector, begin, end);
+    }
 
     void Register_(Followers_t* self) FORWARD_VOID(Followers_t::Register());
     void Enforce(Followers_t* self) FORWARD_VOID(Enforce());
@@ -2792,6 +2806,8 @@ namespace doticu_npcp { namespace Party { namespace Followers { namespace Export
         ADD_METHOD("Unloaded", 0, Vector_t<Follower_t*>, Unloaded);
 
         ADD_METHOD("Sort_Filled", 2, Vector_t<Follower_t*>, Sort_Filled, Int_t, Int_t);
+
+        ADD_METHOD("Slice", 3, Vector_t<Follower_t*>, Slice, VMArray<Follower_t*>, Int_t, Int_t);
 
         ADD_METHOD("p_Register", 0, void, Register_);
         ADD_METHOD("p_Enforce", 0, void, Enforce);

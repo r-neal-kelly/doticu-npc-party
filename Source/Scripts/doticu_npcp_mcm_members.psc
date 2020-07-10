@@ -462,7 +462,7 @@ function p_View(Alias[] arr_aliases, int idx_page, doticu_npcp_member ref_member
     else
         int idx_from = p_MEMBERS_PER_PAGE * p_idx_page
         int idx_to_ex = idx_from + p_MEMBERS_PER_PAGE
-        p_arr_aliases_slice = doticu_npcp.Aliases_Slice(p_arr_aliases, idx_from, idx_to_ex)
+        p_arr_aliases_slice = MEMBERS.Slice(p_arr_aliases, idx_from, idx_to_ex)
     endIf
 
     p_ref_member = ref_member

@@ -1127,8 +1127,6 @@ int function Set_Name(string str_name)
     if Get_Name() != str_name
         return CODES.CANT_RENAME
     endIf
-
-    MEMBERS.Request_Sort()
     
     return CODES.SUCCESS
 endFunction
@@ -2007,8 +2005,6 @@ int function Set_Rating(int int_rating)
     endIf
 
     p_int_rating = int_rating
-    
-    MEMBERS.Request_Sort()
 
     return CODES.SUCCESS
 endFunction
