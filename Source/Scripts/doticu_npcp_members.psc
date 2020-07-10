@@ -40,11 +40,6 @@ doticu_npcp_logs property LOGS hidden
         return p_DATA.MODS.FUNCS.LOGS
     endFunction
 endProperty
-doticu_npcp_aliases property ALIASES hidden
-    doticu_npcp_aliases function Get()
-        return (self as Quest) as doticu_npcp_aliases
-    endFunction
-endProperty
 
 ; Private Constants
 doticu_npcp_data        p_DATA              =  none
@@ -69,7 +64,10 @@ ObjectReference         p_marker_display    =  none
 ; Native Methods
 Alias function p_From_ID(int unique_id) native
 Alias function p_From_Actor(Actor ref_actor) native
+Alias function p_From_Unfilled() native
 
+bool function Has_Space() native
+bool function Hasnt_Space() native
 bool function Has_Actor(Actor ref_actor) native
 bool function Hasnt_Actor(Actor ref_actor) native
 bool function Has_Head(Actor ref_actor) native
@@ -80,8 +78,35 @@ int function Count_Filled() native
 int function Count_Unfilled() native
 int function Count_Loaded() native
 int function Count_Unloaded() native
+int function Count_Unique() native
+int function Count_Generic() native
+int function Count_Alive() native
+int function Count_Dead() native
+int function Count_Originals() native
+int function Count_Clones() native
+int function Count_Mobile() native
+int function Count_Immobile() native
+int function Count_Settlers() native
+int function Count_Non_Settlers() native
+int function Count_Thralls() native
+int function Count_Non_Thralls() native
+int function Count_Paralyzed() native
+int function Count_Non_Paralyzed() native
+int function Count_Mannequins() native
+int function Count_Non_Mannequins() native
+int function Count_Reanimated() native
+int function Count_Non_Reanimated() native
+int function Count_Followers() native
+int function Count_Non_Followers() native
+int function Count_Sneaks() native
+int function Count_Non_Sneaks() native
+int function Count_Saddlers() native
+int function Count_Non_Saddlers() native
+int function Count_Retreaters() native
+int function Count_Non_Retreaters() native
 int function Count_Heads(Actor ref_actor) native
 
+Alias[] function All() native
 Alias[] function Filled() native
 
 Alias[] function Sort_Filled(int begin, int end) native
@@ -89,6 +114,12 @@ Alias[] function Sort_Filled(int begin, int end) native
 string[] function Race_Names() native
 
 function Enforce_Loaded() native
+
+string[] function Filter_Strings(string sex = "", string race = "", string search = "") native
+int[] function Filter_Ints(int style = 0, int vitality = 0, int outfit2 = 0, int rating = -1) native
+int function Add_Filter_Flag_1(int flags_1, string flag_1) native
+int function Add_Filter_Flag_2(int flags_2, string flag_2) native
+Alias[] function Filter(string[] strings, int[] ints, int flags_1, int flags_2) native
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
@@ -98,13 +129,9 @@ function f_Create(doticu_npcp_data DATA)
     p_are_displayed = false
     p_idx_display = -1
     p_marker_display = CONSTS.MARKER_STORAGE.PlaceAtMe(CONSTS.STATIC_MARKER_X)
-
-    ALIASES.f_Create(DATA)
 endFunction
 
 function f_Destroy()
-    ALIASES.f_Destroy()
-
     p_marker_display = none
     p_idx_display = -1
     p_are_displayed = false
@@ -112,8 +139,6 @@ function f_Destroy()
 endFunction
 
 function f_Register()
-    ALIASES.f_Register()
-
     ; just in case, see ALIASES.f_Register()
     int filled_count = Count_Filled()
     if VARS.max_members < filled_count
@@ -138,9 +163,6 @@ endFunction
 
 ; Public Methods
 int function Create_Member(Actor ref_actor, bool do_clone = false)
-    int code_return
-    bool was_dead = false
-
     if !ref_actor
         return CODES.ISNT_ACTOR
     endIf
@@ -158,6 +180,7 @@ int function Create_Member(Actor ref_actor, bool do_clone = false)
         do_clone = true
     endIf
 
+    bool was_dead = false
     if do_clone
         if ACTORS.Is_Unique(ref_actor)
             LOGS.Create_Note("Adding clone to members...", false)
@@ -170,6 +193,10 @@ int function Create_Member(Actor ref_actor, bool do_clone = false)
             return CODES.CANT_CLONE
         endIf
     else
+        if Has_Actor(ref_actor)
+            return CODES.HAS_ACTOR
+        endIf
+
         LOGS.Create_Note("Adding to members...", false)
 
         if ACTORS.Is_Dead(ref_actor)
@@ -182,55 +209,35 @@ int function Create_Member(Actor ref_actor, bool do_clone = false)
         NPCS.Register(ref_actor)
     endIf
 
-    code_return = ALIASES.Create_Alias(ref_actor)
-    if code_return < 0
+    doticu_npcp_member ref_member = p_From_Unfilled() as doticu_npcp_member
+    if !ref_member
         if do_clone
             ACTORS.Delete(ref_actor)
         elseIf was_dead
             ACTORS.Kill(ref_actor)
         endIf
-
-        if code_return == CODES.HAS_ACTOR || code_return == CODES.HAS_ALIAS
-            return CODES.HAS_MEMBER
-        elseIf code_return == CODES.HASNT_SPACE
-            return CODES.HASNT_SPACE_MEMBER
-        else
-            return code_return
-        endIf
+        return CODES.FAILURE
     endIf
-    int id_alias = code_return
 
-    doticu_npcp_member ref_member = p_Get_Member(id_alias)
-    ref_member.f_Create(p_DATA, id_alias, do_clone)
+    ref_member.f_Create(p_DATA, ref_actor, do_clone)
     ref_member.f_Register()
 
     return CODES.SUCCESS
 endFunction
 
 int function Destroy_Member(Actor ref_actor, bool delete_clone = false)
-    int code_return
-
     if !ref_actor
         return CODES.ISNT_ACTOR
     endIf
 
-    if Hasnt_Actor(ref_actor)
+    doticu_npcp_member ref_member = p_From_Actor(ref_actor) as doticu_npcp_member
+    if !ref_member
         return CODES.HASNT_MEMBER
     endIf
     
-    int id_alias = p_Get_Alias_ID(ref_actor)
-    
-
-    doticu_npcp_member ref_member = p_Get_Member(id_alias)
     bool is_clone = ref_member.Is_Clone()
-
     ref_member.f_Unregister()
     ref_member.f_Destroy()
-
-    code_return = ALIASES.Destroy_Alias(id_alias, ref_actor)
-    if code_return < 0
-        return code_return
-    endIf
 
     if Should_Unclone_Actor(ref_actor)
         delete_clone = true
@@ -259,10 +266,6 @@ endFunction
 
 int function Get_Max()
     return Max()
-endFunction
-
-bool function Will_Sort()
-    return ALIASES.Will_Sort()
 endFunction
 
 bool function Has_Member(Actor ref_actor)
@@ -330,26 +333,16 @@ doticu_npcp_member function Get_Member(Actor ref_actor)
     return p_From_Actor(ref_actor) as doticu_npcp_member
 endFunction
 
-doticu_npcp_member function Get_Next_Member(doticu_npcp_member ref_member)
-    Actor ref_actor = ref_member.Get_Actor()
-    return ALIASES.Get_Next_Alias(p_Get_Alias_ID(ref_actor), ref_actor) as doticu_npcp_member
+doticu_npcp_member function Get_Prev_Member(doticu_npcp_member ref_member)
+    ; TODO
 endFunction
 
-doticu_npcp_member function Get_Prev_Member(doticu_npcp_member ref_member)
-    Actor ref_actor = ref_member.Get_Actor()
-    return ALIASES.Get_Prev_Alias(p_Get_Alias_ID(ref_actor), ref_actor) as doticu_npcp_member
+doticu_npcp_member function Get_Next_Member(doticu_npcp_member ref_member)
+    ; TODO
 endFunction
 
 Alias[] function Get_Members(int begin = 0, int end = -1)
     return Sort_Filled(begin, end)
-endFunction
-
-function Request_Sort()
-    ALIASES.Request_Sort()
-endFunction
-
-function Sort()
-    ALIASES.Sort()
 endFunction
 
 bool function Should_Clone_Actor(Actor ref_actor)
@@ -383,81 +376,19 @@ endFunction
 ; would also like a display that skips followers, has only followers, etc. for immobile, settler, etc.
 ; this is getting into filter territory with aliases. need to work that out
 int function Display_Start(Actor ref_actor)
-    if Are_Displayed()
-        return CODES.IS_DISPLAY
-    endIf
-
-    if Count_Filled() < 1
-        return CODES.HASNT_MEMBER
-    endIf
-
-    int idx_alias = ALIASES.f_ID_To_Idx(p_Get_Alias_ID(ref_actor))
-    if idx_alias < 0
-        idx_alias = 0
-    endIf
-
-    p_are_displayed = true
-    p_idx_display = idx_alias
-    ALIASES.Disable_Sort()
-
-    p_marker_display.MoveTo(CONSTS.ACTOR_PLAYER)
-
-    ; to make sure there is no ambiguity with idxs, we go ahead and render Next
-    Display_Next()
-
-    return CODES.SUCCESS
+    ; TODO
 endFunction
 
 int function Display_Stop()
-    if !Are_Displayed()
-        return CODES.ISNT_DISPLAY
-    endIf
-
-    Alias[] arr_prev = ALIASES.Get_Prev_Aliases(p_idx_display, CONSTS.MAX_DISPLAY)
-    Alias[] arr_next = ALIASES.Get_Next_Aliases(p_idx_display, CONSTS.MAX_DISPLAY)
-
-    p_Undisplay_Aliases(arr_prev)
-    p_Undisplay_Aliases(arr_next)
-
-    p_marker_display.MoveTo(CONSTS.MARKER_STORAGE)
-
-    ALIASES.Enable_Sort()
-    p_idx_display = -1
-    p_are_displayed = false
-
-    return CODES.SUCCESS
+    ; TODO
 endFunction
 
 int function Display_Next()
-    if !Are_Displayed()
-        return CODES.ISNT_DISPLAY
-    endIf
-
-    Alias[] arr_prev = ALIASES.Get_Prev_Aliases(p_idx_display, CONSTS.MAX_DISPLAY)
-    Alias[] arr_next = ALIASES.Get_Next_Aliases(p_idx_display, VARS.num_display)
-    
-    p_Undisplay_Aliases(arr_prev)
-    p_Display_Aliases(arr_next, p_DISPLAY_DISTANCE, p_DISPLAY_SPREAD)
-
-    p_idx_display = ALIASES.f_To_Relative_Idx(p_idx_display + VARS.num_display)
-
-    return CODES.SUCCESS
+    ; TODO
 endFunction
 
 int function Display_Previous()
-    if !Are_Displayed()
-        return CODES.ISNT_DISPLAY
-    endIf
-
-    p_idx_display = ALIASES.f_To_Relative_Idx(p_idx_display - VARS.num_display)
-
-    Alias[] arr_prev = ALIASES.Get_Prev_Aliases(p_idx_display, VARS.num_display)
-    Alias[] arr_next = ALIASES.Get_Next_Aliases(p_idx_display, CONSTS.MAX_DISPLAY)
-    
-    p_Undisplay_Aliases(arr_next)
-    p_Display_Aliases(arr_prev, p_DISPLAY_DISTANCE, p_DISPLAY_SPREAD)
-
-    return CODES.SUCCESS
+    ; TODO
 endFunction
 
 function p_Display_Aliases(Alias[] arr_aliases, int distance, int angle_offset)
@@ -502,7 +433,7 @@ endEvent
 
 ; Update Methods
 function u_0_9_0()
-    Alias[] arr_aliases = ALIASES.Get_Aliases()
+    Alias[] arr_aliases = All()
     int idx_aliases = 0
     int num_aliases = arr_aliases.length
     int prev_percent = -1

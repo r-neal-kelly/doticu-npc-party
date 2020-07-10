@@ -14,13 +14,6 @@ namespace doticu_npcp { namespace Quest {
 
 namespace doticu_npcp { namespace Quest { namespace Exports {
 
-    VMResultArray<BGSBaseAlias *> Get_Used_Aliases(StaticFunctionTag *, TESQuest *ref_quest);
-    VMResultArray<SInt32> Get_Free_Alias_IDs(StaticFunctionTag *, TESQuest *ref_quest);
-
-    UInt32 Count_Used_Aliases(StaticFunctionTag *, TESQuest *ref_quest);
-    UInt32 Count_Free_Aliases(StaticFunctionTag *, TESQuest *ref_quest);
-    UInt32 Count_Mannequins(StaticFunctionTag *, TESQuest *ref_quest);
-
     bool Register(VMClassRegistry *registry);
 
 }}}

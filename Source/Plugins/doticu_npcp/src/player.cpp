@@ -4,14 +4,15 @@
 
 #include "actor2.h"
 #include "cell.h"
-#include "followers.h"
 #include "player.h"
+#include "party.h"
 
 namespace doticu_npcp { namespace Player {
 
     bool Is_Party_In_Combat(Player_t *player) {
         Actor_t* player_actor = *g_thePlayer;
-        return (player_actor && player_actor->IsInCombat()) || Followers::Are_In_Combat(Followers::Self());
+        Party::Followers_t* followers = Party::Followers_t::Self();
+        return (player_actor && player_actor->IsInCombat()) || (followers && followers->Are_In_Combat());
     }
 
     bool Is_In_Interior_Cell()

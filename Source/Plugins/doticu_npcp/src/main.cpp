@@ -8,18 +8,18 @@
 
 #include "actor_base2.h"
 #include "actor2.h"
-#include "aliases.h"
+//#include "aliases.h"
 #include "cell.h"
 #include "consts.h"
-#include "follower.h"
-#include "followers.h"
+//#include "follower.h"
+//#include "followers.h"
 #include "form.h"
 #include "forms.h"
 #include "game.h"
 #include "keys.h"
 #include "main.h"
-#include "member.h"
-#include "members.h"
+//#include "member.h"
+//#include "members.h"
 #include "object_ref.h"
 #include "outfit.h"
 #include "package.h"
@@ -99,16 +99,12 @@ namespace doticu_npcp { namespace Main {
 
         REGISTER_NAMESPACE(Actor_Base2);
         REGISTER_NAMESPACE(Actor2);
-        REGISTER_NAMESPACE(Aliases);
         REGISTER_NAMESPACE(Cell);
         REGISTER_NAMESPACE(Consts);
-        REGISTER_NAMESPACE(Follower);
-        REGISTER_NAMESPACE(Followers);
         REGISTER_NAMESPACE(Form);
         REGISTER_NAMESPACE(Forms);
         REGISTER_NAMESPACE(Game);
         REGISTER_NAMESPACE(Keys);
-        REGISTER_NAMESPACE(Member);
         REGISTER_NAMESPACE(Object_Ref);
         REGISTER_NAMESPACE(Outfit);
         REGISTER_NAMESPACE(Package);
@@ -120,8 +116,14 @@ namespace doticu_npcp { namespace Main {
         REGISTER_NAMESPACE(Utils);
         REGISTER_NAMESPACE(Vars);
 
+        REGISTER_NAMESPACE(Party::Aliases);
         REGISTER_NAMESPACE(Party::Members);
+        REGISTER_NAMESPACE(Party::Followers);
+        REGISTER_NAMESPACE(Party::Horses);
+        REGISTER_NAMESPACE(Party::Alias);
         REGISTER_NAMESPACE(Party::Member);
+        REGISTER_NAMESPACE(Party::Follower);
+        REGISTER_NAMESPACE(Party::Horse);
 
         #undef REGISTER_NAMESPACE
 

@@ -68,6 +68,42 @@ namespace doticu_npcp { namespace Utils {
 
     void Print(const char *str);
 
+    template <typename Bits, typename Index>
+    inline Bits Bit_On(Bits bits, Index idx)
+    {
+        return bits | (1llu << idx);
+    }
+
+    template <typename Bits, typename Index>
+    inline Bits Bit_Off(Bits bits, Index idx)
+    {
+        return bits & ~(1llu << idx);
+    }
+
+    template <typename Bits, typename Index>
+    inline bool Is_Bit_On(Bits bits, Index idx)
+    {
+        return 1llu & (bits >> idx);
+    }
+
+    template <typename Bits, typename Index>
+    inline bool Is_Bit_Off(Bits bits, Index idx)
+    {
+        return !(1llu & (bits >> idx));
+    }
+
+    template <typename Bits, typename Index>
+    inline Bits Toggle_Bit(Bits bits, Index idx)
+    {
+        return bits ^ (1llu << idx);
+    }
+
+    template <typename Bits, typename Index>
+    inline Bits Clear_Bits(Bits bits, Index idx)
+    {
+        return 0;
+    }
+
 }}
 
 namespace doticu_npcp { namespace Utils { namespace Exports {

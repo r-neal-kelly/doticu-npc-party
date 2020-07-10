@@ -69,7 +69,6 @@ doticu_npcp_data        p_DATA                      =  none
 ; Private Variables
 bool                    p_is_locked                 = false
 bool                    p_is_created                = false
-int                     p_id_alias                  =    -1
 Actor                   p_ref_actor                 =  none
 doticu_npcp_member      p_ref_member                =  none
 doticu_npcp_horse       p_ref_horse                 =  none
@@ -82,15 +81,21 @@ float                   p_prev_waiting_for_player   =  -1.0
 float                   p_prev_speed_mult           =  -1.0
 bool                    p_prev_faction_bard_no_auto = false
 
+; Native Methods
+Actor function Actor() native
+int function ID() native
+
+function p_Level() native
+function p_Unlevel() native
+
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA, int id_alias, Actor ref_actor)
+function f_Create(doticu_npcp_data DATA, Actor ref_actor)
     p_DATA = DATA
 
 p_Lock()
     ForceRefTo(ref_actor)
 
     p_is_created = true
-    p_id_alias = id_alias
     p_ref_actor = ref_actor
     p_ref_member = MEMBERS.Get_Member(p_ref_actor)
     p_ref_horse = none
@@ -139,7 +144,6 @@ p_Lock()
     p_ref_horse = none
     p_ref_member = none
     p_ref_actor = none
-    p_id_alias = -1
     p_is_created = false
 
     Clear()
@@ -239,7 +243,7 @@ endFunction
 
 function p_Create_Horse()
     if !p_ref_horse
-        int id_horse = FOLLOWERS.Max() + p_id_alias
+        int id_horse = FOLLOWERS.Max() + ID()
         p_ref_horse = (FOLLOWERS.GetNthAlias(id_horse) as doticu_npcp_horse)
         p_ref_horse.f_Create(p_DATA, id_horse, self)
     endIf
@@ -255,7 +259,7 @@ endFunction
 function p_Follow()
 p_Lock()
 
-    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_FOLLOWER, p_id_alias + 1)
+    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_FOLLOWER, ID() + 1)
 
     CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(1)
 
@@ -353,7 +357,7 @@ p_Unlock()
 
     Actor mounted_actor = doticu_npcp.Actor_Get_Mounted_Actor(ref_horse)
     if !mounted_actor || mounted_actor != p_ref_actor
-        (CONSTS.FORMLIST_GLOBALS_SADDLER_IS_SITTING.GetAt(p_id_alias) as GlobalVariable).SetValue(0)
+        (CONSTS.FORMLIST_GLOBALS_SADDLER_IS_SITTING.GetAt(ID()) as GlobalVariable).SetValue(0)
     endIf
 
     p_ref_actor.EvaluatePackage()
@@ -421,12 +425,8 @@ p_Lock()
 p_Unlock()
 endFunction
 
-function p_Level() native
-
-function p_Unlevel() native
-
 function p_Async(string str_func)
-    string str_event = "doticu_npcp_follower_async_" + p_id_alias
+    string str_event = "doticu_npcp_follower_async_" + ID()
 
 p_Lock()
     RegisterForModEvent(str_event, str_func)
@@ -436,10 +436,6 @@ p_Unlock()
 endFunction
 
 ; Public Methods
-int function ID()
-    return p_id_alias
-endFunction
-
 function Enforce()
     p_ref_member.Enforce()
 endFunction

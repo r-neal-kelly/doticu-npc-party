@@ -16,6 +16,8 @@
 #include "xentry.h"
 #include "xlist.h"
 
+#include "papyrus.h"
+
 namespace doticu_npcp { namespace Actor2 {
 
     const char *Get_Base_Name(Actor *actor) {
@@ -528,6 +530,40 @@ namespace doticu_npcp { namespace Actor2 {
         return actor && actor->loadedState == nullptr;
     }
 
+    bool Is_Unique(Actor* actor)
+    {
+        using namespace Papyrus;
+
+        if (actor) {
+            TESNPC* base_npc = DYNAMIC_CAST(actor->baseForm, TESForm, TESNPC);
+            if (base_npc) {
+                Actor_Base_Data_t* base_data = reinterpret_cast<Actor_Base_Data_t*>(&base_npc->actorData);
+                return base_data->Is_Unique();
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    bool Is_Generic(Actor* actor)
+    {
+        using namespace Papyrus;
+
+        if (actor) {
+            TESNPC* base_npc = DYNAMIC_CAST(actor->baseForm, TESForm, TESNPC);
+            if (base_npc) {
+                Actor_Base_Data_t* base_data = reinterpret_cast<Actor_Base_Data_t*>(&base_npc->actorData);
+                return !base_data->Is_Unique();
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
     bool Is_AI_Enabled(Actor *actor) {
         if (!actor) {
             return false;
@@ -723,6 +759,24 @@ namespace doticu_npcp { namespace Actor2 {
     bool Is_On_Mount(Actor_t* actor)
     {
         return actor && Get_Mount(actor) != nullptr;
+    }
+
+    Papyrus::Int_t Sex(Actor_t* actor)
+    {
+        if (actor && actor->baseForm) {
+            return CALL_MEMBER_FN(static_cast<TESNPC*>(actor->baseForm), GetSex)();
+        } else {
+            return ~0;
+        }
+    }
+
+    Papyrus::String_t Race(Actor_t* actor)
+    {
+        if (actor && actor->race) {
+            return actor->race->fullName.name;
+        } else {
+            return "";
+        }
     }
 
 }}

@@ -12,28 +12,6 @@ function Actor_Cache_Static_Inventory(Actor ref_actor, Form form_linchpin, Objec
 function Actor_Reset_Actor_Value(Actor ref_actor, string name) native global
 Actor function Actor_Get_Mounted_Actor(Actor ref_horse) native global
 
-; Aliases
-Alias[] function Aliases_Slice(Alias[] arr_aliases, int idx_from, int idx_to_ex) native global
-Alias[] function Aliases_Sort(Alias[] arr_aliases, string str_algorithm = "") native global
-Alias[] function Aliases_Filter(Alias[] arr_aliases, string[] arr_strings, int[] arr_ints) native global
-int function Aliases_Filter_Flag(int int_flags, string str_command, string str_flag) native global
-string[] function Aliases_Filter_Strings(string str_sex = "", string str_race = "", string str_search = "") global
-    string[] arr_strings = new string[3]
-    arr_strings[0] = str_sex
-    arr_strings[1] = str_race
-    arr_strings[2] = str_search
-    return arr_strings
-endFunction
-int[] function Aliases_Filter_Ints(int int_style = 0, int int_vitality = 0, int int_outfit2 = 0, int int_rating = -1, int int_flags = 0) global
-    int[] arr_ints = new int[5]
-    arr_ints[0] = int_style
-    arr_ints[1] = int_vitality
-    arr_ints[2] = int_outfit2
-    arr_ints[3] = int_rating
-    arr_ints[4] = int_flags
-    return arr_ints
-endFunction
-
 ; Cell
 bool function Cell_Is_Interior(Cell ref_cell) native global
 
@@ -54,13 +32,6 @@ function Object_Ref_Log_XList(ObjectReference ref_object) native global
 ; Outfit
 function Outfit_Add_Item(Outfit outfit_outfit, Form form_item) native global
 function Outfit_Remove_Item(Outfit outfit_outfit, Form form_item) native global
-
-; Quest
-Alias[] function Quest_Get_Used_Aliases(Quest ref_quest) native global
-int[] function Quest_Get_Free_Alias_IDs(Quest ref_quest) native global
-int function Quest_Count_Used_Aliases(Quest ref_quest) native global
-int function Quest_Count_Free_Aliases(Quest ref_quest) native global
-int function Quest_Count_Mannequins(Quest ref_quest) native global
 
 ; Tests
 function Run_Tests() native global

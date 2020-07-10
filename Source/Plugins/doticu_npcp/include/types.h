@@ -29,16 +29,14 @@ namespace doticu_npcp {
     typedef TESQuest                Quest_t;
     typedef TESObjectCELL           Cell_t;
     typedef TESObjectREFR           Reference_t;
+
     typedef Actor                   Actor_t;
     typedef TESNPC                  Actor_Base_t;
+    
+    typedef Projectile              Projectile_t;
+    typedef BGSProjectile           Projectile_Base_t;
 
-    typedef BGSBaseAlias            Alias_t;
     typedef BGSBaseAlias            Player_t;
-    typedef BGSBaseAlias            Member_t;
-    typedef BGSBaseAlias            Follower_t;
-    typedef BGSBaseAlias            Horse_t;
-    typedef TESQuest                Members_t;
-    typedef TESQuest                Followers_t;
     typedef TESQuest                Keys_t;
     typedef TESQuest                Consts_t;
     typedef TESQuest                Vars_t;
@@ -72,8 +70,5 @@ namespace doticu_npcp { namespace Papyrus {
 
     template <typename T> using Vector_t = VMResultArray<T>;
     typedef Vector_t<Int_t> Int_Vector_t;
-
-    //typedef VMValue                 Variable_t;
-    //typedef VMIdentifier            Entity_t;
 
 }}

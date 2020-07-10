@@ -86,9 +86,9 @@ Actor function Actor_In_Crosshair(bool allow_follower_horse = false)
     if allow_follower_horse
         return ref_actor
     else
-        Actor ref_follower = FOLLOWERS.Horse_Actor_To_Follower_Actor(ref_actor)
+        doticu_npcp_follower ref_follower = FOLLOWERS.From_Horse_Actor(ref_actor)
         if ref_follower
-            return ref_follower
+            return ref_follower.Get_Actor()
         else
             return ref_actor
         endIf

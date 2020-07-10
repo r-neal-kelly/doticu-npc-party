@@ -105,6 +105,7 @@ namespace doticu_npcp { namespace Papyrus {
     STATIC_ASSERT(sizeof(Array_t) == 0x20);
 
     class Object_t;
+    class Alias_Base_t;
     class Variable_t {
     public:
         static Registry_t* Registry();
@@ -127,7 +128,7 @@ namespace doticu_npcp { namespace Papyrus {
         } data;
 
         Actor_t* Actor();
-        Alias_t* Alias();
+        Alias_Base_t* Alias();
         Bool_t Bool();
         Float_t Float();
         Int_t Int();
@@ -295,6 +296,26 @@ namespace doticu_npcp { namespace Papyrus {
     };
     STATIC_ASSERT(sizeof(Alias_Reference_t) == 0x48);
 
+    class Actor_Base_Data_t : public BaseFormComponent {
+    public:
+        enum Flags : UInt32 {
+            FLAG_FEMALE = 1 << 0,
+            FLAG_ESSENTIAL = 1 << 1,
+            FLAG_FACE_PRESET = 1 << 2,
+            FLAG_RESPAWNS = 1 << 3,
+            FLAG_AUTO_STATS = 1 << 4,
+            FLAG_UNIQUE = 1 << 5
+            // ...
+        };
+
+        UInt32 flags; // 08
+
+        Bool_t Is_Unique()
+        {
+            return (flags & FLAG_UNIQUE) != 0;
+        }
+    };
+
     class Scripts : public IForEachScriptObjectFunctor
     {
     public:
@@ -307,7 +328,7 @@ namespace doticu_npcp { namespace Papyrus {
             handle = Papyrus::Handle_t(form);
             handle.Registry()->VisitScripts(handle, this);
         }
-        Scripts(Alias_t *alias)
+        Scripts(Alias_Base_t* alias)
         {
             handle = Papyrus::Handle_t(alias);
             handle.Registry()->VisitScripts(handle, this);

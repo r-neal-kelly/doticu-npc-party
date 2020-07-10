@@ -27,9 +27,6 @@
     <ClCompile Include="src\forms.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\aliases.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\object_ref.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -63,15 +60,6 @@
     <ClCompile Include="src\xcontainer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\followers.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\follower.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\member.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -82,9 +70,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\vector.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\members.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\package.cpp">
@@ -99,20 +84,14 @@
     <ClCompile Include="src\consts.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\alias.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\horses.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\party.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\aliases.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\object_ref.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -164,22 +143,10 @@
     <ClInclude Include="include\xcontainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\followers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\follower.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\member.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\cell.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\members.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\main.h">
@@ -197,13 +164,7 @@
     <ClInclude Include="include\consts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\alias.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\party.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\horses.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\tests.h">
@@ -216,6 +177,9 @@
     </None>
     <None Include="scripts\doticu_npcp.psc" />
     <None Include="include\papyrus.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="include\party.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

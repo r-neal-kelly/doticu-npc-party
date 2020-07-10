@@ -77,7 +77,6 @@ doticu_npcp_data        p_DATA                      =  none
 ; Private Variables
 bool                    p_is_locked                 = false
 bool                    p_is_created                = false
-int                     p_id_alias                  =    -1
 Actor                   p_ref_actor                 =  none
 bool                    p_is_clone                  = false
 bool                    p_is_follower               = false
@@ -116,14 +115,20 @@ float                   p_prev_confidence           =   0.0
 float                   p_prev_assistance           =   0.0
 float                   p_prev_morality             =   0.0
 
+; Native Methods
+Actor function Actor() native
+int function ID() native
+function Log_Variable_Infos() native
+
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA, int id_alias, bool is_clone)
+function f_Create(doticu_npcp_data DATA, Actor ref_actor, bool is_clone)
 p_Lock()
 
     p_DATA = DATA
 
+    ForceRefTo(ref_actor)
+
     p_is_created = true
-    p_id_alias = id_alias
     p_ref_actor = GetActorReference()
     p_is_clone = is_clone
     p_is_follower = false
@@ -139,7 +144,7 @@ p_Lock()
     p_code_vitality = VARS.auto_vitality
     p_code_outfit2 = CODES.OUTFIT2_MEMBER
     p_int_rating = 0
-    p_marker_settler = CONSTS.FORMLIST_MARKERS_SETTLER.GetAt(p_id_alias) as ObjectReference
+    p_marker_settler = CONSTS.FORMLIST_MARKERS_SETTLER.GetAt(ID()) as ObjectReference
     p_marker_display = none
     p_marker_mannequin = none
     p_outfit_vanilla = NPCS.Get_Default_Outfit(p_ref_actor)
@@ -233,9 +238,10 @@ p_Lock()
     p_is_follower = false
     p_is_clone = false
     p_ref_actor = none
-    p_id_alias = -1
     p_is_created = false
 
+    Clear()
+    
 p_Unlock()
 endFunction
 
@@ -248,12 +254,8 @@ function f_Unregister()
 endFunction
 
 int function f_Get_ID()
-    return p_id_alias
+    return ID()
 endFunction
-
-; Native Methods
-Actor function Actor() native
-function Log_Variable_Infos() native
 
 ; Private Methods
 function p_Lock(float interval = 0.2, float timeout = 6.0)
@@ -320,7 +322,7 @@ endFunction
 function p_Member()
 p_Lock()
 
-    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_MEMBER, p_id_alias + 1)
+    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_MEMBER, ID() + 1)
     if p_is_clone
         ACTORS.Token(p_ref_actor, CONSTS.TOKEN_CLONE)
     else
@@ -989,7 +991,7 @@ p_Unlock()
 endFunction
 
 function p_Async(string str_func)
-    string str_event = "doticu_npcp_member_async_" + p_id_alias
+    string str_event = "doticu_npcp_member_async_" + ID()
 
 p_Lock()
     RegisterForModEvent(str_event, str_func)

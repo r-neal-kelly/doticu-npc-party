@@ -385,7 +385,7 @@ endFunction
 
 int function Get_Expo_Count()
     ; this should actually return the number of mannequins in expo, because when we add loose mannequins, they'll conflate
-    return doticu_npcp.Quest_Count_Mannequins(MEMBERS); this will count loose mannequins too, so send c++ the array in this module to count
+    return MEMBERS.Count_Mannequins(); this will count loose mannequins too, so send c++ the array in this module to count
 endFunction
 
 int function Get_Max()

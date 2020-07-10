@@ -4,10 +4,9 @@
 
 #pragma once
 
-#include "followers.h"
-#include "member.h"
-#include "members.h"
+#include "types.h"
 #include "papyrus.h"
+#include "party.h"
 #include "tests.h"
 #include "utils.h"
 
@@ -63,7 +62,7 @@ namespace doticu_npcp { namespace Tests {
     {
         using namespace Papyrus;
 
-        Members_t* members = Party::Members::Self();
+        /*Members_t* members = Party::Members::Self();
         ASSERTS(members != nullptr);
 
         String_t class_name = Party::Members::Class_Name();
@@ -75,7 +74,7 @@ namespace doticu_npcp { namespace Tests {
         Object_t* instance = Party::Members::Object();
         ASSERTS(instance != nullptr);
 
-        ASSERTS(class_info == instance->info);
+        ASSERTS(class_info == instance->info);*/
 
         /*for (size_t idx = 0, count = members->aliases.count; idx < count; idx += 1) {
             Alias_Reference_t* alias = reinterpret_cast<Alias_Reference_t*>(members->aliases.entries[idx]);
@@ -94,8 +93,8 @@ namespace doticu_npcp { namespace Tests {
     {
         using namespace Papyrus;
 
-        Followers_t* followers = Followers::Self();
-        ASSERTS(followers != nullptr);
+        /*Followers_t* followers = Followers::Self();
+        ASSERTS(followers != nullptr);*/
 
         return "ok";
     }
@@ -104,11 +103,11 @@ namespace doticu_npcp { namespace Tests {
     {
         using namespace Papyrus;
 
-        String_t class_name = Party::Member::Class_Name();
+        /*String_t class_name = Party::Member::Class_Name();
         ASSERTS(class_name == String_t("doticu_npcp_member"));
 
         Class_Info_t* class_info = Party::Member::Class_Info();
-        ASSERTS(class_info != nullptr);
+        ASSERTS(class_info != nullptr);*/
 
         // get a member_alias and test against class_info
 
@@ -117,7 +116,9 @@ namespace doticu_npcp { namespace Tests {
 
     const char* Test_Papyrus_Handle()
     {
-        Quest_t* quest = dynamic_cast<Quest_t*>(Followers::Self());
+        using namespace Papyrus;
+
+        Quest_t* quest = dynamic_cast<Quest_t*>(Party::Followers_t::Self());
         ASSERTS(quest != nullptr);
 
         Papyrus::Handle_t quest_handle(quest);
@@ -128,7 +129,7 @@ namespace doticu_npcp { namespace Tests {
         ASSERTS(form_handle.Is_Valid());
         ASSERTS(quest_handle == form_handle);
 
-        Alias_t* alias = quest->aliases.entries[0];
+        Alias_Base_t* alias = reinterpret_cast<Alias_Base_t*>(quest->aliases.entries[0]);
         ASSERTS(alias != nullptr);
 
         Papyrus::Handle_t alias_handle(alias);

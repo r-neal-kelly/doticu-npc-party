@@ -222,11 +222,11 @@ namespace doticu_npcp { namespace Papyrus {
         }
     }
 
-    inline Alias_t* Variable_t::Alias()
+    inline Alias_Base_t* Variable_t::Alias()
     {
         if (type.Unmangled() == Type_t::OBJECT) {
             if (data.obj) {
-                return static_cast<Alias_t*>(Policy()->Resolve(kFormType_Alias, data.obj->Handle()));
+                return static_cast<Alias_Base_t*>(Policy()->Resolve(kFormType_Alias, data.obj->Handle()));
             } else {
                 return nullptr;
             }

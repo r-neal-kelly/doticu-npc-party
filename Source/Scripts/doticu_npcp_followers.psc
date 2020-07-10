@@ -44,44 +44,42 @@ bool                    p_is_created    = false
 doticu_npcp_tasklist    p_tasklist      =  none
 
 ; Native Methods
-function p_Register() native
-function p_Summon(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0) native
-function p_Summon_Mobile(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0) native
-function p_Summon_Immobile(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0) native
-function p_Catch_Up() native
-function p_Stash() native
-function p_Enforce(Form tasklist) native
-function p_Resurrect(Form tasklist) native
-function p_Mobilize(Form tasklist) native
-function p_Immobilize(Form tasklist) native
-function p_Settle(Form tasklist) native
-function p_Unsettle(Form tasklist) native
-function p_Sneak(Form tasklist) native
-function p_Unsneak(Form tasklist) native
-function p_Saddle(Form tasklist) native
-function p_Unsaddle(Form tasklist) native
-function p_Retreat(Form tasklist) native
-function p_Unretreat(Form tasklist) native
-function p_Unfollow(Form tasklist) native
-function p_Unmember(Form tasklist) native
+Alias function p_From_ID(int unique_id) native
+Alias function p_From_Actor(Actor ref_actor) native
+Alias function p_From_Unfilled() native
+Alias function p_From_Horse_Actor(Actor ref_actor) native
 
-Alias function p_ID_To_Follower(int id) native
-Alias function p_Actor_To_Follower(Actor ref_actor) native
-int function p_Actor_To_ID(Actor ref_actor) native
-
-Alias function p_Unused_Follower() native
-int function p_Unused_ID() native
-
-Alias[] function p_Sort_All(int from = 0, int to_exclusive = -1, string algorithm = "") native
+bool function Has_Space() native
+bool function Hasnt_Space() native
+bool function Has_Actor(Actor ref_actor) native
+bool function Hasnt_Actor(Actor ref_actor) native
+bool function Are_In_Combat() native
 
 int function Max() native
-int function Count_All() native
+int function Count_Filled() native
+int function Count_Unfilled() native
+int function Count_Loaded() native
+int function Count_Unloaded() native
+int function Count_Unique() native
+int function Count_Generic() native
 int function Count_Alive() native
 int function Count_Dead() native
+int function Count_Originals() native
+int function Count_Clones() native
 int function Count_Mobile() native
 int function Count_Immobile() native
 int function Count_Settlers() native
 int function Count_Non_Settlers() native
+int function Count_Thralls() native
+int function Count_Non_Thralls() native
+int function Count_Paralyzed() native
+int function Count_Non_Paralyzed() native
+int function Count_Mannequins() native
+int function Count_Non_Mannequins() native
+int function Count_Reanimated() native
+int function Count_Non_Reanimated() native
+int function Count_Followers() native
+int function Count_Non_Followers() native
 int function Count_Sneaks() native
 int function Count_Non_Sneaks() native
 int function Count_Saddlers() native
@@ -89,12 +87,42 @@ int function Count_Non_Saddlers() native
 int function Count_Retreaters() native
 int function Count_Non_Retreaters() native
 
-bool function Has_Space() native
-bool function Hasnt_Space() native
-bool function Are_In_Combat() native
-bool function Has_Actor(Actor ref_actor) native
+Alias[] function All() native
+Alias[] function Filled() native
+Alias[] function Unfilled() native
+Alias[] function Loaded() native
+Alias[] function Unloaded() native
 
-Actor function Horse_Actor_To_Follower_Actor(Actor ref_horse) native
+Alias[] function Sort_Filled(int begin, int end) native
+
+function p_Register() native
+function p_Enforce() native
+function p_Resurrect() native
+function p_Mobilize() native
+function p_Immobilize() native
+function p_Settle() native
+function p_Unsettle() native
+function p_Sneak() native
+function p_Unsneak() native
+function p_Saddle() native
+function p_Unsaddle() native
+function p_Retreat() native
+function p_Unretreat() native
+function p_Unfollow() native
+function p_Unmember() native
+
+function p_Summon_Filled(float radius = 140.0, float degree = 0.0, float interval = 19.0) native
+function p_Summon_Mobile(float radius = 140.0, float degree = 0.0, float interval = 19.0) native
+function p_Summon_Immobile(float radius = 140.0, float degree = 0.0, float interval = 19.0) native
+
+function p_Catch_Up() native
+function p_Stash() native
+
+string[] function Filter_Strings(string sex = "", string race = "", string search = "") native
+int[] function Filter_Ints(int style = 0, int vitality = 0, int outfit2 = 0, int rating = -1) native
+int function Add_Filter_Flag_1(int flags_1, string flag_1) native
+int function Add_Filter_Flag_2(int flags_2, string flag_2) native
+Alias[] function Filter(string[] strings, int[] ints, int flags_1, int flags_2) native
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
@@ -130,13 +158,12 @@ int function f_Create_Follower(Actor ref_actor)
         return CODES.HAS_FOLLOWER
     endIf
 
-    int id_alias = p_Unused_ID()
-    if id_alias < 0
+    doticu_npcp_follower ref_follower = p_From_Unfilled() as doticu_npcp_follower
+    if ref_follower == none
         return CODES.FAILURE
     endIf
 
-    doticu_npcp_follower ref_follower = p_ID_To_Follower(id_alias) as doticu_npcp_follower
-    ref_follower.f_Create(p_DATA, id_alias, ref_actor)
+    ref_follower.f_Create(p_DATA, ref_actor)
     ref_follower.f_Register()
 
     ; this value needs to be 1 whenever there is a follower
@@ -151,16 +178,15 @@ int function f_Destroy_Follower(Actor ref_actor)
         return CODES.ISNT_ACTOR
     endIf
 
-    int id_alias = p_Actor_To_ID(ref_actor)
-    if id_alias < 0
+    doticu_npcp_follower ref_follower = p_From_Actor(ref_actor) as doticu_npcp_follower
+    if ref_follower == none
         return CODES.HASNT_FOLLOWER
     endIf
 
-    doticu_npcp_follower ref_follower = p_ID_To_Follower(id_alias) as doticu_npcp_follower
     ref_follower.f_Unregister()
     ref_follower.f_Destroy()
 
-    if Count_All() == 0
+    if Count_Filled() == 0
         ; this would conflict with the vanilla system
         ; and any other mods that use it, except that we
         ; modify the vanilla system to force use of ours
@@ -186,32 +212,36 @@ endFunction
 
 ; Public Methods
 doticu_npcp_follower function Get_Follower(Actor ref_actor)
-    return p_Actor_To_Follower(ref_actor) as doticu_npcp_follower
+    return p_From_Actor(ref_actor) as doticu_npcp_follower
 endFunction
 
-Alias[] function Get_Followers(int idx_from = 0, int idx_to_ex = -1)
-    return p_Sort_All(idx_from, idx_to_ex, VARS.str_sort_followers); we need to attach this to the correct function in c++
+Alias[] function Get_Followers(int begin = 0, int end = -1)
+    return Sort_Filled(begin, end)
 endFunction
 
-int function Summon(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0)
+doticu_npcp_follower function From_Horse_Actor(Actor ref_actor)
+    return p_From_Horse_Actor(ref_actor) as doticu_npcp_follower
+endFunction
+
+int function Summon(float radius = 140.0, float degree = 0.0, float interval = 19.0)
 p_Busy()
 
-    int num_followers = Count_All()
+    int num_followers = Count_Filled()
     if num_followers < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
-    p_Summon(distance, angle_degree, interval_degree)
+    p_Summon_Filled(radius, degree, interval)
 
     return p_Ready_Int(CODES.SUCCESS)
 
 p_Ready()
 endFunction
 
-int function Summon_Mobile(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0)
+int function Summon_Mobile(float radius = 140.0, float degree = 0.0, float interval = 19.0)
 p_Busy()
 
-    int num_followers = Count_All()
+    int num_followers = Count_Filled()
     if num_followers < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
@@ -221,17 +251,17 @@ p_Busy()
         return p_Ready_Int(CODES.HASNT_MOBILE)
     endIf
 
-    p_Summon_Mobile(distance, angle_degree, interval_degree)
+    p_Summon_Mobile(radius, degree, interval)
 
     return p_Ready_Int(CODES.SUCCESS)
 
 p_Ready()
 endFunction
 
-int function Summon_Immobile(float distance = 140.0, float angle_degree = 0.0, float interval_degree = 19.0)
+int function Summon_Immobile(float radius = 140.0, float degree = 0.0, float interval = 19.0)
 p_Busy()
 
-    int num_followers = Count_All()
+    int num_followers = Count_Filled()
     if num_followers < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
@@ -241,7 +271,7 @@ p_Busy()
         return p_Ready_Int(CODES.HASNT_IMMOBILE)
     endIf
 
-    p_Summon_Immobile(distance, angle_degree, interval_degree)
+    p_Summon_Immobile(radius, degree, interval)
 
     return p_Ready_Int(CODES.SUCCESS)
 
@@ -251,7 +281,7 @@ endFunction
 int function Catch_Up()
 p_Busy()
 
-    int num_followers = Count_All()
+    int num_followers = Count_Filled()
     if num_followers < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
@@ -266,7 +296,7 @@ endFunction
 int function Stash()
 p_Busy()
 
-    int num_followers = Count_All()
+    int num_followers = Count_Filled()
     if num_followers < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
@@ -281,12 +311,12 @@ endFunction
 int function Enforce()
 p_Busy()
 
-    int num_followers = Count_All()
+    int num_followers = Count_Filled()
     if num_followers < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
-    p_Enforce(none)
+    p_Enforce()
 
     return p_Ready_Int(CODES.SUCCESS)
 
@@ -296,7 +326,7 @@ endFunction
 int function Resurrect()
 p_Busy()
 
-    if Count_All() < 1
+    if Count_Filled() < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
@@ -307,7 +337,7 @@ p_Busy()
 
     p_tasklist.Init(num_dead)
 
-    p_Resurrect(p_tasklist)
+    p_Resurrect()
 
     if !p_tasklist.Await(num_dead, 0.5, 10.0)
         return p_Ready_Int(CODES.FAILURE)
@@ -321,7 +351,7 @@ endFunction
 int function Mobilize()
 p_Busy()
 
-    if Count_All() < 1
+    if Count_Filled() < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
@@ -332,7 +362,7 @@ p_Busy()
 
     p_tasklist.Init(num_immobile)
 
-    p_Mobilize(p_tasklist)
+    p_Mobilize()
 
     if !p_tasklist.Await(num_immobile, 0.5, 10.0)
         return p_Ready_Int(CODES.FAILURE)
@@ -346,7 +376,7 @@ endFunction
 int function Immobilize()
 p_Busy()
 
-    if Count_All() < 1
+    if Count_Filled() < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
@@ -357,7 +387,7 @@ p_Busy()
 
     p_tasklist.Init(num_mobile)
 
-    p_Immobilize(p_tasklist)
+    p_Immobilize()
     
     if !p_tasklist.Await(num_mobile, 0.5, 10.0)
         return p_Ready_Int(CODES.FAILURE)
@@ -371,14 +401,14 @@ endFunction
 int function Settle()
 p_Busy()
 
-    int num_followers = Count_All()
+    int num_followers = Count_Filled()
     if num_followers < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
     p_tasklist.Init(num_followers)
 
-    p_Settle(p_tasklist)
+    p_Settle()
 
     if !p_tasklist.Await(num_followers, 0.5, 10.0)
         return p_Ready_Int(CODES.FAILURE)
@@ -392,7 +422,7 @@ endFunction
 int function Unsettle()
 p_Busy()
 
-    if Count_All() < 1
+    if Count_Filled() < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
@@ -403,7 +433,7 @@ p_Busy()
 
     p_tasklist.Init(num_settlers)
 
-    p_Unsettle(p_tasklist)
+    p_Unsettle()
 
     if !p_tasklist.Await(num_settlers, 0.5, 10.0)
         return p_Ready_Int(CODES.FAILURE)
@@ -417,7 +447,7 @@ endFunction
 int function Sneak()
 p_Busy()
 
-    if Count_All() < 1
+    if Count_Filled() < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
@@ -428,7 +458,7 @@ p_Busy()
 
     p_tasklist.Init(num_non_sneaks)
 
-    p_Sneak(p_tasklist)
+    p_Sneak()
 
     if !p_tasklist.Await(num_non_sneaks, 0.5, 10.0)
         return p_Ready_Int(CODES.FAILURE)
@@ -442,7 +472,7 @@ endFunction
 int function Unsneak()
 p_Busy()
 
-    if Count_All() < 1
+    if Count_Filled() < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
@@ -453,7 +483,7 @@ p_Busy()
 
     p_tasklist.Init(num_sneaks)
 
-    p_Unsneak(p_tasklist)
+    p_Unsneak()
 
     if !p_tasklist.Await(num_sneaks, 0.5, 10.0)
         return p_Ready_Int(CODES.FAILURE)
@@ -471,7 +501,7 @@ p_Busy()
         return p_Ready_Int(CODES.IS_INTERIOR)
     endIf
 
-    if Count_All() < 1
+    if Count_Filled() < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
@@ -482,7 +512,7 @@ p_Busy()
 
     p_tasklist.Init(num_non_saddlers)
 
-    p_Saddle(p_tasklist)
+    p_Saddle()
 
     if !p_tasklist.Await(num_non_saddlers, 0.5, 10.0)
         return p_Ready_Int(CODES.FAILURE)
@@ -496,7 +526,7 @@ endFunction
 int function Unsaddle()
 p_Busy()
 
-    if Count_All() < 1
+    if Count_Filled() < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
@@ -507,7 +537,7 @@ p_Busy()
 
     p_tasklist.Init(num_saddlers)
 
-    p_Unsaddle(p_tasklist)
+    p_Unsaddle()
 
     if !p_tasklist.Await(num_saddlers, 0.5, 10.0)
         return p_Ready_Int(CODES.FAILURE)
@@ -521,7 +551,7 @@ endFunction
 int function Retreat()
 p_Busy()
     
-    if Count_All() < 1
+    if Count_Filled() < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
     
@@ -532,7 +562,7 @@ p_Busy()
     
     p_tasklist.Init(num_non_retreaters)
     
-    p_Retreat(p_tasklist)
+    p_Retreat()
     
     if !p_tasklist.Await(num_non_retreaters, 0.5, 10.0)
         return p_Ready_Int(CODES.FAILURE)
@@ -546,7 +576,7 @@ endFunction
 int function Unretreat()
 p_Busy()
 
-    if Count_All() < 1
+    if Count_Filled() < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
@@ -557,7 +587,7 @@ p_Busy()
 
     p_tasklist.Init(num_retreaters)
 
-    p_Unretreat(p_tasklist)
+    p_Unretreat()
 
     if !p_tasklist.Await(num_retreaters, 0.5, 10.0)
         return p_Ready_Int(CODES.FAILURE)
@@ -571,14 +601,14 @@ endFunction
 int function Unfollow()
 p_Busy()
 
-    int num_followers = Count_All()
+    int num_followers = Count_Filled()
     if num_followers < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
     p_tasklist.Init(num_followers)
 
-    p_Unfollow(p_tasklist)
+    p_Unfollow()
 
     if !p_tasklist.Await(num_followers, 0.5, 15.0)
         return p_Ready_Int(CODES.FAILURE)
@@ -592,14 +622,14 @@ endFunction
 int function Unmember()
 p_Busy()
 
-    int num_followers = Count_All()
+    int num_followers = Count_Filled()
     if num_followers < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
     p_tasklist.Init(num_followers)
 
-    p_Unmember(p_tasklist)
+    p_Unmember()
 
     if !p_tasklist.Await(num_followers, 0.5, 15.0)
         return p_Ready_Int(CODES.FAILURE)
