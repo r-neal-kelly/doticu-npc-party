@@ -976,38 +976,37 @@ namespace doticu_npcp { namespace Party {
 
             for (size_t idx = 0, size = followers.size(); idx < size; idx += 1) {
                 Follower_t* follower = followers[idx];
-                Handle_t follower_handle(follower);
-                follower_handle.Registry()->QueueEvent(follower_handle, &event_name, &args);
+                Handle_t handle(follower);
+                handle.Registry()->QueueEvent(handle, &event_name, &args);
             }
         }
     }
 
     void Followers_t::Send(Vector_t<Follower_t*> followers, String_t event_name, Form_t* form_arg)
     {
-        if (followers.size() > 0 && !String2::Is_Same_Caseless(event_name, "") && form_arg != nullptr) {
+        if (followers.size() > 0 && !String2::Is_Same_Caseless(event_name, "")) {
             struct Args : public IFunctionArguments {
-                Form_t* m_form_arg;
-                Args(Form_t* form_arg)
+                Form_t* form_arg;
+                Args(Form_t* form_arg) :
+                    form_arg(form_arg)
                 {
-                    m_form_arg = form_arg;
                 }
                 bool Copy(Output* output)
                 {
                     output->Resize(1);
-                    if (m_form_arg) {
-                        PackValue<Form_t>(output->Get(0), &m_form_arg, (*g_skyrimVM)->GetClassRegistry());
+                    if (form_arg) {
+                        PackValue(output->Get(0), &form_arg, (*g_skyrimVM)->GetClassRegistry());
                     } else {
                         output->Get(0)->SetNone();
                     }
-
                     return true;
                 }
             } args(form_arg);
 
             for (size_t idx = 0, size = followers.size(); idx < size; idx += 1) {
                 Follower_t* follower = followers[idx];
-                Handle_t follower_handle(follower);
-                follower_handle.Registry()->QueueEvent(follower_handle, &event_name, &args);
+                Handle_t handle(follower);
+                handle.Registry()->QueueEvent(handle, &event_name, &args);
             }
         }
     }
@@ -1021,7 +1020,7 @@ namespace doticu_npcp { namespace Party {
     void Followers_t::Enforce()
     {
         static const String_t event_name = String_t("On_Followers_Enforce");
-        Send(Followers(), event_name);
+        Send(Followers(), event_name, nullptr);
     }
 
     void Followers_t::Resurrect()
