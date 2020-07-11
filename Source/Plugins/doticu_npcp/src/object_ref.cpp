@@ -311,7 +311,7 @@ namespace doticu_npcp { namespace Object_Ref {
             ExtraAliasInstanceArray::AliasInfo *info = xaliases->aliases[idx];
             if (info && info->alias) {
                 //_MESSAGE("quest: %s, flags: %x", Quest::Get_Name(info->quest), info->alias->flags);
-                if (Bit_Is_Set(info->alias->flags, 2)) {
+                if (Utils::Is_Bit_On(info->alias->flags, 2)) {
                     return true;
                 }
             }

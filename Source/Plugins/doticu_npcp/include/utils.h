@@ -33,25 +33,10 @@ W
 
 #define DOTICU_NPCP_PI 3.141592741f
 
-#define Bit_Set(BITS, BIT_IDX) \
-    ( (BITS) |=  ( (1llu) << (BIT_IDX) ) )
-
-#define Bit_Unset(BITS, BIT_IDX) \
-    ( (BITS) &= ~( (1llu) << (BIT_IDX) ) )
-
-#define Bit_Is_Set(BITS, BIT_IDX) \
-    ( (1llu) &   ( (BITS) >> (BIT_IDX) ) )
-
-#define Bit_Toggle(BITS, BIT_IDX) \
-    ( (BITS) ^=  ( (1llu) << (BIT_IDX) ) )
-
-#define Bit_Clear(BITS)\
-    ( (BITS) = 0 )
-
 // set manually upon each release
 #define DOTICU_NPCP_VERSION_MAJOR 0
 #define DOTICU_NPCP_VERSION_MINOR 9
-#define DOTICU_NPCP_VERSION_PATCH 1
+#define DOTICU_NPCP_VERSION_PATCH 2
 
 #define DOTICU_NPCP_PRINT_PREFIX "doticu_npcp: "
 
