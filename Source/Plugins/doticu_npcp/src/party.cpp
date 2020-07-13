@@ -1729,32 +1729,22 @@ namespace doticu_npcp { namespace Party {
             IS_INVULNERABLE = -306
         };
 
-        Actor_t* member_actor = Actor();
-        if (!member_actor || Is_Dead()) {
-            return;
-        }
-
-        Int_t member_vitality = Vitality();
-        UInt32 id_health = LookupActorValueByName("Health");
-
-        // we have the branching like this in concern for speed
-        if (member_actor->actorValueOwner.GetCurrent(id_health) <= 0.0) {
-            if (member_vitality == IS_MORTAL || member_vitality == IS_PROTECTED && attacker == *g_thePlayer) {
-                struct Args : public IFunctionArguments {
-                    bool Copy(Output* output)
-                    {
-                        return true;
-                    }
-                } func_args;
-                Handle_t handle(this);
-                handle.Registry()->QueueEvent(handle, &kill_func, &func_args);
-            }
-        } else if (member_vitality == IS_INVULNERABLE) {
-            // We need RestoreCurrent, but don't have it, so we do this instead.
-            // Unfortuneately, not sure how to get the previous health back, so we just keep increasing until next enforce.
-            float max_health = member_actor->actorValueOwner.GetMaximum(id_health);
-            if (max_health < 1000000000) {
-                member_actor->actorValueOwner.SetCurrent(id_health, member_actor->actorValueOwner.GetMaximum(id_health) + 1000.f);
+        Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(Actor());
+        if (value_owner && Is_Alive()) {
+            Int_t member_vitality = Vitality();
+            if (value_owner->Get_Actor_Value(Actor_Value_t::HEALTH) <= 0.0) {
+                if (member_vitality == IS_MORTAL || member_vitality == IS_PROTECTED && attacker == *g_thePlayer) {
+                    struct Args : public IFunctionArguments {
+                        bool Copy(Output* output)
+                        {
+                            return true;
+                        }
+                    } func_args;
+                    Handle_t handle(this);
+                    handle.Registry()->QueueEvent(handle, &kill_func, &func_args);
+                }
+            } else if (member_vitality == IS_INVULNERABLE) {
+                value_owner->Restore_Actor_Value(Actor_Modifier_t::DAMAGE, Actor_Value_t::HEALTH, 1000000000.0f);
             }
         }
     }
@@ -2220,170 +2210,235 @@ namespace doticu_npcp { namespace Party {
 
     void Follower_t::Level()
     {
-        // I want to update these before going out of beta
-        enum {
-            IS_WARRIOR = -381,
-            IS_MAGE = -382,
-            IS_ARCHER = -383
-        };
-
-        if (!Is_Created()) {
-            return;
-        }
-
-        Actor_t* follower_actor = Actor();
-        if (!follower_actor) {
-            return;
-        }
-
-        TESNPC* follower_base = static_cast<TESNPC*>(follower_actor->baseForm);
-        if (!follower_base) {
-            return;
-        }
-
         Actor_t* player_actor = *g_thePlayer;
-        if (!player_actor) {
-            return;
+        Actor_t* follower_actor = Actor();
+        if (player_actor && follower_actor && Is_Created()) {
+            Actor_Value_Owner_t* values =
+                Actor2::Actor_Value_Owner(follower_actor);
+            Actor_Value_Owner_t* base_values =
+                Actor_Base2::Actor_Value_Owner(static_cast<Actor_Base_t*>(follower_actor->baseForm));
+            if (values && base_values) {
+                const UInt16 player_level = CALL_MEMBER_FN(player_actor, GetLevel)();
+                const float player_modifier = 0.67f - (log((float)player_level) * 0.067f);
+
+                float health;
+                float magicka;
+                float stamina;
+
+                float one_handed;
+                float two_handed;
+                float block;
+                float heavy_armor;
+                float light_armor;
+                float smithing;
+
+                float destruction;
+                float restoration;
+                float conjuration;
+                float alteration;
+                float illusion;
+                float enchanting;
+
+                float marksman;
+                float sneak;
+                float alchemy;
+                float lockpicking;
+                float pickpocket;
+                float speechcraft;
+
+                auto Get_Values = [&]() -> void
+                {
+                    auto Get_Value = [&](Actor_Value_t value_type) -> float
+                    {
+                        return base_values->Get_Base_Actor_Value(value_type) * player_modifier;
+                    };
+
+                    health = Get_Value(Actor_Value_t::HEALTH);
+                    magicka = Get_Value(Actor_Value_t::MAGICKA);
+                    stamina = Get_Value(Actor_Value_t::STAMINA);
+
+                    one_handed = Get_Value(Actor_Value_t::ONE_HANDED);
+                    two_handed = Get_Value(Actor_Value_t::TWO_HANDED);
+                    block = Get_Value(Actor_Value_t::BLOCK);
+                    heavy_armor = Get_Value(Actor_Value_t::HEAVY_ARMOR);
+                    light_armor = Get_Value(Actor_Value_t::LIGHT_ARMOR);
+                    smithing = Get_Value(Actor_Value_t::SMITHING);
+
+                    destruction = Get_Value(Actor_Value_t::DESTRUCTION);
+                    restoration = Get_Value(Actor_Value_t::RESTORATION);
+                    conjuration = Get_Value(Actor_Value_t::CONJURATION);
+                    alteration = Get_Value(Actor_Value_t::ALTERATION);
+                    illusion = Get_Value(Actor_Value_t::ILLUSION);
+                    enchanting = Get_Value(Actor_Value_t::ENCHANTING);
+
+                    marksman = Get_Value(Actor_Value_t::MARKSMAN);
+                    sneak = Get_Value(Actor_Value_t::SNEAK);
+                    alchemy = Get_Value(Actor_Value_t::ALCHEMY);
+                    lockpicking = Get_Value(Actor_Value_t::LOCKPICKING);
+                    pickpocket = Get_Value(Actor_Value_t::PICKPOCKET);
+                    speechcraft = Get_Value(Actor_Value_t::SPEECHCRAFT);
+                };
+
+                auto Mod_Values = [&]() -> void
+                {
+                    auto Mod_Strength = [&](float modifier) -> void
+                    {
+                        one_handed += modifier;
+                        two_handed += modifier;
+                        block += modifier;
+                        heavy_armor += modifier;
+                        light_armor += modifier;
+                        smithing += modifier;
+                    };
+
+                    auto Mod_Intelligence = [&](float modifier) -> void
+                    {
+                        destruction += modifier;
+                        restoration += modifier;
+                        conjuration += modifier;
+                        alteration += modifier;
+                        illusion += modifier;
+                        enchanting += modifier;
+                    };
+
+                    auto Mod_Dexterity = [&](float modifier) -> void
+                    {
+                        marksman += modifier;
+                        sneak += modifier;
+                        alchemy += modifier;
+                        lockpicking += modifier;
+                        pickpocket += modifier;
+                        speechcraft += modifier;
+                    };
+
+                    // I want to update these before going out of beta
+                    enum {
+                        IS_WARRIOR = -381,
+                        IS_MAGE = -382,
+                        IS_ARCHER = -383
+                    };
+                    const SInt32 follower_style = Style();
+                    const float player_level_modded = player_level * player_modifier;
+                    if (follower_style == IS_WARRIOR) {
+                        health += player_level * 4; // find a better equation
+                        Mod_Strength(+player_level_modded);
+                        Mod_Intelligence(-player_level_modded);
+                        Mod_Dexterity(-player_level_modded);
+                    } else if (follower_style == IS_MAGE) {
+                        magicka += player_level * 4; // find a better equation
+                        Mod_Strength(-player_level_modded);
+                        Mod_Intelligence(+player_level_modded);
+                        Mod_Dexterity(-player_level_modded);
+                    } else if (follower_style == IS_ARCHER) {
+                        stamina += player_level * 4; // find a better equation
+                        Mod_Strength(-player_level_modded);
+                        Mod_Intelligence(-player_level_modded);
+                        Mod_Dexterity(+player_level_modded);
+                    }
+                };
+
+                auto Set_Values = [&]() -> void
+                {
+                    constexpr float max_attribute = 1000.0f;
+                    constexpr float min_attribute = 100.0f;
+                    constexpr float max_skill = 100.0f;
+                    constexpr float min_skill = 0.0f;
+
+                    auto Set_Attribute = [&](Actor_Value_t value_type, float value) -> void
+                    {
+                        values->Set_Base_Actor_Value(
+                            value_type,
+                            value > max_attribute ? max_attribute :
+                            value < min_attribute ? min_attribute :
+                            value
+                        );
+                    };
+
+                    auto Set_Skill = [&](Actor_Value_t value_type, float value) -> void
+                    {
+                        values->Set_Base_Actor_Value(
+                            value_type,
+                            value > max_skill ? max_skill :
+                            value < min_skill ? min_skill :
+                            value
+                        );
+                    };
+
+                    Set_Attribute(Actor_Value_t::HEALTH, health);
+                    Set_Attribute(Actor_Value_t::MAGICKA, magicka);
+                    Set_Attribute(Actor_Value_t::STAMINA, stamina);
+
+                    Set_Skill(Actor_Value_t::ONE_HANDED, one_handed);
+                    Set_Skill(Actor_Value_t::TWO_HANDED, two_handed);
+                    Set_Skill(Actor_Value_t::BLOCK, block);
+                    Set_Skill(Actor_Value_t::HEAVY_ARMOR, heavy_armor);
+                    Set_Skill(Actor_Value_t::LIGHT_ARMOR, light_armor);
+                    Set_Skill(Actor_Value_t::SMITHING, smithing);
+
+                    Set_Skill(Actor_Value_t::DESTRUCTION, destruction);
+                    Set_Skill(Actor_Value_t::RESTORATION, restoration);
+                    Set_Skill(Actor_Value_t::CONJURATION, conjuration);
+                    Set_Skill(Actor_Value_t::ALTERATION, alteration);
+                    Set_Skill(Actor_Value_t::ILLUSION, illusion);
+                    Set_Skill(Actor_Value_t::ENCHANTING, enchanting);
+
+                    Set_Skill(Actor_Value_t::MARKSMAN, marksman);
+                    Set_Skill(Actor_Value_t::SNEAK, sneak);
+                    Set_Skill(Actor_Value_t::ALCHEMY, alchemy);
+                    Set_Skill(Actor_Value_t::LOCKPICKING, lockpicking);
+                    Set_Skill(Actor_Value_t::PICKPOCKET, pickpocket);
+                    Set_Skill(Actor_Value_t::SPEECHCRAFT, speechcraft);
+                };
+
+                auto Check_Values = [&]() -> void
+                {
+                    auto Check_Value = [&](Actor_Value_t value_type, float desired_value) -> void
+                    {
+                        float permanent_value = values->Get_Permanent_Actor_Value(value_type);
+                        if (permanent_value < 0.0f) {
+                            values->Restore_Actor_Value(Actor_Modifier_t::PERMANENT,
+                                                        value_type,
+                                                        -permanent_value + desired_value);
+                            permanent_value = values->Get_Permanent_Actor_Value(value_type);
+                            if (permanent_value < 0.0f) {
+                                values->Mod_Actor_Value(value_type,
+                                                        -permanent_value + desired_value);
+                            }
+                        }
+                    };
+
+                    Check_Value(Actor_Value_t::HEALTH, health);
+                    Check_Value(Actor_Value_t::MAGICKA, magicka);
+                    Check_Value(Actor_Value_t::STAMINA, stamina);
+
+                    Check_Value(Actor_Value_t::ONE_HANDED, one_handed);
+                    Check_Value(Actor_Value_t::TWO_HANDED, two_handed);
+                    Check_Value(Actor_Value_t::BLOCK, block);
+                    Check_Value(Actor_Value_t::HEAVY_ARMOR, heavy_armor);
+                    Check_Value(Actor_Value_t::LIGHT_ARMOR, light_armor);
+                    Check_Value(Actor_Value_t::SMITHING, smithing);
+
+                    Check_Value(Actor_Value_t::DESTRUCTION, destruction);
+                    Check_Value(Actor_Value_t::RESTORATION, restoration);
+                    Check_Value(Actor_Value_t::CONJURATION, conjuration);
+                    Check_Value(Actor_Value_t::ALTERATION, alteration);
+                    Check_Value(Actor_Value_t::ILLUSION, illusion);
+                    Check_Value(Actor_Value_t::ENCHANTING, enchanting);
+
+                    Check_Value(Actor_Value_t::MARKSMAN, marksman);
+                    Check_Value(Actor_Value_t::SNEAK, sneak);
+                    Check_Value(Actor_Value_t::ALCHEMY, alchemy);
+                    Check_Value(Actor_Value_t::LOCKPICKING, lockpicking);
+                    Check_Value(Actor_Value_t::PICKPOCKET, pickpocket);
+                    Check_Value(Actor_Value_t::SPEECHCRAFT, speechcraft);
+                };
+
+                Get_Values();
+                Mod_Values();
+                Set_Values();
+                Check_Values();
+            }
         }
-
-        const UInt16 player_level = CALL_MEMBER_FN(player_actor, GetLevel)();
-        const SInt32 follower_style = Style();
-        const float player_modifier = 0.67f - (log((float)player_level) * 0.067f);
-        const float player_level_modded = player_level * player_modifier;
-        const float max_attribute = 1000.0f;
-        const float min_attribute = 100.0f;
-        const float max_skill = 100.0f;
-        const float min_skill = 0.0f;
-
-        #define GET_BASE_VALUE(NAME)                                            \
-        (                                                                       \
-            Actor_Base2::Get_Base_Actor_Value(follower_base, NAME) +            \
-            Actor2::Get_Base_Actor_Value(player_actor, NAME) * player_modifier  \
-        )
-
-        float health = GET_BASE_VALUE("Health");
-        float magicka = GET_BASE_VALUE("Magicka");
-        float stamina = GET_BASE_VALUE("Stamina");
-
-        float one_handed = GET_BASE_VALUE("OneHanded");
-        float two_handed = GET_BASE_VALUE("TwoHanded");
-        float block = GET_BASE_VALUE("Block");
-        float heavy_armor = GET_BASE_VALUE("HeavyArmor");
-        float light_armor = GET_BASE_VALUE("LightArmor");
-        float smithing = GET_BASE_VALUE("Smithing");
-
-        float destruction = GET_BASE_VALUE("Destruction");
-        float restoration = GET_BASE_VALUE("Restoration");
-        float conjuration = GET_BASE_VALUE("Conjuration");
-        float alteration = GET_BASE_VALUE("Alteration");
-        float illusion = GET_BASE_VALUE("Illusion");
-        float enchanting = GET_BASE_VALUE("Enchanting");
-
-        float marksman = GET_BASE_VALUE("Marksman");
-        float sneak = GET_BASE_VALUE("Sneak");
-        float alchemy = GET_BASE_VALUE("Alchemy");
-        float lockpicking = GET_BASE_VALUE("Lockpicking");
-        float pickpocket = GET_BASE_VALUE("Pickpocket");
-        float speechcraft = GET_BASE_VALUE("Speechcraft");
-
-        #undef GET_BASE_VALUE
-
-        #define MOD_STRENGTH(OP, OPERAND)   \
-        M                                   \
-            one_handed  OP= (OPERAND);      \
-            two_handed  OP= (OPERAND);      \
-            block       OP= (OPERAND);      \
-            heavy_armor OP= (OPERAND);      \
-            light_armor OP= (OPERAND);      \
-            smithing    OP= (OPERAND);      \
-        W
-
-        #define MOD_INTELLIGENCE(OP, OPERAND)   \
-        M                                       \
-            destruction OP= (OPERAND);          \
-            restoration OP= (OPERAND);          \
-            conjuration OP= (OPERAND);          \
-            alteration  OP= (OPERAND);          \
-            illusion    OP= (OPERAND);          \
-            enchanting  OP= (OPERAND);          \
-        W
-
-        #define MOD_DEXTERITY(OP, OPERAND)  \
-        M                                   \
-            marksman    OP= (OPERAND);      \
-            sneak       OP= (OPERAND);      \
-            alchemy     OP= (OPERAND);      \
-            lockpicking OP= (OPERAND);      \
-            pickpocket  OP= (OPERAND);      \
-            speechcraft OP= (OPERAND);      \
-        W
-
-        if (follower_style == IS_WARRIOR) {
-            health += player_level * 4; // find a better equation
-            MOD_STRENGTH(+, player_level_modded);
-            MOD_INTELLIGENCE(-, player_level_modded);
-            MOD_DEXTERITY(-, player_level_modded);
-        } else if (follower_style == IS_MAGE) {
-            magicka += player_level * 4; // find a better equation
-            MOD_STRENGTH(-, player_level_modded);
-            MOD_INTELLIGENCE(+, player_level_modded);
-            MOD_DEXTERITY(-, player_level_modded);
-        } else if (follower_style == IS_ARCHER) {
-            stamina += player_level * 4; // find a better equation
-            MOD_STRENGTH(-, player_level_modded);
-            MOD_INTELLIGENCE(-, player_level_modded);
-            MOD_DEXTERITY(+, player_level_modded);
-        }
-
-        #undef MOD_STRENGTH
-        #undef MOD_INTELLIGENCE
-        #undef MOD_DEXTERITY
-
-        #define SET_ATTRIBUTE(NAME, VALUE)                  \
-        (                                                   \
-            Actor2::Set_Actor_Value(follower_actor, NAME,   \
-                (VALUE) > max_attribute ? max_attribute :   \
-                (VALUE) < min_attribute ? min_attribute :   \
-                (VALUE)                                     \
-            )                                               \
-        )
-
-        #define SET_SKILL(NAME, VALUE)                      \
-        (                                                   \
-            Actor2::Set_Actor_Value(follower_actor, NAME,   \
-                (VALUE) > max_skill ? max_skill :           \
-                (VALUE) < min_skill ? min_skill :           \
-                (VALUE)                                     \
-            )                                               \
-        )
-
-        SET_ATTRIBUTE("Health", health);
-        SET_ATTRIBUTE("Magicka", magicka);
-        SET_ATTRIBUTE("Stamina", stamina);
-
-        SET_SKILL("OneHanded", one_handed);
-        SET_SKILL("TwoHanded", two_handed);
-        SET_SKILL("Block", block);
-        SET_SKILL("HeavyArmor", heavy_armor);
-        SET_SKILL("LightArmor", light_armor);
-        SET_SKILL("Smithing", smithing);
-
-        SET_SKILL("Destruction", destruction);
-        SET_SKILL("Restoration", restoration);
-        SET_SKILL("Conjuration", conjuration);
-        SET_SKILL("Alteration", alteration);
-        SET_SKILL("Illusion", illusion);
-        SET_SKILL("Enchanting", enchanting);
-
-        SET_SKILL("Marksman", marksman);
-        SET_SKILL("Sneak", sneak);
-        SET_SKILL("Alchemy", alchemy);
-        SET_SKILL("Lockpicking", lockpicking);
-        SET_SKILL("Pickpocket", pickpocket);
-        SET_SKILL("Speechcraft", speechcraft);
-
-        #undef SET_ATTRIBUTE
-        #undef SET_SKILL
     }
 
     void Follower_t::Unlevel()

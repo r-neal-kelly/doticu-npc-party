@@ -24,6 +24,24 @@ namespace doticu_npcp { namespace Actor_Base2 {
         return actor_base->skinForm.skin;
     }
 
+    TESNPC::Color* Get_Skin_Color(TESNPC* actor_base)
+    {
+        if (actor_base) {
+            return &actor_base->color;
+        } else {
+            return nullptr;
+        }
+    }
+
+    bool Has_Same_Skin_Color(TESNPC* actor_base_a, TESNPC* actor_base_b)
+    {
+        return
+            actor_base_a && actor_base_b &&
+            actor_base_a->color.red == actor_base_b->color.red &&
+            actor_base_a->color.green == actor_base_b->color.green &&
+            actor_base_a->color.blue == actor_base_b->color.blue;
+    }
+
     bool Has_Same_Head(TESNPC *actor_base_a, TESNPC *actor_base_b) {
         if (!actor_base_a || !actor_base_b) {
             return false;
@@ -49,6 +67,10 @@ namespace doticu_npcp { namespace Actor_Base2 {
         }
 
         if (Get_Skin(actor_base_a) != Get_Skin(actor_base_b)) {
+            return false;
+        }
+
+        if (!Has_Same_Skin_Color(actor_base_a, actor_base_b)) {
             return false;
         }
 
@@ -79,6 +101,13 @@ namespace doticu_npcp { namespace Actor_Base2 {
         }
 
         return true;
+    }
+
+    Actor_Value_Owner_t* Actor_Value_Owner(Actor_Base_t* actor_base)
+    {
+        return actor_base ?
+            reinterpret_cast<Actor_Value_Owner_t*>(&actor_base->actorValueOwner) :
+            nullptr;
     }
 
     float Get_Actor_Value(TESNPC *actor_base, const char *name) {

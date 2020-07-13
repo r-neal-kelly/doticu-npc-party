@@ -644,9 +644,6 @@ endFunction
 function p_Vitalize()
 p_Lock()
 
-    ; because our invulnerability algorithm changes health, we need to reset it
-    doticu_npcp.Actor_Reset_Actor_Value(p_ref_actor, "Health")
-
     if p_code_vitality == CODES.IS_MORTAL
         ACTORS.Token(p_ref_actor, CONSTS.TOKEN_VITALITY_MORTAL)
         ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_PROTECTED)

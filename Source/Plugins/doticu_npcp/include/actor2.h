@@ -35,6 +35,7 @@ namespace doticu_npcp { namespace Actor2 {
 
     void Move_To_Orbit(Actor *obj, TESObjectREFR *target, float radius, float angle_degree);
 
+    Actor_Value_Owner_t* Actor_Value_Owner(Actor_t* actor);
     float Get_Actor_Value(Actor *actor, const char *name);
     float Get_Base_Actor_Value(Actor *actor, const char *name);
     float Get_Max_Actor_Value(Actor *actor, const char *name);
@@ -47,7 +48,7 @@ namespace doticu_npcp { namespace Actor2 {
     bool Is_On_Mount(Actor_t* actor);
 
     Papyrus::Int_t Sex(Actor_t* actor);
-    Papyrus::String_t Race(Actor_t* actor);
+    String_t Race(Actor_t* actor);
 }}
 
 namespace doticu_npcp { namespace Actor2 { namespace Exports {

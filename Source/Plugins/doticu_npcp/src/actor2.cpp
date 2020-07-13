@@ -532,8 +532,6 @@ namespace doticu_npcp { namespace Actor2 {
 
     bool Is_Unique(Actor* actor)
     {
-        using namespace Papyrus;
-
         if (actor) {
             TESNPC* base_npc = DYNAMIC_CAST(actor->baseForm, TESForm, TESNPC);
             if (base_npc) {
@@ -549,8 +547,6 @@ namespace doticu_npcp { namespace Actor2 {
 
     bool Is_Generic(Actor* actor)
     {
-        using namespace Papyrus;
-
         if (actor) {
             TESNPC* base_npc = DYNAMIC_CAST(actor->baseForm, TESForm, TESNPC);
             if (base_npc) {
@@ -609,6 +605,15 @@ namespace doticu_npcp { namespace Actor2 {
         Object_Ref::Move_To_Orbit(actor, target, radius, angle_degree);
 
         CALL_MEMBER_FN(actor, QueueNiNodeUpdate)(false);
+    }
+
+    Actor_Value_Owner_t* Actor_Value_Owner(Actor_t* actor)
+    {
+        if (actor) {
+            return reinterpret_cast<Actor_Value_Owner_t*>(&actor->actorValueOwner);
+        } else {
+            return nullptr;
+        }
     }
 
     float Get_Actor_Value(Actor *actor, const char *name) {
@@ -770,7 +775,7 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
-    Papyrus::String_t Race(Actor_t* actor)
+    String_t Race(Actor_t* actor)
     {
         if (actor && actor->race) {
             return actor->race->fullName.name;

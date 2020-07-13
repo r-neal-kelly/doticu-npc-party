@@ -105,7 +105,6 @@ namespace doticu_npcp { namespace Papyrus {
     STATIC_ASSERT(sizeof(Array_t) == 0x20);
 
     class Object_t;
-    class Alias_Base_t;
     class Variable_t {
     public:
         static Registry_t* Registry();
@@ -235,85 +234,6 @@ namespace doticu_npcp { namespace Papyrus {
 
     class Function_t {
     public:
-    };
-
-    class Alias_Base_t {
-    public:
-        enum {
-            kTypeID = kFormType_Alias
-        };
-
-        enum Flags : UInt32 {
-            // ...
-        };
-
-        enum Fill_Types : UInt16 {
-            CONDITION_FILL = 0,
-            FORCED_FILL = 1
-            // ...
-        };
-
-        virtual ~Alias_Base_t(); // 00
-        virtual bool Load(TESFile* file); // 01
-        virtual void Item(TESForm* form); // 02
-        virtual String_t Type(); // 03
-
-        // void* _vtbl; // 00
-        String_t name; // 08
-        Quest_t* quest; // 10
-        UInt32 id; // 18
-        UInt32 flags; // 1C
-        UInt16 fill_type; // 20
-        UInt16 pad_22; // 22
-        UInt32 pad_24; // 24
-    };
-    STATIC_ASSERT(sizeof(Alias_Base_t) == 0x28);
-
-    class Alias_Reference_t : public Alias_Base_t {
-    public:
-        enum {
-            kTypeID = kFormType_ReferenceAlias
-        };
-
-        struct Forced_Fill {
-            Reference_Handle_t ref_handle; // this never seems to be there...
-        };
-        STATIC_ASSERT(sizeof(Forced_Fill) == 0x4);
-
-        union Fill_u {
-            UInt64 padding[3];
-            Forced_Fill forced;
-        };
-        STATIC_ASSERT(sizeof(Fill_u) == 0x18);
-
-        virtual ~Alias_Reference_t(); // 00
-        virtual bool Load(TESFile* file) override; // 01
-        virtual void Item(TESForm* form) override; // 02
-        virtual String_t Type() override; // 03
-
-        Fill_u fill; // 28
-        void* conditions; // 40
-    };
-    STATIC_ASSERT(sizeof(Alias_Reference_t) == 0x48);
-
-    class Actor_Base_Data_t : public BaseFormComponent {
-    public:
-        enum Flags : UInt32 {
-            FLAG_FEMALE = 1 << 0,
-            FLAG_ESSENTIAL = 1 << 1,
-            FLAG_FACE_PRESET = 1 << 2,
-            FLAG_RESPAWNS = 1 << 3,
-            FLAG_AUTO_STATS = 1 << 4,
-            FLAG_UNIQUE = 1 << 5
-            // ...
-        };
-
-        UInt32 flags; // 08
-
-        Bool_t Is_Unique()
-        {
-            return (flags & FLAG_UNIQUE) != 0;
-        }
     };
 
     class Scripts : public IForEachScriptObjectFunctor
