@@ -41,6 +41,9 @@ string              p_str_arg_race              =      ""
 string              p_str_view_race             = " Any "
 int                 p_option_race               =      -1
 
+string              p_str_arg_search            =      ""
+int                 p_option_search             =      -1
+
 int                 p_int_arg_style             =       0
 string              p_str_view_style            = " Any "
 int                 p_option_style              =      -1
@@ -57,9 +60,6 @@ int                 p_int_arg_rating            =      -1
 string              p_str_view_rating           = " Any "
 int                 p_option_rating             =      -1
 
-string              p_str_arg_search            =      ""
-int                 p_option_search             =      -1
-
 int                 p_int_alive_dead            =       0
 int                 p_option_is_alive           =      -1
 int                 p_option_is_dead            =      -1
@@ -68,17 +68,17 @@ int                 p_int_original_clone        =       0
 int                 p_option_is_original        =      -1
 int                 p_option_is_clone           =      -1
 
-int                 p_int_follower              =       0
-int                 p_option_is_follower        =      -1
-int                 p_option_isnt_follower      =      -1
+int                 p_int_unique_generic        =       0
+int                 p_option_is_unique          =      -1
+int                 p_option_is_generic         =      -1
+
+int                 p_int_mobile_immobile       =       0
+int                 p_option_is_mobile          =      -1
+int                 p_option_is_immobile        =      -1
 
 int                 p_int_settler               =       0
 int                 p_option_is_settler         =      -1
 int                 p_option_isnt_settler       =      -1
-
-int                 p_int_immobile              =       0
-int                 p_option_is_immobile        =      -1
-int                 p_option_isnt_immobile      =      -1
 
 int                 p_int_thrall                =       0
 int                 p_option_is_thrall          =      -1
@@ -95,6 +95,18 @@ int                 p_option_isnt_mannequin     =      -1
 int                 p_int_reanimated            =       0
 int                 p_option_is_reanimated      =      -1
 int                 p_option_isnt_reanimated    =      -1
+
+int                 p_int_follower              =       0
+int                 p_option_is_follower        =      -1
+int                 p_option_isnt_follower      =      -1
+
+int                 p_int_sneak                 =       0
+int                 p_option_is_sneak           =      -1
+int                 p_option_isnt_sneak         =      -1
+
+int                 p_int_saddler               =       0
+int                 p_option_is_saddler         =      -1
+int                 p_option_isnt_saddler       =      -1
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
@@ -153,14 +165,14 @@ function f_Build_Page()
     p_option_is_original = MCM.AddToggleOption(" Is Original ", p_int_original_clone == 1)
     p_option_is_clone = MCM.AddToggleOption(" Is Clone ", p_int_original_clone == -1)
 
-    p_option_is_follower = MCM.AddToggleOption(" Is Follower ", p_int_follower == 1)
-    p_option_isnt_follower = MCM.AddToggleOption(" Isnt Follower ", p_int_follower == -1)
+    p_option_is_unique = MCM.AddToggleOption(" Is Unique ", p_int_unique_generic == 1)
+    p_option_is_generic = MCM.AddToggleOption(" Is Generic ", p_int_unique_generic == -1)
+
+    p_option_is_mobile = MCM.AddToggleOption(" Is Mobile ", p_int_mobile_immobile == 1)
+    p_option_is_immobile = MCM.AddToggleOption(" Is Immobile ", p_int_mobile_immobile == -1)
 
     p_option_is_settler = MCM.AddToggleOption(" Is Settler ", p_int_settler == 1)
     p_option_isnt_settler = MCM.AddToggleOption(" Isnt Settler ", p_int_settler == -1)
-
-    p_option_is_immobile = MCM.AddToggleOption(" Is Immobile ", p_int_immobile == 1)
-    p_option_isnt_immobile = MCM.AddToggleOption(" Isnt Immobile ", p_int_immobile == -1)
 
     p_option_is_thrall = MCM.AddToggleOption(" Is Thrall ", p_int_thrall == 1)
     p_option_isnt_thrall = MCM.AddToggleOption(" Isnt Thrall ", p_int_thrall == -1)
@@ -173,6 +185,15 @@ function f_Build_Page()
 
     p_option_is_reanimated= MCM.AddToggleOption(" Is Reanimated ", p_int_reanimated == 1)
     p_option_isnt_reanimated = MCM.AddToggleOption(" Isnt Reanimated ", p_int_reanimated == -1)
+
+    p_option_is_follower = MCM.AddToggleOption(" Is Follower ", p_int_follower == 1)
+    p_option_isnt_follower = MCM.AddToggleOption(" Isnt Follower ", p_int_follower == -1)
+
+    p_option_is_sneak = MCM.AddToggleOption(" Is Sneak ", p_int_sneak == 1)
+    p_option_isnt_sneak = MCM.AddToggleOption(" Isnt Sneak ", p_int_sneak == -1)
+
+    p_option_is_saddler = MCM.AddToggleOption(" Is Saddler ", p_int_saddler == 1)
+    p_option_isnt_saddler = MCM.AddToggleOption(" Isnt Saddler ", p_int_saddler == -1)
 
 endFunction
 
@@ -191,165 +212,99 @@ function f_On_Option_Select(int id_option)
 
     ; Alive/Dead
     elseIf id_option == p_option_is_alive
-        if p_int_alive_dead == 1
-            p_int_alive_dead = 0
-        else
-            p_int_alive_dead = 1
-        endIf
-        MCM.SetToggleOptionValue(p_option_is_alive, p_int_alive_dead == 1, MCM.DONT_UPDATE)
-        MCM.SetToggleOptionValue(p_option_is_dead, p_int_alive_dead == -1, MCM.DO_UPDATE)
+        p_int_alive_dead = p_Toggle_Between(p_int_alive_dead, 1, 0)
+        p_Update_Alive_Dead()
     elseIf id_option == p_option_is_dead
-        if p_int_alive_dead == -1
-            p_int_alive_dead = 0
-        else
-            p_int_alive_dead = -1
-        endIf
-        MCM.SetToggleOptionValue(p_option_is_alive, p_int_alive_dead == 1, MCM.DONT_UPDATE)
-        MCM.SetToggleOptionValue(p_option_is_dead, p_int_alive_dead == -1, MCM.DO_UPDATE)
+        p_int_alive_dead = p_Toggle_Between(p_int_alive_dead, -1, 0)
+        p_Update_Alive_Dead()
 
     ; Original/Clone
     elseIf id_option == p_option_is_original
-        if p_int_original_clone == 1
-            p_int_original_clone = 0
-        else
-            p_int_original_clone = 1
-        endIf
-        MCM.SetToggleOptionValue(p_option_is_original, p_int_original_clone == 1, MCM.DONT_UPDATE)
-        MCM.SetToggleOptionValue(p_option_is_clone, p_int_original_clone == -1, MCM.DO_UPDATE)
+        p_int_original_clone = p_Toggle_Between(p_int_original_clone, 1, 0)
+        p_Update_Original_Clone()
     elseIf id_option == p_option_is_clone
-        if p_int_original_clone == -1
-            p_int_original_clone = 0
-        else
-            p_int_original_clone = -1
-        endIf
-        MCM.SetToggleOptionValue(p_option_is_original, p_int_original_clone == 1, MCM.DONT_UPDATE)
-        MCM.SetToggleOptionValue(p_option_is_clone, p_int_original_clone == -1, MCM.DO_UPDATE)
+        p_int_original_clone = p_Toggle_Between(p_int_original_clone, -1, 0)
+        p_Update_Original_Clone()
 
-    ; Follower
-    elseIf id_option == p_option_is_follower
-        if p_int_follower == 1
-            p_int_follower = 0
-        else
-            p_int_follower = 1
-        endIf
-        MCM.SetToggleOptionValue(p_option_is_follower, p_int_follower == 1, MCM.DONT_UPDATE)
-        MCM.SetToggleOptionValue(p_option_isnt_follower, p_int_follower == -1, MCM.DO_UPDATE)
-    elseIf id_option == p_option_isnt_follower
-        if p_int_follower == -1
-            p_int_follower = 0
-        else
-            p_int_follower = -1
-        endIf
-        MCM.SetToggleOptionValue(p_option_is_follower, p_int_follower == 1, MCM.DONT_UPDATE)
-        MCM.SetToggleOptionValue(p_option_isnt_follower, p_int_follower == -1, MCM.DO_UPDATE)
+    ; Unique/Generic
+    elseIf id_option == p_option_is_unique
+        p_int_unique_generic = p_Toggle_Between(p_int_unique_generic, 1, 0)
+        p_Update_Unique_Generic()
+    elseIf id_option == p_option_is_generic
+        p_int_unique_generic = p_Toggle_Between(p_int_unique_generic, -1, 0)
+        p_Update_Unique_Generic()
+
+    ; Mobile/Immobile
+    elseIf id_option == p_option_is_mobile
+        p_int_mobile_immobile = p_Toggle_Between(p_int_mobile_immobile, 1, 0)
+        p_Update_Mobile_Immobile()
+    elseIf id_option == p_option_is_immobile
+        p_int_mobile_immobile = p_Toggle_Between(p_int_mobile_immobile, -1, 0)
+        p_Update_Mobile_Immobile()
 
     ; Settler
     elseIf id_option == p_option_is_settler
-        if p_int_settler == 1
-            p_int_settler = 0
-        else
-            p_int_settler = 1
-        endIf
-        MCM.SetToggleOptionValue(p_option_is_settler, p_int_settler == 1, MCM.DONT_UPDATE)
-        MCM.SetToggleOptionValue(p_option_isnt_settler, p_int_settler == -1, MCM.DO_UPDATE)
+        p_int_settler = p_Toggle_Between(p_int_settler, 1, 0)
+        p_Update_Settler()
     elseIf id_option == p_option_isnt_settler
-        if p_int_settler == -1
-            p_int_settler = 0
-        else
-            p_int_settler = -1
-        endIf
-        MCM.SetToggleOptionValue(p_option_is_settler, p_int_settler == 1, MCM.DONT_UPDATE)
-        MCM.SetToggleOptionValue(p_option_isnt_settler, p_int_settler == -1, MCM.DO_UPDATE)
-
-    ; Immobile
-    elseIf id_option == p_option_is_immobile
-        if p_int_immobile == 1
-            p_int_immobile = 0
-        else
-            p_int_immobile = 1
-        endIf
-        MCM.SetToggleOptionValue(p_option_is_immobile, p_int_immobile == 1, MCM.DONT_UPDATE)
-        MCM.SetToggleOptionValue(p_option_isnt_immobile, p_int_immobile == -1, MCM.DO_UPDATE)
-    elseIf id_option == p_option_isnt_immobile
-        if p_int_immobile == -1
-            p_int_immobile = 0
-        else
-            p_int_immobile = -1
-        endIf
-        MCM.SetToggleOptionValue(p_option_is_immobile, p_int_immobile == 1, MCM.DONT_UPDATE)
-        MCM.SetToggleOptionValue(p_option_isnt_immobile, p_int_immobile == -1, MCM.DO_UPDATE)
+        p_int_settler = p_Toggle_Between(p_int_settler, -1, 0)
+        p_Update_Settler()
 
     ; Thrall
     elseIf id_option == p_option_is_thrall
-        if p_int_thrall == 1
-            p_int_thrall = 0
-        else
-            p_int_thrall = 1
-        endIf
-        MCM.SetToggleOptionValue(p_option_is_thrall, p_int_thrall == 1, MCM.DONT_UPDATE)
-        MCM.SetToggleOptionValue(p_option_isnt_thrall, p_int_thrall == -1, MCM.DO_UPDATE)
+        p_int_thrall = p_Toggle_Between(p_int_thrall, 1, 0)
+        p_Update_Thrall()
     elseIf id_option == p_option_isnt_thrall
-        if p_int_thrall == -1
-            p_int_thrall = 0
-        else
-            p_int_thrall = -1
-        endIf
-        MCM.SetToggleOptionValue(p_option_is_thrall, p_int_thrall == 1, MCM.DONT_UPDATE)
-        MCM.SetToggleOptionValue(p_option_isnt_thrall, p_int_thrall == -1, MCM.DO_UPDATE)
+        p_int_thrall = p_Toggle_Between(p_int_thrall, -1, 0)
+        p_Update_Thrall()
 
     ; Paralyzed
     elseIf id_option == p_option_is_paralyzed
-        if p_int_paralyzed == 1
-            p_int_paralyzed = 0
-        else
-            p_int_paralyzed = 1
-        endIf
-        MCM.SetToggleOptionValue(p_option_is_paralyzed, p_int_paralyzed == 1, MCM.DONT_UPDATE)
-        MCM.SetToggleOptionValue(p_option_isnt_paralyzed, p_int_paralyzed == -1, MCM.DO_UPDATE)
+        p_int_paralyzed = p_Toggle_Between(p_int_paralyzed, 1, 0)
+        p_Update_Paralyzed()
     elseIf id_option == p_option_isnt_paralyzed
-        if p_int_paralyzed == -1
-            p_int_paralyzed = 0
-        else
-            p_int_paralyzed = -1
-        endIf
-        MCM.SetToggleOptionValue(p_option_is_paralyzed, p_int_paralyzed == 1, MCM.DONT_UPDATE)
-        MCM.SetToggleOptionValue(p_option_isnt_paralyzed, p_int_paralyzed == -1, MCM.DO_UPDATE)
+        p_int_paralyzed = p_Toggle_Between(p_int_paralyzed, -1, 0)
+        p_Update_Paralyzed()
 
     ; Mannequin
     elseIf id_option == p_option_is_mannequin
-        if p_int_mannequin == 1
-            p_int_mannequin = 0
-        else
-            p_int_mannequin = 1
-        endIf
-        MCM.SetToggleOptionValue(p_option_is_mannequin, p_int_mannequin == 1, MCM.DONT_UPDATE)
-        MCM.SetToggleOptionValue(p_option_isnt_mannequin, p_int_mannequin == -1, MCM.DO_UPDATE)
+        p_int_mannequin = p_Toggle_Between(p_int_mannequin, 1, 0)
+        p_Update_Mannequin()
     elseIf id_option == p_option_isnt_mannequin
-        if p_int_mannequin == -1
-            p_int_mannequin = 0
-        else
-            p_int_mannequin = -1
-        endIf
-        MCM.SetToggleOptionValue(p_option_is_mannequin, p_int_mannequin == 1, MCM.DONT_UPDATE)
-        MCM.SetToggleOptionValue(p_option_isnt_mannequin, p_int_mannequin == -1, MCM.DO_UPDATE)
+        p_int_mannequin = p_Toggle_Between(p_int_mannequin, -1, 0)
+        p_Update_Mannequin()
 
     ; Reanimated
     elseIf id_option == p_option_is_reanimated
-        if p_int_reanimated == 1
-            p_int_reanimated = 0
-        else
-            p_int_reanimated = 1
-        endIf
-        MCM.SetToggleOptionValue(p_option_is_reanimated, p_int_reanimated == 1, MCM.DONT_UPDATE)
-        MCM.SetToggleOptionValue(p_option_isnt_reanimated, p_int_reanimated == -1, MCM.DO_UPDATE)
+        p_int_reanimated = p_Toggle_Between(p_int_reanimated, 1, 0)
+        p_Update_Reanimated()
     elseIf id_option == p_option_isnt_reanimated
-        if p_int_reanimated == -1
-            p_int_reanimated = 0
-        else
-            p_int_reanimated = -1
-        endIf
-        MCM.SetToggleOptionValue(p_option_is_reanimated, p_int_reanimated == 1, MCM.DONT_UPDATE)
-        MCM.SetToggleOptionValue(p_option_isnt_reanimated, p_int_reanimated == -1, MCM.DO_UPDATE)
+        p_int_reanimated = p_Toggle_Between(p_int_reanimated, -1, 0)
+        p_Update_Reanimated()
+
+    ; Follower
+    elseIf id_option == p_option_is_follower
+        p_int_follower = p_Toggle_Between(p_int_follower, 1, 0)
+        p_Update_Follower()
+    elseIf id_option == p_option_isnt_follower
+        p_int_follower = p_Toggle_Between(p_int_follower, -1, 0)
+        p_Update_Follower()
+
+    ; Sneak
+    elseIf id_option == p_option_is_sneak
+        p_int_sneak = p_Toggle_Between(p_int_sneak, 1, 0)
+        p_Update_Sneak()
+    elseIf id_option == p_option_isnt_sneak
+        p_int_sneak = p_Toggle_Between(p_int_sneak, -1, 0)
+        p_Update_Sneak()
+
+    ; Saddler
+    elseIf id_option == p_option_is_saddler
+        p_int_saddler = p_Toggle_Between(p_int_saddler, 1, 0)
+        p_Update_Saddler()
+    elseIf id_option == p_option_isnt_saddler
+        p_int_saddler = p_Toggle_Between(p_int_saddler, -1, 0)
+        p_Update_Saddler()
 
     endIf
 endFunction
@@ -644,18 +599,18 @@ function f_On_Option_Highlight(int id_option)
         MCM.SetInfoText("Find members who are originals, as opposed to clones.")
     elseIf id_option == p_option_is_clone
         MCM.SetInfoText("Find members who are clones, as opposed to originals.")
-    elseIf id_option == p_option_is_follower
-        MCM.SetInfoText("Find members who are followers.")
-    elseIf id_option == p_option_isnt_follower
-        MCM.SetInfoText("Find members who are not followers.")
+    elseIf id_option == p_option_is_unique
+        MCM.SetInfoText("Find members who are unique.")
+    elseIf id_option == p_option_is_generic
+        MCM.SetInfoText("Find members who are generic.")
+    elseIf id_option == p_option_is_mobile
+        MCM.SetInfoText("Find members who are mobile.")
+    elseIf id_option == p_option_is_immobile
+        MCM.SetInfoText("Find members who are immobile.")
     elseIf id_option == p_option_is_settler
         MCM.SetInfoText("Find members who are settlers.")
     elseIf id_option == p_option_isnt_settler
         MCM.SetInfoText("Find members who are not settlers.")
-    elseIf id_option == p_option_is_immobile
-        MCM.SetInfoText("Find members who are immobile.")
-    elseIf id_option == p_option_isnt_immobile
-        MCM.SetInfoText("Find members who are not immobile.")
     elseIf id_option == p_option_is_thrall
         MCM.SetInfoText("Find members who are thralls.")
     elseIf id_option == p_option_isnt_thrall
@@ -672,6 +627,18 @@ function f_On_Option_Highlight(int id_option)
         MCM.SetInfoText("Find members who are reanimated.")
     elseIf id_option == p_option_isnt_reanimated
         MCM.SetInfoText("Find members who are not reanimated.")
+    elseIf id_option == p_option_is_follower
+        MCM.SetInfoText("Find members who are followers.")
+    elseIf id_option == p_option_isnt_follower
+        MCM.SetInfoText("Find members who are not followers.")
+    elseIf id_option == p_option_is_sneak
+        MCM.SetInfoText("Find members who are sneaking followers.")
+    elseIf id_option == p_option_isnt_sneak
+        MCM.SetInfoText("Find members who are not sneaking followers.")
+    elseIf id_option == p_option_is_saddler
+        MCM.SetInfoText("Find members who are horse riding followers.")
+    elseIf id_option == p_option_isnt_saddler
+        MCM.SetInfoText("Find members who are not horse riding followers.")
 
     endIf
 endFunction
@@ -701,6 +668,74 @@ function f_On_Option_Keymap_Change(int id_option, int code_key, string str_confl
 endFunction
 
 ; Private Methods
+int function p_Toggle_Between(int subject, int a, int b)
+    if subject == a
+        return b
+    else
+        return a
+    endIf
+endFunction
+
+function p_Update_Alive_Dead()
+    MCM.SetToggleOptionValue(p_option_is_alive, p_int_alive_dead == 1, MCM.DONT_UPDATE)
+    MCM.SetToggleOptionValue(p_option_is_dead, p_int_alive_dead == -1, MCM.DO_UPDATE)
+endFunction
+
+function p_Update_Original_Clone()
+    MCM.SetToggleOptionValue(p_option_is_original, p_int_original_clone == 1, MCM.DONT_UPDATE)
+    MCM.SetToggleOptionValue(p_option_is_clone, p_int_original_clone == -1, MCM.DO_UPDATE)
+endFunction
+
+function p_Update_Unique_Generic()
+    MCM.SetToggleOptionValue(p_option_is_unique, p_int_unique_generic == 1, MCM.DONT_UPDATE)
+    MCM.SetToggleOptionValue(p_option_is_generic, p_int_unique_generic == -1, MCM.DO_UPDATE)
+endFunction
+
+function p_Update_Mobile_Immobile()
+    MCM.SetToggleOptionValue(p_option_is_mobile, p_int_mobile_immobile == 1, MCM.DONT_UPDATE)
+    MCM.SetToggleOptionValue(p_option_is_immobile, p_int_mobile_immobile == -1, MCM.DO_UPDATE)
+endFunction
+
+function p_Update_Settler()
+    MCM.SetToggleOptionValue(p_option_is_settler, p_int_settler == 1, MCM.DONT_UPDATE)
+    MCM.SetToggleOptionValue(p_option_isnt_settler, p_int_settler == -1, MCM.DO_UPDATE)
+endFunction
+
+function p_Update_Thrall()
+    MCM.SetToggleOptionValue(p_option_is_thrall, p_int_thrall == 1, MCM.DONT_UPDATE)
+    MCM.SetToggleOptionValue(p_option_isnt_thrall, p_int_thrall == -1, MCM.DO_UPDATE)
+endFunction
+
+function p_Update_Paralyzed()
+    MCM.SetToggleOptionValue(p_option_is_paralyzed, p_int_paralyzed == 1, MCM.DONT_UPDATE)
+    MCM.SetToggleOptionValue(p_option_isnt_paralyzed, p_int_paralyzed == -1, MCM.DO_UPDATE)
+endFunction
+
+function p_Update_Mannequin()
+    MCM.SetToggleOptionValue(p_option_is_mannequin, p_int_mannequin == 1, MCM.DONT_UPDATE)
+    MCM.SetToggleOptionValue(p_option_isnt_mannequin, p_int_mannequin == -1, MCM.DO_UPDATE)
+endFunction
+
+function p_Update_Reanimated()
+    MCM.SetToggleOptionValue(p_option_is_reanimated, p_int_reanimated == 1, MCM.DONT_UPDATE)
+    MCM.SetToggleOptionValue(p_option_isnt_reanimated, p_int_reanimated == -1, MCM.DO_UPDATE)
+endFunction
+
+function p_Update_Follower()
+    MCM.SetToggleOptionValue(p_option_is_follower, p_int_follower == 1, MCM.DONT_UPDATE)
+    MCM.SetToggleOptionValue(p_option_isnt_follower, p_int_follower == -1, MCM.DO_UPDATE)
+endFunction
+
+function p_Update_Sneak()
+    MCM.SetToggleOptionValue(p_option_is_sneak, p_int_sneak == 1, MCM.DONT_UPDATE)
+    MCM.SetToggleOptionValue(p_option_isnt_sneak, p_int_sneak == -1, MCM.DO_UPDATE)
+endFunction
+
+function p_Update_Saddler()
+    MCM.SetToggleOptionValue(p_option_is_saddler, p_int_saddler == 1, MCM.DONT_UPDATE)
+    MCM.SetToggleOptionValue(p_option_isnt_saddler, p_int_saddler == -1, MCM.DO_UPDATE)
+endFunction
+
 function p_Concat_Filter_String_Param(string str_param)
     if p_str_view_filter == ""
         p_str_view_filter = str_param
@@ -726,7 +761,7 @@ function p_Goto_Filter_Members()
         p_Concat_Filter_String_Param(p_str_view_vitality)
     endIf
     if p_int_arg_outfit2 < 0
-        p_Concat_Filter_String_Param(p_str_view_outfit2)
+        p_Concat_Filter_String_Param(p_str_view_outfit2 + " Outfit")
     endIf
     if p_int_arg_rating > -1
         p_Concat_Filter_String_Param(p_str_view_rating)
@@ -751,12 +786,20 @@ function p_Goto_Filter_Members()
         p_Concat_Filter_String_Param("Clone")
     endIf
 
-    if p_int_follower == 1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_FOLLOWER")
-        p_Concat_Filter_String_Param("Follower")
-    elseIf p_int_follower == -1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_FOLLOWER")
-        p_Concat_Filter_String_Param("!Follower")
+    if p_int_unique_generic == 1
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_UNIQUE")
+        p_Concat_Filter_String_Param("Unique")
+    elseIf p_int_unique_generic == -1
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_GENERIC")
+        p_Concat_Filter_String_Param("Generic")
+    endIf
+
+    if p_int_mobile_immobile == 1
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_MOBILE")
+        p_Concat_Filter_String_Param("Mobile")
+    elseIf p_int_mobile_immobile == -1
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_IMMOBILE")
+        p_Concat_Filter_String_Param("Immobile")
     endIf
 
     if p_int_settler == 1
@@ -765,14 +808,6 @@ function p_Goto_Filter_Members()
     elseIf p_int_settler == -1
         p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_SETTLER")
         p_Concat_Filter_String_Param("!Settler")
-    endIf
-
-    if p_int_immobile == 1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_IMMOBILE")
-        p_Concat_Filter_String_Param("Immobile")
-    elseIf p_int_immobile == -1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_IMMOBILE")
-        p_Concat_Filter_String_Param("!Immobile")
     endIf
 
     if p_int_thrall == 1
@@ -805,6 +840,30 @@ function p_Goto_Filter_Members()
     elseIf p_int_reanimated == -1
         p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_REANIMATED")
         p_Concat_Filter_String_Param("!Reanimated")
+    endIf
+
+    if p_int_follower == 1
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_FOLLOWER")
+        p_Concat_Filter_String_Param("Follower")
+    elseIf p_int_follower == -1
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_FOLLOWER")
+        p_Concat_Filter_String_Param("!Follower")
+    endIf
+
+    if p_int_sneak == 1
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_SNEAK")
+        p_Concat_Filter_String_Param("Sneak")
+    elseIf p_int_sneak == -1
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_SNEAK")
+        p_Concat_Filter_String_Param("!Sneak")
+    endIf
+
+    if p_int_saddler == 1
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_SADDLER")
+        p_Concat_Filter_String_Param("Saddler")
+    elseIf p_int_saddler == -1
+        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_SADDLER")
+        p_Concat_Filter_String_Param("!Saddler")
     endIf
 
     if p_str_view_filter == ""
