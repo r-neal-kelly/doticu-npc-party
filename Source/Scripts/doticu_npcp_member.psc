@@ -118,6 +118,13 @@ float                   p_prev_morality             =   0.0
 ; Native Methods
 Actor function Actor() native
 int function ID() native
+
+bool function Has_Token(MiscObject token, int count = 1) native
+function Token(MiscObject token, int count = 1) native
+function Untoken(MiscObject token) native
+
+function p_Vitalize() native
+
 function Log_Variable_Infos() native
 
 ; Friend Methods
@@ -641,35 +648,35 @@ p_Lock()
 p_Unlock()
 endFunction
 
-function p_Vitalize()
+;/function p_Vitalize()
 p_Lock()
 
     if p_code_vitality == CODES.IS_MORTAL
-        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_VITALITY_MORTAL)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_PROTECTED)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_ESSENTIAL)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_INVULNERABLE)
+        Token(CONSTS.TOKEN_VITALITY_MORTAL)
+        Untoken(CONSTS.TOKEN_VITALITY_PROTECTED)
+        Untoken(CONSTS.TOKEN_VITALITY_ESSENTIAL)
+        Untoken(CONSTS.TOKEN_VITALITY_INVULNERABLE)
     elseIf p_code_vitality == CODES.IS_PROTECTED
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_MORTAL)
-        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_VITALITY_PROTECTED)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_ESSENTIAL)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_INVULNERABLE)
+        Untoken(CONSTS.TOKEN_VITALITY_MORTAL)
+        Token(CONSTS.TOKEN_VITALITY_PROTECTED)
+        Untoken(CONSTS.TOKEN_VITALITY_ESSENTIAL)
+        Untoken(CONSTS.TOKEN_VITALITY_INVULNERABLE)
     elseIf p_code_vitality == CODES.IS_ESSENTIAL
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_MORTAL)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_PROTECTED)
-        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_VITALITY_ESSENTIAL)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_INVULNERABLE)
+        Untoken(CONSTS.TOKEN_VITALITY_MORTAL)
+        Untoken(CONSTS.TOKEN_VITALITY_PROTECTED)
+        Token(CONSTS.TOKEN_VITALITY_ESSENTIAL)
+        Untoken(CONSTS.TOKEN_VITALITY_INVULNERABLE)
     elseIf p_code_vitality == CODES.IS_INVULNERABLE
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_MORTAL)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_PROTECTED)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_ESSENTIAL)
-        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_VITALITY_INVULNERABLE)
+        Untoken(CONSTS.TOKEN_VITALITY_MORTAL)
+        Untoken(CONSTS.TOKEN_VITALITY_PROTECTED)
+        Untoken(CONSTS.TOKEN_VITALITY_ESSENTIAL)
+        Token(CONSTS.TOKEN_VITALITY_INVULNERABLE)
     endIf
 
     p_ref_actor.EvaluatePackage()
 
 p_Unlock()
-endFunction
+endFunction/;
 
 function p_Unvitalize()
 p_Lock()

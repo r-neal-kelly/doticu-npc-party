@@ -766,7 +766,7 @@ namespace doticu_npcp { namespace Actor2 {
         return actor && Get_Mount(actor) != nullptr;
     }
 
-    Papyrus::Int_t Sex(Actor_t* actor)
+    Int_t Sex(Actor_t* actor)
     {
         if (actor && actor->baseForm) {
             return CALL_MEMBER_FN(static_cast<TESNPC*>(actor->baseForm), GetSex)();
@@ -781,6 +781,17 @@ namespace doticu_npcp { namespace Actor2 {
             return actor->race->fullName.name;
         } else {
             return "";
+        }
+    }
+
+    void Evaluate_Package(Actor_t* actor, bool unk_01, bool unk_02)
+    {
+        using func_type = void(*)(Actor_t*, bool, bool);
+        static func_type func = reinterpret_cast<func_type>
+            (RelocationManager::s_baseAddr + Offsets::Actor::EVALUATE_PACKAGE);
+
+        if (actor) {
+            return func(actor, unk_01, unk_02);
         }
     }
 

@@ -79,6 +79,7 @@ I hope that this mod changes your follower experience for the better. My goal wa
 - cumbrianlad for a [discussion on persistent references](https://forums.nexusmods.com/index.php?/topic/8082738-is-512-persistent-actor-references-bad/), and how this can take a toll on the player's gameplay.
 - Ian Patterson of the SKSE Team for telling me how to save outfits on a form in the SKSE plugin.
 - Ryan-rsm-McKenzie of [CommonLibSSE](https://github.com/Ryan-rsm-McKenzie/CommonLibSSE) for decompiling useful parts of the SkyrimSE engine.
+- meh321 of [Address Library for SKSE Plugins](https://www.nexusmods.com/skyrimspecialedition/mods/32444) for making it easy to get the executable's offsets.
 - [Creation Kit Wiki](https://www.creationkit.com/index.php?title=Main_Page) for the wealth of knowledge with which this mod was made.
 - [GitHub](https://github.com) for giving my codebase a place to live online.
 - [NexusMods](https://www.nexusmods.com/) for such a great site, and for hosting my mod!

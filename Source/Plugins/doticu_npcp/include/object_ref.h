@@ -43,6 +43,11 @@ namespace doticu_npcp { namespace Object_Ref {
     bool Is_Near_Player(TESObjectREFR *obj, float max_radius = 4096);
 
     Reference_t* From_Handle(Reference_Handle_t handle);
+
+    bool Has_Token(Reference_t* ref, Form_t* token, Int_t count = 1);
+    void Token(Reference_t* ref, Form_t* token, Int_t count = 1);
+    void Untoken(Reference_t* ref, Form_t* token);
+
 }}
 
 namespace doticu_npcp { namespace Object_Ref { namespace Exports {

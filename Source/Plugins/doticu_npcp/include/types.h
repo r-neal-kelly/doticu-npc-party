@@ -22,6 +22,7 @@ namespace doticu_npcp {
     typedef int64_t                 s64;
     typedef int64_t                 idx_t;
 
+    typedef SInt32                  Int_t;
     typedef BSFixedString           String_t;
 
     typedef UInt32                  Form_Type_t;
@@ -31,6 +32,7 @@ namespace doticu_npcp {
     typedef TESQuest                Quest_t;
     typedef TESObjectCELL           Cell_t;
     typedef TESObjectREFR           Reference_t;
+    typedef TESObjectMISC           Misc_t;
 
     typedef Actor                   Actor_t;
     typedef TESNPC                  Actor_Base_t;
@@ -65,7 +67,7 @@ namespace doticu_npcp { namespace Papyrus {
     typedef IObjectHandlePolicy     Policy_t;
     typedef VMScriptInstance        Script_t;
     //typedef BSFixedString           String_t;
-    typedef SInt32                  Int_t;
+    //typedef SInt32                  Int_t;
     typedef float                   Float_t;
     typedef bool                    Bool_t;
     typedef UInt64                  Type_e;

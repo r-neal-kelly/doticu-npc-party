@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "offsets.h"
 #include "types.h"
 
 namespace doticu_npcp { namespace Actor2 {
@@ -47,8 +48,10 @@ namespace doticu_npcp { namespace Actor2 {
     Actor_t* Get_Mounted_Actor(Actor_t* horse);
     bool Is_On_Mount(Actor_t* actor);
 
-    Papyrus::Int_t Sex(Actor_t* actor);
+    Int_t Sex(Actor_t* actor);
     String_t Race(Actor_t* actor);
+
+    void Evaluate_Package(Actor_t* actor, bool unk_01 = false, bool unk_02 = false);
 }}
 
 namespace doticu_npcp { namespace Actor2 { namespace Exports {

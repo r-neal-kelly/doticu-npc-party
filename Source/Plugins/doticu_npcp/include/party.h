@@ -52,6 +52,27 @@ namespace doticu_npcp { namespace Party {
         };
     }
 
+    // I want to update these before going out of beta
+    namespace Style_e {
+        enum : Int_t {
+            DEFAULT = -380,
+            WARRIOR = -381,
+            MAGE = -382,
+            ARCHER = -383,
+            COWARD = -384
+        };
+    }
+
+    // I would like to change these numbers before going out of beta.
+    namespace Vitality_e {
+        enum : Int_t {
+            MORTAL = -303,
+            PROTECTED = -304,
+            ESSENTIAL = -305,
+            INVULNERABLE = -306
+        };
+    }
+
     class Aliases_t : public Quest_t {
     public:
         template <typename Alias>
@@ -199,6 +220,14 @@ namespace doticu_npcp { namespace Party {
                                    Vector_t<Int_t>* ints = nullptr,
                                    Int_t flags_1 = 0,
                                    Int_t flags_2 = 0);
+
+        // now we could queue up calls to doticu_npcp_member.
+        // but as much as possible, I want this behavior to be done
+        // here, and as little state as possible saved in scripts.
+        void Start_Display();
+        void Next_Display();
+        void Prev_Display();
+        void Stop_Display();
     };
 
     class Followers_t : public Aliases_t {
@@ -426,11 +455,21 @@ namespace doticu_npcp { namespace Party {
                     Bool_t is_bash,
                     Bool_t is_blocked);
 
+        bool Has_Token(Misc_t* token, Int_t count = 1);
+        void Token(Misc_t* token, Int_t count = 1);
+        void Untoken(Misc_t* token);
+
+        void Stylize();
+        void Vitalize();
+
         void Log_Variable_Infos();
     };
 
     class Follower_t : public Alias_t {
     public:
+        static constexpr Float_t MAX_SNEAK_SPEED = 160.0f;
+        static constexpr Float_t MAX_UNSNEAK_SPEED = 130.0f;
+
         static String_t Class_Name();
         static Class_Info_t* Class_Info();
 
@@ -490,6 +529,10 @@ namespace doticu_npcp { namespace Party {
         Bool_t Is_In_Interior_Cell();
         Bool_t Is_In_Exterior_Cell();
 
+        bool Has_Token(Misc_t* token, Int_t count = 1);
+        void Token(Misc_t* token, Int_t count = 1);
+        void Untoken(Misc_t* token);
+
         void Summon(float radius = 140.0f, float degree = 0.0);
         void Summon_Ahead(float radius = 140.0f);
         void Summon_Behind(float radius = 140.0f);
@@ -498,6 +541,8 @@ namespace doticu_npcp { namespace Party {
         void Saddle();
         void Level();
         void Unlevel();
+        void Sneak();
+        void Unsneak();
     };
 
     class Horse_t : public Alias_t {

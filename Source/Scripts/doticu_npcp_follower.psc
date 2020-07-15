@@ -52,11 +52,6 @@ Actor property ACTOR_PLAYER hidden
         return p_DATA.CONSTS.ACTOR_PLAYER
     endFunction
 endProperty
-float property MAX_SPEED_SNEAK hidden
-    float function Get()
-        return 160.0
-    endFunction
-endProperty
 float property MAX_SPEED_UNSNEAK hidden
     float function Get()
         return 130.0
@@ -87,6 +82,8 @@ int function ID() native
 
 function p_Level() native
 function p_Unlevel() native
+function p_Sneak() native
+function p_Unsneak() native
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA, Actor ref_actor)
@@ -290,30 +287,6 @@ p_Lock()
     p_ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, p_prev_relationship_rank)
 
     ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_FOLLOWER)
-
-    p_ref_actor.EvaluatePackage()
-
-p_Unlock()
-endFunction
-
-function p_Sneak()
-p_Lock()
-
-    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_FOLLOWER_SNEAK)
-
-    p_ref_actor.SetActorValue("SpeedMult", MAX_SPEED_SNEAK)
-
-    p_ref_actor.EvaluatePackage()
-
-p_Unlock()
-endFunction
-
-function p_Unsneak()
-p_Lock()
-
-    p_ref_actor.SetActorValue("SpeedMult", MAX_SPEED_UNSNEAK)
-
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_FOLLOWER_SNEAK)
 
     p_ref_actor.EvaluatePackage()
 

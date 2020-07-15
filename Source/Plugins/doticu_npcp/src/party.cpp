@@ -1721,19 +1721,11 @@ namespace doticu_npcp { namespace Party {
     {
         static const String_t kill_func = String_t("p_Kill");
 
-        // I would like to change these numbers before going out of beta.
-        enum {
-            IS_MORTAL = -303,
-            IS_PROTECTED = -304,
-            IS_ESSENTIAL = -305,
-            IS_INVULNERABLE = -306
-        };
-
         Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(Actor());
         if (value_owner && Is_Alive()) {
-            Int_t member_vitality = Vitality();
+            Int_t vitality = Vitality();
             if (value_owner->Get_Actor_Value(Actor_Value_t::HEALTH) <= 0.0) {
-                if (member_vitality == IS_MORTAL || member_vitality == IS_PROTECTED && attacker == *g_thePlayer) {
+                if (vitality == Vitality_e::MORTAL || vitality == Vitality_e::PROTECTED && attacker == *g_thePlayer) {
                     struct Args : public IFunctionArguments {
                         bool Copy(Output* output)
                         {
@@ -1743,9 +1735,61 @@ namespace doticu_npcp { namespace Party {
                     Handle_t handle(this);
                     handle.Registry()->QueueEvent(handle, &kill_func, &func_args);
                 }
-            } else if (member_vitality == IS_INVULNERABLE) {
+            } else if (vitality == Vitality_e::INVULNERABLE) {
                 value_owner->Restore_Actor_Value(Actor_Modifier_t::DAMAGE, Actor_Value_t::HEALTH, 1000000000.0f);
             }
+        }
+    }
+
+    bool Member_t::Has_Token(Misc_t* token, Int_t count)
+    {
+        return Object_Ref::Has_Token(Actor(), token, count);
+    }
+
+    void Member_t::Token(Misc_t* token, Int_t count)
+    {
+        Object_Ref::Token(Actor(), token, count);
+    }
+
+    void Member_t::Untoken(Misc_t* token)
+    {
+        Object_Ref::Untoken(Actor(), token);
+    }
+
+    void Member_t::Stylize()
+    {
+
+    }
+
+    void Member_t::Vitalize()
+    {
+        // ought to lock.
+
+        Actor_t* actor = Actor();
+        if (actor && Is_Created()) {
+            Int_t vitality = Vitality();
+            if (vitality == Vitality_e::MORTAL) {
+                Token(Consts::Mortal_Vitality_Token());
+                Untoken(Consts::Protected_Vitality_Token());
+                Untoken(Consts::Essential_Vitality_Token());
+                Untoken(Consts::Invulnerable_Vitality_Token());
+            } else if (vitality == Vitality_e::ESSENTIAL) {
+                Untoken(Consts::Mortal_Vitality_Token());
+                Untoken(Consts::Protected_Vitality_Token());
+                Token(Consts::Essential_Vitality_Token());
+                Untoken(Consts::Invulnerable_Vitality_Token());
+            } else if (vitality == Vitality_e::INVULNERABLE) {
+                Untoken(Consts::Mortal_Vitality_Token());
+                Untoken(Consts::Protected_Vitality_Token());
+                Untoken(Consts::Essential_Vitality_Token());
+                Token(Consts::Invulnerable_Vitality_Token());
+            } else /* Vitality_e::PROTECTED */ {
+                Untoken(Consts::Mortal_Vitality_Token());
+                Token(Consts::Protected_Vitality_Token());
+                Untoken(Consts::Essential_Vitality_Token());
+                Untoken(Consts::Invulnerable_Vitality_Token());
+            }
+            Actor2::Evaluate_Package(actor);
         }
     }
 
@@ -2138,6 +2182,21 @@ namespace doticu_npcp { namespace Party {
         return cell && Cell::Is_Exterior(cell);
     }
 
+    bool Follower_t::Has_Token(Misc_t* token, Int_t count)
+    {
+        return Object_Ref::Has_Token(Actor(), token, count);
+    }
+
+    void Follower_t::Token(Misc_t* token, Int_t count)
+    {
+        Object_Ref::Token(Actor(), token, count);
+    }
+
+    void Follower_t::Untoken(Misc_t* token)
+    {
+        Object_Ref::Untoken(Actor(), token);
+    }
+
     void Follower_t::Summon(float radius, float degree)
     {
         Actor_t* player_actor = *g_thePlayer;
@@ -2311,25 +2370,19 @@ namespace doticu_npcp { namespace Party {
                         speechcraft += modifier;
                     };
 
-                    // I want to update these before going out of beta
-                    enum {
-                        IS_WARRIOR = -381,
-                        IS_MAGE = -382,
-                        IS_ARCHER = -383
-                    };
                     const SInt32 follower_style = Style();
                     const float player_level_modded = player_level * player_modifier;
-                    if (follower_style == IS_WARRIOR) {
+                    if (follower_style == Style_e::WARRIOR) {
                         health += player_level * 4; // find a better equation
                         Mod_Strength(+player_level_modded);
                         Mod_Intelligence(-player_level_modded);
                         Mod_Dexterity(-player_level_modded);
-                    } else if (follower_style == IS_MAGE) {
+                    } else if (follower_style == Style_e::MAGE) {
                         magicka += player_level * 4; // find a better equation
                         Mod_Strength(-player_level_modded);
                         Mod_Intelligence(+player_level_modded);
                         Mod_Dexterity(-player_level_modded);
-                    } else if (follower_style == IS_ARCHER) {
+                    } else if (follower_style == Style_e::ARCHER) {
                         stamina += player_level * 4; // find a better equation
                         Mod_Strength(-player_level_modded);
                         Mod_Intelligence(-player_level_modded);
@@ -2490,6 +2543,32 @@ namespace doticu_npcp { namespace Party {
         RESET_VALUE("Speechcraft");
 
         #undef RESET_VALUE
+    }
+
+    void Follower_t::Sneak()
+    {
+        Actor_t* actor = Actor();
+        if (actor && Is_Created()) {
+            Actor_Value_Owner_t* values = Actor2::Actor_Value_Owner(actor);
+            if (values) {
+                values->Set_Actor_Value(Actor_Value_t::SPEED_MULT, MAX_SNEAK_SPEED);
+            }
+            Object_Ref::Token(actor, Consts::Sneak_Follower_Token());
+            Actor2::Evaluate_Package(actor);
+        }
+    }
+
+    void Follower_t::Unsneak()
+    {
+        Actor_t* actor = Actor();
+        if (actor && Is_Created()) {
+            Actor_Value_Owner_t* values = Actor2::Actor_Value_Owner(actor);
+            if (values) {
+                values->Set_Actor_Value(Actor_Value_t::SPEED_MULT, MAX_UNSNEAK_SPEED);
+            }
+            Object_Ref::Untoken(actor, Consts::Sneak_Follower_Token());
+            Actor2::Evaluate_Package(actor);
+        }
     }
 
     // Horse_t //
@@ -2937,6 +3016,12 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
                 Bool_t is_blocked)
         FORWARD_VOID(On_Hit(attacker, tool, projectile, is_power, is_sneak, is_bash, is_blocked));
 
+    bool Has_Token(Member_t* self, Misc_t* token, Int_t count) FORWARD_BOOL(Member_t::Has_Token(token, count));
+    void Token(Member_t* self, Misc_t* token, Int_t count) FORWARD_VOID(Member_t::Token(token, count));
+    void Untoken(Member_t* self, Misc_t* token) FORWARD_VOID(Member_t::Untoken(token));
+
+    void Vitalize(Member_t* self) FORWARD_VOID(Member_t::Vitalize());
+
     void Log_Variable_Infos(Member_t* self) FORWARD_VOID(Log_Variable_Infos());
 
     Bool_t Register(Registry_t* registry)
@@ -2952,6 +3037,12 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
         ADD_METHOD("ID", 0, Int_t, ID);
 
         ADD_METHOD("OnHit", 7, void, On_Hit, Reference_t*, Form_t*, Projectile_Base_t*, Bool_t, Bool_t, Bool_t, Bool_t);
+
+        ADD_METHOD("Has_Token", 2, bool, Has_Token, Misc_t*, Int_t);
+        ADD_METHOD("Token", 2, void, Token, Misc_t*, Int_t);
+        ADD_METHOD("Untoken", 1, void, Untoken, Misc_t*);
+
+        ADD_METHOD("p_Vitalize", 0, void, Vitalize);
 
         ADD_METHOD("Log_Variable_Infos", 0, void, Log_Variable_Infos);
 
@@ -2969,6 +3060,8 @@ namespace doticu_npcp { namespace Party { namespace Follower { namespace Exports
 
     void Level(Follower_t* self) FORWARD_VOID(Follower_t::Level());
     void Unlevel(Follower_t* self) FORWARD_VOID(Follower_t::Unlevel());
+    void Sneak(Follower_t* self) FORWARD_VOID(Follower_t::Sneak());
+    void Unsneak(Follower_t* self) FORWARD_VOID(Follower_t::Unsneak());
 
     Bool_t Register(Registry_t* registry)
     {
@@ -2984,6 +3077,8 @@ namespace doticu_npcp { namespace Party { namespace Follower { namespace Exports
 
         ADD_METHOD("p_Level", 0, void, Level);
         ADD_METHOD("p_Unlevel", 0, void, Unlevel);
+        ADD_METHOD("p_Sneak", 0, void, Sneak);
+        ADD_METHOD("p_Unsneak", 0, void, Unsneak);
 
         return true;
     }

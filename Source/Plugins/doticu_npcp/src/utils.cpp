@@ -60,7 +60,6 @@ namespace doticu_npcp { namespace Utils { namespace Exports {
         _MESSAGE("    UInt8 pad047: 0x%X", cell->pad047);
     }
 
-    using Int_t = Papyrus::Int_t;
     using Int_Vector_t = Papyrus::Int_Vector_t;
 
     Int_Vector_t New_Int_Array(Selfless_t*, Int_t size = 0, Int_t fill = 0)

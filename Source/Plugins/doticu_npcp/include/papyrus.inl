@@ -272,6 +272,19 @@ namespace doticu_npcp { namespace Papyrus {
         }
     }
 
+    inline Misc_t* Variable_t::Misc()
+    {
+        if (type.Is_Object()) {
+            if (data.obj) {
+                return static_cast<Misc_t*>(Policy()->Resolve(kFormType_Misc, data.obj->Handle()));
+            } else {
+                return nullptr;
+            }
+        } else {
+            return nullptr;
+        }
+    }
+
     inline Reference_t* Variable_t::Reference()
     {
         if (type.Unmangled() == Type_t::OBJECT) {

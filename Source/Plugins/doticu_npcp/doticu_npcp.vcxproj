@@ -176,6 +176,7 @@
     <ClInclude Include="include\game.h" />
     <ClInclude Include="include\keys.h" />
     <ClInclude Include="include\main.h" />
+    <ClInclude Include="include\offsets.h" />
     <ClInclude Include="include\package.h" />
     <ClInclude Include="include\party.h" />
     <ClInclude Include="include\player.h" />
