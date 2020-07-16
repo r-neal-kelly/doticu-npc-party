@@ -12,74 +12,42 @@
 
 namespace doticu_npcp {
 
-    typedef uint8_t                 u8;
-    typedef uint16_t                u16;
-    typedef uint32_t                u32;
-    typedef uint64_t                u64;
-    typedef int8_t                  s8;
-    typedef int16_t                 s16;
-    typedef int32_t                 s32;
-    typedef int64_t                 s64;
-    typedef int64_t                 idx_t;
-
-    typedef SInt32                  Int_t;
-    typedef BSFixedString           String_t;
-
-    typedef UInt32                  Form_Type_t;
-    typedef UInt32                  Reference_Handle_t;
-
-    typedef TESForm                 Form_t;
-    typedef TESQuest                Quest_t;
-    typedef TESObjectCELL           Cell_t;
-    typedef TESObjectREFR           Reference_t;
-    typedef TESObjectMISC           Misc_t;
-
-    typedef Actor                   Actor_t;
-    typedef TESNPC                  Actor_Base_t;
-    
-    typedef Projectile              Projectile_t;
-    typedef BGSProjectile           Projectile_Base_t;
-
-    typedef BGSBaseAlias            Player_t;
-    typedef TESQuest                Keys_t;
-    typedef TESQuest                Consts_t;
-    typedef TESQuest                Vars_t;
-
-    typedef TESContainer            BContainer_t;
-    typedef TESContainer::Entry**   BEntries_t;
-    typedef TESContainer::Entry     BEntry_t;
-
-    typedef ExtraContainerChanges   XContainer_t;
-    typedef EntryDataList           XEntries_t;
-    typedef InventoryEntryData      XEntry_t;
-    typedef ExtendDataList          XLists_t;
-    typedef BaseExtraList           XList_t;
-    typedef BSExtraData             XData_t;
-    typedef ExtraAliasInstanceArray XAliases_t;
-
-    typedef StaticFunctionTag       Selfless_t;
+    typedef uint8_t         u8;
+    typedef uint16_t        u16;
+    typedef uint32_t        u32;
+    typedef uint64_t        u64;
+    typedef int8_t          s8;
+    typedef int16_t         s16;
+    typedef int32_t         s32;
+    typedef int64_t         s64;
+    typedef int64_t         idx_t;
 
 }
 
-namespace doticu_npcp { namespace Papyrus {
-
-    typedef VMClassRegistry         Registry_t;
-    typedef IObjectHandlePolicy     Policy_t;
-    typedef VMScriptInstance        Script_t;
-    //typedef BSFixedString           String_t;
-    //typedef SInt32                  Int_t;
-    typedef float                   Float_t;
-    typedef bool                    Bool_t;
-    typedef UInt64                  Type_e;
-
-    template <typename T> using Vector_t = VMResultArray<T>;
-    typedef Vector_t<Int_t> Int_Vector_t;
-
-}}
-
-// a lot of credit for deciphering these classes goes to Ryan-rsm-McKenzie of CommonLibSSE as well as the SKSE team
 namespace doticu_npcp {
 
+    typedef SInt32          Int_t;
+    typedef BSFixedString   String_t;
+    typedef float           Float_t;
+    typedef bool            Bool_t;
+
+    typedef UInt32          Form_Type_t;
+    typedef UInt32          Reference_Handle_t;
+
+    typedef TESForm         Form_t;
+    typedef TESQuest        Quest_t;
+    typedef TESObjectCELL   Cell_t;
+    typedef TESObjectREFR   Reference_t;
+    typedef TESObjectMISC   Misc_t;
+    typedef TESFaction      Faction_t;
+
+    typedef Actor           Actor_t;
+    typedef TESNPC          Actor_Base_t;
+
+    typedef Projectile      Projectile_t;
+    typedef BGSProjectile   Projectile_Base_t;
+
+    // a lot of credit for deciphering these classes goes to Ryan-rsm-McKenzie of CommonLibSSE as well as the SKSE team
     class Actor_Base_Data_t : public BaseFormComponent {
     public:
         enum Flags : UInt32 {
@@ -170,6 +138,8 @@ namespace doticu_npcp {
         SHIELD_PERKS,
         WARD_DEFLECTION,
         // ...
+        WAITING_FOR_PLAYER = 95,
+        // ...
         INVALID = 164
     };
 
@@ -254,4 +224,63 @@ namespace doticu_npcp {
     };
     STATIC_ASSERT(sizeof(Alias_Reference_t) == 0x48);
 
+    class Faction_Rank_t {
+    public:
+        Faction_t* faction;
+        SInt8 rank;
+        UInt8 pad[7];
+    };
+    STATIC_ASSERT(sizeof(Faction_Rank_t) == 0x10);
+
+    class ExtraCanTalkToPlayer : public BSExtraData {
+    public:
+        virtual ~ExtraCanTalkToPlayer();
+
+        Bool_t can_talk; // 10
+        UInt8 pad_11; // 11
+        UInt16 pad_12; // 12
+        UInt32 pad_14; // 14
+    };
+
 }
+
+namespace doticu_npcp {
+
+    typedef BGSBaseAlias            Player_t;
+    typedef TESQuest                Keys_t;
+    typedef TESQuest                Consts_t;
+    typedef TESQuest                Vars_t;
+
+    typedef TESContainer            BContainer_t;
+    typedef TESContainer::Entry**   BEntries_t;
+    typedef TESContainer::Entry     BEntry_t;
+
+    typedef ExtraContainerChanges   XContainer_t;
+    typedef EntryDataList           XEntries_t;
+    typedef InventoryEntryData      XEntry_t;
+    typedef ExtendDataList          XLists_t;
+    typedef BaseExtraList           XList_t;
+    typedef BSExtraData             XData_t;
+    typedef ExtraAliasInstanceArray XAliases_t;
+
+    typedef tArray<Faction_Rank_t>  BFaction_Ranks_t;
+    typedef Faction_Rank_t          BFaction_Rank_t;
+    typedef ExtraFactionChanges     XFactions_t;
+    typedef tArray<Faction_Rank_t>  XFaction_Ranks_t;
+    typedef Faction_Rank_t          XFaction_Rank_t;
+
+    typedef StaticFunctionTag       Selfless_t;
+
+}
+
+namespace doticu_npcp { namespace Papyrus {
+
+    typedef VMClassRegistry         Registry_t;
+    typedef IObjectHandlePolicy     Policy_t;
+    typedef VMScriptInstance        Script_t;
+    typedef UInt64                  Type_e;
+
+    template <typename T> using Vector_t = VMResultArray<T>;
+    typedef Vector_t<Int_t> Int_Vector_t;
+
+}}

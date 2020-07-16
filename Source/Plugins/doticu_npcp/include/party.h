@@ -459,8 +459,12 @@ namespace doticu_npcp { namespace Party {
         void Token(Misc_t* token, Int_t count = 1);
         void Untoken(Misc_t* token);
 
+        void Member();
+        void Unmember();
         void Stylize();
+        void Unstylize();
         void Vitalize();
+        void Unvitalize();
 
         void Log_Variable_Infos();
     };

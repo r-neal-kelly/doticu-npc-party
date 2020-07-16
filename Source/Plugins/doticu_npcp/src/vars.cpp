@@ -21,7 +21,7 @@ namespace doticu_npcp { namespace Vars {
     Vars_t* Self()
     {
         static Vars_t* vars;
-        return vars ? vars : vars = (Vars_t*)Game::Get_NPCP_Form(Consts::QUEST_DATA_DYNAMIC);
+        return vars ? vars : vars = (Vars_t*)Game::NPCP_Form(Consts::QUEST_DATA_DYNAMIC);
     }
 
     Object_t* Object()

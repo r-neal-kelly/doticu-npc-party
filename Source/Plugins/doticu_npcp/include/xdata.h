@@ -39,6 +39,8 @@ namespace doticu_npcp { namespace XData {
     ExtraCount *Create_Count(UInt32 count);
     ExtraOwnership *Create_Ownership(TESForm *owner);
     ExtraReferenceHandle *Create_Reference_Handle(TESObjectREFR *obj);
+    ExtraFactionChanges* Create_Faction_Changes(Actor_t* actor);
+    ExtraCanTalkToPlayer* Create_Can_Talk_To_Player(Bool_t can_talk);
     void Destroy(XData_t *xdata);
 
     ExtraCount *Copy_Count(ExtraCount *xdata, BSReadWriteLock *xlist_lock);

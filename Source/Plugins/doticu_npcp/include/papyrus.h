@@ -133,6 +133,7 @@ namespace doticu_npcp { namespace Papyrus {
         Int_t Int();
         String_t String();
         Misc_t* Misc();
+        Faction_t* Faction();
         Reference_t* Reference();
     };
     STATIC_ASSERT(sizeof(Variable_t) == 0x10);

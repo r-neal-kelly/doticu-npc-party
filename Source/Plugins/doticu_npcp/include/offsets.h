@@ -14,7 +14,14 @@ namespace doticu_npcp { namespace Offsets {
 
     namespace Actor {
 
-        constexpr size_t EVALUATE_PACKAGE = 0x005db310; // 36407
+        constexpr size_t EVALUATE_PACKAGE           = 0x005DB310; // 36407
+
+    }
+
+    namespace Extra {
+
+        constexpr size_t FACTION_CHANGES_V_TABLE    = 0x0152C800; // 229602
+        constexpr size_t CAN_TALK_TO_PLAYER_V_TABLE = 0x0152C740; // 229596
 
     }
 

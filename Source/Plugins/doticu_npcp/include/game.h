@@ -8,9 +8,14 @@
 
 namespace doticu_npcp { namespace Game {
 
-    TESForm *Get_Form(UInt32 form_id);
-    TESForm *Get_Mod_Form(const char *mod_name, UInt32 lower_form_id);
-    TESForm *Get_NPCP_Form(UInt32 lower_form_id);
+    Form_t* Form(UInt32 form_id);
+    Form_t* Mod_Form(const char* mod_name, UInt32 lower_form_id);
+    Form_t* Skyrim_Form(UInt32 lower_form_id);
+    Form_t* Skyrim_Update_Form(UInt32 lower_form_id);
+    Form_t* Dawnguard_Form(UInt32 lower_form_id);
+    Form_t* Hearthfires_Form(UInt32 lower_form_id);
+    Form_t* Dragonborn_Form(UInt32 lower_form_id);
+    Form_t* NPCP_Form(UInt32 lower_form_id);
 
     VMResultArray<BSFixedString> Get_Male_Vanilla_Voice_Names();
     VMResultArray<BSFixedString> Get_Female_Vanilla_Voice_Names();

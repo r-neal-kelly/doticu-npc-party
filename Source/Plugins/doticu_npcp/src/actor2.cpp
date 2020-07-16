@@ -8,6 +8,7 @@
 
 #include "actor_base2.h"
 #include "actor2.h"
+#include "consts.h"
 #include "form.h"
 #include "object_ref.h"
 #include "outfit.h"
@@ -795,6 +796,369 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
+    XFactions_t* XFactions(Actor_t* actor, bool do_create)
+    {
+        if (actor) {
+            XFactions_t* xfactions = static_cast<ExtraFactionChanges*>
+                (actor->extraData.GetByType(kExtraData_FactionChanges));
+            if (!xfactions && do_create) {
+                xfactions = XData::Create_Faction_Changes(actor);
+                if (xfactions) {
+                    actor->extraData.Add(kExtraData_FactionChanges, xfactions);
+                    return xfactions;
+                } else {
+                    return nullptr;
+                }
+            } else {
+                return xfactions;
+            }
+        } else {
+            return nullptr;
+        }
+    }
+
+    BFaction_Ranks_t* BFaction_Ranks(Actor_t* actor)
+    {
+        if (actor && actor->baseForm) {
+            Actor_Base_t* base = static_cast<Actor_Base_t*>(actor->baseForm);
+            return reinterpret_cast<BFaction_Ranks_t*>(&base->actorData.factions);
+        } else {
+            return nullptr;
+        }
+    }
+
+    XFaction_Ranks_t* XFaction_Ranks(Actor_t* actor, bool do_create)
+    {
+        if (actor) {
+            XFactions_t* xfactions = XFactions(actor, do_create);
+            if (xfactions) {
+                return reinterpret_cast<XFaction_Ranks_t*>(&xfactions->factions);
+            } else {
+                return nullptr;
+            }
+        } else {
+            return nullptr;
+        }
+    }
+
+    bool Has_Faction(Actor_t* actor, Faction_t* faction)
+    {
+        if (actor && faction) {
+            XFaction_Ranks_t* xfaction_ranks = XFaction_Ranks(actor);
+            if (xfaction_ranks) {
+                for (size_t idx = xfaction_ranks->count; idx > 0;) {
+                    XFaction_Rank_t& xfaction_rank = xfaction_ranks->entries[idx -= 1];
+                    if (xfaction_rank.faction == faction && xfaction_rank.rank > -1) {
+                        return true;
+                    }
+                }
+            }
+
+            BFaction_Ranks_t* bfaction_ranks = BFaction_Ranks(actor);
+            if (bfaction_ranks) {
+                for (size_t idx = bfaction_ranks->count; idx > 0;) {
+                    BFaction_Rank_t& bfaction_rank = bfaction_ranks->entries[idx -= 1];
+                    if (bfaction_rank.faction == faction && bfaction_rank.rank > -1) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    bool Has_Faction_Rank(Actor_t* actor, Faction_t* faction, Int_t rank)
+    {
+        if (actor && faction) {
+            XFaction_Ranks_t* xfaction_ranks = XFaction_Ranks(actor);
+            if (xfaction_ranks) {
+                for (size_t idx = xfaction_ranks->count; idx > 0;) {
+                    XFaction_Rank_t& xfaction_rank = xfaction_ranks->entries[idx -= 1];
+                    if (xfaction_rank.faction == faction && xfaction_rank.rank == rank) {
+                        return true;
+                    }
+                }
+            }
+
+            BFaction_Ranks_t* bfaction_ranks = BFaction_Ranks(actor);
+            if (bfaction_ranks) {
+                for (size_t idx = bfaction_ranks->count; idx > 0;) {
+                    BFaction_Rank_t& bfaction_rank = bfaction_ranks->entries[idx -= 1];
+                    if (bfaction_rank.faction == faction && bfaction_rank.rank == rank) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    void Add_Faction(Actor_t* actor, Faction_t* faction, Int_t rank)
+    {
+        _MESSAGE("has faction: %u", !!faction);
+        if (actor && faction && rank > -1) {
+            bool base_has_rank = false;
+            BFaction_Ranks_t* bfaction_ranks = BFaction_Ranks(actor);
+            if (bfaction_ranks) {
+                for (size_t idx = 0, count = bfaction_ranks->count; idx < count; idx += 1) {
+                    BFaction_Rank_t& bfaction_rank = bfaction_ranks->entries[idx];
+                    if (bfaction_rank.faction == faction && bfaction_rank.rank == rank) {
+                        base_has_rank = true;
+                        break;
+                    }
+                }
+            }
+
+            if (base_has_rank) {
+                _MESSAGE("base has the rank, so destroying xfaction_changes");
+                XFaction_Ranks_t* xfaction_ranks = XFaction_Ranks(actor);
+                _MESSAGE("got xfaction_ranks: %u", !!xfaction_ranks);
+                if (xfaction_ranks) {
+                    std::vector<size_t> removes;
+                    for (size_t idx = 0, count = xfaction_ranks->count; idx < count; idx += 1) {
+                        XFaction_Rank_t& xfaction_rank = xfaction_ranks->entries[idx];
+                        if (xfaction_rank.faction == faction) {
+                            removes.push_back(idx);
+                        }
+                    }
+                    for (size_t idx = 0, count = removes.size(); idx < count; idx += 1) {
+                        size_t remove_idx = removes[idx];
+                        xfaction_ranks->count -= 1;
+                        if (remove_idx != xfaction_ranks->count) {
+                            xfaction_ranks->entries[remove_idx] = xfaction_ranks->entries[xfaction_ranks->count];
+                        }
+                    }
+                }
+            } else {
+                _MESSAGE("base doesn't have the rank, so checking xfaction_changes");
+                XFaction_Ranks_t* xfaction_ranks = XFaction_Ranks(actor, true);
+                _MESSAGE("got xfaction_ranks: %u", !!xfaction_ranks);
+                if (xfaction_ranks) {
+                    bool extra_has_rank = false;
+                    for (size_t idx = 0, count = xfaction_ranks->count; idx < count; idx += 1) {
+                        XFaction_Rank_t& xfaction_rank = xfaction_ranks->entries[idx];
+                        if (xfaction_rank.faction == faction) {
+                            _MESSAGE("found the faction already here, updating.");
+                            xfaction_rank.rank = rank;
+                            extra_has_rank = true;
+                        }
+                    }
+                    if (!extra_has_rank) {
+                        _MESSAGE("could not find the faction, adding.");
+                        xfaction_ranks->Push({ faction, static_cast<SInt8>(rank) });
+                    }
+                }
+            }
+        }
+    }
+
+    void Remove_Faction(Actor_t* actor, Faction_t* faction)
+    {
+        if (actor && faction) {
+            bool base_in_faction = false;
+            BFaction_Ranks_t* bfaction_ranks = BFaction_Ranks(actor);
+            if (bfaction_ranks) {
+                for (size_t idx = 0, count = bfaction_ranks->count; idx < count; idx += 1) {
+                    BFaction_Rank_t& bfaction_rank = bfaction_ranks->entries[idx];
+                    if (bfaction_rank.faction == faction && bfaction_rank.rank > -1) {
+                        base_in_faction = true;
+                        break;
+                    }
+                }
+            }
+
+            if (base_in_faction) {
+                XFaction_Ranks_t* xfaction_ranks = XFaction_Ranks(actor, true);
+                if (xfaction_ranks) {
+                    bool extra_has_rank = false;
+                    for (size_t idx = 0, count = xfaction_ranks->count; idx < count; idx += 1) {
+                        XFaction_Rank_t& xfaction_rank = xfaction_ranks->entries[idx];
+                        if (xfaction_rank.faction == faction) {
+                            xfaction_rank.rank = -1;
+                            extra_has_rank = true;
+                        }
+                    }
+                    if (!extra_has_rank) {
+                        xfaction_ranks->Push({ faction, -1 });
+                    }
+                }
+            } else {
+                XFaction_Ranks_t* xfaction_ranks = XFaction_Ranks(actor);
+                if (xfaction_ranks) {
+                    std::vector<size_t> removes;
+                    for (size_t idx = 0, count = xfaction_ranks->count; idx < count; idx += 1) {
+                        XFaction_Rank_t& xfaction_rank = xfaction_ranks->entries[idx];
+                        if (xfaction_rank.faction == faction) {
+                            removes.push_back(idx);
+                        }
+                    }
+                    for (size_t idx = 0, count = removes.size(); idx < count; idx += 1) {
+                        size_t remove_idx = removes[idx];
+                        xfaction_ranks->count -= 1;
+                        if (remove_idx != xfaction_ranks->count) {
+                            xfaction_ranks->entries[remove_idx] = xfaction_ranks->entries[xfaction_ranks->count];
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    void Add_Crime_Faction(Actor_t* actor, Faction_t* crime_faction)
+    {
+        if (actor && crime_faction) {
+            Actor_Base_t* actor_base = static_cast<Actor_Base_t*>(actor->baseForm);
+            if (actor_base->faction == crime_faction) {
+                XFactions_t* xfactions = XFactions(actor, false);
+                if (xfactions) {
+                    xfactions->unk28 = reinterpret_cast<UInt64>(crime_faction);
+                }
+            } else {
+                XFactions_t* xfactions = XFactions(actor, true);
+                if (xfactions) {
+                    xfactions->unk28 = reinterpret_cast<UInt64>(crime_faction);
+                }
+            }
+        }
+    }
+
+    void Remove_Crime_Faction(Actor_t* actor)
+    {
+        if (actor) {
+            Actor_Base_t* actor_base = static_cast<Actor_Base_t*>(actor->baseForm);
+            if (actor_base->faction == nullptr) {
+                XFactions_t* xfactions = XFactions(actor, false);
+                if (xfactions) {
+                    xfactions->unk28 = reinterpret_cast<UInt64>(nullptr);
+                }
+            } else {
+                XFactions_t* xfactions = XFactions(actor, true);
+                if (xfactions) {
+                    xfactions->unk28 = reinterpret_cast<UInt64>(nullptr);
+                }
+            }
+        }
+    }
+
+    void Log_Factions(Actor_t* actor)
+    {
+        if (actor) {
+            _MESSAGE("Log_Factions: %s {", Get_Name(actor));
+
+            _MESSAGE("    BFactions:");
+            BFaction_Ranks_t* bfaction_ranks = BFaction_Ranks(actor);
+            if (bfaction_ranks) {
+                for (size_t idx = 0, count = bfaction_ranks->count; idx < count; idx += 1) {
+                    BFaction_Rank_t& bfaction_rank = bfaction_ranks->entries[idx];
+                    _MESSAGE("        form: %X, name: %s, rank: %i, is_in_faction: %i %i",
+                             bfaction_rank.faction->formID,
+                             bfaction_rank.faction->fullName.name,
+                             bfaction_rank.rank,
+                             actor->Is_In_Faction(bfaction_rank.faction),
+                             Has_Faction(actor, bfaction_rank.faction));
+                }
+            }
+
+            _MESSAGE("    XFactions:");
+            XFaction_Ranks_t* xfaction_ranks = XFaction_Ranks(actor);
+            if (xfaction_ranks) {
+                for (size_t idx = 0, count = xfaction_ranks->count; idx < count; idx += 1) {
+                    XFaction_Rank_t& xfaction_rank = xfaction_ranks->entries[idx];
+                    _MESSAGE("        form: %X, name: %s, rank: %i, is_in_faction: %i %i",
+                             xfaction_rank.faction->formID,
+                             xfaction_rank.faction->fullName.name,
+                             xfaction_rank.rank,
+                             actor->Is_In_Faction(xfaction_rank.faction),
+                             Has_Faction(actor, xfaction_rank.faction));
+                }
+            }
+
+            _MESSAGE("}\n");
+        }
+    }
+
+    void Follow_Player(Actor_t* actor, Bool_t allow_favors)
+    {
+        if (actor) {
+            actor->flags1 = Utils::Bit_On(actor->flags1, 26);
+            if (allow_favors) {
+                actor->flags2 = Utils::Bit_On(actor->flags2, 7);
+            }
+        }
+    }
+
+    void Unfollow_Player(Actor_t* actor)
+    {
+        if (actor) {
+            actor->flags1 = Utils::Bit_Off(actor->flags1, 26);
+            actor->flags2 = Utils::Bit_Off(actor->flags2, 7);
+        }
+    }
+
+    void Talks_To_Player(Actor_t* actor, Bool_t can_talk)
+    {
+        if (actor) {
+            ExtraCanTalkToPlayer* xcan_talk = static_cast<ExtraCanTalkToPlayer*>
+                (actor->extraData.GetByType(kExtraData_CanTalkToPlayer));
+            if (xcan_talk) {
+                xcan_talk->can_talk = can_talk;
+            } else {
+                xcan_talk = XData::Create_Can_Talk_To_Player(can_talk);
+                if (xcan_talk) {
+                    actor->extraData.Add(kExtraData_CanTalkToPlayer, xcan_talk);
+                }
+            }
+        }
+    }
+
+    bool Can_Talk_To_Player(Actor_t* actor)
+    {
+        if (actor) {
+            ExtraCanTalkToPlayer* xcan_talk = static_cast<ExtraCanTalkToPlayer*>
+                (actor->extraData.GetByType(kExtraData_CanTalkToPlayer));
+            if (xcan_talk) {
+                return xcan_talk->can_talk;
+            } else {
+                if (actor->race) {
+                    return (actor->race->data.raceFlags & TESRace::kRace_AllowPCDialogue) != 0;
+                } else {
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
+    }
+
+    bool Cant_Talk_To_Player(Actor_t* actor)
+    {
+        if (actor) {
+            return !Can_Talk_To_Player(actor);
+        } else {
+            return false;
+        }
+    }
+
+    bool Race_Can_Talk_To_Player(Actor_t* actor)
+    {
+        if (actor && actor->race) {
+            return (actor->race->data.raceFlags & TESRace::kRace_AllowPCDialogue) != 0;
+        } else {
+            return false;
+        }
+    }
+
+    bool Race_Cant_Talk_To_Player(Actor_t* actor)
+    {
+        if (actor && actor->race) {
+            return (actor->race->data.raceFlags & TESRace::kRace_AllowPCDialogue) == 0;
+        } else {
+            return false;
+        }
+    }
+
 }}
 
 namespace doticu_npcp { namespace Actor2 { namespace Exports {
@@ -829,6 +1193,12 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
         return Actor2::Get_Mounted_Actor(horse);
     }
 
+    void Log_Factions(Selfless_t*, Actor_t* actor)
+    {
+        Actor2::Add_Faction(actor, Consts::Member_Faction());
+        Actor2::Log_Factions(actor);
+    }
+
     bool Register(VMClassRegistry* registry)
     {
         #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
@@ -853,6 +1223,7 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
         ADD_GLOBAL("Actor_Cache_Static_Inventory", 3, void, Cache_Static_Inventory, Actor*, TESForm*, TESObjectREFR*);
         ADD_GLOBAL("Actor_Reset_Actor_Value", 2, void, Reset_Actor_Value, Actor*, BSFixedString);
         ADD_GLOBAL("Actor_Get_Mounted_Actor", 1, Actor_t*, Get_Mounted_Actor, Actor_t*);
+        ADD_GLOBAL("Actor_Log_Factions", 1, void, Log_Factions, Actor_t*);
 
         #undef ADD_METHOD
         #undef ADD_GLOBAL

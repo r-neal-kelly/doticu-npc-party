@@ -285,6 +285,19 @@ namespace doticu_npcp { namespace Papyrus {
         }
     }
 
+    inline Faction_t* Variable_t::Faction()
+    {
+        if (type.Is_Object()) {
+            if (data.obj) {
+                return static_cast<Faction_t*>(Policy()->Resolve(kFormType_Faction, data.obj->Handle()));
+            } else {
+                return nullptr;
+            }
+        } else {
+            return nullptr;
+        }
+    }
+
     inline Reference_t* Variable_t::Reference()
     {
         if (type.Unmangled() == Type_t::OBJECT) {

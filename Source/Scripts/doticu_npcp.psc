@@ -11,6 +11,7 @@ function Actor_Cache_Inventory(Actor ref_actor, Form form_linchpin, ObjectRefere
 function Actor_Cache_Static_Inventory(Actor ref_actor, Form form_linchpin, ObjectREference ref_cache_out) native global
 function Actor_Reset_Actor_Value(Actor ref_actor, string name) native global
 Actor function Actor_Get_Mounted_Actor(Actor ref_horse) native global
+function Actor_Log_Factions(Actor ref_actor) native global
 
 ; Cell
 bool function Cell_Is_Interior(Cell ref_cell) native global

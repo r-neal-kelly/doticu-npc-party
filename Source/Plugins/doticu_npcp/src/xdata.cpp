@@ -2,6 +2,7 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "offsets.h"
 #include "utils.h"
 #include "xdata.h"
 
@@ -283,6 +284,40 @@ namespace doticu_npcp { namespace XData {
         xdata->handle = obj->CreateRefHandle();
 
         return xdata;
+    }
+
+    ExtraFactionChanges* Create_Faction_Changes(Actor_t* actor)
+    {
+        if (actor) {
+            ExtraFactionChanges* xfaction_changes = static_cast<ExtraFactionChanges*>(XData_t::Create(
+                sizeof(ExtraFactionChanges),
+                Offsets::Extra::FACTION_CHANGES_V_TABLE + RelocationManager::s_baseAddr
+            ));
+            if (xfaction_changes) {
+                xfaction_changes->factions.Grow(1);
+                xfaction_changes->unk28 = reinterpret_cast<UInt64>(static_cast<Actor_Base_t*>(actor->baseForm)->faction);
+                xfaction_changes->unk30 = 0;
+                return xfaction_changes;
+            } else {
+                return nullptr;
+            }
+        } else {
+            return nullptr;
+        }
+    }
+
+    ExtraCanTalkToPlayer* Create_Can_Talk_To_Player(Bool_t can_talk)
+    {
+        ExtraCanTalkToPlayer* xcan_talk_to_player = static_cast<ExtraCanTalkToPlayer*>(XData_t::Create(
+            sizeof(ExtraCanTalkToPlayer),
+            Offsets::Extra::CAN_TALK_TO_PLAYER_V_TABLE + RelocationManager::s_baseAddr
+        ));
+        if (xcan_talk_to_player) {
+            xcan_talk_to_player->can_talk = can_talk;
+            return xcan_talk_to_player;
+        } else {
+            return nullptr;
+        }
     }
 
     void Destroy(XData_t *xdata) {

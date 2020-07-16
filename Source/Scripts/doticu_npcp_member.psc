@@ -123,7 +123,12 @@ bool function Has_Token(MiscObject token, int count = 1) native
 function Token(MiscObject token, int count = 1) native
 function Untoken(MiscObject token) native
 
+function p_Member() native
+function p_Unmember() native
+function p_Stylize() native
+function p_Unstylize() native
 function p_Vitalize() native
+function p_Unvitalize() native
 
 function Log_Variable_Infos() native
 
@@ -163,7 +168,7 @@ p_Unlock()
     p_Backup()
 
     p_Member()
-    p_Style()
+    p_Stylize()
     p_Vitalize()
     p_Outfit()
 
@@ -180,7 +185,7 @@ function f_Destroy()
     endIf
 
     p_Unvitalize()
-    p_Unstyle()
+    p_Unstylize()
     if Is_Mannequin()
         p_Unmannequinize()
     endIf
@@ -322,73 +327,6 @@ p_Lock()
 
     ACTORS.Set_Factions(p_ref_actor, p_prev_factions, p_prev_faction_ranks)
     p_ref_actor.SetCrimeFaction(p_prev_faction_crime)
-
-p_Unlock()
-endFunction
-
-function p_Member()
-p_Lock()
-
-    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_MEMBER, ID() + 1)
-    if p_is_clone
-        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_CLONE)
-    else
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_CLONE)
-    endIf
-    if ACTORS.Is_Generic(p_ref_actor)
-        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_GENERIC)
-    else
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_GENERIC)
-    endIf
-    if p_is_thrall
-        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_THRALL)
-    else
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_THRALL)
-    endIf
-
-    p_ref_actor.RemoveFromFaction(CONSTS.FACTION_POTENTIAL_FOLLOWER)
-    p_ref_actor.RemoveFromFaction(CONSTS.FACTION_CURRENT_FOLLOWER); we want to separate state for each reference
-    p_ref_actor.AddToFaction(CONSTS.FACTION_WI_NO_BODY_CLEANUP)
-    p_ref_actor.AddToFaction(CONSTS.FACTION_MEMBER)
-    p_ref_actor.SetCrimeFaction(none)
-
-    p_ref_actor.SetActorValue("Aggression", 0.0)
-    p_ref_actor.SetActorValue("Confidence", 4.0)
-    p_ref_actor.SetActorValue("Assistance", 2.0)
-    p_ref_actor.SetActorValue("Morality", 0.0)
-
-    ; we don't use the vanilla wait system, and have disabled it
-    ; so this makes sure that a member doesn't get stuck
-    p_ref_actor.SetActorValue("WaitingForPlayer", 0.0)
-
-    p_ref_actor.SetPlayerTeammate(true, true)
-
-    if !p_ref_actor.GetRace().AllowPCDialogue()
-        p_ref_actor.AllowPCDialogue(true)
-    endIf
-
-    p_ref_actor.EvaluatePackage()
-
-p_Unlock()
-endFunction
-
-function p_Unmember()
-p_Lock()
-
-    if !p_ref_actor.GetRace().AllowPCDialogue()
-        p_ref_actor.AllowPCDialogue(false)
-    endIf
-
-    p_ref_actor.SetPlayerTeammate(false, false)
-
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_THRALL)
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_GENERIC)
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_CLONE)
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_MEMBER)
-
-    ; Restore() handles the rest
-
-    p_ref_actor.EvaluatePackage()
 
 p_Unlock()
 endFunction
@@ -586,107 +524,10 @@ p_Lock()
 p_Unlock()
 endFunction
 
-function p_Style()
-p_Lock()
-
-    if p_code_style == CODES.IS_DEFAULT
-        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_COWARD)
-    elseIf p_code_style == CODES.IS_WARRIOR
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
-        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_COWARD)
-    elseIf p_code_style == CODES.IS_MAGE
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
-        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_COWARD)
-    elseIf p_code_style == CODES.IS_ARCHER
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
-        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_COWARD)
-    elseIf p_code_style == CODES.IS_COWARD
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
-        ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
-        ACTORS.Token(p_ref_actor, CONSTS.TOKEN_STYLE_COWARD)
-    endIf
-
-    p_ref_actor.EvaluatePackage()
-
-p_Unlock()
-endFunction
-
-function p_Unstyle()
-p_Lock()
-
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_COWARD)
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_ARCHER)
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_MAGE)
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_WARRIOR)
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_STYLE_DEFAULT)
-
-    p_ref_actor.EvaluatePackage()
-
-p_Unlock()
-endFunction
-
 function p_Set_Vitality(int code_vitality)
 p_Lock()
 
     p_code_vitality = code_vitality
-
-p_Unlock()
-endFunction
-
-;/function p_Vitalize()
-p_Lock()
-
-    if p_code_vitality == CODES.IS_MORTAL
-        Token(CONSTS.TOKEN_VITALITY_MORTAL)
-        Untoken(CONSTS.TOKEN_VITALITY_PROTECTED)
-        Untoken(CONSTS.TOKEN_VITALITY_ESSENTIAL)
-        Untoken(CONSTS.TOKEN_VITALITY_INVULNERABLE)
-    elseIf p_code_vitality == CODES.IS_PROTECTED
-        Untoken(CONSTS.TOKEN_VITALITY_MORTAL)
-        Token(CONSTS.TOKEN_VITALITY_PROTECTED)
-        Untoken(CONSTS.TOKEN_VITALITY_ESSENTIAL)
-        Untoken(CONSTS.TOKEN_VITALITY_INVULNERABLE)
-    elseIf p_code_vitality == CODES.IS_ESSENTIAL
-        Untoken(CONSTS.TOKEN_VITALITY_MORTAL)
-        Untoken(CONSTS.TOKEN_VITALITY_PROTECTED)
-        Token(CONSTS.TOKEN_VITALITY_ESSENTIAL)
-        Untoken(CONSTS.TOKEN_VITALITY_INVULNERABLE)
-    elseIf p_code_vitality == CODES.IS_INVULNERABLE
-        Untoken(CONSTS.TOKEN_VITALITY_MORTAL)
-        Untoken(CONSTS.TOKEN_VITALITY_PROTECTED)
-        Untoken(CONSTS.TOKEN_VITALITY_ESSENTIAL)
-        Token(CONSTS.TOKEN_VITALITY_INVULNERABLE)
-    endIf
-
-    p_ref_actor.EvaluatePackage()
-
-p_Unlock()
-endFunction/;
-
-function p_Unvitalize()
-p_Lock()
-
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_INVULNERABLE)
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_ESSENTIAL)
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_PROTECTED)
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_VITALITY_MORTAL)
-
-    p_ref_actor.EvaluatePackage()
 
 p_Unlock()
 endFunction
@@ -1043,7 +884,7 @@ function Enforce()
 
     p_Member()
 
-    p_Style()
+    p_Stylize()
 
     p_Vitalize()
 
@@ -1582,7 +1423,7 @@ int function Style(int code_exec, int code_style)
     endIf
 endFunction
 event On_Style()
-    p_Style()
+    p_Stylize()
     if Is_Follower()
         Get_Follower().f_Relevel()
     endIf
@@ -1601,7 +1442,7 @@ int function Style_Default(int code_exec)
     if code_exec == CODES.DO_ASYNC
         p_Async("On_Style")
     else
-        p_Style()
+        p_Stylize()
         if Is_Follower()
             Get_Follower().f_Relevel()
         endIf
@@ -1623,7 +1464,7 @@ int function Style_Warrior(int code_exec)
     if code_exec == CODES.DO_ASYNC
         p_Async("On_Style")
     else
-        p_Style()
+        p_Stylize()
         if Is_Follower()
             Get_Follower().f_Relevel()
         endIf
@@ -1645,7 +1486,7 @@ int function Style_Mage(int code_exec)
     if code_exec == CODES.DO_ASYNC
         p_Async("On_Style")
     else
-        p_Style()
+        p_Stylize()
         if Is_Follower()
             Get_Follower().f_Relevel()
         endIf
@@ -1667,7 +1508,7 @@ int function Style_Archer(int code_exec)
     if code_exec == CODES.DO_ASYNC
         p_Async("On_Style")
     else
-        p_Style()
+        p_Stylize()
         if Is_Follower()
             Get_Follower().f_Relevel()
         endIf
@@ -1689,7 +1530,7 @@ int function Style_Coward(int code_exec)
     if code_exec == CODES.DO_ASYNC
         p_Async("On_Style")
     else
-        p_Style()
+        p_Stylize()
         if Is_Follower()
             Get_Follower().f_Relevel()
         endIf

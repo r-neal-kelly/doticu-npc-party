@@ -13,76 +13,90 @@
 
 namespace doticu_npcp { namespace Game {
 
-    TESForm *Get_Form(UInt32 form_id)
+    inline static DataHandler* Data_Handler()
+    {
+        static DataHandler* data_handler = DataHandler::GetSingleton();
+        NPCP_ASSERT(data_handler != nullptr);
+        return data_handler;
+    }
+
+    Form_t* Form(UInt32 form_id)
     {
         return LookupFormByID(form_id);
     }
 
-    TESForm *Get_Mod_Form(const char *mod_name, UInt32 lower_form_id)
+    Form_t* Mod_Form(const char* mod_name, UInt32 lower_form_id)
     {
-        static DataHandler *data_handler = DataHandler::GetSingleton();
-        if (data_handler)
-        {
-            const ModInfo *mod_info = data_handler->LookupModByName(mod_name);
-            if (mod_info)
-            {
-                return LookupFormByID(mod_info->GetFormID(lower_form_id));
-            }
-            else
-            {
-                _MESSAGE("Game::Get_Mod_Form: Unable to get mod_info.");
-                return nullptr;
-            }
-        }
-        else
-        {
-            _MESSAGE("Game::Get_Mod_Form: Unable to get data_handler.");
+        const ModInfo* mod_info = Data_Handler()->LookupModByName(mod_name);
+        if (mod_info) {
+            return LookupFormByID(mod_info->GetFormID(lower_form_id));
+        } else {
             return nullptr;
         }
     }
 
-    TESForm *Get_NPCP_Form(UInt32 lower_form_id)
+    Form_t* Skyrim_Form(UInt32 lower_form_id)
     {
-        static DataHandler *data_handler = DataHandler::GetSingleton();
-        if (data_handler)
-        {
-            static const ModInfo *mod_info = data_handler->LookupModByName("doticu_npc_party.esp");
-            if (mod_info)
-            {
-                return LookupFormByID(mod_info->GetFormID(lower_form_id));
-            }
-            else
-            {
-                _MESSAGE("Game::Get_Mod_Form: Unable to get mod_info.");
-                return nullptr;
-            }
-        }
-        else
-        {
-            _MESSAGE("Game::Get_Mod_Form: Unable to get data_handler.");
-            return nullptr;
-        }
+        static const ModInfo* mod_info = Data_Handler()->LookupModByName("Skyrim.esm");
+        NPCP_ASSERT(mod_info != nullptr);
+        return LookupFormByID(mod_info->GetFormID(lower_form_id));
     }
 
-    VMResultArray<BSFixedString> Get_Male_Vanilla_Voice_Names() {
+    Form_t* Skyrim_Update_Form(UInt32 lower_form_id)
+    {
+        static const ModInfo* mod_info = Data_Handler()->LookupModByName("Update.esm");
+        NPCP_ASSERT(mod_info != nullptr);
+        return LookupFormByID(mod_info->GetFormID(lower_form_id));
+    }
+
+    Form_t* Dawnguard_Form(UInt32 lower_form_id)
+    {
+        static const ModInfo* mod_info = Data_Handler()->LookupModByName("Dawnguard.esm");
+        NPCP_ASSERT(mod_info != nullptr);
+        return LookupFormByID(mod_info->GetFormID(lower_form_id));
+    }
+
+    Form_t* Hearthfires_Form(UInt32 lower_form_id)
+    {
+        static const ModInfo* mod_info = Data_Handler()->LookupModByName("HearthFires.esm");
+        NPCP_ASSERT(mod_info != nullptr);
+        return LookupFormByID(mod_info->GetFormID(lower_form_id));
+    }
+
+    Form_t* Dragonborn_Form(UInt32 lower_form_id)
+    {
+        static const ModInfo* mod_info = Data_Handler()->LookupModByName("Dragonborn.esm");
+        NPCP_ASSERT(mod_info != nullptr);
+        return LookupFormByID(mod_info->GetFormID(lower_form_id));
+    }
+    
+    Form_t* NPCP_Form(UInt32 lower_form_id)
+    {
+        static const ModInfo* mod_info = Data_Handler()->LookupModByName("doticu_npc_party.esp");
+        NPCP_ASSERT(mod_info != nullptr);
+        return LookupFormByID(mod_info->GetFormID(lower_form_id));
+    }
+
+    VMResultArray<BSFixedString> Get_Male_Vanilla_Voice_Names()
+    {
         VMResultArray<BSFixedString> results;
 
-        DataHandler *data_handler = DataHandler::GetSingleton();
+        DataHandler* data_handler = DataHandler::GetSingleton();
         if (!data_handler) {
             return results;
         }
 
-        TESForm *form_voice = NULL;
-        BGSVoiceType *voice = NULL;
+        TESForm* form_voice = NULL;
+        BGSVoiceType* voice = NULL;
         for (u64 idx = 0, size = data_handler->arrVTYP.count; idx < size; idx += 1) {
             data_handler->arrVTYP.GetNthItem(idx, form_voice);
-            voice = (BGSVoiceType *)form_voice;
+            voice = (BGSVoiceType*)form_voice;
 
             if (voice->formID >= 0x05000000) {
                 break;
             }
 
-            const char *str_voice = voice->editorId.Get();
+            const char* str_voice = voice->editorId.Get();
             if (String2::Contains(str_voice, "Male")) {
                 results.push_back(BSFixedString(str_voice));
             }
@@ -91,25 +105,26 @@ namespace doticu_npcp { namespace Game {
         return results;
     }
 
-    VMResultArray<BSFixedString> Get_Female_Vanilla_Voice_Names() {
+    VMResultArray<BSFixedString> Get_Female_Vanilla_Voice_Names()
+    {
         VMResultArray<BSFixedString> results;
 
-        DataHandler *data_handler = DataHandler::GetSingleton();
+        DataHandler* data_handler = DataHandler::GetSingleton();
         if (!data_handler) {
             return results;
         }
 
-        TESForm *form_voice = NULL;
-        BGSVoiceType *voice = NULL;
+        TESForm* form_voice = NULL;
+        BGSVoiceType* voice = NULL;
         for (u64 idx = 0, size = data_handler->arrVTYP.count; idx < size; idx += 1) {
             data_handler->arrVTYP.GetNthItem(idx, form_voice);
-            voice = (BGSVoiceType *)form_voice;
+            voice = (BGSVoiceType*)form_voice;
 
             if (voice->formID >= 0x05000000) {
                 break;
             }
 
-            const char *str_voice = voice->editorId.Get();
+            const char* str_voice = voice->editorId.Get();
             if (String2::Contains(str_voice, "Female")) {
                 results.push_back(BSFixedString(str_voice));
             }
@@ -118,17 +133,18 @@ namespace doticu_npcp { namespace Game {
         return results;
     }
 
-    BGSVoiceType *Get_Voice_By_Name(BSFixedString str_name) {
-        DataHandler *data_handler = DataHandler::GetSingleton();
+    BGSVoiceType* Get_Voice_By_Name(BSFixedString str_name)
+    {
+        DataHandler* data_handler = DataHandler::GetSingleton();
         if (!data_handler) {
             return NULL;
         }
 
-        TESForm *form_voice = NULL;
-        BGSVoiceType *voice = NULL;
+        TESForm* form_voice = NULL;
+        BGSVoiceType* voice = NULL;
         for (u64 idx = 0, size = data_handler->arrVTYP.count; idx < size; idx += 1) {
             data_handler->arrVTYP.GetNthItem(idx, form_voice);
-            voice = (BGSVoiceType *)form_voice;
+            voice = (BGSVoiceType*)form_voice;
 
             if (String2::Is_Same(voice->editorId.Get(), str_name.data)) {
                 return voice;

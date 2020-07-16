@@ -52,15 +52,30 @@ namespace doticu_npcp { namespace Actor2 {
     String_t Race(Actor_t* actor);
 
     void Evaluate_Package(Actor_t* actor, bool unk_01 = false, bool unk_02 = false);
+    
+    XFactions_t* XFactions(Actor_t* actor, bool do_create = false);
+    BFaction_Ranks_t* BFaction_Ranks(Actor_t* actor);
+    XFaction_Ranks_t* XFaction_Ranks(Actor_t* actor, bool do_create = false);
+    
+    bool Has_Faction(Actor_t* actor, Faction_t* faction);
+    bool Has_Faction_Rank(Actor_t* actor, Faction_t* faction, Int_t rank);
+    void Add_Faction(Actor_t* actor, Faction_t* faction, Int_t rank = 0);
+    void Remove_Faction(Actor_t* actor, Faction_t* faction);
+    void Add_Crime_Faction(Actor_t* actor, Faction_t* crime_faction);
+    void Remove_Crime_Faction(Actor_t* actor);
+    void Log_Factions(Actor_t* actor);
+
+    void Follow_Player(Actor_t* actor, Bool_t allow_favors = true);
+    void Unfollow_Player(Actor_t* actor);
+    void Talks_To_Player(Actor_t* actor, Bool_t can_talk);
+    bool Can_Talk_To_Player(Actor_t* actor);
+    bool Cant_Talk_To_Player(Actor_t* actor);
+    bool Race_Can_Talk_To_Player(Actor_t* actor);
+    bool Race_Cant_Talk_To_Player(Actor_t* actor);
+
 }}
 
 namespace doticu_npcp { namespace Actor2 { namespace Exports {
-
-    void Set_Outfit2(StaticFunctionTag *, Actor *actor, TESForm *linchpin, TESObjectREFR *vanilla, TESObjectREFR *custom, TESObjectREFR *transfer);
-
-    void Cache_Worn(StaticFunctionTag *, Actor *actor, TESForm *linchpin, TESObjectREFR *cache_out);
-    void Cache_Inventory(StaticFunctionTag *, Actor *actor, TESForm *linchpin, TESObjectREFR *worn_out, TESObjectREFR *pack_out);
-    void Cache_Static_Inventory(VMClassRegistry* registry, UInt32 id_stack, StaticFunctionTag *, Actor *actor, TESForm *linchpin, TESObjectREFR *cache_out);
 
     bool Register(VMClassRegistry *registry);
 

@@ -161,7 +161,7 @@ namespace doticu_npcp { namespace Party {
 
     Members_t* Members_t::Self()
     {
-        static Members_t* members = static_cast<Members_t*>(Game::Get_NPCP_Form(Consts::QUEST_MEMBERS));
+        static Members_t* members = static_cast<Members_t*>(Game::NPCP_Form(Consts::QUEST_MEMBERS));
         return members;
     }
 
@@ -516,7 +516,7 @@ namespace doticu_npcp { namespace Party {
 
     Followers_t* Followers_t::Self()
     {
-        static Followers_t* followers = static_cast<Followers_t*>(Game::Get_NPCP_Form(Consts::QUEST_FOLLOWERS));
+        static Followers_t* followers = static_cast<Followers_t*>(Game::NPCP_Form(Consts::QUEST_FOLLOWERS));
         return followers;
     }
 
@@ -1201,7 +1201,7 @@ namespace doticu_npcp { namespace Party {
 
     Horses_t* Horses_t::Self()
     {
-        static Horses_t* horses = static_cast<Horses_t*>(Game::Get_NPCP_Form(Consts::QUEST_FOLLOWERS));
+        static Horses_t* horses = static_cast<Horses_t*>(Game::NPCP_Form(Consts::QUEST_FOLLOWERS));
         return horses;
     }
 
@@ -1756,39 +1756,158 @@ namespace doticu_npcp { namespace Party {
         Object_Ref::Untoken(Actor(), token);
     }
 
+    void Member_t::Member()
+    {
+        Actor_t* actor = Actor();
+        if (actor && Is_Created()) {
+            Object_Ref::Token(actor, Consts::Member_Token(), ID() + 1);
+            if (Is_Clone()) {
+                Object_Ref::Token(actor, Consts::Clone_Token());
+            } else {
+                Object_Ref::Untoken(actor, Consts::Clone_Token());
+            }
+            if (Is_Generic()) {
+                Object_Ref::Token(actor, Consts::Generic_Token());
+            } else {
+                Object_Ref::Untoken(actor, Consts::Generic_Token());
+            }
+
+            Actor2::Remove_Faction(actor, Consts::Potential_Follower_Faction());
+            Actor2::Remove_Faction(actor, Consts::Current_Follower_Faction());
+            Actor2::Add_Faction(actor, Consts::WI_No_Body_Cleanup_Faction());
+            Actor2::Add_Faction(actor, Consts::Member_Faction());
+            Actor2::Remove_Crime_Faction(actor);
+
+            Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(actor);
+            if (value_owner) {
+                value_owner->Set_Actor_Value(Actor_Value_t::AGGRESSION, 0.0f);
+                value_owner->Set_Actor_Value(Actor_Value_t::CONFIDENCE, 4.0f);
+                value_owner->Set_Actor_Value(Actor_Value_t::ASSISTANCE, 2.0f);
+                value_owner->Set_Actor_Value(Actor_Value_t::MORALITY, 0.0f);
+                value_owner->Set_Actor_Value(Actor_Value_t::WAITING_FOR_PLAYER, 0.0f);
+            }
+
+            Actor2::Follow_Player(actor, true);
+
+            if (Actor2::Cant_Talk_To_Player(actor)) {
+                Actor2::Talks_To_Player(actor, true);
+            }
+
+            Actor2::Evaluate_Package(actor);
+        }
+    }
+
+    void Member_t::Unmember()
+    {
+        Actor_t* actor = Actor();
+        if (actor && Is_Created()) {
+            if (Actor2::Race_Cant_Talk_To_Player(actor)) {
+                Actor2::Talks_To_Player(actor, false);
+            }
+
+            Actor2::Unfollow_Player(actor);
+
+            Object_Ref::Untoken(actor, Consts::Member_Token());
+            Object_Ref::Untoken(actor, Consts::Clone_Token());
+            Object_Ref::Untoken(actor, Consts::Generic_Token());
+
+            // Restore() handles the rest
+
+            Actor2::Evaluate_Package(actor);
+        }
+    }
+
     void Member_t::Stylize()
     {
+        Actor_t* actor = Actor();
+        if (actor && Is_Created()) {
+            Int_t style = Style();
+            if (style == Style_e::WARRIOR) {
+                Object_Ref::Untoken(actor, Consts::Default_Style_Token());
+                Object_Ref::Token(actor, Consts::Warrior_Style_Token());
+                Object_Ref::Untoken(actor, Consts::Mage_Style_Token());
+                Object_Ref::Untoken(actor, Consts::Archer_Style_Token());
+                Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
+            } else if (style == Style_e::MAGE) {
+                Object_Ref::Untoken(actor, Consts::Default_Style_Token());
+                Object_Ref::Untoken(actor, Consts::Warrior_Style_Token());
+                Object_Ref::Token(actor, Consts::Mage_Style_Token());
+                Object_Ref::Untoken(actor, Consts::Archer_Style_Token());
+                Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
+            } else if (style == Style_e::ARCHER) {
+                Object_Ref::Untoken(actor, Consts::Default_Style_Token());
+                Object_Ref::Untoken(actor, Consts::Warrior_Style_Token());
+                Object_Ref::Untoken(actor, Consts::Mage_Style_Token());
+                Object_Ref::Token(actor, Consts::Archer_Style_Token());
+                Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
+            } else if (style == Style_e::COWARD) {
+                Object_Ref::Untoken(actor, Consts::Default_Style_Token());
+                Object_Ref::Untoken(actor, Consts::Warrior_Style_Token());
+                Object_Ref::Untoken(actor, Consts::Mage_Style_Token());
+                Object_Ref::Untoken(actor, Consts::Archer_Style_Token());
+                Object_Ref::Token(actor, Consts::Coward_Style_Token());
+            } else /* style == Style_e::DEFAULT */ {
+                Object_Ref::Token(actor, Consts::Default_Style_Token());
+                Object_Ref::Untoken(actor, Consts::Warrior_Style_Token());
+                Object_Ref::Untoken(actor, Consts::Mage_Style_Token());
+                Object_Ref::Untoken(actor, Consts::Archer_Style_Token());
+                Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
+            }
+            Actor2::Evaluate_Package(actor);
+        }
+    }
 
+    void Member_t::Unstylize()
+    {
+        Actor_t* actor = Actor();
+        if (actor && Is_Created()) {
+            Object_Ref::Untoken(actor, Consts::Default_Style_Token());
+            Object_Ref::Untoken(actor, Consts::Warrior_Style_Token());
+            Object_Ref::Untoken(actor, Consts::Mage_Style_Token());
+            Object_Ref::Untoken(actor, Consts::Archer_Style_Token());
+            Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
+            Actor2::Evaluate_Package(actor);
+        }
     }
 
     void Member_t::Vitalize()
     {
-        // ought to lock.
-
         Actor_t* actor = Actor();
         if (actor && Is_Created()) {
             Int_t vitality = Vitality();
             if (vitality == Vitality_e::MORTAL) {
-                Token(Consts::Mortal_Vitality_Token());
-                Untoken(Consts::Protected_Vitality_Token());
-                Untoken(Consts::Essential_Vitality_Token());
-                Untoken(Consts::Invulnerable_Vitality_Token());
+                Object_Ref::Token(actor, Consts::Mortal_Vitality_Token());
+                Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
+                Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
+                Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
             } else if (vitality == Vitality_e::ESSENTIAL) {
-                Untoken(Consts::Mortal_Vitality_Token());
-                Untoken(Consts::Protected_Vitality_Token());
-                Token(Consts::Essential_Vitality_Token());
-                Untoken(Consts::Invulnerable_Vitality_Token());
+                Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
+                Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
+                Object_Ref::Token(actor, Consts::Essential_Vitality_Token());
+                Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
             } else if (vitality == Vitality_e::INVULNERABLE) {
-                Untoken(Consts::Mortal_Vitality_Token());
-                Untoken(Consts::Protected_Vitality_Token());
-                Untoken(Consts::Essential_Vitality_Token());
-                Token(Consts::Invulnerable_Vitality_Token());
-            } else /* Vitality_e::PROTECTED */ {
-                Untoken(Consts::Mortal_Vitality_Token());
-                Token(Consts::Protected_Vitality_Token());
-                Untoken(Consts::Essential_Vitality_Token());
-                Untoken(Consts::Invulnerable_Vitality_Token());
+                Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
+                Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
+                Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
+                Object_Ref::Token(actor, Consts::Invulnerable_Vitality_Token());
+            } else /* vitality == Vitality_e::PROTECTED */ {
+                Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
+                Object_Ref::Token(actor, Consts::Protected_Vitality_Token());
+                Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
+                Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
             }
+            Actor2::Evaluate_Package(actor);
+        }
+    }
+
+    void Member_t::Unvitalize()
+    {
+        Actor_t* actor = Actor();
+        if (actor && Is_Created()) {
+            Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
+            Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
+            Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
+            Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
             Actor2::Evaluate_Package(actor);
         }
     }
@@ -3020,7 +3139,12 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
     void Token(Member_t* self, Misc_t* token, Int_t count) FORWARD_VOID(Member_t::Token(token, count));
     void Untoken(Member_t* self, Misc_t* token) FORWARD_VOID(Member_t::Untoken(token));
 
+    void Member(Member_t* self) FORWARD_VOID(Member_t::Member());
+    void Unmember(Member_t* self) FORWARD_VOID(Member_t::Unmember());
+    void Stylize(Member_t* self) FORWARD_VOID(Member_t::Stylize());
+    void Unstylize(Member_t* self) FORWARD_VOID(Member_t::Unstylize());
     void Vitalize(Member_t* self) FORWARD_VOID(Member_t::Vitalize());
+    void Unvitalize(Member_t* self) FORWARD_VOID(Member_t::Unvitalize());
 
     void Log_Variable_Infos(Member_t* self) FORWARD_VOID(Log_Variable_Infos());
 
@@ -3042,7 +3166,12 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
         ADD_METHOD("Token", 2, void, Token, Misc_t*, Int_t);
         ADD_METHOD("Untoken", 1, void, Untoken, Misc_t*);
 
+        ADD_METHOD("p_Member", 0, void, Member);
+        ADD_METHOD("p_Unmember", 0, void, Unmember);
+        ADD_METHOD("p_Stylize", 0, void, Stylize);
+        ADD_METHOD("p_Unstylize", 0, void, Unstylize);
         ADD_METHOD("p_Vitalize", 0, void, Vitalize);
+        ADD_METHOD("p_Unvitalize", 0, void, Unvitalize);
 
         ADD_METHOD("Log_Variable_Infos", 0, void, Log_Variable_Infos);
 

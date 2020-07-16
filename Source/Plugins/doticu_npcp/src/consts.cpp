@@ -14,7 +14,7 @@ namespace doticu_npcp { namespace Consts {
 
     Consts_t* Self()
     {
-        static Consts_t* consts = static_cast<Consts_t*>(Game::Get_NPCP_Form(Consts::QUEST_DATA_STATIC));
+        static Consts_t* consts = static_cast<Consts_t*>(Game::NPCP_Form(QUEST_DATA_STATIC));
         return consts;
     }
 
@@ -34,7 +34,7 @@ namespace doticu_npcp { namespace Consts {
         }
     }
 
-    static inline Misc_t* Misc_Variable(String_t variable_name)
+    Misc_t* Misc_Variable(String_t variable_name)
     {
         Variable_t* variable = Variable(variable_name);
         if (variable) {
@@ -44,71 +44,168 @@ namespace doticu_npcp { namespace Consts {
         }
     }
 
-    // it would be faster to just get the actual formid and use that instead.
+    Faction_t* Faction_Variable(String_t variable_name)
+    {
+        Variable_t* variable = Variable(variable_name);
+        if (variable) {
+            return variable->Faction();
+        } else {
+            return nullptr;
+        }
+    }
+
+    Misc_t* Member_Token()
+    {
+        static Misc_t* value = static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_MEMBER));
+        NPCP_ASSERT(value != nullptr);
+        return value;
+    }
+
+    Misc_t* Generic_Token()
+    {
+        static Misc_t* value = static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_GENERIC));
+        NPCP_ASSERT(value != nullptr);
+        return value;
+    }
+
+    Misc_t* Clone_Token()
+    {
+        static Misc_t* value = static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_CLONE));
+        NPCP_ASSERT(value != nullptr);
+        return value;
+    }
+
     Misc_t* Default_Style_Token()
     {
-        static const String_t variable_name = String_t("p_TOKEN_STYLE_DEFAULT");
-        return Misc_Variable(variable_name);
+        static Misc_t* value = static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_STYLE_DEFAULT));
+        NPCP_ASSERT(value != nullptr);
+        return value;
     }
 
     Misc_t* Warrior_Style_Token()
     {
-        static const String_t variable_name = String_t("p_TOKEN_STYLE_WARRIOR");
-        return Misc_Variable(variable_name);
+        static Misc_t* value = static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_STYLE_WARRIOR));
+        NPCP_ASSERT(value != nullptr);
+        return value;
     }
 
     Misc_t* Mage_Style_Token()
     {
-        static const String_t variable_name = String_t("p_TOKEN_STYLE_MAGE");
-        return Misc_Variable(variable_name);
+        static Misc_t* value = static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_STYLE_MAGE));
+        NPCP_ASSERT(value != nullptr);
+        return value;
     }
 
     Misc_t* Archer_Style_Token()
     {
-        static const String_t variable_name = String_t("p_TOKEN_STYLE_ARCHER");
-        return Misc_Variable(variable_name);
+        static Misc_t* value = static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_STYLE_ARCHER));
+        NPCP_ASSERT(value != nullptr);
+        return value;
     }
 
     Misc_t* Coward_Style_Token()
     {
-        static const String_t variable_name = String_t("p_TOKEN_STYLE_COWARD");
-        return Misc_Variable(variable_name);
+        static Misc_t* value = static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_STYLE_COWARD));
+        NPCP_ASSERT(value != nullptr);
+        return value;
     }
 
     Misc_t* Mortal_Vitality_Token()
     {
-        static const String_t variable_name = String_t("p_TOKEN_VITALITY_MORTAL");
-        return Misc_Variable(variable_name);
+        static Misc_t* value = static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_VITALITY_MORTAL));
+        NPCP_ASSERT(value != nullptr);
+        return value;
     }
 
     Misc_t* Protected_Vitality_Token()
     {
-        static const String_t variable_name = String_t("p_TOKEN_VITALITY_PROTECTED");
-        return Misc_Variable(variable_name);
+        static Misc_t* value = static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_VITALITY_PROTECTED));
+        NPCP_ASSERT(value != nullptr);
+        return value;
     }
 
     Misc_t* Essential_Vitality_Token()
     {
-        static const String_t variable_name = String_t("p_TOKEN_VITALITY_ESSENTIAL");
-        return Misc_Variable(variable_name);
+        static Misc_t* value = static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_VITALITY_ESSENTIAL));
+        NPCP_ASSERT(value != nullptr);
+        return value;
     }
 
     Misc_t* Invulnerable_Vitality_Token()
     {
-        static const String_t variable_name = String_t("p_TOKEN_VITALITY_INVULNERABLE");
-        return Misc_Variable(variable_name);
+        static Misc_t* value = static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_VITALITY_INVULNERABLE));
+        NPCP_ASSERT(value != nullptr);
+        return value;
     }
 
     Misc_t* Display_Token()
     {
-        static const String_t variable_name = String_t("p_TOKEN_DISPLAY");
-        return Misc_Variable(variable_name);
+        static Misc_t* value = static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_DISPLAY));
+        NPCP_ASSERT(value != nullptr);
+        return value;
     }
 
     Misc_t* Sneak_Follower_Token()
     {
-        static const String_t variable_name = String_t("p_TOKEN_FOLLOWER_SNEAK");
-        return Misc_Variable(variable_name);
+        static Misc_t* value = static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_FOLLOWER_SNEAK));
+        NPCP_ASSERT(value != nullptr);
+        return value;
+    }
+
+    Faction_t* No_Singer_Bard_Autostart_Faction()
+    {
+        static Faction_t* value = static_cast<Faction_t*>(Game::Skyrim_Form(FACTION_BARD_SINGER_NO_AUTOSTART));
+        NPCP_ASSERT(value != nullptr);
+        return value;
+    }
+
+    Faction_t* Current_Follower_Faction()
+    {
+        static Faction_t* value = static_cast<Faction_t*>(Game::Skyrim_Form(FACTION_CURRENT_FOLLOWER));
+        NPCP_ASSERT(value != nullptr);
+        return value;
+    }
+
+    Faction_t* Potential_Follower_Faction()
+    {
+        static Faction_t* value = static_cast<Faction_t*>(Game::Skyrim_Form(FACTION_POTENTIAL_FOLLOWER));
+        NPCP_ASSERT(value != nullptr);
+        return value;
+    }
+
+    Faction_t* WI_No_Body_Cleanup_Faction()
+    {
+        static Faction_t* value = static_cast<Faction_t*>(Game::Skyrim_Form(FACTION_WI_NO_BODY_CLEANUP));
+        NPCP_ASSERT(value != nullptr);
+        return value;
+    }
+
+    Faction_t* DLC1_Thrall_Faction()
+    {
+        static Faction_t* value = static_cast<Faction_t*>(Game::Dawnguard_Form(FACTION_DLC1_THRALL));
+        NPCP_ASSERT(value != nullptr);
+        return value;
+    }
+
+    Faction_t* DLC1_Vampire_Feed_No_Crime_Faction()
+    {
+        static Faction_t* value = static_cast<Faction_t*>(Game::Dawnguard_Form(FACTION_DLC1_VAMPIRE_FEED_NO_CRIME));
+        NPCP_ASSERT(value != nullptr);
+        return value;
+    }
+
+    Faction_t* Horse_Faction()
+    {
+        static Faction_t* value = static_cast<Faction_t*>(Game::NPCP_Form(FACTION_HORSE));
+        NPCP_ASSERT(value != nullptr);
+        return value;
+    }
+
+    Faction_t* Member_Faction()
+    {
+        static Faction_t* value = static_cast<Faction_t*>(Game::NPCP_Form(FACTION_MEMBER));
+        NPCP_ASSERT(value != nullptr);
+        return value;
     }
 
     void Log_Variables(Consts_t* self)
