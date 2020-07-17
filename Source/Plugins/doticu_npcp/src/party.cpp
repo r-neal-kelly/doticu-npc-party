@@ -1344,6 +1344,18 @@ namespace doticu_npcp { namespace Party {
         return Variable(variable_name);
     }
 
+    Variable_t* Member_t::Is_Mannequin_Variable()
+    {
+        static const String_t variable_name = String_t("p_is_mannequin");
+        return Variable(variable_name);
+    }
+
+    Variable_t* Member_t::Mannequin_Marker_Variable()
+    {
+        static const String_t variable_name = String_t("p_marker_mannequin");
+        return Variable(variable_name);
+    }
+
     Actor_t* Member_t::Actor()
     {
         static const String_t variable_name = String_t("p_ref_actor");
@@ -1655,9 +1667,7 @@ namespace doticu_npcp { namespace Party {
 
     Bool_t Member_t::Is_Mannequin()
     {
-        static const String_t variable_name = String_t("p_is_mannequin");
-
-        Variable_t* const variable = Variable(variable_name);
+        Variable_t* const variable = Is_Mannequin_Variable();
         if (variable) {
             return variable->Bool();
         } else {
@@ -1667,9 +1677,7 @@ namespace doticu_npcp { namespace Party {
 
     Bool_t Member_t::Isnt_Mannequin()
     {
-        static const String_t variable_name = String_t("p_is_mannequin");
-
-        Variable_t* const variable = Variable(variable_name);
+        Variable_t* const variable = Is_Mannequin_Variable();
         if (variable) {
             return !variable->Bool();
         } else {
@@ -2004,6 +2012,66 @@ namespace doticu_npcp { namespace Party {
             Object_Ref::Untoken(actor, Consts::Paralyzed_Token());
 
             if (Isnt_Mannequin()) {
+                Object_Ref::Unblock_All_Activation(actor);
+                Actor2::Enable_AI(actor);
+                Actor2::Unghostify(actor);
+            }
+
+            Actor2::Evaluate_Package(actor);
+        }
+    }
+
+    void Member_t::Mannequinize(Reference_t* marker)
+    {
+        NPCP_ASSERT(marker); // later on, we can make loose mannequins by providing a default marker
+
+        Actor_t* actor = Actor();
+        if (actor && Is_Created()) {
+            Variable_t* is_mannequin_var = Is_Mannequin_Variable();
+            Variable_t* mannequin_marker_var = Mannequin_Marker_Variable();
+            if (is_mannequin_var) {
+                is_mannequin_var->data.b = true;
+            }
+            if (mannequin_marker_var) {
+                PackHandle((VMValue*)mannequin_marker_var, marker, Reference_t::kTypeID, Variable_t::Registry());
+            }
+
+            Object_Ref::Token(actor, Consts::Mannequin_Token());
+
+            Object_Ref::Block_All_Activation(actor);
+            Actor2::Disable_AI(actor);
+            Actor2::Ghostify(actor);
+
+            Object_Ref::Move_To_Orbit(actor, marker, 0.0f, 180.0f);
+            actor->pos.x = marker->pos.x;
+            actor->pos.y = marker->pos.y;
+            actor->pos.z = marker->pos.z;
+            actor->rot.z = marker->rot.z;
+            actor->Update_Actor_3D_Position();
+
+            Actor2::Fully_Update_3D_Model(actor);
+            actor->Resurrect(false, true); // this feels good to have here
+
+            Actor2::Evaluate_Package(actor);
+        }
+    }
+
+    void Member_t::Unmannequinize()
+    {
+        Actor_t* actor = Actor();
+        if (actor && Is_Created()) {
+            Variable_t* is_mannequin_var = Is_Mannequin_Variable();
+            Variable_t* mannequin_marker_var = Mannequin_Marker_Variable();
+            if (is_mannequin_var) {
+                is_mannequin_var->data.b = false;
+            }
+            if (mannequin_marker_var) {
+                PackHandle((VMValue*)mannequin_marker_var, nullptr, Reference_t::kTypeID, Variable_t::Registry());
+            }
+
+            Object_Ref::Untoken(actor, Consts::Mannequin_Token());
+
+            if (Isnt_Paralyzed()) {
                 Object_Ref::Unblock_All_Activation(actor);
                 Actor2::Enable_AI(actor);
                 Actor2::Unghostify(actor);
@@ -3417,6 +3485,8 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
     void Unthrall(Member_t* self) FORWARD_VOID(Member_t::Unthrall());
     void Paralyze(Member_t* self) FORWARD_VOID(Member_t::Paralyze());
     void Unparalyze(Member_t* self) FORWARD_VOID(Member_t::Unparalyze());
+    void Mannequinize(Member_t* self, Reference_t* marker) FORWARD_VOID(Member_t::Mannequinize(marker));
+    void Unmannequinize(Member_t* self) FORWARD_VOID(Member_t::Unmannequinize());
     void Stylize(Member_t* self) FORWARD_VOID(Member_t::Stylize());
     void Unstylize(Member_t* self) FORWARD_VOID(Member_t::Unstylize());
     void Vitalize(Member_t* self) FORWARD_VOID(Member_t::Vitalize());
@@ -3452,6 +3522,8 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
         ADD_METHOD("p_Unthrall", 0, void, Unthrall);
         ADD_METHOD("p_Paralyze", 0, void, Paralyze);
         ADD_METHOD("p_Unparalyze", 0, void, Unparalyze);
+        ADD_METHOD("p_Mannequinize", 1, void, Mannequinize, Reference_t*);
+        ADD_METHOD("p_Unmannequinize", 0, void, Unmannequinize);
         ADD_METHOD("p_Stylize", 0, void, Stylize);
         ADD_METHOD("p_Unstylize", 0, void, Unstylize);
         ADD_METHOD("p_Vitalize", 0, void, Vitalize);

@@ -8,6 +8,7 @@
 #include "form.h"
 #include "game.h"
 #include "object_ref.h"
+#include "offsets.h"
 #include "quest.h"
 #include "utils.h"
 #include "vector.h"
@@ -681,6 +682,17 @@ namespace doticu_npcp { namespace Object_Ref {
         if (xflags) {
             xflags->flags = Utils::Bit_Off(xflags->flags, ExtraFlags::BLOCKS_ACTIVATION);
             xflags->flags = Utils::Bit_Off(xflags->flags, ExtraFlags::BLOCKS_PLAYER_ACTIVATION);
+        }
+    }
+
+    void Play_Animation(Reference_t* ref, void* nicontroller, void* nisequence_from, void* nisequence_to)
+    {
+        using func_type = void(*)(Reference_t*, void*, void*, void*);
+        static func_type func = reinterpret_cast<func_type>
+            (RelocationManager::s_baseAddr + Offsets::Reference::PLAY_ANIMATION);
+
+        if (ref && nicontroller && nisequence_from && nisequence_to) {
+            return func(ref, nicontroller, nisequence_to, nisequence_from); // these are backwards I guess.
         }
     }
 

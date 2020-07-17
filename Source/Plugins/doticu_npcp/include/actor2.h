@@ -51,6 +51,8 @@ namespace doticu_npcp { namespace Actor2 {
     String_t Race(Actor_t* actor);
 
     void Evaluate_Package(Actor_t* actor, bool unk_01 = false, bool unk_02 = false);
+    void Update_3D_Model(Actor_t* actor);
+    void Fully_Update_3D_Model(Actor_t* actor);
     
     XFactions_t* XFactions(Actor_t* actor, bool do_create = false);
     BFaction_Ranks_t* BFaction_Ranks(Actor_t* actor);

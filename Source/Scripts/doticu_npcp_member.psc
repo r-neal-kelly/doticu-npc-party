@@ -132,6 +132,8 @@ function p_Enthrall() native
 function p_Unthrall() native
 function p_Paralyze() native
 function p_Unparalyze() native
+function p_Mannequinize(ObjectReference marker) native
+function p_Unmannequinize() native
 function p_Stylize() native
 function p_Unstylize() native
 function p_Vitalize() native
@@ -355,46 +357,7 @@ p_Unlock()
     p_Paralyze()
 endFunction
 
-function p_Mannequinize()
-    if !Is_Mannequin()
-        return
-    endIf
-
-p_Lock()
-
-    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_MANNEQUIN)
-
-    p_ref_actor.EnableAI(false)
-    p_ref_actor.SetGhost(true)
-    p_ref_actor.BlockActivation(true)
-
-    p_ref_actor.MoveTo(p_marker_mannequin)
-    p_ref_actor.Disable()
-    p_ref_actor.Enable()
-
-    p_ref_actor.EvaluatePackage()
-
-p_Unlock()
-
-    if Is_Follower()
-        Unfollow()
-    endIf
-endFunction
-
-function p_Unmannequinize()
-p_Lock()
-    
-    if !Is_Paralyzed()
-        p_ref_actor.BlockActivation(false)
-        p_ref_actor.SetGhost(false)
-        p_ref_actor.EnableAI(true)
-    endIf
-
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_MANNEQUIN)
-
-p_Unlock()
-endFunction
-
+; we may not need this.
 function p_Remannequinize()
     if !Is_Mannequin()
         return
@@ -882,7 +845,6 @@ int function Mobilize(int code_exec)
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
-
     if !Is_Immobile()
         return CODES.ISNT_IMMOBILE
     endIf
@@ -898,7 +860,6 @@ int function Immobilize(int code_exec)
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
-
     if Is_Immobile()
         return CODES.IS_IMMOBILE
     endIf
@@ -914,7 +875,6 @@ int function Settle(int code_exec)
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
-
     if Is_Settler()
         return CODES.IS_SETTLER
     endIf
@@ -930,7 +890,6 @@ int function Resettle(int code_exec)
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
-
     if !Is_Settler()
         return CODES.ISNT_SETTLER
     endIf
@@ -946,7 +905,6 @@ int function Unsettle(int code_exec)
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
-
     if !Is_Settler()
         return CODES.ISNT_SETTLER
     endIf
@@ -962,11 +920,9 @@ int function Enthrall(int code_exec)
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
-
     if !ACTORS.Is_Vampire(CONSTS.ACTOR_PLAYER)
         return CODES.ISNT_VAMPIRE
     endIf
-
     if Is_Thrall()
         return CODES.IS_THRALL
     endIf
@@ -982,11 +938,9 @@ int function Unthrall(int code_exec)
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
-
     if !ACTORS.Is_Vampire(CONSTS.ACTOR_PLAYER)
         return CODES.ISNT_VAMPIRE
     endIf
-
     if !Is_Thrall()
         return CODES.ISNT_THRALL
     endIf
@@ -1002,7 +956,6 @@ int function Paralyze(int code_exec)
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
-
     if Is_Paralyzed()
         return CODES.IS_PARALYZED
     endIf
@@ -1016,7 +969,6 @@ int function Unparalyze(int code_exec)
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
-
     if !Is_Paralyzed()
         return CODES.ISNT_PARALYZED
     endIf
@@ -1030,60 +982,39 @@ int function Mannequinize(int code_exec, ObjectReference ref_marker)
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
-
     if Is_Mannequin()
         return CODES.IS_MANNEQUIN
     endIf
-
     if !ref_marker
         return CODES.HASNT_MARKER
     endIf
 
-    p_is_mannequin = true
-    p_marker_mannequin = ref_marker
+    p_Mannequinize(ref_marker)
 
-    if code_exec == CODES.DO_ASYNC
-        p_Async("On_Mannequinize")
-    else
-        p_Mannequinize()
+    ; this should be moved over to the c++ func when ready.
+    if Is_Follower()
+        Unfollow()
     endIf
 
     return CODES.SUCCESS
 endFunction
-event On_Mannequinize()
-    if Is_Mannequin()
-        p_Mannequinize()
-    endIf
-endEvent
 
 int function Unmannequinize(int code_exec)
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
-
     if !Is_Mannequin()
         return CODES.ISNT_MANNEQUIN
     endIf
 
-    p_marker_mannequin = none
-    p_is_mannequin = false
-
-    if code_exec == CODES.DO_ASYNC
-        p_Async("On_Unmannequinize")
-    else
-        p_Unmannequinize()
-    endIf
+    p_Unmannequinize()
 
     return CODES.SUCCESS
 endFunction
-event On_Unmannequinize()
-    if Isnt_Mannequin()
-        p_Unmannequinize()
-    endIf
-endEvent
 
 int function Revoice()
     ; the problem is that we would have to change the voice on the actor base. so maybe put in npcs?
+    ; maybe there is a way to change the ref? look at the types a little closer.
 endFunction
 
 int function Unrevoice()

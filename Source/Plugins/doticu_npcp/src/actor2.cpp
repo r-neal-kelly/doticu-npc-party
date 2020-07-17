@@ -788,6 +788,25 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
+    void Update_3D_Model(Actor_t* actor)
+    {
+        using func_type = void(*)(ActorProcessManager*, Actor_t*);
+        static func_type func = reinterpret_cast<func_type>
+            (RelocationManager::s_baseAddr + Offsets::Actor::UPDATE_3D_MODEL);
+
+        if (actor) {
+            return func(actor->processManager, actor);
+        }
+    }
+
+    void Fully_Update_3D_Model(Actor_t* actor)
+    {
+        if (actor && actor->processManager && actor->processManager->middleProcess) {
+            *((u8*)actor->processManager->middleProcess + 0x311) = 255;
+            Update_3D_Model(actor);
+        }
+    }
+
     XFactions_t* XFactions(Actor_t* actor, bool do_create)
     {
         if (actor) {

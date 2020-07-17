@@ -173,7 +173,6 @@ namespace doticu_npcp {
 
     class Actor_t2 {
     public:
-
         enum Flags_1 : UInt32 {
             PROCESS_AI              = 1,
             IS_DEAD                 = 11,
@@ -192,12 +191,11 @@ namespace doticu_npcp {
             FORCE_ANIMATION_UPDATE  = 17,
             IS_ESSENTIAL            = 18,
             IS_PROTECTED            = 19,
-            SHOWS_NO_STEALTH_EYE    = 26,
+            DETECTED_BY_STEALTH_EYE = 26,
             IS_IMMOBILE             = 27,
             FORCE_ANIMATION_UPDATES = 29,
             IS_UNDERWATER           = 31,
         };
-
     };
 
     class Alias_Base_t {

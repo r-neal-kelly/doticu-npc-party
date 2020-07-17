@@ -404,6 +404,8 @@ namespace doticu_npcp { namespace Party {
         Variable_t* Is_Settler_Variable();
         Variable_t* Is_Thrall_Variable();
         Variable_t* Is_Paralyzed_Variable();
+        Variable_t* Is_Mannequin_Variable();
+        Variable_t* Mannequin_Marker_Variable();
 
         Actor_t* Actor();
         Follower_t* Follower();
@@ -478,7 +480,7 @@ namespace doticu_npcp { namespace Party {
         void Unthrall();
         void Paralyze();
         void Unparalyze();
-        void Mannequinize();
+        void Mannequinize(Reference_t* marker = nullptr);
         void Unmannequinize();
         void Stylize();
         void Unstylize();

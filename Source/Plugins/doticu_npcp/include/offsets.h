@@ -15,6 +15,13 @@ namespace doticu_npcp { namespace Offsets {
     namespace Actor {
 
         constexpr uintptr_t EVALUATE_PACKAGE            = 0x005DB310; // 36407
+        constexpr uintptr_t UPDATE_3D_MODEL             = 0x00650DF0; // 38404
+
+    }
+
+    namespace Reference {
+
+        constexpr uintptr_t PLAY_ANIMATION              = 0x00189E30; // 14189
 
     }
 

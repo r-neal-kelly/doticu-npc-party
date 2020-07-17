@@ -77,6 +77,7 @@ namespace doticu_npcp { namespace Consts {
     Misc_t* Settler_Token();
     Misc_t* Thrall_Token();
     Misc_t* Paralyzed_Token();
+    Misc_t* Mannequin_Token();
 
     Misc_t* Default_Style_Token();
     Misc_t* Warrior_Style_Token();

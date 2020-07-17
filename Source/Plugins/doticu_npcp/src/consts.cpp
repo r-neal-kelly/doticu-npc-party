@@ -103,6 +103,13 @@ namespace doticu_npcp { namespace Consts {
         return value;
     }
 
+    Misc_t* Mannequin_Token()
+    {
+        static Misc_t* value = static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_MANNEQUIN));
+        NPCP_ASSERT(value != nullptr);
+        return value;
+    }
+
     Misc_t* Default_Style_Token()
     {
         static Misc_t* value = static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_STYLE_DEFAULT));
