@@ -320,6 +320,28 @@ namespace doticu_npcp { namespace XData {
         }
     }
 
+    ExtraFlags* Create_Flags()
+    {
+        ExtraFlags* xflags = static_cast<ExtraFlags*>(XData_t::Create(
+            sizeof(ExtraFlags),
+            Offsets::Extra::FLAGS_V_TABLE + RelocationManager::s_baseAddr
+        ));
+        return xflags;
+    }
+
+    ExtraGhost* Create_Ghost(Bool_t is_ghost)
+    {
+        ExtraGhost* xghost = static_cast<ExtraGhost*>(XData_t::Create(
+            sizeof(ExtraGhost),
+            Offsets::Extra::GHOST_V_TABLE + RelocationManager::s_baseAddr
+        ));
+        if (xghost) {
+            xghost->is_ghost = is_ghost;
+        } else {
+            return nullptr;
+        }
+    }
+
     void Destroy(XData_t *xdata) {
         if (!xdata) {
             return;

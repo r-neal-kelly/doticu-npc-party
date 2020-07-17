@@ -531,7 +531,7 @@ namespace doticu_npcp { namespace Actor2 {
         return actor && actor->loadedState == nullptr;
     }
 
-    bool Is_Unique(Actor* actor)
+    bool Is_Unique(Actor_t* actor)
     {
         if (actor) {
             TESNPC* base_npc = DYNAMIC_CAST(actor->baseForm, TESForm, TESNPC);
@@ -546,7 +546,7 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
-    bool Is_Generic(Actor* actor)
+    bool Is_Generic(Actor_t* actor)
     {
         if (actor) {
             TESNPC* base_npc = DYNAMIC_CAST(actor->baseForm, TESForm, TESNPC);
@@ -559,14 +559,6 @@ namespace doticu_npcp { namespace Actor2 {
         } else {
             return false;
         }
-    }
-
-    bool Is_AI_Enabled(Actor *actor) {
-        if (!actor) {
-            return false;
-        }
-
-        return (actor->flags1 & Actor::kFlags_AIEnabled) == Actor::kFlags_AIEnabled;
     }
 
     bool Is_Aliased_In_Quest(Actor *actor, TESQuest *quest)
@@ -841,7 +833,7 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
-    bool Has_Faction(Actor_t* actor, Faction_t* faction)
+    Bool_t Has_Faction(Actor_t* actor, Faction_t* faction)
     {
         if (actor && faction) {
             XFaction_Ranks_t* xfaction_ranks = XFaction_Ranks(actor);
@@ -868,7 +860,7 @@ namespace doticu_npcp { namespace Actor2 {
         return false;
     }
 
-    bool Has_Faction_Rank(Actor_t* actor, Faction_t* faction, Int_t rank)
+    Bool_t Has_Faction_Rank(Actor_t* actor, Faction_t* faction, Int_t rank)
     {
         if (actor && faction) {
             XFaction_Ranks_t* xfaction_ranks = XFaction_Ranks(actor);
@@ -897,7 +889,6 @@ namespace doticu_npcp { namespace Actor2 {
 
     void Add_Faction(Actor_t* actor, Faction_t* faction, Int_t rank)
     {
-        _MESSAGE("has faction: %u", !!faction);
         if (actor && faction && rank > -1) {
             bool base_has_rank = false;
             BFaction_Ranks_t* bfaction_ranks = BFaction_Ranks(actor);
@@ -912,9 +903,7 @@ namespace doticu_npcp { namespace Actor2 {
             }
 
             if (base_has_rank) {
-                _MESSAGE("base has the rank, so destroying xfaction_changes");
                 XFaction_Ranks_t* xfaction_ranks = XFaction_Ranks(actor);
-                _MESSAGE("got xfaction_ranks: %u", !!xfaction_ranks);
                 if (xfaction_ranks) {
                     std::vector<size_t> removes;
                     for (size_t idx = 0, count = xfaction_ranks->count; idx < count; idx += 1) {
@@ -932,21 +921,17 @@ namespace doticu_npcp { namespace Actor2 {
                     }
                 }
             } else {
-                _MESSAGE("base doesn't have the rank, so checking xfaction_changes");
                 XFaction_Ranks_t* xfaction_ranks = XFaction_Ranks(actor, true);
-                _MESSAGE("got xfaction_ranks: %u", !!xfaction_ranks);
                 if (xfaction_ranks) {
                     bool extra_has_rank = false;
                     for (size_t idx = 0, count = xfaction_ranks->count; idx < count; idx += 1) {
                         XFaction_Rank_t& xfaction_rank = xfaction_ranks->entries[idx];
                         if (xfaction_rank.faction == faction) {
-                            _MESSAGE("found the faction already here, updating.");
                             xfaction_rank.rank = rank;
                             extra_has_rank = true;
                         }
                     }
                     if (!extra_has_rank) {
-                        _MESSAGE("could not find the faction, adding.");
                         xfaction_ranks->Push({ faction, static_cast<SInt8>(rank) });
                     }
                 }
@@ -1082,9 +1067,9 @@ namespace doticu_npcp { namespace Actor2 {
     void Follow_Player(Actor_t* actor, Bool_t allow_favors)
     {
         if (actor) {
-            actor->flags1 = Utils::Bit_On(actor->flags1, 26);
+            actor->flags1 = Utils::Bit_On(actor->flags1, Actor_t2::IS_PLAYER_TEAMMATE);
             if (allow_favors) {
-                actor->flags2 = Utils::Bit_On(actor->flags2, 7);
+                actor->flags2 = Utils::Bit_On(actor->flags2, Actor_t2::DOES_FAVORS);
             }
         }
     }
@@ -1092,8 +1077,8 @@ namespace doticu_npcp { namespace Actor2 {
     void Unfollow_Player(Actor_t* actor)
     {
         if (actor) {
-            actor->flags1 = Utils::Bit_Off(actor->flags1, 26);
-            actor->flags2 = Utils::Bit_Off(actor->flags2, 7);
+            actor->flags1 = Utils::Bit_Off(actor->flags1, Actor_t2::IS_PLAYER_TEAMMATE);
+            actor->flags2 = Utils::Bit_Off(actor->flags2, Actor_t2::DOES_FAVORS);
         }
     }
 
@@ -1113,7 +1098,7 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
-    bool Can_Talk_To_Player(Actor_t* actor)
+    Bool_t Can_Talk_To_Player(Actor_t* actor)
     {
         if (actor) {
             ExtraCanTalkToPlayer* xcan_talk = static_cast<ExtraCanTalkToPlayer*>
@@ -1132,7 +1117,7 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
-    bool Cant_Talk_To_Player(Actor_t* actor)
+    Bool_t Cant_Talk_To_Player(Actor_t* actor)
     {
         if (actor) {
             return !Can_Talk_To_Player(actor);
@@ -1141,7 +1126,7 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
-    bool Race_Can_Talk_To_Player(Actor_t* actor)
+    Bool_t Race_Can_Talk_To_Player(Actor_t* actor)
     {
         if (actor && actor->race) {
             return (actor->race->data.raceFlags & TESRace::kRace_AllowPCDialogue) != 0;
@@ -1150,12 +1135,79 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
-    bool Race_Cant_Talk_To_Player(Actor_t* actor)
+    Bool_t Race_Cant_Talk_To_Player(Actor_t* actor)
     {
         if (actor && actor->race) {
             return (actor->race->data.raceFlags & TESRace::kRace_AllowPCDialogue) == 0;
         } else {
             return false;
+        }
+    }
+
+    Bool_t Is_AI_Enabled(Actor_t* actor)
+    {
+        if (actor) {
+            return Utils::Is_Bit_On(actor->flags1, Actor_t2::PROCESS_AI);
+        } else {
+            return false;
+        }
+    }
+
+    void Enable_AI(Actor_t* actor)
+    {
+        if (actor) {
+            actor->flags1 = Utils::Bit_On(actor->flags1, Actor_t2::PROCESS_AI);
+        }
+    }
+
+    void Disable_AI(Actor_t* actor)
+    {
+        if (actor) {
+            actor->flags1 = Utils::Bit_Off(actor->flags1, Actor_t2::PROCESS_AI);
+        }
+    }
+
+    Bool_t Is_Ghost(Actor_t* actor)
+    {
+        if (actor) {
+            ExtraGhost* xghost = static_cast<ExtraGhost*>(actor->extraData.GetByType(kExtraData_Ghost));
+            if (xghost) {
+                return xghost->is_ghost;
+            } else {
+                return Actor_Base2::Is_Ghost(static_cast<Actor_Base_t*>(actor->baseForm));
+            }
+        } else {
+            return false;
+        }
+    }
+
+    void Ghostify(Actor_t* actor)
+    {
+        if (actor) {
+            ExtraGhost* xghost = static_cast<ExtraGhost*>(actor->extraData.GetByType(kExtraData_Ghost));
+            if (xghost) {
+                xghost->is_ghost = true;
+            } else if (!Actor_Base2::Is_Ghost(static_cast<Actor_Base_t*>(actor->baseForm))) {
+                ExtraGhost* xghost = XData::Create_Ghost(true);
+                if (xghost) {
+                    actor->extraData.Add(kExtraData_Ghost, xghost);
+                }
+            }
+        }
+    }
+
+    void Unghostify(Actor_t* actor)
+    {
+        if (actor) {
+            ExtraGhost* xghost = static_cast<ExtraGhost*>(actor->extraData.GetByType(kExtraData_Ghost));
+            if (xghost) {
+                xghost->is_ghost = false;
+            } else if (Actor_Base2::Is_Ghost(static_cast<Actor_Base_t*>(actor->baseForm))) {
+                ExtraGhost* xghost = XData::Create_Ghost(false);
+                if (xghost) {
+                    actor->extraData.Add(kExtraData_Ghost, xghost);
+                }
+            }
         }
     }
 

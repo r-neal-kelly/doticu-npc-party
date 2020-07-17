@@ -27,6 +27,8 @@ namespace doticu_npcp { namespace Consts {
         FACTION_HORSE                       = 0x354111,
         FACTION_MEMBER                      = 0x091154,
 
+        FORMLIST_MARKERS_SETTLER            = 0x00B46E,
+
         QUEST_DATA_STATIC                   = 0x0FBA9A,
         QUEST_DATA_DYNAMIC                  = 0x003DFF,
         QUEST_MEMBERS                       = 0x00184C,
@@ -71,6 +73,10 @@ namespace doticu_npcp { namespace Consts {
     Misc_t* Member_Token();
     Misc_t* Generic_Token();
     Misc_t* Clone_Token();
+    Misc_t* Immobile_Token();
+    Misc_t* Settler_Token();
+    Misc_t* Thrall_Token();
+    Misc_t* Paralyzed_Token();
 
     Misc_t* Default_Style_Token();
     Misc_t* Warrior_Style_Token();
@@ -96,6 +102,8 @@ namespace doticu_npcp { namespace Consts {
     Faction_t* DLC1_Vampire_Feed_No_Crime_Faction();
 
     Faction_t* Member_Faction();
+
+    Formlist_t* Settler_Markers_Formlist();
 
     void Log_Variables(Consts_t* self);
     void Log_Defaults(Consts_t* self);

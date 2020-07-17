@@ -337,6 +337,10 @@ namespace doticu_npcp { namespace Party {
         void Immobilize();
         void Settle();
         void Unsettle();
+        void Enthrall();
+        void Unthrall();
+        void Paralyze();
+        void Unparalyze();
         void Sneak();
         void Unsneak();
         void Saddle();
@@ -396,11 +400,16 @@ namespace doticu_npcp { namespace Party {
 
     public:
         Variable_t* Variable(String_t variable_name);
+        Variable_t* Is_Immobile_Variable();
+        Variable_t* Is_Settler_Variable();
+        Variable_t* Is_Thrall_Variable();
+        Variable_t* Is_Paralyzed_Variable();
 
         Actor_t* Actor();
         Follower_t* Follower();
 
         Reference_t* Pack();
+        Reference_t* Settler_Marker();
         Cell_t* Cell();
         Int_t Style();
         Int_t Vitality();
@@ -461,6 +470,16 @@ namespace doticu_npcp { namespace Party {
 
         void Member();
         void Unmember();
+        void Mobilize();
+        void Immobilize();
+        void Settle();
+        void Unsettle();
+        void Enthrall();
+        void Unthrall();
+        void Paralyze();
+        void Unparalyze();
+        void Mannequinize();
+        void Unmannequinize();
         void Stylize();
         void Unstylize();
         void Vitalize();
@@ -540,6 +559,15 @@ namespace doticu_npcp { namespace Party {
         void Summon(float radius = 140.0f, float degree = 0.0);
         void Summon_Ahead(float radius = 140.0f);
         void Summon_Behind(float radius = 140.0f);
+
+        void Mobilize();
+        void Immobilize();
+        void Settle();
+        void Unsettle();
+        void Enthrall();
+        void Unthrall();
+        void Paralyze();
+        void Unparalyze();
 
         void Catch_Up();
         void Saddle();

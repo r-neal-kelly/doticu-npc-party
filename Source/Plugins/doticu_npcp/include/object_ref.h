@@ -48,6 +48,15 @@ namespace doticu_npcp { namespace Object_Ref {
     void Token(Reference_t* ref, Form_t* token, Int_t count = 1);
     void Untoken(Reference_t* ref, Form_t* token);
 
+    void Block_Activation(Reference_t* ref);
+    void Unblock_Activation(Reference_t* ref);
+    void Block_Player_Activation(Reference_t* ref);
+    void Unblock_Player_Activation(Reference_t* ref);
+    void Block_All_Activation(Reference_t* ref);
+    void Unblock_All_Activation(Reference_t* ref);
+
+    //Reference_t* Place_At_Me(Reference_t* ref); // this will be needed for cloning, but we can avoid using it as much as possible
+
 }}
 
 namespace doticu_npcp { namespace Object_Ref { namespace Exports {

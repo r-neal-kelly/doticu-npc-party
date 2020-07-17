@@ -75,6 +75,34 @@ namespace doticu_npcp { namespace Consts {
         return value;
     }
 
+    Misc_t* Immobile_Token()
+    {
+        static Misc_t* value = static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_IMMOBILE));
+        NPCP_ASSERT(value != nullptr);
+        return value;
+    }
+
+    Misc_t* Settler_Token()
+    {
+        static Misc_t* value = static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_SETTLER));
+        NPCP_ASSERT(value != nullptr);
+        return value;
+    }
+
+    Misc_t* Thrall_Token()
+    {
+        static Misc_t* value = static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_THRALL));
+        NPCP_ASSERT(value != nullptr);
+        return value;
+    }
+
+    Misc_t* Paralyzed_Token()
+    {
+        static Misc_t* value = static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_PARALYZED));
+        NPCP_ASSERT(value != nullptr);
+        return value;
+    }
+
     Misc_t* Default_Style_Token()
     {
         static Misc_t* value = static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_STYLE_DEFAULT));
@@ -204,6 +232,13 @@ namespace doticu_npcp { namespace Consts {
     Faction_t* Member_Faction()
     {
         static Faction_t* value = static_cast<Faction_t*>(Game::NPCP_Form(FACTION_MEMBER));
+        NPCP_ASSERT(value != nullptr);
+        return value;
+    }
+
+    Formlist_t* Settler_Markers_Formlist()
+    {
+        static Formlist_t* value = static_cast<Formlist_t*>(Game::NPCP_Form(FORMLIST_MARKERS_SETTLER));
         NPCP_ASSERT(value != nullptr);
         return value;
     }

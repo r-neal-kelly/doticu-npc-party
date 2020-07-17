@@ -1011,6 +1011,7 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
+    // some of these can be made way faster now, by calling c++ innate funcs
     void Followers_t::Register()
     {
         static const String_t event_name = String_t("f_Register");
@@ -1031,26 +1032,66 @@ namespace doticu_npcp { namespace Party {
 
     void Followers_t::Mobilize()
     {
-        static const String_t event_name = String_t("On_Followers_Mobilize");
-        Send(Immobile(), event_name, Tasklist());
+        Vector_t<Follower_t*> immobile = Immobile();
+        for (size_t idx = 0, size = immobile.size(); idx < size; idx += 1) {
+            immobile[idx]->Mobilize();
+        }
     }
 
     void Followers_t::Immobilize()
     {
-        static const String_t event_name = String_t("On_Followers_Immobilize");
-        Send(Mobile(), event_name, Tasklist());
+        Vector_t<Follower_t*> mobile = Mobile();
+        for (size_t idx = 0, size = mobile.size(); idx < size; idx += 1) {
+            mobile[idx]->Immobilize();
+        }
     }
 
     void Followers_t::Settle()
     {
-        static const String_t event_name = String_t("On_Followers_Settle");
-        Send(Non_Settlers(), event_name, Tasklist());
+        Vector_t<Follower_t*> non_settlers = Non_Settlers();
+        for (size_t idx = 0, size = non_settlers.size(); idx < size; idx += 1) {
+            non_settlers[idx]->Settle();
+        }
     }
 
     void Followers_t::Unsettle()
     {
-        static const String_t event_name = String_t("On_Followers_Unsettle");
-        Send(Settlers(), event_name, Tasklist());
+        Vector_t<Follower_t*> settlers = Settlers();
+        for (size_t idx = 0, size = settlers.size(); idx < size; idx += 1) {
+            settlers[idx]->Unsettle();
+        }
+    }
+
+    void Followers_t::Enthrall()
+    {
+        Vector_t<Follower_t*> non_thralls = Non_Thralls();
+        for (size_t idx = 0, size = non_thralls.size(); idx < size; idx += 1) {
+            non_thralls[idx]->Enthrall();
+        }
+    }
+
+    void Followers_t::Unthrall()
+    {
+        Vector_t<Follower_t*> thralls = Thralls();
+        for (size_t idx = 0, size = thralls.size(); idx < size; idx += 1) {
+            thralls[idx]->Unthrall();
+        }
+    }
+
+    void Followers_t::Paralyze()
+    {
+        Vector_t<Follower_t*> non_paralyzed = Non_Paralyzed();
+        for (size_t idx = 0, size = non_paralyzed.size(); idx < size; idx += 1) {
+            non_paralyzed[idx]->Paralyze();
+        }
+    }
+
+    void Followers_t::Unparalyze()
+    {
+        Vector_t<Follower_t*> paralyzed = Paralyzed();
+        for (size_t idx = 0, size = paralyzed.size(); idx < size; idx += 1) {
+            paralyzed[idx]->Unparalyze();
+        }
     }
 
     void Followers_t::Sneak()
@@ -1279,6 +1320,30 @@ namespace doticu_npcp { namespace Party {
         return Variable_t::Fetch(this, Class_Name(), variable_name);
     }
 
+    Variable_t* Member_t::Is_Immobile_Variable()
+    {
+        static const String_t variable_name = String_t("p_is_immobile");
+        return Variable(variable_name);
+    }
+
+    Variable_t* Member_t::Is_Settler_Variable()
+    {
+        static const String_t variable_name = String_t("p_is_settler");
+        return Variable(variable_name);
+    }
+
+    Variable_t* Member_t::Is_Thrall_Variable()
+    {
+        static const String_t variable_name = String_t("p_is_thrall");
+        return Variable(variable_name);
+    }
+
+    Variable_t* Member_t::Is_Paralyzed_Variable()
+    {
+        static const String_t variable_name = String_t("p_is_paralyzed");
+        return Variable(variable_name);
+    }
+
     Actor_t* Member_t::Actor()
     {
         static const String_t variable_name = String_t("p_ref_actor");
@@ -1309,8 +1374,15 @@ namespace doticu_npcp { namespace Party {
         if (variable) {
             return variable->Reference();
         } else {
-            return 0;
+            return nullptr;
         }
+    }
+
+    Reference_t* Member_t::Settler_Marker()
+    {
+        Formlist_t* settler_markers = Consts::Settler_Markers_Formlist();
+        NPCP_ASSERT(settler_markers->forms.count == Members_t::MAX);
+        return static_cast<Reference_t*>(settler_markers->forms.entries[ID()]);
     }
 
     Cell_t* Member_t::Cell()
@@ -1503,9 +1575,7 @@ namespace doticu_npcp { namespace Party {
 
     Bool_t Member_t::Is_Mobile()
     {
-        static const String_t variable_name = String_t("p_is_immobile");
-
-        Variable_t* const variable = Variable(variable_name);
+        Variable_t* const variable = Is_Immobile_Variable();
         if (variable) {
             return !variable->Bool();
         } else {
@@ -1515,9 +1585,7 @@ namespace doticu_npcp { namespace Party {
 
     Bool_t Member_t::Is_Immobile()
     {
-        static const String_t variable_name = String_t("p_is_immobile");
-
-        Variable_t* const variable = Variable(variable_name);
+        Variable_t* const variable = Is_Immobile_Variable();
         if (variable) {
             return variable->Bool();
         } else {
@@ -1527,9 +1595,7 @@ namespace doticu_npcp { namespace Party {
 
     Bool_t Member_t::Is_Settler()
     {
-        static const String_t variable_name = String_t("p_is_settler");
-
-        Variable_t* const variable = Variable(variable_name);
+        Variable_t* const variable = Is_Settler_Variable();
         if (variable) {
             return variable->Bool();
         } else {
@@ -1539,9 +1605,7 @@ namespace doticu_npcp { namespace Party {
 
     Bool_t Member_t::Isnt_Settler()
     {
-        static const String_t variable_name = String_t("p_is_settler");
-
-        Variable_t* const variable = Variable(variable_name);
+        Variable_t* const variable = Is_Settler_Variable();
         if (variable) {
             return !variable->Bool();
         } else {
@@ -1551,9 +1615,7 @@ namespace doticu_npcp { namespace Party {
 
     Bool_t Member_t::Is_Thrall()
     {
-        static const String_t variable_name = String_t("p_is_thrall");
-
-        Variable_t* const variable = Variable(variable_name);
+        Variable_t* const variable = Is_Thrall_Variable();
         if (variable) {
             return variable->Bool();
         } else {
@@ -1563,9 +1625,7 @@ namespace doticu_npcp { namespace Party {
 
     Bool_t Member_t::Isnt_Thrall()
     {
-        static const String_t variable_name = String_t("p_is_thrall");
-
-        Variable_t* const variable = Variable(variable_name);
+        Variable_t* const variable = Is_Thrall_Variable();
         if (variable) {
             return !variable->Bool();
         } else {
@@ -1575,9 +1635,7 @@ namespace doticu_npcp { namespace Party {
 
     Bool_t Member_t::Is_Paralyzed()
     {
-        static const String_t variable_name = String_t("p_is_paralyzed");
-
-        Variable_t* const variable = Variable(variable_name);
+        Variable_t* const variable = Is_Paralyzed_Variable();
         if (variable) {
             return variable->Bool();
         } else {
@@ -1587,9 +1645,7 @@ namespace doticu_npcp { namespace Party {
 
     Bool_t Member_t::Isnt_Paralyzed()
     {
-        static const String_t variable_name = String_t("p_is_paralyzed");
-
-        Variable_t* const variable = Variable(variable_name);
+        Variable_t* const variable = Is_Paralyzed_Variable();
         if (variable) {
             return !variable->Bool();
         } else {
@@ -1812,6 +1868,146 @@ namespace doticu_npcp { namespace Party {
             Object_Ref::Untoken(actor, Consts::Generic_Token());
 
             // Restore() handles the rest
+
+            Actor2::Evaluate_Package(actor);
+        }
+    }
+
+    void Member_t::Mobilize()
+    {
+        Actor_t* actor = Actor();
+        if (actor && Is_Created()) {
+            Variable_t* variable = Is_Immobile_Variable();
+            if (variable) {
+                variable->data.b = false;
+            }
+
+            Object_Ref::Untoken(actor, Consts::Immobile_Token());
+
+            Actor2::Evaluate_Package(actor);
+        }
+    }
+
+    void Member_t::Immobilize()
+    {
+        Actor_t* actor = Actor();
+        if (actor && Is_Created()) {
+            Variable_t* variable = Is_Immobile_Variable();
+            if (variable) {
+                variable->data.b = true;
+            }
+
+            Object_Ref::Token(actor, Consts::Immobile_Token());
+
+            Actor2::Evaluate_Package(actor);
+        }
+    }
+
+    void Member_t::Settle()
+    {
+        Actor_t* actor = Actor();
+        if (actor && Is_Created()) {
+            Variable_t* variable = Is_Settler_Variable();
+            if (variable) {
+                variable->data.b = true;
+            }
+
+            Object_Ref::Token(actor, Consts::Settler_Token());
+
+            Object_Ref::Move_To_Orbit(Settler_Marker(), actor, 0.0f, 180.0f);
+
+            Actor2::Evaluate_Package(actor);
+        }
+    }
+
+    void Member_t::Unsettle()
+    {
+        Actor_t* actor = Actor();
+        if (actor && Is_Created()) {
+            Variable_t* variable = Is_Settler_Variable();
+            if (variable) {
+                variable->data.b = false;
+            }
+
+            Object_Ref::Untoken(actor, Consts::Settler_Token());
+
+            //Settler_Marker(); // move to editor location.
+
+            Actor2::Evaluate_Package(actor);
+        }
+    }
+
+    void Member_t::Enthrall()
+    {
+        Actor_t* actor = Actor();
+        if (actor && Is_Created()) {
+            Variable_t* variable = Is_Thrall_Variable();
+            if (variable) {
+                variable->data.b = true;
+            }
+
+            Object_Ref::Token(actor, Consts::Thrall_Token());
+
+            Actor2::Add_Faction(actor, Consts::DLC1_Vampire_Feed_No_Crime_Faction());
+
+            Actor2::Evaluate_Package(actor);
+        }
+    }
+
+    void Member_t::Unthrall()
+    {
+        Actor_t* actor = Actor();
+        if (actor && Is_Created()) {
+            Variable_t* variable = Is_Thrall_Variable();
+            if (variable) {
+                variable->data.b = false;
+            }
+
+            Object_Ref::Untoken(actor, Consts::Thrall_Token());
+
+            Actor2::Remove_Faction(actor, Consts::DLC1_Vampire_Feed_No_Crime_Faction());
+
+            Actor2::Evaluate_Package(actor);
+        }
+    }
+
+    void Member_t::Paralyze()
+    {
+        Actor_t* actor = Actor();
+        if (actor && Is_Created()) {
+            Variable_t* variable = Is_Paralyzed_Variable();
+            if (variable) {
+                variable->data.b = true;
+            }
+
+            Object_Ref::Token(actor, Consts::Paralyzed_Token());
+
+            Object_Ref::Block_All_Activation(actor);
+            Actor2::Disable_AI(actor);
+            Actor2::Ghostify(actor);
+
+            actor->Update_3D_Position();
+
+            Actor2::Evaluate_Package(actor);
+        }
+    }
+
+    void Member_t::Unparalyze()
+    {
+        Actor_t* actor = Actor();
+        if (actor && Is_Created()) {
+            Variable_t* variable = Is_Paralyzed_Variable();
+            if (variable) {
+                variable->data.b = false;
+            }
+
+            Object_Ref::Untoken(actor, Consts::Paralyzed_Token());
+
+            if (Isnt_Mannequin()) {
+                Object_Ref::Unblock_All_Activation(actor);
+                Actor2::Enable_AI(actor);
+                Actor2::Unghostify(actor);
+            }
 
             Actor2::Evaluate_Package(actor);
         }
@@ -2345,6 +2541,70 @@ namespace doticu_npcp { namespace Party {
     void Follower_t::Summon_Behind(float radius)
     {
         Summon(radius, 180);
+    }
+
+    void Follower_t::Mobilize()
+    {
+        Member_t* member = Member();
+        if (member) {
+            member->Mobilize();
+        }
+    }
+
+    void Follower_t::Immobilize()
+    {
+        Member_t* member = Member();
+        if (member) {
+            member->Immobilize();
+        }
+    }
+
+    void Follower_t::Settle()
+    {
+        Member_t* member = Member();
+        if (member) {
+            member->Settle();
+        }
+    }
+
+    void Follower_t::Unsettle()
+    {
+        Member_t* member = Member();
+        if (member) {
+            member->Unsettle();
+        }
+    }
+
+    void Follower_t::Enthrall()
+    {
+        Member_t* member = Member();
+        if (member) {
+            member->Enthrall();
+        }
+    }
+
+    void Follower_t::Unthrall()
+    {
+        Member_t* member = Member();
+        if (member) {
+            member->Unthrall();
+        }
+    }
+
+    void Follower_t::Paralyze()
+    {
+        Member_t* member = Member();
+        if (member) {
+            member->Paralyze();
+        }
+    }
+
+    void Follower_t::Unparalyze()
+    {
+        Member_t* member = Member();
+        if (member) {
+            member->Unparalyze();
+        }
     }
 
     void Follower_t::Catch_Up()
@@ -2965,20 +3225,24 @@ namespace doticu_npcp { namespace Party { namespace Followers { namespace Export
     }
 
     void Register_(Followers_t* self) FORWARD_VOID(Followers_t::Register());
-    void Enforce(Followers_t* self) FORWARD_VOID(Enforce());
-    void Resurrect(Followers_t* self) FORWARD_VOID(Resurrect());
-    void Mobilize(Followers_t* self) FORWARD_VOID(Mobilize());
-    void Immobilize(Followers_t* self) FORWARD_VOID(Immobilize());
-    void Settle(Followers_t* self) FORWARD_VOID(Settle());
-    void Unsettle(Followers_t* self) FORWARD_VOID(Unsettle());
-    void Sneak(Followers_t* self) FORWARD_VOID(Sneak());
-    void Unsneak(Followers_t* self) FORWARD_VOID(Unsneak());
-    void Saddle(Followers_t* self) FORWARD_VOID(Saddle());
-    void Unsaddle(Followers_t* self) FORWARD_VOID(Unsaddle());
-    void Retreat(Followers_t* self) FORWARD_VOID(Retreat());
-    void Unretreat(Followers_t* self) FORWARD_VOID(Unretreat());
-    void Unfollow(Followers_t* self) FORWARD_VOID(Unfollow());
-    void Unmember(Followers_t* self) FORWARD_VOID(Unmember());
+    void Enforce(Followers_t* self) FORWARD_VOID(Followers_t::Enforce());
+    void Resurrect(Followers_t* self) FORWARD_VOID(Followers_t::Resurrect());
+    void Mobilize(Followers_t* self) FORWARD_VOID(Followers_t::Mobilize());
+    void Immobilize(Followers_t* self) FORWARD_VOID(Followers_t::Immobilize());
+    void Settle(Followers_t* self) FORWARD_VOID(Followers_t::Settle());
+    void Unsettle(Followers_t* self) FORWARD_VOID(Followers_t::Unsettle());
+    void Enthrall(Followers_t* self) FORWARD_VOID(Followers_t::Enthrall());
+    void Unthrall(Followers_t* self) FORWARD_VOID(Followers_t::Unthrall());
+    void Paralyze(Followers_t* self) FORWARD_VOID(Followers_t::Paralyze());
+    void Unparalyze(Followers_t* self) FORWARD_VOID(Followers_t::Unparalyze());
+    void Sneak(Followers_t* self) FORWARD_VOID(Followers_t::Sneak());
+    void Unsneak(Followers_t* self) FORWARD_VOID(Followers_t::Unsneak());
+    void Saddle(Followers_t* self) FORWARD_VOID(Followers_t::Saddle());
+    void Unsaddle(Followers_t* self) FORWARD_VOID(Followers_t::Unsaddle());
+    void Retreat(Followers_t* self) FORWARD_VOID(Followers_t::Retreat());
+    void Unretreat(Followers_t* self) FORWARD_VOID(Followers_t::Unretreat());
+    void Unfollow(Followers_t* self) FORWARD_VOID(Followers_t::Unfollow());
+    void Unmember(Followers_t* self) FORWARD_VOID(Followers_t::Unmember());
 
     void Summon_Filled(Followers_t* self, float radius, float degree, float interval) FORWARD_VOID(Summon_Filled());
     void Summon_Mobile(Followers_t* self, float radius, float degree, float interval) FORWARD_VOID(Summon_Mobile());
@@ -3073,6 +3337,10 @@ namespace doticu_npcp { namespace Party { namespace Followers { namespace Export
         ADD_METHOD("p_Immobilize", 0, void, Immobilize);
         ADD_METHOD("p_Settle", 0, void, Settle);
         ADD_METHOD("p_Unsettle", 0, void, Unsettle);
+        ADD_METHOD("p_Enthrall", 0, void, Enthrall);
+        ADD_METHOD("p_Unthrall", 0, void, Unthrall);
+        ADD_METHOD("p_Paralyze", 0, void, Paralyze);
+        ADD_METHOD("p_Unparalyze", 0, void, Unparalyze);
         ADD_METHOD("p_Sneak", 0, void, Sneak);
         ADD_METHOD("p_Unsneak", 0, void, Unsneak);
         ADD_METHOD("p_Saddle", 0, void, Saddle);
@@ -3141,6 +3409,14 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
 
     void Member(Member_t* self) FORWARD_VOID(Member_t::Member());
     void Unmember(Member_t* self) FORWARD_VOID(Member_t::Unmember());
+    void Mobilize(Member_t* self) FORWARD_VOID(Member_t::Mobilize());
+    void Immobilize(Member_t* self) FORWARD_VOID(Member_t::Immobilize());
+    void Settle(Member_t* self) FORWARD_VOID(Member_t::Settle());
+    void Unsettle(Member_t* self) FORWARD_VOID(Member_t::Unsettle());
+    void Enthrall(Member_t* self) FORWARD_VOID(Member_t::Enthrall());
+    void Unthrall(Member_t* self) FORWARD_VOID(Member_t::Unthrall());
+    void Paralyze(Member_t* self) FORWARD_VOID(Member_t::Paralyze());
+    void Unparalyze(Member_t* self) FORWARD_VOID(Member_t::Unparalyze());
     void Stylize(Member_t* self) FORWARD_VOID(Member_t::Stylize());
     void Unstylize(Member_t* self) FORWARD_VOID(Member_t::Unstylize());
     void Vitalize(Member_t* self) FORWARD_VOID(Member_t::Vitalize());
@@ -3168,6 +3444,14 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
 
         ADD_METHOD("p_Member", 0, void, Member);
         ADD_METHOD("p_Unmember", 0, void, Unmember);
+        ADD_METHOD("p_Mobilize", 0, void, Mobilize);
+        ADD_METHOD("p_Immobilize", 0, void, Immobilize);
+        ADD_METHOD("p_Settle", 0, void, Settle);
+        ADD_METHOD("p_Unsettle", 0, void, Unsettle);
+        ADD_METHOD("p_Enthrall", 0, void, Enthrall);
+        ADD_METHOD("p_Unthrall", 0, void, Unthrall);
+        ADD_METHOD("p_Paralyze", 0, void, Paralyze);
+        ADD_METHOD("p_Unparalyze", 0, void, Unparalyze);
         ADD_METHOD("p_Stylize", 0, void, Stylize);
         ADD_METHOD("p_Unstylize", 0, void, Unstylize);
         ADD_METHOD("p_Vitalize", 0, void, Vitalize);

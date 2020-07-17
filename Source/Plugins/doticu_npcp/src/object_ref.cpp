@@ -505,7 +505,7 @@ namespace doticu_npcp { namespace Object_Ref {
 
         TESWorldSpace *target_world = CALL_MEMBER_FN(target, GetWorldspace)();
 
-        float angle_radians = target->rot.z - (angle_degree * DOTICU_NPCP_PI / 180);
+        float angle_radians = target->rot.z - (angle_degree * DOTICU_NPCP_PI / 180.0f);
         NiPoint3 obj_pos(
             target->pos.x + radius * sin(angle_radians),
             target->pos.y + radius * cos(angle_radians),
@@ -514,7 +514,7 @@ namespace doticu_npcp { namespace Object_Ref {
         NiPoint3 obj_rot(
             0.0,
             0.0,
-            target->rot.z + ((180 - angle_degree) * DOTICU_NPCP_PI / 180)
+            target->rot.z + ((180.0f - angle_degree) * DOTICU_NPCP_PI / 180.0f)
         );
 
         MoveRefrToPosition(obj, &target_handle, target_cell, target_world, &obj_pos, &obj_rot);
@@ -612,6 +612,75 @@ namespace doticu_npcp { namespace Object_Ref {
                     _MESSAGE("unable to get xentry for removing token.");
                 }
             }
+        }
+    }
+
+    void Block_Activation(Reference_t* ref)
+    {
+        ExtraFlags* xflags = static_cast<ExtraFlags*>(ref->extraData.GetByType(kExtraData_Flags));
+        if (xflags) {
+            xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_ACTIVATION);
+        } else {
+            xflags = XData::Create_Flags();
+            if (xflags) {
+                ref->extraData.Add(kExtraData_Flags, xflags);
+                xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_ACTIVATION);
+            }
+        }
+    }
+
+    void Unblock_Activation(Reference_t* ref)
+    {
+        ExtraFlags* xflags = static_cast<ExtraFlags*>(ref->extraData.GetByType(kExtraData_Flags));
+        if (xflags) {
+            xflags->flags = Utils::Bit_Off(xflags->flags, ExtraFlags::BLOCKS_ACTIVATION);
+        }
+    }
+
+    void Block_Player_Activation(Reference_t* ref)
+    {
+        ExtraFlags* xflags = static_cast<ExtraFlags*>(ref->extraData.GetByType(kExtraData_Flags));
+        if (xflags) {
+            xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_PLAYER_ACTIVATION);
+        } else {
+            xflags = XData::Create_Flags();
+            if (xflags) {
+                ref->extraData.Add(kExtraData_Flags, xflags);
+                xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_PLAYER_ACTIVATION);
+            }
+        }
+    }
+
+    void Unblock_Player_Activation(Reference_t* ref)
+    {
+        ExtraFlags* xflags = static_cast<ExtraFlags*>(ref->extraData.GetByType(kExtraData_Flags));
+        if (xflags) {
+            xflags->flags = Utils::Bit_Off(xflags->flags, ExtraFlags::BLOCKS_PLAYER_ACTIVATION);
+        }
+    }
+
+    void Block_All_Activation(Reference_t* ref)
+    {
+        ExtraFlags* xflags = static_cast<ExtraFlags*>(ref->extraData.GetByType(kExtraData_Flags));
+        if (xflags) {
+            xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_ACTIVATION);
+            xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_PLAYER_ACTIVATION);
+        } else {
+            xflags = XData::Create_Flags();
+            if (xflags) {
+                ref->extraData.Add(kExtraData_Flags, xflags);
+                xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_ACTIVATION);
+                xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_PLAYER_ACTIVATION);
+            }
+        }
+    }
+
+    void Unblock_All_Activation(Reference_t* ref)
+    {
+        ExtraFlags* xflags = static_cast<ExtraFlags*>(ref->extraData.GetByType(kExtraData_Flags));
+        if (xflags) {
+            xflags->flags = Utils::Bit_Off(xflags->flags, ExtraFlags::BLOCKS_ACTIVATION);
+            xflags->flags = Utils::Bit_Off(xflags->flags, ExtraFlags::BLOCKS_PLAYER_ACTIVATION);
         }
     }
 

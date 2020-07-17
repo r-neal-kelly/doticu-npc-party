@@ -91,7 +91,6 @@ int                     p_code_style                =    -1
 int                     p_code_vitality             =    -1
 int                     p_code_outfit2              =    -1
 int                     p_int_rating                =     0
-ObjectReference         p_marker_settler            =  none
 ObjectReference         p_marker_display            =  none
 ObjectReference         p_marker_mannequin          =  none
 Outfit                  p_outfit_vanilla            =  none
@@ -125,6 +124,14 @@ function Untoken(MiscObject token) native
 
 function p_Member() native
 function p_Unmember() native
+function p_Mobilize() native
+function p_Immobilize() native
+function p_Settle() native
+function p_Unsettle() native
+function p_Enthrall() native
+function p_Unthrall() native
+function p_Paralyze() native
+function p_Unparalyze() native
 function p_Stylize() native
 function p_Unstylize() native
 function p_Vitalize() native
@@ -156,7 +163,6 @@ p_Lock()
     p_code_vitality = VARS.auto_vitality
     p_code_outfit2 = CODES.OUTFIT2_MEMBER
     p_int_rating = 0
-    p_marker_settler = CONSTS.FORMLIST_MARKERS_SETTLER.GetAt(ID()) as ObjectReference
     p_marker_display = none
     p_marker_mannequin = none
     p_outfit_vanilla = NPCS.Get_Default_Outfit(p_ref_actor)
@@ -235,7 +241,6 @@ p_Lock()
     p_outfit_vanilla = none
     p_marker_mannequin = none
     p_marker_display = none
-    p_marker_settler = none
     p_int_rating = 0
     p_code_outfit2 = -1
     p_code_vitality = -1
@@ -327,109 +332,6 @@ p_Lock()
 
     ACTORS.Set_Factions(p_ref_actor, p_prev_factions, p_prev_faction_ranks)
     p_ref_actor.SetCrimeFaction(p_prev_faction_crime)
-
-p_Unlock()
-endFunction
-
-function p_Settle()
-p_Lock()
-
-    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_SETTLER)
-
-    p_marker_settler.MoveTo(p_ref_actor)
-
-    p_ref_actor.EvaluatePackage()
-
-p_Unlock()
-endFunction
-
-function p_Unsettle()
-p_Lock()
-
-    p_marker_settler.MoveToMyEditorLocation()
-
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_SETTLER)
-
-    p_ref_actor.EvaluatePackage()
-
-p_Unlock()
-endFunction
-
-function p_Enthrall()
-p_Lock()
-
-    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_THRALL)
-
-    p_ref_actor.AddToFaction(CONSTS.FACTION_DLC1_VAMPIRE_FEED_NO_CRIME)
-
-    p_ref_actor.EvaluatePackage()
-
-p_Unlock()
-endFunction
-
-function p_Unthrall()
-p_Lock()
-
-    p_ref_actor.RemoveFromFaction(CONSTS.FACTION_DLC1_VAMPIRE_FEED_NO_CRIME)
-
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_THRALL)
-
-    p_ref_actor.EvaluatePackage()
-
-p_Unlock()
-endFunction
-
-function p_Immobilize()
-p_Lock()
-
-    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_IMMOBILE)
-
-    p_ref_actor.EvaluatePackage()
-
-p_Unlock()
-endFunction
-
-function p_Mobilize()
-p_Lock()
-
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_IMMOBILE)
-
-    p_ref_actor.EvaluatePackage()
-
-p_Unlock()
-endFunction
-
-function p_Paralyze()
-p_Lock()
-
-    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_PARALYZED)
-
-    ObjectReference ref_marker = p_ref_actor.PlaceAtMe(CONSTS.STATIC_MARKER_X)
-    ref_marker.MoveTo(p_ref_actor)
-    
-    p_ref_actor.EnableAI(false)
-    p_ref_actor.SetGhost(true)
-    p_ref_actor.BlockActivation(true)
-
-    p_ref_actor.EvaluatePackage()
-
-    p_ref_actor.MoveTo(ref_marker)
-
-p_Unlock()
-endFunction
-
-function p_Unparalyze()
-p_Lock()
-    
-    if !Is_Mannequin()
-        p_ref_actor.BlockActivation(false)
-        p_ref_actor.SetGhost(false)
-        p_ref_actor.EnableAI(true)
-    endIf
-
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_PARALYZED)
-
-    ;p_ref_actor.EvaluatePackage(); resets animation
 
 p_Unlock()
 endFunction
@@ -976,6 +878,38 @@ int function Set_Name(string str_name)
     return CODES.SUCCESS
 endFunction
 
+int function Mobilize(int code_exec)
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+
+    if !Is_Immobile()
+        return CODES.ISNT_IMMOBILE
+    endIf
+
+    p_Mobilize()
+
+    p_Async("On_Outfit")
+
+    return CODES.SUCCESS
+endFunction
+
+int function Immobilize(int code_exec)
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+
+    if Is_Immobile()
+        return CODES.IS_IMMOBILE
+    endIf
+
+    p_Immobilize()
+
+    p_Async("On_Outfit")
+
+    return CODES.SUCCESS
+endFunction
+
 int function Settle(int code_exec)
     if !Exists()
         return CODES.ISNT_MEMBER
@@ -985,23 +919,12 @@ int function Settle(int code_exec)
         return CODES.IS_SETTLER
     endIf
 
-    p_is_settler = true
-
-    if code_exec == CODES.DO_ASYNC
-        p_Async("On_Settle")
-    else
-        p_Settle()
-    endIf
+    p_Settle()
 
     p_Async("On_Outfit")
 
     return CODES.SUCCESS
 endFunction
-event On_Settle()
-    if Is_Settler()
-        p_Settle()
-    endIf
-endEvent
 
 int function Resettle(int code_exec)
     if !Exists()
@@ -1012,11 +935,7 @@ int function Resettle(int code_exec)
         return CODES.ISNT_SETTLER
     endIf
 
-    if code_exec == CODES.DO_ASYNC
-        p_Async("On_Settle")
-    else
-        p_Settle()
-    endIf
+    p_Settle()
 
     p_Async("On_Outfit")
 
@@ -1032,23 +951,12 @@ int function Unsettle(int code_exec)
         return CODES.ISNT_SETTLER
     endIf
 
-    p_is_settler = false
-
-    if code_exec == CODES.DO_ASYNC
-        p_Async("On_Unsettle")
-    else
-        p_Unsettle()
-    endIf
+    p_Unsettle()
 
     p_Async("On_Outfit")
 
     return CODES.SUCCESS
 endFunction
-event On_Unsettle()
-    if Isnt_Settler()
-        p_Unsettle()
-    endIf
-endEvent
 
 int function Enthrall(int code_exec)
     if !Exists()
@@ -1063,23 +971,12 @@ int function Enthrall(int code_exec)
         return CODES.IS_THRALL
     endIf
 
-    p_is_thrall = true
-
-    if code_exec == CODES.DO_ASYNC
-        p_Async("On_Enthrall")
-    else
-        p_Enthrall()
-    endIf
+    p_Enthrall()
 
     p_Async("On_Outfit")
 
     return CODES.SUCCESS
 endFunction
-event On_Enthrall()
-    if Is_Thrall()
-        p_Enthrall()
-    endIf
-endEvent
 
 int function Unthrall(int code_exec)
     if !Exists()
@@ -1094,77 +991,12 @@ int function Unthrall(int code_exec)
         return CODES.ISNT_THRALL
     endIf
 
-    p_is_thrall = false
-
-    if code_exec == CODES.DO_ASYNC
-        p_Async("On_Unthrall")
-    else
-        p_Unthrall()
-    endIf
+    p_Unthrall()
 
     p_Async("On_Outfit")
 
     return CODES.SUCCESS
 endFunction
-event On_Unthrall()
-    if Isnt_Thrall()
-        p_Unthrall()
-    endIf
-endEvent
-
-int function Immobilize(int code_exec)
-    if !Exists()
-        return CODES.ISNT_MEMBER
-    endIf
-
-    if Is_Immobile()
-        return CODES.IS_IMMOBILE
-    endIf
-
-    p_is_immobile = true
-
-    if code_exec == CODES.DO_ASYNC
-        p_Async("On_Immobilize")
-    else
-        p_Immobilize()
-    endIf
-
-    p_Async("On_Outfit")
-
-    return CODES.SUCCESS
-endFunction
-event On_Immobilize()
-    if Is_Immobile()
-        p_Immobilize()
-    endIf
-endEvent
-
-int function Mobilize(int code_exec)
-    if !Exists()
-        return CODES.ISNT_MEMBER
-    endIf
-
-    if !Is_Immobile()
-        return CODES.ISNT_IMMOBILE
-    endIf
-
-    p_is_immobile = false
-
-    if code_exec == CODES.DO_ASYNC
-        p_Async("On_Mobilize")
-    else
-        p_Mobilize()
-    endIf
-
-    p_Async("On_Outfit")
-
-    return CODES.SUCCESS
-endFunction
-event On_Mobilize()
-    if Is_Mobile()
-        p_Mobilize()
-    endIf
-endEvent
 
 int function Paralyze(int code_exec)
     if !Exists()
@@ -1175,21 +1007,10 @@ int function Paralyze(int code_exec)
         return CODES.IS_PARALYZED
     endIf
 
-    p_is_paralyzed = true
-
-    if code_exec == CODES.DO_ASYNC
-        p_Async("On_Paralyze")
-    else
-        p_Paralyze()
-    endIf
+    p_Paralyze()
 
     return CODES.SUCCESS
 endFunction
-event On_Paralyze()
-    if Is_Paralyzed()
-        p_Paralyze()
-    endIf
-endEvent
 
 int function Unparalyze(int code_exec)
     if !Exists()
@@ -1200,21 +1021,10 @@ int function Unparalyze(int code_exec)
         return CODES.ISNT_PARALYZED
     endIf
 
-    p_is_paralyzed = false
-
-    if code_exec == CODES.DO_ASYNC
-        p_Async("On_Unparalyze")
-    else
-        p_Unparalyze()
-    endIf
+    p_Unparalyze()
 
     return CODES.SUCCESS
 endFunction
-event On_Unparalyze()
-    if Is_Unparalyzed()
-        p_Unparalyze()
-    endIf
-endEvent
 
 int function Mannequinize(int code_exec, ObjectReference ref_marker)
     if !Exists()

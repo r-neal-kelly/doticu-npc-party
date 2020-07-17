@@ -18,6 +18,8 @@ namespace doticu_npcp { namespace Actor_Base2 {
     float Get_Actor_Value(TESNPC *actor_base, const char *name);
     float Get_Base_Actor_Value(TESNPC *actor_base, const char *name);
     float Get_Max_Actor_Value(TESNPC *actor_base, const char *name);
+
+    Bool_t Is_Ghost(Actor_Base_t* actor_base);
 }}
 
 namespace doticu_npcp { namespace Actor_Base2 { namespace Exports {

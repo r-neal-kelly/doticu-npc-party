@@ -9,19 +9,21 @@
 // credit goes to meh321 of 'Address Library for SKSE Plugins' for the offsets
 // and also Ryan-rsm-McKenzie of CommonLibSSE for the ids
 
-// this is for version 1.5.97.0 only
+// this is for version 1.5.97.0 only. use the ids in comments for other versions
 namespace doticu_npcp { namespace Offsets {
 
     namespace Actor {
 
-        constexpr size_t EVALUATE_PACKAGE           = 0x005DB310; // 36407
+        constexpr uintptr_t EVALUATE_PACKAGE            = 0x005DB310; // 36407
 
     }
 
     namespace Extra {
 
-        constexpr size_t FACTION_CHANGES_V_TABLE    = 0x0152C800; // 229602
-        constexpr size_t CAN_TALK_TO_PLAYER_V_TABLE = 0x0152C740; // 229596
+        constexpr uintptr_t CAN_TALK_TO_PLAYER_V_TABLE  = 0x0152C740; // 229596
+        constexpr uintptr_t FACTION_CHANGES_V_TABLE     = 0x0152C800; // 229602
+        constexpr uintptr_t FLAGS_V_TABLE               = 0x0152CBC0; // 229632
+        constexpr uintptr_t GHOST_V_TABLE               = 0x0152F2A0; // 229888
 
     }
 

@@ -149,6 +149,15 @@ namespace doticu_npcp { namespace Actor_Base2 {
         return actor_base->actorValueOwner.GetMaximum(id_value);
     }
 
+    Bool_t Is_Ghost(Actor_Base_t* actor_base)
+    {
+        if (actor_base) {
+            return reinterpret_cast<Actor_Base_Data_t*>(&actor_base->actorData)->Is_Ghost();
+        } else {
+            return false;
+        }
+    }
+
 }}
 
 namespace doticu_npcp { namespace Actor_Base2 { namespace Exports {

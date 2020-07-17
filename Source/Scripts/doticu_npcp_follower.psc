@@ -745,42 +745,6 @@ event On_Followers_Resurrect(Form form_tasklist)
     endIf
 endEvent
 
-event On_Followers_Mobilize(Form form_tasklist)
-    if Exists() && Is_Immobile()
-        Mobilize(CODES.DO_SYNC)
-        if form_tasklist
-            (form_tasklist as doticu_npcp_tasklist).Detask()
-        endIf
-    endIf
-endEvent
-
-event On_Followers_Immobilize(Form form_tasklist)
-    if Exists() && Is_Mobile()
-        Immobilize(CODES.DO_SYNC)
-        if form_tasklist
-            (form_tasklist as doticu_npcp_tasklist).Detask()
-        endIf
-    endIf
-endEvent
-
-event On_Followers_Settle(Form form_tasklist)
-    if Exists()
-        Settle(CODES.DO_SYNC)
-        if form_tasklist
-            (form_tasklist as doticu_npcp_tasklist).Detask()
-        endIf
-    endIf
-endEvent
-
-event On_Followers_Unsettle(Form form_tasklist)
-    if Exists() && Is_Settler()
-        Unsettle(CODES.DO_SYNC)
-        if form_tasklist
-            (form_tasklist as doticu_npcp_tasklist).Detask()
-        endIf
-    endIf
-endEvent
-
 event On_Followers_Sneak(Form form_tasklist)
     if Exists() && Is_Unsneak()
         Sneak(CODES.DO_SYNC)

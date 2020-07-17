@@ -104,6 +104,10 @@ function p_Mobilize() native
 function p_Immobilize() native
 function p_Settle() native
 function p_Unsettle() native
+function p_Enthrall() native
+function p_Unthrall() native
+function p_Paralyze() native
+function p_Unparalyze() native
 function p_Sneak() native
 function p_Unsneak() native
 function p_Saddle() native
@@ -356,19 +360,11 @@ p_Busy()
     if Count_Filled() < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
-
-    int num_immobile = Count_Immobile()
-    if num_immobile < 1
+    if Count_Immobile() < 1
         return p_Ready_Int(CODES.HASNT_IMMOBILE)
     endIf
 
-    p_tasklist.Init(num_immobile)
-
     p_Mobilize()
-
-    if !p_tasklist.Await(num_immobile, 0.5, 10.0)
-        return p_Ready_Int(CODES.FAILURE)
-    endIf
 
     return p_Ready_Int(CODES.SUCCESS)
 
@@ -381,19 +377,11 @@ p_Busy()
     if Count_Filled() < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
-
-    int num_mobile = Count_Mobile()
-    if num_mobile < 1
+    if Count_Mobile() < 1
         return p_Ready_Int(CODES.HASNT_MOBILE)
     endIf
 
-    p_tasklist.Init(num_mobile)
-
     p_Immobilize()
-    
-    if !p_tasklist.Await(num_mobile, 0.5, 10.0)
-        return p_Ready_Int(CODES.FAILURE)
-    endIf
 
     return p_Ready_Int(CODES.SUCCESS)
 
@@ -403,18 +391,11 @@ endFunction
 int function Settle()
 p_Busy()
 
-    int num_followers = Count_Filled()
-    if num_followers < 1
+    if Count_Filled() < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
 
-    p_tasklist.Init(num_followers)
-
     p_Settle()
-
-    if !p_tasklist.Await(num_followers, 0.5, 10.0)
-        return p_Ready_Int(CODES.FAILURE)
-    endIf
 
     return p_Ready_Int(CODES.SUCCESS)
 
@@ -427,19 +408,79 @@ p_Busy()
     if Count_Filled() < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
-
-    int num_settlers = Count_Settlers()
-    if num_settlers < 1
+    if Count_Settlers() < 1
         return p_Ready_Int(CODES.HASNT_SETTLER)
     endIf
 
-    p_tasklist.Init(num_settlers)
-
     p_Unsettle()
 
-    if !p_tasklist.Await(num_settlers, 0.5, 10.0)
-        return p_Ready_Int(CODES.FAILURE)
+    return p_Ready_Int(CODES.SUCCESS)
+
+p_Ready()
+endFunction
+
+int function Enthrall()
+p_Busy()
+
+    if Count_Filled() < 1
+        return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
+    if Count_Non_Thralls() < 1
+        return p_Ready_Int(CODES.HASNT_NON_THRALL)
+    endIf
+
+    p_Enthrall()
+
+    return p_Ready_Int(CODES.SUCCESS)
+
+p_Ready()
+endFunction
+
+int function Unthrall()
+p_Busy()
+
+    if Count_Filled() < 1
+        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+    endIf
+    if Count_Thralls() < 1
+        return p_Ready_Int(CODES.HASNT_THRALL)
+    endIf
+
+    p_Unthrall()
+
+    return p_Ready_Int(CODES.SUCCESS)
+
+p_Ready()
+endFunction
+
+int function Paralyze()
+p_Busy()
+
+    if Count_Filled() < 1
+        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+    endIf
+    if Count_Non_Paralyzed() < 1
+        return p_Ready_Int(CODES.HASNT_NON_PARALYZED)
+    endIf
+
+    p_Paralyze()
+
+    return p_Ready_Int(CODES.SUCCESS)
+
+p_Ready()
+endFunction
+
+int function Unparalyze()
+p_Busy()
+
+    if Count_Filled() < 1
+        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+    endIf
+    if Count_Paralyzed() < 1
+        return p_Ready_Int(CODES.HASNT_PARALYZED)
+    endIf
+
+    p_Unparalyze()
 
     return p_Ready_Int(CODES.SUCCESS)
 
@@ -660,6 +701,14 @@ state p_STATE_BUSY
     endFunction
     int function Unsettle()
     endFunction
+    int function Enthrall()
+    endFunction
+    int function Unthrall()
+    endFunction
+    int function Paralyze()
+    endFunction
+    int function Unparalyze()
+    endFunction
     int function Sneak()
     endFunction
     int function Unsneak()
@@ -679,5 +728,3 @@ state p_STATE_BUSY
     int function Unmember()
     endFunction
 endState
-
-; should have an update func that destroys aliases?

@@ -157,6 +157,7 @@
     <ClCompile Include="src\player.cpp" />
     <ClCompile Include="src\quest.cpp" />
     <ClCompile Include="src\tests.cpp" />
+    <ClCompile Include="src\types.cpp" />
     <ClCompile Include="src\vars.cpp" />
     <ClCompile Include="src\vector.cpp" />
     <ClCompile Include="src\xcontainer.cpp" />

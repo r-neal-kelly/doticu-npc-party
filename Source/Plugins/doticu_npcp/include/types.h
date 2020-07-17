@@ -47,25 +47,31 @@ namespace doticu_npcp {
     typedef Projectile      Projectile_t;
     typedef BGSProjectile   Projectile_Base_t;
 
+    typedef BGSListForm     Formlist_t;
+
+    class Reference_t2 {
+    public:
+    };
+
     // a lot of credit for deciphering these classes goes to Ryan-rsm-McKenzie of CommonLibSSE as well as the SKSE team
     class Actor_Base_Data_t : public BaseFormComponent {
     public:
         enum Flags : UInt32 {
-            FLAG_FEMALE = 1 << 0,
-            FLAG_ESSENTIAL = 1 << 1,
-            FLAG_FACE_PRESET = 1 << 2,
-            FLAG_RESPAWNS = 1 << 3,
-            FLAG_AUTO_STATS = 1 << 4,
-            FLAG_UNIQUE = 1 << 5
+            IS_FEMALE = 0,
+            IS_ESSENTIAL = 1,
+            FACE_PRESET = 2,
+            RESPAWNS = 3,
+            AUTO_STATS = 4,
+            IS_UNIQUE = 5,
+            // ...
+            IS_GHOST = 29,
             // ...
         };
 
         UInt32 flags; // 08
 
-        bool Is_Unique()
-        {
-            return (flags & FLAG_UNIQUE) != 0;
-        }
+        Bool_t Is_Unique();
+        Bool_t Is_Ghost();
     };
 
     enum class Actor_Value_t : UInt32 {
@@ -165,6 +171,35 @@ namespace doticu_npcp {
     };
     STATIC_ASSERT(sizeof(Actor_Value_Owner_t) == 0x08);
 
+    class Actor_t2 {
+    public:
+
+        enum Flags_1 : UInt32 {
+            PROCESS_AI              = 1,
+            IS_DEAD                 = 11,
+            RESET_AI                = 17,
+            IS_PLAYER_TEAMMATE      = 26,
+            IS_PARALYZED            = 31,
+        };
+
+        enum Flags_2 {
+            IS_A_MOUNT              = 1,
+            IS_MOUNT_OBSTRUCTED     = 2,
+            IS_MOUNTING_ON_OFF      = 3,
+            DOES_FAVORS             = 7,
+            UPDATE_ANIMATION_GRAPH  = 8,
+            CAN_SPEAK               = 13,
+            FORCE_ANIMATION_UPDATE  = 17,
+            IS_ESSENTIAL            = 18,
+            IS_PROTECTED            = 19,
+            SHOWS_NO_STEALTH_EYE    = 26,
+            IS_IMMOBILE             = 27,
+            FORCE_ANIMATION_UPDATES = 29,
+            IS_UNDERWATER           = 31,
+        };
+
+    };
+
     class Alias_Base_t {
     public:
         enum {
@@ -242,6 +277,30 @@ namespace doticu_npcp {
         UInt32 pad_14; // 14
     };
 
+    class ExtraFlags : public BSExtraData {
+    public:
+        enum : UInt32 {
+            BLOCKS_ACTIVATION = 0,
+            BLOCKS_PLAYER_ACTIVATION = 1,
+            // ...
+        };
+
+        virtual ~ExtraFlags();
+
+        UInt32 flags; // 10
+        UInt32 pad; // 14
+    };
+
+    class ExtraGhost : public BSExtraData {
+    public:
+        virtual ~ExtraGhost();
+
+        Bool_t is_ghost; // 10
+        UInt8 pad_11; // 11
+        UInt16 pad_12; // 12
+        UInt32 pad_14; // 14
+    };
+
 }
 
 namespace doticu_npcp {
@@ -277,6 +336,7 @@ namespace doticu_npcp { namespace Papyrus {
 
     typedef VMClassRegistry         Registry_t;
     typedef IObjectHandlePolicy     Policy_t;
+    typedef UInt32                  Stack_ID_t;
     typedef VMScriptInstance        Script_t;
     typedef UInt64                  Type_e;
 
