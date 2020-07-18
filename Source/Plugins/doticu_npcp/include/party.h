@@ -406,6 +406,8 @@ namespace doticu_npcp { namespace Party {
         Variable_t* Is_Paralyzed_Variable();
         Variable_t* Is_Mannequin_Variable();
         Variable_t* Mannequin_Marker_Variable();
+        Variable_t* Style_Variable();
+        Variable_t* Vitality_Variable();
 
         Actor_t* Actor();
         Follower_t* Follower();
@@ -482,10 +484,13 @@ namespace doticu_npcp { namespace Party {
         void Unparalyze();
         void Mannequinize(Reference_t* marker = nullptr);
         void Unmannequinize();
-        void Stylize();
+        void Stylize(Int_t style);
         void Unstylize();
-        void Vitalize();
+        void Vitalize(Int_t vitality);
         void Unvitalize();
+        void Rename(String_t new_name);
+
+        void Level();
 
         void Log_Variable_Infos();
     };
@@ -577,6 +582,7 @@ namespace doticu_npcp { namespace Party {
         void Unlevel();
         void Sneak();
         void Unsneak();
+        void Rename(String_t new_name);
     };
 
     class Horse_t : public Alias_t {
@@ -589,6 +595,12 @@ namespace doticu_npcp { namespace Party {
 
         Actor_t* Actor();
         Follower_t* Follower();
+
+        String_t Base_Name();
+        String_t Reference_Name();
+        String_t Name();
+
+        void Rename(String_t new_name);
     };
 
 }}

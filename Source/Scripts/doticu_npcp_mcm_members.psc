@@ -228,7 +228,7 @@ function f_Build_Page()
     int idx_slice = 0
     while idx_slice < p_arr_aliases_slice.length
         doticu_npcp_member ref_member = p_arr_aliases_slice[idx_slice] as doticu_npcp_member
-        MCM.AddTextOption(ref_member.Get_Name(), "...")
+        MCM.AddTextOption(ref_member.Name(), "...")
         idx_slice += 1
     endWhile
 endFunction
@@ -315,7 +315,7 @@ function f_On_Option_Highlight(int id_option)
             return
         endIf
         
-        MCM.SetInfoText("Opens the member menu for " + ref_member.Get_Name() + ".\n" + Get_Info_String(ref_member))
+        MCM.SetInfoText("Opens the member menu for " + ref_member.Name() + ".\n" + Get_Info_String(ref_member))
 
     endIf
 endFunction
@@ -368,7 +368,7 @@ string function Get_Info_String(doticu_npcp_member ref_member)
         return ""
     endIf
 
-    Actor ref_actor = ref_member.Get_Actor()
+    Actor ref_actor = ref_member.Actor()
     if !ref_actor
         return ""
     endIf

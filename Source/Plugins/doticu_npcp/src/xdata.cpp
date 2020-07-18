@@ -342,13 +342,35 @@ namespace doticu_npcp { namespace XData {
         }
     }
 
-    void Destroy(XData_t *xdata) {
-        if (!xdata) {
-            return;
-        }
+    ExtraTextDisplay* Create_Text_Display(String_t name)
+    {
+        ExtraTextDisplay* xtext = static_cast<ExtraTextDisplay*>(XData_t::Create(
+            sizeof(ExtraTextDisplay),
+            Offsets::Extra::TEXT_DISPLAY_V_TABLE + RelocationManager::s_baseAddr
+        ));
+        if (xtext) {
+            xtext->name = "";
+            xtext->message = nullptr;
+            xtext->owner = nullptr;
+            xtext->flag = ExtraTextDisplay::DEFAULT;
+            xtext->extra_health = 1.0f;
+            xtext->custom_length = 0;
+            xtext->pad_32 = 0;
+            xtext->pad_34 = 0;
 
-        // this apparently does delete the xdata the correct way.
-        xdata->~BSExtraData();
+            xtext->Force_Rename(name);
+
+            return xtext;
+        } else {
+            return nullptr;
+        }
+    }
+
+    void Destroy(XData_t* xdata)
+    {
+        if (xdata) {
+            xdata->~BSExtraData();
+        }
     }
 
     ExtraCount *Copy_Count(ExtraCount *xdata, BSReadWriteLock *xlist_lock) {

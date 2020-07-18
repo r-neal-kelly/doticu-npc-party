@@ -153,11 +153,11 @@ function Open(ObjectReference ref_container)
     FUNCS.Wait(0.1)
 endFunction
 
-string function Get_Name(ObjectReference ref_container)
+string function Name(ObjectReference ref_container)
     return ref_container.GetDisplayName()
 endFunction
 
-function Set_Name(ObjectReference ref_container, string str_name)
+function Rename(ObjectReference ref_container, string str_name)
     ref_container.SetDisplayName(str_name, true)
 endFunction
 

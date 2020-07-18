@@ -80,10 +80,14 @@ bool                    p_prev_faction_bard_no_auto = false
 Actor function Actor() native
 int function ID() native
 
+string function Name() native
+
 function p_Level() native
 function p_Unlevel() native
 function p_Sneak() native
 function p_Unsneak() native
+
+function p_Rename(string new_name) native
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA, Actor ref_actor)
@@ -148,6 +152,7 @@ p_Unlock()
 endFunction
 
 function f_Register()
+    ; is this necessary? prob. not
     RegisterForModEvent("doticu_npcp_cell_change", "On_Cell_Change")
 endFunction
 
@@ -191,12 +196,6 @@ p_Unlock()
     else
         p_Unsaddle()
     endIf
-endFunction
-
-function f_Relevel()
-p_Lock()
-    p_Level()
-p_Unlock()
 endFunction
 
 ; Private Methods
@@ -307,7 +306,7 @@ p_Unlock()
 
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_SADDLER)
 
-    Actor ref_horse = p_ref_horse.Get_Actor()
+    Actor ref_horse = p_ref_horse.Actor()
 
     ref_horse.Enable()
     ref_horse.IgnoreFriendlyHits(true)
@@ -347,7 +346,7 @@ p_Lock()
     endIf
 
     if p_ref_horse
-        Actor ref_horse = p_ref_horse.Get_Actor()
+        Actor ref_horse = p_ref_horse.Actor()
         ref_horse.Disable()
         ref_horse.MoveTo(CONSTS.MARKER_STORAGE)
     endIf
@@ -417,14 +416,6 @@ bool function Exists()
     return p_is_created
 endFunction
 
-string function Get_Name()
-    return p_ref_member.Get_Name()
-endFunction
-
-Actor function Get_Actor()
-    return p_ref_member.Get_Actor()
-endFunction
-
 doticu_npcp_member function Get_Member()
     if !Exists() || !p_ref_member.Exists()
         return none
@@ -433,9 +424,9 @@ doticu_npcp_member function Get_Member()
     endIf
 endFunction
 
-int function Set_Name(string str_name)
+int function Rename(string str_name)
 
-    int code_return = p_ref_member.Set_Name(str_name)
+    int code_return = p_ref_member.Rename(str_name)
     if code_return < 0
         return code_return
     endIf
@@ -583,24 +574,24 @@ int function Stash()
     return p_ref_member.Stash()
 endFunction
 
-int function Settle(int code_exec)
+int function Settle()
     if Is_Settler()
-        return p_ref_member.Resettle(code_exec)
+        return p_ref_member.Resettle()
     else
-        return p_ref_member.Settle(code_exec)
+        return p_ref_member.Settle()
     endIf
 endFunction
 
-int function Unsettle(int code_exec)
-    return p_ref_member.Unsettle(code_exec)
+int function Unsettle()
+    return p_ref_member.Unsettle()
 endFunction
 
-int function Immobilize(int code_exec)
-    return p_ref_member.Immobilize(code_exec)
+int function Immobilize()
+    return p_ref_member.Immobilize()
 endFunction
 
-int function Mobilize(int code_exec)
-    return p_ref_member.Mobilize(code_exec)
+int function Mobilize()
+    return p_ref_member.Mobilize()
 endFunction
 
 int function Unmember()

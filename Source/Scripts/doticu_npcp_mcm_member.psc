@@ -188,7 +188,7 @@ function f_Build_Page()
         return
     endIf
     
-    string str_name = p_ref_member.Get_Name()
+    string str_name = p_ref_member.Name()
 
     MCM.SetCursorPosition(0)
     MCM.SetCursorFillMode(MCM.LEFT_TO_RIGHT)
@@ -240,7 +240,7 @@ function f_On_Option_Select(int id_option)
         return
     endIf
 
-    Actor ref_actor = p_ref_member.Get_Actor()
+    Actor ref_actor = p_ref_member.Actor()
 
     if false
 
@@ -285,33 +285,33 @@ function f_On_Option_Select(int id_option)
 
     elseIf id_option == p_option_settle
         f_Disable(p_option_settle, DO_UPDATE)
-        COMMANDS.Settle_Sync(ref_actor, false)
+        COMMANDS.Settle(ref_actor, false)
         p_Update_Commands()
     elseIf id_option == p_option_resettle
         f_Disable(p_option_resettle, DO_UPDATE)
-        COMMANDS.Resettle_Sync(ref_actor, false)
+        COMMANDS.Resettle(ref_actor, false)
         p_Update_Commands()
     elseIf id_option == p_option_unsettle
         f_Disable(p_option_unsettle, DO_UPDATE)
-        COMMANDS.Unsettle_Sync(ref_actor, false)
+        COMMANDS.Unsettle(ref_actor, false)
         p_Update_Commands()
 
     elseIf id_option == p_option_immobilize
         f_Disable(p_option_immobilize, DO_UPDATE)
-        COMMANDS.Immobilize_Sync(ref_actor, false)
+        COMMANDS.Immobilize(ref_actor, false)
         p_Update_Commands()
     elseIf id_option == p_option_mobilize
         f_Disable(p_option_mobilize, DO_UPDATE)
-        COMMANDS.Mobilize_Sync(ref_actor, false)
+        COMMANDS.Mobilize(ref_actor, false)
         p_Update_Commands()
 
     elseIf id_option == p_option_paralyze
         f_Disable(p_option_paralyze, DO_UPDATE)
-        COMMANDS.Paralyze_Sync(ref_actor, false)
+        COMMANDS.Paralyze(ref_actor, false)
         p_Update_Commands()
     elseIf id_option == p_option_unparalyze
         f_Disable(p_option_unparalyze, DO_UPDATE)
-        COMMANDS.Unparalyze_Sync(ref_actor, false)
+        COMMANDS.Unparalyze(ref_actor, false)
         p_Update_Commands()
 
     elseIf id_option == p_option_follow
@@ -362,37 +362,37 @@ function f_On_Option_Select(int id_option)
         endIf
 
     elseIf id_option == p_option_style
-        int code_style = p_ref_member.Get_Style()
+        int code_style = p_ref_member.Style()
         if code_style == CODES.IS_DEFAULT
-            COMMANDS.Style_Warrior_Sync(ref_actor, false)
+            COMMANDS.Stylize_Warrior(ref_actor, false)
             p_Update_Commands()
         elseIf code_style == CODES.IS_WARRIOR
-            COMMANDS.Style_Mage_Sync(ref_actor, false)
+            COMMANDS.Stylize_Mage(ref_actor, false)
             p_Update_Commands()
         elseIf code_style == CODES.IS_MAGE
-            COMMANDS.Style_Archer_Sync(ref_actor, false)
+            COMMANDS.Stylize_Archer(ref_actor, false)
             p_Update_Commands()
         elseIf code_style == CODES.IS_ARCHER
-            COMMANDS.Style_Coward_Sync(ref_actor, false)
+            COMMANDS.Stylize_Coward(ref_actor, false)
             p_Update_Commands()
         elseIf code_style == CODES.IS_COWARD
-            COMMANDS.Style_Default_Sync(ref_actor, false)
+            COMMANDS.Stylize_Default(ref_actor, false)
             p_Update_Commands()
         endIf
 
     elseIf id_option == p_option_vitalize
-        int code_vitality = p_ref_member.Get_Vitality()
+        int code_vitality = p_ref_member.Vitality()
         if code_vitality == CODES.IS_MORTAL
-            COMMANDS.Vitalize_Protected_Sync(ref_actor, false)
+            COMMANDS.Vitalize_Protected(ref_actor, false)
             p_Update_Commands()
         elseIf code_vitality == CODES.IS_PROTECTED
-            COMMANDS.Vitalize_Essential_Sync(ref_actor, false)
+            COMMANDS.Vitalize_Essential(ref_actor, false)
             p_Update_Commands()
         elseIf code_vitality == CODES.IS_ESSENTIAL
-            COMMANDS.Vitalize_Invulnerable_Sync(ref_actor, false)
+            COMMANDS.Vitalize_Invulnerable(ref_actor, false)
             p_Update_Commands()
         elseIf code_vitality == CODES.IS_INVULNERABLE
-            COMMANDS.Vitalize_Mortal_Sync(ref_actor, false)
+            COMMANDS.Vitalize_Mortal(ref_actor, false)
             p_Update_Commands()
         endIf
     
@@ -457,7 +457,7 @@ function f_On_Option_Menu_Accept(int id_option, int idx_option)
         return
     endIf
 
-    Actor ref_actor = p_ref_member.Get_Actor()
+    Actor ref_actor = p_ref_member.Actor()
 
     if id_option == p_option_outfit
         if ACTORS.Is_Vampire(CONSTS.ACTOR_PLAYER)
@@ -520,7 +520,7 @@ function f_On_Option_Input_Accept(int id_option, string str_input)
 
     if id_option == p_option_rename
         if str_input != ""
-            p_ref_member.Set_Name(str_input)
+            p_ref_member.Rename(str_input)
             MCM.ForcePageReset()
         endIf
     endIf
@@ -531,7 +531,7 @@ function f_On_Option_Highlight(int id_option)
         return
     endIf
     
-    string str_name = p_ref_member.Get_Name()
+    string str_name = p_ref_member.Name()
 
     if false
 
@@ -676,7 +676,7 @@ function p_Build_Commands()
 
     p_option_rating = MCM.AddTextOption(CONSTS.STR_MCM_RATING, p_ref_member.Get_Rating_Stars())
 
-    int code_style = p_ref_member.Get_Style()
+    int code_style = p_ref_member.Style()
     if code_style == CODES.IS_DEFAULT
         p_option_style = MCM.AddTextOption(CONSTS.STR_MCM_STYLE, CONSTS.STR_MCM_DEFAULT)
     elseIf code_style == CODES.IS_WARRIOR
@@ -689,7 +689,7 @@ function p_Build_Commands()
         p_option_style = MCM.AddTextOption(CONSTS.STR_MCM_STYLE, CONSTS.STR_MCM_COWARD)
     endIf
 
-    int code_vitality = p_ref_member.Get_Vitality()
+    int code_vitality = p_ref_member.Vitality()
     if code_vitality == CODES.IS_MORTAL
         p_option_vitalize = MCM.AddTextOption(CONSTS.STR_MCM_VITALITY, CONSTS.STR_MCM_MORTAL)
     elseIf code_vitality == CODES.IS_PROTECTED
@@ -778,7 +778,7 @@ function p_Update_Commands()
 
     MCM.SetTextOptionValue(p_option_rating, p_ref_member.Get_Rating_Stars(), DONT_UPDATE)
 
-    int code_style = p_ref_member.Get_Style()
+    int code_style = p_ref_member.Style()
     if code_style == CODES.IS_DEFAULT
         MCM.SetTextOptionValue(p_option_style, CONSTS.STR_MCM_DEFAULT, DONT_UPDATE)
     elseIf code_style == CODES.IS_WARRIOR
@@ -791,7 +791,7 @@ function p_Update_Commands()
         MCM.SetTextOptionValue(p_option_style, CONSTS.STR_MCM_COWARD, DONT_UPDATE)
     endIf
 
-    int code_vitality = p_ref_member.Get_Vitality()
+    int code_vitality = p_ref_member.Vitality()
     if code_vitality == CODES.IS_MORTAL
         MCM.SetTextOptionValue(p_option_vitalize, CONSTS.STR_MCM_MORTAL, DONT_UPDATE)
     elseIf code_vitality == CODES.IS_PROTECTED
@@ -829,7 +829,7 @@ function p_Build_Statistics()
         return
     endIf
 
-    Actor ref_actor = p_ref_member.Get_Actor()
+    Actor ref_actor = p_ref_member.Actor()
 
     p_option_health             = MCM.AddTextOption(CONSTS.STR_MCM_HEALTH,      ref_actor.GetActorValue(CONSTS.STR_HEALTH)      as int)
     p_option_magicka            = MCM.AddTextOption(CONSTS.STR_MCM_MAGICKA,     ref_actor.GetActorValue(CONSTS.STR_MAGICKA)     as int)
@@ -864,7 +864,7 @@ function p_Update_Statistics()
         return
     endIf
 
-    Actor ref_actor = p_ref_member.Get_Actor()
+    Actor ref_actor = p_ref_member.Actor()
 
     MCM.SetTextOptionValue(p_option_health,             ref_actor.GetActorValue(CONSTS.STR_HEALTH)      as int,  true)
     MCM.SetTextOptionValue(p_option_magicka,            ref_actor.GetActorValue(CONSTS.STR_MAGICKA)     as int,  true)

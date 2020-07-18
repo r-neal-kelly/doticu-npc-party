@@ -299,6 +299,28 @@ namespace doticu_npcp {
         UInt32 pad_14; // 14
     };
 
+    class ExtraTextDisplay : public BSExtraData {
+    public:
+        virtual ~ExtraTextDisplay();
+
+        enum {
+            DEFAULT = -1,
+            CUSTOM = -2,
+        };
+
+        String_t name; // 10
+        BGSMessage* message; // 18
+        Quest_t* owner; // 20
+        SInt32 flag; // 28
+        Float_t extra_health; // 2C
+        UInt16 custom_length; // 30
+        UInt16 pad_32; // 32
+        UInt32 pad_34; // 34
+
+        void Force_Rename(String_t new_name);
+    };
+    STATIC_ASSERT(sizeof(ExtraTextDisplay) == 0x38);
+
 }
 
 namespace doticu_npcp {

@@ -399,7 +399,7 @@ function Unparalyze(int code_return, string str_name)
     endIf
 endFunction
 
-function Style(int code_return, string str_name, int code_style)
+function Stylize(int code_return, string str_name, int code_style)
     string str_style
 
     if code_style == CODES.IS_DEFAULT

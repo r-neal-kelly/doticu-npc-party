@@ -474,7 +474,7 @@ function f_On_Option_Highlight(int id_option)
     else
         doticu_npcp_member ref_member = p_curr_members[p_Get_Idx_Entity(id_option)] as doticu_npcp_member
         if ref_member
-            MCM.SetInfoText("Open the mannequin menu for " + ref_member.Get_Name() + ".\n" + MCM.MCM_MEMBERS.Get_Info_String(ref_member))
+            MCM.SetInfoText("Open the mannequin menu for " + ref_member.Name() + ".\n" + MCM.MCM_MEMBERS.Get_Info_String(ref_member))
         endIf
 
     endIf
@@ -537,7 +537,7 @@ function p_Fill_Cell_Column(int idx_to_ex)
         idx_to_ex -= 1
         ref_member = p_curr_members[idx_to_ex] as doticu_npcp_member
         if ref_member
-            MCM.AddTextOption(ref_member.Get_Name(), "")
+            MCM.AddTextOption(ref_member.Name(), "")
         else
             MCM.AddTextOption("EMPTY ", "", MCM.FLAG_DISABLE)
         endIf

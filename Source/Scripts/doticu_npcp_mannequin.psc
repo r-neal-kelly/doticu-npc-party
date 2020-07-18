@@ -67,7 +67,7 @@ event OnActivate(ObjectReference ref_activator)
     endIf
 
     GotoState("STATE_BUSY")
-    COMMANDS.Toggle_Expoee_Sync(ID, MARKER)
+    COMMANDS.Toggle_Expoee(ID, MARKER)
     GotoState("")
 endEvent
 

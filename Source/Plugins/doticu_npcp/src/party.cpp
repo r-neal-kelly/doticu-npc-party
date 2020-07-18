@@ -1356,6 +1356,22 @@ namespace doticu_npcp { namespace Party {
         return Variable(variable_name);
     }
 
+    Variable_t* Member_t::Style_Variable()
+    {
+        static const String_t variable_name = String_t("p_code_style");
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable && variable->type.Is_Int());
+        return variable;
+    }
+
+    Variable_t* Member_t::Vitality_Variable()
+    {
+        static const String_t variable_name = String_t("p_code_vitality");
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable && variable->type.Is_Int());
+        return variable;
+    }
+
     Actor_t* Member_t::Actor()
     {
         static const String_t variable_name = String_t("p_ref_actor");
@@ -1405,26 +1421,12 @@ namespace doticu_npcp { namespace Party {
 
     Int_t Member_t::Style()
     {
-        static const String_t variable_name = String_t("p_code_style");
-
-        Variable_t* const variable = Variable(variable_name);
-        if (variable) {
-            return variable->Int();
-        } else {
-            return 0;
-        }
+        return Style_Variable()->Int();
     }
 
     Int_t Member_t::Vitality()
     {
-        static const String_t variable_name = String_t("p_code_vitality");
-
-        Variable_t* const variable = Variable(variable_name);
-        if (variable) {
-            return variable->Int();
-        } else {
-            return 0;
-        }
+        return Vitality_Variable()->Int();
     }
 
     Int_t Member_t::Outfit2()
@@ -2081,42 +2083,49 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
-    void Member_t::Stylize()
+    void Member_t::Stylize(Int_t style)
     {
         Actor_t* actor = Actor();
         if (actor && Is_Created()) {
-            Int_t style = Style();
             if (style == Style_e::WARRIOR) {
+                Style_Variable()->data.i = Style_e::WARRIOR;
                 Object_Ref::Untoken(actor, Consts::Default_Style_Token());
                 Object_Ref::Token(actor, Consts::Warrior_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Mage_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Archer_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
             } else if (style == Style_e::MAGE) {
+                Style_Variable()->data.i = Style_e::MAGE;
                 Object_Ref::Untoken(actor, Consts::Default_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Warrior_Style_Token());
                 Object_Ref::Token(actor, Consts::Mage_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Archer_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
             } else if (style == Style_e::ARCHER) {
+                Style_Variable()->data.i = Style_e::ARCHER;
                 Object_Ref::Untoken(actor, Consts::Default_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Warrior_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Mage_Style_Token());
                 Object_Ref::Token(actor, Consts::Archer_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
             } else if (style == Style_e::COWARD) {
+                Style_Variable()->data.i = Style_e::COWARD;
                 Object_Ref::Untoken(actor, Consts::Default_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Warrior_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Mage_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Archer_Style_Token());
                 Object_Ref::Token(actor, Consts::Coward_Style_Token());
             } else /* style == Style_e::DEFAULT */ {
+                Style_Variable()->data.i = Style_e::DEFAULT;
                 Object_Ref::Token(actor, Consts::Default_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Warrior_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Mage_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Archer_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
             }
+
+            Level();
+
             Actor2::Evaluate_Package(actor);
         }
     }
@@ -2125,41 +2134,50 @@ namespace doticu_npcp { namespace Party {
     {
         Actor_t* actor = Actor();
         if (actor && Is_Created()) {
+            Style_Variable()->data.i = 0;
+
             Object_Ref::Untoken(actor, Consts::Default_Style_Token());
             Object_Ref::Untoken(actor, Consts::Warrior_Style_Token());
             Object_Ref::Untoken(actor, Consts::Mage_Style_Token());
             Object_Ref::Untoken(actor, Consts::Archer_Style_Token());
             Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
+
             Actor2::Evaluate_Package(actor);
         }
     }
 
-    void Member_t::Vitalize()
+    void Member_t::Vitalize(Int_t vitality)
     {
         Actor_t* actor = Actor();
         if (actor && Is_Created()) {
-            Int_t vitality = Vitality();
             if (vitality == Vitality_e::MORTAL) {
+                Vitality_Variable()->data.i = Vitality_e::MORTAL;
                 Object_Ref::Token(actor, Consts::Mortal_Vitality_Token());
                 Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
                 Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
                 Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
             } else if (vitality == Vitality_e::ESSENTIAL) {
+                Vitality_Variable()->data.i = Vitality_e::ESSENTIAL;
                 Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
                 Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
                 Object_Ref::Token(actor, Consts::Essential_Vitality_Token());
                 Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
             } else if (vitality == Vitality_e::INVULNERABLE) {
+                Vitality_Variable()->data.i = Vitality_e::INVULNERABLE;
                 Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
                 Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
                 Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
                 Object_Ref::Token(actor, Consts::Invulnerable_Vitality_Token());
             } else /* vitality == Vitality_e::PROTECTED */ {
+                Vitality_Variable()->data.i = Vitality_e::PROTECTED;
                 Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
                 Object_Ref::Token(actor, Consts::Protected_Vitality_Token());
                 Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
                 Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
             }
+
+            Level();
+
             Actor2::Evaluate_Package(actor);
         }
     }
@@ -2168,11 +2186,32 @@ namespace doticu_npcp { namespace Party {
     {
         Actor_t* actor = Actor();
         if (actor && Is_Created()) {
+            Vitality_Variable()->data.i = 0;
+
             Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
             Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
             Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
             Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
+
             Actor2::Evaluate_Package(actor);
+        }
+    }
+
+    void Member_t::Rename(String_t new_name)
+    {
+        Actor_t* actor = Actor();
+        if (actor && Is_Created()) {
+            Object_Ref::Rename(actor, new_name);
+
+            Actor2::Evaluate_Package(actor);
+        }
+    }
+
+    void Member_t::Level()
+    {
+        Follower_t* follower = Follower();
+        if (follower) {
+            follower->Level();
         }
     }
 
@@ -2289,20 +2328,17 @@ namespace doticu_npcp { namespace Party {
 
     String_t Follower_t::Base_Name()
     {
-        Member_t* member = Member();
-        return member ? member->Base_Name() : "";
+        return Actor2::Get_Base_Name(Actor());
     }
 
     String_t Follower_t::Reference_Name()
     {
-        Member_t* member = Member();
-        return member ? member->Reference_Name() : "";
+        return Actor2::Get_Ref_Name(Actor());
     }
 
     String_t Follower_t::Name()
     {
-        Member_t* member = Member();
-        return member ? member->Name() : "";
+        return Actor2::Get_Name(Actor());
     }
 
     Bool_t Follower_t::Is_Filled()
@@ -3000,7 +3036,9 @@ namespace doticu_npcp { namespace Party {
             if (values) {
                 values->Set_Actor_Value(Actor_Value_t::SPEED_MULT, MAX_SNEAK_SPEED);
             }
+
             Object_Ref::Token(actor, Consts::Sneak_Follower_Token());
+
             Actor2::Evaluate_Package(actor);
         }
     }
@@ -3013,7 +3051,19 @@ namespace doticu_npcp { namespace Party {
             if (values) {
                 values->Set_Actor_Value(Actor_Value_t::SPEED_MULT, MAX_UNSNEAK_SPEED);
             }
+
             Object_Ref::Untoken(actor, Consts::Sneak_Follower_Token());
+
+            Actor2::Evaluate_Package(actor);
+        }
+    }
+
+    void Follower_t::Rename(String_t new_name)
+    {
+        Actor_t* actor = Actor();
+        if (actor && Is_Created()) {
+            Object_Ref::Rename(actor, new_name);
+
             Actor2::Evaluate_Package(actor);
         }
     }
@@ -3059,6 +3109,21 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
+    String_t Horse_t::Base_Name()
+    {
+        return Actor2::Get_Base_Name(Actor());
+    }
+
+    String_t Horse_t::Reference_Name()
+    {
+        return Actor2::Get_Ref_Name(Actor());
+    }
+
+    String_t Horse_t::Name()
+    {
+        return Actor2::Get_Name(Actor());
+    }
+
 }}
 
 // Exports //
@@ -3066,6 +3131,7 @@ namespace doticu_npcp { namespace Party {
 #define FORWARD_POINTER(METHOD_) { return self ? self->METHOD_ : nullptr; }
 #define FORWARD_BOOL(METHOD_) { return self ? self->METHOD_ : false; }
 #define FORWARD_INT(METHOD_) { return self ? self->METHOD_ : 0; }
+#define FORWARD_STRING(METHOD_) { return self ? self->METHOD_ : ""; }
 #define FORWARD_VECTOR(METHOD_, TYPE_) { return self ? self->METHOD_ : Vector_t<TYPE_>(); }
 #define FORWARD_VOID(METHOD_) { self ? self->METHOD_, 1 : 0; }
 
@@ -3461,6 +3527,10 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
     Actor_t* Actor(Member_t* self) FORWARD_POINTER(Actor());
     Int_t ID(Member_t* self) FORWARD_INT(ID());
 
+    Int_t Style(Member_t* self) FORWARD_INT(Style());
+    Int_t Vitality(Member_t* self) FORWARD_INT(Vitality());
+    String_t Name(Member_t* self) FORWARD_STRING(Member_t::Name());
+
     void On_Hit(Member_t* self,
                 Reference_t* attacker,
                 Form_t* tool,
@@ -3487,10 +3557,12 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
     void Unparalyze(Member_t* self) FORWARD_VOID(Member_t::Unparalyze());
     void Mannequinize(Member_t* self, Reference_t* marker) FORWARD_VOID(Member_t::Mannequinize(marker));
     void Unmannequinize(Member_t* self) FORWARD_VOID(Member_t::Unmannequinize());
-    void Stylize(Member_t* self) FORWARD_VOID(Member_t::Stylize());
+    void Stylize(Member_t* self, Int_t style) FORWARD_VOID(Member_t::Stylize(style));
     void Unstylize(Member_t* self) FORWARD_VOID(Member_t::Unstylize());
-    void Vitalize(Member_t* self) FORWARD_VOID(Member_t::Vitalize());
+    void Vitalize(Member_t* self, Int_t vitality) FORWARD_VOID(Member_t::Vitalize(vitality));
     void Unvitalize(Member_t* self) FORWARD_VOID(Member_t::Unvitalize());
+
+    void Rename(Member_t* self, String_t new_name) FORWARD_VOID(Member_t::Rename(new_name));
 
     void Log_Variable_Infos(Member_t* self) FORWARD_VOID(Log_Variable_Infos());
 
@@ -3505,6 +3577,10 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
 
         ADD_METHOD("Actor", 0, Actor_t*, Actor);
         ADD_METHOD("ID", 0, Int_t, ID);
+
+        ADD_METHOD("Style", 0, Int_t, Style);
+        ADD_METHOD("Vitality", 0, Int_t, Vitality);
+        ADD_METHOD("Name", 0, String_t, Name);
 
         ADD_METHOD("OnHit", 7, void, On_Hit, Reference_t*, Form_t*, Projectile_Base_t*, Bool_t, Bool_t, Bool_t, Bool_t);
 
@@ -3524,10 +3600,12 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
         ADD_METHOD("p_Unparalyze", 0, void, Unparalyze);
         ADD_METHOD("p_Mannequinize", 1, void, Mannequinize, Reference_t*);
         ADD_METHOD("p_Unmannequinize", 0, void, Unmannequinize);
-        ADD_METHOD("p_Stylize", 0, void, Stylize);
+        ADD_METHOD("p_Stylize", 1, void, Stylize, Int_t);
         ADD_METHOD("p_Unstylize", 0, void, Unstylize);
-        ADD_METHOD("p_Vitalize", 0, void, Vitalize);
+        ADD_METHOD("p_Vitalize", 1, void, Vitalize, Int_t);
         ADD_METHOD("p_Unvitalize", 0, void, Unvitalize);
+
+        ADD_METHOD("p_Rename", 1, void, Rename, String_t);
 
         ADD_METHOD("Log_Variable_Infos", 0, void, Log_Variable_Infos);
 
@@ -3543,10 +3621,14 @@ namespace doticu_npcp { namespace Party { namespace Follower { namespace Exports
     Actor_t* Actor(Follower_t* self) FORWARD_POINTER(Actor());
     Int_t ID(Follower_t* self) FORWARD_INT(ID());
 
+    String_t Name(Follower_t* self) FORWARD_STRING(Follower_t::Name());
+
     void Level(Follower_t* self) FORWARD_VOID(Follower_t::Level());
     void Unlevel(Follower_t* self) FORWARD_VOID(Follower_t::Unlevel());
     void Sneak(Follower_t* self) FORWARD_VOID(Follower_t::Sneak());
     void Unsneak(Follower_t* self) FORWARD_VOID(Follower_t::Unsneak());
+
+    void Rename(Follower_t* self, String_t new_name) FORWARD_VOID(Follower_t::Rename(new_name));
 
     Bool_t Register(Registry_t* registry)
     {
@@ -3560,10 +3642,16 @@ namespace doticu_npcp { namespace Party { namespace Follower { namespace Exports
         ADD_METHOD("Actor", 0, Actor_t*, Actor);
         ADD_METHOD("ID", 0, Int_t, ID);
 
+        ADD_METHOD("Name", 0, String_t, Name);
+
         ADD_METHOD("p_Level", 0, void, Level);
         ADD_METHOD("p_Unlevel", 0, void, Unlevel);
         ADD_METHOD("p_Sneak", 0, void, Sneak);
         ADD_METHOD("p_Unsneak", 0, void, Unsneak);
+
+        ADD_METHOD("p_Rename", 1, void, Rename, String_t);
+
+        #undef ADD_METHOD
 
         return true;
     }
@@ -3572,8 +3660,25 @@ namespace doticu_npcp { namespace Party { namespace Follower { namespace Exports
 
 namespace doticu_npcp { namespace Party { namespace Horse { namespace Exports {
 
+    Actor_t* Actor(Horse_t* self) FORWARD_POINTER(Horse_t::Actor());
+
+    String_t Name(Horse_t* self) FORWARD_STRING(Horse_t::Name());
+
     Bool_t Register(Registry_t* registry)
     {
+        #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                               \
+            ADD_CLASS_METHOD(Horse_t::Class_Name(), Horse_t,            \
+                             STR_FUNC_, ARG_NUM_,                       \
+                             RETURN_, Exports::METHOD_, __VA_ARGS__);   \
+        W
+
+        ADD_METHOD("Actor", 0, Actor_t*, Actor);
+
+        ADD_METHOD("Name", 0, String_t, Name);
+
+        #undef ADD_METHOD
+
         return true;
     }
 
@@ -3582,5 +3687,6 @@ namespace doticu_npcp { namespace Party { namespace Horse { namespace Exports {
 #undef FORWARD_POINTER
 #undef FORWARD_BOOL
 #undef FORWARD_INT
+#undef FORWARD_STRING
 #undef FORWARD_VECTOR
 #undef FORWARD_VOID

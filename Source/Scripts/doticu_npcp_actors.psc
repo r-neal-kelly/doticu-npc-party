@@ -180,7 +180,7 @@ ActorBase function Get_Real_Base(Actor ref_actor)
     endIf
 endFunction
 
-string function Get_Name(Actor ref_actor)
+string function Name(Actor ref_actor)
     if ref_actor
         return ref_actor.GetDisplayName()
     else
@@ -188,7 +188,7 @@ string function Get_Name(Actor ref_actor)
     endIf
 endFunction
 
-function Set_Name(Actor ref_actor, string str_name)
+function Rename(Actor ref_actor, string str_name)
     if ref_actor && str_name != ""
         ref_actor.SetDisplayName(str_name, true)
     endIf
@@ -562,7 +562,7 @@ Actor function Clone(Actor ref_actor, ObjectReference ref_marker, bool do_persis
 
     ref_clone.MoveTo(ref_marker)
     Pacify(ref_clone)
-    Set_Name(ref_clone, "Clone of " + Get_Name(ref_actor))
+    Rename(ref_clone, "Clone of " + Name(ref_actor))
     
     return ref_clone
 endFunction

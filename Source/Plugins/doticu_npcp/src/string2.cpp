@@ -71,6 +71,20 @@ namespace doticu_npcp { namespace String2 {
         return false;
     }
 
+    size_t Length(const char* str)
+    {
+        constexpr size_t MAX = 1024;
+        size_t length = 0;
+        for (size_t idx = 0; idx < MAX; idx += 1) {
+            if (str[idx] == 0) {
+                return length;
+            } else {
+                length += 1;
+            }
+        }
+        return 0;
+    }
+
 }}
 
 namespace doticu_npcp { namespace String2 { namespace Exports {

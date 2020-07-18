@@ -57,6 +57,8 @@ namespace doticu_npcp { namespace Object_Ref {
 
     void Play_Animation(Reference_t* ref, void* nicontroller, void* nisequence_from, void* nisequence_to);
 
+    void Rename(Reference_t* ref, String_t new_name);
+
     //Reference_t* Place_At_Me(Reference_t* ref); // this will be needed for cloning, but we can avoid using it as much as possible
 
 }}

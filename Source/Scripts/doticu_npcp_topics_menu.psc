@@ -44,7 +44,7 @@ endProperty
 ; Private Methods
 function p_Open_Chest(ObjectReference ref_container, string str_name)
     doticu_npcp.Object_Ref_Categorize(CONSTS.CATEGORY_INPUT)
-    CONTAINERS.Set_Name(ref_container, str_name)
+    CONTAINERS.Rename(ref_container, str_name)
     CONTAINERS.Open(ref_container)
 endFunction
 

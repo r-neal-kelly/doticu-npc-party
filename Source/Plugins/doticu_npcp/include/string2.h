@@ -19,6 +19,8 @@ namespace doticu_npcp { namespace String2 {
     bool Starts_With_Caseless(const char *str, const char chr);
     bool Contains_Caseless(const char *str_a, const char *str_b);
 
+    size_t Length(const char* str);
+
 }}
 
 namespace doticu_npcp { namespace String2 { namespace Exports {

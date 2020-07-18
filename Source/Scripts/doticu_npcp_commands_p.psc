@@ -74,7 +74,7 @@ function Member(Actor ref_actor)
     endIf
 
     int code_return
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
 
     NOTES.Member(MEMBERS.Create_Member(ref_actor), str_name)
 endFunction
@@ -86,21 +86,21 @@ function Unmember(Actor ref_actor)
     endIf
 
     int code_return
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
 
     NOTES.Unmember(MEMBERS.Destroy_Member(ref_actor), str_name)
 endFunction
 
 function Clone(Actor ref_actor)
     int code_return
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
 
     NOTES.Clone(MEMBERS.Create_Member(ref_actor, true), str_name)
 endFunction
 
 function Unclone(Actor ref_actor)
     int code_return
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
@@ -118,7 +118,7 @@ endFunction
 
 function Pack(int code_exec, Actor ref_actor, bool auto_create)
     int code_return
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
     
     if auto_create && !MEMBERS.Has_Member(ref_actor)
         code_return = MEMBERS.Create_Member(ref_actor)
@@ -140,15 +140,15 @@ endFunction
 function Stash(Actor ref_actor)
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        return NOTES.Stash(CODES.HASNT_MEMBER, ref_member.Get_Name())
+        return NOTES.Stash(CODES.HASNT_MEMBER, ref_member.Name())
     endIf
 
-    NOTES.Stash(ref_member.Stash(), ref_member.Get_Name())
+    NOTES.Stash(ref_member.Stash(), ref_member.Name())
 endFunction
 
 function Outfit(int code_exec, Actor ref_actor, int code_outfit2, bool auto_create)
     int code_return
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
 
     if code_outfit2 != CODES.OUTFIT2_MEMBER &&\
         code_outfit2 != CODES.OUTFIT2_SETTLER &&\
@@ -216,7 +216,7 @@ endFunction
 
 function Resurrect(int code_exec, Actor ref_actor, bool auto_create)
     int code_return
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
 
     if auto_create && !MEMBERS.Has_Member(ref_actor)
         ; creating a member automatically resurrects them
@@ -235,7 +235,7 @@ endFunction
 
 function Reanimate(int code_exec, Actor ref_actor, bool auto_create)
     int code_return
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
 
     if auto_create && !MEMBERS.Has_Member(ref_actor)
         code_return = MEMBERS.Create_Member(ref_actor)
@@ -254,34 +254,34 @@ function Reanimate(int code_exec, Actor ref_actor, bool auto_create)
     NOTES.Reanimate(ref_member.Reanimate(code_exec), str_name)
 endFunction
 
-function Mannequinize(int code_exec, Actor ref_actor, ObjectReference ref_marker, bool auto_create)
+function Mannequinize(Actor ref_actor, ObjectReference ref_marker, bool auto_create)
     if auto_create && !MEMBERS.Has_Member(ref_actor)
         int code_return = MEMBERS.Create_Member(ref_actor)
         if code_return < 0
-            return NOTES.Mannequinize(code_return, ACTORS.Get_Name(ref_actor))
+            return NOTES.Mannequinize(code_return, ACTORS.Name(ref_actor))
         endIf
     endIf
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        return NOTES.Mannequinize(CODES.HASNT_MEMBER, ACTORS.Get_Name(ref_actor))
+        return NOTES.Mannequinize(CODES.HASNT_MEMBER, ACTORS.Name(ref_actor))
     endIf
 
-    NOTES.Mannequinize(ref_member.Mannequinize(code_exec, ref_marker), ACTORS.Get_Name(ref_actor))
+    NOTES.Mannequinize(ref_member.Mannequinize(ref_marker), ACTORS.Name(ref_actor))
 endFunction
 
-function Unmannequinize(int code_exec, Actor ref_actor)
+function Unmannequinize(Actor ref_actor)
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        return NOTES.Unmannequinize(CODES.HASNT_MEMBER, ACTORS.Get_Name(ref_actor))
+        return NOTES.Unmannequinize(CODES.HASNT_MEMBER, ACTORS.Name(ref_actor))
     endIf
 
-    NOTES.Unmannequinize(ref_member.Unmannequinize(code_exec), ACTORS.Get_Name(ref_actor))
+    NOTES.Unmannequinize(ref_member.Unmannequinize(), ACTORS.Name(ref_actor))
 endFunction
 
-function Settle(int code_exec, Actor ref_actor, bool auto_create)
+function Settle(Actor ref_actor, bool auto_create)
     int code_return
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
 
     if auto_create && !MEMBERS.Has_Member(ref_actor)
         code_return = MEMBERS.Create_Member(ref_actor)
@@ -297,12 +297,12 @@ function Settle(int code_exec, Actor ref_actor, bool auto_create)
         return
     endIf
 
-    NOTES.Settle(ref_member.Settle(code_exec), str_name)
+    NOTES.Settle(ref_member.Settle(), str_name)
 endFunction
 
-function Unsettle(int code_exec, Actor ref_actor, bool auto_create)
+function Unsettle( Actor ref_actor, bool auto_create)
     int code_return
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
 
     if auto_create && !MEMBERS.Has_Member(ref_actor)
         code_return = MEMBERS.Create_Member(ref_actor)
@@ -318,12 +318,12 @@ function Unsettle(int code_exec, Actor ref_actor, bool auto_create)
         return
     endIf
 
-    NOTES.Unsettle(ref_member.Unsettle(code_exec), str_name)
+    NOTES.Unsettle(ref_member.Unsettle(), str_name)
 endFunction
 
-function Resettle(int code_exec, Actor ref_actor, bool auto_create)
+function Resettle(Actor ref_actor, bool auto_create)
     int code_return
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
 
     if auto_create && !MEMBERS.Has_Member(ref_actor)
         code_return = MEMBERS.Create_Member(ref_actor)
@@ -340,19 +340,19 @@ function Resettle(int code_exec, Actor ref_actor, bool auto_create)
     endIf
 
     if auto_create && !ref_member.Is_Settler()
-        code_return = ref_member.Settle(code_exec)
+        code_return = ref_member.Settle()
         if code_return < 0
             NOTES.Resettle(code_return, str_name)
             return
         endIf
     endIf
 
-    NOTES.Resettle(ref_member.Resettle(code_exec), str_name)
+    NOTES.Resettle(ref_member.Resettle(), str_name)
 endFunction
 
-function Enthrall(int code_exec, Actor ref_actor, bool auto_create)
+function Enthrall(Actor ref_actor, bool auto_create)
     int code_return
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
 
     if auto_create && !MEMBERS.Has_Member(ref_actor)
         code_return = MEMBERS.Create_Member(ref_actor)
@@ -368,12 +368,12 @@ function Enthrall(int code_exec, Actor ref_actor, bool auto_create)
         return
     endIf
 
-    NOTES.Enthrall(ref_member.Enthrall(code_exec), str_name)
+    NOTES.Enthrall(ref_member.Enthrall(), str_name)
 endFunction
 
-function Unthrall(int code_exec, Actor ref_actor, bool auto_create)
+function Unthrall(Actor ref_actor, bool auto_create)
     int code_return
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
 
     if auto_create && !MEMBERS.Has_Member(ref_actor)
         code_return = MEMBERS.Create_Member(ref_actor)
@@ -389,12 +389,12 @@ function Unthrall(int code_exec, Actor ref_actor, bool auto_create)
         return
     endIf
 
-    NOTES.Unthrall(ref_member.Unthrall(code_exec), str_name)
+    NOTES.Unthrall(ref_member.Unthrall(), str_name)
 endFunction
 
-function Immobilize(int code_exec, Actor ref_actor, bool auto_create)
+function Immobilize(Actor ref_actor, bool auto_create)
     int code_return
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
 
     if auto_create && !MEMBERS.Has_Member(ref_actor)
         code_return = MEMBERS.Create_Member(ref_actor)
@@ -410,12 +410,12 @@ function Immobilize(int code_exec, Actor ref_actor, bool auto_create)
         return
     endIf
 
-    NOTES.Immobilize(ref_member.Immobilize(code_exec), str_name)
+    NOTES.Immobilize(ref_member.Immobilize(), str_name)
 endFunction
 
-function Mobilize(int code_exec, Actor ref_actor, bool auto_create)
+function Mobilize(Actor ref_actor, bool auto_create)
     int code_return
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
 
     if auto_create && !MEMBERS.Has_Member(ref_actor)
         code_return = MEMBERS.Create_Member(ref_actor)
@@ -431,12 +431,12 @@ function Mobilize(int code_exec, Actor ref_actor, bool auto_create)
         return
     endIf
 
-    NOTES.Mobilize(ref_member.Mobilize(code_exec), str_name)
+    NOTES.Mobilize(ref_member.Mobilize(), str_name)
 endFunction
 
-function Paralyze(int code_exec, Actor ref_actor, bool auto_create)
+function Paralyze(Actor ref_actor, bool auto_create)
     int code_return
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
 
     if auto_create && !MEMBERS.Has_Member(ref_actor)
         code_return = MEMBERS.Create_Member(ref_actor)
@@ -452,12 +452,12 @@ function Paralyze(int code_exec, Actor ref_actor, bool auto_create)
         return
     endIf
     
-    NOTES.Paralyze(ref_member.Paralyze(code_exec), str_name)
+    NOTES.Paralyze(ref_member.Paralyze(), str_name)
 endFunction
 
-function Unparalyze(int code_exec, Actor ref_actor, bool auto_create)
+function Unparalyze(Actor ref_actor, bool auto_create)
     int code_return
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
 
     if auto_create && !MEMBERS.Has_Member(ref_actor)
         code_return = MEMBERS.Create_Member(ref_actor)
@@ -473,12 +473,12 @@ function Unparalyze(int code_exec, Actor ref_actor, bool auto_create)
         return
     endIf
 
-    NOTES.Unparalyze(ref_member.Unparalyze(code_exec), str_name)
+    NOTES.Unparalyze(ref_member.Unparalyze(), str_name)
 endFunction
 
-function Style(int code_exec, Actor ref_actor, int code_style, bool auto_create)
+function Stylize(Actor ref_actor, int code_style, bool auto_create)
     int code_return
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
 
     if code_style != CODES.IS_DEFAULT &&\
         code_style != CODES.IS_WARRIOR &&\
@@ -491,53 +491,53 @@ function Style(int code_exec, Actor ref_actor, int code_style, bool auto_create)
     if auto_create && !MEMBERS.Has_Member(ref_actor)
         code_return = MEMBERS.Create_Member(ref_actor)
         if code_return < 0
-            NOTES.Style(code_return, str_name, code_style)
+            NOTES.Stylize(code_return, str_name, code_style)
             return
         endIf
     endIf
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Style(CODES.HASNT_MEMBER, str_name, code_style)
+        NOTES.Stylize(CODES.HASNT_MEMBER, str_name, code_style)
         return
     endIf
 
     if code_style == CODES.IS_DEFAULT
-        NOTES.Style(ref_member.Style_Default(code_exec), str_name, code_style)
+        NOTES.Stylize(ref_member.Stylize_Default(), str_name, code_style)
     elseIf code_style == CODES.IS_WARRIOR
-        NOTES.Style(ref_member.Style_Warrior(code_exec), str_name, code_style)
+        NOTES.Stylize(ref_member.Stylize_Warrior(), str_name, code_style)
     elseIf code_style == CODES.IS_MAGE
-        NOTES.Style(ref_member.Style_Mage(code_exec), str_name, code_style)
+        NOTES.Stylize(ref_member.Stylize_Mage(), str_name, code_style)
     elseIf code_style == CODES.IS_ARCHER
-        NOTES.Style(ref_member.Style_Archer(code_exec), str_name, code_style)
+        NOTES.Stylize(ref_member.Stylize_Archer(), str_name, code_style)
     elseIf code_style == CODES.IS_COWARD
-        NOTES.Style(ref_member.Style_Coward(code_exec), str_name, code_style)
+        NOTES.Stylize(ref_member.Stylize_Coward(), str_name, code_style)
     endIf
 endFunction
 
-function Style_Default(int code_exec, Actor ref_actor, bool auto_create)
-    Style(code_exec, ref_actor, CODES.IS_DEFAULT, auto_create)
+function Stylize_Default(Actor ref_actor, bool auto_create)
+    Stylize(ref_actor, CODES.IS_DEFAULT, auto_create)
 endFunction
 
-function Style_Warrior(int code_exec, Actor ref_actor, bool auto_create)
-    Style(code_exec, ref_actor, CODES.IS_WARRIOR, auto_create)
+function Stylize_Warrior(Actor ref_actor, bool auto_create)
+    Stylize(ref_actor, CODES.IS_WARRIOR, auto_create)
 endFunction
 
-function Style_Mage(int code_exec, Actor ref_actor, bool auto_create)
-    Style(code_exec, ref_actor, CODES.IS_MAGE, auto_create)
+function Stylize_Mage(Actor ref_actor, bool auto_create)
+    Stylize(ref_actor, CODES.IS_MAGE, auto_create)
 endFunction
 
-function Style_Archer(int code_exec, Actor ref_actor, bool auto_create)
-    Style(code_exec, ref_actor, CODES.IS_ARCHER, auto_create)
+function Stylize_Archer(Actor ref_actor, bool auto_create)
+    Stylize(ref_actor, CODES.IS_ARCHER, auto_create)
 endFunction
 
-function Style_Coward(int code_exec, Actor ref_actor, bool auto_create)
-    Style(code_exec, ref_actor, CODES.IS_COWARD, auto_create)
+function Stylize_Coward(Actor ref_actor, bool auto_create)
+    Stylize(ref_actor, CODES.IS_COWARD, auto_create)
 endFunction
 
-function Vitalize(int code_exec, Actor ref_actor, int code_vitality, bool auto_create)
+function Vitalize(Actor ref_actor, int code_vitality, bool auto_create)
     int code_return
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
     
     if code_vitality != CODES.IS_MORTAL &&\
         code_vitality != CODES.IS_PROTECTED &&\
@@ -561,35 +561,35 @@ function Vitalize(int code_exec, Actor ref_actor, int code_vitality, bool auto_c
     endIf
 
     if code_vitality == CODES.IS_MORTAL
-        NOTES.Vitalize(ref_member.Vitalize_Mortal(code_exec), str_name, code_vitality)
+        NOTES.Vitalize(ref_member.Vitalize_Mortal(), str_name, code_vitality)
     elseIf code_vitality == CODES.IS_PROTECTED
-        NOTES.Vitalize(ref_member.Vitalize_Protected(code_exec), str_name, code_vitality)
+        NOTES.Vitalize(ref_member.Vitalize_Protected(), str_name, code_vitality)
     elseIf code_vitality == CODES.IS_ESSENTIAL
-        NOTES.Vitalize(ref_member.Vitalize_Essential(code_exec), str_name, code_vitality)
+        NOTES.Vitalize(ref_member.Vitalize_Essential(), str_name, code_vitality)
     elseIf code_vitality == CODES.IS_INVULNERABLE
-        NOTES.Vitalize(ref_member.Vitalize_Invulnerable(code_exec), str_name, code_vitality)
+        NOTES.Vitalize(ref_member.Vitalize_Invulnerable(), str_name, code_vitality)
     endIf
 endFunction
 
-function Vitalize_Mortal(int code_exec, Actor ref_actor, bool auto_create)
-    Vitalize(code_exec, ref_actor, CODES.IS_MORTAL, auto_create)
+function Vitalize_Mortal(Actor ref_actor, bool auto_create)
+    Vitalize(ref_actor, CODES.IS_MORTAL, auto_create)
 endFunction
 
-function Vitalize_Protected(int code_exec, Actor ref_actor, bool auto_create)
-    Vitalize(code_exec, ref_actor, CODES.IS_PROTECTED, auto_create)
+function Vitalize_Protected(Actor ref_actor, bool auto_create)
+    Vitalize(ref_actor, CODES.IS_PROTECTED, auto_create)
 endFunction
 
-function Vitalize_Essential(int code_exec, Actor ref_actor, bool auto_create)
-    Vitalize(code_exec, ref_actor, CODES.IS_ESSENTIAL, auto_create)
+function Vitalize_Essential(Actor ref_actor, bool auto_create)
+    Vitalize(ref_actor, CODES.IS_ESSENTIAL, auto_create)
 endFunction
 
-function Vitalize_Invulnerable(int code_exec, Actor ref_actor, bool auto_create)
-    Vitalize(code_exec, ref_actor, CODES.IS_INVULNERABLE, auto_create)
+function Vitalize_Invulnerable(Actor ref_actor, bool auto_create)
+    Vitalize(ref_actor, CODES.IS_INVULNERABLE, auto_create)
 endFunction
 
 function Follow(Actor ref_actor, bool auto_create)
     int code_return
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
 
     if auto_create && !MEMBERS.Has_Member(ref_actor)
         code_return = MEMBERS.Create_Member(ref_actor)
@@ -610,7 +610,7 @@ endFunction
 
 function Unfollow(Actor ref_actor, bool auto_create)
     int code_return
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
 
     if auto_create && !MEMBERS.Has_Member(ref_actor)
         code_return = MEMBERS.Create_Member(ref_actor)
@@ -631,7 +631,7 @@ endFunction
 
 function Sneak(int code_exec, Actor ref_actor, bool auto_create)
     int code_return
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
 
     if auto_create && !MEMBERS.Has_Member(ref_actor)
         code_return = MEMBERS.Create_Member(ref_actor)
@@ -666,7 +666,7 @@ endFunction
 
 function Unsneak(int code_exec, Actor ref_actor, bool auto_create)
     int code_return
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
 
     if auto_create && !MEMBERS.Has_Member(ref_actor)
         code_return = MEMBERS.Create_Member(ref_actor)
@@ -700,7 +700,7 @@ function Unsneak(int code_exec, Actor ref_actor, bool auto_create)
 endFunction
 
 function Saddle(int code_exec, Actor ref_actor, bool auto_create)
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
 
     if auto_create && !MEMBERS.Has_Member(ref_actor)
         int code_return = MEMBERS.Create_Member(ref_actor)
@@ -730,7 +730,7 @@ function Saddle(int code_exec, Actor ref_actor, bool auto_create)
 endFunction
 
 function Unsaddle(int code_exec, Actor ref_actor, bool auto_create)
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
 
     if auto_create && !MEMBERS.Has_Member(ref_actor)
         int code_return = MEMBERS.Create_Member(ref_actor)
@@ -761,14 +761,14 @@ endFunction
 
 function Move(Actor ref_actor)
     int code_return
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
 
     NOTES.Move(ACTORS.Toggle_Move(ref_actor), str_name)
 endFunction
 
 function Summon(Actor ref_actor)
     int code_return
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
@@ -786,10 +786,10 @@ function Goto(Actor ref_actor)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        return NOTES.Goto(CODES.HASNT_MEMBER, ACTORS.Get_Name(ref_actor))
+        return NOTES.Goto(CODES.HASNT_MEMBER, ACTORS.Name(ref_actor))
     endIf
 
-    NOTES.Goto(ref_member.Goto(), ref_member.Get_Name())
+    NOTES.Goto(ref_member.Goto(), ref_member.Name())
 endFunction
 
 function Toggle_Member(Actor ref_actor)
@@ -810,39 +810,39 @@ function Toggle_Clone(Actor ref_actor)
     endIf
 endFunction
 
-function Toggle_Settler(int code_exec, Actor ref_actor)
+function Toggle_Settler(Actor ref_actor)
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if ref_member && ref_member.Is_Settler()
-        Unsettle(code_exec, ref_actor, true)
+        Unsettle(ref_actor, true)
     else
-        Settle(code_exec, ref_actor, true)
+        Settle(ref_actor, true)
     endIf
 endFunction
 
-function Toggle_Thrall(int code_exec, Actor ref_actor)
+function Toggle_Thrall(Actor ref_actor)
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if ref_member && ref_member.Is_Thrall()
-        Unthrall(code_exec, ref_actor, true)
+        Unthrall(ref_actor, true)
     else
-        Enthrall(code_exec, ref_actor, true)
+        Enthrall(ref_actor, true)
     endIf
 endFunction
 
-function Toggle_Immobile(int code_exec, Actor ref_actor)
+function Toggle_Immobile(Actor ref_actor)
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if ref_member && ref_member.Is_Immobile()
-        Mobilize(code_exec, ref_actor, true)
+        Mobilize(ref_actor, true)
     else
-        Immobilize(code_exec, ref_actor, true)
+        Immobilize(ref_actor, true)
     endIf
 endFunction
 
-function Toggle_Paralyzed(int code_exec, Actor ref_actor)
+function Toggle_Paralyzed(Actor ref_actor)
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if ref_member && ref_member.Is_Paralyzed()
-        Unparalyze(code_exec, ref_actor, true)
+        Unparalyze(ref_actor, true)
     else
-        Paralyze(code_exec, ref_actor, true)
+        Paralyze(ref_actor, true)
     endIf
 endFunction
 
@@ -873,50 +873,50 @@ function Toggle_Saddle(int code_exec, Actor ref_actor)
     endIf
 endFunction
 
-function Toggle_Mannequin(int code_exec, Actor ref_actor, ObjectReference ref_marker)
+function Toggle_Mannequin(Actor ref_actor, ObjectReference ref_marker)
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if ref_member && ref_member.Is_Mannequin()
-        Mannequinize(code_exec, ref_actor, ref_marker, true)
+        Mannequinize(ref_actor, ref_marker, true)
     else
-        Unmannequinize(code_exec, ref_actor)
+        Unmannequinize(ref_actor)
     endIf
 endFunction
 
 function Cycle_Style(Actor ref_actor, bool auto_create)
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        Style(CODES.DO_ASYNC, ref_actor, VARS.auto_style, auto_create)
+        Stylize(ref_actor, VARS.auto_style, auto_create)
     elseIf ref_member.Is_Styled_Default()
-        Style(CODES.DO_ASYNC, ref_actor, CODES.IS_WARRIOR, auto_create)
+        Stylize(ref_actor, CODES.IS_WARRIOR, auto_create)
     elseIf ref_member.Is_Styled_Warrior()
-        Style(CODES.DO_ASYNC, ref_actor, CODES.IS_MAGE, auto_create)
+        Stylize(ref_actor, CODES.IS_MAGE, auto_create)
     elseIf ref_member.Is_Styled_Mage()
-        Style(CODES.DO_ASYNC, ref_actor, CODES.IS_ARCHER, auto_create)
+        Stylize(ref_actor, CODES.IS_ARCHER, auto_create)
     elseIf ref_member.Is_Styled_Archer()
-        Style(CODES.DO_ASYNC, ref_actor, CODES.IS_COWARD, auto_create)
+        Stylize(ref_actor, CODES.IS_COWARD, auto_create)
     elseIf ref_member.Is_Styled_Coward()
-        Style(CODES.DO_ASYNC, ref_actor, CODES.IS_DEFAULT, auto_create)
+        Stylize(ref_actor, CODES.IS_DEFAULT, auto_create)
     endIf
 endFunction
 
 function Cycle_Vitality(Actor ref_actor, bool auto_create)
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        Vitalize(CODES.DO_ASYNC, ref_actor, VARS.auto_vitality, auto_create)
+        Vitalize(ref_actor, VARS.auto_vitality, auto_create)
     elseIf ref_member.Is_Vitalized_Mortal()
-        Vitalize(CODES.DO_ASYNC, ref_actor, CODES.IS_PROTECTED, auto_create)
+        Vitalize(ref_actor, CODES.IS_PROTECTED, auto_create)
     elseIf ref_member.Is_Vitalized_Protected()
-        Vitalize(CODES.DO_ASYNC, ref_actor, CODES.IS_ESSENTIAL, auto_create)
+        Vitalize(ref_actor, CODES.IS_ESSENTIAL, auto_create)
     elseIf ref_member.Is_Vitalized_Essential()
-        Vitalize(CODES.DO_ASYNC, ref_actor, CODES.IS_INVULNERABLE, auto_create)
+        Vitalize(ref_actor, CODES.IS_INVULNERABLE, auto_create)
     elseIf ref_member.Is_Vitalized_Invulnerable()
-        Vitalize(CODES.DO_ASYNC, ref_actor, CODES.IS_MORTAL, auto_create)
+        Vitalize(ref_actor, CODES.IS_MORTAL, auto_create)
     endIf
 endFunction
 
 function Members_Display_Start(Actor ref_actor)
     int code_return
-    string str_name = ACTORS.Get_Name(ref_actor)
+    string str_name = ACTORS.Name(ref_actor)
 
     NOTES.Members_Display_Start(MEMBERS.Display_Start(ref_actor), str_name)
 endFunction
@@ -1068,7 +1068,7 @@ function Style_Show(Actor ref_actor)
         return
     endIf
 
-    int code_style = ref_member.Get_Style()
+    int code_style = ref_member.Style()
     if code_style == CODES.IS_DEFAULT
         LOGS.Create_Note("Is Default ", false)
     elseIf code_style == CODES.IS_WARRIOR
@@ -1089,7 +1089,7 @@ function Vitality_Show(Actor ref_actor)
         return
     endIf
 
-    int code_vitality = ref_member.Get_Vitality()
+    int code_vitality = ref_member.Vitality()
     if code_vitality == CODES.IS_MORTAL
         LOGS.Create_Note("Is Mortal ", false)
     elseIf code_vitality == CODES.IS_PROTECTED

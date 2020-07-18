@@ -36,6 +36,11 @@ int                     p_id_alias      =    -1
 Actor                   p_ref_actor     =  none
 doticu_npcp_follower    p_ref_follower  =  none
 
+; Native Method
+Actor function Actor() native
+
+string function Name() native
+
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA, int id_alias, doticu_npcp_follower ref_follower)
 p_Lock()
@@ -94,18 +99,6 @@ bool function Exists()
     return p_is_created
 endFunction
 
-string function Get_Name()
-    return ACTORS.Get_Name(p_ref_actor)
-endFunction
-
-Actor function Get_Actor()
-    if Exists() && p_ref_actor
-        return p_ref_actor
-    else
-        return none
-    endIf
-endFunction
-
 doticu_npcp_follower function Get_Follower()
     if Exists() && p_ref_follower
         return p_ref_follower
@@ -114,8 +107,8 @@ doticu_npcp_follower function Get_Follower()
     endIf
 endFunction
 
-function Set_Name(string str_name)
-    ACTORS.Set_Name(p_ref_actor, str_name)
+function Rename(string str_name)
+    ACTORS.Rename(p_ref_actor, str_name)
 endFunction
 
 ;/int function Pack(int code_exec)
@@ -129,7 +122,7 @@ endFunction/;
 ; Events
 event OnActivate(ObjectReference activator_obj)
     Actor activator_actor = activator_obj as Actor
-    if activator_actor && p_ref_follower.Get_Actor() == activator_actor
+    if activator_actor && p_ref_follower.Actor() == activator_actor
         (CONSTS.FORMLIST_GLOBALS_SADDLER_IS_SITTING.GetAt(p_ref_follower.ID()) as GlobalVariable).SetValue(1)
         activator_actor.EvaluatePackage()
     endIf

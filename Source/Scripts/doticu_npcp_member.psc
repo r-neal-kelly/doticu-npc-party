@@ -55,11 +55,6 @@ doticu_npcp_outfits property OUTFITS hidden
         return p_DATA.MODS.FUNCS.OUTFITS
     endFunction
 endProperty
-doticu_npcp_logs property LOGS hidden
-    doticu_npcp_logs function Get()
-        return p_DATA.MODS.FUNCS.LOGS
-    endFunction
-endProperty
 doticu_npcp_members property MEMBERS hidden
     doticu_npcp_members function Get()
         return p_DATA.MODS.MEMBERS
@@ -87,9 +82,9 @@ bool                    p_is_paralyzed              = false
 bool                    p_is_mannequin              = false
 bool                    p_is_reanimated             = false
 bool                    p_do_outfit_vanilla         = false
-int                     p_code_style                =    -1
-int                     p_code_vitality             =    -1
-int                     p_code_outfit2              =    -1
+int                     p_code_style                =     0
+int                     p_code_vitality             =     0
+int                     p_code_outfit2              =     0
 int                     p_int_rating                =     0
 ObjectReference         p_marker_display            =  none
 ObjectReference         p_marker_mannequin          =  none
@@ -118,6 +113,10 @@ float                   p_prev_morality             =   0.0
 Actor function Actor() native
 int function ID() native
 
+int function Style() native
+int function Vitality() native
+string function Name() native
+
 bool function Has_Token(MiscObject token, int count = 1) native
 function Token(MiscObject token, int count = 1) native
 function Untoken(MiscObject token) native
@@ -134,10 +133,12 @@ function p_Paralyze() native
 function p_Unparalyze() native
 function p_Mannequinize(ObjectReference marker) native
 function p_Unmannequinize() native
-function p_Stylize() native
+function p_Stylize(int style) native
 function p_Unstylize() native
-function p_Vitalize() native
+function p_Vitalize(int vitality) native
 function p_Unvitalize() native
+
+function p_Rename(string new_name) native
 
 function Log_Variable_Infos() native
 
@@ -161,8 +162,6 @@ p_Lock()
     p_is_reanimated = false
     
     p_do_outfit_vanilla = false
-    p_code_style = VARS.auto_style
-    p_code_vitality = VARS.auto_vitality
     p_code_outfit2 = CODES.OUTFIT2_MEMBER
     p_int_rating = 0
     p_marker_display = none
@@ -176,8 +175,8 @@ p_Unlock()
     p_Backup()
 
     p_Member()
-    p_Stylize()
-    p_Vitalize()
+    p_Stylize(VARS.auto_style)
+    p_Vitalize(VARS.auto_vitality)
     p_Outfit()
 
     ; has to happen after p_Member() because it needs
@@ -262,14 +261,6 @@ p_Lock()
     Clear()
     
 p_Unlock()
-endFunction
-
-function f_Register()
-endFunction
-
-function f_Unregister()
-    ; this covers queue registration also I believe
-    UnregisterForAllModEvents()
 endFunction
 
 int function f_Get_ID()
@@ -381,22 +372,6 @@ p_Lock()
 p_Unlock()
 endFunction
 
-function p_Set_Style(int code_style)
-p_Lock()
-
-    p_code_style = code_style
-
-p_Unlock()
-endFunction
-
-function p_Set_Vitality(int code_vitality)
-p_Lock()
-
-    p_code_vitality = code_vitality
-
-p_Unlock()
-endFunction
-
 function p_Create_Outfit(int code_outfit2)
 p_Lock()
 
@@ -481,28 +456,28 @@ p_Lock()
     endIf
 
     if code_outfit2 == CODES.OUTFIT2_MEMBER
-        p_outfit2_member.Set_Name(Get_Name() + "'s Member Outfit")
+        p_outfit2_member.Rename(Name() + "'s Member Outfit")
         p_outfit2_member.Put()
     elseIf code_outfit2 == CODES.OUTFIT2_SETTLER
-        p_outfit2_settler.Set_Name(Get_Name() + "'s Settler Outfit")
+        p_outfit2_settler.Rename(Name() + "'s Settler Outfit")
         p_outfit2_settler.Put()
     elseIf code_outfit2 == CODES.OUTFIT2_THRALL
-        p_outfit2_thrall.Set_Name(Get_Name() + "'s Thrall Outfit")
+        p_outfit2_thrall.Rename(Name() + "'s Thrall Outfit")
         p_outfit2_thrall.Put()
     elseIf code_outfit2 == CODES.OUTFIT2_IMMOBILE
-        p_outfit2_immobile.Set_Name(Get_Name() + "'s Immobile Outfit")
+        p_outfit2_immobile.Rename(Name() + "'s Immobile Outfit")
         p_outfit2_immobile.Put()
     elseIf code_outfit2 == CODES.OUTFIT2_FOLLOWER
-        p_outfit2_follower.Set_Name(Get_Name() + "'s Follower Outfit")
+        p_outfit2_follower.Rename(Name() + "'s Follower Outfit")
         p_outfit2_follower.Put()
     elseIf code_outfit2 == CODES.OUTFIT2_VANILLA
-        p_outfit2_vanilla.Set_Name(Get_Name() + "'s Vanilla Outfit")
+        p_outfit2_vanilla.Rename(Name() + "'s Vanilla Outfit")
         p_outfit2_vanilla.Put()
     elseIf code_outfit2 == CODES.OUTFIT2_DEFAULT
-        p_outfit2_default.Set_Name(Get_Name() + "'s Default Outfit")
+        p_outfit2_default.Rename(Name() + "'s Default Outfit")
         p_outfit2_default.Put()
     else
-        p_outfit2_member.Set_Name(Get_Name() + "'s Member Outfit")
+        p_outfit2_member.Rename(Name() + "'s Member Outfit")
         p_outfit2_member.Put()
     endIf
 
@@ -666,20 +641,10 @@ p_Lock()
 p_Unlock()
 endFunction
 
-function p_Rename(string str_name)
-p_Lock()
-
-    ACTORS.Set_Name(p_ref_actor, str_name)
-
-    p_ref_actor.EvaluatePackage()
-
-p_Unlock()
-endfunction
-
 function p_Pack()
 p_Lock()
 
-    CONTAINERS.Set_Name(p_container_pack, Get_Name() + "'s Pack")
+    CONTAINERS.Rename(p_container_pack, Name() + "'s Pack")
     CONTAINERS.Open(p_container_pack)
 
 p_Unlock()
@@ -749,9 +714,9 @@ function Enforce()
 
     p_Member()
 
-    p_Stylize()
+    p_Stylize(p_code_style)
 
-    p_Vitalize()
+    p_Vitalize(p_code_vitality)
 
     FUNCS.Wait(0.1)
     if !Exists() || Is_Dead()
@@ -779,43 +744,11 @@ bool function Exists()
     return p_is_created
 endFunction
 
-string function Get_Name()
-    if !Exists()
-        return ""
-    else
-        return ACTORS.Get_Name(p_ref_actor)
-    endIf
-endFunction
-
-Actor function Get_Actor()
-    if !Exists()
-        return none
-    else
-        return p_ref_actor
-    endIf
-endFunction
-
 doticu_npcp_follower function Get_Follower()
     if !Exists() || !Is_Follower()
         return none
     else
         return FOLLOWERS.Get_Follower(p_ref_actor)
-    endIf
-endFunction
-
-int function Get_Style()
-    if !Exists()
-        return -1
-    else
-        return p_code_style
-    endIf
-endFunction
-
-int function Get_Vitality()
-    if !Exists()
-        return -1
-    else
-        return p_code_vitality
     endIf
 endFunction
 
@@ -827,21 +760,17 @@ int function Get_Outfit2()
     endIf
 endFunction
 
-int function Set_Name(string str_name)
+int function Rename(string str_name)
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
 
     p_Rename(str_name)
-
-    if Get_Name() != str_name
-        return CODES.CANT_RENAME
-    endIf
     
     return CODES.SUCCESS
 endFunction
 
-int function Mobilize(int code_exec)
+int function Mobilize()
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -856,7 +785,7 @@ int function Mobilize(int code_exec)
     return CODES.SUCCESS
 endFunction
 
-int function Immobilize(int code_exec)
+int function Immobilize()
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -871,7 +800,7 @@ int function Immobilize(int code_exec)
     return CODES.SUCCESS
 endFunction
 
-int function Settle(int code_exec)
+int function Settle()
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -886,7 +815,7 @@ int function Settle(int code_exec)
     return CODES.SUCCESS
 endFunction
 
-int function Resettle(int code_exec)
+int function Resettle()
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -901,7 +830,7 @@ int function Resettle(int code_exec)
     return CODES.SUCCESS
 endFunction
 
-int function Unsettle(int code_exec)
+int function Unsettle()
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -916,7 +845,7 @@ int function Unsettle(int code_exec)
     return CODES.SUCCESS
 endFunction
 
-int function Enthrall(int code_exec)
+int function Enthrall()
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -934,7 +863,7 @@ int function Enthrall(int code_exec)
     return CODES.SUCCESS
 endFunction
 
-int function Unthrall(int code_exec)
+int function Unthrall()
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -952,7 +881,7 @@ int function Unthrall(int code_exec)
     return CODES.SUCCESS
 endFunction
 
-int function Paralyze(int code_exec)
+int function Paralyze()
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -965,7 +894,7 @@ int function Paralyze(int code_exec)
     return CODES.SUCCESS
 endFunction
 
-int function Unparalyze(int code_exec)
+int function Unparalyze()
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -978,7 +907,7 @@ int function Unparalyze(int code_exec)
     return CODES.SUCCESS
 endFunction
 
-int function Mannequinize(int code_exec, ObjectReference ref_marker)
+int function Mannequinize(ObjectReference ref_marker)
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -999,7 +928,7 @@ int function Mannequinize(int code_exec, ObjectReference ref_marker)
     return CODES.SUCCESS
 endFunction
 
-int function Unmannequinize(int code_exec)
+int function Unmannequinize()
     if !Exists()
         return CODES.ISNT_MEMBER
     endIf
@@ -1008,6 +937,149 @@ int function Unmannequinize(int code_exec)
     endIf
 
     p_Unmannequinize()
+
+    return CODES.SUCCESS
+endFunction
+
+int function Stylize(int code_style)
+    if code_style == CODES.IS_WARRIOR
+        return Stylize_Warrior()
+    elseIf code_style == CODES.IS_MAGE
+        return Stylize_Mage()
+    elseIf code_style == CODES.IS_ARCHER
+        return Stylize_Archer()
+    elseIf code_style == CODES.IS_COWARD
+        return Stylize_Coward()
+    else ; CODES.IS_DEFAULT
+        return Stylize_Default()
+    endIf
+endFunction
+
+int function Stylize_Default()
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+    if Style() == CODES.IS_DEFAULT
+        return CODES.IS_DEFAULT
+    endIf
+
+    p_Stylize(CODES.IS_DEFAULT)
+
+    return CODES.SUCCESS
+endFunction
+
+int function Stylize_Warrior()
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+    if Style() == CODES.IS_WARRIOR
+        return CODES.IS_WARRIOR
+    endIf
+
+    p_Stylize(CODES.IS_WARRIOR)
+
+    return CODES.SUCCESS
+endFunction
+
+int function Stylize_Mage()
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+    if Style() == CODES.IS_MAGE
+        return CODES.IS_MAGE
+    endIf
+
+    p_Stylize(CODES.IS_MAGE)
+
+    return CODES.SUCCESS
+endFunction
+
+int function Stylize_Archer()
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+    if Style() == CODES.IS_ARCHER
+        return CODES.IS_ARCHER
+    endIf
+
+    p_Stylize(CODES.IS_ARCHER)
+
+    return CODES.SUCCESS
+endFunction
+
+int function Stylize_Coward()
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+    if Style() == CODES.IS_COWARD
+        return CODES.IS_COWARD
+    endIf
+
+    p_Stylize(CODES.IS_COWARD)
+
+    return CODES.SUCCESS
+endFunction
+
+int function Vitalize(int code_vitality)
+    if code_vitality == CODES.IS_MORTAL
+        return Vitalize_Mortal()
+    elseIf code_vitality == CODES.IS_ESSENTIAL
+        return Vitalize_Essential()
+    elseIf code_vitality == CODES.IS_INVULNERABLE
+        return Vitalize_Invulnerable()
+    else ; CODES.IS_PROTECTED
+        return Vitalize_Protected()
+    endIf
+endFunction
+
+int function Vitalize_Mortal()
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+    if Vitality() == CODES.IS_MORTAL
+        return CODES.IS_MORTAL
+    endIf
+
+    p_Vitalize(CODES.IS_MORTAL)
+
+    return CODES.SUCCESS
+endFunction
+
+int function Vitalize_Protected()
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+    if Vitality() == CODES.IS_PROTECTED
+        return CODES.IS_PROTECTED
+    endIf
+
+    p_Vitalize(CODES.IS_PROTECTED)
+
+    return CODES.SUCCESS
+endFunction
+
+int function Vitalize_Essential()
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+    if Vitality() == CODES.IS_ESSENTIAL
+        return CODES.IS_ESSENTIAL
+    endIf
+
+    p_Vitalize(CODES.IS_ESSENTIAL)
+
+    return CODES.SUCCESS
+endFunction
+
+int function Vitalize_Invulnerable()
+    if !Exists()
+        return CODES.ISNT_MEMBER
+    endIf
+    if Vitality() == CODES.IS_INVULNERABLE
+        return CODES.IS_INVULNERABLE
+    endIf
+
+    p_Vitalize(CODES.IS_INVULNERABLE)
 
     return CODES.SUCCESS
 endFunction
@@ -1149,242 +1221,6 @@ event On_Deanimate()
         p_Deanimate()
     endIf
 endEvent
-
-int function Style(int code_exec, int code_style)
-    if code_style == CODES.IS_DEFAULT
-        return Style_Default(code_exec)
-    elseIf code_style == CODES.IS_WARRIOR
-        return Style_Warrior(code_exec)
-    elseIf code_style == CODES.IS_MAGE
-        return Style_Mage(code_exec)
-    elseIf code_style == CODES.IS_ARCHER
-        return Style_Archer(code_exec)
-    elseIf code_style == CODES.IS_COWARD
-        return Style_Coward(code_exec)
-    endIf
-endFunction
-event On_Style()
-    p_Stylize()
-    if Is_Follower()
-        Get_Follower().f_Relevel()
-    endIf
-endEvent
-
-int function Style_Default(int code_exec)
-    if !Exists()
-        return CODES.ISNT_MEMBER
-    endIf
-
-    if Get_Style() == CODES.IS_DEFAULT
-        return CODES.IS_DEFAULT
-    endIf
-
-    p_Set_Style(CODES.IS_DEFAULT)
-    if code_exec == CODES.DO_ASYNC
-        p_Async("On_Style")
-    else
-        p_Stylize()
-        if Is_Follower()
-            Get_Follower().f_Relevel()
-        endIf
-    endIf
-
-    return CODES.SUCCESS
-endFunction
-
-int function Style_Warrior(int code_exec)
-    if !Exists()
-        return CODES.ISNT_MEMBER
-    endIf
-
-    if Get_Style() == CODES.IS_WARRIOR
-        return CODES.IS_WARRIOR
-    endIf
-
-    p_Set_Style(CODES.IS_WARRIOR)
-    if code_exec == CODES.DO_ASYNC
-        p_Async("On_Style")
-    else
-        p_Stylize()
-        if Is_Follower()
-            Get_Follower().f_Relevel()
-        endIf
-    endIf
-
-    return CODES.SUCCESS
-endFunction
-
-int function Style_Mage(int code_exec)
-    if !Exists()
-        return CODES.ISNT_MEMBER
-    endIf
-
-    if Get_Style() == CODES.IS_MAGE
-        return CODES.IS_MAGE
-    endIf
-
-    p_Set_Style(CODES.IS_MAGE)
-    if code_exec == CODES.DO_ASYNC
-        p_Async("On_Style")
-    else
-        p_Stylize()
-        if Is_Follower()
-            Get_Follower().f_Relevel()
-        endIf
-    endIf
-
-    return CODES.SUCCESS
-endFunction
-
-int function Style_Archer(int code_exec)
-    if !Exists()
-        return CODES.ISNT_MEMBER
-    endIf
-
-    if Get_Style() == CODES.IS_ARCHER
-        return CODES.IS_ARCHER
-    endIf
-
-    p_Set_Style(CODES.IS_ARCHER)
-    if code_exec == CODES.DO_ASYNC
-        p_Async("On_Style")
-    else
-        p_Stylize()
-        if Is_Follower()
-            Get_Follower().f_Relevel()
-        endIf
-    endIf
-
-    return CODES.SUCCESS
-endFunction
-
-int function Style_Coward(int code_exec)
-    if !Exists()
-        return CODES.ISNT_MEMBER
-    endIf
-
-    if Get_Style() == CODES.IS_COWARD
-        return CODES.IS_COWARD
-    endIf
-
-    p_Set_Style(CODES.IS_COWARD)
-    if code_exec == CODES.DO_ASYNC
-        p_Async("On_Style")
-    else
-        p_Stylize()
-        if Is_Follower()
-            Get_Follower().f_Relevel()
-        endIf
-    endIf
-
-    return CODES.SUCCESS
-endFunction
-
-int function Vitalize(int code_exec, int code_vitality)
-    if code_vitality == CODES.IS_MORTAL
-        return Vitalize_Mortal(code_exec)
-    elseIf code_vitality == CODES.IS_PROTECTED
-        return Vitalize_Protected(code_exec)
-    elseIf code_vitality == CODES.IS_ESSENTIAL
-        return Vitalize_Essential(code_exec)
-    elseIf code_vitality == CODES.IS_INVULNERABLE
-        return Vitalize_Invulnerable(code_exec)
-    endIf
-endFunction
-event On_Vitalize()
-    p_Vitalize()
-    if Is_Follower()
-        Get_Follower().f_Relevel()
-    endIf
-endEvent
-
-int function Vitalize_Mortal(int code_exec)
-    if !Exists()
-        return CODES.ISNT_MEMBER
-    endIf
-
-    if Get_Vitality() == CODES.IS_MORTAL
-        return CODES.IS_MORTAL
-    endIf
-
-    p_Set_Vitality(CODES.IS_MORTAL)
-    if code_exec == CODES.DO_ASYNC
-        p_Async("On_Vitalize")
-    else
-        p_Vitalize()
-        if Is_Follower()
-            Get_Follower().f_Relevel()
-        endIf
-    endIf
-
-    return CODES.SUCCESS
-endFunction
-
-int function Vitalize_Protected(int code_exec)
-    if !Exists()
-        return CODES.ISNT_MEMBER
-    endIf
-
-    if Get_Vitality() == CODES.IS_PROTECTED
-        return CODES.IS_PROTECTED
-    endIf
-
-    p_Set_Vitality(CODES.IS_PROTECTED)
-    if code_exec == CODES.DO_ASYNC
-        p_Async("On_Vitalize")
-    else
-        p_Vitalize()
-        if Is_Follower()
-            Get_Follower().f_Relevel()
-        endIf
-    endIf
-
-    return CODES.SUCCESS
-endFunction
-
-int function Vitalize_Essential(int code_exec)
-    if !Exists()
-        return CODES.ISNT_MEMBER
-    endIf
-
-    if Get_Vitality() == CODES.IS_ESSENTIAL
-        return CODES.IS_ESSENTIAL
-    endIf
-
-    p_Set_Vitality(CODES.IS_ESSENTIAL)
-    if code_exec == CODES.DO_ASYNC
-        p_Async("On_Vitalize")
-    else
-        p_Vitalize()
-        if Is_Follower()
-            Get_Follower().f_Relevel()
-        endIf
-    endIf
-
-    return CODES.SUCCESS
-endFunction
-
-int function Vitalize_Invulnerable(int code_exec)
-    if !Exists()
-        return CODES.ISNT_MEMBER
-    endIf
-
-    if Get_Vitality() == CODES.IS_INVULNERABLE
-        return CODES.IS_INVULNERABLE
-    endIf
-
-    p_Set_Vitality(CODES.IS_INVULNERABLE)
-    if code_exec == CODES.DO_ASYNC
-        p_Async("On_Vitalize")
-    else
-        p_Vitalize()
-        if Is_Follower()
-            Get_Follower().f_Relevel()
-        endIf
-    endIf
-
-    return CODES.SUCCESS
-endFunction
 
 ; can this one actually be async?
 int function Pack(int code_exec)

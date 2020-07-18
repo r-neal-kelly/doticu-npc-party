@@ -41,7 +41,6 @@ doticu_npcp_data    p_DATA              =  none
 
 ; Private Variables
 bool                p_is_created        = false
-doticu_npcp_queue   p_queue_commands    =  none
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
@@ -50,15 +49,9 @@ function f_Create(doticu_npcp_data DATA)
     PRIVATE.f_Create(DATA)
 
     p_is_created = true
-    p_queue_commands = QUEUES.Create("commands", 64, 0.1)
-    p_queue_commands.Use_Forms()
-    p_queue_commands.Use_Bools()
 endFunction
 
 function f_Destroy()
-    QUEUES.Destroy(p_queue_commands)
-
-    p_queue_commands = none
     p_is_created = false
 
     PRIVATE.f_Destroy()
@@ -66,26 +59,28 @@ endFunction
 
 function f_Register()
     PRIVATE.f_Register()
-
-    p_queue_commands.Register_Form(self as form, "On_Queue_Commands")
 endFunction
 
 ; Private Methods
-function p_Enqueue(string str_message, Actor ref_actor, bool opt_bool = false)
-    p_queue_commands.Enqueue_Form_Bool(str_message, ref_actor as Form, opt_bool, 0.1)
+function p_Busy()
+    GotoState("p_STATE_BUSY")
+endFunction
+
+function p_Ready()
+    GotoState("")
 endFunction
 
 ; Public Methods
 function Cycle_Style(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Cycle_Style", ref_actor, auto_create)
-    GotoState("")
+p_Busy()
+    PRIVATE.Cycle_Style(ref_actor, auto_create)
+p_Ready()
 endFunction
 
 function Cycle_Vitality(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Cycle_Vitality", ref_actor, auto_create)
-    GotoState("")
+p_Busy()
+    PRIVATE.Cycle_Vitality(ref_actor, auto_create)
+p_Ready()
 endFunction
 
 function Members_Display_Start(Actor ref_actor)
@@ -93,7 +88,7 @@ function Members_Display_Start(Actor ref_actor)
     return
 
     ;GotoState("p_STATE_BUSY")
-    ;p_Enqueue("Members_Display_Start", ref_actor)
+    ;PRIVATE.Members_Display_Start(ref_actor)
     ;GotoState("")
 endFunction
 
@@ -102,7 +97,7 @@ function Members_Display_Stop()
     return
 
     ;GotoState("p_STATE_BUSY")
-    ;p_Enqueue("Members_Display_Stop", none)
+    ;PRIVATE.Members_Display_Stop()
     ;GotoState("")
 endFunction
 
@@ -111,7 +106,7 @@ function Members_Display_Next()
     return
 
     ;GotoState("p_STATE_BUSY")
-    ;p_Enqueue("Members_Display_Next", none)
+    ;PRIVATE.Members_Display_Next()
     ;GotoState("")
 endFunction
 
@@ -120,7 +115,7 @@ function Members_Display_Previous()
     return
 
     ;GotoState("p_STATE_BUSY")
-    ;p_Enqueue("Members_Display_Previous", none)
+    ;PRIVATE.Members_Display_Previous()
     ;GotoState("")
 endFunction
 
@@ -129,120 +124,120 @@ function Toggle_Members_Display(Actor ref_actor)
     return
 
     ;GotoState("p_STATE_BUSY")
-    ;p_Enqueue("Toggle_Members_Display", ref_actor)
+    ;PRIVATE.Toggle_Members_Display(ref_actor)
     ;GotoState("")
 endFunction
 
-
-function Followers_Summon_All()
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Followers_Summon_All", none)
-    GotoState("")
-endFunction
-
-function Followers_Summon_Mobile()
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Followers_Summon_Mobile", none)
-    GotoState("")
-endFunction
-
-function Followers_Summon_Immobile()
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Followers_Summon_Immobile", none)
-    GotoState("")
-endFunction
-
-function Followers_Settle()
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Followers_Settle", none)
-    GotoState("")
-endFunction
-
-function Followers_Unsettle()
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Followers_Unsettle", none)
-    GotoState("")
-endFunction
-
-function Followers_Immobilize()
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Followers_Immobilize", none)
-    GotoState("")
+; Followers
+function Followers_Resurrect()
+p_Busy()
+    PRIVATE.Followers_Resurrect()
+p_Ready()
 endFunction
 
 function Followers_Mobilize()
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Followers_Mobilize", none)
-    GotoState("")
+p_Busy()
+    PRIVATE.Followers_Mobilize()
+p_Ready()
+endFunction
+
+function Followers_Immobilize()
+p_Busy()
+    PRIVATE.Followers_Immobilize()
+p_Ready()
+endFunction
+
+function Followers_Settle()
+p_Busy()
+    PRIVATE.Followers_Settle()
+p_Ready()
+endFunction
+
+function Followers_Unsettle()
+p_Busy()
+    PRIVATE.Followers_Unsettle()
+p_Ready()
 endFunction
 
 function Followers_Sneak()
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Followers_Sneak", none)
-    GotoState("")
+p_Busy()
+    PRIVATE.Followers_Sneak()
+p_Ready()
 endFunction
 
 function Followers_Unsneak()
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Followers_Unsneak", none)
-    GotoState("")
+p_Busy()
+    PRIVATE.Followers_Unsneak()
+p_Ready()
 endFunction
 
 function Followers_Saddle()
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Followers_Saddle", none)
-    GotoState("")
+p_Busy()
+    PRIVATE.Followers_Saddle()
+p_Ready()
 endFunction
 
 function Followers_Unsaddle()
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Followers_Unsaddle", none)
-    GotoState("")
-endFunction
-
-function Followers_Stash()
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Followers_Stash()
-    GotoState("")
-endFunction
-
-function Followers_Resurrect()
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Followers_Resurrect", none)
-    GotoState("")
+p_Busy()
+    PRIVATE.Followers_Unsaddle()
+p_Ready()
 endFunction
 
 function Followers_Unfollow()
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Followers_Unfollow", none)
-    GotoState("")
+p_Busy()
+    PRIVATE.Followers_Unfollow()
+p_Ready()
 endFunction
 
 function Followers_Unmember()
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Followers_Unmember", none)
-    GotoState("")
+p_Busy()
+    PRIVATE.Followers_Unmember()
+p_Ready()
 endFunction
 
+function Followers_Summon_All()
+p_Busy()
+    PRIVATE.Followers_Summon_All()
+p_Ready()
+endFunction
+
+function Followers_Summon_Mobile()
+p_Busy()
+    PRIVATE.Followers_Summon_Mobile()
+p_Ready()
+endFunction
+
+function Followers_Summon_Immobile()
+p_Busy()
+    PRIVATE.Followers_Summon_Immobile()
+p_Ready()
+endFunction
+
+function Followers_Stash()
+p_Busy()
+    PRIVATE.Followers_Stash()
+p_Ready()
+endFunction
 
 function Toggle_Followers_Settle()
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Toggle_Followers_Settle", none)
-    GotoState("")
+p_Busy()
+    PRIVATE.Toggle_Followers_Settle()
+p_Ready()
 endFunction
 
 function Toggle_Followers_Immobilize()
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Toggle_Followers_Immobilize", none)
-    GotoState("")
+p_Busy()
+    PRIVATE.Toggle_Followers_Immobilize()
+p_Ready()
 endFunction
 
 function Toggle_Followers_Sneak()
-    GotoState("p_STATE_BUSY")
-    p_Enqueue("Toggle_Followers_Sneak", none)
-    GotoState("")
+p_Busy()
+    PRIVATE.Toggle_Followers_Sneak()
+p_Ready()
 endFunction
 
+; Member
 function Outfit_Show(Actor ref_actor)
     PRIVATE.Outfit_Show(ref_actor)
 endFunction
@@ -255,353 +250,351 @@ function Vitality_Show(Actor ref_actor)
     PRIVATE.Vitality_Show(ref_actor)
 endFunction
 
-
-
 ; Public Methods (Sync)
 function Member_Sync(Actor ref_actor)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Member(ref_actor)
-    GotoState("")
+p_Ready()
 endFunction
 
 function Unmember_Sync(Actor ref_actor)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Unmember(ref_actor)
-    GotoState("")
+p_Ready()
 endFunction
 
 function Clone_Sync(Actor ref_actor)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Clone(ref_actor)
-    GotoState("")
+p_Ready()
 endFunction
 
 function Unclone_Sync(Actor ref_actor)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Unclone(ref_actor)
-    GotoState("")
+p_Ready()
 endFunction
 
-function Settle_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Settle(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+function Settle(Actor ref_actor, bool auto_create)
+p_Busy()
+    PRIVATE.Settle(ref_actor, auto_create)
+p_Ready()
 endFunction
 
-function Unsettle_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Unsettle(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+function Resettle(Actor ref_actor, bool auto_create)
+p_Busy()
+    PRIVATE.Resettle(ref_actor, auto_create)
+p_Ready()
 endFunction
 
-function Resettle_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Resettle(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+function Unsettle(Actor ref_actor, bool auto_create)
+p_Busy()
+    PRIVATE.Unsettle(ref_actor, auto_create)
+p_Ready()
 endFunction
 
-function Enthrall_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Enthrall(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+function Enthrall(Actor ref_actor, bool auto_create)
+p_Busy()
+    PRIVATE.Enthrall(ref_actor, auto_create)
+p_Ready()
 endFunction
 
-function Unthrall_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Unthrall(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+function Unthrall(Actor ref_actor, bool auto_create)
+p_Busy()
+    PRIVATE.Unthrall(ref_actor, auto_create)
+p_Ready()
 endFunction
 
-function Immobilize_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Immobilize(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+function Mobilize(Actor ref_actor, bool auto_create)
+p_Busy()
+    PRIVATE.Mobilize(ref_actor, auto_create)
+p_Ready()
 endFunction
 
-function Mobilize_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Mobilize(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+function Immobilize(Actor ref_actor, bool auto_create)
+p_Busy()
+    PRIVATE.Immobilize(ref_actor, auto_create)
+p_Ready()
 endFunction
 
-function Paralyze_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Paralyze(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+function Paralyze(Actor ref_actor, bool auto_create)
+p_Busy()
+    PRIVATE.Paralyze(ref_actor, auto_create)
+p_Ready()
 endFunction
 
-function Unparalyze_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Unparalyze(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+function Unparalyze(Actor ref_actor, bool auto_create)
+p_Busy()
+    PRIVATE.Unparalyze(ref_actor, auto_create)
+p_Ready()
 endFunction
 
 function Follow_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Follow(ref_actor, auto_create)
-    GotoState("")
+p_Ready()
 endFunction
 
 function Unfollow_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Unfollow(ref_actor, auto_create)
-    GotoState("")
+p_Ready()
 endFunction
 
 function Sneak_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Sneak(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+p_Ready()
 endFunction
 
 function Unsneak_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Unsneak(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+p_Ready()
 endFunction
 
 function Saddle_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Saddle(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+p_Ready()
 endFunction
 
 function Unsaddle_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Unsaddle(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+p_Ready()
 endFunction
 
 function Pack_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Pack(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+p_Ready()
 endFunction
 
 function Stash(Actor ref_actor)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Stash(ref_actor)
-    GotoState("")
+p_Ready()
 endFunction
 
 function Outfit_Current_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Outfit_Current(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+p_Ready()
 endFunction
 
 function Outfit_Member_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Outfit_Member(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+p_Ready()
 endFunction
 
 function Outfit_Settler_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Outfit_Settler(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+p_Ready()
 endFunction
 
 function Outfit_Thrall_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Outfit_Thrall(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+p_Ready()
 endFunction
 
 function Outfit_Follower_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Outfit_Follower(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+p_Ready()
 endFunction
 
 function Outfit_Immobile_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Outfit_Immobile(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+p_Ready()
 endFunction
 
 function Outfit_Vanilla_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Outfit_Vanilla(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+p_Ready()
 endFunction
 
 function Outfit_Default_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Outfit_Default(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+p_Ready()
 endFunction
 
-function Style_Default_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Style_Default(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+function Stylize_Default(Actor ref_actor, bool auto_create)
+p_Busy()
+    PRIVATE.Stylize_Default(ref_actor, auto_create)
+p_Ready()
 endFunction
 
-function Style_Warrior_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Style_Warrior(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+function Stylize_Warrior(Actor ref_actor, bool auto_create)
+p_Busy()
+    PRIVATE.Stylize_Warrior(ref_actor, auto_create)
+p_Ready()
 endFunction
 
-function Style_Mage_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Style_Mage(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+function Stylize_Mage(Actor ref_actor, bool auto_create)
+p_Busy()
+    PRIVATE.Stylize_Mage(ref_actor, auto_create)
+p_Ready()
 endFunction
 
-function Style_Archer_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Style_Archer(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+function Stylize_Archer(Actor ref_actor, bool auto_create)
+p_Busy()
+    PRIVATE.Stylize_Archer(ref_actor, auto_create)
+p_Ready()
 endFunction
 
-function Style_Coward_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Style_Coward(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+function Stylize_Coward(Actor ref_actor, bool auto_create)
+p_Busy()
+    PRIVATE.Stylize_Coward(ref_actor, auto_create)
+p_Ready()
 endFunction
 
-function Vitalize_Mortal_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Vitalize_Mortal(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+function Vitalize_Mortal(Actor ref_actor, bool auto_create)
+p_Busy()
+    PRIVATE.Vitalize_Mortal(ref_actor, auto_create)
+p_Ready()
 endFunction
 
-function Vitalize_Protected_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Vitalize_Protected(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+function Vitalize_Protected(Actor ref_actor, bool auto_create)
+p_Busy()
+    PRIVATE.Vitalize_Protected(ref_actor, auto_create)
+p_Ready()
 endFunction
 
-function Vitalize_Essential_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Vitalize_Essential(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+function Vitalize_Essential(Actor ref_actor, bool auto_create)
+p_Busy()
+    PRIVATE.Vitalize_Essential(ref_actor, auto_create)
+p_Ready()
 endFunction
 
-function Vitalize_Invulnerable_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Vitalize_Invulnerable(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+function Vitalize_Invulnerable(Actor ref_actor, bool auto_create)
+p_Busy()
+    PRIVATE.Vitalize_Invulnerable(ref_actor, auto_create)
+p_Ready()
 endFunction
 
 function Move_Sync(Actor ref_actor)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Move(ref_actor)
-    GotoState("")
+p_Ready()
 endFunction
 
 function Summon_Sync(Actor ref_actor)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Summon(ref_actor)
-    GotoState("")
+p_Ready()
 endFunction
 
 function Goto_Sync(Actor ref_actor)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Goto(ref_actor)
-    GotoState("")
+p_Ready()
 endFunction
 
 function Resurrect_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Resurrect(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+p_Ready()
 endFunction
 
 function Reanimate_Sync(Actor ref_actor, bool auto_create)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Reanimate(CODES.DO_SYNC, ref_actor, auto_create)
-    GotoState("")
+p_Ready()
 endFunction
 
-function Mannequinize_Sync(Actor ref_actor, ObjectReference ref_marker, bool auto_create)
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Mannequinize(CODES.DO_SYNC, ref_actor, ref_marker, auto_create)
-    GotoState("")
+function Mannequinize(Actor ref_actor, ObjectReference ref_marker, bool auto_create)
+p_Busy()
+    PRIVATE.Mannequinize(ref_actor, ref_marker, auto_create)
+p_Ready()
 endFunction
 
-function Unmannequinize_Sync(Actor ref_actor)
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Unmannequinize(CODES.DO_SYNC, ref_actor)
-    GotoState("")
+function Unmannequinize(Actor ref_actor)
+p_Busy()
+    PRIVATE.Unmannequinize(ref_actor)
+p_Ready()
 endFunction
 
-function Expo_Sync(int id_expoee, ObjectReference ref_marker, bool auto_create)
-    GotoState("p_STATE_BUSY")
-    MANNEQUINS.Expo(CODES.DO_SYNC, id_expoee, ref_marker, auto_create)
-    GotoState("")
+function Expo(int id_expoee, ObjectReference ref_marker, bool auto_create)
+p_Busy()
+    MANNEQUINS.Expo(id_expoee, ref_marker, auto_create)
+p_Ready()
 endFunction
 
-function Unexpo_Sync(int id_expoee)
-    GotoState("p_STATE_BUSY")
-    MANNEQUINS.Unexpo(CODES.DO_SYNC, id_expoee)
-    GotoState("")
+function Unexpo(int id_expoee)
+p_Busy()
+    MANNEQUINS.Unexpo(id_expoee)
+p_Ready()
 endFunction
 
 function Toggle_Member_Sync(Actor ref_actor)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Toggle_Member(ref_actor)
-    GotoState("")
+p_Ready()
 endFunction
 
 function Toggle_Clone_Sync(Actor ref_actor)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Toggle_Clone(ref_actor)
-    GotoState("")
+p_Ready()
 endFunction
 
-function Toggle_Settler_Sync(Actor ref_actor)
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Toggle_Settler(CODES.DO_SYNC, ref_actor)
-    GotoState("")
+function Toggle_Settler(Actor ref_actor)
+p_Busy()
+    PRIVATE.Toggle_Settler(ref_actor)
+p_Ready()
 endFunction
 
-function Toggle_Thrall_Sync(Actor ref_actor)
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Toggle_Thrall(CODES.DO_SYNC, ref_actor)
-    GotoState("")
+function Toggle_Thrall(Actor ref_actor)
+p_Busy()
+    PRIVATE.Toggle_Thrall(ref_actor)
+p_Ready()
 endFunction
 
-function Toggle_Immobile_Sync(Actor ref_actor)
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Toggle_Immobile(CODES.DO_SYNC, ref_actor)
-    GotoState("")
+function Toggle_Immobile(Actor ref_actor)
+p_Busy()
+    PRIVATE.Toggle_Immobile(ref_actor)
+p_Ready()
 endFunction
 
-function Toggle_Paralyzed_Sync(Actor ref_actor)
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Toggle_Paralyzed(CODES.DO_SYNC, ref_actor)
-    GotoState("")
+function Toggle_Paralyzed(Actor ref_actor)
+p_Busy()
+    PRIVATE.Toggle_Paralyzed(ref_actor)
+p_Ready()
 endFunction
 
 function Toggle_Follower_Sync(Actor ref_actor)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Toggle_Follower(ref_actor)
-    GotoState("")
+p_Ready()
 endFunction
 
 function Toggle_Sneak_Sync(Actor ref_actor)
-    GotoState("p_STATE_BUSY")
+p_Busy()
     PRIVATE.Toggle_Sneak(CODES.DO_SYNC, ref_actor)
-    GotoState("")
+p_Ready()
 endFunction
 
-function Toggle_Mannequin_Sync(Actor ref_actor, ObjectReference ref_marker)
-    GotoState("p_STATE_BUSY")
-    PRIVATE.Toggle_Mannequin(CODES.DO_SYNC, ref_actor, ref_marker)
-    GotoState("")
+function Toggle_Mannequin(Actor ref_actor, ObjectReference ref_marker)
+p_Busy()
+    PRIVATE.Toggle_Mannequin(ref_actor, ref_marker)
+p_Ready()
 endFunction
 
-function Toggle_Expoee_Sync(int id_expoee, ObjectReference ref_marker)
-    GotoState("p_STATE_BUSY")
+function Toggle_Expoee(int id_expoee, ObjectReference ref_marker)
+p_Busy()
     if MANNEQUINS.Is_ID_Free(id_expoee)
-        MANNEQUINS.Expo(CODES.DO_SYNC, id_expoee, ref_marker, true)
+        MANNEQUINS.Expo(id_expoee, ref_marker, true)
     else
-        MANNEQUINS.Unexpo(CODES.DO_SYNC, id_expoee)
+        MANNEQUINS.Unexpo(id_expoee)
     endIf
-    GotoState("")
+p_Ready()
 endFunction
 
 ; Public Methods (Async)
@@ -619,42 +612,6 @@ endFunction
 
 function Unclone_Async(Actor ref_actor)
     PRIVATE.Unclone(ref_actor)
-endFunction
-
-function Settle_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Settle(CODES.DO_ASYNC, ref_actor, auto_create)
-endFunction
-
-function Unsettle_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Unsettle(CODES.DO_ASYNC, ref_actor, auto_create)
-endFunction
-
-function Resettle_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Resettle(CODES.DO_ASYNC, ref_actor, auto_create)
-endFunction
-
-function Enthrall_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Enthrall(CODES.DO_ASYNC, ref_actor, auto_create)
-endFunction
-
-function Unthrall_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Unthrall(CODES.DO_ASYNC, ref_actor, auto_create)
-endFunction
-
-function Immobilize_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Immobilize(CODES.DO_ASYNC, ref_actor, auto_create)
-endFunction
-
-function Mobilize_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Mobilize(CODES.DO_ASYNC, ref_actor, auto_create)
-endFunction
-
-function Paralyze_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Paralyze(CODES.DO_ASYNC, ref_actor, auto_create)
-endFunction
-
-function Unparalyze_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Unparalyze(CODES.DO_ASYNC, ref_actor, auto_create)
 endFunction
 
 function Sneak_Async(Actor ref_actor, bool auto_create)
@@ -693,68 +650,12 @@ function Outfit_Immobile_Async(Actor ref_actor, bool auto_create)
     PRIVATE.Outfit_Immobile(CODES.DO_ASYNC, ref_actor, auto_create)
 endFunction
 
-function Style_Default_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Style_Default(CODES.DO_ASYNC, ref_actor, auto_create)
-endFunction
-
-function Style_Warrior_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Style_Warrior(CODES.DO_ASYNC, ref_actor, auto_create)
-endFunction
-
-function Style_Mage_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Style_Mage(CODES.DO_ASYNC, ref_actor, auto_create)
-endFunction
-
-function Style_Archer_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Style_Archer(CODES.DO_ASYNC, ref_actor, auto_create)
-endFunction
-
-function Style_Coward_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Style_Coward(CODES.DO_ASYNC, ref_actor, auto_create)
-endFunction
-
-function Vitalize_Mortal_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Vitalize_Mortal(CODES.DO_ASYNC, ref_actor, auto_create)
-endFunction
-
-function Vitalize_Protected_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Vitalize_Protected(CODES.DO_ASYNC, ref_actor, auto_create)
-endFunction
-
-function Vitalize_Essential_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Vitalize_Essential(CODES.DO_ASYNC, ref_actor, auto_create)
-endFunction
-
-function Vitalize_Invulnerable_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Vitalize_Invulnerable(CODES.DO_ASYNC, ref_actor, auto_create)
-endFunction
-
-
-
 function Summon_Async(Actor ref_actor)
     PRIVATE.Summon(ref_actor)
 endFunction
 
 function Resurrect_Async(Actor ref_actor, bool auto_create)
     PRIVATE.Resurrect(CODES.DO_ASYNC, ref_actor, auto_create)
-endFunction
-
-
-
-function Toggle_Settler_Async(Actor ref_actor)
-    PRIVATE.Toggle_Settler(CODES.DO_ASYNC, ref_actor)
-endFunction
-
-function Toggle_Thrall_Async(Actor ref_actor)
-    PRIVATE.Toggle_Thrall(CODES.DO_ASYNC, ref_actor)
-endFunction
-
-function Toggle_Immobile_Async(Actor ref_actor)
-    PRIVATE.Toggle_Immobile(CODES.DO_ASYNC, ref_actor)
-endFunction
-
-function Toggle_Paralyzed_Async(Actor ref_actor)
-    PRIVATE.Toggle_Paralyzed(CODES.DO_ASYNC, ref_actor)
 endFunction
 
 function Toggle_Sneak_Async(Actor ref_actor)
@@ -767,72 +668,6 @@ endFunction
 
 ; "all", "mobile", "immobile", follower cycle, etc, such that they each summon one after another
 
-; Events
-event On_Queue_Commands(string str_message, Form form_actor, bool auto_create)
-    ; this queue should be separated into two, one for members, one for followers,
-    ; and removed from this module
-    Actor ref_actor = form_actor as Actor
-
-    if p_queue_commands.Should_Cancel()
-    
-    elseIf str_message == "Cycle_Style"
-        PRIVATE.Cycle_Style(ref_actor, auto_create)
-    elseIf str_message == "Cycle_Vitality"
-        PRIVATE.Cycle_Vitality(ref_actor, auto_create)
-
-    elseIf str_message == "Members_Display_Start"
-        PRIVATE.Members_Display_Start(ref_actor)
-    elseIf str_message == "Members_Display_Stop"
-        PRIVATE.Members_Display_Stop()
-    elseIf str_message == "Members_Display_Next"
-        PRIVATE.Members_Display_Next()
-    elseIf str_message == "Members_Display_Previous"
-        PRIVATE.Members_Display_Previous()
-
-    elseIf str_message == "Toggle_Members_Display"
-        PRIVATE.Toggle_Members_Display(ref_actor)
-    
-    elseIf str_message == "Followers_Summon_All"
-        PRIVATE.Followers_Summon_All()
-    elseIf str_message == "Followers_Summon_Mobile"
-        PRIVATE.Followers_Summon_Mobile()
-    elseIf str_message == "Followers_Summon_Immobile"
-        PRIVATE.Followers_Summon_Immobile()
-    elseIf str_message == "Followers_Settle"
-        PRIVATE.Followers_Settle()
-    elseIf str_message == "Followers_Unsettle"
-        PRIVATE.Followers_Unsettle()
-    elseIf str_message == "Followers_Immobilize"
-        PRIVATE.Followers_Immobilize()
-    elseIf str_message == "Followers_Mobilize"
-        PRIVATE.Followers_Mobilize()
-    elseIf str_message == "Followers_Sneak"
-        PRIVATE.Followers_Sneak()
-    elseIf str_message == "Followers_Unsneak"
-        PRIVATE.Followers_Unsneak()
-    elseIf str_message == "Followers_Saddle"
-        PRIVATE.Followers_Saddle()
-    elseIf str_message == "Followers_Unsaddle"
-        PRIVATE.Followers_Unsaddle()
-    elseIf str_message == "Followers_Resurrect"
-        PRIVATE.Followers_Resurrect()
-    elseIf str_message == "Followers_Unfollow"
-        PRIVATE.Followers_Unfollow()
-    elseIf str_message == "Followers_Unmember"
-        PRIVATE.Followers_Unmember()
-    
-    elseIf str_message == "Toggle_Followers_Settle"
-        PRIVATE.Toggle_Followers_Settle()
-    elseIf str_message == "Toggle_Followers_Immobilize"
-        PRIVATE.Toggle_Followers_Immobilize()
-    elseIf str_message == "Toggle_Followers_Sneak"
-        PRIVATE.Toggle_Followers_Sneak()
-    
-    endIf
-
-    p_queue_commands.Dequeue()
-endEvent
-
 ; Private States
 state p_STATE_BUSY
     function Member_Sync(Actor ref_actor)
@@ -843,23 +678,23 @@ state p_STATE_BUSY
     endFunction
     function Unclone_Sync(Actor ref_actor)
     endFunction
-    function Settle_Sync(Actor ref_actor, bool auto_create)
+    function Mobilize(Actor ref_actor, bool auto_create)
     endFunction
-    function Unsettle_Sync(Actor ref_actor, bool auto_create)
+    function Immobilize(Actor ref_actor, bool auto_create)
     endFunction
-    function Resettle_Sync(Actor ref_actor, bool auto_create)
+    function Settle(Actor ref_actor, bool auto_create)
     endFunction
-    function Enthrall_Sync(Actor ref_actor, bool auto_create)
+    function Resettle(Actor ref_actor, bool auto_create)
     endFunction
-    function Unthrall_Sync(Actor ref_actor, bool auto_create)
+    function Unsettle(Actor ref_actor, bool auto_create)
     endFunction
-    function Immobilize_Sync(Actor ref_actor, bool auto_create)
+    function Enthrall(Actor ref_actor, bool auto_create)
     endFunction
-    function Mobilize_Sync(Actor ref_actor, bool auto_create)
+    function Unthrall(Actor ref_actor, bool auto_create)
     endFunction
-    function Paralyze_Sync(Actor ref_actor, bool auto_create)
+    function Paralyze(Actor ref_actor, bool auto_create)
     endFunction
-    function Unparalyze_Sync(Actor ref_actor, bool auto_create)
+    function Unparalyze(Actor ref_actor, bool auto_create)
     endFunction
     function Follow_Sync(Actor ref_actor, bool auto_create)
     endFunction
@@ -891,23 +726,23 @@ state p_STATE_BUSY
     endFunction
     function Outfit_Default_Sync(Actor ref_actor, bool auto_create)
     endFunction
-    function Style_Default_Sync(Actor ref_actor, bool auto_create)
+    function Stylize_Default(Actor ref_actor, bool auto_create)
     endFunction
-    function Style_Warrior_Sync(Actor ref_actor, bool auto_create)
+    function Stylize_Warrior(Actor ref_actor, bool auto_create)
     endFunction
-    function Style_Mage_Sync(Actor ref_actor, bool auto_create)
+    function Stylize_Mage(Actor ref_actor, bool auto_create)
     endFunction
-    function Style_Archer_Sync(Actor ref_actor, bool auto_create)
+    function Stylize_Archer(Actor ref_actor, bool auto_create)
     endFunction
-    function Style_Coward_Sync(Actor ref_actor, bool auto_create)
+    function Stylize_Coward(Actor ref_actor, bool auto_create)
     endFunction
-    function Vitalize_Mortal_Sync(Actor ref_actor, bool auto_create)
+    function Vitalize_Mortal(Actor ref_actor, bool auto_create)
     endFunction
-    function Vitalize_Protected_Sync(Actor ref_actor, bool auto_create)
+    function Vitalize_Protected(Actor ref_actor, bool auto_create)
     endFunction
-    function Vitalize_Essential_Sync(Actor ref_actor, bool auto_create)
+    function Vitalize_Essential(Actor ref_actor, bool auto_create)
     endFunction
-    function Vitalize_Invulnerable_Sync(Actor ref_actor, bool auto_create)
+    function Vitalize_Invulnerable(Actor ref_actor, bool auto_create)
     endFunction
 
     function Move_Sync(Actor ref_actor)
@@ -921,34 +756,34 @@ state p_STATE_BUSY
     function Reanimate_Sync(Actor ref_actor, bool auto_create)
     endFunction
 
-    function Mannequinize_Sync(Actor ref_actor, ObjectReference ref_marker, bool auto_create)
+    function Mannequinize(Actor ref_actor, ObjectReference ref_marker, bool auto_create)
     endFunction
-    function Unmannequinize_Sync(Actor ref_actor)
+    function Unmannequinize(Actor ref_actor)
     endFunction
-    function Expo_Sync(int id_mannequin, ObjectReference ref_marker, bool auto_create)
+    function Expo(int id_mannequin, ObjectReference ref_marker, bool auto_create)
     endFunction
-    function Unexpo_Sync(int id_mannequin)
+    function Unexpo(int id_mannequin)
     endFunction
 
     function Toggle_Member_Sync(Actor ref_actor)
     endFunction
     function Toggle_Clone_Sync(Actor ref_actor)
     endFunction
-    function Toggle_Settler_Sync(Actor ref_actor)
+    function Toggle_Settler(Actor ref_actor)
     endFunction
-    function Toggle_Thrall_Sync(Actor ref_actor)
+    function Toggle_Thrall(Actor ref_actor)
     endFunction
-    function Toggle_Immobile_Sync(Actor ref_actor)
+    function Toggle_Immobile(Actor ref_actor)
     endFunction
-    function Toggle_Paralyzed_Sync(Actor ref_actor)
+    function Toggle_Paralyzed(Actor ref_actor)
     endFunction
     function Toggle_Follower_Sync(Actor ref_actor)
     endFunction
     function Toggle_Sneak_Sync(Actor ref_actor)
     endFunction
-    function Toggle_Mannequin_Sync(Actor ref_actor, ObjectReference ref_marker)
+    function Toggle_Mannequin(Actor ref_actor, ObjectReference ref_marker)
     endFunction
-    function Toggle_Expoee_Sync(int id_expoee, ObjectReference ref_marker)
+    function Toggle_Expoee(int id_expoee, ObjectReference ref_marker)
     endFunction
     
     function Cycle_Style(Actor ref_actor, bool auto_create)
@@ -1104,31 +939,37 @@ state f_STATE_UPDATING
     function Unclone_Sync(Actor ref_actor)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Settle_Sync(Actor ref_actor, bool auto_create)
+    function Settle(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Unsettle_Sync(Actor ref_actor, bool auto_create)
+    function Unsettle(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Resettle_Sync(Actor ref_actor, bool auto_create)
+    function Resettle(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Enthrall_Sync(Actor ref_actor, bool auto_create)
+    function Enthrall(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Unthrall_Sync(Actor ref_actor, bool auto_create)
+    function Unthrall(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Immobilize_Sync(Actor ref_actor, bool auto_create)
+    function Immobilize(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Mobilize_Sync(Actor ref_actor, bool auto_create)
+    function Mobilize(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Paralyze_Sync(Actor ref_actor, bool auto_create)
+    function Paralyze(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Unparalyze_Sync(Actor ref_actor, bool auto_create)
+    function Unparalyze(Actor ref_actor, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Mannequinize(Actor ref_actor, ObjectReference ref_marker, bool auto_create)
+        LOGS.Notify_Is_Updating()
+    endFunction
+    function Unmannequinize(Actor ref_actor)
         LOGS.Notify_Is_Updating()
     endFunction
     function Follow_Sync(Actor ref_actor, bool auto_create)
@@ -1179,31 +1020,31 @@ state f_STATE_UPDATING
     function Outfit_Default_Sync(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Style_Default_Sync(Actor ref_actor, bool auto_create)
+    function Stylize_Default(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Style_Warrior_Sync(Actor ref_actor, bool auto_create)
+    function Stylize_Warrior(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Style_Mage_Sync(Actor ref_actor, bool auto_create)
+    function Stylize_Mage(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Style_Archer_Sync(Actor ref_actor, bool auto_create)
+    function Stylize_Archer(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Style_Coward_Sync(Actor ref_actor, bool auto_create)
+    function Stylize_Coward(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Vitalize_Mortal_Sync(Actor ref_actor, bool auto_create)
+    function Vitalize_Mortal(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Vitalize_Protected_Sync(Actor ref_actor, bool auto_create)
+    function Vitalize_Protected(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Vitalize_Essential_Sync(Actor ref_actor, bool auto_create)
+    function Vitalize_Essential(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Vitalize_Invulnerable_Sync(Actor ref_actor, bool auto_create)
+    function Vitalize_Invulnerable(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
     function Move_Sync(Actor ref_actor)
@@ -1221,16 +1062,10 @@ state f_STATE_UPDATING
     function Reanimate_Sync(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Mannequinize_Sync(Actor ref_actor, ObjectReference ref_marker, bool auto_create)
+    function Expo(int id_mannequin, ObjectReference ref_marker, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Unmannequinize_Sync(Actor ref_actor)
-        LOGS.Notify_Is_Updating()
-    endFunction
-    function Expo_Sync(int id_mannequin, ObjectReference ref_marker, bool auto_create)
-        LOGS.Notify_Is_Updating()
-    endFunction
-    function Unexpo_Sync(int id_mannequin)
+    function Unexpo(int id_mannequin)
         LOGS.Notify_Is_Updating()
     endFunction
     function Toggle_Member_Sync(Actor ref_actor)
@@ -1239,16 +1074,16 @@ state f_STATE_UPDATING
     function Toggle_Clone_Sync(Actor ref_actor)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Toggle_Settler_Sync(Actor ref_actor)
+    function Toggle_Settler(Actor ref_actor)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Toggle_Thrall_Sync(Actor ref_actor)
+    function Toggle_Thrall(Actor ref_actor)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Toggle_Immobile_Sync(Actor ref_actor)
+    function Toggle_Immobile(Actor ref_actor)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Toggle_Paralyzed_Sync(Actor ref_actor)
+    function Toggle_Paralyzed(Actor ref_actor)
         LOGS.Notify_Is_Updating()
     endFunction
     function Toggle_Follower_Sync(Actor ref_actor)
@@ -1257,10 +1092,10 @@ state f_STATE_UPDATING
     function Toggle_Sneak_Sync(Actor ref_actor)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Toggle_Mannequin_Sync(Actor ref_actor, ObjectReference ref_marker)
+    function Toggle_Mannequin(Actor ref_actor, ObjectReference ref_marker)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Toggle_Expoee_Sync(int id_expoee, ObjectReference ref_marker)
+    function Toggle_Expoee(int id_expoee, ObjectReference ref_marker)
         LOGS.Notify_Is_Updating()
     endFunction
     function Member_Async(Actor ref_actor)
@@ -1273,33 +1108,6 @@ state f_STATE_UPDATING
         LOGS.Notify_Is_Updating()
     endFunction
     function Unclone_Async(Actor ref_actor)
-        LOGS.Notify_Is_Updating()
-    endFunction
-    function Settle_Async(Actor ref_actor, bool auto_create)
-        LOGS.Notify_Is_Updating()
-    endFunction
-    function Unsettle_Async(Actor ref_actor, bool auto_create)
-        LOGS.Notify_Is_Updating()
-    endFunction
-    function Resettle_Async(Actor ref_actor, bool auto_create)
-        LOGS.Notify_Is_Updating()
-    endFunction
-    function Enthrall_Async(Actor ref_actor, bool auto_create)
-        LOGS.Notify_Is_Updating()
-    endFunction
-    function Unthrall_Async(Actor ref_actor, bool auto_create)
-        LOGS.Notify_Is_Updating()
-    endFunction
-    function Immobilize_Async(Actor ref_actor, bool auto_create)
-        LOGS.Notify_Is_Updating()
-    endFunction
-    function Mobilize_Async(Actor ref_actor, bool auto_create)
-        LOGS.Notify_Is_Updating()
-    endFunction
-    function Paralyze_Async(Actor ref_actor, bool auto_create)
-        LOGS.Notify_Is_Updating()
-    endFunction
-    function Unparalyze_Async(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
     function Sneak_Async(Actor ref_actor, bool auto_create)
@@ -1329,49 +1137,10 @@ state f_STATE_UPDATING
     function Outfit_Immobile_Async(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Style_Default_Async(Actor ref_actor, bool auto_create)
-        LOGS.Notify_Is_Updating()
-    endFunction
-    function Style_Warrior_Async(Actor ref_actor, bool auto_create)
-        LOGS.Notify_Is_Updating()
-    endFunction
-    function Style_Mage_Async(Actor ref_actor, bool auto_create)
-        LOGS.Notify_Is_Updating()
-    endFunction
-    function Style_Archer_Async(Actor ref_actor, bool auto_create)
-        LOGS.Notify_Is_Updating()
-    endFunction
-    function Style_Coward_Async(Actor ref_actor, bool auto_create)
-        LOGS.Notify_Is_Updating()
-    endFunction
-    function Vitalize_Mortal_Async(Actor ref_actor, bool auto_create)
-        LOGS.Notify_Is_Updating()
-    endFunction
-    function Vitalize_Protected_Async(Actor ref_actor, bool auto_create)
-        LOGS.Notify_Is_Updating()
-    endFunction
-    function Vitalize_Essential_Async(Actor ref_actor, bool auto_create)
-        LOGS.Notify_Is_Updating()
-    endFunction
-    function Vitalize_Invulnerable_Async(Actor ref_actor, bool auto_create)
-        LOGS.Notify_Is_Updating()
-    endFunction
     function Summon_Async(Actor ref_actor)
         LOGS.Notify_Is_Updating()
     endFunction
     function Resurrect_Async(Actor ref_actor, bool auto_create)
-        LOGS.Notify_Is_Updating()
-    endFunction
-    function Toggle_Settler_Async(Actor ref_actor)
-        LOGS.Notify_Is_Updating()
-    endFunction
-    function Toggle_Thrall_Async(Actor ref_actor)
-        LOGS.Notify_Is_Updating()
-    endFunction
-    function Toggle_Immobile_Async(Actor ref_actor)
-        LOGS.Notify_Is_Updating()
-    endFunction
-    function Toggle_Paralyzed_Async(Actor ref_actor)
         LOGS.Notify_Is_Updating()
     endFunction
     function Toggle_Sneak_Async(Actor ref_actor)
@@ -1380,7 +1149,4 @@ state f_STATE_UPDATING
     function Toggle_Saddler_Async(Actor ref_actor)
         LOGS.Notify_Is_Updating()
     endFunction
-    event On_Queue_Commands(string str_message, Form form_actor, bool auto_create)
-        LOGS.Notify_Is_Updating()
-    endEvent
 endState

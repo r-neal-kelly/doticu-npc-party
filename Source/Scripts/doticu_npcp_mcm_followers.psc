@@ -143,7 +143,7 @@ function f_Build_Page()
 
         MCM.SetCursorPosition(cursor)
 
-        MCM.AddHeaderOption(ref_follower.Get_Name() + " ")
+        MCM.AddHeaderOption(ref_follower.Name() + " ")
         MCM.AddTextOption("   Summon", "")
         MCM.AddTextOption("   Pack", "")
         if ref_follower.Is_Immobile()
@@ -175,7 +175,7 @@ function f_On_Option_Select(int id_option)
     int idx_command = p_Get_Idx_Command(id_option, idx_entity)
 
     doticu_npcp_follower ref_follower = p_arr_aliases[idx_entity] as doticu_npcp_follower
-    Actor ref_actor = ref_follower.Get_Actor()
+    Actor ref_actor = ref_follower.Actor()
 
     if false
 
@@ -192,9 +192,9 @@ function f_On_Option_Select(int id_option)
     elseIf idx_command == p_COMMAND_ONE_IMMOBILIZE
         MCM.f_Disable(id_option, MCM.DO_UPDATE)
         if ref_follower.Is_Immobile()
-            COMMANDS.Mobilize_Async(ref_actor, false)
+            COMMANDS.Mobilize(ref_actor, false)
         else
-            COMMANDS.Immobilize_Async(ref_actor, false)
+            COMMANDS.Immobilize(ref_actor, false)
         endIf
         MCM.ForcePageReset()
 
@@ -277,7 +277,7 @@ function f_On_Option_Highlight(int id_option)
         int idx_command = p_Get_Idx_Command(id_option, idx_entity)
 
         doticu_npcp_follower ref_follower = p_arr_aliases[idx_entity] as doticu_npcp_follower
-        string name_follower = ref_follower.Get_Name()
+        string name_follower = ref_follower.Name()
 
         if false
 

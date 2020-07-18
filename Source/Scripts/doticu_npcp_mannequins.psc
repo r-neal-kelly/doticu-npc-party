@@ -160,7 +160,7 @@ function p_Try_Unset_Teleport()
 endFunction
 
 ; Public Methods
-function Expo(int code_exec, int id_expoee, ObjectReference ref_marker, bool auto_create)
+function Expo(int id_expoee, ObjectReference ref_marker, bool auto_create)
     if id_expoee < 0 || id_expoee >= MAX_MANNEQUINS
         return LOGS.Create_Note("Invalid Expo ID.")
     endIf
@@ -197,12 +197,12 @@ function Expo(int code_exec, int id_expoee, ObjectReference ref_marker, bool aut
 
     p_arr_mannequins[id_expoee] = ref_member
 
-    ref_member.Mannequinize(code_exec, ref_marker)
+    ref_member.Mannequinize(ref_marker)
 
-    return LOGS.Create_Note(ref_member.Get_Name() + " will now be a mannequin.")
+    return LOGS.Create_Note(ref_member.Name() + " will now be a mannequin.")
 endFunction
 
-function Unexpo(int code_exec, int id_expoee)
+function Unexpo(int id_expoee)
     if id_expoee < 0 || id_expoee >= MAX_MANNEQUINS
         return LOGS.Create_Note("Invalid Expo ID.")
     endIf
@@ -215,9 +215,9 @@ function Unexpo(int code_exec, int id_expoee)
 
     p_arr_mannequins[id_expoee] = none
 
-    ref_member.Unmannequinize(code_exec)
+    ref_member.Unmannequinize()
 
-    return LOGS.Create_Note(ref_member.Get_Name() + " will no longer be a mannequin.")
+    return LOGS.Create_Note(ref_member.Name() + " will no longer be a mannequin.")
 endFunction
 
 bool function Is_ID_Used(int id_expoee)
@@ -247,7 +247,7 @@ function Refresh_Mannequin(int id_expoee, ObjectReference ref_marker)
 
     doticu_npcp_member ref_member = p_arr_mannequins[id_expoee] as doticu_npcp_member
     if ref_member
-        ref_member.Get_Actor().MoveTo(ref_marker)
+        ref_member.Actor().MoveTo(ref_marker)
     endIf
 endFunction
 
@@ -380,7 +380,7 @@ bool function Is_Player_In_Expo()
 endFunction
 
 bool function Is_Member_In_Expo(doticu_npcp_member ref_member)
-    return ref_member && ref_member.Exists() && ref_member.Get_Actor().IsInLocation(CONSTS.LOCATION_EXPO)
+    return ref_member && ref_member.Exists() && ref_member.Actor().IsInLocation(CONSTS.LOCATION_EXPO)
 endFunction
 
 int function Get_Expo_Count()

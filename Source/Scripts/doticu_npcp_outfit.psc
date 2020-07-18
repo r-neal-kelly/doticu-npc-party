@@ -148,11 +148,11 @@ bool function Exists()
     return p_is_created
 endFunction
 
-string function Get_Name()
+string function Name()
     return p_str_name
 endFunction
 
-function Set_Name(string str_name)
+function Rename(string str_name)
     p_str_name = str_name
     self.SetDisplayName(p_str_name, true)
 endFunction

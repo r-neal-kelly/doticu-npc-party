@@ -31,6 +31,7 @@ namespace doticu_npcp { namespace Offsets {
         constexpr uintptr_t FACTION_CHANGES_V_TABLE     = 0x0152C800; // 229602
         constexpr uintptr_t FLAGS_V_TABLE               = 0x0152CBC0; // 229632
         constexpr uintptr_t GHOST_V_TABLE               = 0x0152F2A0; // 229888
+        constexpr uintptr_t TEXT_DISPLAY_V_TABLE        = 0x0152CAE0; // 229625
 
     }
 

@@ -62,52 +62,52 @@ int                     p_idx_display       =    -1
 ObjectReference         p_marker_display    =  none
 
 ; Native Methods
-Alias function p_From_ID(int unique_id) native
-Alias function p_From_Actor(Actor ref_actor) native
-Alias function p_From_Unfilled() native
+Alias function p_From_ID(int unique_id)         native
+Alias function p_From_Actor(Actor ref_actor)    native
+Alias function p_From_Unfilled()                native
 
-bool function Has_Space() native
-bool function Hasnt_Space() native
-bool function Has_Actor(Actor ref_actor) native
-bool function Hasnt_Actor(Actor ref_actor) native
-bool function Has_Head(Actor ref_actor) native
-bool function Hasnt_Head(Actor ref_actor) native
+bool function Has_Space()                   native
+bool function Hasnt_Space()                 native
+bool function Has_Actor(Actor ref_actor)    native
+bool function Hasnt_Actor(Actor ref_actor)  native
+bool function Has_Head(Actor ref_actor)     native
+bool function Hasnt_Head(Actor ref_actor)   native
 
-int function Max() native
-int function Count_Filled() native
-int function Count_Unfilled() native
-int function Count_Loaded() native
-int function Count_Unloaded() native
-int function Count_Unique() native
-int function Count_Generic() native
-int function Count_Alive() native
-int function Count_Dead() native
-int function Count_Originals() native
-int function Count_Clones() native
-int function Count_Mobile() native
-int function Count_Immobile() native
-int function Count_Settlers() native
-int function Count_Non_Settlers() native
-int function Count_Thralls() native
-int function Count_Non_Thralls() native
-int function Count_Paralyzed() native
-int function Count_Non_Paralyzed() native
-int function Count_Mannequins() native
-int function Count_Non_Mannequins() native
-int function Count_Reanimated() native
-int function Count_Non_Reanimated() native
-int function Count_Followers() native
-int function Count_Non_Followers() native
-int function Count_Sneaks() native
-int function Count_Non_Sneaks() native
-int function Count_Saddlers() native
-int function Count_Non_Saddlers() native
-int function Count_Retreaters() native
-int function Count_Non_Retreaters() native
-int function Count_Heads(Actor ref_actor) native
+int function Max()                          native
+int function Count_Filled()                 native
+int function Count_Unfilled()               native
+int function Count_Loaded()                 native
+int function Count_Unloaded()               native
+int function Count_Unique()                 native
+int function Count_Generic()                native
+int function Count_Alive()                  native
+int function Count_Dead()                   native
+int function Count_Originals()              native
+int function Count_Clones()                 native
+int function Count_Mobile()                 native
+int function Count_Immobile()               native
+int function Count_Settlers()               native
+int function Count_Non_Settlers()           native
+int function Count_Thralls()                native
+int function Count_Non_Thralls()            native
+int function Count_Paralyzed()              native
+int function Count_Non_Paralyzed()          native
+int function Count_Mannequins()             native
+int function Count_Non_Mannequins()         native
+int function Count_Reanimated()             native
+int function Count_Non_Reanimated()         native
+int function Count_Followers()              native
+int function Count_Non_Followers()          native
+int function Count_Sneaks()                 native
+int function Count_Non_Sneaks()             native
+int function Count_Saddlers()               native
+int function Count_Non_Saddlers()           native
+int function Count_Retreaters()             native
+int function Count_Non_Retreaters()         native
+int function Count_Heads(Actor ref_actor)   native
 
-Alias[] function All() native
-Alias[] function Filled() native
+Alias[] function All()      native
+Alias[] function Filled()   native
 
 Alias[] function Sort_Filled(int begin, int end) native
 
@@ -117,11 +117,11 @@ string[] function Race_Names() native
 
 function Enforce_Loaded() native
 
-string[] function Filter_Strings(string sex = "", string race = "", string search = "") native
-int[] function Filter_Ints(int style = 0, int vitality = 0, int outfit2 = 0, int rating = -1) native
-int function Add_Filter_Flag_1(int flags_1, string flag_1) native
-int function Add_Filter_Flag_2(int flags_2, string flag_2) native
-Alias[] function Filter(string[] strings, int[] ints, int flags_1, int flags_2) native
+string[]    function Filter_Strings(string sex = "", string race = "", string search = "")          native
+int[]       function Filter_Ints(int style = 0, int vitality = 0, int outfit2 = 0, int rating = -1) native
+int         function Add_Filter_Flag_1(int flags_1, string flag_1)                                  native
+int         function Add_Filter_Flag_2(int flags_2, string flag_2)                                  native
+Alias[]     function Filter(string[] strings, int[] ints, int flags_1, int flags_2)                 native
 
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
@@ -222,7 +222,6 @@ int function Create_Member(Actor ref_actor, bool do_clone = false)
     endIf
 
     ref_member.f_Create(p_DATA, ref_actor, do_clone)
-    ref_member.f_Register()
 
     return CODES.SUCCESS
 endFunction
@@ -238,7 +237,6 @@ int function Destroy_Member(Actor ref_actor, bool delete_clone = false)
     endIf
     
     bool is_clone = ref_member.Is_Clone()
-    ref_member.f_Unregister()
     ref_member.f_Destroy()
 
     if Should_Unclone_Actor(ref_actor)
@@ -335,14 +333,6 @@ doticu_npcp_member function Get_Member(Actor ref_actor)
     return p_From_Actor(ref_actor) as doticu_npcp_member
 endFunction
 
-doticu_npcp_member function Get_Prev_Member(doticu_npcp_member ref_member)
-    ; TODO
-endFunction
-
-doticu_npcp_member function Get_Next_Member(doticu_npcp_member ref_member)
-    ; TODO
-endFunction
-
 Alias[] function Get_Members(int begin = 0, int end = -1)
     return Sort_Filled(begin, end)
 endFunction
@@ -372,7 +362,7 @@ bool function Should_Unclone_Actor(Actor ref_actor)
 endFunction
 
 bool function Should_Unclone_Member(doticu_npcp_member ref_member)
-    return ref_member && ref_member.Is_Clone() && Should_Unclone_Actor(ref_member.Get_Actor())
+    return ref_member && ref_member.Is_Clone() && Should_Unclone_Actor(ref_member.Actor())
 endFunction
 
 ; would also like a display that skips followers, has only followers, etc. for immobile, settler, etc.

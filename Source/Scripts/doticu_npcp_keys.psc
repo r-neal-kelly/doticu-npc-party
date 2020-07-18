@@ -88,7 +88,7 @@ Actor function Actor_In_Crosshair(bool allow_follower_horse = false)
     else
         doticu_npcp_follower ref_follower = FOLLOWERS.From_Horse_Actor(ref_actor)
         if ref_follower
-            return ref_follower.Get_Actor()
+            return ref_follower.Actor()
         else
             return ref_actor
         endIf
@@ -295,9 +295,9 @@ event OnKeyUp(int value, float hold_time)
         if ref_actor == none
             LOGS.Create_Note("That is not an NPC.", false)
         elseIf p_DATA.MODS.MEMBERS.Has_Base(ref_actor)
-            LOGS.Create_Note("A member has the base of " + ACTORS.Get_Name(ref_actor) + ".", false)
+            LOGS.Create_Note("A member has the base of " + ACTORS.Name(ref_actor) + ".", false)
         else
-            LOGS.Create_Note("No member has the base of " + ACTORS.Get_Name(ref_actor) + ".", false)
+            LOGS.Create_Note("No member has the base of " + ACTORS.Name(ref_actor) + ".", false)
         endIf
     elseIf pressed_hotkey == CONSTS.KEY_N_COUNT_BASE
         Actor ref_actor = Actor_In_Crosshair()
@@ -306,9 +306,9 @@ event OnKeyUp(int value, float hold_time)
         else
             int num_members = p_DATA.MODS.MEMBERS.Get_Base_Count(ref_actor)
             if num_members == 1
-                LOGS.Create_Note(num_members + " member has the base of " + ACTORS.Get_Name(ref_actor) + ".", false)
+                LOGS.Create_Note(num_members + " member has the base of " + ACTORS.Name(ref_actor) + ".", false)
             else
-                LOGS.Create_Note(num_members + " members have the base of " + ACTORS.Get_Name(ref_actor) + ".", false)
+                LOGS.Create_Note(num_members + " members have the base of " + ACTORS.Name(ref_actor) + ".", false)
             endIf
         endIf
     elseif pressed_hotkey == CONSTS.KEY_N_HAS_HEAD
@@ -316,9 +316,9 @@ event OnKeyUp(int value, float hold_time)
         if ref_actor == none
             LOGS.Create_Note("That is not an NPC.", false)
         elseIf p_DATA.MODS.MEMBERS.Has_Head(ref_actor)
-            LOGS.Create_Note("A member looks like " + ACTORS.Get_Name(ref_actor) + ".", false)
+            LOGS.Create_Note("A member looks like " + ACTORS.Name(ref_actor) + ".", false)
         else
-            LOGS.Create_Note("No member looks like " + ACTORS.Get_Name(ref_actor) + ".", false)
+            LOGS.Create_Note("No member looks like " + ACTORS.Name(ref_actor) + ".", false)
         endIf
     elseIf pressed_hotkey == CONSTS.KEY_N_COUNT_HEADS
         Actor ref_actor = Actor_In_Crosshair()
@@ -327,9 +327,9 @@ event OnKeyUp(int value, float hold_time)
         else
             int num_heads = p_DATA.MODS.MEMBERS.Count_Heads(ref_actor)
             if num_heads == 1
-                LOGS.Create_Note(num_heads + " member looks like " + ACTORS.Get_Name(ref_actor) + ".", false)
+                LOGS.Create_Note(num_heads + " member looks like " + ACTORS.Name(ref_actor) + ".", false)
             else
-                LOGS.Create_Note(num_heads + " members look like " + ACTORS.Get_Name(ref_actor) + ".", false)
+                LOGS.Create_Note(num_heads + " members look like " + ACTORS.Name(ref_actor) + ".", false)
             endIf
         endIf
 
@@ -337,13 +337,13 @@ event OnKeyUp(int value, float hold_time)
     elseIf pressed_hotkey == CONSTS.KEY_M_TOGGLE_CLONE
         COMMANDS.Toggle_Clone_Sync(Actor_In_Crosshair())
     elseIf pressed_hotkey == CONSTS.KEY_M_TOGGLE_SETTLER
-        COMMANDS.Toggle_Settler_Async(Actor_In_Crosshair())
+        COMMANDS.Toggle_Settler(Actor_In_Crosshair())
     elseIf pressed_hotkey == CONSTS.KEY_M_TOGGLE_THRALL
-        COMMANDS.Toggle_Thrall_Async(Actor_In_Crosshair())
+        COMMANDS.Toggle_Thrall(Actor_In_Crosshair())
     elseIf pressed_hotkey == CONSTS.KEY_M_TOGGLE_IMMOBILE
-        COMMANDS.Toggle_Immobile_Async(Actor_In_Crosshair())
+        COMMANDS.Toggle_Immobile(Actor_In_Crosshair())
     elseIf pressed_hotkey == CONSTS.KEY_M_TOGGLE_PARALYZED
-        COMMANDS.Toggle_Paralyzed_Async(Actor_In_Crosshair())
+        COMMANDS.Toggle_Paralyzed(Actor_In_Crosshair())
     elseIf pressed_hotkey == CONSTS.KEY_M_TOGGLE_FOLLOWER
         COMMANDS.Toggle_Follower_Sync(Actor_In_Crosshair())
 

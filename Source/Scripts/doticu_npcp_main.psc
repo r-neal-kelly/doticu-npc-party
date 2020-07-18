@@ -38,7 +38,6 @@ endProperty
 
 ; Private Constants
 doticu_npcp_data    p_DATA                      =  none
-bool                p_will_init_or_load_0_9_1   = false
 
 ; Public Constants
 doticu_npcp_data property DATA
@@ -52,18 +51,8 @@ doticu_npcp_data property DATA
     endFunction
 endProperty
 
-bool property WILL_INIT_OR_LOAD_0_9_1
-    bool function Get()
-        return p_will_init_or_load_0_9_1
-    endFunction
-endProperty
-
 ; Friend Methods
 function f_Init_Mod()
-    ; this lets a contingency update method know whether to startup or not
-    ; to be removed in next update.
-    p_will_init_or_load_0_9_1 = true
-
     ; just in case of any engine bugs, like AddItem, which may not work
     ; during the first second of the game, see wiki
     FUNCS.Wait_Out_Of_Menu(1)
@@ -92,10 +81,6 @@ function f_Init_Mod()
 endFunction
 
 function f_Load_Mod()
-    ; this lets a contingency update method know whether to startup or not
-    ; to be removed in next update.
-    p_will_init_or_load_0_9_1 = true
-
     ; just in case of any engine bugs, like AddItem, which may not work
     ; during the first second of the game, see wiki
     FUNCS.Wait_Out_Of_Menu(1)
@@ -112,9 +97,6 @@ function f_Load_Mod()
 
     FUNCS.Send_Event("doticu_npcp_load_mod")
     doticu_npcp.Print("NPC Party has loaded.")
-
-    ; Testing
-    ;doticu_npcp.Run_Tests()
 endFunction
 
 ; Private Methods

@@ -618,70 +618,82 @@ namespace doticu_npcp { namespace Object_Ref {
 
     void Block_Activation(Reference_t* ref)
     {
-        ExtraFlags* xflags = static_cast<ExtraFlags*>(ref->extraData.GetByType(kExtraData_Flags));
-        if (xflags) {
-            xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_ACTIVATION);
-        } else {
-            xflags = XData::Create_Flags();
+        if (ref) {
+            ExtraFlags* xflags = static_cast<ExtraFlags*>(ref->extraData.GetByType(kExtraData_Flags));
             if (xflags) {
-                ref->extraData.Add(kExtraData_Flags, xflags);
                 xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_ACTIVATION);
+            } else {
+                xflags = XData::Create_Flags();
+                if (xflags) {
+                    ref->extraData.Add(kExtraData_Flags, xflags);
+                    xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_ACTIVATION);
+                }
             }
         }
     }
 
     void Unblock_Activation(Reference_t* ref)
     {
-        ExtraFlags* xflags = static_cast<ExtraFlags*>(ref->extraData.GetByType(kExtraData_Flags));
-        if (xflags) {
-            xflags->flags = Utils::Bit_Off(xflags->flags, ExtraFlags::BLOCKS_ACTIVATION);
+        if (ref) {
+            ExtraFlags* xflags = static_cast<ExtraFlags*>(ref->extraData.GetByType(kExtraData_Flags));
+            if (xflags) {
+                xflags->flags = Utils::Bit_Off(xflags->flags, ExtraFlags::BLOCKS_ACTIVATION);
+            }
         }
     }
 
     void Block_Player_Activation(Reference_t* ref)
     {
-        ExtraFlags* xflags = static_cast<ExtraFlags*>(ref->extraData.GetByType(kExtraData_Flags));
-        if (xflags) {
-            xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_PLAYER_ACTIVATION);
-        } else {
-            xflags = XData::Create_Flags();
+        if (ref) {
+            ExtraFlags* xflags = static_cast<ExtraFlags*>(ref->extraData.GetByType(kExtraData_Flags));
             if (xflags) {
-                ref->extraData.Add(kExtraData_Flags, xflags);
                 xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_PLAYER_ACTIVATION);
+            } else {
+                xflags = XData::Create_Flags();
+                if (xflags) {
+                    ref->extraData.Add(kExtraData_Flags, xflags);
+                    xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_PLAYER_ACTIVATION);
+                }
             }
         }
     }
 
     void Unblock_Player_Activation(Reference_t* ref)
     {
-        ExtraFlags* xflags = static_cast<ExtraFlags*>(ref->extraData.GetByType(kExtraData_Flags));
-        if (xflags) {
-            xflags->flags = Utils::Bit_Off(xflags->flags, ExtraFlags::BLOCKS_PLAYER_ACTIVATION);
+        if (ref) {
+            ExtraFlags* xflags = static_cast<ExtraFlags*>(ref->extraData.GetByType(kExtraData_Flags));
+            if (xflags) {
+                xflags->flags = Utils::Bit_Off(xflags->flags, ExtraFlags::BLOCKS_PLAYER_ACTIVATION);
+            }
         }
     }
 
     void Block_All_Activation(Reference_t* ref)
     {
-        ExtraFlags* xflags = static_cast<ExtraFlags*>(ref->extraData.GetByType(kExtraData_Flags));
-        if (xflags) {
-            xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_ACTIVATION);
-            xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_PLAYER_ACTIVATION);
-        } else {
-            xflags = XData::Create_Flags();
+        if (ref) {
+            ExtraFlags* xflags = static_cast<ExtraFlags*>(ref->extraData.GetByType(kExtraData_Flags));
             if (xflags) {
-                ref->extraData.Add(kExtraData_Flags, xflags);
                 xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_ACTIVATION);
                 xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_PLAYER_ACTIVATION);
+            } else {
+                xflags = XData::Create_Flags();
+                if (xflags) {
+                    ref->extraData.Add(kExtraData_Flags, xflags);
+                    xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_ACTIVATION);
+                    xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_PLAYER_ACTIVATION);
+                }
             }
         }
     }
 
     void Unblock_All_Activation(Reference_t* ref)
     {
-        ExtraFlags* xflags = static_cast<ExtraFlags*>(ref->extraData.GetByType(kExtraData_Flags));
-        if (xflags) {
-            xflags->flags = Utils::Bit_Off(xflags->flags, ExtraFlags::BLOCKS_ACTIVATION);
-            xflags->flags = Utils::Bit_Off(xflags->flags, ExtraFlags::BLOCKS_PLAYER_ACTIVATION);
+        if (ref) {
+            ExtraFlags* xflags = static_cast<ExtraFlags*>(ref->extraData.GetByType(kExtraData_Flags));
+            if (xflags) {
+                xflags->flags = Utils::Bit_Off(xflags->flags, ExtraFlags::BLOCKS_ACTIVATION);
+                xflags->flags = Utils::Bit_Off(xflags->flags, ExtraFlags::BLOCKS_PLAYER_ACTIVATION);
+            }
         }
     }
 
@@ -693,6 +705,21 @@ namespace doticu_npcp { namespace Object_Ref {
 
         if (ref && nicontroller && nisequence_from && nisequence_to) {
             return func(ref, nicontroller, nisequence_to, nisequence_from); // these are backwards I guess.
+        }
+    }
+
+    void Rename(Reference_t* ref, String_t new_name)
+    {
+        if (ref) {
+            ExtraTextDisplay* xtext = static_cast<ExtraTextDisplay*>(ref->extraData.GetByType(kExtraData_TextDisplayData));
+            if (xtext) {
+                xtext->Force_Rename(new_name);
+            } else {
+                xtext = XData::Create_Text_Display(new_name);
+                if (xtext) {
+                    ref->extraData.Add(kExtraData_TextDisplayData, xtext);
+                }
+            }
         }
     }
 

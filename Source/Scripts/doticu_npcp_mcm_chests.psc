@@ -399,6 +399,6 @@ endFunction
 function p_Open(ObjectReference ref_container, string str_name)
     FUNCS.Close_Menus()
     doticu_npcp.Object_Ref_Categorize(CONSTS.CATEGORY_INPUT)
-    CONTAINERS.Set_Name(ref_container, str_name)
+    CONTAINERS.Rename(ref_container, str_name)
     CONTAINERS.Open(ref_container)
 endFunction
