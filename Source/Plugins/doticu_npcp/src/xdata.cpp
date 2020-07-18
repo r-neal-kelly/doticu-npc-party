@@ -337,6 +337,7 @@ namespace doticu_npcp { namespace XData {
         ));
         if (xghost) {
             xghost->is_ghost = is_ghost;
+            return xghost;
         } else {
             return nullptr;
         }

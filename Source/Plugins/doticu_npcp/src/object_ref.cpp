@@ -28,25 +28,17 @@ namespace doticu_npcp { namespace Object_Ref {
     }
 
     XContainer_t *Get_XContainer(TESObjectREFR *obj, bool do_create) {
-        if (!obj) {
-            return NULL;
-        }
-
-        XContainer_t *xcontainer = (XContainer_t *)obj->extraData.GetByType(kExtraData_ContainerChanges);
-        if (xcontainer && xcontainer->data && xcontainer->data->objList) {
-            return xcontainer;
-        } else if (do_create) {
-            if (!xcontainer) {
-                xcontainer = XContainer::Create(obj);
-                obj->extraData.Add(kExtraData_ContainerChanges, xcontainer);
-            } else if (!xcontainer->data) {
-                xcontainer->data = XContainer::Create_Data(obj);
-            } else {
-                xcontainer->data->objList = XContainer::Create_Data_Entries();
+        if (obj) {
+            XContainer_t* xcontainer = static_cast<XContainer_t*>
+                (obj->extraData.GetByType(kExtraData_ContainerChanges));
+            if (!xcontainer && do_create) {
+                Init_Container(obj);
+                xcontainer = static_cast<XContainer_t*>
+                    (obj->extraData.GetByType(kExtraData_ContainerChanges));
             }
             return xcontainer;
         } else {
-            return NULL;
+            return nullptr;
         }
     }
 
@@ -73,7 +65,11 @@ namespace doticu_npcp { namespace Object_Ref {
             return NULL;
         }
 
-        XContainer_t *xcontainer = Get_XContainer(obj);
+        XContainer_t *xcontainer = Get_XContainer(obj, do_create);
+        if (do_create) {
+            NPCP_ASSERT(xcontainer);
+        }
+
         if (xcontainer) {
             for (XEntries_t::Iterator it = xcontainer->data->objList->Begin(); !it.End(); ++it) {
                 XEntry_t *entry = it.Get();
@@ -98,11 +94,8 @@ namespace doticu_npcp { namespace Object_Ref {
             return;
         }
 
-        XContainer_t *xcontainer_obj = Get_XContainer(obj);
-        if (!xcontainer_obj) {
-            _ERROR("Object_Ref::Add_XEntry: Cannot get obj xcontainer.");
-            return;
-        }
+        XContainer_t *xcontainer_obj = Get_XContainer(obj, true);
+        NPCP_ASSERT(xcontainer_obj);
 
         TESForm *form = xentry_add->type;
         if (!form) {
@@ -152,7 +145,7 @@ namespace doticu_npcp { namespace Object_Ref {
             return;
         }
 
-        XContainer_t *xcontainer = Get_XContainer(obj);
+        XContainer_t *xcontainer = Get_XContainer(obj, false);
         if (!xcontainer) {
             return;
         }
@@ -180,17 +173,11 @@ namespace doticu_npcp { namespace Object_Ref {
             return;
         }
 
-        XContainer_t *xcontainer_from = Get_XContainer(from);
-        if (!xcontainer_from) {
-            _ERROR("Object_Ref::Move_XEntry: Could not get xcontainer_from.");
-            return;
-        }
+        XContainer_t *xcontainer_from = Get_XContainer(from, true);
+        NPCP_ASSERT(xcontainer_from);
 
-        XContainer_t *xcontainer_to = Get_XContainer(to);
-        if (!xcontainer_to) {
-            _ERROR("Object_Ref::Move_XEntry: Could not get xcontainer_to.");
-            return;
-        }
+        XContainer_t *xcontainer_to = Get_XContainer(to, true);
+        NPCP_ASSERT(xcontainer_to);
 
         XEntry_t *xentry_from = Get_XEntry(from, form);
         u64 count_bentry_from = Get_BEntry_Count(from, form);
@@ -335,16 +322,13 @@ namespace doticu_npcp { namespace Object_Ref {
             return;
         }
 
-        XContainer_t *xcontainer_other = Object_Ref::Get_XContainer(other);
-        if (!xcontainer_other) {
-            _ERROR("Object_Ref::Remove_Unwearable: Could not get other xcontainer.");
-            return;
-        }
+        XContainer_t *xcontainer_other = Object_Ref::Get_XContainer(other, true);
+        NPCP_ASSERT(xcontainer_other);
 
         std::vector<TESForm *> vec_forms_remove;
         vec_forms_remove.reserve(4);
 
-        XContainer_t *xcontainer_obj = Object_Ref::Get_XContainer(obj);
+        XContainer_t *xcontainer_obj = Object_Ref::Get_XContainer(obj, false);
         if (xcontainer_obj) {
             for (XEntries_t::Iterator it_xentry_obj = xcontainer_obj->data->objList->Begin(); !it_xentry_obj.End(); ++it_xentry_obj) {
                 XEntry_t *xentry_obj = it_xentry_obj.Get();
@@ -396,7 +380,7 @@ namespace doticu_npcp { namespace Object_Ref {
 
         std::vector<TESForm *> vec_forms_move;
 
-        XContainer_t *xcontainer_obj = Object_Ref::Get_XContainer(obj);
+        XContainer_t *xcontainer_obj = Object_Ref::Get_XContainer(obj, false);
         if (xcontainer_obj) {
             for (XEntries_t::Iterator it_xentry_obj = xcontainer_obj->data->objList->Begin(); !it_xentry_obj.End(); ++it_xentry_obj) {
                 XEntry_t *xentry_obj = it_xentry_obj.Get();
@@ -457,7 +441,7 @@ namespace doticu_npcp { namespace Object_Ref {
             _MESSAGE("Log_XContainer: (no name)");
         }
 
-        XContainer_t *xcontainer = Object_Ref::Get_XContainer(ref_object);
+        XContainer_t *xcontainer = Object_Ref::Get_XContainer(ref_object, false);
         if (xcontainer) {
             for (XEntries_t::Iterator it_xentry = xcontainer->data->objList->Begin(); !it_xentry.End(); ++it_xentry) {
                 XEntry_t *xentry = it_xentry.Get();
@@ -720,6 +704,15 @@ namespace doticu_npcp { namespace Object_Ref {
                     ref->extraData.Add(kExtraData_TextDisplayData, xtext);
                 }
             }
+        }
+    }
+
+    void Init_Container(Reference_t* ref)
+    {
+        if (ref) {
+            // thankfully, this is an easy way to make sure
+            // the ExtraContainerChanges is init'd on ref.
+            ref->Add_Worn_Item(nullptr, 0, false, 0, 0);
         }
     }
 

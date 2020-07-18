@@ -27,8 +27,6 @@ function f_Create(doticu_npcp_data DATA)
     p_DATA = DATA
 
     p_is_created = true
-
-    p_Init_Categories()
 endFunction
 
 function f_Destroy()
@@ -36,73 +34,6 @@ function f_Destroy()
 endFunction
 
 function f_Register()
-endFunction
-
-; Private Methods
-function p_Init_Categories()
-    Init_Container(CONSTS.CATEGORY_INPUT)
-
-    Init_Container(CONSTS.CATEGORY_SWORDS)
-    Init_Container(CONSTS.CATEGORY_GREATSWORDS)
-    Init_Container(CONSTS.CATEGORY_WARAXES)
-    Init_Container(CONSTS.CATEGORY_BATTLEAXES)
-    Init_Container(CONSTS.CATEGORY_MACES)
-    Init_Container(CONSTS.CATEGORY_WARHAMMERS)
-    Init_Container(CONSTS.CATEGORY_DAGGERS)
-    Init_Container(CONSTS.CATEGORY_STAVES)
-    Init_Container(CONSTS.CATEGORY_BOWS)
-    Init_Container(CONSTS.CATEGORY_AMMO)
-    Init_Container(CONSTS.CATEGORY_WEAPONS)
-
-    Init_Container(CONSTS.CATEGORY_LIGHT_ARMOR)
-    Init_Container(CONSTS.CATEGORY_HEAVY_ARMOR)
-    Init_Container(CONSTS.CATEGORY_SHIELDS)
-    Init_Container(CONSTS.CATEGORY_JEWELRY)
-    Init_Container(CONSTS.CATEGORY_CLOTHES)
-
-    Init_Container(CONSTS.CATEGORY_POTIONS)
-    Init_Container(CONSTS.CATEGORY_POISONS)
-    Init_Container(CONSTS.CATEGORY_INGREDIENTS)
-    Init_Container(CONSTS.CATEGORY_FOOD)
-
-    Init_Container(CONSTS.CATEGORY_SPELL_TOMES)
-    Init_Container(CONSTS.CATEGORY_RECIPES)
-    Init_Container(CONSTS.CATEGORY_BOOKS_A)
-    Init_Container(CONSTS.CATEGORY_BOOKS_B)
-    Init_Container(CONSTS.CATEGORY_BOOKS_C)
-    Init_Container(CONSTS.CATEGORY_BOOKS_D)
-    Init_Container(CONSTS.CATEGORY_BOOKS_E)
-    Init_Container(CONSTS.CATEGORY_BOOKS_F)
-    Init_Container(CONSTS.CATEGORY_BOOKS_G)
-    Init_Container(CONSTS.CATEGORY_BOOKS_H)
-    Init_Container(CONSTS.CATEGORY_BOOKS_I)
-    Init_Container(CONSTS.CATEGORY_BOOKS_J)
-    Init_Container(CONSTS.CATEGORY_BOOKS_K)
-    Init_Container(CONSTS.CATEGORY_BOOKS_L)
-    Init_Container(CONSTS.CATEGORY_BOOKS_M)
-    Init_Container(CONSTS.CATEGORY_BOOKS_N)
-    Init_Container(CONSTS.CATEGORY_BOOKS_O)
-    Init_Container(CONSTS.CATEGORY_BOOKS_P)
-    Init_Container(CONSTS.CATEGORY_BOOKS_Q)
-    Init_Container(CONSTS.CATEGORY_BOOKS_R)
-    Init_Container(CONSTS.CATEGORY_BOOKS_S)
-    Init_Container(CONSTS.CATEGORY_BOOKS_T)
-    Init_Container(CONSTS.CATEGORY_BOOKS_U)
-    Init_Container(CONSTS.CATEGORY_BOOKS_V)
-    Init_Container(CONSTS.CATEGORY_BOOKS_W)
-    Init_Container(CONSTS.CATEGORY_BOOKS_X)
-    Init_Container(CONSTS.CATEGORY_BOOKS_Y)
-    Init_Container(CONSTS.CATEGORY_BOOKS_Z)
-    Init_Container(CONSTS.CATEGORY_BOOKS)
-
-    Init_Container(CONSTS.CATEGORY_METALS)
-    Init_Container(CONSTS.CATEGORY_LEATHER)
-    Init_Container(CONSTS.CATEGORY_GEMS)
-    Init_Container(CONSTS.CATEGORY_CLUTTER)
-    Init_Container(CONSTS.CATEGORY_SCROLLS)
-    Init_Container(CONSTS.CATEGORY_SOULGEMS)
-    Init_Container(CONSTS.CATEGORY_KEYS)
-    Init_Container(CONSTS.CATEGORY_OTHERS)
 endFunction
 
 ; Public Methods
@@ -113,8 +44,6 @@ ObjectReference function Create_Temp()
     FUNCS.Wait(0.1)
 
     ref_container.SetActorOwner(CONSTS.ACTOR_PLAYER.GetActorBase())
-
-    Init_Container(ref_container)
     
     return ref_container
 endFunction
@@ -131,8 +60,6 @@ ObjectReference function Create_Perm()
     FUNCS.Wait(0.1)
 
     ref_container.SetActorOwner(CONSTS.ACTOR_PLAYER.GetActorBase())
-
-    Init_Container(ref_container)
     
     return ref_container
 endFunction
@@ -140,12 +67,6 @@ endFunction
 function Destroy_Perm(ObjectReference ref_container)
     ref_container.Disable()
     ref_container.Delete()
-endFunction
-
-function Init_Container(ObjectReference ref_container)
-    ; to make sure certain fields in c++ have been allocated for our plugin
-    ref_container.AddItem(CONSTS.WEAPON_BLANK, 1, true)
-    ref_container.RemoveItem(CONSTS.WEAPON_BLANK, 1, true, none)
 endFunction
 
 function Open(ObjectReference ref_container)
@@ -197,9 +118,4 @@ function Empty(ObjectReference ref_container)
         ref_container.RemoveItem(ref_form, ref_container.GetItemCount(ref_form), true, none)
         idx_forms += 1
     endWhile
-endFunction
-
-; Update Methods
-function u_0_9_1()
-    p_Init_Categories()
 endFunction

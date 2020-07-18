@@ -59,6 +59,8 @@ namespace doticu_npcp { namespace Object_Ref {
 
     void Rename(Reference_t* ref, String_t new_name);
 
+    void Init_Container(Reference_t* ref);
+
     //Reference_t* Place_At_Me(Reference_t* ref); // this will be needed for cloning, but we can avoid using it as much as possible
 
 }}

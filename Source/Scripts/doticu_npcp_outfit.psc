@@ -225,10 +225,6 @@ function Try_Cache_Vanilla(Outfit outfit_vanilla)
 endFunction
 
 function Get(Actor ref_actor, ObjectReference ref_pack)
-    ; just to make sure c++ has allocated xcontainers
-    CONTAINERS.Init_Container(self)
-    CONTAINERS.Init_Container(ref_pack)
-
     doticu_npcp.Object_Ref_Categorize(self)
     doticu_npcp.Actor_Cache_Inventory(ref_actor, CONSTS.ARMOR_BLANK, self, ref_pack); maybe buffer with ref_transfer
 endFunction

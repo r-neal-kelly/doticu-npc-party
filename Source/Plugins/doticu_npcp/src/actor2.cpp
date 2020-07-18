@@ -88,7 +88,7 @@ namespace doticu_npcp { namespace Actor2 {
         }
 
         // we need to unequip anything that doesn't come with outfit
-        ExtraContainerChanges *container_extra = Object_Ref::Get_XContainer(ref_actor);
+        ExtraContainerChanges *container_extra = Object_Ref::Get_XContainer(ref_actor, false);
         if (container_extra) {
             for (tList<InventoryEntryData>::Iterator it_entry = container_extra->data->objList->Begin(); !it_entry.End(); ++it_entry) {
                 InventoryEntryData *entry = it_entry.Get();
@@ -112,11 +112,8 @@ namespace doticu_npcp { namespace Actor2 {
             return;
         }
 
-        XContainer_t *xcontainer_actor = Object_Ref::Get_XContainer(actor);
-        if (!xcontainer_actor) {
-            _ERROR("Actor2::Set_Outfit2: Unable to get actor XContainer.");
-            return;
-        }
+        XContainer_t *xcontainer_actor = Object_Ref::Get_XContainer(actor, true);
+        NPCP_ASSERT(xcontainer_actor);
 
         XEntry::Set_Count(Object_Ref::Get_XEntry(actor, linchpin), 1);
 
@@ -225,7 +222,7 @@ namespace doticu_npcp { namespace Actor2 {
             return;
         }
 
-        XContainer_t *xcontainer_outfit = Object_Ref::Get_XContainer(outfit2_partition);
+        XContainer_t *xcontainer_outfit = Object_Ref::Get_XContainer(outfit2_partition, false);
         if (!xcontainer_outfit) {
             return;
         }
@@ -285,7 +282,7 @@ namespace doticu_npcp { namespace Actor2 {
             return;
         }
 
-        XContainer_t *xcontainer_actor = Object_Ref::Get_XContainer(actor);
+        XContainer_t *xcontainer_actor = Object_Ref::Get_XContainer(actor, false);
         if (!xcontainer_actor) {
             return;
         }
@@ -343,19 +340,13 @@ namespace doticu_npcp { namespace Actor2 {
             return;
         }
 
-        XContainer_t *xcontainer_worn = Object_Ref::Get_XContainer(worn_out);
-        if (!xcontainer_worn) {
-            _ERROR("Actor2::Cache_Inventory: Could not get worn xcontainer.");
-            return;
-        }
+        XContainer_t *xcontainer_worn = Object_Ref::Get_XContainer(worn_out, true);
+        NPCP_ASSERT(xcontainer_worn);
 
-        XContainer_t *xcontainer_pack = Object_Ref::Get_XContainer(pack_out);
-        if (!xcontainer_pack) {
-            _ERROR("Actor2::Cache_Inventory: Could not get pack xcontainer.");
-            return;
-        }
+        XContainer_t *xcontainer_pack = Object_Ref::Get_XContainer(pack_out, true);
+        NPCP_ASSERT(xcontainer_pack);
 
-        XContainer_t *xcontainer_actor = Object_Ref::Get_XContainer(actor);
+        XContainer_t *xcontainer_actor = Object_Ref::Get_XContainer(actor, false);
         if (xcontainer_actor) {
             for (XEntries_t::Iterator it_xentry_actor = xcontainer_actor->data->objList->Begin(); !it_xentry_actor.End(); ++it_xentry_actor) {
                 XEntry_t *xentry_actor = it_xentry_actor.Get();

@@ -265,6 +265,28 @@ namespace doticu_npcp {
     };
     STATIC_ASSERT(sizeof(Faction_Rank_t) == 0x10);
 
+}
+
+namespace doticu_npcp {
+
+    typedef TESContainer            BContainer_t;
+    typedef TESContainer::Entry**   BEntries_t;
+    typedef TESContainer::Entry     BEntry_t;
+
+    typedef ExtraContainerChanges   XContainer_t;
+    typedef EntryDataList           XEntries_t;
+    typedef InventoryEntryData      XEntry_t;
+    typedef ExtendDataList          XLists_t;
+    typedef BaseExtraList           XList_t;
+    typedef BSExtraData             XData_t;
+    typedef ExtraAliasInstanceArray XAliases_t;
+
+    typedef tArray<Faction_Rank_t>  BFaction_Ranks_t;
+    typedef Faction_Rank_t          BFaction_Rank_t;
+    typedef ExtraFactionChanges     XFactions_t;
+    typedef tArray<Faction_Rank_t>  XFaction_Ranks_t;
+    typedef Faction_Rank_t          XFaction_Rank_t;
+
     class ExtraCanTalkToPlayer : public BSExtraData {
     public:
         virtual ~ExtraCanTalkToPlayer();
@@ -321,6 +343,33 @@ namespace doticu_npcp {
     };
     STATIC_ASSERT(sizeof(ExtraTextDisplay) == 0x38);
 
+    class Container_Changes_t {
+    public:
+        static Container_Changes_t* Create(Reference_t* owner);
+        static void Destroy(Container_Changes_t* changes);
+    public:
+        XEntries_t* entries; // 00 (I think a crash is caused here when used with SKSE)
+        Reference_t* owner; // 08
+        float total_weight; // 10
+        float armor_weight; // 14
+        bool has_changed; // 18
+        UInt8 pad_19; // 19
+        UInt16 pad_1A; // 1A
+        UInt32 pad_1C; // 1C
+    };
+    STATIC_ASSERT(sizeof(Container_Changes_t) == 0x20);
+
+    class Extra_Container_Changes_t : public BSExtraData {
+    public:
+        static Extra_Container_Changes_t* Create(Reference_t* owner);
+        static void Destroy(Extra_Container_Changes_t* xchanges);
+    public:
+        virtual ~Extra_Container_Changes_t();
+
+        Container_Changes_t* changes;
+    };
+    STATIC_ASSERT(sizeof(Extra_Container_Changes_t) == 0x18);
+
 }
 
 namespace doticu_npcp {
@@ -329,24 +378,6 @@ namespace doticu_npcp {
     typedef TESQuest                Keys_t;
     typedef TESQuest                Consts_t;
     typedef TESQuest                Vars_t;
-
-    typedef TESContainer            BContainer_t;
-    typedef TESContainer::Entry**   BEntries_t;
-    typedef TESContainer::Entry     BEntry_t;
-
-    typedef ExtraContainerChanges   XContainer_t;
-    typedef EntryDataList           XEntries_t;
-    typedef InventoryEntryData      XEntry_t;
-    typedef ExtendDataList          XLists_t;
-    typedef BaseExtraList           XList_t;
-    typedef BSExtraData             XData_t;
-    typedef ExtraAliasInstanceArray XAliases_t;
-
-    typedef tArray<Faction_Rank_t>  BFaction_Ranks_t;
-    typedef Faction_Rank_t          BFaction_Rank_t;
-    typedef ExtraFactionChanges     XFactions_t;
-    typedef tArray<Faction_Rank_t>  XFaction_Ranks_t;
-    typedef Faction_Rank_t          XFaction_Rank_t;
 
     typedef StaticFunctionTag       Selfless_t;
 

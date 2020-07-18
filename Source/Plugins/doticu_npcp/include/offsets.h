@@ -19,19 +19,27 @@ namespace doticu_npcp { namespace Offsets {
 
     }
 
-    namespace Reference {
-
-        constexpr uintptr_t PLAY_ANIMATION              = 0x00189E30; // 14189
-
-    }
-
     namespace Extra {
 
         constexpr uintptr_t CAN_TALK_TO_PLAYER_V_TABLE  = 0x0152C740; // 229596
+        constexpr uintptr_t CONTAINER_CHANGES_V_TABLE   = 0x0152F260; // 229886
         constexpr uintptr_t FACTION_CHANGES_V_TABLE     = 0x0152C800; // 229602
         constexpr uintptr_t FLAGS_V_TABLE               = 0x0152CBC0; // 229632
         constexpr uintptr_t GHOST_V_TABLE               = 0x0152F2A0; // 229888
         constexpr uintptr_t TEXT_DISPLAY_V_TABLE        = 0x0152CAE0; // 229625
+
+    }
+
+    namespace Container_Changes {
+
+        constexpr uintptr_t CTOR                        = 0x001D9200; // 15812
+        constexpr uintptr_t DTOR                        = 0x001D92F0; // 15813
+
+    }
+
+    namespace Reference {
+
+        constexpr uintptr_t PLAY_ANIMATION              = 0x00189E30; // 14189
 
     }
 
