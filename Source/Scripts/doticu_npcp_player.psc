@@ -209,13 +209,3 @@ event On_Cell_Change(Form cell_new, Form cell_old)
     ACTORS.Apply_Ability(ACTOR_PLAYER, CONSTS.ABILITY_CELL)
     FOLLOWERS.Catch_Up()
 endEvent
-
-; Update Methods
-doticu_npcp_queue p_queue_player = none
-function u_0_9_0()
-    if p_queue_player
-        p_queue_player.Disable()
-        p_queue_player.Delete()
-        p_queue_player = none
-    endIf
-endFunction

@@ -10,11 +10,6 @@ doticu_npcp_codes property CODES hidden
         return p_DATA.CODES
     endFunction
 endProperty
-doticu_npcp_queues property QUEUES hidden
-    doticu_npcp_queues function Get()
-        return p_DATA.MODS.FUNCS.QUEUES
-    endFunction
-endProperty
 doticu_npcp_logs property LOGS hidden
     doticu_npcp_logs function Get()
         return p_DATA.MODS.FUNCS.LOGS

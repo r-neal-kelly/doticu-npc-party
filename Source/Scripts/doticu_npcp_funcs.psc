@@ -20,11 +20,6 @@ doticu_npcp_vectors property VECTORS hidden
         return (self as Quest) as doticu_npcp_vectors
     endFunction
 endProperty
-doticu_npcp_queues property QUEUES hidden
-    doticu_npcp_queues function Get()
-        return (self as Quest) as doticu_npcp_queues
-    endFunction
-endProperty
 doticu_npcp_tasklists property TASKLISTS hidden
     doticu_npcp_tasklists function Get()
         return (self as Quest) as doticu_npcp_tasklists
@@ -75,7 +70,6 @@ function f_Create(doticu_npcp_data DATA)
 
     LOGS.f_Create(p_DATA)
     VECTORS.f_Create(p_DATA)
-    QUEUES.f_Create(p_DATA)
     TASKLISTS.f_Create(p_DATA)
     CONTAINERS.f_Create(p_DATA)
     OUTFITS.f_Create(p_DATA)
@@ -93,7 +87,6 @@ function f_Destroy()
     OUTFITS.f_Destroy()
     CONTAINERS.f_Destroy()
     TASKLISTS.f_Destroy()
-    QUEUES.f_Destroy()
     VECTORS.f_Destroy()
     LOGS.f_Destroy()
 
@@ -103,7 +96,6 @@ endFunction
 function f_Register()
     LOGS.f_Register()
     VECTORS.f_Register()
-    QUEUES.f_Register()
     TASKLISTS.f_Register()
     CONTAINERS.f_Register()
     OUTFITS.f_Register()
@@ -217,7 +209,6 @@ endFunction
 
 ; Update Methods
 function u_0_9_0()
-    ACTORS.PLAYER.u_0_9_0()
     NPCS.u_0_9_0()
 
     MANNEQUINS.f_Create(p_DATA)

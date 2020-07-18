@@ -150,19 +150,6 @@ function f_Register()
     RegisterForModEvent("doticu_npcp_load_mod", "On_Load_Mod")
 endFunction
 
-; Private Methods
-int function p_Get_Alias_ID(Actor ref_actor)
-    if !ref_actor
-        return -1
-    else
-        return ref_actor.GetItemCount(CONSTS.TOKEN_MEMBER) - 1
-    endIf
-endFunction
-
-doticu_npcp_member function p_Get_Member(int id_alias)
-    return p_From_ID(id_alias) as doticu_npcp_member
-endFunction
-
 ; Public Methods
 int function Create_Member(Actor ref_actor, bool do_clone = false)
     if !ref_actor

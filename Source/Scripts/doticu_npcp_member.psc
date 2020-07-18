@@ -356,8 +356,6 @@ function p_Remannequinize()
     
 p_Lock()
 
-    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_MANNEQUIN)
-
     p_ref_actor.EnableAI(false)
     p_ref_actor.SetGhost(true)
     p_ref_actor.BlockActivation(true)
@@ -1768,7 +1766,7 @@ event OnCombatStateChanged(Actor ref_target, int code_combat)
 
     if ref_target == CONSTS.ACTOR_PLAYER
         ACTORS.Pacify(p_ref_actor)
-    elseIf ACTORS.Has_Token(ref_target, CONSTS.TOKEN_MEMBER)
+    elseIf MEMBERS.Has_Actor(ref_target)
         ACTORS.Pacify(p_ref_actor)
         ACTORS.Pacify(ref_target)
     endIf
@@ -1794,17 +1792,10 @@ event OnDeath(Actor ref_killer)
 endEvent
 
 ; Update Methods
-doticu_npcp_queue p_queue_member = none
 doticu_npcp_container p_container2_pack = none
 function u_0_9_0()
     if !Exists()
         return
-    endIf
-
-    if p_queue_member
-        p_queue_member.Disable()
-        p_queue_member.Delete()
-        p_queue_member = none
     endIf
 
     if p_container2_pack

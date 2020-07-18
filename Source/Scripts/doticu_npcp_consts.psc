@@ -18,33 +18,16 @@ ObjectReference             p_MARKER_GOTO_SAFE                      = none
 Spell                       p_ABILITY_CELL                          = none
 Spell                       p_ABILITY_RETREAT                       = none
 MagicEffect                 p_EFFECT_RETREAT                        = none
-MiscObject                  p_TOKEN_MEMBER                          = none
-MiscObject                  p_TOKEN_SETTLER                         = none
 MiscObject                  p_TOKEN_FOLLOWER                        = none
 MiscObject                  p_TOKEN_FOLLOWER_SNEAK                  = none
-MiscObject                  p_TOKEN_IMMOBILE                        = none
 MiscObject                  p_TOKEN_CLONE                           = none
 MiscObject                  p_TOKEN_BANISHED                        = none
 MiscObject                  p_TOKEN_DISPLAY                         = none
 MiscObject                  p_TOKEN_MOVEE                           = none
-MiscObject                  p_TOKEN_GENERIC                         = none
-MiscObject                  p_TOKEN_THRALL                          = none
 MiscObject                  p_TOKEN_GREETER                         = none
-MiscObject                  p_TOKEN_PARALYZED                       = none
-MiscObject                  p_TOKEN_MANNEQUIN                       = none
 MiscObject                  p_TOKEN_RETREATER                       = none
 MiscObject                  p_TOKEN_SADDLER                         = none
-MiscObject                  p_TOKEN_STYLE_DEFAULT                   = none
-MiscObject                  p_TOKEN_STYLE_WARRIOR                   = none
-MiscObject                  p_TOKEN_STYLE_MAGE                      = none
-MiscObject                  p_TOKEN_STYLE_ARCHER                    = none
-MiscObject                  p_TOKEN_STYLE_COWARD                    = none
 MiscObject                  p_TOKEN_REANIMATED                      = none
-MiscObject                  p_TOKEN_VITALITY_MORTAL                 = none
-MiscObject                  p_TOKEN_VITALITY_PROTECTED              = none
-MiscObject                  p_TOKEN_VITALITY_ESSENTIAL              = none
-MiscObject                  p_TOKEN_VITALITY_INVULNERABLE           = none
-MiscObject                  p_MISC_QUEUE                            = none
 MiscObject                  p_MISC_TASKLIST                         = none
 MiscObject                  p_MISC_VECTOR_FORM                      = none
 GlobalVariable              p_GLOBAL_PLAYER_FOLLOWER_COUNT          = none
@@ -57,7 +40,6 @@ GlobalVariable              p_GLOBAL_PERCENT_NO_BODY                = none
 GlobalVariable              p_GLOBAL_PERCENT_NO_FEET                = none
 GlobalVariable              p_GLOBAL_PERCENT_NO_HANDS               = none
 GlobalVariable              p_GLOBAL_PERCENT_NO_HEAD                = none
-FormList                    p_FORMLIST_MARKERS_SETTLER              = none
 FormList                    p_FORMLIST_MARKERS_EXPO_CELL            = none
 FormList                    p_FORMLIST_GLOBALS_SADDLER_IS_SITTING   = none
 Faction                     p_FACTION_MEMBER                        = none
@@ -301,28 +283,6 @@ MagicEffect property EFFECT_RETREAT
     endFunction
 endProperty
 
-MiscObject property TOKEN_MEMBER
-    MiscObject function Get()
-        return p_TOKEN_MEMBER
-    endFunction
-    function Set(MiscObject val)
-        if p_TOKEN_MEMBER == none
-            p_TOKEN_MEMBER = val
-        endIf
-    endFunction
-endProperty
-
-MiscObject property TOKEN_SETTLER
-    MiscObject function Get()
-        return p_TOKEN_SETTLER
-    endFunction
-    function Set(MiscObject val)
-        if p_TOKEN_SETTLER == none
-            p_TOKEN_SETTLER = val
-        endIf
-    endFunction
-endProperty
-
 MiscObject property TOKEN_FOLLOWER
     MiscObject function Get()
         return p_TOKEN_FOLLOWER
@@ -341,17 +301,6 @@ MiscObject property TOKEN_FOLLOWER_SNEAK
     function Set(MiscObject val)
         if p_TOKEN_FOLLOWER_SNEAK == none
             p_TOKEN_FOLLOWER_SNEAK = val
-        endIf
-    endFunction
-endProperty
-
-MiscObject property TOKEN_IMMOBILE
-    MiscObject function Get()
-        return p_TOKEN_IMMOBILE
-    endFunction
-    function Set(MiscObject val)
-        if p_TOKEN_IMMOBILE == none
-            p_TOKEN_IMMOBILE = val
         endIf
     endFunction
 endProperty
@@ -400,28 +349,6 @@ MiscObject property TOKEN_MOVEE
     endFunction
 endProperty
 
-MiscObject property TOKEN_GENERIC
-    MiscObject function Get()
-        return p_TOKEN_GENERIC
-    endFunction
-    function Set(MiscObject val)
-        if p_TOKEN_GENERIC == none
-            p_TOKEN_GENERIC = val
-        endIf
-    endFunction
-endProperty
-
-MiscObject property TOKEN_THRALL
-    MiscObject function Get()
-        return p_TOKEN_THRALL
-    endFunction
-    function Set(MiscObject val)
-        if p_TOKEN_THRALL == none
-            p_TOKEN_THRALL = val
-        endIf
-    endFunction
-endProperty
-
 MiscObject property TOKEN_GREETER
     MiscObject function Get()
         return p_TOKEN_GREETER
@@ -429,28 +356,6 @@ MiscObject property TOKEN_GREETER
     function Set(MiscObject val)
         if p_TOKEN_GREETER == none
             p_TOKEN_GREETER = val
-        endIf
-    endFunction
-endProperty
-
-MiscObject property TOKEN_PARALYZED
-    MiscObject function Get()
-        return p_TOKEN_PARALYZED
-    endFunction
-    function Set(MiscObject val)
-        if p_TOKEN_PARALYZED == none
-            p_TOKEN_PARALYZED = val
-        endIf
-    endFunction
-endProperty
-
-MiscObject property TOKEN_MANNEQUIN
-    MiscObject function Get()
-        return p_TOKEN_MANNEQUIN
-    endFunction
-    function Set(MiscObject val)
-        if p_TOKEN_MANNEQUIN == none
-            p_TOKEN_MANNEQUIN = val
         endIf
     endFunction
 endProperty
@@ -477,61 +382,6 @@ MiscObject property TOKEN_SADDLER
     endFunction
 endProperty
 
-MiscObject property TOKEN_STYLE_DEFAULT
-    MiscObject function Get()
-        return p_TOKEN_STYLE_DEFAULT
-    endFunction
-    function Set(MiscObject val)
-        if p_TOKEN_STYLE_DEFAULT == none
-            p_TOKEN_STYLE_DEFAULT = val
-        endIf
-    endFunction
-endProperty
-
-MiscObject property TOKEN_STYLE_WARRIOR
-    MiscObject function Get()
-        return p_TOKEN_STYLE_WARRIOR
-    endFunction
-    function Set(MiscObject val)
-        if p_TOKEN_STYLE_WARRIOR == none
-            p_TOKEN_STYLE_WARRIOR = val
-        endIf
-    endFunction
-endProperty
-
-MiscObject property TOKEN_STYLE_MAGE
-    MiscObject function Get()
-        return p_TOKEN_STYLE_MAGE
-    endFunction
-    function Set(MiscObject val)
-        if p_TOKEN_STYLE_MAGE == none
-            p_TOKEN_STYLE_MAGE = val
-        endIf
-    endFunction
-endProperty
-
-MiscObject property TOKEN_STYLE_ARCHER
-    MiscObject function Get()
-        return p_TOKEN_STYLE_ARCHER
-    endFunction
-    function Set(MiscObject val)
-        if p_TOKEN_STYLE_ARCHER == none
-            p_TOKEN_STYLE_ARCHER = val
-        endIf
-    endFunction
-endProperty
-
-MiscObject property TOKEN_STYLE_COWARD
-    MiscObject function Get()
-        return p_TOKEN_STYLE_COWARD
-    endFunction
-    function Set(MiscObject val)
-        if p_TOKEN_STYLE_COWARD == none
-            p_TOKEN_STYLE_COWARD = val
-        endIf
-    endFunction
-endProperty
-
 MiscObject property TOKEN_REANIMATED
     MiscObject function Get()
         return p_TOKEN_REANIMATED
@@ -539,61 +389,6 @@ MiscObject property TOKEN_REANIMATED
     function Set(MiscObject val)
         if p_TOKEN_REANIMATED == none
             p_TOKEN_REANIMATED = val
-        endIf
-    endFunction
-endProperty
-
-MiscObject property TOKEN_VITALITY_MORTAL
-    MiscObject function Get()
-        return p_TOKEN_VITALITY_MORTAL
-    endFunction
-    function Set(MiscObject val)
-        if p_TOKEN_VITALITY_MORTAL == none
-            p_TOKEN_VITALITY_MORTAL = val
-        endIf
-    endFunction
-endProperty
-
-MiscObject property TOKEN_VITALITY_PROTECTED
-    MiscObject function Get()
-        return p_TOKEN_VITALITY_PROTECTED
-    endFunction
-    function Set(MiscObject val)
-        if p_TOKEN_VITALITY_PROTECTED == none
-            p_TOKEN_VITALITY_PROTECTED = val
-        endIf
-    endFunction
-endProperty
-
-MiscObject property TOKEN_VITALITY_ESSENTIAL
-    MiscObject function Get()
-        return p_TOKEN_VITALITY_ESSENTIAL
-    endFunction
-    function Set(MiscObject val)
-        if p_TOKEN_VITALITY_ESSENTIAL == none
-            p_TOKEN_VITALITY_ESSENTIAL = val
-        endIf
-    endFunction
-endProperty
-
-MiscObject property TOKEN_VITALITY_INVULNERABLE
-    MiscObject function Get()
-        return p_TOKEN_VITALITY_INVULNERABLE
-    endFunction
-    function Set(MiscObject val)
-        if p_TOKEN_VITALITY_INVULNERABLE == none
-            p_TOKEN_VITALITY_INVULNERABLE = val
-        endIf
-    endFunction
-endProperty
-
-MiscObject property MISC_QUEUE
-    MiscObject function Get()
-        return p_MISC_QUEUE
-    endFunction
-    function Set(MiscObject val)
-        if p_MISC_QUEUE == none
-            p_MISC_QUEUE = val
         endIf
     endFunction
 endProperty
@@ -726,17 +521,6 @@ GlobalVariable property GLOBAL_PERCENT_NO_HEAD
     function Set(GlobalVariable val)
         if p_GLOBAL_PERCENT_NO_HEAD == none
             p_GLOBAL_PERCENT_NO_HEAD = val
-        endIf
-    endFunction
-endProperty
-
-Formlist property FORMLIST_MARKERS_SETTLER
-    Formlist function Get()
-        return p_FORMLIST_MARKERS_SETTLER
-    endFunction
-    function Set(Formlist val)
-        if p_FORMLIST_MARKERS_SETTLER == none
-            p_FORMLIST_MARKERS_SETTLER = val
         endIf
     endFunction
 endProperty
