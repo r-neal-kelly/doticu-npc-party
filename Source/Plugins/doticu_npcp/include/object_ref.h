@@ -61,7 +61,11 @@ namespace doticu_npcp { namespace Object_Ref {
 
     void Init_Container(Reference_t* ref);
 
-    //Reference_t* Place_At_Me(Reference_t* ref); // this will be needed for cloning, but we can avoid using it as much as possible
+    Reference_t* Place_At_Me(Reference_t* me,
+                             Form_t* to_place,
+                             Int_t count,
+                             Bool_t force_persist,
+                             Bool_t initially_disabled);
 
 }}
 

@@ -153,7 +153,15 @@
     <ClCompile Include="src\form.cpp" />
     <ClCompile Include="src\package.cpp" />
     <ClCompile Include="src\papyrus.cpp" />
-    <ClCompile Include="src\party.cpp" />
+    <ClCompile Include="src\party\alias.cpp" />
+    <ClCompile Include="src\party\aliases.cpp" />
+    <ClCompile Include="src\party\follower.cpp" />
+    <ClCompile Include="src\party\followers.cpp" />
+    <ClCompile Include="src\party\horse.cpp" />
+    <ClCompile Include="src\party\horses.cpp" />
+    <ClCompile Include="src\party\member.cpp" />
+    <ClCompile Include="src\party\members.cpp" />
+    <ClCompile Include="src\party\npcs.cpp" />
     <ClCompile Include="src\player.cpp" />
     <ClCompile Include="src\quest.cpp" />
     <ClCompile Include="src\tests.cpp" />
@@ -200,6 +208,7 @@
     <None Include="exports.def" />
     <None Include="include\papyrus.inl" />
     <None Include="include\party.inl" />
+    <None Include="include\party\aliases.inl" />
     <None Include="scripts\doticu_npcp.psc" />
   </ItemGroup>
   <ItemGroup>

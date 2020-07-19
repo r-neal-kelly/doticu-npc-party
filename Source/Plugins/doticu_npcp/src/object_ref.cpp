@@ -9,6 +9,7 @@
 #include "game.h"
 #include "object_ref.h"
 #include "offsets.h"
+#include "papyrus.h"
 #include "quest.h"
 #include "utils.h"
 #include "vector.h"
@@ -714,6 +715,20 @@ namespace doticu_npcp { namespace Object_Ref {
             // the ExtraContainerChanges is init'd on ref.
             ref->Add_Worn_Item(nullptr, 0, false, 0, 0);
         }
+    }
+
+    Reference_t* Place_At_Me(Reference_t* me,
+                             Form_t* to_place,
+                             Int_t count,
+                             Bool_t force_persist,
+                             Bool_t initially_disabled)
+    {
+        using namespace Papyrus;
+        static auto place_at_me = reinterpret_cast
+            <Reference_t * (*)(Virtual_Machine_t*, Stack_ID_t, Reference_t*, Form_t*, Int_t, Bool_t, Bool_t)>
+            (RelocationManager::s_baseAddr + Offsets::Reference::PLACE_AT_ME);
+
+        return place_at_me(Virtual_Machine_t::Self(), 0, me, to_place, count, force_persist, initially_disabled);
     }
 
 }}

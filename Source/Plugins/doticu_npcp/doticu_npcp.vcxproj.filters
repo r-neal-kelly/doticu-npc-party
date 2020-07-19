@@ -87,10 +87,34 @@
     <ClCompile Include="src\tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\party.cpp">
+    <ClCompile Include="src\types.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\types.cpp">
+    <ClCompile Include="src\party\aliases.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\party\members.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\party\followers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\party\horses.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\party\npcs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\party\alias.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\party\member.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\party\follower.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\party\horse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -186,6 +210,9 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="include\party.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="include\party\aliases.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

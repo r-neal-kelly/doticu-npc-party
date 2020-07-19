@@ -8,18 +8,13 @@
 
 #include "actor_base2.h"
 #include "actor2.h"
-//#include "aliases.h"
 #include "cell.h"
 #include "consts.h"
-//#include "follower.h"
-//#include "followers.h"
 #include "form.h"
 #include "forms.h"
 #include "game.h"
 #include "keys.h"
 #include "main.h"
-//#include "member.h"
-//#include "members.h"
 #include "object_ref.h"
 #include "outfit.h"
 #include "package.h"
@@ -116,11 +111,10 @@ namespace doticu_npcp { namespace Main {
         REGISTER_NAMESPACE(Utils);
         REGISTER_NAMESPACE(Vars);
 
-        REGISTER_NAMESPACE(Party::Aliases);
+        REGISTER_NAMESPACE(Party::NPCS);
         REGISTER_NAMESPACE(Party::Members);
         REGISTER_NAMESPACE(Party::Followers);
         REGISTER_NAMESPACE(Party::Horses);
-        REGISTER_NAMESPACE(Party::Alias);
         REGISTER_NAMESPACE(Party::Member);
         REGISTER_NAMESPACE(Party::Follower);
         REGISTER_NAMESPACE(Party::Horse);

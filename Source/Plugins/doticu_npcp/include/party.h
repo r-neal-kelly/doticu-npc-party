@@ -11,6 +11,8 @@ namespace doticu_npcp { namespace Party {
 
     using namespace Papyrus;
 
+    class NPCS_t;
+
     class Aliases_t;
     class Members_t;
     class Followers_t;
@@ -73,6 +75,16 @@ namespace doticu_npcp { namespace Party {
         };
     }
 
+    class NPCs_t : public Quest_t {
+    public:
+    };
+
+    namespace NPCS { namespace Exports {
+
+        Bool_t Register(Registry_t* registry);
+
+    }}
+
     class Aliases_t : public Quest_t {
     public:
         template <typename Alias>
@@ -129,8 +141,13 @@ namespace doticu_npcp { namespace Party {
         template <typename Alias>
         Int_t Count_Heads(Range_t<Alias**> aliases, Actor_t* actor);
 
-        Vector_t<String_t> Filter_Strings(String_t sex = "", String_t race = "", String_t search = "");
-        Vector_t<Int_t> Filter_Ints(Int_t style = 0, Int_t vitality = 0, Int_t outfit2 = 0, Int_t rating = -1);
+        Vector_t<String_t> Filter_Strings(String_t sex = "",
+                                          String_t race = "",
+                                          String_t search = "");
+        Vector_t<Int_t> Filter_Ints(Int_t style = 0,
+                                    Int_t vitality = 0,
+                                    Int_t outfit2 = 0,
+                                    Int_t rating = -1);
         Int_t Add_Filter_Flag_1(Int_t flags_1, String_t flag_1);
         Int_t Add_Filter_Flag_2(Int_t flags_2, String_t flag_2);
         template <typename Alias>
@@ -229,6 +246,12 @@ namespace doticu_npcp { namespace Party {
         void Prev_Display();
         void Stop_Display();
     };
+
+    namespace Members { namespace Exports {
+
+        Bool_t Register(Registry_t* registry);
+
+    }}
 
     class Followers_t : public Aliases_t {
     public:
@@ -364,6 +387,12 @@ namespace doticu_npcp { namespace Party {
                                      Int_t flags_2 = 0);
     };
 
+    namespace Followers { namespace Exports {
+
+        Bool_t Register(Registry_t* registry);
+
+    }}
+
     class Horses_t : public Aliases_t {
     public:
         static constexpr size_t MAX = 16;
@@ -385,6 +414,12 @@ namespace doticu_npcp { namespace Party {
         Horse_t* From_ID(Int_t unique_id);
         Horse_t* From_Actor(Actor_t* actor);
     };
+
+    namespace Horses { namespace Exports {
+
+        Bool_t Register(Registry_t* registry);
+
+    }}
 
     class Alias_t : public Alias_Base_t {
     public:
@@ -493,7 +528,15 @@ namespace doticu_npcp { namespace Party {
         void Level();
 
         void Log_Variable_Infos();
+
+        void Test();
     };
+
+    namespace Member { namespace Exports {
+
+        Bool_t Register(Registry_t* registry);
+
+    }}
 
     class Follower_t : public Alias_t {
     public:
@@ -585,6 +628,12 @@ namespace doticu_npcp { namespace Party {
         void Rename(String_t new_name);
     };
 
+    namespace Follower { namespace Exports {
+
+        Bool_t Register(Registry_t* registry);
+
+    }}
+
     class Horse_t : public Alias_t {
     public:
         static String_t Class_Name();
@@ -603,54 +652,10 @@ namespace doticu_npcp { namespace Party {
         void Rename(String_t new_name);
     };
 
+    namespace Horse { namespace Exports {
+
+        Bool_t Register(Registry_t* registry);
+
+    }}
+
 }}
-
-namespace doticu_npcp { namespace Party { namespace Aliases { namespace Exports {
-
-    Bool_t Register(Registry_t* registry);
-
-}}}}
-
-namespace doticu_npcp { namespace Party { namespace Members { namespace Exports {
-
-    Bool_t Register(Registry_t* registry);
-
-}}}}
-
-namespace doticu_npcp { namespace Party { namespace Followers { namespace Exports {
-
-    Bool_t Register(Registry_t* registry);
-
-}}}}
-
-namespace doticu_npcp { namespace Party { namespace Horses { namespace Exports {
-
-    Bool_t Register(Registry_t* registry);
-
-}}}}
-
-namespace doticu_npcp { namespace Party { namespace Alias { namespace Exports {
-
-    Bool_t Register(Registry_t* registry);
-
-}}}}
-
-namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
-
-    Bool_t Register(Registry_t* registry);
-
-}}}}
-
-namespace doticu_npcp { namespace Party { namespace Follower { namespace Exports {
-
-    Bool_t Register(Registry_t* registry);
-
-}}}}
-
-namespace doticu_npcp { namespace Party { namespace Horse { namespace Exports {
-
-    Bool_t Register(Registry_t* registry);
-
-}}}}
-
-#include "party.inl"

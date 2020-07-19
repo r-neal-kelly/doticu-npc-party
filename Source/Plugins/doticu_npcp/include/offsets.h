@@ -39,6 +39,7 @@ namespace doticu_npcp { namespace Offsets {
 
     namespace Reference {
 
+        constexpr uintptr_t PLACE_AT_ME                 = 0x009951F0; // 55672
         constexpr uintptr_t PLAY_ANIMATION              = 0x00189E30; // 14189
 
     }
