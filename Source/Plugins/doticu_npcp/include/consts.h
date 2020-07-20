@@ -61,6 +61,8 @@ namespace doticu_npcp { namespace Consts {
         TOKEN_VITALITY_INVULNERABLE         = 0x0A045C,
         TOKEN_VITALITY_MORTAL               = 0x0A045B,
         TOKEN_VITALITY_PROTECTED            = 0x0A045A,
+
+        WEAPON_BLANK                        = 0x0C8D65,
     };
 
     Consts_t* Self();
@@ -105,6 +107,8 @@ namespace doticu_npcp { namespace Consts {
     Faction_t* Member_Faction();
 
     Formlist_t* Settler_Markers_Formlist();
+
+    Weapon_t* Blank_Weapon();
 
     void Log_Variables(Consts_t* self);
     void Log_Defaults(Consts_t* self);

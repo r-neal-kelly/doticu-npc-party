@@ -72,7 +72,7 @@ endFunction
 ; Private Methods
 doticu_npcp_outfit function p_Create(Container form_container, string str_name, int code_create = 0)
     doticu_npcp_outfit ref_outfit = CONSTS.MARKER_STORAGE.PlaceAtMe(CONSTS.CONTAINER_OUTFIT, 1, true, false) as doticu_npcp_outfit
-    
+
     ; this can prevent a ctd
     FUNCS.Wait(0.1)
 

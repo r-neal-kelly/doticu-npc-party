@@ -63,8 +63,4 @@ endEvent
 
 event OnCombatStateChanged(Actor ref_target, int code_combat)
     p_ref_actor.StopCombatAlarm()
-    if ref_target
-        ref_target.StopCombat()
-        ref_target.EvaluatePackage()
-    endIf
 endEvent

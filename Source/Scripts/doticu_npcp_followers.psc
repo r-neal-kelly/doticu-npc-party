@@ -321,7 +321,7 @@ p_Busy()
     if num_followers < 1
         return p_Ready_Int(CODES.HASNT_FOLLOWER)
     endIf
-
+    
     p_Enforce()
 
     return p_Ready_Int(CODES.SUCCESS)

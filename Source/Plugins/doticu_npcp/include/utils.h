@@ -40,6 +40,66 @@ W
 
 #define DOTICU_NPCP_PRINT_PREFIX "doticu_npcp: "
 
+#if 0
+
+#define FORWARD_POINTER(METHOD_)                                                \
+{                                                                               \
+    _MESSAGE("in func: %s, file: %s, line: %u", __func__, __FILE__, __LINE__);  \
+    auto result = self ? self->METHOD_ : nullptr;                               \
+    _MESSAGE("out of func: %s", __func__);                                      \
+    return result;                                                              \
+}
+
+#define FORWARD_BOOL(METHOD_)                                                   \
+{                                                                               \
+    _MESSAGE("in func: %s, file: %s, line: %u", __func__, __FILE__, __LINE__);  \
+    auto result = self ? self->METHOD_ : false;                                 \
+    _MESSAGE("out of func: %s", __func__);                                      \
+    return result;                                                              \
+}
+
+#define FORWARD_INT(METHOD_)                                                    \
+{                                                                               \
+    _MESSAGE("in func: %s, file: %s, line: %u", __func__, __FILE__, __LINE__);  \
+    auto result = self ? self->METHOD_ : 0;                                     \
+    _MESSAGE("out of func: %s", __func__);                                      \
+    return result;                                                              \
+}
+
+#define FORWARD_STRING(METHOD_)                                                 \
+{                                                                               \
+    _MESSAGE("in func: %s, file: %s, line: %u", __func__, __FILE__, __LINE__);  \
+    auto result = self ? self->METHOD_ : "";                                    \
+    _MESSAGE("out of func: %s", __func__);                                      \
+    return result;                                                              \
+}
+
+#define FORWARD_VECTOR(METHOD_, TYPE_)                                          \
+{                                                                               \
+    _MESSAGE("in func: %s, file: %s, line: %u", __func__, __FILE__, __LINE__);  \
+    auto result = self ? self->METHOD_ : Vector_t<TYPE_>();                     \
+    _MESSAGE("out of func: %s", __func__);                                      \
+    return result;                                                              \
+}
+
+#define FORWARD_VOID(METHOD_)                                                   \
+{                                                                               \
+    _MESSAGE("in func: %s, file: %s, line: %u", __func__, __FILE__, __LINE__);  \
+    self ? self->METHOD_, 1 : 0;                                                \
+    _MESSAGE("out of func: %s", __func__);                                      \
+}
+
+#else
+
+#define FORWARD_POINTER(METHOD_) { return self ? self->METHOD_ : nullptr; }
+#define FORWARD_BOOL(METHOD_) { return self ? self->METHOD_ : false; }
+#define FORWARD_INT(METHOD_) { return self ? self->METHOD_ : 0; }
+#define FORWARD_STRING(METHOD_) { return self ? self->METHOD_ : ""; }
+#define FORWARD_VECTOR(METHOD_, TYPE_) { return self ? self->METHOD_ : Vector_t<TYPE_>(); }
+#define FORWARD_VOID(METHOD_) { self ? self->METHOD_, 1 : 0; }
+
+#endif
+
 #define ADD_CLASS_METHOD(STR_CLASS_, BASE_, STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...) \
 M                                                                                       \
     registry->RegisterFunction(                                                         \

@@ -5,6 +5,7 @@
 #include "skse64/GameRTTI.h"
 
 #include "cell.h"
+#include "consts.h"
 #include "form.h"
 #include "game.h"
 #include "object_ref.h"
@@ -713,7 +714,7 @@ namespace doticu_npcp { namespace Object_Ref {
         if (ref) {
             // thankfully, this is an easy way to make sure
             // the ExtraContainerChanges is init'd on ref.
-            ref->Add_Worn_Item(nullptr, 0, false, 0, 0);
+            ref->Add_Worn_Item(Consts::Blank_Weapon(), 0, false, 0, 0); // this needs an object, or it may ctd
         }
     }
 

@@ -250,6 +250,13 @@ namespace doticu_npcp { namespace Consts {
         return value;
     }
 
+    Weapon_t* Blank_Weapon()
+    {
+        static Weapon_t* value = static_cast<Weapon_t*>(Game::NPCP_Form(WEAPON_BLANK));
+        NPCP_ASSERT(value != nullptr);
+        return value;
+    }
+
     void Log_Variables(Consts_t* self)
     {
         Object_t* object = Object();
