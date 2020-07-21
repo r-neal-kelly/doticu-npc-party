@@ -81,4 +81,38 @@ namespace doticu_npcp {
         }
     }
 
+    Bool_t Quest_t2::Hash_Map_t::Has_Key(UInt16 key)
+    {
+        UInt32 idx = Utils::CRC32(key) & (capacity - 1);
+        Entry_t* entry = entries + idx;
+        if (entry->chain != nullptr) {
+            for (; entry != end_of_chain; entry = entry->chain) {
+                if (entry->tuple.key == key) {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            return false;
+        }
+    }
+
+    void Alias_Base_t::Log()
+    {
+        _MESSAGE("Log Alias Base: {");
+
+
+
+        _MESSAGE("}");
+    }
+
+    void Alias_Reference_t::Log()
+    {
+        _MESSAGE("Log Alias Reference: {");
+
+
+
+        _MESSAGE("}");
+    }
+
 }

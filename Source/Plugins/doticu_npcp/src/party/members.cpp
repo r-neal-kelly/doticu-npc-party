@@ -4,8 +4,10 @@
 
 #include "consts.h"
 #include "game.h"
+#include "object_ref.h"
 #include "party.h"
 #include "party.inl"
+#include "quest.h"
 #include "utils.h"
 #include "vars.h"
 #include "vector.h"
@@ -124,152 +126,152 @@ namespace doticu_npcp { namespace Party {
 
     Int_t Members_t::Count_Filled()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled);
     }
 
     Int_t Members_t::Count_Unfilled()
     {
-        return Count_If(Aliases(), &Member_t::Is_Unfilled);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Unfilled);
     }
 
     Int_t Members_t::Count_Loaded()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Loaded);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Loaded);
     }
 
     Int_t Members_t::Count_Unloaded()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Unloaded);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Unloaded);
     }
 
     Int_t Members_t::Count_Unique()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Unique);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Unique);
     }
 
     Int_t Members_t::Count_Generic()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Generic);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Generic);
     }
 
     Int_t Members_t::Count_Alive()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Alive);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Alive);
     }
 
     Int_t Members_t::Count_Dead()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Dead);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Dead);
     }
 
     Int_t Members_t::Count_Originals()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Original);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Original);
     }
 
     Int_t Members_t::Count_Clones()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Clone);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Clone);
     }
 
     Int_t Members_t::Count_Mobile()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Mobile);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Mobile);
     }
 
     Int_t Members_t::Count_Immobile()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Immobile);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Immobile);
     }
 
     Int_t Members_t::Count_Settlers()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Settler);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Settler);
     }
 
     Int_t Members_t::Count_Non_Settlers()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Isnt_Settler);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Isnt_Settler);
     }
 
     Int_t Members_t::Count_Thralls()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Thrall);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Thrall);
     }
 
     Int_t Members_t::Count_Non_Thralls()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Isnt_Thrall);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Isnt_Thrall);
     }
 
     Int_t Members_t::Count_Paralyzed()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Paralyzed);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Paralyzed);
     }
 
     Int_t Members_t::Count_Non_Paralyzed()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Isnt_Paralyzed);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Isnt_Paralyzed);
     }
 
     Int_t Members_t::Count_Mannequins()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Mannequin);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Mannequin);
     }
 
     Int_t Members_t::Count_Non_Mannequins()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Isnt_Mannequin);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Isnt_Mannequin);
     }
 
     Int_t Members_t::Count_Reanimated()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Reanimated);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Reanimated);
     }
 
     Int_t Members_t::Count_Non_Reanimated()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Isnt_Reanimated);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Isnt_Reanimated);
     }
 
     Int_t Members_t::Count_Followers()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Follower);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Follower);
     }
 
     Int_t Members_t::Count_Non_Followers()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Isnt_Follower);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Isnt_Follower);
     }
 
     Int_t Members_t::Count_Sneaks()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Sneak);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Sneak);
     }
 
     Int_t Members_t::Count_Non_Sneaks()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Isnt_Sneak);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Isnt_Sneak);
     }
 
     Int_t Members_t::Count_Saddlers()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Saddler);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Saddler);
     }
 
     Int_t Members_t::Count_Non_Saddlers()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Isnt_Saddler);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Isnt_Saddler);
     }
 
     Int_t Members_t::Count_Retreaters()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Retreater);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Retreater);
     }
 
     Int_t Members_t::Count_Non_Retreaters()
     {
-        return Count_If(Aliases(), &Member_t::Is_Filled, &Member_t::Isnt_Retreater);
+        return Count_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Isnt_Retreater);
     }
 
     Int_t Members_t::Count_Heads(Actor_t* actor)
@@ -292,22 +294,22 @@ namespace doticu_npcp { namespace Party {
 
     Vector_t<Member_t*> Members_t::Filled()
     {
-        return Copy_If(Aliases(), &Member_t::Is_Filled, MAX);
+        return Copy_If<Member_t>(Aliases(), &Member_t::Is_Filled, MAX);
     }
 
     Vector_t<Member_t*> Members_t::Unfilled()
     {
-        return Copy_If(Aliases(), &Member_t::Is_Unfilled, HALF);
+        return Copy_If<Member_t>(Aliases(), &Member_t::Is_Unfilled, HALF);
     }
 
     Vector_t<Member_t*> Members_t::Loaded()
     {
-        return Copy_If(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Loaded, HALF);
+        return Copy_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Loaded, HALF);
     }
 
     Vector_t<Member_t*> Members_t::Unloaded()
     {
-        return Copy_If(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Unloaded, HALF);
+        return Copy_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Unloaded, HALF);
     }
 
     Vector_t<Member_t*> Members_t::Sort(Vector_t<Member_t*> members)

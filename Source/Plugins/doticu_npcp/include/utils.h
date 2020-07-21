@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "offsets.h"
 #include "types.h"
 
 #define M \
@@ -147,6 +148,25 @@ namespace doticu_npcp { namespace Utils {
     inline Bits Clear_Bits(Bits bits, Index idx)
     {
         return 0;
+    }
+
+    void CRC32_By_Size(UInt32& result, void* value, UInt32 size);
+    void CRC32_By_32(UInt32& result, UInt32 value);
+    void CRC32_By_64(UInt32& result, UInt64 value);
+
+    template <typename Value>
+    inline UInt32 CRC32_By_Size(Value value)
+    {
+        UInt32 result = 0;
+        CRC32_By_Size(result, &value, sizeof(value));
+        return result;
+    }
+
+    inline UInt32 CRC32(UInt16 value)
+    {
+        UInt32 result = 0;
+        CRC32_By_32(result, (UInt32)value);
+        return result;
     }
 
 }}

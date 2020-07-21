@@ -542,12 +542,12 @@ namespace doticu_npcp { namespace Object_Ref {
         return distance > 0 && distance <= max_radius;
     }
 
-    Reference_t* From_Handle(Reference_Handle_t handle)
+    /*Reference_t* From_Handle(Reference_Handle_t handle)
     {
         NiPointer<Reference_t> reference = nullptr;
         LookupREFRByHandle(handle, reference);
         return static_cast<Reference_t*>(reference);
-    }
+    }*/
 
     bool Has_Token(Reference_t* ref, Form_t* token, Int_t count)
     {
@@ -730,6 +730,17 @@ namespace doticu_npcp { namespace Object_Ref {
             (RelocationManager::s_baseAddr + Offsets::Reference::PLACE_AT_ME);
 
         return place_at_me(Virtual_Machine_t::Self(), 0, me, to_place, count, force_persist, initially_disabled);
+    }
+
+    Reference_t* From_Handle(Reference_Handle_t handle)
+    {
+        static auto lookup_reference_handle = reinterpret_cast
+            <Reference_t* (*)(Reference_Handle_t&, NiPointer<Reference_t>&)>
+            (RelocationManager::s_baseAddr + Offsets::Reference::LOOKUP_REFERENCE_BY_HANDLE1);
+
+        NiPointer<Reference_t> ptr;
+        lookup_reference_handle(handle, ptr);
+        return ptr.get();
     }
 
 }}

@@ -331,6 +331,13 @@ namespace doticu_npcp { namespace XList {
                              idx_xdata,
                              XData::Get_Type_String(xdata));
                 }
+            } else if (xdata->GetType() == kExtraData_AliasInstanceArray) {
+                ExtraAliasInstanceArray* xaliases = reinterpret_cast<ExtraAliasInstanceArray*>(xdata);
+                _MESSAGE("%sxdata idx: %i, type: %s, quest_count: %u",
+                         str_indent.c_str(),
+                         idx_xdata,
+                         XData::Get_Type_String(xdata),
+                         xaliases->aliases.count);
             } else if (xdata->GetType() == kExtraData_Interaction) {
                 XData::XInteraction* xinteraction = reinterpret_cast<XData::XInteraction*>(xdata);
                 if (xinteraction->interaction) {

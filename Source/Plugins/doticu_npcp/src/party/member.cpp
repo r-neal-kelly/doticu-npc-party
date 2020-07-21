@@ -81,18 +81,6 @@ namespace doticu_npcp { namespace Party {
         return variable;
     }
 
-    Actor_t* Member_t::Actor()
-    {
-        static const String_t variable_name = String_t("p_ref_actor");
-
-        Variable_t* const variable = Variable(variable_name);
-        if (variable) {
-            return variable->Actor();
-        } else {
-            return nullptr;
-        }
-    }
-
     Follower_t* Member_t::Follower()
     {
         Followers_t* followers = Followers_t::Self();
@@ -202,7 +190,7 @@ namespace doticu_npcp { namespace Party {
         return Actor2::Get_Name(Actor());
     }
 
-    Bool_t Member_t::Is_Filled()
+    /*Bool_t Member_t::Is_Filled()
     {
         return Is_Created() && Actor() != nullptr;
     }
@@ -210,7 +198,7 @@ namespace doticu_npcp { namespace Party {
     Bool_t Member_t::Is_Unfilled()
     {
         return Is_Destroyed() || Actor() == nullptr;
-    }
+    }*/
 
     Bool_t Member_t::Is_Loaded()
     {
@@ -650,7 +638,7 @@ namespace doticu_npcp { namespace Party {
 
             Object_Ref::Untoken(actor, Consts::Settler_Token());
 
-            //Settler_Marker(); // move to editor location.
+            Object_Ref::Move_To_Orbit(Settler_Marker(), Consts::Storage_Marker(), 0.0f, 0.0f);
 
             Actor2::Evaluate_Package(actor);
         }

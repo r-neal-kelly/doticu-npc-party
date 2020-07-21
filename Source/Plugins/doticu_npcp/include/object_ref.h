@@ -42,7 +42,7 @@ namespace doticu_npcp { namespace Object_Ref {
     float Get_Distance(TESObjectREFR *obj, TESObjectREFR *target);
     bool Is_Near_Player(TESObjectREFR *obj, float max_radius = 4096);
 
-    Reference_t* From_Handle(Reference_Handle_t handle);
+    //Reference_t* From_Handle(Reference_Handle_t handle);
 
     bool Has_Token(Reference_t* ref, Form_t* token, Int_t count = 1);
     void Token(Reference_t* ref, Form_t* token, Int_t count = 1);
@@ -66,6 +66,8 @@ namespace doticu_npcp { namespace Object_Ref {
                              Int_t count,
                              Bool_t force_persist,
                              Bool_t initially_disabled);
+
+    Reference_t* From_Handle(Reference_Handle_t handle);
 
 }}
 

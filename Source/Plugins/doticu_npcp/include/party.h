@@ -426,6 +426,10 @@ namespace doticu_npcp { namespace Party {
 
     public:
         Int_t ID();
+        Actor_t* Actor();
+
+        Bool_t Is_Filled();
+        Bool_t Is_Unfilled();
     };
 
     class Member_t : public Alias_t {
@@ -444,7 +448,6 @@ namespace doticu_npcp { namespace Party {
         Variable_t* Style_Variable();
         Variable_t* Vitality_Variable();
 
-        Actor_t* Actor();
         Follower_t* Follower();
 
         Reference_t* Pack();
@@ -460,8 +463,6 @@ namespace doticu_npcp { namespace Party {
         String_t Reference_Name();
         String_t Name();
 
-        Bool_t Is_Filled();
-        Bool_t Is_Unfilled();
         Bool_t Is_Loaded();
         Bool_t Is_Unloaded();
         Bool_t Is_Created();
@@ -528,8 +529,6 @@ namespace doticu_npcp { namespace Party {
         void Level();
 
         void Log_Variable_Infos();
-
-        void Test();
     };
 
     namespace Member { namespace Exports {
@@ -549,7 +548,6 @@ namespace doticu_npcp { namespace Party {
     public:
         Variable_t* Variable(String_t variable_name);
 
-        Actor_t* Actor();
         Member_t* Member();
         Horse_t* Horse();
         
@@ -565,8 +563,6 @@ namespace doticu_npcp { namespace Party {
         String_t Reference_Name();
         String_t Name();
 
-        Bool_t Is_Filled();
-        Bool_t Is_Unfilled();
         Bool_t Is_Loaded();
         Bool_t Is_Unloaded();
         Bool_t Is_Created();
@@ -642,7 +638,6 @@ namespace doticu_npcp { namespace Party {
     public:
         Variable_t* Variable(String_t variable_name);
 
-        Actor_t* Actor();
         Follower_t* Follower();
 
         String_t Base_Name();

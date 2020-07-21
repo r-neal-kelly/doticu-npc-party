@@ -1168,7 +1168,6 @@ int function Reanimate(int code_exec)
         return CODES.ISNT_MEMBER
     endIf
 
-    ; we set this here for the queue to check
     p_is_reanimated = true
 
     ; we accept an already alive member to make it easier on creation, but maybe not once we make a dedicated Create_Reanimated()
@@ -1197,7 +1196,6 @@ int function Deanimate(int code_exec)
         return CODES.ISNT_MEMBER
     endIf
 
-    ; we set this here for the queue to check
     p_is_reanimated = false
 
     if code_exec == CODES.DO_ASYNC

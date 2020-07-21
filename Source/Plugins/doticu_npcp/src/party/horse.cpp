@@ -26,18 +26,6 @@ namespace doticu_npcp { namespace Party {
         return Variable_t::Fetch(this, Class_Name(), variable_name);
     }
 
-    Actor_t* Horse_t::Actor()
-    {
-        static const String_t variable_name = String_t("p_ref_actor");
-
-        Variable_t* const variable = Variable(variable_name);
-        if (variable) {
-            return variable->Actor();
-        } else {
-            return nullptr;
-        }
-    }
-
     Follower_t* Horse_t::Follower()
     {
         Followers_t* followers = Followers_t::Self();

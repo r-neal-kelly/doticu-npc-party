@@ -250,6 +250,13 @@ namespace doticu_npcp { namespace Consts {
         return value;
     }
 
+    Reference_t* Storage_Marker()
+    {
+        static Reference_t* value = static_cast<Reference_t*>(Game::NPCP_Form(MARKER_STORAGE));
+        NPCP_ASSERT(value != nullptr);
+        return value;
+    }
+
     Weapon_t* Blank_Weapon()
     {
         static Weapon_t* value = static_cast<Weapon_t*>(Game::NPCP_Form(WEAPON_BLANK));

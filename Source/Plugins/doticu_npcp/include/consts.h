@@ -29,6 +29,8 @@ namespace doticu_npcp { namespace Consts {
 
         FORMLIST_MARKERS_SETTLER            = 0x00B46E,
 
+        MARKER_STORAGE                      = 0x114F9D,
+
         QUEST_DATA_STATIC                   = 0x0FBA9A,
         QUEST_DATA_DYNAMIC                  = 0x003DFF,
         QUEST_MEMBERS                       = 0x00184C,
@@ -107,6 +109,8 @@ namespace doticu_npcp { namespace Consts {
     Faction_t* Member_Faction();
 
     Formlist_t* Settler_Markers_Formlist();
+
+    Reference_t* Storage_Marker();
 
     Weapon_t* Blank_Weapon();
 

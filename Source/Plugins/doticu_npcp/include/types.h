@@ -228,6 +228,8 @@ namespace doticu_npcp {
         UInt16 fill_type; // 20
         UInt16 pad_22; // 22
         UInt32 pad_24; // 24
+
+        void Log();
     };
     STATIC_ASSERT(sizeof(Alias_Base_t) == 0x28);
 
@@ -255,6 +257,8 @@ namespace doticu_npcp {
 
         Fill_u fill; // 28
         void* conditions; // 40
+
+        void Log();
     };
     STATIC_ASSERT(sizeof(Alias_Reference_t) == 0x48);
 
@@ -265,6 +269,35 @@ namespace doticu_npcp {
         UInt8 pad[7];
     };
     STATIC_ASSERT(sizeof(Faction_Rank_t) == 0x10);
+
+    class Quest_t2 : public BGSStoryManagerTreeForm {
+    public:
+        class Hash_Map_t {
+        public:
+            class Tuple_t {
+            public:
+                UInt16 key;
+                UInt16 value; // unused in this hashmap!
+            };
+
+            class Entry_t {
+            public:
+                Tuple_t tuple;
+                Entry_t* chain; // if nullptr, key is not in the table
+            };
+
+            UInt64 pad_00; // 00
+            UInt32 pad_08; // 08
+            UInt32 capacity; // 0C
+            UInt32 free_count; // 10
+            UInt32 free_idx; // 14
+            Entry_t* end_of_chain; // 18
+            UInt64 pad_20; // 20
+            Entry_t* entries; // 28
+
+            Bool_t Has_Key(UInt16 key);
+        };
+    };
 
 }
 

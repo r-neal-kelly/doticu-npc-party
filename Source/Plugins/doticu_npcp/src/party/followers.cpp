@@ -152,152 +152,152 @@ namespace doticu_npcp { namespace Party {
 
     Int_t Followers_t::Count_Filled()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled);
     }
 
     Int_t Followers_t::Count_Unfilled()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Unfilled);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Unfilled);
     }
 
     Int_t Followers_t::Count_Loaded()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Loaded);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Loaded);
     }
 
     Int_t Followers_t::Count_Unloaded()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Unloaded);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Unloaded);
     }
 
     Int_t Followers_t::Count_Unique()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Unique);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Unique);
     }
 
     Int_t Followers_t::Count_Generic()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Generic);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Generic);
     }
 
     Int_t Followers_t::Count_Alive()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Alive);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Alive);
     }
 
     Int_t Followers_t::Count_Dead()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Dead);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Dead);
     }
 
     Int_t Followers_t::Count_Originals()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Original);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Original);
     }
 
     Int_t Followers_t::Count_Clones()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Clone);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Clone);
     }
 
     Int_t Followers_t::Count_Mobile()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Mobile);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Mobile);
     }
 
     Int_t Followers_t::Count_Immobile()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Immobile);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Immobile);
     }
 
     Int_t Followers_t::Count_Settlers()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Settler);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Settler);
     }
 
     Int_t Followers_t::Count_Non_Settlers()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Settler);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Settler);
     }
 
     Int_t Followers_t::Count_Thralls()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Thrall);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Thrall);
     }
 
     Int_t Followers_t::Count_Non_Thralls()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Thrall);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Thrall);
     }
 
     Int_t Followers_t::Count_Paralyzed()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Paralyzed);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Paralyzed);
     }
 
     Int_t Followers_t::Count_Non_Paralyzed()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Paralyzed);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Paralyzed);
     }
 
     Int_t Followers_t::Count_Mannequins()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Mannequin);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Mannequin);
     }
 
     Int_t Followers_t::Count_Non_Mannequins()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Mannequin);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Mannequin);
     }
 
     Int_t Followers_t::Count_Reanimated()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Reanimated);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Reanimated);
     }
 
     Int_t Followers_t::Count_Non_Reanimated()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Reanimated);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Reanimated);
     }
 
     Int_t Followers_t::Count_Followers()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Follower);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Follower);
     }
 
     Int_t Followers_t::Count_Non_Followers()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Follower);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Follower);
     }
 
     Int_t Followers_t::Count_Sneaks()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Sneak);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Sneak);
     }
 
     Int_t Followers_t::Count_Non_Sneaks()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Sneak);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Sneak);
     }
 
     Int_t Followers_t::Count_Saddlers()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Saddler);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Saddler);
     }
 
     Int_t Followers_t::Count_Non_Saddlers()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Saddler);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Saddler);
     }
 
     Int_t Followers_t::Count_Retreaters()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Retreater);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Retreater);
     }
 
     Int_t Followers_t::Count_Non_Retreaters()
     {
-        return Count_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Retreater);
+        return Count_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Retreater);
     }
 
     Vector_t<Follower_t*> Followers_t::All()
@@ -315,152 +315,152 @@ namespace doticu_npcp { namespace Party {
 
     Vector_t<Follower_t*> Followers_t::Filled()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Unfilled()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Unfilled, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Unfilled, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Loaded()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Loaded, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Loaded, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Unloaded()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Unloaded, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Unloaded, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Unique()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Unique, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Unique, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Generic()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Generic, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Generic, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Alive()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Alive, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Alive, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Dead()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Dead, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Dead, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Originals()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Original, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Original, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Clones()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Clone, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Clone, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Mobile()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Mobile, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Mobile, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Immobile()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Immobile, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Immobile, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Settlers()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Settler, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Settler, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Non_Settlers()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Settler, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Settler, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Thralls()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Thrall, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Thrall, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Non_Thralls()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Thrall, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Thrall, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Paralyzed()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Paralyzed, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Paralyzed, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Non_Paralyzed()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Paralyzed, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Paralyzed, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Mannequins()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Mannequin, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Mannequin, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Non_Mannequins()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Mannequin, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Mannequin, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Reanimated()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Reanimated, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Reanimated, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Non_Reanimated()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Reanimated, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Reanimated, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Followers()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Follower, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Follower, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Non_Followers()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Follower, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Follower, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Sneaks()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Sneak, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Sneak, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Non_Sneaks()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Sneak, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Sneak, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Saddlers()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Saddler, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Saddler, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Non_Saddlers()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Saddler, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Saddler, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Retreaters()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Retreater, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Is_Retreater, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Non_Retreaters()
     {
-        return Copy_If(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Retreater, MAX);
+        return Copy_If<Follower_t>(Aliases(), &Follower_t::Is_Filled, &Follower_t::Isnt_Retreater, MAX);
     }
 
     Vector_t<Follower_t*> Followers_t::Sort(Vector_t<Follower_t*> followers)

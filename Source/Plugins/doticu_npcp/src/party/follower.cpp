@@ -31,18 +31,6 @@ namespace doticu_npcp { namespace Party {
         return Variable_t::Fetch(this, Class_Name(), variable_name);
     }
 
-    Actor_t* Follower_t::Actor()
-    {
-        static const String_t variable_name = String_t("p_ref_actor");
-
-        Variable_t* const variable = Variable(variable_name);
-        if (variable) {
-            return variable->Actor();
-        } else {
-            return nullptr;
-        }
-    }
-
     Member_t* Follower_t::Member()
     {
         Members_t* members = Members_t::Self();
@@ -126,7 +114,7 @@ namespace doticu_npcp { namespace Party {
         return Actor2::Get_Name(Actor());
     }
 
-    Bool_t Follower_t::Is_Filled()
+    /*Bool_t Follower_t::Is_Filled()
     {
         return Is_Created() && Actor() != nullptr;
     }
@@ -134,7 +122,7 @@ namespace doticu_npcp { namespace Party {
     Bool_t Follower_t::Is_Unfilled()
     {
         return Is_Destroyed() || Actor() == nullptr;
-    }
+    }*/
 
     Bool_t Follower_t::Is_Loaded()
     {
