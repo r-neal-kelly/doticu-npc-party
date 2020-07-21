@@ -36,7 +36,11 @@ namespace doticu_npcp { namespace Quest {
     {
         if (quest) {
             Quest_t2::Hash_Map_t* hash_map = (Quest_t2::Hash_Map_t*)((u8*)quest + 0x070);
-            return hash_map->Has_Key(alias_id);
+            if (hash_map) {
+                return hash_map->Has_Key(alias_id);
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
