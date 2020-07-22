@@ -14,14 +14,18 @@ namespace doticu_npcp { namespace Party {
 
     String_t Member_t::Class_Name()
     {
-        static const String_t class_name = String_t("doticu_npcp_member");
+        static const String_t class_name = Utils::Assert(
+            String_t("doticu_npcp_member")
+        );
         return class_name;
     }
 
     Class_Info_t* Member_t::Class_Info()
     {
-        static Class_Info_t* object_info = Class_Info_t::Fetch(Class_Name());
-        return object_info;
+        static Class_Info_t* class_info = Utils::Assert(
+            Class_Info_t::Fetch(Class_Name())
+        );
+        return class_info;
     }
 
     Variable_t* Member_t::Variable(String_t variable_name)
@@ -31,54 +35,94 @@ namespace doticu_npcp { namespace Party {
 
     Variable_t* Member_t::Is_Immobile_Variable()
     {
-        static const String_t variable_name = String_t("p_is_immobile");
-        return Variable(variable_name);
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_is_immobile")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
     }
 
     Variable_t* Member_t::Is_Settler_Variable()
     {
-        static const String_t variable_name = String_t("p_is_settler");
-        return Variable(variable_name);
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_is_settler")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
     }
 
     Variable_t* Member_t::Is_Thrall_Variable()
     {
-        static const String_t variable_name = String_t("p_is_thrall");
-        return Variable(variable_name);
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_is_thrall")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
     }
 
     Variable_t* Member_t::Is_Paralyzed_Variable()
     {
-        static const String_t variable_name = String_t("p_is_paralyzed");
-        return Variable(variable_name);
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_is_paralyzed")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
     }
 
     Variable_t* Member_t::Is_Mannequin_Variable()
     {
-        static const String_t variable_name = String_t("p_is_mannequin");
-        return Variable(variable_name);
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_is_mannequin")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
     }
 
     Variable_t* Member_t::Mannequin_Marker_Variable()
     {
-        static const String_t variable_name = String_t("p_marker_mannequin");
-        return Variable(variable_name);
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_marker_mannequin")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
     }
 
     Variable_t* Member_t::Style_Variable()
     {
-        static const String_t variable_name = String_t("p_code_style");
-        Variable_t* variable = Variable(variable_name);
-        NPCP_ASSERT(variable && variable->type.Is_Int());
-        return variable;
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_code_style")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
     }
 
     Variable_t* Member_t::Vitality_Variable()
     {
-        static const String_t variable_name = String_t("p_code_vitality");
-        Variable_t* variable = Variable(variable_name);
-        NPCP_ASSERT(variable && variable->type.Is_Int());
-        return variable;
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_code_vitality")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
+    Actor_t* Member_t::Actor()
+    {
+        static const String_t variable_name = String_t("p_ref_actor");
+
+        Variable_t* const variable = Variable(variable_name);
+        if (variable) {
+            return variable->Actor();
+        } else {
+            return nullptr;
+        }
     }
 
     Follower_t* Member_t::Follower()
@@ -584,10 +628,7 @@ namespace doticu_npcp { namespace Party {
     {
         Actor_t* actor = Actor();
         if (actor && Is_Created()) {
-            Variable_t* variable = Is_Immobile_Variable();
-            if (variable) {
-                variable->data.b = false;
-            }
+            Is_Immobile_Variable()->Bool(false);
 
             Object_Ref::Untoken(actor, Consts::Immobile_Token());
 
@@ -599,10 +640,7 @@ namespace doticu_npcp { namespace Party {
     {
         Actor_t* actor = Actor();
         if (actor && Is_Created()) {
-            Variable_t* variable = Is_Immobile_Variable();
-            if (variable) {
-                variable->data.b = true;
-            }
+            Is_Immobile_Variable()->Bool(true);
 
             Object_Ref::Token(actor, Consts::Immobile_Token());
 
@@ -614,10 +652,7 @@ namespace doticu_npcp { namespace Party {
     {
         Actor_t* actor = Actor();
         if (actor && Is_Created()) {
-            Variable_t* variable = Is_Settler_Variable();
-            if (variable) {
-                variable->data.b = true;
-            }
+            Is_Settler_Variable()->Bool(true);
 
             Object_Ref::Token(actor, Consts::Settler_Token());
 
@@ -631,10 +666,7 @@ namespace doticu_npcp { namespace Party {
     {
         Actor_t* actor = Actor();
         if (actor && Is_Created()) {
-            Variable_t* variable = Is_Settler_Variable();
-            if (variable) {
-                variable->data.b = false;
-            }
+            Is_Settler_Variable()->Bool(false);
 
             Object_Ref::Untoken(actor, Consts::Settler_Token());
 
@@ -648,10 +680,7 @@ namespace doticu_npcp { namespace Party {
     {
         Actor_t* actor = Actor();
         if (actor && Is_Created()) {
-            Variable_t* variable = Is_Thrall_Variable();
-            if (variable) {
-                variable->data.b = true;
-            }
+            Is_Thrall_Variable()->Bool(true);
 
             Object_Ref::Token(actor, Consts::Thrall_Token());
 
@@ -665,10 +694,7 @@ namespace doticu_npcp { namespace Party {
     {
         Actor_t* actor = Actor();
         if (actor && Is_Created()) {
-            Variable_t* variable = Is_Thrall_Variable();
-            if (variable) {
-                variable->data.b = false;
-            }
+            Is_Thrall_Variable()->Bool(false);
 
             Object_Ref::Untoken(actor, Consts::Thrall_Token());
 
@@ -682,10 +708,7 @@ namespace doticu_npcp { namespace Party {
     {
         Actor_t* actor = Actor();
         if (actor && Is_Created()) {
-            Variable_t* variable = Is_Paralyzed_Variable();
-            if (variable) {
-                variable->data.b = true;
-            }
+            Is_Paralyzed_Variable()->Bool(true);
 
             Object_Ref::Token(actor, Consts::Paralyzed_Token());
 
@@ -703,10 +726,7 @@ namespace doticu_npcp { namespace Party {
     {
         Actor_t* actor = Actor();
         if (actor && Is_Created()) {
-            Variable_t* variable = Is_Paralyzed_Variable();
-            if (variable) {
-                variable->data.b = false;
-            }
+            Is_Paralyzed_Variable()->Bool(false);
 
             Object_Ref::Untoken(actor, Consts::Paralyzed_Token());
 
@@ -726,14 +746,8 @@ namespace doticu_npcp { namespace Party {
 
         Actor_t* actor = Actor();
         if (actor && Is_Created()) {
-            Variable_t* is_mannequin_var = Is_Mannequin_Variable();
-            Variable_t* mannequin_marker_var = Mannequin_Marker_Variable();
-            if (is_mannequin_var) {
-                is_mannequin_var->data.b = true;
-            }
-            if (mannequin_marker_var) {
-                PackHandle((VMValue*)mannequin_marker_var, marker, Reference_t::kTypeID, Variable_t::Registry());
-            }
+            Is_Mannequin_Variable()->Bool(true);
+            Mannequin_Marker_Variable()->Pack(marker);
 
             Object_Ref::Token(actor, Consts::Mannequin_Token());
 
@@ -759,14 +773,8 @@ namespace doticu_npcp { namespace Party {
     {
         Actor_t* actor = Actor();
         if (actor && Is_Created()) {
-            Variable_t* is_mannequin_var = Is_Mannequin_Variable();
-            Variable_t* mannequin_marker_var = Mannequin_Marker_Variable();
-            if (is_mannequin_var) {
-                is_mannequin_var->data.b = false;
-            }
-            if (mannequin_marker_var) {
-                PackHandle((VMValue*)mannequin_marker_var, nullptr, Reference_t::kTypeID, Variable_t::Registry());
-            }
+            Is_Mannequin_Variable()->Bool(false);
+            Mannequin_Marker_Variable()->None();
 
             Object_Ref::Untoken(actor, Consts::Mannequin_Token());
 
@@ -785,35 +793,35 @@ namespace doticu_npcp { namespace Party {
         Actor_t* actor = Actor();
         if (actor && Is_Created()) {
             if (style == Style_e::WARRIOR) {
-                Style_Variable()->data.i = Style_e::WARRIOR;
+                Style_Variable()->Int(Style_e::WARRIOR);
                 Object_Ref::Untoken(actor, Consts::Default_Style_Token());
                 Object_Ref::Token(actor, Consts::Warrior_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Mage_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Archer_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
             } else if (style == Style_e::MAGE) {
-                Style_Variable()->data.i = Style_e::MAGE;
+                Style_Variable()->Int(Style_e::MAGE);
                 Object_Ref::Untoken(actor, Consts::Default_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Warrior_Style_Token());
                 Object_Ref::Token(actor, Consts::Mage_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Archer_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
             } else if (style == Style_e::ARCHER) {
-                Style_Variable()->data.i = Style_e::ARCHER;
+                Style_Variable()->Int(Style_e::ARCHER);
                 Object_Ref::Untoken(actor, Consts::Default_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Warrior_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Mage_Style_Token());
                 Object_Ref::Token(actor, Consts::Archer_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
             } else if (style == Style_e::COWARD) {
-                Style_Variable()->data.i = Style_e::COWARD;
+                Style_Variable()->Int(Style_e::COWARD);
                 Object_Ref::Untoken(actor, Consts::Default_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Warrior_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Mage_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Archer_Style_Token());
                 Object_Ref::Token(actor, Consts::Coward_Style_Token());
             } else /* style == Style_e::DEFAULT */ {
-                Style_Variable()->data.i = Style_e::DEFAULT;
+                Style_Variable()->Int(Style_e::DEFAULT);
                 Object_Ref::Token(actor, Consts::Default_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Warrior_Style_Token());
                 Object_Ref::Untoken(actor, Consts::Mage_Style_Token());
@@ -831,7 +839,7 @@ namespace doticu_npcp { namespace Party {
     {
         Actor_t* actor = Actor();
         if (actor && Is_Created()) {
-            Style_Variable()->data.i = 0;
+            Style_Variable()->Int(0);
 
             Object_Ref::Untoken(actor, Consts::Default_Style_Token());
             Object_Ref::Untoken(actor, Consts::Warrior_Style_Token());
@@ -848,25 +856,25 @@ namespace doticu_npcp { namespace Party {
         Actor_t* actor = Actor();
         if (actor && Is_Created()) {
             if (vitality == Vitality_e::MORTAL) {
-                Vitality_Variable()->data.i = Vitality_e::MORTAL;
+                Vitality_Variable()->Int(Vitality_e::MORTAL);
                 Object_Ref::Token(actor, Consts::Mortal_Vitality_Token());
                 Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
                 Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
                 Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
             } else if (vitality == Vitality_e::ESSENTIAL) {
-                Vitality_Variable()->data.i = Vitality_e::ESSENTIAL;
+                Vitality_Variable()->Int(Vitality_e::ESSENTIAL);
                 Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
                 Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
                 Object_Ref::Token(actor, Consts::Essential_Vitality_Token());
                 Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
             } else if (vitality == Vitality_e::INVULNERABLE) {
-                Vitality_Variable()->data.i = Vitality_e::INVULNERABLE;
+                Vitality_Variable()->Int(Vitality_e::INVULNERABLE);
                 Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
                 Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
                 Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
                 Object_Ref::Token(actor, Consts::Invulnerable_Vitality_Token());
             } else /* vitality == Vitality_e::PROTECTED */ {
-                Vitality_Variable()->data.i = Vitality_e::PROTECTED;
+                Vitality_Variable()->Int(Vitality_e::PROTECTED);
                 Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
                 Object_Ref::Token(actor, Consts::Protected_Vitality_Token());
                 Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
@@ -883,7 +891,7 @@ namespace doticu_npcp { namespace Party {
     {
         Actor_t* actor = Actor();
         if (actor && Is_Created()) {
-            Vitality_Variable()->data.i = 0;
+            Vitality_Variable()->Int(0);
 
             Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
             Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());

@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <utility>
+
 #include "offsets.h"
 #include "types.h"
 
@@ -111,6 +113,13 @@ M                                                                               
 W
 
 namespace doticu_npcp { namespace Utils {
+
+    template <typename Type>
+    inline Type&& Assert(Type&& value)
+    {
+        NPCP_ASSERT(value);
+        return std::move(value);
+    }
 
     void Print(const char *str);
 

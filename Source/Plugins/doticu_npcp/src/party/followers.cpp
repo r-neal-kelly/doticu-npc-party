@@ -14,31 +14,39 @@ namespace doticu_npcp { namespace Party {
 
     String_t Followers_t::Class_Name()
     {
-        static const String_t class_name = String_t("doticu_npcp_followers");
+        static const String_t class_name = Utils::Assert(
+            String_t("doticu_npcp_followers")
+        );
         return class_name;
     }
 
     Class_Info_t* Followers_t::Class_Info()
     {
-        static Class_Info_t* object_info = Class_Info_t::Fetch(Class_Name());
-        return object_info;
+        static Class_Info_t* class_info = Utils::Assert(
+            Class_Info_t::Fetch(Class_Name())
+        );
+        return class_info;
     }
 
     Followers_t* Followers_t::Self()
     {
-        static Followers_t* followers = static_cast<Followers_t*>(Game::NPCP_Form(Consts::QUEST_FOLLOWERS));
-        return followers;
+        static Followers_t* self = Utils::Assert(
+            static_cast<Followers_t*>(Game::NPCP_Form(Consts::QUEST_FOLLOWERS))
+        );
+        return self;
     }
 
     Object_t* Followers_t::Object()
     {
-        static Object_t* object = Object_t::Fetch(Self(), Class_Name());
+        static Object_t* object = Utils::Assert(
+            Object_t::Fetch(Self(), Class_Name())
+        );
         return object;
     }
 
     Variable_t* Followers_t::Variable(String_t variable_name)
     {
-        return Variable_t::Fetch(this, Class_Name(), variable_name);
+        return Object()->Variable(variable_name);
     }
 
     Range_t<UInt64> Followers_t::Indices()

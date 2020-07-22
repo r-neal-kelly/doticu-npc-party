@@ -77,6 +77,10 @@ namespace doticu_npcp { namespace Party {
 
     class NPCs_t : public Quest_t {
     public:
+        Bool_t Register(Actor_t* actor);
+        Bool_t Unregister(Actor_t* actor);
+        Actor_t* Clone(Actor_t* actor);
+        Bool_t Unclone(Actor_t* actor);
     };
 
     namespace NPCS { namespace Exports {
@@ -237,6 +241,8 @@ namespace doticu_npcp { namespace Party {
                                    Vector_t<Int_t>* ints = nullptr,
                                    Int_t flags_1 = 0,
                                    Int_t flags_2 = 0);
+
+        void Create_Member(Actor_t* actor, Bool_t do_clone);
 
         // now we could queue up calls to doticu_npcp_member.
         // but as much as possible, I want this behavior to be done
@@ -448,6 +454,7 @@ namespace doticu_npcp { namespace Party {
         Variable_t* Style_Variable();
         Variable_t* Vitality_Variable();
 
+        Actor_t* Actor();
         Follower_t* Follower();
 
         Reference_t* Pack();
@@ -508,6 +515,8 @@ namespace doticu_npcp { namespace Party {
         void Token(Misc_t* token, Int_t count = 1);
         void Untoken(Misc_t* token);
 
+        void Create(Actor_t* actor, Bool_t is_clone);
+        void Destroy();
         void Member();
         void Unmember();
         void Mobilize();
@@ -548,6 +557,7 @@ namespace doticu_npcp { namespace Party {
     public:
         Variable_t* Variable(String_t variable_name);
 
+        Actor_t* Actor();
         Member_t* Member();
         Horse_t* Horse();
         
@@ -638,6 +648,7 @@ namespace doticu_npcp { namespace Party {
     public:
         Variable_t* Variable(String_t variable_name);
 
+        Actor_t* Actor();
         Follower_t* Follower();
 
         String_t Base_Name();

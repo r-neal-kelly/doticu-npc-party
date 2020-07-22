@@ -11,19 +11,35 @@ namespace doticu_npcp { namespace Party {
 
     String_t Horse_t::Class_Name()
     {
-        static const String_t class_name = String_t("doticu_npcp_horse");
+        static const String_t class_name = Utils::Assert(
+            String_t("doticu_npcp_horse")
+        );
         return class_name;
     }
 
     Class_Info_t* Horse_t::Class_Info()
     {
-        static Class_Info_t* object_info = Class_Info_t::Fetch(Class_Name());
-        return object_info;
+        static Class_Info_t* class_info = Utils::Assert(
+            Class_Info_t::Fetch(Class_Name())
+        );
+        return class_info;
     }
 
     Variable_t* Horse_t::Variable(String_t variable_name)
     {
         return Variable_t::Fetch(this, Class_Name(), variable_name);
+    }
+
+    Actor_t* Horse_t::Actor()
+    {
+        static const String_t variable_name = String_t("p_ref_actor");
+
+        Variable_t* const variable = Variable(variable_name);
+        if (variable) {
+            return variable->Actor();
+        } else {
+            return nullptr;
+        }
     }
 
     Follower_t* Horse_t::Follower()

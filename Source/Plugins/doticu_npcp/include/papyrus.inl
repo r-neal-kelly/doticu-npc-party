@@ -6,6 +6,7 @@
 
 #include "papyrus.h"
 #include "string2.h"
+#include "utils.h"
 
 namespace doticu_npcp { namespace Papyrus {
 
@@ -15,6 +16,7 @@ namespace doticu_npcp { namespace Papyrus {
     {
         static Virtual_Machine_t* const virtual_machine =
             reinterpret_cast<Virtual_Machine_t*>((*g_skyrimVM)->GetClassRegistry());
+        NPCP_ASSERT(virtual_machine);
         return virtual_machine;
     }
 
@@ -23,12 +25,14 @@ namespace doticu_npcp { namespace Papyrus {
     inline Registry_t* Handle_t::Registry()
     {
         static Registry_t* registry = (*g_skyrimVM)->GetClassRegistry();
+        NPCP_ASSERT(registry);
         return registry;
     }
 
     inline Policy_t* Handle_t::Policy()
     {
         static Policy_t* policy = Registry()->GetHandlePolicy();
+        NPCP_ASSERT(policy);
         return policy;
     }
 
@@ -82,6 +86,21 @@ namespace doticu_npcp { namespace Papyrus {
     }
 
     // Type_t
+
+    inline Type_t::Type_t() :
+        mangled(NONE)
+    {
+    }
+
+    inline Type_t::Type_t(Type_e type) :
+        mangled(type)
+    {
+    }
+
+    inline Type_t::Type_t(Class_Info_t* class_info) :
+        mangled(reinterpret_cast<UInt64>(class_info))
+    {
+    }
 
     inline Type_e Type_t::Unmangled()
     {
@@ -178,9 +197,32 @@ namespace doticu_npcp { namespace Papyrus {
 
     // Array_t
 
+    inline Array_t* Array_t::Create(Type_t* type, UInt32 count)
+    {
+        if (type) {
+            Array_t* arr;
+            if (Virtual_Machine_t::Self()->Create_Array(type, count, &arr)) {
+                return arr;
+            } else {
+                return nullptr;
+            }
+        } else {
+            return nullptr;
+        }
+    }
+
     inline Variable_t* Array_t::Variables()
     {
         return reinterpret_cast<Variable_t*>(this + 1);
+    }
+
+    inline Variable_t* Array_t::Point(size_t idx)
+    {
+        if (idx < count) {
+            return Variables() + idx;
+        } else {
+            return nullptr;
+        }
     }
 
     // Variable_t
@@ -210,56 +252,58 @@ namespace doticu_npcp { namespace Papyrus {
         }
     }
 
-    inline Actor_t* Variable_t::Actor()
+    inline Variable_t::Variable_t() :
+        type(Type_t()), data(Variable_u())
     {
-        if (type.Unmangled() == Type_t::OBJECT) {
-            if (data.obj) {
-                return static_cast<Actor_t*>(Policy()->Resolve(kFormType_Character, data.obj->Handle()));
-            } else {
-                return nullptr;
-            }
-        } else {
-            return nullptr;
-        }
     }
 
-    inline Alias_Base_t* Variable_t::Alias()
+    inline Variable_t::Variable_u::Variable_u() :
+        ptr(nullptr)
     {
-        if (type.Unmangled() == Type_t::OBJECT) {
-            if (data.obj) {
-                return static_cast<Alias_Base_t*>(Policy()->Resolve(kFormType_Alias, data.obj->Handle()));
-            } else {
-                return nullptr;
-            }
-        } else {
-            return nullptr;
-        }
+    }
+
+    inline void Variable_t::Destroy()
+    {
+        static auto destroy = reinterpret_cast
+            <void (*)(Variable_t*)>
+            (RelocationManager::s_baseAddr + Offsets::Variable::DESTROY);
+        destroy(this);
+        data.ptr = nullptr;
+    }
+
+    inline void Variable_t::Copy(Variable_t* other)
+    {
+        static auto copy = reinterpret_cast
+            <void (*)(Variable_t*, Variable_t*)>
+            (RelocationManager::s_baseAddr + Offsets::Variable::COPY);
+        Destroy();
+        copy(this, other);
     }
 
     inline Bool_t Variable_t::Bool()
     {
-        if (type.Unmangled() == Type_t::BOOL) {
+        if (type.Is_Bool()) {
             return data.b;
         } else {
             return false;
         }
     }
 
-    inline Float_t Variable_t::Float()
-    {
-        if (type.Unmangled() == Type_t::FLOAT) {
-            return data.f;
-        } else {
-            return 0.0;
-        }
-    }
-
     inline Int_t Variable_t::Int()
     {
-        if (type.Unmangled() == Type_t::INT) {
+        if (type.Is_Int()) {
             return data.i;
         } else {
             return 0;
+        }
+    }
+
+    inline Float_t Variable_t::Float()
+    {
+        if (type.Is_Float()) {
+            return data.f;
+        } else {
+            return 0.0;
         }
     }
 
@@ -272,11 +316,24 @@ namespace doticu_npcp { namespace Papyrus {
         }
     }
 
-    inline Misc_t* Variable_t::Misc()
+    inline Actor_t* Variable_t::Actor()
     {
         if (type.Is_Object()) {
             if (data.obj) {
-                return static_cast<Misc_t*>(Policy()->Resolve(kFormType_Misc, data.obj->Handle()));
+                return static_cast<Actor_t*>(Policy()->Resolve(kFormType_Character, data.obj->Handle()));
+            } else {
+                return nullptr;
+            }
+        } else {
+            return nullptr;
+        }
+    }
+
+    inline Alias_Base_t* Variable_t::Alias()
+    {
+        if (type.Is_Object()) {
+            if (data.obj) {
+                return static_cast<Alias_Base_t*>(Policy()->Resolve(kFormType_Alias, data.obj->Handle()));
             } else {
                 return nullptr;
             }
@@ -298,9 +355,22 @@ namespace doticu_npcp { namespace Papyrus {
         }
     }
 
+    inline Misc_t* Variable_t::Misc()
+    {
+        if (type.Is_Object()) {
+            if (data.obj) {
+                return static_cast<Misc_t*>(Policy()->Resolve(kFormType_Misc, data.obj->Handle()));
+            } else {
+                return nullptr;
+            }
+        } else {
+            return nullptr;
+        }
+    }
+
     inline Reference_t* Variable_t::Reference()
     {
-        if (type.Unmangled() == Type_t::OBJECT) {
+        if (type.Is_Object()) {
             if (data.obj) {
                 return static_cast<Reference_t*>(Policy()->Resolve(kFormType_Reference, data.obj->Handle()));
             } else {
@@ -311,6 +381,227 @@ namespace doticu_npcp { namespace Papyrus {
         }
     }
 
+    inline void Variable_t::None()
+    {
+        Destroy();
+        type.mangled = Type_t::NONE;
+        data.ptr = nullptr;
+    }
+
+    inline void Variable_t::Bool(Bool_t value)
+    {
+        Destroy();
+        type.mangled = Type_t::BOOL;
+        data.b = value;
+    }
+
+    inline void Variable_t::Int(Int_t value)
+    {
+        Destroy();
+        type.mangled = Type_t::INT;
+        data.i = value;
+    }
+
+    inline void Variable_t::Float(Float_t value)
+    {
+        Destroy();
+        type.mangled = Type_t::FLOAT;
+        data.f = value;
+    }
+
+    inline void Variable_t::String(String_t value)
+    {
+        static auto set = reinterpret_cast
+            <String_t* (*)(String_t*, const char*)>
+            (RelocationManager::s_baseAddr + Offsets::String::SET);
+        NPCP_ASSERT(value);
+        Destroy();
+        type.mangled = Type_t::STRING;
+        set(&data.str, value);
+    }
+
+    inline void Variable_t::Object(Object_t* value)
+    {
+        NPCP_ASSERT(value);
+        Destroy();
+        type.mangled = reinterpret_cast<UInt64>(value->info);
+        data.obj = value;
+    }
+
+    inline void Variable_t::Array(Array_t* value)
+    {
+        NPCP_ASSERT(value);
+        Destroy();
+        type.mangled = value->type.mangled;
+        data.arr = value;
+    }
+
+    template <typename Type>
+    inline void Variable_t::Pack(Type* value)
+    {
+        NPCP_ASSERT(value);
+
+        Class_Info_t* class_info = Class_Info_t::Fetch(Type::kTypeID);
+        NPCP_ASSERT(class_info);
+
+        Object_t* object = Object_t::Fetch(value, class_info->name);
+        NPCP_ASSERT(object);
+
+        Object(object);
+
+        class_info->Free();
+    }
+
+    template <>
+    inline void Variable_t::Pack(Bool_t* value)
+    {
+        NPCP_ASSERT(value);
+        Bool(*value);
+    }
+
+    template <>
+    inline void Variable_t::Pack(Int_t* value)
+    {
+        NPCP_ASSERT(value);
+        Int(*value);
+    }
+
+    template <>
+    inline void Variable_t::Pack(Float_t* value)
+    {
+        NPCP_ASSERT(value);
+        Float(*value);
+    }
+
+    template <>
+    inline void Variable_t::Pack(String_t* value)
+    {
+        NPCP_ASSERT(value);
+        String(*value);
+    }
+
+    template <>
+    inline void Variable_t::Pack(Object_t* value)
+    {
+        NPCP_ASSERT(value);
+        Object(value);
+    }
+
+    template <>
+    inline void Variable_t::Pack(Array_t* value)
+    {
+        NPCP_ASSERT(value);
+        Array(value);
+    }
+
+    template <typename Type>
+    inline void Variable_t::Pack(Vector_t<Type>& values)
+    {
+        Class_Info_t* class_info = Class_Info_t::Fetch(Type::kTypeID);
+        NPCP_ASSERT(class_info);
+
+        Type_t type(class_info);
+        Array_t* arr = Array_t::Create(&type, values.size());
+        NPCP_ASSERT(arr);
+
+        for (size_t idx = 0, count = arr->count; idx < count; idx += 1) {
+            arr->Point(idx)->Pack(values[idx]);
+        }
+
+        Array(arr);
+
+        class_info->Free();
+    }
+
+    template <>
+    inline void Variable_t::Pack(Vector_t<Bool_t>& values)
+    {
+        Type_t type(Type_t::BOOL);
+        Array_t* arr = Array_t::Create(&type, values.size());
+        NPCP_ASSERT(arr);
+
+        for (size_t idx = 0, count = arr->count; idx < count; idx += 1) {
+            // can't point to std::vector<bool>[i]. f'ing stupid. if I wanted a bitfield I would use a different type!!!
+            Bool_t value = values[idx];
+            arr->Point(idx)->Pack(&value);
+        }
+
+        Array(arr);
+    }
+
+    template <>
+    inline void Variable_t::Pack(Vector_t<Int_t>& values)
+    {
+        Type_t type(Type_t::INT);
+        Array_t* arr = Array_t::Create(&type, values.size());
+        NPCP_ASSERT(arr);
+
+        for (size_t idx = 0, count = arr->count; idx < count; idx += 1) {
+            arr->Point(idx)->Pack(&values[idx]);
+        }
+
+        Array(arr);
+    }
+
+    template <>
+    inline void Variable_t::Pack(Vector_t<Float_t>& values)
+    {
+        Type_t type(Type_t::FLOAT);
+        Array_t* arr = Array_t::Create(&type, values.size());
+        NPCP_ASSERT(arr);
+
+        for (size_t idx = 0, count = arr->count; idx < count; idx += 1) {
+            arr->Point(idx)->Pack(&values[idx]);
+        }
+
+        Array(arr);
+    }
+
+    template <>
+    inline void Variable_t::Pack(Vector_t<String_t>& values)
+    {
+        Type_t type(Type_t::STRING);
+        Array_t* arr = Array_t::Create(&type, values.size());
+        NPCP_ASSERT(arr);
+
+        for (size_t idx = 0, count = arr->count; idx < count; idx += 1) {
+            arr->Point(idx)->Pack(&values[idx]);
+        }
+
+        Array(arr);
+    }
+
+    template <>
+    inline void Variable_t::Pack(Vector_t<Object_t*>& values)
+    {
+        NPCP_ASSERT(values.size() > 0);
+        Type_t type(values[0]->info);
+        Array_t* arr = Array_t::Create(&type, values.size());
+        NPCP_ASSERT(arr);
+
+        for (size_t idx = 0, count = arr->count; idx < count; idx += 1) {
+            arr->Point(idx)->Pack(values[idx]);
+        }
+
+        Array(arr);
+    }
+
+    template <>
+    inline void Variable_t::Pack(Vector_t<Array_t*>& values)
+    {
+        // not tested, may not work with Virtual_Machine_t::Create_Array
+        NPCP_ASSERT(values.size() > 0);
+        Type_t type(values[0]->type);
+        Array_t* arr = Array_t::Create(&type, values.size());
+        NPCP_ASSERT(arr);
+
+        for (size_t idx = 0, count = arr->count; idx < count; idx += 1) {
+            arr->Point(idx)->Pack(values[idx]);
+        }
+
+        Array(arr);
+    }
+
     // Class_Info_t
 
     inline Class_Info_t* Class_Info_t::Fetch(String_t class_name)
@@ -319,7 +610,18 @@ namespace doticu_npcp { namespace Papyrus {
         if (virtual_machine) {
             Class_Info_t* info_out = nullptr;
             virtual_machine->Load_Class_Info(&class_name, &info_out);
-            //virtual_machine->Class_Info(&class_name, &info_out);
+            return info_out;
+        } else {
+            return nullptr;
+        }
+    }
+
+    inline Class_Info_t* Class_Info_t::Fetch(Type_ID_t type_id)
+    {
+        Virtual_Machine_t* const virtual_machine = Virtual_Machine_t::Self();
+        if (virtual_machine) {
+            Class_Info_t* info_out = nullptr;
+            virtual_machine->Load_Class_Info2(type_id, &info_out);
             return info_out;
         } else {
             return nullptr;
@@ -487,9 +789,12 @@ namespace doticu_npcp { namespace Papyrus {
     {
         Handle_t handle(instance);
         if (handle.Is_Valid()) {
-            VMIdentifier* identifier = nullptr;
-            handle.Registry()->Unk_1C(handle, class_name, &identifier);
-            return reinterpret_cast<Object_t*>(identifier);
+            Object_t* object = nullptr;
+            if (Virtual_Machine_t::Self()->Find_Bound_Object(handle, class_name, &object)) {
+                return object;
+            } else {
+                return nullptr;
+            }
         } else {
             return nullptr;
         }

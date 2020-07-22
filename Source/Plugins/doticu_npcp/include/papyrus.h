@@ -9,7 +9,11 @@
 namespace doticu_npcp { namespace Papyrus {
 
     // a lot of credit for deciphering these classes goes to Ryan-rsm-McKenzie of CommonLibSSE as well as the SKSE team
+    class Handle_t;
     class Class_Info_t;
+    class Object_t;
+    class Array_t;
+    class Type_t;
     class Virtual_Machine_t { // Registry_t
     public:
         static Virtual_Machine_t* Self();
@@ -23,9 +27,26 @@ namespace doticu_npcp { namespace Papyrus {
         virtual void _06(void); // 06
         virtual void _07(void); // 07
         virtual void _08(void); // 08
-        virtual void Load_Class_Info(String_t* class_name, Class_Info_t** info_out); // 09, call Class_Info_t Free() after use
-        virtual void _0A(void); // 0A
-        virtual void Class_Info(String_t* class_name, Class_Info_t** info_out); // 0B, call Class_Info_t Free() after use
+        virtual Bool_t Load_Class_Info(String_t* class_name, Class_Info_t** info_out); // 09, call Class_Info_t Free() after use
+        virtual Bool_t Load_Class_Info2(Type_ID_t type_id, Class_Info_t** info_out); // 0A, call Class_Info_t Free() after use
+        virtual Bool_t Class_Info(String_t* class_name, Class_Info_t** info_out); // 0B, call Class_Info_t Free() after use
+        virtual Bool_t Class_Info2(Type_ID_t type_id, Class_Info_t** info_out); // 0C, call Class_Info_t Free() after use
+        virtual void _0D(void); // 0D
+        virtual void _0E(void); // 0E
+        virtual void _0F(void); // 0F
+        virtual void _10(void); // 10
+        virtual void _11(void); // 11
+        virtual void _12(void); // 12
+        virtual void _13(void); // 13
+        virtual void _14(void); // 14
+        virtual Bool_t Create_Object2(String_t* class_name, Object_t** object_out); // 15
+        virtual Bool_t Create_Array(Type_t* type, UInt32 count, Array_t** array_out); // 16, SKSE has Variable_t* for first arg?
+        virtual void _17(void); // 17
+        virtual void _18(void); // 18
+        virtual void _19(void); // 19
+        virtual void _1A(void); // 1A
+        virtual void _1B(void); // 1B
+        virtual Bool_t Find_Bound_Object(Handle_t handle, String_t class_name, Object_t** object_out); // 1C
     };
 
     class Handle_t {
@@ -65,6 +86,10 @@ namespace doticu_npcp { namespace Papyrus {
             FLOAT_ARRAY = 14,
             BOOL_ARRAY = 15
         };
+    public:
+        Type_t();
+        Type_t(Type_e type);
+        Type_t(Class_Info_t* class_info);
 
         UInt64 mangled;
 
@@ -89,6 +114,8 @@ namespace doticu_npcp { namespace Papyrus {
     class Variable_t;
     class Array_t {
     public:
+        static Array_t* Create(Type_t* type, UInt32 count);
+    public:
         UInt32 ref_count; // 00
         UInt32 pad_04; // 04
         Type_t type; // 08
@@ -98,6 +125,7 @@ namespace doticu_npcp { namespace Papyrus {
         //Variable_t variables[0]; // 20
 
         Variable_t* Variables();
+        Variable_t* Point(size_t idx);
 
         // see VMArray, it's a wrapper of this object
         // so you can add similar templated funcs.
@@ -114,33 +142,54 @@ namespace doticu_npcp { namespace Papyrus {
         static Variable_t* Fetch(Type* bsobject,
                                  String_t class_name,
                                  String_t variable_name);
+    public:
+        Variable_t();
 
         Type_t type;
         union Variable_u {
+            Variable_u();
+
             void* ptr;
+            Bool_t b;
             Int_t i;
             Float_t f;
-            Bool_t b;
-            Array_t* arr;
-            Object_t* obj;
             String_t str;
+            Object_t* obj;
+            Array_t* arr;
         } data;
 
+        void Destroy();
+        void Copy(Variable_t* other);
+
+        Bool_t Bool();
+        Int_t Int();
+        Float_t Float();
+        String_t String();
         Actor_t* Actor();
         Alias_Base_t* Alias();
-        Bool_t Bool();
-        Float_t Float();
-        Int_t Int();
-        String_t String();
-        Misc_t* Misc();
         Faction_t* Faction();
+        Misc_t* Misc();
         Reference_t* Reference();
+
+        void None();
+        void Bool(Bool_t value);
+        void Int(Int_t value);
+        void Float(Float_t value);
+        void String(String_t value);
+        void Object(Object_t* value);
+        void Array(Array_t* value);
+
+        template <typename Type>
+        void Pack(Type* value);
+        template <typename Type>
+        void Pack(Vector_t<Type>& values);
     };
     STATIC_ASSERT(sizeof(Variable_t) == 0x10);
 
     class Class_Info_t {
     public:
         static Class_Info_t* Fetch(String_t class_name);
+        static Class_Info_t* Fetch(Type_ID_t type_id);
 
         struct Setting_Info_t {
             UInt64 unk_00; // 00

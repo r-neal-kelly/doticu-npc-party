@@ -62,4 +62,17 @@ namespace doticu_npcp { namespace Offsets {
 
     }
 
+    namespace String {
+
+        constexpr uintptr_t SET                         = 0x00C28D60; // 67823
+
+    }
+
+    namespace Variable {
+
+        constexpr uintptr_t COPY                        = 0x01236E50; // 97509
+        constexpr uintptr_t DESTROY                     = 0x01236D10; // 97508
+
+    }
+
 }}

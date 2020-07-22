@@ -424,6 +424,7 @@ namespace doticu_npcp { namespace Papyrus {
     typedef UInt32                  Stack_ID_t;
     typedef VMScriptInstance        Script_t;
     typedef UInt64                  Type_e;
+    typedef UInt32                  Type_ID_t;
 
     template <typename T> using Vector_t = VMResultArray<T>;
     typedef Vector_t<Int_t> Int_Vector_t;
