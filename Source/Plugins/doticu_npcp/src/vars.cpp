@@ -41,9 +41,10 @@ namespace doticu_npcp { namespace Vars {
 
     Object_t* Object()
     {
-        static Object_t* object = Utils::Assert(
+        Object_t* object = Utils::Assert(
             Object_t::Fetch(Self(), Class_Name())
         );
+        object->Decrement_Lock();
         return object;
     }
 

@@ -72,6 +72,8 @@ bool function Has_Actor(Actor ref_actor)    native
 bool function Hasnt_Actor(Actor ref_actor)  native
 bool function Has_Head(Actor ref_actor)     native
 bool function Hasnt_Head(Actor ref_actor)   native
+bool function Has_Display()                 native
+bool function Hasnt_Display()               native
 
 int function Max()                          native
 int function Count_Filled()                 native
@@ -315,10 +317,6 @@ int function Get_Base_Count(Actor ref_actor)
     endWhile
 
     return num_members
-endFunction
-
-bool function Are_Displayed()
-    return p_has_display
 endFunction
 
 doticu_npcp_member function Get_Member(Actor ref_actor)

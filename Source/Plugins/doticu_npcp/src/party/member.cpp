@@ -848,12 +848,11 @@ namespace doticu_npcp { namespace Party {
             Undisplay_Marker_Variable()->Pack(undisplay_marker);
 
             Object_Ref::Token(actor, Consts::Display_Token());
-            Object_Ref::Move_To_Orbit(actor, origin, radius, degree);
+            Actor2::Move_To_Orbit(actor, origin, radius, degree);
 
             Reference_t* display_marker = Utils::Assert(Object_Ref::Create_Marker_At(actor));
             Display_Marker_Variable()->Pack(display_marker);
 
-            // maybe only needs to be done in OnLoad()
             Reparalyze();
             Remannequinize();
 
@@ -867,7 +866,7 @@ namespace doticu_npcp { namespace Party {
         if (actor && Is_Filled() && Is_Display()) {
             Object_Ref::Token(actor, Consts::Display_Token());
 
-            Object_Ref::Move_To_Orbit(actor, Display_Marker(), 0.0f, 180.0f);
+            Actor2::Move_To_Orbit(actor, Display_Marker(), 0.0f, 180.0f);
 
             Actor2::Evaluate_Package(actor);
         }
@@ -886,12 +885,11 @@ namespace doticu_npcp { namespace Party {
             
             Reference_t* undisplay_marker = Undisplay_Marker_Variable()->Reference();
             if (undisplay_marker) {
-                Object_Ref::Move_To_Orbit(actor, undisplay_marker, 0.0f, 180.0f);
+                Actor2::Move_To_Orbit(actor, undisplay_marker, 0.0f, 180.0f);
                 Object_Ref::Delete(undisplay_marker);
             }
             Undisplay_Marker_Variable()->None();
 
-            // maybe only needs to be done in OnLoad()
             Reparalyze();
             Remannequinize();
 

@@ -33,9 +33,10 @@ namespace doticu_npcp { namespace Party {
 
     Object_t* Horses_t::Object()
     {
-        static Object_t* object = Utils::Assert(
+        Object_t* object = Utils::Assert(
             Object_t::Fetch(Self(), Class_Name())
         );
+        object->Decrement_Lock();
         return object;
     }
 

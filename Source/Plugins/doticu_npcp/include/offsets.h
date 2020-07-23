@@ -45,6 +45,13 @@ namespace doticu_npcp { namespace Offsets {
 
     }
 
+    namespace Object {
+
+        constexpr uintptr_t INCREMENT_LOCK              = 0x01234360; // 97468
+        constexpr uintptr_t DECREMENT_LOCK              = 0x01234410; // 97469
+
+    }
+
     namespace Quest {
 
         //constexpr uintptr_t CLEAR_ALL_ALIASES         = 0x003745D0; // 24520

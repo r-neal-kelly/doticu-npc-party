@@ -931,7 +931,7 @@ function Members_Display_Previous()
 endFunction
 
 function Toggle_Members_Display()
-    if MEMBERS.Are_Displayed()
+    if MEMBERS.Has_Display()
         Members_Display_Stop()
     else
         Members_Display_Start()

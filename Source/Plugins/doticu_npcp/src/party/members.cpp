@@ -39,9 +39,10 @@ namespace doticu_npcp { namespace Party {
 
     Object_t* Members_t::Object()
     {
-        static Object_t* object = Utils::Assert(
+        Object_t* object = Utils::Assert(
             Object_t::Fetch(Self(), Class_Name())
         );
+        object->Decrement_Lock();
         return object;
     }
 
@@ -607,6 +608,8 @@ namespace doticu_npcp { namespace Party { namespace Members { namespace Exports 
     Bool_t Hasnt_Actor(Members_t* self, Actor_t* actor) FORWARD_BOOL(Hasnt_Actor(actor));
     Bool_t Has_Head(Members_t* self, Actor_t* actor) FORWARD_BOOL(Has_Head(actor));
     Bool_t Hasnt_Head(Members_t* self, Actor_t* actor) FORWARD_BOOL(Hasnt_Head(actor));
+    Bool_t Has_Display(Members_t* self) FORWARD_BOOL(Members_t::Has_Display());
+    Bool_t Hasnt_Display(Members_t* self) FORWARD_BOOL(Members_t::Hasnt_Display());
 
     Int_t Max(Members_t* self) FORWARD_INT(Max());
     Int_t Count_Filled(Members_t* self) FORWARD_INT(Count_Filled());
@@ -697,6 +700,8 @@ namespace doticu_npcp { namespace Party { namespace Members { namespace Exports 
         ADD_METHOD("Hasnt_Actor", 1, Bool_t, Hasnt_Actor, Actor_t*);
         ADD_METHOD("Has_Head", 1, Bool_t, Has_Head, Actor_t*);
         ADD_METHOD("Hasnt_Head", 1, Bool_t, Hasnt_Head, Actor_t*);
+        ADD_METHOD("Has_Display", 0, Bool_t, Has_Display);
+        ADD_METHOD("Hasnt_Display", 0, Bool_t, Hasnt_Display);
 
         ADD_METHOD("Max", 0, Int_t, Max);
         ADD_METHOD("Count_Filled", 0, Int_t, Count_Filled);

@@ -586,9 +586,20 @@ namespace doticu_npcp { namespace Actor2 {
             return;
         }
 
+        bool was_ai_disabled = false;
+        if (!Is_AI_Enabled(actor)) {
+            was_ai_disabled = true;
+            Enable_AI(actor);
+        }
+
         Object_Ref::Move_To_Orbit(actor, target, radius, angle_degree);
 
         CALL_MEMBER_FN(actor, QueueNiNodeUpdate)(false);
+        //Fully_Update_3D_Model(actor);
+
+        if (was_ai_disabled) {
+            Disable_AI(actor);
+        }
     }
 
     Actor_Value_Owner_t* Actor_Value_Owner(Actor_t* actor)

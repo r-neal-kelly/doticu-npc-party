@@ -819,6 +819,22 @@ namespace doticu_npcp { namespace Papyrus {
         return reinterpret_cast<Variable_t*>(this + 1);
     }
 
+    inline void Object_t::Increment_Lock()
+    {
+        static auto increment_lock = reinterpret_cast
+            <void (*)(Object_t*)>
+            (RelocationManager::s_baseAddr + Offsets::Object::INCREMENT_LOCK);
+        return increment_lock(this);
+    }
+
+    inline UInt32 Object_t::Decrement_Lock()
+    {
+        static auto decrement_lock = reinterpret_cast
+            <UInt32(*)(Object_t*)>
+            (RelocationManager::s_baseAddr + Offsets::Object::DECREMENT_LOCK);
+        return decrement_lock(this);
+    }
+
     inline Handle_t Object_t::Handle()
     {
         return reinterpret_cast<VMIdentifier*>(this)->GetHandle();

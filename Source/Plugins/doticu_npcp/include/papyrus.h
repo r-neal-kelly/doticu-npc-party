@@ -274,6 +274,9 @@ namespace doticu_npcp { namespace Papyrus {
         UInt32 pad_2C; // 2C
         //Variable_t variables[0]; // 30
 
+        void Increment_Lock();
+        UInt32 Decrement_Lock();
+
         Handle_t Handle();
         Variable_t* Property(String_t property_name);
         Variable_t* Variable(String_t variable_name);
