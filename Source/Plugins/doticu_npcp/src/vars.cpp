@@ -18,26 +18,38 @@ using namespace doticu_npcp::Papyrus;
 
 namespace doticu_npcp { namespace Vars {
 
+    String_t Class_Name()
+    {
+        static const String_t class_name = Utils::Assert(
+            String_t("doticu_npcp_vars")
+        );
+        return class_name;
+    }
+
+    Class_Info_t* Class_Info()
+    {
+        static Class_Info_t* class_info = Utils::Assert(
+            Class_Info_t::Fetch(Class_Name())
+        );
+        return class_info;
+    }
+
     Vars_t* Self()
     {
-        static Vars_t* vars;
-        return vars ? vars : vars = (Vars_t*)Game::NPCP_Form(Consts::QUEST_DATA_DYNAMIC);
+        return static_cast<Vars_t*>(Consts::Dynamic_Data_Quest());
     }
 
     Object_t* Object()
     {
-        static Object_t* object = Object_t::Fetch(Self(), "doticu_npcp_vars");
+        static Object_t* object = Utils::Assert(
+            Object_t::Fetch(Self(), Class_Name())
+        );
         return object;
     }
 
     Variable_t* Variable(String_t variable_name)
     {
-        Object_t* object = Object();
-        if (object) {
-            return object->Variable(variable_name);
-        } else {
-            return nullptr;
-        }
+        return Object()->Variable(variable_name);
     }
 
     Variable_t* Property(String_t property_name)
@@ -58,6 +70,17 @@ namespace doticu_npcp { namespace Vars {
         } else {
             return "";
         }
+    }
+
+    Int_t Display_Count()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_num_display")
+        );
+        static Variable_t* variable = Utils::Assert(
+            Variable(variable_name)
+        );
+        return variable->Int();
     }
 
     void Log_Variables(Vars_t* self)

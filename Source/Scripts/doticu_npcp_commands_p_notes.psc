@@ -643,26 +643,22 @@ function Move(int code_return, string str_name)
     endIf
 endFunction
 
-function Members_Display_Start(int code_return, string str_name)
-    if code_return == CODES.SUCCESS && str_name
-        LOGS.Create_Note("Display mode will now start with " + str_name + ".")
-    elseIf code_return == CODES.SUCCESS
+function Members_Display_Start(int code_return)
+    if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note("Display mode has been started.")
-    elseIf code_return == CODES.IS_DISPLAY
+    elseIf code_return == doticu_npcp_codes.HAS_DISPLAY()
         LOGS.Create_Note("Display has already been started.")
-    elseIf code_return == CODES.ISNT_MEMBER || code_return == CODES.HASNT_MEMBER
-        LOGS.Create_Note("No members to start a display with.")
-    elseIf code_return == CODES.OUT_OF_BOUNDS
-        LOGS.Create_Error("Can not display that amount of members.")
+    elseIf code_return == doticu_npcp_codes.HASNT_MEMBER()
+        LOGS.Create_Note("No members to display. Check your filter.")
     else
         LOGS.Create_Error("Could not start a display: " + code_return)
     endIf
 endFunction
 
 function Members_Display_Stop(int code_return)
-    if code_return == CODES.SUCCESS
+    if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note("Display has now been stopped.")
-    elseIf code_return == CODES.ISNT_DISPLAY
+    elseIf code_return == doticu_npcp_codes.HASNT_DISPLAY()
         LOGS.Create_Note("Display has already stopped.")
     else
         LOGS.Create_Error("Could not stop display: " + code_return)
@@ -670,20 +666,24 @@ function Members_Display_Stop(int code_return)
 endFunction
 
 function Members_Display_Next(int code_return)
-    if code_return == CODES.SUCCESS
+    if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note("Displaying next members.")
-    elseIf code_return == CODES.ISNT_DISPLAY
+    elseIf code_return == doticu_npcp_codes.HASNT_DISPLAY()
         LOGS.Create_Note("You need to start up a display first.")
+    elseIf code_return == doticu_npcp_codes.HASNT_MEMBER()
+        LOGS.Create_Note("No remaining members to display. Stopping.")
     else
         LOGS.Create_Error("Could not display the next members: " + code_return)
     endIf
 endFunction
 
 function Members_Display_Previous(int code_return)
-    if code_return == CODES.SUCCESS
+    if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note("Displying previous members.")
-    elseIf code_return == CODES.ISNT_DISPLAY
+    elseIf code_return == doticu_npcp_codes.HASNT_DISPLAY()
         LOGS.Create_Note("You need to start up a display first.")
+    elseIf code_return == doticu_npcp_codes.HASNT_MEMBER()
+        LOGS.Create_Note("No remaining members to display. Stopping.")
     else
         LOGS.Create_Error("Could not display the previous members: " + code_return)
     endIf

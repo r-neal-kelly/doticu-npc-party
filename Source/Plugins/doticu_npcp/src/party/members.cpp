@@ -2,7 +2,9 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "codes.h"
 #include "consts.h"
+#include "filter.h"
 #include "game.h"
 #include "object_ref.h"
 #include "party.h"
@@ -32,10 +34,7 @@ namespace doticu_npcp { namespace Party {
 
     Members_t* Members_t::Self()
     {
-        static Members_t* self = Utils::Assert(
-            static_cast<Members_t*>(Game::NPCP_Form(Consts::QUEST_MEMBERS))
-        );
-        return self;
+        return static_cast<Members_t*>(Consts::Members_Quest());
     }
 
     Object_t* Members_t::Object()
@@ -51,6 +50,36 @@ namespace doticu_npcp { namespace Party {
         return Object()->Variable(variable_name);
     }
 
+    Variable_t* Members_t::Has_Display_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_has_display")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
+    Variable_t* Members_t::Display_Idx_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_idx_display")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
+    Variable_t* Members_t::Display_Marker_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_marker_display")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
     Range_t<UInt64> Members_t::Indices()
     {
         return { BEGIN, END };
@@ -59,6 +88,11 @@ namespace doticu_npcp { namespace Party {
     Range_t<Member_t**> Members_t::Aliases()
     {
         return Aliases_t::Aliases<Member_t>(BEGIN, END);
+    }
+
+    Reference_t* Members_t::Display_Marker()
+    {
+        return Display_Marker_Variable()->Reference();
     }
 
     Member_t* Members_t::From_ID(Int_t unique_id)
@@ -121,6 +155,16 @@ namespace doticu_npcp { namespace Party {
     Bool_t Members_t::Hasnt_Head(Actor_t* actor)
     {
         return actor && !Aliases_t::Has_Head<Member_t>(Aliases(), actor);
+    }
+
+    Bool_t Members_t::Has_Display()
+    {
+        return Has_Display_Variable()->Bool();
+    }
+
+    Bool_t Members_t::Hasnt_Display()
+    {
+        return !Has_Display_Variable()->Bool();
     }
 
     Int_t Members_t::Max()
@@ -316,6 +360,16 @@ namespace doticu_npcp { namespace Party {
         return Copy_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Unloaded, HALF);
     }
 
+    Vector_t<Member_t*> Members_t::Displayed()
+    {
+        return Copy_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Display, Vars::Display_Count());
+    }
+
+    Vector_t<Member_t*> Members_t::Undisplayed()
+    {
+        return Copy_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Isnt_Display, HALF);
+    }
+
     Vector_t<Member_t*> Members_t::Sort(Vector_t<Member_t*> members)
     {
         static const String_t sort_algorithm_name = String_t("p_str_sort_members");
@@ -375,6 +429,170 @@ namespace doticu_npcp { namespace Party {
         return Sort(Aliases_t::Filter(Aliases(), strings, ints, flags_1, flags_2));
     }
 
+    Vector_t<Member_t*> Members_t::Current_Unsorted_Filter()
+    {
+        Vector_t<String_t> strings = Filter_t::Strings();
+        Vector_t<Int_t> ints = Filter_t::Ints();
+        Int_t flags_1 = Filter_t::Flags_1();
+        Int_t flags_2 = Filter_t::Flags_2();
+        return Aliases_t::Filter(Aliases(), &strings, &ints, flags_1, flags_2);
+    }
+
+    Int_t Members_t::Display_Start()
+    {
+        if (Hasnt_Display()) {
+            Vector_t<Member_t*> filter = Current_Unsorted_Filter();
+            Int_t filter_count = filter.size();
+            if (filter_count > 0) {
+                Has_Display_Variable()->Bool(true);
+                Display_Idx_Variable()->Int(0);
+
+                Reference_t* marker = Utils::Assert(Object_Ref::Create_Marker_At(*g_thePlayer));
+                Display_Marker_Variable()->Pack(marker);
+
+                Int_t display_count = Vars::Display_Count();
+                Int_t slice_count = filter_count < display_count ? filter_count : display_count;
+                Display(filter, 0, slice_count, marker);
+
+                return CODES::SUCCESS;
+            } else {
+                return CODES::HASNT_MEMBER;
+            }
+        } else {
+            return CODES::HAS_DISPLAY;
+        }
+    }
+
+    Int_t Members_t::Display_Stop()
+    {
+        if (Has_Display()) {
+            Has_Display_Variable()->Bool(false);
+            Display_Idx_Variable()->Int(0);
+
+            Object_Ref::Delete(Display_Marker_Variable()->Reference());
+            Display_Marker_Variable()->None();
+
+            Undisplay();
+
+            return CODES::SUCCESS;
+        } else {
+            return CODES::HASNT_DISPLAY;
+        }
+    }
+    
+    Int_t Members_t::Display_Next()
+    {
+        if (Has_Display()) {
+            Vector_t<Member_t*> filter = Current_Unsorted_Filter();
+            Int_t filter_count = filter.size();
+            if (filter_count > 0) {
+                Int_t display_count = Vars::Display_Count();
+                Int_t slice_count = filter_count < display_count ? filter_count : display_count;
+                Int_t idx = Display_Idx_Variable()->Int();
+                if (idx < 0 || idx >= filter_count) {
+                    idx = 0;
+                } else {
+                    idx += slice_count;
+                }
+                if (idx >= filter_count) {
+                    idx -= filter_count;
+                }
+                Display_Idx_Variable()->Int(idx);
+
+                Display(filter, idx, display_count, Display_Marker());
+
+                return CODES::SUCCESS;
+            } else {
+                Display_Stop();
+                return CODES::HASNT_MEMBER;
+            }
+        } else {
+            return CODES::HASNT_DISPLAY;
+        }
+    }
+
+    Int_t Members_t::Display_Previous()
+    {
+        if (Has_Display()) {
+            Vector_t<Member_t*> filter = Current_Unsorted_Filter();
+            Int_t filter_count = filter.size();
+            if (filter_count > 0) {
+                Int_t display_count = Vars::Display_Count();
+                Int_t slice_count = filter_count < display_count ? filter_count : display_count;
+                Int_t idx = Display_Idx_Variable()->Int();
+                if (idx < 0 || idx >= filter_count) {
+                    idx = filter_count;
+                } else {
+                    idx -= slice_count;
+                }
+                if (idx < 0) {
+                    idx += filter_count;
+                }
+                Display_Idx_Variable()->Int(idx);
+
+                Display(filter, idx, display_count, Display_Marker());
+
+                return CODES::SUCCESS;
+            } else {
+                Display_Stop();
+                return CODES::HASNT_MEMBER;
+            }
+        } else {
+            return CODES::HASNT_DISPLAY;
+        }
+    }
+
+    void Members_t::Display(Vector_t<Member_t*> filter,
+                            Int_t begin,
+                            Int_t count,
+                            Reference_t* origin,
+                            float radius,
+                            float degree,
+                            float interval)
+    {
+        if (Has_Display()) {
+
+            Undisplay();
+
+            Int_t filter_count = filter.size();
+            NPCP_ASSERT(filter_count > 0);
+            NPCP_ASSERT(begin > -1 && begin < filter_count);
+            NPCP_ASSERT(count <= filter_count);
+            NPCP_ASSERT(origin != nullptr);
+
+            Vector_t<Member_t*> displays;
+            displays.reserve(count);
+            size_t iterations = 0;
+            for (size_t idx = begin; iterations < count && idx < filter_count; iterations += 1, idx += 1) {
+                displays.push_back(filter[idx]);
+            }
+            for (size_t idx = 0; iterations < count; iterations += 1, idx += 1) {
+                displays.push_back(filter[idx]);
+            }
+
+            // we might have this backwards, but we can just switch - to +.
+            float first_degree = degree;
+            if (count % 2 == 0) {
+                first_degree -= interval / 2;
+                first_degree -= interval * (count / 2);
+            } else {
+                first_degree -= interval * (count / 2);
+            }
+
+            for (size_t idx = 0, size = displays.size(); idx < size; idx += 1, first_degree += interval) {
+                displays[idx]->Display(origin, radius, first_degree);
+            }
+        }
+    }
+
+    void Members_t::Undisplay()
+    {
+        Vector_t<Member_t*> displayed = Displayed();
+        for (size_t idx = 0, count = displayed.size(); idx < count; idx += 1) {
+            displayed[idx]->Undisplay();
+        }
+    }
+    
 }}
 
 namespace doticu_npcp { namespace Party { namespace Members { namespace Exports {
@@ -455,6 +673,11 @@ namespace doticu_npcp { namespace Party { namespace Members { namespace Exports 
                             flags_1, flags_2);
     }
 
+    Int_t Display_Start(Members_t* self) FORWARD_INT(Members_t::Display_Start());
+    Int_t Display_Stop(Members_t* self) FORWARD_INT(Members_t::Display_Stop());
+    Int_t Display_Next(Members_t* self) FORWARD_INT(Members_t::Display_Next());
+    Int_t Display_Previous(Members_t* self) FORWARD_INT(Members_t::Display_Previous());
+
     Bool_t Register(Registry_t* registry)
     {
         #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
@@ -524,6 +747,11 @@ namespace doticu_npcp { namespace Party { namespace Members { namespace Exports 
         ADD_METHOD("Add_Filter_Flag_1", 2, Int_t, Add_Filter_Flag_1, Int_t, String_t);
         ADD_METHOD("Add_Filter_Flag_2", 2, Int_t, Add_Filter_Flag_2, Int_t, String_t);
         ADD_METHOD("Filter", 4, Vector_t<Member_t*>, Filter, VMArray<String_t>, VMArray<Int_t>, Int_t, Int_t);
+
+        ADD_METHOD("Display_Start", 0, Int_t, Display_Start);
+        ADD_METHOD("Display_Stop", 0, Int_t, Display_Stop);
+        ADD_METHOD("Display_Next", 0, Int_t, Display_Next);
+        ADD_METHOD("Display_Previous", 0, Int_t, Display_Previous);
 
         #undef ADD_METHOD
 

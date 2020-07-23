@@ -355,7 +355,7 @@ event OnKeyUp(int value, float hold_time)
 
     ; Members
     elseIf pressed_hotkey == CONSTS.KEY_MS_TOGGLE_DISPLAY
-        COMMANDS.Toggle_Members_Display(Actor_In_Crosshair())
+        COMMANDS.Toggle_Members_Display()
     elseIf pressed_hotkey == CONSTS.KEY_MS_DISPLAY_PREVIOUS
         COMMANDS.Members_Display_Previous()
     elseIf pressed_hotkey == CONSTS.KEY_MS_DISPLAY_NEXT

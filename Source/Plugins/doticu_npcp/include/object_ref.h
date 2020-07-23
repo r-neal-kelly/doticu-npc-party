@@ -69,6 +69,11 @@ namespace doticu_npcp { namespace Object_Ref {
 
     Reference_t* From_Handle(Reference_Handle_t handle);
 
+    Reference_t* Create_Marker_At(Reference_t* ref);
+
+    void Delete(Reference_t* ref);
+    void Undelete(Reference_t* ref);
+
 }}
 
 namespace doticu_npcp { namespace Object_Ref { namespace Exports {

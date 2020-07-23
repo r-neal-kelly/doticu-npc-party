@@ -81,13 +81,15 @@ bool                    p_is_immobile               = false
 bool                    p_is_paralyzed              = false
 bool                    p_is_mannequin              = false
 bool                    p_is_reanimated             = false
+bool                    p_is_display                = false
 bool                    p_do_outfit_vanilla         = false
 int                     p_code_style                =     0
 int                     p_code_vitality             =     0
 int                     p_code_outfit2              =     0
 int                     p_int_rating                =     0
-ObjectReference         p_marker_display            =  none
 ObjectReference         p_marker_mannequin          =  none
+ObjectReference         p_marker_display            =  none
+ObjectReference         p_marker_undisplay          =  none
 Outfit                  p_outfit_vanilla            =  none
 ObjectReference         p_container_pack            =  none
 doticu_npcp_outfit      p_outfit2_member            =  none
@@ -160,11 +162,13 @@ p_Lock()
     p_is_paralyzed = false
     p_is_mannequin = false
     p_is_reanimated = false
+    p_is_display = false
     
     p_do_outfit_vanilla = false
     p_code_outfit2 = CODES.OUTFIT2_MEMBER
     p_int_rating = 0
     p_marker_display = none
+    p_marker_undisplay = none
     p_marker_mannequin = none
     p_outfit_vanilla = NPCS.Get_Default_Outfit(p_ref_actor)
 
@@ -241,12 +245,14 @@ p_Lock()
     p_container_pack = none
     p_outfit_vanilla = none
     p_marker_mannequin = none
+    p_marker_undisplay = none
     p_marker_display = none
     p_int_rating = 0
     p_code_outfit2 = -1
     p_code_vitality = -1
     p_code_style = -1
     p_do_outfit_vanilla = false
+    p_is_display = false
     p_is_reanimated = false
     p_is_mannequin = false
     p_is_paralyzed = false
@@ -1448,47 +1454,6 @@ string function Get_Rating_Stars()
         return "*****"
     
     endIf
-endFunction
-
-int function Display(ObjectReference ref_marker, int distance, int angle)
-    if !Exists()
-        return CODES.ISNT_MEMBER
-    endIf
-
-    if ACTORS.Has_Token(p_ref_actor, CONSTS.TOKEN_DISPLAY)
-        return CODES.IS_DISPLAY
-    endIf
-
-    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_DISPLAY)
-
-    p_marker_display = p_ref_actor.PlaceAtMe(CONSTS.STATIC_MARKER_X)
-
-    ACTORS.Move_To(p_ref_actor as ObjectReference, ref_marker, distance, angle)
-
-    p_Remannequinize()
-    p_Reparalyze()
-
-    return CODES.SUCCESS
-endFunction
-
-int function Undisplay()
-    if !Exists()
-        return CODES.ISNT_MEMBER
-    endIf
-
-    if !ACTORS.Has_Token(p_ref_actor, CONSTS.TOKEN_DISPLAY)
-        return CODES.ISNT_DISPLAY
-    endIf
-
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_DISPLAY)
-
-    p_ref_actor.MoveTo(p_marker_display)
-
-    p_marker_display.Disable()
-    p_marker_display.Delete()
-    p_marker_display = none
-
-    return CODES.SUCCESS
 endFunction
 
 int function Unmember()

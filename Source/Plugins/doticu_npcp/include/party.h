@@ -77,6 +77,14 @@ namespace doticu_npcp { namespace Party {
 
     class NPCs_t : public Quest_t {
     public:
+        Bool_t Has_Base(Actor_t* actor);
+        Bool_t Has_Original(Actor_t* actor);
+        Bool_t Has_Clone(Actor_t* actor);
+
+        void Add_Base(Actor_t* actor);
+        void Remove_Base(Actor_t* actor);
+        void Try_Remove_Base(Actor_t* actor);
+
         Bool_t Register(Actor_t* actor);
         Bool_t Unregister(Actor_t* actor);
         Actor_t* Clone(Actor_t* actor);
@@ -176,9 +184,13 @@ namespace doticu_npcp { namespace Party {
 
     public:
         Variable_t* Variable(String_t variable_name);
+        Variable_t* Has_Display_Variable();
+        Variable_t* Display_Idx_Variable();
+        Variable_t* Display_Marker_Variable();
 
         Range_t<UInt64> Indices();
         Range_t<Member_t**> Aliases();
+        Reference_t* Display_Marker();
 
         Member_t* From_ID(Int_t unique_id);
         Member_t* From_Actor(Actor_t* actor);
@@ -190,6 +202,8 @@ namespace doticu_npcp { namespace Party {
         Bool_t Hasnt_Actor(Actor_t* actor);
         Bool_t Has_Head(Actor_t* actor);
         Bool_t Hasnt_Head(Actor_t* actor);
+        Bool_t Has_Display();
+        Bool_t Hasnt_Display();
 
         Int_t Max();
         Int_t Count_Filled();
@@ -229,6 +243,8 @@ namespace doticu_npcp { namespace Party {
         Vector_t<Member_t*> Unfilled();
         Vector_t<Member_t*> Loaded();
         Vector_t<Member_t*> Unloaded();
+        Vector_t<Member_t*> Displayed();
+        Vector_t<Member_t*> Undisplayed();
 
         Vector_t<Member_t*> Sort(Vector_t<Member_t*> members);
         Vector_t<Member_t*> Sort_Filled(Int_t begin = 0, Int_t end = -1);
@@ -242,15 +258,23 @@ namespace doticu_npcp { namespace Party {
                                    Int_t flags_1 = 0,
                                    Int_t flags_2 = 0);
 
+        Vector_t<Member_t*> Current_Unsorted_Filter();
+
         void Create_Member(Actor_t* actor, Bool_t do_clone);
 
-        // now we could queue up calls to doticu_npcp_member.
-        // but as much as possible, I want this behavior to be done
-        // here, and as little state as possible saved in scripts.
-        void Start_Display();
-        void Next_Display();
-        void Prev_Display();
-        void Stop_Display();
+        Int_t Display_Start();
+        Int_t Display_Stop();
+        Int_t Display_Next();
+        Int_t Display_Previous();
+        void Display(Vector_t<Member_t*> filter,
+                     Int_t begin,
+                     Int_t count,
+                     Reference_t* origin,
+                     float radius = 140.0,
+                     float degree = 0.0,
+                     float interval = 19.0);
+        void Undisplay();
+        
     };
 
     namespace Members { namespace Exports {
@@ -450,7 +474,10 @@ namespace doticu_npcp { namespace Party {
         Variable_t* Is_Thrall_Variable();
         Variable_t* Is_Paralyzed_Variable();
         Variable_t* Is_Mannequin_Variable();
+        Variable_t* Is_Display_Variable();
         Variable_t* Mannequin_Marker_Variable();
+        Variable_t* Display_Marker_Variable();
+        Variable_t* Undisplay_Marker_Variable();
         Variable_t* Style_Variable();
         Variable_t* Vitality_Variable();
 
@@ -459,6 +486,8 @@ namespace doticu_npcp { namespace Party {
 
         Reference_t* Pack();
         Reference_t* Settler_Marker();
+        Reference_t* Display_Marker();
+        Reference_t* Undisplay_Marker();
         Cell_t* Cell();
         Int_t Style();
         Int_t Vitality();
@@ -492,6 +521,8 @@ namespace doticu_npcp { namespace Party {
         Bool_t Isnt_Mannequin();
         Bool_t Is_Reanimated();
         Bool_t Isnt_Reanimated();
+        Bool_t Is_Display();
+        Bool_t Isnt_Display();
         Bool_t Is_Follower();
         Bool_t Isnt_Follower();
         Bool_t Is_Sneak();
@@ -526,14 +557,24 @@ namespace doticu_npcp { namespace Party {
         void Enthrall();
         void Unthrall();
         void Paralyze();
+        void Reparalyze();
         void Unparalyze();
         void Mannequinize(Reference_t* marker = nullptr);
+        void Remannequinize();
         void Unmannequinize();
+        void Display(Reference_t* origin, float radius = 140.0f, float degree = 0.0f);
+        void Redisplay();
+        void Undisplay();
         void Stylize(Int_t style);
         void Unstylize();
         void Vitalize(Int_t vitality);
         void Unvitalize();
         void Rename(String_t new_name);
+
+        void Summon(Reference_t* marker, float radius = 140.0f, float degree = 0.0f);
+        void Summon(float radius = 140.0f, float degree = 0.0f);
+        void Summon_Ahead(float radius = 140.0f);
+        void Summon_Behind(float radius = 140.0f);
 
         void Level();
 

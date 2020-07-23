@@ -39,6 +39,7 @@ namespace doticu_npcp {
     typedef TESObjectCELL   Cell_t;
     typedef TESObjectREFR   Reference_t;
     typedef TESObjectMISC   Misc_t;
+    typedef TESObjectSTAT   Static_t;
     typedef TESObjectWEAP   Weapon_t;
     typedef TESFaction      Faction_t;
 

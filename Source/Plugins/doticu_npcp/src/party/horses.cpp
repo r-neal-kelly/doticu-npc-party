@@ -28,10 +28,7 @@ namespace doticu_npcp { namespace Party {
 
     Horses_t* Horses_t::Self()
     {
-        static Horses_t* self = Utils::Assert(
-            static_cast<Horses_t*>(Game::NPCP_Form(Consts::QUEST_FOLLOWERS))
-        );
-        return self;
+        return static_cast<Horses_t*>(Consts::Followers_Quest());
     }
 
     Object_t* Horses_t::Object()

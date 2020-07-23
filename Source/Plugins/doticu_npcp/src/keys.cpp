@@ -431,8 +431,7 @@ namespace doticu_npcp { namespace Keys {
 
     Keys_t* Self()
     {
-        static Keys_t* keys;
-        return keys ? keys : keys = (Keys_t*)Game::NPCP_Form(Consts::QUEST_CONTROL);
+        return static_cast<Keys_t*>(Consts::Control_Quest());
     }
 
     Int_t Default_Value(Keys_t* keys, String_t key)

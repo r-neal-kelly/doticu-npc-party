@@ -30,10 +30,7 @@ namespace doticu_npcp { namespace Party {
 
     Followers_t* Followers_t::Self()
     {
-        static Followers_t* self = Utils::Assert(
-            static_cast<Followers_t*>(Game::NPCP_Form(Consts::QUEST_FOLLOWERS))
-        );
-        return self;
+        return static_cast<Followers_t*>(Consts::Followers_Quest());
     }
 
     Object_t* Followers_t::Object()

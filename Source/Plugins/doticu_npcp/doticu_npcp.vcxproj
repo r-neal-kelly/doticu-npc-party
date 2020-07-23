@@ -142,7 +142,9 @@
   <ItemGroup>
     <ClCompile Include="src\actor_base2.cpp" />
     <ClCompile Include="src\cell.cpp" />
+    <ClCompile Include="src\codes.cpp" />
     <ClCompile Include="src\consts.cpp" />
+    <ClCompile Include="src\filter.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\keys.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -178,7 +180,9 @@
   <ItemGroup>
     <ClInclude Include="include\actor_base2.h" />
     <ClInclude Include="include\cell.h" />
+    <ClInclude Include="include\codes.h" />
     <ClInclude Include="include\consts.h" />
+    <ClInclude Include="include\filter.h" />
     <ClInclude Include="include\form.h" />
     <ClInclude Include="include\actor2.h" />
     <ClInclude Include="include\forms.h" />

@@ -4,6 +4,21 @@
 
 Scriptname doticu_npcp_codes extends Quest
 
+; Native Methods
+int function SUCCESS() native global
+int function FAILURE() native global
+int function OUT_OF_BOUNDS() native global
+
+int function IS_DISPLAY() native global
+int function ISNT_DISPLAY() native global
+int function IS_MEMBER() native global
+int function ISNT_MEMBER() native global
+
+int function HAS_DISPLAY() native global
+int function HASNT_DISPLAY() native global
+int function HAS_MEMBER() native global
+int function HASNT_MEMBER() native global
+
 ; Public Constants
 int property SUCCESS                        =     0 autoReadOnly
 int property FAILURE                        =    -1 autoReadOnly

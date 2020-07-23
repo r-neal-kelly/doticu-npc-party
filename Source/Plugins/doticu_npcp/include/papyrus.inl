@@ -384,28 +384,28 @@ namespace doticu_npcp { namespace Papyrus {
     inline void Variable_t::None()
     {
         Destroy();
-        type.mangled = Type_t::NONE;
+        type = Type_t::NONE;
         data.ptr = nullptr;
     }
 
     inline void Variable_t::Bool(Bool_t value)
     {
         Destroy();
-        type.mangled = Type_t::BOOL;
+        type = Type_t::BOOL;
         data.b = value;
     }
 
     inline void Variable_t::Int(Int_t value)
     {
         Destroy();
-        type.mangled = Type_t::INT;
+        type = Type_t::INT;
         data.i = value;
     }
 
     inline void Variable_t::Float(Float_t value)
     {
         Destroy();
-        type.mangled = Type_t::FLOAT;
+        type = Type_t::FLOAT;
         data.f = value;
     }
 
@@ -414,31 +414,45 @@ namespace doticu_npcp { namespace Papyrus {
         static auto set = reinterpret_cast
             <String_t* (*)(String_t*, const char*)>
             (RelocationManager::s_baseAddr + Offsets::String::SET);
-        NPCP_ASSERT(value);
         Destroy();
-        type.mangled = Type_t::STRING;
-        set(&data.str, value);
+        type = Type_t::STRING;
+        set(&data.str, value ? value : "");
     }
 
     inline void Variable_t::Object(Object_t* value)
     {
-        NPCP_ASSERT(value);
-        Destroy();
-        type.mangled = reinterpret_cast<UInt64>(value->info);
-        data.obj = value;
+        if (value) {
+            Destroy();
+            Variable_t temp;
+            temp.type = value->info;
+            temp.data.obj = value;
+            Copy(&temp); // this may do stuff we don't
+        } else {
+            None();
+        }
     }
 
     inline void Variable_t::Array(Array_t* value)
     {
-        NPCP_ASSERT(value);
-        Destroy();
-        type.mangled = value->type.mangled;
-        data.arr = value;
+        if (value) {
+            Destroy();
+            Variable_t temp;
+            temp.type = value->type;
+            temp.data.arr = value;
+            Copy(&temp); // this may do stuff we don't
+        } else {
+            None();
+        }
     }
 
     template <typename Type>
     inline void Variable_t::Pack(Type* value)
     {
+        /////////////////////////////////////////////////////
+        PackHandle(reinterpret_cast<VMValue*>(this), value, Type::kTypeID, Registry());
+        return;
+        /////////////////////////////////////////////////////
+
         NPCP_ASSERT(value);
 
         Class_Info_t* class_info = Class_Info_t::Fetch(Type::kTypeID);
@@ -497,7 +511,7 @@ namespace doticu_npcp { namespace Papyrus {
     template <typename Type>
     inline void Variable_t::Pack(Vector_t<Type>& values)
     {
-        Class_Info_t* class_info = Class_Info_t::Fetch(Type::kTypeID);
+        Class_Info_t* class_info = Class_Info_t::Fetch(std::remove_pointer<Type>::type::kTypeID);
         NPCP_ASSERT(class_info);
 
         Type_t type(class_info);

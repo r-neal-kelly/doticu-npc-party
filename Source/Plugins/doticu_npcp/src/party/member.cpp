@@ -83,10 +83,40 @@ namespace doticu_npcp { namespace Party {
         );
     }
 
+    Variable_t* Member_t::Is_Display_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_is_display")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
     Variable_t* Member_t::Mannequin_Marker_Variable()
     {
         static const String_t variable_name = Utils::Assert(
             String_t("p_marker_mannequin")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
+    Variable_t* Member_t::Display_Marker_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_marker_display")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
+    Variable_t* Member_t::Undisplay_Marker_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_marker_undisplay")
         );
         return Utils::Assert(
             Variable(variable_name)
@@ -152,6 +182,16 @@ namespace doticu_npcp { namespace Party {
         Formlist_t* settler_markers = Consts::Settler_Markers_Formlist();
         NPCP_ASSERT(settler_markers->forms.count == Members_t::MAX);
         return static_cast<Reference_t*>(settler_markers->forms.entries[ID()]);
+    }
+
+    Reference_t* Member_t::Display_Marker()
+    {
+        return Display_Marker_Variable()->Reference();
+    }
+
+    Reference_t* Member_t::Undisplay_Marker()
+    {
+        return Undisplay_Marker_Variable()->Reference();
     }
 
     Cell_t* Member_t::Cell()
@@ -233,16 +273,6 @@ namespace doticu_npcp { namespace Party {
     {
         return Actor2::Get_Name(Actor());
     }
-
-    /*Bool_t Member_t::Is_Filled()
-    {
-        return Is_Created() && Actor() != nullptr;
-    }
-
-    Bool_t Member_t::Is_Unfilled()
-    {
-        return Is_Destroyed() || Actor() == nullptr;
-    }*/
 
     Bool_t Member_t::Is_Loaded()
     {
@@ -450,6 +480,16 @@ namespace doticu_npcp { namespace Party {
         } else {
             return false;
         }
+    }
+
+    Bool_t Member_t::Is_Display()
+    {
+        return Is_Display_Variable()->Bool();
+    }
+
+    Bool_t Member_t::Isnt_Display()
+    {
+        return !Is_Display_Variable()->Bool();
     }
 
     Bool_t Member_t::Is_Follower()
@@ -722,6 +762,11 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
+    void Member_t::Reparalyze()
+    {
+
+    }
+
     void Member_t::Unparalyze()
     {
         Actor_t* actor = Actor();
@@ -769,6 +814,11 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
+    void Member_t::Remannequinize()
+    {
+
+    }
+
     void Member_t::Unmannequinize()
     {
         Actor_t* actor = Actor();
@@ -783,6 +833,67 @@ namespace doticu_npcp { namespace Party {
                 Actor2::Enable_AI(actor);
                 Actor2::Unghostify(actor);
             }
+
+            Actor2::Evaluate_Package(actor);
+        }
+    }
+
+    void Member_t::Display(Reference_t* origin, float radius, float degree)
+    {
+        Actor_t* actor = Actor();
+        if (actor && Is_Filled() && Isnt_Display()) {
+            Is_Display_Variable()->Bool(true);
+
+            Reference_t* undisplay_marker = Utils::Assert(Object_Ref::Create_Marker_At(actor));
+            Undisplay_Marker_Variable()->Pack(undisplay_marker);
+
+            Object_Ref::Token(actor, Consts::Display_Token());
+            Object_Ref::Move_To_Orbit(actor, origin, radius, degree);
+
+            Reference_t* display_marker = Utils::Assert(Object_Ref::Create_Marker_At(actor));
+            Display_Marker_Variable()->Pack(display_marker);
+
+            // maybe only needs to be done in OnLoad()
+            Reparalyze();
+            Remannequinize();
+
+            Actor2::Evaluate_Package(actor);
+        }
+    }
+
+    void Member_t::Redisplay()
+    {
+        Actor_t* actor = Actor();
+        if (actor && Is_Filled() && Is_Display()) {
+            Object_Ref::Token(actor, Consts::Display_Token());
+
+            Object_Ref::Move_To_Orbit(actor, Display_Marker(), 0.0f, 180.0f);
+
+            Actor2::Evaluate_Package(actor);
+        }
+    }
+
+    void Member_t::Undisplay()
+    {
+        Actor_t* actor = Actor();
+        if (actor && Is_Filled() && Is_Display()) {
+            Is_Display_Variable()->Bool(false);
+
+            Object_Ref::Untoken(actor, Consts::Display_Token());
+
+            Object_Ref::Delete(Display_Marker_Variable()->Reference());
+            Display_Marker_Variable()->None();
+            
+            Reference_t* undisplay_marker = Undisplay_Marker_Variable()->Reference();
+            if (undisplay_marker) {
+                Object_Ref::Move_To_Orbit(actor, undisplay_marker, 0.0f, 180.0f);
+                Object_Ref::Delete(undisplay_marker);
+            }
+            Undisplay_Marker_Variable()->None();
+
+            // maybe only needs to be done in OnLoad()
+            Reparalyze();
+            Remannequinize();
 
             Actor2::Evaluate_Package(actor);
         }
@@ -910,6 +1021,29 @@ namespace doticu_npcp { namespace Party {
 
             Actor2::Evaluate_Package(actor);
         }
+    }
+
+    void Member_t::Summon(Reference_t* marker, float radius, float degree)
+    {
+        Actor_t* actor = Actor();
+        if (Is_Filled() && marker && actor) {
+            Actor2::Move_To_Orbit(actor, marker, radius, degree);
+        }
+    }
+
+    void Member_t::Summon(float radius, float degree)
+    {
+        Summon(*g_thePlayer, radius, degree);
+    }
+
+    void Member_t::Summon_Ahead(float radius)
+    {
+        Summon(radius, 0);
+    }
+
+    void Member_t::Summon_Behind(float radius)
+    {
+        Summon(radius, 180);
     }
 
     void Member_t::Level()

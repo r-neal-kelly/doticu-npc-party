@@ -9,6 +9,7 @@
 #include "actor_base2.h"
 #include "actor2.h"
 #include "cell.h"
+#include "codes.h"
 #include "consts.h"
 #include "form.h"
 #include "forms.h"
@@ -95,6 +96,7 @@ namespace doticu_npcp { namespace Main {
         REGISTER_NAMESPACE(Actor_Base2);
         REGISTER_NAMESPACE(Actor2);
         REGISTER_NAMESPACE(Cell);
+        REGISTER_NAMESPACE(CODES);
         REGISTER_NAMESPACE(Consts);
         REGISTER_NAMESPACE(Form);
         REGISTER_NAMESPACE(Forms);

@@ -57,8 +57,8 @@ endProperty
 
 ; Private Variables
 bool                    p_is_created        = false
-bool                    p_are_displayed     = false
-int                     p_idx_display       =    -1
+bool                    p_has_display       = false
+int                     p_idx_display       =     0
 ObjectReference         p_marker_display    =  none
 
 ; Native Methods
@@ -123,12 +123,17 @@ int         function Add_Filter_Flag_1(int flags_1, string flag_1)              
 int         function Add_Filter_Flag_2(int flags_2, string flag_2)                                  native
 Alias[]     function Filter(string[] strings, int[] ints, int flags_1, int flags_2)                 native
 
+int function Display_Start()    native
+int function Display_Stop()     native
+int function Display_Next()     native
+int function Display_Previous() native
+
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA)
     p_DATA = DATA
 
     p_is_created = true
-    p_are_displayed = false
+    p_has_display = false
     p_idx_display = -1
     p_marker_display = CONSTS.MARKER_STORAGE.PlaceAtMe(CONSTS.STATIC_MARKER_X)
 endFunction
@@ -136,7 +141,7 @@ endFunction
 function f_Destroy()
     p_marker_display = none
     p_idx_display = -1
-    p_are_displayed = false
+    p_has_display = false
     p_is_created = false
 endFunction
 
@@ -313,7 +318,7 @@ int function Get_Base_Count(Actor ref_actor)
 endFunction
 
 bool function Are_Displayed()
-    return p_are_displayed
+    return p_has_display
 endFunction
 
 doticu_npcp_member function Get_Member(Actor ref_actor)
@@ -350,59 +355,6 @@ endFunction
 
 bool function Should_Unclone_Member(doticu_npcp_member ref_member)
     return ref_member && ref_member.Is_Clone() && Should_Unclone_Actor(ref_member.Actor())
-endFunction
-
-; would also like a display that skips followers, has only followers, etc. for immobile, settler, etc.
-; this is getting into filter territory with aliases. need to work that out
-int function Display_Start(Actor ref_actor)
-    ; TODO
-endFunction
-
-int function Display_Stop()
-    ; TODO
-endFunction
-
-int function Display_Next()
-    ; TODO
-endFunction
-
-int function Display_Previous()
-    ; TODO
-endFunction
-
-function p_Display_Aliases(Alias[] arr_aliases, int distance, int angle_offset)
-    int idx_aliases = 0
-    int num_aliases = arr_aliases.length
-    int median = Math.Ceiling(num_aliases / 2)
-    int angle = angle_offset * median
-
-    if num_aliases % 2 == 0
-        while idx_aliases < num_aliases
-            (arr_aliases[idx_aliases] as doticu_npcp_member).Display(p_marker_display, distance, angle)
-            idx_aliases += 1
-            if idx_aliases == median
-                angle -= angle_offset * 2
-            else
-                angle -= angle_offset
-            endIf
-        endWhile
-    else
-        while idx_aliases < num_aliases
-            (arr_aliases[idx_aliases] as doticu_npcp_member).Display(p_marker_display, distance, angle)
-            idx_aliases += 1
-            angle -= angle_offset
-        endWhile
-    endIf
-endFunction
-
-function p_Undisplay_Aliases(Alias[] arr_aliases)
-    int idx_aliases = 0
-    int num_aliases = arr_aliases.length
-
-    while idx_aliases < num_aliases
-        (arr_aliases[idx_aliases] as doticu_npcp_member).Undisplay()
-        idx_aliases += 1
-    endWhile
 endFunction
 
 ; Events

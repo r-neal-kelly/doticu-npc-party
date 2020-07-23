@@ -78,49 +78,34 @@ p_Busy()
 p_Ready()
 endFunction
 
-function Members_Display_Start(Actor ref_actor)
-    Debug.Notification("Display is disabled until the next update.")
-    return
-
-    ;GotoState("p_STATE_BUSY")
-    ;PRIVATE.Members_Display_Start(ref_actor)
-    ;GotoState("")
+function Members_Display_Start()
+    GotoState("p_STATE_BUSY")
+    PRIVATE.Members_Display_Start()
+    GotoState("")
 endFunction
 
 function Members_Display_Stop()
-    Debug.Notification("Display is disabled until the next update.")
-    return
-
-    ;GotoState("p_STATE_BUSY")
-    ;PRIVATE.Members_Display_Stop()
-    ;GotoState("")
+    GotoState("p_STATE_BUSY")
+    PRIVATE.Members_Display_Stop()
+    GotoState("")
 endFunction
 
 function Members_Display_Next()
-    Debug.Notification("Display is disabled until the next update.")
-    return
-
-    ;GotoState("p_STATE_BUSY")
-    ;PRIVATE.Members_Display_Next()
-    ;GotoState("")
+    GotoState("p_STATE_BUSY")
+    PRIVATE.Members_Display_Next()
+    GotoState("")
 endFunction
 
 function Members_Display_Previous()
-    Debug.Notification("Display is disabled until the next update.")
-    return
-
-    ;GotoState("p_STATE_BUSY")
-    ;PRIVATE.Members_Display_Previous()
-    ;GotoState("")
+    GotoState("p_STATE_BUSY")
+    PRIVATE.Members_Display_Previous()
+    GotoState("")
 endFunction
 
-function Toggle_Members_Display(Actor ref_actor)
-    Debug.Notification("Display is disabled until the next update.")
-    return
-
-    ;GotoState("p_STATE_BUSY")
-    ;PRIVATE.Toggle_Members_Display(ref_actor)
-    ;GotoState("")
+function Toggle_Members_Display()
+    GotoState("p_STATE_BUSY")
+    PRIVATE.Toggle_Members_Display()
+    GotoState("")
 endFunction
 
 ; Followers
@@ -786,7 +771,7 @@ state p_STATE_BUSY
     function Cycle_Vitality(Actor ref_actor, bool auto_create)
     endFunction
 
-    function Members_Display_Start(Actor ref_actor)
+    function Members_Display_Start()
     endFunction
     function Members_Display_Stop()
     endFunction
@@ -795,7 +780,7 @@ state p_STATE_BUSY
     function Members_Display_Previous()
     endFunction
 
-    function Toggle_Members_Display(Actor ref_actor)
+    function Toggle_Members_Display()
     endFunction
     
     function Followers_Summon_All()
@@ -844,7 +829,7 @@ state f_STATE_UPDATING
     function Cycle_Vitality(Actor ref_actor, bool auto_create)
         LOGS.Notify_Is_Updating()
     endFunction
-    function Members_Display_Start(Actor ref_actor)
+    function Members_Display_Start()
         LOGS.Notify_Is_Updating()
     endFunction
     function Members_Display_Stop()
@@ -856,7 +841,7 @@ state f_STATE_UPDATING
     function Members_Display_Previous()
         LOGS.Notify_Is_Updating()
     endFunction
-    function Toggle_Members_Display(Actor ref_actor)
+    function Toggle_Members_Display()
         LOGS.Notify_Is_Updating()
     endFunction
     function Followers_Summon_All()

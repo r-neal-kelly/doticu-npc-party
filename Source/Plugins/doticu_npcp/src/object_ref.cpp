@@ -743,6 +743,41 @@ namespace doticu_npcp { namespace Object_Ref {
         return ptr.get();
     }
 
+    Reference_t* Create_Marker_At(Reference_t* ref)
+    {
+        if (ref) {
+            Reference_t* marker = Place_At_Me(ref, Consts::Marker_X_Static(), 1, true, false);
+            if (marker) {
+                marker->pos.x = ref->pos.x;
+                marker->pos.y = ref->pos.y;
+                marker->pos.z = ref->pos.z;
+                marker->rot.x = ref->rot.x;
+                marker->rot.y = ref->rot.y;
+                marker->rot.z = ref->rot.z;
+                marker->Update_3D_Position();
+                return marker;
+            } else {
+                return nullptr;
+            }
+        } else {
+            return nullptr;
+        }
+    }
+
+    void Delete(Reference_t* ref)
+    {
+        if (ref) {
+            ref->Set_Delete(true);
+        }
+    }
+
+    void Undelete(Reference_t* ref)
+    {
+        if (ref) {
+            ref->Set_Delete(false);
+        }
+    }
+
 }}
 
 namespace doticu_npcp { namespace Object_Ref { namespace Exports {

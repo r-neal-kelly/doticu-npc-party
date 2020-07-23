@@ -914,11 +914,8 @@ function Cycle_Vitality(Actor ref_actor, bool auto_create)
     endIf
 endFunction
 
-function Members_Display_Start(Actor ref_actor)
-    int code_return
-    string str_name = ACTORS.Name(ref_actor)
-
-    NOTES.Members_Display_Start(MEMBERS.Display_Start(ref_actor), str_name)
+function Members_Display_Start()
+    NOTES.Members_Display_Start(MEMBERS.Display_Start())
 endFunction
 
 function Members_Display_Stop()
@@ -933,14 +930,11 @@ function Members_Display_Previous()
     NOTES.Members_Display_Previous(MEMBERS.Display_Previous())
 endFunction
 
-function Toggle_Members_Display(Actor ref_actor)
-    if ref_actor && MEMBERS.Are_Displayed()
-        Members_Display_Stop()
-        Members_Display_Start(ref_actor)
-    elseIf MEMBERS.Are_Displayed()
+function Toggle_Members_Display()
+    if MEMBERS.Are_Displayed()
         Members_Display_Stop()
     else
-        Members_Display_Start(ref_actor)
+        Members_Display_Start()
     endIf
 endFunction
 
