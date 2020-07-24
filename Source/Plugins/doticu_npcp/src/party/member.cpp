@@ -8,6 +8,7 @@
 #include "object_ref.h"
 #include "party.h"
 #include "party.inl"
+#include "player.h"
 #include "utils.h"
 
 namespace doticu_npcp { namespace Party {
@@ -845,12 +846,19 @@ namespace doticu_npcp { namespace Party {
         if (actor && Is_Filled() && Isnt_Display()) {
             Is_Display_Variable()->Bool(true);
 
+            Object_Ref::Token(actor, Consts::Display_Token());
+
             Reference_t* undisplay_marker = Utils::Assert(Object_Ref::Create_Marker_At(actor));
             Undisplay_Marker_Variable()->Pack(undisplay_marker);
 
-            Object_Ref::Token(actor, Consts::Display_Token());
+            Cell_t* previous_cell = actor->parentCell;
+
             Actor2::Disable_Havok_Collision(actor);
             Actor2::Move_To_Orbit(actor, origin, radius, degree);
+
+            if (!Actor2::Is_AI_Enabled(actor) && previous_cell == origin->parentCell) {
+                Actor2::Fully_Update_3D_Model(actor);
+            }
 
             Reference_t* display_marker = Utils::Assert(Object_Ref::Create_Marker_At(actor));
             Display_Marker_Variable()->Pack(display_marker);
@@ -881,23 +889,35 @@ namespace doticu_npcp { namespace Party {
     {
         Actor_t* actor = Actor();
         if (actor && Is_Filled() && Is_Display()) {
-            Is_Display_Variable()->Bool(false);
+            Variable_t* display_marker_variable = Display_Marker_Variable();
+            Reference_t* display_marker = display_marker_variable->Reference();
 
-            Object_Ref::Untoken(actor, Consts::Display_Token());
-            Actor2::Enable_Havok_Collision(actor);
+            Variable_t* undisplay_marker_variable = Undisplay_Marker_Variable();
+            Reference_t* undisplay_marker = undisplay_marker_variable->Reference();
 
-            Object_Ref::Delete(Display_Marker_Variable()->Reference());
-            Display_Marker_Variable()->None();
-            
-            Reference_t* undisplay_marker = Undisplay_Marker_Variable()->Reference();
+            Cell_t* previous_cell = actor->parentCell;
+
             if (undisplay_marker) {
+                Actor2::Enable_Havok_Collision(actor);
                 Actor2::Move_To_Orbit(actor, undisplay_marker, 0.0f, 180.0f);
-                Object_Ref::Delete(undisplay_marker);
             }
-            Undisplay_Marker_Variable()->None();
+            
+            if (!Actor2::Is_AI_Enabled(actor) && previous_cell == actor->parentCell) {
+                Actor2::Fully_Update_3D_Model(actor);
+            }
 
             Reparalyze();
             Remannequinize();
+
+            Object_Ref::Delete(undisplay_marker);
+            undisplay_marker_variable->None();
+
+            Object_Ref::Delete(display_marker);
+            display_marker_variable->None();
+
+            Object_Ref::Untoken(actor, Consts::Display_Token());
+
+            Is_Display_Variable()->Bool(false);
 
             Actor2::Evaluate_Package(actor);
         }
