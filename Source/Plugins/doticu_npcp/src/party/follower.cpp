@@ -272,6 +272,18 @@ namespace doticu_npcp { namespace Party {
         return member && member->Isnt_Mannequin();
     }
 
+    Bool_t Follower_t::Is_Display()
+    {
+        Member_t* member = Member();
+        return member && member->Is_Display();
+    }
+
+    Bool_t Follower_t::Isnt_Display()
+    {
+        Member_t* member = Member();
+        return member && member->Isnt_Display();
+    }
+
     Bool_t Follower_t::Is_Reanimated()
     {
         Member_t* member = Member();
@@ -404,26 +416,32 @@ namespace doticu_npcp { namespace Party {
     {
         Object_Ref::Untoken(Actor(), token);
     }
+    
+    void Follower_t::Summon(Reference_t* origin, float radius, float degree)
+    {
+        if (origin && Is_Filled()) {
+            Actor_t* follower_actor = Actor();
+            if (follower_actor) {
+                if (Object_Ref::Is_In_Exterior_Cell(origin) && Is_Saddler()) {
+                    Horse_t* follower_horse = Horse();
+                    Actor_t* follower_horse_actor = follower_horse ? follower_horse->Actor() : nullptr;
+                    if (follower_horse_actor) {
+                        Actor2::Move_To_Orbit(follower_horse_actor, origin, radius * 4, degree + 12);
+                        Actor2::Move_To_Orbit(follower_actor, origin, radius * 3.5, degree);
+                        Saddle();
+                    } else {
+                        Actor2::Move_To_Orbit(follower_actor, origin, radius, degree);
+                    }
+                } else {
+                    Actor2::Move_To_Orbit(follower_actor, origin, radius, degree);
+                }
+            }
+        }
+    }
 
     void Follower_t::Summon(float radius, float degree)
     {
-        Actor_t* player_actor = *g_thePlayer;
-        Actor_t* follower_actor = Actor();
-        if (player_actor && follower_actor && Is_Created()) {
-            if (Player::Is_In_Exterior_Cell() && Is_Saddler()) {
-                Horse_t* follower_horse = Horse();
-                Actor_t* follower_horse_actor = follower_horse ? follower_horse->Actor() : nullptr;
-                if (follower_horse_actor) {
-                    Actor2::Move_To_Orbit(follower_horse_actor, player_actor, radius * 4, degree + 12);
-                    Actor2::Move_To_Orbit(follower_actor, player_actor, radius * 3.5, degree);
-                    Saddle();
-                } else {
-                    Actor2::Move_To_Orbit(follower_actor, player_actor, radius, degree);
-                }
-            } else {
-                Actor2::Move_To_Orbit(follower_actor, player_actor, radius, degree);
-            }
-        }
+        Summon(Player::Actor(), radius, degree);
     }
 
     void Follower_t::Summon_Ahead(float radius)
@@ -502,7 +520,8 @@ namespace doticu_npcp { namespace Party {
 
     void Follower_t::Catch_Up()
     {
-        if (Is_Filled() && Is_Mobile() && Isnt_Paralyzed() && Isnt_Mannequin()) {
+        // for the last three we are asking if they have ai essentially
+        if (Is_Filled() && Is_Mobile() && Isnt_Paralyzed() && Isnt_Mannequin() && Isnt_Display()) {
             if (Player::Is_In_Interior_Cell() || Isnt_Saddler()) {
                 if (Isnt_Near_Player()) {
                     Summon_Behind();

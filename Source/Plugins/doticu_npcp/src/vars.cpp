@@ -78,10 +78,7 @@ namespace doticu_npcp { namespace Vars {
         static const String_t variable_name = Utils::Assert(
             String_t("p_num_display")
         );
-        static Variable_t* variable = Utils::Assert(
-            Variable(variable_name)
-        );
-        return variable->Int();
+        return Utils::Assert(Variable(variable_name))->Int();
     }
 
     void Log_Variables(Vars_t* self)

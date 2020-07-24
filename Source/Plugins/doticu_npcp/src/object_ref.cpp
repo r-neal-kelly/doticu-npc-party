@@ -542,13 +542,6 @@ namespace doticu_npcp { namespace Object_Ref {
         return distance > 0 && distance <= max_radius;
     }
 
-    /*Reference_t* From_Handle(Reference_Handle_t handle)
-    {
-        NiPointer<Reference_t> reference = nullptr;
-        LookupREFRByHandle(handle, reference);
-        return static_cast<Reference_t*>(reference);
-    }*/
-
     bool Has_Token(Reference_t* ref, Form_t* token, Int_t count)
     {
         if (ref && token && count > 0) {
@@ -775,6 +768,24 @@ namespace doticu_npcp { namespace Object_Ref {
     {
         if (ref) {
             ref->Set_Delete(false);
+        }
+    }
+
+    bool Is_In_Interior_Cell(Reference_t* ref)
+    {
+        if (ref) {
+            return ref->parentCell && Cell::Is_Interior(ref->parentCell);
+        } else {
+            return false;
+        }
+    }
+
+    bool Is_In_Exterior_Cell(Reference_t* ref)
+    {
+        if (ref) {
+            return ref->parentCell && Cell::Is_Exterior(ref->parentCell);
+        } else {
+            return false;
         }
     }
 

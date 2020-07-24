@@ -177,6 +177,10 @@ namespace doticu_npcp { namespace Party {
         static constexpr size_t BEGIN = 0;
         static constexpr size_t END = BEGIN + MAX;
 
+        static constexpr float DEFAULT_DISPLAY_RADIUS = 140.0f;
+        static constexpr float DEFAULT_DISPLAY_DEGREE = 0.0f;
+        static constexpr float DEFAULT_DISPLAY_INTERVAL = 24.0f;
+
         static String_t Class_Name();
         static Class_Info_t* Class_Info();
         static Members_t* Self();
@@ -270,11 +274,10 @@ namespace doticu_npcp { namespace Party {
                      Int_t begin,
                      Int_t count,
                      Reference_t* origin,
-                     float radius = 140.0,
-                     float degree = 0.0,
-                     float interval = 19.0);
+                     float radius = DEFAULT_DISPLAY_RADIUS,
+                     float degree = DEFAULT_DISPLAY_DEGREE,
+                     float interval = DEFAULT_DISPLAY_INTERVAL);
         void Undisplay();
-        
     };
 
     namespace Members { namespace Exports {
@@ -519,10 +522,10 @@ namespace doticu_npcp { namespace Party {
         Bool_t Isnt_Paralyzed();
         Bool_t Is_Mannequin();
         Bool_t Isnt_Mannequin();
-        Bool_t Is_Reanimated();
-        Bool_t Isnt_Reanimated();
         Bool_t Is_Display();
         Bool_t Isnt_Display();
+        Bool_t Is_Reanimated();
+        Bool_t Isnt_Reanimated();
         Bool_t Is_Follower();
         Bool_t Isnt_Follower();
         Bool_t Is_Sneak();
@@ -571,7 +574,7 @@ namespace doticu_npcp { namespace Party {
         void Unvitalize();
         void Rename(String_t new_name);
 
-        void Summon(Reference_t* marker, float radius = 140.0f, float degree = 0.0f);
+        void Summon(Reference_t* origin, float radius = 140.0f, float degree = 0.0f);
         void Summon(float radius = 140.0f, float degree = 0.0f);
         void Summon_Ahead(float radius = 140.0f);
         void Summon_Behind(float radius = 140.0f);
@@ -634,6 +637,8 @@ namespace doticu_npcp { namespace Party {
         Bool_t Isnt_Paralyzed();
         Bool_t Is_Mannequin();
         Bool_t Isnt_Mannequin();
+        Bool_t Is_Display();
+        Bool_t Isnt_Display();
         Bool_t Is_Reanimated();
         Bool_t Isnt_Reanimated();
         Bool_t Is_Follower();
@@ -653,7 +658,8 @@ namespace doticu_npcp { namespace Party {
         void Token(Misc_t* token, Int_t count = 1);
         void Untoken(Misc_t* token);
 
-        void Summon(float radius = 140.0f, float degree = 0.0);
+        void Summon(Reference_t* origin, float radius = 140.0f, float degree = 0.0f);
+        void Summon(float radius = 140.0f, float degree = 0.0f);
         void Summon_Ahead(float radius = 140.0f);
         void Summon_Behind(float radius = 140.0f);
 

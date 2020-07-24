@@ -175,6 +175,11 @@ namespace doticu_npcp {
 
     class Actor_t2 {
     public:
+        enum Form_Flags : UInt32 {
+            HASNT_HAVOK_COLLISION = 4,
+            IS_DISABLED = 27,
+        };
+
         enum Flags_1 : UInt32 {
             PROCESS_AI              = 1,
             IS_DEAD                 = 11,
@@ -183,7 +188,7 @@ namespace doticu_npcp {
             IS_PARALYZED            = 31,
         };
 
-        enum Flags_2 {
+        enum Flags_2 : UInt32 {
             IS_A_MOUNT              = 1,
             IS_MOUNT_OBSTRUCTED     = 2,
             IS_MOUNTING_ON_OFF      = 3,
@@ -197,6 +202,17 @@ namespace doticu_npcp {
             IS_IMMOBILE             = 27,
             FORCE_ANIMATION_UPDATES = 29,
             IS_UNDERWATER           = 31,
+        };
+
+        enum Update_3D_Flags : UInt8 {
+            MODEL_3D                = 0,
+            SKIN_3D                 = 1,
+            HEAD_3D                 = 2,
+            FACE_3D                 = 3,
+            SCALE_3D                = 4,
+            SKELETON_3D             = 5,
+            UNKNOWN_6               = 6,
+            UNKNOWN_7               = 7,
         };
     };
 

@@ -500,7 +500,7 @@ namespace doticu_npcp { namespace Party {
                 }
                 Display_Idx_Variable()->Int(idx);
 
-                Display(filter, idx, display_count, Display_Marker());
+                Display(filter, idx, slice_count, Display_Marker());
 
                 return CODES::SUCCESS;
             } else {
@@ -522,7 +522,7 @@ namespace doticu_npcp { namespace Party {
                 Int_t slice_count = filter_count < display_count ? filter_count : display_count;
                 Int_t idx = Display_Idx_Variable()->Int();
                 if (idx < 0 || idx >= filter_count) {
-                    idx = filter_count;
+                    idx = filter_count - 1; // we could make this zero also
                 } else {
                     idx -= slice_count;
                 }
@@ -531,7 +531,7 @@ namespace doticu_npcp { namespace Party {
                 }
                 Display_Idx_Variable()->Int(idx);
 
-                Display(filter, idx, display_count, Display_Marker());
+                Display(filter, idx, slice_count, Display_Marker());
 
                 return CODES::SUCCESS;
             } else {
@@ -552,13 +552,12 @@ namespace doticu_npcp { namespace Party {
                             float interval)
     {
         if (Has_Display()) {
-
             Undisplay();
 
             Int_t filter_count = filter.size();
             NPCP_ASSERT(filter_count > 0);
             NPCP_ASSERT(begin > -1 && begin < filter_count);
-            NPCP_ASSERT(count <= filter_count);
+            NPCP_ASSERT(count > 0 && count <= filter_count);
             NPCP_ASSERT(origin != nullptr);
 
             Vector_t<Member_t*> displays;
@@ -571,16 +570,15 @@ namespace doticu_npcp { namespace Party {
                 displays.push_back(filter[idx]);
             }
 
-            // we might have this backwards, but we can just switch - to +.
             float first_degree = degree;
             if (count % 2 == 0) {
-                first_degree -= interval / 2;
-                first_degree -= interval * (count / 2);
+                first_degree += interval / 2;
+                first_degree += interval * ((count / 2) - 1);
             } else {
-                first_degree -= interval * (count / 2);
+                first_degree += interval * (count / 2);
             }
 
-            for (size_t idx = 0, size = displays.size(); idx < size; idx += 1, first_degree += interval) {
+            for (size_t idx = 0, size = displays.size(); idx < size; idx += 1, first_degree -= interval) {
                 displays[idx]->Display(origin, radius, first_degree);
             }
         }

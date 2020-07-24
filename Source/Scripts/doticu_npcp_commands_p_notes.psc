@@ -640,6 +640,8 @@ function Move(int code_return, string str_name)
         LOGS.Create_Note("Can only move actors.")
     elseIf code_return == CODES.IS_MANNEQUIN
         LOGS.Create_Note("Can't move mannequins.")
+    elseIf code_return == CODES.IS_DISPLAY
+        LOGS.Create_Note("Can't move displays.")
     endIf
 endFunction
 
@@ -679,7 +681,7 @@ endFunction
 
 function Members_Display_Previous(int code_return)
     if code_return == doticu_npcp_codes.SUCCESS()
-        LOGS.Create_Note("Displying previous members.")
+        LOGS.Create_Note("Displaying previous members.")
     elseIf code_return == doticu_npcp_codes.HASNT_DISPLAY()
         LOGS.Create_Note("You need to start up a display first.")
     elseIf code_return == doticu_npcp_codes.HASNT_MEMBER()

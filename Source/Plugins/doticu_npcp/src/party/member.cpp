@@ -458,6 +458,16 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
+    Bool_t Member_t::Is_Display()
+    {
+        return Is_Display_Variable()->Bool();
+    }
+
+    Bool_t Member_t::Isnt_Display()
+    {
+        return !Is_Display_Variable()->Bool();
+    }
+
     Bool_t Member_t::Is_Reanimated()
     {
         static const String_t variable_name = String_t("p_is_reanimated");
@@ -480,16 +490,6 @@ namespace doticu_npcp { namespace Party {
         } else {
             return false;
         }
-    }
-
-    Bool_t Member_t::Is_Display()
-    {
-        return Is_Display_Variable()->Bool();
-    }
-
-    Bool_t Member_t::Isnt_Display()
-    {
-        return !Is_Display_Variable()->Bool();
     }
 
     Bool_t Member_t::Is_Follower()
@@ -800,7 +800,8 @@ namespace doticu_npcp { namespace Party {
             Actor2::Disable_AI(actor);
             Actor2::Ghostify(actor);
 
-            Object_Ref::Move_To_Orbit(actor, marker, 0.0f, 180.0f);
+            Actor2::Move_To_Orbit(actor, marker, 0.0f, 180.0f);
+
             actor->pos.x = marker->pos.x;
             actor->pos.y = marker->pos.y;
             actor->pos.z = marker->pos.z;
@@ -808,7 +809,7 @@ namespace doticu_npcp { namespace Party {
             actor->Update_Actor_3D_Position();
 
             Actor2::Fully_Update_3D_Model(actor);
-            actor->Resurrect(false, true); // this feels good to have here
+            actor->Resurrect(false, true);
 
             Actor2::Evaluate_Package(actor);
         }
@@ -848,6 +849,7 @@ namespace doticu_npcp { namespace Party {
             Undisplay_Marker_Variable()->Pack(undisplay_marker);
 
             Object_Ref::Token(actor, Consts::Display_Token());
+            Actor2::Disable_Havok_Collision(actor);
             Actor2::Move_To_Orbit(actor, origin, radius, degree);
 
             Reference_t* display_marker = Utils::Assert(Object_Ref::Create_Marker_At(actor));
@@ -865,8 +867,11 @@ namespace doticu_npcp { namespace Party {
         Actor_t* actor = Actor();
         if (actor && Is_Filled() && Is_Display()) {
             Object_Ref::Token(actor, Consts::Display_Token());
-
+            Actor2::Disable_Havok_Collision(actor);
             Actor2::Move_To_Orbit(actor, Display_Marker(), 0.0f, 180.0f);
+
+            Reparalyze(); // not sure about these two
+            Remannequinize();
 
             Actor2::Evaluate_Package(actor);
         }
@@ -879,6 +884,7 @@ namespace doticu_npcp { namespace Party {
             Is_Display_Variable()->Bool(false);
 
             Object_Ref::Untoken(actor, Consts::Display_Token());
+            Actor2::Enable_Havok_Collision(actor);
 
             Object_Ref::Delete(Display_Marker_Variable()->Reference());
             Display_Marker_Variable()->None();
@@ -1021,11 +1027,11 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
-    void Member_t::Summon(Reference_t* marker, float radius, float degree)
+    void Member_t::Summon(Reference_t* origin, float radius, float degree)
     {
         Actor_t* actor = Actor();
-        if (Is_Filled() && marker && actor) {
-            Actor2::Move_To_Orbit(actor, marker, radius, degree);
+        if (Is_Filled() && origin && actor) {
+            Actor2::Move_To_Orbit(actor, origin, radius, degree);
         }
     }
 

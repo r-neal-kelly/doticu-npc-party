@@ -33,7 +33,7 @@ namespace doticu_npcp { namespace Actor2 {
     bool Is_Generic(Actor_t* actor);
     bool Is_Aliased_In_Quest(Actor *actor, TESQuest *quest);
 
-    void Move_To_Orbit(Actor *obj, TESObjectREFR *target, float radius, float angle_degree);
+    void Move_To_Orbit(Actor* actor, Reference_t* origin, float radius, float degree);
 
     Actor_Value_Owner_t* Actor_Value_Owner(Actor_t* actor);
     float Get_Actor_Value(Actor *actor, const char *name);
@@ -53,6 +53,7 @@ namespace doticu_npcp { namespace Actor2 {
     void Evaluate_Package(Actor_t* actor, bool unk_01 = false, bool unk_02 = false);
     void Update_3D_Model(Actor_t* actor);
     void Fully_Update_3D_Model(Actor_t* actor);
+    void Queue_Ni_Node_Update(Actor_t* actor, bool do_update_weight = false);
     
     XFactions_t* XFactions(Actor_t* actor, bool do_create = false);
     BFaction_Ranks_t* BFaction_Ranks(Actor_t* actor);
@@ -81,6 +82,9 @@ namespace doticu_npcp { namespace Actor2 {
     Bool_t Is_Ghost(Actor_t* actor);
     void Ghostify(Actor_t* actor);
     void Unghostify(Actor_t* actor);
+
+    void Enable_Havok_Collision(Actor_t* actor);
+    void Disable_Havok_Collision(Actor_t* actor);
 
 }}
 

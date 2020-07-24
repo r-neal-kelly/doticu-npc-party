@@ -24,6 +24,18 @@ namespace doticu_npcp { namespace Papyrus {
         static Variable_t* Vitality_Variable();
         static Variable_t* Outfit2_Variable();
         static Variable_t* Rating_Variable();
+        static Variable_t* Alive_Dead_Variable();
+        static Variable_t* Original_Clone_Variable();
+        static Variable_t* Unique_Generic_Variable();
+        static Variable_t* Mobile_Immobile_Variable();
+        static Variable_t* Settler_Variable();
+        static Variable_t* Thrall_Variable();
+        static Variable_t* Paralyzed_Variable();
+        static Variable_t* Mannequin_Variable();
+        static Variable_t* Reanimated_Variable();
+        static Variable_t* Follower_Variable();
+        static Variable_t* Sneak_Variable();
+        static Variable_t* Saddler_Variable();
         static Variable_t* Flags_1_Variable();
 
         static Vector_t<String_t> Strings();

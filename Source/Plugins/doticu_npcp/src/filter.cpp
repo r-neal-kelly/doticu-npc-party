@@ -4,6 +4,8 @@
 
 #include "consts.h"
 #include "filter.h"
+#include "party.h"
+#include "utils.h"
 
 namespace doticu_npcp { namespace Papyrus {
 
@@ -112,6 +114,126 @@ namespace doticu_npcp { namespace Papyrus {
         );
     }
 
+    Variable_t* Filter_t::Alive_Dead_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_int_alive_dead")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
+    Variable_t* Filter_t::Original_Clone_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_int_original_clone")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
+    Variable_t* Filter_t::Unique_Generic_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_int_unique_generic")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
+    Variable_t* Filter_t::Mobile_Immobile_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_int_mobile_immobile")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
+    Variable_t* Filter_t::Settler_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_int_settler")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
+    Variable_t* Filter_t::Thrall_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_int_thrall")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
+    Variable_t* Filter_t::Paralyzed_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_int_paralyzed")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
+    Variable_t* Filter_t::Mannequin_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_int_mannequin")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
+    Variable_t* Filter_t::Reanimated_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_int_reanimated")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
+    Variable_t* Filter_t::Follower_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_int_follower")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
+    Variable_t* Filter_t::Sneak_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_int_sneak")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
+    Variable_t* Filter_t::Saddler_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_int_saddler")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
     Variable_t* Filter_t::Flags_1_Variable()
     {
         static const String_t variable_name = Utils::Assert(
@@ -145,7 +267,95 @@ namespace doticu_npcp { namespace Papyrus {
 
     Int_t Filter_t::Flags_1()
     {
-        return Flags_1_Variable()->Int();
+        Int_t flags_1 = 0;
+
+        Int_t alive_dead = Alive_Dead_Variable()->Int();
+        if (alive_dead > 0) {
+            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_ALIVE);
+        } else if (alive_dead < 0) {
+            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_DEAD);
+        }
+
+        Int_t original_clone = Original_Clone_Variable()->Int();
+        if (original_clone > 0) {
+            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_ORIGINAL);
+        } else if (original_clone < 0) {
+            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_CLONE);
+        }
+
+        Int_t unique_generic = Unique_Generic_Variable()->Int();
+        if (unique_generic > 0) {
+            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_UNIQUE);
+        } else if (unique_generic < 0) {
+            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_GENERIC);
+        }
+
+        Int_t mobile_immobile = Mobile_Immobile_Variable()->Int();
+        if (mobile_immobile > 0) {
+            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_MOBILE);
+        } else if (mobile_immobile < 0) {
+            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_IMMOBILE);
+        }
+
+        Int_t settler = Settler_Variable()->Int();
+        if (settler > 0) {
+            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_SETTLER);
+        } else if (settler < 0) {
+            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::ISNT_SETTLER);
+        }
+
+        Int_t thrall = Thrall_Variable()->Int();
+        if (thrall > 0) {
+            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_THRALL);
+        } else if (thrall < 0) {
+            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::ISNT_THRALL);
+        }
+
+        Int_t paralyzed = Paralyzed_Variable()->Int();
+        if (paralyzed > 0) {
+            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_PARALYZED);
+        } else if (paralyzed < 0) {
+            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::ISNT_PARALYZED);
+        }
+
+        Int_t mannequin = Mannequin_Variable()->Int();
+        if (mannequin > 0) {
+            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_MANNEQUIN);
+        } else if (mannequin < 0) {
+            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::ISNT_MANNEQUIN);
+        }
+
+        Int_t reanimated = Reanimated_Variable()->Int();
+        if (reanimated > 0) {
+            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_REANIMATED);
+        } else if (reanimated < 0) {
+            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::ISNT_REANIMATED);
+        }
+
+        Int_t follower = Follower_Variable()->Int();
+        if (follower > 0) {
+            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_FOLLOWER);
+        } else if (follower < 0) {
+            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::ISNT_FOLLOWER);
+        }
+
+        Int_t sneak = Sneak_Variable()->Int();
+        if (sneak > 0) {
+            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_SNEAK);
+        } else if (sneak < 0) {
+            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::ISNT_SNEAK);
+        }
+
+        Int_t saddler = Saddler_Variable()->Int();
+        if (saddler > 0) {
+            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_SADDLER);
+        } else if (saddler < 0) {
+            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::ISNT_SADDLER);
+        }
+
+        Flags_1_Variable()->Int(flags_1);
+
+        return flags_1;
     }
 
     Int_t Filter_t::Flags_2()

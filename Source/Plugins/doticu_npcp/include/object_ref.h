@@ -42,8 +42,6 @@ namespace doticu_npcp { namespace Object_Ref {
     float Get_Distance(TESObjectREFR *obj, TESObjectREFR *target);
     bool Is_Near_Player(TESObjectREFR *obj, float max_radius = 4096);
 
-    //Reference_t* From_Handle(Reference_Handle_t handle);
-
     bool Has_Token(Reference_t* ref, Form_t* token, Int_t count = 1);
     void Token(Reference_t* ref, Form_t* token, Int_t count = 1);
     void Untoken(Reference_t* ref, Form_t* token);
@@ -73,6 +71,9 @@ namespace doticu_npcp { namespace Object_Ref {
 
     void Delete(Reference_t* ref);
     void Undelete(Reference_t* ref);
+
+    bool Is_In_Interior_Cell(Reference_t* ref);
+    bool Is_In_Exterior_Cell(Reference_t* ref);
 
 }}
 

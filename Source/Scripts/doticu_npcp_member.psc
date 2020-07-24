@@ -119,6 +119,8 @@ int function Style() native
 int function Vitality() native
 string function Name() native
 
+;bool function Is_Alive() native; we will replace all the papyrus versions with these
+
 bool function Has_Token(MiscObject token, int count = 1) native
 function Token(MiscObject token, int count = 1) native
 function Untoken(MiscObject token) native
@@ -367,7 +369,7 @@ p_Lock()
     p_ref_actor.BlockActivation(true)
 
     ; this allows the mannequin to be called on display
-    if !p_marker_display
+    if !p_is_display
         p_ref_actor.MoveTo(p_marker_mannequin)
     endIf
 
@@ -1588,6 +1590,14 @@ endFunction
 
 bool function Isnt_Mannequin()
     return Exists() && !p_is_mannequin
+endFunction
+
+bool function Is_Display()
+    return Exists() && p_is_display
+endFunction
+
+bool function Isnt_Display()
+    return Exists() && !p_is_display
 endFunction
 
 bool function Is_Reanimated()

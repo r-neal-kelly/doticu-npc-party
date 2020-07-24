@@ -44,17 +44,6 @@ endProperty
 ; Private Constants
 doticu_npcp_data        p_DATA              =  none
 
-int property p_DISPLAY_DISTANCE
-    int function Get()
-        return 120
-    endFunction
-endProperty
-int property p_DISPLAY_SPREAD
-    int function Get()
-        return 24
-    endFunction
-endProperty
-
 ; Private Variables
 bool                    p_is_created        = false
 bool                    p_has_display       = false

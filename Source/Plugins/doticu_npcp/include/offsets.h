@@ -15,6 +15,7 @@ namespace doticu_npcp { namespace Offsets {
     namespace Actor {
 
         constexpr uintptr_t EVALUATE_PACKAGE            = 0x005DB310; // 36407
+        constexpr uintptr_t QUEUE_NI_NODE_UPDATE        = 0x00693110; // 39181
         constexpr uintptr_t UPDATE_3D_MODEL             = 0x00650DF0; // 38404
 
     }

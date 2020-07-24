@@ -4,43 +4,37 @@
 
 #include "actor2.h"
 #include "cell.h"
+#include "object_ref.h"
 #include "player.h"
 #include "party.h"
+#include "utils.h"
 
 namespace doticu_npcp { namespace Player {
 
+    Actor_t* Actor()
+    {
+        static Actor_t* actor = Utils::Assert(static_cast<Actor_t*>(*g_thePlayer));
+        return actor;
+    }
+
     bool Is_Party_In_Combat(Player_t *player) {
-        Actor_t* player_actor = *g_thePlayer;
         Party::Followers_t* followers = Party::Followers_t::Self();
-        return (player_actor && player_actor->IsInCombat()) || (followers && followers->Are_In_Combat());
+        return (Actor()->IsInCombat()) || (followers->Are_In_Combat());
     }
 
     bool Is_In_Interior_Cell()
     {
-        Actor_t* player_actor = *g_thePlayer;
-        if (player_actor) {
-            TESObjectCELL* player_cell = player_actor->parentCell;
-            return player_cell && Cell::Is_Interior(player_cell);
-        } else {
-            return false;
-        }
+        return Object_Ref::Is_In_Interior_Cell(Actor());
     }
 
     bool Is_In_Exterior_Cell()
     {
-        Actor_t* player_actor = *g_thePlayer;
-        if (player_actor) {
-            TESObjectCELL* player_cell = player_actor->parentCell;
-            return player_cell && Cell::Is_Exterior(player_cell);
-        } else {
-            return false;
-        }
+        return Object_Ref::Is_In_Exterior_Cell(Actor());
     }
 
     bool Is_On_Mount()
     {
-        Actor_t* player_actor = *g_thePlayer;
-        return player_actor && Actor2::Is_On_Mount(player_actor);
+        return Actor2::Is_On_Mount(Actor());
     }
 
 }}

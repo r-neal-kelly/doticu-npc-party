@@ -581,24 +581,17 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
-    void Move_To_Orbit(Actor *actor, TESObjectREFR *target, float radius, float angle_degree) {
-        if (!actor || !target) {
-            return;
-        }
+    void Move_To_Orbit(Actor* actor, Reference_t* origin, float radius, float degree)
+    {
+        if (actor && origin) {
+            //actor->flags2 = Utils::Bit_On(actor->flags2, Actor_t2::Flags_2::IS_IMMOBILE);
 
-        bool was_ai_disabled = false;
-        if (!Is_AI_Enabled(actor)) {
-            was_ai_disabled = true;
-            Enable_AI(actor);
-        }
+            Object_Ref::Move_To_Orbit(actor, origin, radius, degree);
 
-        Object_Ref::Move_To_Orbit(actor, target, radius, angle_degree);
+            //actor->flags2 = Utils::Bit_Off(actor->flags2, Actor_t2::Flags_2::IS_IMMOBILE);
 
-        CALL_MEMBER_FN(actor, QueueNiNodeUpdate)(false);
-        //Fully_Update_3D_Model(actor);
-
-        if (was_ai_disabled) {
-            Disable_AI(actor);
+            // we may want to move this behavior up to member/follower, etc.
+            Update_3D_Model(actor);
         }
     }
 
@@ -804,8 +797,25 @@ namespace doticu_npcp { namespace Actor2 {
     void Fully_Update_3D_Model(Actor_t* actor)
     {
         if (actor && actor->processManager && actor->processManager->middleProcess) {
-            *((u8*)actor->processManager->middleProcess + 0x311) = 255;
+            u8* flags_3d = ((u8*)actor->processManager->middleProcess + 0x311);
+            *flags_3d = 0 |
+                1 << Actor_t2::Update_3D_Flags::MODEL_3D |
+                1 << Actor_t2::Update_3D_Flags::SKIN_3D |
+                1 << Actor_t2::Update_3D_Flags::HEAD_3D |
+                1 << Actor_t2::Update_3D_Flags::FACE_3D |
+                1 << Actor_t2::Update_3D_Flags::SCALE_3D |
+                1 << Actor_t2::Update_3D_Flags::SKELETON_3D;
             Update_3D_Model(actor);
+        }
+    }
+
+    void Queue_Ni_Node_Update(Actor_t* actor, bool do_update_weight)
+    {
+        static auto queue_ni_node_update = reinterpret_cast
+            <void (*)(Actor_t*, bool)>
+            (RelocationManager::s_baseAddr + Offsets::Actor::QUEUE_NI_NODE_UPDATE);
+        if (actor) {
+            queue_ni_node_update(actor, do_update_weight);
         }
     }
 
@@ -1229,6 +1239,20 @@ namespace doticu_npcp { namespace Actor2 {
                     actor->extraData.Add(kExtraData_Ghost, xghost);
                 }
             }
+        }
+    }
+
+    void Enable_Havok_Collision(Actor_t* actor)
+    {
+        if (actor) {
+            actor->flags = Utils::Bit_Off(actor->flags, Actor_t2::Form_Flags::HASNT_HAVOK_COLLISION);
+        }
+    }
+
+    void Disable_Havok_Collision(Actor_t* actor)
+    {
+        if (actor) {
+            actor->flags = Utils::Bit_On(actor->flags, Actor_t2::Form_Flags::HASNT_HAVOK_COLLISION);
         }
     }
 
