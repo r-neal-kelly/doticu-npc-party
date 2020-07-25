@@ -7,47 +7,56 @@ Scriptname doticu_npcp_codes extends Quest
 ; Native Methods
 int function SUCCESS() native global
 int function FAILURE() native global
+
 int function OUT_OF_BOUNDS() native global
 
-int function IS_DISPLAY() native global
-int function ISNT_DISPLAY() native global
+int function IS_ACTOR() native global
+int function ISNT_ACTOR() native global
 int function IS_MEMBER() native global
 int function ISNT_MEMBER() native global
+int function IS_DISPLAY() native global
+int function ISNT_DISPLAY() native global
 
-int function HAS_DISPLAY() native global
-int function HASNT_DISPLAY() native global
+int function IS_STYLE() native global
+int function ISNT_STYLE() native global
+int function IS_DEFAULT() native global
+int function IS_WARRIOR() native global
+int function IS_MAGE() native global
+int function IS_ARCHER() native global
+int function IS_COWARD() native global
+
 int function HAS_MEMBER() native global
 int function HASNT_MEMBER() native global
+int function HAS_MEMBER_SPACE() native global
+int function HASNT_MEMBER_SPACE() native global
+int function HAS_DISPLAY() native global
+int function HASNT_DISPLAY() native global
+
+int function HAS_FOLLOWER_SPACE() native global
+int function HASNT_FOLLOWER_SPACE() native global
+
+int function CAN_RESURRECT() native global
+int function CANT_RESURRECT() native global
+
+int function STYLE_DEFAULT() native global
+int function STYLE_WARRIOR() native global
+int function STYLE_MAGE() native global
+int function STYLE_ARCHER() native global
+int function STYLE_COWARD() native global
+
+int function VITALITY_MORTAL() native global
+int function VITALITY_PROTECTED() native global
+int function VITALITY_ESSENTIAL() native global
+int function VITALITY_INVULNERABLE() native global
 
 ; Public Constants
-int property SUCCESS                        =     0 autoReadOnly
-int property FAILURE                        =    -1 autoReadOnly
 int property STARTED                        =   -10 autoReadOnly
 int property STOPPED                        =   -11 autoReadOnly
-int property CREATED                        =   -20 autoReadOnly
-int property DESTROYED                      =   -21 autoReadOnly
-int property READY                          =   -30 autoReadOnly
-int property BUSY                           =   -31 autoReadOnly
-int property OUT_OF_BOUNDS                  =   -99 autoReadOnly
 
-int property HAS_SPACE                      =  -100 autoReadOnly
 int property HAS_ACTOR                      =  -110 autoReadOnly
-int property HAS_ALIAS                      =  -120 autoReadOnly
-int property HAS_MEMBER                     =  -130 autoReadOnly
-int property HAS_SETTLER                    =  -140 autoReadOnly
-int property HAS_IMMOBILE                   =  -150 autoReadOnly
 int property HAS_FOLLOWER                   =  -160 autoReadOnly
-int property HAS_SNEAK                      =  -170 autoReadOnly
-int property HAS_MANNEQUIN                  =  -180 autoReadOnly
-
-int property HASNT_SPACE                    =  -200 autoReadOnly
-int property HASNT_SPACE_MEMBER             =  -201 autoReadOnly
-int property HASNT_SPACE_FOLLOWER           =  -202 autoReadOnly
-int property HASNT_ID                       =  -203 autoReadOnly
 int property HASNT_MARKER                   =  -204 autoReadOnly
-int property HASNT_ACTOR                    =  -210 autoReadOnly
-int property HASNT_ALIAS                    =  -220 autoReadOnly
-int property HASNT_MEMBER                   =  -230 autoReadOnly
+
 int property HASNT_SETTLER                  =  -231 autoReadOnly
 int property HASNT_IMMOBILE                 =  -232 autoReadOnly
 int property HASNT_MOBILE                   =  -233 autoReadOnly
@@ -72,9 +81,8 @@ int property IS_MORTAL                      =  -303 autoReadOnly
 int property IS_PROTECTED                   =  -304 autoReadOnly
 int property IS_ESSENTIAL                   =  -305 autoReadOnly
 int property IS_INVULNERABLE                =  -306 autoReadOnly
-int property IS_ACTOR                       =  -307 autoReadOnly
 int property IS_ALIAS                       =  -310 autoReadOnly
-int property IS_MEMBER                      =  -320 autoReadOnly
+
 int property IS_SETTLER                     =  -330 autoReadOnly
 int property IS_IMMOBILE                    =  -340 autoReadOnly
 int property IS_PARALYZED                   =  -341 autoReadOnly
@@ -83,21 +91,20 @@ int property IS_FOLLOWER                    =  -350 autoReadOnly
 int property IS_SNEAK                       =  -360 autoReadOnly
 int property IS_SADDLER                     =  -365 autoReadOnly
 int property IS_THRALL                      =  -370 autoReadOnly
-int property IS_DEFAULT                     =  -380 autoReadOnly
-int property IS_WARRIOR                     =  -381 autoReadOnly
-int property IS_MAGE                        =  -382 autoReadOnly
-int property IS_ARCHER                      =  -383 autoReadOnly
-int property IS_COWARD                      =  -384 autoReadOnly
+
+
+
+
+
 int property IS_GREETER                     =  -390 autoReadOnly
 int property IS_VAMPIRE                     =  -399 autoReadOnly
-int property IS_DISPLAY                     = -3400 autoReadOnly
+
 int property IS_CHILD                       = -3410 autoReadOnly
 int property IS_INTERIOR                    = -3800 autoReadOnly
 int property IS_EXTERIOR                    = -3810 autoReadOnly
 
-int property ISNT_ACTOR                     =  -400 autoReadOnly
 int property ISNT_ALIAS                     =  -410 autoReadOnly
-int property ISNT_MEMBER                    =  -420 autoReadOnly
+
 int property ISNT_SETTLER                   =  -430 autoReadOnly
 int property ISNT_IMMOBILE                  =  -440 autoReadOnly
 int property ISNT_MOBILE                    =  -441 autoReadOnly
@@ -110,12 +117,9 @@ int property ISNT_THRALL                    =  -470 autoReadOnly
 int property ISNT_CLONE                     =  -480 autoReadOnly
 int property ISNT_GREETER                   =  -490 autoReadOnly
 int property ISNT_VAMPIRE                   =  -499 autoReadOnly
-int property ISNT_DISPLAY                   = -4400 autoReadOnly
+
 int property ISNT_RATING                    = -4500 autoReadOnly
 
-int property CAN_RESURRECT                  =  -500 autoReadOnly
-
-int property CANT_RESURRECT                 =  -600 autoReadOnly
 int property CANT_CLONE                     =  -605 autoReadOnly
 int property CANT_RENAME                    =  -610 autoReadOnly
 int property CANT_CATCH_UP                  =  -615 autoReadOnly
@@ -168,18 +172,6 @@ int property OUTFIT2_FOLLOWER               = -4000 autoReadOnly
 int property OUTFIT2_IMMOBILE               = -5000 autoReadOnly
 int property OUTFIT2_VANILLA                = -7000 autoReadOnly
 int property OUTFIT2_DEFAULT                = -8000 autoReadOnly
-
-; STYLE AND VITALITY codes are to replace certain IS_ codes
-int property STYLE_DEFAULT                  = -1000 autoReadOnly
-int property STYLE_WARRIOR                  = -2000 autoReadOnly
-int property STYLE_MAGE                     = -3000 autoReadOnly
-int property STYLE_ARCHER                   = -4000 autoReadOnly
-int property STYLE_COWARD                   = -5000 autoReadOnly
-
-int property VITALITY_MORTAL                = -1000 autoReadOnly
-int property VITALITY_PROTECTED             = -2000 autoReadOnly
-int property VITALITY_ESSENTIAL             = -3000 autoReadOnly
-int property VITALITY_INVULNERABLE          = -4000 autoReadOnly
 
 int property VIEW_MEMBERS                   = -1000 autoReadOnly
 int property VIEW_FOLLOWERS                 = -1100 autoReadOnly

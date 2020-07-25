@@ -71,10 +71,8 @@ doticu_npcp_data        p_DATA                      =  none
 
 ; Private Variables
 bool                    p_is_locked                 = false
-bool                    p_is_created                = false
 Actor                   p_ref_actor                 =  none
 bool                    p_is_clone                  = false
-bool                    p_is_follower               = false
 bool                    p_is_settler                = false
 bool                    p_is_thrall                 = false
 bool                    p_is_immobile               = false
@@ -119,7 +117,38 @@ int function Style() native
 int function Vitality() native
 string function Name() native
 
-;bool function Is_Alive() native; we will replace all the papyrus versions with these
+bool function Is_Filled() native
+bool function Is_Unfilled() native
+bool function Is_Loaded() native
+bool function Is_Unloaded() native
+bool function Is_Unique() native
+bool function Is_Generic() native
+bool function Is_Original() native
+bool function Is_Clone() native
+bool function Is_Alive() native
+bool function Is_Dead() native
+bool function Is_Mobile() native
+bool function Is_Immobile() native
+bool function Is_Settler() native
+bool function Isnt_Settler() native
+bool function Is_Thrall() native
+bool function Isnt_Thrall() native
+bool function Is_Paralyzed() native
+bool function Isnt_Paralyzed() native
+bool function Is_Mannequin() native
+bool function Isnt_Mannequin() native
+bool function Is_Display() native
+bool function Isnt_Display() native
+bool function Is_Reanimated() native
+bool function Isnt_Reanimated() native
+bool function Is_Follower() native
+bool function Isnt_Follower() native
+bool function Is_Sneak() native
+bool function Isnt_Sneak() native
+bool function Is_Saddler() native
+bool function Isnt_Saddler() native
+bool function Is_Retreater() native
+bool function Isnt_Retreater() native
 
 bool function Has_Token(MiscObject token, int count = 1) native
 function Token(MiscObject token, int count = 1) native
@@ -137,8 +166,16 @@ function p_Paralyze() native
 function p_Unparalyze() native
 function p_Mannequinize(ObjectReference marker) native
 function p_Unmannequinize() native
-function p_Stylize(int style) native
-function p_Unstylize() native
+
+int function Stylize(int style) native
+int function Stylize_Default() native
+int function Stylize_Warrior() native
+int function Stylize_Mage() native
+int function Stylize_Archer() native
+int function Stylize_Coward() native
+function p_Restylize(Actor ref_actor) native
+int function Unstylize() native
+
 function p_Vitalize(int vitality) native
 function p_Unvitalize() native
 
@@ -154,10 +191,8 @@ p_Lock()
 
     ForceRefTo(ref_actor)
 
-    p_is_created = true
     p_ref_actor = GetActorReference()
     p_is_clone = is_clone
-    p_is_follower = false
     p_is_settler = false
     p_is_thrall = false
     p_is_immobile = false
@@ -181,7 +216,7 @@ p_Unlock()
     p_Backup()
 
     p_Member()
-    p_Stylize(VARS.auto_style)
+    Stylize(VARS.auto_style)
     p_Vitalize(VARS.auto_vitality)
     p_Outfit()
 
@@ -198,7 +233,7 @@ function f_Destroy()
     endIf
 
     p_Unvitalize()
-    p_Unstylize()
+    Unstylize()
     if Is_Mannequin()
         p_Unmannequinize()
     endIf
@@ -261,10 +296,8 @@ p_Lock()
     p_is_immobile = false
     p_is_thrall = false
     p_is_settler = false
-    p_is_follower = false
     p_is_clone = false
     p_ref_actor = none
-    p_is_created = false
 
     Clear()
     
@@ -720,7 +753,7 @@ function Enforce()
 
     p_Member()
 
-    p_Stylize(p_code_style)
+    p_Restylize(p_ref_actor)
 
     p_Vitalize(p_code_vitality)
 
@@ -747,7 +780,7 @@ function Enforce()
 endFunction
 
 bool function Exists()
-    return p_is_created
+    return Is_Filled()
 endFunction
 
 doticu_npcp_follower function Get_Follower()
@@ -768,17 +801,17 @@ endFunction
 
 int function Rename(string str_name)
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
 
     p_Rename(str_name)
     
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Mobilize()
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
     if !Is_Immobile()
         return CODES.ISNT_IMMOBILE
@@ -788,12 +821,12 @@ int function Mobilize()
 
     p_Async("On_Outfit")
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Immobilize()
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
     if Is_Immobile()
         return CODES.IS_IMMOBILE
@@ -803,12 +836,12 @@ int function Immobilize()
 
     p_Async("On_Outfit")
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Settle()
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
     if Is_Settler()
         return CODES.IS_SETTLER
@@ -818,12 +851,12 @@ int function Settle()
 
     p_Async("On_Outfit")
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Resettle()
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
     if !Is_Settler()
         return CODES.ISNT_SETTLER
@@ -833,12 +866,12 @@ int function Resettle()
 
     p_Async("On_Outfit")
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Unsettle()
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
     if !Is_Settler()
         return CODES.ISNT_SETTLER
@@ -848,12 +881,12 @@ int function Unsettle()
 
     p_Async("On_Outfit")
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Enthrall()
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
     if !ACTORS.Is_Vampire(CONSTS.ACTOR_PLAYER)
         return CODES.ISNT_VAMPIRE
@@ -866,12 +899,12 @@ int function Enthrall()
 
     p_Async("On_Outfit")
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Unthrall()
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
     if !ACTORS.Is_Vampire(CONSTS.ACTOR_PLAYER)
         return CODES.ISNT_VAMPIRE
@@ -884,12 +917,12 @@ int function Unthrall()
 
     p_Async("On_Outfit")
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Paralyze()
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
     if Is_Paralyzed()
         return CODES.IS_PARALYZED
@@ -897,12 +930,12 @@ int function Paralyze()
 
     p_Paralyze()
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Unparalyze()
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
     if !Is_Paralyzed()
         return CODES.ISNT_PARALYZED
@@ -910,12 +943,12 @@ int function Unparalyze()
 
     p_Unparalyze()
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Mannequinize(ObjectReference ref_marker)
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
     if Is_Mannequin()
         return CODES.IS_MANNEQUIN
@@ -931,12 +964,12 @@ int function Mannequinize(ObjectReference ref_marker)
         Unfollow()
     endIf
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Unmannequinize()
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
     if !Is_Mannequin()
         return CODES.ISNT_MANNEQUIN
@@ -944,86 +977,7 @@ int function Unmannequinize()
 
     p_Unmannequinize()
 
-    return CODES.SUCCESS
-endFunction
-
-int function Stylize(int code_style)
-    if code_style == CODES.IS_WARRIOR
-        return Stylize_Warrior()
-    elseIf code_style == CODES.IS_MAGE
-        return Stylize_Mage()
-    elseIf code_style == CODES.IS_ARCHER
-        return Stylize_Archer()
-    elseIf code_style == CODES.IS_COWARD
-        return Stylize_Coward()
-    else ; CODES.IS_DEFAULT
-        return Stylize_Default()
-    endIf
-endFunction
-
-int function Stylize_Default()
-    if !Exists()
-        return CODES.ISNT_MEMBER
-    endIf
-    if Style() == CODES.IS_DEFAULT
-        return CODES.IS_DEFAULT
-    endIf
-
-    p_Stylize(CODES.IS_DEFAULT)
-
-    return CODES.SUCCESS
-endFunction
-
-int function Stylize_Warrior()
-    if !Exists()
-        return CODES.ISNT_MEMBER
-    endIf
-    if Style() == CODES.IS_WARRIOR
-        return CODES.IS_WARRIOR
-    endIf
-
-    p_Stylize(CODES.IS_WARRIOR)
-
-    return CODES.SUCCESS
-endFunction
-
-int function Stylize_Mage()
-    if !Exists()
-        return CODES.ISNT_MEMBER
-    endIf
-    if Style() == CODES.IS_MAGE
-        return CODES.IS_MAGE
-    endIf
-
-    p_Stylize(CODES.IS_MAGE)
-
-    return CODES.SUCCESS
-endFunction
-
-int function Stylize_Archer()
-    if !Exists()
-        return CODES.ISNT_MEMBER
-    endIf
-    if Style() == CODES.IS_ARCHER
-        return CODES.IS_ARCHER
-    endIf
-
-    p_Stylize(CODES.IS_ARCHER)
-
-    return CODES.SUCCESS
-endFunction
-
-int function Stylize_Coward()
-    if !Exists()
-        return CODES.ISNT_MEMBER
-    endIf
-    if Style() == CODES.IS_COWARD
-        return CODES.IS_COWARD
-    endIf
-
-    p_Stylize(CODES.IS_COWARD)
-
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Vitalize(int code_vitality)
@@ -1040,7 +994,7 @@ endFunction
 
 int function Vitalize_Mortal()
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
     if Vitality() == CODES.IS_MORTAL
         return CODES.IS_MORTAL
@@ -1048,12 +1002,12 @@ int function Vitalize_Mortal()
 
     p_Vitalize(CODES.IS_MORTAL)
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Vitalize_Protected()
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
     if Vitality() == CODES.IS_PROTECTED
         return CODES.IS_PROTECTED
@@ -1061,12 +1015,12 @@ int function Vitalize_Protected()
 
     p_Vitalize(CODES.IS_PROTECTED)
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Vitalize_Essential()
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
     if Vitality() == CODES.IS_ESSENTIAL
         return CODES.IS_ESSENTIAL
@@ -1074,12 +1028,12 @@ int function Vitalize_Essential()
 
     p_Vitalize(CODES.IS_ESSENTIAL)
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Vitalize_Invulnerable()
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
     if Vitality() == CODES.IS_INVULNERABLE
         return CODES.IS_INVULNERABLE
@@ -1087,7 +1041,7 @@ int function Vitalize_Invulnerable()
 
     p_Vitalize(CODES.IS_INVULNERABLE)
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Revoice()
@@ -1100,7 +1054,7 @@ endFunction
 
 int function Follow()
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
 
     if Is_Follower()
@@ -1118,16 +1072,14 @@ p_Unlock()
         return code_return
     endIf
 
-    p_is_follower = true
-
     p_Async("On_Outfit")
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Unfollow()
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
 
     if !Is_Follower()
@@ -1141,16 +1093,14 @@ p_Unlock()
         return code_return
     endIf
 
-    p_is_follower = false
-
     p_Async("On_Outfit")
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Resurrect(int code_exec)
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
 
     if ACTORS.Is_Alive(p_ref_actor)
@@ -1163,7 +1113,7 @@ int function Resurrect(int code_exec)
         p_Resurrect()
     endIf
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 event On_Resurrect()
     if Is_Dead()
@@ -1173,7 +1123,7 @@ endEvent
 
 int function Reanimate(int code_exec)
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
 
     p_is_reanimated = true
@@ -1188,7 +1138,7 @@ int function Reanimate(int code_exec)
         p_Reanimate()
     endIf
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 event On_Reanimate()
     if Is_Reanimated()
@@ -1201,7 +1151,7 @@ endEvent
 
 int function Deanimate(int code_exec)
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
 
     p_is_reanimated = false
@@ -1215,7 +1165,7 @@ int function Deanimate(int code_exec)
         p_Deanimate()
     endIf
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 event On_Deanimate()
     if Isnt_Reanimated()
@@ -1229,7 +1179,7 @@ endEvent
 ; can this one actually be async?
 int function Pack(int code_exec)
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
 
     if code_exec == CODES.DO_ASYNC
@@ -1238,7 +1188,7 @@ int function Pack(int code_exec)
         p_Pack()
     endIf
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 event On_Pack()
     p_Pack()
@@ -1246,12 +1196,12 @@ endEvent
 
 int function Stash()
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
 
     p_Stash()
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Outfit(int code_exec, int code_outfit2)
@@ -1279,7 +1229,7 @@ endEvent
 
 int function Outfit_Member(int code_exec)
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
 
     p_Create_Outfit(CODES.OUTFIT2_MEMBER)
@@ -1291,12 +1241,12 @@ int function Outfit_Member(int code_exec)
         p_Outfit()
     endIf
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Outfit_Settler(int code_exec)
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
 
     p_Create_Outfit(CODES.OUTFIT2_SETTLER)
@@ -1308,12 +1258,12 @@ int function Outfit_Settler(int code_exec)
         p_Outfit()
     endIf
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Outfit_Thrall(int code_exec)
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
 
     p_Create_Outfit(CODES.OUTFIT2_THRALL)
@@ -1325,12 +1275,12 @@ int function Outfit_Thrall(int code_exec)
         p_Outfit()
     endIf
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Outfit_Immobile(int code_exec)
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
 
     p_Create_Outfit(CODES.OUTFIT2_IMMOBILE)
@@ -1342,12 +1292,12 @@ int function Outfit_Immobile(int code_exec)
         p_Outfit()
     endIf
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Outfit_Follower(int code_exec)
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
 
     p_Create_Outfit(CODES.OUTFIT2_FOLLOWER)
@@ -1359,12 +1309,12 @@ int function Outfit_Follower(int code_exec)
         p_Outfit()
     endIf
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Outfit_Vanilla(int code_exec)
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
 
     p_Create_Outfit(CODES.OUTFIT2_VANILLA)
@@ -1376,12 +1326,12 @@ int function Outfit_Vanilla(int code_exec)
         p_Outfit()
     endIf
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Outfit_Default(int code_exec)
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
 
     p_Create_Outfit(CODES.OUTFIT2_DEFAULT)
@@ -1393,12 +1343,12 @@ int function Outfit_Default(int code_exec)
         p_Outfit()
     endIf
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Outfit_Current(int code_exec)
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
 
     p_Create_Outfit(CODES.OUTFIT2_CURRENT)
@@ -1410,12 +1360,12 @@ int function Outfit_Current(int code_exec)
         p_Outfit()
     endIf
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Get_Rating()
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
 
     return p_int_rating
@@ -1423,7 +1373,7 @@ endFunction
 
 int function Set_Rating(int int_rating)
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
 
     if int_rating < 0 || int_rating > 5
@@ -1432,7 +1382,7 @@ int function Set_Rating(int int_rating)
 
     p_int_rating = int_rating
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 string function Get_Rating_Stars()
@@ -1460,7 +1410,7 @@ endFunction
 
 int function Unmember()
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
 
     if MEMBERS.Should_Unclone_Actor(p_ref_actor)
@@ -1472,7 +1422,7 @@ endFunction
 
 int function Clone()
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
 
     return p_Clone()
@@ -1480,7 +1430,7 @@ endFunction
 
 int function Unclone()
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
 
     if !p_is_clone
@@ -1492,7 +1442,7 @@ endFunction
 
 int function Summon(int distance = 120, int angle = 0)
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
 
     ; we don't allow mannequins to be removed, until they are unmannequinized
@@ -1505,7 +1455,7 @@ int function Summon(int distance = 120, int angle = 0)
     p_Remannequinize()
     p_Reparalyze()
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Summon_Ahead(int distance = 120)
@@ -1518,7 +1468,7 @@ endFunction
 
 int function Goto(int distance = 120, int angle = 0)
     if !Exists()
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
 
     ; this is done so that we can exit expo gracefully
@@ -1529,115 +1479,27 @@ int function Goto(int distance = 120, int angle = 0)
     p_Remannequinize()
     p_Reparalyze()
 
-    return CODES.SUCCESS
-endFunction
-
-bool function Is_Member()
-    return Exists()
-endFunction
-
-bool function Is_Unique()
-    return Exists() && ACTORS.Is_Unique(p_ref_actor)
-endFunction
-
-bool function Is_Generic()
-    return Exists() && ACTORS.Is_Generic(p_ref_actor)
-endFunction
-
-bool function Is_Original()
-    return Exists() && !p_is_clone
-endFunction
-
-bool function Is_Clone()
-    return Exists() && p_is_clone
-endFunction
-
-bool function Is_Settler()
-    return Exists() && p_is_settler
-endFunction
-
-bool function Isnt_Settler()
-    return Exists() && !p_is_settler
-endFunction
-
-bool function Is_Thrall()
-    return Exists() && p_is_thrall
-endFunction
-
-bool function Isnt_Thrall()
-    return Exists() && !p_is_thrall
-endFunction
-
-bool function Is_Immobile()
-    return Exists() && p_is_immobile
-endFunction
-
-bool function Is_Mobile()
-    return Exists() && !p_is_immobile
-endFunction
-
-bool function Is_Paralyzed()
-    return Exists() && p_is_paralyzed
-endFunction
-
-bool function Is_Unparalyzed()
-    return Exists() && !p_is_paralyzed
-endFunction
-
-bool function Is_Mannequin()
-    return Exists() && p_is_mannequin
-endFunction
-
-bool function Isnt_Mannequin()
-    return Exists() && !p_is_mannequin
-endFunction
-
-bool function Is_Display()
-    return Exists() && p_is_display
-endFunction
-
-bool function Isnt_Display()
-    return Exists() && !p_is_display
-endFunction
-
-bool function Is_Reanimated()
-    return Exists() && p_is_reanimated
-endFunction
-
-bool function Isnt_Reanimated()
-    return Exists() && !p_is_reanimated
-endFunction
-
-bool function Is_Sneak()
-    return Is_Follower() && Get_Follower().Is_Sneak()
-endFunction
-
-bool function Is_Unsneak()
-    return Is_Follower() && Get_Follower().Is_Unsneak()
-endFunction
-
-bool function Is_Follower()
-    return Exists() && p_is_follower
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 bool function Is_Styled_Default()
-    return Exists() && p_code_style == CODES.IS_DEFAULT
+    return Exists() && p_code_style == doticu_npcp_codes.STYLE_DEFAULT()
 endFunction
 
 bool function Is_Styled_Warrior()
-    return Exists() && p_code_style == CODES.IS_WARRIOR
+    return Exists() && p_code_style == doticu_npcp_codes.STYLE_WARRIOR()
 endFunction
 
 bool function Is_Styled_Mage()
-    return Exists() && p_code_style == CODES.IS_MAGE
+    return Exists() && p_code_style == doticu_npcp_codes.STYLE_MAGE()
 endFunction
 
 bool function Is_Styled_Archer()
-    return Exists() && p_code_style == CODES.IS_ARCHER
+    return Exists() && p_code_style == doticu_npcp_codes.STYLE_ARCHER()
 endFunction
 
 bool function Is_Styled_Coward()
-    return Exists() && p_code_style == CODES.IS_COWARD
+    return Exists() && p_code_style == doticu_npcp_codes.STYLE_COWARD()
 endFunction
 
 bool function Is_Vitalized_Mortal()
@@ -1654,14 +1516,6 @@ endFunction
 
 bool function Is_Vitalized_Invulnerable()
     return Exists() && p_code_vitality == CODES.IS_INVULNERABLE
-endFunction
-
-bool function Is_Alive()
-    return Exists() && ACTORS.Is_Alive(p_ref_actor)
-endFunction
-
-bool function Is_Dead()
-    return Exists() && ACTORS.Is_Dead(p_ref_actor)
 endFunction
 
 bool function Is_In_Combat()
@@ -1774,11 +1628,6 @@ function u_0_9_0()
     if p_container2_pack
         p_container_pack = p_container2_pack
         p_container2_pack = none
-    endIf
-
-    ; so that we can easily filter followers
-    if FOLLOWERS.Has_Actor(p_ref_actor)
-        p_is_follower = true
     endIf
 
     ; so that we can filter outfit

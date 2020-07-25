@@ -5,6 +5,7 @@
 #include "actor2.h"
 #include "actor_base2.h"
 #include "cell.h"
+#include "codes.h"
 #include "consts.h"
 #include "object_ref.h"
 #include "party.h"
@@ -663,17 +664,17 @@ namespace doticu_npcp { namespace Party {
 
                     const SInt32 follower_style = Style();
                     const float player_level_modded = player_level * player_modifier;
-                    if (follower_style == Style_e::WARRIOR) {
+                    if (follower_style == CODES::STYLE::WARRIOR) {
                         health += player_level * 4; // find a better equation
                         Mod_Strength(+player_level_modded);
                         Mod_Intelligence(-player_level_modded);
                         Mod_Dexterity(-player_level_modded);
-                    } else if (follower_style == Style_e::MAGE) {
+                    } else if (follower_style == CODES::STYLE::MAGE) {
                         magicka += player_level * 4; // find a better equation
                         Mod_Strength(-player_level_modded);
                         Mod_Intelligence(+player_level_modded);
                         Mod_Dexterity(-player_level_modded);
-                    } else if (follower_style == Style_e::ARCHER) {
+                    } else if (follower_style == CODES::STYLE::ARCHER) {
                         stamina += player_level * 4; // find a better equation
                         Mod_Strength(-player_level_modded);
                         Mod_Intelligence(-player_level_modded);

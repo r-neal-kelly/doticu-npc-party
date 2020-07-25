@@ -584,24 +584,16 @@ namespace doticu_npcp { namespace Actor2 {
     void Move_To_Orbit(Actor* actor, Reference_t* origin, float radius, float degree)
     {
         if (actor && origin) {
-            //actor->flags2 = Utils::Bit_On(actor->flags2, Actor_t2::Flags_2::IS_IMMOBILE);
-
+            //Stop_Movement(actor); // doesnt work yet.
             Object_Ref::Move_To_Orbit(actor, origin, radius, degree);
-
-            //actor->flags2 = Utils::Bit_Off(actor->flags2, Actor_t2::Flags_2::IS_IMMOBILE);
-
-            // we may want to move this behavior up to member/follower, etc.
-            Update_3D_Model(actor);
+            Update_3D_Model(actor); // we may want to move this behavior up to member/follower, etc.
         }
     }
 
     Actor_Value_Owner_t* Actor_Value_Owner(Actor_t* actor)
     {
-        if (actor) {
-            return reinterpret_cast<Actor_Value_Owner_t*>(&actor->actorValueOwner);
-        } else {
-            return nullptr;
-        }
+        NPCP_ASSERT(actor);
+        return reinterpret_cast<Actor_Value_Owner_t*>(&actor->actorValueOwner);
     }
 
     float Get_Actor_Value(Actor *actor, const char *name) {
@@ -760,6 +752,33 @@ namespace doticu_npcp { namespace Actor2 {
             return CALL_MEMBER_FN(static_cast<TESNPC*>(actor->baseForm), GetSex)();
         } else {
             return ~0;
+        }
+    }
+
+    String_t Sex_String(Actor_t* actor)
+    {
+        static const String_t male = Utils::Assert(
+            String_t("male")
+        );
+        static const String_t female = Utils::Assert(
+            String_t("female")
+        );
+        static const String_t none = Utils::Assert(
+            String_t("none")
+        );
+        static const String_t invalid = Utils::Assert(
+            String_t("")
+        );
+
+        Int_t sex = Sex(actor);
+        if (sex == 0) {
+            return male;
+        } else if (sex == 1) {
+            return female;
+        } else if (sex == -1) {
+            return none;
+        } else {
+            return invalid;
         }
     }
 
@@ -1253,6 +1272,14 @@ namespace doticu_npcp { namespace Actor2 {
     {
         if (actor) {
             actor->flags = Utils::Bit_On(actor->flags, Actor_t2::Form_Flags::HASNT_HAVOK_COLLISION);
+        }
+    }
+
+    void Stop_Movement(Actor_t* actor)
+    {
+        if (actor) {
+            Actor_State_t* actor_state = reinterpret_cast<Actor_State_t*>(&actor->actorState);
+            actor_state->Stop_Movement();
         }
     }
 

@@ -149,15 +149,15 @@ endFunction
 
 int function f_Create_Follower(Actor ref_actor)
     if !ref_actor
-        return CODES.ISNT_ACTOR
+        return doticu_npcp_codes.ISNT_ACTOR()
     endIf
 
     if Hasnt_Space()
-        return CODES.HASNT_SPACE_FOLLOWER
+        return doticu_npcp_codes.HASNT_FOLLOWER_SPACE()
     endIf
 
     if !MEMBERS.Has_Member(ref_actor)
-        return CODES.ISNT_MEMBER
+        return doticu_npcp_codes.ISNT_MEMBER()
     endIf
 
     if Has_Actor(ref_actor)
@@ -166,7 +166,7 @@ int function f_Create_Follower(Actor ref_actor)
 
     doticu_npcp_follower ref_follower = p_From_Unfilled() as doticu_npcp_follower
     if ref_follower == none
-        return CODES.FAILURE
+        return doticu_npcp_codes.FAILURE()
     endIf
 
     ref_follower.f_Create(p_DATA, ref_actor)
@@ -176,12 +176,12 @@ int function f_Create_Follower(Actor ref_actor)
     ; because the engine won't update player teammates when 0
     CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(1)
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function f_Destroy_Follower(Actor ref_actor)
     if !ref_actor
-        return CODES.ISNT_ACTOR
+        return doticu_npcp_codes.ISNT_ACTOR()
     endIf
 
     doticu_npcp_follower ref_follower = p_From_Actor(ref_actor) as doticu_npcp_follower
@@ -199,7 +199,7 @@ int function f_Destroy_Follower(Actor ref_actor)
         CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(0)
     endIf
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 ; Private Methods
@@ -239,7 +239,7 @@ p_Busy()
 
     p_Summon_Filled(radius, degree, interval)
 
-    return p_Ready_Int(CODES.SUCCESS)
+    return p_Ready_Int(doticu_npcp_codes.SUCCESS())
 
 p_Ready()
 endFunction
@@ -259,7 +259,7 @@ p_Busy()
 
     p_Summon_Mobile(radius, degree, interval)
 
-    return p_Ready_Int(CODES.SUCCESS)
+    return p_Ready_Int(doticu_npcp_codes.SUCCESS())
 
 p_Ready()
 endFunction
@@ -279,7 +279,7 @@ p_Busy()
 
     p_Summon_Immobile(radius, degree, interval)
 
-    return p_Ready_Int(CODES.SUCCESS)
+    return p_Ready_Int(doticu_npcp_codes.SUCCESS())
 
 p_Ready()
 endFunction
@@ -294,7 +294,7 @@ p_Busy()
 
     p_Catch_Up()
 
-    return p_Ready_Int(CODES.SUCCESS)
+    return p_Ready_Int(doticu_npcp_codes.SUCCESS())
 
 p_Ready()
 endFunction
@@ -309,7 +309,7 @@ p_Busy()
 
     p_Stash()
 
-    return p_Ready_Int(CODES.SUCCESS)
+    return p_Ready_Int(doticu_npcp_codes.SUCCESS())
 
 p_Ready()
 endFunction
@@ -324,7 +324,7 @@ p_Busy()
     
     p_Enforce()
 
-    return p_Ready_Int(CODES.SUCCESS)
+    return p_Ready_Int(doticu_npcp_codes.SUCCESS())
 
 p_Ready()
 endFunction
@@ -346,10 +346,10 @@ p_Busy()
     p_Resurrect()
 
     if !p_tasklist.Await(num_dead, 0.5, 10.0)
-        return p_Ready_Int(CODES.FAILURE)
+        return p_Ready_Int(doticu_npcp_codes.FAILURE())
     endIf
 
-    return p_Ready_Int(CODES.SUCCESS)
+    return p_Ready_Int(doticu_npcp_codes.SUCCESS())
 
 p_Ready()
 endFunction
@@ -366,7 +366,7 @@ p_Busy()
 
     p_Mobilize()
 
-    return p_Ready_Int(CODES.SUCCESS)
+    return p_Ready_Int(doticu_npcp_codes.SUCCESS())
 
 p_Ready()
 endFunction
@@ -383,7 +383,7 @@ p_Busy()
 
     p_Immobilize()
 
-    return p_Ready_Int(CODES.SUCCESS)
+    return p_Ready_Int(doticu_npcp_codes.SUCCESS())
 
 p_Ready()
 endFunction
@@ -397,7 +397,7 @@ p_Busy()
 
     p_Settle()
 
-    return p_Ready_Int(CODES.SUCCESS)
+    return p_Ready_Int(doticu_npcp_codes.SUCCESS())
 
 p_Ready()
 endFunction
@@ -414,7 +414,7 @@ p_Busy()
 
     p_Unsettle()
 
-    return p_Ready_Int(CODES.SUCCESS)
+    return p_Ready_Int(doticu_npcp_codes.SUCCESS())
 
 p_Ready()
 endFunction
@@ -431,7 +431,7 @@ p_Busy()
 
     p_Enthrall()
 
-    return p_Ready_Int(CODES.SUCCESS)
+    return p_Ready_Int(doticu_npcp_codes.SUCCESS())
 
 p_Ready()
 endFunction
@@ -448,7 +448,7 @@ p_Busy()
 
     p_Unthrall()
 
-    return p_Ready_Int(CODES.SUCCESS)
+    return p_Ready_Int(doticu_npcp_codes.SUCCESS())
 
 p_Ready()
 endFunction
@@ -465,7 +465,7 @@ p_Busy()
 
     p_Paralyze()
 
-    return p_Ready_Int(CODES.SUCCESS)
+    return p_Ready_Int(doticu_npcp_codes.SUCCESS())
 
 p_Ready()
 endFunction
@@ -482,7 +482,7 @@ p_Busy()
 
     p_Unparalyze()
 
-    return p_Ready_Int(CODES.SUCCESS)
+    return p_Ready_Int(doticu_npcp_codes.SUCCESS())
 
 p_Ready()
 endFunction
@@ -504,10 +504,10 @@ p_Busy()
     p_Sneak()
 
     if !p_tasklist.Await(num_non_sneaks, 0.5, 10.0)
-        return p_Ready_Int(CODES.FAILURE)
+        return p_Ready_Int(doticu_npcp_codes.FAILURE())
     endIf
 
-    return p_Ready_Int(CODES.SUCCESS)
+    return p_Ready_Int(doticu_npcp_codes.SUCCESS())
 
 p_Ready()
 endFunction
@@ -529,10 +529,10 @@ p_Busy()
     p_Unsneak()
 
     if !p_tasklist.Await(num_sneaks, 0.5, 10.0)
-        return p_Ready_Int(CODES.FAILURE)
+        return p_Ready_Int(doticu_npcp_codes.FAILURE())
     endIf
 
-    return p_Ready_Int(CODES.SUCCESS)
+    return p_Ready_Int(doticu_npcp_codes.SUCCESS())
 
 p_Ready()
 endFunction
@@ -558,10 +558,10 @@ p_Busy()
     p_Saddle()
 
     if !p_tasklist.Await(num_non_saddlers, 0.5, 10.0)
-        return p_Ready_Int(CODES.FAILURE)
+        return p_Ready_Int(doticu_npcp_codes.FAILURE())
     endIf
 
-    return p_Ready_Int(CODES.SUCCESS)
+    return p_Ready_Int(doticu_npcp_codes.SUCCESS())
 
 p_Ready()
 endFunction
@@ -583,10 +583,10 @@ p_Busy()
     p_Unsaddle()
 
     if !p_tasklist.Await(num_saddlers, 0.5, 10.0)
-        return p_Ready_Int(CODES.FAILURE)
+        return p_Ready_Int(doticu_npcp_codes.FAILURE())
     endIf
 
-    return p_Ready_Int(CODES.SUCCESS)
+    return p_Ready_Int(doticu_npcp_codes.SUCCESS())
 
 p_Ready()
 endFunction
@@ -608,10 +608,10 @@ p_Busy()
     p_Retreat()
     
     if !p_tasklist.Await(num_non_retreaters, 0.5, 10.0)
-        return p_Ready_Int(CODES.FAILURE)
+        return p_Ready_Int(doticu_npcp_codes.FAILURE())
     endIf
     
-    return p_Ready_Int(CODES.SUCCESS)
+    return p_Ready_Int(doticu_npcp_codes.SUCCESS())
     
 p_Ready()
 endFunction
@@ -633,10 +633,10 @@ p_Busy()
     p_Unretreat()
 
     if !p_tasklist.Await(num_retreaters, 0.5, 10.0)
-        return p_Ready_Int(CODES.FAILURE)
+        return p_Ready_Int(doticu_npcp_codes.FAILURE())
     endIf
 
-    return p_Ready_Int(CODES.SUCCESS)
+    return p_Ready_Int(doticu_npcp_codes.SUCCESS())
 
 p_Ready()
 endFunction
@@ -654,10 +654,10 @@ p_Busy()
     p_Unfollow()
 
     if !p_tasklist.Await(num_followers, 0.5, 15.0)
-        return p_Ready_Int(CODES.FAILURE)
+        return p_Ready_Int(doticu_npcp_codes.FAILURE())
     endIf
 
-    return p_Ready_Int(CODES.SUCCESS)
+    return p_Ready_Int(doticu_npcp_codes.SUCCESS())
 
 p_Ready()
 endFunction
@@ -675,10 +675,10 @@ p_Busy()
     p_Unmember()
 
     if !p_tasklist.Await(num_followers, 0.5, 15.0)
-        return p_Ready_Int(CODES.FAILURE)
+        return p_Ready_Int(doticu_npcp_codes.FAILURE())
     endIf
 
-    return p_Ready_Int(CODES.SUCCESS)
+    return p_Ready_Int(doticu_npcp_codes.SUCCESS())
 
 p_Ready()
 endFunction

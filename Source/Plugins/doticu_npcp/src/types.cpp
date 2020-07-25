@@ -101,6 +101,14 @@ namespace doticu_npcp {
         }
     }
 
+    void Actor_State_t::Stop_Movement()
+    {
+        state.moving_back = 0;
+        state.moving_forward = 0;
+        state.moving_right = 0;
+        state.moving_left = 0;
+    }
+
     void Alias_Base_t::Log()
     {
         _MESSAGE("Log Alias Base: {");

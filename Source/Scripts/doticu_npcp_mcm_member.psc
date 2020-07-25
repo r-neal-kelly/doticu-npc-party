@@ -363,19 +363,19 @@ function f_On_Option_Select(int id_option)
 
     elseIf id_option == p_option_style
         int code_style = p_ref_member.Style()
-        if code_style == CODES.IS_DEFAULT
+        if code_style == doticu_npcp_codes.STYLE_DEFAULT()
             COMMANDS.Stylize_Warrior(ref_actor, false)
             p_Update_Commands()
-        elseIf code_style == CODES.IS_WARRIOR
+        elseIf code_style == doticu_npcp_codes.STYLE_WARRIOR()
             COMMANDS.Stylize_Mage(ref_actor, false)
             p_Update_Commands()
-        elseIf code_style == CODES.IS_MAGE
+        elseIf code_style == doticu_npcp_codes.STYLE_MAGE()
             COMMANDS.Stylize_Archer(ref_actor, false)
             p_Update_Commands()
-        elseIf code_style == CODES.IS_ARCHER
+        elseIf code_style == doticu_npcp_codes.STYLE_ARCHER()
             COMMANDS.Stylize_Coward(ref_actor, false)
             p_Update_Commands()
-        elseIf code_style == CODES.IS_COWARD
+        elseIf code_style == doticu_npcp_codes.STYLE_COWARD()
             COMMANDS.Stylize_Default(ref_actor, false)
             p_Update_Commands()
         endIf
@@ -677,15 +677,15 @@ function p_Build_Commands()
     p_option_rating = MCM.AddTextOption(CONSTS.STR_MCM_RATING, p_ref_member.Get_Rating_Stars())
 
     int code_style = p_ref_member.Style()
-    if code_style == CODES.IS_DEFAULT
+    if code_style == doticu_npcp_codes.STYLE_DEFAULT()
         p_option_style = MCM.AddTextOption(CONSTS.STR_MCM_STYLE, CONSTS.STR_MCM_DEFAULT)
-    elseIf code_style == CODES.IS_WARRIOR
+    elseIf code_style == doticu_npcp_codes.STYLE_WARRIOR()
         p_option_style = MCM.AddTextOption(CONSTS.STR_MCM_STYLE, CONSTS.STR_MCM_WARRIOR)
-    elseIf code_style == CODES.IS_MAGE
+    elseIf code_style == doticu_npcp_codes.STYLE_MAGE()
         p_option_style = MCM.AddTextOption(CONSTS.STR_MCM_STYLE, CONSTS.STR_MCM_MAGE)
-    elseIf code_style == CODES.IS_ARCHER
+    elseIf code_style == doticu_npcp_codes.STYLE_ARCHER()
         p_option_style = MCM.AddTextOption(CONSTS.STR_MCM_STYLE, CONSTS.STR_MCM_ARCHER)
-    elseIf code_style == CODES.IS_COWARD
+    elseIf code_style == doticu_npcp_codes.STYLE_COWARD()
         p_option_style = MCM.AddTextOption(CONSTS.STR_MCM_STYLE, CONSTS.STR_MCM_COWARD)
     endIf
 
@@ -779,15 +779,15 @@ function p_Update_Commands()
     MCM.SetTextOptionValue(p_option_rating, p_ref_member.Get_Rating_Stars(), DONT_UPDATE)
 
     int code_style = p_ref_member.Style()
-    if code_style == CODES.IS_DEFAULT
+    if code_style == doticu_npcp_codes.STYLE_DEFAULT()
         MCM.SetTextOptionValue(p_option_style, CONSTS.STR_MCM_DEFAULT, DONT_UPDATE)
-    elseIf code_style == CODES.IS_WARRIOR
+    elseIf code_style == doticu_npcp_codes.STYLE_WARRIOR()
         MCM.SetTextOptionValue(p_option_style, CONSTS.STR_MCM_WARRIOR, DONT_UPDATE)
-    elseIf code_style == CODES.IS_MAGE
+    elseIf code_style == doticu_npcp_codes.STYLE_MAGE()
         MCM.SetTextOptionValue(p_option_style, CONSTS.STR_MCM_MAGE, DONT_UPDATE)
-    elseIf code_style == CODES.IS_ARCHER
+    elseIf code_style == doticu_npcp_codes.STYLE_ARCHER()
         MCM.SetTextOptionValue(p_option_style, CONSTS.STR_MCM_ARCHER, DONT_UPDATE)
-    elseIf code_style == CODES.IS_COWARD
+    elseIf code_style == doticu_npcp_codes.STYLE_COWARD()
         MCM.SetTextOptionValue(p_option_style, CONSTS.STR_MCM_COWARD, DONT_UPDATE)
     endIf
 

@@ -10,16 +10,6 @@
 
 namespace doticu_npcp { namespace Papyrus {
 
-    // Virtual_Machine_t
-
-    inline Virtual_Machine_t* Virtual_Machine_t::Self()
-    {
-        static Virtual_Machine_t* const virtual_machine =
-            reinterpret_cast<Virtual_Machine_t*>((*g_skyrimVM)->GetClassRegistry());
-        NPCP_ASSERT(virtual_machine);
-        return virtual_machine;
-    }
-
     // Handle_t
 
     inline Registry_t* Handle_t::Registry()
@@ -65,16 +55,6 @@ namespace doticu_npcp { namespace Papyrus {
     {
     }
 
-    // doing this causes a lot of warnings to pop up in the log.
-    // it does not seem to be necessary for our purposes.
-    /*inline Handle_t::~Handle_t()
-    {
-        if (Is_Valid()) {
-            
-            Policy()->Release(handle);
-        }
-    }*/
-
     inline bool Handle_t::Is_Valid()
     {
         return handle != Policy()->GetInvalidHandle();
@@ -83,6 +63,23 @@ namespace doticu_npcp { namespace Papyrus {
     inline Handle_t::operator UInt64()
     {
         return handle;
+    }
+
+    // Virtual_Machine_t
+
+    inline Virtual_Machine_t* Virtual_Machine_t::Self()
+    {
+        static Virtual_Machine_t* const virtual_machine =
+            reinterpret_cast<Virtual_Machine_t*>((*g_skyrimVM)->GetClassRegistry());
+        NPCP_ASSERT(virtual_machine);
+        return virtual_machine;
+    }
+
+    template <typename BSObject>
+    inline void Virtual_Machine_t::Send_Event(BSObject* object, String_t event_name, IFunctionArguments* arguments)
+    {
+        NPCP_ASSERT(object && event_name && arguments);
+        Self()->Send_Event(Handle_t(object), &event_name, arguments);
     }
 
     // Type_t

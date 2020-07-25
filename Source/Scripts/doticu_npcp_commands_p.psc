@@ -104,7 +104,7 @@ function Unclone(Actor ref_actor)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Unclone(CODES.HASNT_MEMBER, str_name)
+        NOTES.Unclone(doticu_npcp_codes.HASNT_MEMBER(), str_name)
         return
     endIf
 
@@ -130,7 +130,7 @@ function Pack(int code_exec, Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Pack(CODES.HASNT_MEMBER, str_name)
+        NOTES.Pack(doticu_npcp_codes.HASNT_MEMBER(), str_name)
         return
     endIf
 
@@ -140,7 +140,7 @@ endFunction
 function Stash(Actor ref_actor)
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        return NOTES.Stash(CODES.HASNT_MEMBER, ref_member.Name())
+        return NOTES.Stash(doticu_npcp_codes.HASNT_MEMBER(), ref_member.Name())
     endIf
 
     NOTES.Stash(ref_member.Stash(), ref_member.Name())
@@ -171,7 +171,7 @@ function Outfit(int code_exec, Actor ref_actor, int code_outfit2, bool auto_crea
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Outfit(CODES.HASNT_MEMBER, str_name, code_outfit2)
+        NOTES.Outfit(doticu_npcp_codes.HASNT_MEMBER(), str_name, code_outfit2)
         return
     endIf
 
@@ -226,7 +226,7 @@ function Resurrect(int code_exec, Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Resurrect(CODES.HASNT_MEMBER, str_name)
+        NOTES.Resurrect(doticu_npcp_codes.HASNT_MEMBER(), str_name)
         return
     endIf
     
@@ -247,7 +247,7 @@ function Reanimate(int code_exec, Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Reanimate(CODES.HASNT_MEMBER, str_name)
+        NOTES.Reanimate(doticu_npcp_codes.HASNT_MEMBER(), str_name)
         return
     endIf
 
@@ -264,7 +264,7 @@ function Mannequinize(Actor ref_actor, ObjectReference ref_marker, bool auto_cre
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        return NOTES.Mannequinize(CODES.HASNT_MEMBER, ACTORS.Name(ref_actor))
+        return NOTES.Mannequinize(doticu_npcp_codes.HASNT_MEMBER(), ACTORS.Name(ref_actor))
     endIf
 
     NOTES.Mannequinize(ref_member.Mannequinize(ref_marker), ACTORS.Name(ref_actor))
@@ -273,7 +273,7 @@ endFunction
 function Unmannequinize(Actor ref_actor)
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        return NOTES.Unmannequinize(CODES.HASNT_MEMBER, ACTORS.Name(ref_actor))
+        return NOTES.Unmannequinize(doticu_npcp_codes.HASNT_MEMBER(), ACTORS.Name(ref_actor))
     endIf
 
     NOTES.Unmannequinize(ref_member.Unmannequinize(), ACTORS.Name(ref_actor))
@@ -293,7 +293,7 @@ function Settle(Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Settle(CODES.HASNT_MEMBER, str_name)
+        NOTES.Settle(doticu_npcp_codes.HASNT_MEMBER(), str_name)
         return
     endIf
 
@@ -314,7 +314,7 @@ function Unsettle( Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Unsettle(CODES.HASNT_MEMBER, str_name)
+        NOTES.Unsettle(doticu_npcp_codes.HASNT_MEMBER(), str_name)
         return
     endIf
 
@@ -335,7 +335,7 @@ function Resettle(Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Resettle(CODES.HASNT_MEMBER, str_name)
+        NOTES.Resettle(doticu_npcp_codes.HASNT_MEMBER(), str_name)
         return
     endIf
 
@@ -364,7 +364,7 @@ function Enthrall(Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Enthrall(CODES.HASNT_MEMBER, str_name)
+        NOTES.Enthrall(doticu_npcp_codes.HASNT_MEMBER(), str_name)
         return
     endIf
 
@@ -385,7 +385,7 @@ function Unthrall(Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Unthrall(CODES.HASNT_MEMBER, str_name)
+        NOTES.Unthrall(doticu_npcp_codes.HASNT_MEMBER(), str_name)
         return
     endIf
 
@@ -406,7 +406,7 @@ function Immobilize(Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Immobilize(CODES.HASNT_MEMBER, str_name)
+        NOTES.Immobilize(doticu_npcp_codes.HASNT_MEMBER(), str_name)
         return
     endIf
 
@@ -427,7 +427,7 @@ function Mobilize(Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Mobilize(CODES.HASNT_MEMBER, str_name)
+        NOTES.Mobilize(doticu_npcp_codes.HASNT_MEMBER(), str_name)
         return
     endIf
 
@@ -448,7 +448,7 @@ function Paralyze(Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Paralyze(CODES.HASNT_MEMBER, str_name)
+        NOTES.Paralyze(doticu_npcp_codes.HASNT_MEMBER(), str_name)
         return
     endIf
     
@@ -469,7 +469,7 @@ function Unparalyze(Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Unparalyze(CODES.HASNT_MEMBER, str_name)
+        NOTES.Unparalyze(doticu_npcp_codes.HASNT_MEMBER(), str_name)
         return
     endIf
 
@@ -480,11 +480,11 @@ function Stylize(Actor ref_actor, int code_style, bool auto_create)
     int code_return
     string str_name = ACTORS.Name(ref_actor)
 
-    if code_style != CODES.IS_DEFAULT &&\
-        code_style != CODES.IS_WARRIOR &&\
-        code_style != CODES.IS_MAGE &&\
-        code_style != CODES.IS_ARCHER &&\
-        code_style != CODES.IS_COWARD
+    if code_style != doticu_npcp_codes.STYLE_DEFAULT() &&\
+        code_style != doticu_npcp_codes.STYLE_WARRIOR() &&\
+        code_style != doticu_npcp_codes.STYLE_MAGE() &&\
+        code_style != doticu_npcp_codes.STYLE_ARCHER() &&\
+        code_style != doticu_npcp_codes.STYLE_COWARD()
         code_style = VARS.auto_style; eventually VARS.default_style
     endIf
 
@@ -498,41 +498,41 @@ function Stylize(Actor ref_actor, int code_style, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Stylize(CODES.HASNT_MEMBER, str_name, code_style)
+        NOTES.Stylize(doticu_npcp_codes.HASNT_MEMBER(), str_name, code_style)
         return
     endIf
 
-    if code_style == CODES.IS_DEFAULT
+    if code_style == doticu_npcp_codes.STYLE_DEFAULT()
         NOTES.Stylize(ref_member.Stylize_Default(), str_name, code_style)
-    elseIf code_style == CODES.IS_WARRIOR
+    elseIf code_style == doticu_npcp_codes.STYLE_WARRIOR()
         NOTES.Stylize(ref_member.Stylize_Warrior(), str_name, code_style)
-    elseIf code_style == CODES.IS_MAGE
+    elseIf code_style == doticu_npcp_codes.STYLE_MAGE()
         NOTES.Stylize(ref_member.Stylize_Mage(), str_name, code_style)
-    elseIf code_style == CODES.IS_ARCHER
+    elseIf code_style == doticu_npcp_codes.STYLE_ARCHER()
         NOTES.Stylize(ref_member.Stylize_Archer(), str_name, code_style)
-    elseIf code_style == CODES.IS_COWARD
+    elseIf code_style == doticu_npcp_codes.STYLE_COWARD()
         NOTES.Stylize(ref_member.Stylize_Coward(), str_name, code_style)
     endIf
 endFunction
 
 function Stylize_Default(Actor ref_actor, bool auto_create)
-    Stylize(ref_actor, CODES.IS_DEFAULT, auto_create)
+    Stylize(ref_actor, doticu_npcp_codes.STYLE_DEFAULT(), auto_create)
 endFunction
 
 function Stylize_Warrior(Actor ref_actor, bool auto_create)
-    Stylize(ref_actor, CODES.IS_WARRIOR, auto_create)
+    Stylize(ref_actor, doticu_npcp_codes.STYLE_WARRIOR(), auto_create)
 endFunction
 
 function Stylize_Mage(Actor ref_actor, bool auto_create)
-    Stylize(ref_actor, CODES.IS_MAGE, auto_create)
+    Stylize(ref_actor, doticu_npcp_codes.STYLE_MAGE(), auto_create)
 endFunction
 
 function Stylize_Archer(Actor ref_actor, bool auto_create)
-    Stylize(ref_actor, CODES.IS_ARCHER, auto_create)
+    Stylize(ref_actor, doticu_npcp_codes.STYLE_ARCHER(), auto_create)
 endFunction
 
 function Stylize_Coward(Actor ref_actor, bool auto_create)
-    Stylize(ref_actor, CODES.IS_COWARD, auto_create)
+    Stylize(ref_actor, doticu_npcp_codes.STYLE_COWARD(), auto_create)
 endFunction
 
 function Vitalize(Actor ref_actor, int code_vitality, bool auto_create)
@@ -556,7 +556,7 @@ function Vitalize(Actor ref_actor, int code_vitality, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Vitalize(CODES.HASNT_MEMBER, str_name, code_vitality)
+        NOTES.Vitalize(doticu_npcp_codes.HASNT_MEMBER(), str_name, code_vitality)
         return
     endIf
 
@@ -601,7 +601,7 @@ function Follow(Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Follow(CODES.HASNT_MEMBER, str_name)
+        NOTES.Follow(doticu_npcp_codes.HASNT_MEMBER(), str_name)
         return
     endIf
 
@@ -622,7 +622,7 @@ function Unfollow(Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Unfollow(CODES.HASNT_MEMBER, str_name)
+        NOTES.Unfollow(doticu_npcp_codes.HASNT_MEMBER(), str_name)
         return
     endIf
 
@@ -643,7 +643,7 @@ function Sneak(int code_exec, Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Sneak(CODES.HASNT_MEMBER, str_name)
+        NOTES.Sneak(doticu_npcp_codes.HASNT_MEMBER(), str_name)
         return
     endIf
 
@@ -678,7 +678,7 @@ function Unsneak(int code_exec, Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Unsneak(CODES.HASNT_MEMBER, str_name)
+        NOTES.Unsneak(doticu_npcp_codes.HASNT_MEMBER(), str_name)
         return
     endIf
 
@@ -711,7 +711,7 @@ function Saddle(int code_exec, Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        return NOTES.Saddle(CODES.HASNT_MEMBER, str_name)
+        return NOTES.Saddle(doticu_npcp_codes.HASNT_MEMBER(), str_name)
     endIf
 
     if auto_create && !ref_member.Is_Follower()
@@ -741,7 +741,7 @@ function Unsaddle(int code_exec, Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        return NOTES.Unsaddle(CODES.HASNT_MEMBER, str_name)
+        return NOTES.Unsaddle(doticu_npcp_codes.HASNT_MEMBER(), str_name)
     endIf
 
     if auto_create && !ref_member.Is_Follower()
@@ -772,7 +772,7 @@ function Summon(Actor ref_actor)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Summon(CODES.HASNT_MEMBER, str_name)
+        NOTES.Summon(doticu_npcp_codes.HASNT_MEMBER(), str_name)
         return
     endIf
 
@@ -781,12 +781,12 @@ endFunction
 
 function Goto(Actor ref_actor)
     if !ref_actor
-        return NOTES.Goto(CODES.ISNT_ACTOR, "")
+        return NOTES.Goto(doticu_npcp_codes.ISNT_ACTOR(), "")
     endIf
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        return NOTES.Goto(CODES.HASNT_MEMBER, ACTORS.Name(ref_actor))
+        return NOTES.Goto(doticu_npcp_codes.HASNT_MEMBER(), ACTORS.Name(ref_actor))
     endIf
 
     NOTES.Goto(ref_member.Goto(), ref_member.Name())
@@ -887,15 +887,15 @@ function Cycle_Style(Actor ref_actor, bool auto_create)
     if !ref_member
         Stylize(ref_actor, VARS.auto_style, auto_create)
     elseIf ref_member.Is_Styled_Default()
-        Stylize(ref_actor, CODES.IS_WARRIOR, auto_create)
+        Stylize(ref_actor, doticu_npcp_codes.STYLE_WARRIOR(), auto_create)
     elseIf ref_member.Is_Styled_Warrior()
-        Stylize(ref_actor, CODES.IS_MAGE, auto_create)
+        Stylize(ref_actor, doticu_npcp_codes.STYLE_MAGE(), auto_create)
     elseIf ref_member.Is_Styled_Mage()
-        Stylize(ref_actor, CODES.IS_ARCHER, auto_create)
+        Stylize(ref_actor, doticu_npcp_codes.STYLE_ARCHER(), auto_create)
     elseIf ref_member.Is_Styled_Archer()
-        Stylize(ref_actor, CODES.IS_COWARD, auto_create)
+        Stylize(ref_actor, doticu_npcp_codes.STYLE_COWARD(), auto_create)
     elseIf ref_member.Is_Styled_Coward()
-        Stylize(ref_actor, CODES.IS_DEFAULT, auto_create)
+        Stylize(ref_actor, doticu_npcp_codes.STYLE_DEFAULT(), auto_create)
     endIf
 endFunction
 
@@ -1063,15 +1063,15 @@ function Style_Show(Actor ref_actor)
     endIf
 
     int code_style = ref_member.Style()
-    if code_style == CODES.IS_DEFAULT
+    if code_style == doticu_npcp_codes.STYLE_DEFAULT()
         LOGS.Create_Note("Is Default ", false)
-    elseIf code_style == CODES.IS_WARRIOR
+    elseIf code_style == doticu_npcp_codes.STYLE_WARRIOR()
         LOGS.Create_Note("Is Warrior ", false)
-    elseIf code_style == CODES.IS_MAGE
+    elseIf code_style == doticu_npcp_codes.STYLE_MAGE()
         LOGS.Create_Note("Is Mage ", false)
-    elseIf code_style == CODES.IS_ARCHER
+    elseIf code_style == doticu_npcp_codes.STYLE_ARCHER()
         LOGS.Create_Note("Is Archer ", false)
-    elseIf code_style == CODES.IS_COWARD
+    elseIf code_style == doticu_npcp_codes.STYLE_COWARD()
         LOGS.Create_Note("Is Coward ", false)
     endIf
 endFunction

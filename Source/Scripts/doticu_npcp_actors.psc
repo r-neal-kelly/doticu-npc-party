@@ -463,7 +463,7 @@ endFunction
 int function Toggle_Move(Actor ref_actor)
     if !MOVEE.Exists()
         if !ref_actor
-            return CODES.ISNT_ACTOR
+            return doticu_npcp_codes.ISNT_ACTOR()
         endIf
         
         doticu_npcp_member ref_member = p_DATA.MODS.MEMBERS.Get_Member(ref_actor)
@@ -471,7 +471,7 @@ int function Toggle_Move(Actor ref_actor)
             if ref_member.Is_Mannequin()
                 return CODES.IS_MANNEQUIN
             elseIf ref_member.Is_Display()
-                return CODES.IS_DISPLAY
+                return doticu_npcp_codes.IS_DISPLAY()
             endIf
         endIf
 

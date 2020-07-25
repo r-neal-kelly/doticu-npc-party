@@ -149,7 +149,7 @@ endFunction
 ; Public Methods
 int function Create_Member(Actor ref_actor, bool do_clone = false)
     if !ref_actor
-        return CODES.ISNT_ACTOR
+        return doticu_npcp_codes.ISNT_ACTOR()
     endIf
 
     if ref_actor.IsChild()
@@ -158,7 +158,7 @@ int function Create_Member(Actor ref_actor, bool do_clone = false)
 
     if Count_Filled() >= Get_Limit()
         ; check first so we don't have to unclone
-        return CODES.HASNT_SPACE_MEMBER
+        return doticu_npcp_codes.HASNT_MEMBER_SPACE()
     endIf
 
     if Should_Clone_Actor(ref_actor)
@@ -188,7 +188,7 @@ int function Create_Member(Actor ref_actor, bool do_clone = false)
             was_dead = true
             ACTORS.Resurrect(ref_actor)
             if ACTORS.Is_Dead(ref_actor)
-                return CODES.CANT_RESURRECT
+                return doticu_npcp_codes.CANT_RESURRECT()
             endIf
         endIf
         NPCS.Register(ref_actor)
@@ -201,22 +201,22 @@ int function Create_Member(Actor ref_actor, bool do_clone = false)
         elseIf was_dead
             ACTORS.Kill(ref_actor)
         endIf
-        return CODES.FAILURE
+        return doticu_npcp_codes.FAILURE()
     endIf
 
     ref_member.f_Create(p_DATA, ref_actor, do_clone)
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Destroy_Member(Actor ref_actor, bool delete_clone = false)
     if !ref_actor
-        return CODES.ISNT_ACTOR
+        return doticu_npcp_codes.ISNT_ACTOR()
     endIf
 
     doticu_npcp_member ref_member = p_From_Actor(ref_actor) as doticu_npcp_member
     if !ref_member
-        return CODES.HASNT_MEMBER
+        return doticu_npcp_codes.HASNT_MEMBER()
     endIf
     
     bool is_clone = ref_member.Is_Clone()
@@ -236,7 +236,7 @@ int function Destroy_Member(Actor ref_actor, bool delete_clone = false)
         NPCS.Unregister(ref_actor)
     endIf
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Get_Count()

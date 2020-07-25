@@ -4,6 +4,7 @@
 
 #include "actor2.h"
 #include "actor_base2.h"
+#include "codes.h"
 #include "consts.h"
 #include "object_ref.h"
 #include "party.h"
@@ -32,6 +33,106 @@ namespace doticu_npcp { namespace Party {
     Variable_t* Member_t::Variable(String_t variable_name)
     {
         return Variable_t::Fetch(this, Class_Name(), variable_name);
+    }
+
+    Variable_t* Member_t::Actor_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_ref_actor")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
+    Variable_t* Member_t::Pack_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_container_pack")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
+    Variable_t* Member_t::Mannequin_Marker_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_marker_mannequin")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
+    Variable_t* Member_t::Display_Marker_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_marker_display")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
+    Variable_t* Member_t::Undisplay_Marker_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_marker_undisplay")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
+    Variable_t* Member_t::Style_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_code_style")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
+    Variable_t* Member_t::Vitality_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_code_vitality")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
+    Variable_t* Member_t::Outfit2_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_code_outfit2")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
+    Variable_t* Member_t::Rating_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_int_rating")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
+    }
+
+    Variable_t* Member_t::Is_Clone_Variable()
+    {
+        static const String_t variable_name = Utils::Assert(
+            String_t("p_is_clone")
+        );
+        return Utils::Assert(
+            Variable(variable_name)
+        );
     }
 
     Variable_t* Member_t::Is_Immobile_Variable()
@@ -94,50 +195,10 @@ namespace doticu_npcp { namespace Party {
         );
     }
 
-    Variable_t* Member_t::Mannequin_Marker_Variable()
+    Variable_t* Member_t::Is_Reanimated_Variable()
     {
         static const String_t variable_name = Utils::Assert(
-            String_t("p_marker_mannequin")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
-    }
-
-    Variable_t* Member_t::Display_Marker_Variable()
-    {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_marker_display")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
-    }
-
-    Variable_t* Member_t::Undisplay_Marker_Variable()
-    {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_marker_undisplay")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
-    }
-
-    Variable_t* Member_t::Style_Variable()
-    {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_code_style")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
-    }
-
-    Variable_t* Member_t::Vitality_Variable()
-    {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_code_vitality")
+            String_t("p_is_reanimated")
         );
         return Utils::Assert(
             Variable(variable_name)
@@ -146,414 +207,478 @@ namespace doticu_npcp { namespace Party {
 
     Actor_t* Member_t::Actor()
     {
-        static const String_t variable_name = String_t("p_ref_actor");
-
-        Variable_t* const variable = Variable(variable_name);
-        if (variable) {
-            return variable->Actor();
-        } else {
-            return nullptr;
+        NPCP_ASSERT(Is_Filled());
+        Actor_t* actor = Actor_Variable()->Actor();
+        if (actor == nullptr) {
+            actor = Utils::Assert(Alias_t::Actor());
+            Actor_Variable()->Pack(actor);
         }
+        return actor;
     }
 
     Follower_t* Member_t::Follower()
     {
-        Followers_t* followers = Followers_t::Self();
-        if (followers) {
-            return followers->From_Actor(Actor());
-        } else {
-            return nullptr;
-        }
+        NPCP_ASSERT(Is_Filled());
+        return Followers_t::Self()->From_Actor(Actor());
     }
 
     Reference_t* Member_t::Pack()
     {
-        static const String_t variable_name = String_t("p_container_pack");
-
-        Variable_t* const variable = Variable(variable_name);
-        if (variable) {
-            return variable->Reference();
-        } else {
-            return nullptr;
-        }
+        NPCP_ASSERT(Is_Filled());
+        return Pack_Variable()->Reference();
     }
 
     Reference_t* Member_t::Settler_Marker()
     {
-        Formlist_t* settler_markers = Consts::Settler_Markers_Formlist();
-        NPCP_ASSERT(settler_markers->forms.count == Members_t::MAX);
-        return static_cast<Reference_t*>(settler_markers->forms.entries[ID()]);
+        NPCP_ASSERT(Is_Filled());
+        return static_cast<Reference_t*>(Consts::Settler_Markers_Formlist()->forms.entries[ID()]);
     }
 
     Reference_t* Member_t::Display_Marker()
     {
+        NPCP_ASSERT(Is_Filled());
         return Display_Marker_Variable()->Reference();
     }
 
     Reference_t* Member_t::Undisplay_Marker()
     {
+        NPCP_ASSERT(Is_Filled());
         return Undisplay_Marker_Variable()->Reference();
     }
 
     Cell_t* Member_t::Cell()
     {
-        Actor_t* actor = Actor();
-        return actor ? actor->parentCell : nullptr;
+        NPCP_ASSERT(Is_Filled());
+        return Actor()->parentCell;
     }
 
     Int_t Member_t::Style()
     {
+        NPCP_ASSERT(Is_Filled());
         return Style_Variable()->Int();
     }
 
     Int_t Member_t::Vitality()
     {
+        NPCP_ASSERT(Is_Filled());
         return Vitality_Variable()->Int();
     }
 
     Int_t Member_t::Outfit2()
     {
-        static const String_t variable_name = String_t("p_code_outfit2");
-
-        Variable_t* const variable = Variable(variable_name);
-        if (variable) {
-            return variable->Int();
-        } else {
-            return 0;
-        }
+        NPCP_ASSERT(Is_Filled());
+        return Outfit2_Variable()->Int();
     }
 
     Int_t Member_t::Rating()
     {
-        static const String_t variable_name = String_t("p_int_rating");
-
-        Variable_t* const variable = Variable(variable_name);
-        if (variable) {
-            return variable->Int();
-        } else {
-            return 0;
-        }
+        NPCP_ASSERT(Is_Filled());
+        return Rating_Variable()->Int();
     }
 
     String_t Member_t::Sex()
     {
-        static const String_t male = String_t("male");
-        static const String_t female = String_t("female");
-        static const String_t none = String_t("none");
-        static const String_t invalid = String_t("");
-
-        Int_t sex = Actor2::Sex(Actor());
-        if (sex == 0) {
-            return male;
-        } else if (sex == 1) {
-            return female;
-        } else if (sex == -1) {
-            return none;
-        } else {
-            return invalid;
-        }
+        NPCP_ASSERT(Is_Filled());
+        return Actor2::Sex_String(Actor());
     }
 
     String_t Member_t::Race()
     {
-        Actor_t* actor = Actor();
-        return actor ? Actor2::Race(actor) : "";
+        NPCP_ASSERT(Is_Filled());
+        return Actor2::Race(Actor());
     }
 
     String_t Member_t::Base_Name()
     {
+        NPCP_ASSERT(Is_Filled());
         return Actor2::Get_Base_Name(Actor());
     }
 
     String_t Member_t::Reference_Name()
     {
+        NPCP_ASSERT(Is_Filled());
         return Actor2::Get_Ref_Name(Actor());
     }
 
     String_t Member_t::Name()
     {
+        NPCP_ASSERT(Is_Filled());
         return Actor2::Get_Name(Actor());
     }
 
     Bool_t Member_t::Is_Loaded()
     {
-        Actor_t* actor = Actor();
-        return actor && Actor2::Is_Loaded(actor);
+        return Is_Filled() && Actor2::Is_Loaded(Actor());
     }
 
     Bool_t Member_t::Is_Unloaded()
     {
-        Actor_t* actor = Actor();
-        return actor && Actor2::Is_Unloaded(actor);
-    }
-
-    Bool_t Member_t::Is_Created()
-    {
-        static const String_t variable_name = String_t("p_is_created");
-
-        Variable_t* const variable = Variable(variable_name);
-        if (variable) {
-            return variable->Bool();
-        } else {
-            return false;
-        }
-    }
-
-    Bool_t Member_t::Is_Destroyed()
-    {
-        static const String_t variable_name = String_t("p_is_created");
-
-        Variable_t* const variable = Variable(variable_name);
-        if (variable) {
-            return !variable->Bool();
-        } else {
-            return false;
-        }
+        return Is_Filled() && Actor2::Is_Unloaded(Actor());
     }
 
     Bool_t Member_t::Is_Unique()
     {
-        Actor_t* actor = Actor();
-        return actor && Actor2::Is_Unique(actor);
+        return Is_Filled() && Actor2::Is_Unique(Actor());
     }
 
     Bool_t Member_t::Is_Generic()
     {
-        Actor_t* actor = Actor();
-        return actor && Actor2::Is_Generic(actor);
+        return Is_Filled() && Actor2::Is_Generic(Actor());
     }
 
     Bool_t Member_t::Is_Original()
     {
-        static const String_t variable_name = String_t("p_is_clone");
-
-        Variable_t* const variable = Variable(variable_name);
-        if (variable) {
-            return !variable->Bool();
-        } else {
-            return false;
-        }
+        return Is_Filled() && !Is_Clone_Variable()->Bool();
     }
 
     Bool_t Member_t::Is_Clone()
     {
-        static const String_t variable_name = String_t("p_is_clone");
-
-        Variable_t* const variable = Variable(variable_name);
-        if (variable) {
-            return variable->Bool();
-        } else {
-            return false;
-        }
+        return Is_Filled() && Is_Clone_Variable()->Bool();
     }
 
     Bool_t Member_t::Is_Alive()
     {
-        Actor_t* actor = Actor();
-        return actor && Actor2::Is_Alive(actor);
+        return Is_Filled() && Actor2::Is_Alive(Actor());
     }
 
     Bool_t Member_t::Is_Dead()
     {
-        Actor_t* actor = Actor();
-        return actor && Actor2::Is_Dead(actor);
+        return Is_Filled() && Actor2::Is_Dead(Actor());
     }
 
     Bool_t Member_t::Is_Mobile()
     {
-        Variable_t* const variable = Is_Immobile_Variable();
-        if (variable) {
-            return !variable->Bool();
-        } else {
-            return false;
-        }
+        return Is_Filled() && !Is_Immobile_Variable()->Bool();
     }
 
     Bool_t Member_t::Is_Immobile()
     {
-        Variable_t* const variable = Is_Immobile_Variable();
-        if (variable) {
-            return variable->Bool();
-        } else {
-            return false;
-        }
+        return Is_Filled() && Is_Immobile_Variable()->Bool();
     }
 
     Bool_t Member_t::Is_Settler()
     {
-        Variable_t* const variable = Is_Settler_Variable();
-        if (variable) {
-            return variable->Bool();
-        } else {
-            return false;
-        }
+        return Is_Filled() && Is_Settler_Variable()->Bool();
     }
 
     Bool_t Member_t::Isnt_Settler()
     {
-        Variable_t* const variable = Is_Settler_Variable();
-        if (variable) {
-            return !variable->Bool();
-        } else {
-            return false;
-        }
+        return Is_Filled() && !Is_Settler_Variable()->Bool();
     }
 
     Bool_t Member_t::Is_Thrall()
     {
-        Variable_t* const variable = Is_Thrall_Variable();
-        if (variable) {
-            return variable->Bool();
-        } else {
-            return false;
-        }
+        return Is_Filled() && Is_Thrall_Variable()->Bool();
     }
 
     Bool_t Member_t::Isnt_Thrall()
     {
-        Variable_t* const variable = Is_Thrall_Variable();
-        if (variable) {
-            return !variable->Bool();
-        } else {
-            return false;
-        }
+        return Is_Filled() && !Is_Thrall_Variable()->Bool();
     }
 
     Bool_t Member_t::Is_Paralyzed()
     {
-        Variable_t* const variable = Is_Paralyzed_Variable();
-        if (variable) {
-            return variable->Bool();
-        } else {
-            return false;
-        }
+        return Is_Filled() && Is_Paralyzed_Variable()->Bool();
     }
 
     Bool_t Member_t::Isnt_Paralyzed()
     {
-        Variable_t* const variable = Is_Paralyzed_Variable();
-        if (variable) {
-            return !variable->Bool();
-        } else {
-            return false;
-        }
+        return Is_Filled() && !Is_Paralyzed_Variable()->Bool();
     }
 
     Bool_t Member_t::Is_Mannequin()
     {
-        Variable_t* const variable = Is_Mannequin_Variable();
-        if (variable) {
-            return variable->Bool();
-        } else {
-            return false;
-        }
+        return Is_Filled() && Is_Mannequin_Variable()->Bool();
     }
 
     Bool_t Member_t::Isnt_Mannequin()
     {
-        Variable_t* const variable = Is_Mannequin_Variable();
-        if (variable) {
-            return !variable->Bool();
-        } else {
-            return false;
-        }
+        return Is_Filled() && !Is_Mannequin_Variable()->Bool();
     }
 
     Bool_t Member_t::Is_Display()
     {
-        return Is_Display_Variable()->Bool();
+        return Is_Filled() && Is_Display_Variable()->Bool();
     }
 
     Bool_t Member_t::Isnt_Display()
     {
-        return !Is_Display_Variable()->Bool();
+        return Is_Filled() && !Is_Display_Variable()->Bool();
     }
 
     Bool_t Member_t::Is_Reanimated()
     {
-        static const String_t variable_name = String_t("p_is_reanimated");
-
-        Variable_t* const variable = Variable(variable_name);
-        if (variable) {
-            return variable->Bool();
-        } else {
-            return false;
-        }
+        return Is_Filled() && Is_Reanimated_Variable()->Bool();
     }
 
     Bool_t Member_t::Isnt_Reanimated()
     {
-        static const String_t variable_name = String_t("p_is_reanimated");
+        return Is_Filled() && !Is_Reanimated_Variable()->Bool();
+    }
 
-        Variable_t* const variable = Variable(variable_name);
-        if (variable) {
-            return !variable->Bool();
+    Bool_t Member_t::Is_Follower()
+    {
+        return Is_Filled() && Follower() != nullptr;
+    }
+
+    Bool_t Member_t::Isnt_Follower()
+    {
+        return Is_Filled() && Follower() == nullptr;
+    }
+
+    Bool_t Member_t::Is_Sneak()
+    {
+        if (Is_Filled()) {
+            Follower_t* follower = Follower();
+            return follower && follower->Is_Sneak();
         } else {
             return false;
         }
     }
 
-    Bool_t Member_t::Is_Follower()
-    {
-        return Follower() != nullptr;
-    }
-
-    Bool_t Member_t::Isnt_Follower()
-    {
-        return Follower() == nullptr;
-    }
-
-    Bool_t Member_t::Is_Sneak()
-    {
-        Follower_t* follower = Follower();
-        return follower && follower->Is_Sneak();
-    }
-
     Bool_t Member_t::Isnt_Sneak()
     {
-        Follower_t* follower = Follower();
-        return follower && follower->Isnt_Sneak();
+        if (Is_Filled()) {
+            Follower_t* follower = Follower();
+            return follower && follower->Isnt_Sneak();
+        } else {
+            return false;
+        }
     }
 
     Bool_t Member_t::Is_Saddler()
     {
-        Follower_t* follower = Follower();
-        return follower && follower->Is_Saddler();
+        if (Is_Filled()) {
+            Follower_t* follower = Follower();
+            return follower && follower->Is_Saddler();
+        } else {
+            return false;
+        }
     }
 
     Bool_t Member_t::Isnt_Saddler()
     {
-        Follower_t* follower = Follower();
-        return follower && follower->Isnt_Saddler();
+        if (Is_Filled()) {
+            Follower_t* follower = Follower();
+            return follower && follower->Isnt_Saddler();
+        } else {
+            return false;
+        }
     }
 
     Bool_t Member_t::Is_Retreater()
     {
-        Follower_t* follower = Follower();
-        return follower && follower->Is_Retreater();
+        if (Is_Filled()) {
+            Follower_t* follower = Follower();
+            return follower && follower->Is_Retreater();
+        } else {
+            return false;
+        }
     }
 
     Bool_t Member_t::Isnt_Retreater()
     {
+        if (Is_Filled()) {
+            Follower_t* follower = Follower();
+            return follower && follower->Isnt_Retreater();
+        } else {
+            return false;
+        }
+    }
+
+    Bool_t Member_t::Is_Loaded_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Actor2::Is_Loaded(Actor());
+    }
+
+    Bool_t Member_t::Is_Unloaded_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Actor2::Is_Unloaded(Actor());
+    }
+
+    Bool_t Member_t::Is_Unique_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Actor2::Is_Unique(Actor());
+    }
+
+    Bool_t Member_t::Is_Generic_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Actor2::Is_Generic(Actor());
+    }
+
+    Bool_t Member_t::Is_Original_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return !Is_Clone_Variable()->Bool();
+    }
+
+    Bool_t Member_t::Is_Clone_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Is_Clone_Variable()->Bool();
+    }
+
+    Bool_t Member_t::Is_Alive_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Actor2::Is_Alive(Actor());
+    }
+
+    Bool_t Member_t::Is_Dead_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Actor2::Is_Dead(Actor());
+    }
+
+    Bool_t Member_t::Is_Mobile_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return !Is_Immobile_Variable()->Bool();
+    }
+
+    Bool_t Member_t::Is_Immobile_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Is_Immobile_Variable()->Bool();
+    }
+
+    Bool_t Member_t::Is_Settler_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Is_Settler_Variable()->Bool();
+    }
+
+    Bool_t Member_t::Isnt_Settler_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return !Is_Settler_Variable()->Bool();
+    }
+
+    Bool_t Member_t::Is_Thrall_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Is_Thrall_Variable()->Bool();
+    }
+
+    Bool_t Member_t::Isnt_Thrall_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return !Is_Thrall_Variable()->Bool();
+    }
+
+    Bool_t Member_t::Is_Paralyzed_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Is_Paralyzed_Variable()->Bool();
+    }
+
+    Bool_t Member_t::Isnt_Paralyzed_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return !Is_Paralyzed_Variable()->Bool();
+    }
+
+    Bool_t Member_t::Is_Mannequin_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Is_Mannequin_Variable()->Bool();
+    }
+
+    Bool_t Member_t::Isnt_Mannequin_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return !Is_Mannequin_Variable()->Bool();
+    }
+
+    Bool_t Member_t::Is_Display_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Is_Display_Variable()->Bool();
+    }
+
+    Bool_t Member_t::Isnt_Display_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return !Is_Display_Variable()->Bool();
+    }
+
+    Bool_t Member_t::Is_Reanimated_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Is_Reanimated_Variable()->Bool();
+    }
+
+    Bool_t Member_t::Isnt_Reanimated_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return !Is_Reanimated_Variable()->Bool();
+    }
+
+    Bool_t Member_t::Is_Follower_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Follower() != nullptr;
+    }
+
+    Bool_t Member_t::Isnt_Follower_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Follower() == nullptr;
+    }
+
+    Bool_t Member_t::Is_Sneak_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        Follower_t* follower = Follower();
+        return follower && follower->Is_Sneak();
+    }
+
+    Bool_t Member_t::Isnt_Sneak_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        Follower_t* follower = Follower();
+        return follower && follower->Isnt_Sneak();
+    }
+
+    Bool_t Member_t::Is_Saddler_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        Follower_t* follower = Follower();
+        return follower && follower->Is_Saddler();
+    }
+
+    Bool_t Member_t::Isnt_Saddler_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        Follower_t* follower = Follower();
+        return follower && follower->Isnt_Saddler();
+    }
+
+    Bool_t Member_t::Is_Retreater_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
+        Follower_t* follower = Follower();
+        return follower && follower->Is_Retreater();
+    }
+
+    Bool_t Member_t::Isnt_Retreater_Unsafe()
+    {
+        NPCP_ASSERT(Is_Filled());
         Follower_t* follower = Follower();
         return follower && follower->Isnt_Retreater();
     }
 
     Bool_t Member_t::Has_Same_Head(Actor_t* other_actor)
     {
+        NPCP_ASSERT(Is_Filled());
         if (other_actor) {
-            Actor_t* alias_actor = Actor();
-            if (alias_actor && Is_Created()) {
-                Actor_Base_t* other_actor_base = static_cast<Actor_Base_t*>(other_actor->baseForm);
-                Actor_Base_t* alias_actor_base = static_cast<Actor_Base_t*>(alias_actor->baseForm);
-                if (other_actor_base && alias_actor_base && Actor_Base2::Has_Same_Head(other_actor_base, alias_actor_base)) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
+            Actor_Base_t* alias_base = static_cast<Actor_Base_t*>(Actor()->baseForm);
+            Actor_Base_t* other_base = static_cast<Actor_Base_t*>(other_actor->baseForm);
+            return Actor_Base2::Has_Same_Head(alias_base, other_base);
         } else {
             return false;
         }
@@ -567,23 +692,23 @@ namespace doticu_npcp { namespace Party {
                           Bool_t is_bash,
                           Bool_t is_blocked)
     {
-        static const String_t kill_func = String_t("p_Kill");
+        // we need to check that the tool isnt healing the member, even if their health is below zero, we shouldn't kill
 
-        Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(Actor());
-        if (value_owner && Is_Alive()) {
+        static const String_t kill_func = Utils::Assert(
+            String_t("p_Kill")
+        );
+
+        if (Is_Filled() && Is_Alive_Unsafe()) {
+            Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(Actor());
             Int_t vitality = Vitality();
             if (value_owner->Get_Actor_Value(Actor_Value_t::HEALTH) <= 0.0) {
-                if (vitality == Vitality_e::MORTAL || vitality == Vitality_e::PROTECTED && attacker == *g_thePlayer) {
+                if (vitality == CODES::VITALITY::MORTAL || vitality == CODES::VITALITY::PROTECTED && attacker == Player::Actor()) {
                     struct Args : public IFunctionArguments {
-                        bool Copy(Output* output)
-                        {
-                            return true;
-                        }
+                        bool Copy(Output* output) { return true; }
                     } func_args;
-                    Handle_t handle(this);
-                    handle.Registry()->QueueEvent(handle, &kill_func, &func_args);
+                    Virtual_Machine_t::Send_Event(this, kill_func, &func_args);
                 }
-            } else if (vitality == Vitality_e::INVULNERABLE) {
+            } else if (vitality == CODES::VITALITY::INVULNERABLE) {
                 value_owner->Restore_Actor_Value(Actor_Modifier_t::DAMAGE, Actor_Value_t::HEALTH, 1000000000.0f);
             }
         }
@@ -591,176 +716,177 @@ namespace doticu_npcp { namespace Party {
 
     bool Member_t::Has_Token(Misc_t* token, Int_t count)
     {
+        NPCP_ASSERT(Is_Filled());
         return Object_Ref::Has_Token(Actor(), token, count);
     }
 
     void Member_t::Token(Misc_t* token, Int_t count)
     {
+        NPCP_ASSERT(Is_Filled());
         Object_Ref::Token(Actor(), token, count);
     }
 
     void Member_t::Untoken(Misc_t* token)
     {
+        NPCP_ASSERT(Is_Filled());
         Object_Ref::Untoken(Actor(), token);
     }
 
     void Member_t::Member()
     {
+        NPCP_ASSERT(Is_Filled());
         Actor_t* actor = Actor();
-        if (actor && Is_Created()) {
-            Object_Ref::Token(actor, Consts::Member_Token(), ID() + 1);
-            if (Is_Clone()) {
-                Object_Ref::Token(actor, Consts::Clone_Token());
-            } else {
-                Object_Ref::Untoken(actor, Consts::Clone_Token());
-            }
-            if (Is_Generic()) {
-                Object_Ref::Token(actor, Consts::Generic_Token());
-            } else {
-                Object_Ref::Untoken(actor, Consts::Generic_Token());
-            }
 
-            Actor2::Remove_Faction(actor, Consts::Potential_Follower_Faction());
-            Actor2::Remove_Faction(actor, Consts::Current_Follower_Faction());
-            Actor2::Add_Faction(actor, Consts::WI_No_Body_Cleanup_Faction());
-            Actor2::Add_Faction(actor, Consts::Member_Faction());
-            Actor2::Remove_Crime_Faction(actor);
-
-            Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(actor);
-            if (value_owner) {
-                value_owner->Set_Actor_Value(Actor_Value_t::AGGRESSION, 0.0f);
-                value_owner->Set_Actor_Value(Actor_Value_t::CONFIDENCE, 4.0f);
-                value_owner->Set_Actor_Value(Actor_Value_t::ASSISTANCE, 2.0f);
-                value_owner->Set_Actor_Value(Actor_Value_t::MORALITY, 0.0f);
-                value_owner->Set_Actor_Value(Actor_Value_t::WAITING_FOR_PLAYER, 0.0f);
-            }
-
-            Actor2::Follow_Player(actor, true);
-
-            if (Actor2::Cant_Talk_To_Player(actor)) {
-                Actor2::Talks_To_Player(actor, true);
-            }
-
-            Actor2::Evaluate_Package(actor);
+        Object_Ref::Token(actor, Consts::Member_Token(), ID() + 1);
+        if (Is_Clone_Unsafe()) {
+            Object_Ref::Token(actor, Consts::Clone_Token());
+        } else {
+            Object_Ref::Untoken(actor, Consts::Clone_Token());
         }
+        if (Is_Generic_Unsafe()) {
+            Object_Ref::Token(actor, Consts::Generic_Token());
+        } else {
+            Object_Ref::Untoken(actor, Consts::Generic_Token());
+        }
+
+        Actor2::Remove_Faction(actor, Consts::Potential_Follower_Faction());
+        Actor2::Remove_Faction(actor, Consts::Current_Follower_Faction());
+        Actor2::Add_Faction(actor, Consts::WI_No_Body_Cleanup_Faction());
+        Actor2::Add_Faction(actor, Consts::Member_Faction());
+        Actor2::Remove_Crime_Faction(actor);
+
+        Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(actor);
+        value_owner->Set_Actor_Value(Actor_Value_t::AGGRESSION, 0.0f);
+        value_owner->Set_Actor_Value(Actor_Value_t::CONFIDENCE, 4.0f);
+        value_owner->Set_Actor_Value(Actor_Value_t::ASSISTANCE, 2.0f);
+        value_owner->Set_Actor_Value(Actor_Value_t::MORALITY, 0.0f);
+        value_owner->Set_Actor_Value(Actor_Value_t::WAITING_FOR_PLAYER, 0.0f);
+
+        Actor2::Follow_Player(actor, true);
+
+        if (Actor2::Cant_Talk_To_Player(actor)) {
+            Actor2::Talks_To_Player(actor, true);
+        }
+
+        Actor2::Evaluate_Package(actor);
     }
 
     void Member_t::Unmember()
     {
+        NPCP_ASSERT(Is_Filled());
         Actor_t* actor = Actor();
-        if (actor && Is_Created()) {
-            if (Actor2::Race_Cant_Talk_To_Player(actor)) {
-                Actor2::Talks_To_Player(actor, false);
-            }
 
-            Actor2::Unfollow_Player(actor);
-
-            Object_Ref::Untoken(actor, Consts::Member_Token());
-            Object_Ref::Untoken(actor, Consts::Clone_Token());
-            Object_Ref::Untoken(actor, Consts::Generic_Token());
-
-            // Restore() handles the rest
-
-            Actor2::Evaluate_Package(actor);
+        if (Actor2::Race_Cant_Talk_To_Player(actor)) {
+            Actor2::Talks_To_Player(actor, false);
         }
+
+        Actor2::Unfollow_Player(actor);
+
+        Object_Ref::Untoken(actor, Consts::Member_Token());
+        Object_Ref::Untoken(actor, Consts::Clone_Token());
+        Object_Ref::Untoken(actor, Consts::Generic_Token());
+
+        // Restore() handles the rest
+
+        Actor2::Evaluate_Package(actor);
     }
 
     void Member_t::Mobilize()
     {
+        NPCP_ASSERT(Is_Filled());
         Actor_t* actor = Actor();
-        if (actor && Is_Created()) {
-            Is_Immobile_Variable()->Bool(false);
 
-            Object_Ref::Untoken(actor, Consts::Immobile_Token());
+        Is_Immobile_Variable()->Bool(false);
 
-            Actor2::Evaluate_Package(actor);
-        }
+        Object_Ref::Untoken(actor, Consts::Immobile_Token());
+
+        Actor2::Evaluate_Package(actor);
     }
 
     void Member_t::Immobilize()
     {
+        NPCP_ASSERT(Is_Filled());
         Actor_t* actor = Actor();
-        if (actor && Is_Created()) {
-            Is_Immobile_Variable()->Bool(true);
 
-            Object_Ref::Token(actor, Consts::Immobile_Token());
+        Is_Immobile_Variable()->Bool(true);
 
-            Actor2::Evaluate_Package(actor);
-        }
+        Object_Ref::Token(actor, Consts::Immobile_Token());
+
+        Actor2::Evaluate_Package(actor);
     }
 
     void Member_t::Settle()
     {
+        NPCP_ASSERT(Is_Filled());
         Actor_t* actor = Actor();
-        if (actor && Is_Created()) {
-            Is_Settler_Variable()->Bool(true);
 
-            Object_Ref::Token(actor, Consts::Settler_Token());
+        Is_Settler_Variable()->Bool(true);
 
-            Object_Ref::Move_To_Orbit(Settler_Marker(), actor, 0.0f, 180.0f);
+        Object_Ref::Token(actor, Consts::Settler_Token());
 
-            Actor2::Evaluate_Package(actor);
-        }
+        Object_Ref::Move_To_Orbit(Settler_Marker(), actor, 0.0f, 180.0f);
+
+        Actor2::Evaluate_Package(actor);
     }
 
     void Member_t::Unsettle()
     {
+        NPCP_ASSERT(Is_Filled());
         Actor_t* actor = Actor();
-        if (actor && Is_Created()) {
-            Is_Settler_Variable()->Bool(false);
 
-            Object_Ref::Untoken(actor, Consts::Settler_Token());
+        Is_Settler_Variable()->Bool(false);
 
-            Object_Ref::Move_To_Orbit(Settler_Marker(), Consts::Storage_Marker(), 0.0f, 0.0f);
+        Object_Ref::Untoken(actor, Consts::Settler_Token());
 
-            Actor2::Evaluate_Package(actor);
-        }
+        Object_Ref::Move_To_Orbit(Settler_Marker(), Consts::Storage_Marker(), 0.0f, 0.0f);
+
+        Actor2::Evaluate_Package(actor);
     }
 
     void Member_t::Enthrall()
     {
+        NPCP_ASSERT(Is_Filled());
         Actor_t* actor = Actor();
-        if (actor && Is_Created()) {
-            Is_Thrall_Variable()->Bool(true);
 
-            Object_Ref::Token(actor, Consts::Thrall_Token());
+        Is_Thrall_Variable()->Bool(true);
 
-            Actor2::Add_Faction(actor, Consts::DLC1_Vampire_Feed_No_Crime_Faction());
+        Object_Ref::Token(actor, Consts::Thrall_Token());
 
-            Actor2::Evaluate_Package(actor);
-        }
+        Actor2::Add_Faction(actor, Consts::DLC1_Vampire_Feed_No_Crime_Faction());
+
+        Actor2::Evaluate_Package(actor);
     }
 
     void Member_t::Unthrall()
     {
+        NPCP_ASSERT(Is_Filled());
         Actor_t* actor = Actor();
-        if (actor && Is_Created()) {
-            Is_Thrall_Variable()->Bool(false);
 
-            Object_Ref::Untoken(actor, Consts::Thrall_Token());
+        Is_Thrall_Variable()->Bool(false);
 
-            Actor2::Remove_Faction(actor, Consts::DLC1_Vampire_Feed_No_Crime_Faction());
+        Object_Ref::Untoken(actor, Consts::Thrall_Token());
 
-            Actor2::Evaluate_Package(actor);
-        }
+        Actor2::Remove_Faction(actor, Consts::DLC1_Vampire_Feed_No_Crime_Faction());
+
+        Actor2::Evaluate_Package(actor);
     }
 
     void Member_t::Paralyze()
     {
+        NPCP_ASSERT(Is_Filled());
         Actor_t* actor = Actor();
-        if (actor && Is_Created()) {
-            Is_Paralyzed_Variable()->Bool(true);
 
-            Object_Ref::Token(actor, Consts::Paralyzed_Token());
+        Is_Paralyzed_Variable()->Bool(true);
 
-            Object_Ref::Block_All_Activation(actor);
-            Actor2::Disable_AI(actor);
-            Actor2::Ghostify(actor);
+        Object_Ref::Token(actor, Consts::Paralyzed_Token());
 
-            actor->Update_3D_Position();
+        Object_Ref::Block_All_Activation(actor);
+        Actor2::Disable_AI(actor);
+        Actor2::Ghostify(actor);
 
-            Actor2::Evaluate_Package(actor);
-        }
+        actor->Update_3D_Position();
+
+        Actor2::Evaluate_Package(actor);
     }
 
     void Member_t::Reparalyze()
@@ -770,80 +896,82 @@ namespace doticu_npcp { namespace Party {
 
     void Member_t::Unparalyze()
     {
+        NPCP_ASSERT(Is_Filled());
         Actor_t* actor = Actor();
-        if (actor && Is_Created()) {
-            Is_Paralyzed_Variable()->Bool(false);
 
-            Object_Ref::Untoken(actor, Consts::Paralyzed_Token());
+        Is_Paralyzed_Variable()->Bool(false);
 
-            if (Isnt_Mannequin()) {
-                Object_Ref::Unblock_All_Activation(actor);
-                Actor2::Enable_AI(actor);
-                Actor2::Unghostify(actor);
-            }
+        Object_Ref::Untoken(actor, Consts::Paralyzed_Token());
 
-            Actor2::Evaluate_Package(actor);
+        if (Isnt_Mannequin_Unsafe()) {
+            Object_Ref::Unblock_All_Activation(actor);
+            Actor2::Enable_AI(actor);
+            Actor2::Unghostify(actor);
         }
+
+        Actor2::Evaluate_Package(actor);
     }
 
     void Member_t::Mannequinize(Reference_t* marker)
     {
+        NPCP_ASSERT(Is_Filled());
         NPCP_ASSERT(marker); // later on, we can make loose mannequins by providing a default marker
-
         Actor_t* actor = Actor();
-        if (actor && Is_Created()) {
-            Is_Mannequin_Variable()->Bool(true);
-            Mannequin_Marker_Variable()->Pack(marker);
 
-            Object_Ref::Token(actor, Consts::Mannequin_Token());
+        Is_Mannequin_Variable()->Bool(true);
+        Mannequin_Marker_Variable()->Pack(marker);
 
-            Object_Ref::Block_All_Activation(actor);
-            Actor2::Disable_AI(actor);
-            Actor2::Ghostify(actor);
+        Object_Ref::Token(actor, Consts::Mannequin_Token());
 
-            Actor2::Move_To_Orbit(actor, marker, 0.0f, 180.0f);
+        Object_Ref::Block_All_Activation(actor);
+        Actor2::Disable_AI(actor);
+        Actor2::Ghostify(actor);
 
-            actor->pos.x = marker->pos.x;
-            actor->pos.y = marker->pos.y;
-            actor->pos.z = marker->pos.z;
-            actor->rot.z = marker->rot.z;
-            actor->Update_Actor_3D_Position();
+        Actor2::Move_To_Orbit(actor, marker, 0.0f, 180.0f);
 
-            Actor2::Fully_Update_3D_Model(actor);
-            actor->Resurrect(false, true);
+        actor->pos.x = marker->pos.x;
+        actor->pos.y = marker->pos.y;
+        actor->pos.z = marker->pos.z;
+        actor->rot.z = marker->rot.z;
+        actor->Update_Actor_3D_Position();
 
-            Actor2::Evaluate_Package(actor);
-        }
+        Actor2::Fully_Update_3D_Model(actor);
+        actor->Resurrect(false, true);
+
+        Actor2::Evaluate_Package(actor);
     }
 
     void Member_t::Remannequinize()
     {
-
+        NPCP_ASSERT(Is_Filled());
+        Actor_t* actor = Actor();
     }
 
     void Member_t::Unmannequinize()
     {
+        NPCP_ASSERT(Is_Filled());
         Actor_t* actor = Actor();
-        if (actor && Is_Created()) {
-            Is_Mannequin_Variable()->Bool(false);
-            Mannequin_Marker_Variable()->None();
+        
+        Is_Mannequin_Variable()->Bool(false);
+        Mannequin_Marker_Variable()->None();
 
-            Object_Ref::Untoken(actor, Consts::Mannequin_Token());
+        Object_Ref::Untoken(actor, Consts::Mannequin_Token());
 
-            if (Isnt_Paralyzed()) {
-                Object_Ref::Unblock_All_Activation(actor);
-                Actor2::Enable_AI(actor);
-                Actor2::Unghostify(actor);
-            }
-
-            Actor2::Evaluate_Package(actor);
+        if (Isnt_Paralyzed_Unsafe()) {
+            Object_Ref::Unblock_All_Activation(actor);
+            Actor2::Enable_AI(actor);
+            Actor2::Unghostify(actor);
         }
+
+        Actor2::Evaluate_Package(actor);
     }
 
     void Member_t::Display(Reference_t* origin, float radius, float degree)
     {
+        NPCP_ASSERT(Is_Filled());
         Actor_t* actor = Actor();
-        if (actor && Is_Filled() && Isnt_Display()) {
+
+        if (Isnt_Display_Unsafe()) {
             Is_Display_Variable()->Bool(true);
 
             Object_Ref::Token(actor, Consts::Display_Token());
@@ -872,8 +1000,10 @@ namespace doticu_npcp { namespace Party {
 
     void Member_t::Redisplay()
     {
+        NPCP_ASSERT(Is_Filled());
         Actor_t* actor = Actor();
-        if (actor && Is_Filled() && Is_Display()) {
+
+        if (Is_Display_Unsafe()) {
             Object_Ref::Token(actor, Consts::Display_Token());
             Actor2::Disable_Havok_Collision(actor);
             Actor2::Move_To_Orbit(actor, Display_Marker(), 0.0f, 180.0f);
@@ -887,8 +1017,10 @@ namespace doticu_npcp { namespace Party {
 
     void Member_t::Undisplay()
     {
+        NPCP_ASSERT(Is_Filled());
         Actor_t* actor = Actor();
-        if (actor && Is_Filled() && Is_Display()) {
+
+        if (Is_Display_Unsafe()) {
             Variable_t* display_marker_variable = Display_Marker_Variable();
             Reference_t* display_marker = display_marker_variable->Reference();
 
@@ -923,59 +1055,229 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
-    void Member_t::Stylize(Int_t style)
+    Int_t Member_t::Stylize(Int_t style)
     {
-        Actor_t* actor = Actor();
-        if (actor && Is_Created()) {
-            if (style == Style_e::WARRIOR) {
-                Style_Variable()->Int(Style_e::WARRIOR);
-                Object_Ref::Untoken(actor, Consts::Default_Style_Token());
-                Object_Ref::Token(actor, Consts::Warrior_Style_Token());
-                Object_Ref::Untoken(actor, Consts::Mage_Style_Token());
-                Object_Ref::Untoken(actor, Consts::Archer_Style_Token());
-                Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
-            } else if (style == Style_e::MAGE) {
-                Style_Variable()->Int(Style_e::MAGE);
-                Object_Ref::Untoken(actor, Consts::Default_Style_Token());
-                Object_Ref::Untoken(actor, Consts::Warrior_Style_Token());
-                Object_Ref::Token(actor, Consts::Mage_Style_Token());
-                Object_Ref::Untoken(actor, Consts::Archer_Style_Token());
-                Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
-            } else if (style == Style_e::ARCHER) {
-                Style_Variable()->Int(Style_e::ARCHER);
-                Object_Ref::Untoken(actor, Consts::Default_Style_Token());
-                Object_Ref::Untoken(actor, Consts::Warrior_Style_Token());
-                Object_Ref::Untoken(actor, Consts::Mage_Style_Token());
-                Object_Ref::Token(actor, Consts::Archer_Style_Token());
-                Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
-            } else if (style == Style_e::COWARD) {
-                Style_Variable()->Int(Style_e::COWARD);
-                Object_Ref::Untoken(actor, Consts::Default_Style_Token());
-                Object_Ref::Untoken(actor, Consts::Warrior_Style_Token());
-                Object_Ref::Untoken(actor, Consts::Mage_Style_Token());
-                Object_Ref::Untoken(actor, Consts::Archer_Style_Token());
-                Object_Ref::Token(actor, Consts::Coward_Style_Token());
-            } else /* style == Style_e::DEFAULT */ {
-                Style_Variable()->Int(Style_e::DEFAULT);
-                Object_Ref::Token(actor, Consts::Default_Style_Token());
-                Object_Ref::Untoken(actor, Consts::Warrior_Style_Token());
-                Object_Ref::Untoken(actor, Consts::Mage_Style_Token());
-                Object_Ref::Untoken(actor, Consts::Archer_Style_Token());
-                Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
+        if (Is_Filled()) {
+            if (style == CODES::STYLE::DEFAULT) {
+                return Stylize_Default();
+            } else if (style == CODES::STYLE::WARRIOR) {
+                return Stylize_Warrior();
+            } else if (style == CODES::STYLE::MAGE) {
+                return Stylize_Mage();
+            } else if (style == CODES::STYLE::ARCHER) {
+                return Stylize_Archer();
+            } else if (style == CODES::STYLE::COWARD) {
+                return Stylize_Coward();
+            } else {
+                return CODES::ISNT_STYLE;
             }
-
-            Level();
-
-            Actor2::Evaluate_Package(actor);
+        } else {
+            return CODES::ISNT_MEMBER;
         }
     }
 
-    void Member_t::Unstylize()
+    Int_t Member_t::Stylize_Default()
     {
-        Actor_t* actor = Actor();
-        if (actor && Is_Created()) {
+        if (Is_Filled()) {
+            Variable_t* style_variable = Style_Variable();
+            if (style_variable->Int() == CODES::STYLE::DEFAULT) {
+                return CODES::IS_DEFAULT;
+            } else {
+                style_variable->Int(CODES::STYLE::DEFAULT);
+
+                Actor_t* actor = Actor();
+                Restylize_Default(actor);
+                Level();
+
+                Actor2::Evaluate_Package(actor);
+
+                return CODES::SUCCESS;
+            }
+        } else {
+            return CODES::ISNT_MEMBER;
+        }
+    }
+
+    Int_t Member_t::Stylize_Warrior()
+    {
+        if (Is_Filled()) {
+            Variable_t* style_variable = Style_Variable();
+            if (style_variable->Int() == CODES::STYLE::WARRIOR) {
+                return CODES::IS_WARRIOR;
+            } else {
+                style_variable->Int(CODES::STYLE::WARRIOR);
+
+                Actor_t* actor = Actor();
+                Restylize_Warrior(actor);
+                Level();
+
+                Actor2::Evaluate_Package(actor);
+
+                return CODES::SUCCESS;
+            }
+        } else {
+            return CODES::ISNT_MEMBER;
+        }
+    }
+
+    Int_t Member_t::Stylize_Mage()
+    {
+        if (Is_Filled()) {
+            Variable_t* style_variable = Style_Variable();
+            if (style_variable->Int() == CODES::STYLE::MAGE) {
+                return CODES::IS_MAGE;
+            } else {
+                style_variable->Int(CODES::STYLE::MAGE);
+
+                Actor_t* actor = Actor();
+                Restylize_Mage(actor);
+                Level();
+
+                Actor2::Evaluate_Package(actor);
+
+                return CODES::SUCCESS;
+            }
+        } else {
+            return CODES::ISNT_MEMBER;
+        }
+    }
+
+    Int_t Member_t::Stylize_Archer()
+    {
+        if (Is_Filled()) {
+            Variable_t* style_variable = Style_Variable();
+            if (style_variable->Int() == CODES::STYLE::ARCHER) {
+                return CODES::IS_ARCHER;
+            } else {
+                style_variable->Int(CODES::STYLE::ARCHER);
+
+                Actor_t* actor = Actor();
+                Restylize_Archer(actor);
+                Level();
+
+                Actor2::Evaluate_Package(actor);
+
+                return CODES::SUCCESS;
+            }
+        } else {
+            return CODES::ISNT_MEMBER;
+        }
+    }
+
+    Int_t Member_t::Stylize_Coward()
+    {
+        if (Is_Filled()) {
+            Variable_t* style_variable = Style_Variable();
+            if (style_variable->Int() == CODES::STYLE::COWARD) {
+                return CODES::IS_COWARD;
+            } else {
+                style_variable->Int(CODES::STYLE::COWARD);
+
+                Actor_t* actor = Actor();
+                Restylize_Coward(actor);
+                Level();
+
+                Actor2::Evaluate_Package(actor);
+
+                return CODES::SUCCESS;
+            }
+        } else {
+            return CODES::ISNT_MEMBER;
+        }
+    }
+
+    void Member_t::Restylize(Actor_t* actor)
+    {
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(actor);
+
+        Int_t style = Style_Variable()->Int();
+        if (style == CODES::STYLE::DEFAULT) {
+            return Restylize_Default(actor);
+        } else if (style == CODES::STYLE::WARRIOR) {
+            return Restylize_Warrior(actor);
+        } else if (style == CODES::STYLE::MAGE) {
+            return Restylize_Mage(actor);
+        } else if (style == CODES::STYLE::ARCHER) {
+            return Restylize_Archer(actor);
+        } else if (style == CODES::STYLE::COWARD) {
+            return Restylize_Coward(actor);
+        } else {
+            NPCP_ASSERT(false);
+        }
+    }
+
+    void Member_t::Restylize_Default(Actor_t* actor)
+    {
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(actor);
+        NPCP_ASSERT(Style_Variable()->Int() == CODES::STYLE::DEFAULT);
+
+        Object_Ref::Token(actor, Consts::Default_Style_Token());
+        Object_Ref::Untoken(actor, Consts::Warrior_Style_Token());
+        Object_Ref::Untoken(actor, Consts::Mage_Style_Token());
+        Object_Ref::Untoken(actor, Consts::Archer_Style_Token());
+        Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
+    }
+
+    void Member_t::Restylize_Warrior(Actor_t* actor)
+    {
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(actor);
+        NPCP_ASSERT(Style_Variable()->Int() == CODES::STYLE::WARRIOR);
+
+        Object_Ref::Untoken(actor, Consts::Default_Style_Token());
+        Object_Ref::Token(actor, Consts::Warrior_Style_Token());
+        Object_Ref::Untoken(actor, Consts::Mage_Style_Token());
+        Object_Ref::Untoken(actor, Consts::Archer_Style_Token());
+        Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
+    }
+
+    void Member_t::Restylize_Mage(Actor_t* actor)
+    {
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(actor);
+        NPCP_ASSERT(Style_Variable()->Int() == CODES::STYLE::MAGE);
+
+        Object_Ref::Untoken(actor, Consts::Default_Style_Token());
+        Object_Ref::Untoken(actor, Consts::Warrior_Style_Token());
+        Object_Ref::Token(actor, Consts::Mage_Style_Token());
+        Object_Ref::Untoken(actor, Consts::Archer_Style_Token());
+        Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
+    }
+
+    void Member_t::Restylize_Archer(Actor_t* actor)
+    {
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(actor);
+        NPCP_ASSERT(Style_Variable()->Int() == CODES::STYLE::ARCHER);
+
+        Object_Ref::Untoken(actor, Consts::Default_Style_Token());
+        Object_Ref::Untoken(actor, Consts::Warrior_Style_Token());
+        Object_Ref::Untoken(actor, Consts::Mage_Style_Token());
+        Object_Ref::Token(actor, Consts::Archer_Style_Token());
+        Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
+    }
+
+    void Member_t::Restylize_Coward(Actor_t* actor)
+    {
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(actor);
+        NPCP_ASSERT(Style_Variable()->Int() == CODES::STYLE::COWARD);
+
+        Object_Ref::Untoken(actor, Consts::Default_Style_Token());
+        Object_Ref::Untoken(actor, Consts::Warrior_Style_Token());
+        Object_Ref::Untoken(actor, Consts::Mage_Style_Token());
+        Object_Ref::Untoken(actor, Consts::Archer_Style_Token());
+        Object_Ref::Token(actor, Consts::Coward_Style_Token());
+    }
+
+    Int_t Member_t::Unstylize()
+    {
+        if (Is_Filled()) {
             Style_Variable()->Int(0);
 
+            Actor_t* actor = Actor();
             Object_Ref::Untoken(actor, Consts::Default_Style_Token());
             Object_Ref::Untoken(actor, Consts::Warrior_Style_Token());
             Object_Ref::Untoken(actor, Consts::Mage_Style_Token());
@@ -983,95 +1285,102 @@ namespace doticu_npcp { namespace Party {
             Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
 
             Actor2::Evaluate_Package(actor);
+
+            return CODES::SUCCESS;
+        } else {
+            return CODES::ISNT_MEMBER;
         }
     }
 
     void Member_t::Vitalize(Int_t vitality)
     {
+        NPCP_ASSERT(Is_Filled());
         Actor_t* actor = Actor();
-        if (actor && Is_Created()) {
-            if (vitality == Vitality_e::MORTAL) {
-                Vitality_Variable()->Int(Vitality_e::MORTAL);
-                Object_Ref::Token(actor, Consts::Mortal_Vitality_Token());
-                Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
-                Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
-                Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
-            } else if (vitality == Vitality_e::ESSENTIAL) {
-                Vitality_Variable()->Int(Vitality_e::ESSENTIAL);
-                Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
-                Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
-                Object_Ref::Token(actor, Consts::Essential_Vitality_Token());
-                Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
-            } else if (vitality == Vitality_e::INVULNERABLE) {
-                Vitality_Variable()->Int(Vitality_e::INVULNERABLE);
-                Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
-                Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
-                Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
-                Object_Ref::Token(actor, Consts::Invulnerable_Vitality_Token());
-            } else /* vitality == Vitality_e::PROTECTED */ {
-                Vitality_Variable()->Int(Vitality_e::PROTECTED);
-                Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
-                Object_Ref::Token(actor, Consts::Protected_Vitality_Token());
-                Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
-                Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
-            }
-
-            Level();
-
-            Actor2::Evaluate_Package(actor);
+        
+        if (vitality == CODES::VITALITY::MORTAL) {
+            Vitality_Variable()->Int(CODES::VITALITY::MORTAL);
+            Object_Ref::Token(actor, Consts::Mortal_Vitality_Token());
+            Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
+            Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
+            Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
+        } else if (vitality == CODES::VITALITY::ESSENTIAL) {
+            Vitality_Variable()->Int(CODES::VITALITY::ESSENTIAL);
+            Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
+            Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
+            Object_Ref::Token(actor, Consts::Essential_Vitality_Token());
+            Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
+        } else if (vitality == CODES::VITALITY::INVULNERABLE) {
+            Vitality_Variable()->Int(CODES::VITALITY::INVULNERABLE);
+            Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
+            Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
+            Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
+            Object_Ref::Token(actor, Consts::Invulnerable_Vitality_Token());
+        } else /* vitality == Vitality_e::PROTECTED */ {
+            Vitality_Variable()->Int(CODES::VITALITY::PROTECTED);
+            Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
+            Object_Ref::Token(actor, Consts::Protected_Vitality_Token());
+            Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
+            Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
         }
+
+        Level();
+
+        Actor2::Evaluate_Package(actor);
     }
 
     void Member_t::Unvitalize()
     {
+        NPCP_ASSERT(Is_Filled());
         Actor_t* actor = Actor();
-        if (actor && Is_Created()) {
-            Vitality_Variable()->Int(0);
 
-            Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
-            Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
-            Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
-            Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
+        Vitality_Variable()->Int(0);
 
-            Actor2::Evaluate_Package(actor);
-        }
+        Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
+        Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
+        Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
+        Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
+
+        Actor2::Evaluate_Package(actor);
     }
 
     void Member_t::Rename(String_t new_name)
     {
+        NPCP_ASSERT(Is_Filled());
         Actor_t* actor = Actor();
-        if (actor && Is_Created()) {
-            Object_Ref::Rename(actor, new_name);
 
-            Actor2::Evaluate_Package(actor);
-        }
+        Object_Ref::Rename(actor, new_name);
+
+        Actor2::Evaluate_Package(actor);
     }
 
     void Member_t::Summon(Reference_t* origin, float radius, float degree)
     {
-        Actor_t* actor = Actor();
-        if (Is_Filled() && origin && actor) {
-            Actor2::Move_To_Orbit(actor, origin, radius, degree);
-        }
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(origin);
+        Actor2::Move_To_Orbit(Actor(), origin, radius, degree);
     }
 
     void Member_t::Summon(float radius, float degree)
     {
+        NPCP_ASSERT(Is_Filled());
         Summon(*g_thePlayer, radius, degree);
     }
 
     void Member_t::Summon_Ahead(float radius)
     {
+        NPCP_ASSERT(Is_Filled());
         Summon(radius, 0);
     }
 
     void Member_t::Summon_Behind(float radius)
     {
+        NPCP_ASSERT(Is_Filled());
         Summon(radius, 180);
     }
 
     void Member_t::Level()
     {
+        NPCP_ASSERT(Is_Filled());
         Follower_t* follower = Follower();
         if (follower) {
             follower->Level();
@@ -1101,6 +1410,39 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
     Int_t Vitality(Member_t* self) FORWARD_INT(Vitality());
     String_t Name(Member_t* self) FORWARD_STRING(Member_t::Name());
 
+    Bool_t Is_Filled(Member_t* self)        FORWARD_BOOL(Member_t::Is_Filled());
+    Bool_t Is_Unfilled(Member_t* self)      FORWARD_BOOL(Member_t::Is_Unfilled());
+    Bool_t Is_Loaded(Member_t* self)        FORWARD_BOOL(Member_t::Is_Loaded());
+    Bool_t Is_Unloaded(Member_t* self)      FORWARD_BOOL(Member_t::Is_Unloaded());
+    Bool_t Is_Unique(Member_t* self)        FORWARD_BOOL(Member_t::Is_Unique());
+    Bool_t Is_Generic(Member_t* self)       FORWARD_BOOL(Member_t::Is_Generic());
+    Bool_t Is_Original(Member_t* self)      FORWARD_BOOL(Member_t::Is_Original());
+    Bool_t Is_Clone(Member_t* self)         FORWARD_BOOL(Member_t::Is_Clone());
+    Bool_t Is_Alive(Member_t* self)         FORWARD_BOOL(Member_t::Is_Alive());
+    Bool_t Is_Dead(Member_t* self)          FORWARD_BOOL(Member_t::Is_Dead());
+    Bool_t Is_Mobile(Member_t* self)        FORWARD_BOOL(Member_t::Is_Mobile());
+    Bool_t Is_Immobile(Member_t* self)      FORWARD_BOOL(Member_t::Is_Immobile());
+    Bool_t Is_Settler(Member_t* self)       FORWARD_BOOL(Member_t::Is_Settler());
+    Bool_t Isnt_Settler(Member_t* self)     FORWARD_BOOL(Member_t::Isnt_Settler());
+    Bool_t Is_Thrall(Member_t* self)        FORWARD_BOOL(Member_t::Is_Thrall());
+    Bool_t Isnt_Thrall(Member_t* self)      FORWARD_BOOL(Member_t::Isnt_Thrall());
+    Bool_t Is_Paralyzed(Member_t* self)     FORWARD_BOOL(Member_t::Is_Paralyzed());
+    Bool_t Isnt_Paralyzed(Member_t* self)   FORWARD_BOOL(Member_t::Isnt_Paralyzed());
+    Bool_t Is_Mannequin(Member_t* self)     FORWARD_BOOL(Member_t::Is_Mannequin());
+    Bool_t Isnt_Mannequin(Member_t* self)   FORWARD_BOOL(Member_t::Isnt_Mannequin());
+    Bool_t Is_Display(Member_t* self)       FORWARD_BOOL(Member_t::Is_Display());
+    Bool_t Isnt_Display(Member_t* self)     FORWARD_BOOL(Member_t::Isnt_Display());
+    Bool_t Is_Reanimated(Member_t* self)    FORWARD_BOOL(Member_t::Is_Reanimated());
+    Bool_t Isnt_Reanimated(Member_t* self)  FORWARD_BOOL(Member_t::Isnt_Reanimated());
+    Bool_t Is_Follower(Member_t* self)      FORWARD_BOOL(Member_t::Is_Follower());
+    Bool_t Isnt_Follower(Member_t* self)    FORWARD_BOOL(Member_t::Isnt_Follower());
+    Bool_t Is_Sneak(Member_t* self)         FORWARD_BOOL(Member_t::Is_Sneak());
+    Bool_t Isnt_Sneak(Member_t* self)       FORWARD_BOOL(Member_t::Isnt_Sneak());
+    Bool_t Is_Saddler(Member_t* self)       FORWARD_BOOL(Member_t::Is_Saddler());
+    Bool_t Isnt_Saddler(Member_t* self)     FORWARD_BOOL(Member_t::Isnt_Saddler());
+    Bool_t Is_Retreater(Member_t* self)     FORWARD_BOOL(Member_t::Is_Retreater());
+    Bool_t Isnt_Retreater(Member_t* self)   FORWARD_BOOL(Member_t::Isnt_Retreater());
+
     void On_Hit(Member_t* self,
                 Reference_t* attacker,
                 Form_t* tool,
@@ -1127,8 +1469,16 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
     void Unparalyze(Member_t* self) FORWARD_VOID(Member_t::Unparalyze());
     void Mannequinize(Member_t* self, Reference_t* marker) FORWARD_VOID(Member_t::Mannequinize(marker));
     void Unmannequinize(Member_t* self) FORWARD_VOID(Member_t::Unmannequinize());
-    void Stylize(Member_t* self, Int_t style) FORWARD_VOID(Member_t::Stylize(style));
-    void Unstylize(Member_t* self) FORWARD_VOID(Member_t::Unstylize());
+
+    Int_t Stylize(Member_t* self, Int_t style) FORWARD_INT(Member_t::Stylize(style));
+    Int_t Stylize_Default(Member_t* self) FORWARD_INT(Member_t::Stylize_Default());
+    Int_t Stylize_Warrior(Member_t* self) FORWARD_INT(Member_t::Stylize_Warrior());
+    Int_t Stylize_Mage(Member_t* self) FORWARD_INT(Member_t::Stylize_Mage());
+    Int_t Stylize_Archer(Member_t* self) FORWARD_INT(Member_t::Stylize_Archer());
+    Int_t Stylize_Coward(Member_t* self) FORWARD_INT(Member_t::Stylize_Coward());
+    void Restylize(Member_t* self, Actor_t* actor) FORWARD_VOID(Member_t::Restylize(actor));
+    Int_t Unstylize(Member_t* self) FORWARD_INT(Member_t::Unstylize());
+
     void Vitalize(Member_t* self, Int_t vitality) FORWARD_VOID(Member_t::Vitalize(vitality));
     void Unvitalize(Member_t* self) FORWARD_VOID(Member_t::Unvitalize());
 
@@ -1152,6 +1502,39 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
         ADD_METHOD("Vitality", 0, Int_t, Vitality);
         ADD_METHOD("Name", 0, String_t, Name);
 
+        ADD_METHOD("Is_Filled", 0, Bool_t, Is_Filled);
+        ADD_METHOD("Is_Unfilled", 0, Bool_t, Is_Unfilled);
+        ADD_METHOD("Is_Loaded", 0, Bool_t, Is_Loaded);
+        ADD_METHOD("Is_Unloaded", 0, Bool_t, Is_Unloaded);
+        ADD_METHOD("Is_Unique", 0, Bool_t, Is_Unique);
+        ADD_METHOD("Is_Generic", 0, Bool_t, Is_Generic);
+        ADD_METHOD("Is_Original", 0, Bool_t, Is_Original);
+        ADD_METHOD("Is_Clone", 0, Bool_t, Is_Clone);
+        ADD_METHOD("Is_Alive", 0, Bool_t, Is_Alive);
+        ADD_METHOD("Is_Dead", 0, Bool_t, Is_Dead);
+        ADD_METHOD("Is_Mobile", 0, Bool_t, Is_Mobile);
+        ADD_METHOD("Is_Immobile", 0, Bool_t, Is_Immobile);
+        ADD_METHOD("Is_Settler", 0, Bool_t, Is_Settler);
+        ADD_METHOD("Isnt_Settler", 0, Bool_t, Isnt_Settler);
+        ADD_METHOD("Is_Thrall", 0, Bool_t, Is_Thrall);
+        ADD_METHOD("Isnt_Thrall", 0, Bool_t, Isnt_Thrall);
+        ADD_METHOD("Is_Paralyzed", 0, Bool_t, Is_Paralyzed);
+        ADD_METHOD("Isnt_Paralyzed", 0, Bool_t, Isnt_Paralyzed);
+        ADD_METHOD("Is_Mannequin", 0, Bool_t, Is_Mannequin);
+        ADD_METHOD("Isnt_Mannequin", 0, Bool_t, Isnt_Mannequin);
+        ADD_METHOD("Is_Display", 0, Bool_t, Is_Display);
+        ADD_METHOD("Isnt_Display", 0, Bool_t, Isnt_Display);
+        ADD_METHOD("Is_Reanimated", 0, Bool_t, Is_Reanimated);
+        ADD_METHOD("Isnt_Reanimated", 0, Bool_t, Isnt_Reanimated);
+        ADD_METHOD("Is_Follower", 0, Bool_t, Is_Follower);
+        ADD_METHOD("Isnt_Follower", 0, Bool_t, Isnt_Follower);
+        ADD_METHOD("Is_Sneak", 0, Bool_t, Is_Sneak);
+        ADD_METHOD("Isnt_Sneak", 0, Bool_t, Isnt_Sneak);
+        ADD_METHOD("Is_Saddler", 0, Bool_t, Is_Saddler);
+        ADD_METHOD("Isnt_Saddler", 0, Bool_t, Isnt_Saddler);
+        ADD_METHOD("Is_Retreater", 0, Bool_t, Is_Retreater);
+        ADD_METHOD("Isnt_Retreater", 0, Bool_t, Isnt_Retreater);
+
         ADD_METHOD("OnHit", 7, void, On_Hit, Reference_t*, Form_t*, Projectile_Base_t*, Bool_t, Bool_t, Bool_t, Bool_t);
 
         ADD_METHOD("Has_Token", 2, bool, Has_Token, Misc_t*, Int_t);
@@ -1170,8 +1553,16 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
         ADD_METHOD("p_Unparalyze", 0, void, Unparalyze);
         ADD_METHOD("p_Mannequinize", 1, void, Mannequinize, Reference_t*);
         ADD_METHOD("p_Unmannequinize", 0, void, Unmannequinize);
-        ADD_METHOD("p_Stylize", 1, void, Stylize, Int_t);
-        ADD_METHOD("p_Unstylize", 0, void, Unstylize);
+
+        ADD_METHOD("Stylize", 1, Int_t, Stylize, Int_t);
+        ADD_METHOD("Stylize_Default", 0, Int_t, Stylize_Default);
+        ADD_METHOD("Stylize_Warrior", 0, Int_t, Stylize_Warrior);
+        ADD_METHOD("Stylize_Mage", 0, Int_t, Stylize_Mage);
+        ADD_METHOD("Stylize_Archer", 0, Int_t, Stylize_Archer);
+        ADD_METHOD("Stylize_Coward", 0, Int_t, Stylize_Coward);
+        ADD_METHOD("p_Restylize", 1, void, Restylize, Actor_t*);
+        ADD_METHOD("Unstylize", 0, Int_t, Unstylize);
+
         ADD_METHOD("p_Vitalize", 1, void, Vitalize, Int_t);
         ADD_METHOD("p_Unvitalize", 0, void, Unvitalize);
 

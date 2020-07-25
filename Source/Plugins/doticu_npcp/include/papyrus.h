@@ -9,7 +9,25 @@
 namespace doticu_npcp { namespace Papyrus {
 
     // a lot of credit for deciphering these classes goes to Ryan-rsm-McKenzie of CommonLibSSE as well as the SKSE team
-    class Handle_t;
+    class Handle_t {
+    public:
+        static Registry_t* Registry();
+        static Policy_t* Policy();
+
+        UInt64 handle = 0;
+
+        template <typename Type>
+        Handle_t(Type* instance);
+        Handle_t(Form_t* form);
+        Handle_t(UInt64 handle);
+        Handle_t();
+
+        bool Is_Valid();
+
+        operator UInt64();
+    };
+    STATIC_ASSERT(sizeof(Handle_t) == 0x8);
+
     class Class_Info_t;
     class Object_t;
     class Array_t;
@@ -17,7 +35,9 @@ namespace doticu_npcp { namespace Papyrus {
     class Virtual_Machine_t { // Registry_t
     public:
         static Virtual_Machine_t* Self();
-
+        template <typename BSObject>
+        static void Send_Event(BSObject* object, String_t event_name, IFunctionArguments* arguments);
+    public:
         virtual ~Virtual_Machine_t(); // 00
         virtual void _01(void); // 01
         virtual void _02(void); // 02
@@ -47,26 +67,15 @@ namespace doticu_npcp { namespace Papyrus {
         virtual void _1A(void); // 1A
         virtual void _1B(void); // 1B
         virtual Bool_t Find_Bound_Object(Handle_t handle, String_t class_name, Object_t** object_out); // 1C
+        virtual void _1D(void); // 1D
+        virtual void _1E(void); // 1E
+        virtual void _1F(void); // 1F
+        virtual void _20(void); // 20
+        virtual void _21(void); // 21
+        virtual void _22(void); // 22
+        virtual void _23(void); // 23
+        virtual void Send_Event(Handle_t handle, String_t* event_name, IFunctionArguments* arguments); // 24
     };
-
-    class Handle_t {
-    public:
-        static Registry_t* Registry();
-        static Policy_t* Policy();
-
-        UInt64 handle = 0;
-
-        template <typename Type>
-        Handle_t(Type* instance);
-        Handle_t(Form_t* form);
-        Handle_t(UInt64 handle);
-        Handle_t();
-
-        bool Is_Valid();
-
-        operator UInt64();
-    };
-    STATIC_ASSERT(sizeof(Handle_t) == 0x8);
 
     class Class_Info_t;
     class Type_t {

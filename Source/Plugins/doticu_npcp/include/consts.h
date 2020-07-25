@@ -11,6 +11,9 @@ namespace doticu_npcp { namespace Consts {
 
     using namespace Papyrus;
 
+    constexpr size_t MAX_MEMBERS = 1024;
+    constexpr size_t MAX_FOLLOWERS = 16;
+
     String_t Class_Name();
     Class_Info_t* Class_Info();
     Consts_t* Self();

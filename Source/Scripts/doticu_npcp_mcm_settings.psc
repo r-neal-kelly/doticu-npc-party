@@ -112,15 +112,15 @@ function f_Build_Page()
 
     MCM.AddHeaderOption(" General ")
     MCM.AddEmptyOption()
-    if VARS.auto_style == CODES.IS_DEFAULT
+    if VARS.auto_style == doticu_npcp_codes.STYLE_DEFAULT()
         p_option_auto_style = MCM.AddTextOption(" New Member Style ", CONSTS.STR_MCM_DEFAULT)
-    elseIf VARS.auto_style == CODES.IS_WARRIOR
+    elseIf VARS.auto_style == doticu_npcp_codes.STYLE_WARRIOR()
         p_option_auto_style = MCM.AddTextOption(" New Member Style ", CONSTS.STR_MCM_WARRIOR)
-    elseIf VARS.auto_style == CODES.IS_MAGE
+    elseIf VARS.auto_style == doticu_npcp_codes.STYLE_MAGE()
         p_option_auto_style = MCM.AddTextOption(" New Member Style ", CONSTS.STR_MCM_MAGE)
-    elseIf VARS.auto_style == CODES.IS_ARCHER
+    elseIf VARS.auto_style == doticu_npcp_codes.STYLE_ARCHER()
         p_option_auto_style = MCM.AddTextOption(" New Member Style ", CONSTS.STR_MCM_ARCHER)
-    elseIf VARS.auto_style == CODES.IS_COWARD
+    elseIf VARS.auto_style == doticu_npcp_codes.STYLE_COWARD()
         p_option_auto_style = MCM.AddTextOption(" New Member Style ", CONSTS.STR_MCM_COWARD)
     endIf
     if VARS.auto_vitality == CODES.IS_MORTAL
@@ -186,20 +186,20 @@ function f_On_Option_Select(int id_option)
 
     ; General
     elseIf id_option == p_option_auto_style
-        if VARS.auto_style == CODES.IS_DEFAULT
-            VARS.auto_style = CODES.IS_WARRIOR
+        if VARS.auto_style == doticu_npcp_codes.STYLE_DEFAULT()
+            VARS.auto_style = doticu_npcp_codes.STYLE_WARRIOR()
             MCM.SetTextOptionValue(p_option_auto_style, CONSTS.STR_MCM_WARRIOR)
-        elseIf VARS.auto_style == CODES.IS_WARRIOR
-            VARS.auto_style = CODES.IS_MAGE
+        elseIf VARS.auto_style == doticu_npcp_codes.STYLE_WARRIOR()
+            VARS.auto_style = doticu_npcp_codes.STYLE_MAGE()
             MCM.SetTextOptionValue(p_option_auto_style, CONSTS.STR_MCM_MAGE)
-        elseIf VARS.auto_style == CODES.IS_MAGE
-            VARS.auto_style = CODES.IS_ARCHER
+        elseIf VARS.auto_style == doticu_npcp_codes.STYLE_MAGE()
+            VARS.auto_style = doticu_npcp_codes.STYLE_ARCHER()
             MCM.SetTextOptionValue(p_option_auto_style, CONSTS.STR_MCM_ARCHER)
-        elseIf VARS.auto_style == CODES.IS_ARCHER
-            VARS.auto_style = CODES.IS_COWARD
+        elseIf VARS.auto_style == doticu_npcp_codes.STYLE_ARCHER()
+            VARS.auto_style = doticu_npcp_codes.STYLE_COWARD()
             MCM.SetTextOptionValue(p_option_auto_style, CONSTS.STR_MCM_COWARD)
-        elseIf VARS.auto_style == CODES.IS_COWARD
-            VARS.auto_style = CODES.IS_DEFAULT
+        elseIf VARS.auto_style == doticu_npcp_codes.STYLE_COWARD()
+            VARS.auto_style = doticu_npcp_codes.STYLE_DEFAULT()
             MCM.SetTextOptionValue(p_option_auto_style, CONSTS.STR_MCM_DEFAULT)
         endIf
     elseIf id_option == p_option_auto_vitality
@@ -372,15 +372,15 @@ function f_On_Option_Highlight(int id_option)
 
     ; General
     elseIf id_option == p_option_auto_style
-        if VARS.auto_style == CODES.IS_DEFAULT
+        if VARS.auto_style == doticu_npcp_codes.STYLE_DEFAULT()
             MCM.SetInfoText("When an npc becomes a member, they will fight how they wish.")
-        elseIf VARS.auto_style == CODES.IS_WARRIOR
+        elseIf VARS.auto_style == doticu_npcp_codes.STYLE_WARRIOR()
             MCM.SetInfoText("When an npc becomes a member, they will fight as a warrior.")
-        elseIf VARS.auto_style == CODES.IS_MAGE
+        elseIf VARS.auto_style == doticu_npcp_codes.STYLE_MAGE()
             MCM.SetInfoText("When an npc becomes a member, they will fight as a mage.")
-        elseIf VARS.auto_style == CODES.IS_ARCHER
+        elseIf VARS.auto_style == doticu_npcp_codes.STYLE_ARCHER()
             MCM.SetInfoText("When an npc becomes a member, they will fight as an archer.")
-        elseIf VARS.auto_style == CODES.IS_COWARD
+        elseIf VARS.auto_style == doticu_npcp_codes.STYLE_COWARD()
             MCM.SetInfoText("When an npc becomes a member, they will fight as a coward.")
         endIf
     elseIf id_option == p_option_auto_vitality

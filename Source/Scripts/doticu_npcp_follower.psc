@@ -431,7 +431,7 @@ int function Rename(string str_name)
         return code_return
     endIf
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Sneak(int code_exec)
@@ -451,7 +451,7 @@ int function Sneak(int code_exec)
         p_Sneak()
     endIf
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 event On_Sneak()
     if Is_Sneak()
@@ -476,7 +476,7 @@ int function Unsneak(int code_exec)
         p_Unsneak()
     endIf
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 event On_Unsneak()
     if Is_Unsneak()
@@ -505,7 +505,7 @@ int function Saddle(int code_exec)
         p_Saddle()
     endIf
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 event On_Saddle()
     if Is_Saddler()
@@ -530,7 +530,7 @@ int function Unsaddle(int code_exec)
         p_Unsaddle()
     endIf
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 event On_Unsaddle()
     if Isnt_Saddler()
@@ -547,7 +547,7 @@ int function Retreat()
 
     p_Retreat()
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Unretreat()
@@ -559,7 +559,7 @@ int function Unretreat()
 
     p_Unretreat()
 
-    return CODES.SUCCESS
+    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 int function Unfollow()

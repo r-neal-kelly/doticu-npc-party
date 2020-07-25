@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "consts.h"
 #include "papyrus.h"
 #include "papyrus.inl"
 
@@ -51,27 +52,6 @@ namespace doticu_npcp { namespace Party {
     namespace Filter_Flags_2 {
         enum : UInt64 {
             // if we hit 32 indices in the first one
-        };
-    }
-
-    // I want to update these before going out of beta
-    namespace Style_e {
-        enum : Int_t {
-            DEFAULT = -380,
-            WARRIOR = -381,
-            MAGE = -382,
-            ARCHER = -383,
-            COWARD = -384
-        };
-    }
-
-    // I would like to change these numbers before going out of beta.
-    namespace Vitality_e {
-        enum : Int_t {
-            MORTAL = -303,
-            PROTECTED = -304,
-            ESSENTIAL = -305,
-            INVULNERABLE = -306
         };
     }
 
@@ -172,7 +152,7 @@ namespace doticu_npcp { namespace Party {
 
     class Members_t : public Aliases_t {
     public:
-        static constexpr size_t MAX = 1024;
+        static constexpr size_t MAX = Consts::MAX_MEMBERS;
         static constexpr size_t HALF = MAX / 2;
         static constexpr size_t BEGIN = 0;
         static constexpr size_t END = BEGIN + MAX;
@@ -288,7 +268,7 @@ namespace doticu_npcp { namespace Party {
 
     class Followers_t : public Aliases_t {
     public:
-        static constexpr size_t MAX = 16;
+        static constexpr size_t MAX = Consts::MAX_FOLLOWERS;
         static constexpr size_t HALF = MAX / 2;
         static constexpr size_t BEGIN = 0;
         static constexpr size_t END = BEGIN + MAX;
@@ -428,7 +408,7 @@ namespace doticu_npcp { namespace Party {
 
     class Horses_t : public Aliases_t {
     public:
-        static constexpr size_t MAX = 16;
+        static constexpr size_t MAX = Consts::MAX_FOLLOWERS;
         static constexpr size_t HALF = MAX / 2;
         static constexpr size_t BEGIN = Followers_t::END;
         static constexpr size_t END = BEGIN + MAX;
@@ -472,21 +452,28 @@ namespace doticu_npcp { namespace Party {
 
     public:
         Variable_t* Variable(String_t variable_name);
+
+        Variable_t* Actor_Variable();
+        Variable_t* Pack_Variable();
+        Variable_t* Mannequin_Marker_Variable();
+        Variable_t* Display_Marker_Variable();
+        Variable_t* Undisplay_Marker_Variable();
+        Variable_t* Style_Variable();
+        Variable_t* Vitality_Variable();
+        Variable_t* Outfit2_Variable();
+        Variable_t* Rating_Variable();
+
+        Variable_t* Is_Clone_Variable();
         Variable_t* Is_Immobile_Variable();
         Variable_t* Is_Settler_Variable();
         Variable_t* Is_Thrall_Variable();
         Variable_t* Is_Paralyzed_Variable();
         Variable_t* Is_Mannequin_Variable();
         Variable_t* Is_Display_Variable();
-        Variable_t* Mannequin_Marker_Variable();
-        Variable_t* Display_Marker_Variable();
-        Variable_t* Undisplay_Marker_Variable();
-        Variable_t* Style_Variable();
-        Variable_t* Vitality_Variable();
+        Variable_t* Is_Reanimated_Variable();
 
         Actor_t* Actor();
         Follower_t* Follower();
-
         Reference_t* Pack();
         Reference_t* Settler_Marker();
         Reference_t* Display_Marker();
@@ -504,8 +491,6 @@ namespace doticu_npcp { namespace Party {
 
         Bool_t Is_Loaded();
         Bool_t Is_Unloaded();
-        Bool_t Is_Created();
-        Bool_t Is_Destroyed();
         Bool_t Is_Unique();
         Bool_t Is_Generic();
         Bool_t Is_Original();
@@ -534,6 +519,37 @@ namespace doticu_npcp { namespace Party {
         Bool_t Isnt_Saddler();
         Bool_t Is_Retreater();
         Bool_t Isnt_Retreater();
+
+        Bool_t Is_Loaded_Unsafe();
+        Bool_t Is_Unloaded_Unsafe();
+        Bool_t Is_Unique_Unsafe();
+        Bool_t Is_Generic_Unsafe();
+        Bool_t Is_Original_Unsafe();
+        Bool_t Is_Clone_Unsafe();
+        Bool_t Is_Alive_Unsafe();
+        Bool_t Is_Dead_Unsafe();
+        Bool_t Is_Mobile_Unsafe();
+        Bool_t Is_Immobile_Unsafe();
+        Bool_t Is_Settler_Unsafe();
+        Bool_t Isnt_Settler_Unsafe();
+        Bool_t Is_Thrall_Unsafe();
+        Bool_t Isnt_Thrall_Unsafe();
+        Bool_t Is_Paralyzed_Unsafe();
+        Bool_t Isnt_Paralyzed_Unsafe();
+        Bool_t Is_Mannequin_Unsafe();
+        Bool_t Isnt_Mannequin_Unsafe();
+        Bool_t Is_Display_Unsafe();
+        Bool_t Isnt_Display_Unsafe();
+        Bool_t Is_Reanimated_Unsafe();
+        Bool_t Isnt_Reanimated_Unsafe();
+        Bool_t Is_Follower_Unsafe();
+        Bool_t Isnt_Follower_Unsafe();
+        Bool_t Is_Sneak_Unsafe();
+        Bool_t Isnt_Sneak_Unsafe();
+        Bool_t Is_Saddler_Unsafe();
+        Bool_t Isnt_Saddler_Unsafe();
+        Bool_t Is_Retreater_Unsafe();
+        Bool_t Isnt_Retreater_Unsafe();
 
         Bool_t Has_Same_Head(Actor_t* actor);
 
@@ -568,9 +584,23 @@ namespace doticu_npcp { namespace Party {
         void Display(Reference_t* origin, float radius = 140.0f, float degree = 0.0f);
         void Redisplay();
         void Undisplay();
-        void Stylize(Int_t style);
-        void Unstylize();
+
+        Int_t Stylize(Int_t style);
+        Int_t Stylize_Default();
+        Int_t Stylize_Warrior();
+        Int_t Stylize_Mage();
+        Int_t Stylize_Archer();
+        Int_t Stylize_Coward();
+        void Restylize(Actor_t* actor);
+        void Restylize_Default(Actor_t* actor);
+        void Restylize_Warrior(Actor_t* actor);
+        void Restylize_Mage(Actor_t* actor);
+        void Restylize_Archer(Actor_t* actor);
+        void Restylize_Coward(Actor_t* actor);
+        Int_t Unstylize();
+
         void Vitalize(Int_t vitality);
+        void Revitalize();
         void Unvitalize();
         void Rename(String_t new_name);
 

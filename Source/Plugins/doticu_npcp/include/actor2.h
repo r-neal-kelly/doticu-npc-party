@@ -48,6 +48,7 @@ namespace doticu_npcp { namespace Actor2 {
     bool Is_On_Mount(Actor_t* actor);
 
     Int_t Sex(Actor_t* actor);
+    String_t Sex_String(Actor_t* actor);
     String_t Race(Actor_t* actor);
 
     void Evaluate_Package(Actor_t* actor, bool unk_01 = false, bool unk_02 = false);
@@ -85,6 +86,8 @@ namespace doticu_npcp { namespace Actor2 {
 
     void Enable_Havok_Collision(Actor_t* actor);
     void Disable_Havok_Collision(Actor_t* actor);
+
+    void Stop_Movement(Actor_t* actor);
 
 }}
 

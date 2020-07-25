@@ -187,6 +187,7 @@ namespace doticu_npcp { namespace Consts {
         static Formlist_t* value = Utils::Assert(
             static_cast<Formlist_t*>(Game::NPCP_Form(FORMLIST_MARKERS_SETTLER))
         );
+        NPCP_ASSERT(value->forms.count == MAX_MEMBERS);
         return value;
     }
 

@@ -452,19 +452,19 @@ function f_On_Option_Menu_Accept(int id_option, int idx_option)
             p_int_arg_style = 0
             p_str_view_style = " Any "
         elseIf idx_option == 1
-            p_int_arg_style = CODES.IS_DEFAULT
+            p_int_arg_style = doticu_npcp_codes.STYLE_DEFAULT()
             p_str_view_style = " Default "
         elseIf idx_option == 2
-            p_int_arg_style = CODES.IS_WARRIOR
+            p_int_arg_style = doticu_npcp_codes.STYLE_WARRIOR()
             p_str_view_style = " Warrior "
         elseIf idx_option == 3
-            p_int_arg_style = CODES.IS_MAGE
+            p_int_arg_style = doticu_npcp_codes.STYLE_MAGE()
             p_str_view_style = " Mage "
         elseIf idx_option == 4
-            p_int_arg_style = CODES.IS_ARCHER
+            p_int_arg_style = doticu_npcp_codes.STYLE_ARCHER()
             p_str_view_style = " Archer "
         elseIf idx_option == 5
-            p_int_arg_style = CODES.IS_COWARD
+            p_int_arg_style = doticu_npcp_codes.STYLE_COWARD()
             p_str_view_style = " Coward "
 
         endIf

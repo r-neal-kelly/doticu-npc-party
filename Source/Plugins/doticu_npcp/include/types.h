@@ -173,11 +173,44 @@ namespace doticu_npcp {
     };
     STATIC_ASSERT(sizeof(Actor_Value_Owner_t) == 0x08);
 
+    class Actor_State_t : public IMovementState {
+    public:
+        virtual ~Actor_State_t();
+
+        class State_t {
+        public:
+            Bool_t moving_back : 1;
+            Bool_t moving_forward : 1;
+            Bool_t moving_right : 1;
+            Bool_t moving_left : 1;
+            Bool_t unk_0_4 : 1;
+            Bool_t unk_0_5 : 1;
+            Bool_t walking : 1;
+            Bool_t running : 1;
+
+            Bool_t sprinting : 1;
+            Bool_t sneaking : 1;
+            Bool_t swimming : 1;
+
+            Bool_t wip_2;
+            Bool_t wip_3;
+            Bool_t wip_4;
+            Bool_t wip_5;
+            Bool_t wip_6;
+            Bool_t wip_7;
+        };
+
+        void Stop_Movement();
+
+        State_t state;
+    };
+    STATIC_ASSERT(sizeof(Actor_State_t) == 0x10);
+
     class Actor_t2 {
     public:
         enum Form_Flags : UInt32 {
             HASNT_HAVOK_COLLISION = 4,
-            IS_DISABLED = 27,
+            IS_INITIALLY_DISABLED = 27,
         };
 
         enum Flags_1 : UInt32 {

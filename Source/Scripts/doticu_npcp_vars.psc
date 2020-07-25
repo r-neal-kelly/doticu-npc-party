@@ -440,8 +440,8 @@ function Set_Defaults()
     version_minor = CONSTS.VERSION_MINOR
     version_patch = CONSTS.VERSION_PATCH
 
-    auto_style = CODES.IS_DEFAULT; IS_DEFAULT, IS_WARRIOR, IS_MAGE, IS_ARCHER, IS_COWARD
-    auto_vitality = CODES.IS_PROTECTED; IS_MORTAL, IS_PROTECTED, IS_ESSENTIAL, IS_INVULNERABLE
+    auto_style = doticu_npcp_codes.STYLE_DEFAULT(); DEFAULT, WARRIOR, MAGE, ARCHER, COWARD
+    auto_vitality = CODES.IS_PROTECTED; MORTAL, PROTECTED, ESSENTIAL, INVULNERABLE
     auto_resurrect = true
 
     force_clone_unique = false
