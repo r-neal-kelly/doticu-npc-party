@@ -396,7 +396,6 @@ endFunction
 
 function Stylize(int code_return, string str_name, int code_style)
     string str_style
-
     if code_style == doticu_npcp_codes.STYLE_DEFAULT()
         str_style = "a default member"
     elseIf code_style == doticu_npcp_codes.STYLE_WARRIOR()

@@ -467,9 +467,6 @@ function Unparalyze(Actor ref_actor, bool auto_create)
 endFunction
 
 function Stylize(Actor ref_actor, int code_style, bool auto_create)
-    int code_return
-    string str_name = ACTORS.Name(ref_actor)
-
     if code_style != doticu_npcp_codes.STYLE_DEFAULT() &&\
         code_style != doticu_npcp_codes.STYLE_WARRIOR() &&\
         code_style != doticu_npcp_codes.STYLE_MAGE() &&\
@@ -479,29 +476,27 @@ function Stylize(Actor ref_actor, int code_style, bool auto_create)
     endIf
 
     if auto_create && !MEMBERS.Has_Member(ref_actor)
-        code_return = MEMBERS.Create_Member(ref_actor)
+        int code_return = MEMBERS.Create_Member(ref_actor)
         if code_return != doticu_npcp_codes.SUCCESS()
-            NOTES.Stylize(code_return, str_name, code_style)
-            return
+            return NOTES.Stylize(code_return, ACTORS.Name(ref_actor), code_style)
         endIf
     endIf
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Stylize(doticu_npcp_codes.HASNT_MEMBER(), str_name, code_style)
-        return
+        return NOTES.Stylize(doticu_npcp_codes.HASNT_MEMBER(), ACTORS.Name(ref_actor), code_style)
     endIf
 
     if code_style == doticu_npcp_codes.STYLE_DEFAULT()
-        NOTES.Stylize(ref_member.Stylize_Default(), str_name, code_style)
+        NOTES.Stylize(ref_member.Stylize_Default(), ACTORS.Name(ref_actor), code_style)
     elseIf code_style == doticu_npcp_codes.STYLE_WARRIOR()
-        NOTES.Stylize(ref_member.Stylize_Warrior(), str_name, code_style)
+        NOTES.Stylize(ref_member.Stylize_Warrior(), ACTORS.Name(ref_actor), code_style)
     elseIf code_style == doticu_npcp_codes.STYLE_MAGE()
-        NOTES.Stylize(ref_member.Stylize_Mage(), str_name, code_style)
+        NOTES.Stylize(ref_member.Stylize_Mage(), ACTORS.Name(ref_actor), code_style)
     elseIf code_style == doticu_npcp_codes.STYLE_ARCHER()
-        NOTES.Stylize(ref_member.Stylize_Archer(), str_name, code_style)
+        NOTES.Stylize(ref_member.Stylize_Archer(), ACTORS.Name(ref_actor), code_style)
     elseIf code_style == doticu_npcp_codes.STYLE_COWARD()
-        NOTES.Stylize(ref_member.Stylize_Coward(), str_name, code_style)
+        NOTES.Stylize(ref_member.Stylize_Coward(), ACTORS.Name(ref_actor), code_style)
     endIf
 endFunction
 
