@@ -12,17 +12,15 @@ namespace doticu_npcp { namespace Party {
 
     String_t Horses_t::Class_Name()
     {
-        static const String_t class_name = Utils::Assert(
-            String_t("doticu_npcp_horses")
-        );
+        static const String_t class_name = String_t("doticu_npcp_horses");
+        NPCP_ASSERT(class_name);
         return class_name;
     }
 
     Class_Info_t* Horses_t::Class_Info()
     {
-        static Class_Info_t* class_info = Utils::Assert(
-            Class_Info_t::Fetch(Class_Name())
-        );
+        static Class_Info_t* class_info = Class_Info_t::Fetch(Class_Name());
+        NPCP_ASSERT(class_info);
         return class_info;
     }
 
@@ -33,9 +31,8 @@ namespace doticu_npcp { namespace Party {
 
     Object_t* Horses_t::Object()
     {
-        Object_t* object = Utils::Assert(
-            Object_t::Fetch(Self(), Class_Name())
-        );
+        Object_t* object = Object_t::Fetch(Self(), Class_Name());
+        NPCP_ASSERT(object);
         object->Decrement_Lock();
         return object;
     }

@@ -10,11 +10,6 @@ doticu_npcp_consts property CONSTS hidden
         return p_DATA.CONSTS
     endFunction
 endProperty
-doticu_npcp_codes property CODES hidden
-    doticu_npcp_codes function Get()
-        return p_DATA.CODES
-    endFunction
-endProperty
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
         return p_DATA.VARS
@@ -153,7 +148,7 @@ int function f_Create_Follower(Actor ref_actor)
     endIf
 
     if Hasnt_Space()
-        return doticu_npcp_codes.HASNT_FOLLOWER_SPACE()
+        return doticu_npcp_codes.HASNT_NON_FOLLOWER()
     endIf
 
     if !MEMBERS.Has_Member(ref_actor)
@@ -161,7 +156,7 @@ int function f_Create_Follower(Actor ref_actor)
     endIf
 
     if Has_Actor(ref_actor)
-        return CODES.HAS_FOLLOWER
+        return doticu_npcp_codes.HAS_FOLLOWER()
     endIf
 
     doticu_npcp_follower ref_follower = p_From_Unfilled() as doticu_npcp_follower
@@ -186,7 +181,7 @@ int function f_Destroy_Follower(Actor ref_actor)
 
     doticu_npcp_follower ref_follower = p_From_Actor(ref_actor) as doticu_npcp_follower
     if ref_follower == none
-        return CODES.HASNT_FOLLOWER
+        return doticu_npcp_codes.HASNT_FOLLOWER()
     endIf
 
     ref_follower.f_Unregister()
@@ -234,7 +229,7 @@ p_Busy()
 
     int num_followers = Count_Filled()
     if num_followers < 1
-        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_FOLLOWER())
     endIf
 
     p_Summon_Filled(radius, degree, interval)
@@ -249,12 +244,12 @@ p_Busy()
 
     int num_followers = Count_Filled()
     if num_followers < 1
-        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_FOLLOWER())
     endIf
 
     int num_mobile = Count_Mobile()
     if num_mobile < 1
-        return p_Ready_Int(CODES.HASNT_MOBILE)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_MOBILE())
     endIf
 
     p_Summon_Mobile(radius, degree, interval)
@@ -269,12 +264,12 @@ p_Busy()
 
     int num_followers = Count_Filled()
     if num_followers < 1
-        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_FOLLOWER())
     endIf
 
     int num_immobile = Count_Immobile()
     if num_immobile < 1
-        return p_Ready_Int(CODES.HASNT_IMMOBILE)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_IMMOBILE())
     endIf
 
     p_Summon_Immobile(radius, degree, interval)
@@ -289,7 +284,7 @@ p_Busy()
 
     int num_followers = Count_Filled()
     if num_followers < 1
-        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_FOLLOWER())
     endIf
 
     p_Catch_Up()
@@ -304,7 +299,7 @@ p_Busy()
 
     int num_followers = Count_Filled()
     if num_followers < 1
-        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_FOLLOWER())
     endIf
 
     p_Stash()
@@ -319,7 +314,7 @@ p_Busy()
 
     int num_followers = Count_Filled()
     if num_followers < 1
-        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_FOLLOWER())
     endIf
     
     p_Enforce()
@@ -333,12 +328,12 @@ int function Resurrect()
 p_Busy()
 
     if Count_Filled() < 1
-        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_FOLLOWER())
     endIf
 
     int num_dead = Count_Dead()
     if num_dead < 1
-        return p_Ready_Int(CODES.HASNT_DEAD)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_DEAD())
     endIf
 
     p_tasklist.Init(num_dead)
@@ -358,10 +353,10 @@ int function Mobilize()
 p_Busy()
 
     if Count_Filled() < 1
-        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_FOLLOWER())
     endIf
     if Count_Immobile() < 1
-        return p_Ready_Int(CODES.HASNT_IMMOBILE)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_IMMOBILE())
     endIf
 
     p_Mobilize()
@@ -375,10 +370,10 @@ int function Immobilize()
 p_Busy()
 
     if Count_Filled() < 1
-        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_FOLLOWER())
     endIf
     if Count_Mobile() < 1
-        return p_Ready_Int(CODES.HASNT_MOBILE)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_MOBILE())
     endIf
 
     p_Immobilize()
@@ -392,7 +387,7 @@ int function Settle()
 p_Busy()
 
     if Count_Filled() < 1
-        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_FOLLOWER())
     endIf
 
     p_Settle()
@@ -406,10 +401,10 @@ int function Unsettle()
 p_Busy()
 
     if Count_Filled() < 1
-        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_FOLLOWER())
     endIf
     if Count_Settlers() < 1
-        return p_Ready_Int(CODES.HASNT_SETTLER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_SETTLER())
     endIf
 
     p_Unsettle()
@@ -423,10 +418,10 @@ int function Enthrall()
 p_Busy()
 
     if Count_Filled() < 1
-        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_FOLLOWER())
     endIf
     if Count_Non_Thralls() < 1
-        return p_Ready_Int(CODES.HASNT_NON_THRALL)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_NON_THRALL())
     endIf
 
     p_Enthrall()
@@ -440,10 +435,10 @@ int function Unthrall()
 p_Busy()
 
     if Count_Filled() < 1
-        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_FOLLOWER())
     endIf
     if Count_Thralls() < 1
-        return p_Ready_Int(CODES.HASNT_THRALL)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_THRALL())
     endIf
 
     p_Unthrall()
@@ -457,10 +452,10 @@ int function Paralyze()
 p_Busy()
 
     if Count_Filled() < 1
-        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_FOLLOWER())
     endIf
     if Count_Non_Paralyzed() < 1
-        return p_Ready_Int(CODES.HASNT_NON_PARALYZED)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_NON_PARALYZED())
     endIf
 
     p_Paralyze()
@@ -474,10 +469,10 @@ int function Unparalyze()
 p_Busy()
 
     if Count_Filled() < 1
-        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_FOLLOWER())
     endIf
     if Count_Paralyzed() < 1
-        return p_Ready_Int(CODES.HASNT_PARALYZED)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_PARALYZED())
     endIf
 
     p_Unparalyze()
@@ -491,12 +486,12 @@ int function Sneak()
 p_Busy()
 
     if Count_Filled() < 1
-        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_FOLLOWER())
     endIf
 
     int num_non_sneaks = Count_Non_Sneaks()
     if num_non_sneaks < 1
-        return p_Ready_Int(CODES.HASNT_NON_SNEAK)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_NON_SNEAK())
     endIf
 
     p_tasklist.Init(num_non_sneaks)
@@ -516,12 +511,12 @@ int function Unsneak()
 p_Busy()
 
     if Count_Filled() < 1
-        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_FOLLOWER())
     endIf
 
     int num_sneaks = Count_Sneaks()
     if num_sneaks < 1
-        return p_Ready_Int(CODES.HASNT_SNEAK)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_SNEAK())
     endIf
 
     p_tasklist.Init(num_sneaks)
@@ -541,16 +536,16 @@ int function Saddle()
 p_Busy()
 
     if CONSTS.ACTOR_PLAYER.GetParentCell().IsInterior()
-        return p_Ready_Int(CODES.IS_INTERIOR)
+        return p_Ready_Int(doticu_npcp_codes.INTERIOR())
     endIf
 
     if Count_Filled() < 1
-        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_FOLLOWER())
     endIf
 
     int num_non_saddlers = Count_Non_Saddlers()
     if num_non_saddlers < 1
-        return p_Ready_Int(CODES.HASNT_NON_SADDLER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_NON_SADDLER())
     endIf
 
     p_tasklist.Init(num_non_saddlers)
@@ -570,12 +565,12 @@ int function Unsaddle()
 p_Busy()
 
     if Count_Filled() < 1
-        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_FOLLOWER())
     endIf
 
     int num_saddlers = Count_Saddlers()
     if num_saddlers < 1
-        return p_Ready_Int(CODES.HASNT_SADDLER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_SADDLER())
     endIf
 
     p_tasklist.Init(num_saddlers)
@@ -595,12 +590,12 @@ int function Retreat()
 p_Busy()
     
     if Count_Filled() < 1
-        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_FOLLOWER())
     endIf
     
     int num_non_retreaters = Count_Non_Retreaters()
     if num_non_retreaters < 1
-        return p_Ready_Int(CODES.HASNT_NON_RETREATER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_NON_RETREATER())
     endIf
     
     p_tasklist.Init(num_non_retreaters)
@@ -620,12 +615,12 @@ int function Unretreat()
 p_Busy()
 
     if Count_Filled() < 1
-        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_FOLLOWER())
     endIf
 
     int num_retreaters = Count_Retreaters()
     if num_retreaters < 1
-        return p_Ready_Int(CODES.HASNT_RETREATER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_RETREATER())
     endIf
 
     p_tasklist.Init(num_retreaters)
@@ -646,7 +641,7 @@ p_Busy()
 
     int num_followers = Count_Filled()
     if num_followers < 1
-        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_FOLLOWER())
     endIf
 
     p_tasklist.Init(num_followers)
@@ -667,7 +662,7 @@ p_Busy()
 
     int num_followers = Count_Filled()
     if num_followers < 1
-        return p_Ready_Int(CODES.HASNT_FOLLOWER)
+        return p_Ready_Int(doticu_npcp_codes.HASNT_FOLLOWER())
     endIf
 
     p_tasklist.Init(num_followers)

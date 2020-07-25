@@ -13,7 +13,8 @@ namespace doticu_npcp { namespace Player {
 
     Actor_t* Actor()
     {
-        static Actor_t* actor = Utils::Assert(static_cast<Actor_t*>(*g_thePlayer));
+        static Actor_t* actor = static_cast<Actor_t*>(*g_thePlayer);
+        NPCP_ASSERT(actor);
         return actor;
     }
 

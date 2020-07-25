@@ -10,11 +10,6 @@ doticu_npcp_consts property CONSTS hidden
         return p_DATA.CONSTS
     endFunction
 endProperty
-doticu_npcp_codes property CODES hidden
-    doticu_npcp_codes function Get()
-        return p_DATA.CODES
-    endFunction
-endProperty
 doticu_npcp_funcs property FUNCS hidden
     doticu_npcp_funcs function Get()
         return p_DATA.MODS.FUNCS
@@ -87,7 +82,7 @@ function f_Create(doticu_npcp_data DATA)
     p_DATA = DATA
 
     p_is_created = true
-    p_code_view = CODES.VIEW_MANNEQUINS
+    p_code_view = doticu_npcp_codes.VIEW_MANNEQUINS()
 endFunction
 
 function f_Destroy()
@@ -101,7 +96,7 @@ function f_Unregister()
 endFunction
 
 function f_Review_Mannequins()
-    p_code_view = CODES.VIEW_MANNEQUINS_CELL
+    p_code_view = doticu_npcp_codes.VIEW_MANNEQUINS_CELL()
 endFunction
 
 bool function f_Is_Valid_Member(doticu_npcp_member ref_member)
@@ -156,7 +151,7 @@ endFunction
 ; States
 auto state STATE_MANNEQUINS
 function f_Build_Page()
-    p_code_view = CODES.VIEW_MANNEQUINS
+    p_code_view = doticu_npcp_codes.VIEW_MANNEQUINS()
     p_num_pages = Math.Ceiling(MANNEQUINS.MAX_COLUMNS / p_COLUMNS_PER_PAGE)
     if p_idx_page < 0 || p_idx_page >= p_num_pages
         p_idx_page = 0
@@ -321,7 +316,7 @@ endFunction
 function f_Build_Page()
     p_curr_members = MANNEQUINS.Get_Mannequins(p_curr_column, p_curr_row)
 
-    if p_code_view == CODES.VIEW_MANNEQUINS_MEMBER
+    if p_code_view == doticu_npcp_codes.VIEW_MANNEQUINS_MEMBER()
         if f_Is_Valid_Member(p_ref_member)
             return p_Goto_Mannequins_Member()
         else
@@ -329,7 +324,7 @@ function f_Build_Page()
         endIf
     endIf
 
-    p_code_view = CODES.VIEW_MANNEQUINS_CELL
+    p_code_view = doticu_npcp_codes.VIEW_MANNEQUINS_CELL()
     
     ; Title
     MCM.SetTitleText("Mannequins: C " + p_curr_column + ", R " + p_curr_row)
@@ -393,7 +388,7 @@ function f_Build_Page()
 endFunction
 
 function f_On_Option_Select(int id_option)
-    if p_code_view == CODES.VIEW_MANNEQUINS_MEMBER
+    if p_code_view == doticu_npcp_codes.VIEW_MANNEQUINS_MEMBER()
         return MCM.MCM_MEMBER.f_On_Option_Select(id_option)
     endIf
 
@@ -429,7 +424,7 @@ function f_On_Option_Select(int id_option)
         MCM.ForcePageReset()
     else
         MCM.f_Disable(id_option, MCM.DO_UPDATE)
-        p_code_view = CODES.VIEW_MANNEQUINS_MEMBER
+        p_code_view = doticu_npcp_codes.VIEW_MANNEQUINS_MEMBER()
         p_ref_member = p_curr_members[p_Get_Idx_Entity(id_option)] as doticu_npcp_member
         MCM.ForcePageReset()
 
@@ -437,7 +432,7 @@ function f_On_Option_Select(int id_option)
 endFunction
 
 function f_On_Option_Input_Accept(int id_option, string str_input)
-    if p_code_view == CODES.VIEW_MANNEQUINS_MEMBER
+    if p_code_view == doticu_npcp_codes.VIEW_MANNEQUINS_MEMBER()
         return MCM.MCM_MEMBER.f_On_Option_Input_Accept(id_option, str_input)
     endIf
 
@@ -451,7 +446,7 @@ function f_On_Option_Input_Accept(int id_option, string str_input)
 endFunction
 
 function f_On_Option_Highlight(int id_option)
-    if p_code_view == CODES.VIEW_MANNEQUINS_MEMBER
+    if p_code_view == doticu_npcp_codes.VIEW_MANNEQUINS_MEMBER()
         return MCM.MCM_MEMBER.f_On_Option_Highlight(id_option)
     endIf
 
@@ -481,37 +476,37 @@ function f_On_Option_Highlight(int id_option)
 endFunction
 
 function f_On_Option_Menu_Open(int id_option)
-    if p_code_view == CODES.VIEW_MANNEQUINS_MEMBER
+    if p_code_view == doticu_npcp_codes.VIEW_MANNEQUINS_MEMBER()
         return MCM.MCM_MEMBER.f_On_Option_Menu_Open(id_option)
     endIf
 endFunction
 
 function f_On_Option_Menu_Accept(int id_option, int idx_option)
-    if p_code_view == CODES.VIEW_MANNEQUINS_MEMBER
+    if p_code_view == doticu_npcp_codes.VIEW_MANNEQUINS_MEMBER()
         return MCM.MCM_MEMBER.f_On_Option_Menu_Accept(id_option, idx_option)
     endIf
 endFunction
 
 function f_On_Option_Slider_Open(int id_option)
-    if p_code_view == CODES.VIEW_MANNEQUINS_MEMBER
+    if p_code_view == doticu_npcp_codes.VIEW_MANNEQUINS_MEMBER()
         return MCM.MCM_MEMBER.f_On_Option_Slider_Open(id_option)
     endIf
 endFunction
 
 function f_On_Option_Slider_Accept(int id_option, float float_value)
-    if p_code_view == CODES.VIEW_MANNEQUINS_MEMBER
+    if p_code_view == doticu_npcp_codes.VIEW_MANNEQUINS_MEMBER()
         return MCM.MCM_MEMBER.f_On_Option_Slider_Accept(id_option, float_value)
     endIf
 endFunction
 
 function f_On_Option_Keymap_Change(int id_option, int code_key, string str_conflict_control, string str_conflict_mod)
-    if p_code_view == CODES.VIEW_MANNEQUINS_MEMBER
+    if p_code_view == doticu_npcp_codes.VIEW_MANNEQUINS_MEMBER()
         return MCM.MCM_MEMBER.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
     endIf
 endFunction
 
 function f_On_Option_Default(int id_option)
-    if p_code_view == CODES.VIEW_MANNEQUINS_MEMBER
+    if p_code_view == doticu_npcp_codes.VIEW_MANNEQUINS_MEMBER()
         return MCM.MCM_MEMBER.f_On_Option_Default(id_option)
     endIf
 endFunction

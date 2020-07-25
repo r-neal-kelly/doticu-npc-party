@@ -5,11 +5,6 @@
 Scriptname doticu_npcp_commands extends Quest
 
 ; Modules
-doticu_npcp_codes property CODES hidden
-    doticu_npcp_codes function Get()
-        return p_DATA.CODES
-    endFunction
-endProperty
 doticu_npcp_logs property LOGS hidden
     doticu_npcp_logs function Get()
         return p_DATA.MODS.FUNCS.LOGS
@@ -323,31 +318,31 @@ endFunction
 
 function Sneak_Sync(Actor ref_actor, bool auto_create)
 p_Busy()
-    PRIVATE.Sneak(CODES.DO_SYNC, ref_actor, auto_create)
+    PRIVATE.Sneak(doticu_npcp_codes.SYNC(), ref_actor, auto_create)
 p_Ready()
 endFunction
 
 function Unsneak_Sync(Actor ref_actor, bool auto_create)
 p_Busy()
-    PRIVATE.Unsneak(CODES.DO_SYNC, ref_actor, auto_create)
+    PRIVATE.Unsneak(doticu_npcp_codes.SYNC(), ref_actor, auto_create)
 p_Ready()
 endFunction
 
 function Saddle_Sync(Actor ref_actor, bool auto_create)
 p_Busy()
-    PRIVATE.Saddle(CODES.DO_SYNC, ref_actor, auto_create)
+    PRIVATE.Saddle(doticu_npcp_codes.SYNC(), ref_actor, auto_create)
 p_Ready()
 endFunction
 
 function Unsaddle_Sync(Actor ref_actor, bool auto_create)
 p_Busy()
-    PRIVATE.Unsaddle(CODES.DO_SYNC, ref_actor, auto_create)
+    PRIVATE.Unsaddle(doticu_npcp_codes.SYNC(), ref_actor, auto_create)
 p_Ready()
 endFunction
 
 function Pack_Sync(Actor ref_actor, bool auto_create)
 p_Busy()
-    PRIVATE.Pack(CODES.DO_SYNC, ref_actor, auto_create)
+    PRIVATE.Pack(doticu_npcp_codes.SYNC(), ref_actor, auto_create)
 p_Ready()
 endFunction
 
@@ -359,49 +354,49 @@ endFunction
 
 function Outfit_Current_Sync(Actor ref_actor, bool auto_create)
 p_Busy()
-    PRIVATE.Outfit_Current(CODES.DO_SYNC, ref_actor, auto_create)
+    PRIVATE.Outfit_Current(doticu_npcp_codes.SYNC(), ref_actor, auto_create)
 p_Ready()
 endFunction
 
 function Outfit_Member_Sync(Actor ref_actor, bool auto_create)
 p_Busy()
-    PRIVATE.Outfit_Member(CODES.DO_SYNC, ref_actor, auto_create)
+    PRIVATE.Outfit_Member(doticu_npcp_codes.SYNC(), ref_actor, auto_create)
 p_Ready()
 endFunction
 
 function Outfit_Settler_Sync(Actor ref_actor, bool auto_create)
 p_Busy()
-    PRIVATE.Outfit_Settler(CODES.DO_SYNC, ref_actor, auto_create)
+    PRIVATE.Outfit_Settler(doticu_npcp_codes.SYNC(), ref_actor, auto_create)
 p_Ready()
 endFunction
 
 function Outfit_Thrall_Sync(Actor ref_actor, bool auto_create)
 p_Busy()
-    PRIVATE.Outfit_Thrall(CODES.DO_SYNC, ref_actor, auto_create)
+    PRIVATE.Outfit_Thrall(doticu_npcp_codes.SYNC(), ref_actor, auto_create)
 p_Ready()
 endFunction
 
 function Outfit_Follower_Sync(Actor ref_actor, bool auto_create)
 p_Busy()
-    PRIVATE.Outfit_Follower(CODES.DO_SYNC, ref_actor, auto_create)
+    PRIVATE.Outfit_Follower(doticu_npcp_codes.SYNC(), ref_actor, auto_create)
 p_Ready()
 endFunction
 
 function Outfit_Immobile_Sync(Actor ref_actor, bool auto_create)
 p_Busy()
-    PRIVATE.Outfit_Immobile(CODES.DO_SYNC, ref_actor, auto_create)
+    PRIVATE.Outfit_Immobile(doticu_npcp_codes.SYNC(), ref_actor, auto_create)
 p_Ready()
 endFunction
 
 function Outfit_Vanilla_Sync(Actor ref_actor, bool auto_create)
 p_Busy()
-    PRIVATE.Outfit_Vanilla(CODES.DO_SYNC, ref_actor, auto_create)
+    PRIVATE.Outfit_Vanilla(doticu_npcp_codes.SYNC(), ref_actor, auto_create)
 p_Ready()
 endFunction
 
 function Outfit_Default_Sync(Actor ref_actor, bool auto_create)
 p_Busy()
-    PRIVATE.Outfit_Default(CODES.DO_SYNC, ref_actor, auto_create)
+    PRIVATE.Outfit_Default(doticu_npcp_codes.SYNC(), ref_actor, auto_create)
 p_Ready()
 endFunction
 
@@ -479,13 +474,13 @@ endFunction
 
 function Resurrect_Sync(Actor ref_actor, bool auto_create)
 p_Busy()
-    PRIVATE.Resurrect(CODES.DO_SYNC, ref_actor, auto_create)
+    PRIVATE.Resurrect(doticu_npcp_codes.SYNC(), ref_actor, auto_create)
 p_Ready()
 endFunction
 
 function Reanimate_Sync(Actor ref_actor, bool auto_create)
 p_Busy()
-    PRIVATE.Reanimate(CODES.DO_SYNC, ref_actor, auto_create)
+    PRIVATE.Reanimate(doticu_npcp_codes.SYNC(), ref_actor, auto_create)
 p_Ready()
 endFunction
 
@@ -557,7 +552,7 @@ endFunction
 
 function Toggle_Sneak_Sync(Actor ref_actor)
 p_Busy()
-    PRIVATE.Toggle_Sneak(CODES.DO_SYNC, ref_actor)
+    PRIVATE.Toggle_Sneak(doticu_npcp_codes.SYNC(), ref_actor)
 p_Ready()
 endFunction
 
@@ -595,39 +590,39 @@ function Unclone_Async(Actor ref_actor)
 endFunction
 
 function Sneak_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Sneak(CODES.DO_ASYNC, ref_actor, auto_create)
+    PRIVATE.Sneak(doticu_npcp_codes.ASYNC(), ref_actor, auto_create)
 endFunction
 
 function Unsneak_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Unsneak(CODES.DO_ASYNC, ref_actor, auto_create)
+    PRIVATE.Unsneak(doticu_npcp_codes.ASYNC(), ref_actor, auto_create)
 endFunction
 
 function Pack_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Pack(CODES.DO_ASYNC, ref_actor, auto_create)
+    PRIVATE.Pack(doticu_npcp_codes.ASYNC(), ref_actor, auto_create)
 endFunction
 
 function Outfit_Current_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Outfit_Current(CODES.DO_ASYNC, ref_actor, auto_create)
+    PRIVATE.Outfit_Current(doticu_npcp_codes.ASYNC(), ref_actor, auto_create)
 endFunction
 
 function Outfit_Member_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Outfit_Member(CODES.DO_ASYNC, ref_actor, auto_create)
+    PRIVATE.Outfit_Member(doticu_npcp_codes.ASYNC(), ref_actor, auto_create)
 endFunction
 
 function Outfit_Settler_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Outfit_Settler(CODES.DO_ASYNC, ref_actor, auto_create)
+    PRIVATE.Outfit_Settler(doticu_npcp_codes.ASYNC(), ref_actor, auto_create)
 endFunction
 
 function Outfit_Thrall_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Outfit_Thrall(CODES.DO_ASYNC, ref_actor, auto_create)
+    PRIVATE.Outfit_Thrall(doticu_npcp_codes.ASYNC(), ref_actor, auto_create)
 endFunction
 
 function Outfit_Follower_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Outfit_Follower(CODES.DO_ASYNC, ref_actor, auto_create)
+    PRIVATE.Outfit_Follower(doticu_npcp_codes.ASYNC(), ref_actor, auto_create)
 endFunction
 
 function Outfit_Immobile_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Outfit_Immobile(CODES.DO_ASYNC, ref_actor, auto_create)
+    PRIVATE.Outfit_Immobile(doticu_npcp_codes.ASYNC(), ref_actor, auto_create)
 endFunction
 
 function Summon_Async(Actor ref_actor)
@@ -635,15 +630,15 @@ function Summon_Async(Actor ref_actor)
 endFunction
 
 function Resurrect_Async(Actor ref_actor, bool auto_create)
-    PRIVATE.Resurrect(CODES.DO_ASYNC, ref_actor, auto_create)
+    PRIVATE.Resurrect(doticu_npcp_codes.ASYNC(), ref_actor, auto_create)
 endFunction
 
 function Toggle_Sneak_Async(Actor ref_actor)
-    PRIVATE.Toggle_Sneak(CODES.DO_ASYNC, ref_actor)
+    PRIVATE.Toggle_Sneak(doticu_npcp_codes.ASYNC(), ref_actor)
 endFunction
 
 function Toggle_Saddler_Async(Actor ref_actor)
-    PRIVATE.Toggle_Saddle(CODES.DO_ASYNC, ref_actor)
+    PRIVATE.Toggle_Saddle(doticu_npcp_codes.ASYNC(), ref_actor)
 endFunction
 
 ; "all", "mobile", "immobile", follower cycle, etc, such that they each summon one after another

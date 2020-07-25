@@ -10,11 +10,6 @@ doticu_npcp_consts property CONSTS hidden
         return p_DATA.CONSTS
     endFunction
 endProperty
-doticu_npcp_codes property CODES hidden
-    doticu_npcp_codes function Get()
-        return p_DATA.CODES
-    endFunction
-endProperty
 doticu_npcp_funcs property FUNCS hidden
     doticu_npcp_funcs function Get()
         return p_DATA.MODS.FUNCS
@@ -132,11 +127,11 @@ bool function Is_Vampire(Actor ref_actor)
 endFunction
 
 bool function Is_Male(Actor ref_actor)
-    return Get_Sex(ref_actor) == CODES.GENDER_MALE
+    return Get_Sex(ref_actor) == doticu_npcp_codes.SEX_MALE()
 endFunction
 
 bool function Is_Female(Actor ref_actor)
-    return Get_Sex(ref_actor) == CODES.GENDER_FEMALE
+    return Get_Sex(ref_actor) == doticu_npcp_codes.SEX_FEMALE()
 endFunction
 
 bool function Is_Essential(Actor ref_actor)
@@ -240,13 +235,13 @@ int function Get_Vitality(Actor ref_actor)
     ActorBase p_base_actor = ref_actor.GetLeveledActorBase()
 
     if p_base_actor.IsProtected()
-        return CODES.IS_PROTECTED
+        return doticu_npcp_codes.VITALITY_PROTECTED()
     elseIf p_base_actor.IsEssential()
-        return CODES.IS_ESSENTIAL
+        return doticu_npcp_codes.VITALITY_ESSENTIAL()
     elseIf p_base_actor.IsInvulnerable()
-        return CODES.IS_INVULNERABLE
+        return doticu_npcp_codes.VITALITY_INVULNERABLE()
     else
-        return CODES.IS_MORTAL
+        return doticu_npcp_codes.VITALITY_MORTAL()
     endIf
 endFunction
 
@@ -291,7 +286,7 @@ function Resurrect(Actor ref_actor)
     ; we hide the resurrection because the actor starts standing by default
     ; we could try playing a laying down animation to see if that would help.
     ref_actor.SetAlpha(0, false)
-    ref_actor.SetCriticalStage(CODES.CRITICAL_NONE)
+    ref_actor.SetCriticalStage(doticu_npcp_codes.CRITICAL_NONE())
     ref_actor.Resurrect()
     FUNCS.Wait(0.1); stops the body from being caught in the ground
     ref_actor.EnableAI(false)
@@ -469,7 +464,7 @@ int function Toggle_Move(Actor ref_actor)
         doticu_npcp_member ref_member = p_DATA.MODS.MEMBERS.Get_Member(ref_actor)
         if ref_member
             if ref_member.Is_Mannequin()
-                return CODES.IS_MANNEQUIN
+                return doticu_npcp_codes.IS_MANNEQUIN()
             elseIf ref_member.Is_Display()
                 return doticu_npcp_codes.IS_DISPLAY()
             endIf
@@ -478,12 +473,12 @@ int function Toggle_Move(Actor ref_actor)
         MOVEE.f_Create(p_DATA, ref_actor)
         MOVEE.f_Register()
 
-        return CODES.STARTED
+        return doticu_npcp_codes.STARTED()
     else
         MOVEE.f_Unregister()
         MOVEE.f_Destroy()
 
-        return CODES.STOPPED
+        return doticu_npcp_codes.STOPPED()
     endIf
 endFunction
 

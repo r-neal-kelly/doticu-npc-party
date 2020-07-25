@@ -17,17 +17,15 @@ namespace doticu_npcp { namespace Party {
 
     String_t Follower_t::Class_Name()
     {
-        static const String_t class_name = Utils::Assert(
-            String_t("doticu_npcp_follower")
-        );
+        static const String_t class_name = String_t("doticu_npcp_follower");
+        NPCP_ASSERT(class_name);
         return class_name;
     }
 
     Class_Info_t* Follower_t::Class_Info()
     {
-        static Class_Info_t* object_info = Utils::Assert(
-            Class_Info_t::Fetch(Class_Name())
-        );
+        static Class_Info_t* object_info = Class_Info_t::Fetch(Class_Name());
+        NPCP_ASSERT(object_info);
         return object_info;
     }
 

@@ -35,8 +35,8 @@ namespace doticu_npcp { namespace Papyrus {
     class Virtual_Machine_t { // Registry_t
     public:
         static Virtual_Machine_t* Self();
-        template <typename BSObject>
-        static void Send_Event(BSObject* object, String_t event_name, IFunctionArguments* arguments);
+        //template <typename BSObject>
+        //static void Send_Event(BSObject* object, String_t event_name, IFunctionArguments* arguments);
     public:
         virtual ~Virtual_Machine_t(); // 00
         virtual void _01(void); // 01

@@ -5,11 +5,6 @@
 Scriptname doticu_npcp_commands_p_notes extends Quest
 
 ; Modules
-doticu_npcp_codes property CODES hidden
-    doticu_npcp_codes function Get()
-        return p_DATA.CODES
-    endFunction
-endProperty
 doticu_npcp_logs property LOGS hidden
     doticu_npcp_logs function Get()
         return p_DATA.MODS.FUNCS.LOGS
@@ -40,9 +35,9 @@ endFunction
 function Member(int code_return, string str_name)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note(str_name + " is now a member.")
-    elseIf code_return == CODES.CANT_CLONE
+    elseIf code_return == doticu_npcp_codes.CANT_CLONE()
         LOGS.Create_Note(str_name + " could not be cloned. Try to manually member them.")
-    elseIf code_return == doticu_npcp_codes.HASNT_MEMBER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_MEMBER()
         LOGS.Create_Note("No room for " + str_name + " to become a member.")
     elseIf code_return == doticu_npcp_codes.CANT_RESURRECT()
         LOGS.Create_Note(str_name + " can't be revived, and so can't become a member.")
@@ -50,7 +45,7 @@ function Member(int code_return, string str_name)
         LOGS.Create_Note(str_name + " is already a member.")
     elseIf code_return == doticu_npcp_codes.ISNT_ACTOR()
         LOGS.Create_Note("That can't become a member.")
-    elseIf code_return == CODES.IS_CHILD
+    elseIf code_return == doticu_npcp_codes.CHILD()
         LOGS.Create_Note("A child cannot become a member.")
     else
         LOGS.Create_Error("It's unknown why " + str_name + " can't be a member: " + code_return)
@@ -72,15 +67,15 @@ endFunction
 function Clone(int code_return, string str_name)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note("A clone of " + str_name + " is now a member.")
-    elseIf code_return == CODES.CANT_CLONE
+    elseIf code_return == doticu_npcp_codes.CANT_CLONE()
         LOGS.Create_Note(str_name + " could not be cloned.")
-    elseIf code_return == doticu_npcp_codes.HASNT_MEMBER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_MEMBER()
         LOGS.Create_Note("No room for a clone of " + str_name + " to be a member.")
     elseIf code_return == doticu_npcp_codes.CANT_RESURRECT()
         LOGS.Create_Note(str_name + " can't be revived, can't be cloned, and can't become a member.")
     elseIf code_return == doticu_npcp_codes.ISNT_ACTOR()
         LOGS.Create_Note("A clone of this can't be made a member.")
-    elseIf code_return == CODES.IS_CHILD
+    elseIf code_return == doticu_npcp_codes.CHILD()
         LOGS.Create_Note("A child cannot be cloned.")
     else
         LOGS.Create_Error("It's unknown why a clone of " + str_name + " can't be a member: " + code_return)
@@ -94,7 +89,7 @@ function Unclone(int code_return, string str_name)
         LOGS.Create_Note("That can't be unmembered or uncloned.")
     elseIf code_return == doticu_npcp_codes.ISNT_MEMBER() || code_return == doticu_npcp_codes.HASNT_MEMBER()
         LOGS.Create_Note(str_name + " was already not a member and can't be uncloned.")
-    elseIf code_return == CODES.ISNT_CLONE
+    elseIf code_return == doticu_npcp_codes.ISNT_CLONE()
         LOGS.Create_Note(str_name + " is not a clone.")
     else
         LOGS.Create_Error("It's unknown why " + str_name + " can't be unmembered and uncloned: " + code_return)
@@ -104,7 +99,7 @@ endFunction
 function Pack(int code_return, string str_name)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note(str_name + " will carry the pack.")
-    elseIf code_return == doticu_npcp_codes.HASNT_MEMBER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_MEMBER()
         LOGS.Create_Note("No room for " + str_name + " to carry a pack as a new member.")
     elseIf code_return == doticu_npcp_codes.CANT_RESURRECT()
         LOGS.Create_Note(str_name + " can't be revived, and so can't carry a pack as a new member.")
@@ -132,25 +127,25 @@ endFunction
 function Outfit(int code_return, string str_name, int code_outfit2)
     string str_outfit
 
-    if code_outfit2 == CODES.OUTFIT2_MEMBER
+    if code_outfit2 == doticu_npcp_codes.OUTFIT2_MEMBER()
         str_outfit = "a member"
-    elseIf code_outfit2 == CODES.OUTFIT2_SETTLER
+    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_SETTLER()
         str_outfit = "a settler"
-    elseIf code_outfit2 == CODES.OUTFIT2_THRALL
+    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_THRALL()
         str_outfit = "a thrall"
-    elseIf code_outfit2 == CODES.OUTFIT2_FOLLOWER
+    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_FOLLOWER()
         str_outfit = "a follower"
-    elseIf code_outfit2 == CODES.OUTFIT2_IMMOBILE
+    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_IMMOBILE()
         str_outfit = "an immobile"
-    elseIf code_outfit2 == CODES.OUTFIT2_VANILLA
+    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_VANILLA()
         str_outfit = "a vanilla npc"
-    elseIf code_outfit2 == CODES.OUTFIT2_DEFAULT
+    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_DEFAULT()
         str_outfit = "a default npc"
     endIf
 
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note(str_name + " has been outfitted as " + str_outfit + ".")
-    elseIf code_return == doticu_npcp_codes.HASNT_MEMBER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_MEMBER()
         LOGS.Create_Note("No room for " + str_name + " to be outfitted as " + str_outfit + ".")
     elseIf code_return == doticu_npcp_codes.CANT_RESURRECT()
         LOGS.Create_Note(str_name + " can't be revived, and so can't be outfitted as " + str_outfit + ".")
@@ -166,11 +161,11 @@ endFunction
 function Resurrect(int code_return, string str_name)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note(str_name + " has been resurrected.")
-    elseIf code_return == doticu_npcp_codes.HASNT_MEMBER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_MEMBER()
         LOGS.Create_Note("No room for " + str_name + " to be a resurrected new member.")
     elseIf code_return == doticu_npcp_codes.CANT_RESURRECT()
         LOGS.Create_Note(str_name + " can't be resurrected, and so can't be a new member.")
-    elseIf code_return == CODES.IS_ALIVE
+    elseIf code_return == doticu_npcp_codes.IS_ALIVE()
         LOGS.Create_Note(str_name + " is already alive.")
     elseIf code_return == doticu_npcp_codes.ISNT_ACTOR()
         LOGS.Create_Note("That can't become a resurrected new member.")
@@ -184,11 +179,11 @@ endFunction
 function Reanimate(int code_return, string str_name)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note(str_name + " has been reanimated.")
-    elseIf code_return == doticu_npcp_codes.HASNT_MEMBER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_MEMBER()
         LOGS.Create_Note("No room for " + str_name + " to be a reanimated member.")
     elseIf code_return == doticu_npcp_codes.CANT_RESURRECT()
         LOGS.Create_Note(str_name + " can't be reanimated, and so can't be a new member.")
-    elseIf code_return == CODES.IS_ALIVE
+    elseIf code_return == doticu_npcp_codes.IS_ALIVE()
         LOGS.Create_Note(str_name + " is alive and can't be reanimated.")
     elseIf code_return == doticu_npcp_codes.ISNT_ACTOR()
         LOGS.Create_Note("That can't become a reanimated member.")
@@ -202,7 +197,7 @@ endFunction
 function Mannequinize(int code_return, string str_name)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note(str_name + " has been turned into a mannequin.")
-    elseIf code_return == doticu_npcp_codes.HASNT_MEMBER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_MEMBER()
         LOGS.Create_Note("No room for " + str_name + " to be a mannequin.")
     elseIf code_return == doticu_npcp_codes.CANT_RESURRECT()
         LOGS.Create_Note(str_name + " can't be resurrected, and so can't be a mannequin.")
@@ -210,9 +205,9 @@ function Mannequinize(int code_return, string str_name)
         LOGS.Create_Note("That can't become a mannequin.")
     elseIf code_return == doticu_npcp_codes.ISNT_MEMBER() || code_return == doticu_npcp_codes.HASNT_MEMBER()
         LOGS.Create_Note(str_name + " isn't a member, and so can't be a mannequin.")
-    elseIf code_return == CODES.IS_MANNEQUIN
+    elseIf code_return == doticu_npcp_codes.IS_MANNEQUIN()
         LOGS.Create_Note(str_name + " is already a mannequin.")
-    elseIf code_return == CODES.HASNT_MARKER
+    elseIf code_return == doticu_npcp_codes.HASNT_MARKER()
         LOGS.Create_Note(str_name + " doesn't have a valid mannequin marker.")
     else
         LOGS.Create_Error("It's unknown why " + str_name + " can't be mannequinized: " + code_return)
@@ -226,7 +221,7 @@ function Unmannequinize(int code_return, string str_name)
         LOGS.Create_Note("That isn't an npc.")
     elseIf code_return == doticu_npcp_codes.ISNT_MEMBER() || code_return == doticu_npcp_codes.HASNT_MEMBER()
         LOGS.Create_Note(str_name + " isn't a member.")
-    elseIf code_return == CODES.ISNT_MANNEQUIN
+    elseIf code_return == doticu_npcp_codes.ISNT_MANNEQUIN()
         LOGS.Create_Note(str_name + " isn't a mannequin.")
     else
         LOGS.Create_Error("It's unknown why " + str_name + " can't be unmannequinized: " + code_return)
@@ -236,7 +231,7 @@ endFunction
 function Settle(int code_return, string str_name)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note(str_name + " will settle here.")
-    elseIf code_return == doticu_npcp_codes.HASNT_MEMBER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_MEMBER()
         LOGS.Create_Note("No room for " + str_name + " to become a settled member.")
     elseIf code_return == doticu_npcp_codes.CANT_RESURRECT()
         LOGS.Create_Note(str_name + " can't be revived, and so can't be a settled member.")
@@ -244,7 +239,7 @@ function Settle(int code_return, string str_name)
         LOGS.Create_Note("That can't become a settled member.")
     elseIf code_return == doticu_npcp_codes.ISNT_MEMBER() || code_return == doticu_npcp_codes.HASNT_MEMBER()
         LOGS.Create_Note(str_name + " isn't a member, and so can't settle here.")
-    elseIf code_return == CODES.IS_SETTLER
+    elseIf code_return == doticu_npcp_codes.IS_SETTLER()
         LOGS.Create_Note(str_name + " is already settled elsewhere.")
     else
         LOGS.Create_Error("It's unknown why " + str_name + " can't settle here: " + code_return)
@@ -254,7 +249,7 @@ endFunction
 function Unsettle(int code_return, string str_name)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note(str_name + " will no longer be a settler.")
-    elseIf code_return == doticu_npcp_codes.HASNT_MEMBER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_MEMBER()
         LOGS.Create_Note("No room for " + str_name + " to become an unsettled member.")
     elseIf code_return == doticu_npcp_codes.CANT_RESURRECT()
         LOGS.Create_Note(str_name + " can't be revived, and so can't be an unsettled member.")
@@ -262,7 +257,7 @@ function Unsettle(int code_return, string str_name)
         LOGS.Create_Note("That can't become an unsettled member.")
     elseIf code_return == doticu_npcp_codes.ISNT_MEMBER() || code_return == doticu_npcp_codes.HASNT_MEMBER()
         LOGS.Create_Note(str_name + " isn't a member, and so can't unsettle.")
-    elseIf code_return == CODES.ISNT_SETTLER
+    elseIf code_return == doticu_npcp_codes.ISNT_SETTLER()
         LOGS.Create_Note(str_name + " isn't settled.")
     else
         LOGS.Create_Error("It's unknown why " + str_name + " can't unsettle: " + code_return)
@@ -272,7 +267,7 @@ endFunction
 function Resettle(int code_return, string str_name)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note(str_name + " will resettle here.")
-    elseIf code_return == doticu_npcp_codes.HASNT_MEMBER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_MEMBER()
         LOGS.Create_Note("No room for " + str_name + " to become a resettled member.")
     elseIf code_return == doticu_npcp_codes.CANT_RESURRECT()
         LOGS.Create_Note(str_name + " can't be revived, and so can't become a resettled member.")
@@ -280,7 +275,7 @@ function Resettle(int code_return, string str_name)
         LOGS.Create_Note("That can't become a resettled member.")
     elseIf code_return == doticu_npcp_codes.ISNT_MEMBER() || code_return == doticu_npcp_codes.HASNT_MEMBER()
         LOGS.Create_Note(str_name + " isn't a member, and so can't resettle.")
-    elseIf code_return == CODES.ISNT_SETTLER
+    elseIf code_return == doticu_npcp_codes.ISNT_SETTLER()
         LOGS.Create_Note(str_name + " isn't a settler, and so can't resettle.")
     else
         LOGS.Create_Error("It's unknown why " + str_name + " can't resettle: " + code_return)
@@ -290,17 +285,17 @@ endFunction
 function Enthrall(int code_return, string str_name)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note(str_name + " is now enthralled.")
-    elseIf code_return == doticu_npcp_codes.HASNT_MEMBER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_MEMBER()
         LOGS.Create_Note("No room for " + str_name + " to become an enthralled member.")
     elseIf code_return == doticu_npcp_codes.CANT_RESURRECT()
         LOGS.Create_Note(str_name + " can't be revived, and so can't be enthralled.")
-    elseIf code_return == CODES.ISNT_VAMPIRE
+    elseIf code_return == doticu_npcp_codes.NON_VAMPIRE()
         LOGS.Create_Note("Only a vampire can enthrall a member.")
     elseIf code_return == doticu_npcp_codes.ISNT_ACTOR()
         LOGS.Create_Note("That can't become an enthralled member.")
     elseIf code_return == doticu_npcp_codes.ISNT_MEMBER() || code_return == doticu_npcp_codes.HASNT_MEMBER()
         LOGS.Create_Note(str_name + " isn't a member, and so can't be enthralled.")
-    elseIf code_return == CODES.IS_IMMOBILE
+    elseIf code_return == doticu_npcp_codes.IS_IMMOBILE()
         LOGS.Create_Note(str_name + " is already enthralled.")
     else
         LOGS.Create_Error("It's unknown why " + str_name + " can't be enthralled: " + code_return)
@@ -310,17 +305,17 @@ endFunction
 function Unthrall(int code_return, string str_name)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note(str_name + " is no longer enthralled.")
-    elseIf code_return == doticu_npcp_codes.HASNT_MEMBER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_MEMBER()
         LOGS.Create_Note("No room for " + str_name + " to become an unthralled member.")
     elseIf code_return == doticu_npcp_codes.CANT_RESURRECT()
         LOGS.Create_Note(str_name + " can't be revived, and so can't be unthralled.")
-    elseIf code_return == CODES.ISNT_VAMPIRE
+    elseIf code_return == doticu_npcp_codes.NON_VAMPIRE()
         LOGS.Create_Note("Only a vampire can unthrall a member.")
     elseIf code_return == doticu_npcp_codes.ISNT_ACTOR()
         LOGS.Create_Note("That can't become an unthralled member.")
     elseIf code_return == doticu_npcp_codes.ISNT_MEMBER() || code_return == doticu_npcp_codes.HASNT_MEMBER()
         LOGS.Create_Note(str_name + " isn't a member, and so can't be unthralled.")
-    elseIf code_return == CODES.ISNT_IMMOBILE
+    elseIf code_return == doticu_npcp_codes.ISNT_IMMOBILE()
         LOGS.Create_Note(str_name + " is already unthralled.")
     else
         LOGS.Create_Error("It's unknown why " + str_name + " can't be unthralled: " + code_return)
@@ -330,7 +325,7 @@ endFunction
 function Immobilize(int code_return, string str_name)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note(str_name + " will stop moving.")
-    elseIf code_return == doticu_npcp_codes.HASNT_MEMBER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_MEMBER()
         LOGS.Create_Note("No room for " + str_name + " to become an immobile member.")
     elseIf code_return == doticu_npcp_codes.CANT_RESURRECT()
         LOGS.Create_Note(str_name + " can't be revived, and so can't be immobilized.")
@@ -338,7 +333,7 @@ function Immobilize(int code_return, string str_name)
         LOGS.Create_Note("That can't become an immobile member.")
     elseIf code_return == doticu_npcp_codes.ISNT_MEMBER() || code_return == doticu_npcp_codes.HASNT_MEMBER()
         LOGS.Create_Note(str_name + " isn't a member, and so can't be immobilized.")
-    elseIf code_return == CODES.IS_IMMOBILE
+    elseIf code_return == doticu_npcp_codes.IS_IMMOBILE()
         LOGS.Create_Note(str_name + " is already immobile.")
     else
         LOGS.Create_Error("It's unknown why " + str_name + " can't be immobilized: " + code_return)
@@ -348,7 +343,7 @@ endFunction
 function Mobilize(int code_return, string str_name)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note(str_name + " will start moving.")
-    elseIf code_return == doticu_npcp_codes.HASNT_MEMBER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_MEMBER()
         LOGS.Create_Note("No room for " + str_name + " to become a mobile member.")
     elseIf code_return == doticu_npcp_codes.CANT_RESURRECT()
         LOGS.Create_Note(str_name + " can't be revived, and so can't be mobilized.")
@@ -356,7 +351,7 @@ function Mobilize(int code_return, string str_name)
         LOGS.Create_Note("That can't become a mobile member.")
     elseIf code_return == doticu_npcp_codes.ISNT_MEMBER() || code_return == doticu_npcp_codes.HASNT_MEMBER()
         LOGS.Create_Note(str_name + " isn't a member, and so can't be mobilized.")
-    elseIf code_return == CODES.ISNT_IMMOBILE
+    elseIf code_return == doticu_npcp_codes.ISNT_IMMOBILE()
         LOGS.Create_Note(str_name + " is already mobile.")
     else
         LOGS.Create_Error("It's unknown why " + str_name + " can't be mobilized: " + code_return)
@@ -366,7 +361,7 @@ endFunction
 function Paralyze(int code_return, string str_name)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note(str_name + " will be paralyzed.")
-    elseIf code_return == doticu_npcp_codes.HASNT_MEMBER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_MEMBER()
         LOGS.Create_Note("No room for " + str_name + " to become an immobile and paralyzed member.")
     elseIf code_return == doticu_npcp_codes.CANT_RESURRECT()
         LOGS.Create_Note(str_name + " can't be revived, and so can't become an immobile and paralyzed member.")
@@ -374,7 +369,7 @@ function Paralyze(int code_return, string str_name)
         LOGS.Create_Note("That can't become an immobile and paralyzed member.")
     elseIf code_return == doticu_npcp_codes.ISNT_MEMBER() || code_return == doticu_npcp_codes.HASNT_MEMBER()
         LOGS.Create_Note(str_name + " isn't a member, and so can't be immobile and paralyzed.")
-    elseIf code_return == CODES.IS_PARALYZED
+    elseIf code_return == doticu_npcp_codes.IS_PARALYZED()
         LOGS.Create_Note(str_name + " is already paralyzed.")
     else
         LOGS.Create_Error("It's unknown why " + str_name + " can't be immobile and paralyzed: " + code_return)
@@ -384,7 +379,7 @@ endFunction
 function Unparalyze(int code_return, string str_name)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note(str_name + " will no longer be paralyzed.")
-    elseIf code_return == doticu_npcp_codes.HASNT_MEMBER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_MEMBER()
         LOGS.Create_Note("No room for " + str_name + " to become an immobile and unparalyzed member.")
     elseIf code_return == doticu_npcp_codes.CANT_RESURRECT()
         LOGS.Create_Note(str_name + " can't be revived, and so can't become an immobile and unparalyzed member.")
@@ -392,7 +387,7 @@ function Unparalyze(int code_return, string str_name)
         LOGS.Create_Note("That can't become an immobile and unparalyzed member.")
     elseIf code_return == doticu_npcp_codes.ISNT_MEMBER() || code_return == doticu_npcp_codes.HASNT_MEMBER()
         LOGS.Create_Note(str_name + " isn't a member, and so can't be immobile and unparalyzed.")
-    elseIf code_return == CODES.ISNT_PARALYZED
+    elseIf code_return == doticu_npcp_codes.ISNT_PARALYZED()
         LOGS.Create_Note(str_name + " wasn't paralyzed.")
     else
         LOGS.Create_Error("It's unknown why " + str_name + " can't stop being paralyzed: " + code_return)
@@ -416,7 +411,7 @@ function Stylize(int code_return, string str_name, int code_style)
 
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note(str_name + " now fights as " + str_style + ".")
-    elseIf code_return == doticu_npcp_codes.HASNT_MEMBER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_MEMBER()
         LOGS.Create_Note("No room for " + str_name + " to become " + str_style + ".")
     elseIf code_return == doticu_npcp_codes.CANT_RESURRECT()
         LOGS.Create_Note(str_name + " can't be revived, and so can't become " + str_style + ".")
@@ -424,6 +419,8 @@ function Stylize(int code_return, string str_name, int code_style)
         LOGS.Create_Note("That can't become " + str_style + ".")
     elseIf code_return == doticu_npcp_codes.ISNT_MEMBER() || code_return == doticu_npcp_codes.HASNT_MEMBER()
         LOGS.Create_Note(str_name + " isn't a member, and so can't be " + str_style + ".")
+    elseIf code_return == doticu_npcp_codes.ISNT_STYLE()
+        LOGS.Create_Note("That isn't a member style.")
     elseIf code_return == doticu_npcp_codes.IS_DEFAULT()
         LOGS.Create_Note(str_name + " is already " + str_style + ".")
     elseIf code_return == doticu_npcp_codes.IS_WARRIOR()
@@ -442,19 +439,19 @@ endFunction
 function Vitalize(int code_return, string str_name, int code_vitality)
     string str_vitality
 
-    if code_vitality == CODES.IS_MORTAL
+    if code_vitality == doticu_npcp_codes.VITALITY_MORTAL()
         str_vitality = "a mortal member"
-    elseIf code_vitality == CODES.IS_PROTECTED
+    elseIf code_vitality == doticu_npcp_codes.VITALITY_PROTECTED()
         str_vitality = "a protected member"
-    elseIf code_vitality == CODES.IS_ESSENTIAL
+    elseIf code_vitality == doticu_npcp_codes.VITALITY_ESSENTIAL()
         str_vitality = "an essential member"
-    elseIf code_vitality == CODES.IS_INVULNERABLE
+    elseIf code_vitality == doticu_npcp_codes.VITALITY_INVULNERABLE()
         str_vitality = "an invulnerable member"
     endIf
 
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note(str_name + " is now " + str_vitality + ".")
-    elseIf code_return == doticu_npcp_codes.HASNT_MEMBER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_MEMBER()
         LOGS.Create_Note("No room for " + str_name + " to become " + str_vitality + ".")
     elseIf code_return == doticu_npcp_codes.CANT_RESURRECT()
         LOGS.Create_Note(str_name + " can't be revived, and so can't become " + str_vitality + ".")
@@ -462,13 +459,13 @@ function Vitalize(int code_return, string str_name, int code_vitality)
         LOGS.Create_Note("That can't become " + str_vitality + ".")
     elseIf code_return == doticu_npcp_codes.ISNT_MEMBER() || code_return == doticu_npcp_codes.HASNT_MEMBER()
         LOGS.Create_Note(str_name + " isn't a member, and so can't be " + str_vitality + ".")
-    elseIf code_return == CODES.IS_MORTAL
+    elseIf code_return == doticu_npcp_codes.IS_MORTAL()
         LOGS.Create_Note(str_name + " is already " + str_vitality + ".")
-    elseIf code_return == CODES.IS_PROTECTED
+    elseIf code_return == doticu_npcp_codes.IS_PROTECTED()
         LOGS.Create_Note(str_name + " is already " + str_vitality + ".")
-    elseIf code_return == CODES.IS_ESSENTIAL
+    elseIf code_return == doticu_npcp_codes.IS_ESSENTIAL()
         LOGS.Create_Note(str_name + " is already " + str_vitality + ".")
-    elseIf code_return == CODES.IS_INVULNERABLE
+    elseIf code_return == doticu_npcp_codes.IS_INVULNERABLE()
         LOGS.Create_Note(str_name + " is already " + str_vitality + ".")
     else
         LOGS.Create_Error("It's unknown why " + str_name + " can't be " + str_vitality + ": " + code_return)
@@ -478,9 +475,9 @@ endFunction
 function Follow(int code_return, string str_name)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note(str_name + " will start following.")
-    elseIf code_return == doticu_npcp_codes.HASNT_MEMBER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_MEMBER()
         LOGS.Create_Note("No room for " + str_name + " to become a member or a follower.")
-    elseIf code_return == doticu_npcp_codes.HASNT_FOLLOWER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_FOLLOWER()
         LOGS.Create_Note("No room for " + str_name + " to become a follower.")
     elseIf code_return == doticu_npcp_codes.CANT_RESURRECT()
         LOGS.Create_Note(str_name + " can't be revived, and so can't become a follower.")
@@ -488,9 +485,9 @@ function Follow(int code_return, string str_name)
         LOGS.Create_Note("That can't become a member or a follower.")
     elseIf code_return == doticu_npcp_codes.ISNT_MEMBER() || code_return == doticu_npcp_codes.HASNT_MEMBER()
         LOGS.Create_Note(str_name + " isn't a member, and so can't start following.")
-    elseIf code_return == CODES.IS_FOLLOWER
+    elseIf code_return == doticu_npcp_codes.IS_FOLLOWER()
         LOGS.Create_Note(str_name + " is already following.")
-    elseIf code_return == CODES.IS_MANNEQUIN
+    elseIf code_return == doticu_npcp_codes.IS_MANNEQUIN()
         LOGS.Create_Note(str_name + " is a mannequin and cannot follow.")
     else
         LOGS.Create_Error("It's unknown why " + str_name + " can't start following: " + code_return)
@@ -500,7 +497,7 @@ endFunction
 function Unfollow(int code_return, string str_name)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note(str_name + " will stop following.")
-    elseIf code_return == doticu_npcp_codes.HASNT_MEMBER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_MEMBER()
         LOGS.Create_Note("No room for " + str_name + " to become a non-following member.")
     elseIf code_return == doticu_npcp_codes.CANT_RESURRECT()
         LOGS.Create_Note(str_name + " can't be revived, and so can't become a non-following member.")
@@ -508,7 +505,7 @@ function Unfollow(int code_return, string str_name)
         LOGS.Create_Note("That can't become a member or a non-following member.")
     elseIf code_return == doticu_npcp_codes.ISNT_MEMBER() || code_return == doticu_npcp_codes.HASNT_MEMBER()
         LOGS.Create_Note(str_name + " isn't a member, and so can't stop following.")
-    elseIf code_return == CODES.ISNT_FOLLOWER || code_return == CODES.HASNT_FOLLOWER
+    elseIf code_return == doticu_npcp_codes.ISNT_FOLLOWER() || code_return == doticu_npcp_codes.HASNT_FOLLOWER()
         LOGS.Create_Note(str_name + " wasn't following.")
     else
         LOGS.Create_Error("It's unknown why " + str_name + " can't stop following: " + code_return)
@@ -518,9 +515,9 @@ endFunction
 function Sneak(int code_return, string str_name)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note(str_name + " will start sneaking.")
-    elseIf code_return == doticu_npcp_codes.HASNT_MEMBER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_MEMBER()
         LOGS.Create_Note("No room for " + str_name + " to become a member or a sneaking follower.")
-    elseIf code_return == doticu_npcp_codes.HASNT_FOLLOWER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_FOLLOWER()
         LOGS.Create_Note("No room for " + str_name + " to become a sneaking follower.")
     elseIf code_return == doticu_npcp_codes.CANT_RESURRECT()
         LOGS.Create_Note(str_name + " can't be revived, and so can't become a sneaking follower.")
@@ -528,9 +525,9 @@ function Sneak(int code_return, string str_name)
         LOGS.Create_Note("That can't become a member or a sneaking follower.")
     elseIf code_return == doticu_npcp_codes.ISNT_MEMBER() || code_return == doticu_npcp_codes.HASNT_MEMBER()
         LOGS.Create_Note(str_name + " isn't a member, and so can't start sneaking.")
-    elseIf code_return == CODES.ISNT_FOLLOWER
+    elseIf code_return == doticu_npcp_codes.ISNT_FOLLOWER()
         LOGS.Create_Note(str_name + " isn't a follower, and so can't start sneaking.")
-    elseIf code_return == CODES.IS_SNEAK
+    elseIf code_return == doticu_npcp_codes.IS_SNEAK()
         LOGS.Create_Note(str_name + " is already sneaking.")
     else
         LOGS.Create_Error("It's unknown why " + str_name + " can't start sneaking: " + code_return)
@@ -540,9 +537,9 @@ endFunction
 function Unsneak(int code_return, string str_name)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note(str_name + " will stop sneaking.")
-    elseIf code_return == doticu_npcp_codes.HASNT_MEMBER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_MEMBER()
         LOGS.Create_Note("No room for " + str_name + " to become a member or an unsneaking follower.")
-    elseIf code_return == doticu_npcp_codes.HASNT_FOLLOWER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_FOLLOWER()
         LOGS.Create_Note("No room for " + str_name + " to become an unsneaking follower.")
     elseIf code_return == doticu_npcp_codes.CANT_RESURRECT()
         LOGS.Create_Note(str_name + " can't be revived, and so can't become an unsneaking follower.")
@@ -550,9 +547,9 @@ function Unsneak(int code_return, string str_name)
         LOGS.Create_Note("That can't become a member or an unsneaking follower.")
     elseIf code_return == doticu_npcp_codes.ISNT_MEMBER() || code_return == doticu_npcp_codes.HASNT_MEMBER()
         LOGS.Create_Note(str_name + " isn't a member, and so can't stop sneaking.")
-    elseIf code_return == CODES.ISNT_FOLLOWER
+    elseIf code_return == doticu_npcp_codes.ISNT_FOLLOWER()
         LOGS.Create_Note(str_name + " isn't a follower, and so can't stop sneaking.")
-    elseIf code_return == CODES.ISNT_SNEAK
+    elseIf code_return == doticu_npcp_codes.ISNT_SNEAK()
         LOGS.Create_Note(str_name + " wasn't sneaking.")
     else
         LOGS.Create_Error("It's unknown why " + str_name + " can't stop sneaking: " + code_return)
@@ -562,9 +559,9 @@ endFunction
 function Saddle(int code_return, string str_name)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note(str_name + " has saddled up.")
-    elseIf code_return == doticu_npcp_codes.HASNT_MEMBER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_MEMBER()
         LOGS.Create_Note("No room for " + str_name + " to become a member or a saddled follower.")
-    elseIf code_return == doticu_npcp_codes.HASNT_FOLLOWER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_FOLLOWER()
         LOGS.Create_Note("No room for " + str_name + " to become a saddled follower.")
     elseIf code_return == doticu_npcp_codes.CANT_RESURRECT()
         LOGS.Create_Note(str_name + " can't be revived, and so can't become a saddled follower.")
@@ -572,11 +569,11 @@ function Saddle(int code_return, string str_name)
         LOGS.Create_Note("That can't become a member or a saddled follower.")
     elseIf code_return == doticu_npcp_codes.ISNT_MEMBER() || code_return == doticu_npcp_codes.HASNT_MEMBER()
         LOGS.Create_Note(str_name + " isn't a member, and so can't saddle up.")
-    elseIf code_return == CODES.ISNT_FOLLOWER
+    elseIf code_return == doticu_npcp_codes.ISNT_FOLLOWER()
         LOGS.Create_Note(str_name + " isn't a follower, and so can't saddle up.")
-    elseIf code_return == CODES.IS_SADDLER
+    elseIf code_return == doticu_npcp_codes.IS_SADDLER()
         LOGS.Create_Note(str_name + " is already saddled up.")
-    elseIf code_return == CODES.IS_INTERIOR
+    elseIf code_return == doticu_npcp_codes.INTERIOR()
         LOGS.Create_Note(str_name + " cannot saddle up in an interior space.")
     else
         LOGS.Create_Error("It's unknown why " + str_name + " can't saddle up: " + code_return)
@@ -586,9 +583,9 @@ endFunction
 function Unsaddle(int code_return, string str_name)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note(str_name + " has unsaddled.")
-    elseIf code_return == doticu_npcp_codes.HASNT_MEMBER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_MEMBER()
         LOGS.Create_Note("No room for " + str_name + " to become a member or an unsaddled follower.")
-    elseIf code_return == doticu_npcp_codes.HASNT_FOLLOWER_SPACE()
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_FOLLOWER()
         LOGS.Create_Note("No room for " + str_name + " to become an unsaddled follower.")
     elseIf code_return == doticu_npcp_codes.CANT_RESURRECT()
         LOGS.Create_Note(str_name + " can't be revived, and so can't become an unsaddled follower.")
@@ -596,9 +593,9 @@ function Unsaddle(int code_return, string str_name)
         LOGS.Create_Note("That can't become a member or an unsaddled follower.")
     elseIf code_return == doticu_npcp_codes.ISNT_MEMBER() || code_return == doticu_npcp_codes.HASNT_MEMBER()
         LOGS.Create_Note(str_name + " isn't a member, and so can't unsaddle.")
-    elseIf code_return == CODES.ISNT_FOLLOWER
+    elseIf code_return == doticu_npcp_codes.ISNT_FOLLOWER()
         LOGS.Create_Note(str_name + " isn't a follower, and so can't unsaddle.")
-    elseIf code_return == CODES.ISNT_SADDLER
+    elseIf code_return == doticu_npcp_codes.ISNT_SADDLER()
         LOGS.Create_Note(str_name + " wasn't saddled.")
     else
         LOGS.Create_Error("It's unknown why " + str_name + " can't unsaddle: " + code_return)
@@ -612,7 +609,7 @@ function Summon(int code_return, string str_name)
         LOGS.Create_Note("Can only summon actors.")
     elseIf code_return == doticu_npcp_codes.ISNT_MEMBER() || code_return == doticu_npcp_codes.HASNT_MEMBER()
         LOGS.Create_Note(str_name + " isn't a member, and so can't be summoned.")
-    elseIf code_return == CODES.IS_MANNEQUIN
+    elseIf code_return == doticu_npcp_codes.IS_MANNEQUIN()
         LOGS.Create_Note(str_name + " is a mannequin, and so wasn't summoned.")
     else
         LOGS.Create_Note("It is unknown why " + str_name + " can not be summoned: " + code_return)
@@ -632,13 +629,13 @@ function Goto(int code_return, string str_name)
 endFunction
 
 function Move(int code_return, string str_name)
-    if code_return == CODES.STARTED
+    if code_return == doticu_npcp_codes.STARTED()
         LOGS.Create_Note("Moving " + str_name + ".")
-    elseIf code_return == CODES.STOPPED
+    elseIf code_return == doticu_npcp_codes.STOPPED()
         LOGS.Create_Note("Stopped moving npc.")
     elseIf code_return == doticu_npcp_codes.ISNT_ACTOR()
         LOGS.Create_Note("Can only move actors.")
-    elseIf code_return == CODES.IS_MANNEQUIN
+    elseIf code_return == doticu_npcp_codes.IS_MANNEQUIN()
         LOGS.Create_Note("Can't move mannequins.")
     elseIf code_return == doticu_npcp_codes.IS_DISPLAY()
         LOGS.Create_Note("Can't move displays.")
@@ -694,7 +691,7 @@ endFunction
 function Followers_Summon_All(int code_return)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note("Summoned all followers.")
-    elseIf code_return == CODES.HASNT_FOLLOWER
+    elseIf code_return == doticu_npcp_codes.HASNT_FOLLOWER()
         LOGS.Create_Note("No followers to summon.")
     else
         LOGS.Create_Error("Could not summon all followers: " + code_return)
@@ -704,9 +701,9 @@ endFunction
 function Followers_Summon_Mobile(int code_return)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note("Summoned all mobile followers.")
-    elseIf code_return == CODES.HASNT_FOLLOWER
+    elseIf code_return == doticu_npcp_codes.HASNT_FOLLOWER()
         LOGS.Create_Note("No followers to summon.")
-    elseIf code_return == CODES.HASNT_MOBILE
+    elseIf code_return == doticu_npcp_codes.HASNT_MOBILE()
         LOGS.Create_Note("No mobile followers to summon.")
     else
         LOGS.Create_Error("Could not summon mobile followers: " + code_return)
@@ -716,9 +713,9 @@ endFunction
 function Followers_Summon_Immobile(int code_return)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note("Summoned all immobile followers.")
-    elseIf code_return == CODES.HASNT_FOLLOWER
+    elseIf code_return == doticu_npcp_codes.HASNT_FOLLOWER()
         LOGS.Create_Note("No followers to summon.")
-    elseIf code_return == CODES.HASNT_IMMOBILE
+    elseIf code_return == doticu_npcp_codes.HASNT_IMMOBILE()
         LOGS.Create_Note("No immobile followers to summon.")
     else
         LOGS.Create_Error("Could not summon immobile followers: " + code_return)
@@ -728,7 +725,7 @@ endFunction
 function Followers_Settle(int code_return)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note("All followers settle where they stand.")
-    elseIf code_return == CODES.HASNT_FOLLOWER
+    elseIf code_return == doticu_npcp_codes.HASNT_FOLLOWER()
         LOGS.Create_Note("No followers to settle.")
     else
         LOGS.Create_Error("Could not settle followers: " + code_return)
@@ -738,9 +735,9 @@ endFunction
 function Followers_Unsettle(int code_return)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note("All followers have unsettled.")
-    elseIf code_return == CODES.HASNT_FOLLOWER
+    elseIf code_return == doticu_npcp_codes.HASNT_FOLLOWER()
         LOGS.Create_Note("No followers to unsettle.")
-    elseIf code_return == CODES.HASNT_SETTLER
+    elseIf code_return == doticu_npcp_codes.HASNT_SETTLER()
         LOGS.Create_Note("No followers are already unsettled.")
     else
         LOGS.Create_Error("Could not unsettle followers: " + code_return)
@@ -750,9 +747,9 @@ endFunction
 function Followers_Immobilize(int code_return)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note("All followers have been immobilized.")
-    elseIf code_return == CODES.HASNT_FOLLOWER
+    elseIf code_return == doticu_npcp_codes.HASNT_FOLLOWER()
         LOGS.Create_Note("No followers to immobilize.")
-    elseIf code_return == CODES.HASNT_MOBILE
+    elseIf code_return == doticu_npcp_codes.HASNT_MOBILE()
         LOGS.Create_Note("All followers are already immobilized.")
     else
         LOGS.Create_Error("Could not immobilize followers: " + code_return)
@@ -762,9 +759,9 @@ endFunction
 function Followers_Mobilize(int code_return)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note("All followers have been mobilized.")
-    elseIf code_return == CODES.HASNT_FOLLOWER
+    elseIf code_return == doticu_npcp_codes.HASNT_FOLLOWER()
         LOGS.Create_Note("No followers to mobilize.")
-    elseIf code_return == CODES.HASNT_IMMOBILE
+    elseIf code_return == doticu_npcp_codes.HASNT_IMMOBILE()
         LOGS.Create_Note("All followers are already mobilized.")
     else
         LOGS.Create_Error("Could not mobilize followers: " + code_return)
@@ -774,9 +771,9 @@ endFunction
 function Followers_Sneak(int code_return)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note("All followers will sneak.")
-    elseIf code_return == CODES.HASNT_FOLLOWER
+    elseIf code_return == doticu_npcp_codes.HASNT_FOLLOWER()
         LOGS.Create_Note("No followers to sneak.")
-    elseIf code_return == CODES.HASNT_NON_SNEAK
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_SNEAK()
         LOGS.Create_Note("All followers are already sneaking.")
     else
         LOGS.Create_Error("Could not make followers sneak: " + code_return)
@@ -786,9 +783,9 @@ endFunction
 function Followers_Unsneak(int code_return)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note("All followers will stop sneaking.")
-    elseIf code_return == CODES.HASNT_FOLLOWER
+    elseIf code_return == doticu_npcp_codes.HASNT_FOLLOWER()
         LOGS.Create_Note("No followers to stop sneaking.")
-    elseIf code_return == CODES.HASNT_SNEAK
+    elseIf code_return == doticu_npcp_codes.HASNT_SNEAK()
         LOGS.Create_Note("All followers are already not sneaking.")
     else
         LOGS.Create_Error("Could not make followers stop sneaking: " + code_return)
@@ -798,11 +795,11 @@ endFunction
 function Followers_Saddle(int code_return)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note("All followers will saddle up.")
-    elseIf code_return == CODES.IS_INTERIOR
+    elseIf code_return == doticu_npcp_codes.INTERIOR()
         LOGS.Create_Note("Followers cannot saddle up in an interior space.")
-    elseIf code_return == CODES.HASNT_FOLLOWER
+    elseIf code_return == doticu_npcp_codes.HASNT_FOLLOWER()
         LOGS.Create_Note("No followers to saddle up.")
-    elseIf code_return == CODES.HASNT_NON_SADDLER
+    elseIf code_return == doticu_npcp_codes.HASNT_NON_SADDLER()
         LOGS.Create_Note("All followers are already saddled up.")
     else
         LOGS.Create_Error("Could not make followers saddle up: " + code_return)
@@ -812,9 +809,9 @@ endFunction
 function Followers_Unsaddle(int code_return)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note("All followers will unsaddle.")
-    elseIf code_return == CODES.HASNT_FOLLOWER
+    elseIf code_return == doticu_npcp_codes.HASNT_FOLLOWER()
         LOGS.Create_Note("No followers to unsaddle.")
-    elseIf code_return == CODES.HASNT_SADDLER
+    elseIf code_return == doticu_npcp_codes.HASNT_SADDLER()
         LOGS.Create_Note("All followers are already unsaddled.")
     else
         LOGS.Create_Error("Could not make followers unsaddle: " + code_return)
@@ -824,7 +821,7 @@ endFunction
 function Followers_Stash(int code_return)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note("All followers have stashed their packs away.")
-    elseIf code_return == CODES.HASNT_FOLLOWER
+    elseIf code_return == doticu_npcp_codes.HASNT_FOLLOWER()
         LOGS.Create_Note("No followers to stash packs.")
     else
         LOGS.Create_Error("Followers could not stash their packs: " + code_return)
@@ -834,9 +831,9 @@ endFunction
 function Followers_Resurrect(int code_return)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note("All dead followers will resurrect.")
-    elseIf code_return == CODES.HASNT_FOLLOWER
+    elseIf code_return == doticu_npcp_codes.HASNT_FOLLOWER()
         LOGS.Create_Note("No followers to resurrect.")
-    elseIf code_return == CODES.HASNT_DEAD
+    elseIf code_return == doticu_npcp_codes.HASNT_DEAD()
         LOGS.Create_Note("All followers are already alive.")
     else
         LOGS.Create_Error("Could not make followers resurrect: " + code_return)
@@ -846,7 +843,7 @@ endFunction
 function Followers_Unfollow(int code_return)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note("All followers will no longer follow.")
-    elseIf code_return == CODES.HASNT_FOLLOWER
+    elseIf code_return == doticu_npcp_codes.HASNT_FOLLOWER()
         LOGS.Create_Note("No followers to unfollow.")
     else
         LOGS.Create_Error("Could not make followers stop following: " + code_return)
@@ -856,7 +853,7 @@ endFunction
 function Followers_Unmember(int code_return)
     if code_return == doticu_npcp_codes.SUCCESS()
         LOGS.Create_Note("All followers are no longer members.")
-    elseIf code_return == CODES.HASNT_FOLLOWER
+    elseIf code_return == doticu_npcp_codes.HASNT_FOLLOWER()
         LOGS.Create_Note("No followers to unmember.")
     else
         LOGS.Create_Error("Could not unmember followers: " + code_return)

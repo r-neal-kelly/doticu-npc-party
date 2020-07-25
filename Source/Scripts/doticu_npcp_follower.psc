@@ -10,11 +10,6 @@ doticu_npcp_consts property CONSTS hidden
         return p_DATA.CONSTS
     endFunction
 endProperty
-doticu_npcp_codes property CODES hidden
-    doticu_npcp_codes function Get()
-        return p_DATA.CODES
-    endFunction
-endProperty
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
         return p_DATA.VARS
@@ -427,7 +422,7 @@ endFunction
 int function Rename(string str_name)
 
     int code_return = p_ref_member.Rename(str_name)
-    if code_return < 0
+    if code_return != doticu_npcp_codes.SUCCESS()
         return code_return
     endIf
 
@@ -436,16 +431,16 @@ endFunction
 
 int function Sneak(int code_exec)
     if !Exists()
-        return CODES.ISNT_FOLLOWER
+        return doticu_npcp_codes.ISNT_FOLLOWER()
     endIf
 
     if Is_Sneak()
-        return CODES.IS_SNEAK
+        return doticu_npcp_codes.IS_SNEAK()
     endIf
 
     p_is_sneak = true
 
-    if code_exec == CODES.DO_ASYNC
+    if code_exec == doticu_npcp_codes.ASYNC()
         p_Async("On_Sneak")
     else
         p_Sneak()
@@ -461,16 +456,16 @@ endEvent
 
 int function Unsneak(int code_exec)
     if !Exists()
-        return CODES.ISNT_FOLLOWER
+        return doticu_npcp_codes.ISNT_FOLLOWER()
     endIf
 
     if Is_Unsneak()
-        return CODES.ISNT_SNEAK
+        return doticu_npcp_codes.ISNT_SNEAK()
     endIf
 
     p_is_sneak = false
 
-    if code_exec == CODES.DO_ASYNC
+    if code_exec == doticu_npcp_codes.ASYNC()
         p_Async("On_Unsneak")
     else
         p_Unsneak()
@@ -486,20 +481,20 @@ endEvent
 
 int function Saddle(int code_exec)
     if !Exists()
-        return CODES.ISNT_FOLLOWER
+        return doticu_npcp_codes.ISNT_FOLLOWER()
     endIf
 
     if Is_Saddler()
-        return CODES.IS_SADDLER
+        return doticu_npcp_codes.IS_SADDLER()
     endIf
 
     if p_ref_actor.GetParentCell().IsInterior()
-        return CODES.IS_INTERIOR
+        return doticu_npcp_codes.INTERIOR()
     endIf
 
     p_is_saddler = true
 
-    if code_exec == CODES.DO_ASYNC
+    if code_exec == doticu_npcp_codes.ASYNC()
         p_Async("On_Saddle")
     else
         p_Saddle()
@@ -515,16 +510,16 @@ endEvent
 
 int function Unsaddle(int code_exec)
     if !Exists()
-        return CODES.ISNT_FOLLOWER
+        return doticu_npcp_codes.ISNT_FOLLOWER()
     endIf
 
     if Isnt_Saddler()
-        return CODES.ISNT_SADDLER
+        return doticu_npcp_codes.ISNT_SADDLER()
     endIf
 
     p_is_saddler = false
 
-    if code_exec == CODES.DO_ASYNC
+    if code_exec == doticu_npcp_codes.ASYNC()
         p_Async("On_Unsaddle")
     else
         p_Unsaddle()
@@ -540,7 +535,7 @@ endEvent
 
 int function Retreat()
     if !Exists()
-        return CODES.ISNT_FOLLOWER
+        return doticu_npcp_codes.ISNT_FOLLOWER()
     endIf
 
     p_is_retreater = true
@@ -552,7 +547,7 @@ endFunction
 
 int function Unretreat()
     if !Exists()
-        return CODES.ISNT_FOLLOWER
+        return doticu_npcp_codes.ISNT_FOLLOWER()
     endIf
 
     p_is_retreater = false
@@ -646,26 +641,6 @@ bool function Is_Mannequin()
     return Exists() && p_ref_member.Is_Mannequin()
 endFunction
 
-bool function Is_Styled_Default()
-    return Exists() && p_ref_member.Is_Styled_Default()
-endFunction
-
-bool function Is_Styled_Warrior()
-    return Exists() && p_ref_member.Is_Styled_Warrior()
-endFunction
-
-bool function Is_Styled_Mage()
-    return Exists() && p_ref_member.Is_Styled_Mage()
-endFunction
-
-bool function Is_Styled_Archer()
-    return Exists() && p_ref_member.Is_Styled_Archer()
-endFunction
-
-bool function Is_Styled_Coward()
-    return Exists() && p_ref_member.Is_Styled_Coward()
-endFunction
-
 bool function Is_In_Combat()
     return Exists() && p_ref_member.Is_In_Combat()
 endFunction
@@ -700,11 +675,11 @@ event OnCombatStateChanged(Actor ref_target, int code_combat)
         return
     endIf
 
-    if code_combat == CODES.COMBAT_NO
+    if code_combat == doticu_npcp_codes.COMBAT_NO()
         
-    elseIf code_combat == CODES.COMBAT_YES
+    elseIf code_combat == doticu_npcp_codes.COMBAT_YES()
         ACTORS.PLAYER.f_Begin_Combat()
-    elseIf code_combat == CODES.COMBAT_SEARCHING
+    elseIf code_combat == doticu_npcp_codes.COMBAT_SEARCHING()
 
     endIf
 endEvent
@@ -729,7 +704,7 @@ endEvent
 
 event On_Followers_Resurrect(Form form_tasklist)
     if Exists() && Is_Dead()
-        Resurrect(CODES.DO_SYNC)
+        Resurrect(doticu_npcp_codes.SYNC())
         if form_tasklist
             (form_tasklist as doticu_npcp_tasklist).Detask()
         endIf
@@ -738,7 +713,7 @@ endEvent
 
 event On_Followers_Sneak(Form form_tasklist)
     if Exists() && Is_Unsneak()
-        Sneak(CODES.DO_SYNC)
+        Sneak(doticu_npcp_codes.SYNC())
         if form_tasklist
             (form_tasklist as doticu_npcp_tasklist).Detask()
         endIf
@@ -747,7 +722,7 @@ endEvent
 
 event On_Followers_Unsneak(Form form_tasklist)
     if Exists() && Is_Sneak()
-        Unsneak(CODES.DO_SYNC)
+        Unsneak(doticu_npcp_codes.SYNC())
         if form_tasklist
             (form_tasklist as doticu_npcp_tasklist).Detask()
         endIf
@@ -756,7 +731,7 @@ endEvent
 
 event On_Followers_Saddle(Form form_tasklist)
     if Exists() && Isnt_Saddler()
-        Saddle(CODES.DO_SYNC)
+        Saddle(doticu_npcp_codes.SYNC())
         if form_tasklist
             (form_tasklist as doticu_npcp_tasklist).Detask()
         endIf
@@ -765,7 +740,7 @@ endEvent
 
 event On_Followers_Unsaddle(Form form_tasklist)
     if Exists() && Is_Saddler()
-        Unsaddle(CODES.DO_SYNC)
+        Unsaddle(doticu_npcp_codes.SYNC())
         if form_tasklist
             (form_tasklist as doticu_npcp_tasklist).Detask()
         endIf

@@ -20,17 +20,15 @@ namespace doticu_npcp { namespace Vars {
 
     String_t Class_Name()
     {
-        static const String_t class_name = Utils::Assert(
-            String_t("doticu_npcp_vars")
-        );
+        static const String_t class_name = String_t("doticu_npcp_vars");
+        NPCP_ASSERT(class_name);
         return class_name;
     }
 
     Class_Info_t* Class_Info()
     {
-        static Class_Info_t* class_info = Utils::Assert(
-            Class_Info_t::Fetch(Class_Name())
-        );
+        static Class_Info_t* class_info = Class_Info_t::Fetch(Class_Name());
+        NPCP_ASSERT(class_info);
         return class_info;
     }
 
@@ -41,9 +39,8 @@ namespace doticu_npcp { namespace Vars {
 
     Object_t* Object()
     {
-        Object_t* object = Utils::Assert(
-            Object_t::Fetch(Self(), Class_Name())
-        );
+        Object_t* object = Object_t::Fetch(Self(), Class_Name());
+        NPCP_ASSERT(object);
         object->Decrement_Lock();
         return object;
     }
@@ -75,10 +72,11 @@ namespace doticu_npcp { namespace Vars {
 
     Int_t Display_Count()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_num_display")
-        );
-        return Utils::Assert(Variable(variable_name))->Int();
+        static const String_t variable_name = String_t("p_num_display");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable->Int();
     }
 
     void Log_Variables(Vars_t* self)

@@ -18,17 +18,15 @@ namespace doticu_npcp { namespace Party {
 
     String_t Members_t::Class_Name()
     {
-        static const String_t class_name = Utils::Assert(
-            String_t("doticu_npcp_members")
-        );
+        static const String_t class_name = String_t("doticu_npcp_members");
+        NPCP_ASSERT(class_name);
         return class_name;
     }
 
     Class_Info_t* Members_t::Class_Info()
     {
-        static Class_Info_t* class_info = Utils::Assert(
-            Class_Info_t::Fetch(Class_Name())
-        );
+        static Class_Info_t* class_info = Class_Info_t::Fetch(Class_Name());
+        NPCP_ASSERT(class_info);
         return class_info;
     }
 
@@ -39,9 +37,8 @@ namespace doticu_npcp { namespace Party {
 
     Object_t* Members_t::Object()
     {
-        Object_t* object = Utils::Assert(
-            Object_t::Fetch(Self(), Class_Name())
-        );
+        Object_t* object = Object_t::Fetch(Self(), Class_Name());
+        NPCP_ASSERT(object);
         object->Decrement_Lock();
         return object;
     }
@@ -53,32 +50,29 @@ namespace doticu_npcp { namespace Party {
 
     Variable_t* Members_t::Has_Display_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_has_display")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_has_display");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Members_t::Display_Idx_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_idx_display")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_idx_display");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Members_t::Display_Marker_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_marker_display")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_marker_display");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Range_t<UInt64> Members_t::Indices()
@@ -448,7 +442,8 @@ namespace doticu_npcp { namespace Party {
                 Has_Display_Variable()->Bool(true);
                 Display_Idx_Variable()->Int(0);
 
-                Reference_t* marker = Utils::Assert(Object_Ref::Create_Marker_At(*g_thePlayer));
+                Reference_t* marker = Object_Ref::Create_Marker_At(*g_thePlayer);
+                NPCP_ASSERT(marker);
                 Display_Marker_Variable()->Pack(marker);
 
                 Int_t display_count = Vars::Display_Count();
@@ -655,7 +650,7 @@ namespace doticu_npcp { namespace Party { namespace Members { namespace Exports 
 
     Vector_t<String_t> Race_Names(Members_t* self) FORWARD_VECTOR(Race_Names(), String_t);
 
-    void Enforce_Loaded(Members_t* self) FORWARD_VOID(Enforce_Loaded());
+    void Enforce_Loaded(Members_t* self) FORWARD_VOID(Members_t::Enforce_Loaded());
 
     Vector_t<String_t> Filter_Strings(Members_t* self, String_t sex, String_t race, String_t search)
         FORWARD_VECTOR(Members_t::Filter_Strings(sex, race, search), String_t);

@@ -11,17 +11,15 @@ namespace doticu_npcp { namespace Papyrus {
 
     String_t Filter_t::Class_Name()
     {
-        static const String_t class_name = Utils::Assert(
-            String_t("doticu_npcp_mcm_filter")
-        );
+        static const String_t class_name = String_t("doticu_npcp_mcm_filter");
+        NPCP_ASSERT(class_name);
         return class_name;
     }
 
     Class_Info_t* Filter_t::Class_Info()
     {
-        static Class_Info_t* class_info = Utils::Assert(
-            Class_Info_t::Fetch(Class_Name())
-        );
+        static Class_Info_t* class_info = Class_Info_t::Fetch(Class_Name());
+        NPCP_ASSERT(class_info);
         return class_info;
     }
 
@@ -32,9 +30,8 @@ namespace doticu_npcp { namespace Papyrus {
 
     Object_t* Filter_t::Object()
     {
-        Object_t* object = Utils::Assert(
-            Object_t::Fetch(Self(), Class_Name())
-        );
+        Object_t* object = Object_t::Fetch(Self(), Class_Name());
+        NPCP_ASSERT(object);
         object->Decrement_Lock();
         return object;
     }
@@ -46,202 +43,182 @@ namespace doticu_npcp { namespace Papyrus {
 
     Variable_t* Filter_t::Sex_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_str_arg_sex")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_str_arg_sex");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Filter_t::Race_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_str_arg_race")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_str_arg_race");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Filter_t::Search_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_str_arg_search")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_str_arg_search");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Filter_t::Style_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_int_arg_style")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_int_arg_style");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Filter_t::Vitality_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_int_arg_vitality")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_int_arg_vitality");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Filter_t::Outfit2_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_int_arg_outfit2")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_int_arg_outfit2");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Filter_t::Rating_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_int_arg_rating")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_int_arg_rating");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Filter_t::Alive_Dead_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_int_alive_dead")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_int_alive_dead");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Filter_t::Original_Clone_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_int_original_clone")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_int_original_clone");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Filter_t::Unique_Generic_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_int_unique_generic")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_int_unique_generic");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Filter_t::Mobile_Immobile_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_int_mobile_immobile")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_int_mobile_immobile");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Filter_t::Settler_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_int_settler")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_int_settler");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Filter_t::Thrall_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_int_thrall")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_int_thrall");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Filter_t::Paralyzed_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_int_paralyzed")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_int_paralyzed");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Filter_t::Mannequin_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_int_mannequin")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_int_mannequin");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Filter_t::Reanimated_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_int_reanimated")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_int_reanimated");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Filter_t::Follower_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_int_follower")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_int_follower");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Filter_t::Sneak_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_int_sneak")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_int_sneak");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Filter_t::Saddler_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_int_saddler")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_int_saddler");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Filter_t::Flags_1_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_int_arg_flags")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_int_arg_flags");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Vector_t<String_t> Filter_t::Strings()

@@ -14,17 +14,15 @@ namespace doticu_npcp { namespace Consts {
 
     String_t Class_Name()
     {
-        static const String_t class_name = Utils::Assert(
-            String_t("doticu_npcp_consts")
-        );
+        static const String_t class_name = String_t("doticu_npcp_consts");
+        NPCP_ASSERT(class_name);
         return class_name;
     }
 
     Class_Info_t* Class_Info()
     {
-        static Class_Info_t* class_info = Utils::Assert(
-            Class_Info_t::Fetch(Class_Name())
-        );
+        static Class_Info_t* class_info = Class_Info_t::Fetch(Class_Name());
+        NPCP_ASSERT(class_info);
         return class_info;
     }
 
@@ -35,21 +33,15 @@ namespace doticu_npcp { namespace Consts {
 
     Object_t* Object()
     {
-        Object_t* object = Utils::Assert(
-            Object_t::Fetch(Self(), Class_Name())
-        );
+        Object_t* object = Object_t::Fetch(Self(), Class_Name());
+        NPCP_ASSERT(object);
         object->Decrement_Lock();
         return object;
     }
 
     Variable_t* Variable(String_t variable_name)
     {
-        Object_t* object = Object();
-        if (object) {
-            return object->Variable(variable_name);
-        } else {
-            return nullptr;
-        }
+        return Object()->Variable(variable_name);
     }
 
     enum Skyrim_Forms {
@@ -63,41 +55,41 @@ namespace doticu_npcp { namespace Consts {
 
     Faction_t* No_Bard_Singer_Autostart_Faction()
     {
-        static Faction_t* value = Utils::Assert(
-            static_cast<Faction_t*>(Game::Skyrim_Form(FACTION_BARD_SINGER_NO_AUTOSTART))
-        );
+        static Faction_t* value =
+            static_cast<Faction_t*>(Game::Skyrim_Form(FACTION_BARD_SINGER_NO_AUTOSTART));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Faction_t* Current_Follower_Faction()
     {
-        static Faction_t* value = Utils::Assert(
-            static_cast<Faction_t*>(Game::Skyrim_Form(FACTION_CURRENT_FOLLOWER))
-        );
+        static Faction_t* value =
+            static_cast<Faction_t*>(Game::Skyrim_Form(FACTION_CURRENT_FOLLOWER));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Faction_t* Potential_Follower_Faction()
     {
-        static Faction_t* value = Utils::Assert(
-            static_cast<Faction_t*>(Game::Skyrim_Form(FACTION_POTENTIAL_FOLLOWER))
-        );
+        static Faction_t* value =
+            static_cast<Faction_t*>(Game::Skyrim_Form(FACTION_POTENTIAL_FOLLOWER));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Faction_t* WI_No_Body_Cleanup_Faction()
     {
-        static Faction_t* value = Utils::Assert(
-            static_cast<Faction_t*>(Game::Skyrim_Form(FACTION_WI_NO_BODY_CLEANUP))
-        );
+        static Faction_t* value =
+            static_cast<Faction_t*>(Game::Skyrim_Form(FACTION_WI_NO_BODY_CLEANUP));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Static_t* Marker_X_Static()
     {
-        static Static_t* value = Utils::Assert(
-            static_cast<Static_t*>(Game::Skyrim_Form(STATIC_MARKER_X))
-        );
+        static Static_t* value =
+            static_cast<Static_t*>(Game::Skyrim_Form(STATIC_MARKER_X));
+        NPCP_ASSERT(value);
         return value;
     }
 
@@ -108,17 +100,17 @@ namespace doticu_npcp { namespace Consts {
 
     Faction_t* DLC1_Thrall_Faction()
     {
-        static Faction_t* value = Utils::Assert(
-            static_cast<Faction_t*>(Game::Dawnguard_Form(FACTION_DLC1_THRALL))
-        );
+        static Faction_t* value =
+            static_cast<Faction_t*>(Game::Dawnguard_Form(FACTION_DLC1_THRALL));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Faction_t* DLC1_Vampire_Feed_No_Crime_Faction()
     {
-        static Faction_t* value = Utils::Assert(
-            static_cast<Faction_t*>(Game::Dawnguard_Form(FACTION_DLC1_VAMPIRE_FEED_NO_CRIME))
-        );
+        static Faction_t* value =
+            static_cast<Faction_t*>(Game::Dawnguard_Form(FACTION_DLC1_VAMPIRE_FEED_NO_CRIME));
+        NPCP_ASSERT(value);
         return value;
     }
 
@@ -168,234 +160,233 @@ namespace doticu_npcp { namespace Consts {
 
     Faction_t* Member_Faction()
     {
-        static Faction_t* value = Utils::Assert(
-            static_cast<Faction_t*>(Game::NPCP_Form(FACTION_MEMBER))
-        );
+        static Faction_t* value =
+            static_cast<Faction_t*>(Game::NPCP_Form(FACTION_MEMBER));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Faction_t* Horse_Faction()
     {
-        static Faction_t* value = Utils::Assert(
-            static_cast<Faction_t*>(Game::NPCP_Form(FACTION_HORSE))
-        );
+        static Faction_t* value =
+            static_cast<Faction_t*>(Game::NPCP_Form(FACTION_HORSE));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Formlist_t* Settler_Markers_Formlist()
     {
-        static Formlist_t* value = Utils::Assert(
-            static_cast<Formlist_t*>(Game::NPCP_Form(FORMLIST_MARKERS_SETTLER))
-        );
+        static Formlist_t* value =
+            static_cast<Formlist_t*>(Game::NPCP_Form(FORMLIST_MARKERS_SETTLER));
+        NPCP_ASSERT(value);
         NPCP_ASSERT(value->forms.count == MAX_MEMBERS);
         return value;
     }
 
     Misc_t* Member_Token()
     {
-        static Misc_t* value = Utils::Assert(
-            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_MEMBER))
-        );
+        static Misc_t* value =
+            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_MEMBER));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Misc_t* Generic_Token()
     {
-        static Misc_t* value = Utils::Assert(
-            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_GENERIC))
-        );
+        static Misc_t* value =
+            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_GENERIC));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Misc_t* Clone_Token()
     {
-        static Misc_t* value = Utils::Assert(
-            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_CLONE))
-        );
+        static Misc_t* value =
+            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_CLONE));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Misc_t* Immobile_Token()
     {
-        static Misc_t* value = Utils::Assert(
-            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_IMMOBILE))
-        );
+        static Misc_t* value =
+            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_IMMOBILE));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Misc_t* Settler_Token()
     {
-        static Misc_t* value = Utils::Assert(
-            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_SETTLER))
-        );
+        static Misc_t* value =
+            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_SETTLER));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Misc_t* Thrall_Token()
     {
-        static Misc_t* value = Utils::Assert(
-            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_THRALL))
-        );
+        static Misc_t* value = static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_THRALL));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Misc_t* Paralyzed_Token()
     {
-        static Misc_t* value = Utils::Assert(
-            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_PARALYZED))
-        );
+        static Misc_t* value =
+            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_PARALYZED));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Misc_t* Mannequin_Token()
     {
-        static Misc_t* value = Utils::Assert(
-            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_MANNEQUIN))
-        );
+        static Misc_t* value =
+            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_MANNEQUIN));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Misc_t* Display_Token()
     {
-        static Misc_t* value = Utils::Assert(
-            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_DISPLAY))
-        );
+        static Misc_t* value =
+            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_DISPLAY));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Misc_t* Default_Style_Token()
     {
-        static Misc_t* value = Utils::Assert(
-            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_STYLE_DEFAULT))
-        );
+        static Misc_t* value =
+            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_STYLE_DEFAULT));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Misc_t* Warrior_Style_Token()
     {
-        static Misc_t* value = Utils::Assert(
-            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_STYLE_WARRIOR))
-        );
+        static Misc_t* value =
+            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_STYLE_WARRIOR));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Misc_t* Mage_Style_Token()
     {
-        static Misc_t* value = Utils::Assert(
-            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_STYLE_MAGE))
-        );
+        static Misc_t* value =
+            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_STYLE_MAGE));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Misc_t* Archer_Style_Token()
     {
-        static Misc_t* value = Utils::Assert(
-            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_STYLE_ARCHER))
-        );
+        static Misc_t* value =
+            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_STYLE_ARCHER));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Misc_t* Coward_Style_Token()
     {
-        static Misc_t* value = Utils::Assert(
-            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_STYLE_COWARD))
-        );
+        static Misc_t* value =
+            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_STYLE_COWARD));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Misc_t* Mortal_Vitality_Token()
     {
-        static Misc_t* value = Utils::Assert(
-            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_VITALITY_MORTAL))
-        );
+        static Misc_t* value =
+            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_VITALITY_MORTAL));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Misc_t* Protected_Vitality_Token()
     {
-        static Misc_t* value = Utils::Assert(
-            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_VITALITY_PROTECTED))
-        );
+        static Misc_t* value =
+            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_VITALITY_PROTECTED));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Misc_t* Essential_Vitality_Token()
     {
-        static Misc_t* value = Utils::Assert(
-            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_VITALITY_ESSENTIAL))
-        );
+        static Misc_t* value =
+            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_VITALITY_ESSENTIAL));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Misc_t* Invulnerable_Vitality_Token()
     {
-        static Misc_t* value = Utils::Assert(
-            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_VITALITY_INVULNERABLE))
-        );
+        static Misc_t* value =
+            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_VITALITY_INVULNERABLE));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Misc_t* Sneak_Follower_Token()
     {
-        static Misc_t* value = Utils::Assert(
-            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_FOLLOWER_SNEAK))
-        );
+        static Misc_t* value =
+            static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_FOLLOWER_SNEAK));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Quest_t* Static_Data_Quest()
     {
-        static Quest_t* value = Utils::Assert(
-            static_cast<Quest_t*>(Game::NPCP_Form(QUEST_DATA_STATIC))
-        );
+        static Quest_t* value =
+            static_cast<Quest_t*>(Game::NPCP_Form(QUEST_DATA_STATIC));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Quest_t* Dynamic_Data_Quest()
     {
-        static Quest_t* value = Utils::Assert(
-            static_cast<Quest_t*>(Game::NPCP_Form(QUEST_DATA_DYNAMIC))
-        );
+        static Quest_t* value =
+            static_cast<Quest_t*>(Game::NPCP_Form(QUEST_DATA_DYNAMIC));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Quest_t* Members_Quest()
     {
-        static Quest_t* value = Utils::Assert(
-            static_cast<Quest_t*>(Game::NPCP_Form(QUEST_MEMBERS))
-        );
+        static Quest_t* value =
+            static_cast<Quest_t*>(Game::NPCP_Form(QUEST_MEMBERS));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Quest_t* Followers_Quest()
     {
-        static Quest_t* value = Utils::Assert(
-            static_cast<Quest_t*>(Game::NPCP_Form(QUEST_FOLLOWERS))
-        );
+        static Quest_t* value =
+            static_cast<Quest_t*>(Game::NPCP_Form(QUEST_FOLLOWERS));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Quest_t* Control_Quest()
     {
-        static Quest_t* value = Utils::Assert(
-            static_cast<Quest_t*>(Game::NPCP_Form(QUEST_CONTROL))
-        );
+        static Quest_t* value =
+            static_cast<Quest_t*>(Game::NPCP_Form(QUEST_CONTROL));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Reference_t* Storage_Marker()
     {
-        static Reference_t* value = Utils::Assert(
-            static_cast<Reference_t*>(Game::NPCP_Form(MARKER_STORAGE))
-        );
+        static Reference_t* value =
+            static_cast<Reference_t*>(Game::NPCP_Form(MARKER_STORAGE));
+        NPCP_ASSERT(value);
         return value;
     }
 
     Weapon_t* Blank_Weapon()
     {
-        static Weapon_t* value = Utils::Assert(
-            static_cast<Weapon_t*>(Game::NPCP_Form(WEAPON_BLANK))
-        );
+        static Weapon_t* value =
+            static_cast<Weapon_t*>(Game::NPCP_Form(WEAPON_BLANK));
+        NPCP_ASSERT(value);
         return value;
     }
 

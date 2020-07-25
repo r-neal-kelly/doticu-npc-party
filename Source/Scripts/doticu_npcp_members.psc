@@ -10,11 +10,6 @@ doticu_npcp_consts property CONSTS hidden
         return p_DATA.CONSTS
     endFunction
 endProperty
-doticu_npcp_codes property CODES hidden
-    doticu_npcp_codes function Get()
-        return p_DATA.CODES
-    endFunction
-endProperty
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
         return p_DATA.VARS
@@ -153,12 +148,12 @@ int function Create_Member(Actor ref_actor, bool do_clone = false)
     endIf
 
     if ref_actor.IsChild()
-        return CODES.IS_CHILD
+        return doticu_npcp_codes.CHILD()
     endIf
 
     if Count_Filled() >= Get_Limit()
         ; check first so we don't have to unclone
-        return doticu_npcp_codes.HASNT_MEMBER_SPACE()
+        return doticu_npcp_codes.HASNT_NON_MEMBER()
     endIf
 
     if Should_Clone_Actor(ref_actor)
@@ -175,11 +170,11 @@ int function Create_Member(Actor ref_actor, bool do_clone = false)
 
         ref_actor = NPCS.Clone(ref_actor)
         if !ref_actor
-            return CODES.CANT_CLONE
+            return doticu_npcp_codes.CANT_CLONE()
         endIf
     else
         if Has_Actor(ref_actor)
-            return CODES.HAS_ACTOR
+            return doticu_npcp_codes.HAS_ACTOR()
         endIf
 
         LOGS.Create_Note("Adding to members...", false)

@@ -10,11 +10,6 @@ doticu_npcp_consts property CONSTS hidden
         return p_DATA.CONSTS
     endFunction
 endProperty
-doticu_npcp_codes property CODES hidden
-    doticu_npcp_codes function Get()
-        return p_DATA.CODES
-    endFunction
-endProperty
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
         return p_DATA.VARS
@@ -218,7 +213,7 @@ endFunction
 
 function Try_Cache_Vanilla(Outfit outfit_vanilla)
     ; this is just a way to do asyncronous updating for 0.9.0
-    if !p_cache_base && (p_code_create == CODES.OUTFIT2_VANILLA || p_code_create == CODES.OUTFIT2_DEFAULT)
+    if !p_cache_base && (p_code_create == doticu_npcp_codes.OUTFIT2_VANILLA() || p_code_create == doticu_npcp_codes.OUTFIT2_DEFAULT())
         p_cache_base = CONTAINERS.Create_Perm()
         Cache_Vanilla_Static(outfit_vanilla)
     endIf
@@ -256,7 +251,7 @@ event OnItemAdded(Form form_item, int count_item, ObjectReference ref_item, Obje
     if self.GetNumItems() >= p_MAX_ITEMS
         self.RemoveItem(form_item, count_item, true, ref_container_source)
         LOGS.Create_Note("Can only have so many items in an outfit.")
-    elseIf !form_item || p_code_create != CODES.OUTFIT2_DEFAULT && !form_item.IsPlayable()
+    elseIf !form_item || p_code_create != doticu_npcp_codes.OUTFIT2_DEFAULT() && !form_item.IsPlayable()
         ; now we let unplayables into default outfit's self container
         self.RemoveItem(form_item, count_item, true, ref_container_source)
         LOGS.Create_Note("Cannot add that item to an outfit.")

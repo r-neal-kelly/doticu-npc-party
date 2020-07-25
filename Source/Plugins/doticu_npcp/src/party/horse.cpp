@@ -11,17 +11,15 @@ namespace doticu_npcp { namespace Party {
 
     String_t Horse_t::Class_Name()
     {
-        static const String_t class_name = Utils::Assert(
-            String_t("doticu_npcp_horse")
-        );
+        static const String_t class_name = String_t("doticu_npcp_horse");
+        NPCP_ASSERT(class_name);
         return class_name;
     }
 
     Class_Info_t* Horse_t::Class_Info()
     {
-        static Class_Info_t* class_info = Utils::Assert(
-            Class_Info_t::Fetch(Class_Name())
-        );
+        static Class_Info_t* class_info = Class_Info_t::Fetch(Class_Name());
+        NPCP_ASSERT(class_info);
         return class_info;
     }
 

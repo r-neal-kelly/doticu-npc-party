@@ -5,11 +5,6 @@
 Scriptname doticu_npcp_mcm_followers extends Quest
 
 ; Modules
-doticu_npcp_codes property CODES hidden
-    doticu_npcp_codes function Get()
-        return p_DATA.CODES
-    endFunction
-endProperty
 doticu_npcp_funcs property FUNCS hidden
     doticu_npcp_funcs function Get()
         return p_DATA.MODS.FUNCS
@@ -87,7 +82,7 @@ function f_Unregister()
 endFunction
 
 function f_Review_Followers()
-    p_code_view = CODES.VIEW_FOLLOWERS
+    p_code_view = doticu_npcp_codes.VIEW_FOLLOWERS()
     p_ref_member = none
 endFunction
 
@@ -108,7 +103,7 @@ bool function f_Is_Valid_Member(doticu_npcp_member ref_member)
 endFunction
 
 function f_Build_Page()
-    if p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+    if p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
         if f_Is_Valid_Member(p_ref_member)
             return p_Goto_Followers_Member(p_ref_member, true)
         else
@@ -164,7 +159,7 @@ function f_Build_Page()
 endFunction
 
 function f_On_Option_Select(int id_option)
-    if p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+    if p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
         return MCM.MCM_MEMBER.f_On_Option_Select(id_option)
     endIf
 
@@ -206,7 +201,7 @@ function f_On_Option_Select(int id_option)
 endFunction
 
 function f_On_Option_Menu_Open(int id_option)
-    if p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+    if p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
         return MCM.MCM_MEMBER.f_On_Option_Menu_Open(id_option)
     endIf
 
@@ -230,7 +225,7 @@ function f_On_Option_Menu_Open(int id_option)
 endFunction
 
 function f_On_Option_Menu_Accept(int id_option, int idx_option)
-    if p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+    if p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
         return MCM.MCM_MEMBER.f_On_Option_Menu_Accept(id_option, idx_option)
     endIf
 
@@ -263,7 +258,7 @@ function f_On_Option_Menu_Accept(int id_option, int idx_option)
 endFunction
 
 function f_On_Option_Highlight(int id_option)
-    if p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+    if p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
         return MCM.MCM_MEMBER.f_On_Option_Highlight(id_option)
     endIf
 
@@ -299,31 +294,31 @@ function f_On_Option_Highlight(int id_option)
 endFunction
 
 function f_On_Option_Slider_Open(int id_option)
-    if p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+    if p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
         return MCM.MCM_MEMBER.f_On_Option_Slider_Open(id_option)
     endIf
 endFunction
 
 function f_On_Option_Slider_Accept(int id_option, float float_value)
-    if p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+    if p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
         return MCM.MCM_MEMBER.f_On_Option_Slider_Accept(id_option, float_value)
     endIf
 endFunction
 
 function f_On_Option_Input_Accept(int id_option, string str_input)
-    if p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+    if p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
         return MCM.MCM_MEMBER.f_On_Option_Input_Accept(id_option, str_input)
     endIf
 endFunction
 
 function f_On_Option_Keymap_Change(int id_option, int code_key, string str_conflict_control, string str_conflict_mod)
-    if p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+    if p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
         return MCM.MCM_MEMBER.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
     endIf
 endFunction
 
 function f_On_Option_Default(int id_option)
-    if p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+    if p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
         return MCM.MCM_MEMBER.f_On_Option_Default(id_option)
     endIf
 endFunction
@@ -377,7 +372,7 @@ function p_Goto_Followers_Member(doticu_npcp_member ref_member, bool is_building
         MCM.MCM_MEMBER.f_View_Followers_Member(ref_member)
         MCM.MCM_MEMBER.f_Build_Page()
     else
-        p_code_view = CODES.VIEW_FOLLOWERS_MEMBER
+        p_code_view = doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
         p_ref_member = ref_member
         MCM.MCM_MEMBER.f_View_Followers_Member(ref_member)
         MCM.ForcePageReset()

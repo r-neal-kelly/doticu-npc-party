@@ -26,6 +26,8 @@ M                               \
     __pragma(warning(pop));     \
 W
 
+#if 1
+
 #define NPCP_ASSERT(IS_TRUE)                                        \
 M                                                                   \
     if (!(IS_TRUE)) {                                               \
@@ -33,6 +35,21 @@ M                                                                   \
         _AssertionFailed(__FILE__, __LINE__, #IS_TRUE);             \
     }                                                               \
 W
+
+#else
+
+#define NPCP_ASSERT(IS_TRUE)                                        \
+M                                                                   \
+    if (!(IS_TRUE)) {                                               \
+        _MESSAGE("Asserted. Exiting Skyrim. Failed: %s", #IS_TRUE); \
+        _AssertionFailed(__FILE__, __LINE__, #IS_TRUE);             \
+    } else {                                                        \
+        _MESSAGE("Passed. %s, %s, %u",                              \
+                 __FILE__, __func__, __LINE__);                     \
+    }                                                               \
+W
+
+#endif
 
 #define DOTICU_NPCP_PI 3.141592741f
 
@@ -113,13 +130,6 @@ M                                                                               
 W
 
 namespace doticu_npcp { namespace Utils {
-
-    template <typename Type>
-    inline Type&& Assert(Type&& value)
-    {
-        NPCP_ASSERT(value);
-        return std::move(value);
-    }
 
     void Print(const char *str);
 

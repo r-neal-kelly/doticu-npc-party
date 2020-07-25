@@ -10,11 +10,6 @@ doticu_npcp_consts property CONSTS hidden
         return p_DATA.CONSTS
     endFunction
 endProperty
-doticu_npcp_codes property CODES hidden
-    doticu_npcp_codes function Get()
-        return p_DATA.CODES
-    endFunction
-endProperty
 doticu_npcp_funcs property FUNCS hidden
     doticu_npcp_funcs function Get()
         return p_DATA.MODS.FUNCS
@@ -160,25 +155,25 @@ function f_Disable(int id_option, bool bool_update)
 endFunction
 
 function f_View_Members_Member(doticu_npcp_member ref_member)
-    p_code_view = CODES.VIEW_MEMBERS_MEMBER
+    p_code_view = doticu_npcp_codes.VIEW_MEMBERS_MEMBER()
 
     p_ref_member = ref_member
 endFunction
 
 function f_View_Filter_Members_Member(doticu_npcp_member ref_member)
-    p_code_view = CODES.VIEW_FILTER_MEMBERS_MEMBER
+    p_code_view = doticu_npcp_codes.VIEW_FILTER_MEMBERS_MEMBER()
 
     p_ref_member = ref_member
 endFunction
 
 function f_View_Followers_Member(doticu_npcp_member ref_member)
-    p_code_view = CODES.VIEW_FOLLOWERS_MEMBER
+    p_code_view = doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
 
     p_ref_member = ref_member
 endFunction
 
 function f_View_Mannequins_Member(doticu_npcp_member ref_member)
-    p_code_view = CODES.VIEW_MANNEQUINS_MEMBER
+    p_code_view = doticu_npcp_codes.VIEW_MANNEQUINS_MEMBER()
 
     p_ref_member = ref_member
 endFunction
@@ -193,20 +188,20 @@ function f_Build_Page()
     MCM.SetCursorPosition(0)
     MCM.SetCursorFillMode(MCM.LEFT_TO_RIGHT)
 
-    if p_code_view == CODES.VIEW_MEMBERS_MEMBER
+    if p_code_view == doticu_npcp_codes.VIEW_MEMBERS_MEMBER()
         MCM.SetTitleText("Member: " + str_name)
-    elseIf p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+    elseIf p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
         MCM.SetTitleText("Follower: " + str_name)
-    elseIf p_code_view == CODES.VIEW_FILTER_MEMBERS_MEMBER
+    elseIf p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS_MEMBER()
         MCM.SetTitleText("Filtered Member: " + str_name)
-    elseIf p_code_view == CODES.VIEW_MANNEQUINS_MEMBER
+    elseIf p_code_view == doticu_npcp_codes.VIEW_MANNEQUINS_MEMBER()
         MCM.SetTitleText("Mannequin: " + str_name)
     endIf
 
     p_option_rename = MCM.AddInputOption(str_name + " ", " Rename ")
     p_option_back = MCM.AddTextOption("                            Go Back", "")
 
-    if p_code_view == CODES.VIEW_MEMBERS_MEMBER || p_code_view == CODES.VIEW_FILTER_MEMBERS_MEMBER
+    if p_code_view == doticu_npcp_codes.VIEW_MEMBERS_MEMBER() || p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS_MEMBER()
         if MEMBERS.Get_Count() > 1
             p_option_prev = MCM.AddTextOption("                      Previous Member", "")
             p_option_next = MCM.AddTextOption("                        Next Member", "")
@@ -214,7 +209,7 @@ function f_Build_Page()
             p_option_prev = MCM.AddTextOption("                      Previous Member", "", FLAG_DISABLE)
             p_option_next = MCM.AddTextOption("                        Next Member", "", FLAG_DISABLE)
         endIf
-    elseIf p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+    elseIf p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
         if FOLLOWERS.Count_Filled() > 1
             p_option_prev = MCM.AddTextOption("                      Previous Follower", "")
             p_option_next = MCM.AddTextOption("                        Next Follower", "")
@@ -249,19 +244,19 @@ function f_On_Option_Select(int id_option)
         p_Go_Back()
     elseIf id_option == p_option_prev
         f_Disable(id_option, DO_UPDATE)
-        if p_code_view == CODES.VIEW_MEMBERS_MEMBER || p_code_view == CODES.VIEW_FILTER_MEMBERS_MEMBER
+        if p_code_view == doticu_npcp_codes.VIEW_MEMBERS_MEMBER() || p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS_MEMBER()
             MCM.MCM_MEMBERS.f_Request_Prev_Member()
             MCM.ForcePageReset()
-        elseIf p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+        elseIf p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
             MCM.MCM_FOLLOWERS.f_Request_Prev_Member()
             MCM.ForcePageReset()
         endIf
     elseIf id_option == p_option_next
         f_Disable(id_option, DO_UPDATE)
-        if p_code_view == CODES.VIEW_MEMBERS_MEMBER || p_code_view == CODES.VIEW_FILTER_MEMBERS_MEMBER
+        if p_code_view == doticu_npcp_codes.VIEW_MEMBERS_MEMBER() || p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS_MEMBER()
             MCM.MCM_MEMBERS.f_Request_Next_Member()
             MCM.ForcePageReset()
-        elseIf p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+        elseIf p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
             MCM.MCM_FOLLOWERS.f_Request_Next_Member()
             MCM.ForcePageReset()
         endIf
@@ -321,7 +316,7 @@ function f_On_Option_Select(int id_option)
     elseIf id_option == p_option_unfollow
         f_Disable(p_option_unfollow, DO_UPDATE)
         COMMANDS.Unfollow_Sync(ref_actor, false)
-        if p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+        if p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
             p_Go_Back()
         else
             p_Update_Commands()
@@ -382,16 +377,16 @@ function f_On_Option_Select(int id_option)
 
     elseIf id_option == p_option_vitalize
         int code_vitality = p_ref_member.Vitality()
-        if code_vitality == CODES.IS_MORTAL
+        if code_vitality == doticu_npcp_codes.VITALITY_MORTAL()
             COMMANDS.Vitalize_Protected(ref_actor, false)
             p_Update_Commands()
-        elseIf code_vitality == CODES.IS_PROTECTED
+        elseIf code_vitality == doticu_npcp_codes.VITALITY_PROTECTED()
             COMMANDS.Vitalize_Essential(ref_actor, false)
             p_Update_Commands()
-        elseIf code_vitality == CODES.IS_ESSENTIAL
+        elseIf code_vitality == doticu_npcp_codes.VITALITY_ESSENTIAL()
             COMMANDS.Vitalize_Invulnerable(ref_actor, false)
             p_Update_Commands()
-        elseIf code_vitality == CODES.IS_INVULNERABLE
+        elseIf code_vitality == doticu_npcp_codes.VITALITY_INVULNERABLE()
             COMMANDS.Vitalize_Mortal(ref_actor, false)
             p_Update_Commands()
         endIf
@@ -690,13 +685,13 @@ function p_Build_Commands()
     endIf
 
     int code_vitality = p_ref_member.Vitality()
-    if code_vitality == CODES.IS_MORTAL
+    if code_vitality == doticu_npcp_codes.VITALITY_MORTAL()
         p_option_vitalize = MCM.AddTextOption(CONSTS.STR_MCM_VITALITY, CONSTS.STR_MCM_MORTAL)
-    elseIf code_vitality == CODES.IS_PROTECTED
+    elseIf code_vitality == doticu_npcp_codes.VITALITY_PROTECTED()
         p_option_vitalize = MCM.AddTextOption(CONSTS.STR_MCM_VITALITY, CONSTS.STR_MCM_PROTECTED)
-    elseIf code_vitality == CODES.IS_ESSENTIAL
+    elseIf code_vitality == doticu_npcp_codes.VITALITY_ESSENTIAL()
         p_option_vitalize = MCM.AddTextOption(CONSTS.STR_MCM_VITALITY, CONSTS.STR_MCM_ESSENTIAL)
-    elseIf code_vitality == CODES.IS_INVULNERABLE
+    elseIf code_vitality == doticu_npcp_codes.VITALITY_INVULNERABLE()
         p_option_vitalize = MCM.AddTextOption(CONSTS.STR_MCM_VITALITY, CONSTS.STR_MCM_INVULNERABLE)
     endIf
 
@@ -792,13 +787,13 @@ function p_Update_Commands()
     endIf
 
     int code_vitality = p_ref_member.Vitality()
-    if code_vitality == CODES.IS_MORTAL
+    if code_vitality == doticu_npcp_codes.VITALITY_MORTAL()
         MCM.SetTextOptionValue(p_option_vitalize, CONSTS.STR_MCM_MORTAL, DONT_UPDATE)
-    elseIf code_vitality == CODES.IS_PROTECTED
+    elseIf code_vitality == doticu_npcp_codes.VITALITY_PROTECTED()
         MCM.SetTextOptionValue(p_option_vitalize, CONSTS.STR_MCM_PROTECTED, DONT_UPDATE)
-    elseIf code_vitality == CODES.IS_ESSENTIAL
+    elseIf code_vitality == doticu_npcp_codes.VITALITY_ESSENTIAL()
         MCM.SetTextOptionValue(p_option_vitalize, CONSTS.STR_MCM_ESSENTIAL, DONT_UPDATE)
-    elseIf code_vitality == CODES.IS_INVULNERABLE
+    elseIf code_vitality == doticu_npcp_codes.VITALITY_INVULNERABLE()
         MCM.SetTextOptionValue(p_option_vitalize, CONSTS.STR_MCM_INVULNERABLE, DONT_UPDATE)
     endIf
 
@@ -895,16 +890,16 @@ function p_Update_Statistics()
 endFunction
 
 function p_Go_Back()
-    if p_code_view == CODES.VIEW_MEMBERS_MEMBER
+    if p_code_view == doticu_npcp_codes.VIEW_MEMBERS_MEMBER()
         MCM.MCM_MEMBERS.f_Review_Members()
         MCM.ForcePageReset()
-    elseIf p_code_view == CODES.VIEW_FILTER_MEMBERS_MEMBER
+    elseIf p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS_MEMBER()
         MCM.MCM_MEMBERS.f_Review_Filter_Members()
         MCM.ForcePageReset()
-    elseIf p_code_view == CODES.VIEW_FOLLOWERS_MEMBER
+    elseIf p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
         MCM.MCM_FOLLOWERS.f_Review_Followers()
         MCM.ForcePageReset()
-    elseIf p_code_view == CODES.VIEW_MANNEQUINS_MEMBER
+    elseIf p_code_view == doticu_npcp_codes.VIEW_MANNEQUINS_MEMBER()
         MCM.MCM_MANNEQUINS.f_Review_Mannequins()
         MCM.ForcePageReset()
     endIf

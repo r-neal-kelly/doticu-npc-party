@@ -43,11 +43,6 @@ doticu_npcp_consts property CONSTS hidden
         return p_DATA.CONSTS
     endFunction
 endProperty
-doticu_npcp_codes property CODES hidden
-    doticu_npcp_codes function Get()
-        return p_DATA.CODES
-    endFunction
-endProperty
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
         return p_DATA.VARS
@@ -187,7 +182,7 @@ function Expo(int id_expoee, ObjectReference ref_marker, bool auto_create)
     if !ref_member
         if auto_create
             int code_return = MEMBERS.Create_Member(ref_actor)
-            if code_return < 0
+            if code_return != doticu_npcp_codes.SUCCESS()
                 LOGS.Create_Note("Could not create Expo Member.")
             endIf
         else

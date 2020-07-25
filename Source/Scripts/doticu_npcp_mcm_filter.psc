@@ -5,11 +5,6 @@
 Scriptname doticu_npcp_mcm_filter extends Quest
 
 ; Modules
-doticu_npcp_codes property CODES hidden
-    doticu_npcp_codes function Get()
-        return p_DATA.CODES
-    endFunction
-endProperty
 doticu_npcp_members property MEMBERS hidden
     doticu_npcp_members function Get()
         return p_DATA.MODS.MEMBERS
@@ -128,7 +123,7 @@ function f_Unregister()
 endFunction
 
 function f_Review_Filter()
-    p_code_view = CODES.VIEW_FILTER
+    p_code_view = doticu_npcp_codes.VIEW_FILTER()
 endFunction
 
 string function f_Get_Filter_String()
@@ -136,7 +131,7 @@ string function f_Get_Filter_String()
 endFunction
 
 function f_Build_Page()
-    if p_code_view == CODES.VIEW_FILTER_MEMBERS
+    if p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS()
         return p_Goto_Filter_Members()
     endIf
 
@@ -198,7 +193,7 @@ function f_Build_Page()
 endFunction
 
 function f_On_Option_Select(int id_option)
-    if p_code_view == CODES.VIEW_FILTER_MEMBERS
+    if p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS()
         return MCM.MCM_MEMBERS.f_On_Option_Select(id_option)
     endIf
 
@@ -207,7 +202,7 @@ function f_On_Option_Select(int id_option)
     ; Filter
     elseIf id_option == p_option_filter
         MCM.f_Disable(id_option, MCM.DO_UPDATE)
-        p_code_view = CODES.VIEW_FILTER_MEMBERS
+        p_code_view = doticu_npcp_codes.VIEW_FILTER_MEMBERS()
         return MCM.ForcePageReset()
 
     ; Alive/Dead
@@ -310,7 +305,7 @@ function f_On_Option_Select(int id_option)
 endFunction
 
 function f_On_Option_Menu_Open(int id_option)
-    if p_code_view == CODES.VIEW_FILTER_MEMBERS
+    if p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS()
         return MCM.MCM_MEMBERS.f_On_Option_Menu_Open(id_option)
     endIf
 
@@ -407,7 +402,7 @@ function f_On_Option_Menu_Open(int id_option)
 endFunction
 
 function f_On_Option_Menu_Accept(int id_option, int idx_option)
-    if p_code_view == CODES.VIEW_FILTER_MEMBERS
+    if p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS()
         return MCM.MCM_MEMBERS.f_On_Option_Menu_Accept(id_option, idx_option)
     endIf
 
@@ -477,16 +472,16 @@ function f_On_Option_Menu_Accept(int id_option, int idx_option)
             p_int_arg_vitality = 0
             p_str_view_vitality = " Any "
         elseIf idx_option == 1
-            p_int_arg_vitality = CODES.IS_MORTAL
+            p_int_arg_vitality = doticu_npcp_codes.VITALITY_MORTAL()
             p_str_view_vitality = " Mortal "
         elseIf idx_option == 2
-            p_int_arg_vitality = CODES.IS_PROTECTED
+            p_int_arg_vitality = doticu_npcp_codes.VITALITY_PROTECTED()
             p_str_view_vitality = " Protected "
         elseIf idx_option == 3
-            p_int_arg_vitality = CODES.IS_ESSENTIAL
+            p_int_arg_vitality = doticu_npcp_codes.VITALITY_ESSENTIAL()
             p_str_view_vitality = " Essential "
         elseIf idx_option == 4
-            p_int_arg_vitality = CODES.IS_INVULNERABLE
+            p_int_arg_vitality = doticu_npcp_codes.VITALITY_INVULNERABLE()
             p_str_view_vitality = " Invulnerable "
 
         endIf
@@ -499,25 +494,25 @@ function f_On_Option_Menu_Accept(int id_option, int idx_option)
             p_int_arg_outfit2 = 0
             p_str_view_outfit2 = " Any "
         elseIf idx_option == 1
-            p_int_arg_outfit2 = CODES.OUTFIT2_MEMBER
+            p_int_arg_outfit2 = doticu_npcp_codes.OUTFIT2_MEMBER()
             p_str_view_outfit2 = " Member "
         elseIf idx_option == 2
-            p_int_arg_outfit2 = CODES.OUTFIT2_SETTLER
+            p_int_arg_outfit2 = doticu_npcp_codes.OUTFIT2_SETTLER()
             p_str_view_outfit2 = " Settler "
         elseIf idx_option == 3
-            p_int_arg_outfit2 = CODES.OUTFIT2_THRALL
+            p_int_arg_outfit2 = doticu_npcp_codes.OUTFIT2_THRALL()
             p_str_view_outfit2 = " Thrall "
         elseIf idx_option == 4
-            p_int_arg_outfit2 = CODES.OUTFIT2_IMMOBILE
+            p_int_arg_outfit2 = doticu_npcp_codes.OUTFIT2_IMMOBILE()
             p_str_view_outfit2 = " Immobile "
         elseIf idx_option == 5
-            p_int_arg_outfit2 = CODES.OUTFIT2_FOLLOWER
+            p_int_arg_outfit2 = doticu_npcp_codes.OUTFIT2_FOLLOWER()
             p_str_view_outfit2 = " Follower "
         elseIf idx_option == 6
-            p_int_arg_outfit2 = CODES.OUTFIT2_VANILLA
+            p_int_arg_outfit2 = doticu_npcp_codes.OUTFIT2_VANILLA()
             p_str_view_outfit2 = " Vanilla "
         elseIf idx_option == 7
-            p_int_arg_outfit2 = CODES.OUTFIT2_DEFAULT
+            p_int_arg_outfit2 = doticu_npcp_codes.OUTFIT2_DEFAULT()
             p_str_view_outfit2 = " Default "
 
         endIf
@@ -555,7 +550,7 @@ function f_On_Option_Menu_Accept(int id_option, int idx_option)
 endFunction
 
 function f_On_Option_Input_Accept(int id_option, string str_input)
-    if p_code_view == CODES.VIEW_FILTER_MEMBERS
+    if p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS()
         return MCM.MCM_MEMBERS.f_On_Option_Input_Accept(id_option, str_input)
     endIf
 
@@ -569,7 +564,7 @@ function f_On_Option_Input_Accept(int id_option, string str_input)
 endFunction
 
 function f_On_Option_Highlight(int id_option)
-    if p_code_view == CODES.VIEW_FILTER_MEMBERS
+    if p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS()
         return MCM.MCM_MEMBERS.f_On_Option_Highlight(id_option)
     endIf
 
@@ -644,25 +639,25 @@ function f_On_Option_Highlight(int id_option)
 endFunction
 
 function f_On_Option_Default(int id_option)
-    if p_code_view == CODES.VIEW_FILTER_MEMBERS
+    if p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS()
         return MCM.MCM_MEMBERS.f_On_Option_Default(id_option)
     endIf
 endFunction
 
 function f_On_Option_Slider_Open(int id_option)
-    if p_code_view == CODES.VIEW_FILTER_MEMBERS
+    if p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS()
         return MCM.MCM_MEMBERS.f_On_Option_Slider_Open(id_option)
     endIf
 endFunction
 
 function f_On_Option_Slider_Accept(int id_option, float float_value)
-    if p_code_view == CODES.VIEW_FILTER_MEMBERS
+    if p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS()
         return MCM.MCM_MEMBERS.f_On_Option_Slider_Accept(id_option, float_value)
     endIf
 endFunction
 
 function f_On_Option_Keymap_Change(int id_option, int code_key, string str_conflict_control, string str_conflict_mod)
-    if p_code_view == CODES.VIEW_FILTER_MEMBERS
+    if p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS()
         return MCM.MCM_MEMBERS.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
     endIf
 endFunction

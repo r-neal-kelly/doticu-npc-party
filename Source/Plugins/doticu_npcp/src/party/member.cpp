@@ -2,6 +2,9 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include <thread>
+#include <chrono>
+
 #include "actor2.h"
 #include "actor_base2.h"
 #include "codes.h"
@@ -16,17 +19,15 @@ namespace doticu_npcp { namespace Party {
 
     String_t Member_t::Class_Name()
     {
-        static const String_t class_name = Utils::Assert(
-            String_t("doticu_npcp_member")
-        );
+        static String_t class_name = String_t("doticu_npcp_member");
+        NPCP_ASSERT(class_name);
         return class_name;
     }
 
     Class_Info_t* Member_t::Class_Info()
     {
-        static Class_Info_t* class_info = Utils::Assert(
-            Class_Info_t::Fetch(Class_Name())
-        );
+        static Class_Info_t* class_info = Class_Info_t::Fetch(Class_Name());
+        NPCP_ASSERT(class_info);
         return class_info;
     }
 
@@ -37,172 +38,155 @@ namespace doticu_npcp { namespace Party {
 
     Variable_t* Member_t::Actor_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_ref_actor")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_ref_actor");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Member_t::Pack_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_container_pack")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_container_pack");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Member_t::Mannequin_Marker_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_marker_mannequin")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_marker_mannequin");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Member_t::Display_Marker_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_marker_display")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_marker_display");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Member_t::Undisplay_Marker_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_marker_undisplay")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_marker_undisplay");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Member_t::Style_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_code_style")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_code_style");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Member_t::Vitality_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_code_vitality")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_code_vitality");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Member_t::Outfit2_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_code_outfit2")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_code_outfit2");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Member_t::Rating_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_int_rating")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_int_rating");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Member_t::Is_Clone_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_is_clone")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_is_clone");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Member_t::Is_Immobile_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_is_immobile")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_is_immobile");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Member_t::Is_Settler_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_is_settler")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_is_settler");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Member_t::Is_Thrall_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_is_thrall")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_is_thrall");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Member_t::Is_Paralyzed_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_is_paralyzed")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_is_paralyzed");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Member_t::Is_Mannequin_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_is_mannequin")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_is_mannequin");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Member_t::Is_Display_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_is_display")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_is_display");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Variable_t* Member_t::Is_Reanimated_Variable()
     {
-        static const String_t variable_name = Utils::Assert(
-            String_t("p_is_reanimated")
-        );
-        return Utils::Assert(
-            Variable(variable_name)
-        );
+        static const String_t variable_name = String_t("p_is_reanimated");
+        NPCP_ASSERT(variable_name);
+        Variable_t* variable = Variable(variable_name);
+        NPCP_ASSERT(variable);
+        return variable;
     }
 
     Actor_t* Member_t::Actor()
@@ -210,7 +194,8 @@ namespace doticu_npcp { namespace Party {
         NPCP_ASSERT(Is_Filled());
         Actor_t* actor = Actor_Variable()->Actor();
         if (actor == nullptr) {
-            actor = Utils::Assert(Alias_t::Actor());
+            actor = Alias_t::Actor();
+            NPCP_ASSERT(actor);
             Actor_Variable()->Pack(actor);
         }
         return actor;
@@ -694,9 +679,8 @@ namespace doticu_npcp { namespace Party {
     {
         // we need to check that the tool isnt healing the member, even if their health is below zero, we shouldn't kill
 
-        static const String_t kill_func = Utils::Assert(
-            String_t("p_Kill")
-        );
+        static const String_t kill_func = String_t("p_Kill");
+        NPCP_ASSERT(kill_func);
 
         if (Is_Filled() && Is_Alive_Unsafe()) {
             Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(Actor());
@@ -706,7 +690,9 @@ namespace doticu_npcp { namespace Party {
                     struct Args : public IFunctionArguments {
                         bool Copy(Output* output) { return true; }
                     } func_args;
-                    Virtual_Machine_t::Send_Event(this, kill_func, &func_args);
+                    //Virtual_Machine_t::Send_Event(this, kill_func, &func_args);
+                    Handle_t handle(this);
+                    handle.Registry()->QueueEvent(handle, &kill_func, &func_args);
                 }
             } else if (vitality == CODES::VITALITY::INVULNERABLE) {
                 value_owner->Restore_Actor_Value(Actor_Modifier_t::DAMAGE, Actor_Value_t::HEALTH, 1000000000.0f);
@@ -976,7 +962,8 @@ namespace doticu_npcp { namespace Party {
 
             Object_Ref::Token(actor, Consts::Display_Token());
 
-            Reference_t* undisplay_marker = Utils::Assert(Object_Ref::Create_Marker_At(actor));
+            Reference_t* undisplay_marker = Object_Ref::Create_Marker_At(actor);
+            NPCP_ASSERT(undisplay_marker);
             Undisplay_Marker_Variable()->Pack(undisplay_marker);
 
             Cell_t* previous_cell = actor->parentCell;
@@ -988,7 +975,8 @@ namespace doticu_npcp { namespace Party {
                 Actor2::Fully_Update_3D_Model(actor);
             }
 
-            Reference_t* display_marker = Utils::Assert(Object_Ref::Create_Marker_At(actor));
+            Reference_t* display_marker = Object_Ref::Create_Marker_At(actor);
+            NPCP_ASSERT(display_marker);
             Display_Marker_Variable()->Pack(display_marker);
 
             Reparalyze();
@@ -1389,14 +1377,7 @@ namespace doticu_npcp { namespace Party {
 
     void Member_t::Log_Variable_Infos()
     {
-        Object_t* script = Object_t::Fetch(this, "doticu_npcp_member");
-        if (script) {
-            Class_Info_t* info = script->info;
-            while (info) {
-                info->Log_Variable_Infos();
-                info = info->parent != info ? info->parent : nullptr;
-            }
-        }
+        Class_Info()->Log_Variable_Infos();
     }
 
 }}

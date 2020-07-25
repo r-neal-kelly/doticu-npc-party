@@ -10,11 +10,6 @@ doticu_npcp_consts property CONSTS hidden
         return p_DATA.CONSTS
     endFunction
 endProperty
-doticu_npcp_codes property CODES hidden
-    doticu_npcp_codes function Get()
-        return p_DATA.CODES
-    endFunction
-endProperty
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
         return p_DATA.VARS
@@ -113,11 +108,11 @@ doticu_npcp_outfit function Create_Follower(string str_name = "Follower Outfit")
 endFunction
 
 doticu_npcp_outfit function Create_Vanilla(string str_name = "Vanilla Outfit")
-    return p_Create(CONSTS.CONTAINER_OUTFIT, str_name, CODES.OUTFIT2_VANILLA)
+    return p_Create(CONSTS.CONTAINER_OUTFIT, str_name, doticu_npcp_codes.OUTFIT2_VANILLA())
 endFunction
 
 doticu_npcp_outfit function Create_Default(string str_name = "Default Outfit")
-    return p_Create(CONSTS.CONTAINER_OUTFIT, str_name, CODES.OUTFIT2_DEFAULT)
+    return p_Create(CONSTS.CONTAINER_OUTFIT, str_name, doticu_npcp_codes.OUTFIT2_DEFAULT())
 endFunction
 
 function Destroy(doticu_npcp_outfit ref_outfit)
@@ -140,14 +135,14 @@ function Outfit_Clone(Actor ref_clone, Actor ref_orig)
     ref_clone.RemoveAllItems(ref_junk, false, false)
 
     ; this ensures that our modded outfit is worn, including the blank armor.
-    ; this also fufills VARS.clone_outfit == CODES.OUTFIT_BASE
+    ; this also fufills VARS.clone_outfit == doticu_npcp_codes.OUTFIT_BASE()
 NPCS.Lock_Base(ref_clone)
     Outfit outfit_default = NPCS.Get_Default_Outfit(ref_clone)
     doticu_npcp.Outfit_Add_Item(outfit_default, CONSTS.ARMOR_BLANK)
     ref_clone.SetOutfit(outfit_default)
 NPCS.Unlock_Base(ref_clone)
 
-    if VARS.clone_outfit == CODES.OUTFIT_REFERENCE
+    if VARS.clone_outfit == doticu_npcp_codes.OUTFIT_REFERENCE()
         ; this will stop the actor from rendering while we manage its inventory
         bool is_teammate = ref_clone.IsPlayerTeammate()
         ref_clone.SetPlayerTeammate(false, false)

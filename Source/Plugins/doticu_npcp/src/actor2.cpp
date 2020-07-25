@@ -8,6 +8,7 @@
 
 #include "actor_base2.h"
 #include "actor2.h"
+#include "codes.h"
 #include "consts.h"
 #include "form.h"
 #include "object_ref.h"
@@ -757,25 +758,19 @@ namespace doticu_npcp { namespace Actor2 {
 
     String_t Sex_String(Actor_t* actor)
     {
-        static const String_t male = Utils::Assert(
-            String_t("male")
-        );
-        static const String_t female = Utils::Assert(
-            String_t("female")
-        );
-        static const String_t none = Utils::Assert(
-            String_t("none")
-        );
-        static const String_t invalid = Utils::Assert(
-            String_t("")
-        );
+        static const String_t male = String_t("male");
+        static const String_t female = String_t("female");
+        static const String_t none = String_t("none");
+        static const String_t invalid = String_t("");
+
+        NPCP_ASSERT(male && female && none && invalid);
 
         Int_t sex = Sex(actor);
-        if (sex == 0) {
+        if (sex == CODES::SEX::MALE) {
             return male;
-        } else if (sex == 1) {
+        } else if (sex == CODES::SEX::FEMALE) {
             return female;
-        } else if (sex == -1) {
+        } else if (sex == CODES::SEX::NONE) {
             return none;
         } else {
             return invalid;

@@ -10,11 +10,6 @@ doticu_npcp_consts property CONSTS hidden
         return p_DATA.CONSTS
     endFunction
 endProperty
-doticu_npcp_codes property CODES hidden
-    doticu_npcp_codes function Get()
-        return p_DATA.CODES
-    endFunction
-endProperty
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
         return p_DATA.VARS
@@ -123,13 +118,13 @@ function f_Build_Page()
     elseIf VARS.auto_style == doticu_npcp_codes.STYLE_COWARD()
         p_option_auto_style = MCM.AddTextOption(" New Member Style ", CONSTS.STR_MCM_COWARD)
     endIf
-    if VARS.auto_vitality == CODES.IS_MORTAL
+    if VARS.auto_vitality == doticu_npcp_codes.VITALITY_MORTAL()
         p_option_auto_vitality = MCM.AddTextOption(" New Member Vitality ", CONSTS.STR_MCM_MORTAL)
-    elseIf VARS.auto_vitality == CODES.IS_PROTECTED
+    elseIf VARS.auto_vitality == doticu_npcp_codes.VITALITY_PROTECTED()
         p_option_auto_vitality = MCM.AddTextOption(" New Member Vitality ", CONSTS.STR_MCM_PROTECTED)
-    elseIf VARS.auto_vitality == CODES.IS_ESSENTIAL
+    elseIf VARS.auto_vitality == doticu_npcp_codes.VITALITY_ESSENTIAL()
         p_option_auto_vitality = MCM.AddTextOption(" New Member Vitality ", CONSTS.STR_MCM_ESSENTIAL)
-    elseIf VARS.auto_vitality == CODES.IS_INVULNERABLE
+    elseIf VARS.auto_vitality == doticu_npcp_codes.VITALITY_INVULNERABLE()
         p_option_auto_vitality = MCM.AddTextOption(" New Member Vitality ", CONSTS.STR_MCM_INVULNERABLE)
     endIf
     p_option_slider_max_members = MCM.AddSliderOption(" Max Members ", VARS.max_members, " {0} ")
@@ -145,9 +140,9 @@ function f_Build_Page()
     p_option_force_unclone_unique = MCM.AddToggleOption(" Force Unclone Unique NPCs ", VARS.force_unclone_unique)
     p_option_force_clone_generic = MCM.AddToggleOption(" Force Clone Generic NPCs ", VARS.force_clone_generic)
     p_option_force_unclone_generic = MCM.AddToggleOption(" Force Unclone Generic NPCs ", VARS.force_unclone_generic)
-    if VARS.clone_outfit == CODES.OUTFIT_BASE
+    if VARS.clone_outfit == doticu_npcp_codes.OUTFIT_BASE()
         p_option_clone_outfit = MCM.AddTextOption(" New Clone Outfit ", CONSTS.STR_MCM_BASE)
-    elseIf VARS.clone_outfit == CODES.OUTFIT_REFERENCE
+    elseIf VARS.clone_outfit == doticu_npcp_codes.OUTFIT_REFERENCE()
         p_option_clone_outfit = MCM.AddTextOption(" New Clone Outfit ", CONSTS.STR_MCM_REFERENCE)
     endIf
     MCM.AddEmptyOption()
@@ -203,17 +198,17 @@ function f_On_Option_Select(int id_option)
             MCM.SetTextOptionValue(p_option_auto_style, CONSTS.STR_MCM_DEFAULT)
         endIf
     elseIf id_option == p_option_auto_vitality
-        if VARS.auto_vitality == CODES.IS_MORTAL
-            VARS.auto_vitality = CODES.IS_PROTECTED
+        if VARS.auto_vitality == doticu_npcp_codes.VITALITY_MORTAL()
+            VARS.auto_vitality = doticu_npcp_codes.VITALITY_PROTECTED()
             MCM.SetTextOptionValue(p_option_auto_vitality, CONSTS.STR_MCM_PROTECTED)
-        elseIf VARS.auto_vitality == CODES.IS_PROTECTED
-            VARS.auto_vitality = CODES.IS_ESSENTIAL
+        elseIf VARS.auto_vitality == doticu_npcp_codes.VITALITY_PROTECTED()
+            VARS.auto_vitality = doticu_npcp_codes.VITALITY_ESSENTIAL()
             MCM.SetTextOptionValue(p_option_auto_vitality, CONSTS.STR_MCM_ESSENTIAL)
-        elseIf VARS.auto_vitality == CODES.IS_ESSENTIAL
-            VARS.auto_vitality = CODES.IS_INVULNERABLE
+        elseIf VARS.auto_vitality == doticu_npcp_codes.VITALITY_ESSENTIAL()
+            VARS.auto_vitality = doticu_npcp_codes.VITALITY_INVULNERABLE()
             MCM.SetTextOptionValue(p_option_auto_vitality, CONSTS.STR_MCM_INVULNERABLE)
-        elseIf VARS.auto_vitality == CODES.IS_INVULNERABLE
-            VARS.auto_vitality = CODES.IS_MORTAL
+        elseIf VARS.auto_vitality == doticu_npcp_codes.VITALITY_INVULNERABLE()
+            VARS.auto_vitality = doticu_npcp_codes.VITALITY_MORTAL()
             MCM.SetTextOptionValue(p_option_auto_vitality, CONSTS.STR_MCM_MORTAL)
         endIf
     elseIf id_option == p_option_auto_resurrect
@@ -234,11 +229,11 @@ function f_On_Option_Select(int id_option)
         VARS.force_unclone_generic = !VARS.force_unclone_generic
         MCM.SetToggleOptionValue(p_option_force_unclone_generic, VARS.force_unclone_generic)
     elseIf id_option == p_option_clone_outfit
-        if VARS.clone_outfit == CODES.OUTFIT_BASE
-            VARS.clone_outfit = CODES.OUTFIT_REFERENCE
+        if VARS.clone_outfit == doticu_npcp_codes.OUTFIT_BASE()
+            VARS.clone_outfit = doticu_npcp_codes.OUTFIT_REFERENCE()
             MCM.SetTextOptionValue(p_option_clone_outfit, CONSTS.STR_MCM_REFERENCE)
-        elseIf VARS.clone_outfit == CODES.OUTFIT_REFERENCE
-            VARS.clone_outfit = CODES.OUTFIT_BASE
+        elseIf VARS.clone_outfit == doticu_npcp_codes.OUTFIT_REFERENCE()
+            VARS.clone_outfit = doticu_npcp_codes.OUTFIT_BASE()
             MCM.SetTextOptionValue(p_option_clone_outfit, CONSTS.STR_MCM_BASE)
         endIf
 
@@ -384,13 +379,13 @@ function f_On_Option_Highlight(int id_option)
             MCM.SetInfoText("When an npc becomes a member, they will fight as a coward.")
         endIf
     elseIf id_option == p_option_auto_vitality
-        if VARS.auto_vitality == CODES.IS_MORTAL
+        if VARS.auto_vitality == doticu_npcp_codes.VITALITY_MORTAL()
             MCM.SetInfoText("When an npc becomes a member, they will be mortal.")
-        elseIf VARS.auto_vitality == CODES.IS_PROTECTED
+        elseIf VARS.auto_vitality == doticu_npcp_codes.VITALITY_PROTECTED()
             MCM.SetInfoText("When an npc becomes a member, they will be protected and only you can kill them.")
-        elseIf VARS.auto_vitality == CODES.IS_ESSENTIAL
+        elseIf VARS.auto_vitality == doticu_npcp_codes.VITALITY_ESSENTIAL()
             MCM.SetInfoText("When an npc becomes a member, they will be essential and will recover when they bleedout.")
-        elseIf VARS.auto_vitality == CODES.IS_INVULNERABLE
+        elseIf VARS.auto_vitality == doticu_npcp_codes.VITALITY_INVULNERABLE()
             MCM.SetInfoText("When an npc becomes a member, they will be invulnerable and cannot be hurt.")
         endIf
     elseIf id_option == p_option_auto_resurrect
@@ -428,9 +423,9 @@ function f_On_Option_Highlight(int id_option)
             MCM.SetInfoText("Allows a clone of a generic npc to be unmembered or uncloned.")
         endIf
     elseIf id_option == p_option_clone_outfit
-        if VARS.clone_outfit == CODES.OUTFIT_BASE
+        if VARS.clone_outfit == doticu_npcp_codes.OUTFIT_BASE()
             MCM.SetInfoText("A clone will receive the base outfit of the original npc.")
-        elseIf VARS.clone_outfit == CODES.OUTFIT_REFERENCE
+        elseIf VARS.clone_outfit == doticu_npcp_codes.OUTFIT_REFERENCE()
             MCM.SetInfoText("A clone will receive the current outfit of the original npc.")
         endIf
 

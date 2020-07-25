@@ -6,7 +6,6 @@ Scriptname doticu_npcp_data extends Quest
 
 ; Private Constants
 doticu_npcp_consts  p_CONSTS        =  none; static
-doticu_npcp_codes   p_CODES         =  none; static
 doticu_npcp_mods    p_MODS          =  none; static
 doticu_npcp_vars    p_VARS          =  none; dynamic
 
@@ -21,17 +20,6 @@ doticu_npcp_consts property CONSTS
     function Set(doticu_npcp_consts val)
         if p_CONSTS == none
             p_CONSTS = val
-        endIf
-    endFunction
-endProperty
-
-doticu_npcp_codes property CODES
-    doticu_npcp_codes function Get()
-        return p_CODES
-    endFunction
-    function Set(doticu_npcp_codes val)
-        if p_CODES == none
-            p_CODES = val
         endIf
     endFunction
 endProperty

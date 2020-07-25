@@ -15,11 +15,6 @@ doticu_npcp_consts property CONSTS hidden
         return p_DATA.CONSTS
     endFunction
 endProperty
-doticu_npcp_codes property CODES hidden
-    doticu_npcp_codes function Get()
-        return p_DATA.CODES
-    endFunction
-endProperty
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
         return p_DATA.VARS
@@ -85,7 +80,7 @@ function f_Register()
     RegisterForModEvent("doticu_npcp_init_mod", "On_Init_Mod")
     RegisterForModEvent("doticu_npcp_cell_change", "On_Cell_Change")
     RegisterForControl("Sneak")
-    RegisterForActorAction(CODES.ACTION_DRAW_END)
+    RegisterForActorAction(doticu_npcp_codes.ACTION_DRAW_END())
 endFunction
 
 function f_Unregister()
@@ -197,7 +192,7 @@ endEvent
 
 event OnActorAction(int code_action, Actor ref_actor, Form form_source, int slot)
     if ref_actor == ACTOR_PLAYER
-        if code_action == CODES.ACTION_DRAW_END
+        if code_action == doticu_npcp_codes.ACTION_DRAW_END()
             if !Is_Party_In_Combat()
                 FOLLOWERS.Catch_Up()
             endIf

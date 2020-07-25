@@ -10,11 +10,6 @@ doticu_npcp_consts property CONSTS hidden
         return p_DATA.CONSTS
     endFunction
 endProperty
-doticu_npcp_codes property CODES hidden
-    doticu_npcp_codes function Get()
-        return p_DATA.CODES
-    endFunction
-endProperty
 
 ; Private Constants
 doticu_npcp_data    p_DATA                  =  none
@@ -441,14 +436,14 @@ function Set_Defaults()
     version_patch = CONSTS.VERSION_PATCH
 
     auto_style = doticu_npcp_codes.STYLE_DEFAULT(); DEFAULT, WARRIOR, MAGE, ARCHER, COWARD
-    auto_vitality = CODES.IS_PROTECTED; MORTAL, PROTECTED, ESSENTIAL, INVULNERABLE
+    auto_vitality = doticu_npcp_codes.VITALITY_PROTECTED(); MORTAL, PROTECTED, ESSENTIAL, INVULNERABLE
     auto_resurrect = true
 
     force_clone_unique = false
     force_clone_generic = false
     force_unclone_unique = false
     force_unclone_generic = false
-    clone_outfit = CODES.OUTFIT_BASE; OUTFIT_BASE, OUTFIT_REFERENCE
+    clone_outfit = doticu_npcp_codes.OUTFIT_BASE(); OUTFIT_BASE, OUTFIT_REFERENCE
 
     auto_outfit = false
     auto_immobile_outfit = false
