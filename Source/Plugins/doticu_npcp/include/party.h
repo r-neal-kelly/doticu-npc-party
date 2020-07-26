@@ -552,6 +552,7 @@ namespace doticu_npcp { namespace Party {
         Bool_t Isnt_Retreater_Unsafe();
 
         Bool_t Has_Same_Head(Actor_t* actor);
+        Bool_t Has_Same_Head_Unsafe(Actor_t* actor);
 
         void On_Hit(Reference_t* attacker,
                     Form_t* tool,

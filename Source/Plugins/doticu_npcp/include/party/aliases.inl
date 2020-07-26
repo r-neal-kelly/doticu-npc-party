@@ -245,7 +245,8 @@ namespace doticu_npcp { namespace Party {
     {
         if (actor) {
             for (; aliases.begin < aliases.end; aliases.begin += 1) {
-                if ((*aliases.begin)->Has_Same_Head(actor)) {
+                Alias* alias = *aliases.begin;
+                if (alias->Is_Filled() && alias->Has_Same_Head_Unsafe(actor)) {
                     return true;
                 }
             }

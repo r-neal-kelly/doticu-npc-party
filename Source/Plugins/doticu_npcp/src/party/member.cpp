@@ -659,14 +659,22 @@ namespace doticu_npcp { namespace Party {
 
     Bool_t Member_t::Has_Same_Head(Actor_t* other_actor)
     {
-        NPCP_ASSERT(Is_Filled());
-        if (other_actor) {
+        if (Is_Filled() && other_actor) {
             Actor_Base_t* alias_base = static_cast<Actor_Base_t*>(Actor()->baseForm);
             Actor_Base_t* other_base = static_cast<Actor_Base_t*>(other_actor->baseForm);
             return Actor_Base2::Has_Same_Head(alias_base, other_base);
         } else {
             return false;
         }
+    }
+
+    Bool_t Member_t::Has_Same_Head_Unsafe(Actor_t* other_actor)
+    {
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(other_actor);
+        Actor_Base_t* alias_base = static_cast<Actor_Base_t*>(Actor()->baseForm);
+        Actor_Base_t* other_base = static_cast<Actor_Base_t*>(other_actor->baseForm);
+        return Actor_Base2::Has_Same_Head(alias_base, other_base);
     }
 
     void Member_t::On_Hit(Reference_t* attacker,
