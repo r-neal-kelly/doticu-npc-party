@@ -242,7 +242,7 @@ namespace doticu_npcp { namespace Party {
                                    Int_t flags_1 = 0,
                                    Int_t flags_2 = 0);
 
-        Vector_t<Member_t*> Current_Unsorted_Filter();
+        Vector_t<Member_t*> Current_Filter();
 
         void Create_Member(Actor_t* actor, Bool_t do_clone);
 

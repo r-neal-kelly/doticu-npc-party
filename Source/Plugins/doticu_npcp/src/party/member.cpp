@@ -2,9 +2,6 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
-#include <thread>
-#include <chrono>
-
 #include "actor2.h"
 #include "actor_base2.h"
 #include "codes.h"
@@ -1026,9 +1023,9 @@ namespace doticu_npcp { namespace Party {
             Cell_t* previous_cell = actor->parentCell;
 
             if (undisplay_marker) {
-                Actor2::Enable_Havok_Collision(actor);
                 Actor2::Move_To_Orbit(actor, undisplay_marker, 0.0f, 180.0f);
             }
+            Actor2::Enable_Havok_Collision(actor);
             
             if (!Actor2::Is_AI_Enabled(actor) && previous_cell == actor->parentCell) {
                 Actor2::Fully_Update_3D_Model(actor);
@@ -1065,10 +1062,10 @@ namespace doticu_npcp { namespace Party {
             } else if (style == CODES::STYLE::COWARD) {
                 return Stylize_Coward();
             } else {
-                return CODES::ISNT_STYLE;
+                return CODES::ISNT;
             }
         } else {
-            return CODES::ISNT_MEMBER;
+            return CODES::MEMBER;
         }
     }
 
@@ -1077,7 +1074,7 @@ namespace doticu_npcp { namespace Party {
         if (Is_Filled()) {
             Variable_t* style_variable = Style_Variable();
             if (style_variable->Int() == CODES::STYLE::DEFAULT) {
-                return CODES::IS_DEFAULT;
+                return CODES::IS;
             } else {
                 style_variable->Int(CODES::STYLE::DEFAULT);
 
@@ -1090,7 +1087,7 @@ namespace doticu_npcp { namespace Party {
                 return CODES::SUCCESS;
             }
         } else {
-            return CODES::ISNT_MEMBER;
+            return CODES::MEMBER;
         }
     }
 
@@ -1099,7 +1096,7 @@ namespace doticu_npcp { namespace Party {
         if (Is_Filled()) {
             Variable_t* style_variable = Style_Variable();
             if (style_variable->Int() == CODES::STYLE::WARRIOR) {
-                return CODES::IS_WARRIOR;
+                return CODES::IS;
             } else {
                 style_variable->Int(CODES::STYLE::WARRIOR);
 
@@ -1112,7 +1109,7 @@ namespace doticu_npcp { namespace Party {
                 return CODES::SUCCESS;
             }
         } else {
-            return CODES::ISNT_MEMBER;
+            return CODES::MEMBER;
         }
     }
 
@@ -1121,7 +1118,7 @@ namespace doticu_npcp { namespace Party {
         if (Is_Filled()) {
             Variable_t* style_variable = Style_Variable();
             if (style_variable->Int() == CODES::STYLE::MAGE) {
-                return CODES::IS_MAGE;
+                return CODES::IS;
             } else {
                 style_variable->Int(CODES::STYLE::MAGE);
 
@@ -1134,7 +1131,7 @@ namespace doticu_npcp { namespace Party {
                 return CODES::SUCCESS;
             }
         } else {
-            return CODES::ISNT_MEMBER;
+            return CODES::MEMBER;
         }
     }
 
@@ -1143,7 +1140,7 @@ namespace doticu_npcp { namespace Party {
         if (Is_Filled()) {
             Variable_t* style_variable = Style_Variable();
             if (style_variable->Int() == CODES::STYLE::ARCHER) {
-                return CODES::IS_ARCHER;
+                return CODES::IS;
             } else {
                 style_variable->Int(CODES::STYLE::ARCHER);
 
@@ -1156,7 +1153,7 @@ namespace doticu_npcp { namespace Party {
                 return CODES::SUCCESS;
             }
         } else {
-            return CODES::ISNT_MEMBER;
+            return CODES::MEMBER;
         }
     }
 
@@ -1165,7 +1162,7 @@ namespace doticu_npcp { namespace Party {
         if (Is_Filled()) {
             Variable_t* style_variable = Style_Variable();
             if (style_variable->Int() == CODES::STYLE::COWARD) {
-                return CODES::IS_COWARD;
+                return CODES::IS;
             } else {
                 style_variable->Int(CODES::STYLE::COWARD);
 
@@ -1178,7 +1175,7 @@ namespace doticu_npcp { namespace Party {
                 return CODES::SUCCESS;
             }
         } else {
-            return CODES::ISNT_MEMBER;
+            return CODES::MEMBER;
         }
     }
 
@@ -1284,7 +1281,7 @@ namespace doticu_npcp { namespace Party {
 
             return CODES::SUCCESS;
         } else {
-            return CODES::ISNT_MEMBER;
+            return CODES::MEMBER;
         }
     }
 

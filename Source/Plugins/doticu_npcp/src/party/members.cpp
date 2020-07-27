@@ -424,7 +424,7 @@ namespace doticu_npcp { namespace Party {
         return Sort(Aliases_t::Filter(Aliases(), strings, ints, flags_1, flags_2));
     }
 
-    Vector_t<Member_t*> Members_t::Current_Unsorted_Filter()
+    Vector_t<Member_t*> Members_t::Current_Filter()
     {
         Vector_t<String_t> strings = Filter_t::Strings();
         Vector_t<Int_t> ints = Filter_t::Ints();
@@ -436,7 +436,7 @@ namespace doticu_npcp { namespace Party {
     Int_t Members_t::Display_Start()
     {
         if (Hasnt_Display()) {
-            Vector_t<Member_t*> filter = Current_Unsorted_Filter();
+            Vector_t<Member_t*> filter = Current_Filter();
             Int_t filter_count = filter.size();
             if (filter_count > 0) {
                 Has_Display_Variable()->Bool(true);
@@ -452,10 +452,10 @@ namespace doticu_npcp { namespace Party {
 
                 return CODES::SUCCESS;
             } else {
-                return CODES::HASNT_MEMBER;
+                return CODES::MEMBERS;
             }
         } else {
-            return CODES::HAS_DISPLAY;
+            return CODES::DISPLAY;
         }
     }
 
@@ -472,14 +472,14 @@ namespace doticu_npcp { namespace Party {
 
             return CODES::SUCCESS;
         } else {
-            return CODES::HASNT_DISPLAY;
+            return CODES::DISPLAY;
         }
     }
     
     Int_t Members_t::Display_Next()
     {
         if (Has_Display()) {
-            Vector_t<Member_t*> filter = Current_Unsorted_Filter();
+            Vector_t<Member_t*> filter = Current_Filter();
             Int_t filter_count = filter.size();
             if (filter_count > 0) {
                 Int_t display_count = Vars::Display_Count();
@@ -500,17 +500,17 @@ namespace doticu_npcp { namespace Party {
                 return CODES::SUCCESS;
             } else {
                 Display_Stop();
-                return CODES::HASNT_MEMBER;
+                return CODES::MEMBERS;
             }
         } else {
-            return CODES::HASNT_DISPLAY;
+            return CODES::DISPLAY;
         }
     }
 
     Int_t Members_t::Display_Previous()
     {
         if (Has_Display()) {
-            Vector_t<Member_t*> filter = Current_Unsorted_Filter();
+            Vector_t<Member_t*> filter = Current_Filter();
             Int_t filter_count = filter.size();
             if (filter_count > 0) {
                 Int_t display_count = Vars::Display_Count();
@@ -531,10 +531,10 @@ namespace doticu_npcp { namespace Party {
                 return CODES::SUCCESS;
             } else {
                 Display_Stop();
-                return CODES::HASNT_MEMBER;
+                return CODES::MEMBERS;
             }
         } else {
-            return CODES::HASNT_DISPLAY;
+            return CODES::DISPLAY;
         }
     }
 

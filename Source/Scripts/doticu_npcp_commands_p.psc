@@ -63,75 +63,41 @@ endFunction
 
 ; Public Methods
 function Member(Actor ref_actor)
-    if MEMBERS.Should_Clone_Actor(ref_actor)
-        Clone(ref_actor)
-        return
-    endIf
-
-    string str_name = ACTORS.Name(ref_actor)
-
-    NOTES.Member(MEMBERS.Create_Member(ref_actor), str_name)
+    NOTES.Member(MEMBERS.Create_Member(ref_actor), ACTORS.Name(ref_actor))
 endFunction
 
 function Unmember(Actor ref_actor)
-    if MEMBERS.Should_Unclone_Member(MEMBERS.Get_Member(ref_actor))
-        Unclone(ref_actor)
-        return
-    endIf
-
-    string str_name = ACTORS.Name(ref_actor)
-
-    NOTES.Unmember(MEMBERS.Destroy_Member(ref_actor), str_name)
+    NOTES.Unmember(MEMBERS.Destroy_Member(ref_actor), ACTORS.Name(ref_actor))
 endFunction
 
 function Clone(Actor ref_actor)
-    string str_name = ACTORS.Name(ref_actor)
-
-    NOTES.Clone(MEMBERS.Create_Member(ref_actor, true), str_name)
+    NOTES.Clone(MEMBERS.Clone(ref_actor), ACTORS.Name(ref_actor))
 endFunction
 
 function Unclone(Actor ref_actor)
-    string str_name = ACTORS.Name(ref_actor)
-
-    doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
-    if !ref_member
-        NOTES.Unclone(doticu_npcp_codes.HASNT_MEMBER(), str_name)
-        return
-    endIf
-
-    if !ref_member.Is_Clone()
-        NOTES.Unclone(doticu_npcp_codes.ISNT_CLONE(), str_name)
-        return
-    endIf
-
-    NOTES.Unclone(MEMBERS.Destroy_Member(ref_actor, true), str_name)
+    NOTES.Unclone(MEMBERS.Unclone(ref_actor, true), ACTORS.Name(ref_actor))
 endFunction
 
 function Pack(int code_exec, Actor ref_actor, bool auto_create)
-    int code_return
-    string str_name = ACTORS.Name(ref_actor)
-    
     if auto_create && !MEMBERS.Has_Member(ref_actor)
-        code_return = MEMBERS.Create_Member(ref_actor)
+        int code_return = MEMBERS.Create_Member(ref_actor)
         if code_return != doticu_npcp_codes.SUCCESS()
-            NOTES.Pack(code_return, str_name)
-            return
+            return NOTES.Pack(code_return, ACTORS.Name(ref_actor))
         endIf
     endIf
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Pack(doticu_npcp_codes.HASNT_MEMBER(), str_name)
-        return
+        return NOTES.Pack(doticu_npcp_codes.MEMBER(), ACTORS.Name(ref_actor))
     endIf
 
-    NOTES.Pack(ref_member.Pack(code_exec), str_name)
+    NOTES.Pack(ref_member.Pack(code_exec), ACTORS.Name(ref_actor))
 endFunction
 
 function Stash(Actor ref_actor)
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        return NOTES.Stash(doticu_npcp_codes.HASNT_MEMBER(), ref_member.Name())
+        return NOTES.Stash(doticu_npcp_codes.MEMBER(), ref_member.Name())
     endIf
 
     NOTES.Stash(ref_member.Stash(), ref_member.Name())
@@ -162,7 +128,7 @@ function Outfit(int code_exec, Actor ref_actor, int code_outfit2, bool auto_crea
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Outfit(doticu_npcp_codes.HASNT_MEMBER(), str_name, code_outfit2)
+        NOTES.Outfit(doticu_npcp_codes.MEMBER(), str_name, code_outfit2)
         return
     endIf
 
@@ -216,7 +182,7 @@ function Resurrect(int code_exec, Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Resurrect(doticu_npcp_codes.HASNT_MEMBER(), str_name)
+        NOTES.Resurrect(doticu_npcp_codes.MEMBER(), str_name)
         return
     endIf
     
@@ -237,7 +203,7 @@ function Reanimate(int code_exec, Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Reanimate(doticu_npcp_codes.HASNT_MEMBER(), str_name)
+        NOTES.Reanimate(doticu_npcp_codes.MEMBER(), str_name)
         return
     endIf
 
@@ -254,7 +220,7 @@ function Mannequinize(Actor ref_actor, ObjectReference ref_marker, bool auto_cre
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        return NOTES.Mannequinize(doticu_npcp_codes.HASNT_MEMBER(), ACTORS.Name(ref_actor))
+        return NOTES.Mannequinize(doticu_npcp_codes.MEMBER(), ACTORS.Name(ref_actor))
     endIf
 
     NOTES.Mannequinize(ref_member.Mannequinize(ref_marker), ACTORS.Name(ref_actor))
@@ -263,7 +229,7 @@ endFunction
 function Unmannequinize(Actor ref_actor)
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        return NOTES.Unmannequinize(doticu_npcp_codes.HASNT_MEMBER(), ACTORS.Name(ref_actor))
+        return NOTES.Unmannequinize(doticu_npcp_codes.MEMBER(), ACTORS.Name(ref_actor))
     endIf
 
     NOTES.Unmannequinize(ref_member.Unmannequinize(), ACTORS.Name(ref_actor))
@@ -283,7 +249,7 @@ function Settle(Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Settle(doticu_npcp_codes.HASNT_MEMBER(), str_name)
+        NOTES.Settle(doticu_npcp_codes.MEMBER(), str_name)
         return
     endIf
 
@@ -304,7 +270,7 @@ function Unsettle( Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Unsettle(doticu_npcp_codes.HASNT_MEMBER(), str_name)
+        NOTES.Unsettle(doticu_npcp_codes.MEMBER(), str_name)
         return
     endIf
 
@@ -325,7 +291,7 @@ function Resettle(Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Resettle(doticu_npcp_codes.HASNT_MEMBER(), str_name)
+        NOTES.Resettle(doticu_npcp_codes.MEMBER(), str_name)
         return
     endIf
 
@@ -354,7 +320,7 @@ function Enthrall(Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Enthrall(doticu_npcp_codes.HASNT_MEMBER(), str_name)
+        NOTES.Enthrall(doticu_npcp_codes.MEMBER(), str_name)
         return
     endIf
 
@@ -375,7 +341,7 @@ function Unthrall(Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Unthrall(doticu_npcp_codes.HASNT_MEMBER(), str_name)
+        NOTES.Unthrall(doticu_npcp_codes.MEMBER(), str_name)
         return
     endIf
 
@@ -396,7 +362,7 @@ function Immobilize(Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Immobilize(doticu_npcp_codes.HASNT_MEMBER(), str_name)
+        NOTES.Immobilize(doticu_npcp_codes.MEMBER(), str_name)
         return
     endIf
 
@@ -417,7 +383,7 @@ function Mobilize(Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Mobilize(doticu_npcp_codes.HASNT_MEMBER(), str_name)
+        NOTES.Mobilize(doticu_npcp_codes.MEMBER(), str_name)
         return
     endIf
 
@@ -438,7 +404,7 @@ function Paralyze(Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Paralyze(doticu_npcp_codes.HASNT_MEMBER(), str_name)
+        NOTES.Paralyze(doticu_npcp_codes.MEMBER(), str_name)
         return
     endIf
     
@@ -459,7 +425,7 @@ function Unparalyze(Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Unparalyze(doticu_npcp_codes.HASNT_MEMBER(), str_name)
+        NOTES.Unparalyze(doticu_npcp_codes.MEMBER(), str_name)
         return
     endIf
 
@@ -484,7 +450,7 @@ function Stylize(Actor ref_actor, int code_style, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        return NOTES.Stylize(doticu_npcp_codes.HASNT_MEMBER(), ACTORS.Name(ref_actor), code_style)
+        return NOTES.Stylize(doticu_npcp_codes.MEMBER(), ACTORS.Name(ref_actor), code_style)
     endIf
 
     if code_style == doticu_npcp_codes.STYLE_DEFAULT()
@@ -541,7 +507,7 @@ function Vitalize(Actor ref_actor, int code_vitality, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Vitalize(doticu_npcp_codes.HASNT_MEMBER(), str_name, code_vitality)
+        NOTES.Vitalize(doticu_npcp_codes.MEMBER(), str_name, code_vitality)
         return
     endIf
 
@@ -586,7 +552,7 @@ function Follow(Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Follow(doticu_npcp_codes.HASNT_MEMBER(), str_name)
+        NOTES.Follow(doticu_npcp_codes.MEMBER(), str_name)
         return
     endIf
 
@@ -607,7 +573,7 @@ function Unfollow(Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Unfollow(doticu_npcp_codes.HASNT_MEMBER(), str_name)
+        NOTES.Unfollow(doticu_npcp_codes.MEMBER(), str_name)
         return
     endIf
 
@@ -628,7 +594,7 @@ function Sneak(int code_exec, Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Sneak(doticu_npcp_codes.HASNT_MEMBER(), str_name)
+        NOTES.Sneak(doticu_npcp_codes.MEMBER(), str_name)
         return
     endIf
 
@@ -642,7 +608,7 @@ function Sneak(int code_exec, Actor ref_actor, bool auto_create)
 
     doticu_npcp_follower ref_follower = FOLLOWERS.Get_Follower(ref_actor)
     if !ref_follower
-        NOTES.Sneak(doticu_npcp_codes.HASNT_FOLLOWER(), str_name)
+        NOTES.Sneak(doticu_npcp_codes.FOLLOWER(), str_name)
         return
     endIf
 
@@ -663,7 +629,7 @@ function Unsneak(int code_exec, Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Unsneak(doticu_npcp_codes.HASNT_MEMBER(), str_name)
+        NOTES.Unsneak(doticu_npcp_codes.MEMBER(), str_name)
         return
     endIf
 
@@ -677,7 +643,7 @@ function Unsneak(int code_exec, Actor ref_actor, bool auto_create)
 
     doticu_npcp_follower ref_follower = FOLLOWERS.Get_Follower(ref_actor)
     if !ref_follower
-        NOTES.Unsneak(doticu_npcp_codes.HASNT_FOLLOWER(), str_name)
+        NOTES.Unsneak(doticu_npcp_codes.FOLLOWER(), str_name)
         return
     endIf
 
@@ -696,7 +662,7 @@ function Saddle(int code_exec, Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        return NOTES.Saddle(doticu_npcp_codes.HASNT_MEMBER(), str_name)
+        return NOTES.Saddle(doticu_npcp_codes.MEMBER(), str_name)
     endIf
 
     if auto_create && !ref_member.Is_Follower()
@@ -708,7 +674,7 @@ function Saddle(int code_exec, Actor ref_actor, bool auto_create)
 
     doticu_npcp_follower ref_follower = FOLLOWERS.Get_Follower(ref_actor)
     if !ref_follower
-        return NOTES.Saddle(doticu_npcp_codes.HASNT_FOLLOWER(), str_name)
+        return NOTES.Saddle(doticu_npcp_codes.FOLLOWER(), str_name)
     endIf
 
     NOTES.Saddle(ref_follower.Saddle(code_exec), str_name)
@@ -726,7 +692,7 @@ function Unsaddle(int code_exec, Actor ref_actor, bool auto_create)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        return NOTES.Unsaddle(doticu_npcp_codes.HASNT_MEMBER(), str_name)
+        return NOTES.Unsaddle(doticu_npcp_codes.MEMBER(), str_name)
     endIf
 
     if auto_create && !ref_member.Is_Follower()
@@ -738,7 +704,7 @@ function Unsaddle(int code_exec, Actor ref_actor, bool auto_create)
 
     doticu_npcp_follower ref_follower = FOLLOWERS.Get_Follower(ref_actor)
     if !ref_follower
-        return NOTES.Unsaddle(doticu_npcp_codes.HASNT_FOLLOWER(), str_name)
+        return NOTES.Unsaddle(doticu_npcp_codes.FOLLOWER(), str_name)
     endIf
 
     NOTES.Unsaddle(ref_follower.Unsaddle(code_exec), str_name)
@@ -755,7 +721,7 @@ function Summon(Actor ref_actor)
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        NOTES.Summon(doticu_npcp_codes.HASNT_MEMBER(), str_name)
+        NOTES.Summon(doticu_npcp_codes.MEMBER(), str_name)
         return
     endIf
 
@@ -764,12 +730,12 @@ endFunction
 
 function Goto(Actor ref_actor)
     if !ref_actor
-        return NOTES.Goto(doticu_npcp_codes.ISNT_ACTOR(), "")
+        return NOTES.Goto(doticu_npcp_codes.ACTOR(), "")
     endIf
 
     doticu_npcp_member ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
-        return NOTES.Goto(doticu_npcp_codes.HASNT_MEMBER(), ACTORS.Name(ref_actor))
+        return NOTES.Goto(doticu_npcp_codes.MEMBER(), ACTORS.Name(ref_actor))
     endIf
 
     NOTES.Goto(ref_member.Goto(), ref_member.Name())

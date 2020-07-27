@@ -142,9 +142,9 @@ function f_Register()
 endFunction
 
 ; Public Methods
-int function Create_Member(Actor ref_actor, bool do_clone = false)
+int function Create_Member(Actor ref_actor)
     if !ref_actor
-        return doticu_npcp_codes.ISNT_ACTOR()
+        return doticu_npcp_codes.ACTOR()
     endIf
 
     if ref_actor.IsChild()
@@ -152,82 +152,109 @@ int function Create_Member(Actor ref_actor, bool do_clone = false)
     endIf
 
     if Count_Filled() >= Get_Limit()
-        ; check first so we don't have to unclone
-        return doticu_npcp_codes.HASNT_NON_MEMBER()
+        return doticu_npcp_codes.MEMBERS()
     endIf
 
     if Should_Clone_Actor(ref_actor)
-        do_clone = true
+        return Clone(ref_actor)
     endIf
 
-    bool was_dead = false
-    if do_clone
-        if ACTORS.Is_Unique(ref_actor)
-            LOGS.Create_Note("Adding clone to members...", false)
-        else
-            LOGS.Create_Note("Adding clone to members, please wait...", false)
-        endIf
+    if Has_Actor(ref_actor)
+        return doticu_npcp_codes.MEMBER()
+    endIf
 
-        ref_actor = NPCS.Clone(ref_actor)
-        if !ref_actor
-            return doticu_npcp_codes.CANT_CLONE()
-        endIf
-    else
-        if Has_Actor(ref_actor)
-            return doticu_npcp_codes.HAS_ACTOR()
-        endIf
+    LOGS.Create_Note("Adding to members...", false)
 
-        LOGS.Create_Note("Adding to members...", false)
-
+    if ACTORS.Is_Dead(ref_actor)
+        ACTORS.Resurrect(ref_actor)
         if ACTORS.Is_Dead(ref_actor)
-            was_dead = true
-            ACTORS.Resurrect(ref_actor)
-            if ACTORS.Is_Dead(ref_actor)
-                return doticu_npcp_codes.CANT_RESURRECT()
-            endIf
+            return doticu_npcp_codes.DEAD()
         endIf
-        NPCS.Register(ref_actor)
     endIf
+
+    NPCS.Register(ref_actor)
 
     doticu_npcp_member ref_member = p_From_Unfilled() as doticu_npcp_member
     if !ref_member
-        if do_clone
-            ACTORS.Delete(ref_actor)
-        elseIf was_dead
-            ACTORS.Kill(ref_actor)
-        endIf
         return doticu_npcp_codes.FAILURE()
     endIf
 
-    ref_member.f_Create(p_DATA, ref_actor, do_clone)
+    ref_member.f_Create(p_DATA, ref_actor, false)
 
     return doticu_npcp_codes.SUCCESS()
 endFunction
 
-int function Destroy_Member(Actor ref_actor, bool delete_clone = false)
+int function Destroy_Member(Actor ref_actor)
     if !ref_actor
-        return doticu_npcp_codes.ISNT_ACTOR()
+        return doticu_npcp_codes.ACTOR()
     endIf
 
     doticu_npcp_member ref_member = p_From_Actor(ref_actor) as doticu_npcp_member
     if !ref_member
-        return doticu_npcp_codes.HASNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
-    
-    bool is_clone = ref_member.Is_Clone()
+
+    if ref_member.Is_Clone()
+        return Unclone(ref_actor, false)
+    endIf
+
     ref_member.f_Destroy()
 
-    if Should_Unclone_Actor(ref_actor)
-        delete_clone = true
+    NPCS.Unregister(ref_actor)
+
+    return doticu_npcp_codes.SUCCESS()
+endFunction
+
+int function Clone(Actor ref_actor)
+    if !ref_actor
+        return doticu_npcp_codes.ACTOR()
     endIf
 
-    ; this must be done after alias destruction/unmember
-    if is_clone && delete_clone
-        ; also unregsiters
+    if ref_actor.IsChild()
+        return doticu_npcp_codes.CHILD()
+    endIf
+
+    if Count_Filled() >= Get_Limit()
+        return doticu_npcp_codes.MEMBERS()
+    endIf
+
+    LOGS.Create_Note("Adding clone to members...", false)
+
+    ref_actor = NPCS.Clone(ref_actor)
+    if !ref_actor
+        return doticu_npcp_codes.CLONE()
+    endIf
+
+    doticu_npcp_member ref_member = p_From_Unfilled() as doticu_npcp_member
+    if !ref_member
+        ACTORS.Delete(ref_actor)
+        return doticu_npcp_codes.FAILURE()
+    endIf
+
+    ref_member.f_Create(p_DATA, ref_actor, true)
+
+    return doticu_npcp_codes.SUCCESS()
+endFunction
+
+int function Unclone(Actor ref_actor, bool delete_clone)
+    if !ref_actor
+        return doticu_npcp_codes.ACTOR()
+    endIf
+
+    doticu_npcp_member ref_member = p_From_Actor(ref_actor) as doticu_npcp_member
+    if !ref_member
+        return doticu_npcp_codes.MEMBER()
+    endIf
+
+    if !ref_member.Is_Clone()
+        return doticu_npcp_codes.CLONE()
+    endIf
+
+    ref_member.f_Destroy()
+
+    if delete_clone || Should_Unclone_Actor(ref_actor)
         NPCS.Unclone(ref_actor)
     else
-        ; even though we don't remove clones from the
-        ; system we still need to unregister them
         NPCS.Unregister(ref_actor)
     endIf
 

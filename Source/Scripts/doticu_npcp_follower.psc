@@ -431,11 +431,11 @@ endFunction
 
 int function Sneak(int code_exec)
     if !Exists()
-        return doticu_npcp_codes.ISNT_FOLLOWER()
+        return doticu_npcp_codes.FOLLOWER()
     endIf
 
     if Is_Sneak()
-        return doticu_npcp_codes.IS_SNEAK()
+        return doticu_npcp_codes.IS()
     endIf
 
     p_is_sneak = true
@@ -456,11 +456,11 @@ endEvent
 
 int function Unsneak(int code_exec)
     if !Exists()
-        return doticu_npcp_codes.ISNT_FOLLOWER()
+        return doticu_npcp_codes.FOLLOWER()
     endIf
 
     if Is_Unsneak()
-        return doticu_npcp_codes.ISNT_SNEAK()
+        return doticu_npcp_codes.IS()
     endIf
 
     p_is_sneak = false
@@ -481,11 +481,11 @@ endEvent
 
 int function Saddle(int code_exec)
     if !Exists()
-        return doticu_npcp_codes.ISNT_FOLLOWER()
+        return doticu_npcp_codes.FOLLOWER()
     endIf
 
     if Is_Saddler()
-        return doticu_npcp_codes.IS_SADDLER()
+        return doticu_npcp_codes.IS()
     endIf
 
     if p_ref_actor.GetParentCell().IsInterior()
@@ -510,11 +510,11 @@ endEvent
 
 int function Unsaddle(int code_exec)
     if !Exists()
-        return doticu_npcp_codes.ISNT_FOLLOWER()
+        return doticu_npcp_codes.FOLLOWER()
     endIf
 
     if Isnt_Saddler()
-        return doticu_npcp_codes.ISNT_SADDLER()
+        return doticu_npcp_codes.IS()
     endIf
 
     p_is_saddler = false
@@ -535,7 +535,7 @@ endEvent
 
 int function Retreat()
     if !Exists()
-        return doticu_npcp_codes.ISNT_FOLLOWER()
+        return doticu_npcp_codes.FOLLOWER()
     endIf
 
     p_is_retreater = true
@@ -547,7 +547,7 @@ endFunction
 
 int function Unretreat()
     if !Exists()
-        return doticu_npcp_codes.ISNT_FOLLOWER()
+        return doticu_npcp_codes.FOLLOWER()
     endIf
 
     p_is_retreater = false

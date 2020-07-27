@@ -692,13 +692,6 @@ p_Lock()
 p_Unlock()
 endFunction
 
-int function p_Clone()
-p_Lock()
-    int code_return = MEMBERS.Create_Member(p_ref_actor, true)
-p_Unlock()
-    return code_return
-endFunction
-
 function p_Async(string str_func)
     string str_event = "doticu_npcp_member_async_" + ID()
 
@@ -796,7 +789,7 @@ endFunction
 
 int function Rename(string str_name)
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
 
     p_Rename(str_name)
@@ -806,10 +799,10 @@ endFunction
 
 int function Mobilize()
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
     if !Is_Immobile()
-        return doticu_npcp_codes.ISNT_IMMOBILE()
+        return doticu_npcp_codes.IS()
     endIf
 
     p_Mobilize()
@@ -821,10 +814,10 @@ endFunction
 
 int function Immobilize()
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
     if Is_Immobile()
-        return doticu_npcp_codes.IS_IMMOBILE()
+        return doticu_npcp_codes.IS()
     endIf
 
     p_Immobilize()
@@ -836,10 +829,10 @@ endFunction
 
 int function Settle()
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
     if Is_Settler()
-        return doticu_npcp_codes.IS_SETTLER()
+        return doticu_npcp_codes.IS()
     endIf
 
     p_Settle()
@@ -851,10 +844,10 @@ endFunction
 
 int function Resettle()
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
     if !Is_Settler()
-        return doticu_npcp_codes.ISNT_SETTLER()
+        return doticu_npcp_codes.ISNT()
     endIf
 
     p_Settle()
@@ -866,10 +859,10 @@ endFunction
 
 int function Unsettle()
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
     if !Is_Settler()
-        return doticu_npcp_codes.ISNT_SETTLER()
+        return doticu_npcp_codes.IS()
     endIf
 
     p_Unsettle()
@@ -881,13 +874,13 @@ endFunction
 
 int function Enthrall()
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
     if !ACTORS.Is_Vampire(CONSTS.ACTOR_PLAYER)
-        return doticu_npcp_codes.NON_VAMPIRE()
+        return doticu_npcp_codes.VAMPIRE()
     endIf
     if Is_Thrall()
-        return doticu_npcp_codes.IS_THRALL()
+        return doticu_npcp_codes.IS()
     endIf
 
     p_Enthrall()
@@ -899,13 +892,13 @@ endFunction
 
 int function Unthrall()
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
     if !ACTORS.Is_Vampire(CONSTS.ACTOR_PLAYER)
-        return doticu_npcp_codes.NON_VAMPIRE()
+        return doticu_npcp_codes.VAMPIRE()
     endIf
     if !Is_Thrall()
-        return doticu_npcp_codes.ISNT_THRALL()
+        return doticu_npcp_codes.IS()
     endIf
 
     p_Unthrall()
@@ -917,10 +910,10 @@ endFunction
 
 int function Paralyze()
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
     if Is_Paralyzed()
-        return doticu_npcp_codes.IS_PARALYZED()
+        return doticu_npcp_codes.IS()
     endIf
 
     p_Paralyze()
@@ -930,10 +923,10 @@ endFunction
 
 int function Unparalyze()
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
     if !Is_Paralyzed()
-        return doticu_npcp_codes.ISNT_PARALYZED()
+        return doticu_npcp_codes.IS()
     endIf
 
     p_Unparalyze()
@@ -943,13 +936,13 @@ endFunction
 
 int function Mannequinize(ObjectReference ref_marker)
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
     if Is_Mannequin()
-        return doticu_npcp_codes.IS_MANNEQUIN()
+        return doticu_npcp_codes.IS()
     endIf
     if !ref_marker
-        return doticu_npcp_codes.HASNT_MARKER()
+        return doticu_npcp_codes.MARKER()
     endIf
 
     p_Mannequinize(ref_marker)
@@ -964,10 +957,10 @@ endFunction
 
 int function Unmannequinize()
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
     if !Is_Mannequin()
-        return doticu_npcp_codes.ISNT_MANNEQUIN()
+        return doticu_npcp_codes.IS()
     endIf
 
     p_Unmannequinize()
@@ -989,10 +982,10 @@ endFunction
 
 int function Vitalize_Mortal()
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
     if Vitality() == doticu_npcp_codes.VITALITY_MORTAL()
-        return doticu_npcp_codes.VITALITY_MORTAL()
+        return doticu_npcp_codes.IS()
     endIf
 
     p_Vitalize(doticu_npcp_codes.VITALITY_MORTAL())
@@ -1002,10 +995,10 @@ endFunction
 
 int function Vitalize_Protected()
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
     if Vitality() == doticu_npcp_codes.VITALITY_PROTECTED()
-        return doticu_npcp_codes.VITALITY_PROTECTED()
+        return doticu_npcp_codes.IS()
     endIf
 
     p_Vitalize(doticu_npcp_codes.VITALITY_PROTECTED())
@@ -1015,10 +1008,10 @@ endFunction
 
 int function Vitalize_Essential()
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
     if Vitality() == doticu_npcp_codes.VITALITY_ESSENTIAL()
-        return doticu_npcp_codes.VITALITY_ESSENTIAL()
+        return doticu_npcp_codes.IS()
     endIf
 
     p_Vitalize(doticu_npcp_codes.VITALITY_ESSENTIAL())
@@ -1028,10 +1021,10 @@ endFunction
 
 int function Vitalize_Invulnerable()
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
     if Vitality() == doticu_npcp_codes.VITALITY_INVULNERABLE()
-        return doticu_npcp_codes.VITALITY_INVULNERABLE()
+        return doticu_npcp_codes.IS()
     endIf
 
     p_Vitalize(doticu_npcp_codes.VITALITY_INVULNERABLE())
@@ -1049,15 +1042,15 @@ endFunction
 
 int function Follow()
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
 
     if Is_Follower()
-        return doticu_npcp_codes.IS_FOLLOWER()
+        return doticu_npcp_codes.FOLLOWER()
     endIf
 
     if Is_Mannequin()
-        return doticu_npcp_codes.IS_MANNEQUIN()
+        return doticu_npcp_codes.MANNEQUIN()
     endIf
 
 p_Lock()
@@ -1074,11 +1067,11 @@ endFunction
 
 int function Unfollow()
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
 
     if !Is_Follower()
-        return doticu_npcp_codes.ISNT_FOLLOWER()
+        return doticu_npcp_codes.FOLLOWER()
     endIf
 
 p_Lock()
@@ -1095,11 +1088,11 @@ endFunction
 
 int function Resurrect(int code_exec)
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
 
     if ACTORS.Is_Alive(p_ref_actor)
-        return doticu_npcp_codes.IS_ALIVE()
+        return doticu_npcp_codes.IS()
     endIf
 
     if code_exec == doticu_npcp_codes.ASYNC()
@@ -1118,7 +1111,11 @@ endEvent
 
 int function Reanimate(int code_exec)
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
+    endIf
+
+    if Is_Alive()
+        return doticu_npcp_codes.ALIVE()
     endIf
 
     p_is_reanimated = true
@@ -1146,7 +1143,7 @@ endEvent
 
 int function Deanimate(int code_exec)
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
 
     p_is_reanimated = false
@@ -1174,7 +1171,7 @@ endEvent
 ; can this one actually be async?
 int function Pack(int code_exec)
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
 
     if code_exec == doticu_npcp_codes.ASYNC()
@@ -1191,7 +1188,7 @@ endEvent
 
 int function Stash()
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
 
     p_Stash()
@@ -1224,7 +1221,7 @@ endEvent
 
 int function Outfit_Member(int code_exec)
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
 
     p_Create_Outfit(doticu_npcp_codes.OUTFIT2_MEMBER())
@@ -1241,7 +1238,7 @@ endFunction
 
 int function Outfit_Settler(int code_exec)
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
 
     p_Create_Outfit(doticu_npcp_codes.OUTFIT2_SETTLER())
@@ -1258,7 +1255,7 @@ endFunction
 
 int function Outfit_Thrall(int code_exec)
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
 
     p_Create_Outfit(doticu_npcp_codes.OUTFIT2_THRALL())
@@ -1275,7 +1272,7 @@ endFunction
 
 int function Outfit_Immobile(int code_exec)
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
 
     p_Create_Outfit(doticu_npcp_codes.OUTFIT2_IMMOBILE())
@@ -1292,7 +1289,7 @@ endFunction
 
 int function Outfit_Follower(int code_exec)
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
 
     p_Create_Outfit(doticu_npcp_codes.OUTFIT2_FOLLOWER())
@@ -1309,7 +1306,7 @@ endFunction
 
 int function Outfit_Vanilla(int code_exec)
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
 
     p_Create_Outfit(doticu_npcp_codes.OUTFIT2_VANILLA())
@@ -1326,7 +1323,7 @@ endFunction
 
 int function Outfit_Default(int code_exec)
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
 
     p_Create_Outfit(doticu_npcp_codes.OUTFIT2_DEFAULT())
@@ -1343,7 +1340,7 @@ endFunction
 
 int function Outfit_Current(int code_exec)
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
 
     p_Create_Outfit(doticu_npcp_codes.OUTFIT2_CURRENT())
@@ -1360,7 +1357,7 @@ endFunction
 
 int function Get_Rating()
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
 
     return p_int_rating
@@ -1368,11 +1365,11 @@ endFunction
 
 int function Set_Rating(int int_rating)
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
 
     if int_rating < 0 || int_rating > 5
-        return doticu_npcp_codes.NON_RATING()
+        return doticu_npcp_codes.ISNT()
     endIf
 
     p_int_rating = int_rating
@@ -1405,44 +1402,36 @@ endFunction
 
 int function Unmember()
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
 
-    if MEMBERS.Should_Unclone_Actor(p_ref_actor)
-        return Unclone()
-    else
-        return MEMBERS.Destroy_Member(p_ref_actor, false)
-    endIf
+    return MEMBERS.Destroy_Member(p_ref_actor)
 endFunction
 
 int function Clone()
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
 
-    return p_Clone()
+    return MEMBERS.Clone(p_ref_actor)
 endFunction
 
 int function Unclone()
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
 
-    if !p_is_clone
-        return doticu_npcp_codes.ISNT_CLONE()
-    endIf
-
-    return MEMBERS.Destroy_Member(p_ref_actor, true)
+    return MEMBERS.Unclone(p_ref_actor, true)
 endFunction
 
 int function Summon(int distance = 120, int angle = 0)
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
 
     ; we don't allow mannequins to be removed, until they are unmannequinized
     if Is_Mannequin()
-        return doticu_npcp_codes.IS_MANNEQUIN()
+        return doticu_npcp_codes.MANNEQUIN()
     endIf
 
     ACTORS.Move_To(p_ref_actor, CONSTS.ACTOR_PLAYER, distance, angle)
@@ -1463,7 +1452,7 @@ endFunction
 
 int function Goto(int distance = 120, int angle = 0)
     if !Exists()
-        return doticu_npcp_codes.ISNT_MEMBER()
+        return doticu_npcp_codes.MEMBER()
     endIf
 
     ; this is done so that we can exit expo gracefully
