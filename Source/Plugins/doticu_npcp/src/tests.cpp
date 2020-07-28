@@ -9,6 +9,7 @@
 #include "party.h"
 #include "tests.h"
 #include "utils.h"
+#include "form_vector.h"
 
 #include "papyrus.inl"
 
@@ -54,6 +55,59 @@ namespace doticu_npcp { namespace Tests {
     const char* Test_Object()
     {
         // we need to check whether or not we are incrementing ref when we fetch the object.
+
+        return "ok";
+    }
+
+    const char* Test_Form_Vector()
+    {
+        using namespace Papyrus;
+
+        Form_Vector_t* forms;
+
+        forms = Form_Vector_t::Create(0, nullptr, 1.5f);
+        NPCP_ASSERT(forms);
+        NPCP_ASSERT(forms->Array() != nullptr);
+        NPCP_ASSERT(forms->Capacity() == 0);
+        NPCP_ASSERT(forms->Count() == 0);
+        NPCP_ASSERT(forms->Filler() == nullptr);
+        NPCP_ASSERT(forms->Grow_Rate() == 1.5f);
+        NPCP_ASSERT(forms->Vector().size() == 0);
+        Form_Vector_t::Destroy(forms);
+
+        forms = Form_Vector_t::Create(1, nullptr, 2.0f);
+        NPCP_ASSERT(forms);
+        NPCP_ASSERT(forms->Array() != nullptr);
+        NPCP_ASSERT(forms->Capacity() == 1);
+        NPCP_ASSERT(forms->Count() == 0);
+        NPCP_ASSERT(forms->Filler() == nullptr);
+        NPCP_ASSERT(forms->Grow_Rate() == 2.0f);
+        NPCP_ASSERT(forms->Vector().size() == 0);
+        forms->Push(Consts::Clone_Token());
+        NPCP_ASSERT(forms->Capacity() == 1);
+        NPCP_ASSERT(forms->Count() == 1);
+        NPCP_ASSERT(forms->Vector().size() == 1);
+        forms->Push(Consts::Blank_Weapon());
+        NPCP_ASSERT(forms->Capacity() == 2);
+        NPCP_ASSERT(forms->Count() == 2);
+        NPCP_ASSERT(forms->Vector().size() == 2);
+        NPCP_ASSERT(forms->At(0) == Consts::Clone_Token());
+        NPCP_ASSERT(forms->At(1) == Consts::Blank_Weapon());
+        NPCP_ASSERT(forms->Has(Consts::Clone_Token()) == true);
+        forms->Remove_Unstable(0);
+        NPCP_ASSERT(forms->Capacity() == 2);
+        NPCP_ASSERT(forms->Count() == 1);
+        NPCP_ASSERT(forms->Vector().size() == 1);
+        NPCP_ASSERT(forms->At(0) == Consts::Blank_Weapon());
+        NPCP_ASSERT(forms->Has(Consts::Clone_Token()) == false);
+
+        _MESSAGE("data: %p, type: %s, count: %i, capacity: %i",
+                 forms->Array(),
+                 forms->Array_Variable()->type.Class_Info()->name,
+                 forms->Count(),
+                 forms->Capacity());
+
+        Form_Vector_t::Destroy(forms);
 
         return "ok";
     }
@@ -153,6 +207,7 @@ namespace doticu_npcp { namespace Tests {
         RUN_TEST(Test_Static_Values);
         RUN_TEST(Test_Class_Info);
         RUN_TEST(Test_Object);
+        RUN_TEST(Test_Form_Vector);
         RUN_TEST(Test_Members);
         RUN_TEST(Test_Followers);
         RUN_TEST(Test_Member);

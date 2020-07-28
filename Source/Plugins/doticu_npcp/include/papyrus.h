@@ -105,34 +105,37 @@ namespace doticu_npcp { namespace Papyrus {
         Type_e Unmangled();
         Class_Info_t* Class_Info();
         String_t To_String();
-        bool Is_None();
-        bool Is_Object();
-        bool Is_String();
-        bool Is_Int();
-        bool Is_Float();
-        bool Is_Bool();
-        bool Is_None_Array();
-        bool Is_Object_Array();
-        bool Is_String_Array();
-        bool Is_Int_Array();
-        bool Is_Float_Array();
-        bool Is_Bool_Array();
+
+        Bool_t Is_None();
+        Bool_t Is_Bool();
+        Bool_t Is_Int();
+        Bool_t Is_Float();
+        Bool_t Is_String();
+        Bool_t Is_Object();
+        Bool_t Is_Array();
+        Bool_t Is_None_Array();
+        Bool_t Is_Object_Array();
+        Bool_t Is_String_Array();
+        Bool_t Is_Int_Array();
+        Bool_t Is_Float_Array();
+        Bool_t Is_Bool_Array();
     };
     STATIC_ASSERT(sizeof(Type_t) == 0x8);
 
     class Variable_t;
     class Array_t {
     public:
-        static Array_t* Create(Type_t* type, UInt32 count);
+        static Array_t* Create(Type_t* item_type, UInt32 count);
     public:
         UInt32 ref_count; // 00
         UInt32 pad_04; // 04
-        Type_t type; // 08
+        Type_t item_type; // 08
         UInt32 count; // 10
         UInt32 pad_14; // 14
         UInt64 lock; // 18
         //Variable_t variables[0]; // 20
 
+        Type_t Array_Type();
         Variable_t* Variables();
         Variable_t* Point(size_t idx);
 
@@ -174,6 +177,10 @@ namespace doticu_npcp { namespace Papyrus {
         Int_t Int();
         Float_t Float();
         String_t String();
+        Object_t* Object();
+        Array_t* Array();
+        Array_t* Object_Array();
+        Form_t* Form();
         Actor_t* Actor();
         Alias_Base_t* Alias();
         Faction_t* Faction();

@@ -13,6 +13,7 @@
 #include "consts.h"
 #include "form.h"
 #include "forms.h"
+#include "form_vector.h"
 #include "game.h"
 #include "keys.h"
 #include "main.h"
@@ -100,6 +101,7 @@ namespace doticu_npcp { namespace Main {
         REGISTER_NAMESPACE(Consts);
         REGISTER_NAMESPACE(Form);
         REGISTER_NAMESPACE(Forms);
+        REGISTER_NAMESPACE(Form_Vector);
         REGISTER_NAMESPACE(Game);
         REGISTER_NAMESPACE(Keys);
         REGISTER_NAMESPACE(Object_Ref);

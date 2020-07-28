@@ -4,9 +4,6 @@
 
 Scriptname doticu_npcp_vector_form extends ObjectReference
 
-; Private Constants
-doticu_npcp_data    p_DATA                  =  none
-
 ; Public Variables
 int property num hidden
     int function Get()
@@ -20,7 +17,6 @@ int property max hidden
 endProperty
 
 ; Private Variables
-bool                p_is_created            = false
 Form[]              p_arr_forms             =  none
 int                 p_num_forms             =     0
 int                 p_max_forms             =     0
@@ -28,15 +24,12 @@ Form                p_item_fill             =  none
 float               p_grow_rate             =   0.0
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA, int init_max = 0, Form item_fill = none, float grow_rate = 1.5)
-    p_DATA = DATA
-
+function f_Create(int init_max = 0, Form item_fill = none, float grow_rate = 1.5)
     if grow_rate < 1.0
         ; will only grow by 1 idx at a time
         grow_rate = 1.0
     endIf
 
-    p_is_created = true
     p_arr_forms = Utility.CreateFormArray(init_max, item_fill)
     p_num_forms = 0
     p_max_forms = init_max
@@ -50,10 +43,6 @@ function f_Destroy()
     p_max_forms = 0
     p_num_forms = 0
     p_arr_forms = Utility.CreateFormArray(1, none); p_arr_forms = none throws!
-    p_is_created = false
-endFunction
-
-function f_Register()
 endFunction
 
 ; Private Methods
@@ -78,17 +67,6 @@ function Push(Form item)
     endIf
     p_arr_forms[p_num_forms] = item
     p_num_forms += 1
-endFunction
-
-Form function Pop()
-    if p_num_forms > 0
-        p_num_forms -= 1
-        Form form_item = p_arr_forms[p_num_forms]
-        p_arr_forms[p_num_forms] = p_item_fill
-        return form_item
-    else
-        return none
-    endIf
 endFunction
 
 function Remove_At_Unstable(int idx)
@@ -119,36 +97,12 @@ Form function Set(int idx, Form item)
     endIf
 endFunction
 
-Form function Unset(int idx)
-    if idx > -1 && idx < p_num_forms
-        Form item_old = p_arr_forms[idx]
-        p_arr_forms[idx] = p_item_fill
-        return item_old
-    else
-        return none
-    endIf
-endFunction
-
 bool function Has(Form item)
     return p_arr_forms.Find(item, 0) > -1
 endFunction
 
 int function Find(Form item)
     return p_arr_forms.Find(item, 0)
-endFunction
-
-function Fit()
-    if p_num_forms > 0
-        p_arr_forms = Get_Array()
-    else
-        p_arr_forms = Utility.CreateFormArray(1, none)
-    endIf
-    p_max_forms = p_num_forms
-endFunction
-
-function Empty()
-    p_num_forms = 0
-    p_arr_forms = Utility.CreateFormArray(p_max_forms, p_item_fill)
 endFunction
 
 function Print()

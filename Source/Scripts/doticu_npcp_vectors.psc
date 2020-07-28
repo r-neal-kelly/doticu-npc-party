@@ -45,11 +45,8 @@ endFunction
 
 ; Public Methods
 doticu_npcp_vector_form function Create_Form_Vector(int init_max = 0, Form item_fill = none, float grow_rate = 1.5)
-    doticu_npcp_vector_form ref_vec = MARKER_STORAGE.PlaceAtMe(MISC_VECTOR_FORM as Form, 1, false, false) as doticu_npcp_vector_form
-
-    ref_vec.f_Create(p_DATA, init_max, item_fill, grow_rate)
-    ref_vec.f_Register()
-
+    doticu_npcp_vector_form ref_vec = MARKER_STORAGE.PlaceAtMe(MISC_VECTOR_FORM as Form, 1, true, false) as doticu_npcp_vector_form
+    ref_vec.f_Create(init_max, item_fill, grow_rate)
     return ref_vec
 endFunction
 

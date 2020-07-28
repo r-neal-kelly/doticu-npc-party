@@ -145,6 +145,7 @@
     <ClCompile Include="src\codes.cpp" />
     <ClCompile Include="src\consts.cpp" />
     <ClCompile Include="src\filter.cpp" />
+    <ClCompile Include="src\form_vector.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\keys.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -186,6 +187,7 @@
     <ClInclude Include="include\form.h" />
     <ClInclude Include="include\actor2.h" />
     <ClInclude Include="include\forms.h" />
+    <ClInclude Include="include\form_vector.h" />
     <ClInclude Include="include\game.h" />
     <ClInclude Include="include\keys.h" />
     <ClInclude Include="include\main.h" />

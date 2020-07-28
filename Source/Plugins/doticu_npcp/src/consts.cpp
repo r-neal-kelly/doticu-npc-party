@@ -122,6 +122,8 @@ namespace doticu_npcp { namespace Consts {
 
         MARKER_STORAGE                      = 0x114F9D,
 
+        MISC_VECTOR_FORM                    = 0x15C1B2,
+
         QUEST_DATA_STATIC                   = 0x0FBA9A,
         QUEST_DATA_DYNAMIC                  = 0x003DFF,
         QUEST_MEMBERS                       = 0x00184C,
@@ -330,6 +332,14 @@ namespace doticu_npcp { namespace Consts {
     {
         static Misc_t* value =
             static_cast<Misc_t*>(Game::NPCP_Form(TOKEN_FOLLOWER_SNEAK));
+        NPCP_ASSERT(value);
+        return value;
+    }
+
+    Misc_t* Form_Vector()
+    {
+        static Misc_t* value = static_cast<Misc_t*>
+            (Game::NPCP_Form(MISC_VECTOR_FORM));
         NPCP_ASSERT(value);
         return value;
     }

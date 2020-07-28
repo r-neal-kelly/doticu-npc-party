@@ -57,6 +57,7 @@ namespace doticu_npcp { namespace Consts {
     Misc_t* Essential_Vitality_Token();
     Misc_t* Invulnerable_Vitality_Token();
     Misc_t* Sneak_Follower_Token();
+    Misc_t* Form_Vector();
 
     Quest_t* Static_Data_Quest();
     Quest_t* Dynamic_Data_Quest();

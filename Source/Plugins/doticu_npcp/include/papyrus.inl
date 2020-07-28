@@ -110,7 +110,13 @@ namespace doticu_npcp { namespace Papyrus {
 
     inline Class_Info_t* Type_t::Class_Info()
     {
-        return reinterpret_cast<Class_Info_t*>(mangled);
+        if (Is_Object()) {
+            return reinterpret_cast<Class_Info_t*>(mangled);
+        } else if (Is_Object_Array()) {
+            return reinterpret_cast<Class_Info_t*>(mangled - 1);
+        } else {
+            return nullptr;
+        }
     }
 
     inline String_t Type_t::To_String()
@@ -132,79 +138,94 @@ namespace doticu_npcp { namespace Papyrus {
         };
     }
 
-    inline bool Type_t::Is_None()
+    inline Bool_t Type_t::Is_None()
     {
         return Unmangled() == NONE;
     }
 
-    inline bool Type_t::Is_Object()
-    {
-        return Unmangled() == OBJECT;
-    }
-
-    inline bool Type_t::Is_String()
-    {
-        return Unmangled() == STRING;
-    }
-
-    inline bool Type_t::Is_Int()
-    {
-        return Unmangled() == INT;
-    }
-
-    inline bool Type_t::Is_Float()
-    {
-        return Unmangled() == FLOAT;
-    }
-
-    inline bool Type_t::Is_Bool()
+    inline Bool_t Type_t::Is_Bool()
     {
         return Unmangled() == BOOL;
     }
 
-    inline bool Type_t::Is_None_Array()
+    inline Bool_t Type_t::Is_Int()
+    {
+        return Unmangled() == INT;
+    }
+
+    inline Bool_t Type_t::Is_Float()
+    {
+        return Unmangled() == FLOAT;
+    }
+
+    inline Bool_t Type_t::Is_String()
+    {
+        return Unmangled() == STRING;
+    }
+
+    inline Bool_t Type_t::Is_Object()
+    {
+        return Unmangled() == OBJECT;
+    }
+
+    inline Bool_t Type_t::Is_Array()
+    {
+        Type_e unmangled = Unmangled();
+        return unmangled >= NONE_ARRAY && unmangled <= BOOL_ARRAY;
+    }
+
+    inline Bool_t Type_t::Is_None_Array()
     {
         return Unmangled() == NONE_ARRAY;
     }
 
-    inline bool Type_t::Is_Object_Array()
-    {
-        return Unmangled() == OBJECT_ARRAY;
-    }
-
-    inline bool Type_t::Is_String_Array()
-    {
-        return Unmangled() == STRING_ARRAY;
-    }
-
-    inline bool Type_t::Is_Int_Array()
-    {
-        return Unmangled() == INT_ARRAY;
-    }
-
-    inline bool Type_t::Is_Float_Array()
-    {
-        return Unmangled() == FLOAT_ARRAY;
-    }
-
-    inline bool Type_t::Is_Bool_Array()
+    inline Bool_t Type_t::Is_Bool_Array()
     {
         return Unmangled() == BOOL_ARRAY;
     }
 
+    inline Bool_t Type_t::Is_Int_Array()
+    {
+        return Unmangled() == INT_ARRAY;
+    }
+
+    inline Bool_t Type_t::Is_Float_Array()
+    {
+        return Unmangled() == FLOAT_ARRAY;
+    }
+
+    inline Bool_t Type_t::Is_String_Array()
+    {
+        return Unmangled() == STRING_ARRAY;
+    }
+
+    inline Bool_t Type_t::Is_Object_Array()
+    {
+        return Unmangled() == OBJECT_ARRAY;
+    }
+
     // Array_t
 
-    inline Array_t* Array_t::Create(Type_t* type, UInt32 count)
+    inline Array_t* Array_t::Create(Type_t* item_type, UInt32 count)
     {
-        if (type) {
+        if (item_type) {
             Array_t* arr;
-            if (Virtual_Machine_t::Self()->Create_Array(type, count, &arr)) {
+            if (Virtual_Machine_t::Self()->Create_Array(item_type, count, &arr)) {
                 return arr;
             } else {
                 return nullptr;
             }
         } else {
             return nullptr;
+        }
+    }
+
+    inline Type_t Array_t::Array_Type()
+    {
+        if (item_type.mangled < Type_t::NONE_ARRAY) {
+            return item_type.mangled + Type_t::NONE_ARRAY;
+        } else {
+            return item_type.mangled + 1;
         }
     }
 
@@ -310,6 +331,46 @@ namespace doticu_npcp { namespace Papyrus {
             return data.str;
         } else {
             return "";
+        }
+    }
+
+    inline Object_t* Variable_t::Object()
+    {
+        if (type.Is_Object()) {
+            return data.obj;
+        } else {
+            return nullptr;
+        }
+    }
+
+    inline Array_t* Variable_t::Array()
+    {
+        if (type.Is_Array()) {
+            return data.arr;
+        } else {
+            return nullptr;
+        }
+    }
+
+    inline Array_t* Variable_t::Object_Array()
+    {
+        if (type.Is_Object_Array()) {
+            return data.arr;
+        } else {
+            return nullptr;
+        }
+    }
+
+    inline Form_t* Variable_t::Form()
+    {
+        if (type.Is_Object()) {
+            if (data.obj) {
+                return static_cast<Form_t*>(Policy()->Resolve(kFormType_None, data.obj->Handle()));
+            } else {
+                return nullptr;
+            }
+        } else {
+            return nullptr;
         }
     }
 
@@ -433,10 +494,8 @@ namespace doticu_npcp { namespace Papyrus {
     {
         if (value) {
             Destroy();
-            Variable_t temp;
-            temp.type = value->type;
-            temp.data.arr = value;
-            Copy(&temp); // this may do stuff we don't
+            type = value->Array_Type();
+            data.arr = value;
         } else {
             None();
         }
@@ -600,17 +659,7 @@ namespace doticu_npcp { namespace Papyrus {
     template <>
     inline void Variable_t::Pack(Vector_t<Array_t*>& values)
     {
-        // not tested, may not work with Virtual_Machine_t::Create_Array
-        NPCP_ASSERT(values.size() > 0);
-        Type_t type(values[0]->type);
-        Array_t* arr = Array_t::Create(&type, values.size());
-        NPCP_ASSERT(arr);
-
-        for (size_t idx = 0, count = arr->count; idx < count; idx += 1) {
-            arr->Point(idx)->Pack(values[idx]);
-        }
-
-        Array(arr);
+        NPCP_ASSERT(false);
     }
 
     // Class_Info_t

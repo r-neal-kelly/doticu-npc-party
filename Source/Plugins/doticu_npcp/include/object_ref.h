@@ -62,8 +62,8 @@ namespace doticu_npcp { namespace Object_Ref {
     Reference_t* Place_At_Me(Reference_t* me,
                              Form_t* to_place,
                              Int_t count,
-                             Bool_t force_persist,
-                             Bool_t initially_disabled);
+                             Bool_t force_persist = true,
+                             Bool_t initially_disabled = false);
 
     Reference_t* From_Handle(Reference_Handle_t handle);
 
