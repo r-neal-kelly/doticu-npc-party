@@ -33,6 +33,8 @@ namespace doticu_npcp { namespace Consts {
     Faction_t* DLC1_Vampire_Feed_No_Crime_Faction();
     
     // doticu_npc_party.esp
+    Armor_t* Blank_Armor();
+
     Faction_t* Member_Faction();
     Faction_t* Horse_Faction();
 
@@ -59,8 +61,11 @@ namespace doticu_npcp { namespace Consts {
     Misc_t* Sneak_Follower_Token();
     Misc_t* Form_Vector();
 
+    Outfit_t* Empty_Outfit();
+
     Quest_t* Static_Data_Quest();
     Quest_t* Dynamic_Data_Quest();
+    Quest_t* Funcs_Quest();
     Quest_t* Members_Quest();
     Quest_t* Followers_Quest();
     Quest_t* Control_Quest();

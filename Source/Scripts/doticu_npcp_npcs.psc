@@ -49,7 +49,7 @@ bool                    p_is_created        = false
 bool                    p_is_locked         = false
 
 doticu_npcp_vector_form p_vec_bases         =  none; the real base of a npc, our key
-doticu_npcp_vector_form p_vec_locks         =  none; for parallel processing
+doticu_npcp_vector_form p_vec_locks         =  none; for parallel processing (to be removed once we move to c++)
 doticu_npcp_vector_form p_vec_vec_origs     =  none; vecs of original members
 doticu_npcp_vector_form p_vec_vec_clones    =  none; vecs of cloned npcs, members or not
 doticu_npcp_vector_form p_vec_outfits_def   =  none; default vanilla outfits
@@ -471,8 +471,6 @@ p_Unlock()
         ref_clone.Delete()
         return none
     endIf
-
-    OUTFITS.Outfit_Clone(ref_clone, ref_actor)
 
     return ref_clone
 endFunction

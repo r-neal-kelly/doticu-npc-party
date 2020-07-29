@@ -13,6 +13,7 @@
 #include "form.h"
 #include "object_ref.h"
 #include "outfit.h"
+#include "player.h"
 #include "utils.h"
 #include "xdata.h"
 #include "xentry.h"
@@ -34,20 +35,13 @@ namespace doticu_npcp { namespace Actor2 {
         return Object_Ref::Get_Name(actor);
     }
 
-    BGSOutfit *Get_Outfit(Actor *actor, bool get_sleep_outfit) {
-        if (!actor) {
-            return NULL;
-        }
-
-        TESNPC *base = DYNAMIC_CAST(actor->baseForm, TESForm, TESNPC);
-        if (!base) {
-            return NULL;
-        }
-
-        if (get_sleep_outfit) {
-            return base->sleepOutfit;
-        } else {
+    Outfit_t* Base_Outfit(Actor* actor)
+    {
+        if (actor) {
+            Actor_Base_t* base = Dynamic_Base(actor);
             return base->defaultOutfit;
+        } else {
+            return nullptr;
         }
     }
 
@@ -1275,6 +1269,77 @@ namespace doticu_npcp { namespace Actor2 {
         if (actor) {
             Actor_State_t* actor_state = reinterpret_cast<Actor_State_t*>(&actor->actorState);
             actor_state->Stop_Movement();
+        }
+    }
+
+    Actor_Base_t* Dynamic_Base(Actor_t* actor)
+    {
+        NPCP_ASSERT(actor);
+        Actor_Base_t* dynamic_base = static_cast<Actor_Base_t*>(actor->baseForm);
+        NPCP_ASSERT(dynamic_base);
+        return dynamic_base;
+    }
+
+    Actor_Base_t* Real_Base(Actor_t* actor)
+    {
+        if (actor) {
+            Actor_Base_t* real_base = Dynamic_Base(actor);
+            while (real_base->nextTemplate) {
+                real_base = real_base->nextTemplate;
+            }
+            return real_base;
+        } else {
+            return nullptr;
+        }
+    }
+
+    void Stop_Combat(Actor_t* actor)
+    {
+        if (actor) {
+            actor->Stop_Combat();
+            actor->Update_Combat(); // maybe not necessary?
+        }
+    }
+
+    void Stop_Combat_Alarm(Actor_t* actor)
+    {
+        if (actor) {
+            Process_Lists_t::Self()->Stop_Combat_Alarm(actor);
+        }
+    }
+
+    void Pacify(Actor_t* actor)
+    {
+        if (actor) {
+            Actor_Value_Owner(actor)->Set_Actor_Value(Actor_Value_t::AGGRESSION, 0.0f);
+            Stop_Combat(actor);
+            Stop_Combat_Alarm(actor);
+            Evaluate_Package(actor);
+        }
+    }
+
+    Actor_t* Clone(Actor_t* actor, Reference_t* marker)
+    {
+        if (actor) {
+            if (!marker) {
+                if (Is_AI_Enabled(actor) && Object_Ref::Is_Near_Player(actor, 1024.0f)) {
+                    marker = actor;
+                } else {
+                    marker = Player::Actor();
+                }
+            }
+            
+            Actor_Base_t* real_base = Real_Base(actor);
+            NPCP_ASSERT(real_base);
+            Actor_t* clone = static_cast<Actor_t*>(Object_Ref::Place_At_Me(marker, real_base, 1));
+            NPCP_ASSERT(clone);
+
+            Pacify(clone);
+            Object_Ref::Rename(clone, (std::string("Clone of ") + Get_Name(clone)).c_str());
+
+            return clone;
+        } else {
+            return nullptr;
         }
     }
 

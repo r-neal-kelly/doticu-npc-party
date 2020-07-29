@@ -127,4 +127,23 @@ namespace doticu_npcp {
         _MESSAGE("}");
     }
 
+    Process_Lists_t* Process_Lists_t::Self()
+    {
+        static auto self = reinterpret_cast
+            <Process_Lists_t**>
+            (RelocationManager::s_baseAddr + Offsets::Process_Lists::SELF);
+        NPCP_ASSERT(self);
+        return *self;
+    }
+
+    void Process_Lists_t::Stop_Combat_Alarm(Actor_t* actor, Bool_t dont_end_alarm)
+    {
+        static auto stop_combat_alarm = reinterpret_cast
+            <void (*)(Process_Lists_t*, Actor_t*, Bool_t)>
+            (RelocationManager::s_baseAddr + Offsets::Process_Lists::STOP_COMBAT_ALARM);
+        if (actor) {
+            stop_combat_alarm(this, actor, dont_end_alarm);
+        }
+    }
+
 }

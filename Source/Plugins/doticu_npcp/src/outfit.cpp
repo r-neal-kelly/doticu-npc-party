@@ -3,67 +3,55 @@
 */
 
 #include "outfit.h"
+#include "utils.h"
 
 namespace doticu_npcp { namespace Outfit {
 
+    void Add_Item(Outfit_t* outfit, Form_t* form)
+    {
+        NPCP_ASSERT(outfit && form);
+        tArray<Form_t*>& items = outfit->armorOrLeveledItemArray;
+        if (items.GetItemIndex(form) < 0) {
+            items.Push(form);
+        }
+    }
 
+    void Remove_Item(Outfit_t* outfit, Form_t* form)
+    {
+        NPCP_ASSERT(outfit && form);
+        tArray<Form_t*>& items = outfit->armorOrLeveledItemArray;
+        SInt64 item_idx = items.GetItemIndex(form);
+        if (item_idx > -1) {
+            items.Remove(static_cast<UInt32>(item_idx));
+        }
+    }
 
 }}
 
 namespace doticu_npcp { namespace Outfit { namespace Exports {
 
-    void Add_Item(StaticFunctionTag *, BGSOutfit *outfit, TESForm *form_item) {
-        // changes are NOT lost on load game, but they are lost after changing outfits.
-        if (!outfit || !form_item) {
-            _MESSAGE("    Outfit_Add_Item: missing param");
-            return;
-        }
-
-        tArray<TESForm *> *arr_items = &outfit->armorOrLeveledItemArray;
-        if (!arr_items) {
-            _MESSAGE("    Outfit_Add_Item: outfit is missing armorOrLeveledItemArray");
-            return;
-        }
-
-        SInt64 idx_item = arr_items->GetItemIndex(form_item);
-        if (idx_item < 0) {
-            arr_items->Push(form_item);
-        }
+    void Add_Item(Selfless_t*, Outfit_t* outfit, Form_t* form)
+    {
+        return Outfit::Add_Item(outfit, form);
     }
 
-    void Remove_Item(StaticFunctionTag *, BGSOutfit *outfit, TESForm *form_item) {
-        // changes are NOT lost on load game, but they are lost after changing outfits.
-        if (!outfit || !form_item) {
-            return;
-        }
-
-        tArray<TESForm *> *arr_items = &outfit->armorOrLeveledItemArray;
-        if (!arr_items) {
-            return;
-        }
-
-        SInt64 idx_item = arr_items->GetItemIndex(form_item);
-        if (idx_item > -1) {
-            // as long as it's greater than -1, it should be fine to cast to unsigned
-            arr_items->Remove((UInt64)idx_item);
-        }
+    void Remove_Item(Selfless_t*, Outfit_t* outfit, Form_t* form)
+    {
+        return Outfit::Remove_Item(outfit, form);
     }
 
     bool Register(VMClassRegistry *registry) {
-        registry->RegisterFunction(
-            new NativeFunction2 <StaticFunctionTag, void, BGSOutfit *, TESForm *>(
-                "Outfit_Add_Item",
-                "doticu_npcp",
-                Add_Item,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction2 <StaticFunctionTag, void, BGSOutfit *, TESForm *>(
-                "Outfit_Remove_Item",
-                "doticu_npcp",
-                Remove_Item,
-                registry)
-        );
+        #define ADD_GLOBAL(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                               \
+            ADD_CLASS_METHOD("doticu_npcp", Selfless_t,                 \
+                             STR_FUNC_, ARG_NUM_,                       \
+                             RETURN_, Exports::METHOD_, __VA_ARGS__);   \
+        W
+
+        ADD_GLOBAL("Outfit_Add_Item", 2, void, Add_Item, Outfit_t*, Form_t*);
+        ADD_GLOBAL("Outfit_Remove_Item", 2, void, Remove_Item, Outfit_t*, Form_t*);
+
+        #undef ADD_GLOBAL
 
         return true;
     }

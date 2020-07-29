@@ -63,7 +63,6 @@ Container                   p_CONTAINER_OUTFIT_THRALL               = none
 Container                   p_CONTAINER_OUTFIT_IMMOBILE             = none
 Container                   p_CONTAINER_OUTFIT_FOLLOWER             = none
 Outfit                      p_OUTFIT_EMPTY                          = none
-Outfit                      p_OUTFIT_TEMP                           = none
 Quest                       p_QUEST_BARD_SONGS                      = none
 VoiceType                   p_VOICE_FEMALE_COWARD                   = none
 Weapon                      p_WEAPON_BLANK                          = none
@@ -774,17 +773,6 @@ Outfit property OUTFIT_EMPTY
     function Set(Outfit val)
         if p_OUTFIT_EMPTY == none
             p_OUTFIT_EMPTY = val
-        endIf
-    endFunction
-endProperty
-
-Outfit property OUTFIT_TEMP
-    Outfit function Get()
-        return p_OUTFIT_TEMP
-    endFunction
-    function Set(Outfit val)
-        if p_OUTFIT_TEMP == none
-            p_OUTFIT_TEMP = val
         endIf
     endFunction
 endProperty

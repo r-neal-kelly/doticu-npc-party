@@ -5,6 +5,7 @@
 #pragma once
 
 #include "consts.h"
+#include "form_vector.h"
 #include "papyrus.h"
 #include "papyrus.inl"
 
@@ -55,20 +56,49 @@ namespace doticu_npcp { namespace Party {
         };
     }
 
-    class NPCs_t : public Quest_t {
+    class NPCS_t : public Quest_t {
     public:
+        static String_t Class_Name();
+        static Class_Info_t* Class_Info();
+        static Members_t* Self();
+        static Object_t* Object();
+    public:
+        Variable_t* Variable(String_t variable_name);
+        Variable_t* Bases_Variable();
+        Variable_t* Original_Vectors_Variable();
+        Variable_t* Clone_Vectors_Variable();
+        Variable_t* Default_Outfits_Variable();
+
+        Form_Vector_t* Bases();
+        Form_Vector_t* Original_Vectors();
+        Form_Vector_t* Clone_Vectors();
+        Form_Vector_t* Default_Outfits();
+
+        Actor_Base_t* Base(Actor_t* actor);
+        Int_t Base_Idx(Actor_t* actor);
+        Form_Vector_t* Originals(Int_t base_idx);
+        Form_Vector_t* Clones(Int_t base_idx);
+        Outfit_t* Default_Outfit(Int_t base_idx);
+
         Bool_t Has_Base(Actor_t* actor);
-        Bool_t Has_Original(Actor_t* actor);
-        Bool_t Has_Clone(Actor_t* actor);
+        Bool_t Has_Original(Int_t base_idx, Actor_t* actor);
+        Bool_t Has_Clone(Int_t base_idx, Actor_t* actor);
 
-        void Add_Base(Actor_t* actor);
-        void Remove_Base(Actor_t* actor);
-        void Try_Remove_Base(Actor_t* actor);
+        Int_t Add_Base_If_Needed(Actor_t* actor_with_base, Actor_t* actor_with_outfit);
+        void Remove_Base_If_Needed(Int_t base_idx);
 
-        Bool_t Register(Actor_t* actor);
-        Bool_t Unregister(Actor_t* actor);
-        Actor_t* Clone(Actor_t* actor);
-        Bool_t Unclone(Actor_t* actor);
+        void Add_Original(Actor_t* original);
+        void Remove_Original(Actor_t* original);
+        Actor_t* Add_Clone(Actor_t* original);
+        void Remove_Clone(Actor_t* clone);
+
+        Vector_t<Actor_t*> Originals(Actor_t* actor);
+        Vector_t<Actor_t*> Clones(Actor_t* actor);
+        Outfit_t* Default_Outfit(Actor_t* actor);
+        void Default_Outfit(Actor_t* actor, Outfit_t* default_outfit);
+
+        Bool_t Is_Original(Actor_t* actor);
+        Bool_t Is_Clone(Actor_t* actor);
     };
 
     namespace NPCS { namespace Exports {

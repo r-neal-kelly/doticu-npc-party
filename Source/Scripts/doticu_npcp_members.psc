@@ -25,6 +25,11 @@ doticu_npcp_npcs property NPCS hidden
         return p_DATA.MODS.FUNCS.NPCS
     endFunction
 endProperty
+doticu_npcp_outfits property OUTFITS hidden
+    doticu_npcp_outfits function Get()
+        return p_DATA.MODS.FUNCS.OUTFITS
+    endFunction
+endProperty
 doticu_npcp_tasklists property TASKLISTS hidden
     doticu_npcp_tasklists function Get()
         return p_DATA.MODS.FUNCS.TASKLISTS
@@ -142,6 +147,7 @@ function f_Register()
 endFunction
 
 ; Public Methods
+; these should be renamed to Add_Original, Remove_Original, Add_Clone, Remove_Clone
 int function Create_Member(Actor ref_actor)
     if !ref_actor
         return doticu_npcp_codes.ACTOR()
@@ -220,18 +226,19 @@ int function Clone(Actor ref_actor)
 
     LOGS.Create_Note("Adding clone to members...", false)
 
-    ref_actor = NPCS.Clone(ref_actor)
-    if !ref_actor
+    Actor ref_clone = NPCS.Clone(ref_actor)
+    if !ref_clone
         return doticu_npcp_codes.CLONE()
     endIf
+    OUTFITS.Outfit_Clone(ref_clone, ref_actor)
 
     doticu_npcp_member ref_member = p_From_Unfilled() as doticu_npcp_member
     if !ref_member
-        ACTORS.Delete(ref_actor)
+        ACTORS.Delete(ref_clone)
         return doticu_npcp_codes.FAILURE()
     endIf
 
-    ref_member.f_Create(p_DATA, ref_actor, true)
+    ref_member.f_Create(p_DATA, ref_clone, true)
 
     return doticu_npcp_codes.SUCCESS()
 endFunction
@@ -254,8 +261,6 @@ int function Unclone(Actor ref_actor, bool delete_clone)
 
     if delete_clone || Should_Unclone_Actor(ref_actor)
         NPCS.Unclone(ref_actor)
-    else
-        NPCS.Unregister(ref_actor)
     endIf
 
     return doticu_npcp_codes.SUCCESS()

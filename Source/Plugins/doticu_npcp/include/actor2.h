@@ -13,8 +13,8 @@ namespace doticu_npcp { namespace Actor2 {
     const char *Get_Ref_Name(Actor *actor);
     const char *Get_Name(Actor *actor);
 
-    BGSOutfit *Get_Outfit(Actor *ref_actor, bool get_sleep_outfit);
-    void Set_Outfit(Actor *ref_actor, BGSOutfit *outfit, bool is_sleep_outfit);
+    Outfit_t* Base_Outfit(Actor* actor);
+    void Set_Outfit(Actor *ref_actor, BGSOutfit *outfit, bool is_sleep_outfit); // we can use this to tell us when another mod has changed the outfit
 
     void Set_Outfit2(Actor *actor, TESForm *linchpin, TESObjectREFR *vanilla, TESObjectREFR *custom, TESObjectREFR *transfer);
     void Copy_Outfit2_Partition(Actor *actor, TESForm *linchpin, TESObjectREFR *outfit2_partition);
@@ -88,6 +88,13 @@ namespace doticu_npcp { namespace Actor2 {
     void Disable_Havok_Collision(Actor_t* actor);
 
     void Stop_Movement(Actor_t* actor);
+
+    Actor_Base_t* Dynamic_Base(Actor_t* actor);
+    Actor_Base_t* Real_Base(Actor_t* actor);
+
+    void Pacify(Actor_t* actor);
+
+    Actor_t* Clone(Actor_t* actor, Reference_t* marker = nullptr);
 
 }}
 

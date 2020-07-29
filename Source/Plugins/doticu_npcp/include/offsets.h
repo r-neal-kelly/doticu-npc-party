@@ -53,6 +53,13 @@ namespace doticu_npcp { namespace Offsets {
 
     }
 
+    namespace Process_Lists {
+
+        constexpr uintptr_t SELF                        = 0x01EBEAD0; // 514167
+        constexpr uintptr_t STOP_COMBAT_ALARM           = 0x006D9490; // 40330
+
+    }
+
     namespace Quest {
 
         //constexpr uintptr_t CLEAR_ALL_ALIASES         = 0x003745D0; // 24520

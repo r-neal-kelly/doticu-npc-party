@@ -41,7 +41,9 @@ namespace doticu_npcp {
     typedef TESObjectMISC   Misc_t;
     typedef TESObjectSTAT   Static_t;
     typedef TESObjectWEAP   Weapon_t;
+    typedef TESObjectARMO   Armor_t;
     typedef TESFaction      Faction_t;
+    typedef BGSOutfit       Outfit_t;
 
     typedef Actor           Actor_t;
     typedef TESNPC          Actor_Base_t;
@@ -347,6 +349,13 @@ namespace doticu_npcp {
 
             Bool_t Has_Key(UInt16 key);
         };
+    };
+
+    class Process_Lists_t {
+    public:
+        static Process_Lists_t* Self();
+    public:
+        void Stop_Combat_Alarm(Actor_t* actor, Bool_t dont_end_alarm = false);
     };
 
 }
