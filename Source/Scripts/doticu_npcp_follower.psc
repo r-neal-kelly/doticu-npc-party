@@ -252,8 +252,6 @@ p_Lock()
 
     ACTORS.Token(p_ref_actor, CONSTS.TOKEN_FOLLOWER, ID() + 1)
 
-    CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(1)
-
     ; we can't do away with this, because it controls dialogue api in mods.
     ; however, maybe we could set it dynamically somehow?
     p_ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, 3)

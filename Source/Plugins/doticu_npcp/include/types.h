@@ -211,7 +211,7 @@ namespace doticu_npcp {
     class Actor_t2 {
     public:
         enum Form_Flags : UInt32 {
-            HASNT_HAVOK_COLLISION = 4,
+            HASNT_HAVOK_COLLISION = 4, // checkout 29 on Character type
             IS_INITIALLY_DISABLED = 27,
         };
 
@@ -259,6 +259,10 @@ namespace doticu_npcp {
 
         enum Flags : UInt32 {
             // ...
+            IS_ESSENTIAL = 1 << 6,
+            // ...
+            IS_PROTECTED = 1 << 10,
+            // ...
         };
 
         enum Fill_Types : UInt16 {
@@ -288,7 +292,7 @@ namespace doticu_npcp {
     class Alias_Reference_t : public Alias_Base_t {
     public:
         enum {
-            kTypeID = kFormType_ReferenceAlias
+            kTypeID = kFormType_ReferenceAlias,
         };
 
         struct Forced_Fill {
@@ -357,6 +361,28 @@ namespace doticu_npcp {
     public:
         void Stop_Combat_Alarm(Actor_t* actor, Bool_t dont_end_alarm = false);
     };
+
+    class Global_t : public Form_t {
+    public:
+        enum {
+            kTypeID = kFormType_Global,
+        };
+
+        enum Type : char {
+            FLOAT = 'f',
+            SHORT = 's',
+            LONG = 'l',
+        };
+    public:
+        virtual ~Global_t();
+
+        BSString editor_id; // 20
+        char type; // 30
+        UInt8 pad_31; // 31
+        UInt16 pad_32; // 32
+        Float_t value; // 34 (static cast to other types)
+    };
+    STATIC_ASSERT(sizeof(Global_t) == 0x38);
 
 }
 

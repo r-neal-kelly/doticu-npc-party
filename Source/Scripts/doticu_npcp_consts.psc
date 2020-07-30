@@ -1606,3 +1606,5 @@ string property KEY_FS_RESURRECT            = "Followers: Resurrect"        auto
 function Log_Variables() native
 function Log_Defaults() native
 function Log_Properties() native
+
+Quest function Follower_Dialogue_Quest() native global

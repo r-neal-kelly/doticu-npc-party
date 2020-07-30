@@ -167,10 +167,6 @@ int function f_Create_Follower(Actor ref_actor)
     ref_follower.f_Create(p_DATA, ref_actor)
     ref_follower.f_Register()
 
-    ; this value needs to be 1 whenever there is a follower
-    ; because the engine won't update player teammates when 0
-    CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(1)
-
     return doticu_npcp_codes.SUCCESS()
 endFunction
 
@@ -186,13 +182,6 @@ int function f_Destroy_Follower(Actor ref_actor)
 
     ref_follower.f_Unregister()
     ref_follower.f_Destroy()
-
-    if Count_Filled() == 0
-        ; this would conflict with the vanilla system
-        ; and any other mods that use it, except that we
-        ; modify the vanilla system to force use of ours
-        CONSTS.GLOBAL_PLAYER_FOLLOWER_COUNT.SetValue(0)
-    endIf
 
     return doticu_npcp_codes.SUCCESS()
 endFunction

@@ -10,6 +10,7 @@
 #include "party.h"
 #include "party.inl"
 #include "player.h"
+#include "quest.h"
 #include "utils.h"
 
 namespace doticu_npcp { namespace Party {
@@ -695,9 +696,7 @@ namespace doticu_npcp { namespace Party {
                     struct Args : public IFunctionArguments {
                         bool Copy(Output* output) { return true; }
                     } func_args;
-                    //Virtual_Machine_t::Send_Event(this, kill_func, &func_args);
-                    Handle_t handle(this);
-                    handle.Registry()->QueueEvent(handle, &kill_func, &func_args);
+                    Virtual_Machine_t::Self()->Send_Event(this, kill_func, &func_args);
                 }
             } else if (vitality == CODES::VITALITY::INVULNERABLE) {
                 value_owner->Restore_Actor_Value(Actor_Modifier_t::DAMAGE, Actor_Value_t::HEALTH, 1000000000.0f);
@@ -751,9 +750,11 @@ namespace doticu_npcp { namespace Party {
         value_owner->Set_Actor_Value(Actor_Value_t::CONFIDENCE, 4.0f);
         value_owner->Set_Actor_Value(Actor_Value_t::ASSISTANCE, 2.0f);
         value_owner->Set_Actor_Value(Actor_Value_t::MORALITY, 0.0f);
+
+        // maybe we can check this, and if it's set, immobilize the member
         value_owner->Set_Actor_Value(Actor_Value_t::WAITING_FOR_PLAYER, 0.0f);
 
-        Actor2::Follow_Player(actor, true);
+        Actor2::Join_Player_Team(actor, true);
 
         if (Actor2::Cant_Talk_To_Player(actor)) {
             Actor2::Talks_To_Player(actor, true);
@@ -771,7 +772,7 @@ namespace doticu_npcp { namespace Party {
             Actor2::Talks_To_Player(actor, false);
         }
 
-        Actor2::Unfollow_Player(actor);
+        Actor2::Leave_Player_Team(actor);
 
         Object_Ref::Untoken(actor, Consts::Member_Token());
         Object_Ref::Untoken(actor, Consts::Clone_Token());
@@ -1296,24 +1297,36 @@ namespace doticu_npcp { namespace Party {
             Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
             Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
             Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
+
+            flags &= ~IS_PROTECTED;
+            flags &= ~IS_ESSENTIAL;
         } else if (vitality == CODES::VITALITY::ESSENTIAL) {
             Vitality_Variable()->Int(CODES::VITALITY::ESSENTIAL);
             Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
             Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
             Object_Ref::Token(actor, Consts::Essential_Vitality_Token());
             Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
+
+            flags &= ~IS_PROTECTED;
+            flags |= IS_ESSENTIAL;
         } else if (vitality == CODES::VITALITY::INVULNERABLE) {
             Vitality_Variable()->Int(CODES::VITALITY::INVULNERABLE);
             Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
             Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
             Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
             Object_Ref::Token(actor, Consts::Invulnerable_Vitality_Token());
+
+            flags &= ~IS_PROTECTED;
+            flags |= IS_ESSENTIAL;
         } else /* vitality == Vitality_e::PROTECTED */ {
             Vitality_Variable()->Int(CODES::VITALITY::PROTECTED);
             Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
             Object_Ref::Token(actor, Consts::Protected_Vitality_Token());
             Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
             Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
+
+            flags |= IS_PROTECTED;
+            flags &= ~IS_ESSENTIAL;
         }
 
         Level();

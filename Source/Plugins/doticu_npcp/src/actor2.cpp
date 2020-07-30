@@ -1103,21 +1103,35 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
-    void Follow_Player(Actor_t* actor, Bool_t allow_favors)
+    void Join_Player_Team(Actor_t* actor, Bool_t allow_favors)
     {
         if (actor) {
-            actor->flags1 = Utils::Bit_On(actor->flags1, Actor_t2::IS_PLAYER_TEAMMATE);
-            if (allow_favors) {
+            if (Utils::Is_Bit_Off(actor->flags1, Actor_t2::IS_PLAYER_TEAMMATE)) {
+                actor->flags1 = Utils::Bit_On(actor->flags1, Actor_t2::IS_PLAYER_TEAMMATE);
+
+                // necessary to get quick commands to work
+                static_cast<PlayerCharacter*>(Player::Actor())->numTeammates += 1;
+            }
+            if (allow_favors && Utils::Is_Bit_Off(actor->flags2, Actor_t2::DOES_FAVORS)) {
                 actor->flags2 = Utils::Bit_On(actor->flags2, Actor_t2::DOES_FAVORS);
             }
         }
     }
 
-    void Unfollow_Player(Actor_t* actor)
+    void Leave_Player_Team(Actor_t* actor)
     {
         if (actor) {
-            actor->flags1 = Utils::Bit_Off(actor->flags1, Actor_t2::IS_PLAYER_TEAMMATE);
-            actor->flags2 = Utils::Bit_Off(actor->flags2, Actor_t2::DOES_FAVORS);
+            if (Utils::Is_Bit_On(actor->flags1, Actor_t2::IS_PLAYER_TEAMMATE)) {
+                actor->flags1 = Utils::Bit_Off(actor->flags1, Actor_t2::IS_PLAYER_TEAMMATE);
+
+                UInt32* teammate_count = &Player::Player_Character()->numTeammates;
+                if (*teammate_count > 0) {
+                    *teammate_count -= 1;
+                }
+            }
+            if (Utils::Is_Bit_On(actor->flags2, Actor_t2::DOES_FAVORS)) {
+                actor->flags2 = Utils::Bit_Off(actor->flags2, Actor_t2::DOES_FAVORS);
+            }
         }
     }
 

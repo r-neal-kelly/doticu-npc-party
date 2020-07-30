@@ -18,6 +18,11 @@ namespace doticu_npcp { namespace Player {
         return actor;
     }
 
+    PlayerCharacter* Player_Character()
+    {
+        return static_cast<PlayerCharacter*>(Player::Actor());
+    }
+
     bool Is_Party_In_Combat(Player_t *player) {
         Party::Followers_t* followers = Party::Followers_t::Self();
         return (Actor()->IsInCombat()) || (followers->Are_In_Combat());

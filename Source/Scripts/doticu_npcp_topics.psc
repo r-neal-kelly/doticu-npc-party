@@ -145,6 +145,15 @@ function Paralyze(ObjectReference ref_object)
     (GetOwningQuest() as doticu_npcp_commands).Paralyze(ref_object as Actor, false)
 endFunction
 
+; Direct Topics
+function Direct_Begin(ObjectReference ref_object)
+    (ref_object as Actor).SetDoingFavor(true)
+endFunction
+
+function Direct_End(ObjectReference ref_object)
+    (ref_object as Actor).SetDoingFavor(false)
+endFunction
+
 ; Follower Topics
 function Follow(ObjectReference ref_object)
     (GetOwningQuest() as doticu_npcp_commands).Follow_Sync(ref_object as Actor, false)

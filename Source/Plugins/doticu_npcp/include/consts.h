@@ -23,8 +23,13 @@ namespace doticu_npcp { namespace Consts {
     // Skyrim.esm
     Faction_t* No_Bard_Singer_Autostart_Faction();
     Faction_t* Current_Follower_Faction();
+    Faction_t* Player_Follower_Faction();
     Faction_t* Potential_Follower_Faction();
     Faction_t* WI_No_Body_Cleanup_Faction();
+
+    Global_t* Player_Follower_Count_Global();
+
+    Quest_t* Follower_Dialogue_Quest();
 
     Static_t* Marker_X_Static();
 

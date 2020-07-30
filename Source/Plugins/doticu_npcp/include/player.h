@@ -9,6 +9,7 @@
 namespace doticu_npcp { namespace Player {
 
     Actor_t* Actor();
+    PlayerCharacter* Player_Character();
     bool Is_Party_In_Combat(Player_t *player);
     bool Is_In_Interior_Cell();
     bool Is_In_Exterior_Cell();

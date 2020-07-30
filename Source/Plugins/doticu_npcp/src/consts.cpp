@@ -47,8 +47,13 @@ namespace doticu_npcp { namespace Consts {
     enum Skyrim_Forms {
         FACTION_BARD_SINGER_NO_AUTOSTART    = 0x0163FA,
         FACTION_CURRENT_FOLLOWER            = 0x05C84E,
+        FACTION_PLAYER_FOLLOWER             = 0x084D1B,
         FACTION_POTENTIAL_FOLLOWER          = 0x05C84D,
         FACTION_WI_NO_BODY_CLEANUP          = 0x09653A,
+
+        GLOBAL_PLAYER_FOLLOWER_COUNT        = 0x0BCC98,
+
+        QUEST_DIALOGUE_FOLLOWER             = 0x0750BA,
 
         STATIC_MARKER_X                     = 0x00003B,
     };
@@ -69,6 +74,14 @@ namespace doticu_npcp { namespace Consts {
         return value;
     }
 
+    Faction_t* Player_Follower_Faction()
+    {
+        static Faction_t* value = static_cast<Faction_t*>
+            (Game::Skyrim_Form(FACTION_PLAYER_FOLLOWER));
+        NPCP_ASSERT(value);
+        return value;
+    }
+
     Faction_t* Potential_Follower_Faction()
     {
         static Faction_t* value = static_cast<Faction_t*>
@@ -81,6 +94,22 @@ namespace doticu_npcp { namespace Consts {
     {
         static Faction_t* value = static_cast<Faction_t*>
             (Game::Skyrim_Form(FACTION_WI_NO_BODY_CLEANUP));
+        NPCP_ASSERT(value);
+        return value;
+    }
+
+    Global_t* Player_Follower_Count_Global()
+    {
+        static Global_t* value = static_cast<Global_t*>
+            (Game::Skyrim_Form(GLOBAL_PLAYER_FOLLOWER_COUNT));
+        NPCP_ASSERT(value);
+        return value;
+    }
+
+    Quest_t* Follower_Dialogue_Quest()
+    {
+        static Quest_t* value = static_cast<Quest_t*>
+            (Game::Skyrim_Form(QUEST_DIALOGUE_FOLLOWER));
         NPCP_ASSERT(value);
         return value;
     }
@@ -457,6 +486,11 @@ namespace doticu_npcp { namespace Consts {
 
 namespace doticu_npcp { namespace Consts { namespace Exports {
 
+    Quest_t* Follower_Dialogue_Quest(Selfless_t*)
+    {
+        return Consts::Follower_Dialogue_Quest();
+    }
+
     bool Register(Papyrus::Registry_t* registry)
     {
         #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
@@ -471,6 +505,17 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
         ADD_METHOD("Log_Properties", 0, void, Log_Properties);
 
         #undef ADD_METHOD
+
+        #define ADD_GLOBAL(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                               \
+            ADD_CLASS_METHOD("doticu_npcp_consts", Selfless_t,          \
+                             STR_FUNC_, ARG_NUM_,                       \
+                             RETURN_, Exports::METHOD_, __VA_ARGS__);   \
+        W
+
+        ADD_GLOBAL("Follower_Dialogue_Quest", 0, Quest_t*, Follower_Dialogue_Quest);
+
+        #undef ADD_GLOBAL
 
         return true;
     }

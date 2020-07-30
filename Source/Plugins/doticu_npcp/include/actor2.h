@@ -68,8 +68,8 @@ namespace doticu_npcp { namespace Actor2 {
     void Remove_Crime_Faction(Actor_t* actor);
     void Log_Factions(Actor_t* actor);
 
-    void Follow_Player(Actor_t* actor, Bool_t allow_favors = true);
-    void Unfollow_Player(Actor_t* actor);
+    void Join_Player_Team(Actor_t* actor, Bool_t allow_favors = true);
+    void Leave_Player_Team(Actor_t* actor);
     void Talks_To_Player(Actor_t* actor, Bool_t can_talk);
     Bool_t Can_Talk_To_Player(Actor_t* actor);
     Bool_t Cant_Talk_To_Player(Actor_t* actor);
