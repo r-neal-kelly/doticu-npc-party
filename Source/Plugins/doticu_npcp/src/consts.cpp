@@ -53,6 +53,11 @@ namespace doticu_npcp { namespace Consts {
 
         GLOBAL_PLAYER_FOLLOWER_COUNT        = 0x0BCC98,
 
+        KEYWORD_MAGIC_DAMAGE_FIRE           = 0x01CEAD,
+        KEYWORD_MAGIC_DAMAGE_FROST          = 0x01CEAE,
+        KEYWORD_MAGIC_DAMAGE_SHOCK          = 0x01CEAF,
+        KEYWORD_MAGIC_VAMPIRE_DRAIN         = 0x101BDE,
+
         QUEST_DIALOGUE_FOLLOWER             = 0x0750BA,
 
         STATIC_MARKER_X                     = 0x00003B,
@@ -102,6 +107,38 @@ namespace doticu_npcp { namespace Consts {
     {
         static Global_t* value = static_cast<Global_t*>
             (Game::Skyrim_Form(GLOBAL_PLAYER_FOLLOWER_COUNT));
+        NPCP_ASSERT(value);
+        return value;
+    }
+
+    Keyword_t* Fire_Damage_Magic_Keyword()
+    {
+        static Keyword_t* value = static_cast<Keyword_t*>
+            (Game::Skyrim_Form(KEYWORD_MAGIC_DAMAGE_FIRE));
+        NPCP_ASSERT(value);
+        return value;
+    }
+
+    Keyword_t* Frost_Damage_Magic_Keyword()
+    {
+        static Keyword_t* value = static_cast<Keyword_t*>
+            (Game::Skyrim_Form(KEYWORD_MAGIC_DAMAGE_FROST));
+        NPCP_ASSERT(value);
+        return value;
+    }
+
+    Keyword_t* Shock_Damage_Magic_Keyword()
+    {
+        static Keyword_t* value = static_cast<Keyword_t*>
+            (Game::Skyrim_Form(KEYWORD_MAGIC_DAMAGE_SHOCK));
+        NPCP_ASSERT(value);
+        return value;
+    }
+
+    Keyword_t* Vampire_Drain_Magic_Keyword()
+    {
+        static Keyword_t* value = static_cast<Keyword_t*>
+            (Game::Skyrim_Form(KEYWORD_MAGIC_VAMPIRE_DRAIN));
         NPCP_ASSERT(value);
         return value;
     }

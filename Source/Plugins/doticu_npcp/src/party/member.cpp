@@ -6,11 +6,13 @@
 #include "actor_base2.h"
 #include "codes.h"
 #include "consts.h"
+#include "form.h"
 #include "object_ref.h"
 #include "party.h"
 #include "party.inl"
 #include "player.h"
 #include "quest.h"
+#include "spell.h"
 #include "utils.h"
 
 namespace doticu_npcp { namespace Party {
@@ -683,22 +685,20 @@ namespace doticu_npcp { namespace Party {
                           Bool_t is_bash,
                           Bool_t is_blocked)
     {
-        // we need to check that the tool isnt healing the member, even if their health is below zero, we shouldn't kill
-
         static const String_t kill_func = String_t("p_Kill");
         NPCP_ASSERT(kill_func);
 
         if (Is_Filled() && Is_Alive_Unsafe()) {
             Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(Actor());
-            Int_t vitality = Vitality();
             if (value_owner->Get_Actor_Value(Actor_Value_t::HEALTH) <= 0.0) {
-                if (vitality == CODES::VITALITY::MORTAL || vitality == CODES::VITALITY::PROTECTED && attacker == Player::Actor()) {
-                    struct Args : public IFunctionArguments {
-                        bool Copy(Output* output) { return true; }
-                    } func_args;
-                    Virtual_Machine_t::Self()->Send_Event(this, kill_func, &func_args);
+                Int_t vitality = Vitality();
+                if (vitality == CODES::VITALITY::MORTAL ||
+                    vitality == CODES::VITALITY::PROTECTED && attacker == Player::Actor()) {
+                    if (tool->formType != kFormType_Spell || Spell::Can_Damage_Health(static_cast<Spell_t*>(tool))) {
+                        Virtual_Machine_t::Self()->Send_Event(this, kill_func);
+                    }
                 }
-            } else if (vitality == CODES::VITALITY::INVULNERABLE) {
+            } else if (Vitality() == CODES::VITALITY::INVULNERABLE) {
                 value_owner->Restore_Actor_Value(Actor_Modifier_t::DAMAGE, Actor_Value_t::HEALTH, 1000000000.0f);
             }
         }

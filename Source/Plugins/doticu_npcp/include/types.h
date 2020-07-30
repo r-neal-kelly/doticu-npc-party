@@ -44,6 +44,9 @@ namespace doticu_npcp {
     typedef TESObjectARMO   Armor_t;
     typedef TESFaction      Faction_t;
     typedef BGSOutfit       Outfit_t;
+    typedef BGSKeyword      Keyword_t;
+    typedef EffectSetting   Magic_Effect_t;
+    typedef SpellItem       Spell_t;
 
     typedef Actor           Actor_t;
     typedef TESNPC          Actor_Base_t;

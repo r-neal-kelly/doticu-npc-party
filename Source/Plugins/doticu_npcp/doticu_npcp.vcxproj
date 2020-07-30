@@ -167,6 +167,7 @@
     <ClCompile Include="src\party\npcs.cpp" />
     <ClCompile Include="src\player.cpp" />
     <ClCompile Include="src\quest.cpp" />
+    <ClCompile Include="src\spell.cpp" />
     <ClCompile Include="src\tests.cpp" />
     <ClCompile Include="src\types.cpp" />
     <ClCompile Include="src\vars.cpp" />
@@ -195,6 +196,7 @@
     <ClInclude Include="include\package.h" />
     <ClInclude Include="include\party.h" />
     <ClInclude Include="include\player.h" />
+    <ClInclude Include="include\spell.h" />
     <ClInclude Include="include\tests.h" />
     <ClInclude Include="include\vars.h" />
     <ClInclude Include="include\xcontainer.h" />

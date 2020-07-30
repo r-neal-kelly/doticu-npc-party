@@ -82,6 +82,16 @@ namespace doticu_npcp { namespace Papyrus {
         Self()->Send_Event(Handle_t(object), &event_name, arguments);
     }
 
+    template <typename BSObject>
+    inline void Virtual_Machine_t::Send_Event(BSObject* object, String_t event_name)
+    {
+        NPCP_ASSERT(object && event_name);
+        struct : public IFunctionArguments {
+            bool Copy(Output* output) { return true; }
+        } arguments;
+        Self()->Send_Event(Handle_t(object), &event_name, &arguments);
+    }
+
     // Type_t
 
     inline Type_t::Type_t() :

@@ -76,6 +76,8 @@ namespace doticu_npcp { namespace Papyrus {
 
         template <typename BSObject>
         void Send_Event(BSObject* object, String_t event_name, IFunctionArguments* arguments);
+        template <typename BSObject>
+        void Send_Event(BSObject* object, String_t event_name);
     };
 
     class Class_Info_t;

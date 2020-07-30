@@ -24,6 +24,7 @@
 #include "party.h"
 #include "player.h"
 #include "quest.h"
+#include "spell.h"
 #include "string2.h"
 #include "tests.h"
 #include "utils.h"
@@ -110,6 +111,7 @@ namespace doticu_npcp { namespace Main {
         REGISTER_NAMESPACE(Papyrus);
         REGISTER_NAMESPACE(Player);
         REGISTER_NAMESPACE(Quest);
+        REGISTER_NAMESPACE(Spell);
         REGISTER_NAMESPACE(String2);
         REGISTER_NAMESPACE(Tests);
         REGISTER_NAMESPACE(Utils);

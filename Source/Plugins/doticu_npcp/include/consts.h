@@ -29,6 +29,11 @@ namespace doticu_npcp { namespace Consts {
 
     Global_t* Player_Follower_Count_Global();
 
+    Keyword_t* Fire_Damage_Magic_Keyword();
+    Keyword_t* Frost_Damage_Magic_Keyword();
+    Keyword_t* Shock_Damage_Magic_Keyword();
+    Keyword_t* Vampire_Drain_Magic_Keyword();
+
     Quest_t* Follower_Dialogue_Quest();
 
     Static_t* Marker_X_Static();
