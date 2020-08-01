@@ -976,6 +976,7 @@ namespace doticu_npcp { namespace Papyrus {
         static auto destroy = reinterpret_cast
             <void (*)(Object_t*)>
             (RelocationManager::s_baseAddr + Offsets::Object::DESTROY);
+        destroy(this);
     }
 
     inline void Object_t::Increment_Lock()

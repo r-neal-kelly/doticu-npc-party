@@ -43,7 +43,7 @@ endProperty
 
 ; Private Methods
 function p_Open_Chest(ObjectReference ref_container, string str_name)
-    doticu_npcp.Object_Ref_Categorize(CONSTS.CATEGORY_INPUT)
+    doticu_npcp.Object_Ref_Categorize(doticu_npcp_consts.Input_Category())
     CONTAINERS.Rename(ref_container, str_name)
     CONTAINERS.Open(ref_container)
 endFunction
@@ -97,186 +97,186 @@ function Followers_Unmember(ObjectReference ___)
 endFunction
 
 function Chests_Input(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_INPUT, " Input ")
+    p_Open_Chest(doticu_npcp_consts.Input_Category(), " Input ")
 endFunction
 
 ; Weapons
 function Chests_Weapons_Swords(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_SWORDS, " Swords ")
+    p_Open_Chest(doticu_npcp_consts.Swords_Category(), " Swords ")
 endFunction
 function Chests_Weapons_Greatswords(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_GREATSWORDS, " Greatswords ")
+    p_Open_Chest(doticu_npcp_consts.Greatswords_Category(), " Greatswords ")
 endFunction
 function Chests_Weapons_Waraxes(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_WARAXES, " Waraxes ")
+    p_Open_Chest(doticu_npcp_consts.Waraxes_Category(), " Waraxes ")
 endFunction
 function Chests_Weapons_Battleaxes(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BATTLEAXES, " Battleaxes ")
+    p_Open_Chest(doticu_npcp_consts.Battleaxes_Category(), " Battleaxes ")
 endFunction
 function Chests_Weapons_Maces(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_MACES, " Maces ")
+    p_Open_Chest(doticu_npcp_consts.Maces_Category(), " Maces ")
 endFunction
 function Chests_Weapons_Warhammers(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_WARHAMMERS, " Warhammers ")
+    p_Open_Chest(doticu_npcp_consts.Warhammers_Category(), " Warhammers ")
 endFunction
 function Chests_Weapons_Daggers(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_DAGGERS, " Daggers ")
+    p_Open_Chest(doticu_npcp_consts.Daggers_Category(), " Daggers ")
 endFunction
 function Chests_Weapons_Staves(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_STAVES, " Staves ")
+    p_Open_Chest(doticu_npcp_consts.Staves_Category(), " Staves ")
 endFunction
 function Chests_Weapons_Bows(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOWS, " Bows ")
+    p_Open_Chest(doticu_npcp_consts.Bows_Category(), " Bows ")
 endFunction
 function Chests_Weapons_Ammo(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_AMMO, " Ammo ")
+    p_Open_Chest(doticu_npcp_consts.Ammo_Category(), " Ammo ")
 endFunction
 function Chests_Weapons_Others(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_WEAPONS, " Other Weapons ")
+    p_Open_Chest(doticu_npcp_consts.Weapons_Category(), " Other Weapons ")
 endFunction
 
 ; Apparel
 function Chests_Apparel_Light_Armor(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_LIGHT_ARMOR, " Light Armor ")
+    p_Open_Chest(doticu_npcp_consts.Light_Armor_Category(), " Light Armor ")
 endFunction
 function Chests_Apparel_Heavy_Armor(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_HEAVY_ARMOR, " Heavy Armor ")
+    p_Open_Chest(doticu_npcp_consts.Heavy_Armor_Category(), " Heavy Armor ")
 endFunction
 function Chests_Apparel_Shields(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_SHIELDS, " Shields ")
+    p_Open_Chest(doticu_npcp_consts.Shields_Category(), " Shields ")
 endFunction
 function Chests_Apparel_Jewelry(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_JEWELRY, " Jewelry ")
+    p_Open_Chest(doticu_npcp_consts.Jewelry_Category(), " Jewelry ")
 endFunction
 function Chests_Apparel_Clothes(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_CLOTHES, " Clothes ")
+    p_Open_Chest(doticu_npcp_consts.Clothes_Category(), " Clothes ")
 endFunction
 
 ; Edibles
 function Chests_Edibles_Potions(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_POTIONS, " Potions ")
+    p_Open_Chest(doticu_npcp_consts.Potions_Category(), " Potions ")
 endFunction
 function Chests_Edibles_Poisons(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_POISONS, " Poisons ")
+    p_Open_Chest(doticu_npcp_consts.Poisons_Category(), " Poisons ")
 endFunction
 function Chests_Edibles_Ingredients(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_INGREDIENTS, " Ingredients ")
+    p_Open_Chest(doticu_npcp_consts.Ingredients_Category(), " Ingredients ")
 endFunction
 function Chests_Edibles_Food(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_FOOD, " Food ")
+    p_Open_Chest(doticu_npcp_consts.Food_Category(), " Food ")
 endFunction
 
 ; Misc
 function Chests_Misc_Soulgems(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_SOULGEMS, " Soulgems ")
+    p_Open_Chest(doticu_npcp_consts.Soulgems_Category(), " Soulgems ")
 endFunction
 function Chests_Misc_Scrolls(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_SCROLLS, " Scrolls ")
+    p_Open_Chest(doticu_npcp_consts.Scrolls_Category(), " Scrolls ")
 endFunction
 function Chests_Misc_Metals(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_METALS, " Metals ")
+    p_Open_Chest(doticu_npcp_consts.Metals_Category(), " Metals ")
 endFunction
 function Chests_Misc_Leather(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_LEATHER, " Leather ")
+    p_Open_Chest(doticu_npcp_consts.Leather_Category(), " Leather ")
 endFunction
 function Chests_Misc_Gems(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_GEMS, " Gems ")
+    p_Open_Chest(doticu_npcp_consts.Gems_Category(), " Gems ")
 endFunction
 function Chests_Misc_Clutter(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_CLUTTER, " Clutter ")
+    p_Open_Chest(doticu_npcp_consts.Clutter_Category(), " Clutter ")
 endFunction
 function Chests_Misc_Keys(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_KEYS, " Keys ")
+    p_Open_Chest(doticu_npcp_consts.Keys_Category(), " Keys ")
 endFunction
 function Chests_Misc_Others(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_OTHERS, " Other Misc ")
+    p_Open_Chest(doticu_npcp_consts.Misc_Category(), " Other Misc ")
 endFunction
 
 ; Books
 function Chests_Books_Spell_Tomes(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_SPELL_TOMES, " Spell Tomes ")
+    p_Open_Chest(doticu_npcp_consts.Spell_Tomes_Category(), " Spell Tomes ")
 endFunction
 function Chests_Books_Recipes(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_RECIPES, " Recipes ")
+    p_Open_Chest(doticu_npcp_consts.Recipes_Category(), " Recipes ")
 endFunction
 function Chests_Books_A(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOOKS_A, " Books A ")
+    p_Open_Chest(doticu_npcp_consts.A_Books_Category(), " Books A ")
 endFunction
 function Chests_Books_B(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOOKS_B, " Books B ")
+    p_Open_Chest(doticu_npcp_consts.B_Books_Category(), " Books B ")
 endFunction
 function Chests_Books_C(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOOKS_C, " Books C ")
+    p_Open_Chest(doticu_npcp_consts.C_Books_Category(), " Books C ")
 endFunction
 function Chests_Books_D(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOOKS_D, " Books D ")
+    p_Open_Chest(doticu_npcp_consts.D_Books_Category(), " Books D ")
 endFunction
 function Chests_Books_E(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOOKS_E, " Books E ")
+    p_Open_Chest(doticu_npcp_consts.E_Books_Category(), " Books E ")
 endFunction
 function Chests_Books_F(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOOKS_F, " Books F ")
+    p_Open_Chest(doticu_npcp_consts.F_Books_Category(), " Books F ")
 endFunction
 function Chests_Books_G(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOOKS_G, " Books G ")
+    p_Open_Chest(doticu_npcp_consts.G_Books_Category(), " Books G ")
 endFunction
 function Chests_Books_H(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOOKS_H, " Books H ")
+    p_Open_Chest(doticu_npcp_consts.H_Books_Category(), " Books H ")
 endFunction
 function Chests_Books_I(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOOKS_I, " Books I ")
+    p_Open_Chest(doticu_npcp_consts.I_Books_Category(), " Books I ")
 endFunction
 function Chests_Books_J(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOOKS_J, " Books J ")
+    p_Open_Chest(doticu_npcp_consts.J_Books_Category(), " Books J ")
 endFunction
 function Chests_Books_K(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOOKS_K, " Books K ")
+    p_Open_Chest(doticu_npcp_consts.K_Books_Category(), " Books K ")
 endFunction
 function Chests_Books_L(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOOKS_L, " Books L ")
+    p_Open_Chest(doticu_npcp_consts.L_Books_Category(), " Books L ")
 endFunction
 function Chests_Books_M(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOOKS_M, " Books M ")
+    p_Open_Chest(doticu_npcp_consts.M_Books_Category(), " Books M ")
 endFunction
 function Chests_Books_N(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOOKS_N, " Books N ")
+    p_Open_Chest(doticu_npcp_consts.N_Books_Category(), " Books N ")
 endFunction
 function Chests_Books_O(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOOKS_O, " Books O ")
+    p_Open_Chest(doticu_npcp_consts.O_Books_Category(), " Books O ")
 endFunction
 function Chests_Books_P(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOOKS_P, " Books P ")
+    p_Open_Chest(doticu_npcp_consts.P_Books_Category(), " Books P ")
 endFunction
 function Chests_Books_Q(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOOKS_Q, " Books Q ")
+    p_Open_Chest(doticu_npcp_consts.Q_Books_Category(), " Books Q ")
 endFunction
 function Chests_Books_R(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOOKS_R, " Books R ")
+    p_Open_Chest(doticu_npcp_consts.R_Books_Category(), " Books R ")
 endFunction
 function Chests_Books_S(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOOKS_S, " Books S ")
+    p_Open_Chest(doticu_npcp_consts.S_Books_Category(), " Books S ")
 endFunction
 function Chests_Books_T(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOOKS_T, " Books T ")
+    p_Open_Chest(doticu_npcp_consts.T_Books_Category(), " Books T ")
 endFunction
 function Chests_Books_U(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOOKS_U, " Books U ")
+    p_Open_Chest(doticu_npcp_consts.U_Books_Category(), " Books U ")
 endFunction
 function Chests_Books_V(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOOKS_V, " Books V ")
+    p_Open_Chest(doticu_npcp_consts.V_Books_Category(), " Books V ")
 endFunction
 function Chests_Books_W(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOOKS_W, " Books W ")
+    p_Open_Chest(doticu_npcp_consts.W_Books_Category(), " Books W ")
 endFunction
 function Chests_Books_X(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOOKS_X, " Books X ")
+    p_Open_Chest(doticu_npcp_consts.X_Books_Category(), " Books X ")
 endFunction
 function Chests_Books_Y(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOOKS_Y, " Books Y ")
+    p_Open_Chest(doticu_npcp_consts.Y_Books_Category(), " Books Y ")
 endFunction
 function Chests_Books_Z(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOOKS_Z, " Books Z ")
+    p_Open_Chest(doticu_npcp_consts.Z_Books_Category(), " Books Z ")
 endFunction
 function Chests_Books_Others(ObjectReference ___)
-    p_Open_Chest(CONSTS.CATEGORY_BOOKS, " Books # ")
+    p_Open_Chest(doticu_npcp_consts.Books_Category(), " Books # ")
 endFunction

@@ -236,131 +236,131 @@ function f_On_Option_Select(int id_option)
     if false
 
     elseIf id_option == p_option_input
-        p_Open(CONSTS.CATEGORY_INPUT, " Input ")
+        p_Open(doticu_npcp_consts.Input_Category(), " Input ")
 
     ; Weapons
     elseIf id_option == p_option_swords
-        p_Open(CONSTS.CATEGORY_SWORDS, " Swords ")
+        p_Open(doticu_npcp_consts.Swords_Category(), " Swords ")
     elseIf id_option == p_option_greatswords
-        p_Open(CONSTS.CATEGORY_GREATSWORDS, " Greatswords ")
+        p_Open(doticu_npcp_consts.Greatswords_Category(), " Greatswords ")
     elseIf id_option == p_option_waraxes
-        p_Open(CONSTS.CATEGORY_WARAXES, " Waraxes ")
+        p_Open(doticu_npcp_consts.Waraxes_Category(), " Waraxes ")
     elseIf id_option == p_option_battleaxes
-        p_Open(CONSTS.CATEGORY_BATTLEAXES, " Battleaxes ")
+        p_Open(doticu_npcp_consts.Battleaxes_Category(), " Battleaxes ")
     elseIf id_option == p_option_maces
-        p_Open(CONSTS.CATEGORY_MACES, " Maces ")
+        p_Open(doticu_npcp_consts.Maces_Category(), " Maces ")
     elseIf id_option == p_option_warhammers
-        p_Open(CONSTS.CATEGORY_WARHAMMERS, " Warhammers ")
+        p_Open(doticu_npcp_consts.Warhammers_Category(), " Warhammers ")
     elseIf id_option == p_option_daggers
-        p_Open(CONSTS.CATEGORY_DAGGERS, " Daggers ")
+        p_Open(doticu_npcp_consts.Daggers_Category(), " Daggers ")
     elseIf id_option == p_option_staves
-        p_Open(CONSTS.CATEGORY_STAVES, " Staves ")
+        p_Open(doticu_npcp_consts.Staves_Category(), " Staves ")
     elseIf id_option == p_option_bows
-        p_Open(CONSTS.CATEGORY_BOWS, " Bows ")
+        p_Open(doticu_npcp_consts.Bows_Category(), " Bows ")
     elseIf id_option == p_option_ammo
-        p_Open(CONSTS.CATEGORY_AMMO, " Ammo ")
+        p_Open(doticu_npcp_consts.Ammo_Category(), " Ammo ")
     elseIf id_option == p_option_weapons
-        p_Open(CONSTS.CATEGORY_WEAPONS, " Other Weapons ")
+        p_Open(doticu_npcp_consts.Weapons_Category(), " Other Weapons ")
 
     ; Armor
     elseIf id_option == p_option_light_armor
-        p_Open(CONSTS.CATEGORY_LIGHT_ARMOR, " Light Armor ")
+        p_Open(doticu_npcp_consts.Light_Armor_Category(), " Light Armor ")
     elseIf id_option == p_option_heavy_armor
-        p_Open(CONSTS.CATEGORY_HEAVY_ARMOR, " Heavy Armor ")
+        p_Open(doticu_npcp_consts.Heavy_Armor_Category(), " Heavy Armor ")
     elseIf id_option == p_option_shields
-        p_Open(CONSTS.CATEGORY_SHIELDS, " Shields ")
+        p_Open(doticu_npcp_consts.Shields_Category(), " Shields ")
     elseIf id_option == p_option_jewelry
-        p_Open(CONSTS.CATEGORY_JEWELRY, " Jewelry ")
+        p_Open(doticu_npcp_consts.Jewelry_Category(), " Jewelry ")
     elseIf id_option == p_option_clothes
-        p_Open(CONSTS.CATEGORY_CLOTHES, " Clothes ")
+        p_Open(doticu_npcp_consts.Clothes_Category(), " Clothes ")
 
     ; Edibles
     elseIf id_option == p_option_potions
-        p_Open(CONSTS.CATEGORY_POTIONS, " Potions ")
+        p_Open(doticu_npcp_consts.Potions_Category(), " Potions ")
     elseIf id_option == p_option_poisons
-        p_Open(CONSTS.CATEGORY_POISONS, " Poisons ")
+        p_Open(doticu_npcp_consts.Poisons_Category(), " Poisons ")
     elseIf id_option == p_option_ingredients
-        p_Open(CONSTS.CATEGORY_INGREDIENTS, " Ingredients ")
+        p_Open(doticu_npcp_consts.Ingredients_Category(), " Ingredients ")
     elseIf id_option == p_option_food
-        p_Open(CONSTS.CATEGORY_FOOD, " Food ")
+        p_Open(doticu_npcp_consts.Food_Category(), " Food ")
 
     ; Misc
     elseIf id_option == p_option_soulgems
-        p_Open(CONSTS.CATEGORY_SOULGEMS, " Soulgems ")
+        p_Open(doticu_npcp_consts.Soulgems_Category(), " Soulgems ")
     elseIf id_option == p_option_scrolls
-        p_Open(CONSTS.CATEGORY_SCROLLS, " Scrolls ")
+        p_Open(doticu_npcp_consts.Scrolls_Category(), " Scrolls ")
     elseIf id_option == p_option_metals
-        p_Open(CONSTS.CATEGORY_METALS, " Metals ")
+        p_Open(doticu_npcp_consts.Metals_Category(), " Metals ")
     elseIf id_option == p_option_leather
-        p_Open(CONSTS.CATEGORY_LEATHER, " Leather ")
+        p_Open(doticu_npcp_consts.Leather_Category(), " Leather ")
     elseIf id_option == p_option_gems
-        p_Open(CONSTS.CATEGORY_GEMS, " Gems ")
+        p_Open(doticu_npcp_consts.Gems_Category(), " Gems ")
     elseIf id_option == p_option_clutter
-        p_Open(CONSTS.CATEGORY_CLUTTER, " Clutter ")
+        p_Open(doticu_npcp_consts.Clutter_Category(), " Clutter ")
     elseIf id_option == p_option_keys
-        p_Open(CONSTS.CATEGORY_KEYS, " Keys ")
+        p_Open(doticu_npcp_consts.Keys_Category(), " Keys ")
     elseIf id_option == p_option_others
-        p_Open(CONSTS.CATEGORY_OTHERS, " Other Misc ")
+        p_Open(doticu_npcp_consts.Misc_Category(), " Other Misc ")
 
     ; Books
     elseIf id_option == p_option_spell_tomes
-        p_Open(CONSTS.CATEGORY_SPELL_TOMES, " Spell Tomes ")
+        p_Open(doticu_npcp_consts.Spell_Tomes_Category(), " Spell Tomes ")
     elseIf id_option == p_option_recipes
-        p_Open(CONSTS.CATEGORY_RECIPES, " Recipes ")
+        p_Open(doticu_npcp_consts.Recipes_Category(), " Recipes ")
     elseIf id_option == p_option_books_a
-        p_Open(CONSTS.CATEGORY_BOOKS_A, " Books A ")
+        p_Open(doticu_npcp_consts.A_Books_Category(), " Books A ")
     elseIf id_option == p_option_books_b
-        p_Open(CONSTS.CATEGORY_BOOKS_B, " Books B ")
+        p_Open(doticu_npcp_consts.B_Books_Category(), " Books B ")
     elseIf id_option == p_option_books_c
-        p_Open(CONSTS.CATEGORY_BOOKS_C, " Books C ")
+        p_Open(doticu_npcp_consts.C_Books_Category(), " Books C ")
     elseIf id_option == p_option_books_d
-        p_Open(CONSTS.CATEGORY_BOOKS_D, " Books D ")
+        p_Open(doticu_npcp_consts.D_Books_Category(), " Books D ")
     elseIf id_option == p_option_books_e
-        p_Open(CONSTS.CATEGORY_BOOKS_E, " Books E ")
+        p_Open(doticu_npcp_consts.E_Books_Category(), " Books E ")
     elseIf id_option == p_option_books_f
-        p_Open(CONSTS.CATEGORY_BOOKS_F, " Books F ")
+        p_Open(doticu_npcp_consts.F_Books_Category(), " Books F ")
     elseIf id_option == p_option_books_g
-        p_Open(CONSTS.CATEGORY_BOOKS_G, " Books G ")
+        p_Open(doticu_npcp_consts.G_Books_Category(), " Books G ")
     elseIf id_option == p_option_books_h
-        p_Open(CONSTS.CATEGORY_BOOKS_H, " Books H ")
+        p_Open(doticu_npcp_consts.H_Books_Category(), " Books H ")
     elseIf id_option == p_option_books_i
-        p_Open(CONSTS.CATEGORY_BOOKS_I, " Books I ")
+        p_Open(doticu_npcp_consts.I_Books_Category(), " Books I ")
     elseIf id_option == p_option_books_j
-        p_Open(CONSTS.CATEGORY_BOOKS_J, " Books J ")
+        p_Open(doticu_npcp_consts.J_Books_Category(), " Books J ")
     elseIf id_option == p_option_books_k
-        p_Open(CONSTS.CATEGORY_BOOKS_K, " Books K ")
+        p_Open(doticu_npcp_consts.K_Books_Category(), " Books K ")
     elseIf id_option == p_option_books_l
-        p_Open(CONSTS.CATEGORY_BOOKS_L, " Books L ")
+        p_Open(doticu_npcp_consts.L_Books_Category(), " Books L ")
     elseIf id_option == p_option_books_m
-        p_Open(CONSTS.CATEGORY_BOOKS_M, " Books M ")
+        p_Open(doticu_npcp_consts.M_Books_Category(), " Books M ")
     elseIf id_option == p_option_books_n
-        p_Open(CONSTS.CATEGORY_BOOKS_N, " Books N ")
+        p_Open(doticu_npcp_consts.N_Books_Category(), " Books N ")
     elseIf id_option == p_option_books_o
-        p_Open(CONSTS.CATEGORY_BOOKS_O, " Books O ")
+        p_Open(doticu_npcp_consts.O_Books_Category(), " Books O ")
     elseIf id_option == p_option_books_p
-        p_Open(CONSTS.CATEGORY_BOOKS_P, " Books P ")
+        p_Open(doticu_npcp_consts.P_Books_Category(), " Books P ")
     elseIf id_option == p_option_books_q
-        p_Open(CONSTS.CATEGORY_BOOKS_Q, " Books Q ")
+        p_Open(doticu_npcp_consts.Q_Books_Category(), " Books Q ")
     elseIf id_option == p_option_books_r
-        p_Open(CONSTS.CATEGORY_BOOKS_R, " Books R ")
+        p_Open(doticu_npcp_consts.R_Books_Category(), " Books R ")
     elseIf id_option == p_option_books_s
-        p_Open(CONSTS.CATEGORY_BOOKS_S, " Books S ")
+        p_Open(doticu_npcp_consts.S_Books_Category(), " Books S ")
     elseIf id_option == p_option_books_t
-        p_Open(CONSTS.CATEGORY_BOOKS_T, " Books T ")
+        p_Open(doticu_npcp_consts.T_Books_Category(), " Books T ")
     elseIf id_option == p_option_books_u
-        p_Open(CONSTS.CATEGORY_BOOKS_U, " Books U ")
+        p_Open(doticu_npcp_consts.U_Books_Category(), " Books U ")
     elseIf id_option == p_option_books_v
-        p_Open(CONSTS.CATEGORY_BOOKS_V, " Books V ")
+        p_Open(doticu_npcp_consts.V_Books_Category(), " Books V ")
     elseIf id_option == p_option_books_w
-        p_Open(CONSTS.CATEGORY_BOOKS_W, " Books W ")
+        p_Open(doticu_npcp_consts.W_Books_Category(), " Books W ")
     elseIf id_option == p_option_books_x
-        p_Open(CONSTS.CATEGORY_BOOKS_X, " Books X ")
+        p_Open(doticu_npcp_consts.X_Books_Category(), " Books X ")
     elseIf id_option == p_option_books_y
-        p_Open(CONSTS.CATEGORY_BOOKS_Y, " Books Y ")
+        p_Open(doticu_npcp_consts.Y_Books_Category(), " Books Y ")
     elseIf id_option == p_option_books_z
-        p_Open(CONSTS.CATEGORY_BOOKS_Z, " Books Z ")
+        p_Open(doticu_npcp_consts.Z_Books_Category(), " Books Z ")
     elseIf id_option == p_option_books
-        p_Open(CONSTS.CATEGORY_BOOKS, " Books # ")
+        p_Open(doticu_npcp_consts.Books_Category(), " Books # ")
 
     endIf
 endFunction
@@ -398,7 +398,7 @@ endFunction
 ; Private Methods
 function p_Open(ObjectReference ref_container, string str_name)
     FUNCS.Close_Menus()
-    doticu_npcp.Object_Ref_Categorize(CONSTS.CATEGORY_INPUT)
+    doticu_npcp.Object_Ref_Categorize(doticu_npcp_consts.Input_Category())
     CONTAINERS.Rename(ref_container, str_name)
     CONTAINERS.Open(ref_container)
 endFunction

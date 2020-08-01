@@ -21,7 +21,8 @@ namespace doticu_npcp { namespace Game {
     VMResultArray<BSFixedString> Get_Female_Vanilla_Voice_Names();
     BGSVoiceType *Get_Voice_By_Name(BSFixedString str_name);
 
-    TESObjectREFR *Get_NPCP_Category(TESForm *form);
+    Reference_t* Get_NPCP_Category(Form_t* form);
+
 }}
 
 namespace doticu_npcp { namespace Game { namespace Exports {

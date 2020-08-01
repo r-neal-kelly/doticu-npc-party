@@ -740,7 +740,7 @@ namespace doticu_npcp { namespace Object_Ref {
     Reference_t* Create_Marker_At(Reference_t* ref)
     {
         if (ref) {
-            Reference_t* marker = Place_At_Me(ref, Consts::Marker_X_Static(), 1, true, false);
+            Reference_t* marker = Place_At_Me(ref, Consts::X_Marker_Static(), 1, true, false);
             if (marker) {
                 marker->pos.x = ref->pos.x;
                 marker->pos.y = ref->pos.y;

@@ -4,6 +4,69 @@
 
 Scriptname doticu_npcp_consts extends Quest
 
+; Skyrim
+Quest function Follower_Dialogue_Quest() native global
+
+; NPCP
+ObjectReference function Input_Category() native global
+ObjectReference function Swords_Category() native global
+ObjectReference function Greatswords_Category() native global
+ObjectReference function Waraxes_Category() native global
+ObjectReference function Battleaxes_Category() native global
+ObjectReference function Maces_Category() native global
+ObjectReference function Warhammers_Category() native global
+ObjectReference function Daggers_Category() native global
+ObjectReference function Staves_Category() native global
+ObjectReference function Bows_Category() native global
+ObjectReference function Ammo_Category() native global
+ObjectReference function Weapons_Category() native global
+ObjectReference function Light_Armor_Category() native global
+ObjectReference function Heavy_Armor_Category() native global
+ObjectReference function Shields_Category() native global
+ObjectReference function Jewelry_Category() native global
+ObjectReference function Clothes_Category() native global
+ObjectReference function Potions_Category() native global
+ObjectReference function Poisons_Category() native global
+ObjectReference function Ingredients_Category() native global
+ObjectReference function Food_Category() native global
+ObjectReference function Soulgems_Category() native global
+ObjectReference function Scrolls_Category() native global
+ObjectReference function Metals_Category() native global
+ObjectReference function Leather_Category() native global
+ObjectReference function Gems_Category() native global
+ObjectReference function Clutter_Category() native global
+ObjectReference function Keys_Category() native global
+ObjectReference function Misc_Category() native global
+ObjectReference function Spell_Tomes_Category() native global
+ObjectReference function Recipes_Category() native global
+ObjectReference function A_Books_Category() native global
+ObjectReference function B_Books_Category() native global
+ObjectReference function C_Books_Category() native global
+ObjectReference function D_Books_Category() native global
+ObjectReference function E_Books_Category() native global
+ObjectReference function F_Books_Category() native global
+ObjectReference function G_Books_Category() native global
+ObjectReference function H_Books_Category() native global
+ObjectReference function I_Books_Category() native global
+ObjectReference function J_Books_Category() native global
+ObjectReference function K_Books_Category() native global
+ObjectReference function L_Books_Category() native global
+ObjectReference function M_Books_Category() native global
+ObjectReference function N_Books_Category() native global
+ObjectReference function O_Books_Category() native global
+ObjectReference function P_Books_Category() native global
+ObjectReference function Q_Books_Category() native global
+ObjectReference function R_Books_Category() native global
+ObjectReference function S_Books_Category() native global
+ObjectReference function T_Books_Category() native global
+ObjectReference function U_Books_Category() native global
+ObjectReference function V_Books_Category() native global
+ObjectReference function W_Books_Category() native global
+ObjectReference function X_Books_Category() native global
+ObjectReference function Y_Books_Category() native global
+ObjectReference function Z_Books_Category() native global
+ObjectReference function Books_Category() native global
+
 ; Private Constants
 Actor                       p_ACTOR_PLAYER                          = none
 ActorBase                   p_ACTOR_BASE_MENU                       = none
@@ -72,71 +135,6 @@ Quest                       p_QUEST_DIALOGUE_REANIMATED             = none
 Quest                       p_QUEST_DIALOGUE_THRALL                 = none
 EffectShader                p_SHADER_REANIMATE_FX                   = none
 Location                    p_LOCATION_EXPO                         = none
-
-ObjectReference             p_CATEGORY_SWORDS                       = none
-ObjectReference             p_CATEGORY_GREATSWORDS                  = none
-ObjectReference             p_CATEGORY_WARAXES                      = none
-ObjectReference             p_CATEGORY_BATTLEAXES                   = none
-ObjectReference             p_CATEGORY_MACES                        = none
-ObjectReference             p_CATEGORY_WARHAMMERS                   = none
-ObjectReference             p_CATEGORY_DAGGERS                      = none
-ObjectReference             p_CATEGORY_BOWS                         = none
-ObjectReference             p_CATEGORY_STAVES                       = none
-ObjectReference             p_CATEGORY_WEAPONS                      = none
-
-ObjectReference             p_CATEGORY_LIGHT_ARMOR                  = none
-ObjectReference             p_CATEGORY_HEAVY_ARMOR                  = none
-ObjectReference             p_CATEGORY_SHIELDS                      = none
-ObjectReference             p_CATEGORY_JEWELRY                      = none
-ObjectReference             p_CATEGORY_CLOTHES                      = none
-
-ObjectReference             p_CATEGORY_POTIONS                      = none
-ObjectReference             p_CATEGORY_POISONS                      = none
-ObjectReference             p_CATEGORY_FOOD                         = none
-
-ObjectReference             p_CATEGORY_SPELL_TOMES                  = none
-ObjectReference             p_CATEGORY_RECIPES                      = none
-ObjectReference             p_CATEGORY_BOOKS_A                      = none
-ObjectReference             p_CATEGORY_BOOKS_B                      = none
-ObjectReference             p_CATEGORY_BOOKS_C                      = none
-ObjectReference             p_CATEGORY_BOOKS_D                      = none
-ObjectReference             p_CATEGORY_BOOKS_E                      = none
-ObjectReference             p_CATEGORY_BOOKS_F                      = none
-ObjectReference             p_CATEGORY_BOOKS_G                      = none
-ObjectReference             p_CATEGORY_BOOKS_H                      = none
-ObjectReference             p_CATEGORY_BOOKS_I                      = none
-ObjectReference             p_CATEGORY_BOOKS_J                      = none
-ObjectReference             p_CATEGORY_BOOKS_K                      = none
-ObjectReference             p_CATEGORY_BOOKS_L                      = none
-ObjectReference             p_CATEGORY_BOOKS_M                      = none
-ObjectReference             p_CATEGORY_BOOKS_N                      = none
-ObjectReference             p_CATEGORY_BOOKS_O                      = none
-ObjectReference             p_CATEGORY_BOOKS_P                      = none
-ObjectReference             p_CATEGORY_BOOKS_Q                      = none
-ObjectReference             p_CATEGORY_BOOKS_R                      = none
-ObjectReference             p_CATEGORY_BOOKS_S                      = none
-ObjectReference             p_CATEGORY_BOOKS_T                      = none
-ObjectReference             p_CATEGORY_BOOKS_U                      = none
-ObjectReference             p_CATEGORY_BOOKS_V                      = none
-ObjectReference             p_CATEGORY_BOOKS_W                      = none
-ObjectReference             p_CATEGORY_BOOKS_X                      = none
-ObjectReference             p_CATEGORY_BOOKS_Y                      = none
-ObjectReference             p_CATEGORY_BOOKS_Z                      = none
-ObjectReference             p_CATEGORY_BOOKS                        = none
-
-ObjectReference             p_CATEGORY_METALS                       = none
-ObjectReference             p_CATEGORY_LEATHER                      = none
-ObjectReference             p_CATEGORY_GEMS                         = none
-ObjectReference             p_CATEGORY_CLUTTER                      = none
-
-ObjectReference             p_CATEGORY_AMMO                         = none
-ObjectReference             p_CATEGORY_INGREDIENTS                  = none
-ObjectReference             p_CATEGORY_SCROLLS                      = none
-ObjectReference             p_CATEGORY_SOULGEMS                     = none
-ObjectReference             p_CATEGORY_KEYS                         = none
-ObjectReference             p_CATEGORY_OTHERS                       = none
-
-ObjectReference             p_CATEGORY_INPUT                        = none
 
 ; Public Constants
 Actor property ACTOR_PLAYER
@@ -876,592 +874,6 @@ Location property LOCATION_EXPO
     endFunction
 endProperty
 
-ObjectReference property CATEGORY_SWORDS
-    ObjectReference function Get()
-        return p_CATEGORY_SWORDS
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_SWORDS == none
-            p_CATEGORY_SWORDS = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_GREATSWORDS
-    ObjectReference function Get()
-        return p_CATEGORY_GREATSWORDS
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_GREATSWORDS == none
-            p_CATEGORY_GREATSWORDS = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_WARAXES
-    ObjectReference function Get()
-        return p_CATEGORY_WARAXES
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_WARAXES == none
-            p_CATEGORY_WARAXES = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BATTLEAXES
-    ObjectReference function Get()
-        return p_CATEGORY_BATTLEAXES
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BATTLEAXES == none
-            p_CATEGORY_BATTLEAXES = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_MACES
-    ObjectReference function Get()
-        return p_CATEGORY_MACES
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_MACES == none
-            p_CATEGORY_MACES = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_WARHAMMERS
-    ObjectReference function Get()
-        return p_CATEGORY_WARHAMMERS
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_WARHAMMERS == none
-            p_CATEGORY_WARHAMMERS = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_DAGGERS
-    ObjectReference function Get()
-        return p_CATEGORY_DAGGERS
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_DAGGERS == none
-            p_CATEGORY_DAGGERS = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOWS
-    ObjectReference function Get()
-        return p_CATEGORY_BOWS
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOWS == none
-            p_CATEGORY_BOWS = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_STAVES
-    ObjectReference function Get()
-        return p_CATEGORY_STAVES
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_STAVES == none
-            p_CATEGORY_STAVES = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_WEAPONS
-    ObjectReference function Get()
-        return p_CATEGORY_WEAPONS
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_WEAPONS == none
-            p_CATEGORY_WEAPONS = val
-        endIf
-    endFunction
-endProperty
-
-ObjectReference property CATEGORY_LIGHT_ARMOR
-    ObjectReference function Get()
-        return p_CATEGORY_LIGHT_ARMOR
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_LIGHT_ARMOR == none
-            p_CATEGORY_LIGHT_ARMOR = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_HEAVY_ARMOR
-    ObjectReference function Get()
-        return p_CATEGORY_HEAVY_ARMOR
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_HEAVY_ARMOR == none
-            p_CATEGORY_HEAVY_ARMOR = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_SHIELDS
-    ObjectReference function Get()
-        return p_CATEGORY_SHIELDS
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_SHIELDS == none
-            p_CATEGORY_SHIELDS = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_JEWELRY
-    ObjectReference function Get()
-        return p_CATEGORY_JEWELRY
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_JEWELRY == none
-            p_CATEGORY_JEWELRY = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_CLOTHES
-    ObjectReference function Get()
-        return p_CATEGORY_CLOTHES
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_CLOTHES == none
-            p_CATEGORY_CLOTHES = val
-        endIf
-    endFunction
-endProperty
-
-ObjectReference property CATEGORY_POTIONS
-    ObjectReference function Get()
-        return p_CATEGORY_POTIONS
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_POTIONS == none
-            p_CATEGORY_POTIONS = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_POISONS
-    ObjectReference function Get()
-        return p_CATEGORY_POISONS
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_POISONS == none
-            p_CATEGORY_POISONS = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_FOOD
-    ObjectReference function Get()
-        return p_CATEGORY_FOOD
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_FOOD == none
-            p_CATEGORY_FOOD = val
-        endIf
-    endFunction
-endProperty
-
-ObjectReference property CATEGORY_SPELL_TOMES
-    ObjectReference function Get()
-        return p_CATEGORY_SPELL_TOMES
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_SPELL_TOMES == none
-            p_CATEGORY_SPELL_TOMES = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_RECIPES
-    ObjectReference function Get()
-        return p_CATEGORY_RECIPES
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_RECIPES == none
-            p_CATEGORY_RECIPES = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOOKS_A
-    ObjectReference function Get()
-        return p_CATEGORY_BOOKS_A
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOOKS_A == none
-            p_CATEGORY_BOOKS_A = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOOKS_B
-    ObjectReference function Get()
-        return p_CATEGORY_BOOKS_B
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOOKS_B == none
-            p_CATEGORY_BOOKS_B = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOOKS_C
-    ObjectReference function Get()
-        return p_CATEGORY_BOOKS_C
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOOKS_C == none
-            p_CATEGORY_BOOKS_C = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOOKS_D
-    ObjectReference function Get()
-        return p_CATEGORY_BOOKS_D
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOOKS_D == none
-            p_CATEGORY_BOOKS_D = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOOKS_E
-    ObjectReference function Get()
-        return p_CATEGORY_BOOKS_E
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOOKS_E == none
-            p_CATEGORY_BOOKS_E = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOOKS_F
-    ObjectReference function Get()
-        return p_CATEGORY_BOOKS_F
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOOKS_F == none
-            p_CATEGORY_BOOKS_F = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOOKS_G
-    ObjectReference function Get()
-        return p_CATEGORY_BOOKS_G
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOOKS_G == none
-            p_CATEGORY_BOOKS_G = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOOKS_H
-    ObjectReference function Get()
-        return p_CATEGORY_BOOKS_H
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOOKS_H == none
-            p_CATEGORY_BOOKS_H = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOOKS_I
-    ObjectReference function Get()
-        return p_CATEGORY_BOOKS_I
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOOKS_I == none
-            p_CATEGORY_BOOKS_I = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOOKS_J
-    ObjectReference function Get()
-        return p_CATEGORY_BOOKS_J
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOOKS_J == none
-            p_CATEGORY_BOOKS_J = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOOKS_K
-    ObjectReference function Get()
-        return p_CATEGORY_BOOKS_K
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOOKS_K == none
-            p_CATEGORY_BOOKS_K = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOOKS_L
-    ObjectReference function Get()
-        return p_CATEGORY_BOOKS_L
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOOKS_L == none
-            p_CATEGORY_BOOKS_L = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOOKS_M
-    ObjectReference function Get()
-        return p_CATEGORY_BOOKS_M
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOOKS_M == none
-            p_CATEGORY_BOOKS_M = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOOKS_N
-    ObjectReference function Get()
-        return p_CATEGORY_BOOKS_N
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOOKS_N == none
-            p_CATEGORY_BOOKS_N = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOOKS_O
-    ObjectReference function Get()
-        return p_CATEGORY_BOOKS_O
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOOKS_O == none
-            p_CATEGORY_BOOKS_O = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOOKS_P
-    ObjectReference function Get()
-        return p_CATEGORY_BOOKS_P
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOOKS_P == none
-            p_CATEGORY_BOOKS_P = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOOKS_Q
-    ObjectReference function Get()
-        return p_CATEGORY_BOOKS_Q
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOOKS_Q == none
-            p_CATEGORY_BOOKS_Q = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOOKS_R
-    ObjectReference function Get()
-        return p_CATEGORY_BOOKS_R
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOOKS_R == none
-            p_CATEGORY_BOOKS_R = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOOKS_S
-    ObjectReference function Get()
-        return p_CATEGORY_BOOKS_S
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOOKS_S == none
-            p_CATEGORY_BOOKS_S = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOOKS_T
-    ObjectReference function Get()
-        return p_CATEGORY_BOOKS_T
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOOKS_T == none
-            p_CATEGORY_BOOKS_T = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOOKS_U
-    ObjectReference function Get()
-        return p_CATEGORY_BOOKS_U
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOOKS_U == none
-            p_CATEGORY_BOOKS_U = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOOKS_V
-    ObjectReference function Get()
-        return p_CATEGORY_BOOKS_V
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOOKS_V == none
-            p_CATEGORY_BOOKS_V = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOOKS_W
-    ObjectReference function Get()
-        return p_CATEGORY_BOOKS_W
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOOKS_W == none
-            p_CATEGORY_BOOKS_W = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOOKS_X
-    ObjectReference function Get()
-        return p_CATEGORY_BOOKS_X
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOOKS_X == none
-            p_CATEGORY_BOOKS_X = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOOKS_Y
-    ObjectReference function Get()
-        return p_CATEGORY_BOOKS_Y
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOOKS_Y == none
-            p_CATEGORY_BOOKS_Y = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOOKS_Z
-    ObjectReference function Get()
-        return p_CATEGORY_BOOKS_Z
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOOKS_Z == none
-            p_CATEGORY_BOOKS_Z = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_BOOKS
-    ObjectReference function Get()
-        return p_CATEGORY_BOOKS
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_BOOKS == none
-            p_CATEGORY_BOOKS = val
-        endIf
-    endFunction
-endProperty
-
-ObjectReference property CATEGORY_METALS
-    ObjectReference function Get()
-        return p_CATEGORY_METALS
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_METALS == none
-            p_CATEGORY_METALS = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_LEATHER
-    ObjectReference function Get()
-        return p_CATEGORY_LEATHER
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_LEATHER == none
-            p_CATEGORY_LEATHER = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_GEMS
-    ObjectReference function Get()
-        return p_CATEGORY_GEMS
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_GEMS == none
-            p_CATEGORY_GEMS = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_CLUTTER
-    ObjectReference function Get()
-        return p_CATEGORY_CLUTTER
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_CLUTTER == none
-            p_CATEGORY_CLUTTER = val
-        endIf
-    endFunction
-endProperty
-
-ObjectReference property CATEGORY_AMMO
-    ObjectReference function Get()
-        return p_CATEGORY_AMMO
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_AMMO == none
-            p_CATEGORY_AMMO = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_INGREDIENTS
-    ObjectReference function Get()
-        return p_CATEGORY_INGREDIENTS
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_INGREDIENTS == none
-            p_CATEGORY_INGREDIENTS = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_SCROLLS
-    ObjectReference function Get()
-        return p_CATEGORY_SCROLLS
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_SCROLLS == none
-            p_CATEGORY_SCROLLS = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_SOULGEMS
-    ObjectReference function Get()
-        return p_CATEGORY_SOULGEMS
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_SOULGEMS == none
-            p_CATEGORY_SOULGEMS = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_KEYS
-    ObjectReference function Get()
-        return p_CATEGORY_KEYS
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_KEYS == none
-            p_CATEGORY_KEYS = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_OTHERS
-    ObjectReference function Get()
-        return p_CATEGORY_OTHERS
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_OTHERS == none
-            p_CATEGORY_OTHERS = val
-        endIf
-    endFunction
-endProperty
-ObjectReference property CATEGORY_INPUT
-    ObjectReference function Get()
-        return p_CATEGORY_INPUT
-    endFunction
-    function Set(ObjectReference val)
-        if p_CATEGORY_INPUT == none
-            p_CATEGORY_INPUT = val
-        endIf
-    endFunction
-endProperty
-
 int property VERSION_MAJOR                  =     0 autoReadOnly hidden; set manually upon each release
 int property VERSION_MINOR                  =     9 autoReadOnly hidden; set manually upon each release
 int property VERSION_PATCH                  =     2 autoReadOnly hidden; set manually upon each release
@@ -1601,10 +1013,3 @@ string property KEY_FS_UNSNEAK              = "Followers: Unsneak"          auto
 string property KEY_FS_SADDLE               = "Followers: Saddle"           autoReadOnly hidden
 string property KEY_FS_UNSADDLE             = "Followers: Unsaddle"         autoReadOnly hidden
 string property KEY_FS_RESURRECT            = "Followers: Resurrect"        autoReadOnly hidden
-
-; Public Methods
-function Log_Variables() native
-function Log_Defaults() native
-function Log_Properties() native
-
-Quest function Follower_Dialogue_Quest() native global
