@@ -61,7 +61,7 @@ namespace doticu_npcp { namespace Object_Ref {
 
     Reference_t* Place_At_Me(Reference_t* me,
                              Form_t* to_place,
-                             Int_t count,
+                             Int_t count = 1,
                              Bool_t force_persist = true,
                              Bool_t initially_disabled = false);
 
@@ -69,11 +69,15 @@ namespace doticu_npcp { namespace Object_Ref {
 
     Reference_t* Create_Marker_At(Reference_t* ref);
 
-    void Delete(Reference_t* ref);
-    void Undelete(Reference_t* ref);
+    void Delete_Safe(Reference_t* ref);
+    void Delete_Unsafe(Reference_t* ref);
+    //void Request_Delete(Reference_t* ref);
+    //void Force_Delete(Reference_t* ref);
 
     bool Is_In_Interior_Cell(Reference_t* ref);
     bool Is_In_Exterior_Cell(Reference_t* ref);
+
+    UInt32 Ref_Count(Reference_t* ref);
 
 }}
 

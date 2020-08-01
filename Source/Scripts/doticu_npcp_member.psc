@@ -202,7 +202,7 @@ p_Lock()
     p_marker_display = none
     p_marker_undisplay = none
     p_marker_mannequin = none
-    p_outfit_vanilla = NPCS.Get_Default_Outfit(p_ref_actor)
+    p_outfit_vanilla = NPCS.Default_Outfit(p_ref_actor)
 
 p_Unlock()
 
@@ -596,7 +596,7 @@ p_Lock()
         if p_outfit2_current == p_outfit2_vanilla
             p_outfit2_current.Cache_Vanilla_Static(p_outfit_vanilla)
         elseIf p_outfit2_current == p_outfit2_default
-            p_outfit2_current.Cache_Vanilla_Static(NPCS.Get_Default_Outfit(p_ref_actor))
+            p_outfit2_current.Cache_Vanilla_Static(NPCS.Default_Outfit(p_ref_actor))
         endIf
         p_outfit2_current.Set(p_ref_actor, p_container_pack)
     else
@@ -604,7 +604,7 @@ p_Lock()
         if p_outfit2_current == p_outfit2_vanilla
             p_outfit2_current.Try_Cache_Vanilla(p_outfit_vanilla)
         elseIf p_outfit2_current == p_outfit2_default
-            p_outfit2_current.Try_Cache_Vanilla(NPCS.Get_Default_Outfit(p_ref_actor))
+            p_outfit2_current.Try_Cache_Vanilla(NPCS.Default_Outfit(p_ref_actor))
         endIf
         p_outfit2_current.Set(p_ref_actor, p_container_pack)
     endIf
@@ -1507,16 +1507,13 @@ event OnActivate(ObjectReference activator_obj)
             ; we need to lock so that one ref at a time can do this check. we don't want
             ; every ref to get the new outfit, or we may be changing outfit on another ref.
             ; for the same reason we only check right after dialgoue, so the mod must have changed it by now.
-NPCS.Lock_Base(p_ref_actor)
+
             Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(p_ref_actor)
-            Outfit outfit_default = NPCS.Get_Default_Outfit(p_ref_actor)
-            ; we reset the default, so outfitter doesn't detect the base npc outfit has been changed, and set the default on NPCS
-            ACTORS.Set_Base_Outfit(p_ref_actor, outfit_default)
-NPCS.Unlock_Base(p_ref_actor)
-            if outfit_vanilla && outfit_vanilla != outfit_default
+            if outfit_vanilla && outfit_vanilla != NPCS.Default_Outfit(p_ref_actor)
                 ; one drawback of this method is that there is no way to tell if the default
                 ; outfit has been selected through an outfit mod. we could rig something through
                 ; Set_Outfit in c++, but prob. not worth it atm
+                ;NPCS.Update_Base_Outfit(p_ref_actor); so outfitter doesn't detect it has been changed (what? maybe just delete this)
                 p_outfit_vanilla = outfit_vanilla
                 p_do_outfit_vanilla = true
                 p_Outfit()

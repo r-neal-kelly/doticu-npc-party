@@ -241,6 +241,22 @@ namespace doticu_npcp { namespace Party {
     }
 
     template <typename Alias>
+    Bool_t Aliases_t::Has_Base(Range_t<Alias**> aliases, Actor_t* actor_with_base)
+    {
+        if (actor_with_base) {
+            for (; aliases.begin < aliases.end; aliases.begin += 1) {
+                Alias* alias = *aliases.begin;
+                if (alias->Is_Filled() && alias->Has_Same_Base_Unsafe(actor_with_base)) {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            return false;
+        }
+    }
+
+    template <typename Alias>
     Bool_t Aliases_t::Has_Head(Range_t<Alias**> aliases, Actor_t* actor)
     {
         if (actor) {
@@ -253,6 +269,22 @@ namespace doticu_npcp { namespace Party {
             return false;
         } else {
             return false;
+        }
+    }
+
+    template <typename Alias>
+    Int_t Aliases_t::Count_Base(Range_t<Alias**> aliases, Actor_t* actor_with_base)
+    {
+        if (actor_with_base) {
+            Int_t count = 0;
+            for (; aliases.begin < aliases.end; aliases.begin += 1) {
+                if ((*aliases.begin)->Has_Same_Base(actor_with_base)) {
+                    count += 1;
+                }
+            }
+            return count;
+        } else {
+            return 0;
         }
     }
 

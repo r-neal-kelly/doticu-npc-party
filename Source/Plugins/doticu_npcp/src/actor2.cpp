@@ -35,13 +35,22 @@ namespace doticu_npcp { namespace Actor2 {
         return Object_Ref::Get_Name(actor);
     }
 
-    Outfit_t* Base_Outfit(Actor* actor)
+    Outfit_t* Base_Outfit(Actor_t* actor)
     {
         if (actor) {
-            Actor_Base_t* base = Dynamic_Base(actor);
-            return base->defaultOutfit;
+            Actor_Base_t* base_actor = Dynamic_Base(actor);
+            return base_actor->defaultOutfit;
         } else {
             return nullptr;
+        }
+    }
+
+    void Base_Outfit(Actor_t* actor, Outfit_t* outfit)
+    {
+        if (actor) {
+            Actor_Base_t* base_actor = Dynamic_Base(actor);
+            base_actor->defaultOutfit = outfit;
+            base_actor->MarkChanged(0x1000);
         }
     }
 

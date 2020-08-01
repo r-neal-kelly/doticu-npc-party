@@ -20,6 +20,12 @@ namespace doticu_npcp { namespace Offsets {
 
     }
 
+    namespace Array {
+
+        constexpr uintptr_t DESTROY                     = 0x01241E40; // 97723
+
+    }
+
     namespace Container_Changes {
 
         constexpr uintptr_t CTOR                        = 0x001D9200; // 15812
@@ -50,6 +56,13 @@ namespace doticu_npcp { namespace Offsets {
 
         constexpr uintptr_t INCREMENT_LOCK              = 0x01234360; // 97468
         constexpr uintptr_t DECREMENT_LOCK              = 0x01234410; // 97469
+        constexpr uintptr_t DESTROY                     = 0x01233670; // 97462
+
+    }
+
+    namespace Object_Policy {
+
+        constexpr uintptr_t BIND_OBJECT                 = 0x0122DAD0; // 97379
 
     }
 

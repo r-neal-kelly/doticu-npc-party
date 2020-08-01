@@ -65,6 +65,21 @@ namespace doticu_npcp { namespace Papyrus {
         return handle;
     }
 
+    // Object_Bind_Policy_t
+
+    inline void Object_Policy_t::Bind_Object(Object_t*& object, Handle_t handle)
+    {
+        static auto bind_object = reinterpret_cast
+            <void (*)(Object_Policy_t*, Object_t*& object, Handle_t)>
+            (RelocationManager::s_baseAddr + Offsets::Object_Policy::BIND_OBJECT);
+        bind_object(this, object, handle);
+    }
+
+    inline void Object_Policy_t::Unbind_Object(Object_t*& object)
+    {
+        virtual_binder->Unbind_Object(object);
+    }
+
     // Virtual_Machine_t
 
     inline Virtual_Machine_t* Virtual_Machine_t::Self()
@@ -90,6 +105,36 @@ namespace doticu_npcp { namespace Papyrus {
             bool Copy(Output* output) { return true; }
         } arguments;
         Self()->Send_Event(Handle_t(object), &event_name, &arguments);
+    }
+
+    inline Int_t Virtual_Machine_t::Count_Objects(Handle_t handle)
+    {
+        class Counter : public IForEachScriptObjectFunctor {
+        public:
+            Handle_t handle;
+            Int_t count = 0;
+
+            Counter(Handle_t handle) :
+                handle(handle), count(0)
+            {
+            }
+
+            virtual bool Visit(Script_t* object, void*)
+            {
+                _MESSAGE("        >>>> %s", object->classInfo->name);
+                count += 1;
+                return true;
+            }
+        } counter(handle);
+
+        For_Each_Object(handle, &counter);
+
+        return counter.count;
+    }
+
+    inline Bool_t Virtual_Machine_t::Has_Object(Handle_t handle)
+    {
+        return Count_Objects(handle) < 1;
     }
 
     // Type_t
@@ -227,6 +272,28 @@ namespace doticu_npcp { namespace Papyrus {
             }
         } else {
             return nullptr;
+        }
+    }
+
+    inline void Array_t::Destroy(Array_t* arr)
+    {
+        static auto destroy = reinterpret_cast
+            <void (*)(Array_t*)>
+            (RelocationManager::s_baseAddr + Offsets::Array::DESTROY);
+        if (arr) {
+            destroy(arr);
+        }
+    }
+
+    inline void Array_t::Increment_Count()
+    {
+        InterlockedIncrement(&ref_count);
+    }
+
+    inline void Array_t::Decrement_Count()
+    {
+        if (InterlockedDecrement(&ref_count) < 1) {
+            Array_t::Destroy(this);
         }
     }
 
@@ -494,7 +561,7 @@ namespace doticu_npcp { namespace Papyrus {
             Variable_t temp;
             temp.type = value->info;
             temp.data.obj = value;
-            Copy(&temp); // this may do stuff we don't
+            Copy(&temp); // this prob. does stuff we don't
         } else {
             None();
         }
@@ -506,6 +573,7 @@ namespace doticu_npcp { namespace Papyrus {
             Destroy();
             type = value->Array_Type();
             data.arr = value;
+            value->ref_count += 1; // value->Increment_Count();
         } else {
             None();
         }
@@ -514,64 +582,86 @@ namespace doticu_npcp { namespace Papyrus {
     template <typename Type>
     inline void Variable_t::Pack(Type* value)
     {
-        /////////////////////////////////////////////////////
-        PackHandle(reinterpret_cast<VMValue*>(this), value, Type::kTypeID, Registry());
-        return;
-        /////////////////////////////////////////////////////
+        if (value) {
+            /////////////////////////////////////////////////////
+            PackHandle(reinterpret_cast<VMValue*>(this), value, Type::kTypeID, Registry());
+            return;
+            /////////////////////////////////////////////////////
 
-        NPCP_ASSERT(value);
+            Class_Info_t* class_info = Class_Info_t::Fetch(Type::kTypeID);
+            NPCP_ASSERT(class_info);
 
-        Class_Info_t* class_info = Class_Info_t::Fetch(Type::kTypeID);
-        NPCP_ASSERT(class_info);
+            Object_t* object = Object_t::Fetch(value, class_info->name);
+            // if !object, we need to do some extra work.
+            NPCP_ASSERT(object);
+            object->Decrement_Lock();
 
-        Object_t* object = Object_t::Fetch(value, class_info->name);
-        NPCP_ASSERT(object);
+            Object(object);
 
-        Object(object);
-
-        class_info->Free();
+            class_info->Free();
+        } else {
+            None();
+        }
     }
 
     template <>
     inline void Variable_t::Pack(Bool_t* value)
     {
-        NPCP_ASSERT(value);
-        Bool(*value);
+        if (value) {
+            Bool(*value);
+        } else {
+            None();
+        }
     }
 
     template <>
     inline void Variable_t::Pack(Int_t* value)
     {
-        NPCP_ASSERT(value);
-        Int(*value);
+        if (value) {
+            Int(*value);
+        } else {
+            None();
+        }
     }
 
     template <>
     inline void Variable_t::Pack(Float_t* value)
     {
-        NPCP_ASSERT(value);
-        Float(*value);
+        if (value) {
+            Float(*value);
+        } else {
+            None();
+        }
     }
 
     template <>
     inline void Variable_t::Pack(String_t* value)
     {
-        NPCP_ASSERT(value);
-        String(*value);
+        if (value) {
+            String(*value);
+        } else {
+            None();
+        }
     }
 
     template <>
     inline void Variable_t::Pack(Object_t* value)
     {
-        NPCP_ASSERT(value);
-        Object(value);
+        if (value) {
+            Object(value);
+        } else {
+            None();
+        }
     }
 
     template <>
     inline void Variable_t::Pack(Array_t* value)
     {
-        NPCP_ASSERT(value);
-        Array(value);
+        if (value) {
+            Array(value);
+        } else {
+            None();
+        }
     }
 
     template <typename Type>
@@ -583,6 +673,7 @@ namespace doticu_npcp { namespace Papyrus {
         Type_t type(class_info);
         Array_t* arr = Array_t::Create(&type, values.size());
         NPCP_ASSERT(arr);
+        arr->ref_count -= 1;
 
         for (size_t idx = 0, count = arr->count; idx < count; idx += 1) {
             arr->Point(idx)->Pack(values[idx]);
@@ -599,6 +690,7 @@ namespace doticu_npcp { namespace Papyrus {
         Type_t type(Type_t::BOOL);
         Array_t* arr = Array_t::Create(&type, values.size());
         NPCP_ASSERT(arr);
+        arr->ref_count -= 1;
 
         for (size_t idx = 0, count = arr->count; idx < count; idx += 1) {
             // can't point to std::vector<bool>[i]. f'ing stupid. if I wanted a bitfield I would use a different type!!!
@@ -615,6 +707,7 @@ namespace doticu_npcp { namespace Papyrus {
         Type_t type(Type_t::INT);
         Array_t* arr = Array_t::Create(&type, values.size());
         NPCP_ASSERT(arr);
+        arr->ref_count -= 1;
 
         for (size_t idx = 0, count = arr->count; idx < count; idx += 1) {
             arr->Point(idx)->Pack(&values[idx]);
@@ -629,6 +722,7 @@ namespace doticu_npcp { namespace Papyrus {
         Type_t type(Type_t::FLOAT);
         Array_t* arr = Array_t::Create(&type, values.size());
         NPCP_ASSERT(arr);
+        arr->ref_count -= 1;
 
         for (size_t idx = 0, count = arr->count; idx < count; idx += 1) {
             arr->Point(idx)->Pack(&values[idx]);
@@ -643,6 +737,7 @@ namespace doticu_npcp { namespace Papyrus {
         Type_t type(Type_t::STRING);
         Array_t* arr = Array_t::Create(&type, values.size());
         NPCP_ASSERT(arr);
+        arr->ref_count -= 1;
 
         for (size_t idx = 0, count = arr->count; idx < count; idx += 1) {
             arr->Point(idx)->Pack(&values[idx]);
@@ -658,6 +753,7 @@ namespace doticu_npcp { namespace Papyrus {
         Type_t type(values[0]->info);
         Array_t* arr = Array_t::Create(&type, values.size());
         NPCP_ASSERT(arr);
+        arr->ref_count -= 1;
 
         for (size_t idx = 0, count = arr->count; idx < count; idx += 1) {
             arr->Point(idx)->Pack(values[idx]);
@@ -873,6 +969,13 @@ namespace doticu_npcp { namespace Papyrus {
     inline Variable_t* Object_t::Variables()
     {
         return reinterpret_cast<Variable_t*>(this + 1);
+    }
+
+    inline void Object_t::Destroy()
+    {
+        static auto destroy = reinterpret_cast
+            <void (*)(Object_t*)>
+            (RelocationManager::s_baseAddr + Offsets::Object::DESTROY);
     }
 
     inline void Object_t::Increment_Lock()

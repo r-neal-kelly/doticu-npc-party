@@ -100,22 +100,7 @@ function p_Set(Actor ref_actor, ObjectReference ref_pack)
         return
     endIf
 
-NPCS.Lock_Base(ref_actor)
-    Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(ref_actor)
-    Outfit outfit_default = NPCS.Get_Default_Outfit(ref_actor)
-    if outfit_vanilla && outfit_vanilla != outfit_default
-        NPCS.Set_Default_Outfit(ref_actor, outfit_vanilla)
-        doticu_npcp.Outfit_Add_Item(outfit_vanilla, CONSTS.ARMOR_BLANK)
-        ref_actor.SetOutfit(outfit_vanilla)
-    elseIf !ref_actor.IsEquipped(CONSTS.ARMOR_BLANK)
-        ; it's imperative that ARMOR_BLANK be on the outfit and equipped before further ops
-        doticu_npcp.Outfit_Add_Item(outfit_default, CONSTS.ARMOR_BLANK)
-        ref_actor.SetOutfit(outfit_default)
-    else
-        ; just in case it was changed before this ref was updated
-        ACTORS.Set_Base_Outfit(ref_actor, outfit_default)
-    endIf
-NPCS.Unlock_Base(ref_actor)
+    NPCS.Update_And_Apply_Default_Oufit_If_Needed(ref_actor)
 
     ; this will stop the actor from rendering while we manage its inventory
     bool is_teammate = ref_actor.IsPlayerTeammate()

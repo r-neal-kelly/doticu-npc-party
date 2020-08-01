@@ -11,6 +11,7 @@ namespace doticu_npcp { namespace Form {
     const char *Get_Name(TESForm *ref_form);
     const char *Get_Type_String(TESForm *ref_form);
     bool Has_Keyword(TESForm *form, BGSKeyword *keyword);
+    void Log_Flags(Form_t* form);
 
 }}
 

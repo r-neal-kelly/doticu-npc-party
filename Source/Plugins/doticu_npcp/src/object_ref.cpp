@@ -11,6 +11,8 @@
 #include "object_ref.h"
 #include "offsets.h"
 #include "papyrus.h"
+#include "papyrus.inl"
+#include "player.h"
 #include "quest.h"
 #include "utils.h"
 #include "vector.h"
@@ -721,7 +723,6 @@ namespace doticu_npcp { namespace Object_Ref {
         static auto place_at_me = reinterpret_cast
             <Reference_t * (*)(Virtual_Machine_t*, Stack_ID_t, Reference_t*, Form_t*, Int_t, Bool_t, Bool_t)>
             (RelocationManager::s_baseAddr + Offsets::Reference::PLACE_AT_ME);
-
         return place_at_me(Virtual_Machine_t::Self(), 0, me, to_place, count, force_persist, initially_disabled);
     }
 
@@ -757,17 +758,28 @@ namespace doticu_npcp { namespace Object_Ref {
         }
     }
 
-    void Delete(Reference_t* ref)
+    void Delete_Safe(Reference_t* ref)
     {
+        using namespace Papyrus;
+
         if (ref) {
-            ref->Set_Delete(true);
+            ref->Disable();
+            Virtual_Machine_t::Self()->Send_Event(ref, "Delete");
         }
     }
 
-    void Undelete(Reference_t* ref)
+    void Delete_Unsafe(Reference_t* ref)
     {
+        using namespace Papyrus;
+
         if (ref) {
-            ref->Set_Delete(false);
+            Object_Policy_t* object_policy = Virtual_Machine_t::Self()->Object_Policy();
+            object_policy->virtual_binder->Unbind_All_Objects3(ref);
+
+            ref->Disable();
+            ref->Set_Delete(true);
+            ref->handleRefObject.m_uiRefCount = 0;
+            ref->handleRefObject.DeleteThis();
         }
     }
 
@@ -787,6 +799,12 @@ namespace doticu_npcp { namespace Object_Ref {
         } else {
             return false;
         }
+    }
+
+    UInt32 Ref_Count(Reference_t* ref)
+    {
+        NPCP_ASSERT(ref);
+        return ref->handleRefObject.m_uiRefCount & 0x3FF;
     }
 
 }}

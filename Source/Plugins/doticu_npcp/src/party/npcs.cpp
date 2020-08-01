@@ -241,6 +241,31 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
+    void NPCS_t::Remove_All_Tokens(Actor_t* actor)
+    {
+        if (actor) {
+            Object_Ref::Untoken(actor, Consts::Member_Token());
+            Object_Ref::Untoken(actor, Consts::Generic_Token());
+            Object_Ref::Untoken(actor, Consts::Clone_Token());
+            Object_Ref::Untoken(actor, Consts::Immobile_Token());
+            Object_Ref::Untoken(actor, Consts::Settler_Token());
+            Object_Ref::Untoken(actor, Consts::Thrall_Token());
+            Object_Ref::Untoken(actor, Consts::Paralyzed_Token());
+            Object_Ref::Untoken(actor, Consts::Mannequin_Token());
+            Object_Ref::Untoken(actor, Consts::Display_Token());
+            Object_Ref::Untoken(actor, Consts::Default_Style_Token());
+            Object_Ref::Untoken(actor, Consts::Warrior_Style_Token());
+            Object_Ref::Untoken(actor, Consts::Mage_Style_Token());
+            Object_Ref::Untoken(actor, Consts::Archer_Style_Token());
+            Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
+            Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
+            Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
+            Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
+            Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
+            Object_Ref::Untoken(actor, Consts::Sneak_Follower_Token());
+        }
+    }
+
     void NPCS_t::Add_Original(Actor_t* original)
     {
         NPCP_ASSERT(original);
@@ -271,8 +296,8 @@ namespace doticu_npcp { namespace Party {
             if (original_idx > -1) {
                 originals->Remove_Unstable(original_idx);
                 if (originals->Count() < 1) {
-                    Form_Vector_t::Destroy(originals);
                     Original_Vectors()->Set(base_idx, nullptr);
+                    Form_Vector_t::Destroy(originals);
                     Remove_Base_If_Needed(base_idx);
                 }
             }
@@ -285,6 +310,7 @@ namespace doticu_npcp { namespace Party {
 
         Actor_t* clone = Actor2::Clone(original);
         NPCP_ASSERT(clone);
+        Remove_All_Tokens(clone);
 
         Int_t base_idx = Add_Base_If_Needed(clone, original);
         Form_Vector_t* clones = Clones(base_idx);
@@ -295,6 +321,8 @@ namespace doticu_npcp { namespace Party {
         } else if (!clones->Has(clone)) {
             clones->Push(clone);
         }
+
+        return clone;
     }
 
     void NPCS_t::Remove_Clone(Actor_t* clone)
@@ -309,13 +337,37 @@ namespace doticu_npcp { namespace Party {
             Int_t clone_idx = clones->Find(clone);
             if (clone_idx > -1) {
                 clones->Remove_Unstable(clone_idx);
-                Object_Ref::Delete(clone);
+                Object_Ref::Delete_Safe(clone);
                 if (clones->Count() < 1) {
-                    Form_Vector_t::Destroy(clones);
                     Clone_Vectors()->Set(base_idx, nullptr);
+                    Form_Vector_t::Destroy(clones);
                     Remove_Base_If_Needed(base_idx);
                 }
             }
+        }
+    }
+
+    Bool_t NPCS_t::Is_Original(Actor_t* actor)
+    {
+        NPCP_ASSERT(actor);
+
+        Int_t base_idx = Base_Idx(actor);
+        if (base_idx > -1) {
+            return Has_Original(base_idx, actor);
+        } else {
+            return false;
+        }
+    }
+
+    Bool_t NPCS_t::Is_Clone(Actor_t* actor)
+    {
+        NPCP_ASSERT(actor);
+
+        Int_t base_idx = Base_Idx(actor);
+        if (base_idx > -1) {
+            return Has_Clone(base_idx, actor);
+        } else {
+            return false;
         }
     }
 
@@ -365,7 +417,7 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
-    void NPCS_t::Default_Outfit(Actor_t* actor, Outfit_t* default_outfit)
+    void NPCS_t::Change_Default_Outfit(Actor_t* actor, Outfit_t* default_outfit)
     {
         NPCP_ASSERT(actor);
         NPCP_ASSERT(default_outfit);
@@ -378,36 +430,90 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
-    Bool_t NPCS_t::Is_Original(Actor_t* actor)
+    void NPCS_t::Apply_Default_Outfit(Actor_t* actor)
     {
         NPCP_ASSERT(actor);
 
-        Int_t base_idx = Base_Idx(actor);
-        if (base_idx > -1) {
-            return Has_Original(base_idx, actor);
+        Outfit_t* default_outfit = Default_Outfit(actor);
+        Outfit::Add_Item(default_outfit, Consts::Blank_Armor());
+        Actor2::Set_Outfit(actor, default_outfit, false);
+    }
+
+    void NPCS_t::Update_And_Apply_Default_Oufit_If_Needed(Actor_t* actor)
+    {
+        NPCP_ASSERT(actor);
+
+        Outfit_t* current_outfit = Actor2::Base_Outfit(actor);
+        Outfit_t* default_outfit = Default_Outfit(actor);
+
+        if (current_outfit && current_outfit != default_outfit) {
+            Change_Default_Outfit(actor, current_outfit);
+            Actor2::Set_Outfit(actor, current_outfit, false);
+        } else if (!Object_Ref::Is_Worn(actor, Consts::Blank_Armor())) {
+            Outfit::Add_Item(default_outfit, Consts::Blank_Armor());
+            Actor2::Set_Outfit(actor, default_outfit, false);
         } else {
-            return false;
+            Actor2::Base_Outfit(actor, default_outfit);
         }
     }
 
-    Bool_t NPCS_t::Is_Clone(Actor_t* actor)
+    void NPCS_t::Update_Base_Outfit(Actor_t* actor)
     {
         NPCP_ASSERT(actor);
 
-        Int_t base_idx = Base_Idx(actor);
-        if (base_idx > -1) {
-            return Has_Clone(base_idx, actor);
-        } else {
-            return false;
-        }
+        Outfit_t* default_outfit = Default_Outfit(actor);
+        Actor2::Base_Outfit(actor, default_outfit);
     }
 
 }}
 
 namespace doticu_npcp { namespace Party { namespace NPCS { namespace Exports {
 
+    void Add_Original(NPCS_t* self, Actor_t* original) FORWARD_VOID(Add_Original(original));
+    void Remove_Original(NPCS_t* self, Actor_t* original) FORWARD_VOID(Remove_Original(original));
+    Actor_t* Add_Clone(NPCS_t* self, Actor_t* original) FORWARD_POINTER(Add_Clone(original));
+    void Remove_Clone(NPCS_t* self, Actor_t* clone) FORWARD_VOID(Remove_Clone(clone));
+
+    Bool_t Is_Original(NPCS_t* self, Actor_t* actor) FORWARD_BOOL(Is_Original(actor));
+    Bool_t Is_Clone(NPCS_t* self, Actor_t* actor) FORWARD_BOOL(Is_Clone(actor));
+
+    Vector_t<Actor_t*> Originals(NPCS_t* self, Actor_t* actor) FORWARD_VECTOR(Originals(actor), Actor_t*);
+    Vector_t<Actor_t*> Clones(NPCS_t* self, Actor_t* actor) FORWARD_VECTOR(Clones(actor), Actor_t*);
+
+    Outfit_t* Default_Outfit(NPCS_t* self, Actor_t* actor) FORWARD_POINTER(Default_Outfit(actor));
+    void Change_Default_Outfit(NPCS_t* self, Actor_t* actor, Outfit_t* default_outfit) FORWARD_VOID(Change_Default_Outfit(actor, default_outfit));
+    void Apply_Default_Outfit(NPCS_t* self, Actor_t* actor) FORWARD_VOID(Apply_Default_Outfit(actor));
+    void Update_And_Apply_Default_Oufit_If_Needed(NPCS_t* self, Actor_t* actor) FORWARD_VOID(Update_And_Apply_Default_Oufit_If_Needed(actor));
+    void Update_Base_Outfit(NPCS_t* self, Actor_t* actor) FORWARD_VOID(Update_Base_Outfit(actor));
+
     Bool_t Register(Registry_t* registry)
     {
+        #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                               \
+            ADD_CLASS_METHOD(NPCS_t::Class_Name(), NPCS_t,              \
+                             STR_FUNC_, ARG_NUM_,                       \
+                             RETURN_, Exports::METHOD_, __VA_ARGS__);   \
+        W
+
+        ADD_METHOD("Add_Original", 1, void, Add_Original, Actor_t*);
+        ADD_METHOD("Remove_Original", 1, void, Remove_Original, Actor_t*);
+        ADD_METHOD("Add_Clone", 1, Actor_t*, Add_Clone, Actor_t*);
+        ADD_METHOD("Remove_Clone", 1, void, Remove_Clone, Actor_t*);
+
+        ADD_METHOD("Is_Original", 1, Bool_t, Is_Original, Actor_t*);
+        ADD_METHOD("Is_Clone", 1, Bool_t, Is_Clone, Actor_t*);
+
+        ADD_METHOD("Originals", 1, Vector_t<Actor_t*>, Originals, Actor_t*);
+        ADD_METHOD("Clones", 1, Vector_t<Actor_t*>, Clones, Actor_t*);
+
+        ADD_METHOD("Default_Outfit", 1, Outfit_t*, Default_Outfit, Actor_t*);
+        ADD_METHOD("Change_Default_Outfit", 2, void, Change_Default_Outfit, Actor_t*, Outfit_t*);
+        ADD_METHOD("Apply_Default_Outfit", 1, void, Apply_Default_Outfit, Actor_t*);
+        ADD_METHOD("Update_And_Apply_Default_Oufit_If_Needed", 1, void, Update_And_Apply_Default_Oufit_If_Needed, Actor_t*);
+        ADD_METHOD("Update_Base_Outfit", 1, void, Update_Base_Outfit, Actor_t*);
+
+        #undef ADD_METHOD
+
         return true;
     }
 

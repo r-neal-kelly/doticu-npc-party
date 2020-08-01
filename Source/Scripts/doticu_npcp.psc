@@ -19,6 +19,9 @@ bool function Cell_Is_Interior(Cell ref_cell) native global
 ; Forms
 Form[] function Forms_Slice(Form[] arr_forms, int idx_from, int idx_to_ex) native global
 
+; Form
+function Form_Log_Flags(Form ref_form) native global
+
 ; Game
 string[] function Game_Get_Male_Vanilla_Voice_Names() native global
 string[] function Game_Get_Female_Vanilla_Voice_Names() native global

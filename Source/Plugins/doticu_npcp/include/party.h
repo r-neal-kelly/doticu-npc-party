@@ -87,18 +87,25 @@ namespace doticu_npcp { namespace Party {
         Int_t Add_Base_If_Needed(Actor_t* actor_with_base, Actor_t* actor_with_outfit);
         void Remove_Base_If_Needed(Int_t base_idx);
 
+        void Remove_All_Tokens(Actor_t* actor);
+
+    public:
         void Add_Original(Actor_t* original);
         void Remove_Original(Actor_t* original);
         Actor_t* Add_Clone(Actor_t* original);
         void Remove_Clone(Actor_t* clone);
 
-        Vector_t<Actor_t*> Originals(Actor_t* actor);
-        Vector_t<Actor_t*> Clones(Actor_t* actor);
-        Outfit_t* Default_Outfit(Actor_t* actor);
-        void Default_Outfit(Actor_t* actor, Outfit_t* default_outfit);
-
         Bool_t Is_Original(Actor_t* actor);
         Bool_t Is_Clone(Actor_t* actor);
+
+        Vector_t<Actor_t*> Originals(Actor_t* actor);
+        Vector_t<Actor_t*> Clones(Actor_t* actor);
+
+        Outfit_t* Default_Outfit(Actor_t* actor);
+        void Change_Default_Outfit(Actor_t* actor, Outfit_t* default_outfit);
+        void Apply_Default_Outfit(Actor_t* actor);
+        void Update_And_Apply_Default_Oufit_If_Needed(Actor_t* actor);
+        void Update_Base_Outfit(Actor_t* actor);
     };
 
     namespace NPCS { namespace Exports {
@@ -159,7 +166,11 @@ namespace doticu_npcp { namespace Party {
         Vector_t<Alias*> Slice(Vector_t<Alias*> aliases, Int_t begin, Int_t end);
 
         template <typename Alias>
+        Bool_t Has_Base(Range_t<Alias**> aliases, Actor_t* actor_with_base);
+        template <typename Alias>
         Bool_t Has_Head(Range_t<Alias**> aliases, Actor_t* actor);
+        template <typename Alias>
+        Int_t Count_Base(Range_t<Alias**> aliases, Actor_t* actor_with_base);
         template <typename Alias>
         Int_t Count_Heads(Range_t<Alias**> aliases, Actor_t* actor);
 
@@ -214,6 +225,8 @@ namespace doticu_npcp { namespace Party {
         Bool_t Hasnt_Space();
         Bool_t Has_Actor(Actor_t* actor);
         Bool_t Hasnt_Actor(Actor_t* actor);
+        Bool_t Has_Base(Actor_t* actor_with_base);
+        Bool_t Hasnt_Base(Actor_t* actor_with_base);
         Bool_t Has_Head(Actor_t* actor);
         Bool_t Hasnt_Head(Actor_t* actor);
         Bool_t Has_Display();
@@ -250,6 +263,7 @@ namespace doticu_npcp { namespace Party {
         Int_t Count_Non_Saddlers();
         Int_t Count_Retreaters();
         Int_t Count_Non_Retreaters();
+        Int_t Count_Base(Actor_t* actor_with_base);
         Int_t Count_Heads(Actor_t* actor);
 
         Vector_t<Member_t*> All();
@@ -581,8 +595,11 @@ namespace doticu_npcp { namespace Party {
         Bool_t Is_Retreater_Unsafe();
         Bool_t Isnt_Retreater_Unsafe();
 
-        Bool_t Has_Same_Head(Actor_t* actor);
-        Bool_t Has_Same_Head_Unsafe(Actor_t* actor);
+        Bool_t Has_Same_Base(Actor_t* other_actor);
+        Bool_t Has_Same_Head(Actor_t* other_actor);
+
+        Bool_t Has_Same_Base_Unsafe(Actor_t* other_actor);
+        Bool_t Has_Same_Head_Unsafe(Actor_t* other_actor);
 
         void On_Hit(Reference_t* attacker,
                     Form_t* tool,

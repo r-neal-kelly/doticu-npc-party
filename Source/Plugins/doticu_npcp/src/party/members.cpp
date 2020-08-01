@@ -142,6 +142,16 @@ namespace doticu_npcp { namespace Party {
         return actor && From_Actor(actor) == nullptr;
     }
 
+    Bool_t Members_t::Has_Base(Actor_t* actor_with_base)
+    {
+        return actor_with_base && Aliases_t::Has_Base<Member_t>(Aliases(), actor_with_base);
+    }
+
+    Bool_t Members_t::Hasnt_Base(Actor_t* actor_with_base)
+    {
+        return actor_with_base && !Aliases_t::Has_Base<Member_t>(Aliases(), actor_with_base);
+    }
+
     Bool_t Members_t::Has_Head(Actor_t* actor)
     {
         return actor && Aliases_t::Has_Head<Member_t>(Aliases(), actor);
@@ -317,6 +327,11 @@ namespace doticu_npcp { namespace Party {
         return Count_If<Member_t>(Aliases(), &Member_t::Isnt_Retreater);
     }
 
+    Int_t Members_t::Count_Base(Actor_t* actor_with_base)
+    {
+        return Aliases_t::Count_Base(Aliases(), actor_with_base);
+    }
+
     Int_t Members_t::Count_Heads(Actor_t* actor)
     {
         return Aliases_t::Count_Heads(Aliases(), actor);
@@ -465,8 +480,9 @@ namespace doticu_npcp { namespace Party {
             Has_Display_Variable()->Bool(false);
             Display_Idx_Variable()->Int(0);
 
-            Object_Ref::Delete(Display_Marker_Variable()->Reference());
+            Reference_t* display_marker = Display_Marker_Variable()->Reference();
             Display_Marker_Variable()->None();
+            Object_Ref::Delete_Safe(display_marker);
 
             Undisplay();
 
@@ -599,6 +615,8 @@ namespace doticu_npcp { namespace Party { namespace Members { namespace Exports 
     Bool_t Hasnt_Space(Members_t* self) FORWARD_BOOL(Hasnt_Space());
     Bool_t Has_Actor(Members_t* self, Actor_t* actor) FORWARD_BOOL(Has_Actor(actor));
     Bool_t Hasnt_Actor(Members_t* self, Actor_t* actor) FORWARD_BOOL(Hasnt_Actor(actor));
+    Bool_t Has_Base(Members_t* self, Actor_t* actor_with_base) FORWARD_BOOL(Has_Base(actor_with_base));
+    Bool_t Hasnt_Base(Members_t* self, Actor_t* actor_with_base) FORWARD_BOOL(Hasnt_Base(actor_with_base));
     Bool_t Has_Head(Members_t* self, Actor_t* actor) FORWARD_BOOL(Has_Head(actor));
     Bool_t Hasnt_Head(Members_t* self, Actor_t* actor) FORWARD_BOOL(Hasnt_Head(actor));
     Bool_t Has_Display(Members_t* self) FORWARD_BOOL(Members_t::Has_Display());
@@ -635,6 +653,7 @@ namespace doticu_npcp { namespace Party { namespace Members { namespace Exports 
     Int_t Count_Non_Saddlers(Members_t* self) FORWARD_INT(Count_Non_Saddlers());
     Int_t Count_Retreaters(Members_t* self) FORWARD_INT(Count_Retreaters());
     Int_t Count_Non_Retreaters(Members_t* self) FORWARD_INT(Count_Non_Retreaters());
+    Int_t Count_Base(Members_t* self, Actor_t* actor_with_base) FORWARD_INT(Count_Base(actor_with_base));
     Int_t Count_Heads(Members_t* self, Actor_t* actor) FORWARD_INT(Count_Heads(actor));
 
     Vector_t<Member_t*> All(Members_t* self) FORWARD_VECTOR(All(), Member_t*);
@@ -691,6 +710,8 @@ namespace doticu_npcp { namespace Party { namespace Members { namespace Exports 
         ADD_METHOD("Hasnt_Space", 0, Bool_t, Hasnt_Space);
         ADD_METHOD("Has_Actor", 1, Bool_t, Has_Actor, Actor_t*);
         ADD_METHOD("Hasnt_Actor", 1, Bool_t, Hasnt_Actor, Actor_t*);
+        ADD_METHOD("Has_Base", 1, Bool_t, Has_Base, Actor_t*);
+        ADD_METHOD("Hasnt_Base", 1, Bool_t, Hasnt_Base, Actor_t*);
         ADD_METHOD("Has_Head", 1, Bool_t, Has_Head, Actor_t*);
         ADD_METHOD("Hasnt_Head", 1, Bool_t, Hasnt_Head, Actor_t*);
         ADD_METHOD("Has_Display", 0, Bool_t, Has_Display);
@@ -727,6 +748,7 @@ namespace doticu_npcp { namespace Party { namespace Members { namespace Exports 
         ADD_METHOD("Count_Non_Saddlers", 0, Int_t, Count_Non_Saddlers);
         ADD_METHOD("Count_Retreaters", 0, Int_t, Count_Retreaters);
         ADD_METHOD("Count_Non_Retreaters", 0, Int_t, Count_Non_Retreaters);
+        ADD_METHOD("Count_Base", 1, Int_t, Count_Base, Actor_t*);
         ADD_METHOD("Count_Heads", 1, Int_t, Count_Heads, Actor_t*);
 
         ADD_METHOD("All", 0, Vector_t<Member_t*>, All);

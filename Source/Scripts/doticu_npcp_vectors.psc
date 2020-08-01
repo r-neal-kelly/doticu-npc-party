@@ -4,13 +4,6 @@
 
 Scriptname doticu_npcp_vectors extends Quest
 
-; Modules
-doticu_npcp_consts property CONSTS hidden
-    doticu_npcp_consts function Get()
-        return p_DATA.CONSTS
-    endFunction
-endProperty
-
 ; Public Constants
 ObjectReference property MARKER_STORAGE hidden
     ObjectReference function Get()

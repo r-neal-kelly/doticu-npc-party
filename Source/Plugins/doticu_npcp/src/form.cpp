@@ -5,6 +5,7 @@
 #include "skse64/GameRTTI.h"
 
 #include "form.h"
+#include "utils.h"
 
 const char *arr_str_form_types[143] = {
     "kFormType_None",
@@ -184,11 +185,34 @@ namespace doticu_npcp { namespace Form {
         return keywords->HasKeyword(keyword);
     }
 
+    void Log_Flags(Form_t* form)
+    {
+        _MESSAGE("record form flags: %s", Utils::To_Binary(&form->flags, sizeof(form->flags)).data());
+        _MESSAGE("in-game form flags: %s", Utils::To_Binary(&form->unk18, sizeof(form->unk18)).data());
+    }
+
 }}
 
 namespace doticu_npcp { namespace Form { namespace Exports {
 
-    bool Register(VMClassRegistry *registry) {
+    void Log_Flags(Selfless_t*, Form_t* form)
+    {
+        return Form::Log_Flags(form);
+    }
+
+    bool Register(VMClassRegistry* registry)
+    {
+        #define ADD_GLOBAL(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                               \
+            ADD_CLASS_METHOD("doticu_npcp", Selfless_t,                 \
+                             STR_FUNC_, ARG_NUM_,                       \
+                             RETURN_, Exports::METHOD_, __VA_ARGS__);   \
+        W
+
+        ADD_GLOBAL("Form_Log_Flags", 1, void, Log_Flags, Form_t*);
+
+        #undef ADD_GLOBAL
+
         return true;
     }
 

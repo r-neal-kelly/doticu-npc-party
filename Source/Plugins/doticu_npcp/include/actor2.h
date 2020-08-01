@@ -13,7 +13,8 @@ namespace doticu_npcp { namespace Actor2 {
     const char *Get_Ref_Name(Actor *actor);
     const char *Get_Name(Actor *actor);
 
-    Outfit_t* Base_Outfit(Actor* actor);
+    Outfit_t* Base_Outfit(Actor_t* actor);
+    void Base_Outfit(Actor_t* actor, Outfit_t* outfit);
     void Set_Outfit(Actor *ref_actor, BGSOutfit *outfit, bool is_sleep_outfit); // we can use this to tell us when another mod has changed the outfit
 
     void Set_Outfit2(Actor *actor, TESForm *linchpin, TESObjectREFR *vanilla, TESObjectREFR *custom, TESObjectREFR *transfer);

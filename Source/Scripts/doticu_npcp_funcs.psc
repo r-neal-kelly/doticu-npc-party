@@ -100,7 +100,6 @@ function f_Register()
     CONTAINERS.f_Register()
     OUTFITS.f_Register()
     ACTORS.f_Register()
-    NPCS.f_Register()
     PERKS.f_Register()
     MANNEQUINS.f_Register()
 endFunction
@@ -209,8 +208,6 @@ endFunction
 
 ; Update Methods
 function u_0_9_0()
-    NPCS.u_0_9_0()
-
     MANNEQUINS.f_Create(p_DATA)
     MANNEQUINS.f_Register()
 endFunction

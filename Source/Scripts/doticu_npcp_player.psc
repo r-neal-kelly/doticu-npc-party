@@ -30,11 +30,6 @@ doticu_npcp_actors property ACTORS hidden
         return p_DATA.MODS.FUNCS.ACTORS
     endFunction
 endProperty
-doticu_npcp_npcs property NPCS hidden
-    doticu_npcp_npcs function Get()
-        return p_DATA.MODS.FUNCS.NPCS
-    endFunction
-endProperty
 doticu_npcp_members property MEMBERS hidden
     doticu_npcp_members function Get()
         return p_DATA.MODS.MEMBERS

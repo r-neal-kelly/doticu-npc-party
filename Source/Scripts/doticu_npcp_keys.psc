@@ -304,7 +304,7 @@ event OnKeyUp(int value, float hold_time)
         if ref_actor == none
             LOGS.Create_Note("That is not an NPC.", false)
         else
-            int num_members = p_DATA.MODS.MEMBERS.Get_Base_Count(ref_actor)
+            int num_members = p_DATA.MODS.MEMBERS.Count_Base(ref_actor)
             if num_members == 1
                 LOGS.Create_Note(num_members + " member has the base of " + ACTORS.Name(ref_actor) + ".", false)
             else

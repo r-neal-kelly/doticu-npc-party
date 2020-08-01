@@ -134,13 +134,8 @@ function Outfit_Clone(Actor ref_clone, Actor ref_orig)
     ObjectReference ref_junk = CONTAINERS.Create_Temp()
     ref_clone.RemoveAllItems(ref_junk, false, false)
 
-    ; this ensures that our modded outfit is worn, including the blank armor.
     ; this also fufills VARS.clone_outfit == doticu_npcp_codes.OUTFIT_BASE()
-NPCS.Lock_Base(ref_clone)
-    Outfit outfit_default = NPCS.Get_Default_Outfit(ref_clone)
-    doticu_npcp.Outfit_Add_Item(outfit_default, CONSTS.ARMOR_BLANK)
-    ref_clone.SetOutfit(outfit_default)
-NPCS.Unlock_Base(ref_clone)
+    NPCS.Apply_Default_Outfit(ref_clone)
 
     if VARS.clone_outfit == doticu_npcp_codes.OUTFIT_REFERENCE()
         ; this will stop the actor from rendering while we manage its inventory

@@ -657,6 +657,17 @@ namespace doticu_npcp { namespace Party {
         return follower && follower->Isnt_Retreater();
     }
 
+    Bool_t Member_t::Has_Same_Base(Actor_t* other_actor)
+    {
+        if (Is_Filled() && other_actor) {
+            Actor_Base_t* alias_base = static_cast<Actor_Base_t*>(Actor()->baseForm);
+            Actor_Base_t* other_base = static_cast<Actor_Base_t*>(other_actor->baseForm);
+            return alias_base == other_base;
+        } else {
+            return false;
+        }
+    }
+
     Bool_t Member_t::Has_Same_Head(Actor_t* other_actor)
     {
         if (Is_Filled() && other_actor) {
@@ -666,6 +677,15 @@ namespace doticu_npcp { namespace Party {
         } else {
             return false;
         }
+    }
+
+    Bool_t Member_t::Has_Same_Base_Unsafe(Actor_t* other_actor)
+    {
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(other_actor);
+        Actor_Base_t* alias_base = static_cast<Actor_Base_t*>(Actor()->baseForm);
+        Actor_Base_t* other_base = static_cast<Actor_Base_t*>(other_actor->baseForm);
+        return alias_base == other_base;
     }
 
     Bool_t Member_t::Has_Same_Head_Unsafe(Actor_t* other_actor)
@@ -1035,11 +1055,11 @@ namespace doticu_npcp { namespace Party {
             Reparalyze();
             Remannequinize();
 
-            Object_Ref::Delete(undisplay_marker);
             undisplay_marker_variable->None();
+            Object_Ref::Delete_Safe(undisplay_marker);
 
-            Object_Ref::Delete(display_marker);
             display_marker_variable->None();
+            Object_Ref::Delete_Safe(display_marker);
 
             Object_Ref::Untoken(actor, Consts::Display_Token());
 

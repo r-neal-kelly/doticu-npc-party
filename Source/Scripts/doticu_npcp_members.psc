@@ -59,6 +59,8 @@ bool function Has_Space()                   native
 bool function Hasnt_Space()                 native
 bool function Has_Actor(Actor ref_actor)    native
 bool function Hasnt_Actor(Actor ref_actor)  native
+bool function Has_Base(Actor ref_actor)     native
+bool function Hasnt_Base(Actor ref_actor)   native
 bool function Has_Head(Actor ref_actor)     native
 bool function Hasnt_Head(Actor ref_actor)   native
 bool function Has_Display()                 native
@@ -95,6 +97,7 @@ int function Count_Saddlers()               native
 int function Count_Non_Saddlers()           native
 int function Count_Retreaters()             native
 int function Count_Non_Retreaters()         native
+int function Count_Base(Actor ref_actor)    native
 int function Count_Heads(Actor ref_actor)   native
 
 Alias[] function All()      native
@@ -178,7 +181,7 @@ int function Create_Member(Actor ref_actor)
         endIf
     endIf
 
-    NPCS.Register(ref_actor)
+    NPCS.Add_Original(ref_actor)
 
     doticu_npcp_member ref_member = p_From_Unfilled() as doticu_npcp_member
     if !ref_member
@@ -206,7 +209,7 @@ int function Destroy_Member(Actor ref_actor)
 
     ref_member.f_Destroy()
 
-    NPCS.Unregister(ref_actor)
+    NPCS.Remove_Original(ref_actor)
 
     return doticu_npcp_codes.SUCCESS()
 endFunction
@@ -226,7 +229,7 @@ int function Clone(Actor ref_actor)
 
     LOGS.Create_Note("Adding clone to members...", false)
 
-    Actor ref_clone = NPCS.Clone(ref_actor)
+    Actor ref_clone = NPCS.Add_Clone(ref_actor)
     if !ref_clone
         return doticu_npcp_codes.CLONE()
     endIf
@@ -260,7 +263,7 @@ int function Unclone(Actor ref_actor, bool delete_clone)
     ref_member.f_Destroy()
 
     if delete_clone || Should_Unclone_Actor(ref_actor)
-        NPCS.Unclone(ref_actor)
+        NPCS.Remove_Clone(ref_actor)
     endIf
 
     return doticu_npcp_codes.SUCCESS()
@@ -280,59 +283,6 @@ endFunction
 
 bool function Has_Member(Actor ref_actor)
     return Has_Actor(ref_actor)
-endFunction
-
-bool function Has_Base(Actor ref_actor)
-    Form[] arr_origs = NPCS.Get_Originals(ref_actor)
-    int idx_origs = arr_origs.length
-    while idx_origs > 0
-        idx_origs -= 1
-        if Has_Member(arr_origs[idx_origs] as Actor)
-            return true
-        endIf
-    endWhile
-
-    Form[] arr_clones = NPCS.Get_Clones(ref_actor)
-    int idx_clones = arr_clones.length
-    while idx_clones > 0
-        idx_clones -= 1
-        if Has_Member(arr_clones[idx_clones] as Actor)
-            return true
-        endIf
-    endWhile
-
-    return false
-endFunction
-
-int function Get_Base_Count(Actor ref_actor)
-    int num_members = 0
-
-    Form[] arr_origs = NPCS.Get_Originals(ref_actor)
-    int idx_origs = arr_origs.length
-    Form form_orig
-    while idx_origs > 0
-        idx_origs -= 1
-        form_orig = arr_origs[idx_origs]
-        if Has_Member(form_orig as Actor)
-            num_members += 1
-        endIf
-    endWhile
-
-    Form[] arr_clones = NPCS.Get_Clones(ref_actor)
-    int idx_clones = arr_clones.length
-    Form form_clone
-    while idx_clones > 0
-        idx_clones -= 1
-        form_clone = arr_clones[idx_clones]
-        if Has_Member(form_clone as Actor)
-            ; we don't want to count the same member twice
-            if arr_origs.Find(form_clone) < 0
-                num_members += 1
-            endIf
-        endIf
-    endWhile
-
-    return num_members
 endFunction
 
 doticu_npcp_member function Get_Member(Actor ref_actor)
