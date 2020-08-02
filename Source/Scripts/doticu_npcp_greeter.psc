@@ -48,7 +48,7 @@ function f_Create(doticu_npcp_data DATA, Actor ref_actor)
     p_time_waited = 0.0
 
     ForceRefTo(p_ref_actor)
-    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_GREETER)
+    ACTORS.Token(p_ref_actor, doticu_npcp_consts.Greeter_Token())
     ACTORS.Pacify(p_ref_actor)
 
     RegisterForSingleUpdate(0.0)
@@ -56,7 +56,7 @@ endFunction
 
 function f_Destroy()
     ACTORS.Pacify(p_ref_actor)
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_GREETER)
+    ACTORS.Untoken(p_ref_actor, doticu_npcp_consts.Greeter_Token())
     Clear()
 
     if p_ref_actor

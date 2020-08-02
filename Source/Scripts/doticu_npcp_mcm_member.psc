@@ -417,7 +417,7 @@ function f_On_Option_Menu_Open(int id_option)
     if false
 
     elseIf id_option == p_option_outfit
-        if ACTORS.Is_Vampire(CONSTS.ACTOR_PLAYER)
+        if ACTORS.Is_Vampire(doticu_npcp_consts.Player_Actor())
             string[] arr_options = Utility.CreateStringArray(8, "")
 
             arr_options[0] = CONSTS.STR_MCM_CURRENT
@@ -455,7 +455,7 @@ function f_On_Option_Menu_Accept(int id_option, int idx_option)
     Actor ref_actor = p_ref_member.Actor()
 
     if id_option == p_option_outfit
-        if ACTORS.Is_Vampire(CONSTS.ACTOR_PLAYER)
+        if ACTORS.Is_Vampire(doticu_npcp_consts.Player_Actor())
             if idx_option == 0
                 FUNCS.Close_Menus()
                 COMMANDS.Outfit_Current_Sync(ref_actor, false)

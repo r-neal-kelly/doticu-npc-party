@@ -645,12 +645,12 @@ endFunction
 function p_Reanimate()
 p_Lock()
 
-    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_REANIMATED)
+    ACTORS.Token(p_ref_actor, doticu_npcp_consts.Reanimated_Token())
 
     ; we could have an option for what shader is player, including none
     ; we go ahead and make sure that the shader is stopped so we don't stack them
-    CONSTS.SHADER_REANIMATE_FX.Stop(p_ref_actor)
-    CONSTS.SHADER_REANIMATE_FX.Play(p_ref_actor, -1.0)
+    doticu_npcp_consts.Reanimate_Effect_Shader().Stop(p_ref_actor)
+    doticu_npcp_consts.Reanimate_Effect_Shader().Play(p_ref_actor, -1.0)
 
     ; can't set unconscious, messes up their ai pretty badly
     ; it would be cool if we could change how they walk.
@@ -666,9 +666,9 @@ endFunction
 function p_Deanimate()
 p_Lock()
 
-    CONSTS.SHADER_REANIMATE_FX.Stop(p_ref_actor)
+    doticu_npcp_consts.Reanimate_Effect_Shader().Stop(p_ref_actor)
 
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_REANIMATED)
+    ACTORS.Untoken(p_ref_actor, doticu_npcp_consts.Reanimated_Token())
 
     p_ref_actor.EvaluatePackage()
 
@@ -876,7 +876,7 @@ int function Enthrall()
     if !Exists()
         return doticu_npcp_codes.MEMBER()
     endIf
-    if !ACTORS.Is_Vampire(CONSTS.ACTOR_PLAYER)
+    if !ACTORS.Is_Vampire(doticu_npcp_consts.Player_Actor())
         return doticu_npcp_codes.VAMPIRE()
     endIf
     if Is_Thrall()
@@ -894,7 +894,7 @@ int function Unthrall()
     if !Exists()
         return doticu_npcp_codes.MEMBER()
     endIf
-    if !ACTORS.Is_Vampire(CONSTS.ACTOR_PLAYER)
+    if !ACTORS.Is_Vampire(doticu_npcp_consts.Player_Actor())
         return doticu_npcp_codes.VAMPIRE()
     endIf
     if !Is_Thrall()
@@ -1434,7 +1434,7 @@ int function Summon(int distance = 120, int angle = 0)
         return doticu_npcp_codes.MANNEQUIN()
     endIf
 
-    ACTORS.Move_To(p_ref_actor, CONSTS.ACTOR_PLAYER, distance, angle)
+    ACTORS.Move_To(p_ref_actor, doticu_npcp_consts.Player_Actor(), distance, angle)
 
     p_Remannequinize()
     p_Reparalyze()
@@ -1458,7 +1458,7 @@ int function Goto(int distance = 120, int angle = 0)
     ; this is done so that we can exit expo gracefully
     MANNEQUINS.f_Try_Set_Teleport(self)
 
-    ACTORS.Move_To(CONSTS.ACTOR_PLAYER, p_ref_actor, distance, angle)
+    ACTORS.Move_To(doticu_npcp_consts.Player_Actor(), p_ref_actor, distance, angle)
 
     p_Remannequinize()
     p_Reparalyze()
@@ -1480,7 +1480,7 @@ event OnLoad()
 endEvent
 
 event OnActivate(ObjectReference activator_obj)
-    if VARS.is_updating || !Exists() || activator_obj != CONSTS.ACTOR_PLAYER
+    if VARS.is_updating || !Exists() || activator_obj != doticu_npcp_consts.Player_Actor()
         return
     endIf
 
@@ -1536,7 +1536,7 @@ event OnCombatStateChanged(Actor ref_target, int code_combat)
         return
     endIf
 
-    if ref_target == CONSTS.ACTOR_PLAYER
+    if ref_target == doticu_npcp_consts.Player_Actor()
         ACTORS.Pacify(p_ref_actor)
     elseIf MEMBERS.Has_Actor(ref_target)
         ACTORS.Pacify(p_ref_actor)

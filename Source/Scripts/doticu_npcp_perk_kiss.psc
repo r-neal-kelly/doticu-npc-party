@@ -53,28 +53,28 @@ endFunction
 function Kiss_Thrall(ObjectReference ref_target, Actor _)
     Actor ref_thrall = ref_target as Actor
 
-    if !ref_thrall || !ACTORS.Is_Vampire(CONSTS.ACTOR_PLAYER)
+    if !ref_thrall || !ACTORS.Is_Vampire(doticu_npcp_consts.Player_Actor())
         return
     endIf
 
     Game.ForceThirdPerson()
 
-    PERKS.Remove_Perk(CONSTS.PERK_KISS_THRALL)
-    ref_thrall.AddToFaction(CONSTS.FACTION_DLC1_THRALL)
+    PERKS.Remove_Perk(doticu_npcp_consts.Kiss_Thrall_Perk())
+    ref_thrall.AddToFaction(doticu_npcp_consts.DLC1_Thrall_Faction())
 
     if FUNCS.Is_Mod_Installed("Better Vampires.esp")
         ref_thrall.SetGhost(true); stops further dialogs
         ref_thrall.SetActorValue("Variable08", 8); cancels limit
-        (CONSTS.PERK_VAMPIRE_FEED as PRKF_VampireFeedBeds_000CF02C).Fragment_15(ref_thrall, none)
+        (doticu_npcp_consts.Vampire_Feed_Perk() as PRKF_VampireFeedBeds_000CF02C).Fragment_15(ref_thrall, none)
         ref_thrall.SetActorValue("Variable08", 8)
         ref_thrall.SetGhost(false)
     elseIf ACTORS.Is_Dead(ref_thrall)
         ; do cannibal instead, or make another perk
     else
-        CONSTS.ACTOR_PLAYER.StartVampireFeed(ref_thrall)
-        CONSTS.SCRIPT_PLAYER_VAMPIRE_QUEST.VampireFeed()
+        doticu_npcp_consts.Player_Actor().StartVampireFeed(ref_thrall)
+        (doticu_npcp_consts.Player_Vampire_Quest() as PlayerVampireQuestScript).VampireFeed()
     endIf
 
-    ref_thrall.RemoveFromFaction(CONSTS.FACTION_DLC1_THRALL)
-    PERKS.Add_Perk(CONSTS.PERK_KISS_THRALL)
+    ref_thrall.RemoveFromFaction(doticu_npcp_consts.DLC1_Thrall_Faction())
+    PERKS.Add_Perk(doticu_npcp_consts.Kiss_Thrall_Perk())
 endFunction

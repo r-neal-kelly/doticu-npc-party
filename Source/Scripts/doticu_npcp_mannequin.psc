@@ -62,7 +62,7 @@ endProperty
 
 ; Events
 event OnActivate(ObjectReference ref_activator)
-    if ref_activator != CONSTS.ACTOR_PLAYER
+    if ref_activator != doticu_npcp_consts.Player_Actor()
         return
     endIf
 

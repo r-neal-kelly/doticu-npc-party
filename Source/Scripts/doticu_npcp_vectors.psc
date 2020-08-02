@@ -7,12 +7,12 @@ Scriptname doticu_npcp_vectors extends Quest
 ; Public Constants
 ObjectReference property MARKER_STORAGE hidden
     ObjectReference function Get()
-        return p_DATA.CONSTS.MARKER_STORAGE
+        return doticu_npcp_consts.Storage_Marker()
     endFunction
 endProperty
 MiscObject property MISC_VECTOR_FORM hidden
     MiscObject function Get()
-        return p_DATA.CONSTS.MISC_VECTOR_FORM
+        return doticu_npcp_consts.Form_Vector()
     endFunction
 endProperty
 

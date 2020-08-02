@@ -42,6 +42,11 @@ namespace doticu_npcp {
     typedef TESObjectSTAT   Static_t;
     typedef TESObjectWEAP   Weapon_t;
     typedef TESObjectARMO   Armor_t;
+    typedef TESObjectCONT   Container_t;
+    typedef BGSPerk         Perk_t;
+    typedef TESEffectShader Effect_Shader_t;
+    typedef TESLevCharacter Leveled_Actor_t;
+    typedef BGSLocation     Location_t;
     typedef TESFaction      Faction_t;
     typedef BGSOutfit       Outfit_t;
     typedef BGSKeyword      Keyword_t;

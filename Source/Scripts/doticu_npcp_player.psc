@@ -44,7 +44,7 @@ endProperty
 ; Public Constants
 Actor property ACTOR_PLAYER hidden
     Actor function Get()
-        return p_DATA.CONSTS.ACTOR_PLAYER
+        return doticu_npcp_consts.Player_Actor()
     endFunction
 endProperty
 
@@ -159,14 +159,14 @@ bool function Is_Party_In_Combat() native
 
 ; Events
 event On_Init_Mod()
-    ACTORS.Apply_Ability(ACTOR_PLAYER, CONSTS.ABILITY_CELL)
+    ACTORS.Apply_Ability(ACTOR_PLAYER, doticu_npcp_consts.Cell_Ability_Spell())
 endEvent
 
 event OnPlayerLoadGame()
     MAIN.f_Load_Mod()
 
     ; just in case it somehow gets stuck, which has happened before
-    ACTORS.Apply_Ability(ACTOR_PLAYER, CONSTS.ABILITY_CELL)
+    ACTORS.Apply_Ability(ACTOR_PLAYER, doticu_npcp_consts.Cell_Ability_Spell())
 
     if !Is_Party_In_Combat()
         ; for some reason, p_is_in_combat sometimes gets stuck to true
@@ -196,6 +196,6 @@ event OnActorAction(int code_action, Actor ref_actor, Form form_source, int slot
 endEvent
 
 event On_Cell_Change(Form cell_new, Form cell_old)
-    ACTORS.Apply_Ability(ACTOR_PLAYER, CONSTS.ABILITY_CELL)
+    ACTORS.Apply_Ability(ACTOR_PLAYER, doticu_npcp_consts.Cell_Ability_Spell())
     FOLLOWERS.Catch_Up()
 endEvent

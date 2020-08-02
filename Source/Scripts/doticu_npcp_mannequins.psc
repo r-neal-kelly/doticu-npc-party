@@ -142,7 +142,7 @@ endFunction
 function p_Try_Set_Teleport()
     if !Is_Player_In_Expo()
         p_Try_Unset_Teleport()
-        p_marker_teleport = CONSTS.ACTOR_PLAYER.PlaceAtMe(CONSTS.STATIC_MARKER_X, 1, false, false)
+        p_marker_teleport = doticu_npcp_consts.Player_Actor().PlaceAtMe(doticu_npcp_consts.X_Marker_Static(), 1, false, false)
     endIf
 endFunction
 
@@ -170,7 +170,7 @@ function Expo(int id_expoee, ObjectReference ref_marker, bool auto_create)
     endIf
 
     Actor ref_actor = Game.FindClosestActorFromRef(ref_marker, 48)
-    if !ref_actor || ref_actor == CONSTS.ACTOR_PLAYER
+    if !ref_actor || ref_actor == doticu_npcp_consts.Player_Actor()
         LOGS.Create_Note("Move NPC onto pedestal.")
         if !KEYS.Is_Active(VARS.key_n_toggle_move)
             LOGS.Create_Note("(You can set a hotkey for 'Toggle Move' in Settings.)")
@@ -350,16 +350,16 @@ function Move_Player_To_Cell(int column, int row)
     row -= 1
 
     int idx_cell = column * MAX_ROWS + row
-    CONSTS.ACTOR_PLAYER.MoveTo(CONSTS.FORMLIST_MARKERS_EXPO_CELL.GetAt(idx_cell) as ObjectReference)
+    doticu_npcp_consts.Player_Actor().MoveTo(doticu_npcp_consts.Expo_Cell_Markers_Formlist().GetAt(idx_cell) as ObjectReference)
 endFunction
 
 function Remove_Player()
     if Is_Player_In_Expo()
         if p_marker_teleport
-            CONSTS.ACTOR_PLAYER.MoveTo(p_marker_teleport)
+            doticu_npcp_consts.Player_Actor().MoveTo(p_marker_teleport)
             p_Try_Unset_Teleport()
         else
-            CONSTS.ACTOR_PLAYER.MoveTo(CONSTS.MARKER_GOTO_SAFE)
+            doticu_npcp_consts.Player_Actor().MoveTo(doticu_npcp_consts.Safe_Goto_Marker())
         endIf
     endIf
 endFunction
@@ -367,15 +367,15 @@ endFunction
 function Move_Player_To_Antechamber()
     p_Try_Set_Teleport()
 
-    CONSTS.ACTOR_PLAYER.MoveTo(CONSTS.MARKER_EXPO_ANTECHAMBER)
+    doticu_npcp_consts.Player_Actor().MoveTo(doticu_npcp_consts.Expo_Antechamber_Marker())
 endFunction
 
 bool function Is_Player_In_Expo()
-    return CONSTS.ACTOR_PLAYER.IsInLocation(CONSTS.LOCATION_EXPO)
+    return doticu_npcp_consts.Player_Actor().IsInLocation(doticu_npcp_consts.Expo_Location())
 endFunction
 
 bool function Is_Member_In_Expo(doticu_npcp_member ref_member)
-    return ref_member && ref_member.Exists() && ref_member.Actor().IsInLocation(CONSTS.LOCATION_EXPO)
+    return ref_member && ref_member.Exists() && ref_member.Actor().IsInLocation(doticu_npcp_consts.Expo_Location())
 endFunction
 
 int function Get_Expo_Count()

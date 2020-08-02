@@ -20,38 +20,91 @@ namespace doticu_npcp { namespace Consts {
     Object_t* Object();
     Variable_t* Variable(String_t variable_name);
 
-    // Skyrim.esm
+    // Skyrim Actors
     Actor_t* Player_Actor();
 
+    // Skyrim Effect Shaders
+    Effect_Shader_t* Reanimate_Effect_Shader();
+
+    // Skyrim Factions
     Faction_t* No_Bard_Singer_Autostart_Faction();
     Faction_t* Current_Follower_Faction();
     Faction_t* Player_Follower_Faction();
     Faction_t* Potential_Follower_Faction();
     Faction_t* WI_No_Body_Cleanup_Faction();
 
+    // Skyrim Globals
     Global_t* Player_Follower_Count_Global();
 
+    // Skyrim Keywords
     Keyword_t* Fire_Damage_Magic_Keyword();
     Keyword_t* Frost_Damage_Magic_Keyword();
     Keyword_t* Shock_Damage_Magic_Keyword();
     Keyword_t* Vampire_Drain_Magic_Keyword();
+    Keyword_t* Vampire_Keyword();
 
+    // Skyrim Perks
+    Perk_t* Vampire_Feed_Perk();
+
+    // Skyrim Quests
+    Quest_t* Bard_Songs_Quest();
     Quest_t* Follower_Dialogue_Quest();
+    Quest_t* Player_Vampire_Quest();
 
+    // Skyrim Reference Markers
+    Reference_t* Safe_Goto_Marker();
+
+    // Skyrim Statics
     Static_t* X_Marker_Static();
 
-    // Dawnguard.esm
+    // Dawnguard Factions
     Faction_t* DLC1_Thrall_Faction();
     Faction_t* DLC1_Vampire_Feed_No_Crime_Faction();
     
-    // doticu_npc_party.esp
+    // NPCP Actor Base
+    Actor_Base_t* Menu_Actor_Base();
+
+    // NPCP Armors
     Armor_t* Blank_Armor();
 
+    // NPCP Containers
+    Container_t* Empty_Container();
+    Container_t* Outfit_Container();
+    Container_t* Immobile_Outfit_Container();
+    Container_t* Settler_Outfit_Container();
+    Container_t* Thrall_Outfit_Container();
+    Container_t* Follower_Outfit_Container();
+
+    // NPCP Factions
     Faction_t* Member_Faction();
     Faction_t* Horse_Faction();
 
+    // NPCP Formlists
+    Formlist_t* Is_Saddler_Sitting_Globals_Formlist();
+    Formlist_t* Expo_Cell_Markers_Formlist();
     Formlist_t* Settler_Markers_Formlist();
 
+    // NPCP Globals
+    Global_t* Is_Installed_Global();
+    Global_t* Force_Clone_Uniques_Global();
+    Global_t* Force_Clone_Generics_Global();
+    Global_t* Force_Unclone_Uniques_Global();
+    Global_t* Force_Unclone_Generics_Global();
+    Global_t* No_Body_Percent_Global();
+    Global_t* No_Feet_Percent_Global();
+    Global_t* No_Hands_Percent_Global();
+    Global_t* No_Head_Percent_Global();
+
+    // NPCP Leveled Actor
+    Leveled_Actor_t* Horse_Leveled_Actor();
+
+    // NPCP Location
+    Location_t* Expo_Location();
+
+    // NPCP Magic Effects
+    Magic_Effect_t* Retreat_Magic_Effect();
+
+    // NPCP Misc Tokens
     Misc_t* Member_Token();
     Misc_t* Generic_Token();
     Misc_t* Clone_Token();
@@ -78,10 +131,21 @@ namespace doticu_npcp { namespace Consts {
     Misc_t* Sneak_Follower_Token();
     Misc_t* Saddler_Token();
     Misc_t* Retreater_Token();
+
+    // NPCP Misc
+    Misc_t* Tasklist();
     Misc_t* Form_Vector();
 
+    // NPCP Outfits
     Outfit_t* Empty_Outfit();
 
+    // NPCP Perks
+    Perk_t* Kiss_Thrall_Perk();
+    Perk_t* Reanimate_Perk();
+    Perk_t* Resurrect_Perk();
+    Perk_t* Unparalyze_Perk();
+
+    // NPCP Quests
     Quest_t* Static_Data_Quest();
     Quest_t* Dynamic_Data_Quest();
     Quest_t* Funcs_Quest();
@@ -89,6 +153,7 @@ namespace doticu_npcp { namespace Consts {
     Quest_t* Followers_Quest();
     Quest_t* Control_Quest();
 
+    // NPCP Reference Categories
     Reference_t* Input_Category();
     Reference_t* Swords_Category();
     Reference_t* Greatswords_Category();
@@ -147,8 +212,13 @@ namespace doticu_npcp { namespace Consts {
     Reference_t* Y_Books_Category();
     Reference_t* Z_Books_Category();
     Reference_t* Books_Category();
+
+    // NPCP Reference Markers
+    Reference_t* Cell_Marker();
+    Reference_t* Expo_Antechamber_Marker();
     Reference_t* Storage_Marker();
 
+    // NPCP Weapons
     Weapon_t* Blank_Weapon();
 
 }}

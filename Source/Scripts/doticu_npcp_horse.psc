@@ -42,7 +42,7 @@ p_Lock()
 
     p_DATA = DATA
 
-    p_ref_actor = CONSTS.MARKER_STORAGE.PlaceAtMe(CONSTS.ACTOR_LEVELED_HORSE, 1, true, true) as Actor
+    p_ref_actor = doticu_npcp_consts.Storage_Marker().PlaceAtMe(doticu_npcp_consts.Horse_Leveled_Actor(), 1, true, true) as Actor
     ForceRefTo(p_ref_actor)
 
     p_is_created = true
@@ -118,7 +118,7 @@ endFunction/;
 event OnActivate(ObjectReference activator_obj)
     Actor activator_actor = activator_obj as Actor
     if activator_actor && p_ref_follower.Actor() == activator_actor
-        (CONSTS.FORMLIST_GLOBALS_SADDLER_IS_SITTING.GetAt(p_ref_follower.ID()) as GlobalVariable).SetValue(1)
+        (doticu_npcp_consts.Is_Saddler_Sitting_Globals_Formlist().GetAt(p_ref_follower.ID()) as GlobalVariable).SetValue(1)
         activator_actor.EvaluatePackage()
     endIf
 endEvent

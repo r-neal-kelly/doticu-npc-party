@@ -12,22 +12,22 @@ doticu_npcp_consts property CONSTS hidden
 endProperty
 doticu_npcp_perk_kiss property KISS
     doticu_npcp_perk_kiss function Get()
-        return p_DATA.CONSTS.PERK_KISS_THRALL as doticu_npcp_perk_kiss
+        return doticu_npcp_consts.Kiss_Thrall_Perk() as doticu_npcp_perk_kiss
     endFunction
 endProperty
 doticu_npcp_perk_resurrect property RESURRECT
     doticu_npcp_perk_resurrect function Get()
-        return p_DATA.CONSTS.PERK_RESURRECT as doticu_npcp_perk_resurrect
+        return doticu_npcp_consts.Resurrect_Perk() as doticu_npcp_perk_resurrect
     endFunction
 endProperty
 doticu_npcp_perk_reanimate property REANIMATE
     doticu_npcp_perk_reanimate function Get()
-        return p_DATA.CONSTS.PERK_REANIMATE as doticu_npcp_perk_reanimate
+        return doticu_npcp_consts.Reanimate_Perk() as doticu_npcp_perk_reanimate
     endFunction
 endProperty
 doticu_npcp_perk_unparalyze property UNPARALYZE
     doticu_npcp_perk_unparalyze function Get()
-        return p_DATA.CONSTS.PERK_UNPARALYZE as doticu_npcp_perk_unparalyze
+        return doticu_npcp_consts.Unparalyze_Perk() as doticu_npcp_perk_unparalyze
     endFunction
 endProperty
 
@@ -43,10 +43,10 @@ function f_Create(doticu_npcp_data DATA)
 
     p_is_created = true
 
-    Add_Perk(CONSTS.PERK_KISS_THRALL)
-    Add_Perk(CONSTS.PERK_RESURRECT)
-    Add_Perk(CONSTS.PERK_REANIMATE)
-    Add_Perk(CONSTS.PERK_UNPARALYZE)
+    Add_Perk(doticu_npcp_consts.Kiss_Thrall_Perk())
+    Add_Perk(doticu_npcp_consts.Resurrect_Perk())
+    Add_Perk(doticu_npcp_consts.Reanimate_Perk())
+    Add_Perk(doticu_npcp_consts.Unparalyze_Perk())
 
     KISS.f_Create(p_DATA)
     RESURRECT.f_Create(p_DATA)
@@ -60,10 +60,10 @@ function f_Destroy()
     RESURRECT.f_Destroy()
     KISS.f_Destroy()
 
-    Remove_Perk(CONSTS.PERK_UNPARALYZE)
-    Remove_Perk(CONSTS.PERK_REANIMATE)
-    Remove_Perk(CONSTS.PERK_RESURRECT)
-    Remove_Perk(CONSTS.PERK_KISS_THRALL)
+    Remove_Perk(doticu_npcp_consts.Unparalyze_Perk())
+    Remove_Perk(doticu_npcp_consts.Reanimate_Perk())
+    Remove_Perk(doticu_npcp_consts.Resurrect_Perk())
+    Remove_Perk(doticu_npcp_consts.Kiss_Thrall_Perk())
 
     p_is_created = false
 endFunction
@@ -84,16 +84,16 @@ endFunction
 
 ; Public Methods
 function Add_Perk(Perk perk_to_add)
-    CONSTS.ACTOR_PLAYER.AddPerk(perk_to_add)
+    doticu_npcp_consts.Player_Actor().AddPerk(perk_to_add)
 endFunction
 
 function Remove_Perk(Perk perk_to_remove)
-    CONSTS.ACTOR_PLAYER.RemovePerk(perk_to_remove)
+    doticu_npcp_consts.Player_Actor().RemovePerk(perk_to_remove)
 endFunction
 
 ; Update Methods
 function u_0_8_2()
-    Add_Perk(CONSTS.PERK_REANIMATE)
+    Add_Perk(doticu_npcp_consts.Reanimate_Perk())
     REANIMATE.f_Create(p_DATA)
     REANIMATE.f_Register()
 endFunction

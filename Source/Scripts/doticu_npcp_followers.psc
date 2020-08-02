@@ -524,7 +524,7 @@ endFunction
 int function Saddle()
 p_Busy()
 
-    if CONSTS.ACTOR_PLAYER.GetParentCell().IsInterior()
+    if doticu_npcp_consts.Player_Actor().GetParentCell().IsInterior()
         return p_Ready_Int(doticu_npcp_codes.INTERIOR())
     endIf
 

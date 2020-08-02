@@ -180,9 +180,9 @@ bool property force_clone_unique hidden
     function Set(bool val)
         p_force_clone_unique = val
         if p_force_clone_unique
-            CONSTS.GLOBAL_FORCE_CLONE_UNIQUE.SetValue(1)
+            doticu_npcp_consts.Force_Clone_Uniques_Global().SetValue(1)
         else
-            CONSTS.GLOBAL_FORCE_CLONE_UNIQUE.SetValue(0)
+            doticu_npcp_consts.Force_Clone_Uniques_Global().SetValue(0)
         endIf
     endFunction
 endProperty
@@ -194,9 +194,9 @@ bool property force_clone_generic hidden
     function Set(bool val)
         p_force_clone_generic = val
         if p_force_clone_generic
-            CONSTS.GLOBAL_FORCE_CLONE_GENERIC.SetValue(1)
+            doticu_npcp_consts.Force_Clone_Generics_Global().SetValue(1)
         else
-            CONSTS.GLOBAL_FORCE_CLONE_GENERIC.SetValue(0)
+            doticu_npcp_consts.Force_Clone_Generics_Global().SetValue(0)
         endIf
     endFunction
 endProperty
@@ -208,9 +208,9 @@ bool property force_unclone_unique hidden
     function Set(bool val)
         p_force_unclone_unique = val
         if p_force_unclone_unique
-            CONSTS.GLOBAL_FORCE_UNCLONE_UNIQUE.SetValue(1)
+            doticu_npcp_consts.Force_Unclone_Uniques_Global().SetValue(1)
         else
-            CONSTS.GLOBAL_FORCE_UNCLONE_UNIQUE.SetValue(0)
+            doticu_npcp_consts.Force_Unclone_Uniques_Global().SetValue(0)
         endIf
     endFunction
 endProperty
@@ -222,9 +222,9 @@ bool property force_unclone_generic hidden
     function Set(bool val)
         p_force_unclone_generic = val
         if p_force_unclone_generic
-            CONSTS.GLOBAL_FORCE_UNCLONE_GENERIC.SetValue(1)
+            doticu_npcp_consts.Force_Unclone_Generics_Global().SetValue(1)
         else
-            CONSTS.GLOBAL_FORCE_UNCLONE_GENERIC.SetValue(0)
+            doticu_npcp_consts.Force_Unclone_Generics_Global().SetValue(0)
         endIf
     endFunction
 endProperty
@@ -285,7 +285,7 @@ int property percent_body hidden
             val = 100
         endIf
         p_percent_body = val
-        CONSTS.GLOBAL_PERCENT_NO_BODY.SetValue(100 - val)
+        doticu_npcp_consts.No_Body_Percent_Global().SetValue(100 - val)
     endFunction
 endProperty
 
@@ -300,7 +300,7 @@ int property percent_feet hidden
             val = 100
         endIf
         p_percent_feet = val
-        CONSTS.GLOBAL_PERCENT_NO_FEET.SetValue(100 - val)
+        doticu_npcp_consts.No_Feet_Percent_Global().SetValue(100 - val)
     endFunction
 endProperty
 
@@ -315,7 +315,7 @@ int property percent_hands hidden
             val = 100
         endIf
         p_percent_hands = val
-        CONSTS.GLOBAL_PERCENT_NO_HANDS.SetValue(100 - val)
+        doticu_npcp_consts.No_Hands_Percent_Global().SetValue(100 - val)
     endFunction
 endProperty
 
@@ -330,7 +330,7 @@ int property percent_head hidden
             val = 100
         endIf
         p_percent_head = val
-        CONSTS.GLOBAL_PERCENT_NO_HEAD.SetValue(100 - val)
+        doticu_npcp_consts.No_Head_Percent_Global().SetValue(100 - val)
     endFunction
 endProperty
 

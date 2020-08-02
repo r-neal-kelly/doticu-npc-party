@@ -123,7 +123,7 @@ bool function Is_Unleveled(Actor ref_actor)
 endFunction
 
 bool function Is_Vampire(Actor ref_actor)
-    return ref_actor && ref_actor.HasKeyword(CONSTS.KEYWORD_VAMPIRE)
+    return ref_actor && ref_actor.HasKeyword(doticu_npcp_consts.Vampire_Keyword())
 endFunction
 
 bool function Is_Male(Actor ref_actor)
@@ -281,7 +281,7 @@ function Resurrect(Actor ref_actor)
     CONTAINERS.Take_All(ref_container_temp, ref_actor)
 
     ; Resurrect() moved them a little bit and other actions can contribute to leaving the original position
-    ObjectReference ref_marker = ref_actor.PlaceAtMe(CONSTS.STATIC_MARKER_X, 1, false, false)
+    ObjectReference ref_marker = ref_actor.PlaceAtMe(doticu_npcp_consts.X_Marker_Static(), 1, false, false)
 
     ; we hide the resurrection because the actor starts standing by default
     ; we could try playing a laying down animation to see if that would help.
@@ -292,7 +292,7 @@ function Resurrect(Actor ref_actor)
     ref_actor.EnableAI(false)
     ref_actor.MoveTo(ref_marker, 0.0, 0.0, 1.5, true)
     ref_actor.EnableAI(true)
-    CONSTS.ACTOR_PLAYER.PushActorAway(ref_actor, 0.0001)
+    doticu_npcp_consts.Player_Actor().PushActorAway(ref_actor, 0.0001)
     Pacify(ref_actor)
     ref_actor.SetAlpha(1, true)
 
@@ -375,7 +375,7 @@ function Move_To(ObjectReference ref_subject, ObjectReference ref_object, int di
 endFunction
 
 bool function Is_Near_Player(Actor ref_actor, int max_distance = 1024)
-    Actor ref_player = CONSTS.ACTOR_PLAYER
+    Actor ref_player = doticu_npcp_consts.Player_Actor()
     Cell cell_player = ref_player.GetParentCell()
     Cell cell_actor = ref_actor.GetParentCell()
 
@@ -399,7 +399,7 @@ bool function Is_Near_Player(Actor ref_actor, int max_distance = 1024)
 endFunction
 
 function Stop_If_Playing_Music(Actor ref_actor)
-    BardSongsScript script = CONSTS.QUEST_BARD_SONGS as BardSongsScript
+    BardSongsScript script = doticu_npcp_consts.Bard_Songs_Quest() as BardSongsScript
 
     if script.BardSongs_Bard.GetActorReference() == ref_actor
         script.StopAllSongs()
@@ -441,8 +441,8 @@ function Create_Menu()
         Destroy_Menu()
     endIf
 
-    p_ref_menu = CONSTS.ACTOR_PLAYER.PlaceAtMe(CONSTS.ACTOR_BASE_MENU, 1, false, true) as Actor
-    FUNCS.ACTORS.Move_To(p_ref_menu, CONSTS.ACTOR_PLAYER)
+    p_ref_menu = doticu_npcp_consts.Player_Actor().PlaceAtMe(doticu_npcp_consts.Menu_Actor_Base(), 1, false, true) as Actor
+    FUNCS.ACTORS.Move_To(p_ref_menu, doticu_npcp_consts.Player_Actor())
     p_ref_menu.Enable()
 endFunction
 
@@ -496,7 +496,7 @@ endFunction
 function Ragdoll(Actor ref_actor)
     ; maybe should accept a timer, which can be done async or parallel
     ref_actor.SetActorValue("Paralysis", 1); should this come after the push?
-    CONSTS.ACTOR_PLAYER.PushActorAway(ref_actor, 0.0)
+    doticu_npcp_consts.Player_Actor().PushActorAway(ref_actor, 0.0)
 endFunction
 
 function Unragdoll(Actor ref_actor)
@@ -518,8 +518,8 @@ function Update_Equipment(Actor ref_actor)
         ref_actor.SetPlayerTeammate(true, true)
     endIf
 
-    ref_actor.AddItem(CONSTS.WEAPON_BLANK, 1, true)
-    ref_actor.RemoveItem(CONSTS.WEAPON_BLANK, 1, true, none)
+    ref_actor.AddItem(doticu_npcp_consts.Blank_Weapon(), 1, true)
+    ref_actor.RemoveItem(doticu_npcp_consts.Blank_Weapon(), 1, true, none)
 
     if !is_player_teammate
         ref_actor.SetPlayerTeammate(false, false)

@@ -47,7 +47,7 @@ endEvent
 
 event OnEffectFinish(Actor ref_target, Actor ref_caster)
     ; just in case there is a false finish
-    if !CONSTS.ACTOR_PLAYER.IsSneaking()
+    if !doticu_npcp_consts.Player_Actor().IsSneaking()
         FOLLOWERS.Get_Follower(ref_target).Unretreat()
     else
         FOLLOWERS.Get_Follower(ref_target).Retreat()

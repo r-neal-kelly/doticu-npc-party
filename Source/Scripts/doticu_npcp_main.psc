@@ -68,13 +68,13 @@ function f_Init_Mod()
     FOLLOWERS.Start()
     CONTROL.Start()
 
-    DATA.CONSTS.QUEST_DIALOGUE_REANIMATED.Start()
-    DATA.CONSTS.QUEST_DIALOGUE_THRALL.Start()
+    doticu_npcp_consts.Reanimated_Dialogue_Quest().Start()
+    doticu_npcp_consts.Thrall_Dialogue_Quest().Start()
 
     p_Create()
     p_Register()
 
-    DATA.CONSTS.GLOBAL_IS_INSTALLED.SetValue(1)
+    doticu_npcp_consts.Is_Installed_Global().SetValue(1)
     FUNCS.LOGS.Create_Note("Thank you for installing!")
 
     FUNCS.Send_Event("doticu_npcp_init_mod")
@@ -120,7 +120,7 @@ bool function p_Has_Requires()
         return false
     endIf
 
-    if DATA.CONSTS.GLOBAL_IS_INSTALLED.GetValue() > 0 && Is_NPC_Party_Version_Less_Than(0, 8, 2)
+    if doticu_npcp_consts.Is_Installed_Global().GetValue() > 0 && Is_NPC_Party_Version_Less_Than(0, 8, 2)
         Debug.MessageBox("NPC Party: This save has a version of NPC Party older than 0.8.2. " + \
                          "The new version you are running will not work on this save yet. " + \
                          "Exit without saving, and then update to version 0.8.2 before trying again.")

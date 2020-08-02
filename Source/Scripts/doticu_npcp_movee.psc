@@ -92,7 +92,7 @@ function f_Create(doticu_npcp_data DATA, Actor ref_actor)
     p_is_created = true
     p_is_executing = false
     p_ref_actor = ref_actor
-    p_ref_player = CONSTS.ACTOR_PLAYER
+    p_ref_player = doticu_npcp_consts.Player_Actor()
     p_is_airborne = false
     p_do_distance_farther = false
     p_do_distance_nearer = false
@@ -102,7 +102,7 @@ function f_Create(doticu_npcp_data DATA, Actor ref_actor)
     p_movee_ang = p_ref_actor.GetAngleZ()
 
     ForceRefTo(p_ref_actor)
-    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_MOVEE)
+    ACTORS.Token(p_ref_actor, doticu_npcp_consts.Movee_Token())
     p_ref_actor.EvaluatePackage()
     p_ref_actor.SetActorValue("Paralysis", 1)
 
@@ -129,7 +129,7 @@ p_Lock()
         p_ref_actor.ApplyHavokImpulse(0.0, 0.0, 0.001, 0.001)
     endIf
     p_ref_actor.SetActorValue("Paralysis", 0)
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_MOVEE)
+    ACTORS.Untoken(p_ref_actor, doticu_npcp_consts.Movee_Token())
     Clear()
     p_ref_actor.EvaluatePackage()
 
@@ -238,7 +238,7 @@ endFunction
 
 function p_Reload()
     p_ref_actor.SetActorValue("Paralysis", 0)
-    ACTORS.Move_To(p_ref_actor, CONSTS.ACTOR_PLAYER, p_movee_pos as int)
+    ACTORS.Move_To(p_ref_actor, doticu_npcp_consts.Player_Actor(), p_movee_pos as int)
     while !p_ref_actor.Is3DLoaded()
         FUNCS.Wait_Out_Of_Menu(0.2)
     endWhile

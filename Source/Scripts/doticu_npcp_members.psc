@@ -129,7 +129,7 @@ function f_Create(doticu_npcp_data DATA)
     p_is_created = true
     p_has_display = false
     p_idx_display = -1
-    p_marker_display = CONSTS.MARKER_STORAGE.PlaceAtMe(CONSTS.STATIC_MARKER_X)
+    p_marker_display = doticu_npcp_consts.Storage_Marker().PlaceAtMe(doticu_npcp_consts.X_Marker_Static())
 endFunction
 
 function f_Destroy()

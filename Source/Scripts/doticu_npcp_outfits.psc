@@ -66,16 +66,16 @@ endFunction
 
 ; Private Methods
 doticu_npcp_outfit function p_Create(Container form_container, string str_name, int code_create = 0)
-    doticu_npcp_outfit ref_outfit = CONSTS.MARKER_STORAGE.PlaceAtMe(CONSTS.CONTAINER_OUTFIT, 1, true, false) as doticu_npcp_outfit
+    doticu_npcp_outfit ref_outfit = doticu_npcp_consts.Storage_Marker().PlaceAtMe(doticu_npcp_consts.Outfit_Container(), 1, true, false) as doticu_npcp_outfit
 
     ; this can prevent a ctd
     FUNCS.Wait(0.1)
 
-    if VARS.fill_outfits && form_container != CONSTS.CONTAINER_OUTFIT
+    if VARS.fill_outfits && form_container != doticu_npcp_consts.Outfit_Container()
         ; there is a horrible bug where a container that spawns with a leveled list inside
         ; miscounts GetItemCount when the player is not in the same cell it spawned in. so
         ; we spawn items in variant outfits in a temp container and move them to the outfit
-        ObjectReference ref_temp = CONSTS.ACTOR_PLAYER.PlaceAtMe(form_container, 1, false, false)
+        ObjectReference ref_temp = doticu_npcp_consts.Player_Actor().PlaceAtMe(form_container, 1, false, false)
         FUNCS.Wait(0.1)
         ref_temp.RemoveAllItems(ref_outfit, false, true); we should make a c++ call to make sure that all items are removed?
     endIf
@@ -88,31 +88,31 @@ endFunction
 
 ; Public Methods
 doticu_npcp_outfit function Create(string str_name = "Outfit")
-    return p_Create(CONSTS.CONTAINER_OUTFIT, str_name)
+    return p_Create(doticu_npcp_consts.Outfit_Container(), str_name)
 endFunction
 
 doticu_npcp_outfit function Create_Settler(string str_name = "Settler Outfit")
-    return p_Create(CONSTS.CONTAINER_OUTFIT_SETTLER, str_name)
+    return p_Create(doticu_npcp_consts.Settler_Outfit_Container(), str_name)
 endFunction
 
 doticu_npcp_outfit function Create_Thrall(string str_name = "Thrall Outfit")
-    return p_Create(CONSTS.CONTAINER_OUTFIT_THRALL, str_name)
+    return p_Create(doticu_npcp_consts.Thrall_Outfit_Container(), str_name)
 endFunction
 
 doticu_npcp_outfit function Create_Immobile(string str_name = "Immobile Outfit")
-    return p_Create(CONSTS.CONTAINER_OUTFIT_IMMOBILE, str_name)
+    return p_Create(doticu_npcp_consts.Immobile_Outfit_Container(), str_name)
 endFunction
 
 doticu_npcp_outfit function Create_Follower(string str_name = "Follower Outfit")
-    return p_Create(CONSTS.CONTAINER_OUTFIT_FOLLOWER, str_name)
+    return p_Create(doticu_npcp_consts.Follower_Outfit_Container(), str_name)
 endFunction
 
 doticu_npcp_outfit function Create_Vanilla(string str_name = "Vanilla Outfit")
-    return p_Create(CONSTS.CONTAINER_OUTFIT, str_name, doticu_npcp_codes.OUTFIT2_VANILLA())
+    return p_Create(doticu_npcp_consts.Outfit_Container(), str_name, doticu_npcp_codes.OUTFIT2_VANILLA())
 endFunction
 
 doticu_npcp_outfit function Create_Default(string str_name = "Default Outfit")
-    return p_Create(CONSTS.CONTAINER_OUTFIT, str_name, doticu_npcp_codes.OUTFIT2_DEFAULT())
+    return p_Create(doticu_npcp_consts.Outfit_Container(), str_name, doticu_npcp_codes.OUTFIT2_DEFAULT())
 endFunction
 
 function Destroy(doticu_npcp_outfit ref_outfit)
@@ -143,12 +143,12 @@ function Outfit_Clone(Actor ref_clone, Actor ref_orig)
         ref_clone.SetPlayerTeammate(false, false)
 
         ; does all the heavy lifting of removing unfit items and adding outfit items
-        doticu_npcp.Actor_Set_Outfit2(ref_clone, CONSTS.ARMOR_BLANK, none, ref_orig, ref_junk)
+        doticu_npcp.Actor_Set_Outfit2(ref_clone, doticu_npcp_consts.Blank_Armor(), none, ref_orig, ref_junk)
 
         ; doing this allows us to render all at once, which is far more efficient
         ref_clone.SetPlayerTeammate(true, true)
-        ref_clone.AddItem(CONSTS.WEAPON_BLANK, 1, true)
-        ref_clone.RemoveItem(CONSTS.WEAPON_BLANK, 1, true, none)
+        ref_clone.AddItem(doticu_npcp_consts.Blank_Weapon(), 1, true)
+        ref_clone.RemoveItem(doticu_npcp_consts.Blank_Weapon(), 1, true, none)
 
         ; make sure to restore render status
         if !is_teammate

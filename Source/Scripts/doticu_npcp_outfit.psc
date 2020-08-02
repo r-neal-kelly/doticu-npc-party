@@ -71,7 +71,7 @@ function f_Create(doticu_npcp_data DATA, string str_name, int code_create = 0)
     p_cache_base = none
     
     self.SetDisplayName(p_str_name, true)
-    self.SetActorOwner(CONSTS.ACTOR_PLAYER.GetActorBase())
+    self.SetActorOwner(doticu_npcp_consts.Player_Actor().GetActorBase())
 endFunction
 
 function f_Destroy()
@@ -108,14 +108,14 @@ function p_Set(Actor ref_actor, ObjectReference ref_pack)
 
     ; does all the heavy lifting of removing unfit items and adding outfit items
     ObjectReference ref_transfer = CONTAINERS.Create_Temp()
-    doticu_npcp.Actor_Set_Outfit2(ref_actor, CONSTS.ARMOR_BLANK, p_cache_base, self, ref_transfer)
+    doticu_npcp.Actor_Set_Outfit2(ref_actor, doticu_npcp_consts.Blank_Armor(), p_cache_base, self, ref_transfer)
     ref_transfer.RemoveAllItems(ref_pack, true, true)
     CONTAINERS.Destroy_Temp(ref_transfer)
 
     ; doing this allows us to render all at once, which is far more efficient
     ref_actor.SetPlayerTeammate(true, true)
-    ref_actor.AddItem(CONSTS.WEAPON_BLANK, 1, true)
-    ref_actor.RemoveItem(CONSTS.WEAPON_BLANK, 1, true, none)
+    ref_actor.AddItem(doticu_npcp_consts.Blank_Weapon(), 1, true)
+    ref_actor.RemoveItem(doticu_npcp_consts.Blank_Weapon(), 1, true, none)
 
     ; make sure to restore render status
     if !is_teammate
@@ -147,7 +147,7 @@ endFunction
 
 function Put()
     self.SetDisplayName(p_str_name, true)
-    self.Activate(CONSTS.ACTOR_PLAYER)
+    self.Activate(doticu_npcp_consts.Player_Actor())
     FUNCS.Wait_Out_Of_Menu(0.1)
 endFunction
 
@@ -172,7 +172,7 @@ function Cache_Vanilla_Static(Outfit outfit_vanilla)
     while idx_forms > 0
         idx_forms -= 1
         form_item = outfit_vanilla.GetNthPart(idx_forms)
-        if form_item != CONSTS.ARMOR_BLANK as Form
+        if form_item != doticu_npcp_consts.Blank_Armor() as Form
             p_cache_base.AddItem(form_item, 1, true); will expand LeveledItems!
         endIf
     endWhile
@@ -193,7 +193,7 @@ function Cache_Vanilla_Dynamic(Actor ref_actor)
     ; not only does this do the heavy lifting, but it caches what the actor is wearing
     ; so that when a vanilla outfit change happens, leveled items wont be calc'd twice.
     ; also, we can trust more in our override of Actor.SetOutfit, and we won't get non-outfit items
-    doticu_npcp.Actor_Cache_Worn(ref_actor, CONSTS.ARMOR_BLANK, p_cache_base)
+    doticu_npcp.Actor_Cache_Worn(ref_actor, doticu_npcp_consts.Blank_Armor(), p_cache_base)
 endFunction
 
 function Try_Cache_Vanilla(Outfit outfit_vanilla)
@@ -206,14 +206,14 @@ endFunction
 
 function Get(Actor ref_actor, ObjectReference ref_pack)
     doticu_npcp.Object_Ref_Categorize(self)
-    doticu_npcp.Actor_Cache_Inventory(ref_actor, CONSTS.ARMOR_BLANK, self, ref_pack); maybe buffer with ref_transfer
+    doticu_npcp.Actor_Cache_Inventory(ref_actor, doticu_npcp_consts.Blank_Armor(), self, ref_pack); maybe buffer with ref_transfer
 endFunction
 
 function Get_Default(Actor ref_actor)
     ObjectReference ref_default = CONTAINERS.Create_Temp()
     ObjectReference ref_trash = CONTAINERS.Create_Temp()
 
-    doticu_npcp.Actor_Cache_Static_Inventory(ref_actor, CONSTS.ARMOR_BLANK, ref_default)
+    doticu_npcp.Actor_Cache_Static_Inventory(ref_actor, doticu_npcp_consts.Blank_Armor(), ref_default)
     doticu_npcp.Object_Ref_Remove_Unwearable(ref_default, ref_trash)
     ref_default.RemoveAllItems(self, false, true)
 

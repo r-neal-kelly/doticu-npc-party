@@ -59,69 +59,144 @@ namespace doticu_npcp { namespace Consts {
     }
 
     enum Skyrim_Forms {
+        // Skyrim Actors
         ACTOR_PLAYER                        = 0x000014,
 
+        // Skyrim Effect Shaders
+        EFFECT_SHADER_REANIMATE             = 0x075272,
+
+        // Skyrim Factions
         FACTION_BARD_SINGER_NO_AUTOSTART    = 0x0163FA,
         FACTION_CURRENT_FOLLOWER            = 0x05C84E,
         FACTION_PLAYER_FOLLOWER             = 0x084D1B,
         FACTION_POTENTIAL_FOLLOWER          = 0x05C84D,
         FACTION_WI_NO_BODY_CLEANUP          = 0x09653A,
 
+        // Skyrim Globals
         GLOBAL_PLAYER_FOLLOWER_COUNT        = 0x0BCC98,
 
+        // Skyrim Keywords
         KEYWORD_MAGIC_DAMAGE_FIRE           = 0x01CEAD,
         KEYWORD_MAGIC_DAMAGE_FROST          = 0x01CEAE,
         KEYWORD_MAGIC_DAMAGE_SHOCK          = 0x01CEAF,
         KEYWORD_MAGIC_VAMPIRE_DRAIN         = 0x101BDE,
+        KEYWORD_VAMPIRE                     = 0x0A82BB,
 
+        // Skyrim Perks
+        PERK_VAMPIRE_FEED                   = 0x0CF02C,
+
+        // Skyrim Quests
+        QUEST_BARD_SONGS                    = 0x074A55,
         QUEST_DIALOGUE_FOLLOWER             = 0x0750BA,
+        QUEST_PLAYER_VAMPIRE                = 0x0EAFD5,
 
+        // Skyrim Reference Markers
+        REFERENCE_MARKER_GOTO_SAFE          = 0x01BDF3,
+
+        // Skyrim Statics
         STATIC_MARKER_X                     = 0x00003B,
     };
 
     #define SKYRIM_FORM(TYPE_, MOD_ID_) FORM(Skyrim_Form, TYPE_, MOD_ID_);
 
+    // Skyrim Actors
     Actor_t* Player_Actor() SKYRIM_FORM(Actor_t, ACTOR_PLAYER);
 
+    // Skyrim Effect Shaders
+    Effect_Shader_t* Reanimate_Effect_Shader() SKYRIM_FORM(Effect_Shader_t, EFFECT_SHADER_REANIMATE);
+
+    // Skyrim Factions
     Faction_t* No_Bard_Singer_Autostart_Faction() SKYRIM_FORM(Faction_t, FACTION_BARD_SINGER_NO_AUTOSTART);
     Faction_t* Current_Follower_Faction() SKYRIM_FORM(Faction_t, FACTION_CURRENT_FOLLOWER);
     Faction_t* Player_Follower_Faction() SKYRIM_FORM(Faction_t, FACTION_PLAYER_FOLLOWER);
     Faction_t* Potential_Follower_Faction() SKYRIM_FORM(Faction_t, FACTION_POTENTIAL_FOLLOWER);
     Faction_t* WI_No_Body_Cleanup_Faction() SKYRIM_FORM(Faction_t, FACTION_WI_NO_BODY_CLEANUP);
 
+    // Skyrim Globals
     Global_t* Player_Follower_Count_Global() SKYRIM_FORM(Global_t, GLOBAL_PLAYER_FOLLOWER_COUNT);
 
+    // Skyrim Keywords
     Keyword_t* Fire_Damage_Magic_Keyword() SKYRIM_FORM(Keyword_t, KEYWORD_MAGIC_DAMAGE_FIRE);
     Keyword_t* Frost_Damage_Magic_Keyword() SKYRIM_FORM(Keyword_t, KEYWORD_MAGIC_DAMAGE_FROST);
     Keyword_t* Shock_Damage_Magic_Keyword() SKYRIM_FORM(Keyword_t, KEYWORD_MAGIC_DAMAGE_SHOCK);
     Keyword_t* Vampire_Drain_Magic_Keyword() SKYRIM_FORM(Keyword_t, KEYWORD_MAGIC_VAMPIRE_DRAIN);
+    Keyword_t* Vampire_Keyword() SKYRIM_FORM(Keyword_t, KEYWORD_VAMPIRE);
 
+    // Skyrim Perks
+    Perk_t* Vampire_Feed_Perk() SKYRIM_FORM(Perk_t, PERK_VAMPIRE_FEED);
+
+    // Skyrim Quests
+    Quest_t* Bard_Songs_Quest() SKYRIM_FORM(Quest_t, QUEST_BARD_SONGS);
     Quest_t* Follower_Dialogue_Quest() SKYRIM_FORM(Quest_t, QUEST_DIALOGUE_FOLLOWER);
+    Quest_t* Player_Vampire_Quest() SKYRIM_FORM(Quest_t, QUEST_PLAYER_VAMPIRE);
 
+    // Skyrim Reference Markers
+    Reference_t* Safe_Goto_Marker() SKYRIM_FORM(Reference_t, REFERENCE_MARKER_GOTO_SAFE);
+
+    // Skyrim Statics
     Static_t* X_Marker_Static() SKYRIM_FORM(Static_t, STATIC_MARKER_X);
 
     #undef SKYRIM_FORM
 
     enum Dawnguard_Forms {
+        // Dawnguard Factions
         FACTION_DLC1_THRALL                 = 0x0162F7,
         FACTION_DLC1_VAMPIRE_FEED_NO_CRIME  = 0x014CBD,
     };
 
     #define DAWNGUARD_FORM(TYPE_, MOD_ID_) FORM(Dawnguard_Form, TYPE_, MOD_ID_);
 
+    // Dawnguard Factions
     Faction_t* DLC1_Thrall_Faction() DAWNGUARD_FORM(Faction_t, FACTION_DLC1_THRALL);
     Faction_t* DLC1_Vampire_Feed_No_Crime_Faction() DAWNGUARD_FORM(Faction_t, FACTION_DLC1_VAMPIRE_FEED_NO_CRIME);
 
     #undef DAWNGUARD_FORM
 
     enum NPCP_Forms {
+        // NPCP Actor Base
+        ACTOR_BASE_MENU                     = 0x317447,
+
+        // NPCP Armors
         ARMOR_BLANK                         = 0x1EF2A5,
 
+        // NPCP Containers
+        CONTAINER_EMPTY                     = 0x0A5561,
+        CONTAINER_OUTFIT                    = 0x0B9A63,
+        CONTAINER_OUTFIT_IMMOBILE           = 0x1663CE,
+        CONTAINER_OUTFIT_SETTLER            = 0x1663CD,
+        CONTAINER_OUTFIT_THRALL             = 0x1663CC,
+        CONTAINER_OUTFIT_FOLLOWER           = 0x1663C7,
+
+        // NPCP Factions
         FACTION_HORSE                       = 0x354111,
         FACTION_MEMBER                      = 0x091154,
 
+        // NPCP Formlists
+        FORMLIST_GLOBALS_IS_SADDLER_SITTING = 0x395E54,
+        FORMLIST_MARKERS_EXPO_CELL          = 0x2928AF,
         FORMLIST_MARKERS_SETTLER            = 0x00B46E,
 
+        // NPCP Globals
+        GLOBAL_IS_INSTALLED                 = 0x189ADD,
+        GLOBAL_FORCE_CLONE_UNIQUES          = 0x05244D,
+        GLOBAL_FORCE_CLONE_GENERICS         = 0x05244E,
+        GLOBAL_FORCE_UNCLONE_UNIQUES        = 0x05244F,
+        GLOBAL_FORCE_UNCLONE_GENERICS       = 0x052450,
+        GLOBAL_PERCENT_NO_BODY              = 0x193CEA,
+        GLOBAL_PERCENT_NO_FEET              = 0x193CE7,
+        GLOBAL_PERCENT_NO_HANDS             = 0x193CE8,
+        GLOBAL_PERCENT_NO_HEAD              = 0x193CE6,
+
+        // NPCP Leveled Actor
+        LEVELED_ACTOR_HORSE                 = 0x354127,
+
+        // NPCP Location
+        LOCATION_EXPO                       = 0x27E48E,
+
+        // NPCP Magic Effects
+        MAGIC_EFFECT_RETREAT                = 0x2DF8FA,
+
+        // NPCP Misc Tokens
         MISC_TOKEN_BANISHED                 = 0x003DFD,
         MISC_TOKEN_CLONE                    = 0x003DFC,
         MISC_TOKEN_DISPLAY                  = 0x13D7AC,
@@ -148,17 +223,31 @@ namespace doticu_npcp { namespace Consts {
         MISC_TOKEN_VITALITY_INVULNERABLE    = 0x0A045C,
         MISC_TOKEN_VITALITY_MORTAL          = 0x0A045B,
         MISC_TOKEN_VITALITY_PROTECTED       = 0x0A045A,
+
+        // NPCP Misc
+        MISC_TASKLIST                       = 0x12E4A9,
         MISC_VECTOR_FORM                    = 0x15C1B2,
 
+        // NPCP Outfits
         OUTFIT_EMPTY                        = 0x0C3C64,
 
+        // NPCP PERKS
+        PERK_KISS_THRALL                    = 0x07CD48,
+        PERK_REANIMATE                      = 0x1DFD9C,
+        PERK_RESURRECT                      = 0x0D2F7C,
+        PERK_UNPARALYZE                     = 0x16B4D1,
+
+        // NPCP Quests
         QUEST_DATA_STATIC                   = 0x0FBA9A,
         QUEST_DATA_DYNAMIC                  = 0x003DFF,
+        QUEST_DIALOGUE_THRALL               = 0x212D57,
+        QUEST_DIALOGUE_REANIMATED           = 0x2089A9,
         QUEST_FUNCS                         = 0x005384,
         QUEST_MEMBERS                       = 0x00184C,
         QUEST_FOLLOWERS                     = 0x000D83,
         QUEST_CONTROL                       = 0x000D7F,
 
+        // NPCP Reference Categories
         REFERENCE_CATEGORY_INPUT            = 0x395E55,
         REFERENCE_CATEGORY_SWORDS           = 0x30D20A,
         REFERENCE_CATEGORY_GREATSWORDS      = 0x30D20B,
@@ -217,20 +306,66 @@ namespace doticu_npcp { namespace Consts {
         REFERENCE_CATEGORY_BOOKS_Y          = 0x30D236,
         REFERENCE_CATEGORY_BOOKS_Z          = 0x30D237,
         REFERENCE_CATEGORY_BOOKS            = 0x30D238,
+
+        // NPCP Reference Markers
+        REFERENCE_MARKER_CELL               = 0x15C1AE,
+        REFERENCE_MARKER_EXPO_ANTECHAMBER   = 0x2979B0,
         REFERENCE_MARKER_STORAGE            = 0x114F9D,
 
+        // NPCP Spells
+        SPELL_ABILITY_CELL                  = 0x15C1B0,
+        SPELL_ABILITY_RETREAT               = 0x2F3CFF,
+
+        // NPCP Weapons
         WEAPON_BLANK                        = 0x0C8D65,
     };
 
     #define NPCP_FORM(TYPE_, MOD_ID_) FORM(NPCP_Form, TYPE_, MOD_ID_);
 
+    // NPCP Actor Base
+    Actor_Base_t* Menu_Actor_Base() NPCP_FORM(Actor_Base_t, ACTOR_BASE_MENU);
+
+    // NPCP Armors
     Armor_t* Blank_Armor() NPCP_FORM(Armor_t, ARMOR_BLANK);
 
+    // NPCP Containers
+    Container_t* Empty_Container() NPCP_FORM(Container_t, CONTAINER_EMPTY);
+    Container_t* Outfit_Container() NPCP_FORM(Container_t, CONTAINER_OUTFIT);
+    Container_t* Immobile_Outfit_Container() NPCP_FORM(Container_t, CONTAINER_OUTFIT_IMMOBILE);
+    Container_t* Settler_Outfit_Container() NPCP_FORM(Container_t, CONTAINER_OUTFIT_SETTLER);
+    Container_t* Thrall_Outfit_Container() NPCP_FORM(Container_t, CONTAINER_OUTFIT_THRALL);
+    Container_t* Follower_Outfit_Container() NPCP_FORM(Container_t, CONTAINER_OUTFIT_FOLLOWER);
+
+    // NPCP Factions
     Faction_t* Member_Faction() NPCP_FORM(Faction_t, FACTION_MEMBER);
     Faction_t* Horse_Faction() NPCP_FORM(Faction_t, FACTION_HORSE);
 
+    // NPCP Formlists
+    Formlist_t* Is_Saddler_Sitting_Globals_Formlist() NPCP_FORM(Formlist_t, FORMLIST_GLOBALS_IS_SADDLER_SITTING);
+    Formlist_t* Expo_Cell_Markers_Formlist() NPCP_FORM(Formlist_t, FORMLIST_MARKERS_EXPO_CELL);
     Formlist_t* Settler_Markers_Formlist() NPCP_FORM(Formlist_t, FORMLIST_MARKERS_SETTLER);
 
+    // NPCP Globals
+    Global_t* Is_Installed_Global() NPCP_FORM(Global_t, GLOBAL_IS_INSTALLED);
+    Global_t* Force_Clone_Uniques_Global() NPCP_FORM(Global_t, GLOBAL_FORCE_CLONE_UNIQUES);
+    Global_t* Force_Clone_Generics_Global() NPCP_FORM(Global_t, GLOBAL_FORCE_CLONE_GENERICS);
+    Global_t* Force_Unclone_Uniques_Global() NPCP_FORM(Global_t, GLOBAL_FORCE_UNCLONE_UNIQUES);
+    Global_t* Force_Unclone_Generics_Global() NPCP_FORM(Global_t, GLOBAL_FORCE_UNCLONE_GENERICS);
+    Global_t* No_Body_Percent_Global() NPCP_FORM(Global_t, GLOBAL_PERCENT_NO_BODY);
+    Global_t* No_Feet_Percent_Global() NPCP_FORM(Global_t, GLOBAL_PERCENT_NO_FEET);
+    Global_t* No_Hands_Percent_Global() NPCP_FORM(Global_t, GLOBAL_PERCENT_NO_HANDS);
+    Global_t* No_Head_Percent_Global() NPCP_FORM(Global_t, GLOBAL_PERCENT_NO_HEAD);
+
+    // NPCP Leveled Actor
+    Leveled_Actor_t* Horse_Leveled_Actor() NPCP_FORM(Leveled_Actor_t, LEVELED_ACTOR_HORSE);
+
+    // NPCP Location
+    Location_t* Expo_Location() NPCP_FORM(Location_t, LOCATION_EXPO);
+
+    // NPCP Magic Effects
+    Magic_Effect_t* Retreat_Magic_Effect() NPCP_FORM(Magic_Effect_t, MAGIC_EFFECT_RETREAT);
+
+    // NPCP Misc Tokens
     Misc_t* Member_Token() NPCP_FORM(Misc_t, MISC_TOKEN_MEMBER);
     Misc_t* Generic_Token() NPCP_FORM(Misc_t, MISC_TOKEN_GENERIC);
     Misc_t* Clone_Token() NPCP_FORM(Misc_t, MISC_TOKEN_CLONE);
@@ -257,17 +392,31 @@ namespace doticu_npcp { namespace Consts {
     Misc_t* Sneak_Follower_Token() NPCP_FORM(Misc_t, MISC_TOKEN_FOLLOWER_SNEAK);
     Misc_t* Saddler_Token() NPCP_FORM(Misc_t, MISC_TOKEN_SADDLER);
     Misc_t* Retreater_Token() NPCP_FORM(Misc_t, MISC_TOKEN_RETREATER);
+
+    // NPCP Misc
+    Misc_t* Tasklist() NPCP_FORM(Misc_t, MISC_TASKLIST);
     Misc_t* Form_Vector() NPCP_FORM(Misc_t, MISC_VECTOR_FORM);
 
+    // NPCP Outfits
     Outfit_t* Empty_Outfit() NPCP_FORM(Outfit_t, OUTFIT_EMPTY);
 
+    // NPCP Perks
+    Perk_t* Kiss_Thrall_Perk() NPCP_FORM(Perk_t, PERK_KISS_THRALL);
+    Perk_t* Reanimate_Perk() NPCP_FORM(Perk_t, PERK_REANIMATE);
+    Perk_t* Resurrect_Perk() NPCP_FORM(Perk_t, PERK_RESURRECT);
+    Perk_t* Unparalyze_Perk() NPCP_FORM(Perk_t, PERK_UNPARALYZE);
+
+    // NPCP Quests
     Quest_t* Static_Data_Quest() NPCP_FORM(Quest_t, QUEST_DATA_STATIC);
     Quest_t* Dynamic_Data_Quest() NPCP_FORM(Quest_t, QUEST_DATA_DYNAMIC);
+    Quest_t* Thrall_Dialogue_Quest() NPCP_FORM(Quest_t, QUEST_DIALOGUE_THRALL);
+    Quest_t* Reanimated_Dialogue_Quest() NPCP_FORM(Quest_t, QUEST_DIALOGUE_REANIMATED);
     Quest_t* Funcs_Quest() NPCP_FORM(Quest_t, QUEST_FUNCS);
     Quest_t* Members_Quest() NPCP_FORM(Quest_t, QUEST_MEMBERS);
     Quest_t* Followers_Quest() NPCP_FORM(Quest_t, QUEST_FOLLOWERS);
     Quest_t* Control_Quest() NPCP_FORM(Quest_t, QUEST_CONTROL);
 
+    // NPCP Reference Categories
     Reference_t* Input_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_INPUT);
     Reference_t* Swords_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_SWORDS);
     Reference_t* Greatswords_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_GREATSWORDS);
@@ -326,8 +475,17 @@ namespace doticu_npcp { namespace Consts {
     Reference_t* Y_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_Y);
     Reference_t* Z_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_Z);
     Reference_t* Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS);
+
+    // NPCP Reference Markers
+    Reference_t* Cell_Marker() NPCP_FORM(Reference_t, REFERENCE_MARKER_CELL);
+    Reference_t* Expo_Antechamber_Marker() NPCP_FORM(Reference_t, REFERENCE_MARKER_EXPO_ANTECHAMBER);
     Reference_t* Storage_Marker() NPCP_FORM(Reference_t, REFERENCE_MARKER_STORAGE);
 
+    // NPCP Spells
+    Spell_t* Cell_Ability_Spell() NPCP_FORM(Spell_t, SPELL_ABILITY_CELL);
+    Spell_t* Retreat_Ability_Spell() NPCP_FORM(Spell_t, SPELL_ABILITY_RETREAT);
+
+    // NPCP Weapons
     Weapon_t* Blank_Weapon() NPCP_FORM(Weapon_t, WEAPON_BLANK);
 
     #undef NPCP_FORM
@@ -340,12 +498,96 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
 
     #define FORWARD_CONST(METHOD_) { return Consts::METHOD_(); }
 
-    // Skryim
+    // Skyrim Actors
+    Actor_t* Player_Actor(Selfless_t*) FORWARD_CONST(Player_Actor);
+
+    // Skyrim Effect Shaders
+    Effect_Shader_t* Reanimate_Effect_Shader(Selfless_t*) FORWARD_CONST(Reanimate_Effect_Shader);
+
+    // Skyrim Factions
+    Faction_t* No_Bard_Singer_Autostart_Faction(Selfless_t*) FORWARD_CONST(No_Bard_Singer_Autostart_Faction);
+
+    // Skyrim Keywords
+    Keyword_t* Vampire_Keyword(Selfless_t*) FORWARD_CONST(Vampire_Keyword);
+
+    // Skyrim Perks
+    Perk_t* Vampire_Feed_Perk(Selfless_t*) FORWARD_CONST(Vampire_Feed_Perk);
+
+    // Skryim Quests
+    Quest_t* Bard_Songs_Quest(Selfless_t*) FORWARD_CONST(Bard_Songs_Quest);
     Quest_t* Follower_Dialogue_Quest(Selfless_t*) FORWARD_CONST(Follower_Dialogue_Quest);
+    Quest_t* Player_Vampire_Quest(Selfless_t*) FORWARD_CONST(Player_Vampire_Quest);
 
-    // Dawnguard
+    // Skyrim Reference Markers
+    Reference_t* Safe_Goto_Marker(Selfless_t*) FORWARD_CONST(Safe_Goto_Marker);
 
-    // NPCP
+    // Skyrim Statics
+    Static_t* X_Marker_Static(Selfless_t*) FORWARD_CONST(X_Marker_Static);
+
+    // Dawnguard Factions
+    Faction_t* DLC1_Thrall_Faction(Selfless_t*) FORWARD_CONST(DLC1_Thrall_Faction);
+
+    // NPCP Actor Base
+    Actor_Base_t* Menu_Actor_Base(Selfless_t*) FORWARD_CONST(Menu_Actor_Base);
+
+    // NPCP Armors
+    Armor_t* Blank_Armor(Selfless_t*) FORWARD_CONST(Blank_Armor);
+
+    // NPCP Containers
+    Container_t* Empty_Container(Selfless_t*) FORWARD_CONST(Empty_Container);
+    Container_t* Outfit_Container(Selfless_t*) FORWARD_CONST(Outfit_Container);
+    Container_t* Immobile_Outfit_Container(Selfless_t*) FORWARD_CONST(Immobile_Outfit_Container);
+    Container_t* Settler_Outfit_Container(Selfless_t*) FORWARD_CONST(Settler_Outfit_Container);
+    Container_t* Thrall_Outfit_Container(Selfless_t*) FORWARD_CONST(Thrall_Outfit_Container);
+    Container_t* Follower_Outfit_Container(Selfless_t*) FORWARD_CONST(Follower_Outfit_Container);
+
+    // NPCP Formlists
+    Formlist_t* Is_Saddler_Sitting_Globals_Formlist(Selfless_t*) FORWARD_CONST(Is_Saddler_Sitting_Globals_Formlist);
+    Formlist_t* Expo_Cell_Markers_Formlist(Selfless_t*) FORWARD_CONST(Expo_Cell_Markers_Formlist);
+
+    // NPCP Globals
+    Global_t* Is_Installed_Global(Selfless_t*) FORWARD_CONST(Is_Installed_Global);
+    Global_t* Force_Clone_Uniques_Global(Selfless_t*) FORWARD_CONST(Force_Clone_Uniques_Global);
+    Global_t* Force_Clone_Generics_Global(Selfless_t*) FORWARD_CONST(Force_Clone_Generics_Global);
+    Global_t* Force_Unclone_Uniques_Global(Selfless_t*) FORWARD_CONST(Force_Unclone_Uniques_Global);
+    Global_t* Force_Unclone_Generics_Global(Selfless_t*) FORWARD_CONST(Force_Unclone_Generics_Global);
+    Global_t* No_Body_Percent_Global(Selfless_t*) FORWARD_CONST(No_Body_Percent_Global);
+    Global_t* No_Feet_Percent_Global(Selfless_t*) FORWARD_CONST(No_Feet_Percent_Global);
+    Global_t* No_Hands_Percent_Global(Selfless_t*) FORWARD_CONST(No_Hands_Percent_Global);
+    Global_t* No_Head_Percent_Global(Selfless_t*) FORWARD_CONST(No_Head_Percent_Global);
+
+    // NPCP Leveled Actor
+    Leveled_Actor_t* Horse_Leveled_Actor(Selfless_t*) FORWARD_CONST(Horse_Leveled_Actor);
+
+    // NPCP Location
+    Location_t* Expo_Location(Selfless_t*) FORWARD_CONST(Expo_Location);
+
+    // NPCP Magic Effects
+    Magic_Effect_t* Retreat_Magic_Effect(Selfless_t*) FORWARD_CONST(Retreat_Magic_Effect);
+
+    // NPCP Misc Tokens
+    Misc_t* Greeter_Token(Selfless_t*) FORWARD_CONST(Greeter_Token);
+    Misc_t* Movee_Token(Selfless_t*) FORWARD_CONST(Movee_Token);
+    Misc_t* Reanimated_Token(Selfless_t*) FORWARD_CONST(Reanimated_Token);
+    Misc_t* Follower_Token(Selfless_t*) FORWARD_CONST(Follower_Token);
+    Misc_t* Saddler_Token(Selfless_t*) FORWARD_CONST(Saddler_Token);
+    Misc_t* Retreater_Token(Selfless_t*) FORWARD_CONST(Retreater_Token);
+
+    // NPCP Misc
+    Misc_t* Tasklist(Selfless_t*) FORWARD_CONST(Tasklist);
+    Misc_t* Form_Vector(Selfless_t*) FORWARD_CONST(Form_Vector);
+
+    // NPCP Perks
+    Perk_t* Kiss_Thrall_Perk(Selfless_t*) FORWARD_CONST(Kiss_Thrall_Perk);
+    Perk_t* Reanimate_Perk(Selfless_t*) FORWARD_CONST(Reanimate_Perk);
+    Perk_t* Resurrect_Perk(Selfless_t*) FORWARD_CONST(Resurrect_Perk);
+    Perk_t* Unparalyze_Perk(Selfless_t*) FORWARD_CONST(Unparalyze_Perk);
+
+    // NPCP Quests
+    Quest_t* Thrall_Dialogue_Quest(Selfless_t*) FORWARD_CONST(Thrall_Dialogue_Quest);
+    Quest_t* Reanimated_Dialogue_Quest(Selfless_t*) FORWARD_CONST(Reanimated_Dialogue_Quest);
+
+    // NPCP Reference Categories
     Reference_t* Input_Category(Selfless_t*) FORWARD_CONST(Input_Category);
     Reference_t* Swords_Category(Selfless_t*) FORWARD_CONST(Swords_Category);
     Reference_t* Greatswords_Category(Selfless_t*) FORWARD_CONST(Greatswords_Category);
@@ -405,6 +647,18 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
     Reference_t* Z_Books_Category(Selfless_t*) FORWARD_CONST(Z_Books_Category);
     Reference_t* Books_Category(Selfless_t*) FORWARD_CONST(Books_Category);
 
+    // NPCP Reference Markers
+    Reference_t* Cell_Marker(Selfless_t*) FORWARD_CONST(Cell_Marker);
+    Reference_t* Expo_Antechamber_Marker(Selfless_t*) FORWARD_CONST(Expo_Antechamber_Marker);
+    Reference_t* Storage_Marker(Selfless_t*) FORWARD_CONST(Storage_Marker);
+
+    // NPCP Spells
+    Spell_t* Cell_Ability_Spell(Selfless_t*) FORWARD_CONST(Cell_Ability_Spell);
+    Spell_t* Retreat_Ability_Spell(Selfless_t*) FORWARD_CONST(Retreat_Ability_Spell);
+
+    // NPCP Weapons
+    Weapon_t* Blank_Weapon(Selfless_t*) FORWARD_CONST(Blank_Weapon);
+
     #undef FORWARD_CONST
 
     bool Register(Papyrus::Registry_t* registry)
@@ -416,10 +670,96 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
                              RETURN_, Exports::METHOD_, __VA_ARGS__);   \
         W
 
-        // Skyrim
-        ADD_GLOBAL("Follower_Dialogue_Quest", 0, Quest_t*, Follower_Dialogue_Quest);
+        // Skyrim Actors
+        ADD_GLOBAL("Player_Actor", 0, Actor_t*, Player_Actor);
 
-        // NPCP
+        // Skyrim Effect Shaders
+        ADD_GLOBAL("Reanimate_Effect_Shader", 0, Effect_Shader_t*, Reanimate_Effect_Shader);
+
+        // Skyrim Factions
+        ADD_GLOBAL("No_Bard_Singer_Autostart_Faction", 0, Faction_t*, No_Bard_Singer_Autostart_Faction);
+
+        // Skyrim Keywords
+        ADD_GLOBAL("Vampire_Keyword", 0, Keyword_t*, Vampire_Keyword);
+
+        // Skyrim Perks
+        ADD_GLOBAL("Vampire_Feed_Perk", 0, Perk_t*, Vampire_Feed_Perk);
+
+        // Skyrim Quests
+        ADD_GLOBAL("Bard_Songs_Quest", 0, Quest_t*, Bard_Songs_Quest);
+        ADD_GLOBAL("Follower_Dialogue_Quest", 0, Quest_t*, Follower_Dialogue_Quest);
+        ADD_GLOBAL("Player_Vampire_Quest", 0, Quest_t*, Player_Vampire_Quest);
+
+        // Skyrim Reference Markers
+        ADD_GLOBAL("Safe_Goto_Marker", 0, Reference_t*, Safe_Goto_Marker);
+
+        // Skyrim Statics
+        ADD_GLOBAL("X_Marker_Static", 0, Static_t*, X_Marker_Static);
+
+        // Dawnguard Factions
+        ADD_GLOBAL("DLC1_Thrall_Faction", 0, Faction_t*, DLC1_Thrall_Faction);
+
+        // NPCP Actor Base
+        ADD_GLOBAL("Menu_Actor_Base", 0, Actor_Base_t*, Menu_Actor_Base);
+
+        // NPCP Armors
+        ADD_GLOBAL("Blank_Armor", 0, Armor_t*, Blank_Armor);
+
+        // NPCP Containers
+        ADD_GLOBAL("Empty_Container", 0, Container_t*, Empty_Container);
+        ADD_GLOBAL("Outfit_Container", 0, Container_t*, Outfit_Container);
+        ADD_GLOBAL("Immobile_Outfit_Container", 0, Container_t*, Immobile_Outfit_Container);
+        ADD_GLOBAL("Settler_Outfit_Container", 0, Container_t*, Settler_Outfit_Container);
+        ADD_GLOBAL("Thrall_Outfit_Container", 0, Container_t*, Thrall_Outfit_Container);
+        ADD_GLOBAL("Follower_Outfit_Container", 0, Container_t*, Follower_Outfit_Container);
+
+        // NPCP Formlists
+        ADD_GLOBAL("Is_Saddler_Sitting_Globals_Formlist", 0, Formlist_t*, Is_Saddler_Sitting_Globals_Formlist);
+        ADD_GLOBAL("Expo_Cell_Markers_Formlist", 0, Formlist_t*, Expo_Cell_Markers_Formlist);
+
+        // NPCP Globals
+        ADD_GLOBAL("Is_Installed_Global", 0, Global_t*, Is_Installed_Global);
+        ADD_GLOBAL("Force_Clone_Uniques_Global", 0, Global_t*, Force_Clone_Uniques_Global);
+        ADD_GLOBAL("Force_Clone_Generics_Global", 0, Global_t*, Force_Clone_Generics_Global);
+        ADD_GLOBAL("Force_Unclone_Uniques_Global", 0, Global_t*, Force_Unclone_Uniques_Global);
+        ADD_GLOBAL("Force_Unclone_Generics_Global", 0, Global_t*, Force_Unclone_Generics_Global);
+        ADD_GLOBAL("No_Body_Percent_Global", 0, Global_t*, No_Body_Percent_Global);
+        ADD_GLOBAL("No_Feet_Percent_Global", 0, Global_t*, No_Feet_Percent_Global);
+        ADD_GLOBAL("No_Hands_Percent_Global", 0, Global_t*, No_Hands_Percent_Global);
+        ADD_GLOBAL("No_Head_Percent_Global", 0, Global_t*, No_Head_Percent_Global);
+
+        // NPCP Leveled Actor
+        ADD_GLOBAL("Horse_Leveled_Actor", 0, Leveled_Actor_t*, Horse_Leveled_Actor);
+
+        // NPCP Location
+        ADD_GLOBAL("Expo_Location", 0, Location_t*, Expo_Location);
+
+        // NPCP Magic Effects
+        ADD_GLOBAL("Retreat_Magic_Effect", 0, Magic_Effect_t*, Retreat_Magic_Effect);
+
+        // NPCP Misc Tokens
+        ADD_GLOBAL("Greeter_Token", 0, Misc_t*, Greeter_Token);
+        ADD_GLOBAL("Movee_Token", 0, Misc_t*, Movee_Token);
+        ADD_GLOBAL("Reanimated_Token", 0, Misc_t*, Reanimated_Token);
+        ADD_GLOBAL("Follower_Token", 0, Misc_t*, Follower_Token);
+        ADD_GLOBAL("Saddler_Token", 0, Misc_t*, Saddler_Token);
+        ADD_GLOBAL("Retreater_Token", 0, Misc_t*, Retreater_Token);
+
+        // NPCP Misc
+        ADD_GLOBAL("Tasklist", 0, Misc_t*, Tasklist);
+        ADD_GLOBAL("Form_Vector", 0, Misc_t*, Form_Vector);
+
+        // NPCP Perks
+        ADD_GLOBAL("Kiss_Thrall_Perk", 0, Perk_t*, Kiss_Thrall_Perk);
+        ADD_GLOBAL("Reanimate_Perk", 0, Perk_t*, Reanimate_Perk);
+        ADD_GLOBAL("Resurrect_Perk", 0, Perk_t*, Resurrect_Perk);
+        ADD_GLOBAL("Unparalyze_Perk", 0, Perk_t*, Unparalyze_Perk);
+
+        // NPCP Quests
+        ADD_GLOBAL("Thrall_Dialogue_Quest", 0, Quest_t*, Thrall_Dialogue_Quest);
+        ADD_GLOBAL("Reanimated_Dialogue_Quest", 0, Quest_t*, Reanimated_Dialogue_Quest);
+
+        // NPCP Reference Categories
         ADD_GLOBAL("Input_Category", 0, Reference_t*, Input_Category);
         ADD_GLOBAL("Swords_Category", 0, Reference_t*, Swords_Category);
         ADD_GLOBAL("Greatswords_Category", 0, Reference_t*, Greatswords_Category);
@@ -478,6 +818,18 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
         ADD_GLOBAL("Y_Books_Category", 0, Reference_t*, Y_Books_Category);
         ADD_GLOBAL("Z_Books_Category", 0, Reference_t*, Z_Books_Category);
         ADD_GLOBAL("Books_Category", 0, Reference_t*, Books_Category);
+
+        // NPCP Reference Markers
+        ADD_GLOBAL("Cell_Marker", 0, Reference_t*, Cell_Marker);
+        ADD_GLOBAL("Expo_Antechamber_Marker", 0, Reference_t*, Expo_Antechamber_Marker);
+        ADD_GLOBAL("Storage_Marker", 0, Reference_t*, Storage_Marker);
+
+        // NPCP Spells
+        ADD_GLOBAL("Cell_Ability_Spell", 0, Spell_t*, Cell_Ability_Spell);
+        ADD_GLOBAL("Retreat_Ability_Spell", 0, Spell_t*, Retreat_Ability_Spell);
+
+        // NPCP Weapons
+        ADD_GLOBAL("Blank_Weapon", 0, Weapon_t*, Blank_Weapon);
 
         #undef ADD_GLOBAL
 

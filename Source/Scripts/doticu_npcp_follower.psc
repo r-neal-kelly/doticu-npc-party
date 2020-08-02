@@ -44,7 +44,7 @@ endProperty
 ; Public Constants
 Actor property ACTOR_PLAYER hidden
     Actor function Get()
-        return p_DATA.CONSTS.ACTOR_PLAYER
+        return doticu_npcp_consts.Player_Actor()
     endFunction
 endProperty
 float property MAX_SPEED_UNSNEAK hidden
@@ -212,10 +212,10 @@ endFunction
 function p_Backup()
 p_Lock()
 
-    p_prev_relationship_rank = p_ref_actor.GetRelationshipRank(CONSTS.ACTOR_PLAYER)
+    p_prev_relationship_rank = p_ref_actor.GetRelationshipRank(doticu_npcp_consts.Player_Actor())
     p_prev_waiting_for_player = p_ref_actor.GetBaseActorValue("WaitingForPlayer")
     p_prev_speed_mult = p_ref_actor.GetBaseActorValue("SpeedMult")
-    p_prev_faction_bard_no_auto = p_ref_actor.IsInFaction(CONSTS.FACTION_BARD_SINGER_NO_AUTOSTART)
+    p_prev_faction_bard_no_auto = p_ref_actor.IsInFaction(doticu_npcp_consts.No_Bard_Singer_Autostart_Faction())
 
 p_Unlock()
 endFunction
@@ -224,7 +224,7 @@ function p_Restore()
 p_Lock()
 
     if p_prev_faction_bard_no_auto
-        p_ref_actor.AddToFaction(CONSTS.FACTION_BARD_SINGER_NO_AUTOSTART)
+        p_ref_actor.AddToFaction(doticu_npcp_consts.No_Bard_Singer_Autostart_Faction())
     endIf
     p_ref_actor.SetActorValue("SpeedMult", p_prev_speed_mult)
     p_ref_actor.SetActorValue("WaitingForPlayer", p_prev_waiting_for_player)
@@ -250,16 +250,16 @@ endFunction
 function p_Follow()
 p_Lock()
 
-    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_FOLLOWER, ID() + 1)
+    ACTORS.Token(p_ref_actor, doticu_npcp_consts.Follower_Token(), ID() + 1)
 
     ; we can't do away with this, because it controls dialogue api in mods.
     ; however, maybe we could set it dynamically somehow?
-    p_ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, 3)
+    p_ref_actor.SetRelationshipRank(doticu_npcp_consts.Player_Actor(), 3)
 
     p_ref_actor.IgnoreFriendlyHits(true)
     p_ref_actor.SetNotShowOnStealthMeter(true)
 
-    p_ref_actor.AddToFaction(CONSTS.FACTION_BARD_SINGER_NO_AUTOSTART)
+    p_ref_actor.AddToFaction(doticu_npcp_consts.No_Bard_Singer_Autostart_Faction())
 
     p_ref_actor.SetActorValue("WaitingForPlayer", 0.0); we don't use the vanilla wait, but immobilize
     p_ref_actor.SetActorValue("SpeedMult", MAX_SPEED_UNSNEAK)
@@ -272,13 +272,13 @@ endFunction
 function p_Unfollow()
 p_Lock()
 
-    p_ref_actor.RemoveFromFaction(CONSTS.FACTION_BARD_SINGER_NO_AUTOSTART)
+    p_ref_actor.RemoveFromFaction(doticu_npcp_consts.No_Bard_Singer_Autostart_Faction())
 
     p_ref_actor.SetNotShowOnStealthMeter(false)
     p_ref_actor.IgnoreFriendlyHits(false)
-    p_ref_actor.SetRelationshipRank(CONSTS.ACTOR_PLAYER, p_prev_relationship_rank)
+    p_ref_actor.SetRelationshipRank(doticu_npcp_consts.Player_Actor(), p_prev_relationship_rank)
 
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_FOLLOWER)
+    ACTORS.Untoken(p_ref_actor, doticu_npcp_consts.Follower_Token())
 
     p_ref_actor.EvaluatePackage()
 
@@ -292,12 +292,12 @@ p_Lock()
         p_Create_Horse()
     endIf
 
-    if CONSTS.ACTOR_PLAYER.GetParentCell().IsInterior()
+    if doticu_npcp_consts.Player_Actor().GetParentCell().IsInterior()
 p_Unlock()
         return p_Unsaddle()
     endIf
 
-    ACTORS.Token(p_ref_actor, CONSTS.TOKEN_SADDLER)
+    ACTORS.Token(p_ref_actor, doticu_npcp_consts.Saddler_Token())
 
     Actor ref_horse = p_ref_horse.Actor()
 
@@ -322,7 +322,7 @@ p_Unlock()
 
     Actor mounted_actor = doticu_npcp.Actor_Get_Mounted_Actor(ref_horse)
     if !mounted_actor || mounted_actor != p_ref_actor
-        (CONSTS.FORMLIST_GLOBALS_SADDLER_IS_SITTING.GetAt(ID()) as GlobalVariable).SetValue(0)
+        (doticu_npcp_consts.Is_Saddler_Sitting_Globals_Formlist().GetAt(ID()) as GlobalVariable).SetValue(0)
     endIf
 
     p_ref_actor.EvaluatePackage()
@@ -341,10 +341,10 @@ p_Lock()
     if p_ref_horse
         Actor ref_horse = p_ref_horse.Actor()
         ref_horse.Disable()
-        ref_horse.MoveTo(CONSTS.MARKER_STORAGE)
+        ref_horse.MoveTo(doticu_npcp_consts.Storage_Marker())
     endIf
 
-    ACTORS.Untoken(p_ref_actor, CONSTS.TOKEN_SADDLER)
+    ACTORS.Untoken(p_ref_actor, doticu_npcp_consts.Saddler_Token())
 
     p_ref_actor.EvaluatePackage()
 
@@ -354,7 +354,7 @@ endFunction
 function p_Retreat()
     ; this is kinda a hack to make sure that they don't get stuck as a retreater.
     ; it becomes very obvious when they won't get on their horses for example
-    if !CONSTS.ACTOR_PLAYER.IsSneaking()
+    if !doticu_npcp_consts.Player_Actor().IsSneaking()
         p_is_retreater = false
         return p_Unretreat()
     endIf
@@ -362,12 +362,12 @@ function p_Retreat()
 p_Lock()
 
     ; this will cause a package change, where ref ignores combat
-    ACTORS.TOKEN(p_ref_actor, CONSTS.TOKEN_RETREATER)
+    ACTORS.TOKEN(p_ref_actor, doticu_npcp_consts.Retreater_Token())
 
     ; add a spell that immediately causes invisibility.
     ; sometimes it won't work correctly, so check that it does
-    while !p_ref_actor.HasMagicEffect(CONSTS.EFFECT_RETREAT)
-        ACTORS.Apply_Ability(p_ref_actor, CONSTS.ABILITY_RETREAT)
+    while !p_ref_actor.HasMagicEffect(doticu_npcp_consts.Retreat_Magic_Effect())
+        ACTORS.Apply_Ability(p_ref_actor, doticu_npcp_consts.Retreat_Ability_Spell())
     endWhile
 
     ; make sure there is no fighting
@@ -381,9 +381,9 @@ endFunction
 function p_Unretreat()
 p_Lock()
 
-    ACTORS.Unapply_Ability(p_ref_actor, CONSTS.ABILITY_RETREAT)
+    ACTORS.Unapply_Ability(p_ref_actor, doticu_npcp_consts.Retreat_Ability_Spell())
 
-    ACTORS.UNTOKEN(p_ref_actor, CONSTS.TOKEN_RETREATER)
+    ACTORS.UNTOKEN(p_ref_actor, doticu_npcp_consts.Retreater_Token())
 
     p_ref_actor.EvaluatePackage()
 

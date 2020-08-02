@@ -38,11 +38,11 @@ doticu_npcp_data p_DATA = none
 
 ; Private Methods
 function p_Create()
-    Cell cell_new = CONSTS.ACTOR_PLAYER.GetParentCell()
-    Cell cell_old = CONSTS.MARKER_CELL.GetParentCell()
+    Cell cell_new = doticu_npcp_consts.Player_Actor().GetParentCell()
+    Cell cell_old = doticu_npcp_consts.Cell_Marker().GetParentCell()
 
     FUNCS.Wait(0.01)
-    CONSTS.MARKER_CELL.MoveTo(CONSTS.ACTOR_PLAYER)
+    doticu_npcp_consts.Cell_Marker().MoveTo(doticu_npcp_consts.Player_Actor())
 
     p_Send_Cell_Change(cell_new, cell_old)
 endFunction

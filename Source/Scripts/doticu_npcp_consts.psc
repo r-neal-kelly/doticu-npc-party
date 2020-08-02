@@ -4,10 +4,100 @@
 
 Scriptname doticu_npcp_consts extends Quest
 
-; Skyrim
-Quest function Follower_Dialogue_Quest() native global
+;/
+    We actually want to remove the need of most of these in due time.
+/;
 
-; NPCP
+; Skyrim Actors
+Actor function Player_Actor() native global
+
+; Skyrim Effect Shaders
+EffectShader function Reanimate_Effect_Shader() native global
+
+; Skyrim Factions
+Faction function No_Bard_Singer_Autostart_Faction() native global
+
+; Skyrim Keywords
+Keyword function Vampire_Keyword() native global
+
+; Skyrim Perks
+Perk function Vampire_Feed_Perk() native global
+
+; Skyrim Quests
+Quest function Bard_Songs_Quest() native global
+Quest function Follower_Dialogue_Quest() native global
+Quest function Player_Vampire_Quest() native global
+
+; Skyrim Reference Markers
+ObjectReference function Safe_Goto_Marker() native global
+
+; Skyrim Statics
+Static function X_Marker_Static() native global
+
+; Dawnguard Factions
+Faction function DLC1_Thrall_Faction() native global
+
+; NPCP Actor Bases
+ActorBase function Menu_Actor_Base() native global
+
+; NPCP Armors
+Armor function Blank_Armor() native global
+
+; NPCP Containers
+Container function Empty_Container() native global
+Container function Outfit_Container() native global
+Container function Immobile_Outfit_Container() native global
+Container function Settler_Outfit_Container() native global
+Container function Thrall_Outfit_Container() native global
+Container function Follower_Outfit_Container() native global
+
+; NPCP Formlists
+Formlist function Is_Saddler_Sitting_Globals_Formlist() native global
+Formlist function Expo_Cell_Markers_Formlist() native global
+
+; NPCP Globals
+GlobalVariable function Is_Installed_Global() native global
+GlobalVariable function Force_Clone_Uniques_Global() native global
+GlobalVariable function Force_Clone_Generics_Global() native global
+GlobalVariable function Force_Unclone_Uniques_Global() native global
+GlobalVariable function Force_Unclone_Generics_Global() native global
+GlobalVariable function No_Body_Percent_Global() native global
+GlobalVariable function No_Feet_Percent_Global() native global
+GlobalVariable function No_Hands_Percent_Global() native global
+GlobalVariable function No_Head_Percent_Global() native global
+
+; NPCP Leveled Actors
+LeveledActor function Horse_Leveled_Actor() native global
+
+; NPCP Locations
+Location function Expo_Location() native global
+
+; NPCP Magic Effects
+MagicEffect function Retreat_Magic_Effect() native global
+
+; NPCP Misc Tokens
+MiscObject function Greeter_Token() native global
+MiscObject function Movee_Token() native global
+MiscObject function Reanimated_Token() native global
+MiscObject function Follower_Token() native global
+MiscObject function Saddler_Token() native global
+MiscObject function Retreater_Token() native global
+
+; NPCP Miscs
+MiscObject function Tasklist() native global
+MiscObject function Form_Vector() native global
+
+; NPCP Perks
+Perk function Kiss_Thrall_Perk() native global
+Perk function Reanimate_Perk() native global
+Perk function Resurrect_Perk() native global
+Perk function Unparalyze_Perk() native global
+
+; NPCP Quests
+Quest function Thrall_Dialogue_Quest() native global
+Quest function Reanimated_Dialogue_Quest() native global
+
+; NPCP Reference Categories
 ObjectReference function Input_Category() native global
 ObjectReference function Swords_Category() native global
 ObjectReference function Greatswords_Category() native global
@@ -67,813 +157,19 @@ ObjectReference function Y_Books_Category() native global
 ObjectReference function Z_Books_Category() native global
 ObjectReference function Books_Category() native global
 
-; Private Constants
-Actor                       p_ACTOR_PLAYER                          = none
-ActorBase                   p_ACTOR_BASE_MENU                       = none
-LeveledActor                p_ACTOR_LEVELED_HORSE                   = none
-Cell                        p_CELL_STORAGE                          = none
-Static                      p_STATIC_MARKER_X                       = none
-ObjectReference             p_MARKER_STORAGE                        = none
-ObjectReference             p_MARKER_CLONER                         = none
-ObjectReference             p_MARKER_CELL                           = none
-ObjectReference             p_MARKER_EXPO_ANTECHAMBER               = none
-ObjectReference             p_MARKER_GOTO_SAFE                      = none
-Spell                       p_ABILITY_CELL                          = none
-Spell                       p_ABILITY_RETREAT                       = none
-MagicEffect                 p_EFFECT_RETREAT                        = none
-MiscObject                  p_TOKEN_FOLLOWER                        = none
-MiscObject                  p_TOKEN_FOLLOWER_SNEAK                  = none
-MiscObject                  p_TOKEN_CLONE                           = none
-MiscObject                  p_TOKEN_BANISHED                        = none
-MiscObject                  p_TOKEN_DISPLAY                         = none
-MiscObject                  p_TOKEN_MOVEE                           = none
-MiscObject                  p_TOKEN_GREETER                         = none
-MiscObject                  p_TOKEN_RETREATER                       = none
-MiscObject                  p_TOKEN_SADDLER                         = none
-MiscObject                  p_TOKEN_REANIMATED                      = none
-MiscObject                  p_MISC_TASKLIST                         = none
-MiscObject                  p_MISC_VECTOR_FORM                      = none
-GlobalVariable              p_GLOBAL_PLAYER_FOLLOWER_COUNT          = none
-GlobalVariable              p_GLOBAL_FORCE_CLONE_UNIQUE             = none
-GlobalVariable              p_GLOBAL_FORCE_CLONE_GENERIC            = none
-GlobalVariable              p_GLOBAL_FORCE_UNCLONE_UNIQUE           = none
-GlobalVariable              p_GLOBAL_FORCE_UNCLONE_GENERIC          = none
-GlobalVariable              p_GLOBAL_IS_INSTALLED                   = none
-GlobalVariable              p_GLOBAL_PERCENT_NO_BODY                = none
-GlobalVariable              p_GLOBAL_PERCENT_NO_FEET                = none
-GlobalVariable              p_GLOBAL_PERCENT_NO_HANDS               = none
-GlobalVariable              p_GLOBAL_PERCENT_NO_HEAD                = none
-FormList                    p_FORMLIST_MARKERS_EXPO_CELL            = none
-FormList                    p_FORMLIST_GLOBALS_SADDLER_IS_SITTING   = none
-Faction                     p_FACTION_MEMBER                        = none
-Faction                     p_FACTION_DLC1_THRALL                   = none
-Faction                     p_FACTION_DLC1_VAMPIRE_FEED_NO_CRIME    = none
-Faction                     p_FACTION_WI_NO_BODY_CLEANUP            = none
-Faction                     p_FACTION_CURRENT_FOLLOWER              = none
-Faction                     p_FACTION_POTENTIAL_FOLLOWER            = none
-Faction                     p_FACTION_BARD_SINGER_NO_AUTOSTART      = none
-Perk                        p_PERK_VAMPIRE_FEED                     = none
-Perk                        p_PERK_KISS_THRALL                      = none
-Perk                        p_PERK_RESURRECT                        = none
-Perk                        p_PERK_REANIMATE                        = none
-Perk                        p_PERK_UNPARALYZE                       = none
-PlayerVampireQuestScript    p_SCRIPT_PLAYER_VAMPIRE_QUEST           = none
-Keyword                     p_KEYWORD_VAMPIRE                       = none
-Container                   p_CONTAINER_EMPTY                       = none
-Container                   p_CONTAINER_OUTFIT                      = none
-Container                   p_CONTAINER_OUTFIT_SETTLER              = none
-Container                   p_CONTAINER_OUTFIT_THRALL               = none
-Container                   p_CONTAINER_OUTFIT_IMMOBILE             = none
-Container                   p_CONTAINER_OUTFIT_FOLLOWER             = none
-Outfit                      p_OUTFIT_EMPTY                          = none
-Quest                       p_QUEST_BARD_SONGS                      = none
-VoiceType                   p_VOICE_FEMALE_COWARD                   = none
-Weapon                      p_WEAPON_BLANK                          = none
-Armor                       p_ARMOR_BLANK                           = none
-Key                         p_KEY_LOCK                              = none
-Quest                       p_QUEST_DIALOGUE_REANIMATED             = none
-Quest                       p_QUEST_DIALOGUE_THRALL                 = none
-EffectShader                p_SHADER_REANIMATE_FX                   = none
-Location                    p_LOCATION_EXPO                         = none
-
-; Public Constants
-Actor property ACTOR_PLAYER
-    Actor function Get()
-        return p_ACTOR_PLAYER
-    endFunction
-    function Set(Actor val)
-        if p_ACTOR_PLAYER == none
-            p_ACTOR_PLAYER = val
-        endIf
-    endFunction
-endProperty
-
-ActorBase property ACTOR_BASE_MENU
-    ActorBase function Get()
-        return p_ACTOR_BASE_MENU
-    endFunction
-    function Set(ActorBase val)
-        if p_ACTOR_BASE_MENU == none
-            p_ACTOR_BASE_MENU = val
-        endIf
-    endFunction
-endProperty
-
-LeveledActor property ACTOR_LEVELED_HORSE
-    LeveledActor function Get()
-        return p_ACTOR_LEVELED_HORSE
-    endFunction
-    function Set(LeveledActor val)
-        if p_ACTOR_LEVELED_HORSE == none
-            p_ACTOR_LEVELED_HORSE = val
-        endIf
-    endFunction
-endProperty
-
-Cell property CELL_STORAGE
-    Cell function Get()
-        return p_CELL_STORAGE
-    endFunction
-    function Set(Cell val)
-        if p_CELL_STORAGE == none
-            p_CELL_STORAGE = val
-        endIf
-    endFunction
-endProperty
-
-Static property STATIC_MARKER_X
-    Static function Get()
-        return p_STATIC_MARKER_X
-    endFunction
-    function Set(Static val)
-        if p_STATIC_MARKER_X == none
-            p_STATIC_MARKER_X = val
-        endIf
-    endFunction
-endProperty
-
-ObjectReference property MARKER_STORAGE
-    ObjectReference function Get()
-        return p_MARKER_STORAGE
-    endFunction
-    function Set(ObjectReference val)
-        if p_MARKER_STORAGE == none
-            p_MARKER_STORAGE = val
-        endIf
-    endFunction
-endProperty
-
-ObjectReference property MARKER_CLONER
-    ObjectReference function Get()
-        return p_MARKER_CLONER
-    endFunction
-    function Set(ObjectReference val)
-        if p_MARKER_CLONER == none
-            p_MARKER_CLONER = val
-        endIf
-    endFunction
-endProperty
-
-ObjectReference property MARKER_CELL
-    ObjectReference function Get()
-        return p_MARKER_CELL
-    endFunction
-    function Set(ObjectReference val)
-        if p_MARKER_CELL == none
-            p_MARKER_CELL = val
-        endIf
-    endFunction
-endProperty
-
-ObjectReference property MARKER_EXPO_ANTECHAMBER
-    ObjectReference function Get()
-        return p_MARKER_EXPO_ANTECHAMBER
-    endFunction
-    function Set(ObjectReference val)
-        if p_MARKER_EXPO_ANTECHAMBER == none
-            p_MARKER_EXPO_ANTECHAMBER = val
-        endIf
-    endFunction
-endProperty
-
-ObjectReference property MARKER_GOTO_SAFE
-    ObjectReference function Get()
-        return p_MARKER_GOTO_SAFE
-    endFunction
-    function Set(ObjectReference val)
-        if p_MARKER_GOTO_SAFE == none
-            p_MARKER_GOTO_SAFE = val
-        endIf
-    endFunction
-endProperty
-
-Spell property ABILITY_CELL
-    Spell function Get()
-        return p_ABILITY_CELL
-    endFunction
-    function Set(Spell val)
-        if p_ABILITY_CELL == none
-            p_ABILITY_CELL = val
-        endIf
-    endFunction
-endProperty
-
-Spell property ABILITY_RETREAT
-    Spell function Get()
-        return p_ABILITY_RETREAT
-    endFunction
-    function Set(Spell val)
-        if p_ABILITY_RETREAT == none
-            p_ABILITY_RETREAT = val
-        endIf
-    endFunction
-endProperty
-
-MagicEffect property EFFECT_RETREAT
-    MagicEffect function Get()
-        return p_EFFECT_RETREAT
-    endFunction
-    function Set(MagicEffect val)
-        if p_EFFECT_RETREAT == none
-            p_EFFECT_RETREAT = val
-        endIf
-    endFunction
-endProperty
-
-MiscObject property TOKEN_FOLLOWER
-    MiscObject function Get()
-        return p_TOKEN_FOLLOWER
-    endFunction
-    function Set(MiscObject val)
-        if p_TOKEN_FOLLOWER == none
-            p_TOKEN_FOLLOWER = val
-        endIf
-    endFunction
-endProperty
-
-MiscObject property TOKEN_FOLLOWER_SNEAK
-    MiscObject function Get()
-        return p_TOKEN_FOLLOWER_SNEAK
-    endFunction
-    function Set(MiscObject val)
-        if p_TOKEN_FOLLOWER_SNEAK == none
-            p_TOKEN_FOLLOWER_SNEAK = val
-        endIf
-    endFunction
-endProperty
-
-MiscObject property TOKEN_CLONE
-    MiscObject function Get()
-        return p_TOKEN_CLONE
-    endFunction
-    function Set(MiscObject val)
-        if p_TOKEN_CLONE == none
-            p_TOKEN_CLONE = val
-        endIf
-    endFunction
-endProperty
-
-MiscObject property TOKEN_BANISHED
-    MiscObject function Get()
-        return p_TOKEN_BANISHED
-    endFunction
-    function Set(MiscObject val)
-        if p_TOKEN_BANISHED == none
-            p_TOKEN_BANISHED = val
-        endIf
-    endFunction
-endProperty
-
-MiscObject property TOKEN_DISPLAY
-    MiscObject function Get()
-        return p_TOKEN_DISPLAY
-    endFunction
-    function Set(MiscObject val)
-        if p_TOKEN_DISPLAY == none
-            p_TOKEN_DISPLAY = val
-        endIf
-    endFunction
-endProperty
-
-MiscObject property TOKEN_MOVEE
-    MiscObject function Get()
-        return p_TOKEN_MOVEE
-    endFunction
-    function set(MiscObject val)
-        if p_TOKEN_MOVEE == none
-            p_TOKEN_MOVEE = val
-        endIf
-    endFunction
-endProperty
-
-MiscObject property TOKEN_GREETER
-    MiscObject function Get()
-        return p_TOKEN_GREETER
-    endFunction
-    function Set(MiscObject val)
-        if p_TOKEN_GREETER == none
-            p_TOKEN_GREETER = val
-        endIf
-    endFunction
-endProperty
-
-MiscObject property TOKEN_RETREATER
-    MiscObject function Get()
-        return p_TOKEN_RETREATER
-    endFunction
-    function Set(MiscObject val)
-        if p_TOKEN_RETREATER == none
-            p_TOKEN_RETREATER = val
-        endIf
-    endFunction
-endProperty
-
-MiscObject property TOKEN_SADDLER
-    MiscObject function Get()
-        return p_TOKEN_SADDLER
-    endFunction
-    function Set(MiscObject val)
-        if p_TOKEN_SADDLER == none
-            p_TOKEN_SADDLER = val
-        endIf
-    endFunction
-endProperty
-
-MiscObject property TOKEN_REANIMATED
-    MiscObject function Get()
-        return p_TOKEN_REANIMATED
-    endFunction
-    function Set(MiscObject val)
-        if p_TOKEN_REANIMATED == none
-            p_TOKEN_REANIMATED = val
-        endIf
-    endFunction
-endProperty
-
-MiscObject property MISC_TASKLIST
-    MiscObject function Get()
-        return p_MISC_TASKLIST
-    endFunction
-    function Set(MiscObject val)
-        if p_MISC_TASKLIST == none
-            p_MISC_TASKLIST = val
-        endIf
-    endFunction
-endProperty
-
-MiscObject property MISC_VECTOR_FORM
-    MiscObject function Get()
-        return p_MISC_VECTOR_FORM
-    endFunction
-    function Set(MiscObject val)
-        if p_MISC_VECTOR_FORM == none
-            p_MISC_VECTOR_FORM = val
-        endIf
-    endFunction
-endProperty
-
-GlobalVariable property GLOBAL_PLAYER_FOLLOWER_COUNT
-    GlobalVariable function Get()
-        return p_GLOBAL_PLAYER_FOLLOWER_COUNT
-    endFunction
-    function Set(GlobalVariable val)
-        if p_GLOBAL_PLAYER_FOLLOWER_COUNT == none
-            p_GLOBAL_PLAYER_FOLLOWER_COUNT = val
-        endIf
-    endFunction
-endProperty
-
-GlobalVariable property GLOBAL_FORCE_CLONE_UNIQUE
-    GlobalVariable function Get()
-        return p_GLOBAL_FORCE_CLONE_UNIQUE
-    endFunction
-    function Set(GlobalVariable val)
-        if p_GLOBAL_FORCE_CLONE_UNIQUE == none
-            p_GLOBAL_FORCE_CLONE_UNIQUE = val
-        endIf
-    endFunction
-endProperty
-
-GlobalVariable property GLOBAL_FORCE_CLONE_GENERIC
-    GlobalVariable function Get()
-        return p_GLOBAL_FORCE_CLONE_GENERIC
-    endFunction
-    function Set(GlobalVariable val)
-        if p_GLOBAL_FORCE_CLONE_GENERIC == none
-            p_GLOBAL_FORCE_CLONE_GENERIC = val
-        endIf
-    endFunction
-endProperty
-
-GlobalVariable property GLOBAL_FORCE_UNCLONE_UNIQUE
-    GlobalVariable function Get()
-        return p_GLOBAL_FORCE_UNCLONE_UNIQUE
-    endFunction
-    function Set(GlobalVariable val)
-        if p_GLOBAL_FORCE_UNCLONE_UNIQUE == none
-            p_GLOBAL_FORCE_UNCLONE_UNIQUE = val
-        endIf
-    endFunction
-endProperty
-
-GlobalVariable property GLOBAL_FORCE_UNCLONE_GENERIC
-    GlobalVariable function Get()
-        return p_GLOBAL_FORCE_UNCLONE_GENERIC
-    endFunction
-    function Set(GlobalVariable val)
-        if p_GLOBAL_FORCE_UNCLONE_GENERIC == none
-            p_GLOBAL_FORCE_UNCLONE_GENERIC = val
-        endIf
-    endFunction
-endProperty
-
-GlobalVariable property GLOBAL_IS_INSTALLED
-    GlobalVariable function Get()
-        return p_GLOBAL_IS_INSTALLED
-    endFunction
-    function Set(GlobalVariable val)
-        if p_GLOBAL_IS_INSTALLED == none
-            p_GLOBAL_IS_INSTALLED = val
-        endIf
-    endFunction
-endProperty
-
-GlobalVariable property GLOBAL_PERCENT_NO_BODY
-    GlobalVariable function Get()
-        return p_GLOBAL_PERCENT_NO_BODY
-    endFunction
-    function Set(GlobalVariable val)
-        if p_GLOBAL_PERCENT_NO_BODY == none
-            p_GLOBAL_PERCENT_NO_BODY = val
-        endIf
-    endFunction
-endProperty
-
-GlobalVariable property GLOBAL_PERCENT_NO_FEET
-    GlobalVariable function Get()
-        return p_GLOBAL_PERCENT_NO_FEET
-    endFunction
-    function Set(GlobalVariable val)
-        if p_GLOBAL_PERCENT_NO_FEET == none
-            p_GLOBAL_PERCENT_NO_FEET = val
-        endIf
-    endFunction
-endProperty
-
-GlobalVariable property GLOBAL_PERCENT_NO_HANDS
-    GlobalVariable function Get()
-        return p_GLOBAL_PERCENT_NO_HANDS
-    endFunction
-    function Set(GlobalVariable val)
-        if p_GLOBAL_PERCENT_NO_HANDS == none
-            p_GLOBAL_PERCENT_NO_HANDS = val
-        endIf
-    endFunction
-endProperty
-
-GlobalVariable property GLOBAL_PERCENT_NO_HEAD
-    GlobalVariable function Get()
-        return p_GLOBAL_PERCENT_NO_HEAD
-    endFunction
-    function Set(GlobalVariable val)
-        if p_GLOBAL_PERCENT_NO_HEAD == none
-            p_GLOBAL_PERCENT_NO_HEAD = val
-        endIf
-    endFunction
-endProperty
-
-Formlist property FORMLIST_MARKERS_EXPO_CELL
-    Formlist function Get()
-        return p_FORMLIST_MARKERS_EXPO_CELL
-    endFunction
-    function Set(Formlist val)
-        if p_FORMLIST_MARKERS_EXPO_CELL == none
-            p_FORMLIST_MARKERS_EXPO_CELL = val
-        endIf
-    endFunction
-endProperty
-
-Formlist property FORMLIST_GLOBALS_SADDLER_IS_SITTING
-    Formlist function Get()
-        return p_FORMLIST_GLOBALS_SADDLER_IS_SITTING
-    endFunction
-    function Set(Formlist val)
-        if p_FORMLIST_GLOBALS_SADDLER_IS_SITTING == none
-            p_FORMLIST_GLOBALS_SADDLER_IS_SITTING = val
-        endIf
-    endFunction
-endProperty
-
-Faction property FACTION_MEMBER
-    Faction function Get()
-        return p_FACTION_MEMBER
-    endFunction
-    function Set(Faction val)
-        if p_FACTION_MEMBER == none
-            p_FACTION_MEMBER = val
-        endIf
-    endFunction
-endProperty
-
-Faction property FACTION_DLC1_THRALL
-    Faction function Get()
-        return p_FACTION_DLC1_THRALL
-    endFunction
-    function Set(Faction val)
-        if p_FACTION_DLC1_THRALL == none
-            p_FACTION_DLC1_THRALL = val
-        endIf
-    endFunction
-endProperty
-
-Faction property FACTION_DLC1_VAMPIRE_FEED_NO_CRIME
-    Faction function Get()
-        return p_FACTION_DLC1_VAMPIRE_FEED_NO_CRIME
-    endFunction
-    function Set(Faction val)
-        if p_FACTION_DLC1_VAMPIRE_FEED_NO_CRIME == none
-            p_FACTION_DLC1_VAMPIRE_FEED_NO_CRIME = val
-        endIf
-    endFunction
-endProperty
-
-Faction property FACTION_WI_NO_BODY_CLEANUP
-    Faction function Get()
-        return p_FACTION_WI_NO_BODY_CLEANUP
-    endFunction
-    function Set(Faction val)
-        if p_FACTION_WI_NO_BODY_CLEANUP == none
-            p_FACTION_WI_NO_BODY_CLEANUP = val
-        endIf
-    endFunction
-endProperty
-
-Faction property FACTION_CURRENT_FOLLOWER
-    Faction function Get()
-        return p_FACTION_CURRENT_FOLLOWER
-    endFunction
-    function Set(Faction val)
-        if p_FACTION_CURRENT_FOLLOWER == none
-            p_FACTION_CURRENT_FOLLOWER = val
-        endIf
-    endFunction
-endProperty
-
-Faction property FACTION_POTENTIAL_FOLLOWER
-    Faction function Get()
-        return p_FACTION_POTENTIAL_FOLLOWER
-    endFunction
-    function Set(Faction val)
-        if p_FACTION_POTENTIAL_FOLLOWER == none
-            p_FACTION_POTENTIAL_FOLLOWER = val
-        endIf
-    endFunction
-endProperty
-
-Faction property FACTION_BARD_SINGER_NO_AUTOSTART
-    Faction function Get()
-        return p_FACTION_BARD_SINGER_NO_AUTOSTART
-    endFunction
-    function Set(Faction val)
-        if p_FACTION_BARD_SINGER_NO_AUTOSTART == none
-            p_FACTION_BARD_SINGER_NO_AUTOSTART = val
-        endIf
-    endFunction
-endProperty
-
-Perk property PERK_VAMPIRE_FEED
-    Perk function Get()
-        return p_PERK_VAMPIRE_FEED
-    endFunction
-    function Set(Perk val)
-        if p_PERK_VAMPIRE_FEED == none
-            p_PERK_VAMPIRE_FEED = val
-        endIf
-    endFunction
-endProperty
-
-Perk property PERK_KISS_THRALL
-    Perk function Get()
-        return p_PERK_KISS_THRALL
-    endFunction
-    function Set(Perk val)
-        if p_PERK_KISS_THRALL == none
-            p_PERK_KISS_THRALL = val
-        endIf
-    endFunction
-endProperty
-
-Perk property PERK_RESURRECT
-    Perk function Get()
-        return p_PERK_RESURRECT
-    endFunction
-    function Set(Perk val)
-        if p_PERK_RESURRECT == none
-            p_PERK_RESURRECT = val
-        endIf
-    endFunction
-endProperty
-
-Perk property PERK_REANIMATE
-    Perk function Get()
-        return p_PERK_REANIMATE
-    endFunction
-    function Set(Perk val)
-        if p_PERK_REANIMATE == none
-            p_PERK_REANIMATE = val
-        endIf
-    endFunction
-endProperty
-
-Perk property PERK_UNPARALYZE
-    Perk function Get()
-        return p_PERK_UNPARALYZE
-    endFunction
-    function Set(Perk val)
-        if p_PERK_UNPARALYZE == none
-            p_PERK_UNPARALYZE = val
-        endIf
-    endFunction
-endProperty
-
-PlayerVampireQuestScript property SCRIPT_PLAYER_VAMPIRE_QUEST
-    PlayerVampireQuestScript function Get()
-        return p_SCRIPT_PLAYER_VAMPIRE_QUEST
-    endFunction
-    function Set(PlayerVampireQuestScript val)
-        if p_SCRIPT_PLAYER_VAMPIRE_QUEST == none
-            p_SCRIPT_PLAYER_VAMPIRE_QUEST = val
-        endIf
-    endFunction
-endProperty
-
-Keyword property KEYWORD_VAMPIRE
-    Keyword function Get()
-        return p_KEYWORD_VAMPIRE
-    endFunction
-    function Set(Keyword val)
-        if p_KEYWORD_VAMPIRE == none
-            p_KEYWORD_VAMPIRE = val
-        endIf
-    endFunction
-endProperty
-
-Container property CONTAINER_EMPTY
-    Container function Get()
-        return p_CONTAINER_EMPTY
-    endFunction
-    function Set(Container val)
-        if p_CONTAINER_EMPTY == none
-            p_CONTAINER_EMPTY = val
-        endIf
-    endFunction
-endProperty
-
-Container property CONTAINER_OUTFIT
-    Container function Get()
-        return p_CONTAINER_OUTFIT
-    endFunction
-    function Set(Container val)
-        if p_CONTAINER_OUTFIT == none
-            p_CONTAINER_OUTFIT = val
-        endIf
-    endFunction
-endProperty
-
-Container property CONTAINER_OUTFIT_SETTLER
-    Container function Get()
-        return p_CONTAINER_OUTFIT_SETTLER
-    endFunction
-    function Set(Container val)
-        if p_CONTAINER_OUTFIT_SETTLER == none
-            p_CONTAINER_OUTFIT_SETTLER = val
-        endIf
-    endFunction
-endProperty
-
-Container property CONTAINER_OUTFIT_THRALL
-    Container function Get()
-        return p_CONTAINER_OUTFIT_THRALL
-    endFunction
-    function Set(Container val)
-        if p_CONTAINER_OUTFIT_THRALL == none
-            p_CONTAINER_OUTFIT_THRALL = val
-        endIf
-    endFunction
-endProperty
-
-Container property CONTAINER_OUTFIT_IMMOBILE
-    Container function Get()
-        return p_CONTAINER_OUTFIT_IMMOBILE
-    endFunction
-    function Set(Container val)
-        if p_CONTAINER_OUTFIT_IMMOBILE == none
-            p_CONTAINER_OUTFIT_IMMOBILE = val
-        endIf
-    endFunction
-endProperty
-
-Container property CONTAINER_OUTFIT_FOLLOWER
-    Container function Get()
-        return p_CONTAINER_OUTFIT_FOLLOWER
-    endFunction
-    function Set(Container val)
-        if p_CONTAINER_OUTFIT_FOLLOWER == none
-            p_CONTAINER_OUTFIT_FOLLOWER = val
-        endIf
-    endFunction
-endProperty
-
-Outfit property OUTFIT_EMPTY
-    Outfit function Get()
-        return p_OUTFIT_EMPTY
-    endFunction
-    function Set(Outfit val)
-        if p_OUTFIT_EMPTY == none
-            p_OUTFIT_EMPTY = val
-        endIf
-    endFunction
-endProperty
-
-Quest property QUEST_BARD_SONGS
-    Quest function Get()
-        return p_QUEST_BARD_SONGS
-    endFunction
-    function Set(Quest val)
-        if p_QUEST_BARD_SONGS == none
-            p_QUEST_BARD_SONGS = val
-        endIf
-    endFunction
-endProperty
-
-Quest property QUEST_DIALOGUE_REANIMATED
-    Quest function Get()
-        return p_QUEST_DIALOGUE_REANIMATED
-    endFunction
-    function Set(Quest val)
-        if p_QUEST_DIALOGUE_REANIMATED == none
-            p_QUEST_DIALOGUE_REANIMATED = val
-        endIf
-    endFunction
-endProperty
-
-Quest property QUEST_DIALOGUE_THRALL
-    Quest function Get()
-        return p_QUEST_DIALOGUE_THRALL
-    endFunction
-    function Set(Quest val)
-        if p_QUEST_DIALOGUE_THRALL == none
-            p_QUEST_DIALOGUE_THRALL = val
-        endIf
-    endFunction
-endProperty
-
-Weapon property WEAPON_BLANK
-    Weapon function Get()
-        return p_WEAPON_BLANK
-    endFunction
-    function Set(Weapon val)
-        if p_WEAPON_BLANK == none
-            p_WEAPON_BLANK = val
-        endIf
-    endFunction
-endProperty
-
-Armor property ARMOR_BLANK
-    Armor function Get()
-        return p_ARMOR_BLANK
-    endFunction
-    function Set(Armor val)
-        if p_ARMOR_BLANK == none
-            p_ARMOR_BLANK = val
-        endIf
-    endFunction
-endProperty
-
-VoiceType property VOICE_FEMALE_COWARD
-    VoiceType function Get()
-        return p_VOICE_FEMALE_COWARD
-    endFunction
-    function Set(VoiceType val)
-        if p_VOICE_FEMALE_COWARD == none
-            p_VOICE_FEMALE_COWARD = val
-        endIf
-    endFunction
-endProperty
-
-Key property KEY_LOCK
-    Key function Get()
-        return p_KEY_LOCK
-    endFunction
-    function Set(Key val)
-        if p_KEY_LOCK == none
-            p_KEY_LOCK = val
-        endIf
-    endFunction
-endProperty
-
-EffectShader property SHADER_REANIMATE_FX
-    EffectShader function Get()
-        return p_SHADER_REANIMATE_FX
-    endFunction
-    function Set(EffectShader val)
-        if p_SHADER_REANIMATE_FX == none
-            p_SHADER_REANIMATE_FX = val
-        endIf
-    endFunction
-endProperty
-
-Location property LOCATION_EXPO
-    Location function Get()
-        return p_LOCATION_EXPO
-    endFunction
-    function Set(Location val)
-        if p_LOCATION_EXPO == none
-            p_LOCATION_EXPO = val
-        endIf
-    endFunction
-endProperty
-
+; NPCP Reference Markers
+ObjectReference function Cell_Marker() native global
+ObjectReference function Expo_Antechamber_Marker() native global
+ObjectReference function Storage_Marker() native global
+
+; NPCP Spells
+Spell function Cell_Ability_Spell() native global
+Spell function Retreat_Ability_Spell() native global
+
+; NPCP Weapons
+Weapon function Blank_Weapon() native global
+
+; Literals
 int property VERSION_MAJOR                  =     0 autoReadOnly hidden; set manually upon each release
 int property VERSION_MINOR                  =     9 autoReadOnly hidden; set manually upon each release
 int property VERSION_PATCH                  =     2 autoReadOnly hidden; set manually upon each release

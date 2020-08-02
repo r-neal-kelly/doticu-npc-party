@@ -14,12 +14,12 @@ endProperty
 ; Publice Constants
 ObjectReference property OBJECT_STORAGE hidden
     ObjectReference function Get()
-        return CONSTS.MARKER_STORAGE
+        return doticu_npcp_consts.Storage_Marker()
     endFunction
 endProperty
 MiscObject property MISC_TASKLIST hidden
     MiscObject function Get()
-        return CONSTS.MISC_TASKLIST
+        return doticu_npcp_consts.Tasklist()
     endFunction
 endProperty
 
