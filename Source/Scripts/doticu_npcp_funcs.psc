@@ -205,9 +205,3 @@ endFunction
 function Wait_Out_Of_Menu(float seconds)
     Utility.Wait(seconds)
 endFunction
-
-; Update Methods
-function u_0_9_0()
-    MANNEQUINS.f_Create(p_DATA)
-    MANNEQUINS.f_Register()
-endFunction

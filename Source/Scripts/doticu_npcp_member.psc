@@ -617,8 +617,8 @@ endFunction
 function p_Resurrect()
 p_Lock()
 
-    ; no longer triggers an OnLoad()
-    ACTORS.Resurrect(p_ref_actor)
+    ; don't yet know if this triggers and OnLoad
+    doticu_npcp.Actor_Resurrect(p_ref_actor, false)
 
 p_Unlock()
 
@@ -1562,35 +1562,3 @@ event OnDeath(Actor ref_killer)
         p_Deanimate()
     endIf
 endEvent
-
-; Update Methods
-doticu_npcp_container p_container2_pack = none
-function u_0_9_0()
-    if !Exists()
-        return
-    endIf
-
-    if p_container2_pack
-        p_container_pack = p_container2_pack
-        p_container2_pack = none
-    endIf
-
-    ; so that we can filter outfit
-    if p_outfit2_current == p_outfit2_member
-        p_code_outfit2 = doticu_npcp_codes.OUTFIT2_MEMBER()
-    elseIf p_outfit2_current == p_outfit2_settler
-        p_code_outfit2 = doticu_npcp_codes.OUTFIT2_SETTLER()
-    elseIf p_outfit2_current == p_outfit2_thrall
-        p_code_outfit2 = doticu_npcp_codes.OUTFIT2_THRALL()
-    elseIf p_outfit2_current == p_outfit2_follower
-        p_code_outfit2 = doticu_npcp_codes.OUTFIT2_FOLLOWER()
-    elseIf p_outfit2_current == p_outfit2_immobile
-        p_code_outfit2 = doticu_npcp_codes.OUTFIT2_IMMOBILE()
-    elseIf p_outfit2_current == p_outfit2_vanilla
-        p_code_outfit2 = doticu_npcp_codes.OUTFIT2_VANILLA()
-    elseIf p_outfit2_current == p_outfit2_default
-        p_code_outfit2 = doticu_npcp_codes.OUTFIT2_DEFAULT()
-    else
-        p_code_outfit2 = doticu_npcp_codes.OUTFIT2_MEMBER()
-    endIf
-endFunction

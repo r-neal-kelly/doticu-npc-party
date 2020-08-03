@@ -120,10 +120,10 @@ bool function p_Has_Requires()
         return false
     endIf
 
-    if doticu_npcp_consts.Is_Installed_Global().GetValue() > 0 && Is_NPC_Party_Version_Less_Than(0, 8, 2)
-        Debug.MessageBox("NPC Party: This save has a version of NPC Party older than 0.8.2. " + \
+    if doticu_npcp_consts.Is_Installed_Global().GetValue() > 0 && Is_NPC_Party_Version_Less_Than(0, 9, 0)
+        Debug.MessageBox("NPC Party: This save has a version of NPC Party older than 0.9.0. " + \
                          "The new version you are running will not work on this save yet. " + \
-                         "Exit without saving, and then update to version 0.8.2 before trying again.")
+                         "Exit without saving, and then update to version 0.9.0 before trying again.")
         return false
     endIf
 
@@ -161,12 +161,6 @@ endFunction
 function p_Version()
     if Is_NPC_Party_Version_Less_Than(CONSTS.VERSION_MAJOR, CONSTS.VERSION_MINOR, CONSTS.VERSION_PATCH)
         p_Start_Updating()
-
-        if Is_NPC_Party_Version_Less_Than(0, 9, 0)
-            if !Is_NPC_Party_Version(0, 8, 3); this in-house version was incrementally updated
-                u_0_9_0()
-            endIf
-        endIf
 
         if Is_NPC_Party_Version_Less_Than(0, 9, 1)
             u_0_9_1()
@@ -250,31 +244,6 @@ bool function Is_Ready()
 endFunction
 
 ; Update Methods
-function u_0_9_0()
-    Debug.MessageBox(                                           \
-        "NPC Party: This update may take a couple minutes, " +  \
-        "depending on how many members you have. " +            \
-        "Open the console to monitor progress!\n" +             \
-        "(Push the '~' key to open the console.)"               \
-    )
-
-    FUNCS.LOGS.Notify_Is_Updating()
-
-    FUNCS.LOGS.Print("Beginning update...")
-
-    VARS.u_0_9_0()
-    FUNCS.u_0_9_0()
-    MEMBERS.u_0_9_0()
-    CONTROL.MCM.u_0_9_0()
-
-    FUNCS.LOGS.Print("Done updating.")
-
-    Debug.MessageBox(                                       \
-        "NPC Party: The update has been completed. " +      \
-        "You should save your game. Thank you for waiting!" \
-    )
-endFunction
-
 function u_0_9_1()
     CONTROL.MCM.u_0_9_1()
 endFunction

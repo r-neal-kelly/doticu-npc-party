@@ -462,11 +462,3 @@ function Set_Defaults()
     is_updating = false
     is_mcm_open = false
 endFunction
-
-; Update Methods
-function u_0_9_0()
-    max_members = p_DATA.MODS.MEMBERS.GetNumAliases()
-
-    str_sort_members = "NAME"
-    str_sort_followers = "NAME"
-endFunction

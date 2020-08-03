@@ -175,7 +175,7 @@ int function Create_Member(Actor ref_actor)
     LOGS.Create_Note("Adding to members...", false)
 
     if ACTORS.Is_Dead(ref_actor)
-        ACTORS.Resurrect(ref_actor)
+        doticu_npcp.Actor_Resurrect(ref_actor, false)
         if ACTORS.Is_Dead(ref_actor)
             return doticu_npcp_codes.DEAD()
         endIf
@@ -325,26 +325,3 @@ endFunction
 event On_Load_Mod()
     Enforce_Loaded()
 endEvent
-
-; Update Methods
-function u_0_9_0()
-    Alias[] arr_aliases = All()
-    int idx_aliases = 0
-    int num_aliases = arr_aliases.length
-    int prev_percent = -1
-    int curr_percent = -1
-
-    while idx_aliases < num_aliases
-        curr_percent = (idx_aliases * 100 / num_aliases) as int
-        if prev_percent != curr_percent
-            LOGS.Print("%%" + curr_percent)
-            prev_percent = curr_percent
-        endIf
-        
-        (arr_aliases[idx_aliases] as doticu_npcp_member).u_0_9_0()
-        
-        idx_aliases += 1
-    endWhile
-
-    LOGS.Print("%%100")
-endFunction

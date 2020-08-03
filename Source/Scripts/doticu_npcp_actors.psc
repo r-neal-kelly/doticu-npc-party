@@ -275,39 +275,6 @@ function Kill(Actor ref_actor)
     endIf
 endFunction
 
-function Resurrect(Actor ref_actor)
-    ; we back up everything on actor because Resurrect() resets their inventory
-    ObjectReference ref_container_temp = CONTAINERS.Create_Temp()
-    CONTAINERS.Take_All(ref_container_temp, ref_actor)
-
-    ; Resurrect() moved them a little bit and other actions can contribute to leaving the original position
-    ObjectReference ref_marker = ref_actor.PlaceAtMe(doticu_npcp_consts.X_Marker_Static(), 1, false, false)
-
-    ; we hide the resurrection because the actor starts standing by default
-    ; we could try playing a laying down animation to see if that would help.
-    ref_actor.SetAlpha(0, false)
-    ref_actor.SetCriticalStage(doticu_npcp_codes.CRITICAL_NONE())
-    ref_actor.Resurrect()
-    FUNCS.Wait(0.1); stops the body from being caught in the ground
-    ref_actor.EnableAI(false)
-    ref_actor.MoveTo(ref_marker, 0.0, 0.0, 1.5, true)
-    ref_actor.EnableAI(true)
-    doticu_npcp_consts.Player_Actor().PushActorAway(ref_actor, 0.0001)
-    Pacify(ref_actor)
-    ref_actor.SetAlpha(1, true)
-
-    ; restore the inventory to maintain state tokens and gear
-    CONTAINERS.Empty(ref_actor)
-    CONTAINERS.Take_All(ref_actor, ref_container_temp)
-    Update_Equipment(ref_actor)
-
-    ; just in case the garbage collector doesn't do it
-    ref_marker.Disable()
-    ref_marker.Delete()
-    ref_container_temp.Disable()
-    ref_container_temp.Delete()
-endFunction
-
 function Open_Inventory(Actor ref_actor)
     ref_actor.OpenInventory(true)
 endFunction
@@ -371,30 +338,6 @@ function Move_To(ObjectReference ref_subject, ObjectReference ref_object, int di
 
     if !has_enabled_ai
         ref_actor.EnableAI(false)
-    endIf
-endFunction
-
-bool function Is_Near_Player(Actor ref_actor, int max_distance = 1024)
-    Actor ref_player = doticu_npcp_consts.Player_Actor()
-    Cell cell_player = ref_player.GetParentCell()
-    Cell cell_actor = ref_actor.GetParentCell()
-
-    if cell_player && cell_player.IsInterior() || cell_actor && cell_actor.IsInterior()
-        if cell_player == cell_actor
-            if ref_player.GetDistance(ref_actor) > max_distance
-                return false
-            else
-                return true
-            endIf
-        else
-            return false
-        endIf
-    else
-        if ref_player.GetDistance(ref_actor) > max_distance
-            return false
-        else
-            return true
-        endIf
     endIf
 endFunction
 
@@ -504,66 +447,6 @@ function Unragdoll(Actor ref_actor)
         ref_actor.SetActorValue("Paralysis", 0)
     endwhile
     ref_actor.EvaluatePackage()
-endFunction
-
-function Update_Equipment(Actor ref_actor)
-    bool is_player_teammate = ref_actor.IsPlayerTeammate()
-
-    while !p_DATA.VARS.is_updating && Utility.IsInMenuMode()
-        ; we wait so that the render actually happens.
-        FUNCS.Wait(0.1)
-    endWhile
-    
-    if !is_player_teammate
-        ref_actor.SetPlayerTeammate(true, true)
-    endIf
-
-    ref_actor.AddItem(doticu_npcp_consts.Blank_Weapon(), 1, true)
-    ref_actor.RemoveItem(doticu_npcp_consts.Blank_Weapon(), 1, true, none)
-
-    if !is_player_teammate
-        ref_actor.SetPlayerTeammate(false, false)
-    endIf
-endFunction
-
-bool function Has_Same_Head(Actor ref_actor_1, Actor ref_actor_2)
-    ActorBase ref_base_1 = ref_actor_1.GetLeveledActorBase(); returns unleveled base too
-    ActorBase ref_base_2 = ref_actor_2.GetLeveledActorBase()
-    int int_slots_1 = ref_base_1.GetNumHeadParts()
-    int int_slots_2 = ref_base_2.GetNumHeadParts()
-
-    if int_slots_1 != int_slots_2
-        return false
-    endIf
-
-    int int_slot_idx = 0
-    while int_slot_idx < int_slots_1
-        if ref_base_1.GetNthHeadPart(int_slot_idx) != ref_base_2.GetNthHeadPart(int_slot_idx)
-            return false
-        endIf
-        int_slot_idx += 1
-    endWhile
-
-    return true
-endFunction
-
-Actor function Clone(Actor ref_actor, ObjectReference ref_marker, bool do_persist = true, bool do_disable = false)
-    ; the user of this function is responsible for making sure the clone's outfit is in order
-    if !ref_actor || !ref_marker
-        return none
-    endIf
-
-    ; this saves an enormous amount of time, rather than having to loop through PlaceActorAtMe
-    Actor ref_clone = ref_marker.PlaceAtMe(Get_Real_Base(ref_actor) as Form, 1, do_persist, do_disable) as Actor
-    if !ref_clone
-        return none
-    endIf
-
-    ref_clone.MoveTo(ref_marker)
-    Pacify(ref_clone)
-    Rename(ref_clone, "Clone of " + Name(ref_actor))
-    
-    return ref_clone
 endFunction
 
 bool function Has_Faction(Actor ref_actor, Faction form_faction)

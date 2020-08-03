@@ -1366,6 +1366,15 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
+    void Resurrect(Actor_t* actor, Bool_t do_reset_inventory)
+    {
+        if (actor) {
+            actor->Resurrect(do_reset_inventory, true);
+            Fully_Update_3D_Model(actor);
+            Pacify(actor);
+        }
+    }
+
 }}
 
 namespace doticu_npcp { namespace Actor2 { namespace Exports {
@@ -1406,6 +1415,11 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
         Actor2::Log_Factions(actor);
     }
 
+    void Resurrect(Selfless_t*, Actor_t* actor, Bool_t do_reset_inventory = false)
+    {
+        return Actor2::Resurrect(actor, do_reset_inventory);
+    }
+
     bool Register(VMClassRegistry* registry)
     {
         #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
@@ -1431,6 +1445,7 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
         ADD_GLOBAL("Actor_Reset_Actor_Value", 2, void, Reset_Actor_Value, Actor*, BSFixedString);
         ADD_GLOBAL("Actor_Get_Mounted_Actor", 1, Actor_t*, Get_Mounted_Actor, Actor_t*);
         ADD_GLOBAL("Actor_Log_Factions", 1, void, Log_Factions, Actor_t*);
+        ADD_GLOBAL("Actor_Resurrect", 2, void, Resurrect, Actor_t*, Bool_t);
 
         #undef ADD_METHOD
         #undef ADD_GLOBAL
