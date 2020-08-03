@@ -128,7 +128,7 @@ function Outfit_Clone(Actor ref_clone, Actor ref_orig)
         return
     endIf
 
-    ; this may prevent crashing, when the engine copies a ptr on orig and frees it
+    ; this may prevent crashing, due to something happening in the engine
     ; RemoveAllItems does not remove unplayable items, so tokens are copied and left
     ; until member funcs clear it.
     ObjectReference ref_junk = CONTAINERS.Create_Temp()
@@ -144,6 +144,7 @@ function Outfit_Clone(Actor ref_clone, Actor ref_orig)
 
         ; does all the heavy lifting of removing unfit items and adding outfit items
         doticu_npcp.Actor_Set_Outfit2(ref_clone, doticu_npcp_consts.Blank_Armor(), none, ref_orig, ref_junk)
+        NPCS.Remove_All_Tokens(ref_clone)
 
         ; doing this allows us to render all at once, which is far more efficient
         ref_clone.SetPlayerTeammate(true, true)

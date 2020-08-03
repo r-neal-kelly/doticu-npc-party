@@ -352,6 +352,10 @@ p_Unlock()
 endFunction
 
 function p_Retreat()
+    if Is_Dead()
+        return
+    endIf
+    
     ; this is kinda a hack to make sure that they don't get stuck as a retreater.
     ; it becomes very obvious when they won't get on their horses for example
     if !doticu_npcp_consts.Player_Actor().IsSneaking()

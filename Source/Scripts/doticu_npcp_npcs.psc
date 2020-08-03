@@ -40,6 +40,8 @@ function Apply_Default_Outfit(Actor ref_actor) native
 function Update_And_Apply_Default_Oufit_If_Needed(Actor ref_actor) native
 function Update_Base_Outfit(Actor ref_actor) native; maybe delete
 
+function Remove_All_Tokens(Actor ref_actor) native
+
 ; Friend Methods
 function f_Create(doticu_npcp_data DATA, int init_max = 8)
     p_DATA = DATA

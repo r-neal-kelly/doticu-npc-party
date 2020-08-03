@@ -241,31 +241,6 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
-    void NPCS_t::Remove_All_Tokens(Actor_t* actor)
-    {
-        if (actor) {
-            Object_Ref::Untoken(actor, Consts::Member_Token());
-            Object_Ref::Untoken(actor, Consts::Generic_Token());
-            Object_Ref::Untoken(actor, Consts::Clone_Token());
-            Object_Ref::Untoken(actor, Consts::Immobile_Token());
-            Object_Ref::Untoken(actor, Consts::Settler_Token());
-            Object_Ref::Untoken(actor, Consts::Thrall_Token());
-            Object_Ref::Untoken(actor, Consts::Paralyzed_Token());
-            Object_Ref::Untoken(actor, Consts::Mannequin_Token());
-            Object_Ref::Untoken(actor, Consts::Display_Token());
-            Object_Ref::Untoken(actor, Consts::Default_Style_Token());
-            Object_Ref::Untoken(actor, Consts::Warrior_Style_Token());
-            Object_Ref::Untoken(actor, Consts::Mage_Style_Token());
-            Object_Ref::Untoken(actor, Consts::Archer_Style_Token());
-            Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
-            Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
-            Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
-            Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
-            Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
-            Object_Ref::Untoken(actor, Consts::Sneak_Follower_Token());
-        }
-    }
-
     void NPCS_t::Add_Original(Actor_t* original)
     {
         NPCP_ASSERT(original);
@@ -310,7 +285,6 @@ namespace doticu_npcp { namespace Party {
 
         Actor_t* clone = Actor2::Clone(original);
         NPCP_ASSERT(clone);
-        Remove_All_Tokens(clone);
 
         Int_t base_idx = Add_Base_If_Needed(clone, original);
         Form_Vector_t* clones = Clones(base_idx);
@@ -465,6 +439,38 @@ namespace doticu_npcp { namespace Party {
         Actor2::Base_Outfit(actor, default_outfit);
     }
 
+    void NPCS_t::Remove_All_Tokens(Actor_t* actor)
+    {
+        if (actor) {
+            Object_Ref::Untoken(actor, Consts::Member_Token());
+            Object_Ref::Untoken(actor, Consts::Generic_Token());
+            Object_Ref::Untoken(actor, Consts::Clone_Token());
+            Object_Ref::Untoken(actor, Consts::Greeter_Token());
+            Object_Ref::Untoken(actor, Consts::Movee_Token());
+            Object_Ref::Untoken(actor, Consts::Immobile_Token());
+            Object_Ref::Untoken(actor, Consts::Settler_Token());
+            Object_Ref::Untoken(actor, Consts::Thrall_Token());
+            Object_Ref::Untoken(actor, Consts::Paralyzed_Token());
+            Object_Ref::Untoken(actor, Consts::Mannequin_Token());
+            Object_Ref::Untoken(actor, Consts::Display_Token());
+            Object_Ref::Untoken(actor, Consts::Reanimated_Token());
+            Object_Ref::Untoken(actor, Consts::Banished_Token());
+            Object_Ref::Untoken(actor, Consts::Default_Style_Token());
+            Object_Ref::Untoken(actor, Consts::Warrior_Style_Token());
+            Object_Ref::Untoken(actor, Consts::Mage_Style_Token());
+            Object_Ref::Untoken(actor, Consts::Archer_Style_Token());
+            Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
+            Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
+            Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
+            Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
+            Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
+            Object_Ref::Untoken(actor, Consts::Follower_Token());
+            Object_Ref::Untoken(actor, Consts::Sneak_Follower_Token());
+            Object_Ref::Untoken(actor, Consts::Saddler_Token());
+            Object_Ref::Untoken(actor, Consts::Retreater_Token());
+        }
+    }
+
 }}
 
 namespace doticu_npcp { namespace Party { namespace NPCS { namespace Exports {
@@ -485,6 +491,8 @@ namespace doticu_npcp { namespace Party { namespace NPCS { namespace Exports {
     void Apply_Default_Outfit(NPCS_t* self, Actor_t* actor) FORWARD_VOID(Apply_Default_Outfit(actor));
     void Update_And_Apply_Default_Oufit_If_Needed(NPCS_t* self, Actor_t* actor) FORWARD_VOID(Update_And_Apply_Default_Oufit_If_Needed(actor));
     void Update_Base_Outfit(NPCS_t* self, Actor_t* actor) FORWARD_VOID(Update_Base_Outfit(actor));
+
+    void Remove_All_Tokens(NPCS_t* self, Actor_t* actor) FORWARD_VOID(Remove_All_Tokens(actor));
 
     Bool_t Register(Registry_t* registry)
     {
@@ -511,6 +519,8 @@ namespace doticu_npcp { namespace Party { namespace NPCS { namespace Exports {
         ADD_METHOD("Apply_Default_Outfit", 1, void, Apply_Default_Outfit, Actor_t*);
         ADD_METHOD("Update_And_Apply_Default_Oufit_If_Needed", 1, void, Update_And_Apply_Default_Oufit_If_Needed, Actor_t*);
         ADD_METHOD("Update_Base_Outfit", 1, void, Update_Base_Outfit, Actor_t*);
+
+        ADD_METHOD("Remove_All_Tokens", 1, void, Remove_All_Tokens, Actor_t*);
 
         #undef ADD_METHOD
 

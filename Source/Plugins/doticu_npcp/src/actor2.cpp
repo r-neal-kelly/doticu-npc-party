@@ -1358,7 +1358,7 @@ namespace doticu_npcp { namespace Actor2 {
             NPCP_ASSERT(clone);
 
             Pacify(clone);
-            Object_Ref::Rename(clone, (std::string("Clone of ") + Get_Name(clone)).c_str());
+            Object_Ref::Rename(clone, (std::string("Clone of ") + Get_Name(actor)).c_str());
 
             return clone;
         } else {
