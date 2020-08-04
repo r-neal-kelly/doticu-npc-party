@@ -16,9 +16,6 @@ namespace doticu_npcp { namespace Consts {
 
     String_t Class_Name();
     Class_Info_t* Class_Info();
-    Consts_t* Self();
-    Object_t* Object();
-    Variable_t* Variable(String_t variable_name);
 
     // Skyrim Actors
     Actor_t* Player_Actor();
