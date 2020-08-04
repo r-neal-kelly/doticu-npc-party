@@ -7,32 +7,20 @@ Scriptname doticu_npcp_mannequin extends ObjectReference
 ; Modules
 doticu_npcp_mannequins property MANNEQUINS hidden
     doticu_npcp_mannequins function Get()
-        return p_DATA.MODS.FUNCS.MANNEQUINS
+        return doticu_npcp.Funcs().MANNEQUINS
     endFunction
 endProperty
 doticu_npcp_commands property COMMANDS hidden
     doticu_npcp_commands function Get()
-        return p_DATA.MODS.CONTROL.COMMANDS
+        return doticu_npcp.Control().COMMANDS
     endFunction
 endProperty
 
 ; Private Constants
-doticu_npcp_data    p_DATA      = none
 ObjectReference     p_MARKER    = none
 int                 p_ID        =   -1
 
 ; Public Constants
-doticu_npcp_data property DATA
-    doticu_npcp_data function Get()
-        return p_DATA
-    endFunction
-    function Set(doticu_npcp_data val)
-        if p_DATA == none
-            p_DATA = val
-        endIf
-    endFunction
-endProperty
-
 ObjectReference property MARKER
     ObjectReference function Get()
         return p_MARKER

@@ -7,17 +7,14 @@ Scriptname doticu_npcp_mcm_filter extends Quest
 ; Modules
 doticu_npcp_members property MEMBERS hidden
     doticu_npcp_members function Get()
-        return p_DATA.MODS.MEMBERS
+        return doticu_npcp.Members()
     endFunction
 endProperty
 doticu_npcp_mcm property MCM hidden
     doticu_npcp_mcm function Get()
-        return p_DATA.MODS.CONTROL.MCM
+        return doticu_npcp.Control().MCM
     endFunction
 endProperty
-
-; Private Constants
-doticu_npcp_data    p_DATA                      =    none
 
 ; Private Variables
 bool                p_is_created                =   false
@@ -104,9 +101,7 @@ int                 p_option_is_saddler         =      -1
 int                 p_option_isnt_saddler       =      -1
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA)
-    p_DATA = DATA
-
+function f_Create()
     p_is_created = true
     p_code_view = 0
 endFunction

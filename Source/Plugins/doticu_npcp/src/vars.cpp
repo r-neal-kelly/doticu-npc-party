@@ -34,7 +34,7 @@ namespace doticu_npcp { namespace Vars {
 
     Vars_t* Self()
     {
-        return static_cast<Vars_t*>(Consts::Dynamic_Data_Quest());
+        return static_cast<Vars_t*>(Consts::Vars_Quest());
     }
 
     Object_t* Object()

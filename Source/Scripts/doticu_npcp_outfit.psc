@@ -7,43 +7,41 @@ Scriptname doticu_npcp_outfit extends ObjectReference
 ; Modules
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
-        return p_DATA.VARS
+        return doticu_npcp.Vars()
     endFunction
 endProperty
 doticu_npcp_funcs property FUNCS hidden
     doticu_npcp_funcs function Get()
-        return p_DATA.MODS.FUNCS
+        return doticu_npcp.Funcs()
     endFunction
 endProperty
 doticu_npcp_actors property ACTORS hidden
     doticu_npcp_actors function Get()
-        return p_DATA.MODS.FUNCS.ACTORS
+        return doticu_npcp.Funcs().ACTORS
     endFunction
 endProperty
 doticu_npcp_npcs property NPCS hidden
     doticu_npcp_npcs function Get()
-        return p_DATA.MODS.FUNCS.NPCS
+        return doticu_npcp.Funcs().NPCS
     endFunction
 endProperty
 doticu_npcp_containers property CONTAINERS hidden
     doticu_npcp_containers function Get()
-        return p_DATA.MODS.FUNCS.CONTAINERS
+        return doticu_npcp.Funcs().CONTAINERS
     endFunction
 endProperty
 doticu_npcp_outfits property OUTFITS hidden
     doticu_npcp_outfits function Get()
-        return p_DATA.MODS.FUNCS.OUTFITS
+        return doticu_npcp.Funcs().OUTFITS
     endFunction
 endProperty
 doticu_npcp_logs property LOGS hidden
     doticu_npcp_logs function Get()
-        return p_DATA.MODS.FUNCS.LOGS
+        return doticu_npcp.Funcs().LOGS
     endFunction
 endProperty
 
 ; Private Constants
-doticu_npcp_data        p_DATA          =  none
-
 int property p_MAX_ITEMS hidden
     int function Get()
         return 16; might be able to increase this, now that we have moved outfitting to c++
@@ -57,9 +55,7 @@ int                     p_code_create       =     0; OUTFIT2_VANILLA, OUTFIT2_DE
 ObjectReference         p_cache_base        =  none
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA, string str_name, int code_create = 0)
-    p_DATA = DATA
-
+function f_Create(string str_name, int code_create = 0)
     p_is_created = true
     p_str_name = str_name
     p_code_create = code_create
@@ -81,8 +77,6 @@ function f_Destroy()
     p_code_create = 0
     p_str_name = ""
     p_is_created = false
-
-    p_DATA = none
 endFunction
 
 function f_Register()

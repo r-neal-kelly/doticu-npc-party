@@ -7,12 +7,9 @@ Scriptname doticu_npcp_tasklist extends ObjectReference
 ; Modules
 doticu_npcp_funcs property FUNCS hidden
     doticu_npcp_funcs function Get()
-        return p_DATA.MODS.FUNCS
+        return doticu_npcp.Funcs()
     endFunction
 endProperty
-
-; Private Constants
-doticu_npcp_data    p_DATA                  =  none
 
 ; Private Variables
 bool                p_is_created            = false
@@ -22,9 +19,7 @@ int                 p_num_tasks_total       =    -1
 int                 p_num_tasks_complete    =    -1
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA, float wait_interval, float wait_timeout)
-    p_DATA = DATA
-
+function f_Create(float wait_interval, float wait_timeout)
     p_is_created = true
     p_default_wait_interval = wait_interval
     p_default_wait_timeout = wait_timeout

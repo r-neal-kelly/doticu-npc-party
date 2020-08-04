@@ -7,27 +7,12 @@ Scriptname doticu_npcp_effect_retreat extends ActiveMagicEffect
 ; Modules
 doticu_npcp_actors property ACTORS hidden
     doticu_npcp_actors function Get()
-        return p_DATA.MODS.FUNCS.ACTORS
+        return doticu_npcp.Funcs().ACTORS
     endFunction
 endProperty
 doticu_npcp_followers property FOLLOWERS hidden
     doticu_npcp_followers function Get()
-        return p_DATA.MODS.FOLLOWERS
-    endFunction
-endProperty
-
-; Private Constants
-doticu_npcp_data p_DATA = none
-
-; Public Constants
-doticu_npcp_data property DATA
-    doticu_npcp_data function Get()
-        return p_DATA
-    endFunction
-    function Set(doticu_npcp_data val)
-        if p_DATA == none
-            p_DATA = val
-        endIf
+        return doticu_npcp.Followers()
     endFunction
 endProperty
 

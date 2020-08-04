@@ -7,17 +7,17 @@ Scriptname doticu_npcp_actors extends Quest
 ; Modules
 doticu_npcp_funcs property FUNCS hidden
     doticu_npcp_funcs function Get()
-        return p_DATA.MODS.FUNCS
+        return doticu_npcp.Funcs()
     endFunction
 endProperty
 doticu_npcp_containers property CONTAINERS hidden
     doticu_npcp_containers function Get()
-        return p_DATA.MODS.FUNCS.CONTAINERS
+        return doticu_npcp.Funcs().CONTAINERS
     endFunction
 endProperty
 doticu_npcp_outfits property OUTFITS hidden
     doticu_npcp_outfits function Get()
-        return p_DATA.MODS.FUNCS.OUTFITS
+        return doticu_npcp.Funcs().OUTFITS
     endFunction
 endProperty
 doticu_npcp_player property PLAYER
@@ -36,20 +36,15 @@ doticu_npcp_movee property MOVEE
     endFunction
 endProperty
 
-; Private Constants
-doticu_npcp_data    p_DATA          =  none
-
 ; Private Variables
 bool                p_is_created    = false
 Actor               p_ref_menu      =  none
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA)
-    p_DATA = DATA
-
+function f_Create()
     p_is_created = true
 
-    PLAYER.f_Create(DATA)
+    PLAYER.f_Create()
 endFunction
 
 function f_Destroy()
@@ -371,7 +366,7 @@ function Greet_Player(Actor ref_actor)
         GREETER.f_Destroy()
     endIf
 
-    GREETER.f_Create(p_DATA, ref_actor)
+    GREETER.f_Create(ref_actor)
 endFunction
 
 function Create_Menu()
@@ -399,7 +394,7 @@ int function Toggle_Move(Actor ref_actor)
             return doticu_npcp_codes.ACTOR()
         endIf
         
-        doticu_npcp_member ref_member = p_DATA.MODS.MEMBERS.Get_Member(ref_actor)
+        doticu_npcp_member ref_member = doticu_npcp.Members().Get_Member(ref_actor)
         if ref_member
             if ref_member.Is_Mannequin()
                 return doticu_npcp_codes.MANNEQUIN()
@@ -408,7 +403,7 @@ int function Toggle_Move(Actor ref_actor)
             endIf
         endIf
 
-        MOVEE.f_Create(p_DATA, ref_actor)
+        MOVEE.f_Create(ref_actor)
         MOVEE.f_Register()
 
         return doticu_npcp_codes.IS()

@@ -7,35 +7,30 @@ Scriptname doticu_npcp_perk_reanimate extends Perk hidden
 ; Modules
 doticu_npcp_actors property ACTORS hidden
     doticu_npcp_actors function Get()
-        return p_DATA.MODS.FUNCS.ACTORS
+        return doticu_npcp.Funcs().ACTORS
     endFunction
 endProperty
 doticu_npcp_perks property PERKS hidden
     doticu_npcp_perks function Get()
-        return p_DATA.MODS.FUNCS.PERKS
+        return doticu_npcp.Funcs().PERKS
     endFunction
 endProperty
 doticu_npcp_members property MEMBERS hidden
     doticu_npcp_members function Get()
-        return p_DATA.MODS.MEMBERS
+        return doticu_npcp.Members()
     endFunction
 endProperty
 doticu_npcp_commands property COMMANDS hidden
     doticu_npcp_commands function Get()
-        return p_DATA.MODS.CONTROL.COMMANDS
+        return doticu_npcp.Control().COMMANDS
     endFunction
 endProperty
-
-; Private Constants
-doticu_npcp_data    p_DATA          = none
 
 ; Private Variables
 bool                p_is_created    = false
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA)
-    p_DATA = DATA
-
+function f_Create()
     p_is_created = true
 endFunction
 

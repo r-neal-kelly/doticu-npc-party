@@ -4,6 +4,28 @@
 
 Scriptname doticu_npcp hidden
 
+; Modules
+doticu_npcp_main function Main() global
+    return doticu_npcp_consts.Main_Quest() as doticu_npcp_main
+endFunction
+doticu_npcp_vars function Vars() global
+    return doticu_npcp_consts.Vars_Quest() as doticu_npcp_vars
+endFunction
+doticu_npcp_funcs function Funcs() global
+    return doticu_npcp_consts.Funcs_Quest() as doticu_npcp_funcs
+endFunction
+doticu_npcp_members function Members() global
+    return doticu_npcp_consts.Members_Quest() as doticu_npcp_members
+endFunction
+doticu_npcp_followers function Followers() global
+    return doticu_npcp_consts.Followers_Quest() as doticu_npcp_followers
+endFunction
+doticu_npcp_control function Control() global
+    return doticu_npcp_consts.Control_Quest() as doticu_npcp_control
+endFunction
+
+; most of the following shall eventually be moved into existing types
+
 ; Actor
 function Actor_Set_Outfit2(Actor ref_actor, Form linchpin, ObjectReference vanilla, ObjectReference custom, ObjectReference transfer) native global
 function Actor_Cache_Worn(Actor ref_actor, Form form_linchpin, ObjectReference ref_cache_out) native global

@@ -21,19 +21,16 @@ doticu_npcp_mcm property MCM
     endFunction
 endProperty
 
-; Private Constants
-doticu_npcp_data    p_DATA          =  none
-
 ; Private Variables
 bool                p_is_created    = false
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA)
+function f_Create()
     p_is_created = true
 
-    COMMANDS.f_Create(DATA)
-    KEYS.f_Create(DATA)
-    MCM.f_Create(DATA)
+    COMMANDS.f_Create()
+    KEYS.f_Create()
+    MCM.f_Create()
 endFunction
 
 function f_Destroy()

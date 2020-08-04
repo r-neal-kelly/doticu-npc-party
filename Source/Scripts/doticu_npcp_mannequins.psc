@@ -4,7 +4,6 @@
 
 Scriptname doticu_npcp_mannequins extends Quest
 
-; Info
 ;/
     Formlist Structure:
     ------------    ------------
@@ -40,33 +39,31 @@ Scriptname doticu_npcp_mannequins extends Quest
 ; Modules
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
-        return p_DATA.VARS
+        return doticu_npcp.Vars()
     endFunction
 endProperty
 doticu_npcp_logs property LOGS hidden
     doticu_npcp_logs function Get()
-        return p_DATA.MODS.FUNCS.LOGS
+        return doticu_npcp.Funcs().LOGS
     endFunction
 endProperty
 doticu_npcp_members property MEMBERS hidden
     doticu_npcp_members function Get()
-        return p_DATA.MODS.MEMBERS
+        return doticu_npcp.Members()
     endFunction
 endProperty
 doticu_npcp_commands property COMMANDS hidden
     doticu_npcp_commands function Get()
-        return p_DATA.MODS.CONTROL.COMMANDS
+        return doticu_npcp.Control().COMMANDS
     endFunction
 endProperty
 doticu_npcp_keys property KEYS hidden
     doticu_npcp_keys function Get()
-        return p_DATA.MODS.CONTROL.KEYS
+        return doticu_npcp.Control().KEYS
     endFunction
 endProperty
 
 ; Private Constants
-doticu_npcp_data p_DATA =  none
-
 int property p_MAX_MANNEQUINS_PER_CELL hidden
     int function Get()
         return 16
@@ -107,9 +104,7 @@ String[]                p_arr_cell_names    =  none
 ObjectReference         p_marker_teleport   =  none
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA)
-    p_DATA = DATA
-
+function f_Create()
     p_is_created = true
     p_arr_mannequins = Utility.CreateAliasArray(MAX_MANNEQUINS, none)
     p_arr_cell_names = Utility.CreateStringArray(p_MAX_CELLS, "")

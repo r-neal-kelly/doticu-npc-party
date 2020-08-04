@@ -1,5 +1,5 @@
 /*
-    Copyright © 2020 r-neal-kelly, aka doticu
+    Copyright ï¿½ 2020 r-neal-kelly, aka doticu
 */
 
 #include "offsets.h"
@@ -478,7 +478,7 @@ namespace doticu_npcp { namespace XData {
             const char *str = arr_str_xdata_types[xdata->GetType()];
             return str ? str : "UNKNOWN_TYPE";
         } else {
-            return "INVALID_EXTRA_DATA";
+            return "INVALID_XDATA";
         }
     }
 

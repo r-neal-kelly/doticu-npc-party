@@ -4,8 +4,6 @@
 
 Scriptname doticu_npcp_logs extends Quest
 
-; Private Constants
-doticu_npcp_data    p_DATA          =  none
 string[]            p_NOTES         =  none
 string[]            p_ERRORS        =  none
 
@@ -21,8 +19,7 @@ int                 p_errors_used   =     0
 int                 p_errors_max    =    64
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA)
-    p_DATA = DATA
+function f_Create()
     p_NOTES = Utility.CreateStringArray(p_notes_max, "")
     p_ERRORS = Utility.CreateStringArray(p_errors_max, "")
 

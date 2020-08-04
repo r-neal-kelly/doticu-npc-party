@@ -7,32 +7,32 @@ Scriptname doticu_npcp_player extends ReferenceAlias
 ; Modules
 doticu_npcp_main property MAIN hidden
     doticu_npcp_main function Get()
-        return p_DATA.MODS.MAIN
+        return doticu_npcp.Main()
     endFunction
 endProperty
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
-        return p_DATA.VARS
+        return doticu_npcp.Vars()
     endFunction
 endProperty
 doticu_npcp_funcs property FUNCS hidden
     doticu_npcp_funcs function Get()
-        return p_DATA.MODS.FUNCS
+        return doticu_npcp.Funcs()
     endFunction
 endProperty
 doticu_npcp_actors property ACTORS hidden
     doticu_npcp_actors function Get()
-        return p_DATA.MODS.FUNCS.ACTORS
+        return doticu_npcp.Funcs().ACTORS
     endFunction
 endProperty
 doticu_npcp_members property MEMBERS hidden
     doticu_npcp_members function Get()
-        return p_DATA.MODS.MEMBERS
+        return doticu_npcp.Members()
     endFunction
 endProperty
 doticu_npcp_followers property FOLLOWERS hidden
     doticu_npcp_followers function Get()
-        return p_DATA.MODS.FOLLOWERS
+        return doticu_npcp.Followers()
     endFunction
 endProperty
 
@@ -43,18 +43,13 @@ Actor property ACTOR_PLAYER hidden
     endFunction
 endProperty
 
-; Private Constants
-doticu_npcp_data    p_DATA          =  none
-
 ; Private Variables
 bool                p_is_created    = false
 bool                p_is_locked     = false
 bool                p_is_in_combat  = false
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA)
-    p_DATA = DATA
-
+function f_Create()
     p_is_created = true
     p_is_locked = false
     p_is_in_combat = false

@@ -7,32 +7,32 @@ Scriptname doticu_npcp_follower extends ReferenceAlias
 ; Modules
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
-        return p_DATA.VARS
+        return doticu_npcp.Vars()
     endFunction
 endProperty
 doticu_npcp_funcs property FUNCS hidden
     doticu_npcp_funcs function Get()
-        return p_DATA.MODS.FUNCS
+        return doticu_npcp.Funcs()
     endFunction
 endProperty
 doticu_npcp_actors property ACTORS hidden
     doticu_npcp_actors function Get()
-        return p_DATA.MODS.FUNCS.ACTORS
+        return doticu_npcp.Funcs().ACTORS
     endFunction
 endProperty
 doticu_npcp_player property PLAYER hidden
     doticu_npcp_player function Get()
-        return p_DATA.MODS.FUNCS.ACTORS.PLAYER
+        return doticu_npcp.Funcs().ACTORS.PLAYER
     endFunction
 endProperty
 doticu_npcp_members property MEMBERS hidden
     doticu_npcp_members function Get()
-        return p_DATA.MODS.MEMBERS
+        return doticu_npcp.Members()
     endFunction
 endProperty
 doticu_npcp_followers property FOLLOWERS hidden
     doticu_npcp_followers function Get()
-        return p_DATA.MODS.FOLLOWERS
+        return doticu_npcp.Followers()
     endFunction
 endProperty
 
@@ -47,9 +47,6 @@ float property MAX_SPEED_UNSNEAK hidden
         return 130.0
     endFunction
 endProperty
-
-; Private Constants
-doticu_npcp_data        p_DATA                      =  none
 
 ; Private Variables
 bool                    p_is_locked                 = false
@@ -80,9 +77,7 @@ function p_Unsneak() native
 function p_Rename(string new_name) native
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA, Actor ref_actor)
-    p_DATA = DATA
-
+function f_Create(Actor ref_actor)
 p_Lock()
     ForceRefTo(ref_actor)
 
@@ -231,7 +226,7 @@ function p_Create_Horse()
     if !p_ref_horse
         int id_horse = FOLLOWERS.Max() + ID()
         p_ref_horse = (FOLLOWERS.GetNthAlias(id_horse) as doticu_npcp_horse)
-        p_ref_horse.f_Create(p_DATA, id_horse, self)
+        p_ref_horse.f_Create(id_horse, self)
     endIf
 endFunction
 

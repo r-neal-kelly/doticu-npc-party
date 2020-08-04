@@ -4,9 +4,6 @@
 
 Scriptname doticu_npcp_vars extends Quest
 
-; Private Constants
-doticu_npcp_data    p_DATA                  =  none
-
 ; Private Variables
 bool                p_is_created            = false
 
@@ -400,9 +397,7 @@ string property str_sort_followers hidden
 endProperty
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA)
-    p_DATA = DATA
-
+function f_Create()
     p_is_created = true
 
     Set_Defaults()
@@ -441,16 +436,16 @@ function Set_Defaults()
     auto_outfit = false
     auto_immobile_outfit = false
     fill_outfits = true
-    percent_body = p_DATA.MODS.MEMBERS.DEFAULT_PERCENT_BODY
-    percent_feet = p_DATA.MODS.MEMBERS.DEFAULT_PERCENT_FEET
-    percent_hands = p_DATA.MODS.MEMBERS.DEFAULT_PERCENT_HANDS
-    percent_head = p_DATA.MODS.MEMBERS.DEFAULT_PERCENT_HEAD
+    percent_body = doticu_npcp.Members().DEFAULT_PERCENT_BODY
+    percent_feet = doticu_npcp.Members().DEFAULT_PERCENT_FEET
+    percent_hands = doticu_npcp.Members().DEFAULT_PERCENT_HANDS
+    percent_head = doticu_npcp.Members().DEFAULT_PERCENT_HEAD
 
     str_sort_members = "NAME"
     str_sort_followers = "NAME"
 
-    num_display = p_DATA.MODS.MEMBERS.DEFAULT_DISPLAY
-    max_members = p_DATA.MODS.MEMBERS.Max(); MEMBERS is not f_Create()'d yet, but this func can be called
+    num_display = doticu_npcp.Members().DEFAULT_DISPLAY
+    max_members = doticu_npcp.Members().Max()
 
     is_updating = false
     is_mcm_open = false

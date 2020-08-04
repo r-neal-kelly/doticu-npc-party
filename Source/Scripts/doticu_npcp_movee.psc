@@ -9,28 +9,26 @@ Scriptname doticu_npcp_movee extends ReferenceAlias
 ; Modules
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
-        return p_DATA.VARS
+        return doticu_npcp.Vars()
     endFunction
 endProperty
 doticu_npcp_funcs property FUNCS hidden
     doticu_npcp_funcs function Get()
-        return p_DATA.MODS.FUNCS
+        return doticu_npcp.Funcs()
     endFunction
 endProperty
 doticu_npcp_actors property ACTORS hidden
     doticu_npcp_actors function Get()
-        return p_DATA.MODS.FUNCS.ACTORS
+        return doticu_npcp.Funcs().ACTORS
     endFunction
 endProperty
 doticu_npcp_keys property KEYS hidden
     doticu_npcp_keys function Get()
-        return p_DATA.MODS.CONTROL.KEYS
+        return doticu_npcp.Control().KEYS
     endFunction
 endProperty
 
 ; Private Constants
-doticu_npcp_data    p_DATA                  =  none
-
 float property p_DISTANCE_MIN hidden
     float function Get()
         return 25.0
@@ -81,9 +79,7 @@ float               p_movee_pos             =   0.0
 float               p_movee_ang             =   0.0
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA, Actor ref_actor)
-    p_DATA = DATA
-
+function f_Create(Actor ref_actor)
     p_is_created = true
     p_is_executing = false
     p_ref_actor = ref_actor

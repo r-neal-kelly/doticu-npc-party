@@ -7,17 +7,17 @@ Scriptname doticu_npcp_mcm_chests extends Quest
 ; Modules
 doticu_npcp_funcs property FUNCS hidden
     doticu_npcp_funcs function Get()
-        return p_DATA.MODS.FUNCS
+        return doticu_npcp.Funcs()
     endFunction
 endProperty
 doticu_npcp_containers property CONTAINERS hidden
     doticu_npcp_containers function Get()
-        return p_DATA.MODS.FUNCS.CONTAINERS
+        return doticu_npcp.Funcs().CONTAINERS
     endFunction
 endProperty
 doticu_npcp_mcm property MCM hidden
     doticu_npcp_mcm function Get()
-        return p_DATA.MODS.CONTROL.MCM
+        return doticu_npcp.Control().MCM
     endFunction
 endProperty
 
@@ -42,9 +42,6 @@ int property FLAG_DISABLE hidden
         return MCM.FLAG_DISABLE
     endFunction
 endProperty
-
-; Private Constants
-doticu_npcp_data    p_DATA                  =  none
 
 ; Private Variables
 bool                p_is_created            = false
@@ -114,9 +111,7 @@ int                 p_option_books_z        =    -1
 int                 p_option_books          =    -1
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA)
-    p_DATA = DATA
-
+function f_Create()
     p_is_created = true
 endFunction
 

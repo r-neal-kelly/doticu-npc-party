@@ -7,42 +7,27 @@ Scriptname doticu_npcp_main extends Quest
 ; Modules
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
-        return p_DATA.VARS
+        return doticu_npcp.Vars()
     endFunction
 endProperty
 doticu_npcp_funcs property FUNCS hidden
     doticu_npcp_funcs function Get()
-        return p_DATA.MODS.FUNCS
+        return doticu_npcp.Funcs()
     endFunction
 endProperty
 doticu_npcp_members property MEMBERS hidden
     doticu_npcp_members function Get()
-        return p_DATA.MODS.MEMBERS
+        return doticu_npcp.Members()
     endFunction
 endProperty
 doticu_npcp_followers property FOLLOWERS hidden
     doticu_npcp_followers function Get()
-        return p_DATA.MODS.FOLLOWERS
+        return doticu_npcp.Followers()
     endFunction
 endProperty
 doticu_npcp_control property CONTROL hidden
     doticu_npcp_control function Get()
-        return p_DATA.MODS.CONTROL
-    endFunction
-endProperty
-
-; Private Constants
-doticu_npcp_data    p_DATA                      =  none
-
-; Public Constants
-doticu_npcp_data property DATA
-    doticu_npcp_data function Get()
-        return p_DATA
-    endFunction
-    function Set(doticu_npcp_data val)
-        if p_DATA == none
-            p_DATA = val
-        endIf
+        return doticu_npcp.Control()
     endFunction
 endProperty
 
@@ -56,7 +41,6 @@ function f_Init_Mod()
         return
     endIf
 
-    DATA.Start()
     VARS.Start()
     FUNCS.Start()
     MEMBERS.Start()
@@ -118,18 +102,16 @@ bool function p_Has_Requires()
 endFunction
 
 function p_Create()
-    DATA.f_Create(DATA)
-    VARS.f_Create(DATA)
-    FUNCS.f_Create(DATA)
-    MEMBERS.f_Create(DATA)
-    FOLLOWERS.f_Create(DATA)
-    CONTROL.f_Create(DATA)
+    VARS.f_Create()
+    FUNCS.f_Create()
+    MEMBERS.f_Create()
+    FOLLOWERS.f_Create()
+    CONTROL.f_Create()
 endFunction
 
 function p_Register()
     ; registering mod events is global for each script on an object, and
     ; further, works for handlers labeled as function as well as event.
-    DATA.f_Register()
     VARS.f_Register()
     FUNCS.f_Register()
     MEMBERS.f_Register()
@@ -211,6 +193,7 @@ event OnInit()
     ; we don't init in this thread because it will not wait
     RegisterForSingleUpdate(0.01)
 endEvent
+
 event OnUpdate()
     f_Init_Mod()
 endEvent

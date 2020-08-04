@@ -97,7 +97,12 @@ Perk function Resurrect_Perk() native global
 Perk function Unparalyze_Perk() native global
 
 ; NPCP Quests
-
+Quest function Main_Quest() native global
+Quest function Vars_Quest() native global
+Quest function Funcs_Quest() native global
+Quest function Members_Quest() native global
+Quest function Followers_Quest() native global
+Quest function Control_Quest() native global
 Quest function Thrall_Dialogue_Quest() native global
 Quest function Reanimated_Dialogue_Quest() native global
 

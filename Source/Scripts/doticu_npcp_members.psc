@@ -7,32 +7,32 @@ Scriptname doticu_npcp_members extends Quest
 ; Modules
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
-        return p_DATA.VARS
+        return doticu_npcp.Vars()
     endFunction
 endProperty
 doticu_npcp_actors property ACTORS hidden
     doticu_npcp_actors function Get()
-        return p_DATA.MODS.FUNCS.ACTORS
+        return doticu_npcp.Funcs().ACTORS
     endFunction
 endProperty
 doticu_npcp_npcs property NPCS hidden
     doticu_npcp_npcs function Get()
-        return p_DATA.MODS.FUNCS.NPCS
+        return doticu_npcp.Funcs().NPCS
     endFunction
 endProperty
 doticu_npcp_outfits property OUTFITS hidden
     doticu_npcp_outfits function Get()
-        return p_DATA.MODS.FUNCS.OUTFITS
+        return doticu_npcp.Funcs().OUTFITS
     endFunction
 endProperty
 doticu_npcp_tasklists property TASKLISTS hidden
     doticu_npcp_tasklists function Get()
-        return p_DATA.MODS.FUNCS.TASKLISTS
+        return doticu_npcp.Funcs().TASKLISTS
     endFunction
 endProperty
 doticu_npcp_logs property LOGS hidden
     doticu_npcp_logs function Get()
-        return p_DATA.MODS.FUNCS.LOGS
+        return doticu_npcp.Funcs().LOGS
     endFunction
 endProperty
 
@@ -45,9 +45,6 @@ int property DEFAULT_PERCENT_BODY           =   100 autoReadOnly hidden
 int property DEFAULT_PERCENT_FEET           =    90 autoReadOnly hidden
 int property DEFAULT_PERCENT_HANDS          =    90 autoReadOnly hidden
 int property DEFAULT_PERCENT_HEAD           =    50 autoReadOnly hidden
-
-; Private Constants
-doticu_npcp_data        p_DATA              =  none
 
 ; Private Variables
 bool                    p_is_created        = false
@@ -128,13 +125,11 @@ int function Display_Next()     native
 int function Display_Previous() native
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA)
-    p_DATA = DATA
-
+function f_Create()
     p_is_created = true
     p_has_display = false
     p_idx_display = -1
-    p_marker_display = doticu_npcp_consts.Storage_Marker().PlaceAtMe(doticu_npcp_consts.X_Marker_Static())
+    p_marker_display = none
 endFunction
 
 function f_Destroy()
@@ -193,7 +188,7 @@ int function Create_Member(Actor ref_actor)
         return doticu_npcp_codes.FAILURE()
     endIf
 
-    ref_member.f_Create(p_DATA, ref_actor, false)
+    ref_member.f_Create(ref_actor, false)
 
     return doticu_npcp_codes.SUCCESS()
 endFunction
@@ -246,7 +241,7 @@ int function Clone(Actor ref_actor)
         return doticu_npcp_codes.FAILURE()
     endIf
 
-    ref_member.f_Create(p_DATA, ref_clone, true)
+    ref_member.f_Create(ref_clone, true)
 
     return doticu_npcp_codes.SUCCESS()
 endFunction

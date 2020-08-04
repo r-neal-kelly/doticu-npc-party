@@ -26,16 +26,11 @@ doticu_npcp_perk_unparalyze property UNPARALYZE
     endFunction
 endProperty
 
-; Private Constants
-doticu_npcp_data    p_DATA          =  none
-
 ; Private Variables
 bool                p_is_created    = false
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA)
-    p_DATA = DATA
-
+function f_Create()
     p_is_created = true
 
     Add_Perk(doticu_npcp_consts.Kiss_Thrall_Perk())
@@ -43,10 +38,10 @@ function f_Create(doticu_npcp_data DATA)
     Add_Perk(doticu_npcp_consts.Reanimate_Perk())
     Add_Perk(doticu_npcp_consts.Unparalyze_Perk())
 
-    KISS.f_Create(p_DATA)
-    RESURRECT.f_Create(p_DATA)
-    REANIMATE.f_Create(p_DATA)
-    UNPARALYZE.f_Create(p_DATA)
+    KISS.f_Create()
+    RESURRECT.f_Create()
+    REANIMATE.f_Create()
+    UNPARALYZE.f_Create()
 endFunction
 
 function f_Destroy()
@@ -84,11 +79,4 @@ endFunction
 
 function Remove_Perk(Perk perk_to_remove)
     doticu_npcp_consts.Player_Actor().RemovePerk(perk_to_remove)
-endFunction
-
-; Update Methods
-function u_0_8_2()
-    Add_Perk(doticu_npcp_consts.Reanimate_Perk())
-    REANIMATE.f_Create(p_DATA)
-    REANIMATE.f_Register()
 endFunction

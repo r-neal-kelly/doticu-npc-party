@@ -7,32 +7,37 @@ Scriptname doticu_npcp_keys extends Quest
 ; Modules
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
-        return p_DATA.VARS
+        return doticu_npcp.Vars()
     endFunction
 endProperty
 doticu_npcp_funcs property FUNCS hidden
     doticu_npcp_funcs function Get()
-        return p_DATA.MODS.FUNCS
+        return doticu_npcp.Funcs()
     endFunction
 endProperty
 doticu_npcp_actors property ACTORS hidden
     doticu_npcp_actors function Get()
-        return p_DATA.MODS.FUNCS.ACTORS
+        return doticu_npcp.Funcs().ACTORS
+    endFunction
+endProperty
+doticu_npcp_members property MEMBERS hidden
+    doticu_npcp_members function Get()
+        return doticu_npcp.Members()
     endFunction
 endProperty
 doticu_npcp_followers property FOLLOWERS hidden
     doticu_npcp_followers function Get()
-        return p_DATA.MODS.FOLLOWERS
+        return doticu_npcp.Followers()
     endFunction
 endProperty
 doticu_npcp_commands property COMMANDS hidden
     doticu_npcp_commands function Get()
-        return p_DATA.MODS.CONTROL.COMMANDS
+        return doticu_npcp.Control().COMMANDS
     endFunction
 endProperty
 doticu_npcp_logs property LOGS hidden
     doticu_npcp_logs function Get()
-        return p_DATA.MODS.FUNCS.LOGS
+        return doticu_npcp.Funcs().LOGS
     endFunction
 endProperty
 
@@ -77,18 +82,13 @@ string property KEY_FS_SADDLE               = "Followers: Saddle"           auto
 string property KEY_FS_UNSADDLE             = "Followers: Unsaddle"         autoReadOnly hidden
 string property KEY_FS_RESURRECT            = "Followers: Resurrect"        autoReadOnly hidden
 
-; Private Constants
-doticu_npcp_data    p_DATA              =  none
-
 ; Private Variables
 bool                p_is_created        = false
 
 string              p_pressed_hotkey    =    ""
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA)
-    p_DATA = DATA
-
+function f_Create()
     p_is_created = true
 endFunction
 
@@ -330,7 +330,7 @@ event OnKeyUp(int value, float hold_time)
         Actor ref_actor = Actor_In_Crosshair()
         if ref_actor == none
             LOGS.Create_Note("That is not an NPC.", false)
-        elseIf p_DATA.MODS.MEMBERS.Has_Base(ref_actor)
+        elseIf MEMBERS.Has_Base(ref_actor)
             LOGS.Create_Note("A member has the base of " + ACTORS.Name(ref_actor) + ".", false)
         else
             LOGS.Create_Note("No member has the base of " + ACTORS.Name(ref_actor) + ".", false)
@@ -340,7 +340,7 @@ event OnKeyUp(int value, float hold_time)
         if ref_actor == none
             LOGS.Create_Note("That is not an NPC.", false)
         else
-            int num_members = p_DATA.MODS.MEMBERS.Count_Base(ref_actor)
+            int num_members = MEMBERS.Count_Base(ref_actor)
             if num_members == 1
                 LOGS.Create_Note(num_members + " member has the base of " + ACTORS.Name(ref_actor) + ".", false)
             else
@@ -351,7 +351,7 @@ event OnKeyUp(int value, float hold_time)
         Actor ref_actor = Actor_In_Crosshair()
         if ref_actor == none
             LOGS.Create_Note("That is not an NPC.", false)
-        elseIf p_DATA.MODS.MEMBERS.Has_Head(ref_actor)
+        elseIf MEMBERS.Has_Head(ref_actor)
             LOGS.Create_Note("A member looks like " + ACTORS.Name(ref_actor) + ".", false)
         else
             LOGS.Create_Note("No member looks like " + ACTORS.Name(ref_actor) + ".", false)
@@ -361,7 +361,7 @@ event OnKeyUp(int value, float hold_time)
         if ref_actor == none
             LOGS.Create_Note("That is not an NPC.", false)
         else
-            int num_heads = p_DATA.MODS.MEMBERS.Count_Heads(ref_actor)
+            int num_heads = MEMBERS.Count_Heads(ref_actor)
             if num_heads == 1
                 LOGS.Create_Note(num_heads + " member looks like " + ACTORS.Name(ref_actor) + ".", false)
             else

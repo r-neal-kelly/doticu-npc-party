@@ -7,27 +7,27 @@ Scriptname doticu_npcp_commands_p extends Quest
 ; Modules
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
-        return p_DATA.VARS
+        return doticu_npcp.Vars()
     endFunction
 endProperty
 doticu_npcp_logs property LOGS hidden
     doticu_npcp_logs function Get()
-        return p_DATA.MODS.FUNCS.LOGS
+        return doticu_npcp.Funcs().LOGS
     endFunction
 endProperty
 doticu_npcp_actors property ACTORS hidden
     doticu_npcp_actors function Get()
-        return p_DATA.MODS.FUNCS.ACTORS
+        return doticu_npcp.Funcs().ACTORS
     endFunction
 endProperty
 doticu_npcp_members property MEMBERS hidden
     doticu_npcp_members function Get()
-        return p_DATA.MODS.MEMBERS
+        return doticu_npcp.Members()
     endFunction
 endProperty
 doticu_npcp_followers property FOLLOWERS hidden
     doticu_npcp_followers function Get()
-        return p_DATA.MODS.FOLLOWERS
+        return doticu_npcp.Followers()
     endFunction
 endProperty
 doticu_npcp_commands_p_notes property NOTES hidden
@@ -36,17 +36,12 @@ doticu_npcp_commands_p_notes property NOTES hidden
     endFunction
 endProperty
 
-; Private Constants
-doticu_npcp_data    p_DATA              =  none
-
 ; Private Variables
 bool                p_is_created        = false
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA)
-    p_DATA = DATA
-
-    NOTES.f_Create(DATA)
+function f_Create()
+    NOTES.f_Create()
 
     p_is_created = true
 endFunction

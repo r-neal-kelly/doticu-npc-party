@@ -7,27 +7,24 @@ Scriptname doticu_npcp_followers extends Quest
 ; Modules
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
-        return p_DATA.VARS
+        return doticu_npcp.Vars()
     endFunction
 endProperty
 doticu_npcp_funcs property FUNCS hidden
     doticu_npcp_funcs function Get()
-        return p_DATA.MODS.FUNCS
+        return doticu_npcp.Funcs()
     endFunction
 endProperty
 doticu_npcp_tasklists property TASKLISTS hidden
     doticu_npcp_tasklists function Get()
-        return p_DATA.MODS.FUNCS.TASKLISTS
+        return doticu_npcp.Funcs().TASKLISTS
     endFunction
 endProperty
 doticu_npcp_members property MEMBERS hidden
     doticu_npcp_members function Get()
-        return p_DATA.MODS.MEMBERS
+        return doticu_npcp.Members()
     endFunction
 endProperty
-
-; Private Constants
-doticu_npcp_data        p_DATA          =  none
 
 ; Private Variables
 bool                    p_is_created    = false
@@ -121,9 +118,7 @@ int function Add_Filter_Flag_2(int flags_2, string flag_2) native
 Alias[] function Filter(string[] strings, int[] ints, int flags_1, int flags_2) native
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA)
-    p_DATA = DATA
-
+function f_Create()
     p_is_created = true
     p_tasklist = TASKLISTS.Create()
 endFunction
@@ -159,7 +154,7 @@ int function f_Create_Follower(Actor ref_actor)
         return doticu_npcp_codes.FAILURE()
     endIf
 
-    ref_follower.f_Create(p_DATA, ref_actor)
+    ref_follower.f_Create(ref_actor)
     ref_follower.f_Register()
 
     return doticu_npcp_codes.SUCCESS()

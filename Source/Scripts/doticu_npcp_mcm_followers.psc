@@ -7,28 +7,26 @@ Scriptname doticu_npcp_mcm_followers extends Quest
 ; Modules
 doticu_npcp_funcs property FUNCS hidden
     doticu_npcp_funcs function Get()
-        return p_DATA.MODS.FUNCS
+        return doticu_npcp.Funcs()
     endFunction
 endProperty
 doticu_npcp_followers property FOLLOWERS hidden
     doticu_npcp_followers function Get()
-        return p_DATA.MODS.FOLLOWERS
+        return doticu_npcp.Followers()
     endFunction
 endProperty
 doticu_npcp_commands property COMMANDS hidden
     doticu_npcp_commands function Get()
-        return p_DATA.MODS.CONTROL.COMMANDS
+        return doticu_npcp.Control().COMMANDS
     endFunction
 endProperty
 doticu_npcp_mcm property MCM hidden
     doticu_npcp_mcm function Get()
-        return p_DATA.MODS.CONTROL.MCM
+        return doticu_npcp.Control().MCM
     endFunction
 endProperty
 
 ; Private Constants
-doticu_npcp_data        p_DATA                          =  none
-
 int property            p_HEADERS_PER_PAGE              =     2 autoReadOnly hidden
 
 int property            p_COMMANDS_IN_MENU              =    11 autoReadOnly hidden
@@ -65,9 +63,7 @@ int                     p_options_offset            =    -1
 int                     p_option_menu               =    -1
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA)
-    p_DATA = DATA
-
+function f_Create()
     p_is_created = true
 endFunction
 

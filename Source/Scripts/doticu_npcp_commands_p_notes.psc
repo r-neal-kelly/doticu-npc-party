@@ -7,20 +7,15 @@ Scriptname doticu_npcp_commands_p_notes extends Quest
 ; Modules
 doticu_npcp_logs property LOGS hidden
     doticu_npcp_logs function Get()
-        return p_DATA.MODS.FUNCS.LOGS
+        return doticu_npcp.Funcs().LOGS
     endFunction
 endProperty
-
-; Private Constants
-doticu_npcp_data    p_DATA              =  none
 
 ; Private Variables
 bool                p_is_created        = false
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA)
-    p_DATA = DATA
-
+function f_Create()
     p_is_created = true
 endFunction
 

@@ -7,29 +7,9 @@ Scriptname doticu_npcp_effect_cell extends ActiveMagicEffect
 ; Modules
 doticu_npcp_funcs property FUNCS hidden
     doticu_npcp_funcs function Get()
-        return p_DATA.MODS.FUNCS
+        return doticu_npcp.Funcs()
     endFunction
 endProperty
-doticu_npcp_player property PLAYER hidden
-    doticu_npcp_player function Get()
-        return p_DATA.MODS.FUNCS.ACTORS.PLAYER
-    endFunction
-endProperty
-
-; Public Constants
-doticu_npcp_data property DATA
-    doticu_npcp_data function Get()
-        return p_DATA
-    endFunction
-    function Set(doticu_npcp_data val)
-        if p_DATA == none
-            p_DATA = val
-        endIf
-    endFunction
-endProperty
-
-; Private Constants
-doticu_npcp_data p_DATA = none
 
 ; Private Methods
 function p_Create()

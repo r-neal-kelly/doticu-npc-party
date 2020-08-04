@@ -4,23 +4,11 @@
 
 Scriptname doticu_npcp_containers extends Quest
 
-; Modules
-doticu_npcp_funcs property FUNCS hidden
-    doticu_npcp_funcs function Get()
-        return p_DATA.MODS.FUNCS
-    endFunction
-endProperty
-
-; Private Constants
-doticu_npcp_data    p_DATA          =  none
-
 ; Private Variables
 bool                p_is_created    = false
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA)
-    p_DATA = DATA
-
+function f_Create()
     p_is_created = true
 endFunction
 
@@ -36,7 +24,7 @@ ObjectReference function Create_Temp()
     ObjectReference ref_container = doticu_npcp_consts.Player_Actor().PlaceAtMe(doticu_npcp_consts.Empty_Container(), 1, false, false)
 
     ; this can prevent a ctd
-    FUNCS.Wait(0.1)
+    doticu_npcp.Funcs().Wait(0.1)
 
     ref_container.SetActorOwner(doticu_npcp_consts.Player_Actor().GetActorBase())
     
@@ -52,7 +40,7 @@ ObjectReference function Create_Perm()
     ObjectReference ref_container = doticu_npcp_consts.Storage_Marker().PlaceAtMe(doticu_npcp_consts.Empty_Container(), 1, true, false)
     
     ; this can prevent a ctd
-    FUNCS.Wait(0.1)
+    doticu_npcp.Funcs().Wait(0.1)
 
     ref_container.SetActorOwner(doticu_npcp_consts.Player_Actor().GetActorBase())
     
@@ -66,7 +54,7 @@ endFunction
 
 function Open(ObjectReference ref_container)
     ref_container.Activate(doticu_npcp_consts.Player_Actor())
-    FUNCS.Wait(0.1)
+    doticu_npcp.Funcs().Wait(0.1)
 endFunction
 
 string function Name(ObjectReference ref_container)

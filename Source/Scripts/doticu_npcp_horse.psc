@@ -7,17 +7,14 @@ Scriptname doticu_npcp_horse extends ReferenceAlias
 ; Modules
 doticu_npcp_funcs property FUNCS hidden
     doticu_npcp_funcs function Get()
-        return p_DATA.MODS.FUNCS
+        return doticu_npcp.Funcs()
     endFunction
 endProperty
 doticu_npcp_actors property ACTORS hidden
     doticu_npcp_actors function Get()
-        return p_DATA.MODS.FUNCS.ACTORS
+        return doticu_npcp.Funcs().ACTORS
     endFunction
 endProperty
-
-; Private Constants
-doticu_npcp_data        p_DATA          =  none
 
 ; Private Variables
 bool                    p_is_locked     = false
@@ -32,10 +29,8 @@ Actor function Actor() native
 string function Name() native
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA, int id_alias, doticu_npcp_follower ref_follower)
+function f_Create(int id_alias, doticu_npcp_follower ref_follower)
 p_Lock()
-
-    p_DATA = DATA
 
     p_ref_actor = doticu_npcp_consts.Storage_Marker().PlaceAtMe(doticu_npcp_consts.Horse_Leveled_Actor(), 1, true, true) as Actor
     ForceRefTo(p_ref_actor)

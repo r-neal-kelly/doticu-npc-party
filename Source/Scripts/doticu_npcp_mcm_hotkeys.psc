@@ -7,22 +7,19 @@ Scriptname doticu_npcp_mcm_hotkeys extends Quest
 ; Modules
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
-        return p_DATA.VARS
+        return doticu_npcp.Vars()
     endFunction
 endProperty
 doticu_npcp_keys property KEYS hidden
     doticu_npcp_keys function Get()
-        return p_DATA.MODS.CONTROL.KEYS
+        return doticu_npcp.Control().KEYS
     endFunction
 endProperty
 doticu_npcp_mcm property MCM hidden
     doticu_npcp_mcm function Get()
-        return p_DATA.MODS.CONTROL.MCM
+        return doticu_npcp.Control().MCM
     endFunction
 endProperty
-
-; Private Constants
-doticu_npcp_data    p_DATA                              =  none
 
 ; Private Variables
 bool                p_is_created                        = false
@@ -117,9 +114,7 @@ int                 p_option_fs_unsaddle_mods           =    -1
 int                 p_option_fs_resurrect_mods          =    -1
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA)
-    p_DATA = DATA
-
+function f_Create()
     p_is_created = true
 endFunction
 

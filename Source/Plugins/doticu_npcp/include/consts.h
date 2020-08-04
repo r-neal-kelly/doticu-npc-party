@@ -151,8 +151,8 @@ namespace doticu_npcp { namespace Consts {
     Perk_t* Unparalyze_Perk();
 
     // NPCP Quests
-    Quest_t* Static_Data_Quest();
-    Quest_t* Dynamic_Data_Quest();
+    Quest_t* Main_Quest();
+    Quest_t* Vars_Quest();
     Quest_t* Funcs_Quest();
     Quest_t* Members_Quest();
     Quest_t* Followers_Quest();

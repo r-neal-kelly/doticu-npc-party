@@ -51,27 +51,22 @@ doticu_npcp_mannequins property MANNEQUINS hidden
     endFunction
 endProperty
 
-; Private Constants
-doticu_npcp_data    p_DATA          =  none
-
 ; Private Variables
 bool                p_is_created    = false
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA)
-    p_DATA = DATA
-
+function f_Create()
     p_is_created = true
 
-    LOGS.f_Create(p_DATA)
-    VECTORS.f_Create(p_DATA)
-    TASKLISTS.f_Create(p_DATA)
-    CONTAINERS.f_Create(p_DATA)
-    OUTFITS.f_Create(p_DATA)
-    ACTORS.f_Create(p_DATA)
-    NPCS.f_Create(p_DATA)
-    PERKS.f_Create(p_DATA)
-    MANNEQUINS.f_Create(p_DATA)
+    LOGS.f_Create()
+    VECTORS.f_Create()
+    TASKLISTS.f_Create()
+    CONTAINERS.f_Create()
+    OUTFITS.f_Create()
+    ACTORS.f_Create()
+    NPCS.f_Create()
+    PERKS.f_Create()
+    MANNEQUINS.f_Create()
 endFunction
 
 function f_Destroy()

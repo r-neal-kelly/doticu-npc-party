@@ -7,57 +7,54 @@ Scriptname doticu_npcp_member extends ReferenceAlias
 ; Modules
 doticu_npcp_main property MAIN hidden
     doticu_npcp_main function Get()
-        return p_DATA.MODS.MAIN
+        return doticu_npcp.Main()
     endFunction
 endProperty
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
-        return p_DATA.VARS
+        return doticu_npcp.Vars()
     endFunction
 endProperty
 doticu_npcp_funcs property FUNCS hidden
     doticu_npcp_funcs function Get()
-        return p_DATA.MODS.FUNCS
+        return doticu_npcp.Funcs()
     endFunction
 endProperty
 doticu_npcp_actors property ACTORS hidden
     doticu_npcp_actors function Get()
-        return p_DATA.MODS.FUNCS.ACTORS
+        return doticu_npcp.Funcs().ACTORS
     endFunction
 endProperty
 doticu_npcp_npcs property NPCS hidden
     doticu_npcp_npcs function Get()
-        return p_DATA.MODS.FUNCS.NPCS
+        return doticu_npcp.Funcs().NPCS
     endFunction
 endProperty
 doticu_npcp_mannequins property MANNEQUINS hidden
     doticu_npcp_mannequins function Get()
-        return p_DATA.MODS.FUNCS.MANNEQUINS
+        return doticu_npcp.Funcs().MANNEQUINS
     endFunction
 endProperty
 doticu_npcp_containers property CONTAINERS hidden
     doticu_npcp_containers function Get()
-        return p_DATA.MODS.FUNCS.CONTAINERS
+        return doticu_npcp.Funcs().CONTAINERS
     endFunction
 endProperty
 doticu_npcp_outfits property OUTFITS hidden
     doticu_npcp_outfits function Get()
-        return p_DATA.MODS.FUNCS.OUTFITS
+        return doticu_npcp.Funcs().OUTFITS
     endFunction
 endProperty
 doticu_npcp_members property MEMBERS hidden
     doticu_npcp_members function Get()
-        return p_DATA.MODS.MEMBERS
+        return doticu_npcp.Members()
     endFunction
 endProperty
 doticu_npcp_followers property FOLLOWERS hidden
     doticu_npcp_followers function Get()
-        return p_DATA.MODS.FOLLOWERS
+        return doticu_npcp.Followers()
     endFunction
 endProperty
-
-; Private Constants
-doticu_npcp_data        p_DATA                      =  none
 
 ; Private Variables
 bool                    p_is_locked                 = false
@@ -174,10 +171,8 @@ function p_Rename(string new_name) native
 function Log_Variable_Infos() native
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA, Actor ref_actor, bool is_clone)
+function f_Create(Actor ref_actor, bool is_clone)
 p_Lock()
-
-    p_DATA = DATA
 
     ForceRefTo(ref_actor)
 

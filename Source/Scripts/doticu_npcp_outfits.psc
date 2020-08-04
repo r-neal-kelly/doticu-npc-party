@@ -7,45 +7,40 @@ Scriptname doticu_npcp_outfits extends Quest
 ; Modules
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
-        return p_DATA.VARS
+        return doticu_npcp.Vars()
     endFunction
 endProperty
 doticu_npcp_funcs property FUNCS hidden
     doticu_npcp_funcs function Get()
-        return p_DATA.MODS.FUNCS
+        return doticu_npcp.Funcs()
     endFunction
 endProperty
 doticu_npcp_containers property CONTAINERS hidden
     doticu_npcp_containers function Get()
-        return p_DATA.MODS.FUNCS.CONTAINERS
+        return doticu_npcp.Funcs().CONTAINERS
     endFunction
 endProperty
 doticu_npcp_actors property ACTORS hidden
     doticu_npcp_actors function Get()
-        return p_DATA.MODS.FUNCS.ACTORS
+        return doticu_npcp.Funcs().ACTORS
     endFunction
 endProperty
 doticu_npcp_npcs property NPCS hidden
     doticu_npcp_npcs function Get()
-        return p_DATA.MODS.FUNCS.NPCS
+        return doticu_npcp.Funcs().NPCS
     endFunction
 endProperty
 doticu_npcp_members property MEMBERS hidden
     doticu_npcp_members function Get()
-        return p_DATA.MODS.MEMBERS
+        return doticu_npcp.Members()
     endFunction
 endProperty
-
-; Private Constants
-doticu_npcp_data    p_DATA          =  none
 
 ; Private Variables
 bool                p_is_created    = false
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA)
-    p_DATA = DATA
-
+function f_Create()
     p_is_created = true
 endFunction
 
@@ -75,7 +70,7 @@ doticu_npcp_outfit function p_Create(Container form_container, string str_name, 
         ref_temp.RemoveAllItems(ref_outfit, false, true); we should make a c++ call to make sure that all items are removed?
     endIf
     
-    ref_outfit.f_Create(p_DATA, str_name, code_create)
+    ref_outfit.f_Create(str_name, code_create)
     ref_outfit.f_Register()
 
     return ref_outfit

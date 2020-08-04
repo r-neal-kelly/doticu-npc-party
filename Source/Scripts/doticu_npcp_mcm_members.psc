@@ -7,38 +7,36 @@ Scriptname doticu_npcp_mcm_members extends Quest
 ; Modules
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
-        return p_DATA.VARS
+        return doticu_npcp.Vars()
     endFunction
 endProperty
 doticu_npcp_funcs property FUNCS hidden
     doticu_npcp_funcs function Get()
-        return p_DATA.MODS.FUNCS
+        return doticu_npcp.Funcs()
     endFunction
 endProperty
 doticu_npcp_actors property ACTORS hidden
     doticu_npcp_actors function Get()
-        return p_DATA.MODS.FUNCS.ACTORS
+        return doticu_npcp.Funcs().ACTORS
     endFunction
 endProperty
 doticu_npcp_members property MEMBERS hidden
     doticu_npcp_members function Get()
-        return p_DATA.MODS.MEMBERS
+        return doticu_npcp.Members()
     endFunction
 endProperty
 doticu_npcp_commands property COMMANDS hidden
     doticu_npcp_commands function Get()
-        return p_DATA.MODS.CONTROL.COMMANDS
+        return doticu_npcp.Control().COMMANDS
     endFunction
 endProperty
 doticu_npcp_mcm property MCM hidden
     doticu_npcp_mcm function Get()
-        return p_DATA.MODS.CONTROL.MCM
+        return doticu_npcp.Control().MCM
     endFunction
 endProperty
 
 ; Private Constants
-doticu_npcp_data    p_DATA  =  none
-
 int property p_HEADERS_PER_PAGE hidden
     int function Get()
         if p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS() 
@@ -84,9 +82,7 @@ int                 p_option_prev                       =    -1
 int                 p_option_next                       =    -1
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA)
-    p_DATA = DATA
-
+function f_Create()
     p_is_created = true
     p_code_view = 0
     p_ref_member = none

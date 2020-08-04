@@ -7,22 +7,22 @@ Scriptname doticu_npcp_mcm_settings extends Quest
 ; Modules
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
-        return p_DATA.VARS
+        return doticu_npcp.Vars()
     endFunction
 endProperty
 doticu_npcp_members property MEMBERS hidden
     doticu_npcp_members function Get()
-        return p_DATA.MODS.MEMBERS
+        return doticu_npcp.Members()
     endFunction
 endProperty
 doticu_npcp_followers property FOLLOWERS hidden
     doticu_npcp_followers function Get()
-        return p_DATA.MODS.FOLLOWERS
+        return doticu_npcp.Followers()
     endFunction
 endProperty
 doticu_npcp_mcm property MCM hidden
     doticu_npcp_mcm function Get()
-        return p_DATA.MODS.CONTROL.MCM
+        return doticu_npcp.Control().MCM
     endFunction
 endProperty
 
@@ -47,9 +47,6 @@ int property FLAG_DISABLE hidden
         return MCM.FLAG_DISABLE
     endFunction
 endProperty
-
-; Private Constants
-doticu_npcp_data    p_DATA                              =  none
 
 ; Private Variables
 bool                p_is_created                        = false
@@ -78,9 +75,7 @@ int                 p_option_sort_followers             =    -1
 int                 p_option_slider_ms_display          =    -1
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA)
-    p_DATA = DATA
-
+function f_Create()
     p_is_created = true
 endFunction
 

@@ -32,24 +32,6 @@ namespace doticu_npcp { namespace Consts {
         return class_info;
     }
 
-    Consts_t* Self()
-    {
-        return static_cast<Consts_t*>(Static_Data_Quest());
-    }
-
-    Object_t* Object()
-    {
-        Object_t* object = Object_t::Fetch(Self(), Class_Name());
-        NPCP_ASSERT(object);
-        object->Decrement_Lock();
-        return object;
-    }
-
-    Variable_t* Variable(String_t variable_name)
-    {
-        return Object()->Variable(variable_name);
-    }
-
     #define FORM(MOD_, TYPE_, MOD_ID_)              \
     {                                               \
         static TYPE_* value = static_cast<TYPE_*>   \
@@ -238,14 +220,14 @@ namespace doticu_npcp { namespace Consts {
         PERK_UNPARALYZE                     = 0x16B4D1,
 
         // NPCP Quests
-        QUEST_DATA_STATIC                   = 0x0FBA9A,
-        QUEST_DATA_DYNAMIC                  = 0x003DFF,
-        QUEST_DIALOGUE_THRALL               = 0x212D57,
-        QUEST_DIALOGUE_REANIMATED           = 0x2089A9,
+        QUEST_MAIN                          = 0x005385,
+        QUEST_VARS                          = 0x003DFF,
         QUEST_FUNCS                         = 0x005384,
         QUEST_MEMBERS                       = 0x00184C,
         QUEST_FOLLOWERS                     = 0x000D83,
         QUEST_CONTROL                       = 0x000D7F,
+        QUEST_DIALOGUE_THRALL               = 0x212D57,
+        QUEST_DIALOGUE_REANIMATED           = 0x2089A9,
 
         // NPCP Reference Categories
         REFERENCE_CATEGORY_INPUT            = 0x395E55,
@@ -412,8 +394,8 @@ namespace doticu_npcp { namespace Consts {
     Perk_t* Unparalyze_Perk() NPCP_FORM(Perk_t, PERK_UNPARALYZE);
 
     // NPCP Quests
-    Quest_t* Static_Data_Quest() NPCP_FORM(Quest_t, QUEST_DATA_STATIC);
-    Quest_t* Dynamic_Data_Quest() NPCP_FORM(Quest_t, QUEST_DATA_DYNAMIC);
+    Quest_t* Main_Quest() NPCP_FORM(Quest_t, QUEST_MAIN);
+    Quest_t* Vars_Quest() NPCP_FORM(Quest_t, QUEST_VARS);
     Quest_t* Funcs_Quest() NPCP_FORM(Quest_t, QUEST_FUNCS);
     Quest_t* Members_Quest() NPCP_FORM(Quest_t, QUEST_MEMBERS);
     Quest_t* Followers_Quest() NPCP_FORM(Quest_t, QUEST_FOLLOWERS);
@@ -594,6 +576,12 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
     Perk_t* Unparalyze_Perk(Selfless_t*) FORWARD_CONST(Unparalyze_Perk);
 
     // NPCP Quests
+    Quest_t* Main_Quest(Selfless_t*) FORWARD_CONST(Main_Quest);
+    Quest_t* Vars_Quest(Selfless_t*) FORWARD_CONST(Vars_Quest);
+    Quest_t* Funcs_Quest(Selfless_t*) FORWARD_CONST(Funcs_Quest);
+    Quest_t* Members_Quest(Selfless_t*) FORWARD_CONST(Members_Quest);
+    Quest_t* Followers_Quest(Selfless_t*) FORWARD_CONST(Followers_Quest);
+    Quest_t* Control_Quest(Selfless_t*) FORWARD_CONST(Control_Quest);
     Quest_t* Thrall_Dialogue_Quest(Selfless_t*) FORWARD_CONST(Thrall_Dialogue_Quest);
     Quest_t* Reanimated_Dialogue_Quest(Selfless_t*) FORWARD_CONST(Reanimated_Dialogue_Quest);
 
@@ -771,6 +759,12 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
         ADD_GLOBAL("Unparalyze_Perk", 0, Perk_t*, Unparalyze_Perk);
 
         // NPCP Quests
+        ADD_GLOBAL("Main_Quest", 0, Quest_t*, Main_Quest);
+        ADD_GLOBAL("Vars_Quest", 0, Quest_t*, Vars_Quest);
+        ADD_GLOBAL("Funcs_Quest", 0, Quest_t*, Funcs_Quest);
+        ADD_GLOBAL("Members_Quest", 0, Quest_t*, Members_Quest);
+        ADD_GLOBAL("Followers_Quest", 0, Quest_t*, Followers_Quest);
+        ADD_GLOBAL("Control_Quest", 0, Quest_t*, Control_Quest);
         ADD_GLOBAL("Thrall_Dialogue_Quest", 0, Quest_t*, Thrall_Dialogue_Quest);
         ADD_GLOBAL("Reanimated_Dialogue_Quest", 0, Quest_t*, Reanimated_Dialogue_Quest);
 

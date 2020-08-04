@@ -7,12 +7,9 @@ Scriptname doticu_npcp_npcs extends Quest
 ; Modules
 doticu_npcp_vectors property VECTORS hidden
     doticu_npcp_vectors function Get()
-        return p_DATA.MODS.FUNCS.VECTORS
+        return doticu_npcp.Funcs().VECTORS
     endFunction
 endProperty
-
-; Private Constants
-doticu_npcp_data        p_DATA              =  none
 
 ; Private Variable
 bool                    p_is_created        = false
@@ -43,9 +40,7 @@ function Update_Base_Outfit(Actor ref_actor) native; maybe delete
 function Remove_All_Tokens(Actor ref_actor) native
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA, int init_max = 8)
-    p_DATA = DATA
-
+function f_Create(int init_max = 8)
     p_is_created = true
     p_vec_bases = VECTORS.Create_Form_Vector(init_max, none, 1.5)
     p_vec_vec_origs = VECTORS.Create_Form_Vector(init_max, none, 1.5)

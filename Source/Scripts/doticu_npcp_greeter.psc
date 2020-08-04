@@ -7,17 +7,16 @@ Scriptname doticu_npcp_greeter extends ReferenceAlias
 ; Modules
 doticu_npcp_funcs property FUNCS hidden
     doticu_npcp_funcs function Get()
-        return p_DATA.MODS.FUNCS
+        return doticu_npcp.Funcs()
     endFunction
 endProperty
 doticu_npcp_actors property ACTORS hidden
     doticu_npcp_actors function Get()
-        return p_DATA.MODS.FUNCS.ACTORS
+        return doticu_npcp.Funcs().ACTORS
     endFunction
 endProperty
 
 ; Private Constants
-doticu_npcp_data    p_DATA          =  none
 float property p_WAIT_TIME hidden
     float function Get()
         return 0.5
@@ -35,9 +34,7 @@ Actor               p_ref_actor     =  none
 float               p_time_waited   =   0.0
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA, Actor ref_actor)
-    p_DATA = DATA
-
+function f_Create(Actor ref_actor)
     p_is_created = true
     p_ref_actor = ref_actor
     p_time_waited = 0.0

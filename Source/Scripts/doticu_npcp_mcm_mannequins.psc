@@ -7,23 +7,21 @@ Scriptname doticu_npcp_mcm_mannequins extends Quest
 ; Modules
 doticu_npcp_funcs property FUNCS hidden
     doticu_npcp_funcs function Get()
-        return p_DATA.MODS.FUNCS
+        return doticu_npcp.Funcs()
     endFunction
 endProperty
 doticu_npcp_mannequins property MANNEQUINS hidden
     doticu_npcp_mannequins function Get()
-        return p_DATA.MODS.FUNCS.MANNEQUINS
+        return doticu_npcp.Funcs().MANNEQUINS
     endFunction
 endProperty
 doticu_npcp_mcm property MCM hidden
     doticu_npcp_mcm function Get()
-        return p_DATA.MODS.CONTROL.MCM
+        return doticu_npcp.Control().MCM
     endFunction
 endProperty
 
 ; Private Constants
-doticu_npcp_data    p_DATA  =  none
-
 int property p_HEADERS_IN_MANNEQUINS hidden
     int function Get()
         return 6; must be even
@@ -73,9 +71,7 @@ int                 p_option_south_1            =    -1
 int                 p_option_south_2            =    -1
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA)
-    p_DATA = DATA
-
+function f_Create()
     p_is_created = true
     p_code_view = doticu_npcp_codes.VIEW_MANNEQUINS()
 endFunction

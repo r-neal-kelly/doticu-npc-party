@@ -7,18 +7,16 @@ Scriptname doticu_npcp_mcm_log extends Quest
 ; Modules
 doticu_npcp_logs property LOGS hidden
     doticu_npcp_logs function Get()
-        return p_DATA.MODS.FUNCS.LOGS
+        return doticu_npcp.Funcs().LOGS
     endFunction
 endProperty
 doticu_npcp_mcm property MCM hidden
     doticu_npcp_mcm function Get()
-        return p_DATA.MODS.CONTROL.MCM
+        return doticu_npcp.Control().MCM
     endFunction
 endProperty
 
 ; Private Constants
-doticu_npcp_data    p_DATA                  =  none
-
 int                 p_HEADERS_PER_PAGE      =     4
 int                 p_STRINGS_PER_PAGE      =     8
 
@@ -37,9 +35,7 @@ int                 p_option_clear_notes    =    -1
 int                 p_option_clear_errors   =    -1
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA)
-    p_DATA = DATA
-
+function f_Create()
     p_is_created = true
 endFunction
 

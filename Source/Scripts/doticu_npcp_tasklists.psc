@@ -16,16 +16,11 @@ MiscObject property MISC_TASKLIST hidden
     endFunction
 endProperty
 
-; Private Constants
-doticu_npcp_data        p_DATA          =  none
-
 ; Private Variables
 bool                    p_is_created    = false
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA)
-    p_DATA = DATA
-
+function f_Create()
     p_is_created = true
 endFunction
 
@@ -40,7 +35,7 @@ endFunction
 doticu_npcp_tasklist function Create(float wait_interval = 0.5, float wait_timeout = 5.0)
     doticu_npcp_tasklist ref_tasklist = OBJECT_STORAGE.PlaceAtMe(MISC_TASKLIST, 1, true, false) as doticu_npcp_tasklist
     
-    ref_tasklist.f_Create(p_DATA, wait_interval, wait_timeout)
+    ref_tasklist.f_Create(wait_interval, wait_timeout)
     ref_tasklist.f_Register()
 
     return ref_tasklist

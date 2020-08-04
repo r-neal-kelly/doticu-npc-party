@@ -7,12 +7,17 @@ Scriptname doticu_npcp_mcm extends SKI_ConfigBase
 ; Modules
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
-        return p_DATA.VARS
+        return doticu_npcp.Vars()
+    endFunction
+endProperty
+doticu_npcp_members property MEMBERS hidden
+    doticu_npcp_members function Get()
+        return doticu_npcp.Members()
     endFunction
 endProperty
 doticu_npcp_keys property KEYS hidden
     doticu_npcp_keys function Get()
-        return p_DATA.MODS.CONTROL.KEYS
+        return doticu_npcp.Control().KEYS
     endFunction
 endProperty
 doticu_npcp_mcm_followers property MCM_FOLLOWERS
@@ -171,9 +176,6 @@ int property FLAG_DISABLE hidden
     endFunction
 endProperty
 
-; Private Constants
-doticu_npcp_data    p_DATA              =  none
-
 ; Private Variables
 bool                p_is_created        = false
 bool                p_is_custom_page    = false
@@ -181,23 +183,21 @@ string              p_str_def_page      =    ""
 string              p_str_curr_page     =    ""
 
 ; Friend Methods
-function f_Create(doticu_npcp_data DATA)
-    p_DATA = DATA
-
+function f_Create()
     p_is_created = true
     p_is_custom_page = false
     p_str_def_page = PAGE_SETTINGS; or a help page? or global stats page?
     p_str_curr_page = p_str_def_page
 
-    MCM_FOLLOWERS.f_Create(DATA)
-    MCM_MEMBERS.f_Create(DATA)
-    MCM_MEMBER.f_Create(DATA)
-    MCM_FILTER.f_Create(DATA)
-    MCM_MANNEQUINS.f_Create(DATA)
-    MCM_CHESTS.f_Create(DATA)
-    MCM_SETTINGS.f_Create(DATA)
-    MCM_HOTKEYS.f_Create(DATA)
-    MCM_LOG.f_Create(DATA)
+    MCM_FOLLOWERS.f_Create()
+    MCM_MEMBERS.f_Create()
+    MCM_MEMBER.f_Create()
+    MCM_FILTER.f_Create()
+    MCM_MANNEQUINS.f_Create()
+    MCM_CHESTS.f_Create()
+    MCM_SETTINGS.f_Create()
+    MCM_HOTKEYS.f_Create()
+    MCM_LOG.f_Create()
 endFunction
 
 function f_Destroy()
@@ -296,7 +296,7 @@ event OnPageReset(string str_page)
         MCM_FOLLOWERS.f_Build_Page()
     elseIf str_page == PAGE_MEMBERS
         p_str_curr_page = str_page
-        MCM_MEMBERS.f_View_Members(p_DATA.MODS.MEMBERS.Get_Members())
+        MCM_MEMBERS.f_View_Members(MEMBERS.Get_Members())
         MCM_MEMBERS.f_Build_Page()
     elseIf str_page == PAGE_FILTER
         p_str_curr_page = str_page
@@ -504,8 +504,8 @@ endEvent
 
 ; Update Methods
 function u_0_9_1()
-    MCM_CHESTS.f_Create(p_DATA)
+    MCM_CHESTS.f_Create()
     MCM_CHESTS.f_Register()
-    MCM_HOTKEYS.f_Create(p_DATA)
+    MCM_HOTKEYS.f_Create()
     MCM_HOTKEYS.f_Register()
 endFunction

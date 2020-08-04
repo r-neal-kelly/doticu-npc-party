@@ -7,32 +7,17 @@ Scriptname doticu_npcp_topics_menu extends TopicInfo hidden
 ; Modules
 doticu_npcp_funcs property FUNCS hidden
     doticu_npcp_funcs function Get()
-        return p_DATA.MODS.FUNCS
+        return doticu_npcp.Funcs()
     endFunction
 endProperty
 doticu_npcp_containers property CONTAINERS hidden
     doticu_npcp_containers function Get()
-        return p_DATA.MODS.FUNCS.CONTAINERS
+        return doticu_npcp.Funcs().CONTAINERS
     endFunction
 endProperty
 doticu_npcp_commands property COMMANDS hidden
     doticu_npcp_commands function Get()
-        return p_DATA.MODS.CONTROL.COMMANDS
-    endFunction
-endProperty
-
-; Private Constants
-doticu_npcp_data p_DATA = none
-
-; Public Constants
-doticu_npcp_data property DATA
-    doticu_npcp_data function Get()
-        return p_DATA
-    endFunction
-    function Set(doticu_npcp_data val)
-        if p_DATA == none
-            p_DATA = val
-        endIf
+        return doticu_npcp.Control().COMMANDS
     endFunction
 endProperty
 
