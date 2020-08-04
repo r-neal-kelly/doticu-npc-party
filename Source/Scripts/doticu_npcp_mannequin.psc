@@ -5,11 +5,6 @@
 Scriptname doticu_npcp_mannequin extends ObjectReference
 
 ; Modules
-doticu_npcp_consts property CONSTS hidden
-    doticu_npcp_consts function Get()
-        return p_DATA.CONSTS
-    endFunction
-endProperty
 doticu_npcp_mannequins property MANNEQUINS hidden
     doticu_npcp_mannequins function Get()
         return p_DATA.MODS.FUNCS.MANNEQUINS

@@ -62,56 +62,104 @@ doticu_npcp_mcm_log property MCM_LOG
 endProperty
 
 ; Public Constants
-string property PAGE_FOLLOWERS hidden
-    string function Get()
-        return " Followers "
-    endFunction
-endProperty
-string property PAGE_MEMBERS hidden
-    string function Get()
-        return " Members "
-    endFunction
-endProperty
-string property PAGE_MANNEQUINS hidden
-    string function Get()
-        return " Mannequins "
-    endFunction
-endProperty
-string property PAGE_CHESTS hidden
-    string function Get()
-        return " Chests "
-    endFunction
-endProperty
-string property PAGE_FILTER hidden
-    string function Get()
-        return " Filter "
-    endFunction
-endProperty
-string property PAGE_SETTINGS hidden
-    string function Get()
-        return " Settings "
-    endFunction
-endProperty
-string property PAGE_HOTKEYS hidden
-    string function Get()
-        return " Hotkeys "
-    endFunction
-endProperty
-string property PAGE_LOG hidden
-    string function Get()
-        return " Log "
-    endFunction
-endProperty
-bool property DO_UPDATE hidden
-    bool function Get()
-        return false
-    endFunction
-endProperty
-bool property DONT_UPDATE hidden
-    bool function Get()
-        return true
-    endFunction
-endProperty
+string property STR_HEALTH                  = "Health"                      autoReadOnly hidden
+string property STR_MAGICKA                 = "Magicka"                     autoReadOnly hidden
+string property STR_STAMINA                 = "Stamina"                     autoReadOnly hidden
+string property STR_ONE_HANDED              = "OneHanded"                   autoReadOnly hidden
+string property STR_TWO_HANDED              = "TwoHanded"                   autoReadOnly hidden
+string property STR_BLOCK                   = "Block"                       autoReadOnly hidden
+string property STR_HEAVY_ARMOR             = "HeavyArmor"                  autoReadOnly hidden
+string property STR_LIGHT_ARMOR             = "LightArmor"                  autoReadOnly hidden
+string property STR_SMITHING                = "Smithing"                    autoReadOnly hidden
+string property STR_DESTRUCTION             = "Destruction"                 autoReadOnly hidden
+string property STR_RESTORATION             = "Restoration"                 autoReadOnly hidden
+string property STR_CONJURATION             = "Conjuration"                 autoReadOnly hidden
+string property STR_ALTERATION              = "Alteration"                  autoReadOnly hidden
+string property STR_ILLUSION                = "Illusion"                    autoReadOnly hidden
+string property STR_ENCHANTING              = "Enchanting"                  autoReadOnly hidden
+string property STR_MARKSMAN                = "Marksman"                    autoReadOnly hidden
+string property STR_SNEAK                   = "Sneak"                       autoReadOnly hidden
+string property STR_ALCHEMY                 = "Alchemy"                     autoReadOnly hidden
+string property STR_LOCKPICKING             = "Lockpicking"                 autoReadOnly hidden
+string property STR_PICKPOCKET              = "Pickpocket"                  autoReadOnly hidden
+string property STR_SPEECHCRAFT             = "Speechcraft"                 autoReadOnly hidden
+
+string property STR_MCM_SUMMON              = " Summon "                    autoReadOnly hidden
+string property STR_MCM_GOTO                = " Goto "                      autoReadOnly hidden
+string property STR_MCM_PACK                = " Pack "                      autoReadOnly hidden
+string property STR_MCM_OUTFIT              = " Outfit "                    autoReadOnly hidden
+string property STR_MCM_STYLE               = " Style "                     autoReadOnly hidden
+string property STR_MCM_VITALIZE            = " Vitalize "                  autoReadOnly hidden
+string property STR_MCM_RATING              = " Rating "                    autoReadOnly hidden
+string property STR_MCM_VITALITY            = " Vitality "                  autoReadOnly hidden
+string property STR_MCM_CURRENT             = " Current "                   autoReadOnly hidden
+string property STR_MCM_MEMBER              = " Member "                    autoReadOnly hidden
+string property STR_MCM_SETTLER             = " Settler "                   autoReadOnly hidden
+string property STR_MCM_THRALL              = " Thrall "                    autoReadOnly hidden
+string property STR_MCM_IMMOBILE            = " Immobile "                  autoReadOnly hidden
+string property STR_MCM_FOLLOWER            = " Follower "                  autoReadOnly hidden
+string property STR_MCM_VANILLA             = " Vanilla "                   autoReadOnly hidden
+string property STR_MCM_SETTLE              = " Settle "                    autoReadOnly hidden
+string property STR_MCM_RESETTLE            = " Resettle "                  autoReadOnly hidden
+string property STR_MCM_UNSETTLE            = " Unsettle "                  autoReadOnly hidden
+string property STR_MCM_IMMOBILIZE          = " Immobilize "                autoReadOnly hidden
+string property STR_MCM_MOBILIZE            = " Mobilize "                  autoReadOnly hidden
+string property STR_MCM_PARALYZE            = " Paralyze "                  autoReadOnly hidden
+string property STR_MCM_UNPARALYZE          = " Unparalyze "                autoReadOnly hidden
+string property STR_MCM_FOLLOW              = " Follow "                    autoReadOnly hidden
+string property STR_MCM_UNFOLLOW            = " Unfollow "                  autoReadOnly hidden
+string property STR_MCM_UNSNEAK             = " Unsneak "                   autoReadOnly hidden
+string property STR_MCM_RESURRECT           = " Resurrect "                 autoReadOnly hidden
+string property STR_MCM_DEFAULT             = " Default "                   autoReadOnly hidden
+string property STR_MCM_WARRIOR             = " Warrior "                   autoReadOnly hidden
+string property STR_MCM_MAGE                = " Mage "                      autoReadOnly hidden
+string property STR_MCM_ARCHER              = " Archer "                    autoReadOnly hidden
+string property STR_MCM_COWARD              = " Coward "                    autoReadOnly hidden
+string property STR_MCM_MORTAL              = " Mortal "                    autoReadOnly hidden
+string property STR_MCM_PROTECTED           = " Protected "                 autoReadOnly hidden
+string property STR_MCM_ESSENTIAL           = " Essential "                 autoReadOnly hidden
+string property STR_MCM_INVULNERABLE        = " Invulnerable "              autoReadOnly hidden
+string property STR_MCM_CLONE               = " Clone "                     autoReadOnly hidden
+string property STR_MCM_UNCLONE             = " Unclone "                   autoReadOnly hidden
+string property STR_MCM_UNMEMBER            = " Unmember "                  autoReadOnly hidden
+string property STR_MCM_BASE                = " Base "                      autoReadOnly hidden
+string property STR_MCM_REFERENCE           = " Reference "                 autoReadOnly hidden
+string property STR_MCM_RACE                = " Race "                      autoReadOnly hidden
+
+string property STR_MCM_HEALTH              = " Health "                    autoReadOnly hidden
+string property STR_MCM_MAGICKA             = " Magicka "                   autoReadOnly hidden
+string property STR_MCM_STAMINA             = " Stamina "                   autoReadOnly hidden
+string property STR_MCM_ONE_HANDED          = " One Handed "                autoReadOnly hidden
+string property STR_MCM_TWO_HANDED          = " Two Handed "                autoReadOnly hidden
+string property STR_MCM_BLOCK               = " Block "                     autoReadOnly hidden
+string property STR_MCM_HEAVY_ARMOR         = " Heavy Armor "               autoReadOnly hidden
+string property STR_MCM_LIGHT_ARMOR         = " Light Armor "               autoReadOnly hidden
+string property STR_MCM_SMITHING            = " Smithing "                  autoReadOnly hidden
+string property STR_MCM_DESTRUCTION         = " Destruction "               autoReadOnly hidden
+string property STR_MCM_RESTORATION         = " Restoration "               autoReadOnly hidden
+string property STR_MCM_CONJURATION         = " Conjuration "               autoReadOnly hidden
+string property STR_MCM_ALTERATION          = " Alteration "                autoReadOnly hidden
+string property STR_MCM_ILLUSION            = " Illusion "                  autoReadOnly hidden
+string property STR_MCM_ENCHANTING          = " Enchanting "                autoReadOnly hidden
+string property STR_MCM_MARKSMAN            = " Marksman "                  autoReadOnly hidden
+string property STR_MCM_SNEAK               = " Sneak "                     autoReadOnly hidden
+string property STR_MCM_ALCHEMY             = " Alchemy "                   autoReadOnly hidden
+string property STR_MCM_LOCKPICKING         = " Lockpicking "               autoReadOnly hidden
+string property STR_MCM_PICKPOCKET          = " Pickpocket "                autoReadOnly hidden
+string property STR_MCM_SPEECHCRAFT         = " Speechcraft "               autoReadOnly hidden
+
+string property PAGE_FOLLOWERS              = " Followers "                 autoReadOnly hidden
+string property PAGE_MEMBERS                = " Members "                   autoReadOnly hidden
+string property PAGE_MANNEQUINS             = " Mannequins "                autoReadOnly hidden
+string property PAGE_CHESTS                 = " Chests "                    autoReadOnly hidden
+string property PAGE_FILTER                 = " Filter "                    autoReadOnly hidden
+string property PAGE_SETTINGS               = " Settings "                  autoReadOnly hidden
+string property PAGE_HOTKEYS                = " Hotkeys "                   autoReadOnly hidden
+string property PAGE_LOG                    = " Log "                       autoReadOnly hidden
+
+bool property DO_UPDATE     = false autoReadOnly hidden
+bool property DONT_UPDATE   = true  autoReadOnly hidden
+
 int property FLAG_ENABLE hidden
     int function Get()
         return OPTION_FLAG_NONE

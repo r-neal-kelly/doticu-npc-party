@@ -5,11 +5,6 @@
 Scriptname doticu_npcp_mcm_member extends Quest
 
 ; Modules
-doticu_npcp_consts property CONSTS hidden
-    doticu_npcp_consts function Get()
-        return p_DATA.CONSTS
-    endFunction
-endProperty
 doticu_npcp_funcs property FUNCS hidden
     doticu_npcp_funcs function Get()
         return p_DATA.MODS.FUNCS
@@ -420,26 +415,26 @@ function f_On_Option_Menu_Open(int id_option)
         if ACTORS.Is_Vampire(doticu_npcp_consts.Player_Actor())
             string[] arr_options = Utility.CreateStringArray(8, "")
 
-            arr_options[0] = CONSTS.STR_MCM_CURRENT
-            arr_options[1] = CONSTS.STR_MCM_MEMBER
-            arr_options[2] = CONSTS.STR_MCM_SETTLER
-            arr_options[3] = CONSTS.STR_MCM_THRALL
-            arr_options[4] = CONSTS.STR_MCM_FOLLOWER
-            arr_options[5] = CONSTS.STR_MCM_IMMOBILE
-            arr_options[6] = CONSTS.STR_MCM_VANILLA
-            arr_options[7] = CONSTS.STR_MCM_DEFAULT
+            arr_options[0] = MCM.STR_MCM_CURRENT
+            arr_options[1] = MCM.STR_MCM_MEMBER
+            arr_options[2] = MCM.STR_MCM_SETTLER
+            arr_options[3] = MCM.STR_MCM_THRALL
+            arr_options[4] = MCM.STR_MCM_FOLLOWER
+            arr_options[5] = MCM.STR_MCM_IMMOBILE
+            arr_options[6] = MCM.STR_MCM_VANILLA
+            arr_options[7] = MCM.STR_MCM_DEFAULT
 
             MCM.SetMenuDialogOptions(arr_options)
         else
             string[] arr_options = Utility.CreateStringArray(7, "")
 
-            arr_options[0] = CONSTS.STR_MCM_CURRENT
-            arr_options[1] = CONSTS.STR_MCM_MEMBER
-            arr_options[2] = CONSTS.STR_MCM_SETTLER
-            arr_options[3] = CONSTS.STR_MCM_FOLLOWER
-            arr_options[4] = CONSTS.STR_MCM_IMMOBILE
-            arr_options[5] = CONSTS.STR_MCM_VANILLA
-            arr_options[6] = CONSTS.STR_MCM_DEFAULT
+            arr_options[0] = MCM.STR_MCM_CURRENT
+            arr_options[1] = MCM.STR_MCM_MEMBER
+            arr_options[2] = MCM.STR_MCM_SETTLER
+            arr_options[3] = MCM.STR_MCM_FOLLOWER
+            arr_options[4] = MCM.STR_MCM_IMMOBILE
+            arr_options[5] = MCM.STR_MCM_VANILLA
+            arr_options[6] = MCM.STR_MCM_DEFAULT
 
             MCM.SetMenuDialogOptions(arr_options)
         endIf
@@ -618,100 +613,100 @@ function p_Build_Commands()
     ; unblessedly, we can't just call an update in the PageReset function,
     ; the lib in not capable, so we have to type out logic here too
 
-    p_option_summon = MCM.AddTextOption(CONSTS.STR_MCM_SUMMON, "", FLAG_ENABLE)
-    p_option_goto = MCM.AddTextOption(CONSTS.STR_MCM_GOTO, "", FLAG_ENABLE)
-    p_option_pack = MCM.AddTextOption(CONSTS.STR_MCM_PACK, "", FLAG_ENABLE)
+    p_option_summon = MCM.AddTextOption(MCM.STR_MCM_SUMMON, "", FLAG_ENABLE)
+    p_option_goto = MCM.AddTextOption(MCM.STR_MCM_GOTO, "", FLAG_ENABLE)
+    p_option_pack = MCM.AddTextOption(MCM.STR_MCM_PACK, "", FLAG_ENABLE)
     p_option_stash = MCM.AddTextOption(" Stash ", "", FLAG_ENABLE)
-    p_option_outfit = MCM.AddMenuOption(CONSTS.STR_MCM_OUTFIT, "", FLAG_ENABLE)
+    p_option_outfit = MCM.AddMenuOption(MCM.STR_MCM_OUTFIT, "", FLAG_ENABLE)
 
     if p_ref_member.Is_Settler()
-        p_option_settle = MCM.AddTextOption(CONSTS.STR_MCM_SETTLE, "", FLAG_DISABLE)
-        p_option_resettle = MCM.AddTextOption(CONSTS.STR_MCM_RESETTLE, "", FLAG_ENABLE)
-        p_option_unsettle = MCM.AddTextOption(CONSTS.STR_MCM_UNSETTLE, "", FLAG_ENABLE)
+        p_option_settle = MCM.AddTextOption(MCM.STR_MCM_SETTLE, "", FLAG_DISABLE)
+        p_option_resettle = MCM.AddTextOption(MCM.STR_MCM_RESETTLE, "", FLAG_ENABLE)
+        p_option_unsettle = MCM.AddTextOption(MCM.STR_MCM_UNSETTLE, "", FLAG_ENABLE)
     else
-        p_option_settle = MCM.AddTextOption(CONSTS.STR_MCM_SETTLE, "", FLAG_ENABLE)
-        p_option_resettle = MCM.AddTextOption(CONSTS.STR_MCM_RESETTLE, "", FLAG_DISABLE)
-        p_option_unsettle = MCM.AddTextOption(CONSTS.STR_MCM_UNSETTLE, "", FLAG_DISABLE)
+        p_option_settle = MCM.AddTextOption(MCM.STR_MCM_SETTLE, "", FLAG_ENABLE)
+        p_option_resettle = MCM.AddTextOption(MCM.STR_MCM_RESETTLE, "", FLAG_DISABLE)
+        p_option_unsettle = MCM.AddTextOption(MCM.STR_MCM_UNSETTLE, "", FLAG_DISABLE)
     endif
 
     if p_ref_member.Is_Immobile()
-        p_option_immobilize = MCM.AddTextOption(CONSTS.STR_MCM_IMMOBILIZE, "", FLAG_DISABLE)
-        p_option_mobilize = MCM.AddTextOption(CONSTS.STR_MCM_MOBILIZE, "", FLAG_ENABLE)
+        p_option_immobilize = MCM.AddTextOption(MCM.STR_MCM_IMMOBILIZE, "", FLAG_DISABLE)
+        p_option_mobilize = MCM.AddTextOption(MCM.STR_MCM_MOBILIZE, "", FLAG_ENABLE)
     else
-        p_option_immobilize = MCM.AddTextOption(CONSTS.STR_MCM_IMMOBILIZE, "", FLAG_ENABLE)
-        p_option_mobilize = MCM.AddTextOption(CONSTS.STR_MCM_MOBILIZE, "", FLAG_DISABLE)
+        p_option_immobilize = MCM.AddTextOption(MCM.STR_MCM_IMMOBILIZE, "", FLAG_ENABLE)
+        p_option_mobilize = MCM.AddTextOption(MCM.STR_MCM_MOBILIZE, "", FLAG_DISABLE)
     endif
 
     if p_ref_member.Is_Paralyzed()
-        p_option_paralyze = MCM.AddTextOption(CONSTS.STR_MCM_PARALYZE, "", FLAG_DISABLE)
-        p_option_unparalyze = MCM.AddTextOption(CONSTS.STR_MCM_UNPARALYZE, "", FLAG_ENABLE)
+        p_option_paralyze = MCM.AddTextOption(MCM.STR_MCM_PARALYZE, "", FLAG_DISABLE)
+        p_option_unparalyze = MCM.AddTextOption(MCM.STR_MCM_UNPARALYZE, "", FLAG_ENABLE)
     else
-        p_option_paralyze = MCM.AddTextOption(CONSTS.STR_MCM_PARALYZE, "", FLAG_ENABLE)
-        p_option_unparalyze = MCM.AddTextOption(CONSTS.STR_MCM_UNPARALYZE, "", FLAG_DISABLE)
+        p_option_paralyze = MCM.AddTextOption(MCM.STR_MCM_PARALYZE, "", FLAG_ENABLE)
+        p_option_unparalyze = MCM.AddTextOption(MCM.STR_MCM_UNPARALYZE, "", FLAG_DISABLE)
     endif
 
     if p_ref_member.Is_Follower()
-        p_option_follow = MCM.AddTextOption(CONSTS.STR_MCM_FOLLOW, "", FLAG_DISABLE)
-        p_option_unfollow = MCM.AddTextOption(CONSTS.STR_MCM_UNFOLLOW, "", FLAG_ENABLE)
+        p_option_follow = MCM.AddTextOption(MCM.STR_MCM_FOLLOW, "", FLAG_DISABLE)
+        p_option_unfollow = MCM.AddTextOption(MCM.STR_MCM_UNFOLLOW, "", FLAG_ENABLE)
 
         if p_ref_member.Is_Sneak()
-            p_option_sneak = MCM.AddTextOption(CONSTS.STR_MCM_SNEAK, "", FLAG_DISABLE)
-            p_option_unsneak = MCM.AddTextOption(CONSTS.STR_MCM_UNSNEAK, "", FLAG_ENABLE)
+            p_option_sneak = MCM.AddTextOption(MCM.STR_MCM_SNEAK, "", FLAG_DISABLE)
+            p_option_unsneak = MCM.AddTextOption(MCM.STR_MCM_UNSNEAK, "", FLAG_ENABLE)
         else
-            p_option_sneak = MCM.AddTextOption(CONSTS.STR_MCM_SNEAK, "", FLAG_ENABLE)
-            p_option_unsneak = MCM.AddTextOption(CONSTS.STR_MCM_UNSNEAK, "", FLAG_DISABLE)
+            p_option_sneak = MCM.AddTextOption(MCM.STR_MCM_SNEAK, "", FLAG_ENABLE)
+            p_option_unsneak = MCM.AddTextOption(MCM.STR_MCM_UNSNEAK, "", FLAG_DISABLE)
         endIf
     else
-        p_option_follow = MCM.AddTextOption(CONSTS.STR_MCM_FOLLOW, "", FLAG_ENABLE)
-        p_option_unfollow = MCM.AddTextOption(CONSTS.STR_MCM_UNFOLLOW, "", FLAG_DISABLE)
+        p_option_follow = MCM.AddTextOption(MCM.STR_MCM_FOLLOW, "", FLAG_ENABLE)
+        p_option_unfollow = MCM.AddTextOption(MCM.STR_MCM_UNFOLLOW, "", FLAG_DISABLE)
 
-        p_option_sneak = MCM.AddTextOption(CONSTS.STR_MCM_SNEAK, "", FLAG_DISABLE)
-        p_option_unsneak = MCM.AddTextOption(CONSTS.STR_MCM_UNSNEAK, "", FLAG_DISABLE)
+        p_option_sneak = MCM.AddTextOption(MCM.STR_MCM_SNEAK, "", FLAG_DISABLE)
+        p_option_unsneak = MCM.AddTextOption(MCM.STR_MCM_UNSNEAK, "", FLAG_DISABLE)
     endif
 
-    p_option_rating = MCM.AddTextOption(CONSTS.STR_MCM_RATING, p_ref_member.Get_Rating_Stars())
+    p_option_rating = MCM.AddTextOption(MCM.STR_MCM_RATING, p_ref_member.Get_Rating_Stars())
 
     int code_style = p_ref_member.Style()
     if code_style == doticu_npcp_codes.STYLE_DEFAULT()
-        p_option_style = MCM.AddTextOption(CONSTS.STR_MCM_STYLE, CONSTS.STR_MCM_DEFAULT)
+        p_option_style = MCM.AddTextOption(MCM.STR_MCM_STYLE, MCM.STR_MCM_DEFAULT)
     elseIf code_style == doticu_npcp_codes.STYLE_WARRIOR()
-        p_option_style = MCM.AddTextOption(CONSTS.STR_MCM_STYLE, CONSTS.STR_MCM_WARRIOR)
+        p_option_style = MCM.AddTextOption(MCM.STR_MCM_STYLE, MCM.STR_MCM_WARRIOR)
     elseIf code_style == doticu_npcp_codes.STYLE_MAGE()
-        p_option_style = MCM.AddTextOption(CONSTS.STR_MCM_STYLE, CONSTS.STR_MCM_MAGE)
+        p_option_style = MCM.AddTextOption(MCM.STR_MCM_STYLE, MCM.STR_MCM_MAGE)
     elseIf code_style == doticu_npcp_codes.STYLE_ARCHER()
-        p_option_style = MCM.AddTextOption(CONSTS.STR_MCM_STYLE, CONSTS.STR_MCM_ARCHER)
+        p_option_style = MCM.AddTextOption(MCM.STR_MCM_STYLE, MCM.STR_MCM_ARCHER)
     elseIf code_style == doticu_npcp_codes.STYLE_COWARD()
-        p_option_style = MCM.AddTextOption(CONSTS.STR_MCM_STYLE, CONSTS.STR_MCM_COWARD)
+        p_option_style = MCM.AddTextOption(MCM.STR_MCM_STYLE, MCM.STR_MCM_COWARD)
     endIf
 
     int code_vitality = p_ref_member.Vitality()
     if code_vitality == doticu_npcp_codes.VITALITY_MORTAL()
-        p_option_vitalize = MCM.AddTextOption(CONSTS.STR_MCM_VITALITY, CONSTS.STR_MCM_MORTAL)
+        p_option_vitalize = MCM.AddTextOption(MCM.STR_MCM_VITALITY, MCM.STR_MCM_MORTAL)
     elseIf code_vitality == doticu_npcp_codes.VITALITY_PROTECTED()
-        p_option_vitalize = MCM.AddTextOption(CONSTS.STR_MCM_VITALITY, CONSTS.STR_MCM_PROTECTED)
+        p_option_vitalize = MCM.AddTextOption(MCM.STR_MCM_VITALITY, MCM.STR_MCM_PROTECTED)
     elseIf code_vitality == doticu_npcp_codes.VITALITY_ESSENTIAL()
-        p_option_vitalize = MCM.AddTextOption(CONSTS.STR_MCM_VITALITY, CONSTS.STR_MCM_ESSENTIAL)
+        p_option_vitalize = MCM.AddTextOption(MCM.STR_MCM_VITALITY, MCM.STR_MCM_ESSENTIAL)
     elseIf code_vitality == doticu_npcp_codes.VITALITY_INVULNERABLE()
-        p_option_vitalize = MCM.AddTextOption(CONSTS.STR_MCM_VITALITY, CONSTS.STR_MCM_INVULNERABLE)
+        p_option_vitalize = MCM.AddTextOption(MCM.STR_MCM_VITALITY, MCM.STR_MCM_INVULNERABLE)
     endIf
 
     if p_ref_member.Is_Dead()
-        p_option_resurrect = MCM.AddTextOption(CONSTS.STR_MCM_RESURRECT, "", FLAG_ENABLE)
+        p_option_resurrect = MCM.AddTextOption(MCM.STR_MCM_RESURRECT, "", FLAG_ENABLE)
     else
-        p_option_resurrect = MCM.AddTextOption(CONSTS.STR_MCM_RESURRECT, "", FLAG_DISABLE)
+        p_option_resurrect = MCM.AddTextOption(MCM.STR_MCM_RESURRECT, "", FLAG_DISABLE)
     endIf
 
-    p_option_clone = MCM.AddTextOption(CONSTS.STR_MCM_CLONE, "", FLAG_ENABLE)
+    p_option_clone = MCM.AddTextOption(MCM.STR_MCM_CLONE, "", FLAG_ENABLE)
     if p_ref_member.Is_Clone()
-        p_option_unclone = MCM.AddTextOption(CONSTS.STR_MCM_UNCLONE, "", FLAG_ENABLE)
+        p_option_unclone = MCM.AddTextOption(MCM.STR_MCM_UNCLONE, "", FLAG_ENABLE)
     else
-        p_option_unclone = MCM.AddTextOption(CONSTS.STR_MCM_UNCLONE, "", FLAG_DISABLE)
+        p_option_unclone = MCM.AddTextOption(MCM.STR_MCM_UNCLONE, "", FLAG_DISABLE)
     endIf
 
     if MEMBERS.Should_Unclone_Member(p_ref_member)
-        p_option_unmember = MCM.AddTextOption(CONSTS.STR_MCM_UNMEMBER, "", FLAG_DISABLE)
+        p_option_unmember = MCM.AddTextOption(MCM.STR_MCM_UNMEMBER, "", FLAG_DISABLE)
     else
-        p_option_unmember = MCM.AddTextOption(CONSTS.STR_MCM_UNMEMBER, "", FLAG_ENABLE)
+        p_option_unmember = MCM.AddTextOption(MCM.STR_MCM_UNMEMBER, "", FLAG_ENABLE)
     endIf
 endFunction
 
@@ -775,26 +770,26 @@ function p_Update_Commands()
 
     int code_style = p_ref_member.Style()
     if code_style == doticu_npcp_codes.STYLE_DEFAULT()
-        MCM.SetTextOptionValue(p_option_style, CONSTS.STR_MCM_DEFAULT, DONT_UPDATE)
+        MCM.SetTextOptionValue(p_option_style, MCM.STR_MCM_DEFAULT, DONT_UPDATE)
     elseIf code_style == doticu_npcp_codes.STYLE_WARRIOR()
-        MCM.SetTextOptionValue(p_option_style, CONSTS.STR_MCM_WARRIOR, DONT_UPDATE)
+        MCM.SetTextOptionValue(p_option_style, MCM.STR_MCM_WARRIOR, DONT_UPDATE)
     elseIf code_style == doticu_npcp_codes.STYLE_MAGE()
-        MCM.SetTextOptionValue(p_option_style, CONSTS.STR_MCM_MAGE, DONT_UPDATE)
+        MCM.SetTextOptionValue(p_option_style, MCM.STR_MCM_MAGE, DONT_UPDATE)
     elseIf code_style == doticu_npcp_codes.STYLE_ARCHER()
-        MCM.SetTextOptionValue(p_option_style, CONSTS.STR_MCM_ARCHER, DONT_UPDATE)
+        MCM.SetTextOptionValue(p_option_style, MCM.STR_MCM_ARCHER, DONT_UPDATE)
     elseIf code_style == doticu_npcp_codes.STYLE_COWARD()
-        MCM.SetTextOptionValue(p_option_style, CONSTS.STR_MCM_COWARD, DONT_UPDATE)
+        MCM.SetTextOptionValue(p_option_style, MCM.STR_MCM_COWARD, DONT_UPDATE)
     endIf
 
     int code_vitality = p_ref_member.Vitality()
     if code_vitality == doticu_npcp_codes.VITALITY_MORTAL()
-        MCM.SetTextOptionValue(p_option_vitalize, CONSTS.STR_MCM_MORTAL, DONT_UPDATE)
+        MCM.SetTextOptionValue(p_option_vitalize, MCM.STR_MCM_MORTAL, DONT_UPDATE)
     elseIf code_vitality == doticu_npcp_codes.VITALITY_PROTECTED()
-        MCM.SetTextOptionValue(p_option_vitalize, CONSTS.STR_MCM_PROTECTED, DONT_UPDATE)
+        MCM.SetTextOptionValue(p_option_vitalize, MCM.STR_MCM_PROTECTED, DONT_UPDATE)
     elseIf code_vitality == doticu_npcp_codes.VITALITY_ESSENTIAL()
-        MCM.SetTextOptionValue(p_option_vitalize, CONSTS.STR_MCM_ESSENTIAL, DONT_UPDATE)
+        MCM.SetTextOptionValue(p_option_vitalize, MCM.STR_MCM_ESSENTIAL, DONT_UPDATE)
     elseIf code_vitality == doticu_npcp_codes.VITALITY_INVULNERABLE()
-        MCM.SetTextOptionValue(p_option_vitalize, CONSTS.STR_MCM_INVULNERABLE, DONT_UPDATE)
+        MCM.SetTextOptionValue(p_option_vitalize, MCM.STR_MCM_INVULNERABLE, DONT_UPDATE)
     endIf
 
     if p_ref_member.Is_Dead()
@@ -826,32 +821,32 @@ function p_Build_Statistics()
 
     Actor ref_actor = p_ref_member.Actor()
 
-    p_option_health             = MCM.AddTextOption(CONSTS.STR_MCM_HEALTH,      ref_actor.GetActorValue(CONSTS.STR_HEALTH)      as int)
-    p_option_magicka            = MCM.AddTextOption(CONSTS.STR_MCM_MAGICKA,     ref_actor.GetActorValue(CONSTS.STR_MAGICKA)     as int)
-    p_option_stamina            = MCM.AddTextOption(CONSTS.STR_MCM_STAMINA,     ref_actor.GetActorValue(CONSTS.STR_STAMINA)     as int)
+    p_option_health             = MCM.AddTextOption(MCM.STR_MCM_HEALTH,      ref_actor.GetActorValue(MCM.STR_HEALTH)      as int)
+    p_option_magicka            = MCM.AddTextOption(MCM.STR_MCM_MAGICKA,     ref_actor.GetActorValue(MCM.STR_MAGICKA)     as int)
+    p_option_stamina            = MCM.AddTextOption(MCM.STR_MCM_STAMINA,     ref_actor.GetActorValue(MCM.STR_STAMINA)     as int)
 
-    p_option_skill_one_handed   = MCM.AddTextOption(CONSTS.STR_MCM_ONE_HANDED,  ref_actor.GetActorValue(CONSTS.STR_ONE_HANDED)  as int)
-    p_option_skill_two_handed   = MCM.AddTextOption(CONSTS.STR_MCM_TWO_HANDED,  ref_actor.GetActorValue(CONSTS.STR_TWO_HANDED)  as int)
-    p_option_skill_block        = MCM.AddTextOption(CONSTS.STR_MCM_BLOCK,       ref_actor.GetActorValue(CONSTS.STR_BLOCK)       as int)
-    p_option_skill_heavy_armor  = MCM.AddTextOption(CONSTS.STR_MCM_HEAVY_ARMOR, ref_actor.GetActorValue(CONSTS.STR_HEAVY_ARMOR) as int)
-    p_option_skill_light_armor  = MCM.AddTextOption(CONSTS.STR_MCM_LIGHT_ARMOR, ref_actor.GetActorValue(CONSTS.STR_LIGHT_ARMOR) as int)
-    p_option_skill_smithing     = MCM.AddTextOption(CONSTS.STR_MCM_SMITHING,    ref_actor.GetActorValue(CONSTS.STR_SMITHING)    as int)
+    p_option_skill_one_handed   = MCM.AddTextOption(MCM.STR_MCM_ONE_HANDED,  ref_actor.GetActorValue(MCM.STR_ONE_HANDED)  as int)
+    p_option_skill_two_handed   = MCM.AddTextOption(MCM.STR_MCM_TWO_HANDED,  ref_actor.GetActorValue(MCM.STR_TWO_HANDED)  as int)
+    p_option_skill_block        = MCM.AddTextOption(MCM.STR_MCM_BLOCK,       ref_actor.GetActorValue(MCM.STR_BLOCK)       as int)
+    p_option_skill_heavy_armor  = MCM.AddTextOption(MCM.STR_MCM_HEAVY_ARMOR, ref_actor.GetActorValue(MCM.STR_HEAVY_ARMOR) as int)
+    p_option_skill_light_armor  = MCM.AddTextOption(MCM.STR_MCM_LIGHT_ARMOR, ref_actor.GetActorValue(MCM.STR_LIGHT_ARMOR) as int)
+    p_option_skill_smithing     = MCM.AddTextOption(MCM.STR_MCM_SMITHING,    ref_actor.GetActorValue(MCM.STR_SMITHING)    as int)
 
-    p_option_skill_destruction  = MCM.AddTextOption(CONSTS.STR_MCM_DESTRUCTION, ref_actor.GetActorValue(CONSTS.STR_DESTRUCTION) as int)
-    p_option_skill_restoration  = MCM.AddTextOption(CONSTS.STR_MCM_RESTORATION, ref_actor.GetActorValue(CONSTS.STR_RESTORATION) as int)
-    p_option_skill_conjuration  = MCM.AddTextOption(CONSTS.STR_MCM_CONJURATION, ref_actor.GetActorValue(CONSTS.STR_CONJURATION) as int)
-    p_option_skill_alteration   = MCM.AddTextOption(CONSTS.STR_MCM_ALTERATION,  ref_actor.GetActorValue(CONSTS.STR_ALTERATION)  as int)
-    p_option_skill_illusion     = MCM.AddTextOption(CONSTS.STR_MCM_ILLUSION,    ref_actor.GetActorValue(CONSTS.STR_ILLUSION)    as int)
-    p_option_skill_enchanting   = MCM.AddTextOption(CONSTS.STR_MCM_ENCHANTING,  ref_actor.GetActorValue(CONSTS.STR_ENCHANTING)  as int)
+    p_option_skill_destruction  = MCM.AddTextOption(MCM.STR_MCM_DESTRUCTION, ref_actor.GetActorValue(MCM.STR_DESTRUCTION) as int)
+    p_option_skill_restoration  = MCM.AddTextOption(MCM.STR_MCM_RESTORATION, ref_actor.GetActorValue(MCM.STR_RESTORATION) as int)
+    p_option_skill_conjuration  = MCM.AddTextOption(MCM.STR_MCM_CONJURATION, ref_actor.GetActorValue(MCM.STR_CONJURATION) as int)
+    p_option_skill_alteration   = MCM.AddTextOption(MCM.STR_MCM_ALTERATION,  ref_actor.GetActorValue(MCM.STR_ALTERATION)  as int)
+    p_option_skill_illusion     = MCM.AddTextOption(MCM.STR_MCM_ILLUSION,    ref_actor.GetActorValue(MCM.STR_ILLUSION)    as int)
+    p_option_skill_enchanting   = MCM.AddTextOption(MCM.STR_MCM_ENCHANTING,  ref_actor.GetActorValue(MCM.STR_ENCHANTING)  as int)
 
-    p_option_skill_marksman     = MCM.AddTextOption(CONSTS.STR_MCM_MARKSMAN,    ref_actor.GetActorValue(CONSTS.STR_MARKSMAN)    as int)
-    p_option_skill_sneak        = MCM.AddTextOption(CONSTS.STR_MCM_SNEAK,       ref_actor.GetActorValue(CONSTS.STR_SNEAK)       as int)
-    p_option_skill_alchemy      = MCM.AddTextOption(CONSTS.STR_MCM_ALCHEMY,     ref_actor.GetActorValue(CONSTS.STR_ALCHEMY)     as int)
-    p_option_skill_lockpicking  = MCM.AddTextOption(CONSTS.STR_MCM_LOCKPICKING, ref_actor.GetActorValue(CONSTS.STR_LOCKPICKING) as int)
-    p_option_skill_pickpocket   = MCM.AddTextOption(CONSTS.STR_MCM_PICKPOCKET,  ref_actor.GetActorValue(CONSTS.STR_PICKPOCKET)  as int)
-    p_option_skill_speechcraft  = MCM.AddTextOption(CONSTS.STR_MCM_SPEECHCRAFT, ref_actor.GetActorValue(CONSTS.STR_SPEECHCRAFT) as int)
+    p_option_skill_marksman     = MCM.AddTextOption(MCM.STR_MCM_MARKSMAN,    ref_actor.GetActorValue(MCM.STR_MARKSMAN)    as int)
+    p_option_skill_sneak        = MCM.AddTextOption(MCM.STR_MCM_SNEAK,       ref_actor.GetActorValue(MCM.STR_SNEAK)       as int)
+    p_option_skill_alchemy      = MCM.AddTextOption(MCM.STR_MCM_ALCHEMY,     ref_actor.GetActorValue(MCM.STR_ALCHEMY)     as int)
+    p_option_skill_lockpicking  = MCM.AddTextOption(MCM.STR_MCM_LOCKPICKING, ref_actor.GetActorValue(MCM.STR_LOCKPICKING) as int)
+    p_option_skill_pickpocket   = MCM.AddTextOption(MCM.STR_MCM_PICKPOCKET,  ref_actor.GetActorValue(MCM.STR_PICKPOCKET)  as int)
+    p_option_skill_speechcraft  = MCM.AddTextOption(MCM.STR_MCM_SPEECHCRAFT, ref_actor.GetActorValue(MCM.STR_SPEECHCRAFT) as int)
 
-    p_option_race               = MCM.AddTextOption(CONSTS.STR_MCM_RACE,        ref_actor.GetRace().GetName())
+    p_option_race               = MCM.AddTextOption(MCM.STR_MCM_RACE,        ref_actor.GetRace().GetName())
 endFunction
 
 function p_Update_Statistics()
@@ -861,30 +856,30 @@ function p_Update_Statistics()
 
     Actor ref_actor = p_ref_member.Actor()
 
-    MCM.SetTextOptionValue(p_option_health,             ref_actor.GetActorValue(CONSTS.STR_HEALTH)      as int,  true)
-    MCM.SetTextOptionValue(p_option_magicka,            ref_actor.GetActorValue(CONSTS.STR_MAGICKA)     as int,  true)
-    MCM.SetTextOptionValue(p_option_stamina,            ref_actor.GetActorValue(CONSTS.STR_STAMINA)     as int,  true)
+    MCM.SetTextOptionValue(p_option_health,             ref_actor.GetActorValue(MCM.STR_HEALTH)      as int,  true)
+    MCM.SetTextOptionValue(p_option_magicka,            ref_actor.GetActorValue(MCM.STR_MAGICKA)     as int,  true)
+    MCM.SetTextOptionValue(p_option_stamina,            ref_actor.GetActorValue(MCM.STR_STAMINA)     as int,  true)
 
-    MCM.SetTextOptionValue(p_option_skill_one_handed,   ref_actor.GetActorValue(CONSTS.STR_ONE_HANDED)  as int,  true)
-    MCM.SetTextOptionValue(p_option_skill_two_handed,   ref_actor.GetActorValue(CONSTS.STR_TWO_HANDED)  as int,  true)
-    MCM.SetTextOptionValue(p_option_skill_block,        ref_actor.GetActorValue(CONSTS.STR_BLOCK)       as int,  true)
-    MCM.SetTextOptionValue(p_option_skill_heavy_armor,  ref_actor.GetActorValue(CONSTS.STR_HEAVY_ARMOR) as int,  true)
-    MCM.SetTextOptionValue(p_option_skill_light_armor,  ref_actor.GetActorValue(CONSTS.STR_LIGHT_ARMOR) as int,  true)
-    MCM.SetTextOptionValue(p_option_skill_smithing,     ref_actor.GetActorValue(CONSTS.STR_SMITHING)    as int,  true)
+    MCM.SetTextOptionValue(p_option_skill_one_handed,   ref_actor.GetActorValue(MCM.STR_ONE_HANDED)  as int,  true)
+    MCM.SetTextOptionValue(p_option_skill_two_handed,   ref_actor.GetActorValue(MCM.STR_TWO_HANDED)  as int,  true)
+    MCM.SetTextOptionValue(p_option_skill_block,        ref_actor.GetActorValue(MCM.STR_BLOCK)       as int,  true)
+    MCM.SetTextOptionValue(p_option_skill_heavy_armor,  ref_actor.GetActorValue(MCM.STR_HEAVY_ARMOR) as int,  true)
+    MCM.SetTextOptionValue(p_option_skill_light_armor,  ref_actor.GetActorValue(MCM.STR_LIGHT_ARMOR) as int,  true)
+    MCM.SetTextOptionValue(p_option_skill_smithing,     ref_actor.GetActorValue(MCM.STR_SMITHING)    as int,  true)
 
-    MCM.SetTextOptionValue(p_option_skill_destruction,  ref_actor.GetActorValue(CONSTS.STR_DESTRUCTION) as int,  true)
-    MCM.SetTextOptionValue(p_option_skill_restoration,  ref_actor.GetActorValue(CONSTS.STR_RESTORATION) as int,  true)
-    MCM.SetTextOptionValue(p_option_skill_conjuration,  ref_actor.GetActorValue(CONSTS.STR_CONJURATION) as int,  true)
-    MCM.SetTextOptionValue(p_option_skill_alteration,   ref_actor.GetActorValue(CONSTS.STR_ALTERATION)  as int,  true)
-    MCM.SetTextOptionValue(p_option_skill_illusion,     ref_actor.GetActorValue(CONSTS.STR_ILLUSION)    as int,  true)
-    MCM.SetTextOptionValue(p_option_skill_enchanting,   ref_actor.GetActorValue(CONSTS.STR_ENCHANTING)  as int,  true)
+    MCM.SetTextOptionValue(p_option_skill_destruction,  ref_actor.GetActorValue(MCM.STR_DESTRUCTION) as int,  true)
+    MCM.SetTextOptionValue(p_option_skill_restoration,  ref_actor.GetActorValue(MCM.STR_RESTORATION) as int,  true)
+    MCM.SetTextOptionValue(p_option_skill_conjuration,  ref_actor.GetActorValue(MCM.STR_CONJURATION) as int,  true)
+    MCM.SetTextOptionValue(p_option_skill_alteration,   ref_actor.GetActorValue(MCM.STR_ALTERATION)  as int,  true)
+    MCM.SetTextOptionValue(p_option_skill_illusion,     ref_actor.GetActorValue(MCM.STR_ILLUSION)    as int,  true)
+    MCM.SetTextOptionValue(p_option_skill_enchanting,   ref_actor.GetActorValue(MCM.STR_ENCHANTING)  as int,  true)
 
-    MCM.SetTextOptionValue(p_option_skill_marksman,     ref_actor.GetActorValue(CONSTS.STR_MARKSMAN)    as int,  true)
-    MCM.SetTextOptionValue(p_option_skill_sneak,        ref_actor.GetActorValue(CONSTS.STR_SNEAK)       as int,  true)
-    MCM.SetTextOptionValue(p_option_skill_alchemy,      ref_actor.GetActorValue(CONSTS.STR_ALCHEMY)     as int,  true)
-    MCM.SetTextOptionValue(p_option_skill_lockpicking,  ref_actor.GetActorValue(CONSTS.STR_LOCKPICKING) as int,  true)
-    MCM.SetTextOptionValue(p_option_skill_pickpocket,   ref_actor.GetActorValue(CONSTS.STR_PICKPOCKET)  as int,  true)
-    MCM.SetTextOptionValue(p_option_skill_speechcraft,  ref_actor.GetActorValue(CONSTS.STR_SPEECHCRAFT) as int,  true)
+    MCM.SetTextOptionValue(p_option_skill_marksman,     ref_actor.GetActorValue(MCM.STR_MARKSMAN)    as int,  true)
+    MCM.SetTextOptionValue(p_option_skill_sneak,        ref_actor.GetActorValue(MCM.STR_SNEAK)       as int,  true)
+    MCM.SetTextOptionValue(p_option_skill_alchemy,      ref_actor.GetActorValue(MCM.STR_ALCHEMY)     as int,  true)
+    MCM.SetTextOptionValue(p_option_skill_lockpicking,  ref_actor.GetActorValue(MCM.STR_LOCKPICKING) as int,  true)
+    MCM.SetTextOptionValue(p_option_skill_pickpocket,   ref_actor.GetActorValue(MCM.STR_PICKPOCKET)  as int,  true)
+    MCM.SetTextOptionValue(p_option_skill_speechcraft,  ref_actor.GetActorValue(MCM.STR_SPEECHCRAFT) as int,  true)
 
     MCM.SetTextOptionValue(p_option_race,               ref_actor.GetRace().GetName()                         , false)
 endFunction

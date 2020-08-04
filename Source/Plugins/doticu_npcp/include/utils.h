@@ -53,11 +53,6 @@ W
 
 #define DOTICU_NPCP_PI 3.141592741f
 
-// set manually upon each release
-#define DOTICU_NPCP_VERSION_MAJOR 0
-#define DOTICU_NPCP_VERSION_MINOR 9
-#define DOTICU_NPCP_VERSION_PATCH 2
-
 #define DOTICU_NPCP_PRINT_PREFIX "doticu_npcp: "
 
 #if 0
@@ -226,7 +221,6 @@ namespace doticu_npcp { namespace Utils {
 
 namespace doticu_npcp { namespace Utils { namespace Exports {
 
-    VMResultArray<SInt32> Get_Plugin_Version(StaticFunctionTag *);
     void Print(StaticFunctionTag *, BSFixedString str);
     void Log(StaticFunctionTag *, BSFixedString str);
 

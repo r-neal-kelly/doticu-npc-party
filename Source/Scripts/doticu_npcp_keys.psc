@@ -5,11 +5,6 @@
 Scriptname doticu_npcp_keys extends Quest
 
 ; Modules
-doticu_npcp_consts property CONSTS hidden
-    doticu_npcp_consts function Get()
-        return p_DATA.CONSTS
-    endFunction
-endProperty
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
         return p_DATA.VARS
@@ -40,6 +35,47 @@ doticu_npcp_logs property LOGS hidden
         return p_DATA.MODS.FUNCS.LOGS
     endFunction
 endProperty
+
+; Public Constants
+string property KEY_G_DIALOGUE_MENU         = "Global: Open Dialogue Menu"  autoReadOnly hidden
+
+string property KEY_N_TOGGLE_MEMBER         = "NPC: Toggle Member"          autoReadOnly hidden
+string property KEY_N_TOGGLE_MOVE           = "NPC: Toggle Move"            autoReadOnly hidden
+string property KEY_N_MOVE_FARTHER          = "NPC: Move Farther"           autoReadOnly hidden
+string property KEY_N_MOVE_NEARER           = "NPC: Move Nearer"            autoReadOnly hidden
+string property KEY_N_MOVE_ROTATE_LEFT      = "NPC: Rotate Left"            autoReadOnly hidden
+string property KEY_N_MOVE_ROTATE_RIGHT     = "NPC: Rotate Right"           autoReadOnly hidden
+string property KEY_N_HAS_BASE              = "NPC: Has Base"               autoReadOnly hidden
+string property KEY_N_COUNT_BASE            = "NPC: Count Base"             autoReadOnly hidden
+string property KEY_N_HAS_HEAD              = "NPC: Has Head"               autoReadOnly hidden
+string property KEY_N_COUNT_HEADS           = "NPC: Count Heads"            autoReadOnly hidden
+
+string property KEY_M_TOGGLE_CLONE          = "Member: Toggle Clone"        autoReadOnly hidden
+string property KEY_M_TOGGLE_SETTLER        = "Member: Toggle Settler"      autoReadOnly hidden
+string property KEY_M_TOGGLE_THRALL         = "Member: Toggle Thrall"       autoReadOnly hidden
+string property KEY_M_TOGGLE_IMMOBILE       = "Member: Toggle Immobile"     autoReadOnly hidden
+string property KEY_M_TOGGLE_PARALYZED      = "Member: Toggle Paralyzed"    autoReadOnly hidden
+string property KEY_M_TOGGLE_FOLLOWER       = "Member: Toggle Follower"     autoReadOnly hidden
+
+string property KEY_F_TOGGLE_SNEAK          = "Follower: Toggle Sneak"      autoReadOnly hidden
+string property KEY_F_TOGGLE_SADDLER        = "Follower: Toggle Saddler"    autoReadOnly hidden
+
+string property KEY_MS_TOGGLE_DISPLAY       = "Members: Toggle Display"     autoReadOnly hidden
+string property KEY_MS_DISPLAY_PREVIOUS     = "Members: Display Previous"   autoReadOnly hidden
+string property KEY_MS_DISPLAY_NEXT         = "Members: Display Next"       autoReadOnly hidden
+
+string property KEY_FS_SUMMON_ALL           = "Followers: Summon All"       autoReadOnly hidden
+string property KEY_FS_SUMMON_MOBILE        = "Followers: Summon Mobile"    autoReadOnly hidden
+string property KEY_FS_SUMMON_IMMOBILE      = "Followers: Summon Immobile"  autoReadOnly hidden
+string property KEY_FS_SETTLE               = "Followers: Settle"           autoReadOnly hidden
+string property KEY_FS_UNSETTLE             = "Followers: Unsettle"         autoReadOnly hidden
+string property KEY_FS_MOBILIZE             = "Followers: Mobilize"         autoReadOnly hidden
+string property KEY_FS_IMMOBILIZE           = "Followers: Immobilize"       autoReadOnly hidden
+string property KEY_FS_SNEAK                = "Followers: Sneak"            autoReadOnly hidden
+string property KEY_FS_UNSNEAK              = "Followers: Unsneak"          autoReadOnly hidden
+string property KEY_FS_SADDLE               = "Followers: Saddle"           autoReadOnly hidden
+string property KEY_FS_UNSADDLE             = "Followers: Unsaddle"         autoReadOnly hidden
+string property KEY_FS_RESURRECT            = "Followers: Resurrect"        autoReadOnly hidden
 
 ; Private Constants
 doticu_npcp_data    p_DATA              =  none
@@ -282,15 +318,15 @@ event OnKeyUp(int value, float hold_time)
     if false
         
     ; General
-    elseIf pressed_hotkey == CONSTS.KEY_G_DIALOGUE_MENU
+    elseIf pressed_hotkey == KEY_G_DIALOGUE_MENU
         FUNCS.ACTORS.Create_Menu()
 
     ; NPC
-    elseIf pressed_hotkey == CONSTS.KEY_N_TOGGLE_MEMBER
+    elseIf pressed_hotkey == KEY_N_TOGGLE_MEMBER
         COMMANDS.Toggle_Member_Sync(Actor_In_Crosshair())
-    elseIf pressed_hotkey == CONSTS.KEY_N_TOGGLE_MOVE
+    elseIf pressed_hotkey == KEY_N_TOGGLE_MOVE
         COMMANDS.Move_Sync(Actor_In_Crosshair(true))
-    elseIf pressed_hotkey == CONSTS.KEY_N_HAS_BASE
+    elseIf pressed_hotkey == KEY_N_HAS_BASE
         Actor ref_actor = Actor_In_Crosshair()
         if ref_actor == none
             LOGS.Create_Note("That is not an NPC.", false)
@@ -299,7 +335,7 @@ event OnKeyUp(int value, float hold_time)
         else
             LOGS.Create_Note("No member has the base of " + ACTORS.Name(ref_actor) + ".", false)
         endIf
-    elseIf pressed_hotkey == CONSTS.KEY_N_COUNT_BASE
+    elseIf pressed_hotkey == KEY_N_COUNT_BASE
         Actor ref_actor = Actor_In_Crosshair()
         if ref_actor == none
             LOGS.Create_Note("That is not an NPC.", false)
@@ -311,7 +347,7 @@ event OnKeyUp(int value, float hold_time)
                 LOGS.Create_Note(num_members + " members have the base of " + ACTORS.Name(ref_actor) + ".", false)
             endIf
         endIf
-    elseif pressed_hotkey == CONSTS.KEY_N_HAS_HEAD
+    elseif pressed_hotkey == KEY_N_HAS_HEAD
         Actor ref_actor = Actor_In_Crosshair()
         if ref_actor == none
             LOGS.Create_Note("That is not an NPC.", false)
@@ -320,7 +356,7 @@ event OnKeyUp(int value, float hold_time)
         else
             LOGS.Create_Note("No member looks like " + ACTORS.Name(ref_actor) + ".", false)
         endIf
-    elseIf pressed_hotkey == CONSTS.KEY_N_COUNT_HEADS
+    elseIf pressed_hotkey == KEY_N_COUNT_HEADS
         Actor ref_actor = Actor_In_Crosshair()
         if ref_actor == none
             LOGS.Create_Note("That is not an NPC.", false)
@@ -334,57 +370,57 @@ event OnKeyUp(int value, float hold_time)
         endIf
 
     ; Member
-    elseIf pressed_hotkey == CONSTS.KEY_M_TOGGLE_CLONE
+    elseIf pressed_hotkey == KEY_M_TOGGLE_CLONE
         COMMANDS.Toggle_Clone_Sync(Actor_In_Crosshair())
-    elseIf pressed_hotkey == CONSTS.KEY_M_TOGGLE_SETTLER
+    elseIf pressed_hotkey == KEY_M_TOGGLE_SETTLER
         COMMANDS.Toggle_Settler(Actor_In_Crosshair())
-    elseIf pressed_hotkey == CONSTS.KEY_M_TOGGLE_THRALL
+    elseIf pressed_hotkey == KEY_M_TOGGLE_THRALL
         COMMANDS.Toggle_Thrall(Actor_In_Crosshair())
-    elseIf pressed_hotkey == CONSTS.KEY_M_TOGGLE_IMMOBILE
+    elseIf pressed_hotkey == KEY_M_TOGGLE_IMMOBILE
         COMMANDS.Toggle_Immobile(Actor_In_Crosshair())
-    elseIf pressed_hotkey == CONSTS.KEY_M_TOGGLE_PARALYZED
+    elseIf pressed_hotkey == KEY_M_TOGGLE_PARALYZED
         COMMANDS.Toggle_Paralyzed(Actor_In_Crosshair())
-    elseIf pressed_hotkey == CONSTS.KEY_M_TOGGLE_FOLLOWER
+    elseIf pressed_hotkey == KEY_M_TOGGLE_FOLLOWER
         COMMANDS.Toggle_Follower_Sync(Actor_In_Crosshair())
 
     ; Follower
-    elseIf pressed_hotkey == CONSTS.KEY_F_TOGGLE_SNEAK
+    elseIf pressed_hotkey == KEY_F_TOGGLE_SNEAK
         COMMANDS.Toggle_Sneak_Async(Actor_In_Crosshair())
-    elseIf pressed_hotkey == CONSTS.KEY_F_TOGGLE_SADDLER
+    elseIf pressed_hotkey == KEY_F_TOGGLE_SADDLER
         COMMANDS.Toggle_Saddler_Async(Actor_In_Crosshair())
 
     ; Members
-    elseIf pressed_hotkey == CONSTS.KEY_MS_TOGGLE_DISPLAY
+    elseIf pressed_hotkey == KEY_MS_TOGGLE_DISPLAY
         COMMANDS.Toggle_Members_Display()
-    elseIf pressed_hotkey == CONSTS.KEY_MS_DISPLAY_PREVIOUS
+    elseIf pressed_hotkey == KEY_MS_DISPLAY_PREVIOUS
         COMMANDS.Members_Display_Previous()
-    elseIf pressed_hotkey == CONSTS.KEY_MS_DISPLAY_NEXT
+    elseIf pressed_hotkey == KEY_MS_DISPLAY_NEXT
         COMMANDS.Members_Display_Next()
 
     ; Followers
-    elseIf pressed_hotkey == CONSTS.KEY_FS_SUMMON_ALL
+    elseIf pressed_hotkey == KEY_FS_SUMMON_ALL
         COMMANDS.Followers_Summon_All()
-    elseIf pressed_hotkey == CONSTS.KEY_FS_SUMMON_MOBILE
+    elseIf pressed_hotkey == KEY_FS_SUMMON_MOBILE
         COMMANDS.Followers_Summon_Mobile()
-    elseIf pressed_hotkey == CONSTS.KEY_FS_SUMMON_IMMOBILE
+    elseIf pressed_hotkey == KEY_FS_SUMMON_IMMOBILE
         COMMANDS.Followers_Summon_Immobile()
-    elseIf pressed_hotkey == CONSTS.KEY_FS_SETTLE
+    elseIf pressed_hotkey == KEY_FS_SETTLE
         COMMANDS.Followers_Settle()
-    elseIf pressed_hotkey == CONSTS.KEY_FS_UNSETTLE
+    elseIf pressed_hotkey == KEY_FS_UNSETTLE
         COMMANDS.Followers_Unsettle()
-    elseIf pressed_hotkey == CONSTS.KEY_FS_MOBILIZE
+    elseIf pressed_hotkey == KEY_FS_MOBILIZE
         COMMANDS.Followers_Mobilize()
-    elseIf pressed_hotkey == CONSTS.KEY_FS_IMMOBILIZE
+    elseIf pressed_hotkey == KEY_FS_IMMOBILIZE
         COMMANDS.Followers_Immobilize()
-    elseIf pressed_hotkey == CONSTS.KEY_FS_SNEAK
+    elseIf pressed_hotkey == KEY_FS_SNEAK
         COMMANDS.Followers_Sneak()
-    elseIf pressed_hotkey == CONSTS.KEY_FS_UNSNEAK
+    elseIf pressed_hotkey == KEY_FS_UNSNEAK
         COMMANDS.Followers_Unsneak()
-    elseIf pressed_hotkey == CONSTS.KEY_FS_SADDLE
+    elseIf pressed_hotkey == KEY_FS_SADDLE
         COMMANDS.Followers_Saddle()
-    elseIf pressed_hotkey == CONSTS.KEY_FS_UNSADDLE
+    elseIf pressed_hotkey == KEY_FS_UNSADDLE
         COMMANDS.Followers_Unsaddle()
-    elseIf pressed_hotkey == CONSTS.KEY_FS_RESURRECT
+    elseIf pressed_hotkey == KEY_FS_RESURRECT
         COMMANDS.Followers_Resurrect()
 
     endIf

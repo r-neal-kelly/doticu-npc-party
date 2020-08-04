@@ -45,17 +45,6 @@ namespace doticu_npcp { namespace Utils {
 
 namespace doticu_npcp { namespace Utils { namespace Exports {
 
-    VMResultArray<SInt32> Get_Plugin_Version(StaticFunctionTag *) {
-        VMResultArray<SInt32> vec_versions;
-        vec_versions.reserve(3);
-
-        vec_versions.push_back(DOTICU_NPCP_VERSION_MAJOR);
-        vec_versions.push_back(DOTICU_NPCP_VERSION_MINOR);
-        vec_versions.push_back(DOTICU_NPCP_VERSION_PATCH);
-
-        return vec_versions;
-    }
-
     void Print(StaticFunctionTag *, BSFixedString str) {
         Console_Print(str.data);
     }
@@ -110,13 +99,6 @@ namespace doticu_npcp { namespace Utils { namespace Exports {
 
         #undef ADD_GLOBAL
 
-        registry->RegisterFunction(
-            new NativeFunction0 <StaticFunctionTag, VMResultArray<SInt32>>(
-                "Get_Plugin_Version",
-                "doticu_npcp",
-                Exports::Get_Plugin_Version,
-                registry)
-        );
         registry->RegisterFunction(
             new NativeFunction1 <StaticFunctionTag, void, BSFixedString>(
                 "Print",

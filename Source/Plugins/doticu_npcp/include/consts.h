@@ -95,6 +95,11 @@ namespace doticu_npcp { namespace Consts {
     Global_t* No_Hands_Percent_Global();
     Global_t* No_Head_Percent_Global();
 
+    // NPCP Ints
+    Int_t NPCP_Major();
+    Int_t NPCP_Minor();
+    Int_t NPCP_Patch();
+
     // NPCP Leveled Actor
     Leveled_Actor_t* Horse_Leveled_Actor();
 
@@ -152,6 +157,8 @@ namespace doticu_npcp { namespace Consts {
     Quest_t* Members_Quest();
     Quest_t* Followers_Quest();
     Quest_t* Control_Quest();
+    Quest_t* Thrall_Dialogue_Quest();
+    Quest_t* Reanimated_Dialogue_Quest();
 
     // NPCP Reference Categories
     Reference_t* Input_Category();

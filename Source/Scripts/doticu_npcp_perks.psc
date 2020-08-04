@@ -5,11 +5,6 @@
 Scriptname doticu_npcp_perks extends Quest hidden
 
 ; Modules
-doticu_npcp_consts property CONSTS hidden
-    doticu_npcp_consts function Get()
-        return p_DATA.CONSTS
-    endFunction
-endProperty
 doticu_npcp_perk_kiss property KISS
     doticu_npcp_perk_kiss function Get()
         return doticu_npcp_consts.Kiss_Thrall_Perk() as doticu_npcp_perk_kiss

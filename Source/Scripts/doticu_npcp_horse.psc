@@ -5,11 +5,6 @@
 Scriptname doticu_npcp_horse extends ReferenceAlias
 
 ; Modules
-doticu_npcp_consts property CONSTS hidden
-    doticu_npcp_consts function Get()
-        return p_DATA.CONSTS
-    endFunction
-endProperty
 doticu_npcp_funcs property FUNCS hidden
     doticu_npcp_funcs function Get()
         return p_DATA.MODS.FUNCS

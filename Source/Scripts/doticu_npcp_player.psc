@@ -10,11 +10,6 @@ doticu_npcp_main property MAIN hidden
         return p_DATA.MODS.MAIN
     endFunction
 endProperty
-doticu_npcp_consts property CONSTS hidden
-    doticu_npcp_consts function Get()
-        return p_DATA.CONSTS
-    endFunction
-endProperty
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
         return p_DATA.VARS

@@ -4,13 +4,6 @@
 
 Scriptname doticu_npcp_tasklists extends Quest
 
-; Modules
-doticu_npcp_consts property CONSTS hidden
-    doticu_npcp_consts function Get()
-        return p_DATA.CONSTS
-    endFunction
-endProperty
-
 ; Publice Constants
 ObjectReference property OBJECT_STORAGE hidden
     ObjectReference function Get()

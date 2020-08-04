@@ -5,11 +5,6 @@
 Scriptname doticu_npcp_members extends Quest
 
 ; Modules
-doticu_npcp_consts property CONSTS hidden
-    doticu_npcp_consts function Get()
-        return p_DATA.CONSTS
-    endFunction
-endProperty
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
         return p_DATA.VARS
@@ -40,6 +35,16 @@ doticu_npcp_logs property LOGS hidden
         return p_DATA.MODS.FUNCS.LOGS
     endFunction
 endProperty
+
+; Public Constants
+int property MIN_DISPLAY                    =     1 autoReadOnly hidden
+int property MAX_DISPLAY                    =     8 autoReadOnly hidden
+int property DEFAULT_DISPLAY                =     5 autoReadOnly hidden
+
+int property DEFAULT_PERCENT_BODY           =   100 autoReadOnly hidden
+int property DEFAULT_PERCENT_FEET           =    90 autoReadOnly hidden
+int property DEFAULT_PERCENT_HANDS          =    90 autoReadOnly hidden
+int property DEFAULT_PERCENT_HEAD           =    50 autoReadOnly hidden
 
 ; Private Constants
 doticu_npcp_data        p_DATA              =  none

@@ -4,13 +4,6 @@
 
 Scriptname doticu_npcp_vars extends Quest
 
-; Modules
-doticu_npcp_consts property CONSTS hidden
-    doticu_npcp_consts function Get()
-        return p_DATA.CONSTS
-    endFunction
-endProperty
-
 ; Private Constants
 doticu_npcp_data    p_DATA                  =  none
 
@@ -431,9 +424,9 @@ function Log_Variables() native
 function Log_Properties() native
 
 function Set_Defaults()
-    version_major = CONSTS.VERSION_MAJOR
-    version_minor = CONSTS.VERSION_MINOR
-    version_patch = CONSTS.VERSION_PATCH
+    version_major = doticu_npcp_consts.NPCP_Major()
+    version_minor = doticu_npcp_consts.NPCP_Minor()
+    version_patch = doticu_npcp_consts.NPCP_Patch()
 
     auto_style = doticu_npcp_codes.STYLE_DEFAULT(); DEFAULT, WARRIOR, MAGE, ARCHER, COWARD
     auto_vitality = doticu_npcp_codes.VITALITY_PROTECTED(); MORTAL, PROTECTED, ESSENTIAL, INVULNERABLE
@@ -448,16 +441,16 @@ function Set_Defaults()
     auto_outfit = false
     auto_immobile_outfit = false
     fill_outfits = true
-    percent_body = CONSTS.DEFAULT_PERCENT_BODY
-    percent_feet = CONSTS.DEFAULT_PERCENT_FEET
-    percent_hands = CONSTS.DEFAULT_PERCENT_HANDS
-    percent_head = CONSTS.DEFAULT_PERCENT_HEAD
+    percent_body = p_DATA.MODS.MEMBERS.DEFAULT_PERCENT_BODY
+    percent_feet = p_DATA.MODS.MEMBERS.DEFAULT_PERCENT_FEET
+    percent_hands = p_DATA.MODS.MEMBERS.DEFAULT_PERCENT_HANDS
+    percent_head = p_DATA.MODS.MEMBERS.DEFAULT_PERCENT_HEAD
 
     str_sort_members = "NAME"
     str_sort_followers = "NAME"
 
-    num_display = CONSTS.DEFAULT_DISPLAY
-    max_members = p_DATA.MODS.MEMBERS.GetNumAliases(); MEMBERS is not f_Create()'d yet, but this func can be called
+    num_display = p_DATA.MODS.MEMBERS.DEFAULT_DISPLAY
+    max_members = p_DATA.MODS.MEMBERS.Max(); MEMBERS is not f_Create()'d yet, but this func can be called
 
     is_updating = false
     is_mcm_open = false

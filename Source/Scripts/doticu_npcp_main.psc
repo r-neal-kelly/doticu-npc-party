@@ -5,11 +5,6 @@
 Scriptname doticu_npcp_main extends Quest
 
 ; Modules
-doticu_npcp_consts property CONSTS hidden
-    doticu_npcp_consts function Get()
-        return p_DATA.CONSTS
-    endFunction
-endProperty
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
         return p_DATA.VARS
@@ -81,22 +76,14 @@ function f_Init_Mod()
 endFunction
 
 function f_Load_Mod()
-    ; just in case of any engine bugs, like AddItem, which may not work
-    ; during the first second of the game, see wiki
-    FUNCS.Wait_Out_Of_Menu(1)
+    FUNCS.Wait_Out_Of_Menu(1); just in case of any engine bugs
+    if p_Has_Requires()
+        p_Register()
+        p_Version()
 
-    if !p_Has_Requires()
-        return
+        FUNCS.Send_Event("doticu_npcp_load_mod")
+        doticu_npcp.Print("NPC Party has loaded.")
     endIf
-
-    DATA.Stop()
-    DATA.Start()
-
-    p_Register()
-    p_Version()
-
-    FUNCS.Send_Event("doticu_npcp_load_mod")
-    doticu_npcp.Print("NPC Party has loaded.")
 endFunction
 
 ; Private Methods
@@ -127,14 +114,6 @@ bool function p_Has_Requires()
         return false
     endIf
 
-    int[] plugin_version = doticu_npcp.Get_Plugin_Version()
-    if CONSTS.VERSION_MAJOR != plugin_version[0] || CONSTS.VERSION_MINOR != plugin_version[1] || CONSTS.VERSION_PATCH != plugin_version[2]
-        Debug.MessageBox("NPC Party: The NPC Party plugin doesn't match the current version. " + \
-                         "The plugin has not been correctly installed or correctly updated. " + \
-                         "Exit without saving, and make sure everything is installed correctly before trying again.")
-        return false
-    endIf
-
     return true
 endFunction
 
@@ -159,18 +138,23 @@ function p_Register()
 endFunction
 
 function p_Version()
-    if Is_NPC_Party_Version_Less_Than(CONSTS.VERSION_MAJOR, CONSTS.VERSION_MINOR, CONSTS.VERSION_PATCH)
+    if Is_NPC_Party_Version_Less_Than(doticu_npcp_consts.NPCP_Major(), \
+                                      doticu_npcp_consts.NPCP_Minor(), \
+                                      doticu_npcp_consts.NPCP_Patch())
         p_Start_Updating()
 
         if Is_NPC_Party_Version_Less_Than(0, 9, 1)
             u_0_9_1()
         endIf
 
-        VARS.version_major = CONSTS.VERSION_MAJOR
-        VARS.version_minor = CONSTS.VERSION_MINOR
-        VARS.version_patch = CONSTS.VERSION_PATCH
+        VARS.version_major = doticu_npcp_consts.NPCP_Major()
+        VARS.version_minor = doticu_npcp_consts.NPCP_Minor()
+        VARS.version_patch = doticu_npcp_consts.NPCP_Patch()
 
-        FUNCS.LOGS.Create_Note("Running version " + Get_Version_String())
+        FUNCS.LOGS.Create_Note("Running version " + \
+                               doticu_npcp_consts.NPCP_Major() + "." + \
+                               doticu_npcp_consts.NPCP_Minor() + "." + \
+                               doticu_npcp_consts.NPCP_Patch())
 
         p_Stop_Updating()
     endIf
@@ -187,32 +171,6 @@ function p_Stop_Updating()
 endFunction
 
 ; Public Methods
-int[] function Get_Version_Array()
-    int[] arr_version = new int[3]
-
-    arr_version[0] = CONSTS.VERSION_MAJOR
-    arr_version[1] = CONSTS.VERSION_MINOR
-    arr_version[2] = CONSTS.VERSION_PATCH
-
-    return arr_version
-endFunction
-
-string function Get_Version_String()
-    return CONSTS.VERSION_MAJOR + "." + CONSTS.VERSION_MINOR + "." + CONSTS.VERSION_PATCH
-endFunction
-
-int function Get_Version_Major()
-    return CONSTS.VERSION_MAJOR
-endFunction
-
-int function Get_Version_Minor()
-    return CONSTS.VERSION_MINOR
-endFunction
-
-int function Get_Version_Patch()
-    return CONSTS.VERSION_PATCH
-endFunction
-
 bool function Is_Version_Less_Than(int major, int minor, int patch, int min_major, int min_minor, int min_patch)
     if major != min_major
         return major < min_major
@@ -238,9 +196,9 @@ bool function Is_NPC_Party_Version(int major, int minor, int patch)
 endFunction
 
 bool function Is_Ready()
-    return  VARS.version_major == CONSTS.VERSION_MAJOR && \
-            VARS.version_minor == CONSTS.VERSION_MINOR && \
-            VARS.version_patch == CONSTS.VERSION_PATCH
+    return  VARS.version_major == doticu_npcp_consts.NPCP_Major() && \
+            VARS.version_minor == doticu_npcp_consts.NPCP_Minor() && \
+            VARS.version_patch == doticu_npcp_consts.NPCP_Patch()
 endFunction
 
 ; Update Methods
@@ -250,11 +208,9 @@ endFunction
 
 ; Events
 event OnInit()
-    ; we don't want to init in this thread because
-    ; it won't wait for properties to be filled
+    ; we don't init in this thread because it will not wait
     RegisterForSingleUpdate(0.01)
 endEvent
-
 event OnUpdate()
     f_Init_Mod()
 endEvent

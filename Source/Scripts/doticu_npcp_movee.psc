@@ -7,11 +7,6 @@
 Scriptname doticu_npcp_movee extends ReferenceAlias
 
 ; Modules
-doticu_npcp_consts property CONSTS hidden
-    doticu_npcp_consts function Get()
-        return p_DATA.CONSTS
-    endFunction
-endProperty
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
         return p_DATA.VARS
@@ -309,15 +304,15 @@ event OnKeyUp(int value, float hold_time)
     endIf
 
     string pressed_key = KEYS.Pressed_Hotkey(value)
-    if pressed_key == CONSTS.KEY_N_TOGGLE_MOVE
+    if pressed_key == KEYS.KEY_N_TOGGLE_MOVE
         ACTORS.Toggle_Move(p_ref_actor); calls f_Destroy()
-    elseIf pressed_key == CONSTS.KEY_N_MOVE_FARTHER
+    elseIf pressed_key == KEYS.KEY_N_MOVE_FARTHER
         p_do_distance_farther = false
-    elseIf pressed_key == CONSTS.KEY_N_MOVE_NEARER
+    elseIf pressed_key == KEYS.KEY_N_MOVE_NEARER
         p_do_distance_nearer = false
-    elseIf pressed_key == CONSTS.KEY_N_MOVE_ROTATE_LEFT
+    elseIf pressed_key == KEYS.KEY_N_MOVE_ROTATE_LEFT
         p_do_rotate_left = false
-    elseIf pressed_key == CONSTS.KEY_N_MOVE_ROTATE_RIGHT
+    elseIf pressed_key == KEYS.KEY_N_MOVE_ROTATE_RIGHT
         p_do_rotate_right = false
 
     endIf

@@ -5,11 +5,6 @@
 Scriptname doticu_npcp_mcm_hotkeys extends Quest
 
 ; Modules
-doticu_npcp_consts property CONSTS hidden
-    doticu_npcp_consts function Get()
-        return p_DATA.CONSTS
-    endFunction
-endProperty
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
         return p_DATA.VARS
@@ -154,126 +149,126 @@ function f_Build_Page()
     MCM.AddHeaderOption(" Global ")
     MCM.AddEmptyOption()
     p_option_g_dialogue_menu = MCM.AddKeymapOption(" Dialogue Menu ", VARS.key_g_dialogue_menu, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_g_dialogue_menu_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_G_DIALOGUE_MENU))
+    p_option_g_dialogue_menu_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_G_DIALOGUE_MENU))
     MCM.AddEmptyOption()
     MCM.AddEmptyOption()
 
     MCM.AddHeaderOption(" NPC ")
     MCM.AddEmptyOption()
     p_option_n_toggle_member = MCM.AddKeymapOption(" Toggle Member ", VARS.key_n_toggle_member, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_n_toggle_member_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_N_TOGGLE_MEMBER))
+    p_option_n_toggle_member_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_N_TOGGLE_MEMBER))
 
     p_option_n_toggle_move = MCM.AddKeymapOption(" Toggle Move ", VARS.key_n_toggle_move, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_n_toggle_move_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_N_TOGGLE_MOVE))
+    p_option_n_toggle_move_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_N_TOGGLE_MOVE))
 
     p_option_n_move_nearer = MCM.AddKeymapOption(" Move Nearer ", VARS.key_n_move_nearer, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_n_move_nearer_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_N_MOVE_NEARER))
+    p_option_n_move_nearer_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_N_MOVE_NEARER))
 
     p_option_n_move_farther = MCM.AddKeymapOption(" Move Farther ", VARS.key_n_move_farther, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_n_move_farther_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_N_MOVE_FARTHER))
+    p_option_n_move_farther_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_N_MOVE_FARTHER))
 
     p_option_n_move_rotate_left = MCM.AddKeymapOption(" Move Clockwise ", VARS.key_n_move_rotate_left, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_n_move_rotate_left_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_N_MOVE_ROTATE_LEFT))
+    p_option_n_move_rotate_left_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_N_MOVE_ROTATE_LEFT))
 
     p_option_n_move_rotate_right = MCM.AddKeymapOption(" Move Counter-Clockwise ", VARS.key_n_move_rotate_right, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_n_move_rotate_right_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_N_MOVE_ROTATE_RIGHT))
+    p_option_n_move_rotate_right_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_N_MOVE_ROTATE_RIGHT))
 
     p_option_n_has_base = MCM.AddKeymapOption(" Has Base ", VARS.key_n_has_base, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_n_has_base_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_N_HAS_BASE))
+    p_option_n_has_base_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_N_HAS_BASE))
 
     p_option_n_count_base = MCM.AddKeymapOption(" Count Base ", VARS.key_n_count_base, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_n_count_base_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_N_COUNT_BASE))
+    p_option_n_count_base_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_N_COUNT_BASE))
 
     p_option_n_has_head = MCM.AddKeymapOption(" Has Head ", VARS.key_n_has_head, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_n_has_head_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_N_HAS_HEAD))
+    p_option_n_has_head_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_N_HAS_HEAD))
 
     p_option_n_count_heads = MCM.AddKeymapOption(" Count Heads ", VARS.key_n_count_heads, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_n_count_heads_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_N_COUNT_HEADS))
+    p_option_n_count_heads_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_N_COUNT_HEADS))
     MCM.AddEmptyOption()
     MCM.AddEmptyOption()
 
     MCM.AddHeaderOption(" Member ")
     MCM.AddEmptyOption()
     p_option_m_toggle_clone = MCM.AddKeymapOption(" Toggle Clone ", VARS.key_m_toggle_clone, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_m_toggle_clone_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_M_TOGGLE_CLONE))
+    p_option_m_toggle_clone_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_M_TOGGLE_CLONE))
 
     p_option_m_toggle_settler = MCM.AddKeymapOption(" Toggle Settler ", VARS.key_m_toggle_settler, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_m_toggle_settler_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_M_TOGGLE_SETTLER))
+    p_option_m_toggle_settler_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_M_TOGGLE_SETTLER))
 
     p_option_m_toggle_thrall = MCM.AddKeymapOption(" Toggle Thrall ", VARS.key_m_toggle_thrall, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_m_toggle_thrall_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_M_TOGGLE_THRALL))
+    p_option_m_toggle_thrall_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_M_TOGGLE_THRALL))
 
     p_option_m_toggle_immobile = MCM.AddKeymapOption(" Toggle Immobile ", VARS.key_m_toggle_immobile, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_m_toggle_immobile_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_M_TOGGLE_IMMOBILE))
+    p_option_m_toggle_immobile_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_M_TOGGLE_IMMOBILE))
 
     p_option_m_toggle_paralyzed = MCM.AddKeymapOption(" Toggle Paralyzed ", VARS.key_m_toggle_paralyzed, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_m_toggle_paralyzed_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_M_TOGGLE_PARALYZED))
+    p_option_m_toggle_paralyzed_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_M_TOGGLE_PARALYZED))
 
     p_option_m_toggle_follower = MCM.AddKeymapOption(" Toggle Follower ", VARS.key_m_toggle_follower, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_m_toggle_follower_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_M_TOGGLE_FOLLOWER))
+    p_option_m_toggle_follower_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_M_TOGGLE_FOLLOWER))
     MCM.AddEmptyOption()
     MCM.AddEmptyOption()
 
     MCM.AddHeaderOption(" Follower ")
     MCM.AddEmptyOption()
     p_option_f_toggle_sneak = MCM.AddKeymapOption(" Toggle Sneak ", VARS.key_f_toggle_sneak, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_f_toggle_sneak_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_F_TOGGLE_SNEAK))
+    p_option_f_toggle_sneak_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_F_TOGGLE_SNEAK))
 
     p_option_f_toggle_saddler = MCM.AddKeymapOption(" Toggle Saddler ", VARS.key_f_toggle_saddler, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_f_toggle_saddler_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_F_TOGGLE_SADDLER))
+    p_option_f_toggle_saddler_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_F_TOGGLE_SADDLER))
     MCM.AddEmptyOption()
     MCM.AddEmptyOption()
 
     MCM.AddHeaderOption(" Members ")
     MCM.AddEmptyOption()
     p_option_ms_toggle_display = MCM.AddKeymapOption(" Toggle Display ", VARS.key_ms_toggle_display, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_ms_toggle_display_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_MS_TOGGLE_DISPLAY))
+    p_option_ms_toggle_display_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_MS_TOGGLE_DISPLAY))
 
     p_option_ms_display_previous = MCM.AddKeymapOption(" Display Previous ", VARS.key_ms_display_previous, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_ms_display_previous_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_MS_DISPLAY_PREVIOUS))
+    p_option_ms_display_previous_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_MS_DISPLAY_PREVIOUS))
 
     p_option_ms_display_next = MCM.AddKeymapOption(" Display Next ", VARS.key_ms_display_next, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_ms_display_next_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_MS_DISPLAY_NEXT))
+    p_option_ms_display_next_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_MS_DISPLAY_NEXT))
     MCM.AddEmptyOption()
     MCM.AddEmptyOption()
 
     MCM.AddHeaderOption(" Followers ")
     MCM.AddEmptyOption()
     p_option_fs_summon_all = MCM.AddKeymapOption(" Summon All ", VARS.key_fs_summon_all, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_fs_summon_all_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_FS_SUMMON_ALL))
+    p_option_fs_summon_all_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_FS_SUMMON_ALL))
 
     p_option_fs_summon_mobile = MCM.AddKeymapOption(" Summon Mobile ", VARS.key_fs_summon_mobile, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_fs_summon_mobile_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_FS_SUMMON_MOBILE))
+    p_option_fs_summon_mobile_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_FS_SUMMON_MOBILE))
 
     p_option_fs_summon_immobile = MCM.AddKeymapOption(" Summon Immobile ", VARS.key_fs_summon_immobile, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_fs_summon_immobile_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_FS_SUMMON_IMMOBILE))
+    p_option_fs_summon_immobile_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_FS_SUMMON_IMMOBILE))
 
     p_option_fs_settle = MCM.AddKeymapOption(" Settle ", VARS.key_fs_settle, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_fs_settle_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_FS_SETTLE))
+    p_option_fs_settle_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_FS_SETTLE))
 
     p_option_fs_unsettle = MCM.AddKeymapOption(" Unsettle ", VARS.key_fs_unsettle, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_fs_unsettle_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_FS_UNSETTLE))
+    p_option_fs_unsettle_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_FS_UNSETTLE))
 
     p_option_fs_mobilize = MCM.AddKeymapOption(" Mobilize ", VARS.key_fs_mobilize, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_fs_mobilize_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_FS_MOBILIZE))
+    p_option_fs_mobilize_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_FS_MOBILIZE))
 
     p_option_fs_immobilize = MCM.AddKeymapOption(" Immobilize ", VARS.key_fs_immobilize, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_fs_immobilize_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_FS_IMMOBILIZE))
+    p_option_fs_immobilize_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_FS_IMMOBILIZE))
 
     p_option_fs_sneak = MCM.AddKeymapOption(" Sneak ", VARS.key_fs_sneak, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_fs_sneak_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_FS_SNEAK))
+    p_option_fs_sneak_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_FS_SNEAK))
 
     p_option_fs_unsneak = MCM.AddKeymapOption(" Unsneak ", VARS.key_fs_unsneak, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_fs_unsneak_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_FS_UNSNEAK))
+    p_option_fs_unsneak_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_FS_UNSNEAK))
 
     p_option_fs_saddle = MCM.AddKeymapOption(" Saddle ", VARS.key_fs_saddle, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_fs_saddle_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_FS_SADDLE))
+    p_option_fs_saddle_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_FS_SADDLE))
 
     p_option_fs_unsaddle = MCM.AddKeymapOption(" Unsaddle ", VARS.key_fs_unsaddle, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_fs_unsaddle_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_FS_UNSADDLE))
+    p_option_fs_unsaddle_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_FS_UNSADDLE))
 
     p_option_fs_resurrect = MCM.AddKeymapOption(" Resurrect ", VARS.key_fs_resurrect, MCM.OPTION_FLAG_WITH_UNMAP)
-    p_option_fs_resurrect_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(CONSTS.KEY_FS_RESURRECT))
+    p_option_fs_resurrect_mods = MCM.AddTextOption(" Mods ", KEYS.Current_Mods_To_String(KEYS.KEY_FS_RESURRECT))
     MCM.AddEmptyOption()
     MCM.AddEmptyOption()
 endFunction
@@ -539,83 +534,83 @@ string function p_Value_Option_to_Hotkey(int id_option)
 
     ; Global
     elseIf id_option == p_option_g_dialogue_menu
-        return CONSTS.KEY_G_DIALOGUE_MENU
+        return KEYS.KEY_G_DIALOGUE_MENU
 
     ; NPC
     elseIf id_option == p_option_n_toggle_member
-        return CONSTS.KEY_N_TOGGLE_MEMBER
+        return KEYS.KEY_N_TOGGLE_MEMBER
     elseIf id_option == p_option_n_toggle_move
-        return CONSTS.KEY_N_TOGGLE_MOVE
+        return KEYS.KEY_N_TOGGLE_MOVE
     elseIf id_option == p_option_n_move_farther
-        return CONSTS.KEY_N_MOVE_FARTHER
+        return KEYS.KEY_N_MOVE_FARTHER
     elseIf id_option == p_option_n_move_nearer
-        return CONSTS.KEY_N_MOVE_NEARER
+        return KEYS.KEY_N_MOVE_NEARER
     elseIf id_option == p_option_n_move_rotate_right
-        return CONSTS.KEY_N_MOVE_ROTATE_RIGHT
+        return KEYS.KEY_N_MOVE_ROTATE_RIGHT
     elseIf id_option == p_option_n_move_rotate_left
-        return CONSTS.KEY_N_MOVE_ROTATE_LEFT
+        return KEYS.KEY_N_MOVE_ROTATE_LEFT
     elseIf id_option == p_option_n_has_base
-        return CONSTS.KEY_N_HAS_BASE
+        return KEYS.KEY_N_HAS_BASE
     elseIf id_option == p_option_n_count_base
-        return CONSTS.KEY_N_COUNT_BASE
+        return KEYS.KEY_N_COUNT_BASE
     elseIf id_option == p_option_n_has_head
-        return CONSTS.KEY_N_HAS_HEAD
+        return KEYS.KEY_N_HAS_HEAD
     elseIf id_option == p_option_n_count_heads
-        return CONSTS.KEY_N_COUNT_HEADS
+        return KEYS.KEY_N_COUNT_HEADS
 
     ; Member
     elseIf id_option == p_option_m_toggle_clone
-        return CONSTS.KEY_M_TOGGLE_CLONE
+        return KEYS.KEY_M_TOGGLE_CLONE
     elseIf id_option == p_option_m_toggle_settler
-        return CONSTS.KEY_M_TOGGLE_SETTLER
+        return KEYS.KEY_M_TOGGLE_SETTLER
     elseIf id_option == p_option_m_toggle_thrall
-        return CONSTS.KEY_M_TOGGLE_THRALL
+        return KEYS.KEY_M_TOGGLE_THRALL
     elseIf id_option == p_option_m_toggle_immobile
-        return CONSTS.KEY_M_TOGGLE_IMMOBILE
+        return KEYS.KEY_M_TOGGLE_IMMOBILE
     elseIf id_option == p_option_m_toggle_paralyzed
-        return CONSTS.KEY_M_TOGGLE_PARALYZED
+        return KEYS.KEY_M_TOGGLE_PARALYZED
     elseIf id_option == p_option_m_toggle_follower
-        return CONSTS.KEY_M_TOGGLE_FOLLOWER
+        return KEYS.KEY_M_TOGGLE_FOLLOWER
 
     ; Follower
     elseIf id_option == p_option_f_toggle_sneak
-        return CONSTS.KEY_F_TOGGLE_SNEAK
+        return KEYS.KEY_F_TOGGLE_SNEAK
     elseIf id_option == p_option_f_toggle_saddler
-        return CONSTS.KEY_F_TOGGLE_SADDLER
+        return KEYS.KEY_F_TOGGLE_SADDLER
 
     ; Members
     elseIf id_option == p_option_ms_toggle_display
-        return CONSTS.KEY_MS_TOGGLE_DISPLAY
+        return KEYS.KEY_MS_TOGGLE_DISPLAY
     elseIf id_option == p_option_ms_display_previous
-        return CONSTS.KEY_MS_DISPLAY_PREVIOUS
+        return KEYS.KEY_MS_DISPLAY_PREVIOUS
     elseIf id_option == p_option_ms_display_next
-        return CONSTS.KEY_MS_DISPLAY_NEXT
+        return KEYS.KEY_MS_DISPLAY_NEXT
 
     ; Followers
     elseIf id_option == p_option_fs_summon_all
-        return CONSTS.KEY_FS_SUMMON_ALL
+        return KEYS.KEY_FS_SUMMON_ALL
     elseIf id_option == p_option_fs_summon_mobile
-        return CONSTS.KEY_FS_SUMMON_MOBILE
+        return KEYS.KEY_FS_SUMMON_MOBILE
     elseIf id_option == p_option_fs_summon_immobile
-        return CONSTS.KEY_FS_SUMMON_IMMOBILE
+        return KEYS.KEY_FS_SUMMON_IMMOBILE
     elseIf id_option == p_option_fs_settle
-        return CONSTS.KEY_FS_SETTLE
+        return KEYS.KEY_FS_SETTLE
     elseIf id_option == p_option_fs_unsettle
-        return CONSTS.KEY_FS_UNSETTLE
+        return KEYS.KEY_FS_UNSETTLE
     elseIf id_option == p_option_fs_mobilize
-        return CONSTS.KEY_FS_MOBILIZE
+        return KEYS.KEY_FS_MOBILIZE
     elseIf id_option == p_option_fs_immobilize
-        return CONSTS.KEY_FS_IMMOBILIZE
+        return KEYS.KEY_FS_IMMOBILIZE
     elseIf id_option == p_option_fs_sneak
-        return CONSTS.KEY_FS_SNEAK
+        return KEYS.KEY_FS_SNEAK
     elseIf id_option == p_option_fs_unsneak
-        return CONSTS.KEY_FS_UNSNEAK
+        return KEYS.KEY_FS_UNSNEAK
     elseIf id_option == p_option_fs_saddle
-        return CONSTS.KEY_FS_SADDLE
+        return KEYS.KEY_FS_SADDLE
     elseIf id_option == p_option_fs_unsaddle
-        return CONSTS.KEY_FS_UNSADDLE
+        return KEYS.KEY_FS_UNSADDLE
     elseIf id_option == p_option_fs_resurrect
-        return CONSTS.KEY_FS_RESURRECT
+        return KEYS.KEY_FS_RESURRECT
 
     else
         return ""
@@ -628,83 +623,83 @@ string function p_Mods_Option_to_Hotkey(int id_option)
 
     ; Global
     elseIf id_option == p_option_g_dialogue_menu_mods
-        return CONSTS.KEY_G_DIALOGUE_MENU
+        return KEYS.KEY_G_DIALOGUE_MENU
 
     ; NPC
     elseIf id_option == p_option_n_toggle_member_mods
-        return CONSTS.KEY_N_TOGGLE_MEMBER
+        return KEYS.KEY_N_TOGGLE_MEMBER
     elseIf id_option == p_option_n_toggle_move_mods
-        return CONSTS.KEY_N_TOGGLE_MOVE
+        return KEYS.KEY_N_TOGGLE_MOVE
     elseIf id_option == p_option_n_move_farther_mods
-        return CONSTS.KEY_N_MOVE_FARTHER
+        return KEYS.KEY_N_MOVE_FARTHER
     elseIf id_option == p_option_n_move_nearer_mods
-        return CONSTS.KEY_N_MOVE_NEARER
+        return KEYS.KEY_N_MOVE_NEARER
     elseIf id_option == p_option_n_move_rotate_right_mods
-        return CONSTS.KEY_N_MOVE_ROTATE_RIGHT
+        return KEYS.KEY_N_MOVE_ROTATE_RIGHT
     elseIf id_option == p_option_n_move_rotate_left_mods
-        return CONSTS.KEY_N_MOVE_ROTATE_LEFT
+        return KEYS.KEY_N_MOVE_ROTATE_LEFT
     elseIf id_option == p_option_n_has_base_mods
-        return CONSTS.KEY_N_HAS_BASE
+        return KEYS.KEY_N_HAS_BASE
     elseIf id_option == p_option_n_count_base_mods
-        return CONSTS.KEY_N_COUNT_BASE
+        return KEYS.KEY_N_COUNT_BASE
     elseIf id_option == p_option_n_has_head_mods
-        return CONSTS.KEY_N_HAS_HEAD
+        return KEYS.KEY_N_HAS_HEAD
     elseIf id_option == p_option_n_count_heads_mods
-        return CONSTS.KEY_N_COUNT_HEADS
+        return KEYS.KEY_N_COUNT_HEADS
 
     ; Member
     elseIf id_option == p_option_m_toggle_clone_mods
-        return CONSTS.KEY_M_TOGGLE_CLONE
+        return KEYS.KEY_M_TOGGLE_CLONE
     elseIf id_option == p_option_m_toggle_settler_mods
-        return CONSTS.KEY_M_TOGGLE_SETTLER
+        return KEYS.KEY_M_TOGGLE_SETTLER
     elseIf id_option == p_option_m_toggle_thrall_mods
-        return CONSTS.KEY_M_TOGGLE_THRALL
+        return KEYS.KEY_M_TOGGLE_THRALL
     elseIf id_option == p_option_m_toggle_immobile_mods
-        return CONSTS.KEY_M_TOGGLE_IMMOBILE
+        return KEYS.KEY_M_TOGGLE_IMMOBILE
     elseIf id_option == p_option_m_toggle_paralyzed_mods
-        return CONSTS.KEY_M_TOGGLE_PARALYZED
+        return KEYS.KEY_M_TOGGLE_PARALYZED
     elseIf id_option == p_option_m_toggle_follower_mods
-        return CONSTS.KEY_M_TOGGLE_FOLLOWER
+        return KEYS.KEY_M_TOGGLE_FOLLOWER
 
     ; Follower
     elseIf id_option == p_option_f_toggle_sneak_mods
-        return CONSTS.KEY_F_TOGGLE_SNEAK
+        return KEYS.KEY_F_TOGGLE_SNEAK
     elseIf id_option == p_option_f_toggle_saddler_mods
-        return CONSTS.KEY_F_TOGGLE_SADDLER
+        return KEYS.KEY_F_TOGGLE_SADDLER
 
     ; Members
     elseIf id_option == p_option_ms_toggle_display_mods
-        return CONSTS.KEY_MS_TOGGLE_DISPLAY
+        return KEYS.KEY_MS_TOGGLE_DISPLAY
     elseIf id_option == p_option_ms_display_previous_mods
-        return CONSTS.KEY_MS_DISPLAY_PREVIOUS
+        return KEYS.KEY_MS_DISPLAY_PREVIOUS
     elseIf id_option == p_option_ms_display_next_mods
-        return CONSTS.KEY_MS_DISPLAY_NEXT
+        return KEYS.KEY_MS_DISPLAY_NEXT
 
     ; Followers
     elseIf id_option == p_option_fs_summon_all_mods
-        return CONSTS.KEY_FS_SUMMON_ALL
+        return KEYS.KEY_FS_SUMMON_ALL
     elseIf id_option == p_option_fs_summon_mobile_mods
-        return CONSTS.KEY_FS_SUMMON_MOBILE
+        return KEYS.KEY_FS_SUMMON_MOBILE
     elseIf id_option == p_option_fs_summon_immobile_mods
-        return CONSTS.KEY_FS_SUMMON_IMMOBILE
+        return KEYS.KEY_FS_SUMMON_IMMOBILE
     elseIf id_option == p_option_fs_settle_mods
-        return CONSTS.KEY_FS_SETTLE
+        return KEYS.KEY_FS_SETTLE
     elseIf id_option == p_option_fs_unsettle_mods
-        return CONSTS.KEY_FS_UNSETTLE
+        return KEYS.KEY_FS_UNSETTLE
     elseIf id_option == p_option_fs_mobilize_mods
-        return CONSTS.KEY_FS_MOBILIZE
+        return KEYS.KEY_FS_MOBILIZE
     elseIf id_option == p_option_fs_immobilize_mods
-        return CONSTS.KEY_FS_IMMOBILIZE
+        return KEYS.KEY_FS_IMMOBILIZE
     elseIf id_option == p_option_fs_sneak_mods
-        return CONSTS.KEY_FS_SNEAK
+        return KEYS.KEY_FS_SNEAK
     elseIf id_option == p_option_fs_unsneak_mods
-        return CONSTS.KEY_FS_UNSNEAK
+        return KEYS.KEY_FS_UNSNEAK
     elseIf id_option == p_option_fs_saddle_mods
-        return CONSTS.KEY_FS_SADDLE
+        return KEYS.KEY_FS_SADDLE
     elseIf id_option == p_option_fs_unsaddle_mods
-        return CONSTS.KEY_FS_UNSADDLE
+        return KEYS.KEY_FS_UNSADDLE
     elseIf id_option == p_option_fs_resurrect_mods
-        return CONSTS.KEY_FS_RESURRECT
+        return KEYS.KEY_FS_RESURRECT
 
     else
         return ""
@@ -960,50 +955,50 @@ endFunction
 
 function p_Set_Hotkey_Defaults()
     ; Global
-    p_Set_Hotkey_Default(p_option_g_dialogue_menu,      p_option_g_dialogue_menu_mods,      CONSTS.KEY_G_DIALOGUE_MENU)
+    p_Set_Hotkey_Default(p_option_g_dialogue_menu,      p_option_g_dialogue_menu_mods,      KEYS.KEY_G_DIALOGUE_MENU)
 
     ; NPC
-    p_Set_Hotkey_Default(p_option_n_toggle_member,      p_option_n_toggle_member_mods,      CONSTS.KEY_N_TOGGLE_MEMBER)
-    p_Set_Hotkey_Default(p_option_n_toggle_move,        p_option_n_toggle_move_mods,        CONSTS.KEY_N_TOGGLE_MOVE)
-    p_Set_Hotkey_Default(p_option_n_move_farther,       p_option_n_move_farther_mods,       CONSTS.KEY_N_MOVE_FARTHER)
-    p_Set_Hotkey_Default(p_option_n_move_nearer,        p_option_n_move_nearer_mods,        CONSTS.KEY_N_MOVE_NEARER)
-    p_Set_Hotkey_Default(p_option_n_move_rotate_right,  p_option_n_move_rotate_right_mods,  CONSTS.KEY_N_MOVE_ROTATE_RIGHT)
-    p_Set_Hotkey_Default(p_option_n_move_rotate_left,   p_option_n_move_rotate_left_mods,   CONSTS.KEY_N_MOVE_ROTATE_LEFT)
-    p_Set_Hotkey_Default(p_option_n_has_base,           p_option_n_has_base_mods,           CONSTS.KEY_N_HAS_BASE)
-    p_Set_Hotkey_Default(p_option_n_count_base,         p_option_n_count_base_mods,         CONSTS.KEY_N_COUNT_BASE)
-    p_Set_Hotkey_Default(p_option_n_has_head,           p_option_n_has_head_mods,           CONSTS.KEY_N_HAS_HEAD)
-    p_Set_Hotkey_Default(p_option_n_count_heads,        p_option_n_count_heads_mods,        CONSTS.KEY_N_COUNT_HEADS)
+    p_Set_Hotkey_Default(p_option_n_toggle_member,      p_option_n_toggle_member_mods,      KEYS.KEY_N_TOGGLE_MEMBER)
+    p_Set_Hotkey_Default(p_option_n_toggle_move,        p_option_n_toggle_move_mods,        KEYS.KEY_N_TOGGLE_MOVE)
+    p_Set_Hotkey_Default(p_option_n_move_farther,       p_option_n_move_farther_mods,       KEYS.KEY_N_MOVE_FARTHER)
+    p_Set_Hotkey_Default(p_option_n_move_nearer,        p_option_n_move_nearer_mods,        KEYS.KEY_N_MOVE_NEARER)
+    p_Set_Hotkey_Default(p_option_n_move_rotate_right,  p_option_n_move_rotate_right_mods,  KEYS.KEY_N_MOVE_ROTATE_RIGHT)
+    p_Set_Hotkey_Default(p_option_n_move_rotate_left,   p_option_n_move_rotate_left_mods,   KEYS.KEY_N_MOVE_ROTATE_LEFT)
+    p_Set_Hotkey_Default(p_option_n_has_base,           p_option_n_has_base_mods,           KEYS.KEY_N_HAS_BASE)
+    p_Set_Hotkey_Default(p_option_n_count_base,         p_option_n_count_base_mods,         KEYS.KEY_N_COUNT_BASE)
+    p_Set_Hotkey_Default(p_option_n_has_head,           p_option_n_has_head_mods,           KEYS.KEY_N_HAS_HEAD)
+    p_Set_Hotkey_Default(p_option_n_count_heads,        p_option_n_count_heads_mods,        KEYS.KEY_N_COUNT_HEADS)
 
     ; Member
-    p_Set_Hotkey_Default(p_option_m_toggle_clone,       p_option_m_toggle_clone_mods,       CONSTS.KEY_M_TOGGLE_CLONE)
-    p_Set_Hotkey_Default(p_option_m_toggle_settler,     p_option_m_toggle_settler_mods,     CONSTS.KEY_M_TOGGLE_SETTLER)
-    p_Set_Hotkey_Default(p_option_m_toggle_thrall,      p_option_m_toggle_thrall_mods,      CONSTS.KEY_M_TOGGLE_THRALL)
-    p_Set_Hotkey_Default(p_option_m_toggle_immobile,    p_option_m_toggle_immobile_mods,    CONSTS.KEY_M_TOGGLE_IMMOBILE)
-    p_Set_Hotkey_Default(p_option_m_toggle_paralyzed,   p_option_m_toggle_paralyzed_mods,   CONSTS.KEY_M_TOGGLE_PARALYZED)
-    p_Set_Hotkey_Default(p_option_m_toggle_follower,    p_option_m_toggle_follower_mods,    CONSTS.KEY_M_TOGGLE_FOLLOWER)
+    p_Set_Hotkey_Default(p_option_m_toggle_clone,       p_option_m_toggle_clone_mods,       KEYS.KEY_M_TOGGLE_CLONE)
+    p_Set_Hotkey_Default(p_option_m_toggle_settler,     p_option_m_toggle_settler_mods,     KEYS.KEY_M_TOGGLE_SETTLER)
+    p_Set_Hotkey_Default(p_option_m_toggle_thrall,      p_option_m_toggle_thrall_mods,      KEYS.KEY_M_TOGGLE_THRALL)
+    p_Set_Hotkey_Default(p_option_m_toggle_immobile,    p_option_m_toggle_immobile_mods,    KEYS.KEY_M_TOGGLE_IMMOBILE)
+    p_Set_Hotkey_Default(p_option_m_toggle_paralyzed,   p_option_m_toggle_paralyzed_mods,   KEYS.KEY_M_TOGGLE_PARALYZED)
+    p_Set_Hotkey_Default(p_option_m_toggle_follower,    p_option_m_toggle_follower_mods,    KEYS.KEY_M_TOGGLE_FOLLOWER)
 
     ; Follower
-    p_Set_Hotkey_Default(p_option_f_toggle_sneak,       p_option_f_toggle_sneak_mods,       CONSTS.KEY_F_TOGGLE_SNEAK)
-    p_Set_Hotkey_Default(p_option_f_toggle_saddler,     p_option_f_toggle_saddler_mods,     CONSTS.KEY_F_TOGGLE_SADDLER)
+    p_Set_Hotkey_Default(p_option_f_toggle_sneak,       p_option_f_toggle_sneak_mods,       KEYS.KEY_F_TOGGLE_SNEAK)
+    p_Set_Hotkey_Default(p_option_f_toggle_saddler,     p_option_f_toggle_saddler_mods,     KEYS.KEY_F_TOGGLE_SADDLER)
 
     ; Members
-    p_Set_Hotkey_Default(p_option_ms_toggle_display,    p_option_ms_toggle_display_mods,    CONSTS.KEY_MS_TOGGLE_DISPLAY)
-    p_Set_Hotkey_Default(p_option_ms_display_previous,  p_option_ms_display_previous_mods,  CONSTS.KEY_MS_DISPLAY_PREVIOUS)
-    p_Set_Hotkey_Default(p_option_ms_display_next,      p_option_ms_display_next_mods,      CONSTS.KEY_MS_DISPLAY_NEXT)
+    p_Set_Hotkey_Default(p_option_ms_toggle_display,    p_option_ms_toggle_display_mods,    KEYS.KEY_MS_TOGGLE_DISPLAY)
+    p_Set_Hotkey_Default(p_option_ms_display_previous,  p_option_ms_display_previous_mods,  KEYS.KEY_MS_DISPLAY_PREVIOUS)
+    p_Set_Hotkey_Default(p_option_ms_display_next,      p_option_ms_display_next_mods,      KEYS.KEY_MS_DISPLAY_NEXT)
 
     ; Followers
-    p_Set_Hotkey_Default(p_option_fs_summon_all,        p_option_fs_summon_all_mods,        CONSTS.KEY_FS_SUMMON_ALL)
-    p_Set_Hotkey_Default(p_option_fs_summon_mobile,     p_option_fs_summon_mobile_mods,     CONSTS.KEY_FS_SUMMON_MOBILE)
-    p_Set_Hotkey_Default(p_option_fs_summon_immobile,   p_option_fs_summon_immobile_mods,   CONSTS.KEY_FS_SUMMON_IMMOBILE)
-    p_Set_Hotkey_Default(p_option_fs_settle,            p_option_fs_settle_mods,            CONSTS.KEY_FS_SETTLE)
-    p_Set_Hotkey_Default(p_option_fs_unsettle,          p_option_fs_unsettle_mods,          CONSTS.KEY_FS_UNSETTLE)
-    p_Set_Hotkey_Default(p_option_fs_mobilize,          p_option_fs_mobilize_mods,          CONSTS.KEY_FS_MOBILIZE)
-    p_Set_Hotkey_Default(p_option_fs_immobilize,        p_option_fs_immobilize_mods,        CONSTS.KEY_FS_IMMOBILIZE)
-    p_Set_Hotkey_Default(p_option_fs_sneak,             p_option_fs_sneak_mods,             CONSTS.KEY_FS_SNEAK)
-    p_Set_Hotkey_Default(p_option_fs_unsneak,           p_option_fs_unsneak_mods,           CONSTS.KEY_FS_UNSNEAK)
-    p_Set_Hotkey_Default(p_option_fs_saddle,            p_option_fs_saddle_mods,            CONSTS.KEY_FS_SADDLE)
-    p_Set_Hotkey_Default(p_option_fs_unsaddle,          p_option_fs_unsaddle_mods,          CONSTS.KEY_FS_UNSADDLE)
-    p_Set_Hotkey_Default(p_option_fs_resurrect,         p_option_fs_resurrect_mods,         CONSTS.KEY_FS_RESURRECT)
+    p_Set_Hotkey_Default(p_option_fs_summon_all,        p_option_fs_summon_all_mods,        KEYS.KEY_FS_SUMMON_ALL)
+    p_Set_Hotkey_Default(p_option_fs_summon_mobile,     p_option_fs_summon_mobile_mods,     KEYS.KEY_FS_SUMMON_MOBILE)
+    p_Set_Hotkey_Default(p_option_fs_summon_immobile,   p_option_fs_summon_immobile_mods,   KEYS.KEY_FS_SUMMON_IMMOBILE)
+    p_Set_Hotkey_Default(p_option_fs_settle,            p_option_fs_settle_mods,            KEYS.KEY_FS_SETTLE)
+    p_Set_Hotkey_Default(p_option_fs_unsettle,          p_option_fs_unsettle_mods,          KEYS.KEY_FS_UNSETTLE)
+    p_Set_Hotkey_Default(p_option_fs_mobilize,          p_option_fs_mobilize_mods,          KEYS.KEY_FS_MOBILIZE)
+    p_Set_Hotkey_Default(p_option_fs_immobilize,        p_option_fs_immobilize_mods,        KEYS.KEY_FS_IMMOBILIZE)
+    p_Set_Hotkey_Default(p_option_fs_sneak,             p_option_fs_sneak_mods,             KEYS.KEY_FS_SNEAK)
+    p_Set_Hotkey_Default(p_option_fs_unsneak,           p_option_fs_unsneak_mods,           KEYS.KEY_FS_UNSNEAK)
+    p_Set_Hotkey_Default(p_option_fs_saddle,            p_option_fs_saddle_mods,            KEYS.KEY_FS_SADDLE)
+    p_Set_Hotkey_Default(p_option_fs_unsaddle,          p_option_fs_unsaddle_mods,          KEYS.KEY_FS_UNSADDLE)
+    p_Set_Hotkey_Default(p_option_fs_resurrect,         p_option_fs_resurrect_mods,         KEYS.KEY_FS_RESURRECT)
 
     KEYS.Update_Keys()
 endFunction
@@ -1019,50 +1014,50 @@ endFunction
 
 function p_Unset_All_Hotkeys()
     ; Global
-    p_Unset_Hotkey(p_option_g_dialogue_menu,        p_option_g_dialogue_menu_mods,      CONSTS.KEY_G_DIALOGUE_MENU)
+    p_Unset_Hotkey(p_option_g_dialogue_menu,        p_option_g_dialogue_menu_mods,      KEYS.KEY_G_DIALOGUE_MENU)
 
     ; NPC
-    p_Unset_Hotkey(p_option_n_toggle_member,        p_option_n_toggle_member_mods,      CONSTS.KEY_N_TOGGLE_MEMBER)
-    p_Unset_Hotkey(p_option_n_toggle_move,          p_option_n_toggle_move_mods,        CONSTS.KEY_N_TOGGLE_MOVE)
-    p_Unset_Hotkey(p_option_n_move_farther,         p_option_n_move_farther_mods,       CONSTS.KEY_N_MOVE_FARTHER)
-    p_Unset_Hotkey(p_option_n_move_nearer,          p_option_n_move_nearer_mods,        CONSTS.KEY_N_MOVE_NEARER)
-    p_Unset_Hotkey(p_option_n_move_rotate_right,    p_option_n_move_rotate_right_mods,  CONSTS.KEY_N_MOVE_ROTATE_RIGHT)
-    p_Unset_Hotkey(p_option_n_move_rotate_left,     p_option_n_move_rotate_left_mods,   CONSTS.KEY_N_MOVE_ROTATE_LEFT)
-    p_Unset_Hotkey(p_option_n_has_base,             p_option_n_has_base_mods,           CONSTS.KEY_N_HAS_BASE)
-    p_Unset_Hotkey(p_option_n_count_base,           p_option_n_count_base_mods,         CONSTS.KEY_N_COUNT_BASE)
-    p_Unset_Hotkey(p_option_n_has_head,             p_option_n_has_head_mods,           CONSTS.KEY_N_HAS_HEAD)
-    p_Unset_Hotkey(p_option_n_count_heads,          p_option_n_count_heads_mods,        CONSTS.KEY_N_COUNT_HEADS)
+    p_Unset_Hotkey(p_option_n_toggle_member,        p_option_n_toggle_member_mods,      KEYS.KEY_N_TOGGLE_MEMBER)
+    p_Unset_Hotkey(p_option_n_toggle_move,          p_option_n_toggle_move_mods,        KEYS.KEY_N_TOGGLE_MOVE)
+    p_Unset_Hotkey(p_option_n_move_farther,         p_option_n_move_farther_mods,       KEYS.KEY_N_MOVE_FARTHER)
+    p_Unset_Hotkey(p_option_n_move_nearer,          p_option_n_move_nearer_mods,        KEYS.KEY_N_MOVE_NEARER)
+    p_Unset_Hotkey(p_option_n_move_rotate_right,    p_option_n_move_rotate_right_mods,  KEYS.KEY_N_MOVE_ROTATE_RIGHT)
+    p_Unset_Hotkey(p_option_n_move_rotate_left,     p_option_n_move_rotate_left_mods,   KEYS.KEY_N_MOVE_ROTATE_LEFT)
+    p_Unset_Hotkey(p_option_n_has_base,             p_option_n_has_base_mods,           KEYS.KEY_N_HAS_BASE)
+    p_Unset_Hotkey(p_option_n_count_base,           p_option_n_count_base_mods,         KEYS.KEY_N_COUNT_BASE)
+    p_Unset_Hotkey(p_option_n_has_head,             p_option_n_has_head_mods,           KEYS.KEY_N_HAS_HEAD)
+    p_Unset_Hotkey(p_option_n_count_heads,          p_option_n_count_heads_mods,        KEYS.KEY_N_COUNT_HEADS)
 
     ; Member
-    p_Unset_Hotkey(p_option_m_toggle_clone,         p_option_m_toggle_clone_mods,       CONSTS.KEY_M_TOGGLE_CLONE)
-    p_Unset_Hotkey(p_option_m_toggle_settler,       p_option_m_toggle_settler_mods,     CONSTS.KEY_M_TOGGLE_SETTLER)
-    p_Unset_Hotkey(p_option_m_toggle_thrall,        p_option_m_toggle_thrall_mods,      CONSTS.KEY_M_TOGGLE_THRALL)
-    p_Unset_Hotkey(p_option_m_toggle_immobile,      p_option_m_toggle_immobile_mods,    CONSTS.KEY_M_TOGGLE_IMMOBILE)
-    p_Unset_Hotkey(p_option_m_toggle_paralyzed,     p_option_m_toggle_paralyzed_mods,   CONSTS.KEY_M_TOGGLE_PARALYZED)
-    p_Unset_Hotkey(p_option_m_toggle_follower,      p_option_m_toggle_follower_mods,    CONSTS.KEY_M_TOGGLE_FOLLOWER)
+    p_Unset_Hotkey(p_option_m_toggle_clone,         p_option_m_toggle_clone_mods,       KEYS.KEY_M_TOGGLE_CLONE)
+    p_Unset_Hotkey(p_option_m_toggle_settler,       p_option_m_toggle_settler_mods,     KEYS.KEY_M_TOGGLE_SETTLER)
+    p_Unset_Hotkey(p_option_m_toggle_thrall,        p_option_m_toggle_thrall_mods,      KEYS.KEY_M_TOGGLE_THRALL)
+    p_Unset_Hotkey(p_option_m_toggle_immobile,      p_option_m_toggle_immobile_mods,    KEYS.KEY_M_TOGGLE_IMMOBILE)
+    p_Unset_Hotkey(p_option_m_toggle_paralyzed,     p_option_m_toggle_paralyzed_mods,   KEYS.KEY_M_TOGGLE_PARALYZED)
+    p_Unset_Hotkey(p_option_m_toggle_follower,      p_option_m_toggle_follower_mods,    KEYS.KEY_M_TOGGLE_FOLLOWER)
 
     ; Follower
-    p_Unset_Hotkey(p_option_f_toggle_sneak,         p_option_f_toggle_sneak_mods,       CONSTS.KEY_F_TOGGLE_SNEAK)
-    p_Unset_Hotkey(p_option_f_toggle_saddler,       p_option_f_toggle_saddler_mods,     CONSTS.KEY_F_TOGGLE_SADDLER)
+    p_Unset_Hotkey(p_option_f_toggle_sneak,         p_option_f_toggle_sneak_mods,       KEYS.KEY_F_TOGGLE_SNEAK)
+    p_Unset_Hotkey(p_option_f_toggle_saddler,       p_option_f_toggle_saddler_mods,     KEYS.KEY_F_TOGGLE_SADDLER)
 
     ; Members
-    p_Unset_Hotkey(p_option_ms_toggle_display,      p_option_ms_toggle_display_mods,    CONSTS.KEY_MS_TOGGLE_DISPLAY)
-    p_Unset_Hotkey(p_option_ms_display_previous,    p_option_ms_display_previous_mods,  CONSTS.KEY_MS_DISPLAY_PREVIOUS)
-    p_Unset_Hotkey(p_option_ms_display_next,        p_option_ms_display_next_mods,      CONSTS.KEY_MS_DISPLAY_NEXT)
+    p_Unset_Hotkey(p_option_ms_toggle_display,      p_option_ms_toggle_display_mods,    KEYS.KEY_MS_TOGGLE_DISPLAY)
+    p_Unset_Hotkey(p_option_ms_display_previous,    p_option_ms_display_previous_mods,  KEYS.KEY_MS_DISPLAY_PREVIOUS)
+    p_Unset_Hotkey(p_option_ms_display_next,        p_option_ms_display_next_mods,      KEYS.KEY_MS_DISPLAY_NEXT)
 
     ; Followers
-    p_Unset_Hotkey(p_option_fs_summon_all,          p_option_fs_summon_all_mods,        CONSTS.KEY_FS_SUMMON_ALL)
-    p_Unset_Hotkey(p_option_fs_summon_mobile,       p_option_fs_summon_mobile_mods,     CONSTS.KEY_FS_SUMMON_MOBILE)
-    p_Unset_Hotkey(p_option_fs_summon_immobile,     p_option_fs_summon_immobile_mods,   CONSTS.KEY_FS_SUMMON_IMMOBILE)
-    p_Unset_Hotkey(p_option_fs_settle,              p_option_fs_settle_mods,            CONSTS.KEY_FS_SETTLE)
-    p_Unset_Hotkey(p_option_fs_unsettle,            p_option_fs_unsettle_mods,          CONSTS.KEY_FS_UNSETTLE)
-    p_Unset_Hotkey(p_option_fs_mobilize,            p_option_fs_mobilize_mods,          CONSTS.KEY_FS_MOBILIZE)
-    p_Unset_Hotkey(p_option_fs_immobilize,          p_option_fs_immobilize_mods,        CONSTS.KEY_FS_IMMOBILIZE)
-    p_Unset_Hotkey(p_option_fs_sneak,               p_option_fs_sneak_mods,             CONSTS.KEY_FS_SNEAK)
-    p_Unset_Hotkey(p_option_fs_unsneak,             p_option_fs_unsneak_mods,           CONSTS.KEY_FS_UNSNEAK)
-    p_Unset_Hotkey(p_option_fs_saddle,              p_option_fs_saddle_mods,            CONSTS.KEY_FS_SADDLE)
-    p_Unset_Hotkey(p_option_fs_unsaddle,            p_option_fs_unsaddle_mods,          CONSTS.KEY_FS_UNSADDLE)
-    p_Unset_Hotkey(p_option_fs_resurrect,           p_option_fs_resurrect_mods,         CONSTS.KEY_FS_RESURRECT)
+    p_Unset_Hotkey(p_option_fs_summon_all,          p_option_fs_summon_all_mods,        KEYS.KEY_FS_SUMMON_ALL)
+    p_Unset_Hotkey(p_option_fs_summon_mobile,       p_option_fs_summon_mobile_mods,     KEYS.KEY_FS_SUMMON_MOBILE)
+    p_Unset_Hotkey(p_option_fs_summon_immobile,     p_option_fs_summon_immobile_mods,   KEYS.KEY_FS_SUMMON_IMMOBILE)
+    p_Unset_Hotkey(p_option_fs_settle,              p_option_fs_settle_mods,            KEYS.KEY_FS_SETTLE)
+    p_Unset_Hotkey(p_option_fs_unsettle,            p_option_fs_unsettle_mods,          KEYS.KEY_FS_UNSETTLE)
+    p_Unset_Hotkey(p_option_fs_mobilize,            p_option_fs_mobilize_mods,          KEYS.KEY_FS_MOBILIZE)
+    p_Unset_Hotkey(p_option_fs_immobilize,          p_option_fs_immobilize_mods,        KEYS.KEY_FS_IMMOBILIZE)
+    p_Unset_Hotkey(p_option_fs_sneak,               p_option_fs_sneak_mods,             KEYS.KEY_FS_SNEAK)
+    p_Unset_Hotkey(p_option_fs_unsneak,             p_option_fs_unsneak_mods,           KEYS.KEY_FS_UNSNEAK)
+    p_Unset_Hotkey(p_option_fs_saddle,              p_option_fs_saddle_mods,            KEYS.KEY_FS_SADDLE)
+    p_Unset_Hotkey(p_option_fs_unsaddle,            p_option_fs_unsaddle_mods,          KEYS.KEY_FS_UNSADDLE)
+    p_Unset_Hotkey(p_option_fs_resurrect,           p_option_fs_resurrect_mods,         KEYS.KEY_FS_RESURRECT)
 
     KEYS.Update_Keys()
 endFunction

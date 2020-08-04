@@ -42,7 +42,6 @@ function Outfit_Remove_Item(Outfit outfit_outfit, Form form_item) native global
 function Run_Tests() native global
 
 ; Utils
-int[] function Get_Plugin_Version() native global
 function Print(string str) native global
 function Log(string str) native global
 function Log_Cell(Cell ref_cell) native global

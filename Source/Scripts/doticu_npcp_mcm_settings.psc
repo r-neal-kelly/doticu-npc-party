@@ -5,11 +5,6 @@
 Scriptname doticu_npcp_mcm_settings extends Quest
 
 ; Modules
-doticu_npcp_consts property CONSTS hidden
-    doticu_npcp_consts function Get()
-        return p_DATA.CONSTS
-    endFunction
-endProperty
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
         return p_DATA.VARS
@@ -108,24 +103,24 @@ function f_Build_Page()
     MCM.AddHeaderOption(" General ")
     MCM.AddEmptyOption()
     if VARS.auto_style == doticu_npcp_codes.STYLE_DEFAULT()
-        p_option_auto_style = MCM.AddTextOption(" New Member Style ", CONSTS.STR_MCM_DEFAULT)
+        p_option_auto_style = MCM.AddTextOption(" New Member Style ", MCM.STR_MCM_DEFAULT)
     elseIf VARS.auto_style == doticu_npcp_codes.STYLE_WARRIOR()
-        p_option_auto_style = MCM.AddTextOption(" New Member Style ", CONSTS.STR_MCM_WARRIOR)
+        p_option_auto_style = MCM.AddTextOption(" New Member Style ", MCM.STR_MCM_WARRIOR)
     elseIf VARS.auto_style == doticu_npcp_codes.STYLE_MAGE()
-        p_option_auto_style = MCM.AddTextOption(" New Member Style ", CONSTS.STR_MCM_MAGE)
+        p_option_auto_style = MCM.AddTextOption(" New Member Style ", MCM.STR_MCM_MAGE)
     elseIf VARS.auto_style == doticu_npcp_codes.STYLE_ARCHER()
-        p_option_auto_style = MCM.AddTextOption(" New Member Style ", CONSTS.STR_MCM_ARCHER)
+        p_option_auto_style = MCM.AddTextOption(" New Member Style ", MCM.STR_MCM_ARCHER)
     elseIf VARS.auto_style == doticu_npcp_codes.STYLE_COWARD()
-        p_option_auto_style = MCM.AddTextOption(" New Member Style ", CONSTS.STR_MCM_COWARD)
+        p_option_auto_style = MCM.AddTextOption(" New Member Style ", MCM.STR_MCM_COWARD)
     endIf
     if VARS.auto_vitality == doticu_npcp_codes.VITALITY_MORTAL()
-        p_option_auto_vitality = MCM.AddTextOption(" New Member Vitality ", CONSTS.STR_MCM_MORTAL)
+        p_option_auto_vitality = MCM.AddTextOption(" New Member Vitality ", MCM.STR_MCM_MORTAL)
     elseIf VARS.auto_vitality == doticu_npcp_codes.VITALITY_PROTECTED()
-        p_option_auto_vitality = MCM.AddTextOption(" New Member Vitality ", CONSTS.STR_MCM_PROTECTED)
+        p_option_auto_vitality = MCM.AddTextOption(" New Member Vitality ", MCM.STR_MCM_PROTECTED)
     elseIf VARS.auto_vitality == doticu_npcp_codes.VITALITY_ESSENTIAL()
-        p_option_auto_vitality = MCM.AddTextOption(" New Member Vitality ", CONSTS.STR_MCM_ESSENTIAL)
+        p_option_auto_vitality = MCM.AddTextOption(" New Member Vitality ", MCM.STR_MCM_ESSENTIAL)
     elseIf VARS.auto_vitality == doticu_npcp_codes.VITALITY_INVULNERABLE()
-        p_option_auto_vitality = MCM.AddTextOption(" New Member Vitality ", CONSTS.STR_MCM_INVULNERABLE)
+        p_option_auto_vitality = MCM.AddTextOption(" New Member Vitality ", MCM.STR_MCM_INVULNERABLE)
     endIf
     p_option_slider_max_members = MCM.AddSliderOption(" Max Members ", VARS.max_members, " {0} ")
     p_option_slider_ms_display = MCM.AddSliderOption(" Members per Display Cycle ", VARS.num_display, " {0} ")
@@ -141,9 +136,9 @@ function f_Build_Page()
     p_option_force_clone_generic = MCM.AddToggleOption(" Force Clone Generic NPCs ", VARS.force_clone_generic)
     p_option_force_unclone_generic = MCM.AddToggleOption(" Force Unclone Generic NPCs ", VARS.force_unclone_generic)
     if VARS.clone_outfit == doticu_npcp_codes.OUTFIT_BASE()
-        p_option_clone_outfit = MCM.AddTextOption(" New Clone Outfit ", CONSTS.STR_MCM_BASE)
+        p_option_clone_outfit = MCM.AddTextOption(" New Clone Outfit ", MCM.STR_MCM_BASE)
     elseIf VARS.clone_outfit == doticu_npcp_codes.OUTFIT_REFERENCE()
-        p_option_clone_outfit = MCM.AddTextOption(" New Clone Outfit ", CONSTS.STR_MCM_REFERENCE)
+        p_option_clone_outfit = MCM.AddTextOption(" New Clone Outfit ", MCM.STR_MCM_REFERENCE)
     endIf
     MCM.AddEmptyOption()
     MCM.AddEmptyOption()
@@ -183,33 +178,33 @@ function f_On_Option_Select(int id_option)
     elseIf id_option == p_option_auto_style
         if VARS.auto_style == doticu_npcp_codes.STYLE_DEFAULT()
             VARS.auto_style = doticu_npcp_codes.STYLE_WARRIOR()
-            MCM.SetTextOptionValue(p_option_auto_style, CONSTS.STR_MCM_WARRIOR)
+            MCM.SetTextOptionValue(p_option_auto_style, MCM.STR_MCM_WARRIOR)
         elseIf VARS.auto_style == doticu_npcp_codes.STYLE_WARRIOR()
             VARS.auto_style = doticu_npcp_codes.STYLE_MAGE()
-            MCM.SetTextOptionValue(p_option_auto_style, CONSTS.STR_MCM_MAGE)
+            MCM.SetTextOptionValue(p_option_auto_style, MCM.STR_MCM_MAGE)
         elseIf VARS.auto_style == doticu_npcp_codes.STYLE_MAGE()
             VARS.auto_style = doticu_npcp_codes.STYLE_ARCHER()
-            MCM.SetTextOptionValue(p_option_auto_style, CONSTS.STR_MCM_ARCHER)
+            MCM.SetTextOptionValue(p_option_auto_style, MCM.STR_MCM_ARCHER)
         elseIf VARS.auto_style == doticu_npcp_codes.STYLE_ARCHER()
             VARS.auto_style = doticu_npcp_codes.STYLE_COWARD()
-            MCM.SetTextOptionValue(p_option_auto_style, CONSTS.STR_MCM_COWARD)
+            MCM.SetTextOptionValue(p_option_auto_style, MCM.STR_MCM_COWARD)
         elseIf VARS.auto_style == doticu_npcp_codes.STYLE_COWARD()
             VARS.auto_style = doticu_npcp_codes.STYLE_DEFAULT()
-            MCM.SetTextOptionValue(p_option_auto_style, CONSTS.STR_MCM_DEFAULT)
+            MCM.SetTextOptionValue(p_option_auto_style, MCM.STR_MCM_DEFAULT)
         endIf
     elseIf id_option == p_option_auto_vitality
         if VARS.auto_vitality == doticu_npcp_codes.VITALITY_MORTAL()
             VARS.auto_vitality = doticu_npcp_codes.VITALITY_PROTECTED()
-            MCM.SetTextOptionValue(p_option_auto_vitality, CONSTS.STR_MCM_PROTECTED)
+            MCM.SetTextOptionValue(p_option_auto_vitality, MCM.STR_MCM_PROTECTED)
         elseIf VARS.auto_vitality == doticu_npcp_codes.VITALITY_PROTECTED()
             VARS.auto_vitality = doticu_npcp_codes.VITALITY_ESSENTIAL()
-            MCM.SetTextOptionValue(p_option_auto_vitality, CONSTS.STR_MCM_ESSENTIAL)
+            MCM.SetTextOptionValue(p_option_auto_vitality, MCM.STR_MCM_ESSENTIAL)
         elseIf VARS.auto_vitality == doticu_npcp_codes.VITALITY_ESSENTIAL()
             VARS.auto_vitality = doticu_npcp_codes.VITALITY_INVULNERABLE()
-            MCM.SetTextOptionValue(p_option_auto_vitality, CONSTS.STR_MCM_INVULNERABLE)
+            MCM.SetTextOptionValue(p_option_auto_vitality, MCM.STR_MCM_INVULNERABLE)
         elseIf VARS.auto_vitality == doticu_npcp_codes.VITALITY_INVULNERABLE()
             VARS.auto_vitality = doticu_npcp_codes.VITALITY_MORTAL()
-            MCM.SetTextOptionValue(p_option_auto_vitality, CONSTS.STR_MCM_MORTAL)
+            MCM.SetTextOptionValue(p_option_auto_vitality, MCM.STR_MCM_MORTAL)
         endIf
     elseIf id_option == p_option_auto_resurrect
         VARS.auto_resurrect = !VARS.auto_resurrect
@@ -231,10 +226,10 @@ function f_On_Option_Select(int id_option)
     elseIf id_option == p_option_clone_outfit
         if VARS.clone_outfit == doticu_npcp_codes.OUTFIT_BASE()
             VARS.clone_outfit = doticu_npcp_codes.OUTFIT_REFERENCE()
-            MCM.SetTextOptionValue(p_option_clone_outfit, CONSTS.STR_MCM_REFERENCE)
+            MCM.SetTextOptionValue(p_option_clone_outfit, MCM.STR_MCM_REFERENCE)
         elseIf VARS.clone_outfit == doticu_npcp_codes.OUTFIT_REFERENCE()
             VARS.clone_outfit = doticu_npcp_codes.OUTFIT_BASE()
-            MCM.SetTextOptionValue(p_option_clone_outfit, CONSTS.STR_MCM_BASE)
+            MCM.SetTextOptionValue(p_option_clone_outfit, MCM.STR_MCM_BASE)
         endIf
 
     ; Outfitting
@@ -307,29 +302,29 @@ function f_On_Option_Slider_Open(int id_option)
 
     elseIf id_option == p_option_slider_percent_body
         MCM.SetSliderDialogStartValue(VARS.percent_body as float)
-        MCM.SetSliderDialogDefaultValue(CONSTS.DEFAULT_PERCENT_BODY as float)
+        MCM.SetSliderDialogDefaultValue(MEMBERS.DEFAULT_PERCENT_BODY as float)
         MCM.SetSliderDialogRange(0 as float, 100 as float)
         MCM.SetSliderDialogInterval(1.0)
     elseIf id_option == p_option_slider_percent_feet
         MCM.SetSliderDialogStartValue(VARS.percent_feet as float)
-        MCM.SetSliderDialogDefaultValue(CONSTS.DEFAULT_PERCENT_FEET as float)
+        MCM.SetSliderDialogDefaultValue(MEMBERS.DEFAULT_PERCENT_FEET as float)
         MCM.SetSliderDialogRange(0 as float, 100 as float)
         MCM.SetSliderDialogInterval(1.0)
     elseIf id_option == p_option_slider_percent_hands
         MCM.SetSliderDialogStartValue(VARS.percent_hands as float)
-        MCM.SetSliderDialogDefaultValue(CONSTS.DEFAULT_PERCENT_HANDS as float)
+        MCM.SetSliderDialogDefaultValue(MEMBERS.DEFAULT_PERCENT_HANDS as float)
         MCM.SetSliderDialogRange(0 as float, 100 as float)
         MCM.SetSliderDialogInterval(1.0)
     elseIf id_option == p_option_slider_percent_head
         MCM.SetSliderDialogStartValue(VARS.percent_head as float)
-        MCM.SetSliderDialogDefaultValue(CONSTS.DEFAULT_PERCENT_HEAD as float)
+        MCM.SetSliderDialogDefaultValue(MEMBERS.DEFAULT_PERCENT_HEAD as float)
         MCM.SetSliderDialogRange(0 as float, 100 as float)
         MCM.SetSliderDialogInterval(1.0)
 
     elseIf id_option == p_option_slider_ms_display
         MCM.SetSliderDialogStartValue(VARS.num_display as float)
-        MCM.SetSliderDialogDefaultValue(CONSTS.DEFAULT_DISPLAY as float)
-        MCM.SetSliderDialogRange(CONSTS.MIN_DISPLAY as float, CONSTS.MAX_DISPLAY as float)
+        MCM.SetSliderDialogDefaultValue(MEMBERS.DEFAULT_DISPLAY as float)
+        MCM.SetSliderDialogRange(MEMBERS.MIN_DISPLAY as float, MEMBERS.MAX_DISPLAY as float)
         MCM.SetSliderDialogInterval(1.0)
 
     endIf

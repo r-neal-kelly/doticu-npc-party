@@ -5,11 +5,6 @@
 Scriptname doticu_npcp_effect_retreat extends ActiveMagicEffect
 
 ; Modules
-doticu_npcp_consts property CONSTS hidden
-    doticu_npcp_consts function Get()
-        return p_DATA.CONSTS
-    endFunction
-endProperty
 doticu_npcp_actors property ACTORS hidden
     doticu_npcp_actors function Get()
         return p_DATA.MODS.FUNCS.ACTORS

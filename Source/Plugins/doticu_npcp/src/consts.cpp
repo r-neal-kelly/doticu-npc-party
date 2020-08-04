@@ -356,6 +356,11 @@ namespace doticu_npcp { namespace Consts {
     Global_t* No_Hands_Percent_Global() NPCP_FORM(Global_t, GLOBAL_PERCENT_NO_HANDS);
     Global_t* No_Head_Percent_Global() NPCP_FORM(Global_t, GLOBAL_PERCENT_NO_HEAD);
 
+    // NPCP Ints
+    Int_t NPCP_Major() { return 0; } // set manually upon each release
+    Int_t NPCP_Minor() { return 9; } // set manually upon each release
+    Int_t NPCP_Patch() { return 2; } // set manually upon each release
+
     // NPCP Leveled Actor
     Leveled_Actor_t* Horse_Leveled_Actor() NPCP_FORM(Leveled_Actor_t, LEVELED_ACTOR_HORSE);
 
@@ -409,12 +414,12 @@ namespace doticu_npcp { namespace Consts {
     // NPCP Quests
     Quest_t* Static_Data_Quest() NPCP_FORM(Quest_t, QUEST_DATA_STATIC);
     Quest_t* Dynamic_Data_Quest() NPCP_FORM(Quest_t, QUEST_DATA_DYNAMIC);
-    Quest_t* Thrall_Dialogue_Quest() NPCP_FORM(Quest_t, QUEST_DIALOGUE_THRALL);
-    Quest_t* Reanimated_Dialogue_Quest() NPCP_FORM(Quest_t, QUEST_DIALOGUE_REANIMATED);
     Quest_t* Funcs_Quest() NPCP_FORM(Quest_t, QUEST_FUNCS);
     Quest_t* Members_Quest() NPCP_FORM(Quest_t, QUEST_MEMBERS);
     Quest_t* Followers_Quest() NPCP_FORM(Quest_t, QUEST_FOLLOWERS);
     Quest_t* Control_Quest() NPCP_FORM(Quest_t, QUEST_CONTROL);
+    Quest_t* Thrall_Dialogue_Quest() NPCP_FORM(Quest_t, QUEST_DIALOGUE_THRALL);
+    Quest_t* Reanimated_Dialogue_Quest() NPCP_FORM(Quest_t, QUEST_DIALOGUE_REANIMATED);
 
     // NPCP Reference Categories
     Reference_t* Input_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_INPUT);
@@ -555,6 +560,11 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
     Global_t* No_Feet_Percent_Global(Selfless_t*) FORWARD_CONST(No_Feet_Percent_Global);
     Global_t* No_Hands_Percent_Global(Selfless_t*) FORWARD_CONST(No_Hands_Percent_Global);
     Global_t* No_Head_Percent_Global(Selfless_t*) FORWARD_CONST(No_Head_Percent_Global);
+
+    // NPCP Ints
+    Int_t NPCP_Major(Selfless_t*) FORWARD_CONST(NPCP_Major);
+    Int_t NPCP_Minor(Selfless_t*) FORWARD_CONST(NPCP_Minor);
+    Int_t NPCP_Patch(Selfless_t*) FORWARD_CONST(NPCP_Patch);
 
     // NPCP Leveled Actor
     Leveled_Actor_t* Horse_Leveled_Actor(Selfless_t*) FORWARD_CONST(Horse_Leveled_Actor);
@@ -727,6 +737,11 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
         ADD_GLOBAL("No_Feet_Percent_Global", 0, Global_t*, No_Feet_Percent_Global);
         ADD_GLOBAL("No_Hands_Percent_Global", 0, Global_t*, No_Hands_Percent_Global);
         ADD_GLOBAL("No_Head_Percent_Global", 0, Global_t*, No_Head_Percent_Global);
+
+        // NPCP Ints
+        ADD_GLOBAL("NPCP_Major", 0, Int_t, NPCP_Major);
+        ADD_GLOBAL("NPCP_Minor", 0, Int_t, NPCP_Minor);
+        ADD_GLOBAL("NPCP_Patch", 0, Int_t, NPCP_Patch);
 
         // NPCP Leveled Actor
         ADD_GLOBAL("Horse_Leveled_Actor", 0, Leveled_Actor_t*, Horse_Leveled_Actor);

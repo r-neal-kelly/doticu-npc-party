@@ -10,11 +10,6 @@ doticu_npcp_main property MAIN hidden
         return p_DATA.MODS.MAIN
     endFunction
 endProperty
-doticu_npcp_consts property CONSTS hidden
-    doticu_npcp_consts function Get()
-        return p_DATA.CONSTS
-    endFunction
-endProperty
 doticu_npcp_vars property VARS hidden
     doticu_npcp_vars function Get()
         return p_DATA.VARS
@@ -1526,10 +1521,6 @@ event OnActivate(ObjectReference activator_obj)
 endEvent
 
 event OnHit(ObjectReference ref_attacker, Form form_tool, Projectile ref_projectile, bool is_power, bool is_sneak, bool is_bash, bool is_blocked) native
-
-function Restore_Health(float amount)
-    p_ref_actor.RestoreActorValue(CONSTS.STR_HEALTH, amount)
-endFunction
 
 event OnCombatStateChanged(Actor ref_target, int code_combat)
     if VARS.is_updating
