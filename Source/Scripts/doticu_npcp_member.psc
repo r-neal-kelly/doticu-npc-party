@@ -58,35 +58,38 @@ endProperty
 
 ; Private Variables
 bool                    p_is_locked                 = false
+
 Actor                   p_ref_actor                 =  none
-bool                    p_is_clone                  = false
-bool                    p_is_settler                = false
-bool                    p_is_thrall                 = false
-bool                    p_is_immobile               = false
-bool                    p_is_paralyzed              = false
-bool                    p_is_mannequin              = false
-bool                    p_is_reanimated             = false
-bool                    p_is_display                = false
-bool                    p_do_outfit_vanilla         = false
-int                     p_code_style                =     0
-int                     p_code_vitality             =     0
-int                     p_code_outfit2              =     0
-int                     p_int_rating                =     0
+ObjectReference         p_container_pack            =  none
 ObjectReference         p_marker_mannequin          =  none
 ObjectReference         p_marker_display            =  none
 ObjectReference         p_marker_undisplay          =  none
 Outfit                  p_outfit_vanilla            =  none
-ObjectReference         p_container_pack            =  none
 doticu_npcp_outfit      p_outfit2_member            =  none
+doticu_npcp_outfit      p_outfit2_immobile          =  none
 doticu_npcp_outfit      p_outfit2_settler           =  none
 doticu_npcp_outfit      p_outfit2_thrall            =  none
-doticu_npcp_outfit      p_outfit2_immobile          =  none
 doticu_npcp_outfit      p_outfit2_follower          =  none
 doticu_npcp_outfit      p_outfit2_vanilla           =  none
 doticu_npcp_outfit      p_outfit2_default           =  none
 doticu_npcp_outfit      p_outfit2_current           =  none
 doticu_npcp_outfit      p_outfit2_previous          =  none
 doticu_npcp_outfit      p_outfit2_auto_backup       =  none
+
+bool                    p_is_clone                  = false
+bool                    p_is_immobile               = false
+bool                    p_is_settler                = false
+bool                    p_is_thrall                 = false
+bool                    p_is_paralyzed              = false
+bool                    p_is_mannequin              = false
+bool                    p_is_display                = false
+bool                    p_is_reanimated             = false
+bool                    p_do_outfit_vanilla         = false
+
+int                     p_code_style                =     0
+int                     p_code_vitality             =     0
+int                     p_code_outfit2              =     0
+int                     p_int_rating                =     0
 
 Faction[]               p_prev_factions             =  none
 int[]                   p_prev_faction_ranks        =  none
@@ -176,7 +179,7 @@ p_Lock()
 
     ForceRefTo(ref_actor)
 
-    p_ref_actor = GetActorReference()
+    p_ref_actor = ref_actor
     p_is_clone = is_clone
     p_is_settler = false
     p_is_thrall = false

@@ -25,11 +25,6 @@ doticu_npcp_outfits property OUTFITS hidden
         return doticu_npcp.Funcs().OUTFITS
     endFunction
 endProperty
-doticu_npcp_tasklists property TASKLISTS hidden
-    doticu_npcp_tasklists function Get()
-        return doticu_npcp.Funcs().TASKLISTS
-    endFunction
-endProperty
 doticu_npcp_logs property LOGS hidden
     doticu_npcp_logs function Get()
         return doticu_npcp.Funcs().LOGS

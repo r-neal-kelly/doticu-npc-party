@@ -124,6 +124,15 @@ M                                                                               
     );                                                                                  \
 W
 
+#define DEFINE_VARIABLE(NAME_)                              \
+M                                                           \
+    static const String_t variable_name = String_t(NAME_);  \
+    NPCP_ASSERT(variable_name);                             \
+    Variable_t* variable = Variable(variable_name);         \
+    NPCP_ASSERT(variable);                                  \
+    return variable;                                        \
+W
+
 namespace doticu_npcp { namespace Utils {
 
     void Print(const char *str);

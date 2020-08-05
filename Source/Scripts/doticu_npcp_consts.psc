@@ -43,11 +43,11 @@ Armor function Blank_Armor() native global
 
 ; NPCP Containers
 Container function Empty_Container() native global
-Container function Outfit_Container() native global
-Container function Immobile_Outfit_Container() native global
-Container function Settler_Outfit_Container() native global
-Container function Thrall_Outfit_Container() native global
-Container function Follower_Outfit_Container() native global
+Container function Outfit2_Container() native global
+Container function Immobile_Outfit2_Container() native global
+Container function Settler_Outfit2_Container() native global
+Container function Thrall_Outfit2_Container() native global
+Container function Follower_Outfit2_Container() native global
 
 ; NPCP Formlists
 Formlist function Is_Saddler_Sitting_Globals_Formlist() native global

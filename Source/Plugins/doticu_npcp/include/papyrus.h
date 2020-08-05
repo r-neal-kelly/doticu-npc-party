@@ -34,6 +34,8 @@ namespace doticu_npcp { namespace Papyrus {
     class Type_t;
     class Handle_Policy_t;
     class Object_Policy_t;
+    class Virtual_Callback_i;
+    class Variable_t;
 
     class Virtual_Machine_i {
     public:
@@ -78,10 +80,10 @@ namespace doticu_npcp { namespace Papyrus {
         virtual void _25(void) = 0; // 25
         virtual void _26(void) = 0; // 26
         virtual void _27(void) = 0; // 27
-        virtual void _28(void) = 0; // 28
+        virtual Bool_t Call_Method2(Handle_t handle, String_t* class_name, String_t* function_name, IFunctionArguments* arguments, Virtual_Callback_i** callback) = 0; // 28
         virtual void _29(void) = 0; // 29
         virtual void _2A(void) = 0; // 2A
-        virtual void _2B(void) = 0; // 2B
+        virtual void Return_Latent_Function(Stack_ID_t stack_id, Variable_t* return_variable) = 0; // 2B
         virtual void _2C(void) = 0; // 2C
         virtual Handle_Policy_t* Handle_Policy() = 0; // 2D
         virtual void _2E(void) = 0; // 2E
@@ -180,10 +182,10 @@ namespace doticu_npcp { namespace Papyrus {
         virtual void _25(void) override; // 25
         virtual void _26(void) override; // 26
         virtual void _27(void) override; // 27
-        virtual void _28(void) override; // 28
+        virtual Bool_t Call_Method2(Handle_t handle, String_t* class_name, String_t* function_name, IFunctionArguments* arguments, Virtual_Callback_i** callback) override; // 28
         virtual void _29(void) override; // 29
         virtual void _2A(void) override; // 2A
-        virtual void _2B(void) override; // 2B
+        virtual void Return_Latent_Function(Stack_ID_t stack_id, Variable_t* return_variable) override; // 2B
         virtual void _2C(void) override; // 2C
         virtual Handle_Policy_t* Handle_Policy() override; // 2D
         virtual void _2E(void) override; // 2E
@@ -197,6 +199,26 @@ namespace doticu_npcp { namespace Papyrus {
         Int_t Count_Objects(Handle_t handle);
         Bool_t Has_Object(Handle_t handle);
     };
+
+    class Variable_t;
+    class Virtual_Callback_i {
+    public:
+        Virtual_Callback_i() :
+            ref_count(0)
+        {
+        }
+
+        virtual ~Virtual_Callback_i() = default; // 00
+
+        virtual void operator()(Variable_t* return_variable) = 0; // 01
+        virtual Bool_t Can_Save() = 0; // 02
+        virtual void Set_Object(Object_t** object) = 0; // 03
+
+        UInt32 ref_count; // 00
+        // void* _vtbl; // 04 (I think)
+        UInt32 pad_04; // 0C
+    };
+    STATIC_ASSERT(sizeof(Virtual_Callback_i) == 0x10);
 
     class Class_Info_t;
     class Type_t {
@@ -296,6 +318,20 @@ namespace doticu_npcp { namespace Papyrus {
 
         void Destroy();
         void Copy(Variable_t* other);
+
+        Bool_t Is_None();
+        Bool_t Is_Bool();
+        Bool_t Is_Int();
+        Bool_t Is_Float();
+        Bool_t Is_String();
+        Bool_t Is_Object();
+        Bool_t Is_Array();
+        Bool_t Is_None_Array();
+        Bool_t Is_Object_Array();
+        Bool_t Is_String_Array();
+        Bool_t Is_Int_Array();
+        Bool_t Is_Float_Array();
+        Bool_t Is_Bool_Array();
 
         Bool_t Bool();
         Int_t Int();

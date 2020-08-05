@@ -83,6 +83,7 @@ namespace doticu_npcp { namespace Offsets {
 
     namespace Reference {
 
+        constexpr uintptr_t ADD_ITEM                    = 0x00993100; // 55616
         constexpr uintptr_t LOOKUP_REFERENCE_BY_HANDLE1 = 0x001328A0; // 12203
         constexpr uintptr_t LOOKUP_REFERENCE_BY_HANDLE2 = 0x001329D0; // 12204
         constexpr uintptr_t PLACE_AT_ME                 = 0x009951F0; // 55672

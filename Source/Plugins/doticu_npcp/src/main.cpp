@@ -19,6 +19,7 @@
 #include "main.h"
 #include "object_ref.h"
 #include "outfit.h"
+#include "outfit2.h"
 #include "package.h"
 #include "papyrus.h"
 #include "party.h"
@@ -107,6 +108,7 @@ namespace doticu_npcp { namespace Main {
         REGISTER_NAMESPACE(Keys);
         REGISTER_NAMESPACE(Object_Ref);
         REGISTER_NAMESPACE(Outfit);
+        REGISTER_NAMESPACE(Outfit2);
         REGISTER_NAMESPACE(Package);
         REGISTER_NAMESPACE(Papyrus);
         REGISTER_NAMESPACE(Player);

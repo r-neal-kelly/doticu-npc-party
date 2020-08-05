@@ -468,8 +468,7 @@ namespace doticu_npcp { namespace Party {
 
     Vector_t<Follower_t*> Followers_t::Sort(Vector_t<Follower_t*> followers)
     {
-        static const String_t sort_algorithm_name = String_t("p_str_sort_followers");
-        return Aliases_t::Sort<Follower_t>(followers, Vars::String_Variable(sort_algorithm_name));
+        return Aliases_t::Sort<Follower_t>(followers, Vars::Followers_Sort_Algorithm());
     }
 
     Vector_t<Follower_t*> Followers_t::Sort_Filled(Int_t begin, Int_t end)

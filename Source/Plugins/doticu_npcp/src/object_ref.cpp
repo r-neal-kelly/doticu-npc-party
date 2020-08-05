@@ -726,6 +726,18 @@ namespace doticu_npcp { namespace Object_Ref {
         return place_at_me(Virtual_Machine_t::Self(), 0, me, to_place, count, force_persist, initially_disabled);
     }
 
+    void Add_Item(Reference_t* ref, Form_t* form, Int_t count, Bool_t do_silently)
+    {
+        using namespace Papyrus;
+        static auto add_item = reinterpret_cast
+            <void (*)(Virtual_Machine_t*, Stack_ID_t, Reference_t*, Form_t*, Int_t, Bool_t)>
+            (RelocationManager::s_baseAddr + Offsets::Reference::ADD_ITEM);
+        static Variable_t none;
+        Virtual_Machine_t* virtual_machine = Virtual_Machine_t::Self();
+        add_item(virtual_machine, 0, ref, form, count, do_silently);
+        virtual_machine->Return_Latent_Function(0, &none);
+    }
+
     Reference_t* From_Handle(Reference_Handle_t handle)
     {
         static auto lookup_reference_handle = reinterpret_cast
@@ -756,6 +768,13 @@ namespace doticu_npcp { namespace Object_Ref {
         } else {
             return nullptr;
         }
+    }
+
+    Reference_t* Create_Container()
+    {
+        Reference_t* container = Place_At_Me(Consts::Storage_Marker(), Consts::Empty_Container(), 1, true, false);
+        NPCP_ASSERT(container);
+        return container;
     }
 
     void Delete_Safe(Reference_t* ref)

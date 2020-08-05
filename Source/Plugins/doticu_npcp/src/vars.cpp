@@ -60,24 +60,40 @@ namespace doticu_npcp { namespace Vars {
         }
     }
 
-    String_t String_Variable(String_t variable_name)
-    {
-        Variable_t* variable = Variable(variable_name);
-        if (variable) {
-            return variable->String();
-        } else {
-            return "";
-        }
-    }
+    #define VAR(TYPE_, NAME_)                                   \
+    M                                                           \
+        static const String_t variable_name = String_t(NAME_);  \
+        NPCP_ASSERT(variable_name);                             \
+        Variable_t* variable = Variable(variable_name);         \
+        NPCP_ASSERT(variable);                                  \
+        return variable->TYPE_();                               \
+    W
 
-    Int_t Display_Count()
-    {
-        static const String_t variable_name = String_t("p_num_display");
-        NPCP_ASSERT(variable_name);
-        Variable_t* variable = Variable(variable_name);
-        NPCP_ASSERT(variable);
-        return variable->Int();
-    }
+    #define BOOL_VAR(NAME_) VAR(Bool, NAME_)
+
+    Bool_t Do_Force_Clone_Unique() { BOOL_VAR("p_force_clone_unique"); }
+    Bool_t Do_Force_Clone_Generic() { BOOL_VAR("p_force_clone_generic"); }
+    Bool_t Do_Force_Unclone_Unique() { BOOL_VAR("p_force_unclone_unique"); }
+    Bool_t Do_Force_Unclone_Generic() { BOOL_VAR("p_force_unclone_generic"); }
+    Bool_t Do_Fill_Outfit2s() { BOOL_VAR("p_fill_outfits"); }
+
+    #undef BOOL_VAR
+
+    #define INT_VAR(NAME_) VAR(Int, NAME_)
+
+    Int_t Member_Limit() { INT_VAR("p_max_members"); }
+    Int_t Display_Count() { INT_VAR("p_num_display"); }
+
+    #undef INT_VAR
+
+    #define STRING_VAR(NAME_) VAR(String, NAME_)
+
+    String_t Members_Sort_Algorithm() { STRING_VAR("p_str_sort_members"); }
+    String_t Followers_Sort_Algorithm() { STRING_VAR("p_str_sort_followers"); }
+
+    #undef STRING_VAR
+
+    #undef VAR
 
     void Log_Variables(Vars_t* self)
     {

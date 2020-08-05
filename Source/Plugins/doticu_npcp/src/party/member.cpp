@@ -36,158 +36,46 @@ namespace doticu_npcp { namespace Party {
         return Variable_t::Fetch(this, Class_Name(), variable_name);
     }
 
-    Variable_t* Member_t::Actor_Variable()
-    {
-        static const String_t variable_name = String_t("p_ref_actor");
-        NPCP_ASSERT(variable_name);
-        Variable_t* variable = Variable(variable_name);
-        NPCP_ASSERT(variable);
-        return variable;
-    }
+    Variable_t* Member_t::Actor_Variable() { DEFINE_VARIABLE("p_ref_actor"); }
+    Variable_t* Member_t::Pack_Variable() { DEFINE_VARIABLE("p_container_pack"); }
+    Variable_t* Member_t::Mannequin_Marker_Variable() { DEFINE_VARIABLE("p_marker_mannequin"); }
+    Variable_t* Member_t::Display_Marker_Variable() { DEFINE_VARIABLE("p_marker_display"); }
+    Variable_t* Member_t::Undisplay_Marker_Variable() { DEFINE_VARIABLE("p_marker_undisplay"); }
+    Variable_t* Member_t::Vanilla_Outfit_Variable() { DEFINE_VARIABLE("p_outfit_vanilla"); }
 
-    Variable_t* Member_t::Pack_Variable()
-    {
-        static const String_t variable_name = String_t("p_container_pack");
-        NPCP_ASSERT(variable_name);
-        Variable_t* variable = Variable(variable_name);
-        NPCP_ASSERT(variable);
-        return variable;
-    }
+    Variable_t* Member_t::Member_Outfit2_Variable() { DEFINE_VARIABLE("p_outfit2_member"); }
+    Variable_t* Member_t::Immobile_Outfit2_Variable() { DEFINE_VARIABLE("p_outfit2_immobile"); }
+    Variable_t* Member_t::Settler_Outfit2_Variable() { DEFINE_VARIABLE("p_outfit2_settler"); }
+    Variable_t* Member_t::Thrall_Outfit2_Variable() { DEFINE_VARIABLE("p_outfit2_thrall"); }
+    Variable_t* Member_t::Follower_Outfit2_Variable() { DEFINE_VARIABLE("p_outfit2_follower"); }
+    Variable_t* Member_t::Vanilla_Outfit2_Variable() { DEFINE_VARIABLE("p_outfit2_vanilla"); }
+    Variable_t* Member_t::Default_Outfit2_Variable() { DEFINE_VARIABLE("p_outfit2_default"); }
+    Variable_t* Member_t::Current_Outfit2_Variable() { DEFINE_VARIABLE("p_outfit2_current"); }
+    Variable_t* Member_t::Previous_Outfit2_Variable() { DEFINE_VARIABLE("p_outfit2_previous"); }
+    Variable_t* Member_t::Auto_Backup_Outfit2_Variable() { DEFINE_VARIABLE("p_outfit2_auto_backup"); }
 
-    Variable_t* Member_t::Mannequin_Marker_Variable()
-    {
-        static const String_t variable_name = String_t("p_marker_mannequin");
-        NPCP_ASSERT(variable_name);
-        Variable_t* variable = Variable(variable_name);
-        NPCP_ASSERT(variable);
-        return variable;
-    }
+    Variable_t* Member_t::Is_Clone_Variable() { DEFINE_VARIABLE("p_is_clone"); }
+    Variable_t* Member_t::Is_Immobile_Variable() { DEFINE_VARIABLE("p_is_immobile"); }
+    Variable_t* Member_t::Is_Settler_Variable() { DEFINE_VARIABLE("p_is_settler"); }
+    Variable_t* Member_t::Is_Thrall_Variable() { DEFINE_VARIABLE("p_is_thrall"); }
+    Variable_t* Member_t::Is_Paralyzed_Variable() { DEFINE_VARIABLE("p_is_paralyzed"); }
+    Variable_t* Member_t::Is_Mannequin_Variable() { DEFINE_VARIABLE("p_is_mannequin"); }
+    Variable_t* Member_t::Is_Display_Variable() { DEFINE_VARIABLE("p_is_display"); }
+    Variable_t* Member_t::Is_Reanimated_Variable() { DEFINE_VARIABLE("p_is_reanimated"); }
+    Variable_t* Member_t::Do_Vanilla_Outfit_Variable() { DEFINE_VARIABLE("p_do_outfit_vanilla"); }
 
-    Variable_t* Member_t::Display_Marker_Variable()
-    {
-        static const String_t variable_name = String_t("p_marker_display");
-        NPCP_ASSERT(variable_name);
-        Variable_t* variable = Variable(variable_name);
-        NPCP_ASSERT(variable);
-        return variable;
-    }
+    Variable_t* Member_t::Style_Variable() { DEFINE_VARIABLE("p_code_style"); }
+    Variable_t* Member_t::Vitality_Variable() { DEFINE_VARIABLE("p_code_vitality"); }
+    Variable_t* Member_t::Outfit2_Variable() { DEFINE_VARIABLE("p_code_outfit2"); }
+    Variable_t* Member_t::Rating_Variable() { DEFINE_VARIABLE("p_int_rating"); }
 
-    Variable_t* Member_t::Undisplay_Marker_Variable()
-    {
-        static const String_t variable_name = String_t("p_marker_undisplay");
-        NPCP_ASSERT(variable_name);
-        Variable_t* variable = Variable(variable_name);
-        NPCP_ASSERT(variable);
-        return variable;
-    }
-
-    Variable_t* Member_t::Style_Variable()
-    {
-        static const String_t variable_name = String_t("p_code_style");
-        NPCP_ASSERT(variable_name);
-        Variable_t* variable = Variable(variable_name);
-        NPCP_ASSERT(variable);
-        return variable;
-    }
-
-    Variable_t* Member_t::Vitality_Variable()
-    {
-        static const String_t variable_name = String_t("p_code_vitality");
-        NPCP_ASSERT(variable_name);
-        Variable_t* variable = Variable(variable_name);
-        NPCP_ASSERT(variable);
-        return variable;
-    }
-
-    Variable_t* Member_t::Outfit2_Variable()
-    {
-        static const String_t variable_name = String_t("p_code_outfit2");
-        NPCP_ASSERT(variable_name);
-        Variable_t* variable = Variable(variable_name);
-        NPCP_ASSERT(variable);
-        return variable;
-    }
-
-    Variable_t* Member_t::Rating_Variable()
-    {
-        static const String_t variable_name = String_t("p_int_rating");
-        NPCP_ASSERT(variable_name);
-        Variable_t* variable = Variable(variable_name);
-        NPCP_ASSERT(variable);
-        return variable;
-    }
-
-    Variable_t* Member_t::Is_Clone_Variable()
-    {
-        static const String_t variable_name = String_t("p_is_clone");
-        NPCP_ASSERT(variable_name);
-        Variable_t* variable = Variable(variable_name);
-        NPCP_ASSERT(variable);
-        return variable;
-    }
-
-    Variable_t* Member_t::Is_Immobile_Variable()
-    {
-        static const String_t variable_name = String_t("p_is_immobile");
-        NPCP_ASSERT(variable_name);
-        Variable_t* variable = Variable(variable_name);
-        NPCP_ASSERT(variable);
-        return variable;
-    }
-
-    Variable_t* Member_t::Is_Settler_Variable()
-    {
-        static const String_t variable_name = String_t("p_is_settler");
-        NPCP_ASSERT(variable_name);
-        Variable_t* variable = Variable(variable_name);
-        NPCP_ASSERT(variable);
-        return variable;
-    }
-
-    Variable_t* Member_t::Is_Thrall_Variable()
-    {
-        static const String_t variable_name = String_t("p_is_thrall");
-        NPCP_ASSERT(variable_name);
-        Variable_t* variable = Variable(variable_name);
-        NPCP_ASSERT(variable);
-        return variable;
-    }
-
-    Variable_t* Member_t::Is_Paralyzed_Variable()
-    {
-        static const String_t variable_name = String_t("p_is_paralyzed");
-        NPCP_ASSERT(variable_name);
-        Variable_t* variable = Variable(variable_name);
-        NPCP_ASSERT(variable);
-        return variable;
-    }
-
-    Variable_t* Member_t::Is_Mannequin_Variable()
-    {
-        static const String_t variable_name = String_t("p_is_mannequin");
-        NPCP_ASSERT(variable_name);
-        Variable_t* variable = Variable(variable_name);
-        NPCP_ASSERT(variable);
-        return variable;
-    }
-
-    Variable_t* Member_t::Is_Display_Variable()
-    {
-        static const String_t variable_name = String_t("p_is_display");
-        NPCP_ASSERT(variable_name);
-        Variable_t* variable = Variable(variable_name);
-        NPCP_ASSERT(variable);
-        return variable;
-    }
-
-    Variable_t* Member_t::Is_Reanimated_Variable()
-    {
-        static const String_t variable_name = String_t("p_is_reanimated");
-        NPCP_ASSERT(variable_name);
-        Variable_t* variable = Variable(variable_name);
-        NPCP_ASSERT(variable);
-        return variable;
-    }
+    Variable_t* Member_t::Previous_Factions_Variable() { DEFINE_VARIABLE("p_prev_factions"); }
+    Variable_t* Member_t::Previous_Faction_Ranks_Variable() { DEFINE_VARIABLE("p_prev_faction_ranks"); }
+    Variable_t* Member_t::Previous_Crime_Faction_Variable() { DEFINE_VARIABLE("p_prev_faction_crime"); }
+    Variable_t* Member_t::Previous_Aggression_Variable() { DEFINE_VARIABLE("p_prev_aggression"); }
+    Variable_t* Member_t::Previous_Confidence_Variable() { DEFINE_VARIABLE("p_prev_confidence"); }
+    Variable_t* Member_t::Previous_Assistance_Variable() { DEFINE_VARIABLE("p_prev_assistance"); }
+    Variable_t* Member_t::Previous_Morality_Variable() { DEFINE_VARIABLE("p_prev_morality"); }
 
     Actor_t* Member_t::Actor()
     {
@@ -740,6 +628,83 @@ namespace doticu_npcp { namespace Party {
     {
         NPCP_ASSERT(Is_Filled());
         Object_Ref::Untoken(Actor(), token);
+    }
+
+    void Member_t::Create(Actor_t* actor, Bool_t is_clone)
+    {
+        Actor_Variable()->Pack(actor);
+        Pack_Variable()->Pack(Object_Ref::Create_Container());
+        Mannequin_Marker_Variable()->None();
+        Display_Marker_Variable()->None();
+        Undisplay_Marker_Variable()->None();
+        Vanilla_Outfit_Variable()->Pack(NPCS_t::Self()->Default_Outfit(actor));
+
+        Is_Clone_Variable()->Bool(is_clone);
+        Is_Immobile_Variable()->Bool(false);
+        Is_Settler_Variable()->Bool(false);
+        Is_Thrall_Variable()->Bool(false);
+        Is_Paralyzed_Variable()->Bool(false);
+        Is_Mannequin_Variable()->Bool(false);
+        Is_Display_Variable()->Bool(false);
+        Is_Reanimated_Variable()->Bool(false);
+        Do_Vanilla_Outfit_Variable()->Bool(false);
+
+        Outfit2_Variable()->Int(CODES::OUTFIT2::MEMBER);
+        Rating_Variable()->Int(0);
+
+        Backup_State();
+
+        /*
+    p_Create_Outfit(doticu_npcp_codes.OUTFIT2_MEMBER())
+    p_Backup()
+
+    p_Member()
+    Stylize(VARS.auto_style)
+    p_Vitalize(VARS.auto_vitality)
+    p_Outfit()
+
+    ; has to happen after p_Member() because it needs
+    ; to have the token for the full dialogue
+    if p_is_clone
+        ACTORS.Greet_Player(p_ref_actor)
+    endIf
+        */
+    }
+
+    void Member_t::Destroy()
+    {
+
+    }
+
+    void Member_t::Backup_State()
+    {
+        /*
+        
+    p_prev_factions = ACTORS.Get_Factions(p_ref_actor)
+    p_prev_faction_ranks = ACTORS.Get_Faction_Ranks(p_ref_actor, p_prev_factions)
+    p_prev_faction_crime = p_ref_actor.GetCrimeFaction()
+
+    p_prev_aggression = p_ref_actor.GetBaseActorValue("Aggression")
+    p_prev_confidence = p_ref_actor.GetBaseActorValue("Confidence")
+    p_prev_assistance = p_ref_actor.GetBaseActorValue("Assistance")
+    p_prev_morality = p_ref_actor.GetBaseActorValue("Morality")
+        
+        */
+    }
+
+    void Member_t::Restore_State()
+    {
+        /*
+        
+    p_ref_actor.SetActorValue("Morality", p_prev_morality)
+    p_ref_actor.SetActorValue("Assistance", p_prev_assistance)
+    p_ref_actor.SetActorValue("Confidence", p_prev_confidence)
+    p_ref_actor.SetActorValue("Aggression", 0.0)
+
+    ACTORS.Set_Factions(p_ref_actor, p_prev_factions, p_prev_faction_ranks)
+    p_ref_actor.SetCrimeFaction(p_prev_faction_crime)
+        
+        */
     }
 
     void Member_t::Member()

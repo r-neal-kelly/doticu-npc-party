@@ -375,6 +375,20 @@ namespace doticu_npcp { namespace Papyrus {
         copy(this, other);
     }
 
+    inline Bool_t Variable_t::Is_None() { return type.Is_None(); }
+    inline Bool_t Variable_t::Is_Bool() { return type.Is_Bool(); }
+    inline Bool_t Variable_t::Is_Int() { return type.Is_Int(); }
+    inline Bool_t Variable_t::Is_Float() { return type.Is_Float(); }
+    inline Bool_t Variable_t::Is_String() { return type.Is_String(); }
+    inline Bool_t Variable_t::Is_Object() { return type.Is_Object(); }
+    inline Bool_t Variable_t::Is_Array() { return type.Is_Array(); }
+    inline Bool_t Variable_t::Is_None_Array() { return type.Is_None_Array(); }
+    inline Bool_t Variable_t::Is_Object_Array() { return type.Is_Object_Array(); }
+    inline Bool_t Variable_t::Is_String_Array() { return type.Is_String_Array(); }
+    inline Bool_t Variable_t::Is_Int_Array() { return type.Is_Int_Array(); }
+    inline Bool_t Variable_t::Is_Float_Array() { return type.Is_Float_Array(); }
+    inline Bool_t Variable_t::Is_Bool_Array() { return type.Is_Bool_Array(); }
+
     inline Bool_t Variable_t::Bool()
     {
         if (type.Is_Bool()) {

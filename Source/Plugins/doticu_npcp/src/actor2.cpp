@@ -1375,6 +1375,24 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
+    Bool_t Try_Resurrect(Actor_t* actor, Bool_t do_reset_inventory)
+    {
+        NPCP_ASSERT(Is_Dead(actor));
+
+        Resurrect(actor, do_reset_inventory);
+        return Is_Alive(actor);
+    }
+
+    Bool_t Is_Child(Actor_t* actor)
+    {
+        return actor->Is_Child();
+    }
+
+    Bool_t Isnt_Child(Actor_t* actor)
+    {
+        return !actor->Is_Child();
+    }
+
 }}
 
 namespace doticu_npcp { namespace Actor2 { namespace Exports {

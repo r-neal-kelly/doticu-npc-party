@@ -13,6 +13,7 @@ namespace doticu_npcp { namespace Quest {
     void Force_Reference_To(Quest_t* quest, UInt32 alias_id, Reference_t* reference);
     bool Is_Alias_Filled(Quest_t* quest, UInt16 alias_id);
     Actor_t* Alias_Actor(Quest_t* quest, UInt16 alias_id);
+    void Clear_Alias(Quest_t* quest, UInt16 alias_id);
 
     void Log_Aliases(Quest_t* quest);
 

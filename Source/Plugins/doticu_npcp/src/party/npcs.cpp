@@ -9,6 +9,7 @@
 #include "party.h"
 #include "party.inl"
 #include "utils.h"
+#include "vars.h"
 
 /*
 
@@ -47,9 +48,9 @@ namespace doticu_npcp { namespace Party {
         return class_info;
     }
 
-    Members_t* NPCS_t::Self()
+    NPCS_t* NPCS_t::Self()
     {
-        return static_cast<Members_t*>(Consts::Funcs_Quest());
+        return static_cast<NPCS_t*>(Consts::Funcs_Quest());
     }
 
     Object_t* NPCS_t::Object()
@@ -343,6 +344,24 @@ namespace doticu_npcp { namespace Party {
         } else {
             return false;
         }
+    }
+
+    Bool_t NPCS_t::Should_Clone(Actor_t* actor)
+    {
+        NPCP_ASSERT(actor);
+
+        return
+            Actor2::Is_Unique(actor) && Vars::Do_Force_Clone_Unique() ||
+            Actor2::Is_Generic(actor) && Vars::Do_Force_Clone_Generic();
+    }
+
+    Bool_t NPCS_t::Should_Unclone(Actor_t* actor)
+    {
+        NPCP_ASSERT(actor);
+
+        return
+            Actor2::Is_Unique(actor) && Vars::Do_Force_Unclone_Unique() ||
+            Actor2::Is_Generic(actor) && Vars::Do_Force_Unclone_Generic();
     }
 
     Vector_t<Actor_t*> NPCS_t::Originals(Actor_t* actor)

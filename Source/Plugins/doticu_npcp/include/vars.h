@@ -18,9 +18,17 @@ namespace doticu_npcp { namespace Vars {
     Variable_t* Variable(String_t variable_name);
     Variable_t* Property(String_t property_name);
 
-    String_t String_Variable(String_t variable_name);
+    Bool_t Do_Force_Clone_Unique();
+    Bool_t Do_Force_Clone_Generic();
+    Bool_t Do_Force_Unclone_Unique();
+    Bool_t Do_Force_Unclone_Generic();
+    Bool_t Do_Fill_Outfit2s();
 
+    Int_t Member_Limit();
     Int_t Display_Count();
+
+    String_t Members_Sort_Algorithm();
+    String_t Followers_Sort_Algorithm();
 
     void Log_Variables(Vars_t* self);
     void Log_Properties(Vars_t* self);

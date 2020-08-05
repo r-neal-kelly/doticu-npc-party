@@ -5,6 +5,8 @@
 #include "skse64/GameRTTI.h"
 
 #include "object_ref.h"
+#include "papyrus.h"
+#include "papyrus.inl"
 #include "quest.h"
 #include "types.h"
 #include "utils.h"
@@ -71,6 +73,25 @@ namespace doticu_npcp { namespace Quest {
         }
 
         return nullptr;
+    }
+
+    void Clear_Alias(Quest_t* quest, UInt16 alias_id)
+    {
+        using namespace Papyrus;
+
+        NPCP_ASSERT(quest);
+        NPCP_ASSERT(alias_id < quest->aliases.count);
+
+        Alias_Reference_t* alias = reinterpret_cast<Alias_Reference_t*>
+            (quest->aliases.entries[alias_id]);
+        Virtual_Machine_t::Self()->Send_Event(alias, "Clear");
+
+        // to do this manually would at minimum require that we clear the relevant data
+        // on quest, which is from a hashmap and an array (at least) and we clear data
+        // on the actor, like promoted ref and xaliases. but I'm not sure what else
+        // there might be I don't know about. I still haven't found the actual function
+        // in the executable. maybe it's nearby Alias_Reference_t instead of Quest_t,
+        // like ForceToRef is.
     }
 
     void Log_Aliases(Quest_t* quest)

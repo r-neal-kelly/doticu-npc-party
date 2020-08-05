@@ -5,11 +5,6 @@
 Scriptname doticu_npcp_outfit extends ObjectReference
 
 ; Modules
-doticu_npcp_vars property VARS hidden
-    doticu_npcp_vars function Get()
-        return doticu_npcp.Vars()
-    endFunction
-endProperty
 doticu_npcp_funcs property FUNCS hidden
     doticu_npcp_funcs function Get()
         return doticu_npcp.Funcs()
@@ -30,11 +25,6 @@ doticu_npcp_containers property CONTAINERS hidden
         return doticu_npcp.Funcs().CONTAINERS
     endFunction
 endProperty
-doticu_npcp_outfits property OUTFITS hidden
-    doticu_npcp_outfits function Get()
-        return doticu_npcp.Funcs().OUTFITS
-    endFunction
-endProperty
 doticu_npcp_logs property LOGS hidden
     doticu_npcp_logs function Get()
         return doticu_npcp.Funcs().LOGS
@@ -49,20 +39,16 @@ int property p_MAX_ITEMS hidden
 endProperty
 
 ; Private Variables
-bool                    p_is_created        = false
 string                  p_str_name          =    ""
 int                     p_code_create       =     0; OUTFIT2_VANILLA, OUTFIT2_DEFAULT
 ObjectReference         p_cache_base        =  none
 
+; Native Methods
+
 ; Friend Methods
-function f_Create(string str_name, int code_create = 0)
-    p_is_created = true
-    p_str_name = str_name
+function f_Create(int code_create = 0)
     p_code_create = code_create
     p_cache_base = none
-    
-    self.SetDisplayName(p_str_name, true)
-    self.SetActorOwner(doticu_npcp_consts.Player_Actor().GetActorBase())
 endFunction
 
 function f_Destroy()
@@ -72,14 +58,6 @@ function f_Destroy()
         p_cache_base.Disable()
         p_cache_base.Delete()
     endIf
-
-    p_cache_base = none
-    p_code_create = 0
-    p_str_name = ""
-    p_is_created = false
-endFunction
-
-function f_Register()
 endFunction
 
 ; Private Methods
@@ -113,10 +91,6 @@ function p_Set(Actor ref_actor, ObjectReference ref_pack)
 endFunction
 
 ; Public Methods
-bool function Exists()
-    return p_is_created
-endFunction
-
 string function Name()
     return p_str_name
 endFunction
@@ -124,14 +98,6 @@ endFunction
 function Rename(string str_name)
     p_str_name = str_name
     self.SetDisplayName(p_str_name, true)
-endFunction
-
-int function Get_Items_Count()
-    return self.GetNumItems()
-endFunction
-
-int function Get_Item_Count(Form form_item)
-    return self.GetItemCount(form_item)
 endFunction
 
 function Put()
@@ -218,10 +184,6 @@ endFunction
 
 ; Events
 event OnItemAdded(Form form_item, int count_item, ObjectReference ref_item, ObjectReference ref_container_source)
-    if !Exists()
-        return
-    endIf
-
     if self.GetNumItems() >= p_MAX_ITEMS
         self.RemoveItem(form_item, count_item, true, ref_container_source)
         LOGS.Create_Note("Can only have so many items in an outfit.")

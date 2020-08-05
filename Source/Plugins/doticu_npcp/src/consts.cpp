@@ -82,41 +82,41 @@ namespace doticu_npcp { namespace Consts {
     #define SKYRIM_FORM(TYPE_, MOD_ID_) FORM(Skyrim_Form, TYPE_, MOD_ID_);
 
     // Skyrim Actors
-    Actor_t* Player_Actor() SKYRIM_FORM(Actor_t, ACTOR_PLAYER);
+    Actor_t* Player_Actor() { SKYRIM_FORM(Actor_t, ACTOR_PLAYER); }
 
     // Skyrim Effect Shaders
-    Effect_Shader_t* Reanimate_Effect_Shader() SKYRIM_FORM(Effect_Shader_t, EFFECT_SHADER_REANIMATE);
+    Effect_Shader_t* Reanimate_Effect_Shader() { SKYRIM_FORM(Effect_Shader_t, EFFECT_SHADER_REANIMATE); }
 
     // Skyrim Factions
-    Faction_t* No_Bard_Singer_Autostart_Faction() SKYRIM_FORM(Faction_t, FACTION_BARD_SINGER_NO_AUTOSTART);
-    Faction_t* Current_Follower_Faction() SKYRIM_FORM(Faction_t, FACTION_CURRENT_FOLLOWER);
-    Faction_t* Player_Follower_Faction() SKYRIM_FORM(Faction_t, FACTION_PLAYER_FOLLOWER);
-    Faction_t* Potential_Follower_Faction() SKYRIM_FORM(Faction_t, FACTION_POTENTIAL_FOLLOWER);
-    Faction_t* WI_No_Body_Cleanup_Faction() SKYRIM_FORM(Faction_t, FACTION_WI_NO_BODY_CLEANUP);
+    Faction_t* No_Bard_Singer_Autostart_Faction() { SKYRIM_FORM(Faction_t, FACTION_BARD_SINGER_NO_AUTOSTART); }
+    Faction_t* Current_Follower_Faction() { SKYRIM_FORM(Faction_t, FACTION_CURRENT_FOLLOWER); }
+    Faction_t* Player_Follower_Faction() { SKYRIM_FORM(Faction_t, FACTION_PLAYER_FOLLOWER); }
+    Faction_t* Potential_Follower_Faction() { SKYRIM_FORM(Faction_t, FACTION_POTENTIAL_FOLLOWER); }
+    Faction_t* WI_No_Body_Cleanup_Faction() { SKYRIM_FORM(Faction_t, FACTION_WI_NO_BODY_CLEANUP); }
 
     // Skyrim Globals
-    Global_t* Player_Follower_Count_Global() SKYRIM_FORM(Global_t, GLOBAL_PLAYER_FOLLOWER_COUNT);
+    Global_t* Player_Follower_Count_Global() { SKYRIM_FORM(Global_t, GLOBAL_PLAYER_FOLLOWER_COUNT); }
 
     // Skyrim Keywords
-    Keyword_t* Fire_Damage_Magic_Keyword() SKYRIM_FORM(Keyword_t, KEYWORD_MAGIC_DAMAGE_FIRE);
-    Keyword_t* Frost_Damage_Magic_Keyword() SKYRIM_FORM(Keyword_t, KEYWORD_MAGIC_DAMAGE_FROST);
-    Keyword_t* Shock_Damage_Magic_Keyword() SKYRIM_FORM(Keyword_t, KEYWORD_MAGIC_DAMAGE_SHOCK);
-    Keyword_t* Vampire_Drain_Magic_Keyword() SKYRIM_FORM(Keyword_t, KEYWORD_MAGIC_VAMPIRE_DRAIN);
-    Keyword_t* Vampire_Keyword() SKYRIM_FORM(Keyword_t, KEYWORD_VAMPIRE);
+    Keyword_t* Fire_Damage_Magic_Keyword() { SKYRIM_FORM(Keyword_t, KEYWORD_MAGIC_DAMAGE_FIRE); }
+    Keyword_t* Frost_Damage_Magic_Keyword() { SKYRIM_FORM(Keyword_t, KEYWORD_MAGIC_DAMAGE_FROST); }
+    Keyword_t* Shock_Damage_Magic_Keyword() { SKYRIM_FORM(Keyword_t, KEYWORD_MAGIC_DAMAGE_SHOCK); }
+    Keyword_t* Vampire_Drain_Magic_Keyword() { SKYRIM_FORM(Keyword_t, KEYWORD_MAGIC_VAMPIRE_DRAIN); }
+    Keyword_t* Vampire_Keyword() { SKYRIM_FORM(Keyword_t, KEYWORD_VAMPIRE); }
 
     // Skyrim Perks
-    Perk_t* Vampire_Feed_Perk() SKYRIM_FORM(Perk_t, PERK_VAMPIRE_FEED);
+    Perk_t* Vampire_Feed_Perk() { SKYRIM_FORM(Perk_t, PERK_VAMPIRE_FEED); }
 
     // Skyrim Quests
-    Quest_t* Bard_Songs_Quest() SKYRIM_FORM(Quest_t, QUEST_BARD_SONGS);
-    Quest_t* Follower_Dialogue_Quest() SKYRIM_FORM(Quest_t, QUEST_DIALOGUE_FOLLOWER);
-    Quest_t* Player_Vampire_Quest() SKYRIM_FORM(Quest_t, QUEST_PLAYER_VAMPIRE);
+    Quest_t* Bard_Songs_Quest() { SKYRIM_FORM(Quest_t, QUEST_BARD_SONGS); }
+    Quest_t* Follower_Dialogue_Quest() { SKYRIM_FORM(Quest_t, QUEST_DIALOGUE_FOLLOWER); }
+    Quest_t* Player_Vampire_Quest() { SKYRIM_FORM(Quest_t, QUEST_PLAYER_VAMPIRE); }
 
     // Skyrim Reference Markers
-    Reference_t* Safe_Goto_Marker() SKYRIM_FORM(Reference_t, REFERENCE_MARKER_GOTO_SAFE);
+    Reference_t* Safe_Goto_Marker() { SKYRIM_FORM(Reference_t, REFERENCE_MARKER_GOTO_SAFE); }
 
     // Skyrim Statics
-    Static_t* X_Marker_Static() SKYRIM_FORM(Static_t, STATIC_MARKER_X);
+    Static_t* X_Marker_Static() { SKYRIM_FORM(Static_t, STATIC_MARKER_X); }
 
     #undef SKYRIM_FORM
 
@@ -129,8 +129,8 @@ namespace doticu_npcp { namespace Consts {
     #define DAWNGUARD_FORM(TYPE_, MOD_ID_) FORM(Dawnguard_Form, TYPE_, MOD_ID_);
 
     // Dawnguard Factions
-    Faction_t* DLC1_Thrall_Faction() DAWNGUARD_FORM(Faction_t, FACTION_DLC1_THRALL);
-    Faction_t* DLC1_Vampire_Feed_No_Crime_Faction() DAWNGUARD_FORM(Faction_t, FACTION_DLC1_VAMPIRE_FEED_NO_CRIME);
+    Faction_t* DLC1_Thrall_Faction() { DAWNGUARD_FORM(Faction_t, FACTION_DLC1_THRALL); }
+    Faction_t* DLC1_Vampire_Feed_No_Crime_Faction() { DAWNGUARD_FORM(Faction_t, FACTION_DLC1_VAMPIRE_FEED_NO_CRIME); }
 
     #undef DAWNGUARD_FORM
 
@@ -143,11 +143,11 @@ namespace doticu_npcp { namespace Consts {
 
         // NPCP Containers
         CONTAINER_EMPTY                     = 0x0A5561,
-        CONTAINER_OUTFIT                    = 0x0B9A63,
-        CONTAINER_OUTFIT_IMMOBILE           = 0x1663CE,
-        CONTAINER_OUTFIT_SETTLER            = 0x1663CD,
-        CONTAINER_OUTFIT_THRALL             = 0x1663CC,
-        CONTAINER_OUTFIT_FOLLOWER           = 0x1663C7,
+        CONTAINER_OUTFIT2                   = 0x0B9A63,
+        CONTAINER_OUTFIT2_IMMOBILE          = 0x1663CE,
+        CONTAINER_OUTFIT2_SETTLER           = 0x1663CD,
+        CONTAINER_OUTFIT2_THRALL            = 0x1663CC,
+        CONTAINER_OUTFIT2_FOLLOWER          = 0x1663C7,
 
         // NPCP Factions
         FACTION_HORSE                       = 0x354111,
@@ -305,38 +305,38 @@ namespace doticu_npcp { namespace Consts {
     #define NPCP_FORM(TYPE_, MOD_ID_) FORM(NPCP_Form, TYPE_, MOD_ID_);
 
     // NPCP Actor Base
-    Actor_Base_t* Menu_Actor_Base() NPCP_FORM(Actor_Base_t, ACTOR_BASE_MENU);
+    Actor_Base_t* Menu_Actor_Base() { NPCP_FORM(Actor_Base_t, ACTOR_BASE_MENU); }
 
     // NPCP Armors
-    Armor_t* Blank_Armor() NPCP_FORM(Armor_t, ARMOR_BLANK);
+    Armor_t* Blank_Armor() { NPCP_FORM(Armor_t, ARMOR_BLANK); }
 
     // NPCP Containers
-    Container_t* Empty_Container() NPCP_FORM(Container_t, CONTAINER_EMPTY);
-    Container_t* Outfit_Container() NPCP_FORM(Container_t, CONTAINER_OUTFIT);
-    Container_t* Immobile_Outfit_Container() NPCP_FORM(Container_t, CONTAINER_OUTFIT_IMMOBILE);
-    Container_t* Settler_Outfit_Container() NPCP_FORM(Container_t, CONTAINER_OUTFIT_SETTLER);
-    Container_t* Thrall_Outfit_Container() NPCP_FORM(Container_t, CONTAINER_OUTFIT_THRALL);
-    Container_t* Follower_Outfit_Container() NPCP_FORM(Container_t, CONTAINER_OUTFIT_FOLLOWER);
+    Container_t* Empty_Container() { NPCP_FORM(Container_t, CONTAINER_EMPTY); }
+    Container_t* Outfit2_Container() { NPCP_FORM(Container_t, CONTAINER_OUTFIT2); }
+    Container_t* Immobile_Outfit2_Container() { NPCP_FORM(Container_t, CONTAINER_OUTFIT2_IMMOBILE); }
+    Container_t* Settler_Outfit2_Container() { NPCP_FORM(Container_t, CONTAINER_OUTFIT2_SETTLER); }
+    Container_t* Thrall_Outfit2_Container() { NPCP_FORM(Container_t, CONTAINER_OUTFIT2_THRALL); }
+    Container_t* Follower_Outfit2_Container() { NPCP_FORM(Container_t, CONTAINER_OUTFIT2_FOLLOWER); }
 
     // NPCP Factions
-    Faction_t* Member_Faction() NPCP_FORM(Faction_t, FACTION_MEMBER);
-    Faction_t* Horse_Faction() NPCP_FORM(Faction_t, FACTION_HORSE);
+    Faction_t* Member_Faction() { NPCP_FORM(Faction_t, FACTION_MEMBER); }
+    Faction_t* Horse_Faction() { NPCP_FORM(Faction_t, FACTION_HORSE); }
 
     // NPCP Formlists
-    Formlist_t* Is_Saddler_Sitting_Globals_Formlist() NPCP_FORM(Formlist_t, FORMLIST_GLOBALS_IS_SADDLER_SITTING);
-    Formlist_t* Expo_Cell_Markers_Formlist() NPCP_FORM(Formlist_t, FORMLIST_MARKERS_EXPO_CELL);
-    Formlist_t* Settler_Markers_Formlist() NPCP_FORM(Formlist_t, FORMLIST_MARKERS_SETTLER);
+    Formlist_t* Is_Saddler_Sitting_Globals_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_GLOBALS_IS_SADDLER_SITTING); }
+    Formlist_t* Expo_Cell_Markers_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_MARKERS_EXPO_CELL); }
+    Formlist_t* Settler_Markers_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_MARKERS_SETTLER); }
 
     // NPCP Globals
-    Global_t* Is_Installed_Global() NPCP_FORM(Global_t, GLOBAL_IS_INSTALLED);
-    Global_t* Force_Clone_Uniques_Global() NPCP_FORM(Global_t, GLOBAL_FORCE_CLONE_UNIQUES);
-    Global_t* Force_Clone_Generics_Global() NPCP_FORM(Global_t, GLOBAL_FORCE_CLONE_GENERICS);
-    Global_t* Force_Unclone_Uniques_Global() NPCP_FORM(Global_t, GLOBAL_FORCE_UNCLONE_UNIQUES);
-    Global_t* Force_Unclone_Generics_Global() NPCP_FORM(Global_t, GLOBAL_FORCE_UNCLONE_GENERICS);
-    Global_t* No_Body_Percent_Global() NPCP_FORM(Global_t, GLOBAL_PERCENT_NO_BODY);
-    Global_t* No_Feet_Percent_Global() NPCP_FORM(Global_t, GLOBAL_PERCENT_NO_FEET);
-    Global_t* No_Hands_Percent_Global() NPCP_FORM(Global_t, GLOBAL_PERCENT_NO_HANDS);
-    Global_t* No_Head_Percent_Global() NPCP_FORM(Global_t, GLOBAL_PERCENT_NO_HEAD);
+    Global_t* Is_Installed_Global() { NPCP_FORM(Global_t, GLOBAL_IS_INSTALLED); }
+    Global_t* Force_Clone_Uniques_Global() { NPCP_FORM(Global_t, GLOBAL_FORCE_CLONE_UNIQUES); }
+    Global_t* Force_Clone_Generics_Global() { NPCP_FORM(Global_t, GLOBAL_FORCE_CLONE_GENERICS); }
+    Global_t* Force_Unclone_Uniques_Global() { NPCP_FORM(Global_t, GLOBAL_FORCE_UNCLONE_UNIQUES); }
+    Global_t* Force_Unclone_Generics_Global() { NPCP_FORM(Global_t, GLOBAL_FORCE_UNCLONE_GENERICS); }
+    Global_t* No_Body_Percent_Global() { NPCP_FORM(Global_t, GLOBAL_PERCENT_NO_BODY); }
+    Global_t* No_Feet_Percent_Global() { NPCP_FORM(Global_t, GLOBAL_PERCENT_NO_FEET); }
+    Global_t* No_Hands_Percent_Global() { NPCP_FORM(Global_t, GLOBAL_PERCENT_NO_HANDS); }
+    Global_t* No_Head_Percent_Global() { NPCP_FORM(Global_t, GLOBAL_PERCENT_NO_HEAD); }
 
     // NPCP Ints
     Int_t NPCP_Major() { return 0; } // set manually upon each release
@@ -344,136 +344,136 @@ namespace doticu_npcp { namespace Consts {
     Int_t NPCP_Patch() { return 2; } // set manually upon each release
 
     // NPCP Leveled Actor
-    Leveled_Actor_t* Horse_Leveled_Actor() NPCP_FORM(Leveled_Actor_t, LEVELED_ACTOR_HORSE);
+    Leveled_Actor_t* Horse_Leveled_Actor() { NPCP_FORM(Leveled_Actor_t, LEVELED_ACTOR_HORSE); }
 
     // NPCP Location
-    Location_t* Expo_Location() NPCP_FORM(Location_t, LOCATION_EXPO);
+    Location_t* Expo_Location() { NPCP_FORM(Location_t, LOCATION_EXPO); }
 
     // NPCP Magic Effects
-    Magic_Effect_t* Retreat_Magic_Effect() NPCP_FORM(Magic_Effect_t, MAGIC_EFFECT_RETREAT);
+    Magic_Effect_t* Retreat_Magic_Effect() { NPCP_FORM(Magic_Effect_t, MAGIC_EFFECT_RETREAT); }
 
     // NPCP Misc Tokens
-    Misc_t* Member_Token() NPCP_FORM(Misc_t, MISC_TOKEN_MEMBER);
-    Misc_t* Generic_Token() NPCP_FORM(Misc_t, MISC_TOKEN_GENERIC);
-    Misc_t* Clone_Token() NPCP_FORM(Misc_t, MISC_TOKEN_CLONE);
-    Misc_t* Greeter_Token() NPCP_FORM(Misc_t, MISC_TOKEN_GREETER);
-    Misc_t* Movee_Token() NPCP_FORM(Misc_t, MISC_TOKEN_MOVEE);
-    Misc_t* Immobile_Token() NPCP_FORM(Misc_t, MISC_TOKEN_IMMOBILE);
-    Misc_t* Settler_Token() NPCP_FORM(Misc_t, MISC_TOKEN_SETTLER);
-    Misc_t* Thrall_Token() NPCP_FORM(Misc_t, MISC_TOKEN_THRALL);
-    Misc_t* Paralyzed_Token() NPCP_FORM(Misc_t, MISC_TOKEN_PARALYZED);
-    Misc_t* Mannequin_Token() NPCP_FORM(Misc_t, MISC_TOKEN_MANNEQUIN);
-    Misc_t* Display_Token() NPCP_FORM(Misc_t, MISC_TOKEN_DISPLAY);
-    Misc_t* Reanimated_Token() NPCP_FORM(Misc_t, MISC_TOKEN_REANIMATED);
-    Misc_t* Banished_Token() NPCP_FORM(Misc_t, MISC_TOKEN_BANISHED);
-    Misc_t* Default_Style_Token() NPCP_FORM(Misc_t, MISC_TOKEN_STYLE_DEFAULT);
-    Misc_t* Warrior_Style_Token() NPCP_FORM(Misc_t, MISC_TOKEN_STYLE_WARRIOR);
-    Misc_t* Mage_Style_Token() NPCP_FORM(Misc_t, MISC_TOKEN_STYLE_MAGE);
-    Misc_t* Archer_Style_Token() NPCP_FORM(Misc_t, MISC_TOKEN_STYLE_ARCHER);
-    Misc_t* Coward_Style_Token() NPCP_FORM(Misc_t, MISC_TOKEN_STYLE_COWARD);
-    Misc_t* Mortal_Vitality_Token() NPCP_FORM(Misc_t, MISC_TOKEN_VITALITY_MORTAL);
-    Misc_t* Protected_Vitality_Token() NPCP_FORM(Misc_t, MISC_TOKEN_VITALITY_PROTECTED);
-    Misc_t* Essential_Vitality_Token() NPCP_FORM(Misc_t, MISC_TOKEN_VITALITY_ESSENTIAL);
-    Misc_t* Invulnerable_Vitality_Token() NPCP_FORM(Misc_t, MISC_TOKEN_VITALITY_INVULNERABLE);
-    Misc_t* Follower_Token() NPCP_FORM(Misc_t, MISC_TOKEN_FOLLOWER);
-    Misc_t* Sneak_Follower_Token() NPCP_FORM(Misc_t, MISC_TOKEN_FOLLOWER_SNEAK);
-    Misc_t* Saddler_Token() NPCP_FORM(Misc_t, MISC_TOKEN_SADDLER);
-    Misc_t* Retreater_Token() NPCP_FORM(Misc_t, MISC_TOKEN_RETREATER);
+    Misc_t* Member_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_MEMBER); }
+    Misc_t* Generic_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_GENERIC); }
+    Misc_t* Clone_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_CLONE); }
+    Misc_t* Greeter_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_GREETER); }
+    Misc_t* Movee_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_MOVEE); }
+    Misc_t* Immobile_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_IMMOBILE); }
+    Misc_t* Settler_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_SETTLER); }
+    Misc_t* Thrall_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_THRALL); }
+    Misc_t* Paralyzed_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_PARALYZED); }
+    Misc_t* Mannequin_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_MANNEQUIN); }
+    Misc_t* Display_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_DISPLAY); }
+    Misc_t* Reanimated_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_REANIMATED); }
+    Misc_t* Banished_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_BANISHED); }
+    Misc_t* Default_Style_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_STYLE_DEFAULT); }
+    Misc_t* Warrior_Style_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_STYLE_WARRIOR); }
+    Misc_t* Mage_Style_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_STYLE_MAGE); }
+    Misc_t* Archer_Style_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_STYLE_ARCHER); }
+    Misc_t* Coward_Style_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_STYLE_COWARD); }
+    Misc_t* Mortal_Vitality_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_VITALITY_MORTAL); }
+    Misc_t* Protected_Vitality_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_VITALITY_PROTECTED); }
+    Misc_t* Essential_Vitality_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_VITALITY_ESSENTIAL); }
+    Misc_t* Invulnerable_Vitality_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_VITALITY_INVULNERABLE); }
+    Misc_t* Follower_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_FOLLOWER); }
+    Misc_t* Sneak_Follower_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_FOLLOWER_SNEAK); }
+    Misc_t* Saddler_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_SADDLER); }
+    Misc_t* Retreater_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_RETREATER); }
 
     // NPCP Misc
-    Misc_t* Tasklist() NPCP_FORM(Misc_t, MISC_TASKLIST);
-    Misc_t* Form_Vector() NPCP_FORM(Misc_t, MISC_VECTOR_FORM);
+    Misc_t* Tasklist() { NPCP_FORM(Misc_t, MISC_TASKLIST); }
+    Misc_t* Form_Vector() { NPCP_FORM(Misc_t, MISC_VECTOR_FORM); }
 
     // NPCP Outfits
-    Outfit_t* Empty_Outfit() NPCP_FORM(Outfit_t, OUTFIT_EMPTY);
+    Outfit_t* Empty_Outfit() { NPCP_FORM(Outfit_t, OUTFIT_EMPTY); }
 
     // NPCP Perks
-    Perk_t* Kiss_Thrall_Perk() NPCP_FORM(Perk_t, PERK_KISS_THRALL);
-    Perk_t* Reanimate_Perk() NPCP_FORM(Perk_t, PERK_REANIMATE);
-    Perk_t* Resurrect_Perk() NPCP_FORM(Perk_t, PERK_RESURRECT);
-    Perk_t* Unparalyze_Perk() NPCP_FORM(Perk_t, PERK_UNPARALYZE);
+    Perk_t* Kiss_Thrall_Perk() { NPCP_FORM(Perk_t, PERK_KISS_THRALL); }
+    Perk_t* Reanimate_Perk() { NPCP_FORM(Perk_t, PERK_REANIMATE); }
+    Perk_t* Resurrect_Perk() { NPCP_FORM(Perk_t, PERK_RESURRECT); }
+    Perk_t* Unparalyze_Perk() { NPCP_FORM(Perk_t, PERK_UNPARALYZE); }
 
     // NPCP Quests
-    Quest_t* Main_Quest() NPCP_FORM(Quest_t, QUEST_MAIN);
-    Quest_t* Vars_Quest() NPCP_FORM(Quest_t, QUEST_VARS);
-    Quest_t* Funcs_Quest() NPCP_FORM(Quest_t, QUEST_FUNCS);
-    Quest_t* Members_Quest() NPCP_FORM(Quest_t, QUEST_MEMBERS);
-    Quest_t* Followers_Quest() NPCP_FORM(Quest_t, QUEST_FOLLOWERS);
-    Quest_t* Control_Quest() NPCP_FORM(Quest_t, QUEST_CONTROL);
-    Quest_t* Thrall_Dialogue_Quest() NPCP_FORM(Quest_t, QUEST_DIALOGUE_THRALL);
-    Quest_t* Reanimated_Dialogue_Quest() NPCP_FORM(Quest_t, QUEST_DIALOGUE_REANIMATED);
+    Quest_t* Main_Quest() { NPCP_FORM(Quest_t, QUEST_MAIN); }
+    Quest_t* Vars_Quest() { NPCP_FORM(Quest_t, QUEST_VARS); }
+    Quest_t* Funcs_Quest() { NPCP_FORM(Quest_t, QUEST_FUNCS); }
+    Quest_t* Members_Quest() { NPCP_FORM(Quest_t, QUEST_MEMBERS); }
+    Quest_t* Followers_Quest() { NPCP_FORM(Quest_t, QUEST_FOLLOWERS); }
+    Quest_t* Control_Quest() { NPCP_FORM(Quest_t, QUEST_CONTROL); }
+    Quest_t* Thrall_Dialogue_Quest() { NPCP_FORM(Quest_t, QUEST_DIALOGUE_THRALL); }
+    Quest_t* Reanimated_Dialogue_Quest() { NPCP_FORM(Quest_t, QUEST_DIALOGUE_REANIMATED); }
 
     // NPCP Reference Categories
-    Reference_t* Input_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_INPUT);
-    Reference_t* Swords_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_SWORDS);
-    Reference_t* Greatswords_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_GREATSWORDS);
-    Reference_t* Waraxes_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_WARAXES);
-    Reference_t* Battleaxes_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BATTLEAXES);
-    Reference_t* Maces_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_MACES);
-    Reference_t* Warhammers_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_WARHAMMERS);
-    Reference_t* Daggers_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_DAGGERS);
-    Reference_t* Staves_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_STAVES);
-    Reference_t* Bows_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOWS);
-    Reference_t* Ammo_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_AMMO);
-    Reference_t* Weapons_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_WEAPONS);
-    Reference_t* Light_Armor_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_LIGHT_ARMOR);
-    Reference_t* Heavy_Armor_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_HEAVY_ARMOR);
-    Reference_t* Shields_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_SHIELDS);
-    Reference_t* Jewelry_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_JEWELRY);
-    Reference_t* Clothes_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_CLOTHES);
-    Reference_t* Potions_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_POTIONS);
-    Reference_t* Poisons_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_POISONS);
-    Reference_t* Ingredients_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_INGREDIENTS);
-    Reference_t* Food_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_FOOD);
-    Reference_t* Soulgems_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_SOULGEMS);
-    Reference_t* Scrolls_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_SCROLLS);
-    Reference_t* Metals_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_METALS);
-    Reference_t* Leather_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_LEATHER);
-    Reference_t* Gems_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_GEMS);
-    Reference_t* Clutter_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_CLUTTER);
-    Reference_t* Keys_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_KEYS);
-    Reference_t* Misc_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_MISC);
-    Reference_t* Spell_Tomes_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_SPELL_TOMES);
-    Reference_t* Recipes_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_RECIPES);
-    Reference_t* A_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_A);
-    Reference_t* B_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_B);
-    Reference_t* C_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_C);
-    Reference_t* D_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_D);
-    Reference_t* E_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_E);
-    Reference_t* F_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_F);
-    Reference_t* G_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_G);
-    Reference_t* H_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_H);
-    Reference_t* I_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_I);
-    Reference_t* J_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_J);
-    Reference_t* K_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_K);
-    Reference_t* L_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_L);
-    Reference_t* M_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_M);
-    Reference_t* N_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_N);
-    Reference_t* O_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_O);
-    Reference_t* P_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_P);
-    Reference_t* Q_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_Q);
-    Reference_t* R_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_R);
-    Reference_t* S_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_S);
-    Reference_t* T_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_T);
-    Reference_t* U_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_U);
-    Reference_t* V_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_V);
-    Reference_t* W_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_W);
-    Reference_t* X_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_X);
-    Reference_t* Y_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_Y);
-    Reference_t* Z_Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_Z);
-    Reference_t* Books_Category() NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS);
+    Reference_t* Input_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_INPUT); }
+    Reference_t* Swords_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_SWORDS); }
+    Reference_t* Greatswords_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_GREATSWORDS); }
+    Reference_t* Waraxes_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_WARAXES); }
+    Reference_t* Battleaxes_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BATTLEAXES); }
+    Reference_t* Maces_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_MACES); }
+    Reference_t* Warhammers_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_WARHAMMERS); }
+    Reference_t* Daggers_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_DAGGERS); }
+    Reference_t* Staves_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_STAVES); }
+    Reference_t* Bows_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOWS); }
+    Reference_t* Ammo_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_AMMO); }
+    Reference_t* Weapons_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_WEAPONS); }
+    Reference_t* Light_Armor_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_LIGHT_ARMOR); }
+    Reference_t* Heavy_Armor_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_HEAVY_ARMOR); }
+    Reference_t* Shields_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_SHIELDS); }
+    Reference_t* Jewelry_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_JEWELRY); }
+    Reference_t* Clothes_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_CLOTHES); }
+    Reference_t* Potions_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_POTIONS); }
+    Reference_t* Poisons_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_POISONS); }
+    Reference_t* Ingredients_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_INGREDIENTS); }
+    Reference_t* Food_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_FOOD); }
+    Reference_t* Soulgems_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_SOULGEMS); }
+    Reference_t* Scrolls_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_SCROLLS); }
+    Reference_t* Metals_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_METALS); }
+    Reference_t* Leather_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_LEATHER); }
+    Reference_t* Gems_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_GEMS); }
+    Reference_t* Clutter_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_CLUTTER); }
+    Reference_t* Keys_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_KEYS); }
+    Reference_t* Misc_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_MISC); }
+    Reference_t* Spell_Tomes_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_SPELL_TOMES); }
+    Reference_t* Recipes_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_RECIPES); }
+    Reference_t* A_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_A); }
+    Reference_t* B_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_B); }
+    Reference_t* C_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_C); }
+    Reference_t* D_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_D); }
+    Reference_t* E_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_E); }
+    Reference_t* F_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_F); }
+    Reference_t* G_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_G); }
+    Reference_t* H_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_H); }
+    Reference_t* I_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_I); }
+    Reference_t* J_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_J); }
+    Reference_t* K_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_K); }
+    Reference_t* L_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_L); }
+    Reference_t* M_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_M); }
+    Reference_t* N_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_N); }
+    Reference_t* O_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_O); }
+    Reference_t* P_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_P); }
+    Reference_t* Q_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_Q); }
+    Reference_t* R_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_R); }
+    Reference_t* S_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_S); }
+    Reference_t* T_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_T); }
+    Reference_t* U_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_U); }
+    Reference_t* V_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_V); }
+    Reference_t* W_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_W); }
+    Reference_t* X_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_X); }
+    Reference_t* Y_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_Y); }
+    Reference_t* Z_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_Z); }
+    Reference_t* Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS); }
 
     // NPCP Reference Markers
-    Reference_t* Cell_Marker() NPCP_FORM(Reference_t, REFERENCE_MARKER_CELL);
-    Reference_t* Expo_Antechamber_Marker() NPCP_FORM(Reference_t, REFERENCE_MARKER_EXPO_ANTECHAMBER);
-    Reference_t* Storage_Marker() NPCP_FORM(Reference_t, REFERENCE_MARKER_STORAGE);
+    Reference_t* Cell_Marker() { NPCP_FORM(Reference_t, REFERENCE_MARKER_CELL); }
+    Reference_t* Expo_Antechamber_Marker() { NPCP_FORM(Reference_t, REFERENCE_MARKER_EXPO_ANTECHAMBER); }
+    Reference_t* Storage_Marker() { NPCP_FORM(Reference_t, REFERENCE_MARKER_STORAGE); }
 
     // NPCP Spells
-    Spell_t* Cell_Ability_Spell() NPCP_FORM(Spell_t, SPELL_ABILITY_CELL);
-    Spell_t* Retreat_Ability_Spell() NPCP_FORM(Spell_t, SPELL_ABILITY_RETREAT);
+    Spell_t* Cell_Ability_Spell() { NPCP_FORM(Spell_t, SPELL_ABILITY_CELL); }
+    Spell_t* Retreat_Ability_Spell() { NPCP_FORM(Spell_t, SPELL_ABILITY_RETREAT); }
 
     // NPCP Weapons
-    Weapon_t* Blank_Weapon() NPCP_FORM(Weapon_t, WEAPON_BLANK);
+    Weapon_t* Blank_Weapon() { NPCP_FORM(Weapon_t, WEAPON_BLANK); }
 
     #undef NPCP_FORM
 
@@ -483,189 +483,17 @@ namespace doticu_npcp { namespace Consts {
 
 namespace doticu_npcp { namespace Consts { namespace Exports {
 
-    #define FORWARD_CONST(METHOD_) { return Consts::METHOD_(); }
-
-    // Skyrim Actors
-    Actor_t* Player_Actor(Selfless_t*) FORWARD_CONST(Player_Actor);
-
-    // Skyrim Effect Shaders
-    Effect_Shader_t* Reanimate_Effect_Shader(Selfless_t*) FORWARD_CONST(Reanimate_Effect_Shader);
-
-    // Skyrim Factions
-    Faction_t* No_Bard_Singer_Autostart_Faction(Selfless_t*) FORWARD_CONST(No_Bard_Singer_Autostart_Faction);
-
-    // Skyrim Keywords
-    Keyword_t* Vampire_Keyword(Selfless_t*) FORWARD_CONST(Vampire_Keyword);
-
-    // Skyrim Perks
-    Perk_t* Vampire_Feed_Perk(Selfless_t*) FORWARD_CONST(Vampire_Feed_Perk);
-
-    // Skryim Quests
-    Quest_t* Bard_Songs_Quest(Selfless_t*) FORWARD_CONST(Bard_Songs_Quest);
-    Quest_t* Follower_Dialogue_Quest(Selfless_t*) FORWARD_CONST(Follower_Dialogue_Quest);
-    Quest_t* Player_Vampire_Quest(Selfless_t*) FORWARD_CONST(Player_Vampire_Quest);
-
-    // Skyrim Reference Markers
-    Reference_t* Safe_Goto_Marker(Selfless_t*) FORWARD_CONST(Safe_Goto_Marker);
-
-    // Skyrim Statics
-    Static_t* X_Marker_Static(Selfless_t*) FORWARD_CONST(X_Marker_Static);
-
-    // Dawnguard Factions
-    Faction_t* DLC1_Thrall_Faction(Selfless_t*) FORWARD_CONST(DLC1_Thrall_Faction);
-
-    // NPCP Actor Base
-    Actor_Base_t* Menu_Actor_Base(Selfless_t*) FORWARD_CONST(Menu_Actor_Base);
-
-    // NPCP Armors
-    Armor_t* Blank_Armor(Selfless_t*) FORWARD_CONST(Blank_Armor);
-
-    // NPCP Containers
-    Container_t* Empty_Container(Selfless_t*) FORWARD_CONST(Empty_Container);
-    Container_t* Outfit_Container(Selfless_t*) FORWARD_CONST(Outfit_Container);
-    Container_t* Immobile_Outfit_Container(Selfless_t*) FORWARD_CONST(Immobile_Outfit_Container);
-    Container_t* Settler_Outfit_Container(Selfless_t*) FORWARD_CONST(Settler_Outfit_Container);
-    Container_t* Thrall_Outfit_Container(Selfless_t*) FORWARD_CONST(Thrall_Outfit_Container);
-    Container_t* Follower_Outfit_Container(Selfless_t*) FORWARD_CONST(Follower_Outfit_Container);
-
-    // NPCP Formlists
-    Formlist_t* Is_Saddler_Sitting_Globals_Formlist(Selfless_t*) FORWARD_CONST(Is_Saddler_Sitting_Globals_Formlist);
-    Formlist_t* Expo_Cell_Markers_Formlist(Selfless_t*) FORWARD_CONST(Expo_Cell_Markers_Formlist);
-
-    // NPCP Globals
-    Global_t* Is_Installed_Global(Selfless_t*) FORWARD_CONST(Is_Installed_Global);
-    Global_t* Force_Clone_Uniques_Global(Selfless_t*) FORWARD_CONST(Force_Clone_Uniques_Global);
-    Global_t* Force_Clone_Generics_Global(Selfless_t*) FORWARD_CONST(Force_Clone_Generics_Global);
-    Global_t* Force_Unclone_Uniques_Global(Selfless_t*) FORWARD_CONST(Force_Unclone_Uniques_Global);
-    Global_t* Force_Unclone_Generics_Global(Selfless_t*) FORWARD_CONST(Force_Unclone_Generics_Global);
-    Global_t* No_Body_Percent_Global(Selfless_t*) FORWARD_CONST(No_Body_Percent_Global);
-    Global_t* No_Feet_Percent_Global(Selfless_t*) FORWARD_CONST(No_Feet_Percent_Global);
-    Global_t* No_Hands_Percent_Global(Selfless_t*) FORWARD_CONST(No_Hands_Percent_Global);
-    Global_t* No_Head_Percent_Global(Selfless_t*) FORWARD_CONST(No_Head_Percent_Global);
-
-    // NPCP Ints
-    Int_t NPCP_Major(Selfless_t*) FORWARD_CONST(NPCP_Major);
-    Int_t NPCP_Minor(Selfless_t*) FORWARD_CONST(NPCP_Minor);
-    Int_t NPCP_Patch(Selfless_t*) FORWARD_CONST(NPCP_Patch);
-
-    // NPCP Leveled Actor
-    Leveled_Actor_t* Horse_Leveled_Actor(Selfless_t*) FORWARD_CONST(Horse_Leveled_Actor);
-
-    // NPCP Location
-    Location_t* Expo_Location(Selfless_t*) FORWARD_CONST(Expo_Location);
-
-    // NPCP Magic Effects
-    Magic_Effect_t* Retreat_Magic_Effect(Selfless_t*) FORWARD_CONST(Retreat_Magic_Effect);
-
-    // NPCP Misc Tokens
-    Misc_t* Greeter_Token(Selfless_t*) FORWARD_CONST(Greeter_Token);
-    Misc_t* Movee_Token(Selfless_t*) FORWARD_CONST(Movee_Token);
-    Misc_t* Reanimated_Token(Selfless_t*) FORWARD_CONST(Reanimated_Token);
-    Misc_t* Follower_Token(Selfless_t*) FORWARD_CONST(Follower_Token);
-    Misc_t* Saddler_Token(Selfless_t*) FORWARD_CONST(Saddler_Token);
-    Misc_t* Retreater_Token(Selfless_t*) FORWARD_CONST(Retreater_Token);
-
-    // NPCP Misc
-    Misc_t* Tasklist(Selfless_t*) FORWARD_CONST(Tasklist);
-    Misc_t* Form_Vector(Selfless_t*) FORWARD_CONST(Form_Vector);
-
-    // NPCP Perks
-    Perk_t* Kiss_Thrall_Perk(Selfless_t*) FORWARD_CONST(Kiss_Thrall_Perk);
-    Perk_t* Reanimate_Perk(Selfless_t*) FORWARD_CONST(Reanimate_Perk);
-    Perk_t* Resurrect_Perk(Selfless_t*) FORWARD_CONST(Resurrect_Perk);
-    Perk_t* Unparalyze_Perk(Selfless_t*) FORWARD_CONST(Unparalyze_Perk);
-
-    // NPCP Quests
-    Quest_t* Main_Quest(Selfless_t*) FORWARD_CONST(Main_Quest);
-    Quest_t* Vars_Quest(Selfless_t*) FORWARD_CONST(Vars_Quest);
-    Quest_t* Funcs_Quest(Selfless_t*) FORWARD_CONST(Funcs_Quest);
-    Quest_t* Members_Quest(Selfless_t*) FORWARD_CONST(Members_Quest);
-    Quest_t* Followers_Quest(Selfless_t*) FORWARD_CONST(Followers_Quest);
-    Quest_t* Control_Quest(Selfless_t*) FORWARD_CONST(Control_Quest);
-    Quest_t* Thrall_Dialogue_Quest(Selfless_t*) FORWARD_CONST(Thrall_Dialogue_Quest);
-    Quest_t* Reanimated_Dialogue_Quest(Selfless_t*) FORWARD_CONST(Reanimated_Dialogue_Quest);
-
-    // NPCP Reference Categories
-    Reference_t* Input_Category(Selfless_t*) FORWARD_CONST(Input_Category);
-    Reference_t* Swords_Category(Selfless_t*) FORWARD_CONST(Swords_Category);
-    Reference_t* Greatswords_Category(Selfless_t*) FORWARD_CONST(Greatswords_Category);
-    Reference_t* Waraxes_Category(Selfless_t*) FORWARD_CONST(Waraxes_Category);
-    Reference_t* Battleaxes_Category(Selfless_t*) FORWARD_CONST(Battleaxes_Category);
-    Reference_t* Maces_Category(Selfless_t*) FORWARD_CONST(Maces_Category);
-    Reference_t* Warhammers_Category(Selfless_t*) FORWARD_CONST(Warhammers_Category);
-    Reference_t* Daggers_Category(Selfless_t*) FORWARD_CONST(Daggers_Category);
-    Reference_t* Staves_Category(Selfless_t*) FORWARD_CONST(Staves_Category);
-    Reference_t* Bows_Category(Selfless_t*) FORWARD_CONST(Bows_Category);
-    Reference_t* Ammo_Category(Selfless_t*) FORWARD_CONST(Ammo_Category);
-    Reference_t* Weapons_Category(Selfless_t*) FORWARD_CONST(Weapons_Category);
-    Reference_t* Light_Armor_Category(Selfless_t*) FORWARD_CONST(Light_Armor_Category);
-    Reference_t* Heavy_Armor_Category(Selfless_t*) FORWARD_CONST(Heavy_Armor_Category);
-    Reference_t* Shields_Category(Selfless_t*) FORWARD_CONST(Shields_Category);
-    Reference_t* Jewelry_Category(Selfless_t*) FORWARD_CONST(Jewelry_Category);
-    Reference_t* Clothes_Category(Selfless_t*) FORWARD_CONST(Clothes_Category);
-    Reference_t* Potions_Category(Selfless_t*) FORWARD_CONST(Potions_Category);
-    Reference_t* Poisons_Category(Selfless_t*) FORWARD_CONST(Poisons_Category);
-    Reference_t* Ingredients_Category(Selfless_t*) FORWARD_CONST(Ingredients_Category);
-    Reference_t* Food_Category(Selfless_t*) FORWARD_CONST(Food_Category);
-    Reference_t* Soulgems_Category(Selfless_t*) FORWARD_CONST(Soulgems_Category);
-    Reference_t* Scrolls_Category(Selfless_t*) FORWARD_CONST(Scrolls_Category);
-    Reference_t* Metals_Category(Selfless_t*) FORWARD_CONST(Metals_Category);
-    Reference_t* Leather_Category(Selfless_t*) FORWARD_CONST(Leather_Category);
-    Reference_t* Gems_Category(Selfless_t*) FORWARD_CONST(Gems_Category);
-    Reference_t* Clutter_Category(Selfless_t*) FORWARD_CONST(Clutter_Category);
-    Reference_t* Keys_Category(Selfless_t*) FORWARD_CONST(Keys_Category);
-    Reference_t* Misc_Category(Selfless_t*) FORWARD_CONST(Misc_Category);
-    Reference_t* Spell_Tomes_Category(Selfless_t*) FORWARD_CONST(Spell_Tomes_Category);
-    Reference_t* Recipes_Category(Selfless_t*) FORWARD_CONST(Recipes_Category);
-    Reference_t* A_Books_Category(Selfless_t*) FORWARD_CONST(A_Books_Category);
-    Reference_t* B_Books_Category(Selfless_t*) FORWARD_CONST(B_Books_Category);
-    Reference_t* C_Books_Category(Selfless_t*) FORWARD_CONST(C_Books_Category);
-    Reference_t* D_Books_Category(Selfless_t*) FORWARD_CONST(D_Books_Category);
-    Reference_t* E_Books_Category(Selfless_t*) FORWARD_CONST(E_Books_Category);
-    Reference_t* F_Books_Category(Selfless_t*) FORWARD_CONST(F_Books_Category);
-    Reference_t* G_Books_Category(Selfless_t*) FORWARD_CONST(G_Books_Category);
-    Reference_t* H_Books_Category(Selfless_t*) FORWARD_CONST(H_Books_Category);
-    Reference_t* I_Books_Category(Selfless_t*) FORWARD_CONST(I_Books_Category);
-    Reference_t* J_Books_Category(Selfless_t*) FORWARD_CONST(J_Books_Category);
-    Reference_t* K_Books_Category(Selfless_t*) FORWARD_CONST(K_Books_Category);
-    Reference_t* L_Books_Category(Selfless_t*) FORWARD_CONST(L_Books_Category);
-    Reference_t* M_Books_Category(Selfless_t*) FORWARD_CONST(M_Books_Category);
-    Reference_t* N_Books_Category(Selfless_t*) FORWARD_CONST(N_Books_Category);
-    Reference_t* O_Books_Category(Selfless_t*) FORWARD_CONST(O_Books_Category);
-    Reference_t* P_Books_Category(Selfless_t*) FORWARD_CONST(P_Books_Category);
-    Reference_t* Q_Books_Category(Selfless_t*) FORWARD_CONST(Q_Books_Category);
-    Reference_t* R_Books_Category(Selfless_t*) FORWARD_CONST(R_Books_Category);
-    Reference_t* S_Books_Category(Selfless_t*) FORWARD_CONST(S_Books_Category);
-    Reference_t* T_Books_Category(Selfless_t*) FORWARD_CONST(T_Books_Category);
-    Reference_t* U_Books_Category(Selfless_t*) FORWARD_CONST(U_Books_Category);
-    Reference_t* V_Books_Category(Selfless_t*) FORWARD_CONST(V_Books_Category);
-    Reference_t* W_Books_Category(Selfless_t*) FORWARD_CONST(W_Books_Category);
-    Reference_t* X_Books_Category(Selfless_t*) FORWARD_CONST(X_Books_Category);
-    Reference_t* Y_Books_Category(Selfless_t*) FORWARD_CONST(Y_Books_Category);
-    Reference_t* Z_Books_Category(Selfless_t*) FORWARD_CONST(Z_Books_Category);
-    Reference_t* Books_Category(Selfless_t*) FORWARD_CONST(Books_Category);
-
-    // NPCP Reference Markers
-    Reference_t* Cell_Marker(Selfless_t*) FORWARD_CONST(Cell_Marker);
-    Reference_t* Expo_Antechamber_Marker(Selfless_t*) FORWARD_CONST(Expo_Antechamber_Marker);
-    Reference_t* Storage_Marker(Selfless_t*) FORWARD_CONST(Storage_Marker);
-
-    // NPCP Spells
-    Spell_t* Cell_Ability_Spell(Selfless_t*) FORWARD_CONST(Cell_Ability_Spell);
-    Spell_t* Retreat_Ability_Spell(Selfless_t*) FORWARD_CONST(Retreat_Ability_Spell);
-
-    // NPCP Weapons
-    Weapon_t* Blank_Weapon(Selfless_t*) FORWARD_CONST(Blank_Weapon);
-
-    #undef FORWARD_CONST
-
     bool Register(Papyrus::Registry_t* registry)
     {
         #define ADD_GLOBAL(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
         M                                                               \
+            auto lambda = [](Selfless_t*) -> RETURN_                    \
+            {                                                           \
+                return Consts::METHOD_();                               \
+            };                                                          \
             ADD_CLASS_METHOD("doticu_npcp_consts", Selfless_t,          \
                              STR_FUNC_, ARG_NUM_,                       \
-                             RETURN_, Exports::METHOD_, __VA_ARGS__);   \
+                             RETURN_, lambda, __VA_ARGS__);             \
         W
 
         // Skyrim Actors
@@ -705,11 +533,11 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
 
         // NPCP Containers
         ADD_GLOBAL("Empty_Container", 0, Container_t*, Empty_Container);
-        ADD_GLOBAL("Outfit_Container", 0, Container_t*, Outfit_Container);
-        ADD_GLOBAL("Immobile_Outfit_Container", 0, Container_t*, Immobile_Outfit_Container);
-        ADD_GLOBAL("Settler_Outfit_Container", 0, Container_t*, Settler_Outfit_Container);
-        ADD_GLOBAL("Thrall_Outfit_Container", 0, Container_t*, Thrall_Outfit_Container);
-        ADD_GLOBAL("Follower_Outfit_Container", 0, Container_t*, Follower_Outfit_Container);
+        ADD_GLOBAL("Outfit2_Container", 0, Container_t*, Outfit2_Container);
+        ADD_GLOBAL("Immobile_Outfit2_Container", 0, Container_t*, Immobile_Outfit2_Container);
+        ADD_GLOBAL("Settler_Outfit2_Container", 0, Container_t*, Settler_Outfit2_Container);
+        ADD_GLOBAL("Thrall_Outfit2_Container", 0, Container_t*, Thrall_Outfit2_Container);
+        ADD_GLOBAL("Follower_Outfit2_Container", 0, Container_t*, Follower_Outfit2_Container);
 
         // NPCP Formlists
         ADD_GLOBAL("Is_Saddler_Sitting_Globals_Formlist", 0, Formlist_t*, Is_Saddler_Sitting_Globals_Formlist);

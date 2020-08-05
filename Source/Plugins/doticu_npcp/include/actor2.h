@@ -97,6 +97,10 @@ namespace doticu_npcp { namespace Actor2 {
 
     Actor_t* Clone(Actor_t* actor, Reference_t* marker = nullptr);
     void Resurrect(Actor_t* actor, Bool_t do_reset_inventory = false);
+    Bool_t Try_Resurrect(Actor_t* actor, Bool_t do_reset_inventory = false);
+
+    Bool_t Is_Child(Actor_t* actor);
+    Bool_t Isnt_Child(Actor_t* actor);
 
 }}
 

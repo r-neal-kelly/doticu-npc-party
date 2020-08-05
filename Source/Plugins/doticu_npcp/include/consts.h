@@ -66,11 +66,11 @@ namespace doticu_npcp { namespace Consts {
 
     // NPCP Containers
     Container_t* Empty_Container();
-    Container_t* Outfit_Container();
-    Container_t* Immobile_Outfit_Container();
-    Container_t* Settler_Outfit_Container();
-    Container_t* Thrall_Outfit_Container();
-    Container_t* Follower_Outfit_Container();
+    Container_t* Outfit2_Container();
+    Container_t* Immobile_Outfit2_Container();
+    Container_t* Settler_Outfit2_Container();
+    Container_t* Thrall_Outfit2_Container();
+    Container_t* Follower_Outfit2_Container();
 
     // NPCP Factions
     Faction_t* Member_Faction();

@@ -65,9 +65,12 @@ namespace doticu_npcp { namespace Object_Ref {
                              Bool_t force_persist = true,
                              Bool_t initially_disabled = false);
 
+    void Add_Item(Reference_t* ref, Form_t* form, Int_t count, Bool_t do_silently = true);
+
     Reference_t* From_Handle(Reference_Handle_t handle);
 
     Reference_t* Create_Marker_At(Reference_t* ref);
+    Reference_t* Create_Container();
 
     void Delete_Safe(Reference_t* ref);
     void Delete_Unsafe(Reference_t* ref);

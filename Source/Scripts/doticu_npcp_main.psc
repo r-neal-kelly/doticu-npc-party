@@ -61,7 +61,7 @@ endFunction
 
 function f_Load_Mod()
     FUNCS.Wait_Out_Of_Menu(1); just in case of any engine bugs
-    
+
     if p_Has_Requires()
         p_Register()
         p_Version()

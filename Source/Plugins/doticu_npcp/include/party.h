@@ -60,7 +60,7 @@ namespace doticu_npcp { namespace Party {
     public:
         static String_t Class_Name();
         static Class_Info_t* Class_Info();
-        static Members_t* Self();
+        static NPCS_t* Self();
         static Object_t* Object();
     public:
         Variable_t* Variable(String_t variable_name);
@@ -95,6 +95,8 @@ namespace doticu_npcp { namespace Party {
 
         Bool_t Is_Original(Actor_t* actor);
         Bool_t Is_Clone(Actor_t* actor);
+        Bool_t Should_Clone(Actor_t* actor);
+        Bool_t Should_Unclone(Actor_t* actor);
 
         Vector_t<Actor_t*> Originals(Actor_t* actor);
         Vector_t<Actor_t*> Clones(Actor_t* actor);
@@ -232,7 +234,11 @@ namespace doticu_npcp { namespace Party {
         Bool_t Has_Display();
         Bool_t Hasnt_Display();
 
+        Bool_t Should_Clone(Actor_t* actor);
+        Bool_t Should_Unclone(Actor_t* actor);
+
         Int_t Max();
+        Int_t Limit();
         Int_t Count_Filled();
         Int_t Count_Unfilled();
         Int_t Count_Loaded();
@@ -288,8 +294,6 @@ namespace doticu_npcp { namespace Party {
 
         Vector_t<Member_t*> Current_Filter();
 
-        void Create_Member(Actor_t* actor, Bool_t do_clone);
-
         Int_t Display_Start();
         Int_t Display_Stop();
         Int_t Display_Next();
@@ -302,6 +306,11 @@ namespace doticu_npcp { namespace Party {
                      float degree = DEFAULT_DISPLAY_DEGREE,
                      float interval = DEFAULT_DISPLAY_INTERVAL);
         void Undisplay();
+
+        Int_t Add_Original(Actor_t* original); // int function Create_Member(Actor ref_actor)
+        Int_t Remove_Original(Actor_t* original); // int function Destroy_Member(Actor ref_actor)
+        Int_t Add_Clone(Actor_t* original); // int function Clone(Actor ref_actor)
+        Int_t Remove_Clone(Actor_t* clone); // int function Unclone(Actor ref_actor, bool delete_clone)
     };
 
     namespace Members { namespace Exports {
@@ -502,11 +511,19 @@ namespace doticu_npcp { namespace Party {
         Variable_t* Mannequin_Marker_Variable();
         Variable_t* Display_Marker_Variable();
         Variable_t* Undisplay_Marker_Variable();
-        Variable_t* Style_Variable();
-        Variable_t* Vitality_Variable();
-        Variable_t* Outfit2_Variable();
-        Variable_t* Rating_Variable();
+        Variable_t* Vanilla_Outfit_Variable();
 
+        Variable_t* Member_Outfit2_Variable();
+        Variable_t* Immobile_Outfit2_Variable();
+        Variable_t* Settler_Outfit2_Variable();
+        Variable_t* Thrall_Outfit2_Variable();
+        Variable_t* Follower_Outfit2_Variable();
+        Variable_t* Vanilla_Outfit2_Variable();
+        Variable_t* Default_Outfit2_Variable();
+        Variable_t* Current_Outfit2_Variable();
+        Variable_t* Previous_Outfit2_Variable();
+        Variable_t* Auto_Backup_Outfit2_Variable();
+        
         Variable_t* Is_Clone_Variable();
         Variable_t* Is_Immobile_Variable();
         Variable_t* Is_Settler_Variable();
@@ -515,6 +532,20 @@ namespace doticu_npcp { namespace Party {
         Variable_t* Is_Mannequin_Variable();
         Variable_t* Is_Display_Variable();
         Variable_t* Is_Reanimated_Variable();
+        Variable_t* Do_Vanilla_Outfit_Variable();
+
+        Variable_t* Style_Variable();
+        Variable_t* Vitality_Variable();
+        Variable_t* Outfit2_Variable();
+        Variable_t* Rating_Variable();
+
+        Variable_t* Previous_Factions_Variable();
+        Variable_t* Previous_Faction_Ranks_Variable();
+        Variable_t* Previous_Crime_Faction_Variable();
+        Variable_t* Previous_Aggression_Variable();
+        Variable_t* Previous_Confidence_Variable();
+        Variable_t* Previous_Assistance_Variable();
+        Variable_t* Previous_Morality_Variable();
 
         Actor_t* Actor();
         Follower_t* Follower();
@@ -615,6 +646,8 @@ namespace doticu_npcp { namespace Party {
 
         void Create(Actor_t* actor, Bool_t is_clone);
         void Destroy();
+        void Backup_State();
+        void Restore_State();
         void Member();
         void Unmember();
         void Mobilize();

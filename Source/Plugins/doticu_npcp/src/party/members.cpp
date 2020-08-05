@@ -2,6 +2,7 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "actor2.h"
 #include "codes.h"
 #include "consts.h"
 #include "filter.h"
@@ -172,9 +173,24 @@ namespace doticu_npcp { namespace Party {
         return !Has_Display_Variable()->Bool();
     }
 
+    Bool_t Members_t::Should_Clone(Actor_t* actor)
+    {
+        return NPCS_t::Self()->Should_Clone(actor);
+    }
+
+    Bool_t Members_t::Should_Unclone(Actor_t* actor)
+    {
+        return NPCS_t::Self()->Should_Unclone(actor);
+    }
+
     Int_t Members_t::Max()
     {
         return MAX;
+    }
+
+    Int_t Members_t::Limit()
+    {
+        return Vars::Member_Limit();
     }
 
     Int_t Members_t::Count_Filled()
@@ -382,8 +398,7 @@ namespace doticu_npcp { namespace Party {
 
     Vector_t<Member_t*> Members_t::Sort(Vector_t<Member_t*> members)
     {
-        static const String_t sort_algorithm_name = String_t("p_str_sort_members");
-        return Aliases_t::Sort<Member_t>(members, Vars::String_Variable(sort_algorithm_name));
+        return Aliases_t::Sort<Member_t>(members, Vars::Members_Sort_Algorithm());
     }
 
     Vector_t<Member_t*> Members_t::Sort_Filled(Int_t begin, Int_t end)
@@ -601,6 +616,58 @@ namespace doticu_npcp { namespace Party {
         for (size_t idx = 0, count = displayed.size(); idx < count; idx += 1) {
             displayed[idx]->Undisplay();
         }
+    }
+
+    Int_t Members_t::Add_Original(Actor_t* original)
+    {
+        if (original) {
+            if (Actor2::Isnt_Child(original)) {
+                if (Count_Filled() < Limit()) {
+                    if (!Should_Clone(original)) {
+                        if (Hasnt_Actor(original)) {
+                            if (Actor2::Is_Alive(original) || Actor2::Try_Resurrect(original)) {
+                                NPCS_t::Self()->Add_Original(original);
+
+                                Member_t* member = From_Unfilled();
+                                NPCP_ASSERT(member);
+                                Quest::Force_Reference_To(this, member->id, original);
+
+                                member->Create(original, false);
+
+                                return CODES::SUCCESS;
+                            } else {
+                                return CODES::DEAD;
+                            }
+                        } else {
+                            return CODES::MEMBER;
+                        }
+                    } else {
+                        return Add_Clone(original);
+                    }
+                } else {
+                    return CODES::MEMBERS;
+                }
+            } else {
+                return CODES::CHILD;
+            }
+        } else {
+            return CODES::ACTOR;
+        }
+    }
+
+    Int_t Members_t::Remove_Original(Actor_t* original)
+    {
+        return CODES::FAILURE;
+    }
+
+    Int_t Members_t::Add_Clone(Actor_t* original)
+    {
+        return CODES::FAILURE;
+    }
+
+    Int_t Members_t::Remove_Clone(Actor_t* clone)
+    {
+        return CODES::FAILURE;
     }
     
 }}
