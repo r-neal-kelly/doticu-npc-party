@@ -147,6 +147,8 @@ namespace doticu_npcp { namespace Papyrus {
         if (!outfit1_cache_variable->Is_None()) {
             Object_Ref::Delete_Safe(outfit1_cache_variable->Reference());
         }
+
+        Object_Ref::Delete_Unsafe(outfit2);
     }
 
     Variable_t* Outfit2_t::Variable(String_t variable_name)

@@ -61,6 +61,18 @@ namespace doticu_npcp {
 
     typedef BGSListForm     Formlist_t;
 
+    typedef TESContainer            BContainer_t;
+    typedef TESContainer::Entry** BEntries_t;
+    typedef TESContainer::Entry     BEntry_t;
+
+    typedef ExtraContainerChanges   XContainer_t;
+    typedef EntryDataList           XEntries_t;
+    typedef InventoryEntryData      XEntry_t;
+    typedef ExtendDataList          XLists_t;
+    typedef BaseExtraList           XList_t;
+    typedef BSExtraData             XData_t;
+    typedef ExtraAliasInstanceArray XAliases_t;
+
     class Reference_t2 {
     public:
     };
@@ -215,6 +227,31 @@ namespace doticu_npcp {
         State_t state;
     };
     STATIC_ASSERT(sizeof(Actor_State_t) == 0x10);
+
+    class Actor_Equipper_t {
+    public:
+        static Actor_Equipper_t* Self();
+    public:
+        void Equip_Item(Actor_t* actor,
+                        Form_t* form,
+                        XList_t* xlist,
+                        UInt32 count,
+                        BGSEquipSlot* slot,
+                        Bool_t do_queue,
+                        Bool_t do_force,
+                        Bool_t do_sounds,
+                        Bool_t do_apply);
+        Bool_t Unequip_Item(Actor_t* actor,
+                            Form_t* form,
+                            XList_t* xlist,
+                            UInt32 count,
+                            BGSEquipSlot* slot,
+                            Bool_t do_queue,
+                            Bool_t do_force,
+                            Bool_t do_sounds,
+                            Bool_t do_apply,
+                            BGSEquipSlot* slot_to_replace);
+    };
 
     class Actor_t2 {
     public:
@@ -395,18 +432,6 @@ namespace doticu_npcp {
 }
 
 namespace doticu_npcp {
-
-    typedef TESContainer            BContainer_t;
-    typedef TESContainer::Entry**   BEntries_t;
-    typedef TESContainer::Entry     BEntry_t;
-
-    typedef ExtraContainerChanges   XContainer_t;
-    typedef EntryDataList           XEntries_t;
-    typedef InventoryEntryData      XEntry_t;
-    typedef ExtendDataList          XLists_t;
-    typedef BaseExtraList           XList_t;
-    typedef BSExtraData             XData_t;
-    typedef ExtraAliasInstanceArray XAliases_t;
 
     typedef tArray<Faction_Rank_t>  BFaction_Ranks_t;
     typedef Faction_Rank_t          BFaction_Rank_t;

@@ -20,6 +20,14 @@ namespace doticu_npcp { namespace Offsets {
 
     }
 
+    namespace Actor_Equipper {
+
+        constexpr uintptr_t SELF                        = 0x02EC4838; // 514494
+        constexpr uintptr_t EQUIP_ITEM                  = 0x00637A80; // 37938
+        constexpr uintptr_t UNEQUIP_ITEM                = 0x00638190; // 37945
+
+    }
+
     namespace Array {
 
         constexpr uintptr_t DESTROY                     = 0x01241E40; // 97723

@@ -33,14 +33,11 @@ namespace doticu_npcp { namespace Object_Ref {
 
     XContainer_t *Get_XContainer(TESObjectREFR *obj, bool do_create) {
         if (obj) {
-            XContainer_t* xcontainer = static_cast<XContainer_t*>
-                (obj->extraData.GetByType(kExtraData_ContainerChanges));
-            if (!xcontainer && do_create) {
-                Init_Container(obj);
-                xcontainer = static_cast<XContainer_t*>
-                    (obj->extraData.GetByType(kExtraData_ContainerChanges));
+            if (do_create) {
+                Init_Container_If_Needed(obj);
             }
-            return xcontainer;
+            return static_cast<XContainer_t*>
+                (obj->extraData.GetByType(kExtraData_ContainerChanges));
         } else {
             return nullptr;
         }
@@ -168,6 +165,16 @@ namespace doticu_npcp { namespace Object_Ref {
         xcontainer->data->objList->RemoveIf(functor);
     }
 
+    void Remove_All_XEntries(Reference_t* ref)
+    {
+        NPCP_ASSERT(ref);
+
+        XContainer_t* xcontainer = Get_XContainer(ref, false);
+        if (xcontainer) {
+            xcontainer->data->objList->RemoveAll();
+        }
+    }
+
     bool Has_XEntry(TESObjectREFR *obj, TESForm *form) {
         return Get_XEntry(obj, form, false) != NULL;
     }
@@ -210,10 +217,6 @@ namespace doticu_npcp { namespace Object_Ref {
             Object_Ref::Add_XEntry(from, XEntry::Create(form, 0 - count_bentry_from));
             Object_Ref::Add_XEntry(to, XEntry::Create(form, count_bentry_from));
         }
-    }
-
-    void Move_XList(TESObjectREFR *from, TESObjectREFR *to, TESForm *form, XList_t *xlist) {
-        return XEntry::Move_XList(Get_XEntry(from, form), Get_XEntry(to, form), xlist, to);
     }
 
     // need to study if a BContainer can have multiple entries of the same form or not. confer with editor.
@@ -373,6 +376,97 @@ namespace doticu_npcp { namespace Object_Ref {
                 TESForm *form_remove = vec_forms_remove[idx];
                 Object_Ref::Move_Entry(obj, other, form_remove);
             }
+        }
+    }
+
+    void Remove_All_Items(Reference_t* ref, Reference_t* transfer, Bool_t remove_quest_items, Bool_t remove_unplayable_items)
+    {
+        NPCP_ASSERT(ref);
+
+        Bool_t do_delete_transfer;
+        if (transfer) {
+            Init_Container_If_Needed(transfer);
+            do_delete_transfer = false;
+        } else {
+            transfer = Create_Container();
+            do_delete_transfer = true;
+        }
+
+        XContainer_t* transfer_xcontainer = Get_XContainer(transfer, true);
+        NPCP_ASSERT(transfer_xcontainer);
+
+        XContainer_t* ref_xcontainer = Get_XContainer(ref, false);
+        if (ref_xcontainer) {
+            std::vector<Form_t*> forms_to_move;
+            forms_to_move.reserve(4);
+
+            struct XXList_t { Form_t* form; XList_t* xlist; };
+            std::vector<XXList_t> xxlists_to_keep;
+            xxlists_to_keep.reserve(4);
+
+            for (XEntries_t::Iterator xentry_it = ref_xcontainer->data->objList->Begin(); !xentry_it.End(); ++xentry_it) {
+                XEntry_t* xentry = xentry_it.Get();
+                Form_t* form = xentry ? xentry->type : nullptr;
+                if (form && (remove_unplayable_items || form->IsPlayable())) {
+                    if (!remove_quest_items) {
+                        std::vector<XList_t*> xlists_to_keep;
+                        xlists_to_keep.reserve(1);
+
+                        for (XLists_t::Iterator xlist_it = xentry->extendDataList->Begin(); !xlist_it.End(); ++xlist_it) {
+                            XList_t* xlist = xlist_it.Get();
+                            if (xlist) {
+                                if (static_cast<Int_t>(XList::Get_Count(xlist)) < 0) {
+                                    _MESSAGE("Object_Ref::Remove_All_Items: Encountered overflowed xlist. Setting count to 1:");
+                                    _MESSAGE("Ref: %s, Form: %s", Get_Name(ref), Form::Get_Name(form));
+                                    XList::Log(xlist, "");
+                                    XList::Set_Count(xlist, 1);
+                                }
+                                if (XList::Is_Quest_Item(xlist)) {
+                                    xlists_to_keep.push_back(xlist);
+                                }
+                            }
+                        }
+
+                        for (size_t idx = 0, count = xlists_to_keep.size(); idx < count; idx += 1) {
+                            XList_t* xlist = xlists_to_keep[idx];
+                            XEntry::Remove_XList(xentry, xlist);
+                            xxlists_to_keep.push_back({ form, xlist });
+                        }
+                    }
+                    forms_to_move.push_back(form);
+                }
+            }
+
+            for (size_t idx = 0, count = forms_to_move.size(); idx < count; idx += 1) {
+                Form_t* form = forms_to_move[idx];
+                Move_Entry(ref, transfer, form);
+            }
+
+            for (size_t idx = 0, count = xxlists_to_keep.size(); idx < count; idx += 1) {
+                XXList_t xxlist = xxlists_to_keep[idx];
+                XEntry_t* xentry = Get_XEntry(ref, xxlist.form, true);
+                XEntry::Add_XList(xentry, xxlist.xlist);
+            }
+        }
+
+        BContainer_t* bcontainer = Get_BContainer(ref);
+        if (bcontainer) {
+            for (u64 idx = 0; idx < bcontainer->numEntries; idx += 1) {
+                BEntry_t* bentry = bcontainer->entries[idx];
+                Form_t* form = bentry && bentry->count > 0 ? bentry->form : nullptr;
+                if (form && (remove_unplayable_items || form->IsPlayable())) {
+                    XEntry_t* xentry = Get_XEntry(ref, form, true);
+                    Int_t entry_count = bentry->count + xentry->countDelta;
+                    if (entry_count > 0) {
+                        Get_XEntry(transfer, form, true)->countDelta += entry_count;
+                        xentry->countDelta = 0 - bentry->count;
+                    }
+                }
+            }
+        }
+
+        if (do_delete_transfer) {
+            Delete_Safe(transfer);
         }
     }
 
@@ -561,6 +655,7 @@ namespace doticu_npcp { namespace Object_Ref {
                 XEntry_t* xentry = Object_Ref::Get_XEntry(ref, token, false);
                 if (xentry) {
                     Object_Ref::Remove_XEntry(ref, xentry);
+                    XEntry::Destroy(xentry);
                 }
             } else {
                 XEntry_t* xentry = Object_Ref::Get_XEntry(ref, token, true);
@@ -583,6 +678,7 @@ namespace doticu_npcp { namespace Object_Ref {
                 XEntry_t* xentry = Object_Ref::Get_XEntry(ref, token, false);
                 if (xentry) {
                     Object_Ref::Remove_XEntry(ref, xentry);
+                    XEntry::Destroy(xentry);
                 }
             } else {
                 XEntry_t* xentry = Object_Ref::Get_XEntry(ref, token, true);
@@ -704,12 +800,20 @@ namespace doticu_npcp { namespace Object_Ref {
         }
     }
 
-    void Init_Container(Reference_t* ref)
+    void Init_Container_If_Needed(Reference_t* ref)
     {
         if (ref) {
-            // thankfully, this is an easy way to make sure
-            // the ExtraContainerChanges is init'd on ref.
-            ref->Add_Worn_Item(Consts::Blank_Weapon(), 0, false, 0, 0); // this needs an object, or it may ctd
+            XContainer_t* xcontainer = static_cast<XContainer_t*>
+                (ref->extraData.GetByType(kExtraData_ContainerChanges));
+            if (!xcontainer) {
+                Weapon_t* blank_weapon = Consts::Blank_Weapon();
+                ref->Add_Worn_Item(blank_weapon, 0, false, 0, 0);
+                XEntry_t* xentry = Get_XEntry(ref, blank_weapon, false);
+                if (xentry) {
+                    Remove_XEntry(ref, xentry);
+                    XEntry::Destroy(xentry);
+                }
+            }
         }
     }
 
@@ -774,6 +878,7 @@ namespace doticu_npcp { namespace Object_Ref {
     {
         Reference_t* container = Place_At_Me(Consts::Storage_Marker(), Consts::Empty_Container(), 1, true, false);
         NPCP_ASSERT(container);
+        Init_Container_If_Needed(container);
         return container;
     }
 

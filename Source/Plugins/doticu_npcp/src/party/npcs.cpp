@@ -3,6 +3,7 @@
 */
 
 #include "actor2.h"
+#include "codes.h"
 #include "form_vector.h"
 #include "object_ref.h"
 #include "outfit.h"
@@ -285,7 +286,6 @@ namespace doticu_npcp { namespace Party {
         NPCP_ASSERT(original);
 
         Actor_t* clone = Actor2::Clone(original);
-        NPCP_ASSERT(clone);
 
         Int_t base_idx = Add_Base_If_Needed(clone, original);
         Form_Vector_t* clones = Clones(base_idx);
@@ -294,7 +294,17 @@ namespace doticu_npcp { namespace Party {
             Clone_Vectors()->Set(base_idx, clones);
             clones->Push(clone);
         } else if (!clones->Has(clone)) {
-            clones->Push(clone);
+            clones->Push(clone); // this is where the crash can occur
+        }
+
+        Object_Ref::Remove_All_Items(clone);
+        Apply_Default_Outfit(clone);
+
+        if (Vars::Clone_Outfit() == CODES::OUTFIT::REFERENCE) {
+            Reference_t* trash = Object_Ref::Create_Container();
+            Actor2::Set_Outfit2(clone, Consts::Blank_Armor(), nullptr, original, trash);
+            Object_Ref::Delete_Safe(trash);
+            Remove_All_Tokens(clone);
         }
 
         return clone;

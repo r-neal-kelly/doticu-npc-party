@@ -15,10 +15,9 @@ namespace doticu_npcp { namespace Object_Ref {
     XEntry_t *Get_XEntry(TESObjectREFR *obj, TESForm *form, bool do_create = false);
     void Add_XEntry(TESObjectREFR *obj, XEntry_t *xentry_add);
     void Remove_XEntry(TESObjectREFR *obj, XEntry_t *xentry);
+    void Remove_All_XEntries(Reference_t* ref);
     bool Has_XEntry(TESObjectREFR *obj, TESForm *form);
-
     void Move_Entry(TESObjectREFR *from, TESObjectREFR *to, TESForm *form);
-    void Move_XList(TESObjectREFR *from, TESObjectREFR *to, TESForm *form, XList_t *xlist);
 
     SInt32 Get_BEntry_Count(TESObjectREFR *obj, TESForm *form);
     SInt32 Get_XEntry_Count(TESObjectREFR *obj, TESForm *form);
@@ -33,6 +32,10 @@ namespace doticu_npcp { namespace Object_Ref {
     bool Is_Worn(TESObjectREFR *obj, TESForm *form);
 
     void Remove_Unwearable(TESObjectREFR *obj, TESObjectREFR *other);
+    void Remove_All_Items(Reference_t* ref,
+                          Reference_t* transfer = nullptr,
+                          Bool_t remove_quest_items = false,
+                          Bool_t remove_unplayable_items = true);
     void Categorize(TESObjectREFR *ref_object);
     void Log_XContainer(TESObjectREFR *obj);
     void Log_XList(TESObjectREFR *ref_object);
@@ -57,7 +60,7 @@ namespace doticu_npcp { namespace Object_Ref {
 
     void Rename(Reference_t* ref, String_t new_name);
 
-    void Init_Container(Reference_t* ref);
+    void Init_Container_If_Needed(Reference_t* ref);
 
     Reference_t* Place_At_Me(Reference_t* me,
                              Form_t* to_place,

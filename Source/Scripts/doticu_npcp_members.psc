@@ -228,7 +228,10 @@ int function Clone(Actor ref_actor)
     if !ref_clone
         return doticu_npcp_codes.CLONE()
     endIf
-    OUTFITS.Outfit_Clone(ref_clone, ref_actor)
+
+    ref_clone.SetPlayerTeammate(true, true)
+    ref_clone.AddItem(doticu_npcp_consts.Blank_Armor(), 1, true)
+    ref_clone.RemoveItem(doticu_npcp_consts.Blank_Armor(), 1, true, none)
 
     doticu_npcp_member ref_member = p_From_Unfilled() as doticu_npcp_member
     if !ref_member

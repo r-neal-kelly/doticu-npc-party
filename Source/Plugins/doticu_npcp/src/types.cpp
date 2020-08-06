@@ -109,6 +109,50 @@ namespace doticu_npcp {
         state.moving_left = 0;
     }
 
+    Actor_Equipper_t* Actor_Equipper_t::Self()
+    {
+        static auto self = reinterpret_cast
+            <Actor_Equipper_t**>
+            (RelocationManager::s_baseAddr + Offsets::Actor_Equipper::SELF);
+        NPCP_ASSERT(self);
+        return *self;
+    }
+
+    void Actor_Equipper_t::Equip_Item(Actor_t* actor,
+                                      Form_t* form,
+                                      XList_t* xlist,
+                                      UInt32 count,
+                                      BGSEquipSlot* slot,
+                                      Bool_t do_queue,
+                                      Bool_t do_force,
+                                      Bool_t do_sounds,
+                                      Bool_t do_apply)
+    {
+        static auto equip_item = reinterpret_cast
+            <void (*)(Actor_Equipper_t*, Actor_t*, Form_t*, XList_t*, UInt32, BGSEquipSlot*, Bool_t, Bool_t, Bool_t, Bool_t)>
+            (RelocationManager::s_baseAddr + Offsets::Actor_Equipper::EQUIP_ITEM);
+        NPCP_ASSERT(equip_item);
+        return equip_item(this, actor, form, xlist, count, slot, do_queue, do_force, do_sounds, do_apply);
+    }
+
+    Bool_t Actor_Equipper_t::Unequip_Item(Actor_t* actor,
+                                          Form_t* form,
+                                          XList_t* xlist,
+                                          UInt32 count,
+                                          BGSEquipSlot* slot,
+                                          Bool_t do_queue,
+                                          Bool_t do_force,
+                                          Bool_t do_sounds,
+                                          Bool_t do_apply,
+                                          BGSEquipSlot* slot_to_replace)
+    {
+        static auto unequip_item = reinterpret_cast
+            <Bool_t (*)(Actor_Equipper_t*, Actor_t*, Form_t*, XList_t*, UInt32, BGSEquipSlot*, Bool_t, Bool_t, Bool_t, Bool_t, BGSEquipSlot*)>
+            (RelocationManager::s_baseAddr + Offsets::Actor_Equipper::UNEQUIP_ITEM);
+        NPCP_ASSERT(unequip_item);
+        return unequip_item(this, actor, form, xlist, count, slot, do_queue, do_force, do_sounds, do_apply, slot_to_replace);
+    }
+
     void Alias_Base_t::Log()
     {
         _MESSAGE("Log Alias Base: {");

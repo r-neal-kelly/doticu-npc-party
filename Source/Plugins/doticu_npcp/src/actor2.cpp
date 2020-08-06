@@ -100,14 +100,14 @@ namespace doticu_npcp { namespace Actor2 {
                     for (tList<BaseExtraList>::Iterator it_xlist = entry->extendDataList->Begin(); !it_xlist.End(); ++it_xlist) {
                         BaseExtraList *xlist = it_xlist.Get();
                         if (xlist && !xlist->HasType(kExtraData_OutfitItem) && xlist->HasType(kExtraData_Worn)) {
-                            papyrusActor::UnequipItemEx(ref_actor, entry->type, 0, true);
+                            papyrusActor::UnequipItemEx(ref_actor, entry->type, 0, false);
                         }
                     }
                 }
             }
         }
 
-        return;
+        //Queue_Ni_Node_Update(ref_actor);
     }
 
     void Set_Outfit2(Actor *actor, TESForm *linchpin, TESObjectREFR *vanilla, TESObjectREFR *custom, TESObjectREFR *transfer) {
@@ -219,6 +219,10 @@ namespace doticu_npcp { namespace Actor2 {
 
         Copy_Outfit2_Partition(actor, linchpin, vanilla);
         Copy_Outfit2_Partition(actor, linchpin, custom);
+
+        //Actor2::Join_Player_Team(actor);
+        //Actor_Equipper_t::Self()->Equip_Item(actor, Consts::Blank_Weapon(), nullptr, 1, GetRightHandSlot(), false, true, false, true);
+        //Actor_Equipper_t::Self()->Unequip_Item(actor, Consts::Blank_Weapon(), nullptr, 1, GetRightHandSlot(), false, true, false, true, 0);
     }
 
     void Copy_Outfit2_Partition(Actor *actor, TESForm *linchpin, TESObjectREFR *outfit2_partition) {
@@ -1352,10 +1356,18 @@ namespace doticu_npcp { namespace Actor2 {
                 }
             }
             
+            // removing the outfit and fully resetting the inventory
+            // seems to completely prevent a rare deadlock/crash
+            // that is caused by a bug somewhere in the engine.
+
             Actor_Base_t* real_base = Real_Base(actor);
             NPCP_ASSERT(real_base);
+            Outfit_t* base_outfit = real_base->defaultOutfit;
+            real_base->defaultOutfit = nullptr;
             Actor_t* clone = static_cast<Actor_t*>(Object_Ref::Place_At_Me(marker, real_base, 1));
             NPCP_ASSERT(clone);
+            clone->ResetInventory(false);
+            real_base->defaultOutfit = base_outfit;
 
             Pacify(clone);
             Object_Ref::Rename(clone, (std::string("Clone of ") + Get_Name(actor)).c_str());

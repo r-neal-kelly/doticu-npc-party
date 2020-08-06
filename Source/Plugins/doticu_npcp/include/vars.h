@@ -26,6 +26,7 @@ namespace doticu_npcp { namespace Vars {
 
     Int_t Member_Limit();
     Int_t Display_Count();
+    Int_t Clone_Outfit();
 
     String_t Members_Sort_Algorithm();
     String_t Followers_Sort_Algorithm();
