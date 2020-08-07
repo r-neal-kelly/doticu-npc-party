@@ -24,10 +24,9 @@ doticu_npcp_control function Control() global
     return doticu_npcp_consts.Control_Quest() as doticu_npcp_control
 endFunction
 
-; most of the following shall eventually be moved into existing types
+; most of the following shall eventually be moved into existing types or remove completely
 
 ; Actor
-function Actor_Set_Outfit2(Actor ref_actor, Form linchpin, ObjectReference vanilla, ObjectReference custom, ObjectReference transfer) native global
 function Actor_Cache_Worn(Actor ref_actor, Form form_linchpin, ObjectReference ref_cache_out) native global
 function Actor_Cache_Inventory(Actor ref_actor, Form form_linchpin, ObjectReference ref_worn_out, ObjectReference ref_pack_out) native global
 function Actor_Cache_Static_Inventory(Actor ref_actor, Form form_linchpin, ObjectREference ref_cache_out) native global

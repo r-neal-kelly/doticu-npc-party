@@ -108,7 +108,7 @@ namespace doticu_npcp { namespace Main {
         REGISTER_NAMESPACE(Keys);
         REGISTER_NAMESPACE(Object_Ref);
         REGISTER_NAMESPACE(Outfit);
-        REGISTER_NAMESPACE(Outfit2);
+        REGISTER_NAMESPACE(Papyrus::Outfit2);
         REGISTER_NAMESPACE(Package);
         REGISTER_NAMESPACE(Papyrus);
         REGISTER_NAMESPACE(Player);

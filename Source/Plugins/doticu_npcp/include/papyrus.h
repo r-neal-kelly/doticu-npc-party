@@ -211,8 +211,8 @@ namespace doticu_npcp { namespace Papyrus {
         virtual ~Virtual_Callback_i() = default; // 00
 
         virtual void operator()(Variable_t* return_variable) = 0; // 01
-        virtual Bool_t Can_Save() = 0; // 02
-        virtual void Set_Object(Object_t** object) = 0; // 03
+        virtual Bool_t Can_Save() { return false; } // 02
+        virtual void Set_Object(Object_t** object) {} // 03
 
         UInt32 ref_count; // 00
         // void* _vtbl; // 04 (I think)

@@ -44,6 +44,7 @@ int                     p_code_create       =     0; OUTFIT2_VANILLA, OUTFIT2_DE
 ObjectReference         p_cache_base        =  none
 
 ; Native Methods
+function Apply_To(Actor ref_actor, ObjectReference ref_pack) native
 
 ; Friend Methods
 function f_Create(int code_create = 0)
@@ -57,36 +58,6 @@ function f_Destroy()
     if p_cache_base
         p_cache_base.Disable()
         p_cache_base.Delete()
-    endIf
-endFunction
-
-; Private Methods
-function p_Set(Actor ref_actor, ObjectReference ref_pack)
-    if ACTORS.Is_Dead(ref_actor)
-        ; we might redo this some time, but right now, we're cutting it.
-        return
-    endIf
-
-    NPCS.Update_And_Apply_Default_Oufit_If_Needed(ref_actor)
-
-    ; this will stop the actor from rendering while we manage its inventory
-    bool is_teammate = ref_actor.IsPlayerTeammate()
-    ref_actor.SetPlayerTeammate(false, false)
-
-    ; does all the heavy lifting of removing unfit items and adding outfit items
-    ObjectReference ref_transfer = CONTAINERS.Create_Temp()
-    doticu_npcp.Actor_Set_Outfit2(ref_actor, doticu_npcp_consts.Blank_Armor(), p_cache_base, self, ref_transfer)
-    ref_transfer.RemoveAllItems(ref_pack, true, true)
-    CONTAINERS.Destroy_Temp(ref_transfer)
-
-    ; doing this allows us to render all at once, which is far more efficient
-    ref_actor.SetPlayerTeammate(true, true)
-    ref_actor.AddItem(doticu_npcp_consts.Blank_Weapon(), 1, true)
-    ref_actor.RemoveItem(doticu_npcp_consts.Blank_Weapon(), 1, true, none)
-
-    ; make sure to restore render status
-    if !is_teammate
-        ref_actor.SetPlayerTeammate(false, false)
     endIf
 endFunction
 
@@ -174,12 +145,6 @@ function Get_Default(Actor ref_actor)
 
     CONTAINERS.Destroy_Temp(ref_default)
     CONTAINERS.Destroy_Temp(ref_trash)
-endFunction
-
-function Set(Actor ref_actor, ObjectReference ref_pack)
-    if ref_actor && ref_pack
-        p_Set(ref_actor, ref_pack)
-    endIf
 endFunction
 
 ; Events

@@ -5,6 +5,7 @@
 #pragma once
 
 #include "types.h"
+#include "papyrus.h"
 
 namespace doticu_npcp { namespace Object_Ref {
 
@@ -84,6 +85,18 @@ namespace doticu_npcp { namespace Object_Ref {
     bool Is_In_Exterior_Cell(Reference_t* ref);
 
     UInt32 Ref_Count(Reference_t* ref);
+
+    void Add_Item_And_Callback(Reference_t* ref,
+                               Form_t* form,
+                               Int_t count = 1,
+                               Bool_t do_sounds = false,
+                               Papyrus::Virtual_Callback_i** callback = nullptr);
+    void Remove_Item_And_Callback(Reference_t* ref,
+                                  Form_t* form,
+                                  Int_t count = 1,
+                                  Bool_t do_sounds = false,
+                                  Reference_t* destination = nullptr,
+                                  Papyrus::Virtual_Callback_i** callback = nullptr);
 
 }}
 

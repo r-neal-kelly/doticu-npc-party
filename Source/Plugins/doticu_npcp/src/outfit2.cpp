@@ -207,19 +207,18 @@ namespace doticu_npcp { namespace Papyrus {
 
         if (Actor2::Is_Alive(actor)) {
             Party::NPCS_t::Self()->Update_And_Apply_Default_Oufit_If_Needed(actor);
-            Actor2::Set_Outfit2(actor, Consts::Blank_Armor(), Outfit1_Cache(), this, pack);
-            Actor2::Queue_Ni_Node_Update(actor);
+            Actor2::Set_Outfit2(actor, Outfit1_Cache(), this, pack);
         }
     }
 
 }}
 
-namespace doticu_npcp { namespace Outfit2 { namespace Exports {
+namespace doticu_npcp { namespace Papyrus { namespace Outfit2 { namespace Exports {
+
+    void Apply_To(Outfit2_t* self, Actor_t* actor, Reference_t* pack) FORWARD_VOID(Apply_To(actor, pack));
 
     bool Register(VMClassRegistry* registry)
     {
-        using namespace Papyrus;
-
         #define ADD_GLOBAL(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
         M                                                               \
             ADD_CLASS_METHOD(Outfit2_t::Class_Name(), Selfless_t,       \
@@ -229,7 +228,18 @@ namespace doticu_npcp { namespace Outfit2 { namespace Exports {
 
         #undef ADD_GLOBAL
 
+        #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                               \
+            ADD_CLASS_METHOD(Outfit2_t::Class_Name(), Outfit2_t,        \
+                             STR_FUNC_, ARG_NUM_,                       \
+                             RETURN_, Exports::METHOD_, __VA_ARGS__);   \
+        W
+
+        ADD_METHOD("Apply_To", 2, void, Apply_To, Actor_t*, Reference_t*);
+
+        #undef ADD_METHOD
+
         return true;
     }
 
-}}}
+}}}}

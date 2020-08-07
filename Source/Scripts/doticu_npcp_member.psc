@@ -583,7 +583,7 @@ p_Lock()
         p_Create_Outfit(doticu_npcp_codes.OUTFIT2_VANILLA())
         p_Set_Outfit(doticu_npcp_codes.OUTFIT2_VANILLA())
         p_outfit2_vanilla.Cache_Vanilla_Dynamic(p_ref_actor)
-        p_outfit2_vanilla.Set(p_ref_actor, p_container_pack)
+        p_outfit2_vanilla.Apply_To(p_ref_actor, p_container_pack)
     elseIf p_outfit2_previous != p_outfit2_current
         p_outfit2_previous = p_outfit2_current
         if p_outfit2_current == p_outfit2_vanilla
@@ -591,7 +591,7 @@ p_Lock()
         elseIf p_outfit2_current == p_outfit2_default
             p_outfit2_current.Cache_Vanilla_Static(NPCS.Default_Outfit(p_ref_actor))
         endIf
-        p_outfit2_current.Set(p_ref_actor, p_container_pack)
+        p_outfit2_current.Apply_To(p_ref_actor, p_container_pack)
     else
         ; this is just a way to do asyncronous updating for 0.9.0+
         if p_outfit2_current == p_outfit2_vanilla
@@ -599,7 +599,7 @@ p_Lock()
         elseIf p_outfit2_current == p_outfit2_default
             p_outfit2_current.Try_Cache_Vanilla(NPCS.Default_Outfit(p_ref_actor))
         endIf
-        p_outfit2_current.Set(p_ref_actor, p_container_pack)
+        p_outfit2_current.Apply_To(p_ref_actor, p_container_pack)
     endIf
 
     p_ref_actor.EvaluatePackage()

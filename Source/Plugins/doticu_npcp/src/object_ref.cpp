@@ -807,7 +807,7 @@ namespace doticu_npcp { namespace Object_Ref {
                 (ref->extraData.GetByType(kExtraData_ContainerChanges));
             if (!xcontainer) {
                 Weapon_t* blank_weapon = Consts::Blank_Weapon();
-                ref->Add_Worn_Item(blank_weapon, 0, false, 0, 0);
+                ref->Equip_Weapon(blank_weapon, 0, false, 0, 0);
                 XEntry_t* xentry = Get_XEntry(ref, blank_weapon, false);
                 if (xentry) {
                     Remove_XEntry(ref, xentry);
@@ -929,6 +929,104 @@ namespace doticu_npcp { namespace Object_Ref {
     {
         NPCP_ASSERT(ref);
         return ref->handleRefObject.m_uiRefCount & 0x3FF;
+    }
+
+    static Papyrus::Virtual_Callback_i** Default_Virtual_Callback()
+    {
+        using namespace Papyrus;
+
+        struct Callback : public Virtual_Callback_i {
+            Callback()
+            {
+                ref_count = 1;
+            }
+            virtual void operator()(Variable_t* return_variable) override
+            {
+            }
+        };
+        static Callback callback = Callback();
+        static Virtual_Callback_i* callback_ptr = &callback;
+
+        return &callback_ptr;
+    }
+
+    void Add_Item_And_Callback(Reference_t* ref,
+                               Form_t* form,
+                               Int_t count,
+                               Bool_t do_sounds,
+                               Papyrus::Virtual_Callback_i** callback)
+    {
+        using namespace Papyrus;
+
+        static String_t class_name = "ObjectReference";
+        static String_t function_name = "AddItem";
+
+        struct Args : public IFunctionArguments {
+            Form_t* form;
+            Int_t count;
+            Bool_t do_sounds;
+
+            Args(Form_t* form, Int_t count, Bool_t do_sounds) :
+                form(form), count(count), do_sounds(do_sounds)
+            {
+            }
+
+            bool Copy(Output* output)
+            {
+                output->Resize(3);
+                reinterpret_cast<Variable_t*>(output->Get(0))->Pack(form);
+                reinterpret_cast<Variable_t*>(output->Get(1))->Int(count);
+                reinterpret_cast<Variable_t*>(output->Get(2))->Bool(do_sounds);
+                return true;
+            }
+        } args(form, count, do_sounds);
+
+        if (!callback) {
+            callback = Default_Virtual_Callback();
+        }
+
+        Virtual_Machine_t::Self()->Call_Method2(ref, &class_name, &function_name, &args, callback);
+    }
+
+    void Remove_Item_And_Callback(Reference_t* ref,
+                                  Form_t* form,
+                                  Int_t count,
+                                  Bool_t do_sounds,
+                                  Reference_t* destination,
+                                  Papyrus::Virtual_Callback_i** callback)
+    {
+        using namespace Papyrus;
+
+        static String_t class_name = "ObjectReference";
+        static String_t function_name = "RemoveItem";
+
+        struct Args : public IFunctionArguments {
+            Form_t* form;
+            Int_t count;
+            Bool_t do_sounds;
+            Reference_t* destination;
+
+            Args(Form_t* form, Int_t count, Bool_t do_sounds, Reference_t* destination) :
+                form(form), count(count), do_sounds(do_sounds), destination(destination)
+            {
+            }
+
+            bool Copy(Output* output)
+            {
+                output->Resize(4);
+                reinterpret_cast<Variable_t*>(output->Get(0))->Pack(form);
+                reinterpret_cast<Variable_t*>(output->Get(1))->Int(count);
+                reinterpret_cast<Variable_t*>(output->Get(2))->Bool(do_sounds);
+                reinterpret_cast<Variable_t*>(output->Get(3))->Pack(destination);
+                return true;
+            }
+        } args(form, count, do_sounds, destination);
+
+        if (!callback) {
+            callback = Default_Virtual_Callback();
+        }
+
+        Virtual_Machine_t::Self()->Call_Method2(ref, &class_name, &function_name, &args, callback);
     }
 
 }}

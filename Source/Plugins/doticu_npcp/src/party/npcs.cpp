@@ -294,7 +294,7 @@ namespace doticu_npcp { namespace Party {
             Clone_Vectors()->Set(base_idx, clones);
             clones->Push(clone);
         } else if (!clones->Has(clone)) {
-            clones->Push(clone); // this is where the crash can occur
+            clones->Push(clone); // this is where the crash can occur. presumably something to do with arrays
         }
 
         Object_Ref::Remove_All_Items(clone);
@@ -302,7 +302,7 @@ namespace doticu_npcp { namespace Party {
 
         if (Vars::Clone_Outfit() == CODES::OUTFIT::REFERENCE) {
             Reference_t* trash = Object_Ref::Create_Container();
-            Actor2::Set_Outfit2(clone, Consts::Blank_Armor(), nullptr, original, trash);
+            Actor2::Set_Outfit2(clone, nullptr, original, trash);
             Object_Ref::Delete_Safe(trash);
             Remove_All_Tokens(clone);
         }

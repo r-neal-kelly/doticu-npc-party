@@ -41,8 +41,8 @@ namespace doticu_npcp { namespace Papyrus {
 
 }}
 
-namespace doticu_npcp { namespace Outfit2 { namespace Exports {
+namespace doticu_npcp { namespace Papyrus { namespace Outfit2 { namespace Exports {
 
     bool Register(VMClassRegistry *registry);
 
-}}}
+}}}}

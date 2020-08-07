@@ -17,8 +17,8 @@ namespace doticu_npcp { namespace Actor2 {
     void Base_Outfit(Actor_t* actor, Outfit_t* outfit);
     void Set_Outfit(Actor *ref_actor, BGSOutfit *outfit, bool is_sleep_outfit); // we can use this to tell us when another mod has changed the outfit
 
-    void Set_Outfit2(Actor *actor, TESForm *linchpin, TESObjectREFR *vanilla, TESObjectREFR *custom, TESObjectREFR *transfer);
-    void Copy_Outfit2_Partition(Actor *actor, TESForm *linchpin, TESObjectREFR *outfit2_partition);
+    void Set_Outfit2(Actor_t* actor, Reference_t* vanilla, Reference_t* custom, Reference_t* transfer);
+    void Copy_Outfit2_Partition(Actor_t* actor, Reference_t* outfit2_partition);
 
     void Cache_Worn(Actor *actor, TESForm *linchpin, TESObjectREFR *cache_out);
     void Cache_Inventory(Actor *actor, TESForm *linchpin, TESObjectREFR *worn_out, TESObjectREFR *pack_out);
@@ -101,6 +101,8 @@ namespace doticu_npcp { namespace Actor2 {
 
     Bool_t Is_Child(Actor_t* actor);
     Bool_t Isnt_Child(Actor_t* actor);
+
+    void Update_Equipment(Actor_t* actor);
 
 }}
 

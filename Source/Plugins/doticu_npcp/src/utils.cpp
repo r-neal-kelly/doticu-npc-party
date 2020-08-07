@@ -87,7 +87,8 @@ namespace doticu_npcp { namespace Utils { namespace Exports {
         return vec;
     }
 
-    bool Register(VMClassRegistry *registry) {
+    bool Register(VMClassRegistry *registry)
+    {
         #define ADD_GLOBAL(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
         M                                                               \
             ADD_CLASS_METHOD("doticu_npcp", Selfless_t,                 \

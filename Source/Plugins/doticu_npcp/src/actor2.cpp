@@ -20,6 +20,7 @@
 #include "xlist.h"
 
 #include "papyrus.h"
+#include "papyrus.inl"
 
 namespace doticu_npcp { namespace Actor2 {
 
@@ -107,14 +108,17 @@ namespace doticu_npcp { namespace Actor2 {
             }
         }
 
-        //Queue_Ni_Node_Update(ref_actor);
+        //Actor_Equipper_t::Self()->Equip_Item(actor, Consts::Blank_Weapon(), nullptr, 1, GetRightHandSlot(), false, true, false, true);
+        //Actor_Equipper_t::Self()->Unequip_Item(actor, Consts::Blank_Weapon(), nullptr, 1, GetRightHandSlot(), false, true, false, true, 0);
     }
 
-    void Set_Outfit2(Actor *actor, TESForm *linchpin, TESObjectREFR *vanilla, TESObjectREFR *custom, TESObjectREFR *transfer) {
-        if (!actor || !linchpin || !transfer) {
-            _ERROR("Actor2::Set_Outfit2: Invalid args.");
-            return;
-        }
+    void Set_Outfit2(Actor_t* actor, Reference_t* vanilla, Reference_t* custom, Reference_t* transfer) {
+        NPCP_ASSERT(actor);
+        NPCP_ASSERT(transfer);
+
+        Form_t* linchpin = Consts::Blank_Armor();
+
+        Join_Player_Team(actor, true);
 
         XContainer_t *xcontainer_actor = Object_Ref::Get_XContainer(actor, true);
         NPCP_ASSERT(xcontainer_actor);
@@ -217,23 +221,22 @@ namespace doticu_npcp { namespace Actor2 {
             }
         }
 
-        Copy_Outfit2_Partition(actor, linchpin, vanilla);
-        Copy_Outfit2_Partition(actor, linchpin, custom);
+        Copy_Outfit2_Partition(actor, vanilla);
+        Copy_Outfit2_Partition(actor, custom);
 
-        //Actor2::Join_Player_Team(actor);
-        //Actor_Equipper_t::Self()->Equip_Item(actor, Consts::Blank_Weapon(), nullptr, 1, GetRightHandSlot(), false, true, false, true);
-        //Actor_Equipper_t::Self()->Unequip_Item(actor, Consts::Blank_Weapon(), nullptr, 1, GetRightHandSlot(), false, true, false, true, 0);
+        Update_Equipment(actor);
     }
 
-    void Copy_Outfit2_Partition(Actor *actor, TESForm *linchpin, TESObjectREFR *outfit2_partition) {
-        if (!actor || !linchpin) {
-            return;
-        }
+    void Copy_Outfit2_Partition(Actor_t* actor, Reference_t* outfit2_partition) {
+
+        NPCP_ASSERT(actor);
 
         XContainer_t *xcontainer_outfit = Object_Ref::Get_XContainer(outfit2_partition, false);
         if (!xcontainer_outfit) {
             return;
         }
+
+        Form_t* linchpin = Consts::Blank_Armor();
 
         for (XEntries_t::Iterator it_xentry_outfit = xcontainer_outfit->data->objList->Begin(); !it_xentry_outfit.End(); ++it_xentry_outfit) {
             XEntry_t *xentry_outfit = it_xentry_outfit.Get();
@@ -1405,14 +1408,50 @@ namespace doticu_npcp { namespace Actor2 {
         return !actor->Is_Child();
     }
 
+    void Update_Equipment(Actor_t* actor)
+    {
+        using namespace Papyrus;
+
+        NPCP_ASSERT(actor);
+
+        struct Add_Item_Callback : public Virtual_Callback_i {
+            Actor_t* actor;
+            Add_Item_Callback(Actor_t* actor) :
+                actor(actor)
+            {
+                ref_count = 1;
+            }
+            virtual void operator()(Variable_t* return_variable) override
+            {
+            }
+        };
+        static Add_Item_Callback add_item_callback = Add_Item_Callback(actor);
+        static Virtual_Callback_i* add_item_callback_ptr = &add_item_callback;
+
+        struct Remove_Item_Callback : public Virtual_Callback_i {
+            Actor_t* actor;
+            Remove_Item_Callback(Actor_t* actor) :
+                actor(actor)
+            {
+                ref_count = 1;
+            }
+            virtual void operator()(Variable_t* return_variable) override
+            {
+            }
+        };
+        static Remove_Item_Callback remove_item_callback = Remove_Item_Callback(actor);
+        static Virtual_Callback_i* remove_item_callback_ptr = &remove_item_callback;
+
+        //Object_Ref::Add_Item_And_Callback(actor, Consts::Blank_Weapon(), 1, false, &add_item_callback_ptr);
+        //Object_Ref::Remove_Item_And_Callback(actor, Consts::Blank_Weapon(), 1, false, nullptr, &remove_item_callback_ptr);
+
+        Object_Ref::Add_Item_And_Callback(actor, Consts::Blank_Weapon(), 1, false);
+        Object_Ref::Remove_Item_And_Callback(actor, Consts::Blank_Weapon(), 1, false, nullptr);
+    }
+
 }}
 
 namespace doticu_npcp { namespace Actor2 { namespace Exports {
-
-    void Set_Outfit2(Selfless_t*, Actor* actor, TESForm* linchpin, TESObjectREFR* vanilla, TESObjectREFR* custom, TESObjectREFR* transfer)
-    {
-        return Actor2::Set_Outfit2(actor, linchpin, vanilla, custom, transfer);
-    }
 
     void Cache_Worn(Selfless_t*, Actor* actor, TESForm* linchpin, TESObjectREFR* cache_out)
     {
@@ -1459,6 +1498,10 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
                              RETURN_, Actor2::METHOD_, __VA_ARGS__);    \
         W
 
+        ADD_METHOD("SetOutfit", 2, void, Set_Outfit, BGSOutfit*, bool);
+
+        #undef ADD_METHOD
+
         #define ADD_GLOBAL(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
         M                                                               \
             ADD_CLASS_METHOD("doticu_npcp", Selfless_t,                 \
@@ -1466,9 +1509,6 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
                              RETURN_, Exports::METHOD_, __VA_ARGS__);   \
         W
 
-        ADD_METHOD("SetOutfit", 2, void, Set_Outfit, BGSOutfit*, bool);
-
-        ADD_GLOBAL("Actor_Set_Outfit2", 5, void, Set_Outfit2, Actor*, TESForm*, TESObjectREFR*, TESObjectREFR*, TESObjectREFR*);
         ADD_GLOBAL("Actor_Cache_Worn", 3, void, Cache_Worn, Actor*, TESForm*, TESObjectREFR*);
         ADD_GLOBAL("Actor_Cache_Inventory", 4, void, Cache_Inventory, Actor*, TESForm*, TESObjectREFR*, TESObjectREFR*);
         ADD_GLOBAL("Actor_Cache_Static_Inventory", 3, void, Cache_Static_Inventory, Actor*, TESForm*, TESObjectREFR*);
@@ -1477,7 +1517,6 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
         ADD_GLOBAL("Actor_Log_Factions", 1, void, Log_Factions, Actor_t*);
         ADD_GLOBAL("Actor_Resurrect", 2, void, Resurrect, Actor_t*, Bool_t);
 
-        #undef ADD_METHOD
         #undef ADD_GLOBAL
 
         return true;
