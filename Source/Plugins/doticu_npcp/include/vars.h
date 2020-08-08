@@ -23,6 +23,8 @@ namespace doticu_npcp { namespace Vars {
     Bool_t Do_Force_Unclone_Unique();
     Bool_t Do_Force_Unclone_Generic();
     Bool_t Do_Fill_Outfit2s();
+    Bool_t Do_Auto_Outfit2s();
+    Bool_t Do_Auto_Immobile_Outfit2();
 
     Int_t Member_Limit();
     Int_t Display_Count();

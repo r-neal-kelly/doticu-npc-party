@@ -28,6 +28,12 @@ namespace doticu_npcp { namespace Papyrus {
         return class_info;
     }
 
+    Type_ID_t* Outfit2_t::Type_ID()
+    {
+        static Type_ID_t type_id = Virtual_Machine_t::Self()->Type_ID(Class_Name());
+        return &type_id;
+    }
+
     static void Fill(Outfit2_t* outfit2, Container_t* container)
     {
         using namespace Papyrus;
@@ -39,18 +45,21 @@ namespace doticu_npcp { namespace Papyrus {
         for (size_t idx = 0, count = bcontainer.numEntries; idx < count; idx += 1) {
             BEntry_t* bentry = bcontainer.entries[idx];
             if (bentry && bentry->form && bentry->count > 0) {
-                Object_Ref::Add_Item(outfit2, bentry->form, bentry->count, true);
+                Object_Ref::Add_Item(outfit2, bentry->form, bentry->count, true); // this needs to be handled better
             }
         }
     }
 
-    Outfit2_t* Outfit2_t::Create_Member()
+    Outfit2_t* Outfit2_t::Create_Member(Actor_t* actor, Reference_t* pack)
     {
         Outfit2_t* outfit2 = static_cast<Outfit2_t*>
             (Object_Ref::Place_At_Me(Consts::Storage_Marker(), Consts::Outfit2_Container(), 1));
+        NPCP_ASSERT(outfit2);
 
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::MEMBER);
         outfit2->Outfit1_Cache_Variable()->None();
+
+        Actor2::Split_Inventory(actor, outfit2, pack);
 
         return outfit2;
     }
@@ -59,6 +68,7 @@ namespace doticu_npcp { namespace Papyrus {
     {
         Outfit2_t* outfit2 = static_cast<Outfit2_t*>
             (Object_Ref::Place_At_Me(Consts::Storage_Marker(), Consts::Outfit2_Container(), 1));
+        NPCP_ASSERT(outfit2);
 
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::IMMOBILE);
         outfit2->Outfit1_Cache_Variable()->None();
@@ -74,6 +84,7 @@ namespace doticu_npcp { namespace Papyrus {
     {
         Outfit2_t* outfit2 = static_cast<Outfit2_t*>
             (Object_Ref::Place_At_Me(Consts::Storage_Marker(), Consts::Outfit2_Container(), 1));
+        NPCP_ASSERT(outfit2);
 
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::SETTLER);
         outfit2->Outfit1_Cache_Variable()->None();
@@ -89,6 +100,7 @@ namespace doticu_npcp { namespace Papyrus {
     {
         Outfit2_t* outfit2 = static_cast<Outfit2_t*>
             (Object_Ref::Place_At_Me(Consts::Storage_Marker(), Consts::Outfit2_Container(), 1));
+        NPCP_ASSERT(outfit2);
 
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::THRALL);
         outfit2->Outfit1_Cache_Variable()->None();
@@ -104,6 +116,7 @@ namespace doticu_npcp { namespace Papyrus {
     {
         Outfit2_t* outfit2 = static_cast<Outfit2_t*>
             (Object_Ref::Place_At_Me(Consts::Storage_Marker(), Consts::Outfit2_Container(), 1));
+        NPCP_ASSERT(outfit2);
 
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::FOLLOWER);
         outfit2->Outfit1_Cache_Variable()->None();
@@ -119,6 +132,7 @@ namespace doticu_npcp { namespace Papyrus {
     {
         Outfit2_t* outfit2 = static_cast<Outfit2_t*>
             (Object_Ref::Place_At_Me(Consts::Storage_Marker(), Consts::Outfit2_Container(), 1));
+        NPCP_ASSERT(outfit2);
 
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::VANILLA);
         outfit2->Outfit1_Cache_Variable()->None();
@@ -130,9 +144,24 @@ namespace doticu_npcp { namespace Papyrus {
     {
         Outfit2_t* outfit2 = static_cast<Outfit2_t*>
             (Object_Ref::Place_At_Me(Consts::Storage_Marker(), Consts::Outfit2_Container(), 1));
+        NPCP_ASSERT(outfit2);
 
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::DEFAULT);
         outfit2->Outfit1_Cache_Variable()->None();
+
+        /*
+        
+    ObjectReference ref_default = CONTAINERS.Create_Temp()
+    ObjectReference ref_trash = CONTAINERS.Create_Temp()
+
+    doticu_npcp.Actor_Cache_Static_Inventory(ref_actor, doticu_npcp_consts.Blank_Armor(), ref_default)
+    doticu_npcp.Object_Ref_Remove_Unwearable(ref_default, ref_trash)
+    ref_default.RemoveAllItems(self, false, true)
+
+    CONTAINERS.Destroy_Temp(ref_default)
+    CONTAINERS.Destroy_Temp(ref_trash)
+        
+        */
 
         return outfit2;
     }
@@ -157,7 +186,6 @@ namespace doticu_npcp { namespace Papyrus {
     }
 
     Variable_t* Outfit2_t::Type_Variable() { DEFINE_VARIABLE("p_code_create"); }
-    Variable_t* Outfit2_t::Name_Variable() { DEFINE_VARIABLE("p_str_name"); }
     Variable_t* Outfit2_t::Outfit1_Cache_Variable() { DEFINE_VARIABLE("p_cache_base"); }
 
     Int_t Outfit2_t::Type()
@@ -167,16 +195,6 @@ namespace doticu_npcp { namespace Papyrus {
             return variable->Int();
         } else {
             return 0;
-        }
-    }
-
-    String_t Outfit2_t::Name()
-    {
-        Variable_t* variable = Name_Variable();
-        if (!variable->Is_None()) {
-            return variable->String();
-        } else {
-            return "";
         }
     }
 
@@ -190,14 +208,23 @@ namespace doticu_npcp { namespace Papyrus {
         }
     }
 
-    void Outfit2_t::Open()
+    Bool_t Outfit2_t::Has_Outfit1_Cache()
     {
-        Virtual_Machine_t::Self()->Send_Event(this, "Put");
+        return Outfit1_Cache() != nullptr;
     }
 
-    void Outfit2_t::Rename(String_t name)
+    Bool_t Outfit2_t::Hasnt_Outfit1_Cache()
     {
-        Object_Ref::Rename(this, name);
+        return Outfit1_Cache() == nullptr;
+    }
+
+    void Outfit2_t::Open(String_t outfit_name, Virtual_Callback_i** callback)
+    {
+        NPCP_ASSERT(outfit_name);
+
+        Object_Ref::Rename(this, outfit_name);
+
+        Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "p_Open", nullptr, callback);
     }
 
     void Outfit2_t::Apply_To(Actor_t* actor, Reference_t* pack)
@@ -211,11 +238,64 @@ namespace doticu_npcp { namespace Papyrus {
         }
     }
 
+    void Outfit2_t::Cache_Static_Outfit1(Outfit_t* outfit)
+    {
+        /*
+        
+    ; this should just copy what the actor has equipped at this point, because our Set_Outfit improves the original.
+    ; this way it won't relevel the outfit items and the user will get what they saw the first time
+    if !outfit_vanilla
+        return
+    endIf
+
+    ; make sure this container is persistent from now on.
+    if p_cache_base
+        p_cache_base.Disable()
+        p_cache_base.Delete()
+    endIf
+    p_cache_base = CONTAINERS.Create_Perm()
+
+    ; it's nice to have vanilla leveled items cached so they remain unchanged
+    ; this is also an avenue to getting unplayable items into the outfit
+    int idx_forms = outfit_vanilla.GetNumParts()
+    Form form_item
+    while idx_forms > 0
+        idx_forms -= 1
+        form_item = outfit_vanilla.GetNthPart(idx_forms)
+        if form_item != doticu_npcp_consts.Blank_Armor() as Form
+            p_cache_base.AddItem(form_item, 1, true); will expand LeveledItems!
+        endIf
+    endWhile
+        
+        */
+    }
+
+    void Outfit2_t::Cache_Dynamic_Outfit1(Actor_t* actor)
+    {
+        /*
+        
+    if !ref_actor
+        return
+    endIf
+
+    ; make sure this container is persistent from now on.
+    if p_cache_base
+        p_cache_base.Disable()
+        p_cache_base.Delete()
+    endIf
+    p_cache_base = CONTAINERS.Create_Perm()
+
+    ; not only does this do the heavy lifting, but it caches what the actor is wearing
+    ; so that when a vanilla outfit change happens, leveled items wont be calc'd twice.
+    ; also, we can trust more in our override of Actor.SetOutfit, and we won't get non-outfit items
+    doticu_npcp.Actor_Cache_Worn(ref_actor, doticu_npcp_consts.Blank_Armor(), p_cache_base)
+        
+        */
+    }
+
 }}
 
 namespace doticu_npcp { namespace Papyrus { namespace Outfit2 { namespace Exports {
-
-    void Apply_To(Outfit2_t* self, Actor_t* actor, Reference_t* pack) FORWARD_VOID(Apply_To(actor, pack));
 
     bool Register(VMClassRegistry* registry)
     {
@@ -234,8 +314,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Outfit2 { namespace Export
                              STR_FUNC_, ARG_NUM_,                       \
                              RETURN_, Exports::METHOD_, __VA_ARGS__);   \
         W
-
-        ADD_METHOD("Apply_To", 2, void, Apply_To, Actor_t*, Reference_t*);
 
         #undef ADD_METHOD
 

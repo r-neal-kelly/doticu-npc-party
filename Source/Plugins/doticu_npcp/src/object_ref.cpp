@@ -788,6 +788,7 @@ namespace doticu_npcp { namespace Object_Ref {
     void Rename(Reference_t* ref, String_t new_name)
     {
         if (ref) {
+            XList::Validate(&ref->extraData);
             ExtraTextDisplay* xtext = static_cast<ExtraTextDisplay*>(ref->extraData.GetByType(kExtraData_TextDisplayData));
             if (xtext) {
                 xtext->Force_Rename(new_name);
@@ -931,25 +932,6 @@ namespace doticu_npcp { namespace Object_Ref {
         return ref->handleRefObject.m_uiRefCount & 0x3FF;
     }
 
-    static Papyrus::Virtual_Callback_i** Default_Virtual_Callback()
-    {
-        using namespace Papyrus;
-
-        struct Callback : public Virtual_Callback_i {
-            Callback()
-            {
-                ref_count = 1;
-            }
-            virtual void operator()(Variable_t* return_variable) override
-            {
-            }
-        };
-        static Callback callback = Callback();
-        static Virtual_Callback_i* callback_ptr = &callback;
-
-        return &callback_ptr;
-    }
-
     void Add_Item_And_Callback(Reference_t* ref,
                                Form_t* form,
                                Int_t count,
@@ -961,7 +943,7 @@ namespace doticu_npcp { namespace Object_Ref {
         static String_t class_name = "ObjectReference";
         static String_t function_name = "AddItem";
 
-        struct Args : public IFunctionArguments {
+        struct Args : public Virtual_Arguments_i {
             Form_t* form;
             Int_t count;
             Bool_t do_sounds;
@@ -971,18 +953,18 @@ namespace doticu_npcp { namespace Object_Ref {
             {
             }
 
-            bool Copy(Output* output)
+            virtual Bool_t operator()(Array_t* arguments)
             {
-                output->Resize(3);
-                reinterpret_cast<Variable_t*>(output->Get(0))->Pack(form);
-                reinterpret_cast<Variable_t*>(output->Get(1))->Int(count);
-                reinterpret_cast<Variable_t*>(output->Get(2))->Bool(do_sounds);
+                arguments->Resize(3);
+                arguments->At(0)->Pack(form);
+                arguments->At(1)->Int(count);
+                arguments->At(2)->Bool(do_sounds);
                 return true;
             }
         } args(form, count, do_sounds);
 
         if (!callback) {
-            callback = Default_Virtual_Callback();
+            callback = Virtual_Callback_i::Default();
         }
 
         Virtual_Machine_t::Self()->Call_Method2(ref, &class_name, &function_name, &args, callback);
@@ -1000,7 +982,7 @@ namespace doticu_npcp { namespace Object_Ref {
         static String_t class_name = "ObjectReference";
         static String_t function_name = "RemoveItem";
 
-        struct Args : public IFunctionArguments {
+        struct Args : public Virtual_Arguments_i {
             Form_t* form;
             Int_t count;
             Bool_t do_sounds;
@@ -1011,19 +993,19 @@ namespace doticu_npcp { namespace Object_Ref {
             {
             }
 
-            bool Copy(Output* output)
+            virtual Bool_t operator()(Array_t* arguments)
             {
-                output->Resize(4);
-                reinterpret_cast<Variable_t*>(output->Get(0))->Pack(form);
-                reinterpret_cast<Variable_t*>(output->Get(1))->Int(count);
-                reinterpret_cast<Variable_t*>(output->Get(2))->Bool(do_sounds);
-                reinterpret_cast<Variable_t*>(output->Get(3))->Pack(destination);
+                arguments->Resize(4);
+                arguments->At(0)->Pack(form);
+                arguments->At(1)->Int(count);
+                arguments->At(2)->Bool(do_sounds);
+                arguments->At(3)->Pack(destination);
                 return true;
             }
         } args(form, count, do_sounds, destination);
 
         if (!callback) {
-            callback = Default_Virtual_Callback();
+            callback = Virtual_Callback_i::Default();
         }
 
         Virtual_Machine_t::Self()->Call_Method2(ref, &class_name, &function_name, &args, callback);

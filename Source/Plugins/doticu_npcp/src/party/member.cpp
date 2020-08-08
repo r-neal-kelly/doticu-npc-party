@@ -14,6 +14,7 @@
 #include "quest.h"
 #include "spell.h"
 #include "utils.h"
+#include "vars.h"
 
 namespace doticu_npcp { namespace Party {
 
@@ -51,8 +52,7 @@ namespace doticu_npcp { namespace Party {
     Variable_t* Member_t::Vanilla_Outfit2_Variable() { DEFINE_VARIABLE("p_outfit2_vanilla"); }
     Variable_t* Member_t::Default_Outfit2_Variable() { DEFINE_VARIABLE("p_outfit2_default"); }
     Variable_t* Member_t::Current_Outfit2_Variable() { DEFINE_VARIABLE("p_outfit2_current"); }
-    Variable_t* Member_t::Previous_Outfit2_Variable() { DEFINE_VARIABLE("p_outfit2_previous"); }
-    Variable_t* Member_t::Auto_Backup_Outfit2_Variable() { DEFINE_VARIABLE("p_outfit2_auto_backup"); }
+    Variable_t* Member_t::Backup_Outfit2_Variable() { DEFINE_VARIABLE("p_outfit2_auto_backup"); }
 
     Variable_t* Member_t::Is_Clone_Variable() { DEFINE_VARIABLE("p_is_clone"); }
     Variable_t* Member_t::Is_Immobile_Variable() { DEFINE_VARIABLE("p_is_immobile"); }
@@ -62,7 +62,6 @@ namespace doticu_npcp { namespace Party {
     Variable_t* Member_t::Is_Mannequin_Variable() { DEFINE_VARIABLE("p_is_mannequin"); }
     Variable_t* Member_t::Is_Display_Variable() { DEFINE_VARIABLE("p_is_display"); }
     Variable_t* Member_t::Is_Reanimated_Variable() { DEFINE_VARIABLE("p_is_reanimated"); }
-    Variable_t* Member_t::Do_Vanilla_Outfit_Variable() { DEFINE_VARIABLE("p_do_outfit_vanilla"); }
 
     Variable_t* Member_t::Style_Variable() { DEFINE_VARIABLE("p_code_style"); }
     Variable_t* Member_t::Vitality_Variable() { DEFINE_VARIABLE("p_code_vitality"); }
@@ -177,6 +176,161 @@ namespace doticu_npcp { namespace Party {
     {
         NPCP_ASSERT(Is_Filled());
         return Actor2::Get_Name(Actor());
+    }
+
+    Outfit_t* Member_t::Vanilla_Outfit()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Vanilla_Outfit_Variable()->Outfit();
+    }
+
+    Outfit2_t* Member_t::Member_Outfit2()
+    {
+        NPCP_ASSERT(Is_Filled());
+
+        Variable_t* variable = Member_Outfit2_Variable();
+
+        Outfit2_t* outfit2 = nullptr;
+        if (variable->Has_Object()) {
+            outfit2 = static_cast<Outfit2_t*>(variable->Reference());
+        } else {
+            outfit2 = Outfit2_t::Create_Member(Actor(), Pack());
+            //variable->Pack(outfit2, Outfit2_t::Class_Info());
+            variable->Pack(outfit2);
+        }
+        NPCP_ASSERT(outfit2);
+
+        return outfit2;
+    }
+
+    Outfit2_t* Member_t::Immobile_Outfit2()
+    {
+        NPCP_ASSERT(Is_Filled());
+
+        Variable_t* variable = Immobile_Outfit2_Variable();
+
+        Outfit2_t* outfit2 = nullptr;
+        if (variable->Has_Object()) {
+            outfit2 = static_cast<Outfit2_t*>(variable->Reference());
+        } else {
+            outfit2 = Outfit2_t::Create_Immobile();
+            //variable->Pack(outfit2, Outfit2_t::Class_Info());
+            variable->Pack(outfit2);
+        }
+        NPCP_ASSERT(outfit2);
+
+        return outfit2;
+    }
+
+    Outfit2_t* Member_t::Settler_Outfit2()
+    {
+        NPCP_ASSERT(Is_Filled());
+
+        Variable_t* variable = Settler_Outfit2_Variable();
+
+        Outfit2_t* outfit2 = nullptr;
+        if (variable->Has_Object()) {
+            outfit2 = static_cast<Outfit2_t*>(variable->Reference());
+        } else {
+            outfit2 = Outfit2_t::Create_Settler();
+            //variable->Pack(outfit2, Outfit2_t::Class_Info());
+            variable->Pack(outfit2);
+        }
+        NPCP_ASSERT(outfit2);
+
+        return outfit2;
+    }
+
+    Outfit2_t* Member_t::Thrall_Outfit2()
+    {
+        NPCP_ASSERT(Is_Filled());
+
+        Variable_t* variable = Thrall_Outfit2_Variable();
+
+        Outfit2_t* outfit2 = nullptr;
+        if (variable->Has_Object()) {
+            outfit2 = static_cast<Outfit2_t*>(variable->Reference());
+        } else {
+            outfit2 = Outfit2_t::Create_Thrall();
+            //variable->Pack(outfit2, Outfit2_t::Class_Info());
+            variable->Pack(outfit2);
+        }
+        NPCP_ASSERT(outfit2);
+
+        return outfit2;
+    }
+
+    Outfit2_t* Member_t::Follower_Outfit2()
+    {
+        NPCP_ASSERT(Is_Filled());
+
+        Variable_t* variable = Follower_Outfit2_Variable();
+
+        Outfit2_t* outfit2 = nullptr;
+        if (variable->Has_Object()) {
+            outfit2 = static_cast<Outfit2_t*>(variable->Reference());
+        } else {
+            outfit2 = Outfit2_t::Create_Follower();
+            //variable->Pack(outfit2, Outfit2_t::Class_Info());
+            variable->Pack(outfit2);
+        }
+        NPCP_ASSERT(outfit2);
+
+        return outfit2;
+    }
+
+    Outfit2_t* Member_t::Vanilla_Outfit2()
+    {
+        NPCP_ASSERT(Is_Filled());
+
+        Variable_t* variable = Vanilla_Outfit2_Variable();
+
+        Outfit2_t* outfit2 = nullptr;
+        if (variable->Has_Object()) {
+            outfit2 = static_cast<Outfit2_t*>(variable->Reference());
+        } else {
+            outfit2 = Outfit2_t::Create_Vanilla();
+            //variable->Pack(outfit2, Outfit2_t::Class_Info());
+            variable->Pack(outfit2);
+        }
+        NPCP_ASSERT(outfit2);
+
+        return outfit2;
+    }
+
+    Outfit2_t* Member_t::Default_Outfit2()
+    {
+        NPCP_ASSERT(Is_Filled());
+
+        Variable_t* variable = Default_Outfit2_Variable();
+
+        Outfit2_t* outfit2 = nullptr;
+        if (variable->Has_Object()) {
+            outfit2 = static_cast<Outfit2_t*>(variable->Reference());
+        } else {
+            outfit2 = Outfit2_t::Create_Default();
+            //variable->Pack(outfit2, Outfit2_t::Class_Info());
+            variable->Pack(outfit2);
+        }
+        NPCP_ASSERT(outfit2);
+
+        return outfit2;
+    }
+
+    Outfit2_t* Member_t::Current_Outfit2()
+    {
+        NPCP_ASSERT(Is_Filled());
+        Outfit2_t* outfit2 = static_cast<Outfit2_t*>(Current_Outfit2_Variable()->Reference());
+        NPCP_ASSERT(outfit2);
+        return outfit2;
+    }
+
+    Outfit2_t* Member_t::Backup_Outfit2()
+    {
+        NPCP_ASSERT(Is_Filled());
+        Outfit2_t* outfit2 = static_cast<Outfit2_t*>(Backup_Outfit2_Variable()->Reference());
+        NPCP_ASSERT(outfit2);
+        return outfit2;
     }
 
     Bool_t Member_t::Is_Loaded()
@@ -647,7 +801,6 @@ namespace doticu_npcp { namespace Party {
         Is_Mannequin_Variable()->Bool(false);
         Is_Display_Variable()->Bool(false);
         Is_Reanimated_Variable()->Bool(false);
-        Do_Vanilla_Outfit_Variable()->Bool(false);
 
         Outfit2_Variable()->Int(CODES::OUTFIT2::MEMBER);
         Rating_Variable()->Int(0);
@@ -1334,6 +1487,289 @@ namespace doticu_npcp { namespace Party {
         Actor2::Evaluate_Package(actor);
     }
 
+    void Member_t::Change_Outfit1(Outfit_t* outfit)
+    {
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(outfit);
+
+        Vanilla_Outfit_Variable()->Pack(outfit);
+        Update_Outfit2(CODES::OUTFIT2::VANILLA, false);
+
+        Actor_t* actor = Actor();
+        if (Actor2::Base_Outfit(actor) != outfit) {
+            Actor2::Set_Outfit(actor, outfit, false);
+        }
+        Actor2::Base_Outfit(actor, NPCS_t::Self()->Default_Outfit(actor)); // stops default outfit change on NPCS_t
+        
+        Vanilla_Outfit2()->Cache_Dynamic_Outfit1(actor);
+
+        Apply_Outfit2();
+    }
+
+    Int_t Member_t::Change_Outfit2(Int_t outfit2_code)
+    {
+        if (Is_Filled()) {
+            if (outfit2_code == CODES::OUTFIT2::CURRENT) {
+                outfit2_code = Outfit2();
+            }
+
+            if (outfit2_code == CODES::OUTFIT2::MEMBER) {
+                return Change_Member_Outfit2();
+            } else if (outfit2_code == CODES::OUTFIT2::IMMOBILE) {
+                return Change_Immobile_Outfit2();
+            } else if (outfit2_code == CODES::OUTFIT2::SETTLER) {
+                return Change_Settler_Outfit2();
+            } else if (outfit2_code == CODES::OUTFIT2::THRALL) {
+                return Change_Thrall_Outfit2();
+            } else if (outfit2_code == CODES::OUTFIT2::FOLLOWER) {
+                return Change_Follower_Outfit2();
+            } else if (outfit2_code == CODES::OUTFIT2::VANILLA) {
+                return Change_Vanilla_Outfit2();
+            } else if (outfit2_code == CODES::OUTFIT2::DEFAULT) {
+                return Change_Default_Outfit2();
+            } else {
+                return Change_Member_Outfit2();
+            }
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    Int_t Member_t::Change_Member_Outfit2()
+    {
+        if (Is_Filled()) {
+            Update_Outfit2(CODES::OUTFIT2::MEMBER);
+            Open_Outfit2();
+            return CODES::SUCCESS;
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    Int_t Member_t::Change_Immobile_Outfit2()
+    {
+        if (Is_Filled()) {
+            Update_Outfit2(CODES::OUTFIT2::IMMOBILE);
+            Open_Outfit2();
+            return CODES::SUCCESS;
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    Int_t Member_t::Change_Settler_Outfit2()
+    {
+        if (Is_Filled()) {
+            Update_Outfit2(CODES::OUTFIT2::SETTLER);
+            Open_Outfit2();
+            return CODES::SUCCESS;
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    Int_t Member_t::Change_Thrall_Outfit2()
+    {
+        if (Is_Filled()) {
+            Update_Outfit2(CODES::OUTFIT2::THRALL);
+            Open_Outfit2();
+            return CODES::SUCCESS;
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    Int_t Member_t::Change_Follower_Outfit2()
+    {
+        if (Is_Filled()) {
+            Update_Outfit2(CODES::OUTFIT2::FOLLOWER);
+            Open_Outfit2();
+            return CODES::SUCCESS;
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    Int_t Member_t::Change_Vanilla_Outfit2()
+    {
+        if (Is_Filled()) {
+            if (Outfit2() != CODES::OUTFIT2::VANILLA) {
+                Update_Outfit2(CODES::OUTFIT2::VANILLA, true);
+            } else {
+                Update_Outfit2(CODES::OUTFIT2::VANILLA, false);
+            }
+            Open_Outfit2();
+            return CODES::SUCCESS;
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    Int_t Member_t::Change_Default_Outfit2()
+    {
+        if (Is_Filled()) {
+            if (Outfit2() != CODES::OUTFIT2::DEFAULT) {
+                Update_Outfit2(CODES::OUTFIT2::DEFAULT, true);
+            } else {
+                Update_Outfit2(CODES::OUTFIT2::DEFAULT, false);
+            }
+            Open_Outfit2();
+            return CODES::SUCCESS;
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    Int_t Member_t::Change_Current_Outfit2()
+    {
+        if (Is_Filled()) {
+            Update_Outfit2(Outfit2());
+            Open_Outfit2();
+            return CODES::SUCCESS;
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    void Member_t::Update_Outfit2(Int_t outfit2_code, Bool_t do_cache_outfit1)
+    {
+        NPCP_ASSERT(Is_Filled());
+
+        Outfit2_t* current_outfit2 = nullptr;
+        Outfit2_t* backup_outfit2 = nullptr;
+        if (outfit2_code == CODES::OUTFIT2::MEMBER) {
+            current_outfit2 = Member_Outfit2();
+            backup_outfit2 = current_outfit2;
+        } else if (outfit2_code == CODES::OUTFIT2::IMMOBILE) {
+            current_outfit2 = Immobile_Outfit2();
+        } else if (outfit2_code == CODES::OUTFIT2::SETTLER) {
+            current_outfit2 = Settler_Outfit2();
+        } else if (outfit2_code == CODES::OUTFIT2::THRALL) {
+            current_outfit2 = Thrall_Outfit2();
+        } else if (outfit2_code == CODES::OUTFIT2::FOLLOWER) {
+            current_outfit2 = Follower_Outfit2();
+        } else if (outfit2_code == CODES::OUTFIT2::VANILLA) {
+            current_outfit2 = Vanilla_Outfit2();
+            backup_outfit2 = current_outfit2;
+            if (do_cache_outfit1) {
+                current_outfit2->Cache_Static_Outfit1(Vanilla_Outfit());
+            }
+        } else if (outfit2_code == CODES::OUTFIT2::DEFAULT) {
+            current_outfit2 = Default_Outfit2();
+            backup_outfit2 = current_outfit2;
+            if (do_cache_outfit1) {
+                current_outfit2->Cache_Static_Outfit1(NPCS_t::Self()->Default_Outfit(Actor()));
+            }
+        } else {
+            current_outfit2 = Current_Outfit2();
+            outfit2_code = Outfit2();
+        }
+
+        NPCP_ASSERT(current_outfit2);
+        //Current_Outfit2_Variable()->Pack(current_outfit2, Outfit2_t::Class_Info());
+        Current_Outfit2_Variable()->Pack(current_outfit2);
+        Outfit2_Variable()->Int(outfit2_code);
+
+        if (backup_outfit2) {
+            //Backup_Outfit2_Variable()->Pack(backup_outfit2, Outfit2_t::Class_Info());
+            Backup_Outfit2_Variable()->Pack(backup_outfit2);
+        }
+    }
+
+    void Member_t::Open_Outfit2()
+    {
+        NPCP_ASSERT(Is_Filled());
+
+        Outfit2_t* current_outfit2 = Current_Outfit2();
+        Int_t current_outfit2_code = Outfit2();
+        std::string outfit2_name = Name().c_str();
+
+        struct Callback : public Virtual_Callback_i {
+            Member_t* member;
+            Callback(Member_t* member) :
+                member(member)
+            {
+            }
+            virtual void operator()(Variable_t* result)
+            {
+                member->Apply_Outfit2();
+                Actor2::Evaluate_Package(member->Actor());
+            }
+        };
+        Virtual_Callback_i* callback = new Callback(this);
+
+        if (current_outfit2_code == CODES::OUTFIT2::MEMBER) {
+            current_outfit2->Open((outfit2_name + "'s Member Outfit").c_str(), &callback);
+        } else if (current_outfit2_code == CODES::OUTFIT2::IMMOBILE) {
+            current_outfit2->Open((outfit2_name + "'s Immobile Outfit").c_str(), &callback);
+        } else if (current_outfit2_code == CODES::OUTFIT2::SETTLER) {
+            current_outfit2->Open((outfit2_name + "'s Settler Outfit").c_str(), &callback);
+        } else if (current_outfit2_code == CODES::OUTFIT2::THRALL) {
+            current_outfit2->Open((outfit2_name + "'s Thrall Outfit").c_str(), &callback);
+        } else if (current_outfit2_code == CODES::OUTFIT2::FOLLOWER) {
+            current_outfit2->Open((outfit2_name + "'s Follower Outfit").c_str(), &callback);
+        } else if (current_outfit2_code == CODES::OUTFIT2::VANILLA) {
+            current_outfit2->Open((outfit2_name + "'s Vanilla Outfit").c_str(), &callback);
+        } else if (current_outfit2_code == CODES::OUTFIT2::DEFAULT) {
+            current_outfit2->Open((outfit2_name + "'s Default Outfit").c_str(), &callback);
+        } else {
+            NPCP_ASSERT(false);
+        }
+    }
+
+    void Member_t::Apply_Outfit2()
+    {
+        NPCP_ASSERT(Is_Filled());
+
+        Outfit2_t* current_outfit2;
+        Int_t current_outfit2_code;
+        if (Vars::Do_Auto_Outfit2s()) {
+            if (Is_Immobile() && Vars::Do_Auto_Immobile_Outfit2()) {
+                current_outfit2 = Immobile_Outfit2();
+                current_outfit2_code = CODES::OUTFIT2::IMMOBILE;
+            } else if (Is_Follower()) {
+                current_outfit2 = Follower_Outfit2();
+                current_outfit2_code = CODES::OUTFIT2::FOLLOWER;
+            } else if (Is_Thrall()) {
+                current_outfit2 = Thrall_Outfit2();
+                current_outfit2_code = CODES::OUTFIT2::THRALL;
+            } else if (Is_Settler()) {
+                current_outfit2 = Settler_Outfit2();
+                current_outfit2_code = CODES::OUTFIT2::SETTLER;
+            } else {
+                Outfit2_t* backup_outfit2 = Backup_Outfit2();
+                Outfit2_t* vanilla_outfit2 = Vanilla_Outfit2();
+                Outfit2_t* default_outfit2 = Default_Outfit2();
+                if (backup_outfit2 == vanilla_outfit2) {
+                    current_outfit2 = Vanilla_Outfit2();
+                    current_outfit2_code = CODES::OUTFIT2::VANILLA;
+                } else if (backup_outfit2 == default_outfit2) {
+                    current_outfit2 = Default_Outfit2();
+                    current_outfit2_code = CODES::OUTFIT2::DEFAULT;
+                } else {
+                    current_outfit2 = Member_Outfit2();
+                    current_outfit2_code = CODES::OUTFIT2::MEMBER;
+                }
+            }
+            //Current_Outfit2_Variable()->Pack(current_outfit2, Outfit2_t::Class_Info());
+            Current_Outfit2_Variable()->Pack(current_outfit2);
+            Outfit2_Variable()->Int(current_outfit2_code);
+        } else {
+            current_outfit2 = Current_Outfit2();
+            current_outfit2_code = Outfit2();
+        }
+        NPCP_ASSERT(current_outfit2);
+
+        // maybe we can do this upfront on a update now
+        if (current_outfit2_code == CODES::OUTFIT2::VANILLA && current_outfit2->Hasnt_Outfit1_Cache()) {
+            current_outfit2->Cache_Static_Outfit1(Vanilla_Outfit());
+        } else if (current_outfit2_code == CODES::OUTFIT2::DEFAULT && current_outfit2->Hasnt_Outfit1_Cache()) {
+            current_outfit2->Cache_Static_Outfit1(NPCS_t::Self()->Default_Outfit(Actor()));
+        }
+
+        current_outfit2->Apply_To(Actor(), Pack());
+    }
+
     void Member_t::Rename(String_t new_name)
     {
         NPCP_ASSERT(Is_Filled());
@@ -1466,6 +1902,20 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
     void Vitalize(Member_t* self, Int_t vitality) FORWARD_VOID(Member_t::Vitalize(vitality));
     void Unvitalize(Member_t* self) FORWARD_VOID(Member_t::Unvitalize());
 
+    void Change_Outfit1(Member_t* self, Outfit_t* outfit) FORWARD_VOID(Change_Outfit1(outfit));
+    Int_t Change_Outfit2(Member_t* self, Int_t outfit2_code) FORWARD_INT(Change_Outfit2(outfit2_code));
+    Int_t Change_Member_Outfit2(Member_t* self) FORWARD_INT(Change_Member_Outfit2());
+    Int_t Change_Immobile_Outfit2(Member_t* self) FORWARD_INT(Change_Immobile_Outfit2());
+    Int_t Change_Settler_Outfit2(Member_t* self) FORWARD_INT(Change_Settler_Outfit2());
+    Int_t Change_Thrall_Outfit2(Member_t* self) FORWARD_INT(Change_Thrall_Outfit2());
+    Int_t Change_Follower_Outfit2(Member_t* self) FORWARD_INT(Change_Follower_Outfit2());
+    Int_t Change_Vanilla_Outfit2(Member_t* self) FORWARD_INT(Change_Vanilla_Outfit2());
+    Int_t Change_Default_Outfit2(Member_t* self) FORWARD_INT(Change_Default_Outfit2());
+    Int_t Change_Current_Outfit2(Member_t* self) FORWARD_INT(Change_Current_Outfit2());
+    void Update_Outfit2(Member_t* self, Int_t outfit2_code, Bool_t do_cache_outfit1) FORWARD_VOID(Update_Outfit2(outfit2_code, do_cache_outfit1));
+    void Open_Outfit2(Member_t* self) FORWARD_VOID(Open_Outfit2());
+    void Apply_Outfit2(Member_t* self) FORWARD_VOID(Apply_Outfit2());
+
     void Rename(Member_t* self, String_t new_name) FORWARD_VOID(Member_t::Rename(new_name));
 
     void Log_Variable_Infos(Member_t* self) FORWARD_VOID(Log_Variable_Infos());
@@ -1549,6 +1999,20 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
 
         ADD_METHOD("p_Vitalize", 1, void, Vitalize, Int_t);
         ADD_METHOD("p_Unvitalize", 0, void, Unvitalize);
+
+        ADD_METHOD("p_Change_Outfit1", 1, void, Change_Outfit1, Outfit_t*);
+        ADD_METHOD("Change_Outfit2", 1, Int_t, Change_Outfit2, Int_t);
+        ADD_METHOD("Change_Member_Outfit2", 0, Int_t, Change_Member_Outfit2);
+        ADD_METHOD("Change_Immobile_Outfit2", 0, Int_t, Change_Immobile_Outfit2);
+        ADD_METHOD("Change_Settler_Outfit2", 0, Int_t, Change_Settler_Outfit2);
+        ADD_METHOD("Change_Thrall_Outfit2", 0, Int_t, Change_Thrall_Outfit2);
+        ADD_METHOD("Change_Follower_Outfit2", 0, Int_t, Change_Follower_Outfit2);
+        ADD_METHOD("Change_Vanilla_Outfit2", 0, Int_t, Change_Vanilla_Outfit2);
+        ADD_METHOD("Change_Default_Outfit2", 0, Int_t, Change_Default_Outfit2);
+        ADD_METHOD("Change_Current_Outfit2", 0, Int_t, Change_Current_Outfit2);
+        ADD_METHOD("p_Update_Outfit2", 2, void, Update_Outfit2, Int_t, Bool_t);
+        ADD_METHOD("p_Open_Outfit2", 0, void, Open_Outfit2);
+        ADD_METHOD("p_Apply_Outfit2", 0, void, Apply_Outfit2);
 
         ADD_METHOD("p_Rename", 1, void, Rename, String_t);
 

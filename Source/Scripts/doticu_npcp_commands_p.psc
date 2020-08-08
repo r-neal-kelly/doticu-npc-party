@@ -131,7 +131,7 @@ function Outfit(int code_exec, Actor ref_actor, int code_outfit2, bool auto_crea
         code_outfit2 = ref_member.Get_Outfit2()
     endIf
 
-    NOTES.Outfit(ref_member.Outfit(code_exec, code_outfit2), str_name, code_outfit2)
+    NOTES.Outfit(ref_member.Change_Outfit2(code_outfit2), str_name, code_outfit2)
 endFunction
 
 function Outfit_Member(int code_exec, Actor ref_actor, bool auto_create)

@@ -28,6 +28,12 @@ namespace doticu_npcp { namespace Offsets {
 
     }
 
+    namespace Virtual_Arguments {
+
+        constexpr uintptr_t RESIZE                      = 0x00920360; // 53105
+
+    }
+
     namespace Array {
 
         constexpr uintptr_t DESTROY                     = 0x01241E40; // 97723

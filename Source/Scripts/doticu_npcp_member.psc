@@ -73,7 +73,6 @@ doticu_npcp_outfit      p_outfit2_follower          =  none
 doticu_npcp_outfit      p_outfit2_vanilla           =  none
 doticu_npcp_outfit      p_outfit2_default           =  none
 doticu_npcp_outfit      p_outfit2_current           =  none
-doticu_npcp_outfit      p_outfit2_previous          =  none
 doticu_npcp_outfit      p_outfit2_auto_backup       =  none
 
 bool                    p_is_clone                  = false
@@ -84,7 +83,6 @@ bool                    p_is_paralyzed              = false
 bool                    p_is_mannequin              = false
 bool                    p_is_display                = false
 bool                    p_is_reanimated             = false
-bool                    p_do_outfit_vanilla         = false
 
 int                     p_code_style                =     0
 int                     p_code_vitality             =     0
@@ -169,6 +167,20 @@ int function Unstylize() native
 function p_Vitalize(int vitality) native
 function p_Unvitalize() native
 
+function p_Change_Outfit1(Outfit outfit1) native
+int function Change_Outfit2(int outfit2_code) native
+int function Change_Member_Outfit2() native
+int function Change_Immobile_Outfit2() native
+int function Change_Settler_Outfit2() native
+int function Change_Thrall_Outfit2() native
+int function Change_Follower_Outfit2() native
+int function Change_Vanilla_Outfit2() native
+int function Change_Default_Outfit2() native
+int function Change_Current_Outfit2() native
+function p_Update_Outfit2(int outfit2_code, bool do_cache_outfit1 = false) native
+function p_Open_Outfit2() native
+function p_Apply_Outfit2() native
+
 function p_Rename(string new_name) native
 
 function Log_Variable_Infos() native
@@ -189,7 +201,6 @@ p_Lock()
     p_is_reanimated = false
     p_is_display = false
     
-    p_do_outfit_vanilla = false
     p_code_outfit2 = doticu_npcp_codes.OUTFIT2_MEMBER()
     p_int_rating = 0
     p_marker_display = none
@@ -200,13 +211,13 @@ p_Lock()
 p_Unlock()
 
     p_Create_Container()
-    p_Create_Outfit(doticu_npcp_codes.OUTFIT2_MEMBER())
+    p_Update_Outfit2(doticu_npcp_codes.OUTFIT2_MEMBER())
     p_Backup()
 
     p_Member()
     Stylize(VARS.auto_style)
     p_Vitalize(VARS.auto_vitality)
-    p_Outfit()
+    p_Apply_Outfit2()
 
     ; has to happen after p_Member() because it needs
     ; to have the token for the full dialogue
@@ -258,7 +269,6 @@ p_Lock()
     p_prev_factions = new Faction[1]
 
     p_outfit2_auto_backup = none
-    p_outfit2_previous = none
     p_outfit2_current = none
     p_outfit2_default = none
     p_outfit2_vanilla = none
@@ -276,7 +286,6 @@ p_Lock()
     p_code_outfit2 = -1
     p_code_vitality = -1
     p_code_style = -1
-    p_do_outfit_vanilla = false
     p_is_display = false
     p_is_reanimated = false
     p_is_mannequin = false
@@ -399,54 +408,6 @@ p_Lock()
 p_Unlock()
 endFunction
 
-function p_Create_Outfit(int code_outfit2)
-p_Lock()
-
-    if code_outfit2 == doticu_npcp_codes.OUTFIT2_CURRENT()
-        code_outfit2 = p_code_outfit2
-    endIf
-
-    if code_outfit2 == doticu_npcp_codes.OUTFIT2_MEMBER()
-        if !p_outfit2_member
-            p_outfit2_member = OUTFITS.Create()
-            if VARS.fill_outfits
-                p_outfit2_member.Get(p_ref_actor, p_container_pack)
-            else
-                p_ref_actor.RemoveAllItems(p_container_pack, true, false)
-            endIf
-            p_outfit2_previous = p_outfit2_member
-            p_outfit2_current = p_outfit2_member
-        endIf
-    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_SETTLER()
-        if !p_outfit2_settler
-            p_outfit2_settler = OUTFITS.Create_Settler()
-        endIf
-    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_THRALL()
-        if !p_outfit2_thrall
-            p_outfit2_thrall = OUTFITS.Create_Thrall()
-        endIf
-    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_IMMOBILE()
-        if !p_outfit2_immobile
-            p_outfit2_immobile = OUTFITS.Create_Immobile()
-        endIf
-    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_FOLLOWER()
-        if !p_outfit2_follower
-            p_outfit2_follower = OUTFITS.Create_Follower()
-        endIf
-    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_VANILLA()
-        if !p_outfit2_vanilla
-            p_outfit2_vanilla = OUTFITS.Create_Vanilla()
-        endIf
-    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_DEFAULT()
-        if !p_outfit2_default
-            p_outfit2_default = OUTFITS.Create_Default()
-            p_outfit2_default.Get_Default(p_ref_actor)
-        endIf
-    endIf
-    
-p_Unlock()
-endFunction
-
 function p_Destroy_Outfits()
 p_Lock()
 
@@ -471,138 +432,6 @@ p_Lock()
     if p_outfit2_member
         OUTFITS.Destroy(p_outfit2_member)
     endIf
-
-p_Unlock()
-endFunction
-
-function p_Put_Outfit(int code_outfit2)
-p_Lock()
-
-    if code_outfit2 == doticu_npcp_codes.OUTFIT2_CURRENT()
-        code_outfit2 = p_code_outfit2
-    endIf
-
-    if code_outfit2 == doticu_npcp_codes.OUTFIT2_MEMBER()
-        p_outfit2_member.Rename(Name() + "'s Member Outfit")
-        p_outfit2_member.Put()
-    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_SETTLER()
-        p_outfit2_settler.Rename(Name() + "'s Settler Outfit")
-        p_outfit2_settler.Put()
-    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_THRALL()
-        p_outfit2_thrall.Rename(Name() + "'s Thrall Outfit")
-        p_outfit2_thrall.Put()
-    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_IMMOBILE()
-        p_outfit2_immobile.Rename(Name() + "'s Immobile Outfit")
-        p_outfit2_immobile.Put()
-    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_FOLLOWER()
-        p_outfit2_follower.Rename(Name() + "'s Follower Outfit")
-        p_outfit2_follower.Put()
-    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_VANILLA()
-        p_outfit2_vanilla.Rename(Name() + "'s Vanilla Outfit")
-        p_outfit2_vanilla.Put()
-    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_DEFAULT()
-        p_outfit2_default.Rename(Name() + "'s Default Outfit")
-        p_outfit2_default.Put()
-    else
-        p_outfit2_member.Rename(Name() + "'s Member Outfit")
-        p_outfit2_member.Put()
-    endIf
-
-p_Unlock()
-endFunction
-
-function p_Set_Outfit(int code_outfit2)
-p_Lock()
-
-    p_outfit2_previous = p_outfit2_current
-
-    if code_outfit2 == doticu_npcp_codes.OUTFIT2_CURRENT()
-        code_outfit2 = p_code_outfit2
-    endIf
-
-    if code_outfit2 == doticu_npcp_codes.OUTFIT2_MEMBER()
-        p_outfit2_current = p_outfit2_member
-        p_outfit2_auto_backup = p_outfit2_member
-    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_SETTLER()
-        p_outfit2_current = p_outfit2_settler
-    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_THRALL()
-        p_outfit2_current = p_outfit2_thrall
-    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_IMMOBILE()
-        p_outfit2_current = p_outfit2_immobile
-    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_FOLLOWER()
-        p_outfit2_current = p_outfit2_follower
-    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_VANILLA()
-        p_outfit2_current = p_outfit2_vanilla
-        p_outfit2_auto_backup = p_outfit2_vanilla
-    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_DEFAULT()
-        p_outfit2_current = p_outfit2_default
-        p_outfit2_auto_backup = p_outfit2_default
-    else
-        code_outfit2 = doticu_npcp_codes.OUTFIT2_MEMBER()
-        p_outfit2_current = p_outfit2_member
-        p_outfit2_auto_backup = p_outfit2_member
-    endIf
-
-    p_code_outfit2 = code_outfit2
-
-p_Unlock()
-endFunction
-
-function p_Outfit()
-    if VARS.auto_outfit
-        if Is_Immobile() && VARS.auto_immobile_outfit
-            p_Create_Outfit(doticu_npcp_codes.OUTFIT2_IMMOBILE())
-            p_Set_Outfit(doticu_npcp_codes.OUTFIT2_IMMOBILE())
-        elseIf Is_Follower()
-            p_Create_Outfit(doticu_npcp_codes.OUTFIT2_FOLLOWER())
-            p_Set_Outfit(doticu_npcp_codes.OUTFIT2_FOLLOWER())
-        elseIf Is_Thrall()
-            p_Create_Outfit(doticu_npcp_codes.OUTFIT2_THRALL())
-            p_Set_Outfit(doticu_npcp_codes.OUTFIT2_THRALL())
-        elseIf Is_Settler()
-            p_Create_Outfit(doticu_npcp_codes.OUTFIT2_SETTLER())
-            p_Set_Outfit(doticu_npcp_codes.OUTFIT2_SETTLER())
-        elseIf p_outfit2_auto_backup
-            if p_outfit2_auto_backup == p_outfit2_vanilla
-                p_Set_Outfit(doticu_npcp_codes.OUTFIT2_VANILLA())
-            elseIf p_outfit2_auto_backup == p_outfit2_default
-                p_Set_Outfit(doticu_npcp_codes.OUTFIT2_DEFAULT())
-            else
-                p_Set_Outfit(doticu_npcp_codes.OUTFIT2_MEMBER())
-            endif
-        else
-            p_Set_Outfit(doticu_npcp_codes.OUTFIT2_MEMBER())
-        endIf
-    endIf
-
-p_Lock()
-
-    if p_do_outfit_vanilla
-        p_do_outfit_vanilla = false
-        p_outfit2_current = p_outfit2_vanilla; we don't want the next Outfit() to call branch below unless changed otherwise
-        p_Create_Outfit(doticu_npcp_codes.OUTFIT2_VANILLA())
-        p_Set_Outfit(doticu_npcp_codes.OUTFIT2_VANILLA())
-        p_outfit2_vanilla.Cache_Vanilla_Dynamic(p_ref_actor)
-        p_outfit2_vanilla.Apply_To(p_ref_actor, p_container_pack)
-    elseIf p_outfit2_previous != p_outfit2_current
-        p_outfit2_previous = p_outfit2_current
-        if p_outfit2_current == p_outfit2_vanilla
-            p_outfit2_current.Cache_Vanilla_Static(p_outfit_vanilla)
-        elseIf p_outfit2_current == p_outfit2_default
-            p_outfit2_current.Cache_Vanilla_Static(NPCS.Default_Outfit(p_ref_actor))
-        endIf
-        p_outfit2_current.Apply_To(p_ref_actor, p_container_pack)
-    else
-        ; this is just a way to do asyncronous updating for 0.9.0+
-        if p_outfit2_current == p_outfit2_vanilla
-            p_outfit2_current.Try_Cache_Vanilla(p_outfit_vanilla)
-        elseIf p_outfit2_current == p_outfit2_default
-            p_outfit2_current.Try_Cache_Vanilla(NPCS.Default_Outfit(p_ref_actor))
-        endIf
-        p_outfit2_current.Apply_To(p_ref_actor, p_container_pack)
-    endIf
-
-    p_ref_actor.EvaluatePackage()
 
 p_Unlock()
 endFunction
@@ -730,7 +559,7 @@ function Enforce()
         return
     endIf
 
-    p_Outfit()
+    p_Apply_Outfit2()
 
     p_Member()
 
@@ -800,7 +629,7 @@ int function Mobilize()
 
     p_Mobilize()
 
-    p_Async("On_Outfit")
+    p_Apply_Outfit2()
 
     return doticu_npcp_codes.SUCCESS()
 endFunction
@@ -815,7 +644,7 @@ int function Immobilize()
 
     p_Immobilize()
 
-    p_Async("On_Outfit")
+    p_Apply_Outfit2()
 
     return doticu_npcp_codes.SUCCESS()
 endFunction
@@ -830,7 +659,7 @@ int function Settle()
 
     p_Settle()
 
-    p_Async("On_Outfit")
+    p_Apply_Outfit2()
 
     return doticu_npcp_codes.SUCCESS()
 endFunction
@@ -845,7 +674,7 @@ int function Resettle()
 
     p_Settle()
 
-    p_Async("On_Outfit")
+    p_Apply_Outfit2()
 
     return doticu_npcp_codes.SUCCESS()
 endFunction
@@ -860,7 +689,7 @@ int function Unsettle()
 
     p_Unsettle()
 
-    p_Async("On_Outfit")
+    p_Apply_Outfit2()
 
     return doticu_npcp_codes.SUCCESS()
 endFunction
@@ -878,7 +707,7 @@ int function Enthrall()
 
     p_Enthrall()
 
-    p_Async("On_Outfit")
+    p_Apply_Outfit2()
 
     return doticu_npcp_codes.SUCCESS()
 endFunction
@@ -896,7 +725,7 @@ int function Unthrall()
 
     p_Unthrall()
 
-    p_Async("On_Outfit")
+    p_Apply_Outfit2()
 
     return doticu_npcp_codes.SUCCESS()
 endFunction
@@ -1053,7 +882,7 @@ p_Unlock()
         return code_return
     endIf
 
-    p_Async("On_Outfit")
+    p_Apply_Outfit2()
 
     return doticu_npcp_codes.SUCCESS()
 endFunction
@@ -1074,7 +903,7 @@ p_Unlock()
         return code_return
     endIf
 
-    p_Async("On_Outfit")
+    p_Apply_Outfit2()
 
     return doticu_npcp_codes.SUCCESS()
 endFunction
@@ -1189,165 +1018,6 @@ int function Stash()
     return doticu_npcp_codes.SUCCESS()
 endFunction
 
-int function Outfit(int code_exec, int code_outfit2)
-    if code_outfit2 == doticu_npcp_codes.OUTFIT2_MEMBER()
-        return Outfit_Member(code_exec)
-    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_SETTLER()
-        return Outfit_Settler(code_exec)
-    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_THRALL()
-        return Outfit_Thrall(code_exec)
-    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_IMMOBILE()
-        return Outfit_Immobile(code_exec)
-    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_FOLLOWER()
-        return Outfit_Follower(code_exec)
-    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_VANILLA()
-        return Outfit_Vanilla(code_exec)
-    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_DEFAULT()
-        return Outfit_Default(code_exec)
-    elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_CURRENT()
-        return Outfit_Current(code_exec)
-    endIf
-endFunction
-event On_Outfit()
-    p_Outfit()
-endEvent
-
-int function Outfit_Member(int code_exec)
-    if !Exists()
-        return doticu_npcp_codes.MEMBER()
-    endIf
-
-    p_Create_Outfit(doticu_npcp_codes.OUTFIT2_MEMBER())
-    p_Set_Outfit(doticu_npcp_codes.OUTFIT2_MEMBER())
-    p_Put_Outfit(doticu_npcp_codes.OUTFIT2_MEMBER())
-    if code_exec == doticu_npcp_codes.ASYNC()
-        p_Async("On_Outfit")
-    else
-        p_Outfit()
-    endIf
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Outfit_Settler(int code_exec)
-    if !Exists()
-        return doticu_npcp_codes.MEMBER()
-    endIf
-
-    p_Create_Outfit(doticu_npcp_codes.OUTFIT2_SETTLER())
-    p_Set_Outfit(doticu_npcp_codes.OUTFIT2_SETTLER())
-    p_Put_Outfit(doticu_npcp_codes.OUTFIT2_SETTLER())
-    if code_exec == doticu_npcp_codes.ASYNC()
-        p_Async("On_Outfit")
-    else
-        p_Outfit()
-    endIf
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Outfit_Thrall(int code_exec)
-    if !Exists()
-        return doticu_npcp_codes.MEMBER()
-    endIf
-
-    p_Create_Outfit(doticu_npcp_codes.OUTFIT2_THRALL())
-    p_Set_Outfit(doticu_npcp_codes.OUTFIT2_THRALL())
-    p_Put_Outfit(doticu_npcp_codes.OUTFIT2_THRALL())
-    if code_exec == doticu_npcp_codes.ASYNC()
-        p_Async("On_Outfit")
-    else
-        p_Outfit()
-    endIf
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Outfit_Immobile(int code_exec)
-    if !Exists()
-        return doticu_npcp_codes.MEMBER()
-    endIf
-
-    p_Create_Outfit(doticu_npcp_codes.OUTFIT2_IMMOBILE())
-    p_Set_Outfit(doticu_npcp_codes.OUTFIT2_IMMOBILE())
-    p_Put_Outfit(doticu_npcp_codes.OUTFIT2_IMMOBILE())
-    if code_exec == doticu_npcp_codes.ASYNC()
-        p_Async("On_Outfit")
-    else
-        p_Outfit()
-    endIf
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Outfit_Follower(int code_exec)
-    if !Exists()
-        return doticu_npcp_codes.MEMBER()
-    endIf
-
-    p_Create_Outfit(doticu_npcp_codes.OUTFIT2_FOLLOWER())
-    p_Set_Outfit(doticu_npcp_codes.OUTFIT2_FOLLOWER())
-    p_Put_Outfit(doticu_npcp_codes.OUTFIT2_FOLLOWER())
-    if code_exec == doticu_npcp_codes.ASYNC()
-        p_Async("On_Outfit")
-    else
-        p_Outfit()
-    endIf
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Outfit_Vanilla(int code_exec)
-    if !Exists()
-        return doticu_npcp_codes.MEMBER()
-    endIf
-
-    p_Create_Outfit(doticu_npcp_codes.OUTFIT2_VANILLA())
-    p_Set_Outfit(doticu_npcp_codes.OUTFIT2_VANILLA())
-    p_Put_Outfit(doticu_npcp_codes.OUTFIT2_VANILLA())
-    if code_exec == doticu_npcp_codes.ASYNC()
-        p_Async("On_Outfit")
-    else
-        p_Outfit()
-    endIf
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Outfit_Default(int code_exec)
-    if !Exists()
-        return doticu_npcp_codes.MEMBER()
-    endIf
-
-    p_Create_Outfit(doticu_npcp_codes.OUTFIT2_DEFAULT())
-    p_Set_Outfit(doticu_npcp_codes.OUTFIT2_DEFAULT())
-    p_Put_Outfit(doticu_npcp_codes.OUTFIT2_DEFAULT())
-    if code_exec == doticu_npcp_codes.ASYNC()
-        p_Async("On_Outfit")
-    else
-        p_Outfit()
-    endIf
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Outfit_Current(int code_exec)
-    if !Exists()
-        return doticu_npcp_codes.MEMBER()
-    endIf
-
-    p_Create_Outfit(doticu_npcp_codes.OUTFIT2_CURRENT())
-    p_Set_Outfit(doticu_npcp_codes.OUTFIT2_CURRENT())
-    p_Put_Outfit(doticu_npcp_codes.OUTFIT2_CURRENT())
-    if code_exec == doticu_npcp_codes.ASYNC()
-        p_Async("On_Outfit")
-    else
-        p_Outfit()
-    endIf
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
 int function Get_Rating()
     if !Exists()
         return doticu_npcp_codes.MEMBER()
@@ -1435,14 +1105,6 @@ int function Summon(int distance = 120, int angle = 0)
     return doticu_npcp_codes.SUCCESS()
 endFunction
 
-int function Summon_Ahead(int distance = 120)
-    return Summon(distance, 0)
-endFunction
-
-int function Summon_Behind(int distance = 120)
-    return Summon(distance, 180)
-endFunction
-
 int function Goto(int distance = 120, int angle = 0)
     if !Exists()
         return doticu_npcp_codes.MEMBER()
@@ -1505,16 +1167,12 @@ event OnActivate(ObjectReference activator_obj)
             if outfit_vanilla && outfit_vanilla != NPCS.Default_Outfit(p_ref_actor)
                 ; one drawback of this method is that there is no way to tell if the default
                 ; outfit has been selected through an outfit mod. we could rig something through
-                ; Set_Outfit in c++, but prob. not worth it atm
-                ;NPCS.Update_Base_Outfit(p_ref_actor); so outfitter doesn't detect it has been changed (what? maybe just delete this)
-                p_outfit_vanilla = outfit_vanilla
-                p_do_outfit_vanilla = true
-                p_Outfit()
+                ; Set_Outfit in c++
+                p_Change_Outfit1(outfit_vanilla)
             endIf
         endIf
     else
-        p_outfit2_current.Put()
-        p_Outfit()
+        p_Open_Outfit2()
     endIf
 endEvent
 

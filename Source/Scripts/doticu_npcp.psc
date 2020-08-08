@@ -27,9 +27,6 @@ endFunction
 ; most of the following shall eventually be moved into existing types or remove completely
 
 ; Actor
-function Actor_Cache_Worn(Actor ref_actor, Form form_linchpin, ObjectReference ref_cache_out) native global
-function Actor_Cache_Inventory(Actor ref_actor, Form form_linchpin, ObjectReference ref_worn_out, ObjectReference ref_pack_out) native global
-function Actor_Cache_Static_Inventory(Actor ref_actor, Form form_linchpin, ObjectREference ref_cache_out) native global
 function Actor_Reset_Actor_Value(Actor ref_actor, string name) native global
 Actor function Actor_Get_Mounted_Actor(Actor ref_horse) native global
 function Actor_Log_Factions(Actor ref_actor) native global

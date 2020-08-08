@@ -76,6 +76,8 @@ namespace doticu_npcp { namespace Vars {
     Bool_t Do_Force_Unclone_Unique() { BOOL_VAR("p_force_unclone_unique"); }
     Bool_t Do_Force_Unclone_Generic() { BOOL_VAR("p_force_unclone_generic"); }
     Bool_t Do_Fill_Outfit2s() { BOOL_VAR("p_fill_outfits"); }
+    Bool_t Do_Auto_Outfit2s() { BOOL_VAR("p_auto_outfit"); }
+    Bool_t Do_Auto_Immobile_Outfit2() { BOOL_VAR("p_auto_immobile_outfit"); }
 
     #undef BOOL_VAR
 

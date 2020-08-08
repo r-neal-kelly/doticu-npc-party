@@ -29,6 +29,23 @@ namespace doticu_npcp { namespace XList {
         return xlist;
     }
 
+    void Validate(XList_t* xlist)
+    {
+        NPCP_ASSERT(xlist);
+
+        if (!xlist->m_presence) {
+            xlist->m_presence = (XList_t::PresenceBitfield*)Heap_Allocate(sizeof(XList_t::PresenceBitfield));
+            NPCP_ASSERT(xlist->m_presence);
+
+            u64* bits = (u64*)xlist->m_presence->bits;
+            bits[0] = 0;
+            bits[1] = 0;
+            bits[2] = 0;
+
+            xlist->m_lock = BSReadWriteLock();
+        }
+    }
+
     void Destroy(XList_t *xlist) {
         if (!xlist) {
             return;

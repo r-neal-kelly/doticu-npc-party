@@ -26,6 +26,15 @@ namespace doticu_npcp { namespace Papyrus {
         return policy;
     }
 
+    inline Handle_t::Handle_t(void* instance, Type_ID_t type_id)
+    {
+        if (instance) {
+            handle = Policy()->Create(type_id, instance);
+        } else {
+            handle = Policy()->GetInvalidHandle();
+        }
+    }
+
     template <typename Type>
     inline Handle_t::Handle_t(Type* instance)
     {
@@ -34,6 +43,12 @@ namespace doticu_npcp { namespace Papyrus {
         } else {
             handle = Policy()->GetInvalidHandle();
         }
+    }
+
+    template <>
+    inline Handle_t::Handle_t(void* instance)
+    {
+        NPCP_ASSERT(false);
     }
 
     inline Handle_t::Handle_t(Form_t* form)
@@ -55,9 +70,14 @@ namespace doticu_npcp { namespace Papyrus {
     {
     }
 
-    inline bool Handle_t::Is_Valid()
+    inline Bool_t Handle_t::Is_Valid()
     {
         return handle != Policy()->GetInvalidHandle();
+    }
+
+    inline Bool_t Handle_t::Has_Type_ID(Type_ID_t type_id)
+    {
+        return reinterpret_cast<Handle_Policy_t*>(Policy())->Has_Type_ID(type_id, handle);
     }
 
     inline Handle_t::operator UInt64()
@@ -107,6 +127,19 @@ namespace doticu_npcp { namespace Papyrus {
         Self()->Send_Event(Handle_t(object), &event_name, &arguments);
     }
 
+    inline Bool_t Virtual_Machine_t::Call_Method(Handle_t handle,
+                                                 String_t class_name,
+                                                 String_t function_name,
+                                                 Virtual_Arguments_i* arguments,
+                                                 Virtual_Callback_i** callback)
+    {
+        return Call_Method2(handle,
+                            &class_name,
+                            &function_name,
+                            arguments ? arguments : Virtual_Arguments_i::Default(),
+                            callback ? callback : Virtual_Callback_i::Default());
+    }
+
     inline Int_t Virtual_Machine_t::Count_Objects(Handle_t handle)
     {
         class Counter : public IForEachScriptObjectFunctor {
@@ -135,6 +168,65 @@ namespace doticu_npcp { namespace Papyrus {
     inline Bool_t Virtual_Machine_t::Has_Object(Handle_t handle)
     {
         return Count_Objects(handle) < 1;
+    }
+
+    inline Type_ID_t Virtual_Machine_t::Type_ID(String_t class_name)
+    {
+        NPCP_ASSERT(class_name);
+        Type_ID_t type_id = 0;
+        Type_ID(&class_name, &type_id);
+        return type_id;
+    }
+
+    // Virtual_Arguments_i
+
+    inline Virtual_Arguments_i* Virtual_Arguments_i::Default()
+    {
+        struct Arguments : public Virtual_Arguments_i {
+            virtual Bool_t operator()(Array_t* arguments) override
+            {
+                return true;
+            }
+        };
+        static Arguments arguments = Arguments();
+
+        return &arguments;
+    }
+
+    inline Bool_t Virtual_Arguments_i::Array_t::Resize(UInt32 count)
+    {
+        static auto resize = reinterpret_cast
+            <Bool_t (*)(Virtual_Arguments_i::Array_t*, UInt32)>
+            (RelocationManager::s_baseAddr + Offsets::Virtual_Arguments::RESIZE);
+        return resize(this, count);
+    }
+
+    inline Variable_t* Virtual_Arguments_i::Array_t::At(UInt32 idx)
+    {
+        if (idx < count) {
+            return variables + idx;
+        } else {
+            return nullptr;
+        }
+    }
+
+    // Virtual_Callback_i
+
+    inline Virtual_Callback_i** Virtual_Callback_i::Default()
+    {
+        struct Callback : public Virtual_Callback_i {
+            Callback()
+            {
+                ref_count = 1;
+            }
+            virtual void operator()(Variable_t* return_variable) override
+            {
+            }
+        };
+        static Callback callback = Callback();
+        static Virtual_Callback_i* callback_ptr = &callback;
+
+        return &callback_ptr;
     }
 
     // Type_t
@@ -389,6 +481,11 @@ namespace doticu_npcp { namespace Papyrus {
     inline Bool_t Variable_t::Is_Float_Array() { return type.Is_Float_Array(); }
     inline Bool_t Variable_t::Is_Bool_Array() { return type.Is_Bool_Array(); }
 
+    inline Bool_t Variable_t::Has_Object()
+    {
+        return Is_Object() && data.obj != nullptr;
+    }
+
     inline Bool_t Variable_t::Bool()
     {
         if (type.Is_Bool()) {
@@ -517,6 +614,19 @@ namespace doticu_npcp { namespace Papyrus {
         }
     }
 
+    inline Outfit_t* Variable_t::Outfit()
+    {
+        if (type.Is_Object()) {
+            if (data.obj) {
+                return static_cast<Outfit_t*>(Policy()->Resolve(kFormType_Outfit, data.obj->Handle()));
+            } else {
+                return nullptr;
+            }
+        } else {
+            return nullptr;
+        }
+    }
+
     inline Reference_t* Variable_t::Reference()
     {
         if (type.Is_Object()) {
@@ -594,28 +704,46 @@ namespace doticu_npcp { namespace Papyrus {
     }
 
     template <typename Type>
-    inline void Variable_t::Pack(Type* value)
+    inline void Variable_t::Pack(Type* value, Class_Info_t* class_info)
     {
+        NPCP_ASSERT(class_info);
+
         if (value) {
-            /////////////////////////////////////////////////////
-            PackHandle(reinterpret_cast<VMValue*>(this), value, Type::kTypeID, Registry());
-            return;
-            /////////////////////////////////////////////////////
+            Object_t* object = nullptr;
+            Virtual_Machine_t::Self()->Find_Bound_Object(value, class_info->name, &object);
+            if (!object) {
+                Virtual_Machine_t* vm = Virtual_Machine_t::Self();
 
-            Class_Info_t* class_info = Class_Info_t::Fetch(Type::kTypeID);
-            NPCP_ASSERT(class_info);
+                vm->Create_Object2(&class_info->name, &object);
+                NPCP_ASSERT(object);
 
-            Object_t* object = Object_t::Fetch(value, class_info->name);
-            // if !object, we need to do some extra work.
-            NPCP_ASSERT(object);
+                class_info->Hold();
+                vm->Object_Policy()->Bind_Object(object, vm->Type_ID(class_info->name));
+                class_info->Free();
+            }
             object->Decrement_Lock();
 
             Object(object);
-
-            class_info->Free();
         } else {
-            None();
+            Destroy();
+            Variable_t temp;
+            temp.type = class_info;
+            temp.data.obj = nullptr;
+            Copy(&temp); // this prob. does stuff we don't
         }
+
+        class_info->Free();
+    }
+
+    template <typename Type>
+    inline void Variable_t::Pack(Type* value)
+    {
+        Type_ID_t type_id = Type::kTypeID;
+        Class_Info_t* class_info = Class_Info_t::Fetch(type_id);
+        NPCP_ASSERT(class_info);
+
+        //return Pack(value, class_info);
+        return PackHandle(reinterpret_cast<VMValue*>(this), value, type_id, (*g_skyrimVM)->GetClassRegistry());
     }
 
     template <>
@@ -624,7 +752,7 @@ namespace doticu_npcp { namespace Papyrus {
         if (value) {
             Bool(*value);
         } else {
-            None();
+            Bool(0);
         }
     }
 
@@ -634,7 +762,7 @@ namespace doticu_npcp { namespace Papyrus {
         if (value) {
             Int(*value);
         } else {
-            None();
+            Int(0);
         }
     }
 
@@ -644,7 +772,7 @@ namespace doticu_npcp { namespace Papyrus {
         if (value) {
             Float(*value);
         } else {
-            None();
+            Float(0.0f);
         }
     }
 
@@ -654,28 +782,22 @@ namespace doticu_npcp { namespace Papyrus {
         if (value) {
             String(*value);
         } else {
-            None();
+            String("");
         }
     }
 
     template <>
     inline void Variable_t::Pack(Object_t* value)
     {
-        if (value) {
-            Object(value);
-        } else {
-            None();
-        }
+        NPCP_ASSERT(value);
+        Object(value);
     }
 
     template <>
     inline void Variable_t::Pack(Array_t* value)
     {
-        if (value) {
-            Array(value);
-        } else {
-            None();
-        }
+        NPCP_ASSERT(value);
+        Array(value);
     }
 
     template <typename Type>

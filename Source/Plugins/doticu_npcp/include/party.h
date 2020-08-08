@@ -6,6 +6,7 @@
 
 #include "consts.h"
 #include "form_vector.h"
+#include "outfit2.h"
 #include "papyrus.h"
 #include "papyrus.inl"
 
@@ -521,8 +522,7 @@ namespace doticu_npcp { namespace Party {
         Variable_t* Vanilla_Outfit2_Variable();
         Variable_t* Default_Outfit2_Variable();
         Variable_t* Current_Outfit2_Variable();
-        Variable_t* Previous_Outfit2_Variable();
-        Variable_t* Auto_Backup_Outfit2_Variable();
+        Variable_t* Backup_Outfit2_Variable();
         
         Variable_t* Is_Clone_Variable();
         Variable_t* Is_Immobile_Variable();
@@ -532,7 +532,6 @@ namespace doticu_npcp { namespace Party {
         Variable_t* Is_Mannequin_Variable();
         Variable_t* Is_Display_Variable();
         Variable_t* Is_Reanimated_Variable();
-        Variable_t* Do_Vanilla_Outfit_Variable();
 
         Variable_t* Style_Variable();
         Variable_t* Vitality_Variable();
@@ -563,6 +562,17 @@ namespace doticu_npcp { namespace Party {
         String_t Base_Name();
         String_t Reference_Name();
         String_t Name();
+
+        Outfit_t* Vanilla_Outfit();
+        Outfit2_t* Member_Outfit2();
+        Outfit2_t* Immobile_Outfit2();
+        Outfit2_t* Settler_Outfit2();
+        Outfit2_t* Thrall_Outfit2();
+        Outfit2_t* Follower_Outfit2();
+        Outfit2_t* Vanilla_Outfit2();
+        Outfit2_t* Default_Outfit2();
+        Outfit2_t* Current_Outfit2();
+        Outfit2_t* Backup_Outfit2();
 
         Bool_t Is_Loaded();
         Bool_t Is_Unloaded();
@@ -683,6 +693,21 @@ namespace doticu_npcp { namespace Party {
         void Vitalize(Int_t vitality);
         void Revitalize();
         void Unvitalize();
+
+        void Change_Outfit1(Outfit_t* outfit);
+        Int_t Change_Outfit2(Int_t outfit2_code);
+        Int_t Change_Member_Outfit2();
+        Int_t Change_Immobile_Outfit2();
+        Int_t Change_Settler_Outfit2();
+        Int_t Change_Thrall_Outfit2();
+        Int_t Change_Follower_Outfit2();
+        Int_t Change_Vanilla_Outfit2();
+        Int_t Change_Default_Outfit2();
+        Int_t Change_Current_Outfit2();
+        void Update_Outfit2(Int_t outfit2_code, Bool_t do_cache_outfit1 = false);
+        void Open_Outfit2();
+        void Apply_Outfit2();
+
         void Rename(String_t new_name);
 
         void Summon(Reference_t* origin, float radius = 140.0f, float degree = 0.0f);

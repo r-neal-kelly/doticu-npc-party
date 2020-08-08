@@ -16,13 +16,15 @@ namespace doticu_npcp { namespace Papyrus {
 
         UInt64 handle = 0;
 
+        Handle_t(void* instance, Type_ID_t type_id);
         template <typename Type>
         Handle_t(Type* instance);
         Handle_t(Form_t* form);
         Handle_t(UInt64 handle);
         Handle_t();
 
-        bool Is_Valid();
+        Bool_t Is_Valid();
+        Bool_t Has_Type_ID(Type_ID_t type_id);
 
         operator UInt64();
     };
@@ -34,6 +36,7 @@ namespace doticu_npcp { namespace Papyrus {
     class Type_t;
     class Handle_Policy_t;
     class Object_Policy_t;
+    class Virtual_Arguments_i;
     class Virtual_Callback_i;
     class Variable_t;
 
@@ -53,7 +56,7 @@ namespace doticu_npcp { namespace Papyrus {
         virtual Bool_t Load_Class_Info2(Type_ID_t type_id, Class_Info_t** info_out) = 0; // 0A, call Class_Info_t Free() after use
         virtual Bool_t Class_Info(String_t* class_name, Class_Info_t** info_out) = 0; // 0B, call Class_Info_t Free() after use
         virtual Bool_t Class_Info2(Type_ID_t type_id, Class_Info_t** info_out) = 0; // 0C, call Class_Info_t Free() after use
-        virtual void _0D(void) = 0; // 0D
+        virtual Bool_t Type_ID(String_t* class_name, Type_ID_t* type_id_out) = 0; // 0D
         virtual void _0E(void) = 0; // 0E
         virtual void _0F(void) = 0; // 0F
         virtual void _10(void) = 0; // 10
@@ -80,7 +83,7 @@ namespace doticu_npcp { namespace Papyrus {
         virtual void _25(void) = 0; // 25
         virtual void _26(void) = 0; // 26
         virtual void _27(void) = 0; // 27
-        virtual Bool_t Call_Method2(Handle_t handle, String_t* class_name, String_t* function_name, IFunctionArguments* arguments, Virtual_Callback_i** callback) = 0; // 28
+        virtual Bool_t Call_Method2(Handle_t handle, String_t* class_name, String_t* function_name, Virtual_Arguments_i* arguments, Virtual_Callback_i** callback) = 0; // 28
         virtual void _29(void) = 0; // 29
         virtual void _2A(void) = 0; // 2A
         virtual void Return_Latent_Function(Stack_ID_t stack_id, Variable_t* return_variable) = 0; // 2B
@@ -110,10 +113,10 @@ namespace doticu_npcp { namespace Papyrus {
     public:
         virtual ~Handle_Policy_t();
 
-        virtual void _01(void); // 01
-        virtual void _02(void); // 02
-        virtual void _03(void); // 03
-        virtual void _04(void); // 04
+        virtual Bool_t Has_Type_ID(Type_ID_t type_id, Handle_t handle); // 01
+        virtual Bool_t Is_Valid(Handle_t handle); // 02
+        virtual Handle_t Invalid_Handle(); // 03
+        virtual Handle_t Handle(Type_ID_t type_id, const void* data); // 04
         virtual void _05(void); // 05
         virtual void _06(void); // 06
         virtual void _07(void); // 07
@@ -155,7 +158,7 @@ namespace doticu_npcp { namespace Papyrus {
         virtual Bool_t Load_Class_Info2(Type_ID_t type_id, Class_Info_t** info_out) override; // 0A, call Class_Info_t Free() after use
         virtual Bool_t Class_Info(String_t* class_name, Class_Info_t** info_out) override; // 0B, call Class_Info_t Free() after use
         virtual Bool_t Class_Info2(Type_ID_t type_id, Class_Info_t** info_out) override; // 0C, call Class_Info_t Free() after use
-        virtual void _0D(void) override; // 0D
+        virtual Bool_t Type_ID(String_t* class_name, Type_ID_t* type_id_out) override; // 0D
         virtual void _0E(void) override; // 0E
         virtual void _0F(void) override; // 0F
         virtual void _10(void) override; // 10
@@ -182,7 +185,7 @@ namespace doticu_npcp { namespace Papyrus {
         virtual void _25(void) override; // 25
         virtual void _26(void) override; // 26
         virtual void _27(void) override; // 27
-        virtual Bool_t Call_Method2(Handle_t handle, String_t* class_name, String_t* function_name, IFunctionArguments* arguments, Virtual_Callback_i** callback) override; // 28
+        virtual Bool_t Call_Method2(Handle_t handle, String_t* class_name, String_t* function_name, Virtual_Arguments_i* arguments, Virtual_Callback_i** callback) override; // 28
         virtual void _29(void) override; // 29
         virtual void _2A(void) override; // 2A
         virtual void Return_Latent_Function(Stack_ID_t stack_id, Variable_t* return_variable) override; // 2B
@@ -196,12 +199,44 @@ namespace doticu_npcp { namespace Papyrus {
         template <typename BSObject>
         void Send_Event(BSObject* object, String_t event_name);
 
+        Bool_t Call_Method(Handle_t handle,
+                           String_t class_name,
+                           String_t function_name,
+                           Virtual_Arguments_i* arguments = nullptr,
+                           Virtual_Callback_i** callback = nullptr);
+
         Int_t Count_Objects(Handle_t handle);
         Bool_t Has_Object(Handle_t handle);
+
+        Type_ID_t Type_ID(String_t class_name);
+    };
+
+    class Variable_t;
+    class Virtual_Arguments_i {
+    public:
+        static Virtual_Arguments_i* Default();
+    public:
+        struct Array_t {
+            UInt32 unk00; // 00
+            UInt32 unk04; // 04
+            Variable_t* variables; // 08
+            UInt64 unk08; // 10
+            UInt32 count; // 18
+
+            Bool_t Resize(UInt32 count);
+            Variable_t* At(UInt32 idx);
+        };
+        STATIC_ASSERT(sizeof(Array_t) == 0x20);
+
+        virtual ~Virtual_Arguments_i() = default; // 00
+
+        virtual Bool_t operator()(Array_t* arguments) = 0; // 01
     };
 
     class Variable_t;
     class Virtual_Callback_i {
+    public:
+        static Virtual_Callback_i** Default();
     public:
         Virtual_Callback_i() :
             ref_count(0)
@@ -333,6 +368,8 @@ namespace doticu_npcp { namespace Papyrus {
         Bool_t Is_Float_Array();
         Bool_t Is_Bool_Array();
 
+        Bool_t Has_Object();
+
         Bool_t Bool();
         Int_t Int();
         Float_t Float();
@@ -345,6 +382,7 @@ namespace doticu_npcp { namespace Papyrus {
         Alias_Base_t* Alias();
         Faction_t* Faction();
         Misc_t* Misc();
+        Outfit_t* Outfit();
         Reference_t* Reference();
 
         void None();
@@ -355,6 +393,8 @@ namespace doticu_npcp { namespace Papyrus {
         void Object(Object_t* value);
         void Array(Array_t* value);
 
+        template <typename Type>
+        void Pack(Type* value, Class_Info_t* type_id);
         template <typename Type>
         void Pack(Type* value);
         template <typename Type>

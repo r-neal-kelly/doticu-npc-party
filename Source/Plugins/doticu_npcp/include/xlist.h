@@ -9,6 +9,7 @@
 namespace doticu_npcp { namespace XList {
 
     XList_t *Create();
+    void Validate(XList_t* xlist);
     void Destroy(XList_t *xlist);
 
     XList_t *Copy(XList_t *xlist);

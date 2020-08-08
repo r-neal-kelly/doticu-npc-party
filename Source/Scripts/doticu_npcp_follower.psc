@@ -649,14 +649,6 @@ function Summon(int distance = 60, int angle = 0)
     p_ref_member.Summon(distance, angle)
 endFunction
 
-function Summon_Ahead(int distance = 120)
-    p_ref_member.Summon_Ahead(distance)
-endFunction
-
-function Summon_Behind(int distance = 120)
-    p_ref_member.Summon_Behind(distance)
-endFunction
-
 function Resurrect(int code_exec)
     p_ref_member.Resurrect(code_exec)
 endFunction

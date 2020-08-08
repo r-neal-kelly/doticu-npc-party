@@ -287,6 +287,128 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
+    void Split_Inventory(Actor_t* actor, Reference_t* worn_out, Reference_t* pack_out)
+    {
+        NPCP_ASSERT(actor);
+        NPCP_ASSERT(worn_out);
+        NPCP_ASSERT(pack_out);
+
+        Form_t* linchpin = Consts::Blank_Armor();
+
+        XContainer_t* xcontainer_worn = Object_Ref::Get_XContainer(worn_out, true);
+        NPCP_ASSERT(xcontainer_worn);
+
+        XContainer_t* xcontainer_pack = Object_Ref::Get_XContainer(pack_out, true);
+        NPCP_ASSERT(xcontainer_pack);
+
+        XContainer_t* xcontainer_actor = Object_Ref::Get_XContainer(actor, false);
+        if (xcontainer_actor) {
+            for (XEntries_t::Iterator it_xentry_actor = xcontainer_actor->data->objList->Begin(); !it_xentry_actor.End(); ++it_xentry_actor) {
+                XEntry_t* xentry_actor = it_xentry_actor.Get();
+                if (!xentry_actor || !xentry_actor->type || xentry_actor->type == linchpin) {
+                    continue;
+                }
+
+                TESForm* form_actor = xentry_actor->type;
+                if (!form_actor->IsPlayable()) {
+                    continue;
+                }
+
+                u64 count_xlists_actor = 0;
+                if (xentry_actor->extendDataList) {
+                    std::vector<XList_t*> vec_xlists_worn;
+                    std::vector<XList_t*> vec_xlists_pack;
+                    vec_xlists_worn.reserve(2);
+                    vec_xlists_pack.reserve(2);
+
+                    for (XLists_t::Iterator it_xlist_actor = xentry_actor->extendDataList->Begin(); !it_xlist_actor.End(); ++it_xlist_actor) {
+                        XList_t* xlist_actor = it_xlist_actor.Get();
+                        if (!xlist_actor) {
+                            continue;
+                        }
+
+                        if (static_cast<s32>(XList::Get_Count(xlist_actor)) < 0) {
+                            _MESSAGE("Actor2::Split_Inventory: Encountered xlist overflow. Setting count to 1:");
+                            _MESSAGE("Actor: %s, Form: %s", Get_Name(actor), Form::Get_Name(xentry_actor->type));
+                            XList::Log(xlist_actor, "");
+                            XList::Set_Count(xlist_actor, 1);
+                        }
+
+                        count_xlists_actor += XList::Get_Count(xlist_actor);
+
+                        if (XList::Is_Worn(xlist_actor)) {
+                            vec_xlists_worn.push_back(xlist_actor);
+                        } else {
+                            vec_xlists_pack.push_back(xlist_actor);
+                        }
+                    }
+
+                    if (vec_xlists_worn.size() > 0) {
+                        XEntry_t* xentry_worn = Object_Ref::Get_XEntry(worn_out, form_actor, true);
+                        if (!xentry_worn) {
+                            continue;
+                        }
+
+                        for (u64 idx = 0, size = vec_xlists_worn.size(); idx < size; idx += 1) {
+                            XList_t* xlist_worn = vec_xlists_worn[idx];
+                            XList_t* xlist_copy = XList::Copy(xlist_worn);
+                            if (xlist_copy) {
+                                XEntry::Add_XList(xentry_worn, xlist_copy);
+                            } else {
+                                XEntry::Inc_Count(xentry_worn, XList::Get_Count(xlist_worn));
+                            }
+                        }
+                    }
+
+                    if (vec_xlists_pack.size() > 0) {
+                        XEntry_t* xentry_pack = Object_Ref::Get_XEntry(pack_out, form_actor, true);
+                        if (!xentry_pack) {
+                            continue;
+                        }
+
+                        for (u64 idx = 0, size = vec_xlists_pack.size(); idx < size; idx += 1) {
+                            XList_t* xlist_pack = vec_xlists_pack[idx];
+                            XList_t* xlist_copy = XList::Copy(xlist_pack);
+                            if (xlist_copy) {
+                                XEntry::Add_XList(xentry_pack, xlist_copy);
+                            } else {
+                                XEntry::Inc_Count(xentry_pack, XList::Get_Count(xlist_pack));
+                            }
+                        }
+                    }
+                }
+
+                u64 count_remaining = Object_Ref::Get_BEntry_Count(actor, form_actor) + XEntry::Get_Count(xentry_actor) - count_xlists_actor;
+                if (count_remaining > 0) {
+                    XEntry_t* xentry_pack = Object_Ref::Get_XEntry(pack_out, form_actor, true);
+                    if (xentry_pack) {
+                        XEntry::Inc_Count(xentry_pack, count_remaining);
+                    }
+                }
+            }
+        }
+
+        BContainer_t* bcontainer_actor = Object_Ref::Get_BContainer(actor);
+        if (bcontainer_actor) {
+            for (u64 idx = 0; idx < bcontainer_actor->numEntries; idx += 1) {
+                BEntry_t* bentry_actor = bcontainer_actor->entries[idx];
+                if (!bentry_actor || !bentry_actor->form || bentry_actor->count < 1) {
+                    continue;
+                }
+
+                TESForm* form_actor = bentry_actor->form;
+                if (form_actor == linchpin || form_actor->formType == kFormType_LeveledItem || !form_actor->IsPlayable()) {
+                    continue;
+                }
+
+                if (!Object_Ref::Has_XEntry(actor, form_actor)) {
+                    XEntry_t* xentry_pack = Object_Ref::Get_XEntry(pack_out, form_actor, true);
+                    XEntry::Inc_Count(xentry_pack, bentry_actor->count);
+                }
+            }
+        }
+    }
+
     void Cache_Worn(Actor *actor, TESForm *linchpin, TESObjectREFR *cache_out) {
         if (!actor || !linchpin || !cache_out) {
             _ERROR("Actor2::Cache_Worn: Invalid args.");
@@ -339,127 +461,6 @@ namespace doticu_npcp { namespace Actor2 {
                     } else {
                         XEntry::Inc_Count(xentry_cache, XList::Get_Count(xlist_worn));
                     }
-                }
-            }
-        }
-    }
-
-    // this copies and splits playable items into two containers, one for equipment and the other for everything else
-    void Cache_Inventory(Actor *actor, TESForm *linchpin, TESObjectREFR *worn_out, TESObjectREFR *pack_out) {
-        if (!actor || !linchpin || !worn_out || !pack_out) {
-            _ERROR("Actor2::Cache_Inventory: Invalid args.");
-            return;
-        }
-
-        XContainer_t *xcontainer_worn = Object_Ref::Get_XContainer(worn_out, true);
-        NPCP_ASSERT(xcontainer_worn);
-
-        XContainer_t *xcontainer_pack = Object_Ref::Get_XContainer(pack_out, true);
-        NPCP_ASSERT(xcontainer_pack);
-
-        XContainer_t *xcontainer_actor = Object_Ref::Get_XContainer(actor, false);
-        if (xcontainer_actor) {
-            for (XEntries_t::Iterator it_xentry_actor = xcontainer_actor->data->objList->Begin(); !it_xentry_actor.End(); ++it_xentry_actor) {
-                XEntry_t *xentry_actor = it_xentry_actor.Get();
-                if (!xentry_actor || !xentry_actor->type || xentry_actor->type == linchpin) {
-                    continue;
-                }
-
-                TESForm *form_actor = xentry_actor->type;
-                if (!form_actor->IsPlayable()) {
-                    continue;
-                }
-
-                u64 count_xlists_actor = 0;
-                if (xentry_actor->extendDataList) {
-                    std::vector<XList_t *> vec_xlists_worn;
-                    std::vector<XList_t *> vec_xlists_pack;
-                    vec_xlists_worn.reserve(2);
-                    vec_xlists_pack.reserve(2);
-
-                    for (XLists_t::Iterator it_xlist_actor = xentry_actor->extendDataList->Begin(); !it_xlist_actor.End(); ++it_xlist_actor) {
-                        XList_t *xlist_actor = it_xlist_actor.Get();
-                        if (!xlist_actor) {
-                            continue;
-                        }
-
-                        if (static_cast<s32>(XList::Get_Count(xlist_actor)) < 0) {
-                            _MESSAGE("Actor2::Cache_Inventory: Encountered xlist that could overflow xentry. Setting count to 1!:");
-                            _MESSAGE("Actor: %s, Form: %s", Get_Name(actor), Form::Get_Name(xentry_actor->type));
-                            XList::Log(xlist_actor, "");
-                            XList::Set_Count(xlist_actor, 1);
-                        }
-
-                        count_xlists_actor += XList::Get_Count(xlist_actor);
-
-                        if (XList::Is_Worn(xlist_actor)) {
-                            vec_xlists_worn.push_back(xlist_actor);
-                        } else {
-                            vec_xlists_pack.push_back(xlist_actor);
-                        }
-                    }
-
-                    if (vec_xlists_worn.size() > 0) {
-                        XEntry_t *xentry_worn = Object_Ref::Get_XEntry(worn_out, form_actor, true);
-                        if (!xentry_worn) {
-                            continue;
-                        }
-
-                        for (u64 idx = 0, size = vec_xlists_worn.size(); idx < size; idx += 1) {
-                            XList_t *xlist_worn = vec_xlists_worn[idx];
-                            XList_t *xlist_copy = XList::Copy(xlist_worn);
-                            if (xlist_copy) {
-                                XEntry::Add_XList(xentry_worn, xlist_copy);
-                            } else {
-                                XEntry::Inc_Count(xentry_worn, XList::Get_Count(xlist_worn));
-                            }
-                        }
-                    }
-
-                    if (vec_xlists_pack.size() > 0) {
-                        XEntry_t *xentry_pack = Object_Ref::Get_XEntry(pack_out, form_actor, true);
-                        if (!xentry_pack) {
-                            continue;
-                        }
-
-                        for (u64 idx = 0, size = vec_xlists_pack.size(); idx < size; idx += 1) {
-                            XList_t *xlist_pack = vec_xlists_pack[idx];
-                            XList_t *xlist_copy = XList::Copy(xlist_pack);
-                            if (xlist_copy) {
-                                XEntry::Add_XList(xentry_pack, xlist_copy);
-                            } else {
-                                XEntry::Inc_Count(xentry_pack, XList::Get_Count(xlist_pack));
-                            }
-                        }
-                    }
-                }
-
-                u64 count_remaining = Object_Ref::Get_BEntry_Count(actor, form_actor) + XEntry::Get_Count(xentry_actor) - count_xlists_actor;
-                if (count_remaining > 0) {
-                    XEntry_t *xentry_pack = Object_Ref::Get_XEntry(pack_out, form_actor, true);
-                    if (xentry_pack) {
-                        XEntry::Inc_Count(xentry_pack, count_remaining);
-                    }
-                }
-            }
-        }
-
-        BContainer_t *bcontainer_actor = Object_Ref::Get_BContainer(actor);
-        if (bcontainer_actor) {
-            for (u64 idx = 0; idx < bcontainer_actor->numEntries; idx += 1) {
-                BEntry_t *bentry_actor = bcontainer_actor->entries[idx];
-                if (!bentry_actor || !bentry_actor->form || bentry_actor->count < 1) {
-                    continue;
-                }
-
-                TESForm *form_actor = bentry_actor->form;
-                if (form_actor == linchpin || form_actor->formType == kFormType_LeveledItem || !form_actor->IsPlayable()) {
-                    continue;
-                }
-
-                if (!Object_Ref::Has_XEntry(actor, form_actor)) {
-                    XEntry_t *xentry_pack = Object_Ref::Get_XEntry(pack_out, form_actor, true);
-                    XEntry::Inc_Count(xentry_pack, bentry_actor->count);
                 }
             }
         }
@@ -1453,21 +1454,6 @@ namespace doticu_npcp { namespace Actor2 {
 
 namespace doticu_npcp { namespace Actor2 { namespace Exports {
 
-    void Cache_Worn(Selfless_t*, Actor* actor, TESForm* linchpin, TESObjectREFR* cache_out)
-    {
-        return Actor2::Cache_Worn(actor, linchpin, cache_out);
-    }
-
-    void Cache_Inventory(Selfless_t*, Actor* actor, TESForm* linchpin, TESObjectREFR* worn_out, TESObjectREFR* pack_out)
-    {
-        return Actor2::Cache_Inventory(actor, linchpin, worn_out, pack_out);
-    }
-
-    void Cache_Static_Inventory(VMClassRegistry* registry, UInt32 id_stack, Selfless_t*, Actor* actor, TESForm* linchpin, TESObjectREFR* cache_out)
-    {
-        return Actor2::Cache_Static_Inventory(registry, id_stack, actor, linchpin, cache_out);
-    }
-
     void Reset_Actor_Value(Selfless_t*, Actor* actor, BSFixedString name)
     {
         return Actor2::Reset_Actor_Value(actor, name.data);
@@ -1509,9 +1495,6 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
                              RETURN_, Exports::METHOD_, __VA_ARGS__);   \
         W
 
-        ADD_GLOBAL("Actor_Cache_Worn", 3, void, Cache_Worn, Actor*, TESForm*, TESObjectREFR*);
-        ADD_GLOBAL("Actor_Cache_Inventory", 4, void, Cache_Inventory, Actor*, TESForm*, TESObjectREFR*, TESObjectREFR*);
-        ADD_GLOBAL("Actor_Cache_Static_Inventory", 3, void, Cache_Static_Inventory, Actor*, TESForm*, TESObjectREFR*);
         ADD_GLOBAL("Actor_Reset_Actor_Value", 2, void, Reset_Actor_Value, Actor*, BSFixedString);
         ADD_GLOBAL("Actor_Get_Mounted_Actor", 1, Actor_t*, Get_Mounted_Actor, Actor_t*);
         ADD_GLOBAL("Actor_Log_Factions", 1, void, Log_Factions, Actor_t*);

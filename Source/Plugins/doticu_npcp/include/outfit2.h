@@ -15,8 +15,9 @@ namespace doticu_npcp { namespace Papyrus {
 
         static String_t Class_Name();
         static Class_Info_t* Class_Info();
+        static Type_ID_t* Type_ID();
 
-        static Outfit2_t* Create_Member();
+        static Outfit2_t* Create_Member(Actor_t* actor, Reference_t* pack);
         static Outfit2_t* Create_Immobile();
         static Outfit2_t* Create_Settler();
         static Outfit2_t* Create_Thrall();
@@ -27,16 +28,18 @@ namespace doticu_npcp { namespace Papyrus {
     public:
         Variable_t* Variable(String_t variable_name);
         Variable_t* Type_Variable();
-        Variable_t* Name_Variable();
         Variable_t* Outfit1_Cache_Variable();
 
         Int_t Type();
-        String_t Name();
         Reference_t* Outfit1_Cache();
 
-        void Open();
-        void Rename(String_t name);
+        Bool_t Has_Outfit1_Cache();
+        Bool_t Hasnt_Outfit1_Cache();
+
+        void Open(String_t outfit_name, Virtual_Callback_i** callback = nullptr);
         void Apply_To(Actor_t* actor, Reference_t* pack);
+        void Cache_Static_Outfit1(Outfit_t* outfit);
+        void Cache_Dynamic_Outfit1(Actor_t* actor);
     };
 
 }}
