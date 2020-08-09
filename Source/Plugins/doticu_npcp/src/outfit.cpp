@@ -30,16 +30,6 @@ namespace doticu_npcp { namespace Outfit {
 
 namespace doticu_npcp { namespace Outfit { namespace Exports {
 
-    void Add_Item(Selfless_t*, Outfit_t* outfit, Form_t* form)
-    {
-        return Outfit::Add_Item(outfit, form);
-    }
-
-    void Remove_Item(Selfless_t*, Outfit_t* outfit, Form_t* form)
-    {
-        return Outfit::Remove_Item(outfit, form);
-    }
-
     bool Register(VMClassRegistry *registry) {
         #define ADD_GLOBAL(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
         M                                                               \
@@ -47,9 +37,6 @@ namespace doticu_npcp { namespace Outfit { namespace Exports {
                              STR_FUNC_, ARG_NUM_,                       \
                              RETURN_, Exports::METHOD_, __VA_ARGS__);   \
         W
-
-        ADD_GLOBAL("Outfit_Add_Item", 2, void, Add_Item, Outfit_t*, Form_t*);
-        ADD_GLOBAL("Outfit_Remove_Item", 2, void, Remove_Item, Outfit_t*, Form_t*);
 
         #undef ADD_GLOBAL
 

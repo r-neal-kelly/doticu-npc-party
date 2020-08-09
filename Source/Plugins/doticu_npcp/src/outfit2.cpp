@@ -140,7 +140,7 @@ namespace doticu_npcp { namespace Papyrus {
         return outfit2;
     }
 
-    Outfit2_t* Outfit2_t::Create_Default()
+    Outfit2_t* Outfit2_t::Create_Default(Actor_t* actor)
     {
         Outfit2_t* outfit2 = static_cast<Outfit2_t*>
             (Object_Ref::Place_At_Me(Consts::Storage_Marker(), Consts::Outfit2_Container(), 1));
@@ -149,19 +149,22 @@ namespace doticu_npcp { namespace Papyrus {
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::DEFAULT);
         outfit2->Outfit1_Cache_Variable()->None();
 
-        /*
-        
-    ObjectReference ref_default = CONTAINERS.Create_Temp()
-    ObjectReference ref_trash = CONTAINERS.Create_Temp()
+        Actor2::Cache_BContainer(actor, outfit2);
 
-    doticu_npcp.Actor_Cache_Static_Inventory(ref_actor, doticu_npcp_consts.Blank_Armor(), ref_default)
-    doticu_npcp.Object_Ref_Remove_Unwearable(ref_default, ref_trash)
-    ref_default.RemoveAllItems(self, false, true)
+        struct Callback : public Virtual_Callback_t {
+            Outfit2_t* outfit2;
+            Callback(Outfit2_t* outfit2) :
+                outfit2(outfit2)
+            {
+            }
+            virtual void operator()(Variable_t*)
+            {
+                Object_Ref::Remove_Unwearable(outfit2);
+            }
+        };
+        Virtual_Callback_i* callback = new Callback(outfit2);
 
-    CONTAINERS.Destroy_Temp(ref_default)
-    CONTAINERS.Destroy_Temp(ref_trash)
-        
-        */
+        Object_Ref::Add_Item_And_Callback(outfit2, Consts::Gold(), 1, false, &callback);
 
         return outfit2;
     }
@@ -201,21 +204,36 @@ namespace doticu_npcp { namespace Papyrus {
     Reference_t* Outfit2_t::Outfit1_Cache()
     {
         Variable_t* variable = Outfit1_Cache_Variable();
-        if (!variable->Is_None()) {
+        if (variable->Has_Object()) {
             return variable->Reference();
         } else {
             return nullptr;
         }
     }
 
+    Reference_t* Outfit2_t::Reset_Outfit1_Cache()
+    {
+        Variable_t* variable = Outfit1_Cache_Variable();
+
+        if (variable->Has_Object()) {
+            Reference_t* old_cache = variable->Reference();
+            Object_Ref::Delete_Safe(old_cache);
+        }
+
+        Reference_t* new_cache = Object_Ref::Create_Container();
+        variable->Pack(new_cache);
+
+        return new_cache;
+    }
+
     Bool_t Outfit2_t::Has_Outfit1_Cache()
     {
-        return Outfit1_Cache() != nullptr;
+        return Outfit1_Cache_Variable()->Has_Object();
     }
 
     Bool_t Outfit2_t::Hasnt_Outfit1_Cache()
     {
-        return Outfit1_Cache() == nullptr;
+        return !Outfit1_Cache_Variable()->Has_Object();
     }
 
     void Outfit2_t::Open(String_t outfit_name, Virtual_Callback_i** callback)
@@ -240,57 +258,24 @@ namespace doticu_npcp { namespace Papyrus {
 
     void Outfit2_t::Cache_Static_Outfit1(Outfit_t* outfit)
     {
-        /*
-        
-    ; this should just copy what the actor has equipped at this point, because our Set_Outfit improves the original.
-    ; this way it won't relevel the outfit items and the user will get what they saw the first time
-    if !outfit_vanilla
-        return
-    endIf
+        NPCP_ASSERT(outfit);
 
-    ; make sure this container is persistent from now on.
-    if p_cache_base
-        p_cache_base.Disable()
-        p_cache_base.Delete()
-    endIf
-    p_cache_base = CONTAINERS.Create_Perm()
-
-    ; it's nice to have vanilla leveled items cached so they remain unchanged
-    ; this is also an avenue to getting unplayable items into the outfit
-    int idx_forms = outfit_vanilla.GetNumParts()
-    Form form_item
-    while idx_forms > 0
-        idx_forms -= 1
-        form_item = outfit_vanilla.GetNthPart(idx_forms)
-        if form_item != doticu_npcp_consts.Blank_Armor() as Form
-            p_cache_base.AddItem(form_item, 1, true); will expand LeveledItems!
-        endIf
-    endWhile
-        
-        */
+        Reference_t* outfit1_cache = Reset_Outfit1_Cache();
+        Form_t* linchpin = Consts::Blank_Armor();
+        for (size_t idx = 0, count = outfit->armorOrLeveledItemArray.count; idx < count; idx += 1) {
+            Form_t* form = outfit->armorOrLeveledItemArray.entries[idx];
+            if (form != linchpin) {
+                Object_Ref::Add_Item(outfit1_cache, form, 1, true);
+            }
+        }
     }
 
     void Outfit2_t::Cache_Dynamic_Outfit1(Actor_t* actor)
     {
-        /*
-        
-    if !ref_actor
-        return
-    endIf
+        NPCP_ASSERT(actor);
 
-    ; make sure this container is persistent from now on.
-    if p_cache_base
-        p_cache_base.Disable()
-        p_cache_base.Delete()
-    endIf
-    p_cache_base = CONTAINERS.Create_Perm()
-
-    ; not only does this do the heavy lifting, but it caches what the actor is wearing
-    ; so that when a vanilla outfit change happens, leveled items wont be calc'd twice.
-    ; also, we can trust more in our override of Actor.SetOutfit, and we won't get non-outfit items
-    doticu_npcp.Actor_Cache_Worn(ref_actor, doticu_npcp_consts.Blank_Armor(), p_cache_base)
-        
-        */
+        Reference_t* outfit1_cache = Reset_Outfit1_Cache();
+        Actor2::Cache_Worn(actor, outfit1_cache);
     }
 
 }}

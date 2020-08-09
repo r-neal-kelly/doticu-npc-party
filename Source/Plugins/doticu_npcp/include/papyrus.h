@@ -214,8 +214,6 @@ namespace doticu_npcp { namespace Papyrus {
     class Variable_t;
     class Virtual_Arguments_i {
     public:
-        static Virtual_Arguments_i* Default();
-    public:
         struct Array_t {
             UInt32 unk00; // 00
             UInt32 unk04; // 04
@@ -232,26 +230,35 @@ namespace doticu_npcp { namespace Papyrus {
 
         virtual Bool_t operator()(Array_t* arguments) = 0; // 01
     };
+    STATIC_ASSERT(sizeof(Virtual_Arguments_i) == 0x8);
 
+    class Virtual_Arguments_t : public Virtual_Arguments_i {
+    public:
+        virtual Bool_t operator()(Array_t* arguments) override { return true; } // 01
+    };
+    STATIC_ASSERT(sizeof(Virtual_Arguments_i) == 0x8);
+
+    class Object_t;
     class Variable_t;
     class Virtual_Callback_i {
     public:
-        static Virtual_Callback_i** Default();
-    public:
-        Virtual_Callback_i() :
-            ref_count(0)
-        {
-        }
+        UInt32 ref_count = 0; // 00
+        // void* _vtbl; // 04 (I think)
+        UInt32 pad_04; // 0C
 
         virtual ~Virtual_Callback_i() = default; // 00
 
-        virtual void operator()(Variable_t* return_variable) = 0; // 01
-        virtual Bool_t Can_Save() { return false; } // 02
-        virtual void Set_Object(Object_t** object) {} // 03
+        virtual void operator()(Variable_t* result) = 0; // 01
+        virtual Bool_t Can_Save() = 0; // 02
+        virtual void Set_Object(Object_t** object) = 0; // 03
+    };
+    STATIC_ASSERT(sizeof(Virtual_Callback_i) == 0x10);
 
-        UInt32 ref_count; // 00
-        // void* _vtbl; // 04 (I think)
-        UInt32 pad_04; // 0C
+    class Virtual_Callback_t : public Virtual_Callback_i {
+    public:
+        virtual void operator()(Variable_t* result) override {}; // 01
+        virtual Bool_t Can_Save() override { return false; } // 02
+        virtual void Set_Object(Object_t** object) override {} // 03
     };
     STATIC_ASSERT(sizeof(Virtual_Callback_i) == 0x10);
 

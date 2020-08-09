@@ -44,6 +44,10 @@ namespace doticu_npcp { namespace XList {
 
             xlist->m_lock = BSReadWriteLock();
         }
+
+        if (static_cast<Int_t>(Get_Count(xlist)) < 0) {
+            XList::Set_Count(xlist, 1); // maybe just delete count?
+        }
     }
 
     void Destroy(XList_t *xlist) {

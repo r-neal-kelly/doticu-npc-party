@@ -133,11 +133,17 @@ namespace doticu_npcp { namespace Papyrus {
                                                  Virtual_Arguments_i* arguments,
                                                  Virtual_Callback_i** callback)
     {
-        return Call_Method2(handle,
-                            &class_name,
-                            &function_name,
-                            arguments ? arguments : Virtual_Arguments_i::Default(),
-                            callback ? callback : Virtual_Callback_i::Default());
+        if (!callback) {
+            Virtual_Callback_i* default_callback = new Virtual_Callback_t();
+            callback = &default_callback;
+        }
+
+        if (arguments) {
+            return Call_Method2(handle, &class_name, &function_name, arguments, callback);
+        } else {
+            Virtual_Arguments_t default_arguments;
+            return Call_Method2(handle, &class_name, &function_name, &default_arguments, callback);
+        }
     }
 
     inline Int_t Virtual_Machine_t::Count_Objects(Handle_t handle)
@@ -154,7 +160,6 @@ namespace doticu_npcp { namespace Papyrus {
 
             virtual bool Visit(Script_t* object, void*)
             {
-                _MESSAGE("        >>>> %s", object->classInfo->name);
                 count += 1;
                 return true;
             }
@@ -180,19 +185,6 @@ namespace doticu_npcp { namespace Papyrus {
 
     // Virtual_Arguments_i
 
-    inline Virtual_Arguments_i* Virtual_Arguments_i::Default()
-    {
-        struct Arguments : public Virtual_Arguments_i {
-            virtual Bool_t operator()(Array_t* arguments) override
-            {
-                return true;
-            }
-        };
-        static Arguments arguments = Arguments();
-
-        return &arguments;
-    }
-
     inline Bool_t Virtual_Arguments_i::Array_t::Resize(UInt32 count)
     {
         static auto resize = reinterpret_cast
@@ -208,25 +200,6 @@ namespace doticu_npcp { namespace Papyrus {
         } else {
             return nullptr;
         }
-    }
-
-    // Virtual_Callback_i
-
-    inline Virtual_Callback_i** Virtual_Callback_i::Default()
-    {
-        struct Callback : public Virtual_Callback_i {
-            Callback()
-            {
-                ref_count = 1;
-            }
-            virtual void operator()(Variable_t* return_variable) override
-            {
-            }
-        };
-        static Callback callback = Callback();
-        static Virtual_Callback_i* callback_ptr = &callback;
-
-        return &callback_ptr;
     }
 
     // Type_t

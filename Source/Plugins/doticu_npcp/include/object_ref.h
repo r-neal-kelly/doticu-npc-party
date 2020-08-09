@@ -32,7 +32,9 @@ namespace doticu_npcp { namespace Object_Ref {
     bool Is_Quest_Item(TESObjectREFR *ref_object);
     bool Is_Worn(TESObjectREFR *obj, TESForm *form);
 
-    void Remove_Unwearable(TESObjectREFR *obj, TESObjectREFR *other);
+    void Remove_Wearables(Reference_t* obj, Reference_t* other = nullptr, Bool_t remove_quest_items = false);
+    void Remove_Unwearable(Reference_t* obj, Reference_t* other = nullptr);
+    void Remove_Non_Outfit_Worn(Reference_t* obj, Reference_t* other = nullptr, Bool_t remove_quest_items = false);
     void Remove_All_Items(Reference_t* ref,
                           Reference_t* transfer = nullptr,
                           Bool_t remove_quest_items = false,

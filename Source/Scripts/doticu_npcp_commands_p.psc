@@ -128,7 +128,7 @@ function Outfit(int code_exec, Actor ref_actor, int code_outfit2, bool auto_crea
     endIf
 
     if code_outfit2 == doticu_npcp_codes.OUTFIT2_CURRENT()
-        code_outfit2 = ref_member.Get_Outfit2()
+        code_outfit2 = ref_member.Outfit2()
     endIf
 
     NOTES.Outfit(ref_member.Change_Outfit2(code_outfit2), str_name, code_outfit2)
@@ -987,7 +987,7 @@ function Outfit_Show(Actor ref_actor)
         return
     endIf
 
-    int code_outfit2 = ref_member.Get_Outfit2()
+    int code_outfit2 = ref_member.Outfit2()
     if code_outfit2 == doticu_npcp_codes.OUTFIT2_MEMBER()
         LOGS.Create_Note("Wearing Member ", false)
     elseIf code_outfit2 == doticu_npcp_codes.OUTFIT2_SETTLER()

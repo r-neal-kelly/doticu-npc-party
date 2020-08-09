@@ -23,7 +23,7 @@ namespace doticu_npcp { namespace Papyrus {
         static Outfit2_t* Create_Thrall();
         static Outfit2_t* Create_Follower();
         static Outfit2_t* Create_Vanilla();
-        static Outfit2_t* Create_Default();
+        static Outfit2_t* Create_Default(Actor_t* actor);
         static void Destroy(Outfit2_t* outfit2);
     public:
         Variable_t* Variable(String_t variable_name);
@@ -32,6 +32,7 @@ namespace doticu_npcp { namespace Papyrus {
 
         Int_t Type();
         Reference_t* Outfit1_Cache();
+        Reference_t* Reset_Outfit1_Cache();
 
         Bool_t Has_Outfit1_Cache();
         Bool_t Hasnt_Outfit1_Cache();

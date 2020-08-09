@@ -308,7 +308,7 @@ namespace doticu_npcp { namespace Party {
         if (variable->Has_Object()) {
             outfit2 = static_cast<Outfit2_t*>(variable->Reference());
         } else {
-            outfit2 = Outfit2_t::Create_Default();
+            outfit2 = Outfit2_t::Create_Default(Actor());
             //variable->Pack(outfit2, Outfit2_t::Class_Info());
             variable->Pack(outfit2);
         }
@@ -1496,14 +1496,13 @@ namespace doticu_npcp { namespace Party {
         Update_Outfit2(CODES::OUTFIT2::VANILLA, false);
 
         Actor_t* actor = Actor();
-        if (Actor2::Base_Outfit(actor) != outfit) {
-            Actor2::Set_Outfit(actor, outfit, false);
-        }
-        Actor2::Base_Outfit(actor, NPCS_t::Self()->Default_Outfit(actor)); // stops default outfit change on NPCS_t
+        NPCP_ASSERT(Actor2::Base_Outfit(actor) == outfit);
+        Actor2::Base_Outfit(actor, NPCS_t::Self()->Default_Outfit(actor)); // stops default outfit from changing on NPCS_t
         
         Vanilla_Outfit2()->Cache_Dynamic_Outfit1(actor);
 
-        Apply_Outfit2();
+        //Apply_Outfit2(); // for some reason, we get crashes doing it directly...
+        Virtual_Machine_t::Self()->Send_Event(this, "p_Apply_Outfit2");
     }
 
     Int_t Member_t::Change_Outfit2(Int_t outfit2_code)
@@ -1684,7 +1683,7 @@ namespace doticu_npcp { namespace Party {
         Int_t current_outfit2_code = Outfit2();
         std::string outfit2_name = Name().c_str();
 
-        struct Callback : public Virtual_Callback_i {
+        struct Callback : public Virtual_Callback_t {
             Member_t* member;
             Callback(Member_t* member) :
                 member(member)
@@ -1767,7 +1766,10 @@ namespace doticu_npcp { namespace Party {
             current_outfit2->Cache_Static_Outfit1(NPCS_t::Self()->Default_Outfit(Actor()));
         }
 
-        current_outfit2->Apply_To(Actor(), Pack());
+        Actor_t* actor = Actor();
+        current_outfit2->Apply_To(actor, Pack());
+        Actor2::Join_Player_Team(actor);
+        Virtual_Machine_t::Self()->Send_Event(this, "On_Update_Equipment");
     }
 
     void Member_t::Rename(String_t new_name)
@@ -1828,6 +1830,7 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
 
     Int_t Style(Member_t* self) FORWARD_INT(Style());
     Int_t Vitality(Member_t* self) FORWARD_INT(Vitality());
+    Int_t Outfit2(Member_t* self) FORWARD_INT(Outfit2());
     String_t Name(Member_t* self) FORWARD_STRING(Member_t::Name());
 
     Bool_t Is_Filled(Member_t* self)        FORWARD_BOOL(Member_t::Is_Filled());
@@ -1902,7 +1905,6 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
     void Vitalize(Member_t* self, Int_t vitality) FORWARD_VOID(Member_t::Vitalize(vitality));
     void Unvitalize(Member_t* self) FORWARD_VOID(Member_t::Unvitalize());
 
-    void Change_Outfit1(Member_t* self, Outfit_t* outfit) FORWARD_VOID(Change_Outfit1(outfit));
     Int_t Change_Outfit2(Member_t* self, Int_t outfit2_code) FORWARD_INT(Change_Outfit2(outfit2_code));
     Int_t Change_Member_Outfit2(Member_t* self) FORWARD_INT(Change_Member_Outfit2());
     Int_t Change_Immobile_Outfit2(Member_t* self) FORWARD_INT(Change_Immobile_Outfit2());
@@ -1934,6 +1936,7 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
 
         ADD_METHOD("Style", 0, Int_t, Style);
         ADD_METHOD("Vitality", 0, Int_t, Vitality);
+        ADD_METHOD("Outfit2", 0, Int_t, Outfit2);
         ADD_METHOD("Name", 0, String_t, Name);
 
         ADD_METHOD("Is_Filled", 0, Bool_t, Is_Filled);
@@ -2000,7 +2003,6 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
         ADD_METHOD("p_Vitalize", 1, void, Vitalize, Int_t);
         ADD_METHOD("p_Unvitalize", 0, void, Unvitalize);
 
-        ADD_METHOD("p_Change_Outfit1", 1, void, Change_Outfit1, Outfit_t*);
         ADD_METHOD("Change_Outfit2", 1, Int_t, Change_Outfit2, Int_t);
         ADD_METHOD("Change_Member_Outfit2", 0, Int_t, Change_Member_Outfit2);
         ADD_METHOD("Change_Immobile_Outfit2", 0, Int_t, Change_Immobile_Outfit2);

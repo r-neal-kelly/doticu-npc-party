@@ -20,6 +20,9 @@ namespace doticu_npcp { namespace Consts {
     // Skyrim Actors
     Actor_t* Player_Actor();
 
+    // Skyrim Armors
+    Armor_t* Belted_Tunic_Armor();
+
     // Skyrim Effect Shaders
     Effect_Shader_t* Reanimate_Effect_Shader();
 
@@ -39,6 +42,9 @@ namespace doticu_npcp { namespace Consts {
     Keyword_t* Shock_Damage_Magic_Keyword();
     Keyword_t* Vampire_Drain_Magic_Keyword();
     Keyword_t* Vampire_Keyword();
+
+    // Skyrim Miscs
+    Misc_t* Gold();
 
     // Skyrim Perks
     Perk_t* Vampire_Feed_Perk();

@@ -6,6 +6,7 @@
 
 #include "offsets.h"
 #include "types.h"
+#include "papyrus.h"
 
 namespace doticu_npcp { namespace Actor2 {
 
@@ -15,16 +16,15 @@ namespace doticu_npcp { namespace Actor2 {
 
     Outfit_t* Base_Outfit(Actor_t* actor);
     void Base_Outfit(Actor_t* actor, Outfit_t* outfit);
-    void Set_Outfit(Actor *ref_actor, BGSOutfit *outfit, bool is_sleep_outfit); // we can use this to tell us when another mod has changed the outfit
+    void Base_Sleep_Outfit(Actor_t* actor, Outfit_t* outfit);
+    void Set_Outfit_Basic(Actor_t* actor, Outfit_t* outfit, Bool_t is_sleep_outfit = false);
+    void Set_Outfit(Actor_t* actor, Outfit_t* outfit, Bool_t is_sleep_outfit = false);
 
     void Set_Outfit2(Actor_t* actor, Reference_t* vanilla, Reference_t* custom, Reference_t* transfer);
     void Copy_Outfit2_Partition(Actor_t* actor, Reference_t* outfit2_partition);
-
     void Split_Inventory(Actor_t* actor, Reference_t* worn_out, Reference_t* pack_out);
-
-    void Cache_Worn(Actor *actor, TESForm *linchpin, TESObjectREFR *cache_out);
-    
-    void Cache_Static_Inventory(VMClassRegistry* registry, UInt32 id_stack, Actor *actor, TESForm *linchpin, TESObjectREFR *cache_out);
+    void Cache_Worn(Actor_t* actor, Reference_t* cache_out);
+    void Cache_BContainer(Actor_t* actor, Reference_t* cache_out);
 
     bool Has_Same_Head(Actor *actor_a, Actor *actor_b);
 
@@ -73,6 +73,7 @@ namespace doticu_npcp { namespace Actor2 {
 
     void Join_Player_Team(Actor_t* actor, Bool_t allow_favors = true);
     void Leave_Player_Team(Actor_t* actor);
+    Bool_t Is_Player_Teammate(Actor_t* actor);
     void Talks_To_Player(Actor_t* actor, Bool_t can_talk);
     Bool_t Can_Talk_To_Player(Actor_t* actor);
     Bool_t Cant_Talk_To_Player(Actor_t* actor);
@@ -104,7 +105,7 @@ namespace doticu_npcp { namespace Actor2 {
     Bool_t Is_Child(Actor_t* actor);
     Bool_t Isnt_Child(Actor_t* actor);
 
-    void Update_Equipment(Actor_t* actor);
+    void Update_Equipment(Actor_t* actor, Papyrus::Virtual_Callback_i** callback = nullptr);
 
 }}
 

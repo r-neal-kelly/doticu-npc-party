@@ -44,6 +44,9 @@ namespace doticu_npcp { namespace Consts {
         // Skyrim Actors
         ACTOR_PLAYER                        = 0x000014,
 
+        // Skyrim Armors
+        ARMOR_BELTED_TUNIC                  = 0x01BE1A,
+
         // Skyrim Effect Shaders
         EFFECT_SHADER_REANIMATE             = 0x075272,
 
@@ -63,6 +66,9 @@ namespace doticu_npcp { namespace Consts {
         KEYWORD_MAGIC_DAMAGE_SHOCK          = 0x01CEAF,
         KEYWORD_MAGIC_VAMPIRE_DRAIN         = 0x101BDE,
         KEYWORD_VAMPIRE                     = 0x0A82BB,
+
+        // Skyrim Miscs
+        MISC_GOLD                           = 0x00000F,
 
         // Skyrim Perks
         PERK_VAMPIRE_FEED                   = 0x0CF02C,
@@ -84,6 +90,9 @@ namespace doticu_npcp { namespace Consts {
     // Skyrim Actors
     Actor_t* Player_Actor() { SKYRIM_FORM(Actor_t, ACTOR_PLAYER); }
 
+    // Skyrim Armors
+    Armor_t* Belted_Tunic_Armor() { SKYRIM_FORM(Armor_t, ARMOR_BELTED_TUNIC); }
+
     // Skyrim Effect Shaders
     Effect_Shader_t* Reanimate_Effect_Shader() { SKYRIM_FORM(Effect_Shader_t, EFFECT_SHADER_REANIMATE); }
 
@@ -103,6 +112,9 @@ namespace doticu_npcp { namespace Consts {
     Keyword_t* Shock_Damage_Magic_Keyword() { SKYRIM_FORM(Keyword_t, KEYWORD_MAGIC_DAMAGE_SHOCK); }
     Keyword_t* Vampire_Drain_Magic_Keyword() { SKYRIM_FORM(Keyword_t, KEYWORD_MAGIC_VAMPIRE_DRAIN); }
     Keyword_t* Vampire_Keyword() { SKYRIM_FORM(Keyword_t, KEYWORD_VAMPIRE); }
+
+    // Skyrim Miscs
+    Misc_t* Gold() { SKYRIM_FORM(Misc_t, MISC_GOLD); }
 
     // Skyrim Perks
     Perk_t* Vampire_Feed_Perk() { SKYRIM_FORM(Perk_t, PERK_VAMPIRE_FEED); }

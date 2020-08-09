@@ -103,6 +103,7 @@ int function ID() native
 
 int function Style() native
 int function Vitality() native
+int function Outfit2() native
 string function Name() native
 
 bool function Is_Filled() native
@@ -167,7 +168,6 @@ int function Unstylize() native
 function p_Vitalize(int vitality) native
 function p_Unvitalize() native
 
-function p_Change_Outfit1(Outfit outfit1) native
 int function Change_Outfit2(int outfit2_code) native
 int function Change_Member_Outfit2() native
 int function Change_Immobile_Outfit2() native
@@ -530,6 +530,8 @@ function Enforce()
         return
     endIf
 
+    p_Apply_Outfit2()
+
     if Is_Immobile()
         p_Immobilize()
     else
@@ -558,8 +560,6 @@ function Enforce()
     if !Exists() || Is_Dead()
         return
     endIf
-
-    p_Apply_Outfit2()
 
     p_Member()
 
@@ -598,14 +598,6 @@ doticu_npcp_follower function Get_Follower()
         return none
     else
         return FOLLOWERS.Get_Follower(p_ref_actor)
-    endIf
-endFunction
-
-int function Get_Outfit2()
-    if !Exists() || p_outfit2_current == none
-        return -1
-    else
-        return p_code_outfit2
     endIf
 endFunction
 
@@ -1127,11 +1119,9 @@ endFunction
 
 ; Events
 event OnLoad()
-    if !MAIN.Is_Ready()
-        return
+    if MAIN.Is_Ready()
+        Enforce()
     endIf
-
-    Enforce()
 endEvent
 
 event OnActivate(ObjectReference activator_obj)
@@ -1140,40 +1130,18 @@ event OnActivate(ObjectReference activator_obj)
     endIf
 
     if Is_Alive()
-        ; this should allow the player to talk with npcs that don't normally talk, or refuse to
+        Enforce()
         if !p_ref_actor.IsInDialogueWithPlayer() && p_ref_actor.IsAIEnabled()
             ACTORS.Greet_Player(p_ref_actor)
-        endIf
-
-        Enforce()
-        
-        ; instead of polling, we might be able to set up a package that happens only when in dialogue
-        ; and wait for the Package change or end event to let us know dialogue is over.
-        while Exists() && p_ref_actor && p_ref_actor.IsInDialogueWithPlayer()
-            ; we could do an outfit in here if we detect vanilla change
-            ; we might also have npcp commands start up this func if it
-            ; wasn't already called. it would lead to more consistency.
-            FUNCS.Wait(2)
-        endWhile
-
-        ; it's entirely possible that the ref may no longer be a member at this
-        ; point through dialogue selections. so we need to check to avoid error
-        if Exists()
-            ; we need to lock so that one ref at a time can do this check. we don't want
-            ; every ref to get the new outfit, or we may be changing outfit on another ref.
-            ; for the same reason we only check right after dialgoue, so the mod must have changed it by now.
-
-            Outfit outfit_vanilla = ACTORS.Get_Base_Outfit(p_ref_actor)
-            if outfit_vanilla && outfit_vanilla != NPCS.Default_Outfit(p_ref_actor)
-                ; one drawback of this method is that there is no way to tell if the default
-                ; outfit has been selected through an outfit mod. we could rig something through
-                ; Set_Outfit in c++
-                p_Change_Outfit1(outfit_vanilla)
-            endIf
         endIf
     else
         p_Open_Outfit2()
     endIf
+endEvent
+
+event On_Update_Equipment()
+    p_ref_actor.AddItem(doticu_npcp_consts.Blank_Weapon(), 1, true)
+    p_ref_actor.RemoveItem(doticu_npcp_consts.Blank_Weapon(), 1, true, none)
 endEvent
 
 event OnHit(ObjectReference ref_attacker, Form form_tool, Projectile ref_projectile, bool is_power, bool is_sneak, bool is_bash, bool is_blocked) native

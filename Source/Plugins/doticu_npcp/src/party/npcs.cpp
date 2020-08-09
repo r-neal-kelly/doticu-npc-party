@@ -439,7 +439,7 @@ namespace doticu_npcp { namespace Party {
 
         Outfit_t* default_outfit = Default_Outfit(actor);
         Outfit::Add_Item(default_outfit, Consts::Blank_Armor());
-        Actor2::Set_Outfit(actor, default_outfit, false);
+        Actor2::Set_Outfit_Basic(actor, default_outfit, false);
     }
 
     void NPCS_t::Update_And_Apply_Default_Oufit_If_Needed(Actor_t* actor)
@@ -451,10 +451,10 @@ namespace doticu_npcp { namespace Party {
 
         if (current_outfit && current_outfit != default_outfit) {
             Change_Default_Outfit(actor, current_outfit);
-            Actor2::Set_Outfit(actor, current_outfit, false);
+            Actor2::Set_Outfit_Basic(actor, current_outfit, false);
         } else if (!Object_Ref::Is_Worn(actor, Consts::Blank_Armor())) {
             Outfit::Add_Item(default_outfit, Consts::Blank_Armor());
-            Actor2::Set_Outfit(actor, default_outfit, false);
+            Actor2::Set_Outfit_Basic(actor, default_outfit, false);
         } else {
             Actor2::Base_Outfit(actor, default_outfit);
         }
