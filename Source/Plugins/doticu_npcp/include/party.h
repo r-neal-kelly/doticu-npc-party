@@ -574,6 +574,8 @@ namespace doticu_npcp { namespace Party {
         Outfit2_t* Current_Outfit2();
         Outfit2_t* Backup_Outfit2();
 
+        Bool_t Is_Ready();
+        Bool_t Is_Unready();
         Bool_t Is_Loaded();
         Bool_t Is_Unloaded();
         Bool_t Is_Unique();

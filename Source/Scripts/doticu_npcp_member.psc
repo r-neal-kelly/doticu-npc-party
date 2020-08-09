@@ -108,6 +108,8 @@ string function Name() native
 
 bool function Is_Filled() native
 bool function Is_Unfilled() native
+bool function Is_Ready() native
+bool function Is_Unready() native
 bool function Is_Loaded() native
 bool function Is_Unloaded() native
 bool function Is_Unique() native
@@ -1119,7 +1121,7 @@ endFunction
 
 ; Events
 event OnLoad()
-    if MAIN.Is_Ready()
+    if MAIN.Is_Ready() && Is_Ready()
         Enforce()
     endIf
 endEvent

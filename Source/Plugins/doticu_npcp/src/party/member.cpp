@@ -333,6 +333,16 @@ namespace doticu_npcp { namespace Party {
         return outfit2;
     }
 
+    Bool_t Member_t::Is_Ready()
+    {
+        return Current_Outfit2_Variable()->Has_Object();
+    }
+
+    Bool_t Member_t::Is_Unready()
+    {
+        return !Current_Outfit2_Variable()->Has_Object();
+    }
+
     Bool_t Member_t::Is_Loaded()
     {
         return Is_Filled() && Actor2::Is_Loaded(Actor());
@@ -1835,6 +1845,8 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
 
     Bool_t Is_Filled(Member_t* self)        FORWARD_BOOL(Member_t::Is_Filled());
     Bool_t Is_Unfilled(Member_t* self)      FORWARD_BOOL(Member_t::Is_Unfilled());
+    Bool_t Is_Ready(Member_t* self)         FORWARD_BOOL(Member_t::Is_Ready());
+    Bool_t Is_Unready(Member_t* self)       FORWARD_BOOL(Member_t::Is_Unready());
     Bool_t Is_Loaded(Member_t* self)        FORWARD_BOOL(Member_t::Is_Loaded());
     Bool_t Is_Unloaded(Member_t* self)      FORWARD_BOOL(Member_t::Is_Unloaded());
     Bool_t Is_Unique(Member_t* self)        FORWARD_BOOL(Member_t::Is_Unique());
@@ -1941,6 +1953,8 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
 
         ADD_METHOD("Is_Filled", 0, Bool_t, Is_Filled);
         ADD_METHOD("Is_Unfilled", 0, Bool_t, Is_Unfilled);
+        ADD_METHOD("Is_Ready", 0, Bool_t, Is_Ready);
+        ADD_METHOD("Is_Unready", 0, Bool_t, Is_Unready);
         ADD_METHOD("Is_Loaded", 0, Bool_t, Is_Loaded);
         ADD_METHOD("Is_Unloaded", 0, Bool_t, Is_Unloaded);
         ADD_METHOD("Is_Unique", 0, Bool_t, Is_Unique);
