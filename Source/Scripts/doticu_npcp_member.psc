@@ -1130,10 +1130,10 @@ event OnActivate(ObjectReference activator_obj)
     endIf
 
     if Is_Alive()
-        Enforce()
         if !p_ref_actor.IsInDialogueWithPlayer() && p_ref_actor.IsAIEnabled()
             ACTORS.Greet_Player(p_ref_actor)
         endIf
+        Enforce()
     else
         p_Open_Outfit2()
     endIf

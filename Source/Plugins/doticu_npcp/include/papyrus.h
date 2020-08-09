@@ -534,7 +534,6 @@ namespace doticu_npcp { namespace Papyrus {
 
         virtual bool Visit(Script_t *script, void *)
         {
-            //_MESSAGE("%s", script->classInfo->name.data);
             names.push_back(script->classInfo->name.data);
             scripts.push_back(script);
             return true;

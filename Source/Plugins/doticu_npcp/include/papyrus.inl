@@ -711,12 +711,11 @@ namespace doticu_npcp { namespace Papyrus {
     template <typename Type>
     inline void Variable_t::Pack(Type* value)
     {
-        Type_ID_t type_id = Type::kTypeID;
-        Class_Info_t* class_info = Class_Info_t::Fetch(type_id);
-        NPCP_ASSERT(class_info);
-
-        //return Pack(value, class_info);
-        return PackHandle(reinterpret_cast<VMValue*>(this), value, type_id, (*g_skyrimVM)->GetClassRegistry());
+        if (value) {
+            PackHandle(reinterpret_cast<VMValue*>(this), value, Type::kTypeID, Registry());
+        } else {
+            None();
+        }
     }
 
     template <>

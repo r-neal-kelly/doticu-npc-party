@@ -15,7 +15,6 @@ namespace doticu_npcp { namespace Papyrus {
 
         static String_t Class_Name();
         static Class_Info_t* Class_Info();
-        static Type_ID_t* Type_ID();
 
         static Outfit2_t* Create_Member(Actor_t* actor, Reference_t* pack);
         static Outfit2_t* Create_Immobile();

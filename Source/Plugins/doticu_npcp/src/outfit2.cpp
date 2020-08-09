@@ -28,12 +28,6 @@ namespace doticu_npcp { namespace Papyrus {
         return class_info;
     }
 
-    Type_ID_t* Outfit2_t::Type_ID()
-    {
-        static Type_ID_t type_id = Virtual_Machine_t::Self()->Type_ID(Class_Name());
-        return &type_id;
-    }
-
     static void Fill(Outfit2_t* outfit2, Container_t* container)
     {
         using namespace Papyrus;
