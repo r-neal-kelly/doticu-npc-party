@@ -782,6 +782,7 @@ namespace doticu_npcp { namespace Papyrus {
     {
         Class_Info_t* class_info = Class_Info_t::Fetch(std::remove_pointer<Type>::type::kTypeID);
         NPCP_ASSERT(class_info);
+        class_info->Free();
 
         Type_t type(class_info);
         Array_t* arr = Array_t::Create(&type, values.size());
@@ -793,8 +794,6 @@ namespace doticu_npcp { namespace Papyrus {
         }
 
         Array(arr);
-
-        class_info->Free();
     }
 
     template <>
