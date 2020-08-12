@@ -185,15 +185,15 @@ namespace doticu_npcp { namespace Papyrus {
 
     // Virtual_Arguments_i
 
-    inline Bool_t Virtual_Arguments_i::Array_t::Resize(UInt32 count)
+    inline Bool_t Virtual_Arguments_i::Arguments_t::Resize(UInt32 count)
     {
         static auto resize = reinterpret_cast
-            <Bool_t (*)(Virtual_Arguments_i::Array_t*, UInt32)>
+            <Bool_t (*)(Virtual_Arguments_i::Arguments_t*, UInt32)>
             (RelocationManager::s_baseAddr + Offsets::Virtual_Arguments::RESIZE);
         return resize(this, count);
     }
 
-    inline Variable_t* Virtual_Arguments_i::Array_t::At(UInt32 idx)
+    inline Variable_t* Virtual_Arguments_i::Arguments_t::At(UInt32 idx)
     {
         if (idx < count) {
             return variables + idx;
@@ -453,6 +453,11 @@ namespace doticu_npcp { namespace Papyrus {
     inline Bool_t Variable_t::Is_Int_Array() { return type.Is_Int_Array(); }
     inline Bool_t Variable_t::Is_Float_Array() { return type.Is_Float_Array(); }
     inline Bool_t Variable_t::Is_Bool_Array() { return type.Is_Bool_Array(); }
+
+    inline Bool_t Variable_t::Has_String()
+    {
+        return Is_String() && data.str && data.str.data && data.str.data[0] != 0;
+    }
 
     inline Bool_t Variable_t::Has_Object()
     {

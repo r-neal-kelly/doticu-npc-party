@@ -497,6 +497,8 @@ namespace doticu_npcp { namespace Party {
 
         Bool_t Is_Filled();
         Bool_t Is_Unfilled();
+
+        void Fill(Actor_t* actor, Virtual_Callback_i** callback);
     };
 
     class Member_t : public Alias_t {
@@ -538,9 +540,12 @@ namespace doticu_npcp { namespace Party {
         Variable_t* Outfit2_Variable();
         Variable_t* Rating_Variable();
 
+        Variable_t* Name_Variable();
+
         Variable_t* Previous_Factions_Variable();
-        Variable_t* Previous_Faction_Ranks_Variable();
         Variable_t* Previous_Crime_Faction_Variable();
+        Variable_t* Previous_Potential_Follower_Faction_Variable();
+        Variable_t* Previous_No_Body_Cleanup_Faction_Variable();
         Variable_t* Previous_Aggression_Variable();
         Variable_t* Previous_Confidence_Variable();
         Variable_t* Previous_Assistance_Variable();
@@ -656,10 +661,12 @@ namespace doticu_npcp { namespace Party {
         void Token(Misc_t* token, Int_t count = 1);
         void Untoken(Misc_t* token);
 
+        void Fill(Actor_t* actor, Bool_t is_clone);
         void Create(Actor_t* actor, Bool_t is_clone);
         void Destroy();
-        void Backup_State();
-        void Restore_State();
+        void Backup_State(Actor_t* actor);
+        void Restore_State(Actor_t* actor);
+
         void Member();
         void Unmember();
         void Mobilize();
@@ -684,17 +691,25 @@ namespace doticu_npcp { namespace Party {
         Int_t Stylize_Mage();
         Int_t Stylize_Archer();
         Int_t Stylize_Coward();
-        void Restylize(Actor_t* actor);
-        void Restylize_Default(Actor_t* actor);
-        void Restylize_Warrior(Actor_t* actor);
-        void Restylize_Mage(Actor_t* actor);
-        void Restylize_Archer(Actor_t* actor);
-        void Restylize_Coward(Actor_t* actor);
+        void Enforce_Style(Actor_t* actor);
+        void Enforce_Default_Style(Actor_t* actor);
+        void Enforce_Warrior_Style(Actor_t* actor);
+        void Enforce_Mage_Style(Actor_t* actor);
+        void Enforce_Archer_Style(Actor_t* actor);
+        void Enforce_Coward_Style(Actor_t* actor);
         Int_t Unstylize();
 
-        void Vitalize(Int_t vitality);
-        void Revitalize();
-        void Unvitalize();
+        Int_t Vitalize(Int_t vitality);
+        Int_t Vitalize_Mortal();
+        Int_t Vitalize_Protected();
+        Int_t Vitalize_Essential();
+        Int_t Vitalize_Invulnerable();
+        void Enforce_Vitality(Actor_t* actor);
+        void Enforce_Mortal_Vitality(Actor_t* actor);
+        void Enforce_Protected_Vitality(Actor_t* actor);
+        void Enforce_Essential_Vitality(Actor_t* actor);
+        void Enforce_Invulnerable_Vitality(Actor_t* actor);
+        Int_t Unvitalize();
 
         void Change_Outfit1(Outfit_t* outfit);
         Int_t Change_Outfit2(Int_t outfit2_code);
@@ -711,6 +726,7 @@ namespace doticu_npcp { namespace Party {
         void Apply_Outfit2();
 
         void Rename(String_t new_name);
+        void Enforce_Name(Actor_t* actor);
 
         void Summon(Reference_t* origin, float radius = 140.0f, float degree = 0.0f);
         void Summon(float radius = 140.0f, float degree = 0.0f);

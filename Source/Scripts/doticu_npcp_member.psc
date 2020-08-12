@@ -25,11 +25,6 @@ doticu_npcp_actors property ACTORS hidden
         return doticu_npcp.Funcs().ACTORS
     endFunction
 endProperty
-doticu_npcp_npcs property NPCS hidden
-    doticu_npcp_npcs function Get()
-        return doticu_npcp.Funcs().NPCS
-    endFunction
-endProperty
 doticu_npcp_mannequins property MANNEQUINS hidden
     doticu_npcp_mannequins function Get()
         return doticu_npcp.Funcs().MANNEQUINS
@@ -57,45 +52,49 @@ doticu_npcp_followers property FOLLOWERS hidden
 endProperty
 
 ; Private Variables
-bool                    p_is_locked                 = false
+bool                    p_is_locked                         = false
 
-Actor                   p_ref_actor                 =  none
-ObjectReference         p_container_pack            =  none
-ObjectReference         p_marker_mannequin          =  none
-ObjectReference         p_marker_display            =  none
-ObjectReference         p_marker_undisplay          =  none
-Outfit                  p_outfit_vanilla            =  none
-doticu_npcp_outfit      p_outfit2_member            =  none
-doticu_npcp_outfit      p_outfit2_immobile          =  none
-doticu_npcp_outfit      p_outfit2_settler           =  none
-doticu_npcp_outfit      p_outfit2_thrall            =  none
-doticu_npcp_outfit      p_outfit2_follower          =  none
-doticu_npcp_outfit      p_outfit2_vanilla           =  none
-doticu_npcp_outfit      p_outfit2_default           =  none
-doticu_npcp_outfit      p_outfit2_current           =  none
-doticu_npcp_outfit      p_outfit2_auto_backup       =  none
+Actor                   p_ref_actor                         =  none
+ObjectReference         p_container_pack                    =  none
+ObjectReference         p_marker_mannequin                  =  none
+ObjectReference         p_marker_display                    =  none
+ObjectReference         p_marker_undisplay                  =  none
+Outfit                  p_outfit_vanilla                    =  none
+doticu_npcp_outfit      p_outfit2_member                    =  none
+doticu_npcp_outfit      p_outfit2_immobile                  =  none
+doticu_npcp_outfit      p_outfit2_settler                   =  none
+doticu_npcp_outfit      p_outfit2_thrall                    =  none
+doticu_npcp_outfit      p_outfit2_follower                  =  none
+doticu_npcp_outfit      p_outfit2_vanilla                   =  none
+doticu_npcp_outfit      p_outfit2_default                   =  none
+doticu_npcp_outfit      p_outfit2_current                   =  none
+doticu_npcp_outfit      p_outfit2_auto_backup               =  none
 
-bool                    p_is_clone                  = false
-bool                    p_is_immobile               = false
-bool                    p_is_settler                = false
-bool                    p_is_thrall                 = false
-bool                    p_is_paralyzed              = false
-bool                    p_is_mannequin              = false
-bool                    p_is_display                = false
-bool                    p_is_reanimated             = false
+bool                    p_is_clone                          = false
+bool                    p_is_immobile                       = false
+bool                    p_is_settler                        = false
+bool                    p_is_thrall                         = false
+bool                    p_is_paralyzed                      = false
+bool                    p_is_mannequin                      = false
+bool                    p_is_display                        = false
+bool                    p_is_reanimated                     = false
 
-int                     p_code_style                =     0
-int                     p_code_vitality             =     0
-int                     p_code_outfit2              =     0
-int                     p_int_rating                =     0
+int                     p_code_style                        =     0
+int                     p_code_vitality                     =     0
+int                     p_code_outfit2                      =     0
+int                     p_int_rating                        =     0
 
-Faction[]               p_prev_factions             =  none
-int[]                   p_prev_faction_ranks        =  none
-Faction                 p_prev_faction_crime        =  none
-float                   p_prev_aggression           =   0.0
-float                   p_prev_confidence           =   0.0
-float                   p_prev_assistance           =   0.0
-float                   p_prev_morality             =   0.0
+string                  p_str_name                          =    ""
+
+Faction[]               p_prev_factions                     =  none
+
+Faction                 p_prev_faction_crime                =  none
+bool                    p_prev_faction_potential_follower   = false
+bool                    p_prev_faction_no_body_cleanup      = false
+float                   p_prev_aggression                   =   0.0
+float                   p_prev_confidence                   =   0.0
+float                   p_prev_assistance                   =   0.0
+float                   p_prev_morality                     =   0.0
 
 ; Native Methods
 Actor function Actor() native
@@ -164,11 +163,16 @@ int function Stylize_Warrior() native
 int function Stylize_Mage() native
 int function Stylize_Archer() native
 int function Stylize_Coward() native
-function p_Restylize(Actor ref_actor) native
+function p_Enforce_Style(Actor ref_actor) native
 int function Unstylize() native
 
-function p_Vitalize(int vitality) native
-function p_Unvitalize() native
+int function Vitalize(int vitality) native
+int function Vitalize_Mortal() native
+int function Vitalize_Protected() native
+int function Vitalize_Essential() native
+int function Vitalize_Invulnerable() native
+function p_Enforce_Vitality(Actor ref_actor) native
+int function Unvitalize() native
 
 int function Change_Outfit2(int outfit2_code) native
 int function Change_Member_Outfit2() native
@@ -187,53 +191,15 @@ function p_Rename(string new_name) native
 
 function Log_Variable_Infos() native
 
+function p_Restore_State(Actor ref_actor) native
+
 ; Friend Methods
-function f_Create(Actor ref_actor, bool is_clone)
-p_Lock()
-
-    ForceRefTo(ref_actor)
-
-    p_ref_actor = ref_actor
-    p_is_clone = is_clone
-    p_is_settler = false
-    p_is_thrall = false
-    p_is_immobile = false
-    p_is_paralyzed = false
-    p_is_mannequin = false
-    p_is_reanimated = false
-    p_is_display = false
-    
-    p_code_outfit2 = doticu_npcp_codes.OUTFIT2_MEMBER()
-    p_int_rating = 0
-    p_marker_display = none
-    p_marker_undisplay = none
-    p_marker_mannequin = none
-    p_outfit_vanilla = NPCS.Default_Outfit(p_ref_actor)
-
-p_Unlock()
-
-    p_Create_Container()
-    p_Update_Outfit2(doticu_npcp_codes.OUTFIT2_MEMBER())
-    p_Backup()
-
-    p_Member()
-    Stylize(VARS.auto_style)
-    p_Vitalize(VARS.auto_vitality)
-    p_Apply_Outfit2()
-
-    ; has to happen after p_Member() because it needs
-    ; to have the token for the full dialogue
-    if p_is_clone
-        ACTORS.Greet_Player(p_ref_actor)
-    endIf
-endFunction
-
 function f_Destroy()
     if Is_Follower()
         FOLLOWERS.f_Destroy_Follower(p_ref_actor)
     endIf
 
-    p_Unvitalize()
+    Unvitalize()
     Unstylize()
     if Is_Mannequin()
         p_Unmannequinize()
@@ -256,7 +222,7 @@ function f_Destroy()
         p_Kill()
     endIf
 
-    p_Restore()
+    p_Restore_State(p_ref_actor)
     p_Destroy_Outfits()
     p_Destroy_Containers()
 
@@ -266,8 +232,9 @@ p_Lock()
     p_prev_assistance = 0.0
     p_prev_confidence = 0.0
     p_prev_aggression = 0.0
+    p_prev_faction_no_body_cleanup = false
+    p_prev_faction_potential_follower = false
     p_prev_faction_crime = none
-    p_prev_faction_ranks = new int[1]
     p_prev_factions = new Faction[1]
 
     p_outfit2_auto_backup = none
@@ -303,10 +270,6 @@ p_Lock()
 p_Unlock()
 endFunction
 
-int function f_Get_ID()
-    return ID()
-endFunction
-
 ; Private Methods
 function p_Lock(float interval = 0.2, float timeout = 6.0)
     float time_waited = 0.0
@@ -323,48 +286,11 @@ function p_Unlock()
     p_is_locked = false
 endFunction
 
-function p_Create_Container()
-p_Lock()
-
-    p_container_pack = CONTAINERS.Create_Perm()
-
-p_Unlock()
-endFunction
-
 function p_Destroy_Containers()
 p_Lock()
 
     doticu_npcp.Object_Ref_Categorize(p_container_pack)
     CONTAINERS.Destroy_Perm(p_container_pack)
-
-p_Unlock()
-endFunction
-
-function p_Backup()
-p_Lock()
-
-    p_prev_factions = ACTORS.Get_Factions(p_ref_actor)
-    p_prev_faction_ranks = ACTORS.Get_Faction_Ranks(p_ref_actor, p_prev_factions)
-    p_prev_faction_crime = p_ref_actor.GetCrimeFaction()
-
-    p_prev_aggression = p_ref_actor.GetBaseActorValue("Aggression")
-    p_prev_confidence = p_ref_actor.GetBaseActorValue("Confidence")
-    p_prev_assistance = p_ref_actor.GetBaseActorValue("Assistance")
-    p_prev_morality = p_ref_actor.GetBaseActorValue("Morality")
-
-p_Unlock()
-endFunction
-
-function p_Restore()
-p_Lock()
-
-    p_ref_actor.SetActorValue("Morality", p_prev_morality)
-    p_ref_actor.SetActorValue("Assistance", p_prev_assistance)
-    p_ref_actor.SetActorValue("Confidence", p_prev_confidence)
-    p_ref_actor.SetActorValue("Aggression", 0.0)
-
-    ACTORS.Set_Factions(p_ref_actor, p_prev_factions, p_prev_faction_ranks)
-    p_ref_actor.SetCrimeFaction(p_prev_faction_crime)
 
 p_Unlock()
 endFunction
@@ -499,33 +425,6 @@ p_Lock()
 p_Unlock()
 endFunction
 
-function p_Pack()
-p_Lock()
-
-    CONTAINERS.Rename(p_container_pack, Name() + "'s Pack")
-    CONTAINERS.Open(p_container_pack)
-
-p_Unlock()
-endFunction
-
-function p_Stash()
-p_Lock()
-
-    doticu_npcp.Object_Ref_Categorize(p_container_pack)
-
-p_Unlock()
-endFunction
-
-function p_Async(string str_func)
-    string str_event = "doticu_npcp_member_async_" + ID()
-
-p_Lock()
-    RegisterForModEvent(str_event, str_func)
-    FUNCS.Send_Event(str_event, 0.25, 5.0)
-    UnregisterForModEvent(str_event)
-p_Unlock()
-endFunction
-
 ; Public Methods
 function Enforce()
     if !Exists() || Is_Dead()
@@ -564,10 +463,8 @@ function Enforce()
     endIf
 
     p_Member()
-
-    p_Restylize(p_ref_actor)
-
-    p_Vitalize(p_code_vitality)
+    p_Enforce_Style(p_ref_actor)
+    p_Enforce_Vitality(p_ref_actor)
 
     FUNCS.Wait(0.1)
     if !Exists() || Is_Dead()
@@ -784,70 +681,6 @@ int function Unmannequinize()
     return doticu_npcp_codes.SUCCESS()
 endFunction
 
-int function Vitalize(int code_vitality)
-    if code_vitality == doticu_npcp_codes.VITALITY_MORTAL()
-        return Vitalize_Mortal()
-    elseIf code_vitality == doticu_npcp_codes.VITALITY_ESSENTIAL()
-        return Vitalize_Essential()
-    elseIf code_vitality == doticu_npcp_codes.VITALITY_INVULNERABLE()
-        return Vitalize_Invulnerable()
-    else ; doticu_npcp_codes.VITALITY_PROTECTED()
-        return Vitalize_Protected()
-    endIf
-endFunction
-
-int function Vitalize_Mortal()
-    if !Exists()
-        return doticu_npcp_codes.MEMBER()
-    endIf
-    if Vitality() == doticu_npcp_codes.VITALITY_MORTAL()
-        return doticu_npcp_codes.IS()
-    endIf
-
-    p_Vitalize(doticu_npcp_codes.VITALITY_MORTAL())
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Vitalize_Protected()
-    if !Exists()
-        return doticu_npcp_codes.MEMBER()
-    endIf
-    if Vitality() == doticu_npcp_codes.VITALITY_PROTECTED()
-        return doticu_npcp_codes.IS()
-    endIf
-
-    p_Vitalize(doticu_npcp_codes.VITALITY_PROTECTED())
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Vitalize_Essential()
-    if !Exists()
-        return doticu_npcp_codes.MEMBER()
-    endIf
-    if Vitality() == doticu_npcp_codes.VITALITY_ESSENTIAL()
-        return doticu_npcp_codes.IS()
-    endIf
-
-    p_Vitalize(doticu_npcp_codes.VITALITY_ESSENTIAL())
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Vitalize_Invulnerable()
-    if !Exists()
-        return doticu_npcp_codes.MEMBER()
-    endIf
-    if Vitality() == doticu_npcp_codes.VITALITY_INVULNERABLE()
-        return doticu_npcp_codes.IS()
-    endIf
-
-    p_Vitalize(doticu_npcp_codes.VITALITY_INVULNERABLE())
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
 int function Revoice()
     ; the problem is that we would have to change the voice on the actor base. so maybe put in npcs?
     ; maybe there is a way to change the ref? look at the types a little closer.
@@ -911,19 +744,10 @@ int function Resurrect(int code_exec)
         return doticu_npcp_codes.IS()
     endIf
 
-    if code_exec == doticu_npcp_codes.ASYNC()
-        p_Async("On_Resurrect")
-    else
-        p_Resurrect()
-    endIf
+    p_Resurrect()
 
     return doticu_npcp_codes.SUCCESS()
 endFunction
-event On_Resurrect()
-    if Is_Dead()
-        p_Resurrect()
-    endIf
-endEvent
 
 int function Reanimate(int code_exec)
     if !Exists()
@@ -937,25 +761,13 @@ int function Reanimate(int code_exec)
     p_is_reanimated = true
 
     ; we accept an already alive member to make it easier on creation, but maybe not once we make a dedicated Create_Reanimated()
-    if code_exec == doticu_npcp_codes.ASYNC()
-        p_Async("On_Reanimate")
-    else
-        if Is_Dead()
-            p_Resurrect()
-        endIf
-        p_Reanimate()
+    if Is_Dead()
+        p_Resurrect()
     endIf
+    p_Reanimate()
 
     return doticu_npcp_codes.SUCCESS()
 endFunction
-event On_Reanimate()
-    if Is_Reanimated()
-        if Is_Dead()
-            p_Resurrect()
-        endIf
-        p_Reanimate()
-    endIf
-endEvent
 
 int function Deanimate(int code_exec)
     if !Exists()
@@ -964,25 +776,13 @@ int function Deanimate(int code_exec)
 
     p_is_reanimated = false
 
-    if code_exec == doticu_npcp_codes.ASYNC()
-        p_Async("On_Deanimate")
-    else
-        if Is_Alive()
-            p_Kill()
-        endIf
-        p_Deanimate()
+    if Is_Alive()
+        p_Kill()
     endIf
+    p_Deanimate()
 
     return doticu_npcp_codes.SUCCESS()
 endFunction
-event On_Deanimate()
-    if Isnt_Reanimated()
-        if Is_Alive()
-            p_Kill()
-        endIf
-        p_Deanimate()
-    endIf
-endEvent
 
 ; can this one actually be async?
 int function Pack(int code_exec)
@@ -990,24 +790,18 @@ int function Pack(int code_exec)
         return doticu_npcp_codes.MEMBER()
     endIf
 
-    if code_exec == doticu_npcp_codes.ASYNC()
-        p_Async("On_Pack")
-    else
-        p_Pack()
-    endIf
+    CONTAINERS.Rename(p_container_pack, Name() + "'s Pack")
+    CONTAINERS.Open(p_container_pack)
 
     return doticu_npcp_codes.SUCCESS()
 endFunction
-event On_Pack()
-    p_Pack()
-endEvent
 
 int function Stash()
     if !Exists()
         return doticu_npcp_codes.MEMBER()
     endIf
 
-    p_Stash()
+    doticu_npcp.Object_Ref_Categorize(p_container_pack)
 
     return doticu_npcp_codes.SUCCESS()
 endFunction
@@ -1070,7 +864,7 @@ int function Clone()
         return doticu_npcp_codes.MEMBER()
     endIf
 
-    return MEMBERS.Clone(p_ref_actor)
+    return MEMBERS.Add_Clone(p_ref_actor)
 endFunction
 
 int function Unclone()

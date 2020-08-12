@@ -627,13 +627,9 @@ namespace doticu_npcp { namespace Party {
                         if (Hasnt_Actor(original)) {
                             if (Actor2::Is_Alive(original) || Actor2::Try_Resurrect(original)) {
                                 NPCS_t::Self()->Add_Original(original);
-
                                 Member_t* member = From_Unfilled();
                                 NPCP_ASSERT(member);
-                                Quest::Force_Reference_To(this, member->id, original);
-
-                                member->Create(original, false);
-
+                                member->Fill(original, false);
                                 return CODES::SUCCESS;
                             } else {
                                 return CODES::DEAD;
@@ -662,7 +658,23 @@ namespace doticu_npcp { namespace Party {
 
     Int_t Members_t::Add_Clone(Actor_t* original)
     {
-        return CODES::FAILURE;
+        if (original) {
+            if (Actor2::Isnt_Child(original)) {
+                if (Count_Filled() < Limit()) {
+                    Actor_t* clone = NPCS_t::Self()->Add_Clone(original);
+                    Member_t* member = From_Unfilled();
+                    NPCP_ASSERT(member);
+                    member->Fill(clone, true);
+                    return CODES::SUCCESS;
+                } else {
+                    return CODES::MEMBERS;
+                }
+            } else {
+                return CODES::CHILD;
+            }
+        } else {
+            return CODES::ACTOR;
+        }
     }
 
     Int_t Members_t::Remove_Clone(Actor_t* clone)
@@ -673,6 +685,9 @@ namespace doticu_npcp { namespace Party {
 }}
 
 namespace doticu_npcp { namespace Party { namespace Members { namespace Exports {
+
+    Int_t Add_Original(Members_t* self, Actor_t* original) FORWARD_INT(Members_t::Add_Original(original));
+    Int_t Add_Clone(Members_t* self, Actor_t* original) FORWARD_INT(Members_t::Add_Clone(original));
 
     Member_t* From_ID(Members_t* self, Int_t unique_id) FORWARD_POINTER(From_ID(unique_id));
     Member_t* From_Actor(Members_t* self, Actor_t* actor) FORWARD_POINTER(From_Actor(actor));
@@ -768,6 +783,9 @@ namespace doticu_npcp { namespace Party { namespace Members { namespace Exports 
                              STR_FUNC_, ARG_NUM_,                       \
                              RETURN_, Exports::METHOD_, __VA_ARGS__);   \
         W
+
+        ADD_METHOD("Add_Original", 1, Int_t, Add_Original, Actor_t*);
+        ADD_METHOD("Add_Clone", 1, Int_t, Add_Clone, Actor_t*);
 
         ADD_METHOD("p_From_ID", 1, Member_t*, From_ID, Int_t);
         ADD_METHOD("p_From_Actor", 1, Member_t*, From_Actor, Actor_t*);

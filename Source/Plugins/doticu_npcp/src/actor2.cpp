@@ -16,6 +16,7 @@
 #include "party.h"
 #include "player.h"
 #include "utils.h"
+#include "vector.h"
 #include "xdata.h"
 #include "xentry.h"
 #include "xlist.h"
@@ -310,23 +311,16 @@ namespace doticu_npcp { namespace Actor2 {
 
                     for (XLists_t::Iterator it_xlist_actor = xentry_actor->extendDataList->Begin(); !it_xlist_actor.End(); ++it_xlist_actor) {
                         XList_t* xlist_actor = it_xlist_actor.Get();
-                        if (!xlist_actor) {
-                            continue;
-                        }
+                        if (xlist_actor) {
+                            XList::Validate(xlist_actor);
 
-                        if (static_cast<s32>(XList::Get_Count(xlist_actor)) < 0) {
-                            _MESSAGE("Actor2::Split_Inventory: Encountered xlist overflow. Setting count to 1:");
-                            _MESSAGE("Actor: %s, Form: %s", Get_Name(actor), Form::Get_Name(xentry_actor->type));
-                            XList::Log(xlist_actor, "");
-                            XList::Set_Count(xlist_actor, 1);
-                        }
+                            count_xlists_actor += XList::Get_Count(xlist_actor);
 
-                        count_xlists_actor += XList::Get_Count(xlist_actor);
-
-                        if (XList::Is_Worn(xlist_actor)) {
-                            vec_xlists_worn.push_back(xlist_actor);
-                        } else {
-                            vec_xlists_pack.push_back(xlist_actor);
+                            if (XList::Is_Worn(xlist_actor) || XList::Has_Outfit2_Flag(xlist_actor)) {
+                                vec_xlists_worn.push_back(xlist_actor);
+                            } else {
+                                vec_xlists_pack.push_back(xlist_actor);
+                            }
                         }
                     }
 
@@ -1102,6 +1096,72 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
+    void Factions_And_Ranks(Actor_t* actor, Factions_And_Ranks_t& results, Int_t min_rank, Int_t max_rank)
+    {
+        NPCP_ASSERT(actor);
+
+        results.factions.clear();
+        results.factions.reserve(4);
+        results.ranks.clear();
+        results.ranks.reserve(4);
+
+        Vector_t<Faction_t*> xfactions;
+        xfactions.reserve(4);
+
+        auto try_update = [&](Faction_t* faction, Int_t rank) -> void
+        {
+            if (rank >= min_rank && rank <= max_rank) {
+                s64 faction_idx = Vector::Index_Of(results.factions, faction);
+                if (faction_idx > -1) {
+                    results.ranks.at(faction_idx) = rank;
+                } else {
+                    results.factions.push_back(faction);
+                    results.ranks.push_back(rank);
+                }
+            }
+        };
+
+        XFaction_Ranks_t* xfaction_ranks = XFaction_Ranks(actor);
+        if (xfaction_ranks) {
+            for (size_t idx = 0, count = xfaction_ranks->count; idx < count; idx += 1) {
+                XFaction_Rank_t* xfaction_rank = xfaction_ranks->entries + idx;
+                try_update(xfaction_rank->faction, xfaction_rank->rank);
+                xfactions.push_back(xfaction_rank->faction);
+            }
+        }
+
+        BFaction_Ranks_t* bfaction_ranks = BFaction_Ranks(actor);
+        if (bfaction_ranks) {
+            for (size_t idx = 0, count = bfaction_ranks->count; idx < count; idx += 1) {
+                BFaction_Rank_t* bfaction_rank = bfaction_ranks->entries + idx;
+                if (!Vector::Has(xfactions, bfaction_rank->faction)) {
+                    try_update(bfaction_rank->faction, bfaction_rank->rank);
+                }
+            }
+        }
+    }
+
+    Faction_t* Crime_Faction(Actor_t* actor)
+    {
+        NPCP_ASSERT(actor);
+
+        Actor_Base_t* actor_base = static_cast<Actor_Base_t*>(actor->baseForm);
+        NPCP_ASSERT(actor_base);
+
+        Faction_t* crime_faction = nullptr;
+
+        XFactions_t* xfactions = XFactions(actor, false);
+        if (xfactions) {
+            crime_faction = reinterpret_cast<Faction_t*>(xfactions->unk28);
+        }
+
+        if (!crime_faction) {
+            crime_faction = actor_base->faction;
+        }
+
+        return crime_faction;
+    }
+
     void Join_Player_Team(Actor_t* actor, Bool_t allow_favors)
     {
         if (actor) {
@@ -1365,7 +1425,6 @@ namespace doticu_npcp { namespace Actor2 {
             real_base->defaultOutfit = base_outfit;
 
             Pacify(clone);
-            Object_Ref::Rename(clone, (std::string("Clone of ") + Get_Name(actor)).c_str());
 
             return clone;
         } else {
@@ -1402,39 +1461,41 @@ namespace doticu_npcp { namespace Actor2 {
 
     void Update_Equipment(Actor_t* actor, Papyrus::Virtual_Callback_i** callback)
     {
+        // we need to make sure that the actor is part of the player team
         using namespace Papyrus;
 
         NPCP_ASSERT(actor);
 
-        using Func_t = void (*)();
+        Object_Ref::Add_Item_And_Callback(actor, Consts::Blank_Weapon(), 1, false);
+        Object_Ref::Remove_Item_And_Callback(actor, Consts::Blank_Weapon(), 1, false, nullptr, callback);
+    }
 
-        struct Callback_t : public Virtual_Callback_t {
-            Func_t func;
-            Callback_t(Func_t func) :
-                func(func)
-            {
-            }
-            virtual void operator()(Variable_t*) override
-            {
-                func();
-            }
-        };
+    void Greet_Player(Actor_t* actor)
+    {
+        using namespace Papyrus;
 
-        Virtual_Callback_i* on_add = new Callback_t(
-            []() -> void
-            {
-                _MESSAGE("    added item.");
-            }
-        );
-        Object_Ref::Add_Item_And_Callback(actor, Consts::Blank_Weapon(), 1, false, &on_add);
+        NPCP_ASSERT(actor);
 
-        Virtual_Callback_i* on_remove = new Callback_t(
-            []() -> void
+        class Arguments : public Virtual_Arguments_t {
+        public:
+            Actor_t* actor;
+            Arguments(Actor_t* actor) :
+                actor(actor)
             {
-                _MESSAGE("    removed item.");
             }
-        );
-        Object_Ref::Remove_Item_And_Callback(actor, Consts::Blank_Weapon(), 1, false, nullptr, &on_remove);
+            virtual Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(1);
+                arguments->At(0)->Pack(actor);
+
+                return true;
+            }
+        } args(actor);
+
+        Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(),
+                                               "doticu_npcp_actors",
+                                               "Greet_Player",
+                                               &args);
     }
 
 }}

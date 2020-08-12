@@ -48,6 +48,9 @@ int                     p_idx_display       =     0
 ObjectReference         p_marker_display    =  none
 
 ; Native Methods
+int function Add_Original(Actor original) native
+int function Add_Clone(Actor original) native
+
 Alias function p_From_ID(int unique_id)         native
 Alias function p_From_Actor(Actor ref_actor)    native
 Alias function p_From_Unfilled()                native
@@ -146,48 +149,6 @@ endFunction
 
 ; Public Methods
 ; these should be renamed to Add_Original, Remove_Original, Add_Clone, Remove_Clone
-int function Create_Member(Actor ref_actor)
-    if !ref_actor
-        return doticu_npcp_codes.ACTOR()
-    endIf
-
-    if ref_actor.IsChild()
-        return doticu_npcp_codes.CHILD()
-    endIf
-
-    if Count_Filled() >= Get_Limit()
-        return doticu_npcp_codes.MEMBERS()
-    endIf
-
-    if Should_Clone_Actor(ref_actor)
-        return Clone(ref_actor)
-    endIf
-
-    if Has_Actor(ref_actor)
-        return doticu_npcp_codes.MEMBER()
-    endIf
-
-    LOGS.Create_Note("Adding to members...", false)
-
-    if ACTORS.Is_Dead(ref_actor)
-        doticu_npcp.Actor_Resurrect(ref_actor, false)
-        if ACTORS.Is_Dead(ref_actor)
-            return doticu_npcp_codes.DEAD()
-        endIf
-    endIf
-
-    NPCS.Add_Original(ref_actor)
-
-    doticu_npcp_member ref_member = p_From_Unfilled() as doticu_npcp_member
-    if !ref_member
-        return doticu_npcp_codes.FAILURE()
-    endIf
-
-    ref_member.f_Create(ref_actor, false)
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
 int function Destroy_Member(Actor ref_actor)
     if !ref_actor
         return doticu_npcp_codes.ACTOR()
@@ -205,41 +166,6 @@ int function Destroy_Member(Actor ref_actor)
     ref_member.f_Destroy()
 
     NPCS.Remove_Original(ref_actor)
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Clone(Actor ref_actor)
-    if !ref_actor
-        return doticu_npcp_codes.ACTOR()
-    endIf
-
-    if ref_actor.IsChild()
-        return doticu_npcp_codes.CHILD()
-    endIf
-
-    if Count_Filled() >= Get_Limit()
-        return doticu_npcp_codes.MEMBERS()
-    endIf
-
-    LOGS.Create_Note("Adding clone to members...", false)
-
-    Actor ref_clone = NPCS.Add_Clone(ref_actor)
-    if !ref_clone
-        return doticu_npcp_codes.CLONE()
-    endIf
-
-    ref_clone.SetPlayerTeammate(true, true)
-    ref_clone.AddItem(doticu_npcp_consts.Blank_Armor(), 1, true)
-    ref_clone.RemoveItem(doticu_npcp_consts.Blank_Armor(), 1, true, none)
-
-    doticu_npcp_member ref_member = p_From_Unfilled() as doticu_npcp_member
-    if !ref_member
-        ACTORS.Delete(ref_clone)
-        return doticu_npcp_codes.FAILURE()
-    endIf
-
-    ref_member.f_Create(ref_clone, true)
 
     return doticu_npcp_codes.SUCCESS()
 endFunction
@@ -289,18 +215,6 @@ endFunction
 
 Alias[] function Get_Members(int begin = 0, int end = -1)
     return Sort_Filled(begin, end)
-endFunction
-
-bool function Should_Clone_Actor(Actor ref_actor)
-    if !ref_actor
-        return false
-    elseIf VARS.force_clone_unique && ACTORS.Is_Unique(ref_actor)
-        return true
-    elseIf VARS.force_clone_generic && ACTORS.Is_Generic(ref_actor)
-        return true
-    else
-        return false
-    endIf
 endFunction
 
 bool function Should_Unclone_Actor(Actor ref_actor)

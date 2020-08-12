@@ -26,14 +26,6 @@ namespace doticu_npcp { namespace Quest {
         return full_name->name.data;
     }
 
-    void Force_Reference_To(Quest_t* quest, UInt32 alias_id, Reference_t* reference)
-    {
-        static auto force_reference_to = reinterpret_cast
-            <UInt32 (*)(Quest_t*, UInt32, Reference_t*)>
-            (RelocationManager::s_baseAddr + Offsets::Quest::FORCE_REFERENCE_TO);
-        force_reference_to(quest, alias_id, reference);
-    }
-
     bool Is_Alias_Filled(Quest_t* quest, UInt16 alias_id)
     {
         if (quest) {

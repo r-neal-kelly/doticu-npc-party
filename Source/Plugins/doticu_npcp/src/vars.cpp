@@ -86,6 +86,8 @@ namespace doticu_npcp { namespace Vars {
     Int_t Member_Limit() { INT_VAR("p_max_members"); }
     Int_t Display_Count() { INT_VAR("p_num_display"); }
     Int_t Clone_Outfit() { INT_VAR("p_clone_outfit"); }
+    Int_t Default_Style() { INT_VAR("p_auto_style"); }
+    Int_t Default_Vitality() { INT_VAR("p_auto_vitality"); }
 
     #undef INT_VAR
 

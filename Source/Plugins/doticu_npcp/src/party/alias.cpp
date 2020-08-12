@@ -28,4 +28,25 @@ namespace doticu_npcp { namespace Party {
         return !Quest::Is_Alias_Filled(quest, id);
     }
 
+    void Alias_t::Fill(Actor_t* actor, Virtual_Callback_i** callback)
+    {
+        struct Arguments : public Virtual_Arguments_t {
+        public:
+            Reference_t* ref;
+            Arguments(Reference_t* ref) :
+                ref(ref)
+            {
+            }
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(1);
+                arguments->At(0)->Pack(ref);
+
+                return true;
+            }
+        } arguments(actor);
+
+        Virtual_Machine_t::Self()->Call_Method(this, "ReferenceAlias", "ForceRefTo", &arguments, callback);
+    }
+
 }}

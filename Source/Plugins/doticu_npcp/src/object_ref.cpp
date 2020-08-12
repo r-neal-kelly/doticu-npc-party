@@ -323,22 +323,42 @@ namespace doticu_npcp { namespace Object_Ref {
         return XEntry::Is_Worn(Get_XEntry(obj, form));
     }
 
-    void Remove_Wearables(Reference_t* obj, Reference_t* other, Bool_t remove_quest_items)
+    void Remove_If(Reference_t* from,
+                   Reference_t* to,
+                   Bool_t (*should_remove_xform)(Form_t*),
+                   Bool_t (*should_remove_xlist)(XList_t*, Form_t*),
+                   Bool_t(*should_remove_bform)(Form_t*))
     {
-        // if we templated this, we would need at least two funcs, one for the form, and one for the xlist
+        NPCP_ASSERT(from);
 
-        NPCP_ASSERT(obj);
-
-        Bool_t do_delete_other;
-        if (other) {
-            Init_Container_If_Needed(other);
-            do_delete_other = false;
+        Bool_t do_delete_to;
+        if (to) {
+            Init_Container_If_Needed(to);
+            do_delete_to = false;
         } else {
-            other = Create_Container();
-            do_delete_other = true;
+            to = Create_Container();
+            do_delete_to = true;
         }
 
-        XContainer_t* xcontainer = Object_Ref::Get_XContainer(obj, false);
+        if (!should_remove_xform) {
+            should_remove_xform = [](Form_t*) -> Bool_t
+            {
+                return true;
+            };
+        }
+
+        if (!should_remove_xlist) {
+            should_remove_xlist = [](XList_t* xlist, Form_t*) -> Bool_t
+            {
+                return !XList::Is_Quest_Item(xlist);
+            };
+        }
+
+        if (!should_remove_bform) {
+            should_remove_bform = should_remove_xform;
+        }
+
+        XContainer_t* xcontainer = Object_Ref::Get_XContainer(from, false);
         if (xcontainer) {
             std::vector<XEntry_t*> xentries_to_destroy;
             xentries_to_destroy.reserve(4);
@@ -346,7 +366,7 @@ namespace doticu_npcp { namespace Object_Ref {
             for (XEntries_t::Iterator xentries = xcontainer->data->objList->Begin(); !xentries.End(); ++xentries) {
                 XEntry_t* xentry = xentries.Get();
                 Form_t* form = xentry ? xentry->type : nullptr;
-                if (form && (form->IsArmor() || form->IsWeapon() || form->IsAmmo())) {
+                if (form && should_remove_xform(form)) {
                     std::vector<XList_t*> xlists_to_remove;
                     xlists_to_remove.reserve(2);
 
@@ -354,17 +374,17 @@ namespace doticu_npcp { namespace Object_Ref {
                         XList_t* xlist = xlists.Get();
                         if (xlist) {
                             XList::Validate(xlist);
-                            if (remove_quest_items || !XList::Is_Quest_Item(xlist)) {
+                            if (should_remove_xlist(xlist, form)) {
                                 xlists_to_remove.push_back(xlist);
                             }
                         }
                     }
 
                     if (xlists_to_remove.size() > 0) {
-                        XEntry_t* other_xentry = Object_Ref::Get_XEntry(other, form, true);
+                        XEntry_t* to_xentry = Object_Ref::Get_XEntry(to, form, true);
                         for (size_t idx = 0, count = xlists_to_remove.size(); idx < count; idx += 1) {
                             XList_t* xlist = xlists_to_remove[idx];
-                            XEntry::Move_XList(xentry, other_xentry, xlist, other);
+                            XEntry::Move_XList(xentry, to_xentry, xlist, to);
                         }
                     }
                 }
@@ -376,12 +396,12 @@ namespace doticu_npcp { namespace Object_Ref {
 
             for (size_t idx = 0, count = xentries_to_destroy.size(); idx < count; idx += 1) {
                 XEntry_t* xentry = xentries_to_destroy[idx];
-                Object_Ref::Remove_XEntry(obj, xentry);
+                Object_Ref::Remove_XEntry(from, xentry);
                 XEntry::Destroy(xentry);
             }
         }
 
-        BContainer_t* bcontainer = Object_Ref::Get_BContainer(obj);
+        BContainer_t* bcontainer = Object_Ref::Get_BContainer(from);
         if (bcontainer) {
             std::vector<BEntry_t*> bentries_to_move;
             bentries_to_move.reserve(4);
@@ -390,7 +410,7 @@ namespace doticu_npcp { namespace Object_Ref {
                 BEntry_t* bentry = bcontainer->entries[idx];
                 if (bentry && bentry->form && bentry->count > 0) {
                     Form_t* form = bentry->form;
-                    if (form->formType != kFormType_LeveledItem && (form->IsArmor() || form->IsWeapon() || form->IsAmmo())) {
+                    if (form->formType != kFormType_LeveledItem && should_remove_bform(form)) {
                         bentries_to_move.push_back(bentry);
                     }
                 }
@@ -399,249 +419,125 @@ namespace doticu_npcp { namespace Object_Ref {
             if (bentries_to_move.size() > 0) {
                 for (size_t idx = 0, count = bentries_to_move.size(); idx < count; idx += 1) {
                     BEntry_t* bentry = bentries_to_move[idx];
-                    XEntry_t* xentry = Get_XEntry(obj, bentry->form, true);
+                    XEntry_t* xentry = Get_XEntry(from, bentry->form, true);
                     Int_t entry_count = bentry->count + xentry->countDelta;
                     if (entry_count > 0) {
-                        XEntry_t* other_xentry = Get_XEntry(other, bentry->form, true);
-                        other_xentry->countDelta += entry_count;
+                        XEntry_t* to_xentry = Get_XEntry(to, bentry->form, true);
+                        to_xentry->countDelta += entry_count;
                         xentry->countDelta = 0 - bentry->count;
                     }
                 }
             }
         }
 
-        if (do_delete_other) {
-            Delete_Safe(other);
+        if (do_delete_to) {
+            Delete_Safe(to);
         }
     }
 
-    void Remove_Unwearable(Reference_t* obj, Reference_t* other)
+    void Remove_Wearables(Reference_t* obj, Reference_t* other, Bool_t remove_quest_items)
     {
-        NPCP_ASSERT(obj);
+        auto should_remove_xform = [](Form_t* form) -> Bool_t
+        {
+            return form->IsArmor() || form->IsWeapon() || form->IsAmmo();
+        };
 
-        Bool_t do_delete_other;
-        if (other) {
-            Init_Container_If_Needed(other);
-            do_delete_other = false;
+        Bool_t (*should_remove_xlist)(XList_t*, Form_t*);
+        if (remove_quest_items) {
+            should_remove_xlist = [](XList_t* xlist, Form_t* form) -> Bool_t
+            {
+                return true;
+            };
         } else {
-            other = Create_Container();
-            do_delete_other = true;
+            should_remove_xlist = [](XList_t* xlist, Form_t* form) -> Bool_t
+            {
+                return !XList::Is_Quest_Item(xlist);
+            };
         }
 
-        XContainer_t* xcontainer_other = Object_Ref::Get_XContainer(other, true);
-        NPCP_ASSERT(xcontainer_other);
+        Remove_If(obj, other, should_remove_xform, should_remove_xlist);
+    }
 
-        std::vector<TESForm*> vec_forms_remove;
-        vec_forms_remove.reserve(4);
+    void Remove_Unwearables(Reference_t* obj, Reference_t* other, Bool_t remove_quest_items)
+    {
+        auto should_remove_xform = [](Form_t* form) -> Bool_t
+        {
+            return !form->IsArmor() && !form->IsWeapon() && !form->IsAmmo();
+        };
 
-        XContainer_t* xcontainer_obj = Object_Ref::Get_XContainer(obj, false);
-        if (xcontainer_obj) {
-            for (XEntries_t::Iterator it_xentry_obj = xcontainer_obj->data->objList->Begin(); !it_xentry_obj.End(); ++it_xentry_obj) {
-                XEntry_t* xentry_obj = it_xentry_obj.Get();
-                if (!xentry_obj || !xentry_obj->type) {
-                    continue;
-                }
-
-                TESForm* form_obj = xentry_obj->type;
-                if (form_obj->IsArmor() || form_obj->IsWeapon() || form_obj->IsAmmo()) {
-                    continue;
-                }
-
-                vec_forms_remove.push_back(form_obj);
-            }
+        Bool_t(*should_remove_xlist)(XList_t*, Form_t*);
+        if (remove_quest_items) {
+            should_remove_xlist = [](XList_t* xlist, Form_t* form) -> Bool_t
+            {
+                return true;
+            };
+        } else {
+            should_remove_xlist = [](XList_t* xlist, Form_t* form) -> Bool_t
+            {
+                return !XList::Is_Quest_Item(xlist);
+            };
         }
 
-        BContainer_t* bcontainer_obj = Object_Ref::Get_BContainer(obj);
-        if (bcontainer_obj) {
-            for (u64 idx = 0; idx < bcontainer_obj->numEntries; idx += 1) {
-                BEntry_t* bentry_obj = bcontainer_obj->entries[idx];
-                if (!bentry_obj || !bentry_obj->form || bentry_obj->count < 1) {
-                    continue;
-                }
-
-                TESForm* form_obj = bentry_obj->form;
-                if (form_obj->formType == kFormType_LeveledItem || form_obj->IsArmor() || form_obj->IsWeapon() || form_obj->IsAmmo()) {
-                    continue;
-                }
-
-                if (!Vector::Has<TESForm*>(vec_forms_remove, form_obj)) {
-                    vec_forms_remove.push_back(form_obj);
-                }
-            }
-        }
-
-        if (vec_forms_remove.size() > 0) {
-            for (u64 idx = 0, size = vec_forms_remove.size(); idx < size; idx += 1) {
-                TESForm* form_remove = vec_forms_remove[idx];
-                Object_Ref::Move_Entry(obj, other, form_remove);
-            }
-        }
-
-        if (do_delete_other) {
-            Delete_Safe(other);
-        }
+        Remove_If(obj, other, should_remove_xform, should_remove_xlist);
     }
 
     void Remove_Non_Outfit_Worn(Reference_t* obj, Reference_t* other, Bool_t remove_quest_items)
     {
-        NPCP_ASSERT(obj);
+        auto should_remove_xform = [](Form_t* form) -> Bool_t
+        {
+            return true;
+        };
 
-        Bool_t do_delete_other;
-        if (other) {
-            Init_Container_If_Needed(other);
-            do_delete_other = false;
+        Bool_t(*should_remove_xlist)(XList_t*, Form_t*);
+        if (remove_quest_items) {
+            should_remove_xlist = [](XList_t* xlist, Form_t* form) -> Bool_t
+            {
+                return true;
+            };
         } else {
-            other = Create_Container();
-            do_delete_other = true;
+            should_remove_xlist = [](XList_t* xlist, Form_t* form) -> Bool_t
+            {
+                return !XList::Is_Quest_Item(xlist);
+            };
         }
 
-        XContainer_t* other_xcontainer = Object_Ref::Get_XContainer(other, true);
-        NPCP_ASSERT(other_xcontainer);
+        auto should_remove_bform = [](Form_t* form) -> Bool_t
+        {
+            return false;
+        };
 
-        XContainer_t* xcontainer = Object_Ref::Get_XContainer(obj, false);
-        if (xcontainer) {
-            std::vector<XEntry_t*> xentries_to_remove;
-            xentries_to_remove.reserve(4);
-
-            for (XEntries_t::Iterator xentries = xcontainer->data->objList->Begin(); !xentries.End(); ++xentries) {
-                XEntry_t* xentry = xentries.Get();
-                Form_t* form = xentry ? xentry->type : nullptr;
-                if (form) {
-                    std::vector<XList_t*> xlists_to_remove;
-
-                    for (XLists_t::Iterator xlists = xentry->extendDataList->Begin(); !xlists.End(); ++xlists) {
-                        XList_t* xlist = xlists.Get();
-                        if (xlist) {
-                            XList::Validate(xlist);
-                            if (static_cast<Int_t>(XList::Get_Count(xlist)) < 0) {
-                                _MESSAGE("Object_Ref::Remove_Non_Outfit_Worn: Encountered overflowed xlist. Setting count to 1:");
-                                _MESSAGE("Ref: %s, Form: %s", Get_Name(obj), Form::Get_Name(form));
-                                XList::Log(xlist, "");
-                                XList::Set_Count(xlist, 1);
-                            }
-                            if (remove_quest_items || !XList::Is_Quest_Item(xlist)) {
-                                if (xlist->HasType(kExtraData_Worn) && !xlist->HasType(kExtraData_OutfitItem)) {
-                                    xlists_to_remove.push_back(xlist);
-                                }
-                            }
-                        }
-                    }
-
-                    if (xlists_to_remove.size() > 0) {
-                        XEntry_t* other_xentry = Object_Ref::Get_XEntry(other, form, true);
-                        for (size_t idx = 0, count = xlists_to_remove.size(); idx < count; idx += 1) {
-                            XList_t* xlist = xlists_to_remove[idx];
-                            XEntry::Move_XList(xentry, other_xentry, xlist, other);
-                        }
-                    }
-                }
-
-                if (xentry->countDelta == 0) {
-                    xentries_to_remove.push_back(xentry);
-                }
-            }
-
-            for (size_t idx = 0, count = xentries_to_remove.size(); idx < count; idx += 1) {
-                XEntry_t* xentry = xentries_to_remove[idx];
-                Object_Ref::Remove_XEntry(obj, xentry);
-                XEntry::Destroy(xentry);
-            }
-        }
-
-        if (do_delete_other) {
-            Delete_Safe(other);
-        }
+        Remove_If(obj, other, should_remove_xform, should_remove_xlist, should_remove_bform);
     }
 
     void Remove_All_Items(Reference_t* ref, Reference_t* transfer, Bool_t remove_quest_items, Bool_t remove_unplayable_items)
     {
-        NPCP_ASSERT(ref);
-
-        Bool_t do_delete_transfer;
-        if (transfer) {
-            Init_Container_If_Needed(transfer);
-            do_delete_transfer = false;
+        Bool_t(*should_remove_xform)(Form_t*);
+        if (remove_unplayable_items) {
+            should_remove_xform = [](Form_t* form) -> Bool_t
+            {
+                return true;
+            };
         } else {
-            transfer = Create_Container();
-            do_delete_transfer = true;
+            should_remove_xform = [](Form_t* form) -> Bool_t
+            {
+                return form->IsPlayable();
+            };
         }
 
-        XContainer_t* transfer_xcontainer = Get_XContainer(transfer, true);
-        NPCP_ASSERT(transfer_xcontainer);
-
-        XContainer_t* ref_xcontainer = Get_XContainer(ref, false);
-        if (ref_xcontainer) {
-            std::vector<Form_t*> forms_to_move;
-            forms_to_move.reserve(4);
-
-            struct XXList_t { Form_t* form; XList_t* xlist; };
-            std::vector<XXList_t> xxlists_to_keep;
-            xxlists_to_keep.reserve(4);
-
-            for (XEntries_t::Iterator xentry_it = ref_xcontainer->data->objList->Begin(); !xentry_it.End(); ++xentry_it) {
-                XEntry_t* xentry = xentry_it.Get();
-                Form_t* form = xentry ? xentry->type : nullptr;
-                if (form && (remove_unplayable_items || form->IsPlayable())) {
-                    if (!remove_quest_items) {
-                        std::vector<XList_t*> xlists_to_keep;
-                        xlists_to_keep.reserve(1);
-
-                        for (XLists_t::Iterator xlist_it = xentry->extendDataList->Begin(); !xlist_it.End(); ++xlist_it) {
-                            XList_t* xlist = xlist_it.Get();
-                            if (xlist) {
-                                if (static_cast<Int_t>(XList::Get_Count(xlist)) < 0) {
-                                    _MESSAGE("Object_Ref::Remove_All_Items: Encountered overflowed xlist. Setting count to 1:");
-                                    _MESSAGE("Ref: %s, Form: %s", Get_Name(ref), Form::Get_Name(form));
-                                    XList::Log(xlist, "");
-                                    XList::Set_Count(xlist, 1);
-                                }
-                                if (XList::Is_Quest_Item(xlist)) {
-                                    xlists_to_keep.push_back(xlist);
-                                }
-                            }
-                        }
-
-                        for (size_t idx = 0, count = xlists_to_keep.size(); idx < count; idx += 1) {
-                            XList_t* xlist = xlists_to_keep[idx];
-                            XEntry::Remove_XList(xentry, xlist);
-                            xxlists_to_keep.push_back({ form, xlist });
-                        }
-                    }
-                    forms_to_move.push_back(form);
-                }
-            }
-
-            for (size_t idx = 0, count = forms_to_move.size(); idx < count; idx += 1) {
-                Form_t* form = forms_to_move[idx];
-                Move_Entry(ref, transfer, form);
-            }
-
-            for (size_t idx = 0, count = xxlists_to_keep.size(); idx < count; idx += 1) {
-                XXList_t xxlist = xxlists_to_keep[idx];
-                XEntry_t* xentry = Get_XEntry(ref, xxlist.form, true);
-                XEntry::Add_XList(xentry, xxlist.xlist);
-            }
+        Bool_t(*should_remove_xlist)(XList_t*, Form_t*);
+        if (remove_quest_items) {
+            should_remove_xlist = [](XList_t* xlist, Form_t* form) -> Bool_t
+            {
+                return true;
+            };
+        } else {
+            should_remove_xlist = [](XList_t* xlist, Form_t* form) -> Bool_t
+            {
+                return !XList::Is_Quest_Item(xlist);
+            };
         }
 
-        BContainer_t* bcontainer = Get_BContainer(ref);
-        if (bcontainer) {
-            for (u64 idx = 0; idx < bcontainer->numEntries; idx += 1) {
-                BEntry_t* bentry = bcontainer->entries[idx];
-                Form_t* form = bentry && bentry->count > 0 ? bentry->form : nullptr;
-                if (form && (remove_unplayable_items || form->IsPlayable())) {
-                    XEntry_t* xentry = Get_XEntry(ref, form, true);
-                    Int_t entry_count = bentry->count + xentry->countDelta;
-                    if (entry_count > 0) {
-                        Get_XEntry(transfer, form, true)->countDelta += entry_count;
-                        xentry->countDelta = 0 - bentry->count;
-                    }
-                }
-            }
-        }
-
-        if (do_delete_transfer) {
-            Delete_Safe(transfer);
-        }
+        Remove_If(ref, transfer, should_remove_xform, should_remove_xlist);
     }
 
     void Categorize(TESObjectREFR *obj) {
@@ -1131,7 +1027,7 @@ namespace doticu_npcp { namespace Object_Ref {
             {
             }
 
-            virtual Bool_t operator()(Array_t* arguments)
+            virtual Bool_t operator()(Arguments_t* arguments)
             {
                 arguments->Resize(3);
                 arguments->At(0)->Pack(form);
@@ -1167,7 +1063,7 @@ namespace doticu_npcp { namespace Object_Ref {
             {
             }
 
-            virtual Bool_t operator()(Array_t* arguments)
+            virtual Bool_t operator()(Arguments_t* arguments)
             {
                 arguments->Resize(4);
                 arguments->At(0)->Pack(form);

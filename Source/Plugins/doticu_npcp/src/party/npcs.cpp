@@ -287,6 +287,15 @@ namespace doticu_npcp { namespace Party {
 
         Actor_t* clone = Actor2::Clone(original);
 
+        String_t original_name;
+        Member_t* original_member = Members_t::Self()->From_Actor(original);
+        if (original_member) {
+            original_name = original_member->Name();
+        } else {
+            original_name = Actor2::Get_Name(original);
+        }
+        Object_Ref::Rename(clone, (std::string("Clone of ") + original_name.data).c_str());
+
         Int_t base_idx = Add_Base_If_Needed(clone, original);
         Form_Vector_t* clones = Clones(base_idx);
         if (!clones) {

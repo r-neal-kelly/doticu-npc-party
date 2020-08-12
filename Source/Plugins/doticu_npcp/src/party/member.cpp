@@ -68,9 +68,12 @@ namespace doticu_npcp { namespace Party {
     Variable_t* Member_t::Outfit2_Variable() { DEFINE_VARIABLE("p_code_outfit2"); }
     Variable_t* Member_t::Rating_Variable() { DEFINE_VARIABLE("p_int_rating"); }
 
+    Variable_t* Member_t::Name_Variable() { DEFINE_VARIABLE("p_str_name"); }
+
     Variable_t* Member_t::Previous_Factions_Variable() { DEFINE_VARIABLE("p_prev_factions"); }
-    Variable_t* Member_t::Previous_Faction_Ranks_Variable() { DEFINE_VARIABLE("p_prev_faction_ranks"); }
     Variable_t* Member_t::Previous_Crime_Faction_Variable() { DEFINE_VARIABLE("p_prev_faction_crime"); }
+    Variable_t* Member_t::Previous_Potential_Follower_Faction_Variable() { DEFINE_VARIABLE("p_prev_faction_potential_follower"); }
+    Variable_t* Member_t::Previous_No_Body_Cleanup_Faction_Variable() { DEFINE_VARIABLE("p_prev_faction_no_body_cleanup"); }
     Variable_t* Member_t::Previous_Aggression_Variable() { DEFINE_VARIABLE("p_prev_aggression"); }
     Variable_t* Member_t::Previous_Confidence_Variable() { DEFINE_VARIABLE("p_prev_confidence"); }
     Variable_t* Member_t::Previous_Assistance_Variable() { DEFINE_VARIABLE("p_prev_assistance"); }
@@ -175,7 +178,12 @@ namespace doticu_npcp { namespace Party {
     String_t Member_t::Name()
     {
         NPCP_ASSERT(Is_Filled());
-        return Actor2::Get_Name(Actor());
+        Variable_t* name_variable = Name_Variable();
+        if (name_variable->Has_String()) {
+            return name_variable->String();
+        } else {
+            return Actor2::Get_Name(Actor());
+        }
     }
 
     Outfit_t* Member_t::Vanilla_Outfit()
@@ -194,7 +202,11 @@ namespace doticu_npcp { namespace Party {
         if (variable->Has_Object()) {
             outfit2 = static_cast<Outfit2_t*>(variable->Reference());
         } else {
-            outfit2 = Outfit2_t::Create_Member(Actor(), Pack());
+            if (Is_Clone()) {
+                outfit2 = Outfit2_t::Create_Member(Actor(), Pack());
+            } else {
+                outfit2 = Outfit2_t::Create_Member(Actor(), Pack());
+            }
             //variable->Pack(outfit2, Outfit2_t::Class_Info());
             variable->Pack(outfit2);
         }
@@ -335,12 +347,12 @@ namespace doticu_npcp { namespace Party {
 
     Bool_t Member_t::Is_Ready()
     {
-        return Current_Outfit2_Variable()->Has_Object();
+        return Is_Filled() && Current_Outfit2_Variable()->Has_Object();
     }
 
     Bool_t Member_t::Is_Unready()
     {
-        return !Current_Outfit2_Variable()->Has_Object();
+        return Is_Filled() && !Current_Outfit2_Variable()->Has_Object();
     }
 
     Bool_t Member_t::Is_Loaded()
@@ -794,6 +806,27 @@ namespace doticu_npcp { namespace Party {
         Object_Ref::Untoken(Actor(), token);
     }
 
+    void Member_t::Fill(Actor_t* actor, Bool_t is_clone)
+    {
+        struct Callback : public Virtual_Callback_t {
+        public:
+            Member_t* member;
+            Actor_t* actor;
+            Bool_t is_clone;
+            Callback(Member_t* member, Actor_t* actor, Bool_t is_clone) :
+                member(member), actor(actor), is_clone(is_clone)
+            {
+            }
+            void operator()(Variable_t* result)
+            {
+                member->Create(actor, is_clone);
+            }
+        };
+        Virtual_Callback_i* callback = new Callback(this, actor, is_clone);
+
+        Alias_t::Fill(actor, &callback);
+    }
+
     void Member_t::Create(Actor_t* actor, Bool_t is_clone)
     {
         Actor_Variable()->Pack(actor);
@@ -812,62 +845,135 @@ namespace doticu_npcp { namespace Party {
         Is_Display_Variable()->Bool(false);
         Is_Reanimated_Variable()->Bool(false);
 
-        Outfit2_Variable()->Int(CODES::OUTFIT2::MEMBER);
         Rating_Variable()->Int(0);
 
-        Backup_State();
+        Backup_State(actor);
 
-        /*
-    p_Create_Outfit(doticu_npcp_codes.OUTFIT2_MEMBER())
-    p_Backup()
+        Member();
+        Stylize(Vars::Default_Style());
+        Vitalize(Vars::Default_Vitality());
 
-    p_Member()
-    Stylize(VARS.auto_style)
-    p_Vitalize(VARS.auto_vitality)
-    p_Outfit()
+        Update_Outfit2(CODES::OUTFIT2::MEMBER);
+        Apply_Outfit2();
 
-    ; has to happen after p_Member() because it needs
-    ; to have the token for the full dialogue
-    if p_is_clone
-        ACTORS.Greet_Player(p_ref_actor)
-    endIf
-        */
+        if (is_clone) {
+            Actor2::Greet_Player(actor);
+        }
     }
 
     void Member_t::Destroy()
     {
-
-    }
-
-    void Member_t::Backup_State()
-    {
         /*
         
-    p_prev_factions = ACTORS.Get_Factions(p_ref_actor)
-    p_prev_faction_ranks = ACTORS.Get_Faction_Ranks(p_ref_actor, p_prev_factions)
-    p_prev_faction_crime = p_ref_actor.GetCrimeFaction()
+    if Is_Follower()
+        FOLLOWERS.f_Destroy_Follower(p_ref_actor)
+    endIf
 
-    p_prev_aggression = p_ref_actor.GetBaseActorValue("Aggression")
-    p_prev_confidence = p_ref_actor.GetBaseActorValue("Confidence")
-    p_prev_assistance = p_ref_actor.GetBaseActorValue("Assistance")
-    p_prev_morality = p_ref_actor.GetBaseActorValue("Morality")
+    Unvitalize()
+    Unstylize()
+    if Is_Mannequin()
+        p_Unmannequinize()
+    endIf
+    if Is_Paralyzed()
+        p_Unparalyze()
+    endIf
+    if Is_Immobile()
+        p_Mobilize()
+    endIf
+    if Is_Thrall()
+        p_Unthrall()
+    endIf
+    if Is_Settler()
+        p_Unsettle()
+    endIf
+    p_Unmember()
+    if Is_Reanimated()
+        p_Deanimate()
+        p_Kill()
+    endIf
+
+    p_Restore()
+    p_Destroy_Outfits()
+    p_Destroy_Containers()
+
+p_Lock()
+
+    p_prev_morality = 0.0
+    p_prev_assistance = 0.0
+    p_prev_confidence = 0.0
+    p_prev_aggression = 0.0
+    p_prev_faction_no_body_cleanup = false
+    p_prev_faction_potential_follower = false
+    p_prev_faction_crime = none
+    p_prev_factions = new Faction[1]
+
+    p_outfit2_auto_backup = none
+    p_outfit2_current = none
+    p_outfit2_default = none
+    p_outfit2_vanilla = none
+    p_outfit2_follower = none
+    p_outfit2_immobile = none
+    p_outfit2_thrall = none
+    p_outfit2_settler = none
+    p_outfit2_member = none
+    p_container_pack = none
+    p_outfit_vanilla = none
+    p_marker_mannequin = none
+    p_marker_undisplay = none
+    p_marker_display = none
+    p_int_rating = 0
+    p_code_outfit2 = -1
+    p_code_vitality = -1
+    p_code_style = -1
+    p_is_display = false
+    p_is_reanimated = false
+    p_is_mannequin = false
+    p_is_paralyzed = false
+    p_is_immobile = false
+    p_is_thrall = false
+    p_is_settler = false
+    p_is_clone = false
+    p_ref_actor = none
+
+    Clear()
+    
+p_Unlock()
         
         */
     }
 
-    void Member_t::Restore_State()
+    void Member_t::Backup_State(Actor_t* actor)
     {
-        /*
-        
-    p_ref_actor.SetActorValue("Morality", p_prev_morality)
-    p_ref_actor.SetActorValue("Assistance", p_prev_assistance)
-    p_ref_actor.SetActorValue("Confidence", p_prev_confidence)
-    p_ref_actor.SetActorValue("Aggression", 0.0)
+        Previous_Crime_Faction_Variable()->Pack(Actor2::Crime_Faction(actor));
+        Previous_Potential_Follower_Faction_Variable()->Bool(Actor2::Has_Faction(actor, Consts::Potential_Follower_Faction()));
+        Previous_No_Body_Cleanup_Faction_Variable()->Bool(Actor2::Has_Faction(actor, Consts::WI_No_Body_Cleanup_Faction()));
 
-    ACTORS.Set_Factions(p_ref_actor, p_prev_factions, p_prev_faction_ranks)
-    p_ref_actor.SetCrimeFaction(p_prev_faction_crime)
-        
-        */
+        Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(actor);
+        Previous_Aggression_Variable()->Float(value_owner->Get_Base_Actor_Value(Actor_Value_t::AGGRESSION));
+        Previous_Confidence_Variable()->Float(value_owner->Get_Base_Actor_Value(Actor_Value_t::CONFIDENCE));
+        Previous_Assistance_Variable()->Float(value_owner->Get_Base_Actor_Value(Actor_Value_t::ASSISTANCE));
+        Previous_Morality_Variable()->Float(value_owner->Get_Base_Actor_Value(Actor_Value_t::MORALITY));
+    }
+
+    void Member_t::Restore_State(Actor_t* actor)
+    {
+        Actor2::Add_Crime_Faction(actor, Previous_Crime_Faction_Variable()->Faction());
+        if (Previous_Potential_Follower_Faction_Variable()->Bool()) {
+            Actor2::Add_Faction(actor, Consts::Potential_Follower_Faction(), 0);
+        } else {
+            Actor2::Remove_Faction(actor, Consts::Potential_Follower_Faction());
+        }
+        if (Previous_No_Body_Cleanup_Faction_Variable()->Bool()) {
+            Actor2::Add_Faction(actor, Consts::WI_No_Body_Cleanup_Faction(), 0);
+        } else {
+            Actor2::Remove_Faction(actor, Consts::WI_No_Body_Cleanup_Faction());
+        }
+
+        Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(actor);
+        value_owner->Set_Actor_Value(Actor_Value_t::AGGRESSION, Previous_Aggression_Variable()->Float());
+        value_owner->Set_Actor_Value(Actor_Value_t::CONFIDENCE, Previous_Confidence_Variable()->Float());
+        value_owner->Set_Actor_Value(Actor_Value_t::ASSISTANCE, Previous_Assistance_Variable()->Float());
+        value_owner->Set_Actor_Value(Actor_Value_t::MORALITY, Previous_Morality_Variable()->Float());
     }
 
     void Member_t::Member()
@@ -1228,7 +1334,7 @@ namespace doticu_npcp { namespace Party {
                 style_variable->Int(CODES::STYLE::DEFAULT);
 
                 Actor_t* actor = Actor();
-                Restylize_Default(actor);
+                Enforce_Default_Style(actor);
                 Level();
 
                 Actor2::Evaluate_Package(actor);
@@ -1250,7 +1356,7 @@ namespace doticu_npcp { namespace Party {
                 style_variable->Int(CODES::STYLE::WARRIOR);
 
                 Actor_t* actor = Actor();
-                Restylize_Warrior(actor);
+                Enforce_Warrior_Style(actor);
                 Level();
 
                 Actor2::Evaluate_Package(actor);
@@ -1272,7 +1378,7 @@ namespace doticu_npcp { namespace Party {
                 style_variable->Int(CODES::STYLE::MAGE);
 
                 Actor_t* actor = Actor();
-                Restylize_Mage(actor);
+                Enforce_Mage_Style(actor);
                 Level();
 
                 Actor2::Evaluate_Package(actor);
@@ -1294,7 +1400,7 @@ namespace doticu_npcp { namespace Party {
                 style_variable->Int(CODES::STYLE::ARCHER);
 
                 Actor_t* actor = Actor();
-                Restylize_Archer(actor);
+                Enforce_Archer_Style(actor);
                 Level();
 
                 Actor2::Evaluate_Package(actor);
@@ -1316,7 +1422,7 @@ namespace doticu_npcp { namespace Party {
                 style_variable->Int(CODES::STYLE::COWARD);
 
                 Actor_t* actor = Actor();
-                Restylize_Coward(actor);
+                Enforce_Coward_Style(actor);
                 Level();
 
                 Actor2::Evaluate_Package(actor);
@@ -1328,28 +1434,28 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
-    void Member_t::Restylize(Actor_t* actor)
+    void Member_t::Enforce_Style(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
         NPCP_ASSERT(actor);
 
         Int_t style = Style_Variable()->Int();
         if (style == CODES::STYLE::DEFAULT) {
-            return Restylize_Default(actor);
+            return Enforce_Default_Style(actor);
         } else if (style == CODES::STYLE::WARRIOR) {
-            return Restylize_Warrior(actor);
+            return Enforce_Warrior_Style(actor);
         } else if (style == CODES::STYLE::MAGE) {
-            return Restylize_Mage(actor);
+            return Enforce_Mage_Style(actor);
         } else if (style == CODES::STYLE::ARCHER) {
-            return Restylize_Archer(actor);
+            return Enforce_Archer_Style(actor);
         } else if (style == CODES::STYLE::COWARD) {
-            return Restylize_Coward(actor);
+            return Enforce_Coward_Style(actor);
         } else {
             NPCP_ASSERT(false);
         }
     }
 
-    void Member_t::Restylize_Default(Actor_t* actor)
+    void Member_t::Enforce_Default_Style(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
         NPCP_ASSERT(actor);
@@ -1362,7 +1468,7 @@ namespace doticu_npcp { namespace Party {
         Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
     }
 
-    void Member_t::Restylize_Warrior(Actor_t* actor)
+    void Member_t::Enforce_Warrior_Style(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
         NPCP_ASSERT(actor);
@@ -1375,7 +1481,7 @@ namespace doticu_npcp { namespace Party {
         Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
     }
 
-    void Member_t::Restylize_Mage(Actor_t* actor)
+    void Member_t::Enforce_Mage_Style(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
         NPCP_ASSERT(actor);
@@ -1388,7 +1494,7 @@ namespace doticu_npcp { namespace Party {
         Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
     }
 
-    void Member_t::Restylize_Archer(Actor_t* actor)
+    void Member_t::Enforce_Archer_Style(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
         NPCP_ASSERT(actor);
@@ -1401,7 +1507,7 @@ namespace doticu_npcp { namespace Party {
         Object_Ref::Untoken(actor, Consts::Coward_Style_Token());
     }
 
-    void Member_t::Restylize_Coward(Actor_t* actor)
+    void Member_t::Enforce_Coward_Style(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
         NPCP_ASSERT(actor);
@@ -1434,67 +1540,212 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
-    void Member_t::Vitalize(Int_t vitality)
+    Int_t Member_t::Vitalize(Int_t vitality)
     {
-        NPCP_ASSERT(Is_Filled());
-        Actor_t* actor = Actor();
-        
-        if (vitality == CODES::VITALITY::MORTAL) {
-            Vitality_Variable()->Int(CODES::VITALITY::MORTAL);
-            Object_Ref::Token(actor, Consts::Mortal_Vitality_Token());
-            Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
-            Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
-            Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
-
-            flags &= ~IS_PROTECTED;
-            flags &= ~IS_ESSENTIAL;
-        } else if (vitality == CODES::VITALITY::ESSENTIAL) {
-            Vitality_Variable()->Int(CODES::VITALITY::ESSENTIAL);
-            Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
-            Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
-            Object_Ref::Token(actor, Consts::Essential_Vitality_Token());
-            Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
-
-            flags &= ~IS_PROTECTED;
-            flags |= IS_ESSENTIAL;
-        } else if (vitality == CODES::VITALITY::INVULNERABLE) {
-            Vitality_Variable()->Int(CODES::VITALITY::INVULNERABLE);
-            Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
-            Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
-            Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
-            Object_Ref::Token(actor, Consts::Invulnerable_Vitality_Token());
-
-            flags &= ~IS_PROTECTED;
-            flags |= IS_ESSENTIAL;
-        } else /* vitality == Vitality_e::PROTECTED */ {
-            Vitality_Variable()->Int(CODES::VITALITY::PROTECTED);
-            Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
-            Object_Ref::Token(actor, Consts::Protected_Vitality_Token());
-            Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
-            Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
-
-            flags |= IS_PROTECTED;
-            flags &= ~IS_ESSENTIAL;
+        if (Is_Filled()) {
+            if (vitality == CODES::VITALITY::MORTAL) {
+                return Vitalize_Mortal();
+            } else if (vitality == CODES::VITALITY::PROTECTED) {
+                return Vitalize_Protected();
+            } else if (vitality == CODES::VITALITY::ESSENTIAL) {
+                return Vitalize_Essential();
+            } else if (vitality == CODES::VITALITY::INVULNERABLE) {
+                return Vitalize_Invulnerable();
+            } else {
+                return CODES::ISNT;
+            }
+        } else {
+            return CODES::MEMBER;
         }
-
-        Level();
-
-        Actor2::Evaluate_Package(actor);
     }
 
-    void Member_t::Unvitalize()
+    Int_t Member_t::Vitalize_Mortal()
+    {
+        if (Is_Filled()) {
+            Variable_t* vitality_variable = Vitality_Variable();
+            if (vitality_variable->Int() == CODES::VITALITY::MORTAL) {
+                return CODES::IS;
+            } else {
+                vitality_variable->Int(CODES::VITALITY::MORTAL);
+
+                Actor_t* actor = Actor();
+                Enforce_Mortal_Vitality(actor);
+                Level();
+
+                Actor2::Evaluate_Package(actor);
+
+                return CODES::SUCCESS;
+            }
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    Int_t Member_t::Vitalize_Protected()
+    {
+        if (Is_Filled()) {
+            Variable_t* vitality_variable = Vitality_Variable();
+            if (vitality_variable->Int() == CODES::VITALITY::PROTECTED) {
+                return CODES::IS;
+            } else {
+                vitality_variable->Int(CODES::VITALITY::PROTECTED);
+
+                Actor_t* actor = Actor();
+                Enforce_Protected_Vitality(actor);
+                Level();
+
+                Actor2::Evaluate_Package(actor);
+
+                return CODES::SUCCESS;
+            }
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    Int_t Member_t::Vitalize_Essential()
+    {
+        if (Is_Filled()) {
+            Variable_t* vitality_variable = Vitality_Variable();
+            if (vitality_variable->Int() == CODES::VITALITY::ESSENTIAL) {
+                return CODES::IS;
+            } else {
+                vitality_variable->Int(CODES::VITALITY::ESSENTIAL);
+
+                Actor_t* actor = Actor();
+                Enforce_Essential_Vitality(actor);
+                Level();
+
+                Actor2::Evaluate_Package(actor);
+
+                return CODES::SUCCESS;
+            }
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    Int_t Member_t::Vitalize_Invulnerable()
+    {
+        if (Is_Filled()) {
+            Variable_t* vitality_variable = Vitality_Variable();
+            if (vitality_variable->Int() == CODES::VITALITY::INVULNERABLE) {
+                return CODES::IS;
+            } else {
+                vitality_variable->Int(CODES::VITALITY::INVULNERABLE);
+
+                Actor_t* actor = Actor();
+                Enforce_Invulnerable_Vitality(actor);
+                Level();
+
+                Actor2::Evaluate_Package(actor);
+
+                return CODES::SUCCESS;
+            }
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    void Member_t::Enforce_Vitality(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
-        Actor_t* actor = Actor();
+        NPCP_ASSERT(actor);
 
-        Vitality_Variable()->Int(0);
+        Int_t vitality = Vitality_Variable()->Int();
+        if (vitality == CODES::VITALITY::MORTAL) {
+            return Enforce_Mortal_Vitality(actor);
+        } else if (vitality == CODES::VITALITY::PROTECTED) {
+            return Enforce_Protected_Vitality(actor);
+        } else if (vitality == CODES::VITALITY::ESSENTIAL) {
+            return Enforce_Essential_Vitality(actor);
+        } else if (vitality == CODES::VITALITY::INVULNERABLE) {
+            return Enforce_Invulnerable_Vitality(actor);
+        } else {
+            NPCP_ASSERT(false);
+        }
+    }
 
-        Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
+    void Member_t::Enforce_Mortal_Vitality(Actor_t* actor)
+    {
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(actor);
+        NPCP_ASSERT(Vitality_Variable()->Int() == CODES::VITALITY::MORTAL);
+
+        Object_Ref::Token(actor, Consts::Mortal_Vitality_Token());
         Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
         Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
         Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
 
-        Actor2::Evaluate_Package(actor);
+        flags &= ~IS_PROTECTED;
+        flags &= ~IS_ESSENTIAL;
+    }
+
+    void Member_t::Enforce_Protected_Vitality(Actor_t* actor)
+    {
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(actor);
+        NPCP_ASSERT(Vitality_Variable()->Int() == CODES::VITALITY::PROTECTED);
+
+        Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
+        Object_Ref::Token(actor, Consts::Protected_Vitality_Token());
+        Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
+        Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
+
+        flags |= IS_PROTECTED;
+        flags &= ~IS_ESSENTIAL;
+    }
+
+    void Member_t::Enforce_Essential_Vitality(Actor_t* actor)
+    {
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(actor);
+        NPCP_ASSERT(Vitality_Variable()->Int() == CODES::VITALITY::ESSENTIAL);
+
+        Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
+        Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
+        Object_Ref::Token(actor, Consts::Essential_Vitality_Token());
+        Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
+
+        flags &= ~IS_PROTECTED;
+        flags |= IS_ESSENTIAL;
+    }
+
+    void Member_t::Enforce_Invulnerable_Vitality(Actor_t* actor)
+    {
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(actor);
+        NPCP_ASSERT(Vitality_Variable()->Int() == CODES::VITALITY::INVULNERABLE);
+
+        Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
+        Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
+        Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
+        Object_Ref::Token(actor, Consts::Invulnerable_Vitality_Token());
+
+        flags &= ~IS_PROTECTED;
+        flags |= IS_ESSENTIAL;
+    }
+
+    Int_t Member_t::Unvitalize()
+    {
+        if (Is_Filled()) {
+            Vitality_Variable()->Int(0);
+
+            Actor_t* actor = Actor();
+            Object_Ref::Untoken(actor, Consts::Mortal_Vitality_Token());
+            Object_Ref::Untoken(actor, Consts::Protected_Vitality_Token());
+            Object_Ref::Untoken(actor, Consts::Essential_Vitality_Token());
+            Object_Ref::Untoken(actor, Consts::Invulnerable_Vitality_Token());
+
+            flags &= ~IS_PROTECTED;
+            flags |= IS_ESSENTIAL;
+
+            Actor2::Evaluate_Package(actor);
+
+            return CODES::SUCCESS;
+        } else {
+            return CODES::MEMBER;
+        }
     }
 
     void Member_t::Change_Outfit1(Outfit_t* outfit)
@@ -1787,9 +2038,19 @@ namespace doticu_npcp { namespace Party {
         NPCP_ASSERT(Is_Filled());
         Actor_t* actor = Actor();
 
+        Name_Variable()->String(new_name);
         Object_Ref::Rename(actor, new_name);
 
         Actor2::Evaluate_Package(actor);
+    }
+
+    void Member_t::Enforce_Name(Actor_t* actor)
+    {
+        NPCP_ASSERT(Is_Filled());
+        Variable_t* name_variable = Name_Variable();
+        if (name_variable->Has_String()) {
+            Object_Ref::Rename(actor, name_variable->String());
+        }
     }
 
     void Member_t::Summon(Reference_t* origin, float radius, float degree)
@@ -1911,11 +2172,16 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
     Int_t Stylize_Mage(Member_t* self) FORWARD_INT(Member_t::Stylize_Mage());
     Int_t Stylize_Archer(Member_t* self) FORWARD_INT(Member_t::Stylize_Archer());
     Int_t Stylize_Coward(Member_t* self) FORWARD_INT(Member_t::Stylize_Coward());
-    void Restylize(Member_t* self, Actor_t* actor) FORWARD_VOID(Member_t::Restylize(actor));
+    void Enforce_Style(Member_t* self, Actor_t* actor) FORWARD_VOID(Member_t::Enforce_Style(actor));
     Int_t Unstylize(Member_t* self) FORWARD_INT(Member_t::Unstylize());
 
-    void Vitalize(Member_t* self, Int_t vitality) FORWARD_VOID(Member_t::Vitalize(vitality));
-    void Unvitalize(Member_t* self) FORWARD_VOID(Member_t::Unvitalize());
+    Int_t Vitalize(Member_t* self, Int_t vitality) FORWARD_INT(Member_t::Vitalize(vitality));
+    Int_t Vitalize_Mortal(Member_t* self) FORWARD_INT(Member_t::Vitalize_Mortal());
+    Int_t Vitalize_Protected(Member_t* self) FORWARD_INT(Member_t::Vitalize_Protected());
+    Int_t Vitalize_Essential(Member_t* self) FORWARD_INT(Member_t::Vitalize_Essential());
+    Int_t Vitalize_Invulnerable(Member_t* self) FORWARD_INT(Member_t::Vitalize_Invulnerable());
+    void Enforce_Vitality(Member_t* self, Actor_t* actor) FORWARD_VOID(Member_t::Enforce_Vitality(actor));
+    Int_t Unvitalize(Member_t* self) FORWARD_INT(Member_t::Unvitalize());
 
     Int_t Change_Outfit2(Member_t* self, Int_t outfit2_code) FORWARD_INT(Change_Outfit2(outfit2_code));
     Int_t Change_Member_Outfit2(Member_t* self) FORWARD_INT(Change_Member_Outfit2());
@@ -1933,6 +2199,8 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
     void Rename(Member_t* self, String_t new_name) FORWARD_VOID(Member_t::Rename(new_name));
 
     void Log_Variable_Infos(Member_t* self) FORWARD_VOID(Log_Variable_Infos());
+
+    void Restore_State(Member_t* self, Actor_t* actor) FORWARD_VOID(Member_t::Restore_State(actor));
 
     Bool_t Register(Registry_t* registry)
     {
@@ -2011,11 +2279,16 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
         ADD_METHOD("Stylize_Mage", 0, Int_t, Stylize_Mage);
         ADD_METHOD("Stylize_Archer", 0, Int_t, Stylize_Archer);
         ADD_METHOD("Stylize_Coward", 0, Int_t, Stylize_Coward);
-        ADD_METHOD("p_Restylize", 1, void, Restylize, Actor_t*);
+        ADD_METHOD("p_Enforce_Style", 1, void, Enforce_Style, Actor_t*);
         ADD_METHOD("Unstylize", 0, Int_t, Unstylize);
 
-        ADD_METHOD("p_Vitalize", 1, void, Vitalize, Int_t);
-        ADD_METHOD("p_Unvitalize", 0, void, Unvitalize);
+        ADD_METHOD("Vitalize", 1, Int_t, Vitalize, Int_t);
+        ADD_METHOD("Vitalize_Mortal", 0, Int_t, Vitalize_Mortal);
+        ADD_METHOD("Vitalize_Protected", 0, Int_t, Vitalize_Protected);
+        ADD_METHOD("Vitalize_Essential", 0, Int_t, Vitalize_Essential);
+        ADD_METHOD("Vitalize_Invulnerable", 0, Int_t, Vitalize_Invulnerable);
+        ADD_METHOD("p_Enforce_Vitality", 1, void, Enforce_Vitality, Actor_t*);
+        ADD_METHOD("Unvitalize", 0, Int_t, Unvitalize);
 
         ADD_METHOD("Change_Outfit2", 1, Int_t, Change_Outfit2, Int_t);
         ADD_METHOD("Change_Member_Outfit2", 0, Int_t, Change_Member_Outfit2);
@@ -2033,6 +2306,8 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
         ADD_METHOD("p_Rename", 1, void, Rename, String_t);
 
         ADD_METHOD("Log_Variable_Infos", 0, void, Log_Variable_Infos);
+
+        ADD_METHOD("p_Restore_State", 1, void, Restore_State, Actor_t*);
 
         #undef ADD_METHOD
 

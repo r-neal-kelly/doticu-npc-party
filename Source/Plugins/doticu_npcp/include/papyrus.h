@@ -214,7 +214,7 @@ namespace doticu_npcp { namespace Papyrus {
     class Variable_t;
     class Virtual_Arguments_i {
     public:
-        struct Array_t {
+        struct Arguments_t {
             UInt32 unk00; // 00
             UInt32 unk04; // 04
             Variable_t* variables; // 08
@@ -224,17 +224,17 @@ namespace doticu_npcp { namespace Papyrus {
             Bool_t Resize(UInt32 count);
             Variable_t* At(UInt32 idx);
         };
-        STATIC_ASSERT(sizeof(Array_t) == 0x20);
+        STATIC_ASSERT(sizeof(Arguments_t) == 0x20);
 
         virtual ~Virtual_Arguments_i() = default; // 00
 
-        virtual Bool_t operator()(Array_t* arguments) = 0; // 01
+        virtual Bool_t operator()(Arguments_t* arguments) = 0; // 01
     };
     STATIC_ASSERT(sizeof(Virtual_Arguments_i) == 0x8);
 
     class Virtual_Arguments_t : public Virtual_Arguments_i {
     public:
-        virtual Bool_t operator()(Array_t* arguments) override { return true; } // 01
+        virtual Bool_t operator()(Arguments_t* arguments) override { return true; } // 01
     };
     STATIC_ASSERT(sizeof(Virtual_Arguments_i) == 0x8);
 
@@ -375,6 +375,7 @@ namespace doticu_npcp { namespace Papyrus {
         Bool_t Is_Float_Array();
         Bool_t Is_Bool_Array();
 
+        Bool_t Has_String();
         Bool_t Has_Object();
 
         Bool_t Bool();

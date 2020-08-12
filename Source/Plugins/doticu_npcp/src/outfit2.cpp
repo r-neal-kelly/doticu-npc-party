@@ -153,7 +153,7 @@ namespace doticu_npcp { namespace Papyrus {
             }
             virtual void operator()(Variable_t*)
             {
-                Object_Ref::Remove_Unwearable(outfit2);
+                Object_Ref::Remove_Unwearables(outfit2);
             }
         };
         Virtual_Callback_i* callback = new Callback(outfit2);

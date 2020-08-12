@@ -10,6 +10,8 @@
 
 namespace doticu_npcp { namespace Actor2 {
 
+    using namespace Papyrus;
+
     const char *Get_Base_Name(Actor *actor);
     const char *Get_Ref_Name(Actor *actor);
     const char *Get_Name(Actor *actor);
@@ -63,6 +65,11 @@ namespace doticu_npcp { namespace Actor2 {
     BFaction_Ranks_t* BFaction_Ranks(Actor_t* actor);
     XFaction_Ranks_t* XFaction_Ranks(Actor_t* actor, bool do_create = false);
     
+    struct Factions_And_Ranks_t {
+        Vector_t<Faction_t*> factions;
+        Vector_t<Int_t> ranks;
+    };
+
     Bool_t Has_Faction(Actor_t* actor, Faction_t* faction);
     Bool_t Has_Faction_Rank(Actor_t* actor, Faction_t* faction, Int_t rank);
     void Add_Faction(Actor_t* actor, Faction_t* faction, Int_t rank = 0);
@@ -70,6 +77,8 @@ namespace doticu_npcp { namespace Actor2 {
     void Add_Crime_Faction(Actor_t* actor, Faction_t* crime_faction);
     void Remove_Crime_Faction(Actor_t* actor);
     void Log_Factions(Actor_t* actor);
+    void Factions_And_Ranks(Actor_t* actor, Factions_And_Ranks_t& results, Int_t min_rank = -128, Int_t max_rank = 127);
+    Faction_t* Crime_Faction(Actor_t* actor);
 
     void Join_Player_Team(Actor_t* actor, Bool_t allow_favors = true);
     void Leave_Player_Team(Actor_t* actor);
@@ -106,6 +115,8 @@ namespace doticu_npcp { namespace Actor2 {
     Bool_t Isnt_Child(Actor_t* actor);
 
     void Update_Equipment(Actor_t* actor, Papyrus::Virtual_Callback_i** callback = nullptr);
+
+    void Greet_Player(Actor_t* actor);
 
 }}
 

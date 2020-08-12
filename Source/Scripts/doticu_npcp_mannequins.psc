@@ -171,7 +171,7 @@ function Expo(int id_expoee, ObjectReference ref_marker, bool auto_create)
     ref_member = MEMBERS.Get_Member(ref_actor)
     if !ref_member
         if auto_create
-            int code_return = MEMBERS.Create_Member(ref_actor)
+            int code_return = MEMBERS.Add_Original(ref_actor)
             if code_return != doticu_npcp_codes.SUCCESS()
                 LOGS.Create_Note("Could not create Expo Member.")
             endIf

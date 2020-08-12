@@ -32,13 +32,16 @@ namespace doticu_npcp { namespace Object_Ref {
     bool Is_Quest_Item(TESObjectREFR *ref_object);
     bool Is_Worn(TESObjectREFR *obj, TESForm *form);
 
+    void Remove_If(Reference_t* from,
+                   Reference_t* to = nullptr, // if nullptr, will delete items
+                   Bool_t(*should_remove_xform)(Form_t*) = nullptr, // if nullptr, will remove all
+                   Bool_t(*should_remove_xlist)(XList_t*, Form_t*) = nullptr, // if nullptr, will remove non-quest items
+                   Bool_t(*should_remove_bform)(Form_t*) = nullptr); // if nullptr, is the same as should_remove_xform
     void Remove_Wearables(Reference_t* obj, Reference_t* other = nullptr, Bool_t remove_quest_items = false);
-    void Remove_Unwearable(Reference_t* obj, Reference_t* other = nullptr);
+    void Remove_Unwearables(Reference_t* obj, Reference_t* other = nullptr, Bool_t remove_quest_items = false);
     void Remove_Non_Outfit_Worn(Reference_t* obj, Reference_t* other = nullptr, Bool_t remove_quest_items = false);
-    void Remove_All_Items(Reference_t* ref,
-                          Reference_t* transfer = nullptr,
-                          Bool_t remove_quest_items = false,
-                          Bool_t remove_unplayable_items = true);
+    void Remove_All_Items(Reference_t* from, Reference_t* to = nullptr, Bool_t remove_quest_items = false, Bool_t remove_unplayable_items = true);
+    
     void Categorize(TESObjectREFR *ref_object);
     void Log_XContainer(TESObjectREFR *obj);
     void Log_XList(TESObjectREFR *ref_object);
