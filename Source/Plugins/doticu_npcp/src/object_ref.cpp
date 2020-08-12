@@ -325,8 +325,8 @@ namespace doticu_npcp { namespace Object_Ref {
 
     void Remove_If(Reference_t* from,
                    Reference_t* to,
-                   Bool_t (*should_remove_xform)(Form_t*),
-                   Bool_t (*should_remove_xlist)(XList_t*, Form_t*),
+                   Bool_t(*should_remove_xform)(Form_t*),
+                   Bool_t(*should_remove_xlist)(XList_t*, Form_t*),
                    Bool_t(*should_remove_bform)(Form_t*))
     {
         NPCP_ASSERT(from);
@@ -365,32 +365,38 @@ namespace doticu_npcp { namespace Object_Ref {
 
             for (XEntries_t::Iterator xentries = xcontainer->data->objList->Begin(); !xentries.End(); ++xentries) {
                 XEntry_t* xentry = xentries.Get();
-                Form_t* form = xentry ? xentry->type : nullptr;
-                if (form && should_remove_xform(form)) {
-                    std::vector<XList_t*> xlists_to_remove;
-                    xlists_to_remove.reserve(2);
+                if (xentry) {
+                    Form_t* form = xentry->type;
+                    if (form) {
+                        if (should_remove_xform(form)) {
+                            std::vector<XList_t*> xlists_to_remove;
+                            xlists_to_remove.reserve(2);
 
-                    for (XLists_t::Iterator xlists = xentry->extendDataList->Begin(); !xlists.End(); ++xlists) {
-                        XList_t* xlist = xlists.Get();
-                        if (xlist) {
-                            XList::Validate(xlist);
-                            if (should_remove_xlist(xlist, form)) {
-                                xlists_to_remove.push_back(xlist);
+                            for (XLists_t::Iterator xlists = xentry->extendDataList->Begin(); !xlists.End(); ++xlists) {
+                                XList_t* xlist = xlists.Get();
+                                if (xlist) {
+                                    XList::Validate(xlist);
+                                    if (should_remove_xlist(xlist, form)) {
+                                        xlists_to_remove.push_back(xlist);
+                                    }
+                                }
+                            }
+
+                            if (xlists_to_remove.size() > 0) {
+                                XEntry_t* to_xentry = Object_Ref::Get_XEntry(to, form, true);
+                                for (size_t idx = 0, count = xlists_to_remove.size(); idx < count; idx += 1) {
+                                    XList_t* xlist = xlists_to_remove[idx];
+                                    XEntry::Move_XList(xentry, to_xentry, xlist, to);
+                                }
                             }
                         }
-                    }
 
-                    if (xlists_to_remove.size() > 0) {
-                        XEntry_t* to_xentry = Object_Ref::Get_XEntry(to, form, true);
-                        for (size_t idx = 0, count = xlists_to_remove.size(); idx < count; idx += 1) {
-                            XList_t* xlist = xlists_to_remove[idx];
-                            XEntry::Move_XList(xentry, to_xentry, xlist, to);
+                        if (xentry->countDelta == 0) {
+                            xentries_to_destroy.push_back(xentry);
                         }
+                    } else {
+                        xentries_to_destroy.push_back(xentry);
                     }
-                }
-
-                if (xentry->countDelta == 0) {
-                    xentries_to_destroy.push_back(xentry);
                 }
             }
 

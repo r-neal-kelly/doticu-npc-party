@@ -621,9 +621,9 @@ namespace doticu_npcp { namespace Party {
     Int_t Members_t::Add_Original(Actor_t* original)
     {
         if (original) {
-            if (Actor2::Isnt_Child(original)) {
-                if (Count_Filled() < Limit()) {
-                    if (!Should_Clone(original)) {
+            if (!Should_Clone(original)) {
+                if (Actor2::Isnt_Child(original)) {
+                    if (Count_Filled() < Limit()) {
                         if (Hasnt_Actor(original)) {
                             if (Actor2::Is_Alive(original) || Actor2::Try_Resurrect(original)) {
                                 NPCS_t::Self()->Add_Original(original);
@@ -638,13 +638,13 @@ namespace doticu_npcp { namespace Party {
                             return CODES::MEMBER;
                         }
                     } else {
-                        return Add_Clone(original);
+                        return CODES::MEMBERS;
                     }
                 } else {
-                    return CODES::MEMBERS;
+                    return CODES::CHILD;
                 }
             } else {
-                return CODES::CHILD;
+                return Add_Clone(original);
             }
         } else {
             return CODES::ACTOR;
