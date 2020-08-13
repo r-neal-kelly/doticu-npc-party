@@ -109,6 +109,12 @@ namespace doticu_npcp { namespace Party {
         return static_cast<Reference_t*>(Consts::Settler_Markers_Formlist()->forms.entries[ID()]);
     }
 
+    Reference_t* Member_t::Mannequin_Marker()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Mannequin_Marker_Variable()->Reference();
+    }
+
     Reference_t* Member_t::Display_Marker()
     {
         NPCP_ASSERT(Is_Filled());
@@ -1037,92 +1043,236 @@ p_Unlock()
         Actor2::Evaluate_Package(actor);
     }
 
-    void Member_t::Mobilize()
+    Int_t Member_t::Mobilize()
+    {
+        if (Is_Filled()) {
+            if (Is_Immobile()) {
+                Is_Immobile_Variable()->Bool(false);
+
+                Actor_t* actor = Actor();
+                Enforce_Mobile(actor);
+                Apply_Outfit2();
+
+                Actor2::Evaluate_Package(actor);
+
+                return CODES::SUCCESS;
+            } else {
+                return CODES::IS;
+            }
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    void Member_t::Enforce_Mobile(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
-        Actor_t* actor = Actor();
-
-        Is_Immobile_Variable()->Bool(false);
+        NPCP_ASSERT(Is_Mobile());
 
         Object_Ref::Untoken(actor, Consts::Immobile_Token());
-
-        Actor2::Evaluate_Package(actor);
     }
 
-    void Member_t::Immobilize()
+    Int_t Member_t::Immobilize()
+    {
+        if (Is_Filled()) {
+            if (Is_Mobile()) {
+                Is_Immobile_Variable()->Bool(true);
+
+                Actor_t* actor = Actor();
+                Enforce_Immobile(actor);
+                Apply_Outfit2();
+
+                Actor2::Evaluate_Package(actor);
+
+                return CODES::SUCCESS;
+            } else {
+                return CODES::IS;
+            }
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    void Member_t::Enforce_Immobile(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
-        Actor_t* actor = Actor();
-
-        Is_Immobile_Variable()->Bool(true);
+        NPCP_ASSERT(Is_Immobile());
 
         Object_Ref::Token(actor, Consts::Immobile_Token());
-
-        Actor2::Evaluate_Package(actor);
     }
 
-    void Member_t::Settle()
+    Int_t Member_t::Settle()
+    {
+        if (Is_Filled()) {
+            if (Isnt_Settler()) {
+                Is_Settler_Variable()->Bool(true);
+
+                Actor_t* actor = Actor();
+                Object_Ref::Move_To_Orbit(Settler_Marker(), actor, 0.0f, 180.0f);
+                Enforce_Settler(actor);
+                Apply_Outfit2();
+
+                Actor2::Evaluate_Package(actor);
+
+                return CODES::SUCCESS;
+            } else {
+                return CODES::IS;
+            }
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    void Member_t::Enforce_Settler(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
-        Actor_t* actor = Actor();
-
-        Is_Settler_Variable()->Bool(true);
+        NPCP_ASSERT(Is_Settler());
 
         Object_Ref::Token(actor, Consts::Settler_Token());
-
-        Object_Ref::Move_To_Orbit(Settler_Marker(), actor, 0.0f, 180.0f);
-
-        Actor2::Evaluate_Package(actor);
     }
 
-    void Member_t::Unsettle()
+    Int_t Member_t::Resettle()
+    {
+        if (Is_Filled()) {
+            if (Is_Settler()) {
+                Actor_t* actor = Actor();
+                Object_Ref::Move_To_Orbit(Settler_Marker(), actor, 0.0f, 180.0f);
+                Enforce_Settler(actor);
+                Apply_Outfit2();
+
+                Actor2::Evaluate_Package(actor);
+
+                return CODES::SUCCESS;
+            } else {
+                return CODES::ISNT;
+            }
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    Int_t Member_t::Unsettle()
+    {
+        if (Is_Filled()) {
+            if (Is_Settler()) {
+                Is_Settler_Variable()->Bool(false);
+
+                Actor_t* actor = Actor();
+                Object_Ref::Move_To_Orbit(Settler_Marker(), Consts::Storage_Marker(), 0.0f, 0.0f);
+                Enforce_Non_Settler(actor);
+                Apply_Outfit2();
+
+                Actor2::Evaluate_Package(actor);
+
+                return CODES::SUCCESS;
+            } else {
+                return CODES::IS;
+            }
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    void Member_t::Enforce_Non_Settler(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
-        Actor_t* actor = Actor();
-
-        Is_Settler_Variable()->Bool(false);
+        NPCP_ASSERT(Isnt_Settler());
 
         Object_Ref::Untoken(actor, Consts::Settler_Token());
-
-        Object_Ref::Move_To_Orbit(Settler_Marker(), Consts::Storage_Marker(), 0.0f, 0.0f);
-
-        Actor2::Evaluate_Package(actor);
     }
 
-    void Member_t::Enthrall()
+    Int_t Member_t::Enthrall()
+    {
+        if (Is_Filled()) {
+            if (Actor2::Is_Vampire(Player::Actor())) {
+                if (Isnt_Thrall()) {
+                    Is_Thrall_Variable()->Bool(true);
+
+                    Actor_t* actor = Actor();
+                    Enforce_Thrall(actor);
+                    Apply_Outfit2();
+
+                    Actor2::Evaluate_Package(actor);
+
+                    return CODES::SUCCESS;
+                } else {
+                    return CODES::IS;
+                }
+            } else {
+                return CODES::VAMPIRE;
+            }
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    void Member_t::Enforce_Thrall(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
-        Actor_t* actor = Actor();
-
-        Is_Thrall_Variable()->Bool(true);
+        NPCP_ASSERT(Is_Thrall());
 
         Object_Ref::Token(actor, Consts::Thrall_Token());
-
         Actor2::Add_Faction(actor, Consts::DLC1_Vampire_Feed_No_Crime_Faction());
-
-        Actor2::Evaluate_Package(actor);
     }
 
-    void Member_t::Unthrall()
+    Int_t Member_t::Unthrall()
+    {
+        if (Is_Filled()) {
+            if (Actor2::Is_Vampire(Player::Actor())) {
+                if (Is_Thrall()) {
+                    Is_Thrall_Variable()->Bool(false);
+
+                    Actor_t* actor = Actor();
+                    Enforce_Non_Thrall(actor);
+                    Apply_Outfit2();
+
+                    Actor2::Evaluate_Package(actor);
+
+                    return CODES::SUCCESS;
+                } else {
+                    return CODES::IS;
+                }
+            } else {
+                return CODES::VAMPIRE;
+            }
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    void Member_t::Enforce_Non_Thrall(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
-        Actor_t* actor = Actor();
-
-        Is_Thrall_Variable()->Bool(false);
+        NPCP_ASSERT(Isnt_Thrall());
 
         Object_Ref::Untoken(actor, Consts::Thrall_Token());
-
         Actor2::Remove_Faction(actor, Consts::DLC1_Vampire_Feed_No_Crime_Faction());
-
-        Actor2::Evaluate_Package(actor);
     }
 
-    void Member_t::Paralyze()
+    Int_t Member_t::Paralyze()
+    {
+        if (Is_Filled()) {
+            if (Isnt_Paralyzed()) {
+                Is_Paralyzed_Variable()->Bool(true);
+
+                Actor_t* actor = Actor();
+                Enforce_Paralyzed(actor);
+
+                Actor2::Evaluate_Package(actor);
+
+                return CODES::SUCCESS;
+            } else {
+                return CODES::IS;
+            }
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    void Member_t::Enforce_Paralyzed(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
-        Actor_t* actor = Actor();
-
-        Is_Paralyzed_Variable()->Bool(true);
+        NPCP_ASSERT(Is_Paralyzed());
 
         Object_Ref::Token(actor, Consts::Paralyzed_Token());
 
@@ -1131,21 +1281,32 @@ p_Unlock()
         Actor2::Ghostify(actor);
 
         actor->Update_3D_Position();
-
-        Actor2::Evaluate_Package(actor);
     }
 
-    void Member_t::Reparalyze()
+    Int_t Member_t::Unparalyze()
     {
+        if (Is_Filled()) {
+            if (Is_Paralyzed()) {
+                Is_Paralyzed_Variable()->Bool(false);
 
+                Actor_t* actor = Actor();
+                Enforce_Non_Paralyzed(actor);
+
+                Actor2::Evaluate_Package(actor);
+
+                return CODES::SUCCESS;
+            } else {
+                return CODES::IS;
+            }
+        } else {
+            return CODES::MEMBER;
+        }
     }
 
-    void Member_t::Unparalyze()
+    void Member_t::Enforce_Non_Paralyzed(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
-        Actor_t* actor = Actor();
-
-        Is_Paralyzed_Variable()->Bool(false);
+        NPCP_ASSERT(Isnt_Paralyzed());
 
         Object_Ref::Untoken(actor, Consts::Paralyzed_Token());
 
@@ -1154,18 +1315,44 @@ p_Unlock()
             Actor2::Enable_AI(actor);
             Actor2::Unghostify(actor);
         }
-
-        Actor2::Evaluate_Package(actor);
     }
 
-    void Member_t::Mannequinize(Reference_t* marker)
+    Int_t Member_t::Mannequinize(Reference_t* marker)
+    {
+        if (Is_Filled()) {
+            if (Isnt_Mannequin()) {
+                if (marker) { // later on, we can make loose mannequins by providing a default marker
+                    Is_Mannequin_Variable()->Bool(true);
+                    Mannequin_Marker_Variable()->Pack(marker);
+
+                    Actor_t* actor = Actor();
+                    Enforce_Mannequin(actor, marker);
+
+                    Follower_t* follower = Follower();
+                    if (follower) {
+                        Virtual_Machine_t::Self()->Call_Method(follower, Follower_t::Class_Name(), "Unfollow");
+                    }
+
+                    Actor2::Evaluate_Package(actor);
+
+                    return CODES::SUCCESS;
+                } else {
+                    return CODES::MARKER;
+                }
+            } else {
+                return CODES::IS;
+            }
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    void Member_t::Enforce_Mannequin(Actor_t* actor, Reference_t* marker)
     {
         NPCP_ASSERT(Is_Filled());
-        NPCP_ASSERT(marker); // later on, we can make loose mannequins by providing a default marker
-        Actor_t* actor = Actor();
-
-        Is_Mannequin_Variable()->Bool(true);
-        Mannequin_Marker_Variable()->Pack(marker);
+        NPCP_ASSERT(Is_Mannequin());
+        NPCP_ASSERT(actor);
+        NPCP_ASSERT(marker); 
 
         Object_Ref::Token(actor, Consts::Mannequin_Token());
 
@@ -1173,34 +1360,47 @@ p_Unlock()
         Actor2::Disable_AI(actor);
         Actor2::Ghostify(actor);
 
-        Actor2::Move_To_Orbit(actor, marker, 0.0f, 180.0f);
+        if (Isnt_Display()) {
+            Actor2::Move_To_Orbit(actor, marker, 0.0f, 180.0f);
 
-        actor->pos.x = marker->pos.x;
-        actor->pos.y = marker->pos.y;
-        actor->pos.z = marker->pos.z;
-        actor->rot.z = marker->rot.z;
-        actor->Update_Actor_3D_Position();
+            actor->pos.x = marker->pos.x;
+            actor->pos.y = marker->pos.y;
+            actor->pos.z = marker->pos.z;
+            actor->rot.z = marker->rot.z;
+            actor->Update_Actor_3D_Position();
 
-        Actor2::Fully_Update_3D_Model(actor);
-        actor->Resurrect(false, true);
-
-        Actor2::Evaluate_Package(actor);
+            Actor2::Fully_Update_3D_Model(actor);
+            actor->Resurrect(false, true);
+        }
     }
 
-    void Member_t::Remannequinize()
+    Int_t Member_t::Unmannequinize()
     {
-        NPCP_ASSERT(Is_Filled());
-        Actor_t* actor = Actor();
+        if (Is_Filled()) {
+            if (Is_Mannequin()) {
+                Is_Mannequin_Variable()->Bool(false);
+                Mannequin_Marker_Variable()->None();
+
+                Actor_t* actor = Actor();
+                Enforce_Non_Mannequin(actor);
+
+                Actor2::Evaluate_Package(actor);
+
+                return CODES::SUCCESS;
+            } else {
+                return CODES::IS;
+            }
+        } else {
+            return CODES::MEMBER;
+        }
     }
 
-    void Member_t::Unmannequinize()
+    void Member_t::Enforce_Non_Mannequin(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
-        Actor_t* actor = Actor();
+        NPCP_ASSERT(Isnt_Mannequin());
+        NPCP_ASSERT(actor);
         
-        Is_Mannequin_Variable()->Bool(false);
-        Mannequin_Marker_Variable()->None();
-
         Object_Ref::Untoken(actor, Consts::Mannequin_Token());
 
         if (Isnt_Paralyzed_Unsafe()) {
@@ -1208,8 +1408,6 @@ p_Unlock()
             Actor2::Enable_AI(actor);
             Actor2::Unghostify(actor);
         }
-
-        Actor2::Evaluate_Package(actor);
     }
 
     void Member_t::Display(Reference_t* origin, float radius, float degree)
@@ -1239,28 +1437,22 @@ p_Unlock()
             NPCP_ASSERT(display_marker);
             Display_Marker_Variable()->Pack(display_marker);
 
-            Reparalyze();
-            Remannequinize();
+            //Reparalyze();
+            //Remannequinize();
+            Enforce();
 
             Actor2::Evaluate_Package(actor);
         }
     }
 
-    void Member_t::Redisplay()
+    void Member_t::Enforce_Display(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
-        Actor_t* actor = Actor();
+        NPCP_ASSERT(Is_Display());
 
-        if (Is_Display_Unsafe()) {
-            Object_Ref::Token(actor, Consts::Display_Token());
-            Actor2::Disable_Havok_Collision(actor);
-            Actor2::Move_To_Orbit(actor, Display_Marker(), 0.0f, 180.0f);
-
-            Reparalyze(); // not sure about these two
-            Remannequinize();
-
-            Actor2::Evaluate_Package(actor);
-        }
+        Object_Ref::Token(actor, Consts::Display_Token());
+        Actor2::Disable_Havok_Collision(actor);
+        Actor2::Move_To_Orbit(actor, Display_Marker(), 0.0f, 180.0f);
     }
 
     void Member_t::Undisplay()
@@ -1286,8 +1478,9 @@ p_Unlock()
                 Actor2::Fully_Update_3D_Model(actor);
             }
 
-            Reparalyze();
-            Remannequinize();
+            //Reparalyze();
+            //Remannequinize();
+            Enforce();
 
             undisplay_marker_variable->None();
             Object_Ref::Delete_Safe(undisplay_marker);
@@ -2053,6 +2246,61 @@ p_Unlock()
         }
     }
 
+    void Member_t::Enforce()
+    {
+        if (Is_Ready() && Is_Alive()) {
+            Actor_t* actor = Actor();
+
+            Member(); // maybe rename and pass actor?
+
+            if (Is_Mobile()) {
+                Enforce_Mobile(actor);
+            } else {
+                Enforce_Immobile(actor);
+            }
+
+            if (Is_Settler()) {
+                Enforce_Settler(actor);
+            } else {
+                Enforce_Non_Settler(actor);
+            }
+
+            if (Is_Thrall()) {
+                Enforce_Thrall(actor);
+            } else {
+                Enforce_Non_Thrall(actor);
+            }
+
+            if (Is_Paralyzed()) {
+                Enforce_Paralyzed(actor);
+            } else {
+                Enforce_Non_Paralyzed(actor);
+            }
+
+            if (Is_Mannequin()) {
+                Enforce_Mannequin(actor, Mannequin_Marker());
+            } else {
+                Enforce_Non_Mannequin(actor);
+            }
+
+            // need to enforce Display still
+            // need to enforce reanimated still
+
+            Enforce_Style(actor);
+
+            Enforce_Vitality(actor);
+
+            Apply_Outfit2(); // maybe rename and pass actor
+
+            Enforce_Name(actor);
+
+            Follower_t* follower = Follower();
+            if (follower) {
+                Virtual_Machine_t::Self()->Call_Method(follower, Follower_t::Class_Name(), "f_Enforce");
+            }
+        }
+    }
+
     void Member_t::Summon(Reference_t* origin, float radius, float degree)
     {
         NPCP_ASSERT(Is_Filled());
@@ -2149,22 +2397,19 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
                 Bool_t is_blocked)
         FORWARD_VOID(On_Hit(attacker, tool, projectile, is_power, is_sneak, is_bash, is_blocked));
 
-    bool Has_Token(Member_t* self, Misc_t* token, Int_t count) FORWARD_BOOL(Member_t::Has_Token(token, count));
-    void Token(Member_t* self, Misc_t* token, Int_t count) FORWARD_VOID(Member_t::Token(token, count));
-    void Untoken(Member_t* self, Misc_t* token) FORWARD_VOID(Member_t::Untoken(token));
-
     void Member(Member_t* self) FORWARD_VOID(Member_t::Member());
     void Unmember(Member_t* self) FORWARD_VOID(Member_t::Unmember());
-    void Mobilize(Member_t* self) FORWARD_VOID(Member_t::Mobilize());
-    void Immobilize(Member_t* self) FORWARD_VOID(Member_t::Immobilize());
-    void Settle(Member_t* self) FORWARD_VOID(Member_t::Settle());
-    void Unsettle(Member_t* self) FORWARD_VOID(Member_t::Unsettle());
-    void Enthrall(Member_t* self) FORWARD_VOID(Member_t::Enthrall());
-    void Unthrall(Member_t* self) FORWARD_VOID(Member_t::Unthrall());
-    void Paralyze(Member_t* self) FORWARD_VOID(Member_t::Paralyze());
-    void Unparalyze(Member_t* self) FORWARD_VOID(Member_t::Unparalyze());
-    void Mannequinize(Member_t* self, Reference_t* marker) FORWARD_VOID(Member_t::Mannequinize(marker));
-    void Unmannequinize(Member_t* self) FORWARD_VOID(Member_t::Unmannequinize());
+    Int_t Mobilize(Member_t* self) FORWARD_INT(Member_t::Mobilize());
+    Int_t Immobilize(Member_t* self) FORWARD_INT(Member_t::Immobilize());
+    Int_t Settle(Member_t* self) FORWARD_INT(Member_t::Settle());
+    Int_t Resettle(Member_t* self) FORWARD_INT(Member_t::Resettle());
+    Int_t Unsettle(Member_t* self) FORWARD_INT(Member_t::Unsettle());
+    Int_t Enthrall(Member_t* self) FORWARD_INT(Member_t::Enthrall());
+    Int_t Unthrall(Member_t* self) FORWARD_INT(Member_t::Unthrall());
+    Int_t Paralyze(Member_t* self) FORWARD_INT(Member_t::Paralyze());
+    Int_t Unparalyze(Member_t* self) FORWARD_INT(Member_t::Unparalyze());
+    Int_t Mannequinize(Member_t* self, Reference_t* marker) FORWARD_INT(Member_t::Mannequinize(marker));
+    Int_t Unmannequinize(Member_t* self) FORWARD_INT(Member_t::Unmannequinize());
 
     Int_t Stylize(Member_t* self, Int_t style) FORWARD_INT(Member_t::Stylize(style));
     Int_t Stylize_Default(Member_t* self) FORWARD_INT(Member_t::Stylize_Default());
@@ -2172,7 +2417,6 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
     Int_t Stylize_Mage(Member_t* self) FORWARD_INT(Member_t::Stylize_Mage());
     Int_t Stylize_Archer(Member_t* self) FORWARD_INT(Member_t::Stylize_Archer());
     Int_t Stylize_Coward(Member_t* self) FORWARD_INT(Member_t::Stylize_Coward());
-    void Enforce_Style(Member_t* self, Actor_t* actor) FORWARD_VOID(Member_t::Enforce_Style(actor));
     Int_t Unstylize(Member_t* self) FORWARD_INT(Member_t::Unstylize());
 
     Int_t Vitalize(Member_t* self, Int_t vitality) FORWARD_INT(Member_t::Vitalize(vitality));
@@ -2180,7 +2424,6 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
     Int_t Vitalize_Protected(Member_t* self) FORWARD_INT(Member_t::Vitalize_Protected());
     Int_t Vitalize_Essential(Member_t* self) FORWARD_INT(Member_t::Vitalize_Essential());
     Int_t Vitalize_Invulnerable(Member_t* self) FORWARD_INT(Member_t::Vitalize_Invulnerable());
-    void Enforce_Vitality(Member_t* self, Actor_t* actor) FORWARD_VOID(Member_t::Enforce_Vitality(actor));
     Int_t Unvitalize(Member_t* self) FORWARD_INT(Member_t::Unvitalize());
 
     Int_t Change_Outfit2(Member_t* self, Int_t outfit2_code) FORWARD_INT(Change_Outfit2(outfit2_code));
@@ -2192,11 +2435,12 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
     Int_t Change_Vanilla_Outfit2(Member_t* self) FORWARD_INT(Change_Vanilla_Outfit2());
     Int_t Change_Default_Outfit2(Member_t* self) FORWARD_INT(Change_Default_Outfit2());
     Int_t Change_Current_Outfit2(Member_t* self) FORWARD_INT(Change_Current_Outfit2());
-    void Update_Outfit2(Member_t* self, Int_t outfit2_code, Bool_t do_cache_outfit1) FORWARD_VOID(Update_Outfit2(outfit2_code, do_cache_outfit1));
     void Open_Outfit2(Member_t* self) FORWARD_VOID(Open_Outfit2());
     void Apply_Outfit2(Member_t* self) FORWARD_VOID(Apply_Outfit2());
 
     void Rename(Member_t* self, String_t new_name) FORWARD_VOID(Member_t::Rename(new_name));
+
+    void Enforce(Member_t* self) FORWARD_VOID(Member_t::Enforce());
 
     void Log_Variable_Infos(Member_t* self) FORWARD_VOID(Log_Variable_Infos());
 
@@ -2256,22 +2500,19 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
 
         ADD_METHOD("OnHit", 7, void, On_Hit, Reference_t*, Form_t*, Projectile_Base_t*, Bool_t, Bool_t, Bool_t, Bool_t);
 
-        ADD_METHOD("Has_Token", 2, bool, Has_Token, Misc_t*, Int_t);
-        ADD_METHOD("Token", 2, void, Token, Misc_t*, Int_t);
-        ADD_METHOD("Untoken", 1, void, Untoken, Misc_t*);
-
         ADD_METHOD("p_Member", 0, void, Member);
         ADD_METHOD("p_Unmember", 0, void, Unmember);
-        ADD_METHOD("p_Mobilize", 0, void, Mobilize);
-        ADD_METHOD("p_Immobilize", 0, void, Immobilize);
-        ADD_METHOD("p_Settle", 0, void, Settle);
-        ADD_METHOD("p_Unsettle", 0, void, Unsettle);
-        ADD_METHOD("p_Enthrall", 0, void, Enthrall);
-        ADD_METHOD("p_Unthrall", 0, void, Unthrall);
-        ADD_METHOD("p_Paralyze", 0, void, Paralyze);
-        ADD_METHOD("p_Unparalyze", 0, void, Unparalyze);
-        ADD_METHOD("p_Mannequinize", 1, void, Mannequinize, Reference_t*);
-        ADD_METHOD("p_Unmannequinize", 0, void, Unmannequinize);
+        ADD_METHOD("Mobilize", 0, Int_t, Mobilize);
+        ADD_METHOD("Immobilize", 0, Int_t, Immobilize);
+        ADD_METHOD("Settle", 0, Int_t, Settle);
+        ADD_METHOD("Resettle", 0, Int_t, Resettle);
+        ADD_METHOD("Unsettle", 0, Int_t, Unsettle);
+        ADD_METHOD("Enthrall", 0, Int_t, Enthrall);
+        ADD_METHOD("Unthrall", 0, Int_t, Unthrall);
+        ADD_METHOD("Paralyze", 0, Int_t, Paralyze);
+        ADD_METHOD("Unparalyze", 0, Int_t, Unparalyze);
+        ADD_METHOD("Mannequinize", 1, Int_t, Mannequinize, Reference_t*);
+        ADD_METHOD("Unmannequinize", 0, Int_t, Unmannequinize);
 
         ADD_METHOD("Stylize", 1, Int_t, Stylize, Int_t);
         ADD_METHOD("Stylize_Default", 0, Int_t, Stylize_Default);
@@ -2279,7 +2520,6 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
         ADD_METHOD("Stylize_Mage", 0, Int_t, Stylize_Mage);
         ADD_METHOD("Stylize_Archer", 0, Int_t, Stylize_Archer);
         ADD_METHOD("Stylize_Coward", 0, Int_t, Stylize_Coward);
-        ADD_METHOD("p_Enforce_Style", 1, void, Enforce_Style, Actor_t*);
         ADD_METHOD("Unstylize", 0, Int_t, Unstylize);
 
         ADD_METHOD("Vitalize", 1, Int_t, Vitalize, Int_t);
@@ -2287,7 +2527,6 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
         ADD_METHOD("Vitalize_Protected", 0, Int_t, Vitalize_Protected);
         ADD_METHOD("Vitalize_Essential", 0, Int_t, Vitalize_Essential);
         ADD_METHOD("Vitalize_Invulnerable", 0, Int_t, Vitalize_Invulnerable);
-        ADD_METHOD("p_Enforce_Vitality", 1, void, Enforce_Vitality, Actor_t*);
         ADD_METHOD("Unvitalize", 0, Int_t, Unvitalize);
 
         ADD_METHOD("Change_Outfit2", 1, Int_t, Change_Outfit2, Int_t);
@@ -2299,11 +2538,12 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
         ADD_METHOD("Change_Vanilla_Outfit2", 0, Int_t, Change_Vanilla_Outfit2);
         ADD_METHOD("Change_Default_Outfit2", 0, Int_t, Change_Default_Outfit2);
         ADD_METHOD("Change_Current_Outfit2", 0, Int_t, Change_Current_Outfit2);
-        ADD_METHOD("p_Update_Outfit2", 2, void, Update_Outfit2, Int_t, Bool_t);
         ADD_METHOD("p_Open_Outfit2", 0, void, Open_Outfit2);
         ADD_METHOD("p_Apply_Outfit2", 0, void, Apply_Outfit2);
 
         ADD_METHOD("p_Rename", 1, void, Rename, String_t);
+
+        ADD_METHOD("Enforce", 0, void, Enforce);
 
         ADD_METHOD("Log_Variable_Infos", 0, void, Log_Variable_Infos);
 

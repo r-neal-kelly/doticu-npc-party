@@ -52,8 +52,6 @@ doticu_npcp_followers property FOLLOWERS hidden
 endProperty
 
 ; Private Variables
-bool                    p_is_locked                         = false
-
 Actor                   p_ref_actor                         =  none
 ObjectReference         p_container_pack                    =  none
 ObjectReference         p_marker_mannequin                  =  none
@@ -86,8 +84,6 @@ int                     p_int_rating                        =     0
 
 string                  p_str_name                          =    ""
 
-Faction[]               p_prev_factions                     =  none
-
 Faction                 p_prev_faction_crime                =  none
 bool                    p_prev_faction_potential_follower   = false
 bool                    p_prev_faction_no_body_cleanup      = false
@@ -95,6 +91,10 @@ float                   p_prev_aggression                   =   0.0
 float                   p_prev_confidence                   =   0.0
 float                   p_prev_assistance                   =   0.0
 float                   p_prev_morality                     =   0.0
+
+; to be deleted
+bool                    p_is_locked                         = false
+Faction[]               p_prev_factions                     =  none
 
 ; Native Methods
 Actor function Actor() native
@@ -140,22 +140,20 @@ bool function Isnt_Saddler() native
 bool function Is_Retreater() native
 bool function Isnt_Retreater() native
 
-bool function Has_Token(MiscObject token, int count = 1) native
-function Token(MiscObject token, int count = 1) native
-function Untoken(MiscObject token) native
-
 function p_Member() native
 function p_Unmember() native
-function p_Mobilize() native
-function p_Immobilize() native
-function p_Settle() native
-function p_Unsettle() native
-function p_Enthrall() native
-function p_Unthrall() native
-function p_Paralyze() native
-function p_Unparalyze() native
-function p_Mannequinize(ObjectReference marker) native
-function p_Unmannequinize() native
+
+int function Mobilize() native
+int function Immobilize() native
+int function Settle() native
+int function Resettle() native
+int function Unsettle() native
+int function Enthrall() native
+int function Unthrall() native
+int function Paralyze() native
+int function Unparalyze() native
+int function Mannequinize(ObjectReference marker) native
+int function Unmannequinize() native
 
 int function Stylize(int style) native
 int function Stylize_Default() native
@@ -163,7 +161,6 @@ int function Stylize_Warrior() native
 int function Stylize_Mage() native
 int function Stylize_Archer() native
 int function Stylize_Coward() native
-function p_Enforce_Style(Actor ref_actor) native
 int function Unstylize() native
 
 int function Vitalize(int vitality) native
@@ -171,7 +168,6 @@ int function Vitalize_Mortal() native
 int function Vitalize_Protected() native
 int function Vitalize_Essential() native
 int function Vitalize_Invulnerable() native
-function p_Enforce_Vitality(Actor ref_actor) native
 int function Unvitalize() native
 
 int function Change_Outfit2(int outfit2_code) native
@@ -183,11 +179,12 @@ int function Change_Follower_Outfit2() native
 int function Change_Vanilla_Outfit2() native
 int function Change_Default_Outfit2() native
 int function Change_Current_Outfit2() native
-function p_Update_Outfit2(int outfit2_code, bool do_cache_outfit1 = false) native
 function p_Open_Outfit2() native
 function p_Apply_Outfit2() native
 
 function p_Rename(string new_name) native
+
+function Enforce() native
 
 function Log_Variable_Infos() native
 
@@ -202,19 +199,19 @@ function f_Destroy()
     Unvitalize()
     Unstylize()
     if Is_Mannequin()
-        p_Unmannequinize()
+        Unmannequinize()
     endIf
     if Is_Paralyzed()
-        p_Unparalyze()
+        Unparalyze()
     endIf
     if Is_Immobile()
-        p_Mobilize()
+        Mobilize()
     endIf
     if Is_Thrall()
-        p_Unthrall()
+        Unthrall()
     endIf
     if Is_Settler()
-        p_Unsettle()
+        Unsettle()
     endIf
     p_Unmember()
     if Is_Reanimated()
@@ -300,7 +297,7 @@ function p_Reparalyze()
         return
     endIf
 
-    p_Unparalyze()
+    Unparalyze()
 
 p_Lock()
 
@@ -311,29 +308,7 @@ p_Lock()
 
 p_Unlock()
 
-    p_Paralyze()
-endFunction
-
-; we may not need this.
-function p_Remannequinize()
-    if !Is_Mannequin()
-        return
-    endIf
-    
-p_Lock()
-
-    p_ref_actor.EnableAI(false)
-    p_ref_actor.SetGhost(true)
-    p_ref_actor.BlockActivation(true)
-
-    ; this allows the mannequin to be called on display
-    if !p_is_display
-        p_ref_actor.MoveTo(p_marker_mannequin)
-    endIf
-
-    p_ref_actor.EvaluatePackage()
-
-p_Unlock()
+    Paralyze()
 endFunction
 
 function p_Destroy_Outfits()
@@ -426,68 +401,6 @@ p_Unlock()
 endFunction
 
 ; Public Methods
-function Enforce()
-    if !Exists() || Is_Dead()
-        return
-    endIf
-
-    p_Apply_Outfit2()
-
-    if Is_Immobile()
-        p_Immobilize()
-    else
-        p_Mobilize()
-    endIf
-
-    if Is_Paralyzed()
-        p_Reparalyze()
-    else
-        p_Unparalyze()
-    endIf
-
-    if Is_Mannequin()
-        p_Remannequinize()
-    else
-        p_Unmannequinize()
-    endIf
-
-    if Is_Reanimated()
-        p_Reanimate()
-    else
-        p_Deanimate()
-    endIf
-
-    FUNCS.Wait(0.1)
-    if !Exists() || Is_Dead()
-        return
-    endIf
-
-    p_Member()
-    p_Enforce_Style(p_ref_actor)
-    p_Enforce_Vitality(p_ref_actor)
-
-    FUNCS.Wait(0.1)
-    if !Exists() || Is_Dead()
-        return
-    endIf
-
-    if Is_Settler()
-        p_Settle()
-    else
-        p_Unsettle()
-    endIf
-
-    if Is_Thrall()
-        p_Enthrall()
-    else
-        p_Unthrall()
-    endIf
-
-    if Is_Follower()
-        Get_Follower().f_Enforce()
-    endIf
-endFunction
-
 bool function Exists()
     return Is_Filled()
 endFunction
@@ -508,185 +421,6 @@ int function Rename(string str_name)
     p_Rename(str_name)
     
     return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Mobilize()
-    if !Exists()
-        return doticu_npcp_codes.MEMBER()
-    endIf
-    if !Is_Immobile()
-        return doticu_npcp_codes.IS()
-    endIf
-
-    p_Mobilize()
-
-    p_Apply_Outfit2()
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Immobilize()
-    if !Exists()
-        return doticu_npcp_codes.MEMBER()
-    endIf
-    if Is_Immobile()
-        return doticu_npcp_codes.IS()
-    endIf
-
-    p_Immobilize()
-
-    p_Apply_Outfit2()
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Settle()
-    if !Exists()
-        return doticu_npcp_codes.MEMBER()
-    endIf
-    if Is_Settler()
-        return doticu_npcp_codes.IS()
-    endIf
-
-    p_Settle()
-
-    p_Apply_Outfit2()
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Resettle()
-    if !Exists()
-        return doticu_npcp_codes.MEMBER()
-    endIf
-    if !Is_Settler()
-        return doticu_npcp_codes.ISNT()
-    endIf
-
-    p_Settle()
-
-    p_Apply_Outfit2()
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Unsettle()
-    if !Exists()
-        return doticu_npcp_codes.MEMBER()
-    endIf
-    if !Is_Settler()
-        return doticu_npcp_codes.IS()
-    endIf
-
-    p_Unsettle()
-
-    p_Apply_Outfit2()
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Enthrall()
-    if !Exists()
-        return doticu_npcp_codes.MEMBER()
-    endIf
-    if !ACTORS.Is_Vampire(doticu_npcp_consts.Player_Actor())
-        return doticu_npcp_codes.VAMPIRE()
-    endIf
-    if Is_Thrall()
-        return doticu_npcp_codes.IS()
-    endIf
-
-    p_Enthrall()
-
-    p_Apply_Outfit2()
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Unthrall()
-    if !Exists()
-        return doticu_npcp_codes.MEMBER()
-    endIf
-    if !ACTORS.Is_Vampire(doticu_npcp_consts.Player_Actor())
-        return doticu_npcp_codes.VAMPIRE()
-    endIf
-    if !Is_Thrall()
-        return doticu_npcp_codes.IS()
-    endIf
-
-    p_Unthrall()
-
-    p_Apply_Outfit2()
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Paralyze()
-    if !Exists()
-        return doticu_npcp_codes.MEMBER()
-    endIf
-    if Is_Paralyzed()
-        return doticu_npcp_codes.IS()
-    endIf
-
-    p_Paralyze()
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Unparalyze()
-    if !Exists()
-        return doticu_npcp_codes.MEMBER()
-    endIf
-    if !Is_Paralyzed()
-        return doticu_npcp_codes.IS()
-    endIf
-
-    p_Unparalyze()
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Mannequinize(ObjectReference ref_marker)
-    if !Exists()
-        return doticu_npcp_codes.MEMBER()
-    endIf
-    if Is_Mannequin()
-        return doticu_npcp_codes.IS()
-    endIf
-    if !ref_marker
-        return doticu_npcp_codes.MARKER()
-    endIf
-
-    p_Mannequinize(ref_marker)
-
-    ; this should be moved over to the c++ func when ready.
-    if Is_Follower()
-        Unfollow()
-    endIf
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Unmannequinize()
-    if !Exists()
-        return doticu_npcp_codes.MEMBER()
-    endIf
-    if !Is_Mannequin()
-        return doticu_npcp_codes.IS()
-    endIf
-
-    p_Unmannequinize()
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Revoice()
-    ; the problem is that we would have to change the voice on the actor base. so maybe put in npcs?
-    ; maybe there is a way to change the ref? look at the types a little closer.
-endFunction
-
-int function Unrevoice()
 endFunction
 
 int function Follow()
@@ -887,8 +621,9 @@ int function Summon(int distance = 120, int angle = 0)
 
     ACTORS.Move_To(p_ref_actor, doticu_npcp_consts.Player_Actor(), distance, angle)
 
-    p_Remannequinize()
-    p_Reparalyze()
+    ;p_Remannequinize()
+    ;p_Reparalyze()
+    Enforce()
 
     return doticu_npcp_codes.SUCCESS()
 endFunction
@@ -903,8 +638,9 @@ int function Goto(int distance = 120, int angle = 0)
 
     ACTORS.Move_To(doticu_npcp_consts.Player_Actor(), p_ref_actor, distance, angle)
 
-    p_Remannequinize()
-    p_Reparalyze()
+    ;p_Remannequinize()
+    ;p_Reparalyze()
+    Enforce()
 
     return doticu_npcp_codes.SUCCESS()
 endFunction

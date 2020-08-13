@@ -555,6 +555,7 @@ namespace doticu_npcp { namespace Party {
         Follower_t* Follower();
         Reference_t* Pack();
         Reference_t* Settler_Marker();
+        Reference_t* Mannequin_Marker();
         Reference_t* Display_Marker();
         Reference_t* Undisplay_Marker();
         Cell_t* Cell();
@@ -669,20 +670,29 @@ namespace doticu_npcp { namespace Party {
 
         void Member();
         void Unmember();
-        void Mobilize();
-        void Immobilize();
-        void Settle();
-        void Unsettle();
-        void Enthrall();
-        void Unthrall();
-        void Paralyze();
-        void Reparalyze();
-        void Unparalyze();
-        void Mannequinize(Reference_t* marker = nullptr);
-        void Remannequinize();
-        void Unmannequinize();
+        Int_t Mobilize();
+        void Enforce_Mobile(Actor_t* actor);
+        Int_t Immobilize();
+        void Enforce_Immobile(Actor_t* actor);
+        Int_t Settle();
+        void Enforce_Settler(Actor_t* actor);
+        Int_t Resettle();
+        Int_t Unsettle();
+        void Enforce_Non_Settler(Actor_t* actor);
+        Int_t Enthrall();
+        void Enforce_Thrall(Actor_t* actor);
+        Int_t Unthrall();
+        void Enforce_Non_Thrall(Actor_t* actor);
+        Int_t Paralyze();
+        void Enforce_Paralyzed(Actor_t* actor);
+        Int_t Unparalyze();
+        void Enforce_Non_Paralyzed(Actor_t* actor);
+        Int_t Mannequinize(Reference_t* marker = nullptr);
+        void Enforce_Mannequin(Actor_t* actor, Reference_t* marker);
+        Int_t Unmannequinize();
+        void Enforce_Non_Mannequin(Actor_t* actor);
         void Display(Reference_t* origin, float radius = 140.0f, float degree = 0.0f);
-        void Redisplay();
+        void Enforce_Display(Actor_t* actor);
         void Undisplay();
 
         Int_t Stylize(Int_t style);
@@ -727,6 +737,8 @@ namespace doticu_npcp { namespace Party {
 
         void Rename(String_t new_name);
         void Enforce_Name(Actor_t* actor);
+
+        void Enforce();
 
         void Summon(Reference_t* origin, float radius = 140.0f, float degree = 0.0f);
         void Summon(float radius = 140.0f, float degree = 0.0f);

@@ -569,6 +569,15 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
+    Bool_t Is_Vampire(Actor_t* actor)
+    {
+        if (actor) {
+            return Form::Has_Keyword(actor, Consts::Vampire_Keyword());
+        } else {
+            return false;
+        }
+    }
+
     void Move_To_Orbit(Actor* actor, Reference_t* origin, float radius, float degree)
     {
         if (actor && origin) {

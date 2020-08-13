@@ -37,6 +37,7 @@ namespace doticu_npcp { namespace Actor2 {
     bool Is_Unique(Actor_t* actor);
     bool Is_Generic(Actor_t* actor);
     bool Is_Aliased_In_Quest(Actor *actor, TESQuest *quest);
+    Bool_t Is_Vampire(Actor_t* actor);
 
     void Move_To_Orbit(Actor* actor, Reference_t* origin, float radius, float degree);
 
