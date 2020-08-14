@@ -782,7 +782,9 @@ namespace doticu_npcp { namespace Papyrus {
     {
         Class_Info_t* class_info = Class_Info_t::Fetch(std::remove_pointer<Type>::type::kTypeID);
         NPCP_ASSERT(class_info);
-        class_info->Free();
+        if (class_info->ref_count > 1) {
+            class_info->ref_count -= 1;
+        }
 
         Type_t type(class_info);
         Array_t* arr = Array_t::Create(&type, values.size());

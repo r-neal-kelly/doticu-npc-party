@@ -303,7 +303,7 @@ namespace doticu_npcp { namespace Party {
             Clone_Vectors()->Set(base_idx, clones);
             clones->Push(clone);
         } else if (!clones->Has(clone)) {
-            clones->Push(clone); // this is where the crash can occur. presumably something to do with arrays
+            clones->Push(clone);
         }
 
         Object_Ref::Remove_All_Items(clone);
