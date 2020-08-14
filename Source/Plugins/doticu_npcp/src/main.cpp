@@ -31,6 +31,11 @@
 #include "utils.h"
 #include "vars.h"
 
+#include "mcm/mcm_main.h"
+#include "mcm/mcm_member.h"
+
+#include "papyrus.inl"
+
 namespace doticu_npcp { namespace Main {
 
     bool Query_Plugin(const SKSEInterface* skse, PluginInfo* info);
@@ -86,6 +91,8 @@ namespace doticu_npcp { namespace Main {
 
     bool Register_Functions(Papyrus::Registry_t* registry)
     {
+        using namespace Papyrus;
+
         #define REGISTER_NAMESPACE(NAMESPACE_)                                                  \
         M                                                                                       \
             if (!doticu_npcp::NAMESPACE_::Exports::Register(registry)) {                        \
@@ -128,6 +135,17 @@ namespace doticu_npcp { namespace Main {
         REGISTER_NAMESPACE(Party::Horse);
 
         #undef REGISTER_NAMESPACE
+
+        #define REGISTER_TYPE(TYPE_)                                            \
+        M                                                                       \
+            TYPE_::Register_Me(registry);                                       \
+            _MESSAGE(DOTICU_NPCP_PRINT_PREFIX "Added " #TYPE_ " functions.");   \
+        W
+
+        REGISTER_TYPE(MCM::Main_t);
+        REGISTER_TYPE(MCM::Member_t);
+
+        #undef REGISTER_TYPE
 
         _MESSAGE(DOTICU_NPCP_PRINT_PREFIX "Added all functions.\n");
 

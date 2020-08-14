@@ -540,31 +540,22 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
-    bool Is_Aliased_In_Quest(Actor *actor, TESQuest *quest)
+    bool Is_Aliased_In_Quest(Actor* actor, TESQuest* quest)
     {
-        if (actor && quest)
-        {
-            ExtraAliasInstanceArray *xaliases = (ExtraAliasInstanceArray *)actor->extraData.GetByType(kExtraData_AliasInstanceArray);
-            if (xaliases)
-            {
-                for (u64 idx = 0, size = xaliases->aliases.count; idx < size; idx += 1)
-                {
-                    ExtraAliasInstanceArray::AliasInfo *info = xaliases->aliases[idx];
-                    if (info && info->quest == quest)
-                    {
+        if (actor && quest) {
+            ExtraAliasInstanceArray* xaliases = (ExtraAliasInstanceArray*)actor->extraData.GetByType(kExtraData_AliasInstanceArray);
+            if (xaliases) {
+                for (u64 idx = 0, size = xaliases->aliases.count; idx < size; idx += 1) {
+                    ExtraAliasInstanceArray::AliasInfo* info = xaliases->aliases[idx];
+                    if (info && info->quest == quest) {
                         return true;
                     }
                 }
-
+                return false;
+            } else {
                 return false;
             }
-            else
-            {
-                return false;
-            }
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
@@ -572,7 +563,7 @@ namespace doticu_npcp { namespace Actor2 {
     Bool_t Is_Vampire(Actor_t* actor)
     {
         if (actor) {
-            return Form::Has_Keyword(actor, Consts::Vampire_Keyword());
+            return actor->Has_Keyword(Consts::Vampire_Keyword());
         } else {
             return false;
         }

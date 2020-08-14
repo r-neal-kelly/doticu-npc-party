@@ -192,6 +192,28 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
+    String_t Member_t::Rating_Stars()
+    {
+        NPCP_ASSERT(Is_Filled());
+
+        Int_t rating = Rating();
+        if (rating < 1) {
+            return "-";
+        } else if (rating == 1) {
+            return "*";
+        } else if (rating == 2) {
+            return "**";
+        } else if (rating == 3) {
+            return "***";
+        } else if (rating == 4) {
+            return "****";
+        } else if (rating == 5) {
+            return "*****";
+        } else {
+            NPCP_ASSERT(false);
+        }
+    }
+
     Outfit_t* Member_t::Vanilla_Outfit()
     {
         NPCP_ASSERT(Is_Filled());
@@ -765,6 +787,12 @@ namespace doticu_npcp { namespace Party {
         Actor_Base_t* alias_base = static_cast<Actor_Base_t*>(Actor()->baseForm);
         Actor_Base_t* other_base = static_cast<Actor_Base_t*>(other_actor->baseForm);
         return Actor_Base2::Has_Same_Head(alias_base, other_base);
+    }
+
+    Bool_t Member_t::Should_Unclone()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Members_t::Self()->Should_Unclone(Actor());
     }
 
     void Member_t::On_Hit(Reference_t* attacker,

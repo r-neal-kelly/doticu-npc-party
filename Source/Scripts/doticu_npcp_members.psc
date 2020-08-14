@@ -111,11 +111,11 @@ string[] function Race_Names() native
 
 function Enforce_Loaded() native
 
-string[]    function Filter_Strings(string sex = "", string race = "", string search = "")          native
-int[]       function Filter_Ints(int style = 0, int vitality = 0, int outfit2 = 0, int rating = -1) native
-int         function Add_Filter_Flag_1(int flags_1, string flag_1)                                  native
-int         function Add_Filter_Flag_2(int flags_2, string flag_2)                                  native
-Alias[]     function Filter(string[] strings, int[] ints, int flags_1, int flags_2)                 native
+string[]    function Filter_Strings     (string sex = "", string race = "", string search = "")             native
+int[]       function Filter_Ints        (int style = 0, int vitality = 0, int outfit2 = 0, int rating = -1) native
+int         function Add_Filter_Flag_1  (int flags_1, string flag_1)                                        native
+int         function Add_Filter_Flag_2  (int flags_2, string flag_2)                                        native
+Alias[]     function Filter             (string[] strings, int[] ints, int flags_1, int flags_2)            native
 
 int function Display_Start()    native
 int function Display_Stop()     native

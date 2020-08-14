@@ -370,17 +370,21 @@ namespace doticu_npcp { namespace Party {
         NPCP_ASSERT(actor);
 
         return
-            Actor2::Is_Unique(actor) && Vars::Do_Force_Clone_Unique() ||
-            Actor2::Is_Generic(actor) && Vars::Do_Force_Clone_Generic();
+            (Actor2::Is_Unique(actor) && Vars::Do_Force_Clone_Unique()) ||
+            (Actor2::Is_Generic(actor) && Vars::Do_Force_Clone_Generic());
     }
 
     Bool_t NPCS_t::Should_Unclone(Actor_t* actor)
     {
         NPCP_ASSERT(actor);
 
-        return
-            Actor2::Is_Unique(actor) && Vars::Do_Force_Unclone_Unique() ||
-            Actor2::Is_Generic(actor) && Vars::Do_Force_Unclone_Generic();
+        if (Is_Clone(actor)) {
+            return
+                (Actor2::Is_Unique(actor) && Vars::Do_Force_Unclone_Unique()) ||
+                (Actor2::Is_Generic(actor) && Vars::Do_Force_Unclone_Generic());
+        } else {
+            return false;
+        }
     }
 
     Vector_t<Actor_t*> NPCS_t::Originals(Actor_t* actor)

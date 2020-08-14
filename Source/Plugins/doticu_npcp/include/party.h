@@ -568,6 +568,7 @@ namespace doticu_npcp { namespace Party {
         String_t Base_Name();
         String_t Reference_Name();
         String_t Name();
+        String_t Rating_Stars();
 
         Outfit_t* Vanilla_Outfit();
         Outfit2_t* Member_Outfit2();
@@ -649,6 +650,8 @@ namespace doticu_npcp { namespace Party {
 
         Bool_t Has_Same_Base_Unsafe(Actor_t* other_actor);
         Bool_t Has_Same_Head_Unsafe(Actor_t* other_actor);
+
+        Bool_t Should_Unclone();
 
         void On_Hit(Reference_t* attacker,
                     Form_t* tool,
