@@ -120,103 +120,108 @@ namespace doticu_npcp { namespace MCM {
         Party::Member_t* party_member = Party_Member();
         NPCP_ASSERT(party_member);
 
-        mcm_main->Add_Text_Option(Summon_Option_Variable(), " Summon ", "");
-        mcm_main->Add_Text_Option(Goto_Option_Variable(), " Goto ", "");
-        mcm_main->Add_Text_Option(Pack_Option_Variable(), " Pack ", "");
-        mcm_main->Add_Text_Option(Stash_Option_Variable(), " Stash ", "");
-        mcm_main->Add_Menu_Option(Outfit2_Option_Variable(), " Outfit ", "");
+        mcm_main->Cursor_Position(4);
+        mcm_main->Cursor_Fill_Mode(Cursor_Fill_Mode_e::TOP_TO_BOTTOM);
+
+        mcm_main->Add_Header_Option("Commands: ");
+
+        Summon_Option_Variable()->Int(mcm_main->Add_Text_Option(" Summon ", ""));
+        Goto_Option_Variable()->Int(mcm_main->Add_Text_Option(" Goto ", ""));
+        Pack_Option_Variable()->Int(mcm_main->Add_Text_Option(" Pack ", ""));
+        Stash_Option_Variable()->Int(mcm_main->Add_Text_Option(" Stash ", ""));
+        Outfit2_Option_Variable()->Int(mcm_main->Add_Menu_Option(" Outfit ", ""));
 
         if (party_member->Is_Mobile()) {
-            mcm_main->Add_Text_Option(Mobilize_Option_Variable(), " Mobilize ", "", MCM::DISABLE);
-            mcm_main->Add_Text_Option(Immobilize_Option_Variable(), " Immobilize ", "");
+            Mobilize_Option_Variable()->Int(mcm_main->Add_Text_Option(" Mobilize ", "", MCM::DISABLE));
+            Immobilize_Option_Variable()->Int(mcm_main->Add_Text_Option(" Immobilize ", ""));
         } else {
-            mcm_main->Add_Text_Option(Mobilize_Option_Variable(), " Mobilize ", "");
-            mcm_main->Add_Text_Option(Immobilize_Option_Variable(), " Immobilize ", "", MCM::DISABLE);
+            Mobilize_Option_Variable()->Int(mcm_main->Add_Text_Option(" Mobilize ", ""));
+            Immobilize_Option_Variable()->Int(mcm_main->Add_Text_Option(" Immobilize ", "", MCM::DISABLE));
         }
 
         if (party_member->Is_Settler()) {
-            mcm_main->Add_Text_Option(Settle_Option_Variable(), " Settle ", "", MCM::DISABLE);
-            mcm_main->Add_Text_Option(Resettle_Option_Variable(), " Resettle ", "");
-            mcm_main->Add_Text_Option(Unsettle_Option_Variable(), " Unsettle ", "");
+            Settle_Option_Variable()->Int(mcm_main->Add_Text_Option(" Settle ", "", MCM::DISABLE));
+            Resettle_Option_Variable()->Int(mcm_main->Add_Text_Option(" Resettle ", ""));
+            Unsettle_Option_Variable()->Int(mcm_main->Add_Text_Option(" Unsettle ", ""));
         } else {
-            mcm_main->Add_Text_Option(Settle_Option_Variable(), " Settle ", "");
-            mcm_main->Add_Text_Option(Resettle_Option_Variable(), " Resettle ", "", MCM::DISABLE);
-            mcm_main->Add_Text_Option(Unsettle_Option_Variable(), " Unsettle ", "", MCM::DISABLE);
+            Settle_Option_Variable()->Int(mcm_main->Add_Text_Option(" Settle ", ""));
+            Resettle_Option_Variable()->Int(mcm_main->Add_Text_Option(" Resettle ", "", MCM::DISABLE));
+            Unsettle_Option_Variable()->Int(mcm_main->Add_Text_Option(" Unsettle ", "", MCM::DISABLE));
         }
 
         if (party_member->Is_Paralyzed()) {
-            mcm_main->Add_Text_Option(Paralyze_Option_Variable(), " Paralyze ", "", MCM::DISABLE);
-            mcm_main->Add_Text_Option(Unparalyze_Option_Variable(), " Unparalyze ", "");
+            Paralyze_Option_Variable()->Int(mcm_main->Add_Text_Option(" Paralyze ", "", MCM::DISABLE));
+            Unparalyze_Option_Variable()->Int(mcm_main->Add_Text_Option(" Unparalyze ", ""));
         } else {
-            mcm_main->Add_Text_Option(Paralyze_Option_Variable(), " Paralyze ", "");
-            mcm_main->Add_Text_Option(Unparalyze_Option_Variable(), " Unparalyze ", "", MCM::DISABLE);
+            Paralyze_Option_Variable()->Int(mcm_main->Add_Text_Option(" Paralyze ", ""));
+            Unparalyze_Option_Variable()->Int(mcm_main->Add_Text_Option(" Unparalyze ", "", MCM::DISABLE));
         }
 
         if (party_member->Is_Follower()) {
-            mcm_main->Add_Text_Option(Follow_Option_Variable(), " Follow ", "", MCM::DISABLE);
-            mcm_main->Add_Text_Option(Unfollow_Option_Variable(), " Unfollow ", "");
+            Follow_Option_Variable()->Int(mcm_main->Add_Text_Option(" Follow ", "", MCM::DISABLE));
+            Unfollow_Option_Variable()->Int(mcm_main->Add_Text_Option(" Unfollow ", ""));
             if (party_member->Is_Sneak()) {
-                mcm_main->Add_Text_Option(Sneak_Option_Variable(), " Sneak ", "", MCM::DISABLE);
-                mcm_main->Add_Text_Option(Unsneak_Option_Variable(), " Unsneak ", "");
+                Sneak_Option_Variable()->Int(mcm_main->Add_Text_Option(" Sneak ", "", MCM::DISABLE));
+                Unsneak_Option_Variable()->Int(mcm_main->Add_Text_Option(" Unsneak ", ""));
             } else {
-                mcm_main->Add_Text_Option(Sneak_Option_Variable(), " Sneak ", "");
-                mcm_main->Add_Text_Option(Unsneak_Option_Variable(), " Unsneak ", "", MCM::DISABLE);
+                Sneak_Option_Variable()->Int(mcm_main->Add_Text_Option(" Sneak ", ""));
+                Unsneak_Option_Variable()->Int(mcm_main->Add_Text_Option(" Unsneak ", "", MCM::DISABLE));
             }
         } else {
-            mcm_main->Add_Text_Option(Follow_Option_Variable(), " Follow ", "");
-            mcm_main->Add_Text_Option(Unfollow_Option_Variable(), " Unfollow ", "", MCM::DISABLE);
+            Follow_Option_Variable()->Int(mcm_main->Add_Text_Option(" Follow ", ""));
+            Unfollow_Option_Variable()->Int(mcm_main->Add_Text_Option(" Unfollow ", "", MCM::DISABLE));
 
-            mcm_main->Add_Text_Option(Sneak_Option_Variable(), " Sneak ", "", MCM::DISABLE);
-            mcm_main->Add_Text_Option(Unsneak_Option_Variable(), " Unsneak ", "", MCM::DISABLE);
+            Sneak_Option_Variable()->Int(mcm_main->Add_Text_Option(" Sneak ", "", MCM::DISABLE));
+            Unsneak_Option_Variable()->Int(mcm_main->Add_Text_Option(" Unsneak ", "", MCM::DISABLE));
         }
 
-        mcm_main->Add_Text_Option(Rating_Option_Variable(), " Rating ", party_member->Rating_Stars());
+        Rating_Option_Variable()->Int(mcm_main->Add_Text_Option(" Rating ", party_member->Rating_Stars()));
 
         Int_t style = party_member->Style();
         if (style == CODES::STYLE::DEFAULT) {
-            mcm_main->Add_Text_Option(Stylize_Option_Variable(), " Style ", " Default ");
+            Stylize_Option_Variable()->Int(mcm_main->Add_Text_Option(" Style ", " Default "));
         } else if (style == CODES::STYLE::WARRIOR) {
-            mcm_main->Add_Text_Option(Stylize_Option_Variable(), " Style ", " Warrior ");
+            Stylize_Option_Variable()->Int(mcm_main->Add_Text_Option(" Style ", " Warrior "));
         } else if (style == CODES::STYLE::MAGE) {
-            mcm_main->Add_Text_Option(Stylize_Option_Variable(), " Style ", " Mage ");
+            Stylize_Option_Variable()->Int(mcm_main->Add_Text_Option(" Style ", " Mage "));
         } else if (style == CODES::STYLE::ARCHER) {
-            mcm_main->Add_Text_Option(Stylize_Option_Variable(), " Style ", " Archer ");
+            Stylize_Option_Variable()->Int(mcm_main->Add_Text_Option(" Style ", " Archer "));
         } else if (style == CODES::STYLE::COWARD) {
-            mcm_main->Add_Text_Option(Stylize_Option_Variable(), " Style ", " Coward ");
+            Stylize_Option_Variable()->Int(mcm_main->Add_Text_Option(" Style ", " Coward "));
         } else {
             NPCP_ASSERT(false);
         }
 
         Int_t vitality = party_member->Vitality();
         if (vitality == CODES::VITALITY::MORTAL) {
-            mcm_main->Add_Text_Option(Vitalize_Option_Variable(), " Vitality ", " Mortal ");
+            Vitalize_Option_Variable()->Int(mcm_main->Add_Text_Option(" Vitality ", " Mortal "));
         } else if (vitality == CODES::VITALITY::PROTECTED) {
-            mcm_main->Add_Text_Option(Vitalize_Option_Variable(), " Vitality ", " Protected ");
+            Vitalize_Option_Variable()->Int(mcm_main->Add_Text_Option(" Vitality ", " Protected "));
         } else if (vitality == CODES::VITALITY::ESSENTIAL) {
-            mcm_main->Add_Text_Option(Vitalize_Option_Variable(), " Vitality ", " Essential ");
+            Vitalize_Option_Variable()->Int(mcm_main->Add_Text_Option(" Vitality ", " Essential "));
         } else if (vitality == CODES::VITALITY::INVULNERABLE) {
-            mcm_main->Add_Text_Option(Vitalize_Option_Variable(), " Vitality ", " Invulnerable ");
+            Vitalize_Option_Variable()->Int(mcm_main->Add_Text_Option(" Vitality ", " Invulnerable "));
         } else {
             NPCP_ASSERT(false);
         }
 
         if (party_member->Is_Alive()) {
-            mcm_main->Add_Text_Option(Resurrect_Option_Variable(), " Resurrect ", "", MCM::DISABLE);
+            Resurrect_Option_Variable()->Int(mcm_main->Add_Text_Option(" Resurrect ", "", MCM::DISABLE));
         } else {
-            mcm_main->Add_Text_Option(Resurrect_Option_Variable(), " Resurrect ", "");
+            Resurrect_Option_Variable()->Int(mcm_main->Add_Text_Option(" Resurrect ", ""));
         }
 
-        mcm_main->Add_Text_Option(Clone_Option_Variable(), " Clone ", "");
+        Clone_Option_Variable()->Int(mcm_main->Add_Text_Option(" Clone ", ""));
         if (party_member->Is_Clone()) {
-            mcm_main->Add_Text_Option(Unclone_Option_Variable(), " Unclone ", "");
+            Unclone_Option_Variable()->Int(mcm_main->Add_Text_Option(" Unclone ", ""));
         } else {
-            mcm_main->Add_Text_Option(Unclone_Option_Variable(), " Unclone ", "", MCM::DISABLE);
+            Unclone_Option_Variable()->Int(mcm_main->Add_Text_Option(" Unclone ", "", MCM::DISABLE));
         }
 
         if (party_member->Should_Unclone()) {
-            mcm_main->Add_Text_Option(Unmember_Option_Variable(), " Unmember ", "", MCM::DISABLE);
+            Unmember_Option_Variable()->Int(mcm_main->Add_Text_Option(" Unmember ", "", MCM::DISABLE));
         } else {
-            mcm_main->Add_Text_Option(Unmember_Option_Variable(), " Unmember ", "");
+            Unmember_Option_Variable()->Int(mcm_main->Add_Text_Option(" Unmember ", ""));
         }
     }
 
@@ -342,10 +347,15 @@ namespace doticu_npcp { namespace MCM {
         Actor_Value_Owner_t* values = Actor2::Actor_Value_Owner(actor);
         NPCP_ASSERT(values);
 
+        mcm_main->Cursor_Position(5);
+        mcm_main->Cursor_Fill_Mode(Cursor_Fill_Mode_e::TOP_TO_BOTTOM);
+
+        mcm_main->Add_Header_Option("Statistics: ");
+
         auto build_stat = [&](Variable_t* variable, String_t text, Actor_Value_t actor_value) -> void
         {
             Int_t value = static_cast<Int_t>(values->Get_Actor_Value(actor_value));
-            mcm_main->Add_Text_Option(variable, text, std::to_string(value).c_str());
+            variable->Int(mcm_main->Add_Text_Option(text, std::to_string(value).c_str()));
         };
 
         build_stat(Health_Attribute_Option_Variable(), " Health ", Actor_Value_t::HEALTH);
@@ -373,7 +383,7 @@ namespace doticu_npcp { namespace MCM {
         build_stat(Pickpocket_Skill_Option_Variable(), " Pickpocket ", Actor_Value_t::PICKPOCKET);
         build_stat(Speechcraft_Skill_Option_Variable(), " Speechcraft ", Actor_Value_t::SPEECHCRAFT);
 
-        mcm_main->Add_Text_Option(Race_Option_Variable(), " Race ", party_member->Race());
+        Race_Option_Variable()->Int(mcm_main->Add_Text_Option(" Race ", party_member->Race()));
     }
 
     void Member_t::Update_Statistics()

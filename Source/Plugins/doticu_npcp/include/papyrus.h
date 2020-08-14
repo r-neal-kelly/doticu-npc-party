@@ -74,7 +74,7 @@ namespace doticu_npcp { namespace Papyrus {
         virtual Bool_t Find_Bound_Object(Handle_t handle, String_t class_name, Object_t** object_out) = 0; // 1C
         virtual void _1D(void) = 0; // 1D
         virtual void _1E(void) = 0; // 1E
-        virtual void _1F(void) = 0; // 1F
+        virtual Bool_t Cast_Object(Object_t** object_in, Class_Info_t** cast_to, Object_t** object_out) = 0; // 1F
         virtual void _20(void) = 0; // 20
         virtual void _21(void) = 0; // 21
         virtual void _22(void) = 0; // 22
@@ -176,7 +176,7 @@ namespace doticu_npcp { namespace Papyrus {
         virtual Bool_t Find_Bound_Object(Handle_t handle, String_t class_name, Object_t** object_out) override; // 1C
         virtual void _1D(void) override; // 1D
         virtual void _1E(void) override; // 1E
-        virtual void _1F(void) override; // 1F
+        virtual Bool_t Cast_Object(Object_t** object_in, Class_Info_t** cast_to, Object_t** object_out) override; // 1F
         virtual void _20(void) override; // 20
         virtual void _21(void) override; // 21
         virtual void _22(void) override; // 22
@@ -487,7 +487,9 @@ namespace doticu_npcp { namespace Papyrus {
     class Object_t {
     public:
         template <typename Type>
-        static Object_t* Fetch(Type* bsobject, String_t class_name);
+        static Object_t* Fetch(Type* instance, String_t class_name);
+        template <typename Type>
+        static Object_t* Create(Type* instance, String_t class_name);
 
         UInt64 unk_00; // 00
         Class_Info_t* info; // 08

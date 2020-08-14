@@ -1062,14 +1062,41 @@ namespace doticu_npcp { namespace Papyrus {
     // Object_t
 
     template <typename Type>
-    inline Object_t* Object_t::Fetch(Type* instance,
-                                     String_t class_name)
+    inline Object_t* Object_t::Fetch(Type* instance, String_t class_name)
     {
         Handle_t handle(instance);
         if (handle.Is_Valid()) {
             Object_t* object = nullptr;
             if (Virtual_Machine_t::Self()->Find_Bound_Object(handle, class_name, &object)) {
                 return object;
+            } else {
+                return nullptr;
+            }
+        } else {
+            return nullptr;
+        }
+    }
+
+    template <typename Type>
+    inline Object_t* Object_t::Create(Type* instance, String_t class_name)
+    {
+        Handle_t handle(instance);
+        if (handle.Is_Valid()) {
+            Virtual_Machine_t* virtual_machine = Virtual_Machine_t::Self();
+
+            Class_Info_t* class_info = Class_Info_t::Fetch(class_name);
+            class_info->Free();
+
+            Object_t* object = nullptr;
+            virtual_machine->Create_Object2(&class_info->name, &object);
+            if (object) {
+                virtual_machine->Object_Policy()->virtual_binder->Bind_Object(object, handle, false);
+                if (object) {
+                    NPCP_ASSERT(object->info == class_info);
+                    return object;
+                } else {
+                    return nullptr;
+                }
             } else {
                 return nullptr;
             }
@@ -1114,9 +1141,20 @@ namespace doticu_npcp { namespace Papyrus {
 
     inline Variable_t* Object_t::Property(String_t property_name)
     {
-        SInt64 idx = info->Property_Index(property_name);
+        Class_Info_t* info = this->info;
+        SInt64 idx = -1;
+        SInt64 offset = 0;
+        while (info) {
+            if (idx < 0) {
+                idx = info->Property_Index(property_name);
+            } else {
+                offset += info->Count_Variable_Infos();
+            }
+            info = info->parent != info ? info->parent : nullptr;
+        }
+
         if (idx > -1) {
-            return &Variables()[idx];
+            return Variables() + offset + idx;
         } else {
             return nullptr;
         }
@@ -1124,9 +1162,20 @@ namespace doticu_npcp { namespace Papyrus {
 
     inline Variable_t* Object_t::Variable(String_t variable_name)
     {
-        SInt64 idx = info->Variable_Index(variable_name);
+        Class_Info_t* info = this->info;
+        SInt64 idx = -1;
+        SInt64 offset = 0;
+        while (info) {
+            if (idx < 0) {
+                idx = info->Variable_Index(variable_name);
+            } else {
+                offset += info->Count_Variable_Infos();
+            }
+            info = info->parent != info ? info->parent : nullptr;
+        }
+
         if (idx > -1) {
-            return &Variables()[idx];
+            return Variables() + offset + idx;
         } else {
             return nullptr;
         }
