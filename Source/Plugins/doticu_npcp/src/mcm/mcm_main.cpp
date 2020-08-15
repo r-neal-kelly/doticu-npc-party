@@ -25,14 +25,9 @@ namespace doticu_npcp { namespace MCM {
         return class_info;
     }
 
-    SKI_Config_Base_t* SKI_Config_Base_t::Self()
-    {
-        return static_cast<SKI_Config_Base_t*>(Consts::Control_Quest());
-    }
-
     Object_t* SKI_Config_Base_t::Object()
     {
-        Object_t* object = Object_t::Fetch(Self(), Class_Name()); // might want to use Main_t::Class_Name()
+        Object_t* object = Object_t::Fetch(this, Class_Name());
         NPCP_ASSERT(object);
         object->Decrement_Lock();
         return object;

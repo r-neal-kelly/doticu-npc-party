@@ -46,9 +46,8 @@ namespace doticu_npcp { namespace MCM {
     public:
         static String_t Class_Name();
         static Class_Info_t* Class_Info();
-        static SKI_Config_Base_t* Self();
-        static Object_t* Object();
     public:
+        Object_t* Object();
         Variable_t* Variable(String_t variable_name);
 
         Variable_t* Current_Page_Name_Variable();

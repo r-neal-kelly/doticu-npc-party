@@ -127,7 +127,7 @@ namespace doticu_npcp { namespace Actor2 {
 
     void Set_Outfit(Actor_t* actor, Outfit_t* outfit, Bool_t is_sleep_outfit)
     {
-        if (actor) {
+        if (actor && actor != Player::Actor()) {
             Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
             if (member) {
                 if (!outfit) {
