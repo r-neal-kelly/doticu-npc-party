@@ -66,7 +66,7 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
-    void Set_Outfit_Basic(Actor_t* actor, Outfit_t* outfit, Bool_t is_sleep_outfit)
+    void Set_Outfit_Basic(Actor_t* actor, Outfit_t* outfit, Bool_t is_sleep_outfit, Bool_t allow_bcontainer)
     {
         NPCP_ASSERT(actor);
 
@@ -81,20 +81,66 @@ namespace doticu_npcp { namespace Actor2 {
         }
 
         Object_Ref::Remove_Wearables(actor, nullptr, false);
-        actor->ResetInventory(true); // true won't delete all items, only outfit and leveled items from bcontainer
+
+        Bool_t is_player_teammate = Utils::Is_Bit_On(actor->flags1, Actor_t2::IS_PLAYER_TEAMMATE);
+        if (is_player_teammate) {
+            actor->flags1 = Utils::Bit_Off(actor->flags1, Actor_t2::IS_PLAYER_TEAMMATE);
+        }
+
+        if (allow_bcontainer) {
+            actor->ResetInventory(true);
+        } else {
+            BContainer_t* bcontainer = Object_Ref::Get_BContainer(actor);
+            if (bcontainer) {
+                UInt32 count = bcontainer->numEntries;
+                bcontainer->numEntries = 0;
+                actor->ResetInventory(true);
+                bcontainer->numEntries = count;
+            } else {
+                actor->ResetInventory(true);
+            }
+        }
+
+        XEntry_t* xentry = Object_Ref::Get_XEntry(actor, Consts::Belted_Tunic_Armor());
+        if (xentry) {
+            for (XLists_t::Iterator xlists = xentry->extendDataList->Begin(); !xlists.End(); ++xlists) {
+                XList_t* xlist = xlists.Get();
+                if (xlist) {
+                    XList::Validate(xlist);
+                    if (xlist->HasType(kExtraData_OutfitItem) && !xlist->HasType(kExtraData_Worn)) {
+                        XEntry::Remove_XList(xentry, xlist);
+                        XList::Destroy(xlist);
+                        if (xentry->countDelta == 0) {
+                            Object_Ref::Remove_XEntry(actor, xentry);
+                            XEntry::Destroy(xentry);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (is_player_teammate) {
+            actor->flags1 = Utils::Bit_On(actor->flags1, Actor_t2::IS_PLAYER_TEAMMATE);
+        }
     }
 
     void Set_Outfit(Actor_t* actor, Outfit_t* outfit, Bool_t is_sleep_outfit)
     {
         if (actor) {
-            Set_Outfit_Basic(actor, outfit, is_sleep_outfit);
             Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
             if (member) {
-                if (outfit) {
-                    member->Change_Outfit1(outfit);
-                } else {
-                    member->Change_Outfit1(Consts::Empty_Outfit());
+                if (!outfit) {
+                    outfit = Consts::Empty_Outfit();
                 }
+                Set_Outfit_Basic(actor, outfit, is_sleep_outfit, false);
+                member->Change_Outfit1(outfit);
+            } else {
+                Set_Outfit_Basic(actor, outfit, is_sleep_outfit, true); // could make this a setting
+                if (!outfit) {
+                    outfit = Consts::Empty_Outfit();
+                }
+                Party::NPCS_t::Self()->Change_Default_Outfit(actor, outfit);
             }
         }
     }
@@ -1532,7 +1578,7 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
                              RETURN_, Actor2::METHOD_, __VA_ARGS__);    \
         W
 
-        ADD_METHOD("SetOutfit", 2, void, Set_Outfit, BGSOutfit*, bool);
+        ADD_METHOD("SetOutfit", 2, void, Set_Outfit, Outfit_t*, Bool_t);
 
         #undef ADD_METHOD
 

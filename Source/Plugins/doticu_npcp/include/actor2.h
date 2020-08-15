@@ -19,7 +19,7 @@ namespace doticu_npcp { namespace Actor2 {
     Outfit_t* Base_Outfit(Actor_t* actor);
     void Base_Outfit(Actor_t* actor, Outfit_t* outfit);
     void Base_Sleep_Outfit(Actor_t* actor, Outfit_t* outfit);
-    void Set_Outfit_Basic(Actor_t* actor, Outfit_t* outfit, Bool_t is_sleep_outfit = false);
+    void Set_Outfit_Basic(Actor_t* actor, Outfit_t* outfit, Bool_t is_sleep_outfit = false, Bool_t allow_bcontainer = true);
     void Set_Outfit(Actor_t* actor, Outfit_t* outfit, Bool_t is_sleep_outfit = false);
 
     void Set_Outfit2(Actor_t* actor, Reference_t* vanilla, Reference_t* custom, Reference_t* transfer);

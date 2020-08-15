@@ -106,7 +106,6 @@ namespace doticu_npcp { namespace Party {
         void Change_Default_Outfit(Actor_t* actor, Outfit_t* default_outfit);
         void Apply_Default_Outfit(Actor_t* actor);
         void Update_And_Apply_Default_Oufit_If_Needed(Actor_t* actor);
-        void Update_Base_Outfit(Actor_t* actor);
 
         void Remove_All_Tokens(Actor_t* actor);
     };

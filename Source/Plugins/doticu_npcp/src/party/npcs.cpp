@@ -450,9 +450,7 @@ namespace doticu_npcp { namespace Party {
     {
         NPCP_ASSERT(actor);
 
-        Outfit_t* default_outfit = Default_Outfit(actor);
-        Outfit::Add_Item(default_outfit, Consts::Blank_Armor());
-        Actor2::Set_Outfit_Basic(actor, default_outfit, false);
+        Actor2::Set_Outfit_Basic(actor, Default_Outfit(actor), false, false);
     }
 
     void NPCS_t::Update_And_Apply_Default_Oufit_If_Needed(Actor_t* actor)
@@ -461,24 +459,9 @@ namespace doticu_npcp { namespace Party {
 
         Outfit_t* current_outfit = Actor2::Base_Outfit(actor);
         Outfit_t* default_outfit = Default_Outfit(actor);
-
-        if (current_outfit && current_outfit != default_outfit) {
-            Change_Default_Outfit(actor, current_outfit);
-            Actor2::Set_Outfit_Basic(actor, current_outfit, false);
-        } else if (!Object_Ref::Is_Worn(actor, Consts::Blank_Armor())) {
-            Outfit::Add_Item(default_outfit, Consts::Blank_Armor());
-            Actor2::Set_Outfit_Basic(actor, default_outfit, false);
-        } else {
-            Actor2::Base_Outfit(actor, default_outfit);
+        if (!current_outfit || current_outfit != default_outfit || !Object_Ref::Is_Worn(actor, Consts::Blank_Armor())) {
+            Actor2::Set_Outfit_Basic(actor, default_outfit, false, false);
         }
-    }
-
-    void NPCS_t::Update_Base_Outfit(Actor_t* actor)
-    {
-        NPCP_ASSERT(actor);
-
-        Outfit_t* default_outfit = Default_Outfit(actor);
-        Actor2::Base_Outfit(actor, default_outfit);
     }
 
     void NPCS_t::Remove_All_Tokens(Actor_t* actor)
@@ -517,24 +500,8 @@ namespace doticu_npcp { namespace Party {
 
 namespace doticu_npcp { namespace Party { namespace NPCS { namespace Exports {
 
-    void Add_Original(NPCS_t* self, Actor_t* original) FORWARD_VOID(Add_Original(original));
     void Remove_Original(NPCS_t* self, Actor_t* original) FORWARD_VOID(Remove_Original(original));
-    Actor_t* Add_Clone(NPCS_t* self, Actor_t* original) FORWARD_POINTER(Add_Clone(original));
     void Remove_Clone(NPCS_t* self, Actor_t* clone) FORWARD_VOID(Remove_Clone(clone));
-
-    Bool_t Is_Original(NPCS_t* self, Actor_t* actor) FORWARD_BOOL(Is_Original(actor));
-    Bool_t Is_Clone(NPCS_t* self, Actor_t* actor) FORWARD_BOOL(Is_Clone(actor));
-
-    Vector_t<Actor_t*> Originals(NPCS_t* self, Actor_t* actor) FORWARD_VECTOR(Originals(actor), Actor_t*);
-    Vector_t<Actor_t*> Clones(NPCS_t* self, Actor_t* actor) FORWARD_VECTOR(Clones(actor), Actor_t*);
-
-    Outfit_t* Default_Outfit(NPCS_t* self, Actor_t* actor) FORWARD_POINTER(Default_Outfit(actor));
-    void Change_Default_Outfit(NPCS_t* self, Actor_t* actor, Outfit_t* default_outfit) FORWARD_VOID(Change_Default_Outfit(actor, default_outfit));
-    void Apply_Default_Outfit(NPCS_t* self, Actor_t* actor) FORWARD_VOID(Apply_Default_Outfit(actor));
-    void Update_And_Apply_Default_Oufit_If_Needed(NPCS_t* self, Actor_t* actor) FORWARD_VOID(Update_And_Apply_Default_Oufit_If_Needed(actor));
-    void Update_Base_Outfit(NPCS_t* self, Actor_t* actor) FORWARD_VOID(Update_Base_Outfit(actor));
-
-    void Remove_All_Tokens(NPCS_t* self, Actor_t* actor) FORWARD_VOID(Remove_All_Tokens(actor));
 
     Bool_t Register(Registry_t* registry)
     {
@@ -545,24 +512,8 @@ namespace doticu_npcp { namespace Party { namespace NPCS { namespace Exports {
                              RETURN_, Exports::METHOD_, __VA_ARGS__);   \
         W
 
-        ADD_METHOD("Add_Original", 1, void, Add_Original, Actor_t*);
         ADD_METHOD("Remove_Original", 1, void, Remove_Original, Actor_t*);
-        ADD_METHOD("Add_Clone", 1, Actor_t*, Add_Clone, Actor_t*);
         ADD_METHOD("Remove_Clone", 1, void, Remove_Clone, Actor_t*);
-
-        ADD_METHOD("Is_Original", 1, Bool_t, Is_Original, Actor_t*);
-        ADD_METHOD("Is_Clone", 1, Bool_t, Is_Clone, Actor_t*);
-
-        ADD_METHOD("Originals", 1, Vector_t<Actor_t*>, Originals, Actor_t*);
-        ADD_METHOD("Clones", 1, Vector_t<Actor_t*>, Clones, Actor_t*);
-
-        ADD_METHOD("Default_Outfit", 1, Outfit_t*, Default_Outfit, Actor_t*);
-        ADD_METHOD("Change_Default_Outfit", 2, void, Change_Default_Outfit, Actor_t*, Outfit_t*);
-        ADD_METHOD("Apply_Default_Outfit", 1, void, Apply_Default_Outfit, Actor_t*);
-        ADD_METHOD("Update_And_Apply_Default_Oufit_If_Needed", 1, void, Update_And_Apply_Default_Oufit_If_Needed, Actor_t*);
-        ADD_METHOD("Update_Base_Outfit", 1, void, Update_Base_Outfit, Actor_t*);
-
-        ADD_METHOD("Remove_All_Tokens", 1, void, Remove_All_Tokens, Actor_t*);
 
         #undef ADD_METHOD
 

@@ -20,24 +20,8 @@ doticu_npcp_vector_form p_vec_vec_clones    =  none; vecs of cloned npcs, member
 doticu_npcp_vector_form p_vec_outfits_def   =  none; default vanilla outfits
 
 ; Native Methods
-function Add_Original(Actor original) native
 function Remove_Original(Actor original) native
-Actor function Add_Clone(Actor original) native
 function Remove_Clone(Actor clone) native
-
-bool function Is_Original(Actor ref_actor) native
-bool function Is_Clone(Actor ref_actor) native
-
-Actor[] function Originals(Actor ref_actor) native
-Actor[] function Clones(Actor ref_actor) native
-
-Outfit function Default_Outfit(Actor ref_actor) native
-function Change_Default_Outfit(Actor ref_actor, Outfit default_outfit) native
-function Apply_Default_Outfit(Actor ref_actor) native
-function Update_And_Apply_Default_Oufit_If_Needed(Actor ref_actor) native
-function Update_Base_Outfit(Actor ref_actor) native; maybe delete
-
-function Remove_All_Tokens(Actor ref_actor) native
 
 ; Friend Methods
 function f_Create(int init_max = 8)
