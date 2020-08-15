@@ -1355,6 +1355,8 @@ p_Unlock()
 
                     Actor_t* actor = Actor();
                     Enforce_Mannequin(actor, marker);
+                    Actor2::Fully_Update_3D_Model(actor);
+                    actor->Resurrect(false, true);
 
                     Follower_t* follower = Follower();
                     if (follower) {
@@ -1396,9 +1398,6 @@ p_Unlock()
             actor->pos.z = marker->pos.z;
             actor->rot.z = marker->rot.z;
             actor->Update_Actor_3D_Position();
-
-            Actor2::Fully_Update_3D_Model(actor);
-            actor->Resurrect(false, true);
         }
     }
 
