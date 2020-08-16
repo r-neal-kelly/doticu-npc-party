@@ -62,8 +62,11 @@ namespace doticu_npcp { namespace Party {
         static String_t Class_Name();
         static Class_Info_t* Class_Info();
         static NPCS_t* Self();
-        static Object_t* Object();
     public:
+        void Initialize();
+        void Uninitialize();
+
+        Object_t* Object();
         Variable_t* Variable(String_t variable_name);
         Variable_t* Bases_Variable();
         Variable_t* Original_Vectors_Variable();
@@ -87,8 +90,6 @@ namespace doticu_npcp { namespace Party {
 
         Int_t Add_Base_If_Needed(Actor_t* actor_with_base, Actor_t* actor_with_outfit);
         void Remove_Base_If_Needed(Int_t base_idx);
-
-    public:
         void Add_Original(Actor_t* original);
         void Remove_Original(Actor_t* original);
         Actor_t* Add_Clone(Actor_t* original);
@@ -104,17 +105,11 @@ namespace doticu_npcp { namespace Party {
 
         Outfit_t* Default_Outfit(Actor_t* actor);
         void Change_Default_Outfit(Actor_t* actor, Outfit_t* default_outfit);
-        void Apply_Default_Outfit(Actor_t* actor);
-        void Update_And_Apply_Default_Oufit_If_Needed(Actor_t* actor);
 
         void Remove_All_Tokens(Actor_t* actor);
+    public:
+        static void Register_Me(Registry_t* registry);
     };
-
-    namespace NPCS { namespace Exports {
-
-        Bool_t Register(Registry_t* registry);
-
-    }}
 
     class Aliases_t : public Quest_t {
     public:
@@ -311,6 +306,8 @@ namespace doticu_npcp { namespace Party {
         Int_t Remove_Original(Actor_t* original); // int function Destroy_Member(Actor ref_actor)
         Int_t Add_Clone(Actor_t* original); // int function Clone(Actor ref_actor)
         Int_t Remove_Clone(Actor_t* clone); // int function Unclone(Actor ref_actor, bool delete_clone)
+
+        void u_0_9_3();
     };
 
     namespace Members { namespace Exports {
@@ -514,6 +511,7 @@ namespace doticu_npcp { namespace Party {
         Variable_t* Display_Marker_Variable();
         Variable_t* Undisplay_Marker_Variable();
         Variable_t* Vanilla_Outfit_Variable();
+        Variable_t* Default_Outfit_Variable();
 
         Variable_t* Member_Outfit2_Variable();
         Variable_t* Immobile_Outfit2_Variable();
@@ -570,6 +568,7 @@ namespace doticu_npcp { namespace Party {
         String_t Rating_Stars();
 
         Outfit_t* Vanilla_Outfit();
+        Outfit_t* Default_Outfit();
         Outfit2_t* Member_Outfit2();
         Outfit2_t* Immobile_Outfit2();
         Outfit2_t* Settler_Outfit2();

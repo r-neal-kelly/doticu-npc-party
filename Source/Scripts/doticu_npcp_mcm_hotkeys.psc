@@ -22,8 +22,6 @@ doticu_npcp_mcm property MCM hidden
 endProperty
 
 ; Private Variables
-bool                p_is_created                        = false
-
 int                 p_option_set_defaults               =    -1
 int                 p_option_unset_all                  =    -1
 
@@ -114,20 +112,6 @@ int                 p_option_fs_unsaddle_mods           =    -1
 int                 p_option_fs_resurrect_mods          =    -1
 
 ; Friend Methods
-function f_Create()
-    p_is_created = true
-endFunction
-
-function f_Destroy()
-    p_is_created = false
-endFunction
-
-function f_Register()
-endFunction
-
-function f_Unregister()
-endFunction
-
 function f_Build_Page()
     MCM.SetCursorPosition(0)
     MCM.SetCursorFillMode(MCM.LEFT_TO_RIGHT)

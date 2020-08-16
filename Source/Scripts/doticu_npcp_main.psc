@@ -31,6 +31,9 @@ doticu_npcp_control property CONTROL hidden
     endFunction
 endProperty
 
+; Native Methods
+bool function p_Try_Update() native
+
 ; Friend Methods
 function f_Init_Mod()
     ; just in case of any engine bugs, like AddItem, which may not work
@@ -64,10 +67,13 @@ function f_Load_Mod()
 
     if p_Has_Requires()
         p_Register()
-        p_Version()
-
+        if p_Try_Update()
+            FUNCS.LOGS.Create_Note("Running version " + \
+                                   doticu_npcp_consts.NPCP_Major() + "." + \
+                                   doticu_npcp_consts.NPCP_Minor() + "." + \
+                                   doticu_npcp_consts.NPCP_Patch())
+        endIf
         FUNCS.Send_Event("doticu_npcp_load_mod")
-        doticu_npcp.Print("NPC Party has loaded.")
     endIf
 endFunction
 
@@ -120,39 +126,6 @@ function p_Register()
     CONTROL.f_Register()
 endFunction
 
-function p_Version()
-    if Is_NPC_Party_Version_Less_Than(doticu_npcp_consts.NPCP_Major(), \
-                                      doticu_npcp_consts.NPCP_Minor(), \
-                                      doticu_npcp_consts.NPCP_Patch())
-        p_Start_Updating()
-
-        if Is_NPC_Party_Version_Less_Than(0, 9, 1)
-            u_0_9_1()
-        endIf
-
-        VARS.version_major = doticu_npcp_consts.NPCP_Major()
-        VARS.version_minor = doticu_npcp_consts.NPCP_Minor()
-        VARS.version_patch = doticu_npcp_consts.NPCP_Patch()
-
-        FUNCS.LOGS.Create_Note("Running version " + \
-                               doticu_npcp_consts.NPCP_Major() + "." + \
-                               doticu_npcp_consts.NPCP_Minor() + "." + \
-                               doticu_npcp_consts.NPCP_Patch())
-
-        p_Stop_Updating()
-    endIf
-endFunction
-
-function p_Start_Updating()
-    VARS.is_updating = true
-    CONTROL.f_Start_Updating()
-endFunction
-
-function p_Stop_Updating()
-    CONTROL.f_Stop_Updating()
-    VARS.is_updating = false
-endFunction
-
 ; Public Methods
 bool function Is_Version_Less_Than(int major, int minor, int patch, int min_major, int min_minor, int min_patch)
     if major != min_major
@@ -182,11 +155,6 @@ bool function Is_Ready()
     return  VARS.version_major == doticu_npcp_consts.NPCP_Major() && \
             VARS.version_minor == doticu_npcp_consts.NPCP_Minor() && \
             VARS.version_patch == doticu_npcp_consts.NPCP_Patch()
-endFunction
-
-; Update Methods
-function u_0_9_1()
-    CONTROL.MCM.u_0_9_1()
 endFunction
 
 ; Events

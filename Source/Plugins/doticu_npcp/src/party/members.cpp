@@ -681,6 +681,36 @@ namespace doticu_npcp { namespace Party {
     {
         return CODES::FAILURE;
     }
+
+    void Members_t::u_0_9_3()
+    {
+        NPCS_t* npcs = NPCS_t::Self();
+
+        Vector_t<Member_t*> filled = Filled();
+        for (size_t idx = 0, count = filled.size(); idx < count; idx += 1) {
+            Member_t* member = filled.at(idx);
+
+            Variable_t* previous_factions_variable = member->Variable("p_prev_factions");
+            NPCP_ASSERT(previous_factions_variable);
+            Array_t* previous_factions = previous_factions_variable->Array();
+            previous_factions_variable->None();
+            if (previous_factions) {
+                Faction_t* potentional_follower_faction = Consts::Potential_Follower_Faction();
+                Faction_t* wi_no_body_cleanup_faction = Consts::WI_No_Body_Cleanup_Faction();
+                for (size_t idx = 0, count = previous_factions->count; idx < count; idx += 1) {
+                    Faction_t* faction = previous_factions->Point(idx)->Faction();
+                    if (faction == potentional_follower_faction) {
+                        member->Previous_Potential_Follower_Faction_Variable()->Bool(true);
+                    }
+                    if (faction == wi_no_body_cleanup_faction) {
+                        member->Previous_No_Body_Cleanup_Faction_Variable()->Bool(true);
+                    }
+                }
+            }
+
+            member->Default_Outfit_Variable()->Pack(npcs->Default_Outfit(member->Actor()));
+        }
+    }
     
 }}
 

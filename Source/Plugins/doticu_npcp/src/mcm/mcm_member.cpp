@@ -452,8 +452,6 @@ namespace doticu_npcp { namespace MCM {
         ADD_METHOD("p_Update_Statistics", 0, void, Update_Statistics);
 
         #undef ADD_METHOD
-
-        return;
     }
 
 }}

@@ -51,12 +51,60 @@ namespace doticu_npcp { namespace Party {
 
     NPCS_t* NPCS_t::Self()
     {
-        return static_cast<NPCS_t*>(Consts::Funcs_Quest());
+        static NPCS_t* self = static_cast<NPCS_t*>(Consts::Funcs_Quest());
+        NPCP_ASSERT(self);
+        return self;
+    }
+
+    void NPCS_t::Initialize()
+    {
+        Int_t reserve = 8;
+
+        Bases_Variable()->Pack(
+            Form_Vector_t::Create(reserve, nullptr, 1.5f)
+        );
+        Original_Vectors_Variable()->Pack(
+            Form_Vector_t::Create(reserve, nullptr, 1.5f)
+        );
+        Clone_Vectors_Variable()->Pack(
+            Form_Vector_t::Create(reserve, nullptr, 1.5f)
+        );
+        Default_Outfits_Variable()->Pack(
+            Form_Vector_t::Create(reserve, nullptr, 1.5f)
+        );
+    }
+
+    void NPCS_t::Uninitialize()
+    {
+        Form_Vector_t::Destroy(Default_Outfits());
+
+        Form_Vector_t* clone_vectors = Clone_Vectors();
+        for (size_t idx = 0, count = clone_vectors->Count(); idx < count; idx += 1) {
+            Form_Vector_t::Destroy(
+                static_cast<Form_Vector_t*>(clone_vectors->At(idx))
+            );
+        }
+        Form_Vector_t::Destroy(clone_vectors);
+
+        Form_Vector_t* original_vectors = Original_Vectors();
+        for (size_t idx = 0, count = original_vectors->Count(); idx < count; idx += 1) {
+            Form_Vector_t::Destroy(
+                static_cast<Form_Vector_t*>(original_vectors->At(idx))
+            );
+        }
+        Form_Vector_t::Destroy(original_vectors);
+
+        Form_Vector_t::Destroy(Bases());
+
+        Default_Outfits_Variable()->None();
+        Clone_Vectors_Variable()->None();
+        Original_Vectors_Variable()->None();
+        Bases_Variable()->None();
     }
 
     Object_t* NPCS_t::Object()
     {
-        Object_t* object = Object_t::Fetch(Self(), Class_Name());
+        Object_t* object = Object_t::Fetch(this, Class_Name());
         NPCP_ASSERT(object);
         object->Decrement_Lock();
         return object;
@@ -307,7 +355,7 @@ namespace doticu_npcp { namespace Party {
         }
 
         Object_Ref::Remove_All_Items(clone);
-        Apply_Default_Outfit(clone);
+        Actor2::Set_Outfit_Basic(clone, Default_Outfit(clone), false, false);
 
         if (Vars::Clone_Outfit() == CODES::OUTFIT::REFERENCE) {
             Reference_t* trash = Object_Ref::Create_Container();
@@ -436,31 +484,16 @@ namespace doticu_npcp { namespace Party {
     void NPCS_t::Change_Default_Outfit(Actor_t* actor, Outfit_t* default_outfit)
     {
         NPCP_ASSERT(actor);
-        NPCP_ASSERT(default_outfit);
+        
+        if (!default_outfit) {
+            default_outfit = Consts::Empty_Outfit();
+        }
 
         Int_t base_idx = Base_Idx(actor);
         if (base_idx > -1) {
             Outfit::Remove_Item(Default_Outfit(base_idx), Consts::Blank_Armor());
             Outfit::Add_Item(default_outfit, Consts::Blank_Armor());
             Default_Outfits()->Set(base_idx, default_outfit);
-        }
-    }
-
-    void NPCS_t::Apply_Default_Outfit(Actor_t* actor)
-    {
-        NPCP_ASSERT(actor);
-
-        Actor2::Set_Outfit_Basic(actor, Default_Outfit(actor), false, false);
-    }
-
-    void NPCS_t::Update_And_Apply_Default_Oufit_If_Needed(Actor_t* actor)
-    {
-        NPCP_ASSERT(actor);
-
-        Outfit_t* current_outfit = Actor2::Base_Outfit(actor);
-        Outfit_t* default_outfit = Default_Outfit(actor);
-        if (!current_outfit || current_outfit != default_outfit || !Object_Ref::Is_Worn(actor, Consts::Blank_Armor())) {
-            Actor2::Set_Outfit_Basic(actor, default_outfit, false, false);
         }
     }
 
@@ -496,28 +529,26 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
-}}
-
-namespace doticu_npcp { namespace Party { namespace NPCS { namespace Exports {
-
-    void Remove_Original(NPCS_t* self, Actor_t* original) FORWARD_VOID(Remove_Original(original));
-    void Remove_Clone(NPCS_t* self, Actor_t* clone) FORWARD_VOID(Remove_Clone(clone));
-
-    Bool_t Register(Registry_t* registry)
+    void NPCS_t::Register_Me(Registry_t* registry)
     {
+        auto Initialize = [](NPCS_t* self)->void FORWARD_VOID(NPCS_t::Initialize());
+        auto Uninitialize = [](NPCS_t* self)->void FORWARD_VOID(NPCS_t::Uninitialize());
+        auto Remove_Original = [](NPCS_t* self, Actor_t* original)->void FORWARD_VOID(NPCS_t::Remove_Original(original));
+        auto Remove_Clone = [](NPCS_t* self, Actor_t* clone)->void FORWARD_VOID(NPCS_t::Remove_Clone(clone));
+
         #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
         M                                                               \
-            ADD_CLASS_METHOD(NPCS_t::Class_Name(), NPCS_t,              \
+            ADD_CLASS_METHOD(Class_Name(), NPCS_t,                      \
                              STR_FUNC_, ARG_NUM_,                       \
-                             RETURN_, Exports::METHOD_, __VA_ARGS__);   \
+                             RETURN_, METHOD_, __VA_ARGS__);            \
         W
 
+        ADD_METHOD("f_Initialize", 0, void, Initialize);
+        ADD_METHOD("f_Uninitialize", 0, void, Uninitialize);
         ADD_METHOD("Remove_Original", 1, void, Remove_Original, Actor_t*);
         ADD_METHOD("Remove_Clone", 1, void, Remove_Clone, Actor_t*);
 
         #undef ADD_METHOD
-
-        return true;
     }
 
-}}}}
+}}

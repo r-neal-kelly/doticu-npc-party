@@ -60,6 +60,17 @@ namespace doticu_npcp { namespace Vars {
         }
     }
 
+    Variable_t* NPCP_Major_Variable() { DEFINE_VARIABLE("p_version_major"); }
+    Variable_t* NPCP_Minor_Variable() { DEFINE_VARIABLE("p_version_minor"); }
+    Variable_t* NPCP_Patch_Variable() { DEFINE_VARIABLE("p_version_patch"); }
+
+    Int_t NPCP_Major() { return NPCP_Major_Variable()->Int(); }
+    Int_t NPCP_Minor() { return NPCP_Minor_Variable()->Int(); }
+    Int_t NPCP_Patch() { return NPCP_Patch_Variable()->Int(); }
+    void NPCP_Major(Int_t npcp_major) { NPCP_Major_Variable()->Int(npcp_major); }
+    void NPCP_Minor(Int_t npcp_minor) { NPCP_Minor_Variable()->Int(npcp_minor); }
+    void NPCP_Patch(Int_t npcp_patch) { NPCP_Patch_Variable()->Int(npcp_patch); }
+
     #define VAR(TYPE_, NAME_)                                   \
     M                                                           \
         static const String_t variable_name = String_t(NAME_);  \

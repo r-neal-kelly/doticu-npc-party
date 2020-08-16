@@ -18,6 +18,10 @@ namespace doticu_npcp { namespace Vars {
     Variable_t* Variable(String_t variable_name);
     Variable_t* Property(String_t property_name);
 
+    Variable_t* NPCP_Major_Variable();
+    Variable_t* NPCP_Minor_Variable();
+    Variable_t* NPCP_Patch_Variable();
+
     Bool_t Do_Force_Clone_Unique();
     Bool_t Do_Force_Clone_Generic();
     Bool_t Do_Force_Unclone_Unique();
@@ -25,6 +29,13 @@ namespace doticu_npcp { namespace Vars {
     Bool_t Do_Fill_Outfit2s();
     Bool_t Do_Auto_Outfit2s();
     Bool_t Do_Auto_Immobile_Outfit2();
+
+    Int_t NPCP_Major();
+    Int_t NPCP_Minor();
+    Int_t NPCP_Patch();
+    void NPCP_Major(Int_t npcp_major);
+    void NPCP_Minor(Int_t npcp_minor);
+    void NPCP_Patch(Int_t npcp_patch);
 
     Int_t Member_Limit();
     Int_t Display_Count();

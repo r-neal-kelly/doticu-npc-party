@@ -43,6 +43,7 @@ namespace doticu_npcp { namespace Party {
     Variable_t* Member_t::Display_Marker_Variable() { DEFINE_VARIABLE("p_marker_display"); }
     Variable_t* Member_t::Undisplay_Marker_Variable() { DEFINE_VARIABLE("p_marker_undisplay"); }
     Variable_t* Member_t::Vanilla_Outfit_Variable() { DEFINE_VARIABLE("p_outfit_vanilla"); }
+    Variable_t* Member_t::Default_Outfit_Variable() { DEFINE_VARIABLE("p_outfit_default"); }
 
     Variable_t* Member_t::Member_Outfit2_Variable() { DEFINE_VARIABLE("p_outfit2_member"); }
     Variable_t* Member_t::Immobile_Outfit2_Variable() { DEFINE_VARIABLE("p_outfit2_immobile"); }
@@ -220,6 +221,14 @@ namespace doticu_npcp { namespace Party {
         return Vanilla_Outfit_Variable()->Outfit();
     }
 
+    Outfit_t* Member_t::Default_Outfit()
+    {
+        NPCP_ASSERT(Is_Filled());
+        Outfit_t* value = Default_Outfit_Variable()->Outfit();
+        NPCP_ASSERT(value);
+        return value;
+    }
+
     Outfit2_t* Member_t::Member_Outfit2()
     {
         NPCP_ASSERT(Is_Filled());
@@ -230,11 +239,7 @@ namespace doticu_npcp { namespace Party {
         if (variable->Has_Object()) {
             outfit2 = static_cast<Outfit2_t*>(variable->Reference());
         } else {
-            if (Is_Clone()) {
-                outfit2 = Outfit2_t::Create_Member(Actor(), Pack());
-            } else {
-                outfit2 = Outfit2_t::Create_Member(Actor(), Pack());
-            }
+            outfit2 = Outfit2_t::Create_Member(Actor(), Pack());
             //variable->Pack(outfit2, Outfit2_t::Class_Info());
             variable->Pack(outfit2);
         }
@@ -868,7 +873,11 @@ namespace doticu_npcp { namespace Party {
         Mannequin_Marker_Variable()->None();
         Display_Marker_Variable()->None();
         Undisplay_Marker_Variable()->None();
-        Vanilla_Outfit_Variable()->Pack(NPCS_t::Self()->Default_Outfit(actor));
+
+        Outfit_t* default_outfit = NPCS_t::Self()->Default_Outfit(actor);
+        NPCP_ASSERT(default_outfit);
+        Vanilla_Outfit_Variable()->Pack(default_outfit);
+        Default_Outfit_Variable()->Pack(default_outfit);
 
         Is_Clone_Variable()->Bool(is_clone);
         Is_Immobile_Variable()->Bool(false);
@@ -951,6 +960,7 @@ p_Lock()
     p_outfit2_settler = none
     p_outfit2_member = none
     p_container_pack = none
+    p_outfit_default = none
     p_outfit_vanilla = none
     p_marker_mannequin = none
     p_marker_undisplay = none
@@ -1971,19 +1981,22 @@ p_Unlock()
     void Member_t::Change_Outfit1(Outfit_t* outfit)
     {
         NPCP_ASSERT(Is_Filled());
-        NPCP_ASSERT(outfit);
+
+        if (!outfit) {
+            outfit = Consts::Empty_Outfit();
+        }
+
+        Actor_t* actor = Actor();
+        Outfit_t* old_outfit = Actor2::Base_Outfit(actor);
+        Actor2::Set_Outfit_Basic(actor, outfit, false, false);
 
         Vanilla_Outfit_Variable()->Pack(outfit);
         Update_Outfit2(CODES::OUTFIT2::VANILLA, false);
-
-        Actor_t* actor = Actor();
-        NPCP_ASSERT(Actor2::Base_Outfit(actor) == outfit);
-        Actor2::Base_Outfit(actor, NPCS_t::Self()->Default_Outfit(actor)); // stops default outfit from changing on NPCS_t
-        
         Vanilla_Outfit2()->Cache_Dynamic_Outfit1(actor);
 
-        //Apply_Outfit2(); // for some reason, we get crashes doing it directly...
-        Virtual_Machine_t::Self()->Send_Event(this, "p_Apply_Outfit2");
+        Actor2::Set_Outfit_Basic(actor, old_outfit, false, false);
+
+        Apply_Outfit2();
     }
 
     Int_t Member_t::Change_Outfit2(Int_t outfit2_code)
@@ -2248,9 +2261,17 @@ p_Unlock()
         }
 
         Actor_t* actor = Actor();
-        current_outfit2->Apply_To(actor, Pack());
-        Actor2::Join_Player_Team(actor);
-        Virtual_Machine_t::Self()->Send_Event(this, "On_Update_Equipment");
+        if (Actor2::Is_Alive(actor)) {
+            Outfit_t* default_outfit1 = NPCS_t::Self()->Default_Outfit(actor);
+            if (Default_Outfit() != default_outfit1) {
+                Default_Outfit_Variable()->Pack(default_outfit1);
+                current_outfit2->Apply_To(actor, Pack(), default_outfit1);
+            } else if (Actor2::Base_Outfit(actor) != default_outfit1 || !Object_Ref::Is_Worn(actor, Consts::Blank_Armor())) {
+                current_outfit2->Apply_To(actor, Pack(), default_outfit1);
+            } else {
+                current_outfit2->Apply_To(actor, Pack(), nullptr);
+            }
+        }
     }
 
     void Member_t::Rename(String_t new_name)

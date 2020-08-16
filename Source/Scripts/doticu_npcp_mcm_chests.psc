@@ -44,8 +44,6 @@ int property FLAG_DISABLE hidden
 endProperty
 
 ; Private Variables
-bool                p_is_created            = false
-
 int                 p_option_input          =    -1
 
 int                 p_option_swords         =    -1
@@ -111,20 +109,6 @@ int                 p_option_books_z        =    -1
 int                 p_option_books          =    -1
 
 ; Friend Methods
-function f_Create()
-    p_is_created = true
-endFunction
-
-function f_Destroy()
-    p_is_created = false
-endFunction
-
-function f_Register()
-endFunction
-
-function f_Unregister()
-endFunction
-
 function f_Build_Page()
     MCM.SetCursorPosition(0)
     MCM.SetCursorFillMode(MCM.LEFT_TO_RIGHT)

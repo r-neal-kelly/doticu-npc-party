@@ -127,17 +127,13 @@ function f_Create()
     MCM_MEMBER.f_Create()
     MCM_FILTER.f_Create()
     MCM_MANNEQUINS.f_Create()
-    MCM_CHESTS.f_Create()
     MCM_SETTINGS.f_Create()
-    MCM_HOTKEYS.f_Create()
     MCM_LOG.f_Create()
 endFunction
 
 function f_Destroy()
     MCM_LOG.f_Destroy()
-    MCM_HOTKEYS.f_Destroy()
     MCM_SETTINGS.f_Destroy()
-    MCM_CHESTS.f_Destroy()
     MCM_MANNEQUINS.f_Destroy()
     MCM_FILTER.f_Destroy()
     MCM_MEMBER.f_Destroy()
@@ -153,17 +149,13 @@ function f_Register()
     MCM_MEMBER.f_Register()
     MCM_FILTER.f_Register()
     MCM_MANNEQUINS.f_Register()
-    MCM_CHESTS.f_Register()
     MCM_SETTINGS.f_Register()
-    MCM_HOTKEYS.f_Register()
     MCM_LOG.f_Register()
 endFunction
 
 function f_Unregister()
     MCM_LOG.f_Unregister()
-    MCM_HOTKEYS.f_Unregister()
     MCM_SETTINGS.f_Unregister()
-    MCM_CHESTS.f_Unregister()
     MCM_MANNEQUINS.f_Unregister()
     MCM_FILTER.f_Unregister()
     MCM_MEMBER.f_Unregister()
@@ -434,11 +426,3 @@ event OnOptionHighlight(int id_option)
         MCM_LOG.f_On_Option_Highlight(id_option)
     endIf
 endEvent
-
-; Update Methods
-function u_0_9_1()
-    MCM_CHESTS.f_Create()
-    MCM_CHESTS.f_Register()
-    MCM_HOTKEYS.f_Create()
-    MCM_HOTKEYS.f_Register()
-endFunction

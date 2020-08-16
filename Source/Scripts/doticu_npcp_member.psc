@@ -58,6 +58,7 @@ ObjectReference         p_marker_mannequin                  =  none
 ObjectReference         p_marker_display                    =  none
 ObjectReference         p_marker_undisplay                  =  none
 Outfit                  p_outfit_vanilla                    =  none
+Outfit                  p_outfit_default                    =  none
 doticu_npcp_outfit      p_outfit2_member                    =  none
 doticu_npcp_outfit      p_outfit2_immobile                  =  none
 doticu_npcp_outfit      p_outfit2_settler                   =  none
@@ -92,9 +93,8 @@ float                   p_prev_confidence                   =   0.0
 float                   p_prev_assistance                   =   0.0
 float                   p_prev_morality                     =   0.0
 
-; to be deleted
-bool                    p_is_locked                         = false
-Faction[]               p_prev_factions                     =  none
+bool                    p_is_locked                         = false; to be deleted as soon as possible
+Faction[]               p_prev_factions                     =  none; to be deleted in a future update
 
 ; Native Methods
 Actor function Actor() native
@@ -244,6 +244,7 @@ p_Lock()
     p_outfit2_settler = none
     p_outfit2_member = none
     p_container_pack = none
+    p_outfit_default = none
     p_outfit_vanilla = none
     p_marker_mannequin = none
     p_marker_undisplay = none
@@ -657,7 +658,7 @@ event OnLoad()
 endEvent
 
 event OnActivate(ObjectReference activator_obj)
-    if VARS.is_updating || !Exists() || activator_obj != doticu_npcp_consts.Player_Actor()
+    if !Exists() || activator_obj != doticu_npcp_consts.Player_Actor()
         return
     endIf
 
@@ -679,10 +680,6 @@ endEvent
 event OnHit(ObjectReference ref_attacker, Form form_tool, Projectile ref_projectile, bool is_power, bool is_sneak, bool is_bash, bool is_blocked) native
 
 event OnCombatStateChanged(Actor ref_target, int code_combat)
-    if VARS.is_updating
-        return
-    endIf
-
     if ref_target == doticu_npcp_consts.Player_Actor()
         ACTORS.Pacify(p_ref_actor)
     elseIf MEMBERS.Has_Actor(ref_target)

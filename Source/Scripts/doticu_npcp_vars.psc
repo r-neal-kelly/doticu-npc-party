@@ -36,7 +36,6 @@ int                 p_auto_vitality         =    -1
 int                 p_num_display           =    -1
 int                 p_max_members           =    -1
 
-bool                p_is_updating           = false
 bool                p_is_mcm_open           = false
 
 ; Keys
@@ -360,15 +359,6 @@ int property max_members hidden
     endFunction
 endProperty
 
-bool property is_updating hidden
-    bool function Get()
-        return p_is_updating
-    endFunction
-    function Set(bool val)
-        p_is_updating = val
-    endFunction
-endProperty
-
 bool property is_mcm_open hidden
     bool function Get()
         return p_is_mcm_open
@@ -447,6 +437,5 @@ function Set_Defaults()
     num_display = doticu_npcp.Members().DEFAULT_DISPLAY
     max_members = doticu_npcp.Members().Max()
 
-    is_updating = false
     is_mcm_open = false
 endFunction

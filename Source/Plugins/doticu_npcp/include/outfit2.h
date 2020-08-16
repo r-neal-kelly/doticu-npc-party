@@ -37,7 +37,7 @@ namespace doticu_npcp { namespace Papyrus {
         Bool_t Hasnt_Outfit1_Cache();
 
         void Open(String_t outfit_name, Virtual_Callback_i** callback = nullptr);
-        void Apply_To(Actor_t* actor, Reference_t* pack);
+        void Apply_To(Actor_t* actor, Reference_t* pack, Outfit_t* outfit1_to_apply = nullptr);
         void Cache_Static_Outfit1(Outfit_t* outfit);
         void Cache_Dynamic_Outfit1(Actor_t* actor);
     };

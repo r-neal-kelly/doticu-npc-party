@@ -239,14 +239,18 @@ namespace doticu_npcp { namespace Papyrus {
         Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "p_Open", nullptr, callback);
     }
 
-    void Outfit2_t::Apply_To(Actor_t* actor, Reference_t* pack)
+    void Outfit2_t::Apply_To(Actor_t* actor, Reference_t* pack, Outfit_t* outfit1_to_apply)
     {
         NPCP_ASSERT(actor);
         NPCP_ASSERT(pack);
 
         if (Actor2::Is_Alive(actor)) {
-            Party::NPCS_t::Self()->Update_And_Apply_Default_Oufit_If_Needed(actor);
+            if (outfit1_to_apply) {
+                Actor2::Set_Outfit_Basic(actor, outfit1_to_apply, false, false);
+            }
             Actor2::Set_Outfit2(actor, Outfit1_Cache(), this, pack);
+            Actor2::Join_Player_Team(actor);
+            Actor2::Update_Equipment(actor);
         }
     }
 

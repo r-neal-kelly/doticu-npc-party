@@ -63,6 +63,7 @@ endFunction
 
 function f_Register()
     RegisterForModEvent("doticu_npcp_init_mod", "On_Init_Mod")
+    RegisterForModEvent("doticu_npcp_load_mod", "On_Load_Mod")
     RegisterForModEvent("doticu_npcp_cell_change", "On_Cell_Change")
     RegisterForControl("Sneak")
     RegisterForActorAction(doticu_npcp_codes.ACTION_DRAW_END())
@@ -152,9 +153,7 @@ event On_Init_Mod()
     ACTORS.Apply_Ability(ACTOR_PLAYER, doticu_npcp_consts.Cell_Ability_Spell())
 endEvent
 
-event OnPlayerLoadGame()
-    MAIN.f_Load_Mod()
-
+event On_Load_Mod()
     ; just in case it somehow gets stuck, which has happened before
     ACTORS.Apply_Ability(ACTOR_PLAYER, doticu_npcp_consts.Cell_Ability_Spell())
 

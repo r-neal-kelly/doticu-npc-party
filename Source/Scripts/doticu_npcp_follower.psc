@@ -655,10 +655,6 @@ endFunction
 
 ; Events
 event OnCombatStateChanged(Actor ref_target, int code_combat)
-    if VARS.is_updating
-        return
-    endIf
-
     if code_combat == doticu_npcp_codes.COMBAT_NO()
         
     elseIf code_combat == doticu_npcp_codes.COMBAT_YES()

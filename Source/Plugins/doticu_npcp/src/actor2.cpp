@@ -70,6 +70,8 @@ namespace doticu_npcp { namespace Actor2 {
     {
         NPCP_ASSERT(actor);
 
+    //Object_Ref::Log_XContainer(actor);
+
         if (is_sleep_outfit) {
             Base_Sleep_Outfit(actor, outfit);
         } else {
@@ -123,6 +125,8 @@ namespace doticu_npcp { namespace Actor2 {
         if (is_player_teammate) {
             actor->flags1 = Utils::Bit_On(actor->flags1, Actor_t2::IS_PLAYER_TEAMMATE);
         }
+
+    //Object_Ref::Log_XContainer(actor);
     }
 
     void Set_Outfit(Actor_t* actor, Outfit_t* outfit, Bool_t is_sleep_outfit)
@@ -130,16 +134,9 @@ namespace doticu_npcp { namespace Actor2 {
         if (actor && actor != Player::Actor()) {
             Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
             if (member) {
-                if (!outfit) {
-                    outfit = Consts::Empty_Outfit();
-                }
-                Set_Outfit_Basic(actor, outfit, is_sleep_outfit, false);
                 member->Change_Outfit1(outfit);
             } else {
                 Set_Outfit_Basic(actor, outfit, is_sleep_outfit, true); // could make this a setting
-                if (!outfit) {
-                    outfit = Consts::Empty_Outfit();
-                }
                 Party::NPCS_t::Self()->Change_Default_Outfit(actor, outfit);
             }
         }
