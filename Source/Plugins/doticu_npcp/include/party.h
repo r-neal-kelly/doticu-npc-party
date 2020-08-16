@@ -69,24 +69,16 @@ namespace doticu_npcp { namespace Party {
         Object_t* Object();
         Variable_t* Variable(String_t variable_name);
         Variable_t* Bases_Variable();
-        Variable_t* Original_Vectors_Variable();
-        Variable_t* Clone_Vectors_Variable();
         Variable_t* Default_Outfits_Variable();
 
         Form_Vector_t* Bases();
-        Form_Vector_t* Original_Vectors();
-        Form_Vector_t* Clone_Vectors();
         Form_Vector_t* Default_Outfits();
 
         Actor_Base_t* Base(Actor_t* actor);
         Int_t Base_Idx(Actor_t* actor);
-        Form_Vector_t* Originals(Int_t base_idx);
-        Form_Vector_t* Clones(Int_t base_idx);
         Outfit_t* Default_Outfit(Int_t base_idx);
 
         Bool_t Has_Base(Actor_t* actor);
-        Bool_t Has_Original(Int_t base_idx, Actor_t* actor);
-        Bool_t Has_Clone(Int_t base_idx, Actor_t* actor);
 
         Int_t Add_Base_If_Needed(Actor_t* actor_with_base, Actor_t* actor_with_outfit);
         void Remove_Base_If_Needed(Int_t base_idx);
@@ -94,14 +86,6 @@ namespace doticu_npcp { namespace Party {
         void Remove_Original(Actor_t* original);
         Actor_t* Add_Clone(Actor_t* original);
         void Remove_Clone(Actor_t* clone);
-
-        Bool_t Is_Original(Actor_t* actor);
-        Bool_t Is_Clone(Actor_t* actor);
-        Bool_t Should_Clone(Actor_t* actor);
-        Bool_t Should_Unclone(Actor_t* actor);
-
-        Vector_t<Actor_t*> Originals(Actor_t* actor);
-        Vector_t<Actor_t*> Clones(Actor_t* actor);
 
         Outfit_t* Default_Outfit(Actor_t* actor);
         void Change_Default_Outfit(Actor_t* actor, Outfit_t* default_outfit);

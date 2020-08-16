@@ -797,7 +797,7 @@ namespace doticu_npcp { namespace Party {
     Bool_t Member_t::Should_Unclone()
     {
         NPCP_ASSERT(Is_Filled());
-        return Members_t::Self()->Should_Unclone(Actor());
+        return Is_Clone() && Members_t::Self()->Should_Unclone(Actor());
     }
 
     void Member_t::On_Hit(Reference_t* attacker,

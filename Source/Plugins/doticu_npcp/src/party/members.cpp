@@ -175,12 +175,16 @@ namespace doticu_npcp { namespace Party {
 
     Bool_t Members_t::Should_Clone(Actor_t* actor)
     {
-        return NPCS_t::Self()->Should_Clone(actor);
+        return
+            (Actor2::Is_Unique(actor) && Vars::Do_Force_Clone_Unique()) ||
+            (Actor2::Is_Generic(actor) && Vars::Do_Force_Clone_Generic());
     }
 
     Bool_t Members_t::Should_Unclone(Actor_t* actor)
     {
-        return NPCS_t::Self()->Should_Unclone(actor);
+        return
+            (Actor2::Is_Unique(actor) && Vars::Do_Force_Unclone_Unique()) ||
+            (Actor2::Is_Generic(actor) && Vars::Do_Force_Unclone_Generic());
     }
 
     Int_t Members_t::Max()

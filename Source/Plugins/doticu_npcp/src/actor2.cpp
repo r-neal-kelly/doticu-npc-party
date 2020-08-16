@@ -70,8 +70,6 @@ namespace doticu_npcp { namespace Actor2 {
     {
         NPCP_ASSERT(actor);
 
-    //Object_Ref::Log_XContainer(actor);
-
         if (is_sleep_outfit) {
             Base_Sleep_Outfit(actor, outfit);
         } else {
@@ -125,8 +123,6 @@ namespace doticu_npcp { namespace Actor2 {
         if (is_player_teammate) {
             actor->flags1 = Utils::Bit_On(actor->flags1, Actor_t2::IS_PLAYER_TEAMMATE);
         }
-
-    //Object_Ref::Log_XContainer(actor);
     }
 
     void Set_Outfit(Actor_t* actor, Outfit_t* outfit, Bool_t is_sleep_outfit)
