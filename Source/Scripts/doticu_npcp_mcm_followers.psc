@@ -191,7 +191,7 @@ function f_On_Option_Select(int id_option)
 
     elseIf idx_command == p_COMMAND_ONE_MORE
         MCM.f_Disable(id_option, MCM.DO_UPDATE)
-        return p_Goto_Followers_Member(ref_follower.Get_Member())
+        return p_Goto_Followers_Member(ref_follower.Member() as doticu_npcp_member)
 
     endIf
 endFunction
@@ -328,9 +328,19 @@ doticu_npcp_member function p_Get_Prev_Member(doticu_npcp_member ref_member)
     int idx_alias = p_arr_aliases.Find(ref_member.Get_Follower() as Alias)
     if idx_alias > -1
         if idx_alias == 0
-            return (p_arr_aliases[p_arr_aliases.length - 1] as doticu_npcp_follower).Get_Member()
+            doticu_npcp_follower follower = p_arr_aliases[p_arr_aliases.length - 1] as doticu_npcp_follower
+            if follower
+                return follower.Member() as doticu_npcp_member
+            else
+                return ref_member
+            endIf
         else
-            return (p_arr_aliases[idx_alias - 1] as doticu_npcp_follower).Get_Member()
+            doticu_npcp_follower follower = p_arr_aliases[idx_alias - 1] as doticu_npcp_follower
+            if follower
+                return follower.Member() as doticu_npcp_member
+            else
+                return ref_member
+            endIf
         endIf
     else
         return ref_member
@@ -345,9 +355,19 @@ doticu_npcp_member function p_Get_Next_Member(doticu_npcp_member ref_member)
     int idx_alias = p_arr_aliases.Find(ref_member.Get_Follower() as Alias)
     if idx_alias > -1
         if idx_alias == p_arr_aliases.length - 1
-            return (p_arr_aliases[0] as doticu_npcp_follower).Get_Member()
+            doticu_npcp_follower follower = p_arr_aliases[0] as doticu_npcp_follower
+            if follower
+                return follower.Member() as doticu_npcp_member
+            else
+                return ref_member
+            endIf
         else
-            return (p_arr_aliases[idx_alias + 1] as doticu_npcp_follower).Get_Member()
+            doticu_npcp_follower follower = p_arr_aliases[idx_alias + 1] as doticu_npcp_follower
+            if follower
+                return follower.Member() as doticu_npcp_member
+            else
+                return ref_member
+            endIf
         endIf
     else
         return ref_member

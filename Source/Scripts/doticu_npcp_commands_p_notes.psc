@@ -709,6 +709,8 @@ function Followers_Settle(int code_return)
         LOGS.Create_Note("All followers settle where they stand.")
     elseIf code_return == doticu_npcp_codes.FOLLOWERS()
         LOGS.Create_Note("No followers to settle.")
+    elseIf code_return == doticu_npcp_codes.HASNT()
+        LOGS.Create_Note("All followers are already settled.")
     else
         LOGS.Create_Error("Could not settle followers: " + code_return)
     endIf

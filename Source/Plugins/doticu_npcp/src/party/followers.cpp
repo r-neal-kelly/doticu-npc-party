@@ -8,6 +8,7 @@
 #include "object_ref.h"
 #include "party.h"
 #include "party.inl"
+#include "player.h"
 #include "utils.h"
 #include "vars.h"
 
@@ -511,182 +512,338 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
-    void Followers_t::Send(Vector_t<Follower_t*> followers, String_t event_name)
+    Int_t Followers_t::Enforce()
     {
-        if (followers.size() > 0 && !String2::Is_Same_Caseless(event_name, "")) {
-            struct Args : public IFunctionArguments {
-                bool Copy(Output* output)
-                {
-                    return true;
-                }
-            } args;
-
-            for (size_t idx = 0, size = followers.size(); idx < size; idx += 1) {
-                Follower_t* follower = followers[idx];
-                Handle_t handle(follower);
-                handle.Registry()->QueueEvent(handle, &event_name, &args);
+        Vector_t<Follower_t*> filled = Filled();
+        size_t filled_count = filled.size();
+        if (filled_count > 0) {
+            for (size_t idx = 0; idx < filled_count; idx += 1) {
+                filled[idx]->Member()->Enforce();
             }
+            return CODES::SUCCESS;
+        } else {
+            return CODES::FOLLOWERS;
         }
     }
 
-    void Followers_t::Send(Vector_t<Follower_t*> followers, String_t event_name, Form_t* form_arg)
+    Int_t Followers_t::Resurrect()
     {
-        if (followers.size() > 0 && !String2::Is_Same_Caseless(event_name, "")) {
-            struct Args : public IFunctionArguments {
-                Form_t* form_arg;
-                Args(Form_t* form_arg) :
-                    form_arg(form_arg)
-                {
+        if (Count_Filled() > 0) {
+            Vector_t<Follower_t*> dead = Dead();
+            size_t dead_count = dead.size();
+            if (dead_count > 0) {
+                for (size_t idx = 0; idx < dead_count; idx += 1) {
+                    dead[idx]->Resurrect();
                 }
-                bool Copy(Output* output)
-                {
-                    output->Resize(1);
-                    if (form_arg) {
-                        PackValue(output->Get(0), &form_arg, (*g_skyrimVM)->GetClassRegistry());
-                    } else {
-                        output->Get(0)->SetNone();
+                return CODES::SUCCESS;
+            } else {
+                return CODES::HASNT;
+            }
+        } else {
+            return CODES::FOLLOWERS;
+        }
+    }
+
+    Int_t Followers_t::Mobilize()
+    {
+        if (Count_Filled() > 0) {
+            Vector_t<Follower_t*> immobile = Immobile();
+            size_t immobile_count = immobile.size();
+            if (immobile_count > 0) {
+                for (size_t idx = 0; idx < immobile_count; idx += 1) {
+                    immobile[idx]->Mobilize();
+                }
+                return CODES::SUCCESS;
+            } else {
+                return CODES::HASNT;
+            }
+        } else {
+            return CODES::FOLLOWERS;
+        }
+    }
+
+    Int_t Followers_t::Immobilize()
+    {
+        if (Count_Filled() > 0) {
+            Vector_t<Follower_t*> mobile = Mobile();
+            size_t mobile_count = mobile.size();
+            if (mobile_count > 0) {
+                for (size_t idx = 0; idx < mobile_count; idx += 1) {
+                    mobile[idx]->Immobilize();
+                }
+                return CODES::SUCCESS;
+            } else {
+                return CODES::HASNT;
+            }
+        } else {
+            return CODES::FOLLOWERS;
+        }
+    }
+
+    Int_t Followers_t::Settle()
+    {
+        if (Count_Filled() > 0) {
+            Vector_t<Follower_t*> non_settlers = Non_Settlers();
+            size_t non_settler_count = non_settlers.size();
+            if (non_settler_count > 0) {
+                for (size_t idx = 0; idx < non_settler_count; idx += 1) {
+                    non_settlers[idx]->Settle();
+                }
+                return CODES::SUCCESS;
+            } else {
+                return CODES::HASNT;
+            }
+        } else {
+            return CODES::FOLLOWERS;
+        }
+    }
+
+    Int_t Followers_t::Resettle()
+    {
+        if (Count_Filled() > 0) {
+            Vector_t<Follower_t*> settlers = Settlers();
+            size_t settler_count = settlers.size();
+            if (settler_count > 0) {
+                for (size_t idx = 0; idx < settler_count; idx += 1) {
+                    settlers[idx]->Resettle();
+                }
+                return CODES::SUCCESS;
+            } else {
+                return CODES::HASNT;
+            }
+        } else {
+            return CODES::FOLLOWERS;
+        }
+    }
+
+    Int_t Followers_t::Unsettle()
+    {
+        if (Count_Filled() > 0) {
+            Vector_t<Follower_t*> settlers = Settlers();
+            size_t settler_count = settlers.size();
+            if (settler_count > 0) {
+                for (size_t idx = 0; idx < settler_count; idx += 1) {
+                    settlers[idx]->Unsettle();
+                }
+                return CODES::SUCCESS;
+            } else {
+                return CODES::HASNT;
+            }
+        } else {
+            return CODES::FOLLOWERS;
+        }
+    }
+
+    Int_t Followers_t::Enthrall()
+    {
+        if (Count_Filled() > 0) {
+            Vector_t<Follower_t*> non_thralls = Non_Thralls();
+            size_t non_thrall_count = non_thralls.size();
+            if (non_thrall_count > 0) {
+                for (size_t idx = 0; idx < non_thrall_count; idx += 1) {
+                    non_thralls[idx]->Enthrall();
+                }
+                return CODES::SUCCESS;
+            } else {
+                return CODES::HASNT;
+            }
+        } else {
+            return CODES::FOLLOWERS;
+        }
+    }
+
+    Int_t Followers_t::Unthrall()
+    {
+        if (Count_Filled() > 0) {
+            Vector_t<Follower_t*> thralls = Thralls();
+            size_t thrall_count = thralls.size();
+            if (thrall_count > 0) {
+                for (size_t idx = 0; idx < thrall_count; idx += 1) {
+                    thralls[idx]->Unthrall();
+                }
+                return CODES::SUCCESS;
+            } else {
+                return CODES::HASNT;
+            }
+        } else {
+            return CODES::FOLLOWERS;
+        }
+    }
+
+    Int_t Followers_t::Paralyze()
+    {
+        if (Count_Filled() > 0) {
+            Vector_t<Follower_t*> non_paralyzed = Non_Paralyzed();
+            size_t non_paralyzed_count = non_paralyzed.size();
+            if (non_paralyzed_count > 0) {
+                for (size_t idx = 0; idx < non_paralyzed_count; idx += 1) {
+                    non_paralyzed[idx]->Paralyze();
+                }
+                return CODES::SUCCESS;
+            } else {
+                return CODES::HASNT;
+            }
+        } else {
+            return CODES::FOLLOWERS;
+        }
+    }
+
+    Int_t Followers_t::Unparalyze()
+    {
+        if (Count_Filled() > 0) {
+            Vector_t<Follower_t*> paralyzed = Paralyzed();
+            size_t paralyzed_count = paralyzed.size();
+            if (paralyzed_count > 0) {
+                for (size_t idx = 0; idx < paralyzed_count; idx += 1) {
+                    paralyzed[idx]->Unparalyze();
+                }
+                return CODES::SUCCESS;
+            } else {
+                return CODES::HASNT;
+            }
+        } else {
+            return CODES::FOLLOWERS;
+        }
+    }
+
+    Int_t Followers_t::Sneak()
+    {
+        if (Count_Filled() > 0) {
+            Vector_t<Follower_t*> non_sneaks = Non_Sneaks();
+            size_t non_sneak_count = non_sneaks.size();
+            if (non_sneak_count > 0) {
+                for (size_t idx = 0; idx < non_sneak_count; idx += 1) {
+                    non_sneaks[idx]->Sneak();
+                }
+                return CODES::SUCCESS;
+            } else {
+                return CODES::HASNT;
+            }
+        } else {
+            return CODES::FOLLOWERS;
+        }
+    }
+
+    Int_t Followers_t::Unsneak()
+    {
+        if (Count_Filled() > 0) {
+            Vector_t<Follower_t*> sneaks = Sneaks();
+            size_t sneak_count = sneaks.size();
+            if (sneak_count > 0) {
+                for (size_t idx = 0; idx < sneak_count; idx += 1) {
+                    sneaks[idx]->Unsneak();
+                }
+                return CODES::SUCCESS;
+            } else {
+                return CODES::HASNT;
+            }
+        } else {
+            return CODES::FOLLOWERS;
+        }
+    }
+
+    Int_t Followers_t::Saddle()
+    {
+        if (Player::Is_In_Exterior_Cell()) {
+            if (Count_Filled() > 0) {
+                Vector_t<Follower_t*> non_saddlers = Non_Saddlers();
+                size_t non_saddler_count = non_saddlers.size();
+                if (non_saddler_count > 0) {
+                    for (size_t idx = 0; idx < non_saddler_count; idx += 1) {
+                        non_saddlers[idx]->Saddle();
                     }
-                    return true;
+                    return CODES::SUCCESS;
+                } else {
+                    return CODES::HASNT;
                 }
-            } args(form_arg);
-
-            for (size_t idx = 0, size = followers.size(); idx < size; idx += 1) {
-                Follower_t* follower = followers[idx];
-                Handle_t handle(follower);
-                handle.Registry()->QueueEvent(handle, &event_name, &args);
+            } else {
+                return CODES::FOLLOWERS;
             }
+        } else {
+            return CODES::INTERIOR;
         }
     }
 
-    // some of these can be made way faster now, by calling c++ innate funcs
-    void Followers_t::Register()
+    Int_t Followers_t::Unsaddle()
     {
-        static const String_t event_name = String_t("f_Register");
-        Send(Followers(), event_name);
-    }
-
-    void Followers_t::Enforce()
-    {
-        static const String_t event_name = String_t("On_Followers_Enforce");
-        Send(Followers(), event_name, nullptr);
-    }
-
-    void Followers_t::Resurrect()
-    {
-        static const String_t event_name = String_t("On_Followers_Resurrect");
-        Send(Dead(), event_name, Tasklist());
-    }
-
-    void Followers_t::Mobilize()
-    {
-        Vector_t<Follower_t*> immobile = Immobile();
-        for (size_t idx = 0, size = immobile.size(); idx < size; idx += 1) {
-            immobile[idx]->Mobilize();
+        if (Count_Filled() > 0) {
+            Vector_t<Follower_t*> saddlers = Saddlers();
+            size_t saddler_count = saddlers.size();
+            if (saddler_count > 0) {
+                for (size_t idx = 0; idx < saddler_count; idx += 1) {
+                    saddlers[idx]->Unsaddle();
+                }
+                return CODES::SUCCESS;
+            } else {
+                return CODES::HASNT;
+            }
+        } else {
+            return CODES::FOLLOWERS;
         }
     }
 
-    void Followers_t::Immobilize()
+    Int_t Followers_t::Retreat()
     {
-        Vector_t<Follower_t*> mobile = Mobile();
-        for (size_t idx = 0, size = mobile.size(); idx < size; idx += 1) {
-            mobile[idx]->Immobilize();
+        if (Count_Filled() > 0) {
+            Vector_t<Follower_t*> non_retreaters = Non_Retreaters();
+            size_t non_retreater_count = non_retreaters.size();
+            if (non_retreater_count > 0) {
+                for (size_t idx = 0; idx < non_retreater_count; idx += 1) {
+                    non_retreaters[idx]->Retreat();
+                }
+                return CODES::SUCCESS;
+            } else {
+                return CODES::HASNT;
+            }
+        } else {
+            return CODES::FOLLOWERS;
         }
     }
 
-    void Followers_t::Settle()
+    Int_t Followers_t::Unretreat()
     {
-        Vector_t<Follower_t*> non_settlers = Non_Settlers();
-        for (size_t idx = 0, size = non_settlers.size(); idx < size; idx += 1) {
-            non_settlers[idx]->Settle();
+        if (Count_Filled() > 0) {
+            Vector_t<Follower_t*> retreaters = Retreaters();
+            size_t retreater_count = retreaters.size();
+            if (retreater_count > 0) {
+                for (size_t idx = 0; idx < retreater_count; idx += 1) {
+                    retreaters[idx]->Unretreat();
+                }
+                return CODES::SUCCESS;
+            } else {
+                return CODES::HASNT;
+            }
+        } else {
+            return CODES::FOLLOWERS;
         }
     }
 
-    void Followers_t::Unsettle()
+    Int_t Followers_t::Unfollow()
     {
-        Vector_t<Follower_t*> settlers = Settlers();
-        for (size_t idx = 0, size = settlers.size(); idx < size; idx += 1) {
-            settlers[idx]->Unsettle();
+        Vector_t<Follower_t*> filled = Filled();
+        size_t filled_count = filled.size();
+        if (filled_count > 0) {
+            for (size_t idx = 0; idx < filled_count; idx += 1) {
+                filled[idx]->Member()->Unfollow();
+            }
+            return CODES::SUCCESS;
+        } else {
+            return CODES::FOLLOWERS;
         }
     }
 
-    void Followers_t::Enthrall()
+    Int_t Followers_t::Unmember()
     {
-        Vector_t<Follower_t*> non_thralls = Non_Thralls();
-        for (size_t idx = 0, size = non_thralls.size(); idx < size; idx += 1) {
-            non_thralls[idx]->Enthrall();
+        Vector_t<Follower_t*> filled = Filled();
+        size_t filled_count = filled.size();
+        if (filled_count > 0) {
+            for (size_t idx = 0; idx < filled_count; idx += 1) {
+                filled[idx]->Member()->Unmember();
+            }
+            return CODES::SUCCESS;
+        } else {
+            return CODES::FOLLOWERS;
         }
-    }
-
-    void Followers_t::Unthrall()
-    {
-        Vector_t<Follower_t*> thralls = Thralls();
-        for (size_t idx = 0, size = thralls.size(); idx < size; idx += 1) {
-            thralls[idx]->Unthrall();
-        }
-    }
-
-    void Followers_t::Paralyze()
-    {
-        Vector_t<Follower_t*> non_paralyzed = Non_Paralyzed();
-        for (size_t idx = 0, size = non_paralyzed.size(); idx < size; idx += 1) {
-            non_paralyzed[idx]->Paralyze();
-        }
-    }
-
-    void Followers_t::Unparalyze()
-    {
-        Vector_t<Follower_t*> paralyzed = Paralyzed();
-        for (size_t idx = 0, size = paralyzed.size(); idx < size; idx += 1) {
-            paralyzed[idx]->Unparalyze();
-        }
-    }
-
-    void Followers_t::Sneak()
-    {
-        static const String_t event_name = String_t("On_Followers_Sneak");
-        Send(Non_Sneaks(), event_name, Tasklist());
-    }
-
-    void Followers_t::Unsneak()
-    {
-        static const String_t event_name = String_t("On_Followers_Unsneak");
-        Send(Sneaks(), event_name, Tasklist());
-    }
-
-    void Followers_t::Saddle()
-    {
-        static const String_t event_name = String_t("On_Followers_Saddle");
-        Send(Non_Saddlers(), event_name, Tasklist());
-    }
-
-    void Followers_t::Unsaddle()
-    {
-        static const String_t event_name = String_t("On_Followers_Unsaddle");
-        Send(Saddlers(), event_name, Tasklist());
-    }
-
-    void Followers_t::Retreat()
-    {
-        static const String_t event_name = String_t("On_Followers_Retreat");
-        Send(Non_Retreaters(), event_name, Tasklist());
-    }
-
-    void Followers_t::Unretreat()
-    {
-        static const String_t event_name = String_t("On_Followers_Unretreat");
-        Send(Retreaters(), event_name, Tasklist());
-    }
-
-    void Followers_t::Unfollow()
-    {
-        static const String_t event_name = String_t("On_Followers_Unfollow");
-        Send(Followers(), event_name, Tasklist());
-    }
-
-    void Followers_t::Unmember()
-    {
-        static const String_t event_name = String_t("On_Followers_Unmember");
-        Send(Followers(), event_name, Tasklist());
     }
 
     void Followers_t::Summon(Vector_t<Follower_t*> followers, float radius, float degree, float interval)
@@ -725,46 +882,72 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
-    void Followers_t::Summon_Filled(float radius, float degree, float interval)
+    Int_t Followers_t::Summon_Filled(float radius, float degree, float interval)
     {
-        Summon(Filled(), radius, degree, interval);
-    }
-
-    void Followers_t::Summon_Mobile(float radius, float degree, float interval)
-    {
-        Summon(Mobile(), radius, degree, interval);
-    }
-
-    void Followers_t::Summon_Immobile(float radius, float degree, float interval)
-    {
-        Summon(Immobile(), radius, degree, interval);
-    }
-
-    void Followers_t::Catch_Up()
-    {
-        Range_t<Follower_t**> range = Aliases();
-        for (; range.begin < range.end; range.begin += 1) {
-            Follower_t* follower = *range.begin;
-            if (follower && follower->Is_Filled()) {
-                follower->Catch_Up();
-            }
+        Vector_t<Follower_t*> filled = Filled();
+        if (filled.size() > 0) {
+            Summon(filled, radius, degree, interval);
+            return CODES::SUCCESS;
+        } else {
+            return CODES::FOLLOWERS;
         }
     }
 
-    void Followers_t::Stash()
+    Int_t Followers_t::Summon_Mobile(float radius, float degree, float interval)
     {
-        Range_t<Follower_t**> range = Aliases();
-        for (; range.begin < range.end; range.begin += 1) {
-            Follower_t* follower = *range.begin;
-            if (follower && follower->Is_Filled()) {
-                Member_t* member = follower->Member();
-                if (member) {
-                    Reference_t* pack = member->Pack();
-                    if (pack) {
-                        Object_Ref::Categorize(pack);
-                    }
-                }
+        if (Count_Filled() > 0) {
+            Vector_t<Follower_t*> mobile = Mobile();
+            if (mobile.size() > 0) {
+                Summon(mobile, radius, degree, interval);
+                return CODES::SUCCESS;
+            } else {
+                return CODES::HASNT;
             }
+        } else {
+            return CODES::FOLLOWERS;
+        }
+    }
+
+    Int_t Followers_t::Summon_Immobile(float radius, float degree, float interval)
+    {
+        if (Count_Filled() > 0) {
+            Vector_t<Follower_t*> immobile = Immobile();
+            if (immobile.size() > 0) {
+                Summon(immobile, radius, degree, interval);
+                return CODES::SUCCESS;
+            } else {
+                return CODES::HASNT;
+            }
+        } else {
+            return CODES::FOLLOWERS;
+        }
+    }
+
+    Int_t Followers_t::Catch_Up()
+    {
+        Vector_t<Follower_t*> filled = Filled();
+        size_t filled_count = filled.size();
+        if (filled_count > 0) {
+            for (size_t idx = 0; idx < filled_count; idx += 1) {
+                filled[idx]->Catch_Up();
+            }
+            return CODES::SUCCESS;
+        } else {
+            return CODES::FOLLOWERS;
+        }
+    }
+
+    Int_t Followers_t::Stash()
+    {
+        Vector_t<Follower_t*> filled = Filled();
+        size_t filled_count = filled.size();
+        if (filled_count > 0) {
+            for (size_t idx = 0; idx < filled_count; idx += 1) {
+                filled[idx]->Stash();
+            }
+            return CODES::SUCCESS;
+        } else {
+            return CODES::FOLLOWERS;
         }
     }
 
@@ -777,42 +960,18 @@ namespace doticu_npcp { namespace Party {
 
 namespace doticu_npcp { namespace Party { namespace Followers { namespace Exports {
 
-    Follower_t* From_ID(Followers_t* self, Int_t unique_id) FORWARD_POINTER(From_ID(unique_id));
     Follower_t* From_Actor(Followers_t* self, Actor_t* actor) FORWARD_POINTER(From_Actor(actor));
-    Follower_t* From_Unfilled(Followers_t* self) FORWARD_POINTER(From_Unfilled());
     Follower_t* From_Horse_Actor(Followers_t* self, Actor_t* actor) FORWARD_POINTER(From_Horse_Actor(actor));
 
-    Bool_t Has_Space(Followers_t* self) FORWARD_BOOL(Has_Space());
-    Bool_t Hasnt_Space(Followers_t* self) FORWARD_BOOL(Hasnt_Space());
-    Bool_t Has_Actor(Followers_t* self, Actor_t* actor) FORWARD_BOOL(Has_Actor(actor));
-    Bool_t Hasnt_Actor(Followers_t* self, Actor_t* actor) FORWARD_BOOL(Hasnt_Actor(actor));
     Bool_t Are_In_Combat(Followers_t* self) FORWARD_BOOL(Are_In_Combat());
 
     Int_t Max(Followers_t* self) FORWARD_INT(Max());
     Int_t Count_Filled(Followers_t* self) FORWARD_INT(Count_Filled());
     Int_t Count_Unfilled(Followers_t* self) FORWARD_INT(Count_Unfilled());
-    Int_t Count_Loaded(Followers_t* self) FORWARD_INT(Count_Loaded());
-    Int_t Count_Unloaded(Followers_t* self) FORWARD_INT(Count_Unloaded());
-    Int_t Count_Unique(Followers_t* self) FORWARD_INT(Count_Unique());
-    Int_t Count_Generic(Followers_t* self) FORWARD_INT(Count_Generic());
-    Int_t Count_Alive(Followers_t* self) FORWARD_INT(Count_Alive());
-    Int_t Count_Dead(Followers_t* self) FORWARD_INT(Count_Dead());
-    Int_t Count_Originals(Followers_t* self) FORWARD_INT(Count_Originals());
-    Int_t Count_Clones(Followers_t* self) FORWARD_INT(Count_Clones());
     Int_t Count_Mobile(Followers_t* self) FORWARD_INT(Count_Mobile());
     Int_t Count_Immobile(Followers_t* self) FORWARD_INT(Count_Immobile());
     Int_t Count_Settlers(Followers_t* self) FORWARD_INT(Count_Settlers());
     Int_t Count_Non_Settlers(Followers_t* self) FORWARD_INT(Count_Non_Settlers());
-    Int_t Count_Thralls(Followers_t* self) FORWARD_INT(Count_Thralls());
-    Int_t Count_Non_Thralls(Followers_t* self) FORWARD_INT(Count_Non_Thralls());
-    Int_t Count_Paralyzed(Followers_t* self) FORWARD_INT(Count_Paralyzed());
-    Int_t Count_Non_Paralyzed(Followers_t* self) FORWARD_INT(Count_Non_Paralyzed());
-    Int_t Count_Mannequins(Followers_t* self) FORWARD_INT(Count_Mannequins());
-    Int_t Count_Non_Mannequins(Followers_t* self) FORWARD_INT(Count_Non_Mannequins());
-    Int_t Count_Reanimated(Followers_t* self) FORWARD_INT(Count_Reanimated());
-    Int_t Count_Non_Reanimated(Followers_t* self) FORWARD_INT(Count_Non_Reanimated());
-    Int_t Count_Followers(Followers_t* self) FORWARD_INT(Count_Followers());
-    Int_t Count_Non_Followers(Followers_t* self) FORWARD_INT(Count_Non_Followers());
     Int_t Count_Sneaks(Followers_t* self) FORWARD_INT(Count_Sneaks());
     Int_t Count_Non_Sneaks(Followers_t* self) FORWARD_INT(Count_Non_Sneaks());
     Int_t Count_Saddlers(Followers_t* self) FORWARD_INT(Count_Saddlers());
@@ -820,63 +979,34 @@ namespace doticu_npcp { namespace Party { namespace Followers { namespace Export
     Int_t Count_Retreaters(Followers_t* self) FORWARD_INT(Count_Retreaters());
     Int_t Count_Non_Retreaters(Followers_t* self) FORWARD_INT(Count_Non_Retreaters());
 
-    Vector_t<Follower_t*> All(Followers_t* self) FORWARD_VECTOR(All(), Follower_t*);
-    Vector_t<Follower_t*> Filled(Followers_t* self) FORWARD_VECTOR(Filled(), Follower_t*);
-    Vector_t<Follower_t*> Unfilled(Followers_t* self) FORWARD_VECTOR(Unfilled(), Follower_t*);
-    Vector_t<Follower_t*> Loaded(Followers_t* self) FORWARD_VECTOR(Loaded(), Follower_t*);
-    Vector_t<Follower_t*> Unloaded(Followers_t* self) FORWARD_VECTOR(Unloaded(), Follower_t*);
-
     Vector_t<Follower_t*> Sort_Filled(Followers_t* self, Int_t begin, Int_t end) FORWARD_VECTOR(Sort_Filled(begin, end), Follower_t*);
 
-    Vector_t<Follower_t*> Slice(Followers_t* self, VMArray<Follower_t*>followers_array, Int_t begin, Int_t end)
-    {
-        Vector_t<Follower_t*> followers_vector = Slice_Array(followers_array);
-        return self->Slice(followers_vector, begin, end);
-    }
+    Int_t Enforce(Followers_t* self) FORWARD_INT(Followers_t::Enforce());
+    Int_t Resurrect(Followers_t* self) FORWARD_INT(Followers_t::Resurrect());
+    Int_t Mobilize(Followers_t* self) FORWARD_INT(Followers_t::Mobilize());
+    Int_t Immobilize(Followers_t* self) FORWARD_INT(Followers_t::Immobilize());
+    Int_t Settle(Followers_t* self) FORWARD_INT(Followers_t::Settle());
+    Int_t Resettle(Followers_t* self) FORWARD_INT(Followers_t::Resettle());
+    Int_t Unsettle(Followers_t* self) FORWARD_INT(Followers_t::Unsettle());
+    Int_t Enthrall(Followers_t* self) FORWARD_INT(Followers_t::Enthrall());
+    Int_t Unthrall(Followers_t* self) FORWARD_INT(Followers_t::Unthrall());
+    Int_t Paralyze(Followers_t* self) FORWARD_INT(Followers_t::Paralyze());
+    Int_t Unparalyze(Followers_t* self) FORWARD_INT(Followers_t::Unparalyze());
+    Int_t Sneak(Followers_t* self) FORWARD_INT(Followers_t::Sneak());
+    Int_t Unsneak(Followers_t* self) FORWARD_INT(Followers_t::Unsneak());
+    Int_t Saddle(Followers_t* self) FORWARD_INT(Followers_t::Saddle());
+    Int_t Unsaddle(Followers_t* self) FORWARD_INT(Followers_t::Unsaddle());
+    Int_t Retreat(Followers_t* self) FORWARD_INT(Followers_t::Retreat());
+    Int_t Unretreat(Followers_t* self) FORWARD_INT(Followers_t::Unretreat());
+    Int_t Unfollow(Followers_t* self) FORWARD_INT(Followers_t::Unfollow());
+    Int_t Unmember(Followers_t* self) FORWARD_INT(Followers_t::Unmember());
 
-    void Register_(Followers_t* self) FORWARD_VOID(Followers_t::Register());
-    void Enforce(Followers_t* self) FORWARD_VOID(Followers_t::Enforce());
-    void Resurrect(Followers_t* self) FORWARD_VOID(Followers_t::Resurrect());
-    void Mobilize(Followers_t* self) FORWARD_VOID(Followers_t::Mobilize());
-    void Immobilize(Followers_t* self) FORWARD_VOID(Followers_t::Immobilize());
-    void Settle(Followers_t* self) FORWARD_VOID(Followers_t::Settle());
-    void Unsettle(Followers_t* self) FORWARD_VOID(Followers_t::Unsettle());
-    void Enthrall(Followers_t* self) FORWARD_VOID(Followers_t::Enthrall());
-    void Unthrall(Followers_t* self) FORWARD_VOID(Followers_t::Unthrall());
-    void Paralyze(Followers_t* self) FORWARD_VOID(Followers_t::Paralyze());
-    void Unparalyze(Followers_t* self) FORWARD_VOID(Followers_t::Unparalyze());
-    void Sneak(Followers_t* self) FORWARD_VOID(Followers_t::Sneak());
-    void Unsneak(Followers_t* self) FORWARD_VOID(Followers_t::Unsneak());
-    void Saddle(Followers_t* self) FORWARD_VOID(Followers_t::Saddle());
-    void Unsaddle(Followers_t* self) FORWARD_VOID(Followers_t::Unsaddle());
-    void Retreat(Followers_t* self) FORWARD_VOID(Followers_t::Retreat());
-    void Unretreat(Followers_t* self) FORWARD_VOID(Followers_t::Unretreat());
-    void Unfollow(Followers_t* self) FORWARD_VOID(Followers_t::Unfollow());
-    void Unmember(Followers_t* self) FORWARD_VOID(Followers_t::Unmember());
+    Int_t Summon_Filled(Followers_t* self, float radius, float degree, float interval) FORWARD_INT(Followers_t::Summon_Filled());
+    Int_t Summon_Mobile(Followers_t* self, float radius, float degree, float interval) FORWARD_INT(Followers_t::Summon_Mobile());
+    Int_t Summon_Immobile(Followers_t* self, float radius, float degree, float interval) FORWARD_INT(Followers_t::Summon_Immobile());
 
-    void Summon_Filled(Followers_t* self, float radius, float degree, float interval) FORWARD_VOID(Summon_Filled());
-    void Summon_Mobile(Followers_t* self, float radius, float degree, float interval) FORWARD_VOID(Summon_Mobile());
-    void Summon_Immobile(Followers_t* self, float radius, float degree, float interval) FORWARD_VOID(Summon_Immobile());
-
-    void Catch_Up(Followers_t* self) FORWARD_VOID(Catch_Up());
-    void Stash(Followers_t* self) FORWARD_VOID(Stash());
-
-    Vector_t<String_t> Filter_Strings(Followers_t* self, String_t sex, String_t race, String_t search)
-        FORWARD_VECTOR(Followers_t::Filter_Strings(sex, race, search), String_t);
-    Vector_t<Int_t> Filter_Ints(Followers_t* self, Int_t style, Int_t vitality, Int_t outfit2, Int_t rating)
-        FORWARD_VECTOR(Followers_t::Filter_Ints(style, vitality, outfit2, rating), Int_t);
-    Int_t Add_Filter_Flag_1(Followers_t* self, Int_t flags_1, String_t flag_1)
-        FORWARD_INT(Followers_t::Add_Filter_Flag_1(flags_1, flag_1));
-    Int_t Add_Filter_Flag_2(Followers_t* self, Int_t flags_2, String_t flag_2)
-        FORWARD_INT(Followers_t::Add_Filter_Flag_2(flags_2, flag_2));
-    Vector_t<Follower_t*> Filter(Followers_t* self, VMArray<String_t> strings, VMArray<Int_t> ints, Int_t flags_1, Int_t flags_2)
-    {
-        Vector_t<String_t> strings_vector = Slice_Array(strings);
-        Vector_t<Int_t> ints_vector = Slice_Array(ints);
-        return self->Filter(strings_vector.size() > 0 ? &strings_vector : nullptr,
-                            ints_vector.size() > 0 ? &ints_vector : nullptr,
-                            flags_1, flags_2);
-    }
+    Int_t Catch_Up(Followers_t* self) FORWARD_INT(Followers_t::Catch_Up());
+    Int_t Stash(Followers_t* self) FORWARD_INT(Followers_t::Stash());
 
     Bool_t Register(Registry_t* registry)
     {
@@ -887,42 +1017,18 @@ namespace doticu_npcp { namespace Party { namespace Followers { namespace Export
                              RETURN_, Exports::METHOD_, __VA_ARGS__);   \
         W
 
-        ADD_METHOD("p_From_ID", 1, Follower_t*, From_ID, Int_t);
         ADD_METHOD("p_From_Actor", 1, Follower_t*, From_Actor, Actor_t*);
-        ADD_METHOD("p_From_Unfilled", 0, Follower_t*, From_Unfilled);
         ADD_METHOD("p_From_Horse_Actor", 1, Follower_t*, From_Horse_Actor, Actor_t*);
 
-        ADD_METHOD("Has_Space", 0, Bool_t, Has_Space);
-        ADD_METHOD("Hasnt_Space", 0, Bool_t, Hasnt_Space);
-        ADD_METHOD("Has_Actor", 1, Bool_t, Has_Actor, Actor_t*);
-        ADD_METHOD("Hasnt_Actor", 1, Bool_t, Hasnt_Actor, Actor_t*);
         ADD_METHOD("Are_In_Combat", 0, Bool_t, Are_In_Combat);
 
         ADD_METHOD("Max", 0, Int_t, Max);
         ADD_METHOD("Count_Filled", 0, Int_t, Count_Filled);
         ADD_METHOD("Count_Unfilled", 0, Int_t, Count_Unfilled);
-        ADD_METHOD("Count_Loaded", 0, Int_t, Count_Loaded);
-        ADD_METHOD("Count_Unloaded", 0, Int_t, Count_Unloaded);
-        ADD_METHOD("Count_Unique", 0, Int_t, Count_Unique);
-        ADD_METHOD("Count_Generic", 0, Int_t, Count_Generic);
-        ADD_METHOD("Count_Alive", 0, Int_t, Count_Alive);
-        ADD_METHOD("Count_Dead", 0, Int_t, Count_Dead);
-        ADD_METHOD("Count_Originals", 0, Int_t, Count_Originals);
-        ADD_METHOD("Count_Clones", 0, Int_t, Count_Clones);
         ADD_METHOD("Count_Mobile", 0, Int_t, Count_Mobile);
         ADD_METHOD("Count_Immobile", 0, Int_t, Count_Immobile);
         ADD_METHOD("Count_Settlers", 0, Int_t, Count_Settlers);
         ADD_METHOD("Count_Non_Settlers", 0, Int_t, Count_Non_Settlers);
-        ADD_METHOD("Count_Thralls", 0, Int_t, Count_Thralls);
-        ADD_METHOD("Count_Non_Thralls", 0, Int_t, Count_Non_Thralls);
-        ADD_METHOD("Count_Paralyzed", 0, Int_t, Count_Paralyzed);
-        ADD_METHOD("Count_Non_Paralyzed", 0, Int_t, Count_Non_Paralyzed);
-        ADD_METHOD("Count_Mannequins", 0, Int_t, Count_Mannequins);
-        ADD_METHOD("Count_Non_Mannequins", 0, Int_t, Count_Non_Mannequins);
-        ADD_METHOD("Count_Reanimated", 0, Int_t, Count_Reanimated);
-        ADD_METHOD("Count_Non_Reanimated", 0, Int_t, Count_Non_Reanimated);
-        ADD_METHOD("Count_Followers", 0, Int_t, Count_Followers);
-        ADD_METHOD("Count_Non_Followers", 0, Int_t, Count_Non_Followers);
         ADD_METHOD("Count_Sneaks", 0, Int_t, Count_Sneaks);
         ADD_METHOD("Count_Non_Sneaks", 0, Int_t, Count_Non_Sneaks);
         ADD_METHOD("Count_Saddlers", 0, Int_t, Count_Saddlers);
@@ -930,48 +1036,34 @@ namespace doticu_npcp { namespace Party { namespace Followers { namespace Export
         ADD_METHOD("Count_Retreaters", 0, Int_t, Count_Retreaters);
         ADD_METHOD("Count_Non_Retreaters", 0, Int_t, Count_Non_Retreaters);
 
-        ADD_METHOD("All", 0, Vector_t<Follower_t*>, All);
-        ADD_METHOD("Filled", 0, Vector_t<Follower_t*>, Filled);
-        ADD_METHOD("Unfilled", 0, Vector_t<Follower_t*>, Unfilled);
-        ADD_METHOD("Loaded", 0, Vector_t<Follower_t*>, Loaded);
-        ADD_METHOD("Unloaded", 0, Vector_t<Follower_t*>, Unloaded);
-
         ADD_METHOD("Sort_Filled", 2, Vector_t<Follower_t*>, Sort_Filled, Int_t, Int_t);
 
-        ADD_METHOD("Slice", 3, Vector_t<Follower_t*>, Slice, VMArray<Follower_t*>, Int_t, Int_t);
+        ADD_METHOD("Enforce", 0, Int_t, Enforce);
+        ADD_METHOD("Resurrect", 0, Int_t, Resurrect);
+        ADD_METHOD("Mobilize", 0, Int_t, Mobilize);
+        ADD_METHOD("Immobilize", 0, Int_t, Immobilize);
+        ADD_METHOD("Settle", 0, Int_t, Settle);
+        ADD_METHOD("Resettle", 0, Int_t, Resettle);
+        ADD_METHOD("Unsettle", 0, Int_t, Unsettle);
+        ADD_METHOD("Enthrall", 0, Int_t, Enthrall);
+        ADD_METHOD("Unthrall", 0, Int_t, Unthrall);
+        ADD_METHOD("Paralyze", 0, Int_t, Paralyze);
+        ADD_METHOD("Unparalyze", 0, Int_t, Unparalyze);
+        ADD_METHOD("Sneak", 0, Int_t, Sneak);
+        ADD_METHOD("Unsneak", 0, Int_t, Unsneak);
+        ADD_METHOD("Saddle", 0, Int_t, Saddle);
+        ADD_METHOD("Unsaddle", 0, Int_t, Unsaddle);
+        ADD_METHOD("Retreat", 0, Int_t, Retreat);
+        ADD_METHOD("Unretreat", 0, Int_t, Unretreat);
+        ADD_METHOD("Unfollow", 0, Int_t, Unfollow);
+        ADD_METHOD("Unmember", 0, Int_t, Unmember);
 
-        ADD_METHOD("p_Register", 0, void, Register_);
-        ADD_METHOD("p_Enforce", 0, void, Enforce);
-        ADD_METHOD("p_Resurrect", 0, void, Resurrect);
-        ADD_METHOD("p_Mobilize", 0, void, Mobilize);
-        ADD_METHOD("p_Immobilize", 0, void, Immobilize);
-        ADD_METHOD("p_Settle", 0, void, Settle);
-        ADD_METHOD("p_Unsettle", 0, void, Unsettle);
-        ADD_METHOD("p_Enthrall", 0, void, Enthrall);
-        ADD_METHOD("p_Unthrall", 0, void, Unthrall);
-        ADD_METHOD("p_Paralyze", 0, void, Paralyze);
-        ADD_METHOD("p_Unparalyze", 0, void, Unparalyze);
-        ADD_METHOD("p_Sneak", 0, void, Sneak);
-        ADD_METHOD("p_Unsneak", 0, void, Unsneak);
-        ADD_METHOD("p_Saddle", 0, void, Saddle);
-        ADD_METHOD("p_Unsaddle", 0, void, Unsaddle);
-        ADD_METHOD("p_Retreat", 0, void, Retreat);
-        ADD_METHOD("p_Unretreat", 0, void, Unretreat);
-        ADD_METHOD("p_Unfollow", 0, void, Unfollow);
-        ADD_METHOD("p_Unmember", 0, void, Unmember);
+        ADD_METHOD("Summon_Filled", 3, Int_t, Summon_Filled, float, float, float);
+        ADD_METHOD("Summon_Mobile", 3, Int_t, Summon_Mobile, float, float, float);
+        ADD_METHOD("Summon_Immobile", 3, Int_t, Summon_Immobile, float, float, float);
 
-        ADD_METHOD("p_Summon_Filled", 3, void, Summon_Filled, float, float, float);
-        ADD_METHOD("p_Summon_Mobile", 3, void, Summon_Mobile, float, float, float);
-        ADD_METHOD("p_Summon_Immobile", 3, void, Summon_Immobile, float, float, float);
-
-        ADD_METHOD("p_Catch_Up", 0, void, Catch_Up);
-        ADD_METHOD("p_Stash", 0, void, Stash);
-
-        ADD_METHOD("Filter_Strings", 3, Vector_t<String_t>, Filter_Strings, String_t, String_t, String_t);
-        ADD_METHOD("Filter_Ints", 4, Vector_t<Int_t>, Filter_Ints, Int_t, Int_t, Int_t, Int_t);
-        ADD_METHOD("Add_Filter_Flag_1", 2, Int_t, Add_Filter_Flag_1, Int_t, String_t);
-        ADD_METHOD("Add_Filter_Flag_2", 2, Int_t, Add_Filter_Flag_2, Int_t, String_t);
-        ADD_METHOD("Filter", 4, Vector_t<Follower_t*>, Filter, VMArray<String_t>, VMArray<Int_t>, Int_t, Int_t);
+        ADD_METHOD("Catch_Up", 0, Int_t, Catch_Up);
+        ADD_METHOD("Stash", 0, Int_t, Stash);
 
         #undef ADD_METHOD
 

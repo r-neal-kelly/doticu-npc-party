@@ -889,7 +889,7 @@ function Toggle_Members_Display()
 endFunction
 
 function Followers_Summon_All()
-    NOTES.Followers_Summon_All(FOLLOWERS.Summon())
+    NOTES.Followers_Summon_All(FOLLOWERS.Summon_Filled())
 endFunction
 
 function Followers_Summon_Mobile()

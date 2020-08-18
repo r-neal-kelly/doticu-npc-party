@@ -10,16 +10,6 @@ doticu_npcp_logs property LOGS hidden
         return (self as Quest) as doticu_npcp_logs
     endFunction
 endProperty
-doticu_npcp_vectors property VECTORS hidden
-    doticu_npcp_vectors function Get()
-        return (self as Quest) as doticu_npcp_vectors
-    endFunction
-endProperty
-doticu_npcp_tasklists property TASKLISTS hidden
-    doticu_npcp_tasklists function Get()
-        return (self as Quest) as doticu_npcp_tasklists
-    endFunction
-endProperty
 doticu_npcp_containers property CONTAINERS hidden
     doticu_npcp_containers function Get()
         return (self as Quest) as doticu_npcp_containers
@@ -54,8 +44,6 @@ function f_Create()
     p_is_created = true
 
     LOGS.f_Create()
-    VECTORS.f_Create()
-    TASKLISTS.f_Create()
     ACTORS.f_Create()
     NPCS.f_Initialize()
     PERKS.f_Create()
@@ -67,8 +55,6 @@ function f_Destroy()
     PERKS.f_Destroy()
     NPCS.f_Uninitialize()
     ACTORS.f_Destroy()
-    TASKLISTS.f_Destroy()
-    VECTORS.f_Destroy()
     LOGS.f_Destroy()
 
     p_is_created = false
@@ -76,8 +62,6 @@ endFunction
 
 function f_Register()
     LOGS.f_Register()
-    VECTORS.f_Register()
-    TASKLISTS.f_Register()
     ACTORS.f_Register()
     PERKS.f_Register()
     MANNEQUINS.f_Register()

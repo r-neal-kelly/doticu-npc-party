@@ -1085,52 +1085,76 @@ namespace doticu_npcp { namespace Party {
         Summon(radius, 180);
     }
 
-    void Follower_t::Mobilize()
+    Int_t Follower_t::Mobilize()
     {
         NPCP_ASSERT(Is_Filled());
-        Member()->Mobilize();
+        return Member()->Mobilize();
     }
 
-    void Follower_t::Immobilize()
+    Int_t Follower_t::Immobilize()
     {
         NPCP_ASSERT(Is_Filled());
-        Member()->Immobilize();
+        return Member()->Immobilize();
     }
 
-    void Follower_t::Settle()
+    Int_t Follower_t::Settle()
     {
         NPCP_ASSERT(Is_Filled());
-        Member()->Settle();
+        return Member()->Settle();
     }
 
-    void Follower_t::Unsettle()
+    Int_t Follower_t::Resettle()
     {
         NPCP_ASSERT(Is_Filled());
-        Member()->Unsettle();
+        return Member()->Resettle();
     }
 
-    void Follower_t::Enthrall()
+    Int_t Follower_t::Unsettle()
     {
         NPCP_ASSERT(Is_Filled());
-        Member()->Enthrall();
+        return Member()->Unsettle();
     }
 
-    void Follower_t::Unthrall()
+    Int_t Follower_t::Enthrall()
     {
         NPCP_ASSERT(Is_Filled());
-        Member()->Unthrall();
+        return Member()->Enthrall();
     }
 
-    void Follower_t::Paralyze()
+    Int_t Follower_t::Unthrall()
     {
         NPCP_ASSERT(Is_Filled());
-        Member()->Paralyze();
+        return Member()->Unthrall();
     }
 
-    void Follower_t::Unparalyze()
+    Int_t Follower_t::Paralyze()
     {
         NPCP_ASSERT(Is_Filled());
-        Member()->Unparalyze();
+        return Member()->Paralyze();
+    }
+
+    Int_t Follower_t::Unparalyze()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Member()->Unparalyze();
+    }
+
+    Int_t Follower_t::Stash()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Member()->Stash();
+    }
+
+    Int_t Follower_t::Resurrect()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Member()->Resurrect();
+    }
+
+    Int_t Follower_t::Kill()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Member()->Kill();
     }
 
     void Follower_t::Catch_Up()
@@ -1166,26 +1190,42 @@ namespace doticu_npcp { namespace Party {
         Member()->Rename(new_name);
     }
 
+    void Follower_t::On_Combat_State_Changed(Actor_t* target, Int_t combat_code)
+    {
+        if (combat_code == CODES::COMBAT::YES) {
+            Virtual_Machine_t::Self()->Call_Method(Player::Alias(), "doticu_npcp_player", "f_Begin_Combat");
+        }
+    }
+
 }}
 
 namespace doticu_npcp { namespace Party { namespace Follower { namespace Exports {
 
-    Actor_t* Actor(Follower_t* self) FORWARD_POINTER(Actor());
-    Int_t ID(Follower_t* self) FORWARD_INT(ID());
+    Int_t ID(Follower_t* self)              FORWARD_INT(Follower_t::ID());
+    Actor_t* Actor(Follower_t* self)        FORWARD_POINTER(Follower_t::Actor());
+    Member_t* Member(Follower_t* self)      FORWARD_POINTER(Follower_t::Member());
+    String_t Name(Follower_t* self)         FORWARD_STRING(Follower_t::Name());
 
-    String_t Name(Follower_t* self) FORWARD_STRING(Follower_t::Name());
+    Bool_t Is_Filled(Follower_t* self)      FORWARD_BOOL(Follower_t::Is_Filled());
+    Bool_t Is_Unfilled(Follower_t* self)    FORWARD_BOOL(Follower_t::Is_Unfilled());
+    Bool_t Is_Mobile(Follower_t* self)      FORWARD_BOOL(Follower_t::Is_Mobile());
+    Bool_t Is_Immobile(Follower_t* self)    FORWARD_BOOL(Follower_t::Is_Immobile());
+    Bool_t Is_Sneak(Follower_t* self)       FORWARD_BOOL(Follower_t::Is_Sneak());
+    Bool_t Isnt_Sneak(Follower_t* self)     FORWARD_BOOL(Follower_t::Isnt_Sneak());
+    Bool_t Is_Saddler(Follower_t* self)     FORWARD_BOOL(Follower_t::Is_Saddler());
+    Bool_t Isnt_Saddler(Follower_t* self)   FORWARD_BOOL(Follower_t::Isnt_Saddler());
+    Bool_t Is_Retreater(Follower_t* self)   FORWARD_BOOL(Follower_t::Is_Retreater());
+    Bool_t Isnt_Retreater(Follower_t* self) FORWARD_BOOL(Follower_t::Isnt_Retreater());
 
-    Bool_t Is_Filled(Follower_t* self) FORWARD_BOOL(Follower_t::Is_Filled());
-    Bool_t Is_Unfilled(Follower_t* self) FORWARD_BOOL(Follower_t::Is_Unfilled());
+    Int_t Sneak(Follower_t* self)           FORWARD_INT(Follower_t::Sneak());
+    Int_t Unsneak(Follower_t* self)         FORWARD_INT(Follower_t::Unsneak());
+    Int_t Saddle(Follower_t* self)          FORWARD_INT(Follower_t::Saddle());
+    Int_t Unsaddle(Follower_t* self)        FORWARD_INT(Follower_t::Unsaddle());
+    Int_t Retreat(Follower_t* self)         FORWARD_INT(Follower_t::Retreat());
+    Int_t Unretreat(Follower_t* self)       FORWARD_INT(Follower_t::Unretreat());
 
-    Int_t Sneak(Follower_t* self) FORWARD_INT(Follower_t::Sneak());
-    Int_t Unsneak(Follower_t* self) FORWARD_INT(Follower_t::Unsneak());
-    Int_t Saddle(Follower_t* self) FORWARD_INT(Follower_t::Saddle());
-    Int_t Unsaddle(Follower_t* self) FORWARD_INT(Follower_t::Unsaddle());
-    Int_t Retreat(Follower_t* self) FORWARD_INT(Follower_t::Retreat());
-    Int_t Unretreat(Follower_t* self) FORWARD_INT(Follower_t::Unretreat());
-
-    void Rename(Follower_t* self, String_t new_name) FORWARD_VOID(Follower_t::Rename(new_name));
+    void On_Combat_State_Changed(Follower_t* self, Actor_t* target, Int_t combat_code)
+        FORWARD_VOID(Follower_t::On_Combat_State_Changed(target, combat_code));
 
     Bool_t Register(Registry_t* registry)
     {
@@ -1196,13 +1236,21 @@ namespace doticu_npcp { namespace Party { namespace Follower { namespace Exports
                              RETURN_, Exports::METHOD_, __VA_ARGS__);   \
         W
 
-        ADD_METHOD("Actor", 0, Actor_t*, Actor);
         ADD_METHOD("ID", 0, Int_t, ID);
-
+        ADD_METHOD("Actor", 0, Actor_t*, Actor);
+        ADD_METHOD("Member", 0, Member_t*, Member);
         ADD_METHOD("Name", 0, String_t, Name);
 
         ADD_METHOD("Is_Filled", 0, Bool_t, Is_Filled);
         ADD_METHOD("Is_Unfilled", 0, Bool_t, Is_Unfilled);
+        ADD_METHOD("Is_Mobile", 0, Bool_t, Is_Mobile);
+        ADD_METHOD("Is_Immobile", 0, Bool_t, Is_Immobile);
+        ADD_METHOD("Is_Sneak", 0, Bool_t, Is_Sneak);
+        ADD_METHOD("Isnt_Sneak", 0, Bool_t, Isnt_Sneak);
+        ADD_METHOD("Is_Saddler", 0, Bool_t, Is_Saddler);
+        ADD_METHOD("Isnt_Saddler", 0, Bool_t, Isnt_Saddler);
+        ADD_METHOD("Is_Retreater", 0, Bool_t, Is_Retreater);
+        ADD_METHOD("Isnt_Retreater", 0, Bool_t, Isnt_Retreater);
 
         ADD_METHOD("Sneak", 0, Int_t, Sneak);
         ADD_METHOD("Unsneak", 0, Int_t, Unsneak);
@@ -1211,7 +1259,7 @@ namespace doticu_npcp { namespace Party { namespace Follower { namespace Exports
         ADD_METHOD("Retreat", 0, Int_t, Retreat);
         ADD_METHOD("Unretreat", 0, Int_t, Unretreat);
 
-        ADD_METHOD("p_Rename", 1, void, Rename, String_t);
+        ADD_METHOD("OnCombatStateChanged", 2, void, On_Combat_State_Changed, Actor_t*, Int_t);
 
         #undef ADD_METHOD
 

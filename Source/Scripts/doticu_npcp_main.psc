@@ -112,7 +112,6 @@ function p_Create()
     VARS.f_Create()
     FUNCS.f_Create()
     MEMBERS.f_Create()
-    FOLLOWERS.f_Create()
     CONTROL.f_Create()
 endFunction
 
@@ -122,7 +121,6 @@ function p_Register()
     VARS.f_Register()
     FUNCS.f_Register()
     MEMBERS.f_Register()
-    FOLLOWERS.f_Register()
     CONTROL.f_Register()
 endFunction
 

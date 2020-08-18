@@ -2405,6 +2405,16 @@ namespace doticu_npcp { namespace Party {
         Summon(radius, 180);
     }
 
+    Int_t Member_t::Stash()
+    {
+        if (Is_Filled()) {
+            Object_Ref::Categorize(Pack());
+            return CODES::SUCCESS;
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
     Int_t Member_t::Resurrect()
     {
         if (Is_Filled()) {
@@ -2576,6 +2586,7 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
 
     void Enforce(Member_t* self) FORWARD_VOID(Member_t::Enforce());
 
+    Int_t Stash(Member_t* self) FORWARD_INT(Member_t::Stash());
     Int_t Resurrect(Member_t* self) FORWARD_INT(Member_t::Resurrect());
     Int_t Kill(Member_t* self) FORWARD_INT(Member_t::Kill());
 
@@ -2679,6 +2690,7 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
 
         ADD_METHOD("Enforce", 0, void, Enforce);
 
+        ADD_METHOD("Stash", 0, Int_t, Stash);
         ADD_METHOD("Resurrect", 0, Int_t, Resurrect);
         ADD_METHOD("Kill", 0, Int_t, Kill);
 

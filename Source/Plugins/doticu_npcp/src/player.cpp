@@ -4,6 +4,7 @@
 
 #include "actor2.h"
 #include "cell.h"
+#include "consts.h"
 #include "object_ref.h"
 #include "player.h"
 #include "party.h"
@@ -16,6 +17,11 @@ namespace doticu_npcp { namespace Player {
         static Actor_t* actor = static_cast<Actor_t*>(*g_thePlayer);
         NPCP_ASSERT(actor);
         return actor;
+    }
+
+    Player_t* Alias()
+    {
+        return *(Consts::Funcs_Quest()->aliases.entries + 0);
     }
 
     PlayerCharacter* Player_Character()

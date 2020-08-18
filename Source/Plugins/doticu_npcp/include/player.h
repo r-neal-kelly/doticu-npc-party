@@ -5,10 +5,14 @@
 #pragma once
 
 #include "types.h"
+#include "papyrus.h"
 
 namespace doticu_npcp { namespace Player {
 
+    using namespace Papyrus;
+
     Actor_t* Actor();
+    Player_t* Alias();
     PlayerCharacter* Player_Character();
     bool Is_Party_In_Combat(Player_t *player);
     bool Is_In_Interior_Cell();

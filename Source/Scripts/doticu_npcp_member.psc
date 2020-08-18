@@ -167,11 +167,14 @@ function p_Rename(string new_name) native
 
 function Enforce() native
 
+int function Stash() native
 int function Resurrect() native
 int function Kill() native
 
 int function Follow() native
 int function Unfollow() native
+
+event OnHit(ObjectReference ref_attacker, Form form_tool, Projectile ref_projectile, bool is_power, bool is_sneak, bool is_bash, bool is_blocked) native
 
 ; Private Methods
 function p_Kill()
@@ -277,16 +280,6 @@ int function Pack(int code_exec)
 
     CONTAINERS.Rename(p_container_pack, Name() + "'s Pack")
     CONTAINERS.Open(p_container_pack)
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Stash()
-    if !Exists()
-        return doticu_npcp_codes.MEMBER()
-    endIf
-
-    doticu_npcp.Object_Ref_Categorize(p_container_pack)
 
     return doticu_npcp_codes.SUCCESS()
 endFunction
@@ -422,8 +415,6 @@ event On_Update_Equipment()
     p_ref_actor.AddItem(doticu_npcp_consts.Blank_Weapon(), 1, true)
     p_ref_actor.RemoveItem(doticu_npcp_consts.Blank_Weapon(), 1, true, none)
 endEvent
-
-event OnHit(ObjectReference ref_attacker, Form form_tool, Projectile ref_projectile, bool is_power, bool is_sneak, bool is_bash, bool is_blocked) native
 
 event OnCombatStateChanged(Actor ref_target, int code_combat)
     if ref_target == doticu_npcp_consts.Player_Actor()

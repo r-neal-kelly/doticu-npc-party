@@ -401,35 +401,33 @@ namespace doticu_npcp { namespace Party {
         Int_t Add_Follower(Member_t* member);
         Int_t Remove_Follower(Member_t* member);
 
-        void Send(Vector_t<Follower_t*> followers, String_t event_name);
-        void Send(Vector_t<Follower_t*> followers, String_t event_name, Form_t* form_arg);
-        void Register();
-        void Enforce();
-        void Resurrect();
-        void Mobilize();
-        void Immobilize();
-        void Settle();
-        void Unsettle();
-        void Enthrall();
-        void Unthrall();
-        void Paralyze();
-        void Unparalyze();
-        void Sneak();
-        void Unsneak();
-        void Saddle();
-        void Unsaddle();
-        void Retreat();
-        void Unretreat();
-        void Unfollow();
-        void Unmember();
+        Int_t Enforce();
+        Int_t Resurrect();
+        Int_t Mobilize();
+        Int_t Immobilize();
+        Int_t Settle();
+        Int_t Resettle();
+        Int_t Unsettle();
+        Int_t Enthrall();
+        Int_t Unthrall();
+        Int_t Paralyze();
+        Int_t Unparalyze();
+        Int_t Sneak();
+        Int_t Unsneak();
+        Int_t Saddle();
+        Int_t Unsaddle();
+        Int_t Retreat();
+        Int_t Unretreat();
+        Int_t Unfollow();
+        Int_t Unmember();
 
         void Summon(Vector_t<Follower_t*> followers, float radius = 140.0, float degree = 0.0, float interval = 19.0);
-        void Summon_Filled(float radius = 140.0, float degree = 0.0, float interval = 19.0);
-        void Summon_Mobile(float radius = 140.0, float degree = 0.0, float interval = 19.0);
-        void Summon_Immobile(float radius = 140.0, float degree = 0.0, float interval = 19.0);
+        Int_t Summon_Filled(float radius = 140.0, float degree = 0.0, float interval = 19.0);
+        Int_t Summon_Mobile(float radius = 140.0, float degree = 0.0, float interval = 19.0);
+        Int_t Summon_Immobile(float radius = 140.0, float degree = 0.0, float interval = 19.0);
 
-        void Catch_Up();
-        void Stash();
+        Int_t Catch_Up();
+        Int_t Stash();
 
         Vector_t<Follower_t*> Filter(Vector_t<String_t>* strings = nullptr,
                                      Vector_t<Int_t>* ints = nullptr,
@@ -740,6 +738,7 @@ namespace doticu_npcp { namespace Party {
         void Summon_Ahead(float radius = 140.0f);
         void Summon_Behind(float radius = 140.0f);
 
+        Int_t Stash();
         Int_t Resurrect();
         Int_t Kill();
 
@@ -782,7 +781,6 @@ namespace doticu_npcp { namespace Party {
         Actor_t* Actor();
         Member_t* Member();
         Horse_t* Horse();
-        
         Reference_t* Pack();
         Cell_t* Cell();
         Int_t Style();
@@ -869,17 +867,23 @@ namespace doticu_npcp { namespace Party {
         void Summon_Ahead(float radius = 140.0f);
         void Summon_Behind(float radius = 140.0f);
 
-        void Mobilize();
-        void Immobilize();
-        void Settle();
-        void Unsettle();
-        void Enthrall();
-        void Unthrall();
-        void Paralyze();
-        void Unparalyze();
+        Int_t Mobilize();
+        Int_t Immobilize();
+        Int_t Settle();
+        Int_t Resettle();
+        Int_t Unsettle();
+        Int_t Enthrall();
+        Int_t Unthrall();
+        Int_t Paralyze();
+        Int_t Unparalyze();
+        Int_t Stash();
+        Int_t Resurrect();
+        Int_t Kill();
 
         void Catch_Up();
         void Rename(String_t new_name);
+
+        void On_Combat_State_Changed(Actor_t* target, Int_t combat_code);
     };
 
     namespace Follower { namespace Exports {
