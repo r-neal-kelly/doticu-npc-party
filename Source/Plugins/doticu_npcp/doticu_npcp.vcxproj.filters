@@ -24,9 +24,6 @@
     <ClCompile Include="src\outfit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\forms.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\object_ref.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -162,9 +159,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\quest.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\forms.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\outfit.h">

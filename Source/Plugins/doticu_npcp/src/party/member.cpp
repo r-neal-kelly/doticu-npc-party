@@ -185,12 +185,7 @@ namespace doticu_npcp { namespace Party {
     String_t Member_t::Name()
     {
         NPCP_ASSERT(Is_Filled());
-        Variable_t* name_variable = Name_Variable();
-        if (name_variable->Has_String()) {
-            return name_variable->String();
-        } else {
-            return Actor2::Get_Name(Actor());
-        }
+        return Name_Variable()->String();
     }
 
     String_t Member_t::Rating_Stars()
@@ -240,7 +235,6 @@ namespace doticu_npcp { namespace Party {
             outfit2 = static_cast<Outfit2_t*>(variable->Reference());
         } else {
             outfit2 = Outfit2_t::Create_Member(Actor(), Pack());
-            //variable->Pack(outfit2, Outfit2_t::Class_Info());
             variable->Pack(outfit2);
         }
         NPCP_ASSERT(outfit2);
@@ -259,7 +253,6 @@ namespace doticu_npcp { namespace Party {
             outfit2 = static_cast<Outfit2_t*>(variable->Reference());
         } else {
             outfit2 = Outfit2_t::Create_Immobile();
-            //variable->Pack(outfit2, Outfit2_t::Class_Info());
             variable->Pack(outfit2);
         }
         NPCP_ASSERT(outfit2);
@@ -278,7 +271,6 @@ namespace doticu_npcp { namespace Party {
             outfit2 = static_cast<Outfit2_t*>(variable->Reference());
         } else {
             outfit2 = Outfit2_t::Create_Settler();
-            //variable->Pack(outfit2, Outfit2_t::Class_Info());
             variable->Pack(outfit2);
         }
         NPCP_ASSERT(outfit2);
@@ -297,7 +289,6 @@ namespace doticu_npcp { namespace Party {
             outfit2 = static_cast<Outfit2_t*>(variable->Reference());
         } else {
             outfit2 = Outfit2_t::Create_Thrall();
-            //variable->Pack(outfit2, Outfit2_t::Class_Info());
             variable->Pack(outfit2);
         }
         NPCP_ASSERT(outfit2);
@@ -316,7 +307,6 @@ namespace doticu_npcp { namespace Party {
             outfit2 = static_cast<Outfit2_t*>(variable->Reference());
         } else {
             outfit2 = Outfit2_t::Create_Follower();
-            //variable->Pack(outfit2, Outfit2_t::Class_Info());
             variable->Pack(outfit2);
         }
         NPCP_ASSERT(outfit2);
@@ -335,7 +325,6 @@ namespace doticu_npcp { namespace Party {
             outfit2 = static_cast<Outfit2_t*>(variable->Reference());
         } else {
             outfit2 = Outfit2_t::Create_Vanilla();
-            //variable->Pack(outfit2, Outfit2_t::Class_Info());
             variable->Pack(outfit2);
         }
         NPCP_ASSERT(outfit2);
@@ -354,7 +343,6 @@ namespace doticu_npcp { namespace Party {
             outfit2 = static_cast<Outfit2_t*>(variable->Reference());
         } else {
             outfit2 = Outfit2_t::Create_Default(Actor());
-            //variable->Pack(outfit2, Outfit2_t::Class_Info());
             variable->Pack(outfit2);
         }
         NPCP_ASSERT(outfit2);
@@ -866,6 +854,12 @@ namespace doticu_npcp { namespace Party {
         Alias_t::Fill(actor, &callback);
     }
 
+    void Member_t::Unfill()
+    {
+        Destroy();
+        Alias_t::Unfill(nullptr);
+    }
+
     void Member_t::Create(Actor_t* actor, Bool_t is_clone)
     {
         Actor_Variable()->Pack(actor);
@@ -890,6 +884,8 @@ namespace doticu_npcp { namespace Party {
 
         Rating_Variable()->Int(0);
 
+        Name_Variable()->String(Actor2::Get_Name(actor));
+
         Backup_State(actor);
 
         Member();
@@ -906,88 +902,129 @@ namespace doticu_npcp { namespace Party {
 
     void Member_t::Destroy()
     {
-        /*
+        Actor_t* actor = Actor();
+
+        if (Is_Follower()) {
+            Followers_t::Self()->Remove_Follower(this);
+        }
+
+        Unvitalize();
+        Unstylize();
+        if (Is_Reanimated()) {
+            // p_Deanimate()
+            // p_Kill()
+        }
+        if (Is_Display()) {
+            Undisplay(); // will this cause problems with Members_t?
+        }
+        if (Is_Mannequin()) {
+            Unmannequinize();
+        }
+        if (Is_Paralyzed()) {
+            Unparalyze();
+        }
+        if (Is_Thrall()) {
+            Unthrall();
+        }
+        if (Is_Settler()) {
+            Unsettle();
+        }
+        if (Is_Immobile()) {
+            Mobilize();
+        }
+        Unmember();
+
+        Restore_State(actor);
+        Destroy_Outfit2s();
+        Destroy_Containers();
         
-    if Is_Follower()
-        FOLLOWERS.f_Destroy_Follower(p_ref_actor)
-    endIf
+        Previous_Morality_Variable()->Float(0.0f);
+        Previous_Assistance_Variable()->Float(0.0f);
+        Previous_Confidence_Variable()->Float(0.0f);
+        Previous_Aggression_Variable()->Float(0.0f);
 
-    Unvitalize()
-    Unstylize()
-    if Is_Mannequin()
-        p_Unmannequinize()
-    endIf
-    if Is_Paralyzed()
-        p_Unparalyze()
-    endIf
-    if Is_Immobile()
-        p_Mobilize()
-    endIf
-    if Is_Thrall()
-        p_Unthrall()
-    endIf
-    if Is_Settler()
-        p_Unsettle()
-    endIf
-    p_Unmember()
-    if Is_Reanimated()
-        p_Deanimate()
-        p_Kill()
-    endIf
+        Previous_No_Body_Cleanup_Faction_Variable()->Bool(false);
+        Previous_Potential_Follower_Faction_Variable()->Bool(false);
+        Previous_Crime_Faction_Variable()->None();
 
-    p_Restore()
-    p_Destroy_Outfits()
-    p_Destroy_Containers()
+        Name_Variable()->String("");
 
-p_Lock()
+        Rating_Variable()->Int(0);
+        Outfit2_Variable()->Int(0);
+        Vitality_Variable()->Int(0);
+        Style_Variable()->Int(0);
 
-    p_prev_morality = 0.0
-    p_prev_assistance = 0.0
-    p_prev_confidence = 0.0
-    p_prev_aggression = 0.0
-    p_prev_faction_no_body_cleanup = false
-    p_prev_faction_potential_follower = false
-    p_prev_faction_crime = none
-    p_prev_factions = new Faction[1]
+        Is_Reanimated_Variable()->Bool(false);
+        Is_Display_Variable()->Bool(false);
+        Is_Mannequin_Variable()->Bool(false);
+        Is_Paralyzed_Variable()->Bool(false);
+        Is_Thrall_Variable()->Bool(false);
+        Is_Settler_Variable()->Bool(false);
+        Is_Immobile_Variable()->Bool(false);
+        Is_Clone_Variable()->Bool(false);
 
-    p_outfit2_auto_backup = none
-    p_outfit2_current = none
-    p_outfit2_default = none
-    p_outfit2_vanilla = none
-    p_outfit2_follower = none
-    p_outfit2_immobile = none
-    p_outfit2_thrall = none
-    p_outfit2_settler = none
-    p_outfit2_member = none
-    p_container_pack = none
-    p_outfit_default = none
-    p_outfit_vanilla = none
-    p_marker_mannequin = none
-    p_marker_undisplay = none
-    p_marker_display = none
-    p_int_rating = 0
-    p_code_outfit2 = -1
-    p_code_vitality = -1
-    p_code_style = -1
-    p_is_display = false
-    p_is_reanimated = false
-    p_is_mannequin = false
-    p_is_paralyzed = false
-    p_is_immobile = false
-    p_is_thrall = false
-    p_is_settler = false
-    p_is_clone = false
-    p_ref_actor = none
+        Backup_Outfit2_Variable()->None();
+        Current_Outfit2_Variable()->None();
+        Default_Outfit2_Variable()->None();
+        Vanilla_Outfit2_Variable()->None();
+        Follower_Outfit2_Variable()->None();
+        Thrall_Outfit2_Variable()->None();
+        Settler_Outfit2_Variable()->None();
+        Immobile_Outfit2_Variable()->None();
+        Member_Outfit2_Variable()->None();
 
-    Clear()
-    
-p_Unlock()
-        
-        */
+        Default_Outfit_Variable()->None();
+        Vanilla_Outfit_Variable()->None();
+        Undisplay_Marker_Variable()->None();
+        Display_Marker_Variable()->None();
+        Mannequin_Marker_Variable()->None();
+        Pack_Variable()->None();
+        Actor_Variable()->None();
+    }
+
+    void Member_t::Destroy_Containers()
+    {
+        Reference_t* pack = Pack();
+        Object_Ref::Categorize(pack);
+        Object_Ref::Delete_Safe(pack);
+    }
+
+    void Member_t::Destroy_Outfit2s()
+    {
+        Outfit2_t* default_outfit2 = static_cast<Outfit2_t*>(Default_Outfit2_Variable()->Reference());
+        if (default_outfit2) {
+            Outfit2_t::Destroy(default_outfit2);
+        }
+        Outfit2_t* vanilla_outfit2 = static_cast<Outfit2_t*>(Vanilla_Outfit2_Variable()->Reference());
+        if (vanilla_outfit2) {
+            Outfit2_t::Destroy(vanilla_outfit2);
+        }
+        Outfit2_t* follower_outfit2 = static_cast<Outfit2_t*>(Follower_Outfit2_Variable()->Reference());
+        if (follower_outfit2) {
+            Outfit2_t::Destroy(follower_outfit2);
+        }
+        Outfit2_t* thrall_outfit2 = static_cast<Outfit2_t*>(Thrall_Outfit2_Variable()->Reference());
+        if (thrall_outfit2) {
+            Outfit2_t::Destroy(thrall_outfit2);
+        }
+        Outfit2_t* settler_outfit2 = static_cast<Outfit2_t*>(Settler_Outfit2_Variable()->Reference());
+        if (settler_outfit2) {
+            Outfit2_t::Destroy(settler_outfit2);
+        }
+        Outfit2_t* immobile_outfit2 = static_cast<Outfit2_t*>(Immobile_Outfit2_Variable()->Reference());
+        if (immobile_outfit2) {
+            Outfit2_t::Destroy(immobile_outfit2);
+        }
+        Outfit2_t* member_outfit2 = static_cast<Outfit2_t*>(Member_Outfit2_Variable()->Reference());
+        if (member_outfit2) {
+            Outfit2_t::Destroy(member_outfit2);
+        }
     }
 
     void Member_t::Backup_State(Actor_t* actor)
     {
+        NPCP_ASSERT(actor);
+
         Previous_Crime_Faction_Variable()->Pack(Actor2::Crime_Faction(actor));
         Previous_Potential_Follower_Faction_Variable()->Bool(Actor2::Has_Faction(actor, Consts::Potential_Follower_Faction()));
         Previous_No_Body_Cleanup_Faction_Variable()->Bool(Actor2::Has_Faction(actor, Consts::WI_No_Body_Cleanup_Faction()));
@@ -1001,6 +1038,8 @@ p_Unlock()
 
     void Member_t::Restore_State(Actor_t* actor)
     {
+        NPCP_ASSERT(actor);
+
         Actor2::Add_Crime_Faction(actor, Previous_Crime_Faction_Variable()->Faction());
         if (Previous_Potential_Follower_Faction_Variable()->Bool()) {
             Actor2::Add_Faction(actor, Consts::Potential_Follower_Faction(), 0);
@@ -1075,8 +1114,6 @@ p_Unlock()
         Object_Ref::Untoken(actor, Consts::Member_Token());
         Object_Ref::Untoken(actor, Consts::Clone_Token());
         Object_Ref::Untoken(actor, Consts::Generic_Token());
-
-        // Restore() handles the rest
 
         Actor2::Evaluate_Package(actor);
     }
@@ -1319,6 +1356,8 @@ p_Unlock()
         Actor2::Ghostify(actor);
 
         actor->Update_3D_Position();
+
+        // Debug.SendAnimationEvent(p_ref_actor, "IdleForceDefaultState")
     }
 
     Int_t Member_t::Unparalyze()
@@ -1474,8 +1513,6 @@ p_Unlock()
             NPCP_ASSERT(display_marker);
             Display_Marker_Variable()->Pack(display_marker);
 
-            //Reparalyze();
-            //Remannequinize();
             Enforce();
 
             Actor2::Evaluate_Package(actor);
@@ -1515,8 +1552,6 @@ p_Unlock()
                 Actor2::Fully_Update_3D_Model(actor);
             }
 
-            //Reparalyze();
-            //Remannequinize();
             Enforce();
 
             undisplay_marker_variable->None();
@@ -2159,12 +2194,10 @@ p_Unlock()
         }
 
         NPCP_ASSERT(current_outfit2);
-        //Current_Outfit2_Variable()->Pack(current_outfit2, Outfit2_t::Class_Info());
         Current_Outfit2_Variable()->Pack(current_outfit2);
         Outfit2_Variable()->Int(outfit2_code);
 
         if (backup_outfit2) {
-            //Backup_Outfit2_Variable()->Pack(backup_outfit2, Outfit2_t::Class_Info());
             Backup_Outfit2_Variable()->Pack(backup_outfit2);
         }
     }
@@ -2244,7 +2277,6 @@ p_Unlock()
                     current_outfit2_code = CODES::OUTFIT2::MEMBER;
                 }
             }
-            //Current_Outfit2_Variable()->Pack(current_outfit2, Outfit2_t::Class_Info());
             Current_Outfit2_Variable()->Pack(current_outfit2);
             Outfit2_Variable()->Int(current_outfit2_code);
         } else {
@@ -2288,10 +2320,7 @@ p_Unlock()
     void Member_t::Enforce_Name(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
-        Variable_t* name_variable = Name_Variable();
-        if (name_variable->Has_String()) {
-            Object_Ref::Rename(actor, name_variable->String());
-        }
+        Object_Ref::Rename(actor, Name_Variable()->String());
     }
 
     void Member_t::Enforce()
@@ -2299,7 +2328,7 @@ p_Unlock()
         if (Is_Ready() && Is_Alive()) {
             Actor_t* actor = Actor();
 
-            Member(); // maybe rename and pass actor?
+            Member(); // This should be Enforce_Member. Backup should be Member, and Restore Unmember. pass actor as well
 
             if (Is_Mobile()) {
                 Enforce_Mobile(actor);
@@ -2344,8 +2373,10 @@ p_Unlock()
 
             Follower_t* follower = Follower();
             if (follower) {
-                Virtual_Machine_t::Self()->Call_Method(follower, Follower_t::Class_Name(), "f_Enforce");
+                follower->Enforce();
             }
+
+            Actor2::Evaluate_Package(actor);
         }
     }
 
@@ -2374,6 +2405,68 @@ p_Unlock()
         Summon(radius, 180);
     }
 
+    Int_t Member_t::Resurrect()
+    {
+        if (Is_Filled()) {
+            if (Is_Dead()) {
+                Actor2::Resurrect(Actor(), false);
+                Enforce();
+                return CODES::SUCCESS;
+            } else {
+                return CODES::IS;
+            }
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    Int_t Member_t::Kill()
+    {
+        return CODES::FAILURE;
+    }
+
+    Int_t Member_t::Follow()
+    {
+        if (Is_Filled()) {
+            if (Isnt_Mannequin()) {
+                if (Isnt_Follower()) {
+                    Int_t result = Followers_t::Self()->Add_Follower(this);
+                    if (result == CODES::SUCCESS) {
+                        Apply_Outfit2(); // may need to use callback
+                        return CODES::SUCCESS;
+                    } else {
+                        return result;
+                    }
+                } else {
+                    return CODES::FOLLOWER;
+                }
+            } else {
+                return CODES::MANNEQUIN;
+            }
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    Int_t Member_t::Unfollow()
+    {
+        if (Is_Filled()) {
+            if (Is_Follower()) {
+                Int_t result = Followers_t::Self()->Remove_Follower(this);
+                if (result == CODES::SUCCESS) {
+                    Apply_Outfit2(); // may need to use callback
+                    return CODES::SUCCESS;
+                } else {
+                    return result;
+                }
+            } else {
+                return CODES::FOLLOWER;
+            }
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
     void Member_t::Level()
     {
         NPCP_ASSERT(Is_Filled());
@@ -2381,11 +2474,6 @@ p_Unlock()
         if (follower) {
             follower->Level();
         }
-    }
-
-    void Member_t::Log_Variable_Infos()
-    {
-        Class_Info()->Log_Variable_Infos();
     }
 
 }}
@@ -2445,8 +2533,6 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
                 Bool_t is_blocked)
         FORWARD_VOID(On_Hit(attacker, tool, projectile, is_power, is_sneak, is_bash, is_blocked));
 
-    void Member(Member_t* self) FORWARD_VOID(Member_t::Member());
-    void Unmember(Member_t* self) FORWARD_VOID(Member_t::Unmember());
     Int_t Mobilize(Member_t* self) FORWARD_INT(Member_t::Mobilize());
     Int_t Immobilize(Member_t* self) FORWARD_INT(Member_t::Immobilize());
     Int_t Settle(Member_t* self) FORWARD_INT(Member_t::Settle());
@@ -2490,9 +2576,11 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
 
     void Enforce(Member_t* self) FORWARD_VOID(Member_t::Enforce());
 
-    void Log_Variable_Infos(Member_t* self) FORWARD_VOID(Log_Variable_Infos());
+    Int_t Resurrect(Member_t* self) FORWARD_INT(Member_t::Resurrect());
+    Int_t Kill(Member_t* self) FORWARD_INT(Member_t::Kill());
 
-    void Restore_State(Member_t* self, Actor_t* actor) FORWARD_VOID(Member_t::Restore_State(actor));
+    Int_t Follow(Member_t* self) FORWARD_INT(Member_t::Follow());
+    Int_t Unfollow(Member_t* self) FORWARD_INT(Member_t::Unfollow());
 
     Bool_t Register(Registry_t* registry)
     {
@@ -2548,8 +2636,6 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
 
         ADD_METHOD("OnHit", 7, void, On_Hit, Reference_t*, Form_t*, Projectile_Base_t*, Bool_t, Bool_t, Bool_t, Bool_t);
 
-        ADD_METHOD("p_Member", 0, void, Member);
-        ADD_METHOD("p_Unmember", 0, void, Unmember);
         ADD_METHOD("Mobilize", 0, Int_t, Mobilize);
         ADD_METHOD("Immobilize", 0, Int_t, Immobilize);
         ADD_METHOD("Settle", 0, Int_t, Settle);
@@ -2593,9 +2679,11 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
 
         ADD_METHOD("Enforce", 0, void, Enforce);
 
-        ADD_METHOD("Log_Variable_Infos", 0, void, Log_Variable_Infos);
+        ADD_METHOD("Resurrect", 0, Int_t, Resurrect);
+        ADD_METHOD("Kill", 0, Int_t, Kill);
 
-        ADD_METHOD("p_Restore_State", 1, void, Restore_State, Actor_t*);
+        ADD_METHOD("Follow", 0, Int_t, Follow);
+        ADD_METHOD("Unfollow", 0, Int_t, Unfollow);
 
         #undef ADD_METHOD
 

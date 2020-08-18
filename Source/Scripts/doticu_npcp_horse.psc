@@ -17,9 +17,6 @@ doticu_npcp_actors property ACTORS hidden
 endProperty
 
 ; Private Variables
-bool                    p_is_locked     = false
-bool                    p_is_created    = false
-int                     p_id_alias      =    -1
 Actor                   p_ref_actor     =  none
 doticu_npcp_follower    p_ref_follower  =  none
 
@@ -28,64 +25,26 @@ Actor function Actor() native
 
 string function Name() native
 
-; Friend Methods
-function f_Create(int id_alias, doticu_npcp_follower ref_follower)
-p_Lock()
-
-    p_ref_actor = doticu_npcp_consts.Storage_Marker().PlaceAtMe(doticu_npcp_consts.Horse_Leveled_Actor(), 1, true, true) as Actor
-    ForceRefTo(p_ref_actor)
-
-    p_is_created = true
-    p_id_alias = id_alias
-    p_ref_follower = ref_follower
-
-p_Unlock()
-endFunction
-
-function f_Destroy()
-p_Lock()
-
-    Clear()
-    p_ref_actor.Disable()
-    p_ref_actor.Delete()
-
-    p_ref_follower = none
-    p_ref_actor = none
-    p_id_alias = -1
-    p_is_created = false
-
-p_Unlock()
-endFunction
-
-function f_Register()
-endFunction
-
-function f_Unregister()
-endFunction
-
 ; Private Methods
-function p_Lock(float interval = 0.2, float timeout = 6.0)
-    float time_waited = 0.0
+function p_Enable()
+    p_ref_actor.Enable()
 
-    while p_is_locked && time_waited < timeout
-        FUNCS.Wait(interval)
-        time_waited += interval
-    endWhile
-
-    p_is_locked = true
+    ; we need to support leveled bases (members) as opposed to real bases (clones) only
+    ; because this takes an actor base, we can't specify a reference clone in this manner.
+    ; so anything we can do to avoid the follower not being on the right horse is advisable
+    p_ref_actor.SetActorOwner(ACTORS.Get_Leveled_Base(p_ref_follower.Actor()))
 endFunction
 
-function p_Unlock()
-    p_is_locked = false
+function p_Disable()
+    while doticu_npcp.Actor_Get_Mounted_Actor(p_ref_actor)
+        FUNCS.Wait_Out_Of_Menu(1)
+    endWhile
+    p_ref_actor.Disable()
 endFunction
 
 ; Public Methods
-bool function Exists()
-    return p_is_created
-endFunction
-
 doticu_npcp_follower function Get_Follower()
-    if Exists() && p_ref_follower
+    if p_ref_follower
         return p_ref_follower
     else
         return none

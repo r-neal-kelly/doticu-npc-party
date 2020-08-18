@@ -34,265 +34,219 @@ namespace doticu_npcp { namespace Party {
         return Variable_t::Fetch(this, Class_Name(), variable_name);
     }
 
+    Variable_t* Follower_t::Actor_Variable() { DEFINE_VARIABLE("p_ref_actor"); }
+    Variable_t* Follower_t::Member_Variable() { DEFINE_VARIABLE("p_ref_member"); }
+    Variable_t* Follower_t::Horse_Variable() { DEFINE_VARIABLE("p_ref_horse"); }
+
+    Variable_t* Follower_t::Is_Sneak_Variable() { DEFINE_VARIABLE("p_is_sneak"); }
+    Variable_t* Follower_t::Is_Saddler_Variable() { DEFINE_VARIABLE("p_is_saddler"); }
+    Variable_t* Follower_t::Is_Retreater_Variable() { DEFINE_VARIABLE("p_is_retreater"); }
+
+    Variable_t* Follower_t::Previous_Player_Relationship_Variable() { DEFINE_VARIABLE("p_prev_relationship_rank"); }
+    Variable_t* Follower_t::Previous_Waiting_For_Player_Variable() { DEFINE_VARIABLE("p_prev_waiting_for_player"); }
+    Variable_t* Follower_t::Previous_Speed_Multiplier_Variable() { DEFINE_VARIABLE("p_prev_speed_mult"); }
+    Variable_t* Follower_t::Previous_No_Auto_Bard_Faction_Variable() { DEFINE_VARIABLE("p_prev_faction_bard_no_auto"); }
+
     Actor_t* Follower_t::Actor()
     {
-        static const String_t variable_name = String_t("p_ref_actor");
-
-        Variable_t* const variable = Variable(variable_name);
-        if (variable) {
-            return variable->Actor();
-        } else {
-            return nullptr;
+        NPCP_ASSERT(Is_Filled());
+        Actor_t* actor = Actor_Variable()->Actor();
+        if (actor == nullptr) {
+            actor = Alias_t::Actor();
+            NPCP_ASSERT(actor);
+            Actor_Variable()->Pack(actor);
         }
+        return actor;
     }
 
     Member_t* Follower_t::Member()
     {
-        Members_t* members = Members_t::Self();
-        if (members) {
-            return members->From_Actor(Actor());
-        } else {
-            return nullptr;
-        }
+        NPCP_ASSERT(Is_Filled());
+        Member_t* member = static_cast<Member_t*>(Member_Variable()->Alias());
+        NPCP_ASSERT(member);
+        return member;
     }
 
     Horse_t* Follower_t::Horse()
     {
-        Horses_t* horses = Horses_t::Self();
-        if (horses) {
-            return horses->From_ID(ID() + Followers_t::MAX);
-        } else {
-            return nullptr;
-        }
+        NPCP_ASSERT(Is_Filled());
+        return static_cast<Horse_t*>(Horse_Variable()->Alias());
     }
 
     Reference_t* Follower_t::Pack()
     {
-        Member_t* member = Member();
-        return member ? member->Pack() : nullptr;
+        NPCP_ASSERT(Is_Filled());
+        return Member()->Pack();
     }
 
     Cell_t* Follower_t::Cell()
     {
-        Member_t* member = Member();
-        return member ? member->Cell() : nullptr;
+        NPCP_ASSERT(Is_Filled());
+        return Member()->Cell();
     }
 
     Int_t Follower_t::Style()
     {
-        Member_t* member = Member();
-        return member ? member->Style() : 0;
+        NPCP_ASSERT(Is_Filled());
+        return Member()->Style();
     }
 
     Int_t Follower_t::Vitality()
     {
-        Member_t* member = Member();
-        return member ? member->Vitality() : 0;
+        NPCP_ASSERT(Is_Filled());
+        return Member()->Vitality();
     }
 
     Int_t Follower_t::Outfit2()
     {
-        Member_t* member = Member();
-        return member ? member->Outfit2() : 0;
+        NPCP_ASSERT(Is_Filled());
+        return Member()->Outfit2();
     }
 
     Int_t Follower_t::Rating()
     {
-        Member_t* member = Member();
-        return member ? member->Rating() : 0;
+        NPCP_ASSERT(Is_Filled());
+        return Member()->Rating();
     }
 
     String_t Follower_t::Sex()
     {
-        Member_t* member = Member();
-        return member ? member->Sex() : "";
+        NPCP_ASSERT(Is_Filled());
+        return Member()->Sex();
     }
 
     String_t Follower_t::Race()
     {
-        Member_t* member = Member();
-        return member ? member->Race() : "";
+        NPCP_ASSERT(Is_Filled());
+        return Member()->Race();
     }
 
     String_t Follower_t::Base_Name()
     {
-        return Actor2::Get_Base_Name(Actor());
+        NPCP_ASSERT(Is_Filled());
+        return Member()->Base_Name();
     }
 
     String_t Follower_t::Reference_Name()
     {
-        return Actor2::Get_Ref_Name(Actor());
+        NPCP_ASSERT(Is_Filled());
+        return Member()->Reference_Name();
     }
 
     String_t Follower_t::Name()
     {
-        return Actor2::Get_Name(Actor());
+        NPCP_ASSERT(Is_Filled());
+        return Member()->Name();
     }
-
-    /*Bool_t Follower_t::Is_Filled()
-    {
-        return Is_Created() && Actor() != nullptr;
-    }
-
-    Bool_t Follower_t::Is_Unfilled()
-    {
-        return Is_Destroyed() || Actor() == nullptr;
-    }*/
 
     Bool_t Follower_t::Is_Loaded()
     {
-        Actor_t* actor = Actor();
-        return actor && Actor2::Is_Loaded(actor);
+        return Is_Filled() && Actor2::Is_Loaded(Actor());
     }
 
     Bool_t Follower_t::Is_Unloaded()
     {
-        Actor_t* actor = Actor();
-        return actor && Actor2::Is_Unloaded(actor);
-    }
-
-    Bool_t Follower_t::Is_Created()
-    {
-        static const String_t variable_name = String_t("p_is_created");
-
-        Variable_t* const variable = Variable(variable_name);
-        if (variable) {
-            return variable->Bool();
-        } else {
-            return false;
-        }
-    }
-
-    Bool_t Follower_t::Is_Destroyed()
-    {
-        static const String_t variable_name = String_t("p_is_created");
-
-        Variable_t* const variable = Variable(variable_name);
-        if (variable) {
-            return !variable->Bool();
-        } else {
-            return false;
-        }
+        return Is_Filled() && Actor2::Is_Unloaded(Actor());
     }
 
     Bool_t Follower_t::Is_Unique()
     {
-        Actor_t* actor = Actor();
-        return actor && Actor2::Is_Unique(actor);
+        return Is_Filled() && Actor2::Is_Unique(Actor());
     }
 
     Bool_t Follower_t::Is_Generic()
     {
-        Actor_t* actor = Actor();
-        return actor && Actor2::Is_Generic(actor);
+        return Is_Filled() && Actor2::Is_Generic(Actor());
     }
 
     Bool_t Follower_t::Is_Original()
     {
-        Member_t* member = Member();
-        return member && member->Is_Original();
+        return Is_Filled() && Member()->Is_Original();
     }
 
     Bool_t Follower_t::Is_Clone()
     {
-        Member_t* member = Member();
-        return member && member->Is_Clone();
+        return Is_Filled() && Member()->Is_Clone();
     }
 
     Bool_t Follower_t::Is_Alive()
     {
-        Actor_t* actor = Actor();
-        return actor && Actor2::Is_Alive(actor);
+        return Is_Filled() && Actor2::Is_Alive(Actor());
     }
 
     Bool_t Follower_t::Is_Dead()
     {
-        Actor_t* actor = Actor();
-        return actor && Actor2::Is_Dead(actor);
+        return Is_Filled() && Actor2::Is_Dead(Actor());
     }
 
     Bool_t Follower_t::Is_Mobile()
     {
-        Member_t* member = Member();
-        return member && member->Is_Mobile();
+        return Is_Filled() && Member()->Is_Mobile();
     }
 
     Bool_t Follower_t::Is_Immobile()
     {
-        Member_t* member = Member();
-        return member && member->Is_Immobile();
+        return Is_Filled() && Member()->Is_Immobile();
     }
 
     Bool_t Follower_t::Is_Settler()
     {
-        Member_t* member = Member();
-        return member && member->Is_Settler();
+        return Is_Filled() && Member()->Is_Settler();
     }
 
     Bool_t Follower_t::Isnt_Settler()
     {
-        Member_t* member = Member();
-        return member && member->Isnt_Settler();
+        return Is_Filled() && Member()->Isnt_Settler();
     }
 
     Bool_t Follower_t::Is_Thrall()
     {
-        Member_t* member = Member();
-        return member && member->Is_Thrall();
+        return Is_Filled() && Member()->Is_Thrall();
     }
 
     Bool_t Follower_t::Isnt_Thrall()
     {
-        Member_t* member = Member();
-        return member && member->Isnt_Thrall();
+        return Is_Filled() && Member()->Isnt_Thrall();
     }
 
     Bool_t Follower_t::Is_Paralyzed()
     {
-        Member_t* member = Member();
-        return member && member->Is_Paralyzed();
+        return Is_Filled() && Member()->Is_Paralyzed();
     }
 
     Bool_t Follower_t::Isnt_Paralyzed()
     {
-        Member_t* member = Member();
-        return member && member->Isnt_Paralyzed();
+        return Is_Filled() && Member()->Isnt_Paralyzed();
     }
 
     Bool_t Follower_t::Is_Mannequin()
     {
-        Member_t* member = Member();
-        return member && member->Is_Mannequin();
+        return Is_Filled() && Member()->Is_Mannequin();
     }
 
     Bool_t Follower_t::Isnt_Mannequin()
     {
-        Member_t* member = Member();
-        return member && member->Isnt_Mannequin();
+        return Is_Filled() && Member()->Isnt_Mannequin();
     }
 
     Bool_t Follower_t::Is_Display()
     {
-        Member_t* member = Member();
-        return member && member->Is_Display();
+        return Is_Filled() && Member()->Is_Display();
     }
 
     Bool_t Follower_t::Isnt_Display()
     {
-        Member_t* member = Member();
-        return member && member->Isnt_Display();
+        return Is_Filled() && Member()->Isnt_Display();
     }
 
     Bool_t Follower_t::Is_Reanimated()
     {
-        Member_t* member = Member();
-        return member && member->Is_Reanimated();
+        return Is_Filled() && Member()->Is_Reanimated();
     }
 
     Bool_t Follower_t::Isnt_Reanimated()
     {
-        Member_t* member = Member();
-        return member && member->Isnt_Reanimated();
+        return Is_Filled() && Member()->Isnt_Reanimated();
     }
 
     Bool_t Follower_t::Is_Follower()
@@ -307,261 +261,287 @@ namespace doticu_npcp { namespace Party {
 
     Bool_t Follower_t::Is_Sneak()
     {
-        static const String_t variable_name = String_t("p_is_sneak");
-
-        Variable_t* const variable = Variable(variable_name);
-        if (variable) {
-            return variable->Bool();
-        } else {
-            return false;
-        }
+        return Is_Filled() && Is_Sneak_Variable()->Bool();
     }
 
     Bool_t Follower_t::Isnt_Sneak()
     {
-        static const String_t variable_name = String_t("p_is_sneak");
-
-        Variable_t* const variable = Variable(variable_name);
-        if (variable) {
-            return !variable->Bool();
-        } else {
-            return false;
-        }
+        return Is_Filled() && !Is_Sneak_Variable()->Bool();
     }
 
     Bool_t Follower_t::Is_Saddler()
     {
-        static const String_t variable_name = String_t("p_is_saddler");
-
-        Variable_t* const variable = Variable(variable_name);
-        if (variable) {
-            return variable->Bool();
-        } else {
-            return false;
-        }
+        return Is_Filled() && Is_Saddler_Variable()->Bool();
     }
 
     Bool_t Follower_t::Isnt_Saddler()
     {
-        static const String_t variable_name = String_t("p_is_saddler");
-
-        Variable_t* const variable = Variable(variable_name);
-        if (variable) {
-            return !variable->Bool();
-        } else {
-            return false;
-        }
+        return Is_Filled() && !Is_Saddler_Variable()->Bool();
     }
 
     Bool_t Follower_t::Is_Retreater()
     {
-        static const String_t variable_name = String_t("p_is_retreater");
-
-        Variable_t* const variable = Variable(variable_name);
-        if (variable) {
-            return variable->Bool();
-        } else {
-            return false;
-        }
+        return Is_Filled() && Is_Retreater_Variable()->Bool();
     }
 
     Bool_t Follower_t::Isnt_Retreater()
     {
-        static const String_t variable_name = String_t("p_is_retreater");
+        return Is_Filled() && !Is_Retreater_Variable()->Bool();
+    }
 
-        Variable_t* const variable = Variable(variable_name);
-        if (variable) {
-            return !variable->Bool();
+    Bool_t Follower_t::Is_Near_Player(float radius)
+    {
+        return Is_Filled() && Object_Ref::Is_Near_Player(Actor(), radius);
+    }
+
+    Bool_t Follower_t::Isnt_Near_Player(float radius)
+    {
+        return Is_Filled() && !Object_Ref::Is_Near_Player(Actor(), radius);
+    }
+
+    Bool_t Follower_t::Is_In_Interior_Cell()
+    {
+        if (Is_Filled()) {
+            Cell_t* cell = Cell();
+            return cell && Cell::Is_Interior(cell);
         } else {
             return false;
         }
     }
 
-    Bool_t Follower_t::Is_Near_Player(float radius)
-    {
-        Actor_t* actor = Actor();
-        return actor && Object_Ref::Is_Near_Player(actor, radius);
-    }
-
-    Bool_t Follower_t::Isnt_Near_Player(float radius)
-    {
-        Actor_t* actor = Actor();
-        return actor && !Object_Ref::Is_Near_Player(actor, radius);
-    }
-
-    Bool_t Follower_t::Is_In_Interior_Cell()
-    {
-        Cell_t* cell = Cell();
-        return cell && Cell::Is_Interior(cell);
-    }
-
     Bool_t Follower_t::Is_In_Exterior_Cell()
     {
-        Cell_t* cell = Cell();
-        return cell && Cell::Is_Exterior(cell);
+        if (Is_Filled()) {
+            Cell_t* cell = Cell();
+            return cell && Cell::Is_Exterior(cell);
+        } else {
+            return false;
+        }
+    }
+
+    Bool_t Follower_t::Is_In_Combat()
+    {
+        return Is_Filled() && Actor()->IsInCombat();
+    }
+
+    Bool_t Follower_t::Isnt_In_Combat()
+    {
+        return Is_Filled() && !Actor()->IsInCombat();
     }
 
     bool Follower_t::Has_Token(Misc_t* token, Int_t count)
     {
-        return Object_Ref::Has_Token(Actor(), token, count);
+        return Is_Filled() && Object_Ref::Has_Token(Actor(), token, count);
     }
 
     void Follower_t::Token(Misc_t* token, Int_t count)
     {
+        NPCP_ASSERT(Is_Filled());
         Object_Ref::Token(Actor(), token, count);
     }
 
     void Follower_t::Untoken(Misc_t* token)
     {
+        NPCP_ASSERT(Is_Filled());
         Object_Ref::Untoken(Actor(), token);
     }
-    
-    void Follower_t::Summon(Reference_t* origin, float radius, float degree)
-    {
-        if (origin && Is_Filled()) {
-            Actor_t* follower_actor = Actor();
-            if (follower_actor) {
-                if (Object_Ref::Is_In_Exterior_Cell(origin) && Is_Saddler()) {
-                    Horse_t* follower_horse = Horse();
-                    Actor_t* follower_horse_actor = follower_horse ? follower_horse->Actor() : nullptr;
-                    if (follower_horse_actor) {
-                        Actor2::Move_To_Orbit(follower_horse_actor, origin, radius * 4, degree + 12);
-                        Actor2::Move_To_Orbit(follower_actor, origin, radius * 3.5, degree);
-                        Saddle();
-                    } else {
-                        Actor2::Move_To_Orbit(follower_actor, origin, radius, degree);
-                    }
-                } else {
-                    Actor2::Move_To_Orbit(follower_actor, origin, radius, degree);
-                }
-            }
-        }
-    }
 
-    void Follower_t::Summon(float radius, float degree)
+    void Follower_t::Fill(Member_t* member)
     {
-        Summon(Player::Actor(), radius, degree);
-    }
+        NPCP_ASSERT(Is_Unfilled());
 
-    void Follower_t::Summon_Ahead(float radius)
-    {
-        Summon(radius, 0);
-    }
-
-    void Follower_t::Summon_Behind(float radius)
-    {
-        Summon(radius, 180);
-    }
-
-    void Follower_t::Mobilize()
-    {
-        Member_t* member = Member();
-        if (member) {
-            member->Mobilize();
-        }
-    }
-
-    void Follower_t::Immobilize()
-    {
-        Member_t* member = Member();
-        if (member) {
-            member->Immobilize();
-        }
-    }
-
-    void Follower_t::Settle()
-    {
-        Member_t* member = Member();
-        if (member) {
-            member->Settle();
-        }
-    }
-
-    void Follower_t::Unsettle()
-    {
-        Member_t* member = Member();
-        if (member) {
-            member->Unsettle();
-        }
-    }
-
-    void Follower_t::Enthrall()
-    {
-        Member_t* member = Member();
-        if (member) {
-            member->Enthrall();
-        }
-    }
-
-    void Follower_t::Unthrall()
-    {
-        Member_t* member = Member();
-        if (member) {
-            member->Unthrall();
-        }
-    }
-
-    void Follower_t::Paralyze()
-    {
-        Member_t* member = Member();
-        if (member) {
-            member->Paralyze();
-        }
-    }
-
-    void Follower_t::Unparalyze()
-    {
-        Member_t* member = Member();
-        if (member) {
-            member->Unparalyze();
-        }
-    }
-
-    void Follower_t::Catch_Up()
-    {
-        // for the last three we are asking if they have ai essentially
-        if (Is_Filled() && Is_Mobile() && Isnt_Paralyzed() && Isnt_Mannequin() && Isnt_Display()) {
-            if (Player::Is_In_Interior_Cell() || Isnt_Saddler()) {
-                if (Isnt_Near_Player()) {
-                    Summon_Behind();
-                }
-            } else {
-                Horse_t* horse = Horse();
-                if (horse) {
-                    Actor_t* horse_actor = horse->Actor();
-                    if (horse_actor && !Object_Ref::Is_Near_Player(horse_actor, 10240.0f)) {
-                        if (Player::Is_On_Mount()) {
-                            Summon_Behind(1024.0f);
-                        } else {
-                            Summon_Behind();
-                        }
-                        Saddle();
-                    }
-                }
-            }
-        }
-    }
-
-    void Follower_t::Saddle()
-    {
-        static const String_t func_name = String_t("p_Saddle");
-
-        struct Args : public IFunctionArguments {
-            bool Copy(Output* output)
+        struct Callback : public Virtual_Callback_t {
+        public:
+            Follower_t* self;
+            Member_t* member;
+            Callback(Follower_t* self, Member_t* member) :
+                self(self), member(member)
             {
-                return true;
             }
-        } args;
+            void operator()(Variable_t* result)
+            {
+                self->Create(member);
+                Virtual_Machine_t::Self()->Call_Method(self, self->Class_Name(), "f_Register");
+            }
+        };
+        Virtual_Callback_i* callback = new Callback(this, member);
 
-        Handle_t handle(this);
-        handle.Registry()->QueueEvent(handle, &func_name, &args);
+        Alias_t::Fill(member->Actor(), &callback);
+    }
+
+    void Follower_t::Unfill()
+    {
+        NPCP_ASSERT(Is_Filled());
+
+        Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "f_Unregister");
+        Destroy();
+        Alias_t::Unfill(nullptr);
+    }
+
+    void Follower_t::Create(Member_t* member)
+    {
+        Actor_t* actor = member->Actor();
+
+        Actor_Variable()->Pack(actor);
+        Member_Variable()->Pack(member);
+        Horse_Variable()->None();
+
+        Is_Sneak_Variable()->Bool(false);
+        Is_Saddler_Variable()->Bool(false);
+        Is_Retreater_Variable()->Bool(false);
+
+        Backup_State(actor);
+        Actor2::Stop_If_Playing_Music(actor);
+
+        Follow();
+        Level();
+    }
+
+    void Follower_t::Destroy()
+    {
+        Actor_t* actor = Actor();
+
+        if (Is_Retreater()) {
+            Unretreat();
+        }
+        if (Is_Saddler()) {
+            Unsaddle();
+        }
+        if (Is_Sneak()) {
+            Unsneak();
+        }
+        Unlevel();
+        Unfollow();
+
+        Restore_State(actor);
+        Destroy_Horse();
+
+        Previous_No_Auto_Bard_Faction_Variable()->Bool(false);
+        Previous_Speed_Multiplier_Variable()->Float(-1.0f);
+        Previous_Waiting_For_Player_Variable()->Float(-1.0f);
+        Previous_Player_Relationship_Variable()->Int(-1);
+
+        Is_Retreater_Variable()->Bool(false);
+        Is_Saddler_Variable()->Bool(false);
+        Is_Sneak_Variable()->Bool(false);
+
+        Horse_Variable()->None();
+        Member_Variable()->None();
+        Actor_Variable()->None();
+    }
+
+    void Follower_t::Create_Horse()
+    {
+        NPCP_ASSERT(!Horse());
+        Horses_t::Self()->Add_Horse(this);
+        Horse_Variable()->Pack(Horses_t::Self()->From_ID(Followers_t::MAX + ID()));
+    }
+
+    void Follower_t::Destroy_Horse()
+    {
+        if (Horse()) {
+            Horses_t::Self()->Remove_Horse(this);
+            Horse_Variable()->None();
+        }
+    }
+
+    void Follower_t::Backup_State(Actor_t* actor)
+    {
+        NPCP_ASSERT(actor);
+
+        Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(actor);
+        Previous_Waiting_For_Player_Variable()->Float(value_owner->Get_Base_Actor_Value(Actor_Value_t::WAITING_FOR_PLAYER));
+        Previous_Speed_Multiplier_Variable()->Float(value_owner->Get_Base_Actor_Value(Actor_Value_t::SPEED_MULT));
+
+        Previous_No_Auto_Bard_Faction_Variable()->Bool(Actor2::Has_Faction(actor, Consts::No_Bard_Singer_Autostart_Faction()));
+
+        class Callback : public Virtual_Callback_t {
+        public:
+            Variable_t* variable;
+            Callback(Variable_t* variable) :
+                variable(variable)
+            {
+            }
+            void operator()(Variable_t* result)
+            {
+                variable->Int(result->Int());
+            }
+        };
+        Virtual_Callback_i* callback = new Callback(Previous_Player_Relationship_Variable());
+        Actor2::Relationship_Rank(actor, Player::Actor(), &callback);
+    }
+
+    void Follower_t::Restore_State(Actor_t* actor)
+    {
+        NPCP_ASSERT(actor);
+
+        Actor2::Relationship_Rank(actor, Player::Actor(), Previous_Player_Relationship_Variable()->Int());
+
+        if (Previous_No_Auto_Bard_Faction_Variable()->Bool()) {
+            Actor2::Add_Faction(actor, Consts::No_Bard_Singer_Autostart_Faction());
+        }
+
+        Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(actor);
+        value_owner->Set_Actor_Value(Actor_Value_t::SPEED_MULT, Previous_Speed_Multiplier_Variable()->Float());
+        value_owner->Set_Actor_Value(Actor_Value_t::WAITING_FOR_PLAYER, Previous_Waiting_For_Player_Variable()->Float());
+    }
+
+    void Follower_t::Follow()
+    {
+        NPCP_ASSERT(Is_Filled());
+
+        Actor_t* actor = Actor();
+
+        Object_Ref::Token(actor, Consts::Follower_Token(), ID() + 1);
+        
+        Actor2::Add_Faction(actor, Consts::No_Bard_Singer_Autostart_Faction());
+
+        Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(actor);
+        value_owner->Set_Actor_Value(Actor_Value_t::WAITING_FOR_PLAYER, 0.0f);
+        value_owner->Set_Actor_Value(Actor_Value_t::SPEED_MULT, MAX_UNSNEAK_SPEED);
+
+        Actor2::Ignore_Friendly_Hits(actor);
+        Actor2::Hide_From_Stealth_Eye(actor);
+
+        class Callback : public Virtual_Callback_t {
+        public:
+            Actor_t* actor;
+            Callback(Actor_t* actor) :
+                actor(actor)
+            {
+            }
+            void operator()(Variable_t* result)
+            {
+                Actor2::Evaluate_Package(actor);
+            }
+        };
+        Virtual_Callback_i* callback = new Callback(actor);
+        Actor2::Relationship_Rank(actor, Player::Actor(), 3, &callback);
+    }
+
+    void Follower_t::Unfollow()
+    {
+        NPCP_ASSERT(Is_Filled());
+
+        Actor_t* actor = Actor();
+
+        Actor2::Show_On_Stealth_Eye(actor);
+        Actor2::Notice_Friendly_Hits(actor);
+
+        Actor2::Remove_Faction(actor, Consts::No_Bard_Singer_Autostart_Faction());
+
+        Object_Ref::Untoken(actor, Consts::Follower_Token());
+
+        Actor2::Evaluate_Package(actor);
     }
 
     void Follower_t::Level()
     {
+        NPCP_ASSERT(Is_Filled());
+
         Actor_t* player_actor = *g_thePlayer;
         Actor_t* follower_actor = Actor();
-        if (player_actor && follower_actor && Is_Created()) {
+        if (player_actor && follower_actor && Is_Filled()) {
             Actor_Value_Owner_t* values =
                 Actor2::Actor_Value_Owner(follower_actor);
             Actor_Value_Owner_t* base_values =
@@ -786,15 +766,9 @@ namespace doticu_npcp { namespace Party {
 
     void Follower_t::Unlevel()
     {
-        if (!Is_Created()) {
-            return;
-        }
+        NPCP_ASSERT(Is_Filled());
 
         Actor_t* follower_actor = Actor();
-        if (!follower_actor) {
-            return;
-        }
-
         TESNPC* follower_base = static_cast<TESNPC*>(follower_actor->baseForm);
         if (!follower_base) {
             return;
@@ -835,44 +809,361 @@ namespace doticu_npcp { namespace Party {
         #undef RESET_VALUE
     }
 
-    void Follower_t::Sneak()
+    Int_t Follower_t::Sneak()
     {
-        Actor_t* actor = Actor();
-        if (actor && Is_Created()) {
-            Actor_Value_Owner_t* values = Actor2::Actor_Value_Owner(actor);
-            if (values) {
-                values->Set_Actor_Value(Actor_Value_t::SPEED_MULT, MAX_SNEAK_SPEED);
+        if (Is_Filled()) {
+            if (Isnt_Sneak()) {
+                Is_Sneak_Variable()->Bool(true);
+
+                Actor_t* actor = Actor();
+                Enforce_Sneak(actor);
+                Actor2::Evaluate_Package(actor);
+
+                return CODES::SUCCESS;
+            } else {
+                return CODES::IS;
             }
-
-            Object_Ref::Token(actor, Consts::Sneak_Follower_Token());
-
-            Actor2::Evaluate_Package(actor);
+        } else {
+            return CODES::FOLLOWER;
         }
     }
 
-    void Follower_t::Unsneak()
+    void Follower_t::Enforce_Sneak(Actor_t* actor)
     {
-        Actor_t* actor = Actor();
-        if (actor && Is_Created()) {
-            Actor_Value_Owner_t* values = Actor2::Actor_Value_Owner(actor);
-            if (values) {
-                values->Set_Actor_Value(Actor_Value_t::SPEED_MULT, MAX_UNSNEAK_SPEED);
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(Is_Sneak());
+
+        Object_Ref::Token(actor, Consts::Sneak_Follower_Token());
+
+        Actor_Value_Owner_t* values = Actor2::Actor_Value_Owner(actor);
+        values->Set_Actor_Value(Actor_Value_t::SPEED_MULT, MAX_SNEAK_SPEED);
+    }
+
+    Int_t Follower_t::Unsneak()
+    {
+        if (Is_Filled()) {
+            if (Is_Sneak()) {
+                Is_Sneak_Variable()->Bool(false);
+
+                Actor_t* actor = Actor();
+                Enforce_Non_Sneak(actor);
+                Actor2::Evaluate_Package(actor);
+
+                return CODES::SUCCESS;
+            } else {
+                return CODES::IS;
+            }
+        } else {
+            return CODES::FOLLOWER;
+        }
+    }
+
+    void Follower_t::Enforce_Non_Sneak(Actor_t* actor)
+    {
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(Isnt_Sneak());
+
+        Object_Ref::Untoken(actor, Consts::Sneak_Follower_Token());
+
+        Actor_Value_Owner_t* values = Actor2::Actor_Value_Owner(actor);
+        values->Set_Actor_Value(Actor_Value_t::SPEED_MULT, MAX_UNSNEAK_SPEED);
+    }
+
+    Int_t Follower_t::Saddle()
+    {
+        if (Is_Filled()) {
+            if (Isnt_Saddler()) {
+                if (Is_In_Exterior_Cell()) {
+                    Is_Saddler_Variable()->Bool(true);
+
+                    Actor_t* actor = Actor();
+                    Enforce_Saddler(actor);
+                    Actor2::Evaluate_Package(actor);
+
+                    return CODES::SUCCESS;
+                } else {
+                    return CODES::INTERIOR;
+                }
+            } else {
+                return CODES::IS;
+            }
+        } else {
+            return CODES::FOLLOWER;
+        }
+    }
+
+    void Follower_t::Enforce_Saddler(Actor_t* actor)
+    {
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(Is_Saddler());
+
+        if (Player::Is_In_Exterior_Cell()) {
+            Object_Ref::Token(actor, Consts::Saddler_Token());
+
+            Horse_t* horse = Horse();
+            if (horse) {
+                horse->Groom();
+            } else {
+                Create_Horse();
+            }
+        } else {
+            Enforce_Non_Saddler(actor);
+        }
+    }
+
+    Int_t Follower_t::Unsaddle()
+    {
+        if (Is_Filled()) {
+            if (Is_Saddler()) {
+                Is_Saddler_Variable()->Bool(false);
+
+                Actor_t* actor = Actor();
+                Enforce_Non_Saddler(actor);
+                Actor2::Evaluate_Package(actor);
+
+                return CODES::SUCCESS;
+            } else {
+                return CODES::IS;
+            }
+        } else {
+            return CODES::FOLLOWER;
+        }
+    }
+
+    void Follower_t::Enforce_Non_Saddler(Actor_t* actor)
+    {
+        NPCP_ASSERT(Is_Filled());
+
+        Object_Ref::Untoken(actor, Consts::Saddler_Token());
+
+        if (Actor2::Is_On_Mount(actor)) {
+            Actor2::Dismount(actor);
+        }
+
+        Horse_t* horse = Horse();
+        if (horse) {
+            horse->Ungroom();
+        }
+    }
+
+    Int_t Follower_t::Retreat()
+    {
+        if (Is_Filled()) {
+            if (Isnt_Retreater()) {
+                Is_Retreater_Variable()->Bool(true);
+
+                Actor_t* actor = Actor();
+                Enforce_Retreater(actor);
+                Actor2::Evaluate_Package(actor);
+
+                return CODES::SUCCESS;
+            } else {
+                return CODES::IS;
+            }
+        } else {
+            return CODES::FOLLOWER;
+        }
+    }
+
+    void Follower_t::Enforce_Retreater(Actor_t* actor)
+    {
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(Is_Retreater());
+
+        if (Is_Alive()) {
+            if (Actor2::Is_Sneaking(Player::Actor())) {
+                Object_Ref::Token(actor, Consts::Retreater_Token());
+
+                if (!Actor2::Has_Magic_Effect(actor, Consts::Retreat_Magic_Effect())) {
+                    Actor2::Add_Spell(actor, Consts::Retreat_Ability_Spell());
+                }
+
+                Actor2::Pacify(actor);
+            } else {
+                Unretreat();
+            }
+        }
+    }
+
+    Int_t Follower_t::Unretreat()
+    {
+        if (Is_Filled()) {
+            if (Is_Retreater()) {
+                Is_Retreater_Variable()->Bool(false);
+
+                Actor_t* actor = Actor();
+                Enforce_Non_Retreater(actor);
+                Actor2::Evaluate_Package(actor);
+
+                return CODES::SUCCESS;
+            } else {
+                return CODES::IS;
+            }
+        } else {
+            return CODES::FOLLOWER;
+        }
+    }
+
+    void Follower_t::Enforce_Non_Retreater(Actor_t* actor)
+    {
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(Isnt_Retreater());
+
+        Object_Ref::Untoken(actor, Consts::Retreater_Token());
+        Actor2::Remove_Spell(actor, Consts::Retreat_Ability_Spell());
+    }
+
+    void Follower_t::Enforce()
+    {
+        if (Is_Filled() && Is_Alive()) {
+            Actor_t* actor = Actor();
+
+            Follow(); // this should be Enforce_Follower. Backup should be Follow and Restore Unfollow
+
+            Level();
+
+            if (Is_Sneak()) {
+                Enforce_Sneak(actor);
+            } else {
+                Enforce_Non_Sneak(actor);
             }
 
-            Object_Ref::Untoken(actor, Consts::Sneak_Follower_Token());
+            if (Is_Saddler()) {
+                Enforce_Saddler(actor);
+            } else {
+                Enforce_Non_Saddler(actor);
+            }
 
-            Actor2::Evaluate_Package(actor);
+            if (Is_Retreater()) {
+                Enforce_Retreater(actor);
+            } else {
+                Enforce_Non_Retreater(actor);
+            }
+        }
+    }
+    
+    void Follower_t::Summon(Reference_t* origin, float radius, float degree)
+    {
+        if (origin && Is_Filled()) {
+            Actor_t* follower_actor = Actor();
+            if (follower_actor) {
+                if (Object_Ref::Is_In_Exterior_Cell(origin) && Is_Saddler()) {
+                    Horse_t* follower_horse = Horse();
+                    Actor_t* follower_horse_actor = follower_horse ? follower_horse->Actor() : nullptr;
+                    if (follower_horse_actor) {
+                        Actor2::Move_To_Orbit(follower_horse_actor, origin, radius * 4, degree + 12);
+                        Actor2::Move_To_Orbit(follower_actor, origin, radius * 3.5, degree);
+                        Enforce_Saddler(follower_actor);
+                    } else {
+                        Actor2::Move_To_Orbit(follower_actor, origin, radius, degree);
+                    }
+                } else {
+                    Actor2::Move_To_Orbit(follower_actor, origin, radius, degree);
+                }
+            }
+        }
+    }
+
+    void Follower_t::Summon(float radius, float degree)
+    {
+        NPCP_ASSERT(Is_Filled());
+
+        Summon(Player::Actor(), radius, degree);
+    }
+
+    void Follower_t::Summon_Ahead(float radius)
+    {
+        NPCP_ASSERT(Is_Filled());
+
+        Summon(radius, 0);
+    }
+
+    void Follower_t::Summon_Behind(float radius)
+    {
+        NPCP_ASSERT(Is_Filled());
+
+        Summon(radius, 180);
+    }
+
+    void Follower_t::Mobilize()
+    {
+        NPCP_ASSERT(Is_Filled());
+        Member()->Mobilize();
+    }
+
+    void Follower_t::Immobilize()
+    {
+        NPCP_ASSERT(Is_Filled());
+        Member()->Immobilize();
+    }
+
+    void Follower_t::Settle()
+    {
+        NPCP_ASSERT(Is_Filled());
+        Member()->Settle();
+    }
+
+    void Follower_t::Unsettle()
+    {
+        NPCP_ASSERT(Is_Filled());
+        Member()->Unsettle();
+    }
+
+    void Follower_t::Enthrall()
+    {
+        NPCP_ASSERT(Is_Filled());
+        Member()->Enthrall();
+    }
+
+    void Follower_t::Unthrall()
+    {
+        NPCP_ASSERT(Is_Filled());
+        Member()->Unthrall();
+    }
+
+    void Follower_t::Paralyze()
+    {
+        NPCP_ASSERT(Is_Filled());
+        Member()->Paralyze();
+    }
+
+    void Follower_t::Unparalyze()
+    {
+        NPCP_ASSERT(Is_Filled());
+        Member()->Unparalyze();
+    }
+
+    void Follower_t::Catch_Up()
+    {
+        // for the last three we are asking if they have ai essentially
+        if (Is_Filled() && Is_Mobile() && Isnt_Paralyzed() && Isnt_Mannequin() && Isnt_Display()) {
+            if (Player::Is_In_Interior_Cell() || Isnt_Saddler()) {
+                if (Isnt_Near_Player()) {
+                    Summon_Behind();
+                }
+            } else {
+                Horse_t* horse = Horse();
+                if (horse) {
+                    Actor_t* horse_actor = horse->Actor();
+                    if (horse_actor && !Object_Ref::Is_Near_Player(horse_actor, 10240.0f)) {
+                        if (Player::Is_On_Mount()) {
+                            Summon_Behind(1024.0f);
+                        } else {
+                            Summon_Behind();
+                        }
+                        Enforce_Saddler(Actor());
+                    }
+                }
+            }
         }
     }
 
     void Follower_t::Rename(String_t new_name)
     {
-        Actor_t* actor = Actor();
-        if (actor && Is_Created()) {
-            Object_Ref::Rename(actor, new_name);
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(new_name);
 
-            Actor2::Evaluate_Package(actor);
-        }
+        Member()->Rename(new_name);
     }
 
 }}
@@ -884,10 +1175,15 @@ namespace doticu_npcp { namespace Party { namespace Follower { namespace Exports
 
     String_t Name(Follower_t* self) FORWARD_STRING(Follower_t::Name());
 
-    void Level(Follower_t* self) FORWARD_VOID(Follower_t::Level());
-    void Unlevel(Follower_t* self) FORWARD_VOID(Follower_t::Unlevel());
-    void Sneak(Follower_t* self) FORWARD_VOID(Follower_t::Sneak());
-    void Unsneak(Follower_t* self) FORWARD_VOID(Follower_t::Unsneak());
+    Bool_t Is_Filled(Follower_t* self) FORWARD_BOOL(Follower_t::Is_Filled());
+    Bool_t Is_Unfilled(Follower_t* self) FORWARD_BOOL(Follower_t::Is_Unfilled());
+
+    Int_t Sneak(Follower_t* self) FORWARD_INT(Follower_t::Sneak());
+    Int_t Unsneak(Follower_t* self) FORWARD_INT(Follower_t::Unsneak());
+    Int_t Saddle(Follower_t* self) FORWARD_INT(Follower_t::Saddle());
+    Int_t Unsaddle(Follower_t* self) FORWARD_INT(Follower_t::Unsaddle());
+    Int_t Retreat(Follower_t* self) FORWARD_INT(Follower_t::Retreat());
+    Int_t Unretreat(Follower_t* self) FORWARD_INT(Follower_t::Unretreat());
 
     void Rename(Follower_t* self, String_t new_name) FORWARD_VOID(Follower_t::Rename(new_name));
 
@@ -905,10 +1201,15 @@ namespace doticu_npcp { namespace Party { namespace Follower { namespace Exports
 
         ADD_METHOD("Name", 0, String_t, Name);
 
-        ADD_METHOD("p_Level", 0, void, Level);
-        ADD_METHOD("p_Unlevel", 0, void, Unlevel);
-        ADD_METHOD("p_Sneak", 0, void, Sneak);
-        ADD_METHOD("p_Unsneak", 0, void, Unsneak);
+        ADD_METHOD("Is_Filled", 0, Bool_t, Is_Filled);
+        ADD_METHOD("Is_Unfilled", 0, Bool_t, Is_Unfilled);
+
+        ADD_METHOD("Sneak", 0, Int_t, Sneak);
+        ADD_METHOD("Unsneak", 0, Int_t, Unsneak);
+        ADD_METHOD("Saddle", 0, Int_t, Saddle);
+        ADD_METHOD("Unsaddle", 0, Int_t, Unsaddle);
+        ADD_METHOD("Retreat", 0, Int_t, Retreat);
+        ADD_METHOD("Unretreat", 0, Int_t, Unretreat);
 
         ADD_METHOD("p_Rename", 1, void, Rename, String_t);
 

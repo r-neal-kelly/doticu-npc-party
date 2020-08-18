@@ -10,16 +10,6 @@ doticu_npcp_main property MAIN hidden
         return doticu_npcp.Main()
     endFunction
 endProperty
-doticu_npcp_vars property VARS hidden
-    doticu_npcp_vars function Get()
-        return doticu_npcp.Vars()
-    endFunction
-endProperty
-doticu_npcp_funcs property FUNCS hidden
-    doticu_npcp_funcs function Get()
-        return doticu_npcp.Funcs()
-    endFunction
-endProperty
 doticu_npcp_actors property ACTORS hidden
     doticu_npcp_actors function Get()
         return doticu_npcp.Funcs().ACTORS
@@ -33,11 +23,6 @@ endProperty
 doticu_npcp_containers property CONTAINERS hidden
     doticu_npcp_containers function Get()
         return doticu_npcp.Funcs().CONTAINERS
-    endFunction
-endProperty
-doticu_npcp_outfits property OUTFITS hidden
-    doticu_npcp_outfits function Get()
-        return doticu_npcp.Funcs().OUTFITS
     endFunction
 endProperty
 doticu_npcp_members property MEMBERS hidden
@@ -93,7 +78,6 @@ float                   p_prev_confidence                   =   0.0
 float                   p_prev_assistance                   =   0.0
 float                   p_prev_morality                     =   0.0
 
-bool                    p_is_locked                         = false; to be deleted as soon as possible
 Faction[]               p_prev_factions                     =  none; to be deleted in a future update
 
 ; Native Methods
@@ -140,9 +124,6 @@ bool function Isnt_Saddler() native
 bool function Is_Retreater() native
 bool function Isnt_Retreater() native
 
-function p_Member() native
-function p_Unmember() native
-
 int function Mobilize() native
 int function Immobilize() native
 int function Settle() native
@@ -186,182 +167,19 @@ function p_Rename(string new_name) native
 
 function Enforce() native
 
-function Log_Variable_Infos() native
+int function Resurrect() native
+int function Kill() native
 
-function p_Restore_State(Actor ref_actor) native
-
-; Friend Methods
-function f_Destroy()
-    if Is_Follower()
-        FOLLOWERS.f_Destroy_Follower(p_ref_actor)
-    endIf
-
-    Unvitalize()
-    Unstylize()
-    if Is_Mannequin()
-        Unmannequinize()
-    endIf
-    if Is_Paralyzed()
-        Unparalyze()
-    endIf
-    if Is_Immobile()
-        Mobilize()
-    endIf
-    if Is_Thrall()
-        Unthrall()
-    endIf
-    if Is_Settler()
-        Unsettle()
-    endIf
-    p_Unmember()
-    if Is_Reanimated()
-        p_Deanimate()
-        p_Kill()
-    endIf
-
-    p_Restore_State(p_ref_actor)
-    p_Destroy_Outfits()
-    p_Destroy_Containers()
-
-p_Lock()
-
-    p_prev_morality = 0.0
-    p_prev_assistance = 0.0
-    p_prev_confidence = 0.0
-    p_prev_aggression = 0.0
-    p_prev_faction_no_body_cleanup = false
-    p_prev_faction_potential_follower = false
-    p_prev_faction_crime = none
-    p_prev_factions = new Faction[1]
-
-    p_outfit2_auto_backup = none
-    p_outfit2_current = none
-    p_outfit2_default = none
-    p_outfit2_vanilla = none
-    p_outfit2_follower = none
-    p_outfit2_immobile = none
-    p_outfit2_thrall = none
-    p_outfit2_settler = none
-    p_outfit2_member = none
-    p_container_pack = none
-    p_outfit_default = none
-    p_outfit_vanilla = none
-    p_marker_mannequin = none
-    p_marker_undisplay = none
-    p_marker_display = none
-    p_int_rating = 0
-    p_code_outfit2 = -1
-    p_code_vitality = -1
-    p_code_style = -1
-    p_is_display = false
-    p_is_reanimated = false
-    p_is_mannequin = false
-    p_is_paralyzed = false
-    p_is_immobile = false
-    p_is_thrall = false
-    p_is_settler = false
-    p_is_clone = false
-    p_ref_actor = none
-
-    Clear()
-    
-p_Unlock()
-endFunction
+int function Follow() native
+int function Unfollow() native
 
 ; Private Methods
-function p_Lock(float interval = 0.2, float timeout = 6.0)
-    float time_waited = 0.0
-
-    while p_is_locked && time_waited < timeout
-        FUNCS.Wait(interval)
-        time_waited += interval
-    endWhile
-
-    p_is_locked = true
-endFunction
-
-function p_Unlock()
-    p_is_locked = false
-endFunction
-
-function p_Destroy_Containers()
-p_Lock()
-
-    doticu_npcp.Object_Ref_Categorize(p_container_pack)
-    CONTAINERS.Destroy_Perm(p_container_pack)
-
-p_Unlock()
-endFunction
-
-function p_Reparalyze()
-    if !Is_Paralyzed() || Is_Mannequin()
-        return
-    endIf
-
-    Unparalyze()
-
-p_Lock()
-
-    Debug.SendAnimationEvent(p_ref_actor, "IdleForceDefaultState"); go to cached animation? FNIS?
-    ;Debug.SendAnimationEvent(p_ref_actor, "IdleCiceroDance1")
-    ;p_ref_actor.WaitForAnimationEvent("done")
-    FUNCS.Wait(0.1)
-
-p_Unlock()
-
-    Paralyze()
-endFunction
-
-function p_Destroy_Outfits()
-p_Lock()
-
-    if p_outfit2_default
-        OUTFITS.Destroy(p_outfit2_default)
-    endIf
-    if p_outfit2_vanilla
-        OUTFITS.Destroy(p_outfit2_vanilla)
-    endIf
-    if p_outfit2_immobile
-        OUTFITS.Destroy(p_outfit2_immobile)
-    endIf
-    if p_outfit2_follower
-        OUTFITS.Destroy(p_outfit2_follower)
-    endIf
-    if p_outfit2_thrall
-        OUTFITS.Destroy(p_outfit2_thrall)
-    endIf
-    if p_outfit2_settler
-        OUTFITS.Destroy(p_outfit2_settler)
-    endIf
-    if p_outfit2_member
-        OUTFITS.Destroy(p_outfit2_member)
-    endIf
-
-p_Unlock()
-endFunction
-
-function p_Resurrect()
-p_Lock()
-
-    ; don't yet know if this triggers and OnLoad
-    doticu_npcp.Actor_Resurrect(p_ref_actor, false)
-
-p_Unlock()
-
-    ; OnLoad checks a lot of state that can be removed on the death of the actor.
-    OnLoad()
-endFunction
-
 function p_Kill()
-p_Lock()
-
     ; we clear it just to make sure that their default essential
     ; status doesn't get in the way of their dying
     Clear()
     ACTORS.Kill(p_ref_actor)
     ForceRefTo(p_ref_actor)
-
-p_Unlock()
 
     ; we call the event handler ourselves because the actor
     ; is not filled on death
@@ -369,8 +187,6 @@ p_Unlock()
 endFunction
 
 function p_Reanimate()
-p_Lock()
-
     ACTORS.Token(p_ref_actor, doticu_npcp_consts.Reanimated_Token())
 
     ; we could have an option for what shader is player, including none
@@ -385,20 +201,14 @@ p_Lock()
     ; look into the susanna the wicked shirt, could be reused in shader? also, there may be a shader in dlc1
 
     p_ref_actor.EvaluatePackage()
-
-p_Unlock()
 endFunction
 
 function p_Deanimate()
-p_Lock()
-
     doticu_npcp_consts.Reanimate_Effect_Shader().Stop(p_ref_actor)
 
     ACTORS.Untoken(p_ref_actor, doticu_npcp_consts.Reanimated_Token())
 
     p_ref_actor.EvaluatePackage()
-
-p_Unlock()
 endFunction
 
 ; Public Methods
@@ -424,66 +234,6 @@ int function Rename(string str_name)
     return doticu_npcp_codes.SUCCESS()
 endFunction
 
-int function Follow()
-    if !Exists()
-        return doticu_npcp_codes.MEMBER()
-    endIf
-
-    if Is_Follower()
-        return doticu_npcp_codes.FOLLOWER()
-    endIf
-
-    if Is_Mannequin()
-        return doticu_npcp_codes.MANNEQUIN()
-    endIf
-
-p_Lock()
-    int code_return = FOLLOWERS.f_Create_Follower(p_ref_actor)
-p_Unlock()
-    if code_return != doticu_npcp_codes.SUCCESS()
-        return code_return
-    endIf
-
-    p_Apply_Outfit2()
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Unfollow()
-    if !Exists()
-        return doticu_npcp_codes.MEMBER()
-    endIf
-
-    if !Is_Follower()
-        return doticu_npcp_codes.FOLLOWER()
-    endIf
-
-p_Lock()
-    int code_return = FOLLOWERS.f_Destroy_Follower(p_ref_actor)
-p_Unlock()
-    if code_return != doticu_npcp_codes.SUCCESS()
-        return code_return
-    endIf
-
-    p_Apply_Outfit2()
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Resurrect(int code_exec)
-    if !Exists()
-        return doticu_npcp_codes.MEMBER()
-    endIf
-
-    if ACTORS.Is_Alive(p_ref_actor)
-        return doticu_npcp_codes.IS()
-    endIf
-
-    p_Resurrect()
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
 int function Reanimate(int code_exec)
     if !Exists()
         return doticu_npcp_codes.MEMBER()
@@ -497,7 +247,7 @@ int function Reanimate(int code_exec)
 
     ; we accept an already alive member to make it easier on creation, but maybe not once we make a dedicated Create_Reanimated()
     if Is_Dead()
-        p_Resurrect()
+        Resurrect()
     endIf
     p_Reanimate()
 
@@ -591,7 +341,7 @@ int function Unmember()
         return doticu_npcp_codes.MEMBER()
     endIf
 
-    return MEMBERS.Destroy_Member(p_ref_actor)
+    return MEMBERS.Remove_Original(p_ref_actor)
 endFunction
 
 int function Clone()
@@ -607,7 +357,7 @@ int function Unclone()
         return doticu_npcp_codes.MEMBER()
     endIf
 
-    return MEMBERS.Unclone(p_ref_actor, true)
+    return MEMBERS.Remove_Clone(p_ref_actor, true)
 endFunction
 
 int function Summon(int distance = 120, int angle = 0)
@@ -622,8 +372,6 @@ int function Summon(int distance = 120, int angle = 0)
 
     ACTORS.Move_To(p_ref_actor, doticu_npcp_consts.Player_Actor(), distance, angle)
 
-    ;p_Remannequinize()
-    ;p_Reparalyze()
     Enforce()
 
     return doticu_npcp_codes.SUCCESS()
@@ -639,8 +387,6 @@ int function Goto(int distance = 120, int angle = 0)
 
     ACTORS.Move_To(doticu_npcp_consts.Player_Actor(), p_ref_actor, distance, angle)
 
-    ;p_Remannequinize()
-    ;p_Reparalyze()
     Enforce()
 
     return doticu_npcp_codes.SUCCESS()

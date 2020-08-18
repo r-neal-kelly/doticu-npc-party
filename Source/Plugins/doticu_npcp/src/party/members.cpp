@@ -627,8 +627,8 @@ namespace doticu_npcp { namespace Party {
         if (original) {
             if (!Should_Clone(original)) {
                 if (Actor2::Isnt_Child(original)) {
-                    if (Count_Filled() < Limit()) {
-                        if (Hasnt_Actor(original)) {
+                    if (Hasnt_Actor(original)) {
+                        if (Count_Filled() < Limit()) {
                             if (Actor2::Is_Alive(original) || Actor2::Try_Resurrect(original)) {
                                 NPCS_t::Self()->Add_Original(original);
                                 Member_t* member = From_Unfilled();
@@ -639,10 +639,10 @@ namespace doticu_npcp { namespace Party {
                                 return CODES::DEAD;
                             }
                         } else {
-                            return CODES::MEMBER;
+                            return CODES::MEMBERS;
                         }
                     } else {
-                        return CODES::MEMBERS;
+                        return CODES::MEMBER;
                     }
                 } else {
                     return CODES::CHILD;
@@ -657,7 +657,22 @@ namespace doticu_npcp { namespace Party {
 
     Int_t Members_t::Remove_Original(Actor_t* original)
     {
-        return CODES::FAILURE;
+        if (original) {
+            Member_t* member = From_Actor(original);
+            if (member) {
+                if (member->Is_Original()) {
+                    member->Unfill();
+                    NPCS_t::Self()->Remove_Original(original);
+                    return CODES::SUCCESS;
+                } else {
+                    return Remove_Clone(original, false);
+                }
+            } else {
+                return CODES::MEMBER;
+            }
+        } else {
+            return CODES::ACTOR;
+        }
     }
 
     Int_t Members_t::Add_Clone(Actor_t* original)
@@ -681,9 +696,24 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
-    Int_t Members_t::Remove_Clone(Actor_t* clone)
+    Int_t Members_t::Remove_Clone(Actor_t* clone, Bool_t do_delete_clone)
     {
-        return CODES::FAILURE;
+        if (clone) {
+            Member_t* member = From_Actor(clone);
+            if (member) {
+                if (member->Is_Clone()) {
+                    member->Unfill();
+                    NPCS_t::Self()->Remove_Clone(clone, do_delete_clone || Should_Unclone(clone));
+                    return CODES::SUCCESS;
+                } else {
+                    return CODES::CLONE;
+                }
+            } else {
+                return CODES::MEMBER;
+            }
+        } else {
+            return CODES::ACTOR;
+        }
     }
 
     void Members_t::u_0_9_3()
@@ -693,6 +723,7 @@ namespace doticu_npcp { namespace Party {
         Vector_t<Member_t*> filled = Filled();
         for (size_t idx = 0, count = filled.size(); idx < count; idx += 1) {
             Member_t* member = filled.at(idx);
+            Actor_t* actor = member->Actor();
 
             Variable_t* previous_factions_variable = member->Variable("p_prev_factions");
             NPCP_ASSERT(previous_factions_variable);
@@ -712,7 +743,10 @@ namespace doticu_npcp { namespace Party {
                 }
             }
 
-            member->Default_Outfit_Variable()->Pack(npcs->Default_Outfit(member->Actor()));
+            npcs->Add_Base_If_Needed(actor, actor);
+            member->Default_Outfit_Variable()->Pack(npcs->Default_Outfit(actor));
+
+            member->Name_Variable()->String(Actor2::Get_Name(actor));
         }
     }
     
@@ -721,11 +755,11 @@ namespace doticu_npcp { namespace Party {
 namespace doticu_npcp { namespace Party { namespace Members { namespace Exports {
 
     Int_t Add_Original(Members_t* self, Actor_t* original) FORWARD_INT(Members_t::Add_Original(original));
+    Int_t Remove_Original(Members_t* self, Actor_t* original) FORWARD_INT(Members_t::Remove_Original(original));
     Int_t Add_Clone(Members_t* self, Actor_t* original) FORWARD_INT(Members_t::Add_Clone(original));
+    Int_t Remove_Clone(Members_t* self, Actor_t* clone, Bool_t do_delete_clone) FORWARD_INT(Members_t::Remove_Clone(clone, do_delete_clone));
 
-    Member_t* From_ID(Members_t* self, Int_t unique_id) FORWARD_POINTER(From_ID(unique_id));
     Member_t* From_Actor(Members_t* self, Actor_t* actor) FORWARD_POINTER(From_Actor(actor));
-    Member_t* From_Unfilled(Members_t* self) FORWARD_POINTER(From_Unfilled());
 
     Bool_t Has_Space(Members_t* self) FORWARD_BOOL(Has_Space());
     Bool_t Hasnt_Space(Members_t* self) FORWARD_BOOL(Hasnt_Space());
@@ -739,6 +773,7 @@ namespace doticu_npcp { namespace Party { namespace Members { namespace Exports 
     Bool_t Hasnt_Display(Members_t* self) FORWARD_BOOL(Members_t::Hasnt_Display());
 
     Int_t Max(Members_t* self) FORWARD_INT(Max());
+    Int_t Limit(Members_t* self) FORWARD_INT(Limit());
     Int_t Count_Filled(Members_t* self) FORWARD_INT(Count_Filled());
     Int_t Count_Unfilled(Members_t* self) FORWARD_INT(Count_Unfilled());
     Int_t Count_Loaded(Members_t* self) FORWARD_INT(Count_Loaded());
@@ -819,11 +854,11 @@ namespace doticu_npcp { namespace Party { namespace Members { namespace Exports 
         W
 
         ADD_METHOD("Add_Original", 1, Int_t, Add_Original, Actor_t*);
+        ADD_METHOD("Remove_Original", 1, Int_t, Remove_Original, Actor_t*);
         ADD_METHOD("Add_Clone", 1, Int_t, Add_Clone, Actor_t*);
+        ADD_METHOD("Remove_Clone", 2, Int_t, Remove_Clone, Actor_t*, Bool_t);
 
-        ADD_METHOD("p_From_ID", 1, Member_t*, From_ID, Int_t);
         ADD_METHOD("p_From_Actor", 1, Member_t*, From_Actor, Actor_t*);
-        ADD_METHOD("p_From_Unfilled", 0, Member_t*, From_Unfilled);
 
         ADD_METHOD("Has_Space", 0, Bool_t, Has_Space);
         ADD_METHOD("Hasnt_Space", 0, Bool_t, Hasnt_Space);
@@ -837,6 +872,7 @@ namespace doticu_npcp { namespace Party { namespace Members { namespace Exports 
         ADD_METHOD("Hasnt_Display", 0, Bool_t, Hasnt_Display);
 
         ADD_METHOD("Max", 0, Int_t, Max);
+        ADD_METHOD("Limit", 0, Int_t, Limit);
         ADD_METHOD("Count_Filled", 0, Int_t, Count_Filled);
         ADD_METHOD("Count_Unfilled", 0, Int_t, Count_Unfilled);
         ADD_METHOD("Count_Loaded", 0, Int_t, Count_Loaded);

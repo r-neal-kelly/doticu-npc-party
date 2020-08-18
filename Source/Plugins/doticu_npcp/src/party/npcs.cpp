@@ -209,10 +209,14 @@ namespace doticu_npcp { namespace Party {
         return clone;
     }
 
-    void NPCS_t::Remove_Clone(Actor_t* clone)
+    void NPCS_t::Remove_Clone(Actor_t* clone, Bool_t do_delete_clone)
     {
         NPCP_ASSERT(clone);
         Remove_Base_If_Needed(Base_Idx(clone));
+
+        if (do_delete_clone) {
+            Object_Ref::Delete_Safe(clone);
+        }
     }
 
     Outfit_t* NPCS_t::Default_Outfit(Actor_t* actor)
@@ -279,8 +283,6 @@ namespace doticu_npcp { namespace Party {
     {
         auto Initialize = [](NPCS_t* self)->void FORWARD_VOID(NPCS_t::Initialize());
         auto Uninitialize = [](NPCS_t* self)->void FORWARD_VOID(NPCS_t::Uninitialize());
-        auto Remove_Original = [](NPCS_t* self, Actor_t* original)->void FORWARD_VOID(NPCS_t::Remove_Original(original));
-        auto Remove_Clone = [](NPCS_t* self, Actor_t* clone)->void FORWARD_VOID(NPCS_t::Remove_Clone(clone));
 
         #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
         M                                                               \
@@ -291,8 +293,6 @@ namespace doticu_npcp { namespace Party {
 
         ADD_METHOD("f_Initialize", 0, void, Initialize);
         ADD_METHOD("f_Uninitialize", 0, void, Uninitialize);
-        ADD_METHOD("Remove_Original", 1, void, Remove_Original, Actor_t*);
-        ADD_METHOD("Remove_Clone", 1, void, Remove_Clone, Actor_t*);
 
         #undef ADD_METHOD
     }

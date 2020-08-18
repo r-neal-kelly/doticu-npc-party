@@ -773,6 +773,11 @@ namespace doticu_npcp { namespace Actor2 {
         return actor && Get_Mount(actor) != nullptr;
     }
 
+    void Dismount(Actor_t* actor, Virtual_Callback_i** callback)
+    {
+        Virtual_Machine_t::Self()->Call_Method(actor, "Actor", "Dismount", nullptr, callback);
+    }
+
     Int_t Sex(Actor_t* actor)
     {
         if (actor && actor->baseForm) {
@@ -1385,6 +1390,34 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
+    void Ignore_Friendly_Hits(Actor_t* actor)
+    {
+        if (actor) {
+            actor->flags = Utils::Bit_On(actor->flags, Actor_t2::Form_Flags::IGNORES_FRIENDLY_HITS);
+        }
+    }
+
+    void Notice_Friendly_Hits(Actor_t* actor)
+    {
+        if (actor) {
+            actor->flags = Utils::Bit_Off(actor->flags, Actor_t2::Form_Flags::IGNORES_FRIENDLY_HITS);
+        }
+    }
+
+    void Show_On_Stealth_Eye(Actor_t* actor)
+    {
+        if (actor) {
+            actor->flags2 = Utils::Bit_Off(actor->flags2, Actor_t2::Flags_2::HIDDEN_FROM_STEALTH_EYE);
+        }
+    }
+
+    void Hide_From_Stealth_Eye(Actor_t* actor)
+    {
+        if (actor) {
+            actor->flags2 = Utils::Bit_On(actor->flags2, Actor_t2::Flags_2::HIDDEN_FROM_STEALTH_EYE);
+        }
+    }
+
     void Stop_Movement(Actor_t* actor)
     {
         if (actor) {
@@ -1511,8 +1544,6 @@ namespace doticu_npcp { namespace Actor2 {
 
     void Greet_Player(Actor_t* actor)
     {
-        using namespace Papyrus;
-
         NPCP_ASSERT(actor);
 
         class Arguments : public Virtual_Arguments_t {
@@ -1529,37 +1560,123 @@ namespace doticu_npcp { namespace Actor2 {
 
                 return true;
             }
-        } args(actor);
+        } arguments(actor);
 
         Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(),
                                                "doticu_npcp_actors",
                                                "Greet_Player",
-                                               &args);
+                                               &arguments);
+    }
+
+    void Stop_If_Playing_Music(Actor_t* actor)
+    {
+        NPCP_ASSERT(actor);
+
+        class Arguments : public Virtual_Arguments_t {
+        public:
+            Actor_t* actor;
+            Arguments(Actor_t* actor) :
+                actor(actor)
+            {
+            }
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(1);
+                arguments->At(0)->Pack(actor);
+
+                return true;
+            }
+        } arguments(actor);
+        Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(),
+                                               "doticu_npcp_actors",
+                                               "Stop_If_Playing_Music",
+                                               &arguments);
+    }
+
+    void Relationship_Rank(Actor_t* actor, Actor_t* other, Virtual_Callback_i** callback)
+    {
+
+    }
+
+    void Relationship_Rank(Actor_t* actor, Actor_t* other, Int_t rank, Virtual_Callback_i** callback)
+    {
+        if (actor && other) {
+            class Arguments : public Virtual_Arguments_t {
+            public:
+                Actor_t* other;
+                Int_t rank;
+                Arguments(Actor_t* other, Int_t rank) :
+                    other(other), rank(rank)
+                {
+                }
+                Bool_t operator()(Arguments_t* arguments)
+                {
+                    arguments->Resize(2);
+                    arguments->At(0)->Pack(other);
+                    arguments->At(1)->Int(rank);
+
+                    return true;
+                }
+            } arguments(other, rank);
+
+            Virtual_Machine_t::Self()->Call_Method(actor, "Actor", "SetRelationshipRank", &arguments, callback);
+        }
+    }
+
+    Bool_t Has_Magic_Effect(Actor_t* actor, Magic_Effect_t* magic_effect)
+    {
+        if (actor) {
+            return reinterpret_cast<Magic_Target_t*>(&actor->magicTarget)->Has_Magic_Effect(magic_effect);
+        } else {
+            return false;
+        }
+    }
+
+    Bool_t Add_Spell(Actor_t* actor, Spell_t* spell)
+    {
+        static auto add_spell = reinterpret_cast
+            <Bool_t(*)(Actor_t*, Spell_t*)>
+            (RelocationManager::s_baseAddr + Offsets::Actor::ADD_SPELL);
+        if (actor && spell) {
+            return add_spell(actor, spell);
+        } else {
+            return false;
+        }
+    }
+
+    void Remove_Spell(Actor_t* actor, Spell_t* spell, Virtual_Callback_i** callback)
+    {
+        if (actor && spell) {
+            class Arguments : public Virtual_Arguments_t {
+            public:
+                Spell_t* spell;
+                Arguments(Spell_t* spell) :
+                    spell(spell)
+                {
+                }
+                Bool_t operator()(Arguments_t* arguments)
+                {
+                    arguments->Resize(1);
+                    arguments->At(0)->Pack(spell);
+                    return true;
+                }
+            } arguments(spell);
+            Virtual_Machine_t::Self()->Call_Method(actor, "Actor", "RemoveSpell", &arguments, callback);
+        }
+    }
+
+    Bool_t Is_Sneaking(Actor_t* actor)
+    {
+        return reinterpret_cast<Actor_State_t*>(&actor->actorState)->state.sneaking;
     }
 
 }}
 
 namespace doticu_npcp { namespace Actor2 { namespace Exports {
 
-    void Reset_Actor_Value(Selfless_t*, Actor* actor, BSFixedString name)
-    {
-        return Actor2::Reset_Actor_Value(actor, name.data);
-    }
-
     Actor_t* Get_Mounted_Actor(Selfless_t*, Actor_t* horse)
     {
         return Actor2::Get_Mounted_Actor(horse);
-    }
-
-    void Log_Factions(Selfless_t*, Actor_t* actor)
-    {
-        Actor2::Add_Faction(actor, Consts::Member_Faction());
-        Actor2::Log_Factions(actor);
-    }
-
-    void Resurrect(Selfless_t*, Actor_t* actor, Bool_t do_reset_inventory = false)
-    {
-        return Actor2::Resurrect(actor, do_reset_inventory);
     }
 
     bool Register(VMClassRegistry* registry)
@@ -1582,10 +1699,7 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
                              RETURN_, Exports::METHOD_, __VA_ARGS__);   \
         W
 
-        ADD_GLOBAL("Actor_Reset_Actor_Value", 2, void, Reset_Actor_Value, Actor*, BSFixedString);
         ADD_GLOBAL("Actor_Get_Mounted_Actor", 1, Actor_t*, Get_Mounted_Actor, Actor_t*);
-        ADD_GLOBAL("Actor_Log_Factions", 1, void, Log_Factions, Actor_t*);
-        ADD_GLOBAL("Actor_Resurrect", 2, void, Resurrect, Actor_t*, Bool_t);
 
         #undef ADD_GLOBAL
 

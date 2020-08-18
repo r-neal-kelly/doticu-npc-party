@@ -190,4 +190,16 @@ namespace doticu_npcp {
         }
     }
 
+    Bool_t Magic_Target_t::Has_Magic_Effect(Magic_Effect_t* magic_effect)
+    {
+        static auto has_magic_effect = reinterpret_cast
+            <Bool_t(*)(Magic_Target_t*, Magic_Effect_t*)>
+            (RelocationManager::s_baseAddr + Offsets::Magic_Target::HAS_MAGIC_EFFECT);
+        if (magic_effect) {
+            return has_magic_effect(this, magic_effect);
+        } else {
+            return false;
+        }
+    }
+
 }

@@ -49,4 +49,9 @@ namespace doticu_npcp { namespace Party {
         Virtual_Machine_t::Self()->Call_Method(this, "ReferenceAlias", "ForceRefTo", &arguments, callback);
     }
 
+    void Alias_t::Unfill(Virtual_Callback_i** callback)
+    {
+        Virtual_Machine_t::Self()->Call_Method(this, "ReferenceAlias", "Clear", nullptr, callback);
+    }
+
 }}

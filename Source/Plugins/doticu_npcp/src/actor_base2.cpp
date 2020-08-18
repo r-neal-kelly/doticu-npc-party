@@ -158,6 +158,43 @@ namespace doticu_npcp { namespace Actor_Base2 {
         }
     }
 
+    Relationships_t* Relationships(Actor_Base_t* actor_base)
+    {
+        if (actor_base) {
+             return *reinterpret_cast<Relationships_t**>(reinterpret_cast<UInt8*>(actor_base) + 0x250);
+        } else {
+            return nullptr;
+        }
+    }
+
+    Relationship_t::Rank_e Relationship_Rank(Actor_Base_t* actor_base, Actor_Base_t* with_other)
+    {
+        if (actor_base && with_other) {
+            Relationships_t* relationships = Relationships(actor_base);
+            for (size_t idx = 0, count = relationships->count; idx < count; idx += 1) {
+                Relationship_t* relationship = *(relationships->entries + idx);
+                if (relationship && relationship->base_actor_2 == with_other) {
+                    return relationship->rank;
+                }
+            }
+            return Relationship_t::Rank_e::ACQUAINTANCE;
+        } else {
+            return Relationship_t::Rank_e::ACQUAINTANCE;
+        }
+    }
+
+    /*void Relationship_Rank(Actor_Base_t* actor_base, Actor_Base_t* with_other, Relationship_t::Rank_e rank)
+    {
+        if (actor_base && with_other) {
+            Relationships_t* relationships = Relationships(actor_base);
+            if (relationships) {
+
+            } else {
+                _MESSAGE("no relationships.");
+            }
+        }
+    }*/
+
 }}
 
 namespace doticu_npcp { namespace Actor_Base2 { namespace Exports {

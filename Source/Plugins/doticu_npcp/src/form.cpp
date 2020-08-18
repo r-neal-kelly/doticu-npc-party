@@ -195,24 +195,8 @@ namespace doticu_npcp { namespace Form {
 
 namespace doticu_npcp { namespace Form { namespace Exports {
 
-    void Log_Flags(Selfless_t*, Form_t* form)
-    {
-        return Form::Log_Flags(form);
-    }
-
     bool Register(VMClassRegistry* registry)
     {
-        #define ADD_GLOBAL(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
-        M                                                               \
-            ADD_CLASS_METHOD("doticu_npcp", Selfless_t,                 \
-                             STR_FUNC_, ARG_NUM_,                       \
-                             RETURN_, Exports::METHOD_, __VA_ARGS__);   \
-        W
-
-        ADD_GLOBAL("Form_Log_Flags", 1, void, Log_Flags, Form_t*);
-
-        #undef ADD_GLOBAL
-
         return true;
     }
 

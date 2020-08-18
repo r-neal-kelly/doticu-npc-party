@@ -52,6 +52,7 @@ namespace doticu_npcp { namespace Actor2 {
     Actor_t* Get_Mount(Actor_t* mounter);
     Actor_t* Get_Mounted_Actor(Actor_t* horse);
     bool Is_On_Mount(Actor_t* actor);
+    void Dismount(Actor_t* actor, Virtual_Callback_i** callback = nullptr);
 
     Int_t Sex(Actor_t* actor);
     String_t Sex_String(Actor_t* actor);
@@ -101,6 +102,11 @@ namespace doticu_npcp { namespace Actor2 {
     void Enable_Havok_Collision(Actor_t* actor);
     void Disable_Havok_Collision(Actor_t* actor);
 
+    void Ignore_Friendly_Hits(Actor_t* actor);
+    void Notice_Friendly_Hits(Actor_t* actor);
+    void Show_On_Stealth_Eye(Actor_t* actor);
+    void Hide_From_Stealth_Eye(Actor_t* actor);
+
     void Stop_Movement(Actor_t* actor);
 
     Actor_Base_t* Dynamic_Base(Actor_t* actor);
@@ -118,6 +124,18 @@ namespace doticu_npcp { namespace Actor2 {
     void Update_Equipment(Actor_t* actor, Papyrus::Virtual_Callback_i** callback = nullptr);
 
     void Greet_Player(Actor_t* actor);
+
+    void Stop_If_Playing_Music(Actor_t* actor);
+
+    void Relationship_Rank(Actor_t* actor, Actor_t* other, Virtual_Callback_i** callback);
+    void Relationship_Rank(Actor_t* actor, Actor_t* other, Int_t rank, Virtual_Callback_i** callback = nullptr);
+
+    Bool_t Has_Magic_Effect(Actor_t* actor, Magic_Effect_t* magic_effect);
+
+    Bool_t Add_Spell(Actor_t* actor, Spell_t* spell);
+    void Remove_Spell(Actor_t* actor, Spell_t* spell, Virtual_Callback_i** callback = nullptr);
+
+    Bool_t Is_Sneaking(Actor_t* actor);
 
 }}
 

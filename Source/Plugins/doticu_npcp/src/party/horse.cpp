@@ -3,6 +3,8 @@
 */
 
 #include "actor2.h"
+#include "codes.h"
+#include "object_ref.h"
 #include "party.h"
 #include "party.inl"
 #include "utils.h"
@@ -28,26 +30,33 @@ namespace doticu_npcp { namespace Party {
         return Variable_t::Fetch(this, Class_Name(), variable_name);
     }
 
+    Variable_t* Horse_t::Actor_Variable() { DEFINE_VARIABLE("p_ref_actor"); }
+    Variable_t* Horse_t::Follower_Variable() { DEFINE_VARIABLE("p_ref_follower"); }
+
     Actor_t* Horse_t::Actor()
     {
-        static const String_t variable_name = String_t("p_ref_actor");
-
-        Variable_t* const variable = Variable(variable_name);
-        if (variable) {
-            return variable->Actor();
-        } else {
-            return nullptr;
+        NPCP_ASSERT(Is_Filled());
+        Actor_t* actor = Actor_Variable()->Actor();
+        if (actor == nullptr) {
+            actor = Alias_t::Actor();
+            NPCP_ASSERT(actor);
+            Actor_Variable()->Pack(actor);
         }
+        return actor;
     }
 
     Follower_t* Horse_t::Follower()
     {
-        Followers_t* followers = Followers_t::Self();
-        if (followers) {
-            return followers->From_ID(ID() - Followers_t::MAX);
-        } else {
-            return nullptr;
-        }
+        NPCP_ASSERT(Is_Filled());
+        Follower_t* follower = static_cast<Follower_t*>(Follower_Variable()->Alias());
+        NPCP_ASSERT(follower);
+        return follower;
+    }
+
+    Cell_t* Horse_t::Cell()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Actor()->parentCell;
     }
 
     String_t Horse_t::Base_Name()
@@ -63,6 +72,142 @@ namespace doticu_npcp { namespace Party {
     String_t Horse_t::Name()
     {
         return Actor2::Get_Name(Actor());
+    }
+
+    Bool_t Horse_t::Is_Alive()
+    {
+        return Is_Filled() && Actor2::Is_Alive(Actor());
+    }
+
+    Bool_t Horse_t::Is_Dead()
+    {
+        return Is_Filled() && Actor2::Is_Dead(Actor());
+    }
+
+    void Horse_t::Fill(Actor_t* actor, Follower_t* follower)
+    {
+        struct Callback : public Virtual_Callback_t {
+        public:
+            Horse_t* self;
+            Actor_t* actor;
+            Follower_t* follower;
+            Callback(Horse_t* self, Actor_t* actor, Follower_t* follower) :
+                self(self), actor(actor), follower(follower)
+            {
+            }
+            void operator()(Variable_t* result)
+            {
+                self->Create(actor, follower);
+            }
+        };
+        Virtual_Callback_i* callback = new Callback(this, actor, follower);
+
+        Alias_t::Fill(actor, &callback);
+    }
+
+    void Horse_t::Unfill(Virtual_Callback_i** callback)
+    {
+        Destroy();
+        Alias_t::Unfill(callback);
+    }
+
+    void Horse_t::Create(Actor_t* actor, Follower_t* follower)
+    {
+        Actor_Variable()->Pack(actor);
+        Follower_Variable()->Pack(follower);
+
+        Groom();
+    }
+
+    void Horse_t::Destroy()
+    {
+        Follower_Variable()->None();
+        Actor_Variable()->None();
+    }
+
+    Int_t Horse_t::Groom()
+    {
+        if (Is_Filled()) {
+            Actor_t* actor = Actor();
+            Enforce_Groom(actor);
+            Actor2::Evaluate_Package(actor);
+
+            return CODES::SUCCESS;
+        } else {
+            return CODES::HORSE;
+        }
+    }
+
+    void Horse_t::Enforce_Groom(Actor_t* actor)
+    {
+        NPCP_ASSERT(actor);
+
+        Actor2::Ignore_Friendly_Hits(actor);
+        Actor2::Hide_From_Stealth_Eye(actor);
+        Actor2::Talks_To_Player(actor, false);
+
+        Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(actor);
+        value_owner->Set_Actor_Value(Actor_Value_t::SPEED_MULT, Follower_t::MAX_UNSNEAK_SPEED);
+
+        if (Is_Dead()) {
+            Actor2::Resurrect(actor, false);
+        }
+
+        if (Cell() != Follower()->Cell()) {
+            Object_Ref::Move_To_Orbit(actor, Follower()->Actor(), 140.0f, -90.0f);
+        }
+
+        if (Actor2::Get_Mounted_Actor(actor) != Follower()->Actor()) {
+            Formlist_t* formlist = Consts::Is_Saddler_Sitting_Globals_Formlist();
+            Global_t* global = static_cast<Global_t*>(*(formlist->forms.entries + Follower()->ID()));
+            global->value = 0.0f; // don't know if this needs MarkChanged()
+        }
+
+        Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "p_Enable");
+    }
+
+    Int_t Horse_t::Ungroom()
+    {
+        if (Is_Filled()) {
+            Actor_t* actor = Actor();
+            Enforce_Non_Groom(actor);
+            Actor2::Evaluate_Package(actor);
+
+            return CODES::SUCCESS;
+        } else {
+            return CODES::HORSE;
+        }
+    }
+
+    void Horse_t::Enforce_Non_Groom(Actor_t* actor)
+    {
+        NPCP_ASSERT(actor);
+
+        class Callback : public Virtual_Callback_t {
+        public:
+            Actor_t* actor;
+            Callback(Actor_t* actor) :
+                actor(actor)
+            {
+            }
+            void operator()(Variable_t* result)
+            {
+                Object_Ref::Move_To_Orbit(actor, Consts::Storage_Marker(), 0.0f, 0.0f);
+            }
+        };
+        Virtual_Callback_i* callback = new Callback(actor);
+        Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "p_Disable", nullptr, &callback);
+    }
+
+    void Horse_t::Enforce()
+    {
+        if (Is_Filled() && Is_Alive()) {
+            Actor_t* actor = Actor();
+
+            Enforce_Groom(actor);
+
+            Actor2::Evaluate_Package(actor);
+        }
     }
 
 }}

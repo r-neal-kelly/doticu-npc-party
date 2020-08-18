@@ -30,6 +30,8 @@ namespace doticu_npcp { namespace CODES {
         DISPLAY,
         FOLLOWER,
         FOLLOWERS,
+        HORSE,
+        HORSES,
         INTERIOR,
         MANNEQUIN,
         MARKER,

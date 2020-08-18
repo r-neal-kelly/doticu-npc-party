@@ -41,21 +41,8 @@ namespace doticu_npcp { namespace Cell {
 
 namespace doticu_npcp { namespace Cell { namespace Exports {
 
-    bool Is_Interior(Selfless_t *, TESObjectCELL *cell)
-    {
-        return Cell::Is_Interior(cell);
-    }
-
     bool Register(VMClassRegistry *registry)
     {
-        registry->RegisterFunction(
-            new NativeFunction1 <Selfless_t, bool, TESObjectCELL *>(
-                "Cell_Is_Interior",
-                "doticu_npcp",
-                Exports::Is_Interior,
-                registry)
-        );
-
         return true;
     }
 

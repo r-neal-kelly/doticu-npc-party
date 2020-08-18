@@ -14,6 +14,7 @@ namespace doticu_npcp { namespace Offsets {
 
     namespace Actor {
 
+        constexpr uintptr_t ADD_SPELL                   = 0x0062F560; // 37771
         constexpr uintptr_t EVALUATE_PACKAGE            = 0x005DB310; // 36407
         constexpr uintptr_t QUEUE_NI_NODE_UPDATE        = 0x00693110; // 39181
         constexpr uintptr_t UPDATE_3D_MODEL             = 0x00650DF0; // 38404
@@ -63,6 +64,12 @@ namespace doticu_npcp { namespace Offsets {
         constexpr uintptr_t FLAGS_V_TABLE               = 0x0152CBC0; // 229632
         constexpr uintptr_t GHOST_V_TABLE               = 0x0152F2A0; // 229888
         constexpr uintptr_t TEXT_DISPLAY_V_TABLE        = 0x0152CAE0; // 229625
+
+    }
+
+    namespace Magic_Target {
+
+        constexpr uintptr_t HAS_MAGIC_EFFECT            = 0x005530D0; // 33733
 
     }
 

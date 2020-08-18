@@ -10,26 +10,6 @@ doticu_npcp_vars property VARS hidden
         return doticu_npcp.Vars()
     endFunction
 endProperty
-doticu_npcp_actors property ACTORS hidden
-    doticu_npcp_actors function Get()
-        return doticu_npcp.Funcs().ACTORS
-    endFunction
-endProperty
-doticu_npcp_npcs property NPCS hidden
-    doticu_npcp_npcs function Get()
-        return doticu_npcp.Funcs().NPCS
-    endFunction
-endProperty
-doticu_npcp_outfits property OUTFITS hidden
-    doticu_npcp_outfits function Get()
-        return doticu_npcp.Funcs().OUTFITS
-    endFunction
-endProperty
-doticu_npcp_logs property LOGS hidden
-    doticu_npcp_logs function Get()
-        return doticu_npcp.Funcs().LOGS
-    endFunction
-endProperty
 
 ; Public Constants
 int property MIN_DISPLAY                    =     1 autoReadOnly hidden
@@ -48,12 +28,12 @@ int                     p_idx_display       =     0
 ObjectReference         p_marker_display    =  none
 
 ; Native Methods
-int function Add_Original(Actor original) native
-int function Add_Clone(Actor original) native
+int function Add_Original       (Actor original)                    native
+int function Remove_Original    (Actor original)                    native
+int function Add_Clone          (Actor original)                    native
+int function Remove_Clone       (Actor clone, bool do_delete_clone) native
 
-Alias function p_From_ID(int unique_id)         native
 Alias function p_From_Actor(Actor ref_actor)    native
-Alias function p_From_Unfilled()                native
 
 bool function Has_Space()                   native
 bool function Hasnt_Space()                 native
@@ -67,6 +47,7 @@ bool function Has_Display()                 native
 bool function Hasnt_Display()               native
 
 int function Max()                          native
+int function Limit()                        native
 int function Count_Filled()                 native
 int function Count_Unfilled()               native
 int function Count_Loaded()                 native
@@ -103,7 +84,7 @@ int function Count_Heads(Actor ref_actor)   native
 Alias[] function All()      native
 Alias[] function Filled()   native
 
-Alias[] function Sort_Filled(int begin, int end) native
+Alias[] function Sort_Filled(int begin = 0, int end = -1) native
 
 Alias[] function Slice(Alias[] members, int begin, int end) native
 
@@ -148,89 +129,8 @@ function f_Register()
 endFunction
 
 ; Public Methods
-; these should be renamed to Add_Original, Remove_Original, Add_Clone, Remove_Clone
-int function Destroy_Member(Actor ref_actor)
-    if !ref_actor
-        return doticu_npcp_codes.ACTOR()
-    endIf
-
-    doticu_npcp_member ref_member = p_From_Actor(ref_actor) as doticu_npcp_member
-    if !ref_member
-        return doticu_npcp_codes.MEMBER()
-    endIf
-
-    if ref_member.Is_Clone()
-        return Unclone(ref_actor, false)
-    endIf
-
-    ref_member.f_Destroy()
-
-    NPCS.Remove_Original(ref_actor)
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Unclone(Actor ref_actor, bool delete_clone)
-    if !ref_actor
-        return doticu_npcp_codes.ACTOR()
-    endIf
-
-    doticu_npcp_member ref_member = p_From_Actor(ref_actor) as doticu_npcp_member
-    if !ref_member
-        return doticu_npcp_codes.MEMBER()
-    endIf
-
-    if !ref_member.Is_Clone()
-        return doticu_npcp_codes.CLONE()
-    endIf
-
-    ref_member.f_Destroy()
-
-    if delete_clone || Should_Unclone_Actor(ref_actor)
-        NPCS.Remove_Clone(ref_actor)
-    endIf
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function Get_Count()
-    return Count_Filled()
-endFunction
-
-int function Get_Limit()
-    return VARS.max_members
-endFunction
-
-int function Get_Max()
-    return Max()
-endFunction
-
-bool function Has_Member(Actor ref_actor)
-    return Has_Actor(ref_actor)
-endFunction
-
 doticu_npcp_member function Get_Member(Actor ref_actor)
     return p_From_Actor(ref_actor) as doticu_npcp_member
-endFunction
-
-Alias[] function Get_Members(int begin = 0, int end = -1)
-    return Sort_Filled(begin, end)
-endFunction
-
-bool function Should_Unclone_Actor(Actor ref_actor)
-    if !ref_actor
-        return false
-    elseIf VARS.force_unclone_unique && ACTORS.Is_Unique(ref_actor)
-        return true
-    elseIf VARS.force_unclone_generic && ACTORS.Is_Generic(ref_actor)
-        return true
-    else
-        return false
-    endIf
-endFunction
-
-bool function Should_Unclone_Member(doticu_npcp_member ref_member)
-    return ref_member && ref_member.Is_Clone() && Should_Unclone_Actor(ref_member.Actor())
 endFunction
 
 ; Events

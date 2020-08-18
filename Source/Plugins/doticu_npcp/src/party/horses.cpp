@@ -2,8 +2,10 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "codes.h"
 #include "consts.h"
 #include "game.h"
+#include "object_ref.h"
 #include "party.h"
 #include "party.inl"
 #include "utils.h"
@@ -76,6 +78,53 @@ namespace doticu_npcp { namespace Party {
             }
         } else {
             return nullptr;
+        }
+    }
+
+    Int_t Horses_t::Add_Horse(Follower_t* follower)
+    {
+        if (follower) {
+            Horse_t* horse = From_ID(Followers_t::MAX + follower->ID());
+            NPCP_ASSERT(horse);
+            if (horse->Is_Unfilled()) {
+                Actor_t* actor = static_cast<Actor_t*>
+                    (Object_Ref::Place_At_Me(Consts::Storage_Marker(), Consts::Horse_Leveled_Actor(), 1, true, false));
+                horse->Fill(actor, follower);
+                return CODES::SUCCESS;
+            } else {
+                return CODES::HORSE;
+            }
+        } else {
+            return CODES::FOLLOWER;
+        }
+    }
+
+    Int_t Horses_t::Remove_Horse(Follower_t* follower)
+    {
+        if (follower) {
+            Horse_t* horse = From_ID(Followers_t::MAX + follower->ID());
+            NPCP_ASSERT(horse);
+            if (horse->Is_Filled()) {
+                class Callback : public Virtual_Callback_t {
+                public:
+                    Actor_t* actor;
+                    Callback(Actor_t* actor) :
+                        actor(actor)
+                    {
+                    }
+                    void operator()(Variable_t* result)
+                    {
+                        Object_Ref::Delete_Safe(actor);
+                    }
+                };
+                Virtual_Callback_i* callback = new Callback(horse->Actor());
+                horse->Unfill(&callback);
+                return CODES::SUCCESS;
+            } else {
+                return CODES::HORSE;
+            }
+        } else {
+            return CODES::FOLLOWER;
         }
     }
 

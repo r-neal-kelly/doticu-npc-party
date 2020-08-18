@@ -153,7 +153,6 @@
     <ClCompile Include="src\mcm\mcm_member.cpp" />
     <ClCompile Include="src\outfit.cpp" />
     <ClCompile Include="src\actor2.cpp" />
-    <ClCompile Include="src\forms.cpp" />
     <ClCompile Include="src\object_ref.cpp" />
     <ClCompile Include="src\form.cpp" />
     <ClCompile Include="src\outfit2.cpp" />
@@ -190,7 +189,6 @@
     <ClInclude Include="include\filter.h" />
     <ClInclude Include="include\form.h" />
     <ClInclude Include="include\actor2.h" />
-    <ClInclude Include="include\forms.h" />
     <ClInclude Include="include\form_vector.h" />
     <ClInclude Include="include\game.h" />
     <ClInclude Include="include\keys.h" />

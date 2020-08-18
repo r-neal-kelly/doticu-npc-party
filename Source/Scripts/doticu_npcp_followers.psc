@@ -5,24 +5,9 @@
 Scriptname doticu_npcp_followers extends Quest
 
 ; Modules
-doticu_npcp_vars property VARS hidden
-    doticu_npcp_vars function Get()
-        return doticu_npcp.Vars()
-    endFunction
-endProperty
-doticu_npcp_funcs property FUNCS hidden
-    doticu_npcp_funcs function Get()
-        return doticu_npcp.Funcs()
-    endFunction
-endProperty
 doticu_npcp_tasklists property TASKLISTS hidden
     doticu_npcp_tasklists function Get()
         return doticu_npcp.Funcs().TASKLISTS
-    endFunction
-endProperty
-doticu_npcp_members property MEMBERS hidden
-    doticu_npcp_members function Get()
-        return doticu_npcp.Members()
     endFunction
 endProperty
 
@@ -130,50 +115,6 @@ endFunction
 
 function f_Register()
     p_Register()
-endFunction
-
-int function f_Create_Follower(Actor ref_actor)
-    if !ref_actor
-        return doticu_npcp_codes.ACTOR()
-    endIf
-
-    if Hasnt_Space()
-        return doticu_npcp_codes.FOLLOWERS()
-    endIf
-
-    if !MEMBERS.Has_Member(ref_actor)
-        return doticu_npcp_codes.MEMBER()
-    endIf
-
-    if Has_Actor(ref_actor)
-        return doticu_npcp_codes.FOLLOWER()
-    endIf
-
-    doticu_npcp_follower ref_follower = p_From_Unfilled() as doticu_npcp_follower
-    if ref_follower == none
-        return doticu_npcp_codes.FAILURE()
-    endIf
-
-    ref_follower.f_Create(ref_actor)
-    ref_follower.f_Register()
-
-    return doticu_npcp_codes.SUCCESS()
-endFunction
-
-int function f_Destroy_Follower(Actor ref_actor)
-    if !ref_actor
-        return doticu_npcp_codes.ACTOR()
-    endIf
-
-    doticu_npcp_follower ref_follower = p_From_Actor(ref_actor) as doticu_npcp_follower
-    if ref_follower == none
-        return doticu_npcp_codes.FOLLOWER()
-    endIf
-
-    ref_follower.f_Unregister()
-    ref_follower.f_Destroy()
-
-    return doticu_npcp_codes.SUCCESS()
 endFunction
 
 ; Private Methods

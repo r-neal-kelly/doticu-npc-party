@@ -228,6 +228,10 @@ namespace doticu_npcp { namespace Consts {
     Reference_t* Expo_Antechamber_Marker();
     Reference_t* Storage_Marker();
 
+    // NPCP Spells
+    Spell_t* Cell_Ability_Spell();
+    Spell_t* Retreat_Ability_Spell();
+
     // NPCP Weapons
     Weapon_t* Blank_Weapon();
 

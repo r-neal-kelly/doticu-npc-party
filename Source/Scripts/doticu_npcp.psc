@@ -27,24 +27,7 @@ endFunction
 ; most of the following shall eventually be moved into existing types or remove completely
 
 ; Actor
-function Actor_Reset_Actor_Value(Actor ref_actor, string name) native global
 Actor function Actor_Get_Mounted_Actor(Actor ref_horse) native global
-function Actor_Log_Factions(Actor ref_actor) native global
-function Actor_Resurrect(Actor ref_actor, bool do_reset_inventory) native global
-
-; Cell
-bool function Cell_Is_Interior(Cell ref_cell) native global
-
-; Forms
-Form[] function Forms_Slice(Form[] arr_forms, int idx_from, int idx_to_ex) native global
-
-; Form
-function Form_Log_Flags(Form ref_form) native global
-
-; Game
-string[] function Game_Get_Male_Vanilla_Voice_Names() native global
-string[] function Game_Get_Female_Vanilla_Voice_Names() native global
-VoiceType function Game_Get_Voice_By_Name(string str_name) native global
 
 ; Object_Ref
 function Object_Ref_Categorize(ObjectReference ref_obj) native global
@@ -57,5 +40,4 @@ function Run_Tests() native global
 ; Utils
 function Print(string str) native global
 function Log(string str) native global
-function Log_Cell(Cell ref_cell) native global
 int[] function New_Int_Array(int size = 0, int fill = 0) native global

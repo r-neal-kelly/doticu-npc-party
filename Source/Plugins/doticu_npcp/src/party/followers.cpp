@@ -2,6 +2,7 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "codes.h"
 #include "consts.h"
 #include "game.h"
 #include "object_ref.h"
@@ -138,11 +139,8 @@ namespace doticu_npcp { namespace Party {
         Range_t<Follower_t**> followers = Aliases();
         for (; followers.begin < followers.end; followers.begin += 1) {
             Follower_t* follower = *followers.begin;
-            if (follower) {
-                Actor_t* actor = follower->Actor();
-                if (actor && actor->IsInCombat()) {
-                    return true;
-                }
+            if (follower && follower->Is_In_Combat()) {
+                return true;
             }
         }
         return false;
@@ -474,6 +472,43 @@ namespace doticu_npcp { namespace Party {
     Vector_t<Follower_t*> Followers_t::Sort_Filled(Int_t begin, Int_t end)
     {
         return Slice(Sort(Filled()), begin, end);
+    }
+
+    Int_t Followers_t::Add_Follower(Member_t* member)
+    {
+        if (member) {
+            Actor_t* actor = member->Actor();
+            if (Hasnt_Actor(actor)) {
+                if (Count_Filled() < Max()) {
+                    Follower_t* follower = From_Unfilled();
+                    NPCP_ASSERT(follower);
+                    follower->Fill(member);
+                    return CODES::SUCCESS;
+                } else {
+                    return CODES::FOLLOWERS;
+                }
+            } else {
+                return CODES::FOLLOWER;
+            }
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    Int_t Followers_t::Remove_Follower(Member_t* member)
+    {
+        if (member) {
+            Actor_t* actor = member->Actor();
+            Follower_t* follower = From_Actor(actor);
+            if (follower) {
+                follower->Unfill();
+                return CODES::SUCCESS;
+            } else {
+                return CODES::FOLLOWER;
+            }
+        } else {
+            return CODES::MEMBER;
+        }
     }
 
     void Followers_t::Send(Vector_t<Follower_t*> followers, String_t event_name)

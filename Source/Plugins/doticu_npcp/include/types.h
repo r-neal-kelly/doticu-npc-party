@@ -257,6 +257,7 @@ namespace doticu_npcp {
     public:
         enum Form_Flags : UInt32 {
             HASNT_HAVOK_COLLISION = 4, // checkout 29 on Character type
+            IGNORES_FRIENDLY_HITS = 20,
             IS_INITIALLY_DISABLED = 27,
         };
 
@@ -278,7 +279,7 @@ namespace doticu_npcp {
             FORCE_ANIMATION_UPDATE  = 17,
             IS_ESSENTIAL            = 18,
             IS_PROTECTED            = 19,
-            DETECTED_BY_STEALTH_EYE = 26,
+            HIDDEN_FROM_STEALTH_EYE = 26,
             IS_IMMOBILE             = 27,
             FORCE_ANIMATION_UPDATES = 29,
             IS_UNDERWATER           = 31,
@@ -428,6 +429,52 @@ namespace doticu_npcp {
         Float_t value; // 34 (static cast to other types)
     };
     STATIC_ASSERT(sizeof(Global_t) == 0x38);
+
+    class Relationship_t : public Form_t {
+    public:
+
+        // interesting. maybe we can just enforce the relationship rank
+        // and not save it. that way we don't have to back it up so seriously
+        enum class Change_e : UInt32 {
+            RELATIONSHIP = 1 << 1,
+        };
+
+        // are these accurate? Papyrus returns different values for GetRelationshipRank
+        enum class Rank_e : UInt8 {
+            LOVER = 0,
+            ALLY = 1,
+            CONFIDANT = 2,
+            FRIEND = 3,
+            ACQUAINTANCE = 4,
+            RIVAL = 5,
+            FOE = 6,
+            ENEMY = 7,
+            ARCHNEMESIS = 8,
+        };
+
+        virtual ~Relationship_t(); // 00
+
+        Actor_Base_t* base_actor_1; // 20
+        Actor_Base_t* base_actor_2; // 28
+        BGSAssociationType* association; // 30
+        Rank_e rank; // 38
+        UInt8 unk_39; // 39
+        UInt8 unk_3A; // 3A
+        UInt8 flag_3B; // 3B
+        UInt32 pad_3C; // 3C
+    };
+    STATIC_ASSERT(sizeof(Relationship_t) == 0x40);
+
+    typedef tArray<Relationship_t*> Relationships_t;
+
+    class Magic_Target_t {
+    public:
+        virtual ~Magic_Target_t(); // 00
+
+        Bool_t Has_Magic_Effect(Magic_Effect_t* magic_effect);
+
+        // bool HasMagicEffect(EffectSetting* a_effect);
+    };
 
 }
 

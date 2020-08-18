@@ -42,7 +42,7 @@ function Unparalyze(ObjectReference ref_target, Actor _)
         return
     endIf
 
-    if !MEMBERS.Has_Member(ref_actor)
+    if !MEMBERS.Has_Actor(ref_actor)
         return
     endIf
 

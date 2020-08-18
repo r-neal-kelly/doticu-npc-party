@@ -10,16 +10,6 @@ doticu_npcp_funcs property FUNCS hidden
         return doticu_npcp.Funcs()
     endFunction
 endProperty
-doticu_npcp_containers property CONTAINERS hidden
-    doticu_npcp_containers function Get()
-        return doticu_npcp.Funcs().CONTAINERS
-    endFunction
-endProperty
-doticu_npcp_outfits property OUTFITS hidden
-    doticu_npcp_outfits function Get()
-        return doticu_npcp.Funcs().OUTFITS
-    endFunction
-endProperty
 doticu_npcp_player property PLAYER
     doticu_npcp_player function Get()
         return GetAliasByName("player") as doticu_npcp_player
@@ -96,20 +86,8 @@ bool function Is_Sleeping(Actor ref_actor)
     return ref_actor && ref_actor.GetSleepState() == 3
 endFunction
 
-bool function Is_Unique(Actor ref_actor)
-    return ref_actor && ref_actor.GetActorBase().IsUnique()
-endFunction
-
-bool function Is_Generic(Actor ref_actor)
-    return ref_actor && !ref_actor.GetActorBase().IsUnique()
-endFunction
-
 bool function Is_Leveled(Actor ref_actor)
     return ref_actor && ref_actor.GetLeveledActorBase() != ref_actor.GetActorBase()
-endFunction
-
-bool function Is_Unleveled(Actor ref_actor)
-    return ref_actor && ref_actor.GetLeveledActorBase() == ref_actor.GetActorBase()
 endFunction
 
 bool function Is_Vampire(Actor ref_actor)
@@ -150,21 +128,6 @@ ActorBase function Get_Leveled_Base(Actor ref_actor); Get_Dynamic_Base
     endIf
 endFunction
 
-ActorBase function Get_Real_Base(Actor ref_actor)
-    if ref_actor
-        ; only returns a real base, never a static or dynamic leveled base
-        ActorBase base_actor = ref_actor.GetActorBase()
-        ActorBase leveled_actor = ref_actor.GetLeveledActorBase()
-        if base_actor != leveled_actor; Is_Leveled
-            return leveled_actor.GetTemplate()
-        else
-            return base_actor
-        endIf
-    else
-        return none
-    endIf
-endFunction
-
 string function Name(Actor ref_actor)
     if ref_actor
         return ref_actor.GetDisplayName()
@@ -179,59 +142,11 @@ function Rename(Actor ref_actor, string str_name)
     endIf
 endFunction
 
-string function Get_Base_Name(Actor ref_actor)
-    if ref_actor
-        return ref_actor.GetName()
-    else
-        return ""
-    endIf
-endFunction
-
-function Set_Base_Name(Actor ref_actor, string str_name)
-    if ref_actor && str_name != ""
-        ref_actor.SetDisplayName(str_name, true)
-        ref_actor.SetName(str_name)
-    endIf
-endFunction
-
 int function Get_Sex(Actor ref_actor)
     if ref_actor
         return Get_Base(ref_actor).GetSex()
     else
         return 1234567
-    endIf
-endFunction
-
-Outfit function Get_Base_Outfit(Actor ref_actor)
-    if ref_actor
-        ; leveled have the outfit on leveled base only.
-        ; GetLeveledActorBase() returns real base for unleveled/template.
-        return ref_actor.GetLeveledActorBase().GetOutfit()
-    else
-        return none
-    endIf
-endFunction
-
-function Set_Base_Outfit(Actor ref_actor, Outfit outfit_base)
-    if ref_actor && outfit_base
-        ; leveled have the outfit on leveled base only.
-        ; GetLeveledActorBase() returns real base for unleveled/template.
-        ; does not immediately affect the ref_actor's outfit
-        ref_actor.GetLeveledActorBase().SetOutfit(outfit_base)
-    endIf
-endFunction
-
-int function Get_Vitality(Actor ref_actor)
-    ActorBase p_base_actor = ref_actor.GetLeveledActorBase()
-
-    if p_base_actor.IsProtected()
-        return doticu_npcp_codes.VITALITY_PROTECTED()
-    elseIf p_base_actor.IsEssential()
-        return doticu_npcp_codes.VITALITY_ESSENTIAL()
-    elseIf p_base_actor.IsInvulnerable()
-        return doticu_npcp_codes.VITALITY_INVULNERABLE()
-    else
-        return doticu_npcp_codes.VITALITY_MORTAL()
     endIf
 endFunction
 
@@ -263,10 +178,6 @@ function Kill(Actor ref_actor)
     if is_essential
         Essentialize(ref_actor)
     endIf
-endFunction
-
-function Open_Inventory(Actor ref_actor)
-    ref_actor.OpenInventory(true)
 endFunction
 
 function Token(Actor ref_actor, MiscObject misc_token, int count_token = 1)
@@ -424,129 +335,4 @@ function Pacify(Actor ref_actor)
     ref_actor.StopCombat()
     ref_actor.StopCombatAlarm()
     ref_actor.EvaluatePackage()
-endFunction
-
-function Ragdoll(Actor ref_actor)
-    ; maybe should accept a timer, which can be done async or parallel
-    ref_actor.SetActorValue("Paralysis", 1); should this come after the push?
-    doticu_npcp_consts.Player_Actor().PushActorAway(ref_actor, 0.0)
-endFunction
-
-function Unragdoll(Actor ref_actor)
-    while ref_actor.GetActorValue("Paralysis") != 0
-        ref_actor.SetActorValue("Paralysis", 0)
-    endwhile
-    ref_actor.EvaluatePackage()
-endFunction
-
-bool function Has_Faction(Actor ref_actor, Faction form_faction)
-    return ref_actor.IsInFaction(form_faction)
-endFunction
-
-bool function Has_Faction_Rank(Actor ref_actor, Faction form_faction, int rank)
-    return ref_actor.IsInFaction(form_faction) && ref_actor.GetFactionRank(form_faction) == rank
-endFunction
-
-function Add_Faction(Actor ref_actor, Faction form_faction, int rank = 0)
-    ref_actor.AddToFaction(form_faction)
-    ref_actor.SetFactionRank(form_faction, rank)
-endFunction
-
-function Remove_Faction(Actor ref_actor, Faction form_faction)
-    ref_actor.RemoveFromFaction(form_faction)
-endFunction
-
-int function Get_Faction_Rank(Actor ref_actor, Faction form_faction)
-    return ref_actor.GetFactionRank(form_faction)
-endFunction
-
-function Set_Faction_Rank(Actor ref_actor, Faction form_faction, int rank)
-    ref_actor.SetFactionRank(form_faction, rank)
-endFunction
-
-Faction[] function Get_Factions(Actor ref_actor, int min_rank = -128, int max_rank = 127)
-    return ref_actor.GetFactions(min_rank, max_rank)
-endFunction
-
-function Set_Factions(Actor ref_actor, Faction[] arr_factions, int[] arr_ranks); arr_ranks = none
-    ref_actor.RemoveFromAllFactions()
-    if arr_factions
-        Add_Factions(ref_actor, arr_factions, arr_ranks)
-    endIf
-endFunction
-
-int[] function Get_Faction_Ranks(Actor ref_actor, Faction[] arr_factions)
-    int[] arr_ranks = Utility.CreateIntArray(arr_factions.length)
-
-    int idx_factions = 0
-    int num_factions = arr_factions.length
-    while idx_factions < num_factions
-        arr_ranks[idx_factions] = ref_actor.GetFactionRank(arr_factions[idx_factions])
-        idx_factions += 1
-    endWhile
-endFunction
-
-function Set_Faction_Ranks(Actor ref_actor, Faction[] arr_factions, int[] arr_ranks); arr_ranks = none
-    if !arr_ranks || arr_factions.length != arr_ranks.length
-        arr_ranks = Utility.CreateIntArray(arr_factions.length, 0)
-    endIf
-
-    int idx_factions = 0
-    int num_factions = arr_factions.length
-    while idx_factions < num_factions
-        ref_actor.SetFactionRank(arr_factions[idx_factions], arr_ranks[idx_factions])
-        idx_factions += 1
-    endWhile
-endFunction
-
-function Add_Factions(Actor ref_actor, Faction[] arr_factions, int[] arr_ranks); arr_ranks = none
-    int idx_factions = 0
-    int num_factions = arr_factions.length
-
-    if arr_ranks
-        while idx_factions < num_factions
-            ref_actor.AddToFaction(arr_factions[idx_factions])
-            ref_actor.SetFactionRank(arr_factions[idx_factions], arr_ranks[idx_factions])
-            idx_factions += 1
-        endWhile
-    else
-        while idx_factions < num_factions
-            ref_actor.AddToFaction(arr_factions[idx_factions])
-            idx_factions += 1
-        endWhile
-    endIf
-endFunction
-
-function Remove_Factions(Actor ref_actor, Faction[] arr_factions)
-    int idx_factions = 0
-    int num_factions = arr_factions.length
-    while idx_factions < num_factions
-        ref_actor.RemoveFromFaction(arr_factions[idx_factions])
-        idx_factions += 1
-    endWhile
-endFunction
-
-function Print_Inventory(Actor ref_actor)
-    string str_inventory = ""
-    int idx_forms = 0
-    int num_forms = ref_actor.GetNumItems()
-    Form form_form
-    int num_form
-
-    str_inventory += "[ "
-
-    while idx_forms < num_forms
-        form_form = ref_actor.GetNthForm(idx_forms)
-        if form_form
-            num_form = ref_actor.GetItemCount(form_form)
-            str_inventory += form_form.GetName() + " (" + num_form + "),"
-        else
-            str_inventory += "none (0),"
-        endIf
-        idx_forms += 1
-    endWhile
-
-    str_inventory += " ]\n"
-
-    doticu_npcp.Print(str_inventory)
 endFunction

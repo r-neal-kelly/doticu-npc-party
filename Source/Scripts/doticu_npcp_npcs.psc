@@ -11,6 +11,3 @@ doticu_npcp_vector_form p_vec_outfits_def   =  none; default vanilla outfits
 ; Native Methods
 function f_Initialize() native
 function f_Uninitialize() native
-
-function Remove_Original(Actor original) native
-function Remove_Clone(Actor clone) native

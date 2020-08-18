@@ -421,41 +421,7 @@ namespace doticu_npcp { namespace Game {
 
 namespace doticu_npcp { namespace Game { namespace Exports {
 
-    VMResultArray<BSFixedString> Get_Male_Vanilla_Voice_Names(StaticFunctionTag *) {
-        return Game::Get_Male_Vanilla_Voice_Names();
-    }
-
-    VMResultArray<BSFixedString> Get_Female_Vanilla_Voice_Names(StaticFunctionTag *) {
-        return Game::Get_Female_Vanilla_Voice_Names();
-    }
-
-    BGSVoiceType *Get_Voice_By_Name(StaticFunctionTag *, BSFixedString str_name) {
-        return Game::Get_Voice_By_Name(str_name);
-    }
-
     bool Register(VMClassRegistry *registry) {
-        registry->RegisterFunction(
-            new NativeFunction0 <StaticFunctionTag, VMResultArray<BSFixedString>>(
-                "Game_Get_Male_Vanilla_Voice_Names",
-                "doticu_npcp",
-                Exports::Get_Male_Vanilla_Voice_Names,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction0 <StaticFunctionTag, VMResultArray<BSFixedString>>(
-                "Game_Get_Female_Vanilla_Voice_Names",
-                "doticu_npcp",
-                Exports::Get_Female_Vanilla_Voice_Names,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction1 <StaticFunctionTag, BGSVoiceType *, BSFixedString>(
-                "Game_Get_Voice_By_Name",
-                "doticu_npcp",
-                Exports::Get_Voice_By_Name,
-                registry)
-        );
-
         return true;
     }
 

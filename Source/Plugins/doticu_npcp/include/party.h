@@ -85,7 +85,7 @@ namespace doticu_npcp { namespace Party {
         void Add_Original(Actor_t* original);
         void Remove_Original(Actor_t* original);
         Actor_t* Add_Clone(Actor_t* original);
-        void Remove_Clone(Actor_t* clone);
+        void Remove_Clone(Actor_t* clone, Bool_t do_delete_clone);
 
         Outfit_t* Default_Outfit(Actor_t* actor);
         void Change_Default_Outfit(Actor_t* actor, Outfit_t* default_outfit);
@@ -286,10 +286,10 @@ namespace doticu_npcp { namespace Party {
                      float interval = DEFAULT_DISPLAY_INTERVAL);
         void Undisplay();
 
-        Int_t Add_Original(Actor_t* original); // int function Create_Member(Actor ref_actor)
-        Int_t Remove_Original(Actor_t* original); // int function Destroy_Member(Actor ref_actor)
-        Int_t Add_Clone(Actor_t* original); // int function Clone(Actor ref_actor)
-        Int_t Remove_Clone(Actor_t* clone); // int function Unclone(Actor ref_actor, bool delete_clone)
+        Int_t Add_Original(Actor_t* original);
+        Int_t Remove_Original(Actor_t* original);
+        Int_t Add_Clone(Actor_t* original);
+        Int_t Remove_Clone(Actor_t* clone, Bool_t do_delete_clone);
 
         void u_0_9_3();
     };
@@ -398,6 +398,9 @@ namespace doticu_npcp { namespace Party {
         Vector_t<Follower_t*> Sort(Vector_t<Follower_t*> members);
         Vector_t<Follower_t*> Sort_Filled(Int_t begin = 0, Int_t end = -1);
 
+        Int_t Add_Follower(Member_t* member);
+        Int_t Remove_Follower(Member_t* member);
+
         void Send(Vector_t<Follower_t*> followers, String_t event_name);
         void Send(Vector_t<Follower_t*> followers, String_t event_name, Form_t* form_arg);
         void Register();
@@ -460,6 +463,9 @@ namespace doticu_npcp { namespace Party {
 
         Horse_t* From_ID(Int_t unique_id);
         Horse_t* From_Actor(Actor_t* actor);
+
+        Int_t Add_Horse(Follower_t* follower);
+        Int_t Remove_Horse(Follower_t* follower);
     };
 
     namespace Horses { namespace Exports {
@@ -479,6 +485,7 @@ namespace doticu_npcp { namespace Party {
         Bool_t Is_Unfilled();
 
         void Fill(Actor_t* actor, Virtual_Callback_i** callback);
+        void Unfill(Virtual_Callback_i** callback);
     };
 
     class Member_t : public Alias_t {
@@ -648,8 +655,11 @@ namespace doticu_npcp { namespace Party {
         void Untoken(Misc_t* token);
 
         void Fill(Actor_t* actor, Bool_t is_clone);
+        void Unfill();
         void Create(Actor_t* actor, Bool_t is_clone);
         void Destroy();
+        void Destroy_Containers();
+        void Destroy_Outfit2s();
         void Backup_State(Actor_t* actor);
         void Restore_State(Actor_t* actor);
 
@@ -730,9 +740,13 @@ namespace doticu_npcp { namespace Party {
         void Summon_Ahead(float radius = 140.0f);
         void Summon_Behind(float radius = 140.0f);
 
-        void Level();
+        Int_t Resurrect();
+        Int_t Kill();
 
-        void Log_Variable_Infos();
+        Int_t Follow();
+        Int_t Unfollow();
+
+        void Level();
     };
 
     namespace Member { namespace Exports {
@@ -752,6 +766,19 @@ namespace doticu_npcp { namespace Party {
     public:
         Variable_t* Variable(String_t variable_name);
 
+        Variable_t* Actor_Variable(); // Actor_t
+        Variable_t* Member_Variable(); // Member_t
+        Variable_t* Horse_Variable(); // Horse_t
+
+        Variable_t* Is_Sneak_Variable(); // Bool_t
+        Variable_t* Is_Saddler_Variable(); // Bool_t
+        Variable_t* Is_Retreater_Variable(); // Bool_t
+
+        Variable_t* Previous_Player_Relationship_Variable(); // Int_t
+        Variable_t* Previous_Waiting_For_Player_Variable(); // Float_t
+        Variable_t* Previous_Speed_Multiplier_Variable(); // Float_t
+        Variable_t* Previous_No_Auto_Bard_Faction_Variable(); // Bool_t
+
         Actor_t* Actor();
         Member_t* Member();
         Horse_t* Horse();
@@ -770,8 +797,6 @@ namespace doticu_npcp { namespace Party {
 
         Bool_t Is_Loaded();
         Bool_t Is_Unloaded();
-        Bool_t Is_Created();
-        Bool_t Is_Destroyed();
         Bool_t Is_Unique();
         Bool_t Is_Generic();
         Bool_t Is_Original();
@@ -804,10 +829,40 @@ namespace doticu_npcp { namespace Party {
         Bool_t Isnt_Near_Player(float radius = 4096.0f);
         Bool_t Is_In_Interior_Cell();
         Bool_t Is_In_Exterior_Cell();
+        Bool_t Is_In_Combat();
+        Bool_t Isnt_In_Combat();
 
         bool Has_Token(Misc_t* token, Int_t count = 1);
         void Token(Misc_t* token, Int_t count = 1);
         void Untoken(Misc_t* token);
+
+        void Fill(Member_t* member);
+        void Unfill();
+        void Create(Member_t* member);
+        void Destroy();
+        void Create_Horse();
+        void Destroy_Horse();
+        void Backup_State(Actor_t* actor);
+        void Restore_State(Actor_t* actor);
+
+        void Follow();
+        void Unfollow();
+        void Level();
+        void Unlevel();
+        Int_t Sneak();
+        void Enforce_Sneak(Actor_t* actor);
+        Int_t Unsneak();
+        void Enforce_Non_Sneak(Actor_t* actor);
+        Int_t Saddle();
+        void Enforce_Saddler(Actor_t* actor);
+        Int_t Unsaddle();
+        void Enforce_Non_Saddler(Actor_t* actor);
+        Int_t Retreat();
+        void Enforce_Retreater(Actor_t* actor);
+        Int_t Unretreat();
+        void Enforce_Non_Retreater(Actor_t* actor);
+
+        void Enforce();
 
         void Summon(Reference_t* origin, float radius = 140.0f, float degree = 0.0f);
         void Summon(float radius = 140.0f, float degree = 0.0f);
@@ -824,11 +879,6 @@ namespace doticu_npcp { namespace Party {
         void Unparalyze();
 
         void Catch_Up();
-        void Saddle();
-        void Level();
-        void Unlevel();
-        void Sneak();
-        void Unsneak();
         void Rename(String_t new_name);
     };
 
@@ -846,12 +896,30 @@ namespace doticu_npcp { namespace Party {
     public:
         Variable_t* Variable(String_t variable_name);
 
+        Variable_t* Actor_Variable();
+        Variable_t* Follower_Variable();
+
         Actor_t* Actor();
         Follower_t* Follower();
-
+        Cell_t* Cell();
         String_t Base_Name();
         String_t Reference_Name();
         String_t Name();
+
+        Bool_t Is_Alive();
+        Bool_t Is_Dead();
+
+        void Fill(Actor_t* actor, Follower_t* follower);
+        void Unfill(Virtual_Callback_i** callback);
+        void Create(Actor_t* actor, Follower_t* follower);
+        void Destroy();
+
+        Int_t Groom();
+        void Enforce_Groom(Actor_t* actor);
+        Int_t Ungroom();
+        void Enforce_Non_Groom(Actor_t* actor);
+
+        void Enforce();
 
         void Rename(String_t new_name);
     };

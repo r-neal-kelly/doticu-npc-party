@@ -189,7 +189,7 @@ function f_Build_Page()
     p_option_back = MCM.AddTextOption("                            Go Back", "")
 
     if p_code_view == doticu_npcp_codes.VIEW_MEMBERS_MEMBER() || p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS_MEMBER()
-        if MEMBERS.Get_Count() > 1
+        if MEMBERS.Count_Filled() > 1
             p_option_prev = MCM.AddTextOption("                      Previous Member", "")
             p_option_next = MCM.AddTextOption("                        Next Member", "")
         else

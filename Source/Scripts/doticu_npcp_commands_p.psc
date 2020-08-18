@@ -62,7 +62,7 @@ function Member(Actor ref_actor)
 endFunction
 
 function Unmember(Actor ref_actor)
-    NOTES.Unmember(MEMBERS.Destroy_Member(ref_actor), ACTORS.Name(ref_actor))
+    NOTES.Unmember(MEMBERS.Remove_Original(ref_actor), ACTORS.Name(ref_actor))
 endFunction
 
 function Clone(Actor ref_actor)
@@ -70,11 +70,11 @@ function Clone(Actor ref_actor)
 endFunction
 
 function Unclone(Actor ref_actor)
-    NOTES.Unclone(MEMBERS.Unclone(ref_actor, true), ACTORS.Name(ref_actor))
+    NOTES.Unclone(MEMBERS.Remove_Clone(ref_actor, true), ACTORS.Name(ref_actor))
 endFunction
 
 function Pack(int code_exec, Actor ref_actor, bool auto_create)
-    if auto_create && !MEMBERS.Has_Member(ref_actor)
+    if auto_create && !MEMBERS.Has_Actor(ref_actor)
         int code_return = MEMBERS.Add_Original(ref_actor)
         if code_return != doticu_npcp_codes.SUCCESS()
             return NOTES.Pack(code_return, ACTORS.Name(ref_actor))
@@ -113,7 +113,7 @@ function Outfit(int code_exec, Actor ref_actor, int code_outfit2, bool auto_crea
         code_outfit2 = doticu_npcp_codes.OUTFIT2_MEMBER(); eventually VARS.default_outfit
     endIf
     
-    if auto_create && !MEMBERS.Has_Member(ref_actor)
+    if auto_create && !MEMBERS.Has_Actor(ref_actor)
         code_return = MEMBERS.Add_Original(ref_actor)
         if code_return != doticu_npcp_codes.SUCCESS()
             NOTES.Outfit(code_return, str_name, code_outfit2)
@@ -169,7 +169,7 @@ endFunction
 function Resurrect(int code_exec, Actor ref_actor, bool auto_create)
     string str_name = ACTORS.Name(ref_actor)
 
-    if auto_create && !MEMBERS.Has_Member(ref_actor)
+    if auto_create && !MEMBERS.Has_Actor(ref_actor)
         ; creating a member automatically resurrects them
         NOTES.Resurrect(MEMBERS.Add_Original(ref_actor), str_name)
         return
@@ -181,14 +181,14 @@ function Resurrect(int code_exec, Actor ref_actor, bool auto_create)
         return
     endIf
     
-    NOTES.Resurrect(ref_member.Resurrect(code_exec), str_name)
+    NOTES.Resurrect(ref_member.Resurrect(), str_name)
 endFunction
 
 function Reanimate(int code_exec, Actor ref_actor, bool auto_create)
     int code_return
     string str_name = ACTORS.Name(ref_actor)
 
-    if auto_create && !MEMBERS.Has_Member(ref_actor)
+    if auto_create && !MEMBERS.Has_Actor(ref_actor)
         code_return = MEMBERS.Add_Original(ref_actor)
         if code_return != doticu_npcp_codes.SUCCESS()
             NOTES.Reanimate(code_return, str_name)
@@ -206,7 +206,7 @@ function Reanimate(int code_exec, Actor ref_actor, bool auto_create)
 endFunction
 
 function Mannequinize(Actor ref_actor, ObjectReference ref_marker, bool auto_create)
-    if auto_create && !MEMBERS.Has_Member(ref_actor)
+    if auto_create && !MEMBERS.Has_Actor(ref_actor)
         int code_return = MEMBERS.Add_Original(ref_actor)
         if code_return != doticu_npcp_codes.SUCCESS()
             return NOTES.Mannequinize(code_return, ACTORS.Name(ref_actor))
@@ -234,7 +234,7 @@ function Settle(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = ACTORS.Name(ref_actor)
 
-    if auto_create && !MEMBERS.Has_Member(ref_actor)
+    if auto_create && !MEMBERS.Has_Actor(ref_actor)
         code_return = MEMBERS.Add_Original(ref_actor)
         if code_return != doticu_npcp_codes.SUCCESS()
             NOTES.Settle(code_return, str_name)
@@ -255,7 +255,7 @@ function Unsettle( Actor ref_actor, bool auto_create)
     int code_return
     string str_name = ACTORS.Name(ref_actor)
 
-    if auto_create && !MEMBERS.Has_Member(ref_actor)
+    if auto_create && !MEMBERS.Has_Actor(ref_actor)
         code_return = MEMBERS.Add_Original(ref_actor)
         if code_return != doticu_npcp_codes.SUCCESS()
             NOTES.Unsettle(code_return, str_name)
@@ -276,7 +276,7 @@ function Resettle(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = ACTORS.Name(ref_actor)
 
-    if auto_create && !MEMBERS.Has_Member(ref_actor)
+    if auto_create && !MEMBERS.Has_Actor(ref_actor)
         code_return = MEMBERS.Add_Original(ref_actor)
         if code_return != doticu_npcp_codes.SUCCESS()
             NOTES.Resettle(code_return, str_name)
@@ -305,7 +305,7 @@ function Enthrall(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = ACTORS.Name(ref_actor)
 
-    if auto_create && !MEMBERS.Has_Member(ref_actor)
+    if auto_create && !MEMBERS.Has_Actor(ref_actor)
         code_return = MEMBERS.Add_Original(ref_actor)
         if code_return != doticu_npcp_codes.SUCCESS()
             NOTES.Enthrall(code_return, str_name)
@@ -326,7 +326,7 @@ function Unthrall(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = ACTORS.Name(ref_actor)
 
-    if auto_create && !MEMBERS.Has_Member(ref_actor)
+    if auto_create && !MEMBERS.Has_Actor(ref_actor)
         code_return = MEMBERS.Add_Original(ref_actor)
         if code_return != doticu_npcp_codes.SUCCESS()
             NOTES.Unthrall(code_return, str_name)
@@ -347,7 +347,7 @@ function Immobilize(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = ACTORS.Name(ref_actor)
 
-    if auto_create && !MEMBERS.Has_Member(ref_actor)
+    if auto_create && !MEMBERS.Has_Actor(ref_actor)
         code_return = MEMBERS.Add_Original(ref_actor)
         if code_return != doticu_npcp_codes.SUCCESS()
             NOTES.Immobilize(code_return, str_name)
@@ -368,7 +368,7 @@ function Mobilize(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = ACTORS.Name(ref_actor)
 
-    if auto_create && !MEMBERS.Has_Member(ref_actor)
+    if auto_create && !MEMBERS.Has_Actor(ref_actor)
         code_return = MEMBERS.Add_Original(ref_actor)
         if code_return != doticu_npcp_codes.SUCCESS()
             NOTES.Mobilize(code_return, str_name)
@@ -389,7 +389,7 @@ function Paralyze(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = ACTORS.Name(ref_actor)
 
-    if auto_create && !MEMBERS.Has_Member(ref_actor)
+    if auto_create && !MEMBERS.Has_Actor(ref_actor)
         code_return = MEMBERS.Add_Original(ref_actor)
         if code_return != doticu_npcp_codes.SUCCESS()
             NOTES.Paralyze(code_return, str_name)
@@ -410,7 +410,7 @@ function Unparalyze(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = ACTORS.Name(ref_actor)
 
-    if auto_create && !MEMBERS.Has_Member(ref_actor)
+    if auto_create && !MEMBERS.Has_Actor(ref_actor)
         code_return = MEMBERS.Add_Original(ref_actor)
         if code_return != doticu_npcp_codes.SUCCESS()
             NOTES.Unparalyze(code_return, str_name)
@@ -436,7 +436,7 @@ function Stylize(Actor ref_actor, int code_style, bool auto_create)
         code_style = VARS.auto_style; eventually VARS.default_style
     endIf
 
-    if auto_create && !MEMBERS.Has_Member(ref_actor)
+    if auto_create && !MEMBERS.Has_Actor(ref_actor)
         int code_return = MEMBERS.Add_Original(ref_actor)
         if code_return != doticu_npcp_codes.SUCCESS()
             return NOTES.Stylize(code_return, ACTORS.Name(ref_actor), code_style)
@@ -492,7 +492,7 @@ function Vitalize(Actor ref_actor, int code_vitality, bool auto_create)
         code_vitality = VARS.auto_vitality; eventually VARS.default_vitality
     endIf
     
-    if auto_create && !MEMBERS.Has_Member(ref_actor)
+    if auto_create && !MEMBERS.Has_Actor(ref_actor)
         code_return = MEMBERS.Add_Original(ref_actor)
         if code_return != doticu_npcp_codes.SUCCESS()
             NOTES.Vitalize(code_return, str_name, code_vitality)
@@ -537,7 +537,7 @@ function Follow(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = ACTORS.Name(ref_actor)
 
-    if auto_create && !MEMBERS.Has_Member(ref_actor)
+    if auto_create && !MEMBERS.Has_Actor(ref_actor)
         code_return = MEMBERS.Add_Original(ref_actor)
         if code_return != doticu_npcp_codes.SUCCESS()
             NOTES.Follow(code_return, str_name)
@@ -558,7 +558,7 @@ function Unfollow(Actor ref_actor, bool auto_create)
     int code_return
     string str_name = ACTORS.Name(ref_actor)
 
-    if auto_create && !MEMBERS.Has_Member(ref_actor)
+    if auto_create && !MEMBERS.Has_Actor(ref_actor)
         code_return = MEMBERS.Add_Original(ref_actor)
         if code_return != doticu_npcp_codes.SUCCESS()
             NOTES.Unfollow(code_return, str_name)
@@ -579,7 +579,7 @@ function Sneak(int code_exec, Actor ref_actor, bool auto_create)
     int code_return
     string str_name = ACTORS.Name(ref_actor)
 
-    if auto_create && !MEMBERS.Has_Member(ref_actor)
+    if auto_create && !MEMBERS.Has_Actor(ref_actor)
         code_return = MEMBERS.Add_Original(ref_actor)
         if code_return != doticu_npcp_codes.SUCCESS()
             NOTES.Sneak(code_return, str_name)
@@ -607,14 +607,14 @@ function Sneak(int code_exec, Actor ref_actor, bool auto_create)
         return
     endIf
 
-    NOTES.Sneak(ref_follower.Sneak(code_exec), str_name)
+    NOTES.Sneak(ref_follower.Sneak(), str_name)
 endFunction
 
 function Unsneak(int code_exec, Actor ref_actor, bool auto_create)
     int code_return
     string str_name = ACTORS.Name(ref_actor)
 
-    if auto_create && !MEMBERS.Has_Member(ref_actor)
+    if auto_create && !MEMBERS.Has_Actor(ref_actor)
         code_return = MEMBERS.Add_Original(ref_actor)
         if code_return != doticu_npcp_codes.SUCCESS()
             NOTES.Unsneak(code_return, str_name)
@@ -642,13 +642,13 @@ function Unsneak(int code_exec, Actor ref_actor, bool auto_create)
         return
     endIf
 
-    NOTES.Unsneak(ref_follower.Unsneak(code_exec), str_name)
+    NOTES.Unsneak(ref_follower.Unsneak(), str_name)
 endFunction
 
 function Saddle(int code_exec, Actor ref_actor, bool auto_create)
     string str_name = ACTORS.Name(ref_actor)
 
-    if auto_create && !MEMBERS.Has_Member(ref_actor)
+    if auto_create && !MEMBERS.Has_Actor(ref_actor)
         int code_return = MEMBERS.Add_Original(ref_actor)
         if code_return != doticu_npcp_codes.SUCCESS()
             return NOTES.Saddle(code_return, str_name)
@@ -672,13 +672,13 @@ function Saddle(int code_exec, Actor ref_actor, bool auto_create)
         return NOTES.Saddle(doticu_npcp_codes.FOLLOWER(), str_name)
     endIf
 
-    NOTES.Saddle(ref_follower.Saddle(code_exec), str_name)
+    NOTES.Saddle(ref_follower.Saddle(), str_name)
 endFunction
 
 function Unsaddle(int code_exec, Actor ref_actor, bool auto_create)
     string str_name = ACTORS.Name(ref_actor)
 
-    if auto_create && !MEMBERS.Has_Member(ref_actor)
+    if auto_create && !MEMBERS.Has_Actor(ref_actor)
         int code_return = MEMBERS.Add_Original(ref_actor)
         if code_return != doticu_npcp_codes.SUCCESS()
             return NOTES.Unsaddle(code_return, str_name)
@@ -702,7 +702,7 @@ function Unsaddle(int code_exec, Actor ref_actor, bool auto_create)
         return NOTES.Unsaddle(doticu_npcp_codes.FOLLOWER(), str_name)
     endIf
 
-    NOTES.Unsaddle(ref_follower.Unsaddle(code_exec), str_name)
+    NOTES.Unsaddle(ref_follower.Unsaddle(), str_name)
 endFunction
 
 function Move(Actor ref_actor)
