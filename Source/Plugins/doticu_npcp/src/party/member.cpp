@@ -838,7 +838,7 @@ namespace doticu_npcp { namespace Party {
 
     void Member_t::On_Combat_State_Changed(Actor_t* target, Int_t combat_code)
     {
-        if (Is_Filled()) {
+        if (Is_Filled() && Is_Alive()) {
             Actor_t* actor = Actor();
 
             if (target == Player::Actor()) {
@@ -2652,7 +2652,6 @@ namespace doticu_npcp { namespace Party {
         if (Is_Filled()) {
             if (Is_Dead()) {
                 Actor2::Resurrect(Actor(), false);
-                Enforce();
                 return CODES::SUCCESS;
             } else {
                 return CODES::IS;

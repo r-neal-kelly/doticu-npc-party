@@ -130,7 +130,6 @@ function p_End_Combat()
         if !ACTOR_PLAYER.IsSneaking()
             FOLLOWERS.Unretreat()
         endIf
-        FOLLOWERS.Enforce()
         if VARS.auto_resurrect
             FOLLOWERS.Resurrect()
         endIf
