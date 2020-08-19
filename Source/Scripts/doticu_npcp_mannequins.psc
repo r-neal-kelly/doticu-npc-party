@@ -365,7 +365,7 @@ bool function Is_Player_In_Expo()
 endFunction
 
 bool function Is_Member_In_Expo(doticu_npcp_member ref_member)
-    return ref_member && ref_member.Exists() && ref_member.Actor().IsInLocation(doticu_npcp_consts.Expo_Location())
+    return ref_member && ref_member.Is_Filled() && ref_member.Actor().IsInLocation(doticu_npcp_consts.Expo_Location())
 endFunction
 
 int function Get_Expo_Count()

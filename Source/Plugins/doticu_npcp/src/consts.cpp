@@ -188,6 +188,7 @@ namespace doticu_npcp { namespace Consts {
         LOCATION_EXPO                       = 0x27E48E,
 
         // NPCP Magic Effects
+        MAGIC_EFFECT_REANIMATE              = 0x3AF361,
         MAGIC_EFFECT_RETREAT                = 0x2DF8FA,
 
         // NPCP Misc Tokens
@@ -219,7 +220,6 @@ namespace doticu_npcp { namespace Consts {
         MISC_TOKEN_VITALITY_PROTECTED       = 0x0A045A,
 
         // NPCP Misc
-        MISC_TASKLIST                       = 0x12E4A9,
         MISC_VECTOR_FORM                    = 0x15C1B2,
 
         // NPCP Outfits
@@ -308,6 +308,7 @@ namespace doticu_npcp { namespace Consts {
 
         // NPCP Spells
         SPELL_ABILITY_CELL                  = 0x15C1B0,
+        SPELL_ABILITY_REANIMATE             = 0x3AF362,
         SPELL_ABILITY_RETREAT               = 0x2F3CFF,
 
         // NPCP Weapons
@@ -362,6 +363,7 @@ namespace doticu_npcp { namespace Consts {
     Location_t* Expo_Location() { NPCP_FORM(Location_t, LOCATION_EXPO); }
 
     // NPCP Magic Effects
+    Magic_Effect_t* Reanimate_Magic_Effect() { NPCP_FORM(Magic_Effect_t, MAGIC_EFFECT_REANIMATE); }
     Magic_Effect_t* Retreat_Magic_Effect() { NPCP_FORM(Magic_Effect_t, MAGIC_EFFECT_RETREAT); }
 
     // NPCP Misc Tokens
@@ -393,7 +395,6 @@ namespace doticu_npcp { namespace Consts {
     Misc_t* Retreater_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_RETREATER); }
 
     // NPCP Misc
-    Misc_t* Tasklist() { NPCP_FORM(Misc_t, MISC_TASKLIST); }
     Misc_t* Form_Vector() { NPCP_FORM(Misc_t, MISC_VECTOR_FORM); }
 
     // NPCP Outfits
@@ -482,6 +483,7 @@ namespace doticu_npcp { namespace Consts {
 
     // NPCP Spells
     Spell_t* Cell_Ability_Spell() { NPCP_FORM(Spell_t, SPELL_ABILITY_CELL); }
+    Spell_t* Reanimate_Ability_Spell() { NPCP_FORM(Spell_t, SPELL_ABILITY_REANIMATE); }
     Spell_t* Retreat_Ability_Spell() { NPCP_FORM(Spell_t, SPELL_ABILITY_RETREAT); }
 
     // NPCP Weapons
@@ -514,9 +516,6 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
         // Skyrim Effect Shaders
         ADD_GLOBAL("Reanimate_Effect_Shader", 0, Effect_Shader_t*, Reanimate_Effect_Shader);
 
-        // Skyrim Factions
-        ADD_GLOBAL("No_Bard_Singer_Autostart_Faction", 0, Faction_t*, No_Bard_Singer_Autostart_Faction);
-
         // Skyrim Keywords
         ADD_GLOBAL("Vampire_Keyword", 0, Keyword_t*, Vampire_Keyword);
 
@@ -525,7 +524,6 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
 
         // Skyrim Quests
         ADD_GLOBAL("Bard_Songs_Quest", 0, Quest_t*, Bard_Songs_Quest);
-        ADD_GLOBAL("Follower_Dialogue_Quest", 0, Quest_t*, Follower_Dialogue_Quest);
         ADD_GLOBAL("Player_Vampire_Quest", 0, Quest_t*, Player_Vampire_Quest);
 
         // Skyrim Reference Markers
@@ -539,17 +537,6 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
 
         // NPCP Actor Base
         ADD_GLOBAL("Menu_Actor_Base", 0, Actor_Base_t*, Menu_Actor_Base);
-
-        // NPCP Armors
-        ADD_GLOBAL("Blank_Armor", 0, Armor_t*, Blank_Armor);
-
-        // NPCP Containers
-        ADD_GLOBAL("Empty_Container", 0, Container_t*, Empty_Container);
-        ADD_GLOBAL("Outfit2_Container", 0, Container_t*, Outfit2_Container);
-        ADD_GLOBAL("Immobile_Outfit2_Container", 0, Container_t*, Immobile_Outfit2_Container);
-        ADD_GLOBAL("Settler_Outfit2_Container", 0, Container_t*, Settler_Outfit2_Container);
-        ADD_GLOBAL("Thrall_Outfit2_Container", 0, Container_t*, Thrall_Outfit2_Container);
-        ADD_GLOBAL("Follower_Outfit2_Container", 0, Container_t*, Follower_Outfit2_Container);
 
         // NPCP Formlists
         ADD_GLOBAL("Is_Saddler_Sitting_Globals_Formlist", 0, Formlist_t*, Is_Saddler_Sitting_Globals_Formlist);
@@ -571,26 +558,12 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
         ADD_GLOBAL("NPCP_Minor", 0, Int_t, NPCP_Minor);
         ADD_GLOBAL("NPCP_Patch", 0, Int_t, NPCP_Patch);
 
-        // NPCP Leveled Actor
-        ADD_GLOBAL("Horse_Leveled_Actor", 0, Leveled_Actor_t*, Horse_Leveled_Actor);
-
         // NPCP Location
         ADD_GLOBAL("Expo_Location", 0, Location_t*, Expo_Location);
-
-        // NPCP Magic Effects
-        ADD_GLOBAL("Retreat_Magic_Effect", 0, Magic_Effect_t*, Retreat_Magic_Effect);
 
         // NPCP Misc Tokens
         ADD_GLOBAL("Greeter_Token", 0, Misc_t*, Greeter_Token);
         ADD_GLOBAL("Movee_Token", 0, Misc_t*, Movee_Token);
-        ADD_GLOBAL("Reanimated_Token", 0, Misc_t*, Reanimated_Token);
-        ADD_GLOBAL("Follower_Token", 0, Misc_t*, Follower_Token);
-        ADD_GLOBAL("Saddler_Token", 0, Misc_t*, Saddler_Token);
-        ADD_GLOBAL("Retreater_Token", 0, Misc_t*, Retreater_Token);
-
-        // NPCP Misc
-        ADD_GLOBAL("Tasklist", 0, Misc_t*, Tasklist);
-        ADD_GLOBAL("Form_Vector", 0, Misc_t*, Form_Vector);
 
         // NPCP Perks
         ADD_GLOBAL("Kiss_Thrall_Perk", 0, Perk_t*, Kiss_Thrall_Perk);
@@ -671,14 +644,9 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
         // NPCP Reference Markers
         ADD_GLOBAL("Cell_Marker", 0, Reference_t*, Cell_Marker);
         ADD_GLOBAL("Expo_Antechamber_Marker", 0, Reference_t*, Expo_Antechamber_Marker);
-        ADD_GLOBAL("Storage_Marker", 0, Reference_t*, Storage_Marker);
 
         // NPCP Spells
         ADD_GLOBAL("Cell_Ability_Spell", 0, Spell_t*, Cell_Ability_Spell);
-        ADD_GLOBAL("Retreat_Ability_Spell", 0, Spell_t*, Retreat_Ability_Spell);
-
-        // NPCP Weapons
-        ADD_GLOBAL("Blank_Weapon", 0, Weapon_t*, Blank_Weapon);
 
         #undef ADD_GLOBAL
 

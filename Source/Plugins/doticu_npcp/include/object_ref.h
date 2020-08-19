@@ -67,6 +67,7 @@ namespace doticu_npcp { namespace Object_Ref {
     void Rename(Reference_t* ref, String_t new_name);
 
     void Init_Container_If_Needed(Reference_t* ref);
+    void Open_Container(Reference_t* ref, Papyrus::Virtual_Callback_i** callback = nullptr);
 
     Reference_t* Place_At_Me(Reference_t* me,
                              Form_t* to_place,

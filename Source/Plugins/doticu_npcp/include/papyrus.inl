@@ -127,6 +127,24 @@ namespace doticu_npcp { namespace Papyrus {
         Self()->Send_Event(Handle_t(object), &event_name, &arguments);
     }
 
+    inline Bool_t Virtual_Machine_t::Call_Global(String_t class_name,
+                                                 String_t function_name,
+                                                 Virtual_Arguments_i* arguments,
+                                                 Virtual_Callback_i** callback)
+    {
+        if (!callback) {
+            Virtual_Callback_i* default_callback = new Virtual_Callback_t();
+            callback = &default_callback;
+        }
+
+        if (arguments) {
+            return Call_Global(&class_name, &function_name, arguments, callback);
+        } else {
+            Virtual_Arguments_t default_arguments;
+            return Call_Global(&class_name, &function_name, &default_arguments, callback);
+        }
+    }
+
     inline Bool_t Virtual_Machine_t::Call_Method(Handle_t handle,
                                                  String_t class_name,
                                                  String_t function_name,

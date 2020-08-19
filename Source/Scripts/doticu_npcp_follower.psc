@@ -1,6 +1,4 @@
-;/
-    Copyright © 2020 r-neal-kelly, aka doticu
-/;
+; Copyright © 2020 r-neal-kelly, aka doticu
 
 Scriptname doticu_npcp_follower extends ReferenceAlias
 
@@ -12,9 +10,9 @@ bool                p_is_sneak                  = false
 bool                p_is_saddler                = false
 bool                p_is_retreater              = false
 
-int                 p_prev_relationship_rank    =    -1
-float               p_prev_waiting_for_player   =  -1.0
-float               p_prev_speed_mult           =  -1.0
+int                 p_prev_relationship_rank    =     0
+float               p_prev_waiting_for_player   =   0.0
+float               p_prev_speed_mult           =   0.0
 bool                p_prev_faction_bard_no_auto = false
 
 int     function ID()               native
@@ -39,5 +37,3 @@ int     function Saddle()           native
 int     function Unsaddle()         native
 int     function Retreat()          native
 int     function Unretreat()        native
-
-event OnCombatStateChanged(Actor target, int combat_code) native

@@ -136,12 +136,6 @@ string function Name(Actor ref_actor)
     endIf
 endFunction
 
-function Rename(Actor ref_actor, string str_name)
-    if ref_actor && str_name != ""
-        ref_actor.SetDisplayName(str_name, true)
-    endIf
-endFunction
-
 int function Get_Sex(Actor ref_actor)
     if ref_actor
         return Get_Base(ref_actor).GetSex()

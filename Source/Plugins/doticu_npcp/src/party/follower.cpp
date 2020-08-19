@@ -393,7 +393,7 @@ namespace doticu_npcp { namespace Party {
         Backup_State(actor);
         Actor2::Stop_If_Playing_Music(actor);
 
-        Follow();
+        Enforce_Follower(actor);
         Level();
     }
 
@@ -411,7 +411,7 @@ namespace doticu_npcp { namespace Party {
             Unsneak();
         }
         Unlevel();
-        Unfollow();
+        Enforce_Non_Follower(actor);
 
         Restore_State(actor);
         Destroy_Horse();
@@ -486,11 +486,9 @@ namespace doticu_npcp { namespace Party {
         value_owner->Set_Actor_Value(Actor_Value_t::WAITING_FOR_PLAYER, Previous_Waiting_For_Player_Variable()->Float());
     }
 
-    void Follower_t::Follow()
+    void Follower_t::Enforce_Follower(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
-
-        Actor_t* actor = Actor();
 
         Object_Ref::Token(actor, Consts::Follower_Token(), ID() + 1);
         
@@ -519,11 +517,9 @@ namespace doticu_npcp { namespace Party {
         Actor2::Relationship_Rank(actor, Player::Actor(), 3, &callback);
     }
 
-    void Follower_t::Unfollow()
+    void Follower_t::Enforce_Non_Follower(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
-
-        Actor_t* actor = Actor();
 
         Actor2::Show_On_Stealth_Eye(actor);
         Actor2::Notice_Friendly_Hits(actor);
@@ -1018,7 +1014,7 @@ namespace doticu_npcp { namespace Party {
         if (Is_Filled() && Is_Alive()) {
             Actor_t* actor = Actor();
 
-            Follow(); // this should be Enforce_Follower. Backup should be Follow and Restore Unfollow
+            Enforce_Follower(actor); // Backup should be Follow and Restore Unfollow
 
             Level();
 
@@ -1042,47 +1038,47 @@ namespace doticu_npcp { namespace Party {
         }
     }
     
-    void Follower_t::Summon(Reference_t* origin, float radius, float degree)
+    void Follower_t::Summon(Reference_t* origin, Float_t radius, Float_t degree)
     {
-        if (origin && Is_Filled()) {
-            Actor_t* follower_actor = Actor();
-            if (follower_actor) {
-                if (Object_Ref::Is_In_Exterior_Cell(origin) && Is_Saddler()) {
-                    Horse_t* follower_horse = Horse();
-                    Actor_t* follower_horse_actor = follower_horse ? follower_horse->Actor() : nullptr;
-                    if (follower_horse_actor) {
-                        Actor2::Move_To_Orbit(follower_horse_actor, origin, radius * 4, degree + 12);
-                        Actor2::Move_To_Orbit(follower_actor, origin, radius * 3.5, degree);
-                        Enforce_Saddler(follower_actor);
-                    } else {
-                        Actor2::Move_To_Orbit(follower_actor, origin, radius, degree);
-                    }
-                } else {
-                    Actor2::Move_To_Orbit(follower_actor, origin, radius, degree);
-                }
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(origin);
+
+        Actor_t* follower_actor = Actor();
+        if (Object_Ref::Is_In_Exterior_Cell(origin) && Is_Saddler()) {
+            Horse_t* follower_horse = Horse();
+            Actor_t* follower_horse_actor = follower_horse ? follower_horse->Actor() : nullptr;
+            if (follower_horse_actor) {
+                Actor2::Move_To_Orbit(follower_horse_actor, origin, radius * 4, degree + 12);
+                Actor2::Move_To_Orbit(follower_actor, origin, radius * 3.5, degree);
+                Enforce_Saddler(follower_actor);
+            } else {
+                Actor2::Move_To_Orbit(follower_actor, origin, radius, degree);
             }
+        } else {
+            Actor2::Move_To_Orbit(follower_actor, origin, radius, degree);
         }
     }
 
-    void Follower_t::Summon(float radius, float degree)
+    Int_t Follower_t::Summon(Float_t radius, Float_t degree)
     {
-        NPCP_ASSERT(Is_Filled());
-
-        Summon(Player::Actor(), radius, degree);
+        if (Is_Filled()) {
+            NPCP_ASSERT(Isnt_Mannequin());
+            Summon(Player::Actor(), radius, degree);
+            Member()->Enforce();
+            return CODES::SUCCESS;
+        } else {
+            return CODES::FOLLOWER;
+        }
     }
 
-    void Follower_t::Summon_Ahead(float radius)
+    Int_t Follower_t::Summon_Ahead(Float_t radius)
     {
-        NPCP_ASSERT(Is_Filled());
-
-        Summon(radius, 0);
+        return Summon(radius, 0.0f);
     }
 
-    void Follower_t::Summon_Behind(float radius)
+    Int_t Follower_t::Summon_Behind(Float_t radius)
     {
-        NPCP_ASSERT(Is_Filled());
-
-        Summon(radius, 180);
+        return Summon(radius, 180.0f);
     }
 
     Int_t Follower_t::Mobilize()
@@ -1163,7 +1159,7 @@ namespace doticu_npcp { namespace Party {
         if (Is_Filled() && Is_Mobile() && Isnt_Paralyzed() && Isnt_Mannequin() && Isnt_Display()) {
             if (Player::Is_In_Interior_Cell() || Isnt_Saddler()) {
                 if (Isnt_Near_Player()) {
-                    Summon_Behind();
+                    Summon(Player::Actor(), 256.0f, 180.0f);
                 }
             } else {
                 Horse_t* horse = Horse();
@@ -1171,9 +1167,9 @@ namespace doticu_npcp { namespace Party {
                     Actor_t* horse_actor = horse->Actor();
                     if (horse_actor && !Object_Ref::Is_Near_Player(horse_actor, 10240.0f)) {
                         if (Player::Is_On_Mount()) {
-                            Summon_Behind(1024.0f);
+                            Summon(Player::Actor(), 1024.0f, 180.0f);
                         } else {
-                            Summon_Behind();
+                            Summon(Player::Actor(), 256.0f, 180.0f);
                         }
                         Enforce_Saddler(Actor());
                     }
@@ -1188,13 +1184,6 @@ namespace doticu_npcp { namespace Party {
         NPCP_ASSERT(new_name);
 
         Member()->Rename(new_name);
-    }
-
-    void Follower_t::On_Combat_State_Changed(Actor_t* target, Int_t combat_code)
-    {
-        if (combat_code == CODES::COMBAT::YES) {
-            Virtual_Machine_t::Self()->Call_Method(Player::Alias(), "doticu_npcp_player", "f_Begin_Combat");
-        }
     }
 
 }}
@@ -1223,9 +1212,6 @@ namespace doticu_npcp { namespace Party { namespace Follower { namespace Exports
     Int_t Unsaddle(Follower_t* self)        FORWARD_INT(Follower_t::Unsaddle());
     Int_t Retreat(Follower_t* self)         FORWARD_INT(Follower_t::Retreat());
     Int_t Unretreat(Follower_t* self)       FORWARD_INT(Follower_t::Unretreat());
-
-    void On_Combat_State_Changed(Follower_t* self, Actor_t* target, Int_t combat_code)
-        FORWARD_VOID(Follower_t::On_Combat_State_Changed(target, combat_code));
 
     Bool_t Register(Registry_t* registry)
     {
@@ -1258,8 +1244,6 @@ namespace doticu_npcp { namespace Party { namespace Follower { namespace Exports
         ADD_METHOD("Unsaddle", 0, Int_t, Unsaddle);
         ADD_METHOD("Retreat", 0, Int_t, Retreat);
         ADD_METHOD("Unretreat", 0, Int_t, Unretreat);
-
-        ADD_METHOD("OnCombatStateChanged", 2, void, On_Combat_State_Changed, Actor_t*, Int_t);
 
         #undef ADD_METHOD
 

@@ -10,11 +10,6 @@ doticu_npcp_funcs property FUNCS hidden
         return doticu_npcp.Funcs()
     endFunction
 endProperty
-doticu_npcp_containers property CONTAINERS hidden
-    doticu_npcp_containers function Get()
-        return doticu_npcp.Funcs().CONTAINERS
-    endFunction
-endProperty
 doticu_npcp_mcm property MCM hidden
     doticu_npcp_mcm function Get()
         return doticu_npcp.Control().MCM
@@ -373,6 +368,6 @@ endFunction
 function p_Open(ObjectReference ref_container, string str_name)
     FUNCS.Close_Menus()
     doticu_npcp.Object_Ref_Categorize(doticu_npcp_consts.Input_Category())
-    CONTAINERS.Rename(ref_container, str_name)
-    CONTAINERS.Open(ref_container)
+    doticu_npcp.Funcs().Rename(ref_container, str_name)
+    doticu_npcp.Funcs().Open_Container(ref_container)
 endFunction

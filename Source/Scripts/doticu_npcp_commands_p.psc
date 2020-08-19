@@ -86,7 +86,7 @@ function Pack(int code_exec, Actor ref_actor, bool auto_create)
         return NOTES.Pack(doticu_npcp_codes.MEMBER(), ACTORS.Name(ref_actor))
     endIf
 
-    NOTES.Pack(ref_member.Pack(code_exec), ACTORS.Name(ref_actor))
+    NOTES.Pack(ref_member.Open_Pack(), ACTORS.Name(ref_actor))
 endFunction
 
 function Stash(Actor ref_actor)
@@ -202,7 +202,7 @@ function Reanimate(int code_exec, Actor ref_actor, bool auto_create)
         return
     endIf
 
-    NOTES.Reanimate(ref_member.Reanimate(code_exec), str_name)
+    NOTES.Reanimate(ref_member.Reanimate(), str_name)
 endFunction
 
 function Mannequinize(Actor ref_actor, ObjectReference ref_marker, bool auto_create)

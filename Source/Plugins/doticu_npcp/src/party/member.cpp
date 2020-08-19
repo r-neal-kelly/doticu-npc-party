@@ -788,6 +788,76 @@ namespace doticu_npcp { namespace Party {
         return Is_Clone() && Members_t::Self()->Should_Unclone(Actor());
     }
 
+    void Member_t::On_Load()
+    {
+        if (Is_Filled()) {
+            Enforce();
+        }
+    }
+
+    void Member_t::On_Death(Actor_t* killer)
+    {
+        if (Is_Filled()) {
+            if (Is_Reanimated()) {
+                Deanimate();
+            }
+        }
+    }
+
+    void Member_t::On_Activate(Reference_t* activator)
+    {
+        if (Is_Filled()) {
+            if (activator == Player::Actor()) {
+                Actor_t* actor = Actor();
+                if (Is_Alive()) {
+                    if (Actor2::Is_AI_Enabled(actor)) {
+                        class Callback : public Virtual_Callback_t {
+                        public:
+                            Actor_t* actor;
+                            Callback(Actor_t* actor) :
+                                actor(actor)
+                            {
+                            }
+                            void operator()(Variable_t* result)
+                            {
+                                if (result && !result->Bool()) {
+                                    Actor2::Greet_Player(actor);
+                                }
+                            }
+                        };
+                        Virtual_Callback_i* callback = new Callback(actor);
+                        Actor2::Is_Talking_To_Player(actor, &callback);
+                    }
+                    Enforce();
+                } else {
+                    Open_Outfit2();
+                }
+            }
+        }
+    }
+
+    void Member_t::On_Combat_State_Changed(Actor_t* target, Int_t combat_code)
+    {
+        if (Is_Filled()) {
+            Actor_t* actor = Actor();
+
+            if (target == Player::Actor()) {
+                Actor2::Pacify(actor);
+            } else if (Members_t::Self()->Has_Actor(target)) {
+                Actor2::Pacify(actor);
+                Actor2::Pacify(target);
+            }
+
+            if (combat_code == CODES::COMBAT::NO) {
+                Enforce();
+            } else if (combat_code == CODES::COMBAT::YES) {
+                if (Is_Follower()) {
+                    Virtual_Machine_t::Self()->Call_Method(Player::Alias(), "doticu_npcp_player", "f_Begin_Combat");
+                }
+            }
+        }
+    }
+
     void Member_t::On_Hit(Reference_t* attacker,
                           Form_t* tool,
                           Projectile_Base_t* projectile,
@@ -888,7 +958,7 @@ namespace doticu_npcp { namespace Party {
 
         Backup_State(actor);
 
-        Member();
+        Enforce_Member(actor);
         Stylize(Vars::Default_Style());
         Vitalize(Vars::Default_Vitality());
 
@@ -932,7 +1002,7 @@ namespace doticu_npcp { namespace Party {
         if (Is_Immobile()) {
             Mobilize();
         }
-        Unmember();
+        Enforce_Non_Member(actor);
 
         Restore_State(actor);
         Destroy_Outfit2s();
@@ -1059,10 +1129,9 @@ namespace doticu_npcp { namespace Party {
         value_owner->Set_Actor_Value(Actor_Value_t::MORALITY, Previous_Morality_Variable()->Float());
     }
 
-    void Member_t::Member()
+    void Member_t::Enforce_Member(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
-        Actor_t* actor = Actor();
 
         Object_Ref::Token(actor, Consts::Member_Token(), ID() + 1);
         if (Is_Clone_Unsafe()) {
@@ -1100,10 +1169,9 @@ namespace doticu_npcp { namespace Party {
         Actor2::Evaluate_Package(actor);
     }
 
-    void Member_t::Unmember()
+    void Member_t::Enforce_Non_Member(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
-        Actor_t* actor = Actor();
 
         if (Actor2::Race_Cant_Talk_To_Player(actor)) {
             Actor2::Talks_To_Player(actor, false);
@@ -1565,6 +1633,119 @@ namespace doticu_npcp { namespace Party {
             Is_Display_Variable()->Bool(false);
 
             Actor2::Evaluate_Package(actor);
+        }
+    }
+
+    void Member_t::Enforce_Non_Display(Actor_t* actor)
+    {
+        NPCP_ASSERT(Is_Filled());
+
+        Object_Ref::Untoken(actor, Consts::Display_Token());
+        Actor2::Enable_Havok_Collision(actor);
+    }
+
+    Int_t Member_t::Reanimate()
+    {
+        if (Is_Filled()) {
+            if (Isnt_Reanimated()) {
+                Is_Reanimated_Variable()->Bool(true);
+
+                Actor_t* actor = Actor();
+                if (Is_Dead()) {
+                    Resurrect();
+                }
+                Enforce_Reanimated(actor);
+
+                Actor2::Evaluate_Package(actor);
+
+                return CODES::SUCCESS;
+            } else {
+                return CODES::IS;
+            }
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    void Member_t::Enforce_Reanimated(Actor_t* actor)
+    {
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(actor);
+
+        if (Is_Alive()) {
+            Object_Ref::Token(actor, Consts::Reanimated_Token());
+            if (!Actor2::Has_Magic_Effect(actor, Consts::Reanimate_Magic_Effect())) {
+                Actor2::Add_Spell(actor, Consts::Reanimate_Ability_Spell());
+            }
+        } else {
+            Deanimate();
+        }
+    }
+
+    Int_t Member_t::Deanimate()
+    {
+        if (Is_Filled()) {
+            if (Is_Reanimated()) {
+                Is_Reanimated_Variable()->Bool(false);
+
+                Actor_t* actor = Actor();
+                if (Is_Alive()) {
+                    Kill();
+                }
+                Enforce_Non_Reanimated(actor);
+
+                Actor2::Evaluate_Package(actor);
+
+                return CODES::SUCCESS;
+            } else {
+                return CODES::IS;
+            }
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    void Member_t::Enforce_Non_Reanimated(Actor_t* actor)
+    {
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(actor);
+
+        Object_Ref::Untoken(actor, Consts::Reanimated_Token());
+        Actor2::Remove_Spell(actor, Consts::Reanimate_Ability_Spell());
+    }
+
+    Int_t Member_t::Unmember()
+    {
+        if (Is_Filled()) {
+            if (Is_Original()) {
+                return Members_t::Self()->Remove_Original(Actor());
+            } else {
+                return Members_t::Self()->Remove_Clone(Actor(), false);
+            }
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    Int_t Member_t::Clone()
+    {
+        if (Is_Filled()) {
+            return Members_t::Self()->Add_Clone(Actor());
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    Int_t Member_t::Unclone()
+    {
+        if (Is_Filled()) {
+            if (Is_Clone()) {
+                return Members_t::Self()->Remove_Clone(Actor(), true);
+            } else {
+                return CODES::CLONE;
+            }
+        } else {
+            return CODES::MEMBER;
         }
     }
 
@@ -2306,21 +2487,42 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
-    void Member_t::Rename(String_t new_name)
+    Int_t Member_t::Rate(Int_t rating)
     {
-        NPCP_ASSERT(Is_Filled());
-        Actor_t* actor = Actor();
-
-        Name_Variable()->String(new_name);
-        Object_Ref::Rename(actor, new_name);
-
-        Actor2::Evaluate_Package(actor);
+        if (Is_Filled()) {
+            if (rating > -1 && rating < 6) {
+                Rating_Variable()->Int(rating);
+                return CODES::SUCCESS;
+            } else {
+                return CODES::ISNT;
+            }
+        } else {
+            return CODES::MEMBER;
+        }
     }
 
-    void Member_t::Enforce_Name(Actor_t* actor)
+    Int_t Member_t::Rename(String_t new_name)
+    {
+        if (Is_Filled()) {
+            Name_Variable()->String(new_name);
+
+            Actor_t* actor = Actor();
+            Enforce_Name(actor, new_name);
+            Actor2::Evaluate_Package(actor);
+
+            return CODES::SUCCESS;
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    void Member_t::Enforce_Name(Actor_t* actor, String_t name)
     {
         NPCP_ASSERT(Is_Filled());
-        Object_Ref::Rename(actor, Name_Variable()->String());
+        NPCP_ASSERT(actor);
+        NPCP_ASSERT(name);
+
+        Object_Ref::Rename(actor, name);
     }
 
     void Member_t::Enforce()
@@ -2328,7 +2530,7 @@ namespace doticu_npcp { namespace Party {
         if (Is_Ready() && Is_Alive()) {
             Actor_t* actor = Actor();
 
-            Member(); // This should be Enforce_Member. Backup should be Member, and Restore Unmember. pass actor as well
+            Enforce_Member(actor); // Backup should be Member, and Restore Unmember. pass actor as well
 
             if (Is_Mobile()) {
                 Enforce_Mobile(actor);
@@ -2360,8 +2562,17 @@ namespace doticu_npcp { namespace Party {
                 Enforce_Non_Mannequin(actor);
             }
 
-            // need to enforce Display still
-            // need to enforce reanimated still
+            if (Is_Display()) {
+                Enforce_Display(actor);
+            } else {
+                Enforce_Non_Display(actor);
+            }
+
+            if (Is_Reanimated()) {
+                Enforce_Reanimated(actor);
+            } else {
+                Enforce_Non_Reanimated(actor);
+            }
 
             Enforce_Style(actor);
 
@@ -2369,7 +2580,7 @@ namespace doticu_npcp { namespace Party {
 
             Apply_Outfit2(); // maybe rename and pass actor
 
-            Enforce_Name(actor);
+            Enforce_Name(actor, Name_Variable()->String());
 
             Follower_t* follower = Follower();
             if (follower) {
@@ -2380,29 +2591,50 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
-    void Member_t::Summon(Reference_t* origin, float radius, float degree)
+    void Member_t::Summon(Reference_t* origin, Float_t radius, Float_t degree)
     {
         NPCP_ASSERT(Is_Filled());
         NPCP_ASSERT(origin);
+
         Actor2::Move_To_Orbit(Actor(), origin, radius, degree);
     }
 
-    void Member_t::Summon(float radius, float degree)
+    Int_t Member_t::Summon(Float_t radius, Float_t degree)
     {
-        NPCP_ASSERT(Is_Filled());
-        Summon(*g_thePlayer, radius, degree);
+        if (Is_Filled()) {
+            if (Isnt_Mannequin()) {
+                Summon(Player::Actor(), radius, degree);
+                Enforce();
+                return CODES::SUCCESS;
+            } else {
+                return CODES::MANNEQUIN;
+            }
+        } else {
+            return CODES::MEMBER;
+        }
     }
 
-    void Member_t::Summon_Ahead(float radius)
+    Int_t Member_t::Summon_Ahead(Float_t radius)
     {
-        NPCP_ASSERT(Is_Filled());
-        Summon(radius, 0);
+        return Summon(radius, 0.0f);
     }
 
-    void Member_t::Summon_Behind(float radius)
+    Int_t Member_t::Summon_Behind(Float_t radius)
     {
-        NPCP_ASSERT(Is_Filled());
-        Summon(radius, 180);
+        return Summon(radius, 180.0f);
+    }
+
+    Int_t Member_t::Open_Pack()
+    {
+        if (Is_Filled()) {
+            Reference_t* pack = Pack();
+            std::string name = Name().c_str();
+            Object_Ref::Rename(pack, (name + "'s Pack").c_str());
+            Object_Ref::Open_Container(pack);
+            return CODES::SUCCESS;
+        } else {
+            return CODES::MEMBER;
+        }
     }
 
     Int_t Member_t::Stash()
@@ -2490,13 +2722,15 @@ namespace doticu_npcp { namespace Party {
 
 namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
 
-    Actor_t* Actor(Member_t* self) FORWARD_POINTER(Actor());
-    Int_t ID(Member_t* self) FORWARD_INT(ID());
-
-    Int_t Style(Member_t* self) FORWARD_INT(Style());
-    Int_t Vitality(Member_t* self) FORWARD_INT(Vitality());
-    Int_t Outfit2(Member_t* self) FORWARD_INT(Outfit2());
+    Int_t ID(Member_t* self) FORWARD_INT(Member_t::ID());
+    Actor_t* Actor(Member_t* self) FORWARD_POINTER(Member_t::Actor());
+    Follower_t* Follower(Member_t* self) FORWARD_POINTER(Member_t::Follower());
+    Int_t Style(Member_t* self) FORWARD_INT(Member_t::Style());
+    Int_t Vitality(Member_t* self) FORWARD_INT(Member_t::Vitality());
+    Int_t Outfit2(Member_t* self) FORWARD_INT(Member_t::Outfit2());
+    Int_t Rating(Member_t* self) FORWARD_INT(Member_t::Rating());
     String_t Name(Member_t* self) FORWARD_STRING(Member_t::Name());
+    String_t Rating_Stars(Member_t* self) FORWARD_STRING(Member_t::Rating_Stars());
 
     Bool_t Is_Filled(Member_t* self)        FORWARD_BOOL(Member_t::Is_Filled());
     Bool_t Is_Unfilled(Member_t* self)      FORWARD_BOOL(Member_t::Is_Unfilled());
@@ -2533,6 +2767,14 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
     Bool_t Is_Retreater(Member_t* self)     FORWARD_BOOL(Member_t::Is_Retreater());
     Bool_t Isnt_Retreater(Member_t* self)   FORWARD_BOOL(Member_t::Isnt_Retreater());
 
+    void On_Load(Member_t* self)
+        FORWARD_VOID(Member_t::On_Load());
+    void On_Death(Member_t* self, Actor_t* killer)
+        FORWARD_VOID(Member_t::On_Death(killer));
+    void On_Activate(Member_t* self, Reference_t* activator)
+        FORWARD_VOID(Member_t::On_Activate(activator));
+    void On_Combat_State_Changed(Member_t* self, Actor_t* target, Int_t combat_code)
+        FORWARD_VOID(Member_t::On_Combat_State_Changed(target, combat_code));
     void On_Hit(Member_t* self,
                 Reference_t* attacker,
                 Form_t* tool,
@@ -2543,6 +2785,9 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
                 Bool_t is_blocked)
         FORWARD_VOID(On_Hit(attacker, tool, projectile, is_power, is_sneak, is_bash, is_blocked));
 
+    Int_t Unmember(Member_t* self) FORWARD_INT(Member_t::Unmember());
+    Int_t Clone(Member_t* self) FORWARD_INT(Member_t::Clone());
+    Int_t Unclone(Member_t* self) FORWARD_INT(Member_t::Unclone());
     Int_t Mobilize(Member_t* self) FORWARD_INT(Member_t::Mobilize());
     Int_t Immobilize(Member_t* self) FORWARD_INT(Member_t::Immobilize());
     Int_t Settle(Member_t* self) FORWARD_INT(Member_t::Settle());
@@ -2554,6 +2799,8 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
     Int_t Unparalyze(Member_t* self) FORWARD_INT(Member_t::Unparalyze());
     Int_t Mannequinize(Member_t* self, Reference_t* marker) FORWARD_INT(Member_t::Mannequinize(marker));
     Int_t Unmannequinize(Member_t* self) FORWARD_INT(Member_t::Unmannequinize());
+    Int_t Reanimate(Member_t* self) FORWARD_INT(Member_t::Reanimate());
+    Int_t Deanimate(Member_t* self) FORWARD_INT(Member_t::Deanimate());
 
     Int_t Stylize(Member_t* self, Int_t style) FORWARD_INT(Member_t::Stylize(style));
     Int_t Stylize_Default(Member_t* self) FORWARD_INT(Member_t::Stylize_Default());
@@ -2561,14 +2808,12 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
     Int_t Stylize_Mage(Member_t* self) FORWARD_INT(Member_t::Stylize_Mage());
     Int_t Stylize_Archer(Member_t* self) FORWARD_INT(Member_t::Stylize_Archer());
     Int_t Stylize_Coward(Member_t* self) FORWARD_INT(Member_t::Stylize_Coward());
-    Int_t Unstylize(Member_t* self) FORWARD_INT(Member_t::Unstylize());
 
     Int_t Vitalize(Member_t* self, Int_t vitality) FORWARD_INT(Member_t::Vitalize(vitality));
     Int_t Vitalize_Mortal(Member_t* self) FORWARD_INT(Member_t::Vitalize_Mortal());
     Int_t Vitalize_Protected(Member_t* self) FORWARD_INT(Member_t::Vitalize_Protected());
     Int_t Vitalize_Essential(Member_t* self) FORWARD_INT(Member_t::Vitalize_Essential());
     Int_t Vitalize_Invulnerable(Member_t* self) FORWARD_INT(Member_t::Vitalize_Invulnerable());
-    Int_t Unvitalize(Member_t* self) FORWARD_INT(Member_t::Unvitalize());
 
     Int_t Change_Outfit2(Member_t* self, Int_t outfit2_code) FORWARD_INT(Change_Outfit2(outfit2_code));
     Int_t Change_Member_Outfit2(Member_t* self) FORWARD_INT(Change_Member_Outfit2());
@@ -2579,13 +2824,15 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
     Int_t Change_Vanilla_Outfit2(Member_t* self) FORWARD_INT(Change_Vanilla_Outfit2());
     Int_t Change_Default_Outfit2(Member_t* self) FORWARD_INT(Change_Default_Outfit2());
     Int_t Change_Current_Outfit2(Member_t* self) FORWARD_INT(Change_Current_Outfit2());
-    void Open_Outfit2(Member_t* self) FORWARD_VOID(Open_Outfit2());
-    void Apply_Outfit2(Member_t* self) FORWARD_VOID(Apply_Outfit2());
+
+    Int_t Rate(Member_t* self, Int_t rating) FORWARD_INT(Member_t::Rate(rating));
 
     void Rename(Member_t* self, String_t new_name) FORWARD_VOID(Member_t::Rename(new_name));
 
     void Enforce(Member_t* self) FORWARD_VOID(Member_t::Enforce());
 
+    Int_t Summon(Member_t* self, Float_t radius, Float_t degree) FORWARD_INT(Member_t::Summon(radius, degree));
+    Int_t Open_Pack(Member_t* self) FORWARD_INT(Member_t::Open_Pack());
     Int_t Stash(Member_t* self) FORWARD_INT(Member_t::Stash());
     Int_t Resurrect(Member_t* self) FORWARD_INT(Member_t::Resurrect());
     Int_t Kill(Member_t* self) FORWARD_INT(Member_t::Kill());
@@ -2602,13 +2849,15 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
                              RETURN_, Exports::METHOD_, __VA_ARGS__);   \
         W
 
-        ADD_METHOD("Actor", 0, Actor_t*, Actor);
         ADD_METHOD("ID", 0, Int_t, ID);
-
+        ADD_METHOD("Actor", 0, Actor_t*, Actor);
+        ADD_METHOD("Follower", 0, Follower_t*, Follower);
         ADD_METHOD("Style", 0, Int_t, Style);
         ADD_METHOD("Vitality", 0, Int_t, Vitality);
         ADD_METHOD("Outfit2", 0, Int_t, Outfit2);
+        ADD_METHOD("Rating", 0, Int_t, Rating);
         ADD_METHOD("Name", 0, String_t, Name);
+        ADD_METHOD("Rating_Stars", 0, String_t, Rating_Stars);
 
         ADD_METHOD("Is_Filled", 0, Bool_t, Is_Filled);
         ADD_METHOD("Is_Unfilled", 0, Bool_t, Is_Unfilled);
@@ -2645,8 +2894,15 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
         ADD_METHOD("Is_Retreater", 0, Bool_t, Is_Retreater);
         ADD_METHOD("Isnt_Retreater", 0, Bool_t, Isnt_Retreater);
 
+        ADD_METHOD("OnLoad", 0, void, On_Load);
+        ADD_METHOD("OnDeath", 1, void, On_Death, Actor_t*);
+        ADD_METHOD("OnActivate", 1, void, On_Activate, Reference_t*);
+        ADD_METHOD("OnCombatStateChanged", 2, void, On_Combat_State_Changed, Actor_t*, Int_t);
         ADD_METHOD("OnHit", 7, void, On_Hit, Reference_t*, Form_t*, Projectile_Base_t*, Bool_t, Bool_t, Bool_t, Bool_t);
 
+        ADD_METHOD("Unmember", 0, Int_t, Unmember);
+        ADD_METHOD("Clone", 0, Int_t, Clone);
+        ADD_METHOD("Unclone", 0, Int_t, Unclone);
         ADD_METHOD("Mobilize", 0, Int_t, Mobilize);
         ADD_METHOD("Immobilize", 0, Int_t, Immobilize);
         ADD_METHOD("Settle", 0, Int_t, Settle);
@@ -2658,6 +2914,8 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
         ADD_METHOD("Unparalyze", 0, Int_t, Unparalyze);
         ADD_METHOD("Mannequinize", 1, Int_t, Mannequinize, Reference_t*);
         ADD_METHOD("Unmannequinize", 0, Int_t, Unmannequinize);
+        ADD_METHOD("Reanimate", 0, Int_t, Reanimate);
+        ADD_METHOD("Deanimate", 0, Int_t, Deanimate);
 
         ADD_METHOD("Stylize", 1, Int_t, Stylize, Int_t);
         ADD_METHOD("Stylize_Default", 0, Int_t, Stylize_Default);
@@ -2665,14 +2923,12 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
         ADD_METHOD("Stylize_Mage", 0, Int_t, Stylize_Mage);
         ADD_METHOD("Stylize_Archer", 0, Int_t, Stylize_Archer);
         ADD_METHOD("Stylize_Coward", 0, Int_t, Stylize_Coward);
-        ADD_METHOD("Unstylize", 0, Int_t, Unstylize);
 
         ADD_METHOD("Vitalize", 1, Int_t, Vitalize, Int_t);
         ADD_METHOD("Vitalize_Mortal", 0, Int_t, Vitalize_Mortal);
         ADD_METHOD("Vitalize_Protected", 0, Int_t, Vitalize_Protected);
         ADD_METHOD("Vitalize_Essential", 0, Int_t, Vitalize_Essential);
         ADD_METHOD("Vitalize_Invulnerable", 0, Int_t, Vitalize_Invulnerable);
-        ADD_METHOD("Unvitalize", 0, Int_t, Unvitalize);
 
         ADD_METHOD("Change_Outfit2", 1, Int_t, Change_Outfit2, Int_t);
         ADD_METHOD("Change_Member_Outfit2", 0, Int_t, Change_Member_Outfit2);
@@ -2683,13 +2939,15 @@ namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
         ADD_METHOD("Change_Vanilla_Outfit2", 0, Int_t, Change_Vanilla_Outfit2);
         ADD_METHOD("Change_Default_Outfit2", 0, Int_t, Change_Default_Outfit2);
         ADD_METHOD("Change_Current_Outfit2", 0, Int_t, Change_Current_Outfit2);
-        ADD_METHOD("p_Open_Outfit2", 0, void, Open_Outfit2);
-        ADD_METHOD("p_Apply_Outfit2", 0, void, Apply_Outfit2);
 
-        ADD_METHOD("p_Rename", 1, void, Rename, String_t);
+        ADD_METHOD("Rate", 1, Int_t, Rate, Int_t);
+
+        ADD_METHOD("Rename", 1, void, Rename, String_t);
 
         ADD_METHOD("Enforce", 0, void, Enforce);
 
+        ADD_METHOD("Summon", 2, Int_t, Summon, Float_t, Float_t);
+        ADD_METHOD("Open_Pack", 0, Int_t, Open_Pack);
         ADD_METHOD("Stash", 0, Int_t, Stash);
         ADD_METHOD("Resurrect", 0, Int_t, Resurrect);
         ADD_METHOD("Kill", 0, Int_t, Kill);

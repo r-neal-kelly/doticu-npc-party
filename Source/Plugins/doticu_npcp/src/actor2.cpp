@@ -1595,7 +1595,24 @@ namespace doticu_npcp { namespace Actor2 {
 
     void Relationship_Rank(Actor_t* actor, Actor_t* other, Virtual_Callback_i** callback)
     {
+        if (actor && other) {
+            class Arguments : public Virtual_Arguments_t {
+            public:
+                Actor_t* other;
+                Arguments(Actor_t* other) :
+                    other(other)
+                {
+                }
+                Bool_t operator()(Arguments_t* arguments)
+                {
+                    arguments->Resize(1);
+                    arguments->At(0)->Pack(other);
+                    return true;
+                }
+            } arguments(other);
 
+            Virtual_Machine_t::Self()->Call_Method(actor, "Actor", "GetRelationshipRank", &arguments, callback);
+        }
     }
 
     void Relationship_Rank(Actor_t* actor, Actor_t* other, Int_t rank, Virtual_Callback_i** callback)
@@ -1614,7 +1631,6 @@ namespace doticu_npcp { namespace Actor2 {
                     arguments->Resize(2);
                     arguments->At(0)->Pack(other);
                     arguments->At(1)->Int(rank);
-
                     return true;
                 }
             } arguments(other, rank);
@@ -1668,6 +1684,14 @@ namespace doticu_npcp { namespace Actor2 {
     Bool_t Is_Sneaking(Actor_t* actor)
     {
         return reinterpret_cast<Actor_State_t*>(&actor->actorState)->state.sneaking;
+    }
+
+    void Is_Talking_To_Player(Actor_t* actor, Virtual_Callback_i** callback)
+    {
+        NPCP_ASSERT(actor);
+        NPCP_ASSERT(callback);
+
+        Virtual_Machine_t::Self()->Call_Method(actor, "ObjectReference", "IsInDialogueWithPlayer", nullptr, callback);
     }
 
 }}

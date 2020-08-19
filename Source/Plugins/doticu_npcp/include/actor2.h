@@ -136,6 +136,7 @@ namespace doticu_npcp { namespace Actor2 {
     void Remove_Spell(Actor_t* actor, Spell_t* spell, Virtual_Callback_i** callback = nullptr);
 
     Bool_t Is_Sneaking(Actor_t* actor);
+    void Is_Talking_To_Player(Actor_t* actor, Virtual_Callback_i** callback);
 
 }}
 

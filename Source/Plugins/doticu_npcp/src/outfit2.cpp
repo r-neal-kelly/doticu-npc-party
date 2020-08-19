@@ -235,8 +235,7 @@ namespace doticu_npcp { namespace Papyrus {
         NPCP_ASSERT(outfit_name);
 
         Object_Ref::Rename(this, outfit_name);
-
-        Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "p_Open", nullptr, callback);
+        Object_Ref::Open_Container(this, callback);
     }
 
     void Outfit2_t::Apply_To(Actor_t* actor, Reference_t* pack, Outfit_t* outfit1_to_apply)

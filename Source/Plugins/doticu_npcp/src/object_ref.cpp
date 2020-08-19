@@ -894,6 +894,30 @@ namespace doticu_npcp { namespace Object_Ref {
         }
     }
 
+    void Open_Container(Reference_t* ref, Papyrus::Virtual_Callback_i** callback)
+    {
+        using namespace Papyrus;
+
+        NPCP_ASSERT(ref && ref->baseForm && ref->baseForm->formType == kFormType_Container);
+
+        class Arguments : public Virtual_Arguments_t {
+        public:
+            Reference_t* ref;
+            Arguments(Reference_t* ref) :
+                ref(ref)
+            {
+            }
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(1);
+                arguments->At(0)->Pack(ref);
+                return true;
+            }
+        } arguments(ref);
+
+        Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(), "doticu_npcp_funcs", "Open_Container", &arguments, callback);
+    }
+
     Reference_t* Place_At_Me(Reference_t* me,
                              Form_t* to_place,
                              Int_t count,

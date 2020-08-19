@@ -81,7 +81,7 @@ namespace doticu_npcp { namespace Papyrus {
         virtual void _23(void) = 0; // 23
         virtual void Send_Event(Handle_t handle, String_t* event_name, IFunctionArguments* arguments) = 0; // 24
         virtual void _25(void) = 0; // 25
-        virtual void _26(void) = 0; // 26
+        virtual Bool_t Call_Global(String_t* class_name, String_t* function_name, Virtual_Arguments_i* arguments, Virtual_Callback_i** callback) = 0; // 26
         virtual void _27(void) = 0; // 27
         virtual Bool_t Call_Method2(Handle_t handle, String_t* class_name, String_t* function_name, Virtual_Arguments_i* arguments, Virtual_Callback_i** callback) = 0; // 28
         virtual void _29(void) = 0; // 29
@@ -183,7 +183,7 @@ namespace doticu_npcp { namespace Papyrus {
         virtual void _23(void) override; // 23
         virtual void Send_Event(Handle_t handle, String_t* event_name, IFunctionArguments* arguments) override; // 24
         virtual void _25(void) override; // 25
-        virtual void _26(void) override; // 26
+        virtual Bool_t Call_Global(String_t* class_name, String_t* function_name, Virtual_Arguments_i* arguments, Virtual_Callback_i** callback) override; // 26
         virtual void _27(void) override; // 27
         virtual Bool_t Call_Method2(Handle_t handle, String_t* class_name, String_t* function_name, Virtual_Arguments_i* arguments, Virtual_Callback_i** callback) override; // 28
         virtual void _29(void) override; // 29
@@ -199,6 +199,10 @@ namespace doticu_npcp { namespace Papyrus {
         template <typename BSObject>
         void Send_Event(BSObject* object, String_t event_name);
 
+        Bool_t Call_Global(String_t class_name,
+                           String_t function_name,
+                           Virtual_Arguments_i* arguments = nullptr,
+                           Virtual_Callback_i** callback = nullptr);
         Bool_t Call_Method(Handle_t handle,
                            String_t class_name,
                            String_t function_name,

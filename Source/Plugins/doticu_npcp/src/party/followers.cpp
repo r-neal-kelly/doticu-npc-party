@@ -103,18 +103,6 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
-    Form_t* Followers_t::Tasklist()
-    {
-        static const String_t tasklist_name = String_t("p_tasklist");
-
-        Variable_t* variable = Variable(tasklist_name);
-        if (variable) {
-            return static_cast<Form_t*>(variable->Reference());
-        } else {
-            return nullptr;
-        }
-    }
-
     Bool_t Followers_t::Has_Space()
     {
         return From_Unfilled() != nullptr;

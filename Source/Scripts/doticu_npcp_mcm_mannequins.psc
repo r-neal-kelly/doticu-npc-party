@@ -297,7 +297,7 @@ endState
 
 state STATE_MANNEQUINS_CELL
 bool function f_Is_Valid_Member(doticu_npcp_member ref_member)
-    if !ref_member || !ref_member.Exists() || !ref_member.Is_Mannequin() || p_curr_members.Find(ref_member) < 0
+    if !ref_member || !ref_member.Is_Filled() || !ref_member.Is_Mannequin() || p_curr_members.Find(ref_member) < 0
         return false
     else
         return true

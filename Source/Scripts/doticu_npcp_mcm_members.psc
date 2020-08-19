@@ -141,7 +141,7 @@ function f_Request_Next_Member()
 endFunction
 
 bool function f_Is_Valid_Member(doticu_npcp_member ref_member)
-    if !ref_member || !ref_member.Exists() || p_arr_aliases.Find(ref_member) < 0
+    if !ref_member || !ref_member.Is_Filled() || p_arr_aliases.Find(ref_member) < 0
         return false
     else
         return true
@@ -372,8 +372,8 @@ string function Get_Info_String(doticu_npcp_member ref_member)
 
     string str_info = str_sex + ", " + str_race + "\n"
 
-    if ref_member.Get_Rating() > 0
-        str_info += "Rating: " + ref_member.Get_Rating_Stars()
+    if ref_member.Rating() > 0
+        str_info += "Rating: " + ref_member.Rating_Stars()
     endIf
 
     ; this should show more about the member, style, and stats!!!

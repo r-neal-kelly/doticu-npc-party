@@ -52,16 +52,8 @@ doticu_npcp_follower function Get_Follower()
 endFunction
 
 function Rename(string str_name)
-    ACTORS.Rename(p_ref_actor, str_name)
+    doticu_npcp.Funcs().Rename(p_ref_actor, str_name)
 endFunction
-
-;/int function Pack(int code_exec)
-    return p_ref_member.Pack(code_exec)
-endFunction
-
-int function Stash()
-    return p_ref_member.Stash()
-endFunction/;
 
 ; Events
 event OnActivate(ObjectReference activator_obj)

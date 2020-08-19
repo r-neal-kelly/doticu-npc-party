@@ -323,8 +323,6 @@ namespace doticu_npcp { namespace Party {
         Follower_t* From_Unfilled();
         Follower_t* From_Horse_Actor(Actor_t* actor);
 
-        Form_t* Tasklist();
-
         Bool_t Has_Space();
         Bool_t Hasnt_Space();
         Bool_t Has_Actor(Actor_t* actor);
@@ -640,6 +638,10 @@ namespace doticu_npcp { namespace Party {
 
         Bool_t Should_Unclone();
 
+        void On_Load();
+        void On_Death(Actor_t* killer);
+        void On_Activate(Reference_t* activator);
+        void On_Combat_State_Changed(Actor_t* target, Int_t combat_code);
         void On_Hit(Reference_t* attacker,
                     Form_t* tool,
                     Projectile_Base_t* projectile,
@@ -661,8 +663,8 @@ namespace doticu_npcp { namespace Party {
         void Backup_State(Actor_t* actor);
         void Restore_State(Actor_t* actor);
 
-        void Member();
-        void Unmember();
+        void Enforce_Member(Actor_t* actor);
+        void Enforce_Non_Member(Actor_t* actor);
         Int_t Mobilize();
         void Enforce_Mobile(Actor_t* actor);
         Int_t Immobilize();
@@ -687,6 +689,15 @@ namespace doticu_npcp { namespace Party {
         void Display(Reference_t* origin, float radius = 140.0f, float degree = 0.0f);
         void Enforce_Display(Actor_t* actor);
         void Undisplay();
+        void Enforce_Non_Display(Actor_t* actor);
+        Int_t Reanimate();
+        void Enforce_Reanimated(Actor_t* actor);
+        Int_t Deanimate();
+        void Enforce_Non_Reanimated(Actor_t* actor);
+
+        Int_t Unmember();
+        Int_t Clone();
+        Int_t Unclone();
 
         Int_t Stylize(Int_t style);
         Int_t Stylize_Default();
@@ -728,16 +739,19 @@ namespace doticu_npcp { namespace Party {
         void Open_Outfit2();
         void Apply_Outfit2();
 
-        void Rename(String_t new_name);
-        void Enforce_Name(Actor_t* actor);
+        Int_t Rate(Int_t rating);
+
+        Int_t Rename(String_t new_name);
+        void Enforce_Name(Actor_t* actor, String_t name);
 
         void Enforce();
 
-        void Summon(Reference_t* origin, float radius = 140.0f, float degree = 0.0f);
-        void Summon(float radius = 140.0f, float degree = 0.0f);
-        void Summon_Ahead(float radius = 140.0f);
-        void Summon_Behind(float radius = 140.0f);
+        void Summon(Reference_t* origin, Float_t radius = 140.0f, Float_t degree = 0.0f);
+        Int_t Summon(Float_t radius = 140.0f, Float_t degree = 0.0f);
+        Int_t Summon_Ahead(Float_t radius = 140.0f);
+        Int_t Summon_Behind(Float_t radius = 140.0f);
 
+        Int_t Open_Pack();
         Int_t Stash();
         Int_t Resurrect();
         Int_t Kill();
@@ -843,8 +857,8 @@ namespace doticu_npcp { namespace Party {
         void Backup_State(Actor_t* actor);
         void Restore_State(Actor_t* actor);
 
-        void Follow();
-        void Unfollow();
+        void Enforce_Follower(Actor_t* actor);
+        void Enforce_Non_Follower(Actor_t* actor);
         void Level();
         void Unlevel();
         Int_t Sneak();
@@ -862,10 +876,10 @@ namespace doticu_npcp { namespace Party {
 
         void Enforce();
 
-        void Summon(Reference_t* origin, float radius = 140.0f, float degree = 0.0f);
-        void Summon(float radius = 140.0f, float degree = 0.0f);
-        void Summon_Ahead(float radius = 140.0f);
-        void Summon_Behind(float radius = 140.0f);
+        void Summon(Reference_t* origin, Float_t radius = 140.0f, Float_t degree = 0.0f);
+        Int_t Summon(Float_t radius = 140.0f, Float_t degree = 0.0f);
+        Int_t Summon_Ahead(Float_t radius = 140.0f);
+        Int_t Summon_Behind(Float_t radius = 140.0f);
 
         Int_t Mobilize();
         Int_t Immobilize();
@@ -882,8 +896,6 @@ namespace doticu_npcp { namespace Party {
 
         void Catch_Up();
         void Rename(String_t new_name);
-
-        void On_Combat_State_Changed(Actor_t* target, Int_t combat_code);
     };
 
     namespace Follower { namespace Exports {

@@ -10,11 +10,6 @@ doticu_npcp_logs property LOGS hidden
         return (self as Quest) as doticu_npcp_logs
     endFunction
 endProperty
-doticu_npcp_containers property CONTAINERS hidden
-    doticu_npcp_containers function Get()
-        return (self as Quest) as doticu_npcp_containers
-    endFunction
-endProperty
 doticu_npcp_actors property ACTORS hidden
     doticu_npcp_actors function Get()
         return (self as Quest) as doticu_npcp_actors
@@ -80,37 +75,8 @@ bool function Can_Use_Keys()
     return !Utility.IsInMenuMode() && !UI.IsMenuOpen("Dialogue Menu")
 endFunction
 
-bool function Can_Render()
-    return !Utility.IsInMenuMode()
-endFunction
-
 bool function Is_Mod_Installed(string name_mod)
     return Game.GetModByName(name_mod) != 255
-endFunction
-
-function Print_Contents(ObjectReference ref_object)
-    string str_contents = ""
-    int idx_forms = 0
-    int num_forms = ref_object.GetNumItems()
-    Form form_form
-    int num_form
-
-    str_contents += "[ "
-
-    while idx_forms < num_forms
-        form_form = ref_object.GetNthForm(idx_forms)
-        if form_form
-            num_form = ref_object.GetItemCount(form_form)
-            str_contents += form_form.GetName() + " (" + num_form + "),"
-        else
-            str_contents += "none (0),"
-        endIf
-        idx_forms += 1
-    endWhile
-
-    str_contents += " ]\n"
-
-    doticu_npcp.Print(str_contents)
 endFunction
 
 function Send_Event(string str_event, float interval = 0.25, float timeout = 5.0)
@@ -167,4 +133,13 @@ endFunction
 
 function Wait_Out_Of_Menu(float seconds)
     Utility.Wait(seconds)
+endFunction
+
+function Rename(ObjectReference ref_container, string str_name)
+    ref_container.SetDisplayName(str_name, true)
+endFunction
+
+function Open_Container(ObjectReference ref_container)
+    ref_container.Activate(doticu_npcp_consts.Player_Actor())
+    Wait(0.1)
 endFunction

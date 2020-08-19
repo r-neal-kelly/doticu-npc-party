@@ -312,26 +312,26 @@ function f_On_Option_Select(int id_option)
         p_Update_Commands()
 
     elseIf id_option == p_option_rating
-        int int_rating = p_ref_member.Get_Rating()
+        int int_rating = p_ref_member.Rating()
         if false
 
         elseIf int_rating == 0
-            p_ref_member.Set_Rating(1)
+            p_ref_member.Rate(1)
             p_Update_Commands()
         elseIf int_rating == 1
-            p_ref_member.Set_Rating(2)
+            p_ref_member.Rate(2)
             p_Update_Commands()
         elseIf int_rating == 2
-            p_ref_member.Set_Rating(3)
+            p_ref_member.Rate(3)
             p_Update_Commands()
         elseIf int_rating == 3
-            p_ref_member.Set_Rating(4)
+            p_ref_member.Rate(4)
             p_Update_Commands()
         elseIf int_rating == 4
-            p_ref_member.Set_Rating(5)
+            p_ref_member.Rate(5)
             p_Update_Commands()
         elseIf int_rating == 5
-            p_ref_member.Set_Rating(0)
+            p_ref_member.Rate(0)
             p_Update_Commands()
 
         endIf
