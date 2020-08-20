@@ -2,6 +2,134 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "skse64/PapyrusUI.h"
+
+#include "utils.h"
+
+namespace doticu_npcp { namespace Papyrus { namespace UI {
+
+    template <typename Type>
+    Type Get_Value(GFxValue* gfx_value)
+    {
+        NPCP_ASSERT(false);
+    }
+
+    template <>
+    Bool_t Get_Value<Bool_t>(GFxValue* gfx_value)
+    {
+        return gfx_value->GetType() == GFxValue::kType_Bool ? gfx_value->GetBool() : false;
+    }
+
+    template <>
+    Int_t Get_Value<Int_t>(GFxValue* gfx_value)
+    {
+        return gfx_value->GetType() == GFxValue::kType_Number ? gfx_value->GetNumber() : 0;
+    }
+
+    template <>
+    Float_t Get_Value<Float_t>(GFxValue* gfx_value)
+    {
+        return gfx_value->GetType() == GFxValue::kType_Number ? gfx_value->GetNumber() : 0.0f;
+    }
+
+    template <>
+    String_t Get_Value<String_t>(GFxValue* gfx_value)
+    {
+        return gfx_value->GetType() == GFxValue::kType_String ? gfx_value->GetString() : "";
+    }
+
+    template <typename Type>
+    Type Get_Value(String_t menu, String_t target)
+    {
+        if (menu && target) {
+            MenuManager* menu_manager = MenuManager::GetSingleton();
+            if (menu_manager) {
+                GFxMovieView* view = menu_manager->GetMovieView(&menu);
+                if (view) {
+                    GFxValue value;
+                    if (view->GetVariable(&value, target)) {
+                        return Get_Value<Type>(&value);
+                    } else {
+                        return 0;
+                    }
+                } else {
+                    return 0;
+                }
+            } else {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    template <typename Type>
+    void Set_Value(GFxValue* gfx_value, Type value)
+    {
+        NPCP_ASSERT(false);
+    }
+
+    template <>
+    void Set_Value<Bool_t>(GFxValue* gfx_value, Bool_t value)
+    {
+        gfx_value->SetBool(value);
+    }
+
+    template <>
+    void Set_Value<Int_t>(GFxValue* gfx_value, Int_t value)
+    {
+        gfx_value->SetNumber(value);
+    }
+
+    template <>
+    void Set_Value<Float_t>(GFxValue* gfx_value, Float_t value)
+    {
+        gfx_value->SetNumber(value);
+    }
+
+    template <>
+    void Set_Value<String_t>(GFxValue* gfx_value, String_t value)
+    {
+        gfx_value->SetString(value);
+    }
+
+    template <typename Type>
+    void Set_Value(String_t menu, String_t target, Type value)
+    {
+        if (menu && target) {
+            MenuManager* menu_manager = MenuManager::GetSingleton();
+            if (menu_manager) {
+                GFxMovieView* view = menu_manager->GetMovieView(&menu);
+                if (view) {
+                    GFxValue gfx_value;
+                    Set_Value<Type>(&gfx_value, value);
+                    view->SetVariable(target, &gfx_value, 1);
+                }
+            }
+        }
+    }
+
+    template <typename Type>
+    void Invoke_Argument(String_t menu, String_t target, Type argument)
+    {
+        if (menu && target) {
+            UIManager* ui_manager = UIManager::GetSingleton();
+            if (ui_manager) {
+                UIInvokeDelegate* delegate = new UIInvokeDelegate(menu, target);
+                delegate->args.resize(1);
+                Set_Value<Type>(&delegate->args[0], argument);
+                ui_manager->QueueCommand(delegate);
+            }
+        }
+    }
+
+    void Invoke(String_t menu, String_t target)
+    {
+        return Invoke_Argument<Bool_t>(menu, target, false);
+    }
+
+}}}
+
 #include "consts.h"
 #include "utils.h"
 
@@ -23,6 +151,11 @@ namespace doticu_npcp { namespace MCM {
         static Class_Info_t* class_info = Class_Info_t::Fetch(Class_Name());
         NPCP_ASSERT(class_info);
         return class_info;
+    }
+
+    const char* SKI_Config_Base_t::Menu(const char* target)
+    {
+        return (std::string(ROOT_MENU) + target).c_str();
     }
 
     Object_t* SKI_Config_Base_t::Object()
@@ -144,6 +277,11 @@ namespace doticu_npcp { namespace MCM {
         Cursor_Fill_Mode(Cursor_Fill_Mode_e::LEFT_TO_RIGHT);
     }
 
+    void SKI_Config_Base_t::Title_Text(String_t title)
+    {
+        UI::Invoke_Argument<String_t>(JOURNAL_MENU, Menu(".setTitleText"), title);
+    }
+
     Int_t SKI_Config_Base_t::Add_Option(Option_Type_e option_type, String_t label, String_t string, Float_t number, Int_t flags)
     {
         NPCP_ASSERT(label);
@@ -208,6 +346,29 @@ namespace doticu_npcp { namespace MCM {
     Int_t SKI_Config_Base_t::Add_Keymap_Option(String_t label, Int_t key_code, Int_t flags)
     {
         return Add_Option(Option_Type_e::KEYMAP, label, "", static_cast<Float_t>(key_code), flags);
+    }
+
+    void SKI_Config_Base_t::Option_Number_Value(Int_t index, Float_t value, Bool_t do_render)
+    {
+        NPCP_ASSERT(Current_State() != State_e::RESET);
+
+        UI::Set_Value<Int_t>(JOURNAL_MENU, Menu(".optionCursorIndex"), index);
+        UI::Set_Value<Float_t>(JOURNAL_MENU, Menu(".optionCursor.numValue"), value);
+
+        if (do_render) {
+            //UI::Invoke(JOURNAL_MENU, Menu(".invalidateOptionData"));
+            Virtual_Machine_t::Self()->Call_Method(Main_t::Self(), Main_t::Class_Name(), "Invoke_Render");
+        }
+    }
+
+    void SKI_Config_Base_t::Keymap_Option_Value(Int_t option, Int_t key_code, Bool_t do_render)
+    {
+        Int_t index = option % 0x100;
+        Option_Type_e type = static_cast<Option_Type_e>
+            (Flags()->Point(index)->Int() % 0x100);
+        NPCP_ASSERT(type == Option_Type_e::KEYMAP);
+
+        Option_Number_Value(index, static_cast<Float_t>(key_code), do_render);
     }
 
     void SKI_Config_Base_t::Register_Me(Registry_t* registry)

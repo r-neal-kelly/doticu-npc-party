@@ -29,13 +29,11 @@ function f_Create()
     p_is_created = true
 
     COMMANDS.f_Create()
-    KEYS.f_Create()
     MCM.f_Create()
 endFunction
 
 function f_Destroy()
     MCM.f_Destroy()
-    KEYS.f_Destroy()
     COMMANDS.f_Destroy()
     
     p_is_created = false

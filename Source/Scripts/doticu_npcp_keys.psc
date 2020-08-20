@@ -83,19 +83,9 @@ string property KEY_FS_UNSADDLE             = "Followers: Unsaddle"         auto
 string property KEY_FS_RESURRECT            = "Followers: Resurrect"        autoReadOnly hidden
 
 ; Private Variables
-bool                p_is_created        = false
-
 string              p_pressed_hotkey    =    ""
 
 ; Friend Methods
-function f_Create()
-    p_is_created = true
-endFunction
-
-function f_Destroy()
-    p_is_created = false
-endFunction
-
 function f_Register()
     Update_Keys()
 endFunction

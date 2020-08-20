@@ -574,7 +574,6 @@ namespace doticu_npcp {
 namespace doticu_npcp {
 
     typedef BGSBaseAlias            Player_t;
-    typedef TESQuest                Keys_t;
     typedef TESQuest                Consts_t;
     typedef TESQuest                Vars_t;
 

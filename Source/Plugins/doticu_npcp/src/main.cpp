@@ -32,6 +32,7 @@
 
 #include "mcm/mcm_main.h"
 #include "mcm/mcm_member.h"
+#include "mcm/mcm_hotkeys.h"
 
 #include "papyrus.inl"
 
@@ -241,7 +242,6 @@ namespace doticu_npcp { namespace Main {
         REGISTER_NAMESPACE(Form);
         REGISTER_NAMESPACE(Form_Vector);
         REGISTER_NAMESPACE(Game);
-        REGISTER_NAMESPACE(Keys);
         REGISTER_NAMESPACE(Object_Ref);
         REGISTER_NAMESPACE(Outfit);
         REGISTER_NAMESPACE(Papyrus::Outfit2);
@@ -271,9 +271,11 @@ namespace doticu_npcp { namespace Main {
         W
         REGISTER_TYPE(Modules::Main_t);
         REGISTER_TYPE(Party::NPCS_t);
+        REGISTER_TYPE(Papyrus::Keys_t);
         REGISTER_TYPE(MCM::SKI_Config_Base_t);
         REGISTER_TYPE(MCM::Main_t);
         REGISTER_TYPE(MCM::Member_t);
+        REGISTER_TYPE(MCM::Hotkeys_t);
 
         #undef REGISTER_TYPE
 

@@ -18,286 +18,11 @@
 
 #include "papyrus.inl"
 
-namespace doticu_npcp { namespace Keys {
+namespace doticu_npcp { namespace Papyrus {
 
-    class Key_System_t
+    const char* Keys_t::Code_To_String(Int_t code)
     {
-    public:
-        class Mods
-        {
-        public:
-            Int_t mod_1 = -1;
-            Int_t mod_2 = -1;
-            Int_t mod_3 = -1;
-
-            Mods(Int_t mod_1 = -1, Int_t mod_2 = -1, Int_t mod_3 = -1) :
-                mod_1(mod_1), mod_2(mod_2), mod_3(mod_3)
-            {
-            }
-
-            Mods(VMArray<Int_t> mods)
-            {
-                u64 mods_size = mods.Length();
-                if (mods_size > 0) {
-                    mods.Get(&mod_1, 0);
-                }
-                if (mods_size > 1) {
-                    mods.Get(&mod_2, 1);
-                }
-                if (mods_size > 2) {
-                    mods.Get(&mod_3, 2);
-                }
-            }
-
-            Mods(String_t mods_variable_name)
-            {
-                Variable_t* variable = Vars::Property(mods_variable_name);
-                if (variable && variable->type.Is_Int_Array() && variable->data.arr) {
-                    Array_t* arr = variable->data.arr;
-                    Variable_t* variables = variable->data.arr->Variables();
-                    if (arr->count > 0) {
-                        mod_1 = variables[0].Int();
-                    }
-                    if (arr->count > 1) {
-                        mod_2 = variables[1].Int();
-                    }
-                    if (arr->count > 2) {
-                        mod_3 = variables[2].Int();
-                    }
-                }
-            }
-
-            Vector_t<Int_t> Vector()
-            {
-                Vector_t<Int_t> mods;
-
-                mods.reserve(3);
-                mods.push_back(mod_1);
-                mods.push_back(mod_2);
-                mods.push_back(mod_3);
-
-                return mods;
-            }
-
-            String_t String()
-            {
-                std::string mods("");
-
-                if (mod_1 > 0) {
-                    mods.append(Key_To_String(mod_1));
-                    if (mod_2 > 0) {
-                        mods.append(" + ");
-                        mods.append(Key_To_String(mod_2));
-                        if (mod_3 > 0) {
-                            mods.append(" + ");
-                            mods.append(Key_To_String(mod_3));
-                        }
-                    }
-                } else {
-                    mods.append("???");
-                }
-                
-                return String_t(mods.c_str());
-            }
-
-            bool operator ==(Mods& rhs)
-            {
-                return
-                    mod_1 == rhs.mod_1 &&
-                    mod_2 == rhs.mod_2 &&
-                    mod_3 == rhs.mod_3;
-            }
-
-            bool Has(Int_t mod)
-            {
-                return mod == mod_1 || mod == mod_2 || mod == mod_3;
-            }
-
-            size_t Size()
-            {
-                size_t count = 0;
-                if (mod_1 > 0) {
-                    count += 1;
-                }
-                if (mod_2 > 0) {
-                    count += 1;
-                }
-                if (mod_3 > 0) {
-                    count += 1;
-                }
-                return count;
-            }
-        };
-
-        std::vector<String_t> keys;
-        std::vector<String_t> var_names;
-        std::vector<String_t> var_mods;
-        std::vector<Int_t> defaults;
-        std::vector<Mods> default_mods;
-
-        Key_System_t()
-        {
-            keys.reserve(64);
-            var_names.reserve(64);
-            var_mods.reserve(64);
-            defaults.reserve(64);
-            default_mods.reserve(64);
-
-            #define KEY(NAME_, VAR_NAME_, DEFAULT_, ...)    \
-            M                                               \
-                keys.push_back(NAME_);                      \
-                var_names.push_back(VAR_NAME_);             \
-                var_mods.push_back(VAR_NAME_ "_mods");      \
-                defaults.push_back(DEFAULT_);               \
-                default_mods.push_back(Mods(__VA_ARGS__));  \
-            W
-
-            KEY("Global: Open Dialogue Menu",   "key_g_dialogue_menu",      KEY_G,                  KEY_LEFT_CONTROL);
-
-            KEY("NPC: Toggle Member",           "key_n_toggle_member",      KEY_NUM_PLUS,           KEY_LEFT_CONTROL);
-            KEY("NPC: Toggle Move",             "key_n_toggle_move",        KEY_LEFT_ALT,           KEY_LEFT_CONTROL);
-            KEY("NPC: Move Farther",            "key_n_move_farther",       KEY_UP_ARROW);
-            KEY("NPC: Move Nearer",             "key_n_move_nearer",        KEY_DOWN_ARROW);
-            KEY("NPC: Rotate Left",             "key_n_move_rotate_left",   KEY_LEFT_ARROW);
-            KEY("NPC: Rotate Right",            "key_n_move_rotate_right",  KEY_RIGHT_ARROW);
-            KEY("NPC: Has Base",                "key_n_has_base",           KEY_RIGHT_SHIFT,        KEY_LEFT_CONTROL);
-            KEY("NPC: Count Base",              "key_n_count_base",         KEY_RIGHT_SHIFT,        KEY_LEFT_ALT);
-            KEY("NPC: Has Head",                "key_n_has_head",           KEY_ENTER,              KEY_LEFT_CONTROL);
-            KEY("NPC: Count Heads",             "key_n_count_heads",        KEY_ENTER,              KEY_LEFT_ALT);
-
-            KEY("Member: Toggle Clone",         "key_m_toggle_clone",       KEY_NUM_ENTER,          KEY_LEFT_CONTROL);
-            KEY("Member: Toggle Settler",       "key_m_toggle_settler",     KEY_NUM_0,              KEY_LEFT_CONTROL);
-            KEY("Member: Toggle Thrall",        "key_m_toggle_thrall",      KEY_NUM_9,              KEY_LEFT_CONTROL);
-            KEY("Member: Toggle Immobile",      "key_m_toggle_immobile",    KEY_NUM_PERIOD,         KEY_LEFT_CONTROL);
-            KEY("Member: Toggle Paralyzed",     "key_m_toggle_paralyzed",   KEY_NUM_FORWARD_SLASH,  KEY_LEFT_CONTROL);
-            KEY("Member: Toggle Follower",      "key_m_toggle_follower",    KEY_NUM_ASTERISK,       KEY_LEFT_CONTROL);
-
-            KEY("Follower: Toggle Sneak",       "key_f_toggle_sneak",       KEY_NUM_ASTERISK,       KEY_LEFT_ALT);
-            KEY("Follower: Toggle Saddler",     "key_f_toggle_saddler",     KEY_NUM_FORWARD_SLASH,  KEY_LEFT_ALT);
-
-            KEY("Members: Toggle Display",      "key_ms_toggle_display",    KEY_BACK_SLASH,         KEY_LEFT_CONTROL);
-            KEY("Members: Display Previous",    "key_ms_display_previous",  KEY_LEFT_BRACKET,       KEY_LEFT_CONTROL);
-            KEY("Members: Display Next",        "key_ms_display_next",      KEY_RIGHT_BRACKET,      KEY_LEFT_CONTROL);
-
-            KEY("Followers: Summon All",        "key_fs_summon_all",        KEY_FORWARD_SLASH,      KEY_LEFT_CONTROL);
-            KEY("Followers: Summon Mobile",     "key_fs_summon_mobile",     KEY_FORWARD_SLASH);
-            KEY("Followers: Summon Immobile",   "key_fs_summon_immobile",   KEY_FORWARD_SLASH,      KEY_LEFT_ALT);
-            KEY("Followers: Settle",            "key_fs_settle",            KEY_0,                  KEY_LEFT_CONTROL);
-            KEY("Followers: Unsettle",          "key_fs_unsettle",          KEY_0,                  KEY_LEFT_ALT);
-            KEY("Followers: Mobilize",          "key_fs_mobilize",          KEY_EQUALS,             KEY_LEFT_CONTROL);
-            KEY("Followers: Immobilize",        "key_fs_immobilize",        KEY_EQUALS,             KEY_LEFT_ALT);
-            KEY("Followers: Sneak",             "key_fs_sneak",             KEY_MINUS,              KEY_LEFT_CONTROL);
-            KEY("Followers: Unsneak",           "key_fs_unsneak",           KEY_MINUS,              KEY_LEFT_ALT);
-            KEY("Followers: Saddle",            "key_fs_saddle",            KEY_H,                  KEY_LEFT_CONTROL);
-            KEY("Followers: Unsaddle",          "key_fs_unsaddle",          KEY_H,                  KEY_LEFT_ALT);
-            KEY("Followers: Resurrect",         "key_fs_resurrect",         KEY_BACKSPACE,          KEY_LEFT_CONTROL);
-
-            #undef KEY
-        }
-
-        s64 Index_Of(String_t key)
-        {
-            for (u64 idx = 0, size = keys.size(); idx < size; idx += 1) {
-                if (String2::Is_Same_Caseless(keys[idx], key)) {
-                    return idx;
-                }
-            }
-
-            return -1;
-        }
-
-        String_t Hotkey(idx_t idx)
-        {
-            if (idx > -1 && idx < Size()) {
-                return keys[idx];
-            } else {
-                return "";
-            }
-        }
-
-        Int_t Default_Value(String_t key)
-        {
-            s64 idx = Index_Of(key);
-            if (idx > -1) {
-                return defaults[idx];
-            } else {
-                return KEY_INVALID;
-            }
-        }
-
-        Int_t Current_Value(String_t key)
-        {
-            s64 idx = Index_Of(key);
-            if (idx > -1) {
-                Variable_t* variable = Vars::Property(var_names[idx]);
-                if (variable && variable->type.Unmangled() == Type_t::INT) {
-                    return variable->data.i;
-                } else {
-                    return KEY_INVALID;
-                }
-            } else {
-                return KEY_INVALID;
-            }
-        }
-
-        Int_t Current_Value(idx_t idx)
-        {
-            if (idx > -1 && idx < Size()) {
-                Variable_t* variable = Vars::Property(var_names[idx]);
-                if (variable && variable->type.Unmangled() == Type_t::INT) {
-                    return variable->data.i;
-                } else {
-                    return -1;
-                }
-            } else {
-                return KEY_INVALID;
-            }
-        }
-
-        Mods Default_Mods(String_t key)
-        {
-            s64 idx = Index_Of(key);
-            if (idx > -1) {
-                return default_mods[idx];
-            } else {
-                return Mods();
-            }
-        }
-
-        Mods Current_Mods(String_t key)
-        {
-            s64 idx = Index_Of(key);
-            if (idx > -1) {
-                return Mods(var_mods[idx]);
-            } else {
-                return Mods();
-            }
-        }
-
-        Mods Current_Mods(idx_t idx)
-        {
-            if (idx > -1 && idx < Size()) {
-                return Mods(var_mods[idx]);
-            } else {
-                return Mods();
-            }
-        }
-
-        u64 Size()
-        {
-            return keys.size();
-        }
-    };
-
-    static Key_System_t& Key_System()
-    {
-        static Key_System_t key_system;
-        return key_system;
-    }
-
-    const char* Key_To_String(Int_t key)
-    {
-        switch (key) {
+        switch (code) {
             case KEY_INVALID: return "Invalid";
             case KEY_ESCAPE: return "Esc";
             case KEY_1: return "1";
@@ -429,67 +154,361 @@ namespace doticu_npcp { namespace Keys {
         }
     }
 
-    Keys_t* Self()
+    // Keys_t::Mods_t
+
+    Keys_t::Mods_t::Mods_t(Int_t mod_1, Int_t mod_2, Int_t mod_3) :
+        mod_1(mod_1), mod_2(mod_2), mod_3(mod_3)
+    {
+    }
+
+    Keys_t::Mods_t::Mods_t(Array_t* array)
+    {
+        if (array) {
+            if (array->count > 0) {
+                mod_1 = array->Point(0)->Int();
+            }
+            if (array->count > 1) {
+                mod_2 = array->Point(1)->Int();
+            }
+            if (array->count > 2) {
+                mod_3 = array->Point(2)->Int();
+            }
+        }
+    }
+
+    Keys_t::Mods_t::Mods_t(VMArray<Int_t> mods)
+    {
+        Mods_t(reinterpret_cast<Array_t*>(mods.arr));
+    }
+
+    Int_t Keys_t::Mods_t::Count()
+    {
+        Int_t count = 0;
+        if (mod_1 > KEY_INVALID) {
+            count += 1;
+        }
+        if (mod_2 > KEY_INVALID) {
+            count += 1;
+        }
+        if (mod_3 > KEY_INVALID) {
+            count += 1;
+        }
+        return count;
+    }
+
+    Bool_t Keys_t::Mods_t::Has(Int_t mod)
+    {
+        return mod_1 == mod || mod_2 == mod || mod_3 == mod;
+    }
+
+    Vector_t<Int_t> Keys_t::Mods_t::Vector()
+    {
+        Vector_t<Int_t> mods;
+
+        mods.reserve(3);
+        mods.push_back(mod_1);
+        mods.push_back(mod_2);
+        mods.push_back(mod_3);
+
+        return mods;
+    }
+
+    String_t Keys_t::Mods_t::String()
+    {
+        std::string mods("");
+
+        if (mod_1 > 0) {
+            mods.append(Code_To_String(mod_1));
+            if (mod_2 > 0) {
+                mods.append(" + ");
+                mods.append(Code_To_String(mod_2));
+                if (mod_3 > 0) {
+                    mods.append(" + ");
+                    mods.append(Code_To_String(mod_3));
+                }
+            }
+        } else {
+            mods.append("???");
+        }
+
+        return mods.c_str();
+    }
+
+    Bool_t Keys_t::Mods_t::operator ==(Mods_t& rhs)
+    {
+        return
+            mod_1 == rhs.mod_1 &&
+            mod_2 == rhs.mod_2 &&
+            mod_3 == rhs.mod_3;
+    }
+
+    // Keys_t::Hotkeys_t
+
+    Keys_t::Hotkeys_t* Keys_t::Hotkeys_t::Self()
+    {
+        static Hotkeys_t hotkeys;
+        return &hotkeys;
+    }
+
+    Keys_t::Hotkeys_t::Hotkeys_t()
+    {
+        names.reserve(64);
+        value_variables.reserve(64);
+        mods_variables.reserve(64);
+        default_values.reserve(64);
+        default_mods.reserve(64);
+
+        #define ADD_HOTKEY(HOTKEY_, DEFAULT_VALUE_, ...)                    \
+        M                                                                   \
+            names.push_back(HOTKEY_());                                     \
+            value_variables.push_back(Vars::HOTKEY_##_Value_Property());    \
+            mods_variables.push_back(Vars::HOTKEY_##_Mods_Property());      \
+            default_values.push_back(DEFAULT_VALUE_);                       \
+            default_mods.push_back(Mods_t(__VA_ARGS__));                    \
+        W
+
+        ADD_HOTKEY(G_Dialogue_Menu, KEY_G, KEY_LEFT_CONTROL);
+
+        ADD_HOTKEY(N_Toggle_Member, KEY_NUM_PLUS, KEY_LEFT_CONTROL);
+        ADD_HOTKEY(N_Toggle_Move, KEY_LEFT_ALT, KEY_LEFT_CONTROL);
+        ADD_HOTKEY(N_Move_Farther, KEY_UP_ARROW);
+        ADD_HOTKEY(N_Move_Nearer, KEY_DOWN_ARROW);
+        ADD_HOTKEY(N_Move_Rotate_Left, KEY_LEFT_ARROW);
+        ADD_HOTKEY(N_Move_Rotate_Right, KEY_RIGHT_ARROW);
+        ADD_HOTKEY(N_Has_Base, KEY_RIGHT_SHIFT, KEY_LEFT_CONTROL);
+        ADD_HOTKEY(N_Count_Base, KEY_RIGHT_SHIFT, KEY_LEFT_ALT);
+        ADD_HOTKEY(N_Has_Head, KEY_ENTER, KEY_LEFT_CONTROL);
+        ADD_HOTKEY(N_Count_Heads, KEY_ENTER, KEY_LEFT_ALT);
+
+        ADD_HOTKEY(M_Toggle_Clone, KEY_NUM_ENTER, KEY_LEFT_CONTROL);
+        ADD_HOTKEY(M_Toggle_Settler, KEY_NUM_0, KEY_LEFT_CONTROL);
+        ADD_HOTKEY(M_Toggle_Thrall, KEY_NUM_9, KEY_LEFT_CONTROL);
+        ADD_HOTKEY(M_Toggle_Immobile, KEY_NUM_PERIOD, KEY_LEFT_CONTROL);
+        ADD_HOTKEY(M_Toggle_Paralyzed, KEY_NUM_FORWARD_SLASH, KEY_LEFT_CONTROL);
+        ADD_HOTKEY(M_Toggle_Follower, KEY_NUM_ASTERISK, KEY_LEFT_CONTROL);
+
+        ADD_HOTKEY(F_Toggle_Sneak, KEY_NUM_ASTERISK, KEY_LEFT_ALT);
+        ADD_HOTKEY(F_Toggle_Saddler, KEY_NUM_FORWARD_SLASH, KEY_LEFT_ALT);
+
+        ADD_HOTKEY(MS_Toggle_Display, KEY_BACK_SLASH, KEY_LEFT_CONTROL);
+        ADD_HOTKEY(MS_Display_Previous, KEY_LEFT_BRACKET, KEY_LEFT_CONTROL);
+        ADD_HOTKEY(MS_Display_Next, KEY_RIGHT_BRACKET, KEY_LEFT_CONTROL);
+
+        ADD_HOTKEY(FS_Summon_All, KEY_FORWARD_SLASH, KEY_LEFT_CONTROL);
+        ADD_HOTKEY(FS_Summon_Mobile, KEY_FORWARD_SLASH);
+        ADD_HOTKEY(FS_Summon_Immobile, KEY_FORWARD_SLASH, KEY_LEFT_ALT);
+        ADD_HOTKEY(FS_Settle, KEY_0, KEY_LEFT_CONTROL);
+        ADD_HOTKEY(FS_Unsettle, KEY_0, KEY_LEFT_ALT);
+        ADD_HOTKEY(FS_Mobilize, KEY_EQUALS, KEY_LEFT_CONTROL);
+        ADD_HOTKEY(FS_Immobilize, KEY_EQUALS, KEY_LEFT_ALT);
+        ADD_HOTKEY(FS_Sneak, KEY_MINUS, KEY_LEFT_CONTROL);
+        ADD_HOTKEY(FS_Unsneak, KEY_MINUS, KEY_LEFT_ALT);
+        ADD_HOTKEY(FS_Saddle, KEY_H, KEY_LEFT_CONTROL);
+        ADD_HOTKEY(FS_Unsaddle, KEY_H, KEY_LEFT_ALT);
+        ADD_HOTKEY(FS_Resurrect, KEY_BACKSPACE, KEY_LEFT_CONTROL);
+
+        #undef ADD_HOTKEY
+    }
+
+    Int_t Keys_t::Hotkeys_t::Count()
+    {
+        Int_t count = static_cast<Int_t>(names.size());
+        NPCP_ASSERT(count > -1);
+        return count;
+    }
+
+    Int_t Keys_t::Hotkeys_t::Index_Of(String_t hotkey)
+    {
+        for (Int_t idx = 0, count = Count(); idx < count; idx += 1) {
+            if (String2::Is_Same_Caseless(names[idx], hotkey)) {
+                return idx;
+            }
+        }
+        return -1;
+    }
+
+    Bool_t Keys_t::Hotkeys_t::Has(String_t hotkey)
+    {
+        return Index_Of(hotkey) > -1;
+    }
+
+    String_t Keys_t::Hotkeys_t::Hotkey(Int_t idx)
+    {
+        NPCP_ASSERT(idx > -1 && idx < Count());
+        return names[idx];
+    }
+
+    Int_t Keys_t::Hotkeys_t::Default_Value(String_t key)
+    {
+        Int_t idx = Index_Of(key);
+        NPCP_ASSERT(idx > -1);
+        return default_values[idx];
+    }
+
+    Int_t Keys_t::Hotkeys_t::Current_Value(String_t key)
+    {
+        Int_t idx = Index_Of(key);
+        NPCP_ASSERT(idx > -1);
+        return value_variables[idx]->Int();
+    }
+
+    Int_t Keys_t::Hotkeys_t::Current_Value(Int_t idx)
+    {
+        NPCP_ASSERT(idx > -1 && idx < Count());
+        return value_variables[idx]->Int();
+    }
+
+    Keys_t::Mods_t Keys_t::Hotkeys_t::Default_Mods(String_t key)
+    {
+        Int_t idx = Index_Of(key);
+        NPCP_ASSERT(idx > -1);
+        return default_mods[idx];
+    }
+
+    Keys_t::Mods_t Keys_t::Hotkeys_t::Current_Mods(String_t key)
+    {
+        Int_t idx = Index_Of(key);
+        NPCP_ASSERT(idx > -1);
+        return Mods_t(mods_variables[idx]->Array());
+    }
+
+    Keys_t::Mods_t Keys_t::Hotkeys_t::Current_Mods(Int_t idx)
+    {
+        NPCP_ASSERT(idx > -1 && idx < Count());
+        return Mods_t(mods_variables[idx]->Array());
+    }
+
+    // Keys_t
+
+    String_t Keys_t::Class_Name() { DEFINE_STRING("doticu_npcp_keys"); }
+
+    Class_Info_t* Keys_t::Class_Info()
+    {
+        static Class_Info_t* class_info = Class_Info_t::Fetch(Class_Name());
+        NPCP_ASSERT(class_info);
+        return class_info;
+    }
+
+    Keys_t* Keys_t::Self()
     {
         return static_cast<Keys_t*>(Consts::Control_Quest());
     }
 
-    Int_t Default_Value(Keys_t* keys, String_t key)
+    Object_t* Keys_t::Object()
     {
-        return Key_System().Default_Value(key);
+        Object_t* object = Object_t::Fetch(Self(), Class_Name());
+        NPCP_ASSERT(object);
+        object->Decrement_Lock();
+        return object;
     }
 
-    Int_t Current_Value(Keys_t* keys, String_t key)
+    // Global
+    String_t Keys_t::G_Dialogue_Menu() { DEFINE_STRING("Global: Open Dialogue Menu"); }
+
+    // NPC
+    String_t Keys_t::N_Toggle_Member() { DEFINE_STRING("NPC: Toggle Member"); }
+    String_t Keys_t::N_Toggle_Move() { DEFINE_STRING("NPC: Toggle Move"); }
+    String_t Keys_t::N_Move_Farther() { DEFINE_STRING("NPC: Move Farther"); }
+    String_t Keys_t::N_Move_Nearer() { DEFINE_STRING("NPC: Move Nearer"); }
+    String_t Keys_t::N_Move_Rotate_Left() { DEFINE_STRING("NPC: Rotate Left"); }
+    String_t Keys_t::N_Move_Rotate_Right() { DEFINE_STRING("NPC: Rotate Right"); }
+    String_t Keys_t::N_Has_Base() { DEFINE_STRING("NPC: Has Base"); }
+    String_t Keys_t::N_Count_Base() { DEFINE_STRING("NPC: Count Base"); }
+    String_t Keys_t::N_Has_Head() { DEFINE_STRING("NPC: Has Head"); }
+    String_t Keys_t::N_Count_Heads() { DEFINE_STRING("NPC: Count Heads"); }
+
+    // Member
+    String_t Keys_t::M_Toggle_Clone() { DEFINE_STRING("Member: Toggle Clone"); }
+    String_t Keys_t::M_Toggle_Settler() { DEFINE_STRING("Member: Toggle Settler"); }
+    String_t Keys_t::M_Toggle_Thrall() { DEFINE_STRING("Member: Toggle Thrall"); }
+    String_t Keys_t::M_Toggle_Immobile() { DEFINE_STRING("Member: Toggle Immobile"); }
+    String_t Keys_t::M_Toggle_Paralyzed() { DEFINE_STRING("Member: Toggle Paralyzed"); }
+    String_t Keys_t::M_Toggle_Follower() { DEFINE_STRING("Member: Toggle Follower"); }
+
+    // Follower
+    String_t Keys_t::F_Toggle_Sneak() { DEFINE_STRING("Follower: Toggle Sneak"); }
+    String_t Keys_t::F_Toggle_Saddler() { DEFINE_STRING("Follower: Toggle Saddler"); }
+
+    // Members
+    String_t Keys_t::MS_Toggle_Display() { DEFINE_STRING("Members: Toggle Display"); }
+    String_t Keys_t::MS_Display_Previous() { DEFINE_STRING("Members: Display Previous"); }
+    String_t Keys_t::MS_Display_Next() { DEFINE_STRING("Members: Display Next"); }
+
+    // Followers
+    String_t Keys_t::FS_Summon_All() { DEFINE_STRING("Followers: Summon All"); }
+    String_t Keys_t::FS_Summon_Mobile() { DEFINE_STRING("Followers: Summon Mobile"); }
+    String_t Keys_t::FS_Summon_Immobile() { DEFINE_STRING("Followers: Summon Immobile"); }
+    String_t Keys_t::FS_Settle() { DEFINE_STRING("Followers: Settle"); }
+    String_t Keys_t::FS_Unsettle() { DEFINE_STRING("Followers: Unsettle"); }
+    String_t Keys_t::FS_Mobilize() { DEFINE_STRING("Followers: Mobilize"); }
+    String_t Keys_t::FS_Immobilize() { DEFINE_STRING("Followers: Immobilize"); }
+    String_t Keys_t::FS_Sneak() { DEFINE_STRING("Followers: Sneak"); }
+    String_t Keys_t::FS_Unsneak() { DEFINE_STRING("Followers: Unsneak"); }
+    String_t Keys_t::FS_Saddle() { DEFINE_STRING("Followers: Saddle"); }
+    String_t Keys_t::FS_Unsaddle() { DEFINE_STRING("Followers: Unsaddle"); }
+    String_t Keys_t::FS_Resurrect() { DEFINE_STRING("Followers: Resurrect"); }
+
+    Variable_t* Keys_t::Variable(String_t variable_name)
     {
-        return Key_System().Current_Value(key);
+        return Object()->Variable(variable_name);
     }
 
-    Vector_t<Int_t> Default_Mods(Keys_t* keys, String_t key)
+    Variable_t* Keys_t::Pressed_Hotkey_Variable() { DEFINE_VARIABLE("p_pressed_hotkey"); }
+
+    Int_t Keys_t::Default_Value(String_t hotkey)
     {
-        return Key_System().Default_Mods(key).Vector();
+        return Hotkeys_t::Self()->Default_Value(hotkey);
     }
 
-    Vector_t<Int_t> Current_Mods(Keys_t* keys, String_t key)
+    Int_t Keys_t::Current_Value(String_t hotkey)
     {
-        return Key_System().Current_Mods(key).Vector();
+        return Hotkeys_t::Self()->Current_Value(hotkey);
     }
 
-    String_t Default_Mods_To_String(Keys_t* keys, String_t key)
+    Vector_t<Int_t> Keys_t::Default_Mods(String_t hotkey)
     {
-        return Key_System().Default_Mods(key).String();
+        return Hotkeys_t::Self()->Default_Mods(hotkey).Vector();
     }
 
-    String_t Current_Mods_To_String(Keys_t* keys, String_t key)
+    Vector_t<Int_t> Keys_t::Current_Mods(String_t hotkey)
     {
-        return Key_System().Current_Mods(key).String();
+        return Hotkeys_t::Self()->Current_Mods(hotkey).Vector();
     }
 
-    String_t Conflicting_Hotkey(Keys_t* keys, String_t key, Int_t value, Int_t mod_1, Int_t mod_2, Int_t mod_3)
+    String_t Keys_t::Default_Mods_String(String_t hotkey)
     {
-        Key_System_t& key_system = Key_System();
-        Key_System_t::Mods mods = Key_System_t::Mods(mod_1, mod_2, mod_3);
+        return Hotkeys_t::Self()->Default_Mods(hotkey).String();
+    }
 
-        for (idx_t idx = 0, size = key_system.Size(); idx < size; idx += 1) {
-            String_t current_key = key_system.Hotkey(idx);
-            if (!String2::Is_Same_Caseless(current_key, key)) {
-                Int_t current_value = key_system.Current_Value(idx);
-                if (current_value > 0 && current_value == value) {
-                    Key_System_t::Mods current_mods = key_system.Current_Mods(idx);
+    String_t Keys_t::Current_Mods_String(String_t hotkey)
+    {
+        return Hotkeys_t::Self()->Current_Mods(hotkey).String();
+    }
+
+    String_t Keys_t::Conflicting_Hotkey(String_t hotkey, Int_t value, Int_t mod_1, Int_t mod_2, Int_t mod_3)
+    {
+        Hotkeys_t* hotkeys = Hotkeys_t::Self();
+        Mods_t mods = Mods_t(mod_1, mod_2, mod_3);
+        for (Int_t idx = 0, count = hotkeys->Count(); idx < count; idx += 1) {
+            String_t current_key = hotkeys->Hotkey(idx);
+            if (!String2::Is_Same_Caseless(current_key, hotkey)) {
+                Int_t current_value = hotkeys->Current_Value(idx);
+                if (current_value > KEY_INVALID && current_value == value) {
+                    Mods_t current_mods = hotkeys->Current_Mods(idx);
                     if (current_mods == mods) {
                         return current_key;
                     }
                 }
             }
         }
-
         return "";
     }
 
-    String_t Pressed_Hotkey(Keys_t* self, Int_t value,
-                            Int_t pressed_1, Int_t pressed_2, Int_t pressed_3, Int_t pressed_4,
-                            Int_t pressed_5, Int_t pressed_6, Int_t pressed_7, Int_t pressed_8)
+    String_t Keys_t::Pressed_Hotkey(Int_t value,
+                                    Int_t pressed_1, Int_t pressed_2, Int_t pressed_3, Int_t pressed_4,
+                                    Int_t pressed_5, Int_t pressed_6, Int_t pressed_7, Int_t pressed_8)
     {
-        Key_System_t& key_system = Key_System();
+        Hotkeys_t* hotkeys = Hotkeys_t::Self();
 
         std::vector<Int_t> pressed_keys;
         pressed_keys.reserve(8);
@@ -517,57 +536,68 @@ namespace doticu_npcp { namespace Keys {
         if (pressed_8 != value) {
             pressed_keys.push_back(pressed_8);
         }
-        while (pressed_keys.size() < 7) {
+        while (pressed_keys.size() < 8) {
             pressed_keys.push_back(KEY_INVALID);
         }
 
         String_t chosen_hotkey = "";
-        Int_t chosen_mods_size = -1;
-        for (idx_t idx = 0, size = key_system.Size(); idx < size; idx += 1) {
-            String_t current_hotkey = key_system.Hotkey(idx);
-            Int_t current_value = key_system.Current_Value(idx);
+        Int_t chosen_mods_count = -1;
+        for (Int_t idx = 0, count = hotkeys->Count(); idx < count; idx += 1) {
+            String_t current_hotkey = hotkeys->Hotkey(idx);
+            Int_t current_value = hotkeys->Current_Value(idx);
             if (current_value == value) {
-                Key_System_t::Mods current_mods = key_system.Current_Mods(idx);
+                Mods_t current_mods = hotkeys->Current_Mods(idx);
                 if (Vector::Has(pressed_keys, current_mods.mod_1) &&
                     Vector::Has(pressed_keys, current_mods.mod_2) &&
                     Vector::Has(pressed_keys, current_mods.mod_3)) {
-                    Int_t current_mods_size = current_mods.Size();
-                    if (current_mods_size > chosen_mods_size) {
+                    Int_t current_mods_count = current_mods.Count();
+                    if (current_mods_count > chosen_mods_count) {
                         chosen_hotkey = current_hotkey;
-                        chosen_mods_size = current_mods_size;
+                        chosen_mods_count = current_mods_count;
                     }
                 }
             }
         }
-        
+
         return chosen_hotkey;
     }
 
-}}
-
-namespace doticu_npcp { namespace Keys { namespace Exports {
-
-    bool Register(Registry_t* registry)
+    void Keys_t::Register_Me(Registry_t* registry)
     {
+        using namespace Utils;
+
+        auto Default_Value = Forward<Int_t, Keys_t, String_t, &Keys_t::Default_Value>();
+        auto Current_Value = Forward<Int_t, Keys_t, String_t, &Keys_t::Current_Value>();
+        auto Default_Mods = Forward<Vector_t<Int_t>, Keys_t, String_t, &Keys_t::Default_Mods>();
+        auto Current_Mods = Forward<Vector_t<Int_t>, Keys_t, String_t, &Keys_t::Current_Mods>();
+
+        auto Default_Mods_String = Forward<String_t, Keys_t, String_t, &Keys_t::Default_Mods_String>();
+        auto Current_Mods_String = Forward<String_t, Keys_t, String_t, &Keys_t::Current_Mods_String>();
+
+        auto Conflicting_Hotkey =
+            Forward<String_t, Keys_t, String_t, Int_t, Int_t, Int_t, Int_t, &Keys_t::Conflicting_Hotkey>();
+        auto Pressed_Hotkey =
+            Forward<String_t, Keys_t, Int_t, Int_t, Int_t, Int_t, Int_t, Int_t, Int_t, Int_t, Int_t, &Keys_t::Pressed_Hotkey>();
+
         #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
         M                                                               \
-            ADD_CLASS_METHOD("doticu_npcp_keys", Keys_t,                \
+            ADD_CLASS_METHOD(Class_Name(), Keys_t,                      \
                              STR_FUNC_, ARG_NUM_,                       \
-                             RETURN_, Keys::METHOD_, __VA_ARGS__);      \
+                             RETURN_, METHOD_, __VA_ARGS__);            \
         W
 
         ADD_METHOD("Default_Value", 1, Int_t, Default_Value, String_t);
         ADD_METHOD("Current_Value", 1, Int_t, Current_Value, String_t);
         ADD_METHOD("Default_Mods", 1, Vector_t<Int_t>, Default_Mods, String_t);
         ADD_METHOD("Current_Mods", 1, Vector_t<Int_t>, Current_Mods, String_t);
-        ADD_METHOD("Default_Mods_To_String", 1, String_t, Default_Mods_To_String, String_t);
-        ADD_METHOD("Current_Mods_To_String", 1, String_t, Current_Mods_To_String, String_t);
+
+        ADD_METHOD("Default_Mods_To_String", 1, String_t, Default_Mods_String, String_t);
+        ADD_METHOD("Current_Mods_To_String", 1, String_t, Current_Mods_String, String_t);
+
         ADD_METHOD("Conflicting_Hotkey", 5, String_t, Conflicting_Hotkey, String_t, Int_t, Int_t, Int_t, Int_t);
         ADD_METHOD("Pressed_Hotkey", 9, String_t, Pressed_Hotkey, Int_t, Int_t, Int_t, Int_t, Int_t, Int_t, Int_t, Int_t, Int_t);
 
         #undef ADD_METHOD
-
-        return true;
     }
 
-}}}
+}}

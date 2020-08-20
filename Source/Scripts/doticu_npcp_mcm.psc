@@ -115,6 +115,10 @@ bool                p_is_custom_page    = false
 string              p_str_def_page      =    ""
 string              p_str_curr_page     =    ""
 
+function Invoke_Render()
+    UI.Invoke("Journal Menu", "_root.ConfigPanelFader.configPanel" + ".invalidateOptionData")
+endFunction
+
 ; Friend Methods
 function f_Create()
     p_is_created = true

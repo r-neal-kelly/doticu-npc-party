@@ -52,12 +52,7 @@ namespace doticu_npcp { namespace Vars {
 
     Variable_t* Property(String_t property_name)
     {
-        Object_t* object = Object();
-        if (object) {
-            return object->Property(property_name);
-        } else {
-            return nullptr;
-        }
+        return Object()->Property(property_name);
     }
 
     Variable_t* NPCP_Major_Variable() { DEFINE_VARIABLE("p_version_major"); }
@@ -67,9 +62,170 @@ namespace doticu_npcp { namespace Vars {
     Int_t NPCP_Major() { return NPCP_Major_Variable()->Int(); }
     Int_t NPCP_Minor() { return NPCP_Minor_Variable()->Int(); }
     Int_t NPCP_Patch() { return NPCP_Patch_Variable()->Int(); }
+
     void NPCP_Major(Int_t npcp_major) { NPCP_Major_Variable()->Int(npcp_major); }
     void NPCP_Minor(Int_t npcp_minor) { NPCP_Minor_Variable()->Int(npcp_minor); }
     void NPCP_Patch(Int_t npcp_patch) { NPCP_Patch_Variable()->Int(npcp_patch); }
+
+    // Global Keys
+    Variable_t* G_Dialogue_Menu_Value_Property() { DEFINE_PROPERTY("key_g_dialogue_menu"); }
+    Variable_t* G_Dialogue_Menu_Mods_Property() { DEFINE_PROPERTY("key_g_dialogue_menu_mods"); }
+
+    Int_t G_Dialogue_Menu_Value() { return G_Dialogue_Menu_Value_Property()->Int(); }
+
+    void G_Dialogue_Menu_Value(Int_t value) { G_Dialogue_Menu_Value_Property()->Int(value); }
+
+    // NPC Keys
+    Variable_t* N_Toggle_Member_Value_Property() { DEFINE_PROPERTY("key_n_toggle_member"); }
+    Variable_t* N_Toggle_Move_Value_Property() { DEFINE_PROPERTY("key_n_toggle_move"); }
+    Variable_t* N_Move_Nearer_Value_Property() { DEFINE_PROPERTY("key_n_move_nearer"); }
+    Variable_t* N_Move_Farther_Value_Property() { DEFINE_PROPERTY("key_n_move_farther"); }
+    Variable_t* N_Move_Rotate_Left_Value_Property() { DEFINE_PROPERTY("key_n_move_rotate_left"); }
+    Variable_t* N_Move_Rotate_Right_Value_Property() { DEFINE_PROPERTY("key_n_move_rotate_right"); }
+    Variable_t* N_Has_Base_Value_Property() { DEFINE_PROPERTY("key_n_has_base"); }
+    Variable_t* N_Count_Base_Value_Property() { DEFINE_PROPERTY("key_n_count_base"); }
+    Variable_t* N_Has_Head_Value_Property() { DEFINE_PROPERTY("key_n_has_head"); }
+    Variable_t* N_Count_Heads_Value_Property() { DEFINE_PROPERTY("key_n_count_heads"); }
+    Variable_t* N_Toggle_Member_Mods_Property() { DEFINE_PROPERTY("key_n_toggle_member_mods"); }
+    Variable_t* N_Toggle_Move_Mods_Property() { DEFINE_PROPERTY("key_n_toggle_move_mods"); }
+    Variable_t* N_Move_Nearer_Mods_Property() { DEFINE_PROPERTY("key_n_move_nearer_mods"); }
+    Variable_t* N_Move_Farther_Mods_Property() { DEFINE_PROPERTY("key_n_move_farther_mods"); }
+    Variable_t* N_Move_Rotate_Left_Mods_Property() { DEFINE_PROPERTY("key_n_move_rotate_left_mods"); }
+    Variable_t* N_Move_Rotate_Right_Mods_Property() { DEFINE_PROPERTY("key_n_move_rotate_right_mods"); }
+    Variable_t* N_Has_Base_Mods_Property() { DEFINE_PROPERTY("key_n_has_base_mods"); }
+    Variable_t* N_Count_Base_Mods_Property() { DEFINE_PROPERTY("key_n_count_base_mods"); }
+    Variable_t* N_Has_Head_Mods_Property() { DEFINE_PROPERTY("key_n_has_head_mods"); }
+    Variable_t* N_Count_Heads_Mods_Property() { DEFINE_PROPERTY("key_n_count_heads_mods"); }
+
+    Int_t N_Toggle_Member_Value() { return N_Toggle_Member_Value_Property()->Int(); }
+    Int_t N_Toggle_Move_Value() { return N_Toggle_Move_Value_Property()->Int(); }
+    Int_t N_Move_Nearer_Value() { return N_Move_Nearer_Value_Property()->Int(); }
+    Int_t N_Move_Farther_Value() { return N_Move_Farther_Value_Property()->Int(); }
+    Int_t N_Move_Rotate_Left_Value() { return N_Move_Rotate_Left_Value_Property()->Int(); }
+    Int_t N_Move_Rotate_Right_Value() { return N_Move_Rotate_Right_Value_Property()->Int(); }
+    Int_t N_Has_Base_Value() { return N_Has_Base_Value_Property()->Int(); }
+    Int_t N_Count_Base_Value() { return N_Count_Base_Value_Property()->Int(); }
+    Int_t N_Has_Head_Value() { return N_Has_Head_Value_Property()->Int(); }
+    Int_t N_Count_Heads_Value() { return N_Count_Heads_Value_Property()->Int(); }
+
+    void N_Toggle_Member_Value(Int_t value) { N_Toggle_Member_Value_Property()->Int(value); }
+    void N_Toggle_Move_Value(Int_t value) { N_Toggle_Move_Value_Property()->Int(value); }
+    void N_Move_Nearer_Value(Int_t value) { N_Move_Nearer_Value_Property()->Int(value); }
+    void N_Move_Farther_Value(Int_t value) { N_Move_Farther_Value_Property()->Int(value); }
+    void N_Move_Rotate_Left_Value(Int_t value) { N_Move_Rotate_Left_Value_Property()->Int(value); }
+    void N_Move_Rotate_Right_Value(Int_t value) { N_Move_Rotate_Right_Value_Property()->Int(value); }
+    void N_Has_Base_Value(Int_t value) { N_Has_Base_Value_Property()->Int(value); }
+    void N_Count_Base_Value(Int_t value) { N_Count_Base_Value_Property()->Int(value); }
+    void N_Has_Head_Value(Int_t value) { N_Has_Head_Value_Property()->Int(value); }
+    void N_Count_Heads_Value(Int_t value) { N_Count_Heads_Value_Property()->Int(value); }
+
+    // Member Keys
+    Variable_t* M_Toggle_Clone_Value_Property() { DEFINE_PROPERTY("key_m_toggle_clone"); }
+    Variable_t* M_Toggle_Settler_Value_Property() { DEFINE_PROPERTY("key_m_toggle_settler"); }
+    Variable_t* M_Toggle_Thrall_Value_Property() { DEFINE_PROPERTY("key_m_toggle_thrall"); }
+    Variable_t* M_Toggle_Immobile_Value_Property() { DEFINE_PROPERTY("key_m_toggle_immobile"); }
+    Variable_t* M_Toggle_Paralyzed_Value_Property() { DEFINE_PROPERTY("key_m_toggle_paralyzed"); }
+    Variable_t* M_Toggle_Follower_Value_Property() { DEFINE_PROPERTY("key_m_toggle_follower"); }
+    Variable_t* M_Toggle_Clone_Mods_Property() { DEFINE_PROPERTY("key_m_toggle_clone_mods"); }
+    Variable_t* M_Toggle_Settler_Mods_Property() { DEFINE_PROPERTY("key_m_toggle_settler_mods"); }
+    Variable_t* M_Toggle_Thrall_Mods_Property() { DEFINE_PROPERTY("key_m_toggle_thrall_mods"); }
+    Variable_t* M_Toggle_Immobile_Mods_Property() { DEFINE_PROPERTY("key_m_toggle_immobile_mods"); }
+    Variable_t* M_Toggle_Paralyzed_Mods_Property() { DEFINE_PROPERTY("key_m_toggle_paralyzed_mods"); }
+    Variable_t* M_Toggle_Follower_Mods_Property() { DEFINE_PROPERTY("key_m_toggle_follower_mods"); }
+
+    Int_t M_Toggle_Clone_Value() { return M_Toggle_Clone_Value_Property()->Int(); }
+    Int_t M_Toggle_Settler_Value() { return M_Toggle_Settler_Value_Property()->Int(); }
+    Int_t M_Toggle_Thrall_Value() { return M_Toggle_Thrall_Value_Property()->Int(); }
+    Int_t M_Toggle_Immobile_Value() { return M_Toggle_Immobile_Value_Property()->Int(); }
+    Int_t M_Toggle_Paralyzed_Value() { return M_Toggle_Paralyzed_Value_Property()->Int(); }
+    Int_t M_Toggle_Follower_Value() { return M_Toggle_Follower_Value_Property()->Int(); }
+
+    void M_Toggle_Clone_Value(Int_t value) { M_Toggle_Clone_Value_Property()->Int(value); }
+    void M_Toggle_Settler_Value(Int_t value) { M_Toggle_Settler_Value_Property()->Int(value); }
+    void M_Toggle_Thrall_Value(Int_t value) { M_Toggle_Thrall_Value_Property()->Int(value); }
+    void M_Toggle_Immobile_Value(Int_t value) { M_Toggle_Immobile_Value_Property()->Int(value); }
+    void M_Toggle_Paralyzed_Value(Int_t value) { M_Toggle_Paralyzed_Value_Property()->Int(value); }
+    void M_Toggle_Follower_Value(Int_t value) { M_Toggle_Follower_Value_Property()->Int(value); }
+
+    // Follower Keys
+    Variable_t* F_Toggle_Sneak_Value_Property() { DEFINE_PROPERTY("key_f_toggle_sneak"); }
+    Variable_t* F_Toggle_Saddler_Value_Property() { DEFINE_PROPERTY("key_f_toggle_saddler"); }
+    Variable_t* F_Toggle_Sneak_Mods_Property() { DEFINE_PROPERTY("key_f_toggle_sneak_mods"); }
+    Variable_t* F_Toggle_Saddler_Mods_Property() { DEFINE_PROPERTY("key_f_toggle_saddler_mods"); }
+
+    Int_t F_Toggle_Sneak_Value() { return F_Toggle_Sneak_Value_Property()->Int(); }
+    Int_t F_Toggle_Saddler_Value() { return F_Toggle_Saddler_Value_Property()->Int(); }
+
+    void F_Toggle_Sneak_Value(Int_t value) { F_Toggle_Sneak_Value_Property()->Int(value); }
+    void F_Toggle_Saddler_Value(Int_t value) { F_Toggle_Saddler_Value_Property()->Int(value); }
+
+    // Members Keys
+    Variable_t* MS_Toggle_Display_Value_Property() { DEFINE_PROPERTY("key_ms_toggle_display"); }
+    Variable_t* MS_Display_Previous_Value_Property() { DEFINE_PROPERTY("key_ms_display_previous"); }
+    Variable_t* MS_Display_Next_Value_Property() { DEFINE_PROPERTY("key_ms_display_next"); }
+    Variable_t* MS_Toggle_Display_Mods_Property() { DEFINE_PROPERTY("key_ms_toggle_display_mods"); }
+    Variable_t* MS_Display_Previous_Mods_Property() { DEFINE_PROPERTY("key_ms_display_previous_mods"); }
+    Variable_t* MS_Display_Next_Mods_Property() { DEFINE_PROPERTY("key_ms_display_next_mods"); }
+
+    Int_t MS_Toggle_Display_Value() { return MS_Toggle_Display_Value_Property()->Int(); }
+    Int_t MS_Display_Previous_Value() { return MS_Display_Previous_Value_Property()->Int(); }
+    Int_t MS_Display_Next_Value() { return MS_Display_Next_Value_Property()->Int(); }
+
+    void MS_Toggle_Display_Value(Int_t value) { MS_Toggle_Display_Value_Property()->Int(value); }
+    void MS_Display_Previous_Value(Int_t value) { MS_Display_Previous_Value_Property()->Int(value); }
+    void MS_Display_Next_Value(Int_t value) { MS_Display_Next_Value_Property()->Int(value); }
+
+    // Followers Keys
+    Variable_t* FS_Summon_All_Value_Property() { DEFINE_PROPERTY("key_fs_summon_all"); }
+    Variable_t* FS_Summon_Mobile_Value_Property() { DEFINE_PROPERTY("key_fs_summon_mobile"); }
+    Variable_t* FS_Summon_Immobile_Value_Property() { DEFINE_PROPERTY("key_fs_summon_immobile"); }
+    Variable_t* FS_Settle_Value_Property() { DEFINE_PROPERTY("key_fs_settle"); }
+    Variable_t* FS_Unsettle_Value_Property() { DEFINE_PROPERTY("key_fs_unsettle"); }
+    Variable_t* FS_Mobilize_Value_Property() { DEFINE_PROPERTY("key_fs_mobilize"); }
+    Variable_t* FS_Immobilize_Value_Property() { DEFINE_PROPERTY("key_fs_immobilize"); }
+    Variable_t* FS_Sneak_Value_Property() { DEFINE_PROPERTY("key_fs_sneak"); }
+    Variable_t* FS_Unsneak_Value_Property() { DEFINE_PROPERTY("key_fs_unsneak"); }
+    Variable_t* FS_Saddle_Value_Property() { DEFINE_PROPERTY("key_fs_saddle"); }
+    Variable_t* FS_Unsaddle_Value_Property() { DEFINE_PROPERTY("key_fs_unsaddle"); }
+    Variable_t* FS_Resurrect_Value_Property() { DEFINE_PROPERTY("key_fs_resurrect"); }
+    Variable_t* FS_Summon_All_Mods_Property() { DEFINE_PROPERTY("key_fs_summon_all_mods"); }
+    Variable_t* FS_Summon_Mobile_Mods_Property() { DEFINE_PROPERTY("key_fs_summon_mobile_mods"); }
+    Variable_t* FS_Summon_Immobile_Mods_Property() { DEFINE_PROPERTY("key_fs_summon_immobile_mods"); }
+    Variable_t* FS_Settle_Mods_Property() { DEFINE_PROPERTY("key_fs_settle_mods"); }
+    Variable_t* FS_Unsettle_Mods_Property() { DEFINE_PROPERTY("key_fs_unsettle_mods"); }
+    Variable_t* FS_Mobilize_Mods_Property() { DEFINE_PROPERTY("key_fs_mobilize_mods"); }
+    Variable_t* FS_Immobilize_Mods_Property() { DEFINE_PROPERTY("key_fs_immobilize_mods"); }
+    Variable_t* FS_Sneak_Mods_Property() { DEFINE_PROPERTY("key_fs_sneak_mods"); }
+    Variable_t* FS_Unsneak_Mods_Property() { DEFINE_PROPERTY("key_fs_unsneak_mods"); }
+    Variable_t* FS_Saddle_Mods_Property() { DEFINE_PROPERTY("key_fs_saddle_mods"); }
+    Variable_t* FS_Unsaddle_Mods_Property() { DEFINE_PROPERTY("key_fs_unsaddle_mods"); }
+    Variable_t* FS_Resurrect_Mods_Property() { DEFINE_PROPERTY("key_fs_resurrect_mods"); }
+
+    Int_t FS_Summon_All_Value() { return FS_Summon_All_Value_Property()->Int(); }
+    Int_t FS_Summon_Mobile_Value() { return FS_Summon_Mobile_Value_Property()->Int(); }
+    Int_t FS_Summon_Immobile_Value() { return FS_Summon_Immobile_Value_Property()->Int(); }
+    Int_t FS_Settle_Value() { return FS_Settle_Value_Property()->Int(); }
+    Int_t FS_Unsettle_Value() { return FS_Unsettle_Value_Property()->Int(); }
+    Int_t FS_Mobilize_Value() { return FS_Mobilize_Value_Property()->Int(); }
+    Int_t FS_Immobilize_Value() { return FS_Immobilize_Value_Property()->Int(); }
+    Int_t FS_Sneak_Value() { return FS_Sneak_Value_Property()->Int(); }
+    Int_t FS_Unsneak_Value() { return FS_Unsneak_Value_Property()->Int(); }
+    Int_t FS_Saddle_Value() { return FS_Saddle_Value_Property()->Int(); }
+    Int_t FS_Unsaddle_Value() { return FS_Unsaddle_Value_Property()->Int(); }
+    Int_t FS_Resurrect_Value() { return FS_Resurrect_Value_Property()->Int(); }
+
+    void FS_Summon_All_Value(Int_t value) { FS_Summon_All_Value_Property()->Int(value); }
+    void FS_Summon_Mobile_Value(Int_t value) { FS_Summon_Mobile_Value_Property()->Int(value); }
+    void FS_Summon_Immobile_Value(Int_t value) { FS_Summon_Immobile_Value_Property()->Int(value); }
+    void FS_Settle_Value(Int_t value) { FS_Settle_Value_Property()->Int(value); }
+    void FS_Unsettle_Value(Int_t value) { FS_Unsettle_Value_Property()->Int(value); }
+    void FS_Mobilize_Value(Int_t value) { FS_Mobilize_Value_Property()->Int(value); }
+    void FS_Immobilize_Value(Int_t value) { FS_Immobilize_Value_Property()->Int(value); }
+    void FS_Sneak_Value(Int_t value) { FS_Sneak_Value_Property()->Int(value); }
+    void FS_Unsneak_Value(Int_t value) { FS_Unsneak_Value_Property()->Int(value); }
+    void FS_Saddle_Value(Int_t value) { FS_Saddle_Value_Property()->Int(value); }
+    void FS_Unsaddle_Value(Int_t value) { FS_Unsaddle_Value_Property()->Int(value); }
+    void FS_Resurrect_Value(Int_t value) { FS_Resurrect_Value_Property()->Int(value); }
 
     #define VAR(TYPE_, NAME_)                                   \
     M                                                           \

@@ -46,6 +46,10 @@ namespace doticu_npcp { namespace MCM {
     public:
         static String_t Class_Name();
         static Class_Info_t* Class_Info();
+
+        static constexpr const char* JOURNAL_MENU = "Journal Menu";
+        static constexpr const char* ROOT_MENU = "_root.ConfigPanelFader.configPanel";
+        static const char* Menu(const char* target);
     public:
         Object_t* Object();
         Variable_t* Variable(String_t variable_name);
@@ -80,6 +84,8 @@ namespace doticu_npcp { namespace MCM {
 
         void Reset(); // ClearOptionBuffers
 
+        void Title_Text(String_t title);
+
         Int_t Add_Option(Option_Type_e option_type, String_t label, String_t string, Float_t number, Int_t flags);
         Int_t Add_Empty_Option();
         Int_t Add_Header_Option(String_t label, Int_t flags = 0);
@@ -89,6 +95,10 @@ namespace doticu_npcp { namespace MCM {
         Int_t Add_Menu_Option(String_t label, String_t value, Int_t flags = 0);
         Int_t Add_Color_Option(String_t label, Int_t color, Int_t flags = 0);
         Int_t Add_Keymap_Option(String_t label, Int_t key_code, Int_t flags = 0);
+
+        void Option_Number_Value(Int_t index, Float_t value, Bool_t do_render);
+
+        void Keymap_Option_Value(Int_t option, Int_t key_code, Bool_t do_render = true);
     public:
         static void Register_Me(Registry_t* registry);
     };
