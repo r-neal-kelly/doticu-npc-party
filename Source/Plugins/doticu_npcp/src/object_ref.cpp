@@ -918,6 +918,33 @@ namespace doticu_npcp { namespace Object_Ref {
         Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(), "doticu_npcp_funcs", "Open_Container", &arguments, callback);
     }
 
+    void Activate(Reference_t* ref,
+                  Reference_t* activator,
+                  Bool_t do_default_processing_only,
+                  Papyrus::Virtual_Callback_i** callback)
+    {
+        using namespace Papyrus;
+
+        class Arguments : public Virtual_Arguments_t {
+        public:
+            Reference_t* activator;
+            Bool_t do_default_processing_only;
+            Arguments(Reference_t* activator, Bool_t do_default_processing_only) :
+                activator(activator), do_default_processing_only(do_default_processing_only)
+            {
+            }
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(2);
+                arguments->At(0)->Pack(activator);
+                arguments->At(1)->Bool(do_default_processing_only);
+                return true;
+            }
+        } arguments(activator, do_default_processing_only);
+
+        Virtual_Machine_t::Self()->Call_Method(ref, "ObjectReference", "Activate", &arguments, callback);
+    }
+
     Reference_t* Place_At_Me(Reference_t* me,
                              Form_t* to_place,
                              Int_t count,

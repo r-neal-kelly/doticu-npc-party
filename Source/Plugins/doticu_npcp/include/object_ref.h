@@ -69,6 +69,11 @@ namespace doticu_npcp { namespace Object_Ref {
     void Init_Container_If_Needed(Reference_t* ref);
     void Open_Container(Reference_t* ref, Papyrus::Virtual_Callback_i** callback = nullptr);
 
+    void Activate(Reference_t* ref,
+                  Reference_t* activator,
+                  Bool_t do_default_processing_only = false,
+                  Papyrus::Virtual_Callback_i** callback = nullptr);
+
     Reference_t* Place_At_Me(Reference_t* me,
                              Form_t* to_place,
                              Int_t count = 1,

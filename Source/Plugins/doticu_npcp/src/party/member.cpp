@@ -963,7 +963,7 @@ namespace doticu_npcp { namespace Party {
         Vitalize(Vars::Default_Vitality());
 
         Update_Outfit2(CODES::OUTFIT2::MEMBER);
-        Apply_Outfit2();
+        Enforce_Outfit2(actor);
 
         if (is_clone) {
             Actor2::Greet_Player(actor);
@@ -1194,7 +1194,7 @@ namespace doticu_npcp { namespace Party {
 
                 Actor_t* actor = Actor();
                 Enforce_Mobile(actor);
-                Apply_Outfit2();
+                Enforce_Outfit2(actor);
 
                 Actor2::Evaluate_Package(actor);
 
@@ -1223,7 +1223,7 @@ namespace doticu_npcp { namespace Party {
 
                 Actor_t* actor = Actor();
                 Enforce_Immobile(actor);
-                Apply_Outfit2();
+                Enforce_Outfit2(actor);
 
                 Actor2::Evaluate_Package(actor);
 
@@ -1253,7 +1253,7 @@ namespace doticu_npcp { namespace Party {
                 Actor_t* actor = Actor();
                 Object_Ref::Move_To_Orbit(Settler_Marker(), actor, 0.0f, 180.0f);
                 Enforce_Settler(actor);
-                Apply_Outfit2();
+                Enforce_Outfit2(actor);
 
                 Actor2::Evaluate_Package(actor);
 
@@ -1281,7 +1281,7 @@ namespace doticu_npcp { namespace Party {
                 Actor_t* actor = Actor();
                 Object_Ref::Move_To_Orbit(Settler_Marker(), actor, 0.0f, 180.0f);
                 Enforce_Settler(actor);
-                Apply_Outfit2();
+                Enforce_Outfit2(actor);
 
                 Actor2::Evaluate_Package(actor);
 
@@ -1303,7 +1303,7 @@ namespace doticu_npcp { namespace Party {
                 Actor_t* actor = Actor();
                 Object_Ref::Move_To_Orbit(Settler_Marker(), Consts::Storage_Marker(), 0.0f, 0.0f);
                 Enforce_Non_Settler(actor);
-                Apply_Outfit2();
+                Enforce_Outfit2(actor);
 
                 Actor2::Evaluate_Package(actor);
 
@@ -1333,7 +1333,7 @@ namespace doticu_npcp { namespace Party {
 
                     Actor_t* actor = Actor();
                     Enforce_Thrall(actor);
-                    Apply_Outfit2();
+                    Enforce_Outfit2(actor);
 
                     Actor2::Evaluate_Package(actor);
 
@@ -1367,7 +1367,7 @@ namespace doticu_npcp { namespace Party {
 
                     Actor_t* actor = Actor();
                     Enforce_Non_Thrall(actor);
-                    Apply_Outfit2();
+                    Enforce_Outfit2(actor);
 
                     Actor2::Evaluate_Package(actor);
 
@@ -2212,7 +2212,7 @@ namespace doticu_npcp { namespace Party {
 
         Actor2::Set_Outfit_Basic(actor, old_outfit, false, false);
 
-        Apply_Outfit2();
+        Enforce_Outfit2(actor);
     }
 
     Int_t Member_t::Change_Outfit2(Int_t outfit2_code)
@@ -2399,8 +2399,9 @@ namespace doticu_npcp { namespace Party {
             }
             virtual void operator()(Variable_t* result)
             {
-                member->Apply_Outfit2();
-                Actor2::Evaluate_Package(member->Actor());
+                Actor_t* actor = member->Actor();
+                member->Enforce_Outfit2(actor);
+                Actor2::Evaluate_Package(actor);
             }
         };
         Virtual_Callback_i* callback = new Callback(this);
@@ -2424,9 +2425,10 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
-    void Member_t::Apply_Outfit2()
+    void Member_t::Enforce_Outfit2(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(actor);
 
         Outfit2_t* current_outfit2;
         Int_t current_outfit2_code;
@@ -2470,10 +2472,9 @@ namespace doticu_npcp { namespace Party {
         if (current_outfit2_code == CODES::OUTFIT2::VANILLA && current_outfit2->Hasnt_Outfit1_Cache()) {
             current_outfit2->Cache_Static_Outfit1(Vanilla_Outfit());
         } else if (current_outfit2_code == CODES::OUTFIT2::DEFAULT && current_outfit2->Hasnt_Outfit1_Cache()) {
-            current_outfit2->Cache_Static_Outfit1(NPCS_t::Self()->Default_Outfit(Actor()));
+            current_outfit2->Cache_Static_Outfit1(NPCS_t::Self()->Default_Outfit(actor));
         }
 
-        Actor_t* actor = Actor();
         if (Actor2::Is_Alive(actor)) {
             Outfit_t* default_outfit1 = NPCS_t::Self()->Default_Outfit(actor);
             if (Default_Outfit() != default_outfit1) {
@@ -2578,7 +2579,7 @@ namespace doticu_npcp { namespace Party {
 
             Enforce_Vitality(actor);
 
-            Apply_Outfit2(); // maybe rename and pass actor
+            Enforce_Outfit2(actor);
 
             Enforce_Name(actor, Name_Variable()->String());
 
@@ -2673,7 +2674,8 @@ namespace doticu_npcp { namespace Party {
                 if (Isnt_Follower()) {
                     Int_t result = Followers_t::Self()->Add_Follower(this);
                     if (result == CODES::SUCCESS) {
-                        Apply_Outfit2(); // may need to use callback
+                        Actor_t* actor = Actor();
+                        Enforce_Outfit2(actor); // may need to use callback
                         return CODES::SUCCESS;
                     } else {
                         return result;
@@ -2695,7 +2697,8 @@ namespace doticu_npcp { namespace Party {
             if (Is_Follower()) {
                 Int_t result = Followers_t::Self()->Remove_Follower(this);
                 if (result == CODES::SUCCESS) {
-                    Apply_Outfit2(); // may need to use callback
+                    Actor_t* actor = Actor();
+                    Enforce_Outfit2(actor); // may need to use callback
                     return CODES::SUCCESS;
                 } else {
                     return result;

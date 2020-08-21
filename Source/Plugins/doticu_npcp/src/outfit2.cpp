@@ -247,9 +247,25 @@ namespace doticu_npcp { namespace Papyrus {
             if (outfit1_to_apply) {
                 Actor2::Set_Outfit_Basic(actor, outfit1_to_apply, false, false);
             }
-            Actor2::Set_Outfit2(actor, Outfit1_Cache(), this, pack);
-            Actor2::Join_Player_Team(actor);
-            Actor2::Update_Equipment(actor);
+
+            class Callback : public Virtual_Callback_t {
+            public:
+                Outfit2_t* outfit2;
+                Actor_t* actor;
+                Reference_t* pack;
+                Callback(Outfit2_t* outfit2, Actor_t* actor, Reference_t* pack) :
+                    outfit2(outfit2), actor(actor), pack(pack)
+                {
+                }
+                void operator()(Variable_t* result)
+                {
+                    Actor2::Set_Outfit2(actor, outfit2->Outfit1_Cache(), outfit2, pack);
+                    Actor2::Join_Player_Team(actor);
+                    Actor2::Update_Equipment(actor);
+                }
+            };
+            Virtual_Callback_i* callback = new Callback(this, actor, pack);
+            Object_Ref::Remove_Item_And_Callback(this, Consts::Blank_Weapon(), 0, false, nullptr, &callback);
         }
     }
 

@@ -141,5 +141,5 @@ endFunction
 
 function Open_Container(ObjectReference ref_container)
     ref_container.Activate(doticu_npcp_consts.Player_Actor())
-    Wait(0.1)
+    Wait_Out_Of_Menu(0.1)
 endFunction

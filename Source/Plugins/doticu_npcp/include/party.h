@@ -737,7 +737,7 @@ namespace doticu_npcp { namespace Party {
         Int_t Change_Current_Outfit2();
         void Update_Outfit2(Int_t outfit2_code, Bool_t do_cache_outfit1 = false);
         void Open_Outfit2();
-        void Apply_Outfit2();
+        void Enforce_Outfit2(Actor_t* actor);
 
         Int_t Rate(Int_t rating);
 
