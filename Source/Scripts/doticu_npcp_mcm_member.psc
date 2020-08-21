@@ -109,6 +109,7 @@ int                 p_option_skill_speechcraft  =    -1
 int                 p_option_race               =    -1
 
 ; Native Methods
+function f_Build_Page() native
 function p_Build_Commands() native
 function p_Update_Commands() native
 function p_Build_Statistics() native
@@ -163,51 +164,6 @@ function f_View_Mannequins_Member(doticu_npcp_member ref_member)
     p_code_view = doticu_npcp_codes.VIEW_MANNEQUINS_MEMBER()
 
     p_ref_member = ref_member
-endFunction
-
-function f_Build_Page()
-    if !p_ref_member
-        return
-    endIf
-    
-    string str_name = p_ref_member.Name()
-
-    MCM.SetCursorPosition(0)
-    MCM.SetCursorFillMode(MCM.LEFT_TO_RIGHT)
-
-    if p_code_view == doticu_npcp_codes.VIEW_MEMBERS_MEMBER()
-        MCM.SetTitleText("Member: " + str_name)
-    elseIf p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
-        MCM.SetTitleText("Follower: " + str_name)
-    elseIf p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS_MEMBER()
-        MCM.SetTitleText("Filtered Member: " + str_name)
-    elseIf p_code_view == doticu_npcp_codes.VIEW_MANNEQUINS_MEMBER()
-        MCM.SetTitleText("Mannequin: " + str_name)
-    endIf
-
-    p_option_rename = MCM.AddInputOption(str_name + " ", " Rename ")
-    p_option_back = MCM.AddTextOption("                            Go Back", "")
-
-    if p_code_view == doticu_npcp_codes.VIEW_MEMBERS_MEMBER() || p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS_MEMBER()
-        if MEMBERS.Count_Filled() > 1
-            p_option_prev = MCM.AddTextOption("                      Previous Member", "")
-            p_option_next = MCM.AddTextOption("                        Next Member", "")
-        else
-            p_option_prev = MCM.AddTextOption("                      Previous Member", "", FLAG_DISABLE)
-            p_option_next = MCM.AddTextOption("                        Next Member", "", FLAG_DISABLE)
-        endIf
-    elseIf p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
-        if FOLLOWERS.Count_Filled() > 1
-            p_option_prev = MCM.AddTextOption("                      Previous Follower", "")
-            p_option_next = MCM.AddTextOption("                        Next Follower", "")
-        else
-            p_option_prev = MCM.AddTextOption("                      Previous Follower", "", FLAG_DISABLE)
-            p_option_next = MCM.AddTextOption("                        Next Follower", "", FLAG_DISABLE)
-        endIf
-    endIf
-
-    p_Build_Commands()
-    p_Build_Statistics()
 endFunction
 
 function f_On_Option_Select(int id_option)

@@ -176,11 +176,6 @@ namespace doticu_npcp { namespace Papyrus {
         }
     }
 
-    Keys_t::Mods_t::Mods_t(VMArray<Int_t> mods)
-    {
-        Mods_t(reinterpret_cast<Array_t*>(mods.arr));
-    }
-
     Int_t Keys_t::Mods_t::Count()
     {
         Int_t count = 0;
@@ -217,12 +212,12 @@ namespace doticu_npcp { namespace Papyrus {
     {
         std::string mods("");
 
-        if (mod_1 > 0) {
+        if (mod_1 > KEY_INVALID) {
             mods.append(Code_To_String(mod_1));
-            if (mod_2 > 0) {
+            if (mod_2 > KEY_INVALID) {
                 mods.append(" + ");
                 mods.append(Code_To_String(mod_2));
-                if (mod_3 > 0) {
+                if (mod_3 > KEY_INVALID) {
                     mods.append(" + ");
                     mods.append(Code_To_String(mod_3));
                 }
@@ -253,18 +248,22 @@ namespace doticu_npcp { namespace Papyrus {
     Keys_t::Hotkeys_t::Hotkeys_t()
     {
         names.reserve(64);
-        value_variables.reserve(64);
-        mods_variables.reserve(64);
+        current_values.reserve(64);
+        current_mods.reserve(64);
         default_values.reserve(64);
         default_mods.reserve(64);
 
-        #define ADD_HOTKEY(HOTKEY_, DEFAULT_VALUE_, ...)                    \
-        M                                                                   \
-            names.push_back(HOTKEY_());                                     \
-            value_variables.push_back(Vars::HOTKEY_##_Value_Property());    \
-            mods_variables.push_back(Vars::HOTKEY_##_Mods_Property());      \
-            default_values.push_back(DEFAULT_VALUE_);                       \
-            default_mods.push_back(Mods_t(__VA_ARGS__));                    \
+        #define ADD_HOTKEY(HOTKEY_, DEFAULT_VALUE_, ...)                        \
+        M                                                                       \
+            names.push_back(HOTKEY_());                                         \
+            current_values.push_back(                                           \
+                []()->Variable_t* { return Vars::HOTKEY_##_Value_Property(); }  \
+            );                                                                  \
+            current_mods.push_back(                                             \
+                []()->Variable_t* { return Vars::HOTKEY_##_Mods_Property(); }   \
+            );                                                                  \
+            default_values.push_back(DEFAULT_VALUE_);                           \
+            default_mods.push_back(Mods_t(__VA_ARGS__));                        \
         W
 
         ADD_HOTKEY(G_Dialogue_Menu, KEY_G, KEY_LEFT_CONTROL);
@@ -349,13 +348,13 @@ namespace doticu_npcp { namespace Papyrus {
     {
         Int_t idx = Index_Of(key);
         NPCP_ASSERT(idx > -1);
-        return value_variables[idx]->Int();
+        return current_values[idx]()->Int();
     }
 
     Int_t Keys_t::Hotkeys_t::Current_Value(Int_t idx)
     {
         NPCP_ASSERT(idx > -1 && idx < Count());
-        return value_variables[idx]->Int();
+        return current_values[idx]()->Int();
     }
 
     Keys_t::Mods_t Keys_t::Hotkeys_t::Default_Mods(String_t key)
@@ -369,13 +368,13 @@ namespace doticu_npcp { namespace Papyrus {
     {
         Int_t idx = Index_Of(key);
         NPCP_ASSERT(idx > -1);
-        return Mods_t(mods_variables[idx]->Array());
+        return Mods_t(current_mods[idx]()->Array());
     }
 
     Keys_t::Mods_t Keys_t::Hotkeys_t::Current_Mods(Int_t idx)
     {
         NPCP_ASSERT(idx > -1 && idx < Count());
-        return Mods_t(mods_variables[idx]->Array());
+        return Mods_t(current_mods[idx]()->Array());
     }
 
     // Keys_t
@@ -560,6 +559,11 @@ namespace doticu_npcp { namespace Papyrus {
         }
 
         return chosen_hotkey;
+    }
+
+    void Keys_t::Register_Keys()
+    {
+        Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "Update_Keys");
     }
 
     void Keys_t::Register_Me(Registry_t* registry)

@@ -330,6 +330,18 @@ namespace doticu_npcp { namespace Papyrus {
         Type_t Array_Type();
         Variable_t* Variables();
         Variable_t* Point(size_t idx);
+        template <typename Type>
+        Vector_t<Type> Vector();
+        template <typename Type>
+        Vector_t<Type*> Vector(Type_ID_t type_id);
+        template <typename Type>
+        Int_t Find(Type element);
+        template <typename Type>
+        Int_t Find(Type_ID_t type_id, Type* element);
+        template <typename Type>
+        Bool_t Has(Type element);
+        template <typename Type>
+        Bool_t Has(Type_ID_t type_id, Type* element);
 
         // see VMArray, it's a wrapper of this object
         // so you can add similar templated funcs.
@@ -389,6 +401,8 @@ namespace doticu_npcp { namespace Papyrus {
         Object_t* Object();
         Array_t* Array();
         Array_t* Object_Array();
+        template <typename Type>
+        Type* Resolve(Type_ID_t type_id);
         Form_t* Form();
         Actor_t* Actor();
         Alias_Base_t* Alias();
@@ -396,6 +410,8 @@ namespace doticu_npcp { namespace Papyrus {
         Misc_t* Misc();
         Outfit_t* Outfit();
         Reference_t* Reference();
+        template <typename Type>
+        Vector_t<Type> Vector();
 
         void None();
         void Bool(Bool_t value);
@@ -494,6 +510,8 @@ namespace doticu_npcp { namespace Papyrus {
         static Object_t* Fetch(Type* instance, String_t class_name);
         template <typename Type>
         static Object_t* Create(Type* instance, String_t class_name);
+        template <typename Type>
+        static Object_t* Create(Type* instance, Class_Info_t* class_info);
 
         UInt64 unk_00; // 00
         Class_Info_t* info; // 08

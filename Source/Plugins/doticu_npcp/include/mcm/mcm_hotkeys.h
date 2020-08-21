@@ -192,8 +192,17 @@ namespace doticu_npcp { namespace MCM {
         Int_t FS_Resurrect_Mods_Option();
 
         void Build_Page();
+        void On_Option_Highlight(Int_t option);
 
-        void Hotkey_Value(Int_t option, String_t hotkey, Int_t value, Bool_t do_register_keys = true); // p_Set_Hotkey_Value
+        // (string hotkey, int value, int mod_1, int mod_2, int mod_3)
+        void Can_Change_Hotkey(String_t hotkey, Int_t value, Keys_t::Mods_t mods,
+                               void (*callback)(Bool_t can_change, Int_t value, Keys_t::Mods_t mods));
+        void Change_Hotkey_Value(Int_t option, Int_t value, Bool_t do_render = true);
+        void Change_Hotkey_Mods(Int_t option, Int_t mod_1, Int_t mod_2, Int_t mod_3, Bool_t do_render = true);
+        void Reset_Hotkeys();
+        void Unset_Hotkeys();
+        String_t Value_Option_To_Hotkey(Int_t value_option);
+        String_t Mods_Option_To_Hotkey(Int_t mods_option);
 
     public:
         static void Register_Me(Registry_t* registry);

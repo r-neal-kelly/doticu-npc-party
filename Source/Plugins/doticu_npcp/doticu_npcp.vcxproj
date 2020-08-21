@@ -152,6 +152,7 @@
     <ClCompile Include="src\mcm\mcm_hotkeys.cpp" />
     <ClCompile Include="src\mcm\mcm_main.cpp" />
     <ClCompile Include="src\mcm\mcm_member.cpp" />
+    <ClCompile Include="src\mcm\mcm_members.cpp" />
     <ClCompile Include="src\outfit.cpp" />
     <ClCompile Include="src\actor2.cpp" />
     <ClCompile Include="src\object_ref.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="include\mcm\mcm_hotkeys.h" />
     <ClInclude Include="include\mcm\mcm_main.h" />
     <ClInclude Include="include\mcm\mcm_member.h" />
+    <ClInclude Include="include\mcm\mcm_members.h" />
     <ClInclude Include="include\offsets.h" />
     <ClInclude Include="include\outfit2.h" />
     <ClInclude Include="include\package.h" />

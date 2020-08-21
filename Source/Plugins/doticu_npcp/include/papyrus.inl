@@ -391,16 +391,84 @@ namespace doticu_npcp { namespace Papyrus {
 
     inline Variable_t* Array_t::Variables()
     {
+        NPCP_ASSERT(count > 0);
         return reinterpret_cast<Variable_t*>(this + 1);
     }
 
     inline Variable_t* Array_t::Point(size_t idx)
     {
-        if (idx < count) {
-            return Variables() + idx;
-        } else {
-            return nullptr;
+        NPCP_ASSERT(idx < count);
+        return Variables() + idx;
+    }
+
+    template <typename Type>
+    inline Vector_t<Type> Array_t::Vector()
+    {
+        Vector_t<Type> vector;
+        for (size_t idx = 0; idx < count; idx += 1) {
+            Variable_t* variable = Point(idx);
+            if (variable && variable->data.ptr) {
+                vector.push_back(*reinterpret_cast<Type*>(&variable->data.ptr));
+            } else {
+                vector.push_back(0);
+            }
         }
+        return vector;
+    }
+
+    template <typename Type>
+    Vector_t<Type*> Array_t::Vector(Type_ID_t type_id)
+    {
+        Vector_t<Type*> vector;
+        for (size_t idx = 0; idx < count; idx += 1) {
+            Variable_t* variable = Point(idx);
+            if (variable && variable->data.obj) {
+                vector.push_back(variable->Resolve<Type>(type_id));
+            } else {
+                vector.push_back(nullptr);
+            }
+        }
+        return vector;
+    }
+
+    template <typename Type>
+    Int_t Array_t::Find(Type element)
+    {
+        for (size_t idx = 0; idx < count; idx += 1) {
+            Variable_t* variable = Point(idx);
+            if (variable) {
+                if (element == *reinterpret_cast<Type*>(&variable->data.ptr)) {
+                    return idx;
+                }
+            }
+        }
+        return -1;
+    }
+
+    template <typename Type>
+    Int_t Array_t::Find(Type_ID_t type_id, Type* element)
+    {
+        for (size_t idx = 0; idx < count; idx += 1) {
+            Variable_t* variable = Point(idx);
+            if (variable) {
+                if (element == variable->Resolve<Type>(type_id)) {
+                    return idx;
+                }
+            }
+        }
+        return -1;
+    }
+
+    template <typename Type>
+    Bool_t Array_t::Has(Type element)
+    {
+        return Find(element) > -1;
+    }
+
+    template <typename Type>
+    Bool_t Array_t::Has(Type_ID_t type_id, Type* element)
+    {
+        return Find(type_id, element) > -1;
     }
 
     // Variable_t
@@ -545,6 +613,12 @@ namespace doticu_npcp { namespace Papyrus {
         }
     }
 
+    template <typename Type>
+    Type* Variable_t::Resolve(Type_ID_t type_id)
+    {
+        return static_cast<Type*>(Policy()->Resolve(type_id, data.obj->Handle()));
+    }
+
     inline Form_t* Variable_t::Form()
     {
         if (type.Is_Object()) {
@@ -636,6 +710,16 @@ namespace doticu_npcp { namespace Papyrus {
         }
     }
 
+    template <typename Type>
+    inline Vector_t<Type> Variable_t::Vector()
+    {
+        if (type.Is_Array() && data.arr) {
+            return data.arr->Vector<Type>();
+        } else {
+            return Vector_t<Type>();
+        }
+    }
+
     inline void Variable_t::None()
     {
         Destroy();
@@ -705,19 +789,15 @@ namespace doticu_npcp { namespace Papyrus {
         NPCP_ASSERT(class_info);
 
         if (value) {
-            Object_t* object = nullptr;
-            Virtual_Machine_t::Self()->Find_Bound_Object(value, class_info->name, &object);
+            Object_t* object = Object_t::Fetch(value, class_info->name);
             if (!object) {
-                Virtual_Machine_t* vm = Virtual_Machine_t::Self();
-
-                vm->Create_Object2(&class_info->name, &object);
+                object = Object_t::Create(value, class_info);
                 NPCP_ASSERT(object);
-
-                class_info->Hold();
-                vm->Object_Policy()->Bind_Object(object, vm->Type_ID(class_info->name));
-                class_info->Free();
+                // might want to check that lock is above zero
             }
-            object->Decrement_Lock();
+            if (object->lock > 0) {
+                object->Decrement_Lock();
+            }
 
             Object(object);
         } else {
@@ -727,8 +807,6 @@ namespace doticu_npcp { namespace Papyrus {
             temp.data.obj = nullptr;
             Copy(&temp); // this prob. does stuff we don't
         }
-
-        class_info->Free();
     }
 
     template <typename Type>
@@ -819,7 +897,10 @@ namespace doticu_npcp { namespace Papyrus {
     template <>
     inline void Variable_t::Pack(Vector_t<Bool_t>& values)
     {
-        Type_t type(Type_t::BOOL);
+        // ours causes a crash sometimes. not sure why yet
+        PackValue(reinterpret_cast<VMValue*>(this), &values, (*g_skyrimVM)->GetClassRegistry());
+
+        /*Type_t type(Type_t::BOOL);
         Array_t* arr = Array_t::Create(&type, values.size());
         NPCP_ASSERT(arr);
         arr->ref_count -= 1;
@@ -830,13 +911,16 @@ namespace doticu_npcp { namespace Papyrus {
             arr->Point(idx)->Pack(&value);
         }
 
-        Array(arr);
+        Array(arr);*/
     }
 
     template <>
     inline void Variable_t::Pack(Vector_t<Int_t>& values)
     {
-        Type_t type(Type_t::INT);
+        // ours causes a crash sometimes. not sure why yet
+        PackValue(reinterpret_cast<VMValue*>(this), &values, (*g_skyrimVM)->GetClassRegistry());
+
+        /*Type_t type(Type_t::INT);
         Array_t* arr = Array_t::Create(&type, values.size());
         NPCP_ASSERT(arr);
         arr->ref_count -= 1;
@@ -845,13 +929,16 @@ namespace doticu_npcp { namespace Papyrus {
             arr->Point(idx)->Pack(&values[idx]);
         }
 
-        Array(arr);
+        Array(arr);*/
     }
 
     template <>
     inline void Variable_t::Pack(Vector_t<Float_t>& values)
     {
-        Type_t type(Type_t::FLOAT);
+        // ours causes a crash sometimes. not sure why yet
+        PackValue(reinterpret_cast<VMValue*>(this), &values, (*g_skyrimVM)->GetClassRegistry());
+
+        /*Type_t type(Type_t::FLOAT);
         Array_t* arr = Array_t::Create(&type, values.size());
         NPCP_ASSERT(arr);
         arr->ref_count -= 1;
@@ -860,13 +947,16 @@ namespace doticu_npcp { namespace Papyrus {
             arr->Point(idx)->Pack(&values[idx]);
         }
 
-        Array(arr);
+        Array(arr);*/
     }
 
     template <>
     inline void Variable_t::Pack(Vector_t<String_t>& values)
     {
-        Type_t type(Type_t::STRING);
+        // ours causes a crash sometimes. not sure why yet
+        PackValue(reinterpret_cast<VMValue*>(this), &values, (*g_skyrimVM)->GetClassRegistry());
+
+        /*Type_t type(Type_t::STRING);
         Array_t* arr = Array_t::Create(&type, values.size());
         NPCP_ASSERT(arr);
         arr->ref_count -= 1;
@@ -875,7 +965,7 @@ namespace doticu_npcp { namespace Papyrus {
             arr->Point(idx)->Pack(&values[idx]);
         }
 
-        Array(arr);
+        Array(arr);*/
     }
 
     template <>
@@ -1100,13 +1190,23 @@ namespace doticu_npcp { namespace Papyrus {
     template <typename Type>
     inline Object_t* Object_t::Create(Type* instance, String_t class_name)
     {
+        Class_Info_t* class_info = Class_Info_t::Fetch(class_name);
+        if (class_info) {
+            class_info->Free();
+            return Create(instance, class_info);
+        } else {
+            return nullptr;
+        }
+    }
+
+    template <typename Type>
+    static Object_t* Object_t::Create(Type* instance, Class_Info_t* class_info)
+    {
+        NPCP_ASSERT(class_info);
+
         Handle_t handle(instance);
         if (handle.Is_Valid()) {
             Virtual_Machine_t* virtual_machine = Virtual_Machine_t::Self();
-
-            Class_Info_t* class_info = Class_Info_t::Fetch(class_name);
-            class_info->Free();
-
             Object_t* object = nullptr;
             virtual_machine->Create_Object2(&class_info->name, &object);
             if (object) {

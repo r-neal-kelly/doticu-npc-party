@@ -138,6 +138,9 @@
     <ClCompile Include="src\mcm\mcm_hotkeys.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\mcm\mcm_members.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\object_ref.h">
@@ -240,6 +243,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\mcm\mcm_hotkeys.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mcm\mcm_members.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

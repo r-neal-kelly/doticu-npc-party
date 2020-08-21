@@ -4,7 +4,12 @@
 
 #include "skse64/PapyrusUI.h"
 
+#include "consts.h"
 #include "utils.h"
+
+#include "mcm/mcm_main.h"
+
+#include "papyrus.inl"
 
 namespace doticu_npcp { namespace Papyrus { namespace UI {
 
@@ -41,13 +46,13 @@ namespace doticu_npcp { namespace Papyrus { namespace UI {
     template <typename Type>
     Type Get_Value(String_t menu, String_t target)
     {
-        if (menu && target) {
+        if (menu.data && target.data) {
             MenuManager* menu_manager = MenuManager::GetSingleton();
             if (menu_manager) {
                 GFxMovieView* view = menu_manager->GetMovieView(&menu);
                 if (view) {
                     GFxValue value;
-                    if (view->GetVariable(&value, target)) {
+                    if (view->GetVariable(&value, target.data)) {
                         return Get_Value<Type>(&value);
                     } else {
                         return 0;
@@ -90,20 +95,24 @@ namespace doticu_npcp { namespace Papyrus { namespace UI {
     template <>
     void Set_Value<String_t>(GFxValue* gfx_value, String_t value)
     {
-        gfx_value->SetString(value);
+        if (value.data) {
+            gfx_value->SetString(value.data);
+        } else {
+            gfx_value->SetString("");
+        }
     }
 
     template <typename Type>
     void Set_Value(String_t menu, String_t target, Type value)
     {
-        if (menu && target) {
+        if (menu.data && target.data) {
             MenuManager* menu_manager = MenuManager::GetSingleton();
             if (menu_manager) {
                 GFxMovieView* view = menu_manager->GetMovieView(&menu);
                 if (view) {
                     GFxValue gfx_value;
                     Set_Value<Type>(&gfx_value, value);
-                    view->SetVariable(target, &gfx_value, 1);
+                    view->SetVariable(target.data, &gfx_value, 1);
                 }
             }
         }
@@ -112,10 +121,10 @@ namespace doticu_npcp { namespace Papyrus { namespace UI {
     template <typename Type>
     void Invoke_Argument(String_t menu, String_t target, Type argument)
     {
-        if (menu && target) {
+        if (menu.data && target.data) {
             UIManager* ui_manager = UIManager::GetSingleton();
             if (ui_manager) {
-                UIInvokeDelegate* delegate = new UIInvokeDelegate(menu, target);
+                UIInvokeDelegate* delegate = new UIInvokeDelegate(menu.data, target.data);
                 delegate->args.resize(1);
                 Set_Value<Type>(&delegate->args[0], argument);
                 ui_manager->QueueCommand(delegate);
@@ -129,13 +138,6 @@ namespace doticu_npcp { namespace Papyrus { namespace UI {
     }
 
 }}}
-
-#include "consts.h"
-#include "utils.h"
-
-#include "mcm/mcm_main.h"
-
-#include "papyrus.inl"
 
 namespace doticu_npcp { namespace MCM {
 
@@ -151,11 +153,6 @@ namespace doticu_npcp { namespace MCM {
         static Class_Info_t* class_info = Class_Info_t::Fetch(Class_Name());
         NPCP_ASSERT(class_info);
         return class_info;
-    }
-
-    const char* SKI_Config_Base_t::Menu(const char* target)
-    {
-        return (std::string(ROOT_MENU) + target).c_str();
     }
 
     Object_t* SKI_Config_Base_t::Object()
@@ -181,6 +178,7 @@ namespace doticu_npcp { namespace MCM {
     Variable_t* SKI_Config_Base_t::String_Values_Variable() { DEFINE_VARIABLE("_strValueBuf"); }
     Variable_t* SKI_Config_Base_t::Number_Values_Variable() { DEFINE_VARIABLE("_numValueBuf"); }
     Variable_t* SKI_Config_Base_t::States_Variable() { DEFINE_VARIABLE("_stateOptionMap"); }
+    Variable_t* SKI_Config_Base_t::Info_Text_Variable() { DEFINE_VARIABLE("_infoText"); }
 
     String_t SKI_Config_Base_t::Current_Page_Name()
     {
@@ -279,7 +277,31 @@ namespace doticu_npcp { namespace MCM {
 
     void SKI_Config_Base_t::Title_Text(String_t title)
     {
-        UI::Invoke_Argument<String_t>(JOURNAL_MENU, Menu(".setTitleText"), title);
+        class Arguments : public Virtual_Arguments_t {
+        public:
+            String_t title;
+            Arguments(String_t title) :
+                title(title)
+            {
+            };
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(1);
+                arguments->At(0)->String(title);
+                return true;
+            }
+        } arguments(title);
+        Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "SetTitleText", &arguments);
+    }
+
+    String_t SKI_Config_Base_t::Info_Text()
+    {
+        return Info_Text_Variable()->String();
+    }
+
+    void SKI_Config_Base_t::Info_Text(String_t info)
+    {
+        Info_Text_Variable()->String(info);
     }
 
     Int_t SKI_Config_Base_t::Add_Option(Option_Type_e option_type, String_t label, String_t string, Float_t number, Int_t flags)
@@ -348,17 +370,59 @@ namespace doticu_npcp { namespace MCM {
         return Add_Option(Option_Type_e::KEYMAP, label, "", static_cast<Float_t>(key_code), flags);
     }
 
+    Int_t SKI_Config_Base_t::Add_Input_Option(String_t label, String_t value, Int_t flags)
+    {
+        return Add_Option(Option_Type_e::INPUT, label, value, 0.0f, flags);
+    }
+
     void SKI_Config_Base_t::Option_Number_Value(Int_t index, Float_t value, Bool_t do_render)
     {
         NPCP_ASSERT(Current_State() != State_e::RESET);
 
-        UI::Set_Value<Int_t>(JOURNAL_MENU, Menu(".optionCursorIndex"), index);
-        UI::Set_Value<Float_t>(JOURNAL_MENU, Menu(".optionCursor.numValue"), value);
+        class Arguments : public Virtual_Arguments_t {
+        public:
+            Int_t index;
+            Float_t value;
+            Bool_t dont_render;
+            Arguments(Int_t index, Float_t value, Bool_t dont_render) :
+                index(index), value(value), dont_render(dont_render)
+            {
+            };
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(3);
+                arguments->At(0)->Int(index);
+                arguments->At(1)->Float(value);
+                arguments->At(2)->Bool(dont_render);
+                return true;
+            }
+        } arguments(index, value, !do_render);
+        Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "SetOptionNumValue", &arguments);
+    }
 
-        if (do_render) {
-            //UI::Invoke(JOURNAL_MENU, Menu(".invalidateOptionData"));
-            Virtual_Machine_t::Self()->Call_Method(Main_t::Self(), Main_t::Class_Name(), "Invoke_Render");
-        }
+    void SKI_Config_Base_t::Option_String_Value(Int_t index, String_t value, Bool_t do_render)
+    {
+        NPCP_ASSERT(Current_State() != State_e::RESET);
+
+        class Arguments : public Virtual_Arguments_t {
+        public:
+            Int_t index;
+            String_t value;
+            Bool_t dont_render;
+            Arguments(Int_t index, String_t value, Bool_t dont_render) :
+                index(index), value(value), dont_render(dont_render)
+            {
+            };
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(3);
+                arguments->At(0)->Int(index);
+                arguments->At(1)->String(value);
+                arguments->At(2)->Bool(dont_render);
+                return true;
+            }
+        } arguments(index, value, !do_render);
+        Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "SetOptionStrValue", &arguments);
     }
 
     void SKI_Config_Base_t::Keymap_Option_Value(Int_t option, Int_t key_code, Bool_t do_render)
@@ -369,6 +433,41 @@ namespace doticu_npcp { namespace MCM {
         NPCP_ASSERT(type == Option_Type_e::KEYMAP);
 
         Option_Number_Value(index, static_cast<Float_t>(key_code), do_render);
+    }
+
+    void SKI_Config_Base_t::Show_Message(String_t message,
+                                         Bool_t allow_cancel,
+                                         String_t accept,
+                                         String_t cancel,
+                                         Virtual_Callback_i** callback)
+    {
+        class Arguments : public Virtual_Arguments_t {
+        public:
+            String_t message;
+            Bool_t allow_cancel;
+            String_t accept;
+            String_t cancel;
+            Arguments(String_t message, Bool_t allow_cancel, String_t accept, String_t cancel) :
+                message(message), allow_cancel(allow_cancel), accept(accept), cancel(cancel)
+            {
+            }
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(4);
+                arguments->At(0)->String(message);
+                arguments->At(1)->Bool(allow_cancel);
+                arguments->At(2)->String(accept);
+                arguments->At(3)->String(cancel);
+                return true;
+            }
+        } arguments(message, allow_cancel, accept, cancel);
+
+        Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "ShowMessage", &arguments, callback);
+    }
+
+    void SKI_Config_Base_t::Reset_Page()
+    {
+        Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "ForcePageReset");
     }
 
     void SKI_Config_Base_t::Register_Me(Registry_t* registry)
@@ -423,9 +522,8 @@ namespace doticu_npcp { namespace MCM {
         return Object()->Variable(variable_name);
     }
 
-    void Main_t::Set_Text_Option(Variable_t* option_in, String_t value, Bool_t do_render)
+    void Main_t::Text_Option_Value(Int_t option, String_t value, Bool_t do_render)
     {
-        NPCP_ASSERT(option_in);
         NPCP_ASSERT(value);
 
         struct Arguments : public Virtual_Arguments_t {
@@ -446,7 +544,7 @@ namespace doticu_npcp { namespace MCM {
 
                 return true;
             }
-        } arguments(option_in->Int(), value, !do_render);
+        } arguments(option, value, !do_render);
 
         Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "SetTextOptionValue", &arguments);
     }

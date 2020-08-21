@@ -81,6 +81,9 @@ int                 p_option_back                       =    -1
 int                 p_option_prev                       =    -1
 int                 p_option_next                       =    -1
 
+; Native Methods
+function f_Build_Page() native
+
 ; Friend Methods
 function f_Create()
     p_is_created = true
@@ -138,85 +141,6 @@ endFunction
 
 function f_Request_Next_Member()
     p_do_next_member = true
-endFunction
-
-bool function f_Is_Valid_Member(doticu_npcp_member ref_member)
-    if !ref_member || !ref_member.Is_Filled() || p_arr_aliases.Find(ref_member) < 0
-        return false
-    else
-        return true
-    endIf
-endFunction
-
-function f_Build_Page()
-    if p_do_prev_member
-        p_ref_member = p_Get_Prev_Member(p_ref_member)
-        p_do_prev_member = false
-    elseIf p_do_next_member
-        p_ref_member = p_Get_Next_Member(p_ref_member)
-        p_do_next_member = false
-    endIf
-
-    if p_code_view == doticu_npcp_codes.VIEW_MEMBERS_MEMBER()
-        if f_Is_Valid_Member(p_ref_member)
-            return p_Build_Members_Member()
-        else
-            f_Review_Members()
-        endIf
-    elseIf p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS_MEMBER()
-        if f_Is_Valid_Member(p_ref_member)
-            return p_Build_Filter_Members_Member()
-        else
-            f_Review_Filter_Members()
-        endIf
-    endIf
-
-    MCM.SetCursorPosition(0)
-    MCM.SetCursorFillMode(MCM.LEFT_TO_RIGHT)
-
-    if !p_arr_aliases
-        MCM.SetTitleText(p_Format_Title(0, 0, 1))
-
-        if p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS()
-            p_option_title = MCM.AddTextOption(MCM.MCM_FILTER.f_Get_Filter_String(), "")
-            p_option_back = MCM.AddTextOption("                            Go Back", "")
-        endIf
-
-        MCM.AddHeaderOption(" No Members ")
-
-        return
-    endIf
-
-    MCM.SetTitleText(p_Format_Title(p_arr_aliases.length, p_idx_page, p_num_pages))
-
-    if p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS()
-        p_option_title = MCM.AddTextOption(MCM.MCM_FILTER.f_Get_Filter_String(), "")
-        p_option_back = MCM.AddTextOption("                            Go Back", "")
-    endIf
-
-    if p_arr_aliases.length > p_MEMBERS_PER_PAGE
-        p_option_prev = MCM.AddTextOption("                     Go to Previous Page", "")
-        p_option_next = MCM.AddTextOption("                       Go to Next Page", "")
-    else
-        p_option_prev = MCM.AddTextOption("                     Go to Previous Page", "", MCM.FLAG_DISABLE)
-        p_option_next = MCM.AddTextOption("                       Go to Next Page", "", MCM.FLAG_DISABLE)
-    endIf
-
-    if p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS()
-        p_options_offset = p_option_title
-    else
-        p_options_offset = p_option_prev
-    endIf
-
-    MCM.AddHeaderOption("")
-    MCM.AddHeaderOption("")
-
-    int idx_slice = 0
-    while idx_slice < p_arr_aliases_slice.length
-        doticu_npcp_member ref_member = p_arr_aliases_slice[idx_slice] as doticu_npcp_member
-        MCM.AddTextOption(ref_member.Name(), "...")
-        idx_slice += 1
-    endWhile
 endFunction
 
 function f_On_Option_Select(int id_option)
@@ -383,44 +307,6 @@ string function Get_Info_String(doticu_npcp_member ref_member)
 endFunction
 
 ; Private Methods
-doticu_npcp_member function p_Get_Prev_Member(doticu_npcp_member ref_member)
-    int idx_alias = p_arr_aliases.Find(ref_member as Alias)
-    if idx_alias > -1
-        if idx_alias == 0
-            return p_arr_aliases[p_arr_aliases.length - 1] as doticu_npcp_member
-        else
-            return p_arr_aliases[idx_alias - 1] as doticu_npcp_member
-        endIf
-    else
-        return p_arr_aliases[0] as doticu_npcp_member
-    endIf
-endFunction
-
-doticu_npcp_member function p_Get_Next_Member(doticu_npcp_member ref_member)
-    int idx_alias = p_arr_aliases.Find(ref_member as Alias)
-    if idx_alias > -1
-        if idx_alias == p_arr_aliases.length - 1
-            return p_arr_aliases[0] as doticu_npcp_member
-        else
-            return p_arr_aliases[idx_alias + 1] as doticu_npcp_member
-        endIf
-    else
-        return p_arr_aliases[p_arr_aliases.length - 1] as doticu_npcp_member
-    endIf
-endFunction
-
-function p_Build_Members_Member()
-    p_ref_member_members = p_ref_member
-    MCM.MCM_MEMBER.f_View_Members_Member(p_ref_member)
-    MCM.MCM_MEMBER.f_Build_Page()
-endFunction
-
-function p_Build_Filter_Members_Member()
-    p_ref_member_filter_members = p_ref_member
-    MCM.MCM_MEMBER.f_View_Filter_Members_Member(p_ref_member)
-    MCM.MCM_MEMBER.f_Build_Page()
-endFunction
-
 function p_Go_Back()
     if p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS()
         MCM.MCM_FILTER.f_Review_Filter()
@@ -452,17 +338,6 @@ function p_View(Alias[] arr_aliases, int idx_page, doticu_npcp_member ref_member
     endIf
 
     p_ref_member = ref_member
-endFunction
-
-string function p_Format_Title(int num_members, int idx_page, int num_pages)
-    string str_members = "Members: " + num_members + "/" + MEMBERS.Limit()
-    string str_pages = "Page: " + (idx_page + 1) + "/" + num_pages
-
-    if p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS()
-        str_members = "Filtered " + str_members
-    endIf
-
-    return str_members + "               " + str_pages
 endFunction
 
 int function p_Get_Idx_Entity(int id_option)

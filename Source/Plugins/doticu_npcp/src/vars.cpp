@@ -69,11 +69,16 @@ namespace doticu_npcp { namespace Vars {
 
     // Global Keys
     Variable_t* G_Dialogue_Menu_Value_Property() { DEFINE_PROPERTY("key_g_dialogue_menu"); }
+
     Variable_t* G_Dialogue_Menu_Mods_Property() { DEFINE_PROPERTY("key_g_dialogue_menu_mods"); }
 
     Int_t G_Dialogue_Menu_Value() { return G_Dialogue_Menu_Value_Property()->Int(); }
 
+    Vector_t<Int_t> G_Dialogue_Menu_Mods() { return G_Dialogue_Menu_Mods_Property()->Vector<Int_t>(); }
+
     void G_Dialogue_Menu_Value(Int_t value) { G_Dialogue_Menu_Value_Property()->Int(value); }
+
+    void G_Dialogue_Menu_Mods(Vector_t<Int_t> value) { G_Dialogue_Menu_Mods_Property()->Pack(value); }
 
     // NPC Keys
     Variable_t* N_Toggle_Member_Value_Property() { DEFINE_PROPERTY("key_n_toggle_member"); }
@@ -86,6 +91,7 @@ namespace doticu_npcp { namespace Vars {
     Variable_t* N_Count_Base_Value_Property() { DEFINE_PROPERTY("key_n_count_base"); }
     Variable_t* N_Has_Head_Value_Property() { DEFINE_PROPERTY("key_n_has_head"); }
     Variable_t* N_Count_Heads_Value_Property() { DEFINE_PROPERTY("key_n_count_heads"); }
+
     Variable_t* N_Toggle_Member_Mods_Property() { DEFINE_PROPERTY("key_n_toggle_member_mods"); }
     Variable_t* N_Toggle_Move_Mods_Property() { DEFINE_PROPERTY("key_n_toggle_move_mods"); }
     Variable_t* N_Move_Nearer_Mods_Property() { DEFINE_PROPERTY("key_n_move_nearer_mods"); }
@@ -108,6 +114,17 @@ namespace doticu_npcp { namespace Vars {
     Int_t N_Has_Head_Value() { return N_Has_Head_Value_Property()->Int(); }
     Int_t N_Count_Heads_Value() { return N_Count_Heads_Value_Property()->Int(); }
 
+    Vector_t<Int_t> N_Toggle_Member_Mods() { return N_Toggle_Member_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> N_Toggle_Move_Mods() { return N_Toggle_Move_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> N_Move_Nearer_Mods() { return N_Move_Nearer_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> N_Move_Farther_Mods() { return N_Move_Farther_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> N_Move_Rotate_Left_Mods() { return N_Move_Rotate_Left_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> N_Move_Rotate_Right_Mods() { return N_Move_Rotate_Right_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> N_Has_Base_Mods() { return N_Has_Base_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> N_Count_Base_Mods() { return N_Count_Base_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> N_Has_Head_Mods() { return N_Has_Head_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> N_Count_Heads_Mods() { return N_Count_Heads_Mods_Property()->Vector<Int_t>(); }
+
     void N_Toggle_Member_Value(Int_t value) { N_Toggle_Member_Value_Property()->Int(value); }
     void N_Toggle_Move_Value(Int_t value) { N_Toggle_Move_Value_Property()->Int(value); }
     void N_Move_Nearer_Value(Int_t value) { N_Move_Nearer_Value_Property()->Int(value); }
@@ -119,6 +136,17 @@ namespace doticu_npcp { namespace Vars {
     void N_Has_Head_Value(Int_t value) { N_Has_Head_Value_Property()->Int(value); }
     void N_Count_Heads_Value(Int_t value) { N_Count_Heads_Value_Property()->Int(value); }
 
+    void N_Toggle_Member_Mods(Vector_t<Int_t> value) { N_Toggle_Member_Mods_Property()->Pack(value); }
+    void N_Toggle_Move_Mods(Vector_t<Int_t> value) { N_Toggle_Move_Mods_Property()->Pack(value); }
+    void N_Move_Nearer_Mods(Vector_t<Int_t> value) { N_Move_Nearer_Mods_Property()->Pack(value); }
+    void N_Move_Farther_Mods(Vector_t<Int_t> value) { N_Move_Farther_Mods_Property()->Pack(value); }
+    void N_Move_Rotate_Left_Mods(Vector_t<Int_t> value) { N_Move_Rotate_Left_Mods_Property()->Pack(value); }
+    void N_Move_Rotate_Right_Mods(Vector_t<Int_t> value) { N_Move_Rotate_Right_Mods_Property()->Pack(value); }
+    void N_Has_Base_Mods(Vector_t<Int_t> value) { N_Has_Base_Mods_Property()->Pack(value); }
+    void N_Count_Base_Mods(Vector_t<Int_t> value) { N_Count_Base_Mods_Property()->Pack(value); }
+    void N_Has_Head_Mods(Vector_t<Int_t> value) { N_Has_Head_Mods_Property()->Pack(value); }
+    void N_Count_Heads_Mods(Vector_t<Int_t> value) { N_Count_Heads_Mods_Property()->Pack(value); }
+
     // Member Keys
     Variable_t* M_Toggle_Clone_Value_Property() { DEFINE_PROPERTY("key_m_toggle_clone"); }
     Variable_t* M_Toggle_Settler_Value_Property() { DEFINE_PROPERTY("key_m_toggle_settler"); }
@@ -126,6 +154,7 @@ namespace doticu_npcp { namespace Vars {
     Variable_t* M_Toggle_Immobile_Value_Property() { DEFINE_PROPERTY("key_m_toggle_immobile"); }
     Variable_t* M_Toggle_Paralyzed_Value_Property() { DEFINE_PROPERTY("key_m_toggle_paralyzed"); }
     Variable_t* M_Toggle_Follower_Value_Property() { DEFINE_PROPERTY("key_m_toggle_follower"); }
+
     Variable_t* M_Toggle_Clone_Mods_Property() { DEFINE_PROPERTY("key_m_toggle_clone_mods"); }
     Variable_t* M_Toggle_Settler_Mods_Property() { DEFINE_PROPERTY("key_m_toggle_settler_mods"); }
     Variable_t* M_Toggle_Thrall_Mods_Property() { DEFINE_PROPERTY("key_m_toggle_thrall_mods"); }
@@ -140,6 +169,13 @@ namespace doticu_npcp { namespace Vars {
     Int_t M_Toggle_Paralyzed_Value() { return M_Toggle_Paralyzed_Value_Property()->Int(); }
     Int_t M_Toggle_Follower_Value() { return M_Toggle_Follower_Value_Property()->Int(); }
 
+    Vector_t<Int_t> M_Toggle_Clone_Mods() { return M_Toggle_Clone_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> M_Toggle_Settler_Mods() { return M_Toggle_Settler_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> M_Toggle_Thrall_Mods() { return M_Toggle_Thrall_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> M_Toggle_Immobile_Mods() { return M_Toggle_Immobile_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> M_Toggle_Paralyzed_Mods() { return M_Toggle_Paralyzed_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> M_Toggle_Follower_Mods() { return M_Toggle_Follower_Mods_Property()->Vector<Int_t>(); }
+
     void M_Toggle_Clone_Value(Int_t value) { M_Toggle_Clone_Value_Property()->Int(value); }
     void M_Toggle_Settler_Value(Int_t value) { M_Toggle_Settler_Value_Property()->Int(value); }
     void M_Toggle_Thrall_Value(Int_t value) { M_Toggle_Thrall_Value_Property()->Int(value); }
@@ -147,22 +183,37 @@ namespace doticu_npcp { namespace Vars {
     void M_Toggle_Paralyzed_Value(Int_t value) { M_Toggle_Paralyzed_Value_Property()->Int(value); }
     void M_Toggle_Follower_Value(Int_t value) { M_Toggle_Follower_Value_Property()->Int(value); }
 
+    void M_Toggle_Clone_Mods(Vector_t<Int_t> value) { M_Toggle_Clone_Mods_Property()->Pack(value); }
+    void M_Toggle_Settler_Mods(Vector_t<Int_t> value) { M_Toggle_Settler_Mods_Property()->Pack(value); }
+    void M_Toggle_Thrall_Mods(Vector_t<Int_t> value) { M_Toggle_Thrall_Mods_Property()->Pack(value); }
+    void M_Toggle_Immobile_Mods(Vector_t<Int_t> value) { M_Toggle_Immobile_Mods_Property()->Pack(value); }
+    void M_Toggle_Paralyzed_Mods(Vector_t<Int_t> value) { M_Toggle_Paralyzed_Mods_Property()->Pack(value); }
+    void M_Toggle_Follower_Mods(Vector_t<Int_t> value) { M_Toggle_Follower_Mods_Property()->Pack(value); }
+
     // Follower Keys
     Variable_t* F_Toggle_Sneak_Value_Property() { DEFINE_PROPERTY("key_f_toggle_sneak"); }
     Variable_t* F_Toggle_Saddler_Value_Property() { DEFINE_PROPERTY("key_f_toggle_saddler"); }
+
     Variable_t* F_Toggle_Sneak_Mods_Property() { DEFINE_PROPERTY("key_f_toggle_sneak_mods"); }
     Variable_t* F_Toggle_Saddler_Mods_Property() { DEFINE_PROPERTY("key_f_toggle_saddler_mods"); }
 
     Int_t F_Toggle_Sneak_Value() { return F_Toggle_Sneak_Value_Property()->Int(); }
     Int_t F_Toggle_Saddler_Value() { return F_Toggle_Saddler_Value_Property()->Int(); }
 
+    Vector_t<Int_t> F_Toggle_Sneak_Mods() { return F_Toggle_Sneak_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> F_Toggle_Saddler_Mods() { return F_Toggle_Saddler_Mods_Property()->Vector<Int_t>(); }
+
     void F_Toggle_Sneak_Value(Int_t value) { F_Toggle_Sneak_Value_Property()->Int(value); }
     void F_Toggle_Saddler_Value(Int_t value) { F_Toggle_Saddler_Value_Property()->Int(value); }
+
+    void F_Toggle_Sneak_Mods(Vector_t<Int_t> value) { F_Toggle_Sneak_Mods_Property()->Pack(value); }
+    void F_Toggle_Saddler_Mods(Vector_t<Int_t> value) { F_Toggle_Saddler_Mods_Property()->Pack(value); }
 
     // Members Keys
     Variable_t* MS_Toggle_Display_Value_Property() { DEFINE_PROPERTY("key_ms_toggle_display"); }
     Variable_t* MS_Display_Previous_Value_Property() { DEFINE_PROPERTY("key_ms_display_previous"); }
     Variable_t* MS_Display_Next_Value_Property() { DEFINE_PROPERTY("key_ms_display_next"); }
+
     Variable_t* MS_Toggle_Display_Mods_Property() { DEFINE_PROPERTY("key_ms_toggle_display_mods"); }
     Variable_t* MS_Display_Previous_Mods_Property() { DEFINE_PROPERTY("key_ms_display_previous_mods"); }
     Variable_t* MS_Display_Next_Mods_Property() { DEFINE_PROPERTY("key_ms_display_next_mods"); }
@@ -171,9 +222,17 @@ namespace doticu_npcp { namespace Vars {
     Int_t MS_Display_Previous_Value() { return MS_Display_Previous_Value_Property()->Int(); }
     Int_t MS_Display_Next_Value() { return MS_Display_Next_Value_Property()->Int(); }
 
+    Vector_t<Int_t> MS_Toggle_Display_Mods() { return MS_Toggle_Display_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> MS_Display_Previous_Mods() { return MS_Display_Previous_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> MS_Display_Next_Mods() { return MS_Display_Next_Mods_Property()->Vector<Int_t>(); }
+
     void MS_Toggle_Display_Value(Int_t value) { MS_Toggle_Display_Value_Property()->Int(value); }
     void MS_Display_Previous_Value(Int_t value) { MS_Display_Previous_Value_Property()->Int(value); }
     void MS_Display_Next_Value(Int_t value) { MS_Display_Next_Value_Property()->Int(value); }
+
+    void MS_Toggle_Display_Mods(Vector_t<Int_t> value) { MS_Toggle_Display_Mods_Property()->Pack(value); }
+    void MS_Display_Previous_Mods(Vector_t<Int_t> value) { MS_Display_Previous_Mods_Property()->Pack(value); }
+    void MS_Display_Next_Mods(Vector_t<Int_t> value) { MS_Display_Next_Mods_Property()->Pack(value); }
 
     // Followers Keys
     Variable_t* FS_Summon_All_Value_Property() { DEFINE_PROPERTY("key_fs_summon_all"); }
@@ -188,6 +247,7 @@ namespace doticu_npcp { namespace Vars {
     Variable_t* FS_Saddle_Value_Property() { DEFINE_PROPERTY("key_fs_saddle"); }
     Variable_t* FS_Unsaddle_Value_Property() { DEFINE_PROPERTY("key_fs_unsaddle"); }
     Variable_t* FS_Resurrect_Value_Property() { DEFINE_PROPERTY("key_fs_resurrect"); }
+
     Variable_t* FS_Summon_All_Mods_Property() { DEFINE_PROPERTY("key_fs_summon_all_mods"); }
     Variable_t* FS_Summon_Mobile_Mods_Property() { DEFINE_PROPERTY("key_fs_summon_mobile_mods"); }
     Variable_t* FS_Summon_Immobile_Mods_Property() { DEFINE_PROPERTY("key_fs_summon_immobile_mods"); }
@@ -214,6 +274,19 @@ namespace doticu_npcp { namespace Vars {
     Int_t FS_Unsaddle_Value() { return FS_Unsaddle_Value_Property()->Int(); }
     Int_t FS_Resurrect_Value() { return FS_Resurrect_Value_Property()->Int(); }
 
+    Vector_t<Int_t> FS_Summon_All_Mods() { return FS_Summon_All_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> FS_Summon_Mobile_Mods() { return FS_Summon_Mobile_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> FS_Summon_Immobile_Mods() { return FS_Summon_Immobile_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> FS_Settle_Mods() { return FS_Settle_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> FS_Unsettle_Mods() { return FS_Unsettle_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> FS_Mobilize_Mods() { return FS_Mobilize_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> FS_Immobilize_Mods() { return FS_Immobilize_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> FS_Sneak_Mods() { return FS_Sneak_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> FS_Unsneak_Mods() { return FS_Unsneak_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> FS_Saddle_Mods() { return FS_Saddle_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> FS_Unsaddle_Mods() { return FS_Unsaddle_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> FS_Resurrect_Mods() { return FS_Resurrect_Mods_Property()->Vector<Int_t>(); }
+
     void FS_Summon_All_Value(Int_t value) { FS_Summon_All_Value_Property()->Int(value); }
     void FS_Summon_Mobile_Value(Int_t value) { FS_Summon_Mobile_Value_Property()->Int(value); }
     void FS_Summon_Immobile_Value(Int_t value) { FS_Summon_Immobile_Value_Property()->Int(value); }
@@ -226,6 +299,19 @@ namespace doticu_npcp { namespace Vars {
     void FS_Saddle_Value(Int_t value) { FS_Saddle_Value_Property()->Int(value); }
     void FS_Unsaddle_Value(Int_t value) { FS_Unsaddle_Value_Property()->Int(value); }
     void FS_Resurrect_Value(Int_t value) { FS_Resurrect_Value_Property()->Int(value); }
+
+    void FS_Summon_All_Mods(Vector_t<Int_t> value) { FS_Summon_All_Mods_Property()->Pack(value); }
+    void FS_Summon_Mobile_Mods(Vector_t<Int_t> value) { FS_Summon_Mobile_Mods_Property()->Pack(value); }
+    void FS_Summon_Immobile_Mods(Vector_t<Int_t> value) { FS_Summon_Immobile_Mods_Property()->Pack(value); }
+    void FS_Settle_Mods(Vector_t<Int_t> value) { FS_Settle_Mods_Property()->Pack(value); }
+    void FS_Unsettle_Mods(Vector_t<Int_t> value) { FS_Unsettle_Mods_Property()->Pack(value); }
+    void FS_Mobilize_Mods(Vector_t<Int_t> value) { FS_Mobilize_Mods_Property()->Pack(value); }
+    void FS_Immobilize_Mods(Vector_t<Int_t> value) { FS_Immobilize_Mods_Property()->Pack(value); }
+    void FS_Sneak_Mods(Vector_t<Int_t> value) { FS_Sneak_Mods_Property()->Pack(value); }
+    void FS_Unsneak_Mods(Vector_t<Int_t> value) { FS_Unsneak_Mods_Property()->Pack(value); }
+    void FS_Saddle_Mods(Vector_t<Int_t> value) { FS_Saddle_Mods_Property()->Pack(value); }
+    void FS_Unsaddle_Mods(Vector_t<Int_t> value) { FS_Unsaddle_Mods_Property()->Pack(value); }
+    void FS_Resurrect_Mods(Vector_t<Int_t> value) { FS_Resurrect_Mods_Property()->Pack(value); }
 
     #define VAR(TYPE_, NAME_)                                   \
     M                                                           \

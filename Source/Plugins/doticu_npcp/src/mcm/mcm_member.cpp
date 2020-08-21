@@ -51,8 +51,13 @@ namespace doticu_npcp { namespace MCM {
         return Object()->Variable(variable_name);
     }
 
+    Variable_t* Member_t::Current_View_Variable() { DEFINE_VARIABLE("p_code_view"); }
     Variable_t* Member_t::Party_Member_Variable() { DEFINE_VARIABLE("p_ref_member"); }
 
+    Variable_t* Member_t::Rename_Option_Variable() { DEFINE_VARIABLE("p_option_rename"); }
+    Variable_t* Member_t::Back_Option_Variable() { DEFINE_VARIABLE("p_option_back"); }
+    Variable_t* Member_t::Previous_Option_Variable() { DEFINE_VARIABLE("p_option_prev"); }
+    Variable_t* Member_t::Next_Option_Variable() { DEFINE_VARIABLE("p_option_next"); }
     Variable_t* Member_t::Unmember_Option_Variable() { DEFINE_VARIABLE("p_option_unmember"); }
     Variable_t* Member_t::Clone_Option_Variable() { DEFINE_VARIABLE("p_option_clone"); }
     Variable_t* Member_t::Unclone_Option_Variable() { DEFINE_VARIABLE("p_option_unclone"); }
@@ -74,7 +79,6 @@ namespace doticu_npcp { namespace MCM {
     Variable_t* Member_t::Goto_Option_Variable() { DEFINE_VARIABLE("p_option_goto"); }
     Variable_t* Member_t::Rating_Option_Variable() { DEFINE_VARIABLE("p_option_rating"); }
     Variable_t* Member_t::Resurrect_Option_Variable() { DEFINE_VARIABLE("p_option_resurrect"); }
-    Variable_t* Member_t::Rename_Option_Variable() { DEFINE_VARIABLE("p_option_rename"); }
     Variable_t* Member_t::Follow_Option_Variable() { DEFINE_VARIABLE("p_option_follow"); }
     Variable_t* Member_t::Unfollow_Option_Variable() { DEFINE_VARIABLE("p_option_unfollow"); }
     Variable_t* Member_t::Sneak_Option_Variable() { DEFINE_VARIABLE("p_option_sneak"); }
@@ -107,9 +111,93 @@ namespace doticu_npcp { namespace MCM {
 
     Variable_t* Member_t::Race_Option_Variable() { DEFINE_VARIABLE("p_option_race"); }
 
+    Int_t Member_t::Current_View()
+    {
+        return Current_View_Variable()->Int();
+    }
+
     Party::Member_t* Member_t::Party_Member()
     {
         return static_cast<Party::Member_t*>(Party_Member_Variable()->Alias());
+    }
+
+    void Member_t::View_Members_Member(Party::Member_t* member)
+    {
+        Current_View_Variable()->Int(CODES::VIEW::MEMBERS_MEMBER);
+        Party_Member_Variable()->Pack(member, Party::Member_t::Class_Info());
+    }
+
+    void Member_t::View_Filter_Members_Member(Party::Member_t* member)
+    {
+        Current_View_Variable()->Int(CODES::VIEW::FILTER_MEMBERS_MEMBER);
+        Party_Member_Variable()->Pack(member, Party::Member_t::Class_Info());
+    }
+
+    void Member_t::Build_Page()
+    {
+        Party::Member_t* member = Party_Member();
+        if (member) {
+            String_t member_name = member->Name();
+            Main_t* mcm = Main();
+
+            mcm->Cursor_Position(0);
+            mcm->Cursor_Fill_Mode(Cursor_Fill_Mode_e::LEFT_TO_RIGHT);
+
+            Int_t current_view = Current_View();
+            if (current_view == CODES::VIEW::MEMBERS_MEMBER) {
+                mcm->Title_Text((std::string("Member: ") + member_name.data).c_str());
+            } else if (current_view == CODES::VIEW::FOLLOWERS_MEMBER) {
+                mcm->Title_Text((std::string("Follower: ") + member_name.data).c_str());
+            } else if (current_view == CODES::VIEW::FILTER_MEMBERS_MEMBER) {
+                mcm->Title_Text((std::string("Filtered Member: ") + member_name.data).c_str());
+            } else if (current_view == CODES::VIEW::MANNEQUINS_MEMBER) {
+                mcm->Title_Text((std::string("Mannequin: ") + member_name.data).c_str());
+            }
+
+            Rename_Option_Variable()->Int(
+                mcm->Add_Input_Option((std::string(member_name.data) + " ").c_str(), " Rename ")
+            );
+            Back_Option_Variable()->Int(
+                mcm->Add_Text_Option("                            Go Back", "")
+            );
+
+            if (current_view == CODES::VIEW::MEMBERS_MEMBER || current_view == CODES::VIEW::FILTER_MEMBERS_MEMBER) {
+                if (Party::Members_t::Self()->Count_Filled() > 1) {
+                    Previous_Option_Variable()->Int(
+                        mcm->Add_Text_Option("                      Previous Member", "")
+                    );
+                    Next_Option_Variable()->Int(
+                        mcm->Add_Text_Option("                        Next Member", "")
+                    );
+                } else {
+                    Previous_Option_Variable()->Int(
+                        mcm->Add_Text_Option("                      Previous Member", "", MCM::DISABLE)
+                    );
+                    Next_Option_Variable()->Int(
+                        mcm->Add_Text_Option("                        Next Member", "", MCM::DISABLE)
+                    );
+                }
+            } else if (current_view == CODES::VIEW::FOLLOWERS_MEMBER) {
+                if (Party::Followers_t::Self()->Count_Filled() > 1) {
+                    Previous_Option_Variable()->Int(
+                        mcm->Add_Text_Option("                      Previous Follower", "")
+                    );
+                    Next_Option_Variable()->Int(
+                        mcm->Add_Text_Option("                        Next Follower", "")
+                    );
+                } else {
+                    Previous_Option_Variable()->Int(
+                        mcm->Add_Text_Option("                      Previous Follower", "", MCM::DISABLE)
+                    );
+                    Next_Option_Variable()->Int(
+                        mcm->Add_Text_Option("                        Next Follower", "", MCM::DISABLE)
+                    );
+                }
+            }
+
+            Build_Commands();
+            Build_Statistics();
+        }
     }
 
     void Member_t::Build_Commands()
@@ -283,32 +371,32 @@ namespace doticu_npcp { namespace MCM {
             mcm_main->Disable_Option(Unsneak_Option_Variable(), false);
         }
 
-        mcm_main->Set_Text_Option(Rating_Option_Variable(), party_member->Rating_Stars(), false);
+        mcm_main->Text_Option_Value(Rating_Option_Variable()->Int(), party_member->Rating_Stars(), false);
 
         Int_t style = party_member->Style();
         if (style == CODES::STYLE::DEFAULT) {
-            mcm_main->Set_Text_Option(Stylize_Option_Variable(), " Default ", false);
+            mcm_main->Text_Option_Value(Stylize_Option_Variable()->Int(), " Default ", false);
         } else if (style == CODES::STYLE::WARRIOR) {
-            mcm_main->Set_Text_Option(Stylize_Option_Variable(), " Warrior ", false);
+            mcm_main->Text_Option_Value(Stylize_Option_Variable()->Int(), " Warrior ", false);
         } else if (style == CODES::STYLE::MAGE) {
-            mcm_main->Set_Text_Option(Stylize_Option_Variable(), " Mage ", false);
+            mcm_main->Text_Option_Value(Stylize_Option_Variable()->Int(), " Mage ", false);
         } else if (style == CODES::STYLE::ARCHER) {
-            mcm_main->Set_Text_Option(Stylize_Option_Variable(), " Archer ", false);
+            mcm_main->Text_Option_Value(Stylize_Option_Variable()->Int(), " Archer ", false);
         } else if (style == CODES::STYLE::COWARD) {
-            mcm_main->Set_Text_Option(Stylize_Option_Variable(), " Coward ", false);
+            mcm_main->Text_Option_Value(Stylize_Option_Variable()->Int(), " Coward ", false);
         } else {
             NPCP_ASSERT(false);
         }
 
         Int_t vitality = party_member->Vitality();
         if (vitality == CODES::VITALITY::MORTAL) {
-            mcm_main->Set_Text_Option(Vitalize_Option_Variable(), " Mortal ", false);
+            mcm_main->Text_Option_Value(Vitalize_Option_Variable()->Int(), " Mortal ", false);
         } else if (vitality == CODES::VITALITY::PROTECTED) {
-            mcm_main->Set_Text_Option(Vitalize_Option_Variable(), " Protected ", false);
+            mcm_main->Text_Option_Value(Vitalize_Option_Variable()->Int(), " Protected ", false);
         } else if (vitality == CODES::VITALITY::ESSENTIAL) {
-            mcm_main->Set_Text_Option(Vitalize_Option_Variable(), " Essential ", false);
+            mcm_main->Text_Option_Value(Vitalize_Option_Variable()->Int(), " Essential ", false);
         } else if (vitality == CODES::VITALITY::INVULNERABLE) {
-            mcm_main->Set_Text_Option(Vitalize_Option_Variable(), " Invulnerable ", false);
+            mcm_main->Text_Option_Value(Vitalize_Option_Variable()->Int(), " Invulnerable ", false);
         } else {
             NPCP_ASSERT(false);
         }
@@ -401,7 +489,7 @@ namespace doticu_npcp { namespace MCM {
         auto update_stat = [&](Variable_t* variable, Actor_Value_t actor_value, Bool_t do_render) -> void
         {
             Int_t value = static_cast<Int_t>(values->Get_Actor_Value(actor_value));
-            mcm_main->Set_Text_Option(variable, std::to_string(value).c_str(), do_render);
+            mcm_main->Text_Option_Value(variable->Int(), std::to_string(value).c_str(), do_render);
         };
 
         update_stat(Health_Attribute_Option_Variable(), Actor_Value_t::HEALTH, false);
@@ -429,11 +517,14 @@ namespace doticu_npcp { namespace MCM {
         update_stat(Pickpocket_Skill_Option_Variable(), Actor_Value_t::PICKPOCKET, false);
         update_stat(Speechcraft_Skill_Option_Variable(), Actor_Value_t::SPEECHCRAFT, false);
 
-        mcm_main->Set_Text_Option(Race_Option_Variable(), party_member->Race(), true);
+        mcm_main->Text_Option_Value(Race_Option_Variable()->Int(), party_member->Race(), true);
     }
 
     void Member_t::Register_Me(Registry_t* registry)
     {
+        using namespace Utils;
+
+        auto Build_Page = Forward<void, Member_t, &Member_t::Build_Page>();
         auto Build_Commands = [](Member_t* self)->void FORWARD_VOID(Member_t::Build_Commands());
         auto Update_Commands = [](Member_t* self)->void FORWARD_VOID(Member_t::Update_Commands());
         auto Build_Statistics = [](Member_t* self)->void FORWARD_VOID(Member_t::Build_Statistics());
@@ -446,6 +537,7 @@ namespace doticu_npcp { namespace MCM {
                              RETURN_, METHOD_, __VA_ARGS__);            \
         W
 
+        ADD_METHOD("f_Build_Page", 0, void, Build_Page);
         ADD_METHOD("p_Build_Commands", 0, void, Build_Commands);
         ADD_METHOD("p_Update_Commands", 0, void, Update_Commands);
         ADD_METHOD("p_Build_Statistics", 0, void, Build_Statistics);

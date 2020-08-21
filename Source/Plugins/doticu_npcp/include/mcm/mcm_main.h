@@ -7,6 +7,8 @@
 #include "types.h"
 #include "papyrus.h"
 
+#undef TEXT
+
 namespace doticu_npcp { namespace MCM {
 
     using namespace Papyrus;
@@ -40,6 +42,7 @@ namespace doticu_npcp { namespace MCM {
         MENU = 5,
         COLOR = 6,
         KEYMAP = 7,
+        INPUT = 8,
     };
 
     class SKI_Config_Base_t : public Quest_t {
@@ -49,7 +52,6 @@ namespace doticu_npcp { namespace MCM {
 
         static constexpr const char* JOURNAL_MENU = "Journal Menu";
         static constexpr const char* ROOT_MENU = "_root.ConfigPanelFader.configPanel";
-        static const char* Menu(const char* target);
     public:
         Object_t* Object();
         Variable_t* Variable(String_t variable_name);
@@ -64,6 +66,7 @@ namespace doticu_npcp { namespace MCM {
         Variable_t* String_Values_Variable();
         Variable_t* Number_Values_Variable();
         Variable_t* States_Variable();
+        Variable_t* Info_Text_Variable();
 
         String_t Current_Page_Name();
         Int_t Current_Page_Number();
@@ -86,6 +89,9 @@ namespace doticu_npcp { namespace MCM {
 
         void Title_Text(String_t title);
 
+        String_t Info_Text();
+        void Info_Text(String_t info);
+
         Int_t Add_Option(Option_Type_e option_type, String_t label, String_t string, Float_t number, Int_t flags);
         Int_t Add_Empty_Option();
         Int_t Add_Header_Option(String_t label, Int_t flags = 0);
@@ -95,10 +101,19 @@ namespace doticu_npcp { namespace MCM {
         Int_t Add_Menu_Option(String_t label, String_t value, Int_t flags = 0);
         Int_t Add_Color_Option(String_t label, Int_t color, Int_t flags = 0);
         Int_t Add_Keymap_Option(String_t label, Int_t key_code, Int_t flags = 0);
+        Int_t Add_Input_Option(String_t label, String_t value, Int_t flags = 0);
 
         void Option_Number_Value(Int_t index, Float_t value, Bool_t do_render);
+        void Option_String_Value(Int_t index, String_t value, Bool_t do_render);
 
         void Keymap_Option_Value(Int_t option, Int_t key_code, Bool_t do_render = true);
+
+        void Show_Message(String_t message,
+                          Bool_t allow_cancel = true,
+                          String_t accept = "$Accept",
+                          String_t cancel = "$Cancel",
+                          Virtual_Callback_i** callback = nullptr);
+        void Reset_Page();
     public:
         static void Register_Me(Registry_t* registry);
     };
@@ -112,7 +127,7 @@ namespace doticu_npcp { namespace MCM {
     public:
         Variable_t* Variable(String_t variable_name);
 
-        void Set_Text_Option(Variable_t* option_in, String_t value, Bool_t do_render = true);
+        void Text_Option_Value(Int_t option, String_t text, Bool_t do_render = true);
         void Set_Option_Flags(Variable_t* option_in, Int_t flags = 0, Bool_t do_render = true);
 
         void Enable_Option(Variable_t* option_in, Bool_t do_render = true);

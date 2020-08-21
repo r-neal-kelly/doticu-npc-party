@@ -11,7 +11,7 @@ namespace doticu_npcp { namespace Papyrus {
     class Keys_t : public Quest_t {
     public:
         enum : Int_t {
-            KEY_INVALID = 0,
+            KEY_INVALID = -1,
             KEY_ESCAPE = 1,
             KEY_1 = 2,
             KEY_2 = 3,
@@ -149,7 +149,6 @@ namespace doticu_npcp { namespace Papyrus {
 
             Mods_t(Int_t mod_1 = KEY_INVALID, Int_t mod_2 = KEY_INVALID, Int_t mod_3 = KEY_INVALID);
             Mods_t(Array_t* array);
-            Mods_t(VMArray<Int_t> mods);
 
             Int_t Count();
             Bool_t Has(Int_t mod);
@@ -163,8 +162,8 @@ namespace doticu_npcp { namespace Papyrus {
             static Hotkeys_t* Self();
         public:
             std::vector<String_t> names;
-            std::vector<Variable_t*> value_variables;
-            std::vector<Variable_t*> mods_variables;
+            std::vector<Variable_t* (*)()> current_values;
+            std::vector<Variable_t* (*)()> current_mods;
             std::vector<Int_t> default_values;
             std::vector<Mods_t> default_mods;
 
@@ -262,6 +261,7 @@ namespace doticu_npcp { namespace Papyrus {
                                 Int_t pressed_7 = KEY_INVALID,
                                 Int_t pressed_8 = KEY_INVALID);
 
+        void Register_Keys();
     public:
         static void Register_Me(Registry_t* registry);
     };

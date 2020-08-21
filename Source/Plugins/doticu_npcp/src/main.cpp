@@ -31,6 +31,7 @@
 #include "vars.h"
 
 #include "mcm/mcm_main.h"
+#include "mcm/mcm_members.h"
 #include "mcm/mcm_member.h"
 #include "mcm/mcm_hotkeys.h"
 
@@ -274,6 +275,7 @@ namespace doticu_npcp { namespace Main {
         REGISTER_TYPE(Papyrus::Keys_t);
         REGISTER_TYPE(MCM::SKI_Config_Base_t);
         REGISTER_TYPE(MCM::Main_t);
+        REGISTER_TYPE(MCM::Members_t);
         REGISTER_TYPE(MCM::Member_t);
         REGISTER_TYPE(MCM::Hotkeys_t);
 

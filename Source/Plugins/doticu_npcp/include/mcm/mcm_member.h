@@ -25,8 +25,13 @@ namespace doticu_npcp { namespace MCM {
     public:
         Variable_t* Variable(String_t variable_name);
 
+        Variable_t* Current_View_Variable();
         Variable_t* Party_Member_Variable();
 
+        Variable_t* Rename_Option_Variable();
+        Variable_t* Back_Option_Variable();
+        Variable_t* Previous_Option_Variable();
+        Variable_t* Next_Option_Variable();
         Variable_t* Unmember_Option_Variable();
         Variable_t* Clone_Option_Variable();
         Variable_t* Unclone_Option_Variable();
@@ -48,7 +53,6 @@ namespace doticu_npcp { namespace MCM {
         Variable_t* Goto_Option_Variable();
         Variable_t* Rating_Option_Variable();
         Variable_t* Resurrect_Option_Variable();
-        Variable_t* Rename_Option_Variable();
         Variable_t* Follow_Option_Variable();
         Variable_t* Unfollow_Option_Variable();
         Variable_t* Sneak_Option_Variable();
@@ -81,8 +85,12 @@ namespace doticu_npcp { namespace MCM {
 
         Variable_t* Race_Option_Variable();
 
+        Int_t Current_View();
         Party::Member_t* Party_Member();
 
+        void View_Members_Member(Party::Member_t* member);
+        void View_Filter_Members_Member(Party::Member_t* member);
+        void Build_Page();
         void Build_Commands();
         void Update_Commands();
         void Build_Statistics();
