@@ -512,6 +512,32 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
+    void Flag_Outfit1_As_Outfit2(Actor_t* actor)
+    {
+        NPCP_ASSERT(actor);
+
+        XContainer_t* xcontainer = Object_Ref::Get_XContainer(actor, false);
+        if (xcontainer) {
+            for (XEntries_t::Iterator xentries = xcontainer->data->objList->Begin(); !xentries.End(); ++xentries) {
+                XEntry_t* xentry = xentries.Get();
+                if (xentry) {
+                    Form_t* form = xentry->type;
+                    if (form) {
+                        for (XLists_t::Iterator xlists = xentry->extendDataList->Begin(); !xlists.End(); ++xlists) {
+                            XList_t* xlist = xlists.Get();
+                            if (xlist) {
+                                XList::Validate(xlist);
+                                if (xlist->HasType(kExtraData_OutfitItem)) {
+                                    XList::Add_Outfit2_Flag(xlist);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     bool Has_Same_Head(Actor *actor_a, Actor *actor_b) {
         if (!actor_a || !actor_b) {
             return false;
@@ -841,7 +867,7 @@ namespace doticu_npcp { namespace Actor2 {
 
     void Fully_Update_3D_Model(Actor_t* actor)
     {
-        if (actor && actor->processManager && actor->processManager->middleProcess) {
+        if (actor && Actor2::Is_Loaded(actor) && actor->processManager && actor->processManager->middleProcess) {
             u8* flags_3d = ((u8*)actor->processManager->middleProcess + 0x311);
             *flags_3d = 0 |
                 1 << Actor_t2::Update_3D_Flags::MODEL_3D |
@@ -1482,10 +1508,6 @@ namespace doticu_npcp { namespace Actor2 {
                     marker = Player::Actor();
                 }
             }
-            
-            // removing the outfit and fully resetting the inventory
-            // seems to completely prevent a rare deadlock/crash
-            // that is caused by a bug somewhere in the engine.
 
             Actor_Base_t* real_base = Real_Base(actor);
             NPCP_ASSERT(real_base);

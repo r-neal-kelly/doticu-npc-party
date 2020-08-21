@@ -199,7 +199,10 @@ namespace doticu_npcp { namespace Party {
         Object_Ref::Remove_All_Items(clone);
         Actor2::Set_Outfit_Basic(clone, Default_Outfit(clone), false, false);
 
-        if (Vars::Clone_Outfit() == CODES::OUTFIT::REFERENCE) {
+        Int_t clone_outfit = Vars::Clone_Outfit();
+        if (clone_outfit == CODES::OUTFIT::BASE) {
+            Actor2::Flag_Outfit1_As_Outfit2(clone);
+        } else if (clone_outfit == CODES::OUTFIT::REFERENCE) {
             Reference_t* trash = Object_Ref::Create_Container();
             Actor2::Set_Outfit2(clone, nullptr, original, trash);
             Object_Ref::Delete_Safe(trash);

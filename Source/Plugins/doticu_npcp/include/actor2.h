@@ -27,6 +27,7 @@ namespace doticu_npcp { namespace Actor2 {
     void Split_Inventory(Actor_t* actor, Reference_t* worn_out, Reference_t* pack_out);
     void Cache_Worn(Actor_t* actor, Reference_t* cache_out);
     void Cache_BContainer(Actor_t* actor, Reference_t* cache_out);
+    void Flag_Outfit1_As_Outfit2(Actor_t* actor);
 
     bool Has_Same_Head(Actor *actor_a, Actor *actor_b);
 
