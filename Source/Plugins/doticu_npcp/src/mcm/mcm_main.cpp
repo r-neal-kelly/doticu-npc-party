@@ -119,22 +119,22 @@ namespace doticu_npcp { namespace Papyrus { namespace UI {
     }
 
     template <typename Type>
-    void Invoke_Argument(String_t menu, String_t target, Type argument)
+    void Run(String_t menu, String_t target, Type argument)
     {
         if (menu.data && target.data) {
             UIManager* ui_manager = UIManager::GetSingleton();
             if (ui_manager) {
-                UIInvokeDelegate* delegate = new UIInvokeDelegate(menu.data, target.data);
-                delegate->args.resize(1);
-                Set_Value<Type>(&delegate->args[0], argument);
-                ui_manager->QueueCommand(delegate);
+                UIInvokeDelegate delegate(menu.data, target.data);
+                delegate.args.resize(1);
+                Set_Value<Type>(&delegate.args[0], argument);
+                delegate.Run();
             }
         }
     }
 
-    void Invoke(String_t menu, String_t target)
+    void Run(String_t menu, String_t target)
     {
-        return Invoke_Argument<Bool_t>(menu, target, false);
+        return Run<Bool_t>(menu, target, false);
     }
 
 }}}
@@ -277,21 +277,7 @@ namespace doticu_npcp { namespace MCM {
 
     void SKI_Config_Base_t::Title_Text(String_t title)
     {
-        class Arguments : public Virtual_Arguments_t {
-        public:
-            String_t title;
-            Arguments(String_t title) :
-                title(title)
-            {
-            };
-            Bool_t operator()(Arguments_t* arguments)
-            {
-                arguments->Resize(1);
-                arguments->At(0)->String(title);
-                return true;
-            }
-        } arguments(title);
-        Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "SetTitleText", &arguments);
+        UI::Run<String_t>("Journal Menu", "_root.ConfigPanelFader.configPanel" ".setTitleText", title);
     }
 
     String_t SKI_Config_Base_t::Info_Text()
@@ -379,50 +365,32 @@ namespace doticu_npcp { namespace MCM {
     {
         NPCP_ASSERT(Current_State() != State_e::RESET);
 
-        class Arguments : public Virtual_Arguments_t {
-        public:
-            Int_t index;
-            Float_t value;
-            Bool_t dont_render;
-            Arguments(Int_t index, Float_t value, Bool_t dont_render) :
-                index(index), value(value), dont_render(dont_render)
-            {
-            };
-            Bool_t operator()(Arguments_t* arguments)
-            {
-                arguments->Resize(3);
-                arguments->At(0)->Int(index);
-                arguments->At(1)->Float(value);
-                arguments->At(2)->Bool(dont_render);
-                return true;
-            }
-        } arguments(index, value, !do_render);
-        Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "SetOptionNumValue", &arguments);
+        UI::Set_Value<Int_t>("Journal Menu", "_root.ConfigPanelFader.configPanel" ".optionCursorIndex", index);
+        UI::Set_Value<Float_t>("Journal Menu", "_root.ConfigPanelFader.configPanel" ".optionCursor.numValue", value);
+        if (do_render) {
+            UI::Run("Journal Menu", "_root.ConfigPanelFader.configPanel" ".invalidateOptionData");
+        }
     }
 
     void SKI_Config_Base_t::Option_String_Value(Int_t index, String_t value, Bool_t do_render)
     {
         NPCP_ASSERT(Current_State() != State_e::RESET);
 
-        class Arguments : public Virtual_Arguments_t {
-        public:
-            Int_t index;
-            String_t value;
-            Bool_t dont_render;
-            Arguments(Int_t index, String_t value, Bool_t dont_render) :
-                index(index), value(value), dont_render(dont_render)
-            {
-            };
-            Bool_t operator()(Arguments_t* arguments)
-            {
-                arguments->Resize(3);
-                arguments->At(0)->Int(index);
-                arguments->At(1)->String(value);
-                arguments->At(2)->Bool(dont_render);
-                return true;
-            }
-        } arguments(index, value, !do_render);
-        Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "SetOptionStrValue", &arguments);
+        UI::Set_Value<Int_t>("Journal Menu", "_root.ConfigPanelFader.configPanel" ".optionCursorIndex", index);
+        UI::Set_Value<String_t>("Journal Menu", "_root.ConfigPanelFader.configPanel" ".optionCursor.strValue", value);
+        if (do_render) {
+            UI::Run("Journal Menu", "_root.ConfigPanelFader.configPanel" ".invalidateOptionData");
+        }
+    }
+
+    void SKI_Config_Base_t::Text_Option_Value(Int_t option, String_t text, Bool_t do_render)
+    {
+        Int_t index = option % 0x100;
+        Option_Type_e type = static_cast<Option_Type_e>
+            (Flags()->Point(index)->Int() % 0x100);
+        NPCP_ASSERT(type == Option_Type_e::TEXT);
+
+        Option_String_Value(index, text, do_render);
     }
 
     void SKI_Config_Base_t::Keymap_Option_Value(Int_t option, Int_t key_code, Bool_t do_render)
@@ -520,33 +488,6 @@ namespace doticu_npcp { namespace MCM {
     Variable_t* Main_t::Variable(String_t variable_name)
     {
         return Object()->Variable(variable_name);
-    }
-
-    void Main_t::Text_Option_Value(Int_t option, String_t value, Bool_t do_render)
-    {
-        NPCP_ASSERT(value);
-
-        struct Arguments : public Virtual_Arguments_t {
-        public:
-            Int_t option;
-            String_t value;
-            Bool_t dont_render;
-            Arguments(Int_t option, String_t value, Bool_t dont_render) :
-                option(option), value(value), dont_render(dont_render)
-            {
-            }
-            Bool_t operator()(Arguments_t* arguments)
-            {
-                arguments->Resize(3);
-                arguments->At(0)->Int(option);
-                arguments->At(1)->String(value);
-                arguments->At(2)->Bool(dont_render);
-
-                return true;
-            }
-        } arguments(option, value, !do_render);
-
-        Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "SetTextOptionValue", &arguments);
     }
 
     void Main_t::Set_Option_Flags(Variable_t* option_in, Int_t flags, Bool_t do_render)

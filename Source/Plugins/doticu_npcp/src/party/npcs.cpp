@@ -3,6 +3,7 @@
 */
 
 #include "actor2.h"
+#include "cell.h"
 #include "codes.h"
 #include "form_vector.h"
 #include "object_ref.h"
@@ -279,6 +280,20 @@ namespace doticu_npcp { namespace Party {
             Object_Ref::Untoken(actor, Consts::Sneak_Follower_Token());
             Object_Ref::Untoken(actor, Consts::Saddler_Token());
             Object_Ref::Untoken(actor, Consts::Retreater_Token());
+        }
+    }
+
+    void NPCS_t::u_0_9_3()
+    {
+        Form_Vector_t* bases = Bases();
+        Form_Vector_t* default_outfits = Default_Outfits();
+
+        Vector_t<Reference_t*> form_vectors = Cell::References(Consts::Storage_Cell(), Consts::Form_Vector());
+        for (size_t idx = 0, count = form_vectors.size(); idx < count; idx += 1) {
+            Form_Vector_t* form_vector = static_cast<Form_Vector_t*>(form_vectors.at(idx));
+            if (form_vector != bases && form_vector != default_outfits) {
+                Form_Vector_t::Destroy(form_vector);
+            }
         }
     }
 

@@ -70,6 +70,9 @@ namespace doticu_npcp { namespace Consts {
     // NPCP Armors
     Armor_t* Blank_Armor();
 
+    // NPCP Cells
+    Cell_t* Storage_Cell();
+
     // NPCP Containers
     Container_t* Empty_Container();
     Container_t* Outfit2_Container();

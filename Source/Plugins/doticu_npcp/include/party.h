@@ -91,6 +91,8 @@ namespace doticu_npcp { namespace Party {
         void Change_Default_Outfit(Actor_t* actor, Outfit_t* default_outfit);
 
         void Remove_All_Tokens(Actor_t* actor);
+
+        void u_0_9_3();
     public:
         static void Register_Me(Registry_t* registry);
     };

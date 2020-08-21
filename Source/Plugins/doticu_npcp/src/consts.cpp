@@ -153,6 +153,9 @@ namespace doticu_npcp { namespace Consts {
         // NPCP Armors
         ARMOR_BLANK                         = 0x1EF2A5,
 
+        // NPCP Cells
+        CELL_STORAGE                        = 0x114F9C,
+
         // NPCP Containers
         CONTAINER_EMPTY                     = 0x0A5561,
         CONTAINER_OUTFIT2                   = 0x0B9A63,
@@ -322,6 +325,9 @@ namespace doticu_npcp { namespace Consts {
 
     // NPCP Armors
     Armor_t* Blank_Armor() { NPCP_FORM(Armor_t, ARMOR_BLANK); }
+
+    // NPCP Cells
+    Cell_t* Storage_Cell() { NPCP_FORM(Cell_t, CELL_STORAGE); }
 
     // NPCP Containers
     Container_t* Empty_Container() { NPCP_FORM(Container_t, CONTAINER_EMPTY); }

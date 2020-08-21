@@ -106,6 +106,7 @@ namespace doticu_npcp { namespace MCM {
         void Option_Number_Value(Int_t index, Float_t value, Bool_t do_render);
         void Option_String_Value(Int_t index, String_t value, Bool_t do_render);
 
+        void Text_Option_Value(Int_t option, String_t text, Bool_t do_render = true);
         void Keymap_Option_Value(Int_t option, Int_t key_code, Bool_t do_render = true);
 
         void Show_Message(String_t message,
@@ -127,7 +128,6 @@ namespace doticu_npcp { namespace MCM {
     public:
         Variable_t* Variable(String_t variable_name);
 
-        void Text_Option_Value(Int_t option, String_t text, Bool_t do_render = true);
         void Set_Option_Flags(Variable_t* option_in, Int_t flags = 0, Bool_t do_render = true);
 
         void Enable_Option(Variable_t* option_in, Bool_t do_render = true);

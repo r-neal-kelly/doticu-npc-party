@@ -21,6 +21,11 @@ namespace doticu_npcp { namespace Game {
         return data_handler;
     }
 
+    tArray<Reference_t*>& References()
+    {
+        return *reinterpret_cast<tArray<Reference_t*>*>(&Data_Handler()->arrREFR);
+    }
+
     Form_t* Form(UInt32 form_id)
     {
         return LookupFormByID(form_id);

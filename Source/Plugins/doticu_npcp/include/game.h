@@ -8,6 +8,8 @@
 
 namespace doticu_npcp { namespace Game {
 
+    tArray<Reference_t*>& References();
+
     Form_t* Form(UInt32 form_id);
     Form_t* Mod_Form(const char* mod_name, UInt32 lower_form_id);
     Form_t* Skyrim_Form(UInt32 lower_form_id);
