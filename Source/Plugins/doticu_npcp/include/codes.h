@@ -116,6 +116,8 @@ namespace doticu_npcp { namespace CODES {
             VANILLA = -7000,
             DEFAULT = -8000,
 
+            DELETED = 0xDEAD,
+
         };
     }
 

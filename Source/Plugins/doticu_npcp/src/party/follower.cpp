@@ -369,13 +369,13 @@ namespace doticu_npcp { namespace Party {
         Alias_t::Fill(member->Actor(), &callback);
     }
 
-    void Follower_t::Unfill()
+    void Follower_t::Unfill(Virtual_Callback_i** callback)
     {
         NPCP_ASSERT(Is_Filled());
 
         Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "f_Unregister");
         Destroy();
-        Alias_t::Unfill(nullptr);
+        Alias_t::Unfill(callback);
     }
 
     void Follower_t::Create(Member_t* member)

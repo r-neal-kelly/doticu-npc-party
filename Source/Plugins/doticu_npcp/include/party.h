@@ -293,6 +293,8 @@ namespace doticu_npcp { namespace Party {
         Int_t Add_Clone(Actor_t* original);
         Int_t Remove_Clone(Actor_t* clone, Bool_t do_delete_clone);
 
+        void Delete_Unused_Outfit2s();
+
         void u_0_9_3();
     };
 
@@ -399,7 +401,7 @@ namespace doticu_npcp { namespace Party {
         Vector_t<Follower_t*> Sort_Filled(Int_t begin = 0, Int_t end = -1);
 
         Int_t Add_Follower(Member_t* member);
-        Int_t Remove_Follower(Member_t* member);
+        Int_t Remove_Follower(Member_t* member, Virtual_Callback_i** callback);
 
         Int_t Enforce();
         Int_t Resurrect();
@@ -851,7 +853,7 @@ namespace doticu_npcp { namespace Party {
         void Untoken(Misc_t* token);
 
         void Fill(Member_t* member);
-        void Unfill();
+        void Unfill(Virtual_Callback_i** callback);
         void Create(Member_t* member);
         void Destroy();
         void Create_Horse();

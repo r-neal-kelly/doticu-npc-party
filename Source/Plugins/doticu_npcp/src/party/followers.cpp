@@ -484,13 +484,13 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
-    Int_t Followers_t::Remove_Follower(Member_t* member)
+    Int_t Followers_t::Remove_Follower(Member_t* member, Virtual_Callback_i** callback)
     {
         if (member) {
             Actor_t* actor = member->Actor();
             Follower_t* follower = From_Actor(actor);
             if (follower) {
-                follower->Unfill();
+                follower->Unfill(callback);
                 return CODES::SUCCESS;
             } else {
                 return CODES::FOLLOWER;

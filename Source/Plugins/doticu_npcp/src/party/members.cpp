@@ -3,6 +3,7 @@
 */
 
 #include "actor2.h"
+#include "cell.h"
 #include "codes.h"
 #include "consts.h"
 #include "filter.h"
@@ -716,6 +717,17 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
+    void Members_t::Delete_Unused_Outfit2s()
+    {
+        Vector_t<Reference_t*> outfit2s = Cell::References(Consts::Storage_Cell(), Consts::Outfit2_Container());
+        for (size_t idx = 0, count = outfit2s.size(); idx < count; idx += 1) {
+            Outfit2_t* outfit2 = static_cast<Outfit2_t*>(outfit2s.at(idx));
+            if (outfit2 && outfit2->Type() == CODES::OUTFIT2::DELETED) {
+                Object_Ref::Delete_Unsafe(outfit2);
+            }
+        }
+    }
+
     void Members_t::u_0_9_3()
     {
         NPCS_t* npcs = NPCS_t::Self();
@@ -725,27 +737,62 @@ namespace doticu_npcp { namespace Party {
             Member_t* member = filled.at(idx);
             Actor_t* actor = member->Actor();
 
-            Variable_t* previous_factions_variable = member->Variable("p_prev_factions");
-            NPCP_ASSERT(previous_factions_variable);
-            Array_t* previous_factions = previous_factions_variable->Array();
-            previous_factions_variable->None();
-            if (previous_factions) {
-                Faction_t* potentional_follower_faction = Consts::Potential_Follower_Faction();
-                Faction_t* wi_no_body_cleanup_faction = Consts::WI_No_Body_Cleanup_Faction();
-                for (size_t idx = 0, count = previous_factions->count; idx < count; idx += 1) {
-                    Faction_t* faction = previous_factions->Point(idx)->Faction();
-                    if (faction == potentional_follower_faction) {
-                        member->Previous_Potential_Follower_Faction_Variable()->Bool(true);
-                    }
-                    if (faction == wi_no_body_cleanup_faction) {
-                        member->Previous_No_Body_Cleanup_Faction_Variable()->Bool(true);
+            { // recache factions
+                Variable_t* previous_factions_variable = member->Variable("p_prev_factions");
+                NPCP_ASSERT(previous_factions_variable);
+                Array_t* previous_factions = previous_factions_variable->Array();
+                previous_factions_variable->None();
+                if (previous_factions) {
+                    Faction_t* potentional_follower_faction = Consts::Potential_Follower_Faction();
+                    Faction_t* wi_no_body_cleanup_faction = Consts::WI_No_Body_Cleanup_Faction();
+                    for (size_t idx = 0, count = previous_factions->count; idx < count; idx += 1) {
+                        Faction_t* faction = previous_factions->Point(idx)->Faction();
+                        if (faction == potentional_follower_faction) {
+                            member->Previous_Potential_Follower_Faction_Variable()->Bool(true);
+                        }
+                        if (faction == wi_no_body_cleanup_faction) {
+                            member->Previous_No_Body_Cleanup_Faction_Variable()->Bool(true);
+                        }
                     }
                 }
             }
 
+            { // make sure outfit2 have their correct type.
+                Outfit2_t* member_outfit2 = static_cast<Outfit2_t*>(member->Member_Outfit2_Variable()->Reference());
+                if (member_outfit2) {
+                    member_outfit2->Type_Variable()->Int(CODES::OUTFIT2::MEMBER);
+                }
+                Outfit2_t* immobile_outfit2 = static_cast<Outfit2_t*>(member->Immobile_Outfit2_Variable()->Reference());
+                if (immobile_outfit2) {
+                    immobile_outfit2->Type_Variable()->Int(CODES::OUTFIT2::IMMOBILE);
+                }
+                Outfit2_t* settler_outfit2 = static_cast<Outfit2_t*>(member->Settler_Outfit2_Variable()->Reference());
+                if (settler_outfit2) {
+                    settler_outfit2->Type_Variable()->Int(CODES::OUTFIT2::SETTLER);
+                }
+                Outfit2_t* thrall_outfit2 = static_cast<Outfit2_t*>(member->Thrall_Outfit2_Variable()->Reference());
+                if (thrall_outfit2) {
+                    thrall_outfit2->Type_Variable()->Int(CODES::OUTFIT2::THRALL);
+                }
+                Outfit2_t* follower_outfit2 = static_cast<Outfit2_t*>(member->Follower_Outfit2_Variable()->Reference());
+                if (follower_outfit2) {
+                    follower_outfit2->Type_Variable()->Int(CODES::OUTFIT2::FOLLOWER);
+                }
+                Outfit2_t* vanilla_outfit2 = static_cast<Outfit2_t*>(member->Vanilla_Outfit2_Variable()->Reference());
+                if (vanilla_outfit2) {
+                    vanilla_outfit2->Type_Variable()->Int(CODES::OUTFIT2::VANILLA);
+                }
+                Outfit2_t* default_outfit2 = static_cast<Outfit2_t*>(member->Default_Outfit2_Variable()->Reference());
+                if (default_outfit2) {
+                    default_outfit2->Type_Variable()->Int(CODES::OUTFIT2::DEFAULT);
+                }
+            }
+
+            // make sure the default outfit is there.
             npcs->Add_Base_If_Needed(actor, actor);
             member->Default_Outfit_Variable()->Pack(npcs->Default_Outfit(actor));
 
+            // new name cache
             member->Name_Variable()->String(Actor2::Get_Name(actor));
         }
     }

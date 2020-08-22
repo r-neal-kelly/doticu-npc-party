@@ -972,84 +972,97 @@ namespace doticu_npcp { namespace Party {
 
     void Member_t::Destroy()
     {
-        Actor_t* actor = Actor();
-
         if (Is_Follower()) {
-            Followers_t::Self()->Remove_Follower(this);
-        }
+            class Callback : public Virtual_Callback_t {
+            public:
+                Member_t* member;
+                Callback(Member_t* member) :
+                    member(member)
+                {
+                }
+                void operator()(Variable_t* result)
+                {
+                    member->Destroy();
+                }
+            };
+            Virtual_Callback_i* callback = new Callback(this);
 
-        Unvitalize();
-        Unstylize();
-        if (Is_Reanimated()) {
-            // p_Deanimate()
-            // p_Kill()
-        }
-        if (Is_Display()) {
-            Undisplay(); // will this cause problems with Members_t?
-        }
-        if (Is_Mannequin()) {
-            Unmannequinize();
-        }
-        if (Is_Paralyzed()) {
-            Unparalyze();
-        }
-        if (Is_Thrall()) {
-            Unthrall();
-        }
-        if (Is_Settler()) {
-            Unsettle();
-        }
-        if (Is_Immobile()) {
-            Mobilize();
-        }
-        Enforce_Non_Member(actor);
+            Followers_t::Self()->Remove_Follower(this, &callback);
+        } else {
+            Actor_t* actor = Actor();
 
-        Restore_State(actor);
-        Destroy_Outfit2s();
-        Destroy_Containers();
-        
-        Previous_Morality_Variable()->Float(0.0f);
-        Previous_Assistance_Variable()->Float(0.0f);
-        Previous_Confidence_Variable()->Float(0.0f);
-        Previous_Aggression_Variable()->Float(0.0f);
+            Unvitalize();
+            Unstylize();
+            if (Is_Reanimated()) {
+                Deanimate();
+            }
+            if (Is_Display()) {
+                Undisplay(); // will this cause problems with Members_t?
+            }
+            if (Is_Mannequin()) {
+                Unmannequinize();
+            }
+            if (Is_Paralyzed()) {
+                Unparalyze();
+            }
+            if (Is_Thrall()) {
+                Unthrall();
+            }
+            if (Is_Settler()) {
+                Unsettle();
+            }
+            if (Is_Immobile()) {
+                Mobilize();
+            }
+            Enforce_Non_Member(actor);
 
-        Previous_No_Body_Cleanup_Faction_Variable()->Bool(false);
-        Previous_Potential_Follower_Faction_Variable()->Bool(false);
-        Previous_Crime_Faction_Variable()->None();
+            Restore_State(actor);
+            Destroy_Outfit2s();
+            Destroy_Containers();
 
-        Name_Variable()->String("");
+            Previous_Morality_Variable()->Float(0.0f);
+            Previous_Assistance_Variable()->Float(0.0f);
+            Previous_Confidence_Variable()->Float(0.0f);
+            Previous_Aggression_Variable()->Float(0.0f);
 
-        Rating_Variable()->Int(0);
-        Outfit2_Variable()->Int(0);
-        Vitality_Variable()->Int(0);
-        Style_Variable()->Int(0);
+            Previous_No_Body_Cleanup_Faction_Variable()->Bool(false);
+            Previous_Potential_Follower_Faction_Variable()->Bool(false);
+            Previous_Crime_Faction_Variable()->None();
 
-        Is_Reanimated_Variable()->Bool(false);
-        Is_Display_Variable()->Bool(false);
-        Is_Mannequin_Variable()->Bool(false);
-        Is_Paralyzed_Variable()->Bool(false);
-        Is_Thrall_Variable()->Bool(false);
-        Is_Settler_Variable()->Bool(false);
-        Is_Immobile_Variable()->Bool(false);
-        Is_Clone_Variable()->Bool(false);
+            Name_Variable()->String("");
 
-        Backup_Outfit2_Variable()->None();
-        Current_Outfit2_Variable()->None();
-        Default_Outfit2_Variable()->None();
-        Vanilla_Outfit2_Variable()->None();
-        Follower_Outfit2_Variable()->None();
-        Thrall_Outfit2_Variable()->None();
-        Settler_Outfit2_Variable()->None();
-        Immobile_Outfit2_Variable()->None();
-        Member_Outfit2_Variable()->None();
+            Rating_Variable()->Int(0);
+            Outfit2_Variable()->Int(0);
+            Vitality_Variable()->Int(0);
+            Style_Variable()->Int(0);
 
-        Default_Outfit_Variable()->None();
-        Vanilla_Outfit_Variable()->None();
-        Undisplay_Marker_Variable()->None();
-        Display_Marker_Variable()->None();
-        Mannequin_Marker_Variable()->None();
-        Pack_Variable()->None();
-        Actor_Variable()->None();
+            Is_Reanimated_Variable()->Bool(false);
+            Is_Display_Variable()->Bool(false);
+            Is_Mannequin_Variable()->Bool(false);
+            Is_Paralyzed_Variable()->Bool(false);
+            Is_Thrall_Variable()->Bool(false);
+            Is_Settler_Variable()->Bool(false);
+            Is_Immobile_Variable()->Bool(false);
+            Is_Clone_Variable()->Bool(false);
+
+            Backup_Outfit2_Variable()->None();
+            Current_Outfit2_Variable()->None();
+            Default_Outfit2_Variable()->None();
+            Vanilla_Outfit2_Variable()->None();
+            Follower_Outfit2_Variable()->None();
+            Thrall_Outfit2_Variable()->None();
+            Settler_Outfit2_Variable()->None();
+            Immobile_Outfit2_Variable()->None();
+            Member_Outfit2_Variable()->None();
+
+            Default_Outfit_Variable()->None();
+            Vanilla_Outfit_Variable()->None();
+            Undisplay_Marker_Variable()->None();
+            Display_Marker_Variable()->None();
+            Mannequin_Marker_Variable()->None();
+            Pack_Variable()->None();
+            Actor_Variable()->None();
+        }
     }
 
     void Member_t::Destroy_Containers()
@@ -2695,7 +2708,7 @@ namespace doticu_npcp { namespace Party {
     {
         if (Is_Filled()) {
             if (Is_Follower()) {
-                Int_t result = Followers_t::Self()->Remove_Follower(this);
+                Int_t result = Followers_t::Self()->Remove_Follower(this, nullptr);
                 if (result == CODES::SUCCESS) {
                     Actor_t* actor = Actor();
                     Enforce_Outfit2(actor); // may need to use callback

@@ -5,6 +5,7 @@
 #pragma once
 
 #include "consts.h"
+#include "form.h"
 #include "form_vector.h"
 #include "object_ref.h"
 #include "papyrus.inl"
@@ -97,10 +98,6 @@ namespace doticu_npcp { namespace Papyrus {
         form_vector->Count_Variable()->Int(0);
         form_vector->Filler_Variable()->None();
         form_vector->Grow_Rate_Variable()->Float(0.0f);
-
-        /*Object_t* object = Object_t::Fetch(form_vector, Class_Name());
-        Virtual_Machine_t::Self()->Object_Policy()->Unbind_Object(object);
-        object->Destroy();*/
 
         Object_Ref::Delete_Unsafe(form_vector);
     }

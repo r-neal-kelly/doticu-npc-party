@@ -9,6 +9,8 @@
 
 namespace doticu_npcp { namespace Object_Ref {
 
+    using namespace Papyrus;
+
     BContainer_t *Get_BContainer(TESObjectREFR *obj);
     XContainer_t *Get_XContainer(TESObjectREFR *obj, bool do_create = false);
 
@@ -88,9 +90,11 @@ namespace doticu_npcp { namespace Object_Ref {
     Reference_t* Create_Container();
 
     void Delete_Safe(Reference_t* ref);
-    void Delete_Unsafe(Reference_t* ref);
-    //void Request_Delete(Reference_t* ref);
-    //void Force_Delete(Reference_t* ref);
+    void Delete_Unsafe(Reference_t* ref); // for some unknown reason, can sometimes cause a crash. but the above does not work with user types
+    void Queue_Delete(Reference_t* ref);
+
+    void Enable(Reference_t* ref, Bool_t do_fade_in = false, Virtual_Callback_i** callback = nullptr);
+    void Disable(Reference_t* ref, Bool_t do_fade_out = false, Virtual_Callback_i** callback = nullptr);
 
     bool Is_In_Interior_Cell(Reference_t* ref);
     bool Is_In_Exterior_Cell(Reference_t* ref);

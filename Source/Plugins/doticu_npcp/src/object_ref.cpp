@@ -3,6 +3,7 @@
 */
 
 #include "skse64/GameRTTI.h"
+#include "skse64/PapyrusWornObject.h"
 
 #include "cell.h"
 #include "consts.h"
@@ -863,7 +864,12 @@ namespace doticu_npcp { namespace Object_Ref {
 
     void Rename(Reference_t* ref, String_t new_name)
     {
+        // because there is a rare and hard to replicate bug that may have something to do with this, we'll use SKSE for now
         if (ref) {
+            referenceUtils::SetDisplayName(&ref->extraData, new_name, true);
+        }
+
+        /*if (ref) {
             XList::Validate(&ref->extraData);
             ExtraTextDisplay* xtext = static_cast<ExtraTextDisplay*>(ref->extraData.GetByType(kExtraData_TextDisplayData));
             if (xtext) {
@@ -874,7 +880,7 @@ namespace doticu_npcp { namespace Object_Ref {
                     ref->extraData.Add(kExtraData_TextDisplayData, xtext);
                 }
             }
-        }
+        }*/
     }
 
     void Init_Container_If_Needed(Reference_t* ref)
@@ -1026,17 +1032,82 @@ namespace doticu_npcp { namespace Object_Ref {
 
     void Delete_Unsafe(Reference_t* ref)
     {
-        using namespace Papyrus;
+        NPCP_ASSERT(ref);
 
-        if (ref) {
-            Object_Policy_t* object_policy = Virtual_Machine_t::Self()->Object_Policy();
-            object_policy->virtual_binder->Unbind_All_Objects3(ref);
+        Virtual_Machine_t::Self()->Object_Policy()->virtual_binder->Unbind_All_Objects3(ref);
 
-            ref->Disable();
-            ref->Set_Delete(true);
-            ref->handleRefObject.m_uiRefCount = 0;
-            ref->handleRefObject.DeleteThis();
-        }
+        ref->Disable();
+        ref->Set_Delete(true);
+        ref->handleRefObject.m_uiRefCount = 0;
+        ref->handleRefObject.DeleteThis();
+    }
+
+    void Queue_Delete(Reference_t* ref)
+    {
+        NPCP_ASSERT(ref);
+
+        class Callback : public Virtual_Callback_t {
+        public:
+            Reference_t* ref;
+            Callback(Reference_t* ref) :
+                ref(ref)
+            {
+            }
+            void operator()(Variable_t* result)
+            {
+                Virtual_Machine_t::Self()->Object_Policy()->virtual_binder->Unbind_All_Objects3(ref);
+                ref->Set_Delete(true);
+                ref->handleRefObject.m_uiRefCount = 0;
+                ref->handleRefObject.DeleteThis();
+            }
+        };
+        Virtual_Callback_i* callback = new Callback(ref);
+        
+        Disable(ref, false, &callback);
+    }
+
+    void Enable(Reference_t* ref, Bool_t do_fade_in, Virtual_Callback_i** callback)
+    {
+        NPCP_ASSERT(ref);
+
+        class Arguments : public Virtual_Arguments_t {
+        public:
+            Bool_t do_fade_in;
+            Arguments(Bool_t do_fade_in) :
+                do_fade_in(do_fade_in)
+            {
+            }
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(1);
+                arguments->At(0)->Bool(do_fade_in);
+                return true;
+            }
+        } arguments(do_fade_in);
+
+        Virtual_Machine_t::Self()->Call_Method(ref, "ObjectReference", "Enable", &arguments, callback);
+    }
+
+    void Disable(Reference_t* ref, Bool_t do_fade_out, Virtual_Callback_i** callback)
+    {
+        NPCP_ASSERT(ref);
+
+        class Arguments : public Virtual_Arguments_t {
+        public:
+            Bool_t do_fade_out;
+            Arguments(Bool_t do_fade_out) :
+                do_fade_out(do_fade_out)
+            {
+            }
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(1);
+                arguments->At(0)->Bool(do_fade_out);
+                return true;
+            }
+        } arguments(do_fade_out);
+
+        Virtual_Machine_t::Self()->Call_Method(ref, "ObjectReference", "Disable", &arguments, callback);
     }
 
     bool Is_In_Interior_Cell(Reference_t* ref)

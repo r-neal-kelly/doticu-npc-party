@@ -174,7 +174,9 @@ namespace doticu_npcp { namespace Papyrus {
             Object_Ref::Delete_Safe(outfit1_cache_variable->Reference());
         }
 
-        Object_Ref::Delete_Unsafe(outfit2);
+        // a flag to delete this outfit on game load, to prevent random crashes with Delete_Unsafe
+        outfit2->Type_Variable()->Int(CODES::OUTFIT2::DELETED);
+        //Object_Ref::Delete_Unsafe(outfit2);
     }
 
     Variable_t* Outfit2_t::Variable(String_t variable_name)
