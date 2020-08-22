@@ -153,19 +153,6 @@ event OnActivate(ObjectReference activator) native
 event OnCombatStateChanged(Actor target, int combat_code) native
 event OnHit(ObjectReference attacker, Form tool, Projectile projectile, bool is_power, bool is_sneak, bool is_bash, bool is_blocked) native
 
-; Private Methods
-function p_Kill()
-    ; we clear it just to make sure that their default essential
-    ; status doesn't get in the way of their dying
-    Clear()
-    doticu_npcp.Funcs().ACTORS.Kill(p_ref_actor)
-    ForceRefTo(p_ref_actor)
-
-    ; we call the event handler ourselves because the actor
-    ; is not filled on death
-    OnDeath(none)
-endFunction
-
 ; Public Methods
 int function Goto(int distance = 140, int angle = 0)
     if !Is_Filled()
@@ -177,7 +164,7 @@ int function Goto(int distance = 140, int angle = 0)
 
     doticu_npcp.Funcs().ACTORS.Move_To(doticu_npcp_consts.Player_Actor(), p_ref_actor, distance, angle)
 
-    Enforce()
+    ;Enforce()
 
     return doticu_npcp_codes.SUCCESS()
 endFunction

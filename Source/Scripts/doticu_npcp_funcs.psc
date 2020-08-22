@@ -143,3 +143,23 @@ function Open_Container(ObjectReference ref_container)
     ref_container.Activate(doticu_npcp_consts.Player_Actor())
     Wait_Out_Of_Menu(0.1)
 endFunction
+
+function Move_To_Orbit(ObjectReference ref, ObjectReference origin, float radius, float degree)
+    bool has_disabled_ai = false
+    Actor ref_actor = ref as Actor
+    if ref_actor && !ref_actor.IsAIEnabled()
+        has_disabled_ai = true
+    endIf
+
+    if has_disabled_ai
+        ref_actor.EnableAI(true)
+    endIf
+
+    float origin_degree = origin.GetAngleZ()
+    ref.MoveTo(origin, radius * Math.Sin(origin_degree - degree), radius * Math.Cos(origin_degree - degree), 0.0)
+    ref.SetAngle(0.0, 0.0, origin_degree - 180 - degree)
+
+    if has_disabled_ai
+        ref_actor.EnableAI(false)
+    endIf
+endFunction

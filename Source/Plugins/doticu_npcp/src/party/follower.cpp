@@ -414,7 +414,7 @@ namespace doticu_npcp { namespace Party {
         Enforce_Non_Follower(actor);
 
         Restore_State(actor);
-        Destroy_Horse();
+        //Destroy_Horse(); until we can make sure the horse is not deleted until it's done with its callbacks
 
         Previous_No_Auto_Bard_Faction_Variable()->Bool(false);
         Previous_Speed_Multiplier_Variable()->Float(-1.0f);
@@ -514,7 +514,7 @@ namespace doticu_npcp { namespace Party {
             }
         };
         Virtual_Callback_i* callback = new Callback(actor);
-        Actor2::Relationship_Rank(actor, Player::Actor(), 3, &callback);
+        Actor2::Relationship_Rank(actor, Player::Actor(), 3, &callback); // maybe we can check for change
     }
 
     void Follower_t::Enforce_Non_Follower(Actor_t* actor)
@@ -1064,7 +1064,7 @@ namespace doticu_npcp { namespace Party {
         if (Is_Filled()) {
             NPCP_ASSERT(Isnt_Mannequin());
             Summon(Player::Actor(), radius, degree);
-            Member()->Enforce();
+            //Member()->Enforce();
             return CODES::SUCCESS;
         } else {
             return CODES::FOLLOWER;

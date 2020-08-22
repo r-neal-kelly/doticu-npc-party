@@ -96,6 +96,10 @@ namespace doticu_npcp {
 
         Bool_t Is_Unique();
         Bool_t Is_Ghost();
+        Bool_t Is_Essential();
+
+        void Essentialize();
+        void Unessentialize();
     };
 
     enum class Actor_Value_t : UInt32 {

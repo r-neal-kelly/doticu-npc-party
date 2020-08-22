@@ -90,7 +90,7 @@ Alias[] function Slice(Alias[] members, int begin, int end) native
 
 string[] function Race_Names() native
 
-function Enforce_Loaded() native
+function Enforce_Loaded(bool do_resurrect = false) native
 
 string[]    function Filter_Strings     (string sex = "", string race = "", string search = "")             native
 int[]       function Filter_Ints        (int style = 0, int vitality = 0, int outfit2 = 0, int rating = -1) native

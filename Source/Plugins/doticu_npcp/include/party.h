@@ -266,7 +266,7 @@ namespace doticu_npcp { namespace Party {
 
         Vector_t<String_t> Race_Names();
 
-        void Enforce_Loaded();
+        void Enforce_Loaded(Bool_t do_resurrect = false);
 
         Vector_t<Member_t*> Filter(Vector_t<String_t>* strings = nullptr,
                                    Vector_t<Int_t>* ints = nullptr,
@@ -654,10 +654,6 @@ namespace doticu_npcp { namespace Party {
                     Bool_t is_bash,
                     Bool_t is_blocked);
 
-        bool Has_Token(Misc_t* token, Int_t count = 1);
-        void Token(Misc_t* token, Int_t count = 1);
-        void Untoken(Misc_t* token);
-
         void Fill(Actor_t* actor, Bool_t is_clone);
         void Unfill();
         void Create(Actor_t* actor, Bool_t is_clone);
@@ -668,35 +664,51 @@ namespace doticu_npcp { namespace Party {
         void Restore_State(Actor_t* actor);
 
         void Enforce_Member(Actor_t* actor);
+        void Destroy_Member(Actor_t* actor);
         void Enforce_Non_Member(Actor_t* actor);
+
         Int_t Mobilize();
+        void Destroy_Immobile(Actor_t* actor);
         void Enforce_Mobile(Actor_t* actor);
         Int_t Immobilize();
         void Enforce_Immobile(Actor_t* actor);
+
         Int_t Settle();
         void Enforce_Settler(Actor_t* actor);
         Int_t Resettle();
         Int_t Unsettle();
+        void Destroy_Settler(Actor_t* actor);
         void Enforce_Non_Settler(Actor_t* actor);
+
         Int_t Enthrall();
         void Enforce_Thrall(Actor_t* actor);
         Int_t Unthrall();
+        void Destroy_Thrall(Actor_t* actor);
         void Enforce_Non_Thrall(Actor_t* actor);
+
         Int_t Paralyze();
         void Enforce_Paralyzed(Actor_t* actor);
         Int_t Unparalyze();
+        void Destroy_Paralyzed(Actor_t* actor);
         void Enforce_Non_Paralyzed(Actor_t* actor);
+
         Int_t Mannequinize(Reference_t* marker = nullptr);
         void Enforce_Mannequin(Actor_t* actor, Reference_t* marker);
         Int_t Unmannequinize();
+        void Destroy_Mannequin(Actor_t* actor);
         void Enforce_Non_Mannequin(Actor_t* actor);
-        void Display(Reference_t* origin, float radius = 140.0f, float degree = 0.0f);
-        void Enforce_Display(Actor_t* actor);
-        void Undisplay();
+
+        Int_t Display(Reference_t* origin, Float_t radius = 140.0f, Float_t degree = 0.0f);
+        void Create_Display(Actor_t* actor, Reference_t* origin, Float_t radius, Float_t degree);
+        void Enforce_Display(Actor_t* actor, Reference_t* display_marker);
+        Int_t Undisplay();
+        void Destroy_Display(Actor_t* actor);
         void Enforce_Non_Display(Actor_t* actor);
+
         Int_t Reanimate();
         void Enforce_Reanimated(Actor_t* actor);
         Int_t Deanimate();
+        void Destroy_Reanimated(Actor_t* actor);
         void Enforce_Non_Reanimated(Actor_t* actor);
 
         Int_t Unmember();
@@ -759,6 +771,7 @@ namespace doticu_npcp { namespace Party {
         Int_t Stash();
         Int_t Resurrect();
         Int_t Kill();
+        void Enforce_Kill(Actor_t* actor);
 
         Int_t Follow();
         Int_t Unfollow();

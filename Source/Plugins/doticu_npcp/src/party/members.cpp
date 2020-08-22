@@ -438,19 +438,25 @@ namespace doticu_npcp { namespace Party {
         return race_names;
     }
 
-    void Members_t::Enforce_Loaded()
+    void Members_t::Enforce_Loaded(Bool_t do_resurrect)
     {
-        static const String_t event_name("Enforce");
-
-        struct Args : public IFunctionArguments {
-            bool Copy(Output* output) { return true; }
-        } args;
-
-        Vector_t<Member_t*> vec_members = Loaded();
-        for (u64 idx = 0, size = vec_members.size(); idx < size; idx += 1) {
-            Member_t* member = vec_members[idx];
-            Handle_t handle(member);
-            handle.Registry()->QueueEvent(handle, &event_name, &args);
+        Vector_t<Member_t*> loaded = Loaded();
+        if (do_resurrect) {
+            for (size_t idx = 0, count = loaded.size(); idx < count; idx += 1) {
+                Member_t* member = loaded.at(idx);
+                if (member->Is_Dead() && member->Is_Follower()) {
+                    member->Resurrect();
+                } else {
+                    member->Enforce();
+                }
+            }
+        } else {
+            for (size_t idx = 0, count = loaded.size(); idx < count; idx += 1) {
+                Member_t* member = loaded.at(idx);
+                if (member->Is_Alive()) {
+                    member->Enforce();
+                }
+            }
         }
     }
 
@@ -867,7 +873,7 @@ namespace doticu_npcp { namespace Party { namespace Members { namespace Exports 
 
     Vector_t<String_t> Race_Names(Members_t* self) FORWARD_VECTOR(Race_Names(), String_t);
 
-    void Enforce_Loaded(Members_t* self) FORWARD_VOID(Members_t::Enforce_Loaded());
+    void Enforce_Loaded(Members_t* self, Bool_t do_resurrect) FORWARD_VOID(Members_t::Enforce_Loaded(do_resurrect));
 
     Vector_t<String_t> Filter_Strings(Members_t* self, String_t sex, String_t race, String_t search)
         FORWARD_VECTOR(Members_t::Filter_Strings(sex, race, search), String_t);
@@ -962,7 +968,7 @@ namespace doticu_npcp { namespace Party { namespace Members { namespace Exports 
 
         ADD_METHOD("Race_Names", 0, Vector_t<String_t>, Race_Names);
 
-        ADD_METHOD("Enforce_Loaded", 0, void, Enforce_Loaded);
+        ADD_METHOD("Enforce_Loaded", 1, void, Enforce_Loaded, Bool_t);
 
         ADD_METHOD("Filter_Strings", 3, Vector_t<String_t>, Filter_Strings, String_t, String_t, String_t);
         ADD_METHOD("Filter_Ints", 4, Vector_t<Int_t>, Filter_Ints, Int_t, Int_t, Int_t, Int_t);

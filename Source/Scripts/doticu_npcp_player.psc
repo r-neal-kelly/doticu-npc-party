@@ -130,9 +130,8 @@ function p_End_Combat()
         if !ACTOR_PLAYER.IsSneaking()
             FOLLOWERS.Unretreat()
         endIf
-        if VARS.auto_resurrect
-            FOLLOWERS.Resurrect()
-        endIf
+
+        MEMBERS.Enforce_Loaded(VARS.auto_resurrect)
     endIf
 endFunction
 
@@ -186,5 +185,4 @@ endEvent
 event On_Cell_Change(Form cell_new, Form cell_old)
     ACTORS.Apply_Ability(ACTOR_PLAYER, doticu_npcp_consts.Cell_Ability_Spell())
     FOLLOWERS.Catch_Up()
-    FOLLOWERS.Enforce()
 endEvent

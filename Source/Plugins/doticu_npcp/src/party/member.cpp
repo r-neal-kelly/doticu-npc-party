@@ -368,12 +368,12 @@ namespace doticu_npcp { namespace Party {
 
     Bool_t Member_t::Is_Ready()
     {
-        return Is_Filled() && Current_Outfit2_Variable()->Has_Object();
+        return Is_Filled() && Actor_Variable()->Has_Object();
     }
 
     Bool_t Member_t::Is_Unready()
     {
-        return Is_Filled() && !Current_Outfit2_Variable()->Has_Object();
+        return Is_Filled() && !Actor_Variable()->Has_Object();
     }
 
     Bool_t Member_t::Is_Loaded()
@@ -790,23 +790,21 @@ namespace doticu_npcp { namespace Party {
 
     void Member_t::On_Load()
     {
-        if (Is_Filled()) {
+        if (Is_Ready()) {
             Enforce();
         }
     }
 
     void Member_t::On_Death(Actor_t* killer)
     {
-        if (Is_Filled()) {
-            if (Is_Reanimated()) {
-                Deanimate();
-            }
+        if (Is_Ready()) {
+            Enforce_Kill(Actor());
         }
     }
 
     void Member_t::On_Activate(Reference_t* activator)
     {
-        if (Is_Filled()) {
+        if (Is_Ready()) {
             if (activator == Player::Actor()) {
                 Actor_t* actor = Actor();
                 if (Is_Alive()) {
@@ -838,7 +836,7 @@ namespace doticu_npcp { namespace Party {
 
     void Member_t::On_Combat_State_Changed(Actor_t* target, Int_t combat_code)
     {
-        if (Is_Filled() && Is_Alive()) {
+        if (Is_Ready() && Is_Alive()) {
             Actor_t* actor = Actor();
 
             if (target == Player::Actor()) {
@@ -848,10 +846,8 @@ namespace doticu_npcp { namespace Party {
                 Actor2::Pacify(target);
             }
 
-            if (combat_code == CODES::COMBAT::NO) {
-                Enforce();
-            } else if (combat_code == CODES::COMBAT::YES) {
-                if (Is_Follower()) {
+            if (Is_Follower()) {
+                if (combat_code == CODES::COMBAT::YES) {
                     Virtual_Machine_t::Self()->Call_Method(Player::Alias(), "doticu_npcp_player", "f_Begin_Combat");
                 }
             }
@@ -866,41 +862,20 @@ namespace doticu_npcp { namespace Party {
                           Bool_t is_bash,
                           Bool_t is_blocked)
     {
-        static const String_t kill_func = String_t("p_Kill");
-        NPCP_ASSERT(kill_func);
-
-        if (Is_Filled() && Is_Alive_Unsafe()) {
+        if (Is_Ready() && Is_Alive_Unsafe()) {
             Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(Actor());
             if (value_owner->Get_Actor_Value(Actor_Value_t::HEALTH) <= 0.0) {
                 Int_t vitality = Vitality();
                 if (vitality == CODES::VITALITY::MORTAL ||
                     vitality == CODES::VITALITY::PROTECTED && attacker == Player::Actor()) {
                     if (tool->formType != kFormType_Spell || Spell::Can_Damage_Health(static_cast<Spell_t*>(tool))) {
-                        Virtual_Machine_t::Self()->Send_Event(this, kill_func);
+                        Kill();
                     }
                 }
             } else if (Vitality() == CODES::VITALITY::INVULNERABLE) {
                 value_owner->Restore_Actor_Value(Actor_Modifier_t::DAMAGE, Actor_Value_t::HEALTH, 1000000000.0f);
             }
         }
-    }
-
-    bool Member_t::Has_Token(Misc_t* token, Int_t count)
-    {
-        NPCP_ASSERT(Is_Filled());
-        return Object_Ref::Has_Token(Actor(), token, count);
-    }
-
-    void Member_t::Token(Misc_t* token, Int_t count)
-    {
-        NPCP_ASSERT(Is_Filled());
-        Object_Ref::Token(Actor(), token, count);
-    }
-
-    void Member_t::Untoken(Misc_t* token)
-    {
-        NPCP_ASSERT(Is_Filled());
-        Object_Ref::Untoken(Actor(), token);
     }
 
     void Member_t::Fill(Actor_t* actor, Bool_t is_clone)
@@ -994,27 +969,27 @@ namespace doticu_npcp { namespace Party {
             Unvitalize();
             Unstylize();
             if (Is_Reanimated()) {
-                Deanimate();
+                Destroy_Reanimated(actor);
             }
             if (Is_Display()) {
-                Undisplay(); // will this cause problems with Members_t?
+                Destroy_Display(actor);
             }
             if (Is_Mannequin()) {
-                Unmannequinize();
+                Destroy_Mannequin(actor);
             }
             if (Is_Paralyzed()) {
-                Unparalyze();
+                Destroy_Paralyzed(actor);
             }
             if (Is_Thrall()) {
-                Unthrall();
+                Destroy_Thrall(actor);
             }
             if (Is_Settler()) {
-                Unsettle();
+                Destroy_Settler(actor);
             }
             if (Is_Immobile()) {
-                Mobilize();
+                Destroy_Immobile(actor);
             }
-            Enforce_Non_Member(actor);
+            Destroy_Member(actor);
 
             Restore_State(actor);
             Destroy_Outfit2s();
@@ -1158,6 +1133,7 @@ namespace doticu_npcp { namespace Party {
             Object_Ref::Untoken(actor, Consts::Generic_Token());
         }
 
+        // maybe we can check for change
         Actor2::Remove_Faction(actor, Consts::Potential_Follower_Faction());
         Actor2::Remove_Faction(actor, Consts::Current_Follower_Faction());
         Actor2::Add_Faction(actor, Consts::WI_No_Body_Cleanup_Faction());
@@ -1182,9 +1158,17 @@ namespace doticu_npcp { namespace Party {
         Actor2::Evaluate_Package(actor);
     }
 
+    void Member_t::Destroy_Member(Actor_t* actor)
+    {
+        NPCP_ASSERT(actor);
+
+        Enforce_Non_Member(actor);
+    }
+
     void Member_t::Enforce_Non_Member(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(actor);
 
         if (Actor2::Race_Cant_Talk_To_Player(actor)) {
             Actor2::Talks_To_Player(actor, false);
@@ -1203,12 +1187,10 @@ namespace doticu_npcp { namespace Party {
     {
         if (Is_Filled()) {
             if (Is_Immobile()) {
-                Is_Immobile_Variable()->Bool(false);
-
                 Actor_t* actor = Actor();
-                Enforce_Mobile(actor);
-                Enforce_Outfit2(actor);
 
+                Destroy_Immobile(actor);
+                Enforce_Outfit2(actor);
                 Actor2::Evaluate_Package(actor);
 
                 return CODES::SUCCESS;
@@ -1220,10 +1202,18 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
+    void Member_t::Destroy_Immobile(Actor_t* actor)
+    {
+        NPCP_ASSERT(actor);
+
+        Is_Immobile_Variable()->Bool(false);
+        Enforce_Mobile(actor);
+    }
+
     void Member_t::Enforce_Mobile(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
-        NPCP_ASSERT(Is_Mobile());
+        NPCP_ASSERT(actor);
 
         Object_Ref::Untoken(actor, Consts::Immobile_Token());
     }
@@ -1252,7 +1242,7 @@ namespace doticu_npcp { namespace Party {
     void Member_t::Enforce_Immobile(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
-        NPCP_ASSERT(Is_Immobile());
+        NPCP_ASSERT(actor);
 
         Object_Ref::Token(actor, Consts::Immobile_Token());
     }
@@ -1282,7 +1272,7 @@ namespace doticu_npcp { namespace Party {
     void Member_t::Enforce_Settler(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
-        NPCP_ASSERT(Is_Settler());
+        NPCP_ASSERT(actor);
 
         Object_Ref::Token(actor, Consts::Settler_Token());
     }
@@ -1311,13 +1301,10 @@ namespace doticu_npcp { namespace Party {
     {
         if (Is_Filled()) {
             if (Is_Settler()) {
-                Is_Settler_Variable()->Bool(false);
-
                 Actor_t* actor = Actor();
-                Object_Ref::Move_To_Orbit(Settler_Marker(), Consts::Storage_Marker(), 0.0f, 0.0f);
-                Enforce_Non_Settler(actor);
-                Enforce_Outfit2(actor);
 
+                Destroy_Settler(actor);
+                Enforce_Outfit2(actor);
                 Actor2::Evaluate_Package(actor);
 
                 return CODES::SUCCESS;
@@ -1329,10 +1316,19 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
+    void Member_t::Destroy_Settler(Actor_t* actor)
+    {
+        NPCP_ASSERT(actor);
+
+        Is_Settler_Variable()->Bool(false);
+        Object_Ref::Move_To_Orbit(Settler_Marker(), Consts::Storage_Marker(), 0.0f, 0.0f);
+        Enforce_Non_Settler(actor);
+    }
+
     void Member_t::Enforce_Non_Settler(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
-        NPCP_ASSERT(Isnt_Settler());
+        NPCP_ASSERT(actor);
 
         Object_Ref::Untoken(actor, Consts::Settler_Token());
     }
@@ -1365,7 +1361,7 @@ namespace doticu_npcp { namespace Party {
     void Member_t::Enforce_Thrall(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
-        NPCP_ASSERT(Is_Thrall());
+        NPCP_ASSERT(actor);
 
         Object_Ref::Token(actor, Consts::Thrall_Token());
         Actor2::Add_Faction(actor, Consts::DLC1_Vampire_Feed_No_Crime_Faction());
@@ -1376,12 +1372,10 @@ namespace doticu_npcp { namespace Party {
         if (Is_Filled()) {
             if (Actor2::Is_Vampire(Player::Actor())) {
                 if (Is_Thrall()) {
-                    Is_Thrall_Variable()->Bool(false);
-
                     Actor_t* actor = Actor();
-                    Enforce_Non_Thrall(actor);
-                    Enforce_Outfit2(actor);
 
+                    Destroy_Thrall(actor);
+                    Enforce_Outfit2(actor);
                     Actor2::Evaluate_Package(actor);
 
                     return CODES::SUCCESS;
@@ -1396,10 +1390,18 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
+    void Member_t::Destroy_Thrall(Actor_t* actor)
+    {
+        NPCP_ASSERT(actor);
+
+        Is_Thrall_Variable()->Bool(false);
+        Enforce_Non_Thrall(actor);
+    }
+
     void Member_t::Enforce_Non_Thrall(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
-        NPCP_ASSERT(Isnt_Thrall());
+        NPCP_ASSERT(actor);
 
         Object_Ref::Untoken(actor, Consts::Thrall_Token());
         Actor2::Remove_Faction(actor, Consts::DLC1_Vampire_Feed_No_Crime_Faction());
@@ -1428,7 +1430,7 @@ namespace doticu_npcp { namespace Party {
     void Member_t::Enforce_Paralyzed(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
-        NPCP_ASSERT(Is_Paralyzed());
+        NPCP_ASSERT(actor);
 
         Object_Ref::Token(actor, Consts::Paralyzed_Token());
 
@@ -1445,11 +1447,9 @@ namespace doticu_npcp { namespace Party {
     {
         if (Is_Filled()) {
             if (Is_Paralyzed()) {
-                Is_Paralyzed_Variable()->Bool(false);
-
                 Actor_t* actor = Actor();
-                Enforce_Non_Paralyzed(actor);
 
+                Destroy_Paralyzed(actor);
                 Actor2::Evaluate_Package(actor);
 
                 return CODES::SUCCESS;
@@ -1461,10 +1461,18 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
+    void Member_t::Destroy_Paralyzed(Actor_t* actor)
+    {
+        NPCP_ASSERT(actor);
+
+        Is_Paralyzed_Variable()->Bool(false);
+        Enforce_Non_Paralyzed(actor);
+    }
+
     void Member_t::Enforce_Non_Paralyzed(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
-        NPCP_ASSERT(Isnt_Paralyzed());
+        NPCP_ASSERT(actor);
 
         Object_Ref::Untoken(actor, Consts::Paralyzed_Token());
 
@@ -1510,7 +1518,6 @@ namespace doticu_npcp { namespace Party {
     void Member_t::Enforce_Mannequin(Actor_t* actor, Reference_t* marker)
     {
         NPCP_ASSERT(Is_Filled());
-        NPCP_ASSERT(Is_Mannequin());
         NPCP_ASSERT(actor);
         NPCP_ASSERT(marker); 
 
@@ -1535,12 +1542,9 @@ namespace doticu_npcp { namespace Party {
     {
         if (Is_Filled()) {
             if (Is_Mannequin()) {
-                Is_Mannequin_Variable()->Bool(false);
-                Mannequin_Marker_Variable()->None();
-
                 Actor_t* actor = Actor();
-                Enforce_Non_Mannequin(actor);
 
+                Destroy_Mannequin(actor);
                 Actor2::Evaluate_Package(actor);
 
                 return CODES::SUCCESS;
@@ -1552,10 +1556,18 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
+    void Member_t::Destroy_Mannequin(Actor_t* actor)
+    {
+        NPCP_ASSERT(actor);
+
+        Is_Mannequin_Variable()->Bool(false);
+        Mannequin_Marker_Variable()->None();
+        Enforce_Non_Mannequin(actor);
+    }
+
     void Member_t::Enforce_Non_Mannequin(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
-        NPCP_ASSERT(Isnt_Mannequin());
         NPCP_ASSERT(actor);
         
         Object_Ref::Untoken(actor, Consts::Mannequin_Token());
@@ -1567,91 +1579,112 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
-    void Member_t::Display(Reference_t* origin, float radius, float degree)
+    Int_t Member_t::Display(Reference_t* origin, Float_t radius, Float_t degree)
     {
-        NPCP_ASSERT(Is_Filled());
-        Actor_t* actor = Actor();
-
-        if (Isnt_Display_Unsafe()) {
-            Is_Display_Variable()->Bool(true);
-
-            Object_Ref::Token(actor, Consts::Display_Token());
-
-            Reference_t* undisplay_marker = Object_Ref::Create_Marker_At(actor);
-            NPCP_ASSERT(undisplay_marker);
-            Undisplay_Marker_Variable()->Pack(undisplay_marker);
-
-            Cell_t* previous_cell = actor->parentCell;
-
-            Actor2::Disable_Havok_Collision(actor);
-            Actor2::Move_To_Orbit(actor, origin, radius, degree);
-
-            if (!Actor2::Is_AI_Enabled(actor) && previous_cell == origin->parentCell) {
-                Actor2::Fully_Update_3D_Model(actor);
+        if (Is_Filled()) {
+            if (Isnt_Display()) {
+                Actor_t* actor = Actor();
+                Create_Display(actor, origin, radius, degree);
+                Actor2::Evaluate_Package(actor);
+                return CODES::SUCCESS;
+            } else {
+                return CODES::IS;
             }
-
-            Reference_t* display_marker = Object_Ref::Create_Marker_At(actor);
-            NPCP_ASSERT(display_marker);
-            Display_Marker_Variable()->Pack(display_marker);
-
-            Enforce();
-
-            Actor2::Evaluate_Package(actor);
+        } else {
+            return CODES::MEMBER;
         }
     }
 
-    void Member_t::Enforce_Display(Actor_t* actor)
+    void Member_t::Create_Display(Actor_t* actor, Reference_t* origin, Float_t radius, Float_t degree)
     {
         NPCP_ASSERT(Is_Filled());
-        NPCP_ASSERT(Is_Display());
+        NPCP_ASSERT(actor);
+        NPCP_ASSERT(origin);
+
+        Is_Display_Variable()->Bool(true);
+
+        Reference_t* display_marker = Object_Ref::Create_Marker_At(actor);
+        NPCP_ASSERT(display_marker);
+        Display_Marker_Variable()->Pack(display_marker);
+        Object_Ref::Move_To_Orbit(display_marker, origin, radius, degree);
+
+        Reference_t* undisplay_marker = Object_Ref::Create_Marker_At(actor);
+        NPCP_ASSERT(undisplay_marker);
+        Undisplay_Marker_Variable()->Pack(undisplay_marker);
+
+        Enforce_Display(actor, display_marker);
+    }
+
+    void Member_t::Enforce_Display(Actor_t* actor, Reference_t* display_marker)
+    {
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(actor);
+        NPCP_ASSERT(display_marker);
 
         Object_Ref::Token(actor, Consts::Display_Token());
         Actor2::Disable_Havok_Collision(actor);
-        Actor2::Move_To_Orbit(actor, Display_Marker(), 0.0f, 180.0f);
+
+        if (!Actor2::Is_AI_Enabled(actor) && actor->parentCell == display_marker->parentCell) {
+            Object_Ref::Move_To_Orbit(actor, display_marker, 0.0f, 180.0f);
+            Actor2::Fully_Update_3D_Model(actor);
+        } else {
+            Object_Ref::Move_To_Orbit(actor, display_marker, 0.0f, 180.0f);
+            Actor2::Update_3D_Model(actor);
+        }
     }
 
-    void Member_t::Undisplay()
+    Int_t Member_t::Undisplay()
+    {
+        if (Is_Filled()) {
+            if (Is_Display()) {
+                Actor_t* actor = Actor();
+                Destroy_Display(actor);
+                Actor2::Evaluate_Package(actor);
+                return CODES::SUCCESS;
+            } else {
+                return CODES::IS;
+            }
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    void Member_t::Destroy_Display(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
-        Actor_t* actor = Actor();
+        NPCP_ASSERT(actor);
 
-        if (Is_Display_Unsafe()) {
-            Variable_t* display_marker_variable = Display_Marker_Variable();
-            Reference_t* display_marker = display_marker_variable->Reference();
+        Is_Display_Variable()->Bool(false);
 
-            Variable_t* undisplay_marker_variable = Undisplay_Marker_Variable();
-            Reference_t* undisplay_marker = undisplay_marker_variable->Reference();
+        Variable_t* display_marker_variable = Display_Marker_Variable();
+        Reference_t* display_marker = display_marker_variable->Reference();
 
-            Cell_t* previous_cell = actor->parentCell;
+        Variable_t* undisplay_marker_variable = Undisplay_Marker_Variable();
+        Reference_t* undisplay_marker = undisplay_marker_variable->Reference();
 
-            if (undisplay_marker) {
-                Actor2::Move_To_Orbit(actor, undisplay_marker, 0.0f, 180.0f);
-            }
-            Actor2::Enable_Havok_Collision(actor);
-            
-            if (!Actor2::Is_AI_Enabled(actor) && previous_cell == actor->parentCell) {
+        if (undisplay_marker) {
+            if (!Actor2::Is_AI_Enabled(actor) && actor->parentCell == undisplay_marker->parentCell) {
+                Object_Ref::Move_To_Orbit(actor, undisplay_marker, 0.0f, 180.0f);
                 Actor2::Fully_Update_3D_Model(actor);
+            } else {
+                Object_Ref::Move_To_Orbit(actor, undisplay_marker, 0.0f, 180.0f);
+                Actor2::Update_3D_Model(actor);
             }
-
-            Enforce();
-
-            undisplay_marker_variable->None();
-            Object_Ref::Delete_Safe(undisplay_marker);
-
-            display_marker_variable->None();
-            Object_Ref::Delete_Safe(display_marker);
-
-            Object_Ref::Untoken(actor, Consts::Display_Token());
-
-            Is_Display_Variable()->Bool(false);
-
-            Actor2::Evaluate_Package(actor);
         }
+
+        undisplay_marker_variable->None();
+        Object_Ref::Delete_Safe(undisplay_marker);
+
+        display_marker_variable->None();
+        Object_Ref::Delete_Safe(display_marker);
+
+        Enforce_Non_Display(actor);
     }
 
     void Member_t::Enforce_Non_Display(Actor_t* actor)
     {
         NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(actor);
 
         Object_Ref::Untoken(actor, Consts::Display_Token());
         Actor2::Enable_Havok_Collision(actor);
@@ -1699,16 +1732,9 @@ namespace doticu_npcp { namespace Party {
     {
         if (Is_Filled()) {
             if (Is_Reanimated()) {
-                Is_Reanimated_Variable()->Bool(false);
-
                 Actor_t* actor = Actor();
-                if (Is_Alive()) {
-                    Kill();
-                }
-                Enforce_Non_Reanimated(actor);
-
+                Destroy_Reanimated(actor);
                 Actor2::Evaluate_Package(actor);
-
                 return CODES::SUCCESS;
             } else {
                 return CODES::IS;
@@ -1716,6 +1742,17 @@ namespace doticu_npcp { namespace Party {
         } else {
             return CODES::MEMBER;
         }
+    }
+
+    void Member_t::Destroy_Reanimated(Actor_t* actor)
+    {
+        NPCP_ASSERT(actor);
+
+        Is_Reanimated_Variable()->Bool(false);
+        if (Is_Alive()) {
+            Kill();
+        }
+        Enforce_Non_Reanimated(actor);
     }
 
     void Member_t::Enforce_Non_Reanimated(Actor_t* actor)
@@ -2577,7 +2614,7 @@ namespace doticu_npcp { namespace Party {
             }
 
             if (Is_Display()) {
-                Enforce_Display(actor);
+                Enforce_Display(actor, Display_Marker());
             } else {
                 Enforce_Non_Display(actor);
             }
@@ -2618,7 +2655,7 @@ namespace doticu_npcp { namespace Party {
         if (Is_Filled()) {
             if (Isnt_Mannequin()) {
                 Summon(Player::Actor(), radius, degree);
-                Enforce();
+                //Enforce();
                 return CODES::SUCCESS;
             } else {
                 return CODES::MANNEQUIN;
@@ -2677,7 +2714,37 @@ namespace doticu_npcp { namespace Party {
 
     Int_t Member_t::Kill()
     {
-        return CODES::FAILURE;
+        if (Is_Filled()) {
+            if (Is_Alive()) {
+                Actor_t* actor = Actor();
+                UInt32 backup_flags = flags;
+
+                flags &= ~IS_PROTECTED;
+                flags &= ~IS_ESSENTIAL;
+
+                Actor2::Kill(actor, nullptr, 10.0f, false, true); // send event doesn't work?
+
+                flags = backup_flags;
+
+                Enforce_Kill(actor);
+
+                return CODES::SUCCESS;
+            } else {
+                return CODES::IS;
+            }
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    void Member_t::Enforce_Kill(Actor_t* actor)
+    {
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(actor);
+
+        if (Is_Reanimated()) {
+            Deanimate();
+        }
     }
 
     Int_t Member_t::Follow()

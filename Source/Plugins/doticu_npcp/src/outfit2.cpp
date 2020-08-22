@@ -174,9 +174,8 @@ namespace doticu_npcp { namespace Papyrus {
             Object_Ref::Delete_Safe(outfit1_cache_variable->Reference());
         }
 
-        // a flag to delete this outfit on game load, to prevent random crashes with Delete_Unsafe
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::DELETED);
-        //Object_Ref::Delete_Unsafe(outfit2);
+        Object_Ref::Delete_Unsafe(outfit2);
     }
 
     Variable_t* Outfit2_t::Variable(String_t variable_name)
@@ -261,6 +260,7 @@ namespace doticu_npcp { namespace Papyrus {
                 }
                 void operator()(Variable_t* result)
                 {
+                    Actor2::Leave_Player_Team(actor);
                     Actor2::Set_Outfit2(actor, outfit2->Outfit1_Cache(), outfit2, pack);
                     Actor2::Join_Player_Team(actor);
                     Actor2::Update_Equipment(actor);

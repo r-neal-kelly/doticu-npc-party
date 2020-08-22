@@ -19,6 +19,21 @@ namespace doticu_npcp {
         return Utils::Is_Bit_On(flags, IS_GHOST);
     }
 
+    Bool_t Actor_Base_Data_t::Is_Essential()
+    {
+        return Utils::Is_Bit_On(flags, IS_ESSENTIAL);
+    }
+
+    void Actor_Base_Data_t::Essentialize()
+    {
+        flags = Utils::Bit_On(flags, IS_ESSENTIAL);
+    }
+
+    void Actor_Base_Data_t::Unessentialize()
+    {
+        flags = Utils::Bit_Off(flags, IS_ESSENTIAL);
+    }
+
     void ExtraTextDisplay::Force_Rename(String_t new_name)
     {
         name = new_name;

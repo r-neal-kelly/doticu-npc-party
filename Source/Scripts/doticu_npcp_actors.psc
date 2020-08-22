@@ -160,20 +160,6 @@ function Unessentialize(Actor ref_actor)
     endIf
 endFunction
 
-function Kill(Actor ref_actor)
-    bool is_essential = Is_Essential(ref_actor)
-
-    if is_essential
-        Unessentialize(ref_actor)
-    endIf
-
-    ref_actor.Kill(none)
-
-    if is_essential
-        Essentialize(ref_actor)
-    endIf
-endFunction
-
 function Token(Actor ref_actor, MiscObject misc_token, int count_token = 1)
     if !ref_actor || !misc_token
         return

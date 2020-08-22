@@ -114,6 +114,7 @@ namespace doticu_npcp { namespace Actor2 {
     Actor_Base_t* Real_Base(Actor_t* actor);
 
     void Pacify(Actor_t* actor);
+    void Kill(Actor_t* actor, Actor_t* killer = nullptr, Float_t damage = 0.0f, Bool_t do_send_event = true, Bool_t do_quick_ragdoll = false);
 
     Actor_t* Clone(Actor_t* actor, Reference_t* marker = nullptr);
     void Resurrect(Actor_t* actor, Bool_t do_reset_inventory = false);

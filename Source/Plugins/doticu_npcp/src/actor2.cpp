@@ -1498,6 +1498,25 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
+    void Kill(Actor_t* actor, Actor_t* killer, Float_t damage, Bool_t do_send_event, Bool_t do_quick_ragdoll)
+    {
+        if (actor) {
+            Actor_Base_t* base_actor = Dynamic_Base(actor);
+            Actor_Base_Data_t* base_data = reinterpret_cast<Actor_Base_Data_t*>(&base_actor->actorData);
+
+            Bool_t is_essential = base_data->Is_Essential();
+            if (is_essential) {
+                base_data->Unessentialize();
+            }
+
+            actor->Kill(killer, damage, do_send_event, do_quick_ragdoll);
+
+            if (is_essential) {
+                base_data->Essentialize();
+            }
+        }
+    }
+
     Actor_t* Clone(Actor_t* actor, Reference_t* marker)
     {
         if (actor) {
