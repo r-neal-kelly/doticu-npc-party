@@ -99,7 +99,7 @@ namespace doticu_npcp { namespace Papyrus {
         form_vector->Filler_Variable()->None(Class_Info_t::Fetch(Form_t::kTypeID, true));
         form_vector->Grow_Rate_Variable()->Float(0.0f);
 
-        Object_Ref::Delete_Unsafe(form_vector);
+        Object_Ref::Delete_Safe(form_vector);
     }
 
     Array_t* Form_Vector_t::Array()

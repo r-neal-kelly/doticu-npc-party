@@ -111,8 +111,6 @@ namespace doticu_npcp { namespace Modules {
 
     void Main_t::Load_Mod()
     {
-        //Party::Members_t::Self()->Delete_Unused_Outfit2s();
-
         struct Callback : public Virtual_Callback_t {
         public:
             void operator()(Variable_t* result)

@@ -1137,44 +1137,9 @@ namespace doticu_npcp { namespace Object_Ref {
 
         if (ref) {
             ref->Disable();
+            ref->flags = Utils::Bit_Off(ref->flags, 10); // IS_PERSISTENT, necessary for user types
             Virtual_Machine_t::Self()->Send_Event(ref, "Delete");
         }
-    }
-
-    void Delete_Unsafe(Reference_t* ref)
-    {
-        NPCP_ASSERT(ref);
-
-        Virtual_Machine_t::Self()->Object_Policy()->virtual_binder->Unbind_All_Objects3(ref);
-
-        ref->Disable();
-        ref->Set_Delete(true);
-        ref->handleRefObject.m_uiRefCount = 0;
-        ref->handleRefObject.DeleteThis();
-    }
-
-    void Queue_Delete(Reference_t* ref)
-    {
-        NPCP_ASSERT(ref);
-
-        class Callback : public Virtual_Callback_t {
-        public:
-            Reference_t* ref;
-            Callback(Reference_t* ref) :
-                ref(ref)
-            {
-            }
-            void operator()(Variable_t* result)
-            {
-                Virtual_Machine_t::Self()->Object_Policy()->virtual_binder->Unbind_All_Objects3(ref);
-                ref->Set_Delete(true);
-                ref->handleRefObject.m_uiRefCount = 0;
-                ref->handleRefObject.DeleteThis();
-            }
-        };
-        Virtual_Callback_i* callback = new Callback(ref);
-        
-        Disable(ref, false, &callback);
     }
 
     void Enable(Reference_t* ref, Bool_t do_fade_in, Virtual_Callback_i** callback)

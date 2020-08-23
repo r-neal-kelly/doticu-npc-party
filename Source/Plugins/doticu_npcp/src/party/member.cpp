@@ -1570,7 +1570,7 @@ namespace doticu_npcp { namespace Party {
         NPCP_ASSERT(actor);
 
         Is_Mannequin_Variable()->Bool(false);
-        Mannequin_Marker_Variable()->None(Class_Info_t::Fetch(Reference_t::kTypeID, true));
+        Mannequin_Marker_Variable()->None(Object_Ref::Class_Info());
         Enforce_Non_Mannequin(actor);
     }
 
@@ -1681,10 +1681,10 @@ namespace doticu_npcp { namespace Party {
             }
         }
 
-        undisplay_marker_variable->None(Class_Info_t::Fetch(Reference_t::kTypeID, true));
+        undisplay_marker_variable->None(Object_Ref::Class_Info());
         Object_Ref::Delete_Safe(undisplay_marker);
 
-        display_marker_variable->None(Class_Info_t::Fetch(Reference_t::kTypeID, true));
+        display_marker_variable->None(Object_Ref::Class_Info());
         Object_Ref::Delete_Safe(display_marker);
 
         Enforce_Non_Display(actor);

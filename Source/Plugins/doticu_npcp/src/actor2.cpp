@@ -1500,7 +1500,7 @@ namespace doticu_npcp { namespace Actor2 {
 
     void Kill(Actor_t* actor, Actor_t* killer, Float_t damage, Bool_t do_send_event, Bool_t do_quick_ragdoll)
     {
-        if (actor) {
+        if (actor && Is_Alive(actor)) {
             Actor_Base_t* base_actor = Dynamic_Base(actor);
             Actor_Base_Data_t* base_data = reinterpret_cast<Actor_Base_Data_t*>(&base_actor->actorData);
 

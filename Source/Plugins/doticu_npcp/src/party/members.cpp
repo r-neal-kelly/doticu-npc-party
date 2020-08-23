@@ -507,7 +507,7 @@ namespace doticu_npcp { namespace Party {
             Display_Idx_Variable()->Int(0);
 
             Reference_t* display_marker = Display_Marker_Variable()->Reference();
-            Display_Marker_Variable()->None(Class_Info_t::Fetch(Reference_t::kTypeID, true));
+            Display_Marker_Variable()->None(Object_Ref::Class_Info());
             Object_Ref::Delete_Safe(display_marker);
 
             Undisplay();
@@ -729,7 +729,7 @@ namespace doticu_npcp { namespace Party {
         for (size_t idx = 0, count = outfit2s.size(); idx < count; idx += 1) {
             Outfit2_t* outfit2 = static_cast<Outfit2_t*>(outfit2s.at(idx));
             if (outfit2 && outfit2->Type() == CODES::OUTFIT2::DELETED) {
-                Object_Ref::Delete_Unsafe(outfit2);
+                Object_Ref::Delete_Safe(outfit2);
             }
         }
     }
