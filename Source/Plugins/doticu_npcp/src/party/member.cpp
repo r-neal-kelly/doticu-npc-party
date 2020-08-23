@@ -2722,7 +2722,7 @@ namespace doticu_npcp { namespace Party {
                 flags &= ~IS_PROTECTED;
                 flags &= ~IS_ESSENTIAL;
 
-                Actor2::Kill(actor, nullptr, 10.0f, false, true); // send event doesn't work?
+                Actor2::Kill(actor, nullptr, 0.0f, true, true); // send event doesn't work?
 
                 flags = backup_flags;
 

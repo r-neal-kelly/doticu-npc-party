@@ -1509,10 +1509,17 @@ namespace doticu_npcp { namespace Actor2 {
                 base_data->Unessentialize();
             }
 
+            Bool_t is_protected = base_data->Is_Protected();
+            if (is_protected) {
+                base_data->Unprotect();
+            }
+
             actor->Kill(killer, damage, do_send_event, do_quick_ragdoll);
 
             if (is_essential) {
-                base_data->Essentialize();
+                Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(), "doticu_npcp_funcs", "Essentialize");
+            } else if (is_protected) {
+                Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(), "doticu_npcp_funcs", "Protect");
             }
         }
     }

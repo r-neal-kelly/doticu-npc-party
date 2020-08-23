@@ -163,3 +163,13 @@ function Move_To_Orbit(ObjectReference ref, ObjectReference origin, float radius
         ref_actor.EnableAI(false)
     endIf
 endFunction
+
+function Essentialize(ActorBase base_actor)
+    Wait(1)
+    base_actor.SetEssential(true)
+endFunction
+
+function Protect(ActorBase base_actor)
+    Wait(1)
+    base_actor.SetProtected(true)
+endFunction

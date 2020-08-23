@@ -88,6 +88,8 @@ namespace doticu_npcp {
             AUTO_STATS = 4,
             IS_UNIQUE = 5,
             // ...
+            IS_PROTECTED = 11,
+            // ...
             IS_GHOST = 29,
             // ...
         };
@@ -96,8 +98,11 @@ namespace doticu_npcp {
 
         Bool_t Is_Unique();
         Bool_t Is_Ghost();
+        Bool_t Is_Protected();
         Bool_t Is_Essential();
 
+        void Protect();
+        void Unprotect();
         void Essentialize();
         void Unessentialize();
     };

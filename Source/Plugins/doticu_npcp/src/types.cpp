@@ -19,9 +19,24 @@ namespace doticu_npcp {
         return Utils::Is_Bit_On(flags, IS_GHOST);
     }
 
+    Bool_t Actor_Base_Data_t::Is_Protected()
+    {
+        return Utils::Is_Bit_On(flags, IS_PROTECTED);
+    }
+
     Bool_t Actor_Base_Data_t::Is_Essential()
     {
         return Utils::Is_Bit_On(flags, IS_ESSENTIAL);
+    }
+
+    void Actor_Base_Data_t::Protect()
+    {
+        flags = Utils::Bit_On(flags, IS_PROTECTED);
+    }
+
+    void Actor_Base_Data_t::Unprotect()
+    {
+        flags = Utils::Bit_Off(flags, IS_PROTECTED);
     }
 
     void Actor_Base_Data_t::Essentialize()
