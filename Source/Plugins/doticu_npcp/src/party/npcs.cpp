@@ -53,8 +53,8 @@ namespace doticu_npcp { namespace Party {
         Form_Vector_t::Destroy(Default_Outfits());
         Form_Vector_t::Destroy(Bases());
 
-        Default_Outfits_Variable()->None();
-        Bases_Variable()->None();
+        Default_Outfits_Variable()->None(Form_Vector_t::Class_Info());
+        Bases_Variable()->None(Form_Vector_t::Class_Info());
     }
 
     Object_t* NPCS_t::Object()

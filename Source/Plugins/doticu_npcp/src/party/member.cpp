@@ -907,11 +907,13 @@ namespace doticu_npcp { namespace Party {
 
     void Member_t::Create(Actor_t* actor, Bool_t is_clone)
     {
+        Class_Info_t* reference_class_info = Object_Ref::Class_Info();
+
         Actor_Variable()->Pack(actor);
         Pack_Variable()->Pack(Object_Ref::Create_Container());
-        Mannequin_Marker_Variable()->None();
-        Display_Marker_Variable()->None();
-        Undisplay_Marker_Variable()->None();
+        Mannequin_Marker_Variable()->None(reference_class_info);
+        Display_Marker_Variable()->None(reference_class_info);
+        Undisplay_Marker_Variable()->None(reference_class_info);
 
         Outfit_t* default_outfit = NPCS_t::Self()->Default_Outfit(actor);
         NPCP_ASSERT(default_outfit);
@@ -965,6 +967,11 @@ namespace doticu_npcp { namespace Party {
             Followers_t::Self()->Remove_Follower(this, &callback);
         } else {
             Actor_t* actor = Actor();
+            Class_Info_t* actor_class_info = Class_Info_t::Fetch(Actor_t::kTypeID, true);
+            Class_Info_t* reference_class_info = Object_Ref::Class_Info();
+            Class_Info_t* outfit1_class_info = Class_Info_t::Fetch(Outfit_t::kTypeID, true);
+            Class_Info_t* outfit2_class_info = Outfit2_t::Class_Info();
+            Class_Info_t* faction_class_info = Class_Info_t::Fetch(Faction_t::kTypeID, true);
 
             Unvitalize();
             Unstylize();
@@ -1002,7 +1009,7 @@ namespace doticu_npcp { namespace Party {
 
             Previous_No_Body_Cleanup_Faction_Variable()->Bool(false);
             Previous_Potential_Follower_Faction_Variable()->Bool(false);
-            Previous_Crime_Faction_Variable()->None();
+            Previous_Crime_Faction_Variable()->None(faction_class_info);
 
             Name_Variable()->String("");
 
@@ -1020,23 +1027,25 @@ namespace doticu_npcp { namespace Party {
             Is_Immobile_Variable()->Bool(false);
             Is_Clone_Variable()->Bool(false);
 
-            Backup_Outfit2_Variable()->None();
-            Current_Outfit2_Variable()->None();
-            Default_Outfit2_Variable()->None();
-            Vanilla_Outfit2_Variable()->None();
-            Follower_Outfit2_Variable()->None();
-            Thrall_Outfit2_Variable()->None();
-            Settler_Outfit2_Variable()->None();
-            Immobile_Outfit2_Variable()->None();
-            Member_Outfit2_Variable()->None();
+            Backup_Outfit2_Variable()->None(outfit2_class_info);
+            Current_Outfit2_Variable()->None(outfit2_class_info);
+            Default_Outfit2_Variable()->None(outfit2_class_info);
+            Vanilla_Outfit2_Variable()->None(outfit2_class_info);
+            Follower_Outfit2_Variable()->None(outfit2_class_info);
+            Thrall_Outfit2_Variable()->None(outfit2_class_info);
+            Settler_Outfit2_Variable()->None(outfit2_class_info);
+            Immobile_Outfit2_Variable()->None(outfit2_class_info);
+            Member_Outfit2_Variable()->None(outfit2_class_info);
 
-            Default_Outfit_Variable()->None();
-            Vanilla_Outfit_Variable()->None();
-            Undisplay_Marker_Variable()->None();
-            Display_Marker_Variable()->None();
-            Mannequin_Marker_Variable()->None();
-            Pack_Variable()->None();
-            Actor_Variable()->None();
+            Default_Outfit_Variable()->None(outfit1_class_info);
+            Vanilla_Outfit_Variable()->None(outfit1_class_info);
+
+            Undisplay_Marker_Variable()->None(reference_class_info);
+            Display_Marker_Variable()->None(reference_class_info);
+            Mannequin_Marker_Variable()->None(reference_class_info);
+            Pack_Variable()->None(reference_class_info);
+
+            Actor_Variable()->None(actor_class_info);
         }
     }
 
@@ -1561,7 +1570,7 @@ namespace doticu_npcp { namespace Party {
         NPCP_ASSERT(actor);
 
         Is_Mannequin_Variable()->Bool(false);
-        Mannequin_Marker_Variable()->None();
+        Mannequin_Marker_Variable()->None(Class_Info_t::Fetch(Reference_t::kTypeID, true));
         Enforce_Non_Mannequin(actor);
     }
 
@@ -1672,10 +1681,10 @@ namespace doticu_npcp { namespace Party {
             }
         }
 
-        undisplay_marker_variable->None();
+        undisplay_marker_variable->None(Class_Info_t::Fetch(Reference_t::kTypeID, true));
         Object_Ref::Delete_Safe(undisplay_marker);
 
-        display_marker_variable->None();
+        display_marker_variable->None(Class_Info_t::Fetch(Reference_t::kTypeID, true));
         Object_Ref::Delete_Safe(display_marker);
 
         Enforce_Non_Display(actor);

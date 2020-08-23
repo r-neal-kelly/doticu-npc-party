@@ -384,7 +384,7 @@ namespace doticu_npcp { namespace Party {
 
         Actor_Variable()->Pack(actor);
         Member_Variable()->Pack(member);
-        Horse_Variable()->None();
+        Horse_Variable()->None(Horse_t::Class_Info());
 
         Is_Sneak_Variable()->Bool(false);
         Is_Saddler_Variable()->Bool(false);
@@ -425,9 +425,9 @@ namespace doticu_npcp { namespace Party {
         Is_Saddler_Variable()->Bool(false);
         Is_Sneak_Variable()->Bool(false);
 
-        Horse_Variable()->None();
-        Member_Variable()->None();
-        Actor_Variable()->None();
+        Horse_Variable()->None(Horse_t::Class_Info());
+        Member_Variable()->None(Member_t::Class_Info());
+        Actor_Variable()->None(Class_Info_t::Fetch(Actor_t::kTypeID, true));
     }
 
     void Follower_t::Create_Horse()
@@ -441,7 +441,7 @@ namespace doticu_npcp { namespace Party {
     {
         if (Horse()) {
             Horses_t::Self()->Remove_Horse(this);
-            Horse_Variable()->None();
+            Horse_Variable()->None(Horse_t::Class_Info());
         }
     }
 

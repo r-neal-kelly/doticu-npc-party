@@ -11,6 +11,9 @@ namespace doticu_npcp { namespace Object_Ref {
 
     using namespace Papyrus;
 
+    String_t Class_Name();
+    Class_Info_t* Class_Info();
+
     BContainer_t *Get_BContainer(TESObjectREFR *obj);
     XContainer_t *Get_XContainer(TESObjectREFR *obj, bool do_create = false);
 

@@ -121,8 +121,8 @@ namespace doticu_npcp { namespace Party {
 
     void Horse_t::Destroy()
     {
-        Follower_Variable()->None();
-        Actor_Variable()->None();
+        Follower_Variable()->None(Follower_t::Class_Info());
+        Actor_Variable()->None(Class_Info_t::Fetch(Actor_t::kTypeID, true));
     }
 
     Int_t Horse_t::Groom()

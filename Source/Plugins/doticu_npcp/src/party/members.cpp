@@ -507,7 +507,7 @@ namespace doticu_npcp { namespace Party {
             Display_Idx_Variable()->Int(0);
 
             Reference_t* display_marker = Display_Marker_Variable()->Reference();
-            Display_Marker_Variable()->None();
+            Display_Marker_Variable()->None(Class_Info_t::Fetch(Reference_t::kTypeID, true));
             Object_Ref::Delete_Safe(display_marker);
 
             Undisplay();
@@ -747,7 +747,7 @@ namespace doticu_npcp { namespace Party {
                 Variable_t* previous_factions_variable = member->Variable("p_prev_factions");
                 NPCP_ASSERT(previous_factions_variable);
                 Array_t* previous_factions = previous_factions_variable->Array();
-                previous_factions_variable->None();
+                previous_factions_variable->None(Type_t::OBJECT_ARRAY);
                 if (previous_factions) {
                     Faction_t* potentional_follower_faction = Consts::Potential_Follower_Faction();
                     Faction_t* wi_no_body_cleanup_faction = Consts::WI_No_Body_Cleanup_Faction();

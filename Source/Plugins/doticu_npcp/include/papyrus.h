@@ -413,7 +413,7 @@ namespace doticu_npcp { namespace Papyrus {
         template <typename Type>
         Vector_t<Type> Vector();
 
-        void None();
+        void None(Type_t type);
         void Bool(Bool_t value);
         void Int(Int_t value);
         void Float(Float_t value);
@@ -422,7 +422,7 @@ namespace doticu_npcp { namespace Papyrus {
         void Array(Array_t* value);
 
         template <typename Type>
-        void Pack(Type* value, Class_Info_t* type_id);
+        void Pack(Type* value, Class_Info_t* class_info);
         template <typename Type>
         void Pack(Type* value);
         template <typename Type>
@@ -432,8 +432,8 @@ namespace doticu_npcp { namespace Papyrus {
 
     class Class_Info_t {
     public:
-        static Class_Info_t* Fetch(String_t class_name);
-        static Class_Info_t* Fetch(Type_ID_t type_id);
+        static Class_Info_t* Fetch(String_t class_name, Bool_t do_auto_decrement = false);
+        static Class_Info_t* Fetch(Type_ID_t type_id, Bool_t do_auto_decrement = false);
 
         struct Setting_Info_t {
             UInt64 unk_00; // 00

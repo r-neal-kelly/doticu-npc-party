@@ -94,9 +94,9 @@ namespace doticu_npcp { namespace Papyrus {
     {
         NPCP_ASSERT(form_vector);
 
-        form_vector->Array_Variable()->None();
+        form_vector->Array_Variable()->None(Type_t::OBJECT_ARRAY); // not sure if this will work correctly, maybe pass empty vector
         form_vector->Count_Variable()->Int(0);
-        form_vector->Filler_Variable()->None();
+        form_vector->Filler_Variable()->None(Class_Info_t::Fetch(Form_t::kTypeID, true));
         form_vector->Grow_Rate_Variable()->Float(0.0f);
 
         Object_Ref::Delete_Unsafe(form_vector);

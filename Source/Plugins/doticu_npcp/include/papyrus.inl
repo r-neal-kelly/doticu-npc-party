@@ -720,11 +720,11 @@ namespace doticu_npcp { namespace Papyrus {
         }
     }
 
-    inline void Variable_t::None()
+    inline void Variable_t::None(Type_t type)
     {
         Destroy();
-        type = Type_t::NONE;
-        data.ptr = nullptr;
+        this->type = type;
+        this->data.ptr = nullptr;
     }
 
     inline void Variable_t::Bool(Bool_t value)
@@ -767,7 +767,7 @@ namespace doticu_npcp { namespace Papyrus {
             temp.data.obj = value;
             Copy(&temp); // this prob. does stuff we don't
         } else {
-            None();
+            NPCP_ASSERT(false);
         }
     }
 
@@ -779,7 +779,7 @@ namespace doticu_npcp { namespace Papyrus {
             data.arr = value;
             value->ref_count += 1; // value->Increment_Count();
         } else {
-            None();
+            NPCP_ASSERT(false);
         }
     }
 
@@ -793,9 +793,11 @@ namespace doticu_npcp { namespace Papyrus {
             if (!object) {
                 object = Object_t::Create(value, class_info);
                 NPCP_ASSERT(object);
-                // might want to check that lock is above zero
+                if (object->lock < 1) {
+                    object->lock = 1;
+                }
             }
-            if (object->lock > 0) {
+            if (object->lock > 1) {
                 object->Decrement_Lock();
             }
 
@@ -815,7 +817,7 @@ namespace doticu_npcp { namespace Papyrus {
         if (value) {
             PackHandle(reinterpret_cast<VMValue*>(this), value, Type::kTypeID, Registry());
         } else {
-            None();
+            None(Class_Info_t::Fetch(Type::kTypeID, true));
         }
     }
 
@@ -992,24 +994,30 @@ namespace doticu_npcp { namespace Papyrus {
 
     // Class_Info_t
 
-    inline Class_Info_t* Class_Info_t::Fetch(String_t class_name)
+    inline Class_Info_t* Class_Info_t::Fetch(String_t class_name, Bool_t do_auto_decrement)
     {
         Virtual_Machine_t* const virtual_machine = Virtual_Machine_t::Self();
         if (virtual_machine) {
             Class_Info_t* info_out = nullptr;
             virtual_machine->Load_Class_Info(&class_name, &info_out);
+            if (do_auto_decrement && info_out->ref_count > 1) {
+                info_out->Free();
+            }
             return info_out;
         } else {
             return nullptr;
         }
     }
 
-    inline Class_Info_t* Class_Info_t::Fetch(Type_ID_t type_id)
+    inline Class_Info_t* Class_Info_t::Fetch(Type_ID_t type_id, Bool_t do_auto_decrement)
     {
         Virtual_Machine_t* const virtual_machine = Virtual_Machine_t::Self();
         if (virtual_machine) {
             Class_Info_t* info_out = nullptr;
             virtual_machine->Load_Class_Info2(type_id, &info_out);
+            if (do_auto_decrement && info_out->ref_count > 1) {
+                info_out->Free();
+            }
             return info_out;
         } else {
             return nullptr;

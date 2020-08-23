@@ -51,7 +51,7 @@ namespace doticu_npcp { namespace Papyrus {
         NPCP_ASSERT(outfit2);
 
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::MEMBER);
-        outfit2->Outfit1_Cache_Variable()->None();
+        outfit2->Outfit1_Cache_Variable()->None(Class_Info_t::Fetch(Reference_t::kTypeID, true));
 
         Actor2::Split_Inventory(actor, outfit2, pack);
 
@@ -65,7 +65,7 @@ namespace doticu_npcp { namespace Papyrus {
         NPCP_ASSERT(outfit2);
 
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::IMMOBILE);
-        outfit2->Outfit1_Cache_Variable()->None();
+        outfit2->Outfit1_Cache_Variable()->None(Class_Info_t::Fetch(Reference_t::kTypeID, true));
 
         if (Vars::Do_Fill_Outfit2s()) {
             Fill(outfit2, Consts::Immobile_Outfit2_Container());
@@ -81,7 +81,7 @@ namespace doticu_npcp { namespace Papyrus {
         NPCP_ASSERT(outfit2);
 
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::SETTLER);
-        outfit2->Outfit1_Cache_Variable()->None();
+        outfit2->Outfit1_Cache_Variable()->None(Class_Info_t::Fetch(Reference_t::kTypeID, true));
 
         if (Vars::Do_Fill_Outfit2s()) {
             Fill(outfit2, Consts::Settler_Outfit2_Container());
@@ -97,7 +97,7 @@ namespace doticu_npcp { namespace Papyrus {
         NPCP_ASSERT(outfit2);
 
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::THRALL);
-        outfit2->Outfit1_Cache_Variable()->None();
+        outfit2->Outfit1_Cache_Variable()->None(Class_Info_t::Fetch(Reference_t::kTypeID, true));
 
         if (Vars::Do_Fill_Outfit2s()) {
             Fill(outfit2, Consts::Thrall_Outfit2_Container());
@@ -113,7 +113,7 @@ namespace doticu_npcp { namespace Papyrus {
         NPCP_ASSERT(outfit2);
 
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::FOLLOWER);
-        outfit2->Outfit1_Cache_Variable()->None();
+        outfit2->Outfit1_Cache_Variable()->None(Class_Info_t::Fetch(Reference_t::kTypeID, true));
 
         if (Vars::Do_Fill_Outfit2s()) {
             Fill(outfit2, Consts::Follower_Outfit2_Container());
@@ -129,7 +129,7 @@ namespace doticu_npcp { namespace Papyrus {
         NPCP_ASSERT(outfit2);
 
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::VANILLA);
-        outfit2->Outfit1_Cache_Variable()->None();
+        outfit2->Outfit1_Cache_Variable()->None(Class_Info_t::Fetch(Reference_t::kTypeID, true));
 
         return outfit2;
     }
@@ -141,7 +141,7 @@ namespace doticu_npcp { namespace Papyrus {
         NPCP_ASSERT(outfit2);
 
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::DEFAULT);
-        outfit2->Outfit1_Cache_Variable()->None();
+        outfit2->Outfit1_Cache_Variable()->None(Class_Info_t::Fetch(Reference_t::kTypeID, true));
 
         Actor2::Cache_BContainer(actor, outfit2);
 
@@ -170,7 +170,7 @@ namespace doticu_npcp { namespace Papyrus {
         Object_Ref::Categorize(outfit2);
 
         Variable_t* outfit1_cache_variable = outfit2->Outfit1_Cache_Variable();
-        if (!outfit1_cache_variable->Is_None()) {
+        if (outfit1_cache_variable->Has_Object()) {
             Object_Ref::Delete_Safe(outfit1_cache_variable->Reference());
         }
 
@@ -189,7 +189,7 @@ namespace doticu_npcp { namespace Papyrus {
     Int_t Outfit2_t::Type()
     {
         Variable_t* variable = Type_Variable();
-        if (!variable->Is_None()) {
+        if (variable->Is_Int()) {
             return variable->Int();
         } else {
             return 0;

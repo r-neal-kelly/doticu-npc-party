@@ -24,6 +24,20 @@
 
 namespace doticu_npcp { namespace Object_Ref {
 
+    String_t Class_Name()
+    {
+        static const String_t class_name = String_t("ObjectReference");
+        NPCP_ASSERT(class_name);
+        return class_name;
+    }
+
+    Class_Info_t* Class_Info()
+    {
+        static Class_Info_t* class_info = Class_Info_t::Fetch(Class_Name());
+        NPCP_ASSERT(class_info);
+        return class_info;
+    }
+
     BContainer_t *Get_BContainer(TESObjectREFR *obj) {
         if (!obj || !obj->baseForm) {
             return NULL;
