@@ -747,7 +747,6 @@ namespace doticu_npcp { namespace Party {
                 Variable_t* previous_factions_variable = member->Variable("p_prev_factions");
                 NPCP_ASSERT(previous_factions_variable);
                 Array_t* previous_factions = previous_factions_variable->Array();
-                previous_factions_variable->None(Type_t::OBJECT_ARRAY);
                 if (previous_factions) {
                     Faction_t* potentional_follower_faction = Consts::Potential_Follower_Faction();
                     Faction_t* wi_no_body_cleanup_faction = Consts::WI_No_Body_Cleanup_Faction();

@@ -65,6 +65,7 @@ namespace doticu_npcp { namespace Party {
     public:
         void Initialize();
         void Uninitialize();
+        void Reinitialize();
 
         Object_t* Object();
         Variable_t* Variable(String_t variable_name);

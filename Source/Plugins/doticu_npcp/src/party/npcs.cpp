@@ -50,11 +50,33 @@ namespace doticu_npcp { namespace Party {
 
     void NPCS_t::Uninitialize()
     {
-        Form_Vector_t::Destroy(Default_Outfits());
-        Form_Vector_t::Destroy(Bases());
+        Variable_t* default_outfits_variable = Default_Outfits_Variable();
+        if (default_outfits_variable->Has_Object()) {
+            Form_Vector_t::Destroy(
+                static_cast<Form_Vector_t*>(default_outfits_variable->Reference())
+            );
+        }
+        default_outfits_variable->None(Form_Vector_t::Class_Info());
 
-        Default_Outfits_Variable()->None(Form_Vector_t::Class_Info());
-        Bases_Variable()->None(Form_Vector_t::Class_Info());
+        Variable_t* bases_variable = Bases_Variable();
+        if (bases_variable->Has_Object()) {
+            Form_Vector_t::Destroy(
+                static_cast<Form_Vector_t*>(bases_variable->Reference())
+            );
+        }
+        bases_variable->None(Form_Vector_t::Class_Info());
+    }
+
+    void NPCS_t::Reinitialize()
+    {
+        Uninitialize();
+        Initialize();
+
+        Vector_t<Member_t*> members = Members_t::Self()->Filled();
+        for (size_t idx = 0, count = members.size(); idx < count; idx += 1) {
+            Actor_t* actor = members.at(idx)->Actor();
+            Add_Base_If_Needed(actor, actor);
+        }
     }
 
     Object_t* NPCS_t::Object()
@@ -92,6 +114,12 @@ namespace doticu_npcp { namespace Party {
     {
         Form_Vector_t* bases = static_cast<Form_Vector_t*>
             (Bases_Variable()->Reference());
+        if (!bases) {
+            _MESSAGE("npcs base array was not created. reinitializing.");
+            Reinitialize();
+            bases = static_cast<Form_Vector_t*>
+                (Bases_Variable()->Reference());
+        }
         NPCP_ASSERT(bases);
         return bases;
     }
@@ -100,6 +128,12 @@ namespace doticu_npcp { namespace Party {
     {
         Form_Vector_t* default_outfits = static_cast<Form_Vector_t*>
             (Default_Outfits_Variable()->Reference());
+        if (!default_outfits) {
+            _MESSAGE("npcs default outfit array was not created. reinitializing.");
+            Reinitialize();
+            default_outfits = static_cast<Form_Vector_t*>
+                (Default_Outfits_Variable()->Reference());
+        }
         NPCP_ASSERT(default_outfits);
         return default_outfits;
     }
