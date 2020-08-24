@@ -28,6 +28,7 @@ bool                    p_is_paralyzed                      = false
 bool                    p_is_mannequin                      = false
 bool                    p_is_display                        = false
 bool                    p_is_reanimated                     = false
+bool                    p_do_skip_on_load                   = false
 
 int                     p_code_style                        =     0
 int                     p_code_vitality                     =     0

@@ -144,7 +144,7 @@
     <ClCompile Include="src\cell.cpp" />
     <ClCompile Include="src\codes.cpp" />
     <ClCompile Include="src\consts.cpp" />
-    <ClCompile Include="src\filter.cpp" />
+    <ClCompile Include="src\mcm\mcm_filter.cpp" />
     <ClCompile Include="src\form_vector.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\keys.cpp" />
@@ -188,13 +188,13 @@
     <ClInclude Include="include\cell.h" />
     <ClInclude Include="include\codes.h" />
     <ClInclude Include="include\consts.h" />
-    <ClInclude Include="include\filter.h" />
     <ClInclude Include="include\form.h" />
     <ClInclude Include="include\actor2.h" />
     <ClInclude Include="include\form_vector.h" />
     <ClInclude Include="include\game.h" />
     <ClInclude Include="include\keys.h" />
     <ClInclude Include="include\main.h" />
+    <ClInclude Include="include\mcm\mcm_filter.h" />
     <ClInclude Include="include\mcm\mcm_hotkeys.h" />
     <ClInclude Include="include\mcm\mcm_main.h" />
     <ClInclude Include="include\mcm\mcm_member.h" />

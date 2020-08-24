@@ -9,6 +9,7 @@
 
 #include "mcm/mcm_members.h"
 #include "mcm/mcm_member.h"
+#include "mcm/mcm_filter.h"
 
 #include "papyrus.inl"
 #include "party.inl"
@@ -205,7 +206,7 @@ namespace doticu_npcp { namespace MCM {
 
             if (current_view == CODES::VIEW::FILTER_MEMBERS) {
                 Title_Option_Variable()->Int(
-                    mcm->Add_Text_Option(" TBD ", "") // MCM.MCM_FILTER.f_Get_Filter_String()
+                    mcm->Add_Text_Option(Filter_t::Self()->Filter_String(), "")
                 ); 
                 Back_Option_Variable()->Int(
                     mcm->Add_Text_Option("                            Go Back", "")
@@ -248,7 +249,7 @@ namespace doticu_npcp { namespace MCM {
 
             if (current_view == CODES::VIEW::FILTER_MEMBERS) {
                 Title_Option_Variable()->Int(
-                    mcm->Add_Text_Option(" TBD ", "") // MCM.MCM_FILTER.f_Get_Filter_String()
+                    mcm->Add_Text_Option(Filter_t::Self()->Filter_String(), "")
                 );
                 Back_Option_Variable()->Int(
                     mcm->Add_Text_Option("                            Go Back", "")

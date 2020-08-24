@@ -6,6 +6,7 @@
 #include "codes.h"
 #include "consts.h"
 #include "keys.h"
+#include "party.h"
 #include "utils.h"
 #include "vars.h"
 

@@ -6,7 +6,6 @@
 #include "cell.h"
 #include "codes.h"
 #include "consts.h"
-#include "filter.h"
 #include "game.h"
 #include "object_ref.h"
 #include "party.h"
@@ -15,6 +14,8 @@
 #include "utils.h"
 #include "vars.h"
 #include "vector.h"
+
+#include "mcm/mcm_filter.h"
 
 namespace doticu_npcp { namespace Party {
 
@@ -467,10 +468,11 @@ namespace doticu_npcp { namespace Party {
 
     Vector_t<Member_t*> Members_t::Current_Filter()
     {
-        Vector_t<String_t> strings = Filter_t::Strings();
-        Vector_t<Int_t> ints = Filter_t::Ints();
-        Int_t flags_1 = Filter_t::Flags_1();
-        Int_t flags_2 = Filter_t::Flags_2();
+        MCM::Filter_t* filter = MCM::Filter_t::Self();
+        Vector_t<String_t> strings = filter->Strings();
+        Vector_t<Int_t> ints = filter->Ints();
+        Int_t flags_1 = filter->Flags_1();
+        Int_t flags_2 = filter->Flags_2();
         return Filter(&strings, &ints, flags_1, flags_2);
     }
 

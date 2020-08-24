@@ -523,6 +523,7 @@ namespace doticu_npcp { namespace Party {
         Variable_t* Is_Mannequin_Variable();
         Variable_t* Is_Display_Variable();
         Variable_t* Is_Reanimated_Variable();
+        Variable_t* Do_Skip_On_Load_Variable();
 
         Variable_t* Style_Variable();
         Variable_t* Vitality_Variable();

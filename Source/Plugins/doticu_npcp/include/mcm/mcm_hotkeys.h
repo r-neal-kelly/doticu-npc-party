@@ -6,7 +6,6 @@
 
 #include "types.h"
 #include "papyrus.h"
-#include "party.h"
 
 #include "mcm/mcm_main.h"
 

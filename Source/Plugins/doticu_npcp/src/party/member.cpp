@@ -63,6 +63,7 @@ namespace doticu_npcp { namespace Party {
     Variable_t* Member_t::Is_Mannequin_Variable() { DEFINE_VARIABLE("p_is_mannequin"); }
     Variable_t* Member_t::Is_Display_Variable() { DEFINE_VARIABLE("p_is_display"); }
     Variable_t* Member_t::Is_Reanimated_Variable() { DEFINE_VARIABLE("p_is_reanimated"); }
+    Variable_t* Member_t::Do_Skip_On_Load_Variable() { DEFINE_VARIABLE("p_do_skip_on_load"); }
 
     Variable_t* Member_t::Style_Variable() { DEFINE_VARIABLE("p_code_style"); }
     Variable_t* Member_t::Vitality_Variable() { DEFINE_VARIABLE("p_code_vitality"); }
@@ -791,7 +792,11 @@ namespace doticu_npcp { namespace Party {
     void Member_t::On_Load()
     {
         if (Is_Ready()) {
-            Enforce();
+            if (Do_Skip_On_Load_Variable()->Bool()) {
+                Do_Skip_On_Load_Variable()->Bool(false);
+            } else {
+                Enforce();
+            }
         }
     }
 
@@ -1635,6 +1640,7 @@ namespace doticu_npcp { namespace Party {
 
         if (!Actor2::Is_AI_Enabled(actor) && actor->parentCell == display_marker->parentCell) {
             Object_Ref::Move_To_Orbit(actor, display_marker, 0.0f, 180.0f);
+            Do_Skip_On_Load_Variable()->Bool(true);
             Actor2::Fully_Update_3D_Model(actor);
         } else {
             Object_Ref::Move_To_Orbit(actor, display_marker, 0.0f, 180.0f);

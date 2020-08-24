@@ -17,112 +17,92 @@ doticu_npcp_mcm property MCM hidden
 endProperty
 
 ; Private Variables
-bool                p_is_created                =   false
 int                 p_code_view                 =       0
+
 int                 p_int_arg_flags             =       0
-string[]            p_arr_race_names            =    none
+string[]            p_arr_race_names            =    none; I think we don't need this in c++
 string              p_str_view_filter           =      ""
 
 int                 p_option_filter             =      -1
 
+int                 p_option_sex                =      -1
 string              p_str_arg_sex               =      ""
 string              p_str_view_sex              = " Any "
-int                 p_option_sex                =      -1
 
+int                 p_option_race               =      -1
 string              p_str_arg_race              =      ""
 string              p_str_view_race             = " Any "
-int                 p_option_race               =      -1
 
-string              p_str_arg_search            =      ""
 int                 p_option_search             =      -1
+string              p_str_arg_search            =      ""
 
+int                 p_option_style              =      -1
 int                 p_int_arg_style             =       0
 string              p_str_view_style            = " Any "
-int                 p_option_style              =      -1
 
+int                 p_option_vitality           =      -1
 int                 p_int_arg_vitality          =       0
 string              p_str_view_vitality         = " Any "
-int                 p_option_vitality           =      -1
 
+int                 p_option_outfit2            =      -1
 int                 p_int_arg_outfit2           =       0
 string              p_str_view_outfit2          = " Any "
-int                 p_option_outfit2            =      -1
 
+int                 p_option_rating             =      -1
 int                 p_int_arg_rating            =      -1
 string              p_str_view_rating           = " Any "
-int                 p_option_rating             =      -1
 
-int                 p_int_alive_dead            =       0
 int                 p_option_is_alive           =      -1
 int                 p_option_is_dead            =      -1
+int                 p_int_alive_dead            =       0
 
-int                 p_int_original_clone        =       0
 int                 p_option_is_original        =      -1
 int                 p_option_is_clone           =      -1
+int                 p_int_original_clone        =       0
 
-int                 p_int_unique_generic        =       0
 int                 p_option_is_unique          =      -1
 int                 p_option_is_generic         =      -1
+int                 p_int_unique_generic        =       0
 
-int                 p_int_mobile_immobile       =       0
 int                 p_option_is_mobile          =      -1
 int                 p_option_is_immobile        =      -1
+int                 p_int_mobile_immobile       =       0
 
-int                 p_int_settler               =       0
 int                 p_option_is_settler         =      -1
 int                 p_option_isnt_settler       =      -1
+int                 p_int_settler               =       0
 
-int                 p_int_thrall                =       0
 int                 p_option_is_thrall          =      -1
 int                 p_option_isnt_thrall        =      -1
+int                 p_int_thrall                =       0
 
-int                 p_int_paralyzed             =       0
 int                 p_option_is_paralyzed       =      -1
 int                 p_option_isnt_paralyzed     =      -1
+int                 p_int_paralyzed             =       0
 
-int                 p_int_mannequin             =       0
 int                 p_option_is_mannequin       =      -1
 int                 p_option_isnt_mannequin     =      -1
+int                 p_int_mannequin             =       0
 
-int                 p_int_reanimated            =       0
 int                 p_option_is_reanimated      =      -1
 int                 p_option_isnt_reanimated    =      -1
+int                 p_int_reanimated            =       0
 
-int                 p_int_follower              =       0
 int                 p_option_is_follower        =      -1
 int                 p_option_isnt_follower      =      -1
+int                 p_int_follower              =       0
 
-int                 p_int_sneak                 =       0
 int                 p_option_is_sneak           =      -1
 int                 p_option_isnt_sneak         =      -1
+int                 p_int_sneak                 =       0
 
-int                 p_int_saddler               =       0
 int                 p_option_is_saddler         =      -1
 int                 p_option_isnt_saddler       =      -1
+int                 p_int_saddler               =       0
 
 ; Friend Methods
-function f_Create()
-    p_is_created = true
-    p_code_view = 0
-endFunction
-
-function f_Destroy()
-    p_code_view = 0
-    p_is_created = false
-endFunction
-
-function f_Register()
-endFunction
-
-function f_Unregister()
-endFunction
-
 function f_Review_Filter()
     p_code_view = doticu_npcp_codes.VIEW_FILTER()
-endFunction
-
-string function f_Get_Filter_String()
-    return p_str_view_filter
 endFunction
 
 function f_Build_Page()
@@ -726,138 +706,79 @@ function p_Update_Saddler()
     MCM.SetToggleOptionValue(p_option_isnt_saddler, p_int_saddler == -1, MCM.DO_UPDATE)
 endFunction
 
-function p_Concat_Filter_String_Param(string str_param)
-    if p_str_view_filter == ""
-        p_str_view_filter = str_param
-    else
-        p_str_view_filter += ", " + str_param
-    endIf
-endFunction
-
 function p_Goto_Filter_Members()
-    p_str_view_filter = ""
     p_int_arg_flags = 0
-
-    if p_str_arg_sex
-        p_Concat_Filter_String_Param(p_str_view_sex)
-    endIf
-    if p_str_arg_race
-        p_Concat_Filter_String_Param(p_str_view_race)
-    endIf
-    if p_int_arg_style < 0
-        p_Concat_Filter_String_Param(p_str_view_style)
-    endIf
-    if p_int_arg_vitality < 0
-        p_Concat_Filter_String_Param(p_str_view_vitality)
-    endIf
-    if p_int_arg_outfit2 < 0
-        p_Concat_Filter_String_Param(p_str_view_outfit2 + " Outfit")
-    endIf
-    if p_int_arg_rating > -1
-        p_Concat_Filter_String_Param(p_str_view_rating)
-    endIf
-    if p_str_arg_search
-        p_Concat_Filter_String_Param("'" + p_str_arg_search + "'")
-    endIf
 
     if p_int_alive_dead == 1
         p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_ALIVE")
-        p_Concat_Filter_String_Param("Alive")
     elseIf p_int_alive_dead == -1
         p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_DEAD")
-        p_Concat_Filter_String_Param("Dead")
     endIf
 
     if p_int_original_clone == 1
         p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_ORIGINAL")
-        p_Concat_Filter_String_Param("Original")
     elseIf p_int_original_clone == -1
         p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_CLONE")
-        p_Concat_Filter_String_Param("Clone")
     endIf
 
     if p_int_unique_generic == 1
         p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_UNIQUE")
-        p_Concat_Filter_String_Param("Unique")
     elseIf p_int_unique_generic == -1
         p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_GENERIC")
-        p_Concat_Filter_String_Param("Generic")
     endIf
 
     if p_int_mobile_immobile == 1
         p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_MOBILE")
-        p_Concat_Filter_String_Param("Mobile")
     elseIf p_int_mobile_immobile == -1
         p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_IMMOBILE")
-        p_Concat_Filter_String_Param("Immobile")
     endIf
 
     if p_int_settler == 1
         p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_SETTLER")
-        p_Concat_Filter_String_Param("Settler")
     elseIf p_int_settler == -1
         p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_SETTLER")
-        p_Concat_Filter_String_Param("!Settler")
     endIf
 
     if p_int_thrall == 1
         p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_THRALL")
-        p_Concat_Filter_String_Param("Thrall")
     elseIf p_int_thrall == -1
         p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_THRALL")
-        p_Concat_Filter_String_Param("!Thrall")
     endIf
 
     if p_int_paralyzed == 1
         p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_PARALYZED")
-        p_Concat_Filter_String_Param("Paralyzed")
     elseIf p_int_paralyzed == -1
         p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_PARALYZED")
-        p_Concat_Filter_String_Param("!Paralyzed")
     endIf
 
     if p_int_mannequin == 1
         p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_MANNEQUIN")
-        p_Concat_Filter_String_Param("Mannequin")
     elseIf p_int_mannequin == -1
         p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_MANNEQUIN")
-        p_Concat_Filter_String_Param("!Mannequin")
     endIf
 
     if p_int_reanimated == 1
         p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_REANIMATED")
-        p_Concat_Filter_String_Param("Reanimated")
     elseIf p_int_reanimated == -1
         p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_REANIMATED")
-        p_Concat_Filter_String_Param("!Reanimated")
     endIf
 
     if p_int_follower == 1
         p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_FOLLOWER")
-        p_Concat_Filter_String_Param("Follower")
     elseIf p_int_follower == -1
         p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_FOLLOWER")
-        p_Concat_Filter_String_Param("!Follower")
     endIf
 
     if p_int_sneak == 1
         p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_SNEAK")
-        p_Concat_Filter_String_Param("Sneak")
     elseIf p_int_sneak == -1
         p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_SNEAK")
-        p_Concat_Filter_String_Param("!Sneak")
     endIf
 
     if p_int_saddler == 1
         p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_SADDLER")
-        p_Concat_Filter_String_Param("Saddler")
     elseIf p_int_saddler == -1
         p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_SADDLER")
-        p_Concat_Filter_String_Param("!Saddler")
-    endIf
-
-    if p_str_view_filter == ""
-        p_str_view_filter = " All Members "
     endIf
 
     Alias[] arr_filter = MEMBERS.Filter( \

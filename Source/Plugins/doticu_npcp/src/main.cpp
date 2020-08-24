@@ -33,6 +33,7 @@
 #include "mcm/mcm_main.h"
 #include "mcm/mcm_members.h"
 #include "mcm/mcm_member.h"
+#include "mcm/mcm_filter.h"
 #include "mcm/mcm_hotkeys.h"
 
 #include "papyrus.inl"
@@ -272,12 +273,16 @@ namespace doticu_npcp { namespace Main {
             _MESSAGE(DOTICU_NPCP_PRINT_PREFIX "Added " #TYPE_ " functions.");   \
         W
         REGISTER_TYPE(Modules::Main_t);
+
         REGISTER_TYPE(Party::NPCS_t);
+
         REGISTER_TYPE(Papyrus::Keys_t);
+
         REGISTER_TYPE(MCM::SKI_Config_Base_t);
         REGISTER_TYPE(MCM::Main_t);
         REGISTER_TYPE(MCM::Members_t);
         REGISTER_TYPE(MCM::Member_t);
+        REGISTER_TYPE(MCM::Filter_t);
         REGISTER_TYPE(MCM::Hotkeys_t);
 
         #undef REGISTER_TYPE
