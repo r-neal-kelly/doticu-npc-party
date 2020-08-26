@@ -8,15 +8,22 @@
 #include "consts.h"
 #include "form.h"
 #include "object_ref.h"
-#include "party.h"
-#include "party.inl"
-#include "player.h"
+#include "outfit2.h"
+#include "papyrus.inl"
 #include "quest.h"
 #include "spell.h"
 #include "utils.h"
 #include "vars.h"
 
-namespace doticu_npcp { namespace Party {
+#include "party/party_player.h"
+#include "party/party_npcs.h"
+#include "party/party_members.h"
+#include "party/party_member.h"
+#include "party/party_mannequins.h"
+#include "party/party_followers.h"
+#include "party/party_follower.h"
+
+namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     String_t Member_t::Class_Name()
     {
@@ -789,6 +796,23 @@ namespace doticu_npcp { namespace Party {
         return Is_Clone() && Members_t::Self()->Should_Unclone(Actor());
     }
 
+    Bool_t Member_t::Is_In_Location(Location_t* location)
+    {
+        NPCP_ASSERT(Is_Filled());
+        if (location) {
+            Cell_t* cell = Cell();
+            if (cell) {
+                ExtraLocation* xlocation = static_cast<ExtraLocation*>
+                    (reinterpret_cast<XList_t*>(&cell->unk048)->GetByType(kExtraData_Location));
+                return xlocation && xlocation->location == location;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
     void Member_t::On_Load()
     {
         if (Is_Ready()) {
@@ -810,7 +834,7 @@ namespace doticu_npcp { namespace Party {
     void Member_t::On_Activate(Reference_t* activator)
     {
         if (Is_Ready()) {
-            if (activator == Player::Actor()) {
+            if (activator == Player_t::Self()->Actor()) {
                 Actor_t* actor = Actor();
                 if (Is_Alive()) {
                     if (Actor2::Is_AI_Enabled(actor)) {
@@ -842,9 +866,10 @@ namespace doticu_npcp { namespace Party {
     void Member_t::On_Combat_State_Changed(Actor_t* target, Int_t combat_code)
     {
         if (Is_Ready() && Is_Alive()) {
+            Player_t* player = Player_t::Self();
             Actor_t* actor = Actor();
 
-            if (target == Player::Actor()) {
+            if (target == player->Actor()) {
                 Actor2::Pacify(actor);
             } else if (Members_t::Self()->Has_Actor(target)) {
                 Actor2::Pacify(actor);
@@ -853,7 +878,7 @@ namespace doticu_npcp { namespace Party {
 
             if (Is_Follower()) {
                 if (combat_code == CODES::COMBAT::YES) {
-                    Virtual_Machine_t::Self()->Call_Method(Player::Alias(), "doticu_npcp_player", "f_Begin_Combat");
+                    player->Begin_Combat();
                 }
             }
         }
@@ -872,7 +897,7 @@ namespace doticu_npcp { namespace Party {
             if (value_owner->Get_Actor_Value(Actor_Value_t::HEALTH) <= 0.0) {
                 Int_t vitality = Vitality();
                 if (vitality == CODES::VITALITY::MORTAL ||
-                    vitality == CODES::VITALITY::PROTECTED && attacker == Player::Actor()) {
+                    vitality == CODES::VITALITY::PROTECTED && attacker == Player_t::Self()->Actor()) {
                     if (tool->formType != kFormType_Spell || Spell::Can_Damage_Health(static_cast<Spell_t*>(tool))) {
                         Kill();
                     }
@@ -1350,7 +1375,7 @@ namespace doticu_npcp { namespace Party {
     Int_t Member_t::Enthrall()
     {
         if (Is_Filled()) {
-            if (Actor2::Is_Vampire(Player::Actor())) {
+            if (Player_t::Self()->Is_Vampire()) {
                 if (Isnt_Thrall()) {
                     Is_Thrall_Variable()->Bool(true);
 
@@ -1384,7 +1409,7 @@ namespace doticu_npcp { namespace Party {
     Int_t Member_t::Unthrall()
     {
         if (Is_Filled()) {
-            if (Actor2::Is_Vampire(Player::Actor())) {
+            if (Player_t::Self()->Is_Vampire()) {
                 if (Is_Thrall()) {
                     Actor_t* actor = Actor();
 
@@ -2669,8 +2694,7 @@ namespace doticu_npcp { namespace Party {
     {
         if (Is_Filled()) {
             if (Isnt_Mannequin()) {
-                Summon(Player::Actor(), radius, degree);
-                //Enforce();
+                Summon(Player_t::Self()->Actor(), radius, degree);
                 return CODES::SUCCESS;
             } else {
                 return CODES::MANNEQUIN;
@@ -2688,6 +2712,17 @@ namespace doticu_npcp { namespace Party {
     Int_t Member_t::Summon_Behind(Float_t radius)
     {
         return Summon(radius, 180.0f);
+    }
+
+    Int_t Member_t::Goto(Int_t radius, Int_t degree)
+    {
+        if (Is_Filled()) {
+            Mannequins_t::Self()->Update_Go_Back_Marker(this);
+            Object_Ref::Move_To_Orbit(Player_t::Self()->Actor(), Actor(), radius, degree);
+            return CODES::SUCCESS;
+        } else {
+            return CODES::MEMBER;
+        }
     }
 
     Int_t Member_t::Open_Pack()
@@ -2815,246 +2850,52 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
-}}
-
-namespace doticu_npcp { namespace Party { namespace Member { namespace Exports {
-
-    Int_t ID(Member_t* self) FORWARD_INT(Member_t::ID());
-    Actor_t* Actor(Member_t* self) FORWARD_POINTER(Member_t::Actor());
-    Follower_t* Follower(Member_t* self) FORWARD_POINTER(Member_t::Follower());
-    Int_t Style(Member_t* self) FORWARD_INT(Member_t::Style());
-    Int_t Vitality(Member_t* self) FORWARD_INT(Member_t::Vitality());
-    Int_t Outfit2(Member_t* self) FORWARD_INT(Member_t::Outfit2());
-    Int_t Rating(Member_t* self) FORWARD_INT(Member_t::Rating());
-    String_t Name(Member_t* self) FORWARD_STRING(Member_t::Name());
-    String_t Rating_Stars(Member_t* self) FORWARD_STRING(Member_t::Rating_Stars());
-
-    Bool_t Is_Filled(Member_t* self)        FORWARD_BOOL(Member_t::Is_Filled());
-    Bool_t Is_Unfilled(Member_t* self)      FORWARD_BOOL(Member_t::Is_Unfilled());
-    Bool_t Is_Ready(Member_t* self)         FORWARD_BOOL(Member_t::Is_Ready());
-    Bool_t Is_Unready(Member_t* self)       FORWARD_BOOL(Member_t::Is_Unready());
-    Bool_t Is_Loaded(Member_t* self)        FORWARD_BOOL(Member_t::Is_Loaded());
-    Bool_t Is_Unloaded(Member_t* self)      FORWARD_BOOL(Member_t::Is_Unloaded());
-    Bool_t Is_Unique(Member_t* self)        FORWARD_BOOL(Member_t::Is_Unique());
-    Bool_t Is_Generic(Member_t* self)       FORWARD_BOOL(Member_t::Is_Generic());
-    Bool_t Is_Original(Member_t* self)      FORWARD_BOOL(Member_t::Is_Original());
-    Bool_t Is_Clone(Member_t* self)         FORWARD_BOOL(Member_t::Is_Clone());
-    Bool_t Is_Alive(Member_t* self)         FORWARD_BOOL(Member_t::Is_Alive());
-    Bool_t Is_Dead(Member_t* self)          FORWARD_BOOL(Member_t::Is_Dead());
-    Bool_t Is_Mobile(Member_t* self)        FORWARD_BOOL(Member_t::Is_Mobile());
-    Bool_t Is_Immobile(Member_t* self)      FORWARD_BOOL(Member_t::Is_Immobile());
-    Bool_t Is_Settler(Member_t* self)       FORWARD_BOOL(Member_t::Is_Settler());
-    Bool_t Isnt_Settler(Member_t* self)     FORWARD_BOOL(Member_t::Isnt_Settler());
-    Bool_t Is_Thrall(Member_t* self)        FORWARD_BOOL(Member_t::Is_Thrall());
-    Bool_t Isnt_Thrall(Member_t* self)      FORWARD_BOOL(Member_t::Isnt_Thrall());
-    Bool_t Is_Paralyzed(Member_t* self)     FORWARD_BOOL(Member_t::Is_Paralyzed());
-    Bool_t Isnt_Paralyzed(Member_t* self)   FORWARD_BOOL(Member_t::Isnt_Paralyzed());
-    Bool_t Is_Mannequin(Member_t* self)     FORWARD_BOOL(Member_t::Is_Mannequin());
-    Bool_t Isnt_Mannequin(Member_t* self)   FORWARD_BOOL(Member_t::Isnt_Mannequin());
-    Bool_t Is_Display(Member_t* self)       FORWARD_BOOL(Member_t::Is_Display());
-    Bool_t Isnt_Display(Member_t* self)     FORWARD_BOOL(Member_t::Isnt_Display());
-    Bool_t Is_Reanimated(Member_t* self)    FORWARD_BOOL(Member_t::Is_Reanimated());
-    Bool_t Isnt_Reanimated(Member_t* self)  FORWARD_BOOL(Member_t::Isnt_Reanimated());
-    Bool_t Is_Follower(Member_t* self)      FORWARD_BOOL(Member_t::Is_Follower());
-    Bool_t Isnt_Follower(Member_t* self)    FORWARD_BOOL(Member_t::Isnt_Follower());
-    Bool_t Is_Sneak(Member_t* self)         FORWARD_BOOL(Member_t::Is_Sneak());
-    Bool_t Isnt_Sneak(Member_t* self)       FORWARD_BOOL(Member_t::Isnt_Sneak());
-    Bool_t Is_Saddler(Member_t* self)       FORWARD_BOOL(Member_t::Is_Saddler());
-    Bool_t Isnt_Saddler(Member_t* self)     FORWARD_BOOL(Member_t::Isnt_Saddler());
-    Bool_t Is_Retreater(Member_t* self)     FORWARD_BOOL(Member_t::Is_Retreater());
-    Bool_t Isnt_Retreater(Member_t* self)   FORWARD_BOOL(Member_t::Isnt_Retreater());
-
-    void On_Load(Member_t* self)
-        FORWARD_VOID(Member_t::On_Load());
-    void On_Death(Member_t* self, Actor_t* killer)
-        FORWARD_VOID(Member_t::On_Death(killer));
-    void On_Activate(Member_t* self, Reference_t* activator)
-        FORWARD_VOID(Member_t::On_Activate(activator));
-    void On_Combat_State_Changed(Member_t* self, Actor_t* target, Int_t combat_code)
-        FORWARD_VOID(Member_t::On_Combat_State_Changed(target, combat_code));
-    void On_Hit(Member_t* self,
-                Reference_t* attacker,
-                Form_t* tool,
-                Projectile_Base_t* projectile,
-                Bool_t is_power,
-                Bool_t is_sneak,
-                Bool_t is_bash,
-                Bool_t is_blocked)
-        FORWARD_VOID(On_Hit(attacker, tool, projectile, is_power, is_sneak, is_bash, is_blocked));
-
-    Int_t Unmember(Member_t* self) FORWARD_INT(Member_t::Unmember());
-    Int_t Clone(Member_t* self) FORWARD_INT(Member_t::Clone());
-    Int_t Unclone(Member_t* self) FORWARD_INT(Member_t::Unclone());
-    Int_t Mobilize(Member_t* self) FORWARD_INT(Member_t::Mobilize());
-    Int_t Immobilize(Member_t* self) FORWARD_INT(Member_t::Immobilize());
-    Int_t Settle(Member_t* self) FORWARD_INT(Member_t::Settle());
-    Int_t Resettle(Member_t* self) FORWARD_INT(Member_t::Resettle());
-    Int_t Unsettle(Member_t* self) FORWARD_INT(Member_t::Unsettle());
-    Int_t Enthrall(Member_t* self) FORWARD_INT(Member_t::Enthrall());
-    Int_t Unthrall(Member_t* self) FORWARD_INT(Member_t::Unthrall());
-    Int_t Paralyze(Member_t* self) FORWARD_INT(Member_t::Paralyze());
-    Int_t Unparalyze(Member_t* self) FORWARD_INT(Member_t::Unparalyze());
-    Int_t Mannequinize(Member_t* self, Reference_t* marker) FORWARD_INT(Member_t::Mannequinize(marker));
-    Int_t Unmannequinize(Member_t* self) FORWARD_INT(Member_t::Unmannequinize());
-    Int_t Reanimate(Member_t* self) FORWARD_INT(Member_t::Reanimate());
-    Int_t Deanimate(Member_t* self) FORWARD_INT(Member_t::Deanimate());
-
-    Int_t Stylize(Member_t* self, Int_t style) FORWARD_INT(Member_t::Stylize(style));
-    Int_t Stylize_Default(Member_t* self) FORWARD_INT(Member_t::Stylize_Default());
-    Int_t Stylize_Warrior(Member_t* self) FORWARD_INT(Member_t::Stylize_Warrior());
-    Int_t Stylize_Mage(Member_t* self) FORWARD_INT(Member_t::Stylize_Mage());
-    Int_t Stylize_Archer(Member_t* self) FORWARD_INT(Member_t::Stylize_Archer());
-    Int_t Stylize_Coward(Member_t* self) FORWARD_INT(Member_t::Stylize_Coward());
-
-    Int_t Vitalize(Member_t* self, Int_t vitality) FORWARD_INT(Member_t::Vitalize(vitality));
-    Int_t Vitalize_Mortal(Member_t* self) FORWARD_INT(Member_t::Vitalize_Mortal());
-    Int_t Vitalize_Protected(Member_t* self) FORWARD_INT(Member_t::Vitalize_Protected());
-    Int_t Vitalize_Essential(Member_t* self) FORWARD_INT(Member_t::Vitalize_Essential());
-    Int_t Vitalize_Invulnerable(Member_t* self) FORWARD_INT(Member_t::Vitalize_Invulnerable());
-
-    Int_t Change_Outfit2(Member_t* self, Int_t outfit2_code) FORWARD_INT(Change_Outfit2(outfit2_code));
-    Int_t Change_Member_Outfit2(Member_t* self) FORWARD_INT(Change_Member_Outfit2());
-    Int_t Change_Immobile_Outfit2(Member_t* self) FORWARD_INT(Change_Immobile_Outfit2());
-    Int_t Change_Settler_Outfit2(Member_t* self) FORWARD_INT(Change_Settler_Outfit2());
-    Int_t Change_Thrall_Outfit2(Member_t* self) FORWARD_INT(Change_Thrall_Outfit2());
-    Int_t Change_Follower_Outfit2(Member_t* self) FORWARD_INT(Change_Follower_Outfit2());
-    Int_t Change_Vanilla_Outfit2(Member_t* self) FORWARD_INT(Change_Vanilla_Outfit2());
-    Int_t Change_Default_Outfit2(Member_t* self) FORWARD_INT(Change_Default_Outfit2());
-    Int_t Change_Current_Outfit2(Member_t* self) FORWARD_INT(Change_Current_Outfit2());
-
-    Int_t Rate(Member_t* self, Int_t rating) FORWARD_INT(Member_t::Rate(rating));
-
-    void Rename(Member_t* self, String_t new_name) FORWARD_VOID(Member_t::Rename(new_name));
-
-    void Enforce(Member_t* self) FORWARD_VOID(Member_t::Enforce());
-
-    Int_t Summon(Member_t* self, Float_t radius, Float_t degree) FORWARD_INT(Member_t::Summon(radius, degree));
-    Int_t Open_Pack(Member_t* self) FORWARD_INT(Member_t::Open_Pack());
-    Int_t Stash(Member_t* self) FORWARD_INT(Member_t::Stash());
-    Int_t Resurrect(Member_t* self) FORWARD_INT(Member_t::Resurrect());
-    Int_t Kill(Member_t* self) FORWARD_INT(Member_t::Kill());
-
-    Int_t Follow(Member_t* self) FORWARD_INT(Member_t::Follow());
-    Int_t Unfollow(Member_t* self) FORWARD_INT(Member_t::Unfollow());
-
-    Bool_t Register(Registry_t* registry)
+    void Member_t::Register_Me(Virtual_Machine_t* vm)
     {
-        #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
-        M                                                               \
-            ADD_CLASS_METHOD(Member_t::Class_Name(), Member_t,          \
-                             STR_FUNC_, ARG_NUM_,                       \
-                             RETURN_, Exports::METHOD_, __VA_ARGS__);   \
+        #define BMETHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...) \
+        M                                                           \
+            FORWARD_METHOD(vm, Class_Name(), Alias_t,               \
+                           STR_FUNC_, ARG_NUM_,                     \
+                           RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        ADD_METHOD("ID", 0, Int_t, ID);
-        ADD_METHOD("Actor", 0, Actor_t*, Actor);
-        ADD_METHOD("Follower", 0, Follower_t*, Follower);
-        ADD_METHOD("Style", 0, Int_t, Style);
-        ADD_METHOD("Vitality", 0, Int_t, Vitality);
-        ADD_METHOD("Outfit2", 0, Int_t, Outfit2);
-        ADD_METHOD("Rating", 0, Int_t, Rating);
-        ADD_METHOD("Name", 0, String_t, Name);
-        ADD_METHOD("Rating_Stars", 0, String_t, Rating_Stars);
+        #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                           \
+            FORWARD_METHOD(vm, Class_Name(), Member_t,              \
+                           STR_FUNC_, ARG_NUM_,                     \
+                           RETURN_, METHOD_, __VA_ARGS__);          \
+        W
 
-        ADD_METHOD("Is_Filled", 0, Bool_t, Is_Filled);
-        ADD_METHOD("Is_Unfilled", 0, Bool_t, Is_Unfilled);
-        ADD_METHOD("Is_Ready", 0, Bool_t, Is_Ready);
-        ADD_METHOD("Is_Unready", 0, Bool_t, Is_Unready);
-        ADD_METHOD("Is_Loaded", 0, Bool_t, Is_Loaded);
-        ADD_METHOD("Is_Unloaded", 0, Bool_t, Is_Unloaded);
-        ADD_METHOD("Is_Unique", 0, Bool_t, Is_Unique);
-        ADD_METHOD("Is_Generic", 0, Bool_t, Is_Generic);
-        ADD_METHOD("Is_Original", 0, Bool_t, Is_Original);
-        ADD_METHOD("Is_Clone", 0, Bool_t, Is_Clone);
-        ADD_METHOD("Is_Alive", 0, Bool_t, Is_Alive);
-        ADD_METHOD("Is_Dead", 0, Bool_t, Is_Dead);
-        ADD_METHOD("Is_Mobile", 0, Bool_t, Is_Mobile);
-        ADD_METHOD("Is_Immobile", 0, Bool_t, Is_Immobile);
-        ADD_METHOD("Is_Settler", 0, Bool_t, Is_Settler);
-        ADD_METHOD("Isnt_Settler", 0, Bool_t, Isnt_Settler);
-        ADD_METHOD("Is_Thrall", 0, Bool_t, Is_Thrall);
-        ADD_METHOD("Isnt_Thrall", 0, Bool_t, Isnt_Thrall);
-        ADD_METHOD("Is_Paralyzed", 0, Bool_t, Is_Paralyzed);
-        ADD_METHOD("Isnt_Paralyzed", 0, Bool_t, Isnt_Paralyzed);
-        ADD_METHOD("Is_Mannequin", 0, Bool_t, Is_Mannequin);
-        ADD_METHOD("Isnt_Mannequin", 0, Bool_t, Isnt_Mannequin);
-        ADD_METHOD("Is_Display", 0, Bool_t, Is_Display);
-        ADD_METHOD("Isnt_Display", 0, Bool_t, Isnt_Display);
-        ADD_METHOD("Is_Reanimated", 0, Bool_t, Is_Reanimated);
-        ADD_METHOD("Isnt_Reanimated", 0, Bool_t, Isnt_Reanimated);
-        ADD_METHOD("Is_Follower", 0, Bool_t, Is_Follower);
-        ADD_METHOD("Isnt_Follower", 0, Bool_t, Isnt_Follower);
-        ADD_METHOD("Is_Sneak", 0, Bool_t, Is_Sneak);
-        ADD_METHOD("Isnt_Sneak", 0, Bool_t, Isnt_Sneak);
-        ADD_METHOD("Is_Saddler", 0, Bool_t, Is_Saddler);
-        ADD_METHOD("Isnt_Saddler", 0, Bool_t, Isnt_Saddler);
-        ADD_METHOD("Is_Retreater", 0, Bool_t, Is_Retreater);
-        ADD_METHOD("Isnt_Retreater", 0, Bool_t, Isnt_Retreater);
+        METHOD("Actor", 0, Actor_t*, Actor);
+        METHOD("Follower", 0, Follower_t*, Follower);
+        METHOD("Style", 0, Int_t, Style);
+        METHOD("Vitality", 0, Int_t, Vitality);
+        METHOD("Rating", 0, Int_t, Rating);
+        METHOD("Name", 0, String_t, Name);
+        METHOD("Rating_Stars", 0, String_t, Rating_Stars);
 
-        ADD_METHOD("OnLoad", 0, void, On_Load);
-        ADD_METHOD("OnDeath", 1, void, On_Death, Actor_t*);
-        ADD_METHOD("OnActivate", 1, void, On_Activate, Reference_t*);
-        ADD_METHOD("OnCombatStateChanged", 2, void, On_Combat_State_Changed, Actor_t*, Int_t);
-        ADD_METHOD("OnHit", 7, void, On_Hit, Reference_t*, Form_t*, Projectile_Base_t*, Bool_t, Bool_t, Bool_t, Bool_t);
+        BMETHOD("Is_Filled", 0, Bool_t, Is_Filled);
+        METHOD("Is_Mannequin", 0, Bool_t, Is_Mannequin);
+        METHOD("Isnt_Mannequin", 0, Bool_t, Isnt_Mannequin);
+        METHOD("Is_Follower", 0, Bool_t, Is_Follower);
 
-        ADD_METHOD("Unmember", 0, Int_t, Unmember);
-        ADD_METHOD("Clone", 0, Int_t, Clone);
-        ADD_METHOD("Unclone", 0, Int_t, Unclone);
-        ADD_METHOD("Mobilize", 0, Int_t, Mobilize);
-        ADD_METHOD("Immobilize", 0, Int_t, Immobilize);
-        ADD_METHOD("Settle", 0, Int_t, Settle);
-        ADD_METHOD("Resettle", 0, Int_t, Resettle);
-        ADD_METHOD("Unsettle", 0, Int_t, Unsettle);
-        ADD_METHOD("Enthrall", 0, Int_t, Enthrall);
-        ADD_METHOD("Unthrall", 0, Int_t, Unthrall);
-        ADD_METHOD("Paralyze", 0, Int_t, Paralyze);
-        ADD_METHOD("Unparalyze", 0, Int_t, Unparalyze);
-        ADD_METHOD("Mannequinize", 1, Int_t, Mannequinize, Reference_t*);
-        ADD_METHOD("Unmannequinize", 0, Int_t, Unmannequinize);
-        ADD_METHOD("Reanimate", 0, Int_t, Reanimate);
-        ADD_METHOD("Deanimate", 0, Int_t, Deanimate);
+        METHOD("Mannequinize", 1, Int_t, Mannequinize, Reference_t*);
+        METHOD("Unmannequinize", 0, Int_t, Unmannequinize);
 
-        ADD_METHOD("Stylize", 1, Int_t, Stylize, Int_t);
-        ADD_METHOD("Stylize_Default", 0, Int_t, Stylize_Default);
-        ADD_METHOD("Stylize_Warrior", 0, Int_t, Stylize_Warrior);
-        ADD_METHOD("Stylize_Mage", 0, Int_t, Stylize_Mage);
-        ADD_METHOD("Stylize_Archer", 0, Int_t, Stylize_Archer);
-        ADD_METHOD("Stylize_Coward", 0, Int_t, Stylize_Coward);
+        METHOD("Rate", 1, Int_t, Rate, Int_t);
 
-        ADD_METHOD("Vitalize", 1, Int_t, Vitalize, Int_t);
-        ADD_METHOD("Vitalize_Mortal", 0, Int_t, Vitalize_Mortal);
-        ADD_METHOD("Vitalize_Protected", 0, Int_t, Vitalize_Protected);
-        ADD_METHOD("Vitalize_Essential", 0, Int_t, Vitalize_Essential);
-        ADD_METHOD("Vitalize_Invulnerable", 0, Int_t, Vitalize_Invulnerable);
+        METHOD("Rename", 1, Int_t, Rename, String_t);
 
-        ADD_METHOD("Change_Outfit2", 1, Int_t, Change_Outfit2, Int_t);
-        ADD_METHOD("Change_Member_Outfit2", 0, Int_t, Change_Member_Outfit2);
-        ADD_METHOD("Change_Immobile_Outfit2", 0, Int_t, Change_Immobile_Outfit2);
-        ADD_METHOD("Change_Settler_Outfit2", 0, Int_t, Change_Settler_Outfit2);
-        ADD_METHOD("Change_Thrall_Outfit2", 0, Int_t, Change_Thrall_Outfit2);
-        ADD_METHOD("Change_Follower_Outfit2", 0, Int_t, Change_Follower_Outfit2);
-        ADD_METHOD("Change_Vanilla_Outfit2", 0, Int_t, Change_Vanilla_Outfit2);
-        ADD_METHOD("Change_Default_Outfit2", 0, Int_t, Change_Default_Outfit2);
-        ADD_METHOD("Change_Current_Outfit2", 0, Int_t, Change_Current_Outfit2);
+        METHOD("Stash", 0, Int_t, Stash);
 
-        ADD_METHOD("Rate", 1, Int_t, Rate, Int_t);
+        METHOD("OnLoad", 0, void, On_Load);
+        METHOD("OnDeath", 1, void, On_Death, Actor_t*);
+        METHOD("OnActivate", 1, void, On_Activate, Reference_t*);
+        METHOD("OnCombatStateChanged", 2, void, On_Combat_State_Changed, Actor_t*, Int_t);
+        METHOD("OnHit", 7, void, On_Hit, Reference_t*, Form_t*, Projectile_Base_t*, Bool_t, Bool_t, Bool_t, Bool_t);
 
-        ADD_METHOD("Rename", 1, void, Rename, String_t);
-
-        ADD_METHOD("Enforce", 0, void, Enforce);
-
-        ADD_METHOD("Summon", 2, Int_t, Summon, Float_t, Float_t);
-        ADD_METHOD("Open_Pack", 0, Int_t, Open_Pack);
-        ADD_METHOD("Stash", 0, Int_t, Stash);
-        ADD_METHOD("Resurrect", 0, Int_t, Resurrect);
-        ADD_METHOD("Kill", 0, Int_t, Kill);
-
-        ADD_METHOD("Follow", 0, Int_t, Follow);
-        ADD_METHOD("Unfollow", 0, Int_t, Unfollow);
-
-        #undef ADD_METHOD
-
-        return true;
+        #undef BMETHOD
+        #undef METHOD
     }
 
-}}}}
+}}}

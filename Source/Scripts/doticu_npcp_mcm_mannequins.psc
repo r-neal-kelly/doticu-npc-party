@@ -34,7 +34,7 @@ int property p_COLUMNS_PER_PAGE hidden
 endProperty
 int property p_OPTIONS_PER_COLUMN hidden
     int function Get()
-        return MANNEQUINS.MAX_ROWS + 1; includes the header for each column
+        return MANNEQUINS.ROWS + 1; includes the header for each column
     endFunction
 endProperty
 
@@ -46,6 +46,7 @@ endProperty
 
 ; Private Variables
 bool                p_is_created                = false
+
 int                 p_code_view                 =    -1
 
 int                 p_idx_page                  =     0
@@ -143,13 +144,13 @@ endFunction
 auto state STATE_MANNEQUINS
 function f_Build_Page()
     p_code_view = doticu_npcp_codes.VIEW_MANNEQUINS()
-    p_num_pages = Math.Ceiling(MANNEQUINS.MAX_COLUMNS / p_COLUMNS_PER_PAGE)
+    p_num_pages = Math.Ceiling(MANNEQUINS.COLUMNS / p_COLUMNS_PER_PAGE)
     if p_idx_page < 0 || p_idx_page >= p_num_pages
         p_idx_page = 0
     endIf
 
     ; Title
-    string str_mannequins = "Mannequins: " + MANNEQUINS.Get_Expo_Count() + "/" + MANNEQUINS.Get_Max()
+    string str_mannequins = "Mannequins: " + MANNEQUINS.Count_Expoees() + "/" + MANNEQUINS.SLOTS
     string str_pages = "Page: " + (p_idx_page + 1) + "/" + p_num_pages
     MCM.SetTitleText(str_mannequins + "               " + str_pages)
 
@@ -164,7 +165,7 @@ function f_Build_Page()
         p_option_enter =    MCM.AddTextOption("                      Enter Antechamber", "", MCM.FLAG_ENABLE)
         p_option_exit =     MCM.AddTextOption("                            Exit Expo", "", MCM.FLAG_DISABLE)
     endIf
-    if MANNEQUINS.MAX_COLUMNS > p_COLUMNS_PER_PAGE
+    if MANNEQUINS.COLUMNS > p_COLUMNS_PER_PAGE
         p_option_prev =     MCM.AddTextOption("                     Go to Previous Page", "")
         p_option_next =     MCM.AddTextOption("                       Go to Next Page", "")
     else
@@ -185,8 +186,8 @@ function f_Build_Page()
 
     idx_column = (p_idx_page * p_COLUMNS_PER_PAGE) + 1
     idx_column_end = idx_column + p_COLUMNS_PER_PAGE - 1
-    if idx_column_end > MANNEQUINS.MAX_COLUMNS
-        idx_column_end = MANNEQUINS.MAX_COLUMNS
+    if idx_column_end > MANNEQUINS.COLUMNS
+        idx_column_end = MANNEQUINS.COLUMNS
     endIf
 
     while idx_column <= idx_column_end
@@ -196,7 +197,7 @@ function f_Build_Page()
             MCM.SetCursorPosition(p_HEADERS_IN_MANNEQUINS)
         endIf
 
-        idx_row = MANNEQUINS.MAX_ROWS
+        idx_row = MANNEQUINS.ROWS
         while idx_row > 0
             str_cell_name = MANNEQUINS.Get_Cell_Name(idx_column, idx_row)
             if str_cell_name
@@ -305,7 +306,7 @@ bool function f_Is_Valid_Member(doticu_npcp_member ref_member)
 endFunction
 
 function f_Build_Page()
-    p_curr_members = MANNEQUINS.Get_Mannequins(p_curr_column, p_curr_row)
+    p_curr_members = MANNEQUINS.Expoees(p_curr_column, p_curr_row)
 
     if p_code_view == doticu_npcp_codes.VIEW_MANNEQUINS_MEMBER()
         if f_Is_Valid_Member(p_ref_member)
@@ -346,13 +347,13 @@ function f_Build_Page()
     p_Fill_Cell_Column(16)
 
     ; Footer
-    MCM.SetCursorPosition(p_HEADERS_IN_MANNEQUINS_CELL + MANNEQUINS.MAX_ROWS * 2)
+    MCM.SetCursorPosition(p_HEADERS_IN_MANNEQUINS_CELL + MANNEQUINS.ROWS * 2)
     MCM.SetCursorFillMode(MCM.LEFT_TO_RIGHT)
 
     MCM.AddHeaderOption("")
     MCM.AddHeaderOption("")
 
-    if p_curr_row < MANNEQUINS.MAX_ROWS
+    if p_curr_row < MANNEQUINS.ROWS
         p_option_north_1 =  MCM.AddTextOption("                              North", "")
         p_option_north_2 =  MCM.AddTextOption("                              North", "")
     else
@@ -364,7 +365,7 @@ function f_Build_Page()
     else
         p_option_west =     MCM.AddTextOption("                              West", "", MCM.FLAG_DISABLE)
     endIf
-    if p_curr_column < MANNEQUINS.MAX_COLUMNS
+    if p_curr_column < MANNEQUINS.COLUMNS
         p_option_east =     MCM.AddTextOption("                              East", "")
     else
         p_option_east =     MCM.AddTextOption("                              East", "", MCM.FLAG_DISABLE)

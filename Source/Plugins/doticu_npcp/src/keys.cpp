@@ -6,17 +6,23 @@
 
 #include "skse64/GameInput.h"
 #include "skse64/Hooks_DirectInput8Create.h"
+#include "skse64/PapyrusGame.h"
 
 #include "consts.h"
 #include "game.h"
 #include "keys.h"
 #include "papyrus.h"
+#include "papyrus.inl"
 #include "string2.h"
+#include "ui.h"
 #include "utils.h"
 #include "vars.h"
 #include "vector.h"
 
-#include "papyrus.inl"
+#include "party/party_followers.h"
+#include "party/party_follower.h"
+
+#include "commands.h"
 
 namespace doticu_npcp { namespace Papyrus {
 
@@ -566,42 +572,139 @@ namespace doticu_npcp { namespace Papyrus {
         Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "Update_Keys");
     }
 
-    void Keys_t::Register_Me(Registry_t* registry)
+    Bool_t Keys_t::Can_Use_Keys()
     {
-        using namespace Utils;
+        return !UI::Is_In_Menu_Mode() && !UI::Is_Menu_Open("Dialogue Menu");
+    }
 
-        auto Default_Value = Forward<Int_t, Keys_t, String_t, &Keys_t::Default_Value>();
-        auto Current_Value = Forward<Int_t, Keys_t, String_t, &Keys_t::Current_Value>();
-        auto Default_Mods = Forward<Vector_t<Int_t>, Keys_t, String_t, &Keys_t::Default_Mods>();
-        auto Current_Mods = Forward<Vector_t<Int_t>, Keys_t, String_t, &Keys_t::Current_Mods>();
+    Actor_t* Keys_t::Actor_In_Crosshair(Bool_t allow_follower_horse)
+    {
+        using namespace Papyrus::Party;
 
-        auto Default_Mods_String = Forward<String_t, Keys_t, String_t, &Keys_t::Default_Mods_String>();
-        auto Current_Mods_String = Forward<String_t, Keys_t, String_t, &Keys_t::Current_Mods_String>();
+        Reference_t* ref = papyrusGame::GetCurrentCrosshairRef(0);
+        if (ref && ref->formType == kFormType_Character) {
+            Actor_t* actor = static_cast<Actor_t*>(ref);
+            if (allow_follower_horse) {
+                return actor;
+            } else {
+                Follower_t* follower = Followers_t::Self()->From_Horse_Actor(actor);
+                if (follower) {
+                    return follower->Actor();
+                } else {
+                    return actor;
+                }
+            }
+        } else {
+            return nullptr;
+        }
+    }
 
-        auto Conflicting_Hotkey =
-            Forward<String_t, Keys_t, String_t, Int_t, Int_t, Int_t, Int_t, &Keys_t::Conflicting_Hotkey>();
-        auto Pressed_Hotkey =
-            Forward<String_t, Keys_t, Int_t, Int_t, Int_t, Int_t, Int_t, Int_t, Int_t, Int_t, Int_t, &Keys_t::Pressed_Hotkey>();
+    void Keys_t::On_Key_Up(Int_t key_code, Float_t time_held)
+    {
+        using namespace Modules::Control;
 
-        #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
-        M                                                               \
-            ADD_CLASS_METHOD(Class_Name(), Keys_t,                      \
-                             STR_FUNC_, ARG_NUM_,                       \
-                             RETURN_, METHOD_, __VA_ARGS__);            \
+        if (Can_Use_Keys()) {
+            String_t pressed_hotkey = Pressed_Hotkey_Variable()->String();
+            if (pressed_hotkey && pressed_hotkey.data && pressed_hotkey.data[0]) {
+                Pressed_Hotkey_Variable()->String("");
+
+                #define IS(HOTKEY_) String2::Is_Same_Caseless(pressed_hotkey, HOTKEY_())
+
+                if (IS(G_Dialogue_Menu)) { // General
+                    Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(), "doticu_npcp_actors", "Create_Menu");
+
+                } else if (IS(N_Toggle_Member)) { // NPC
+                    Commands_t::Self()->Toggle_Member(Actor_In_Crosshair());
+                } else if (IS(N_Toggle_Move)) {
+                    Commands_t::Self()->Toggle_Move(Actor_In_Crosshair(true));
+                } else if (IS(N_Has_Base)) {
+                    Commands_t::Self()->Has_Base(Actor_In_Crosshair());
+                } else if (IS(N_Count_Base)) {
+                    Commands_t::Self()->Count_Base(Actor_In_Crosshair());
+                } else if (IS(N_Has_Head)) {
+                    Commands_t::Self()->Has_Head(Actor_In_Crosshair());
+                } else if (IS(N_Count_Heads)) {
+                    Commands_t::Self()->Count_Heads(Actor_In_Crosshair());
+
+                } else if (IS(M_Toggle_Clone)) { // Member
+                    Commands_t::Self()->Toggle_Clone(Actor_In_Crosshair());
+                } else if (IS(M_Toggle_Settler)) {
+                    Commands_t::Self()->Toggle_Settler(Actor_In_Crosshair());
+                } else if (IS(M_Toggle_Thrall)) {
+                    Commands_t::Self()->Toggle_Thrall(Actor_In_Crosshair());
+                } else if (IS(M_Toggle_Immobile)) {
+                    Commands_t::Self()->Toggle_Immobile(Actor_In_Crosshair());
+                } else if (IS(M_Toggle_Paralyzed)) {
+                    Commands_t::Self()->Toggle_Paralyzed(Actor_In_Crosshair());
+                } else if (IS(M_Toggle_Follower)) {
+                    Commands_t::Self()->Toggle_Follower(Actor_In_Crosshair());
+
+                } else if (IS(F_Toggle_Sneak)) { // Follower
+                    Commands_t::Self()->Toggle_Sneak(Actor_In_Crosshair());
+                } else if (IS(F_Toggle_Saddler)) {
+                    Commands_t::Self()->Toggle_Saddler(Actor_In_Crosshair());
+
+                } else if (IS(MS_Toggle_Display)) { // Members
+                    Commands_t::Self()->Members_Toggle_Display();
+                } else if (IS(MS_Display_Previous)) {
+                    Commands_t::Self()->Members_Display_Previous();
+                } else if (IS(MS_Display_Next)) {
+                    Commands_t::Self()->Members_Display_Next();
+
+                } else if (IS(FS_Summon_All)) { // Followers
+                    Commands_t::Self()->Followers_Summon_All();
+                } else if (IS(FS_Summon_Mobile)) {
+                    Commands_t::Self()->Followers_Summon_Mobile();
+                } else if (IS(FS_Summon_Immobile)) {
+                    Commands_t::Self()->Followers_Summon_Immobile();
+                } else if (IS(FS_Settle)) {
+                    Commands_t::Self()->Followers_Settle();
+                } else if (IS(FS_Unsettle)) {
+                    Commands_t::Self()->Followers_Unsettle();
+                } else if (IS(FS_Mobilize)) {
+                    Commands_t::Self()->Followers_Mobilize();
+                } else if (IS(FS_Immobilize)) {
+                    Commands_t::Self()->Followers_Immobilize();
+                } else if (IS(FS_Sneak)) {
+                    Commands_t::Self()->Followers_Sneak();
+                } else if (IS(FS_Unsneak)) {
+                    Commands_t::Self()->Followers_Unsneak();
+                } else if (IS(FS_Saddle)) {
+                    Commands_t::Self()->Followers_Saddle();
+                } else if (IS(FS_Unsaddle)) {
+                    Commands_t::Self()->Followers_Unsaddle();
+                } else if (IS(FS_Resurrect)) {
+                    Commands_t::Self()->Followers_Resurrect();
+                }
+
+                #undef IS
+            }
+        }
+    }
+
+    void Keys_t::Register_Me(Virtual_Machine_t* vm)
+    {
+        #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                           \
+            FORWARD_METHOD(vm, Class_Name(), Keys_t,                \
+                           STR_FUNC_, ARG_NUM_,                     \
+                           RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        ADD_METHOD("Default_Value", 1, Int_t, Default_Value, String_t);
-        ADD_METHOD("Current_Value", 1, Int_t, Current_Value, String_t);
-        ADD_METHOD("Default_Mods", 1, Vector_t<Int_t>, Default_Mods, String_t);
-        ADD_METHOD("Current_Mods", 1, Vector_t<Int_t>, Current_Mods, String_t);
+        METHOD("Default_Value", 1, Int_t, Default_Value, String_t);
+        METHOD("Current_Value", 1, Int_t, Current_Value, String_t);
+        METHOD("Default_Mods", 1, Vector_t<Int_t>, Default_Mods, String_t);
+        METHOD("Current_Mods", 1, Vector_t<Int_t>, Current_Mods, String_t);
 
-        ADD_METHOD("Default_Mods_To_String", 1, String_t, Default_Mods_String, String_t);
-        ADD_METHOD("Current_Mods_To_String", 1, String_t, Current_Mods_String, String_t);
+        METHOD("Default_Mods_To_String", 1, String_t, Default_Mods_String, String_t);
+        METHOD("Current_Mods_To_String", 1, String_t, Current_Mods_String, String_t);
 
-        ADD_METHOD("Conflicting_Hotkey", 5, String_t, Conflicting_Hotkey, String_t, Int_t, Int_t, Int_t, Int_t);
-        ADD_METHOD("Pressed_Hotkey", 9, String_t, Pressed_Hotkey, Int_t, Int_t, Int_t, Int_t, Int_t, Int_t, Int_t, Int_t, Int_t);
+        METHOD("Conflicting_Hotkey", 5, String_t, Conflicting_Hotkey, String_t, Int_t, Int_t, Int_t, Int_t);
+        METHOD("Pressed_Hotkey", 9, String_t, Pressed_Hotkey, Int_t, Int_t, Int_t, Int_t, Int_t, Int_t, Int_t, Int_t, Int_t);
 
-        #undef ADD_METHOD
+        METHOD("OnKeyUp", 2, void, On_Key_Up, Int_t, Float_t);
+
+        #undef METHOD
     }
 
 }}

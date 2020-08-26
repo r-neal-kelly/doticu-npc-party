@@ -79,7 +79,7 @@ namespace doticu_npcp { namespace Consts {
         QUEST_PLAYER_VAMPIRE                = 0x0EAFD5,
 
         // Skyrim Reference Markers
-        REFERENCE_MARKER_GOTO_SAFE          = 0x01BDF3,
+        REFERENCE_MARKER_GO_BACK_SAFE       = 0x01BDF3,
 
         // Skyrim Statics
         STATIC_MARKER_X                     = 0x00003B,
@@ -125,7 +125,7 @@ namespace doticu_npcp { namespace Consts {
     Quest_t* Player_Vampire_Quest() { SKYRIM_FORM(Quest_t, QUEST_PLAYER_VAMPIRE); }
 
     // Skyrim Reference Markers
-    Reference_t* Safe_Goto_Marker() { SKYRIM_FORM(Reference_t, REFERENCE_MARKER_GOTO_SAFE); }
+    Reference_t* Safe_Go_Back_Marker() { SKYRIM_FORM(Reference_t, REFERENCE_MARKER_GO_BACK_SAFE); }
 
     // Skyrim Statics
     Static_t* X_Marker_Static() { SKYRIM_FORM(Static_t, STATIC_MARKER_X); }
@@ -519,9 +519,6 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
         // Skyrim Actors
         ADD_GLOBAL("Player_Actor", 0, Actor_t*, Player_Actor);
 
-        // Skyrim Effect Shaders
-        ADD_GLOBAL("Reanimate_Effect_Shader", 0, Effect_Shader_t*, Reanimate_Effect_Shader);
-
         // Skyrim Keywords
         ADD_GLOBAL("Vampire_Keyword", 0, Keyword_t*, Vampire_Keyword);
 
@@ -531,9 +528,6 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
         // Skyrim Quests
         ADD_GLOBAL("Bard_Songs_Quest", 0, Quest_t*, Bard_Songs_Quest);
         ADD_GLOBAL("Player_Vampire_Quest", 0, Quest_t*, Player_Vampire_Quest);
-
-        // Skyrim Reference Markers
-        ADD_GLOBAL("Safe_Goto_Marker", 0, Reference_t*, Safe_Goto_Marker);
 
         // Skyrim Statics
         ADD_GLOBAL("X_Marker_Static", 0, Static_t*, X_Marker_Static);

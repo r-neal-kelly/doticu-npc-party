@@ -55,7 +55,7 @@ namespace doticu_npcp { namespace Consts {
     Quest_t* Player_Vampire_Quest();
 
     // Skyrim Reference Markers
-    Reference_t* Safe_Goto_Marker();
+    Reference_t* Safe_Go_Back_Marker();
 
     // Skyrim Statics
     Static_t* X_Marker_Static();

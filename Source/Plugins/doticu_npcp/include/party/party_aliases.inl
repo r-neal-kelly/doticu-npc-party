@@ -2,10 +2,14 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
-#include "party.h"
+#include "papyrus.h"
 #include "string2.h"
 
-namespace doticu_npcp { namespace Party {
+#include "party/party_aliases.h"
+
+#include "mcm/mcm_filter.h"
+
+namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     template <typename Alias>
     Range_t<Alias**> Aliases_t::Aliases(UInt64 begin, UInt64 end)
@@ -438,87 +442,87 @@ namespace doticu_npcp { namespace Party {
         };
 
         if (flags_1 > 0) {
-            if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::IS_LOADED)) {
+            if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_LOADED)) {
                 Filter_If(&Alias::Is_Loaded);
-            } else if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::IS_UNLOADED)) {
+            } else if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_UNLOADED)) {
                 Filter_If(&Alias::Is_Unloaded);
             }
 
-            if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::IS_UNIQUE)) {
+            if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_UNIQUE)) {
                 Filter_If(&Alias::Is_Unique);
-            } else if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::IS_GENERIC)) {
+            } else if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_GENERIC)) {
                 Filter_If(&Alias::Is_Generic);
             }
 
-            if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::IS_ALIVE)) {
+            if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_ALIVE)) {
                 Filter_If(&Alias::Is_Alive);
-            } else if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::IS_DEAD)) {
+            } else if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_DEAD)) {
                 Filter_If(&Alias::Is_Dead);
             }
 
-            if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::IS_ORIGINAL)) {
+            if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_ORIGINAL)) {
                 Filter_If(&Alias::Is_Original);
-            } else if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::IS_CLONE)) {
+            } else if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_CLONE)) {
                 Filter_If(&Alias::Is_Clone);
             }
 
-            if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::IS_MOBILE)) {
+            if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_MOBILE)) {
                 Filter_If(&Alias::Is_Mobile);
-            } else if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::IS_IMMOBILE)) {
+            } else if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_IMMOBILE)) {
                 Filter_If(&Alias::Is_Immobile);
             }
 
-            if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::IS_SETTLER)) {
+            if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_SETTLER)) {
                 Filter_If(&Alias::Is_Settler);
-            } else if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::ISNT_SETTLER)) {
+            } else if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::ISNT_SETTLER)) {
                 Filter_If(&Alias::Isnt_Settler);
             }
 
-            if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::IS_THRALL)) {
+            if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_THRALL)) {
                 Filter_If(&Alias::Is_Thrall);
-            } else if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::ISNT_THRALL)) {
+            } else if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::ISNT_THRALL)) {
                 Filter_If(&Alias::Isnt_Thrall);
             }
 
-            if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::IS_PARALYZED)) {
+            if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_PARALYZED)) {
                 Filter_If(&Alias::Is_Paralyzed);
-            } else if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::ISNT_PARALYZED)) {
+            } else if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::ISNT_PARALYZED)) {
                 Filter_If(&Alias::Isnt_Paralyzed);
             }
 
-            if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::IS_MANNEQUIN)) {
+            if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_MANNEQUIN)) {
                 Filter_If(&Alias::Is_Mannequin);
-            } else if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::ISNT_MANNEQUIN)) {
+            } else if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::ISNT_MANNEQUIN)) {
                 Filter_If(&Alias::Isnt_Mannequin);
             }
 
-            if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::IS_REANIMATED)) {
+            if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_REANIMATED)) {
                 Filter_If(&Alias::Is_Reanimated);
-            } else if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::ISNT_REANIMATED)) {
+            } else if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::ISNT_REANIMATED)) {
                 Filter_If(&Alias::Isnt_Reanimated);
             }
 
-            if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::IS_FOLLOWER)) {
+            if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_FOLLOWER)) {
                 Filter_If(&Alias::Is_Follower);
-            } else if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::ISNT_FOLLOWER)) {
+            } else if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::ISNT_FOLLOWER)) {
                 Filter_If(&Alias::Isnt_Follower);
             }
 
-            if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::IS_SNEAK)) {
+            if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_SNEAK)) {
                 Filter_If(&Alias::Is_Sneak);
-            } else if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::ISNT_SNEAK)) {
+            } else if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::ISNT_SNEAK)) {
                 Filter_If(&Alias::Isnt_Sneak);
             }
 
-            if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::IS_SADDLER)) {
+            if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_SADDLER)) {
                 Filter_If(&Alias::Is_Saddler);
-            } else if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::ISNT_SADDLER)) {
+            } else if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::ISNT_SADDLER)) {
                 Filter_If(&Alias::Isnt_Saddler);
             }
 
-            if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::IS_RETREATER)) {
+            if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_RETREATER)) {
                 Filter_If(&Alias::Is_Retreater);
-            } else if (Utils::Is_Bit_On(flags_1, Filter_Flags_1::ISNT_RETREATER)) {
+            } else if (Utils::Is_Bit_On(flags_1, MCM::Filter_t::Flags_1::ISNT_RETREATER)) {
                 Filter_If(&Alias::Isnt_Retreater);
             }
         }
@@ -530,4 +534,4 @@ namespace doticu_npcp { namespace Party {
         return *read;
     }
 
-}}
+}}}

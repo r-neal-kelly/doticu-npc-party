@@ -34,9 +34,6 @@ function Object_Ref_Categorize(ObjectReference ref_obj) native global
 function Object_Ref_Log_XContainer(ObjectReference ref_object) native global
 function Object_Ref_Log_XList(ObjectReference ref_object) native global
 
-; Tests
-function Run_Tests() native global
-
 ; Utils
 function Print(string str) native global
 function Log(string str) native global

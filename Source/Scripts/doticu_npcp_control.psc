@@ -28,22 +28,16 @@ bool                p_is_created    = false
 function f_Create()
     p_is_created = true
 
-    COMMANDS.f_Create()
     MCM.f_Create()
 endFunction
 
 function f_Destroy()
     MCM.f_Destroy()
-    COMMANDS.f_Destroy()
     
     p_is_created = false
 endFunction
 
 function f_Register()
-    COMMANDS.f_Register()
     KEYS.f_Register()
     MCM.f_Register()
-endFunction
-
-function f_Unregister()
 endFunction

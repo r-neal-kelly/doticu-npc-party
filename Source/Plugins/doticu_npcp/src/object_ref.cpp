@@ -13,7 +13,6 @@
 #include "offsets.h"
 #include "papyrus.h"
 #include "papyrus.inl"
-#include "player.h"
 #include "quest.h"
 #include "utils.h"
 #include "vector.h"
@@ -1279,6 +1278,32 @@ namespace doticu_npcp { namespace Object_Ref {
         } args(form, count, do_sounds, destination);
 
         Virtual_Machine_t::Self()->Call_Method(ref, class_name, function_name, &args, callback);
+    }
+
+    void Find_Closest_Actor_From(Reference_t* ref, Float_t radius, Virtual_Callback_i** callback)
+    {
+        class Arguments : public Virtual_Arguments_t {
+        public:
+            Reference_t* ref;
+            Float_t radius;
+            Arguments(Reference_t* ref, Float_t radius) :
+                ref(ref), radius(radius)
+            {
+            }
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(2);
+                arguments->At(0)->Pack(ref);
+                arguments->At(1)->Float(radius);
+                return true;
+            }
+        } arguments(ref, radius);
+
+        Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(),
+                                               "doticu_npcp_funcs",
+                                               "Find_Closest_Actor_From",
+                                               &arguments,
+                                               callback);
     }
 
 }}

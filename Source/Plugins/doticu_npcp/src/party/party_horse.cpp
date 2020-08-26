@@ -4,12 +4,15 @@
 
 #include "actor2.h"
 #include "codes.h"
+#include "consts.h"
 #include "object_ref.h"
-#include "party.h"
-#include "party.inl"
+#include "papyrus.inl"
 #include "utils.h"
 
-namespace doticu_npcp { namespace Party {
+#include "party/party_follower.h"
+#include "party/party_horse.h"
+
+namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     String_t Horse_t::Class_Name()
     {
@@ -210,30 +213,19 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
-}}
-
-namespace doticu_npcp { namespace Party { namespace Horse { namespace Exports {
-
-    Actor_t* Actor(Horse_t* self) FORWARD_POINTER(Horse_t::Actor());
-
-    String_t Name(Horse_t* self) FORWARD_STRING(Horse_t::Name());
-
-    Bool_t Register(Registry_t* registry)
+    void Horse_t::Register_Me(Virtual_Machine_t* vm)
     {
-        #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
-        M                                                               \
-            ADD_CLASS_METHOD(Horse_t::Class_Name(), Horse_t,            \
-                             STR_FUNC_, ARG_NUM_,                       \
-                             RETURN_, Exports::METHOD_, __VA_ARGS__);   \
+        #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                           \
+            FORWARD_METHOD(vm, Class_Name(), Horse_t,               \
+                           STR_FUNC_, ARG_NUM_,                     \
+                           RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        ADD_METHOD("Actor", 0, Actor_t*, Actor);
+        METHOD("Actor", 0, Actor_t*, Actor);
+        METHOD("Name", 0, String_t, Name);
 
-        ADD_METHOD("Name", 0, String_t, Name);
-
-        #undef ADD_METHOD
-
-        return true;
+        #undef METHOD
     }
 
-}}}}
+}}}

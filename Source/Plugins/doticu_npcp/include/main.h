@@ -5,7 +5,6 @@
 #pragma once
 
 #include "papyrus.h"
-#include "types.h"
 
 namespace doticu_npcp {
 
@@ -42,8 +41,9 @@ namespace doticu_npcp { namespace Modules {
 
         void Load_Mod();
         Bool_t Try_Update();
+
     public:
-        static void Register_Me(Registry_t* registry);
+        static void Register_Me(Virtual_Machine_t* vm);
     };
 
 }}

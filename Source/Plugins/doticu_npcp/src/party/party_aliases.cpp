@@ -2,11 +2,15 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
-#include "party.h"
-#include "party.inl"
+#include "papyrus.inl"
 #include "utils.h"
 
-namespace doticu_npcp { namespace Party {
+#include "party/party_aliases.h"
+#include "party/party_aliases.inl"
+
+#include "mcm/mcm_filter.h"
+
+namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     Vector_t<String_t> Aliases_t::Filter_Strings(String_t sex, String_t race, String_t search)
     {
@@ -61,61 +65,61 @@ namespace doticu_npcp { namespace Party {
         static const String_t ISNT_RETREATER = String_t("ISNT_RETREATER");
 
         if (String2::Is_Same_Caseless(flag_1, IS_UNIQUE)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::IS_UNIQUE);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_UNIQUE);
         } else if (String2::Is_Same_Caseless(flag_1, IS_GENERIC)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::IS_GENERIC);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_GENERIC);
         } else if (String2::Is_Same_Caseless(flag_1, IS_LOADED)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::IS_LOADED);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_LOADED);
         } else if (String2::Is_Same_Caseless(flag_1, IS_UNLOADED)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::IS_UNLOADED);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_UNLOADED);
         } else if (String2::Is_Same_Caseless(flag_1, IS_ALIVE)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::IS_ALIVE);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_ALIVE);
         } else if (String2::Is_Same_Caseless(flag_1, IS_DEAD)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::IS_DEAD);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_DEAD);
         } else if (String2::Is_Same_Caseless(flag_1, IS_ORIGINAL)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::IS_ORIGINAL);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_ORIGINAL);
         } else if (String2::Is_Same_Caseless(flag_1, IS_CLONE)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::IS_CLONE);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_CLONE);
         } else if (String2::Is_Same_Caseless(flag_1, IS_MOBILE)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::IS_MOBILE);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_MOBILE);
         } else if (String2::Is_Same_Caseless(flag_1, IS_IMMOBILE)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::IS_IMMOBILE);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_IMMOBILE);
         } else if (String2::Is_Same_Caseless(flag_1, IS_SETTLER)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::IS_SETTLER);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_SETTLER);
         } else if (String2::Is_Same_Caseless(flag_1, ISNT_SETTLER)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::ISNT_SETTLER);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::ISNT_SETTLER);
         } else if (String2::Is_Same_Caseless(flag_1, IS_THRALL)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::IS_THRALL);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_THRALL);
         } else if (String2::Is_Same_Caseless(flag_1, ISNT_THRALL)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::ISNT_THRALL);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::ISNT_THRALL);
         } else if (String2::Is_Same_Caseless(flag_1, IS_PARALYZED)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::IS_PARALYZED);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_PARALYZED);
         } else if (String2::Is_Same_Caseless(flag_1, ISNT_PARALYZED)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::ISNT_PARALYZED);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::ISNT_PARALYZED);
         } else if (String2::Is_Same_Caseless(flag_1, IS_MANNEQUIN)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::IS_MANNEQUIN);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_MANNEQUIN);
         } else if (String2::Is_Same_Caseless(flag_1, ISNT_MANNEQUIN)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::ISNT_MANNEQUIN);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::ISNT_MANNEQUIN);
         } else if (String2::Is_Same_Caseless(flag_1, IS_REANIMATED)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::IS_REANIMATED);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_REANIMATED);
         } else if (String2::Is_Same_Caseless(flag_1, ISNT_REANIMATED)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::ISNT_REANIMATED);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::ISNT_REANIMATED);
         } else if (String2::Is_Same_Caseless(flag_1, IS_FOLLOWER)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::IS_FOLLOWER);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_FOLLOWER);
         } else if (String2::Is_Same_Caseless(flag_1, ISNT_FOLLOWER)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::ISNT_FOLLOWER);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::ISNT_FOLLOWER);
         } else if (String2::Is_Same_Caseless(flag_1, IS_SNEAK)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::IS_SNEAK);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_SNEAK);
         } else if (String2::Is_Same_Caseless(flag_1, ISNT_SNEAK)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::ISNT_SNEAK);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::ISNT_SNEAK);
         } else if (String2::Is_Same_Caseless(flag_1, IS_SADDLER)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::IS_SADDLER);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_SADDLER);
         } else if (String2::Is_Same_Caseless(flag_1, ISNT_SADDLER)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::ISNT_SADDLER);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::ISNT_SADDLER);
         } else if (String2::Is_Same_Caseless(flag_1, IS_RETREATER)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::IS_RETREATER);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::IS_RETREATER);
         } else if (String2::Is_Same_Caseless(flag_1, ISNT_RETREATER)) {
-            return Utils::Bit_On(flags_1, Filter_Flags_1::ISNT_RETREATER);
+            return Utils::Bit_On(flags_1, MCM::Filter_t::Flags_1::ISNT_RETREATER);
         } else {
             return flags_1;
         }
@@ -126,4 +130,4 @@ namespace doticu_npcp { namespace Party {
         return flags_2;
     }
 
-}}
+}}}

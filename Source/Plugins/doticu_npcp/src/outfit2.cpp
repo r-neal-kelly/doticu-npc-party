@@ -8,7 +8,6 @@
 #include "object_ref.h"
 #include "outfit2.h"
 #include "papyrus.inl"
-#include "party.h"
 #include "utils.h"
 #include "vars.h"
 

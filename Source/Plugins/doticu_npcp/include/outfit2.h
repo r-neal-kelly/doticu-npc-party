@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "types.h"
 #include "papyrus.h"
 
 namespace doticu_npcp { namespace Papyrus {

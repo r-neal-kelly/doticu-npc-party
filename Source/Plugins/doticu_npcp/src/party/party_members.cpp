@@ -5,19 +5,24 @@
 #include "actor2.h"
 #include "cell.h"
 #include "codes.h"
-#include "consts.h"
 #include "game.h"
 #include "object_ref.h"
-#include "party.h"
-#include "party.inl"
+#include "outfit2.h"
+#include "papyrus.inl"
 #include "quest.h"
+#include "string2.h"
 #include "utils.h"
 #include "vars.h"
 #include "vector.h"
 
+#include "party/party_aliases.inl"
+#include "party/party_npcs.h"
+#include "party/party_members.h"
+#include "party/party_member.h"
+
 #include "mcm/mcm_filter.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     String_t Members_t::Class_Name()
     {
@@ -173,6 +178,12 @@ namespace doticu_npcp { namespace Party {
     Bool_t Members_t::Hasnt_Display()
     {
         return !Has_Display_Variable()->Bool();
+    }
+
+    Bool_t Members_t::Is_Clone(Actor_t* actor)
+    {
+        Member_t* member = From_Actor(actor);
+        return member && member->Is_Clone();
     }
 
     Bool_t Members_t::Should_Clone(Actor_t* actor)
@@ -803,188 +814,34 @@ namespace doticu_npcp { namespace Party {
             member->Name_Variable()->String(Actor2::Get_Name(actor));
         }
     }
-    
-}}
 
-namespace doticu_npcp { namespace Party { namespace Members { namespace Exports {
-
-    Int_t Add_Original(Members_t* self, Actor_t* original) FORWARD_INT(Members_t::Add_Original(original));
-    Int_t Remove_Original(Members_t* self, Actor_t* original) FORWARD_INT(Members_t::Remove_Original(original));
-    Int_t Add_Clone(Members_t* self, Actor_t* original) FORWARD_INT(Members_t::Add_Clone(original));
-    Int_t Remove_Clone(Members_t* self, Actor_t* clone, Bool_t do_delete_clone) FORWARD_INT(Members_t::Remove_Clone(clone, do_delete_clone));
-
-    Member_t* From_Actor(Members_t* self, Actor_t* actor) FORWARD_POINTER(From_Actor(actor));
-
-    Bool_t Has_Space(Members_t* self) FORWARD_BOOL(Has_Space());
-    Bool_t Hasnt_Space(Members_t* self) FORWARD_BOOL(Hasnt_Space());
-    Bool_t Has_Actor(Members_t* self, Actor_t* actor) FORWARD_BOOL(Has_Actor(actor));
-    Bool_t Hasnt_Actor(Members_t* self, Actor_t* actor) FORWARD_BOOL(Hasnt_Actor(actor));
-    Bool_t Has_Base(Members_t* self, Actor_t* actor_with_base) FORWARD_BOOL(Has_Base(actor_with_base));
-    Bool_t Hasnt_Base(Members_t* self, Actor_t* actor_with_base) FORWARD_BOOL(Hasnt_Base(actor_with_base));
-    Bool_t Has_Head(Members_t* self, Actor_t* actor) FORWARD_BOOL(Has_Head(actor));
-    Bool_t Hasnt_Head(Members_t* self, Actor_t* actor) FORWARD_BOOL(Hasnt_Head(actor));
-    Bool_t Has_Display(Members_t* self) FORWARD_BOOL(Members_t::Has_Display());
-    Bool_t Hasnt_Display(Members_t* self) FORWARD_BOOL(Members_t::Hasnt_Display());
-
-    Int_t Max(Members_t* self) FORWARD_INT(Max());
-    Int_t Limit(Members_t* self) FORWARD_INT(Limit());
-    Int_t Count_Filled(Members_t* self) FORWARD_INT(Count_Filled());
-    Int_t Count_Unfilled(Members_t* self) FORWARD_INT(Count_Unfilled());
-    Int_t Count_Loaded(Members_t* self) FORWARD_INT(Count_Loaded());
-    Int_t Count_Unloaded(Members_t* self) FORWARD_INT(Count_Unloaded());
-    Int_t Count_Unique(Members_t* self) FORWARD_INT(Count_Unique());
-    Int_t Count_Generic(Members_t* self) FORWARD_INT(Count_Generic());
-    Int_t Count_Alive(Members_t* self) FORWARD_INT(Count_Alive());
-    Int_t Count_Dead(Members_t* self) FORWARD_INT(Count_Dead());
-    Int_t Count_Originals(Members_t* self) FORWARD_INT(Count_Originals());
-    Int_t Count_Clones(Members_t* self) FORWARD_INT(Count_Clones());
-    Int_t Count_Mobile(Members_t* self) FORWARD_INT(Count_Mobile());
-    Int_t Count_Immobile(Members_t* self) FORWARD_INT(Count_Immobile());
-    Int_t Count_Settlers(Members_t* self) FORWARD_INT(Count_Settlers());
-    Int_t Count_Non_Settlers(Members_t* self) FORWARD_INT(Count_Non_Settlers());
-    Int_t Count_Thralls(Members_t* self) FORWARD_INT(Count_Thralls());
-    Int_t Count_Non_Thralls(Members_t* self) FORWARD_INT(Count_Non_Thralls());
-    Int_t Count_Paralyzed(Members_t* self) FORWARD_INT(Count_Paralyzed());
-    Int_t Count_Non_Paralyzed(Members_t* self) FORWARD_INT(Count_Non_Paralyzed());
-    Int_t Count_Mannequins(Members_t* self) FORWARD_INT(Count_Mannequins());
-    Int_t Count_Non_Mannequins(Members_t* self) FORWARD_INT(Count_Non_Mannequins());
-    Int_t Count_Reanimated(Members_t* self) FORWARD_INT(Count_Reanimated());
-    Int_t Count_Non_Reanimated(Members_t* self) FORWARD_INT(Count_Non_Reanimated());
-    Int_t Count_Followers(Members_t* self) FORWARD_INT(Count_Followers());
-    Int_t Count_Non_Followers(Members_t* self) FORWARD_INT(Count_Non_Followers());
-    Int_t Count_Sneaks(Members_t* self) FORWARD_INT(Count_Sneaks());
-    Int_t Count_Non_Sneaks(Members_t* self) FORWARD_INT(Count_Non_Sneaks());
-    Int_t Count_Saddlers(Members_t* self) FORWARD_INT(Count_Saddlers());
-    Int_t Count_Non_Saddlers(Members_t* self) FORWARD_INT(Count_Non_Saddlers());
-    Int_t Count_Retreaters(Members_t* self) FORWARD_INT(Count_Retreaters());
-    Int_t Count_Non_Retreaters(Members_t* self) FORWARD_INT(Count_Non_Retreaters());
-    Int_t Count_Base(Members_t* self, Actor_t* actor_with_base) FORWARD_INT(Count_Base(actor_with_base));
-    Int_t Count_Heads(Members_t* self, Actor_t* actor) FORWARD_INT(Count_Heads(actor));
-
-    Vector_t<Member_t*> All(Members_t* self) FORWARD_VECTOR(All(), Member_t*);
-    Vector_t<Member_t*> Filled(Members_t* self) FORWARD_VECTOR(Filled(), Member_t*);
-
-    Vector_t<Member_t*> Sort_Filled(Members_t* self, Int_t begin, Int_t end) FORWARD_VECTOR(Sort_Filled(begin, end), Member_t*);
-
-    Vector_t<Member_t*> Slice(Members_t* self, VMArray<Member_t*>members_array, Int_t begin, Int_t end)
+    void Members_t::Register_Me(Virtual_Machine_t* vm)
     {
-        Vector_t<Member_t*> members_vector = Slice_Array(members_array);
-        return self->Slice(members_vector, begin, end);
-    }
-
-    Vector_t<String_t> Race_Names(Members_t* self) FORWARD_VECTOR(Race_Names(), String_t);
-
-    void Enforce_Loaded(Members_t* self, Bool_t do_resurrect) FORWARD_VOID(Members_t::Enforce_Loaded(do_resurrect));
-
-    Vector_t<String_t> Filter_Strings(Members_t* self, String_t sex, String_t race, String_t search)
-        FORWARD_VECTOR(Members_t::Filter_Strings(sex, race, search), String_t);
-    Vector_t<Int_t> Filter_Ints(Members_t* self, Int_t style, Int_t vitality, Int_t outfit2, Int_t rating)
-        FORWARD_VECTOR(Members_t::Filter_Ints(style, vitality, outfit2, rating), Int_t);
-    Int_t Add_Filter_Flag_1(Members_t* self, Int_t flags_1, String_t flag_1)
-        FORWARD_INT(Members_t::Add_Filter_Flag_1(flags_1, flag_1));
-    Int_t Add_Filter_Flag_2(Members_t* self, Int_t flags_2, String_t flag_2)
-        FORWARD_INT(Members_t::Add_Filter_Flag_2(flags_2, flag_2));
-    Vector_t<Member_t*> Filter(Members_t* self, VMArray<String_t> strings, VMArray<Int_t> ints, Int_t flags_1, Int_t flags_2)
-    {
-        Vector_t<String_t> strings_vector = Slice_Array(strings);
-        Vector_t<Int_t> ints_vector = Slice_Array(ints);
-        return self->Filter(strings_vector.size() > 0 ? &strings_vector : nullptr,
-                            ints_vector.size() > 0 ? &ints_vector : nullptr,
-                            flags_1, flags_2);
-    }
-
-    Int_t Display_Start(Members_t* self) FORWARD_INT(Members_t::Display_Start());
-    Int_t Display_Stop(Members_t* self) FORWARD_INT(Members_t::Display_Stop());
-    Int_t Display_Next(Members_t* self) FORWARD_INT(Members_t::Display_Next());
-    Int_t Display_Previous(Members_t* self) FORWARD_INT(Members_t::Display_Previous());
-
-    Bool_t Register(Registry_t* registry)
-    {
-        #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
-        M                                                               \
-            ADD_CLASS_METHOD(Members_t::Class_Name(), Members_t,        \
-                             STR_FUNC_, ARG_NUM_,                       \
-                             RETURN_, Exports::METHOD_, __VA_ARGS__);   \
+        #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                           \
+            FORWARD_METHOD(vm, Class_Name(), Members_t,             \
+                           STR_FUNC_, ARG_NUM_,                     \
+                           RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        ADD_METHOD("Add_Original", 1, Int_t, Add_Original, Actor_t*);
-        ADD_METHOD("Remove_Original", 1, Int_t, Remove_Original, Actor_t*);
-        ADD_METHOD("Add_Clone", 1, Int_t, Add_Clone, Actor_t*);
-        ADD_METHOD("Remove_Clone", 2, Int_t, Remove_Clone, Actor_t*, Bool_t);
+        METHOD("p_From_Actor", 1, Member_t*, From_Actor, Actor_t*);
 
-        ADD_METHOD("p_From_Actor", 1, Member_t*, From_Actor, Actor_t*);
+        METHOD("Has_Actor", 1, Bool_t, Has_Actor, Actor_t*);
+        METHOD("Has_Base", 1, Bool_t, Has_Base, Actor_t*);
+        METHOD("Has_Head", 1, Bool_t, Has_Head, Actor_t*);
 
-        ADD_METHOD("Has_Space", 0, Bool_t, Has_Space);
-        ADD_METHOD("Hasnt_Space", 0, Bool_t, Hasnt_Space);
-        ADD_METHOD("Has_Actor", 1, Bool_t, Has_Actor, Actor_t*);
-        ADD_METHOD("Hasnt_Actor", 1, Bool_t, Hasnt_Actor, Actor_t*);
-        ADD_METHOD("Has_Base", 1, Bool_t, Has_Base, Actor_t*);
-        ADD_METHOD("Hasnt_Base", 1, Bool_t, Hasnt_Base, Actor_t*);
-        ADD_METHOD("Has_Head", 1, Bool_t, Has_Head, Actor_t*);
-        ADD_METHOD("Hasnt_Head", 1, Bool_t, Hasnt_Head, Actor_t*);
-        ADD_METHOD("Has_Display", 0, Bool_t, Has_Display);
-        ADD_METHOD("Hasnt_Display", 0, Bool_t, Hasnt_Display);
+        METHOD("Max", 0, Int_t, Max);
+        METHOD("Count_Filled", 0, Int_t, Count_Filled);
+        METHOD("Count_Base", 1, Int_t, Count_Base, Actor_t*);
+        METHOD("Count_Heads", 1, Int_t, Count_Heads, Actor_t*);
 
-        ADD_METHOD("Max", 0, Int_t, Max);
-        ADD_METHOD("Limit", 0, Int_t, Limit);
-        ADD_METHOD("Count_Filled", 0, Int_t, Count_Filled);
-        ADD_METHOD("Count_Unfilled", 0, Int_t, Count_Unfilled);
-        ADD_METHOD("Count_Loaded", 0, Int_t, Count_Loaded);
-        ADD_METHOD("Count_Unloaded", 0, Int_t, Count_Unloaded);
-        ADD_METHOD("Count_Unique", 0, Int_t, Count_Unique);
-        ADD_METHOD("Count_Generic", 0, Int_t, Count_Generic);
-        ADD_METHOD("Count_Alive", 0, Int_t, Count_Alive);
-        ADD_METHOD("Count_Dead", 0, Int_t, Count_Dead);
-        ADD_METHOD("Count_Originals", 0, Int_t, Count_Originals);
-        ADD_METHOD("Count_Clones", 0, Int_t, Count_Clones);
-        ADD_METHOD("Count_Mobile", 0, Int_t, Count_Mobile);
-        ADD_METHOD("Count_Immobile", 0, Int_t, Count_Immobile);
-        ADD_METHOD("Count_Settlers", 0, Int_t, Count_Settlers);
-        ADD_METHOD("Count_Non_Settlers", 0, Int_t, Count_Non_Settlers);
-        ADD_METHOD("Count_Thralls", 0, Int_t, Count_Thralls);
-        ADD_METHOD("Count_Non_Thralls", 0, Int_t, Count_Non_Thralls);
-        ADD_METHOD("Count_Paralyzed", 0, Int_t, Count_Paralyzed);
-        ADD_METHOD("Count_Non_Paralyzed", 0, Int_t, Count_Non_Paralyzed);
-        ADD_METHOD("Count_Mannequins", 0, Int_t, Count_Mannequins);
-        ADD_METHOD("Count_Non_Mannequins", 0, Int_t, Count_Non_Mannequins);
-        ADD_METHOD("Count_Reanimated", 0, Int_t, Count_Reanimated);
-        ADD_METHOD("Count_Non_Reanimated", 0, Int_t, Count_Non_Reanimated);
-        ADD_METHOD("Count_Followers", 0, Int_t, Count_Followers);
-        ADD_METHOD("Count_Non_Followers", 0, Int_t, Count_Non_Followers);
-        ADD_METHOD("Count_Sneaks", 0, Int_t, Count_Sneaks);
-        ADD_METHOD("Count_Non_Sneaks", 0, Int_t, Count_Non_Sneaks);
-        ADD_METHOD("Count_Saddlers", 0, Int_t, Count_Saddlers);
-        ADD_METHOD("Count_Non_Saddlers", 0, Int_t, Count_Non_Saddlers);
-        ADD_METHOD("Count_Retreaters", 0, Int_t, Count_Retreaters);
-        ADD_METHOD("Count_Non_Retreaters", 0, Int_t, Count_Non_Retreaters);
-        ADD_METHOD("Count_Base", 1, Int_t, Count_Base, Actor_t*);
-        ADD_METHOD("Count_Heads", 1, Int_t, Count_Heads, Actor_t*);
+        METHOD("Sort_Filled", 2, Vector_t<Member_t*>, Sort_Filled, Int_t, Int_t);
 
-        ADD_METHOD("All", 0, Vector_t<Member_t*>, All);
-        ADD_METHOD("Filled", 0, Vector_t<Member_t*>, Filled);
+        METHOD("Race_Names", 0, Vector_t<String_t>, Race_Names);
 
-        ADD_METHOD("Sort_Filled", 2, Vector_t<Member_t*>, Sort_Filled, Int_t, Int_t);
+        METHOD("Enforce_Loaded", 1, void, Enforce_Loaded, Bool_t);
 
-        ADD_METHOD("Slice", 3, Vector_t<Member_t*>, Slice, VMArray<Member_t*>, Int_t, Int_t);
-
-        ADD_METHOD("Race_Names", 0, Vector_t<String_t>, Race_Names);
-
-        ADD_METHOD("Enforce_Loaded", 1, void, Enforce_Loaded, Bool_t);
-
-        ADD_METHOD("Filter_Strings", 3, Vector_t<String_t>, Filter_Strings, String_t, String_t, String_t);
-        ADD_METHOD("Filter_Ints", 4, Vector_t<Int_t>, Filter_Ints, Int_t, Int_t, Int_t, Int_t);
-        ADD_METHOD("Add_Filter_Flag_1", 2, Int_t, Add_Filter_Flag_1, Int_t, String_t);
-        ADD_METHOD("Add_Filter_Flag_2", 2, Int_t, Add_Filter_Flag_2, Int_t, String_t);
-        ADD_METHOD("Filter", 4, Vector_t<Member_t*>, Filter, VMArray<String_t>, VMArray<Int_t>, Int_t, Int_t);
-
-        ADD_METHOD("Display_Start", 0, Int_t, Display_Start);
-        ADD_METHOD("Display_Stop", 0, Int_t, Display_Stop);
-        ADD_METHOD("Display_Next", 0, Int_t, Display_Next);
-        ADD_METHOD("Display_Previous", 0, Int_t, Display_Previous);
-
-        #undef ADD_METHOD
-
-        return true;
+        #undef METHOD
     }
-
-}}}}
+    
+}}}

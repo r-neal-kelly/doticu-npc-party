@@ -143,7 +143,9 @@
     <ClCompile Include="src\actor_base2.cpp" />
     <ClCompile Include="src\cell.cpp" />
     <ClCompile Include="src\codes.cpp" />
+    <ClCompile Include="src\commands.cpp" />
     <ClCompile Include="src\consts.cpp" />
+    <ClCompile Include="src\mcm\mcm_chests.cpp" />
     <ClCompile Include="src\mcm\mcm_filter.cpp" />
     <ClCompile Include="src\form_vector.cpp" />
     <ClCompile Include="src\game.cpp" />
@@ -160,19 +162,22 @@
     <ClCompile Include="src\outfit2.cpp" />
     <ClCompile Include="src\package.cpp" />
     <ClCompile Include="src\papyrus.cpp" />
-    <ClCompile Include="src\party\alias.cpp" />
-    <ClCompile Include="src\party\aliases.cpp" />
-    <ClCompile Include="src\party\follower.cpp" />
-    <ClCompile Include="src\party\followers.cpp" />
-    <ClCompile Include="src\party\horse.cpp" />
-    <ClCompile Include="src\party\horses.cpp" />
-    <ClCompile Include="src\party\member.cpp" />
-    <ClCompile Include="src\party\members.cpp" />
-    <ClCompile Include="src\party\npcs.cpp" />
-    <ClCompile Include="src\player.cpp" />
+    <ClCompile Include="src\party\party_alias.cpp" />
+    <ClCompile Include="src\party\party_aliases.cpp" />
+    <ClCompile Include="src\party\party_follower.cpp" />
+    <ClCompile Include="src\party\party_followers.cpp" />
+    <ClCompile Include="src\party\party_greeter.cpp" />
+    <ClCompile Include="src\party\party_horse.cpp" />
+    <ClCompile Include="src\party\party_horses.cpp" />
+    <ClCompile Include="src\party\party_mannequins.cpp" />
+    <ClCompile Include="src\party\party_member.cpp" />
+    <ClCompile Include="src\party\party_members.cpp" />
+    <ClCompile Include="src\party\party_movee.cpp" />
+    <ClCompile Include="src\party\party_npcs.cpp" />
+    <ClCompile Include="src\party\party_player.cpp" />
     <ClCompile Include="src\quest.cpp" />
     <ClCompile Include="src\spell.cpp" />
-    <ClCompile Include="src\tests.cpp" />
+    <ClCompile Include="src\topics.cpp" />
     <ClCompile Include="src\types.cpp" />
     <ClCompile Include="src\vars.cpp" />
     <ClCompile Include="src\vector.cpp" />
@@ -187,6 +192,7 @@
     <ClInclude Include="include\actor_base2.h" />
     <ClInclude Include="include\cell.h" />
     <ClInclude Include="include\codes.h" />
+    <ClInclude Include="include\commands.h" />
     <ClInclude Include="include\consts.h" />
     <ClInclude Include="include\form.h" />
     <ClInclude Include="include\actor2.h" />
@@ -194,6 +200,7 @@
     <ClInclude Include="include\game.h" />
     <ClInclude Include="include\keys.h" />
     <ClInclude Include="include\main.h" />
+    <ClInclude Include="include\mcm\mcm_chests.h" />
     <ClInclude Include="include\mcm\mcm_filter.h" />
     <ClInclude Include="include\mcm\mcm_hotkeys.h" />
     <ClInclude Include="include\mcm\mcm_main.h" />
@@ -202,10 +209,22 @@
     <ClInclude Include="include\offsets.h" />
     <ClInclude Include="include\outfit2.h" />
     <ClInclude Include="include\package.h" />
-    <ClInclude Include="include\party.h" />
-    <ClInclude Include="include\player.h" />
+    <ClInclude Include="include\party\party_alias.h" />
+    <ClInclude Include="include\party\party_aliases.h" />
+    <ClInclude Include="include\party\party_follower.h" />
+    <ClInclude Include="include\party\party_followers.h" />
+    <ClInclude Include="include\party\party_greeter.h" />
+    <ClInclude Include="include\party\party_horse.h" />
+    <ClInclude Include="include\party\party_horses.h" />
+    <ClInclude Include="include\party\party_mannequins.h" />
+    <ClInclude Include="include\party\party_member.h" />
+    <ClInclude Include="include\party\party_members.h" />
+    <ClInclude Include="include\party\party_movee.h" />
+    <ClInclude Include="include\party\party_npcs.h" />
+    <ClInclude Include="include\party\party_player.h" />
     <ClInclude Include="include\spell.h" />
-    <ClInclude Include="include\tests.h" />
+    <ClInclude Include="include\topics.h" />
+    <ClInclude Include="include\ui.h" />
     <ClInclude Include="include\vars.h" />
     <ClInclude Include="include\xcontainer.h" />
     <ClInclude Include="include\xentry.h" />
@@ -223,8 +242,7 @@
   <ItemGroup>
     <None Include="exports.def" />
     <None Include="include\papyrus.inl" />
-    <None Include="include\party.inl" />
-    <None Include="include\party\aliases.inl" />
+    <None Include="include\party\party_aliases.inl" />
     <None Include="scripts\doticu_npcp.psc" />
   </ItemGroup>
   <ItemGroup>

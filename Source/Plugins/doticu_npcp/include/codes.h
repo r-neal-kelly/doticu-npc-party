@@ -15,8 +15,6 @@ namespace doticu_npcp { namespace CODES {
 
         SUCCESS,
         FAILURE,
-        SYNC,
-        ASYNC,
         IS,
         ISNT,
         HAS,
@@ -37,6 +35,7 @@ namespace doticu_npcp { namespace CODES {
         MARKER,
         MEMBER,
         MEMBERS,
+        MOVEE,
         VAMPIRE,
 
     };

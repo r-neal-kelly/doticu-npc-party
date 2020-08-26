@@ -5,14 +5,17 @@
 #include "actor2.h"
 #include "codes.h"
 #include "consts.h"
+#include "papyrus.inl"
 #include "utils.h"
 
+#include "party/party_members.h"
+#include "party/party_member.h"
+#include "party/party_followers.h"
+
+#include "mcm/mcm_main.h"
 #include "mcm/mcm_member.h"
 
-#include "papyrus.inl"
-#include "party.inl"
-
-namespace doticu_npcp { namespace MCM {
+namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     String_t Member_t::Class_Name()
     {
@@ -520,30 +523,22 @@ namespace doticu_npcp { namespace MCM {
         mcm_main->Text_Option_Value(Race_Option_Variable()->Int(), party_member->Race(), true);
     }
 
-    void Member_t::Register_Me(Registry_t* registry)
+    void Member_t::Register_Me(Virtual_Machine_t* vm)
     {
-        using namespace Utils;
-
-        auto Build_Page = Forward<void, Member_t, &Member_t::Build_Page>();
-        auto Build_Commands = [](Member_t* self)->void FORWARD_VOID(Member_t::Build_Commands());
-        auto Update_Commands = [](Member_t* self)->void FORWARD_VOID(Member_t::Update_Commands());
-        auto Build_Statistics = [](Member_t* self)->void FORWARD_VOID(Member_t::Build_Statistics());
-        auto Update_Statistics = [](Member_t* self)->void FORWARD_VOID(Member_t::Update_Statistics());
-
-        #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
-        M                                                               \
-            ADD_CLASS_METHOD(Class_Name(), MCM::Member_t,               \
-                             STR_FUNC_, ARG_NUM_,                       \
-                             RETURN_, METHOD_, __VA_ARGS__);            \
+        #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                           \
+            FORWARD_METHOD(vm, Class_Name(), Member_t,              \
+                           STR_FUNC_, ARG_NUM_,                     \
+                           RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        ADD_METHOD("f_Build_Page", 0, void, Build_Page);
-        ADD_METHOD("p_Build_Commands", 0, void, Build_Commands);
-        ADD_METHOD("p_Update_Commands", 0, void, Update_Commands);
-        ADD_METHOD("p_Build_Statistics", 0, void, Build_Statistics);
-        ADD_METHOD("p_Update_Statistics", 0, void, Update_Statistics);
+        METHOD("f_Build_Page", 0, void, Build_Page);
+        METHOD("p_Build_Commands", 0, void, Build_Commands);
+        METHOD("p_Update_Commands", 0, void, Update_Commands);
+        METHOD("p_Build_Statistics", 0, void, Build_Statistics);
+        METHOD("p_Update_Statistics", 0, void, Update_Statistics);
 
-        #undef ADD_METHOD
+        #undef METHOD
     }
 
-}}
+}}}

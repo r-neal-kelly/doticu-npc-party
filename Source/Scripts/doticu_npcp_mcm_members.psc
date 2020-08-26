@@ -57,20 +57,19 @@ int property p_MEMBERS_PER_PAGE hidden
 endProperty
 
 ; Private Variables
-bool                p_is_created                        = false
 int                 p_code_view                         =     0
 
-doticu_npcp_member  p_ref_member                        =  none
 Alias[]             p_arr_aliases                       =  none
-Alias[]             p_arr_aliases_slice                 =  none
-int                 p_idx_page                          =     0
 int                 p_num_pages                         =    -1
+int                 p_idx_page                          =     0
+Alias[]             p_arr_aliases_slice                 =  none
+doticu_npcp_member  p_ref_member                        =  none
 
-doticu_npcp_member  p_ref_member_members                =  none
 int                 p_idx_page_members                  =    -1
+doticu_npcp_member  p_ref_member_members                =  none
 
-doticu_npcp_member  p_ref_member_filter_members         =  none
 int                 p_idx_page_filter_members           =    -1
+doticu_npcp_member  p_ref_member_filter_members         =  none
 
 bool                p_do_prev_member                    = false
 bool                p_do_next_member                    = false
@@ -82,17 +81,17 @@ int                 p_option_prev                       =    -1
 int                 p_option_next                       =    -1
 
 ; Native Methods
+function f_View_Members() native
+
 function f_Build_Page() native
 
 ; Friend Methods
 function f_Create()
-    p_is_created = true
     p_code_view = 0
     p_ref_member = none
 endFunction
 
 function f_Destroy()
-    p_is_created = false
     p_code_view = 0
     p_ref_member = none
 endFunction
@@ -101,28 +100,6 @@ function f_Register()
 endFunction
 
 function f_Unregister()
-endFunction
-
-function f_View_Members(Alias[] arr_aliases)
-    if p_ref_member_members
-        p_code_view = doticu_npcp_codes.VIEW_MEMBERS_MEMBER()
-    else
-        p_code_view = doticu_npcp_codes.VIEW_MEMBERS()
-    endIf
-
-    p_View(arr_aliases, p_idx_page_members, p_ref_member_members)
-    p_idx_page_members = p_idx_page
-endFunction
-
-function f_View_Filter_Members(Alias[] arr_aliases)
-    if p_ref_member_filter_members
-        p_code_view = doticu_npcp_codes.VIEW_FILTER_MEMBERS_MEMBER()
-    else
-        p_code_view = doticu_npcp_codes.VIEW_FILTER_MEMBERS()
-    endIf
-
-    p_View(arr_aliases, p_idx_page_filter_members, p_ref_member_filter_members)
-    p_idx_page_filter_members = p_idx_page
 endFunction
 
 function f_Review_Members()
@@ -312,32 +289,6 @@ function p_Go_Back()
         MCM.MCM_FILTER.f_Review_Filter()
         MCM.ForcePageReset()
     endIf
-endFunction
-
-function p_View(Alias[] arr_aliases, int idx_page, doticu_npcp_member ref_member)
-    p_arr_aliases = arr_aliases
-
-    if !p_arr_aliases
-        p_num_pages = 0
-    else
-        p_num_pages = Math.Ceiling(p_arr_aliases.length / (p_MEMBERS_PER_PAGE as float))
-    endIf
-
-    if idx_page >= p_num_pages || idx_page < 0
-        p_idx_page = 0
-    else
-        p_idx_page = idx_page
-    endIf
-    
-    if !p_arr_aliases
-        p_arr_aliases_slice = p_arr_aliases
-    else
-        int idx_from = p_MEMBERS_PER_PAGE * p_idx_page
-        int idx_to_ex = idx_from + p_MEMBERS_PER_PAGE
-        p_arr_aliases_slice = MEMBERS.Slice(p_arr_aliases, idx_from, idx_to_ex)
-    endIf
-
-    p_ref_member = ref_member
 endFunction
 
 int function p_Get_Idx_Entity(int id_option)

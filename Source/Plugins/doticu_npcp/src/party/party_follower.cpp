@@ -8,12 +8,17 @@
 #include "codes.h"
 #include "consts.h"
 #include "object_ref.h"
-#include "party.h"
-#include "party.inl"
-#include "player.h"
+#include "papyrus.inl"
 #include "utils.h"
 
-namespace doticu_npcp { namespace Party {
+#include "party/party_player.h"
+#include "party/party_member.h"
+#include "party/party_followers.h"
+#include "party/party_follower.h"
+#include "party/party_horses.h"
+#include "party/party_horse.h"
+
+namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     String_t Follower_t::Class_Name()
     {
@@ -468,14 +473,14 @@ namespace doticu_npcp { namespace Party {
             }
         };
         Virtual_Callback_i* callback = new Callback(Previous_Player_Relationship_Variable());
-        Actor2::Relationship_Rank(actor, Player::Actor(), &callback);
+        Actor2::Relationship_Rank(actor, Player_t::Self()->Actor(), &callback);
     }
 
     void Follower_t::Restore_State(Actor_t* actor)
     {
         NPCP_ASSERT(actor);
 
-        Actor2::Relationship_Rank(actor, Player::Actor(), Previous_Player_Relationship_Variable()->Int());
+        Actor2::Relationship_Rank(actor, Player_t::Self()->Actor(), Previous_Player_Relationship_Variable()->Int());
 
         if (Previous_No_Auto_Bard_Faction_Variable()->Bool()) {
             Actor2::Add_Faction(actor, Consts::No_Bard_Singer_Autostart_Faction());
@@ -514,7 +519,7 @@ namespace doticu_npcp { namespace Party {
             }
         };
         Virtual_Callback_i* callback = new Callback(actor);
-        Actor2::Relationship_Rank(actor, Player::Actor(), 3, &callback); // maybe we can check for change
+        Actor2::Relationship_Rank(actor, Player_t::Self()->Actor(), 3, &callback); // maybe we can check for change
     }
 
     void Follower_t::Enforce_Non_Follower(Actor_t* actor)
@@ -893,7 +898,7 @@ namespace doticu_npcp { namespace Party {
         NPCP_ASSERT(Is_Filled());
         NPCP_ASSERT(Is_Saddler());
 
-        if (Player::Is_In_Exterior_Cell()) {
+        if (Player_t::Self()->Is_In_Exterior_Cell()) {
             Object_Ref::Token(actor, Consts::Saddler_Token());
 
             Horse_t* horse = Horse();
@@ -967,7 +972,7 @@ namespace doticu_npcp { namespace Party {
         NPCP_ASSERT(Is_Retreater());
 
         if (Is_Alive()) {
-            if (Actor2::Is_Sneaking(Player::Actor())) {
+            if (Player_t::Self()->Is_Sneaking()) {
                 Object_Ref::Token(actor, Consts::Retreater_Token());
 
                 if (!Actor2::Has_Magic_Effect(actor, Consts::Retreat_Magic_Effect())) {
@@ -1063,8 +1068,7 @@ namespace doticu_npcp { namespace Party {
     {
         if (Is_Filled()) {
             NPCP_ASSERT(Isnt_Mannequin());
-            Summon(Player::Actor(), radius, degree);
-            //Member()->Enforce();
+            Summon(Player_t::Self()->Actor(), radius, degree);
             return CODES::SUCCESS;
         } else {
             return CODES::FOLLOWER;
@@ -1155,21 +1159,22 @@ namespace doticu_npcp { namespace Party {
 
     void Follower_t::Catch_Up()
     {
-        // for the last three we are asking if they have ai essentially
+        Player_t* player = Player_t::Self();
         if (Is_Filled() && Is_Mobile() && Isnt_Paralyzed() && Isnt_Mannequin() && Isnt_Display()) {
-            if (Player::Is_In_Interior_Cell() || Isnt_Saddler()) {
+            // for the last three we are asking if they have ai essentially
+            if (player->Is_In_Interior_Cell() || Isnt_Saddler()) {
                 if (Isnt_Near_Player()) {
-                    Summon(Player::Actor(), 256.0f, 180.0f);
+                    Summon(player->Actor(), 256.0f, 180.0f);
                 }
             } else {
                 Horse_t* horse = Horse();
                 if (horse) {
                     Actor_t* horse_actor = horse->Actor();
                     if (horse_actor && !Object_Ref::Is_Near_Player(horse_actor, 10240.0f)) {
-                        if (Player::Is_On_Mount()) {
-                            Summon(Player::Actor(), 1024.0f, 180.0f);
+                        if (player->Is_On_Mount()) {
+                            Summon(player->Actor(), 1024.0f, 180.0f);
                         } else {
-                            Summon(Player::Actor(), 256.0f, 180.0f);
+                            Summon(player->Actor(), 256.0f, 180.0f);
                         }
                         Enforce_Saddler(Actor());
                     }
@@ -1186,68 +1191,40 @@ namespace doticu_npcp { namespace Party {
         Member()->Rename(new_name);
     }
 
-}}
-
-namespace doticu_npcp { namespace Party { namespace Follower { namespace Exports {
-
-    Int_t ID(Follower_t* self)              FORWARD_INT(Follower_t::ID());
-    Actor_t* Actor(Follower_t* self)        FORWARD_POINTER(Follower_t::Actor());
-    Member_t* Member(Follower_t* self)      FORWARD_POINTER(Follower_t::Member());
-    String_t Name(Follower_t* self)         FORWARD_STRING(Follower_t::Name());
-
-    Bool_t Is_Filled(Follower_t* self)      FORWARD_BOOL(Follower_t::Is_Filled());
-    Bool_t Is_Unfilled(Follower_t* self)    FORWARD_BOOL(Follower_t::Is_Unfilled());
-    Bool_t Is_Mobile(Follower_t* self)      FORWARD_BOOL(Follower_t::Is_Mobile());
-    Bool_t Is_Immobile(Follower_t* self)    FORWARD_BOOL(Follower_t::Is_Immobile());
-    Bool_t Is_Sneak(Follower_t* self)       FORWARD_BOOL(Follower_t::Is_Sneak());
-    Bool_t Isnt_Sneak(Follower_t* self)     FORWARD_BOOL(Follower_t::Isnt_Sneak());
-    Bool_t Is_Saddler(Follower_t* self)     FORWARD_BOOL(Follower_t::Is_Saddler());
-    Bool_t Isnt_Saddler(Follower_t* self)   FORWARD_BOOL(Follower_t::Isnt_Saddler());
-    Bool_t Is_Retreater(Follower_t* self)   FORWARD_BOOL(Follower_t::Is_Retreater());
-    Bool_t Isnt_Retreater(Follower_t* self) FORWARD_BOOL(Follower_t::Isnt_Retreater());
-
-    Int_t Sneak(Follower_t* self)           FORWARD_INT(Follower_t::Sneak());
-    Int_t Unsneak(Follower_t* self)         FORWARD_INT(Follower_t::Unsneak());
-    Int_t Saddle(Follower_t* self)          FORWARD_INT(Follower_t::Saddle());
-    Int_t Unsaddle(Follower_t* self)        FORWARD_INT(Follower_t::Unsaddle());
-    Int_t Retreat(Follower_t* self)         FORWARD_INT(Follower_t::Retreat());
-    Int_t Unretreat(Follower_t* self)       FORWARD_INT(Follower_t::Unretreat());
-
-    Bool_t Register(Registry_t* registry)
+    void Follower_t::Register_Me(Virtual_Machine_t* vm)
     {
-        #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
-        M                                                               \
-            ADD_CLASS_METHOD(Follower_t::Class_Name(), Follower_t,      \
-                             STR_FUNC_, ARG_NUM_,                       \
-                             RETURN_, Exports::METHOD_, __VA_ARGS__);   \
+        #define BMETHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...) \
+        M                                                           \
+            FORWARD_METHOD(vm, Class_Name(), Alias_t,               \
+                           STR_FUNC_, ARG_NUM_,                     \
+                           RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        ADD_METHOD("ID", 0, Int_t, ID);
-        ADD_METHOD("Actor", 0, Actor_t*, Actor);
-        ADD_METHOD("Member", 0, Member_t*, Member);
-        ADD_METHOD("Name", 0, String_t, Name);
+        #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                           \
+            FORWARD_METHOD(vm, Class_Name(), Follower_t,            \
+                           STR_FUNC_, ARG_NUM_,                     \
+                           RETURN_, METHOD_, __VA_ARGS__);          \
+        W
 
-        ADD_METHOD("Is_Filled", 0, Bool_t, Is_Filled);
-        ADD_METHOD("Is_Unfilled", 0, Bool_t, Is_Unfilled);
-        ADD_METHOD("Is_Mobile", 0, Bool_t, Is_Mobile);
-        ADD_METHOD("Is_Immobile", 0, Bool_t, Is_Immobile);
-        ADD_METHOD("Is_Sneak", 0, Bool_t, Is_Sneak);
-        ADD_METHOD("Isnt_Sneak", 0, Bool_t, Isnt_Sneak);
-        ADD_METHOD("Is_Saddler", 0, Bool_t, Is_Saddler);
-        ADD_METHOD("Isnt_Saddler", 0, Bool_t, Isnt_Saddler);
-        ADD_METHOD("Is_Retreater", 0, Bool_t, Is_Retreater);
-        ADD_METHOD("Isnt_Retreater", 0, Bool_t, Isnt_Retreater);
+        BMETHOD("ID", 0, Int_t, ID);
+        METHOD("Actor", 0, Actor_t*, Actor);
+        METHOD("Member", 0, Member_t*, Member);
+        METHOD("Name", 0, String_t, Name);
 
-        ADD_METHOD("Sneak", 0, Int_t, Sneak);
-        ADD_METHOD("Unsneak", 0, Int_t, Unsneak);
-        ADD_METHOD("Saddle", 0, Int_t, Saddle);
-        ADD_METHOD("Unsaddle", 0, Int_t, Unsaddle);
-        ADD_METHOD("Retreat", 0, Int_t, Retreat);
-        ADD_METHOD("Unretreat", 0, Int_t, Unretreat);
+        METHOD("Is_Immobile", 0, Bool_t, Is_Immobile);
+        METHOD("Is_Sneak", 0, Bool_t, Is_Sneak);
+        METHOD("Is_Saddler", 0, Bool_t, Is_Saddler);
 
-        #undef ADD_METHOD
+        METHOD("Sneak", 0, Int_t, Sneak);
+        METHOD("Unsneak", 0, Int_t, Unsneak);
+        METHOD("Saddle", 0, Int_t, Saddle);
+        METHOD("Unsaddle", 0, Int_t, Unsaddle);
+        METHOD("Retreat", 0, Int_t, Retreat);
+        METHOD("Unretreat", 0, Int_t, Unretreat);
 
-        return true;
+        #undef BMETHOD
+        #undef METHOD
     }
 
-}}}}
+}}}

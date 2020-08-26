@@ -46,5 +46,5 @@ function Unparalyze(ObjectReference ref_target, Actor _)
         return
     endIf
 
-    COMMANDS.Unparalyze(ref_actor, false)
+    COMMANDS.Unparalyze(ref_actor)
 endFunction

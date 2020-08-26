@@ -20,20 +20,7 @@ Actor   function Actor()            native
 Alias   function Member()           native
 string  function Name()             native
 
-bool    function Is_Filled()        native
-bool    function Is_Unfilled()      native
-bool    function Is_Mobile()        native
 bool    function Is_Immobile()      native
-bool    function Is_Sneak()         native
-bool    function Isnt_Sneak()       native
-bool    function Is_Saddler()       native
-bool    function Isnt_Saddler()     native
-bool    function Is_Retreater()     native
-bool    function Isnt_Retreater()   native
 
-int     function Sneak()            native
-int     function Unsneak()          native
-int     function Saddle()           native
-int     function Unsaddle()         native
 int     function Retreat()          native
 int     function Unretreat()        native

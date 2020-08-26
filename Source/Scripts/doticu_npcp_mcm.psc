@@ -217,7 +217,7 @@ event OnPageReset(string str_page)
         MCM_FOLLOWERS.f_Build_Page()
     elseIf str_page == PAGE_MEMBERS
         p_str_curr_page = str_page
-        MCM_MEMBERS.f_View_Members(MEMBERS.Sort_Filled())
+        MCM_MEMBERS.f_View_Members()
         MCM_MEMBERS.f_Build_Page()
     elseIf str_page == PAGE_FILTER
         p_str_curr_page = str_page

@@ -47,10 +47,7 @@ endFunction
 ; Public Methods
 function Reanimate_Member(ObjectReference ref_target, Actor _)
     Actor ref_actor = ref_target as Actor
-
-    if !ref_actor
-        return
+    if ref_actor
+        COMMANDS.Toggle_Reanimated(ref_actor)
     endIf
-
-    COMMANDS.Reanimate_Sync(ref_actor, true)
 endFunction

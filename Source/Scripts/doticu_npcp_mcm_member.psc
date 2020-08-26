@@ -199,16 +199,16 @@ function f_On_Option_Select(int id_option)
 
     elseIf id_option == p_option_summon
         f_Disable(id_option, DO_UPDATE)
-        COMMANDS.Summon_Sync(ref_actor)
+        COMMANDS.Summon(ref_actor)
         p_Update_Commands()
     elseIf id_option == p_option_goto
         f_Disable(id_option, DO_UPDATE)
         FUNCS.Close_Menus()
-        COMMANDS.Goto_Sync(ref_actor)
+        COMMANDS.Goto(ref_actor)
     elseIf id_option == p_option_pack
         f_Disable(id_option, DO_UPDATE)
         FUNCS.Close_Menus()
-        COMMANDS.Pack_Sync(ref_actor, false)
+        COMMANDS.Open_Pack(ref_actor)
     elseIf id_option == p_option_stash
         f_Disable(id_option, DO_UPDATE)
         p_ref_member.Stash()
@@ -216,42 +216,42 @@ function f_On_Option_Select(int id_option)
 
     elseIf id_option == p_option_settle
         f_Disable(p_option_settle, DO_UPDATE)
-        COMMANDS.Settle(ref_actor, false)
+        COMMANDS.Settle(ref_actor)
         p_Update_Commands()
     elseIf id_option == p_option_resettle
         f_Disable(p_option_resettle, DO_UPDATE)
-        COMMANDS.Resettle(ref_actor, false)
+        COMMANDS.Resettle(ref_actor)
         p_Update_Commands()
     elseIf id_option == p_option_unsettle
         f_Disable(p_option_unsettle, DO_UPDATE)
-        COMMANDS.Unsettle(ref_actor, false)
+        COMMANDS.Unsettle(ref_actor)
         p_Update_Commands()
 
     elseIf id_option == p_option_immobilize
         f_Disable(p_option_immobilize, DO_UPDATE)
-        COMMANDS.Immobilize(ref_actor, false)
+        COMMANDS.Immobilize(ref_actor)
         p_Update_Commands()
     elseIf id_option == p_option_mobilize
         f_Disable(p_option_mobilize, DO_UPDATE)
-        COMMANDS.Mobilize(ref_actor, false)
+        COMMANDS.Mobilize(ref_actor)
         p_Update_Commands()
 
     elseIf id_option == p_option_paralyze
         f_Disable(p_option_paralyze, DO_UPDATE)
-        COMMANDS.Paralyze(ref_actor, false)
+        COMMANDS.Paralyze(ref_actor)
         p_Update_Commands()
     elseIf id_option == p_option_unparalyze
         f_Disable(p_option_unparalyze, DO_UPDATE)
-        COMMANDS.Unparalyze(ref_actor, false)
+        COMMANDS.Unparalyze(ref_actor)
         p_Update_Commands()
 
     elseIf id_option == p_option_follow
         f_Disable(p_option_follow, DO_UPDATE)
-        COMMANDS.Follow_Sync(ref_actor, false)
+        COMMANDS.Follow(ref_actor)
         p_Update_Commands()
     elseIf id_option == p_option_unfollow
         f_Disable(p_option_unfollow, DO_UPDATE)
-        COMMANDS.Unfollow_Sync(ref_actor, false)
+        COMMANDS.Unfollow(ref_actor)
         if p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
             p_Go_Back()
         else
@@ -260,11 +260,11 @@ function f_On_Option_Select(int id_option)
 
     elseIf id_option == p_option_sneak
         f_Disable(p_option_sneak, DO_UPDATE)
-        COMMANDS.Sneak_Sync(ref_actor, false)
+        COMMANDS.Sneak(ref_actor)
         p_Update_Commands()
     elseIf id_option == p_option_unsneak
         f_Disable(p_option_unsneak, DO_UPDATE)
-        COMMANDS.Unsneak_Sync(ref_actor, false)
+        COMMANDS.Unsneak(ref_actor)
         p_Update_Commands()
 
     elseIf id_option == p_option_rating
@@ -295,27 +295,27 @@ function f_On_Option_Select(int id_option)
     elseIf id_option == p_option_style
         int code_style = p_ref_member.Style()
         if code_style == doticu_npcp_codes.STYLE_DEFAULT()
-            COMMANDS.Stylize_Warrior(ref_actor, false)
+            COMMANDS.Stylize_Warrior(ref_actor)
             ;p_Update_Commands()
             ;p_Update_Statistics()
             MCM.ForcePageReset()
         elseIf code_style == doticu_npcp_codes.STYLE_WARRIOR()
-            COMMANDS.Stylize_Mage(ref_actor, false)
+            COMMANDS.Stylize_Mage(ref_actor)
             ;p_Update_Commands()
             ;p_Update_Statistics()
             MCM.ForcePageReset()
         elseIf code_style == doticu_npcp_codes.STYLE_MAGE()
-            COMMANDS.Stylize_Archer(ref_actor, false)
+            COMMANDS.Stylize_Archer(ref_actor)
             ;p_Update_Commands()
             ;p_Update_Statistics()
             MCM.ForcePageReset()
         elseIf code_style == doticu_npcp_codes.STYLE_ARCHER()
-            COMMANDS.Stylize_Coward(ref_actor, false)
+            COMMANDS.Stylize_Coward(ref_actor)
             ;p_Update_Commands()
             ;p_Update_Statistics()
             MCM.ForcePageReset()
         elseIf code_style == doticu_npcp_codes.STYLE_COWARD()
-            COMMANDS.Stylize_Default(ref_actor, false)
+            COMMANDS.Stylize_Default(ref_actor)
             ;p_Update_Commands()
             ;p_Update_Statistics()
             MCM.ForcePageReset()
@@ -324,22 +324,22 @@ function f_On_Option_Select(int id_option)
     elseIf id_option == p_option_vitalize
         int code_vitality = p_ref_member.Vitality()
         if code_vitality == doticu_npcp_codes.VITALITY_MORTAL()
-            COMMANDS.Vitalize_Protected(ref_actor, false)
+            COMMANDS.Vitalize_Protected(ref_actor)
             ;p_Update_Commands()
             ;p_Update_Statistics()
             MCM.ForcePageReset()
         elseIf code_vitality == doticu_npcp_codes.VITALITY_PROTECTED()
-            COMMANDS.Vitalize_Essential(ref_actor, false)
+            COMMANDS.Vitalize_Essential(ref_actor)
             ;p_Update_Commands()
             ;p_Update_Statistics()
             MCM.ForcePageReset()
         elseIf code_vitality == doticu_npcp_codes.VITALITY_ESSENTIAL()
-            COMMANDS.Vitalize_Invulnerable(ref_actor, false)
+            COMMANDS.Vitalize_Invulnerable(ref_actor)
             ;p_Update_Commands()
             ;p_Update_Statistics()
             MCM.ForcePageReset()
         elseIf code_vitality == doticu_npcp_codes.VITALITY_INVULNERABLE()
-            COMMANDS.Vitalize_Mortal(ref_actor, false)
+            COMMANDS.Vitalize_Mortal(ref_actor)
             ;p_Update_Commands()
             ;p_Update_Statistics()
             MCM.ForcePageReset()
@@ -347,22 +347,22 @@ function f_On_Option_Select(int id_option)
     
     elseIf id_option == p_option_resurrect
         f_Disable(p_option_resurrect, DO_UPDATE)
-        COMMANDS.Resurrect_Sync(ref_actor, false)
+        COMMANDS.Resurrect(ref_actor)
         ;p_Update_Commands()
         ;p_Update_Statistics()
         MCM.ForcePageReset()
 
     elseIf id_option == p_option_clone
         f_Disable(p_option_clone, DO_UPDATE)
-        COMMANDS.Clone_Async(ref_actor)
+        COMMANDS.Clone(ref_actor)
         p_Update_Commands()
     elseIf id_option == p_option_unclone
         f_Disable(p_option_unclone, DO_UPDATE)
-        COMMANDS.Unclone_Sync(ref_actor)
+        COMMANDS.Unclone(ref_actor)
         p_Go_Back()
     elseIf id_option == p_option_unmember
         f_Disable(p_option_unmember, DO_UPDATE)
-        COMMANDS.Unmember_Sync(ref_actor)
+        COMMANDS.Unmember(ref_actor)
         p_Go_Back()
 
     endIf
@@ -413,51 +413,51 @@ function f_On_Option_Menu_Accept(int id_option, int idx_option)
         if ACTORS.Is_Vampire(doticu_npcp_consts.Player_Actor())
             if idx_option == 0
                 FUNCS.Close_Menus()
-                COMMANDS.Outfit_Current_Sync(ref_actor, false)
+                COMMANDS.Change_Current_Outfit2(ref_actor)
             elseIf idx_option == 1
                 FUNCS.Close_Menus()
-                COMMANDS.Outfit_Member_Sync(ref_actor, false)
+                COMMANDS.Change_Member_Outfit2(ref_actor)
             elseIf idx_option == 2
                 FUNCS.Close_Menus()
-                COMMANDS.Outfit_Settler_Sync(ref_actor, false)
+                COMMANDS.Change_Settler_Outfit2(ref_actor)
             elseIf idx_option == 3
                 FUNCS.Close_Menus()
-                COMMANDS.Outfit_Thrall_Sync(ref_actor, false)
+                COMMANDS.Change_Thrall_Outfit2(ref_actor)
             elseIf idx_option == 4
                 FUNCS.Close_Menus()
-                COMMANDS.Outfit_Follower_Sync(ref_actor, false)
+                COMMANDS.Change_Follower_Outfit2(ref_actor)
             elseIf idx_option == 5
                 FUNCS.Close_Menus()
-                COMMANDS.Outfit_Immobile_Sync(ref_actor, false)
+                COMMANDS.Change_Immobile_Outfit2(ref_actor)
             elseIf idx_option == 6
                 FUNCS.Close_Menus()
-                COMMANDS.Outfit_Vanilla_Sync(ref_actor, false)
+                COMMANDS.Change_Vanilla_Outfit2(ref_actor)
             elseIf idx_option == 7
                 FUNCS.Close_Menus()
-                COMMANDS.Outfit_Default_Sync(ref_actor, false)
+                COMMANDS.Change_Default_Outfit2(ref_actor)
             endIf
         else
             if idx_option == 0
                 FUNCS.Close_Menus()
-                COMMANDS.Outfit_Current_Sync(ref_actor, false)
+                COMMANDS.Change_Current_Outfit2(ref_actor)
             elseIf idx_option == 1
                 FUNCS.Close_Menus()
-                COMMANDS.Outfit_Member_Sync(ref_actor, false)
+                COMMANDS.Change_Member_Outfit2(ref_actor)
             elseIf idx_option == 2
                 FUNCS.Close_Menus()
-                COMMANDS.Outfit_Settler_Sync(ref_actor, false)
+                COMMANDS.Change_Settler_Outfit2(ref_actor)
             elseIf idx_option == 3
                 FUNCS.Close_Menus()
-                COMMANDS.Outfit_Follower_Sync(ref_actor, false)
+                COMMANDS.Change_Follower_Outfit2(ref_actor)
             elseIf idx_option == 4
                 FUNCS.Close_Menus()
-                COMMANDS.Outfit_Immobile_Sync(ref_actor, false)
+                COMMANDS.Change_Immobile_Outfit2(ref_actor)
             elseIf idx_option == 5
                 FUNCS.Close_Menus()
-                COMMANDS.Outfit_Vanilla_Sync(ref_actor, false)
+                COMMANDS.Change_Vanilla_Outfit2(ref_actor)
             elseIf idx_option == 6
                 FUNCS.Close_Menus()
-                COMMANDS.Outfit_Default_Sync(ref_actor, false)
+                COMMANDS.Change_Default_Outfit2(ref_actor)
             endIf
         endIf
     endIf

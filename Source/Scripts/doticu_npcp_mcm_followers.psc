@@ -111,7 +111,7 @@ function f_Build_Page()
     MCM.SetCursorFillMode(MCM.LEFT_TO_RIGHT)
 
     int count_followers = FOLLOWERS.Count_Filled()
-    int max_followers = FOLLOWERS.Max()
+    int max_followers = 16;FOLLOWERS.Max()
     if count_followers == 0
         MCM.SetTitleText("Followers: 0/" + max_followers)
         MCM.AddHeaderOption(" No Followers ")
@@ -172,20 +172,20 @@ function f_On_Option_Select(int id_option)
 
     elseIf idx_command == p_COMMAND_ONE_SUMMON
         MCM.f_Disable(id_option, MCM.DO_UPDATE)
-        COMMANDS.Summon_Async(ref_actor); maybe make this sync instead?
+        COMMANDS.Summon(ref_actor)
         MCM.f_Enable(id_option, MCM.DO_UPDATE)
 
     elseIf idx_command == p_COMMAND_ONE_PACK
         MCM.f_Disable(id_option, MCM.DO_UPDATE)
         FUNCS.Close_Menus()
-        COMMANDS.Pack_Sync(ref_actor, false)
+        COMMANDS.Open_Pack(ref_actor)
 
     elseIf idx_command == p_COMMAND_ONE_IMMOBILIZE
         MCM.f_Disable(id_option, MCM.DO_UPDATE)
         if ref_follower.Is_Immobile()
-            COMMANDS.Mobilize(ref_actor, false)
+            COMMANDS.Mobilize(ref_actor)
         else
-            COMMANDS.Immobilize(ref_actor, false)
+            COMMANDS.Immobilize(ref_actor)
         endIf
         MCM.ForcePageReset()
 

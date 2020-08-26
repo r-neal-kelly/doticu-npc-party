@@ -6,13 +6,19 @@
 #include "consts.h"
 #include "game.h"
 #include "object_ref.h"
-#include "party.h"
-#include "party.inl"
-#include "player.h"
+#include "papyrus.inl"
 #include "utils.h"
 #include "vars.h"
 
-namespace doticu_npcp { namespace Party {
+#include "party/party_aliases.inl"
+#include "party/party_player.h"
+#include "party/party_member.h"
+#include "party/party_followers.h"
+#include "party/party_follower.h"
+#include "party/party_horses.h"
+#include "party/party_horse.h"
+
+namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     String_t Followers_t::Class_Name()
     {
@@ -732,7 +738,7 @@ namespace doticu_npcp { namespace Party {
 
     Int_t Followers_t::Saddle()
     {
-        if (Player::Is_In_Exterior_Cell()) {
+        if (Player_t::Self()->Is_In_Exterior_Cell()) {
             if (Count_Filled() > 0) {
                 Vector_t<Follower_t*> non_saddlers = Non_Saddlers();
                 size_t non_saddler_count = non_saddlers.size();
@@ -944,118 +950,26 @@ namespace doticu_npcp { namespace Party {
         return Sort(Aliases_t::Filter(Aliases(), strings, ints, flags_1, flags_2));
     }
 
-}}
-
-namespace doticu_npcp { namespace Party { namespace Followers { namespace Exports {
-
-    Follower_t* From_Actor(Followers_t* self, Actor_t* actor) FORWARD_POINTER(From_Actor(actor));
-    Follower_t* From_Horse_Actor(Followers_t* self, Actor_t* actor) FORWARD_POINTER(From_Horse_Actor(actor));
-
-    Bool_t Are_In_Combat(Followers_t* self) FORWARD_BOOL(Are_In_Combat());
-
-    Int_t Max(Followers_t* self) FORWARD_INT(Max());
-    Int_t Count_Filled(Followers_t* self) FORWARD_INT(Count_Filled());
-    Int_t Count_Unfilled(Followers_t* self) FORWARD_INT(Count_Unfilled());
-    Int_t Count_Mobile(Followers_t* self) FORWARD_INT(Count_Mobile());
-    Int_t Count_Immobile(Followers_t* self) FORWARD_INT(Count_Immobile());
-    Int_t Count_Settlers(Followers_t* self) FORWARD_INT(Count_Settlers());
-    Int_t Count_Non_Settlers(Followers_t* self) FORWARD_INT(Count_Non_Settlers());
-    Int_t Count_Sneaks(Followers_t* self) FORWARD_INT(Count_Sneaks());
-    Int_t Count_Non_Sneaks(Followers_t* self) FORWARD_INT(Count_Non_Sneaks());
-    Int_t Count_Saddlers(Followers_t* self) FORWARD_INT(Count_Saddlers());
-    Int_t Count_Non_Saddlers(Followers_t* self) FORWARD_INT(Count_Non_Saddlers());
-    Int_t Count_Retreaters(Followers_t* self) FORWARD_INT(Count_Retreaters());
-    Int_t Count_Non_Retreaters(Followers_t* self) FORWARD_INT(Count_Non_Retreaters());
-
-    Vector_t<Follower_t*> Sort_Filled(Followers_t* self, Int_t begin, Int_t end) FORWARD_VECTOR(Sort_Filled(begin, end), Follower_t*);
-
-    Int_t Enforce(Followers_t* self) FORWARD_INT(Followers_t::Enforce());
-    Int_t Resurrect(Followers_t* self) FORWARD_INT(Followers_t::Resurrect());
-    Int_t Mobilize(Followers_t* self) FORWARD_INT(Followers_t::Mobilize());
-    Int_t Immobilize(Followers_t* self) FORWARD_INT(Followers_t::Immobilize());
-    Int_t Settle(Followers_t* self) FORWARD_INT(Followers_t::Settle());
-    Int_t Resettle(Followers_t* self) FORWARD_INT(Followers_t::Resettle());
-    Int_t Unsettle(Followers_t* self) FORWARD_INT(Followers_t::Unsettle());
-    Int_t Enthrall(Followers_t* self) FORWARD_INT(Followers_t::Enthrall());
-    Int_t Unthrall(Followers_t* self) FORWARD_INT(Followers_t::Unthrall());
-    Int_t Paralyze(Followers_t* self) FORWARD_INT(Followers_t::Paralyze());
-    Int_t Unparalyze(Followers_t* self) FORWARD_INT(Followers_t::Unparalyze());
-    Int_t Sneak(Followers_t* self) FORWARD_INT(Followers_t::Sneak());
-    Int_t Unsneak(Followers_t* self) FORWARD_INT(Followers_t::Unsneak());
-    Int_t Saddle(Followers_t* self) FORWARD_INT(Followers_t::Saddle());
-    Int_t Unsaddle(Followers_t* self) FORWARD_INT(Followers_t::Unsaddle());
-    Int_t Retreat(Followers_t* self) FORWARD_INT(Followers_t::Retreat());
-    Int_t Unretreat(Followers_t* self) FORWARD_INT(Followers_t::Unretreat());
-    Int_t Unfollow(Followers_t* self) FORWARD_INT(Followers_t::Unfollow());
-    Int_t Unmember(Followers_t* self) FORWARD_INT(Followers_t::Unmember());
-
-    Int_t Summon_Filled(Followers_t* self, float radius, float degree, float interval) FORWARD_INT(Followers_t::Summon_Filled());
-    Int_t Summon_Mobile(Followers_t* self, float radius, float degree, float interval) FORWARD_INT(Followers_t::Summon_Mobile());
-    Int_t Summon_Immobile(Followers_t* self, float radius, float degree, float interval) FORWARD_INT(Followers_t::Summon_Immobile());
-
-    Int_t Catch_Up(Followers_t* self) FORWARD_INT(Followers_t::Catch_Up());
-    Int_t Stash(Followers_t* self) FORWARD_INT(Followers_t::Stash());
-
-    Bool_t Register(Registry_t* registry)
+    void Followers_t::Register_Me(Virtual_Machine_t* vm)
     {
-        #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
-        M                                                               \
-            ADD_CLASS_METHOD(Followers_t::Class_Name(), Followers_t,    \
-                             STR_FUNC_, ARG_NUM_,                       \
-                             RETURN_, Exports::METHOD_, __VA_ARGS__);   \
+        #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                           \
+            FORWARD_METHOD(vm, Class_Name(), Followers_t,           \
+                           STR_FUNC_, ARG_NUM_,                     \
+                           RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        ADD_METHOD("p_From_Actor", 1, Follower_t*, From_Actor, Actor_t*);
-        ADD_METHOD("p_From_Horse_Actor", 1, Follower_t*, From_Horse_Actor, Actor_t*);
+        METHOD("p_From_Actor", 1, Follower_t*, From_Actor, Actor_t*);
+        METHOD("p_From_Horse_Actor", 1, Follower_t*, From_Horse_Actor, Actor_t*);
 
-        ADD_METHOD("Are_In_Combat", 0, Bool_t, Are_In_Combat);
+        METHOD("Count_Filled", 0, Int_t, Count_Filled);
+        METHOD("Sort_Filled", 2, Vector_t<Follower_t*>, Sort_Filled, Int_t, Int_t);
 
-        ADD_METHOD("Max", 0, Int_t, Max);
-        ADD_METHOD("Count_Filled", 0, Int_t, Count_Filled);
-        ADD_METHOD("Count_Unfilled", 0, Int_t, Count_Unfilled);
-        ADD_METHOD("Count_Mobile", 0, Int_t, Count_Mobile);
-        ADD_METHOD("Count_Immobile", 0, Int_t, Count_Immobile);
-        ADD_METHOD("Count_Settlers", 0, Int_t, Count_Settlers);
-        ADD_METHOD("Count_Non_Settlers", 0, Int_t, Count_Non_Settlers);
-        ADD_METHOD("Count_Sneaks", 0, Int_t, Count_Sneaks);
-        ADD_METHOD("Count_Non_Sneaks", 0, Int_t, Count_Non_Sneaks);
-        ADD_METHOD("Count_Saddlers", 0, Int_t, Count_Saddlers);
-        ADD_METHOD("Count_Non_Saddlers", 0, Int_t, Count_Non_Saddlers);
-        ADD_METHOD("Count_Retreaters", 0, Int_t, Count_Retreaters);
-        ADD_METHOD("Count_Non_Retreaters", 0, Int_t, Count_Non_Retreaters);
+        METHOD("Retreat", 0, Int_t, Retreat);
+        METHOD("Unretreat", 0, Int_t, Unretreat);
+        METHOD("Catch_Up", 0, Int_t, Catch_Up);
 
-        ADD_METHOD("Sort_Filled", 2, Vector_t<Follower_t*>, Sort_Filled, Int_t, Int_t);
-
-        ADD_METHOD("Enforce", 0, Int_t, Enforce);
-        ADD_METHOD("Resurrect", 0, Int_t, Resurrect);
-        ADD_METHOD("Mobilize", 0, Int_t, Mobilize);
-        ADD_METHOD("Immobilize", 0, Int_t, Immobilize);
-        ADD_METHOD("Settle", 0, Int_t, Settle);
-        ADD_METHOD("Resettle", 0, Int_t, Resettle);
-        ADD_METHOD("Unsettle", 0, Int_t, Unsettle);
-        ADD_METHOD("Enthrall", 0, Int_t, Enthrall);
-        ADD_METHOD("Unthrall", 0, Int_t, Unthrall);
-        ADD_METHOD("Paralyze", 0, Int_t, Paralyze);
-        ADD_METHOD("Unparalyze", 0, Int_t, Unparalyze);
-        ADD_METHOD("Sneak", 0, Int_t, Sneak);
-        ADD_METHOD("Unsneak", 0, Int_t, Unsneak);
-        ADD_METHOD("Saddle", 0, Int_t, Saddle);
-        ADD_METHOD("Unsaddle", 0, Int_t, Unsaddle);
-        ADD_METHOD("Retreat", 0, Int_t, Retreat);
-        ADD_METHOD("Unretreat", 0, Int_t, Unretreat);
-        ADD_METHOD("Unfollow", 0, Int_t, Unfollow);
-        ADD_METHOD("Unmember", 0, Int_t, Unmember);
-
-        ADD_METHOD("Summon_Filled", 3, Int_t, Summon_Filled, float, float, float);
-        ADD_METHOD("Summon_Mobile", 3, Int_t, Summon_Mobile, float, float, float);
-        ADD_METHOD("Summon_Immobile", 3, Int_t, Summon_Immobile, float, float, float);
-
-        ADD_METHOD("Catch_Up", 0, Int_t, Catch_Up);
-        ADD_METHOD("Stash", 0, Int_t, Stash);
-
-        #undef ADD_METHOD
-
-        return true;
+        #undef METHOD
     }
 
-}}}}
+}}}

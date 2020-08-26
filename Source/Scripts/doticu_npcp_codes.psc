@@ -6,8 +6,6 @@ Scriptname doticu_npcp_codes hidden
 
 int function SUCCESS() native global
 int function FAILURE() native global
-int function SYNC() native global
-int function ASYNC() native global
 int function IS() native global
 int function ISNT() native global
 int function HAS() native global

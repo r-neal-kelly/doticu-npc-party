@@ -13,16 +13,18 @@
 #include "form.h"
 #include "object_ref.h"
 #include "outfit.h"
-#include "party.h"
-#include "player.h"
+#include "papyrus.h"
+#include "papyrus.inl"
 #include "utils.h"
 #include "vector.h"
 #include "xdata.h"
 #include "xentry.h"
 #include "xlist.h"
 
-#include "papyrus.h"
-#include "papyrus.inl"
+#include "party/party_player.h"
+#include "party/party_npcs.h"
+#include "party/party_members.h"
+#include "party/party_member.h"
 
 namespace doticu_npcp { namespace Actor2 {
 
@@ -127,7 +129,7 @@ namespace doticu_npcp { namespace Actor2 {
 
     void Set_Outfit(Actor_t* actor, Outfit_t* outfit, Bool_t is_sleep_outfit)
     {
-        if (actor && actor != Player::Actor()) {
+        if (actor && actor != Party::Player_t::Self()->Actor()) {
             Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
             if (member) {
                 member->Change_Outfit1(outfit);
@@ -176,13 +178,7 @@ namespace doticu_npcp { namespace Actor2 {
                     if (!xlist_actor) {
                         continue;
                     }
-
-                    if (static_cast<s32>(XList::Get_Count(xlist_actor)) < 0) {
-                        _MESSAGE("Actor2::Set_Outfit2: Encountered xlist overflow. Setting count to 1:");
-                        _MESSAGE("Actor: %s, Custom: %s, Form: %s", Get_Name(actor), Object_Ref::Get_Name(custom), Form::Get_Name(form_actor));
-                        XList::Log(xlist_actor, "");
-                        XList::Set_Count(xlist_actor, 1);
-                    }
+                    XList::Validate(xlist_actor);
 
                     if (XList::Is_Quest_Item(xlist_actor)) {
                         count_in_xlists_kept += XList::Get_Count(xlist_actor);
@@ -284,6 +280,7 @@ namespace doticu_npcp { namespace Actor2 {
                     if (!xlist_outfit) {
                         continue;
                     }
+                    XList::Validate(xlist_outfit);
 
                     XList_t* xlist_actor = XEntry::Get_XList(xentry_actor, xlist_outfit, true);
                     if (xlist_actor) {
@@ -455,13 +452,7 @@ namespace doticu_npcp { namespace Actor2 {
                 if (!xlist_actor) {
                     continue;
                 }
-
-                if (static_cast<s32>(XList::Get_Count(xlist_actor)) < 0) {
-                    _MESSAGE("Actor2::Cache_Worn: Encountered xlist overflow. Setting count to 1:");
-                    _MESSAGE("Actor: %s, Form: %s", Get_Name(actor), Form::Get_Name(xentry_actor->type));
-                    XList::Log(xlist_actor, "");
-                    XList::Set_Count(xlist_actor, 1);
-                }
+                XList::Validate(xlist_actor);
 
                 if (XList::Is_Worn(xlist_actor)) {
                     vec_xlists_worn.push_back(xlist_actor);
@@ -1238,8 +1229,7 @@ namespace doticu_npcp { namespace Actor2 {
             if (Utils::Is_Bit_Off(actor->flags1, Actor_t2::IS_PLAYER_TEAMMATE)) {
                 actor->flags1 = Utils::Bit_On(actor->flags1, Actor_t2::IS_PLAYER_TEAMMATE);
 
-                // necessary to get quick commands to work
-                static_cast<PlayerCharacter*>(Player::Actor())->numTeammates += 1;
+                Party::Player_t::Self()->Player_Character()->numTeammates += 1; // necessary to get quick commands to work
             }
             if (allow_favors && Utils::Is_Bit_Off(actor->flags2, Actor_t2::DOES_FAVORS)) {
                 actor->flags2 = Utils::Bit_On(actor->flags2, Actor_t2::DOES_FAVORS);
@@ -1253,7 +1243,7 @@ namespace doticu_npcp { namespace Actor2 {
             if (Utils::Is_Bit_On(actor->flags1, Actor_t2::IS_PLAYER_TEAMMATE)) {
                 actor->flags1 = Utils::Bit_Off(actor->flags1, Actor_t2::IS_PLAYER_TEAMMATE);
 
-                UInt32* teammate_count = &Player::Player_Character()->numTeammates;
+                UInt32* teammate_count = &Party::Player_t::Self()->Player_Character()->numTeammates;
                 if (*teammate_count > 0) {
                     *teammate_count -= 1;
                 }
@@ -1531,7 +1521,7 @@ namespace doticu_npcp { namespace Actor2 {
                 if (Is_AI_Enabled(actor) && Object_Ref::Is_Near_Player(actor, 1024.0f)) {
                     marker = actor;
                 } else {
-                    marker = Player::Actor();
+                    marker = Party::Player_t::Self()->Actor();
                 }
             }
 

@@ -262,8 +262,12 @@ namespace doticu_npcp { namespace Papyrus {
                                 Int_t pressed_8 = KEY_INVALID);
 
         void Register_Keys();
+        Bool_t Can_Use_Keys();
+        Actor_t* Actor_In_Crosshair(Bool_t allow_follower_horse = false);
+        void On_Key_Up(Int_t key_code, Float_t time_held);
+
     public:
-        static void Register_Me(Registry_t* registry);
+        static void Register_Me(Virtual_Machine_t* vm);
     };
 
 }}

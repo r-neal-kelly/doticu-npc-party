@@ -125,6 +125,16 @@ M                                                                               
     );                                                                                  \
 W
 
+#define FORWARD_METHOD(VM_, STR_CLASS_, TYPE_, STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+M                                                                                           \
+    auto METHOD_ = Utils::Forward<RETURN_, TYPE_, __VA_ARGS__, &TYPE_::METHOD_>();          \
+    VM_->Bind_Function(                                                                     \
+        new NativeFunction##ARG_NUM_ <TYPE_, RETURN_, __VA_ARGS__>(                         \
+            STR_FUNC_, STR_CLASS_, METHOD_, reinterpret_cast<Registry_t*>(VM_)              \
+        )                                                                                   \
+    );                                                                                      \
+W
+
 #define DEFINE_STRING(NAME_)                        \
 M                                                   \
     static const String_t string = String_t(NAME_); \

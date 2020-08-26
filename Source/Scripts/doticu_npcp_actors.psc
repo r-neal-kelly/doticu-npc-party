@@ -279,33 +279,6 @@ function Destroy_Menu()
     p_ref_menu.Delete()
 endFunction
 
-int function Toggle_Move(Actor ref_actor)
-    if !MOVEE.Exists()
-        if !ref_actor
-            return doticu_npcp_codes.ACTOR()
-        endIf
-        
-        doticu_npcp_member ref_member = doticu_npcp.Members().Get_Member(ref_actor)
-        if ref_member
-            if ref_member.Is_Mannequin()
-                return doticu_npcp_codes.MANNEQUIN()
-            elseIf ref_member.Is_Display()
-                return doticu_npcp_codes.DISPLAY()
-            endIf
-        endIf
-
-        MOVEE.f_Create(ref_actor)
-        MOVEE.f_Register()
-
-        return doticu_npcp_codes.IS()
-    else
-        MOVEE.f_Unregister()
-        MOVEE.f_Destroy()
-
-        return doticu_npcp_codes.ISNT()
-    endIf
-endFunction
-
 function Pacify(Actor ref_actor)
     if !ref_actor
         return

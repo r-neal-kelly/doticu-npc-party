@@ -3,14 +3,16 @@
 */
 
 #include "consts.h"
-#include "party.h"
+#include "papyrus.inl"
 #include "utils.h"
 
+#include "party/party_members.h"
+
+#include "mcm/mcm_main.h"
+#include "mcm/mcm_members.h"
 #include "mcm/mcm_filter.h"
 
-#include "papyrus.inl"
-
-namespace doticu_npcp { namespace MCM {
+namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     String_t Filter_t::Class_Name()
     {
@@ -158,95 +160,93 @@ namespace doticu_npcp { namespace MCM {
 
     Int_t Filter_t::Flags_1()
     {
-        Int_t flags_1 = 0;
+        Int_t flags = 0;
 
-        Int_t alive_dead = Alive_Dead_Ternary_Variable()->Int();
-        if (alive_dead > 0) {
-            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_ALIVE);
-        } else if (alive_dead < 0) {
-            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_DEAD);
+        Int_t alive_dead_ternary = Alive_Dead_Ternary_Variable()->Int();
+        if (alive_dead_ternary > 0) {
+            flags |= 1 << Flags_1::IS_ALIVE;
+        } else if (alive_dead_ternary < 0) {
+            flags |= 1 << Flags_1::IS_DEAD;
         }
 
-        Int_t original_clone = Original_Clone_Ternary_Variable()->Int();
-        if (original_clone > 0) {
-            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_ORIGINAL);
-        } else if (original_clone < 0) {
-            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_CLONE);
+        Int_t original_clone_ternary = Original_Clone_Ternary_Variable()->Int();
+        if (original_clone_ternary > 0) {
+            flags |= 1 << Flags_1::IS_ORIGINAL;
+        } else if (original_clone_ternary < 0) {
+            flags |= 1 << Flags_1::IS_CLONE;
         }
 
-        Int_t unique_generic = Unique_Generic_Ternary_Variable()->Int();
-        if (unique_generic > 0) {
-            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_UNIQUE);
-        } else if (unique_generic < 0) {
-            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_GENERIC);
+        Int_t unique_generic_ternary = Unique_Generic_Ternary_Variable()->Int();
+        if (unique_generic_ternary > 0) {
+            flags |= 1 << Flags_1::IS_UNIQUE;
+        } else if (unique_generic_ternary < 0) {
+            flags |= 1 << Flags_1::IS_GENERIC;
         }
 
-        Int_t mobile_immobile = Mobile_Immobile_Ternary_Variable()->Int();
-        if (mobile_immobile > 0) {
-            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_MOBILE);
-        } else if (mobile_immobile < 0) {
-            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_IMMOBILE);
+        Int_t mobile_immobile_ternary = Mobile_Immobile_Ternary_Variable()->Int();
+        if (mobile_immobile_ternary > 0) {
+            flags |= 1 << Flags_1::IS_MOBILE;
+        } else if (mobile_immobile_ternary < 0) {
+            flags |= 1 << Flags_1::IS_IMMOBILE;
         }
 
-        Int_t settler = Settler_Ternary_Variable()->Int();
-        if (settler > 0) {
-            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_SETTLER);
-        } else if (settler < 0) {
-            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::ISNT_SETTLER);
+        Int_t settler_ternary = Settler_Ternary_Variable()->Int();
+        if (settler_ternary > 0) {
+            flags |= 1 << Flags_1::IS_SETTLER;
+        } else if (settler_ternary < 0) {
+            flags |= 1 << Flags_1::ISNT_SETTLER;
         }
 
-        Int_t thrall = Thrall_Ternary_Variable()->Int();
-        if (thrall > 0) {
-            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_THRALL);
-        } else if (thrall < 0) {
-            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::ISNT_THRALL);
+        Int_t thrall_ternary = Thrall_Ternary_Variable()->Int();
+        if (thrall_ternary > 0) {
+            flags |= 1 << Flags_1::IS_THRALL;
+        } else if (thrall_ternary < 0) {
+            flags |= 1 << Flags_1::ISNT_THRALL;
         }
 
-        Int_t paralyzed = Paralyzed_Ternary_Variable()->Int();
-        if (paralyzed > 0) {
-            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_PARALYZED);
-        } else if (paralyzed < 0) {
-            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::ISNT_PARALYZED);
+        Int_t paralyzed_ternary = Paralyzed_Ternary_Variable()->Int();
+        if (paralyzed_ternary > 0) {
+            flags |= 1 << Flags_1::IS_PARALYZED;
+        } else if (paralyzed_ternary < 0) {
+            flags |= 1 << Flags_1::ISNT_PARALYZED;
         }
 
-        Int_t mannequin = Mannequin_Ternary_Variable()->Int();
-        if (mannequin > 0) {
-            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_MANNEQUIN);
-        } else if (mannequin < 0) {
-            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::ISNT_MANNEQUIN);
+        Int_t mannequin_ternary = Mannequin_Ternary_Variable()->Int();
+        if (mannequin_ternary > 0) {
+            flags |= 1 << Flags_1::IS_MANNEQUIN;
+        } else if (mannequin_ternary < 0) {
+            flags |= 1 << Flags_1::ISNT_MANNEQUIN;
         }
 
-        Int_t reanimated = Reanimated_Ternary_Variable()->Int();
-        if (reanimated > 0) {
-            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_REANIMATED);
-        } else if (reanimated < 0) {
-            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::ISNT_REANIMATED);
+        Int_t reanimated_ternary = Reanimated_Ternary_Variable()->Int();
+        if (reanimated_ternary > 0) {
+            flags |= 1 << Flags_1::IS_REANIMATED;
+        } else if (reanimated_ternary < 0) {
+            flags |= 1 << Flags_1::ISNT_REANIMATED;
         }
 
-        Int_t follower = Follower_Ternary_Variable()->Int();
-        if (follower > 0) {
-            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_FOLLOWER);
-        } else if (follower < 0) {
-            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::ISNT_FOLLOWER);
+        Int_t follower_ternary = Follower_Ternary_Variable()->Int();
+        if (follower_ternary > 0) {
+            flags |= 1 << Flags_1::IS_FOLLOWER;
+        } else if (follower_ternary < 0) {
+            flags |= 1 << Flags_1::ISNT_FOLLOWER;
         }
 
-        Int_t sneak = Sneak_Ternary_Variable()->Int();
-        if (sneak > 0) {
-            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_SNEAK);
-        } else if (sneak < 0) {
-            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::ISNT_SNEAK);
+        Int_t sneak_ternary = Sneak_Ternary_Variable()->Int();
+        if (sneak_ternary > 0) {
+            flags |= 1 << Flags_1::IS_SNEAK;
+        } else if (sneak_ternary < 0) {
+            flags |= 1 << Flags_1::ISNT_SNEAK;
         }
 
-        Int_t saddler = Saddler_Ternary_Variable()->Int();
-        if (saddler > 0) {
-            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::IS_SADDLER);
-        } else if (saddler < 0) {
-            flags_1 = Utils::Bit_On(flags_1, Party::Filter_Flags_1::ISNT_SADDLER);
+        Int_t saddler_ternary = Saddler_Ternary_Variable()->Int();
+        if (saddler_ternary > 0) {
+            flags |= 1 << Flags_1::IS_SADDLER;
+        } else if (saddler_ternary < 0) {
+            flags |= 1 << Flags_1::ISNT_SADDLER;
         }
-
-        Flags_1_Variable()->Int(flags_1);
-
-        return flags_1;
+        
+        return flags;
     }
 
     Int_t Filter_t::Flags_2()
@@ -393,18 +393,29 @@ namespace doticu_npcp { namespace MCM {
         return params.c_str();
     }
 
-    void Filter_t::Register_Me(Registry_t* registry)
+    void Filter_t::Goto_Filter_Members()
     {
-        using namespace Utils;
-
-        #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
-        M                                                               \
-            ADD_CLASS_METHOD(Class_Name(), MCM::Filter_t,               \
-                             STR_FUNC_, ARG_NUM_,                       \
-                             RETURN_, METHOD_, __VA_ARGS__);            \
-        W
-
-        #undef ADD_METHOD
+        MCM::Members_t* mcm_members = MCM::Members_t::Self();
+        Vector_t<String_t> strings = Strings();
+        Vector_t<Int_t> ints = Ints();
+        mcm_members->View_Filter_Members(
+            Party::Members_t::Self()->Filter(&strings, &ints, Flags_1(), Flags_2())
+        );
+        mcm_members->Build_Page();
     }
 
-}}
+    void Filter_t::Register_Me(Virtual_Machine_t* vm)
+    {
+        #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                           \
+            FORWARD_METHOD(vm, Class_Name(), Filter_t,              \
+                           STR_FUNC_, ARG_NUM_,                     \
+                           RETURN_, METHOD_, __VA_ARGS__);          \
+        W
+
+        METHOD("Goto_Filter_Members", 0, void, Goto_Filter_Members);
+
+        #undef METHOD
+    }
+
+}}}

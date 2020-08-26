@@ -22,6 +22,11 @@ doticu_npcp_actors property ACTORS hidden
         return doticu_npcp.Funcs().ACTORS
     endFunction
 endProperty
+doticu_npcp_commands property COMMANDS hidden
+    doticu_npcp_commands function Get()
+        return doticu_npcp.Control().COMMANDS
+    endFunction
+endProperty
 doticu_npcp_keys property KEYS hidden
     doticu_npcp_keys function Get()
         return doticu_npcp.Control().KEYS
@@ -301,7 +306,7 @@ event OnKeyUp(int value, float hold_time)
 
     string pressed_key = KEYS.Pressed_Hotkey(value)
     if pressed_key == KEYS.KEY_N_TOGGLE_MOVE
-        ACTORS.Toggle_Move(p_ref_actor); calls f_Destroy()
+        COMMANDS.Toggle_Move(p_ref_actor)
     elseIf pressed_key == KEYS.KEY_N_MOVE_FARTHER
         p_do_distance_farther = false
     elseIf pressed_key == KEYS.KEY_N_MOVE_NEARER

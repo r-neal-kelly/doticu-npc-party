@@ -55,7 +55,7 @@ event OnActivate(ObjectReference ref_activator)
 endEvent
 
 event OnLoad()
-    MANNEQUINS.Refresh_Mannequin(ID, MARKER)
+    MANNEQUINS.Enforce_Expoee(ID, MARKER)
 endEvent
 
 ; States

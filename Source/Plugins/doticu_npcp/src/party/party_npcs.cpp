@@ -5,15 +5,19 @@
 #include "actor2.h"
 #include "cell.h"
 #include "codes.h"
+#include "consts.h"
 #include "form_vector.h"
 #include "object_ref.h"
 #include "outfit.h"
-#include "party.h"
-#include "party.inl"
+#include "papyrus.inl"
 #include "utils.h"
 #include "vars.h"
 
-namespace doticu_npcp { namespace Party {
+#include "party/party_npcs.h"
+#include "party/party_members.h"
+#include "party/party_member.h"
+
+namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     String_t NPCS_t::Class_Name()
     {
@@ -331,22 +335,19 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
-    void NPCS_t::Register_Me(Registry_t* registry)
+    void NPCS_t::Register_Me(Virtual_Machine_t* vm)
     {
-        auto Initialize = [](NPCS_t* self)->void FORWARD_VOID(NPCS_t::Initialize());
-        auto Uninitialize = [](NPCS_t* self)->void FORWARD_VOID(NPCS_t::Uninitialize());
-
-        #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
-        M                                                               \
-            ADD_CLASS_METHOD(Class_Name(), NPCS_t,                      \
-                             STR_FUNC_, ARG_NUM_,                       \
-                             RETURN_, METHOD_, __VA_ARGS__);            \
+        #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                           \
+            FORWARD_METHOD(vm, Class_Name(), NPCS_t,                \
+                           STR_FUNC_, ARG_NUM_,                     \
+                           RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        ADD_METHOD("f_Initialize", 0, void, Initialize);
-        ADD_METHOD("f_Uninitialize", 0, void, Uninitialize);
+        METHOD("f_Initialize", 0, void, Initialize);
+        METHOD("f_Uninitialize", 0, void, Uninitialize);
 
-        #undef ADD_METHOD
+        #undef METHOD
     }
 
-}}
+}}}

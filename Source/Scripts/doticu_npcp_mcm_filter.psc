@@ -100,6 +100,8 @@ int                 p_option_is_saddler         =      -1
 int                 p_option_isnt_saddler       =      -1
 int                 p_int_saddler               =       0
 
+function Goto_Filter_Members() native
+
 ; Friend Methods
 function f_Review_Filter()
     p_code_view = doticu_npcp_codes.VIEW_FILTER()
@@ -107,7 +109,7 @@ endFunction
 
 function f_Build_Page()
     if p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS()
-        return p_Goto_Filter_Members()
+        return Goto_Filter_Members()
     endIf
 
     MCM.SetTitleText(" Filter ")
@@ -704,89 +706,4 @@ endFunction
 function p_Update_Saddler()
     MCM.SetToggleOptionValue(p_option_is_saddler, p_int_saddler == 1, MCM.DONT_UPDATE)
     MCM.SetToggleOptionValue(p_option_isnt_saddler, p_int_saddler == -1, MCM.DO_UPDATE)
-endFunction
-
-function p_Goto_Filter_Members()
-    p_int_arg_flags = 0
-
-    if p_int_alive_dead == 1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_ALIVE")
-    elseIf p_int_alive_dead == -1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_DEAD")
-    endIf
-
-    if p_int_original_clone == 1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_ORIGINAL")
-    elseIf p_int_original_clone == -1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_CLONE")
-    endIf
-
-    if p_int_unique_generic == 1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_UNIQUE")
-    elseIf p_int_unique_generic == -1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_GENERIC")
-    endIf
-
-    if p_int_mobile_immobile == 1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_MOBILE")
-    elseIf p_int_mobile_immobile == -1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_IMMOBILE")
-    endIf
-
-    if p_int_settler == 1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_SETTLER")
-    elseIf p_int_settler == -1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_SETTLER")
-    endIf
-
-    if p_int_thrall == 1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_THRALL")
-    elseIf p_int_thrall == -1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_THRALL")
-    endIf
-
-    if p_int_paralyzed == 1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_PARALYZED")
-    elseIf p_int_paralyzed == -1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_PARALYZED")
-    endIf
-
-    if p_int_mannequin == 1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_MANNEQUIN")
-    elseIf p_int_mannequin == -1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_MANNEQUIN")
-    endIf
-
-    if p_int_reanimated == 1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_REANIMATED")
-    elseIf p_int_reanimated == -1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_REANIMATED")
-    endIf
-
-    if p_int_follower == 1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_FOLLOWER")
-    elseIf p_int_follower == -1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_FOLLOWER")
-    endIf
-
-    if p_int_sneak == 1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_SNEAK")
-    elseIf p_int_sneak == -1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_SNEAK")
-    endIf
-
-    if p_int_saddler == 1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "IS_SADDLER")
-    elseIf p_int_saddler == -1
-        p_int_arg_flags = MEMBERS.Add_Filter_Flag_1(p_int_arg_flags, "ISNT_SADDLER")
-    endIf
-
-    Alias[] arr_filter = MEMBERS.Filter( \
-        MEMBERS.Filter_Strings(p_str_arg_sex, p_str_arg_race, p_str_arg_search), \
-        MEMBERS.Filter_Ints(p_int_arg_style, p_int_arg_vitality, p_int_arg_outfit2, p_int_arg_rating), \
-        p_int_arg_flags, 0 \
-    )
-
-    MCM.MCM_MEMBERS.f_View_Filter_Members(arr_filter)
-    MCM.MCM_MEMBERS.f_Build_Page()
 endFunction

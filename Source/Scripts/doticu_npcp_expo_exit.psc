@@ -16,15 +16,17 @@ event OnInit()
     SetDisplayName("Exit Expo")
 endEvent
 
-event OnOpen(ObjectReference ref_activator)
-    if ref_activator != doticu_npcp_consts.Player_Actor()
-        return
-    endIf
+event OnLoad()
+    SetDisplayName("Exit Expo")
+endEvent
 
-    GotoState("STATE_BUSY")
-    MANNEQUINS.Remove_Player()
-    SetOpen(false)
-    GotoState("")
+event OnOpen(ObjectReference ref_activator)
+    if ref_activator == doticu_npcp_consts.Player_Actor()
+        GotoState("STATE_BUSY")
+        MANNEQUINS.Remove_Player()
+        SetOpen(false)
+        GotoState("")
+    endIf
 endEvent
 
 ; States

@@ -2,144 +2,15 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
-#include "skse64/PapyrusUI.h"
-
 #include "consts.h"
+#include "ui.h"
 #include "utils.h"
 
 #include "mcm/mcm_main.h"
 
 #include "papyrus.inl"
 
-namespace doticu_npcp { namespace Papyrus { namespace UI {
-
-    template <typename Type>
-    Type Get_Value(GFxValue* gfx_value)
-    {
-        NPCP_ASSERT(false);
-    }
-
-    template <>
-    Bool_t Get_Value<Bool_t>(GFxValue* gfx_value)
-    {
-        return gfx_value->GetType() == GFxValue::kType_Bool ? gfx_value->GetBool() : false;
-    }
-
-    template <>
-    Int_t Get_Value<Int_t>(GFxValue* gfx_value)
-    {
-        return gfx_value->GetType() == GFxValue::kType_Number ? gfx_value->GetNumber() : 0;
-    }
-
-    template <>
-    Float_t Get_Value<Float_t>(GFxValue* gfx_value)
-    {
-        return gfx_value->GetType() == GFxValue::kType_Number ? gfx_value->GetNumber() : 0.0f;
-    }
-
-    template <>
-    String_t Get_Value<String_t>(GFxValue* gfx_value)
-    {
-        return gfx_value->GetType() == GFxValue::kType_String ? gfx_value->GetString() : "";
-    }
-
-    template <typename Type>
-    Type Get_Value(String_t menu, String_t target)
-    {
-        if (menu.data && target.data) {
-            MenuManager* menu_manager = MenuManager::GetSingleton();
-            if (menu_manager) {
-                GFxMovieView* view = menu_manager->GetMovieView(&menu);
-                if (view) {
-                    GFxValue value;
-                    if (view->GetVariable(&value, target.data)) {
-                        return Get_Value<Type>(&value);
-                    } else {
-                        return 0;
-                    }
-                } else {
-                    return 0;
-                }
-            } else {
-                return 0;
-            }
-        } else {
-            return 0;
-        }
-    }
-
-    template <typename Type>
-    void Set_Value(GFxValue* gfx_value, Type value)
-    {
-        NPCP_ASSERT(false);
-    }
-
-    template <>
-    void Set_Value<Bool_t>(GFxValue* gfx_value, Bool_t value)
-    {
-        gfx_value->SetBool(value);
-    }
-
-    template <>
-    void Set_Value<Int_t>(GFxValue* gfx_value, Int_t value)
-    {
-        gfx_value->SetNumber(value);
-    }
-
-    template <>
-    void Set_Value<Float_t>(GFxValue* gfx_value, Float_t value)
-    {
-        gfx_value->SetNumber(value);
-    }
-
-    template <>
-    void Set_Value<String_t>(GFxValue* gfx_value, String_t value)
-    {
-        if (value.data) {
-            gfx_value->SetString(value.data);
-        } else {
-            gfx_value->SetString("");
-        }
-    }
-
-    template <typename Type>
-    void Set_Value(String_t menu, String_t target, Type value)
-    {
-        if (menu.data && target.data) {
-            MenuManager* menu_manager = MenuManager::GetSingleton();
-            if (menu_manager) {
-                GFxMovieView* view = menu_manager->GetMovieView(&menu);
-                if (view) {
-                    GFxValue gfx_value;
-                    Set_Value<Type>(&gfx_value, value);
-                    view->SetVariable(target.data, &gfx_value, 1);
-                }
-            }
-        }
-    }
-
-    template <typename Type>
-    void Run(String_t menu, String_t target, Type argument)
-    {
-        if (menu.data && target.data) {
-            UIManager* ui_manager = UIManager::GetSingleton();
-            if (ui_manager) {
-                UIInvokeDelegate delegate(menu.data, target.data);
-                delegate.args.resize(1);
-                Set_Value<Type>(&delegate.args[0], argument);
-                delegate.Run();
-            }
-        }
-    }
-
-    void Run(String_t menu, String_t target)
-    {
-        return Run<Bool_t>(menu, target, false);
-    }
-
-}}}
-
-namespace doticu_npcp { namespace MCM {
+namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     String_t SKI_Config_Base_t::Class_Name()
     {
@@ -438,25 +309,23 @@ namespace doticu_npcp { namespace MCM {
         Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "ForcePageReset");
     }
 
-    void SKI_Config_Base_t::Register_Me(Registry_t* registry)
+    void SKI_Config_Base_t::Register_Me(Virtual_Machine_t* vm)
     {
-        auto Reset = [](SKI_Config_Base_t* self)->void FORWARD_VOID(SKI_Config_Base_t::Reset());
-
-        #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
-        M                                                               \
-            ADD_CLASS_METHOD(Class_Name(), MCM::SKI_Config_Base_t,      \
-                             STR_FUNC_, ARG_NUM_,                       \
-                             RETURN_, METHOD_, __VA_ARGS__);            \
+        #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                           \
+            FORWARD_METHOD(vm, Class_Name(), SKI_Config_Base_t,     \
+                           STR_FUNC_, ARG_NUM_,                     \
+                           RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        ADD_METHOD("ClearOptionBuffers", 0, void, Reset);
+        METHOD("ClearOptionBuffers", 0, void, Reset);
 
-        #undef ADD_METHOD
+        #undef METHOD
     }
 
-}}
+}}}
 
-namespace doticu_npcp { namespace MCM {
+namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     String_t Main_t::Class_Name()
     {
@@ -529,9 +398,16 @@ namespace doticu_npcp { namespace MCM {
         Set_Option_Flags(option_in, MCM::DISABLE, do_render);
     }
 
-    void Main_t::Register_Me(Registry_t* registry)
+    void Main_t::Register_Me(Virtual_Machine_t* vm)
     {
-        return;
+        #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                           \
+            FORWARD_METHOD(vm, Class_Name(), Main_t,                \
+                           STR_FUNC_, ARG_NUM_,                     \
+                           RETURN_, METHOD_, __VA_ARGS__);          \
+        W
+
+        #undef METHOD
     }
 
-}}
+}}}

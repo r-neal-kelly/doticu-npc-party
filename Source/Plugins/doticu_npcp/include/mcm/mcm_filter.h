@@ -4,14 +4,35 @@
 
 #pragma once
 
-#include "types.h"
 #include "papyrus.h"
 
-#include "mcm/mcm_main.h"
+namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
-namespace doticu_npcp { namespace MCM {
+    class Main_t;
 
     class Filter_t : public Quest_t {
+    public:
+        enum Flags_1 : UInt64 {
+            IS_LOADED, IS_UNLOADED,
+            IS_UNIQUE, IS_GENERIC,
+            IS_ORIGINAL, IS_CLONE,
+            IS_ALIVE, IS_DEAD,
+            IS_MOBILE, IS_IMMOBILE,
+            IS_SETTLER, ISNT_SETTLER,
+            IS_THRALL, ISNT_THRALL,
+            IS_PARALYZED, ISNT_PARALYZED,
+            IS_MANNEQUIN, ISNT_MANNEQUIN,
+            IS_REANIMATED, ISNT_REANIMATED,
+            IS_FOLLOWER, ISNT_FOLLOWER,
+            IS_SNEAK, ISNT_SNEAK,
+            IS_SADDLER, ISNT_SADDLER,
+            IS_RETREATER, ISNT_RETREATER,
+        };
+
+        enum Flags_2 : UInt64 {
+            // if we hit 32 indices in the first one
+        };
+
     public:
         static String_t Class_Name();
         static Class_Info_t* Class_Info();
@@ -19,6 +40,7 @@ namespace doticu_npcp { namespace MCM {
         static Object_t* Object();
 
         static Main_t* Main();
+
     public:
         Variable_t* Variable(String_t variable_name);
 
@@ -108,8 +130,10 @@ namespace doticu_npcp { namespace MCM {
 
         String_t Filter_String();
 
+        void Goto_Filter_Members();
+
     public:
-        static void Register_Me(Registry_t* registry);
+        static void Register_Me(Virtual_Machine_t* vm);
     };
 
-}}
+}}}

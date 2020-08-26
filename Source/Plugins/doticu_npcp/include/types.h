@@ -55,14 +55,18 @@ namespace doticu_npcp {
 
     typedef Actor           Actor_t;
     typedef TESNPC          Actor_Base_t;
+    typedef Character       Character_t;
+    typedef PlayerCharacter Player_Character_t;
 
     typedef Projectile      Projectile_t;
     typedef BGSProjectile   Projectile_Base_t;
 
     typedef BGSListForm     Formlist_t;
 
+    typedef TESTopicInfo    Topic_Info_t;
+
     typedef TESContainer            BContainer_t;
-    typedef TESContainer::Entry** BEntries_t;
+    typedef TESContainer::Entry**   BEntries_t;
     typedef TESContainer::Entry     BEntry_t;
 
     typedef ExtraContainerChanges   XContainer_t;
@@ -582,7 +586,6 @@ namespace doticu_npcp {
 
 namespace doticu_npcp {
 
-    typedef BGSBaseAlias            Player_t;
     typedef TESQuest                Consts_t;
     typedef TESQuest                Vars_t;
 
@@ -601,5 +604,11 @@ namespace doticu_npcp { namespace Papyrus {
 
     template <typename T> using Vector_t = VMResultArray<T>;
     typedef Vector_t<Int_t> Int_Vector_t;
+
+    template <typename Type>
+    struct Range_t {
+        Type begin;
+        Type end;
+    };
 
 }}

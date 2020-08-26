@@ -10,6 +10,7 @@
 #include "actor2.h"
 #include "cell.h"
 #include "codes.h"
+#include "commands.h"
 #include "consts.h"
 #include "form.h"
 #include "form_vector.h"
@@ -21,22 +22,32 @@
 #include "outfit2.h"
 #include "package.h"
 #include "papyrus.h"
-#include "party.h"
-#include "player.h"
+#include "papyrus.inl"
 #include "quest.h"
 #include "spell.h"
 #include "string2.h"
-#include "tests.h"
+#include "topics.h"
 #include "utils.h"
 #include "vars.h"
+
+#include "party/party_player.h"
+#include "party/party_greeter.h"
+#include "party/party_movee.h"
+#include "party/party_npcs.h"
+#include "party/party_members.h"
+#include "party/party_member.h"
+#include "party/party_mannequins.h"
+#include "party/party_followers.h"
+#include "party/party_follower.h"
+#include "party/party_horses.h"
+#include "party/party_horse.h"
 
 #include "mcm/mcm_main.h"
 #include "mcm/mcm_members.h"
 #include "mcm/mcm_member.h"
 #include "mcm/mcm_filter.h"
+#include "mcm/mcm_chests.h"
 #include "mcm/mcm_hotkeys.h"
-
-#include "papyrus.inl"
 
 namespace doticu_npcp { namespace Main {
 
@@ -147,20 +158,18 @@ namespace doticu_npcp { namespace Modules {
         }
     }
 
-    void Main_t::Register_Me(Registry_t* registry)
+    void Main_t::Register_Me(Virtual_Machine_t* vm)
     {
-        auto Try_Update = [](Main_t* self)->Bool_t FORWARD_BOOL(Main_t::Try_Update());
-
-        #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
-        M                                                               \
-            ADD_CLASS_METHOD(Class_Name(), Main_t,                      \
-                             STR_FUNC_, ARG_NUM_,                       \
-                             RETURN_, METHOD_, __VA_ARGS__);            \
+        #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                           \
+            FORWARD_METHOD(vm, Class_Name(), Main_t,                \
+                           STR_FUNC_, ARG_NUM_,                     \
+                           RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        ADD_METHOD("p_Try_Update", 0, Bool_t, Try_Update);
+        METHOD("p_Try_Update", 0, Bool_t, Try_Update);
 
-        #undef ADD_METHOD
+        #undef METHOD
     }
 
 }}
@@ -250,31 +259,36 @@ namespace doticu_npcp { namespace Main {
         REGISTER_NAMESPACE(Papyrus::Outfit2);
         REGISTER_NAMESPACE(Package);
         REGISTER_NAMESPACE(Papyrus);
-        REGISTER_NAMESPACE(Player);
         REGISTER_NAMESPACE(Quest);
         REGISTER_NAMESPACE(Spell);
         REGISTER_NAMESPACE(String2);
-        REGISTER_NAMESPACE(Tests);
         REGISTER_NAMESPACE(Utils);
         REGISTER_NAMESPACE(Vars);
-
-        REGISTER_NAMESPACE(Party::Members);
-        REGISTER_NAMESPACE(Party::Followers);
-        REGISTER_NAMESPACE(Party::Horses);
-        REGISTER_NAMESPACE(Party::Member);
-        REGISTER_NAMESPACE(Party::Follower);
-        REGISTER_NAMESPACE(Party::Horse);
 
         #undef REGISTER_NAMESPACE
 
         #define REGISTER_TYPE(TYPE_)                                            \
         M                                                                       \
-            TYPE_::Register_Me(registry);                                       \
+            TYPE_::Register_Me(reinterpret_cast<Virtual_Machine_t*>(registry)); \
             _MESSAGE(DOTICU_NPCP_PRINT_PREFIX "Added " #TYPE_ " functions.");   \
         W
+
         REGISTER_TYPE(Modules::Main_t);
 
+        REGISTER_TYPE(Party::Player_t);
+        REGISTER_TYPE(Party::Greeter_t);
+        REGISTER_TYPE(Party::Movee_t);
         REGISTER_TYPE(Party::NPCS_t);
+        REGISTER_TYPE(Party::Members_t);
+        REGISTER_TYPE(Party::Member_t);
+        REGISTER_TYPE(Party::Mannequins_t);
+        REGISTER_TYPE(Party::Followers_t);
+        REGISTER_TYPE(Party::Follower_t);
+        REGISTER_TYPE(Party::Horses_t);
+        REGISTER_TYPE(Party::Horse_t);
+
+        REGISTER_TYPE(Modules::Control::Commands_t);
+        REGISTER_TYPE(Modules::Control::Topics_t);
 
         REGISTER_TYPE(Papyrus::Keys_t);
 
@@ -283,6 +297,7 @@ namespace doticu_npcp { namespace Main {
         REGISTER_TYPE(MCM::Members_t);
         REGISTER_TYPE(MCM::Member_t);
         REGISTER_TYPE(MCM::Filter_t);
+        REGISTER_TYPE(MCM::Chests_t);
         REGISTER_TYPE(MCM::Hotkeys_t);
 
         #undef REGISTER_TYPE

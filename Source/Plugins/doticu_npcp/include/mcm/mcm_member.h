@@ -4,15 +4,17 @@
 
 #pragma once
 
-#include "types.h"
 #include "papyrus.h"
-#include "party.h"
 
-#include "mcm/mcm_main.h"
+namespace doticu_npcp { namespace Papyrus { namespace Party {
 
-namespace doticu_npcp { namespace MCM {
+    class Member_t;
 
-    using namespace Papyrus;
+}}}
+
+namespace doticu_npcp { namespace Papyrus { namespace MCM {
+
+    class Main_t;
 
     class Member_t : public Quest_t {
     public:
@@ -95,8 +97,9 @@ namespace doticu_npcp { namespace MCM {
         void Update_Commands();
         void Build_Statistics();
         void Update_Statistics();
+
     public:
-        static void Register_Me(Registry_t* registry);
+        static void Register_Me(Virtual_Machine_t* vm);
     };
 
-}}
+}}}

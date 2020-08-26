@@ -3,15 +3,11 @@
 */
 
 #pragma once
-
-#include "types.h"
-#include "papyrus.h"
-
 #undef TEXT
 
-namespace doticu_npcp { namespace MCM {
+#include "papyrus.h"
 
-    using namespace Papyrus;
+namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     enum Flags : Int_t {
         NONE = 0,
@@ -52,6 +48,7 @@ namespace doticu_npcp { namespace MCM {
 
         static constexpr const char* JOURNAL_MENU = "Journal Menu";
         static constexpr const char* ROOT_MENU = "_root.ConfigPanelFader.configPanel";
+
     public:
         Object_t* Object();
         Variable_t* Variable(String_t variable_name);
@@ -115,8 +112,9 @@ namespace doticu_npcp { namespace MCM {
                           String_t cancel = "$Cancel",
                           Virtual_Callback_i** callback = nullptr);
         void Reset_Page();
+
     public:
-        static void Register_Me(Registry_t* registry);
+        static void Register_Me(Virtual_Machine_t* vm);
     };
 
     class Main_t : public SKI_Config_Base_t {
@@ -125,6 +123,7 @@ namespace doticu_npcp { namespace MCM {
         static Class_Info_t* Class_Info();
         static Main_t* Self();
         static Object_t* Object();
+
     public:
         Variable_t* Variable(String_t variable_name);
 
@@ -132,8 +131,9 @@ namespace doticu_npcp { namespace MCM {
 
         void Enable_Option(Variable_t* option_in, Bool_t do_render = true);
         void Disable_Option(Variable_t* option_in, Bool_t do_render = true);
+
     public:
-        static void Register_Me(Registry_t* registry);
+        static void Register_Me(Virtual_Machine_t* vm);
     };
 
-}}
+}}}

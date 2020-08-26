@@ -48,6 +48,9 @@ bool                p_is_created    = false
 bool                p_is_locked     = false
 bool                p_is_in_combat  = false
 
+; Native Methods
+bool function Is_Party_In_Combat() native
+
 ; Friend Methods
 function f_Create()
     p_is_created = true
@@ -115,7 +118,7 @@ p_Unlock()
 endFunction
 
 function p_Try_End_Combat()
-    if ACTOR_PLAYER.IsInCombat() || FOLLOWERS.Are_In_Combat()
+    if Is_Party_In_Combat()
         FUNCS.Wait(5.0)
         p_Async("p_Try_End_Combat")
     else
@@ -143,8 +146,6 @@ endFunction
 function Remove_Perk(Perk perk_to_remove)
     ACTOR_PLAYER.RemovePerk(perk_to_remove)
 endFunction
-
-bool function Is_Party_In_Combat() native
 
 ; Events
 event On_Init_Mod()

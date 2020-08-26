@@ -28,80 +28,22 @@ int                     p_idx_display       =     0
 ObjectReference         p_marker_display    =  none
 
 ; Native Methods
-int function Add_Original       (Actor original)                    native
-int function Remove_Original    (Actor original)                    native
-int function Add_Clone          (Actor original)                    native
-int function Remove_Clone       (Actor clone, bool do_delete_clone) native
-
 Alias function p_From_Actor(Actor ref_actor)    native
 
-bool function Has_Space()                   native
-bool function Hasnt_Space()                 native
 bool function Has_Actor(Actor ref_actor)    native
-bool function Hasnt_Actor(Actor ref_actor)  native
 bool function Has_Base(Actor ref_actor)     native
-bool function Hasnt_Base(Actor ref_actor)   native
 bool function Has_Head(Actor ref_actor)     native
-bool function Hasnt_Head(Actor ref_actor)   native
-bool function Has_Display()                 native
-bool function Hasnt_Display()               native
 
 int function Max()                          native
-int function Limit()                        native
 int function Count_Filled()                 native
-int function Count_Unfilled()               native
-int function Count_Loaded()                 native
-int function Count_Unloaded()               native
-int function Count_Unique()                 native
-int function Count_Generic()                native
-int function Count_Alive()                  native
-int function Count_Dead()                   native
-int function Count_Originals()              native
-int function Count_Clones()                 native
-int function Count_Mobile()                 native
-int function Count_Immobile()               native
-int function Count_Settlers()               native
-int function Count_Non_Settlers()           native
-int function Count_Thralls()                native
-int function Count_Non_Thralls()            native
-int function Count_Paralyzed()              native
-int function Count_Non_Paralyzed()          native
-int function Count_Mannequins()             native
-int function Count_Non_Mannequins()         native
-int function Count_Reanimated()             native
-int function Count_Non_Reanimated()         native
-int function Count_Followers()              native
-int function Count_Non_Followers()          native
-int function Count_Sneaks()                 native
-int function Count_Non_Sneaks()             native
-int function Count_Saddlers()               native
-int function Count_Non_Saddlers()           native
-int function Count_Retreaters()             native
-int function Count_Non_Retreaters()         native
 int function Count_Base(Actor ref_actor)    native
 int function Count_Heads(Actor ref_actor)   native
 
-Alias[] function All()      native
-Alias[] function Filled()   native
-
 Alias[] function Sort_Filled(int begin = 0, int end = -1) native
-
-Alias[] function Slice(Alias[] members, int begin, int end) native
 
 string[] function Race_Names() native
 
 function Enforce_Loaded(bool do_resurrect = false) native
-
-string[]    function Filter_Strings     (string sex = "", string race = "", string search = "")             native
-int[]       function Filter_Ints        (int style = 0, int vitality = 0, int outfit2 = 0, int rating = -1) native
-int         function Add_Filter_Flag_1  (int flags_1, string flag_1)                                        native
-int         function Add_Filter_Flag_2  (int flags_2, string flag_2)                                        native
-Alias[]     function Filter             (string[] strings, int[] ints, int flags_1, int flags_2)            native
-
-int function Display_Start()    native
-int function Display_Stop()     native
-int function Display_Next()     native
-int function Display_Previous() native
 
 ; Friend Methods
 function f_Create()

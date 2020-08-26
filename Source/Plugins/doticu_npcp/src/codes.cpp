@@ -15,8 +15,6 @@ namespace doticu_npcp { namespace CODES { namespace Exports {
 
     Int_t SUCCESS(Selfless_t*)                      { return CODES::SUCCESS; }
     Int_t FAILURE(Selfless_t*)                      { return CODES::FAILURE; }
-    Int_t SYNC(Selfless_t*)                         { return CODES::SYNC; }
-    Int_t ASYNC(Selfless_t*)                        { return CODES::ASYNC; }
     Int_t IS(Selfless_t*)                           { return CODES::IS; }
     Int_t ISNT(Selfless_t*)                         { return CODES::ISNT; }
     Int_t HAS(Selfless_t*)                          { return CODES::HAS; }
@@ -116,8 +114,6 @@ namespace doticu_npcp { namespace CODES { namespace Exports {
 
         ADD_GLOBAL("SUCCESS", 0, Int_t, SUCCESS);
         ADD_GLOBAL("FAILURE", 0, Int_t, FAILURE);
-        ADD_GLOBAL("SYNC", 0, Int_t, SYNC);
-        ADD_GLOBAL("ASYNC", 0, Int_t, ASYNC);
         ADD_GLOBAL("IS", 0, Int_t, IS);
         ADD_GLOBAL("ISNT", 0, Int_t, ISNT);
         ADD_GLOBAL("HAS", 0, Int_t, HAS);

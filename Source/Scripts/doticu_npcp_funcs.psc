@@ -42,11 +42,11 @@ function f_Create()
     ACTORS.f_Create()
     NPCS.f_Initialize()
     PERKS.f_Create()
-    MANNEQUINS.f_Create()
+    MANNEQUINS.f_Initialize()
 endFunction
 
 function f_Destroy()
-    MANNEQUINS.f_Destroy()
+    MANNEQUINS.f_Unintialize()
     PERKS.f_Destroy()
     NPCS.f_Uninitialize()
     ACTORS.f_Destroy()
@@ -59,7 +59,6 @@ function f_Register()
     LOGS.f_Register()
     ACTORS.f_Register()
     PERKS.f_Register()
-    MANNEQUINS.f_Register()
 endFunction
 
 ; Public Methods
@@ -172,4 +171,8 @@ endFunction
 function Protect(ActorBase base_actor)
     Wait(1)
     base_actor.SetProtected(true)
+endFunction
+
+Actor function Find_Closest_Actor_From(ObjectReference ref, float radius)
+    return Game.FindClosestActorFromRef(ref, radius)
 endFunction

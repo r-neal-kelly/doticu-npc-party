@@ -6,16 +6,14 @@
 #include "codes.h"
 #include "consts.h"
 #include "keys.h"
-#include "party.h"
+#include "papyrus.inl"
 #include "utils.h"
 #include "vars.h"
 
+#include "mcm/mcm_main.h"
 #include "mcm/mcm_hotkeys.h"
 
-#include "papyrus.inl"
-#include "party.inl"
-
-namespace doticu_npcp { namespace MCM {
+namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     String_t Hotkeys_t::Class_Name()
     {
@@ -991,36 +989,25 @@ namespace doticu_npcp { namespace MCM {
         }
     }
 
-    void Hotkeys_t::Register_Me(Registry_t* registry)
+    void Hotkeys_t::Register_Me(Virtual_Machine_t* vm)
     {
-        using namespace Utils;
-
-        auto Build_Page = Forward<void, Hotkeys_t, &Hotkeys_t::Build_Page>();
-        auto On_Option_Highlight = Forward<void, Hotkeys_t, Int_t, &Hotkeys_t::On_Option_Highlight>();
-        auto Change_Hotkey_Value = Forward<void, Hotkeys_t, Int_t, Int_t, Bool_t, &Hotkeys_t::Change_Hotkey_Value>();
-        auto Change_Hotkey_Mods = Forward<void, Hotkeys_t, Int_t, Int_t, Int_t, Int_t, Bool_t, &Hotkeys_t::Change_Hotkey_Mods>();
-        auto Reset_Hotkeys = Forward<void, Hotkeys_t, &Hotkeys_t::Reset_Hotkeys>();
-        auto Unset_Hotkeys = Forward<void, Hotkeys_t, &Hotkeys_t::Unset_Hotkeys>();
-        auto Value_Option_To_Hotkey = Forward<String_t, Hotkeys_t, Int_t, &Hotkeys_t::Value_Option_To_Hotkey>();
-        auto Mods_Option_To_Hotkey = Forward<String_t, Hotkeys_t, Int_t, &Hotkeys_t::Mods_Option_To_Hotkey>();
-
-        #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
-        M                                                               \
-            ADD_CLASS_METHOD(Class_Name(), MCM::Hotkeys_t,              \
-                             STR_FUNC_, ARG_NUM_,                       \
-                             RETURN_, METHOD_, __VA_ARGS__);            \
+        #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                           \
+            FORWARD_METHOD(vm, Class_Name(), Hotkeys_t,             \
+                           STR_FUNC_, ARG_NUM_,                     \
+                           RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        ADD_METHOD("f_Build_Page", 0, void, Build_Page);
-        ADD_METHOD("f_On_Option_Highlight", 1, void, On_Option_Highlight, Int_t);
-        ADD_METHOD("Change_Hotkey_Value", 3, void, Change_Hotkey_Value, Int_t, Int_t, Bool_t);
-        ADD_METHOD("Change_Hotkey_Mods", 5, void, Change_Hotkey_Mods, Int_t, Int_t, Int_t, Int_t, Bool_t);
-        ADD_METHOD("Reset_Hotkeys", 0, void, Reset_Hotkeys);
-        ADD_METHOD("Unset_Hotkeys", 0, void, Unset_Hotkeys);
-        ADD_METHOD("Value_Option_To_Hotkey", 1, String_t, Value_Option_To_Hotkey, Int_t);
-        ADD_METHOD("Mods_Option_To_Hotkey", 1, String_t, Mods_Option_To_Hotkey, Int_t);
+        METHOD("f_Build_Page", 0, void, Build_Page);
+        METHOD("f_On_Option_Highlight", 1, void, On_Option_Highlight, Int_t);
+        METHOD("Change_Hotkey_Value", 3, void, Change_Hotkey_Value, Int_t, Int_t, Bool_t);
+        METHOD("Change_Hotkey_Mods", 5, void, Change_Hotkey_Mods, Int_t, Int_t, Int_t, Int_t, Bool_t);
+        METHOD("Reset_Hotkeys", 0, void, Reset_Hotkeys);
+        METHOD("Unset_Hotkeys", 0, void, Unset_Hotkeys);
+        METHOD("Value_Option_To_Hotkey", 1, String_t, Value_Option_To_Hotkey, Int_t);
+        METHOD("Mods_Option_To_Hotkey", 1, String_t, Mods_Option_To_Hotkey, Int_t);
 
-        #undef ADD_METHOD
+        #undef METHOD
     }
 
-}}
+}}}

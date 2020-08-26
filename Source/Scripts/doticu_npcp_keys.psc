@@ -20,26 +20,6 @@ doticu_npcp_actors property ACTORS hidden
         return doticu_npcp.Funcs().ACTORS
     endFunction
 endProperty
-doticu_npcp_members property MEMBERS hidden
-    doticu_npcp_members function Get()
-        return doticu_npcp.Members()
-    endFunction
-endProperty
-doticu_npcp_followers property FOLLOWERS hidden
-    doticu_npcp_followers function Get()
-        return doticu_npcp.Followers()
-    endFunction
-endProperty
-doticu_npcp_commands property COMMANDS hidden
-    doticu_npcp_commands function Get()
-        return doticu_npcp.Control().COMMANDS
-    endFunction
-endProperty
-doticu_npcp_logs property LOGS hidden
-    doticu_npcp_logs function Get()
-        return doticu_npcp.Funcs().LOGS
-    endFunction
-endProperty
 
 ; Public Constants
 string property KEY_G_DIALOGUE_MENU         = "Global: Open Dialogue Menu"  autoReadOnly hidden
@@ -104,24 +84,6 @@ string function Pressed_Hotkey(int value \
                               ,int pressed_5 = -1, int pressed_6 = -1, int pressed_7 = -1, int pressed_8 = -1) native
 
 ; Public Methods
-bool function Is_Active(int code_key)
-    return code_key > -1
-endFunction
-
-Actor function Actor_In_Crosshair(bool allow_follower_horse = false)
-    Actor ref_actor = Game.GetCurrentCrosshairRef() as Actor
-    if allow_follower_horse
-        return ref_actor
-    else
-        doticu_npcp_follower ref_follower = FOLLOWERS.From_Horse_Actor(ref_actor)
-        if ref_follower
-            return ref_follower.Actor()
-        else
-            return ref_actor
-        endIf
-    endIf
-endFunction
-
 function Update_Keys()
     UnregisterForAllKeys()
 
@@ -295,124 +257,4 @@ event OnKeyDown(int value)
     endIf
 endEvent
 
-event OnKeyUp(int value, float hold_time)
-    if !FUNCS.Can_Use_Keys()
-        return
-    endIf
-
-    string pressed_hotkey = p_pressed_hotkey
-    if !pressed_hotkey
-        return
-    endIf
-    p_pressed_hotkey = ""
-
-    if false
-        
-    ; General
-    elseIf pressed_hotkey == KEY_G_DIALOGUE_MENU
-        FUNCS.ACTORS.Create_Menu()
-
-    ; NPC
-    elseIf pressed_hotkey == KEY_N_TOGGLE_MEMBER
-        COMMANDS.Toggle_Member_Sync(Actor_In_Crosshair())
-    elseIf pressed_hotkey == KEY_N_TOGGLE_MOVE
-        COMMANDS.Move_Sync(Actor_In_Crosshair(true))
-    elseIf pressed_hotkey == KEY_N_HAS_BASE
-        Actor ref_actor = Actor_In_Crosshair()
-        if ref_actor == none
-            LOGS.Create_Note("That is not an NPC.", false)
-        elseIf MEMBERS.Has_Base(ref_actor)
-            LOGS.Create_Note("A member has the base of " + ACTORS.Name(ref_actor) + ".", false)
-        else
-            LOGS.Create_Note("No member has the base of " + ACTORS.Name(ref_actor) + ".", false)
-        endIf
-    elseIf pressed_hotkey == KEY_N_COUNT_BASE
-        Actor ref_actor = Actor_In_Crosshair()
-        if ref_actor == none
-            LOGS.Create_Note("That is not an NPC.", false)
-        else
-            int num_members = MEMBERS.Count_Base(ref_actor)
-            if num_members == 1
-                LOGS.Create_Note(num_members + " member has the base of " + ACTORS.Name(ref_actor) + ".", false)
-            else
-                LOGS.Create_Note(num_members + " members have the base of " + ACTORS.Name(ref_actor) + ".", false)
-            endIf
-        endIf
-    elseif pressed_hotkey == KEY_N_HAS_HEAD
-        Actor ref_actor = Actor_In_Crosshair()
-        if ref_actor == none
-            LOGS.Create_Note("That is not an NPC.", false)
-        elseIf MEMBERS.Has_Head(ref_actor)
-            LOGS.Create_Note("A member looks like " + ACTORS.Name(ref_actor) + ".", false)
-        else
-            LOGS.Create_Note("No member looks like " + ACTORS.Name(ref_actor) + ".", false)
-        endIf
-    elseIf pressed_hotkey == KEY_N_COUNT_HEADS
-        Actor ref_actor = Actor_In_Crosshair()
-        if ref_actor == none
-            LOGS.Create_Note("That is not an NPC.", false)
-        else
-            int num_heads = MEMBERS.Count_Heads(ref_actor)
-            if num_heads == 1
-                LOGS.Create_Note(num_heads + " member looks like " + ACTORS.Name(ref_actor) + ".", false)
-            else
-                LOGS.Create_Note(num_heads + " members look like " + ACTORS.Name(ref_actor) + ".", false)
-            endIf
-        endIf
-
-    ; Member
-    elseIf pressed_hotkey == KEY_M_TOGGLE_CLONE
-        COMMANDS.Toggle_Clone_Sync(Actor_In_Crosshair())
-    elseIf pressed_hotkey == KEY_M_TOGGLE_SETTLER
-        COMMANDS.Toggle_Settler(Actor_In_Crosshair())
-    elseIf pressed_hotkey == KEY_M_TOGGLE_THRALL
-        COMMANDS.Toggle_Thrall(Actor_In_Crosshair())
-    elseIf pressed_hotkey == KEY_M_TOGGLE_IMMOBILE
-        COMMANDS.Toggle_Immobile(Actor_In_Crosshair())
-    elseIf pressed_hotkey == KEY_M_TOGGLE_PARALYZED
-        COMMANDS.Toggle_Paralyzed(Actor_In_Crosshair())
-    elseIf pressed_hotkey == KEY_M_TOGGLE_FOLLOWER
-        COMMANDS.Toggle_Follower_Sync(Actor_In_Crosshair())
-
-    ; Follower
-    elseIf pressed_hotkey == KEY_F_TOGGLE_SNEAK
-        COMMANDS.Toggle_Sneak_Async(Actor_In_Crosshair())
-    elseIf pressed_hotkey == KEY_F_TOGGLE_SADDLER
-        COMMANDS.Toggle_Saddler_Async(Actor_In_Crosshair())
-
-    ; Members
-    elseIf pressed_hotkey == KEY_MS_TOGGLE_DISPLAY
-        COMMANDS.Toggle_Members_Display()
-    elseIf pressed_hotkey == KEY_MS_DISPLAY_PREVIOUS
-        COMMANDS.Members_Display_Previous()
-    elseIf pressed_hotkey == KEY_MS_DISPLAY_NEXT
-        COMMANDS.Members_Display_Next()
-
-    ; Followers
-    elseIf pressed_hotkey == KEY_FS_SUMMON_ALL
-        COMMANDS.Followers_Summon_All()
-    elseIf pressed_hotkey == KEY_FS_SUMMON_MOBILE
-        COMMANDS.Followers_Summon_Mobile()
-    elseIf pressed_hotkey == KEY_FS_SUMMON_IMMOBILE
-        COMMANDS.Followers_Summon_Immobile()
-    elseIf pressed_hotkey == KEY_FS_SETTLE
-        COMMANDS.Followers_Settle()
-    elseIf pressed_hotkey == KEY_FS_UNSETTLE
-        COMMANDS.Followers_Unsettle()
-    elseIf pressed_hotkey == KEY_FS_MOBILIZE
-        COMMANDS.Followers_Mobilize()
-    elseIf pressed_hotkey == KEY_FS_IMMOBILIZE
-        COMMANDS.Followers_Immobilize()
-    elseIf pressed_hotkey == KEY_FS_SNEAK
-        COMMANDS.Followers_Sneak()
-    elseIf pressed_hotkey == KEY_FS_UNSNEAK
-        COMMANDS.Followers_Unsneak()
-    elseIf pressed_hotkey == KEY_FS_SADDLE
-        COMMANDS.Followers_Saddle()
-    elseIf pressed_hotkey == KEY_FS_UNSADDLE
-        COMMANDS.Followers_Unsaddle()
-    elseIf pressed_hotkey == KEY_FS_RESURRECT
-        COMMANDS.Followers_Resurrect()
-
-    endIf
-endEvent
+event OnKeyUp(int key_code, float time_held) native

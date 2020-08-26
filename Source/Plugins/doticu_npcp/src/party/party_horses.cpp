@@ -6,11 +6,16 @@
 #include "consts.h"
 #include "game.h"
 #include "object_ref.h"
-#include "party.h"
-#include "party.inl"
+#include "papyrus.inl"
 #include "utils.h"
 
-namespace doticu_npcp { namespace Party {
+#include "party/party_aliases.inl"
+#include "party/party_followers.h"
+#include "party/party_follower.h"
+#include "party/party_horses.h"
+#include "party/party_horse.h"
+
+namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     String_t Horses_t::Class_Name()
     {
@@ -128,13 +133,16 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
-}}
-
-namespace doticu_npcp { namespace Party { namespace Horses { namespace Exports {
-
-    Bool_t Register(Registry_t* registry)
+    void Horses_t::Register_Me(Virtual_Machine_t* vm)
     {
-        return true;
+        #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                           \
+            FORWARD_METHOD(vm, Class_Name(), Horses_t,              \
+                           STR_FUNC_, ARG_NUM_,                     \
+                           RETURN_, METHOD_, __VA_ARGS__);          \
+        W
+
+        #undef METHOD
     }
 
-}}}}
+}}}

@@ -67,7 +67,7 @@ namespace doticu_npcp { namespace Papyrus {
         virtual Bool_t Create_Object2(String_t* class_name, Object_t** object_out) = 0; // 15
         virtual Bool_t Create_Array(Type_t* type, UInt32 count, Array_t** array_out) = 0; // 16, SKSE has Variable_t* for first arg?
         virtual void _17(void) = 0; // 17
-        virtual void _18(void) = 0; // 18
+        virtual Bool_t Bind_Function(IFunction* function) = 0; // 18
         virtual void _19(void) = 0; // 19
         virtual void _1A(void) = 0; // 1A
         virtual void For_Each_Object(Handle_t handle, IForEachScriptObjectFunctor* functor) = 0; // 1B
@@ -169,7 +169,7 @@ namespace doticu_npcp { namespace Papyrus {
         virtual Bool_t Create_Object2(String_t* class_name, Object_t** object_out) override; // 15
         virtual Bool_t Create_Array(Type_t* type, UInt32 count, Array_t** array_out) override; // 16, SKSE has Variable_t* for first arg?
         virtual void _17(void) override; // 17
-        virtual void _18(void) override; // 18
+        virtual Bool_t Bind_Function(IFunction* function) override; // 18
         virtual void _19(void) override; // 19
         virtual void _1A(void) override; // 1A
         virtual void For_Each_Object(Handle_t handle, IForEachScriptObjectFunctor* functor) override; // 1B

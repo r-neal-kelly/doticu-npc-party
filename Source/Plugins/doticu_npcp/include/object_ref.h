@@ -131,6 +131,8 @@ namespace doticu_npcp { namespace Object_Ref {
                                   Reference_t* destination = nullptr,
                                   Papyrus::Virtual_Callback_i** callback = nullptr);
 
+    void Find_Closest_Actor_From(Reference_t* ref, Float_t radius, Virtual_Callback_i** callback);
+
 }}
 
 namespace doticu_npcp { namespace Object_Ref { namespace Exports {

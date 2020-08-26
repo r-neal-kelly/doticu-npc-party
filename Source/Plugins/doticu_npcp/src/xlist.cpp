@@ -31,22 +31,22 @@ namespace doticu_npcp { namespace XList {
 
     void Validate(XList_t* xlist)
     {
-        NPCP_ASSERT(xlist);
+        if (xlist) {
+            if (!xlist->m_presence) {
+                xlist->m_presence = (XList_t::PresenceBitfield*)Heap_Allocate(sizeof(XList_t::PresenceBitfield));
+                NPCP_ASSERT(xlist->m_presence);
 
-        if (!xlist->m_presence) {
-            xlist->m_presence = (XList_t::PresenceBitfield*)Heap_Allocate(sizeof(XList_t::PresenceBitfield));
-            NPCP_ASSERT(xlist->m_presence);
+                u64* bits = (u64*)xlist->m_presence->bits;
+                bits[0] = 0;
+                bits[1] = 0;
+                bits[2] = 0;
 
-            u64* bits = (u64*)xlist->m_presence->bits;
-            bits[0] = 0;
-            bits[1] = 0;
-            bits[2] = 0;
+                xlist->m_lock = BSReadWriteLock();
+            }
 
-            xlist->m_lock = BSReadWriteLock();
-        }
-
-        if (static_cast<Int_t>(Get_Count(xlist)) < 0) {
-            XList::Set_Count(xlist, 1); // maybe just delete count?
+            if (static_cast<Int_t>(Get_Count(xlist)) < 0) {
+                XList::Set_Count(xlist, 1); // maybe just delete count?
+            }
         }
     }
 

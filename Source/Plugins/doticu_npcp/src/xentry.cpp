@@ -87,7 +87,6 @@ namespace doticu_npcp { namespace XEntry {
         }
 
         xentry->extendDataList->Insert(xlist);
-
         xentry->countDelta += XList::Get_Count(xlist);
     }
 

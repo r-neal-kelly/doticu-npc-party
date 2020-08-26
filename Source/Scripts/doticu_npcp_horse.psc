@@ -22,7 +22,6 @@ doticu_npcp_follower    p_ref_follower  =  none
 
 ; Native Method
 Actor function Actor() native
-
 string function Name() native
 
 ; Private Methods

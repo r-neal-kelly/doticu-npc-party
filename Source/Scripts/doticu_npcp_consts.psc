@@ -9,9 +9,6 @@ Scriptname doticu_npcp_consts hidden
 ; Skyrim Actors
 Actor function Player_Actor() native global
 
-; Skyrim Effect Shaders
-EffectShader function Reanimate_Effect_Shader() native global
-
 ; Skyrim Keywords
 Keyword function Vampire_Keyword() native global
 
@@ -21,9 +18,6 @@ Perk function Vampire_Feed_Perk() native global
 ; Skyrim Quests
 Quest function Bard_Songs_Quest() native global
 Quest function Player_Vampire_Quest() native global
-
-; Skyrim Reference Markers
-ObjectReference function Safe_Goto_Marker() native global
 
 ; Skyrim Statics
 Static function X_Marker_Static() native global

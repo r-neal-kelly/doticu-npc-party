@@ -2,11 +2,12 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
-#include "party.h"
-#include "party.inl"
+#include "papyrus.inl"
 #include "quest.h"
 
-namespace doticu_npcp { namespace Party {
+#include "party/party_alias.h"
+
+namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     Int_t Alias_t::ID()
     {
@@ -54,4 +55,4 @@ namespace doticu_npcp { namespace Party {
         Virtual_Machine_t::Self()->Call_Method(this, "ReferenceAlias", "Clear", nullptr, callback);
     }
 
-}}
+}}}
