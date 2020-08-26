@@ -158,9 +158,13 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     Outfit_t* NPCS_t::Default_Outfit(Int_t base_idx)
     {
-        NPCP_ASSERT(base_idx > -1 && base_idx < Default_Outfits()->Count());
-        Outfit_t* default_outfit = static_cast<Outfit_t*>(Default_Outfits()->At(base_idx));
-        NPCP_ASSERT(default_outfit);
+        Form_Vector_t* default_outfits = Default_Outfits();
+        NPCP_ASSERT(base_idx > -1 && base_idx < default_outfits->Count());
+        Outfit_t* default_outfit = static_cast<Outfit_t*>(default_outfits->At(base_idx));
+        if (!default_outfit) {
+            default_outfit = Consts::Empty_Outfit();
+            default_outfits->Set(base_idx, default_outfit);
+        }
         return default_outfit;
     }
 

@@ -227,9 +227,12 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     Outfit_t* Member_t::Default_Outfit()
     {
         NPCP_ASSERT(Is_Filled());
-        Outfit_t* value = Default_Outfit_Variable()->Outfit();
-        NPCP_ASSERT(value);
-        return value;
+        Outfit_t* outfit = Default_Outfit_Variable()->Outfit();
+        if (!outfit) {
+            outfit = NPCS_t::Self()->Default_Outfit(Actor());
+            Default_Outfit_Variable()->Pack(outfit);
+        }
+        return outfit;
     }
 
     Outfit2_t* Member_t::Member_Outfit2()

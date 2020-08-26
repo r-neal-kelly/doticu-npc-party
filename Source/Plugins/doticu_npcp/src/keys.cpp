@@ -4,8 +4,11 @@
 
 #pragma once
 
+#include "skse64_common/BranchTrampoline.h"
+
 #include "skse64/GameInput.h"
 #include "skse64/Hooks_DirectInput8Create.h"
+#include "skse64/Hooks_Gameplay.h"
 #include "skse64/PapyrusGame.h"
 
 #include "consts.h"
@@ -25,6 +28,18 @@
 #include "commands.h"
 
 namespace doticu_npcp { namespace Papyrus {
+
+    // this needs to be reworked.
+    NiPointer<TESObjectREFR> g_crosshair_reference;
+    RelocAddr<uintptr_t> kHook_Crosshair_LookupREFRByHandle_Enter(0x006B0570 + 0x90); // 39535
+    bool __cdecl Hook_Crosshair_LookupREFRByHandle(UInt32& refHandle, NiPointer<TESObjectREFR>& refrOut)
+    {
+        bool result = LookupREFRByHandle(refHandle, refrOut);
+
+        g_crosshair_reference = refrOut;
+
+        return result;
+    }
 
     const char* Keys_t::Code_To_String(Int_t code)
     {
@@ -574,14 +589,14 @@ namespace doticu_npcp { namespace Papyrus {
 
     Bool_t Keys_t::Can_Use_Keys()
     {
-        return !UI::Is_In_Menu_Mode() && !UI::Is_Menu_Open("Dialogue Menu");
+        return !UI::Is_In_Menu_Mode();
     }
 
     Actor_t* Keys_t::Actor_In_Crosshair(Bool_t allow_follower_horse)
     {
         using namespace Papyrus::Party;
 
-        Reference_t* ref = papyrusGame::GetCurrentCrosshairRef(0);
+        Reference_t* ref = g_crosshair_reference;
         if (ref && ref->formType == kFormType_Character) {
             Actor_t* actor = static_cast<Actor_t*>(ref);
             if (allow_follower_horse) {
@@ -705,6 +720,8 @@ namespace doticu_npcp { namespace Papyrus {
         METHOD("OnKeyUp", 2, void, On_Key_Up, Int_t, Float_t);
 
         #undef METHOD
+
+        g_branchTrampoline.Write5Call(kHook_Crosshair_LookupREFRByHandle_Enter, (uintptr_t)Hook_Crosshair_LookupREFRByHandle);
     }
 
 }}

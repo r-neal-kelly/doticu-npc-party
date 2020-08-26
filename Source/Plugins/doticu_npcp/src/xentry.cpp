@@ -86,6 +86,7 @@ namespace doticu_npcp { namespace XEntry {
             xentry->extendDataList = XLists_t::Create();
         }
 
+        XList::Validate(xlist);
         xentry->extendDataList->Insert(xlist);
         xentry->countDelta += XList::Get_Count(xlist);
     }
@@ -114,6 +115,7 @@ namespace doticu_npcp { namespace XEntry {
         } functor(xlist);
         xlists->RemoveIf(functor);
 
+        XList::Validate(xlist);
         xentry->countDelta -= XList::Get_Count(xlist);
     }
 
@@ -178,7 +180,7 @@ namespace doticu_npcp { namespace XEntry {
             if (!xlist) {
                 continue;
             }
-
+            XList::Validate(xlist);
             vec_xlists.push_back(xlist);
         }
 

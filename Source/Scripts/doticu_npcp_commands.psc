@@ -3,6 +3,7 @@
 Scriptname doticu_npcp_commands extends Quest
 
 ; NPC
+function Member(Actor ref_actor) native
 function Unmember(Actor ref_actor) native
 function Clone(Actor ref_actor) native
 function Unclone(Actor ref_actor) native
@@ -12,14 +13,18 @@ function Toggle_Move(Actor ref_actor) native
 function Summon(Actor ref_actor) native
 function Goto(Actor ref_actor) native
 function Open_Pack(Actor ref_actor) native
+function Stash(Actor ref_actor) native
 function Resurrect(Actor ref_actor) native
 function Mobilize(Actor ref_actor) native
 function Immobilize(Actor ref_actor) native
 function Settle(Actor ref_actor) native
 function Resettle(Actor ref_actor) native
 function Unsettle(Actor ref_actor) native
+function Enthrall(Actor ref_actor) native
+function Unthrall(Actor ref_actor) native
 function Paralyze(Actor ref_actor) native
 function Unparalyze(Actor ref_actor) native
+function Deanimate(Actor ref_actor) native
 function Follow(Actor ref_actor) native
 function Unfollow(Actor ref_actor) native
 function Stylize_Default(Actor ref_actor) native
@@ -41,10 +46,17 @@ function Change_Default_Outfit2(Actor ref_actor) native
 function Change_Current_Outfit2(Actor ref_actor) native
 function Toggle_Expoee(int expoee_id, ObjectReference marker) native
 function Toggle_Reanimated(Actor ref_actor) native
+function Show_Style(Actor ref_actor) native
+function Show_Vitality(Actor ref_actor) native
+function Show_Outfit2(Actor ref_actor) native
 
 ; Follower
 function Sneak(Actor ref_actor) native
 function Unsneak(Actor ref_actor) native
+function Saddle(Actor ref_actor) native
+function Unsaddle(Actor ref_actor) native
+function Retreat(Actor ref_actor) native
+function Unretreat(Actor ref_actor) native
 
 ; Followers
 function Followers_Summon_All() native

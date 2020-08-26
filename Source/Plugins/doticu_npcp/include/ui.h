@@ -139,7 +139,7 @@ namespace doticu_npcp { namespace Papyrus { namespace UI {
     {
         MenuManager* menu_manager = MenuManager::GetSingleton();
         if (menu_manager) {
-            return menu_manager->IsShowingMenus();
+            return reinterpret_cast<Menu_Manager_t*>(menu_manager)->menu_stack.count > 1;
         } else {
             return false;
         }

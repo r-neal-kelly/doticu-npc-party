@@ -2356,6 +2356,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         W
 
         // NPC
+        METHOD("Member", 1, void, Member, Actor_t*);
         METHOD("Unmember", 1, void, Unmember, Actor_t*);
         METHOD("Clone", 1, void, Clone, Actor_t*);
         METHOD("Unclone", 1, void, Unclone, Actor_t*);
@@ -2365,14 +2366,18 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         METHOD("Summon", 1, void, Summon, Actor_t*);
         METHOD("Goto", 1, void, Goto, Actor_t*);
         METHOD("Open_Pack", 1, void, Open_Pack, Actor_t*);
+        METHOD("Stash", 1, void, Stash, Actor_t*);
         METHOD("Resurrect", 1, void, Resurrect, Actor_t*);
         METHOD("Mobilize", 1, void, Mobilize, Actor_t*);
         METHOD("Immobilize", 1, void, Immobilize, Actor_t*);
         METHOD("Settle", 1, void, Settle, Actor_t*);
         METHOD("Resettle", 1, void, Resettle, Actor_t*);
         METHOD("Unsettle", 1, void, Unsettle, Actor_t*);
+        METHOD("Enthrall", 1, void, Enthrall, Actor_t*);
+        METHOD("Unthrall", 1, void, Unthrall, Actor_t*);
         METHOD("Paralyze", 1, void, Paralyze, Actor_t*);
         METHOD("Unparalyze", 1, void, Unparalyze, Actor_t*);
+        METHOD("Deanimate", 1, void, Deanimate, Actor_t*);
         METHOD("Follow", 1, void, Follow, Actor_t*);
         METHOD("Unfollow", 1, void, Unfollow, Actor_t*);
         METHOD("Stylize_Default", 1, void, Stylize_Default, Actor_t*);
@@ -2394,10 +2399,17 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         METHOD("Change_Current_Outfit2", 1, void, Change_Current_Outfit2, Actor_t*);
         METHOD("Toggle_Expoee", 2, void, Toggle_Expoee, Int_t, Reference_t*);
         METHOD("Toggle_Reanimated", 1, void, Toggle_Reanimated, Actor_t*);
+        METHOD("Show_Style", 1, void, Show_Style, Actor_t*);
+        METHOD("Show_Vitality", 1, void, Show_Vitality, Actor_t*);
+        METHOD("Show_Outfit2", 1, void, Show_Outfit2, Actor_t*);
 
         // Follower
         METHOD("Sneak", 1, void, Sneak, Actor_t*);
         METHOD("Unsneak", 1, void, Unsneak, Actor_t*);
+        METHOD("Saddle", 1, void, Saddle, Actor_t*);
+        METHOD("Unsaddle", 1, void, Unsaddle, Actor_t*);
+        METHOD("Retreat", 1, void, Retreat, Actor_t*);
+        METHOD("Unretreat", 1, void, Unretreat, Actor_t*);
 
         // Followers
         METHOD("Followers_Summon_All", 0, void, Followers_Summon_All);

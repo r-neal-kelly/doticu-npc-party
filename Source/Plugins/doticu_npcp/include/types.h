@@ -489,6 +489,13 @@ namespace doticu_npcp {
         // bool HasMagicEffect(EffectSetting* a_effect);
     };
 
+    class Menu_Manager_t {
+    public:
+        UInt8 unk[0x110];
+        UnkArray menu_stack; // 0x110
+    };
+    STATIC_ASSERT(sizeof(Menu_Manager_t) == 0x110 + 0x18);
+
 }
 
 namespace doticu_npcp {

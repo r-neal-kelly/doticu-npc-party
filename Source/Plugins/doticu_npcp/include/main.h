@@ -42,6 +42,8 @@ namespace doticu_npcp { namespace Modules {
         void Load_Mod();
         Bool_t Try_Update();
 
+        void Test();
+
     public:
         static void Register_Me(Virtual_Machine_t* vm);
     };

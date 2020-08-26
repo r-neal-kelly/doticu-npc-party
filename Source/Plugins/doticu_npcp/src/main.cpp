@@ -4,6 +4,7 @@
 
 #include <ShlObj.h>
 
+#include "skse64_common/BranchTrampoline.h"
 #include "skse64_common/skse_version.h"
 
 #include "actor_base2.h"
@@ -26,7 +27,6 @@
 #include "quest.h"
 #include "spell.h"
 #include "string2.h"
-#include "topics.h"
 #include "utils.h"
 #include "vars.h"
 
@@ -229,7 +229,12 @@ namespace doticu_npcp { namespace Main {
             g_messaging->RegisterListener(g_plugin_handle, "SKSE", Callback);
         }
 
-        return true;
+        if (g_branchTrampoline.Create(1024 * 64)) {
+            return true;
+        } else {
+            _ERROR("failed to create branch trampoline.");
+            return false;
+        }
     }
 
     bool Register_Functions(Papyrus::Registry_t* registry)
@@ -288,7 +293,6 @@ namespace doticu_npcp { namespace Main {
         REGISTER_TYPE(Party::Horse_t);
 
         REGISTER_TYPE(Modules::Control::Commands_t);
-        REGISTER_TYPE(Modules::Control::Topics_t);
 
         REGISTER_TYPE(Papyrus::Keys_t);
 

@@ -1213,13 +1213,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         METHOD("Name", 0, String_t, Name);
 
         METHOD("Is_Immobile", 0, Bool_t, Is_Immobile);
-        METHOD("Is_Sneak", 0, Bool_t, Is_Sneak);
-        METHOD("Is_Saddler", 0, Bool_t, Is_Saddler);
 
-        METHOD("Sneak", 0, Int_t, Sneak);
-        METHOD("Unsneak", 0, Int_t, Unsneak);
-        METHOD("Saddle", 0, Int_t, Saddle);
-        METHOD("Unsaddle", 0, Int_t, Unsaddle);
         METHOD("Retreat", 0, Int_t, Retreat);
         METHOD("Unretreat", 0, Int_t, Unretreat);
 

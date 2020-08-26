@@ -44,9 +44,9 @@ namespace doticu_npcp { namespace XList {
                 xlist->m_lock = BSReadWriteLock();
             }
 
-            if (static_cast<Int_t>(Get_Count(xlist)) < 0) {
-                XList::Set_Count(xlist, 1); // maybe just delete count?
-            }
+            /*if (static_cast<Int_t>(Get_Count(xlist)) < 0) {
+                XList::Set_Count(xlist, 1);
+            }*/
         }
     }
 
@@ -161,10 +161,8 @@ namespace doticu_npcp { namespace XList {
 
         ExtraCount *xcount = (ExtraCount *)xlist->GetByType(kExtraData_Count);
         if (xcount) {
-            //BSReadLocker locker(&xlist->m_lock);
-            return xcount->count;
+            return xcount->Count();
         } else {
-            // it's always assumed to be one if there is no count.
             return 1;
         }
     }
@@ -178,10 +176,8 @@ namespace doticu_npcp { namespace XList {
 
         ExtraCount *xcount = (ExtraCount *)xlist->GetByType(kExtraData_Count);
         if (xcount) {
-            //BSReadAndWriteLocker(&xlist->m_lock);
-            xcount->count = count;
+            xcount->Count(count);
         } else {
-            // it's always assumed to be one if there is no count.
             if (count > 1) {
                 xlist->Add(kExtraData_Count, XData::Create_Count(count));
             }
@@ -195,10 +191,8 @@ namespace doticu_npcp { namespace XList {
 
         ExtraCount *xcount = (ExtraCount *)xlist->GetByType(kExtraData_Count);
         if (xcount) {
-            //BSReadAndWriteLocker(&xlist->m_lock);
-            xcount->count += inc;
+            xcount->Count(xcount->Count() + inc);
         } else {
-            // it's always assumed to be one if there is no count.
             xlist->Add(kExtraData_Count, XData::Create_Count(inc + 1));
         }
     }
@@ -328,7 +322,7 @@ namespace doticu_npcp { namespace XList {
                          str_indent.c_str(),
                          idx_xdata,
                          XData::Get_Type_String(xdata),
-                         ((ExtraCount *)xdata)->count);
+                         ((ExtraCount *)xdata)->Count());
             } else if (xdata->GetType() == kExtraData_Ownership) {
                 _MESSAGE("%sxdata idx: %i, type: %s, owner: %s",
                          str_indent.c_str(),
