@@ -356,24 +356,30 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Object_Ref::Untoken(Actor(), token);
     }
 
-    void Follower_t::Fill(Member_t* member)
+    void Follower_t::Fill(Member_t* member, Followers_t::Add_Callback_i** add_callback)
     {
+        NPCP_ASSERT(member);
+        NPCP_ASSERT(add_callback);
         NPCP_ASSERT(Is_Unfilled());
 
         struct Callback : public Virtual_Callback_t {
         public:
-            Follower_t* self;
+            Follower_t* follower;
             Member_t* member;
-            Callback(Follower_t* self, Member_t* member) :
-                self(self), member(member)
+            Followers_t::Add_Callback_i* add_callback;
+            Callback(Follower_t* follower, Member_t* member, Followers_t::Add_Callback_i* add_callback) :
+                follower(follower), member(member), add_callback(add_callback)
             {
             }
             void operator()(Variable_t* result)
             {
-                self->Create(member);
+                follower->Create(member);
+                NPCP_ASSERT(add_callback);
+                add_callback->operator()(CODES::SUCCESS, follower);
+                delete add_callback;
             }
         };
-        Virtual_Callback_i* callback = new Callback(this, member);
+        Virtual_Callback_i* callback = new Callback(this, member, *add_callback);
 
         Alias_t::Fill(member->Actor(), &callback);
     }
@@ -402,6 +408,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Actor2::Stop_If_Playing_Music(actor);
 
         Enforce_Follower(actor);
+        member->Enforce_Outfit2(actor);
         Level();
     }
 

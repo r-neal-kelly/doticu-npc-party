@@ -469,24 +469,32 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         return Slice(Sort(Filled()), begin, end);
     }
 
-    Int_t Followers_t::Add_Follower(Member_t* member)
+    void Followers_t::Add_Follower(Member_t* member, Add_Callback_i** add_callback)
     {
+        NPCP_ASSERT(add_callback);
         if (member) {
-            Actor_t* actor = member->Actor();
-            if (Hasnt_Actor(actor)) {
-                if (Count_Filled() < Max()) {
-                    Follower_t* follower = From_Unfilled();
-                    NPCP_ASSERT(follower);
-                    follower->Fill(member);
-                    return CODES::SUCCESS;
+            if (member->Isnt_Mannequin()) {
+                Actor_t* actor = member->Actor();
+                if (Hasnt_Actor(actor)) {
+                    if (Count_Filled() < Max()) {
+                        Follower_t* follower = From_Unfilled();
+                        NPCP_ASSERT(follower);
+                        follower->Fill(member, add_callback);
+                    } else {
+                        (*add_callback)->operator()(CODES::FOLLOWERS, nullptr);
+                        delete (*add_callback);
+                    }
                 } else {
-                    return CODES::FOLLOWERS;
+                    (*add_callback)->operator()(CODES::FOLLOWER, nullptr);
+                    delete (*add_callback);
                 }
             } else {
-                return CODES::FOLLOWER;
+                (*add_callback)->operator()(CODES::MANNEQUIN, nullptr);
+                delete (*add_callback);
             }
         } else {
-            return CODES::MEMBER;
+            (*add_callback)->operator()(CODES::MEMBER, nullptr);
+            delete (*add_callback);
         }
     }
 

@@ -7,6 +7,7 @@
 #include "papyrus.h"
 
 #include "party/party_alias.h"
+#include "party/party_members.h"
 
 namespace doticu_npcp { namespace Papyrus {
 
@@ -187,7 +188,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                     Bool_t is_bash,
                     Bool_t is_blocked);
 
-        void Fill(Actor_t* actor, Bool_t is_clone);
+        void Fill(Actor_t* actor, Bool_t is_clone, Members_t::Add_Callback_i** add_callback);
         void Unfill();
         void Create(Actor_t* actor, Bool_t is_clone);
         void Destroy();
@@ -245,7 +246,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         void Enforce_Non_Reanimated(Actor_t* actor);
 
         Int_t Unmember();
-        Int_t Clone();
+        //Int_t Clone();
         Int_t Unclone();
 
         Int_t Stylize(Int_t style);
@@ -307,7 +308,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Int_t Kill();
         void Enforce_Kill(Actor_t* actor);
 
-        Int_t Follow();
         Int_t Unfollow();
 
         void Level();

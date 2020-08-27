@@ -116,11 +116,8 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
     // NPC
 
-    void Commands_t::Member(Actor_t* actor)
+    void Commands_t::Log_Member(Int_t code, const char* name)
     {
-        const char* name = Actor2::Get_Name(actor);
-        Int_t code = Party::Members_t::Self()->Add_Original(actor);
-
         switch (code) {
             case (CODES::SUCCESS):
                 return Log_Note(name, " is now a member.");
@@ -139,6 +136,45 @@ namespace doticu_npcp { namespace Modules { namespace Control {
             default:
                 return Log_Error(name, " could not become a member", code);
         };
+    }
+
+    void Commands_t::Log_Follow(Int_t code, const char* name)
+    {
+        switch (code) {
+            case (CODES::SUCCESS):
+                return Log_Note(name, " will start following.");
+            case (CODES::FOLLOWERS):
+                return Log_Note("No room for ", name, " to become a follower.");
+            case (CODES::MEMBER):
+                return Log_Note(name, " isn't a member, and so can't start following.");
+            case (CODES::FOLLOWER):
+                return Log_Note(name, " is already following.");
+            case (CODES::MANNEQUIN):
+                return Log_Note(name, " is a mannequin and cannot follow.");
+            default:
+                return Log_Error(name, " can't start following", code);
+        };
+    }
+
+    void Commands_t::Member(Actor_t* actor)
+    {
+        using namespace Party;
+
+        class Add_Callback : public Members_t::Add_Callback_i {
+        public:
+            Commands_t* commands;
+            const char* name;
+            Add_Callback(Commands_t* commands, const char* name) :
+                commands(commands), name(name)
+            {
+            }
+            virtual void operator()(Int_t code, Member_t* member) override
+            {
+                commands->Log_Member(code, name);
+            }
+        };
+        Members_t::Add_Callback_i* add_callback = new Add_Callback(this, Actor2::Get_Name(actor));
+        Members_t::Self()->Add_Original(actor, &add_callback);
     }
 
     void Commands_t::Unmember(Actor_t* actor)
@@ -162,23 +198,35 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
     void Commands_t::Clone(Actor_t* actor)
     {
-        const char* name = Actor2::Get_Name(actor);
-        Int_t code = Party::Members_t::Self()->Add_Clone(actor);
+        using namespace Party;
 
-        switch (code) {
-            case (CODES::SUCCESS):
-                return Log_Note("A clone of ", name, " is now a member.");
-            case (CODES::ACTOR):
-                return Log_Note("A clone of this can't be made a member.");
-            case (CODES::MEMBERS):
-                return Log_Note("No room for a clone of ", name, " to be a member.");
-            case (CODES::CHILD):
-                return Log_Note("A child cannot be cloned.");
-            case (CODES::CLONE):
-                return Log_Note(name, " could not be cloned.");
-            default:
-                return Log_Error(name, " could not be cloned", code);
+        struct Add_Callback : public Members_t::Add_Callback_i {
+            Commands_t* commands;
+            const char* name;
+            Add_Callback(Commands_t* commands, const char* name) :
+                commands(commands), name(name)
+            {
+            }
+            void operator()(Int_t code, Member_t* member)
+            {
+                switch (code) {
+                    case (CODES::SUCCESS):
+                        return commands->Log_Note("A clone of ", name, " is now a member.");
+                    case (CODES::ACTOR):
+                        return commands->Log_Note("A clone of this can't be made a member.");
+                    case (CODES::MEMBERS):
+                        return commands->Log_Note("No room for a clone of ", name, " to be a member.");
+                    case (CODES::CHILD):
+                        return commands->Log_Note("A child cannot be cloned.");
+                    case (CODES::CLONE):
+                        return commands->Log_Note(name, " could not be cloned.");
+                    default:
+                        return commands->Log_Error(name, " could not be cloned", code);
+                };
+            }
         };
+        Members_t::Add_Callback_i* add_callback = new Add_Callback(this, Actor2::Get_Name(actor));
+        Members_t::Self()->Add_Clone(actor, &add_callback);
     }
 
     void Commands_t::Unclone(Actor_t* actor)
@@ -879,32 +927,28 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
     void Commands_t::Follow(Actor_t* actor)
     {
+        using namespace Party;
+
         Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
-
-        const char* name;
-        Int_t code;
         if (member) {
-            name = member->Name().data;
-            code = member->Follow();
+            class Add_Callback : public Followers_t::Add_Callback_i {
+            public:
+                Commands_t* commands;
+                Member_t* member;
+                Add_Callback(Commands_t* commands, Member_t* member) :
+                    commands(commands), member(member)
+                {
+                }
+                virtual void operator()(Int_t code, Follower_t* follower) override
+                {
+                    commands->Log_Follow(code, member->Name());
+                }
+            };
+            Followers_t::Add_Callback_i* add_callback = new Add_Callback(this, member);
+            Followers_t::Self()->Add_Follower(member, &add_callback);
         } else {
-            name = Actor2::Get_Name(actor);
-            code = CODES::MEMBER;
+            Log_Follow(CODES::MEMBER, Actor2::Get_Name(actor));
         }
-
-        switch (code) {
-            case (CODES::SUCCESS):
-                return Log_Note(name, " will start following.");
-            case (CODES::FOLLOWERS):
-                return Log_Note("No room for ", name, " to become a follower.");
-            case (CODES::MEMBER):
-                return Log_Note(name, " isn't a member, and so can't start following.");
-            case (CODES::FOLLOWER):
-                return Log_Note(name, " is already following.");
-            case (CODES::MANNEQUIN):
-                return Log_Note(name, " is a mannequin and cannot follow.");
-            default:
-                return Log_Error(name, " can't start following", code);
-        };
     }
 
     void Commands_t::Unfollow(Actor_t* actor)
@@ -1361,86 +1405,172 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
     void Commands_t::Toggle_Immobile(Actor_t* actor)
     {
-        Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
-        if (!member) {
-            Member(actor);
-            member = Party::Members_t::Self()->From_Actor(actor);
-        }
+        using namespace Party;
 
+        Member_t* member = Party::Members_t::Self()->From_Actor(actor);
         if (member) {
             if (member->Is_Immobile()) {
                 Mobilize(actor);
             } else {
                 Immobilize(actor);
             }
+        } else {
+            class Add_Callback : public Members_t::Add_Callback_i {
+            public:
+                Commands_t* commands;
+                Actor_t* actor;
+                Add_Callback(Commands_t* commands, Actor_t* actor) :
+                    commands(commands), actor(actor)
+                {
+                }
+                virtual void operator()(Int_t code, Member_t* member) override
+                {
+                    if (code == CODES::SUCCESS) {
+                        commands->Immobilize(actor);
+                    } else {
+                        commands->Log_Member(code, Actor2::Get_Name(actor));
+                    }
+                }
+            };
+            Members_t::Add_Callback_i* add_callback = new Add_Callback(this, actor);
+            Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
 
     void Commands_t::Toggle_Settler(Actor_t* actor)
     {
-        Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
-        if (!member) {
-            Member(actor);
-            member = Party::Members_t::Self()->From_Actor(actor);
-        }
+        using namespace Party;
 
+        Member_t* member = Party::Members_t::Self()->From_Actor(actor);
         if (member) {
             if (member->Is_Settler()) {
                 Unsettle(actor);
             } else {
                 Settle(actor);
             }
+        } else {
+            class Add_Callback : public Members_t::Add_Callback_i {
+            public:
+                Commands_t* commands;
+                Actor_t* actor;
+                Add_Callback(Commands_t* commands, Actor_t* actor) :
+                    commands(commands), actor(actor)
+                {
+                }
+                virtual void operator()(Int_t code, Member_t* member) override
+                {
+                    if (code == CODES::SUCCESS) {
+                        commands->Settle(actor);
+                    } else {
+                        commands->Log_Member(code, Actor2::Get_Name(actor));
+                    }
+                }
+            };
+            Members_t::Add_Callback_i* add_callback = new Add_Callback(this, actor);
+            Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
 
     void Commands_t::Toggle_Thrall(Actor_t* actor)
     {
-        Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
-        if (!member) {
-            Member(actor);
-            member = Party::Members_t::Self()->From_Actor(actor);
-        }
+        using namespace Party;
 
+        Member_t* member = Party::Members_t::Self()->From_Actor(actor);
         if (member) {
             if (member->Is_Thrall()) {
                 Unthrall(actor);
             } else {
                 Enthrall(actor);
             }
+        } else {
+            class Add_Callback : public Members_t::Add_Callback_i {
+            public:
+                Commands_t* commands;
+                Actor_t* actor;
+                Add_Callback(Commands_t* commands, Actor_t* actor) :
+                    commands(commands), actor(actor)
+                {
+                }
+                virtual void operator()(Int_t code, Member_t* member) override
+                {
+                    if (code == CODES::SUCCESS) {
+                        commands->Enthrall(actor);
+                    } else {
+                        commands->Log_Member(code, Actor2::Get_Name(actor));
+                    }
+                }
+            };
+            Members_t::Add_Callback_i* add_callback = new Add_Callback(this, actor);
+            Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
 
     void Commands_t::Toggle_Paralyzed(Actor_t* actor)
     {
-        Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
-        if (!member) {
-            Member(actor);
-            member = Party::Members_t::Self()->From_Actor(actor);
-        }
+        using namespace Party;
 
+        Member_t* member = Party::Members_t::Self()->From_Actor(actor);
         if (member) {
             if (member->Is_Paralyzed()) {
                 Unparalyze(actor);
             } else {
                 Paralyze(actor);
             }
+        } else {
+            class Add_Callback : public Members_t::Add_Callback_i {
+            public:
+                Commands_t* commands;
+                Actor_t* actor;
+                Add_Callback(Commands_t* commands, Actor_t* actor) :
+                    commands(commands), actor(actor)
+                {
+                }
+                virtual void operator()(Int_t code, Member_t* member) override
+                {
+                    if (code == CODES::SUCCESS) {
+                        commands->Paralyze(actor);
+                    } else {
+                        commands->Log_Member(code, Actor2::Get_Name(actor));
+                    }
+                }
+            };
+            Members_t::Add_Callback_i* add_callback = new Add_Callback(this, actor);
+            Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
 
     void Commands_t::Toggle_Mannequin(Actor_t* actor, Reference_t* marker)
     {
-        Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
-        if (!member) {
-            Member(actor);
-            member = Party::Members_t::Self()->From_Actor(actor);
-        }
+        using namespace Party;
 
+        Member_t* member = Party::Members_t::Self()->From_Actor(actor);
         if (member) {
             if (member->Is_Mannequin()) {
                 Unmannequinize(actor);
             } else {
                 Mannequinize(actor, marker);
             }
+        } else {
+            class Add_Callback : public Members_t::Add_Callback_i {
+            public:
+                Commands_t* commands;
+                Actor_t* actor;
+                Reference_t* marker;
+                Add_Callback(Commands_t* commands, Actor_t* actor, Reference_t* marker) :
+                    commands(commands), actor(actor), marker(marker)
+                {
+                }
+                virtual void operator()(Int_t code, Member_t* member) override
+                {
+                    if (code == CODES::SUCCESS) {
+                        commands->Mannequinize(actor, marker);
+                    } else {
+                        commands->Log_Member(code, Actor2::Get_Name(actor));
+                    }
+                }
+            };
+            Members_t::Add_Callback_i* add_callback = new Add_Callback(this, actor, marker);
+            Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
 
@@ -1455,35 +1585,69 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
     void Commands_t::Toggle_Reanimated(Actor_t* actor)
     {
-        Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
-        if (!member) {
-            Member(actor);
-            member = Party::Members_t::Self()->From_Actor(actor);
-        }
+        using namespace Party;
 
+        Member_t* member = Party::Members_t::Self()->From_Actor(actor);
         if (member) {
             if (member->Is_Reanimated()) {
                 Deanimate(actor);
             } else {
                 Reanimate(actor);
             }
+        } else {
+            class Add_Callback : public Members_t::Add_Callback_i {
+            public:
+                Commands_t* commands;
+                Actor_t* actor;
+                Add_Callback(Commands_t* commands, Actor_t* actor) :
+                    commands(commands), actor(actor)
+                {
+                }
+                virtual void operator()(Int_t code, Member_t* member) override
+                {
+                    if (code == CODES::SUCCESS) {
+                        commands->Reanimate(actor);
+                    } else {
+                        commands->Log_Member(code, Actor2::Get_Name(actor));
+                    }
+                }
+            };
+            Members_t::Add_Callback_i* add_callback = new Add_Callback(this, actor);
+            Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
 
     void Commands_t::Toggle_Follower(Actor_t* actor)
     {
-        Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
-        if (!member) {
-            Member(actor);
-            member = Party::Members_t::Self()->From_Actor(actor);
-        }
+        using namespace Party;
 
+        Member_t* member = Party::Members_t::Self()->From_Actor(actor);
         if (member) {
             if (member->Is_Follower()) {
                 Unfollow(actor);
             } else {
                 Follow(actor);
             }
+        } else {
+            class Add_Callback : public Members_t::Add_Callback_i {
+            public:
+                Commands_t* commands;
+                Actor_t* actor;
+                Add_Callback(Commands_t* commands, Actor_t* actor) :
+                    commands(commands), actor(actor)
+                {
+                }
+                virtual void operator()(Int_t code, Member_t* member) override
+                {
+                    if (code == CODES::SUCCESS) {
+                        commands->Follow(actor);
+                    } else {
+                        commands->Log_Member(code, Actor2::Get_Name(actor));
+                    }
+                }
+            };
+            Members_t::Add_Callback_i* add_callback = new Add_Callback(this, actor);
+            Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
 
@@ -1587,12 +1751,9 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
     void Commands_t::Cycle_Style(Actor_t* actor)
     {
-        Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
-        if (!member) {
-            Member(actor);
-            member = Party::Members_t::Self()->From_Actor(actor);
-        }
+        using namespace Party;
 
+        Member_t* member = Party::Members_t::Self()->From_Actor(actor);
         if (member) {
             Int_t style = member->Style();
             switch (style) {
@@ -1607,17 +1768,34 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                 case (CODES::STYLE::COWARD):
                     return Stylize_Default(actor);
             }
+        } else {
+            class Add_Callback : public Members_t::Add_Callback_i {
+            public:
+                Commands_t* commands;
+                Actor_t* actor;
+                Add_Callback(Commands_t* commands, Actor_t* actor) :
+                    commands(commands), actor(actor)
+                {
+                }
+                virtual void operator()(Int_t code, Member_t* member) override
+                {
+                    if (code == CODES::SUCCESS) {
+                        commands->Stylize_Default(actor);
+                    } else {
+                        commands->Log_Member(code, Actor2::Get_Name(actor));
+                    }
+                }
+            };
+            Members_t::Add_Callback_i* add_callback = new Add_Callback(this, actor);
+            Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
 
     void Commands_t::Cycle_Vitality(Actor_t* actor)
     {
-        Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
-        if (!member) {
-            Member(actor);
-            member = Party::Members_t::Self()->From_Actor(actor);
-        }
+        using namespace Party;
 
+        Member_t* member = Party::Members_t::Self()->From_Actor(actor);
         if (member) {
             Int_t vitality = member->Vitality();
             switch (vitality) {
@@ -1630,6 +1808,26 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                 case (CODES::VITALITY::INVULNERABLE):
                     return Vitalize_Mortal(actor);
             }
+        } else {
+            class Add_Callback : public Members_t::Add_Callback_i {
+            public:
+                Commands_t* commands;
+                Actor_t* actor;
+                Add_Callback(Commands_t* commands, Actor_t* actor) :
+                    commands(commands), actor(actor)
+                {
+                }
+                virtual void operator()(Int_t code, Member_t* member) override
+                {
+                    if (code == CODES::SUCCESS) {
+                        commands->Vitalize_Mortal(actor);
+                    } else {
+                        commands->Log_Member(code, Actor2::Get_Name(actor));
+                    }
+                }
+            };
+            Members_t::Add_Callback_i* add_callback = new Add_Callback(this, actor);
+            Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
 
@@ -1795,70 +1993,175 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
     void Commands_t::Toggle_Sneak(Actor_t* actor)
     {
-        Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
-        if (!member) {
-            Member(actor);
-            member = Party::Members_t::Self()->From_Actor(actor);
-        }
+        using namespace Party;
 
-        Party::Follower_t* follower = Party::Followers_t::Self()->From_Actor(actor);
-        if (member && !follower) {
-            Follow(actor);
-            follower = Party::Followers_t::Self()->From_Actor(actor);
-        }
-
-        if (follower) {
-            if (follower->Is_Sneak()) {
-                Unsneak(actor);
+        Member_t* member = Party::Members_t::Self()->From_Actor(actor);
+        if (member) {
+            Party::Follower_t* follower = member->Follower();
+            if (follower) {
+                if (follower->Is_Sneak()) {
+                    Unsneak(actor);
+                } else {
+                    Sneak(actor);
+                }
             } else {
-                Sneak(actor);
+                class Add_Callback : public Followers_t::Add_Callback_i {
+                public:
+                    Commands_t* commands;
+                    Actor_t* actor;
+                    Member_t* member;
+                    Add_Callback(Commands_t* commands, Actor_t* actor, Member_t* member) :
+                        commands(commands), actor(actor), member(member)
+                    {
+                    }
+                    virtual void operator()(Int_t code, Follower_t* follower) override
+                    {
+                        if (code == CODES::SUCCESS) {
+                            commands->Sneak(actor);
+                        } else {
+                            commands->Log_Follow(code, member->Name());
+                        }
+                    }
+                };
+                Followers_t::Add_Callback_i* add_callback = new Add_Callback(this, actor, member);
+                Followers_t::Self()->Add_Follower(member, &add_callback);
             }
+        } else {
+            class Add_Callback : public Members_t::Add_Callback_i {
+            public:
+                Commands_t* commands;
+                Actor_t* actor;
+                Add_Callback(Commands_t* commands, Actor_t* actor) :
+                    commands(commands), actor(actor)
+                {
+                }
+                virtual void operator()(Int_t code, Member_t* member) override
+                {
+                    if (code == CODES::SUCCESS) {
+                        commands->Toggle_Sneak(actor);
+                    } else {
+                        commands->Log_Member(code, Actor2::Get_Name(actor));
+                    }
+                }
+            };
+            Members_t::Add_Callback_i* add_callback = new Add_Callback(this, actor);
+            Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
 
     void Commands_t::Toggle_Saddler(Actor_t* actor)
     {
-        Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
-        if (!member) {
-            Member(actor);
-            member = Party::Members_t::Self()->From_Actor(actor);
-        }
+        using namespace Party;
 
-        Party::Follower_t* follower = Party::Followers_t::Self()->From_Actor(actor);
-        if (member && !follower) {
-            Follow(actor);
-            follower = Party::Followers_t::Self()->From_Actor(actor);
-        }
-
-        if (follower) {
-            if (follower->Is_Saddler()) {
-                Unsaddle(actor);
+        Member_t* member = Party::Members_t::Self()->From_Actor(actor);
+        if (member) {
+            Party::Follower_t* follower = member->Follower();
+            if (follower) {
+                if (follower->Is_Saddler()) {
+                    Unsaddle(actor);
+                } else {
+                    Saddle(actor);
+                }
             } else {
-                Saddle(actor);
+                class Add_Callback : public Followers_t::Add_Callback_i {
+                public:
+                    Commands_t* commands;
+                    Actor_t* actor;
+                    Member_t* member;
+                    Add_Callback(Commands_t* commands, Actor_t* actor, Member_t* member) :
+                        commands(commands), actor(actor), member(member)
+                    {
+                    }
+                    virtual void operator()(Int_t code, Follower_t* follower) override
+                    {
+                        if (code == CODES::SUCCESS) {
+                            commands->Saddle(actor);
+                        } else {
+                            commands->Log_Follow(code, member->Name());
+                        }
+                    }
+                };
+                Followers_t::Add_Callback_i* add_callback = new Add_Callback(this, actor, member);
+                Followers_t::Self()->Add_Follower(member, &add_callback);
             }
+        } else {
+            class Add_Callback : public Members_t::Add_Callback_i {
+            public:
+                Commands_t* commands;
+                Actor_t* actor;
+                Add_Callback(Commands_t* commands, Actor_t* actor) :
+                    commands(commands), actor(actor)
+                {
+                }
+                virtual void operator()(Int_t code, Member_t* member) override
+                {
+                    if (code == CODES::SUCCESS) {
+                        commands->Toggle_Saddler(actor);
+                    } else {
+                        commands->Log_Member(code, Actor2::Get_Name(actor));
+                    }
+                }
+            };
+            Members_t::Add_Callback_i* add_callback = new Add_Callback(this, actor);
+            Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
 
     void Commands_t::Toggle_Retreater(Actor_t* actor)
     {
-        Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
-        if (!member) {
-            Member(actor);
-            member = Party::Members_t::Self()->From_Actor(actor);
-        }
+        using namespace Party;
 
-        Party::Follower_t* follower = Party::Followers_t::Self()->From_Actor(actor);
-        if (member && !follower) {
-            Follow(actor);
-            follower = Party::Followers_t::Self()->From_Actor(actor);
-        }
-
-        if (follower) {
-            if (follower->Is_Retreater()) {
-                Unretreat(actor);
+        Member_t* member = Party::Members_t::Self()->From_Actor(actor);
+        if (member) {
+            Party::Follower_t* follower = member->Follower();
+            if (follower) {
+                if (follower->Is_Retreater()) {
+                    Unretreat(actor);
+                } else {
+                    Retreat(actor);
+                }
             } else {
-                Retreat(actor);
+                class Add_Callback : public Followers_t::Add_Callback_i {
+                public:
+                    Commands_t* commands;
+                    Actor_t* actor;
+                    Member_t* member;
+                    Add_Callback(Commands_t* commands, Actor_t* actor, Member_t* member) :
+                        commands(commands), actor(actor), member(member)
+                    {
+                    }
+                    virtual void operator()(Int_t code, Follower_t* follower) override
+                    {
+                        if (code == CODES::SUCCESS) {
+                            commands->Retreat(actor);
+                        } else {
+                            commands->Log_Follow(code, member->Name());
+                        }
+                    }
+                };
+                Followers_t::Add_Callback_i* add_callback = new Add_Callback(this, actor, member);
+                Followers_t::Self()->Add_Follower(member, &add_callback);
             }
+        } else {
+            class Add_Callback : public Members_t::Add_Callback_i {
+            public:
+                Commands_t* commands;
+                Actor_t* actor;
+                Add_Callback(Commands_t* commands, Actor_t* actor) :
+                    commands(commands), actor(actor)
+                {
+                }
+                virtual void operator()(Int_t code, Member_t* member) override
+                {
+                    if (code == CODES::SUCCESS) {
+                        commands->Toggle_Retreater(actor);
+                    } else {
+                        commands->Log_Member(code, Actor2::Get_Name(actor));
+                    }
+                }
+            };
+            Members_t::Add_Callback_i* add_callback = new Add_Callback(this, actor);
+            Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
 

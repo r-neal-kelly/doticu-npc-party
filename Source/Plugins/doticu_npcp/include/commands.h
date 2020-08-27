@@ -5,7 +5,6 @@
 #pragma once
 
 #include "papyrus.h"
-#include "types.h"
 
 namespace doticu_npcp { namespace Modules { namespace Control {
 
@@ -29,6 +28,9 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         void Log_Error(const char* part_1, const char* part_2, Int_t code, Bool_t do_log = true);
 
         // NPC
+        void Log_Member(Int_t code, const char* name);
+        void Log_Follow(Int_t code, const char* name);
+
         void Member(Actor_t* actor);
         void Unmember(Actor_t* actor);
         void Clone(Actor_t* actor);

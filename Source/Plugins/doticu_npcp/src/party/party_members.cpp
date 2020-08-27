@@ -642,8 +642,9 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
-    Int_t Members_t::Add_Original(Actor_t* original)
+    void Members_t::Add_Original(Actor_t* original, Add_Callback_i** add_callback)
     {
+        NPCP_ASSERT(add_callback);
         if (original) {
             if (!Should_Clone(original)) {
                 if (Actor2::Isnt_Child(original)) {
@@ -653,25 +654,29 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                                 NPCS_t::Self()->Add_Original(original);
                                 Member_t* member = From_Unfilled();
                                 NPCP_ASSERT(member);
-                                member->Fill(original, false);
-                                return CODES::SUCCESS;
+                                member->Fill(original, false, add_callback);
                             } else {
-                                return CODES::DEAD;
+                                (*add_callback)->operator()(CODES::DEAD, nullptr);
+                                delete (*add_callback);
                             }
                         } else {
-                            return CODES::MEMBERS;
+                            (*add_callback)->operator()(CODES::MEMBERS, nullptr);
+                            delete (*add_callback);
                         }
                     } else {
-                        return CODES::MEMBER;
+                        (*add_callback)->operator()(CODES::MEMBER, nullptr);
+                        delete (*add_callback);
                     }
                 } else {
-                    return CODES::CHILD;
+                    (*add_callback)->operator()(CODES::CHILD, nullptr);
+                    delete (*add_callback);
                 }
             } else {
-                return Add_Clone(original);
+                return Add_Clone(original, add_callback);
             }
         } else {
-            return CODES::ACTOR;
+            (*add_callback)->operator()(CODES::ACTOR, nullptr);
+            delete (*add_callback);
         }
     }
 
@@ -695,24 +700,27 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
-    Int_t Members_t::Add_Clone(Actor_t* original)
+    void Members_t::Add_Clone(Actor_t* original, Add_Callback_i** add_callback)
     {
+        NPCP_ASSERT(add_callback);
         if (original) {
             if (Actor2::Isnt_Child(original)) {
                 if (Count_Filled() < Limit()) {
                     Actor_t* clone = NPCS_t::Self()->Add_Clone(original);
                     Member_t* member = From_Unfilled();
                     NPCP_ASSERT(member);
-                    member->Fill(clone, true);
-                    return CODES::SUCCESS;
+                    member->Fill(clone, true, add_callback);
                 } else {
-                    return CODES::MEMBERS;
+                    (*add_callback)->operator()(CODES::MEMBERS, nullptr);
+                    delete (*add_callback);
                 }
             } else {
-                return CODES::CHILD;
+                (*add_callback)->operator()(CODES::CHILD, nullptr);
+                delete (*add_callback);
             }
         } else {
-            return CODES::ACTOR;
+            (*add_callback)->operator()(CODES::ACTOR, nullptr);
+            delete (*add_callback);
         }
     }
 

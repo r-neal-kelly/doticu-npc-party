@@ -131,7 +131,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     void Members_t::Member(Party::Member_t* member)
     {
-        Member_Variable()->Pack(member);
+        Member_Variable()->Pack(member, Party::Member_t::Class_Info());
     }
 
     Party::Member_t* Members_t::Previous_Member()
@@ -191,7 +191,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     void Members_t::Members_Member(Party::Member_t* member)
     {
-        Members_Member_Variable()->Pack(member);
+        Members_Member_Variable()->Pack(member, Party::Member_t::Class_Info());
     }
 
     Int_t Members_t::Filter_Members_Page_Index()
@@ -211,7 +211,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     void Members_t::Filter_Members_Member(Party::Member_t* member)
     {
-        Filter_Members_Member_Variable()->Pack(member);
+        Filter_Members_Member_Variable()->Pack(member, Party::Member_t::Class_Info());
     }
 
     Bool_t Members_t::Do_Previous_Member()
@@ -299,7 +299,10 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Page_Index(page_idx);
 
         Int_t begin = members_per_page * page_idx;
-        Int_t end = min(begin + members_per_page, members_count);
+        Int_t end = begin + members_per_page;
+        if (end > members_count) {
+            end = members_count;
+        }
 
         Vector_t<Party::Member_t*> slice;
         slice.reserve(end - begin);
@@ -421,6 +424,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             mcm->Add_Header_Option("");
 
             Array_t* members_slice = Members_Slice();
+
             for (size_t idx = 0, count = members_slice->count; idx < count; idx += 1) {
                 Party::Member_t* member = static_cast<Party::Member_t*>
                     (members_slice->Point(idx)->Alias());

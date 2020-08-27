@@ -878,7 +878,10 @@ namespace doticu_npcp { namespace Papyrus {
     template <typename Type>
     inline void Variable_t::Pack(Vector_t<Type>& values)
     {
-        Class_Info_t* class_info = Class_Info_t::Fetch(std::remove_pointer<Type>::type::kTypeID);
+        // ours causes a crash sometimes. not sure why yet
+        PackValue(reinterpret_cast<VMValue*>(this), &values, (*g_skyrimVM)->GetClassRegistry());
+
+        /*Class_Info_t* class_info = Class_Info_t::Fetch(std::remove_pointer<Type>::type::kTypeID);
         NPCP_ASSERT(class_info);
         if (class_info->ref_count > 1) {
             class_info->ref_count -= 1;
@@ -893,7 +896,7 @@ namespace doticu_npcp { namespace Papyrus {
             arr->Point(idx)->Pack(values[idx]);
         }
 
-        Array(arr);
+        Array(arr);*/
     }
 
     template <>

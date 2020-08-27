@@ -912,23 +912,29 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
-    void Member_t::Fill(Actor_t* actor, Bool_t is_clone)
+    void Member_t::Fill(Actor_t* actor, Bool_t is_clone, Members_t::Add_Callback_i** add_callback)
     {
+        NPCP_ASSERT(add_callback);
+
         struct Callback : public Virtual_Callback_t {
         public:
             Member_t* member;
             Actor_t* actor;
             Bool_t is_clone;
-            Callback(Member_t* member, Actor_t* actor, Bool_t is_clone) :
-                member(member), actor(actor), is_clone(is_clone)
+            Members_t::Add_Callback_i* add_callback;
+            Callback(Member_t* member, Actor_t* actor, Bool_t is_clone, Members_t::Add_Callback_i* add_callback) :
+                member(member), actor(actor), is_clone(is_clone), add_callback(add_callback)
             {
             }
             void operator()(Variable_t* result)
             {
                 member->Create(actor, is_clone);
+                NPCP_ASSERT(add_callback);
+                add_callback->operator()(CODES::SUCCESS, member);
+                delete add_callback;
             }
         };
-        Virtual_Callback_i* callback = new Callback(this, actor, is_clone);
+        Virtual_Callback_i* callback = new Callback(this, actor, is_clone, *add_callback);
 
         Alias_t::Fill(actor, &callback);
     }
@@ -1826,14 +1832,14 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
-    Int_t Member_t::Clone()
+    /*Int_t Member_t::Clone()
     {
         if (Is_Filled()) {
             return Members_t::Self()->Add_Clone(Actor());
         } else {
             return CODES::MEMBER;
         }
-    }
+    }*/
 
     Int_t Member_t::Unclone()
     {
@@ -2803,30 +2809,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         if (Is_Reanimated()) {
             Deanimate();
-        }
-    }
-
-    Int_t Member_t::Follow()
-    {
-        if (Is_Filled()) {
-            if (Isnt_Mannequin()) {
-                if (Isnt_Follower()) {
-                    Int_t result = Followers_t::Self()->Add_Follower(this);
-                    if (result == CODES::SUCCESS) {
-                        Actor_t* actor = Actor();
-                        Enforce_Outfit2(actor); // may need to use callback
-                        return CODES::SUCCESS;
-                    } else {
-                        return result;
-                    }
-                } else {
-                    return CODES::FOLLOWER;
-                }
-            } else {
-                return CODES::MANNEQUIN;
-            }
-        } else {
-            return CODES::MEMBER;
         }
     }
 

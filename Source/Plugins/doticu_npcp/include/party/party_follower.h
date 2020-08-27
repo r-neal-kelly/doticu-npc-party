@@ -7,6 +7,7 @@
 #include "papyrus.h"
 
 #include "party/party_alias.h"
+#include "party/party_followers.h"
 
 namespace doticu_npcp { namespace Papyrus { namespace Party {
 
@@ -94,7 +95,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         void Token(Misc_t* token, Int_t count = 1);
         void Untoken(Misc_t* token);
 
-        void Fill(Member_t* member);
+        void Fill(Member_t* member, Followers_t::Add_Callback_i** add_callback);
         void Unfill(Virtual_Callback_i** callback);
         void Create(Member_t* member);
         void Destroy();
