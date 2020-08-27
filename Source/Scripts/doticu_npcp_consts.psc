@@ -34,6 +34,7 @@ Formlist function Expo_Cell_Markers_Formlist() native global
 
 ; NPCP Globals
 GlobalVariable function Is_Installed_Global() native global
+GlobalVariable function Allow_Dialogue_For_All_Global() native global
 GlobalVariable function Force_Clone_Uniques_Global() native global
 GlobalVariable function Force_Clone_Generics_Global() native global
 GlobalVariable function Force_Unclone_Uniques_Global() native global

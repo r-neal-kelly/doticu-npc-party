@@ -62,7 +62,7 @@ function f_Init_Mod()
     FUNCS.Send_Event("doticu_npcp_init_mod")
 endFunction
 
-function f_Load_Mod()
+function f_Load_Mod();;;
     FUNCS.Wait_Out_Of_Menu(1); just in case of any engine bugs
 
     if p_Has_Requires()

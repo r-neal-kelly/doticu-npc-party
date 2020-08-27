@@ -25,7 +25,7 @@ Actor function Actor() native
 string function Name() native
 
 ; Private Methods
-function p_Enable()
+function p_Enable();;;
     p_ref_actor.Enable()
 
     ; we need to support leveled bases (members) as opposed to real bases (clones) only
@@ -34,7 +34,7 @@ function p_Enable()
     p_ref_actor.SetActorOwner(ACTORS.Get_Leveled_Base(p_ref_follower.Actor()))
 endFunction
 
-function p_Disable()
+function p_Disable();;;
     while doticu_npcp.Actor_Get_Mounted_Actor(p_ref_actor)
         FUNCS.Wait_Out_Of_Menu(1)
     endWhile

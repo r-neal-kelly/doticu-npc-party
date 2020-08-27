@@ -1,6 +1,4 @@
-;/
-    Copyright © 2020 r-neal-kelly, aka doticu
-/;
+; Copyright © 2020 r-neal-kelly, aka doticu
 
 Scriptname doticu_npcp hidden
 
@@ -24,7 +22,7 @@ doticu_npcp_control function Control() global
     return doticu_npcp_consts.Control_Quest() as doticu_npcp_control
 endFunction
 
-; most of the following shall eventually be moved into existing types or remove completely
+; most of the following shall eventually be moved into existing types or removed completely
 
 ; Actor
 Actor function Actor_Get_Mounted_Actor(Actor ref_horse) native global

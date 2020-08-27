@@ -84,7 +84,7 @@ string function Pressed_Hotkey(int value \
                               ,int pressed_5 = -1, int pressed_6 = -1, int pressed_7 = -1, int pressed_8 = -1) native
 
 ; Public Methods
-function Update_Keys()
+function Update_Keys();;;
     UnregisterForAllKeys()
 
     ; General

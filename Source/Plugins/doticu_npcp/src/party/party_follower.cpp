@@ -144,6 +144,11 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         return Member()->Name();
     }
 
+    Bool_t Follower_t::Is_Ready()
+    {
+        return Is_Filled() && Actor_Variable()->Has_Object();
+    }
+
     Bool_t Follower_t::Is_Loaded()
     {
         return Is_Filled() && Actor2::Is_Loaded(Actor());
@@ -366,7 +371,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             void operator()(Variable_t* result)
             {
                 self->Create(member);
-                Virtual_Machine_t::Self()->Call_Method(self, self->Class_Name(), "f_Register");
             }
         };
         Virtual_Callback_i* callback = new Callback(this, member);
@@ -378,7 +382,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     {
         NPCP_ASSERT(Is_Filled());
 
-        Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "f_Unregister");
         Destroy();
         Alias_t::Unfill(callback);
     }
@@ -1016,7 +1019,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     void Follower_t::Enforce()
     {
-        if (Is_Filled() && Is_Alive()) {
+        if (Is_Ready() && Is_Alive()) {
             Actor_t* actor = Actor();
 
             Enforce_Follower(actor); // Backup should be Follow and Restore Unfollow

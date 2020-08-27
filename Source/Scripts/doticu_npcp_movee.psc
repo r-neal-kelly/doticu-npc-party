@@ -84,7 +84,7 @@ float               p_movee_pos             =   0.0
 float               p_movee_ang             =   0.0
 
 ; Friend Methods
-function f_Create(Actor ref_actor)
+function f_Create(Actor ref_actor);;;
     p_is_created = true
     p_is_executing = false
     p_ref_actor = ref_actor
@@ -105,7 +105,7 @@ function f_Create(Actor ref_actor)
     RegisterForSingleUpdate(0.0)
 endFunction
 
-function f_Destroy()
+function f_Destroy();;;
     if !Exists()
         return
     endIf
@@ -144,7 +144,7 @@ p_Lock()
 p_Unlock()
 endFunction
 
-function f_Register()
+function f_Register();;;
     RegisterForModEvent("doticu_npcp_cell_change", "On_Cell_Change")
     RegisterForModEvent("doticu_npcp_movee_distance_farther", "On_Distance_Farther")
     RegisterForModEvent("doticu_npcp_movee_distance_nearer", "On_Distance_Nearer")
@@ -153,7 +153,7 @@ function f_Register()
     Update_Keys()
 endFunction
 
-function f_Unregister()
+function f_Unregister();;;
     UnregisterForAllKeys()
     UnregisterForAllModEvents()
 endFunction

@@ -153,7 +153,7 @@ function f_Build_Page()
     string str_mannequins = "Mannequins: " + MANNEQUINS.Count_Expoees() + "/" + MANNEQUINS.SLOTS
     string str_pages = "Page: " + (p_idx_page + 1) + "/" + p_num_pages
     MCM.SetTitleText(str_mannequins + "               " + str_pages)
-
+    
     ; Header
     MCM.SetCursorFillMode(MCM.LEFT_TO_RIGHT)
     MCM.SetCursorPosition(0)

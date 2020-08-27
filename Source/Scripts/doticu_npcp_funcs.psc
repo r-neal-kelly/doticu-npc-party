@@ -62,7 +62,7 @@ function f_Register()
 endFunction
 
 ; Public Methods
-function Close_Menus()
+function Close_Menus();;;
     int key_menu = Input.GetMappedKey("Tween Menu")
     
     while Utility.IsInMenuMode()
@@ -138,7 +138,7 @@ function Rename(ObjectReference ref_container, string str_name)
     ref_container.SetDisplayName(str_name, true)
 endFunction
 
-function Open_Container(ObjectReference ref_container)
+function Open_Container(ObjectReference ref_container);;;
     ref_container.Activate(doticu_npcp_consts.Player_Actor())
     Wait_Out_Of_Menu(0.1)
 endFunction
@@ -163,16 +163,16 @@ function Move_To_Orbit(ObjectReference ref, ObjectReference origin, float radius
     endIf
 endFunction
 
-function Essentialize(ActorBase base_actor)
+function Essentialize(ActorBase base_actor);;;
     Wait(1)
     base_actor.SetEssential(true)
 endFunction
 
-function Protect(ActorBase base_actor)
+function Protect(ActorBase base_actor);;;
     Wait(1)
     base_actor.SetProtected(true)
 endFunction
 
-Actor function Find_Closest_Actor_From(ObjectReference ref, float radius)
+Actor function Find_Closest_Actor_From(ObjectReference ref, float radius);;;
     return Game.FindClosestActorFromRef(ref, radius)
 endFunction

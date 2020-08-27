@@ -16,6 +16,7 @@
 #include "vars.h"
 
 #include "party/party_player.h"
+#include "party/party_movee.h"
 #include "party/party_npcs.h"
 #include "party/party_members.h"
 #include "party/party_member.h"
@@ -1540,7 +1541,12 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
                     Follower_t* follower = Follower();
                     if (follower) {
-                        Virtual_Machine_t::Self()->Call_Method(follower, Follower_t::Class_Name(), "Unfollow");
+                        Unfollow();
+                    }
+
+                    Movee_t* movee = Movee_t::Self();
+                    if (movee->Actor() == actor) {
+                        movee->Stop();
                     }
 
                     Actor2::Evaluate_Package(actor);

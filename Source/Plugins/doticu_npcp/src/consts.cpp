@@ -175,6 +175,7 @@ namespace doticu_npcp { namespace Consts {
 
         // NPCP Globals
         GLOBAL_IS_INSTALLED                 = 0x189ADD,
+        GLOBAL_ALLOW_DIALOGUE_FOR_ALL       = 0x3B4463,
         GLOBAL_FORCE_CLONE_UNIQUES          = 0x05244D,
         GLOBAL_FORCE_CLONE_GENERICS         = 0x05244E,
         GLOBAL_FORCE_UNCLONE_UNIQUES        = 0x05244F,
@@ -348,6 +349,7 @@ namespace doticu_npcp { namespace Consts {
 
     // NPCP Globals
     Global_t* Is_Installed_Global() { NPCP_FORM(Global_t, GLOBAL_IS_INSTALLED); }
+    Global_t* Allow_Dialogue_For_All_Global() { NPCP_FORM(Global_t, GLOBAL_ALLOW_DIALOGUE_FOR_ALL); }
     Global_t* Force_Clone_Uniques_Global() { NPCP_FORM(Global_t, GLOBAL_FORCE_CLONE_UNIQUES); }
     Global_t* Force_Clone_Generics_Global() { NPCP_FORM(Global_t, GLOBAL_FORCE_CLONE_GENERICS); }
     Global_t* Force_Unclone_Uniques_Global() { NPCP_FORM(Global_t, GLOBAL_FORCE_UNCLONE_UNIQUES); }
@@ -544,6 +546,7 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
 
         // NPCP Globals
         ADD_GLOBAL("Is_Installed_Global", 0, Global_t*, Is_Installed_Global);
+        ADD_GLOBAL("Allow_Dialogue_For_All_Global", 0, Global_t*, Allow_Dialogue_For_All_Global);
         ADD_GLOBAL("Force_Clone_Uniques_Global", 0, Global_t*, Force_Clone_Uniques_Global);
         ADD_GLOBAL("Force_Clone_Generics_Global", 0, Global_t*, Force_Clone_Generics_Global);
         ADD_GLOBAL("Force_Unclone_Uniques_Global", 0, Global_t*, Force_Unclone_Uniques_Global);

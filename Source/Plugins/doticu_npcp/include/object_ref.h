@@ -52,23 +52,6 @@ namespace doticu_npcp { namespace Object_Ref {
     void Log_XList(TESObjectREFR *ref_object);
 
     void Move_To_Orbit(TESObjectREFR *obj, TESObjectREFR *target, float radius, float angle_degree);
-    void Move_To_Orbit_And_Callback(Reference_t* ref,
-                                    Reference_t* origin,
-                                    Float_t radius,
-                                    Float_t degree,
-                                    Virtual_Callback_i** callback = nullptr);
-    void Move_To(Reference_t* ref,
-                 Reference_t* target,
-                 Float_t x_offset,
-                 Float_t y_offset,
-                 Float_t z_offset,
-                 Bool_t do_match_rotation = true,
-                 Virtual_Callback_i** callback = nullptr);
-    void Set_Angle(Reference_t* ref,
-                   Float_t x_degree,
-                   Float_t y_degree,
-                   Float_t z_degree,
-                   Virtual_Callback_i** callback = nullptr);
 
     float Get_Distance(TESObjectREFR *obj, TESObjectREFR *target);
     bool Is_Near_Player(TESObjectREFR *obj, float max_radius = 4096);

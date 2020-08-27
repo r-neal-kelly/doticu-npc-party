@@ -141,14 +141,14 @@ function p_Push_Error(string str_error)
 endFunction
 
 ; Public Methods
-function Create_Note(string str_note, bool do_log = true)
+function Create_Note(string str_note, bool do_log = true);;;
     Debug.Notification("NPC Party: " + str_note)
     if do_log
         p_Push_Note(str_note)
     endIf
 endFunction
 
-function Create_Error(string str_error, bool do_log = true)
+function Create_Error(string str_error, bool do_log = true);;;
     Debug.Notification("NPC Party ERROR: " + str_error)
     if do_log
         p_Push_Error(str_error)

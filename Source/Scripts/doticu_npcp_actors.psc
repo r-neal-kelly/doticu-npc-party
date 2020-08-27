@@ -222,7 +222,7 @@ function Move_To(ObjectReference ref_subject, ObjectReference ref_object, int di
     endIf
 endFunction
 
-function Stop_If_Playing_Music(Actor ref_actor)
+function Stop_If_Playing_Music(Actor ref_actor);;;
     BardSongsScript script = doticu_npcp_consts.Bard_Songs_Quest() as BardSongsScript
 
     if script.BardSongs_Bard.GetActorReference() == ref_actor
@@ -248,7 +248,7 @@ function Stop_If_Playing_Music(Actor ref_actor)
     endIf
 endFunction
 
-function Greet_Player(Actor ref_actor)
+function Greet_Player(Actor ref_actor);;;
     if !ref_actor
         return
     endIf
@@ -260,7 +260,7 @@ function Greet_Player(Actor ref_actor)
     GREETER.f_Create(ref_actor)
 endFunction
 
-function Create_Menu()
+function Create_Menu();;;
     if p_ref_menu
         Destroy_Menu()
     endIf

@@ -59,6 +59,7 @@ int                 p_option_clone_outfit               =    -1
 int                 p_option_auto_style                 =    -1
 int                 p_option_auto_vitality              =    -1
 int                 p_option_auto_resurrect             =    -1
+int                 p_option_allow_dialogue_for_all     =    -1
 int                 p_option_slider_max_members         =    -1
 
 int                 p_option_auto_outfit                =    -1
@@ -120,7 +121,7 @@ function f_Build_Page()
     p_option_slider_max_members = MCM.AddSliderOption(" Max Members ", VARS.max_members, " {0} ")
     p_option_slider_ms_display = MCM.AddSliderOption(" Members per Display Cycle ", VARS.num_display, " {0} ")
     p_option_auto_resurrect = MCM.AddToggleOption(" Auto Resurrect Followers ", VARS.auto_resurrect)
-    MCM.AddEmptyOption()
+    p_option_allow_dialogue_for_all = MCM.AddToggleOption(" Allow Dialogue For All ", doticu_npcp_consts.Allow_Dialogue_For_All_Global().GetValue() > 0)
     MCM.AddEmptyOption()
     MCM.AddEmptyOption()
 
@@ -204,6 +205,14 @@ function f_On_Option_Select(int id_option)
     elseIf id_option == p_option_auto_resurrect
         VARS.auto_resurrect = !VARS.auto_resurrect
         MCM.SetToggleOptionValue(p_option_auto_resurrect, VARS.auto_resurrect)
+    elseIf id_option == p_option_allow_dialogue_for_all
+        if doticu_npcp_consts.Allow_Dialogue_For_All_Global().GetValue() > 0
+            doticu_npcp_consts.Allow_Dialogue_For_All_Global().SetValue(0)
+            MCM.SetToggleOptionValue(p_option_allow_dialogue_for_all, false)
+        else
+            doticu_npcp_consts.Allow_Dialogue_For_All_Global().SetValue(1)
+            MCM.SetToggleOptionValue(p_option_allow_dialogue_for_all, true)
+        endIf
 
     ; Cloning
     elseIf id_option == p_option_force_clone_unique
@@ -384,6 +393,10 @@ function f_On_Option_Highlight(int id_option)
         else
             MCM.SetInfoText("Followers will not automatically resurrect after each battle.")
         endIf
+    elseIf id_option == p_option_allow_dialogue_for_all
+        MCM.SetInfoText("Enabled: You can access the [NPC Party] menu with any viable NPC.\n" + \
+                        "Disabled: You can only access the [NPC Party] menu with members.\n" + \
+                        "Either way, you can still use hotkeys to quickly add a member and access the menu.")
     elseIf id_option == p_option_slider_max_members
         MCM.SetInfoText("A limiter for the amount of members you can have.")
 

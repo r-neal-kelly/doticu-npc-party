@@ -110,14 +110,16 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     Bool_t Mannequins_t::Has_Expoee(Int_t expoee_id)
     {
-        NPCP_ASSERT(expoee_id > -1 && expoee_id < SLOTS);
-        return Slots_Array()->Point(expoee_id)->Has_Object();
+        Array_t* slots_array = Slots_Array();
+        NPCP_ASSERT(expoee_id > -1 && expoee_id < slots_array->count);
+        return slots_array->Point(expoee_id)->Has_Object();
     }
 
     Bool_t Mannequins_t::Hasnt_Expoee(Int_t expoee_id)
     {
-        NPCP_ASSERT(expoee_id > -1 && expoee_id < SLOTS);
-        return !Slots_Array()->Point(expoee_id)->Has_Object();
+        Array_t* slots_array = Slots_Array();
+        NPCP_ASSERT(expoee_id > -1 && expoee_id < slots_array->count);
+        return !slots_array->Point(expoee_id)->Has_Object();
     }
 
     Bool_t Mannequins_t::Is_Member_In_Expo(Member_t* member)
@@ -137,23 +139,24 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     Int_t Mannequins_t::Count_Expoees()
     {
-        Int_t count = 0;
+        Int_t expoee_count = 0;
         Array_t* slots_array = Slots_Array();
         for (size_t idx = 0, count = slots_array->count; idx < count; idx += 1) {
             if (slots_array->Point(idx)->Has_Object()) {
-                count += 1;
+                expoee_count += 1;
             }
         }
-        return count;
+        return expoee_count;
     }
 
     void Mannequins_t::Expo(Int_t expoee_id, Reference_t* marker, void (*callback)(Int_t code, const char* name))
     {
         using User_Callback = void (*)(Int_t code, const char* name);
 
-        if (expoee_id > -1 && expoee_id < SLOTS) {
+        Array_t* slots_array = Slots_Array();
+        if (expoee_id > -1 && expoee_id < slots_array->count) {
             if (marker) {
-                Member_t* expoee = static_cast<Member_t*>(Slots_Array()->Point(expoee_id)->Alias());
+                Member_t* expoee = static_cast<Member_t*>(slots_array->Point(expoee_id)->Alias());
                 if (!expoee) {
                     class Find_Callback : public Virtual_Callback_t {
                     public:
@@ -205,8 +208,9 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     {
         using User_Callback = void (*)(Int_t code, const char* name);
 
-        if (expoee_id > -1 && expoee_id < SLOTS) {
-            Variable_t* slot = Slots_Array()->Point(expoee_id);
+        Array_t* slots_array = Slots_Array();
+        if (expoee_id > -1 && expoee_id < slots_array->count) {
+            Variable_t* slot = slots_array->Point(expoee_id);
             Member_t* expoee = static_cast<Member_t*>(slot->Alias());
             if (expoee) {
                 slot->None(Class_Info_t::Fetch(Member_t::kTypeID, true));
@@ -222,10 +226,11 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     void Mannequins_t::Enforce_Expoee(Int_t expoee_id, Reference_t* marker)
     {
-        NPCP_ASSERT(expoee_id > -1 && expoee_id < SLOTS);
+        Array_t* slots_array = Slots_Array();
+        NPCP_ASSERT(expoee_id > -1 && expoee_id < slots_array->count);
         NPCP_ASSERT(marker);
 
-        Member_t* member = static_cast<Member_t*>(Slots_Array()->Point(expoee_id)->Alias());
+        Member_t* member = static_cast<Member_t*>(slots_array->Point(expoee_id)->Alias());
         if (member) {
             Object_Ref::Move_To_Orbit(member->Actor(), marker, 0.0f, 180.0f);
         }
@@ -256,21 +261,23 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Vector_t<Member_t*> expoees;
         expoees.reserve(SLOTS_PER_CELL);
         for (size_t idx = column * SLOTS_PER_COLUMN + row * SLOTS_PER_CELL; idx < SLOTS_PER_CELL; idx += 1) {
+            NPCP_ASSERT(idx < slots_array->count);
             expoees.push_back(static_cast<Member_t*>(slots_array->Point(idx)->Alias()));
         }
-
         return expoees;
     }
 
     String_t Mannequins_t::Cell_Name(Int_t column, Int_t row)
     {
         Normalize_Coords(column, row);
+        NPCP_ASSERT(column * ROWS + row < SLOTS);
         return Cell_Names_Array()->Point(column * ROWS + row)->String();
     }
 
     void Mannequins_t::Cell_Name(Int_t column, Int_t row, String_t name)
     {
         Normalize_Coords(column, row);
+        NPCP_ASSERT(column * ROWS + row < SLOTS);
         Cell_Names_Array()->Point(column * ROWS + row)->String(name);
     }
 

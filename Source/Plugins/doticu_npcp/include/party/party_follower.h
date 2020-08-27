@@ -52,6 +52,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         String_t Reference_Name();
         String_t Name();
 
+        Bool_t Is_Ready();
         Bool_t Is_Loaded();
         Bool_t Is_Unloaded();
         Bool_t Is_Unique();

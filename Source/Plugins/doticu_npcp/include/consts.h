@@ -92,6 +92,7 @@ namespace doticu_npcp { namespace Consts {
 
     // NPCP Globals
     Global_t* Is_Installed_Global();
+    Global_t* Allow_Dialogue_For_All_Global();
     Global_t* Force_Clone_Uniques_Global();
     Global_t* Force_Clone_Generics_Global();
     Global_t* Force_Unclone_Uniques_Global();

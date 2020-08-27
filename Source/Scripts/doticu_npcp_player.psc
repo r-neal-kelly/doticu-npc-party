@@ -75,7 +75,7 @@ endFunction
 function f_Unregister()
 endFunction
 
-function f_Begin_Combat()
+function f_Begin_Combat();;;
     ; there is no way for PLAYER to know when they are
     ; in combat! so we have followers tell PLAYER to begin
     if p_is_in_combat == false
