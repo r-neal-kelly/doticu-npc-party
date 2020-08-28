@@ -342,8 +342,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     void Chests_t::On_Option_Select(Int_t option)
     {
-        _MESSAGE("in On_Option_Select");
-
         if (option == Input_Option_Variable()->Int()) { // Special
             Open_Chest(Consts::Input_Category(), " Input ");
 
@@ -514,8 +512,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     void Chests_t::Open_Chest(Reference_t* chest, String_t name)
     {
-        _MESSAGE("In Open_Chest");
-
         Object_Ref::Categorize(Consts::Input_Category());
         Object_Ref::Rename(chest, name);
 

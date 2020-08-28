@@ -57,6 +57,10 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     Array_t* Mannequins_t::Slots_Array()
     {
         Array_t* slots_array = Slots_Array_Variable()->Array();
+        if (!slots_array) {
+            Initialize();
+            slots_array = Slots_Array_Variable()->Array();
+        }
         NPCP_ASSERT(slots_array);
         return slots_array;
     }
@@ -64,6 +68,10 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     Array_t* Mannequins_t::Cell_Names_Array()
     {
         Array_t* cell_names_array = Cell_Names_Array_Variable()->Array();
+        if (!cell_names_array) {
+            Initialize();
+            cell_names_array = Cell_Names_Array_Variable()->Array();
+        }
         NPCP_ASSERT(cell_names_array);
         return cell_names_array;
     }
@@ -97,7 +105,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Go_Back_Marker_Variable()->None(Object_Ref::Class_Info());
     }
 
-    void Mannequins_t::Unintialize()
+    void Mannequins_t::Uninitialize()
     {
         Go_Back_Marker_Variable()->None(Object_Ref::Class_Info());
 
@@ -106,6 +114,12 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         Vector_t<Member_t*> slots;
         Slots_Array_Variable()->Pack(slots);
+    }
+
+    void Mannequins_t::Reinitialize()
+    {
+        Uninitialize();
+        Initialize();
     }
 
     Bool_t Mannequins_t::Has_Expoee(Int_t expoee_id)
@@ -258,12 +272,18 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Normalize_Coords(column, row);
 
         Array_t* slots_array = Slots_Array();
+        size_t begin = (column * SLOTS_PER_COLUMN) + (row * SLOTS_PER_CELL);
+        size_t end = begin + SLOTS_PER_CELL;
+        if (end > slots_array->count) {
+            end = slots_array->count;
+        }
+
         Vector_t<Member_t*> expoees;
         expoees.reserve(SLOTS_PER_CELL);
-        for (size_t idx = column * SLOTS_PER_COLUMN + row * SLOTS_PER_CELL; idx < SLOTS_PER_CELL; idx += 1) {
-            NPCP_ASSERT(idx < slots_array->count);
-            expoees.push_back(static_cast<Member_t*>(slots_array->Point(idx)->Alias()));
+        for (; begin < end; begin += 1) {
+            expoees.push_back(static_cast<Member_t*>(slots_array->Point(begin)->Alias()));
         }
+
         return expoees;
     }
 
@@ -345,9 +365,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                            STR_FUNC_, ARG_NUM_,                     \
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
-
-        METHOD("f_Initialize", 0, void, Initialize);
-        METHOD("f_Unintialize", 0, void, Unintialize);
 
         METHOD("Get_Cell_Name", 2, String_t, Cell_Name, Int_t, Int_t);
         METHOD("Set_Cell_Name", 3, void, Cell_Name, Int_t, Int_t, String_t);

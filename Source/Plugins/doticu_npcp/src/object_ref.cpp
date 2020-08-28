@@ -50,10 +50,26 @@ namespace doticu_npcp { namespace Object_Ref {
             if (do_create) {
                 Init_Container_If_Needed(obj);
             }
-            return static_cast<XContainer_t*>
+            XContainer_t* xcontainer = static_cast<XContainer_t*>
                 (obj->extraData.GetByType(kExtraData_ContainerChanges));
+            if (xcontainer && !xcontainer->changes) {
+                Init_Container_If_Needed(obj);
+                xcontainer = static_cast<XContainer_t*>
+                    (obj->extraData.GetByType(kExtraData_ContainerChanges));
+            }
+            return xcontainer;
         } else {
             return nullptr;
+        }
+    }
+
+    void Validate_XContainer(Reference_t* ref)
+    {
+        if (ref) {
+            XContainer_t* xcontainer = Get_XContainer(ref, false);
+            if (xcontainer) {
+                xcontainer->Validate();
+            }
         }
     }
 
@@ -86,97 +102,37 @@ namespace doticu_npcp { namespace Object_Ref {
         }
 
         if (xcontainer) {
-            for (XEntries_t::Iterator it = xcontainer->data->objList->Begin(); !it.End(); ++it) {
+            for (XEntries_t::Iterator it = xcontainer->changes->xentries->Begin(); !it.End(); ++it) {
                 XEntry_t *entry = it.Get();
-                if (entry && entry->type == form) {
+                if (entry && entry->form == form) {
                     return entry;
                 }
             }
             if (do_create) {
-                XEntry_t *entry_new = XEntry::Create(form, 0);
-                if (entry_new) {
-                    xcontainer->data->objList->Insert(entry_new);
-                    return entry_new;
-                }
+                XEntry_t *entry_new = XEntry_t::Create(form, 0);
+                xcontainer->Add_XEntry(entry_new, obj);
+                return entry_new;
             }
         }
 
         return NULL;
     }
 
-    void Add_XEntry(TESObjectREFR *obj, XEntry_t *xentry_add) {
-        if (!obj || !xentry_add) {
-            return;
-        }
-
-        XContainer_t *xcontainer_obj = Get_XContainer(obj, true);
-        NPCP_ASSERT(xcontainer_obj);
-
-        TESForm *form = xentry_add->type;
-        if (!form) {
-            return;
-        }
-
-        XEntry_t *xentry_obj = Get_XEntry(obj, form, false);
-        if (xentry_obj) {
-            if (xentry_add->countDelta < 1) {
-                _ERROR("Object_Ref::Add_XEntry: Cannot merge a negative or empty xentry.");
-                return;
-            }
-
-            if (xentry_add->extendDataList) {
-                std::vector<XList_t *>vec_xlists_add;
-                vec_xlists_add.reserve(xentry_add->extendDataList->Count());
-
-                for (XLists_t::Iterator it_xlist_add = xentry_add->extendDataList->Begin(); !it_xlist_add.End(); ++it_xlist_add) {
-                    XList_t *xlist_add = it_xlist_add.Get();
-                    if (xlist_add) {
-                        vec_xlists_add.push_back(xlist_add);
-                    }
-                }
-
-                for (u64 idx = 0, size = vec_xlists_add.size(); idx < size; idx += 1) {
-                    XList_t *xlist_add = vec_xlists_add[idx];
-                    XEntry::Remove_XList(xentry_add, xlist_add);
-                    XEntry::Add_XList(xentry_obj, xlist_add);
-                }
-            }
-
-            XEntry::Inc_Count(xentry_obj, XEntry::Get_Count(xentry_add));
-
-            XEntry::Destroy(xentry_add);
-        } else {
-            if (xentry_add->countDelta < 1 && Get_BEntry_Count(obj, form) < 1) {
-                _ERROR("Object_Ref::Add_XEntry: Cannot add a useless negative or empty xentry.");
-                return;
-            }
-
-            xcontainer_obj->data->objList->Insert(xentry_add);
+    void Add_XEntry(Reference_t* ref, XEntry_t* to_add) {
+        if (ref && to_add) {
+            XContainer_t* xcontainer_obj = Get_XContainer(ref, true);
+            NPCP_ASSERT(xcontainer_obj);
+            xcontainer_obj->Add_XEntry(to_add, ref);
         }
     }
 
-    void Remove_XEntry(TESObjectREFR *obj, XEntry_t *xentry) {
-        if (!obj || !xentry) {
-            return;
-        }
-
-        XContainer_t *xcontainer = Get_XContainer(obj, false);
-        if (!xcontainer) {
-            return;
-        }
-
-        class Functor {
-        private:
-            XEntry_t *p_xentry;
-        public:
-            Functor(XEntry_t *xentry) {
-                p_xentry = xentry;
+    void Remove_XEntry(Reference_t* ref, XEntry_t* to_remove) {
+        if (ref && to_remove) {
+            XContainer_t* xcontainer = Get_XContainer(ref, false);
+            if (xcontainer) {
+                xcontainer->Remove_XEntry(to_remove);
             }
-            bool Accept(XEntry_t *xentry) {
-                return xentry == p_xentry;
-            }
-        } functor(xentry);
-        xcontainer->data->objList->RemoveIf(functor);
+        }
     }
 
     void Remove_All_XEntries(Reference_t* ref)
@@ -185,7 +141,7 @@ namespace doticu_npcp { namespace Object_Ref {
 
         XContainer_t* xcontainer = Get_XContainer(ref, false);
         if (xcontainer) {
-            xcontainer->data->objList->RemoveAll();
+            xcontainer->changes->xentries->RemoveAll();
         }
     }
 
@@ -207,29 +163,30 @@ namespace doticu_npcp { namespace Object_Ref {
         XEntry_t *xentry_from = Get_XEntry(from, form);
         u64 count_bentry_from = Get_BEntry_Count(from, form);
         if (xentry_from) {
-            u64 count_xentry_from = XEntry::Get_Count(xentry_from);
+            u64 count_xentry_from = xentry_from->Delta_Count();
             if (count_xentry_from == 0 && count_bentry_from == 0) {
                 Object_Ref::Remove_XEntry(from, xentry_from);
-                XEntry::Destroy(xentry_from);
+                XEntry_t::Destroy(xentry_from);
                 return;
             }
 
             if (count_xentry_from <= 0 - count_bentry_from) {
+                xentry_from->Delta_Count(0 - count_bentry_from);
                 return;
             }
 
             Object_Ref::Remove_XEntry(from, xentry_from);
-            XEntry::Clean_XLists(xentry_from, to);
+            xentry_from->Clean_XLists(to);
 
             if (count_bentry_from > 0) {
-                XEntry::Inc_Count(xentry_from, count_bentry_from);
-                Object_Ref::Add_XEntry(from, XEntry::Create(form, 0 - count_bentry_from));
+                xentry_from->Increment(count_bentry_from);
+                Object_Ref::Add_XEntry(from, XEntry_t::Create(form, 0 - count_bentry_from));
             }
 
             Object_Ref::Add_XEntry(to, xentry_from);
         } else if (count_bentry_from > 0) {
-            Object_Ref::Add_XEntry(from, XEntry::Create(form, 0 - count_bentry_from));
-            Object_Ref::Add_XEntry(to, XEntry::Create(form, count_bentry_from));
+            Object_Ref::Add_XEntry(from, XEntry_t::Create(form, 0 - count_bentry_from));
+            Object_Ref::Add_XEntry(to, XEntry_t::Create(form, count_bentry_from));
         }
     }
 
@@ -254,11 +211,16 @@ namespace doticu_npcp { namespace Object_Ref {
     }
 
     SInt32 Get_XEntry_Count(TESObjectREFR *obj, TESForm *form) {
-        if (!obj || !form) {
+        if (obj && form) {
+            XEntry_t* xentry = Get_XEntry(obj, form, false);
+            if (xentry) {
+                return xentry->Delta_Count();
+            } else {
+                return 0;
+            }
+        } else {
             return 0;
         }
-
-        return XEntry::Get_Count(Get_XEntry(obj, form, false));
     }
 
     SInt32 Get_Entry_Count(TESObjectREFR *obj, TESForm *form) {
@@ -330,11 +292,12 @@ namespace doticu_npcp { namespace Object_Ref {
     }
 
     bool Is_Worn(TESObjectREFR *obj, TESForm *form) {
-        if (!obj || !form) {
+        if (obj && form) {
+            XEntry_t* xentry = Get_XEntry(obj, form);
+            return xentry && xentry->Has_Worn_XList();
+        } else {
             return false;
         }
-
-        return XEntry::Is_Worn(Get_XEntry(obj, form));
     }
 
     void Remove_If(Reference_t* from,
@@ -377,16 +340,16 @@ namespace doticu_npcp { namespace Object_Ref {
             std::vector<XEntry_t*> xentries_to_destroy;
             xentries_to_destroy.reserve(4);
 
-            for (XEntries_t::Iterator xentries = xcontainer->data->objList->Begin(); !xentries.End(); ++xentries) {
+            for (XEntries_t::Iterator xentries = xcontainer->changes->xentries->Begin(); !xentries.End(); ++xentries) {
                 XEntry_t* xentry = xentries.Get();
                 if (xentry) {
-                    Form_t* form = xentry->type;
+                    Form_t* form = xentry->form;
                     if (form) {
                         if (should_remove_xform(form)) {
                             std::vector<XList_t*> xlists_to_remove;
                             xlists_to_remove.reserve(2);
 
-                            for (XLists_t::Iterator xlists = xentry->extendDataList->Begin(); !xlists.End(); ++xlists) {
+                            for (XLists_t::Iterator xlists = xentry->xlists->Begin(); !xlists.End(); ++xlists) {
                                 XList_t* xlist = xlists.Get();
                                 if (xlist) {
                                     XList::Validate(xlist);
@@ -400,12 +363,12 @@ namespace doticu_npcp { namespace Object_Ref {
                                 XEntry_t* to_xentry = Object_Ref::Get_XEntry(to, form, true);
                                 for (size_t idx = 0, count = xlists_to_remove.size(); idx < count; idx += 1) {
                                     XList_t* xlist = xlists_to_remove[idx];
-                                    XEntry::Move_XList(xentry, to_xentry, xlist, to);
+                                    xentry->Move_XList(to_xentry, to, xlist);
                                 }
                             }
                         }
 
-                        if (xentry->countDelta == 0) {
+                        if (xentry->Delta_Count() == 0) {
                             xentries_to_destroy.push_back(xentry);
                         }
                     } else {
@@ -417,7 +380,7 @@ namespace doticu_npcp { namespace Object_Ref {
             for (size_t idx = 0, count = xentries_to_destroy.size(); idx < count; idx += 1) {
                 XEntry_t* xentry = xentries_to_destroy[idx];
                 Object_Ref::Remove_XEntry(from, xentry);
-                XEntry::Destroy(xentry);
+                XEntry_t::Destroy(xentry);
             }
         }
 
@@ -440,11 +403,12 @@ namespace doticu_npcp { namespace Object_Ref {
                 for (size_t idx = 0, count = bentries_to_move.size(); idx < count; idx += 1) {
                     BEntry_t* bentry = bentries_to_move[idx];
                     XEntry_t* xentry = Get_XEntry(from, bentry->form, true);
-                    Int_t entry_count = bentry->count + xentry->countDelta;
+                    Int_t entry_count = bentry->count + xentry->Delta_Count();
                     if (entry_count > 0) {
                         XEntry_t* to_xentry = Get_XEntry(to, bentry->form, true);
-                        to_xentry->countDelta += entry_count;
-                        xentry->countDelta = 0 - bentry->count;
+
+                        to_xentry->Increment(entry_count);
+                        xentry->Delta_Count(0 - bentry->count);
                     }
                 }
             }
@@ -570,13 +534,13 @@ namespace doticu_npcp { namespace Object_Ref {
 
         XContainer_t *xcontainer_obj = Object_Ref::Get_XContainer(obj, false);
         if (xcontainer_obj) {
-            for (XEntries_t::Iterator it_xentry_obj = xcontainer_obj->data->objList->Begin(); !it_xentry_obj.End(); ++it_xentry_obj) {
+            for (XEntries_t::Iterator it_xentry_obj = xcontainer_obj->changes->xentries->Begin(); !it_xentry_obj.End(); ++it_xentry_obj) {
                 XEntry_t *xentry_obj = it_xentry_obj.Get();
-                if (!xentry_obj || !xentry_obj->type) {
+                if (!xentry_obj || !xentry_obj->form) {
                     continue;
                 }
 
-                TESForm *form_obj = xentry_obj->type;
+                TESForm *form_obj = xentry_obj->form;
                 if (!form_obj->IsPlayable()) {
                     continue;
                 }
@@ -631,10 +595,10 @@ namespace doticu_npcp { namespace Object_Ref {
 
         XContainer_t *xcontainer = Object_Ref::Get_XContainer(ref_object, false);
         if (xcontainer) {
-            for (XEntries_t::Iterator it_xentry = xcontainer->data->objList->Begin(); !it_xentry.End(); ++it_xentry) {
+            for (XEntries_t::Iterator it_xentry = xcontainer->changes->xentries->Begin(); !it_xentry.End(); ++it_xentry) {
                 XEntry_t *xentry = it_xentry.Get();
                 if (xentry) {
-                    XEntry::Log(xentry, "    ");
+                    xentry->Log("    ");
                 }
             }
         }
@@ -745,13 +709,13 @@ namespace doticu_npcp { namespace Object_Ref {
                 XEntry_t* xentry = Object_Ref::Get_XEntry(ref, token, false);
                 if (xentry) {
                     Object_Ref::Remove_XEntry(ref, xentry);
-                    XEntry::Destroy(xentry);
+                    XEntry_t::Destroy(xentry);
                 }
             } else {
                 XEntry_t* xentry = Object_Ref::Get_XEntry(ref, token, true);
                 if (xentry) {
-                    if (xentry->countDelta + bentry_count != count) {
-                        xentry->countDelta = count - bentry_count;
+                    if (xentry->Delta_Count() + bentry_count != count) {
+                        xentry->Delta_Count(count - bentry_count);
                     }
                 } else {
                     _MESSAGE("unable to get xentry for adding token.");
@@ -768,13 +732,13 @@ namespace doticu_npcp { namespace Object_Ref {
                 XEntry_t* xentry = Object_Ref::Get_XEntry(ref, token, false);
                 if (xentry) {
                     Object_Ref::Remove_XEntry(ref, xentry);
-                    XEntry::Destroy(xentry);
+                    XEntry_t::Destroy(xentry);
                 }
             } else {
                 XEntry_t* xentry = Object_Ref::Get_XEntry(ref, token, true);
                 if (xentry) {
-                    if (xentry->countDelta + bentry_count != 0) {
-                        xentry->countDelta = 0 - bentry_count;
+                    if (xentry->Delta_Count() + bentry_count != 0) {
+                        xentry->Delta_Count(0 - bentry_count);
                     }
                 } else {
                     _MESSAGE("unable to get xentry for removing token.");
@@ -901,13 +865,13 @@ namespace doticu_npcp { namespace Object_Ref {
         if (ref) {
             XContainer_t* xcontainer = static_cast<XContainer_t*>
                 (ref->extraData.GetByType(kExtraData_ContainerChanges));
-            if (!xcontainer) {
+            if (!xcontainer || !xcontainer->changes) {
                 Weapon_t* blank_weapon = Consts::Blank_Weapon();
                 ref->Equip_Weapon(blank_weapon, 0, false, 0, 0);
                 XEntry_t* xentry = Get_XEntry(ref, blank_weapon, false);
                 if (xentry) {
                     Remove_XEntry(ref, xentry);
-                    XEntry::Destroy(xentry);
+                    XEntry_t::Destroy(xentry);
                 }
             }
         }

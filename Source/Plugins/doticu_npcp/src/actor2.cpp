@@ -17,6 +17,7 @@
 #include "papyrus.inl"
 #include "utils.h"
 #include "vector.h"
+#include "xcontainer.h"
 #include "xdata.h"
 #include "xentry.h"
 #include "xlist.h"
@@ -105,16 +106,16 @@ namespace doticu_npcp { namespace Actor2 {
 
         XEntry_t* xentry = Object_Ref::Get_XEntry(actor, Consts::Belted_Tunic_Armor());
         if (xentry) {
-            for (XLists_t::Iterator xlists = xentry->extendDataList->Begin(); !xlists.End(); ++xlists) {
+            for (XLists_t::Iterator xlists = xentry->xlists->Begin(); !xlists.End(); ++xlists) {
                 XList_t* xlist = xlists.Get();
                 if (xlist) {
                     XList::Validate(xlist);
                     if (xlist->HasType(kExtraData_OutfitItem) && !xlist->HasType(kExtraData_Worn)) {
-                        XEntry::Remove_XList(xentry, xlist);
+                        xentry->Remove_XList(xlist);
                         XList::Destroy(xlist);
-                        if (xentry->countDelta == 0) {
+                        if (xentry->Delta_Count() == 0) {
                             Object_Ref::Remove_XEntry(actor, xentry);
-                            XEntry::Destroy(xentry);
+                            XEntry_t::Destroy(xentry);
                             break;
                         }
                     }
@@ -150,30 +151,33 @@ namespace doticu_npcp { namespace Actor2 {
         XContainer_t* xcontainer_actor = Object_Ref::Get_XContainer(actor, true);
         NPCP_ASSERT(xcontainer_actor);
 
-        XEntry::Set_Count(Object_Ref::Get_XEntry(actor, linchpin), 1);
+        XEntry_t* linchpin_xentry = Object_Ref::Get_XEntry(actor, linchpin);
+        if (linchpin_xentry) {
+            linchpin_xentry->Delta_Count(1);
+        }
 
         std::vector<XEntry_t*> vec_xentries_destroy;
         vec_xentries_destroy.reserve(4);
 
-        for (XEntries_t::Iterator it_xentry_actor = xcontainer_actor->data->objList->Begin(); !it_xentry_actor.End(); ++it_xentry_actor) {
+        for (XEntries_t::Iterator it_xentry_actor = xcontainer_actor->changes->xentries->Begin(); !it_xentry_actor.End(); ++it_xentry_actor) {
             XEntry_t* xentry_actor = it_xentry_actor.Get();
-            if (!xentry_actor || !xentry_actor->type || xentry_actor->type == linchpin) {
+            if (!xentry_actor || !xentry_actor->form || xentry_actor->form == linchpin) {
                 continue;
             }
 
-            TESForm* form_actor = xentry_actor->type;
+            TESForm* form_actor = xentry_actor->form;
             if (!form_actor->IsPlayable() && !form_actor->IsArmor() && !form_actor->IsWeapon() && !form_actor->IsAmmo()) {
                 continue;
             }
 
             u64 count_in_xlists_kept = 0;
-            if (xentry_actor->extendDataList) {
+            if (xentry_actor->xlists) {
                 std::vector<XList_t*> vec_xlists_trash;
                 std::vector<XList_t*> vec_xlists_transfer;
                 vec_xlists_trash.reserve(4);
                 vec_xlists_transfer.reserve(4);
 
-                for (XLists_t::Iterator it_xlist_actor = xentry_actor->extendDataList->Begin(); !it_xlist_actor.End(); ++it_xlist_actor) {
+                for (XLists_t::Iterator it_xlist_actor = xentry_actor->xlists->Begin(); !it_xlist_actor.End(); ++it_xlist_actor) {
                     XList_t* xlist_actor = it_xlist_actor.Get();
                     if (!xlist_actor) {
                         continue;
@@ -193,14 +197,14 @@ namespace doticu_npcp { namespace Actor2 {
                 }
                 for (u64 idx = 0, size = vec_xlists_trash.size(); idx < size; idx += 1) {
                     XList_t* xlist_trash = vec_xlists_trash[idx];
-                    XEntry::Remove_XList(xentry_actor, xlist_trash);
+                    xentry_actor->Remove_XList(xlist_trash);
                     XList::Destroy(xlist_trash);
                 }
                 if (vec_xlists_transfer.size() > 0) {
                     XEntry_t* xentry_transfer = Object_Ref::Get_XEntry(transfer, form_actor, true);
                     for (u64 idx = 0, size = vec_xlists_transfer.size(); idx < size; idx += 1) {
                         XList_t* xlist_transfer = vec_xlists_transfer[idx];
-                        XEntry::Move_XList(xentry_actor, xentry_transfer, xlist_transfer, transfer);
+                        xentry_actor->Move_XList(xentry_transfer, transfer, xlist_transfer);
                     }
                 }
             }
@@ -211,20 +215,20 @@ namespace doticu_npcp { namespace Actor2 {
             if (count_remaining > 0) {
                 if (form_actor->IsPlayable()) {
                     XEntry_t* xentry_transfer = Object_Ref::Get_XEntry(transfer, form_actor, true);
-                    XEntry::Inc_Count(xentry_transfer, count_remaining);
+                    xentry_transfer->Increment(count_remaining);
                 }
             }
 
             if (count_in_xlists_kept == 0 && count_bentry == 0) {
                 vec_xentries_destroy.push_back(xentry_actor);
             } else {
-                XEntry::Set_Count(xentry_actor, count_in_xlists_kept - count_bentry);
+                xentry_actor->Delta_Count(count_in_xlists_kept - count_bentry);
             }
         }
         for (u64 idx = 0, size = vec_xentries_destroy.size(); idx < size; idx += 1) {
             XEntry_t* xentry_destroy = vec_xentries_destroy[idx];
             Object_Ref::Remove_XEntry(actor, xentry_destroy);
-            XEntry::Destroy(xentry_destroy);
+            XEntry_t::Destroy(xentry_destroy);
         }
 
         BContainer_t* bcontainer_actor = Object_Ref::Get_BContainer(actor);
@@ -237,7 +241,7 @@ namespace doticu_npcp { namespace Actor2 {
 
                 if (!Object_Ref::Has_XEntry(actor, bentry->form)) {
                     XEntry_t* xentry = Object_Ref::Get_XEntry(actor, bentry->form, true);
-                    XEntry::Dec_Count(xentry, bentry->count);
+                    xentry->Decrement(bentry->count);
                 }
             }
         }
@@ -261,12 +265,12 @@ namespace doticu_npcp { namespace Actor2 {
 
         Form_t* linchpin = Consts::Blank_Armor();
 
-        for (XEntries_t::Iterator it_xentry_outfit = xcontainer_outfit->data->objList->Begin(); !it_xentry_outfit.End(); ++it_xentry_outfit) {
+        for (XEntries_t::Iterator it_xentry_outfit = xcontainer_outfit->changes->xentries->Begin(); !it_xentry_outfit.End(); ++it_xentry_outfit) {
             XEntry_t* xentry_outfit = it_xentry_outfit.Get();
-            if (!xentry_outfit || !xentry_outfit->type || xentry_outfit->type == linchpin) {
+            if (!xentry_outfit || !xentry_outfit->form || xentry_outfit->form == linchpin) {
                 continue;
             }
-            TESForm* form_outfit = xentry_outfit->type;
+            TESForm* form_outfit = xentry_outfit->form;
 
             XEntry_t* xentry_actor = Object_Ref::Get_XEntry(actor, form_outfit, true);
             if (!xentry_actor) {
@@ -274,19 +278,19 @@ namespace doticu_npcp { namespace Actor2 {
             }
 
             u64 count_xlists_outfit = 0;
-            if (xentry_outfit->extendDataList) {
-                for (XLists_t::Iterator it_xlist_outfit = xentry_outfit->extendDataList->Begin(); !it_xlist_outfit.End(); ++it_xlist_outfit) {
+            if (xentry_outfit->xlists) {
+                for (XLists_t::Iterator it_xlist_outfit = xentry_outfit->xlists->Begin(); !it_xlist_outfit.End(); ++it_xlist_outfit) {
                     XList_t* xlist_outfit = it_xlist_outfit.Get();
                     if (!xlist_outfit) {
                         continue;
                     }
                     XList::Validate(xlist_outfit);
 
-                    XList_t* xlist_actor = XEntry::Get_XList(xentry_actor, xlist_outfit, true);
+                    XList_t* xlist_actor = xentry_actor->Similar_XList(xlist_outfit, true);
                     if (xlist_actor) {
                         u64 count_xlist_outfit = XList::Get_Count(xlist_outfit);
                         XList::Inc_Count(xlist_actor, count_xlist_outfit);
-                        XEntry::Inc_Count(xentry_actor, count_xlist_outfit);
+                        xentry_actor->Increment(count_xlist_outfit);
                         count_xlists_outfit += count_xlist_outfit;
                     } else {
                         xlist_actor = XList::Copy(xlist_outfit);
@@ -295,7 +299,7 @@ namespace doticu_npcp { namespace Actor2 {
                         }
 
                         XList::Add_Outfit2_Flag(xlist_actor);
-                        XEntry::Add_XList(xentry_actor, xlist_actor);
+                        xentry_actor->Add_XList(xlist_actor);
                         count_xlists_outfit += XList::Get_Count(xlist_outfit);
                     }
                 }
@@ -306,7 +310,7 @@ namespace doticu_npcp { namespace Actor2 {
                 XList_t* xlist_remainder = XList::Create();
                 XList::Set_Count(xlist_remainder, count_entry_outfit - count_xlists_outfit);
                 XList::Add_Outfit2_Flag(xlist_remainder);
-                XEntry::Add_XList(xentry_actor, xlist_remainder);
+                xentry_actor->Add_XList(xlist_remainder);
             }
         }
     }
@@ -327,25 +331,25 @@ namespace doticu_npcp { namespace Actor2 {
 
         XContainer_t* xcontainer_actor = Object_Ref::Get_XContainer(actor, false);
         if (xcontainer_actor) {
-            for (XEntries_t::Iterator it_xentry_actor = xcontainer_actor->data->objList->Begin(); !it_xentry_actor.End(); ++it_xentry_actor) {
+            for (XEntries_t::Iterator it_xentry_actor = xcontainer_actor->changes->xentries->Begin(); !it_xentry_actor.End(); ++it_xentry_actor) {
                 XEntry_t* xentry_actor = it_xentry_actor.Get();
-                if (!xentry_actor || !xentry_actor->type || xentry_actor->type == linchpin) {
+                if (!xentry_actor || !xentry_actor->form || xentry_actor->form == linchpin) {
                     continue;
                 }
 
-                TESForm* form_actor = xentry_actor->type;
+                TESForm* form_actor = xentry_actor->form;
                 if (!form_actor->IsPlayable()) {
                     continue;
                 }
 
                 u64 count_xlists_actor = 0;
-                if (xentry_actor->extendDataList) {
+                if (xentry_actor->xlists) {
                     std::vector<XList_t*> vec_xlists_worn;
                     std::vector<XList_t*> vec_xlists_pack;
                     vec_xlists_worn.reserve(2);
                     vec_xlists_pack.reserve(2);
 
-                    for (XLists_t::Iterator it_xlist_actor = xentry_actor->extendDataList->Begin(); !it_xlist_actor.End(); ++it_xlist_actor) {
+                    for (XLists_t::Iterator it_xlist_actor = xentry_actor->xlists->Begin(); !it_xlist_actor.End(); ++it_xlist_actor) {
                         XList_t* xlist_actor = it_xlist_actor.Get();
                         if (xlist_actor) {
                             XList::Validate(xlist_actor);
@@ -370,9 +374,9 @@ namespace doticu_npcp { namespace Actor2 {
                             XList_t* xlist_worn = vec_xlists_worn[idx];
                             XList_t* xlist_copy = XList::Copy(xlist_worn);
                             if (xlist_copy) {
-                                XEntry::Add_XList(xentry_worn, xlist_copy);
+                                xentry_worn->Add_XList(xlist_copy);
                             } else {
-                                XEntry::Inc_Count(xentry_worn, XList::Get_Count(xlist_worn));
+                                xentry_worn->Increment(XList::Get_Count(xlist_worn));
                             }
                         }
                     }
@@ -387,19 +391,19 @@ namespace doticu_npcp { namespace Actor2 {
                             XList_t* xlist_pack = vec_xlists_pack[idx];
                             XList_t* xlist_copy = XList::Copy(xlist_pack);
                             if (xlist_copy) {
-                                XEntry::Add_XList(xentry_pack, xlist_copy);
+                                xentry_pack->Add_XList(xlist_copy);
                             } else {
-                                XEntry::Inc_Count(xentry_pack, XList::Get_Count(xlist_pack));
+                                xentry_pack->Increment(XList::Get_Count(xlist_pack));
                             }
                         }
                     }
                 }
 
-                u64 count_remaining = Object_Ref::Get_BEntry_Count(actor, form_actor) + XEntry::Get_Count(xentry_actor) - count_xlists_actor;
+                u64 count_remaining = Object_Ref::Get_BEntry_Count(actor, form_actor) + xentry_actor->Delta_Count() - count_xlists_actor;
                 if (count_remaining > 0) {
                     XEntry_t* xentry_pack = Object_Ref::Get_XEntry(pack_out, form_actor, true);
                     if (xentry_pack) {
-                        XEntry::Inc_Count(xentry_pack, count_remaining);
+                        xentry_pack->Increment(count_remaining);
                     }
                 }
             }
@@ -420,7 +424,7 @@ namespace doticu_npcp { namespace Actor2 {
 
                 if (!Object_Ref::Has_XEntry(actor, form_actor)) {
                     XEntry_t* xentry_pack = Object_Ref::Get_XEntry(pack_out, form_actor, true);
-                    XEntry::Inc_Count(xentry_pack, bentry_actor->count);
+                    xentry_pack->Increment(bentry_actor->count);
                 }
             }
         }
@@ -438,16 +442,16 @@ namespace doticu_npcp { namespace Actor2 {
             return;
         }
 
-        for (XEntries_t::Iterator it_xentry_actor = xcontainer_actor->data->objList->Begin(); !it_xentry_actor.End(); ++it_xentry_actor) {
+        for (XEntries_t::Iterator it_xentry_actor = xcontainer_actor->changes->xentries->Begin(); !it_xentry_actor.End(); ++it_xentry_actor) {
             XEntry_t* xentry_actor = it_xentry_actor.Get();
-            if (!xentry_actor || !xentry_actor->type || xentry_actor->type == linchpin || !xentry_actor->extendDataList) {
+            if (!xentry_actor || !xentry_actor->form || xentry_actor->form == linchpin || !xentry_actor->xlists) {
                 continue;
             }
 
             std::vector<XList_t*> vec_xlists_worn;
             vec_xlists_worn.reserve(2);
 
-            for (XLists_t::Iterator it_xlist_actor = xentry_actor->extendDataList->Begin(); !it_xlist_actor.End(); ++it_xlist_actor) {
+            for (XLists_t::Iterator it_xlist_actor = xentry_actor->xlists->Begin(); !it_xlist_actor.End(); ++it_xlist_actor) {
                 XList_t* xlist_actor = it_xlist_actor.Get();
                 if (!xlist_actor) {
                     continue;
@@ -460,7 +464,7 @@ namespace doticu_npcp { namespace Actor2 {
             }
 
             if (vec_xlists_worn.size() > 0) {
-                XEntry_t* xentry_cache = Object_Ref::Get_XEntry(cache_out, xentry_actor->type, true);
+                XEntry_t* xentry_cache = Object_Ref::Get_XEntry(cache_out, xentry_actor->form, true);
                 if (!xentry_cache) {
                     continue;
                 }
@@ -469,9 +473,9 @@ namespace doticu_npcp { namespace Actor2 {
                     XList_t* xlist_worn = vec_xlists_worn[idx];
                     XList_t* xlist_cache = XList::Copy(xlist_worn);
                     if (xlist_cache) {
-                        XEntry::Add_XList(xentry_cache, xlist_cache);
+                        xentry_cache->Add_XList(xlist_cache);
                     } else {
-                        XEntry::Inc_Count(xentry_cache, XList::Get_Count(xlist_worn));
+                        xentry_cache->Increment(XList::Get_Count(xlist_worn));
                     }
                 }
             }
@@ -509,12 +513,12 @@ namespace doticu_npcp { namespace Actor2 {
 
         XContainer_t* xcontainer = Object_Ref::Get_XContainer(actor, false);
         if (xcontainer) {
-            for (XEntries_t::Iterator xentries = xcontainer->data->objList->Begin(); !xentries.End(); ++xentries) {
+            for (XEntries_t::Iterator xentries = xcontainer->changes->xentries->Begin(); !xentries.End(); ++xentries) {
                 XEntry_t* xentry = xentries.Get();
                 if (xentry) {
-                    Form_t* form = xentry->type;
+                    Form_t* form = xentry->form;
                     if (form) {
-                        for (XLists_t::Iterator xlists = xentry->extendDataList->Begin(); !xlists.End(); ++xlists) {
+                        for (XLists_t::Iterator xlists = xentry->xlists->Begin(); !xlists.End(); ++xlists) {
                             XList_t* xlist = xlists.Get();
                             if (xlist) {
                                 XList::Validate(xlist);

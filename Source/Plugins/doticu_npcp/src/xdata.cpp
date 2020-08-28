@@ -198,7 +198,7 @@ namespace doticu_npcp { namespace XData {
         ExtraCount *xdata = ExtraCount::Create();
         NPCP_ASSERT(xdata);
 
-        xdata->count = count;
+        xdata->Count(count);
 
         return xdata;
     }
@@ -375,15 +375,10 @@ namespace doticu_npcp { namespace XData {
     }
 
     ExtraCount *Copy_Count(ExtraCount *xdata, BSReadWriteLock *xlist_lock) {
-        /*if (!xdata || !xlist_lock) {
-            return NULL;
-        }*/
-
         ExtraCount *xdata_new = ExtraCount::Create();
         NPCP_ASSERT(xdata_new);
 
-        //BSReadLocker locker(xlist_lock);
-        xdata_new->count = xdata->count;
+        xdata_new->Count(xdata->Count());
 
         return xdata_new;
     }

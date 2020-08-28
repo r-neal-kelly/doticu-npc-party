@@ -59,7 +59,7 @@ namespace doticu_npcp {
         custom_length = String2::Length(new_name);
     }
 
-    Container_Changes_t* Container_Changes_t::Create(Reference_t* owner)
+    /*Container_Changes_t* Container_Changes_t::Create(Reference_t* owner)
     {
         static auto ctor = reinterpret_cast<Container_Changes_t* (*)(Container_Changes_t*, Reference_t*)>
             (RelocationManager::s_baseAddr + Offsets::Container_Changes::CTOR);
@@ -88,9 +88,9 @@ namespace doticu_npcp {
         if (changes) {
             dtor(changes);
         }
-    }
+    }*/
 
-    Extra_Container_Changes_t* Extra_Container_Changes_t::Create(Reference_t* owner)
+    /*Extra_Container_Changes_t* Extra_Container_Changes_t::Create(Reference_t* owner)
     {
         Extra_Container_Changes_t* xchanges = static_cast<Extra_Container_Changes_t*>(XData_t::Create(
             sizeof(Extra_Container_Changes_t),
@@ -109,7 +109,7 @@ namespace doticu_npcp {
             //Container_Changes_t::Destroy(xchanges->changes);
             static_cast<BSExtraData*>(xchanges)->~BSExtraData();
         }
-    }
+    }*/
 
     Bool_t Quest_t2::Hash_Map_t::Has_Key(UInt16 key)
     {

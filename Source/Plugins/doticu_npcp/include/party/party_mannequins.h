@@ -49,12 +49,12 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     class Mannequins_t : public Aliases_t {
     public:
-        static constexpr size_t SLOTS = 1024;
-        static constexpr size_t CELLS = 64;
-        static constexpr size_t SLOTS_PER_CELL = 16;
-        static constexpr size_t ROWS = 8;
-        static constexpr size_t COLUMNS = 8;
-        static constexpr size_t SLOTS_PER_COLUMN = 128;
+        static constexpr size_t COLUMNS             = 8;
+        static constexpr size_t ROWS                = 8;
+        static constexpr size_t SLOTS_PER_CELL      = 16;
+        static constexpr size_t CELLS               = COLUMNS * ROWS;
+        static constexpr size_t SLOTS               = SLOTS_PER_CELL * ROWS * COLUMNS;
+        static constexpr size_t SLOTS_PER_COLUMN    = SLOTS_PER_CELL * ROWS;
 
     public:
         static String_t Class_Name();
@@ -75,7 +75,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         void Go_Back_Marker(Reference_t* marker);
 
         void Initialize();
-        void Unintialize();
+        void Uninitialize();
+        void Reinitialize();
 
         Bool_t Has_Expoee(Int_t expoee_id);
         Bool_t Hasnt_Expoee(Int_t expoee_id);

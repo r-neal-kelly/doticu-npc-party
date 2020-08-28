@@ -141,6 +141,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         void Delete_Unused_Outfit2s();
 
         void u_0_9_3();
+        void u_0_9_6();
 
     public:
         static void Register_Me(Virtual_Machine_t* vm);

@@ -6,10 +6,7 @@ Alias[]         p_arr_mannequins    =  none
 string[]        p_arr_cell_names    =  none
 ObjectReference p_marker_teleport   =  none
 
-function f_Initialize() native
-function f_Unintialize() native
-
-; these will all be deleted
+; these will all be deleted when we move mcm_mannequins over to c++
 int property SLOTS = 1024 autoReadOnly
 int property CELLS = 64 autoReadOnly
 int property SLOTS_PER_CELL = 16 autoReadOnly

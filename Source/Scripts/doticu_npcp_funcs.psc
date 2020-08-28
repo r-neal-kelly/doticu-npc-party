@@ -42,11 +42,9 @@ function f_Create()
     ACTORS.f_Create()
     NPCS.f_Initialize()
     PERKS.f_Create()
-    MANNEQUINS.f_Initialize()
 endFunction
 
 function f_Destroy()
-    MANNEQUINS.f_Unintialize()
     PERKS.f_Destroy()
     NPCS.f_Uninitialize()
     ACTORS.f_Destroy()

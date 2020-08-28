@@ -823,6 +823,108 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
+    void Members_t::u_0_9_6()
+    {
+        Vector_t<Member_t*> filled = Filled();
+        for (size_t idx = 0, count = filled.size(); idx < count; idx += 1) {
+            Member_t* member = filled[idx];
+            if (member) {
+                Reference_t* pack = member->Pack();
+                if (pack) {
+                    Object_Ref::Validate_XContainer(pack);
+                }
+
+                Outfit2_t* member_outfit2 = static_cast<Outfit2_t*>(member->Member_Outfit2_Variable()->Reference());
+                if (member_outfit2) {
+                    Object_Ref::Validate_XContainer(member_outfit2);
+                }
+                Outfit2_t* immobile_outfit2 = static_cast<Outfit2_t*>(member->Immobile_Outfit2_Variable()->Reference());
+                if (immobile_outfit2) {
+                    Object_Ref::Validate_XContainer(immobile_outfit2);
+                }
+                Outfit2_t* settler_outfit2 = static_cast<Outfit2_t*>(member->Settler_Outfit2_Variable()->Reference());
+                if (settler_outfit2) {
+                    Object_Ref::Validate_XContainer(settler_outfit2);
+                }
+                Outfit2_t* thrall_outfit2 = static_cast<Outfit2_t*>(member->Thrall_Outfit2_Variable()->Reference());
+                if (thrall_outfit2) {
+                    Object_Ref::Validate_XContainer(thrall_outfit2);
+                }
+                Outfit2_t* follower_outfit2 = static_cast<Outfit2_t*>(member->Follower_Outfit2_Variable()->Reference());
+                if (follower_outfit2) {
+                    Object_Ref::Validate_XContainer(follower_outfit2);
+                }
+                Outfit2_t* vanilla_outfit2 = static_cast<Outfit2_t*>(member->Vanilla_Outfit2_Variable()->Reference());
+                if (vanilla_outfit2) {
+                    Object_Ref::Validate_XContainer(vanilla_outfit2);
+                }
+                Outfit2_t* default_outfit2 = static_cast<Outfit2_t*>(member->Default_Outfit2_Variable()->Reference());
+                if (default_outfit2) {
+                    Object_Ref::Validate_XContainer(default_outfit2);
+                }
+            }
+        }
+
+        Object_Ref::Validate_XContainer(Consts::Input_Category());
+        Object_Ref::Validate_XContainer(Consts::Swords_Category());
+        Object_Ref::Validate_XContainer(Consts::Greatswords_Category());
+        Object_Ref::Validate_XContainer(Consts::Waraxes_Category());
+        Object_Ref::Validate_XContainer(Consts::Battleaxes_Category());
+        Object_Ref::Validate_XContainer(Consts::Maces_Category());
+        Object_Ref::Validate_XContainer(Consts::Warhammers_Category());
+        Object_Ref::Validate_XContainer(Consts::Daggers_Category());
+        Object_Ref::Validate_XContainer(Consts::Staves_Category());
+        Object_Ref::Validate_XContainer(Consts::Bows_Category());
+        Object_Ref::Validate_XContainer(Consts::Ammo_Category());
+        Object_Ref::Validate_XContainer(Consts::Weapons_Category());
+        Object_Ref::Validate_XContainer(Consts::Light_Armor_Category());
+        Object_Ref::Validate_XContainer(Consts::Heavy_Armor_Category());
+        Object_Ref::Validate_XContainer(Consts::Shields_Category());
+        Object_Ref::Validate_XContainer(Consts::Jewelry_Category());
+        Object_Ref::Validate_XContainer(Consts::Clothes_Category());
+        Object_Ref::Validate_XContainer(Consts::Potions_Category());
+        Object_Ref::Validate_XContainer(Consts::Poisons_Category());
+        Object_Ref::Validate_XContainer(Consts::Ingredients_Category());
+        Object_Ref::Validate_XContainer(Consts::Food_Category());
+        Object_Ref::Validate_XContainer(Consts::Soulgems_Category());
+        Object_Ref::Validate_XContainer(Consts::Scrolls_Category());
+        Object_Ref::Validate_XContainer(Consts::Metals_Category());
+        Object_Ref::Validate_XContainer(Consts::Leather_Category());
+        Object_Ref::Validate_XContainer(Consts::Gems_Category());
+        Object_Ref::Validate_XContainer(Consts::Clutter_Category());
+        Object_Ref::Validate_XContainer(Consts::Keys_Category());
+        Object_Ref::Validate_XContainer(Consts::Misc_Category());
+        Object_Ref::Validate_XContainer(Consts::Spell_Tomes_Category());
+        Object_Ref::Validate_XContainer(Consts::Recipes_Category());
+        Object_Ref::Validate_XContainer(Consts::A_Books_Category());
+        Object_Ref::Validate_XContainer(Consts::B_Books_Category());
+        Object_Ref::Validate_XContainer(Consts::C_Books_Category());
+        Object_Ref::Validate_XContainer(Consts::D_Books_Category());
+        Object_Ref::Validate_XContainer(Consts::E_Books_Category());
+        Object_Ref::Validate_XContainer(Consts::F_Books_Category());
+        Object_Ref::Validate_XContainer(Consts::G_Books_Category());
+        Object_Ref::Validate_XContainer(Consts::H_Books_Category());
+        Object_Ref::Validate_XContainer(Consts::I_Books_Category());
+        Object_Ref::Validate_XContainer(Consts::J_Books_Category());
+        Object_Ref::Validate_XContainer(Consts::K_Books_Category());
+        Object_Ref::Validate_XContainer(Consts::L_Books_Category());
+        Object_Ref::Validate_XContainer(Consts::M_Books_Category());
+        Object_Ref::Validate_XContainer(Consts::N_Books_Category());
+        Object_Ref::Validate_XContainer(Consts::O_Books_Category());
+        Object_Ref::Validate_XContainer(Consts::P_Books_Category());
+        Object_Ref::Validate_XContainer(Consts::Q_Books_Category());
+        Object_Ref::Validate_XContainer(Consts::R_Books_Category());
+        Object_Ref::Validate_XContainer(Consts::S_Books_Category());
+        Object_Ref::Validate_XContainer(Consts::T_Books_Category());
+        Object_Ref::Validate_XContainer(Consts::U_Books_Category());
+        Object_Ref::Validate_XContainer(Consts::V_Books_Category());
+        Object_Ref::Validate_XContainer(Consts::W_Books_Category());
+        Object_Ref::Validate_XContainer(Consts::X_Books_Category());
+        Object_Ref::Validate_XContainer(Consts::Y_Books_Category());
+        Object_Ref::Validate_XContainer(Consts::Z_Books_Category());
+        Object_Ref::Validate_XContainer(Consts::Books_Category());
+    }
+
     void Members_t::Register_Me(Virtual_Machine_t* vm)
     {
         #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \

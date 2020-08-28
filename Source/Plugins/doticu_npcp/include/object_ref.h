@@ -4,8 +4,9 @@
 
 #pragma once
 
-#include "types.h"
 #include "papyrus.h"
+#include "xcontainer.h"
+#include "xentry.h"
 
 namespace doticu_npcp { namespace Object_Ref {
 
@@ -16,11 +17,12 @@ namespace doticu_npcp { namespace Object_Ref {
 
     BContainer_t *Get_BContainer(TESObjectREFR *obj);
     XContainer_t *Get_XContainer(TESObjectREFR *obj, bool do_create = false);
+    void Validate_XContainer(Reference_t* ref);
 
     BEntry_t *Get_BEntry(TESObjectREFR *obj, TESForm *form);
     XEntry_t *Get_XEntry(TESObjectREFR *obj, TESForm *form, bool do_create = false);
-    void Add_XEntry(TESObjectREFR *obj, XEntry_t *xentry_add);
-    void Remove_XEntry(TESObjectREFR *obj, XEntry_t *xentry);
+    void Add_XEntry(Reference_t* ref, XEntry_t* to_add);
+    void Remove_XEntry(Reference_t* ref, XEntry_t* to_remove);
     void Remove_All_XEntries(Reference_t* ref);
     bool Has_XEntry(TESObjectREFR *obj, TESForm *form);
     void Move_Entry(TESObjectREFR *from, TESObjectREFR *to, TESForm *form);
@@ -50,6 +52,7 @@ namespace doticu_npcp { namespace Object_Ref {
     void Categorize(TESObjectREFR *ref_object);
     void Log_XContainer(TESObjectREFR *obj);
     void Log_XList(TESObjectREFR *ref_object);
+    void Validate_XContainer(Reference_t* ref);
 
     void Move_To_Orbit(TESObjectREFR *obj, TESObjectREFR *target, float radius, float angle_degree);
 

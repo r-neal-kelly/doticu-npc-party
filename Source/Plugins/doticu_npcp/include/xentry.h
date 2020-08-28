@@ -6,26 +6,40 @@
 
 #include "types.h"
 
-namespace doticu_npcp { namespace XEntry {
+namespace doticu_npcp { namespace Papyrus {
 
-    XEntry_t *Create(TESForm *form, SInt32 count);
-    void Destroy(XEntry_t *xentry);
+    struct XEntry_t {
+    public:
+        static XEntry_t* Create(Form_t* form, Int_t delta_count);
+        static void Destroy(XEntry_t* xentry);
 
-    s32 Get_Count(XEntry_t *xentry);
-    void Set_Count(XEntry_t *xentry, s32 count);
-    void Inc_Count(XEntry_t *xentry, s32 inc);
-    void Dec_Count(XEntry_t *xentry, s32 dec);
+    public:
+        Form_t* form;
+        XLists_t* xlists;
+    private:
+        Int_t delta_count;
 
-    void Add_XList(XEntry_t *xentry, XList_t *xlist);
-    void Remove_XList(XEntry_t *xentry, XList_t *xlist);
-    XList_t *Get_XList(XEntry_t *xentry, XList_t *xlist_similar, bool with_outfit2_flag);
-    bool Has_XList(XEntry_t *xentry, XList_t *xlist_similar, bool with_outfit2_flag);
-    void Move_XList(XEntry_t *from, XEntry_t *to, XList_t *xlist, TESObjectREFR *ref_to);
-    void Clean_XLists(XEntry_t *xentry, TESObjectREFR *ref_container);
-    bool Has_An_XList(XEntry_t *xentry);
+    public:
+        Int_t Delta_Count();
+        void Delta_Count(Int_t new_delta_count);
+        void Increment(Int_t by);
+        void Decrement(Int_t by);
 
-    bool Is_Worn(XEntry_t *xentry);
+        void Add_XList(XList_t* xlist);
+        void Remove_XList(XList_t* xlist);
+        void Move_XList(XEntry_t* to_xentry, Reference_t* to_reference, XList_t* xlist);
+        void Clean_XLists(Reference_t* to_reference);
 
-    void Log(XEntry_t *xentry, const std::string str_indent);
+        XList_t* Similar_XList(XList_t* similiar, Bool_t with_outfit2_flag);
+        Bool_t Has_Similar_XList(XList_t* similiar, Bool_t with_outfit2_flag);
+        Bool_t Has_Worn_XList();
+
+        void Validate(Reference_t* owner);
+
+        void Log(const std::string indent);
+    };
+    STATIC_ASSERT(sizeof(XEntry_t) == 0x18);
+
+    typedef tList<XEntry_t> XEntries_t;
 
 }}
