@@ -115,6 +115,9 @@ bool                p_is_custom_page    = false
 string              p_str_def_page      =    ""
 string              p_str_curr_page     =    ""
 
+; Native Methods
+function Reset_Page() native
+
 ; Friend Methods
 function f_Create()
     p_is_created = true
@@ -162,7 +165,7 @@ endFunction
 function f_Change_Page(string str_page)
     p_str_curr_page = str_page
     p_is_custom_page = true
-    ForcePageReset()
+    Reset_Page()
 endFunction
 
 string function f_Get_Current_Page()
@@ -239,7 +242,7 @@ event OnPageReset(string str_page)
         MCM_LOG.f_Build_Page()
     else
         p_str_curr_page = p_str_def_page
-        ForcePageReset()
+        Reset_Page()
     endIf
 endEvent
 

@@ -103,10 +103,6 @@ int                 p_int_saddler               =       0
 function Goto_Filter_Members() native
 
 ; Friend Methods
-function f_Review_Filter()
-    p_code_view = doticu_npcp_codes.VIEW_FILTER()
-endFunction
-
 function f_Build_Page()
     if p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS()
         return Goto_Filter_Members()
@@ -180,7 +176,7 @@ function f_On_Option_Select(int id_option)
     elseIf id_option == p_option_filter
         MCM.f_Disable(id_option, MCM.DO_UPDATE)
         p_code_view = doticu_npcp_codes.VIEW_FILTER_MEMBERS()
-        return MCM.ForcePageReset()
+        return MCM.Reset_Page()
 
     ; Alive/Dead
     elseIf id_option == p_option_is_alive

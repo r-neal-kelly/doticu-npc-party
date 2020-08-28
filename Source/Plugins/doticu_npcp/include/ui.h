@@ -130,6 +130,23 @@ namespace doticu_npcp { namespace Papyrus { namespace UI {
         }
     }
 
+    template <typename Type>
+    inline void Run(String_t menu, String_t target, Vector_t<Type> arguments)
+    {
+        if (menu.data && target.data) {
+            UIManager* ui_manager = UIManager::GetSingleton();
+            if (ui_manager) {
+                size_t argument_count = arguments.size();
+                UIInvokeDelegate delegate(menu.data, target.data);
+                delegate.args.resize(argument_count);
+                for (size_t idx = 0; idx < argument_count; idx += 1) {
+                    Set_Value<Type>(&delegate.args[idx], arguments[idx]);
+                }
+                delegate.Run();
+            }
+        }
+    }
+
     inline void Run(String_t menu, String_t target)
     {
         return Run<Bool_t>(menu, target, false);

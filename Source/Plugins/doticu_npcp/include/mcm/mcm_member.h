@@ -97,6 +97,9 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         void Update_Commands();
         void Build_Statistics();
         void Update_Statistics();
+        void Go_Back();
+
+        void On_Option_Select(Int_t option);
 
     public:
         static void Register_Me(Virtual_Machine_t* vm);

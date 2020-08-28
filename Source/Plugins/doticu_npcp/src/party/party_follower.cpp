@@ -384,12 +384,31 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Alias_t::Fill(member->Actor(), &callback);
     }
 
-    void Follower_t::Unfill(Virtual_Callback_i** callback)
+    void Follower_t::Unfill(Callback_t<Int_t, Member_t*>** callback)
     {
+        NPCP_ASSERT(callback);
         NPCP_ASSERT(Is_Filled());
 
+        struct VCallback : public Virtual_Callback_t {
+            Member_t* member;
+            Callback_t<Int_t, Member_t*>* callback;
+            VCallback(Member_t* member, Callback_t<Int_t, Member_t*>* callback) :
+                member(member), callback(callback)
+            {
+            }
+            void operator()(Variable_t* result)
+            {
+                NPCP_ASSERT(member);
+                member->Enforce_Outfit2(member->Actor());
+                NPCP_ASSERT(callback);
+                callback->operator()(CODES::SUCCESS, member);
+                delete callback;
+            }
+        };
+        Virtual_Callback_i* vcallback = new VCallback(Member(), *callback);
+        Alias_t::Unfill(&vcallback);
+
         Destroy();
-        Alias_t::Unfill(callback);
     }
 
     void Follower_t::Create(Member_t* member)

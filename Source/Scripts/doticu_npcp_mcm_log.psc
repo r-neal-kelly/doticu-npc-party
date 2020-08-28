@@ -133,7 +133,7 @@ function f_On_Option_Select(int id_option)
     elseIf id_option == p_option_clear_errors
         LOGS.Clear_Errors()
     endIf
-    MCM.ForcePageReset()
+    MCM.Reset_Page()
 endFunction
 
 function f_On_Option_Highlight(int id_option)

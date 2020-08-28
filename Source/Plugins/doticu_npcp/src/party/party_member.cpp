@@ -990,20 +990,13 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     void Member_t::Destroy()
     {
         if (Is_Follower()) {
-            class Callback : public Virtual_Callback_t {
-            public:
-                Member_t* member;
-                Callback(Member_t* member) :
-                    member(member)
-                {
-                }
-                void operator()(Variable_t* result)
+            struct Callback : public Callback_t<Int_t, Member_t*> {
+                void operator()(Int_t code, Member_t* member)
                 {
                     member->Destroy();
                 }
             };
-            Virtual_Callback_i* callback = new Callback(this);
-
+            Callback_t<Int_t, Member_t*>* callback = new Callback();
             Followers_t::Self()->Remove_Follower(this, &callback);
         } else {
             Actor_t* actor = Actor();
@@ -1831,15 +1824,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             return CODES::MEMBER;
         }
     }
-
-    /*Int_t Member_t::Clone()
-    {
-        if (Is_Filled()) {
-            return Members_t::Self()->Add_Clone(Actor());
-        } else {
-            return CODES::MEMBER;
-        }
-    }*/
 
     Int_t Member_t::Unclone()
     {
@@ -2816,14 +2800,12 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     {
         if (Is_Filled()) {
             if (Is_Follower()) {
-                Int_t result = Followers_t::Self()->Remove_Follower(this, nullptr);
-                if (result == CODES::SUCCESS) {
-                    Actor_t* actor = Actor();
-                    Enforce_Outfit2(actor); // may need to use callback
-                    return CODES::SUCCESS;
-                } else {
-                    return result;
-                }
+                struct Callback : public Callback_t<Int_t, Member_t*> {
+                    void operator()(Int_t code, Member_t* member) { }
+                };
+                Callback_t<Int_t, Member_t*>* callback = new Callback();
+                Followers_t::Self()->Remove_Follower(this, &callback);
+                return CODES::SUCCESS;
             } else {
                 return CODES::FOLLOWER;
             }

@@ -151,8 +151,10 @@
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\keys.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\mcm\mcm_followers.cpp" />
     <ClCompile Include="src\mcm\mcm_hotkeys.cpp" />
     <ClCompile Include="src\mcm\mcm_main.cpp" />
+    <ClCompile Include="src\mcm\mcm_mannequins.cpp" />
     <ClCompile Include="src\mcm\mcm_member.cpp" />
     <ClCompile Include="src\mcm\mcm_members.cpp" />
     <ClCompile Include="src\outfit.cpp" />
@@ -201,8 +203,10 @@
     <ClInclude Include="include\main.h" />
     <ClInclude Include="include\mcm\mcm_chests.h" />
     <ClInclude Include="include\mcm\mcm_filter.h" />
+    <ClInclude Include="include\mcm\mcm_followers.h" />
     <ClInclude Include="include\mcm\mcm_hotkeys.h" />
     <ClInclude Include="include\mcm\mcm_main.h" />
+    <ClInclude Include="include\mcm\mcm_mannequins.h" />
     <ClInclude Include="include\mcm\mcm_member.h" />
     <ClInclude Include="include\mcm\mcm_members.h" />
     <ClInclude Include="include\offsets.h" />

@@ -274,6 +274,27 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Option_Number_Value(index, static_cast<Float_t>(key_code), do_render);
     }
 
+    void SKI_Config_Base_t::Option_Flags(Int_t option, Int_t flags, Bool_t do_render)
+    {
+        NPCP_ASSERT(Current_State() != State_e::RESET);
+
+        Int_t index = option % 0x100;
+
+        Int_t old_flags = Flags()->Point(index)->Int();
+        old_flags %= 0x100;
+        old_flags += flags * 0x100;
+
+        Vector_t<Int_t> arguments;
+        arguments.reserve(2);
+        arguments.push_back(index);
+        arguments.push_back(flags);
+
+        UI::Run("Journal Menu", "_root.ConfigPanelFader.configPanel" ".setOptionFlags", arguments);
+        if (do_render) {
+            UI::Run("Journal Menu", "_root.ConfigPanelFader.configPanel" ".invalidateOptionData");
+        }
+    }
+
     void SKI_Config_Base_t::Show_Message(String_t message,
                                          Bool_t allow_cancel,
                                          String_t accept,
@@ -306,7 +327,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     void SKI_Config_Base_t::Reset_Page()
     {
-        Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "ForcePageReset");
+        UI::Run("Journal Menu", "_root.ConfigPanelFader.configPanel" ".forcePageReset");
     }
 
     void SKI_Config_Base_t::Register_Me(Virtual_Machine_t* vm)
@@ -359,6 +380,11 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         return Object()->Variable(variable_name);
     }
 
+    void Main_t::Close_Menus(Virtual_Callback_i** callback)
+    {
+        Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(), "doticu_npcp_funcs", "Close_Menus", nullptr, callback);
+    }
+
     void Main_t::Set_Option_Flags(Variable_t* option_in, Int_t flags, Bool_t do_render)
     {
         NPCP_ASSERT(option_in);
@@ -400,6 +426,13 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     void Main_t::Register_Me(Virtual_Machine_t* vm)
     {
+        #define BMETHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...) \
+        M                                                           \
+            FORWARD_METHOD(vm, Class_Name(), SKI_Config_Base_t,     \
+                           STR_FUNC_, ARG_NUM_,                     \
+                           RETURN_, METHOD_, __VA_ARGS__);          \
+        W
+
         #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
         M                                                           \
             FORWARD_METHOD(vm, Class_Name(), Main_t,                \
@@ -407,6 +440,9 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
+        BMETHOD("Reset_Page", 0, void, Reset_Page);
+
+        #undef BMETHOD
         #undef METHOD
     }
 

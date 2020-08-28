@@ -528,7 +528,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             }
         };
         Virtual_Callback_i* callback = new Callback(chest);
-        Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(), "doticu_npcp_funcs", "Close_Menus", nullptr, &callback);
+        Main()->Close_Menus(&callback);
     }
 
     void Chests_t::Register_Me(Virtual_Machine_t* vm)

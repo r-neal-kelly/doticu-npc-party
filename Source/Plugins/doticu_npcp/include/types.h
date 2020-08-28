@@ -77,6 +77,14 @@ namespace doticu_npcp {
     typedef BSExtraData             XData_t;
     typedef ExtraAliasInstanceArray XAliases_t;
 
+    template <typename ...Arguments>
+    struct Callback_t {
+        virtual ~Callback_t() = default;
+        virtual void operator()(Arguments...) = 0;
+    };
+
+    using Int_Callback_t = Callback_t<Int_t>;
+
     class Reference_t2 {
     public:
     };

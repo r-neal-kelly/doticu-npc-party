@@ -15,16 +15,6 @@ doticu_npcp_actors property ACTORS hidden
         return doticu_npcp.Funcs().ACTORS
     endFunction
 endProperty
-doticu_npcp_members property MEMBERS hidden
-    doticu_npcp_members function Get()
-        return doticu_npcp.Members()
-    endFunction
-endProperty
-doticu_npcp_followers property FOLLOWERS hidden
-    doticu_npcp_followers function Get()
-        return doticu_npcp.Followers()
-    endFunction
-endProperty
 doticu_npcp_commands property COMMANDS hidden
     doticu_npcp_commands function Get()
         return doticu_npcp.Control().COMMANDS
@@ -40,11 +30,6 @@ endProperty
 bool property DO_UPDATE hidden
     bool function Get()
         return MCM.DO_UPDATE
-    endFunction
-endProperty
-int property FLAG_DISABLE hidden
-    int function Get()
-        return MCM.FLAG_DISABLE
     endFunction
 endProperty
 
@@ -115,6 +100,8 @@ function p_Update_Commands() native
 function p_Build_Statistics() native
 function p_Update_Statistics() native
 
+function f_On_Option_Select         (int option) native
+
 ; Friend Methods
 function f_Create()
     p_is_created = true
@@ -142,18 +129,6 @@ function f_Disable(int id_option, bool bool_update)
     return MCM.f_Disable(id_option, bool_update)
 endFunction
 
-function f_View_Members_Member(doticu_npcp_member ref_member)
-    p_code_view = doticu_npcp_codes.VIEW_MEMBERS_MEMBER()
-
-    p_ref_member = ref_member
-endFunction
-
-function f_View_Filter_Members_Member(doticu_npcp_member ref_member)
-    p_code_view = doticu_npcp_codes.VIEW_FILTER_MEMBERS_MEMBER()
-
-    p_ref_member = ref_member
-endFunction
-
 function f_View_Followers_Member(doticu_npcp_member ref_member)
     p_code_view = doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
 
@@ -164,208 +139,6 @@ function f_View_Mannequins_Member(doticu_npcp_member ref_member)
     p_code_view = doticu_npcp_codes.VIEW_MANNEQUINS_MEMBER()
 
     p_ref_member = ref_member
-endFunction
-
-function f_On_Option_Select(int id_option)
-    if !p_ref_member
-        return
-    endIf
-
-    Actor ref_actor = p_ref_member.Actor()
-
-    if false
-
-    elseIf id_option == p_option_back
-        f_Disable(id_option, DO_UPDATE)
-        p_Go_Back()
-    elseIf id_option == p_option_prev
-        f_Disable(id_option, DO_UPDATE)
-        if p_code_view == doticu_npcp_codes.VIEW_MEMBERS_MEMBER() || p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS_MEMBER()
-            MCM.MCM_MEMBERS.f_Request_Prev_Member()
-            MCM.ForcePageReset()
-        elseIf p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
-            MCM.MCM_FOLLOWERS.f_Request_Prev_Member()
-            MCM.ForcePageReset()
-        endIf
-    elseIf id_option == p_option_next
-        f_Disable(id_option, DO_UPDATE)
-        if p_code_view == doticu_npcp_codes.VIEW_MEMBERS_MEMBER() || p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS_MEMBER()
-            MCM.MCM_MEMBERS.f_Request_Next_Member()
-            MCM.ForcePageReset()
-        elseIf p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
-            MCM.MCM_FOLLOWERS.f_Request_Next_Member()
-            MCM.ForcePageReset()
-        endIf
-
-    elseIf id_option == p_option_summon
-        f_Disable(id_option, DO_UPDATE)
-        COMMANDS.Summon(ref_actor)
-        p_Update_Commands()
-    elseIf id_option == p_option_goto
-        f_Disable(id_option, DO_UPDATE)
-        FUNCS.Close_Menus()
-        COMMANDS.Goto(ref_actor)
-    elseIf id_option == p_option_pack
-        f_Disable(id_option, DO_UPDATE)
-        FUNCS.Close_Menus()
-        COMMANDS.Open_Pack(ref_actor)
-    elseIf id_option == p_option_stash
-        f_Disable(id_option, DO_UPDATE)
-        p_ref_member.Stash()
-        p_Update_Commands()
-
-    elseIf id_option == p_option_settle
-        f_Disable(p_option_settle, DO_UPDATE)
-        COMMANDS.Settle(ref_actor)
-        p_Update_Commands()
-    elseIf id_option == p_option_resettle
-        f_Disable(p_option_resettle, DO_UPDATE)
-        COMMANDS.Resettle(ref_actor)
-        p_Update_Commands()
-    elseIf id_option == p_option_unsettle
-        f_Disable(p_option_unsettle, DO_UPDATE)
-        COMMANDS.Unsettle(ref_actor)
-        p_Update_Commands()
-
-    elseIf id_option == p_option_immobilize
-        f_Disable(p_option_immobilize, DO_UPDATE)
-        COMMANDS.Immobilize(ref_actor)
-        p_Update_Commands()
-    elseIf id_option == p_option_mobilize
-        f_Disable(p_option_mobilize, DO_UPDATE)
-        COMMANDS.Mobilize(ref_actor)
-        p_Update_Commands()
-
-    elseIf id_option == p_option_paralyze
-        f_Disable(p_option_paralyze, DO_UPDATE)
-        COMMANDS.Paralyze(ref_actor)
-        p_Update_Commands()
-    elseIf id_option == p_option_unparalyze
-        f_Disable(p_option_unparalyze, DO_UPDATE)
-        COMMANDS.Unparalyze(ref_actor)
-        p_Update_Commands()
-
-    elseIf id_option == p_option_follow
-        f_Disable(p_option_follow, DO_UPDATE)
-        COMMANDS.Follow(ref_actor)
-        p_Update_Commands()
-    elseIf id_option == p_option_unfollow
-        f_Disable(p_option_unfollow, DO_UPDATE)
-        COMMANDS.Unfollow(ref_actor)
-        if p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
-            p_Go_Back()
-        else
-            p_Update_Commands()
-        endIf
-
-    elseIf id_option == p_option_sneak
-        f_Disable(p_option_sneak, DO_UPDATE)
-        COMMANDS.Sneak(ref_actor)
-        p_Update_Commands()
-    elseIf id_option == p_option_unsneak
-        f_Disable(p_option_unsneak, DO_UPDATE)
-        COMMANDS.Unsneak(ref_actor)
-        p_Update_Commands()
-
-    elseIf id_option == p_option_rating
-        int int_rating = p_ref_member.Rating()
-        if false
-
-        elseIf int_rating == 0
-            p_ref_member.Rate(1)
-            p_Update_Commands()
-        elseIf int_rating == 1
-            p_ref_member.Rate(2)
-            p_Update_Commands()
-        elseIf int_rating == 2
-            p_ref_member.Rate(3)
-            p_Update_Commands()
-        elseIf int_rating == 3
-            p_ref_member.Rate(4)
-            p_Update_Commands()
-        elseIf int_rating == 4
-            p_ref_member.Rate(5)
-            p_Update_Commands()
-        elseIf int_rating == 5
-            p_ref_member.Rate(0)
-            p_Update_Commands()
-
-        endIf
-
-    elseIf id_option == p_option_style
-        int code_style = p_ref_member.Style()
-        if code_style == doticu_npcp_codes.STYLE_DEFAULT()
-            COMMANDS.Stylize_Warrior(ref_actor)
-            ;p_Update_Commands()
-            ;p_Update_Statistics()
-            MCM.ForcePageReset()
-        elseIf code_style == doticu_npcp_codes.STYLE_WARRIOR()
-            COMMANDS.Stylize_Mage(ref_actor)
-            ;p_Update_Commands()
-            ;p_Update_Statistics()
-            MCM.ForcePageReset()
-        elseIf code_style == doticu_npcp_codes.STYLE_MAGE()
-            COMMANDS.Stylize_Archer(ref_actor)
-            ;p_Update_Commands()
-            ;p_Update_Statistics()
-            MCM.ForcePageReset()
-        elseIf code_style == doticu_npcp_codes.STYLE_ARCHER()
-            COMMANDS.Stylize_Coward(ref_actor)
-            ;p_Update_Commands()
-            ;p_Update_Statistics()
-            MCM.ForcePageReset()
-        elseIf code_style == doticu_npcp_codes.STYLE_COWARD()
-            COMMANDS.Stylize_Default(ref_actor)
-            ;p_Update_Commands()
-            ;p_Update_Statistics()
-            MCM.ForcePageReset()
-        endIf
-
-    elseIf id_option == p_option_vitalize
-        int code_vitality = p_ref_member.Vitality()
-        if code_vitality == doticu_npcp_codes.VITALITY_MORTAL()
-            COMMANDS.Vitalize_Protected(ref_actor)
-            ;p_Update_Commands()
-            ;p_Update_Statistics()
-            MCM.ForcePageReset()
-        elseIf code_vitality == doticu_npcp_codes.VITALITY_PROTECTED()
-            COMMANDS.Vitalize_Essential(ref_actor)
-            ;p_Update_Commands()
-            ;p_Update_Statistics()
-            MCM.ForcePageReset()
-        elseIf code_vitality == doticu_npcp_codes.VITALITY_ESSENTIAL()
-            COMMANDS.Vitalize_Invulnerable(ref_actor)
-            ;p_Update_Commands()
-            ;p_Update_Statistics()
-            MCM.ForcePageReset()
-        elseIf code_vitality == doticu_npcp_codes.VITALITY_INVULNERABLE()
-            COMMANDS.Vitalize_Mortal(ref_actor)
-            ;p_Update_Commands()
-            ;p_Update_Statistics()
-            MCM.ForcePageReset()
-        endIf
-    
-    elseIf id_option == p_option_resurrect
-        f_Disable(p_option_resurrect, DO_UPDATE)
-        COMMANDS.Resurrect(ref_actor)
-        ;p_Update_Commands()
-        ;p_Update_Statistics()
-        MCM.ForcePageReset()
-
-    elseIf id_option == p_option_clone
-        f_Disable(p_option_clone, DO_UPDATE)
-        COMMANDS.Clone(ref_actor)
-        p_Update_Commands()
-    elseIf id_option == p_option_unclone
-        f_Disable(p_option_unclone, DO_UPDATE)
-        COMMANDS.Unclone(ref_actor)
-        p_Go_Back()
-    elseIf id_option == p_option_unmember
-        f_Disable(p_option_unmember, DO_UPDATE)
-        COMMANDS.Unmember(ref_actor)
-        p_Go_Back()
-
-    endIf
 endFunction
 
 function f_On_Option_Menu_Open(int id_option)
@@ -471,7 +244,7 @@ function f_On_Option_Input_Accept(int id_option, string str_input)
     if id_option == p_option_rename
         if str_input != ""
             p_ref_member.Rename(str_input)
-            MCM.ForcePageReset()
+            MCM.Reset_Page()
         endIf
     endIf
 endFunction
@@ -562,21 +335,4 @@ function f_On_Option_Keymap_Change(int id_option, int code_key, string str_confl
 endFunction
 
 function f_On_Option_Default(int id_option)
-endFunction
-
-; Private Methods
-function p_Go_Back()
-    if p_code_view == doticu_npcp_codes.VIEW_MEMBERS_MEMBER()
-        MCM.MCM_MEMBERS.f_Review_Members()
-        MCM.ForcePageReset()
-    elseIf p_code_view == doticu_npcp_codes.VIEW_FILTER_MEMBERS_MEMBER()
-        MCM.MCM_MEMBERS.f_Review_Filter_Members()
-        MCM.ForcePageReset()
-    elseIf p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
-        MCM.MCM_FOLLOWERS.f_Review_Followers()
-        MCM.ForcePageReset()
-    elseIf p_code_view == doticu_npcp_codes.VIEW_MANNEQUINS_MEMBER()
-        MCM.MCM_MANNEQUINS.f_Review_Mannequins()
-        MCM.ForcePageReset()
-    endIf
 endFunction

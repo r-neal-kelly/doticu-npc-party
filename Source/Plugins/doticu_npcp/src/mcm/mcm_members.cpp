@@ -61,7 +61,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
     Variable_t* Members_t::Members_Variable() { DEFINE_VARIABLE("p_arr_aliases"); }
     Variable_t* Members_t::Page_Index_Variable() { DEFINE_VARIABLE("p_idx_page"); }
     Variable_t* Members_t::Page_Count_Variable() { DEFINE_VARIABLE("p_num_pages"); }
-    Variable_t* Members_t::Members_Slice_Variable() { DEFINE_VARIABLE("p_arr_aliases_slice"); }
     Variable_t* Members_t::Member_Variable() { DEFINE_VARIABLE("p_ref_member"); }
 
     Variable_t* Members_t::Members_Page_Index_Variable() { DEFINE_VARIABLE("p_idx_page_members"); }
@@ -117,11 +116,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
     void Members_t::Page_Count(Int_t page_count)
     {
         Page_Count_Variable()->Int(page_count);
-    }
-
-    Array_t* Members_t::Members_Slice()
-    {
-        return Members_Slice_Variable()->Array();
     }
 
     Party::Member_t* Members_t::Member()
@@ -219,9 +213,19 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         return Do_Previous_Member_Variable()->Bool();
     }
 
+    void Members_t::Do_Previous_Member(Bool_t do_previous_member)
+    {
+        Do_Previous_Member_Variable()->Bool(do_previous_member);
+    }
+
     Bool_t Members_t::Do_Next_Member()
     {
         return Do_Next_Member_Variable()->Bool();
+    }
+
+    void Members_t::Do_Next_Member(Bool_t do_next_member)
+    {
+        Do_Next_Member_Variable()->Bool(do_next_member);
     }
 
     Bool_t Members_t::Is_Valid_Member(Party::Member_t* member)
@@ -234,12 +238,53 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         }
     }
 
+    Int_t Members_t::Headers_Per_Page()
+    {
+        if (Current_View() == CODES::VIEW::FILTER_MEMBERS) {
+            return 6;
+        } else {
+            return 4;
+        }
+    }
+
     Int_t Members_t::Members_Per_Page()
     {
         if (Current_View() == CODES::VIEW::FILTER_MEMBERS) {
             return 18;
         } else {
             return 20;
+        }
+    }
+
+    Party::Member_t* Members_t::Option_To_Member(Int_t option)
+    {
+        Int_t members_per_page = Members_Per_Page();
+        Int_t relative_idx = option - Options_Offset_Variable()->Int() - Headers_Per_Page();
+        if (relative_idx > -1 && relative_idx < members_per_page) {
+            Array_t* members = Members();
+            Int_t absolute_idx = Page_Index() * members_per_page + relative_idx;
+            if (absolute_idx > -1 && absolute_idx < members->count) {
+                return static_cast<Party::Member_t*>(members->Point(absolute_idx)->Alias());
+            } else {
+                return nullptr;
+            }
+        } else {
+            return nullptr;
+        }
+    }
+
+    String_t Members_t::Member_Info_String(Party::Member_t* member)
+    {
+        if (member) {
+            std::string info =
+                std::string("Sex: ") + member->Sex().data + ", " +
+                std::string("Race: ") + member->Race().data + "\n";
+            if (member->Rating() > 0) {
+                info += std::string("Rating: ") + member->Rating_Stars().data;
+            }
+            return info.c_str();
+        } else {
+            return "";
         }
     }
 
@@ -303,14 +348,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         if (end > members_count) {
             end = members_count;
         }
-
-        Vector_t<Party::Member_t*> slice;
-        slice.reserve(end - begin);
-        for (; begin < end; begin += 1) {
-            slice.push_back(members.at(begin));
-        }
-
-        Members_Slice_Variable()->Pack(slice);
     }
 
     void Members_t::Review_Members()
@@ -325,6 +362,24 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Current_View_Variable()->Int(CODES::VIEW::FILTER_MEMBERS);
         Filter_Members_Member_Variable()->Pack(static_cast<Party::Member_t*>(nullptr),
                                                Party::Member_t::Class_Info());
+    }
+
+    void Members_t::Go_Back()
+    {
+        if (Current_View() == CODES::VIEW::FILTER_MEMBERS) {
+            Filter_t::Self()->Review_Filter();
+            Main_t::Self()->Reset_Page();
+        }
+    }
+
+    void Members_t::Request_Previous_Member()
+    {
+        Do_Previous_Member(true);
+    }
+
+    void Members_t::Request_Next_Member()
+    {
+        Do_Next_Member(true);
     }
 
     String_t Members_t::Format_Title(Int_t member_count, Int_t page_idx, Int_t page_count)
@@ -355,7 +410,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             Member_Variable()->Pack(Next_Member(), Party::Member_t::Class_Info());
             Do_Next_Member_Variable()->Bool(false);
         }
-        
+
         Int_t current_view = Current_View();
         if (current_view == CODES::VIEW::MEMBERS_MEMBER) {
             Party::Member_t* current_member = Member();
@@ -381,7 +436,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         current_view = Current_View();
 
         Main_t* mcm = Main_t::Self();
-
         mcm->Cursor_Position(0);
         mcm->Cursor_Fill_Mode(Cursor_Fill_Mode_e::LEFT_TO_RIGHT);
 
@@ -423,11 +477,16 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             mcm->Add_Header_Option("");
             mcm->Add_Header_Option("");
 
-            Array_t* members_slice = Members_Slice();
-
-            for (size_t idx = 0, count = members_slice->count; idx < count; idx += 1) {
+            Int_t members_count = members->count;
+            Int_t members_per_page = Members_Per_Page();
+            Int_t begin = members_per_page * Page_Index();
+            Int_t end = begin + members_per_page;
+            if (end > members_count) {
+                end = members_count;
+            }
+            for (; begin < end; begin += 1) {
                 Party::Member_t* member = static_cast<Party::Member_t*>
-                    (members_slice->Point(idx)->Alias());
+                    (members->Point(begin)->Alias());
                 mcm->Add_Text_Option(member->Name(), "...");
             }
         } else {
@@ -441,8 +500,127 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                     mcm->Add_Text_Option("                            Go Back", "")
                 );
             }
-
             mcm->Add_Header_Option(" No Members ");
+        }
+    }
+
+    void Members_t::On_Option_Select(Int_t option)
+    {
+        Int_t current_view = Current_View();
+        if (current_view == CODES::VIEW::MEMBERS_MEMBER || current_view == CODES::VIEW::FILTER_MEMBERS_MEMBER) {
+            struct Arguments : public Virtual_Arguments_t {
+                Int_t option;
+                Arguments(Int_t option) :
+                    option(option)
+                {
+                }
+                Bool_t operator()(Arguments_t* arguments)
+                {
+                    arguments->Resize(1);
+                    arguments->At(0)->Int(option);
+                    return true;
+                }
+            } arguments(option);
+            Virtual_Machine_t::Self()->Call_Method(Consts::Control_Quest(), Member_t::Class_Name(), "f_On_Option_Select", &arguments);
+        } else {
+            Main_t* mcm = Main();
+            if (option == Back_Option_Variable()->Int() && current_view == CODES::VIEW::FILTER_MEMBERS) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+                Go_Back();
+            } else if (option == Previous_Option_Variable()->Int()) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+
+                Int_t page_idx = Page_Index();
+                if (page_idx == 0) {
+                    page_idx = Page_Count() - 1;
+                } else {
+                    page_idx -= 1;
+                }
+                Page_Index(page_idx);
+
+                Int_t current_view = Current_View();
+                if (current_view == CODES::VIEW::MEMBERS) {
+                    Members_Page_Index(page_idx);
+                } else if (current_view == CODES::VIEW::FILTER_MEMBERS) {
+                    Filter_Members_Page_Index(page_idx);
+                }
+
+                mcm->Reset_Page();
+            } else if (option == Next_Option_Variable()->Int()) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+
+                Int_t page_idx = Page_Index();
+                if (page_idx == Page_Count() - 1) {
+                    page_idx = 0;
+                } else {
+                    page_idx += 1;
+                }
+                Page_Index(page_idx);
+
+                Int_t current_view = Current_View();
+                if (current_view == CODES::VIEW::MEMBERS) {
+                    Members_Page_Index(page_idx);
+                } else if (current_view == CODES::VIEW::FILTER_MEMBERS) {
+                    Filter_Members_Page_Index(page_idx);
+                }
+
+                mcm->Reset_Page();
+            } else {
+                Party::Member_t* member = Option_To_Member(option);
+                if (member) {
+                    mcm->Option_Flags(option, MCM::DISABLE, true);
+
+                    Int_t current_view = Current_View();
+                    if (current_view == CODES::VIEW::MEMBERS) {
+                        Current_View(CODES::VIEW::MEMBERS_MEMBER);
+                        Members_Member(member);
+                    } else if (current_view == CODES::VIEW::FILTER_MEMBERS) {
+                        Current_View(CODES::VIEW::FILTER_MEMBERS_MEMBER);
+                        Filter_Members_Member(member);
+                    }
+
+                    mcm->Reset_Page();
+                }
+            }
+        }
+    }
+
+    void Members_t::On_Option_Highlight(Int_t option)
+    {
+        Int_t current_view = Current_View();
+        if (current_view == CODES::VIEW::MEMBERS_MEMBER || current_view == CODES::VIEW::FILTER_MEMBERS_MEMBER) {
+            struct Arguments : public Virtual_Arguments_t {
+                Int_t option;
+                Arguments(Int_t option) :
+                    option(option)
+                {
+                }
+                Bool_t operator()(Arguments_t* arguments)
+                {
+                    arguments->Resize(1);
+                    arguments->At(0)->Int(option);
+                    return true;
+                }
+            } arguments(option);
+            Virtual_Machine_t::Self()->Call_Method(Consts::Control_Quest(), Member_t::Class_Name(), "f_On_Option_Highlight", &arguments);
+        } else {
+            Main_t* mcm = Main();
+            if (option == Back_Option_Variable()->Int() && current_view == CODES::VIEW::FILTER_MEMBERS) {
+                mcm->Info_Text("Go back to the filter menu.");
+            } else if (option == Previous_Option_Variable()->Int()) {
+                mcm->Info_Text("Go to the Previous Page");
+            } else if (option == Next_Option_Variable()->Int()) {
+                mcm->Info_Text("Go to the Next Page");
+            } else {
+                Party::Member_t* member = Option_To_Member(option);
+                if (member) {
+                    mcm->Info_Text(
+                        (std::string("Opens the member menu for ") +
+                         member->Name().data + ".\n" +
+                         Member_Info_String(member).data).c_str()
+                    );
+                }
+            }
         }
     }
 
@@ -458,6 +636,13 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         METHOD("f_View_Members", 0, void, View_Members);
 
         METHOD("f_Build_Page", 0, void, Build_Page);
+
+        METHOD("f_On_Option_Select", 1, void, On_Option_Select, Int_t);
+        METHOD("f_On_Option_Highlight", 1, void, On_Option_Highlight, Int_t);
+
+        METHOD("Review_Members", 0, void, Review_Members);
+        METHOD("Review_Filter_Members", 0, void, Review_Filter_Members);
+        METHOD("Member_Info_String", 1, String_t, Member_Info_String, Party::Member_t*);
 
         #undef METHOD
     }

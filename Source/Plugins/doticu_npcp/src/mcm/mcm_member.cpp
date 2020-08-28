@@ -4,6 +4,7 @@
 
 #include "actor2.h"
 #include "codes.h"
+#include "commands.h"
 #include "consts.h"
 #include "papyrus.inl"
 #include "utils.h"
@@ -13,7 +14,10 @@
 #include "party/party_followers.h"
 
 #include "mcm/mcm_main.h"
+#include "mcm/mcm_members.h"
 #include "mcm/mcm_member.h"
+#include "mcm/mcm_mannequins.h"
+#include "mcm/mcm_followers.h"
 
 namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
@@ -523,6 +527,204 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         mcm_main->Text_Option_Value(Race_Option_Variable()->Int(), party_member->Race(), true);
     }
 
+    void Member_t::Go_Back()
+    {
+        Int_t current_view = Current_View();
+        if (current_view == CODES::VIEW::MEMBERS_MEMBER) {
+            MCM::Members_t::Self()->Review_Members();
+        } else if (current_view == CODES::VIEW::FILTER_MEMBERS_MEMBER) {
+            MCM::Members_t::Self()->Review_Filter_Members();
+        } else if (current_view == CODES::VIEW::FOLLOWERS_MEMBER) {
+            MCM::Followers_t::Self()->Review_Followers();
+        } else if (current_view == CODES::VIEW::MANNEQUINS_MEMBER) {
+            MCM::Mannequins_t::Self()->Review_Mannequins();
+        }
+        Main()->Reset_Page();
+    }
+
+    void Member_t::On_Option_Select(Int_t option)
+    {
+        using namespace Modules::Control;
+
+        Party::Member_t* member = Party_Member();
+        if (member) {
+            Actor_t* actor = member->Actor();
+            MCM::Main_t* mcm = Main();
+            if (option == Back_Option_Variable()->Int()) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+                Go_Back();
+            } else if (option == Previous_Option_Variable()->Int()) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+                Int_t current_view = Current_View();
+                if (current_view == CODES::VIEW::MEMBERS_MEMBER || current_view == CODES::VIEW::FILTER_MEMBERS_MEMBER) {
+                    MCM::Members_t::Self()->Request_Previous_Member();
+                } else if (current_view == CODES::VIEW::FOLLOWERS_MEMBER) {
+                    MCM::Followers_t::Self()->Request_Previous_Follower();
+                }
+                mcm->Reset_Page();
+            } else if (option == Next_Option_Variable()->Int()) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+                Int_t current_view = Current_View();
+                if (current_view == CODES::VIEW::MEMBERS_MEMBER || current_view == CODES::VIEW::FILTER_MEMBERS_MEMBER) {
+                    MCM::Members_t::Self()->Request_Next_Member();
+                } else if (current_view == CODES::VIEW::FOLLOWERS_MEMBER) {
+                    MCM::Followers_t::Self()->Request_Next_Follower();
+                }
+                mcm->Reset_Page();
+
+            } else if (option == Summon_Option_Variable()->Int()) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+                Commands_t::Self()->Summon(actor);
+                Update_Commands();
+            } else if (option == Goto_Option_Variable()->Int()) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+                struct Callback : public Virtual_Callback_t {
+                    Actor_t* actor;
+                    Callback(Actor_t* actor) :
+                        actor(actor)
+                    {
+                    }
+                    void operator()(Variable_t* result)
+                    {
+                        Commands_t::Self()->Goto(actor);
+                    }
+                };
+                Virtual_Callback_i* callback = new Callback(actor);
+                Main()->Close_Menus(&callback);
+            } else if (option == Pack_Option_Variable()->Int()) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+                struct Callback : public Virtual_Callback_t {
+                    Actor_t* actor;
+                    Callback(Actor_t* actor) :
+                        actor(actor)
+                    {
+                    }
+                    void operator()(Variable_t* result)
+                    {
+                        Commands_t::Self()->Open_Pack(actor);
+                    }
+                };
+                Virtual_Callback_i* callback = new Callback(actor);
+                Main()->Close_Menus(&callback);
+            } else if (option == Stash_Option_Variable()->Int()) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+                Commands_t::Self()->Stash(actor);
+                Update_Commands();
+
+            } else if (option == Settle_Option_Variable()->Int()) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+                Commands_t::Self()->Settle(actor);
+                Update_Commands();
+            } else if (option == Resettle_Option_Variable()->Int()) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+                Commands_t::Self()->Resettle(actor);
+                Update_Commands();
+            } else if (option == Unsettle_Option_Variable()->Int()) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+                Commands_t::Self()->Unsettle(actor);
+                Update_Commands();
+
+            } else if (option == Immobilize_Option_Variable()->Int()) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+                Commands_t::Self()->Immobilize(actor);
+                Update_Commands();
+            } else if (option == Mobilize_Option_Variable()->Int()) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+                Commands_t::Self()->Mobilize(actor);
+                Update_Commands();
+            } else if (option == Paralyze_Option_Variable()->Int()) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+                Commands_t::Self()->Paralyze(actor);
+                Update_Commands();
+            } else if (option == Unparalyze_Option_Variable()->Int()) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+                Commands_t::Self()->Unparalyze(actor);
+                Update_Commands();
+
+            } else if (option == Follow_Option_Variable()->Int()) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+                struct Callback : public Callback_t<Int_t, Party::Follower_t*> {
+                    MCM::Member_t* self;
+                    Callback(MCM::Member_t* self) :
+                        self(self)
+                    {
+                    }
+                    void operator()(Int_t code, Party::Follower_t* follower)
+                    {
+                        self->Update_Commands();
+                    }
+                };
+                Callback_t<Int_t, Party::Follower_t*>* callback = new Callback(this);
+                Commands_t::Self()->Follow(actor, &callback);
+            } else if (option == Unfollow_Option_Variable()->Int()) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+                struct Callback : public Callback_t<Int_t, Party::Member_t*> {
+                    MCM::Member_t* self;
+                    Callback(MCM::Member_t* self) :
+                        self(self)
+                    {
+                    }
+                    void operator()(Int_t code, Party::Member_t* member)
+                    {
+                        Int_t current_view = self->Current_View();
+                        if (current_view == CODES::VIEW::FOLLOWERS_MEMBER) {
+                            self->Go_Back();
+                        } else {
+                            self->Update_Commands();
+                        }
+                    }
+                };
+                Callback_t<Int_t, Party::Member_t*>* callback = new Callback(this);
+                Commands_t::Self()->Unfollow(actor, &callback);
+            } else if (option == Sneak_Option_Variable()->Int()) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+                Commands_t::Self()->Sneak(actor);
+                Update_Commands();
+            } else if (option == Unsneak_Option_Variable()->Int()) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+                Commands_t::Self()->Unsneak(actor);
+                Update_Commands();
+
+            } else if (option == Rating_Option_Variable()->Int()) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+                Commands_t::Self()->Cycle_Rating(actor);
+                Update_Commands();
+                mcm->Option_Flags(option, MCM::NONE, true);
+            } else if (option == Stylize_Option_Variable()->Int()) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+                Commands_t::Self()->Cycle_Style(actor);
+                Update_Commands();
+                Update_Statistics();
+                mcm->Option_Flags(option, MCM::NONE, true);
+            } else if (option == Vitalize_Option_Variable()->Int()) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+                Commands_t::Self()->Cycle_Vitality(actor);
+                Update_Commands();
+                Update_Statistics();
+                mcm->Option_Flags(option, MCM::NONE, true);
+
+            } else if (option == Resurrect_Option_Variable()->Int()) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+                Commands_t::Self()->Resurrect(actor);
+                Update_Commands();
+                Update_Statistics();
+
+            } else if (option == Clone_Option_Variable()->Int()) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+                Commands_t::Self()->Clone(actor);
+                Update_Commands();
+            } else if (option == Unclone_Option_Variable()->Int()) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+                Commands_t::Self()->Unclone(actor);
+                Go_Back();
+            } else if (option == Unmember_Option_Variable()->Int()) {
+                mcm->Option_Flags(option, MCM::DISABLE, true);
+                Commands_t::Self()->Unmember(actor);
+                Go_Back();
+            }
+        }
+    }
+
     void Member_t::Register_Me(Virtual_Machine_t* vm)
     {
         #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
@@ -537,6 +739,8 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         METHOD("p_Update_Commands", 0, void, Update_Commands);
         METHOD("p_Build_Statistics", 0, void, Build_Statistics);
         METHOD("p_Update_Statistics", 0, void, Update_Statistics);
+
+        METHOD("f_On_Option_Select", 1, void, On_Option_Select, Int_t);
 
         #undef METHOD
     }

@@ -115,7 +115,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             virtual void operator()(Int_t code, Follower_t* member) = 0;
         };
         void Add_Follower(Member_t* member, Add_Callback_i** add_callback);
-        Int_t Remove_Follower(Member_t* member, Virtual_Callback_i** callback);
+        void Remove_Follower(Member_t* member, Callback_t<Int_t, Member_t*>** callback);
 
         Int_t Enforce();
         Int_t Resurrect();

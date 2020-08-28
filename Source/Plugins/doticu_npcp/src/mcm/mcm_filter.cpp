@@ -2,6 +2,7 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "codes.h"
 #include "consts.h"
 #include "papyrus.inl"
 #include "utils.h"
@@ -50,6 +51,8 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
     {
         return Object()->Variable(variable_name);
     }
+
+    Variable_t* Filter_t::Current_View_Variable() { DEFINE_VARIABLE("p_code_view"); }
 
     Variable_t* Filter_t::Run_Filter_Option_Variable() { DEFINE_VARIABLE("p_option_filter"); }
 
@@ -135,6 +138,21 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Variable_t* variable = Variable(variable_name);
         NPCP_ASSERT(variable);
         return variable;
+    }
+
+    Int_t Filter_t::Current_View()
+    {
+        return Current_View_Variable()->Int();
+    }
+
+    void Filter_t::Current_View(Int_t view_code)
+    {
+        Current_View_Variable()->Int(view_code);
+    }
+
+    void Filter_t::Review_Filter()
+    {
+        Current_View(CODES::VIEW::FILTER);
     }
 
     Vector_t<String_t> Filter_t::Strings()

@@ -96,7 +96,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         void Untoken(Misc_t* token);
 
         void Fill(Member_t* member, Followers_t::Add_Callback_i** add_callback);
-        void Unfill(Virtual_Callback_i** callback);
+        void Unfill(Callback_t<Int_t, Member_t*>** callback);
         void Create(Member_t* member);
         void Destroy();
         void Create_Horse();

@@ -56,8 +56,8 @@ int                     p_code_view                 =     0
 Alias[]                 p_arr_aliases               =  none
 doticu_npcp_member      p_ref_member                =  none
 
-bool                    p_do_prev_member            = false
-bool                    p_do_next_member            = false
+bool                    p_do_prev_follower          = false
+bool                    p_do_next_follower          = false
 
 int                     p_options_offset            =    -1
 int                     p_option_menu               =    -1
@@ -80,14 +80,6 @@ endFunction
 function f_Review_Followers()
     p_code_view = doticu_npcp_codes.VIEW_FOLLOWERS()
     p_ref_member = none
-endFunction
-
-function f_Request_Prev_Member()
-    p_do_prev_member = true
-endFunction
-
-function f_Request_Next_Member()
-    p_do_next_member = true
 endFunction
 
 bool function f_Is_Valid_Member(doticu_npcp_member ref_member)
@@ -187,7 +179,7 @@ function f_On_Option_Select(int id_option)
         else
             COMMANDS.Immobilize(ref_actor)
         endIf
-        MCM.ForcePageReset()
+        MCM.Reset_Page()
 
     elseIf idx_command == p_COMMAND_ONE_MORE
         MCM.f_Disable(id_option, MCM.DO_UPDATE)
@@ -249,7 +241,7 @@ function f_On_Option_Menu_Accept(int id_option, int idx_option)
         elseIf idx_option == p_COMMAND_ALL_UNMEMBER
             COMMANDS.Followers_Unmember()
         endIf
-        MCM.ForcePageReset()
+        MCM.Reset_Page()
     endIf
 endFunction
 
@@ -356,14 +348,14 @@ endFunction
 
 function p_Goto_Followers_Member(doticu_npcp_member ref_member, bool is_building = false)
     if is_building
-        if p_do_prev_member
+        if p_do_prev_follower
             ref_member = p_Get_Prev_Member(ref_member)
             p_ref_member = ref_member
-            p_do_prev_member = false
-        elseIf p_do_next_member
+            p_do_prev_follower = false
+        elseIf p_do_next_follower
             ref_member = p_Get_Next_Member(ref_member)
             p_ref_member = ref_member
-            p_do_next_member = false
+            p_do_next_follower = false
         endIf
         MCM.MCM_MEMBER.f_View_Followers_Member(ref_member)
         MCM.MCM_MEMBER.f_Build_Page()
@@ -371,7 +363,7 @@ function p_Goto_Followers_Member(doticu_npcp_member ref_member, bool is_building
         p_code_view = doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
         p_ref_member = ref_member
         MCM.MCM_MEMBER.f_View_Followers_Member(ref_member)
-        MCM.ForcePageReset()
+        MCM.Reset_Page()
     endIf
 endFunction
 

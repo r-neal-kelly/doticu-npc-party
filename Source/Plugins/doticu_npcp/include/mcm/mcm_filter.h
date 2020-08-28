@@ -44,6 +44,8 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
     public:
         Variable_t* Variable(String_t variable_name);
 
+        Variable_t* Current_View_Variable();
+
         Variable_t* Run_Filter_Option_Variable();
 
         Variable_t* Sex_Option_Variable();
@@ -122,6 +124,11 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Variable_t* Saddler_Ternary_Variable();
 
         Variable_t* Flags_1_Variable();
+
+        Int_t Current_View();
+        void Current_View(Int_t view_code);
+
+        void Review_Filter();
 
         Vector_t<String_t> Strings();
         Vector_t<Int_t> Ints();

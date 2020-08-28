@@ -106,6 +106,8 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         void Text_Option_Value(Int_t option, String_t text, Bool_t do_render = true);
         void Keymap_Option_Value(Int_t option, Int_t key_code, Bool_t do_render = true);
 
+        void Option_Flags(Int_t option, Int_t flags, Bool_t do_render = true);
+
         void Show_Message(String_t message,
                           Bool_t allow_cancel = true,
                           String_t accept = "$Accept",
@@ -126,6 +128,8 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     public:
         Variable_t* Variable(String_t variable_name);
+
+        void Close_Menus(Virtual_Callback_i** callback = nullptr);
 
         void Set_Option_Flags(Variable_t* option_in, Int_t flags = 0, Bool_t do_render = true);
 

@@ -6,6 +6,13 @@
 
 #include "papyrus.h"
 
+namespace doticu_npcp { namespace Papyrus { namespace Party {
+
+    class Member_t;
+    class Follower_t;
+
+}}}
+
 namespace doticu_npcp { namespace Modules { namespace Control {
 
     using namespace Papyrus;
@@ -30,6 +37,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         // NPC
         void Log_Member(Int_t code, const char* name);
         void Log_Follow(Int_t code, const char* name);
+        void Log_Unfollow(Int_t code, const char* name);
 
         void Member(Actor_t* actor);
         void Unmember(Actor_t* actor);
@@ -68,7 +76,9 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         void Reanimate(Actor_t* actor);
         void Deanimate(Actor_t* actor);
         void Follow(Actor_t* actor);
+        void Follow(Actor_t* actor, Callback_t<Int_t, Party::Follower_t*>** callback);
         void Unfollow(Actor_t* actor);
+        void Unfollow(Actor_t* actor, Callback_t<Int_t, Party::Member_t*>** callback);
         void Stylize_Default(Actor_t* actor);
         void Stylize_Warrior(Actor_t* actor);
         void Stylize_Mage(Actor_t* actor);
@@ -86,6 +96,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         void Change_Vanilla_Outfit2(Actor_t* actor);
         void Change_Default_Outfit2(Actor_t* actor);
         void Change_Current_Outfit2(Actor_t* actor);
+        void Rate(Actor_t* actor, Int_t rating);
         void Toggle_Immobile(Actor_t* actor);
         void Toggle_Settler(Actor_t* actor);
         void Toggle_Thrall(Actor_t* actor);
@@ -99,6 +110,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         void Show_Outfit2(Actor_t* actor);
         void Cycle_Style(Actor_t* actor);
         void Cycle_Vitality(Actor_t* actor);
+        void Cycle_Rating(Actor_t* actor);
 
         // Follower
         void Sneak(Actor_t* actor);

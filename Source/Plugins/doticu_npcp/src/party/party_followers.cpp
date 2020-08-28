@@ -498,19 +498,19 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
-    Int_t Followers_t::Remove_Follower(Member_t* member, Virtual_Callback_i** callback)
+    void Followers_t::Remove_Follower(Member_t* member, Callback_t<Int_t, Member_t*>** callback)
     {
         if (member) {
-            Actor_t* actor = member->Actor();
-            Follower_t* follower = From_Actor(actor);
+            Follower_t* follower = From_Actor(member->Actor());
             if (follower) {
                 follower->Unfill(callback);
-                return CODES::SUCCESS;
             } else {
-                return CODES::FOLLOWER;
+                (*callback)->operator()(CODES::FOLLOWER, member);
+                delete (*callback);
             }
         } else {
-            return CODES::MEMBER;
+            (*callback)->operator()(CODES::MEMBER, nullptr);
+            delete (*callback);
         }
     }
 

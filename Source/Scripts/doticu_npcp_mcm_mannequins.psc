@@ -234,7 +234,7 @@ function f_On_Option_Select(int id_option)
         else
             p_idx_page -= 1
         endIf
-        MCM.ForcePageReset()
+        MCM.Reset_Page()
     elseIf id_option == p_option_next
         MCM.f_Disable(id_option, MCM.DO_UPDATE)
         if p_idx_page == p_num_pages - 1
@@ -242,14 +242,14 @@ function f_On_Option_Select(int id_option)
         else
             p_idx_page += 1
         endIf
-        MCM.ForcePageReset()
+        MCM.Reset_Page()
 
     else
         MCM.f_Disable(id_option, MCM.DO_UPDATE)
         p_curr_column = p_Get_Column(id_option)
         p_curr_row = p_Get_Row(id_option)
         GotoState("STATE_MANNEQUINS_CELL")
-        MCM.ForcePageReset()
+        MCM.Reset_Page()
 
     endIf
 endFunction
@@ -389,7 +389,7 @@ function f_On_Option_Select(int id_option)
     elseIf id_option == p_option_back
         MCM.f_Disable(id_option, MCM.DO_UPDATE)
         GotoState("STATE_MANNEQUINS")
-        MCM.ForcePageReset()
+        MCM.Reset_Page()
     elseIf id_option == p_option_enter
         MCM.f_Disable(id_option, MCM.DO_UPDATE)
         FUNCS.Close_Menus()
@@ -401,24 +401,24 @@ function f_On_Option_Select(int id_option)
     elseIf id_option == p_option_north_1 || id_option == p_option_north_2
         MCM.f_Disable(id_option, MCM.DO_UPDATE)
         p_curr_row += 1
-        MCM.ForcePageReset()
+        MCM.Reset_Page()
     elseIf id_option == p_option_south_1 || id_option == p_option_south_2
         MCM.f_Disable(id_option, MCM.DO_UPDATE)
         p_curr_row -= 1
-        MCM.ForcePageReset()
+        MCM.Reset_Page()
     elseIf id_option == p_option_west
         MCM.f_Disable(id_option, MCM.DO_UPDATE)
         p_curr_column -= 1
-        MCM.ForcePageReset()
+        MCM.Reset_Page()
     elseIf id_option == p_option_east
         MCM.f_Disable(id_option, MCM.DO_UPDATE)
         p_curr_column += 1
-        MCM.ForcePageReset()
+        MCM.Reset_Page()
     else
         MCM.f_Disable(id_option, MCM.DO_UPDATE)
         p_code_view = doticu_npcp_codes.VIEW_MANNEQUINS_MEMBER()
         p_ref_member = p_curr_members[p_Get_Idx_Entity(id_option)] as doticu_npcp_member
-        MCM.ForcePageReset()
+        MCM.Reset_Page()
 
     endIf
 endFunction
@@ -432,7 +432,7 @@ function f_On_Option_Input_Accept(int id_option, string str_input)
 
     elseIf id_option == p_option_name
         MANNEQUINS.Set_Cell_Name(p_curr_column, p_curr_row, str_input)
-        MCM.ForcePageReset()
+        MCM.Reset_Page()
 
     endIf
 endFunction
@@ -461,7 +461,7 @@ function f_On_Option_Highlight(int id_option)
     else
         doticu_npcp_member ref_member = p_curr_members[p_Get_Idx_Entity(id_option)] as doticu_npcp_member
         if ref_member
-            MCM.SetInfoText("Open the mannequin menu for " + ref_member.Name() + ".\n" + MCM.MCM_MEMBERS.Get_Info_String(ref_member))
+            MCM.SetInfoText("Open the mannequin menu for " + ref_member.Name() + ".\n" + MCM.MCM_MEMBERS.Member_Info_String(ref_member as Alias))
         endIf
 
     endIf

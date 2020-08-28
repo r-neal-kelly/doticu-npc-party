@@ -246,7 +246,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         void Enforce_Non_Reanimated(Actor_t* actor);
 
         Int_t Unmember();
-        //Int_t Clone();
         Int_t Unclone();
 
         Int_t Stylize(Int_t style);
