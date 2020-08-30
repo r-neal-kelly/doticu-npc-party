@@ -195,42 +195,50 @@ namespace doticu_npcp { namespace XList {
         }
     }
 
-    bool Is_Similar(XList_t *xlist_a, XList_t *xlist_b) {
-        if (!xlist_a || !xlist_b) {
+    bool Is_Similar(XList_t* xlist_a, XList_t* xlist_b)
+    {
+        if (xlist_a && xlist_b) {
+            return
+                XData::Is_Same_Health(
+                    (ExtraHealth*)xlist_a->GetByType(kExtraData_Health),
+                    (ExtraHealth*)xlist_b->GetByType(kExtraData_Health)
+                ) &&
+                XData::Is_Same_Enchantment(
+                    (ExtraEnchantment*)xlist_a->GetByType(kExtraData_Enchantment),
+                    (ExtraEnchantment*)xlist_b->GetByType(kExtraData_Enchantment)
+                ) &&
+                XData::Is_Same_Charge(
+                    (ExtraCharge*)xlist_a->GetByType(kExtraData_Charge),
+                    (ExtraCharge*)xlist_b->GetByType(kExtraData_Charge));
+        } else {
             return false;
         }
-
-        if (!XData::Is_Same_Health(
-            (ExtraHealth *)xlist_a->GetByType(kExtraData_Health),
-            (ExtraHealth *)xlist_b->GetByType(kExtraData_Health),
-            &xlist_a->m_lock,
-            &xlist_b->m_lock)) {
-            return false;
-        }
-        if (!XData::Is_Same_Enchantment(
-            (ExtraEnchantment *)xlist_a->GetByType(kExtraData_Enchantment),
-            (ExtraEnchantment *)xlist_b->GetByType(kExtraData_Enchantment),
-            &xlist_a->m_lock,
-            &xlist_b->m_lock)) {
-            return false;
-        }
-        if (!XData::Is_Same_Charge(
-            (ExtraCharge *)xlist_a->GetByType(kExtraData_Charge),
-            (ExtraCharge *)xlist_b->GetByType(kExtraData_Charge),
-            &xlist_a->m_lock,
-            &xlist_b->m_lock)) {
-            return false;
-        }
-
-        return true;
     }
 
     bool Can_Copy(XList_t *xlist) {
-        if (!xlist) {
+        if (xlist) {
+            return
+                xlist->HasType(kExtraData_Health) ||
+                xlist->HasType(kExtraData_Enchantment) ||
+                xlist->HasType(kExtraData_Charge);
+        } else {
             return false;
         }
+    }
 
-        return xlist->HasType(kExtraData_Health) || xlist->HasType(kExtraData_Enchantment) || xlist->HasType(kExtraData_Charge);
+    Bool_t Has_Health(XList_t* xlist)
+    {
+        return xlist->HasType(kExtraData_Health);
+    }
+
+    Bool_t Has_Enchantement(XList_t* xlist)
+    {
+        return xlist->HasType(kExtraData_Enchantment);
+    }
+
+    Bool_t Has_Charge(XList_t* xlist)
+    {
+        return xlist->HasType(kExtraData_Charge);
     }
 
     bool Is_Worn(XList_t *xlist) {
@@ -288,12 +296,12 @@ namespace doticu_npcp { namespace XList {
         
         ExtraOwnership *xownership = (ExtraOwnership *)xlist->GetByType(kExtraData_Ownership);
         if (xownership) {
-            //BSReadAndWriteLocker locker(&xlist->m_lock);
             xownership->owner = (*g_thePlayer)->baseForm;
         } else {
             xlist->Add(kExtraData_Ownership, XData::Create_Ownership((*g_thePlayer)->baseForm));
         }
     }
+
     bool Has_Outfit2_Flag(XList_t *xlist) {
         if (!xlist) {
             return false;

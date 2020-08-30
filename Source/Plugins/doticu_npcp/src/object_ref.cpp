@@ -190,17 +190,37 @@ namespace doticu_npcp { namespace Object_Ref {
         }
     }
 
+    Bool_t Has_Similar_XList(Reference_t* ref, Form_t* form, XList_t* xlist_to_compare)
+    {
+        if (ref) {
+            XContainer_t* xcontainer = Get_XContainer(ref, false);
+            if (xcontainer) {
+                XEntry_t* xentry = xcontainer->XEntry(form, false);
+                if (xentry) {
+                    return xentry->Has_Similar_XList(xlist_to_compare);
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
     // need to study if a BContainer can have multiple entries of the same form or not. confer with editor.
-    SInt32 Get_BEntry_Count(TESObjectREFR *obj, TESForm *form) {
+    Int_t Get_BEntry_Count(Reference_t* obj, Form_t* form)
+    {
         if (!obj || !form) {
             return 0;
         }
 
-        BContainer_t *bcontainer = Get_BContainer(obj);
+        BContainer_t* bcontainer = Get_BContainer(obj);
         SInt32 count = 0;
         if (bcontainer) {
             for (u64 idx = 0; idx < bcontainer->numEntries; idx += 1) {
-                BEntry_t *bentry = bcontainer->entries[idx];
+                BEntry_t* bentry = bcontainer->entries[idx];
                 if (bentry && bentry->form == form) {
                     count += bentry->count;
                 }
@@ -210,7 +230,8 @@ namespace doticu_npcp { namespace Object_Ref {
         return count;
     }
 
-    SInt32 Get_XEntry_Count(TESObjectREFR *obj, TESForm *form) {
+    Int_t Get_XEntry_Count(Reference_t* obj, Form_t* form)
+    {
         if (obj && form) {
             XEntry_t* xentry = Get_XEntry(obj, form, false);
             if (xentry) {
@@ -223,7 +244,8 @@ namespace doticu_npcp { namespace Object_Ref {
         }
     }
 
-    SInt32 Get_Entry_Count(TESObjectREFR *obj, TESForm *form) {
+    Int_t Get_Entry_Count(Reference_t* obj, Form_t* form)
+    {
         return Get_BEntry_Count(obj, form) + Get_XEntry_Count(obj, form);
     }
 

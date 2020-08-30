@@ -147,22 +147,13 @@ namespace doticu_npcp { namespace Papyrus {
         }
     }
 
-    XList_t* XEntry_t::Similar_XList(XList_t* similar, Bool_t with_outfit2_flag)
+    XList_t* XEntry_t::Similar_XList(XList_t* xlist_to_compare)
     {
-        if (similar && xlists) {
-            if (with_outfit2_flag) {
-                for (XLists_t::Iterator it = xlists->Begin(); !it.End(); ++it) {
-                    XList_t* xlist = it.Get();
-                    if (XList::Has_Outfit2_Flag(xlist) && XList::Is_Similar(xlist, similar)) {
-                        return xlist;
-                    }
-                }
-            } else {
-                for (XLists_t::Iterator it = xlists->Begin(); !it.End(); ++it) {
-                    XList_t* xlist = it.Get();
-                    if (XList::Is_Similar(xlist, similar)) {
-                        return xlist;
-                    }
+        if (xlist_to_compare && xlists) {
+            for (XLists_t::Iterator it = xlists->Begin(); !it.End(); ++it) {
+                XList_t* xlist = it.Get();
+                if (xlist && XList::Is_Similar(xlist, xlist_to_compare)) {
+                    return xlist;
                 }
             }
             return nullptr;
@@ -171,9 +162,9 @@ namespace doticu_npcp { namespace Papyrus {
         }
     }
 
-    Bool_t XEntry_t::Has_Similar_XList(XList_t* similar, Bool_t with_outfit2_flag)
+    Bool_t XEntry_t::Has_Similar_XList(XList_t* similar)
     {
-        return Similar_XList(similar, with_outfit2_flag) != nullptr;
+        return Similar_XList(similar) != nullptr;
     }
 
     Bool_t XEntry_t::Has_Worn_XList()

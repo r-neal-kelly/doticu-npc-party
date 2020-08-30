@@ -30,8 +30,8 @@ namespace doticu_npcp { namespace Papyrus {
         void Move_XList(XEntry_t* to_xentry, Reference_t* to_reference, XList_t* xlist);
         void Clean_XLists(Reference_t* to_reference);
 
-        XList_t* Similar_XList(XList_t* similiar, Bool_t with_outfit2_flag);
-        Bool_t Has_Similar_XList(XList_t* similiar, Bool_t with_outfit2_flag);
+        XList_t* Similar_XList(XList_t* similiar);
+        Bool_t Has_Similar_XList(XList_t* similiar);
         Bool_t Has_Worn_XList();
 
         void Validate(Reference_t* owner);

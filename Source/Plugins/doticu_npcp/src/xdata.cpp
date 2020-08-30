@@ -430,42 +430,43 @@ namespace doticu_npcp { namespace XData {
         return xdata_new;
     }
 
-    bool Is_Same_Health(ExtraHealth *xdata_a, ExtraHealth *xdata_b, BSReadWriteLock *xlist_lock_a, BSReadWriteLock *xlist_lock_b) {
-        if (!xdata_a && !xdata_b) {
-            return true;
-        } else if (!xdata_a || !xdata_b) {
+    bool Is_Same_Health(ExtraHealth *xdata_a, ExtraHealth *xdata_b) {
+        if (xdata_a && xdata_b) {
+            return xdata_a->health == xdata_b->health;
+        } else if (xdata_a) {
             return false;
+        } else if (xdata_b) {
+            return false;
+        } else {
+            return true;
         }
-
-        //BSReadLocker locker_a(xlist_lock_a);
-        //BSReadLocker locker_b(xlist_lock_b);
-        return xdata_a->health == xdata_b->health;
     }
 
-    bool Is_Same_Enchantment(ExtraEnchantment *xdata_a, ExtraEnchantment *xdata_b, BSReadWriteLock *xlist_lock_a, BSReadWriteLock *xlist_lock_b) {
-        if (!xdata_a && !xdata_b) {
-            return true;
-        } else if (!xdata_a || !xdata_b) {
+    bool Is_Same_Enchantment(ExtraEnchantment *xdata_a, ExtraEnchantment *xdata_b) {
+        if (xdata_a && xdata_b) {
+            return
+                xdata_a->enchant == xdata_b->enchant &&
+                xdata_a->maxCharge == xdata_b->maxCharge &&
+                xdata_a->unk0E == xdata_b->unk0E; // is this one necessary?
+        } else if (xdata_a) {
             return false;
+        } else if (xdata_b) {
+            return false;
+        } else {
+            return true;
         }
-
-        //BSReadLocker locker_a(xlist_lock_a);
-        //BSReadLocker locker_b(xlist_lock_b);
-        return xdata_a->enchant == xdata_b->enchant &&
-            xdata_a->maxCharge == xdata_b->maxCharge &&
-            xdata_a->unk0E == xdata_b->unk0E; // is this one necessary?
     }
 
-    bool Is_Same_Charge(ExtraCharge *xdata_a, ExtraCharge *xdata_b, BSReadWriteLock *xlist_lock_a, BSReadWriteLock *xlist_lock_b) {
-        if (!xdata_a && !xdata_b) {
-            return true;
-        } else if (!xdata_a || !xdata_b) {
+    bool Is_Same_Charge(ExtraCharge *xdata_a, ExtraCharge *xdata_b) {
+        if (xdata_a && xdata_b) {
+            return xdata_a->charge == xdata_b->charge;
+        } else if (xdata_a) {
             return false;
+        } else if (xdata_b) {
+            return false;
+        } else {
+            return true;
         }
-
-        //BSReadLocker locker_a(xlist_lock_a);
-        //BSReadLocker locker_b(xlist_lock_b);
-        return xdata_a->charge == xdata_b->charge;
     }
 
     const char *Get_Type_String(XData_t *xdata) {

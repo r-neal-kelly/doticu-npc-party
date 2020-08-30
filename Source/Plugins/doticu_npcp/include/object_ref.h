@@ -26,10 +26,11 @@ namespace doticu_npcp { namespace Object_Ref {
     void Remove_All_XEntries(Reference_t* ref);
     bool Has_XEntry(TESObjectREFR *obj, TESForm *form);
     void Move_Entry(TESObjectREFR *from, TESObjectREFR *to, TESForm *form);
+    Bool_t Has_Similar_XList(Reference_t* ref, Form_t* form, XList_t* xlist_to_compare);
 
-    SInt32 Get_BEntry_Count(TESObjectREFR *obj, TESForm *form);
-    SInt32 Get_XEntry_Count(TESObjectREFR *obj, TESForm *form);
-    SInt32 Get_Entry_Count(TESObjectREFR *obj, TESForm *form);
+    Int_t Get_BEntry_Count(Reference_t* ref, Form_t* form);
+    Int_t Get_XEntry_Count(Reference_t* ref, Form_t* form);
+    Int_t Get_Entry_Count(Reference_t* ref, Form_t* form);
 
     const char *Get_Base_Name(TESObjectREFR *ref_object);
     const char *Get_Ref_Name(TESObjectREFR *ref_object);

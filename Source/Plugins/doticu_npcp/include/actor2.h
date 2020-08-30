@@ -22,8 +22,7 @@ namespace doticu_npcp { namespace Actor2 {
     void Set_Outfit_Basic(Actor_t* actor, Outfit_t* outfit, Bool_t is_sleep_outfit = false, Bool_t allow_bcontainer = true);
     void Set_Outfit(Actor_t* actor, Outfit_t* outfit, Bool_t is_sleep_outfit = false);
 
-    void Set_Outfit2(Actor_t* actor, Reference_t* vanilla, Reference_t* custom, Reference_t* transfer);
-    void Copy_Outfit2_Partition(Actor_t* actor, Reference_t* outfit2_partition);
+    void Set_Outfit2(Actor_t* actor, Reference_t* outfit1, Reference_t* outfit2, Reference_t* transfer);
     void Split_Inventory(Actor_t* actor, Reference_t* worn_out, Reference_t* pack_out);
     void Cache_Worn(Actor_t* actor, Reference_t* cache_out);
     void Cache_BContainer(Actor_t* actor, Reference_t* cache_out);

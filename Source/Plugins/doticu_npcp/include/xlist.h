@@ -22,6 +22,9 @@ namespace doticu_npcp { namespace XList {
 
     bool Is_Similar(XList_t *xlist_a, XList_t *xlist_b);
     bool Can_Copy(XList_t *xlist);
+    Bool_t Has_Health(XList_t* xlist);
+    Bool_t Has_Enchantement(XList_t* xlist);
+    Bool_t Has_Charge(XList_t* xlist);
     bool Is_Worn(XList_t *xlist);
     bool Is_Outfit_Item(XList_t *xlist);
     bool Is_Leveled_Item(XList_t *xlist);
