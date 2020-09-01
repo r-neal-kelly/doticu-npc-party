@@ -263,7 +263,7 @@ namespace doticu_npcp { namespace Papyrus {
 
         void Register_Keys();
         Bool_t Can_Use_Keys();
-        Actor_t* Actor_In_Crosshair(Bool_t allow_follower_horse = false);
+        void Actor_In_Crosshair(Bool_t allow_follower_horse, void(*callback)(Actor_t*));
         void On_Key_Up(Int_t key_code, Float_t time_held);
 
     public:

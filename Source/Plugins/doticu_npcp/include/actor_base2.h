@@ -24,6 +24,9 @@ namespace doticu_npcp { namespace Actor_Base2 {
     Relationships_t* Relationships(Actor_Base_t* actor_base);
     Relationship_t::Rank_e Relationship_Rank(Actor_Base_t* actor_base, Actor_Base_t* with_other);
     //void Relationship_Rank(Actor_Base_t* actor_base, Actor_Base_t* with_other, Relationship_t::Rank_e rank);
+
+    void Essentialize(Actor_Base_t* actor_base);
+    void Protect(Actor_Base_t* actor_base);
 }}
 
 namespace doticu_npcp { namespace Actor_Base2 { namespace Exports {

@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include "skse64_common/BranchTrampoline.h"
-
 #include "skse64/GameInput.h"
 #include "skse64/Hooks_DirectInput8Create.h"
 #include "skse64/Hooks_Gameplay.h"
@@ -14,6 +12,7 @@
 #include "consts.h"
 #include "game.h"
 #include "keys.h"
+#include "object_ref.h"
 #include "papyrus.h"
 #include "papyrus.inl"
 #include "string2.h"
@@ -28,18 +27,6 @@
 #include "commands.h"
 
 namespace doticu_npcp { namespace Papyrus {
-
-    // this needs to be reworked.
-    NiPointer<TESObjectREFR> g_crosshair_reference;
-    RelocAddr<uintptr_t> kHook_Crosshair_LookupREFRByHandle_Enter(0x006B0570 + 0x90); // 39535
-    bool __cdecl Hook_Crosshair_LookupREFRByHandle(UInt32& refHandle, NiPointer<TESObjectREFR>& refrOut)
-    {
-        bool result = LookupREFRByHandle(refHandle, refrOut);
-
-        g_crosshair_reference = refrOut;
-
-        return result;
-    }
 
     const char* Keys_t::Code_To_String(Int_t code)
     {
@@ -592,26 +579,41 @@ namespace doticu_npcp { namespace Papyrus {
         return !UI::Is_In_Menu_Mode();
     }
 
-    Actor_t* Keys_t::Actor_In_Crosshair(Bool_t allow_follower_horse)
+    void Keys_t::Actor_In_Crosshair(Bool_t allow_follower_horse, void(*callback)(Actor_t*))
     {
         using namespace Papyrus::Party;
 
-        Reference_t* ref = g_crosshair_reference;
-        if (ref && ref->formType == kFormType_Character) {
-            Actor_t* actor = static_cast<Actor_t*>(ref);
-            if (allow_follower_horse) {
-                return actor;
-            } else {
-                Follower_t* follower = Followers_t::Self()->From_Horse_Actor(actor);
-                if (follower) {
-                    return follower->Actor();
-                } else {
-                    return actor;
+        struct VCallback : Virtual_Callback_t {
+            Bool_t allow_follower_horse;
+            void(*callback)(Actor_t*);
+            VCallback(Bool_t allow_follower_horse, void(*callback)(Actor_t*)) :
+                allow_follower_horse(allow_follower_horse), callback(callback)
+            {
+            }
+            void operator()(Variable_t* result)
+            {
+                if (result&& result->Has_Object()) {
+                    Reference_t* ref = result->Reference();
+                    if (ref && ref->formType == kFormType_Character) {
+                        Actor_t* actor = static_cast<Actor_t*>(ref);
+                        if (allow_follower_horse) {
+                            callback(actor);
+                        } else {
+                            Follower_t* follower = Followers_t::Self()->From_Horse_Actor(actor);
+                            if (follower) {
+                                callback(follower->Actor());
+                            } else {
+                                callback(actor);
+                            }
+                        }
+                    } else {
+                        callback(nullptr);
+                    }
                 }
             }
-        } else {
-            return nullptr;
-        }
+        };
+        Virtual_Callback_i* vcallback = new VCallback(allow_follower_horse, callback);
+        Object_Ref::Get_Current_Crosshair_Reference(&vcallback);
     }
 
     void Keys_t::On_Key_Up(Int_t key_code, Float_t time_held)
@@ -629,35 +631,77 @@ namespace doticu_npcp { namespace Papyrus {
                     Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(), "doticu_npcp_actors", "Create_Menu");
 
                 } else if (IS(N_Toggle_Member)) { // NPC
-                    Commands_t::Self()->Toggle_Member(Actor_In_Crosshair());
+                    Actor_In_Crosshair(false, [](Actor_t* actor)->void
+                                       {
+                                           Commands_t::Self()->Toggle_Member(actor);
+                                       });
                 } else if (IS(N_Toggle_Move)) {
-                    Commands_t::Self()->Toggle_Move(Actor_In_Crosshair(true));
+                    Actor_In_Crosshair(true, [](Actor_t* actor)->void
+                                       {
+                                           Commands_t::Self()->Toggle_Move(actor);
+                                       });
                 } else if (IS(N_Has_Base)) {
-                    Commands_t::Self()->Has_Base(Actor_In_Crosshair());
+                    Actor_In_Crosshair(false, [](Actor_t* actor)->void
+                                       {
+                                           Commands_t::Self()->Has_Base(actor);
+                                       });
                 } else if (IS(N_Count_Base)) {
-                    Commands_t::Self()->Count_Base(Actor_In_Crosshair());
+                    Actor_In_Crosshair(false, [](Actor_t* actor)->void
+                                       {
+                                           Commands_t::Self()->Count_Base(actor);
+                                       });
                 } else if (IS(N_Has_Head)) {
-                    Commands_t::Self()->Has_Head(Actor_In_Crosshair());
+                    Actor_In_Crosshair(false, [](Actor_t* actor)->void
+                                       {
+                                           Commands_t::Self()->Has_Head(actor);
+                                       });
                 } else if (IS(N_Count_Heads)) {
-                    Commands_t::Self()->Count_Heads(Actor_In_Crosshair());
+                    Actor_In_Crosshair(false, [](Actor_t* actor)->void
+                                       {
+                                           Commands_t::Self()->Count_Heads(actor);
+                                       });
 
                 } else if (IS(M_Toggle_Clone)) { // Member
-                    Commands_t::Self()->Toggle_Clone(Actor_In_Crosshair());
+                    Actor_In_Crosshair(false, [](Actor_t* actor)->void
+                                       {
+                                           Commands_t::Self()->Toggle_Clone(actor);
+                                       });
                 } else if (IS(M_Toggle_Settler)) {
-                    Commands_t::Self()->Toggle_Settler(Actor_In_Crosshair());
+                    Actor_In_Crosshair(false, [](Actor_t* actor)->void
+                                       {
+                                           Commands_t::Self()->Toggle_Settler(actor);
+                                       });
                 } else if (IS(M_Toggle_Thrall)) {
-                    Commands_t::Self()->Toggle_Thrall(Actor_In_Crosshair());
+                    Actor_In_Crosshair(false, [](Actor_t* actor)->void
+                                       {
+                                           Commands_t::Self()->Toggle_Thrall(actor);
+                                       });
                 } else if (IS(M_Toggle_Immobile)) {
-                    Commands_t::Self()->Toggle_Immobile(Actor_In_Crosshair());
+                    Actor_In_Crosshair(false, [](Actor_t* actor)->void
+                                       {
+                                           Commands_t::Self()->Toggle_Immobile(actor);
+                                       });
                 } else if (IS(M_Toggle_Paralyzed)) {
-                    Commands_t::Self()->Toggle_Paralyzed(Actor_In_Crosshair());
+                    Actor_In_Crosshair(false, [](Actor_t* actor)->void
+                                       {
+                                           Commands_t::Self()->Toggle_Paralyzed(actor);
+                                       });
                 } else if (IS(M_Toggle_Follower)) {
-                    Commands_t::Self()->Toggle_Follower(Actor_In_Crosshair());
+                    Actor_In_Crosshair(false, [](Actor_t* actor)->void
+                                       {
+                                           Commands_t::Self()->Toggle_Follower(actor);
+                                       });
 
                 } else if (IS(F_Toggle_Sneak)) { // Follower
-                    Commands_t::Self()->Toggle_Sneak(Actor_In_Crosshair());
+                    Actor_In_Crosshair(false, [](Actor_t* actor)->void
+                                       {
+                                           Commands_t::Self()->Toggle_Sneak(actor);
+                                       });
                 } else if (IS(F_Toggle_Saddler)) {
-                    Commands_t::Self()->Toggle_Saddler(Actor_In_Crosshair());
+                    Actor_In_Crosshair(false, [](Actor_t* actor)->void
+                                       {
+                                           Commands_t::Self()->Toggle_Saddler(actor);
+                                       });
 
                 } else if (IS(MS_Toggle_Display)) { // Members
                     Commands_t::Self()->Members_Toggle_Display();
@@ -720,8 +764,6 @@ namespace doticu_npcp { namespace Papyrus {
         METHOD("OnKeyUp", 2, void, On_Key_Up, Int_t, Float_t);
 
         #undef METHOD
-
-        g_branchTrampoline.Write5Call(kHook_Crosshair_LookupREFRByHandle_Enter, (uintptr_t)Hook_Crosshair_LookupREFRByHandle);
     }
 
 }}

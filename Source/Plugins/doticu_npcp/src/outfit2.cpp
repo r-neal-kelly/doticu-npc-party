@@ -174,6 +174,7 @@ namespace doticu_npcp { namespace Papyrus {
         }
 
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::DELETED);
+        //outfit2->flags = Utils::Bit_Off(outfit2->flags, 10);
         Object_Ref::Delete_Safe(outfit2);
     }
 
@@ -261,7 +262,6 @@ namespace doticu_npcp { namespace Papyrus {
                 {
                     Actor2::Leave_Player_Team(actor);
                     Actor2::Set_Outfit2(actor, outfit2->Outfit1_Cache(), outfit2, pack);
-                    Actor2::Join_Player_Team(actor);
                     Actor2::Update_Equipment(actor);
                 }
             };

@@ -136,6 +136,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Int_t Unretreat();
         Int_t Unfollow();
         Int_t Unmember();
+        Int_t Level();
+        Int_t Unlevel();
 
         void Summon(Vector_t<Follower_t*> followers, float radius = 140.0, float degree = 0.0, float interval = 19.0);
         Int_t Summon_Filled(float radius = 140.0, float degree = 0.0, float interval = 19.0);

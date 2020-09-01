@@ -386,6 +386,11 @@ string property str_sort_followers hidden
     endFunction
 endProperty
 
+; Native Methods
+bool function Is_Leveling_Enabled() native
+function Enable_Leveling() native
+function Disable_Leveling() native
+
 ; Friend Methods
 function f_Create()
     p_is_created = true
@@ -405,9 +410,6 @@ function f_Unregister()
 endFunction
 
 ; Public Methods
-function Log_Variables() native
-function Log_Properties() native
-
 function Set_Defaults()
     version_major = doticu_npcp_consts.NPCP_Major()
     version_minor = doticu_npcp_consts.NPCP_Minor()

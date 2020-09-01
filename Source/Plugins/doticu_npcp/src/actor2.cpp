@@ -610,9 +610,14 @@ namespace doticu_npcp { namespace Actor2 {
 
             void Unequip(Form_t* form, XList_t* xlist)
             {
-                if (xlist) {
-                    Actor_Equipper_t::Self()->Unequip_Item(actor, form, xlist, XList::Get_Count(xlist),
-                                                           nullptr, false, true, false, true, nullptr);
+                return; // freezes and then potentially crashes game.
+                if (form && xlist) {
+                    Weapon_t* weapon = static_cast<Weapon_t*>(form);
+                    BGSEquipSlot* equip_slot = weapon->equipType.GetEquipSlot();
+                    if (equip_slot) {
+                        Actor_Equipper_t::Self()->Unequip_Item(actor, form, xlist, 1, equip_slot,
+                                                               false, true, false, true, nullptr);
+                    }
                 }
             }
 
@@ -1205,6 +1210,23 @@ namespace doticu_npcp { namespace Actor2 {
                 1 << Actor_t2::Update_3D_Flags::SKELETON_3D;
             Update_3D_Model(actor);
         }
+    }
+
+    void Queue_Fully_Update_3D_Model(Actor_t* actor)
+    {
+        struct Callback : public Virtual_Callback_t {
+            Actor_t* actor;
+            Callback(Actor_t* actor) :
+                actor(actor)
+            {
+            }
+            void operator()(Variable_t* result)
+            {
+                Fully_Update_3D_Model(actor);
+            }
+        };
+        Virtual_Callback_i* callback = new Callback(actor);
+        Object_Ref::Enable(actor, false, &callback);
     }
 
     void Queue_Ni_Node_Update(Actor_t* actor, bool do_update_weight)
@@ -1843,9 +1865,9 @@ namespace doticu_npcp { namespace Actor2 {
             actor->Kill(killer, damage, do_send_event, do_quick_ragdoll);
 
             if (is_essential) {
-                Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(), "doticu_npcp_funcs", "Essentialize");
+                Actor_Base2::Essentialize(static_cast<Actor_Base_t*>(actor->baseForm));
             } else if (is_protected) {
-                Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(), "doticu_npcp_funcs", "Protect");
+                Actor_Base2::Protect(static_cast<Actor_Base_t*>(actor->baseForm));
             }
         }
     }
@@ -1881,9 +1903,35 @@ namespace doticu_npcp { namespace Actor2 {
     void Resurrect(Actor_t* actor, Bool_t do_reset_inventory)
     {
         if (actor) {
+            // it may actually be okay to use this, perhaps after PushActorAway
+            /*if (Actor2::Is_Loaded(actor) && actor->processManager && actor->processManager->middleProcess) {
+                u8* flags_3d = ((u8*)actor->processManager->middleProcess + 0x311);
+                *flags_3d = 0 |
+                    1 << Actor_t2::Update_3D_Flags::MODEL_3D |
+                    1 << Actor_t2::Update_3D_Flags::SKIN_3D |
+                    1 << Actor_t2::Update_3D_Flags::HEAD_3D |
+                    1 << Actor_t2::Update_3D_Flags::FACE_3D |
+                    1 << Actor_t2::Update_3D_Flags::SCALE_3D |
+                    1 << Actor_t2::Update_3D_Flags::SKELETON_3D;
+            }*/
             actor->Resurrect(do_reset_inventory, true);
-            Fully_Update_3D_Model(actor);
             Pacify(actor);
+
+            struct Arguments : public Virtual_Arguments_t {
+                Actor_t* actor;
+                Arguments(Actor_t* actor) :
+                    actor(actor)
+                {
+                }
+                Bool_t operator()(Arguments_t* arguments)
+                {
+                    arguments->Resize(2);
+                    arguments->At(0)->Pack(actor);
+                    arguments->At(1)->Float(0.01f);
+                    return true;
+                }
+            } arguments(actor);
+            Virtual_Machine_t::Self()->Call_Method(actor, "ObjectReference", "PushActorAway", &arguments, nullptr);
         }
     }
 
@@ -1905,15 +1953,69 @@ namespace doticu_npcp { namespace Actor2 {
         return !actor->Is_Child();
     }
 
-    void Update_Equipment(Actor_t* actor, Papyrus::Virtual_Callback_i** callback)
+    void Update_Equipment(Actor_t* actor)
     {
-        // we need to make sure that the actor is part of the player team
         using namespace Papyrus;
 
-        NPCP_ASSERT(actor);
+        if (actor) {
+            Join_Player_Team(actor);
 
-        Object_Ref::Add_Item_And_Callback(actor, Consts::Blank_Weapon(), 1, false);
-        Object_Ref::Remove_Item_And_Callback(actor, Consts::Blank_Weapon(), 1, false, nullptr, callback);
+            XContainer_t* xcontainer = Object_Ref::Get_XContainer(actor, false);
+            if (xcontainer && xcontainer->changes && xcontainer->changes->xentries) {
+                for (XEntries_t::Iterator xentries_it = xcontainer->changes->xentries->Begin(); !xentries_it.End(); ++xentries_it) {
+                    XEntry_t* xentry = xentries_it.Get();
+                    if (xentry && xentry->xlists) {
+                        Form_t* form = xentry->form;
+                        if (form && form->formType == kFormType_Weapon) {
+                            Object_Ref::Add_Item_And_Callback(actor, form, 1, false);
+                            Object_Ref::Remove_Item_And_Callback(actor, form, 1, false, nullptr);
+                            return;
+                        }
+                    }
+                }
+            }
+
+            Object_Ref::Add_Item_And_Callback(actor, Consts::Blank_Weapon(), 1, false);
+            Object_Ref::Remove_Item_And_Callback(actor, Consts::Blank_Weapon(), 1, false, nullptr);
+        }
+
+        /*struct Callback : Virtual_Callback_t {
+            Actor_t* actor;
+            Callback(Actor_t* actor) :
+                actor(actor)
+            {
+            }
+            void operator()(Variable_t* result)
+            {
+                Verify_Weapon_Equips(actor);
+            }
+        };
+        Virtual_Callback_i* callback = new Callback(actor);*/
+    }
+
+    void Verify_Weapon_Equips(Actor_t* actor)
+    {
+        if (actor) {
+            Object_Ref::Log_XContainer(actor);
+            Actor_Equipper_t* actor_equipper = Actor_Equipper_t::Self();
+            XContainer_t* xcontainer = Object_Ref::Get_XContainer(actor, false);
+            if (xcontainer && xcontainer->changes && xcontainer->changes->xentries) {
+                for (XEntries_t::Iterator xentries_it = xcontainer->changes->xentries->Begin(); !xentries_it.End(); ++xentries_it) {
+                    XEntry_t* xentry = xentries_it.Get();
+                    if (xentry && xentry->xlists) {
+                        Form_t* form = xentry->form;
+                        if (form && form->formType == kFormType_Weapon) {
+                            for (XLists_t::Iterator xlists_it = xentry->xlists->Begin(); !xlists_it.End(); ++xlists_it) {
+                                XList_t* xlist = xlists_it.Get();
+                                if (xlist) {
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     void Greet_Player(Actor_t* actor)

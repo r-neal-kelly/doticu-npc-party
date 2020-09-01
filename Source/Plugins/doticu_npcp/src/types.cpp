@@ -183,6 +183,33 @@ namespace doticu_npcp {
         return unequip_item(this, actor, form, xlist, count, slot, do_queue, do_force, do_sounds, do_apply, slot_to_replace);
     }
 
+    BGSEquipSlot* Actor_Equipper_t::Right_Hand_Slot()
+    {
+        static auto self = reinterpret_cast
+            <BGSEquipSlot**>
+            (RelocationManager::s_baseAddr + Offsets::Actor_Equipper::RIGHT_HAND_SLOT);
+        NPCP_ASSERT(self);
+        return *self;
+    }
+
+    BGSEquipSlot* Actor_Equipper_t::Left_Hand_Slot()
+    {
+        static auto self = reinterpret_cast
+            <BGSEquipSlot**>
+            (RelocationManager::s_baseAddr + Offsets::Actor_Equipper::LEFT_HAND_SLOT);
+        NPCP_ASSERT(self);
+        return *self;
+    }
+
+    BGSEquipSlot* Actor_Equipper_t::Either_Hand_Slot()
+    {
+        static auto self = reinterpret_cast
+            <BGSEquipSlot**>
+            (RelocationManager::s_baseAddr + Offsets::Actor_Equipper::EITHER_HAND_SLOT);
+        NPCP_ASSERT(self);
+        return *self;
+    }
+
     void Alias_Base_t::Log()
     {
         _MESSAGE("Log Alias Base: {");

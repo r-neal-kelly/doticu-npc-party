@@ -10,6 +10,7 @@
 #include "object_ref.h"
 #include "papyrus.inl"
 #include "utils.h"
+#include "vars.h"
 
 #include "party/party_player.h"
 #include "party/party_member.h"
@@ -569,6 +570,10 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     {
         NPCP_ASSERT(Is_Filled());
 
+        if (!Vars::Is_Leveling_Enabled()) {
+            return;
+        }
+
         Actor_t* player_actor = *g_thePlayer;
         Actor_t* follower_actor = Actor();
         if (player_actor && follower_actor && Is_Filled()) {
@@ -797,6 +802,10 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     void Follower_t::Unlevel()
     {
         NPCP_ASSERT(Is_Filled());
+
+        if (!Vars::Is_Leveling_Enabled()) {
+            return;
+        }
 
         Actor_t* follower_actor = Actor();
         TESNPC* follower_base = static_cast<TESNPC*>(follower_actor->baseForm);

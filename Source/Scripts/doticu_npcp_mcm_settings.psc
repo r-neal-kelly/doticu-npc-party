@@ -58,7 +58,6 @@ int                 p_option_force_unclone_generic      =    -1
 int                 p_option_clone_outfit               =    -1
 int                 p_option_auto_style                 =    -1
 int                 p_option_auto_vitality              =    -1
-int                 p_option_auto_resurrect             =    -1
 int                 p_option_allow_dialogue_for_all     =    -1
 int                 p_option_slider_max_members         =    -1
 
@@ -69,6 +68,9 @@ int                 p_option_slider_percent_body        =    -1
 int                 p_option_slider_percent_feet        =    -1
 int                 p_option_slider_percent_hands       =    -1
 int                 p_option_slider_percent_head        =    -1
+
+int                 p_option_auto_resurrect             =    -1
+int                 p_option_is_leveling_enabled        =    -1
 
 int                 p_option_sort_members               =    -1
 int                 p_option_sort_followers             =    -1
@@ -120,8 +122,8 @@ function f_Build_Page()
     endIf
     p_option_slider_max_members = MCM.AddSliderOption(" Max Members ", VARS.max_members, " {0} ")
     p_option_slider_ms_display = MCM.AddSliderOption(" Members per Display Cycle ", VARS.num_display, " {0} ")
-    p_option_auto_resurrect = MCM.AddToggleOption(" Auto Resurrect Followers ", VARS.auto_resurrect)
     p_option_allow_dialogue_for_all = MCM.AddToggleOption(" Allow Dialogue For All ", doticu_npcp_consts.Allow_Dialogue_For_All_Global().GetValue() > 0)
+    MCM.AddEmptyOption()
     MCM.AddEmptyOption()
     MCM.AddEmptyOption()
 
@@ -156,6 +158,13 @@ function f_Build_Page()
         p_option_slider_percent_hands = MCM.AddSliderOption(" Fill Hands Chance ", VARS.percent_hands, " {0}% ")
         p_option_slider_percent_head = MCM.AddSliderOption(" Fill Head Chance ", VARS.percent_head, " {0}% ")
     endIf
+    MCM.AddEmptyOption()
+    MCM.AddEmptyOption()
+
+    MCM.AddHeaderOption(" Followers ")
+    MCM.AddEmptyOption()
+    p_option_auto_resurrect = MCM.AddToggleOption(" Auto Resurrect Followers ", VARS.auto_resurrect)
+    p_option_is_leveling_enabled = MCM.AddToggleOption(" Enable Leveling ", VARS.Is_Leveling_Enabled())
     MCM.AddEmptyOption()
     MCM.AddEmptyOption()
 
@@ -202,9 +211,6 @@ function f_On_Option_Select(int id_option)
             VARS.auto_vitality = doticu_npcp_codes.VITALITY_MORTAL()
             MCM.SetTextOptionValue(p_option_auto_vitality, MCM.STR_MCM_MORTAL)
         endIf
-    elseIf id_option == p_option_auto_resurrect
-        VARS.auto_resurrect = !VARS.auto_resurrect
-        MCM.SetToggleOptionValue(p_option_auto_resurrect, VARS.auto_resurrect)
     elseIf id_option == p_option_allow_dialogue_for_all
         if doticu_npcp_consts.Allow_Dialogue_For_All_Global().GetValue() > 0
             doticu_npcp_consts.Allow_Dialogue_For_All_Global().SetValue(0)
@@ -261,6 +267,21 @@ function f_On_Option_Select(int id_option)
             MCM.f_Disable(p_option_slider_percent_feet, DONT_UPDATE)
             MCM.f_Disable(p_option_slider_percent_hands, DONT_UPDATE)
             MCM.f_Disable(p_option_slider_percent_head, DO_UPDATE)
+        endIf
+
+    ; Followers
+    elseIf id_option == p_option_auto_resurrect
+        VARS.auto_resurrect = !VARS.auto_resurrect
+        MCM.SetToggleOptionValue(p_option_auto_resurrect, VARS.auto_resurrect)
+    elseIf id_option == p_option_is_leveling_enabled
+        if VARS.Is_Leveling_Enabled()
+            FOLLOWERS.Unlevel()
+            VARS.Disable_Leveling()
+            MCM.SetToggleOptionValue(p_option_is_leveling_enabled, false)
+        else
+            VARS.Enable_Leveling()
+            MCM.SetToggleOptionValue(p_option_is_leveling_enabled, true)
+            FOLLOWERS.Level()
         endIf
 
     ; Sorting
@@ -387,12 +408,6 @@ function f_On_Option_Highlight(int id_option)
         elseIf VARS.auto_vitality == doticu_npcp_codes.VITALITY_INVULNERABLE()
             MCM.SetInfoText("When an npc becomes a member, they will be invulnerable and cannot be hurt.")
         endIf
-    elseIf id_option == p_option_auto_resurrect
-        if VARS.auto_resurrect
-            MCM.SetInfoText("Followers will automatically resurrect after each battle.")
-        else
-            MCM.SetInfoText("Followers will not automatically resurrect after each battle.")
-        endIf
     elseIf id_option == p_option_allow_dialogue_for_all
         MCM.SetInfoText("Enabled: You can access the [NPC Party] menu with any viable NPC.\n" + \
                         "Disabled: You can only access the [NPC Party] menu with members.\n" + \
@@ -459,6 +474,18 @@ function f_On_Option_Highlight(int id_option)
         MCM.SetInfoText("The chance that outfits will get items that fit on the hands.")
     elseIf id_option == p_option_slider_percent_head
         MCM.SetInfoText("The chance that outfits will get items that fit on the head.")
+
+    ; Followers
+    elseIf id_option == p_option_auto_resurrect
+        if VARS.auto_resurrect
+            MCM.SetInfoText("Followers will automatically resurrect after each battle.")
+        else
+            MCM.SetInfoText("Followers will not automatically resurrect after each battle.")
+        endIf
+    elseIf id_option == p_option_is_leveling_enabled
+        MCM.SetInfoText("Enabled: Followers will be dynamically leveled in pace with the player's level.\n" + \
+                        "Disabled: Followers will not be leveled, and their stats will not change.\n" + \
+                        "You can enable and disable leveling freely without losing any progress.")
 
     ; Sorting
     elseIf id_option == p_option_sort_members

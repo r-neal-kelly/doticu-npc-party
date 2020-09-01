@@ -232,12 +232,7 @@ namespace doticu_npcp { namespace Main {
             g_messaging->RegisterListener(g_plugin_handle, "SKSE", Callback);
         }
 
-        if (g_branchTrampoline.Create(1024 * 64)) {
-            return true;
-        } else {
-            _ERROR("failed to create branch trampoline.");
-            return false;
-        }
+        return true;
     }
 
     bool Register_Functions(Papyrus::Registry_t* registry)

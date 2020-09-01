@@ -272,6 +272,10 @@ namespace doticu_npcp {
                             Bool_t do_sounds,
                             Bool_t do_apply,
                             BGSEquipSlot* slot_to_replace);
+
+        BGSEquipSlot* Right_Hand_Slot();
+        BGSEquipSlot* Left_Hand_Slot();
+        BGSEquipSlot* Either_Hand_Slot();
     };
 
     class Actor_t2 {

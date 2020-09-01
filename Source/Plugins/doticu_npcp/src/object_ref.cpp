@@ -1024,9 +1024,10 @@ namespace doticu_npcp { namespace Object_Ref {
         using namespace Papyrus;
 
         if (ref) {
+            //Object_Ref::Log_XContainer(ref);
             ref->Disable();
-            ref->flags = Utils::Bit_Off(ref->flags, 10); // IS_PERSISTENT, necessary for user types
-            Virtual_Machine_t::Self()->Send_Event(ref, "Delete");
+            //ref->flags = Utils::Bit_Off(ref->flags, 10); // IS_PERSISTENT, necessary for user types
+            Virtual_Machine_t::Self()->Call_Method(ref, "ObjectReference", "Delete");
         }
     }
 
@@ -1193,6 +1194,11 @@ namespace doticu_npcp { namespace Object_Ref {
                                                "Find_Closest_Actor_From",
                                                &arguments,
                                                callback);
+    }
+
+    void Get_Current_Crosshair_Reference(Virtual_Callback_i** callback)
+    {
+        Virtual_Machine_t::Self()->Call_Global("Game", "GetCurrentCrosshairRef", nullptr, callback);
     }
 
 }}

@@ -848,6 +848,34 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
+    Int_t Followers_t::Level()
+    {
+        Vector_t<Follower_t*> filled = Filled();
+        size_t filled_count = filled.size();
+        if (filled_count > 0) {
+            for (size_t idx = 0; idx < filled_count; idx += 1) {
+                filled[idx]->Level();
+            }
+            return CODES::SUCCESS;
+        } else {
+            return CODES::FOLLOWERS;
+        }
+    }
+
+    Int_t Followers_t::Unlevel()
+    {
+        Vector_t<Follower_t*> filled = Filled();
+        size_t filled_count = filled.size();
+        if (filled_count > 0) {
+            for (size_t idx = 0; idx < filled_count; idx += 1) {
+                filled[idx]->Unlevel();
+            }
+            return CODES::SUCCESS;
+        } else {
+            return CODES::FOLLOWERS;
+        }
+    }
+
     void Followers_t::Summon(Vector_t<Follower_t*> followers, float radius, float degree, float interval)
     {
         u64 size = followers.size();
@@ -976,6 +1004,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         METHOD("Retreat", 0, Int_t, Retreat);
         METHOD("Unretreat", 0, Int_t, Unretreat);
         METHOD("Catch_Up", 0, Int_t, Catch_Up);
+        METHOD("Level", 0, Int_t, Level);
+        METHOD("Unlevel", 0, Int_t, Unlevel);
 
         #undef METHOD
     }

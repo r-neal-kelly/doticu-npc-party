@@ -30,6 +30,10 @@ namespace doticu_npcp { namespace Vars {
     void NPCP_Minor(Int_t npcp_minor);
     void NPCP_Patch(Int_t npcp_patch);
 
+    Bool_t Is_Leveling_Enabled();
+    void Enable_Leveling();
+    void Disable_Leveling();
+
     // Global Keys
     Variable_t* G_Dialogue_Menu_Value_Property();
 

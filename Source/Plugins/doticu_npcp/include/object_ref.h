@@ -120,6 +120,8 @@ namespace doticu_npcp { namespace Object_Ref {
 
     void Find_Closest_Actor_From(Reference_t* ref, Float_t radius, Virtual_Callback_i** callback);
 
+    void Get_Current_Crosshair_Reference(Virtual_Callback_i** callback);
+
 }}
 
 namespace doticu_npcp { namespace Object_Ref { namespace Exports {

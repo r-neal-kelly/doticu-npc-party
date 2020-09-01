@@ -67,6 +67,10 @@ namespace doticu_npcp { namespace Vars {
     void NPCP_Minor(Int_t npcp_minor) { NPCP_Minor_Variable()->Int(npcp_minor); }
     void NPCP_Patch(Int_t npcp_patch) { NPCP_Patch_Variable()->Int(npcp_patch); }
 
+    Bool_t Is_Leveling_Enabled() { return Consts::Is_Leveling_Enabled()->value > 0.0f; }
+    void Enable_Leveling() { Consts::Is_Leveling_Enabled()->value = 1.0f; }
+    void Disable_Leveling() { Consts::Is_Leveling_Enabled()->value = 0.0f; }
+
     // Global Keys
     Variable_t* G_Dialogue_Menu_Value_Property() { DEFINE_PROPERTY("key_g_dialogue_menu"); }
 
@@ -353,21 +357,10 @@ namespace doticu_npcp { namespace Vars {
 
     #undef VAR
 
-    void Log_Variables(Vars_t* self)
-    {
-        Object_t* object = Object();
-        if (object) {
-            object->Log_Variables();
-        }
-    }
-
-    void Log_Properties(Vars_t* self)
-    {
-        Object_t* object = Object();
-        if (object) {
-            object->info->Log_Property_Infos();
-        }
-    }
+    // temp
+    Bool_t Is_Leveling_Enabled(Vars_t* self) { return Is_Leveling_Enabled(); }
+    void Enable_Leveling(Vars_t* self) { return Enable_Leveling(); }
+    void Disable_Leveling(Vars_t* self) { return Disable_Leveling(); }
 
 }}
 
@@ -382,8 +375,9 @@ namespace doticu_npcp { namespace Vars { namespace Exports {
                              RETURN_, Vars::METHOD_, __VA_ARGS__);      \
         W
 
-        ADD_METHOD("Log_Variables", 0, void, Log_Variables);
-        ADD_METHOD("Log_Properties", 0, void, Log_Properties);
+        ADD_METHOD("Is_Leveling_Enabled", 0, Bool_t, Is_Leveling_Enabled);
+        ADD_METHOD("Enable_Leveling", 0, void, Enable_Leveling);
+        ADD_METHOD("Disable_Leveling", 0, void, Disable_Leveling);
 
         #undef ADD_METHOD
 

@@ -5,8 +5,13 @@
 #include "skse64/GameData.h"
 
 #include "actor_base2.h"
+#include "consts.h"
+#include "papyrus.h"
+#include "papyrus.inl"
 
 namespace doticu_npcp { namespace Actor_Base2 {
+
+    using namespace Papyrus;
 
     BGSColorForm *Get_Hair_Color(TESNPC *actor_base) {
         if (!actor_base || !actor_base->headData) {
@@ -194,6 +199,42 @@ namespace doticu_npcp { namespace Actor_Base2 {
             }
         }
     }*/
+
+    void Essentialize(Actor_Base_t* actor_base)
+    {
+        struct Arguments : public Virtual_Arguments_t {
+            Actor_Base_t* actor_base;
+            Arguments(Actor_Base_t* actor_base) :
+                actor_base(actor_base)
+            {
+            }
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(1);
+                arguments->At(0)->Pack(actor_base);
+                return true;
+            }
+        } arguments(actor_base);
+        Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(), "doticu_npcp_funcs", "Essentialize", &arguments, nullptr);
+    }
+
+    void Protect(Actor_Base_t* actor_base)
+    {
+        struct Arguments : public Virtual_Arguments_t {
+            Actor_Base_t* actor_base;
+            Arguments(Actor_Base_t* actor_base) :
+                actor_base(actor_base)
+            {
+            }
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(1);
+                arguments->At(0)->Pack(actor_base);
+                return true;
+            }
+        } arguments(actor_base);
+        Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(), "doticu_npcp_funcs", "Protect", &arguments, nullptr);
+    }
 
 }}
 

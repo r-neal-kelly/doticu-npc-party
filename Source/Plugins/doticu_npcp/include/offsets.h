@@ -26,6 +26,9 @@ namespace doticu_npcp { namespace Offsets {
         constexpr uintptr_t SELF                        = 0x02EC4838; // 514494
         constexpr uintptr_t EQUIP_ITEM                  = 0x00637A80; // 37938
         constexpr uintptr_t UNEQUIP_ITEM                = 0x00638190; // 37945
+        constexpr uintptr_t RIGHT_HAND_SLOT             = 0x00331620; // 23151
+        constexpr uintptr_t LEFT_HAND_SLOT              = 0x003315F0; // 23150
+        constexpr uintptr_t EITHER_HAND_SLOT            = 0x00331650; // 23152
 
     }
 

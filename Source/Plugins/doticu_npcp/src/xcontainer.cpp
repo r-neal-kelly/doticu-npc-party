@@ -25,29 +25,28 @@ namespace doticu_npcp { namespace Papyrus {
             } else {
                 XEntry_t* existing_xentry = XEntry(form, false);
                 if (existing_xentry) {
-                    NPCP_ASSERT(to_add->Delta_Count() > 0);
+                    if (to_add != existing_xentry) {
+                        if (to_add->xlists) {
+                            std::vector<XList_t*> xlists_to_add;
+                            xlists_to_add.reserve(to_add->xlists->Count());
 
-                    if (to_add->xlists) {
-                        std::vector<XList_t*> xlists_to_add;
-                        xlists_to_add.reserve(to_add->xlists->Count());
+                            for (XLists_t::Iterator it = to_add->xlists->Begin(); !it.End(); ++it) {
+                                XList_t* xlist_to_add = it.Get();
+                                if (xlist_to_add) {
+                                    XList::Validate(xlist_to_add);
+                                    xlists_to_add.push_back(xlist_to_add);
+                                }
+                            }
 
-                        for (XLists_t::Iterator it = to_add->xlists->Begin(); !it.End(); ++it) {
-                            XList_t* xlist_to_add = it.Get();
-                            if (xlist_to_add) {
-                                XList::Validate(xlist_to_add);
-                                xlists_to_add.push_back(xlist_to_add);
+                            for (size_t idx = 0, count = xlists_to_add.size(); idx < count; idx += 1) {
+                                XList_t* xlist_to_add = xlists_to_add[idx];
+                                to_add->Remove_XList(xlist_to_add);
+                                existing_xentry->Add_XList(xlist_to_add);
                             }
                         }
-
-                        for (size_t idx = 0, count = xlists_to_add.size(); idx < count; idx += 1) {
-                            XList_t* xlist_to_add = xlists_to_add[idx];
-                            to_add->Remove_XList(xlist_to_add);
-                            existing_xentry->Add_XList(xlist_to_add);
-                        }
+                        existing_xentry->Increment(to_add->Delta_Count());
+                        XEntry_t::Destroy(to_add);
                     }
-
-                    existing_xentry->Increment(to_add->Delta_Count());
-                    XEntry_t::Destroy(to_add);
                 } else {
                     xentries->Insert(to_add);
                 }

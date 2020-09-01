@@ -14,6 +14,8 @@ Alias[] function Sort_Filled(int begin, int end) native
 int function Retreat() native
 int function Unretreat() native
 int function Catch_Up() native
+int function Level() native
+int function Unlevel() native
 
 ; Public Methods
 doticu_npcp_follower function Get_Follower(Actor ref_actor)

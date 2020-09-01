@@ -138,3 +138,6 @@ ObjectReference function Expo_Antechamber_Marker() native global
 
 ; NPCP Spells
 Spell function Cell_Ability_Spell() native global
+
+; NPCP Weapons
+Weapon function Blank_Weapon() native global

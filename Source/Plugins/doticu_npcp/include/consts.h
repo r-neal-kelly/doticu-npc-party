@@ -22,6 +22,7 @@ namespace doticu_npcp { namespace Consts {
 
     // Skyrim Armors
     Armor_t* Belted_Tunic_Armor();
+    Armor_t* Gold_Ring();
 
     // Skyrim Effect Shaders
     Effect_Shader_t* Reanimate_Effect_Shader();
@@ -42,6 +43,16 @@ namespace doticu_npcp { namespace Consts {
     Keyword_t* Shock_Damage_Magic_Keyword();
     Keyword_t* Vampire_Drain_Magic_Keyword();
     Keyword_t* Vampire_Keyword();
+    Keyword_t* Staff_Vendor_Item_Keyword();
+    Keyword_t* Sword_Weapon_Type_Keyword();
+    Keyword_t* Greatsword_Weapon_Type_Keyword();
+    Keyword_t* Waraxe_Weapon_Type_Keyword();
+    Keyword_t* Battleaxe_Weapon_Type_Keyword();
+    Keyword_t* Mace_Weapon_Type_Keyword();
+    Keyword_t* Warhammer_Weapon_Type_Keyword();
+    Keyword_t* Dagger_Weapon_Type_Keyword();
+    Keyword_t* Bow_Weapon_Type_Keyword();
+    Keyword_t* Staff_Weapon_Type_Keyword();
 
     // Skyrim Miscs
     Misc_t* Gold();
@@ -97,6 +108,7 @@ namespace doticu_npcp { namespace Consts {
     Global_t* Force_Clone_Generics_Global();
     Global_t* Force_Unclone_Uniques_Global();
     Global_t* Force_Unclone_Generics_Global();
+    Global_t* Is_Leveling_Enabled();
     Global_t* No_Body_Percent_Global();
     Global_t* No_Feet_Percent_Global();
     Global_t* No_Hands_Percent_Global();

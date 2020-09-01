@@ -46,6 +46,7 @@ namespace doticu_npcp { namespace Consts {
 
         // Skyrim Armors
         ARMOR_BELTED_TUNIC                  = 0x01BE1A,
+        ARMOR_GOLD_RING                     = 0x01CF2B,
 
         // Skyrim Effect Shaders
         EFFECT_SHADER_REANIMATE             = 0x075272,
@@ -66,6 +67,16 @@ namespace doticu_npcp { namespace Consts {
         KEYWORD_MAGIC_DAMAGE_SHOCK          = 0x01CEAF,
         KEYWORD_MAGIC_VAMPIRE_DRAIN         = 0x101BDE,
         KEYWORD_VAMPIRE                     = 0x0A82BB,
+        KEYWORD_VENDOR_ITEM_STAFF           = 0x0937A4,
+        KEYWORD_WEAPON_TYPE_SWORD           = 0x01E711,
+        KEYWORD_WEAPON_TYPE_GREATSWORD      = 0x06D931,
+        KEYWORD_WEAPON_TYPE_WARAXE          = 0x01E712,
+        KEYWORD_WEAPON_TYPE_BATTLEAXE       = 0x06D932,
+        KEYWORD_WEAPON_TYPE_MACE            = 0x01E714,
+        KEYWORD_WEAPON_TYPE_WARHAMMER       = 0x06D930,
+        KEYWORD_WEAPON_TYPE_DAGGER          = 0x01E713,
+        KEYWORD_WEAPON_TYPE_BOW             = 0x01E715,
+        KEYWORD_WEAPON_TYPE_STAFF           = 0x01E716,
 
         // Skyrim Miscs
         MISC_GOLD                           = 0x00000F,
@@ -92,6 +103,7 @@ namespace doticu_npcp { namespace Consts {
 
     // Skyrim Armors
     Armor_t* Belted_Tunic_Armor() { SKYRIM_FORM(Armor_t, ARMOR_BELTED_TUNIC); }
+    Armor_t* Gold_Ring() { SKYRIM_FORM(Armor_t, ARMOR_GOLD_RING); }
 
     // Skyrim Effect Shaders
     Effect_Shader_t* Reanimate_Effect_Shader() { SKYRIM_FORM(Effect_Shader_t, EFFECT_SHADER_REANIMATE); }
@@ -112,6 +124,16 @@ namespace doticu_npcp { namespace Consts {
     Keyword_t* Shock_Damage_Magic_Keyword() { SKYRIM_FORM(Keyword_t, KEYWORD_MAGIC_DAMAGE_SHOCK); }
     Keyword_t* Vampire_Drain_Magic_Keyword() { SKYRIM_FORM(Keyword_t, KEYWORD_MAGIC_VAMPIRE_DRAIN); }
     Keyword_t* Vampire_Keyword() { SKYRIM_FORM(Keyword_t, KEYWORD_VAMPIRE); }
+    Keyword_t* Staff_Vendor_Item_Keyword() { SKYRIM_FORM(Keyword_t, KEYWORD_VENDOR_ITEM_STAFF); }
+    Keyword_t* Sword_Weapon_Type_Keyword() { SKYRIM_FORM(Keyword_t, KEYWORD_WEAPON_TYPE_SWORD); }
+    Keyword_t* Greatsword_Weapon_Type_Keyword() { SKYRIM_FORM(Keyword_t, KEYWORD_WEAPON_TYPE_GREATSWORD); }
+    Keyword_t* Waraxe_Weapon_Type_Keyword() { SKYRIM_FORM(Keyword_t, KEYWORD_WEAPON_TYPE_WARAXE); }
+    Keyword_t* Battleaxe_Weapon_Type_Keyword() { SKYRIM_FORM(Keyword_t, KEYWORD_WEAPON_TYPE_BATTLEAXE); }
+    Keyword_t* Mace_Weapon_Type_Keyword() { SKYRIM_FORM(Keyword_t, KEYWORD_WEAPON_TYPE_MACE); }
+    Keyword_t* Warhammer_Weapon_Type_Keyword() { SKYRIM_FORM(Keyword_t, KEYWORD_WEAPON_TYPE_WARHAMMER); }
+    Keyword_t* Dagger_Weapon_Type_Keyword() { SKYRIM_FORM(Keyword_t, KEYWORD_WEAPON_TYPE_DAGGER); }
+    Keyword_t* Bow_Weapon_Type_Keyword() { SKYRIM_FORM(Keyword_t, KEYWORD_WEAPON_TYPE_BOW); }
+    Keyword_t* Staff_Weapon_Type_Keyword() { SKYRIM_FORM(Keyword_t, KEYWORD_WEAPON_TYPE_STAFF); }
 
     // Skyrim Miscs
     Misc_t* Gold() { SKYRIM_FORM(Misc_t, MISC_GOLD); }
@@ -180,6 +202,7 @@ namespace doticu_npcp { namespace Consts {
         GLOBAL_FORCE_CLONE_GENERICS         = 0x05244E,
         GLOBAL_FORCE_UNCLONE_UNIQUES        = 0x05244F,
         GLOBAL_FORCE_UNCLONE_GENERICS       = 0x052450,
+        GLOBAL_IS_LEVELING_ENABLED          = 0x3B4464,
         GLOBAL_PERCENT_NO_BODY              = 0x193CEA,
         GLOBAL_PERCENT_NO_FEET              = 0x193CE7,
         GLOBAL_PERCENT_NO_HANDS             = 0x193CE8,
@@ -354,6 +377,7 @@ namespace doticu_npcp { namespace Consts {
     Global_t* Force_Clone_Generics_Global() { NPCP_FORM(Global_t, GLOBAL_FORCE_CLONE_GENERICS); }
     Global_t* Force_Unclone_Uniques_Global() { NPCP_FORM(Global_t, GLOBAL_FORCE_UNCLONE_UNIQUES); }
     Global_t* Force_Unclone_Generics_Global() { NPCP_FORM(Global_t, GLOBAL_FORCE_UNCLONE_GENERICS); }
+    Global_t* Is_Leveling_Enabled() { NPCP_FORM(Global_t, GLOBAL_IS_LEVELING_ENABLED); }
     Global_t* No_Body_Percent_Global() { NPCP_FORM(Global_t, GLOBAL_PERCENT_NO_BODY); }
     Global_t* No_Feet_Percent_Global() { NPCP_FORM(Global_t, GLOBAL_PERCENT_NO_FEET); }
     Global_t* No_Hands_Percent_Global() { NPCP_FORM(Global_t, GLOBAL_PERCENT_NO_HANDS); }
@@ -650,6 +674,9 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
 
         // NPCP Spells
         ADD_GLOBAL("Cell_Ability_Spell", 0, Spell_t*, Cell_Ability_Spell);
+
+        // NPCP Weapons
+        ADD_GLOBAL("Blank_Weapon", 0, Weapon_t*, Blank_Weapon);
 
         #undef ADD_GLOBAL
 

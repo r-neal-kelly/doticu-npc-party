@@ -122,7 +122,8 @@ namespace doticu_npcp { namespace Actor2 {
     Bool_t Is_Child(Actor_t* actor);
     Bool_t Isnt_Child(Actor_t* actor);
 
-    void Update_Equipment(Actor_t* actor, Papyrus::Virtual_Callback_i** callback = nullptr);
+    void Update_Equipment(Actor_t* actor);
+    void Verify_Weapon_Equips(Actor_t* actor);
 
     void Greet_Player(Actor_t* actor);
 
