@@ -689,7 +689,7 @@ namespace doticu_npcp { namespace Papyrus {
 
     void Keys_t::On_Key_Down(Int_t value)
     {
-        if (Can_Use_Keys()) {
+        /*if (Can_Use_Keys()) {
             struct Callback : public Virtual_Callback_t {
                 Keys_t* self;
                 Int_t value;
@@ -709,9 +709,9 @@ namespace doticu_npcp { namespace Papyrus {
             };
             Virtual_Callback_i* callback = new Callback(this, value);
             Object_Ref::Count_Pressed_Keys(&callback);
-        }
+        }*/
 
-        /*struct Callback : public Virtual_Callback_t {
+        struct Callback : public Virtual_Callback_t {
             Keys_t* self;
             Int_t value;
             Callback(Keys_t* self, Int_t value) :
@@ -744,131 +744,152 @@ namespace doticu_npcp { namespace Papyrus {
             }
         };
         Virtual_Callback_i* callback = new Callback(this, value);
-        Object_Ref::Can_Use_Keys(&callback);*/
+        Object_Ref::Can_Use_Keys(&callback);
     }
 
     void Keys_t::On_Key_Up(Int_t key_code, Float_t time_held)
     {
         using namespace Modules::Control;
 
-        if (Can_Use_Keys()) {
-            String_t pressed_hotkey = Pressed_Hotkey_Variable()->String();
-            if (pressed_hotkey && pressed_hotkey.data && pressed_hotkey.data[0]) {
-                Pressed_Hotkey_Variable()->String("");
-
-                #define IS(HOTKEY_) String2::Is_Same_Caseless(pressed_hotkey, HOTKEY_())
-
-                if (IS(G_Dialogue_Menu)) { // General
-                    Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(), "doticu_npcp_actors", "Create_Menu");
-
-                } else if (IS(N_Toggle_Member)) { // NPC
-                    Actor_In_Crosshair(false, [](Actor_t* actor)->void
-                                       {
-                                           Commands_t::Self()->Toggle_Member(actor);
-                                       });
-                } else if (IS(N_Toggle_Move)) {
-                    Actor_In_Crosshair(true, [](Actor_t* actor)->void
-                                       {
-                                           Commands_t::Self()->Toggle_Move(actor);
-                                       });
-                } else if (IS(N_Has_Base)) {
-                    Actor_In_Crosshair(false, [](Actor_t* actor)->void
-                                       {
-                                           Commands_t::Self()->Has_Base(actor);
-                                       });
-                } else if (IS(N_Count_Base)) {
-                    Actor_In_Crosshair(false, [](Actor_t* actor)->void
-                                       {
-                                           Commands_t::Self()->Count_Base(actor);
-                                       });
-                } else if (IS(N_Has_Head)) {
-                    Actor_In_Crosshair(false, [](Actor_t* actor)->void
-                                       {
-                                           Commands_t::Self()->Has_Head(actor);
-                                       });
-                } else if (IS(N_Count_Heads)) {
-                    Actor_In_Crosshair(false, [](Actor_t* actor)->void
-                                       {
-                                           Commands_t::Self()->Count_Heads(actor);
-                                       });
-
-                } else if (IS(M_Toggle_Clone)) { // Member
-                    Actor_In_Crosshair(false, [](Actor_t* actor)->void
-                                       {
-                                           Commands_t::Self()->Toggle_Clone(actor);
-                                       });
-                } else if (IS(M_Toggle_Settler)) {
-                    Actor_In_Crosshair(false, [](Actor_t* actor)->void
-                                       {
-                                           Commands_t::Self()->Toggle_Settler(actor);
-                                       });
-                } else if (IS(M_Toggle_Thrall)) {
-                    Actor_In_Crosshair(false, [](Actor_t* actor)->void
-                                       {
-                                           Commands_t::Self()->Toggle_Thrall(actor);
-                                       });
-                } else if (IS(M_Toggle_Immobile)) {
-                    Actor_In_Crosshair(false, [](Actor_t* actor)->void
-                                       {
-                                           Commands_t::Self()->Toggle_Immobile(actor);
-                                       });
-                } else if (IS(M_Toggle_Paralyzed)) {
-                    Actor_In_Crosshair(false, [](Actor_t* actor)->void
-                                       {
-                                           Commands_t::Self()->Toggle_Paralyzed(actor);
-                                       });
-                } else if (IS(M_Toggle_Follower)) {
-                    Actor_In_Crosshair(false, [](Actor_t* actor)->void
-                                       {
-                                           Commands_t::Self()->Toggle_Follower(actor);
-                                       });
-
-                } else if (IS(F_Toggle_Sneak)) { // Follower
-                    Actor_In_Crosshair(false, [](Actor_t* actor)->void
-                                       {
-                                           Commands_t::Self()->Toggle_Sneak(actor);
-                                       });
-                } else if (IS(F_Toggle_Saddler)) {
-                    Actor_In_Crosshair(false, [](Actor_t* actor)->void
-                                       {
-                                           Commands_t::Self()->Toggle_Saddler(actor);
-                                       });
-
-                } else if (IS(MS_Toggle_Display)) { // Members
-                    Commands_t::Self()->Members_Toggle_Display();
-                } else if (IS(MS_Display_Previous)) {
-                    Commands_t::Self()->Members_Display_Previous();
-                } else if (IS(MS_Display_Next)) {
-                    Commands_t::Self()->Members_Display_Next();
-
-                } else if (IS(FS_Summon_All)) { // Followers
-                    Commands_t::Self()->Followers_Summon_All();
-                } else if (IS(FS_Summon_Mobile)) {
-                    Commands_t::Self()->Followers_Summon_Mobile();
-                } else if (IS(FS_Summon_Immobile)) {
-                    Commands_t::Self()->Followers_Summon_Immobile();
-                } else if (IS(FS_Settle)) {
-                    Commands_t::Self()->Followers_Settle();
-                } else if (IS(FS_Unsettle)) {
-                    Commands_t::Self()->Followers_Unsettle();
-                } else if (IS(FS_Mobilize)) {
-                    Commands_t::Self()->Followers_Mobilize();
-                } else if (IS(FS_Immobilize)) {
-                    Commands_t::Self()->Followers_Immobilize();
-                } else if (IS(FS_Sneak)) {
-                    Commands_t::Self()->Followers_Sneak();
-                } else if (IS(FS_Unsneak)) {
-                    Commands_t::Self()->Followers_Unsneak();
-                } else if (IS(FS_Saddle)) {
-                    Commands_t::Self()->Followers_Saddle();
-                } else if (IS(FS_Unsaddle)) {
-                    Commands_t::Self()->Followers_Unsaddle();
-                } else if (IS(FS_Resurrect)) {
-                    Commands_t::Self()->Followers_Resurrect();
-                }
-
-                #undef IS
+        struct Callback : public Virtual_Callback_t {
+            Keys_t* self;
+            Int_t key_code;
+            Float_t time_held;
+            Callback(Keys_t* self, Int_t key_code, Float_t time_held) :
+                self(self), key_code(key_code), time_held(time_held)
+            {
             }
+            void operator()(Variable_t* result)
+            {
+                if (result && result->Bool()) {
+                    self->Process_On_Key_Up(key_code, time_held);
+                }
+            }
+        };
+        Virtual_Callback_i* callback = new Callback(this, key_code, time_held);
+        Object_Ref::Can_Use_Keys(&callback);
+    }
+
+    void Keys_t::Process_On_Key_Up(Int_t key_code, Float_t time_held)
+    {
+        using namespace Modules::Control;
+
+        String_t pressed_hotkey = Pressed_Hotkey_Variable()->String();
+        if (pressed_hotkey && pressed_hotkey.data && pressed_hotkey.data[0]) {
+            Pressed_Hotkey_Variable()->String("");
+
+            #define IS(HOTKEY_) String2::Is_Same_Caseless(pressed_hotkey, HOTKEY_())
+
+            if (IS(G_Dialogue_Menu)) { // General
+                Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(), "doticu_npcp_actors", "Create_Menu");
+
+            } else if (IS(N_Toggle_Member)) { // NPC
+                Actor_In_Crosshair(false, [](Actor_t* actor)->void
+                                   {
+                                       Commands_t::Self()->Toggle_Member(actor);
+                                   });
+            } else if (IS(N_Toggle_Move)) {
+                Actor_In_Crosshair(true, [](Actor_t* actor)->void
+                                   {
+                                       Commands_t::Self()->Toggle_Move(actor);
+                                   });
+            } else if (IS(N_Has_Base)) {
+                Actor_In_Crosshair(false, [](Actor_t* actor)->void
+                                   {
+                                       Commands_t::Self()->Has_Base(actor);
+                                   });
+            } else if (IS(N_Count_Base)) {
+                Actor_In_Crosshair(false, [](Actor_t* actor)->void
+                                   {
+                                       Commands_t::Self()->Count_Base(actor);
+                                   });
+            } else if (IS(N_Has_Head)) {
+                Actor_In_Crosshair(false, [](Actor_t* actor)->void
+                                   {
+                                       Commands_t::Self()->Has_Head(actor);
+                                   });
+            } else if (IS(N_Count_Heads)) {
+                Actor_In_Crosshair(false, [](Actor_t* actor)->void
+                                   {
+                                       Commands_t::Self()->Count_Heads(actor);
+                                   });
+
+            } else if (IS(M_Toggle_Clone)) { // Member
+                Actor_In_Crosshair(false, [](Actor_t* actor)->void
+                                   {
+                                       Commands_t::Self()->Toggle_Clone(actor);
+                                   });
+            } else if (IS(M_Toggle_Settler)) {
+                Actor_In_Crosshair(false, [](Actor_t* actor)->void
+                                   {
+                                       Commands_t::Self()->Toggle_Settler(actor);
+                                   });
+            } else if (IS(M_Toggle_Thrall)) {
+                Actor_In_Crosshair(false, [](Actor_t* actor)->void
+                                   {
+                                       Commands_t::Self()->Toggle_Thrall(actor);
+                                   });
+            } else if (IS(M_Toggle_Immobile)) {
+                Actor_In_Crosshair(false, [](Actor_t* actor)->void
+                                   {
+                                       Commands_t::Self()->Toggle_Immobile(actor);
+                                   });
+            } else if (IS(M_Toggle_Paralyzed)) {
+                Actor_In_Crosshair(false, [](Actor_t* actor)->void
+                                   {
+                                       Commands_t::Self()->Toggle_Paralyzed(actor);
+                                   });
+            } else if (IS(M_Toggle_Follower)) {
+                Actor_In_Crosshair(false, [](Actor_t* actor)->void
+                                   {
+                                       Commands_t::Self()->Toggle_Follower(actor);
+                                   });
+
+            } else if (IS(F_Toggle_Sneak)) { // Follower
+                Actor_In_Crosshair(false, [](Actor_t* actor)->void
+                                   {
+                                       Commands_t::Self()->Toggle_Sneak(actor);
+                                   });
+            } else if (IS(F_Toggle_Saddler)) {
+                Actor_In_Crosshair(false, [](Actor_t* actor)->void
+                                   {
+                                       Commands_t::Self()->Toggle_Saddler(actor);
+                                   });
+
+            } else if (IS(MS_Toggle_Display)) { // Members
+                Commands_t::Self()->Members_Toggle_Display();
+            } else if (IS(MS_Display_Previous)) {
+                Commands_t::Self()->Members_Display_Previous();
+            } else if (IS(MS_Display_Next)) {
+                Commands_t::Self()->Members_Display_Next();
+
+            } else if (IS(FS_Summon_All)) { // Followers
+                Commands_t::Self()->Followers_Summon_All();
+            } else if (IS(FS_Summon_Mobile)) {
+                Commands_t::Self()->Followers_Summon_Mobile();
+            } else if (IS(FS_Summon_Immobile)) {
+                Commands_t::Self()->Followers_Summon_Immobile();
+            } else if (IS(FS_Settle)) {
+                Commands_t::Self()->Followers_Settle();
+            } else if (IS(FS_Unsettle)) {
+                Commands_t::Self()->Followers_Unsettle();
+            } else if (IS(FS_Mobilize)) {
+                Commands_t::Self()->Followers_Mobilize();
+            } else if (IS(FS_Immobilize)) {
+                Commands_t::Self()->Followers_Immobilize();
+            } else if (IS(FS_Sneak)) {
+                Commands_t::Self()->Followers_Sneak();
+            } else if (IS(FS_Unsneak)) {
+                Commands_t::Self()->Followers_Unsneak();
+            } else if (IS(FS_Saddle)) {
+                Commands_t::Self()->Followers_Saddle();
+            } else if (IS(FS_Unsaddle)) {
+                Commands_t::Self()->Followers_Unsaddle();
+            } else if (IS(FS_Resurrect)) {
+                Commands_t::Self()->Followers_Resurrect();
+            }
+
+            #undef IS
         }
     }
 
