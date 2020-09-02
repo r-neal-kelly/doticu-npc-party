@@ -689,28 +689,6 @@ namespace doticu_npcp { namespace Papyrus {
 
     void Keys_t::On_Key_Down(Int_t value)
     {
-        /*if (Can_Use_Keys()) {
-            struct Callback : public Virtual_Callback_t {
-                Keys_t* self;
-                Int_t value;
-                Callback(Keys_t* self, Int_t value) :
-                    self(self), value(value)
-                {
-                }
-                void operator()(Variable_t* result)
-                {
-                    Int_t count = result ? result->Int() : 0;
-                    if (count > 0) {
-                        Vector_t<Int_t> key_codes;
-                        key_codes.reserve(count);
-                        self->Gather_Pressed_Keys(value, 0, count, key_codes);
-                    }
-                }
-            };
-            Virtual_Callback_i* callback = new Callback(this, value);
-            Object_Ref::Count_Pressed_Keys(&callback);
-        }*/
-
         struct Callback : public Virtual_Callback_t {
             Keys_t* self;
             Int_t value;

@@ -571,6 +571,14 @@ namespace doticu_npcp { namespace Actor2 {
                                         XList::Set_Count(xlist, outfits_count);
                                         do_refresh = true;
                                     }
+                                    if (xlist->HasType(kExtraData_CannotWear)) {
+                                        XData_t* xdata = xlist->GetByType(kExtraData_CannotWear);
+                                        if (xdata) {
+                                            xlist->Remove(kExtraData_CannotWear, xdata);
+                                            XData::Destroy(xdata);
+                                        }
+                                        do_refresh = true;
+                                    }
                                     xlists_remaining += outfits_count;
                                 } else {
                                     xlists_to_destroy.push_back(xlist);
