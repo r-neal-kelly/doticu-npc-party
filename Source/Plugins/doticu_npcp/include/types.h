@@ -489,10 +489,19 @@ namespace doticu_npcp {
         UInt32 pad_3C; // 3C
 
         static const char* Rank_To_String(Rank_e rank);
+        static Int_t To_Papyrus_Rank(Rank_e rank);
+        static Rank_e From_Papyrus_Rank(Int_t rank);
     };
     STATIC_ASSERT(sizeof(Relationship_t) == 0x40);
 
-    typedef tArray<Relationship_t*> Relationships_t;
+    class Relationships_t {
+    public:
+        static Relationships_t* Self();
+
+    public:
+        Relationship_t::Rank_e Relationship_Rank(Form_t* form_1, Form_t* form_2);
+        void Relationship_Rank(Form_t* form_1, Form_t* form_2, Relationship_t::Rank_e rank);
+    };
 
     class Magic_Target_t {
     public:

@@ -115,6 +115,12 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         return Member()->Rating();
     }
 
+    Int_t Follower_t::Relationship_Rank()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Member()->Relationship_Rank();
+    }
+
     String_t Follower_t::Sex()
     {
         NPCP_ASSERT(Is_Filled());
@@ -490,27 +496,19 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         Previous_No_Auto_Bard_Faction_Variable()->Bool(Actor2::Has_Faction(actor, Consts::No_Bard_Singer_Autostart_Faction()));
 
-        class Callback : public Virtual_Callback_t {
-        public:
-            Variable_t* variable;
-            Callback(Variable_t* variable) :
-                variable(variable)
-            {
-            }
-            void operator()(Variable_t* result)
-            {
-                variable->Int(result->Int());
-            }
-        };
-        Virtual_Callback_i* callback = new Callback(Previous_Player_Relationship_Variable());
-        Actor2::Relationship_Rank(actor, Player_t::Self()->Actor(), &callback);
+        Previous_Player_Relationship_Variable()->Int(
+            Relationship_t::To_Papyrus_Rank(Actor2::Relationship_Rank(actor, Player_t::Self()->Actor()))
+        );
     }
 
     void Follower_t::Restore_State(Actor_t* actor)
     {
         NPCP_ASSERT(actor);
 
-        Actor2::Relationship_Rank(actor, Player_t::Self()->Actor(), Previous_Player_Relationship_Variable()->Int());
+        Actor2::Relationship_Rank(
+            actor, Player_t::Self()->Actor(),
+            Relationship_t::From_Papyrus_Rank(Previous_Player_Relationship_Variable()->Int())
+        );
 
         if (Previous_No_Auto_Bard_Faction_Variable()->Bool()) {
             Actor2::Add_Faction(actor, Consts::No_Bard_Singer_Autostart_Faction());
@@ -536,20 +534,9 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Actor2::Ignore_Friendly_Hits(actor);
         Actor2::Hide_From_Stealth_Eye(actor);
 
-        class Callback : public Virtual_Callback_t {
-        public:
-            Actor_t* actor;
-            Callback(Actor_t* actor) :
-                actor(actor)
-            {
-            }
-            void operator()(Variable_t* result)
-            {
-                Actor2::Evaluate_Package(actor);
-            }
-        };
-        Virtual_Callback_i* callback = new Callback(actor);
-        Actor2::Relationship_Rank(actor, Player_t::Self()->Actor(), 3, &callback); // maybe we can check for change
+        Actor2::Relationship_Rank(actor, Player_t::Self()->Actor(), Relationship_t::Rank_e::ALLY);
+
+        Actor2::Evaluate_Package(actor);
     }
 
     void Follower_t::Enforce_Non_Follower(Actor_t* actor)

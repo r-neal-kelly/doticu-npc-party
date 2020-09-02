@@ -6,6 +6,7 @@
 
 #include "actor_base2.h"
 #include "consts.h"
+#include "form.h"
 #include "papyrus.h"
 #include "papyrus.inl"
 
@@ -163,10 +164,10 @@ namespace doticu_npcp { namespace Actor_Base2 {
         }
     }
 
-    Relationships_t* Relationships(Actor_Base_t* actor_base)
+    tArray<Relationship_t*>* Relationships(Actor_Base_t* actor_base)
     {
         if (actor_base) {
-             return *reinterpret_cast<Relationships_t**>(reinterpret_cast<UInt8*>(actor_base) + 0x250);
+             return reinterpret_cast<tArray<Relationship_t*>*>(actor_base->unk250);
         } else {
             return nullptr;
         }
@@ -174,13 +175,16 @@ namespace doticu_npcp { namespace Actor_Base2 {
 
     Relationship_t::Rank_e Relationship_Rank(Actor_Base_t* actor_base, Actor_Base_t* with_other)
     {
+        // this does not return dynamic relationship ranks. the Global Singleton Relationships_t must be used.
         if (actor_base && with_other) {
-            Relationships_t* relationships = Relationships(actor_base);
+            tArray<Relationship_t*>* relationships = Relationships(actor_base);
             if (relationships) {
                 for (size_t idx = 0, count = relationships->count; idx < count; idx += 1) {
                     Relationship_t* relationship = *(relationships->entries + idx);
-                    if (relationship && relationship->base_actor_2 == with_other) {
-                        return relationship->rank;
+                    if (relationship) {
+                        if (relationship->base_actor_1 == with_other || relationship->base_actor_2 == with_other) {
+                            return relationship->rank;
+                        }
                     }
                 }
             }

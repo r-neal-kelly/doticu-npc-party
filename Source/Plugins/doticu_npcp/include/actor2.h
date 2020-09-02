@@ -128,8 +128,8 @@ namespace doticu_npcp { namespace Actor2 {
 
     void Stop_If_Playing_Music(Actor_t* actor);
 
-    void Relationship_Rank(Actor_t* actor, Actor_t* other, Virtual_Callback_i** callback);
-    void Relationship_Rank(Actor_t* actor, Actor_t* other, Int_t rank, Virtual_Callback_i** callback = nullptr);
+    Relationship_t::Rank_e Relationship_Rank(Actor_t* actor, Actor_t* other);
+    void Relationship_Rank(Actor_t* actor, Actor_t* other, Relationship_t::Rank_e rank);
 
     Bool_t Has_Magic_Effect(Actor_t* actor, Magic_Effect_t* magic_effect);
 

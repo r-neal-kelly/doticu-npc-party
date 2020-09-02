@@ -482,9 +482,9 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Race_Option_Variable()->Int(
             mcm_main->Add_Text_Option(" Race ", party_member->Race())
         );
-        /*Relationship_Rank_Option_Variable()->Int(
+        Relationship_Rank_Option_Variable()->Int(
             mcm_main->Add_Text_Option(" Relationship Rank ", party_member->Relationship_Rank_String())
-        );*/
+        );
     }
 
     void Member_t::Update_Statistics()
@@ -531,7 +531,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         update_stat(Speechcraft_Skill_Option_Variable(), Actor_Value_t::SPEECHCRAFT, false);
 
         mcm_main->Text_Option_Value(Race_Option_Variable()->Int(), party_member->Race(), true);
-        //mcm_main->Text_Option_Value(Relationship_Rank_Option_Variable()->Int(), party_member->Relationship_Rank_String(), true);
+        mcm_main->Text_Option_Value(Relationship_Rank_Option_Variable()->Int(), party_member->Relationship_Rank_String(), true);
     }
 
     void Member_t::Go_Back()

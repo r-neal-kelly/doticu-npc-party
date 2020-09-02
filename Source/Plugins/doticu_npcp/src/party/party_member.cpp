@@ -2,6 +2,8 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "skse64/GameData.h"
+
 #include "actor2.h"
 #include "actor_base2.h"
 #include "codes.h"
@@ -14,6 +16,7 @@
 #include "spell.h"
 #include "utils.h"
 #include "vars.h"
+#include "xlist.h"
 
 #include "party/party_player.h"
 #include "party/party_movee.h"
@@ -167,6 +170,16 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         return Rating_Variable()->Int();
     }
 
+    Int_t Member_t::Relationship_Rank()
+    {
+        NPCP_ASSERT(Is_Filled());
+
+        return static_cast<Int_t>(Relationships_t::Self()->Relationship_Rank(
+            Actor2::Dynamic_Base(Consts::Player_Actor()),
+            Actor2::Dynamic_Base(Actor())
+        ));
+    }
+
     String_t Member_t::Sex()
     {
         NPCP_ASSERT(Is_Filled());
@@ -224,8 +237,10 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         NPCP_ASSERT(Is_Filled());
 
         return Relationship_t::Rank_To_String(
-            Actor_Base2::Relationship_Rank(Actor2::Dynamic_Base(Actor()),
-                                           Actor2::Dynamic_Base(Consts::Player_Actor()))
+            Relationships_t::Self()->Relationship_Rank(
+                Actor2::Dynamic_Base(Consts::Player_Actor()),
+                Actor2::Dynamic_Base(Actor())
+            )
         );
     }
 

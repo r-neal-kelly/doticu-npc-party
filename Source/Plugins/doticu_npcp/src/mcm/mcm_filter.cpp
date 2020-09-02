@@ -83,6 +83,10 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
     Variable_t* Filter_t::Rating_Argument_Variable() { DEFINE_VARIABLE("p_int_arg_rating"); }
     Variable_t* Filter_t::Rating_Display_Variable() { DEFINE_VARIABLE("p_str_view_rating"); }
 
+    Variable_t* Filter_t::Relationship_Rank_Option_Variable() { DEFINE_VARIABLE("p_option_relationship"); }
+    Variable_t* Filter_t::Relationship_Rank_Argument_Variable() { DEFINE_VARIABLE("p_int_arg_relationship"); }
+    Variable_t* Filter_t::Relationship_Rank_Display_Variable() { DEFINE_VARIABLE("p_str_view_relationship"); }
+
     Variable_t* Filter_t::Is_Alive_Option_Variable() { DEFINE_VARIABLE("p_option_is_alive"); }
     Variable_t* Filter_t::Is_Dead_Option_Variable() { DEFINE_VARIABLE("p_option_is_dead"); }
     Variable_t* Filter_t::Alive_Dead_Ternary_Variable() { DEFINE_VARIABLE("p_int_alive_dead"); }
@@ -168,11 +172,12 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
     Vector_t<Int_t> Filter_t::Ints()
     {
         Vector_t<Int_t> ints;
-        ints.reserve(4);
+        ints.reserve(5);
         ints.push_back(Style_Argument_Variable()->Int());
         ints.push_back(Vitality_Argument_Variable()->Int());
         ints.push_back(Outfit2_Argument_Variable()->Int());
         ints.push_back(Rating_Argument_Variable()->Int());
+        ints.push_back(Relationship_Rank_Argument_Variable()->Int());
         return ints;
     }
 
@@ -313,6 +318,11 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Int_t rating_arg = Rating_Argument_Variable()->Int();
         if (rating_arg > -1) {
             Concat(Rating_Display_Variable()->String().data);
+        }
+
+        Int_t relationship_rank_arg = Relationship_Rank_Argument_Variable()->Int();
+        if (relationship_rank_arg > -1) {
+            Concat(Relationship_Rank_Display_Variable()->String().data);
         }
 
         String_t search_arg = Search_Argument_Variable()->String();

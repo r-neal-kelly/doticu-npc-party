@@ -75,6 +75,10 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Variable_t* Rating_Argument_Variable();
         Variable_t* Rating_Display_Variable();
 
+        Variable_t* Relationship_Rank_Option_Variable();
+        Variable_t* Relationship_Rank_Argument_Variable();
+        Variable_t* Relationship_Rank_Display_Variable();
+
         Variable_t* Is_Alive_Option_Variable();
         Variable_t* Is_Dead_Option_Variable();
         Variable_t* Alive_Dead_Ternary_Variable();

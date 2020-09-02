@@ -83,6 +83,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Int_t Vitality();
         Int_t Outfit2();
         Int_t Rating();
+        Int_t Relationship_Rank();
         String_t Sex();
         String_t Race();
         String_t Base_Name();

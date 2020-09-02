@@ -388,6 +388,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             Int_t vitality = ints_size > 1 ? ints->at(1) : 0; // exposed by doticu_npcp_codes, 0+ for any
             Int_t outfit2 = ints_size > 2 ? ints->at(2) : 0; // exposed by doticu_npcp_codes, 0+ for any
             Int_t rating = ints_size > 3 ? ints->at(3) : -1; // exposed by doticu_npcp_member, -1 or less for any, 0 is no rating
+            Int_t relationship_rank = ints_size > 4 ? ints->at(4) : -1; // exposed by Relationship_t::Rank_e, -1 or less for any
 
             if (style < 0) {
                 for (size_t idx = 0, size = read->size(); idx < size; idx += 1) {
@@ -423,6 +424,16 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                 for (size_t idx = 0, size = read->size(); idx < size; idx += 1) {
                     Alias* alias = read->at(idx);
                     if (alias->Rating() == rating) {
+                        write->push_back(alias);
+                    }
+                }
+                Swap();
+            }
+
+            if (relationship_rank > -1) {
+                for (size_t idx = 0, size = read->size(); idx < size; idx += 1) {
+                    Alias* alias = read->at(idx);
+                    if (alias->Relationship_Rank() == relationship_rank) {
                         write->push_back(alias);
                     }
                 }

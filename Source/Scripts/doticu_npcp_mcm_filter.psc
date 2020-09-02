@@ -52,6 +52,10 @@ int                 p_option_rating             =      -1
 int                 p_int_arg_rating            =      -1
 string              p_str_view_rating           = " Any "
 
+int                 p_option_relationship       =      -1
+int                 p_int_arg_relationship      =      -1
+string              p_str_view_relationship     = " Any "
+
 int                 p_option_is_alive           =      -1
 int                 p_option_is_dead            =      -1
 int                 p_int_alive_dead            =       0
@@ -123,6 +127,9 @@ function f_Build_Page()
 
     p_option_outfit2 = MCM.AddMenuOption(" Outfit ", p_str_view_outfit2)
     p_option_rating = MCM.AddMenuOption(" Rating ", p_str_view_rating)
+
+    p_option_relationship = MCM.AddMenuOption(" Relationship Rank ", p_str_view_relationship)
+    MCM.AddEmptyOption()
     
     MCM.AddHeaderOption("")
     MCM.AddHeaderOption("")
@@ -371,6 +378,23 @@ function f_On_Option_Menu_Open(int id_option)
         MCM.SetMenuDialogOptions(arr_options)
         MCM.SetMenuDialogDefaultIndex(0)
 
+    elseIf id_option == p_option_relationship
+        string[] arr_options = Utility.CreateStringArray(10, "")
+
+        arr_options[0] = " Any "
+        arr_options[1] = " Lover "
+        arr_options[2] = " Ally "
+        arr_options[3] = " Confidant "
+        arr_options[4] = " Friend "
+        arr_options[5] = " Acquaintance "
+        arr_options[6] = " Rival "
+        arr_options[7] = " Foe "
+        arr_options[8] = " Enemy "
+        arr_options[9] = " Archnemesis "
+
+        MCM.SetMenuDialogOptions(arr_options)
+        MCM.SetMenuDialogDefaultIndex(0)
+
     endIf
 endFunction
 
@@ -519,6 +543,43 @@ function f_On_Option_Menu_Accept(int id_option, int idx_option)
         endIf
         MCM.SetMenuOptionValue(id_option, p_str_view_rating, MCM.DO_UPDATE)
 
+    elseIf id_option == p_option_relationship
+        if idx_option < 0
+
+        elseIf idx_option == 0
+            p_int_arg_relationship = -1
+            p_str_view_relationship = " Any "
+        elseIf idx_option == 1
+            p_int_arg_relationship = 0
+            p_str_view_relationship = " Lover "
+        elseIf idx_option == 2
+            p_int_arg_relationship = 1
+            p_str_view_relationship = " Ally "
+        elseIf idx_option == 3
+            p_int_arg_relationship = 2
+            p_str_view_relationship = " Confidant "
+        elseIf idx_option == 4
+            p_int_arg_relationship = 3
+            p_str_view_relationship = " Friend "
+        elseIf idx_option == 5
+            p_int_arg_relationship = 4
+            p_str_view_relationship = " Acquaintance "
+        elseIf idx_option == 6
+            p_int_arg_relationship = 5
+            p_str_view_relationship = " Rival "
+        elseIf idx_option == 7
+            p_int_arg_relationship = 6
+            p_str_view_relationship = " Foe "
+        elseIf idx_option == 8
+            p_int_arg_relationship = 7
+            p_str_view_relationship = " Enemy "
+        elseIf idx_option == 9
+            p_int_arg_relationship = 8
+            p_str_view_relationship = " Archnemesis "
+
+        endIf
+        MCM.SetMenuOptionValue(id_option, p_str_view_relationship, MCM.DO_UPDATE)
+
     endIf
 endFunction
 
@@ -557,6 +618,8 @@ function f_On_Option_Highlight(int id_option)
         MCM.SetInfoText("Find members wearing this outfit.")
     elseIf id_option == p_option_rating
         MCM.SetInfoText("Find members with this rating.")
+    elseIf id_option == p_option_relationship
+        MCM.SetInfoText("Find members with this relationship rank.")
     elseIf id_option == p_option_search
         MCM.SetInfoText("Find members whose name contains this input. (If just one character, it only looks at the start of the name.)")
     elseIf id_option == p_option_is_alive
@@ -600,13 +663,13 @@ function f_On_Option_Highlight(int id_option)
     elseIf id_option == p_option_isnt_follower
         MCM.SetInfoText("Find members who are not followers.")
     elseIf id_option == p_option_is_sneak
-        MCM.SetInfoText("Find members who are sneaking followers.")
+        MCM.SetInfoText("Find followers who are sneaking.")
     elseIf id_option == p_option_isnt_sneak
-        MCM.SetInfoText("Find members who are not sneaking followers.")
+        MCM.SetInfoText("Find followers who are not sneaking.")
     elseIf id_option == p_option_is_saddler
-        MCM.SetInfoText("Find members who are horse riding followers.")
+        MCM.SetInfoText("Find followers who are riding a horse.")
     elseIf id_option == p_option_isnt_saddler
-        MCM.SetInfoText("Find members who are not horse riding followers.")
+        MCM.SetInfoText("Find followers who are not riding a horse.")
 
     endIf
 endFunction

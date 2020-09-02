@@ -169,8 +169,6 @@ namespace doticu_npcp { namespace Actor2 {
         NPCP_ASSERT(linchpin_xentry);
         linchpin_xentry->Delta_Count(1); // we need to fix xlists too...
 
-        Bool_t do_refresh = false;
-
         class Outfit_Entry_t {
         public:
             Reference_t* reference = nullptr;
@@ -2077,49 +2075,17 @@ namespace doticu_npcp { namespace Actor2 {
                                                &arguments);
     }
 
-    void Relationship_Rank(Actor_t* actor, Actor_t* other, Virtual_Callback_i** callback)
+    Relationship_t::Rank_e Relationship_Rank(Actor_t* actor, Actor_t* other)
     {
         if (actor && other) {
-            class Arguments : public Virtual_Arguments_t {
-            public:
-                Actor_t* other;
-                Arguments(Actor_t* other) :
-                    other(other)
-                {
-                }
-                Bool_t operator()(Arguments_t* arguments)
-                {
-                    arguments->Resize(1);
-                    arguments->At(0)->Pack(other);
-                    return true;
-                }
-            } arguments(other);
-
-            Virtual_Machine_t::Self()->Call_Method(actor, "Actor", "GetRelationshipRank", &arguments, callback);
+            return Relationships_t::Self()->Relationship_Rank(Dynamic_Base(actor), Dynamic_Base(other));
         }
     }
 
-    void Relationship_Rank(Actor_t* actor, Actor_t* other, Int_t rank, Virtual_Callback_i** callback)
+    void Relationship_Rank(Actor_t* actor, Actor_t* other, Relationship_t::Rank_e rank)
     {
         if (actor && other) {
-            class Arguments : public Virtual_Arguments_t {
-            public:
-                Actor_t* other;
-                Int_t rank;
-                Arguments(Actor_t* other, Int_t rank) :
-                    other(other), rank(rank)
-                {
-                }
-                Bool_t operator()(Arguments_t* arguments)
-                {
-                    arguments->Resize(2);
-                    arguments->At(0)->Pack(other);
-                    arguments->At(1)->Int(rank);
-                    return true;
-                }
-            } arguments(other, rank);
-
-            Virtual_Machine_t::Self()->Call_Method(actor, "Actor", "SetRelationshipRank", &arguments, callback);
+            Relationships_t::Self()->Relationship_Rank(Dynamic_Base(actor), Dynamic_Base(other), rank);
         }
     }
 

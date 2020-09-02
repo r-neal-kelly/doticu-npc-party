@@ -275,4 +275,61 @@ namespace doticu_npcp {
         };
     }
 
+    Int_t Relationship_t::To_Papyrus_Rank(Rank_e rank)
+    {
+        switch (rank) {
+            case (Rank_e::LOVER):           return  4;
+            case (Rank_e::ALLY):            return  3;
+            case (Rank_e::CONFIDANT):       return  2;
+            case (Rank_e::FRIEND):          return  1;
+            case (Rank_e::ACQUAINTANCE):    return  0;
+            case (Rank_e::RIVAL):           return -1;
+            case (Rank_e::FOE):             return -2;
+            case (Rank_e::ENEMY):           return -3;
+            case (Rank_e::ARCHNEMESIS):     return -4;
+            default:                        return  0;
+        };
+    }
+
+    Relationship_t::Rank_e Relationship_t::From_Papyrus_Rank(Int_t rank)
+    {
+        switch (rank) {
+            case ( 4):  return Rank_e::LOVER;
+            case ( 3):  return Rank_e::ALLY;
+            case ( 2):  return Rank_e::CONFIDANT;
+            case ( 1):  return Rank_e::FRIEND;
+            case ( 0):  return Rank_e::ACQUAINTANCE;
+            case (-1):  return Rank_e::RIVAL;
+            case (-2):  return Rank_e::FOE;
+            case (-3):  return Rank_e::ENEMY;
+            case (-4):  return Rank_e::ARCHNEMESIS;
+            default:    return Rank_e::ACQUAINTANCE;
+        };
+    }
+
+    Relationships_t* Relationships_t::Self()
+    {
+        static auto self = reinterpret_cast
+            <Relationships_t**>
+            (RelocationManager::s_baseAddr + Offsets::Relationships::SELF);
+        NPCP_ASSERT(self);
+        return *self;
+    }
+
+    Relationship_t::Rank_e Relationships_t::Relationship_Rank(Form_t* form_1, Form_t* form_2)
+    {
+        static auto get_relationship_rank = reinterpret_cast
+            <Relationship_t::Rank_e(*)(Form_t*, Form_t*)>
+            (RelocationManager::s_baseAddr + Offsets::Relationships::GET_RELATIONSHIP_RANK);
+        return get_relationship_rank(form_1, form_2);
+    }
+
+    void Relationships_t::Relationship_Rank(Form_t* form_1, Form_t* form_2, Relationship_t::Rank_e rank)
+    {
+        static auto set_relationship_rank = reinterpret_cast
+            <void(*)(Form_t*, Form_t*, Relationship_t::Rank_e)>
+            (RelocationManager::s_baseAddr + Offsets::Relationships::SET_RELATIONSHIP_RANK);
+        set_relationship_rank(form_1, form_2, rank);
+    }
+
 }

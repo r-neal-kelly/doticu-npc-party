@@ -116,6 +116,14 @@ namespace doticu_npcp { namespace Offsets {
 
     }
 
+    namespace Relationships {
+
+        constexpr uintptr_t SELF                        = 0x01DD3EF8; // 502260
+        constexpr uintptr_t GET_RELATIONSHIP_RANK       = 0x00345ED0; // 23624
+        constexpr uintptr_t SET_RELATIONSHIP_RANK       = 0x00345b80; // 23623
+
+    }
+
     namespace String {
 
         constexpr uintptr_t SET                         = 0x00C28D60; // 67823
