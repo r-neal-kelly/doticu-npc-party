@@ -176,10 +176,12 @@ namespace doticu_npcp { namespace Actor_Base2 {
     {
         if (actor_base && with_other) {
             Relationships_t* relationships = Relationships(actor_base);
-            for (size_t idx = 0, count = relationships->count; idx < count; idx += 1) {
-                Relationship_t* relationship = *(relationships->entries + idx);
-                if (relationship && relationship->base_actor_2 == with_other) {
-                    return relationship->rank;
+            if (relationships) {
+                for (size_t idx = 0, count = relationships->count; idx < count; idx += 1) {
+                    Relationship_t* relationship = *(relationships->entries + idx);
+                    if (relationship && relationship->base_actor_2 == with_other) {
+                        return relationship->rank;
+                    }
                 }
             }
             return Relationship_t::Rank_e::ACQUAINTANCE;

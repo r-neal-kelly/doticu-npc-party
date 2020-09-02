@@ -189,7 +189,7 @@ namespace doticu_npcp { namespace Main {
         info->name = "doticu_npcp"; // exposed to plugin query API
         info->version = 1; // exposed to scripts
 
-        if (PACKED_SKSE_VERSION < MAKE_EXE_VERSION(2, 0, 17)) {
+        if (skse->skseVersion < MAKE_EXE_VERSION(2, 0, 17)) {
             return false;
         } else {
             return true;

@@ -117,6 +117,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
     Variable_t* Member_t::Speechcraft_Skill_Option_Variable() { DEFINE_VARIABLE("p_option_skill_speechcraft"); }
 
     Variable_t* Member_t::Race_Option_Variable() { DEFINE_VARIABLE("p_option_race"); }
+    Variable_t* Member_t::Relationship_Rank_Option_Variable() { DEFINE_VARIABLE("p_option_relationship_rank"); }
 
     Int_t Member_t::Current_View()
     {
@@ -478,7 +479,12 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         build_stat(Pickpocket_Skill_Option_Variable(), " Pickpocket ", Actor_Value_t::PICKPOCKET);
         build_stat(Speechcraft_Skill_Option_Variable(), " Speechcraft ", Actor_Value_t::SPEECHCRAFT);
 
-        Race_Option_Variable()->Int(mcm_main->Add_Text_Option(" Race ", party_member->Race()));
+        Race_Option_Variable()->Int(
+            mcm_main->Add_Text_Option(" Race ", party_member->Race())
+        );
+        /*Relationship_Rank_Option_Variable()->Int(
+            mcm_main->Add_Text_Option(" Relationship Rank ", party_member->Relationship_Rank_String())
+        );*/
     }
 
     void Member_t::Update_Statistics()
@@ -525,6 +531,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         update_stat(Speechcraft_Skill_Option_Variable(), Actor_Value_t::SPEECHCRAFT, false);
 
         mcm_main->Text_Option_Value(Race_Option_Variable()->Int(), party_member->Race(), true);
+        //mcm_main->Text_Option_Value(Relationship_Rank_Option_Variable()->Int(), party_member->Relationship_Rank_String(), true);
     }
 
     void Member_t::Go_Back()
@@ -652,6 +659,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                     void operator()(Int_t code, Party::Follower_t* follower)
                     {
                         self->Update_Commands();
+                        self->Update_Statistics();
                     }
                 };
                 Callback_t<Int_t, Party::Follower_t*>* callback = new Callback(this);
@@ -671,6 +679,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                             self->Go_Back();
                         } else {
                             self->Update_Commands();
+                            self->Update_Statistics();
                         }
                     }
                 };

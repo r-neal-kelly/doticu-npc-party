@@ -68,7 +68,7 @@ function Close_Menus();;;
     endWhile
 endFunction
 
-bool function Can_Use_Keys()
+bool function Can_Use_Keys();;;
     return !Utility.IsInMenuMode() && !UI.IsMenuOpen("Dialogue Menu")
 endFunction
 
@@ -173,4 +173,16 @@ endFunction
 
 Actor function Find_Closest_Actor_From(ObjectReference ref, float radius);;;
     return Game.FindClosestActorFromRef(ref, radius)
+endFunction
+
+ObjectReference function Current_Crosshair_Reference();;;
+    return Game.GetCurrentCrosshairRef()
+endFunction
+
+int function Count_Pressed_Keys();;;
+    return Input.GetNumKeysPressed()
+endFunction
+
+int function Pressed_Key(int index);;;
+    return Input.GetNthKeyPressed(index)
 endFunction

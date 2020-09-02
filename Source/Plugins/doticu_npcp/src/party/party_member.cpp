@@ -219,6 +219,16 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
+    String_t Member_t::Relationship_Rank_String()
+    {
+        NPCP_ASSERT(Is_Filled());
+
+        return Relationship_t::Rank_To_String(
+            Actor_Base2::Relationship_Rank(Actor2::Dynamic_Base(Actor()),
+                                           Actor2::Dynamic_Base(Consts::Player_Actor()))
+        );
+    }
+
     Outfit_t* Member_t::Vanilla_Outfit()
     {
         NPCP_ASSERT(Is_Filled());

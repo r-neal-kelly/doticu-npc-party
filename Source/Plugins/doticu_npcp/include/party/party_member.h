@@ -89,6 +89,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         String_t Reference_Name();
         String_t Name();
         String_t Rating_Stars();
+        String_t Relationship_Rank_String();
 
         Outfit_t* Vanilla_Outfit();
         Outfit_t* Default_Outfit();

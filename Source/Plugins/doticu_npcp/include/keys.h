@@ -264,6 +264,9 @@ namespace doticu_npcp { namespace Papyrus {
         void Register_Keys();
         Bool_t Can_Use_Keys();
         void Actor_In_Crosshair(Bool_t allow_follower_horse, void(*callback)(Actor_t*));
+
+        void Gather_Pressed_Keys(Int_t key_value, Int_t index, Int_t count, Vector_t<Int_t> key_codes);
+        void On_Key_Down(Int_t key_code);
         void On_Key_Up(Int_t key_code, Float_t time_held);
 
     public:

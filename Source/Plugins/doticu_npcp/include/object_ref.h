@@ -120,7 +120,11 @@ namespace doticu_npcp { namespace Object_Ref {
 
     void Find_Closest_Actor_From(Reference_t* ref, Float_t radius, Virtual_Callback_i** callback);
 
-    void Get_Current_Crosshair_Reference(Virtual_Callback_i** callback);
+    // these don't belong here.
+    void Current_Crosshair_Reference(Virtual_Callback_i** callback);
+    void Can_Use_Keys(Virtual_Callback_i** callback);
+    void Count_Pressed_Keys(Virtual_Callback_i** callback);
+    void Pressed_Key(Int_t index, Virtual_Callback_i** callback);
 
 }}
 

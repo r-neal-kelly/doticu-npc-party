@@ -259,4 +259,20 @@ namespace doticu_npcp {
         }
     }
 
+    const char* Relationship_t::Rank_To_String(Relationship_t::Rank_e rank)
+    {
+        switch (rank) {
+            case (Rank_e::LOVER): return "Lover";
+            case (Rank_e::ALLY): return "Ally";
+            case (Rank_e::CONFIDANT): return "Confidant";
+            case (Rank_e::FRIEND): return "Friend";
+            case (Rank_e::ACQUAINTANCE): return "Acquaintance";
+            case (Rank_e::RIVAL): return "Rival";
+            case (Rank_e::FOE): return "Foe";
+            case (Rank_e::ENEMY): return "Enemy";
+            case (Rank_e::ARCHNEMESIS): return "Archnemesis";
+            default: return "Acquaintance";
+        };
+    }
+
 }

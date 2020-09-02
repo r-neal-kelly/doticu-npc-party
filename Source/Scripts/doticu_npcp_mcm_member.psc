@@ -92,6 +92,7 @@ int                 p_option_skill_lockpicking  =    -1
 int                 p_option_skill_pickpocket   =    -1
 int                 p_option_skill_speechcraft  =    -1
 int                 p_option_race               =    -1
+int                 p_option_relationship_rank  =    -1
 
 ; Native Methods
 function f_Build_Page() native
@@ -100,7 +101,7 @@ function p_Update_Commands() native
 function p_Build_Statistics() native
 function p_Update_Statistics() native
 
-function f_On_Option_Select         (int option) native
+function f_On_Option_Select (int option) native
 
 ; Friend Methods
 function f_Create()

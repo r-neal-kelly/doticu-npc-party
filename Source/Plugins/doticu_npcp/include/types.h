@@ -487,6 +487,8 @@ namespace doticu_npcp {
         UInt8 unk_3A; // 3A
         UInt8 flag_3B; // 3B
         UInt32 pad_3C; // 3C
+
+        static const char* Rank_To_String(Rank_e rank);
     };
     STATIC_ASSERT(sizeof(Relationship_t) == 0x40);
 
