@@ -2752,6 +2752,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         if (Is_Filled()) {
             if (Is_Dead()) {
                 Actor2::Resurrect(Actor(), false);
+                Enforce();
                 return CODES::SUCCESS;
             } else {
                 return CODES::IS;

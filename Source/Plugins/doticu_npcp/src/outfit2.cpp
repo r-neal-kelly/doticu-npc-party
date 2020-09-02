@@ -262,7 +262,6 @@ namespace doticu_npcp { namespace Papyrus {
                 {
                     Actor2::Leave_Player_Team(actor);
                     Actor2::Set_Outfit2(actor, outfit2->Outfit1_Cache(), outfit2, pack);
-                    Actor2::Update_Equipment(actor);
                 }
             };
             Virtual_Callback_i* callback = new Callback(this, actor, pack);

@@ -24,9 +24,6 @@ endFunction
 
 ; most of the following shall eventually be moved into existing types or removed completely
 
-; Actor
-Actor function Actor_Get_Mounted_Actor(Actor ref_horse) native global
-
 ; Object_Ref
 function Object_Ref_Categorize(ObjectReference ref_obj) native global
 function Object_Ref_Log_XContainer(ObjectReference ref_object) native global

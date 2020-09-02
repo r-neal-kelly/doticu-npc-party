@@ -128,7 +128,7 @@ function Wait(float seconds)
     Utility.WaitMenuMode(seconds)
 endFunction
 
-function Wait_Out_Of_Menu(float seconds)
+function Wait_Out_Of_Menu(float seconds);;;
     Utility.Wait(seconds)
 endFunction
 

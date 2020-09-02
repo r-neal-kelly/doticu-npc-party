@@ -123,7 +123,6 @@ namespace doticu_npcp { namespace Actor2 {
     Bool_t Isnt_Child(Actor_t* actor);
 
     void Update_Equipment(Actor_t* actor);
-    void Verify_Weapon_Equips(Actor_t* actor);
 
     void Greet_Player(Actor_t* actor);
 
@@ -139,6 +138,8 @@ namespace doticu_npcp { namespace Actor2 {
 
     Bool_t Is_Sneaking(Actor_t* actor);
     void Is_Talking_To_Player(Actor_t* actor, Virtual_Callback_i** callback);
+
+    void Owner(Actor_t* ref, Actor_Base_t* owner); // maybe we could try the reference instead of base, for horses
 
 }}
 

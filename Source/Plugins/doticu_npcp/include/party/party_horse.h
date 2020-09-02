@@ -22,6 +22,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         Variable_t* Actor_Variable();
         Variable_t* Follower_Variable();
+        Variable_t* Name_Variable();
 
         Actor_t* Actor();
         Follower_t* Follower();
@@ -45,7 +46,10 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         void Enforce();
 
-        void Rename(String_t new_name);
+        Int_t Rename(String_t new_name);
+        void Enforce_Name(Actor_t* actor, String_t name);
+
+        void On_Activate(Reference_t* activator);
 
     public:
         static void Register_Me(Virtual_Machine_t* vm);

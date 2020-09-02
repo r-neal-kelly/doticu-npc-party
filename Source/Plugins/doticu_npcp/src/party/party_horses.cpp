@@ -133,6 +133,11 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
+    void Horses_t::u_0_9_8()
+    {
+
+    }
+
     void Horses_t::Register_Me(Virtual_Machine_t* vm)
     {
         #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \

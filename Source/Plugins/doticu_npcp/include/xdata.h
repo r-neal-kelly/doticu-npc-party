@@ -44,6 +44,7 @@ namespace doticu_npcp { namespace XData {
     ExtraFlags* Create_Flags();
     ExtraGhost* Create_Ghost(Bool_t is_ghost);
     ExtraTextDisplay* Create_Text_Display(String_t name);
+    ExtraOutfitItem* Create_Outfit_Item(Outfit_t* outfit);
     void Destroy(XData_t *xdata);
 
     ExtraCount *Copy_Count(ExtraCount *xdata, BSReadWriteLock *xlist_lock);

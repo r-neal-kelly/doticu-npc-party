@@ -35,6 +35,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     Variable_t* Horse_t::Actor_Variable() { DEFINE_VARIABLE("p_ref_actor"); }
     Variable_t* Horse_t::Follower_Variable() { DEFINE_VARIABLE("p_ref_follower"); }
+    Variable_t* Horse_t::Name_Variable() { DEFINE_VARIABLE("p_str_name"); }
 
     Actor_t* Horse_t::Actor()
     {
@@ -64,17 +65,20 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     String_t Horse_t::Base_Name()
     {
+        NPCP_ASSERT(Is_Filled());
         return Actor2::Get_Base_Name(Actor());
     }
 
     String_t Horse_t::Reference_Name()
     {
+        NPCP_ASSERT(Is_Filled());
         return Actor2::Get_Ref_Name(Actor());
     }
 
     String_t Horse_t::Name()
     {
-        return Actor2::Get_Name(Actor());
+        NPCP_ASSERT(Is_Filled());
+        return Name_Variable()->String();
     }
 
     Bool_t Horse_t::Is_Alive()
@@ -118,12 +122,14 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     {
         Actor_Variable()->Pack(actor);
         Follower_Variable()->Pack(follower);
+        Name_Variable()->String(Actor2::Get_Name(actor));
 
         Groom();
     }
 
     void Horse_t::Destroy()
     {
+        Name_Variable()->String("");
         Follower_Variable()->None(Follower_t::Class_Info());
         Actor_Variable()->None(Class_Info_t::Fetch(Actor_t::kTypeID, true));
     }
@@ -152,21 +158,26 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(actor);
         value_owner->Set_Actor_Value(Actor_Value_t::SPEED_MULT, Follower_t::MAX_UNSNEAK_SPEED);
 
+        Follower_t* follower = Follower();
+        Actor_t* follower_actor = follower->Actor();
+
         if (Is_Dead()) {
             Actor2::Resurrect(actor, false);
         }
 
-        if (Cell() != Follower()->Cell()) {
-            Object_Ref::Move_To_Orbit(actor, Follower()->Actor(), 140.0f, -90.0f);
+        if (Cell() != follower->Cell()) {
+            Object_Ref::Move_To_Orbit(actor, follower_actor, 140.0f, -90.0f);
         }
 
-        if (Actor2::Get_Mounted_Actor(actor) != Follower()->Actor()) {
+        if (Actor2::Get_Mounted_Actor(actor) != follower_actor) {
             Formlist_t* formlist = Consts::Is_Saddler_Sitting_Globals_Formlist();
-            Global_t* global = static_cast<Global_t*>(*(formlist->forms.entries + Follower()->ID()));
-            global->value = 0.0f; // don't know if this needs MarkChanged()
+            Global_t* global = static_cast<Global_t*>(*(formlist->forms.entries + follower->ID()));
+            global->value = 0.0f;
         }
 
-        Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "p_Enable");
+        Actor2::Owner(actor, Actor2::Dynamic_Base(follower_actor));
+
+        Object_Ref::Enable(actor, false);
     }
 
     Int_t Horse_t::Ungroom()
@@ -186,20 +197,33 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     {
         NPCP_ASSERT(actor);
 
-        class Callback : public Virtual_Callback_t {
-        public:
-            Actor_t* actor;
-            Callback(Actor_t* actor) :
-                actor(actor)
-            {
-            }
-            void operator()(Variable_t* result)
-            {
-                Object_Ref::Move_To_Orbit(actor, Consts::Storage_Marker(), 0.0f, 0.0f);
-            }
-        };
-        Virtual_Callback_i* callback = new Callback(actor);
-        Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "p_Disable", nullptr, &callback);
+        if (Actor2::Get_Mounted_Actor(actor) != nullptr) {
+            struct Arguments : public Virtual_Arguments_t {
+                Bool_t operator()(Arguments_t* arguments)
+                {
+                    arguments->Resize(1);
+                    arguments->At(0)->Float(1.0f);
+                    return true;
+                }
+            } arguments;
+            struct Callback : public Virtual_Callback_t {
+                Horse_t* horse;
+                Actor_t* actor;
+                Callback(Horse_t* horse, Actor_t* actor) :
+                    horse(horse), actor(actor)
+                {
+                }
+                void operator()(Variable_t* result)
+                {
+                    horse->Enforce_Non_Groom(actor);
+                }
+            };
+            Virtual_Callback_i* callback = new Callback(this, actor);
+            Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(), "doticu_npcp_funcs", "Wait_Out_Of_Menu", &arguments, &callback);
+        } else {
+            Object_Ref::Move_To_Orbit(actor, Consts::Storage_Marker(), 0.0f, 0.0f);
+            Object_Ref::Disable(actor, false);
+        }
     }
 
     void Horse_t::Enforce()
@@ -213,6 +237,44 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
+    Int_t Horse_t::Rename(String_t new_name)
+    {
+        if (Is_Filled()) {
+            Name_Variable()->String(new_name);
+
+            Actor_t* actor = Actor();
+            Enforce_Name(actor, new_name);
+            Actor2::Evaluate_Package(actor);
+
+            return CODES::SUCCESS;
+        } else {
+            return CODES::MEMBER;
+        }
+    }
+
+    void Horse_t::Enforce_Name(Actor_t* actor, String_t name)
+    {
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(actor);
+        NPCP_ASSERT(name);
+
+        Object_Ref::Rename(actor, name);
+    }
+
+    void Horse_t::On_Activate(Reference_t* activator)
+    {
+        if (activator && activator->formType == kFormType_Character) {
+            Actor_t* activator_actor = static_cast<Actor_t*>(activator);
+            Follower_t* follower = Follower();
+            if (follower && follower->Actor() == activator_actor) {
+                Global_t* is_saddler_sitting_global = static_cast<Global_t*>
+                    (Consts::Is_Saddler_Sitting_Globals_Formlist()->forms.entries[follower->ID()]);
+                is_saddler_sitting_global->value = 1.0f;
+                Actor2::Evaluate_Package(activator_actor);
+            }
+        }
+    }
+
     void Horse_t::Register_Me(Virtual_Machine_t* vm)
     {
         #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
@@ -222,8 +284,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        METHOD("Actor", 0, Actor_t*, Actor);
-        METHOD("Name", 0, String_t, Name);
+        METHOD("OnActivate", 1, void, On_Activate, Reference_t*);
 
         #undef METHOD
     }

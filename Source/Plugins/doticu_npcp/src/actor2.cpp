@@ -169,6 +169,8 @@ namespace doticu_npcp { namespace Actor2 {
         NPCP_ASSERT(linchpin_xentry);
         linchpin_xentry->Delta_Count(1); // we need to fix xlists too...
 
+        Bool_t do_refresh = false;
+
         class Outfit_Entry_t {
         public:
             Reference_t* reference = nullptr;
@@ -435,12 +437,13 @@ namespace doticu_npcp { namespace Actor2 {
                         if (xentry && xentry->form && xentry->form != linchpin) {
                             Form_t* form = xentry->form;
                             if (form->IsPlayable() || form->IsArmor() || form->IsWeapon() || form->IsAmmo() || form->IsLight()) {
+                                Int_t bentry_count = Object_Ref::Get_BEntry_Count(actor, form);
                                 outfits_entry.Evaluate(form);
                                 Simplify_Outfit2_XLists(xentry);
                                 size_t remaining_xlists = Remove_Invalid_XLists(xentry, outfits_entry);
-                                Remove_Non_XLists(xentry, remaining_xlists);
+                                Remove_Non_XLists(xentry, remaining_xlists, bentry_count);
                                 outfits_entry.Add_Missing_XLists(xentry);
-                                if (xentry->Delta_Count() == 0) {
+                                if (xentry->Delta_Count() == 0 && bentry_count == 0) {
                                     xentries_to_destroy.push_back(xentry);
                                 }
                             }
@@ -520,9 +523,6 @@ namespace doticu_npcp { namespace Actor2 {
 
                     for (size_t idx = 0, count = xlists_to_destroy.size(); idx < count; idx += 1) {
                         XList_t* xlist_to_destroy = xlists_to_destroy[idx];
-                        if (xentry->form->IsWeapon() && XList::Is_Worn(xlist_to_destroy)) {
-                            Unequip(xentry->form, xlist_to_destroy);
-                        }
                         xentry->Remove_XList(xlist_to_destroy);
                         XList::Destroy(xlist_to_destroy);
                     }
@@ -568,9 +568,6 @@ namespace doticu_npcp { namespace Actor2 {
 
                     for (size_t idx = 0, count = xlists_to_destroy.size(); idx < count; idx += 1) {
                         XList_t* xlist_to_destroy = xlists_to_destroy[idx];
-                        if (xentry->form->IsWeapon() && XList::Is_Worn(xlist_to_destroy)) {
-                            Unequip(xentry->form, xlist_to_destroy);
-                        }
                         xentry->Remove_XList(xlist_to_destroy);
                         XList::Destroy(xlist_to_destroy);
                     }
@@ -580,9 +577,6 @@ namespace doticu_npcp { namespace Actor2 {
                         XEntry_t* transfer_xentry = Object_Ref::Get_XEntry(transfer, xentry->form, true);
                         for (size_t idx = 0; idx < transfer_xlist_count; idx += 1) {
                             XList_t* xlist_to_transfer = xlists_to_transfer[idx];
-                            if (xentry->form->IsWeapon() && XList::Is_Worn(xlist_to_transfer)) {
-                                Unequip(xentry->form, xlist_to_transfer);
-                            }
                             xentry->Move_XList(transfer_xentry, transfer, xlist_to_transfer);
                         }
                     }
@@ -591,13 +585,12 @@ namespace doticu_npcp { namespace Actor2 {
                 return xlists_remaining;
             }
 
-            void Remove_Non_XLists(XEntry_t* xentry, Int_t xlist_count)
+            void Remove_Non_XLists(XEntry_t* xentry, Int_t xlist_count, Int_t bentry_count)
             {
                 NPCP_ASSERT(xentry);
                 NPCP_ASSERT(xentry->form);
                 NPCP_ASSERT(xlist_count > -1);
 
-                Int_t bentry_count = Object_Ref::Get_BEntry_Count(actor, xentry->form);
                 Int_t remaining_count = bentry_count + xentry->Delta_Count() - xlist_count;
                 if (remaining_count > 0) {
                     if (Is_Form_Transferable(xentry->form)) {
@@ -605,19 +598,6 @@ namespace doticu_npcp { namespace Actor2 {
                         transfer_xentry->Increment(remaining_count);
                     }
                     xentry->Delta_Count(xlist_count - bentry_count);
-                }
-            }
-
-            void Unequip(Form_t* form, XList_t* xlist)
-            {
-                return; // freezes and then potentially crashes game.
-                if (form && xlist) {
-                    Weapon_t* weapon = static_cast<Weapon_t*>(form);
-                    BGSEquipSlot* equip_slot = weapon->equipType.GetEquipSlot();
-                    if (equip_slot) {
-                        Actor_Equipper_t::Self()->Unequip_Item(actor, form, xlist, 1, equip_slot,
-                                                               false, true, false, true, nullptr);
-                    }
                 }
             }
 
@@ -646,6 +626,10 @@ namespace doticu_npcp { namespace Actor2 {
 
         actor_inventory.Remove_Invalid_Entries(outfits_entry);
         Add_Missing_Entries(actor, outfits_entry);
+
+        //if (do_refresh) {
+            Update_Equipment(actor);
+        //}
 
         if (do_delete_transfer) {
             Object_Ref::Delete_Safe(transfer);
@@ -1960,61 +1944,50 @@ namespace doticu_npcp { namespace Actor2 {
         if (actor) {
             Join_Player_Team(actor);
 
+            Vector_t<XList_t*> weapons;
             XContainer_t* xcontainer = Object_Ref::Get_XContainer(actor, false);
             if (xcontainer && xcontainer->changes && xcontainer->changes->xentries) {
                 for (XEntries_t::Iterator xentries_it = xcontainer->changes->xentries->Begin(); !xentries_it.End(); ++xentries_it) {
                     XEntry_t* xentry = xentries_it.Get();
-                    if (xentry && xentry->xlists) {
+                    if (xentry) {
                         Form_t* form = xentry->form;
                         if (form && form->formType == kFormType_Weapon) {
-                            Object_Ref::Add_Item_And_Callback(actor, form, 1, false);
-                            Object_Ref::Remove_Item_And_Callback(actor, form, 1, false, nullptr);
-                            return;
-                        }
-                    }
-                }
-            }
-
-            Object_Ref::Add_Item_And_Callback(actor, Consts::Blank_Weapon(), 1, false);
-            Object_Ref::Remove_Item_And_Callback(actor, Consts::Blank_Weapon(), 1, false, nullptr);
-        }
-
-        /*struct Callback : Virtual_Callback_t {
-            Actor_t* actor;
-            Callback(Actor_t* actor) :
-                actor(actor)
-            {
-            }
-            void operator()(Variable_t* result)
-            {
-                Verify_Weapon_Equips(actor);
-            }
-        };
-        Virtual_Callback_i* callback = new Callback(actor);*/
-    }
-
-    void Verify_Weapon_Equips(Actor_t* actor)
-    {
-        if (actor) {
-            Object_Ref::Log_XContainer(actor);
-            Actor_Equipper_t* actor_equipper = Actor_Equipper_t::Self();
-            XContainer_t* xcontainer = Object_Ref::Get_XContainer(actor, false);
-            if (xcontainer && xcontainer->changes && xcontainer->changes->xentries) {
-                for (XEntries_t::Iterator xentries_it = xcontainer->changes->xentries->Begin(); !xentries_it.End(); ++xentries_it) {
-                    XEntry_t* xentry = xentries_it.Get();
-                    if (xentry && xentry->xlists) {
-                        Form_t* form = xentry->form;
-                        if (form && form->formType == kFormType_Weapon) {
-                            for (XLists_t::Iterator xlists_it = xentry->xlists->Begin(); !xlists_it.End(); ++xlists_it) {
-                                XList_t* xlist = xlists_it.Get();
-                                if (xlist) {
-
+                            if (xentry->xlists) {
+                                for (XLists_t::Iterator xlists_it = xentry->xlists->Begin(); !xlists_it.End(); ++xlists_it) {
+                                    XList_t* xlist = xlists_it.Get();
+                                    if (xlist && XList::Has_Outfit2_Flag(xlist)) {
+                                        XList::Remove_Outfit2_Flag(xlist, actor->baseForm);
+                                        weapons.push_back(xlist);
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
+
+            struct Callback : public Virtual_Callback_t {
+                Actor_t* actor;
+                Vector_t<XList_t*> weapons;
+                Callback(Actor_t* actor, Vector_t<XList_t*> weapons) :
+                    actor(actor), weapons(weapons)
+                {
+                }
+                void operator()(Variable_t* result)
+                {
+                    XEntry_t* xentry = Object_Ref::Get_XEntry(actor, Consts::Blank_Weapon(), false);
+                    if (xentry) {
+                        Object_Ref::Remove_XEntry(actor, xentry);
+                        XEntry_t::Destroy(xentry);
+                    }
+                    
+                    for (size_t idx = 0, count = weapons.size(); idx < count; idx += 1) {
+                        XList::Add_Outfit2_Flag(weapons[idx]);
+                    }
+                }
+            };
+            Virtual_Callback_i* callback = new Callback(actor, weapons);
+            Object_Ref::Add_Item_And_Callback(actor, Consts::Blank_Weapon(), 1, false, &callback);
         }
     }
 
@@ -2170,14 +2143,30 @@ namespace doticu_npcp { namespace Actor2 {
         Virtual_Machine_t::Self()->Call_Method(actor, "ObjectReference", "IsInDialogueWithPlayer", nullptr, callback);
     }
 
+    void Owner(Actor_t* ref, Actor_Base_t* owner)
+    {
+        if (ref) {
+            ExtraOwnership* xowner = static_cast<ExtraOwnership*>
+                (ref->extraData.GetByType(kExtraData_Ownership));
+            if (xowner) {
+                if (owner) {
+                    xowner->owner = static_cast<Form_t*>(owner);
+                } else {
+                    ref->extraData.Remove(kExtraData_Ownership, xowner);
+                    XData::Destroy(xowner);
+                }
+            } else {
+                if (owner) {
+                    xowner = XData::Create_Ownership(static_cast<Form_t*>(owner));
+                    ref->extraData.Add(kExtraData_Ownership, xowner);
+                }
+            }
+        }
+    }
+
 }}
 
 namespace doticu_npcp { namespace Actor2 { namespace Exports {
-
-    Actor_t* Get_Mounted_Actor(Selfless_t*, Actor_t* horse)
-    {
-        return Actor2::Get_Mounted_Actor(horse);
-    }
 
     bool Register(VMClassRegistry* registry)
     {
@@ -2191,17 +2180,6 @@ namespace doticu_npcp { namespace Actor2 { namespace Exports {
         ADD_METHOD("SetOutfit", 2, void, Set_Outfit, Outfit_t*, Bool_t);
 
         #undef ADD_METHOD
-
-        #define ADD_GLOBAL(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
-        M                                                               \
-            ADD_CLASS_METHOD("doticu_npcp", Selfless_t,                 \
-                             STR_FUNC_, ARG_NUM_,                       \
-                             RETURN_, Exports::METHOD_, __VA_ARGS__);   \
-        W
-
-        ADD_GLOBAL("Actor_Get_Mounted_Actor", 1, Actor_t*, Get_Mounted_Actor, Actor_t*);
-
-        #undef ADD_GLOBAL
 
         return true;
     }

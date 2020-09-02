@@ -2,8 +2,12 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "skse64/PapyrusWornObject.h"
+
+#include "consts.h"
 #include "form.h"
 #include "object_ref.h"
+#include "string2.h"
 #include "utils.h"
 #include "xdata.h"
 #include "xlist.h"
@@ -275,7 +279,6 @@ namespace doticu_npcp { namespace XList {
             return false;
         }
 
-        //BSReadLocker locker(&xlist->m_lock);
         TESObjectREFR *ref = xref->GetReference();
         if (!ref) {
             return false;
@@ -284,33 +287,47 @@ namespace doticu_npcp { namespace XList {
         return Object_Ref::Is_Quest_Item(ref);
     }
 
-    // the idea here is to have a way to recognize items that are part of a doticu_npcp_outfit.
-    // every item that is come from the outfit2 will be an xlist with an ownership to the player
-    // unless we figure out something better. I don't know how to accurately test setting owner
-    // to a base form like blank armor, it could crash the game otherwise I'd do it.
-    void Add_Outfit2_Flag(XList_t *xlist) {
-        if (!xlist) {
-            _ERROR("XList_t::Add_Outfit2_Flag: Invalids args.");
-            return;
-        }
-        
-        ExtraOwnership *xownership = (ExtraOwnership *)xlist->GetByType(kExtraData_Ownership);
-        if (xownership) {
-            xownership->owner = (*g_thePlayer)->baseForm;
-        } else {
-            xlist->Add(kExtraData_Ownership, XData::Create_Ownership((*g_thePlayer)->baseForm));
+    void Add_Outfit2_Flag(XList_t* xlist)
+    {
+        if (xlist) {
+            ExtraOwnership* xowner = static_cast<ExtraOwnership*>
+                (xlist->GetByType(kExtraData_Ownership));
+            if (xowner) {
+                xowner->owner = Consts::Player_Actor()->baseForm;
+            } else {
+                xowner = XData::Create_Ownership(Consts::Player_Actor()->baseForm);
+                xlist->Add(kExtraData_Ownership, xowner);
+            }
         }
     }
 
-    bool Has_Outfit2_Flag(XList_t *xlist) {
-        if (!xlist) {
-            return false;
+    void Remove_Outfit2_Flag(XList_t* xlist, Form_t* owner)
+    {
+        if (xlist) {
+            ExtraOwnership* xowner = static_cast<ExtraOwnership*>
+                (xlist->GetByType(kExtraData_Ownership));
+            if (xowner) {
+                if (owner) {
+                    xowner->owner = owner;
+                } else {
+                    xlist->Remove(kExtraData_Ownership, xowner);
+                    XData::Destroy(xowner);
+                }
+            } else {
+                if (owner) {
+                    xowner = XData::Create_Ownership(owner);
+                    xlist->Add(kExtraData_Ownership, xowner);
+                }
+            }
         }
+    }
 
-        ExtraOwnership *xownership = (ExtraOwnership *)xlist->GetByType(kExtraData_Ownership);
-        if (xownership) {
-            //BSReadLocker locker(&xlist->m_lock);
-            return xownership->owner == (*g_thePlayer)->baseForm;
+    bool Has_Outfit2_Flag(XList_t* xlist)
+    {
+        if (xlist) {
+            ExtraOwnership* xowner = static_cast<ExtraOwnership*>
+                (xlist->GetByType(kExtraData_Ownership));
+            return xowner && xowner->owner == Consts::Player_Actor()->baseForm;
         } else {
             return false;
         }

@@ -38,6 +38,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Int_t Add_Horse(Follower_t* follower);
         Int_t Remove_Horse(Follower_t* follower);
 
+        void u_0_9_8();
+
     public:
         static void Register_Me(Virtual_Machine_t* vm);
     };

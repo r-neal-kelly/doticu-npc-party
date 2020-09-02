@@ -574,6 +574,15 @@ namespace doticu_npcp {
     };
     STATIC_ASSERT(sizeof(ExtraTextDisplay) == 0x38);
 
+    class ExtraOutfitItem : public BSExtraData {
+    public:
+        virtual ~ExtraOutfitItem();
+
+        UInt32 outfit_form_id; // 10
+        UInt32 pad_0C; // 14
+    };
+    STATIC_ASSERT(sizeof(ExtraOutfitItem) == 0x18);
+
     /*class Extra_Container_Changes_t : public BSExtraData {
     public:
         static Extra_Container_Changes_t* Create(Reference_t* owner);

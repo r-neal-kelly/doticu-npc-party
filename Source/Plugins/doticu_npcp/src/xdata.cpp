@@ -367,6 +367,17 @@ namespace doticu_npcp { namespace XData {
         }
     }
 
+    ExtraOutfitItem* Create_Outfit_Item(Outfit_t* outfit)
+    {
+        ExtraOutfitItem* xoutfit_item = static_cast<ExtraOutfitItem*>(XData_t::Create(
+            sizeof(ExtraOutfitItem),
+            Offsets::Extra::OUTFIT_ITEM_V_TABLE + RelocationManager::s_baseAddr
+        ));
+        NPCP_ASSERT(xoutfit_item);
+        xoutfit_item->outfit_form_id = outfit ? outfit->formID : 0;
+        return xoutfit_item;
+    }
+
     void Destroy(XData_t* xdata)
     {
         if (xdata) {
