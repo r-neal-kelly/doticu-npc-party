@@ -1,0 +1,93 @@
+This is an example of how to easily write notes. There are only two requirements. I've added a lot of hints to help you out.
+
+Requirements:
+- start with a blank text file.
+- the part that looks like "topic_info: 00000000" must be attached to each of your notes.
+
+Examples:
+topic_info: 000E739C 
+                Thank you. It would mean a lot to me.
+                (on member, on follower)
+topic_info: 000E7690 
+                There's something... personal... I was hoping you would do for me.
+                (hello, lover)
+topic_info: 0006A6FA 
+                Gone? Every one of them? Why, that's incredible.
+                (post combat, archer? because they are so far away sometimes lol!)
+topic_info: 000E49E4 
+                I never asked you to help in the first place. Why would I? Everyone in Skyrim only helps themselves.
+                (on member, hello, goodbye, rival)
+topic_info: 0007632B 
+                Malacath blesses us with this land. It's not for your kind.
+                (idle, foe, outside, if player is not an orc)
+topic_info: 0007EA23 
+                Being a humble servant of Mara, I have little in the way of gold or coin, but perhaps I can offer you something better... companionship.
+                (on member, acquaintance or above)
+topic_info: 000A3C62 
+                I must be getting jumpy.
+                (idle, is follower, in dungeon)
+topic_info: 0009820F 
+                I've waited an eternity for this day.
+                (on follower, in combat, dying?)
+topic_info: 00098211 
+                I vowed to have your head.
+                (hello, archnemesis)
+topic_info: 000BA0DA 
+                You don't want to be part of history? Fine. I'll be at the shrine if you change your mind.
+                (on unfollow, acquaintance)
+                
+General Hints:
+- one note per "topic_info"
+- your note can be as specific or long as you want
+- copy the entire "topic_info" to your file. don't type it manually.
+- putting the note in parentheses helps to make it distinct.
+- the order of your "topic_info"s doesn't matter. You can pick any you want, from anywhere in the file.
+- make use of your text editor's search functionality (try ctrl+f)
+    - you can use search to see if you already have a specific topic info
+    - you can use it to look for certain words that interest you, etc.
+
+Topic Info Hints:
+- not all "topic info"s are useful. (the most useful tend to be one-liners that don't have a name in it.)
+- some "topic info"s are blank, but they still have sound. You can skip them, or listen to them in the Creation Kit. (see Creation Kit Hints)
+- sometimes a voice reads well, but the inflection doesn't fit your intended purpose. (see Creation Kit Hints)
+- You don't need to worry about voice types.
+- none of the original game files will be changed or altered in any way whatsoever, i.e. full compatibility
+- none of the voice files will be copied or redistributed with NPC Party.
+
+Formula Hints:
+- the notes are just ideas and need not be formulaic, although formula can be really helpful.
+- it's okay to start out with simpler notes and make them more forumulaic over time, or vice-versa.
+- NPC Party has many types of NPCs and situations to choose from:
+    - (types) member, follower, settler, immobile, thrall, reanimated, etc.
+    - (events) on member, on follow, on immobilize, on mobilize, on open pack, etc.
+    - (styles) Warrior, Mage, Archer, Coward
+    - (vitality) Mortal, Protected, Essential, Invulnerable
+    - and more, whatever you think is useful.
+    - (if NPC Party doesn't have something, but you think it would be cool (e.g. Healer style), make a note of it)
+- although not fully implemented, relationship rank will be used to specify dialogue: https://www.creationkit.com/index.php?title=Relationship
+    - (e.g. Lover, Ally, Foe, Archnemesis, Acquaintance, etc.)
+- there are many points in time when dialogue can be played: https://www.creationkit.com/index.php?title=Category:Dialogue
+    - specific examples (misc:idle, combat:attack, detection:AlertToCombat)
+    - more generally (idle, attack, on combat)
+    - the "tab"s relate to "branch"es.
+    - each of our "topic_info"s can be put in any or all "branch"es simultaneously.
+    - we are not limited by their original "branch" or "tab"
+- there may be occasions when you wish to indicate that a line of dialgoue can only be played during a certain situation:
+    - like if the speaker or player is a certain race
+    - if the party is inside or outside
+    - if the player has any followers
+    - the possibilities are nearly infinite. there are technical limitations, but write down what you want, and we'll see what we can do.
+
+Creation Kit Hints:
+- optionally, you can listen to the voices in the creation kit to hear inflection:
+    - make sure your speakers/headphones are plugged in before starting up the creation kit
+    - copy the id of the "quest" the "topic_info" belongs to
+    - put it in the search bar of the object window
+    - double click the quest
+    - if the "branch" of the "topic_info" is a number, click on the "Player Dialogue" tab
+    - else click on the tab with the same name as the "branch"
+    - click on each "topic" until you find the one that has the "topic_info"
+    - double click the "topic_info"
+    - double click the "response" located near the middle of the pop up
+    - double click on any of the listed voices at the bottom of the pop up
+    
