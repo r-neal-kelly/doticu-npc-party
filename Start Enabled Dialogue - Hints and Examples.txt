@@ -37,11 +37,11 @@ topic_info: 000BA0DA
                 (on unfollow, acquaintance)
                 
 General Hints:
-- one note per "topic_info"
-- your note can be as specific or long as you want
-- copy the entire "topic_info" to your file. don't type it manually.
+- you don't need to complete the list, do only as much as you want.
+- your note can be as specific or as long as you want
+- copy the entire "topic_info" to your file. you don't need to type it manually.
 - putting the note in parentheses helps to make it distinct.
-- the order of your "topic_info"s doesn't matter. You can pick any you want, from anywhere in the file.
+- the order of your "topic_info"s doesn't matter. You can pick from anywhere in the file, and copy it anywhere in yours
 - make use of your text editor's search functionality (try ctrl+f)
     - you can use search to see if you already have a specific topic info
     - you can use it to look for certain words that interest you, etc.
