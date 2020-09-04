@@ -2,7 +2,7 @@ This is an example of how to easily write notes. There are only two requirements
 
 Requirements:
 - start with a blank text file.
-- the part that looks like "topic_info: 00000000" must be attached to each of your notes.
+- for each entry, the part that looks like "topic_info: 00000000" must come before your note, like in the example. Use copy and paste.
 
 Examples:
 topic_info: 000E739C 
