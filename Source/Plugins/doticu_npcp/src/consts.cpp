@@ -88,6 +88,8 @@ namespace doticu_npcp { namespace Consts {
         QUEST_BARD_SONGS                    = 0x074A55,
         QUEST_DIALOGUE_FOLLOWER             = 0x0750BA,
         QUEST_PLAYER_VAMPIRE                = 0x0EAFD5,
+        QUEST_WI_CHANGE_LOCATION_01         = 0x0350F4,
+        QUEST_WI_REMOVE_ITEM_04             = 0x034DAB,
 
         // Skyrim Reference Markers
         REFERENCE_MARKER_GO_BACK_SAFE       = 0x01BDF3,
@@ -145,6 +147,8 @@ namespace doticu_npcp { namespace Consts {
     Quest_t* Bard_Songs_Quest() { SKYRIM_FORM(Quest_t, QUEST_BARD_SONGS); }
     Quest_t* Follower_Dialogue_Quest() { SKYRIM_FORM(Quest_t, QUEST_DIALOGUE_FOLLOWER); }
     Quest_t* Player_Vampire_Quest() { SKYRIM_FORM(Quest_t, QUEST_PLAYER_VAMPIRE); }
+    Quest_t* WI_Change_Location_01_Quest() { SKYRIM_FORM(Quest_t, QUEST_WI_CHANGE_LOCATION_01); }
+    Quest_t* WI_Remove_Item_04_Quest() { SKYRIM_FORM(Quest_t, QUEST_WI_REMOVE_ITEM_04); }
 
     // Skyrim Reference Markers
     Reference_t* Safe_Go_Back_Marker() { SKYRIM_FORM(Reference_t, REFERENCE_MARKER_GO_BACK_SAFE); }
@@ -198,6 +202,7 @@ namespace doticu_npcp { namespace Consts {
         // NPCP Globals
         GLOBAL_IS_INSTALLED                 = 0x189ADD,
         GLOBAL_ALLOW_DIALOGUE_FOR_ALL       = 0x3B4463,
+        GLOBAL_ALLOW_CHATTER                = 0x3B9568,
         GLOBAL_FORCE_CLONE_UNIQUES          = 0x05244D,
         GLOBAL_FORCE_CLONE_GENERICS         = 0x05244E,
         GLOBAL_FORCE_UNCLONE_UNIQUES        = 0x05244F,
@@ -267,6 +272,7 @@ namespace doticu_npcp { namespace Consts {
         QUEST_CONTROL                       = 0x000D7F,
         QUEST_DIALOGUE_THRALL               = 0x212D57,
         QUEST_DIALOGUE_REANIMATED           = 0x2089A9,
+        QUEST_FEMALE_YOUNG_EAGER            = 0x3B9565,
 
         // NPCP Reference Categories
         REFERENCE_CATEGORY_INPUT            = 0x395E55,
@@ -373,11 +379,12 @@ namespace doticu_npcp { namespace Consts {
     // NPCP Globals
     Global_t* Is_Installed_Global() { NPCP_FORM(Global_t, GLOBAL_IS_INSTALLED); }
     Global_t* Allow_Dialogue_For_All_Global() { NPCP_FORM(Global_t, GLOBAL_ALLOW_DIALOGUE_FOR_ALL); }
+    Global_t* Allow_Chatter_Global() { NPCP_FORM(Global_t, GLOBAL_ALLOW_CHATTER); }
     Global_t* Force_Clone_Uniques_Global() { NPCP_FORM(Global_t, GLOBAL_FORCE_CLONE_UNIQUES); }
     Global_t* Force_Clone_Generics_Global() { NPCP_FORM(Global_t, GLOBAL_FORCE_CLONE_GENERICS); }
     Global_t* Force_Unclone_Uniques_Global() { NPCP_FORM(Global_t, GLOBAL_FORCE_UNCLONE_UNIQUES); }
     Global_t* Force_Unclone_Generics_Global() { NPCP_FORM(Global_t, GLOBAL_FORCE_UNCLONE_GENERICS); }
-    Global_t* Is_Leveling_Enabled() { NPCP_FORM(Global_t, GLOBAL_IS_LEVELING_ENABLED); }
+    Global_t* Is_Leveling_Enabled_Global() { NPCP_FORM(Global_t, GLOBAL_IS_LEVELING_ENABLED); }
     Global_t* No_Body_Percent_Global() { NPCP_FORM(Global_t, GLOBAL_PERCENT_NO_BODY); }
     Global_t* No_Feet_Percent_Global() { NPCP_FORM(Global_t, GLOBAL_PERCENT_NO_FEET); }
     Global_t* No_Hands_Percent_Global() { NPCP_FORM(Global_t, GLOBAL_PERCENT_NO_HANDS); }
@@ -386,7 +393,7 @@ namespace doticu_npcp { namespace Consts {
     // NPCP Ints
     Int_t NPCP_Major() { return 0; } // set manually upon each release
     Int_t NPCP_Minor() { return 9; } // set manually upon each release
-    Int_t NPCP_Patch() { return 7; } // set manually upon each release
+    Int_t NPCP_Patch() { return 8; } // set manually upon each release
 
     // NPCP Leveled Actor
     Leveled_Actor_t* Horse_Leveled_Actor() { NPCP_FORM(Leveled_Actor_t, LEVELED_ACTOR_HORSE); }
@@ -447,6 +454,7 @@ namespace doticu_npcp { namespace Consts {
     Quest_t* Control_Quest() { NPCP_FORM(Quest_t, QUEST_CONTROL); }
     Quest_t* Thrall_Dialogue_Quest() { NPCP_FORM(Quest_t, QUEST_DIALOGUE_THRALL); }
     Quest_t* Reanimated_Dialogue_Quest() { NPCP_FORM(Quest_t, QUEST_DIALOGUE_REANIMATED); }
+    Quest_t* Female_Young_Eager_Quest() { NPCP_FORM(Quest_t, QUEST_FEMALE_YOUNG_EAGER); }
 
     // NPCP Reference Categories
     Reference_t* Input_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_INPUT); }
@@ -554,6 +562,7 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
         // Skyrim Quests
         ADD_GLOBAL("Bard_Songs_Quest", 0, Quest_t*, Bard_Songs_Quest);
         ADD_GLOBAL("Player_Vampire_Quest", 0, Quest_t*, Player_Vampire_Quest);
+        ADD_GLOBAL("WI_Remove_Item_04_Quest", 0, Quest_t*, WI_Remove_Item_04_Quest);
 
         // Skyrim Statics
         ADD_GLOBAL("X_Marker_Static", 0, Static_t*, X_Marker_Static);
@@ -571,6 +580,7 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
         // NPCP Globals
         ADD_GLOBAL("Is_Installed_Global", 0, Global_t*, Is_Installed_Global);
         ADD_GLOBAL("Allow_Dialogue_For_All_Global", 0, Global_t*, Allow_Dialogue_For_All_Global);
+        ADD_GLOBAL("Allow_Chatter_Global", 0, Global_t*, Allow_Chatter_Global);
         ADD_GLOBAL("Force_Clone_Uniques_Global", 0, Global_t*, Force_Clone_Uniques_Global);
         ADD_GLOBAL("Force_Clone_Generics_Global", 0, Global_t*, Force_Clone_Generics_Global);
         ADD_GLOBAL("Force_Unclone_Uniques_Global", 0, Global_t*, Force_Unclone_Uniques_Global);
@@ -607,6 +617,7 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
         ADD_GLOBAL("Control_Quest", 0, Quest_t*, Control_Quest);
         ADD_GLOBAL("Thrall_Dialogue_Quest", 0, Quest_t*, Thrall_Dialogue_Quest);
         ADD_GLOBAL("Reanimated_Dialogue_Quest", 0, Quest_t*, Reanimated_Dialogue_Quest);
+        ADD_GLOBAL("Female_Young_Eager_Quest", 0, Quest_t*, Female_Young_Eager_Quest);
 
         // NPCP Reference Categories
         ADD_GLOBAL("Input_Category", 0, Reference_t*, Input_Category);

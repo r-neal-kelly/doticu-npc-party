@@ -31,11 +31,55 @@ namespace doticu_npcp {
     typedef float           Float_t;
     typedef bool            Bool_t;
 
+    template <typename Key_t, typename Value_t>
+    class Hash_Map_t {
+    public:
+        class Tuple_t {
+        public:
+            Key_t key;
+            Value_t value;
+        };
+
+        class Entry_t {
+        public:
+            Tuple_t tuple;
+            Entry_t* chain; // if nullptr, key is not in the table
+        };
+
+        UInt64 pad_00; // 00
+        UInt32 pad_08; // 08
+        UInt32 capacity; // 0C
+        UInt32 free_count; // 10
+        UInt32 free_idx; // 14
+        Entry_t* end_of_chain; // 18
+        UInt64 pad_20; // 20
+        Entry_t* entries; // 28
+
+        Bool_t Has_Key(Key_t key)
+        {
+            if (entries) {
+                UInt32 idx = Utils::CRC32(key) & (capacity - 1);
+                Entry_t* entry = entries + idx;
+                if (entry && entry->chain != nullptr) {
+                    for (; entry != end_of_chain; entry = entry->chain) {
+                        if (entry->tuple.key == key) {
+                            return true;
+                        }
+                    }
+                    return false;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+    };
+
     typedef UInt32          Form_Type_t;
     typedef UInt32          Reference_Handle_t;
 
     typedef TESForm         Form_t;
-    typedef TESQuest        Quest_t;
     typedef TESObjectCELL   Cell_t;
     typedef TESObjectREFR   Reference_t;
     typedef TESObjectMISC   Misc_t;
@@ -46,6 +90,7 @@ namespace doticu_npcp {
     typedef BGSPerk         Perk_t;
     typedef TESEffectShader Effect_Shader_t;
     typedef TESLevCharacter Leveled_Actor_t;
+    typedef TESLevItem      Leveled_Item_t;
     typedef BGSLocation     Location_t;
     typedef TESFaction      Faction_t;
     typedef BGSOutfit       Outfit_t;
@@ -63,7 +108,10 @@ namespace doticu_npcp {
 
     typedef BGSListForm     Formlist_t;
 
-    typedef TESTopicInfo    Topic_Info_t;
+    typedef TESQuest            Quest_t;
+    typedef BGSDialogueBranch   Branch_t;
+    typedef TESTopic            Topic_t;
+    typedef TESTopicInfo        Topic_Info_t;
 
     typedef TESContainer            BContainer_t;
     typedef TESContainer::Entry**   BEntries_t;
@@ -518,6 +566,48 @@ namespace doticu_npcp {
         UnkArray menu_stack; // 0x110
     };
     STATIC_ASSERT(sizeof(Menu_Manager_t) == 0x110 + 0x18);
+
+    class Dialogue_Response_t {
+    public:
+        enum class Emotion_e : UInt32 {
+            NEUTRAL = 0,
+            ANGER = 1,
+            DISGUST = 2,
+            FEAR = 3,
+            SAD = 4,
+            HAPPY = 5,
+            SURPRISE = 6,
+            PUZZLED = 7,
+        };
+
+        BSString text; // 00
+        Emotion_e emotion; // 10
+        UInt32 emotion_value; // 14
+        BSFixedString voice_text; // 18
+        TESIdleForm* speaker_idle; // 20
+        TESIdleForm* listener_idle; // 28
+        BGSSoundDescriptorForm* voice_sound; // 30
+        Bool_t allow_emotion; // 38
+        Bool_t has_sound_lip; // 39
+        UInt16 pad_3A; // 3A
+        UInt32 pad_3C; // 3C
+    };
+    STATIC_ASSERT(sizeof(Dialogue_Response_t) == 0x40);
+
+    class Dialogue_Info_t {
+    public:
+        Dialogue_Info_t(Quest_t* quest, Topic_t* topic, Topic_Info_t* topic_info, Actor_t* speaker);
+
+        UInt32 ref_count; // 00
+        UInt32 pad_04; // 04
+        tList<Dialogue_Response_t> responses; // 08
+        void* current_response; // 18 (node in tList?)
+        Topic_Info_t* topic_info; // 20
+        Topic_t* topic; // 28
+        Quest_t* quest; // 30
+        Actor_t* speaker; // 38
+        void* extra_response; // 40 (ExtraSayToTopicInfo)
+    };
 
 }
 

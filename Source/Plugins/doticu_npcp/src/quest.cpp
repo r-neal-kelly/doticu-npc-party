@@ -2,8 +2,10 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "skse64/GameData.h"
 #include "skse64/GameRTTI.h"
 
+#include "consts.h"
 #include "object_ref.h"
 #include "papyrus.h"
 #include "papyrus.inl"
@@ -122,6 +124,100 @@ namespace doticu_npcp { namespace Quest {
         }
 
         _MESSAGE("}");
+    }
+
+    Bool_t Start(Quest_t* quest)
+    {
+        static auto start = reinterpret_cast
+            <Bool_t(*)(Quest_t*, Bool_t&, Bool_t)>
+            (RelocationManager::s_baseAddr + Offsets::Quest::START);
+        Bool_t b; // what is this for? a latent indicator?
+        return start(quest, b, true);
+    }
+
+    /*void Start(Quest_t* quest)
+    {
+        Papyrus::Virtual_Machine_t::Self()->Call_Method(quest, "Quest", "Start", nullptr, nullptr);
+    }*/
+
+    void Log_Dialogue(Quest_t* quest)
+    {
+        if (quest) {
+            auto log_topic = [](Quest_t* quest, Topic_t* topic, std::string indent = "")
+            {
+                if (topic) {
+                    _MESSAGE((indent + "topic: %8.8X %s").c_str(), topic->formID, topic->Editor_ID());
+                    Topic_Info_t** topic_infos = reinterpret_cast<Topic_Info_t**>(topic->unk2C);
+                    for (size_t idx = 0, count = topic->unk50; idx < count; idx += 1) {
+                        Topic_Info_t* topic_info = topic_infos[idx];
+                        if (topic_info) {
+                            _MESSAGE((indent + "    topic_info: %8.8X %s").c_str(), topic_info->formID, topic_info->Editor_ID());
+                            Dialogue_Info_t dialogue_info(quest, topic, topic_info, nullptr);
+                            for (auto it = dialogue_info.responses.Begin(); !it.End(); ++it) {
+                                Dialogue_Response_t* response = it.Get();
+                                if (response) {
+                                    _MESSAGE((indent + "        %s").c_str(), response->text.Get());
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            _MESSAGE("quest: %8.8X %s", quest->formID, quest->Editor_ID());
+            for (size_t idx = 0, count = 2; idx < count; idx += 1) {
+                using Branch_Map_t = Hash_Map_t<Branch_t*, tArray<Topic_t*>*>;
+                Branch_Map_t& branch_tab = reinterpret_cast<Branch_Map_t&>(quest->unk118[idx]);
+                for (size_t idx = 0, count = branch_tab.capacity; idx < count; idx += 1) {
+                    Branch_Map_t::Entry_t* entry = branch_tab.entries + idx;
+                    if (entry && entry->chain != nullptr) {
+                        Branch_t* branch = entry->tuple.key;
+                        tArray<Topic_t*>* topics = entry->tuple.value;
+                        if (branch && topics) {
+                            _MESSAGE("    branch: %8.8X %s", branch->formID, branch->Editor_ID());
+                            for (size_t idx = 0, count = topics->count; idx < count; idx += 1) {
+                                Topic_t* topic = *(topics->entries + idx);
+                                log_topic(quest, topic, "        ");
+                            }
+                        }
+                    }
+                }
+            }
+            for (size_t idx = 0, count = 6; idx < count; idx += 1) {
+                tArray<Topic_t*>& tab = reinterpret_cast<tArray<Topic_t*>&>(quest->unk178[idx]);
+                if (tab.count > 0) {
+                    if (idx == 0) {
+                        _MESSAGE("    branch: SCENE");
+                    } else if (idx == 1) {
+                        _MESSAGE("    branch: COMBAT");
+                    } else if (idx == 2) {
+                        _MESSAGE("    branch: FAVORS");
+                    } else if (idx == 3) {
+                        _MESSAGE("    branch: DETECTION");
+                    } else if (idx == 4) {
+                        _MESSAGE("    branch: SERVICE");
+                    } else if (idx == 5) {
+                        _MESSAGE("    branch: MISC");
+                    }
+                    for (size_t idx = 0, count = tab.count; idx < count; idx += 1) {
+                        log_topic(quest, tab[idx], "        ");
+                    }
+                }
+            }
+        }
+    }
+
+    void Log_Start_Enabled_Dialogue()
+    {
+        DataHandler* data_handler = DataHandler::GetSingleton();
+        if (data_handler) {
+            for (size_t idx = 0, count = data_handler->quests.count; idx < count; idx += 1) {
+                Quest_t* quest = *(data_handler->quests.entries + idx);
+                if (quest && quest->unk0D8.flags & (1 << 4)) {
+                    Log_Dialogue(quest);
+                }
+            }
+        }
     }
 
 }}

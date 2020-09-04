@@ -18,6 +18,7 @@ Perk function Vampire_Feed_Perk() native global
 ; Skyrim Quests
 Quest function Bard_Songs_Quest() native global
 Quest function Player_Vampire_Quest() native global
+Quest function WI_Remove_Item_04_Quest() native global
 
 ; Skyrim Statics
 Static function X_Marker_Static() native global
@@ -35,6 +36,7 @@ Formlist function Expo_Cell_Markers_Formlist() native global
 ; NPCP Globals
 GlobalVariable function Is_Installed_Global() native global
 GlobalVariable function Allow_Dialogue_For_All_Global() native global
+GlobalVariable function Allow_Chatter_Global() native global
 GlobalVariable function Force_Clone_Uniques_Global() native global
 GlobalVariable function Force_Clone_Generics_Global() native global
 GlobalVariable function Force_Unclone_Uniques_Global() native global
@@ -71,6 +73,7 @@ Quest function Followers_Quest() native global
 Quest function Control_Quest() native global
 Quest function Thrall_Dialogue_Quest() native global
 Quest function Reanimated_Dialogue_Quest() native global
+Quest function Female_Young_Eager_Quest() native global
 
 ; NPCP Reference Categories
 ObjectReference function Input_Category() native global

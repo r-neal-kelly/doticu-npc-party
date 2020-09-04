@@ -83,6 +83,23 @@ namespace doticu_npcp { namespace Game {
         return LookupFormByID(mod_info->GetFormID(lower_form_id));
     }
 
+    Bool_t Is_Form_In_Mod(UInt32 form_id, const char* mod_name)
+    {
+        const ModInfo* mod_info = Data_Handler()->LookupModByName(mod_name);
+        if (mod_info) {
+            return mod_info->IsFormInMod(form_id);
+        } else {
+            return false;
+        }
+    }
+
+    Bool_t Is_NPCP_Form(UInt32 form_id)
+    {
+        static const ModInfo* mod_info = Data_Handler()->LookupModByName("doticu_npc_party.esp");
+        NPCP_ASSERT(mod_info != nullptr);
+        return mod_info->IsFormInMod(form_id);
+    }
+
     VMResultArray<BSFixedString> Get_Male_Vanilla_Voice_Names()
     {
         VMResultArray<BSFixedString> results;

@@ -59,6 +59,7 @@ int                 p_option_clone_outfit               =    -1
 int                 p_option_auto_style                 =    -1
 int                 p_option_auto_vitality              =    -1
 int                 p_option_allow_dialogue_for_all     =    -1
+int                 p_option_allow_chatter              =    -1
 int                 p_option_slider_max_members         =    -1
 
 int                 p_option_auto_outfit                =    -1
@@ -123,6 +124,7 @@ function f_Build_Page()
     p_option_slider_max_members = MCM.AddSliderOption(" Max Members ", VARS.max_members, " {0} ")
     p_option_slider_ms_display = MCM.AddSliderOption(" Members per Display Cycle ", VARS.num_display, " {0} ")
     p_option_allow_dialogue_for_all = MCM.AddToggleOption(" Allow Dialogue For All ", doticu_npcp_consts.Allow_Dialogue_For_All_Global().GetValue() > 0)
+    ;p_option_allow_chatter = MCM.AddToggleOption(" Allow Chatter (WIP) ", VARS.Does_Allow_Chatter())
     MCM.AddEmptyOption()
     MCM.AddEmptyOption()
     MCM.AddEmptyOption()
@@ -219,6 +221,14 @@ function f_On_Option_Select(int id_option)
             doticu_npcp_consts.Allow_Dialogue_For_All_Global().SetValue(1)
             MCM.SetToggleOptionValue(p_option_allow_dialogue_for_all, true)
         endIf
+    ;/elseIf id_option == p_option_allow_chatter
+        if VARS.Does_Allow_Chatter()
+            VARS.Dont_Allow_Chatter()
+            MCM.SetToggleOptionValue(id_option, false)
+        else
+            VARS.Do_Allow_Chatter()
+            MCM.SetToggleOptionValue(id_option, true)
+        endIf/;
 
     ; Cloning
     elseIf id_option == p_option_force_clone_unique
@@ -414,6 +424,10 @@ function f_On_Option_Highlight(int id_option)
                         "Either way, you can still use hotkeys to quickly add a member and access the menu.")
     elseIf id_option == p_option_slider_max_members
         MCM.SetInfoText("A limiter for the amount of members you can have.")
+    ;/elseIf id_option == p_option_allow_chatter
+        MCM.SetInfoText("Enabled: Members will talk more often and comment on the world around them.\n" + \
+                        "Disabled: Members will remain silent unless they are fighting or you talk to them.\n" + \
+                        "This feature is a work in progress, and so you may not notice any difference yet.")/;
 
     ; Cloning
     elseIf id_option == p_option_force_clone_unique

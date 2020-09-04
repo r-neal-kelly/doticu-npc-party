@@ -19,6 +19,9 @@ namespace doticu_npcp { namespace Game {
     Form_t* Dragonborn_Form(UInt32 lower_form_id);
     Form_t* NPCP_Form(UInt32 lower_form_id);
 
+    Bool_t Is_Form_In_Mod(UInt32 form_id, const char* mod_name);
+    Bool_t Is_NPCP_Form(UInt32 form_id);
+
     VMResultArray<BSFixedString> Get_Male_Vanilla_Voice_Names();
     VMResultArray<BSFixedString> Get_Female_Vanilla_Voice_Names();
     BGSVoiceType *Get_Voice_By_Name(BSFixedString str_name);

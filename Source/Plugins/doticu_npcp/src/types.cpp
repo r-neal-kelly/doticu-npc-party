@@ -332,4 +332,12 @@ namespace doticu_npcp {
         set_relationship_rank(form_1, form_2, rank);
     }
 
+    Dialogue_Info_t::Dialogue_Info_t(Quest_t* quest, Topic_t* topic, Topic_Info_t* topic_info, Actor_t* speaker)
+    {
+        static auto ctor = reinterpret_cast
+            <Dialogue_Info_t * (*)(Dialogue_Info_t*, Quest_t*, Topic_t*, Topic_Info_t*, Actor_t*)>
+            (RelocationManager::s_baseAddr + Offsets::Dialogue_Info::CTOR);
+        ctor(this, quest, topic, topic_info, speaker);
+    }
+
 }

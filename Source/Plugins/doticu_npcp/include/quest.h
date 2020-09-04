@@ -16,6 +16,13 @@ namespace doticu_npcp { namespace Quest {
 
     void Log_Aliases(Quest_t* quest);
 
+    Bool_t Start(Quest_t* quest);
+    //void Start(Quest_t* quest);
+
+    void Log_Dialogue(Quest_t* quest);
+
+    void Log_Start_Enabled_Dialogue();
+
 }}
 
 namespace doticu_npcp { namespace Quest { namespace Exports {

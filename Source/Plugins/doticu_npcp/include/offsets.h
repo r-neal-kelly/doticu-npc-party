@@ -59,6 +59,12 @@ namespace doticu_npcp { namespace Offsets {
 
     }
 
+    namespace Dialogue_Info {
+
+        constexpr uintptr_t CTOR                        = 0x0056C9D0; // 34413
+
+    }
+
     namespace Extra {
 
         constexpr uintptr_t CAN_TALK_TO_PLAYER_V_TABLE  = 0x0152C740; // 229596
@@ -104,6 +110,8 @@ namespace doticu_npcp { namespace Offsets {
         //constexpr uintptr_t RESET_ALIAS_HASHMAP       = 0x00374880; // 24521
         constexpr uintptr_t FORCE_REFERENCE_TO          = 0x00375050; // 24523
 
+        constexpr uintptr_t START                       = 0x00370910; // 24481
+
     }
 
     namespace Reference {
@@ -120,7 +128,7 @@ namespace doticu_npcp { namespace Offsets {
 
         constexpr uintptr_t SELF                        = 0x01DD3EF8; // 502260
         constexpr uintptr_t GET_RELATIONSHIP_RANK       = 0x00345ED0; // 23624
-        constexpr uintptr_t SET_RELATIONSHIP_RANK       = 0x00345b80; // 23623
+        constexpr uintptr_t SET_RELATIONSHIP_RANK       = 0x00345B80; // 23623
 
     }
 

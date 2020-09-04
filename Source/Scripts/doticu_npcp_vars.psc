@@ -391,6 +391,10 @@ bool function Is_Leveling_Enabled() native
 function Enable_Leveling() native
 function Disable_Leveling() native
 
+bool function Does_Allow_Chatter() native
+function Do_Allow_Chatter() native
+function Dont_Allow_Chatter() native
+
 ; Friend Methods
 function f_Create()
     p_is_created = true

@@ -4,8 +4,9 @@
 
 #include <ShlObj.h>
 
-#include "skse64_common/BranchTrampoline.h"
 #include "skse64_common/skse_version.h"
+
+#include "skse64/GameData.h"
 
 #include "actor_base2.h"
 #include "actor2.h"
@@ -29,6 +30,7 @@
 #include "string2.h"
 #include "utils.h"
 #include "vars.h"
+#include "vector.h"
 
 #include "party/party_player.h"
 #include "party/party_greeter.h"
@@ -144,11 +146,13 @@ namespace doticu_npcp { namespace Modules {
         if (Is_NPCP_Version_Less_Than(curr_major, curr_minor, curr_patch)) {
 
             if (Is_NPCP_Version_Less_Than(0, 9, 3)) {
-                //Party::NPCS_t::Self()->u_0_9_3();
                 Party::Members_t::Self()->u_0_9_3();
             }
             if (Is_NPCP_Version_Less_Than(0, 9, 6)) {
                 Party::Members_t::Self()->u_0_9_6();
+            }
+            if (Is_NPCP_Version_Less_Than(0, 9, 8)) {
+                Party::Members_t::Self()->u_0_9_8();
             }
 
             Vars::NPCP_Major(curr_major);

@@ -67,9 +67,13 @@ namespace doticu_npcp { namespace Vars {
     void NPCP_Minor(Int_t npcp_minor) { NPCP_Minor_Variable()->Int(npcp_minor); }
     void NPCP_Patch(Int_t npcp_patch) { NPCP_Patch_Variable()->Int(npcp_patch); }
 
-    Bool_t Is_Leveling_Enabled() { return Consts::Is_Leveling_Enabled()->value > 0.0f; }
-    void Enable_Leveling() { Consts::Is_Leveling_Enabled()->value = 1.0f; }
-    void Disable_Leveling() { Consts::Is_Leveling_Enabled()->value = 0.0f; }
+    Bool_t Is_Leveling_Enabled() { return Consts::Is_Leveling_Enabled_Global()->value > 0.0f; }
+    void Enable_Leveling() { Consts::Is_Leveling_Enabled_Global()->value = 1.0f; }
+    void Disable_Leveling() { Consts::Is_Leveling_Enabled_Global()->value = 0.0f; }
+
+    Bool_t Does_Allow_Chatter() { return Consts::Allow_Chatter_Global()->value > 0.0f; }
+    void Do_Allow_Chatter() { Consts::Allow_Chatter_Global()->value = 1.0f; }
+    void Dont_Allow_Chatter() { Consts::Allow_Chatter_Global()->value = 0.0f; }
 
     // Global Keys
     Variable_t* G_Dialogue_Menu_Value_Property() { DEFINE_PROPERTY("key_g_dialogue_menu"); }
@@ -362,6 +366,10 @@ namespace doticu_npcp { namespace Vars {
     void Enable_Leveling(Vars_t* self) { return Enable_Leveling(); }
     void Disable_Leveling(Vars_t* self) { return Disable_Leveling(); }
 
+    Bool_t Does_Allow_Chatter(Vars_t* self) { return Does_Allow_Chatter(); }
+    void Do_Allow_Chatter(Vars_t* self) { return Do_Allow_Chatter(); }
+    void Dont_Allow_Chatter(Vars_t* self) { return Dont_Allow_Chatter(); }
+
 }}
 
 namespace doticu_npcp { namespace Vars { namespace Exports {
@@ -378,6 +386,10 @@ namespace doticu_npcp { namespace Vars { namespace Exports {
         ADD_METHOD("Is_Leveling_Enabled", 0, Bool_t, Is_Leveling_Enabled);
         ADD_METHOD("Enable_Leveling", 0, void, Enable_Leveling);
         ADD_METHOD("Disable_Leveling", 0, void, Disable_Leveling);
+
+        ADD_METHOD("Does_Allow_Chatter", 0, Bool_t, Does_Allow_Chatter);
+        ADD_METHOD("Do_Allow_Chatter", 0, void, Do_Allow_Chatter);
+        ADD_METHOD("Dont_Allow_Chatter", 0, void, Dont_Allow_Chatter);
 
         #undef ADD_METHOD
 

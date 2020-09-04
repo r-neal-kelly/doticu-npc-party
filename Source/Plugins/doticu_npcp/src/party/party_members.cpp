@@ -925,6 +925,57 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Object_Ref::Validate_XContainer(Consts::Books_Category());
     }
 
+    void Members_t::u_0_9_8()
+    {
+        Vector_t<Form_t*> unplayables;
+        unplayables.reserve(16);
+        unplayables.push_back(Game::Skyrim_Form(0x10E2DC));
+        unplayables.push_back(Game::Skyrim_Form(0x10E2CE));
+        unplayables.push_back(Game::Skyrim_Form(0x0CF8B3));
+        unplayables.push_back(Game::Skyrim_Form(0x0CF8B0));
+        unplayables.push_back(Game::Skyrim_Form(0x0CF8B1));
+        unplayables.push_back(Game::Skyrim_Form(0x0CF8B2));
+        unplayables.push_back(Game::Skyrim_Form(0x088952));
+        unplayables.push_back(Game::Skyrim_Form(0x088954));
+        unplayables.push_back(Game::Skyrim_Form(0x036A44));
+        unplayables.push_back(Game::Skyrim_Form(0x036A46));
+        unplayables.push_back(Game::Skyrim_Form(0x036A45));
+
+        auto Remove_Bad_Unplayables = [&unplayables](Outfit2_t* outfit2)
+        {
+            for (size_t idx = 0, count = unplayables.size(); idx < count; idx += 1) {
+                XEntry_t* xentry = Object_Ref::Get_XEntry(outfit2, unplayables[idx], false);
+                if (xentry) {
+                    Object_Ref::Remove_XEntry(outfit2, xentry);
+                    XEntry_t::Destroy(xentry);
+                }
+            }
+        };
+
+        Vector_t<Member_t*> filled = Filled();
+        for (size_t idx = 0, count = filled.size(); idx < count; idx += 1) {
+            Member_t* member = filled[idx];
+            if (member) {
+                Outfit2_t* immobile_outfit2 = static_cast<Outfit2_t*>(member->Immobile_Outfit2_Variable()->Reference());
+                if (immobile_outfit2) {
+                    Remove_Bad_Unplayables(immobile_outfit2);
+                }
+                Outfit2_t* settler_outfit2 = static_cast<Outfit2_t*>(member->Settler_Outfit2_Variable()->Reference());
+                if (settler_outfit2) {
+                    Remove_Bad_Unplayables(settler_outfit2);
+                }
+                Outfit2_t* thrall_outfit2 = static_cast<Outfit2_t*>(member->Thrall_Outfit2_Variable()->Reference());
+                if (thrall_outfit2) {
+                    Remove_Bad_Unplayables(thrall_outfit2);
+                }
+                Outfit2_t* follower_outfit2 = static_cast<Outfit2_t*>(member->Follower_Outfit2_Variable()->Reference());
+                if (follower_outfit2) {
+                    Remove_Bad_Unplayables(follower_outfit2);
+                }
+            }
+        }
+    }
+
     void Members_t::Register_Me(Virtual_Machine_t* vm)
     {
         #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \

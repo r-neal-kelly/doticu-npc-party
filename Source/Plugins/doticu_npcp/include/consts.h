@@ -64,6 +64,8 @@ namespace doticu_npcp { namespace Consts {
     Quest_t* Bard_Songs_Quest();
     Quest_t* Follower_Dialogue_Quest();
     Quest_t* Player_Vampire_Quest();
+    Quest_t* WI_Change_Location_01_Quest();
+    Quest_t* WI_Remove_Item_04_Quest();
 
     // Skyrim Reference Markers
     Reference_t* Safe_Go_Back_Marker();
@@ -104,11 +106,12 @@ namespace doticu_npcp { namespace Consts {
     // NPCP Globals
     Global_t* Is_Installed_Global();
     Global_t* Allow_Dialogue_For_All_Global();
+    Global_t* Allow_Chatter_Global();
     Global_t* Force_Clone_Uniques_Global();
     Global_t* Force_Clone_Generics_Global();
     Global_t* Force_Unclone_Uniques_Global();
     Global_t* Force_Unclone_Generics_Global();
-    Global_t* Is_Leveling_Enabled();
+    Global_t* Is_Leveling_Enabled_Global();
     Global_t* No_Body_Percent_Global();
     Global_t* No_Feet_Percent_Global();
     Global_t* No_Hands_Percent_Global();
@@ -178,6 +181,7 @@ namespace doticu_npcp { namespace Consts {
     Quest_t* Control_Quest();
     Quest_t* Thrall_Dialogue_Quest();
     Quest_t* Reanimated_Dialogue_Quest();
+    Quest_t* Female_Young_Eager_Quest();
 
     // NPCP Reference Categories
     Reference_t* Input_Category();

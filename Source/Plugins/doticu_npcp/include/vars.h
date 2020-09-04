@@ -34,6 +34,10 @@ namespace doticu_npcp { namespace Vars {
     void Enable_Leveling();
     void Disable_Leveling();
 
+    Bool_t Does_Allow_Chatter();
+    void Do_Allow_Chatter();
+    void Dont_Allow_Chatter();
+
     // Global Keys
     Variable_t* G_Dialogue_Menu_Value_Property();
 

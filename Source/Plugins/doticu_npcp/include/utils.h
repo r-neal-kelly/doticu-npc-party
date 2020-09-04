@@ -361,6 +361,20 @@ namespace doticu_npcp { namespace Utils {
         return result;
     }
 
+    inline UInt32 CRC32(UInt64 value)
+    {
+        UInt32 result = 0;
+        CRC32_By_64(result, value);
+        return result;
+    }
+
+    inline UInt32 CRC32(void* value)
+    {
+        UInt32 result = 0;
+        CRC32_By_64(result, (UInt64)value);
+        return result;
+    }
+
     inline std::vector<char> To_Binary(void* data, size_t bytes)
     {
         static const char* half_bytes[16] = {
