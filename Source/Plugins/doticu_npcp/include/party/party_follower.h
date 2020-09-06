@@ -99,9 +99,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         void Fill(Member_t* member, Followers_t::Add_Callback_i** add_callback);
         void Unfill(Callback_t<Int_t, Member_t*>** callback);
         void Create(Member_t* member);
-        void Destroy();
-        void Create_Horse();
-        void Destroy_Horse();
+        void Destroy(Callback_t<>** callback);
         void Backup_State(Actor_t* actor);
         void Restore_State(Actor_t* actor);
 
@@ -109,14 +107,17 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         void Enforce_Non_Follower(Actor_t* actor);
         void Level();
         void Unlevel();
+
         Int_t Sneak();
         void Enforce_Sneak(Actor_t* actor);
         Int_t Unsneak();
         void Enforce_Non_Sneak(Actor_t* actor);
-        Int_t Saddle();
+
+        void Saddle(Callback_t<Int_t, Follower_t*>** callback);
         void Enforce_Saddler(Actor_t* actor);
-        Int_t Unsaddle();
+        void Unsaddle(Callback_t<Int_t, Follower_t*>** callback);
         void Enforce_Non_Saddler(Actor_t* actor);
+
         Int_t Retreat();
         void Enforce_Retreater(Actor_t* actor);
         Int_t Unretreat();

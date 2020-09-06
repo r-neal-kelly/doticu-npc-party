@@ -159,6 +159,9 @@
     <ClCompile Include="src\mcm\mcm_mannequins.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\funcs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\object_ref.h">
@@ -309,6 +312,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\mcm\mcm_mannequins.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\funcs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -86,56 +86,42 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
-    Int_t Horses_t::Add_Horse(Follower_t* follower)
+    void Horses_t::Add_Horse(Follower_t* follower, Callback_t<Int_t, Horse_t*>** callback)
     {
+        NPCP_ASSERT(callback);
         if (follower) {
             Horse_t* horse = From_ID(Followers_t::MAX + follower->ID());
             NPCP_ASSERT(horse);
             if (horse->Is_Unfilled()) {
-                Actor_t* actor = static_cast<Actor_t*>
+                Actor_t* horse_actor = static_cast<Actor_t*>
                     (Object_Ref::Place_At_Me(Consts::Storage_Marker(), Consts::Horse_Leveled_Actor(), 1, true, false));
-                horse->Fill(actor, follower);
-                return CODES::SUCCESS;
+                horse->Fill(horse_actor, follower, callback);
             } else {
-                return CODES::HORSE;
+                (*callback)->operator()(CODES::HORSE, horse);
+                delete (*callback);
             }
         } else {
-            return CODES::FOLLOWER;
+            (*callback)->operator()(CODES::FOLLOWER, nullptr);
+            delete (*callback);
         }
     }
 
-    Int_t Horses_t::Remove_Horse(Follower_t* follower)
+    void Horses_t::Remove_Horse(Follower_t* follower, Callback_t<Int_t, Follower_t*>** callback)
     {
+        NPCP_ASSERT(callback);
         if (follower) {
             Horse_t* horse = From_ID(Followers_t::MAX + follower->ID());
             NPCP_ASSERT(horse);
             if (horse->Is_Filled()) {
-                class Callback : public Virtual_Callback_t {
-                public:
-                    Actor_t* actor;
-                    Callback(Actor_t* actor) :
-                        actor(actor)
-                    {
-                    }
-                    void operator()(Variable_t* result)
-                    {
-                        Object_Ref::Delete_Safe(actor);
-                    }
-                };
-                Virtual_Callback_i* callback = new Callback(horse->Actor());
-                horse->Unfill(&callback);
-                return CODES::SUCCESS;
+                horse->Unfill(callback);
             } else {
-                return CODES::HORSE;
+                (*callback)->operator()(CODES::HORSE, nullptr);
+                delete (*callback);
             }
         } else {
-            return CODES::FOLLOWER;
+            (*callback)->operator()(CODES::FOLLOWER, nullptr);
+            delete (*callback);
         }
-    }
-
-    void Horses_t::u_0_9_8()
-    {
-
     }
 
     void Horses_t::Register_Me(Virtual_Machine_t* vm)

@@ -174,6 +174,36 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         };
     }
 
+    void Commands_t::Log_Saddle(Int_t code, const char* name)
+    {
+        switch (code) {
+            case (CODES::SUCCESS):
+                return Log_Note(name, " has saddled up.");
+            case (CODES::FOLLOWER):
+                return Log_Note(name, " isn't a follower, and so can't saddle up.");
+            case (CODES::IS):
+                return Log_Note(name, " is already saddled up.");
+            case (CODES::INTERIOR):
+                return Log_Note(name, " cannot saddle up in an interior space.");
+            default:
+                return Log_Error(name, " can't saddle up", code);
+        };
+    }
+
+    void Commands_t::Log_Unsaddle(Int_t code, const char* name)
+    {
+        switch (code) {
+            case (CODES::SUCCESS):
+                return Log_Note(name, " has unsaddled.");
+            case (CODES::FOLLOWER):
+                return Log_Note(name, " isn't a follower, and so can't unsaddle.");
+            case (CODES::IS):
+                return Log_Note(name, " is not saddled.");
+            default:
+                return Log_Error(name, " can't unsaddle", code);
+        };
+    }
+
     void Commands_t::Member(Actor_t* actor)
     {
         using namespace Party;
@@ -2055,56 +2085,62 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
     void Commands_t::Saddle(Actor_t* actor)
     {
-        Party::Follower_t* follower = Party::Followers_t::Self()->From_Actor(actor);
+        using namespace Party;
 
-        const char* name;
-        Int_t code;
-        if (follower) {
-            name = follower->Name().data;
-            code = follower->Saddle();
+        if (actor) {
+            Follower_t* follower = Followers_t::Self()->From_Actor(actor);
+            if (follower) {
+                class Saddle_Callback : public Callback_t<Int_t, Follower_t*> {
+                public:
+                    Commands_t* commands;
+                    Follower_t* follower;
+                    Saddle_Callback(Commands_t* commands, Follower_t* follower) :
+                        commands(commands), follower(follower)
+                    {
+                    }
+                    virtual void operator()(Int_t code, Follower_t* follower) override
+                    {
+                        commands->Log_Saddle(code, follower->Name());
+                    }
+                };
+                Callback_t<Int_t, Follower_t*>* saddle_callback = new Saddle_Callback(this, follower);
+                follower->Saddle(&saddle_callback);
+            } else {
+                Log_Saddle(CODES::FOLLOWER, Actor2::Get_Name(actor));
+            }
         } else {
-            name = Actor2::Get_Name(actor);
-            code = CODES::FOLLOWER;
+            Log_Saddle(CODES::ACTOR, "");
         }
-
-        switch (code) {
-            case (CODES::SUCCESS):
-                return Log_Note(name, " has saddled up.");
-            case (CODES::FOLLOWER):
-                return Log_Note(name, " isn't a follower, and so can't saddle up.");
-            case (CODES::IS):
-                return Log_Note(name, " is already saddled up.");
-            case (CODES::INTERIOR):
-                return Log_Note(name, " cannot saddle up in an interior space.");
-            default:
-                return Log_Error(name, " can't saddle up", code);
-        };
     }
 
     void Commands_t::Unsaddle(Actor_t* actor)
     {
-        Party::Follower_t* follower = Party::Followers_t::Self()->From_Actor(actor);
+        using namespace Party;
 
-        const char* name;
-        Int_t code;
-        if (follower) {
-            name = follower->Name().data;
-            code = follower->Unsaddle();
+        if (actor) {
+            Follower_t* follower = Followers_t::Self()->From_Actor(actor);
+            if (follower) {
+                class Unsaddle_Callback : public Callback_t<Int_t, Follower_t*> {
+                public:
+                    Commands_t* commands;
+                    Follower_t* follower;
+                    Unsaddle_Callback(Commands_t* commands, Follower_t* follower) :
+                        commands(commands), follower(follower)
+                    {
+                    }
+                    virtual void operator()(Int_t code, Follower_t* follower) override
+                    {
+                        commands->Log_Unsaddle(code, follower->Name());
+                    }
+                };
+                Callback_t<Int_t, Follower_t*>* unsaddle_callback = new Unsaddle_Callback(this, follower);
+                follower->Unsaddle(&unsaddle_callback);
+            } else {
+                Log_Unsaddle(CODES::FOLLOWER, Actor2::Get_Name(actor));
+            }
         } else {
-            name = Actor2::Get_Name(actor);
-            code = CODES::FOLLOWER;
+            Log_Unsaddle(CODES::ACTOR, "");
         }
-
-        switch (code) {
-            case (CODES::SUCCESS):
-                return Log_Note(name, " has unsaddled.");
-            case (CODES::FOLLOWER):
-                return Log_Note(name, " isn't a follower, and so can't unsaddle.");
-            case (CODES::IS):
-                return Log_Note(name, " is not saddled.");
-            default:
-                return Log_Error(name, " can't unsaddle", code);
-        };
     }
 
     void Commands_t::Retreat(Actor_t* actor)
@@ -2673,6 +2709,8 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                 return Log_Note("No followers to saddle up.");
             case (CODES::HASNT):
                 return Log_Note("All followers are already saddled up.");
+            case (CODES::HAS):
+                return Log_Note("Still saddling up followers, please wait.");
             default:
                 return Log_Error("Could not make followers saddle up", code);
         };
@@ -2689,6 +2727,8 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                 return Log_Note("No followers to unsaddle.");
             case (CODES::HASNT):
                 return Log_Note("All followers are already unsaddled.");
+            case (CODES::HAS):
+                return Log_Note("Still unsaddling followers, please wait.");
             default:
                 return Log_Error("Could not make followers unsaddle", code);
         };

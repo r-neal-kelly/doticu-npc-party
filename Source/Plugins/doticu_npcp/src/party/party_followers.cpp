@@ -746,17 +746,36 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     Int_t Followers_t::Saddle()
     {
+        static volatile Int_t active_callback_count = 0;
+
         if (Player_t::Self()->Is_In_Exterior_Cell()) {
             if (Count_Filled() > 0) {
-                Vector_t<Follower_t*> non_saddlers = Non_Saddlers();
-                size_t non_saddler_count = non_saddlers.size();
-                if (non_saddler_count > 0) {
-                    for (size_t idx = 0; idx < non_saddler_count; idx += 1) {
-                        non_saddlers[idx]->Saddle();
+                if (active_callback_count < 1) {
+                    Vector_t<Follower_t*> non_saddlers = Non_Saddlers();
+                    size_t non_saddler_count = non_saddlers.size();
+                    if (non_saddler_count > 0) {
+                        active_callback_count = non_saddler_count;
+                        for (size_t idx = 0; idx < non_saddler_count; idx += 1) {
+                            struct Saddle_Callback : Callback_t<Int_t, Follower_t*> {
+                                volatile Int_t* active_callback_count;
+                                Saddle_Callback(volatile Int_t* active_callback_count) :
+                                    active_callback_count(active_callback_count)
+                                {
+                                }
+                                void operator()(Int_t code, Follower_t* follower)
+                                {
+                                    *active_callback_count -= 1; // I don't think we need to do this atomically.
+                                }
+                            };
+                            Callback_t<Int_t, Follower_t*>* saddle_callback = new Saddle_Callback(&active_callback_count);
+                            non_saddlers[idx]->Saddle(&saddle_callback);
+                        }
+                        return CODES::SUCCESS;
+                    } else {
+                        return CODES::HASNT;
                     }
-                    return CODES::SUCCESS;
                 } else {
-                    return CODES::HASNT;
+                    return CODES::HAS;
                 }
             } else {
                 return CODES::FOLLOWERS;
@@ -768,16 +787,35 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     Int_t Followers_t::Unsaddle()
     {
+        static volatile Int_t active_callback_count = 0;
+
         if (Count_Filled() > 0) {
-            Vector_t<Follower_t*> saddlers = Saddlers();
-            size_t saddler_count = saddlers.size();
-            if (saddler_count > 0) {
-                for (size_t idx = 0; idx < saddler_count; idx += 1) {
-                    saddlers[idx]->Unsaddle();
+            if (active_callback_count < 1) {
+                Vector_t<Follower_t*> saddlers = Saddlers();
+                size_t saddler_count = saddlers.size();
+                if (saddler_count > 0) {
+                    active_callback_count = saddler_count;
+                    for (size_t idx = 0; idx < saddler_count; idx += 1) {
+                        struct Unsaddle_Callback : Callback_t<Int_t, Follower_t*> {
+                            volatile Int_t* active_callback_count;
+                            Unsaddle_Callback(volatile Int_t* active_callback_count) :
+                                active_callback_count(active_callback_count)
+                            {
+                            }
+                            void operator()(Int_t code, Follower_t* follower)
+                            {
+                                *active_callback_count -= 1; // I don't think we need to do this atomically.
+                            }
+                        };
+                        Callback_t<Int_t, Follower_t*>* unsaddle_callback = new Unsaddle_Callback(&active_callback_count);
+                        saddlers[idx]->Unsaddle(&unsaddle_callback);
+                    }
+                    return CODES::SUCCESS;
+                } else {
+                    return CODES::HASNT;
                 }
-                return CODES::SUCCESS;
             } else {
-                return CODES::HASNT;
+                return CODES::HAS;
             }
         } else {
             return CODES::FOLLOWERS;

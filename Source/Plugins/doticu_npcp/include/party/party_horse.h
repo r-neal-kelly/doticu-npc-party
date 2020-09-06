@@ -34,15 +34,15 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Bool_t Is_Alive();
         Bool_t Is_Dead();
 
-        void Fill(Actor_t* actor, Follower_t* follower);
-        void Unfill(Virtual_Callback_i** callback);
+        void Fill(Actor_t* actor, Follower_t* follower, Callback_t<Int_t, Horse_t*>** callback);
+        void Unfill(Callback_t<Int_t, Follower_t*>** callback);
         void Create(Actor_t* actor, Follower_t* follower);
-        void Destroy();
+        void Destroy(Callback_t<>** callback);
 
         Int_t Groom();
         void Enforce_Groom(Actor_t* actor);
         Int_t Ungroom();
-        void Enforce_Non_Groom(Actor_t* actor);
+        void Enforce_Non_Groom(Actor_t* actor, Callback_t<>* callback = nullptr);
 
         void Enforce();
 

@@ -16,6 +16,7 @@
 #include "consts.h"
 #include "form.h"
 #include "form_vector.h"
+#include "funcs.h"
 #include "game.h"
 #include "keys.h"
 #include "main.h"
@@ -125,6 +126,8 @@ namespace doticu_npcp { namespace Modules {
 
     void Main_t::Load_Mod()
     {
+        //Quest::Log_0A0(Consts::Members_Quest());
+
         struct Callback : public Virtual_Callback_t {
         public:
             void operator()(Variable_t* result)
@@ -281,6 +284,7 @@ namespace doticu_npcp { namespace Main {
         W
 
         REGISTER_TYPE(Modules::Main_t);
+        REGISTER_TYPE(Modules::Funcs_t);
 
         REGISTER_TYPE(Party::Player_t);
         REGISTER_TYPE(Party::Greeter_t);

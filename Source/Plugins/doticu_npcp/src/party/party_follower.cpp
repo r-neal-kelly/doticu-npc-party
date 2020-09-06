@@ -387,7 +387,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             }
         };
         Virtual_Callback_i* callback = new Callback(this, member, *add_callback);
-
         Alias_t::Fill(member->Actor(), &callback);
     }
 
@@ -396,26 +395,36 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         NPCP_ASSERT(callback);
         NPCP_ASSERT(Is_Filled());
 
-        struct VCallback : public Virtual_Callback_t {
+        struct Destroy_Callback : public Callback_t<> {
+            Follower_t* follower;
             Member_t* member;
-            Callback_t<Int_t, Member_t*>* callback;
-            VCallback(Member_t* member, Callback_t<Int_t, Member_t*>* callback) :
-                member(member), callback(callback)
+            Callback_t<Int_t, Member_t*>* user_callback;
+            Destroy_Callback(Follower_t* follower, Member_t* member, Callback_t<Int_t, Member_t*>* user_callback) :
+                follower(follower), member(member), user_callback(user_callback)
             {
             }
-            void operator()(Variable_t* result)
+            void operator()()
             {
-                NPCP_ASSERT(member);
-                member->Enforce_Outfit2(member->Actor());
-                NPCP_ASSERT(callback);
-                callback->operator()(CODES::SUCCESS, member);
-                delete callback;
+                struct VCallback : public Virtual_Callback_t {
+                    Member_t* member;
+                    Callback_t<Int_t, Member_t*>* user_callback;
+                    VCallback(Member_t* member, Callback_t<Int_t, Member_t*>* user_callback) :
+                        member(member), user_callback(user_callback)
+                    {
+                    }
+                    void operator()(Variable_t* result)
+                    {
+                        member->Enforce_Outfit2(member->Actor());
+                        user_callback->operator()(CODES::SUCCESS, member);
+                        delete user_callback;
+                    }
+                };
+                Virtual_Callback_i* vcallback = new VCallback(member, user_callback);
+                follower->Alias_t::Unfill(&vcallback);
             }
         };
-        Virtual_Callback_i* vcallback = new VCallback(Member(), *callback);
-        Alias_t::Unfill(&vcallback);
-
-        Destroy();
+        Callback_t<>* destroy_callback = new Destroy_Callback(this, Member(), *callback);
+        Destroy(&destroy_callback);
     }
 
     void Follower_t::Create(Member_t* member)
@@ -438,51 +447,53 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Level();
     }
 
-    void Follower_t::Destroy()
+    void Follower_t::Destroy(Callback_t<>** callback)
     {
-        Actor_t* actor = Actor();
-
-        if (Is_Retreater()) {
-            Unretreat();
-        }
         if (Is_Saddler()) {
-            Unsaddle();
-        }
-        if (Is_Sneak()) {
-            Unsneak();
-        }
-        Unlevel();
-        Enforce_Non_Follower(actor);
+            struct Unsaddle_Callback : public Callback_t<Int_t, Follower_t*> {
+                Callback_t<>* user_callback;
+                Unsaddle_Callback(Callback_t<>* user_callback) :
+                    user_callback(user_callback)
+                {
+                }
+                void operator()(Int_t code, Follower_t* follower)
+                {
+                    if (follower) {
+                        follower->Destroy(&user_callback);
+                    }
+                }
+            };
+            Callback_t<Int_t, Follower_t*>* unsaddle_callback = new Unsaddle_Callback(*callback);
+            Unsaddle(&unsaddle_callback);
+        } else {
+            Actor_t* actor = Actor();
 
-        Restore_State(actor);
-        //Destroy_Horse(); until we can make sure the horse is not deleted until it's done with its callbacks
+            if (Is_Retreater()) {
+                Unretreat();
+            }
+            if (Is_Sneak()) {
+                Unsneak();
+            }
+            Unlevel();
+            Enforce_Non_Follower(actor);
 
-        Previous_No_Auto_Bard_Faction_Variable()->Bool(false);
-        Previous_Speed_Multiplier_Variable()->Float(-1.0f);
-        Previous_Waiting_For_Player_Variable()->Float(-1.0f);
-        Previous_Player_Relationship_Variable()->Int(-1);
+            Restore_State(actor);
 
-        Is_Retreater_Variable()->Bool(false);
-        Is_Saddler_Variable()->Bool(false);
-        Is_Sneak_Variable()->Bool(false);
+            Previous_No_Auto_Bard_Faction_Variable()->Bool(false);
+            Previous_Speed_Multiplier_Variable()->Float(-1.0f);
+            Previous_Waiting_For_Player_Variable()->Float(-1.0f);
+            Previous_Player_Relationship_Variable()->Int(-1);
 
-        Horse_Variable()->None(Horse_t::Class_Info());
-        Member_Variable()->None(Member_t::Class_Info());
-        Actor_Variable()->None(Class_Info_t::Fetch(Actor_t::kTypeID, true));
-    }
+            Is_Retreater_Variable()->Bool(false);
+            Is_Saddler_Variable()->Bool(false);
+            Is_Sneak_Variable()->Bool(false);
 
-    void Follower_t::Create_Horse()
-    {
-        NPCP_ASSERT(!Horse());
-        Horses_t::Self()->Add_Horse(this);
-        Horse_Variable()->Pack(Horses_t::Self()->From_ID(Followers_t::MAX + ID()));
-    }
-
-    void Follower_t::Destroy_Horse()
-    {
-        if (Horse()) {
-            Horses_t::Self()->Remove_Horse(this);
             Horse_Variable()->None(Horse_t::Class_Info());
+            Member_Variable()->None(Member_t::Class_Info());
+            Actor_Variable()->None(Class_Info_t::Fetch(Actor_t::kTypeID, true));
+
+            (*callback)->operator()();
+            delete (*callback);
         }
     }
 
@@ -895,26 +906,50 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         values->Set_Actor_Value(Actor_Value_t::SPEED_MULT, MAX_UNSNEAK_SPEED);
     }
 
-    Int_t Follower_t::Saddle()
+    void Follower_t::Saddle(Callback_t<Int_t, Follower_t*>** callback)
     {
+        NPCP_ASSERT(callback);
         if (Is_Filled()) {
             if (Isnt_Saddler()) {
                 if (Is_In_Exterior_Cell()) {
-                    Is_Saddler_Variable()->Bool(true);
+                    struct Add_Horse_Callback : public Callback_t<Int_t, Horse_t*> {
+                        Follower_t* follower;
+                        Callback_t<Int_t, Follower_t*>* callback;
+                        Add_Horse_Callback(Follower_t* follower, Callback_t<Int_t, Follower_t*>* callback) :
+                            follower(follower), callback(callback)
+                        {
+                        }
+                        void operator()(Int_t code, Horse_t* horse)
+                        {
+                            if (horse) {
+                                follower->Horse_Variable()->Pack(horse);
+                                follower->Is_Saddler_Variable()->Bool(true);
+                                
+                                Actor_t* actor = follower->Actor();
+                                follower->Enforce_Saddler(actor);
+                                Actor2::Evaluate_Package(actor);
 
-                    Actor_t* actor = Actor();
-                    Enforce_Saddler(actor);
-                    Actor2::Evaluate_Package(actor);
-
-                    return CODES::SUCCESS;
+                                callback->operator()(CODES::SUCCESS, follower);
+                                delete callback;
+                            } else {
+                                callback->operator()(code, follower);
+                                delete callback;
+                            }
+                        }
+                    };
+                    Callback_t<Int_t, Horse_t*>* add_horse_callback = new Add_Horse_Callback(this, *callback);
+                    Horses_t::Self()->Add_Horse(this, &add_horse_callback);
                 } else {
-                    return CODES::INTERIOR;
+                    (*callback)->operator()(CODES::INTERIOR, this);
+                    delete (*callback);
                 }
             } else {
-                return CODES::IS;
+                (*callback)->operator()(CODES::IS, this);
+                delete (*callback);
             }
         } else {
-            return CODES::FOLLOWER;
+            (*callback)->operator()(CODES::FOLLOWER, this);
+            delete (*callback);
         }
     }
 
@@ -929,30 +964,61 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             Horse_t* horse = Horse();
             if (horse) {
                 horse->Groom();
-            } else {
-                Create_Horse();
             }
         } else {
             Enforce_Non_Saddler(actor);
         }
     }
 
-    Int_t Follower_t::Unsaddle()
+    void Follower_t::Unsaddle(Callback_t<Int_t, Follower_t*>** callback)
     {
         if (Is_Filled()) {
             if (Is_Saddler()) {
-                Is_Saddler_Variable()->Bool(false);
-
                 Actor_t* actor = Actor();
-                Enforce_Non_Saddler(actor);
+                Object_Ref::Untoken(actor, Consts::Saddler_Token());
                 Actor2::Evaluate_Package(actor);
 
-                return CODES::SUCCESS;
+                struct VCallback : public Virtual_Callback_t {
+                    Follower_t* follower;
+                    Actor_t* actor;
+                    Callback_t<Int_t, Follower_t*>* user_callback;
+                    VCallback(Follower_t* follower, Actor_t* actor, Callback_t<Int_t, Follower_t*>* user_callback) :
+                        follower(follower), actor(actor), user_callback(user_callback)
+                    {
+                    }
+                    void operator()(Variable_t* result)
+                    {
+                        struct Remove_Horse_Callback : public Callback_t<Int_t, Follower_t*> {
+                            Follower_t* follower;
+                            Actor_t* actor;
+                            Callback_t<Int_t, Follower_t*>* user_callback;
+                            Remove_Horse_Callback(Follower_t* follower, Actor_t* actor, Callback_t<Int_t, Follower_t*>* user_callback) :
+                                follower(follower), actor(actor), user_callback(user_callback)
+                            {
+                            }
+                            void operator()(Int_t, Follower_t*)
+                            {
+                                follower->Is_Saddler_Variable()->Bool(false);
+                                follower->Horse_Variable()->None(Horse_t::Class_Info());
+                                Actor2::Evaluate_Package(actor);
+
+                                user_callback->operator()(CODES::SUCCESS, follower);
+                                delete user_callback;
+                            }
+                        };
+                        Callback_t<Int_t, Follower_t*>* remove_horse_callback = new Remove_Horse_Callback(follower, actor, user_callback);
+                        Horses_t::Self()->Remove_Horse(follower, &remove_horse_callback);
+                    }
+                };
+                Virtual_Callback_i* vcallback = new VCallback(this, actor, *callback);
+                Actor2::Dismount(actor, &vcallback);
             } else {
-                return CODES::IS;
+                (*callback)->operator()(CODES::IS, this);
+                delete (*callback);
             }
         } else {
-            return CODES::FOLLOWER;
+            (*callback)->operator()(CODES::FOLLOWER, this);
+            delete (*callback);
         }
     }
 

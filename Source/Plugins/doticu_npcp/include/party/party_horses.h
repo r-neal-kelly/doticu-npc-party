@@ -35,10 +35,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Horse_t* From_ID(Int_t unique_id);
         Horse_t* From_Actor(Actor_t* actor);
 
-        Int_t Add_Horse(Follower_t* follower);
-        Int_t Remove_Horse(Follower_t* follower);
-
-        void u_0_9_8();
+        void Add_Horse(Follower_t* follower, Callback_t<Int_t, Horse_t*>** callback);
+        void Remove_Horse(Follower_t* follower, Callback_t<Int_t, Follower_t*>** callback);
 
     public:
         static void Register_Me(Virtual_Machine_t* vm);

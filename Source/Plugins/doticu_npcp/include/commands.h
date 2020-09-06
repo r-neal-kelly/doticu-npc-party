@@ -38,6 +38,8 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         void Log_Member(Int_t code, const char* name);
         void Log_Follow(Int_t code, const char* name);
         void Log_Unfollow(Int_t code, const char* name);
+        void Log_Saddle(Int_t code, const char* name);
+        void Log_Unsaddle(Int_t code, const char* name);
 
         void Member(Actor_t* actor);
         void Unmember(Actor_t* actor);

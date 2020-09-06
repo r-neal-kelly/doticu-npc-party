@@ -220,6 +220,27 @@ namespace doticu_npcp { namespace Quest {
         }
     }
 
+    void Log_0A0(Quest_t* quest)
+    {
+        using Hash_Map_t = Hash_Map_t<UInt16, void*>;
+        Hash_Map_t& hash_map = reinterpret_cast<Hash_Map_t&>(quest->unk0A0);
+        _MESSAGE("capacity: %u", hash_map.capacity);
+        for (size_t idx = 0, count = hash_map.capacity; idx < count; idx += 1) {
+            /*Hash_Map_t::Entry_t* entry = hash_map.entries + idx;
+            if (entry && entry->chain != nullptr) {
+                Branch_t* branch = entry->tuple.key;
+                tArray<Topic_t*>* topics = entry->tuple.value;
+                if (branch && topics) {
+                    _MESSAGE("    branch: %8.8X %s", branch->formID, branch->Editor_ID());
+                    for (size_t idx = 0, count = topics->count; idx < count; idx += 1) {
+                        Topic_t* topic = *(topics->entries + idx);
+                        log_topic(quest, topic, "        ");
+                    }
+                }
+            }*/
+        }
+    }
+
 }}
 
 namespace doticu_npcp { namespace Quest { namespace Exports {
