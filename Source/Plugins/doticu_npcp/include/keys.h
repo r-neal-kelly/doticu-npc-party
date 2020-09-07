@@ -10,6 +10,9 @@ namespace doticu_npcp { namespace Papyrus {
 
     class Keys_t : public Quest_t {
     public:
+        static void On_Load_Plugin();
+
+    public:
         enum : Int_t {
             KEY_INVALID = -1,
             KEY_ESCAPE = 1,
@@ -152,6 +155,7 @@ namespace doticu_npcp { namespace Papyrus {
 
             Int_t Count();
             Bool_t Has(Int_t mod);
+            Bool_t Are_Pressed();
             Vector_t<Int_t> Vector();
             String_t String();
             Bool_t operator ==(Mods_t& rhs);
@@ -251,21 +255,11 @@ namespace doticu_npcp { namespace Papyrus {
                                     Int_t mod_1 = KEY_INVALID,
                                     Int_t mod_2 = KEY_INVALID,
                                     Int_t mod_3 = KEY_INVALID);
-        String_t Pressed_Hotkey(Int_t value,
-                                Int_t pressed_1 = KEY_INVALID,
-                                Int_t pressed_2 = KEY_INVALID,
-                                Int_t pressed_3 = KEY_INVALID,
-                                Int_t pressed_4 = KEY_INVALID,
-                                Int_t pressed_5 = KEY_INVALID,
-                                Int_t pressed_6 = KEY_INVALID,
-                                Int_t pressed_7 = KEY_INVALID,
-                                Int_t pressed_8 = KEY_INVALID);
+        String_t Pressed_Hotkey(Int_t value);
 
         void Register_Keys();
-        Bool_t Can_Use_Keys();
         void Actor_In_Crosshair(Bool_t allow_follower_horse, void(*callback)(Actor_t*));
 
-        void Gather_Pressed_Keys(Int_t key_value, Int_t index, Int_t count, Vector_t<Int_t> key_codes);
         void On_Key_Down(Int_t key_code);
         void On_Key_Up(Int_t key_code, Float_t time_held);
         void Process_On_Key_Up(Int_t key_code, Float_t time_held);

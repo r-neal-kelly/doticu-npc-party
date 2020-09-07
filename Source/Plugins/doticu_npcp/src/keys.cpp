@@ -1,6 +1,8 @@
 /*
-    Copyright © 2020 r-neal-kelly, aka doticu
+    Copyright ï¿½ 2020 r-neal-kelly, aka doticu
 */
+
+//#define INITGUID
 
 #pragma once
 
@@ -27,6 +29,11 @@
 #include "commands.h"
 
 namespace doticu_npcp { namespace Papyrus {
+
+    void Keys_t::On_Load_Plugin()
+    {
+        Hooks_DirectInput_Commit();
+    }
 
     const char* Keys_t::Code_To_String(Int_t code)
     {
@@ -202,6 +209,21 @@ namespace doticu_npcp { namespace Papyrus {
     Bool_t Keys_t::Mods_t::Has(Int_t mod)
     {
         return mod_1 == mod || mod_2 == mod || mod_3 == mod;
+    }
+
+    Bool_t Keys_t::Mods_t::Are_Pressed()
+    {
+        static DIHookControl& controls = DIHookControl::GetSingleton();
+
+        if (mod_3 > KEY_INVALID) {
+            return controls.IsKeyPressed(mod_1) || controls.IsKeyPressed(mod_2) || controls.IsKeyPressed(mod_3);
+        } else if (mod_2 > KEY_INVALID) {
+            return controls.IsKeyPressed(mod_1) || controls.IsKeyPressed(mod_2);
+        } else if (mod_1 > KEY_INVALID) {
+            return controls.IsKeyPressed(mod_1);
+        } else {
+            return true;
+        }
     }
 
     Vector_t<Int_t> Keys_t::Mods_t::Vector()
@@ -511,41 +533,9 @@ namespace doticu_npcp { namespace Papyrus {
         return "";
     }
 
-    String_t Keys_t::Pressed_Hotkey(Int_t value,
-                                    Int_t pressed_1, Int_t pressed_2, Int_t pressed_3, Int_t pressed_4,
-                                    Int_t pressed_5, Int_t pressed_6, Int_t pressed_7, Int_t pressed_8)
+    String_t Keys_t::Pressed_Hotkey(Int_t value)
     {
         Hotkeys_t* hotkeys = Hotkeys_t::Self();
-
-        std::vector<Int_t> pressed_keys;
-        pressed_keys.reserve(8);
-        if (pressed_1 != value) {
-            pressed_keys.push_back(pressed_1);
-        }
-        if (pressed_2 != value) {
-            pressed_keys.push_back(pressed_2);
-        }
-        if (pressed_3 != value) {
-            pressed_keys.push_back(pressed_3);
-        }
-        if (pressed_4 != value) {
-            pressed_keys.push_back(pressed_4);
-        }
-        if (pressed_5 != value) {
-            pressed_keys.push_back(pressed_5);
-        }
-        if (pressed_6 != value) {
-            pressed_keys.push_back(pressed_6);
-        }
-        if (pressed_7 != value) {
-            pressed_keys.push_back(pressed_7);
-        }
-        if (pressed_8 != value) {
-            pressed_keys.push_back(pressed_8);
-        }
-        while (pressed_keys.size() < 8) {
-            pressed_keys.push_back(KEY_INVALID);
-        }
 
         String_t chosen_hotkey = "";
         Int_t chosen_mods_count = -1;
@@ -554,14 +544,10 @@ namespace doticu_npcp { namespace Papyrus {
             Int_t current_value = hotkeys->Current_Value(idx);
             if (current_value == value) {
                 Mods_t current_mods = hotkeys->Current_Mods(idx);
-                if (Vector::Has(pressed_keys, current_mods.mod_1) &&
-                    Vector::Has(pressed_keys, current_mods.mod_2) &&
-                    Vector::Has(pressed_keys, current_mods.mod_3)) {
-                    Int_t current_mods_count = current_mods.Count();
-                    if (current_mods_count > chosen_mods_count) {
-                        chosen_hotkey = current_hotkey;
-                        chosen_mods_count = current_mods_count;
-                    }
+                Int_t current_mods_count = current_mods.Count();
+                if (current_mods_count > chosen_mods_count && current_mods.Are_Pressed()) {
+                    chosen_hotkey = current_hotkey;
+                    chosen_mods_count = current_mods_count;
                 }
             }
         }
@@ -572,11 +558,6 @@ namespace doticu_npcp { namespace Papyrus {
     void Keys_t::Register_Keys()
     {
         Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "Update_Keys");
-    }
-
-    Bool_t Keys_t::Can_Use_Keys()
-    {
-        return !UI::Is_In_Menu_Mode();
     }
 
     void Keys_t::Actor_In_Crosshair(Bool_t allow_follower_horse, void(*callback)(Actor_t*))
@@ -592,7 +573,7 @@ namespace doticu_npcp { namespace Papyrus {
             }
             void operator()(Variable_t* result)
             {
-                if (result&& result->Has_Object()) {
+                if (result && result->Has_Object()) {
                     Reference_t* ref = result->Reference();
                     if (ref && ref->formType == kFormType_Character) {
                         Actor_t* actor = static_cast<Actor_t*>(ref);
@@ -609,82 +590,13 @@ namespace doticu_npcp { namespace Papyrus {
                     } else {
                         callback(nullptr);
                     }
+                } else {
+                    callback(nullptr);
                 }
             }
         };
         Virtual_Callback_i* vcallback = new VCallback(allow_follower_horse, callback);
         Object_Ref::Current_Crosshair_Reference(&vcallback);
-    }
-
-    void Keys_t::Gather_Pressed_Keys(Int_t value, Int_t index, Int_t count, Vector_t<Int_t> key_codes)
-    {
-        struct Callback : public Virtual_Callback_t {
-            Keys_t* self;
-            Int_t value;
-            Int_t index;
-            Int_t count;
-            Vector_t<Int_t> key_codes;
-            Callback(Keys_t* self, Int_t value, Int_t index, Int_t count, Vector_t<Int_t> key_codes) :
-                self(self), value(value), index(index), count(count), key_codes(key_codes)
-            {
-            }
-            void operator()(Variable_t* result)
-            {
-                key_codes.push_back(result ? result->Int() : -1);
-                self->Gather_Pressed_Keys(value, index + 1, count, key_codes);
-            }
-        };
-
-        if (index < count) {
-            Virtual_Callback_i* callback = new Callback(this, value, index, count, key_codes);
-            Object_Ref::Pressed_Key(index, &callback);
-        } else {
-            if (count == 1) {
-                Pressed_Hotkey_Variable()->String(
-                    Pressed_Hotkey(value,
-                                   key_codes[0])
-                );
-            } else if (count == 2) {
-                Pressed_Hotkey_Variable()->String(
-                    Pressed_Hotkey(value,
-                                   key_codes[0], key_codes[1])
-                );
-            } else if (count == 3) {
-                Pressed_Hotkey_Variable()->String(
-                    Pressed_Hotkey(value,
-                                   key_codes[0], key_codes[1], key_codes[2])
-                );
-            } else if (count == 4) {
-                Pressed_Hotkey_Variable()->String(
-                    Pressed_Hotkey(value,
-                                   key_codes[0], key_codes[1], key_codes[2], key_codes[3])
-                );
-            } else if (count == 5) {
-                Pressed_Hotkey_Variable()->String(
-                    Pressed_Hotkey(value,
-                                   key_codes[0], key_codes[1], key_codes[2], key_codes[3],
-                                   key_codes[4])
-                );
-            } else if (count == 6) {
-                Pressed_Hotkey_Variable()->String(
-                    Pressed_Hotkey(value,
-                                   key_codes[0], key_codes[1], key_codes[2], key_codes[3],
-                                   key_codes[4], key_codes[5])
-                );
-            } else if (count == 7) {
-                Pressed_Hotkey_Variable()->String(
-                    Pressed_Hotkey(value,
-                                   key_codes[0], key_codes[1], key_codes[2], key_codes[3],
-                                   key_codes[4], key_codes[5], key_codes[6])
-                );
-            } else if (count >= 8) {
-                Pressed_Hotkey_Variable()->String(
-                    Pressed_Hotkey(value,
-                                   key_codes[0], key_codes[1], key_codes[2], key_codes[3],
-                                   key_codes[4], key_codes[5], key_codes[6], key_codes[7])
-                );
-            }
-        }
     }
 
     void Keys_t::On_Key_Down(Int_t value)
@@ -698,27 +610,7 @@ namespace doticu_npcp { namespace Papyrus {
             }
             void operator()(Variable_t* result)
             {
-                if (result && result->Bool()) {
-                    struct Callback : public Virtual_Callback_t {
-                        Keys_t* self;
-                        Int_t value;
-                        Callback(Keys_t* self, Int_t value) :
-                            self(self), value(value)
-                        {
-                        }
-                        void operator()(Variable_t* result)
-                        {
-                            Int_t count = result ? result->Int() : 0;
-                            if (count > 0) {
-                                Vector_t<Int_t> key_codes;
-                                key_codes.reserve(count);
-                                self->Gather_Pressed_Keys(value, 0, count, key_codes);
-                            }
-                        }
-                    };
-                    Virtual_Callback_i* callback = new Callback(self, value);
-                    Object_Ref::Count_Pressed_Keys(&callback);
-                }
+                self->Pressed_Hotkey_Variable()->String(self->Pressed_Hotkey(value));
             }
         };
         Virtual_Callback_i* callback = new Callback(this, value);
@@ -889,7 +781,7 @@ namespace doticu_npcp { namespace Papyrus {
         METHOD("Current_Mods_To_String", 1, String_t, Current_Mods_String, String_t);
 
         METHOD("Conflicting_Hotkey", 5, String_t, Conflicting_Hotkey, String_t, Int_t, Int_t, Int_t, Int_t);
-        METHOD("Pressed_Hotkey", 9, String_t, Pressed_Hotkey, Int_t, Int_t, Int_t, Int_t, Int_t, Int_t, Int_t, Int_t, Int_t);
+        METHOD("Pressed_Hotkey", 1, String_t, Pressed_Hotkey, Int_t);
 
         METHOD("OnKeyDown", 1, void, On_Key_Down, Int_t);
         METHOD("OnKeyUp", 2, void, On_Key_Up, Int_t, Float_t);

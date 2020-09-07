@@ -239,6 +239,8 @@ namespace doticu_npcp { namespace Main {
             g_messaging->RegisterListener(g_plugin_handle, "SKSE", Callback);
         }
 
+        Papyrus::Keys_t::On_Load_Plugin();
+
         return true;
     }
 

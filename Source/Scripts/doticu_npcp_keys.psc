@@ -1,6 +1,4 @@
-;/
-    Copyright © 2020 r-neal-kelly, aka doticu
-/;
+; Copyright © 2020 r-neal-kelly, aka doticu
 
 Scriptname doticu_npcp_keys extends Quest
 
@@ -10,11 +8,6 @@ doticu_npcp_vars property VARS hidden
         return doticu_npcp.Vars()
     endFunction
 endProperty
-doticu_npcp_funcs property FUNCS hidden
-    doticu_npcp_funcs function Get()
-        return doticu_npcp.Funcs()
-    endFunction
-endProperty
 doticu_npcp_actors property ACTORS hidden
     doticu_npcp_actors function Get()
         return doticu_npcp.Funcs().ACTORS
@@ -22,48 +15,14 @@ doticu_npcp_actors property ACTORS hidden
 endProperty
 
 ; Public Constants
-string property KEY_G_DIALOGUE_MENU         = "Global: Open Dialogue Menu"  autoReadOnly hidden
-
-string property KEY_N_TOGGLE_MEMBER         = "NPC: Toggle Member"          autoReadOnly hidden
-string property KEY_N_TOGGLE_MOVE           = "NPC: Toggle Move"            autoReadOnly hidden
-string property KEY_N_MOVE_FARTHER          = "NPC: Move Farther"           autoReadOnly hidden
-string property KEY_N_MOVE_NEARER           = "NPC: Move Nearer"            autoReadOnly hidden
-string property KEY_N_MOVE_ROTATE_LEFT      = "NPC: Rotate Left"            autoReadOnly hidden
-string property KEY_N_MOVE_ROTATE_RIGHT     = "NPC: Rotate Right"           autoReadOnly hidden
-string property KEY_N_HAS_BASE              = "NPC: Has Base"               autoReadOnly hidden
-string property KEY_N_COUNT_BASE            = "NPC: Count Base"             autoReadOnly hidden
-string property KEY_N_HAS_HEAD              = "NPC: Has Head"               autoReadOnly hidden
-string property KEY_N_COUNT_HEADS           = "NPC: Count Heads"            autoReadOnly hidden
-
-string property KEY_M_TOGGLE_CLONE          = "Member: Toggle Clone"        autoReadOnly hidden
-string property KEY_M_TOGGLE_SETTLER        = "Member: Toggle Settler"      autoReadOnly hidden
-string property KEY_M_TOGGLE_THRALL         = "Member: Toggle Thrall"       autoReadOnly hidden
-string property KEY_M_TOGGLE_IMMOBILE       = "Member: Toggle Immobile"     autoReadOnly hidden
-string property KEY_M_TOGGLE_PARALYZED      = "Member: Toggle Paralyzed"    autoReadOnly hidden
-string property KEY_M_TOGGLE_FOLLOWER       = "Member: Toggle Follower"     autoReadOnly hidden
-
-string property KEY_F_TOGGLE_SNEAK          = "Follower: Toggle Sneak"      autoReadOnly hidden
-string property KEY_F_TOGGLE_SADDLER        = "Follower: Toggle Saddler"    autoReadOnly hidden
-
-string property KEY_MS_TOGGLE_DISPLAY       = "Members: Toggle Display"     autoReadOnly hidden
-string property KEY_MS_DISPLAY_PREVIOUS     = "Members: Display Previous"   autoReadOnly hidden
-string property KEY_MS_DISPLAY_NEXT         = "Members: Display Next"       autoReadOnly hidden
-
-string property KEY_FS_SUMMON_ALL           = "Followers: Summon All"       autoReadOnly hidden
-string property KEY_FS_SUMMON_MOBILE        = "Followers: Summon Mobile"    autoReadOnly hidden
-string property KEY_FS_SUMMON_IMMOBILE      = "Followers: Summon Immobile"  autoReadOnly hidden
-string property KEY_FS_SETTLE               = "Followers: Settle"           autoReadOnly hidden
-string property KEY_FS_UNSETTLE             = "Followers: Unsettle"         autoReadOnly hidden
-string property KEY_FS_MOBILIZE             = "Followers: Mobilize"         autoReadOnly hidden
-string property KEY_FS_IMMOBILIZE           = "Followers: Immobilize"       autoReadOnly hidden
-string property KEY_FS_SNEAK                = "Followers: Sneak"            autoReadOnly hidden
-string property KEY_FS_UNSNEAK              = "Followers: Unsneak"          autoReadOnly hidden
-string property KEY_FS_SADDLE               = "Followers: Saddle"           autoReadOnly hidden
-string property KEY_FS_UNSADDLE             = "Followers: Unsaddle"         autoReadOnly hidden
-string property KEY_FS_RESURRECT            = "Followers: Resurrect"        autoReadOnly hidden
+string property KEY_N_TOGGLE_MOVE       = "NPC: Toggle Move"    autoReadOnly hidden
+string property KEY_N_MOVE_FARTHER      = "NPC: Move Farther"   autoReadOnly hidden
+string property KEY_N_MOVE_NEARER       = "NPC: Move Nearer"    autoReadOnly hidden
+string property KEY_N_MOVE_ROTATE_LEFT  = "NPC: Rotate Left"    autoReadOnly hidden
+string property KEY_N_MOVE_ROTATE_RIGHT = "NPC: Rotate Right"   autoReadOnly hidden
 
 ; Private Variables
-string              p_pressed_hotkey    =    ""
+string p_pressed_hotkey = ""
 
 ; Friend Methods
 function f_Register()
@@ -79,9 +38,7 @@ function Change_Current_Mods(string key, int mod_1, int mod_2, int mod_3) native
 string function Default_Mods_To_String(string key) native
 string function Current_Mods_To_String(string key) native
 string function Conflicting_Hotkey(string key, int value, int mod_1, int mod_2, int mod_3) native
-string function Pressed_Hotkey(int value \
-                              ,int pressed_1 = -1, int pressed_2 = -1, int pressed_3 = -1, int pressed_4 = -1 \
-                              ,int pressed_5 = -1, int pressed_6 = -1, int pressed_7 = -1, int pressed_8 = -1) native
+string function Pressed_Hotkey(int value) native
 
 ; Public Methods
 function Update_Keys();;;
