@@ -236,7 +236,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             Formlist_t* formlist = Consts::Is_Saddler_Sitting_Globals_Formlist();
             Global_t* global = static_cast<Global_t*>(*(formlist->forms.entries + follower->ID()));
             global->value = 0.0f;
-            Actor2::Dismount(mounted_actor);
+            Object_Ref::Move_To_Orbit(mounted_actor, actor, 140.0f, 180.0f);
         }
 
         Actor2::Owner(actor, Actor2::Dynamic_Base(follower_actor));
@@ -263,7 +263,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         Actor_t* mounted_actor = Actor2::Get_Mounted_Actor(actor);
         if (mounted_actor) {
-            Actor2::Dismount(mounted_actor);
             struct VCallback : public Virtual_Callback_t {
                 Horse_t* horse;
                 Actor_t* actor;
@@ -280,6 +279,9 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             Virtual_Callback_i* vcallback = new VCallback(this, actor, callback);
             Modules::Funcs_t::Self()->Wait_Out_Of_Menu(1.0f, &vcallback);
         } else {
+            Global_t* is_saddler_sitting_global = static_cast<Global_t*>
+                (Consts::Is_Saddler_Sitting_Globals_Formlist()->forms.entries[Follower()->ID()]);
+            is_saddler_sitting_global->value = 0.0f;
             Object_Ref::Move_To_Orbit(actor, Consts::Storage_Marker(), 0.0f, 0.0f);
             actor->Disable();
 

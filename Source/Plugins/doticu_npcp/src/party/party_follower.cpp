@@ -978,40 +978,25 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                 Object_Ref::Untoken(actor, Consts::Saddler_Token());
                 Actor2::Evaluate_Package(actor);
 
-                struct VCallback : public Virtual_Callback_t {
-                    Follower_t* follower;
+                struct Remove_Horse_Callback : public Callback_t<Int_t, Follower_t*> {
                     Actor_t* actor;
                     Callback_t<Int_t, Follower_t*>* user_callback;
-                    VCallback(Follower_t* follower, Actor_t* actor, Callback_t<Int_t, Follower_t*>* user_callback) :
-                        follower(follower), actor(actor), user_callback(user_callback)
+                    Remove_Horse_Callback(Actor_t* actor, Callback_t<Int_t, Follower_t*>* user_callback) :
+                        actor(actor), user_callback(user_callback)
                     {
                     }
-                    void operator()(Variable_t* result)
+                    void operator()(Int_t, Follower_t* follower)
                     {
-                        struct Remove_Horse_Callback : public Callback_t<Int_t, Follower_t*> {
-                            Follower_t* follower;
-                            Actor_t* actor;
-                            Callback_t<Int_t, Follower_t*>* user_callback;
-                            Remove_Horse_Callback(Follower_t* follower, Actor_t* actor, Callback_t<Int_t, Follower_t*>* user_callback) :
-                                follower(follower), actor(actor), user_callback(user_callback)
-                            {
-                            }
-                            void operator()(Int_t, Follower_t*)
-                            {
-                                follower->Is_Saddler_Variable()->Bool(false);
-                                follower->Horse_Variable()->None(Horse_t::Class_Info());
-                                Actor2::Evaluate_Package(actor);
+                        follower->Is_Saddler_Variable()->Bool(false);
+                        follower->Horse_Variable()->None(Horse_t::Class_Info());
+                        Actor2::Evaluate_Package(actor);
 
-                                user_callback->operator()(CODES::SUCCESS, follower);
-                                delete user_callback;
-                            }
-                        };
-                        Callback_t<Int_t, Follower_t*>* remove_horse_callback = new Remove_Horse_Callback(follower, actor, user_callback);
-                        Horses_t::Self()->Remove_Horse(follower, &remove_horse_callback);
+                        user_callback->operator()(CODES::SUCCESS, follower);
+                        delete user_callback;
                     }
                 };
-                Virtual_Callback_i* vcallback = new VCallback(this, actor, *callback);
-                Actor2::Dismount(actor, &vcallback);
+                Callback_t<Int_t, Follower_t*>* remove_horse_callback = new Remove_Horse_Callback(actor, *callback);
+                Horses_t::Self()->Remove_Horse(this, &remove_horse_callback);
             } else {
                 (*callback)->operator()(CODES::IS, this);
                 delete (*callback);
@@ -1027,10 +1012,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         NPCP_ASSERT(Is_Filled());
 
         Object_Ref::Untoken(actor, Consts::Saddler_Token());
-
-        if (Actor2::Is_On_Mount(actor)) {
-            Actor2::Dismount(actor);
-        }
 
         Horse_t* horse = Horse();
         if (horse) {

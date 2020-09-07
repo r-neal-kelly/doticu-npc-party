@@ -52,7 +52,6 @@ namespace doticu_npcp { namespace Actor2 {
     Actor_t* Get_Mount(Actor_t* mounter);
     Actor_t* Get_Mounted_Actor(Actor_t* horse);
     bool Is_On_Mount(Actor_t* actor);
-    void Dismount(Actor_t* actor, Virtual_Callback_i** callback = nullptr);
 
     Int_t Sex(Actor_t* actor);
     String_t Sex_String(Actor_t* actor);

@@ -1148,11 +1148,6 @@ namespace doticu_npcp { namespace Actor2 {
         return actor && Get_Mount(actor) != nullptr;
     }
 
-    void Dismount(Actor_t* actor, Virtual_Callback_i** callback)
-    {
-        Virtual_Machine_t::Self()->Call_Method(actor, "Actor", "Dismount", nullptr, callback);
-    }
-
     Int_t Sex(Actor_t* actor)
     {
         if (actor && actor->baseForm) {
