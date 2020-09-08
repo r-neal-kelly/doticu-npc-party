@@ -44,9 +44,9 @@ Actor property ACTOR_PLAYER hidden
 endProperty
 
 ; Private Variables
-bool                p_is_created    = false
-bool                p_is_locked     = false
-bool                p_is_in_combat  = false
+bool    p_is_created        = false
+bool    p_is_locked         = false
+bool    p_is_in_combat      = false
 
 ; Native Methods
 bool function Is_Party_In_Combat() native
@@ -70,6 +70,7 @@ function f_Register()
     RegisterForModEvent("doticu_npcp_cell_change", "On_Cell_Change")
     RegisterForControl("Sneak")
     RegisterForActorAction(doticu_npcp_codes.ACTION_DRAW_END())
+    RegisterForCrosshairRef()
 endFunction
 
 function f_Unregister()
@@ -187,3 +188,5 @@ event On_Cell_Change(Form cell_new, Form cell_old)
     ACTORS.Apply_Ability(ACTOR_PLAYER, doticu_npcp_consts.Cell_Ability_Spell())
     FOLLOWERS.Catch_Up()
 endEvent
+
+event OnCrosshairRefChange(ObjectReference ref) native

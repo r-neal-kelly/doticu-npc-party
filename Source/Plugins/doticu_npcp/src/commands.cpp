@@ -203,6 +203,8 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                 return Log_Note(name, " is a mannequin and cannot follow.");
             case (CODES::ACTOR):
                 return Log_Note("That can't become a follower.");
+            case (CODES::CANT):
+                return Log_Note(name, " is in another framework. Release them first.");
             default:
                 return Log_Error(name, " can't start following", code);
         };
@@ -221,6 +223,22 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                 return Log_Note("That is not a follower.");
             default:
                 return Log_Error(name, " can't stop following", code);
+        };
+    }
+
+    void Commands_t::Log_Relinquish(Int_t code, const char* name)
+    {
+        switch (code) {
+            case (CODES::SUCCESS):
+                return Log_Note(name, " was relinquished to another framework.");
+            case (CODES::MEMBER):
+                return Log_Note(name, " isn't a member, and so can't be relinquished.");
+            case (CODES::FOLLOWER):
+                return Log_Note(name, " wasn't following, and so can't be relinquished.");
+            case (CODES::ACTOR):
+                return Log_Note("That can't be relinquished.");
+            default:
+                return Log_Error(name, " can't be relinquished", code);
         };
     }
 
@@ -2403,6 +2421,33 @@ namespace doticu_npcp { namespace Modules { namespace Control {
             };
             Callback_t<Int_t, Member_t*>* add_callback = new Add_Callback(this, actor);
             Members_t::Self()->Add_Original(actor, &add_callback);
+        }
+    }
+
+    void Commands_t::Relinquish(Actor_t* actor)
+    {
+        using namespace Party;
+
+        if (actor) {
+            Member_t* member = Members_t::Self()->From_Actor(actor);
+            if (member) {
+                struct Relinquish_Callback : public Callback_t<Int_t, Member_t*> {
+                    Commands_t* commands;
+                    Relinquish_Callback(Commands_t* commands) :
+                        commands(commands)
+                    {
+                    }
+                    void operator()(Int_t code, Member_t* member)
+                    {
+                        commands->Log_Relinquish(code, member->Name());
+                    }
+                };
+                Followers_t::Self()->Relinquish_Follower(member, new Relinquish_Callback(this));
+            } else {
+                Log_Relinquish(CODES::MEMBER, Actor2::Get_Name(actor));
+            }
+        } else {
+            Log_Relinquish(CODES::ACTOR, "");
         }
     }
 

@@ -98,6 +98,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         void Fill(Member_t* member, Followers_t::Add_Callback_i** add_callback);
         void Unfill(Callback_t<Int_t, Member_t*>** callback);
+        void Relinquish(Callback_t<Int_t, Member_t*>* user_callback);
         void Create(Member_t* member);
         void Destroy(Callback_t<>** callback);
         void Backup_State(Actor_t* actor);

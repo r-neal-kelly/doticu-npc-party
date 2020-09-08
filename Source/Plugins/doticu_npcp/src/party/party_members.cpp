@@ -1026,6 +1026,19 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
+    void Members_t::u_0_9_9()
+    {
+        Vector_t<Member_t*> filled = Filled();
+        for (size_t idx = 0, count = filled.size(); idx < count; idx += 1) {
+            Member_t* member = filled[idx];
+            if (member) {
+                if (member->Previous_Potential_Follower_Faction_Variable()->Bool()) {
+                    Actor2::Add_Faction(member->Actor(), Consts::Potential_Follower_Faction(), 0);
+                }
+            }
+        }
+    }
+
     void Members_t::Register_Me(Virtual_Machine_t* vm)
     {
         #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \

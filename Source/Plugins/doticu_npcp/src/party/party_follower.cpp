@@ -6,6 +6,7 @@
 #include "actor_base2.h"
 #include "cell.h"
 #include "codes.h"
+#include "commands.h"
 #include "consts.h"
 #include "object_ref.h"
 #include "papyrus.inl"
@@ -438,6 +439,74 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         };
         Callback_t<>* destroy_callback = new Destroy_Callback(this, Member(), *callback);
         Destroy(&destroy_callback);
+    }
+
+    void Follower_t::Relinquish(Callback_t<Int_t, Member_t*>* user_callback)
+    {
+        using UCallback_t = Callback_t<Int_t, Member_t*>;
+
+        if (Is_Saddler()) {
+            struct Unsaddle_Callback : public Callback_t<Int_t, Follower_t*> {
+                UCallback_t* user_callback;
+                Unsaddle_Callback(UCallback_t* user_callback) :
+                    user_callback(user_callback)
+                {
+                }
+                void operator()(Int_t code, Follower_t* follower)
+                {
+                    if (follower) {
+                        follower->Relinquish(user_callback);
+                    }
+                }
+            };
+            Callback_t<Int_t, Follower_t*>* unsaddle_callback = new Unsaddle_Callback(user_callback);
+            Unsaddle(&unsaddle_callback);
+        } else {
+            struct VCallback : public Virtual_Callback_t {
+                Member_t* member;
+                UCallback_t* user_callback;
+                VCallback(Member_t* member, UCallback_t* user_callback) :
+                    member(member), user_callback(user_callback)
+                {
+                }
+                void operator()(Variable_t* result)
+                {
+                    user_callback->operator()(CODES::SUCCESS, member);
+                    delete user_callback;
+                }
+            };
+            Virtual_Callback_i* vcallback = new VCallback(Member(), user_callback);
+            Alias_t::Unfill(&vcallback);
+
+            Actor_t* actor = Actor();
+
+            if (Is_Retreater()) {
+                Unretreat();
+            }
+            if (Is_Sneak()) {
+                Unsneak();
+            }
+            Unlevel();
+
+            if (Previous_No_Auto_Bard_Faction_Variable()->Bool()) {
+                Actor2::Add_Faction(actor, Consts::No_Bard_Singer_Autostart_Faction());
+            }
+            Object_Ref::Untoken(actor, Consts::Follower_Token());
+            Actor2::Evaluate_Package(actor);
+
+            Previous_No_Auto_Bard_Faction_Variable()->Bool(false);
+            Previous_Speed_Multiplier_Variable()->Float(-1.0f);
+            Previous_Waiting_For_Player_Variable()->Float(-1.0f);
+            Previous_Player_Relationship_Variable()->Int(-1);
+
+            Is_Retreater_Variable()->Bool(false);
+            Is_Saddler_Variable()->Bool(false);
+            Is_Sneak_Variable()->Bool(false);
+
+            Horse_Variable()->None(Horse_t::Class_Info());
+            Member_Variable()->None(Member_t::Class_Info());
+            Actor_Variable()->None(Class_Info_t::Fetch(Actor_t::kTypeID, true));
+        }
     }
 
     void Follower_t::Create(Member_t* member)
@@ -1104,26 +1173,30 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         if (Is_Ready() && Is_Alive()) {
             Actor_t* actor = Actor();
 
-            Enforce_Follower(actor); // Backup should be Follow and Restore Unfollow
-
-            Level();
-
-            if (Is_Sneak()) {
-                Enforce_Sneak(actor);
+            if (!Followers_t::Self()->Can_Actor_Follow(actor)) {
+                Modules::Control::Commands_t::Self()->Relinquish(actor);
             } else {
-                Enforce_Non_Sneak(actor);
-            }
+                Enforce_Follower(actor); // Backup should be Follow and Restore Unfollow
 
-            if (Is_Saddler()) {
-                Enforce_Saddler(actor);
-            } else {
-                Enforce_Non_Saddler(actor);
-            }
+                Level();
 
-            if (Is_Retreater()) {
-                Enforce_Retreater(actor);
-            } else {
-                Enforce_Non_Retreater(actor);
+                if (Is_Sneak()) {
+                    Enforce_Sneak(actor);
+                } else {
+                    Enforce_Non_Sneak(actor);
+                }
+
+                if (Is_Saddler()) {
+                    Enforce_Saddler(actor);
+                } else {
+                    Enforce_Non_Saddler(actor);
+                }
+
+                if (Is_Retreater()) {
+                    Enforce_Retreater(actor);
+                } else {
+                    Enforce_Non_Retreater(actor);
+                }
             }
         }
     }

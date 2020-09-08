@@ -863,7 +863,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     void Member_t::On_Activate(Reference_t* activator)
     {
         if (Is_Ready()) {
-            if (activator == Player_t::Self()->Actor()) {
+            Player_t* player = Player_t::Self();
+            if (activator == player->Actor()) {
                 Actor_t* actor = Actor();
                 if (Is_Alive()) {
                     if (Actor2::Is_AI_Enabled(actor)) {
@@ -1194,7 +1195,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         NPCP_ASSERT(actor);
 
         Previous_Crime_Faction_Variable()->Pack(Actor2::Crime_Faction(actor));
-        Previous_Potential_Follower_Faction_Variable()->Bool(Actor2::Has_Faction(actor, Consts::Potential_Follower_Faction()));
+        //Previous_Potential_Follower_Faction_Variable()->Bool(Actor2::Has_Faction(actor, Consts::Potential_Follower_Faction()));
         Previous_No_Body_Cleanup_Faction_Variable()->Bool(Actor2::Has_Faction(actor, Consts::WI_No_Body_Cleanup_Faction()));
 
         Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(actor);
@@ -1209,11 +1210,11 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         NPCP_ASSERT(actor);
 
         Actor2::Add_Crime_Faction(actor, Previous_Crime_Faction_Variable()->Faction());
-        if (Previous_Potential_Follower_Faction_Variable()->Bool()) {
+        /*if (Previous_Potential_Follower_Faction_Variable()->Bool()) {
             Actor2::Add_Faction(actor, Consts::Potential_Follower_Faction(), 0);
         } else {
             Actor2::Remove_Faction(actor, Consts::Potential_Follower_Faction());
-        }
+        }*/
         if (Previous_No_Body_Cleanup_Faction_Variable()->Bool()) {
             Actor2::Add_Faction(actor, Consts::WI_No_Body_Cleanup_Faction(), 0);
         } else {
@@ -1243,9 +1244,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             Object_Ref::Untoken(actor, Consts::Generic_Token());
         }
 
-        // maybe we can check for change
-        Actor2::Remove_Faction(actor, Consts::Potential_Follower_Faction());
-        Actor2::Remove_Faction(actor, Consts::Current_Follower_Faction());
+        //Actor2::Remove_Faction(actor, Consts::Potential_Follower_Faction());
+        //Actor2::Remove_Faction(actor, Consts::Current_Follower_Faction());
         Actor2::Add_Faction(actor, Consts::WI_No_Body_Cleanup_Faction());
         Actor2::Add_Faction(actor, Consts::Member_Faction());
         Actor2::Remove_Crime_Faction(actor);

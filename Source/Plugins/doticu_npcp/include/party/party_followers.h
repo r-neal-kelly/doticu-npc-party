@@ -110,12 +110,14 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Vector_t<Follower_t*> Sort(Vector_t<Follower_t*> members);
         Vector_t<Follower_t*> Sort_Filled(Int_t begin = 0, Int_t end = -1);
 
+        Bool_t Can_Actor_Follow(Actor_t* actor);
         struct Add_Callback_i {
             virtual ~Add_Callback_i() = default;
-            virtual void operator()(Int_t code, Follower_t* member) = 0;
+            virtual void operator()(Int_t code, Follower_t* follower) = 0;
         };
         void Add_Follower(Member_t* member, Add_Callback_i** add_callback);
         void Remove_Follower(Member_t* member, Callback_t<Int_t, Member_t*>** callback);
+        void Relinquish_Follower(Member_t* member, Callback_t<Int_t, Member_t*>* user_callback);
 
         Int_t Enforce();
         Int_t Resurrect();

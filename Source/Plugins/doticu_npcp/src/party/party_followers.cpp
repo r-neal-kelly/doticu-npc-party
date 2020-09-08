@@ -2,6 +2,7 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "actor2.h"
 #include "codes.h"
 #include "consts.h"
 #include "game.h"
@@ -469,6 +470,11 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         return Slice(Sort(Filled()), begin, end);
     }
 
+    Bool_t Followers_t::Can_Actor_Follow(Actor_t* actor)
+    {
+        return actor && !Actor2::Has_Faction(actor, Consts::Current_Follower_Faction());
+    }
+
     void Followers_t::Add_Follower(Member_t* member, Add_Callback_i** add_callback)
     {
         NPCP_ASSERT(add_callback);
@@ -476,12 +482,17 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             if (member->Isnt_Mannequin()) {
                 Actor_t* actor = member->Actor();
                 if (Hasnt_Actor(actor)) {
-                    if (Count_Filled() < Max()) {
-                        Follower_t* follower = From_Unfilled();
-                        NPCP_ASSERT(follower);
-                        follower->Fill(member, add_callback);
+                    if (Can_Actor_Follow(actor)) {
+                        if (Count_Filled() < Max()) {
+                            Follower_t* follower = From_Unfilled();
+                            NPCP_ASSERT(follower);
+                            follower->Fill(member, add_callback);
+                        } else {
+                            (*add_callback)->operator()(CODES::FOLLOWERS, nullptr);
+                            delete (*add_callback);
+                        }
                     } else {
-                        (*add_callback)->operator()(CODES::FOLLOWERS, nullptr);
+                        (*add_callback)->operator()(CODES::CANT, nullptr);
                         delete (*add_callback);
                     }
                 } else {
@@ -511,6 +522,24 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         } else {
             (*callback)->operator()(CODES::MEMBER, nullptr);
             delete (*callback);
+        }
+    }
+
+    void Followers_t::Relinquish_Follower(Member_t* member, Callback_t<Int_t, Member_t*>* user_callback)
+    {
+        NPCP_ASSERT(user_callback);
+
+        if (member) {
+            Follower_t* follower = From_Actor(member->Actor());
+            if (follower) {
+                follower->Relinquish(user_callback);
+            } else {
+                user_callback->operator()(CODES::FOLLOWER, member);
+                delete user_callback;
+            }
+        } else {
+            user_callback->operator()(CODES::MEMBER, nullptr);
+            delete user_callback;
         }
     }
 

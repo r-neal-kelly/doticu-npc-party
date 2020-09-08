@@ -157,6 +157,9 @@ namespace doticu_npcp { namespace Modules {
             if (Is_NPCP_Version_Less_Than(0, 9, 8)) {
                 Party::Members_t::Self()->u_0_9_8();
             }
+            if (Is_NPCP_Version_Less_Than(0, 9, 9)) {
+                Party::Members_t::Self()->u_0_9_9();
+            }
 
             Vars::NPCP_Major(curr_major);
             Vars::NPCP_Minor(curr_minor);

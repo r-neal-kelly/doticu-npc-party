@@ -41,6 +41,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         void Log_Unclone(Int_t code, const char* name);
         void Log_Follow(Int_t code, const char* name);
         void Log_Unfollow(Int_t code, const char* name);
+        void Log_Relinquish(Int_t code, const char* name);
         void Log_Saddle(Int_t code, const char* name);
         void Log_Unsaddle(Int_t code, const char* name);
 
@@ -127,6 +128,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         void Toggle_Sneak(Actor_t* actor);
         void Toggle_Saddler(Actor_t* actor);
         void Toggle_Retreater(Actor_t* actor);
+        void Relinquish(Actor_t* actor);
 
         // Members
         void Members_Start_Display();

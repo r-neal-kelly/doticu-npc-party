@@ -3,12 +3,15 @@
 */
 
 #include "actor2.h"
+#include "commands.h"
 #include "consts.h"
 #include "object_ref.h"
 #include "papyrus.inl"
 #include "utils.h"
 
 #include "party/party_player.h"
+#include "party/party_members.h"
+#include "party/party_member.h"
 #include "party/party_followers.h"
 
 namespace doticu_npcp { namespace Papyrus { namespace Party {
@@ -105,6 +108,24 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     }
 
+    void Player_t::On_Crosshair_Reference_Change(Reference_t* ref)
+    {
+        static Members_t* members = Members_t::Self();
+        static Followers_t* followers = Followers_t::Self();
+
+        if (ref && ref->formType == kFormType_Character) {
+            Actor_t* actor = static_cast<Actor_t*>(ref);
+            Member_t* member = members->From_Actor(actor);
+            if (member) {
+                member->Enforce_Name(actor, member->Name());
+                Follower_t* follower = followers->From_Actor(actor);
+                if (follower && !followers->Can_Actor_Follow(actor)) {
+                    Modules::Control::Commands_t::Self()->Relinquish(actor);
+                }
+            }
+        }
+    }
+
     void Player_t::Register_Me(Virtual_Machine_t* vm)
     {
         #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
@@ -115,6 +136,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         W
 
         METHOD("Is_Party_In_Combat", 0, Bool_t, Is_Party_In_Combat);
+        METHOD("OnCrosshairRefChange", 1, void, On_Crosshair_Reference_Change, Reference_t*);
 
         #undef METHOD
     }

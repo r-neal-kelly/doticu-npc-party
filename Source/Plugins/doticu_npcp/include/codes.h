@@ -19,6 +19,8 @@ namespace doticu_npcp { namespace CODES {
         ISNT,
         HAS,
         HASNT,
+        CAN,
+        CANT,
         ALIVE,
         DEAD,
         
