@@ -138,6 +138,56 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         };
     }
 
+    void Commands_t::Log_Unmember(Int_t code, const char* name)
+    {
+        switch (code) {
+            case (CODES::SUCCESS):
+                return Log_Note(name, " is no longer a member.");
+            case (CODES::ACTOR):
+                return Log_Note("That is not a member.");
+            case (CODES::MEMBER):
+                return Log_Note(name, " isnt a member.");
+            case (CODES::CLONE):
+                return Log_Note(name, " isnt a clone.");
+            default:
+                return Log_Error(name, " could not be unmembered", code);
+        };
+    }
+
+    void Commands_t::Log_Clone(Int_t code, const char* name)
+    {
+        switch (code) {
+            case (CODES::SUCCESS):
+                return Log_Note("A clone of ", name, " is now a member.");
+            case (CODES::ACTOR):
+                return Log_Note("A clone of this can't be made a member.");
+            case (CODES::MEMBERS):
+                return Log_Note("No room for a clone of ", name, " to be a member.");
+            case (CODES::CHILD):
+                return Log_Note("A child cannot be cloned.");
+            case (CODES::CLONE):
+                return Log_Note(name, " could not be cloned.");
+            default:
+                return Log_Error(name, " could not be cloned", code);
+        };
+    }
+
+    void Commands_t::Log_Unclone(Int_t code, const char* name)
+    {
+        switch (code) {
+            case (CODES::SUCCESS):
+                return Log_Note(name, " is no longer a member and was uncloned.");
+            case (CODES::ACTOR):
+                return Log_Note("That can't be unmembered or uncloned.");
+            case (CODES::MEMBER):
+                return Log_Note(name, " was already not a member and can't be uncloned.");
+            case (CODES::CLONE):
+                return Log_Note(name, " isnt a clone.");
+            default:
+                return Log_Error(name, " can't be unmembered and uncloned", code);
+        };
+    }
+
     void Commands_t::Log_Follow(Int_t code, const char* name)
     {
         switch (code) {
@@ -208,47 +258,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
     {
         using namespace Party;
 
-        class Add_Callback : public Members_t::Add_Callback_i {
-        public:
-            Commands_t* commands;
-            const char* name;
-            Add_Callback(Commands_t* commands, const char* name) :
-                commands(commands), name(name)
-            {
-            }
-            virtual void operator()(Int_t code, Member_t* member) override
-            {
-                commands->Log_Member(code, name);
-            }
-        };
-        Members_t::Add_Callback_i* add_callback = new Add_Callback(this, Actor2::Get_Name(actor));
-        Members_t::Self()->Add_Original(actor, &add_callback);
-    }
-
-    void Commands_t::Unmember(Actor_t* actor)
-    {
-        const char* name = Actor2::Get_Name(actor);
-        Int_t code = Party::Members_t::Self()->Remove_Original(actor);
-
-        switch (code) {
-            case (CODES::SUCCESS):
-                return Log_Note(name, " is no longer a member.");
-            case (CODES::ACTOR):
-                return Log_Note("That is not a member.");
-            case (CODES::MEMBER):
-                return Log_Note(name, " isnt a member.");
-            case (CODES::CLONE):
-                return Log_Note(name, " isnt a clone.");
-            default:
-                return Log_Error(name, " could not be unmembered", code);
-        };
-    }
-
-    void Commands_t::Clone(Actor_t* actor)
-    {
-        using namespace Party;
-
-        struct Add_Callback : public Members_t::Add_Callback_i {
+        struct Add_Callback : public Callback_t<Int_t, Member_t*> {
             Commands_t* commands;
             const char* name;
             Add_Callback(Commands_t* commands, const char* name) :
@@ -257,43 +267,70 @@ namespace doticu_npcp { namespace Modules { namespace Control {
             }
             void operator()(Int_t code, Member_t* member)
             {
-                switch (code) {
-                    case (CODES::SUCCESS):
-                        return commands->Log_Note("A clone of ", name, " is now a member.");
-                    case (CODES::ACTOR):
-                        return commands->Log_Note("A clone of this can't be made a member.");
-                    case (CODES::MEMBERS):
-                        return commands->Log_Note("No room for a clone of ", name, " to be a member.");
-                    case (CODES::CHILD):
-                        return commands->Log_Note("A child cannot be cloned.");
-                    case (CODES::CLONE):
-                        return commands->Log_Note(name, " could not be cloned.");
-                    default:
-                        return commands->Log_Error(name, " could not be cloned", code);
-                };
+                commands->Log_Member(code, name);
             }
         };
-        Members_t::Add_Callback_i* add_callback = new Add_Callback(this, Actor2::Get_Name(actor));
+        Callback_t<Int_t, Member_t*>* add_callback = new Add_Callback(this, Actor2::Get_Name(actor));
+        Members_t::Self()->Add_Original(actor, &add_callback);
+    }
+
+    void Commands_t::Unmember(Actor_t* actor)
+    {
+        using namespace Party;
+
+        struct Remove_Callback : public Callback_t<Int_t, Actor_t*> {
+            Commands_t* commands;
+            Remove_Callback(Commands_t* commands) :
+                commands(commands)
+            {
+            }
+            void operator()(Int_t code, Actor_t* actor)
+            {
+                commands->Log_Unmember(code, actor ? Actor2::Get_Name(actor) : "");
+            }
+        };
+        Callback_t<Int_t, Actor_t*>* remove_callback = new Remove_Callback(this);
+        Members_t::Self()->Remove_Original(actor, &remove_callback);
+    }
+
+    void Commands_t::Clone(Actor_t* actor)
+    {
+        using namespace Party;
+
+        struct Add_Callback : public Callback_t<Int_t, Member_t*> {
+            Commands_t* commands;
+            const char* name;
+            Add_Callback(Commands_t* commands, const char* name) :
+                commands(commands), name(name)
+            {
+            }
+            void operator()(Int_t code, Member_t* member)
+            {
+                commands->Log_Clone(code, name);
+            }
+        };
+        Callback_t<Int_t, Member_t*>* add_callback = new Add_Callback(this, Actor2::Get_Name(actor));
         Members_t::Self()->Add_Clone(actor, &add_callback);
     }
 
     void Commands_t::Unclone(Actor_t* actor)
     {
-        const char* name = Actor2::Get_Name(actor);
-        Int_t code = Party::Members_t::Self()->Remove_Clone(actor, true);
+        using namespace Party;
 
-        switch (code) {
-            case (CODES::SUCCESS):
-                return Log_Note(name, " is no longer a member and was uncloned.");
-            case (CODES::ACTOR):
-                return Log_Note("That can't be unmembered or uncloned.");
-            case (CODES::MEMBER):
-                return Log_Note(name, " was already not a member and can't be uncloned.");
-            case (CODES::CLONE):
-                return Log_Note(name, " isnt a clone.");
-            default:
-                return Log_Error(name, " can't be unmembered and uncloned", code);
+        struct Remove_Callback : public Callback_t<Int_t, Actor_t*> {
+            Commands_t* commands;
+            const char* name;
+            Remove_Callback(Commands_t* commands, const char* name) :
+                commands(commands), name(name)
+            {
+            }
+            void operator()(Int_t code, Actor_t* actor)
+            {
+                commands->Log_Unmember(code, name);
+            }
         };
+        Callback_t<Int_t, Actor_t*>* remove_callback = new Remove_Callback(this, Actor2::Get_Name(actor));
+        Members_t::Self()->Remove_Clone(actor, true, &remove_callback);
     }
 
     void Commands_t::Start_Move(Actor_t* actor)
@@ -1569,7 +1606,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                 Immobilize(actor);
             }
         } else {
-            class Add_Callback : public Members_t::Add_Callback_i {
+            class Add_Callback : public Callback_t<Int_t, Member_t*> {
             public:
                 Commands_t* commands;
                 Actor_t* actor;
@@ -1586,7 +1623,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                     }
                 }
             };
-            Members_t::Add_Callback_i* add_callback = new Add_Callback(this, actor);
+            Callback_t<Int_t, Member_t*>* add_callback = new Add_Callback(this, actor);
             Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
@@ -1603,7 +1640,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                 Settle(actor);
             }
         } else {
-            class Add_Callback : public Members_t::Add_Callback_i {
+            class Add_Callback : public Callback_t<Int_t, Member_t*> {
             public:
                 Commands_t* commands;
                 Actor_t* actor;
@@ -1620,7 +1657,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                     }
                 }
             };
-            Members_t::Add_Callback_i* add_callback = new Add_Callback(this, actor);
+            Callback_t<Int_t, Member_t*>* add_callback = new Add_Callback(this, actor);
             Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
@@ -1637,7 +1674,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                 Enthrall(actor);
             }
         } else {
-            class Add_Callback : public Members_t::Add_Callback_i {
+            class Add_Callback : public Callback_t<Int_t, Member_t*> {
             public:
                 Commands_t* commands;
                 Actor_t* actor;
@@ -1654,7 +1691,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                     }
                 }
             };
-            Members_t::Add_Callback_i* add_callback = new Add_Callback(this, actor);
+            Callback_t<Int_t, Member_t*>* add_callback = new Add_Callback(this, actor);
             Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
@@ -1671,7 +1708,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                 Paralyze(actor);
             }
         } else {
-            class Add_Callback : public Members_t::Add_Callback_i {
+            class Add_Callback : public Callback_t<Int_t, Member_t*> {
             public:
                 Commands_t* commands;
                 Actor_t* actor;
@@ -1688,7 +1725,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                     }
                 }
             };
-            Members_t::Add_Callback_i* add_callback = new Add_Callback(this, actor);
+            Callback_t<Int_t, Member_t*>* add_callback = new Add_Callback(this, actor);
             Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
@@ -1705,7 +1742,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                 Mannequinize(actor, marker);
             }
         } else {
-            class Add_Callback : public Members_t::Add_Callback_i {
+            class Add_Callback : public Callback_t<Int_t, Member_t*> {
             public:
                 Commands_t* commands;
                 Actor_t* actor;
@@ -1723,7 +1760,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                     }
                 }
             };
-            Members_t::Add_Callback_i* add_callback = new Add_Callback(this, actor, marker);
+            Callback_t<Int_t, Member_t*>* add_callback = new Add_Callback(this, actor, marker);
             Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
@@ -1749,7 +1786,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                 Reanimate(actor);
             }
         } else {
-            class Add_Callback : public Members_t::Add_Callback_i {
+            class Add_Callback : public Callback_t<Int_t, Member_t*> {
             public:
                 Commands_t* commands;
                 Actor_t* actor;
@@ -1766,7 +1803,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                     }
                 }
             };
-            Members_t::Add_Callback_i* add_callback = new Add_Callback(this, actor);
+            Callback_t<Int_t, Member_t*>* add_callback = new Add_Callback(this, actor);
             Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
@@ -1783,7 +1820,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                 Follow(actor);
             }
         } else {
-            class Add_Callback : public Members_t::Add_Callback_i {
+            class Add_Callback : public Callback_t<Int_t, Member_t*> {
             public:
                 Commands_t* commands;
                 Actor_t* actor;
@@ -1800,7 +1837,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                     }
                 }
             };
-            Members_t::Add_Callback_i* add_callback = new Add_Callback(this, actor);
+            Callback_t<Int_t, Member_t*>* add_callback = new Add_Callback(this, actor);
             Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
@@ -1923,7 +1960,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                     return Stylize_Default(actor);
             }
         } else {
-            class Add_Callback : public Members_t::Add_Callback_i {
+            class Add_Callback : public Callback_t<Int_t, Member_t*> {
             public:
                 Commands_t* commands;
                 Actor_t* actor;
@@ -1940,7 +1977,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                     }
                 }
             };
-            Members_t::Add_Callback_i* add_callback = new Add_Callback(this, actor);
+            Callback_t<Int_t, Member_t*>* add_callback = new Add_Callback(this, actor);
             Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
@@ -1963,7 +2000,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                     return Vitalize_Mortal(actor);
             }
         } else {
-            class Add_Callback : public Members_t::Add_Callback_i {
+            class Add_Callback : public Callback_t<Int_t, Member_t*> {
             public:
                 Commands_t* commands;
                 Actor_t* actor;
@@ -1980,7 +2017,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                     }
                 }
             };
-            Members_t::Add_Callback_i* add_callback = new Add_Callback(this, actor);
+            Callback_t<Int_t, Member_t*>* add_callback = new Add_Callback(this, actor);
             Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
@@ -2007,7 +2044,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                     return Rate(actor, 0);
             }
         } else {
-            class Add_Callback : public Members_t::Add_Callback_i {
+            class Add_Callback : public Callback_t<Int_t, Member_t*> {
             public:
                 Commands_t* commands;
                 Actor_t* actor;
@@ -2024,7 +2061,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                     }
                 }
             };
-            Members_t::Add_Callback_i* add_callback = new Add_Callback(this, actor);
+            Callback_t<Int_t, Member_t*>* add_callback = new Add_Callback(this, actor);
             Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
@@ -2231,7 +2268,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                 Followers_t::Self()->Add_Follower(member, &add_callback);
             }
         } else {
-            class Add_Callback : public Members_t::Add_Callback_i {
+            class Add_Callback : public Callback_t<Int_t, Member_t*> {
             public:
                 Commands_t* commands;
                 Actor_t* actor;
@@ -2248,7 +2285,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                     }
                 }
             };
-            Members_t::Add_Callback_i* add_callback = new Add_Callback(this, actor);
+            Callback_t<Int_t, Member_t*>* add_callback = new Add_Callback(this, actor);
             Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
@@ -2289,7 +2326,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                 Followers_t::Self()->Add_Follower(member, &add_callback);
             }
         } else {
-            class Add_Callback : public Members_t::Add_Callback_i {
+            class Add_Callback : public Callback_t<Int_t, Member_t*> {
             public:
                 Commands_t* commands;
                 Actor_t* actor;
@@ -2306,7 +2343,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                     }
                 }
             };
-            Members_t::Add_Callback_i* add_callback = new Add_Callback(this, actor);
+            Callback_t<Int_t, Member_t*>* add_callback = new Add_Callback(this, actor);
             Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
@@ -2347,7 +2384,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                 Followers_t::Self()->Add_Follower(member, &add_callback);
             }
         } else {
-            class Add_Callback : public Members_t::Add_Callback_i {
+            class Add_Callback : public Callback_t<Int_t, Member_t*> {
             public:
                 Commands_t* commands;
                 Actor_t* actor;
@@ -2364,7 +2401,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                     }
                 }
             };
-            Members_t::Add_Callback_i* add_callback = new Add_Callback(this, actor);
+            Callback_t<Int_t, Member_t*>* add_callback = new Add_Callback(this, actor);
             Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
@@ -2789,6 +2826,8 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                 return Log_Note("All followers are no longer members.");
             case (CODES::FOLLOWERS):
                 return Log_Note("No followers to unmember.");
+            case (CODES::HAS):
+                return Log_Note("Still unmembering followers, please wait.");
             default:
                 return Log_Error("Could not unmember followers", code);
         };

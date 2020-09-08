@@ -190,10 +190,10 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                     Bool_t is_bash,
                     Bool_t is_blocked);
 
-        void Fill(Actor_t* actor, Bool_t is_clone, Members_t::Add_Callback_i** add_callback);
-        void Unfill();
+        void Fill(Actor_t* actor, Bool_t is_clone, Callback_t<Int_t, Member_t*>** user_callback);
+        void Unfill(Callback_t<Int_t, Actor_t*>** user_callback);
         void Create(Actor_t* actor, Bool_t is_clone);
-        void Destroy();
+        void Destroy(Callback_t<>** user_callback);
         void Destroy_Containers();
         void Destroy_Outfit2s();
         void Backup_State(Actor_t* actor);
@@ -247,9 +247,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         void Destroy_Reanimated(Actor_t* actor);
         void Enforce_Non_Reanimated(Actor_t* actor);
 
-        Int_t Unmember();
-        Int_t Unclone();
-
         Int_t Stylize(Int_t style);
         Int_t Stylize_Default();
         Int_t Stylize_Warrior();
@@ -288,7 +285,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Int_t Change_Current_Outfit2();
         void Update_Outfit2(Int_t outfit2_code, Bool_t do_cache_outfit1 = false);
         void Open_Outfit2();
-        void Enforce_Outfit2(Actor_t* actor);
+        void Enforce_Outfit2(Actor_t* actor, Callback_t<Actor_t*>* user_callback = nullptr);
 
         Int_t Rate(Int_t rating);
 

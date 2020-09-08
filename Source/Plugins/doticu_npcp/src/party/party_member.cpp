@@ -937,37 +937,68 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
-    void Member_t::Fill(Actor_t* actor, Bool_t is_clone, Members_t::Add_Callback_i** add_callback)
+    void Member_t::Fill(Actor_t* actor, Bool_t is_clone, Callback_t<Int_t, Member_t*>** user_callback)
     {
-        NPCP_ASSERT(add_callback);
+        NPCP_ASSERT(user_callback);
 
-        struct Callback : public Virtual_Callback_t {
+        using UCallback_t = Callback_t<Int_t, Member_t*>;
+
+        struct VCallback : public Virtual_Callback_t {
         public:
             Member_t* member;
             Actor_t* actor;
             Bool_t is_clone;
-            Members_t::Add_Callback_i* add_callback;
-            Callback(Member_t* member, Actor_t* actor, Bool_t is_clone, Members_t::Add_Callback_i* add_callback) :
-                member(member), actor(actor), is_clone(is_clone), add_callback(add_callback)
+            UCallback_t* user_callback;
+            VCallback(Member_t* member, Actor_t* actor, Bool_t is_clone, UCallback_t* user_callback) :
+                member(member), actor(actor), is_clone(is_clone), user_callback(user_callback)
             {
             }
             void operator()(Variable_t* result)
             {
                 member->Create(actor, is_clone);
-                NPCP_ASSERT(add_callback);
-                add_callback->operator()(CODES::SUCCESS, member);
-                delete add_callback;
+                user_callback->operator()(CODES::SUCCESS, member);
+                delete user_callback;
             }
         };
-        Virtual_Callback_i* callback = new Callback(this, actor, is_clone, *add_callback);
-
-        Alias_t::Fill(actor, &callback);
+        Virtual_Callback_i* vcallback = new VCallback(this, actor, is_clone, *user_callback);
+        Alias_t::Fill(actor, &vcallback);
     }
 
-    void Member_t::Unfill()
+    void Member_t::Unfill(Callback_t<Int_t, Actor_t*>** user_callback)
     {
-        Destroy();
-        Alias_t::Unfill(nullptr);
+        NPCP_ASSERT(user_callback);
+
+        using UCallback_t = Callback_t<Int_t, Actor_t*>;
+
+        struct Destroy_Callback : public Callback_t<> {
+            Member_t* member;
+            Actor_t* actor;
+            UCallback_t* user_callback;
+            Destroy_Callback(Member_t* member, Actor_t* actor, UCallback_t* user_callback) :
+                member(member), actor(actor), user_callback(user_callback)
+            {
+            }
+            void operator()()
+            {
+                struct VCallback : public Virtual_Callback_t {
+                    Actor_t* actor;
+                    UCallback_t* user_callback;
+                    VCallback(Actor_t* actor, UCallback_t* user_callback) :
+                        actor(actor), user_callback(user_callback)
+                    {
+                    }
+                    void operator()(Variable_t* result)
+                    {
+                        user_callback->operator()(CODES::SUCCESS, actor);
+                        delete user_callback;
+                    }
+                };
+                Virtual_Callback_i* vcallback = new VCallback(actor, user_callback);
+                member->Alias_t::Unfill(&vcallback);
+            }
+        };
+        Callback_t<>* destroy_callback = new Destroy_Callback(this, Actor(), *user_callback);
+        Destroy(&destroy_callback);
     }
 
     void Member_t::Create(Actor_t* actor, Bool_t is_clone)
@@ -1012,17 +1043,26 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
-    void Member_t::Destroy()
+    void Member_t::Destroy(Callback_t<>** user_callback)
     {
+        NPCP_ASSERT(user_callback);
+
+        using UCallback_t = Callback_t<>;
+
         if (Is_Follower()) {
-            struct Callback : public Callback_t<Int_t, Member_t*> {
+            struct Remove_Callback : public Callback_t<Int_t, Member_t*> {
+                UCallback_t* user_callback;
+                Remove_Callback(UCallback_t* user_callback) :
+                    user_callback(user_callback)
+                {
+                }
                 void operator()(Int_t code, Member_t* member)
                 {
-                    member->Destroy();
+                    member->Destroy(&user_callback);
                 }
             };
-            Callback_t<Int_t, Member_t*>* callback = new Callback();
-            Followers_t::Self()->Remove_Follower(this, &callback);
+            Callback_t<Int_t, Member_t*>* remove_callback = new Remove_Callback(*user_callback);
+            Followers_t::Self()->Remove_Follower(this, &remove_callback);
         } else {
             Actor_t* actor = Actor();
             Class_Info_t* actor_class_info = Class_Info_t::Fetch(Actor_t::kTypeID, true);
@@ -1104,6 +1144,9 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             Pack_Variable()->None(reference_class_info);
 
             Actor_Variable()->None(actor_class_info);
+
+            (*user_callback)->operator()();
+            delete (*user_callback);
         }
     }
 
@@ -1837,32 +1880,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Actor2::Remove_Spell(actor, Consts::Reanimate_Ability_Spell());
     }
 
-    Int_t Member_t::Unmember()
-    {
-        if (Is_Filled()) {
-            if (Is_Original()) {
-                return Members_t::Self()->Remove_Original(Actor());
-            } else {
-                return Members_t::Self()->Remove_Clone(Actor(), false);
-            }
-        } else {
-            return CODES::MEMBER;
-        }
-    }
-
-    Int_t Member_t::Unclone()
-    {
-        if (Is_Filled()) {
-            if (Is_Clone()) {
-                return Members_t::Self()->Remove_Clone(Actor(), true);
-            } else {
-                return CODES::CLONE;
-            }
-        } else {
-            return CODES::MEMBER;
-        }
-    }
-
     Int_t Member_t::Stylize(Int_t style)
     {
         if (Is_Filled()) {
@@ -2539,7 +2556,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
-    void Member_t::Enforce_Outfit2(Actor_t* actor)
+    void Member_t::Enforce_Outfit2(Actor_t* actor, Callback_t<Actor_t*>* user_callback)
     {
         NPCP_ASSERT(Is_Filled());
         NPCP_ASSERT(actor);
@@ -2593,11 +2610,13 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             Outfit_t* default_outfit1 = NPCS_t::Self()->Default_Outfit(actor);
             if (Default_Outfit() != default_outfit1) {
                 Default_Outfit_Variable()->Pack(default_outfit1);
-                current_outfit2->Apply_To(actor, Pack(), default_outfit1);
+                Actor2::Set_Outfit_Basic(actor, default_outfit1, false, false);
+                current_outfit2->Apply_To(actor, Pack(), user_callback);
             } else if (Actor2::Base_Outfit(actor) != default_outfit1 || !Object_Ref::Is_Worn(actor, Consts::Blank_Armor())) {
-                current_outfit2->Apply_To(actor, Pack(), default_outfit1);
+                Actor2::Set_Outfit_Basic(actor, default_outfit1, false, false);
+                current_outfit2->Apply_To(actor, Pack(), user_callback);
             } else {
-                current_outfit2->Apply_To(actor, Pack(), nullptr);
+                current_outfit2->Apply_To(actor, Pack(), user_callback);
             }
         }
     }

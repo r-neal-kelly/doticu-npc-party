@@ -151,7 +151,7 @@ namespace doticu_npcp { namespace Actor2 {
         }
     };
 
-    void Set_Outfit2(Actor_t* actor, Reference_t* outfit1, Reference_t* outfit2, Reference_t* transfer)
+    Bool_t Set_Outfit2(Actor_t* actor, Reference_t* outfit1, Reference_t* outfit2, Reference_t* transfer)
     {
         NPCP_ASSERT(actor);
 
@@ -650,23 +650,21 @@ namespace doticu_npcp { namespace Actor2 {
                 }
             }
 
-            void Try_To_Update()
+            Bool_t Should_Update()
             {
-                Join_Player_Team(actor);
-                if (do_refresh) {
-                    Update_Equipment(actor);
-                }
+                return do_refresh;
             }
 
         } actor_inventory(actor, transfer, linchpin);
 
         actor_inventory.Remove_Invalid_Entries(outfits_entry);
         actor_inventory.Add_Missing_Entries(outfits_entry);
-        actor_inventory.Try_To_Update();
 
         if (do_delete_transfer) {
             Object_Ref::Delete_Safe(transfer);
         }
+
+        return actor_inventory.Should_Update();
     }
 
     void Split_Inventory(Actor_t* actor, Reference_t* worn_out, Reference_t* pack_out)
@@ -1965,12 +1963,16 @@ namespace doticu_npcp { namespace Actor2 {
         return !actor->Is_Child();
     }
 
-    void Update_Equipment(Actor_t* actor)
+    void Update_Equipment(Actor_t* actor, Callback_t<Actor_t*>* user_callback)
     {
         using namespace Papyrus;
+        using UCallback_t = Callback_t<Actor_t*>;
 
         if (actor) {
-            Join_Player_Team(actor);
+            Bool_t is_player_teammate = Is_Player_Teammate(actor);
+            if (!is_player_teammate) {
+                Join_Player_Team(actor);
+            }
 
             Vector_t<XList_t*> weapons;
             XContainer_t* xcontainer = Object_Ref::Get_XContainer(actor, false);
@@ -1994,11 +1996,13 @@ namespace doticu_npcp { namespace Actor2 {
                 }
             }
 
-            struct Callback : public Virtual_Callback_t {
+            struct VCallback : public Virtual_Callback_t {
                 Actor_t* actor;
+                Bool_t is_player_teammate;
                 Vector_t<XList_t*> weapons;
-                Callback(Actor_t* actor, Vector_t<XList_t*> weapons) :
-                    actor(actor), weapons(weapons)
+                UCallback_t* user_callback;
+                VCallback(Actor_t* actor, Bool_t is_player_teammate, Vector_t<XList_t*> weapons, UCallback_t* user_callback) :
+                    actor(actor), is_player_teammate(is_player_teammate), weapons(weapons), user_callback(user_callback)
                 {
                 }
                 void operator()(Variable_t* result)
@@ -2012,10 +2016,24 @@ namespace doticu_npcp { namespace Actor2 {
                     for (size_t idx = 0, count = weapons.size(); idx < count; idx += 1) {
                         XList::Add_Outfit2_Flag(weapons[idx]);
                     }
+
+                    if (!is_player_teammate) {
+                        Leave_Player_Team(actor);
+                    }
+
+                    if (user_callback) {
+                        user_callback->operator()(actor);
+                        delete user_callback;
+                    }
                 }
             };
-            Virtual_Callback_i* callback = new Callback(actor, weapons);
-            Object_Ref::Add_Item_And_Callback(actor, Consts::Blank_Weapon(), 1, false, &callback);
+            Virtual_Callback_i* vcallback = new VCallback(actor, is_player_teammate, weapons, user_callback);
+            Object_Ref::Add_Item_And_Callback(actor, Consts::Blank_Weapon(), 1, false, &vcallback);
+        } else {
+            if (user_callback) {
+                user_callback->operator()(nullptr);
+                delete user_callback;
+            }
         }
     }
 

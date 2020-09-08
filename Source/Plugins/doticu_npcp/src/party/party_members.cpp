@@ -642,9 +642,10 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
-    void Members_t::Add_Original(Actor_t* original, Add_Callback_i** add_callback)
+    void Members_t::Add_Original(Actor_t* original, Callback_t<Int_t, Member_t*>** user_callback)
     {
-        NPCP_ASSERT(add_callback);
+        NPCP_ASSERT(user_callback);
+
         if (original) {
             if (!Should_Clone(original)) {
                 if (Actor2::Isnt_Child(original)) {
@@ -654,93 +655,142 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                                 NPCS_t::Self()->Add_Original(original);
                                 Member_t* member = From_Unfilled();
                                 NPCP_ASSERT(member);
-                                member->Fill(original, false, add_callback);
+                                member->Fill(original, false, user_callback);
                             } else {
-                                (*add_callback)->operator()(CODES::DEAD, nullptr);
-                                delete (*add_callback);
+                                (*user_callback)->operator()(CODES::DEAD, nullptr);
+                                delete (*user_callback);
                             }
                         } else {
-                            (*add_callback)->operator()(CODES::MEMBERS, nullptr);
-                            delete (*add_callback);
+                            (*user_callback)->operator()(CODES::MEMBERS, nullptr);
+                            delete (*user_callback);
                         }
                     } else {
-                        (*add_callback)->operator()(CODES::MEMBER, nullptr);
-                        delete (*add_callback);
+                        (*user_callback)->operator()(CODES::MEMBER, nullptr);
+                        delete (*user_callback);
                     }
                 } else {
-                    (*add_callback)->operator()(CODES::CHILD, nullptr);
-                    delete (*add_callback);
+                    (*user_callback)->operator()(CODES::CHILD, nullptr);
+                    delete (*user_callback);
                 }
             } else {
-                return Add_Clone(original, add_callback);
+                return Add_Clone(original, user_callback);
             }
         } else {
-            (*add_callback)->operator()(CODES::ACTOR, nullptr);
-            delete (*add_callback);
+            (*user_callback)->operator()(CODES::ACTOR, nullptr);
+            delete (*user_callback);
         }
     }
 
-    Int_t Members_t::Remove_Original(Actor_t* original)
+    void Members_t::Remove_Original(Actor_t* original, Callback_t<Int_t, Actor_t*>** user_callback)
     {
+        NPCP_ASSERT(user_callback);
+
+        using UCallback_t = Callback_t<Int_t, Actor_t*>;
+
         if (original) {
             Member_t* member = From_Actor(original);
             if (member) {
                 if (member->Is_Original()) {
-                    member->Unfill();
-                    NPCS_t::Self()->Remove_Original(original);
-                    return CODES::SUCCESS;
+                    struct Unfill_Callback : public Callback_t<Int_t, Actor_t*> {
+                        Members_t* members;
+                        UCallback_t* user_callback;
+                        Unfill_Callback(Members_t* members, UCallback_t* user_callback) :
+                            members(members), user_callback(user_callback)
+                        {
+                        }
+                        void operator()(Int_t code, Actor_t* original)
+                        {
+                            NPCS_t::Self()->Remove_Original(original);
+                            user_callback->operator()(code, original);
+                            delete user_callback;
+                        }
+                    };
+                    Callback_t<Int_t, Actor_t*>* unfill_callback =
+                        new Unfill_Callback(this, *user_callback);
+                    member->Unfill(&unfill_callback);
                 } else {
-                    return Remove_Clone(original, false);
+                    return Remove_Clone(original, false, user_callback);
                 }
             } else {
-                return CODES::MEMBER;
+                (*user_callback)->operator()(CODES::MEMBER, original);
+                delete (*user_callback);
             }
         } else {
-            return CODES::ACTOR;
+            (*user_callback)->operator()(CODES::ACTOR, nullptr);
+            delete (*user_callback);
         }
     }
 
-    void Members_t::Add_Clone(Actor_t* original, Add_Callback_i** add_callback)
+    void Members_t::Add_Clone(Actor_t* original, Callback_t<Int_t, Member_t*>** user_callback)
     {
-        NPCP_ASSERT(add_callback);
+        NPCP_ASSERT(user_callback);
+
         if (original) {
             if (Actor2::Isnt_Child(original)) {
                 if (Count_Filled() < Limit()) {
                     Actor_t* clone = NPCS_t::Self()->Add_Clone(original);
                     Member_t* member = From_Unfilled();
                     NPCP_ASSERT(member);
-                    member->Fill(clone, true, add_callback);
+                    member->Fill(clone, true, user_callback);
                 } else {
-                    (*add_callback)->operator()(CODES::MEMBERS, nullptr);
-                    delete (*add_callback);
+                    (*user_callback)->operator()(CODES::MEMBERS, nullptr);
+                    delete (*user_callback);
                 }
             } else {
-                (*add_callback)->operator()(CODES::CHILD, nullptr);
-                delete (*add_callback);
+                (*user_callback)->operator()(CODES::CHILD, nullptr);
+                delete (*user_callback);
             }
         } else {
-            (*add_callback)->operator()(CODES::ACTOR, nullptr);
-            delete (*add_callback);
+            (*user_callback)->operator()(CODES::ACTOR, nullptr);
+            delete (*user_callback);
         }
     }
 
-    Int_t Members_t::Remove_Clone(Actor_t* clone, Bool_t do_delete_clone)
+    void Members_t::Remove_Clone(Actor_t* clone, Bool_t do_delete_clone, Callback_t<Int_t, Actor_t*>** user_callback)
     {
+        NPCP_ASSERT(user_callback);
+
+        using UCallback_t = Callback_t<Int_t, Actor_t*>;
+
         if (clone) {
             Member_t* member = From_Actor(clone);
             if (member) {
                 if (member->Is_Clone()) {
-                    member->Unfill();
-                    NPCS_t::Self()->Remove_Clone(clone, do_delete_clone || Should_Unclone(clone));
-                    return CODES::SUCCESS;
+                    struct Unfill_Callback : public Callback_t<Int_t, Actor_t*> {
+                        Members_t* members;
+                        Bool_t do_delete_clone;
+                        UCallback_t* user_callback;
+                        Unfill_Callback(Members_t* members, Bool_t do_delete_clone, UCallback_t* user_callback) :
+                            members(members), do_delete_clone(do_delete_clone), user_callback(user_callback)
+                        {
+                        }
+                        void operator()(Int_t code, Actor_t* clone)
+                        {
+                            if (do_delete_clone || members->Should_Unclone(clone)) {
+                                NPCS_t::Self()->Remove_Clone(clone, true);
+                                user_callback->operator()(code, nullptr);
+                                delete user_callback;
+                            } else {
+                                NPCS_t::Self()->Remove_Clone(clone, false);
+                                user_callback->operator()(code, clone);
+                                delete user_callback;
+                            }
+                        }
+                    };
+                    Callback_t<Int_t, Actor_t*>* unfill_callback =
+                        new Unfill_Callback(this, do_delete_clone, *user_callback);
+                    member->Unfill(&unfill_callback);
                 } else {
-                    return CODES::CLONE;
+                    (*user_callback)->operator()(CODES::CLONE, clone);
+                    delete (*user_callback);
                 }
             } else {
-                return CODES::MEMBER;
+                (*user_callback)->operator()(CODES::MEMBER, clone);
+                delete (*user_callback);
             }
         } else {
-            return CODES::ACTOR;
+            (*user_callback)->operator()(CODES::ACTOR, nullptr);
+            delete (*user_callback);
         }
     }
 

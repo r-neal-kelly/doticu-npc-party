@@ -39,7 +39,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Bool_t Has_Base(Actor_t* actor);
 
         Int_t Add_Base_If_Needed(Actor_t* actor_with_base, Actor_t* actor_with_outfit);
-        void Remove_Base_If_Needed(Int_t base_idx);
+        void Remove_Base(Int_t base_idx);
         void Add_Original(Actor_t* original);
         void Remove_Original(Actor_t* original);
         Actor_t* Add_Clone(Actor_t* original);

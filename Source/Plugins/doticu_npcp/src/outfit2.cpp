@@ -239,33 +239,42 @@ namespace doticu_npcp { namespace Papyrus {
         Object_Ref::Open_Container(this, callback);
     }
 
-    void Outfit2_t::Apply_To(Actor_t* actor, Reference_t* pack, Outfit_t* outfit1_to_apply)
+    void Outfit2_t::Apply_To(Actor_t* actor, Reference_t* pack, Callback_t<Actor_t*>* user_callback)
     {
         NPCP_ASSERT(actor);
         NPCP_ASSERT(pack);
 
-        if (Actor2::Is_Alive(actor)) {
-            if (outfit1_to_apply) {
-                Actor2::Set_Outfit_Basic(actor, outfit1_to_apply, false, false);
-            }
+        using UCallback_t = Callback_t<Actor_t*>;
 
-            class Callback : public Virtual_Callback_t {
+        if (Actor2::Is_Alive(actor)) {
+            class VCallback : public Virtual_Callback_t {
             public:
                 Outfit2_t* outfit2;
                 Actor_t* actor;
                 Reference_t* pack;
-                Callback(Outfit2_t* outfit2, Actor_t* actor, Reference_t* pack) :
-                    outfit2(outfit2), actor(actor), pack(pack)
+                UCallback_t* user_callback;
+                VCallback(Outfit2_t* outfit2, Actor_t* actor, Reference_t* pack, UCallback_t* user_callback) :
+                    outfit2(outfit2), actor(actor), pack(pack), user_callback(user_callback)
                 {
                 }
                 void operator()(Variable_t* result)
                 {
                     Actor2::Leave_Player_Team(actor);
-                    Actor2::Set_Outfit2(actor, outfit2->Outfit1_Cache(), outfit2, pack);
+                    Bool_t should_update = Actor2::Set_Outfit2(actor, outfit2->Outfit1_Cache(), outfit2, pack);
+                    Actor2::Join_Player_Team(actor);
+
+                    if (should_update) {
+                        Actor2::Update_Equipment(actor, user_callback);
+                    } else {
+                        if (user_callback) {
+                            user_callback->operator()(actor);
+                            delete user_callback;
+                        }
+                    }
                 }
             };
-            Virtual_Callback_i* callback = new Callback(this, actor, pack);
-            Object_Ref::Remove_Item_And_Callback(this, Consts::Blank_Weapon(), 0, false, nullptr, &callback);
+            Virtual_Callback_i* vcallback = new VCallback(this, actor, pack, user_callback);
+            Object_Ref::Remove_Item_And_Callback(this, Consts::Blank_Weapon(), 0, false, nullptr, &vcallback);
         }
     }
 

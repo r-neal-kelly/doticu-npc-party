@@ -129,14 +129,10 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                      float interval = DEFAULT_DISPLAY_INTERVAL);
         void Undisplay();
 
-        struct Add_Callback_i {
-            virtual ~Add_Callback_i() = default;
-            virtual void operator()(Int_t code, Member_t* member) = 0;
-        };
-        void Add_Original(Actor_t* original, Add_Callback_i** add_callback);
-        Int_t Remove_Original(Actor_t* original);
-        void Add_Clone(Actor_t* original, Add_Callback_i** add_callback);
-        Int_t Remove_Clone(Actor_t* clone, Bool_t do_delete_clone);
+        void Add_Original(Actor_t* original, Callback_t<Int_t, Member_t*>** user_callback);
+        void Remove_Original(Actor_t* original, Callback_t<Int_t, Actor_t*>** user_callback);
+        void Add_Clone(Actor_t* original, Callback_t<Int_t, Member_t*>** user_callback);
+        void Remove_Clone(Actor_t* clone, Bool_t do_delete_clone, Callback_t<Int_t, Actor_t*>** user_callback);
 
         void Delete_Unused_Outfit2s();
 

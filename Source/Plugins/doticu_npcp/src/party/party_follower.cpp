@@ -395,11 +395,13 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         NPCP_ASSERT(callback);
         NPCP_ASSERT(Is_Filled());
 
+        using UCallback_t = Callback_t<Int_t, Member_t*>;
+
         struct Destroy_Callback : public Callback_t<> {
             Follower_t* follower;
             Member_t* member;
-            Callback_t<Int_t, Member_t*>* user_callback;
-            Destroy_Callback(Follower_t* follower, Member_t* member, Callback_t<Int_t, Member_t*>* user_callback) :
+            UCallback_t* user_callback;
+            Destroy_Callback(Follower_t* follower, Member_t* member, UCallback_t* user_callback) :
                 follower(follower), member(member), user_callback(user_callback)
             {
             }
@@ -407,16 +409,27 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             {
                 struct VCallback : public Virtual_Callback_t {
                     Member_t* member;
-                    Callback_t<Int_t, Member_t*>* user_callback;
-                    VCallback(Member_t* member, Callback_t<Int_t, Member_t*>* user_callback) :
+                    UCallback_t* user_callback;
+                    VCallback(Member_t* member, UCallback_t* user_callback) :
                         member(member), user_callback(user_callback)
                     {
                     }
                     void operator()(Variable_t* result)
                     {
-                        member->Enforce_Outfit2(member->Actor());
-                        user_callback->operator()(CODES::SUCCESS, member);
-                        delete user_callback;
+                        struct Enforce_Outfit2_Callback : public Callback_t<Actor_t*> {
+                            Member_t* member;
+                            UCallback_t* user_callback;
+                            Enforce_Outfit2_Callback(Member_t* member, UCallback_t* user_callback) :
+                                member(member), user_callback(user_callback)
+                            {
+                            }
+                            void operator()(Actor_t* actor)
+                            {
+                                user_callback->operator()(CODES::SUCCESS, member);
+                                delete user_callback;
+                            }
+                        };
+                        member->Enforce_Outfit2(member->Actor(), new Enforce_Outfit2_Callback(member, user_callback));
                     }
                 };
                 Virtual_Callback_i* vcallback = new VCallback(member, user_callback);

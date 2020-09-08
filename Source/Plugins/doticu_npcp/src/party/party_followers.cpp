@@ -874,15 +874,34 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     Int_t Followers_t::Unmember()
     {
-        Vector_t<Follower_t*> filled = Filled();
-        size_t filled_count = filled.size();
-        if (filled_count > 0) {
-            for (size_t idx = 0; idx < filled_count; idx += 1) {
-                filled[idx]->Member()->Unmember();
+        static volatile Int_t active_callback_count = 0;
+        if (active_callback_count < 1) {
+            Vector_t<Follower_t*> filled = Filled();
+            size_t filled_count = filled.size();
+            if (filled_count > 0) {
+                active_callback_count = filled_count;
+                Members_t* members = Members_t::Self();
+                for (size_t idx = 0; idx < filled_count; idx += 1) {
+                    struct Unmember_Callback : Callback_t<Int_t, Actor_t*> {
+                        volatile Int_t* active_callback_count;
+                        Unmember_Callback(volatile Int_t* active_callback_count) :
+                            active_callback_count(active_callback_count)
+                        {
+                        }
+                        void operator()(Int_t code, Actor_t* actor)
+                        {
+                            *active_callback_count -= 1;
+                        }
+                    };
+                    Callback_t<Int_t, Actor_t*>* unmember_callback = new Unmember_Callback(&active_callback_count);
+                    members->Remove_Original(filled[idx]->Actor(), &unmember_callback);
+                }
+                return CODES::SUCCESS;
+            } else {
+                return CODES::FOLLOWERS;
             }
-            return CODES::SUCCESS;
         } else {
-            return CODES::FOLLOWERS;
+            return CODES::HAS;
         }
     }
 

@@ -36,6 +36,9 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
         // NPC
         void Log_Member(Int_t code, const char* name);
+        void Log_Unmember(Int_t code, const char* name);
+        void Log_Clone(Int_t code, const char* name);
+        void Log_Unclone(Int_t code, const char* name);
         void Log_Follow(Int_t code, const char* name);
         void Log_Unfollow(Int_t code, const char* name);
         void Log_Saddle(Int_t code, const char* name);

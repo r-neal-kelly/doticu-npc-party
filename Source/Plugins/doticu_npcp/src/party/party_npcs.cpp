@@ -199,12 +199,9 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
-    void NPCS_t::Remove_Base_If_Needed(Int_t base_idx)
+    void NPCS_t::Remove_Base(Int_t base_idx)
     {
         NPCP_ASSERT(base_idx > -1 && base_idx < Bases()->Count());
-
-        Outfit_t* default_outfit = Default_Outfit(base_idx);
-        Outfit::Remove_Item(default_outfit, Consts::Blank_Armor()); // added back by outfitter when needed.
 
         Bases()->Remove_Unstable(base_idx);
         Default_Outfits()->Remove_Unstable(base_idx);
@@ -219,7 +216,12 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     void NPCS_t::Remove_Original(Actor_t* original)
     {
         NPCP_ASSERT(original);
-        Remove_Base_If_Needed(Base_Idx(original));
+
+        Outfit_t* default_outfit = Default_Outfit(original);
+        if (Members_t::Self()->Hasnt_Base(original)) {
+            Remove_Base(Base_Idx(original));
+        }
+        Actor2::Set_Outfit_Basic(original, default_outfit);
     }
 
     Actor_t* NPCS_t::Add_Clone(Actor_t* original)
@@ -258,10 +260,16 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     void NPCS_t::Remove_Clone(Actor_t* clone, Bool_t do_delete_clone)
     {
         NPCP_ASSERT(clone);
-        Remove_Base_If_Needed(Base_Idx(clone));
+
+        Outfit_t* default_outfit = Default_Outfit(clone);
+        if (Members_t::Self()->Hasnt_Base(clone)) {
+            Remove_Base(Base_Idx(clone));
+        }
 
         if (do_delete_clone) {
             Object_Ref::Delete_Safe(clone);
+        } else {
+            Actor2::Set_Outfit_Basic(clone, default_outfit);
         }
     }
 

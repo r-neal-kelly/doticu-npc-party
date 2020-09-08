@@ -22,7 +22,7 @@ namespace doticu_npcp { namespace Actor2 {
     void Set_Outfit_Basic(Actor_t* actor, Outfit_t* outfit, Bool_t is_sleep_outfit = false, Bool_t allow_bcontainer = true);
     void Set_Outfit(Actor_t* actor, Outfit_t* outfit, Bool_t is_sleep_outfit = false);
 
-    void Set_Outfit2(Actor_t* actor, Reference_t* outfit1, Reference_t* outfit2, Reference_t* transfer);
+    Bool_t Set_Outfit2(Actor_t* actor, Reference_t* outfit1, Reference_t* outfit2, Reference_t* transfer);
     void Split_Inventory(Actor_t* actor, Reference_t* worn_out, Reference_t* pack_out);
     void Cache_Worn(Actor_t* actor, Reference_t* cache_out);
     void Cache_BContainer(Actor_t* actor, Reference_t* cache_out);
@@ -121,7 +121,7 @@ namespace doticu_npcp { namespace Actor2 {
     Bool_t Is_Child(Actor_t* actor);
     Bool_t Isnt_Child(Actor_t* actor);
 
-    void Update_Equipment(Actor_t* actor);
+    void Update_Equipment(Actor_t* actor, Callback_t<Actor_t*>* user_callback = nullptr);
 
     void Greet_Player(Actor_t* actor);
 
