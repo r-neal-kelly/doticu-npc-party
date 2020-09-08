@@ -35,7 +35,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         void Try_To_End_Combat();
         void End_Combat();
 
-        void On_Crosshair_Reference_Change(Reference_t* ref);
+        void On_Control_Down(String_t control);
 
     public:
         static void Register_Me(Virtual_Machine_t* vm);

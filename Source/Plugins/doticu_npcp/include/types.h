@@ -81,6 +81,7 @@ namespace doticu_npcp {
 
     typedef TESForm         Form_t;
     typedef TESObjectCELL   Cell_t;
+    typedef TESPackage      Package_t;
     typedef TESObjectREFR   Reference_t;
     typedef TESObjectMISC   Misc_t;
     typedef TESObjectSTAT   Static_t;

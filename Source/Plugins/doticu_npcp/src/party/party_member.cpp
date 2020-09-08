@@ -938,6 +938,11 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
+    void Member_t::On_Package_Change(Package_t* new_package)
+    {
+        Enforce_Name(Actor(), Name());
+    }
+
     void Member_t::Fill(Actor_t* actor, Bool_t is_clone, Callback_t<Int_t, Member_t*>** user_callback)
     {
         NPCP_ASSERT(user_callback);
@@ -2911,6 +2916,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         METHOD("OnActivate", 1, void, On_Activate, Reference_t*);
         METHOD("OnCombatStateChanged", 2, void, On_Combat_State_Changed, Actor_t*, Int_t);
         METHOD("OnHit", 7, void, On_Hit, Reference_t*, Form_t*, Projectile_Base_t*, Bool_t, Bool_t, Bool_t, Bool_t);
+        METHOD("OnPackageChange", 1, void, On_Package_Change, Package_t*);
 
         #undef BMETHOD
         #undef METHOD

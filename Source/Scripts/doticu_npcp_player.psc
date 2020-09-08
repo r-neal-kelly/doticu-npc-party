@@ -69,6 +69,7 @@ function f_Register()
     RegisterForModEvent("doticu_npcp_load_mod", "On_Load_Mod")
     RegisterForModEvent("doticu_npcp_cell_change", "On_Cell_Change")
     RegisterForControl("Sneak")
+    RegisterForControl("Forward")
     RegisterForActorAction(doticu_npcp_codes.ACTION_DRAW_END())
     RegisterForCrosshairRef()
 endFunction
@@ -164,15 +165,7 @@ event On_Load_Mod()
     endIf
 endEvent
 
-event OnControlDown(string str_control)
-    if str_control == "Sneak"
-        if ACTOR_PLAYER.IsSneaking() && Is_Party_In_Combat()
-            FOLLOWERS.Retreat()
-        else
-            FOLLOWERS.Unretreat()
-        endIf
-    endIf
-endEvent
+event OnControlDown(string control) native
 
 event OnActorAction(int code_action, Actor ref_actor, Form form_source, int slot)
     if ref_actor == ACTOR_PLAYER
@@ -188,5 +181,3 @@ event On_Cell_Change(Form cell_new, Form cell_old)
     ACTORS.Apply_Ability(ACTOR_PLAYER, doticu_npcp_consts.Cell_Ability_Spell())
     FOLLOWERS.Catch_Up()
 endEvent
-
-event OnCrosshairRefChange(ObjectReference ref) native

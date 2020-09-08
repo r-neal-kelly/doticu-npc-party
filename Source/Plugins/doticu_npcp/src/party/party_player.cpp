@@ -108,17 +108,26 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     }
 
-    void Player_t::On_Crosshair_Reference_Change(Reference_t* ref)
+    void Player_t::On_Control_Down(String_t control)
     {
+        static Actor_t* player_actor = Actor();
         static Members_t* members = Members_t::Self();
         static Followers_t* followers = Followers_t::Self();
 
-        if (ref && ref->formType == kFormType_Character) {
-            Actor_t* actor = static_cast<Actor_t*>(ref);
-            Member_t* member = members->From_Actor(actor);
-            if (member) {
+        if (String2::Is_Same_Caseless(control, "Sneak")) {
+            if (Actor2::Is_Sneaking(player_actor) && Is_Party_In_Combat()) {
+                followers->Retreat();
+            } else {
+                followers->Unretreat();
+            }
+        } else if (String2::Is_Same_Caseless(control, "Forward")) {
+            Vector_t<Member_t*> loaded_members = members->Loaded();
+            for (size_t idx = 0, count = loaded_members.size(); idx < count; idx += 1) {
+                Member_t* member = loaded_members[idx];
+                Actor_t* actor = member->Actor();
                 member->Enforce_Name(actor, member->Name());
-                Follower_t* follower = followers->From_Actor(actor);
+
+                Follower_t* follower = member->Follower();
                 if (follower && !followers->Can_Actor_Follow(actor)) {
                     Modules::Control::Commands_t::Self()->Relinquish(actor);
                 }
@@ -136,7 +145,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         W
 
         METHOD("Is_Party_In_Combat", 0, Bool_t, Is_Party_In_Combat);
-        METHOD("OnCrosshairRefChange", 1, void, On_Crosshair_Reference_Change, Reference_t*);
+        METHOD("OnControlDown", 1, void, On_Control_Down, String_t);
 
         #undef METHOD
     }

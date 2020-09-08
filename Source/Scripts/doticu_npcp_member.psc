@@ -74,3 +74,4 @@ event OnDeath(Actor killer) native
 event OnActivate(ObjectReference activator) native
 event OnCombatStateChanged(Actor target, int combat_code) native
 event OnHit(ObjectReference attacker, Form tool, Projectile projectile, bool is_power, bool is_sneak, bool is_bash, bool is_blocked) native
+event OnPackageChange(Package new_package) native
