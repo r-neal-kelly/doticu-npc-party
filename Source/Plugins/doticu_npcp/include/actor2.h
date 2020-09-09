@@ -133,6 +133,7 @@ namespace doticu_npcp { namespace Actor2 {
     Bool_t Has_Magic_Effect(Actor_t* actor, Magic_Effect_t* magic_effect);
 
     Bool_t Add_Spell(Actor_t* actor, Spell_t* spell);
+    void Add_Spell(Actor_t* actor, Spell_t* spell, Bool_t be_verbose, Virtual_Callback_i** callback = nullptr);
     void Remove_Spell(Actor_t* actor, Spell_t* spell, Virtual_Callback_i** callback = nullptr);
 
     Bool_t Is_Sneaking(Actor_t* actor);
@@ -140,7 +141,7 @@ namespace doticu_npcp { namespace Actor2 {
 
     void Owner(Actor_t* actor, Actor_Base_t* owner); // maybe we could try the reference instead of base, for horses
 
-    void Apply_Ability(Actor_t* actor, Spell_t* ability, Callback_t<Actor_t*>* user_callback = nullptr);
+    void Send_Animation_Event(Actor_t* actor, String_t animation, Virtual_Callback_i** callback = nullptr);
 
 }}
 

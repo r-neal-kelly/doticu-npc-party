@@ -83,6 +83,9 @@ bool                p_do_rotate_left        = false
 float               p_movee_pos             =   0.0
 float               p_movee_ang             =   0.0
 
+; Native Methods
+function p_Reload() native
+
 ; Friend Methods
 function f_Create(Actor ref_actor);;;
     p_is_created = true
@@ -145,7 +148,6 @@ p_Unlock()
 endFunction
 
 function f_Register();;;
-    RegisterForModEvent("doticu_npcp_cell_change", "On_Cell_Change")
     RegisterForModEvent("doticu_npcp_movee_distance_farther", "On_Distance_Farther")
     RegisterForModEvent("doticu_npcp_movee_distance_nearer", "On_Distance_Nearer")
     RegisterForModEvent("doticu_npcp_movee_rotate_left", "On_Rotate_Left")
@@ -232,15 +234,6 @@ function p_Move()
     endif
 endFunction
 
-function p_Reload()
-    p_ref_actor.SetActorValue("Paralysis", 0)
-    ACTORS.Move_To(p_ref_actor, doticu_npcp_consts.Player_Actor(), p_movee_pos as int)
-    while !p_ref_actor.Is3DLoaded()
-        FUNCS.Wait_Out_Of_Menu(0.2)
-    endWhile
-    p_ref_actor.SetActorValue("Paralysis", 1)
-endFunction
-
 ; Public Methods
 bool function Exists()
     return p_is_created
@@ -317,8 +310,4 @@ event OnKeyUp(int value, float hold_time)
         p_do_rotate_right = false
 
     endIf
-endEvent
-
-event On_Cell_Change(Form cell_new, Form cell_old)
-    p_Reload()
 endEvent

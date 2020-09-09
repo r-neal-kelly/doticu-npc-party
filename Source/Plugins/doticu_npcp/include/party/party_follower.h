@@ -149,7 +149,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Int_t Resurrect();
         Int_t Kill();
 
-        void Catch_Up();
+        void Catch_Up(Cell_t* new_cell = nullptr, Cell_t* old_cell = nullptr);
         void Rename(String_t new_name);
 
     private:

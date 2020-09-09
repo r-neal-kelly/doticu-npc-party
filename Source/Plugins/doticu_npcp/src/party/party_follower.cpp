@@ -1299,16 +1299,22 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         NPCP_ASSERT(origin);
 
         Actor_t* follower_actor = Actor();
-        if (Object_Ref::Is_In_Exterior_Cell(origin) && Is_Saddler()) {
-            Horse_t* follower_horse = Horse();
-            Actor_t* follower_horse_actor = follower_horse ? follower_horse->Actor() : nullptr;
-            if (follower_horse_actor) {
-                Actor2::Move_To_Orbit(follower_horse_actor, origin, radius * 4, degree + 12);
-                Actor2::Move_To_Orbit(follower_actor, origin, radius * 3.5, degree);
-                Enforce_Saddler(follower_actor);
-            } else {
+        if (Is_Saddler()) {
+            if (Object_Ref::Is_In_Interior_Cell(origin)) {
                 Actor2::Move_To_Orbit(follower_actor, origin, radius, degree);
+            } else {
+                Horse_t* follower_horse = Horse();
+                Actor_t* follower_horse_actor = follower_horse ? follower_horse->Actor() : nullptr;
+                if (follower_horse_actor) {
+                    Actor2::Move_To_Orbit(follower_horse_actor, origin, radius * 4, degree + 12);
+                    Actor2::Move_To_Orbit(follower_actor, origin, radius * 3.5, degree);
+                    Enforce_Saddler(follower_actor);
+                    Actor2::Evaluate_Package(follower_actor);
+                } else {
+                    Actor2::Move_To_Orbit(follower_actor, origin, radius, degree);
+                }
             }
+            Actor2::Send_Animation_Event(follower_actor, "IdleForceDefaultState");
         } else {
             Actor2::Move_To_Orbit(follower_actor, origin, radius, degree);
         }
@@ -1407,29 +1413,30 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         return Member()->Kill();
     }
 
-    void Follower_t::Catch_Up()
+    void Follower_t::Catch_Up(Cell_t* new_cell, Cell_t* old_cell)
     {
-        Player_t* player = Player_t::Self();
-        if (Is_Filled() && Is_Mobile() && Isnt_Paralyzed() && Isnt_Mannequin() && Isnt_Display()) {
-            // for the last three we are asking if they have ai essentially
-            if (player->Is_In_Interior_Cell() || Isnt_Saddler()) {
-                if (Isnt_Near_Player()) {
-                    Summon(player->Actor(), 256.0f, 180.0f);
-                }
-            } else {
-                Horse_t* horse = Horse();
-                if (horse) {
-                    Actor_t* horse_actor = horse->Actor();
-                    if (horse_actor && !Object_Ref::Is_Near_Player(horse_actor, 10240.0f)) {
+        if (Is_Filled()) {
+            if (Is_Mobile() && Isnt_Paralyzed() && Isnt_Mannequin() && Isnt_Display()) {
+                Player_t* player = Player_t::Self();
+                if (Is_Saddler() && player->Is_In_Exterior_Cell()) {
+                    if (Isnt_Near_Player(10240.0f) || !Object_Ref::Is_Near_Player(Horse()->Actor(), 10240.0f)) {
                         if (player->Is_On_Mount()) {
                             Summon(player->Actor(), 1024.0f, 180.0f);
                         } else {
                             Summon(player->Actor(), 256.0f, 180.0f);
                         }
-                        Enforce_Saddler(Actor());
+                    }
+                } else {
+                    if (Isnt_Near_Player()) {
+                        if (player->Is_In_Interior_Cell()) {
+                            Summon(player->Actor(), 128.0f, 180.0f);
+                        } else {
+                            Summon(player->Actor(), 256.0f, 180.0f);
+                        }
                     }
                 }
             }
+            Actor2::Evaluate_Package(Actor());
         }
     }
 

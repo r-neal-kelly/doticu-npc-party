@@ -2123,6 +2123,29 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
+    void Add_Spell(Actor_t* actor, Spell_t* spell, Bool_t be_verbose, Virtual_Callback_i** callback)
+    {
+        if (actor && spell) {
+            class Arguments : public Virtual_Arguments_t {
+            public:
+                Spell_t* spell;
+                Bool_t be_verbose;
+                Arguments(Spell_t* spell, Bool_t be_verbose) :
+                    spell(spell), be_verbose(be_verbose)
+                {
+                }
+                Bool_t operator()(Arguments_t* arguments)
+                {
+                    arguments->Resize(2);
+                    arguments->At(0)->Pack(spell);
+                    arguments->At(1)->Bool(be_verbose);
+                    return true;
+                }
+            } arguments(spell, be_verbose);
+            Virtual_Machine_t::Self()->Call_Method(actor, "Actor", "AddSpell", &arguments, callback);
+        }
+    }
+
     void Remove_Spell(Actor_t* actor, Spell_t* spell, Virtual_Callback_i** callback)
     {
         if (actor && spell) {
@@ -2178,30 +2201,24 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
-    void Apply_Ability(Actor_t* actor, Spell_t* ability, Callback_t<Actor_t*>* user_callback)
+    void Send_Animation_Event(Actor_t* actor, String_t animation, Virtual_Callback_i** callback)
     {
-        using UCallback_t = Callback_t<Actor_t*>;
-
-        struct VCallback : public Virtual_Callback_t {
+        struct Arguments : public Virtual_Arguments_t {
             Actor_t* actor;
-            Spell_t* ability;
-            UCallback_t* user_callback;
-            VCallback(Actor_t* actor, Spell_t* ability, UCallback_t* user_callback) :
-                actor(actor), ability(ability), user_callback(user_callback)
+            String_t animation;
+            Arguments(Actor_t* actor, String_t animation) :
+                actor(actor), animation(animation)
             {
             }
-            void operator()(Variable_t* result)
+            Bool_t operator()(Arguments_t* arguments)
             {
-                Add_Spell(actor, ability);
-                
-                if (user_callback) {
-                    user_callback->operator()(actor);
-                    delete user_callback;
-                }
+                arguments->Resize(2);
+                arguments->At(0)->Pack(static_cast<Reference_t*>(actor));
+                arguments->At(1)->String(animation);
+                return true;
             }
-        };
-        Virtual_Callback_i* vcallback = new VCallback(actor, ability, user_callback);
-        Remove_Spell(actor, ability, &vcallback);
+        } arguments(actor, animation);
+        Virtual_Machine_t::Self()->Call_Global("Debug", "SendAnimationEvent", &arguments, callback);
     }
 
 }}

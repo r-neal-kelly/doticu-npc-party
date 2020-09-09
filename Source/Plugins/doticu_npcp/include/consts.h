@@ -129,6 +129,7 @@ namespace doticu_npcp { namespace Consts {
     Location_t* Expo_Location();
 
     // NPCP Magic Effects
+    Magic_Effect_t* Cell_Magic_Effect();
     Magic_Effect_t* Reanimate_Magic_Effect();
     Magic_Effect_t* Retreat_Magic_Effect();
 

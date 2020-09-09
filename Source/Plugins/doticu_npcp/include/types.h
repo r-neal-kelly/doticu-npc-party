@@ -97,6 +97,7 @@ namespace doticu_npcp {
     typedef BGSOutfit       Outfit_t;
     typedef BGSKeyword      Keyword_t;
     typedef EffectSetting   Magic_Effect_t;
+    typedef ActiveEffect    Active_Magic_Effect_t;
     typedef SpellItem       Spell_t;
 
     typedef Actor           Actor_t;

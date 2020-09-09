@@ -27,6 +27,10 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Int_t Start(Actor_t* actor);
         Int_t Stop();
 
+        void Reload();
+
+        void On_Cell_Change(Cell_t* new_cell, Cell_t* old_cell);
+
     public:
         static void Register_Me(Virtual_Machine_t* vm);
     };

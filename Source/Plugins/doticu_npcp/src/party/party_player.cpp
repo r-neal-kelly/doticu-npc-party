@@ -149,27 +149,28 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     void Player_t::On_Init_Mod()
     {
-        Actor2::Apply_Ability(Actor(), Consts::Cell_Ability_Spell());
+        Actor2::Add_Spell(Actor(), Consts::Cell_Ability_Spell());
     }
 
     void Player_t::On_Load_Mod()
     {
-        Actor2::Apply_Ability(Actor(), Consts::Cell_Ability_Spell());
+        Actor2::Add_Spell(Actor(), Consts::Cell_Ability_Spell());
 
         if (!Is_Party_In_Combat()) {
             End_Combat();
         }
     }
 
-    void Player_t::On_Cell_Change(Form_t* new_cell, Form_t* old_cell)
+    void Player_t::On_Cell_Change(Cell_t* new_cell, Cell_t* old_cell)
     {
-        Utils::Print("On_Cell_Change");
-        Actor2::Apply_Ability(Actor(), Consts::Cell_Ability_Spell());
+        Actor2::Add_Spell(Actor(), Consts::Cell_Ability_Spell());
         Followers_t::Self()->Catch_Up();
     }
 
     void Player_t::On_Control_Down(String_t control)
     {
+        Actor2::Add_Spell(Actor(), Consts::Cell_Ability_Spell());
+
         if (String2::Is_Same_Caseless(control, "Sneak")) {
             Followers_t* followers = Followers_t::Self();
             if (Is_Sneaking() && Is_Party_In_Combat()) {
@@ -215,7 +216,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         W
 
         METHOD("Is_Party_In_Combat", 0, Bool_t, Is_Party_In_Combat);
-        METHOD("On_Cell_Change", 2, void, On_Cell_Change, Form_t*, Form_t*);
         METHOD("OnControlDown", 1, void, On_Control_Down, String_t);
         METHOD("OnActorAction", 4, void, On_Actor_Action, Int_t, Actor_t*, Form_t*, Int_t);
         

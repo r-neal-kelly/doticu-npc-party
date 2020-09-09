@@ -2,8 +2,10 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "actor2.h"
 #include "codes.h"
 #include "consts.h"
+#include "funcs.h"
 #include "papyrus.inl"
 
 #include "party/party_alias.h"
@@ -106,6 +108,47 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
+    void Movee_t::Reload()
+    {
+        Actor_t* actor = Actor();
+        if (actor) {
+            Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(actor);
+            value_owner->Set_Actor_Value(Actor_Value_t::PARALYSIS, 0.0f);
+            Actor2::Move_To_Orbit(actor, Consts::Player_Actor(), 140.0f, 0.0f);
+
+            if (Actor2::Is_Unloaded(actor)) {
+                struct VCallback : public Virtual_Callback_t {
+                    Actor_t* actor;
+                    Actor_Value_Owner_t* value_owner;
+                    VCallback(Actor_t* actor, Actor_Value_Owner_t* value_owner) :
+                        actor(actor), value_owner(value_owner)
+                    {
+                    }
+                    void operator()(Variable_t* result)
+                    {
+                        if (Actor2::Is_Unloaded(actor)) {
+                            Virtual_Callback_i* vcallback = new VCallback(actor, value_owner);
+                            Modules::Funcs_t::Self()->Wait_Out_Of_Menu(0.2f, &vcallback);
+                        } else {
+                            value_owner->Set_Actor_Value(Actor_Value_t::PARALYSIS, 1.0f);
+                        }
+                    }
+                };
+                Virtual_Callback_i* vcallback = new VCallback(actor, value_owner);
+                Modules::Funcs_t::Self()->Wait_Out_Of_Menu(0.2f, &vcallback);
+            } else {
+                value_owner->Set_Actor_Value(Actor_Value_t::PARALYSIS, 1.0f);
+            }
+        }
+    }
+
+    void Movee_t::On_Cell_Change(Cell_t* new_cell, Cell_t* old_cell)
+    {
+        if (Actor()) {
+            Reload();
+        }
+    }
+
     void Movee_t::Register_Me(Virtual_Machine_t* vm)
     {
         #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
@@ -114,6 +157,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                            STR_FUNC_, ARG_NUM_,                     \
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
+
+        METHOD("p_Reload", 0, void, Reload);
 
         #undef METHOD
     }
