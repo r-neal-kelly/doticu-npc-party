@@ -20,6 +20,7 @@ namespace doticu_npcp { namespace Modules {
     public:
         Variable_t* Variable(String_t variable_name);
 
+        void Wait(Float_t seconds, Virtual_Callback_i** callback = nullptr);
         void Wait_Out_Of_Menu(Float_t seconds, Virtual_Callback_i** callback = nullptr);
 
     public:

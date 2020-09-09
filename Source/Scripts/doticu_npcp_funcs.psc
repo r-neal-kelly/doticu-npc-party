@@ -124,7 +124,7 @@ bool function Send_Event_Handle(int handle, float interval = 0.25, float timeout
     return false
 endFunction
 
-function Wait(float seconds)
+function Wait(float seconds);;;
     Utility.WaitMenuMode(seconds)
 endFunction
 

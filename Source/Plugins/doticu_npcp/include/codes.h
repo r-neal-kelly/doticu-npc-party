@@ -15,6 +15,8 @@ namespace doticu_npcp { namespace CODES {
 
         SUCCESS,
         FAILURE,
+        READY,
+        UNREADY,
         IS,
         ISNT,
         HAS,

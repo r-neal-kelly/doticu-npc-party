@@ -22,7 +22,6 @@ namespace doticu_npcp { namespace Quest {
     void Log_Dialogue(Quest_t* quest);
 
     void Log_Start_Enabled_Dialogue();
-    void Log_0A0(Quest_t* quest);
 
 }}
 

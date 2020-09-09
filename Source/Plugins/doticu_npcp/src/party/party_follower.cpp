@@ -8,6 +8,7 @@
 #include "codes.h"
 #include "commands.h"
 #include "consts.h"
+#include "funcs.h"
 #include "object_ref.h"
 #include "papyrus.inl"
 #include "utils.h"
@@ -45,6 +46,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     Variable_t* Follower_t::Member_Variable() { DEFINE_VARIABLE("p_ref_member"); }
     Variable_t* Follower_t::Horse_Variable() { DEFINE_VARIABLE("p_ref_horse"); }
 
+    Variable_t* Follower_t::Is_Locked_Variable() { DEFINE_VARIABLE("p_is_locked"); }
     Variable_t* Follower_t::Is_Sneak_Variable() { DEFINE_VARIABLE("p_is_sneak"); }
     Variable_t* Follower_t::Is_Saddler_Variable() { DEFINE_VARIABLE("p_is_saddler"); }
     Variable_t* Follower_t::Is_Retreater_Variable() { DEFINE_VARIABLE("p_is_retreater"); }
@@ -150,6 +152,16 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     {
         NPCP_ASSERT(Is_Filled());
         return Member()->Name();
+    }
+
+    Bool_t Follower_t::Is_Locked()
+    {
+        return Is_Locked_Variable()->Bool();
+    }
+
+    Bool_t Follower_t::Is_Unlocked()
+    {
+        return !Is_Locked_Variable()->Bool();
     }
 
     Bool_t Follower_t::Is_Ready()
@@ -364,6 +376,43 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Object_Ref::Untoken(Actor(), token);
     }
 
+    void Follower_t::Lock(Callback_t<>* on_lock, Float_t interval, Float_t limit)
+    {
+        if (Is_Locked()) {
+            struct VCallback : Virtual_Callback_t {
+                Follower_t* follower;
+                Callback_t<>* on_lock;
+                Float_t interval;
+                Float_t time_left;
+                VCallback(Follower_t* follower, Callback_t<>* on_lock, Float_t interval, Float_t time_left) :
+                    follower(follower), on_lock(on_lock), interval(interval), time_left(time_left)
+                {
+                }
+                void operator()(Variable_t* result)
+                {
+                    if (follower->Is_Locked() && time_left > 0.0f) {
+                        follower->Lock(on_lock, interval, time_left - interval);
+                    } else {
+                        follower->Is_Locked_Variable()->Bool(true);
+                        on_lock->operator()();
+                        delete on_lock;
+                    }
+                }
+            };
+            Virtual_Callback_i* vcallback = new VCallback(this, on_lock, interval, limit);
+            Modules::Funcs_t::Self()->Wait(interval, &vcallback);
+        } else {
+            Is_Locked_Variable()->Bool(true);
+            on_lock->operator()();
+            delete on_lock;
+        }
+    }
+
+    void Follower_t::Unlock()
+    {
+        Is_Locked_Variable()->Bool(false);
+    }
+
     void Follower_t::Fill(Member_t* member, Followers_t::Add_Callback_i** add_callback)
     {
         NPCP_ASSERT(member);
@@ -443,69 +492,111 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     void Follower_t::Relinquish(Callback_t<Int_t, Member_t*>* user_callback)
     {
+        NPCP_ASSERT(user_callback);
+
         using UCallback_t = Callback_t<Int_t, Member_t*>;
 
-        if (Is_Saddler()) {
-            struct Unsaddle_Callback : public Callback_t<Int_t, Follower_t*> {
-                UCallback_t* user_callback;
-                Unsaddle_Callback(UCallback_t* user_callback) :
-                    user_callback(user_callback)
-                {
-                }
-                void operator()(Int_t code, Follower_t* follower)
-                {
-                    if (follower) {
-                        follower->Relinquish(user_callback);
+        struct Lock_t : public Callback_t<> {
+            Follower_t* follower;
+            UCallback_t* user_callback;
+            Lock_t(Follower_t* follower, UCallback_t* user_callback) :
+                follower(follower), user_callback(user_callback)
+            {
+            }
+            void operator()()
+            {
+                struct Callback_t : public UCallback_t {
+                    Follower_t* follower;
+                    UCallback_t* user_callback;
+                    Callback_t(Follower_t* follower, UCallback_t* user_callback) :
+                        follower(follower), user_callback(user_callback)
+                    {
                     }
+                    void operator()(Int_t code, Member_t* member)
+                    {
+                        user_callback->operator()(code, member);
+                        delete user_callback;
+                        follower->Unlock();
+                    }
+                };
+                follower->Relinquish_Impl(new Callback_t(follower, user_callback));
+            }
+        };
+        Lock(new Lock_t(this, user_callback));
+    }
+
+    void Follower_t::Relinquish_Impl(Callback_t<Int_t, Member_t*>* user_callback)
+    {
+        NPCP_ASSERT(user_callback);
+
+        using UCallback_t = Callback_t<Int_t, Member_t*>;
+
+        if (Is_Ready()) {
+            if (Is_Saddler()) {
+                struct Unsaddle_Callback : public Callback_t<Int_t, Follower_t*> {
+                    Follower_t* follower;
+                    UCallback_t* user_callback;
+                    Unsaddle_Callback(Follower_t* follower, UCallback_t* user_callback) :
+                        follower(follower), user_callback(user_callback)
+                    {
+                    }
+                    void operator()(Int_t code, Follower_t* _)
+                    {
+                        follower->Relinquish_Impl(user_callback);
+                    }
+                };
+                Callback_t<Int_t, Follower_t*>* unsaddle_callback = new Unsaddle_Callback(this, user_callback);
+                Unsaddle(&unsaddle_callback);
+            } else {
+                struct VCallback : public Virtual_Callback_t {
+                    Follower_t* follower;
+                    Member_t* member;
+                    UCallback_t* user_callback;
+                    VCallback(Follower_t* follower, Member_t* member, UCallback_t* user_callback) :
+                        follower(follower), member(member), user_callback(user_callback)
+                    {
+                    }
+                    void operator()(Variable_t* result)
+                    {
+                        user_callback->operator()(CODES::SUCCESS, member);
+                        delete user_callback;
+                    }
+                };
+                Virtual_Callback_i* vcallback = new VCallback(this, Member(), user_callback);
+                Alias_t::Unfill(&vcallback);
+
+                Actor_t* actor = Actor();
+
+                if (Is_Retreater()) {
+                    Unretreat();
                 }
-            };
-            Callback_t<Int_t, Follower_t*>* unsaddle_callback = new Unsaddle_Callback(user_callback);
-            Unsaddle(&unsaddle_callback);
+                if (Is_Sneak()) {
+                    Unsneak();
+                }
+                Unlevel();
+
+                if (Previous_No_Auto_Bard_Faction_Variable()->Bool()) {
+                    Actor2::Add_Faction(actor, Consts::No_Bard_Singer_Autostart_Faction());
+                }
+                Object_Ref::Untoken(actor, Consts::Follower_Token());
+                Actor2::Evaluate_Package(actor);
+
+                Previous_No_Auto_Bard_Faction_Variable()->Bool(false);
+                Previous_Speed_Multiplier_Variable()->Float(-1.0f);
+                Previous_Waiting_For_Player_Variable()->Float(-1.0f);
+                Previous_Player_Relationship_Variable()->Int(-1);
+
+                Is_Retreater_Variable()->Bool(false);
+                Is_Saddler_Variable()->Bool(false);
+                Is_Sneak_Variable()->Bool(false);
+
+                Horse_Variable()->None(Horse_t::Class_Info());
+                Member_Variable()->None(Member_t::Class_Info());
+                Actor_Variable()->None(Class_Info_t::Fetch(Actor_t::kTypeID, true));
+            }
         } else {
-            struct VCallback : public Virtual_Callback_t {
-                Member_t* member;
-                UCallback_t* user_callback;
-                VCallback(Member_t* member, UCallback_t* user_callback) :
-                    member(member), user_callback(user_callback)
-                {
-                }
-                void operator()(Variable_t* result)
-                {
-                    user_callback->operator()(CODES::SUCCESS, member);
-                    delete user_callback;
-                }
-            };
-            Virtual_Callback_i* vcallback = new VCallback(Member(), user_callback);
-            Alias_t::Unfill(&vcallback);
-
-            Actor_t* actor = Actor();
-
-            if (Is_Retreater()) {
-                Unretreat();
-            }
-            if (Is_Sneak()) {
-                Unsneak();
-            }
-            Unlevel();
-
-            if (Previous_No_Auto_Bard_Faction_Variable()->Bool()) {
-                Actor2::Add_Faction(actor, Consts::No_Bard_Singer_Autostart_Faction());
-            }
-            Object_Ref::Untoken(actor, Consts::Follower_Token());
-            Actor2::Evaluate_Package(actor);
-
-            Previous_No_Auto_Bard_Faction_Variable()->Bool(false);
-            Previous_Speed_Multiplier_Variable()->Float(-1.0f);
-            Previous_Waiting_For_Player_Variable()->Float(-1.0f);
-            Previous_Player_Relationship_Variable()->Int(-1);
-
-            Is_Retreater_Variable()->Bool(false);
-            Is_Saddler_Variable()->Bool(false);
-            Is_Sneak_Variable()->Bool(false);
-
-            Horse_Variable()->None(Horse_t::Class_Info());
-            Member_Variable()->None(Member_t::Class_Info());
-            Actor_Variable()->None(Class_Info_t::Fetch(Actor_t::kTypeID, true));
+            user_callback->operator()(CODES::UNREADY, nullptr);
+            delete user_callback;
         }
     }
 
@@ -517,6 +608,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Member_Variable()->Pack(member);
         Horse_Variable()->None(Horse_t::Class_Info());
 
+        Is_Locked_Variable()->Bool(false);
         Is_Sneak_Variable()->Bool(false);
         Is_Saddler_Variable()->Bool(false);
         Is_Retreater_Variable()->Bool(false);

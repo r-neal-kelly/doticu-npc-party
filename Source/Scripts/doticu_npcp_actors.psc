@@ -33,8 +33,6 @@ Actor               p_ref_menu      =  none
 ; Friend Methods
 function f_Create()
     p_is_created = true
-
-    PLAYER.f_Create()
 endFunction
 
 function f_Destroy()
@@ -44,7 +42,6 @@ function f_Destroy()
     if GREETER.Exists()
         GREETER.f_Destroy()
     endIf
-    PLAYER.f_Destroy()
 
     p_is_created = false
 endFunction
@@ -66,7 +63,6 @@ function f_Unregister()
     if GREETER.Exists()
         GREETER.f_Unregister()
     endIf
-    PLAYER.f_Unregister()
 endFunction
 
 ; Public Methods

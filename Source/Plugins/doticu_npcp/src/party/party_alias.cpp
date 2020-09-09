@@ -55,4 +55,26 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Virtual_Machine_t::Self()->Call_Method(this, "ReferenceAlias", "Clear", nullptr, callback);
     }
 
+    void Alias_t::Queue(Callback_t<>* user_callback)
+    {
+        NPCP_ASSERT(user_callback);
+
+        using UCallback_t = Callback_t<>;
+
+        struct VCallback : public Virtual_Callback_t {
+            UCallback_t* user_callback;
+            VCallback(UCallback_t* user_callback) :
+                user_callback(user_callback)
+            {
+            }
+            void operator()(Variable_t* result)
+            {
+                user_callback->operator()();
+                delete user_callback;
+            }
+        };
+        Virtual_Callback_i* vcallback = new VCallback(user_callback);
+        Virtual_Machine_t::Self()->Call_Method(this, "Alias", "GetOwningQuest", nullptr, &vcallback);
+    }
+
 }}}

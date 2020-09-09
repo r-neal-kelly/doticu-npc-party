@@ -2157,25 +2157,51 @@ namespace doticu_npcp { namespace Actor2 {
         Virtual_Machine_t::Self()->Call_Method(actor, "ObjectReference", "IsInDialogueWithPlayer", nullptr, callback);
     }
 
-    void Owner(Actor_t* ref, Actor_Base_t* owner)
+    void Owner(Actor_t* actor, Actor_Base_t* owner)
     {
-        if (ref) {
+        if (actor) {
             ExtraOwnership* xowner = static_cast<ExtraOwnership*>
-                (ref->extraData.GetByType(kExtraData_Ownership));
+                (actor->extraData.GetByType(kExtraData_Ownership));
             if (xowner) {
                 if (owner) {
                     xowner->owner = static_cast<Form_t*>(owner);
                 } else {
-                    ref->extraData.Remove(kExtraData_Ownership, xowner);
+                    actor->extraData.Remove(kExtraData_Ownership, xowner);
                     XData::Destroy(xowner);
                 }
             } else {
                 if (owner) {
                     xowner = XData::Create_Ownership(static_cast<Form_t*>(owner));
-                    ref->extraData.Add(kExtraData_Ownership, xowner);
+                    actor->extraData.Add(kExtraData_Ownership, xowner);
                 }
             }
         }
+    }
+
+    void Apply_Ability(Actor_t* actor, Spell_t* ability, Callback_t<Actor_t*>* user_callback)
+    {
+        using UCallback_t = Callback_t<Actor_t*>;
+
+        struct VCallback : public Virtual_Callback_t {
+            Actor_t* actor;
+            Spell_t* ability;
+            UCallback_t* user_callback;
+            VCallback(Actor_t* actor, Spell_t* ability, UCallback_t* user_callback) :
+                actor(actor), ability(ability), user_callback(user_callback)
+            {
+            }
+            void operator()(Variable_t* result)
+            {
+                Add_Spell(actor, ability);
+                
+                if (user_callback) {
+                    user_callback->operator()(actor);
+                    delete user_callback;
+                }
+            }
+        };
+        Virtual_Callback_i* vcallback = new VCallback(actor, ability, user_callback);
+        Remove_Spell(actor, ability, &vcallback);
     }
 
 }}

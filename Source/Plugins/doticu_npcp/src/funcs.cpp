@@ -41,6 +41,31 @@ namespace doticu_npcp { namespace Modules {
         return Object()->Variable(variable_name);
     }
 
+    void Funcs_t::Wait(Float_t seconds, Virtual_Callback_i** callback)
+    {
+        struct Arguments : public Virtual_Arguments_t {
+            Float_t seconds;
+            Arguments(Float_t seconds) :
+                seconds(seconds)
+            {
+            }
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(1);
+                arguments->At(0)->Float(seconds);
+                return true;
+            }
+        } arguments(seconds);
+
+        Virtual_Machine_t::Self()->Call_Method(
+            Consts::Funcs_Quest(),
+            Class_Name(),
+            "Wait",
+            &arguments,
+            callback
+        );
+    }
+
     void Funcs_t::Wait_Out_Of_Menu(Float_t seconds, Virtual_Callback_i** callback)
     {
         struct Arguments : public Virtual_Arguments_t {

@@ -29,6 +29,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Variable_t* Member_Variable(); // Member_t
         Variable_t* Horse_Variable(); // Horse_t
 
+        Variable_t* Is_Locked_Variable(); // Bool_t
         Variable_t* Is_Sneak_Variable(); // Bool_t
         Variable_t* Is_Saddler_Variable(); // Bool_t
         Variable_t* Is_Retreater_Variable(); // Bool_t
@@ -54,6 +55,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         String_t Reference_Name();
         String_t Name();
 
+        Bool_t Is_Locked();
+        Bool_t Is_Unlocked();
         Bool_t Is_Ready();
         Bool_t Is_Loaded();
         Bool_t Is_Unloaded();
@@ -96,6 +99,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         void Token(Misc_t* token, Int_t count = 1);
         void Untoken(Misc_t* token);
 
+        void Lock(Callback_t<>* on_lock, Float_t interval = 0.2f, Float_t limit = 10.0f);
+        void Unlock();
         void Fill(Member_t* member, Followers_t::Add_Callback_i** add_callback);
         void Unfill(Callback_t<Int_t, Member_t*>** callback);
         void Relinquish(Callback_t<Int_t, Member_t*>* user_callback);
@@ -146,6 +151,9 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         void Catch_Up();
         void Rename(String_t new_name);
+
+    private:
+        void Relinquish_Impl(Callback_t<Int_t, Member_t*>* user_callback);
 
     public:
         static void Register_Me(Virtual_Machine_t* vm);

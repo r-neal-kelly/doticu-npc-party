@@ -407,12 +407,6 @@ function f_Destroy()
     p_is_created = false
 endFunction
 
-function f_Register()
-endFunction
-
-function f_Unregister()
-endFunction
-
 ; Public Methods
 function Set_Defaults()
     version_major = doticu_npcp_consts.NPCP_Major()

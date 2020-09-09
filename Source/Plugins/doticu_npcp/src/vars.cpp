@@ -339,6 +339,7 @@ namespace doticu_npcp { namespace Vars {
     Bool_t Do_Fill_Outfit2s() { BOOL_VAR("p_fill_outfits"); }
     Bool_t Do_Auto_Outfit2s() { BOOL_VAR("p_auto_outfit"); }
     Bool_t Do_Auto_Immobile_Outfit2() { BOOL_VAR("p_auto_immobile_outfit"); }
+    Bool_t Do_Auto_Resurrect() { BOOL_VAR("p_auto_resurrect"); }
 
     #undef BOOL_VAR
 

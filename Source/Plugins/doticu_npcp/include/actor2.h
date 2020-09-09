@@ -138,7 +138,9 @@ namespace doticu_npcp { namespace Actor2 {
     Bool_t Is_Sneaking(Actor_t* actor);
     void Is_Talking_To_Player(Actor_t* actor, Virtual_Callback_i** callback);
 
-    void Owner(Actor_t* ref, Actor_Base_t* owner); // maybe we could try the reference instead of base, for horses
+    void Owner(Actor_t* actor, Actor_Base_t* owner); // maybe we could try the reference instead of base, for horses
+
+    void Apply_Ability(Actor_t* actor, Spell_t* ability, Callback_t<Actor_t*>* user_callback = nullptr);
 
 }}
 

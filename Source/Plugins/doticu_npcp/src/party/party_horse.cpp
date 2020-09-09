@@ -82,6 +82,11 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         return Name_Variable()->String();
     }
 
+    Bool_t Horse_t::Is_Ready()
+    {
+        return Is_Filled() && Actor_Variable()->Has_Object();
+    }
+
     Bool_t Horse_t::Is_Alive()
     {
         return Is_Filled() && Actor2::Is_Alive(Actor());
@@ -198,7 +203,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     Int_t Horse_t::Groom()
     {
-        if (Is_Filled()) {
+        if (Is_Ready()) {
             Actor_t* actor = Actor();
             Enforce_Groom(actor);
             Actor2::Evaluate_Package(actor);
@@ -246,7 +251,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     Int_t Horse_t::Ungroom()
     {
-        if (Is_Filled()) {
+        if (Is_Ready()) {
             Actor_t* actor = Actor();
             Enforce_Non_Groom(actor);
             Actor2::Evaluate_Package(actor);
@@ -279,11 +284,13 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             Virtual_Callback_i* vcallback = new VCallback(this, actor, callback);
             Modules::Funcs_t::Self()->Wait_Out_Of_Menu(1.0f, &vcallback);
         } else {
-            Global_t* is_saddler_sitting_global = static_cast<Global_t*>
-                (Consts::Is_Saddler_Sitting_Globals_Formlist()->forms.entries[Follower()->ID()]);
-            is_saddler_sitting_global->value = 0.0f;
-            Object_Ref::Move_To_Orbit(actor, Consts::Storage_Marker(), 0.0f, 0.0f);
-            actor->Disable();
+            if (Is_Ready()) {
+                Global_t* is_saddler_sitting_global = static_cast<Global_t*>
+                    (Consts::Is_Saddler_Sitting_Globals_Formlist()->forms.entries[Follower()->ID()]);
+                is_saddler_sitting_global->value = 0.0f;
+                Object_Ref::Move_To_Orbit(actor, Consts::Storage_Marker(), 0.0f, 0.0f);
+                actor->Disable();
+            }
 
             if (callback) {
                 callback->operator()();

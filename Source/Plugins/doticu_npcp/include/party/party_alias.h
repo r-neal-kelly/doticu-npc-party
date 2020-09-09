@@ -18,6 +18,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         void Fill(Actor_t* actor, Virtual_Callback_i** callback);
         void Unfill(Virtual_Callback_i** callback);
+
+        void Queue(Callback_t<>* user_callback);
     };
 
 }}}

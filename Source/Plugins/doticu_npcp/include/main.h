@@ -39,10 +39,10 @@ namespace doticu_npcp { namespace Modules {
                                          Int_t min_minor,
                                          Int_t min_patch);
 
+        void Init_Mod();
         void Load_Mod();
+        void Has_Requirements(Callback_t<Bool_t>* user_callback);
         Bool_t Try_Update();
-
-        void Test();
 
     public:
         static void Register_Me(Virtual_Machine_t* vm);

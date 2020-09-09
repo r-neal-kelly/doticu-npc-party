@@ -6,6 +6,7 @@ Actor               p_ref_actor                 =  none
 doticu_npcp_member  p_ref_member                =  none
 doticu_npcp_horse   p_ref_horse                 =  none
 
+bool                p_is_locked                 = false
 bool                p_is_sneak                  = false
 bool                p_is_saddler                = false
 bool                p_is_retreater              = false

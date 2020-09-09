@@ -124,20 +124,131 @@ namespace doticu_npcp { namespace Modules {
                                     min_patch);
     }
 
-    void Main_t::Load_Mod()
+    void Main_t::Init_Mod()
     {
-        //Quest::Log_0A0(Consts::Members_Quest());
-
-        struct Callback : public Virtual_Callback_t {
-        public:
+        struct VCallback : public Virtual_Callback_t {
+            Main_t* main;
+            VCallback(Main_t* main) :
+                main(main)
+            {
+            }
             void operator()(Variable_t* result)
             {
-                Utils::Print("NPC Party has loaded.");
+                struct Callback : public Callback_t<Bool_t> {
+                    Main_t* main;
+                    Callback(Main_t* main) :
+                        main(main)
+                    {
+                    }
+                    void operator()(Bool_t has_requirements)
+                    {
+                        if (has_requirements) {
+                            Quest::Start(Consts::Vars_Quest());
+                            Quest::Start(Consts::Funcs_Quest());
+                            Quest::Start(Consts::Members_Quest());
+                            Quest::Start(Consts::Followers_Quest());
+                            Quest::Start(Consts::Control_Quest());
+
+                            Quest::Start(Consts::Reanimated_Dialogue_Quest());
+                            Quest::Start(Consts::Thrall_Dialogue_Quest());
+
+                            struct VCallback : public Virtual_Callback_t {
+                                Main_t* main;
+                                VCallback(Main_t* main) :
+                                    main(main)
+                                {
+                                }
+                                void operator()(Variable_t* result)
+                                {
+                                    Consts::Is_Installed_Global()->value = 1.0f;
+                                    Modules::Control::Commands_t::Self()->Log_Note("Thank you for installing!", true);
+                                    Party::Player_t::Self()->On_Init_Mod();
+                                }
+                            };
+                            Virtual_Callback_i* vcallback = new VCallback(main);
+                            Virtual_Machine_t::Self()->Call_Method(main, main->Class_Name(), "p_Create", nullptr, &vcallback);
+                        }
+                    }
+                };
+                main->Has_Requirements(new Callback(main));
             }
         };
-        Virtual_Callback_i* callback = new Callback();
+        Virtual_Callback_i* vcallback = new VCallback(this);
+        Funcs_t::Self()->Wait_Out_Of_Menu(1.0f, &vcallback);
+    }
 
-        Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "f_Load_Mod", nullptr, &callback);
+    void Main_t::Load_Mod()
+    {
+        struct VCallback : public Virtual_Callback_t {
+            Main_t* main;
+            VCallback(Main_t* main) :
+                main(main)
+            {
+            }
+            void operator()(Variable_t* result)
+            {
+                struct Callback : public Callback_t<Bool_t> {
+                    Main_t* main;
+                    Callback(Main_t* main) :
+                        main(main)
+                    {
+                    }
+                    void operator()(Bool_t has_requirements)
+                    {
+                        if (has_requirements) {
+                            struct VCallback : public Virtual_Callback_t {
+                                Main_t* main;
+                                VCallback(Main_t* main) :
+                                    main(main)
+                                {
+                                }
+                                void operator()(Variable_t* result)
+                                {
+                                    if (main->Try_Update()) {
+                                        std::string note =
+                                            "Running version " +
+                                            std::to_string(Consts::NPCP_Major()) + "." +
+                                            std::to_string(Consts::NPCP_Minor()) + "." +
+                                            std::to_string(Consts::NPCP_Patch());
+                                        Modules::Control::Commands_t::Self()->Log_Note(note.c_str(), true);
+                                    }
+                                    Party::Player_t::Self()->On_Load_Mod();
+                                    Party::Members_t::Self()->On_Load_Mod();
+                                    Utils::Print("NPC Party has loaded.");
+                                }
+                            };
+                            Virtual_Callback_i* vcallback = new VCallback(main);
+                            Virtual_Machine_t::Self()->Call_Method(main, main->Class_Name(), "p_Register", nullptr, &vcallback);
+                        }
+                    }
+                };
+                main->Has_Requirements(new Callback(main));
+            }
+        };
+        Virtual_Callback_i* vcallback = new VCallback(this);
+        Funcs_t::Self()->Wait_Out_Of_Menu(1.0f, &vcallback);
+    }
+
+    void Main_t::Has_Requirements(Callback_t<Bool_t>* user_callback)
+    {
+        NPCP_ASSERT(user_callback);
+
+        using UCallback_t = Callback_t<Bool_t>;
+
+        struct VCallback : public Virtual_Callback_t {
+            UCallback_t* user_callback;
+            VCallback(UCallback_t* user_callback) :
+                user_callback(user_callback)
+            {
+            }
+            void operator()(Variable_t* result)
+            {
+                user_callback->operator()(result ? result->Bool() : false);
+                delete user_callback;
+            }
+        };
+        Virtual_Callback_i* vcallback = new VCallback(user_callback);
+        Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "p_Has_Requires", nullptr, &vcallback);
     }
 
     Bool_t Main_t::Try_Update()
@@ -180,7 +291,7 @@ namespace doticu_npcp { namespace Modules {
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        METHOD("p_Try_Update", 0, Bool_t, Try_Update);
+        METHOD("p_Init_Mod", 0, void, Init_Mod);
 
         #undef METHOD
     }

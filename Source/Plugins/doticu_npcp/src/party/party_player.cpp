@@ -3,11 +3,14 @@
 */
 
 #include "actor2.h"
+#include "codes.h"
 #include "commands.h"
 #include "consts.h"
+#include "funcs.h"
 #include "object_ref.h"
 #include "papyrus.inl"
 #include "utils.h"
+#include "vars.h"
 
 #include "party/party_player.h"
 #include "party/party_members.h"
@@ -47,6 +50,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     {
         return Object()->Variable(variable_name);
     }
+
+    Variable_t* Player_t::Is_In_Combat_Variable() { DEFINE_VARIABLE("p_is_in_combat"); }
 
     Actor_t* Player_t::Actor()
     {
@@ -95,32 +100,86 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     void Player_t::Begin_Combat()
     {
-        Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "f_Begin_Combat");
+        Variable_t* is_in_combat_variable = Is_In_Combat_Variable();
+        if (is_in_combat_variable->Bool() == false) {
+            is_in_combat_variable->Bool(true);
+
+            
+            Followers_t* followers = Followers_t::Self();
+            followers->Catch_Up();
+            if (Is_Sneaking()) {
+                followers->Retreat();
+            }
+
+            Try_To_End_Combat();
+        }
     }
 
     void Player_t::Try_To_End_Combat()
     {
-
+        if (Is_Party_In_Combat()) {
+            struct VCallback : public Virtual_Callback_t {
+                Player_t* player;
+                VCallback(Player_t* player) :
+                    player(player)
+                {
+                }
+                void operator()(Variable_t* result)
+                {
+                    player->Try_To_End_Combat();
+                }
+            };
+            Virtual_Callback_i* vcallback = new VCallback(this);
+            Modules::Funcs_t::Self()->Wait_Out_Of_Menu(5.0f, &vcallback);
+        } else {
+            End_Combat();
+        }
     }
 
     void Player_t::End_Combat()
     {
+        Is_In_Combat_Variable()->Bool(false);
+        
+        if (!Is_Sneaking()) {
+            Followers_t::Self()->Unretreat();
+        }
 
+        Members_t::Self()->Enforce_Loaded(Vars::Do_Auto_Resurrect());
+    }
+
+    void Player_t::On_Init_Mod()
+    {
+        Actor2::Apply_Ability(Actor(), Consts::Cell_Ability_Spell());
+    }
+
+    void Player_t::On_Load_Mod()
+    {
+        Actor2::Apply_Ability(Actor(), Consts::Cell_Ability_Spell());
+
+        if (!Is_Party_In_Combat()) {
+            End_Combat();
+        }
+    }
+
+    void Player_t::On_Cell_Change(Form_t* new_cell, Form_t* old_cell)
+    {
+        Utils::Print("On_Cell_Change");
+        Actor2::Apply_Ability(Actor(), Consts::Cell_Ability_Spell());
+        Followers_t::Self()->Catch_Up();
     }
 
     void Player_t::On_Control_Down(String_t control)
     {
-        static Actor_t* player_actor = Actor();
-        static Members_t* members = Members_t::Self();
-        static Followers_t* followers = Followers_t::Self();
-
         if (String2::Is_Same_Caseless(control, "Sneak")) {
-            if (Actor2::Is_Sneaking(player_actor) && Is_Party_In_Combat()) {
+            Followers_t* followers = Followers_t::Self();
+            if (Is_Sneaking() && Is_Party_In_Combat()) {
                 followers->Retreat();
             } else {
                 followers->Unretreat();
             }
         } else if (String2::Is_Same_Caseless(control, "Forward")) {
+            Members_t* members = Members_t::Self();
+            Followers_t* followers = Followers_t::Self();
             Vector_t<Member_t*> loaded_members = members->Loaded();
             for (size_t idx = 0, count = loaded_members.size(); idx < count; idx += 1) {
                 Member_t* member = loaded_members[idx];
@@ -130,6 +189,17 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                 Follower_t* follower = member->Follower();
                 if (follower && !followers->Can_Actor_Follow(actor)) {
                     Modules::Control::Commands_t::Self()->Relinquish(actor);
+                }
+            }
+        }
+    }
+
+    void Player_t::On_Actor_Action(Int_t action_code, Actor_t* actor, Form_t* tool, Int_t tool_slot)
+    {
+        if (actor == Actor()) {
+            if (action_code == CODES::ACTION::DRAW_END) {
+                if (!Is_Party_In_Combat()) {
+                    Followers_t::Self()->Catch_Up();
                 }
             }
         }
@@ -145,8 +215,10 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         W
 
         METHOD("Is_Party_In_Combat", 0, Bool_t, Is_Party_In_Combat);
+        METHOD("On_Cell_Change", 2, void, On_Cell_Change, Form_t*, Form_t*);
         METHOD("OnControlDown", 1, void, On_Control_Down, String_t);
-
+        METHOD("OnActorAction", 4, void, On_Actor_Action, Int_t, Actor_t*, Form_t*, Int_t);
+        
         #undef METHOD
     }
 

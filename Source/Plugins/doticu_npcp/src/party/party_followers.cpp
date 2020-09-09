@@ -517,11 +517,9 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             }
         }
 
-        //temp
-        for (size_t idx = 0, count = quests.size(); idx < count; idx += 1) {
+        /*for (size_t idx = 0, count = quests.size(); idx < count; idx += 1) {
             _MESSAGE(quests[idx]->Editor_ID());
-        }
-        //
+        }*/
 
         return quests;
     }

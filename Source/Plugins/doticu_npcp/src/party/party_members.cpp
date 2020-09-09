@@ -805,6 +805,11 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
+    void Members_t::On_Load_Mod()
+    {
+        Enforce_Loaded();
+    }
+
     void Members_t::u_0_9_3()
     {
         NPCS_t* npcs = NPCS_t::Self();

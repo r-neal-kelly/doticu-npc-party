@@ -20,6 +20,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     public:
         Variable_t* Variable(String_t variable_name);
 
+        Variable_t* Is_In_Combat_Variable();
+
         Actor_t* Actor();
         Player_Character_t* Player_Character();
         Location_t* Location();
@@ -35,7 +37,11 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         void Try_To_End_Combat();
         void End_Combat();
 
+        void On_Init_Mod();
+        void On_Load_Mod();
+        void On_Cell_Change(Form_t* new_cell, Form_t* old_cell);
         void On_Control_Down(String_t control);
+        void On_Actor_Action(Int_t action_code, Actor_t* actor, Form_t* tool, Int_t tool_slot);
 
     public:
         static void Register_Me(Virtual_Machine_t* vm);

@@ -20,11 +20,6 @@ doticu_npcp_members property MEMBERS hidden
         return doticu_npcp.Members()
     endFunction
 endProperty
-doticu_npcp_followers property FOLLOWERS hidden
-    doticu_npcp_followers function Get()
-        return doticu_npcp.Followers()
-    endFunction
-endProperty
 doticu_npcp_control property CONTROL hidden
     doticu_npcp_control function Get()
         return doticu_npcp.Control()
@@ -32,53 +27,10 @@ doticu_npcp_control property CONTROL hidden
 endProperty
 
 ; Native Methods
-bool function p_Try_Update() native
-
-; Friend Methods
-function f_Init_Mod()
-    ; just in case of any engine bugs, like AddItem, which may not work
-    ; during the first second of the game, see wiki
-    FUNCS.Wait_Out_Of_Menu(1)
-
-    if !p_Has_Requires()
-        return
-    endIf
-
-    VARS.Start()
-    FUNCS.Start()
-    MEMBERS.Start()
-    FOLLOWERS.Start()
-    CONTROL.Start()
-
-    doticu_npcp_consts.Reanimated_Dialogue_Quest().Start()
-    doticu_npcp_consts.Thrall_Dialogue_Quest().Start()
-
-    p_Create()
-    p_Register()
-
-    doticu_npcp_consts.Is_Installed_Global().SetValue(1)
-    FUNCS.LOGS.Create_Note("Thank you for installing!")
-
-    FUNCS.Send_Event("doticu_npcp_init_mod")
-endFunction
-
-function f_Load_Mod();;;
-    FUNCS.Wait_Out_Of_Menu(1); just in case of any engine bugs
-
-    if p_Has_Requires()
-        p_Register()
-        if p_Try_Update()
-            FUNCS.LOGS.Create_Note("Running version " + \
-                                   doticu_npcp_consts.NPCP_Major() + "." + \
-                                   doticu_npcp_consts.NPCP_Minor() + "." + \
-                                   doticu_npcp_consts.NPCP_Patch())
-        endIf
-        FUNCS.Send_Event("doticu_npcp_load_mod")
-    endIf
-endFunction
+function p_Init_Mod() native
 
 ; Private Methods
-bool function p_Has_Requires()
+bool function p_Has_Requires();;;
     if !SKSE.GetVersion()
         Debug.MessageBox("NPC Party: SKSE is not installed. " + \
                          "This mod will not function correctly. " + \
@@ -108,17 +60,18 @@ bool function p_Has_Requires()
     return true
 endFunction
 
-function p_Create()
+function p_Create();;;
     VARS.f_Create()
     FUNCS.f_Create()
     MEMBERS.f_Create()
     CONTROL.f_Create()
+
+    FUNCS.f_Register()
+    MEMBERS.f_Register()
+    CONTROL.f_Register()
 endFunction
 
-function p_Register()
-    ; registering mod events is global for each script on an object, and
-    ; further, works for handlers labeled as function as well as event.
-    VARS.f_Register()
+function p_Register();;;
     FUNCS.f_Register()
     MEMBERS.f_Register()
     CONTROL.f_Register()
@@ -145,22 +98,11 @@ bool function Is_NPC_Party_Version_Less_Than(int min_major, int min_minor, int m
     return Is_Version_Less_Than(VARS.version_major, VARS.version_minor, VARS.version_patch, min_major, min_minor, min_patch)
 endFunction
 
-bool function Is_NPC_Party_Version(int major, int minor, int patch)
-    return VARS.version_major == major && VARS.version_minor == minor && VARS.version_patch == patch
-endFunction
-
-bool function Is_Ready()
-    return  VARS.version_major == doticu_npcp_consts.NPCP_Major() && \
-            VARS.version_minor == doticu_npcp_consts.NPCP_Minor() && \
-            VARS.version_patch == doticu_npcp_consts.NPCP_Patch()
-endFunction
-
 ; Events
 event OnInit()
-    ; we don't init in this thread because it will not wait
-    RegisterForSingleUpdate(0.01)
+    RegisterForSingleUpdate(0.01); we don't init in this thread because it will not wait
 endEvent
 
 event OnUpdate()
-    f_Init_Mod()
+    p_Init_Mod()
 endEvent

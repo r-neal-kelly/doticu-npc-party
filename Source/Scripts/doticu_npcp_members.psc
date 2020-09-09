@@ -61,21 +61,13 @@ function f_Destroy()
 endFunction
 
 function f_Register()
-    ; just in case, see ALIASES.f_Register()
     int filled_count = Count_Filled()
     if VARS.max_members < filled_count
         VARS.max_members = filled_count
     endIf
-
-    RegisterForModEvent("doticu_npcp_load_mod", "On_Load_Mod")
 endFunction
 
 ; Public Methods
 doticu_npcp_member function Get_Member(Actor ref_actor)
     return p_From_Actor(ref_actor) as doticu_npcp_member
 endFunction
-
-; Events
-event On_Load_Mod()
-    Enforce_Loaded()
-endEvent

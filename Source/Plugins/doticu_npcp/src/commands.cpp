@@ -204,7 +204,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
             case (CODES::ACTOR):
                 return Log_Note("That can't become a follower.");
             case (CODES::CANT):
-                return Log_Note(name, " is in another framework. Release them first.");
+                return Log_Note(name, " follows in another framework.");
             default:
                 return Log_Error(name, " can't start following", code);
         };
@@ -237,6 +237,8 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                 return Log_Note(name, " wasn't following, and so can't be relinquished.");
             case (CODES::ACTOR):
                 return Log_Note("That can't be relinquished.");
+            case (CODES::UNREADY):
+                return;
             default:
                 return Log_Error(name, " can't be relinquished", code);
         };
@@ -2433,16 +2435,17 @@ namespace doticu_npcp { namespace Modules { namespace Control {
             if (member) {
                 struct Relinquish_Callback : public Callback_t<Int_t, Member_t*> {
                     Commands_t* commands;
-                    Relinquish_Callback(Commands_t* commands) :
-                        commands(commands)
+                    const char* member_name;
+                    Relinquish_Callback(Commands_t* commands, const char* member_name) :
+                        commands(commands), member_name(member_name)
                     {
                     }
                     void operator()(Int_t code, Member_t* member)
                     {
-                        commands->Log_Relinquish(code, member->Name());
+                        commands->Log_Relinquish(code, member_name);
                     }
                 };
-                Followers_t::Self()->Relinquish_Follower(member, new Relinquish_Callback(this));
+                Followers_t::Self()->Relinquish_Follower(member, new Relinquish_Callback(this, member->Name()));
             } else {
                 Log_Relinquish(CODES::MEMBER, Actor2::Get_Name(actor));
             }
