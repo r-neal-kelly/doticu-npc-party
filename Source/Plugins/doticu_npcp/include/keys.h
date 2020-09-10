@@ -257,7 +257,8 @@ namespace doticu_npcp { namespace Papyrus {
                                     Int_t mod_3 = KEY_INVALID);
         String_t Pressed_Hotkey(Int_t value);
 
-        void Register_Keys();
+        void Register();
+        void Unregister();
         void Actor_In_Crosshair(Bool_t allow_follower_horse, void(*callback)(Actor_t*));
 
         void On_Key_Down(Int_t key_code);

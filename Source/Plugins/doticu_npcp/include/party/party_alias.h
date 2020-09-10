@@ -20,6 +20,11 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         void Unfill(Virtual_Callback_i** callback);
 
         void Queue(Callback_t<>* user_callback);
+
+        template <typename Base_t>
+        void Lock(Base_t* self, Callback_t<Base_t*>* on_lock, Float_t interval = 0.2f, Float_t limit = 10.0f);
+        template <typename Base_t>
+        void Unlock(Base_t* self);
     };
 
 }}}

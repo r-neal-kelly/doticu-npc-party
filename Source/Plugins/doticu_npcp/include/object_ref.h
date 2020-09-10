@@ -120,6 +120,20 @@ namespace doticu_npcp { namespace Object_Ref {
 
     void Find_Closest_Actor_From(Reference_t* ref, Float_t radius, Virtual_Callback_i** callback);
 
+    void Translate_To(Reference_t* ref,
+                      Float_t pos_degree_x,
+                      Float_t pos_degree_y,
+                      Float_t pos_degree_z,
+                      Float_t rot_degree_x,
+                      Float_t rot_degree_y,
+                      Float_t rot_degree_z,
+                      Float_t pos_speed,
+                      Float_t rot_speed,
+                      Virtual_Callback_i** callback = nullptr);
+    void Stop_Translation(Reference_t* ref, Virtual_Callback_i** callback = nullptr);
+    void Push_Actor_Away(Reference_t* ref, Actor_t* actor, Float_t knockback_force, Virtual_Callback_i** vcallback = nullptr);
+    void Apply_Havok_Impulse(Reference_t* ref, Float_t x, Float_t y, Float_t z, Float_t magnitude, Virtual_Callback_i** vcallback = nullptr);
+
     // these don't belong here.
     void Current_Crosshair_Reference(Virtual_Callback_i** callback);
     void Can_Use_Keys(Virtual_Callback_i** callback);

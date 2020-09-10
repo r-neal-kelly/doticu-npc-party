@@ -142,7 +142,7 @@ function f_On_Option_Keymap_Change(int id_option, int value, string conflicting_
             int[] mods = KEYS.Current_Mods(hotkey)
             if p_Can_Set_Hotkey(hotkey, value, mods[0], mods[1], mods[2])
                 Change_Hotkey_Value(id_option, value)
-                KEYS.Update_Keys()
+                KEYS.Register()
             endIf
         endIf
     endIf
@@ -179,7 +179,7 @@ function f_On_Option_Default(int id_option)
             int[] mods = KEYS.Current_Mods(hotkey)
             if p_Can_Set_Hotkey(hotkey, value, mods[0], mods[1], mods[2])
                 Change_Hotkey_Value(id_option, value)
-                KEYS.Update_Keys()
+                KEYS.Register()
             endIf
         else
             hotkey = Mods_Option_To_Hotkey(id_option)

@@ -335,5 +335,8 @@
     <None Include="include\party\party_aliases.inl">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="include\party\party_alias.inl">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

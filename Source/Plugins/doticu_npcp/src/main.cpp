@@ -215,6 +215,7 @@ namespace doticu_npcp { namespace Modules {
                                         Modules::Control::Commands_t::Self()->Log_Note(note.c_str(), true);
                                     }
                                     Party::Player_t::Self()->On_Load_Mod();
+                                    Party::Movee_t::Self()->On_Load_Mod();
                                     Party::Members_t::Self()->On_Load_Mod();
                                     Utils::Print("NPC Party has loaded.");
                                 }

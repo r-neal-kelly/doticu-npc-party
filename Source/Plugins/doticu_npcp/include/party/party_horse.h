@@ -20,9 +20,10 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     public:
         Variable_t* Variable(String_t variable_name);
 
-        Variable_t* Actor_Variable();
-        Variable_t* Follower_Variable();
-        Variable_t* Name_Variable();
+        Variable_t* Actor_Variable(); // Actor_t
+        Variable_t* Follower_Variable(); // Follower_t
+        Variable_t* Name_Variable(); // String_t
+        Variable_t* Is_Locked_Variable(); // Bool_t
 
         Actor_t* Actor();
         Follower_t* Follower();
@@ -35,6 +36,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Bool_t Is_Alive();
         Bool_t Is_Dead();
 
+        void Lock(Callback_t<Horse_t*>* on_lock, Float_t interval = 0.2f, Float_t limit = 10.0f);
+        void Unlock();
         void Fill(Actor_t* actor, Follower_t* follower, Callback_t<Int_t, Horse_t*>** callback);
         void Unfill(Callback_t<Int_t, Follower_t*>** callback);
         void Create(Actor_t* actor, Follower_t* follower);

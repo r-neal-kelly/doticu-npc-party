@@ -1196,6 +1196,144 @@ namespace doticu_npcp { namespace Object_Ref {
                                                callback);
     }
 
+    void Translate_To(Reference_t* ref,
+                      Float_t pos_degree_x,
+                      Float_t pos_degree_y,
+                      Float_t pos_degree_z,
+                      Float_t rot_degree_x,
+                      Float_t rot_degree_y,
+                      Float_t rot_degree_z,
+                      Float_t pos_speed,
+                      Float_t rot_speed,
+                      Virtual_Callback_i** callback)
+    {
+        struct Arguments : public Virtual_Arguments_t {
+            Float_t pos_degree_x;
+            Float_t pos_degree_y;
+            Float_t pos_degree_z;
+            Float_t rot_degree_x;
+            Float_t rot_degree_y;
+            Float_t rot_degree_z;
+            Float_t pos_speed;
+            Float_t rot_speed;
+            Arguments(Float_t pos_degree_x,
+                      Float_t pos_degree_y,
+                      Float_t pos_degree_z,
+                      Float_t rot_degree_x,
+                      Float_t rot_degree_y,
+                      Float_t rot_degree_z,
+                      Float_t pos_speed,
+                      Float_t rot_speed) :
+                pos_degree_x(pos_degree_x),
+                pos_degree_y(pos_degree_y),
+                pos_degree_z(pos_degree_z),
+                rot_degree_x(rot_degree_x),
+                rot_degree_y(rot_degree_y),
+                rot_degree_z(rot_degree_z),
+                pos_speed(pos_speed),
+                rot_speed(rot_speed)
+            {
+            }
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(8);
+                arguments->At(0)->Float(pos_degree_x);
+                arguments->At(1)->Float(pos_degree_y);
+                arguments->At(2)->Float(pos_degree_z);
+                arguments->At(3)->Float(rot_degree_x);
+                arguments->At(4)->Float(rot_degree_y);
+                arguments->At(5)->Float(rot_degree_z);
+                arguments->At(6)->Float(pos_speed);
+                arguments->At(7)->Float(rot_speed);
+                return true;
+            }
+        } arguments(
+            pos_degree_x,
+            pos_degree_y,
+            pos_degree_z,
+            rot_degree_x,
+            rot_degree_y,
+            rot_degree_z,
+            pos_speed,
+            rot_speed
+        );
+
+        Virtual_Machine_t::Self()->Call_Method(
+            ref,
+            "ObjectReference",
+            "TranslateTo",
+            &arguments,
+            callback
+        );
+    }
+
+    void Stop_Translation(Reference_t* ref, Virtual_Callback_i** callback)
+    {
+        Virtual_Machine_t::Self()->Call_Method(
+            ref,
+            "ObjectReference",
+            "StopTranslation",
+            nullptr,
+            callback
+        );
+    }
+
+    void Push_Actor_Away(Reference_t* ref, Actor_t* actor, Float_t knockback_force, Virtual_Callback_i** vcallback)
+    {
+        struct Arguments : public Virtual_Arguments_t {
+            Actor_t* actor;
+            Float_t knockback_force;
+            Arguments(Actor_t* actor, Float_t knockback_force) :
+                actor(actor), knockback_force(knockback_force)
+            {
+            }
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(2);
+                arguments->At(0)->Pack(actor);
+                arguments->At(1)->Float(knockback_force);
+                return true;
+            }
+        } arguments(actor, knockback_force);
+        Virtual_Machine_t::Self()->Call_Method(
+            ref,
+            "ObjectReference",
+            "PushActorAway",
+            &arguments,
+            vcallback
+        );
+    }
+
+    void Apply_Havok_Impulse(Reference_t* ref, Float_t x, Float_t y, Float_t z, Float_t magnitude, Virtual_Callback_i** vcallback)
+    {
+        struct Arguments : public Virtual_Arguments_t {
+            Float_t x;
+            Float_t y;
+            Float_t z;
+            Float_t magnitude;
+            Arguments(Float_t x, Float_t y, Float_t z, Float_t magnitude) :
+                x(x), y(y), z(z), magnitude(magnitude)
+            {
+            }
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(4);
+                arguments->At(0)->Float(x);
+                arguments->At(1)->Float(y);
+                arguments->At(2)->Float(z);
+                arguments->At(3)->Float(magnitude);
+                return true;
+            }
+        } arguments(x, y, z, magnitude);
+        Virtual_Machine_t::Self()->Call_Method(
+            ref,
+            "ObjectReference",
+            "ApplyHavokImpulse",
+            &arguments,
+            vcallback
+        );
+    }
+
     void Current_Crosshair_Reference(Virtual_Callback_i** callback)
     {
         Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(),

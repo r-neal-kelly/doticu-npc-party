@@ -36,9 +36,6 @@ function f_Create()
 endFunction
 
 function f_Destroy()
-    if MOVEE.Exists()
-        MOVEE.f_Destroy()
-    endIf
     if GREETER.Exists()
         GREETER.f_Destroy()
     endIf
@@ -51,15 +48,11 @@ function f_Register()
     if GREETER.Exists()
         GREETER.f_Register()
     endIf
-    if MOVEE.Exists()
-        MOVEE.f_Register()
-    endIf
+    MOVEE.Register()
 endFunction
 
 function f_Unregister()
-    if MOVEE.Exists()
-        MOVEE.f_Unregister()
-    endIf
+    MOVEE.Unregister()
     if GREETER.Exists()
         GREETER.f_Unregister()
     endIf

@@ -10,6 +10,7 @@
 #include "skse64/Hooks_DirectInput8Create.h"
 #include "skse64/Hooks_Gameplay.h"
 #include "skse64/PapyrusGame.h"
+#include "skse64/PapyrusEvents.h"
 
 #include "consts.h"
 #include "game.h"
@@ -555,9 +556,63 @@ namespace doticu_npcp { namespace Papyrus {
         return chosen_hotkey;
     }
 
-    void Keys_t::Register_Keys()
+    void Keys_t::Register()
     {
-        Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "Update_Keys");
+        Unregister();
+
+        auto Try_To_Register = [&](UInt32 hotkey_value)->void
+        {
+            if (hotkey_value > Keys_t::KEY_INVALID) {
+                g_inputKeyEventRegs.Register(hotkey_value, Quest_t::kTypeID, this);
+            }
+        };
+
+        // General
+        Try_To_Register(Vars::G_Dialogue_Menu_Value());
+
+        // NPC
+        Try_To_Register(Vars::N_Toggle_Member_Value());
+        Try_To_Register(Vars::N_Toggle_Move_Value());
+        Try_To_Register(Vars::N_Has_Base_Value());
+        Try_To_Register(Vars::N_Count_Base_Value());
+        Try_To_Register(Vars::N_Has_Head_Value());
+        Try_To_Register(Vars::N_Count_Heads_Value());
+
+        // Member
+        Try_To_Register(Vars::M_Toggle_Clone_Value());
+        Try_To_Register(Vars::M_Toggle_Immobile_Value());
+        Try_To_Register(Vars::M_Toggle_Settler_Value());
+        Try_To_Register(Vars::M_Toggle_Thrall_Value());
+        Try_To_Register(Vars::M_Toggle_Paralyzed_Value());
+        Try_To_Register(Vars::M_Toggle_Follower_Value());
+
+        // Follower
+        Try_To_Register(Vars::F_Toggle_Sneak_Value());
+        Try_To_Register(Vars::F_Toggle_Saddler_Value());
+
+        // Members
+        Try_To_Register(Vars::MS_Toggle_Display_Value());
+        Try_To_Register(Vars::MS_Display_Previous_Value());
+        Try_To_Register(Vars::MS_Display_Next_Value());
+
+        // Followers
+        Try_To_Register(Vars::FS_Summon_All_Value());
+        Try_To_Register(Vars::FS_Summon_Mobile_Value());
+        Try_To_Register(Vars::FS_Summon_Immobile_Value());
+        Try_To_Register(Vars::FS_Mobilize_Value());
+        Try_To_Register(Vars::FS_Immobilize_Value());
+        Try_To_Register(Vars::FS_Settle_Value());
+        Try_To_Register(Vars::FS_Unsettle_Value());
+        Try_To_Register(Vars::FS_Sneak_Value());
+        Try_To_Register(Vars::FS_Unsneak_Value());
+        Try_To_Register(Vars::FS_Saddle_Value());
+        Try_To_Register(Vars::FS_Unsaddle_Value());
+        Try_To_Register(Vars::FS_Resurrect_Value());
+    }
+
+    void Keys_t::Unregister()
+    {
+        g_inputKeyEventRegs.UnregisterAll(Quest_t::kTypeID, this);
     }
 
     void Keys_t::Actor_In_Crosshair(Bool_t allow_follower_horse, void(*callback)(Actor_t*))
@@ -771,6 +826,9 @@ namespace doticu_npcp { namespace Papyrus {
                            STR_FUNC_, ARG_NUM_,                     \
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
+
+        METHOD("Register", 0, void, Register);
+        METHOD("Unregister", 0, void, Unregister);
 
         METHOD("Default_Value", 1, Int_t, Default_Value, String_t);
         METHOD("Current_Value", 1, Int_t, Current_Value, String_t);

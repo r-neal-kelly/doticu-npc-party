@@ -163,13 +163,19 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     void Player_t::On_Cell_Change(Cell_t* new_cell, Cell_t* old_cell)
     {
-        Actor2::Add_Spell(Actor(), Consts::Cell_Ability_Spell());
+        Actor_t* player_actor = Actor();
+        if (!Actor2::Has_Magic_Effect(player_actor, Consts::Cell_Magic_Effect())) {
+            Actor2::Add_Spell(player_actor, Consts::Cell_Ability_Spell());
+        }
         Followers_t::Self()->Catch_Up();
     }
 
     void Player_t::On_Control_Down(String_t control)
     {
-        Actor2::Add_Spell(Actor(), Consts::Cell_Ability_Spell());
+        Actor_t* player_actor = Actor();
+        if (!Actor2::Has_Magic_Effect(player_actor, Consts::Cell_Magic_Effect())) {
+            Actor2::Add_Spell(player_actor, Consts::Cell_Ability_Spell());
+        }
 
         if (String2::Is_Same_Caseless(control, "Sneak")) {
             Followers_t* followers = Followers_t::Self();

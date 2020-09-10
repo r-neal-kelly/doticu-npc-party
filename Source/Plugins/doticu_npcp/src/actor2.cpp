@@ -1926,22 +1926,7 @@ namespace doticu_npcp { namespace Actor2 {
             }*/
             actor->Resurrect(do_reset_inventory, true);
             Pacify(actor);
-
-            struct Arguments : public Virtual_Arguments_t {
-                Actor_t* actor;
-                Arguments(Actor_t* actor) :
-                    actor(actor)
-                {
-                }
-                Bool_t operator()(Arguments_t* arguments)
-                {
-                    arguments->Resize(2);
-                    arguments->At(0)->Pack(actor);
-                    arguments->At(1)->Float(0.01f);
-                    return true;
-                }
-            } arguments(actor);
-            Virtual_Machine_t::Self()->Call_Method(actor, "ObjectReference", "PushActorAway", &arguments, nullptr);
+            Object_Ref::Push_Actor_Away(actor, actor, 0.01f);
         }
     }
 

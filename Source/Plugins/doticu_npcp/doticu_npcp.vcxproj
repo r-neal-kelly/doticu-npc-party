@@ -248,6 +248,7 @@
   <ItemGroup>
     <None Include="exports.def" />
     <None Include="include\papyrus.inl" />
+    <None Include="include\party\party_alias.inl" />
     <None Include="include\party\party_aliases.inl" />
     <None Include="scripts\doticu_npcp.psc" />
   </ItemGroup>

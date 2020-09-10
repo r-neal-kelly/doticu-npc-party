@@ -761,7 +761,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         
         Main()->Reset_Page();
 
-        keys->Register_Keys();
+        keys->Register();
     }
 
     void Hotkeys_t::Unset_Hotkeys()
@@ -824,7 +824,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
         Main()->Reset_Page();
 
-        keys->Register_Keys();
+        keys->Register();
     }
 
     String_t Hotkeys_t::Value_Option_To_Hotkey(Int_t value_option)

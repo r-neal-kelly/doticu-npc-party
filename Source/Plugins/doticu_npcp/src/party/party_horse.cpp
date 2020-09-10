@@ -10,6 +10,7 @@
 #include "papyrus.inl"
 #include "utils.h"
 
+#include "party/party_alias.inl"
 #include "party/party_follower.h"
 #include "party/party_horse.h"
 
@@ -37,6 +38,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     Variable_t* Horse_t::Actor_Variable() { DEFINE_VARIABLE("p_ref_actor"); }
     Variable_t* Horse_t::Follower_Variable() { DEFINE_VARIABLE("p_ref_follower"); }
     Variable_t* Horse_t::Name_Variable() { DEFINE_VARIABLE("p_str_name"); }
+    Variable_t* Horse_t::Is_Locked_Variable() { DEFINE_VARIABLE("p_is_locked"); }
 
     Actor_t* Horse_t::Actor()
     {
@@ -95,6 +97,16 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     Bool_t Horse_t::Is_Dead()
     {
         return Is_Filled() && Actor2::Is_Dead(Actor());
+    }
+
+    void Horse_t::Lock(Callback_t<Horse_t*>* on_lock, Float_t interval, Float_t limit)
+    {
+        Alias_t::Lock(this, on_lock, interval, limit);
+    }
+
+    void Horse_t::Unlock()
+    {
+        Alias_t::Unlock(this);
     }
 
     void Horse_t::Fill(Actor_t* actor, Follower_t* follower, Callback_t<Int_t, Horse_t*>** callback)
@@ -252,9 +264,29 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     Int_t Horse_t::Ungroom()
     {
         if (Is_Ready()) {
-            Actor_t* actor = Actor();
-            Enforce_Non_Groom(actor);
-            Actor2::Evaluate_Package(actor);
+            struct Lock_t : public Callback_t<Horse_t*> {
+                void operator()(Horse_t* self)
+                {
+                    struct Unlock_t : public Callback_t<> {
+                        Horse_t* self;
+                        Unlock_t(Horse_t* self) :
+                            self(self)
+                        {
+                        }
+                        void operator()()
+                        {
+                            if (self->Is_Ready()) {
+                                Actor2::Evaluate_Package(self->Actor());
+                            }
+                            self->Unlock();
+                        }
+                    };
+                    if (self->Is_Ready()) {
+                        self->Enforce_Non_Groom(self->Actor(), new Unlock_t(self));
+                    }
+                }
+            };
+            Lock(new Lock_t());
 
             return CODES::SUCCESS;
         } else {

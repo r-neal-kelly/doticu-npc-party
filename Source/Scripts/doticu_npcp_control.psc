@@ -38,6 +38,6 @@ function f_Destroy()
 endFunction
 
 function f_Register()
-    KEYS.f_Register()
+    KEYS.Register()
     MCM.f_Register()
 endFunction

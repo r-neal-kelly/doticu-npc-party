@@ -304,6 +304,16 @@ namespace doticu_npcp { namespace Utils {
         };
     }
 
+    inline Float_t To_Degrees(Float_t radians)
+    {
+        return radians * (180.0f / DOTICU_NPCP_PI);
+    }
+
+    inline Float_t To_Radians(Float_t degrees)
+    {
+        return degrees * DOTICU_NPCP_PI / 180.0f;
+    }
+
     void Print(const char *str);
 
     template <typename Bits, typename Index>

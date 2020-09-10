@@ -6,5 +6,6 @@ Scriptname doticu_npcp_horse extends ReferenceAlias
 Actor                   p_ref_actor     =  none
 doticu_npcp_follower    p_ref_follower  =  none
 string                  p_str_name      =    ""
+bool                    p_is_locked     = false
 
 event OnActivate(ObjectReference activator) native
