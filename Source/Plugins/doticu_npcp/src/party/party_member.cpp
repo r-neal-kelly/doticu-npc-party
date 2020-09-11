@@ -1116,7 +1116,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                             member->Alias_t::Unfill(&vcallback);
                         }
                     };
-                    member->Unfill_Impl(new Callback(member, member->Actor_Variable()->Actor(), new Unlock_t(member, user_callback)));
+                    member->Unfill_Impl(new Callback(member, member->Actor(), new Unlock_t(member, user_callback)));
                 }
             };
             Lock(new Lock_t(user_callback));
@@ -1143,8 +1143,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                     member->Unfill_Impl(user_callback);
                 }
             };
-            Callback_t<Int_t, Member_t*>* remove_callback = new Remove_Callback(user_callback);
-            Followers_t::Self()->Remove_Follower(this, &remove_callback);
+            Followers_t::Self()->Remove_Follower(this, new Remove_Callback(user_callback));
         } else {
             Actor_t* actor = Actor();
             Class_Info_t* actor_class_info = Class_Info_t::Fetch(Actor_t::kTypeID, true);
@@ -2921,8 +2920,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                 struct Callback : public Callback_t<Int_t, Member_t*> {
                     void operator()(Int_t code, Member_t* member) { }
                 };
-                Callback_t<Int_t, Member_t*>* callback = new Callback();
-                Followers_t::Self()->Remove_Follower(this, &callback);
+                Followers_t::Self()->Remove_Follower(this, new Callback());
                 return CODES::SUCCESS;
             } else {
                 return CODES::FOLLOWER;

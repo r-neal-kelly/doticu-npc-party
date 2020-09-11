@@ -101,11 +101,11 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         void Lock(Callback_t<Follower_t*>* on_lock, Float_t interval = 0.2f, Float_t limit = 10.0f);
         void Unlock();
-        void Fill(Member_t* member, Followers_t::Add_Callback_i** add_callback);
-        void Unfill(Callback_t<Int_t, Member_t*>** callback);
+        void Fill(Member_t* member, Callback_t<Int_t, Follower_t*>* user_callback);
+        void Fill_Impl(Member_t* member);
+        void Unfill(Callback_t<Int_t, Member_t*>* user_callback);
+        void Unfill_Impl(Callback_t<>* user_callback);
         void Relinquish(Callback_t<Int_t, Member_t*>* user_callback);
-        void Create(Member_t* member);
-        void Destroy(Callback_t<>** callback);
         void Backup_State(Actor_t* actor);
         void Restore_State(Actor_t* actor);
 

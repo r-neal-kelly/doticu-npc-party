@@ -1037,7 +1037,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         if (actor) {
             Member_t* member = Members_t::Self()->From_Actor(actor);
             if (member) {
-                class Add_Callback : public Followers_t::Add_Callback_i {
+                class Add_Callback : public Callback_t<Int_t, Follower_t*> {
                 public:
                     Commands_t* commands;
                     Member_t* member;
@@ -1050,8 +1050,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                         commands->Log_Follow(code, member->Name());
                     }
                 };
-                Followers_t::Add_Callback_i* add_callback = new Add_Callback(this, member);
-                Followers_t::Self()->Add_Follower(member, &add_callback);
+                Followers_t::Self()->Add_Follower(member, new Add_Callback(this, member));
             } else {
                 Log_Follow(CODES::MEMBER, Actor2::Get_Name(actor));
             }
@@ -1067,7 +1066,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         if (actor) {
             Member_t* member = Members_t::Self()->From_Actor(actor);
             if (member) {
-                class Add_Callback : public Followers_t::Add_Callback_i {
+                class Add_Callback : public Callback_t<Int_t, Follower_t*> {
                 public:
                     Commands_t* commands;
                     Member_t* member;
@@ -1083,8 +1082,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                         delete user_callback;
                     }
                 };
-                Followers_t::Add_Callback_i* add_callback = new Add_Callback(this, member, *user_callback);
-                Followers_t::Self()->Add_Follower(member, &add_callback);
+                Followers_t::Self()->Add_Follower(member, new Add_Callback(this, member, *user_callback));
             } else {
                 Log_Follow(CODES::MEMBER, Actor2::Get_Name(actor));
                 (*user_callback)->operator()(CODES::MEMBER, nullptr);
@@ -1116,8 +1114,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                         commands->Log_Unfollow(code, member->Name());
                     }
                 };
-                Callback_t<Int_t, Member_t*>* callback = new Callback(this, member);
-                Followers_t::Self()->Remove_Follower(member, &callback);
+                Followers_t::Self()->Remove_Follower(member, new Callback(this, member));
             } else {
                 Log_Unfollow(CODES::MEMBER, Actor2::Get_Name(actor));
             }
@@ -1148,8 +1145,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                         delete user_callback;
                     }
                 };
-                Callback_t<Int_t, Member_t*>* callback = new Callback(this, member, *user_callback);
-                Followers_t::Self()->Remove_Follower(member, &callback);
+                Followers_t::Self()->Remove_Follower(member, new Callback(this, member, *user_callback));
             } else {
                 Log_Unfollow(CODES::MEMBER, Actor2::Get_Name(actor));
                 (*user_callback)->operator()(CODES::MEMBER, nullptr);
@@ -2266,7 +2262,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                     Sneak(actor);
                 }
             } else {
-                class Add_Callback : public Followers_t::Add_Callback_i {
+                class Add_Callback : public Callback_t<Int_t, Follower_t*> {
                 public:
                     Commands_t* commands;
                     Actor_t* actor;
@@ -2284,8 +2280,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                         }
                     }
                 };
-                Followers_t::Add_Callback_i* add_callback = new Add_Callback(this, actor, member);
-                Followers_t::Self()->Add_Follower(member, &add_callback);
+                Followers_t::Self()->Add_Follower(member, new Add_Callback(this, actor, member));
             }
         } else {
             class Add_Callback : public Callback_t<Int_t, Member_t*> {
@@ -2324,7 +2319,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                     Saddle(actor);
                 }
             } else {
-                class Add_Callback : public Followers_t::Add_Callback_i {
+                class Add_Callback : public Callback_t<Int_t, Follower_t*> {
                 public:
                     Commands_t* commands;
                     Actor_t* actor;
@@ -2342,8 +2337,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                         }
                     }
                 };
-                Followers_t::Add_Callback_i* add_callback = new Add_Callback(this, actor, member);
-                Followers_t::Self()->Add_Follower(member, &add_callback);
+                Followers_t::Self()->Add_Follower(member, new Add_Callback(this, actor, member));
             }
         } else {
             class Add_Callback : public Callback_t<Int_t, Member_t*> {
@@ -2382,7 +2376,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                     Retreat(actor);
                 }
             } else {
-                class Add_Callback : public Followers_t::Add_Callback_i {
+                class Add_Callback : public Callback_t<Int_t, Follower_t*> {
                 public:
                     Commands_t* commands;
                     Actor_t* actor;
@@ -2400,8 +2394,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                         }
                     }
                 };
-                Followers_t::Add_Callback_i* add_callback = new Add_Callback(this, actor, member);
-                Followers_t::Self()->Add_Follower(member, &add_callback);
+                Followers_t::Self()->Add_Follower(member, new Add_Callback(this, actor, member));
             }
         } else {
             class Add_Callback : public Callback_t<Int_t, Member_t*> {

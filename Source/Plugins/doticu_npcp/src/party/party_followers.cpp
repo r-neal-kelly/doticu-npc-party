@@ -555,9 +555,10 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
-    void Followers_t::Add_Follower(Member_t* member, Add_Callback_i** add_callback)
+    void Followers_t::Add_Follower(Member_t* member, Callback_t<Int_t, Follower_t*>* user_callback)
     {
-        NPCP_ASSERT(add_callback);
+        NPCP_ASSERT(user_callback);
+
         if (member) {
             if (member->Isnt_Mannequin()) {
                 Actor_t* actor = member->Actor();
@@ -566,42 +567,44 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                         if (Count_Filled() < Max()) {
                             Follower_t* follower = From_Unfilled();
                             NPCP_ASSERT(follower);
-                            follower->Fill(member, add_callback);
+                            follower->Fill(member, user_callback);
                         } else {
-                            (*add_callback)->operator()(CODES::FOLLOWERS, nullptr);
-                            delete (*add_callback);
+                            user_callback->operator()(CODES::FOLLOWERS, nullptr);
+                            delete user_callback;
                         }
                     } else {
-                        (*add_callback)->operator()(CODES::CANT, nullptr);
-                        delete (*add_callback);
+                        user_callback->operator()(CODES::CANT, nullptr);
+                        delete user_callback;
                     }
                 } else {
-                    (*add_callback)->operator()(CODES::FOLLOWER, nullptr);
-                    delete (*add_callback);
+                    user_callback->operator()(CODES::FOLLOWER, nullptr);
+                    delete user_callback;
                 }
             } else {
-                (*add_callback)->operator()(CODES::MANNEQUIN, nullptr);
-                delete (*add_callback);
+                user_callback->operator()(CODES::MANNEQUIN, nullptr);
+                delete user_callback;
             }
         } else {
-            (*add_callback)->operator()(CODES::MEMBER, nullptr);
-            delete (*add_callback);
+            user_callback->operator()(CODES::MEMBER, nullptr);
+            delete user_callback;
         }
     }
 
-    void Followers_t::Remove_Follower(Member_t* member, Callback_t<Int_t, Member_t*>** callback)
+    void Followers_t::Remove_Follower(Member_t* member, Callback_t<Int_t, Member_t*>* user_callback)
     {
+        NPCP_ASSERT(user_callback);
+
         if (member) {
             Follower_t* follower = From_Actor(member->Actor());
             if (follower) {
-                follower->Unfill(callback);
+                follower->Unfill(user_callback);
             } else {
-                (*callback)->operator()(CODES::FOLLOWER, member);
-                delete (*callback);
+                user_callback->operator()(CODES::FOLLOWER, member);
+                delete user_callback;
             }
         } else {
-            (*callback)->operator()(CODES::MEMBER, nullptr);
-            delete (*callback);
+            user_callback->operator()(CODES::MEMBER, nullptr);
+            delete user_callback;
         }
     }
 

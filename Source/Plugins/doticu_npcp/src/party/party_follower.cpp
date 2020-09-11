@@ -387,81 +387,216 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Alias_t::Unlock(this);
     }
 
-    void Follower_t::Fill(Member_t* member, Followers_t::Add_Callback_i** add_callback)
+    void Follower_t::Fill(Member_t* member, Callback_t<Int_t, Follower_t*>* user_callback)
     {
-        NPCP_ASSERT(member);
-        NPCP_ASSERT(add_callback);
-        NPCP_ASSERT(Is_Unfilled());
+        using UCallback_t = Callback_t<Int_t, Follower_t*>;
+        NPCP_ASSERT(user_callback);
 
-        struct Callback : public Virtual_Callback_t {
-        public:
-            Follower_t* follower;
-            Member_t* member;
-            Followers_t::Add_Callback_i* add_callback;
-            Callback(Follower_t* follower, Member_t* member, Followers_t::Add_Callback_i* add_callback) :
-                follower(follower), member(member), add_callback(add_callback)
-            {
-            }
-            void operator()(Variable_t* result)
-            {
-                follower->Create(member);
-                NPCP_ASSERT(add_callback);
-                add_callback->operator()(CODES::SUCCESS, follower);
-                delete add_callback;
-            }
-        };
-        Virtual_Callback_i* callback = new Callback(this, member, *add_callback);
-        Alias_t::Fill(member->Actor(), &callback);
-    }
-
-    void Follower_t::Unfill(Callback_t<Int_t, Member_t*>** callback)
-    {
-        NPCP_ASSERT(callback);
-        NPCP_ASSERT(Is_Filled());
-
-        using UCallback_t = Callback_t<Int_t, Member_t*>;
-
-        struct Destroy_Callback : public Callback_t<> {
-            Follower_t* follower;
-            Member_t* member;
-            UCallback_t* user_callback;
-            Destroy_Callback(Follower_t* follower, Member_t* member, UCallback_t* user_callback) :
-                follower(follower), member(member), user_callback(user_callback)
-            {
-            }
-            void operator()()
-            {
-                struct VCallback : public Virtual_Callback_t {
+        if (member) {
+            if (Is_Unfilled()) {
+                struct Lock_t : public Callback_t<Follower_t*> {
                     Member_t* member;
                     UCallback_t* user_callback;
-                    VCallback(Member_t* member, UCallback_t* user_callback) :
+                    Lock_t(Member_t* member, UCallback_t* user_callback) :
                         member(member), user_callback(user_callback)
                     {
                     }
-                    void operator()(Variable_t* result)
+                    void operator()(Follower_t* follower)
                     {
-                        struct Enforce_Outfit2_Callback : public Callback_t<Actor_t*> {
-                            Member_t* member;
+                        struct Unlock_t : public UCallback_t {
                             UCallback_t* user_callback;
-                            Enforce_Outfit2_Callback(Member_t* member, UCallback_t* user_callback) :
-                                member(member), user_callback(user_callback)
+                            Unlock_t(UCallback_t* user_callback) :
+                                user_callback(user_callback)
                             {
                             }
-                            void operator()(Actor_t* actor)
+                            void operator()(Int_t code, Follower_t* follower)
                             {
-                                user_callback->operator()(CODES::SUCCESS, member);
+                                user_callback->operator()(code, follower);
+                                delete user_callback;
+                                follower->Unlock();
+                            }
+                        };
+
+                        struct VCallback : public Virtual_Callback_t {
+                        public:
+                            Follower_t* follower;
+                            Member_t* member;
+                            UCallback_t* user_callback;
+                            VCallback(Follower_t* follower, Member_t* member, UCallback_t* user_callback) :
+                                follower(follower), member(member), user_callback(user_callback)
+                            {
+                            }
+                            void operator()(Variable_t* result)
+                            {
+                                follower->Fill_Impl(member);
+                                user_callback->operator()(CODES::SUCCESS, follower);
                                 delete user_callback;
                             }
                         };
-                        member->Enforce_Outfit2(member->Actor(), new Enforce_Outfit2_Callback(member, user_callback));
+                        Virtual_Callback_i* vcallback = new VCallback(follower, member, new Unlock_t(user_callback));
+                        follower->Alias_t::Fill(member->Actor(), &vcallback);
                     }
                 };
-                Virtual_Callback_i* vcallback = new VCallback(member, user_callback);
-                follower->Alias_t::Unfill(&vcallback);
+                Lock(new Lock_t(member, user_callback));
+            } else {
+                user_callback->operator()(CODES::ALIAS, nullptr);
+                delete user_callback;
             }
-        };
-        Callback_t<>* destroy_callback = new Destroy_Callback(this, Member(), *callback);
-        Destroy(&destroy_callback);
+        } else {
+            user_callback->operator()(CODES::MEMBER, nullptr);
+            delete user_callback;
+        }
+    }
+
+    void Follower_t::Fill_Impl(Member_t* member)
+    {
+        Actor_t* actor = member->Actor();
+
+        Actor_Variable()->Pack(actor);
+        Member_Variable()->Pack(member);
+        Horse_Variable()->None(Horse_t::Class_Info());
+
+        Is_Locked_Variable()->Bool(false);
+        Is_Sneak_Variable()->Bool(false);
+        Is_Saddler_Variable()->Bool(false);
+        Is_Retreater_Variable()->Bool(false);
+
+        Backup_State(actor);
+        Actor2::Stop_If_Playing_Music(actor);
+
+        Enforce_Follower(actor);
+        member->Enforce_Outfit2(actor);
+        Level();
+    }
+
+    void Follower_t::Unfill(Callback_t<Int_t, Member_t*>* user_callback)
+    {
+        using UCallback_t = Callback_t<Int_t, Member_t*>;
+        NPCP_ASSERT(user_callback);
+
+        if (Is_Filled()) {
+            struct Lock_t : public Callback_t<Follower_t*> {
+                UCallback_t* user_callback;
+                Lock_t(UCallback_t* user_callback) :
+                    user_callback(user_callback)
+                {
+                }
+                void operator()(Follower_t* follower)
+                {
+                    struct Unlock_t : public UCallback_t {
+                        Follower_t* follower;
+                        UCallback_t* user_callback;
+                        Unlock_t(Follower_t* follower, UCallback_t* user_callback) :
+                            follower(follower), user_callback(user_callback)
+                        {
+                        }
+                        void operator()(Int_t code, Member_t* member)
+                        {
+                            user_callback->operator()(code, member);
+                            delete user_callback;
+                            follower->Unlock();
+                        }
+                    };
+
+                    struct Callback : public Callback_t<> {
+                        Follower_t* follower;
+                        Member_t* member;
+                        UCallback_t* user_callback;
+                        Callback(Follower_t* follower, Member_t* member, UCallback_t* user_callback) :
+                            follower(follower), member(member), user_callback(user_callback)
+                        {
+                        }
+                        void operator()()
+                        {
+                            struct VCallback : public Virtual_Callback_t {
+                                Member_t* member;
+                                UCallback_t* user_callback;
+                                VCallback(Member_t* member, UCallback_t* user_callback) :
+                                    member(member), user_callback(user_callback)
+                                {
+                                }
+                                void operator()(Variable_t* result)
+                                {
+                                    struct Callback : public Callback_t<Actor_t*> {
+                                        Member_t* member;
+                                        UCallback_t* user_callback;
+                                        Callback(Member_t* member, UCallback_t* user_callback) :
+                                            member(member), user_callback(user_callback)
+                                        {
+                                        }
+                                        void operator()(Actor_t* actor)
+                                        {
+                                            user_callback->operator()(CODES::SUCCESS, member);
+                                            delete user_callback;
+                                        }
+                                    };
+                                    member->Enforce_Outfit2(member->Actor(), new Callback(member, user_callback));
+                                }
+                            };
+                            Virtual_Callback_i* vcallback = new VCallback(member, user_callback);
+                            follower->Alias_t::Unfill(&vcallback);
+                        }
+                    };
+                    follower->Unfill_Impl(new Callback(follower, follower->Member(), new Unlock_t(follower, user_callback)));
+                }
+            };
+            Lock(new Lock_t(user_callback));
+        } else {
+            user_callback->operator()(CODES::ALIAS, nullptr);
+            delete user_callback;
+        }
+    }
+
+    void Follower_t::Unfill_Impl(Callback_t<>* user_callback)
+    {
+        using UCallback_t = Callback_t<>;
+
+        if (Is_Saddler()) {
+            struct Unsaddle_Callback : public Callback_t<Int_t, Follower_t*> {
+                UCallback_t* user_callback;
+                Unsaddle_Callback(UCallback_t* user_callback) :
+                    user_callback(user_callback)
+                {
+                }
+                void operator()(Int_t code, Follower_t* follower)
+                {
+                    if (follower) {
+                        follower->Unfill_Impl(user_callback);
+                    }
+                }
+            };
+            Callback_t<Int_t, Follower_t*>* unsaddle_callback = new Unsaddle_Callback(user_callback);
+            Unsaddle(&unsaddle_callback); // call impl version once we set up lock!!!!
+        } else {
+            Actor_t* actor = Actor();
+
+            if (Is_Retreater()) {
+                Unretreat();
+            }
+            if (Is_Sneak()) {
+                Unsneak();
+            }
+            Unlevel();
+            Enforce_Non_Follower(actor);
+
+            Restore_State(actor);
+
+            Previous_No_Auto_Bard_Faction_Variable()->Bool(false);
+            Previous_Speed_Multiplier_Variable()->Float(-1.0f);
+            Previous_Waiting_For_Player_Variable()->Float(-1.0f);
+            Previous_Player_Relationship_Variable()->Int(-1);
+
+            Is_Retreater_Variable()->Bool(false);
+            Is_Saddler_Variable()->Bool(false);
+            Is_Sneak_Variable()->Bool(false);
+
+            Horse_Variable()->None(Horse_t::Class_Info());
+            Member_Variable()->None(Member_t::Class_Info());
+            Actor_Variable()->None(Class_Info_t::Fetch(Actor_t::kTypeID, true));
+
+            user_callback->operator()();
+            delete user_callback;
+        }
     }
 
     void Follower_t::Relinquish(Callback_t<Int_t, Member_t*>* user_callback)
@@ -519,7 +654,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                     }
                 };
                 Callback_t<Int_t, Follower_t*>* unsaddle_callback = new Unsaddle_Callback(this, user_callback);
-                Unsaddle(&unsaddle_callback);
+                Unsaddle(&unsaddle_callback); // call impl version once we set up lock!!!!
             } else {
                 struct VCallback : public Virtual_Callback_t {
                     Follower_t* follower;
@@ -570,77 +705,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         } else {
             user_callback->operator()(CODES::UNREADY, nullptr);
             delete user_callback;
-        }
-    }
-
-    void Follower_t::Create(Member_t* member)
-    {
-        Actor_t* actor = member->Actor();
-
-        Actor_Variable()->Pack(actor);
-        Member_Variable()->Pack(member);
-        Horse_Variable()->None(Horse_t::Class_Info());
-
-        Is_Locked_Variable()->Bool(false);
-        Is_Sneak_Variable()->Bool(false);
-        Is_Saddler_Variable()->Bool(false);
-        Is_Retreater_Variable()->Bool(false);
-
-        Backup_State(actor);
-        Actor2::Stop_If_Playing_Music(actor);
-
-        Enforce_Follower(actor);
-        member->Enforce_Outfit2(actor);
-        Level();
-    }
-
-    void Follower_t::Destroy(Callback_t<>** callback)
-    {
-        if (Is_Saddler()) {
-            struct Unsaddle_Callback : public Callback_t<Int_t, Follower_t*> {
-                Callback_t<>* user_callback;
-                Unsaddle_Callback(Callback_t<>* user_callback) :
-                    user_callback(user_callback)
-                {
-                }
-                void operator()(Int_t code, Follower_t* follower)
-                {
-                    if (follower) {
-                        follower->Destroy(&user_callback);
-                    }
-                }
-            };
-            Callback_t<Int_t, Follower_t*>* unsaddle_callback = new Unsaddle_Callback(*callback);
-            Unsaddle(&unsaddle_callback);
-        } else {
-            Actor_t* actor = Actor();
-
-            if (Is_Retreater()) {
-                Unretreat();
-            }
-            if (Is_Sneak()) {
-                Unsneak();
-            }
-            Unlevel();
-            Enforce_Non_Follower(actor);
-
-            Restore_State(actor);
-
-            Previous_No_Auto_Bard_Faction_Variable()->Bool(false);
-            Previous_Speed_Multiplier_Variable()->Float(-1.0f);
-            Previous_Waiting_For_Player_Variable()->Float(-1.0f);
-            Previous_Player_Relationship_Variable()->Int(-1);
-
-            Is_Retreater_Variable()->Bool(false);
-            Is_Saddler_Variable()->Bool(false);
-            Is_Sneak_Variable()->Bool(false);
-
-            Horse_Variable()->None(Horse_t::Class_Info());
-            Member_Variable()->None(Member_t::Class_Info());
-            Actor_Variable()->None(Class_Info_t::Fetch(Actor_t::kTypeID, true));
-
-            (*callback)->operator()();
-            delete (*callback);
         }
     }
 
