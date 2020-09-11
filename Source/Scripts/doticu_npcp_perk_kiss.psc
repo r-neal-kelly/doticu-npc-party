@@ -58,7 +58,7 @@ function Kiss_Thrall(ObjectReference ref_target, Actor _)
         (doticu_npcp_consts.Vampire_Feed_Perk() as PRKF_VampireFeedBeds_000CF02C).Fragment_15(ref_thrall, none)
         ref_thrall.SetActorValue("Variable08", 8)
         ref_thrall.SetGhost(false)
-    elseIf ACTORS.Is_Dead(ref_thrall)
+    elseIf ref_thrall.IsDead()
         ; do cannibal instead, or make another perk
     else
         doticu_npcp_consts.Player_Actor().StartVampireFeed(ref_thrall)

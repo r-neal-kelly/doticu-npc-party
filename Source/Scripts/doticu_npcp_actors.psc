@@ -27,22 +27,9 @@ doticu_npcp_movee property MOVEE
 endProperty
 
 ; Private Variables
-bool                p_is_created    = false
-Actor               p_ref_menu      =  none
+Actor   p_ref_menu  =  none
 
 ; Friend Methods
-function f_Create()
-    p_is_created = true
-endFunction
-
-function f_Destroy()
-    if GREETER.Exists()
-        GREETER.f_Destroy()
-    endIf
-
-    p_is_created = false
-endFunction
-
 function f_Register()
     PLAYER.On_Register()
     if GREETER.Exists()
@@ -51,102 +38,9 @@ function f_Register()
     MOVEE.Register()
 endFunction
 
-function f_Unregister()
-    MOVEE.Unregister()
-    if GREETER.Exists()
-        GREETER.f_Unregister()
-    endIf
-endFunction
-
 ; Public Methods
-bool function Is_Alive(Actor ref_actor)
-    return ref_actor && !ref_actor.IsDead()
-endFunction
-
-bool function Is_Dead(Actor ref_actor)
-    return ref_actor && ref_actor.IsDead()
-endFunction
-
-bool function Is_Sleeping(Actor ref_actor)
-    ; 0 Not Sleeping
-    ; 2 Not Sleeping, Wants to Sleep
-    ; 3 Sleeping
-    ; 4 Sleeping, Wants to Wake
-    return ref_actor && ref_actor.GetSleepState() == 3
-endFunction
-
-bool function Is_Leveled(Actor ref_actor)
-    return ref_actor && ref_actor.GetLeveledActorBase() != ref_actor.GetActorBase()
-endFunction
-
 bool function Is_Vampire(Actor ref_actor)
     return ref_actor && ref_actor.HasKeyword(doticu_npcp_consts.Vampire_Keyword())
-endFunction
-
-bool function Is_Male(Actor ref_actor)
-    return Get_Sex(ref_actor) == doticu_npcp_codes.SEX_MALE()
-endFunction
-
-bool function Is_Female(Actor ref_actor)
-    return Get_Sex(ref_actor) == doticu_npcp_codes.SEX_FEMALE()
-endFunction
-
-bool function Is_Essential(Actor ref_actor)
-    if Is_Leveled(ref_actor)
-        return Get_Base(ref_actor).IsEssential() || Get_Leveled_Base(ref_actor).IsEssential()
-    else
-        return ref_actor.IsEssential()
-    endIf
-endFunction
-
-ActorBase function Get_Base(Actor ref_actor); Get_Static_Base
-    if ref_actor
-        ; only returns a real or static leveled base, never a dynamic leveled base
-        return ref_actor.GetActorBase()
-    else
-        return none
-    endIf
-endFunction
-
-ActorBase function Get_Leveled_Base(Actor ref_actor); Get_Dynamic_Base
-    if ref_actor
-        ; only returns a real or dynamic leveled base, never a static leveled base
-        return ref_actor.GetLeveledActorBase()
-    else
-        return none
-    endIf
-endFunction
-
-string function Name(Actor ref_actor)
-    if ref_actor
-        return ref_actor.GetDisplayName()
-    else
-        return ""
-    endIf
-endFunction
-
-int function Get_Sex(Actor ref_actor)
-    if ref_actor
-        return Get_Base(ref_actor).GetSex()
-    else
-        return 1234567
-    endIf
-endFunction
-
-function Essentialize(Actor ref_actor)
-    Get_Base(ref_actor).SetEssential(true)
-
-    if Is_Leveled(ref_actor)
-        Get_Leveled_Base(ref_actor).SetEssential(true)
-    endIf
-endFunction
-
-function Unessentialize(Actor ref_actor)
-    Get_Base(ref_actor).SetEssential(false)
-
-    if Is_Leveled(ref_actor)
-        Get_Leveled_Base(ref_actor).SetEssential(false)
-    endIf
 endFunction
 
 function Token(Actor ref_actor, MiscObject misc_token, int count_token = 1)
@@ -172,26 +66,6 @@ function Untoken(Actor ref_actor, MiscObject misc_token)
     if curr_count_token > 0
         ref_actor.RemoveItem(misc_token, curr_count_token, true)
     endIf
-endFunction
-
-bool function Has_Token(Actor ref_actor, MiscObject misc_token, int count_token = 1)
-    return ref_actor && ref_actor.GetItemCount(misc_token) == count_token
-endFunction
-
-function Delete(Actor ref_actor)
-    ref_actor.Disable()
-    ref_actor.Delete()
-endFunction
-
-function Apply_Ability(Actor ref_actor, Spell ability)
-    ; it's necessary to remove it before adding it back, because
-    ; the engine simply will not do everything correctly otherwise
-    ref_actor.RemoveSpell(ability)
-    ref_actor.AddSpell(ability, false)
-endFunction
-
-function Unapply_Ability(Actor ref_actor, Spell ability)
-    ref_actor.RemoveSpell(ability)
 endFunction
 
 function Move_To(ObjectReference ref_subject, ObjectReference ref_object, int distance = 120, int angle = 0)

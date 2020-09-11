@@ -955,71 +955,70 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Alias_t::Unlock(this);
     }
 
-    void Member_t::Fill(Actor_t* actor, Bool_t is_clone, Callback_t<Int_t, Member_t*>** user_callback)
+    void Member_t::Fill(Actor_t* actor, Bool_t is_clone, Callback_t<Int_t, Member_t*>* user_callback)
     {
-        NPCP_ASSERT(user_callback);
-
         using UCallback_t = Callback_t<Int_t, Member_t*>;
-
-        struct VCallback : public Virtual_Callback_t {
-        public:
-            Member_t* member;
-            Actor_t* actor;
-            Bool_t is_clone;
-            UCallback_t* user_callback;
-            VCallback(Member_t* member, Actor_t* actor, Bool_t is_clone, UCallback_t* user_callback) :
-                member(member), actor(actor), is_clone(is_clone), user_callback(user_callback)
-            {
-            }
-            void operator()(Variable_t* result)
-            {
-                member->Create(actor, is_clone);
-                user_callback->operator()(CODES::SUCCESS, member);
-                delete user_callback;
-            }
-        };
-        Virtual_Callback_i* vcallback = new VCallback(this, actor, is_clone, *user_callback);
-        Alias_t::Fill(actor, &vcallback);
-    }
-
-    void Member_t::Unfill(Callback_t<Int_t, Actor_t*>** user_callback)
-    {
         NPCP_ASSERT(user_callback);
 
-        using UCallback_t = Callback_t<Int_t, Actor_t*>;
-
-        struct Destroy_Callback : public Callback_t<> {
-            Member_t* member;
-            Actor_t* actor;
-            UCallback_t* user_callback;
-            Destroy_Callback(Member_t* member, Actor_t* actor, UCallback_t* user_callback) :
-                member(member), actor(actor), user_callback(user_callback)
-            {
-            }
-            void operator()()
-            {
-                struct VCallback : public Virtual_Callback_t {
+        if (actor) {
+            if (Is_Unfilled()) {
+                struct Lock_t : public Callback_t<Member_t*> {
                     Actor_t* actor;
+                    Bool_t is_clone;
                     UCallback_t* user_callback;
-                    VCallback(Actor_t* actor, UCallback_t* user_callback) :
-                        actor(actor), user_callback(user_callback)
+                    Lock_t(Actor_t* actor, Bool_t is_clone, UCallback_t* user_callback) :
+                        actor(actor), is_clone(is_clone), user_callback(user_callback)
                     {
                     }
-                    void operator()(Variable_t* result)
+                    void operator()(Member_t* member)
                     {
-                        user_callback->operator()(CODES::SUCCESS, actor);
-                        delete user_callback;
+                        struct Unlock_t : public UCallback_t {
+                            UCallback_t* user_callback;
+                            Unlock_t(UCallback_t* user_callback) :
+                                user_callback(user_callback)
+                            {
+                            }
+                            void operator()(Int_t code, Member_t* member)
+                            {
+                                user_callback->operator()(code, member);
+                                delete user_callback;
+                                member->Unlock();
+                            }
+                        };
+
+                        struct VCallback : public Virtual_Callback_t {
+                        public:
+                            Member_t* member;
+                            Actor_t* actor;
+                            Bool_t is_clone;
+                            UCallback_t* user_callback;
+                            VCallback(Member_t* member, Actor_t* actor, Bool_t is_clone, UCallback_t* user_callback) :
+                                member(member), actor(actor), is_clone(is_clone), user_callback(user_callback)
+                            {
+                            }
+                            void operator()(Variable_t* result)
+                            {
+                                member->Fill_Impl(actor, is_clone);
+                                user_callback->operator()(CODES::SUCCESS, member);
+                                delete user_callback;
+                            }
+                        };
+                        Virtual_Callback_i* vcallback = new VCallback(member, actor, is_clone, new Unlock_t(user_callback));
+                        member->Alias_t::Fill(actor, &vcallback);
                     }
                 };
-                Virtual_Callback_i* vcallback = new VCallback(actor, user_callback);
-                member->Alias_t::Unfill(&vcallback);
+                Lock(new Lock_t(actor, is_clone, user_callback));
+            } else {
+                user_callback->operator()(CODES::ALIAS, nullptr);
+                delete user_callback;
             }
-        };
-        Callback_t<>* destroy_callback = new Destroy_Callback(this, Actor(), *user_callback);
-        Destroy(&destroy_callback);
+        } else {
+            user_callback->operator()(CODES::ACTOR, nullptr);
+            delete user_callback;
+        }
     }
 
-    void Member_t::Create(Actor_t* actor, Bool_t is_clone)
+    void Member_t::Fill_Impl(Actor_t* actor, Bool_t is_clone)
     {
         Class_Info_t* reference_class_info = Object_Ref::Class_Info();
 
@@ -1061,11 +1060,76 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
-    void Member_t::Destroy(Callback_t<>** user_callback)
+    void Member_t::Unfill(Callback_t<Int_t, Actor_t*>* user_callback)
     {
+        using UCallback_t = Callback_t<Int_t, Actor_t*>;
         NPCP_ASSERT(user_callback);
 
+        if (Is_Filled()) {
+            struct Lock_t : public Callback_t<Member_t*> {
+                UCallback_t* user_callback;
+                Lock_t(UCallback_t* user_callback) :
+                    user_callback(user_callback)
+                {
+                }
+                void operator()(Member_t* member)
+                {
+                    struct Unlock_t : public UCallback_t {
+                        Member_t* member;
+                        UCallback_t* user_callback;
+                        Unlock_t(Member_t* member, UCallback_t* user_callback) :
+                            member(member), user_callback(user_callback)
+                        {
+                        }
+                        void operator()(Int_t code, Actor_t* actor)
+                        {
+                            user_callback->operator()(code, actor);
+                            delete user_callback;
+                            member->Unlock();
+                        }
+                    };
+
+                    struct Callback : public Callback_t<> {
+                        Member_t* member;
+                        Actor_t* actor;
+                        UCallback_t* user_callback;
+                        Callback(Member_t* member, Actor_t* actor, UCallback_t* user_callback) :
+                            member(member), actor(actor), user_callback(user_callback)
+                        {
+                        }
+                        void operator()()
+                        {
+                            struct VCallback : public Virtual_Callback_t {
+                                Actor_t* actor;
+                                UCallback_t* user_callback;
+                                VCallback(Actor_t* actor, UCallback_t* user_callback) :
+                                    actor(actor), user_callback(user_callback)
+                                {
+                                }
+                                void operator()(Variable_t* result)
+                                {
+                                    user_callback->operator()(CODES::SUCCESS, actor);
+                                    delete user_callback;
+                                }
+                            };
+                            Virtual_Callback_i* vcallback = new VCallback(actor, user_callback);
+                            member->Alias_t::Unfill(&vcallback);
+                        }
+                    };
+                    member->Unfill_Impl(new Callback(member, member->Actor_Variable()->Actor(), new Unlock_t(member, user_callback)));
+                }
+            };
+            Lock(new Lock_t(user_callback));
+        } else {
+            user_callback->operator()(CODES::ALIAS, nullptr);
+            delete user_callback;
+        }
+    }
+
+    void Member_t::Unfill_Impl(Callback_t<>* user_callback)
+    {
         using UCallback_t = Callback_t<>;
+        NPCP_ASSERT(user_callback);
 
         if (Is_Follower()) {
             struct Remove_Callback : public Callback_t<Int_t, Member_t*> {
@@ -1076,10 +1140,10 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                 }
                 void operator()(Int_t code, Member_t* member)
                 {
-                    member->Destroy(&user_callback);
+                    member->Unfill_Impl(user_callback);
                 }
             };
-            Callback_t<Int_t, Member_t*>* remove_callback = new Remove_Callback(*user_callback);
+            Callback_t<Int_t, Member_t*>* remove_callback = new Remove_Callback(user_callback);
             Followers_t::Self()->Remove_Follower(this, &remove_callback);
         } else {
             Actor_t* actor = Actor();
@@ -1163,8 +1227,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
             Actor_Variable()->None(actor_class_info);
 
-            (*user_callback)->operator()();
-            delete (*user_callback);
+            user_callback->operator()();
+            delete user_callback;
         }
     }
 
@@ -1212,7 +1276,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         NPCP_ASSERT(actor);
 
         Previous_Crime_Faction_Variable()->Pack(Actor2::Crime_Faction(actor));
-        //Previous_Potential_Follower_Faction_Variable()->Bool(Actor2::Has_Faction(actor, Consts::Potential_Follower_Faction()));
         Previous_No_Body_Cleanup_Faction_Variable()->Bool(Actor2::Has_Faction(actor, Consts::WI_No_Body_Cleanup_Faction()));
 
         Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(actor);
@@ -1227,11 +1290,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         NPCP_ASSERT(actor);
 
         Actor2::Add_Crime_Faction(actor, Previous_Crime_Faction_Variable()->Faction());
-        /*if (Previous_Potential_Follower_Faction_Variable()->Bool()) {
-            Actor2::Add_Faction(actor, Consts::Potential_Follower_Faction(), 0);
-        } else {
-            Actor2::Remove_Faction(actor, Consts::Potential_Follower_Faction());
-        }*/
         if (Previous_No_Body_Cleanup_Faction_Variable()->Bool()) {
             Actor2::Add_Faction(actor, Consts::WI_No_Body_Cleanup_Faction(), 0);
         } else {
@@ -1261,8 +1319,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             Object_Ref::Untoken(actor, Consts::Generic_Token());
         }
 
-        //Actor2::Remove_Faction(actor, Consts::Potential_Follower_Faction());
-        //Actor2::Remove_Faction(actor, Consts::Current_Follower_Faction());
         Actor2::Add_Faction(actor, Consts::WI_No_Body_Cleanup_Faction());
         Actor2::Add_Faction(actor, Consts::Member_Faction());
         Actor2::Remove_Crime_Faction(actor);

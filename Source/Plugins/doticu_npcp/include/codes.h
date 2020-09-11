@@ -27,6 +27,7 @@ namespace doticu_npcp { namespace CODES {
         DEAD,
         
         ACTOR,
+        ALIAS,
         CHILD,
         CLONE,
         DISPLAY,

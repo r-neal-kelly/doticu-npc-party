@@ -1351,37 +1351,6 @@ namespace doticu_npcp { namespace Object_Ref {
                                                callback);
     }
 
-    void Count_Pressed_Keys(Virtual_Callback_i** callback)
-    {
-        Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(),
-                                               "doticu_npcp_funcs",
-                                               "Count_Pressed_Keys",
-                                               nullptr,
-                                               callback);
-    }
-
-    void Pressed_Key(Int_t index, Virtual_Callback_i** callback)
-    {
-        struct Args : public Virtual_Arguments_t {
-            Int_t index;
-            Args(Int_t index) :
-                index(index)
-            {
-            }
-            Bool_t operator()(Arguments_t* args)
-            {
-                args->Resize(1);
-                args->At(0)->Int(index);
-                return true;
-            }
-        } arguments(index);
-        Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(),
-                                               "doticu_npcp_funcs",
-                                               "Pressed_Key",
-                                               &arguments,
-                                               callback);
-    }
-
 }}
 
 namespace doticu_npcp { namespace Object_Ref { namespace Exports {

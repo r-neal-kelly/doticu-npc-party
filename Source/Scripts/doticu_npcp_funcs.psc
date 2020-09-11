@@ -39,7 +39,6 @@ function f_Create()
     p_is_created = true
 
     LOGS.f_Create()
-    ACTORS.f_Create()
     NPCS.f_Initialize()
     PERKS.f_Create()
 endFunction
@@ -47,7 +46,6 @@ endFunction
 function f_Destroy()
     PERKS.f_Destroy()
     NPCS.f_Uninitialize()
-    ACTORS.f_Destroy()
     LOGS.f_Destroy()
 
     p_is_created = false
@@ -76,54 +74,6 @@ bool function Is_Mod_Installed(string name_mod)
     return Game.GetModByName(name_mod) != 255
 endFunction
 
-function Send_Event(string str_event, float interval = 0.25, float timeout = 5.0)
-    float time_waited = 0.0
-    while time_waited < timeout
-        int handle = ModEvent.Create(str_event)
-        if handle
-            if ModEvent.Send(handle)
-                return
-            else
-                ModEvent.Release(handle)
-            endIf
-        endIf
-
-        Wait(interval)
-        time_waited += interval
-    endWhile
-endFunction
-
-int function Get_Event_Handle(string str_event, float interval = 0.25, float timeout = 5.0)
-    float time_waited = 0.0
-    while time_waited < timeout
-        int handle = ModEvent.Create(str_event)
-        if handle
-            return handle
-        endIf
-
-        Wait(interval)
-        time_waited += interval
-    endWhile
-
-    return 0
-endFunction
-
-bool function Send_Event_Handle(int handle, float interval = 0.25, float timeout = 5.0)
-    float time_waited = 0.0
-    while time_waited < timeout
-        if ModEvent.Send(handle)
-            return true
-        endIf
-
-        Wait(interval)
-        time_waited += interval
-    endWhile
-
-    ModEvent.Release(handle)
-
-    return false
-endFunction
-
 function Wait(float seconds);;;
     Utility.WaitMenuMode(seconds)
 endFunction
@@ -139,26 +89,6 @@ endFunction
 function Open_Container(ObjectReference ref_container);;;
     ref_container.Activate(doticu_npcp_consts.Player_Actor())
     Wait_Out_Of_Menu(0.1)
-endFunction
-
-function Move_To_Orbit(ObjectReference ref, ObjectReference origin, float radius, float degree)
-    bool has_disabled_ai = false
-    Actor ref_actor = ref as Actor
-    if ref_actor && !ref_actor.IsAIEnabled()
-        has_disabled_ai = true
-    endIf
-
-    if has_disabled_ai
-        ref_actor.EnableAI(true)
-    endIf
-
-    float origin_degree = origin.GetAngleZ()
-    ref.MoveTo(origin, radius * Math.Sin(origin_degree - degree), radius * Math.Cos(origin_degree - degree), 0.0)
-    ref.SetAngle(0.0, 0.0, origin_degree - 180 - degree)
-
-    if has_disabled_ai
-        ref_actor.EnableAI(false)
-    endIf
 endFunction
 
 function Essentialize(ActorBase base_actor);;;
@@ -177,12 +107,4 @@ endFunction
 
 ObjectReference function Current_Crosshair_Reference();;;
     return Game.GetCurrentCrosshairRef()
-endFunction
-
-int function Count_Pressed_Keys();;;
-    return Input.GetNumKeysPressed()
-endFunction
-
-int function Pressed_Key(int index);;;
-    return Input.GetNthKeyPressed(index)
 endFunction

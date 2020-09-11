@@ -137,8 +137,6 @@ namespace doticu_npcp { namespace Object_Ref {
     // these don't belong here.
     void Current_Crosshair_Reference(Virtual_Callback_i** callback);
     void Can_Use_Keys(Virtual_Callback_i** callback);
-    void Count_Pressed_Keys(Virtual_Callback_i** callback);
-    void Pressed_Key(Int_t index, Virtual_Callback_i** callback);
 
 }}
 

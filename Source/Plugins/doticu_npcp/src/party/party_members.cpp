@@ -655,7 +655,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                                 NPCS_t::Self()->Add_Original(original);
                                 Member_t* member = From_Unfilled();
                                 NPCP_ASSERT(member);
-                                member->Fill(original, false, user_callback);
+                                member->Fill(original, false, *user_callback);
                             } else {
                                 (*user_callback)->operator()(CODES::DEAD, nullptr);
                                 delete (*user_callback);
@@ -707,7 +707,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                     };
                     Callback_t<Int_t, Actor_t*>* unfill_callback =
                         new Unfill_Callback(this, *user_callback);
-                    member->Unfill(&unfill_callback);
+                    member->Unfill(unfill_callback);
                 } else {
                     return Remove_Clone(original, false, user_callback);
                 }
@@ -731,7 +731,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                     Actor_t* clone = NPCS_t::Self()->Add_Clone(original);
                     Member_t* member = From_Unfilled();
                     NPCP_ASSERT(member);
-                    member->Fill(clone, true, user_callback);
+                    member->Fill(clone, true, *user_callback);
                 } else {
                     (*user_callback)->operator()(CODES::MEMBERS, nullptr);
                     delete (*user_callback);
@@ -779,7 +779,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                     };
                     Callback_t<Int_t, Actor_t*>* unfill_callback =
                         new Unfill_Callback(this, do_delete_clone, *user_callback);
-                    member->Unfill(&unfill_callback);
+                    member->Unfill(unfill_callback);
                 } else {
                     (*user_callback)->operator()(CODES::CLONE, clone);
                     delete (*user_callback);
