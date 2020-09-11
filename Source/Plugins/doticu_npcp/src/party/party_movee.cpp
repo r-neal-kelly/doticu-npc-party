@@ -2,8 +2,6 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
-#include "skse64/PapyrusEvents.h"
-
 #include "actor2.h"
 #include "codes.h"
 #include "consts.h"
@@ -369,10 +367,10 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     {
         Unregister();
 
-        auto Try_To_Register = [&](UInt32 hotkey_value)->void
+        auto Try_To_Register = [&](Int_t hotkey_value)->void
         {
             if (hotkey_value > Keys_t::KEY_INVALID) {
-                g_inputKeyEventRegs.Register(hotkey_value, Alias_t::kTypeID, this);
+                Register_Key(hotkey_value);
             }
         };
 
@@ -386,7 +384,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     void Movee_t::Unregister()
     {
-        g_inputKeyEventRegs.UnregisterAll(Alias_t::kTypeID, this);
+        Unregister_Keys();
     }
 
     void Movee_t::Update()

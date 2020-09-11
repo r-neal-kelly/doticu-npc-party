@@ -194,18 +194,6 @@ namespace doticu_npcp { namespace Actor_Base2 {
         }
     }
 
-    /*void Relationship_Rank(Actor_Base_t* actor_base, Actor_Base_t* with_other, Relationship_t::Rank_e rank)
-    {
-        if (actor_base && with_other) {
-            Relationships_t* relationships = Relationships(actor_base);
-            if (relationships) {
-
-            } else {
-                _MESSAGE("no relationships.");
-            }
-        }
-    }*/
-
     void Essentialize(Actor_Base_t* actor_base)
     {
         struct Arguments : public Virtual_Arguments_t {

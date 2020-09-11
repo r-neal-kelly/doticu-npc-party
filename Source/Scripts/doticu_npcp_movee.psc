@@ -15,7 +15,7 @@ bool        p_do_rotate_left        = false
 float       p_distance              =   0.0
 float       p_rotation              =   0.0
 
-function Register() native
-function Unregister() native
-event OnKeyDown(int key_code) native
-event OnKeyUp(int key_code, float time_held) native
+event       Register()                              native
+event       Unregister()                            native
+event       OnKeyDown(int key_code)                 native
+event       OnKeyUp(int key_code, float time_held)  native

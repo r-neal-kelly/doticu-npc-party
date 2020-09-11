@@ -99,7 +99,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         void Token(Misc_t* token, Int_t count = 1);
         void Untoken(Misc_t* token);
 
-        void Lock(Callback_t<>* on_lock, Float_t interval = 0.2f, Float_t limit = 10.0f);
+        void Lock(Callback_t<Follower_t*>* on_lock, Float_t interval = 0.2f, Float_t limit = 10.0f);
         void Unlock();
         void Fill(Member_t* member, Followers_t::Add_Callback_i** add_callback);
         void Unfill(Callback_t<Int_t, Member_t*>** callback);

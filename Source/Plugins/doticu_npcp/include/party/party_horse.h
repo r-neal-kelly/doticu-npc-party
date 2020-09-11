@@ -46,7 +46,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Int_t Groom();
         void Enforce_Groom(Actor_t* actor);
         Int_t Ungroom();
-        void Enforce_Non_Groom(Actor_t* actor, Callback_t<>* callback = nullptr);
+        void Enforce_Non_Groom(Actor_t* actor, Callback_t<>* callback = nullptr, Float_t time_limit = 5.0f);
 
         void Enforce();
 

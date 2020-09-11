@@ -45,6 +45,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Variable_t* Current_Outfit2_Variable();
         Variable_t* Backup_Outfit2_Variable();
 
+        Variable_t* Is_Locked_Variable(); // Bool_t
         Variable_t* Is_Clone_Variable();
         Variable_t* Is_Immobile_Variable();
         Variable_t* Is_Settler_Variable();
@@ -191,6 +192,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                     Bool_t is_blocked);
         void On_Package_Change(Package_t* new_package);
 
+        void Lock(Callback_t<Member_t*>* on_lock, Float_t interval = 0.2f, Float_t limit = 10.0f);
+        void Unlock();
         void Fill(Actor_t* actor, Bool_t is_clone, Callback_t<Int_t, Member_t*>** user_callback);
         void Unfill(Callback_t<Int_t, Actor_t*>** user_callback);
         void Create(Actor_t* actor, Bool_t is_clone);

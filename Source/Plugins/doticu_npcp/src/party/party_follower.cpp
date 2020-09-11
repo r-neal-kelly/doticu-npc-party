@@ -14,6 +14,7 @@
 #include "utils.h"
 #include "vars.h"
 
+#include "party/party_alias.inl"
 #include "party/party_player.h"
 #include "party/party_member.h"
 #include "party/party_followers.h"
@@ -376,41 +377,14 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Object_Ref::Untoken(Actor(), token);
     }
 
-    void Follower_t::Lock(Callback_t<>* on_lock, Float_t interval, Float_t limit)
+    void Follower_t::Lock(Callback_t<Follower_t*>* on_lock, Float_t interval, Float_t limit)
     {
-        if (Is_Locked()) {
-            struct VCallback : Virtual_Callback_t {
-                Follower_t* follower;
-                Callback_t<>* on_lock;
-                Float_t interval;
-                Float_t time_left;
-                VCallback(Follower_t* follower, Callback_t<>* on_lock, Float_t interval, Float_t time_left) :
-                    follower(follower), on_lock(on_lock), interval(interval), time_left(time_left)
-                {
-                }
-                void operator()(Variable_t* result)
-                {
-                    if (follower->Is_Locked() && time_left > 0.0f) {
-                        follower->Lock(on_lock, interval, time_left - interval);
-                    } else {
-                        follower->Is_Locked_Variable()->Bool(true);
-                        on_lock->operator()();
-                        delete on_lock;
-                    }
-                }
-            };
-            Virtual_Callback_i* vcallback = new VCallback(this, on_lock, interval, limit);
-            Modules::Funcs_t::Self()->Wait(interval, &vcallback);
-        } else {
-            Is_Locked_Variable()->Bool(true);
-            on_lock->operator()();
-            delete on_lock;
-        }
+        Alias_t::Lock(this, on_lock, interval, limit);
     }
 
     void Follower_t::Unlock()
     {
-        Is_Locked_Variable()->Bool(false);
+        Alias_t::Unlock(this);
     }
 
     void Follower_t::Fill(Member_t* member, Followers_t::Add_Callback_i** add_callback)
@@ -496,14 +470,13 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         using UCallback_t = Callback_t<Int_t, Member_t*>;
 
-        struct Lock_t : public Callback_t<> {
-            Follower_t* follower;
+        struct Lock_t : public Callback_t<Follower_t*> {
             UCallback_t* user_callback;
-            Lock_t(Follower_t* follower, UCallback_t* user_callback) :
-                follower(follower), user_callback(user_callback)
+            Lock_t(UCallback_t* user_callback) :
+                user_callback(user_callback)
             {
             }
-            void operator()()
+            void operator()(Follower_t* follower)
             {
                 struct Callback_t : public UCallback_t {
                     Follower_t* follower;
@@ -522,7 +495,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                 follower->Relinquish_Impl(new Callback_t(follower, user_callback));
             }
         };
-        Lock(new Lock_t(this, user_callback));
+        Lock(new Lock_t(user_callback));
     }
 
     void Follower_t::Relinquish_Impl(Callback_t<Int_t, Member_t*>* user_callback)
@@ -1148,6 +1121,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     {
         if (Is_Filled()) {
             if (Is_Saddler()) {
+                Is_Saddler_Variable()->Bool(false);
+
                 Actor_t* actor = Actor();
                 Object_Ref::Untoken(actor, Consts::Saddler_Token());
                 Actor2::Evaluate_Package(actor);
@@ -1161,7 +1136,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                     }
                     void operator()(Int_t, Follower_t* follower)
                     {
-                        follower->Is_Saddler_Variable()->Bool(false);
                         follower->Horse_Variable()->None(Horse_t::Class_Info());
                         Actor2::Evaluate_Package(actor);
 

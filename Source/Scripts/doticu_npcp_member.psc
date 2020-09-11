@@ -20,6 +20,7 @@ doticu_npcp_outfit      p_outfit2_default                   =  none
 doticu_npcp_outfit      p_outfit2_current                   =  none
 doticu_npcp_outfit      p_outfit2_auto_backup               =  none
 
+bool                    p_is_locked                         = false
 bool                    p_is_clone                          = false
 bool                    p_is_immobile                       = false
 bool                    p_is_settler                        = false

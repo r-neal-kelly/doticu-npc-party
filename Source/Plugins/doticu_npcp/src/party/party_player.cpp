@@ -161,6 +161,24 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
+    void Player_t::On_Register()
+    {
+        Register_Control("Sneak");
+        Register_Control("Forward");
+        Register_Action(CODES::ACTION::DRAW_END);
+        Register_For_Crosshair_Change();
+    }
+
+    void Player_t::On_Change_Crosshair(Reference_t* ref)
+    {
+        if (ref && ref->formType == kFormType_Character) {
+            Member_t* member = Members_t::Self()->From_Actor(static_cast<Actor_t*>(ref));
+            if (member) {
+                member->Enforce();
+            }
+        }
+    }
+
     void Player_t::On_Cell_Change(Cell_t* new_cell, Cell_t* old_cell)
     {
         Actor_t* player_actor = Actor();
@@ -221,7 +239,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        METHOD("Is_Party_In_Combat", 0, Bool_t, Is_Party_In_Combat);
+        METHOD("On_Register", 0, void, On_Register);
+        METHOD("OnCrosshairRefChange", 1, void, On_Change_Crosshair, Reference_t*);
         METHOD("OnControlDown", 1, void, On_Control_Down, String_t);
         METHOD("OnActorAction", 4, void, On_Actor_Action, Int_t, Actor_t*, Form_t*, Int_t);
         

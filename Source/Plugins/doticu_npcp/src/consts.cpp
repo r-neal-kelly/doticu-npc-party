@@ -564,20 +564,12 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
         // Skyrim Quests
         ADD_GLOBAL("Bard_Songs_Quest", 0, Quest_t*, Bard_Songs_Quest);
         ADD_GLOBAL("Player_Vampire_Quest", 0, Quest_t*, Player_Vampire_Quest);
-        ADD_GLOBAL("WI_Remove_Item_04_Quest", 0, Quest_t*, WI_Remove_Item_04_Quest);
-
-        // Skyrim Statics
-        ADD_GLOBAL("X_Marker_Static", 0, Static_t*, X_Marker_Static);
 
         // Dawnguard Factions
         ADD_GLOBAL("DLC1_Thrall_Faction", 0, Faction_t*, DLC1_Thrall_Faction);
 
         // NPCP Actor Base
         ADD_GLOBAL("Menu_Actor_Base", 0, Actor_Base_t*, Menu_Actor_Base);
-
-        // NPCP Formlists
-        ADD_GLOBAL("Is_Saddler_Sitting_Globals_Formlist", 0, Formlist_t*, Is_Saddler_Sitting_Globals_Formlist);
-        ADD_GLOBAL("Expo_Cell_Markers_Formlist", 0, Formlist_t*, Expo_Cell_Markers_Formlist);
 
         // NPCP Globals
         ADD_GLOBAL("Is_Installed_Global", 0, Global_t*, Is_Installed_Global);
@@ -597,12 +589,8 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
         ADD_GLOBAL("NPCP_Minor", 0, Int_t, NPCP_Minor);
         ADD_GLOBAL("NPCP_Patch", 0, Int_t, NPCP_Patch);
 
-        // NPCP Location
-        ADD_GLOBAL("Expo_Location", 0, Location_t*, Expo_Location);
-
         // NPCP Misc Tokens
         ADD_GLOBAL("Greeter_Token", 0, Misc_t*, Greeter_Token);
-        ADD_GLOBAL("Movee_Token", 0, Misc_t*, Movee_Token);
 
         // NPCP Perks
         ADD_GLOBAL("Kiss_Thrall_Perk", 0, Perk_t*, Kiss_Thrall_Perk);
@@ -680,16 +668,6 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
         ADD_GLOBAL("Y_Books_Category", 0, Reference_t*, Y_Books_Category);
         ADD_GLOBAL("Z_Books_Category", 0, Reference_t*, Z_Books_Category);
         ADD_GLOBAL("Books_Category", 0, Reference_t*, Books_Category);
-
-        // NPCP Reference Markers
-        ADD_GLOBAL("Cell_Marker", 0, Reference_t*, Cell_Marker);
-        ADD_GLOBAL("Expo_Antechamber_Marker", 0, Reference_t*, Expo_Antechamber_Marker);
-
-        // NPCP Spells
-        ADD_GLOBAL("Cell_Ability_Spell", 0, Spell_t*, Cell_Ability_Spell);
-
-        // NPCP Weapons
-        ADD_GLOBAL("Blank_Weapon", 0, Weapon_t*, Blank_Weapon);
 
         #undef ADD_GLOBAL
 

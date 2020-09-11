@@ -18,6 +18,7 @@
 #include "vars.h"
 #include "xlist.h"
 
+#include "party/party_alias.inl"
 #include "party/party_player.h"
 #include "party/party_movee.h"
 #include "party/party_npcs.h"
@@ -66,6 +67,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     Variable_t* Member_t::Current_Outfit2_Variable() { DEFINE_VARIABLE("p_outfit2_current"); }
     Variable_t* Member_t::Backup_Outfit2_Variable() { DEFINE_VARIABLE("p_outfit2_auto_backup"); }
 
+    Variable_t* Member_t::Is_Locked_Variable() { DEFINE_VARIABLE("p_is_locked"); }
     Variable_t* Member_t::Is_Clone_Variable() { DEFINE_VARIABLE("p_is_clone"); }
     Variable_t* Member_t::Is_Immobile_Variable() { DEFINE_VARIABLE("p_is_immobile"); }
     Variable_t* Member_t::Is_Settler_Variable() { DEFINE_VARIABLE("p_is_settler"); }
@@ -941,6 +943,16 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     void Member_t::On_Package_Change(Package_t* new_package)
     {
         Enforce_Name(Actor(), Name());
+    }
+
+    void Member_t::Lock(Callback_t<Member_t*>* on_lock, Float_t interval, Float_t limit)
+    {
+        Alias_t::Lock(this, on_lock, interval, limit);
+    }
+
+    void Member_t::Unlock()
+    {
+        Alias_t::Unlock(this);
     }
 
     void Member_t::Fill(Actor_t* actor, Bool_t is_clone, Callback_t<Int_t, Member_t*>** user_callback)

@@ -2,6 +2,8 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "skse64/PapyrusEvents.h"
+
 #include "papyrus.inl"
 #include "quest.h"
 
@@ -75,6 +77,77 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         };
         Virtual_Callback_i* vcallback = new VCallback(user_callback);
         Virtual_Machine_t::Self()->Call_Method(this, "Alias", "GetOwningQuest", nullptr, &vcallback);
+    }
+
+    void Alias_t::Register_Key(Int_t key_code)
+    {
+        UInt32 u_key_code = key_code;
+        g_inputKeyEventRegs.Register(u_key_code, Alias_t::kTypeID, this);
+    }
+
+    void Alias_t::Unregister_Key(Int_t key_code)
+    {
+        UInt32 u_key_code = key_code;
+        g_inputKeyEventRegs.Unregister(u_key_code, Alias_t::kTypeID, this);
+    }
+
+    void Alias_t::Unregister_Keys()
+    {
+        g_inputKeyEventRegs.UnregisterAll(Alias_t::kTypeID, this);
+    }
+
+    void Alias_t::Register_Control(String_t control)
+    {
+        g_inputControlEventRegs.Register(control, Alias_t::kTypeID, this);
+    }
+
+    void Alias_t::Unregister_Control(String_t control)
+    {
+        g_inputControlEventRegs.Unregister(control, Alias_t::kTypeID, this);
+    }
+
+    void Alias_t::Unregister_Controls()
+    {
+        g_inputControlEventRegs.UnregisterAll(Alias_t::kTypeID, this);
+    }
+
+    void Alias_t::Register_Action(Int_t action_code)
+    {
+        UInt32 u_action_code = action_code;
+        g_actionEventRegs.Register(u_action_code, Alias_t::kTypeID, this);
+    }
+
+    void Alias_t::Unregister_Action(Int_t action_code)
+    {
+        UInt32 u_action_code = action_code;
+        g_actionEventRegs.Unregister(u_action_code, Alias_t::kTypeID, this);
+    }
+
+    void Alias_t::Unregister_Actions()
+    {
+        g_actionEventRegs.UnregisterAll(Alias_t::kTypeID, this);
+    }
+
+    void Alias_t::Register_For_Crosshair_Change(Virtual_Callback_i* vcallback)
+    {
+        Virtual_Machine_t::Self()->Call_Method(
+            this,
+            "Alias",
+            "RegisterForCrosshairRef",
+            nullptr,
+            vcallback ? &vcallback : nullptr
+        );
+    }
+
+    void Alias_t::Unregister_For_Crosshair_Change(Virtual_Callback_i* vcallback)
+    {
+        Virtual_Machine_t::Self()->Call_Method(
+            this,
+            "Alias",
+            "UnregisterForCrosshairRef",
+            nullptr,
+            vcallback ? &vcallback : nullptr
+        );
     }
 
 }}}

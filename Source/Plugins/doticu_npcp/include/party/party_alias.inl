@@ -4,20 +4,22 @@
 
 #pragma once
 
+#include "funcs.h"
+
 #include "party/party_alias.h"
 
 namespace doticu_npcp { namespace Papyrus { namespace Party {
 
-    template <typename Base_t>
-    inline void Alias_t::Lock(Base_t* self, Callback_t<Base_t*>* on_lock, Float_t interval, Float_t limit)
+    template <typename Alias_tm>
+    inline void Alias_t::Lock(Alias_tm* self, Callback_t<Alias_tm*>* on_lock, Float_t interval, Float_t limit)
     {
         if (self->Is_Locked_Variable()->Bool()) {
             struct VCallback : Virtual_Callback_t {
-                Base_t* self;
-                Callback_t<Base_t*>* on_lock;
+                Alias_tm* self;
+                Callback_t<Alias_tm*>* on_lock;
                 Float_t interval;
                 Float_t time_left;
-                VCallback(Base_t* self, Callback_t<Base_t*>* on_lock, Float_t interval, Float_t time_left) :
+                VCallback(Alias_tm* self, Callback_t<Alias_tm*>* on_lock, Float_t interval, Float_t time_left) :
                     self(self), on_lock(on_lock), interval(interval), time_left(time_left)
                 {
                 }
@@ -41,8 +43,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
-    template <typename Base_t>
-    inline void Alias_t::Unlock(Base_t* self)
+    template <typename Alias_tm>
+    inline void Alias_t::Unlock(Alias_tm* self)
     {
         self->Is_Locked_Variable()->Bool(false);
     }

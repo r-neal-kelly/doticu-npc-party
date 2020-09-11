@@ -1,6 +1,4 @@
-;/
-    Copyright © 2020 r-neal-kelly, aka doticu
-/;
+; Copyright © 2020 r-neal-kelly, aka doticu
 
 Scriptname doticu_npcp_consts hidden
 
@@ -18,20 +16,12 @@ Perk function Vampire_Feed_Perk() native global
 ; Skyrim Quests
 Quest function Bard_Songs_Quest() native global
 Quest function Player_Vampire_Quest() native global
-Quest function WI_Remove_Item_04_Quest() native global
-
-; Skyrim Statics
-Static function X_Marker_Static() native global
 
 ; Dawnguard Factions
 Faction function DLC1_Thrall_Faction() native global
 
 ; NPCP Actor Bases
 ActorBase function Menu_Actor_Base() native global
-
-; NPCP Formlists
-Formlist function Is_Saddler_Sitting_Globals_Formlist() native global
-Formlist function Expo_Cell_Markers_Formlist() native global
 
 ; NPCP Globals
 GlobalVariable function Is_Installed_Global() native global
@@ -51,12 +41,8 @@ int function NPCP_Major() native global
 int function NPCP_Minor() native global
 int function NPCP_Patch() native global
 
-; NPCP Locations
-Location function Expo_Location() native global
-
 ; NPCP Misc Tokens
 MiscObject function Greeter_Token() native global
-MiscObject function Movee_Token() native global
 
 ; NPCP Perks
 Perk function Kiss_Thrall_Perk() native global
@@ -134,13 +120,3 @@ ObjectReference function X_Books_Category() native global
 ObjectReference function Y_Books_Category() native global
 ObjectReference function Z_Books_Category() native global
 ObjectReference function Books_Category() native global
-
-; NPCP Reference Markers
-ObjectReference function Cell_Marker() native global
-ObjectReference function Expo_Antechamber_Marker() native global
-
-; NPCP Spells
-Spell function Cell_Ability_Spell() native global
-
-; NPCP Weapons
-Weapon function Blank_Weapon() native global

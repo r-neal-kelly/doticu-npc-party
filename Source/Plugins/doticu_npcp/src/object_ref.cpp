@@ -303,7 +303,6 @@ namespace doticu_npcp { namespace Object_Ref {
         for (u64 idx = 0, count = xaliases->aliases.count; idx < count; idx += 1) {
             ExtraAliasInstanceArray::AliasInfo *info = xaliases->aliases[idx];
             if (info && info->alias) {
-                //_MESSAGE("quest: %s, flags: %x", Quest::Get_Name(info->quest), info->alias->flags);
                 if (Utils::Is_Bit_On(info->alias->flags, 2)) {
                     return true;
                 }

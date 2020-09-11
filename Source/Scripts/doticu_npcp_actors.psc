@@ -44,7 +44,7 @@ function f_Destroy()
 endFunction
 
 function f_Register()
-    PLAYER.f_Register()
+    PLAYER.On_Register()
     if GREETER.Exists()
         GREETER.f_Register()
     endIf

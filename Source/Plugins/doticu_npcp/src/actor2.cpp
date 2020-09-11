@@ -986,7 +986,9 @@ namespace doticu_npcp { namespace Actor2 {
         if (actor && origin) {
             //Stop_Movement(actor); // doesnt work yet.
             Object_Ref::Move_To_Orbit(actor, origin, radius, degree);
-            Update_3D_Model(actor); // we may want to move this behavior up to member/follower, etc.
+            if (Is_Loaded(actor)) {
+                Update_3D_Model(actor); // we may want to move this behavior up to member/follower, etc.
+            }
         }
     }
 

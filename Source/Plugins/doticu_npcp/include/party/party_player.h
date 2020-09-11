@@ -39,6 +39,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         void On_Init_Mod();
         void On_Load_Mod();
+        void On_Register();
+        void On_Change_Crosshair(Reference_t* ref);
         void On_Cell_Change(Cell_t* new_cell, Cell_t* old_cell);
         void On_Control_Down(String_t control);
         void On_Actor_Action(Int_t action_code, Actor_t* actor, Form_t* tool, Int_t tool_slot);

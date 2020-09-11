@@ -5,6 +5,7 @@
 #include "actor2.h"
 #include "codes.h"
 #include "consts.h"
+#include "form.h"
 #include "funcs.h"
 #include "object_ref.h"
 #include "papyrus.inl"
@@ -253,7 +254,9 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             Formlist_t* formlist = Consts::Is_Saddler_Sitting_Globals_Formlist();
             Global_t* global = static_cast<Global_t*>(*(formlist->forms.entries + follower->ID()));
             global->value = 0.0f;
-            Object_Ref::Move_To_Orbit(mounted_actor, actor, 140.0f, 180.0f);
+            if (mounted_actor) {
+                Object_Ref::Move_To_Orbit(mounted_actor, actor, 140.0f, 180.0f);
+            }
         }
 
         Actor2::Owner(actor, Actor2::Dynamic_Base(follower_actor));
@@ -294,27 +297,32 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
-    void Horse_t::Enforce_Non_Groom(Actor_t* actor, Callback_t<>* callback)
+    void Horse_t::Enforce_Non_Groom(Actor_t* actor, Callback_t<>* callback, Float_t time_limit)
     {
         NPCP_ASSERT(actor);
 
         Actor_t* mounted_actor = Actor2::Get_Mounted_Actor(actor);
-        if (mounted_actor) {
+        if (mounted_actor && time_limit > 0.0f) {
+            static constexpr Float_t wait_interval = 1.0f;
+
             struct VCallback : public Virtual_Callback_t {
                 Horse_t* horse;
                 Actor_t* actor;
                 Callback_t<>* callback;
-                VCallback(Horse_t* horse, Actor_t* actor, Callback_t<>* callback) :
-                    horse(horse), actor(actor), callback(callback)
+                Float_t time_limit;
+                VCallback(Horse_t* horse, Actor_t* actor, Callback_t<>* callback, Float_t time_limit) :
+                    horse(horse), actor(actor), callback(callback), time_limit(time_limit)
                 {
                 }
                 void operator()(Variable_t* result)
                 {
-                    horse->Enforce_Non_Groom(actor, callback);
+                    horse->Enforce_Non_Groom(actor, callback, time_limit - wait_interval);
                 }
             };
-            Virtual_Callback_i* vcallback = new VCallback(this, actor, callback);
-            Modules::Funcs_t::Self()->Wait_Out_Of_Menu(1.0f, &vcallback);
+            Virtual_Callback_i* vcallback = new VCallback(this, actor, callback, time_limit);
+            Modules::Funcs_t::Self()->Wait_Out_Of_Menu(wait_interval, &vcallback);
+
+            Actor2::Evaluate_Package(mounted_actor);
         } else {
             if (Is_Ready()) {
                 Global_t* is_saddler_sitting_global = static_cast<Global_t*>
