@@ -942,7 +942,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     void Member_t::On_Package_Change(Package_t* new_package)
     {
-        Enforce_Name(Actor(), Name());
     }
 
     void Member_t::Lock(Callback_t<Member_t*>* on_lock, Float_t interval, Float_t limit)
@@ -2736,6 +2735,26 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     void Member_t::Enforce()
     {
+        struct Lock_t : public Callback_t<Member_t*> {
+            void operator()(Member_t* self)
+            {
+                struct Unlock_t : public Callback_t<Member_t*> {
+                    void operator()(Member_t* self)
+                    {
+                        self->Unlock();
+                    }
+                };
+                self->Enforce_Impl(new Unlock_t());
+            }
+        };
+        Lock(new Lock_t());
+    }
+
+    void Member_t::Enforce_Impl(Callback_t<Member_t*>* user_callback)
+    {
+        using UCallback = Callback_t<Member_t*>;
+        NPCP_ASSERT(user_callback);
+
         if (Is_Ready() && Is_Alive()) {
             Actor_t* actor = Actor();
 
@@ -2787,16 +2806,32 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
             Enforce_Vitality(actor);
 
-            Enforce_Outfit2(actor);
-
             Enforce_Name(actor, Name_Variable()->String());
 
-            Follower_t* follower = Follower();
-            if (follower) {
-                follower->Enforce();
-            }
+            struct Callback : public Callback_t<Actor_t*> {
+                Member_t* self;
+                UCallback* user_callback;
+                Callback(Member_t* self, UCallback* user_callback) :
+                    self(self), user_callback(user_callback)
+                {
+                }
+                void operator()(Actor_t* actor)
+                {
+                    Follower_t* follower = self->Follower();
+                    if (follower) {
+                        follower->Enforce();
+                    }
 
-            Actor2::Evaluate_Package(actor);
+                    Actor2::Evaluate_Package(actor);
+
+                    user_callback->operator()(self);
+                    delete user_callback;
+                }
+            };
+            Enforce_Outfit2(actor, new Callback(this, user_callback));
+        } else {
+            user_callback->operator()(this);
+            delete user_callback;
         }
     }
 

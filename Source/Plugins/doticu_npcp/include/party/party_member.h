@@ -297,6 +297,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         void Enforce_Name(Actor_t* actor, String_t name);
 
         void Enforce();
+        void Enforce_Impl(Callback_t<Member_t*>* user_callback);
 
         void Summon(Reference_t* origin, Float_t radius = 140.0f, Float_t degree = 0.0f);
         Int_t Summon(Float_t radius = 140.0f, Float_t degree = 0.0f);

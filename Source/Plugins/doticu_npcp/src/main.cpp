@@ -33,8 +33,6 @@
 #include "vars.h"
 #include "vector.h"
 
-#include "magic_effect/magic_effect_cell.h"
-
 #include "party/party_player.h"
 #include "party/party_greeter.h"
 #include "party/party_movee.h"
@@ -216,7 +214,6 @@ namespace doticu_npcp { namespace Modules {
                                     }
                                     Party::Player_t::Self()->On_Load_Mod();
                                     Party::Movee_t::Self()->On_Load_Mod();
-                                    Party::Members_t::Self()->On_Load_Mod();
                                     Utils::Print("NPC Party has loaded.");
                                 }
                             };
@@ -404,8 +401,6 @@ namespace doticu_npcp { namespace Main {
 
         REGISTER_TYPE(Modules::Main_t);
         REGISTER_TYPE(Modules::Funcs_t);
-
-        REGISTER_TYPE(Papyrus::Magic_Effect::Cell_t);
 
         REGISTER_TYPE(Party::Player_t);
         REGISTER_TYPE(Party::Greeter_t);

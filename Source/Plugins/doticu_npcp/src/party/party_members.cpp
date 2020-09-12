@@ -794,22 +794,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
-    void Members_t::Delete_Unused_Outfit2s()
-    {
-        Vector_t<Reference_t*> outfit2s = Cell::References(Consts::Storage_Cell(), Consts::Outfit2_Container());
-        for (size_t idx = 0, count = outfit2s.size(); idx < count; idx += 1) {
-            Outfit2_t* outfit2 = static_cast<Outfit2_t*>(outfit2s.at(idx));
-            if (outfit2 && outfit2->Type() == CODES::OUTFIT2::DELETED) {
-                Object_Ref::Delete_Safe(outfit2);
-            }
-        }
-    }
-
-    void Members_t::On_Load_Mod()
-    {
-        Enforce_Loaded();
-    }
-
     void Members_t::u_0_9_3()
     {
         NPCS_t* npcs = NPCS_t::Self();

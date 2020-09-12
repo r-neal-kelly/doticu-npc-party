@@ -134,10 +134,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         void Add_Clone(Actor_t* original, Callback_t<Int_t, Member_t*>** user_callback);
         void Remove_Clone(Actor_t* clone, Bool_t do_delete_clone, Callback_t<Int_t, Actor_t*>** user_callback);
 
-        void Delete_Unused_Outfit2s();
-
-        void On_Load_Mod();
-
         void u_0_9_3();
         void u_0_9_6();
         void u_0_9_8();

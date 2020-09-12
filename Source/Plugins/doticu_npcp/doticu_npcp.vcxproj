@@ -146,7 +146,6 @@
     <ClCompile Include="src\commands.cpp" />
     <ClCompile Include="src\consts.cpp" />
     <ClCompile Include="src\funcs.cpp" />
-    <ClCompile Include="src\magic_effect\magic_effect_cell.cpp" />
     <ClCompile Include="src\mcm\mcm_chests.cpp" />
     <ClCompile Include="src\mcm\mcm_filter.cpp" />
     <ClCompile Include="src\form_vector.cpp" />
@@ -203,7 +202,6 @@
     <ClInclude Include="include\funcs.h" />
     <ClInclude Include="include\game.h" />
     <ClInclude Include="include\keys.h" />
-    <ClInclude Include="include\magic_effect\magic_effect_cell.h" />
     <ClInclude Include="include\main.h" />
     <ClInclude Include="include\mcm\mcm_chests.h" />
     <ClInclude Include="include\mcm\mcm_filter.h" />

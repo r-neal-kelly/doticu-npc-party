@@ -363,6 +363,8 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                 return Log_Note("Moving ", name, ".");
             case (CODES::ACTOR):
                 return Log_Note("Can only move actors.");
+            case (CODES::DEAD):
+                return Log_Note("Can only move the living.");
             case (CODES::MANNEQUIN):
                 return Log_Note("Can't move mannequins.");
             case (CODES::DISPLAY):

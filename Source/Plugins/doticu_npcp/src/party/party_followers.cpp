@@ -1122,13 +1122,13 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
-    Int_t Followers_t::Catch_Up()
+    Int_t Followers_t::Catch_Up(Cell_t* new_cell, Cell_t* old_cell)
     {
         Vector_t<Follower_t*> filled = Filled();
         size_t filled_count = filled.size();
         if (filled_count > 0) {
             for (size_t idx = 0; idx < filled_count; idx += 1) {
-                filled[idx]->Catch_Up();
+                filled[idx]->Catch_Up(new_cell, old_cell);
             }
             return CODES::SUCCESS;
         } else {
@@ -1172,7 +1172,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         METHOD("Retreat", 0, Int_t, Retreat);
         METHOD("Unretreat", 0, Int_t, Unretreat);
-        METHOD("Catch_Up", 0, Int_t, Catch_Up);
         METHOD("Level", 0, Int_t, Level);
         METHOD("Unlevel", 0, Int_t, Unlevel);
 

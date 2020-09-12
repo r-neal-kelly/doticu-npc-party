@@ -183,40 +183,44 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     {
         if (Is_Unfilled()) {
             if (actor) {
-                Member_t* member = Members_t::Self()->From_Actor(actor);
-                if (member) {
-                    if (member->Is_Mannequin()) {
-                        return CODES::MANNEQUIN;
-                    } else if (member->Is_Display()) {
-                        return CODES::DISPLAY;
+                if (Actor2::Is_Alive(actor)) {
+                    Member_t* member = Members_t::Self()->From_Actor(actor);
+                    if (member) {
+                        if (member->Is_Mannequin()) {
+                            return CODES::MANNEQUIN;
+                        } else if (member->Is_Display()) {
+                            return CODES::DISPLAY;
+                        }
                     }
+
+                    struct Lock_t : public Callback_t<Movee_t*> {
+                        Actor_t* actor;
+                        Lock_t(Actor_t* actor) :
+                            actor(actor)
+                        {
+                        }
+                        void operator()(Movee_t* self)
+                        {
+                            struct Unlock_t : public Callback_t<> {
+                                Movee_t* self;
+                                Unlock_t(Movee_t* self) :
+                                    self(self)
+                                {
+                                }
+                                void operator()()
+                                {
+                                    self->Unlock();
+                                }
+                            };
+                            self->Start_Impl(actor, new Unlock_t(self));
+                        }
+                    };
+                    Lock(new Lock_t(actor));
+
+                    return CODES::SUCCESS;
+                } else {
+                    return CODES::DEAD;
                 }
-
-                struct Lock_t : public Callback_t<Movee_t*> {
-                    Actor_t* actor;
-                    Lock_t(Actor_t* actor) :
-                        actor(actor)
-                    {
-                    }
-                    void operator()(Movee_t* self)
-                    {
-                        struct Unlock_t : public Callback_t<> {
-                            Movee_t* self;
-                            Unlock_t(Movee_t* self) :
-                                self(self)
-                            {
-                            }
-                            void operator()()
-                            {
-                                self->Unlock();
-                            }
-                        };
-                        self->Start_Impl(actor, new Unlock_t(self));
-                    }
-                };
-                Lock(new Lock_t(actor));
-
-                return CODES::SUCCESS;
             } else {
                 return CODES::ACTOR;
             }

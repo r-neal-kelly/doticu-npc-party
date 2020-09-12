@@ -143,7 +143,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Int_t Summon_Mobile(float radius = 140.0, float degree = 0.0, float interval = 19.0);
         Int_t Summon_Immobile(float radius = 140.0, float degree = 0.0, float interval = 19.0);
 
-        Int_t Catch_Up();
+        Int_t Catch_Up(Cell_t* new_cell = nullptr, Cell_t* old_cell = nullptr);
         Int_t Stash();
 
         Vector_t<Follower_t*> Filter(Vector_t<String_t>* strings = nullptr,

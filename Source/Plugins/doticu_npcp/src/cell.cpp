@@ -33,6 +33,15 @@ namespace doticu_npcp { namespace Cell {
         }
     }
 
+    Bool_t Has_Same_Worldspace(Cell_t* cell, Cell_t* other)
+    {
+        if (cell && other) {
+            return cell->unk120 == other->unk120;
+        } else {
+            return true;
+        }
+    }
+
     Vector_t<Reference_t*> References(Cell_t* cell, Form_t* of_base)
     {
         NPCP_ASSERT(cell);

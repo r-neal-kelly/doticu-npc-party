@@ -1457,11 +1457,15 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             if (Is_Mobile() && Isnt_Paralyzed() && Isnt_Mannequin() && Isnt_Display()) {
                 Player_t* player = Player_t::Self();
                 if (Is_Saddler() && player->Is_In_Exterior_Cell()) {
-                    if (Isnt_Near_Player(10240.0f) || !Object_Ref::Is_Near_Player(Horse()->Actor(), 10240.0f)) {
-                        if (player->Is_On_Mount()) {
-                            Summon(player->Actor(), 1024.0f, 180.0f);
-                        } else {
-                            Summon(player->Actor(), 256.0f, 180.0f);
+                    if (Cell::Is_Interior(old_cell) || !Cell::Has_Same_Worldspace(old_cell, new_cell)) {
+                        Summon(player->Actor(), 256.0f, 0.0f);
+                    } else {
+                        if (Isnt_Near_Player(10240.0f) || !Object_Ref::Is_Near_Player(Horse()->Actor(), 10240.0f)) {
+                            if (player->Is_On_Mount()) {
+                                Summon(player->Actor(), 512.0f, 180.0f);
+                            } else {
+                                Summon(player->Actor(), 256.0f, 180.0f);
+                            }
                         }
                     }
                 } else {

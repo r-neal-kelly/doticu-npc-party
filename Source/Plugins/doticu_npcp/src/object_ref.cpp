@@ -1351,6 +1351,29 @@ namespace doticu_npcp { namespace Object_Ref {
                                                callback);
     }
 
+    void Mapped_Control(Int_t key_code, Virtual_Callback_i* vcallback)
+    {
+        struct Arguments : public Virtual_Arguments_t {
+            Int_t key_code;
+            Arguments(Int_t key_code) :
+                key_code(key_code)
+            {
+            }
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(1);
+                arguments->At(0)->Int(key_code);
+                return true;
+            }
+        } arguments(key_code);
+        Virtual_Machine_t::Self()->Call_Global(
+            "Input",
+            "GetMappedControl",
+            &arguments,
+            vcallback ? &vcallback : nullptr
+        );
+    }
+
 }}
 
 namespace doticu_npcp { namespace Object_Ref { namespace Exports {

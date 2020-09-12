@@ -12,7 +12,9 @@
 #include "utils.h"
 #include "vars.h"
 
+#include "party/party_alias.inl"
 #include "party/party_player.h"
+#include "party/party_movee.h"
 #include "party/party_members.h"
 #include "party/party_member.h"
 #include "party/party_followers.h"
@@ -51,6 +53,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         return Object()->Variable(variable_name);
     }
 
+    Variable_t* Player_t::Is_Locked_Variable() { DEFINE_VARIABLE("p_is_locked"); }
     Variable_t* Player_t::Is_In_Combat_Variable() { DEFINE_VARIABLE("p_is_in_combat"); }
 
     Actor_t* Player_t::Actor()
@@ -98,6 +101,15 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         return Actor2::Is_Sneaking(Actor());
     }
 
+    void Player_t::Lock(Callback_t<Player_t*>* on_lock, Float_t interval, Float_t limit)
+    {
+        Alias_t::Lock(this, on_lock, interval, limit);
+    }
+    void Player_t::Unlock()
+    {
+        Alias_t::Unlock(this);
+    }
+
     void Player_t::Begin_Combat()
     {
         Variable_t* is_in_combat_variable = Is_In_Combat_Variable();
@@ -130,7 +142,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                 }
             };
             Virtual_Callback_i* vcallback = new VCallback(this);
-            Modules::Funcs_t::Self()->Wait_Out_Of_Menu(5.0f, &vcallback);
+            Modules::Funcs_t::Self()->Wait_Out_Of_Menu(UPDATE_INTERVAL, &vcallback);
         } else {
             End_Combat();
         }
@@ -149,72 +161,108 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     void Player_t::On_Init_Mod()
     {
-        Actor2::Add_Spell(Actor(), Consts::Cell_Ability_Spell());
+        On_Update();
     }
 
     void Player_t::On_Load_Mod()
     {
-        Actor2::Add_Spell(Actor(), Consts::Cell_Ability_Spell());
-
         if (!Is_Party_In_Combat()) {
             End_Combat();
         }
+
+        On_Update();
     }
 
     void Player_t::On_Register()
     {
-        Register_Control("Sneak");
-        Register_Control("Forward");
-        Register_Action(CODES::ACTION::DRAW_END);
         Register_For_Crosshair_Change();
+        Register_Control("Sneak");
+        Register_Action(CODES::ACTION::DRAW_END);
+    }
+
+    void Player_t::On_Update()
+    {
+        struct Lock_t : public Callback_t<Player_t*> {
+            void operator()(Player_t* self)
+            {
+                self->On_Update_Impl();
+
+                struct VCallback : public Virtual_Callback_t {
+                    Player_t* player;
+                    VCallback(Player_t* player) :
+                        player(player)
+                    {
+                    }
+                    void operator()(Variable_t* result)
+                    {
+                        player->On_Update();
+                    }
+                };
+                Virtual_Callback_i* vcallback = new VCallback(self);
+                Modules::Funcs_t::Self()->Wait_Out_Of_Menu(UPDATE_INTERVAL, &vcallback);
+
+                self->Unlock();
+            }
+        };
+        Lock(new Lock_t());
+    }
+
+    void Player_t::On_Update_Impl()
+    {
+        static auto Update_Members = [&]()
+        {
+            if (!Is_Party_In_Combat()) {
+                Members_t* members = Members_t::Self();
+                Vector_t<Member_t*> loaded_members = members->Loaded();
+                for (size_t idx = 0, count = loaded_members.size(); idx < count; idx += 1) {
+                    loaded_members[idx]->Enforce();
+                }
+            }
+        };
+
+        static auto Update_Cell = [&]()
+        {
+            Actor_t* player_actor = Consts::Player_Actor();
+            Reference_t* cell_marker = Consts::Cell_Marker();
+            doticu_npcp::Cell_t* new_cell = player_actor->parentCell;
+            doticu_npcp::Cell_t* old_cell = cell_marker->parentCell;
+            if (new_cell != old_cell) {
+                Object_Ref::Move_To_Orbit(cell_marker, player_actor, 0.0f, 180.0f);
+                Party::Player_t::Self()->On_Cell_Change(new_cell, old_cell);
+                Party::Movee_t::Self()->On_Cell_Change(new_cell, old_cell);
+            }
+        };
+
+        Update_Members();
+        Update_Cell();
     }
 
     void Player_t::On_Change_Crosshair(Reference_t* ref)
     {
         if (ref && ref->formType == kFormType_Character) {
-            Member_t* member = Members_t::Self()->From_Actor(static_cast<Actor_t*>(ref));
-            if (member) {
-                member->Enforce();
+            Actor_t* actor = static_cast<Actor_t*>(ref);
+            if (!actor->IsInCombat()) {
+                Member_t* member = Members_t::Self()->From_Actor(actor);
+                if (member) {
+                    member->Enforce();
+                }
             }
         }
     }
 
     void Player_t::On_Cell_Change(Cell_t* new_cell, Cell_t* old_cell)
     {
-        Actor_t* player_actor = Actor();
-        if (!Actor2::Has_Magic_Effect(player_actor, Consts::Cell_Magic_Effect())) {
-            Actor2::Add_Spell(player_actor, Consts::Cell_Ability_Spell());
-        }
-        Followers_t::Self()->Catch_Up();
+        Followers_t::Self()->Catch_Up(new_cell, old_cell);
     }
 
     void Player_t::On_Control_Down(String_t control)
     {
-        Actor_t* player_actor = Actor();
-        if (!Actor2::Has_Magic_Effect(player_actor, Consts::Cell_Magic_Effect())) {
-            Actor2::Add_Spell(player_actor, Consts::Cell_Ability_Spell());
-        }
-
         if (String2::Is_Same_Caseless(control, "Sneak")) {
             Followers_t* followers = Followers_t::Self();
             if (Is_Sneaking() && Is_Party_In_Combat()) {
                 followers->Retreat();
             } else {
                 followers->Unretreat();
-            }
-        } else if (String2::Is_Same_Caseless(control, "Forward")) {
-            Members_t* members = Members_t::Self();
-            Followers_t* followers = Followers_t::Self();
-            Vector_t<Member_t*> loaded_members = members->Loaded();
-            for (size_t idx = 0, count = loaded_members.size(); idx < count; idx += 1) {
-                Member_t* member = loaded_members[idx];
-                Actor_t* actor = member->Actor();
-                member->Enforce_Name(actor, member->Name());
-
-                Follower_t* follower = member->Follower();
-                if (follower && !followers->Can_Actor_Follow(actor)) {
-                    Modules::Control::Commands_t::Self()->Relinquish(actor);
-                }
             }
         }
     }

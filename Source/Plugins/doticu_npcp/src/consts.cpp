@@ -220,7 +220,6 @@ namespace doticu_npcp { namespace Consts {
         LOCATION_EXPO                       = 0x27E48E,
 
         // NPCP Magic Effects
-        MAGIC_EFFECT_CELL                   = 0x15C1AF,
         MAGIC_EFFECT_REANIMATE              = 0x3AF361,
         MAGIC_EFFECT_RETREAT                = 0x2DF8FA,
 
@@ -341,7 +340,6 @@ namespace doticu_npcp { namespace Consts {
         REFERENCE_MARKER_STORAGE            = 0x114F9D,
 
         // NPCP Spells
-        SPELL_ABILITY_CELL                  = 0x15C1B0,
         SPELL_ABILITY_REANIMATE             = 0x3AF362,
         SPELL_ABILITY_RETREAT               = 0x2F3CFF,
 
@@ -403,7 +401,6 @@ namespace doticu_npcp { namespace Consts {
     Location_t* Expo_Location() { NPCP_FORM(Location_t, LOCATION_EXPO); }
 
     // NPCP Magic Effects
-    Magic_Effect_t* Cell_Magic_Effect() { NPCP_FORM(Magic_Effect_t, MAGIC_EFFECT_CELL); }
     Magic_Effect_t* Reanimate_Magic_Effect() { NPCP_FORM(Magic_Effect_t, MAGIC_EFFECT_REANIMATE); }
     Magic_Effect_t* Retreat_Magic_Effect() { NPCP_FORM(Magic_Effect_t, MAGIC_EFFECT_RETREAT); }
 
@@ -524,7 +521,6 @@ namespace doticu_npcp { namespace Consts {
     Reference_t* Storage_Marker() { NPCP_FORM(Reference_t, REFERENCE_MARKER_STORAGE); }
 
     // NPCP Spells
-    Spell_t* Cell_Ability_Spell() { NPCP_FORM(Spell_t, SPELL_ABILITY_CELL); }
     Spell_t* Reanimate_Ability_Spell() { NPCP_FORM(Spell_t, SPELL_ABILITY_REANIMATE); }
     Spell_t* Retreat_Ability_Spell() { NPCP_FORM(Spell_t, SPELL_ABILITY_RETREAT); }
 
