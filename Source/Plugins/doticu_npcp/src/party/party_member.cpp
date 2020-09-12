@@ -1336,16 +1336,17 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         value_owner->Set_Actor_Value(Actor_Value_t::ASSISTANCE, 2.0f);
         value_owner->Set_Actor_Value(Actor_Value_t::MORALITY, 0.0f);
 
-        // maybe we can check this, and if it's set, immobilize the member
-        value_owner->Set_Actor_Value(Actor_Value_t::WAITING_FOR_PLAYER, 0.0f);
+        if (value_owner->Get_Actor_Value(Actor_Value_t::WAITING_FOR_PLAYER) > 0.0f) {
+            Is_Immobile_Variable()->Bool(true);
+        } else {
+            Is_Immobile_Variable()->Bool(false);
+        }
 
         Actor2::Join_Player_Team(actor, true);
 
         if (Actor2::Cant_Talk_To_Player(actor)) {
             Actor2::Talks_To_Player(actor, true);
         }
-
-        Actor2::Evaluate_Package(actor);
     }
 
     void Member_t::Destroy_Member(Actor_t* actor)
@@ -1406,6 +1407,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         NPCP_ASSERT(actor);
 
         Object_Ref::Untoken(actor, Consts::Immobile_Token());
+        Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(actor);
+        value_owner->Set_Actor_Value(Actor_Value_t::WAITING_FOR_PLAYER, 0.0f);
     }
 
     Int_t Member_t::Immobilize()
@@ -1435,6 +1438,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         NPCP_ASSERT(actor);
 
         Object_Ref::Token(actor, Consts::Immobile_Token());
+        Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(actor);
+        value_owner->Set_Actor_Value(Actor_Value_t::WAITING_FOR_PLAYER, 1.0f);
     }
 
     Int_t Member_t::Settle()
