@@ -43,6 +43,7 @@ namespace doticu_npcp { namespace Modules {
         void Load_Mod();
         void Has_Requirements(Callback_t<Bool_t>* user_callback);
         Bool_t Try_Update();
+        void Try_Cleanup();
 
     public:
         static void Register_Me(Virtual_Machine_t* vm);

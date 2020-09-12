@@ -102,7 +102,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         void Lock(Callback_t<Follower_t*>* on_lock, Float_t interval = 0.2f, Float_t limit = 10.0f);
         void Unlock();
         void Fill(Member_t* member, Callback_t<Int_t, Follower_t*>* user_callback);
-        void Fill_Impl(Member_t* member);
+        void Fill_Impl(Member_t* member, Callback_t<Follower_t*>* user_callback);
         void Unfill(Callback_t<Int_t, Member_t*>* user_callback);
         void Unfill_Impl(Callback_t<>* user_callback);
         void Relinquish(Callback_t<Int_t, Member_t*>* user_callback);

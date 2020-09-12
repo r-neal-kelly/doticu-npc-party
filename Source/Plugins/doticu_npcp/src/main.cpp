@@ -212,6 +212,7 @@ namespace doticu_npcp { namespace Modules {
                                             std::to_string(Consts::NPCP_Patch());
                                         Modules::Control::Commands_t::Self()->Log_Note(note.c_str(), true);
                                     }
+                                    main->Try_Cleanup();
                                     Party::Player_t::Self()->On_Load_Mod();
                                     Party::Movee_t::Self()->On_Load_Mod();
                                     Utils::Print("NPC Party has loaded.");
@@ -279,6 +280,42 @@ namespace doticu_npcp { namespace Modules {
             return true;
         } else {
             return false;
+        }
+    }
+
+    void Main_t::Try_Cleanup()
+    {
+        Int_t objects_deleted = 0;
+
+        {
+            Vector_t<Reference_t*> outfit2s = Cell::References(Consts::Storage_Cell(), Consts::Outfit2_Container());
+            for (size_t idx = 0, count = outfit2s.size(); idx < count; idx += 1) {
+                Outfit2_t* outfit2 = static_cast<Outfit2_t*>(outfit2s.at(idx));
+                if (outfit2 && outfit2->Type() == CODES::OUTFIT2::DELETED) {
+                    Object_Ref::Delete_Safe(outfit2);
+                    objects_deleted += 1;
+                }
+            }
+        }
+        
+        {
+            Party::NPCS_t* npcs = Party::NPCS_t::Self();
+            Form_Vector_t* bases = npcs->Bases();
+            Form_Vector_t* default_outfits = npcs->Default_Outfits();
+            Vector_t<Reference_t*> form_vectors = Cell::References(Consts::Storage_Cell(), Consts::Form_Vector());
+            for (size_t idx = 0, count = form_vectors.size(); idx < count; idx += 1) {
+                Form_Vector_t* form_vector = static_cast<Form_Vector_t*>(form_vectors.at(idx));
+                if (form_vector && form_vector != bases && form_vector != default_outfits) {
+                    Object_Ref::Delete_Safe(form_vector);
+                    objects_deleted += 1;
+                }
+            }
+        }
+
+        if (objects_deleted == 1) {
+            Utils::Print("NPC Party requested 1 object to be deleted.");
+        } else {
+            Utils::Print((std::string("NPC Party requested ") + std::to_string(objects_deleted) + " objects to be deleted.").c_str());
         }
     }
 

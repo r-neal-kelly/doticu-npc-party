@@ -190,12 +190,11 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                     Bool_t is_sneak,
                     Bool_t is_bash,
                     Bool_t is_blocked);
-        void On_Package_Change(Package_t* new_package);
 
         void Lock(Callback_t<Member_t*>* on_lock, Float_t interval = 0.2f, Float_t limit = 10.0f);
         void Unlock();
         void Fill(Actor_t* actor, Bool_t is_clone, Callback_t<Int_t, Member_t*>* user_callback);
-        void Fill_Impl(Actor_t* actor, Bool_t is_clone);
+        void Fill_Impl(Actor_t* actor, Bool_t is_clone, Callback_t<Member_t*>* user_callback);
         void Unfill(Callback_t<Int_t, Actor_t*>* user_callback);
         void Unfill_Impl(Callback_t<>* user_callback);
         void Destroy_Containers();

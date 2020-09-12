@@ -392,17 +392,17 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         using UCallback_t = Callback_t<Int_t, Follower_t*>;
         NPCP_ASSERT(user_callback);
 
-        if (member) {
-            if (Is_Unfilled()) {
-                struct Lock_t : public Callback_t<Follower_t*> {
-                    Member_t* member;
-                    UCallback_t* user_callback;
-                    Lock_t(Member_t* member, UCallback_t* user_callback) :
-                        member(member), user_callback(user_callback)
-                    {
-                    }
-                    void operator()(Follower_t* follower)
-                    {
+        struct Lock_t : public Callback_t<Follower_t*> {
+            Member_t* member;
+            UCallback_t* user_callback;
+            Lock_t(Member_t* member, UCallback_t* user_callback) :
+                member(member), user_callback(user_callback)
+            {
+            }
+            void operator()(Follower_t* follower)
+            {
+                if (member) {
+                    if (follower->Is_Unfilled()) {
                         struct Unlock_t : public UCallback_t {
                             UCallback_t* user_callback;
                             Unlock_t(UCallback_t* user_callback) :
@@ -428,28 +428,43 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                             }
                             void operator()(Variable_t* result)
                             {
-                                follower->Fill_Impl(member);
-                                user_callback->operator()(CODES::SUCCESS, follower);
-                                delete user_callback;
+                                struct Callback : public Callback_t<Follower_t*> {
+                                    UCallback_t* user_callback;
+                                    Callback(UCallback_t* user_callback) :
+                                        user_callback(user_callback)
+                                    {
+                                    }
+                                    void operator()(Follower_t* follower)
+                                    {
+                                        user_callback->operator()(CODES::SUCCESS, follower);
+                                        delete user_callback;
+                                    }
+                                };
+                                follower->Fill_Impl(member, new Callback(user_callback));
                             }
                         };
                         Virtual_Callback_i* vcallback = new VCallback(follower, member, new Unlock_t(user_callback));
                         follower->Alias_t::Fill(member->Actor(), &vcallback);
+                    } else {
+                        user_callback->operator()(CODES::ALIAS, nullptr);
+                        delete user_callback;
+                        follower->Unlock();
                     }
-                };
-                Lock(new Lock_t(member, user_callback));
-            } else {
-                user_callback->operator()(CODES::ALIAS, nullptr);
-                delete user_callback;
+                } else {
+                    user_callback->operator()(CODES::MEMBER, nullptr);
+                    delete user_callback;
+                    follower->Unlock();
+                }
             }
-        } else {
-            user_callback->operator()(CODES::MEMBER, nullptr);
-            delete user_callback;
-        }
+        };
+        Lock(new Lock_t(member, user_callback));
     }
 
-    void Follower_t::Fill_Impl(Member_t* member)
+    void Follower_t::Fill_Impl(Member_t* member, Callback_t<Follower_t*>* user_callback)
     {
+        using UCallback_t = Callback_t<Follower_t*>;
+        NPCP_ASSERT(user_callback);
+
         Actor_t* actor = member->Actor();
 
         Actor_Variable()->Pack(actor);
@@ -464,9 +479,20 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Backup_State(actor);
         Actor2::Stop_If_Playing_Music(actor);
 
-        Enforce_Follower(actor);
-        member->Enforce_Outfit2(actor);
-        Level();
+        struct Callback : public Callback_t<Member_t*> {
+            Follower_t* follower;
+            UCallback_t* user_callback;
+            Callback(Follower_t* follower, UCallback_t* user_callback) :
+                follower(follower), user_callback(user_callback)
+            {
+            }
+            void operator()(Member_t* member)
+            {
+                user_callback->operator()(follower);
+                delete user_callback;
+            }
+        };
+        member->Enforce_Impl(new Callback(this, user_callback));
     }
 
     void Follower_t::Unfill(Callback_t<Int_t, Member_t*>* user_callback)
@@ -474,15 +500,15 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         using UCallback_t = Callback_t<Int_t, Member_t*>;
         NPCP_ASSERT(user_callback);
 
-        if (Is_Filled()) {
-            struct Lock_t : public Callback_t<Follower_t*> {
-                UCallback_t* user_callback;
-                Lock_t(UCallback_t* user_callback) :
-                    user_callback(user_callback)
-                {
-                }
-                void operator()(Follower_t* follower)
-                {
+        struct Lock_t : public Callback_t<Follower_t*> {
+            UCallback_t* user_callback;
+            Lock_t(UCallback_t* user_callback) :
+                user_callback(user_callback)
+            {
+            }
+            void operator()(Follower_t* follower)
+            {
+                if (follower->Is_Filled()) {
                     struct Unlock_t : public UCallback_t {
                         Follower_t* follower;
                         UCallback_t* user_callback;
@@ -517,20 +543,19 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                                 }
                                 void operator()(Variable_t* result)
                                 {
-                                    struct Callback : public Callback_t<Actor_t*> {
-                                        Member_t* member;
+                                    struct Callback : public Callback_t<Member_t*> {
                                         UCallback_t* user_callback;
-                                        Callback(Member_t* member, UCallback_t* user_callback) :
-                                            member(member), user_callback(user_callback)
+                                        Callback(UCallback_t* user_callback) :
+                                            user_callback(user_callback)
                                         {
                                         }
-                                        void operator()(Actor_t* actor)
+                                        void operator()(Member_t* member)
                                         {
                                             user_callback->operator()(CODES::SUCCESS, member);
                                             delete user_callback;
                                         }
                                     };
-                                    member->Enforce_Outfit2(member->Actor(), new Callback(member, user_callback));
+                                    member->Enforce_Impl(new Callback(user_callback));
                                 }
                             };
                             Virtual_Callback_i* vcallback = new VCallback(member, user_callback);
@@ -538,13 +563,14 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                         }
                     };
                     follower->Unfill_Impl(new Callback(follower, follower->Member(), new Unlock_t(follower, user_callback)));
+                } else {
+                    user_callback->operator()(CODES::ALIAS, nullptr);
+                    delete user_callback;
+                    follower->Unlock();
                 }
-            };
-            Lock(new Lock_t(user_callback));
-        } else {
-            user_callback->operator()(CODES::ALIAS, nullptr);
-            delete user_callback;
-        }
+            }
+        };
+        Lock(new Lock_t(user_callback));
     }
 
     void Follower_t::Unfill_Impl(Callback_t<>* user_callback)

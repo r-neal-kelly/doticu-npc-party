@@ -940,10 +940,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
-    void Member_t::On_Package_Change(Package_t* new_package)
-    {
-    }
-
     void Member_t::Lock(Callback_t<Member_t*>* on_lock, Float_t interval, Float_t limit)
     {
         Alias_t::Lock(this, on_lock, interval, limit);
@@ -997,9 +993,19 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                             }
                             void operator()(Variable_t* result)
                             {
-                                member->Fill_Impl(actor, is_clone);
-                                user_callback->operator()(CODES::SUCCESS, member);
-                                delete user_callback;
+                                struct Callback : public Callback_t<Member_t*> {
+                                    UCallback_t* user_callback;
+                                    Callback(UCallback_t* user_callback) :
+                                        user_callback(user_callback)
+                                    {
+                                    }
+                                    void operator()(Member_t* member)
+                                    {
+                                        user_callback->operator()(CODES::SUCCESS, member);
+                                        delete user_callback;
+                                    }
+                                };
+                                member->Fill_Impl(actor, is_clone, new Callback(user_callback));
                             }
                         };
                         Virtual_Callback_i* vcallback = new VCallback(member, actor, is_clone, new Unlock_t(user_callback));
@@ -1019,8 +1025,11 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Lock(new Lock_t(actor, is_clone, user_callback));
     }
 
-    void Member_t::Fill_Impl(Actor_t* actor, Bool_t is_clone)
+    void Member_t::Fill_Impl(Actor_t* actor, Bool_t is_clone, Callback_t<Member_t*>* user_callback)
     {
+        using UCallback = Callback_t<Member_t*>;
+        NPCP_ASSERT(user_callback);
+
         Class_Info_t* reference_class_info = Object_Ref::Class_Info();
 
         Actor_Variable()->Pack(actor);
@@ -1043,22 +1052,19 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Is_Display_Variable()->Bool(false);
         Is_Reanimated_Variable()->Bool(false);
 
+        Style_Variable()->Int(Vars::Default_Style());
+        Vitality_Variable()->Int(Vars::Default_Vitality());
+        Update_Outfit2(CODES::OUTFIT2::MEMBER);
         Rating_Variable()->Int(0);
-
         Name_Variable()->String(Actor2::Get_Name(actor));
 
         Backup_State(actor);
 
-        Enforce_Member(actor);
-        Stylize(Vars::Default_Style());
-        Vitalize(Vars::Default_Vitality());
-
-        Update_Outfit2(CODES::OUTFIT2::MEMBER);
-        Enforce_Outfit2(actor);
-
         if (is_clone) {
             Actor2::Greet_Player(actor);
         }
+
+        Enforce_Impl(user_callback);
     }
 
     void Member_t::Unfill(Callback_t<Int_t, Actor_t*>* user_callback)
@@ -1374,7 +1380,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                 Actor_t* actor = Actor();
 
                 Destroy_Immobile(actor);
-                Enforce_Outfit2(actor);
+                Enforce();
                 Actor2::Evaluate_Package(actor);
 
                 return CODES::SUCCESS;
@@ -1410,7 +1416,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
                 Actor_t* actor = Actor();
                 Enforce_Immobile(actor);
-                Enforce_Outfit2(actor);
+                Enforce();
 
                 Actor2::Evaluate_Package(actor);
 
@@ -1440,7 +1446,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                 Actor_t* actor = Actor();
                 Object_Ref::Move_To_Orbit(Settler_Marker(), actor, 0.0f, 180.0f);
                 Enforce_Settler(actor);
-                Enforce_Outfit2(actor);
+                Enforce();
 
                 Actor2::Evaluate_Package(actor);
 
@@ -1468,7 +1474,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                 Actor_t* actor = Actor();
                 Object_Ref::Move_To_Orbit(Settler_Marker(), actor, 0.0f, 180.0f);
                 Enforce_Settler(actor);
-                Enforce_Outfit2(actor);
+                Enforce();
 
                 Actor2::Evaluate_Package(actor);
 
@@ -1488,7 +1494,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                 Actor_t* actor = Actor();
 
                 Destroy_Settler(actor);
-                Enforce_Outfit2(actor);
+                Enforce();
                 Actor2::Evaluate_Package(actor);
 
                 return CODES::SUCCESS;
@@ -1526,7 +1532,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
                     Actor_t* actor = Actor();
                     Enforce_Thrall(actor);
-                    Enforce_Outfit2(actor);
+                    Enforce();
 
                     Actor2::Evaluate_Package(actor);
 
@@ -1559,7 +1565,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                     Actor_t* actor = Actor();
 
                     Destroy_Thrall(actor);
-                    Enforce_Outfit2(actor);
+                    Enforce();
                     Actor2::Evaluate_Package(actor);
 
                     return CODES::SUCCESS;
@@ -2417,7 +2423,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         Actor2::Set_Outfit_Basic(actor, old_outfit, false, false);
 
-        Enforce_Outfit2(actor);
+        Enforce();
     }
 
     Int_t Member_t::Change_Outfit2(Int_t outfit2_code)
@@ -2604,9 +2610,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             }
             virtual void operator()(Variable_t* result)
             {
-                Actor_t* actor = member->Actor();
-                member->Enforce_Outfit2(actor);
-                Actor2::Evaluate_Package(actor);
+                member->Enforce();
             }
         };
         Virtual_Callback_i* callback = new Callback(this);
@@ -3020,7 +3024,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         METHOD("OnActivate", 1, void, On_Activate, Reference_t*);
         METHOD("OnCombatStateChanged", 2, void, On_Combat_State_Changed, Actor_t*, Int_t);
         METHOD("OnHit", 7, void, On_Hit, Reference_t*, Form_t*, Projectile_Base_t*, Bool_t, Bool_t, Bool_t, Bool_t);
-        METHOD("OnPackageChange", 1, void, On_Package_Change, Package_t*);
 
         #undef BMETHOD
         #undef METHOD
