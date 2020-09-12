@@ -1021,8 +1021,15 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         for (size_t idx = 0, count = filled.size(); idx < count; idx += 1) {
             Member_t* member = filled[idx];
             if (member) {
+                Actor_t* actor = member->Actor();
                 if (member->Previous_Potential_Follower_Faction_Variable()->Bool()) {
-                    Actor2::Add_Faction(member->Actor(), Consts::Potential_Follower_Faction(), 0);
+                    Actor2::Add_Faction(actor, Consts::Potential_Follower_Faction(), 0);
+                }
+                Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(actor);
+                if (member->Is_Immobile()) {
+                    value_owner->Set_Actor_Value(Actor_Value_t::WAITING_FOR_PLAYER, 1.0f);
+                } else {
+                    value_owner->Set_Actor_Value(Actor_Value_t::WAITING_FOR_PLAYER, 0.0f);
                 }
             }
         }

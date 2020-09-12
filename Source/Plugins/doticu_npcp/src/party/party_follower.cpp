@@ -53,7 +53,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     Variable_t* Follower_t::Is_Retreater_Variable() { DEFINE_VARIABLE("p_is_retreater"); }
 
     Variable_t* Follower_t::Previous_Player_Relationship_Variable() { DEFINE_VARIABLE("p_prev_relationship_rank"); }
-    Variable_t* Follower_t::Previous_Waiting_For_Player_Variable() { DEFINE_VARIABLE("p_prev_waiting_for_player"); }
     Variable_t* Follower_t::Previous_Speed_Multiplier_Variable() { DEFINE_VARIABLE("p_prev_speed_mult"); }
     Variable_t* Follower_t::Previous_No_Auto_Bard_Faction_Variable() { DEFINE_VARIABLE("p_prev_faction_bard_no_auto"); }
 
@@ -609,7 +608,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
             Previous_No_Auto_Bard_Faction_Variable()->Bool(false);
             Previous_Speed_Multiplier_Variable()->Float(-1.0f);
-            Previous_Waiting_For_Player_Variable()->Float(-1.0f);
             Previous_Player_Relationship_Variable()->Int(-1);
 
             Is_Retreater_Variable()->Bool(false);
@@ -717,7 +715,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
                 Previous_No_Auto_Bard_Faction_Variable()->Bool(false);
                 Previous_Speed_Multiplier_Variable()->Float(-1.0f);
-                Previous_Waiting_For_Player_Variable()->Float(-1.0f);
                 Previous_Player_Relationship_Variable()->Int(-1);
 
                 Is_Retreater_Variable()->Bool(false);
@@ -739,7 +736,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         NPCP_ASSERT(actor);
 
         Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(actor);
-        Previous_Waiting_For_Player_Variable()->Float(value_owner->Get_Base_Actor_Value(Actor_Value_t::WAITING_FOR_PLAYER));
         Previous_Speed_Multiplier_Variable()->Float(value_owner->Get_Base_Actor_Value(Actor_Value_t::SPEED_MULT));
 
         Previous_No_Auto_Bard_Faction_Variable()->Bool(Actor2::Has_Faction(actor, Consts::No_Bard_Singer_Autostart_Faction()));
@@ -764,7 +760,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(actor);
         value_owner->Set_Actor_Value(Actor_Value_t::SPEED_MULT, Previous_Speed_Multiplier_Variable()->Float());
-        value_owner->Set_Actor_Value(Actor_Value_t::WAITING_FOR_PLAYER, Previous_Waiting_For_Player_Variable()->Float());
     }
 
     void Follower_t::Enforce_Follower(Actor_t* actor)
@@ -776,7 +771,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Actor2::Add_Faction(actor, Consts::No_Bard_Singer_Autostart_Faction());
 
         Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(actor);
-        value_owner->Set_Actor_Value(Actor_Value_t::WAITING_FOR_PLAYER, 0.0f);
         value_owner->Set_Actor_Value(Actor_Value_t::SPEED_MULT, MAX_UNSNEAK_SPEED);
 
         Actor2::Ignore_Friendly_Hits(actor);

@@ -35,7 +35,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Variable_t* Is_Retreater_Variable(); // Bool_t
 
         Variable_t* Previous_Player_Relationship_Variable(); // Int_t
-        Variable_t* Previous_Waiting_For_Player_Variable(); // Float_t
         Variable_t* Previous_Speed_Multiplier_Variable(); // Float_t
         Variable_t* Previous_No_Auto_Bard_Faction_Variable(); // Bool_t
 

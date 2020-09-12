@@ -12,7 +12,6 @@ bool                p_is_saddler                = false
 bool                p_is_retreater              = false
 
 int                 p_prev_relationship_rank    =     0
-float               p_prev_waiting_for_player   =   0.0
 float               p_prev_speed_mult           =   0.0
 bool                p_prev_faction_bard_no_auto = false
 
