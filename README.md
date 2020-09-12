@@ -55,7 +55,9 @@ This mod is currently in beta testing. You may run into a few hiccups every now 
 
 # 
 ## Compatibility
-One of the goals of this mod was to touch as few vanilla assets as possible, but no promises can be made regarding compatibility. Currently, the vanilla follower system is enabled. However it does not mesh well with this mod. This is to be worked on before coming out of beta. There may be issues with other full-scale follower frameworks being used at the same time. Custom followers who do not use the vanilla system are likely fully compatible alongside the framework. Outfitting mods are compatible when using a member's "Vanilla" outfit.
+One of the goals of this mod was to touch as few vanilla assets as possible and to be compatibile with other mods. We strive to have full compatibility with all other follower frameworks. This means you can run NPC Party alongside another framework of your choice. Individual follower mods or packs are also supported, although mileage may vary. Universal outfitting mods are compatible as well.
+
+One possible incompatibility is with a setting in Combat Gameplay Overhaul that switches two-handed weapons to be one-handed. Make sure to disable that setting if you run into any strange animation glitches. This may be less of an incompatiblity and more of a glitch in that mod.
 
 # 
 ## Conclusion
