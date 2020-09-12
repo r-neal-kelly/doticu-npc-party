@@ -960,18 +960,18 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         using UCallback_t = Callback_t<Int_t, Member_t*>;
         NPCP_ASSERT(user_callback);
 
-        if (actor) {
-            if (Is_Unfilled()) {
-                struct Lock_t : public Callback_t<Member_t*> {
-                    Actor_t* actor;
-                    Bool_t is_clone;
-                    UCallback_t* user_callback;
-                    Lock_t(Actor_t* actor, Bool_t is_clone, UCallback_t* user_callback) :
-                        actor(actor), is_clone(is_clone), user_callback(user_callback)
-                    {
-                    }
-                    void operator()(Member_t* member)
-                    {
+        struct Lock_t : public Callback_t<Member_t*> {
+            Actor_t* actor;
+            Bool_t is_clone;
+            UCallback_t* user_callback;
+            Lock_t(Actor_t* actor, Bool_t is_clone, UCallback_t* user_callback) :
+                actor(actor), is_clone(is_clone), user_callback(user_callback)
+            {
+            }
+            void operator()(Member_t* member)
+            {
+                if (actor) {
+                    if (member->Is_Unfilled()) {
                         struct Unlock_t : public UCallback_t {
                             UCallback_t* user_callback;
                             Unlock_t(UCallback_t* user_callback) :
@@ -1005,17 +1005,19 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                         };
                         Virtual_Callback_i* vcallback = new VCallback(member, actor, is_clone, new Unlock_t(user_callback));
                         member->Alias_t::Fill(actor, &vcallback);
+                    } else {
+                        user_callback->operator()(CODES::ALIAS, nullptr);
+                        delete user_callback;
+                        member->Unlock();
                     }
-                };
-                Lock(new Lock_t(actor, is_clone, user_callback));
-            } else {
-                user_callback->operator()(CODES::ALIAS, nullptr);
-                delete user_callback;
+                } else {
+                    user_callback->operator()(CODES::ACTOR, nullptr);
+                    delete user_callback;
+                    member->Unlock();
+                }
             }
-        } else {
-            user_callback->operator()(CODES::ACTOR, nullptr);
-            delete user_callback;
-        }
+        };
+        Lock(new Lock_t(actor, is_clone, user_callback));
     }
 
     void Member_t::Fill_Impl(Actor_t* actor, Bool_t is_clone)
@@ -1065,15 +1067,15 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         using UCallback_t = Callback_t<Int_t, Actor_t*>;
         NPCP_ASSERT(user_callback);
 
-        if (Is_Filled()) {
-            struct Lock_t : public Callback_t<Member_t*> {
-                UCallback_t* user_callback;
-                Lock_t(UCallback_t* user_callback) :
-                    user_callback(user_callback)
-                {
-                }
-                void operator()(Member_t* member)
-                {
+        struct Lock_t : public Callback_t<Member_t*> {
+            UCallback_t* user_callback;
+            Lock_t(UCallback_t* user_callback) :
+                user_callback(user_callback)
+            {
+            }
+            void operator()(Member_t* member)
+            {
+                if (member->Is_Filled()) {
                     struct Unlock_t : public UCallback_t {
                         Member_t* member;
                         UCallback_t* user_callback;
@@ -1117,13 +1119,14 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                         }
                     };
                     member->Unfill_Impl(new Callback(member, member->Actor(), new Unlock_t(member, user_callback)));
+                } else {
+                    user_callback->operator()(CODES::ALIAS, nullptr);
+                    delete user_callback;
+                    member->Unlock();
                 }
-            };
-            Lock(new Lock_t(user_callback));
-        } else {
-            user_callback->operator()(CODES::ALIAS, nullptr);
-            delete user_callback;
-        }
+            }
+        };
+        Lock(new Lock_t(user_callback));
     }
 
     void Member_t::Unfill_Impl(Callback_t<>* user_callback)
