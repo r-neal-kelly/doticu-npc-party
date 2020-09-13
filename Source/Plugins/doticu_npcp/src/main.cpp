@@ -419,7 +419,6 @@ namespace doticu_npcp { namespace Main {
         REGISTER_NAMESPACE(Game);
         REGISTER_NAMESPACE(Object_Ref);
         REGISTER_NAMESPACE(Outfit);
-        REGISTER_NAMESPACE(Papyrus::Outfit2);
         REGISTER_NAMESPACE(Package);
         REGISTER_NAMESPACE(Papyrus);
         REGISTER_NAMESPACE(Quest);
@@ -450,6 +449,7 @@ namespace doticu_npcp { namespace Main {
         REGISTER_TYPE(Party::Follower_t);
         REGISTER_TYPE(Party::Horses_t);
         REGISTER_TYPE(Party::Horse_t);
+        REGISTER_TYPE(Papyrus::Outfit2_t);
 
         REGISTER_TYPE(Modules::Control::Commands_t);
 

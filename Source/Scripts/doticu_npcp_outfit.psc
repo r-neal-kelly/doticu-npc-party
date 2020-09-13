@@ -2,5 +2,6 @@
 
 Scriptname doticu_npcp_outfit extends ObjectReference
 
-int             p_code_create   =     0
-ObjectReference p_cache_base    =  none
+doticu_npcp_member  p_member        =  none
+int                 p_code_create   =     0
+ObjectReference     p_cache_base    =  none

@@ -55,9 +55,12 @@ This mod is currently in beta testing. You may run into a few hiccups every now 
 
 # 
 ## Compatibility
-One of the goals of this mod was to touch as few vanilla assets as possible and to be compatibile with other mods. We strive to have full compatibility with all other follower frameworks. This means you can run NPC Party alongside another framework of your choice. Individual follower mods or packs are also supported, although mileage may vary. Universal outfitting mods are compatible as well.
+One of the goals of this mod was to touch as few vanilla assets as possible and to be compatibile with other mods. We strive to have full compatibility with all other follower frameworks. This means you can run NPC Party alongside any framework of your choice. Individual follower mods and packs are also supported, although mileage may vary. Universal outfitting mods are compatible as well.
 
-One possible incompatibility is with a setting in Combat Gameplay Overhaul that switches two-handed weapons to be one-handed. Make sure to disable that setting if you run into any strange animation glitches. This may be less of an incompatiblity and more of a glitch in that mod.
+There is a Combat Gameplay Overhaul setting that switches two-handed weapons to be one-handed. Make sure to disable that setting if you run into any strange animation glitches. This may be less of an incompatiblity and more of a glitch in that mod.
+
+
+_For Developers_: Any mod that modifies Actor.SetOutfit() in Papyrus or in any SKSE plugin will be incompatible. NPC Party includes a rewritten C++ version of this method that fixes a vanilla bug and allows for compatibility with other mods. If you need to make changes to this function in your mod (very rare), please PM me to see if we can come with up with a generalized solution. If you use this function without modifying it, your mod is compatibile.
 
 # 
 ## Conclusion

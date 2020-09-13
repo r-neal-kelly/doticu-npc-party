@@ -7,6 +7,7 @@
 #include "actor2.h"
 #include "actor_base2.h"
 #include "codes.h"
+#include "commands.h"
 #include "consts.h"
 #include "form.h"
 #include "object_ref.h"
@@ -273,7 +274,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         if (variable->Has_Object()) {
             outfit2 = static_cast<Outfit2_t*>(variable->Reference());
         } else {
-            outfit2 = Outfit2_t::Create_Member(Actor(), Pack());
+            outfit2 = Outfit2_t::Create_Member(this, Actor(), Pack());
             variable->Pack(outfit2);
         }
         NPCP_ASSERT(outfit2);
@@ -291,7 +292,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         if (variable->Has_Object()) {
             outfit2 = static_cast<Outfit2_t*>(variable->Reference());
         } else {
-            outfit2 = Outfit2_t::Create_Immobile();
+            outfit2 = Outfit2_t::Create_Immobile(this);
             variable->Pack(outfit2);
         }
         NPCP_ASSERT(outfit2);
@@ -309,7 +310,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         if (variable->Has_Object()) {
             outfit2 = static_cast<Outfit2_t*>(variable->Reference());
         } else {
-            outfit2 = Outfit2_t::Create_Settler();
+            outfit2 = Outfit2_t::Create_Settler(this);
             variable->Pack(outfit2);
         }
         NPCP_ASSERT(outfit2);
@@ -327,7 +328,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         if (variable->Has_Object()) {
             outfit2 = static_cast<Outfit2_t*>(variable->Reference());
         } else {
-            outfit2 = Outfit2_t::Create_Thrall();
+            outfit2 = Outfit2_t::Create_Thrall(this);
             variable->Pack(outfit2);
         }
         NPCP_ASSERT(outfit2);
@@ -345,7 +346,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         if (variable->Has_Object()) {
             outfit2 = static_cast<Outfit2_t*>(variable->Reference());
         } else {
-            outfit2 = Outfit2_t::Create_Follower();
+            outfit2 = Outfit2_t::Create_Follower(this);
             variable->Pack(outfit2);
         }
         NPCP_ASSERT(outfit2);
@@ -363,7 +364,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         if (variable->Has_Object()) {
             outfit2 = static_cast<Outfit2_t*>(variable->Reference());
         } else {
-            outfit2 = Outfit2_t::Create_Vanilla();
+            outfit2 = Outfit2_t::Create_Vanilla(this);
             variable->Pack(outfit2);
         }
         NPCP_ASSERT(outfit2);
@@ -381,7 +382,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         if (variable->Has_Object()) {
             outfit2 = static_cast<Outfit2_t*>(variable->Reference());
         } else {
-            outfit2 = Outfit2_t::Create_Default(Actor());
+            outfit2 = Outfit2_t::Create_Default(this, Actor());
             variable->Pack(outfit2);
         }
         NPCP_ASSERT(outfit2);
@@ -864,6 +865,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     void Member_t::On_Activate(Reference_t* activator)
     {
+        Alias_t::Register_Menu("ContainerMenu");
+
         if (Is_Ready()) {
             Player_t* player = Player_t::Self();
             if (activator == player->Actor()) {
@@ -937,6 +940,207 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             } else if (Vitality() == CODES::VITALITY::INVULNERABLE) {
                 value_owner->Restore_Actor_Value(Actor_Modifier_t::DAMAGE, Actor_Value_t::HEALTH, 1000000000.0f);
             }
+        }
+    }
+
+    void Member_t::On_Item_Added(Form_t* form,
+                                 Int_t count,
+                                 Reference_t* ref,
+                                 Reference_t* source)
+    {
+        struct Lock_t : public Callback_t<Member_t*> {
+            Form_t* form;
+            Int_t count;
+            Reference_t* ref;
+            Reference_t* source;
+            Lock_t(Form_t* form, Int_t count, Reference_t* ref, Reference_t* source) :
+                form(form), count(count), ref(ref), source(source)
+            {
+            }
+            void operator()(Member_t* self)
+            {
+                struct Unlock_t : public Callback_t<Member_t*> {
+                    void operator()(Member_t* self)
+                    {
+                        self->Unlock();
+                    }
+                };
+                self->On_Item_Added_Impl(form, count, ref, source, new Unlock_t());
+            }
+        };
+        Lock(new Lock_t(form, count, ref, source));
+    }
+
+    void Member_t::On_Item_Added_Impl(Form_t* form,
+                                      Int_t count,
+                                      Reference_t* ref,
+                                      Reference_t* source,
+                                      Callback_t<Member_t*>* user_callback)
+    {
+        using UCallback_t = Callback_t<Member_t*>;
+        NPCP_ASSERT(user_callback);
+
+        if (Is_Filled() && source == Consts::Player_Actor()) {
+            struct VCallback : public Virtual_Callback_t {
+                Member_t* self;
+                UCallback_t* user_callback;
+                Bool_t do_outfit;
+                VCallback(Member_t* self, UCallback_t* user_callback, Bool_t do_outfit) :
+                    self(self), user_callback(user_callback), do_outfit(do_outfit)
+                {
+                }
+                void operator()(Variable_t* result)
+                {
+                    struct Callback : public Callback_t<Actor_t*> {
+                        Member_t* self;
+                        UCallback_t* user_callback;
+                        Bool_t do_outfit;
+                        Callback(Member_t* self, UCallback_t* user_callback, Bool_t do_outfit) :
+                            self(self), user_callback(user_callback), do_outfit(do_outfit)
+                        {
+                        }
+                        void operator()(Actor_t* actor)
+                        {
+                            if (do_outfit) {
+                                Modules::Control::Commands_t::Self()->Log_Note("Updated current outfit. Opening.", true);
+                                struct VCallback : public Virtual_Callback_t {
+                                    Member_t* self;
+                                    UCallback_t* user_callback;
+                                    VCallback(Member_t* self, UCallback_t* user_callback) :
+                                        self(self), user_callback(user_callback)
+                                    {
+                                    }
+                                    void operator()(Variable_t* result)
+                                    {
+                                        self->Change_Current_Outfit2();
+                                        user_callback->operator()(self);
+                                        delete user_callback;
+                                    }
+                                };
+                                Modules::Funcs_t::Self()->Close_Menus(new VCallback(self, user_callback));
+                            } else {
+                                Modules::Control::Commands_t::Self()->Log_Note("Updated pack. Opening.", true);
+                                struct VCallback : public Virtual_Callback_t {
+                                    Member_t* self;
+                                    UCallback_t* user_callback;
+                                    VCallback(Member_t* self, UCallback_t* user_callback) :
+                                        self(self), user_callback(user_callback)
+                                    {
+                                    }
+                                    void operator()(Variable_t* result)
+                                    {
+                                        self->Open_Pack();
+                                        user_callback->operator()(self);
+                                        delete user_callback;
+                                    }
+                                };
+                                Modules::Funcs_t::Self()->Close_Menus(new VCallback(self, user_callback));
+                            }
+                        }
+                    };
+                    self->Enforce_Outfit2(self->Actor(), new Callback(self, user_callback, do_outfit));
+                }
+            };
+            if (form->IsArmor() || form->IsWeapon() || form->IsAmmo() || form->IsLight()) {
+                Virtual_Callback_i* vcallback = new VCallback(this, user_callback, true);
+                Object_Ref::Remove_Item_And_Callback(Actor(), ref ? ref : form, count, true, Current_Outfit2(), &vcallback);
+            } else {
+                Virtual_Callback_i* vcallback = new VCallback(this, user_callback, false);
+                Object_Ref::Remove_Item_And_Callback(Actor(), ref ? ref : form, count, true, Pack(), &vcallback);
+            }
+        } else {
+            user_callback->operator()(this);
+            delete user_callback;
+        }
+    }
+
+    void Member_t::On_Item_Removed(Form_t* form,
+                                   Int_t count,
+                                   Reference_t* ref,
+                                   Reference_t* destination)
+    {
+        struct Lock_t : public Callback_t<Member_t*> {
+            Form_t* form;
+            Int_t count;
+            Reference_t* ref;
+            Reference_t* destination;
+            Lock_t(Form_t* form, Int_t count, Reference_t* ref, Reference_t* destination) :
+                form(form), count(count), ref(ref), destination(destination)
+            {
+            }
+            void operator()(Member_t* self)
+            {
+                struct Unlock_t : public Callback_t<Member_t*> {
+                    void operator()(Member_t* self)
+                    {
+                        self->Unlock();
+                    }
+                };
+                self->On_Item_Removed_Impl(form, count, ref, destination, new Unlock_t());
+            }
+        };
+        Lock(new Lock_t(form, count, ref, destination));
+    }
+
+    void Member_t::On_Item_Removed_Impl(Form_t* form,
+                                        Int_t count,
+                                        Reference_t* ref,
+                                        Reference_t* destination,
+                                        Callback_t<Member_t*>* user_callback)
+    {
+        using UCallback_t = Callback_t<Member_t*>;
+        NPCP_ASSERT(user_callback);
+
+        if (Is_Filled() && destination == Consts::Player_Actor()) {
+            struct VCallback : public Virtual_Callback_t {
+                Member_t* self;
+                Form_t* form;
+                Int_t count;
+                Reference_t* ref;
+                UCallback_t* user_callback;
+                VCallback(Member_t* self, Form_t* form, Int_t count, Reference_t* ref, UCallback_t* user_callback) :
+                    self(self), form(form), count(count), ref(ref), user_callback(user_callback)
+                {
+                }
+                void operator()(Variable_t* result)
+                {
+                    struct VCallback : public Virtual_Callback_t {
+                        Member_t* self;
+                        UCallback_t* user_callback;
+                        VCallback(Member_t* self, UCallback_t* user_callback) :
+                            self(self), user_callback(user_callback)
+                        {
+                        }
+                        void operator()(Variable_t* result)
+                        {
+                            Modules::Control::Commands_t::Self()->Log_Note("Must remove from the current outfit. Opening.", true);
+
+                            struct VCallback : public Virtual_Callback_t {
+                                Member_t* self;
+                                UCallback_t* user_callback;
+                                VCallback(Member_t* self, UCallback_t* user_callback) :
+                                    self(self), user_callback(user_callback)
+                                {
+                                }
+                                void operator()(Variable_t* result)
+                                {
+                                    self->Change_Current_Outfit2();
+                                    user_callback->operator()(self);
+                                    delete user_callback;
+                                }
+                            };
+                            Modules::Funcs_t::Self()->Close_Menus(new VCallback(self, user_callback));
+                        }
+                    };
+                    Virtual_Callback_i* vcallback = new VCallback(self, user_callback);
+                    Object_Ref::Remove_Item_And_Callback(Consts::Container_Ref_Buffer(), ref ? ref : form, count, true, self->Actor(), &vcallback);
+                }
+            };
+            Virtual_Callback_i* vcallback = new VCallback(this, form, count, ref, user_callback);
+            Object_Ref::Remove_Item_And_Callback(destination, ref ? ref : form, count, true, Consts::Container_Ref_Buffer(), &vcallback);
+        } else {
+            user_callback->operator()(this);
+            delete user_callback;
         }
     }
 
@@ -3029,6 +3233,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         METHOD("OnActivate", 1, void, On_Activate, Reference_t*);
         METHOD("OnCombatStateChanged", 2, void, On_Combat_State_Changed, Actor_t*, Int_t);
         METHOD("OnHit", 7, void, On_Hit, Reference_t*, Form_t*, Projectile_Base_t*, Bool_t, Bool_t, Bool_t, Bool_t);
+        METHOD("OnItemAdded", 4, void, On_Item_Added, Form_t*, Int_t, Reference_t*, Reference_t*);
+        METHOD("OnItemRemoved", 4, void, On_Item_Removed, Form_t*, Int_t, Reference_t*, Reference_t*);
 
         #undef BMETHOD
         #undef METHOD

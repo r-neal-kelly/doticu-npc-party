@@ -243,6 +243,9 @@ namespace doticu_npcp { namespace Consts {
     Reference_t* Z_Books_Category();
     Reference_t* Books_Category();
 
+    // NPCP Reference Containers
+    Reference_t* Container_Ref_Buffer();
+
     // NPCP Reference Markers
     Reference_t* Cell_Marker();
     Reference_t* Expo_Antechamber_Marker();

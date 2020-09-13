@@ -87,8 +87,10 @@ function Rename(ObjectReference ref_container, string str_name)
 endFunction
 
 function Open_Container(ObjectReference ref_container);;;
-    ref_container.Activate(doticu_npcp_consts.Player_Actor())
-    Wait_Out_Of_Menu(0.1)
+    if ref_container
+        ref_container.Activate(doticu_npcp_consts.Player_Actor())
+        Wait_Out_Of_Menu(0.1)
+    endIf
 endFunction
 
 function Essentialize(ActorBase base_actor);;;

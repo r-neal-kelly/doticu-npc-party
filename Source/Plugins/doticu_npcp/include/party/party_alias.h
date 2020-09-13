@@ -32,6 +32,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         void Unregister_Actions();
         void Register_For_Crosshair_Change(Virtual_Callback_i* vcallback = nullptr);
         void Unregister_For_Crosshair_Change(Virtual_Callback_i* vcallback = nullptr);
+        void Register_Menu(String_t menu_name, Virtual_Callback_i* vcallback = nullptr);
+        void Unregister_Menus(Virtual_Callback_i* vcallback = nullptr);
 
         template <typename Alias_tm>
         void Lock(Alias_tm* self, Callback_t<Alias_tm*>* on_lock, Float_t interval = 0.2f, Float_t limit = 10.0f);

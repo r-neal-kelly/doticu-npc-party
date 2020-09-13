@@ -190,6 +190,24 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                     Bool_t is_sneak,
                     Bool_t is_bash,
                     Bool_t is_blocked);
+        void On_Item_Added(Form_t* form,
+                           Int_t count,
+                           Reference_t* ref,
+                           Reference_t* source);
+        void On_Item_Added_Impl(Form_t* form,
+                                Int_t count,
+                                Reference_t* ref,
+                                Reference_t* source,
+                                Callback_t<Member_t*>* user_callback);
+        void On_Item_Removed(Form_t* form,
+                             Int_t count,
+                             Reference_t* ref,
+                             Reference_t* destination);
+        void On_Item_Removed_Impl(Form_t* form,
+                                  Int_t count,
+                                  Reference_t* ref,
+                                  Reference_t* source,
+                                  Callback_t<Member_t*>* user_callback);
 
         void Lock(Callback_t<Member_t*>* on_lock, Float_t interval = 0.2f, Float_t limit = 10.0f);
         void Unlock();

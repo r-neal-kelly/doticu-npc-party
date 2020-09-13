@@ -11,6 +11,7 @@
 #include "codes.h"
 #include "consts.h"
 #include "form.h"
+#include "funcs.h"
 #include "object_ref.h"
 #include "outfit.h"
 #include "papyrus.h"

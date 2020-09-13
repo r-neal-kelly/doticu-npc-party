@@ -11,6 +11,8 @@
 #include "utils.h"
 #include "vars.h"
 
+#include "party/party_member.h"
+
 namespace doticu_npcp { namespace Papyrus {
 
     String_t Outfit2_t::Class_Name()
@@ -38,17 +40,18 @@ namespace doticu_npcp { namespace Papyrus {
         for (size_t idx = 0, count = bcontainer.numEntries; idx < count; idx += 1) {
             BEntry_t* bentry = bcontainer.entries[idx];
             if (bentry && bentry->form && bentry->count > 0) {
-                Object_Ref::Add_Item(outfit2, bentry->form, bentry->count, true); // this needs to be handled better
+                Object_Ref::Add_Item(outfit2, bentry->form, bentry->count, true);
             }
         }
     }
 
-    Outfit2_t* Outfit2_t::Create_Member(Actor_t* actor, Reference_t* pack)
+    Outfit2_t* Outfit2_t::Create_Member(Party::Member_t* member, Actor_t* actor, Reference_t* pack)
     {
         Outfit2_t* outfit2 = static_cast<Outfit2_t*>
             (Object_Ref::Place_At_Me(Consts::Storage_Marker(), Consts::Outfit2_Container(), 1));
         NPCP_ASSERT(outfit2);
 
+        outfit2->Member_Variable()->Pack(member);
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::MEMBER);
         outfit2->Outfit1_Cache_Variable()->None(Object_Ref::Class_Info());
 
@@ -57,12 +60,13 @@ namespace doticu_npcp { namespace Papyrus {
         return outfit2;
     }
 
-    Outfit2_t* Outfit2_t::Create_Immobile()
+    Outfit2_t* Outfit2_t::Create_Immobile(Party::Member_t* member)
     {
         Outfit2_t* outfit2 = static_cast<Outfit2_t*>
             (Object_Ref::Place_At_Me(Consts::Storage_Marker(), Consts::Outfit2_Container(), 1));
         NPCP_ASSERT(outfit2);
 
+        outfit2->Member_Variable()->Pack(member);
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::IMMOBILE);
         outfit2->Outfit1_Cache_Variable()->None(Object_Ref::Class_Info());
 
@@ -73,12 +77,13 @@ namespace doticu_npcp { namespace Papyrus {
         return outfit2;
     }
 
-    Outfit2_t* Outfit2_t::Create_Settler()
+    Outfit2_t* Outfit2_t::Create_Settler(Party::Member_t* member)
     {
         Outfit2_t* outfit2 = static_cast<Outfit2_t*>
             (Object_Ref::Place_At_Me(Consts::Storage_Marker(), Consts::Outfit2_Container(), 1));
         NPCP_ASSERT(outfit2);
 
+        outfit2->Member_Variable()->Pack(member);
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::SETTLER);
         outfit2->Outfit1_Cache_Variable()->None(Object_Ref::Class_Info());
 
@@ -89,12 +94,13 @@ namespace doticu_npcp { namespace Papyrus {
         return outfit2;
     }
 
-    Outfit2_t* Outfit2_t::Create_Thrall()
+    Outfit2_t* Outfit2_t::Create_Thrall(Party::Member_t* member)
     {
         Outfit2_t* outfit2 = static_cast<Outfit2_t*>
             (Object_Ref::Place_At_Me(Consts::Storage_Marker(), Consts::Outfit2_Container(), 1));
         NPCP_ASSERT(outfit2);
 
+        outfit2->Member_Variable()->Pack(member);
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::THRALL);
         outfit2->Outfit1_Cache_Variable()->None(Object_Ref::Class_Info());
 
@@ -105,12 +111,13 @@ namespace doticu_npcp { namespace Papyrus {
         return outfit2;
     }
 
-    Outfit2_t* Outfit2_t::Create_Follower()
+    Outfit2_t* Outfit2_t::Create_Follower(Party::Member_t* member)
     {
         Outfit2_t* outfit2 = static_cast<Outfit2_t*>
             (Object_Ref::Place_At_Me(Consts::Storage_Marker(), Consts::Outfit2_Container(), 1));
         NPCP_ASSERT(outfit2);
 
+        outfit2->Member_Variable()->Pack(member);
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::FOLLOWER);
         outfit2->Outfit1_Cache_Variable()->None(Object_Ref::Class_Info());
 
@@ -121,24 +128,26 @@ namespace doticu_npcp { namespace Papyrus {
         return outfit2;
     }
 
-    Outfit2_t* Outfit2_t::Create_Vanilla()
+    Outfit2_t* Outfit2_t::Create_Vanilla(Party::Member_t* member)
     {
         Outfit2_t* outfit2 = static_cast<Outfit2_t*>
             (Object_Ref::Place_At_Me(Consts::Storage_Marker(), Consts::Outfit2_Container(), 1));
         NPCP_ASSERT(outfit2);
 
+        outfit2->Member_Variable()->Pack(member);
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::VANILLA);
         outfit2->Outfit1_Cache_Variable()->None(Object_Ref::Class_Info());
 
         return outfit2;
     }
 
-    Outfit2_t* Outfit2_t::Create_Default(Actor_t* actor)
+    Outfit2_t* Outfit2_t::Create_Default(Party::Member_t* member, Actor_t* actor)
     {
         Outfit2_t* outfit2 = static_cast<Outfit2_t*>
             (Object_Ref::Place_At_Me(Consts::Storage_Marker(), Consts::Outfit2_Container(), 1));
         NPCP_ASSERT(outfit2);
 
+        outfit2->Member_Variable()->Pack(member);
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::DEFAULT);
         outfit2->Outfit1_Cache_Variable()->None(Object_Ref::Class_Info());
 
@@ -174,6 +183,9 @@ namespace doticu_npcp { namespace Papyrus {
         }
 
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::DELETED);
+
+        outfit2->Member_Variable()->None(Party::Member_t::Class_Info());
+
         //outfit2->flags = Utils::Bit_Off(outfit2->flags, 10);
         Object_Ref::Delete_Safe(outfit2);
     }
@@ -183,8 +195,17 @@ namespace doticu_npcp { namespace Papyrus {
         return Variable_t::Fetch(this, Class_Name(), variable_name);
     }
 
+    Variable_t* Outfit2_t::Member_Variable() { DEFINE_VARIABLE("p_member"); }
     Variable_t* Outfit2_t::Type_Variable() { DEFINE_VARIABLE("p_code_create"); }
     Variable_t* Outfit2_t::Outfit1_Cache_Variable() { DEFINE_VARIABLE("p_cache_base"); }
+
+    Party::Member_t* Outfit2_t::Member()
+    {
+        Party::Member_t* member = static_cast<Party::Member_t*>
+            (Member_Variable()->Alias());
+        NPCP_ASSERT(member);
+        return member;
+    }
 
     Int_t Outfit2_t::Type()
     {
@@ -300,31 +321,16 @@ namespace doticu_npcp { namespace Papyrus {
         Actor2::Cache_Worn(actor, outfit1_cache);
     }
 
-}}
-
-namespace doticu_npcp { namespace Papyrus { namespace Outfit2 { namespace Exports {
-
-    bool Register(VMClassRegistry* registry)
+    void Outfit2_t::Register_Me(Virtual_Machine_t* vm)
     {
-        #define ADD_GLOBAL(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
-        M                                                               \
-            ADD_CLASS_METHOD(Outfit2_t::Class_Name(), Selfless_t,       \
-                             STR_FUNC_, ARG_NUM_,                       \
-                             RETURN_, Exports::METHOD_, __VA_ARGS__);   \
+        #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                           \
+            FORWARD_METHOD(vm, Class_Name(), Outfit2_t,             \
+                           STR_FUNC_, ARG_NUM_,                     \
+                           RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        #undef ADD_GLOBAL
-
-        #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
-        M                                                               \
-            ADD_CLASS_METHOD(Outfit2_t::Class_Name(), Outfit2_t,        \
-                             STR_FUNC_, ARG_NUM_,                       \
-                             RETURN_, Exports::METHOD_, __VA_ARGS__);   \
-        W
-
-        #undef ADD_METHOD
-
-        return true;
+        #undef METHOD
     }
 
-}}}}
+}}

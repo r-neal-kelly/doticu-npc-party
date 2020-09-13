@@ -150,4 +150,39 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         );
     }
 
+    void Alias_t::Register_Menu(String_t menu_name, Virtual_Callback_i* vcallback)
+    {
+        struct Arguments : public Virtual_Arguments_t {
+            String_t menu_name;
+            Arguments(String_t menu_name) :
+                menu_name(menu_name)
+            {
+            }
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(1);
+                arguments->At(0)->String(menu_name);
+                return true;
+            }
+        } arguments(menu_name);
+        Virtual_Machine_t::Self()->Call_Method(
+            this,
+            "Alias",
+            "RegisterForMenu",
+            &arguments,
+            vcallback ? &vcallback : nullptr
+        );
+    }
+
+    void Alias_t::Unregister_Menus(Virtual_Callback_i* vcallback)
+    {
+        Virtual_Machine_t::Self()->Call_Method(
+            this,
+            "Alias",
+            "UnregisterForAllMenus",
+            nullptr,
+            vcallback ? &vcallback : nullptr
+        );
+    }
+
 }}}

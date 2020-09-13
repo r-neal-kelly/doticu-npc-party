@@ -23,6 +23,9 @@ namespace doticu_npcp { namespace Modules {
         void Wait(Float_t seconds, Virtual_Callback_i** callback = nullptr);
         void Wait_Out_Of_Menu(Float_t seconds, Virtual_Callback_i** callback = nullptr);
 
+        void Open_Container(Reference_t* container, Virtual_Callback_i* vcallback = nullptr);
+        void Close_Menus(Virtual_Callback_i* vcallback = nullptr);
+
     public:
         static void Register_Me(Virtual_Machine_t* vm);
     };

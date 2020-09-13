@@ -1025,11 +1025,41 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                 if (member->Previous_Potential_Follower_Faction_Variable()->Bool()) {
                     Actor2::Add_Faction(actor, Consts::Potential_Follower_Faction(), 0);
                 }
+
                 Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(actor);
                 if (member->Is_Immobile()) {
                     value_owner->Set_Actor_Value(Actor_Value_t::WAITING_FOR_PLAYER, 1.0f);
                 } else {
                     value_owner->Set_Actor_Value(Actor_Value_t::WAITING_FOR_PLAYER, 0.0f);
+                }
+
+                Outfit2_t* member_outfit2 = static_cast<Outfit2_t*>(member->Member_Outfit2_Variable()->Reference());
+                if (member_outfit2) {
+                    member_outfit2->Member_Variable()->Pack(member);
+                }
+                Outfit2_t* immobile_outfit2 = static_cast<Outfit2_t*>(member->Immobile_Outfit2_Variable()->Reference());
+                if (immobile_outfit2) {
+                    immobile_outfit2->Member_Variable()->Pack(member);
+                }
+                Outfit2_t* settler_outfit2 = static_cast<Outfit2_t*>(member->Settler_Outfit2_Variable()->Reference());
+                if (settler_outfit2) {
+                    settler_outfit2->Member_Variable()->Pack(member);
+                }
+                Outfit2_t* thrall_outfit2 = static_cast<Outfit2_t*>(member->Thrall_Outfit2_Variable()->Reference());
+                if (thrall_outfit2) {
+                    thrall_outfit2->Member_Variable()->Pack(member);
+                }
+                Outfit2_t* follower_outfit2 = static_cast<Outfit2_t*>(member->Follower_Outfit2_Variable()->Reference());
+                if (follower_outfit2) {
+                    follower_outfit2->Member_Variable()->Pack(member);
+                }
+                Outfit2_t* vanilla_outfit2 = static_cast<Outfit2_t*>(member->Vanilla_Outfit2_Variable()->Reference());
+                if (vanilla_outfit2) {
+                    vanilla_outfit2->Member_Variable()->Pack(member);
+                }
+                Outfit2_t* default_outfit2 = static_cast<Outfit2_t*>(member->Default_Outfit2_Variable()->Reference());
+                if (default_outfit2) {
+                    default_outfit2->Member_Variable()->Pack(member);
                 }
             }
         }

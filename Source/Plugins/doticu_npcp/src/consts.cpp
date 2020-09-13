@@ -334,6 +334,9 @@ namespace doticu_npcp { namespace Consts {
         REFERENCE_CATEGORY_BOOKS_Z          = 0x30D237,
         REFERENCE_CATEGORY_BOOKS            = 0x30D238,
 
+        // NPCP Reference Containers
+        REFERENCE_CONTAINER_BUFFER          = 0x3C37A9,
+
         // NPCP Reference Markers
         REFERENCE_MARKER_CELL               = 0x15C1AE,
         REFERENCE_MARKER_EXPO_ANTECHAMBER   = 0x2979B0,
@@ -514,6 +517,9 @@ namespace doticu_npcp { namespace Consts {
     Reference_t* Y_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_Y); }
     Reference_t* Z_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_Z); }
     Reference_t* Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS); }
+
+    // NPCP Reference Containers
+    Reference_t* Container_Ref_Buffer() { NPCP_FORM(Reference_t, REFERENCE_CONTAINER_BUFFER); }
 
     // NPCP Reference Markers
     Reference_t* Cell_Marker() { NPCP_FORM(Reference_t, REFERENCE_MARKER_CELL); }

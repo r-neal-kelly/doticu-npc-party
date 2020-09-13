@@ -91,6 +91,42 @@ namespace doticu_npcp { namespace Modules {
         );
     }
 
+    void Funcs_t::Open_Container(Reference_t* container, Virtual_Callback_i* vcallback)
+    {
+        struct Arguments : public Virtual_Arguments_t {
+            Reference_t* container;
+            Arguments(Reference_t* container) :
+                container(container)
+            {
+            }
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(1);
+                arguments->At(0)->Pack(container);
+                return true;
+            }
+        } arguments(container);
+
+        Virtual_Machine_t::Self()->Call_Method(
+            Consts::Funcs_Quest(),
+            Class_Name(),
+            "Open_Container",
+            &arguments,
+            vcallback ? &vcallback : nullptr
+        );
+    }
+
+    void Funcs_t::Close_Menus(Virtual_Callback_i* vcallback)
+    {
+        Virtual_Machine_t::Self()->Call_Method(
+            Consts::Funcs_Quest(),
+            Class_Name(),
+            "Close_Menus",
+            nullptr,
+            vcallback ? &vcallback : nullptr
+        );
+    }
+
     void Funcs_t::Register_Me(Virtual_Machine_t* vm)
     {
         #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
