@@ -387,12 +387,11 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             Variable_t* slot = slots_array->Point(idx);
             Member_t* expoee = static_cast<Member_t*>(slot->Alias());
             if (expoee) {
-                if (expoee->Is_Unfilled() || expoee->Isnt_Mannequin()) {
+                if (expoee->Is_Unfilled() || expoee->Isnt_Mannequin()) { // eventually Isnt_Expoee, once we add loose mannequins
                     slot->None(Member_t::Class_Info());
                 }
             }
         }
-        _MESSAGE("CLEANED");
     }
 
     void Mannequins_t::Register_Me(Virtual_Machine_t* vm)
