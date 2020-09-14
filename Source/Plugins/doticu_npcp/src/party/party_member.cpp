@@ -1820,7 +1820,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         Object_Ref::Block_Activation(actor, true);
         Actor2::Disable_AI(actor);
-        Actor2::Ghostify(actor);
+        Actor2::Set_Ghost(actor, true);
 
         actor->Update_3D_Position();
 
@@ -1863,7 +1863,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         if (Isnt_Mannequin_Unsafe()) {
             Object_Ref::Block_Activation(actor, false);
             Actor2::Enable_AI(actor);
-            Actor2::Unghostify(actor);
+            Actor2::Set_Ghost(actor, false);
         }
     }
 
@@ -1914,7 +1914,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         Object_Ref::Block_Activation(actor, true);
         Actor2::Disable_AI(actor);
-        Actor2::Ghostify(actor);
+        Actor2::Set_Ghost(actor, true);
 
         if (Isnt_Display()) {
             Actor2::Move_To_Orbit(actor, marker, 0.0f, 180.0f);
@@ -1965,7 +1965,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         if (Isnt_Paralyzed()) {
             Object_Ref::Block_Activation(actor, false);
             Actor2::Enable_AI(actor);
-            Actor2::Unghostify(actor);
+            Actor2::Set_Ghost(actor, false);
         }
     }
 

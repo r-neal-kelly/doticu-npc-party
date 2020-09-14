@@ -97,6 +97,7 @@ namespace doticu_npcp { namespace Actor2 {
     Bool_t Is_Ghost(Actor_t* actor);
     void Ghostify(Actor_t* actor);
     void Unghostify(Actor_t* actor);
+    void Set_Ghost(Actor_t* actor, Bool_t is_ghost, Virtual_Callback_i* vcallback = nullptr);
 
     void Enable_Havok_Collision(Actor_t* actor);
     void Disable_Havok_Collision(Actor_t* actor);

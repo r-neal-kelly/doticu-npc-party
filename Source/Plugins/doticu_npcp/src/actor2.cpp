@@ -1762,6 +1762,30 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
+    void Set_Ghost(Actor_t* actor, Bool_t is_ghost, Virtual_Callback_i* vcallback)
+    {
+        struct Arguments : public Virtual_Arguments_t {
+            Bool_t is_ghost;
+            Arguments(Bool_t is_ghost) :
+                is_ghost(is_ghost)
+            {
+            }
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(1);
+                arguments->At(0)->Bool(is_ghost);
+                return true;
+            }
+        } arguments(is_ghost);
+        Virtual_Machine_t::Self()->Call_Method(
+            actor,
+            "Actor",
+            "SetGhost",
+            &arguments,
+            vcallback ? &vcallback : nullptr
+        );
+    }
+
     void Enable_Havok_Collision(Actor_t* actor)
     {
         if (actor) {

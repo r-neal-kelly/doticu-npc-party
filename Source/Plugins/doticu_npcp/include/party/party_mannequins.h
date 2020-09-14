@@ -106,6 +106,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         void Try_To_Set_Go_Back_Marker();
         void Try_To_Unset_Go_Back_Marker();
 
+        void On_Load_Mod();
+
     public:
         static void Register_Me(Virtual_Machine_t* vm);
     };

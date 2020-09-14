@@ -227,7 +227,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             Variable_t* slot = slots_array->Point(expoee_id);
             Member_t* expoee = static_cast<Member_t*>(slot->Alias());
             if (expoee) {
-                slot->None(Class_Info_t::Fetch(Member_t::kTypeID, true));
+                slot->None(Member_t::Class_Info());
                 expoee->Unmannequinize();
                 return callback(CODES::SUCCESS, expoee->Name());
             } else {
@@ -378,6 +378,21 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             Object_Ref::Delete_Safe(go_back_marker);
             go_back_marker_variable->None(Object_Ref::Class_Info());
         }
+    }
+
+    void Mannequins_t::On_Load_Mod()
+    {
+        Array_t* slots_array = Slots_Array();
+        for (size_t idx = 0, count = slots_array->count; idx < count; idx += 1) {
+            Variable_t* slot = slots_array->Point(idx);
+            Member_t* expoee = static_cast<Member_t*>(slot->Alias());
+            if (expoee) {
+                if (expoee->Is_Unfilled() || expoee->Isnt_Mannequin()) {
+                    slot->None(Member_t::Class_Info());
+                }
+            }
+        }
+        _MESSAGE("CLEANED");
     }
 
     void Mannequins_t::Register_Me(Virtual_Machine_t* vm)
