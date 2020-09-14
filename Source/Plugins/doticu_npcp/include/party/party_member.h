@@ -54,7 +54,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Variable_t* Is_Mannequin_Variable();
         Variable_t* Is_Display_Variable();
         Variable_t* Is_Reanimated_Variable();
-        Variable_t* Do_Skip_On_Load_Variable();
 
         Variable_t* Style_Variable();
         Variable_t* Vitality_Variable();
@@ -179,7 +178,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         Bool_t Is_In_Location(Location_t* location);
 
-        void On_Load();
         void On_Death(Actor_t* killer);
         void On_Activate(Reference_t* activator);
         void On_Combat_State_Changed(Actor_t* target, Int_t combat_code);

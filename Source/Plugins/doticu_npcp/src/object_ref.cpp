@@ -8,6 +8,7 @@
 #include "cell.h"
 #include "consts.h"
 #include "form.h"
+#include "funcs.h"
 #include "game.h"
 #include "object_ref.h"
 #include "offsets.h"
@@ -849,6 +850,30 @@ namespace doticu_npcp { namespace Object_Ref {
         }
     }
 
+    void Block_Activation(Reference_t* ref, Bool_t do_block, Virtual_Callback_i* vcallback)
+    {
+        struct Arguments : public Virtual_Arguments_t {
+            Bool_t do_block;
+            Arguments(Bool_t do_block) :
+                do_block(do_block)
+            {
+            }
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(1);
+                arguments->At(0)->Bool(do_block);
+                return true;
+            }
+        } arguments(do_block);
+        Virtual_Machine_t::Self()->Call_Method(
+            ref,
+            "ObjectReference",
+            "BlockActivation",
+            &arguments,
+            vcallback ? &vcallback : nullptr
+        );
+    }
+
     void Play_Animation(Reference_t* ref, void* nicontroller, void* nisequence_from, void* nisequence_to)
     {
         using func_type = void(*)(Reference_t*, void*, void*, void*);
@@ -1023,9 +1048,9 @@ namespace doticu_npcp { namespace Object_Ref {
         using namespace Papyrus;
 
         if (ref) {
-            //Object_Ref::Log_XContainer(ref);
             ref->Disable();
-            //ref->flags = Utils::Bit_Off(ref->flags, 10); // IS_PERSISTENT, necessary for user types
+            //ref->pos.z -= 10000.0f;
+            Enable(ref);
             Virtual_Machine_t::Self()->Call_Method(ref, "ObjectReference", "Delete");
         }
     }

@@ -77,7 +77,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     Variable_t* Member_t::Is_Mannequin_Variable() { DEFINE_VARIABLE("p_is_mannequin"); }
     Variable_t* Member_t::Is_Display_Variable() { DEFINE_VARIABLE("p_is_display"); }
     Variable_t* Member_t::Is_Reanimated_Variable() { DEFINE_VARIABLE("p_is_reanimated"); }
-    Variable_t* Member_t::Do_Skip_On_Load_Variable() { DEFINE_VARIABLE("p_do_skip_on_load"); }
 
     Variable_t* Member_t::Style_Variable() { DEFINE_VARIABLE("p_code_style"); }
     Variable_t* Member_t::Vitality_Variable() { DEFINE_VARIABLE("p_code_vitality"); }
@@ -845,17 +844,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
-    void Member_t::On_Load()
-    {
-        if (Is_Ready()) {
-            if (Do_Skip_On_Load_Variable()->Bool()) {
-                Do_Skip_On_Load_Variable()->Bool(false);
-            } else {
-                Enforce();
-            }
-        }
-    }
-
     void Member_t::On_Death(Actor_t* killer)
     {
         if (Is_Ready()) {
@@ -865,8 +853,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     void Member_t::On_Activate(Reference_t* activator)
     {
-        Alias_t::Register_Menu("ContainerMenu");
-
         if (Is_Ready()) {
             Player_t* player = Player_t::Self();
             if (activator == player->Actor()) {
@@ -890,7 +876,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                         Virtual_Callback_i* callback = new Callback(actor);
                         Actor2::Is_Talking_To_Player(actor, &callback);
                     }
-                    Enforce();
                 } else {
                     Open_Outfit2();
                 }
@@ -1833,7 +1818,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         Object_Ref::Token(actor, Consts::Paralyzed_Token());
 
-        Object_Ref::Block_All_Activation(actor);
+        Object_Ref::Block_Activation(actor, true);
         Actor2::Disable_AI(actor);
         Actor2::Ghostify(actor);
 
@@ -1876,7 +1861,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Object_Ref::Untoken(actor, Consts::Paralyzed_Token());
 
         if (Isnt_Mannequin_Unsafe()) {
-            Object_Ref::Unblock_All_Activation(actor);
+            Object_Ref::Block_Activation(actor, false);
             Actor2::Enable_AI(actor);
             Actor2::Unghostify(actor);
         }
@@ -1923,11 +1908,11 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     {
         NPCP_ASSERT(Is_Filled());
         NPCP_ASSERT(actor);
-        NPCP_ASSERT(marker); 
+        NPCP_ASSERT(marker);
 
         Object_Ref::Token(actor, Consts::Mannequin_Token());
 
-        Object_Ref::Block_All_Activation(actor);
+        Object_Ref::Block_Activation(actor, true);
         Actor2::Disable_AI(actor);
         Actor2::Ghostify(actor);
 
@@ -1964,6 +1949,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     {
         NPCP_ASSERT(actor);
 
+        Mannequins_t::Self()->Try_To_Remove(this);
         Is_Mannequin_Variable()->Bool(false);
         Mannequin_Marker_Variable()->None(Object_Ref::Class_Info());
         Enforce_Non_Mannequin(actor);
@@ -1973,11 +1959,11 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     {
         NPCP_ASSERT(Is_Filled());
         NPCP_ASSERT(actor);
-        
+
         Object_Ref::Untoken(actor, Consts::Mannequin_Token());
 
-        if (Isnt_Paralyzed_Unsafe()) {
-            Object_Ref::Unblock_All_Activation(actor);
+        if (Isnt_Paralyzed()) {
+            Object_Ref::Block_Activation(actor, false);
             Actor2::Enable_AI(actor);
             Actor2::Unghostify(actor);
         }
@@ -2030,7 +2016,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         if (!Actor2::Is_AI_Enabled(actor) && actor->parentCell == display_marker->parentCell) {
             Object_Ref::Move_To_Orbit(actor, display_marker, 0.0f, 180.0f);
-            Do_Skip_On_Load_Variable()->Bool(true);
             Actor2::Fully_Update_3D_Model(actor);
         } else {
             Object_Ref::Move_To_Orbit(actor, display_marker, 0.0f, 180.0f);
@@ -2895,6 +2880,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         if (Actor2::Is_Alive(actor)) {
             Outfit_t* default_outfit1 = NPCS_t::Self()->Default_Outfit(actor);
+            NPCP_ASSERT(default_outfit1);
             if (Default_Outfit() != default_outfit1) {
                 Default_Outfit_Variable()->Pack(default_outfit1);
                 Actor2::Set_Outfit_Basic(actor, default_outfit1, false, false);
@@ -3228,7 +3214,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         METHOD("Stash", 0, Int_t, Stash);
 
-        METHOD("OnLoad", 0, void, On_Load);
         METHOD("OnDeath", 1, void, On_Death, Actor_t*);
         METHOD("OnActivate", 1, void, On_Activate, Reference_t*);
         METHOD("OnCombatStateChanged", 2, void, On_Combat_State_Changed, Actor_t*, Int_t);

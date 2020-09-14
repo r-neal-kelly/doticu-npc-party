@@ -616,7 +616,15 @@ namespace doticu_npcp { namespace Papyrus {
     template <typename Type>
     Type* Variable_t::Resolve(Type_ID_t type_id)
     {
-        return static_cast<Type*>(Policy()->Resolve(type_id, data.obj->Handle()));
+        if (type.Is_Object()) {
+            if (data.obj) {
+                return static_cast<Type*>(Policy()->Resolve(type_id, data.obj->Handle()));
+            } else {
+                return nullptr;
+            }
+        } else {
+            return nullptr;
+        }
     }
 
     inline Form_t* Variable_t::Form()

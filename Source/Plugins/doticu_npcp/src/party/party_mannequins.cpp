@@ -238,6 +238,29 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
+    Bool_t Mannequins_t::Try_To_Remove(Member_t* member)
+    {
+        Array_t* slots_array = Slots_Array();
+
+        Int_t expoee_id = -1;
+        if (member) {
+            for (size_t idx = 0, count = slots_array->count; idx < count; idx += 1) {
+                Member_t* expoee = static_cast<Member_t*>(slots_array->Point(idx)->Alias());
+                if (expoee == member) {
+                    expoee_id = idx;
+                    break;
+                }
+            }
+        }
+
+        if (expoee_id > -1 && expoee_id < slots_array->count) {
+            slots_array->Point(expoee_id)->None(Member_t::Class_Info());
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     void Mannequins_t::Enforce_Expoee(Int_t expoee_id, Reference_t* marker)
     {
         Array_t* slots_array = Slots_Array();

@@ -29,7 +29,6 @@ bool                    p_is_paralyzed                      = false
 bool                    p_is_mannequin                      = false
 bool                    p_is_display                        = false
 bool                    p_is_reanimated                     = false
-bool                    p_do_skip_on_load                   = false
 
 int                     p_code_style                        =     0
 int                     p_code_vitality                     =     0
@@ -70,7 +69,6 @@ int function Rename(string name) native
 
 int function Stash() native
 
-event OnLoad() native
 event OnDeath(Actor killer) native
 event OnActivate(ObjectReference activator) native
 event OnCombatStateChanged(Actor target, int combat_code) native

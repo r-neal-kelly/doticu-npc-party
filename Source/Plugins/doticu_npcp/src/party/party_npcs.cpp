@@ -278,11 +278,9 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         NPCP_ASSERT(actor);
 
         Int_t base_idx = Base_Idx(actor);
-        if (base_idx > -1) {
-            return Default_Outfit(base_idx);
-        } else {
-            return nullptr;
-        }
+        Outfit_t* default_outfit = base_idx > -1 ?
+            Default_Outfit(base_idx) : Actor2::Base_Outfit(actor);
+        return default_outfit ? default_outfit : Consts::Empty_Outfit();
     }
 
     void NPCS_t::Change_Default_Outfit(Actor_t* actor, Outfit_t* default_outfit)

@@ -88,6 +88,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         void Expo(Int_t expoee_id, Reference_t* marker, void (*callback)(Int_t code, const char* name));
         void Unexpo(Int_t expoee_id, void (*callback)(Int_t code, const char* name));
+        Bool_t Try_To_Remove(Member_t* member);
 
         void Enforce_Expoee(Int_t expoee_id, Reference_t* marker);
 

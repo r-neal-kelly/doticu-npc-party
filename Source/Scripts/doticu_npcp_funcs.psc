@@ -59,10 +59,8 @@ endFunction
 
 ; Public Methods
 function Close_Menus();;;
-    int key_menu = Input.GetMappedKey("Tween Menu")
-    
     while Utility.IsInMenuMode()
-        Input.TapKey(key_menu)
+        Input.TapKey(Input.GetMappedKey("Tween Menu"))
     endWhile
 endFunction
 

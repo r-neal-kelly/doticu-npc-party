@@ -71,6 +71,8 @@ namespace doticu_npcp { namespace Object_Ref {
     void Block_All_Activation(Reference_t* ref);
     void Unblock_All_Activation(Reference_t* ref);
 
+    void Block_Activation(Reference_t* ref, Bool_t do_block, Virtual_Callback_i* vcallback = nullptr);
+
     void Play_Animation(Reference_t* ref, void* nicontroller, void* nisequence_from, void* nisequence_to);
 
     void Rename(Reference_t* ref, String_t new_name);

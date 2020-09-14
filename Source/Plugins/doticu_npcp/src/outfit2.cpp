@@ -252,6 +252,30 @@ namespace doticu_npcp { namespace Papyrus {
         return !Outfit1_Cache_Variable()->Has_Object();
     }
 
+    void Outfit2_t::Clean_Blank_Items()
+    {
+        static auto Clean_Item = [](Reference_t* ref, Form_t* item)->void
+        {
+            XEntry_t* xentry = Object_Ref::Get_XEntry(ref, item, false);
+            if (xentry) {
+                Object_Ref::Remove_XEntry(ref, xentry);
+                XEntry_t::Destroy(xentry);
+            }
+        };
+
+        Weapon_t* blank_weapon = Consts::Blank_Weapon();
+        Armor_t* blank_armor = Consts::Blank_Armor();
+
+        Clean_Item(this, blank_weapon);
+        Clean_Item(this, blank_armor);
+
+        Reference_t* outfit1_cache = Outfit1_Cache();
+        if (outfit1_cache) {
+            Clean_Item(outfit1_cache, blank_weapon);
+            Clean_Item(outfit1_cache, blank_armor);
+        }
+    }
+
     void Outfit2_t::Open(String_t outfit_name, Virtual_Callback_i** callback)
     {
         NPCP_ASSERT(outfit_name);
@@ -280,6 +304,8 @@ namespace doticu_npcp { namespace Papyrus {
                 }
                 void operator()(Variable_t* result)
                 {
+                    outfit2->Clean_Blank_Items();
+
                     Actor2::Leave_Player_Team(actor);
                     Bool_t should_update = Actor2::Set_Outfit2(actor, outfit2->Outfit1_Cache(), outfit2, pack);
                     Actor2::Join_Player_Team(actor);
