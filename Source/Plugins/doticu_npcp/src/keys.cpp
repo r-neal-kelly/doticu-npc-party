@@ -10,9 +10,9 @@
 #include "skse64/Hooks_DirectInput8Create.h"
 #include "skse64/Hooks_Gameplay.h"
 #include "skse64/PapyrusGame.h"
-#include "skse64/PapyrusEvents.h"
 
 #include "consts.h"
+#include "form.h"
 #include "game.h"
 #include "keys.h"
 #include "object_ref.h"
@@ -24,6 +24,7 @@
 #include "vars.h"
 #include "vector.h"
 
+#include "party/party_movee.h"
 #include "party/party_followers.h"
 #include "party/party_follower.h"
 
@@ -560,10 +561,10 @@ namespace doticu_npcp { namespace Papyrus {
     {
         Unregister();
 
-        auto Try_To_Register = [&](UInt32 hotkey_value)->void
+        auto Try_To_Register = [&](Int_t hotkey_value)->void
         {
             if (hotkey_value > Keys_t::KEY_INVALID) {
-                g_inputKeyEventRegs.Register(hotkey_value, Quest_t::kTypeID, this);
+                Form::Register_Key(this, hotkey_value);
             }
         };
 
@@ -608,11 +609,13 @@ namespace doticu_npcp { namespace Papyrus {
         Try_To_Register(Vars::FS_Saddle_Value());
         Try_To_Register(Vars::FS_Unsaddle_Value());
         Try_To_Register(Vars::FS_Resurrect_Value());
+
+        Party::Movee_t::Self()->Register();
     }
 
     void Keys_t::Unregister()
     {
-        g_inputKeyEventRegs.UnregisterAll(Quest_t::kTypeID, this);
+        Form::Unregister_Keys(this);
     }
 
     void Keys_t::Actor_In_Crosshair(Bool_t allow_follower_horse, void(*callback)(Actor_t*))

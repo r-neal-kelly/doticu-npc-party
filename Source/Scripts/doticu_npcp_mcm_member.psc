@@ -93,6 +93,9 @@ int                 p_option_skill_pickpocket   =    -1
 int                 p_option_skill_speechcraft  =    -1
 int                 p_option_race               =    -1
 int                 p_option_relationship_rank  =    -1
+int                 p_option_worldspace         =    -1
+int                 p_option_location           =    -1
+int                 p_option_cell               =    -1
 
 ; Native Methods
 function f_Build_Page() native

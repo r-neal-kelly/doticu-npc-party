@@ -1204,14 +1204,14 @@ namespace doticu_npcp { namespace Actor2 {
         static func_type func = reinterpret_cast<func_type>
             (RelocationManager::s_baseAddr + Offsets::Actor::UPDATE_3D_MODEL);
 
-        if (actor) {
+        if (actor && Is_Loaded(actor)) {
             return func(actor->processManager, actor);
         }
     }
 
     void Fully_Update_3D_Model(Actor_t* actor)
     {
-        if (actor && Actor2::Is_Loaded(actor) && actor->processManager && actor->processManager->middleProcess) {
+        if (actor && Is_Loaded(actor) && actor->processManager && actor->processManager->middleProcess) {
             u8* flags_3d = ((u8*)actor->processManager->middleProcess + 0x311);
             *flags_3d = 0 |
                 1 << Actor_t2::Update_3D_Flags::MODEL_3D |

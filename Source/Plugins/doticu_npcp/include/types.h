@@ -80,6 +80,7 @@ namespace doticu_npcp {
     typedef UInt32          Reference_Handle_t;
 
     typedef TESForm         Form_t;
+    typedef TESWorldSpace   Worldspace_t;
     typedef TESObjectCELL   Cell_t;
     typedef TESPackage      Package_t;
     typedef TESObjectREFR   Reference_t;

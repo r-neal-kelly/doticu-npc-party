@@ -516,6 +516,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     void Movee_t::On_Load_Mod()
     {
         if (Is_Created()) {
+            Register();
+
             Actor_t* actor = Actor();
             if (actor) {
                 Reload();

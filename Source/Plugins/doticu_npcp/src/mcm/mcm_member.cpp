@@ -118,6 +118,9 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     Variable_t* Member_t::Race_Option_Variable() { DEFINE_VARIABLE("p_option_race"); }
     Variable_t* Member_t::Relationship_Rank_Option_Variable() { DEFINE_VARIABLE("p_option_relationship_rank"); }
+    Variable_t* Member_t::Worldspace_Option_Variable() { DEFINE_VARIABLE("p_option_worldspace"); }
+    Variable_t* Member_t::Location_Option_Variable() { DEFINE_VARIABLE("p_option_location"); }
+    Variable_t* Member_t::Cell_Option_Variable() { DEFINE_VARIABLE("p_option_cell"); }
 
     Int_t Member_t::Current_View()
     {
@@ -485,6 +488,15 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Relationship_Rank_Option_Variable()->Int(
             mcm_main->Add_Text_Option(" Relationship Rank ", party_member->Relationship_Rank_String())
         );
+        Worldspace_Option_Variable()->Int(
+            mcm_main->Add_Text_Option(" Worldspace ", party_member->Worldspace_String())
+        );
+        Location_Option_Variable()->Int(
+            mcm_main->Add_Text_Option(" Location ", party_member->Location_String())
+        );
+        Cell_Option_Variable()->Int(
+            mcm_main->Add_Text_Option(" Cell ", party_member->Cell_String())
+        );
     }
 
     void Member_t::Update_Statistics()
@@ -530,8 +542,11 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         update_stat(Pickpocket_Skill_Option_Variable(), Actor_Value_t::PICKPOCKET, false);
         update_stat(Speechcraft_Skill_Option_Variable(), Actor_Value_t::SPEECHCRAFT, false);
 
-        mcm_main->Text_Option_Value(Race_Option_Variable()->Int(), party_member->Race(), true);
-        mcm_main->Text_Option_Value(Relationship_Rank_Option_Variable()->Int(), party_member->Relationship_Rank_String(), true);
+        mcm_main->Text_Option_Value(Race_Option_Variable()->Int(), party_member->Race(), false);
+        mcm_main->Text_Option_Value(Relationship_Rank_Option_Variable()->Int(), party_member->Relationship_Rank_String(), false);
+        mcm_main->Text_Option_Value(Worldspace_Option_Variable()->Int(), party_member->Worldspace_String(), false);
+        mcm_main->Text_Option_Value(Location_Option_Variable()->Int(), party_member->Location_String(), false);
+        mcm_main->Text_Option_Value(Cell_Option_Variable()->Int(), party_member->Cell_String(), true);
     }
 
     void Member_t::Go_Back()

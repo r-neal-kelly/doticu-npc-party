@@ -87,6 +87,9 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
         Variable_t* Race_Option_Variable();
         Variable_t* Relationship_Rank_Option_Variable();
+        Variable_t* Worldspace_Option_Variable();
+        Variable_t* Location_Option_Variable();
+        Variable_t* Cell_Option_Variable();
 
         Int_t Current_View();
         Party::Member_t* Party_Member();

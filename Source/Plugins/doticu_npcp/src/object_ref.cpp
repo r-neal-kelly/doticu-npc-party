@@ -74,6 +74,44 @@ namespace doticu_npcp { namespace Object_Ref {
         }
     }
 
+    Worldspace_t* Worldspace(Reference_t* ref)
+    {
+        static auto worldspace = reinterpret_cast
+            <Worldspace_t* (*)(Reference_t*)>
+            (RelocationManager::s_baseAddr + Offsets::Reference::WORLDSPACE);
+
+        if (ref) {
+            return worldspace(ref);
+        } else {
+            return nullptr;
+        }
+    }
+
+    Location_t* Location(Reference_t* ref)
+    {
+        if (ref) {
+            Cell_t* cell = Cell(ref);
+            if (cell) {
+                ExtraLocation* xlocation = static_cast<ExtraLocation*>
+                    (reinterpret_cast<XList_t*>(&cell->unk048)->GetByType(kExtraData_Location));
+                return xlocation ? xlocation->location : nullptr;
+            } else {
+                return nullptr;
+            }
+        } else {
+            return nullptr;
+        }
+    }
+
+    Cell_t* Cell(Reference_t* ref)
+    {
+        if (ref) {
+            return ref->parentCell;
+        } else {
+            return nullptr;
+        }
+    }
+
     BEntry_t *Get_BEntry(TESObjectREFR *obj, TESForm *form) {
         if (!obj || !form) {
             return NULL;

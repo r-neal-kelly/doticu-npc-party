@@ -121,6 +121,7 @@ namespace doticu_npcp { namespace Offsets {
         constexpr uintptr_t LOOKUP_REFERENCE_BY_HANDLE2 = 0x001329D0; // 12204
         constexpr uintptr_t PLACE_AT_ME                 = 0x009951F0; // 55672
         constexpr uintptr_t PLAY_ANIMATION              = 0x00189E30; // 14189
+        constexpr uintptr_t WORLDSPACE                  = 0x00299750; // 19389
 
     }
 

@@ -21,6 +21,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     class Member_t : public Alias_t {
     public:
+        static constexpr Float_t MAX_DISPLAY_DISTANCE = 12.0f;
+
         static String_t Class_Name();
         static Class_Info_t* Class_Info();
 
@@ -78,6 +80,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Reference_t* Mannequin_Marker();
         Reference_t* Display_Marker();
         Reference_t* Undisplay_Marker();
+        Worldspace_t* Worldspace();
+        Location_t* Location();
         Cell_t* Cell();
         Int_t Style();
         Int_t Vitality();
@@ -91,6 +95,9 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         String_t Name();
         String_t Rating_Stars();
         String_t Relationship_Rank_String();
+        String_t Worldspace_String();
+        String_t Location_String();
+        String_t Cell_String();
 
         Outfit_t* Vanilla_Outfit();
         Outfit_t* Default_Outfit();

@@ -5,6 +5,7 @@
 #include "skse64/GameRTTI.h"
 
 #include "form.h"
+#include "papyrus.inl"
 #include "utils.h"
 
 const char *arr_str_form_types[143] = {
@@ -172,6 +173,22 @@ namespace doticu_npcp { namespace Form {
         }
     }
 
+    const char* Get_Any_Name(Form_t* form)
+    {
+        if (form) {
+            const char* string = Get_Name(form);
+            if (!string || string[0] == 0) {
+                string = form->Editor_ID();
+            }
+            if (!string || string[0] == 0) {
+                string = "Unknown";
+            }
+            return string;
+        } else {
+            return "Unknown";
+        }
+    }
+
     bool Has_Keyword(TESForm *form, BGSKeyword *keyword) {
         if (!form || !keyword) {
             return false;
@@ -189,6 +206,53 @@ namespace doticu_npcp { namespace Form {
     {
         _MESSAGE("record form flags: %s", Utils::To_Binary(&form->flags, sizeof(form->flags)).data());
         _MESSAGE("in-game form flags: %s", Utils::To_Binary(&form->unk18, sizeof(form->unk18)).data());
+    }
+
+    void Register_Key(Form_t* form, Int_t key_code, Virtual_Callback_i* vcallback)
+    {
+        struct Args : public Virtual_Arguments_t {
+            Int_t key_code;
+            Args(Int_t key_code) :
+                key_code(key_code)
+            {
+            }
+            Bool_t operator()(Arguments_t* args)
+            {
+                args->Resize(1);
+                args->At(0)->Int(key_code);
+                return true;
+            }
+        } args(key_code);
+        Virtual_Machine_t::Self()->Call_Method(
+            form, "Form", "RegisterForKey", &args, vcallback ? &vcallback : nullptr
+        );
+    }
+
+    void Unregister_Key(Form_t* form, Int_t key_code, Virtual_Callback_i* vcallback)
+    {
+        struct Args : public Virtual_Arguments_t {
+            Int_t key_code;
+            Args(Int_t key_code) :
+                key_code(key_code)
+            {
+            }
+            Bool_t operator()(Arguments_t* args)
+            {
+                args->Resize(1);
+                args->At(0)->Int(key_code);
+                return true;
+            }
+        } args(key_code);
+        Virtual_Machine_t::Self()->Call_Method(
+            form, "Form", "UnregisterForKey", &args, vcallback ? &vcallback : nullptr
+        );
+    }
+
+    void Unregister_Keys(Form_t* form, Virtual_Callback_i* vcallback)
+    {
+        Virtual_Machine_t::Self()->Call_Method(
+            form, "Form", "UnregisterForAllKeys", nullptr, vcallback ? &vcallback : nullptr
+        );
     }
 
 }}

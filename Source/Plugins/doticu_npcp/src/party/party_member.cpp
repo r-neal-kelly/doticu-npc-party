@@ -142,10 +142,22 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         return Undisplay_Marker_Variable()->Reference();
     }
 
+    Worldspace_t* Member_t::Worldspace()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Object_Ref::Worldspace(Actor());
+    }
+
+    Location_t* Member_t::Location()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Object_Ref::Location(Actor());
+    }
+
     Cell_t* Member_t::Cell()
     {
         NPCP_ASSERT(Is_Filled());
-        return Actor()->parentCell;
+        return Object_Ref::Cell(Actor());
     }
 
     Int_t Member_t::Style()
@@ -244,6 +256,24 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                 Actor2::Dynamic_Base(Actor())
             )
         );
+    }
+
+    String_t Member_t::Worldspace_String()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Form::Get_Any_Name(Worldspace());
+    }
+
+    String_t Member_t::Location_String()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Form::Get_Any_Name(Location());
+    }
+
+    String_t Member_t::Cell_String()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return Form::Get_Any_Name(Cell());
     }
 
     Outfit_t* Member_t::Vanilla_Outfit()
@@ -1536,6 +1566,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         if (Actor2::Cant_Talk_To_Player(actor)) {
             Actor2::Talks_To_Player(actor, true);
         }
+
+        Object_Ref::Enable(actor, false);
     }
 
     void Member_t::Destroy_Member(Actor_t* actor)
@@ -1976,6 +2008,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                 Actor_t* actor = Actor();
                 Create_Display(actor, origin, radius, degree);
                 Actor2::Evaluate_Package(actor);
+                Enforce(); // this needs to be changed out to simply updating outfit
                 return CODES::SUCCESS;
             } else {
                 return CODES::IS;
@@ -2002,6 +2035,10 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         NPCP_ASSERT(undisplay_marker);
         Undisplay_Marker_Variable()->Pack(undisplay_marker);
 
+        Actor2::Move_To_Orbit(actor, display_marker, 0.0f, 180.0f);
+
+        Object_Ref::Enable(actor);
+
         Enforce_Display(actor, display_marker);
     }
 
@@ -2014,12 +2051,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Object_Ref::Token(actor, Consts::Display_Token());
         Actor2::Disable_Havok_Collision(actor);
 
-        if (!Actor2::Is_AI_Enabled(actor) && actor->parentCell == display_marker->parentCell) {
-            Object_Ref::Move_To_Orbit(actor, display_marker, 0.0f, 180.0f);
-            Actor2::Fully_Update_3D_Model(actor);
-        } else {
-            Object_Ref::Move_To_Orbit(actor, display_marker, 0.0f, 180.0f);
-            Actor2::Update_3D_Model(actor);
+        if (Object_Ref::Get_Distance(actor, display_marker) > MAX_DISPLAY_DISTANCE) {
+            Actor2::Move_To_Orbit(actor, display_marker, 0.0f, 180.0f);
         }
     }
 
@@ -2053,12 +2086,9 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Reference_t* undisplay_marker = undisplay_marker_variable->Reference();
 
         if (undisplay_marker) {
-            if (!Actor2::Is_AI_Enabled(actor) && actor->parentCell == undisplay_marker->parentCell) {
-                Object_Ref::Move_To_Orbit(actor, undisplay_marker, 0.0f, 180.0f);
-                Actor2::Fully_Update_3D_Model(actor);
-            } else {
-                Object_Ref::Move_To_Orbit(actor, undisplay_marker, 0.0f, 180.0f);
-                Actor2::Update_3D_Model(actor);
+            Actor2::Move_To_Orbit(actor, undisplay_marker, 0.0f, 180.0f);
+            if (Object_Ref::Get_Distance(actor, display_marker) < MAX_DISPLAY_DISTANCE) {
+                Actor2::Move_To_Orbit(actor, Consts::Player_Actor(), 256.0f, 180.0f);
             }
         }
 

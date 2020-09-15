@@ -55,6 +55,10 @@ namespace doticu_npcp { namespace Object_Ref {
     void Log_XList(TESObjectREFR *ref_object);
     void Validate_XContainer(Reference_t* ref);
 
+    Worldspace_t* Worldspace(Reference_t* ref);
+    Location_t* Location(Reference_t* ref);
+    Cell_t* Cell(Reference_t* ref);
+
     void Move_To_Orbit(TESObjectREFR *obj, TESObjectREFR *target, float radius, float angle_degree);
 
     float Get_Distance(TESObjectREFR *obj, TESObjectREFR *target);

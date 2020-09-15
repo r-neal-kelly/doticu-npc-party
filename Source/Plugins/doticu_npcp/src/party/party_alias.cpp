@@ -2,8 +2,6 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
-#include "skse64/PapyrusEvents.h"
-
 #include "papyrus.inl"
 #include "quest.h"
 
@@ -79,74 +77,111 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Virtual_Machine_t::Self()->Call_Method(this, "Alias", "GetOwningQuest", nullptr, &vcallback);
     }
 
-    void Alias_t::Register_Key(Int_t key_code)
+    void Alias_t::Register_Key(Int_t key_code, Virtual_Callback_i* vcallback)
     {
-        UInt32 u_key_code = key_code;
-        g_inputKeyEventRegs.Register(u_key_code, Alias_t::kTypeID, this);
+        struct Args : public Virtual_Arguments_t {
+            Int_t key_code;
+            Args(Int_t key_code) :
+                key_code(key_code)
+            {
+            }
+            Bool_t operator()(Arguments_t* args)
+            {
+                args->Resize(1);
+                args->At(0)->Int(key_code);
+                return true;
+            }
+        } args(key_code);
+        Virtual_Machine_t::Self()->Call_Method(
+            this, "Alias", "RegisterForKey", &args, vcallback ? &vcallback : nullptr
+        );
     }
 
-    void Alias_t::Unregister_Key(Int_t key_code)
+    void Alias_t::Unregister_Key(Int_t key_code, Virtual_Callback_i* vcallback)
     {
-        UInt32 u_key_code = key_code;
-        g_inputKeyEventRegs.Unregister(u_key_code, Alias_t::kTypeID, this);
+        struct Args : public Virtual_Arguments_t {
+            Int_t key_code;
+            Args(Int_t key_code) :
+                key_code(key_code)
+            {
+            }
+            Bool_t operator()(Arguments_t* args)
+            {
+                args->Resize(1);
+                args->At(0)->Int(key_code);
+                return true;
+            }
+        } args(key_code);
+        Virtual_Machine_t::Self()->Call_Method(
+            this, "Alias", "UnregisterForKey", &args, vcallback ? &vcallback : nullptr
+        );
     }
 
-    void Alias_t::Unregister_Keys()
+    void Alias_t::Unregister_Keys(Virtual_Callback_i* vcallback)
     {
-        g_inputKeyEventRegs.UnregisterAll(Alias_t::kTypeID, this);
+        Virtual_Machine_t::Self()->Call_Method(
+            this, "Alias", "UnregisterForAllKeys", nullptr, vcallback ? &vcallback : nullptr
+        );
     }
 
-    void Alias_t::Register_Control(String_t control)
+    void Alias_t::Register_Control(String_t control, Virtual_Callback_i* vcallback)
     {
-        g_inputControlEventRegs.Register(control, Alias_t::kTypeID, this);
+        struct Args : public Virtual_Arguments_t {
+            String_t control;
+            Args(String_t control) :
+                control(control)
+            {
+            }
+            Bool_t operator()(Arguments_t* args)
+            {
+                args->Resize(1);
+                args->At(0)->String(control);
+                return true;
+            }
+        } args(control);
+        Virtual_Machine_t::Self()->Call_Method(
+            this, "Alias", "RegisterForControl", &args, vcallback ? &vcallback : nullptr
+        );
     }
 
-    void Alias_t::Unregister_Control(String_t control)
+    void Alias_t::Unregister_Control(String_t control, Virtual_Callback_i* vcallback)
     {
-        g_inputControlEventRegs.Unregister(control, Alias_t::kTypeID, this);
+        struct Args : public Virtual_Arguments_t {
+            String_t control;
+            Args(String_t control) :
+                control(control)
+            {
+            }
+            Bool_t operator()(Arguments_t* args)
+            {
+                args->Resize(1);
+                args->At(0)->String(control);
+                return true;
+            }
+        } args(control);
+        Virtual_Machine_t::Self()->Call_Method(
+            this, "Alias", "UnregisterForControl", &args, vcallback ? &vcallback : nullptr
+        );
     }
 
-    void Alias_t::Unregister_Controls()
+    void Alias_t::Unregister_Controls(Virtual_Callback_i* vcallback)
     {
-        g_inputControlEventRegs.UnregisterAll(Alias_t::kTypeID, this);
-    }
-
-    void Alias_t::Register_Action(Int_t action_code)
-    {
-        UInt32 u_action_code = action_code;
-        g_actionEventRegs.Register(u_action_code, Alias_t::kTypeID, this);
-    }
-
-    void Alias_t::Unregister_Action(Int_t action_code)
-    {
-        UInt32 u_action_code = action_code;
-        g_actionEventRegs.Unregister(u_action_code, Alias_t::kTypeID, this);
-    }
-
-    void Alias_t::Unregister_Actions()
-    {
-        g_actionEventRegs.UnregisterAll(Alias_t::kTypeID, this);
+        Virtual_Machine_t::Self()->Call_Method(
+            this, "Alias", "UnregisterForAllControls", nullptr, vcallback ? &vcallback : nullptr
+        );
     }
 
     void Alias_t::Register_For_Crosshair_Change(Virtual_Callback_i* vcallback)
     {
         Virtual_Machine_t::Self()->Call_Method(
-            this,
-            "Alias",
-            "RegisterForCrosshairRef",
-            nullptr,
-            vcallback ? &vcallback : nullptr
+            this, "Alias", "RegisterForCrosshairRef", nullptr, vcallback ? &vcallback : nullptr
         );
     }
 
     void Alias_t::Unregister_For_Crosshair_Change(Virtual_Callback_i* vcallback)
     {
         Virtual_Machine_t::Self()->Call_Method(
-            this,
-            "Alias",
-            "UnregisterForCrosshairRef",
-            nullptr,
-            vcallback ? &vcallback : nullptr
+            this, "Alias", "UnregisterForCrosshairRef", nullptr, vcallback ? &vcallback : nullptr
         );
     }
 
@@ -166,22 +201,14 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             }
         } arguments(menu_name);
         Virtual_Machine_t::Self()->Call_Method(
-            this,
-            "Alias",
-            "RegisterForMenu",
-            &arguments,
-            vcallback ? &vcallback : nullptr
+            this, "Alias", "RegisterForMenu", &arguments, vcallback ? &vcallback : nullptr
         );
     }
 
     void Alias_t::Unregister_Menus(Virtual_Callback_i* vcallback)
     {
         Virtual_Machine_t::Self()->Call_Method(
-            this,
-            "Alias",
-            "UnregisterForAllMenus",
-            nullptr,
-            vcallback ? &vcallback : nullptr
+            this, "Alias", "UnregisterForAllMenus", nullptr, vcallback ? &vcallback : nullptr
         );
     }
 

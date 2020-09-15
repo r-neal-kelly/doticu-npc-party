@@ -21,15 +21,12 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         void Queue(Callback_t<>* user_callback);
 
-        void Register_Key(Int_t key_code);
-        void Unregister_Key(Int_t key_code);
-        void Unregister_Keys();
-        void Register_Control(String_t control);
-        void Unregister_Control(String_t control);
-        void Unregister_Controls();
-        void Register_Action(Int_t action_code);
-        void Unregister_Action(Int_t action_code);
-        void Unregister_Actions();
+        void Register_Key(Int_t key_code, Virtual_Callback_i* vcallback = nullptr);
+        void Unregister_Key(Int_t key_code, Virtual_Callback_i* vcallback = nullptr);
+        void Unregister_Keys(Virtual_Callback_i* vcallback = nullptr);
+        void Register_Control(String_t control, Virtual_Callback_i* vcallback = nullptr);
+        void Unregister_Control(String_t control, Virtual_Callback_i* vcallback = nullptr);
+        void Unregister_Controls(Virtual_Callback_i* vcallback = nullptr);
         void Register_For_Crosshair_Change(Virtual_Callback_i* vcallback = nullptr);
         void Unregister_For_Crosshair_Change(Virtual_Callback_i* vcallback = nullptr);
         void Register_Menu(String_t menu_name, Virtual_Callback_i* vcallback = nullptr);
