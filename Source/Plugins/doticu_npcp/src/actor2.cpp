@@ -2206,6 +2206,30 @@ namespace doticu_npcp { namespace Actor2 {
         Virtual_Machine_t::Self()->Call_Global("Debug", "SendAnimationEvent", &arguments, callback);
     }
 
+    void Set_Doing_Favor(Actor_t* actor, Bool_t is, Virtual_Callback_i* vcallback)
+    {
+        struct VArguments : public Virtual_Arguments_t {
+            Bool_t is;
+            VArguments(Bool_t is) :
+                is(is)
+            {
+            }
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(1);
+                arguments->At(0)->Bool(is);
+                return true;
+            }
+        } arguments(is);
+        Virtual_Machine_t::Self()->Call_Method(
+            actor,
+            "Actor",
+            "SetDoingFavor",
+            &arguments,
+            vcallback ? &vcallback : nullptr
+        );
+    }
+
 }}
 
 namespace doticu_npcp { namespace Actor2 { namespace Exports {

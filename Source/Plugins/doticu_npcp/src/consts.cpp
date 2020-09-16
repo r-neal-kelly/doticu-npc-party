@@ -180,6 +180,11 @@ namespace doticu_npcp { namespace Consts {
         ARMOR_BLANK                                 = 0x1EF2A5,
 
         // NPCP Branches
+        BRANCH_MAIN                                 = 0x0083EF,
+        BRANCH_MAIN_DIRECT                          = 0x3A515A,
+        BRANCH_MAIN_OUTFIT                          = 0x0CDE73,
+        BRANCH_MAIN_STYLE                           = 0x040F0F,
+        BRANCH_MAIN_VITALITY                        = 0x0CDE66,
         BRANCH_MENU_CHESTS                          = 0x32674F,
         BRANCH_MENU_CHESTS_APPAREL                  = 0x32B853,
         BRANCH_MENU_CHESTS_BOOKS                    = 0x32B859,
@@ -376,6 +381,60 @@ namespace doticu_npcp { namespace Consts {
         SPELL_ABILITY_RETREAT                       = 0x2F3CFF,
 
         // NPCP Topics
+        TOPIC_MAIN                                  = 0x0083F1,
+        TOPIC_MAIN_BACK                             = 0x0083F2,
+        TOPIC_MAIN_CLONE                            = 0x020C2A,
+        TOPIC_MAIN_DIRECT                           = 0x3A5158,
+        TOPIC_MAIN_DIRECT_BLOCK                     = 0x3A515B,
+        TOPIC_MAIN_DIRECT_CONTINUE                  = 0x3A515D,
+        TOPIC_MAIN_DIRECT_END                       = 0x3A515F,
+        TOPIC_MAIN_ENTHRALL                         = 0x02D231,
+        TOPIC_MAIN_FOLLOW                           = 0x00AF09,
+        TOPIC_MAIN_GOODBYE                          = 0x19DF1A,
+        TOPIC_MAIN_HELLO                            = 0x08C049,
+        TOPIC_MAIN_IMMOBILIZE                       = 0x00A440,
+        TOPIC_MAIN_MEMBER                           = 0x00B9D2,
+        TOPIC_MAIN_MOBILIZE                         = 0x00A442,
+        TOPIC_MAIN_OUTFIT                           = 0x0CDE74,
+        TOPIC_MAIN_OUTFIT2                          = 0x1C67B9,
+        TOPIC_MAIN_OUTFIT_BACK                      = 0x0CDE76,
+        TOPIC_MAIN_OUTFIT_CURRENT                   = 0x1335AA,
+        TOPIC_MAIN_OUTFIT_DEFAULT                   = 0x1E9FA0,
+        TOPIC_MAIN_OUTFIT_FOLLOWER                  = 0x0CDE77,
+        TOPIC_MAIN_OUTFIT_IMMOBILE                  = 0x12E4A2,
+        TOPIC_MAIN_OUTFIT_MEMBER                    = 0x0CDE75,
+        TOPIC_MAIN_OUTFIT_SETTLER                   = 0x12E4A1,
+        TOPIC_MAIN_OUTFIT_THRALL                    = 0x12E4A5,
+        TOPIC_MAIN_OUTFIT_VANILLA                   = 0x1E9F9E,
+        TOPIC_MAIN_PACK                             = 0x008EB9,
+        TOPIC_MAIN_PARALYZE                         = 0x1705D2,
+        TOPIC_MAIN_RESETTLE                         = 0x00B46F,
+        TOPIC_MAIN_SADDLE                           = 0x36D62B,
+        TOPIC_MAIN_SETTLE                           = 0x00A43F,
+        TOPIC_MAIN_SNEAK                            = 0x00C498,
+        TOPIC_MAIN_STASH                            = 0x312344,
+        TOPIC_MAIN_STYLE                            = 0x040F10,
+        TOPIC_MAIN_STYLE2                           = 0x1C67BB,
+        TOPIC_MAIN_STYLE_ARCHER                     = 0x040F17,
+        TOPIC_MAIN_STYLE_BACK                       = 0x040F11,
+        TOPIC_MAIN_STYLE_COWARD                     = 0x2D56F6,
+        TOPIC_MAIN_STYLE_DEFAULT                    = 0x040F14,
+        TOPIC_MAIN_STYLE_MAGE                       = 0x040F16,
+        TOPIC_MAIN_STYLE_WARRIOR                    = 0x040F15,
+        TOPIC_MAIN_UNCLONE                          = 0x0233C8,
+        TOPIC_MAIN_UNFOLLOW                         = 0x00AF0A,
+        TOPIC_MAIN_UNMEMBER                         = 0x00B9D3,
+        TOPIC_MAIN_UNSADDLE                         = 0x36D62C,
+        TOPIC_MAIN_UNSETTLE                         = 0x00A441,
+        TOPIC_MAIN_UNSNEAK                          = 0x00C499,
+        TOPIC_MAIN_UNTHRALL                         = 0x02D232,
+        TOPIC_MAIN_VITALITY                         = 0x0CDE67,
+        TOPIC_MAIN_VITALITY2                        = 0x1C67BD,
+        TOPIC_MAIN_VITALITY_BACK                    = 0x0CDE68,
+        TOPIC_MAIN_VITALITY_ESSENTIAL               = 0x0CDE6B,
+        TOPIC_MAIN_VITALITY_INVULNERABLE            = 0x0CDE6C,
+        TOPIC_MAIN_VITALITY_MORTAL                  = 0x0CDE69,
+        TOPIC_MAIN_VITALITY_PROTECTED               = 0x0CDE6A,
         TOPIC_MENU_FOLLOWERS                        = 0x344DE3,
         TOPIC_MENU_FOLLOWERS_BACK                   = 0x344DE4,
         TOPIC_MENU_FOLLOWERS_IMMOBILIZE             = 0x344DE9,
@@ -483,6 +542,11 @@ namespace doticu_npcp { namespace Consts {
     Armor_t* Blank_Armor() { NPCP_FORM(Armor_t, ARMOR_BLANK); }
 
     // NPCP Branches
+    Branch_t* Main_Branch() { NPCP_FORM(Branch_t, BRANCH_MAIN); }
+    Branch_t* Main_Direct_Branch() { NPCP_FORM(Branch_t, BRANCH_MAIN_DIRECT); }
+    Branch_t* Main_Outfit_Branch() { NPCP_FORM(Branch_t, BRANCH_MAIN_OUTFIT); }
+    Branch_t* Main_Style_Branch() { NPCP_FORM(Branch_t, BRANCH_MAIN_STYLE); }
+    Branch_t* Main_Vitality_Branch() { NPCP_FORM(Branch_t, BRANCH_MAIN_VITALITY); }
     Branch_t* Menu_Chests_Branch() { NPCP_FORM(Branch_t, BRANCH_MENU_CHESTS); }
     Branch_t* Menu_Chests_Weapons_Branch() { NPCP_FORM(Branch_t, BRANCH_MENU_CHESTS_WEAPONS); }
     Branch_t* Menu_Chests_Apparel_Branch() { NPCP_FORM(Branch_t, BRANCH_MENU_CHESTS_APPAREL); }
@@ -684,6 +748,60 @@ namespace doticu_npcp { namespace Consts {
     Spell_t* Retreat_Ability_Spell() { NPCP_FORM(Spell_t, SPELL_ABILITY_RETREAT); }
 
     // NPCP Topics
+    Topic_t* Main_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN); }
+    Topic_t* Main_Back_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_BACK); }
+    Topic_t* Main_Clone_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_CLONE); }
+    Topic_t* Main_Direct_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_DIRECT); }
+    Topic_t* Main_Direct_Block_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_DIRECT_BLOCK); }
+    Topic_t* Main_Direct_Continue_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_DIRECT_CONTINUE); }
+    Topic_t* Main_Direct_End_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_DIRECT_END); }
+    Topic_t* Main_Enthrall_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_ENTHRALL); }
+    Topic_t* Main_Follow_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_FOLLOW); }
+    Topic_t* Main_Goodbye_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_GOODBYE); }
+    Topic_t* Main_Hello_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_HELLO); }
+    Topic_t* Main_Immobilize_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_IMMOBILIZE); }
+    Topic_t* Main_Member_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_MEMBER); }
+    Topic_t* Main_Mobilize_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_MOBILIZE); }
+    Topic_t* Main_Outfit_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_OUTFIT); }
+    Topic_t* Main_Outfit2_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_OUTFIT2); }
+    Topic_t* Main_Outfit_Back_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_OUTFIT_BACK); }
+    Topic_t* Main_Outfit_Current_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_OUTFIT_CURRENT); }
+    Topic_t* Main_Outfit_Default_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_OUTFIT_DEFAULT); }
+    Topic_t* Main_Outfit_Follower_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_OUTFIT_FOLLOWER); }
+    Topic_t* Main_Outfit_Immobile_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_OUTFIT_IMMOBILE); }
+    Topic_t* Main_Outfit_Member_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_OUTFIT_MEMBER); }
+    Topic_t* Main_Outfit_Settler_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_OUTFIT_SETTLER); }
+    Topic_t* Main_Outfit_Thrall_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_OUTFIT_THRALL); }
+    Topic_t* Main_Outfit_Vanilla_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_OUTFIT_VANILLA); }
+    Topic_t* Main_Pack_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_PACK); }
+    Topic_t* Main_Paralyze_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_PARALYZE); }
+    Topic_t* Main_Resettle_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_RESETTLE); }
+    Topic_t* Main_Saddle_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_SADDLE); }
+    Topic_t* Main_Settle_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_SETTLE); }
+    Topic_t* Main_Sneak_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_SNEAK); }
+    Topic_t* Main_Stash_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_STASH); }
+    Topic_t* Main_Style_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_STYLE); }
+    Topic_t* Main_Style2_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_STYLE2); }
+    Topic_t* Main_Style_Archer_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_STYLE_ARCHER); }
+    Topic_t* Main_Style_Back_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_STYLE_BACK); }
+    Topic_t* Main_Style_Coward_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_STYLE_COWARD); }
+    Topic_t* Main_Style_Default_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_STYLE_DEFAULT); }
+    Topic_t* Main_Style_Mage_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_STYLE_MAGE); }
+    Topic_t* Main_Style_Warrior_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_STYLE_WARRIOR); }
+    Topic_t* Main_Unclone_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_UNCLONE); }
+    Topic_t* Main_Unfollow_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_UNFOLLOW); }
+    Topic_t* Main_Unmember_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_UNMEMBER); }
+    Topic_t* Main_Unsaddle_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_UNSADDLE); }
+    Topic_t* Main_Unsettle_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_UNSETTLE); }
+    Topic_t* Main_Unsneak_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_UNSNEAK); }
+    Topic_t* Main_Unthrall_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_UNTHRALL); }
+    Topic_t* Main_Vitality_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_VITALITY); }
+    Topic_t* Main_Vitality2_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_VITALITY2); }
+    Topic_t* Main_Vitality_Back_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_VITALITY_BACK); }
+    Topic_t* Main_Vitality_Essential_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_VITALITY_ESSENTIAL); }
+    Topic_t* Main_Vitality_Invulnerable_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_VITALITY_INVULNERABLE); }
+    Topic_t* Main_Vitality_Mortal_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_VITALITY_MORTAL); }
+    Topic_t* Main_Vitality_Protected_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_VITALITY_PROTECTED); }
     Topic_t* Menu_Followers_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS); }
     Topic_t* Menu_Followers_Back_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_BACK); }
     Topic_t* Menu_Followers_Immobilize_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_IMMOBILIZE); }

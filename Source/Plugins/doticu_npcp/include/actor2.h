@@ -142,6 +142,8 @@ namespace doticu_npcp { namespace Actor2 {
 
     void Send_Animation_Event(Actor_t* actor, String_t animation, Virtual_Callback_i** callback = nullptr);
 
+    void Set_Doing_Favor(Actor_t* actor, Bool_t is, Virtual_Callback_i* vcallback = nullptr);
+
 }}
 
 namespace doticu_npcp { namespace Actor2 { namespace Exports {
