@@ -147,8 +147,8 @@ namespace doticu_npcp { namespace Quest {
             {
                 if (topic) {
                     _MESSAGE((indent + "topic: %8.8X %s").c_str(), topic->formID, topic->Editor_ID());
-                    Topic_Info_t** topic_infos = reinterpret_cast<Topic_Info_t**>(topic->unk2C);
-                    for (size_t idx = 0, count = topic->unk50; idx < count; idx += 1) {
+                    Topic_Info_t** topic_infos = topic->topic_infos;
+                    for (size_t idx = 0, count = topic->topic_info_count; idx < count; idx += 1) {
                         Topic_Info_t* topic_info = topic_infos[idx];
                         if (topic_info) {
                             _MESSAGE((indent + "    topic_info: %8.8X %s").c_str(), topic_info->formID, topic_info->Editor_ID());

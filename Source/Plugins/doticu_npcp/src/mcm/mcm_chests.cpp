@@ -3,6 +3,7 @@
 */
 
 #include "consts.h"
+#include "game.h"
 #include "object_ref.h"
 #include "papyrus.inl"
 #include "utils.h"
@@ -112,6 +113,79 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
     Variable_t* Chests_t::Y_Books_Option_Variable() { DEFINE_VARIABLE("p_option_books_y"); }
     Variable_t* Chests_t::Z_Books_Option_Variable() { DEFINE_VARIABLE("p_option_books_z"); }
     Variable_t* Chests_t::Books_Option_Variable() { DEFINE_VARIABLE("p_option_books"); }
+
+    Variable_t* Chests_t::Custom_00_Option_Variable() { DEFINE_VARIABLE("p_option_custom_00"); }
+    Variable_t* Chests_t::Custom_01_Option_Variable() { DEFINE_VARIABLE("p_option_custom_01"); }
+    Variable_t* Chests_t::Custom_02_Option_Variable() { DEFINE_VARIABLE("p_option_custom_02"); }
+    Variable_t* Chests_t::Custom_03_Option_Variable() { DEFINE_VARIABLE("p_option_custom_03"); }
+    Variable_t* Chests_t::Custom_04_Option_Variable() { DEFINE_VARIABLE("p_option_custom_04"); }
+    Variable_t* Chests_t::Custom_05_Option_Variable() { DEFINE_VARIABLE("p_option_custom_05"); }
+    Variable_t* Chests_t::Custom_06_Option_Variable() { DEFINE_VARIABLE("p_option_custom_06"); }
+    Variable_t* Chests_t::Custom_07_Option_Variable() { DEFINE_VARIABLE("p_option_custom_07"); }
+    Variable_t* Chests_t::Custom_08_Option_Variable() { DEFINE_VARIABLE("p_option_custom_08"); }
+    Variable_t* Chests_t::Custom_09_Option_Variable() { DEFINE_VARIABLE("p_option_custom_09"); }
+    Variable_t* Chests_t::Custom_10_Option_Variable() { DEFINE_VARIABLE("p_option_custom_10"); }
+    Variable_t* Chests_t::Custom_11_Option_Variable() { DEFINE_VARIABLE("p_option_custom_11"); }
+    Variable_t* Chests_t::Custom_12_Option_Variable() { DEFINE_VARIABLE("p_option_custom_12"); }
+    Variable_t* Chests_t::Custom_13_Option_Variable() { DEFINE_VARIABLE("p_option_custom_13"); }
+    Variable_t* Chests_t::Custom_14_Option_Variable() { DEFINE_VARIABLE("p_option_custom_14"); }
+    Variable_t* Chests_t::Custom_15_Option_Variable() { DEFINE_VARIABLE("p_option_custom_15"); }
+
+    Variable_t* Chests_t::Rename_Custom_00_Option_Variable() { DEFINE_VARIABLE("p_option_rename_custom_00"); }
+    Variable_t* Chests_t::Rename_Custom_01_Option_Variable() { DEFINE_VARIABLE("p_option_rename_custom_01"); }
+    Variable_t* Chests_t::Rename_Custom_02_Option_Variable() { DEFINE_VARIABLE("p_option_rename_custom_02"); }
+    Variable_t* Chests_t::Rename_Custom_03_Option_Variable() { DEFINE_VARIABLE("p_option_rename_custom_03"); }
+    Variable_t* Chests_t::Rename_Custom_04_Option_Variable() { DEFINE_VARIABLE("p_option_rename_custom_04"); }
+    Variable_t* Chests_t::Rename_Custom_05_Option_Variable() { DEFINE_VARIABLE("p_option_rename_custom_05"); }
+    Variable_t* Chests_t::Rename_Custom_06_Option_Variable() { DEFINE_VARIABLE("p_option_rename_custom_06"); }
+    Variable_t* Chests_t::Rename_Custom_07_Option_Variable() { DEFINE_VARIABLE("p_option_rename_custom_07"); }
+    Variable_t* Chests_t::Rename_Custom_08_Option_Variable() { DEFINE_VARIABLE("p_option_rename_custom_08"); }
+    Variable_t* Chests_t::Rename_Custom_09_Option_Variable() { DEFINE_VARIABLE("p_option_rename_custom_09"); }
+    Variable_t* Chests_t::Rename_Custom_10_Option_Variable() { DEFINE_VARIABLE("p_option_rename_custom_10"); }
+    Variable_t* Chests_t::Rename_Custom_11_Option_Variable() { DEFINE_VARIABLE("p_option_rename_custom_11"); }
+    Variable_t* Chests_t::Rename_Custom_12_Option_Variable() { DEFINE_VARIABLE("p_option_rename_custom_12"); }
+    Variable_t* Chests_t::Rename_Custom_13_Option_Variable() { DEFINE_VARIABLE("p_option_rename_custom_13"); }
+    Variable_t* Chests_t::Rename_Custom_14_Option_Variable() { DEFINE_VARIABLE("p_option_rename_custom_14"); }
+    Variable_t* Chests_t::Rename_Custom_15_Option_Variable() { DEFINE_VARIABLE("p_option_rename_custom_15"); }
+
+    Variable_t* Chests_t::Custom_Names_Array_Variable() { DEFINE_VARIABLE("p_custom_names"); }
+
+    Array_t* Chests_t::Custom_Names_Array()
+    {
+        Array_t* custom_names_array = Custom_Names_Array_Variable()->Array();
+        if (!custom_names_array) {
+            Initialize();
+            custom_names_array = Custom_Names_Array_Variable()->Array();
+        }
+        NPCP_ASSERT(custom_names_array);
+        return custom_names_array;
+    }
+
+    void Chests_t::Initialize()
+    {
+        Vector_t<String_t> custom_names;
+        custom_names.reserve(MAX_CUSTOM_CATEGORIES);
+        for (size_t idx = 0, count = MAX_CUSTOM_CATEGORIES; idx < count; idx += 1) {
+            if (idx < 9) {
+                custom_names.push_back((std::string("Custom 0") + std::to_string(idx + 1) + " ").c_str());
+            } else {
+                custom_names.push_back((std::string("Custom ") + std::to_string(idx + 1) + " ").c_str());
+            }
+        }
+        Custom_Names_Array_Variable()->Pack(custom_names);
+    }
+
+    void Chests_t::Uninitialize()
+    {
+        Vector_t<String_t> custom_names;
+        Custom_Names_Array_Variable()->Pack(custom_names);
+    }
+
+    void Chests_t::Reinitialize()
+    {
+        Uninitialize();
+        Initialize();
+    }
 
     void Chests_t::Build_Page()
     {
@@ -338,6 +412,109 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             );
         }
         mcm->Add_Empty_Option();
+
+        mcm->Add_Header_Option(" Custom ");
+        mcm->Add_Empty_Option();
+        {
+            Custom_00_Option_Variable()->Int(
+                mcm->Add_Text_Option(Custom_Names_Array()->Point(0)->String(), "")
+            );
+            Rename_Custom_00_Option_Variable()->Int(
+                mcm->Add_Input_Option(" Rename ", "")
+            );
+            Custom_01_Option_Variable()->Int(
+                mcm->Add_Text_Option(Custom_Names_Array()->Point(1)->String(), "")
+            );
+            Rename_Custom_01_Option_Variable()->Int(
+                mcm->Add_Input_Option(" Rename ", "")
+            );
+            Custom_02_Option_Variable()->Int(
+                mcm->Add_Text_Option(Custom_Names_Array()->Point(2)->String(), "")
+            );
+            Rename_Custom_02_Option_Variable()->Int(
+                mcm->Add_Input_Option(" Rename ", "")
+            );
+            Custom_03_Option_Variable()->Int(
+                mcm->Add_Text_Option(Custom_Names_Array()->Point(3)->String(), "")
+            );
+            Rename_Custom_03_Option_Variable()->Int(
+                mcm->Add_Input_Option(" Rename ", "")
+            );
+            Custom_04_Option_Variable()->Int(
+                mcm->Add_Text_Option(Custom_Names_Array()->Point(4)->String(), "")
+            );
+            Rename_Custom_04_Option_Variable()->Int(
+                mcm->Add_Input_Option(" Rename ", "")
+            );
+            Custom_05_Option_Variable()->Int(
+                mcm->Add_Text_Option(Custom_Names_Array()->Point(5)->String(), "")
+            );
+            Rename_Custom_05_Option_Variable()->Int(
+                mcm->Add_Input_Option(" Rename ", "")
+            );
+            Custom_06_Option_Variable()->Int(
+                mcm->Add_Text_Option(Custom_Names_Array()->Point(6)->String(), "")
+            );
+            Rename_Custom_06_Option_Variable()->Int(
+                mcm->Add_Input_Option(" Rename ", "")
+            );
+            Custom_07_Option_Variable()->Int(
+                mcm->Add_Text_Option(Custom_Names_Array()->Point(7)->String(), "")
+            );
+            Rename_Custom_07_Option_Variable()->Int(
+                mcm->Add_Input_Option(" Rename ", "")
+            );
+            Custom_08_Option_Variable()->Int(
+                mcm->Add_Text_Option(Custom_Names_Array()->Point(8)->String(), "")
+            );
+            Rename_Custom_08_Option_Variable()->Int(
+                mcm->Add_Input_Option(" Rename ", "")
+            );
+            Custom_09_Option_Variable()->Int(
+                mcm->Add_Text_Option(Custom_Names_Array()->Point(9)->String(), "")
+            );
+            Rename_Custom_09_Option_Variable()->Int(
+                mcm->Add_Input_Option(" Rename ", "")
+            );
+            Custom_10_Option_Variable()->Int(
+                mcm->Add_Text_Option(Custom_Names_Array()->Point(10)->String(), "")
+            );
+            Rename_Custom_10_Option_Variable()->Int(
+                mcm->Add_Input_Option(" Rename ", "")
+            );
+            Custom_11_Option_Variable()->Int(
+                mcm->Add_Text_Option(Custom_Names_Array()->Point(11)->String(), "")
+            );
+            Rename_Custom_11_Option_Variable()->Int(
+                mcm->Add_Input_Option(" Rename ", "")
+            );
+            Custom_12_Option_Variable()->Int(
+                mcm->Add_Text_Option(Custom_Names_Array()->Point(12)->String(), "")
+            );
+            Rename_Custom_12_Option_Variable()->Int(
+                mcm->Add_Input_Option(" Rename ", "")
+            );
+            Custom_13_Option_Variable()->Int(
+                mcm->Add_Text_Option(Custom_Names_Array()->Point(13)->String(), "")
+            );
+            Rename_Custom_13_Option_Variable()->Int(
+                mcm->Add_Input_Option(" Rename ", "")
+            );
+            Custom_14_Option_Variable()->Int(
+                mcm->Add_Text_Option(Custom_Names_Array()->Point(14)->String(), "")
+            );
+            Rename_Custom_14_Option_Variable()->Int(
+                mcm->Add_Input_Option(" Rename ", "")
+            );
+            Custom_15_Option_Variable()->Int(
+                mcm->Add_Text_Option(Custom_Names_Array()->Point(15)->String(), "")
+            );
+            Rename_Custom_15_Option_Variable()->Int(
+                mcm->Add_Input_Option(" Rename ", "")
+            );
+        }
+        mcm->Add_Empty_Option();
+        mcm->Add_Empty_Option();
     }
 
     void Chests_t::On_Option_Select(Int_t option)
@@ -463,6 +640,39 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             Open_Chest(Consts::Z_Books_Category(), " Z Books ");
         } else if (option == Books_Option_Variable()->Int()) {
             Open_Chest(Consts::Books_Category(), " # Books ");
+
+        } else if (option == Custom_00_Option_Variable()->Int()) { // Custom
+            Open_Chest(Consts::Custom_00_Category(), Custom_Names_Array()->Point(0)->String());
+        } else if (option == Custom_01_Option_Variable()->Int()) {
+            Open_Chest(Consts::Custom_01_Category(), Custom_Names_Array()->Point(1)->String());
+        } else if (option == Custom_02_Option_Variable()->Int()) {
+            Open_Chest(Consts::Custom_02_Category(), Custom_Names_Array()->Point(2)->String());
+        } else if (option == Custom_03_Option_Variable()->Int()) {
+            Open_Chest(Consts::Custom_03_Category(), Custom_Names_Array()->Point(3)->String());
+        } else if (option == Custom_04_Option_Variable()->Int()) {
+            Open_Chest(Consts::Custom_04_Category(), Custom_Names_Array()->Point(4)->String());
+        } else if (option == Custom_05_Option_Variable()->Int()) {
+            Open_Chest(Consts::Custom_05_Category(), Custom_Names_Array()->Point(5)->String());
+        } else if (option == Custom_06_Option_Variable()->Int()) {
+            Open_Chest(Consts::Custom_06_Category(), Custom_Names_Array()->Point(6)->String());
+        } else if (option == Custom_07_Option_Variable()->Int()) {
+            Open_Chest(Consts::Custom_07_Category(), Custom_Names_Array()->Point(7)->String());
+        } else if (option == Custom_08_Option_Variable()->Int()) {
+            Open_Chest(Consts::Custom_08_Category(), Custom_Names_Array()->Point(8)->String());
+        } else if (option == Custom_09_Option_Variable()->Int()) {
+            Open_Chest(Consts::Custom_09_Category(), Custom_Names_Array()->Point(9)->String());
+        } else if (option == Custom_10_Option_Variable()->Int()) {
+            Open_Chest(Consts::Custom_10_Category(), Custom_Names_Array()->Point(10)->String());
+        } else if (option == Custom_11_Option_Variable()->Int()) {
+            Open_Chest(Consts::Custom_11_Category(), Custom_Names_Array()->Point(11)->String());
+        } else if (option == Custom_12_Option_Variable()->Int()) {
+            Open_Chest(Consts::Custom_12_Category(), Custom_Names_Array()->Point(12)->String());
+        } else if (option == Custom_13_Option_Variable()->Int()) {
+            Open_Chest(Consts::Custom_13_Category(), Custom_Names_Array()->Point(13)->String());
+        } else if (option == Custom_14_Option_Variable()->Int()) {
+            Open_Chest(Consts::Custom_14_Category(), Custom_Names_Array()->Point(14)->String());
+        } else if (option == Custom_15_Option_Variable()->Int()) {
+            Open_Chest(Consts::Custom_15_Category(), Custom_Names_Array()->Point(15)->String());
         }
     }
 
@@ -488,7 +698,47 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     void Chests_t::On_Option_Input_Accept(Int_t option, String_t value)
     {
+        auto Update_Value = [&](Variable_t* custom_variable, Int_t idx, String_t value)->void
+        {
+            Custom_Names_Array()->Point(idx)->String(value);
+            Main()->Reset_Page();
+        };
 
+        if (value && value.data && value.data[0]) {
+            if (option == Rename_Custom_00_Option_Variable()->Int()) {
+                Update_Value(Custom_00_Option_Variable(), 0, value);
+            } else if (option == Rename_Custom_01_Option_Variable()->Int()) {
+                Update_Value(Custom_01_Option_Variable(), 1, value);
+            } else if (option == Rename_Custom_02_Option_Variable()->Int()) {
+                Update_Value(Custom_02_Option_Variable(), 2, value);
+            } else if (option == Rename_Custom_03_Option_Variable()->Int()) {
+                Update_Value(Custom_03_Option_Variable(), 3, value);
+            } else if (option == Rename_Custom_04_Option_Variable()->Int()) {
+                Update_Value(Custom_04_Option_Variable(), 4, value);
+            } else if (option == Rename_Custom_05_Option_Variable()->Int()) {
+                Update_Value(Custom_05_Option_Variable(), 5, value);
+            } else if (option == Rename_Custom_06_Option_Variable()->Int()) {
+                Update_Value(Custom_06_Option_Variable(), 6, value);
+            } else if (option == Rename_Custom_07_Option_Variable()->Int()) {
+                Update_Value(Custom_07_Option_Variable(), 7, value);
+            } else if (option == Rename_Custom_08_Option_Variable()->Int()) {
+                Update_Value(Custom_08_Option_Variable(), 8, value);
+            } else if (option == Rename_Custom_09_Option_Variable()->Int()) {
+                Update_Value(Custom_09_Option_Variable(), 9, value);
+            } else if (option == Rename_Custom_10_Option_Variable()->Int()) {
+                Update_Value(Custom_10_Option_Variable(), 10, value);
+            } else if (option == Rename_Custom_11_Option_Variable()->Int()) {
+                Update_Value(Custom_11_Option_Variable(), 11, value);
+            } else if (option == Rename_Custom_12_Option_Variable()->Int()) {
+                Update_Value(Custom_12_Option_Variable(), 12, value);
+            } else if (option == Rename_Custom_13_Option_Variable()->Int()) {
+                Update_Value(Custom_13_Option_Variable(), 13, value);
+            } else if (option == Rename_Custom_14_Option_Variable()->Int()) {
+                Update_Value(Custom_14_Option_Variable(), 14, value);
+            } else if (option == Rename_Custom_15_Option_Variable()->Int()) {
+                Update_Value(Custom_15_Option_Variable(), 15, value);
+            }
+        }
     }
 
     void Chests_t::On_Option_Keymap_Change(Int_t option, Int_t key_code, String_t conflict, String_t conflicting_mod)
@@ -506,13 +756,14 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Main_t* mcm = Main();
 
         if (option == Input_Option_Variable()->Int()) {
-            mcm->Info_Text("Opens the input chest. The items contained therein will be sorted into each respective category.");
+            mcm->Info_Text("Opens the input chest. The items contained therein will be sorted into each respective category.\n"
+                           "Items will first be filtered through Custom Categories by their form id, and then into the rest.");
         }
     }
 
     void Chests_t::Open_Chest(Reference_t* chest, String_t name)
     {
-        Object_Ref::Categorize(Consts::Input_Category());
+        Game::Update_NPCP_Categories();
         Object_Ref::Rename(chest, name);
 
         class Callback : public Virtual_Callback_t {

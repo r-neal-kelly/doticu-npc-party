@@ -29,6 +29,7 @@
 #include "quest.h"
 #include "spell.h"
 #include "string2.h"
+#include "topic_infos.h"
 #include "utils.h"
 #include "vars.h"
 #include "vector.h"
@@ -422,6 +423,7 @@ namespace doticu_npcp { namespace Main {
         REGISTER_NAMESPACE(Outfit);
         REGISTER_NAMESPACE(Package);
         REGISTER_NAMESPACE(Papyrus);
+        REGISTER_NAMESPACE(Papyrus::Topic_Infos);
         REGISTER_NAMESPACE(Quest);
         REGISTER_NAMESPACE(Spell);
         REGISTER_NAMESPACE(String2);

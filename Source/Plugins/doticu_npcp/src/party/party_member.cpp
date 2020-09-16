@@ -2008,7 +2008,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                 Actor_t* actor = Actor();
                 Create_Display(actor, origin, radius, degree);
                 Actor2::Evaluate_Package(actor);
-                Enforce(); // this needs to be changed out to simply updating outfit
+                Enforce(); // this needs to be changed to simply updating outfit
                 return CODES::SUCCESS;
             } else {
                 return CODES::IS;

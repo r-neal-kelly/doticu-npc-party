@@ -2,6 +2,8 @@
 
 Scriptname doticu_npcp_topics extends TopicInfo hidden
 
+; all the following is to be deleted, see topics_menu Execute
+
 ; NPC
 function Member(ObjectReference ref)
     (GetOwningQuest() as doticu_npcp_commands).Member(ref as Actor)

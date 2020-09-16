@@ -12,6 +12,8 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     class Chests_t : public Quest_t {
     public:
+        static constexpr size_t MAX_CUSTOM_CATEGORIES = 16;
+
         static String_t Class_Name();
         static Class_Info_t* Class_Info();
         static Chests_t* Self();
@@ -85,6 +87,48 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Variable_t* Y_Books_Option_Variable();
         Variable_t* Z_Books_Option_Variable();
         Variable_t* Books_Option_Variable();
+
+        Variable_t* Custom_00_Option_Variable();
+        Variable_t* Custom_01_Option_Variable();
+        Variable_t* Custom_02_Option_Variable();
+        Variable_t* Custom_03_Option_Variable();
+        Variable_t* Custom_04_Option_Variable();
+        Variable_t* Custom_05_Option_Variable();
+        Variable_t* Custom_06_Option_Variable();
+        Variable_t* Custom_07_Option_Variable();
+        Variable_t* Custom_08_Option_Variable();
+        Variable_t* Custom_09_Option_Variable();
+        Variable_t* Custom_10_Option_Variable();
+        Variable_t* Custom_11_Option_Variable();
+        Variable_t* Custom_12_Option_Variable();
+        Variable_t* Custom_13_Option_Variable();
+        Variable_t* Custom_14_Option_Variable();
+        Variable_t* Custom_15_Option_Variable();
+
+        Variable_t* Rename_Custom_00_Option_Variable();
+        Variable_t* Rename_Custom_01_Option_Variable();
+        Variable_t* Rename_Custom_02_Option_Variable();
+        Variable_t* Rename_Custom_03_Option_Variable();
+        Variable_t* Rename_Custom_04_Option_Variable();
+        Variable_t* Rename_Custom_05_Option_Variable();
+        Variable_t* Rename_Custom_06_Option_Variable();
+        Variable_t* Rename_Custom_07_Option_Variable();
+        Variable_t* Rename_Custom_08_Option_Variable();
+        Variable_t* Rename_Custom_09_Option_Variable();
+        Variable_t* Rename_Custom_10_Option_Variable();
+        Variable_t* Rename_Custom_11_Option_Variable();
+        Variable_t* Rename_Custom_12_Option_Variable();
+        Variable_t* Rename_Custom_13_Option_Variable();
+        Variable_t* Rename_Custom_14_Option_Variable();
+        Variable_t* Rename_Custom_15_Option_Variable();
+
+        Variable_t* Custom_Names_Array_Variable();
+
+        Array_t* Custom_Names_Array();
+
+        void Initialize();
+        void Uninitialize();
+        void Reinitialize();
 
         void Build_Page();
 

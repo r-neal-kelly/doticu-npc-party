@@ -50,7 +50,9 @@ namespace doticu_npcp { namespace Object_Ref {
     void Remove_Non_Outfit_Worn(Reference_t* obj, Reference_t* other = nullptr, Bool_t remove_quest_items = false);
     void Remove_All_Items(Reference_t* from, Reference_t* to = nullptr, Bool_t remove_quest_items = false, Bool_t remove_unplayable_items = true);
     
-    void Categorize(TESObjectREFR *ref_object);
+    Bool_t Contains_Form(Reference_t* ref, Form_t* form);
+
+    void Categorize(Reference_t* ref, Bool_t only_custom_categories = false);
     void Log_XContainer(TESObjectREFR *obj);
     void Log_XList(TESObjectREFR *ref_object);
     void Validate_XContainer(Reference_t* ref);

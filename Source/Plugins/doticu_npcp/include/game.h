@@ -27,6 +27,8 @@ namespace doticu_npcp { namespace Game {
     BGSVoiceType *Get_Voice_By_Name(BSFixedString str_name);
 
     Reference_t* Get_NPCP_Category(Form_t* form);
+    Reference_t* Get_NPCP_Custom_Category(Form_t* form);
+    void Update_NPCP_Categories();
 
 }}
 

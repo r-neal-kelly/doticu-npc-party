@@ -22,6 +22,9 @@ doticu_npcp_control function Control() global
     return doticu_npcp_consts.Control_Quest() as doticu_npcp_control
 endFunction
 
+; Funcs
+function Execute_Topic_Info(TopicInfo topic_info, ObjectReference ref) native global
+
 ; most of the following shall eventually be moved into existing types or removed completely
 
 ; Object_Ref

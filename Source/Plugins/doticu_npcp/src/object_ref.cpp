@@ -584,59 +584,170 @@ namespace doticu_npcp { namespace Object_Ref {
         Remove_If(ref, transfer, should_remove_xform, should_remove_xlist);
     }
 
-    void Categorize(TESObjectREFR *obj) {
-        if (!obj) {
-            _MESSAGE("Object_Ref::Categorize: Missing ref_object.");
-            return;
-        }
-
-        std::vector<TESForm *> vec_forms_move;
-
-        XContainer_t *xcontainer_obj = Object_Ref::Get_XContainer(obj, false);
-        if (xcontainer_obj) {
-            for (XEntries_t::Iterator it_xentry_obj = xcontainer_obj->changes->xentries->Begin(); !it_xentry_obj.End(); ++it_xentry_obj) {
-                XEntry_t *xentry_obj = it_xentry_obj.Get();
-                if (!xentry_obj || !xentry_obj->form) {
-                    continue;
-                }
-
-                TESForm *form_obj = xentry_obj->form;
-                if (!form_obj->IsPlayable()) {
-                    continue;
-                }
-
-                vec_forms_move.push_back(form_obj);
-            }
-        }
-
-        BContainer_t *bcontainer_obj = Object_Ref::Get_BContainer(obj);
-        if (bcontainer_obj) {
-            for (u64 idx = 0; idx < bcontainer_obj->numEntries; idx += 1) {
-                BEntry_t *bentry_obj = bcontainer_obj->entries[idx];
-                if (!bentry_obj || !bentry_obj->form || bentry_obj->count < 1) {
-                    continue;
-                }
-
-                TESForm *form_obj = bentry_obj->form;
-                if (form_obj->formType == kFormType_LeveledItem || !form_obj->IsPlayable()) {
-                    continue;
-                }
-
-                if (!Vector::Has<TESForm *>(vec_forms_move, form_obj)) {
-                    vec_forms_move.push_back(form_obj);
+    Bool_t Contains_Form(Reference_t* ref, Form_t* form)
+    {
+        if (ref && form) {
+            BContainer_t* bcontainer = Object_Ref::Get_BContainer(ref);
+            if (bcontainer) {
+                for (size_t idx = 0, count = bcontainer->numEntries; idx < count; idx += 1) {
+                    BEntry_t* bentry = bcontainer->entries[idx];
+                    if (bentry && bentry->form == form && bentry->count > 0) {
+                        XEntry_t* xentry = Get_XEntry(ref, form, false);
+                        if (!xentry || xentry->Delta_Count() > 0 - bentry->count) {
+                            return true;
+                        }
+                    }
                 }
             }
+            XContainer_t* xcontainer = Object_Ref::Get_XContainer(ref, false);
+            if (xcontainer) {
+                for (XEntries_t::Iterator it = xcontainer->changes->xentries->Begin(); !it.End(); ++it) {
+                    XEntry_t* xentry = it.Get();
+                    if (xentry && xentry->form == form && xentry->Delta_Count() > 0) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } else {
+            return false;
         }
+    }
 
-        for (u64 idx = 0, size = vec_forms_move.size(); idx < size; idx += 1) {
-            TESForm *form_move = vec_forms_move[idx];
+    void Categorize(Reference_t *ref, Bool_t only_custom_categories) {
+        if (ref) {
+            Vector_t<XEntry_t*> xentries_to_move;
+            Vector_t<XEntry_t*> xentries_to_destroy;
+            xentries_to_move.reserve(8);
+            xentries_to_destroy.reserve(2);
 
-            TESObjectREFR *category = Game::Get_NPCP_Category(form_move);
-            if (!category) {
-                continue;
+            auto Preexisting_XEntry = [&xentries_to_move](Form_t* form)->XEntry_t*
+            {
+                for (size_t idx = 0, count = xentries_to_move.size(); idx < count; idx += 1) {
+                    XEntry_t* xentry = xentries_to_move[idx];
+                    if (xentry->form == form) {
+                        return xentry;
+                    }
+                }
+                return nullptr;
+            };
+
+            XContainer_t* xcontainer = Get_XContainer(ref, false);
+            if (xcontainer) {
+                for (XEntries_t::Iterator it = xcontainer->changes->xentries->Begin(); !it.End(); ++it) {
+                    XEntry_t* xentry = it.Get();
+                    if (xentry && xentry->form && xentry->form->IsPlayable()) {
+                        XEntry_t* preexisting_xentry = Preexisting_XEntry(xentry->form);
+                        if (preexisting_xentry) {
+                            Int_t bentry_count = Get_BEntry_Count(ref, xentry->form);
+                            Int_t entry_count = xentry->Delta_Count() + bentry_count;
+                            if (entry_count > 0) {
+                                preexisting_xentry->Increment(entry_count);
+                            }
+                            xentry->Delta_Count(0 - bentry_count);
+                            xentries_to_destroy.push_back(xentry);
+                        } else {
+                            xentries_to_move.push_back(xentry);
+                        }
+                    }
+                }
             }
 
-            Object_Ref::Move_Entry(obj, category, form_move);
+            for (size_t idx = 0, count = xentries_to_destroy.size(); idx < count; idx += 1) {
+                XEntry_t* xentry = xentries_to_destroy[idx];
+                Remove_XEntry(ref, xentry);
+                XEntry_t::Destroy(xentry);
+            }
+
+            for (size_t idx = 0, count = xentries_to_move.size(); idx < count; idx += 1) {
+                XEntry_t* xentry = xentries_to_move[idx];
+                Reference_t* category = only_custom_categories ?
+                    Game::Get_NPCP_Custom_Category(xentry->form) :
+                    Game::Get_NPCP_Category(xentry->form);
+                if (category && category != ref) {
+                    XEntry_t* category_xentry = Get_XEntry(category, xentry->form, false);
+                    if (category_xentry) {
+                        Vector_t<XList_t*> xlists_to_move;
+                        xentries_to_move.reserve(2);
+                        for (XLists_t::Iterator it = xentry->xlists->Begin(); !it.End(); ++it) {
+                            XList_t* xlist = it.Get();
+                            xlists_to_move.push_back(xlist);
+                        }
+
+                        for (size_t idx = 0, count = xlists_to_move.size(); idx < count; idx += 1) {
+                            XList_t* xlist = xlists_to_move[idx];
+                            xentry->Move_XList(category_xentry, category, xlist);
+                        }
+
+                        Int_t bentry_count = Get_BEntry_Count(ref, xentry->form);
+                        Int_t entry_count = bentry_count + xentry->Delta_Count();
+                        if (entry_count > 0) {
+                            category_xentry->Increment(entry_count);
+                            if (bentry_count > 0) {
+                                xentry->Delta_Count(0 - bentry_count);
+                            } else {
+                                Remove_XEntry(ref, xentry);
+                                XEntry_t::Destroy(xentry);
+                            }
+                        }
+                    } else {
+                        Int_t xlists_aggregate_count = 0;
+                        for (XLists_t::Iterator it = xentry->xlists->Begin(); !it.End(); ++it) {
+                            XList_t* xlist = it.Get();
+                            xlists_aggregate_count += XList::Get_Count(xlist);
+                        }
+                        if (xlists_aggregate_count < 0) {
+                            xlists_aggregate_count = 0;
+                            for (XLists_t::Iterator it = xentry->xlists->Begin(); !it.End(); ++it) {
+                                XList_t* xlist = it.Get();
+                                XList::Set_Count(xlist, 1);
+                                xlists_aggregate_count += 1;
+                            }
+                            if (xlists_aggregate_count < 0) {
+                                NPCP_ASSERT(false);
+                            }
+                        }
+
+                        Int_t bentry_count = Get_BEntry_Count(ref, xentry->form);
+                        Int_t entry_count = bentry_count + xentry->Delta_Count();
+                        if (entry_count < xlists_aggregate_count) {
+                            entry_count = xlists_aggregate_count;
+                            xentry->Delta_Count(xlists_aggregate_count - bentry_count);
+                        }
+
+                        if (bentry_count > 0) {
+                            xentry->Delta_Count(0 - bentry_count);
+                            XEntry_t* new_xentry = XEntry_t::Create(xentry->form, entry_count);
+                            Add_XEntry(category, new_xentry);
+                        } else {
+                            Remove_XEntry(ref, xentry);
+                            Add_XEntry(category, xentry);
+                        }
+                    }
+                }
+            }
+
+            BContainer_t* bcontainer = Object_Ref::Get_BContainer(ref);
+            if (bcontainer) {
+                for (size_t idx = 0; idx < bcontainer->numEntries; idx += 1) {
+                    BEntry_t* bentry = bcontainer->entries[idx];
+                    if (bentry && bentry->form && bentry->count > 0) {
+                        if (bentry->form->IsPlayable() && bentry->form->formType != kFormType_LeveledItem) {
+                            if (Get_XEntry(ref, bentry->form, false) == nullptr) {
+                                Reference_t* category = only_custom_categories ?
+                                    Game::Get_NPCP_Custom_Category(bentry->form) :
+                                    Game::Get_NPCP_Category(bentry->form);
+                                if (category && category != ref) {
+                                    XEntry_t* category_xentry = Get_XEntry(category, bentry->form, true);
+                                    category_xentry->Increment(bentry->count);
+                                    XEntry_t* xentry = Get_XEntry(ref, bentry->form, true);
+                                    xentry->Delta_Count(0 - bentry->count);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -925,8 +1036,8 @@ namespace doticu_npcp { namespace Object_Ref {
 
     void Rename(Reference_t* ref, String_t new_name)
     {
-        // because there is a rare and hard to replicate bug that may have something to do with this, we'll use SKSE for now
-        if (ref) {
+        if (ref && new_name.data) {
+            XList::Validate(&ref->extraData);
             referenceUtils::SetDisplayName(&ref->extraData, new_name, true);
         }
 

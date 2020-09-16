@@ -42,60 +42,60 @@ namespace doticu_npcp { namespace Consts {
 
     enum Skyrim_Forms {
         // Skyrim Actors
-        ACTOR_PLAYER                        = 0x000014,
+        ACTOR_PLAYER                                = 0x000014,
 
         // Skyrim Armors
-        ARMOR_BELTED_TUNIC                  = 0x01BE1A,
-        ARMOR_GOLD_RING                     = 0x01CF2B,
+        ARMOR_BELTED_TUNIC                          = 0x01BE1A,
+        ARMOR_GOLD_RING                             = 0x01CF2B,
 
         // Skyrim Effect Shaders
-        EFFECT_SHADER_REANIMATE             = 0x075272,
+        EFFECT_SHADER_REANIMATE                     = 0x075272,
 
         // Skyrim Factions
-        FACTION_BARD_SINGER_NO_AUTOSTART    = 0x0163FA,
-        FACTION_CURRENT_FOLLOWER            = 0x05C84E,
-        FACTION_PLAYER_FOLLOWER             = 0x084D1B,
-        FACTION_POTENTIAL_FOLLOWER          = 0x05C84D,
-        FACTION_WI_NO_BODY_CLEANUP          = 0x09653A,
+        FACTION_BARD_SINGER_NO_AUTOSTART            = 0x0163FA,
+        FACTION_CURRENT_FOLLOWER                    = 0x05C84E,
+        FACTION_PLAYER_FOLLOWER                     = 0x084D1B,
+        FACTION_POTENTIAL_FOLLOWER                  = 0x05C84D,
+        FACTION_WI_NO_BODY_CLEANUP                  = 0x09653A,
 
         // Skyrim Globals
-        GLOBAL_PLAYER_FOLLOWER_COUNT        = 0x0BCC98,
+        GLOBAL_PLAYER_FOLLOWER_COUNT                = 0x0BCC98,
 
         // Skyrim Keywords
-        KEYWORD_MAGIC_DAMAGE_FIRE           = 0x01CEAD,
-        KEYWORD_MAGIC_DAMAGE_FROST          = 0x01CEAE,
-        KEYWORD_MAGIC_DAMAGE_SHOCK          = 0x01CEAF,
-        KEYWORD_MAGIC_VAMPIRE_DRAIN         = 0x101BDE,
-        KEYWORD_VAMPIRE                     = 0x0A82BB,
-        KEYWORD_VENDOR_ITEM_STAFF           = 0x0937A4,
-        KEYWORD_WEAPON_TYPE_SWORD           = 0x01E711,
-        KEYWORD_WEAPON_TYPE_GREATSWORD      = 0x06D931,
-        KEYWORD_WEAPON_TYPE_WARAXE          = 0x01E712,
-        KEYWORD_WEAPON_TYPE_BATTLEAXE       = 0x06D932,
-        KEYWORD_WEAPON_TYPE_MACE            = 0x01E714,
-        KEYWORD_WEAPON_TYPE_WARHAMMER       = 0x06D930,
-        KEYWORD_WEAPON_TYPE_DAGGER          = 0x01E713,
-        KEYWORD_WEAPON_TYPE_BOW             = 0x01E715,
-        KEYWORD_WEAPON_TYPE_STAFF           = 0x01E716,
+        KEYWORD_MAGIC_DAMAGE_FIRE                   = 0x01CEAD,
+        KEYWORD_MAGIC_DAMAGE_FROST                  = 0x01CEAE,
+        KEYWORD_MAGIC_DAMAGE_SHOCK                  = 0x01CEAF,
+        KEYWORD_MAGIC_VAMPIRE_DRAIN                 = 0x101BDE,
+        KEYWORD_VAMPIRE                             = 0x0A82BB,
+        KEYWORD_VENDOR_ITEM_STAFF                   = 0x0937A4,
+        KEYWORD_WEAPON_TYPE_SWORD                   = 0x01E711,
+        KEYWORD_WEAPON_TYPE_GREATSWORD              = 0x06D931,
+        KEYWORD_WEAPON_TYPE_WARAXE                  = 0x01E712,
+        KEYWORD_WEAPON_TYPE_BATTLEAXE               = 0x06D932,
+        KEYWORD_WEAPON_TYPE_MACE                    = 0x01E714,
+        KEYWORD_WEAPON_TYPE_WARHAMMER               = 0x06D930,
+        KEYWORD_WEAPON_TYPE_DAGGER                  = 0x01E713,
+        KEYWORD_WEAPON_TYPE_BOW                     = 0x01E715,
+        KEYWORD_WEAPON_TYPE_STAFF                   = 0x01E716,
 
         // Skyrim Miscs
-        MISC_GOLD                           = 0x00000F,
+        MISC_GOLD                                   = 0x00000F,
 
         // Skyrim Perks
-        PERK_VAMPIRE_FEED                   = 0x0CF02C,
+        PERK_VAMPIRE_FEED                           = 0x0CF02C,
 
         // Skyrim Quests
-        QUEST_BARD_SONGS                    = 0x074A55,
-        QUEST_DIALOGUE_FOLLOWER             = 0x0750BA,
-        QUEST_PLAYER_VAMPIRE                = 0x0EAFD5,
-        QUEST_WI_CHANGE_LOCATION_01         = 0x0350F4,
-        QUEST_WI_REMOVE_ITEM_04             = 0x034DAB,
+        QUEST_BARD_SONGS                            = 0x074A55,
+        QUEST_DIALOGUE_FOLLOWER                     = 0x0750BA,
+        QUEST_PLAYER_VAMPIRE                        = 0x0EAFD5,
+        QUEST_WI_CHANGE_LOCATION_01                 = 0x0350F4,
+        QUEST_WI_REMOVE_ITEM_04                     = 0x034DAB,
 
         // Skyrim Reference Markers
-        REFERENCE_MARKER_GO_BACK_SAFE       = 0x01BDF3,
+        REFERENCE_MARKER_GO_BACK_SAFE               = 0x01BDF3,
 
         // Skyrim Statics
-        STATIC_MARKER_X                     = 0x00003B,
+        STATIC_MARKER_X                             = 0x00003B,
     };
 
     #define SKYRIM_FORM(TYPE_, MOD_ID_) FORM(Skyrim_Form, TYPE_, MOD_ID_);
@@ -160,8 +160,8 @@ namespace doticu_npcp { namespace Consts {
 
     enum Dawnguard_Forms {
         // Dawnguard Factions
-        FACTION_DLC1_THRALL                 = 0x0162F7,
-        FACTION_DLC1_VAMPIRE_FEED_NO_CRIME  = 0x014CBD,
+        FACTION_DLC1_THRALL                         = 0x0162F7,
+        FACTION_DLC1_VAMPIRE_FEED_NO_CRIME          = 0x014CBD,
     };
 
     #define DAWNGUARD_FORM(TYPE_, MOD_ID_) FORM(Dawnguard_Form, TYPE_, MOD_ID_);
@@ -174,180 +174,282 @@ namespace doticu_npcp { namespace Consts {
 
     enum NPCP_Forms {
         // NPCP Actor Base
-        ACTOR_BASE_MENU                     = 0x317447,
+        ACTOR_BASE_MENU                             = 0x317447,
 
         // NPCP Armors
-        ARMOR_BLANK                         = 0x1EF2A5,
+        ARMOR_BLANK                                 = 0x1EF2A5,
+
+        // NPCP Branches
+        BRANCH_MENU_CHESTS                          = 0x32674F,
+        BRANCH_MENU_CHESTS_APPAREL                  = 0x32B853,
+        BRANCH_MENU_CHESTS_BOOKS                    = 0x32B859,
+        BRANCH_MENU_CHESTS_CUSTOM                   = 0x3C37BA,
+        BRANCH_MENU_CHESTS_EDIBLES                  = 0x32B855,
+        BRANCH_MENU_CHESTS_MISC                     = 0x32B857,
+        BRANCH_MENU_CHESTS_WEAPONS                  = 0x32B851,
 
         // NPCP Cells
-        CELL_STORAGE                        = 0x114F9C,
+        CELL_STORAGE                                = 0x114F9C,
 
         // NPCP Containers
-        CONTAINER_EMPTY                     = 0x0A5561,
-        CONTAINER_OUTFIT2                   = 0x0B9A63,
-        CONTAINER_OUTFIT2_IMMOBILE          = 0x1663CE,
-        CONTAINER_OUTFIT2_SETTLER           = 0x1663CD,
-        CONTAINER_OUTFIT2_THRALL            = 0x1663CC,
-        CONTAINER_OUTFIT2_FOLLOWER          = 0x1663C7,
+        CONTAINER_EMPTY                             = 0x0A5561,
+        CONTAINER_OUTFIT2                           = 0x0B9A63,
+        CONTAINER_OUTFIT2_IMMOBILE                  = 0x1663CE,
+        CONTAINER_OUTFIT2_SETTLER                   = 0x1663CD,
+        CONTAINER_OUTFIT2_THRALL                    = 0x1663CC,
+        CONTAINER_OUTFIT2_FOLLOWER                  = 0x1663C7,
 
         // NPCP Factions
-        FACTION_HORSE                       = 0x354111,
-        FACTION_MEMBER                      = 0x091154,
+        FACTION_HORSE                               = 0x354111,
+        FACTION_MEMBER                              = 0x091154,
 
         // NPCP Formlists
-        FORMLIST_GLOBALS_IS_SADDLER_SITTING = 0x395E54,
-        FORMLIST_MARKERS_EXPO_CELL          = 0x2928AF,
-        FORMLIST_MARKERS_SETTLER            = 0x00B46E,
+        FORMLIST_GLOBALS_IS_SADDLER_SITTING         = 0x395E54,
+        FORMLIST_MARKERS_EXPO_CELL                  = 0x2928AF,
+        FORMLIST_MARKERS_SETTLER                    = 0x00B46E,
 
         // NPCP Globals
-        GLOBAL_IS_INSTALLED                 = 0x189ADD,
-        GLOBAL_ALLOW_DIALOGUE_FOR_ALL       = 0x3B4463,
-        GLOBAL_ALLOW_CHATTER                = 0x3B9568,
-        GLOBAL_FORCE_CLONE_UNIQUES          = 0x05244D,
-        GLOBAL_FORCE_CLONE_GENERICS         = 0x05244E,
-        GLOBAL_FORCE_UNCLONE_UNIQUES        = 0x05244F,
-        GLOBAL_FORCE_UNCLONE_GENERICS       = 0x052450,
-        GLOBAL_IS_LEVELING_ENABLED          = 0x3B4464,
-        GLOBAL_PERCENT_NO_BODY              = 0x193CEA,
-        GLOBAL_PERCENT_NO_FEET              = 0x193CE7,
-        GLOBAL_PERCENT_NO_HANDS             = 0x193CE8,
-        GLOBAL_PERCENT_NO_HEAD              = 0x193CE6,
+        GLOBAL_IS_INSTALLED                         = 0x189ADD,
+        GLOBAL_ALLOW_DIALOGUE_FOR_ALL               = 0x3B4463,
+        GLOBAL_ALLOW_CHATTER                        = 0x3B9568,
+        GLOBAL_FORCE_CLONE_UNIQUES                  = 0x05244D,
+        GLOBAL_FORCE_CLONE_GENERICS                 = 0x05244E,
+        GLOBAL_FORCE_UNCLONE_UNIQUES                = 0x05244F,
+        GLOBAL_FORCE_UNCLONE_GENERICS               = 0x052450,
+        GLOBAL_IS_LEVELING_ENABLED                  = 0x3B4464,
+        GLOBAL_PERCENT_NO_BODY                      = 0x193CEA,
+        GLOBAL_PERCENT_NO_FEET                      = 0x193CE7,
+        GLOBAL_PERCENT_NO_HANDS                     = 0x193CE8,
+        GLOBAL_PERCENT_NO_HEAD                      = 0x193CE6,
 
         // NPCP Leveled Actor
-        LEVELED_ACTOR_HORSE                 = 0x354127,
+        LEVELED_ACTOR_HORSE                         = 0x354127,
 
         // NPCP Location
-        LOCATION_EXPO                       = 0x27E48E,
+        LOCATION_EXPO                               = 0x27E48E,
 
         // NPCP Magic Effects
-        MAGIC_EFFECT_REANIMATE              = 0x3AF361,
-        MAGIC_EFFECT_RETREAT                = 0x2DF8FA,
+        MAGIC_EFFECT_REANIMATE                      = 0x3AF361,
+        MAGIC_EFFECT_RETREAT                        = 0x2DF8FA,
 
         // NPCP Misc Tokens
-        MISC_TOKEN_BANISHED                 = 0x003DFD,
-        MISC_TOKEN_CLONE                    = 0x003DFC,
-        MISC_TOKEN_DISPLAY                  = 0x13D7AC,
-        MISC_TOKEN_FOLLOWER                 = 0x000D84,
-        MISC_TOKEN_FOLLOWER_SNEAK           = 0x000D85,
-        MISC_TOKEN_GENERIC                  = 0x003DFE,
-        MISC_TOKEN_GREETER                  = 0x057384,
-        MISC_TOKEN_IMMOBILE                 = 0x000D77,
-        MISC_TOKEN_MANNEQUIN                = 0x264F42,
-        MISC_TOKEN_MEMBER                   = 0x000D75,
-        MISC_TOKEN_MOVEE                    = 0x1612B3,
-        MISC_TOKEN_PARALYZED                = 0x12E4A7,
-        MISC_TOKEN_REANIMATED               = 0x1E4E9D,
-        MISC_TOKEN_RETREATER                = 0x2F3D00,
-        MISC_TOKEN_SADDLER                  = 0x34F000,
-        MISC_TOKEN_SETTLER                  = 0x000D73,
-        MISC_TOKEN_STYLE_ARCHER             = 0x0A045E,
-        MISC_TOKEN_STYLE_COWARD             = 0x2D56F3,
-        MISC_TOKEN_STYLE_DEFAULT            = 0x0A045D,
-        MISC_TOKEN_STYLE_MAGE               = 0x0A045F,
-        MISC_TOKEN_STYLE_WARRIOR            = 0x0A0460,
-        MISC_TOKEN_THRALL                   = 0x011E90,
-        MISC_TOKEN_VITALITY_ESSENTIAL       = 0x0A0459,
-        MISC_TOKEN_VITALITY_INVULNERABLE    = 0x0A045C,
-        MISC_TOKEN_VITALITY_MORTAL          = 0x0A045B,
-        MISC_TOKEN_VITALITY_PROTECTED       = 0x0A045A,
+        MISC_TOKEN_BANISHED                         = 0x003DFD,
+        MISC_TOKEN_CLONE                            = 0x003DFC,
+        MISC_TOKEN_DISPLAY                          = 0x13D7AC,
+        MISC_TOKEN_FOLLOWER                         = 0x000D84,
+        MISC_TOKEN_FOLLOWER_SNEAK                   = 0x000D85,
+        MISC_TOKEN_GENERIC                          = 0x003DFE,
+        MISC_TOKEN_GREETER                          = 0x057384,
+        MISC_TOKEN_IMMOBILE                         = 0x000D77,
+        MISC_TOKEN_MANNEQUIN                        = 0x264F42,
+        MISC_TOKEN_MEMBER                           = 0x000D75,
+        MISC_TOKEN_MOVEE                            = 0x1612B3,
+        MISC_TOKEN_PARALYZED                        = 0x12E4A7,
+        MISC_TOKEN_REANIMATED                       = 0x1E4E9D,
+        MISC_TOKEN_RETREATER                        = 0x2F3D00,
+        MISC_TOKEN_SADDLER                          = 0x34F000,
+        MISC_TOKEN_SETTLER                          = 0x000D73,
+        MISC_TOKEN_STYLE_ARCHER                     = 0x0A045E,
+        MISC_TOKEN_STYLE_COWARD                     = 0x2D56F3,
+        MISC_TOKEN_STYLE_DEFAULT                    = 0x0A045D,
+        MISC_TOKEN_STYLE_MAGE                       = 0x0A045F,
+        MISC_TOKEN_STYLE_WARRIOR                    = 0x0A0460,
+        MISC_TOKEN_THRALL                           = 0x011E90,
+        MISC_TOKEN_VITALITY_ESSENTIAL               = 0x0A0459,
+        MISC_TOKEN_VITALITY_INVULNERABLE            = 0x0A045C,
+        MISC_TOKEN_VITALITY_MORTAL                  = 0x0A045B,
+        MISC_TOKEN_VITALITY_PROTECTED               = 0x0A045A,
 
         // NPCP Misc
-        MISC_VECTOR_FORM                    = 0x15C1B2,
+        MISC_VECTOR_FORM                            = 0x15C1B2,
 
         // NPCP Outfits
-        OUTFIT_EMPTY                        = 0x0C3C64,
+        OUTFIT_EMPTY                                = 0x0C3C64,
 
         // NPCP PERKS
-        PERK_KISS_THRALL                    = 0x07CD48,
-        PERK_REANIMATE                      = 0x1DFD9C,
-        PERK_RESURRECT                      = 0x0D2F7C,
-        PERK_UNPARALYZE                     = 0x16B4D1,
+        PERK_KISS_THRALL                            = 0x07CD48,
+        PERK_REANIMATE                              = 0x1DFD9C,
+        PERK_RESURRECT                              = 0x0D2F7C,
+        PERK_UNPARALYZE                             = 0x16B4D1,
 
         // NPCP Quests
-        QUEST_MAIN                          = 0x005385,
-        QUEST_VARS                          = 0x003DFF,
-        QUEST_FUNCS                         = 0x005384,
-        QUEST_MEMBERS                       = 0x00184C,
-        QUEST_FOLLOWERS                     = 0x000D83,
-        QUEST_CONTROL                       = 0x000D7F,
-        QUEST_DIALOGUE_THRALL               = 0x212D57,
-        QUEST_DIALOGUE_REANIMATED           = 0x2089A9,
-        QUEST_FEMALE_YOUNG_EAGER            = 0x3B9565,
+        QUEST_MAIN                                  = 0x005385,
+        QUEST_VARS                                  = 0x003DFF,
+        QUEST_FUNCS                                 = 0x005384,
+        QUEST_MEMBERS                               = 0x00184C,
+        QUEST_FOLLOWERS                             = 0x000D83,
+        QUEST_CONTROL                               = 0x000D7F,
+        QUEST_DIALOGUE_THRALL                       = 0x212D57,
+        QUEST_DIALOGUE_REANIMATED                   = 0x2089A9,
+        QUEST_FEMALE_YOUNG_EAGER                    = 0x3B9565,
 
         // NPCP Reference Categories
-        REFERENCE_CATEGORY_INPUT            = 0x395E55,
-        REFERENCE_CATEGORY_SWORDS           = 0x30D20A,
-        REFERENCE_CATEGORY_GREATSWORDS      = 0x30D20B,
-        REFERENCE_CATEGORY_WARAXES          = 0x30D20C,
-        REFERENCE_CATEGORY_BATTLEAXES       = 0x30D20D,
-        REFERENCE_CATEGORY_MACES            = 0x30D20E,
-        REFERENCE_CATEGORY_WARHAMMERS       = 0x30D20F,
-        REFERENCE_CATEGORY_DAGGERS          = 0x30D210,
-        REFERENCE_CATEGORY_STAVES           = 0x30D212,
-        REFERENCE_CATEGORY_BOWS             = 0x30D211,
-        REFERENCE_CATEGORY_AMMO             = 0x30D23D,
-        REFERENCE_CATEGORY_WEAPONS          = 0x30D213,
-        REFERENCE_CATEGORY_LIGHT_ARMOR      = 0x30D214,
-        REFERENCE_CATEGORY_HEAVY_ARMOR      = 0x30D215,
-        REFERENCE_CATEGORY_SHIELDS          = 0x30D216,
-        REFERENCE_CATEGORY_JEWELRY          = 0x30D217,
-        REFERENCE_CATEGORY_CLOTHES          = 0x30D218,
-        REFERENCE_CATEGORY_POTIONS          = 0x30D219,
-        REFERENCE_CATEGORY_POISONS          = 0x30D21A,
-        REFERENCE_CATEGORY_INGREDIENTS      = 0x30D23E,
-        REFERENCE_CATEGORY_FOOD             = 0x30D21B,
-        REFERENCE_CATEGORY_SOULGEMS         = 0x30D240,
-        REFERENCE_CATEGORY_SCROLLS          = 0x30D23F,
-        REFERENCE_CATEGORY_METALS           = 0x30D239,
-        REFERENCE_CATEGORY_LEATHER          = 0x30D23A,
-        REFERENCE_CATEGORY_GEMS             = 0x30D23B,
-        REFERENCE_CATEGORY_CLUTTER          = 0x30D23C,
-        REFERENCE_CATEGORY_KEYS             = 0x30D241,
-        REFERENCE_CATEGORY_MISC             = 0x30D242,
-        REFERENCE_CATEGORY_SPELL_TOMES      = 0x30D21C,
-        REFERENCE_CATEGORY_RECIPES          = 0x30D21D,
-        REFERENCE_CATEGORY_BOOKS_A          = 0x30D21E,
-        REFERENCE_CATEGORY_BOOKS_B          = 0x30D21F,
-        REFERENCE_CATEGORY_BOOKS_C          = 0x30D220,
-        REFERENCE_CATEGORY_BOOKS_D          = 0x30D221,
-        REFERENCE_CATEGORY_BOOKS_E          = 0x30D222,
-        REFERENCE_CATEGORY_BOOKS_F          = 0x30D223,
-        REFERENCE_CATEGORY_BOOKS_G          = 0x30D224,
-        REFERENCE_CATEGORY_BOOKS_H          = 0x30D225,
-        REFERENCE_CATEGORY_BOOKS_I          = 0x30D226,
-        REFERENCE_CATEGORY_BOOKS_J          = 0x30D227,
-        REFERENCE_CATEGORY_BOOKS_K          = 0x30D228,
-        REFERENCE_CATEGORY_BOOKS_L          = 0x30D229,
-        REFERENCE_CATEGORY_BOOKS_M          = 0x30D22A,
-        REFERENCE_CATEGORY_BOOKS_N          = 0x30D22B,
-        REFERENCE_CATEGORY_BOOKS_O          = 0x30D22C,
-        REFERENCE_CATEGORY_BOOKS_P          = 0x30D22D,
-        REFERENCE_CATEGORY_BOOKS_Q          = 0x30D22E,
-        REFERENCE_CATEGORY_BOOKS_R          = 0x30D22F,
-        REFERENCE_CATEGORY_BOOKS_S          = 0x30D230,
-        REFERENCE_CATEGORY_BOOKS_T          = 0x30D231,
-        REFERENCE_CATEGORY_BOOKS_U          = 0x30D232,
-        REFERENCE_CATEGORY_BOOKS_V          = 0x30D233,
-        REFERENCE_CATEGORY_BOOKS_W          = 0x30D234,
-        REFERENCE_CATEGORY_BOOKS_X          = 0x30D235,
-        REFERENCE_CATEGORY_BOOKS_Y          = 0x30D236,
-        REFERENCE_CATEGORY_BOOKS_Z          = 0x30D237,
-        REFERENCE_CATEGORY_BOOKS            = 0x30D238,
+        REFERENCE_CATEGORY_INPUT                    = 0x395E55,
+        REFERENCE_CATEGORY_SWORDS                   = 0x30D20A,
+        REFERENCE_CATEGORY_GREATSWORDS              = 0x30D20B,
+        REFERENCE_CATEGORY_WARAXES                  = 0x30D20C,
+        REFERENCE_CATEGORY_BATTLEAXES               = 0x30D20D,
+        REFERENCE_CATEGORY_MACES                    = 0x30D20E,
+        REFERENCE_CATEGORY_WARHAMMERS               = 0x30D20F,
+        REFERENCE_CATEGORY_DAGGERS                  = 0x30D210,
+        REFERENCE_CATEGORY_STAVES                   = 0x30D212,
+        REFERENCE_CATEGORY_BOWS                     = 0x30D211,
+        REFERENCE_CATEGORY_AMMO                     = 0x30D23D,
+        REFERENCE_CATEGORY_WEAPONS                  = 0x30D213,
+        REFERENCE_CATEGORY_LIGHT_ARMOR              = 0x30D214,
+        REFERENCE_CATEGORY_HEAVY_ARMOR              = 0x30D215,
+        REFERENCE_CATEGORY_SHIELDS                  = 0x30D216,
+        REFERENCE_CATEGORY_JEWELRY                  = 0x30D217,
+        REFERENCE_CATEGORY_CLOTHES                  = 0x30D218,
+        REFERENCE_CATEGORY_POTIONS                  = 0x30D219,
+        REFERENCE_CATEGORY_POISONS                  = 0x30D21A,
+        REFERENCE_CATEGORY_INGREDIENTS              = 0x30D23E,
+        REFERENCE_CATEGORY_FOOD                     = 0x30D21B,
+        REFERENCE_CATEGORY_SOULGEMS                 = 0x30D240,
+        REFERENCE_CATEGORY_SCROLLS                  = 0x30D23F,
+        REFERENCE_CATEGORY_METALS                   = 0x30D239,
+        REFERENCE_CATEGORY_LEATHER                  = 0x30D23A,
+        REFERENCE_CATEGORY_GEMS                     = 0x30D23B,
+        REFERENCE_CATEGORY_CLUTTER                  = 0x30D23C,
+        REFERENCE_CATEGORY_KEYS                     = 0x30D241,
+        REFERENCE_CATEGORY_MISC                     = 0x30D242,
+        REFERENCE_CATEGORY_SPELL_TOMES              = 0x30D21C,
+        REFERENCE_CATEGORY_RECIPES                  = 0x30D21D,
+        REFERENCE_CATEGORY_BOOKS_A                  = 0x30D21E,
+        REFERENCE_CATEGORY_BOOKS_B                  = 0x30D21F,
+        REFERENCE_CATEGORY_BOOKS_C                  = 0x30D220,
+        REFERENCE_CATEGORY_BOOKS_D                  = 0x30D221,
+        REFERENCE_CATEGORY_BOOKS_E                  = 0x30D222,
+        REFERENCE_CATEGORY_BOOKS_F                  = 0x30D223,
+        REFERENCE_CATEGORY_BOOKS_G                  = 0x30D224,
+        REFERENCE_CATEGORY_BOOKS_H                  = 0x30D225,
+        REFERENCE_CATEGORY_BOOKS_I                  = 0x30D226,
+        REFERENCE_CATEGORY_BOOKS_J                  = 0x30D227,
+        REFERENCE_CATEGORY_BOOKS_K                  = 0x30D228,
+        REFERENCE_CATEGORY_BOOKS_L                  = 0x30D229,
+        REFERENCE_CATEGORY_BOOKS_M                  = 0x30D22A,
+        REFERENCE_CATEGORY_BOOKS_N                  = 0x30D22B,
+        REFERENCE_CATEGORY_BOOKS_O                  = 0x30D22C,
+        REFERENCE_CATEGORY_BOOKS_P                  = 0x30D22D,
+        REFERENCE_CATEGORY_BOOKS_Q                  = 0x30D22E,
+        REFERENCE_CATEGORY_BOOKS_R                  = 0x30D22F,
+        REFERENCE_CATEGORY_BOOKS_S                  = 0x30D230,
+        REFERENCE_CATEGORY_BOOKS_T                  = 0x30D231,
+        REFERENCE_CATEGORY_BOOKS_U                  = 0x30D232,
+        REFERENCE_CATEGORY_BOOKS_V                  = 0x30D233,
+        REFERENCE_CATEGORY_BOOKS_W                  = 0x30D234,
+        REFERENCE_CATEGORY_BOOKS_X                  = 0x30D235,
+        REFERENCE_CATEGORY_BOOKS_Y                  = 0x30D236,
+        REFERENCE_CATEGORY_BOOKS_Z                  = 0x30D237,
+        REFERENCE_CATEGORY_BOOKS                    = 0x30D238,
+        REFERENCE_CATEGORY_CUSTOM_00                = 0x3C37AA,
+        REFERENCE_CATEGORY_CUSTOM_01                = 0x3C37AB,
+        REFERENCE_CATEGORY_CUSTOM_02                = 0x3C37AC,
+        REFERENCE_CATEGORY_CUSTOM_03                = 0x3C37AD,
+        REFERENCE_CATEGORY_CUSTOM_04                = 0x3C37AE,
+        REFERENCE_CATEGORY_CUSTOM_05                = 0x3C37AF,
+        REFERENCE_CATEGORY_CUSTOM_06                = 0x3C37B0,
+        REFERENCE_CATEGORY_CUSTOM_07                = 0x3C37B1,
+        REFERENCE_CATEGORY_CUSTOM_08                = 0x3C37B2,
+        REFERENCE_CATEGORY_CUSTOM_09                = 0x3C37B3,
+        REFERENCE_CATEGORY_CUSTOM_10                = 0x3C37B4,
+        REFERENCE_CATEGORY_CUSTOM_11                = 0x3C37B5,
+        REFERENCE_CATEGORY_CUSTOM_12                = 0x3C37B6,
+        REFERENCE_CATEGORY_CUSTOM_13                = 0x3C37B7,
+        REFERENCE_CATEGORY_CUSTOM_14                = 0x3C37B8,
+        REFERENCE_CATEGORY_CUSTOM_15                = 0x3C37B9,
 
         // NPCP Reference Containers
-        REFERENCE_CONTAINER_BUFFER          = 0x3C37A9,
+        REFERENCE_CONTAINER_BUFFER                  = 0x3C37A9,
 
         // NPCP Reference Markers
-        REFERENCE_MARKER_CELL               = 0x15C1AE,
-        REFERENCE_MARKER_EXPO_ANTECHAMBER   = 0x2979B0,
-        REFERENCE_MARKER_STORAGE            = 0x114F9D,
+        REFERENCE_MARKER_CELL                       = 0x15C1AE,
+        REFERENCE_MARKER_EXPO_ANTECHAMBER           = 0x2979B0,
+        REFERENCE_MARKER_STORAGE                    = 0x114F9D,
 
         // NPCP Spells
-        SPELL_ABILITY_REANIMATE             = 0x3AF362,
-        SPELL_ABILITY_RETREAT               = 0x2F3CFF,
+        SPELL_ABILITY_REANIMATE                     = 0x3AF362,
+        SPELL_ABILITY_RETREAT                       = 0x2F3CFF,
+
+        // NPCP Topic Infos
+        TOPIC_INFO_MENU_CHESTS_INPUT                = 0x39AF57,
+        TOPIC_INFO_MENU_CHESTS_WEAPONS_SWORDS       = 0x32B8DC,
+        TOPIC_INFO_MENU_CHESTS_WEAPONS_GREATSWORDS  = 0x32B8D9,
+        TOPIC_INFO_MENU_CHESTS_WEAPONS_WARAXES      = 0x32B8DD,
+        TOPIC_INFO_MENU_CHESTS_WEAPONS_BATTLEAXES   = 0x32B8D6,
+        TOPIC_INFO_MENU_CHESTS_WEAPONS_MACES        = 0x32B8DA,
+        TOPIC_INFO_MENU_CHESTS_WEAPONS_WARHAMMERS   = 0x32B8DE,
+        TOPIC_INFO_MENU_CHESTS_WEAPONS_DAGGERS      = 0x32B8D8,
+        TOPIC_INFO_MENU_CHESTS_WEAPONS_STAVES       = 0x32B8DB,
+        TOPIC_INFO_MENU_CHESTS_WEAPONS_BOWS         = 0x32B8D7,
+        TOPIC_INFO_MENU_CHESTS_WEAPONS_AMMO         = 0x32B8CC,
+        TOPIC_INFO_MENU_CHESTS_WEAPONS_OTHERS       = 0x32B8DF,
+        TOPIC_INFO_MENU_CHESTS_APPAREL_LIGHT_ARMOR  = 0x32B8AA,
+        TOPIC_INFO_MENU_CHESTS_APPAREL_HEAVY_ARMOR  = 0x32B8A8,
+        TOPIC_INFO_MENU_CHESTS_APPAREL_SHIELDS      = 0x32B8AB,
+        TOPIC_INFO_MENU_CHESTS_APPAREL_JEWELRY      = 0x32B8A9,
+        TOPIC_INFO_MENU_CHESTS_APPAREL_CLOTHES      = 0x32B8A7,
+        TOPIC_INFO_MENU_CHESTS_EDIBLES_POTIONS      = 0x32B8CB,
+        TOPIC_INFO_MENU_CHESTS_EDIBLES_POISONS      = 0x32B8CA,
+        TOPIC_INFO_MENU_CHESTS_EDIBLES_INGREDIENTS  = 0x32B8CF,
+        TOPIC_INFO_MENU_CHESTS_EDIBLES_FOOD         = 0x32B8C9,
+        TOPIC_INFO_MENU_CHESTS_MISC_SOULGEMS        = 0x32B8D5,
+        TOPIC_INFO_MENU_CHESTS_MISC_SCROLLS         = 0x32B8D4,
+        TOPIC_INFO_MENU_CHESTS_MISC_METALS          = 0x32B8D2,
+        TOPIC_INFO_MENU_CHESTS_MISC_LEATHER         = 0x32B8D1,
+        TOPIC_INFO_MENU_CHESTS_MISC_GEMS            = 0x32B8CE,
+        TOPIC_INFO_MENU_CHESTS_MISC_CLUTTER         = 0x32B8CD,
+        TOPIC_INFO_MENU_CHESTS_MISC_KEYS            = 0x32B8D0,
+        TOPIC_INFO_MENU_CHESTS_MISC_OTHERS          = 0x32B8D3,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_SPELL_TOMES    = 0x32B8C1,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_RECIPES        = 0x32B8BF,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_A              = 0x32B8AC,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_B              = 0x32B8AD,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_C              = 0x32B8AE,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_D              = 0x32B8AF,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_E              = 0x32B8B0,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_F              = 0x32B8B1,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_G              = 0x32B8B2,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_H              = 0x32B8B3,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_I              = 0x32B8B4,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_J              = 0x32B8B5,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_K              = 0x32B8B6,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_L              = 0x32B8B7,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_M              = 0x32B8B8,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_N              = 0x32B8B9,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_O              = 0x32B8BA,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_P              = 0x32B8BC,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_Q              = 0x32B8BD,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_R              = 0x32B8BE,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_S              = 0x32B8C0,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_T              = 0x32B8C2,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_U              = 0x32B8C3,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_V              = 0x32B8C4,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_W              = 0x32B8C5,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_X              = 0x32B8C6,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_Y              = 0x32B8C7,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_Z              = 0x32B8C8,
+        TOPIC_INFO_MENU_CHESTS_BOOKS_OTHERS         = 0x32B8BB,
+        TOPIC_INFO_MENU_CHESTS_CUSTOM               = 0x3C37BE,
+        TOPIC_INFO_MENU_CHESTS_CUSTOM_00            = 0x3C37C0,
+        TOPIC_INFO_MENU_CHESTS_CUSTOM_01            = 0x3C37C2,
+        TOPIC_INFO_MENU_CHESTS_CUSTOM_02            = 0x3C37C4,
+        TOPIC_INFO_MENU_CHESTS_CUSTOM_03            = 0x3C37C6,
+        TOPIC_INFO_MENU_CHESTS_CUSTOM_04            = 0x3C37C8,
+        TOPIC_INFO_MENU_CHESTS_CUSTOM_05            = 0x3C37CA,
+        TOPIC_INFO_MENU_CHESTS_CUSTOM_06            = 0x3C37CC,
+        TOPIC_INFO_MENU_CHESTS_CUSTOM_07            = 0x3C37CE,
+        TOPIC_INFO_MENU_CHESTS_CUSTOM_08            = 0x3C37D0,
+        TOPIC_INFO_MENU_CHESTS_CUSTOM_09            = 0x3C37D2,
+        TOPIC_INFO_MENU_CHESTS_CUSTOM_10            = 0x3C37D4,
+        TOPIC_INFO_MENU_CHESTS_CUSTOM_11            = 0x3C37D6,
+        TOPIC_INFO_MENU_CHESTS_CUSTOM_12            = 0x3C37D8,
+        TOPIC_INFO_MENU_CHESTS_CUSTOM_13            = 0x3C37DA,
+        TOPIC_INFO_MENU_CHESTS_CUSTOM_14            = 0x3C37DC,
+        TOPIC_INFO_MENU_CHESTS_CUSTOM_15            = 0x3C37DE,
 
         // NPCP Weapons
-        WEAPON_BLANK                        = 0x0C8D65,
+        WEAPON_BLANK                                = 0x0C8D65,
     };
 
     #define NPCP_FORM(TYPE_, MOD_ID_) FORM(NPCP_Form, TYPE_, MOD_ID_);
@@ -357,6 +459,15 @@ namespace doticu_npcp { namespace Consts {
 
     // NPCP Armors
     Armor_t* Blank_Armor() { NPCP_FORM(Armor_t, ARMOR_BLANK); }
+
+    // NPCP Branches
+    Branch_t* Menu_Chests_Branch() { NPCP_FORM(Branch_t, BRANCH_MENU_CHESTS); }
+    Branch_t* Menu_Chests_Weapons_Branch() { NPCP_FORM(Branch_t, BRANCH_MENU_CHESTS_WEAPONS); }
+    Branch_t* Menu_Chests_Apparel_Branch() { NPCP_FORM(Branch_t, BRANCH_MENU_CHESTS_APPAREL); }
+    Branch_t* Menu_Chests_Edibles_Branch() { NPCP_FORM(Branch_t, BRANCH_MENU_CHESTS_EDIBLES); }
+    Branch_t* Menu_Chests_Misc_Branch() { NPCP_FORM(Branch_t, BRANCH_MENU_CHESTS_MISC); }
+    Branch_t* Menu_Chests_Books_Branch() { NPCP_FORM(Branch_t, BRANCH_MENU_CHESTS_BOOKS); }
+    Branch_t* Menu_Chests_Custom_Branch() { NPCP_FORM(Branch_t, BRANCH_MENU_CHESTS_CUSTOM); }
 
     // NPCP Cells
     Cell_t* Storage_Cell() { NPCP_FORM(Cell_t, CELL_STORAGE); }
@@ -395,7 +506,7 @@ namespace doticu_npcp { namespace Consts {
     // NPCP Ints
     Int_t NPCP_Major() { return 0; } // set manually upon each release
     Int_t NPCP_Minor() { return 9; } // set manually upon each release
-    Int_t NPCP_Patch() { return 10; } // set manually upon each release
+    Int_t NPCP_Patch() { return 12; } // set manually upon each release
 
     // NPCP Leveled Actor
     Leveled_Actor_t* Horse_Leveled_Actor() { NPCP_FORM(Leveled_Actor_t, LEVELED_ACTOR_HORSE); }
@@ -517,6 +628,22 @@ namespace doticu_npcp { namespace Consts {
     Reference_t* Y_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_Y); }
     Reference_t* Z_Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS_Z); }
     Reference_t* Books_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_BOOKS); }
+    Reference_t* Custom_00_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_CUSTOM_00); }
+    Reference_t* Custom_01_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_CUSTOM_01); }
+    Reference_t* Custom_02_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_CUSTOM_02); }
+    Reference_t* Custom_03_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_CUSTOM_03); }
+    Reference_t* Custom_04_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_CUSTOM_04); }
+    Reference_t* Custom_05_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_CUSTOM_05); }
+    Reference_t* Custom_06_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_CUSTOM_06); }
+    Reference_t* Custom_07_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_CUSTOM_07); }
+    Reference_t* Custom_08_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_CUSTOM_08); }
+    Reference_t* Custom_09_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_CUSTOM_09); }
+    Reference_t* Custom_10_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_CUSTOM_10); }
+    Reference_t* Custom_11_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_CUSTOM_11); }
+    Reference_t* Custom_12_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_CUSTOM_12); }
+    Reference_t* Custom_13_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_CUSTOM_13); }
+    Reference_t* Custom_14_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_CUSTOM_14); }
+    Reference_t* Custom_15_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_CUSTOM_15); }
 
     // NPCP Reference Containers
     Reference_t* Container_Ref_Buffer() { NPCP_FORM(Reference_t, REFERENCE_CONTAINER_BUFFER); }
@@ -529,6 +656,83 @@ namespace doticu_npcp { namespace Consts {
     // NPCP Spells
     Spell_t* Reanimate_Ability_Spell() { NPCP_FORM(Spell_t, SPELL_ABILITY_REANIMATE); }
     Spell_t* Retreat_Ability_Spell() { NPCP_FORM(Spell_t, SPELL_ABILITY_RETREAT); }
+
+    // NPCP Topic Infos
+    Topic_Info_t* Menu_Chests_Input_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_INPUT); }
+    Topic_Info_t* Menu_Chests_Weapons_Swords_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_WEAPONS_SWORDS); }
+    Topic_Info_t* Menu_Chests_Weapons_Greatswords_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_WEAPONS_GREATSWORDS); }
+    Topic_Info_t* Menu_Chests_Weapons_Waraxes_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_WEAPONS_WARAXES); }
+    Topic_Info_t* Menu_Chests_Weapons_Battleaxes_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_WEAPONS_BATTLEAXES); }
+    Topic_Info_t* Menu_Chests_Weapons_Maces_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_WEAPONS_MACES); }
+    Topic_Info_t* Menu_Chests_Weapons_Warhammers_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_WEAPONS_WARHAMMERS); }
+    Topic_Info_t* Menu_Chests_Weapons_Daggers_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_WEAPONS_DAGGERS); }
+    Topic_Info_t* Menu_Chests_Weapons_Staves_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_WEAPONS_STAVES); }
+    Topic_Info_t* Menu_Chests_Weapons_Bows_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_WEAPONS_BOWS); }
+    Topic_Info_t* Menu_Chests_Weapons_Ammo_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_WEAPONS_AMMO); }
+    Topic_Info_t* Menu_Chests_Weapons_Others_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_WEAPONS_OTHERS); }
+    Topic_Info_t* Menu_Chests_Apparel_Light_Armor_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_APPAREL_LIGHT_ARMOR); }
+    Topic_Info_t* Menu_Chests_Apparel_Heavy_Armor_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_APPAREL_HEAVY_ARMOR); }
+    Topic_Info_t* Menu_Chests_Apparel_Shields_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_APPAREL_SHIELDS); }
+    Topic_Info_t* Menu_Chests_Apparel_Jewelry_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_APPAREL_JEWELRY); }
+    Topic_Info_t* Menu_Chests_Apparel_Clothes_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_APPAREL_CLOTHES); }
+    Topic_Info_t* Menu_Chests_Edibles_Potions_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_EDIBLES_POTIONS); }
+    Topic_Info_t* Menu_Chests_Edibles_Poisons_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_EDIBLES_POISONS); }
+    Topic_Info_t* Menu_Chests_Edibles_Ingredients_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_EDIBLES_INGREDIENTS); }
+    Topic_Info_t* Menu_Chests_Edibles_Food_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_EDIBLES_FOOD); }
+    Topic_Info_t* Menu_Chests_Misc_Soulgems_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_MISC_SOULGEMS); }
+    Topic_Info_t* Menu_Chests_Misc_Scrolls_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_MISC_SCROLLS); }
+    Topic_Info_t* Menu_Chests_Misc_Metals_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_MISC_METALS); }
+    Topic_Info_t* Menu_Chests_Misc_Leather_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_MISC_LEATHER); }
+    Topic_Info_t* Menu_Chests_Misc_Gems_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_MISC_GEMS); }
+    Topic_Info_t* Menu_Chests_Misc_Clutter_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_MISC_CLUTTER); }
+    Topic_Info_t* Menu_Chests_Misc_Keys_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_MISC_KEYS); }
+    Topic_Info_t* Menu_Chests_Misc_Others_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_MISC_OTHERS); }
+    Topic_Info_t* Menu_Chests_Books_Spell_Tomes_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_SPELL_TOMES); }
+    Topic_Info_t* Menu_Chests_Books_Recipes_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_RECIPES); }
+    Topic_Info_t* Menu_Chests_Books_A_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_A); }
+    Topic_Info_t* Menu_Chests_Books_B_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_B); }
+    Topic_Info_t* Menu_Chests_Books_C_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_C); }
+    Topic_Info_t* Menu_Chests_Books_D_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_D); }
+    Topic_Info_t* Menu_Chests_Books_E_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_E); }
+    Topic_Info_t* Menu_Chests_Books_F_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_F); }
+    Topic_Info_t* Menu_Chests_Books_G_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_G); }
+    Topic_Info_t* Menu_Chests_Books_H_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_H); }
+    Topic_Info_t* Menu_Chests_Books_I_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_I); }
+    Topic_Info_t* Menu_Chests_Books_J_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_J); }
+    Topic_Info_t* Menu_Chests_Books_K_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_K); }
+    Topic_Info_t* Menu_Chests_Books_L_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_L); }
+    Topic_Info_t* Menu_Chests_Books_M_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_M); }
+    Topic_Info_t* Menu_Chests_Books_N_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_N); }
+    Topic_Info_t* Menu_Chests_Books_O_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_O); }
+    Topic_Info_t* Menu_Chests_Books_P_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_P); }
+    Topic_Info_t* Menu_Chests_Books_Q_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_Q); }
+    Topic_Info_t* Menu_Chests_Books_R_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_R); }
+    Topic_Info_t* Menu_Chests_Books_S_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_S); }
+    Topic_Info_t* Menu_Chests_Books_T_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_T); }
+    Topic_Info_t* Menu_Chests_Books_U_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_U); }
+    Topic_Info_t* Menu_Chests_Books_V_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_V); }
+    Topic_Info_t* Menu_Chests_Books_W_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_W); }
+    Topic_Info_t* Menu_Chests_Books_X_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_X); }
+    Topic_Info_t* Menu_Chests_Books_Y_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_Y); }
+    Topic_Info_t* Menu_Chests_Books_Z_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_Z); }
+    Topic_Info_t* Menu_Chests_Books_Others_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_OTHERS); }
+    Topic_Info_t* Menu_Chests_Custom_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM); }
+    Topic_Info_t* Menu_Chests_Custom_00_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_00); }
+    Topic_Info_t* Menu_Chests_Custom_01_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_01); }
+    Topic_Info_t* Menu_Chests_Custom_02_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_02); }
+    Topic_Info_t* Menu_Chests_Custom_03_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_03); }
+    Topic_Info_t* Menu_Chests_Custom_04_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_04); }
+    Topic_Info_t* Menu_Chests_Custom_05_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_05); }
+    Topic_Info_t* Menu_Chests_Custom_06_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_06); }
+    Topic_Info_t* Menu_Chests_Custom_07_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_07); }
+    Topic_Info_t* Menu_Chests_Custom_08_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_08); }
+    Topic_Info_t* Menu_Chests_Custom_09_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_09); }
+    Topic_Info_t* Menu_Chests_Custom_10_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_10); }
+    Topic_Info_t* Menu_Chests_Custom_11_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_11); }
+    Topic_Info_t* Menu_Chests_Custom_12_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_12); }
+    Topic_Info_t* Menu_Chests_Custom_13_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_13); }
+    Topic_Info_t* Menu_Chests_Custom_14_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_14); }
+    Topic_Info_t* Menu_Chests_Custom_15_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_15); }
 
     // NPCP Weapons
     Weapon_t* Blank_Weapon() { NPCP_FORM(Weapon_t, WEAPON_BLANK); }
@@ -607,69 +811,6 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
         ADD_GLOBAL("Members_Quest", 0, Quest_t*, Members_Quest);
         ADD_GLOBAL("Followers_Quest", 0, Quest_t*, Followers_Quest);
         ADD_GLOBAL("Control_Quest", 0, Quest_t*, Control_Quest);
-        ADD_GLOBAL("Thrall_Dialogue_Quest", 0, Quest_t*, Thrall_Dialogue_Quest);
-        ADD_GLOBAL("Reanimated_Dialogue_Quest", 0, Quest_t*, Reanimated_Dialogue_Quest);
-        ADD_GLOBAL("Female_Young_Eager_Quest", 0, Quest_t*, Female_Young_Eager_Quest);
-
-        // NPCP Reference Categories
-        ADD_GLOBAL("Input_Category", 0, Reference_t*, Input_Category);
-        ADD_GLOBAL("Swords_Category", 0, Reference_t*, Swords_Category);
-        ADD_GLOBAL("Greatswords_Category", 0, Reference_t*, Greatswords_Category);
-        ADD_GLOBAL("Waraxes_Category", 0, Reference_t*, Waraxes_Category);
-        ADD_GLOBAL("Battleaxes_Category", 0, Reference_t*, Battleaxes_Category);
-        ADD_GLOBAL("Maces_Category", 0, Reference_t*, Maces_Category);
-        ADD_GLOBAL("Warhammers_Category", 0, Reference_t*, Warhammers_Category);
-        ADD_GLOBAL("Daggers_Category", 0, Reference_t*, Daggers_Category);
-        ADD_GLOBAL("Staves_Category", 0, Reference_t*, Staves_Category);
-        ADD_GLOBAL("Bows_Category", 0, Reference_t*, Bows_Category);
-        ADD_GLOBAL("Ammo_Category", 0, Reference_t*, Ammo_Category);
-        ADD_GLOBAL("Weapons_Category", 0, Reference_t*, Weapons_Category);
-        ADD_GLOBAL("Light_Armor_Category", 0, Reference_t*, Light_Armor_Category);
-        ADD_GLOBAL("Heavy_Armor_Category", 0, Reference_t*, Heavy_Armor_Category);
-        ADD_GLOBAL("Shields_Category", 0, Reference_t*, Shields_Category);
-        ADD_GLOBAL("Jewelry_Category", 0, Reference_t*, Jewelry_Category);
-        ADD_GLOBAL("Clothes_Category", 0, Reference_t*, Clothes_Category);
-        ADD_GLOBAL("Potions_Category", 0, Reference_t*, Potions_Category);
-        ADD_GLOBAL("Poisons_Category", 0, Reference_t*, Poisons_Category);
-        ADD_GLOBAL("Ingredients_Category", 0, Reference_t*, Ingredients_Category);
-        ADD_GLOBAL("Food_Category", 0, Reference_t*, Food_Category);
-        ADD_GLOBAL("Soulgems_Category", 0, Reference_t*, Soulgems_Category);
-        ADD_GLOBAL("Scrolls_Category", 0, Reference_t*, Scrolls_Category);
-        ADD_GLOBAL("Metals_Category", 0, Reference_t*, Metals_Category);
-        ADD_GLOBAL("Leather_Category", 0, Reference_t*, Leather_Category);
-        ADD_GLOBAL("Gems_Category", 0, Reference_t*, Gems_Category);
-        ADD_GLOBAL("Clutter_Category", 0, Reference_t*, Clutter_Category);
-        ADD_GLOBAL("Keys_Category", 0, Reference_t*, Keys_Category);
-        ADD_GLOBAL("Misc_Category", 0, Reference_t*, Misc_Category);
-        ADD_GLOBAL("Spell_Tomes_Category", 0, Reference_t*, Spell_Tomes_Category);
-        ADD_GLOBAL("Recipes_Category", 0, Reference_t*, Recipes_Category);
-        ADD_GLOBAL("A_Books_Category", 0, Reference_t*, A_Books_Category);
-        ADD_GLOBAL("B_Books_Category", 0, Reference_t*, B_Books_Category);
-        ADD_GLOBAL("C_Books_Category", 0, Reference_t*, C_Books_Category);
-        ADD_GLOBAL("D_Books_Category", 0, Reference_t*, D_Books_Category);
-        ADD_GLOBAL("E_Books_Category", 0, Reference_t*, E_Books_Category);
-        ADD_GLOBAL("F_Books_Category", 0, Reference_t*, F_Books_Category);
-        ADD_GLOBAL("G_Books_Category", 0, Reference_t*, G_Books_Category);
-        ADD_GLOBAL("H_Books_Category", 0, Reference_t*, H_Books_Category);
-        ADD_GLOBAL("I_Books_Category", 0, Reference_t*, I_Books_Category);
-        ADD_GLOBAL("J_Books_Category", 0, Reference_t*, J_Books_Category);
-        ADD_GLOBAL("K_Books_Category", 0, Reference_t*, K_Books_Category);
-        ADD_GLOBAL("L_Books_Category", 0, Reference_t*, L_Books_Category);
-        ADD_GLOBAL("M_Books_Category", 0, Reference_t*, M_Books_Category);
-        ADD_GLOBAL("N_Books_Category", 0, Reference_t*, N_Books_Category);
-        ADD_GLOBAL("O_Books_Category", 0, Reference_t*, O_Books_Category);
-        ADD_GLOBAL("P_Books_Category", 0, Reference_t*, P_Books_Category);
-        ADD_GLOBAL("Q_Books_Category", 0, Reference_t*, Q_Books_Category);
-        ADD_GLOBAL("R_Books_Category", 0, Reference_t*, R_Books_Category);
-        ADD_GLOBAL("S_Books_Category", 0, Reference_t*, S_Books_Category);
-        ADD_GLOBAL("T_Books_Category", 0, Reference_t*, T_Books_Category);
-        ADD_GLOBAL("U_Books_Category", 0, Reference_t*, U_Books_Category);
-        ADD_GLOBAL("V_Books_Category", 0, Reference_t*, V_Books_Category);
-        ADD_GLOBAL("W_Books_Category", 0, Reference_t*, W_Books_Category);
-        ADD_GLOBAL("X_Books_Category", 0, Reference_t*, X_Books_Category);
-        ADD_GLOBAL("Y_Books_Category", 0, Reference_t*, Y_Books_Category);
-        ADD_GLOBAL("Z_Books_Category", 0, Reference_t*, Z_Books_Category);
-        ADD_GLOBAL("Books_Category", 0, Reference_t*, Books_Category);
 
         #undef ADD_GLOBAL
 

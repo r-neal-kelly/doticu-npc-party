@@ -20,6 +20,9 @@ namespace doticu_npcp { namespace Form {
     void Unregister_Key(Form_t* form, Int_t key_code, Virtual_Callback_i* vcallback = nullptr);
     void Unregister_Keys(Form_t* form, Virtual_Callback_i* vcallback = nullptr);
 
+    const char* Name(Form_t* form);
+    void Name(Form_t* form, const char* name);
+
 }}
 
 namespace doticu_npcp { namespace Form { namespace Exports {

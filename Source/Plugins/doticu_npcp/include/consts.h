@@ -83,6 +83,15 @@ namespace doticu_npcp { namespace Consts {
     // NPCP Armors
     Armor_t* Blank_Armor();
 
+    // NPCP Branches
+    Branch_t* Menu_Chests_Branch();
+    Branch_t* Menu_Chests_Weapons_Branch();
+    Branch_t* Menu_Chests_Apparel_Branch();
+    Branch_t* Menu_Chests_Edibles_Branch();
+    Branch_t* Menu_Chests_Misc_Branch();
+    Branch_t* Menu_Chests_Books_Branch();
+    Branch_t* Menu_Chests_Custom_Branch();
+
     // NPCP Cells
     Cell_t* Storage_Cell();
 
@@ -242,6 +251,22 @@ namespace doticu_npcp { namespace Consts {
     Reference_t* Y_Books_Category();
     Reference_t* Z_Books_Category();
     Reference_t* Books_Category();
+    Reference_t* Custom_00_Category();
+    Reference_t* Custom_01_Category();
+    Reference_t* Custom_02_Category();
+    Reference_t* Custom_03_Category();
+    Reference_t* Custom_04_Category();
+    Reference_t* Custom_05_Category();
+    Reference_t* Custom_06_Category();
+    Reference_t* Custom_07_Category();
+    Reference_t* Custom_08_Category();
+    Reference_t* Custom_09_Category();
+    Reference_t* Custom_10_Category();
+    Reference_t* Custom_11_Category();
+    Reference_t* Custom_12_Category();
+    Reference_t* Custom_13_Category();
+    Reference_t* Custom_14_Category();
+    Reference_t* Custom_15_Category();
 
     // NPCP Reference Containers
     Reference_t* Container_Ref_Buffer();
@@ -254,6 +279,83 @@ namespace doticu_npcp { namespace Consts {
     // NPCP Spells
     Spell_t* Reanimate_Ability_Spell();
     Spell_t* Retreat_Ability_Spell();
+
+    // NPCP Topic Infos
+    Topic_Info_t* Menu_Chests_Input_Topic_Info();
+    Topic_Info_t* Menu_Chests_Weapons_Swords_Topic_Info();
+    Topic_Info_t* Menu_Chests_Weapons_Greatswords_Topic_Info();
+    Topic_Info_t* Menu_Chests_Weapons_Waraxes_Topic_Info();
+    Topic_Info_t* Menu_Chests_Weapons_Battleaxes_Topic_Info();
+    Topic_Info_t* Menu_Chests_Weapons_Maces_Topic_Info();
+    Topic_Info_t* Menu_Chests_Weapons_Warhammers_Topic_Info();
+    Topic_Info_t* Menu_Chests_Weapons_Daggers_Topic_Info();
+    Topic_Info_t* Menu_Chests_Weapons_Staves_Topic_Info();
+    Topic_Info_t* Menu_Chests_Weapons_Bows_Topic_Info();
+    Topic_Info_t* Menu_Chests_Weapons_Ammo_Topic_Info();
+    Topic_Info_t* Menu_Chests_Weapons_Others_Topic_Info();
+    Topic_Info_t* Menu_Chests_Apparel_Light_Armor_Topic_Info();
+    Topic_Info_t* Menu_Chests_Apparel_Heavy_Armor_Topic_Info();
+    Topic_Info_t* Menu_Chests_Apparel_Shields_Topic_Info();
+    Topic_Info_t* Menu_Chests_Apparel_Jewelry_Topic_Info();
+    Topic_Info_t* Menu_Chests_Apparel_Clothes_Topic_Info();
+    Topic_Info_t* Menu_Chests_Edibles_Potions_Topic_Info();
+    Topic_Info_t* Menu_Chests_Edibles_Poisons_Topic_Info();
+    Topic_Info_t* Menu_Chests_Edibles_Ingredients_Topic_Info();
+    Topic_Info_t* Menu_Chests_Edibles_Food_Topic_Info();
+    Topic_Info_t* Menu_Chests_Misc_Soulgems_Topic_Info();
+    Topic_Info_t* Menu_Chests_Misc_Scrolls_Topic_Info();
+    Topic_Info_t* Menu_Chests_Misc_Metals_Topic_Info();
+    Topic_Info_t* Menu_Chests_Misc_Leather_Topic_Info();
+    Topic_Info_t* Menu_Chests_Misc_Gems_Topic_Info();
+    Topic_Info_t* Menu_Chests_Misc_Clutter_Topic_Info();
+    Topic_Info_t* Menu_Chests_Misc_Keys_Topic_Info();
+    Topic_Info_t* Menu_Chests_Misc_Others_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_Spell_Tomes_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_Recipes_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_A_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_B_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_C_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_D_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_E_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_F_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_G_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_H_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_I_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_J_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_K_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_L_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_M_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_N_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_O_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_P_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_Q_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_R_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_S_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_T_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_U_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_V_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_W_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_X_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_Y_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_Z_Topic_Info();
+    Topic_Info_t* Menu_Chests_Books_Others_Topic_Info();
+    Topic_Info_t* Menu_Chests_Custom_Topic_Info();
+    Topic_Info_t* Menu_Chests_Custom_00_Topic_Info();
+    Topic_Info_t* Menu_Chests_Custom_01_Topic_Info();
+    Topic_Info_t* Menu_Chests_Custom_02_Topic_Info();
+    Topic_Info_t* Menu_Chests_Custom_03_Topic_Info();
+    Topic_Info_t* Menu_Chests_Custom_04_Topic_Info();
+    Topic_Info_t* Menu_Chests_Custom_05_Topic_Info();
+    Topic_Info_t* Menu_Chests_Custom_06_Topic_Info();
+    Topic_Info_t* Menu_Chests_Custom_07_Topic_Info();
+    Topic_Info_t* Menu_Chests_Custom_08_Topic_Info();
+    Topic_Info_t* Menu_Chests_Custom_09_Topic_Info();
+    Topic_Info_t* Menu_Chests_Custom_10_Topic_Info();
+    Topic_Info_t* Menu_Chests_Custom_11_Topic_Info();
+    Topic_Info_t* Menu_Chests_Custom_12_Topic_Info();
+    Topic_Info_t* Menu_Chests_Custom_13_Topic_Info();
+    Topic_Info_t* Menu_Chests_Custom_14_Topic_Info();
+    Topic_Info_t* Menu_Chests_Custom_15_Topic_Info();
 
     // NPCP Weapons
     Weapon_t* Blank_Weapon();

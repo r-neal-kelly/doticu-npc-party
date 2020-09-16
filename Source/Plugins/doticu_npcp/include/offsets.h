@@ -9,7 +9,9 @@
 // credit goes to meh321 of 'Address Library for SKSE Plugins' for the offsets
 // and also Ryan-rsm-McKenzie of CommonLibSSE for the ids
 
-// this is for version 1.5.97.0 only. use the ids in comments for other versions
+// this is for version 1.5.97.0 only. use the ids in comments for other versions.
+// as much as possible we need to gather all offsets that we use and get their id,
+// so it's easier to update if we get an new version of Skyrim
 namespace doticu_npcp { namespace Offsets {
 
     namespace Actor {
@@ -108,7 +110,7 @@ namespace doticu_npcp { namespace Offsets {
 
         //constexpr uintptr_t CLEAR_ALL_ALIASES         = 0x003745D0; // 24520
         //constexpr uintptr_t RESET_ALIAS_HASHMAP       = 0x00374880; // 24521
-        constexpr uintptr_t FORCE_REFERENCE_TO          = 0x00375050; // 24523
+        //constexpr uintptr_t FORCE_REFERENCE_TO        = 0x00375050; // 24523
 
         constexpr uintptr_t START                       = 0x00370910; // 24481
 

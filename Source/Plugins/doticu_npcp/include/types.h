@@ -112,9 +112,96 @@ namespace doticu_npcp {
     typedef BGSListForm     Formlist_t;
 
     typedef TESQuest            Quest_t;
+
     typedef BGSDialogueBranch   Branch_t;
-    typedef TESTopic            Topic_t;
-    typedef TESTopicInfo        Topic_Info_t;
+
+    class Topic_Info_t;
+    class Topic_t : public Form_t {
+    public:
+        enum {
+            kTypeID = kFormType_Topic
+        };
+
+        virtual ~Topic_t();
+
+        TESFullName full_name; // 20
+
+        UInt8 flags; // 30
+        UInt8 type; // 31
+        UInt16 subtype; // 32
+        UInt32 priority_and_journal_index; // 34
+        Branch_t* branch; // 38
+        Quest_t* quest; // 40
+        Topic_Info_t** topic_infos; // 48
+        UInt32 topic_info_count; // 50
+        String_t editor_id; // 58
+    };
+    STATIC_ASSERT(sizeof(Topic_t) == 0x60);
+
+    class Topic_Info_t : public Form_t {
+    public:
+        enum {
+            kTypeID = kFormType_TopicInfo
+        };
+
+        virtual ~Topic_Info_t();
+
+        Topic_t* topic; // 20
+        Topic_Info_t* shared; // 28 (I think)
+        Condition* conditions; // 30
+        UInt16 index; // 38 (to array on topic)
+        Bool_t said_once; // 3A
+        UInt8 favor_level; // 3B
+        UInt16 flags; // 3C
+        UInt16 hours_to_reset; // 3E
+        UInt32 mod_info_offset; // 40
+        UInt32 pad_44; // 44
+
+        Bool_t Is_In_Quest(Quest_t* quest)
+        {
+            if (topic) {
+                if (topic->quest) {
+                    return topic->quest == quest;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        Bool_t Is_In_Branch(Branch_t* branch)
+        {
+            if (topic) {
+                if (topic->branch) {
+                    return topic->branch == branch;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        Bool_t Is_In_Topic(Topic_t* topic)
+        {
+            if (this->topic) {
+                return this->topic == topic;
+            } else {
+                return false;
+            }
+        }
+
+        Branch_t* Branch()
+        {
+            if (topic) {
+                return topic->branch;
+            } else {
+                return nullptr;
+            }
+        }
+    };
+    STATIC_ASSERT(sizeof(Topic_Info_t) == 0x48);
 
     typedef TESContainer            BContainer_t;
     typedef TESContainer::Entry**   BEntries_t;

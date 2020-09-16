@@ -255,6 +255,29 @@ namespace doticu_npcp { namespace Form {
         );
     }
 
+    const char* Name(Form_t* form)
+    {
+        if (form) {
+            TESFullName* full_name = DYNAMIC_CAST(form, TESForm, TESFullName);
+            if (full_name && full_name->name && full_name->name.data) {
+                const char* name = full_name->GetName();
+                return name ? name : "";
+            } else {
+                return "";
+            }
+        }
+    }
+
+    void Name(Form_t* form, const char* name)
+    {
+        if (form) {
+            TESFullName* full_name = DYNAMIC_CAST(form, TESForm, TESFullName);
+            if (full_name) {
+                full_name->name = name;
+            }
+        }
+    }
+
 }}
 
 namespace doticu_npcp { namespace Form { namespace Exports {
