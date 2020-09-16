@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "types.h"
 #include "papyrus.h"
 
 namespace doticu_npcp { namespace CODES {
@@ -33,6 +32,7 @@ namespace doticu_npcp { namespace CODES {
         DISPLAY,
         FOLLOWER,
         FOLLOWERS,
+        GREETER,
         HORSE,
         HORSES,
         INTERIOR,

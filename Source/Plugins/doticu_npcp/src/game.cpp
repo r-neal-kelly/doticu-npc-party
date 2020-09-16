@@ -84,6 +84,18 @@ namespace doticu_npcp { namespace Game {
         return LookupFormByID(mod_info->GetFormID(lower_form_id));
     }
 
+    Bool_t Is_Mod_Installed(const char* mod_name)
+    {
+        const ModInfo* mod_info = Data_Handler()->LookupModByName(mod_name);
+        return mod_info && mod_info->IsActive();
+    }
+
+    Bool_t Is_Better_Vampires_Installed()
+    {
+        static const ModInfo* mod_info = Data_Handler()->LookupModByName("Better Vampires.esp");
+        return mod_info && mod_info->IsActive();
+    }
+
     Bool_t Is_Form_In_Mod(UInt32 form_id, const char* mod_name)
     {
         const ModInfo* mod_info = Data_Handler()->LookupModByName(mod_name);

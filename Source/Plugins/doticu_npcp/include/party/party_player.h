@@ -22,8 +22,9 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     public:
         Variable_t* Variable(String_t variable_name);
 
-        Variable_t* Is_Locked_Variable();
-        Variable_t* Is_In_Combat_Variable();
+        Variable_t* Is_Locked_Variable(); // Bool_t
+        Variable_t* Is_In_Combat_Variable(); // Bool_t
+        Variable_t* Menu_Actor_Variable(); // Actor_t
 
         Actor_t* Actor();
         Player_Character_t* Player_Character();
@@ -41,6 +42,16 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         void Begin_Combat();
         void Begin_Combat_Impl();
+
+        void Add_Perk(Perk_t* perk);
+        void Add_Perk_Impl(Perk_t* perk);
+        void Remove_Perk(Perk_t* perk);
+        void Remove_Perk_Impl(Perk_t* perk);
+
+        void Drink_Blood_Of(Actor_t* victim, Callback_t<Player_t*, Actor_t*>* user_callback = nullptr);
+
+        void Open_Global_Dialogue_Menu();
+        void Close_Global_Dialogue_Menu();
 
         void On_Init_Mod();
         void On_Load_Mod();

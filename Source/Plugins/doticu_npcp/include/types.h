@@ -326,6 +326,16 @@ namespace doticu_npcp {
         ARMOR_PERKS,
         SHIELD_PERKS,
         WARD_DEFLECTION,
+        VARIABLE_01,
+        VARIABLE_02,
+        VARIABLE_03,
+        VARIABLE_04,
+        VARIABLE_05,
+        VARIABLE_06,
+        VARIABLE_07,
+        VARIABLE_08,
+        VARIABLE_09,
+        VARIABLE_10,
         // ...
         WAITING_FOR_PLAYER = 95,
         // ...

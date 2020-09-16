@@ -2,11 +2,13 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "commands.h"
 #include "consts.h"
 #include "form.h"
 #include "funcs.h"
 #include "game.h"
 #include "object_ref.h"
+#include "papyrus.inl"
 #include "topic_infos.h"
 #include "utils.h"
 
@@ -17,9 +19,41 @@ namespace doticu_npcp { namespace Papyrus { namespace Topic_Infos {
     void Execute_Topic_Info(Topic_Info_t* topic_info, Reference_t* ref)
     {
         if (topic_info) {
+            Topic_t* topic = topic_info->topic;
             Branch_t* branch = topic_info->Branch();
             if (branch) {
-                if (branch == Consts::Menu_Chests_Branch()) {
+                if (branch == Consts::Menu_Followers_Branch()) {
+                    if (topic == Consts::Menu_Followers_Immobilize_Topic()) {
+                        Modules::Control::Commands_t::Self()->Followers_Immobilize();
+                    } else if (topic == Consts::Menu_Followers_Mobilize_Topic()) {
+                        Modules::Control::Commands_t::Self()->Followers_Mobilize();
+                    } else if (topic == Consts::Menu_Followers_Saddle_Topic()) {
+                        Modules::Control::Commands_t::Self()->Followers_Saddle();
+                    } else if (topic == Consts::Menu_Followers_Settle_Topic()) {
+                        Modules::Control::Commands_t::Self()->Followers_Settle();
+                    } else if (topic == Consts::Menu_Followers_Sneak_Topic()) {
+                        Modules::Control::Commands_t::Self()->Followers_Sneak();
+                    } else if (topic == Consts::Menu_Followers_Stash_Topic()) {
+                        Modules::Control::Commands_t::Self()->Followers_Stash();
+                    } else if (topic == Consts::Menu_Followers_Summon_All_Topic()) {
+                        Modules::Control::Commands_t::Self()->Followers_Summon_All();
+                    } else if (topic == Consts::Menu_Followers_Summon_Immobile_Topic()) {
+                        Modules::Control::Commands_t::Self()->Followers_Summon_Immobile();
+                    } else if (topic == Consts::Menu_Followers_Summon_Mobile_Topic()) {
+                        Modules::Control::Commands_t::Self()->Followers_Summon_Mobile();
+                    } else if (topic == Consts::Menu_Followers_Unfollow_Topic()) {
+                        Modules::Control::Commands_t::Self()->Followers_Unfollow();
+                    } else if (topic == Consts::Menu_Followers_Unmember_Topic()) {
+                        Modules::Control::Commands_t::Self()->Followers_Unmember();
+                    } else if (topic == Consts::Menu_Followers_Unsaddle_Topic()) {
+                        Modules::Control::Commands_t::Self()->Followers_Unsaddle();
+                    } else if (topic == Consts::Menu_Followers_Unsettle_Topic()) {
+                        Modules::Control::Commands_t::Self()->Followers_Unsettle();
+                    } else if (topic == Consts::Menu_Followers_Unsneak_Topic()) {
+                        Modules::Control::Commands_t::Self()->Followers_Unsneak();
+                    }
+
+                } else if (branch == Consts::Menu_Chests_Branch()) {
                     if (topic_info == Consts::Menu_Chests_Input_Topic_Info()) {
                         return Execute_Menu_Chests_Input();
                     }
@@ -194,7 +228,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Topic_Infos {
         }
     }
 
-    void Open_Category(Reference_t* category, String_t name)
+    static void Open_Category(Reference_t* category, String_t name)
     {
         Game::Update_NPCP_Categories();
         Object_Ref::Rename(category, name);

@@ -187,6 +187,7 @@ namespace doticu_npcp { namespace Consts {
         BRANCH_MENU_CHESTS_EDIBLES                  = 0x32B855,
         BRANCH_MENU_CHESTS_MISC                     = 0x32B857,
         BRANCH_MENU_CHESTS_WEAPONS                  = 0x32B851,
+        BRANCH_MENU_FOLLOWERS                       = 0x344DE2,
 
         // NPCP Cells
         CELL_STORAGE                                = 0x114F9C,
@@ -265,6 +266,9 @@ namespace doticu_npcp { namespace Consts {
 
         // NPCP Outfits
         OUTFIT_EMPTY                                = 0x0C3C64,
+
+        // NPCP_Packages
+        PACKAGE_MENU_EXIT                           = 0x3309E0,
 
         // NPCP PERKS
         PERK_KISS_THRALL                            = 0x07CD48,
@@ -371,6 +375,24 @@ namespace doticu_npcp { namespace Consts {
         SPELL_ABILITY_REANIMATE                     = 0x3AF362,
         SPELL_ABILITY_RETREAT                       = 0x2F3CFF,
 
+        // NPCP Topics
+        TOPIC_MENU_FOLLOWERS                        = 0x344DE3,
+        TOPIC_MENU_FOLLOWERS_BACK                   = 0x344DE4,
+        TOPIC_MENU_FOLLOWERS_IMMOBILIZE             = 0x344DE9,
+        TOPIC_MENU_FOLLOWERS_MOBILIZE               = 0x344DE8,
+        TOPIC_MENU_FOLLOWERS_SADDLE                 = 0x36D62F,
+        TOPIC_MENU_FOLLOWERS_SETTLE                 = 0x344DEC,
+        TOPIC_MENU_FOLLOWERS_SNEAK                  = 0x344DEA,
+        TOPIC_MENU_FOLLOWERS_STASH                  = 0x349EFD,
+        TOPIC_MENU_FOLLOWERS_SUMMON_ALL             = 0x344DE5,
+        TOPIC_MENU_FOLLOWERS_SUMMON_IMMOBILE        = 0x344DE7,
+        TOPIC_MENU_FOLLOWERS_SUMMON_MOBILE          = 0x344DE6,
+        TOPIC_MENU_FOLLOWERS_UNFOLLOW               = 0x344DEE,
+        TOPIC_MENU_FOLLOWERS_UNMEMBER               = 0x344DEF,
+        TOPIC_MENU_FOLLOWERS_UNSADDLE               = 0x36D630,
+        TOPIC_MENU_FOLLOWERS_UNSETTLE               = 0x344DED,
+        TOPIC_MENU_FOLLOWERS_UNSNEAK                = 0x344DEB,
+
         // NPCP Topic Infos
         TOPIC_INFO_MENU_CHESTS_INPUT                = 0x39AF57,
         TOPIC_INFO_MENU_CHESTS_WEAPONS_SWORDS       = 0x32B8DC,
@@ -468,6 +490,7 @@ namespace doticu_npcp { namespace Consts {
     Branch_t* Menu_Chests_Misc_Branch() { NPCP_FORM(Branch_t, BRANCH_MENU_CHESTS_MISC); }
     Branch_t* Menu_Chests_Books_Branch() { NPCP_FORM(Branch_t, BRANCH_MENU_CHESTS_BOOKS); }
     Branch_t* Menu_Chests_Custom_Branch() { NPCP_FORM(Branch_t, BRANCH_MENU_CHESTS_CUSTOM); }
+    Branch_t* Menu_Followers_Branch() { NPCP_FORM(Branch_t, BRANCH_MENU_FOLLOWERS); }
 
     // NPCP Cells
     Cell_t* Storage_Cell() { NPCP_FORM(Cell_t, CELL_STORAGE); }
@@ -551,6 +574,9 @@ namespace doticu_npcp { namespace Consts {
 
     // NPCP Outfits
     Outfit_t* Empty_Outfit() { NPCP_FORM(Outfit_t, OUTFIT_EMPTY); }
+
+    // NPCP Packages
+    Package_t* Menu_Exit_Package() { NPCP_FORM(Package_t, PACKAGE_MENU_EXIT); }
 
     // NPCP Perks
     Perk_t* Kiss_Thrall_Perk() { NPCP_FORM(Perk_t, PERK_KISS_THRALL); }
@@ -656,6 +682,24 @@ namespace doticu_npcp { namespace Consts {
     // NPCP Spells
     Spell_t* Reanimate_Ability_Spell() { NPCP_FORM(Spell_t, SPELL_ABILITY_REANIMATE); }
     Spell_t* Retreat_Ability_Spell() { NPCP_FORM(Spell_t, SPELL_ABILITY_RETREAT); }
+
+    // NPCP Topics
+    Topic_t* Menu_Followers_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS); }
+    Topic_t* Menu_Followers_Back_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_BACK); }
+    Topic_t* Menu_Followers_Immobilize_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_IMMOBILIZE); }
+    Topic_t* Menu_Followers_Mobilize_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_MOBILIZE); }
+    Topic_t* Menu_Followers_Saddle_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_SADDLE); }
+    Topic_t* Menu_Followers_Settle_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_SETTLE); }
+    Topic_t* Menu_Followers_Sneak_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_SNEAK); }
+    Topic_t* Menu_Followers_Stash_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_STASH); }
+    Topic_t* Menu_Followers_Summon_All_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_SUMMON_ALL); }
+    Topic_t* Menu_Followers_Summon_Immobile_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_SUMMON_IMMOBILE); }
+    Topic_t* Menu_Followers_Summon_Mobile_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_SUMMON_MOBILE); }
+    Topic_t* Menu_Followers_Unfollow_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_UNFOLLOW); }
+    Topic_t* Menu_Followers_Unmember_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_UNMEMBER); }
+    Topic_t* Menu_Followers_Unsaddle_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_UNSADDLE); }
+    Topic_t* Menu_Followers_Unsettle_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_UNSETTLE); }
+    Topic_t* Menu_Followers_Unsneak_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_UNSNEAK); }
 
     // NPCP Topic Infos
     Topic_Info_t* Menu_Chests_Input_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_INPUT); }
@@ -764,18 +808,8 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
         // Skyrim Keywords
         ADD_GLOBAL("Vampire_Keyword", 0, Keyword_t*, Vampire_Keyword);
 
-        // Skyrim Perks
-        ADD_GLOBAL("Vampire_Feed_Perk", 0, Perk_t*, Vampire_Feed_Perk);
-
         // Skyrim Quests
         ADD_GLOBAL("Bard_Songs_Quest", 0, Quest_t*, Bard_Songs_Quest);
-        ADD_GLOBAL("Player_Vampire_Quest", 0, Quest_t*, Player_Vampire_Quest);
-
-        // Dawnguard Factions
-        ADD_GLOBAL("DLC1_Thrall_Faction", 0, Faction_t*, DLC1_Thrall_Faction);
-
-        // NPCP Actor Base
-        ADD_GLOBAL("Menu_Actor_Base", 0, Actor_Base_t*, Menu_Actor_Base);
 
         // NPCP Globals
         ADD_GLOBAL("Is_Installed_Global", 0, Global_t*, Is_Installed_Global);
@@ -794,15 +828,6 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
         ADD_GLOBAL("NPCP_Major", 0, Int_t, NPCP_Major);
         ADD_GLOBAL("NPCP_Minor", 0, Int_t, NPCP_Minor);
         ADD_GLOBAL("NPCP_Patch", 0, Int_t, NPCP_Patch);
-
-        // NPCP Misc Tokens
-        ADD_GLOBAL("Greeter_Token", 0, Misc_t*, Greeter_Token);
-
-        // NPCP Perks
-        ADD_GLOBAL("Kiss_Thrall_Perk", 0, Perk_t*, Kiss_Thrall_Perk);
-        ADD_GLOBAL("Reanimate_Perk", 0, Perk_t*, Reanimate_Perk);
-        ADD_GLOBAL("Resurrect_Perk", 0, Perk_t*, Resurrect_Perk);
-        ADD_GLOBAL("Unparalyze_Perk", 0, Perk_t*, Unparalyze_Perk);
 
         // NPCP Quests
         ADD_GLOBAL("Main_Quest", 0, Quest_t*, Main_Quest);

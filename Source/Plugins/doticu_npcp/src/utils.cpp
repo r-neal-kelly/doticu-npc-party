@@ -49,10 +49,6 @@ namespace doticu_npcp { namespace Utils { namespace Exports {
         Console_Print(str.data);
     }
 
-    void Log(StaticFunctionTag *, BSFixedString str) {
-        _MESSAGE(str.data);
-    }
-
     using Int_Vector_t = Papyrus::Int_Vector_t;
 
     Int_Vector_t New_Int_Array(Selfless_t*, Int_t size = 0, Int_t fill = 0)
@@ -85,13 +81,6 @@ namespace doticu_npcp { namespace Utils { namespace Exports {
                 "Print",
                 "doticu_npcp",
                 Exports::Print,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction1 <StaticFunctionTag, void, BSFixedString>(
-                "Log",
-                "doticu_npcp",
-                Exports::Log,
                 registry)
         );
 

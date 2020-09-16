@@ -124,8 +124,6 @@ namespace doticu_npcp { namespace Actor2 {
 
     void Update_Equipment(Actor_t* actor, Callback_t<Actor_t*>* user_callback = nullptr);
 
-    void Greet_Player(Actor_t* actor);
-
     void Stop_If_Playing_Music(Actor_t* actor);
 
     Relationship_t::Rank_e Relationship_Rank(Actor_t* actor, Actor_t* other);

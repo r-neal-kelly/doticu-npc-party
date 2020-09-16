@@ -91,6 +91,7 @@ namespace doticu_npcp { namespace Consts {
     Branch_t* Menu_Chests_Misc_Branch();
     Branch_t* Menu_Chests_Books_Branch();
     Branch_t* Menu_Chests_Custom_Branch();
+    Branch_t* Menu_Followers_Branch();
 
     // NPCP Cells
     Cell_t* Storage_Cell();
@@ -174,6 +175,9 @@ namespace doticu_npcp { namespace Consts {
 
     // NPCP Outfits
     Outfit_t* Empty_Outfit();
+
+    // NPCP Packages
+    Package_t* Menu_Exit_Package();
 
     // NPCP Perks
     Perk_t* Kiss_Thrall_Perk();
@@ -279,6 +283,24 @@ namespace doticu_npcp { namespace Consts {
     // NPCP Spells
     Spell_t* Reanimate_Ability_Spell();
     Spell_t* Retreat_Ability_Spell();
+
+    // NPCP Topics
+    Topic_t* Menu_Followers_Topic();
+    Topic_t* Menu_Followers_Back_Topic();
+    Topic_t* Menu_Followers_Immobilize_Topic();
+    Topic_t* Menu_Followers_Mobilize_Topic();
+    Topic_t* Menu_Followers_Saddle_Topic();
+    Topic_t* Menu_Followers_Settle_Topic();
+    Topic_t* Menu_Followers_Sneak_Topic();
+    Topic_t* Menu_Followers_Stash_Topic();
+    Topic_t* Menu_Followers_Summon_All_Topic();
+    Topic_t* Menu_Followers_Summon_Immobile_Topic();
+    Topic_t* Menu_Followers_Summon_Mobile_Topic();
+    Topic_t* Menu_Followers_Unfollow_Topic();
+    Topic_t* Menu_Followers_Unmember_Topic();
+    Topic_t* Menu_Followers_Unsaddle_Topic();
+    Topic_t* Menu_Followers_Unsettle_Topic();
+    Topic_t* Menu_Followers_Unsneak_Topic();
 
     // NPCP Topic Infos
     Topic_Info_t* Menu_Chests_Input_Topic_Info();

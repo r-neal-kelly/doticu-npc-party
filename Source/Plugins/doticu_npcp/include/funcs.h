@@ -26,6 +26,8 @@ namespace doticu_npcp { namespace Modules {
         void Open_Container(Reference_t* container, Virtual_Callback_i* vcallback = nullptr);
         void Close_Menus(Virtual_Callback_i* vcallback = nullptr);
 
+        void Force_Third_Person(Virtual_Callback_i* vcallback = nullptr);
+
     public:
         static void Register_Me(Virtual_Machine_t* vm);
     };

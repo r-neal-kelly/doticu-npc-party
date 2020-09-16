@@ -127,6 +127,16 @@ namespace doticu_npcp { namespace Modules {
         );
     }
 
+    void Funcs_t::Force_Third_Person(Virtual_Callback_i* vcallback)
+    {
+        Virtual_Machine_t::Self()->Call_Global(
+            "Game",
+            "ForceThirdPerson",
+            nullptr,
+            vcallback ? &vcallback : nullptr
+        );
+    }
+
     void Funcs_t::Register_Me(Virtual_Machine_t* vm)
     {
         #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \

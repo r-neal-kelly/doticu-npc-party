@@ -2048,32 +2048,6 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
-    void Greet_Player(Actor_t* actor)
-    {
-        NPCP_ASSERT(actor);
-
-        class Arguments : public Virtual_Arguments_t {
-        public:
-            Actor_t* actor;
-            Arguments(Actor_t* actor) :
-                actor(actor)
-            {
-            }
-            virtual Bool_t operator()(Arguments_t* arguments)
-            {
-                arguments->Resize(1);
-                arguments->At(0)->Pack(actor);
-
-                return true;
-            }
-        } arguments(actor);
-
-        Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(),
-                                               "doticu_npcp_actors",
-                                               "Greet_Player",
-                                               &arguments);
-    }
-
     void Stop_If_Playing_Music(Actor_t* actor)
     {
         NPCP_ASSERT(actor);

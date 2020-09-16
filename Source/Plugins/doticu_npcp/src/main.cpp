@@ -23,9 +23,10 @@
 #include "object_ref.h"
 #include "outfit.h"
 #include "outfit2.h"
-#include "package.h"
+#include "packages.h"
 #include "papyrus.h"
 #include "papyrus.inl"
+#include "perks.h"
 #include "quest.h"
 #include "spell.h"
 #include "string2.h"
@@ -421,8 +422,9 @@ namespace doticu_npcp { namespace Main {
         REGISTER_NAMESPACE(Game);
         REGISTER_NAMESPACE(Object_Ref);
         REGISTER_NAMESPACE(Outfit);
-        REGISTER_NAMESPACE(Package);
         REGISTER_NAMESPACE(Papyrus);
+        REGISTER_NAMESPACE(Papyrus::Packages);
+        REGISTER_NAMESPACE(Papyrus::Perks);
         REGISTER_NAMESPACE(Papyrus::Topic_Infos);
         REGISTER_NAMESPACE(Quest);
         REGISTER_NAMESPACE(Spell);

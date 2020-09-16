@@ -21,6 +21,7 @@
 
 #include "party/party_alias.inl"
 #include "party/party_player.h"
+#include "party/party_greeter.h"
 #include "party/party_movee.h"
 #include "party/party_npcs.h"
 #include "party/party_members.h"
@@ -899,7 +900,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                             void operator()(Variable_t* result)
                             {
                                 if (result && !result->Bool()) {
-                                    Actor2::Greet_Player(actor);
+                                    Greeter_t::Self()->Start(actor);
                                 }
                             }
                         };
@@ -1280,7 +1281,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Backup_State(actor);
 
         if (is_clone) {
-            Actor2::Greet_Player(actor);
+            Greeter_t::Self()->Start(actor);
         }
 
         Enforce_Impl(user_callback);

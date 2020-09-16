@@ -24,6 +24,7 @@
 #include "vars.h"
 #include "vector.h"
 
+#include "party/party_player.h"
 #include "party/party_movee.h"
 #include "party/party_followers.h"
 #include "party/party_follower.h"
@@ -709,7 +710,7 @@ namespace doticu_npcp { namespace Papyrus {
             #define IS(HOTKEY_) String2::Is_Same_Caseless(pressed_hotkey, HOTKEY_())
 
             if (IS(G_Dialogue_Menu)) { // General
-                Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(), "doticu_npcp_actors", "Create_Menu");
+                Party::Player_t::Self()->Open_Global_Dialogue_Menu();
 
             } else if (IS(N_Toggle_Member)) { // NPC
                 Actor_In_Crosshair(false, [](Actor_t* actor)->void

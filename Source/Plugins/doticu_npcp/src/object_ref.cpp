@@ -1198,7 +1198,6 @@ namespace doticu_npcp { namespace Object_Ref {
 
         if (ref) {
             ref->Disable();
-            //ref->pos.z -= 10000.0f;
             Enable(ref);
             Virtual_Machine_t::Self()->Call_Method(ref, "ObjectReference", "Delete");
         }
@@ -1552,41 +1551,7 @@ namespace doticu_npcp { namespace Object_Ref {
 
 namespace doticu_npcp { namespace Object_Ref { namespace Exports {
 
-    void Categorize(Selfless_t *, TESObjectREFR *obj) {
-        return Object_Ref::Categorize(obj);
-    }
-
-    void Log_XContainer(Selfless_t *, TESObjectREFR *ref_object) {
-        return Object_Ref::Log_XContainer(ref_object);
-    }
-
-    void Log_XList(Selfless_t *, TESObjectREFR *obj) {
-        return Object_Ref::Log_XList(obj);
-    }
-
     bool Register(VMClassRegistry *registry) {
-        registry->RegisterFunction(
-            new NativeFunction1 <Selfless_t, void, TESObjectREFR *>(
-                "Object_Ref_Categorize",
-                "doticu_npcp",
-                Exports::Categorize,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction1 <Selfless_t, void, TESObjectREFR *>(
-                "Object_Ref_Log_XContainer",
-                "doticu_npcp",
-                Exports::Log_XContainer,
-                registry)
-        );
-        registry->RegisterFunction(
-            new NativeFunction1 <Selfless_t, void, TESObjectREFR *>(
-                "Object_Ref_Log_XList",
-                "doticu_npcp",
-                Exports::Log_XList,
-                registry)
-        );
-
         return true;
     }
 

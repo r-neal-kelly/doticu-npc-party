@@ -55,6 +55,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     Variable_t* Player_t::Is_Locked_Variable() { DEFINE_VARIABLE("p_is_locked"); }
     Variable_t* Player_t::Is_In_Combat_Variable() { DEFINE_VARIABLE("p_is_in_combat"); }
+    Variable_t* Player_t::Menu_Actor_Variable() { DEFINE_VARIABLE("p_menu_actor"); }
 
     Actor_t* Player_t::Actor()
     {
@@ -136,6 +137,125 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
+    void Player_t::Add_Perk(Perk_t* perk)
+    {
+        struct Lock_t : public Callback_t<Player_t*> {
+            Perk_t* perk;
+            Lock_t(Perk_t* perk) :
+                perk(perk)
+            {
+            }
+            void operator()(Player_t* self)
+            {
+                self->Add_Perk_Impl(perk);
+                self->Unlock();
+            }
+        };
+        Lock(new Lock_t(perk));
+    }
+
+    void Player_t::Add_Perk_Impl(Perk_t* perk)
+    {
+        Actor()->AddPerk(perk, 0);
+    }
+
+    void Player_t::Remove_Perk(Perk_t* perk)
+    {
+        struct Lock_t : public Callback_t<Player_t*> {
+            Perk_t* perk;
+            Lock_t(Perk_t* perk) :
+                perk(perk)
+            {
+            }
+            void operator()(Player_t* self)
+            {
+                self->Remove_Perk_Impl(perk);
+                self->Unlock();
+            }
+        };
+        Lock(new Lock_t(perk));
+    }
+
+    void Player_t::Remove_Perk_Impl(Perk_t* perk)
+    {
+        Actor()->RemovePerk(perk);
+    }
+
+    void Player_t::Drink_Blood_Of(Actor_t* victim, Callback_t<Player_t*, Actor_t*>* user_callback)
+    {
+        using UCallback_t = Callback_t<Player_t*, Actor_t*>;
+
+        if (victim) {
+            struct VArguments : public Virtual_Arguments_t {
+                Reference_t* victim;
+                VArguments(Reference_t* victim) :
+                    victim(victim)
+                {
+                }
+                Bool_t operator()(Arguments_t* args)
+                {
+                    args->Resize(2);
+                    args->At(0)->Pack(victim);
+                    args->At(1)->None(Class_Info_t::Fetch(Actor_t::kTypeID, true));
+                    return true;
+                }
+            } varguments(victim);
+            struct VCallback : public Virtual_Callback_t {
+                Player_t* self;
+                Actor_t* victim;
+                UCallback_t* user_callback;
+                VCallback(Player_t* self, Actor_t* victim, UCallback_t* user_callback) :
+                    self(self), victim(victim), user_callback(user_callback)
+                {
+                }
+                void operator()(Variable_t* result)
+                {
+                    if (user_callback) {
+                        user_callback->operator()(self, victim);
+                        delete user_callback;
+                    }
+                }
+            };
+            Virtual_Callback_i* vcallback = new VCallback(this, victim, user_callback);
+            Virtual_Machine_t::Self()->Call_Method(
+                Consts::Vampire_Feed_Perk(),
+                "PRKF_VampireFeedBeds_000CF02C",
+                "Fragment_15",
+                &varguments,
+                &vcallback
+            );
+        } else {
+            if (user_callback) {
+                user_callback->operator()(this, nullptr);
+                delete user_callback;
+            }
+        }
+    }
+
+    void Player_t::Open_Global_Dialogue_Menu()
+    {
+        if (Menu_Actor_Variable()->Has_Object()) {
+            Close_Global_Dialogue_Menu();
+        }
+
+        Actor_t* player_actor = Actor();
+        Actor_t* menu_actor = static_cast<Actor_t*>
+            (Object_Ref::Place_At_Me(player_actor, Consts::Menu_Actor_Base(), 1, true, false));
+        Actor2::Move_To_Orbit(menu_actor, player_actor, 120.0f, 0.0f);
+        Object_Ref::Enable(menu_actor);
+
+        Menu_Actor_Variable()->Pack(menu_actor);
+    }
+
+    void Player_t::Close_Global_Dialogue_Menu()
+    {
+        Actor_t* menu_actor = Menu_Actor_Variable()->Actor();
+        if (menu_actor) {
+            Object_Ref::Delete_Safe(menu_actor);
+            Menu_Actor_Variable()->None(Class_Info_t::Fetch(Actor_t::kTypeID, true));
+        }
+    }
+
     void Player_t::On_Init_Mod()
     {
         On_Update();
@@ -180,6 +300,15 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     void Player_t::On_Update_Impl()
     {
+        static auto Update_Player = [&]()->void
+        {
+            Actor_t* actor = Actor();
+            actor->AddPerk(Consts::Kiss_Thrall_Perk(), 0);
+            actor->AddPerk(Consts::Resurrect_Perk(), 0);
+            actor->AddPerk(Consts::Reanimate_Perk(), 0);
+            actor->AddPerk(Consts::Unparalyze_Perk(), 0);
+        };
+
         static auto End_Combat = [&]()->Bool_t
         {
             if (Is_In_Combat_Variable()->Bool() == true) {
@@ -197,7 +326,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             }
         };
 
-        static auto Update_Members = [&]()
+        static auto Update_Members = [&]()->void
         {
             Members_t* members = Members_t::Self();
             Vector_t<Member_t*> loaded_members = members->Loaded();
@@ -206,7 +335,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             }
         };
 
-        static auto Update_Cell = [&]()
+        static auto Update_Cell = [&]()->void
         {
             Actor_t* player_actor = Consts::Player_Actor();
             Reference_t* cell_marker = Consts::Cell_Marker();
@@ -219,6 +348,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             }
         };
 
+        Update_Player();
         if (!Is_Party_In_Combat()) {
             if (!End_Combat()) {
                 Update_Members();

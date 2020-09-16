@@ -4,13 +4,11 @@
 
 #pragma once
 
-#include "types.h"
+#include "papyrus.h"
 
 namespace doticu_npcp { namespace Papyrus { namespace Topic_Infos {
 
     void Execute_Topic_Info(Topic_Info_t* topic_info, Reference_t* ref);
-
-    void Open_Category(Reference_t* category, String_t name);
 
     void Execute_Menu_Chests_Input();
 

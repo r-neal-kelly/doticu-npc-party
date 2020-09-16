@@ -66,9 +66,6 @@
     <ClCompile Include="src\vector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\package.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\keys.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -165,6 +162,12 @@
     <ClCompile Include="src\topic_infos.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\perks.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\packages.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\object_ref.h">
@@ -219,9 +222,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\main.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\package.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\keys.h">
@@ -321,6 +321,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\topic_infos.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\perks.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\packages.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
