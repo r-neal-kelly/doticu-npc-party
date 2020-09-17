@@ -2948,77 +2948,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        // NPC
-        METHOD("Member", 1, void, Member, Actor_t*);
-        METHOD("Unmember", 1, void, Unmember, Actor_t*);
-        METHOD("Clone", 1, void, Clone, Actor_t*);
-        METHOD("Unclone", 1, void, Unclone, Actor_t*);
-        METHOD("Toggle_Move", 1, void, Toggle_Move, Actor_t*);
-
-        // Member
-        METHOD("Summon", 1, void, Summon, Actor_t*);
-        METHOD("Goto", 1, void, Goto, Actor_t*);
-        METHOD("Open_Pack", 1, void, Open_Pack, Actor_t*);
-        METHOD("Stash", 1, void, Stash, Actor_t*);
-        METHOD("Resurrect", 1, void, Resurrect, Actor_t*);
-        METHOD("Mobilize", 1, void, Mobilize, Actor_t*);
-        METHOD("Immobilize", 1, void, Immobilize, Actor_t*);
-        METHOD("Settle", 1, void, Settle, Actor_t*);
-        METHOD("Resettle", 1, void, Resettle, Actor_t*);
-        METHOD("Unsettle", 1, void, Unsettle, Actor_t*);
-        METHOD("Enthrall", 1, void, Enthrall, Actor_t*);
-        METHOD("Unthrall", 1, void, Unthrall, Actor_t*);
-        METHOD("Paralyze", 1, void, Paralyze, Actor_t*);
-        METHOD("Unparalyze", 1, void, Unparalyze, Actor_t*);
-        METHOD("Deanimate", 1, void, Deanimate, Actor_t*);
-        METHOD("Follow", 1, void, Follow, Actor_t*);
-        METHOD("Unfollow", 1, void, Unfollow, Actor_t*);
-        METHOD("Stylize_Default", 1, void, Stylize_Default, Actor_t*);
-        METHOD("Stylize_Warrior", 1, void, Stylize_Warrior, Actor_t*);
-        METHOD("Stylize_Mage", 1, void, Stylize_Mage, Actor_t*);
-        METHOD("Stylize_Archer", 1, void, Stylize_Archer, Actor_t*);
-        METHOD("Stylize_Coward", 1, void, Stylize_Coward, Actor_t*);
-        METHOD("Vitalize_Mortal", 1, void, Vitalize_Mortal, Actor_t*);
-        METHOD("Vitalize_Protected", 1, void, Vitalize_Protected, Actor_t*);
-        METHOD("Vitalize_Essential", 1, void, Vitalize_Essential, Actor_t*);
-        METHOD("Vitalize_Invulnerable", 1, void, Vitalize_Invulnerable, Actor_t*);
-        METHOD("Change_Member_Outfit2", 1, void, Change_Member_Outfit2, Actor_t*);
-        METHOD("Change_Immobile_Outfit2", 1, void, Change_Immobile_Outfit2, Actor_t*);
-        METHOD("Change_Settler_Outfit2", 1, void, Change_Settler_Outfit2, Actor_t*);
-        METHOD("Change_Thrall_Outfit2", 1, void, Change_Thrall_Outfit2, Actor_t*);
-        METHOD("Change_Follower_Outfit2", 1, void, Change_Follower_Outfit2, Actor_t*);
-        METHOD("Change_Vanilla_Outfit2", 1, void, Change_Vanilla_Outfit2, Actor_t*);
-        METHOD("Change_Default_Outfit2", 1, void, Change_Default_Outfit2, Actor_t*);
-        METHOD("Change_Current_Outfit2", 1, void, Change_Current_Outfit2, Actor_t*);
         METHOD("Toggle_Expoee", 2, void, Toggle_Expoee, Int_t, Reference_t*);
-        METHOD("Toggle_Reanimated", 1, void, Toggle_Reanimated, Actor_t*);
-        METHOD("Show_Style", 1, void, Show_Style, Actor_t*);
-        METHOD("Show_Vitality", 1, void, Show_Vitality, Actor_t*);
-        METHOD("Show_Outfit2", 1, void, Show_Outfit2, Actor_t*);
-
-        // Follower
-        METHOD("Sneak", 1, void, Sneak, Actor_t*);
-        METHOD("Unsneak", 1, void, Unsneak, Actor_t*);
-        METHOD("Saddle", 1, void, Saddle, Actor_t*);
-        METHOD("Unsaddle", 1, void, Unsaddle, Actor_t*);
-        METHOD("Retreat", 1, void, Retreat, Actor_t*);
-        METHOD("Unretreat", 1, void, Unretreat, Actor_t*);
-
-        // Followers
-        METHOD("Followers_Summon_All", 0, void, Followers_Summon_All);
-        METHOD("Followers_Summon_Mobile", 0, void, Followers_Summon_Mobile);
-        METHOD("Followers_Summon_Immobile", 0, void, Followers_Summon_Immobile);
-        METHOD("Followers_Stash", 0, void, Followers_Stash);
-        METHOD("Followers_Mobilize", 0, void, Followers_Mobilize);
-        METHOD("Followers_Immobilize", 0, void, Followers_Immobilize);
-        METHOD("Followers_Settle", 0, void, Followers_Settle);
-        METHOD("Followers_Unsettle", 0, void, Followers_Unsettle);
-        METHOD("Followers_Sneak", 0, void, Followers_Sneak);
-        METHOD("Followers_Unsneak", 0, void, Followers_Unsneak);
-        METHOD("Followers_Saddle", 0, void, Followers_Saddle);
-        METHOD("Followers_Unsaddle", 0, void, Followers_Unsaddle);
-        METHOD("Followers_Unfollow", 0, void, Followers_Unfollow);
-        METHOD("Followers_Unmember", 0, void, Followers_Unmember);
 
         #undef METHOD
     }

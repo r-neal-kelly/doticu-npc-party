@@ -3,6 +3,7 @@
 */
 
 #include "consts.h"
+#include "funcs.h"
 #include "ui.h"
 #include "utils.h"
 
@@ -428,6 +429,58 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
     void Main_t::Close_Menus(Virtual_Callback_i** callback)
     {
         Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(), "doticu_npcp_funcs", "Close_Menus", nullptr, callback);
+    }
+
+    void Main_t::Enable(Int_t option, Bool_t do_render, Bool_t with_unmap)
+    {
+        Option_Flags(option, with_unmap ? MCM::UNMAP : MCM::NONE, do_render);
+    }
+
+    void Main_t::Disable(Int_t option, Bool_t do_render)
+    {
+        Option_Flags(option, MCM::DISABLE, do_render);
+    }
+
+    void Main_t::Show(Int_t option, Bool_t do_render, Bool_t with_unmap)
+    {
+        Enable(option, do_render, with_unmap);
+    }
+
+    void Main_t::Hide(Int_t option, Bool_t do_render)
+    {
+        Option_Flags(option, MCM::HIDE, do_render);
+    }
+
+    void Main_t::Flicker(Int_t option)
+    {
+        Option_Flags(option, MCM::DISABLE, true);
+
+        struct VCallback : public Virtual_Callback_t {
+            Main_t* self;
+            Int_t option;
+            VCallback(Main_t* self, Int_t option) :
+                self(self), option(option)
+            {
+            }
+            void operator()(Variable_t* result)
+            {
+                if (self->Current_State() != State_e::RESET) {
+                    self->Option_Flags(option, MCM::NONE, true);
+                }
+            }
+        };
+        Virtual_Callback_i* vcallback = new VCallback(this, option);
+        Modules::Funcs_t::Self()->Wait(0.2f, &vcallback);
+    }
+
+    String_t Main_t::Concat(const char* a, const char* b)
+    {
+        return (std::string(a) + b).c_str();
+    }
+
+    String_t Main_t::Concat(const char* a, const char* b, const char* c)
+    {
+        return (std::string(a) + b + c).c_str();
     }
 
     void Main_t::Register_Me(Virtual_Machine_t* vm)

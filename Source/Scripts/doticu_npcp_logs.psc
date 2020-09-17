@@ -142,7 +142,12 @@ endFunction
 
 ; Public Methods
 function Create_Note(string str_note, bool do_log = true);;;
-    Debug.Notification("NPC Party: " + str_note)
+    if UI.IsMenuOpen("Journal Menu")
+        Debug.MessageBox("NPC Party: " + str_note)
+    else
+        Debug.Notification("NPC Party: " + str_note)
+    endIf
+    
     if do_log
         p_Push_Note(str_note)
     endIf

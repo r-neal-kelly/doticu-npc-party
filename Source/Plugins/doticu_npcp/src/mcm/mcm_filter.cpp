@@ -564,10 +564,18 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                                          Variable_t* ternary_variable,
                                          Bool_t is_high)->void
             {
-                if (ternary_variable->Int() == 0) {
-                    ternary_variable->Int(is_high ? 1 : -1);
+                if (is_high) {
+                    if (ternary_variable->Int() < 1) {
+                        ternary_variable->Int(1);
+                    } else {
+                        ternary_variable->Int(0);
+                    }
                 } else {
-                    ternary_variable->Int(0);
+                    if (ternary_variable->Int() > -1) {
+                        ternary_variable->Int(-1);
+                    } else {
+                        ternary_variable->Int(0);
+                    }
                 }
                 mcm->Toggle_Option_Value(high_option_variable->Int(), ternary_variable->Int() > 0, false);
                 mcm->Toggle_Option_Value(low_option_variable->Int(), ternary_variable->Int() < 0, true);

@@ -1074,22 +1074,9 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        METHOD("p_From_Actor", 1, Member_t*, From_Actor, Actor_t*);
-
-        METHOD("Has_Actor", 1, Bool_t, Has_Actor, Actor_t*);
-        METHOD("Has_Base", 1, Bool_t, Has_Base, Actor_t*);
-        METHOD("Has_Head", 1, Bool_t, Has_Head, Actor_t*);
-
+        METHOD("From_Actor", 1, Member_t*, From_Actor, Actor_t*);
         METHOD("Max", 0, Int_t, Max);
         METHOD("Count_Filled", 0, Int_t, Count_Filled);
-        METHOD("Count_Base", 1, Int_t, Count_Base, Actor_t*);
-        METHOD("Count_Heads", 1, Int_t, Count_Heads, Actor_t*);
-
-        METHOD("Sort_Filled", 2, Vector_t<Member_t*>, Sort_Filled, Int_t, Int_t);
-
-        METHOD("Race_Names", 0, Vector_t<String_t>, Race_Names);
-
-        METHOD("Enforce_Loaded", 1, void, Enforce_Loaded, Bool_t);
 
         #undef METHOD
     }

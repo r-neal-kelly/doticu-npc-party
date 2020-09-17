@@ -118,7 +118,6 @@ function f_Create()
     p_str_def_page = PAGE_SETTINGS; or a help page? or global stats page?
     p_str_curr_page = p_str_def_page
 
-    MCM_FOLLOWERS.f_Create()
     MCM_MANNEQUINS.f_Create()
     MCM_SETTINGS.f_Create()
     MCM_LOG.f_Create()
@@ -128,13 +127,11 @@ function f_Destroy()
     MCM_LOG.f_Destroy()
     MCM_SETTINGS.f_Destroy()
     MCM_MANNEQUINS.f_Destroy()
-    MCM_FOLLOWERS.f_Destroy()
 
     p_is_created = false
 endFunction
 
 function f_Register()
-    MCM_FOLLOWERS.f_Register()
     MCM_MANNEQUINS.f_Register()
     MCM_SETTINGS.f_Register()
     MCM_LOG.f_Register()
@@ -144,7 +141,6 @@ function f_Unregister()
     MCM_LOG.f_Unregister()
     MCM_SETTINGS.f_Unregister()
     MCM_MANNEQUINS.f_Unregister()
-    MCM_FOLLOWERS.f_Unregister()
 endFunction
 
 function f_Change_Page(string str_page)
@@ -202,7 +198,8 @@ event OnPageReset(string str_page)
 
     if str_page == PAGE_FOLLOWERS
         p_str_curr_page = str_page
-        MCM_FOLLOWERS.f_Build_Page()
+        MCM_FOLLOWERS.View_Followers()
+        MCM_FOLLOWERS.On_Build_Page()
     elseIf str_page == PAGE_MEMBERS
         p_str_curr_page = str_page
         MCM_MEMBERS.View_Members()
@@ -233,7 +230,7 @@ endEvent
 
 event OnOptionSelect(int id_option)
     if p_str_curr_page == PAGE_FOLLOWERS
-        MCM_FOLLOWERS.f_On_Option_Select(id_option)
+        MCM_FOLLOWERS.On_Option_Select(id_option)
     elseIf p_str_curr_page == PAGE_MEMBERS
         MCM_MEMBERS.On_Option_Select(id_option)
     elseIf p_str_curr_page == PAGE_FILTER
@@ -253,7 +250,7 @@ endEvent
 
 event OnOptionMenuOpen(int id_option)
     if p_str_curr_page == PAGE_FOLLOWERS
-        MCM_FOLLOWERS.f_On_Option_Menu_Open(id_option)
+        MCM_FOLLOWERS.On_Option_Menu_Open(id_option)
     elseIf p_str_curr_page == PAGE_MEMBERS
         MCM_MEMBERS.On_Option_Menu_Open(id_option)
     elseIf p_str_curr_page == PAGE_FILTER
@@ -273,7 +270,7 @@ endEvent
 
 event OnOptionMenuAccept(int id_option, int idx_option)
     if p_str_curr_page == PAGE_FOLLOWERS
-        MCM_FOLLOWERS.f_On_Option_Menu_Accept(id_option, idx_option)
+        MCM_FOLLOWERS.On_Option_Menu_Accept(id_option, idx_option)
     elseIf p_str_curr_page == PAGE_MEMBERS
         MCM_MEMBERS.On_Option_Menu_Accept(id_option, idx_option)
     elseIf p_str_curr_page == PAGE_FILTER
@@ -293,7 +290,7 @@ endEvent
 
 event OnOptionSliderOpen(int id_option)
     if p_str_curr_page == PAGE_FOLLOWERS
-        MCM_FOLLOWERS.f_On_Option_Slider_Open(id_option)
+        MCM_FOLLOWERS.On_Option_Slider_Open(id_option)
     elseIf p_str_curr_page == PAGE_MEMBERS
         MCM_MEMBERS.On_Option_Slider_Open(id_option)
     elseIf p_str_curr_page == PAGE_FILTER
@@ -313,7 +310,7 @@ endEvent
 
 event OnOptionSliderAccept(int id_option, float float_value)
     if p_str_curr_page == PAGE_FOLLOWERS
-        MCM_FOLLOWERS.f_On_Option_Slider_Accept(id_option, float_value)
+        MCM_FOLLOWERS.On_Option_Slider_Accept(id_option, float_value)
     elseIf p_str_curr_page == PAGE_MEMBERS
         MCM_MEMBERS.On_Option_Slider_Accept(id_option, float_value)
     elseIf p_str_curr_page == PAGE_FILTER
@@ -333,7 +330,7 @@ endEvent
 
 event OnOptionInputAccept(int id_option, string str_input)
     if p_str_curr_page == PAGE_FOLLOWERS
-        MCM_FOLLOWERS.f_On_Option_Input_Accept(id_option, str_input)
+        MCM_FOLLOWERS.On_Option_Input_Accept(id_option, str_input)
     elseIf p_str_curr_page == PAGE_MEMBERS
         MCM_MEMBERS.On_Option_Input_Accept(id_option, str_input)
     elseIf p_str_curr_page == PAGE_FILTER
@@ -353,7 +350,7 @@ endEvent
 
 event OnOptionKeymapChange(int id_option, int code_key, string str_conflict_control, string str_conflict_mod)
     if p_str_curr_page == PAGE_FOLLOWERS
-        MCM_FOLLOWERS.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
+        MCM_FOLLOWERS.On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
     elseIf p_str_curr_page == PAGE_MEMBERS
         MCM_MEMBERS.On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
     elseIf p_str_curr_page == PAGE_FILTER
@@ -373,7 +370,7 @@ endEvent
 
 event OnOptionDefault(int id_option)
     if p_str_curr_page == PAGE_FOLLOWERS
-        MCM_FOLLOWERS.f_On_Option_Default(id_option)
+        MCM_FOLLOWERS.On_Option_Default(id_option)
     elseIf p_str_curr_page == PAGE_MEMBERS
         MCM_MEMBERS.On_Option_Default(id_option)
     elseIf p_str_curr_page == PAGE_FILTER
@@ -393,7 +390,7 @@ endEvent
 
 event OnOptionHighlight(int id_option)
     if p_str_curr_page == PAGE_FOLLOWERS
-        MCM_FOLLOWERS.f_On_Option_Highlight(id_option)
+        MCM_FOLLOWERS.On_Option_Highlight(id_option)
     elseIf p_str_curr_page == PAGE_MEMBERS
         MCM_MEMBERS.On_Option_Highlight(id_option)
     elseIf p_str_curr_page == PAGE_FILTER

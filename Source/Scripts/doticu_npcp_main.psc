@@ -1,6 +1,4 @@
-;/
-    Copyright © 2020 r-neal-kelly, aka doticu
-/;
+; Copyright © 2020 r-neal-kelly, aka doticu
 
 Scriptname doticu_npcp_main extends Quest
 
@@ -63,7 +61,6 @@ endFunction
 function p_Create();;;
     VARS.f_Create()
     FUNCS.f_Create()
-    MEMBERS.f_Create()
     CONTROL.f_Create()
 
     FUNCS.f_Register()

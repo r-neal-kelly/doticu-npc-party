@@ -140,6 +140,12 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Party_Member_Variable()->Pack(member, Party::Member_t::Class_Info());
     }
 
+    void Member_t::View_Followers_Member(Party::Member_t* member)
+    {
+        Current_View_Variable()->Int(CODES::VIEW::FOLLOWERS_MEMBER);
+        Party_Member_Variable()->Pack(member, Party::Member_t::Class_Info());
+    }
+
     void Member_t::View_Filter_Members_Member(Party::Member_t* member)
     {
         Current_View_Variable()->Int(CODES::VIEW::FILTER_MEMBERS_MEMBER);
@@ -316,6 +322,10 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             mcm_main->Option_Flags(Sneak_Option_Variable()->Int(), MCM::DISABLE, false);
             mcm_main->Option_Flags(Unsneak_Option_Variable()->Int(), MCM::DISABLE, false);
         }
+
+        mcm_main->Enable(Rating_Option_Variable()->Int(), false);
+        mcm_main->Enable(Stylize_Option_Variable()->Int(), false);
+        mcm_main->Enable(Vitalize_Option_Variable()->Int(), false);
 
         mcm_main->Text_Option_Value(Rating_Option_Variable()->Int(), party_member->Rating_Stars(), false);
 
@@ -575,10 +585,10 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             Actor_t* actor = member->Actor();
             MCM::Main_t* mcm = Main();
             if (option == Back_Option_Variable()->Int()) {
-                mcm->Option_Flags(option, MCM::DISABLE, true);
+                mcm->Disable(option);
                 Go_Back();
             } else if (option == Previous_Option_Variable()->Int()) {
-                mcm->Option_Flags(option, MCM::DISABLE, true);
+                mcm->Disable(option);
                 Int_t current_view = Current_View();
                 if (current_view == CODES::VIEW::MEMBERS_MEMBER || current_view == CODES::VIEW::FILTER_MEMBERS_MEMBER) {
                     MCM::Members_t::Self()->Request_Previous_Member();
@@ -587,7 +597,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 }
                 mcm->Reset_Page();
             } else if (option == Next_Option_Variable()->Int()) {
-                mcm->Option_Flags(option, MCM::DISABLE, true);
+                mcm->Disable(option);
                 Int_t current_view = Current_View();
                 if (current_view == CODES::VIEW::MEMBERS_MEMBER || current_view == CODES::VIEW::FILTER_MEMBERS_MEMBER) {
                     MCM::Members_t::Self()->Request_Next_Member();
@@ -597,11 +607,11 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 mcm->Reset_Page();
 
             } else if (option == Summon_Option_Variable()->Int()) {
-                mcm->Option_Flags(option, MCM::DISABLE, true);
                 Commands_t::Self()->Summon(actor);
                 Update_Commands();
+                mcm->Flicker(option);
             } else if (option == Goto_Option_Variable()->Int()) {
-                mcm->Option_Flags(option, MCM::DISABLE, true);
+                mcm->Disable(option);
                 struct Callback : public Virtual_Callback_t {
                     Actor_t* actor;
                     Callback(Actor_t* actor) :
@@ -616,7 +626,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 Virtual_Callback_i* callback = new Callback(actor);
                 Main()->Close_Menus(&callback);
             } else if (option == Pack_Option_Variable()->Int()) {
-                mcm->Option_Flags(option, MCM::DISABLE, true);
+                mcm->Disable(option);
                 struct Callback : public Virtual_Callback_t {
                     Actor_t* actor;
                     Callback(Actor_t* actor) :
@@ -631,42 +641,42 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 Virtual_Callback_i* callback = new Callback(actor);
                 Main()->Close_Menus(&callback);
             } else if (option == Stash_Option_Variable()->Int()) {
-                mcm->Option_Flags(option, MCM::DISABLE, true);
                 Commands_t::Self()->Stash(actor);
                 Update_Commands();
+                mcm->Flicker(option);
 
             } else if (option == Settle_Option_Variable()->Int()) {
-                mcm->Option_Flags(option, MCM::DISABLE, true);
+                mcm->Disable(option);
                 Commands_t::Self()->Settle(actor);
                 Update_Commands();
             } else if (option == Resettle_Option_Variable()->Int()) {
-                mcm->Option_Flags(option, MCM::DISABLE, true);
                 Commands_t::Self()->Resettle(actor);
                 Update_Commands();
+                mcm->Flicker(option);
             } else if (option == Unsettle_Option_Variable()->Int()) {
-                mcm->Option_Flags(option, MCM::DISABLE, true);
+                mcm->Disable(option);
                 Commands_t::Self()->Unsettle(actor);
                 Update_Commands();
 
             } else if (option == Immobilize_Option_Variable()->Int()) {
-                mcm->Option_Flags(option, MCM::DISABLE, true);
+                mcm->Disable(option);
                 Commands_t::Self()->Immobilize(actor);
                 Update_Commands();
             } else if (option == Mobilize_Option_Variable()->Int()) {
-                mcm->Option_Flags(option, MCM::DISABLE, true);
+                mcm->Disable(option);
                 Commands_t::Self()->Mobilize(actor);
                 Update_Commands();
             } else if (option == Paralyze_Option_Variable()->Int()) {
-                mcm->Option_Flags(option, MCM::DISABLE, true);
+                mcm->Disable(option);
                 Commands_t::Self()->Paralyze(actor);
                 Update_Commands();
             } else if (option == Unparalyze_Option_Variable()->Int()) {
-                mcm->Option_Flags(option, MCM::DISABLE, true);
+                mcm->Disable(option);
                 Commands_t::Self()->Unparalyze(actor);
                 Update_Commands();
 
             } else if (option == Follow_Option_Variable()->Int()) {
-                mcm->Option_Flags(option, MCM::DISABLE, true);
+                mcm->Disable(option);
                 struct Callback : public Callback_t<Int_t, Party::Follower_t*> {
                     MCM::Member_t* self;
                     Callback(MCM::Member_t* self) :
@@ -682,7 +692,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 Callback_t<Int_t, Party::Follower_t*>* callback = new Callback(this);
                 Commands_t::Self()->Follow(actor, &callback);
             } else if (option == Unfollow_Option_Variable()->Int()) {
-                mcm->Option_Flags(option, MCM::DISABLE, true);
+                mcm->Disable(option);
                 struct Callback : public Callback_t<Int_t, Party::Member_t*> {
                     MCM::Member_t* self;
                     Callback(MCM::Member_t* self) :
@@ -703,48 +713,45 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 Callback_t<Int_t, Party::Member_t*>* callback = new Callback(this);
                 Commands_t::Self()->Unfollow(actor, &callback);
             } else if (option == Sneak_Option_Variable()->Int()) {
-                mcm->Option_Flags(option, MCM::DISABLE, true);
+                mcm->Disable(option);
                 Commands_t::Self()->Sneak(actor);
                 Update_Commands();
             } else if (option == Unsneak_Option_Variable()->Int()) {
-                mcm->Option_Flags(option, MCM::DISABLE, true);
+                mcm->Disable(option);
                 Commands_t::Self()->Unsneak(actor);
                 Update_Commands();
 
             } else if (option == Rating_Option_Variable()->Int()) {
-                mcm->Option_Flags(option, MCM::DISABLE, true);
+                mcm->Disable(option);
                 Commands_t::Self()->Cycle_Rating(actor);
                 Update_Commands();
-                mcm->Option_Flags(option, MCM::NONE, true);
             } else if (option == Stylize_Option_Variable()->Int()) {
-                mcm->Option_Flags(option, MCM::DISABLE, true);
+                mcm->Disable(option);
                 Commands_t::Self()->Cycle_Style(actor);
                 Update_Commands();
                 Update_Statistics();
-                mcm->Option_Flags(option, MCM::NONE, true);
             } else if (option == Vitalize_Option_Variable()->Int()) {
-                mcm->Option_Flags(option, MCM::DISABLE, true);
+                mcm->Disable(option);
                 Commands_t::Self()->Cycle_Vitality(actor);
                 Update_Commands();
                 Update_Statistics();
-                mcm->Option_Flags(option, MCM::NONE, true);
 
             } else if (option == Resurrect_Option_Variable()->Int()) {
-                mcm->Option_Flags(option, MCM::DISABLE, true);
+                mcm->Disable(option);
                 Commands_t::Self()->Resurrect(actor);
                 Update_Commands();
                 Update_Statistics();
 
             } else if (option == Clone_Option_Variable()->Int()) {
-                mcm->Option_Flags(option, MCM::DISABLE, true);
                 Commands_t::Self()->Clone(actor);
                 Update_Commands();
+                mcm->Flicker(option);
             } else if (option == Unclone_Option_Variable()->Int()) {
-                mcm->Option_Flags(option, MCM::DISABLE, true);
+                mcm->Disable(option);
                 Commands_t::Self()->Unclone(actor);
                 Go_Back();
             } else if (option == Unmember_Option_Variable()->Int()) {
-                mcm->Option_Flags(option, MCM::DISABLE, true);
+                mcm->Disable(option);
                 Commands_t::Self()->Unmember(actor);
                 Go_Back();
             }
@@ -771,26 +778,27 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             values.push_back(" Default ");
 
             mcm->Menu_Dialog_Values(values);
-            mcm->Menu_Dialog_Default(0);
         }
     }
 
     void Member_t::On_Option_Menu_Accept(Int_t option, Int_t idx)
     {
         if (option == Outfit2_Option_Variable()->Int()) {
-            Party::Member_t* member = Party_Member();
-            if (member) {
-                struct VCallback : public Virtual_Callback_t {
-                    MCM::Member_t* self;
-                    Party::Member_t* member;
-                    Int_t idx;
-                    VCallback(MCM::Member_t* self, Party::Member_t* member, Int_t idx) :
-                        self(self), member(member), idx(idx)
-                    {
-                    }
-                    void operator()(Variable_t* result)
-                    {
-                        if (Party::Player_t::Self()->Is_Vampire()) {
+            if (idx > -1) {
+                Party::Member_t* member = Party_Member();
+                if (member) {
+                    struct VCallback : public Virtual_Callback_t {
+                        Party::Member_t* member;
+                        Int_t idx;
+                        VCallback(Party::Member_t* member, Int_t idx) :
+                            member(member), idx(idx)
+                        {
+                        }
+                        void operator()(Variable_t* result)
+                        {
+                            if (!Party::Player_t::Self()->Is_Vampire() && idx > 2) {
+                                idx += 1;
+                            }
                             if (idx == 0) {
                                 Modules::Control::Commands_t::Self()->Change_Current_Outfit2(member->Actor());
                             } else if (idx == 1) {
@@ -808,26 +816,10 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                             } else if (idx == 7) {
                                 Modules::Control::Commands_t::Self()->Change_Default_Outfit2(member->Actor());
                             }
-                        } else {
-                            if (idx == 0) {
-                                Modules::Control::Commands_t::Self()->Change_Current_Outfit2(member->Actor());
-                            } else if (idx == 1) {
-                                Modules::Control::Commands_t::Self()->Change_Member_Outfit2(member->Actor());
-                            } else if (idx == 2) {
-                                Modules::Control::Commands_t::Self()->Change_Settler_Outfit2(member->Actor());
-                            } else if (idx == 3) {
-                                Modules::Control::Commands_t::Self()->Change_Follower_Outfit2(member->Actor());
-                            } else if (idx == 4) {
-                                Modules::Control::Commands_t::Self()->Change_Immobile_Outfit2(member->Actor());
-                            } else if (idx == 5) {
-                                Modules::Control::Commands_t::Self()->Change_Vanilla_Outfit2(member->Actor());
-                            } else if (idx == 6) {
-                                Modules::Control::Commands_t::Self()->Change_Default_Outfit2(member->Actor());
-                            }
                         }
-                    }
-                };
-                Modules::Funcs_t::Self()->Close_Menus(new VCallback(this, member, idx));
+                    };
+                    Modules::Funcs_t::Self()->Close_Menus(new VCallback(member, idx));
+                }
             }
         }
     }
@@ -863,16 +855,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     void Member_t::On_Option_Highlight(Int_t option)
     {
-        auto Concat2 = [](const char* a, const char* b)->const char*
-        {
-            return (std::string(a) + b).c_str();
-        };
-
-        auto Concat3 = [](const char* a, const char* b, const char* c)->const char*
-        {
-            return (std::string(a) + b + c).c_str();
-        };
-
         MCM::Main_t* mcm = Main();
         Party::Member_t* member = Party_Member();
         if (member) {
@@ -899,31 +881,31 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 mcm->Info_Text("Choose what this npc will wear in one of their outfits.");
 
             } else if (option == Settle_Option_Variable()->Int()) {
-                mcm->Info_Text(Concat2("Settle ", name));
+                mcm->Info_Text(mcm->Concat("Settle ", name));
             } else if (option == Resettle_Option_Variable()->Int()) {
-                mcm->Info_Text(Concat2("Resettle ", name));
+                mcm->Info_Text(mcm->Concat("Resettle ", name));
             } else if (option == Unsettle_Option_Variable()->Int()) {
-                mcm->Info_Text(Concat2("Unsettle ", name));
+                mcm->Info_Text(mcm->Concat("Unsettle ", name));
 
             } else if (option == Immobilize_Option_Variable()->Int()) {
-                mcm->Info_Text(Concat2("Immobilize ", name));
+                mcm->Info_Text(mcm->Concat("Immobilize ", name));
             } else if (option == Mobilize_Option_Variable()->Int()) {
-                mcm->Info_Text(Concat2("Mobilize ", name));
+                mcm->Info_Text(mcm->Concat("Mobilize ", name));
 
             } else if (option == Paralyze_Option_Variable()->Int()) {
-                mcm->Info_Text(Concat2("Paralyze ", name));
+                mcm->Info_Text(mcm->Concat("Paralyze ", name));
             } else if (option == Unparalyze_Option_Variable()->Int()) {
-                mcm->Info_Text(Concat2("Unparalyze ", name));
+                mcm->Info_Text(mcm->Concat("Unparalyze ", name));
 
             } else if (option == Follow_Option_Variable()->Int()) {
-                mcm->Info_Text(Concat3("Have ", name, " follow you."));
+                mcm->Info_Text(mcm->Concat("Have ", name, " follow you."));
             } else if (option == Unfollow_Option_Variable()->Int()) {
-                mcm->Info_Text(Concat3("Have ", name, " stop following you."));
+                mcm->Info_Text(mcm->Concat("Have ", name, " stop following you."));
 
             } else if (option == Sneak_Option_Variable()->Int()) {
-                mcm->Info_Text(Concat3("Have ", name, " sneak."));
+                mcm->Info_Text(mcm->Concat("Have ", name, " sneak."));
             } else if (option == Unsneak_Option_Variable()->Int()) {
-                mcm->Info_Text(Concat3("Have ", name, " stop sneaking."));
+                mcm->Info_Text(mcm->Concat("Have ", name, " stop sneaking."));
 
             } else if (option == Resurrect_Option_Variable()->Int()) {
                 mcm->Info_Text("Resurrect this dead member.");

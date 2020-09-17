@@ -48,6 +48,7 @@
 #include "party/party_horse.h"
 
 #include "mcm/mcm_main.h"
+#include "mcm/mcm_followers.h"
 #include "mcm/mcm_members.h"
 #include "mcm/mcm_member.h"
 #include "mcm/mcm_filter.h"
@@ -462,6 +463,7 @@ namespace doticu_npcp { namespace Main {
 
         REGISTER_TYPE(MCM::SKI_Config_Base_t);
         REGISTER_TYPE(MCM::Main_t);
+        REGISTER_TYPE(MCM::Followers_t);
         REGISTER_TYPE(MCM::Members_t);
         REGISTER_TYPE(MCM::Member_t);
         REGISTER_TYPE(MCM::Filter_t);

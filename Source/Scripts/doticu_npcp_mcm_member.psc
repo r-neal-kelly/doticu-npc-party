@@ -74,11 +74,6 @@ function On_Option_Keymap_Change(int option, int key_code, string conflict, stri
 function On_Option_Default(int option) native
 function On_Option_Highlight(int option) native
 
-function f_View_Followers_Member(doticu_npcp_member ref_member)
-    p_code_view = doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
-    p_ref_member = ref_member
-endFunction
-
 function f_View_Mannequins_Member(doticu_npcp_member ref_member)
     p_code_view = doticu_npcp_codes.VIEW_MANNEQUINS_MEMBER()
     p_ref_member = ref_member

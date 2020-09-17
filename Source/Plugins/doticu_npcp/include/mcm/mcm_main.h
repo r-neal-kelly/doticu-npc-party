@@ -136,6 +136,13 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Variable_t* Variable(String_t variable_name);
 
         void Close_Menus(Virtual_Callback_i** callback = nullptr);
+        void Enable(Int_t option, Bool_t do_render = true, Bool_t with_unmap = false);
+        void Disable(Int_t option, Bool_t do_render = true);
+        void Show(Int_t option, Bool_t do_render = true, Bool_t with_unmap = false);
+        void Hide(Int_t option, Bool_t do_render = true);
+        void Flicker(Int_t option);
+        String_t Concat(const char* a, const char* b);
+        String_t Concat(const char* a, const char* b, const char* c);
 
     public:
         static void Register_Me(Virtual_Machine_t* vm);

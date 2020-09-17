@@ -1164,14 +1164,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        METHOD("p_From_Actor", 1, Follower_t*, From_Actor, Actor_t*);
-        METHOD("p_From_Horse_Actor", 1, Follower_t*, From_Horse_Actor, Actor_t*);
-
-        METHOD("Count_Filled", 0, Int_t, Count_Filled);
-        METHOD("Sort_Filled", 2, Vector_t<Follower_t*>, Sort_Filled, Int_t, Int_t);
-
-        METHOD("Retreat", 0, Int_t, Retreat);
-        METHOD("Unretreat", 0, Int_t, Unretreat);
+        METHOD("From_Actor", 1, Follower_t*, From_Actor, Actor_t*);
         METHOD("Level", 0, Int_t, Level);
         METHOD("Unlevel", 0, Int_t, Unlevel);
 
