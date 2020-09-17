@@ -67,13 +67,6 @@ doticu_npcp_mcm_log property MCM_LOG
 endProperty
 
 ; Public Constants
-string property STR_MCM_CURRENT             = " Current "                   autoReadOnly hidden
-string property STR_MCM_MEMBER              = " Member "                    autoReadOnly hidden
-string property STR_MCM_SETTLER             = " Settler "                   autoReadOnly hidden
-string property STR_MCM_THRALL              = " Thrall "                    autoReadOnly hidden
-string property STR_MCM_IMMOBILE            = " Immobile "                  autoReadOnly hidden
-string property STR_MCM_FOLLOWER            = " Follower "                  autoReadOnly hidden
-string property STR_MCM_VANILLA             = " Vanilla "                   autoReadOnly hidden
 string property STR_MCM_DEFAULT             = " Default "                   autoReadOnly hidden
 string property STR_MCM_WARRIOR             = " Warrior "                   autoReadOnly hidden
 string property STR_MCM_MAGE                = " Mage "                      autoReadOnly hidden
@@ -126,8 +119,6 @@ function f_Create()
     p_str_curr_page = p_str_def_page
 
     MCM_FOLLOWERS.f_Create()
-    MCM_MEMBERS.f_Create()
-    MCM_MEMBER.f_Create()
     MCM_MANNEQUINS.f_Create()
     MCM_SETTINGS.f_Create()
     MCM_LOG.f_Create()
@@ -137,8 +128,6 @@ function f_Destroy()
     MCM_LOG.f_Destroy()
     MCM_SETTINGS.f_Destroy()
     MCM_MANNEQUINS.f_Destroy()
-    MCM_MEMBER.f_Destroy()
-    MCM_MEMBERS.f_Destroy()
     MCM_FOLLOWERS.f_Destroy()
 
     p_is_created = false
@@ -146,8 +135,6 @@ endFunction
 
 function f_Register()
     MCM_FOLLOWERS.f_Register()
-    MCM_MEMBERS.f_Register()
-    MCM_MEMBER.f_Register()
     MCM_MANNEQUINS.f_Register()
     MCM_SETTINGS.f_Register()
     MCM_LOG.f_Register()
@@ -157,8 +144,6 @@ function f_Unregister()
     MCM_LOG.f_Unregister()
     MCM_SETTINGS.f_Unregister()
     MCM_MANNEQUINS.f_Unregister()
-    MCM_MEMBER.f_Unregister()
-    MCM_MEMBERS.f_Unregister()
     MCM_FOLLOWERS.f_Unregister()
 endFunction
 
@@ -220,11 +205,11 @@ event OnPageReset(string str_page)
         MCM_FOLLOWERS.f_Build_Page()
     elseIf str_page == PAGE_MEMBERS
         p_str_curr_page = str_page
-        MCM_MEMBERS.f_View_Members()
-        MCM_MEMBERS.f_Build_Page()
+        MCM_MEMBERS.View_Members()
+        MCM_MEMBERS.On_Build_Page()
     elseIf str_page == PAGE_FILTER
         p_str_curr_page = str_page
-        MCM_FILTER.f_Build_Page()
+        MCM_FILTER.On_Build_Page()
     elseIf str_page == PAGE_MANNEQUINS
         p_str_curr_page = str_page
         MCM_MANNEQUINS.f_Build_Page()
@@ -250,9 +235,9 @@ event OnOptionSelect(int id_option)
     if p_str_curr_page == PAGE_FOLLOWERS
         MCM_FOLLOWERS.f_On_Option_Select(id_option)
     elseIf p_str_curr_page == PAGE_MEMBERS
-        MCM_MEMBERS.f_On_Option_Select(id_option)
+        MCM_MEMBERS.On_Option_Select(id_option)
     elseIf p_str_curr_page == PAGE_FILTER
-        MCM_FILTER.f_On_Option_Select(id_option)
+        MCM_FILTER.On_Option_Select(id_option)
     elseIf p_str_curr_page == PAGE_MANNEQUINS
         MCM_MANNEQUINS.f_On_Option_Select(id_option)
     elseIf p_str_curr_page == PAGE_CHESTS
@@ -270,9 +255,9 @@ event OnOptionMenuOpen(int id_option)
     if p_str_curr_page == PAGE_FOLLOWERS
         MCM_FOLLOWERS.f_On_Option_Menu_Open(id_option)
     elseIf p_str_curr_page == PAGE_MEMBERS
-        MCM_MEMBERS.f_On_Option_Menu_Open(id_option)
+        MCM_MEMBERS.On_Option_Menu_Open(id_option)
     elseIf p_str_curr_page == PAGE_FILTER
-        MCM_FILTER.f_On_Option_Menu_Open(id_option)
+        MCM_FILTER.On_Option_Menu_Open(id_option)
     elseIf p_str_curr_page == PAGE_MANNEQUINS
         MCM_MANNEQUINS.f_On_Option_Menu_Open(id_option)
     elseIf p_str_curr_page == PAGE_CHESTS
@@ -290,9 +275,9 @@ event OnOptionMenuAccept(int id_option, int idx_option)
     if p_str_curr_page == PAGE_FOLLOWERS
         MCM_FOLLOWERS.f_On_Option_Menu_Accept(id_option, idx_option)
     elseIf p_str_curr_page == PAGE_MEMBERS
-        MCM_MEMBERS.f_On_Option_Menu_Accept(id_option, idx_option)
+        MCM_MEMBERS.On_Option_Menu_Accept(id_option, idx_option)
     elseIf p_str_curr_page == PAGE_FILTER
-        MCM_FILTER.f_On_Option_Menu_Accept(id_option, idx_option)
+        MCM_FILTER.On_Option_Menu_Accept(id_option, idx_option)
     elseIf p_str_curr_page == PAGE_MANNEQUINS
         MCM_MANNEQUINS.f_On_Option_Menu_Accept(id_option, idx_option)
     elseIf p_str_curr_page == PAGE_CHESTS
@@ -310,9 +295,9 @@ event OnOptionSliderOpen(int id_option)
     if p_str_curr_page == PAGE_FOLLOWERS
         MCM_FOLLOWERS.f_On_Option_Slider_Open(id_option)
     elseIf p_str_curr_page == PAGE_MEMBERS
-        MCM_MEMBERS.f_On_Option_Slider_Open(id_option)
+        MCM_MEMBERS.On_Option_Slider_Open(id_option)
     elseIf p_str_curr_page == PAGE_FILTER
-        MCM_FILTER.f_On_Option_Slider_Open(id_option)
+        MCM_FILTER.On_Option_Slider_Open(id_option)
     elseIf p_str_curr_page == PAGE_MANNEQUINS
         MCM_MANNEQUINS.f_On_Option_Slider_Open(id_option)
     elseIf p_str_curr_page == PAGE_CHESTS
@@ -330,9 +315,9 @@ event OnOptionSliderAccept(int id_option, float float_value)
     if p_str_curr_page == PAGE_FOLLOWERS
         MCM_FOLLOWERS.f_On_Option_Slider_Accept(id_option, float_value)
     elseIf p_str_curr_page == PAGE_MEMBERS
-        MCM_MEMBERS.f_On_Option_Slider_Accept(id_option, float_value)
+        MCM_MEMBERS.On_Option_Slider_Accept(id_option, float_value)
     elseIf p_str_curr_page == PAGE_FILTER
-        MCM_FILTER.f_On_Option_Slider_Accept(id_option, float_value)
+        MCM_FILTER.On_Option_Slider_Accept(id_option, float_value)
     elseIf p_str_curr_page == PAGE_MANNEQUINS
         MCM_MANNEQUINS.f_On_Option_Slider_Accept(id_option, float_value)
     elseIf p_str_curr_page == PAGE_CHESTS
@@ -350,9 +335,9 @@ event OnOptionInputAccept(int id_option, string str_input)
     if p_str_curr_page == PAGE_FOLLOWERS
         MCM_FOLLOWERS.f_On_Option_Input_Accept(id_option, str_input)
     elseIf p_str_curr_page == PAGE_MEMBERS
-        MCM_MEMBERS.f_On_Option_Input_Accept(id_option, str_input)
+        MCM_MEMBERS.On_Option_Input_Accept(id_option, str_input)
     elseIf p_str_curr_page == PAGE_FILTER
-        MCM_FILTER.f_On_Option_Input_Accept(id_option, str_input)
+        MCM_FILTER.On_Option_Input_Accept(id_option, str_input)
     elseIf p_str_curr_page == PAGE_MANNEQUINS
         MCM_MANNEQUINS.f_On_Option_Input_Accept(id_option, str_input)
     elseIf p_str_curr_page == PAGE_CHESTS
@@ -370,9 +355,9 @@ event OnOptionKeymapChange(int id_option, int code_key, string str_conflict_cont
     if p_str_curr_page == PAGE_FOLLOWERS
         MCM_FOLLOWERS.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
     elseIf p_str_curr_page == PAGE_MEMBERS
-        MCM_MEMBERS.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
+        MCM_MEMBERS.On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
     elseIf p_str_curr_page == PAGE_FILTER
-        MCM_FILTER.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
+        MCM_FILTER.On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
     elseIf p_str_curr_page == PAGE_MANNEQUINS
         MCM_MANNEQUINS.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
     elseIf p_str_curr_page == PAGE_CHESTS
@@ -390,9 +375,9 @@ event OnOptionDefault(int id_option)
     if p_str_curr_page == PAGE_FOLLOWERS
         MCM_FOLLOWERS.f_On_Option_Default(id_option)
     elseIf p_str_curr_page == PAGE_MEMBERS
-        MCM_MEMBERS.f_On_Option_Default(id_option)
+        MCM_MEMBERS.On_Option_Default(id_option)
     elseIf p_str_curr_page == PAGE_FILTER
-        MCM_FILTER.f_On_Option_Default(id_option)
+        MCM_FILTER.On_Option_Default(id_option)
     elseIf p_str_curr_page == PAGE_MANNEQUINS
         MCM_MANNEQUINS.f_On_Option_Default(id_option)
     elseIf p_str_curr_page == PAGE_CHESTS
@@ -410,9 +395,9 @@ event OnOptionHighlight(int id_option)
     if p_str_curr_page == PAGE_FOLLOWERS
         MCM_FOLLOWERS.f_On_Option_Highlight(id_option)
     elseIf p_str_curr_page == PAGE_MEMBERS
-        MCM_MEMBERS.f_On_Option_Highlight(id_option)
+        MCM_MEMBERS.On_Option_Highlight(id_option)
     elseIf p_str_curr_page == PAGE_FILTER
-        MCM_FILTER.f_On_Option_Highlight(id_option)
+        MCM_FILTER.On_Option_Highlight(id_option)
     elseIf p_str_curr_page == PAGE_MANNEQUINS
         MCM_MANNEQUINS.f_On_Option_Highlight(id_option)
     elseIf p_str_curr_page == PAGE_CHESTS

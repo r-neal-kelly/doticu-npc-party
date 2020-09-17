@@ -401,7 +401,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         return (members + "               " + pages).c_str();
     }
 
-    void Members_t::Build_Page()
+    void Members_t::On_Build_Page()
     {
         if (Do_Previous_Member()) {
             Member_Variable()->Pack(Previous_Member(), Party::Member_t::Class_Info());
@@ -418,7 +418,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 Member_t* mcm_member = Member_t::Self();
                 Members_Member_Variable()->Pack(current_member, Party::Member_t::Class_Info());
                 mcm_member->View_Members_Member(current_member);
-                return mcm_member->Build_Page();
+                return mcm_member->On_Build_Page();
             } else {
                 Review_Members();
             }
@@ -428,7 +428,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 Member_t* mcm_member = Member_t::Self();
                 Filter_Members_Member_Variable()->Pack(current_member, Party::Member_t::Class_Info());
                 mcm_member->View_Filter_Members_Member(current_member);
-                return mcm_member->Build_Page();
+                return mcm_member->On_Build_Page();
             } else {
                 Review_Filter_Members();
             }
@@ -508,20 +508,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
     {
         Int_t current_view = Current_View();
         if (current_view == CODES::VIEW::MEMBERS_MEMBER || current_view == CODES::VIEW::FILTER_MEMBERS_MEMBER) {
-            struct Arguments : public Virtual_Arguments_t {
-                Int_t option;
-                Arguments(Int_t option) :
-                    option(option)
-                {
-                }
-                Bool_t operator()(Arguments_t* arguments)
-                {
-                    arguments->Resize(1);
-                    arguments->At(0)->Int(option);
-                    return true;
-                }
-            } arguments(option);
-            Virtual_Machine_t::Self()->Call_Method(Consts::Control_Quest(), Member_t::Class_Name(), "f_On_Option_Select", &arguments);
+            MCM::Member_t::Self()->On_Option_Select(option);
         } else {
             Main_t* mcm = Main();
             if (option == Back_Option_Variable()->Int() && current_view == CODES::VIEW::FILTER_MEMBERS) {
@@ -585,24 +572,67 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         }
     }
 
+    void Members_t::On_Option_Menu_Open(Int_t option)
+    {
+        Int_t current_view = Current_View();
+        if (current_view == CODES::VIEW::MEMBERS_MEMBER || current_view == CODES::VIEW::FILTER_MEMBERS_MEMBER) {
+            MCM::Member_t::Self()->On_Option_Menu_Open(option);
+        }
+    }
+
+    void Members_t::On_Option_Menu_Accept(Int_t option, Int_t idx)
+    {
+        Int_t current_view = Current_View();
+        if (current_view == CODES::VIEW::MEMBERS_MEMBER || current_view == CODES::VIEW::FILTER_MEMBERS_MEMBER) {
+            MCM::Member_t::Self()->On_Option_Menu_Accept(option, idx);
+        }
+    }
+
+    void Members_t::On_Option_Slider_Open(Int_t option)
+    {
+        Int_t current_view = Current_View();
+        if (current_view == CODES::VIEW::MEMBERS_MEMBER || current_view == CODES::VIEW::FILTER_MEMBERS_MEMBER) {
+            MCM::Member_t::Self()->On_Option_Slider_Open(option);
+        }
+    }
+
+    void Members_t::On_Option_Slider_Accept(Int_t option, Float_t value)
+    {
+        Int_t current_view = Current_View();
+        if (current_view == CODES::VIEW::MEMBERS_MEMBER || current_view == CODES::VIEW::FILTER_MEMBERS_MEMBER) {
+            MCM::Member_t::Self()->On_Option_Slider_Accept(option, value);
+        }
+    }
+
+    void Members_t::On_Option_Input_Accept(Int_t option, String_t value)
+    {
+        Int_t current_view = Current_View();
+        if (current_view == CODES::VIEW::MEMBERS_MEMBER || current_view == CODES::VIEW::FILTER_MEMBERS_MEMBER) {
+            MCM::Member_t::Self()->On_Option_Input_Accept(option, value);
+        }
+    }
+
+    void Members_t::On_Option_Keymap_Change(Int_t option, Int_t key_code, String_t conflict, String_t conflicting_mod)
+    {
+        Int_t current_view = Current_View();
+        if (current_view == CODES::VIEW::MEMBERS_MEMBER || current_view == CODES::VIEW::FILTER_MEMBERS_MEMBER) {
+            MCM::Member_t::Self()->On_Option_Keymap_Change(option, key_code, conflict, conflicting_mod);
+        }
+    }
+
+    void Members_t::On_Option_Default(Int_t option)
+    {
+        Int_t current_view = Current_View();
+        if (current_view == CODES::VIEW::MEMBERS_MEMBER || current_view == CODES::VIEW::FILTER_MEMBERS_MEMBER) {
+            MCM::Member_t::Self()->On_Option_Default(option);
+        }
+    }
+
     void Members_t::On_Option_Highlight(Int_t option)
     {
         Int_t current_view = Current_View();
         if (current_view == CODES::VIEW::MEMBERS_MEMBER || current_view == CODES::VIEW::FILTER_MEMBERS_MEMBER) {
-            struct Arguments : public Virtual_Arguments_t {
-                Int_t option;
-                Arguments(Int_t option) :
-                    option(option)
-                {
-                }
-                Bool_t operator()(Arguments_t* arguments)
-                {
-                    arguments->Resize(1);
-                    arguments->At(0)->Int(option);
-                    return true;
-                }
-            } arguments(option);
-            Virtual_Machine_t::Self()->Call_Method(Consts::Control_Quest(), Member_t::Class_Name(), "f_On_Option_Highlight", &arguments);
+            MCM::Member_t::Self()->On_Option_Highlight(option);
         } else {
             Main_t* mcm = Main();
             if (option == Back_Option_Variable()->Int() && current_view == CODES::VIEW::FILTER_MEMBERS) {
@@ -633,16 +663,19 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        METHOD("f_View_Members", 0, void, View_Members);
-
-        METHOD("f_Build_Page", 0, void, Build_Page);
-
-        METHOD("f_On_Option_Select", 1, void, On_Option_Select, Int_t);
-        METHOD("f_On_Option_Highlight", 1, void, On_Option_Highlight, Int_t);
-
-        METHOD("Review_Members", 0, void, Review_Members);
-        METHOD("Review_Filter_Members", 0, void, Review_Filter_Members);
+        METHOD("View_Members", 0, void, View_Members);
         METHOD("Member_Info_String", 1, String_t, Member_Info_String, Party::Member_t*);
+
+        METHOD("On_Build_Page", 0, void, On_Build_Page);
+        METHOD("On_Option_Select", 1, void, On_Option_Select, Int_t);
+        METHOD("On_Option_Menu_Open", 1, void, On_Option_Menu_Open, Int_t);
+        METHOD("On_Option_Menu_Accept", 2, void, On_Option_Menu_Accept, Int_t, Int_t);
+        METHOD("On_Option_Slider_Open", 1, void, On_Option_Slider_Open, Int_t);
+        METHOD("On_Option_Slider_Accept", 2, void, On_Option_Slider_Accept, Int_t, Float_t);
+        METHOD("On_Option_Input_Accept", 2, void, On_Option_Input_Accept, Int_t, String_t);
+        METHOD("On_Option_Keymap_Change", 4, void, On_Option_Keymap_Change, Int_t, Int_t, String_t, String_t);
+        METHOD("On_Option_Default", 1, void, On_Option_Default, Int_t);
+        METHOD("On_Option_Highlight", 1, void, On_Option_Highlight, Int_t);
 
         #undef METHOD
     }

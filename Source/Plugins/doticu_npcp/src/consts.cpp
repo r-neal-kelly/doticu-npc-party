@@ -923,9 +923,6 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
         // Skyrim Actors
         ADD_GLOBAL("Player_Actor", 0, Actor_t*, Player_Actor);
 
-        // Skyrim Keywords
-        ADD_GLOBAL("Vampire_Keyword", 0, Keyword_t*, Vampire_Keyword);
-
         // Skyrim Quests
         ADD_GLOBAL("Bard_Songs_Quest", 0, Quest_t*, Bard_Songs_Quest);
 

@@ -7,9 +7,6 @@ Scriptname doticu_npcp_consts hidden
 ; Skyrim Actors
 Actor function Player_Actor() native global
 
-; Skyrim Keywords
-Keyword function Vampire_Keyword() native global
-
 ; Skyrim Quests
 Quest function Bard_Songs_Quest() native global
 

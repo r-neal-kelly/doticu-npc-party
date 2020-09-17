@@ -6,9 +6,11 @@
 #include "codes.h"
 #include "commands.h"
 #include "consts.h"
+#include "funcs.h"
 #include "papyrus.inl"
 #include "utils.h"
 
+#include "party/party_player.h"
 #include "party/party_members.h"
 #include "party/party_member.h"
 #include "party/party_followers.h"
@@ -144,73 +146,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Party_Member_Variable()->Pack(member, Party::Member_t::Class_Info());
     }
 
-    void Member_t::Build_Page()
-    {
-        Party::Member_t* member = Party_Member();
-        if (member) {
-            String_t member_name = member->Name();
-            Main_t* mcm = Main();
-
-            mcm->Cursor_Position(0);
-            mcm->Cursor_Fill_Mode(Cursor_Fill_Mode_e::LEFT_TO_RIGHT);
-
-            Int_t current_view = Current_View();
-            if (current_view == CODES::VIEW::MEMBERS_MEMBER) {
-                mcm->Title_Text((std::string("Member: ") + member_name.data).c_str());
-            } else if (current_view == CODES::VIEW::FOLLOWERS_MEMBER) {
-                mcm->Title_Text((std::string("Follower: ") + member_name.data).c_str());
-            } else if (current_view == CODES::VIEW::FILTER_MEMBERS_MEMBER) {
-                mcm->Title_Text((std::string("Filtered Member: ") + member_name.data).c_str());
-            } else if (current_view == CODES::VIEW::MANNEQUINS_MEMBER) {
-                mcm->Title_Text((std::string("Mannequin: ") + member_name.data).c_str());
-            }
-
-            Rename_Option_Variable()->Int(
-                mcm->Add_Input_Option((std::string(member_name.data) + " ").c_str(), " Rename ")
-            );
-            Back_Option_Variable()->Int(
-                mcm->Add_Text_Option("                            Go Back", "")
-            );
-
-            if (current_view == CODES::VIEW::MEMBERS_MEMBER || current_view == CODES::VIEW::FILTER_MEMBERS_MEMBER) {
-                if (Party::Members_t::Self()->Count_Filled() > 1) {
-                    Previous_Option_Variable()->Int(
-                        mcm->Add_Text_Option("                      Previous Member", "")
-                    );
-                    Next_Option_Variable()->Int(
-                        mcm->Add_Text_Option("                        Next Member", "")
-                    );
-                } else {
-                    Previous_Option_Variable()->Int(
-                        mcm->Add_Text_Option("                      Previous Member", "", MCM::DISABLE)
-                    );
-                    Next_Option_Variable()->Int(
-                        mcm->Add_Text_Option("                        Next Member", "", MCM::DISABLE)
-                    );
-                }
-            } else if (current_view == CODES::VIEW::FOLLOWERS_MEMBER) {
-                if (Party::Followers_t::Self()->Count_Filled() > 1) {
-                    Previous_Option_Variable()->Int(
-                        mcm->Add_Text_Option("                      Previous Follower", "")
-                    );
-                    Next_Option_Variable()->Int(
-                        mcm->Add_Text_Option("                        Next Follower", "")
-                    );
-                } else {
-                    Previous_Option_Variable()->Int(
-                        mcm->Add_Text_Option("                      Previous Follower", "", MCM::DISABLE)
-                    );
-                    Next_Option_Variable()->Int(
-                        mcm->Add_Text_Option("                        Next Follower", "", MCM::DISABLE)
-                    );
-                }
-            }
-
-            Build_Commands();
-            Build_Statistics();
-        }
-    }
-
     void Member_t::Build_Commands()
     {
         MCM::Main_t* mcm_main = Main();
@@ -332,54 +267,54 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Party::Member_t* party_member = Party_Member();
         NPCP_ASSERT(party_member);
 
-        mcm_main->Enable_Option(Summon_Option_Variable(), false);
-        mcm_main->Enable_Option(Goto_Option_Variable(), false);
-        mcm_main->Enable_Option(Pack_Option_Variable(), false);
-        mcm_main->Enable_Option(Stash_Option_Variable(), false);
-        mcm_main->Enable_Option(Outfit2_Option_Variable(), false);
+        mcm_main->Option_Flags(Summon_Option_Variable()->Int(), MCM::NONE, false);
+        mcm_main->Option_Flags(Goto_Option_Variable()->Int(), MCM::NONE, false);
+        mcm_main->Option_Flags(Pack_Option_Variable()->Int(), MCM::NONE, false);
+        mcm_main->Option_Flags(Stash_Option_Variable()->Int(), MCM::NONE, false);
+        mcm_main->Option_Flags(Outfit2_Option_Variable()->Int(), MCM::NONE, false);
 
         if (party_member->Is_Mobile()) {
-            mcm_main->Disable_Option(Mobilize_Option_Variable(), false);
-            mcm_main->Enable_Option(Immobilize_Option_Variable(), false);
+            mcm_main->Option_Flags(Mobilize_Option_Variable()->Int(), MCM::DISABLE, false);
+            mcm_main->Option_Flags(Immobilize_Option_Variable()->Int(), MCM::NONE, false);
         } else {
-            mcm_main->Enable_Option(Mobilize_Option_Variable(), false);
-            mcm_main->Disable_Option(Immobilize_Option_Variable(), false);
+            mcm_main->Option_Flags(Mobilize_Option_Variable()->Int(), MCM::NONE, false);
+            mcm_main->Option_Flags(Immobilize_Option_Variable()->Int(), MCM::DISABLE, false);
         }
 
         if (party_member->Is_Settler()) {
-            mcm_main->Disable_Option(Settle_Option_Variable(), false);
-            mcm_main->Enable_Option(Resettle_Option_Variable(), false);
-            mcm_main->Enable_Option(Unsettle_Option_Variable(), false);
+            mcm_main->Option_Flags(Settle_Option_Variable()->Int(), MCM::DISABLE, false);
+            mcm_main->Option_Flags(Resettle_Option_Variable()->Int(), MCM::NONE, false);
+            mcm_main->Option_Flags(Unsettle_Option_Variable()->Int(), MCM::NONE, false);
         } else {
-            mcm_main->Enable_Option(Settle_Option_Variable(), false);
-            mcm_main->Disable_Option(Resettle_Option_Variable(), false);
-            mcm_main->Disable_Option(Unsettle_Option_Variable(), false);
+            mcm_main->Option_Flags(Settle_Option_Variable()->Int(), MCM::NONE, false);
+            mcm_main->Option_Flags(Resettle_Option_Variable()->Int(), MCM::DISABLE, false);
+            mcm_main->Option_Flags(Unsettle_Option_Variable()->Int(), MCM::DISABLE, false);
         }
 
         if (party_member->Is_Paralyzed()) {
-            mcm_main->Disable_Option(Paralyze_Option_Variable(), false);
-            mcm_main->Enable_Option(Unparalyze_Option_Variable(), false);
+            mcm_main->Option_Flags(Paralyze_Option_Variable()->Int(), MCM::DISABLE, false);
+            mcm_main->Option_Flags(Unparalyze_Option_Variable()->Int(), MCM::NONE, false);
         } else {
-            mcm_main->Enable_Option(Paralyze_Option_Variable(), false);
-            mcm_main->Disable_Option(Unparalyze_Option_Variable(), false);
+            mcm_main->Option_Flags(Paralyze_Option_Variable()->Int(), MCM::NONE, false);
+            mcm_main->Option_Flags(Unparalyze_Option_Variable()->Int(), MCM::DISABLE, false);
         }
 
         if (party_member->Is_Follower()) {
-            mcm_main->Disable_Option(Follow_Option_Variable(), false);
-            mcm_main->Enable_Option(Unfollow_Option_Variable(), false);
+            mcm_main->Option_Flags(Follow_Option_Variable()->Int(), MCM::DISABLE, false);
+            mcm_main->Option_Flags(Unfollow_Option_Variable()->Int(), MCM::NONE, false);
             if (party_member->Is_Sneak()) {
-                mcm_main->Disable_Option(Sneak_Option_Variable(), false);
-                mcm_main->Enable_Option(Unsneak_Option_Variable(), false);
+                mcm_main->Option_Flags(Sneak_Option_Variable()->Int(), MCM::DISABLE, false);
+                mcm_main->Option_Flags(Unsneak_Option_Variable()->Int(), MCM::NONE, false);
             } else {
-                mcm_main->Enable_Option(Sneak_Option_Variable(), false);
-                mcm_main->Disable_Option(Unsneak_Option_Variable(), false);
+                mcm_main->Option_Flags(Sneak_Option_Variable()->Int(), MCM::NONE, false);
+                mcm_main->Option_Flags(Unsneak_Option_Variable()->Int(), MCM::DISABLE, false);
             }
         } else {
-            mcm_main->Enable_Option(Follow_Option_Variable(), false);
-            mcm_main->Disable_Option(Unfollow_Option_Variable(), false);
+            mcm_main->Option_Flags(Follow_Option_Variable()->Int(), MCM::NONE, false);
+            mcm_main->Option_Flags(Unfollow_Option_Variable()->Int(), MCM::DISABLE, false);
 
-            mcm_main->Disable_Option(Sneak_Option_Variable(), false);
-            mcm_main->Disable_Option(Unsneak_Option_Variable(), false);
+            mcm_main->Option_Flags(Sneak_Option_Variable()->Int(), MCM::DISABLE, false);
+            mcm_main->Option_Flags(Unsneak_Option_Variable()->Int(), MCM::DISABLE, false);
         }
 
         mcm_main->Text_Option_Value(Rating_Option_Variable()->Int(), party_member->Rating_Stars(), false);
@@ -413,25 +348,25 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         }
 
         if (party_member->Is_Alive()) {
-            mcm_main->Disable_Option(Resurrect_Option_Variable(), false);
+            mcm_main->Option_Flags(Resurrect_Option_Variable()->Int(), MCM::DISABLE, false);
         } else {
-            mcm_main->Enable_Option(Resurrect_Option_Variable(), false);
+            mcm_main->Option_Flags(Resurrect_Option_Variable()->Int(), MCM::NONE, false);
         }
 
-        mcm_main->Enable_Option(Clone_Option_Variable(), false);
+        mcm_main->Option_Flags(Clone_Option_Variable()->Int(), MCM::NONE, false);
         if (party_member->Is_Clone()) {
-            mcm_main->Enable_Option(Unclone_Option_Variable(), false);
+            mcm_main->Option_Flags(Unclone_Option_Variable()->Int(), MCM::NONE, false);
         } else {
-            mcm_main->Disable_Option(Unclone_Option_Variable(), false);
+            mcm_main->Option_Flags(Unclone_Option_Variable()->Int(), MCM::DISABLE, false);
         }
 
         if (party_member->Should_Unclone()) {
-            mcm_main->Disable_Option(Unmember_Option_Variable(), false);
+            mcm_main->Option_Flags(Unmember_Option_Variable()->Int(), MCM::DISABLE, false);
         } else {
-            mcm_main->Enable_Option(Unmember_Option_Variable(), false);
+            mcm_main->Option_Flags(Unmember_Option_Variable()->Int(), MCM::NONE, false);
         }
 
-        mcm_main->Enable_Option(Rename_Option_Variable(), true);
+        mcm_main->Option_Flags(Rename_Option_Variable()->Int(), MCM::NONE, true);
     }
 
     void Member_t::Build_Statistics()
@@ -562,6 +497,73 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             MCM::Mannequins_t::Self()->Review_Mannequins();
         }
         Main()->Reset_Page();
+    }
+
+    void Member_t::On_Build_Page()
+    {
+        Party::Member_t* member = Party_Member();
+        if (member) {
+            String_t member_name = member->Name();
+            Main_t* mcm = Main();
+
+            mcm->Cursor_Position(0);
+            mcm->Cursor_Fill_Mode(Cursor_Fill_Mode_e::LEFT_TO_RIGHT);
+
+            Int_t current_view = Current_View();
+            if (current_view == CODES::VIEW::MEMBERS_MEMBER) {
+                mcm->Title_Text((std::string("Member: ") + member_name.data).c_str());
+            } else if (current_view == CODES::VIEW::FOLLOWERS_MEMBER) {
+                mcm->Title_Text((std::string("Follower: ") + member_name.data).c_str());
+            } else if (current_view == CODES::VIEW::FILTER_MEMBERS_MEMBER) {
+                mcm->Title_Text((std::string("Filtered Member: ") + member_name.data).c_str());
+            } else if (current_view == CODES::VIEW::MANNEQUINS_MEMBER) {
+                mcm->Title_Text((std::string("Mannequin: ") + member_name.data).c_str());
+            }
+
+            Rename_Option_Variable()->Int(
+                mcm->Add_Input_Option((std::string(member_name.data) + " ").c_str(), " Rename ")
+            );
+            Back_Option_Variable()->Int(
+                mcm->Add_Text_Option("                            Go Back", "")
+            );
+
+            if (current_view == CODES::VIEW::MEMBERS_MEMBER || current_view == CODES::VIEW::FILTER_MEMBERS_MEMBER) {
+                if (Party::Members_t::Self()->Count_Filled() > 1) {
+                    Previous_Option_Variable()->Int(
+                        mcm->Add_Text_Option("                      Previous Member", "")
+                    );
+                    Next_Option_Variable()->Int(
+                        mcm->Add_Text_Option("                        Next Member", "")
+                    );
+                } else {
+                    Previous_Option_Variable()->Int(
+                        mcm->Add_Text_Option("                      Previous Member", "", MCM::DISABLE)
+                    );
+                    Next_Option_Variable()->Int(
+                        mcm->Add_Text_Option("                        Next Member", "", MCM::DISABLE)
+                    );
+                }
+            } else if (current_view == CODES::VIEW::FOLLOWERS_MEMBER) {
+                if (Party::Followers_t::Self()->Count_Filled() > 1) {
+                    Previous_Option_Variable()->Int(
+                        mcm->Add_Text_Option("                      Previous Follower", "")
+                    );
+                    Next_Option_Variable()->Int(
+                        mcm->Add_Text_Option("                        Next Follower", "")
+                    );
+                } else {
+                    Previous_Option_Variable()->Int(
+                        mcm->Add_Text_Option("                      Previous Follower", "", MCM::DISABLE)
+                    );
+                    Next_Option_Variable()->Int(
+                        mcm->Add_Text_Option("                        Next Follower", "", MCM::DISABLE)
+                    );
+                }
+            }
+
+            Build_Commands();
+            Build_Statistics();
+        }
     }
 
     void Member_t::On_Option_Select(Int_t option)
@@ -749,6 +751,200 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         }
     }
 
+    void Member_t::On_Option_Menu_Open(Int_t option)
+    {
+        MCM::Main_t* mcm = Main();
+
+        if (option == Outfit2_Option_Variable()->Int()) {
+            Vector_t<String_t> values;
+            values.reserve(8);
+
+            values.push_back(" Current ");
+            values.push_back(" Member ");
+            values.push_back(" Settler ");
+            if (Party::Player_t::Self()->Is_Vampire()) {
+                values.push_back(" Thrall ");
+            }
+            values.push_back(" Follower ");
+            values.push_back(" Immobile ");
+            values.push_back(" Vanilla ");
+            values.push_back(" Default ");
+
+            mcm->Menu_Dialog_Values(values);
+            mcm->Menu_Dialog_Default(0);
+        }
+    }
+
+    void Member_t::On_Option_Menu_Accept(Int_t option, Int_t idx)
+    {
+        if (option == Outfit2_Option_Variable()->Int()) {
+            Party::Member_t* member = Party_Member();
+            if (member) {
+                struct VCallback : public Virtual_Callback_t {
+                    MCM::Member_t* self;
+                    Party::Member_t* member;
+                    Int_t idx;
+                    VCallback(MCM::Member_t* self, Party::Member_t* member, Int_t idx) :
+                        self(self), member(member), idx(idx)
+                    {
+                    }
+                    void operator()(Variable_t* result)
+                    {
+                        if (Party::Player_t::Self()->Is_Vampire()) {
+                            if (idx == 0) {
+                                Modules::Control::Commands_t::Self()->Change_Current_Outfit2(member->Actor());
+                            } else if (idx == 1) {
+                                Modules::Control::Commands_t::Self()->Change_Member_Outfit2(member->Actor());
+                            } else if (idx == 2) {
+                                Modules::Control::Commands_t::Self()->Change_Settler_Outfit2(member->Actor());
+                            } else if (idx == 3) {
+                                Modules::Control::Commands_t::Self()->Change_Thrall_Outfit2(member->Actor());
+                            } else if (idx == 4) {
+                                Modules::Control::Commands_t::Self()->Change_Follower_Outfit2(member->Actor());
+                            } else if (idx == 5) {
+                                Modules::Control::Commands_t::Self()->Change_Immobile_Outfit2(member->Actor());
+                            } else if (idx == 6) {
+                                Modules::Control::Commands_t::Self()->Change_Vanilla_Outfit2(member->Actor());
+                            } else if (idx == 7) {
+                                Modules::Control::Commands_t::Self()->Change_Default_Outfit2(member->Actor());
+                            }
+                        } else {
+                            if (idx == 0) {
+                                Modules::Control::Commands_t::Self()->Change_Current_Outfit2(member->Actor());
+                            } else if (idx == 1) {
+                                Modules::Control::Commands_t::Self()->Change_Member_Outfit2(member->Actor());
+                            } else if (idx == 2) {
+                                Modules::Control::Commands_t::Self()->Change_Settler_Outfit2(member->Actor());
+                            } else if (idx == 3) {
+                                Modules::Control::Commands_t::Self()->Change_Follower_Outfit2(member->Actor());
+                            } else if (idx == 4) {
+                                Modules::Control::Commands_t::Self()->Change_Immobile_Outfit2(member->Actor());
+                            } else if (idx == 5) {
+                                Modules::Control::Commands_t::Self()->Change_Vanilla_Outfit2(member->Actor());
+                            } else if (idx == 6) {
+                                Modules::Control::Commands_t::Self()->Change_Default_Outfit2(member->Actor());
+                            }
+                        }
+                    }
+                };
+                Modules::Funcs_t::Self()->Close_Menus(new VCallback(this, member, idx));
+            }
+        }
+    }
+
+    void Member_t::On_Option_Slider_Open(Int_t option)
+    {
+    }
+
+    void Member_t::On_Option_Slider_Accept(Int_t option, Float_t value)
+    {
+    }
+
+    void Member_t::On_Option_Input_Accept(Int_t option, String_t value)
+    {
+        MCM::Main_t* mcm = Main();
+
+        if (option == Rename_Option_Variable()->Int()) {
+            Party::Member_t* member = Party_Member();
+            if (member && value.data && value.data[0]) {
+                member->Rename(value);
+                mcm->Reset_Page();
+            }
+        }
+    }
+
+    void Member_t::On_Option_Keymap_Change(Int_t option, Int_t key_code, String_t conflict, String_t conflicting_mod)
+    {
+    }
+
+    void Member_t::On_Option_Default(Int_t option)
+    {
+    }
+
+    void Member_t::On_Option_Highlight(Int_t option)
+    {
+        auto Concat2 = [](const char* a, const char* b)->const char*
+        {
+            return (std::string(a) + b).c_str();
+        };
+
+        auto Concat3 = [](const char* a, const char* b, const char* c)->const char*
+        {
+            return (std::string(a) + b + c).c_str();
+        };
+
+        MCM::Main_t* mcm = Main();
+        Party::Member_t* member = Party_Member();
+        if (member) {
+            const char* name = member->Name();
+
+            if (option == Rename_Option_Variable()->Int()) {
+                mcm->Info_Text("Rename this member.");
+            } else if (option == Back_Option_Variable()->Int()) {
+                mcm->Info_Text("Go back to Members");
+            } else if (option == Previous_Option_Variable()->Int()) {
+                mcm->Info_Text("Go to the Previous Member");
+            } else if (option == Next_Option_Variable()->Int()) {
+                mcm->Info_Text("Go to the Next Member");
+
+            } else if (option == Summon_Option_Variable()->Int()) {
+                mcm->Info_Text("Summon this member to you.");
+            } else if (option == Goto_Option_Variable()->Int()) {
+                mcm->Info_Text("Goto this member.");
+            } else if (option == Pack_Option_Variable()->Int()) {
+                mcm->Info_Text("Pack items in this member's inventory.");
+            } else if (option == Stash_Option_Variable()->Int()) {
+                mcm->Info_Text("Stash all of the items in the member's pack, into community chests.");
+            } else if (option == Outfit2_Option_Variable()->Int()) {
+                mcm->Info_Text("Choose what this npc will wear in one of their outfits.");
+
+            } else if (option == Settle_Option_Variable()->Int()) {
+                mcm->Info_Text(Concat2("Settle ", name));
+            } else if (option == Resettle_Option_Variable()->Int()) {
+                mcm->Info_Text(Concat2("Resettle ", name));
+            } else if (option == Unsettle_Option_Variable()->Int()) {
+                mcm->Info_Text(Concat2("Unsettle ", name));
+
+            } else if (option == Immobilize_Option_Variable()->Int()) {
+                mcm->Info_Text(Concat2("Immobilize ", name));
+            } else if (option == Mobilize_Option_Variable()->Int()) {
+                mcm->Info_Text(Concat2("Mobilize ", name));
+
+            } else if (option == Paralyze_Option_Variable()->Int()) {
+                mcm->Info_Text(Concat2("Paralyze ", name));
+            } else if (option == Unparalyze_Option_Variable()->Int()) {
+                mcm->Info_Text(Concat2("Unparalyze ", name));
+
+            } else if (option == Follow_Option_Variable()->Int()) {
+                mcm->Info_Text(Concat3("Have ", name, " follow you."));
+            } else if (option == Unfollow_Option_Variable()->Int()) {
+                mcm->Info_Text(Concat3("Have ", name, " stop following you."));
+
+            } else if (option == Sneak_Option_Variable()->Int()) {
+                mcm->Info_Text(Concat3("Have ", name, " sneak."));
+            } else if (option == Unsneak_Option_Variable()->Int()) {
+                mcm->Info_Text(Concat3("Have ", name, " stop sneaking."));
+
+            } else if (option == Resurrect_Option_Variable()->Int()) {
+                mcm->Info_Text("Resurrect this dead member.");
+
+            } else if (option == Rating_Option_Variable()->Int()) {
+                mcm->Info_Text("Rate this member. Causes them to sort higher, and can be used in the filter.");
+            } else if (option == Stylize_Option_Variable()->Int()) {
+                mcm->Info_Text("Change the fighting style of this member.");
+            } else if (option == Vitalize_Option_Variable()->Int()) {
+                mcm->Info_Text("Change how this member lives or dies.");
+
+            } else if (option == Clone_Option_Variable()->Int()) {
+                mcm->Info_Text("Clone this member.");
+            } else if (option == Unclone_Option_Variable()->Int()) {
+                mcm->Info_Text("Unclone and unmember this member.");
+            } else if (option == Unmember_Option_Variable()->Int()) {
+                mcm->Info_Text("Unmember this member.");
+            }
+        }
+    }
+
     void Member_t::Register_Me(Virtual_Machine_t* vm)
     {
         #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
@@ -758,13 +954,16 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        METHOD("f_Build_Page", 0, void, Build_Page);
-        METHOD("p_Build_Commands", 0, void, Build_Commands);
-        METHOD("p_Update_Commands", 0, void, Update_Commands);
-        METHOD("p_Build_Statistics", 0, void, Build_Statistics);
-        METHOD("p_Update_Statistics", 0, void, Update_Statistics);
-
-        METHOD("f_On_Option_Select", 1, void, On_Option_Select, Int_t);
+        METHOD("On_Build_Page", 0, void, On_Build_Page);
+        METHOD("On_Option_Select", 1, void, On_Option_Select, Int_t);
+        METHOD("On_Option_Menu_Open", 1, void, On_Option_Menu_Open, Int_t);
+        METHOD("On_Option_Menu_Accept", 2, void, On_Option_Menu_Accept, Int_t, Int_t);
+        METHOD("On_Option_Slider_Open", 1, void, On_Option_Slider_Open, Int_t);
+        METHOD("On_Option_Slider_Accept", 2, void, On_Option_Slider_Accept, Int_t, Float_t);
+        METHOD("On_Option_Input_Accept", 2, void, On_Option_Input_Accept, Int_t, String_t);
+        METHOD("On_Option_Keymap_Change", 4, void, On_Option_Keymap_Change, Int_t, Int_t, String_t, String_t);
+        METHOD("On_Option_Default", 1, void, On_Option_Default, Int_t);
+        METHOD("On_Option_Highlight", 1, void, On_Option_Highlight, Int_t);
 
         #undef METHOD
     }

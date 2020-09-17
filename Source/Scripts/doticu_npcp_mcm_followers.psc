@@ -148,7 +148,7 @@ endFunction
 
 function f_On_Option_Select(int id_option)
     if p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
-        return MCM.MCM_MEMBER.f_On_Option_Select(id_option)
+        return MCM.MCM_MEMBER.On_Option_Select(id_option)
     endIf
 
     int idx_entity = p_Get_Idx_Entity(id_option)
@@ -190,7 +190,7 @@ endFunction
 
 function f_On_Option_Menu_Open(int id_option)
     if p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
-        return MCM.MCM_MEMBER.f_On_Option_Menu_Open(id_option)
+        return MCM.MCM_MEMBER.On_Option_Menu_Open(id_option)
     endIf
 
     if id_option == p_option_menu
@@ -214,7 +214,7 @@ endFunction
 
 function f_On_Option_Menu_Accept(int id_option, int idx_option)
     if p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
-        return MCM.MCM_MEMBER.f_On_Option_Menu_Accept(id_option, idx_option)
+        return MCM.MCM_MEMBER.On_Option_Menu_Accept(id_option, idx_option)
     endIf
 
     if id_option == p_option_menu
@@ -247,7 +247,7 @@ endFunction
 
 function f_On_Option_Highlight(int id_option)
     if p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
-        return MCM.MCM_MEMBER.f_On_Option_Highlight(id_option)
+        return MCM.MCM_MEMBER.On_Option_Highlight(id_option)
     endIf
 
     if id_option == p_option_menu
@@ -283,31 +283,31 @@ endFunction
 
 function f_On_Option_Slider_Open(int id_option)
     if p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
-        return MCM.MCM_MEMBER.f_On_Option_Slider_Open(id_option)
+        return MCM.MCM_MEMBER.On_Option_Slider_Open(id_option)
     endIf
 endFunction
 
 function f_On_Option_Slider_Accept(int id_option, float float_value)
     if p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
-        return MCM.MCM_MEMBER.f_On_Option_Slider_Accept(id_option, float_value)
+        return MCM.MCM_MEMBER.On_Option_Slider_Accept(id_option, float_value)
     endIf
 endFunction
 
 function f_On_Option_Input_Accept(int id_option, string str_input)
     if p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
-        return MCM.MCM_MEMBER.f_On_Option_Input_Accept(id_option, str_input)
+        return MCM.MCM_MEMBER.On_Option_Input_Accept(id_option, str_input)
     endIf
 endFunction
 
 function f_On_Option_Keymap_Change(int id_option, int code_key, string str_conflict_control, string str_conflict_mod)
     if p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
-        return MCM.MCM_MEMBER.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
+        return MCM.MCM_MEMBER.On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
     endIf
 endFunction
 
 function f_On_Option_Default(int id_option)
     if p_code_view == doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
-        return MCM.MCM_MEMBER.f_On_Option_Default(id_option)
+        return MCM.MCM_MEMBER.On_Option_Default(id_option)
     endIf
 endFunction
 
@@ -358,7 +358,7 @@ function p_Goto_Followers_Member(doticu_npcp_member ref_member, bool is_building
             p_do_next_follower = false
         endIf
         MCM.MCM_MEMBER.f_View_Followers_Member(ref_member)
-        MCM.MCM_MEMBER.f_Build_Page()
+        MCM.MCM_MEMBER.On_Build_Page()
     else
         p_code_view = doticu_npcp_codes.VIEW_FOLLOWERS_MEMBER()
         p_ref_member = ref_member

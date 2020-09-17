@@ -7,10 +7,6 @@ function f_Register()
     (GetAliasByName("movee") as doticu_npcp_movee).Register()
 endFunction
 
-bool function Is_Vampire(Actor ref_actor)
-    return ref_actor && ref_actor.HasKeyword(doticu_npcp_consts.Vampire_Keyword())
-endFunction
-
 function Stop_If_Playing_Music(Actor ref_actor);;;
     BardSongsScript script = doticu_npcp_consts.Bard_Songs_Quest() as BardSongsScript
 

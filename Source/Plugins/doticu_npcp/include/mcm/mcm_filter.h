@@ -127,8 +127,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Variable_t* Is_Non_Saddler_Option_Variable();
         Variable_t* Saddler_Ternary_Variable();
 
-        Variable_t* Flags_1_Variable();
-
         Int_t Current_View();
         void Current_View(Int_t view_code);
 
@@ -141,7 +139,16 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
         String_t Filter_String();
 
-        void Goto_Filter_Members();
+        void On_Build_Page();
+        void On_Option_Select(Int_t option);
+        void On_Option_Menu_Open(Int_t option);
+        void On_Option_Menu_Accept(Int_t option, Int_t idx);
+        void On_Option_Slider_Open(Int_t option);
+        void On_Option_Slider_Accept(Int_t option, Float_t value);
+        void On_Option_Input_Accept(Int_t option, String_t value);
+        void On_Option_Keymap_Change(Int_t option, Int_t key_code, String_t conflict, String_t conflicting_mod);
+        void On_Option_Default(Int_t option);
+        void On_Option_Highlight(Int_t option);
 
     public:
         static void Register_Me(Virtual_Machine_t* vm);

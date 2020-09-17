@@ -50,6 +50,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
     Variable_t* SKI_Config_Base_t::Number_Values_Variable() { DEFINE_VARIABLE("_numValueBuf"); }
     Variable_t* SKI_Config_Base_t::States_Variable() { DEFINE_VARIABLE("_stateOptionMap"); }
     Variable_t* SKI_Config_Base_t::Info_Text_Variable() { DEFINE_VARIABLE("_infoText"); }
+    Variable_t* SKI_Config_Base_t::Menu_Parameters_Variable() { DEFINE_VARIABLE("_menuParams"); }
 
     String_t SKI_Config_Base_t::Current_Page_Name()
     {
@@ -232,7 +233,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         return Add_Option(Option_Type_e::INPUT, label, value, 0.0f, flags);
     }
 
-    void SKI_Config_Base_t::Option_Number_Value(Int_t index, Float_t value, Bool_t do_render)
+    void SKI_Config_Base_t::Number_Option_Value(Int_t index, Float_t value, Bool_t do_render)
     {
         NPCP_ASSERT(Current_State() != State_e::RESET);
 
@@ -243,7 +244,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         }
     }
 
-    void SKI_Config_Base_t::Option_String_Value(Int_t index, String_t value, Bool_t do_render)
+    void SKI_Config_Base_t::String_Option_Value(Int_t index, String_t value, Bool_t do_render)
     {
         NPCP_ASSERT(Current_State() != State_e::RESET);
 
@@ -254,6 +255,20 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         }
     }
 
+    void SKI_Config_Base_t::Menu_Dialog_Values(Vector_t<String_t> values)
+    {
+        NPCP_ASSERT(Current_State() == State_e::MENU);
+
+        UI::Run("Journal Menu", "_root.ConfigPanelFader.configPanel" ".setMenuDialogOptions", values);
+    }
+
+    void SKI_Config_Base_t::Menu_Dialog_Default(Int_t index)
+    {
+        NPCP_ASSERT(Current_State() == State_e::MENU);
+
+        Menu_Parameters_Variable()->Array()->Point(1)->Int(index);
+    }
+
     void SKI_Config_Base_t::Text_Option_Value(Int_t option, String_t text, Bool_t do_render)
     {
         Int_t index = option % 0x100;
@@ -261,7 +276,37 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             (Flags()->Point(index)->Int() % 0x100);
         NPCP_ASSERT(type == Option_Type_e::TEXT);
 
-        Option_String_Value(index, text, do_render);
+        String_Option_Value(index, text, do_render);
+    }
+
+    void SKI_Config_Base_t::Toggle_Option_Value(Int_t option, Bool_t value, Bool_t do_render)
+    {
+        Int_t index = option % 0x100;
+        Option_Type_e type = static_cast<Option_Type_e>
+            (Flags()->Point(index)->Int() % 0x100);
+        NPCP_ASSERT(type == Option_Type_e::TOGGLE);
+
+        Number_Option_Value(index, static_cast<Float_t>(value), do_render);
+    }
+
+    void SKI_Config_Base_t::Menu_Option_Value(Int_t option, String_t value, Bool_t do_render)
+    {
+        Int_t index = option % 0x100;
+        Option_Type_e type = static_cast<Option_Type_e>
+            (Flags()->Point(index)->Int() % 0x100);
+        NPCP_ASSERT(type == Option_Type_e::MENU);
+
+        String_Option_Value(index, value, do_render);
+    }
+
+    void SKI_Config_Base_t::Input_Option_Value(Int_t option, String_t value, Bool_t do_render)
+    {
+        Int_t index = option % 0x100;
+        Option_Type_e type = static_cast<Option_Type_e>
+            (Flags()->Point(index)->Int() % 0x100);
+        NPCP_ASSERT(type == Option_Type_e::INPUT);
+
+        String_Option_Value(index, value, do_render);
     }
 
     void SKI_Config_Base_t::Keymap_Option_Value(Int_t option, Int_t key_code, Bool_t do_render)
@@ -271,7 +316,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             (Flags()->Point(index)->Int() % 0x100);
         NPCP_ASSERT(type == Option_Type_e::KEYMAP);
 
-        Option_Number_Value(index, static_cast<Float_t>(key_code), do_render);
+        Number_Option_Value(index, static_cast<Float_t>(key_code), do_render);
     }
 
     void SKI_Config_Base_t::Option_Flags(Int_t option, Int_t flags, Bool_t do_render)
@@ -383,45 +428,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
     void Main_t::Close_Menus(Virtual_Callback_i** callback)
     {
         Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(), "doticu_npcp_funcs", "Close_Menus", nullptr, callback);
-    }
-
-    void Main_t::Set_Option_Flags(Variable_t* option_in, Int_t flags, Bool_t do_render)
-    {
-        NPCP_ASSERT(option_in);
-
-        struct Arguments : public Virtual_Arguments_t {
-        public:
-            Int_t option;
-            Int_t flags;
-            Bool_t dont_render;
-            Arguments(Int_t option, Int_t flags, Bool_t dont_render) :
-                option(option), flags(flags), dont_render(dont_render)
-            {
-            }
-            Bool_t operator()(Arguments_t* arguments)
-            {
-                arguments->Resize(3);
-                arguments->At(0)->Int(option);
-                arguments->At(1)->Int(flags);
-                arguments->At(2)->Bool(dont_render);
-
-                return true;
-            }
-        } arguments(option_in->Int(), flags, !do_render);
-
-        Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "SetOptionFlags", &arguments);
-    }
-
-    void Main_t::Enable_Option(Variable_t* option_in, Bool_t do_render)
-    {
-        NPCP_ASSERT(option_in);
-        Set_Option_Flags(option_in, MCM::NONE, do_render);
-    }
-
-    void Main_t::Disable_Option(Variable_t* option_in, Bool_t do_render)
-    {
-        NPCP_ASSERT(option_in);
-        Set_Option_Flags(option_in, MCM::DISABLE, do_render);
     }
 
     void Main_t::Register_Me(Virtual_Machine_t* vm)

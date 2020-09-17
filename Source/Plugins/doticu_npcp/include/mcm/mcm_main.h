@@ -64,6 +64,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Variable_t* Number_Values_Variable();
         Variable_t* States_Variable();
         Variable_t* Info_Text_Variable();
+        Variable_t* Menu_Parameters_Variable(); // Array_t* of Int_t
 
         String_t Current_Page_Name();
         Int_t Current_Page_Number();
@@ -100,10 +101,15 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Int_t Add_Keymap_Option(String_t label, Int_t key_code, Int_t flags = 0);
         Int_t Add_Input_Option(String_t label, String_t value, Int_t flags = 0);
 
-        void Option_Number_Value(Int_t index, Float_t value, Bool_t do_render);
-        void Option_String_Value(Int_t index, String_t value, Bool_t do_render);
+        void Number_Option_Value(Int_t index, Float_t value, Bool_t do_render);
+        void String_Option_Value(Int_t index, String_t value, Bool_t do_render);
+        void Menu_Dialog_Values(Vector_t<String_t> values);
+        void Menu_Dialog_Default(Int_t index);
 
         void Text_Option_Value(Int_t option, String_t text, Bool_t do_render = true);
+        void Toggle_Option_Value(Int_t option, Bool_t value, Bool_t do_render = true);
+        void Menu_Option_Value(Int_t option, String_t value, Bool_t do_render = true);
+        void Input_Option_Value(Int_t option, String_t value, Bool_t do_render = true);
         void Keymap_Option_Value(Int_t option, Int_t key_code, Bool_t do_render = true);
 
         void Option_Flags(Int_t option, Int_t flags, Bool_t do_render = true);
@@ -130,11 +136,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Variable_t* Variable(String_t variable_name);
 
         void Close_Menus(Virtual_Callback_i** callback = nullptr);
-
-        void Set_Option_Flags(Variable_t* option_in, Int_t flags = 0, Bool_t do_render = true);
-
-        void Enable_Option(Variable_t* option_in, Bool_t do_render = true);
-        void Disable_Option(Variable_t* option_in, Bool_t do_render = true);
 
     public:
         static void Register_Me(Virtual_Machine_t* vm);
