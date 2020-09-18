@@ -318,7 +318,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                     Followers_t::Self()->Unretreat();
                 }
 
-                Members_t::Self()->Enforce_Loaded(Vars::Do_Auto_Resurrect());
+                Members_t::Self()->Enforce_Loaded(Modules::Vars_t::Self()->Do_Auto_Resurrect_Followers());
 
                 return true;
             } else {

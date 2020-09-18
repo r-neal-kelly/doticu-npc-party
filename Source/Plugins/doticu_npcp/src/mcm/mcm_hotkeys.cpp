@@ -222,6 +222,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     void Hotkeys_t::Build_Page()
     {
+        Modules::Vars_t* vars = Modules::Vars_t::Self();
         Keys_t* keys = Keys_t::Self();
         MCM::Main_t* mcm = Main();
 
@@ -242,7 +243,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         #define BUILD_HOTKEY(HOTKEY_, LABEL_)                                                   \
         M                                                                                       \
             HOTKEY_##_Value_Option_Variable()->Int(                                             \
-                mcm->Add_Keymap_Option(LABEL_, Vars::HOTKEY_##_Value(), MCM::Flags::UNMAP)      \
+                mcm->Add_Keymap_Option(LABEL_, vars->HOTKEY_##_Value(), MCM::Flags::UNMAP)      \
             );                                                                                  \
             HOTKEY_##_Mods_Option_Variable()->Int(                                              \
                 mcm->Add_Text_Option(" Mods ", keys->Current_Mods_String(Keys_t::HOTKEY_()))    \
@@ -533,79 +534,81 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     void Hotkeys_t::Change_Hotkey_Value(Int_t option, Int_t value, Bool_t do_render)
     {
+        Modules::Vars_t* vars = Modules::Vars_t::Self();
+
         if (option == G_Dialogue_Menu_Value_Option()) { // Global
-            Vars::G_Dialogue_Menu_Value(value);
+            vars->G_Dialogue_Menu_Value(value);
 
         } else if (option == N_Toggle_Member_Value_Option()) { // NPC
-            Vars::N_Toggle_Member_Value(value);
+            vars->N_Toggle_Member_Value(value);
         } else if (option == N_Toggle_Move_Value_Option()) {
-            Vars::N_Toggle_Move_Value(value);
+            vars->N_Toggle_Move_Value(value);
         } else if (option == N_Move_Nearer_Value_Option()) {
-            Vars::N_Move_Nearer_Value(value);
+            vars->N_Move_Nearer_Value(value);
         } else if (option == N_Move_Farther_Value_Option()) {
-            Vars::N_Move_Farther_Value(value);
+            vars->N_Move_Farther_Value(value);
         } else if (option == N_Move_Rotate_Left_Value_Option()) {
-            Vars::N_Move_Rotate_Left_Value(value);
+            vars->N_Move_Rotate_Left_Value(value);
         } else if (option == N_Move_Rotate_Right_Value_Option()) {
-            Vars::N_Move_Rotate_Right_Value(value);
+            vars->N_Move_Rotate_Right_Value(value);
         } else if (option == N_Has_Base_Value_Option()) {
-            Vars::N_Has_Base_Value(value);
+            vars->N_Has_Base_Value(value);
         } else if (option == N_Count_Base_Value_Option()) {
-            Vars::N_Count_Base_Value(value);
+            vars->N_Count_Base_Value(value);
         } else if (option == N_Has_Head_Value_Option()) {
-            Vars::N_Has_Head_Value(value);
+            vars->N_Has_Head_Value(value);
         } else if (option == N_Count_Heads_Value_Option()) {
-            Vars::N_Count_Heads_Value(value);
+            vars->N_Count_Heads_Value(value);
 
         } else if (option == M_Toggle_Clone_Value_Option()) { // Member
-            Vars::M_Toggle_Clone_Value(value);
+            vars->M_Toggle_Clone_Value(value);
         } else if (option == M_Toggle_Settler_Value_Option()) {
-            Vars::M_Toggle_Settler_Value(value);
+            vars->M_Toggle_Settler_Value(value);
         } else if (option == M_Toggle_Thrall_Value_Option()) {
-            Vars::M_Toggle_Thrall_Value(value);
+            vars->M_Toggle_Thrall_Value(value);
         } else if (option == M_Toggle_Immobile_Value_Option()) {
-            Vars::M_Toggle_Immobile_Value(value);
+            vars->M_Toggle_Immobile_Value(value);
         } else if (option == M_Toggle_Paralyzed_Value_Option()) {
-            Vars::M_Toggle_Paralyzed_Value(value);
+            vars->M_Toggle_Paralyzed_Value(value);
         } else if (option == M_Toggle_Follower_Value_Option()) {
-            Vars::M_Toggle_Follower_Value(value);
+            vars->M_Toggle_Follower_Value(value);
 
         } else if (option == F_Toggle_Sneak_Value_Option()) { // Follower
-            Vars::F_Toggle_Sneak_Value(value);
+            vars->F_Toggle_Sneak_Value(value);
         } else if (option == F_Toggle_Saddler_Value_Option()) {
-            Vars::F_Toggle_Saddler_Value(value);
+            vars->F_Toggle_Saddler_Value(value);
 
         } else if (option == MS_Toggle_Display_Value_Option()) { // Members
-            Vars::MS_Toggle_Display_Value(value);
+            vars->MS_Toggle_Display_Value(value);
         } else if (option == MS_Display_Previous_Value_Option()) {
-            Vars::MS_Display_Previous_Value(value);
+            vars->MS_Display_Previous_Value(value);
         } else if (option == MS_Display_Next_Value_Option()) {
-            Vars::MS_Display_Next_Value(value);
+            vars->MS_Display_Next_Value(value);
 
         } else if (option == FS_Summon_All_Value_Option()) { // Followers
-            Vars::FS_Summon_All_Value(value);
+            vars->FS_Summon_All_Value(value);
         } else if (option == FS_Summon_Mobile_Value_Option()) {
-            Vars::FS_Summon_Mobile_Value(value);
+            vars->FS_Summon_Mobile_Value(value);
         } else if (option == FS_Summon_Immobile_Value_Option()) {
-            Vars::FS_Summon_Immobile_Value(value);
+            vars->FS_Summon_Immobile_Value(value);
         } else if (option == FS_Settle_Value_Option()) {
-            Vars::FS_Settle_Value(value);
+            vars->FS_Settle_Value(value);
         } else if (option == FS_Unsettle_Value_Option()) {
-            Vars::FS_Unsettle_Value(value);
+            vars->FS_Unsettle_Value(value);
         } else if (option == FS_Immobilize_Value_Option()) {
-            Vars::FS_Immobilize_Value(value);
+            vars->FS_Immobilize_Value(value);
         } else if (option == FS_Mobilize_Value_Option()) {
-            Vars::FS_Mobilize_Value(value);
+            vars->FS_Mobilize_Value(value);
         } else if (option == FS_Sneak_Value_Option()) {
-            Vars::FS_Sneak_Value(value);
+            vars->FS_Sneak_Value(value);
         } else if (option == FS_Unsneak_Value_Option()) {
-            Vars::FS_Unsneak_Value(value);
+            vars->FS_Unsneak_Value(value);
         } else if (option == FS_Saddle_Value_Option()) {
-            Vars::FS_Saddle_Value(value);
+            vars->FS_Saddle_Value(value);
         } else if (option == FS_Unsaddle_Value_Option()) {
-            Vars::FS_Unsaddle_Value(value);
+            vars->FS_Unsaddle_Value(value);
         } else if (option == FS_Resurrect_Value_Option()) {
-            Vars::FS_Resurrect_Value(value);
+            vars->FS_Resurrect_Value(value);
 
         } else {
             NPCP_ASSERT(false);
@@ -616,82 +619,83 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     void Hotkeys_t::Change_Hotkey_Mods(Int_t option, Int_t mod_1, Int_t mod_2, Int_t mod_3, Bool_t do_render)
     {
+        Modules::Vars_t* vars = Modules::Vars_t::Self();
         Keys_t::Mods_t mods(mod_1, mod_2, mod_3);
         Vector_t<Int_t> vector = mods.Vector();
 
         if (option == G_Dialogue_Menu_Mods_Option()) { // Global
-            Vars::G_Dialogue_Menu_Mods(vector);
+            vars->G_Dialogue_Menu_Mods(vector);
 
         } else if (option == N_Toggle_Member_Mods_Option()) { // NPC
-            Vars::N_Toggle_Member_Mods(vector);
+            vars->N_Toggle_Member_Mods(vector);
         } else if (option == N_Toggle_Move_Mods_Option()) {
-            Vars::N_Toggle_Move_Mods(vector);
+            vars->N_Toggle_Move_Mods(vector);
         } else if (option == N_Move_Nearer_Mods_Option()) {
-            Vars::N_Move_Nearer_Mods(vector);
+            vars->N_Move_Nearer_Mods(vector);
         } else if (option == N_Move_Farther_Mods_Option()) {
-            Vars::N_Move_Farther_Mods(vector);
+            vars->N_Move_Farther_Mods(vector);
         } else if (option == N_Move_Rotate_Left_Mods_Option()) {
-            Vars::N_Move_Rotate_Left_Mods(vector);
+            vars->N_Move_Rotate_Left_Mods(vector);
         } else if (option == N_Move_Rotate_Right_Mods_Option()) {
-            Vars::N_Move_Rotate_Right_Mods(vector);
+            vars->N_Move_Rotate_Right_Mods(vector);
         } else if (option == N_Has_Base_Mods_Option()) {
-            Vars::N_Has_Base_Mods(vector);
+            vars->N_Has_Base_Mods(vector);
         } else if (option == N_Count_Base_Mods_Option()) {
-            Vars::N_Count_Base_Mods(vector);
+            vars->N_Count_Base_Mods(vector);
         } else if (option == N_Has_Head_Mods_Option()) {
-            Vars::N_Has_Head_Mods(vector);
+            vars->N_Has_Head_Mods(vector);
         } else if (option == N_Count_Heads_Mods_Option()) {
-            Vars::N_Count_Heads_Mods(vector);
+            vars->N_Count_Heads_Mods(vector);
 
         } else if (option == M_Toggle_Clone_Mods_Option()) { // Member
-            Vars::M_Toggle_Clone_Mods(vector);
+            vars->M_Toggle_Clone_Mods(vector);
         } else if (option == M_Toggle_Settler_Mods_Option()) {
-            Vars::M_Toggle_Settler_Mods(vector);
+            vars->M_Toggle_Settler_Mods(vector);
         } else if (option == M_Toggle_Thrall_Mods_Option()) {
-            Vars::M_Toggle_Thrall_Mods(vector);
+            vars->M_Toggle_Thrall_Mods(vector);
         } else if (option == M_Toggle_Immobile_Mods_Option()) {
-            Vars::M_Toggle_Immobile_Mods(vector);
+            vars->M_Toggle_Immobile_Mods(vector);
         } else if (option == M_Toggle_Paralyzed_Mods_Option()) {
-            Vars::M_Toggle_Paralyzed_Mods(vector);
+            vars->M_Toggle_Paralyzed_Mods(vector);
         } else if (option == M_Toggle_Follower_Mods_Option()) {
-            Vars::M_Toggle_Follower_Mods(vector);
+            vars->M_Toggle_Follower_Mods(vector);
 
         } else if (option == F_Toggle_Sneak_Mods_Option()) { // Follower
-            Vars::F_Toggle_Sneak_Mods(vector);
+            vars->F_Toggle_Sneak_Mods(vector);
         } else if (option == F_Toggle_Saddler_Mods_Option()) {
-            Vars::F_Toggle_Saddler_Mods(vector);
+            vars->F_Toggle_Saddler_Mods(vector);
 
         } else if (option == MS_Toggle_Display_Mods_Option()) { // Members
-            Vars::MS_Toggle_Display_Mods(vector);
+            vars->MS_Toggle_Display_Mods(vector);
         } else if (option == MS_Display_Previous_Mods_Option()) {
-            Vars::MS_Display_Previous_Mods(vector);
+            vars->MS_Display_Previous_Mods(vector);
         } else if (option == MS_Display_Next_Mods_Option()) {
-            Vars::MS_Display_Next_Mods(vector);
+            vars->MS_Display_Next_Mods(vector);
 
         } else if (option == FS_Summon_All_Mods_Option()) { // Followers
-            Vars::FS_Summon_All_Mods(vector);
+            vars->FS_Summon_All_Mods(vector);
         } else if (option == FS_Summon_Mobile_Mods_Option()) {
-            Vars::FS_Summon_Mobile_Mods(vector);
+            vars->FS_Summon_Mobile_Mods(vector);
         } else if (option == FS_Summon_Immobile_Mods_Option()) {
-            Vars::FS_Summon_Immobile_Mods(vector);
+            vars->FS_Summon_Immobile_Mods(vector);
         } else if (option == FS_Settle_Mods_Option()) {
-            Vars::FS_Settle_Mods(vector);
+            vars->FS_Settle_Mods(vector);
         } else if (option == FS_Unsettle_Mods_Option()) {
-            Vars::FS_Unsettle_Mods(vector);
+            vars->FS_Unsettle_Mods(vector);
         } else if (option == FS_Immobilize_Mods_Option()) {
-            Vars::FS_Immobilize_Mods(vector);
+            vars->FS_Immobilize_Mods(vector);
         } else if (option == FS_Mobilize_Mods_Option()) {
-            Vars::FS_Mobilize_Mods(vector);
+            vars->FS_Mobilize_Mods(vector);
         } else if (option == FS_Sneak_Mods_Option()) {
-            Vars::FS_Sneak_Mods(vector);
+            vars->FS_Sneak_Mods(vector);
         } else if (option == FS_Unsneak_Mods_Option()) {
-            Vars::FS_Unsneak_Mods(vector);
+            vars->FS_Unsneak_Mods(vector);
         } else if (option == FS_Saddle_Mods_Option()) {
-            Vars::FS_Saddle_Mods(vector);
+            vars->FS_Saddle_Mods(vector);
         } else if (option == FS_Unsaddle_Mods_Option()) {
-            Vars::FS_Unsaddle_Mods(vector);
+            vars->FS_Unsaddle_Mods(vector);
         } else if (option == FS_Resurrect_Mods_Option()) {
-            Vars::FS_Resurrect_Mods(vector);
+            vars->FS_Resurrect_Mods(vector);
 
         } else {
             NPCP_ASSERT(false);
@@ -702,13 +706,14 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     void Hotkeys_t::Reset_Hotkeys()
     {
+        Modules::Vars_t* vars = Modules::Vars_t::Self();
         Keys_t* keys = Keys_t::Self();
 
         #define RESET_HOTKEY(HOTKEY_)                           \
         M                                                       \
             String_t hotkey = Keys_t::HOTKEY_();                \
-            Vars::HOTKEY_##_Value(keys->Default_Value(hotkey)); \
-            Vars::HOTKEY_##_Mods(keys->Default_Mods(hotkey));   \
+            vars->HOTKEY_##_Value(keys->Default_Value(hotkey)); \
+            vars->HOTKEY_##_Mods(keys->Default_Mods(hotkey));   \
         W
 
         // Global
@@ -766,12 +771,13 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     void Hotkeys_t::Unset_Hotkeys()
     {
+        Modules::Vars_t* vars = Modules::Vars_t::Self();
         Keys_t* keys = Keys_t::Self();
 
         #define UNSET_HOTKEY(HOTKEY_)                           \
         M                                                       \
-            Vars::HOTKEY_##_Value(Keys_t::KEY_INVALID);         \
-            Vars::HOTKEY_##_Mods(Keys_t::Mods_t().Vector());    \
+            vars->HOTKEY_##_Value(Keys_t::KEY_INVALID);         \
+            vars->HOTKEY_##_Mods(Keys_t::Mods_t().Vector());    \
         W
 
         // Global

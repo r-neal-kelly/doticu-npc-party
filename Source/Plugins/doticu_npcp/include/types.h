@@ -800,7 +800,6 @@ namespace doticu_npcp {
 namespace doticu_npcp {
 
     typedef TESQuest                Consts_t;
-    typedef TESQuest                Vars_t;
 
     typedef StaticFunctionTag       Selfless_t;
 

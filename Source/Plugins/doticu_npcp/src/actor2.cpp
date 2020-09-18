@@ -2077,6 +2077,8 @@ namespace doticu_npcp { namespace Actor2 {
     {
         if (actor && other) {
             return Relationships_t::Self()->Relationship_Rank(Dynamic_Base(actor), Dynamic_Base(other));
+        } else {
+            return Relationship_t::Rank_e::ACQUAINTANCE;
         }
     }
 

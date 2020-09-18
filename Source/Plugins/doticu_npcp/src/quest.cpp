@@ -135,6 +135,36 @@ namespace doticu_npcp { namespace Quest {
         return start(quest, b, true);
     }
 
+    void Start_All(const Vector_t<Quest_t*> quests, Callback_t<>* user_callback)
+    {
+        using UCallback_t = Callback_t<>;
+        NPCP_ASSERT(user_callback);
+
+        struct VCallback : public Virtual_Callback_t {
+            const Vector_t<Quest_t*> quests;
+            size_t index;
+            UCallback_t* user_callback;
+            VCallback(const Vector_t<Quest_t*> quests, size_t index, UCallback_t* user_callback) :
+                quests(quests), index(index), user_callback(user_callback)
+            {
+            }
+            void operator()(Variable_t* result)
+            {
+                if (index < quests.size()) {
+                    Virtual_Callback_i* vcallback = new VCallback(quests, index + 1, user_callback);
+                    Papyrus::Virtual_Machine_t::Self()->Call_Method(quests[index], "Quest", "Start", nullptr, &vcallback);
+                } else {
+                    user_callback->operator()();
+                    delete user_callback;
+                }
+            }
+        };
+
+        size_t index = 0;
+        Virtual_Callback_i* vcallback = new VCallback(quests, index + 1, user_callback);
+        Papyrus::Virtual_Machine_t::Self()->Call_Method(quests[index], "Quest", "Start", nullptr, &vcallback);
+    }
+
     /*void Start(Quest_t* quest)
     {
         Papyrus::Virtual_Machine_t::Self()->Call_Method(quest, "Quest", "Start", nullptr, nullptr);

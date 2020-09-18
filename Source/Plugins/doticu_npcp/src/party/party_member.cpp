@@ -1272,8 +1272,9 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Is_Display_Variable()->Bool(false);
         Is_Reanimated_Variable()->Bool(false);
 
-        Style_Variable()->Int(Vars::Default_Style());
-        Vitality_Variable()->Int(Vars::Default_Vitality());
+        Modules::Vars_t* vars = Modules::Vars_t::Self();
+        Style_Variable()->Int(vars->Default_Member_Style());
+        Vitality_Variable()->Int(vars->Default_Member_Vitality());
         Update_Outfit2(CODES::OUTFIT2::MEMBER);
         Rating_Variable()->Int(0);
         Name_Variable()->String(Actor2::Get_Name(actor));
@@ -2864,10 +2865,12 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         NPCP_ASSERT(Is_Filled());
         NPCP_ASSERT(actor);
 
+        Modules::Vars_t* vars = Modules::Vars_t::Self();
+
         Outfit2_t* current_outfit2;
         Int_t current_outfit2_code;
-        if (Vars::Do_Auto_Outfit2s()) {
-            if (Is_Immobile() && Vars::Do_Auto_Immobile_Outfit2()) {
+        if (vars->Do_Auto_Change_Outfits()) {
+            if (Is_Immobile() && vars->Do_Auto_Change_Immobile_Outfit()) {
                 current_outfit2 = Immobile_Outfit2();
                 current_outfit2_code = CODES::OUTFIT2::IMMOBILE;
             } else if (Is_Follower()) {

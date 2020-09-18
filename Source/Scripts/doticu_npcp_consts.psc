@@ -12,8 +12,6 @@ Quest function Bard_Songs_Quest() native global
 
 ; NPCP Globals
 GlobalVariable function Is_Installed_Global() native global
-GlobalVariable function Allow_Dialogue_For_All_Global() native global
-GlobalVariable function Allow_Chatter_Global() native global
 GlobalVariable function Force_Clone_Uniques_Global() native global
 GlobalVariable function Force_Clone_Generics_Global() native global
 GlobalVariable function Force_Unclone_Uniques_Global() native global

@@ -168,6 +168,9 @@
     <ClCompile Include="src\packages.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\mcm\mcm_settings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\object_ref.h">
@@ -327,6 +330,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\packages.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mcm\mcm_settings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

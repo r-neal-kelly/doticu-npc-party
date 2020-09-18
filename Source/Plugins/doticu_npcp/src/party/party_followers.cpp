@@ -465,7 +465,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     Vector_t<Follower_t*> Followers_t::Sort(Vector_t<Follower_t*> followers)
     {
-        return Aliases_t::Sort<Follower_t>(followers, Vars::Followers_Sort_Algorithm());
+        return Aliases_t::Sort<Follower_t>(followers, Modules::Vars_t::Self()->Follower_Sort_Algorithm());
     }
 
     Vector_t<Follower_t*> Followers_t::Sort_Filled(Int_t begin, Int_t end)

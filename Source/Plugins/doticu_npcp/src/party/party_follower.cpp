@@ -799,7 +799,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     {
         NPCP_ASSERT(Is_Filled());
 
-        if (!Vars::Is_Leveling_Enabled()) {
+        if (!Modules::Vars_t::Self()->Do_Level_Followers()) {
             return;
         }
 
@@ -1032,7 +1032,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     {
         NPCP_ASSERT(Is_Filled());
 
-        if (!Vars::Is_Leveling_Enabled()) {
+        if (!Modules::Vars_t::Self()->Do_Level_Followers()) {
             return;
         }
 

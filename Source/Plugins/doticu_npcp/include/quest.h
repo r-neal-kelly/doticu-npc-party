@@ -4,9 +4,11 @@
 
 #pragma once
 
-#include "types.h"
+#include "papyrus.h"
 
 namespace doticu_npcp { namespace Quest {
+
+    using namespace Papyrus;
 
     const char *Get_Name(TESQuest *quest);
 
@@ -18,6 +20,7 @@ namespace doticu_npcp { namespace Quest {
 
     Bool_t Start(Quest_t* quest);
     //void Start(Quest_t* quest);
+    void Start_All(const Vector_t<Quest_t*> quests, Callback_t<>* user_callback);
 
     void Log_Dialogue(Quest_t* quest);
 

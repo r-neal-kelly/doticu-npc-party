@@ -378,11 +378,13 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             }
         };
 
+        Modules::Vars_t* vars = Modules::Vars_t::Self();
+
         if (Is_Created()) {
-            Try_To_Register(Vars::N_Move_Farther_Value());
-            Try_To_Register(Vars::N_Move_Nearer_Value());
-            Try_To_Register(Vars::N_Move_Rotate_Left_Value());
-            Try_To_Register(Vars::N_Move_Rotate_Right_Value());
+            Try_To_Register(vars->N_Move_Farther_Value());
+            Try_To_Register(vars->N_Move_Nearer_Value());
+            Try_To_Register(vars->N_Move_Rotate_Left_Value());
+            Try_To_Register(vars->N_Move_Rotate_Right_Value());
         }
     }
 
@@ -544,14 +546,15 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             }
             void operator()(Variable_t* result)
             {
+                Modules::Vars_t* vars = Modules::Vars_t::Self();
                 if (result && result->Bool()) {
-                    if (key_code == Vars::N_Move_Farther_Value()) {
+                    if (key_code == vars->N_Move_Farther_Value()) {
                         self->Do_Distance_Farther(true);
-                    } else if (key_code == Vars::N_Move_Nearer_Value()) {
+                    } else if (key_code == vars->N_Move_Nearer_Value()) {
                         self->Do_Distance_Nearer(true);
-                    } else if (key_code == Vars::N_Move_Rotate_Left_Value()) {
+                    } else if (key_code == vars->N_Move_Rotate_Left_Value()) {
                         self->Do_Rotate_Left(true);
-                    } else if (key_code == Vars::N_Move_Rotate_Right_Value()) {
+                    } else if (key_code == vars->N_Move_Rotate_Right_Value()) {
                         self->Do_Rotate_Right(true);
                     }
                 }

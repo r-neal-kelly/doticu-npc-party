@@ -928,8 +928,6 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
 
         // NPCP Globals
         ADD_GLOBAL("Is_Installed_Global", 0, Global_t*, Is_Installed_Global);
-        ADD_GLOBAL("Allow_Dialogue_For_All_Global", 0, Global_t*, Allow_Dialogue_For_All_Global);
-        ADD_GLOBAL("Allow_Chatter_Global", 0, Global_t*, Allow_Chatter_Global);
         ADD_GLOBAL("Force_Clone_Uniques_Global", 0, Global_t*, Force_Clone_Uniques_Global);
         ADD_GLOBAL("Force_Clone_Generics_Global", 0, Global_t*, Force_Clone_Generics_Global);
         ADD_GLOBAL("Force_Unclone_Uniques_Global", 0, Global_t*, Force_Unclone_Uniques_Global);

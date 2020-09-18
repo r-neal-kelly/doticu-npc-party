@@ -53,6 +53,7 @@
 #include "mcm/mcm_member.h"
 #include "mcm/mcm_filter.h"
 #include "mcm/mcm_chests.h"
+#include "mcm/mcm_settings.h"
 #include "mcm/mcm_hotkeys.h"
 
 namespace doticu_npcp { namespace Main {
@@ -119,9 +120,10 @@ namespace doticu_npcp { namespace Modules {
                                              Int_t min_minor,
                                              Int_t min_patch)
     {
-        return Is_Version_Less_Than(Vars::NPCP_Major(),
-                                    Vars::NPCP_Minor(),
-                                    Vars::NPCP_Patch(),
+        Vars_t* vars = Vars_t::Self();
+        return Is_Version_Less_Than(vars->NPCP_Major(),
+                                    vars->NPCP_Minor(),
+                                    vars->NPCP_Patch(),
                                     min_major,
                                     min_minor,
                                     min_patch);
@@ -146,30 +148,45 @@ namespace doticu_npcp { namespace Modules {
                     void operator()(Bool_t has_requirements)
                     {
                         if (has_requirements) {
-                            Quest::Start(Consts::Vars_Quest());
-                            Quest::Start(Consts::Funcs_Quest());
-                            Quest::Start(Consts::Members_Quest());
-                            Quest::Start(Consts::Followers_Quest());
-                            Quest::Start(Consts::Control_Quest());
-
                             Quest::Start(Consts::Reanimated_Dialogue_Quest());
                             Quest::Start(Consts::Thrall_Dialogue_Quest());
 
-                            struct VCallback : public Virtual_Callback_t {
+                            Vector_t<Quest_t*> quests_to_start;
+                            quests_to_start.reserve(5);
+                            quests_to_start.push_back(Consts::Vars_Quest());
+                            quests_to_start.push_back(Consts::Funcs_Quest());
+                            quests_to_start.push_back(Consts::Members_Quest());
+                            quests_to_start.push_back(Consts::Followers_Quest());
+                            quests_to_start.push_back(Consts::Control_Quest());
+
+                            struct Callback : public Callback_t<> {
                                 Main_t* main;
-                                VCallback(Main_t* main) :
+                                Callback(Main_t* main) :
                                     main(main)
                                 {
                                 }
-                                void operator()(Variable_t* result)
+                                void operator()()
                                 {
-                                    Consts::Is_Installed_Global()->value = 1.0f;
-                                    Modules::Control::Commands_t::Self()->Log_Note("Thank you for installing!", true);
-                                    Party::Player_t::Self()->On_Init_Mod();
+                                    Vars_t::Self()->Initialize();
+
+                                    struct VCallback : public Virtual_Callback_t {
+                                        Main_t* main;
+                                        VCallback(Main_t* main) :
+                                            main(main)
+                                        {
+                                        }
+                                        void operator()(Variable_t* result)
+                                        {
+                                            Consts::Is_Installed_Global()->value = 1.0f;
+                                            Modules::Control::Commands_t::Self()->Log_Note("Thank you for installing!", true);
+                                            Party::Player_t::Self()->On_Init_Mod();
+                                        }
+                                    };
+                                    Virtual_Callback_i* vcallback = new VCallback(main);
+                                    Virtual_Machine_t::Self()->Call_Method(main, main->Class_Name(), "p_Create", nullptr, &vcallback);
                                 }
                             };
-                            Virtual_Callback_i* vcallback = new VCallback(main);
-                            Virtual_Machine_t::Self()->Call_Method(main, main->Class_Name(), "p_Create", nullptr, &vcallback);
+                            Quest::Start_All(quests_to_start, new Callback(main));
                         }
                     }
                 };
@@ -216,6 +233,7 @@ namespace doticu_npcp { namespace Modules {
                                         Modules::Control::Commands_t::Self()->Log_Note(note.c_str(), true);
                                     }
                                     main->Try_Cleanup();
+                                    Party::Members_t::Self()->On_Load_Mod();
                                     Party::Player_t::Self()->On_Load_Mod();
                                     Party::Movee_t::Self()->On_Load_Mod();
                                     Party::Mannequins_t::Self()->On_Load_Mod();
@@ -277,9 +295,10 @@ namespace doticu_npcp { namespace Modules {
                 Party::Members_t::Self()->u_0_9_9();
             }
 
-            Vars::NPCP_Major(curr_major);
-            Vars::NPCP_Minor(curr_minor);
-            Vars::NPCP_Patch(curr_patch);
+            Vars_t* vars = Vars_t::Self();
+            vars->NPCP_Major(curr_major);
+            vars->NPCP_Minor(curr_minor);
+            vars->NPCP_Patch(curr_patch);
 
             return true;
         } else {
@@ -431,7 +450,6 @@ namespace doticu_npcp { namespace Main {
         REGISTER_NAMESPACE(Spell);
         REGISTER_NAMESPACE(String2);
         REGISTER_NAMESPACE(Utils);
-        REGISTER_NAMESPACE(Vars);
 
         #undef REGISTER_NAMESPACE
 
@@ -443,6 +461,7 @@ namespace doticu_npcp { namespace Main {
 
         REGISTER_TYPE(Modules::Main_t);
         REGISTER_TYPE(Modules::Funcs_t);
+        REGISTER_TYPE(Modules::Vars_t);
 
         REGISTER_TYPE(Party::Player_t);
         REGISTER_TYPE(Party::Greeter_t);
@@ -468,6 +487,7 @@ namespace doticu_npcp { namespace Main {
         REGISTER_TYPE(MCM::Member_t);
         REGISTER_TYPE(MCM::Filter_t);
         REGISTER_TYPE(MCM::Chests_t);
+        REGISTER_TYPE(MCM::Settings_t);
         REGISTER_TYPE(MCM::Hotkeys_t);
 
         #undef REGISTER_TYPE

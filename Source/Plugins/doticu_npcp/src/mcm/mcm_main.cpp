@@ -51,6 +51,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
     Variable_t* SKI_Config_Base_t::Number_Values_Variable() { DEFINE_VARIABLE("_numValueBuf"); }
     Variable_t* SKI_Config_Base_t::States_Variable() { DEFINE_VARIABLE("_stateOptionMap"); }
     Variable_t* SKI_Config_Base_t::Info_Text_Variable() { DEFINE_VARIABLE("_infoText"); }
+    Variable_t* SKI_Config_Base_t::Slider_Parameters_Variable() { DEFINE_VARIABLE("_sliderParams"); }
     Variable_t* SKI_Config_Base_t::Menu_Parameters_Variable() { DEFINE_VARIABLE("_menuParams"); }
 
     String_t SKI_Config_Base_t::Current_Page_Name()
@@ -256,6 +257,48 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         }
     }
 
+    void SKI_Config_Base_t::Both_Option_Values(Int_t index, String_t string_value, Float_t number_value, Bool_t do_render)
+    {
+        NPCP_ASSERT(Current_State() != State_e::RESET);
+
+        UI::Set_Value<Int_t>("Journal Menu", "_root.ConfigPanelFader.configPanel" ".optionCursorIndex", index);
+        UI::Set_Value<String_t>("Journal Menu", "_root.ConfigPanelFader.configPanel" ".optionCursor.strValue", string_value);
+        UI::Set_Value<Float_t>("Journal Menu", "_root.ConfigPanelFader.configPanel" ".optionCursor.numValue", number_value);
+        if (do_render) {
+            UI::Run("Journal Menu", "_root.ConfigPanelFader.configPanel" ".invalidateOptionData");
+        }
+    }
+
+    void SKI_Config_Base_t::Slider_Dialog_Current_Value(Float_t value)
+    {
+        NPCP_ASSERT(Current_State() == State_e::SLIDER);
+
+        Slider_Parameters_Variable()->Array()->Point(0)->Float(value);
+    }
+
+    void SKI_Config_Base_t::Slider_Dialog_Default_Value(Float_t value)
+    {
+        NPCP_ASSERT(Current_State() == State_e::SLIDER);
+
+        Slider_Parameters_Variable()->Array()->Point(1)->Float(value);
+    }
+
+    void SKI_Config_Base_t::Slider_Dialog_Range_Values(Float_t min, Float_t max)
+    {
+        NPCP_ASSERT(Current_State() == State_e::SLIDER);
+
+        Array_t* slider_parameters = Slider_Parameters_Variable()->Array();
+        slider_parameters->Point(2)->Float(min);
+        slider_parameters->Point(3)->Float(max);
+    }
+
+    void SKI_Config_Base_t::Slider_Dialog_Interval_Value(Float_t value)
+    {
+        NPCP_ASSERT(Current_State() == State_e::SLIDER);
+
+        Slider_Parameters_Variable()->Array()->Point(4)->Float(value);
+    }
+
     void SKI_Config_Base_t::Menu_Dialog_Values(Vector_t<String_t> values)
     {
         NPCP_ASSERT(Current_State() == State_e::MENU);
@@ -288,6 +331,16 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         NPCP_ASSERT(type == Option_Type_e::TOGGLE);
 
         Number_Option_Value(index, static_cast<Float_t>(value), do_render);
+    }
+
+    void SKI_Config_Base_t::Slider_Option_Value(Int_t option, Float_t value, String_t format, Bool_t do_render)
+    {
+        Int_t index = option % 0x100;
+        Option_Type_e type = static_cast<Option_Type_e>
+            (Flags()->Point(index)->Int() % 0x100);
+        NPCP_ASSERT(type == Option_Type_e::SLIDER);
+
+        Both_Option_Values(index, format, value, do_render);
     }
 
     void SKI_Config_Base_t::Menu_Option_Value(Int_t option, String_t value, Bool_t do_render)

@@ -20,9 +20,17 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         static constexpr size_t BEGIN = 0;
         static constexpr size_t END = BEGIN + MAX;
 
-        static constexpr float DEFAULT_DISPLAY_RADIUS = 140.0f;
-        static constexpr float DEFAULT_DISPLAY_DEGREE = 0.0f;
-        static constexpr float DEFAULT_DISPLAY_INTERVAL = 24.0f;
+        static constexpr Int_t MIN_DISPLAY_LIMIT = 1;
+        static constexpr Int_t MAX_DISPLAY_LIMIT = 8;
+        static constexpr Int_t DEFAULT_DISPLAY_LIMIT = 5;
+        static constexpr Float_t DEFAULT_DISPLAY_RADIUS = 140.0f;
+        static constexpr Float_t DEFAULT_DISPLAY_DEGREE = 0.0f;
+        static constexpr Float_t DEFAULT_DISPLAY_INTERVAL = 24.0f;
+        
+        static constexpr Int_t DEFAULT_OUTFIT_BODY_CHANCE = 100;
+        static constexpr Int_t DEFAULT_OUTFIT_HEAD_CHANCE = 50;
+        static constexpr Int_t DEFAULT_OUTFIT_HANDS_CHANCE = 67;
+        static constexpr Int_t DEFAULT_OUTFIT_FEET_CHANCE = 67;
 
         static String_t Class_Name();
         static Class_Info_t* Class_Info();
@@ -133,6 +141,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         void Remove_Original(Actor_t* original, Callback_t<Int_t, Actor_t*>** user_callback);
         void Add_Clone(Actor_t* original, Callback_t<Int_t, Member_t*>** user_callback);
         void Remove_Clone(Actor_t* clone, Bool_t do_delete_clone, Callback_t<Int_t, Actor_t*>** user_callback);
+
+        void On_Load_Mod();
 
         void u_0_9_3();
         void u_0_9_6();

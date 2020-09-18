@@ -1,6 +1,4 @@
-;/
-    Copyright © 2020 r-neal-kelly, aka doticu
-/;
+; Copyright © 2020 r-neal-kelly, aka doticu
 
 Scriptname doticu_npcp_mcm extends SKI_ConfigBase
 
@@ -67,18 +65,6 @@ doticu_npcp_mcm_log property MCM_LOG
 endProperty
 
 ; Public Constants
-string property STR_MCM_DEFAULT             = " Default "                   autoReadOnly hidden
-string property STR_MCM_WARRIOR             = " Warrior "                   autoReadOnly hidden
-string property STR_MCM_MAGE                = " Mage "                      autoReadOnly hidden
-string property STR_MCM_ARCHER              = " Archer "                    autoReadOnly hidden
-string property STR_MCM_COWARD              = " Coward "                    autoReadOnly hidden
-string property STR_MCM_MORTAL              = " Mortal "                    autoReadOnly hidden
-string property STR_MCM_PROTECTED           = " Protected "                 autoReadOnly hidden
-string property STR_MCM_ESSENTIAL           = " Essential "                 autoReadOnly hidden
-string property STR_MCM_INVULNERABLE        = " Invulnerable "              autoReadOnly hidden
-string property STR_MCM_BASE                = " Base "                      autoReadOnly hidden
-string property STR_MCM_REFERENCE           = " Reference "                 autoReadOnly hidden
-
 string property PAGE_FOLLOWERS              = " Followers "                 autoReadOnly hidden
 string property PAGE_MEMBERS                = " Members "                   autoReadOnly hidden
 string property PAGE_MANNEQUINS             = " Mannequins "                autoReadOnly hidden
@@ -103,7 +89,6 @@ int property FLAG_DISABLE hidden
 endProperty
 
 ; Private Variables
-bool                p_is_created        = false
 bool                p_is_custom_page    = false
 string              p_str_def_page      =    ""
 string              p_str_curr_page     =    ""
@@ -113,33 +98,26 @@ function Reset_Page() native
 
 ; Friend Methods
 function f_Create()
-    p_is_created = true
     p_is_custom_page = false
     p_str_def_page = PAGE_SETTINGS; or a help page? or global stats page?
     p_str_curr_page = p_str_def_page
 
     MCM_MANNEQUINS.f_Create()
-    MCM_SETTINGS.f_Create()
     MCM_LOG.f_Create()
 endFunction
 
 function f_Destroy()
     MCM_LOG.f_Destroy()
-    MCM_SETTINGS.f_Destroy()
     MCM_MANNEQUINS.f_Destroy()
-
-    p_is_created = false
 endFunction
 
 function f_Register()
     MCM_MANNEQUINS.f_Register()
-    MCM_SETTINGS.f_Register()
     MCM_LOG.f_Register()
 endFunction
 
 function f_Unregister()
     MCM_LOG.f_Unregister()
-    MCM_SETTINGS.f_Unregister()
     MCM_MANNEQUINS.f_Unregister()
 endFunction
 
@@ -167,8 +145,6 @@ event OnConfigInit()
 endEvent
 
 event OnConfigOpen()
-    VARS.is_mcm_open = true
-
     Pages = Utility.CreateStringArray(8, "")
     Pages[0] = PAGE_FOLLOWERS
     Pages[1] = PAGE_MEMBERS
@@ -178,10 +154,6 @@ event OnConfigOpen()
     Pages[5] = PAGE_SETTINGS
     Pages[6] = PAGE_HOTKEYS
     Pages[7] = PAGE_LOG
-endEvent
-
-event OnConfigClose()
-    VARS.is_mcm_open = false
 endEvent
 
 event OnPageReset(string str_page)
@@ -215,7 +187,7 @@ event OnPageReset(string str_page)
         MCM_CHESTS.f_Build_Page()
     elseIf str_page == PAGE_SETTINGS
         p_str_curr_page = str_page
-        MCM_SETTINGS.f_Build_Page()
+        MCM_SETTINGS.On_Build_Page()
     elseIf str_page == PAGE_HOTKEYS
         p_str_curr_page = str_page
         MCM_HOTKEYS.f_Build_Page()
@@ -240,7 +212,7 @@ event OnOptionSelect(int id_option)
     elseIf p_str_curr_page == PAGE_CHESTS
         MCM_CHESTS.f_On_Option_Select(id_option)
     elseIf p_str_curr_page == PAGE_SETTINGS
-        MCM_SETTINGS.f_On_Option_Select(id_option)
+        MCM_SETTINGS.On_Option_Select(id_option)
     elseIf p_str_curr_page == PAGE_HOTKEYS
         MCM_HOTKEYS.f_On_Option_Select(id_option)
     elseIf p_str_curr_page == PAGE_LOG
@@ -260,7 +232,7 @@ event OnOptionMenuOpen(int id_option)
     elseIf p_str_curr_page == PAGE_CHESTS
         MCM_CHESTS.f_On_Option_Menu_Open(id_option)
     elseIf p_str_curr_page == PAGE_SETTINGS
-        MCM_SETTINGS.f_On_Option_Menu_Open(id_option)
+        MCM_SETTINGS.On_Option_Menu_Open(id_option)
     elseIf p_str_curr_page == PAGE_HOTKEYS
         MCM_HOTKEYS.f_On_Option_Menu_Open(id_option)
     elseIf p_str_curr_page == PAGE_LOG
@@ -280,7 +252,7 @@ event OnOptionMenuAccept(int id_option, int idx_option)
     elseIf p_str_curr_page == PAGE_CHESTS
         MCM_CHESTS.f_On_Option_Menu_Accept(id_option, idx_option)
     elseIf p_str_curr_page == PAGE_SETTINGS
-        MCM_SETTINGS.f_On_Option_Menu_Accept(id_option, idx_option)
+        MCM_SETTINGS.On_Option_Menu_Accept(id_option, idx_option)
     elseIf p_str_curr_page == PAGE_HOTKEYS
         MCM_HOTKEYS.f_On_Option_Menu_Accept(id_option, idx_option)
     elseIf p_str_curr_page == PAGE_LOG
@@ -300,7 +272,7 @@ event OnOptionSliderOpen(int id_option)
     elseIf p_str_curr_page == PAGE_CHESTS
         MCM_CHESTS.f_On_Option_Slider_Open(id_option)
     elseIf p_str_curr_page == PAGE_SETTINGS
-        MCM_SETTINGS.f_On_Option_Slider_Open(id_option)
+        MCM_SETTINGS.On_Option_Slider_Open(id_option)
     elseIf p_str_curr_page == PAGE_HOTKEYS
         MCM_HOTKEYS.f_On_Option_Slider_Open(id_option)
     elseIf p_str_curr_page == PAGE_LOG
@@ -320,7 +292,7 @@ event OnOptionSliderAccept(int id_option, float float_value)
     elseIf p_str_curr_page == PAGE_CHESTS
         MCM_CHESTS.f_On_Option_Slider_Accept(id_option, float_value)
     elseIf p_str_curr_page == PAGE_SETTINGS
-        MCM_SETTINGS.f_On_Option_Slider_Accept(id_option, float_value)
+        MCM_SETTINGS.On_Option_Slider_Accept(id_option, float_value)
     elseIf p_str_curr_page == PAGE_HOTKEYS
         MCM_HOTKEYS.f_On_Option_Slider_Accept(id_option, float_value)
     elseIf p_str_curr_page == PAGE_LOG
@@ -340,7 +312,7 @@ event OnOptionInputAccept(int id_option, string str_input)
     elseIf p_str_curr_page == PAGE_CHESTS
         MCM_CHESTS.f_On_Option_Input_Accept(id_option, str_input)
     elseIf p_str_curr_page == PAGE_SETTINGS
-        MCM_SETTINGS.f_On_Option_Input_Accept(id_option, str_input)
+        MCM_SETTINGS.On_Option_Input_Accept(id_option, str_input)
     elseIf p_str_curr_page == PAGE_HOTKEYS
         MCM_HOTKEYS.f_On_Option_Input_Accept(id_option, str_input)
     elseIf p_str_curr_page == PAGE_LOG
@@ -360,7 +332,7 @@ event OnOptionKeymapChange(int id_option, int code_key, string str_conflict_cont
     elseIf p_str_curr_page == PAGE_CHESTS
         MCM_CHESTS.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
     elseIf p_str_curr_page == PAGE_SETTINGS
-        MCM_SETTINGS.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
+        MCM_SETTINGS.On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
     elseIf p_str_curr_page == PAGE_HOTKEYS
         MCM_HOTKEYS.f_On_Option_Keymap_Change(id_option, code_key, str_conflict_control, str_conflict_mod)
     elseIf p_str_curr_page == PAGE_LOG
@@ -380,7 +352,7 @@ event OnOptionDefault(int id_option)
     elseIf p_str_curr_page == PAGE_CHESTS
         MCM_CHESTS.f_On_Option_Default(id_option)
     elseIf p_str_curr_page == PAGE_SETTINGS
-        MCM_SETTINGS.f_On_Option_Default(id_option)
+        MCM_SETTINGS.On_Option_Default(id_option)
     elseIf p_str_curr_page == PAGE_HOTKEYS
         MCM_HOTKEYS.f_On_Option_Default(id_option)
     elseIf p_str_curr_page == PAGE_LOG
@@ -400,7 +372,7 @@ event OnOptionHighlight(int id_option)
     elseIf p_str_curr_page == PAGE_CHESTS
         MCM_CHESTS.f_On_Option_Highlight(id_option)
     elseIf p_str_curr_page == PAGE_SETTINGS
-        MCM_SETTINGS.f_On_Option_Highlight(id_option)
+        MCM_SETTINGS.On_Option_Highlight(id_option)
     elseIf p_str_curr_page == PAGE_HOTKEYS
         MCM_HOTKEYS.f_On_Option_Highlight(id_option)
     elseIf p_str_curr_page == PAGE_LOG

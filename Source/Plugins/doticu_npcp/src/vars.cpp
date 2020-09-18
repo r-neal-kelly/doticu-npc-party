@@ -4,40 +4,37 @@
 
 #pragma once
 
-#include "skse64_common/Relocation.h"
-
+#include "codes.h"
 #include "consts.h"
 #include "game.h"
-#include "papyrus.h"
+#include "papyrus.inl"
 #include "utils.h"
 #include "vars.h"
 
-#include "papyrus.inl"
+#include "party/party_members.h"
 
-using namespace doticu_npcp::Papyrus;
+namespace doticu_npcp { namespace Modules {
 
-namespace doticu_npcp { namespace Vars {
-
-    String_t Class_Name()
+    String_t Vars_t::Class_Name()
     {
         static const String_t class_name = String_t("doticu_npcp_vars");
         NPCP_ASSERT(class_name);
         return class_name;
     }
 
-    Class_Info_t* Class_Info()
+    Class_Info_t* Vars_t::Class_Info()
     {
         static Class_Info_t* class_info = Class_Info_t::Fetch(Class_Name());
         NPCP_ASSERT(class_info);
         return class_info;
     }
 
-    Vars_t* Self()
+    Vars_t* Vars_t::Self()
     {
         return static_cast<Vars_t*>(Consts::Vars_Quest());
     }
 
-    Object_t* Object()
+    Object_t* Vars_t::Object()
     {
         Object_t* object = Object_t::Fetch(Self(), Class_Name());
         NPCP_ASSERT(object);
@@ -45,356 +42,354 @@ namespace doticu_npcp { namespace Vars {
         return object;
     }
 
-    Variable_t* Variable(String_t variable_name)
+    Variable_t* Vars_t::Variable(String_t variable_name)
     {
         return Object()->Variable(variable_name);
     }
 
-    Variable_t* Property(String_t property_name)
+    Variable_t* Vars_t::Property(String_t property_name)
     {
         return Object()->Property(property_name);
     }
 
-    Variable_t* NPCP_Major_Variable() { DEFINE_VARIABLE("p_version_major"); }
-    Variable_t* NPCP_Minor_Variable() { DEFINE_VARIABLE("p_version_minor"); }
-    Variable_t* NPCP_Patch_Variable() { DEFINE_VARIABLE("p_version_patch"); }
+    Variable_t* Vars_t::NPCP_Major_Variable() { DEFINE_VARIABLE("p_version_major"); }
+    Variable_t* Vars_t::NPCP_Minor_Variable() { DEFINE_VARIABLE("p_version_minor"); }
+    Variable_t* Vars_t::NPCP_Patch_Variable() { DEFINE_VARIABLE("p_version_patch"); }
 
-    Int_t NPCP_Major() { return NPCP_Major_Variable()->Int(); }
-    Int_t NPCP_Minor() { return NPCP_Minor_Variable()->Int(); }
-    Int_t NPCP_Patch() { return NPCP_Patch_Variable()->Int(); }
+    Variable_t* Vars_t::Member_Limit_Variable() { DEFINE_VARIABLE("p_max_members"); }
+    Variable_t* Vars_t::Member_Display_Limit_Variable() { DEFINE_VARIABLE("p_num_display"); }
+    Variable_t* Vars_t::Default_Member_Style_Variable() { DEFINE_VARIABLE("p_auto_style"); }
+    Variable_t* Vars_t::Default_Member_Vitality_Variable() { DEFINE_VARIABLE("p_auto_vitality"); }
 
-    void NPCP_Major(Int_t npcp_major) { NPCP_Major_Variable()->Int(npcp_major); }
-    void NPCP_Minor(Int_t npcp_minor) { NPCP_Minor_Variable()->Int(npcp_minor); }
-    void NPCP_Patch(Int_t npcp_patch) { NPCP_Patch_Variable()->Int(npcp_patch); }
+    Variable_t* Vars_t::Clone_Outfit_Algorithm_Variable() { DEFINE_VARIABLE("p_clone_outfit"); }
 
-    Bool_t Is_Leveling_Enabled() { return Consts::Is_Leveling_Enabled_Global()->value > 0.0f; }
-    void Enable_Leveling() { Consts::Is_Leveling_Enabled_Global()->value = 1.0f; }
-    void Disable_Leveling() { Consts::Is_Leveling_Enabled_Global()->value = 0.0f; }
+    Variable_t* Vars_t::Do_Auto_Resurrect_Followers_Variable() { DEFINE_VARIABLE("p_auto_resurrect"); }
 
-    Bool_t Does_Allow_Chatter() { return Consts::Allow_Chatter_Global()->value > 0.0f; }
-    void Do_Allow_Chatter() { Consts::Allow_Chatter_Global()->value = 1.0f; }
-    void Dont_Allow_Chatter() { Consts::Allow_Chatter_Global()->value = 0.0f; }
+    Variable_t* Vars_t::Do_Auto_Change_Outfits_Variable() { DEFINE_VARIABLE("p_auto_outfit"); }
+    Variable_t* Vars_t::Do_Auto_Change_Immobile_Outfit_Variable() { DEFINE_VARIABLE("p_auto_immobile_outfit"); }
+    Variable_t* Vars_t::Do_Auto_Fill_Outfits_Variable() { DEFINE_VARIABLE("p_fill_outfits"); }
 
-    // Global Keys
-    Variable_t* G_Dialogue_Menu_Value_Property() { DEFINE_PROPERTY("key_g_dialogue_menu"); }
+    Variable_t* Vars_t::Member_Sort_Algorithm_Variable() { DEFINE_VARIABLE("p_str_sort_members"); }
+    Variable_t* Vars_t::Follower_Sort_Algorithm_Variable() { DEFINE_VARIABLE("p_str_sort_followers"); }
 
-    Variable_t* G_Dialogue_Menu_Mods_Property() { DEFINE_PROPERTY("key_g_dialogue_menu_mods"); }
+    Variable_t* Vars_t::G_Dialogue_Menu_Value_Property() { DEFINE_PROPERTY("key_g_dialogue_menu"); }
+    Variable_t* Vars_t::G_Dialogue_Menu_Mods_Property() { DEFINE_PROPERTY("key_g_dialogue_menu_mods"); }
 
-    Int_t G_Dialogue_Menu_Value() { return G_Dialogue_Menu_Value_Property()->Int(); }
+    Variable_t* Vars_t::N_Toggle_Member_Value_Property() { DEFINE_PROPERTY("key_n_toggle_member"); }
+    Variable_t* Vars_t::N_Toggle_Move_Value_Property() { DEFINE_PROPERTY("key_n_toggle_move"); }
+    Variable_t* Vars_t::N_Move_Nearer_Value_Property() { DEFINE_PROPERTY("key_n_move_nearer"); }
+    Variable_t* Vars_t::N_Move_Farther_Value_Property() { DEFINE_PROPERTY("key_n_move_farther"); }
+    Variable_t* Vars_t::N_Move_Rotate_Left_Value_Property() { DEFINE_PROPERTY("key_n_move_rotate_left"); }
+    Variable_t* Vars_t::N_Move_Rotate_Right_Value_Property() { DEFINE_PROPERTY("key_n_move_rotate_right"); }
+    Variable_t* Vars_t::N_Has_Base_Value_Property() { DEFINE_PROPERTY("key_n_has_base"); }
+    Variable_t* Vars_t::N_Count_Base_Value_Property() { DEFINE_PROPERTY("key_n_count_base"); }
+    Variable_t* Vars_t::N_Has_Head_Value_Property() { DEFINE_PROPERTY("key_n_has_head"); }
+    Variable_t* Vars_t::N_Count_Heads_Value_Property() { DEFINE_PROPERTY("key_n_count_heads"); }
+    Variable_t* Vars_t::N_Toggle_Member_Mods_Property() { DEFINE_PROPERTY("key_n_toggle_member_mods"); }
+    Variable_t* Vars_t::N_Toggle_Move_Mods_Property() { DEFINE_PROPERTY("key_n_toggle_move_mods"); }
+    Variable_t* Vars_t::N_Move_Nearer_Mods_Property() { DEFINE_PROPERTY("key_n_move_nearer_mods"); }
+    Variable_t* Vars_t::N_Move_Farther_Mods_Property() { DEFINE_PROPERTY("key_n_move_farther_mods"); }
+    Variable_t* Vars_t::N_Move_Rotate_Left_Mods_Property() { DEFINE_PROPERTY("key_n_move_rotate_left_mods"); }
+    Variable_t* Vars_t::N_Move_Rotate_Right_Mods_Property() { DEFINE_PROPERTY("key_n_move_rotate_right_mods"); }
+    Variable_t* Vars_t::N_Has_Base_Mods_Property() { DEFINE_PROPERTY("key_n_has_base_mods"); }
+    Variable_t* Vars_t::N_Count_Base_Mods_Property() { DEFINE_PROPERTY("key_n_count_base_mods"); }
+    Variable_t* Vars_t::N_Has_Head_Mods_Property() { DEFINE_PROPERTY("key_n_has_head_mods"); }
+    Variable_t* Vars_t::N_Count_Heads_Mods_Property() { DEFINE_PROPERTY("key_n_count_heads_mods"); }
 
-    Vector_t<Int_t> G_Dialogue_Menu_Mods() { return G_Dialogue_Menu_Mods_Property()->Vector<Int_t>(); }
+    Variable_t* Vars_t::M_Toggle_Clone_Value_Property() { DEFINE_PROPERTY("key_m_toggle_clone"); }
+    Variable_t* Vars_t::M_Toggle_Settler_Value_Property() { DEFINE_PROPERTY("key_m_toggle_settler"); }
+    Variable_t* Vars_t::M_Toggle_Thrall_Value_Property() { DEFINE_PROPERTY("key_m_toggle_thrall"); }
+    Variable_t* Vars_t::M_Toggle_Immobile_Value_Property() { DEFINE_PROPERTY("key_m_toggle_immobile"); }
+    Variable_t* Vars_t::M_Toggle_Paralyzed_Value_Property() { DEFINE_PROPERTY("key_m_toggle_paralyzed"); }
+    Variable_t* Vars_t::M_Toggle_Follower_Value_Property() { DEFINE_PROPERTY("key_m_toggle_follower"); }
+    Variable_t* Vars_t::M_Toggle_Clone_Mods_Property() { DEFINE_PROPERTY("key_m_toggle_clone_mods"); }
+    Variable_t* Vars_t::M_Toggle_Settler_Mods_Property() { DEFINE_PROPERTY("key_m_toggle_settler_mods"); }
+    Variable_t* Vars_t::M_Toggle_Thrall_Mods_Property() { DEFINE_PROPERTY("key_m_toggle_thrall_mods"); }
+    Variable_t* Vars_t::M_Toggle_Immobile_Mods_Property() { DEFINE_PROPERTY("key_m_toggle_immobile_mods"); }
+    Variable_t* Vars_t::M_Toggle_Paralyzed_Mods_Property() { DEFINE_PROPERTY("key_m_toggle_paralyzed_mods"); }
+    Variable_t* Vars_t::M_Toggle_Follower_Mods_Property() { DEFINE_PROPERTY("key_m_toggle_follower_mods"); }
 
-    void G_Dialogue_Menu_Value(Int_t value) { G_Dialogue_Menu_Value_Property()->Int(value); }
+    Variable_t* Vars_t::F_Toggle_Sneak_Value_Property() { DEFINE_PROPERTY("key_f_toggle_sneak"); }
+    Variable_t* Vars_t::F_Toggle_Saddler_Value_Property() { DEFINE_PROPERTY("key_f_toggle_saddler"); }
+    Variable_t* Vars_t::F_Toggle_Sneak_Mods_Property() { DEFINE_PROPERTY("key_f_toggle_sneak_mods"); }
+    Variable_t* Vars_t::F_Toggle_Saddler_Mods_Property() { DEFINE_PROPERTY("key_f_toggle_saddler_mods"); }
 
-    void G_Dialogue_Menu_Mods(Vector_t<Int_t> value) { G_Dialogue_Menu_Mods_Property()->Pack(value); }
+    Variable_t* Vars_t::MS_Toggle_Display_Value_Property() { DEFINE_PROPERTY("key_ms_toggle_display"); }
+    Variable_t* Vars_t::MS_Display_Previous_Value_Property() { DEFINE_PROPERTY("key_ms_display_previous"); }
+    Variable_t* Vars_t::MS_Display_Next_Value_Property() { DEFINE_PROPERTY("key_ms_display_next"); }
+    Variable_t* Vars_t::MS_Toggle_Display_Mods_Property() { DEFINE_PROPERTY("key_ms_toggle_display_mods"); }
+    Variable_t* Vars_t::MS_Display_Previous_Mods_Property() { DEFINE_PROPERTY("key_ms_display_previous_mods"); }
+    Variable_t* Vars_t::MS_Display_Next_Mods_Property() { DEFINE_PROPERTY("key_ms_display_next_mods"); }
 
-    // NPC Keys
-    Variable_t* N_Toggle_Member_Value_Property() { DEFINE_PROPERTY("key_n_toggle_member"); }
-    Variable_t* N_Toggle_Move_Value_Property() { DEFINE_PROPERTY("key_n_toggle_move"); }
-    Variable_t* N_Move_Nearer_Value_Property() { DEFINE_PROPERTY("key_n_move_nearer"); }
-    Variable_t* N_Move_Farther_Value_Property() { DEFINE_PROPERTY("key_n_move_farther"); }
-    Variable_t* N_Move_Rotate_Left_Value_Property() { DEFINE_PROPERTY("key_n_move_rotate_left"); }
-    Variable_t* N_Move_Rotate_Right_Value_Property() { DEFINE_PROPERTY("key_n_move_rotate_right"); }
-    Variable_t* N_Has_Base_Value_Property() { DEFINE_PROPERTY("key_n_has_base"); }
-    Variable_t* N_Count_Base_Value_Property() { DEFINE_PROPERTY("key_n_count_base"); }
-    Variable_t* N_Has_Head_Value_Property() { DEFINE_PROPERTY("key_n_has_head"); }
-    Variable_t* N_Count_Heads_Value_Property() { DEFINE_PROPERTY("key_n_count_heads"); }
+    Variable_t* Vars_t::FS_Summon_All_Value_Property() { DEFINE_PROPERTY("key_fs_summon_all"); }
+    Variable_t* Vars_t::FS_Summon_Mobile_Value_Property() { DEFINE_PROPERTY("key_fs_summon_mobile"); }
+    Variable_t* Vars_t::FS_Summon_Immobile_Value_Property() { DEFINE_PROPERTY("key_fs_summon_immobile"); }
+    Variable_t* Vars_t::FS_Settle_Value_Property() { DEFINE_PROPERTY("key_fs_settle"); }
+    Variable_t* Vars_t::FS_Unsettle_Value_Property() { DEFINE_PROPERTY("key_fs_unsettle"); }
+    Variable_t* Vars_t::FS_Mobilize_Value_Property() { DEFINE_PROPERTY("key_fs_mobilize"); }
+    Variable_t* Vars_t::FS_Immobilize_Value_Property() { DEFINE_PROPERTY("key_fs_immobilize"); }
+    Variable_t* Vars_t::FS_Sneak_Value_Property() { DEFINE_PROPERTY("key_fs_sneak"); }
+    Variable_t* Vars_t::FS_Unsneak_Value_Property() { DEFINE_PROPERTY("key_fs_unsneak"); }
+    Variable_t* Vars_t::FS_Saddle_Value_Property() { DEFINE_PROPERTY("key_fs_saddle"); }
+    Variable_t* Vars_t::FS_Unsaddle_Value_Property() { DEFINE_PROPERTY("key_fs_unsaddle"); }
+    Variable_t* Vars_t::FS_Resurrect_Value_Property() { DEFINE_PROPERTY("key_fs_resurrect"); }
+    Variable_t* Vars_t::FS_Summon_All_Mods_Property() { DEFINE_PROPERTY("key_fs_summon_all_mods"); }
+    Variable_t* Vars_t::FS_Summon_Mobile_Mods_Property() { DEFINE_PROPERTY("key_fs_summon_mobile_mods"); }
+    Variable_t* Vars_t::FS_Summon_Immobile_Mods_Property() { DEFINE_PROPERTY("key_fs_summon_immobile_mods"); }
+    Variable_t* Vars_t::FS_Settle_Mods_Property() { DEFINE_PROPERTY("key_fs_settle_mods"); }
+    Variable_t* Vars_t::FS_Unsettle_Mods_Property() { DEFINE_PROPERTY("key_fs_unsettle_mods"); }
+    Variable_t* Vars_t::FS_Mobilize_Mods_Property() { DEFINE_PROPERTY("key_fs_mobilize_mods"); }
+    Variable_t* Vars_t::FS_Immobilize_Mods_Property() { DEFINE_PROPERTY("key_fs_immobilize_mods"); }
+    Variable_t* Vars_t::FS_Sneak_Mods_Property() { DEFINE_PROPERTY("key_fs_sneak_mods"); }
+    Variable_t* Vars_t::FS_Unsneak_Mods_Property() { DEFINE_PROPERTY("key_fs_unsneak_mods"); }
+    Variable_t* Vars_t::FS_Saddle_Mods_Property() { DEFINE_PROPERTY("key_fs_saddle_mods"); }
+    Variable_t* Vars_t::FS_Unsaddle_Mods_Property() { DEFINE_PROPERTY("key_fs_unsaddle_mods"); }
+    Variable_t* Vars_t::FS_Resurrect_Mods_Property() { DEFINE_PROPERTY("key_fs_resurrect_mods"); }
 
-    Variable_t* N_Toggle_Member_Mods_Property() { DEFINE_PROPERTY("key_n_toggle_member_mods"); }
-    Variable_t* N_Toggle_Move_Mods_Property() { DEFINE_PROPERTY("key_n_toggle_move_mods"); }
-    Variable_t* N_Move_Nearer_Mods_Property() { DEFINE_PROPERTY("key_n_move_nearer_mods"); }
-    Variable_t* N_Move_Farther_Mods_Property() { DEFINE_PROPERTY("key_n_move_farther_mods"); }
-    Variable_t* N_Move_Rotate_Left_Mods_Property() { DEFINE_PROPERTY("key_n_move_rotate_left_mods"); }
-    Variable_t* N_Move_Rotate_Right_Mods_Property() { DEFINE_PROPERTY("key_n_move_rotate_right_mods"); }
-    Variable_t* N_Has_Base_Mods_Property() { DEFINE_PROPERTY("key_n_has_base_mods"); }
-    Variable_t* N_Count_Base_Mods_Property() { DEFINE_PROPERTY("key_n_count_base_mods"); }
-    Variable_t* N_Has_Head_Mods_Property() { DEFINE_PROPERTY("key_n_has_head_mods"); }
-    Variable_t* N_Count_Heads_Mods_Property() { DEFINE_PROPERTY("key_n_count_heads_mods"); }
+    Int_t Vars_t::NPCP_Major() { return NPCP_Major_Variable()->Int(); }
+    Int_t Vars_t::NPCP_Minor() { return NPCP_Minor_Variable()->Int(); }
+    Int_t Vars_t::NPCP_Patch() { return NPCP_Patch_Variable()->Int(); }
+    void Vars_t::NPCP_Major(Int_t npcp_major) { NPCP_Major_Variable()->Int(npcp_major); }
+    void Vars_t::NPCP_Minor(Int_t npcp_minor) { NPCP_Minor_Variable()->Int(npcp_minor); }
+    void Vars_t::NPCP_Patch(Int_t npcp_patch) { NPCP_Patch_Variable()->Int(npcp_patch); }
 
-    Int_t N_Toggle_Member_Value() { return N_Toggle_Member_Value_Property()->Int(); }
-    Int_t N_Toggle_Move_Value() { return N_Toggle_Move_Value_Property()->Int(); }
-    Int_t N_Move_Nearer_Value() { return N_Move_Nearer_Value_Property()->Int(); }
-    Int_t N_Move_Farther_Value() { return N_Move_Farther_Value_Property()->Int(); }
-    Int_t N_Move_Rotate_Left_Value() { return N_Move_Rotate_Left_Value_Property()->Int(); }
-    Int_t N_Move_Rotate_Right_Value() { return N_Move_Rotate_Right_Value_Property()->Int(); }
-    Int_t N_Has_Base_Value() { return N_Has_Base_Value_Property()->Int(); }
-    Int_t N_Count_Base_Value() { return N_Count_Base_Value_Property()->Int(); }
-    Int_t N_Has_Head_Value() { return N_Has_Head_Value_Property()->Int(); }
-    Int_t N_Count_Heads_Value() { return N_Count_Heads_Value_Property()->Int(); }
+    Bool_t Vars_t::Allow_Dialogue_For_All() { return Consts::Allow_Dialogue_For_All_Global()->value > 0.0f; }
+    Bool_t Vars_t::Allow_Chatter() { return Consts::Allow_Chatter_Global()->value > 0.0f; }
+    void Vars_t::Allow_Dialogue_For_All(Bool_t value) { Consts::Allow_Dialogue_For_All_Global()->value = value ? 1.0f : 0.0f; }
+    void Vars_t::Allow_Chatter(Bool_t value) { Consts::Allow_Chatter_Global()->value = value ? 1.0f : 0.0f; }
 
-    Vector_t<Int_t> N_Toggle_Member_Mods() { return N_Toggle_Member_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> N_Toggle_Move_Mods() { return N_Toggle_Move_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> N_Move_Nearer_Mods() { return N_Move_Nearer_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> N_Move_Farther_Mods() { return N_Move_Farther_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> N_Move_Rotate_Left_Mods() { return N_Move_Rotate_Left_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> N_Move_Rotate_Right_Mods() { return N_Move_Rotate_Right_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> N_Has_Base_Mods() { return N_Has_Base_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> N_Count_Base_Mods() { return N_Count_Base_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> N_Has_Head_Mods() { return N_Has_Head_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> N_Count_Heads_Mods() { return N_Count_Heads_Mods_Property()->Vector<Int_t>(); }
+    Int_t Vars_t::Member_Limit() { return Member_Limit_Variable()->Int(); }
+    Int_t Vars_t::Member_Display_Limit() { return Member_Display_Limit_Variable()->Int(); }
+    Int_t Vars_t::Default_Member_Style() { return Default_Member_Style_Variable()->Int(); }
+    Int_t Vars_t::Default_Member_Vitality() { return Default_Member_Vitality_Variable()->Int(); }
+    void Vars_t::Member_Limit(Int_t value) { Member_Limit_Variable()->Int(value); }
+    void Vars_t::Member_Display_Limit(Int_t value) { Member_Display_Limit_Variable()->Int(value); }
+    void Vars_t::Default_Member_Style(Int_t value) { Default_Member_Style_Variable()->Int(value); }
+    void Vars_t::Default_Member_Vitality(Int_t value) { Default_Member_Vitality_Variable()->Int(value); }
 
-    void N_Toggle_Member_Value(Int_t value) { N_Toggle_Member_Value_Property()->Int(value); }
-    void N_Toggle_Move_Value(Int_t value) { N_Toggle_Move_Value_Property()->Int(value); }
-    void N_Move_Nearer_Value(Int_t value) { N_Move_Nearer_Value_Property()->Int(value); }
-    void N_Move_Farther_Value(Int_t value) { N_Move_Farther_Value_Property()->Int(value); }
-    void N_Move_Rotate_Left_Value(Int_t value) { N_Move_Rotate_Left_Value_Property()->Int(value); }
-    void N_Move_Rotate_Right_Value(Int_t value) { N_Move_Rotate_Right_Value_Property()->Int(value); }
-    void N_Has_Base_Value(Int_t value) { N_Has_Base_Value_Property()->Int(value); }
-    void N_Count_Base_Value(Int_t value) { N_Count_Base_Value_Property()->Int(value); }
-    void N_Has_Head_Value(Int_t value) { N_Has_Head_Value_Property()->Int(value); }
-    void N_Count_Heads_Value(Int_t value) { N_Count_Heads_Value_Property()->Int(value); }
+    Bool_t Vars_t::Force_Clone_Uniques() { return Consts::Force_Clone_Uniques_Global()->value > 0.0f; }
+    Bool_t Vars_t::Force_Clone_Generics() { return Consts::Force_Clone_Generics_Global()->value > 0.0f; }
+    Bool_t Vars_t::Force_Unclone_Uniques() { return Consts::Force_Unclone_Uniques_Global()->value > 0.0f; }
+    Bool_t Vars_t::Force_Unclone_Generics() { return Consts::Force_Unclone_Generics_Global()->value > 0.0f; }
+    Int_t Vars_t::Clone_Outfit_Algorithm() { return Clone_Outfit_Algorithm_Variable()->Int(); }
+    void Vars_t::Force_Clone_Uniques(Bool_t value) { Consts::Force_Clone_Uniques_Global()->value = value ? 1.0f : 0.0f; }
+    void Vars_t::Force_Clone_Generics(Bool_t value) { Consts::Force_Clone_Generics_Global()->value = value ? 1.0f : 0.0f; }
+    void Vars_t::Force_Unclone_Uniques(Bool_t value) { Consts::Force_Unclone_Uniques_Global()->value = value ? 1.0f : 0.0f; }
+    void Vars_t::Force_Unclone_Generics(Bool_t value) { Consts::Force_Unclone_Generics_Global()->value = value ? 1.0f : 0.0f; }
+    void Vars_t::Clone_Outfit_Algorithm(Int_t value) { Clone_Outfit_Algorithm_Variable()->Int(value); }
 
-    void N_Toggle_Member_Mods(Vector_t<Int_t> value) { N_Toggle_Member_Mods_Property()->Pack(value); }
-    void N_Toggle_Move_Mods(Vector_t<Int_t> value) { N_Toggle_Move_Mods_Property()->Pack(value); }
-    void N_Move_Nearer_Mods(Vector_t<Int_t> value) { N_Move_Nearer_Mods_Property()->Pack(value); }
-    void N_Move_Farther_Mods(Vector_t<Int_t> value) { N_Move_Farther_Mods_Property()->Pack(value); }
-    void N_Move_Rotate_Left_Mods(Vector_t<Int_t> value) { N_Move_Rotate_Left_Mods_Property()->Pack(value); }
-    void N_Move_Rotate_Right_Mods(Vector_t<Int_t> value) { N_Move_Rotate_Right_Mods_Property()->Pack(value); }
-    void N_Has_Base_Mods(Vector_t<Int_t> value) { N_Has_Base_Mods_Property()->Pack(value); }
-    void N_Count_Base_Mods(Vector_t<Int_t> value) { N_Count_Base_Mods_Property()->Pack(value); }
-    void N_Has_Head_Mods(Vector_t<Int_t> value) { N_Has_Head_Mods_Property()->Pack(value); }
-    void N_Count_Heads_Mods(Vector_t<Int_t> value) { N_Count_Heads_Mods_Property()->Pack(value); }
+    Bool_t Vars_t::Do_Auto_Resurrect_Followers() { return Do_Auto_Resurrect_Followers_Variable()->Bool(); }
+    Bool_t Vars_t::Do_Level_Followers() { return Consts::Is_Leveling_Enabled_Global()->value > 0.0f; }
+    void Vars_t::Do_Auto_Resurrect_Followers(Bool_t value) { Do_Auto_Resurrect_Followers_Variable()->Bool(value); }
+    void Vars_t::Do_Level_Followers(Bool_t value) { Consts::Is_Leveling_Enabled_Global()->value = value ? 1.0f : 0.0f; }
 
-    // Member Keys
-    Variable_t* M_Toggle_Clone_Value_Property() { DEFINE_PROPERTY("key_m_toggle_clone"); }
-    Variable_t* M_Toggle_Settler_Value_Property() { DEFINE_PROPERTY("key_m_toggle_settler"); }
-    Variable_t* M_Toggle_Thrall_Value_Property() { DEFINE_PROPERTY("key_m_toggle_thrall"); }
-    Variable_t* M_Toggle_Immobile_Value_Property() { DEFINE_PROPERTY("key_m_toggle_immobile"); }
-    Variable_t* M_Toggle_Paralyzed_Value_Property() { DEFINE_PROPERTY("key_m_toggle_paralyzed"); }
-    Variable_t* M_Toggle_Follower_Value_Property() { DEFINE_PROPERTY("key_m_toggle_follower"); }
+    Bool_t Vars_t::Do_Auto_Change_Outfits() { return Do_Auto_Change_Outfits_Variable()->Bool(); }
+    Bool_t Vars_t::Do_Auto_Change_Immobile_Outfit() { return Do_Auto_Change_Immobile_Outfit_Variable()->Bool(); }
+    Bool_t Vars_t::Do_Auto_Fill_Outfits() { return Do_Auto_Fill_Outfits_Variable()->Bool(); }
+    Int_t Vars_t::Fill_Outfit_Body_Chance() { return 100 - Consts::No_Body_Percent_Global()->value; }
+    Int_t Vars_t::Fill_Outfit_Head_Chance() { return 100 - Consts::No_Head_Percent_Global()->value; }
+    Int_t Vars_t::Fill_Outfit_Hands_Chance() { return 100 - Consts::No_Hands_Percent_Global()->value; }
+    Int_t Vars_t::Fill_Outfit_Feet_Chance() { return 100 - Consts::No_Feet_Percent_Global()->value; }
+    void Vars_t::Do_Auto_Change_Outfits(Bool_t value) { Do_Auto_Change_Outfits_Variable()->Bool(value); }
+    void Vars_t::Do_Auto_Change_Immobile_Outfit(Bool_t value) { Do_Auto_Change_Immobile_Outfit_Variable()->Bool(value); }
+    void Vars_t::Do_Auto_Fill_Outfits(Bool_t value) { Do_Auto_Fill_Outfits_Variable()->Bool(value); }
+    void Vars_t::Fill_Outfit_Body_Chance(Int_t v) { Consts::No_Body_Percent_Global()->value = v < 0 ? 100 : v > 100 ? 0 : 100 - v; }
+    void Vars_t::Fill_Outfit_Head_Chance(Int_t v) { Consts::No_Head_Percent_Global()->value = v < 0 ? 100 : v > 100 ? 0 : 100 - v; }
+    void Vars_t::Fill_Outfit_Hands_Chance(Int_t v) { Consts::No_Hands_Percent_Global()->value = v < 0 ? 100 : v > 100 ? 0 : 100 - v; }
+    void Vars_t::Fill_Outfit_Feet_Chance(Int_t v) { Consts::No_Feet_Percent_Global()->value = v < 0 ? 100 : v > 100 ? 0 : 100 - v; }
 
-    Variable_t* M_Toggle_Clone_Mods_Property() { DEFINE_PROPERTY("key_m_toggle_clone_mods"); }
-    Variable_t* M_Toggle_Settler_Mods_Property() { DEFINE_PROPERTY("key_m_toggle_settler_mods"); }
-    Variable_t* M_Toggle_Thrall_Mods_Property() { DEFINE_PROPERTY("key_m_toggle_thrall_mods"); }
-    Variable_t* M_Toggle_Immobile_Mods_Property() { DEFINE_PROPERTY("key_m_toggle_immobile_mods"); }
-    Variable_t* M_Toggle_Paralyzed_Mods_Property() { DEFINE_PROPERTY("key_m_toggle_paralyzed_mods"); }
-    Variable_t* M_Toggle_Follower_Mods_Property() { DEFINE_PROPERTY("key_m_toggle_follower_mods"); }
+    String_t Vars_t::Member_Sort_Algorithm() { return Member_Sort_Algorithm_Variable()->String(); }
+    String_t Vars_t::Follower_Sort_Algorithm() { return Follower_Sort_Algorithm_Variable()->String(); }
+    void Vars_t::Member_Sort_Algorithm(String_t value) { Member_Sort_Algorithm_Variable()->String(value); }
+    void Vars_t::Follower_Sort_Algorithm(String_t value) { Follower_Sort_Algorithm_Variable()->String(value); }
 
-    Int_t M_Toggle_Clone_Value() { return M_Toggle_Clone_Value_Property()->Int(); }
-    Int_t M_Toggle_Settler_Value() { return M_Toggle_Settler_Value_Property()->Int(); }
-    Int_t M_Toggle_Thrall_Value() { return M_Toggle_Thrall_Value_Property()->Int(); }
-    Int_t M_Toggle_Immobile_Value() { return M_Toggle_Immobile_Value_Property()->Int(); }
-    Int_t M_Toggle_Paralyzed_Value() { return M_Toggle_Paralyzed_Value_Property()->Int(); }
-    Int_t M_Toggle_Follower_Value() { return M_Toggle_Follower_Value_Property()->Int(); }
+    Int_t Vars_t::G_Dialogue_Menu_Value() { return G_Dialogue_Menu_Value_Property()->Int(); }
+    Vector_t<Int_t> Vars_t::G_Dialogue_Menu_Mods() { return G_Dialogue_Menu_Mods_Property()->Vector<Int_t>(); }
+    void Vars_t::G_Dialogue_Menu_Value(Int_t value) { G_Dialogue_Menu_Value_Property()->Int(value); }
+    void Vars_t::G_Dialogue_Menu_Mods(Vector_t<Int_t> value) { G_Dialogue_Menu_Mods_Property()->Pack(value); }
 
-    Vector_t<Int_t> M_Toggle_Clone_Mods() { return M_Toggle_Clone_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> M_Toggle_Settler_Mods() { return M_Toggle_Settler_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> M_Toggle_Thrall_Mods() { return M_Toggle_Thrall_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> M_Toggle_Immobile_Mods() { return M_Toggle_Immobile_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> M_Toggle_Paralyzed_Mods() { return M_Toggle_Paralyzed_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> M_Toggle_Follower_Mods() { return M_Toggle_Follower_Mods_Property()->Vector<Int_t>(); }
+    Int_t Vars_t::N_Toggle_Member_Value() { return N_Toggle_Member_Value_Property()->Int(); }
+    Int_t Vars_t::N_Toggle_Move_Value() { return N_Toggle_Move_Value_Property()->Int(); }
+    Int_t Vars_t::N_Move_Nearer_Value() { return N_Move_Nearer_Value_Property()->Int(); }
+    Int_t Vars_t::N_Move_Farther_Value() { return N_Move_Farther_Value_Property()->Int(); }
+    Int_t Vars_t::N_Move_Rotate_Left_Value() { return N_Move_Rotate_Left_Value_Property()->Int(); }
+    Int_t Vars_t::N_Move_Rotate_Right_Value() { return N_Move_Rotate_Right_Value_Property()->Int(); }
+    Int_t Vars_t::N_Has_Base_Value() { return N_Has_Base_Value_Property()->Int(); }
+    Int_t Vars_t::N_Count_Base_Value() { return N_Count_Base_Value_Property()->Int(); }
+    Int_t Vars_t::N_Has_Head_Value() { return N_Has_Head_Value_Property()->Int(); }
+    Int_t Vars_t::N_Count_Heads_Value() { return N_Count_Heads_Value_Property()->Int(); }
+    Vector_t<Int_t> Vars_t::N_Toggle_Member_Mods() { return N_Toggle_Member_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::N_Toggle_Move_Mods() { return N_Toggle_Move_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::N_Move_Nearer_Mods() { return N_Move_Nearer_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::N_Move_Farther_Mods() { return N_Move_Farther_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::N_Move_Rotate_Left_Mods() { return N_Move_Rotate_Left_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::N_Move_Rotate_Right_Mods() { return N_Move_Rotate_Right_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::N_Has_Base_Mods() { return N_Has_Base_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::N_Count_Base_Mods() { return N_Count_Base_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::N_Has_Head_Mods() { return N_Has_Head_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::N_Count_Heads_Mods() { return N_Count_Heads_Mods_Property()->Vector<Int_t>(); }
+    void Vars_t::N_Toggle_Member_Value(Int_t value) { N_Toggle_Member_Value_Property()->Int(value); }
+    void Vars_t::N_Toggle_Move_Value(Int_t value) { N_Toggle_Move_Value_Property()->Int(value); }
+    void Vars_t::N_Move_Nearer_Value(Int_t value) { N_Move_Nearer_Value_Property()->Int(value); }
+    void Vars_t::N_Move_Farther_Value(Int_t value) { N_Move_Farther_Value_Property()->Int(value); }
+    void Vars_t::N_Move_Rotate_Left_Value(Int_t value) { N_Move_Rotate_Left_Value_Property()->Int(value); }
+    void Vars_t::N_Move_Rotate_Right_Value(Int_t value) { N_Move_Rotate_Right_Value_Property()->Int(value); }
+    void Vars_t::N_Has_Base_Value(Int_t value) { N_Has_Base_Value_Property()->Int(value); }
+    void Vars_t::N_Count_Base_Value(Int_t value) { N_Count_Base_Value_Property()->Int(value); }
+    void Vars_t::N_Has_Head_Value(Int_t value) { N_Has_Head_Value_Property()->Int(value); }
+    void Vars_t::N_Count_Heads_Value(Int_t value) { N_Count_Heads_Value_Property()->Int(value); }
+    void Vars_t::N_Toggle_Member_Mods(Vector_t<Int_t> value) { N_Toggle_Member_Mods_Property()->Pack(value); }
+    void Vars_t::N_Toggle_Move_Mods(Vector_t<Int_t> value) { N_Toggle_Move_Mods_Property()->Pack(value); }
+    void Vars_t::N_Move_Nearer_Mods(Vector_t<Int_t> value) { N_Move_Nearer_Mods_Property()->Pack(value); }
+    void Vars_t::N_Move_Farther_Mods(Vector_t<Int_t> value) { N_Move_Farther_Mods_Property()->Pack(value); }
+    void Vars_t::N_Move_Rotate_Left_Mods(Vector_t<Int_t> value) { N_Move_Rotate_Left_Mods_Property()->Pack(value); }
+    void Vars_t::N_Move_Rotate_Right_Mods(Vector_t<Int_t> value) { N_Move_Rotate_Right_Mods_Property()->Pack(value); }
+    void Vars_t::N_Has_Base_Mods(Vector_t<Int_t> value) { N_Has_Base_Mods_Property()->Pack(value); }
+    void Vars_t::N_Count_Base_Mods(Vector_t<Int_t> value) { N_Count_Base_Mods_Property()->Pack(value); }
+    void Vars_t::N_Has_Head_Mods(Vector_t<Int_t> value) { N_Has_Head_Mods_Property()->Pack(value); }
+    void Vars_t::N_Count_Heads_Mods(Vector_t<Int_t> value) { N_Count_Heads_Mods_Property()->Pack(value); }
 
-    void M_Toggle_Clone_Value(Int_t value) { M_Toggle_Clone_Value_Property()->Int(value); }
-    void M_Toggle_Settler_Value(Int_t value) { M_Toggle_Settler_Value_Property()->Int(value); }
-    void M_Toggle_Thrall_Value(Int_t value) { M_Toggle_Thrall_Value_Property()->Int(value); }
-    void M_Toggle_Immobile_Value(Int_t value) { M_Toggle_Immobile_Value_Property()->Int(value); }
-    void M_Toggle_Paralyzed_Value(Int_t value) { M_Toggle_Paralyzed_Value_Property()->Int(value); }
-    void M_Toggle_Follower_Value(Int_t value) { M_Toggle_Follower_Value_Property()->Int(value); }
+    Int_t Vars_t::M_Toggle_Clone_Value() { return M_Toggle_Clone_Value_Property()->Int(); }
+    Int_t Vars_t::M_Toggle_Settler_Value() { return M_Toggle_Settler_Value_Property()->Int(); }
+    Int_t Vars_t::M_Toggle_Thrall_Value() { return M_Toggle_Thrall_Value_Property()->Int(); }
+    Int_t Vars_t::M_Toggle_Immobile_Value() { return M_Toggle_Immobile_Value_Property()->Int(); }
+    Int_t Vars_t::M_Toggle_Paralyzed_Value() { return M_Toggle_Paralyzed_Value_Property()->Int(); }
+    Int_t Vars_t::M_Toggle_Follower_Value() { return M_Toggle_Follower_Value_Property()->Int(); }
+    Vector_t<Int_t> Vars_t::M_Toggle_Clone_Mods() { return M_Toggle_Clone_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::M_Toggle_Settler_Mods() { return M_Toggle_Settler_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::M_Toggle_Thrall_Mods() { return M_Toggle_Thrall_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::M_Toggle_Immobile_Mods() { return M_Toggle_Immobile_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::M_Toggle_Paralyzed_Mods() { return M_Toggle_Paralyzed_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::M_Toggle_Follower_Mods() { return M_Toggle_Follower_Mods_Property()->Vector<Int_t>(); }
+    void Vars_t::M_Toggle_Clone_Value(Int_t value) { M_Toggle_Clone_Value_Property()->Int(value); }
+    void Vars_t::M_Toggle_Settler_Value(Int_t value) { M_Toggle_Settler_Value_Property()->Int(value); }
+    void Vars_t::M_Toggle_Thrall_Value(Int_t value) { M_Toggle_Thrall_Value_Property()->Int(value); }
+    void Vars_t::M_Toggle_Immobile_Value(Int_t value) { M_Toggle_Immobile_Value_Property()->Int(value); }
+    void Vars_t::M_Toggle_Paralyzed_Value(Int_t value) { M_Toggle_Paralyzed_Value_Property()->Int(value); }
+    void Vars_t::M_Toggle_Follower_Value(Int_t value) { M_Toggle_Follower_Value_Property()->Int(value); }
+    void Vars_t::M_Toggle_Clone_Mods(Vector_t<Int_t> value) { M_Toggle_Clone_Mods_Property()->Pack(value); }
+    void Vars_t::M_Toggle_Settler_Mods(Vector_t<Int_t> value) { M_Toggle_Settler_Mods_Property()->Pack(value); }
+    void Vars_t::M_Toggle_Thrall_Mods(Vector_t<Int_t> value) { M_Toggle_Thrall_Mods_Property()->Pack(value); }
+    void Vars_t::M_Toggle_Immobile_Mods(Vector_t<Int_t> value) { M_Toggle_Immobile_Mods_Property()->Pack(value); }
+    void Vars_t::M_Toggle_Paralyzed_Mods(Vector_t<Int_t> value) { M_Toggle_Paralyzed_Mods_Property()->Pack(value); }
+    void Vars_t::M_Toggle_Follower_Mods(Vector_t<Int_t> value) { M_Toggle_Follower_Mods_Property()->Pack(value); }
 
-    void M_Toggle_Clone_Mods(Vector_t<Int_t> value) { M_Toggle_Clone_Mods_Property()->Pack(value); }
-    void M_Toggle_Settler_Mods(Vector_t<Int_t> value) { M_Toggle_Settler_Mods_Property()->Pack(value); }
-    void M_Toggle_Thrall_Mods(Vector_t<Int_t> value) { M_Toggle_Thrall_Mods_Property()->Pack(value); }
-    void M_Toggle_Immobile_Mods(Vector_t<Int_t> value) { M_Toggle_Immobile_Mods_Property()->Pack(value); }
-    void M_Toggle_Paralyzed_Mods(Vector_t<Int_t> value) { M_Toggle_Paralyzed_Mods_Property()->Pack(value); }
-    void M_Toggle_Follower_Mods(Vector_t<Int_t> value) { M_Toggle_Follower_Mods_Property()->Pack(value); }
+    Int_t Vars_t::F_Toggle_Sneak_Value() { return F_Toggle_Sneak_Value_Property()->Int(); }
+    Int_t Vars_t::F_Toggle_Saddler_Value() { return F_Toggle_Saddler_Value_Property()->Int(); }
+    Vector_t<Int_t> Vars_t::F_Toggle_Sneak_Mods() { return F_Toggle_Sneak_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::F_Toggle_Saddler_Mods() { return F_Toggle_Saddler_Mods_Property()->Vector<Int_t>(); }
+    void Vars_t::F_Toggle_Sneak_Value(Int_t value) { F_Toggle_Sneak_Value_Property()->Int(value); }
+    void Vars_t::F_Toggle_Saddler_Value(Int_t value) { F_Toggle_Saddler_Value_Property()->Int(value); }
+    void Vars_t::F_Toggle_Sneak_Mods(Vector_t<Int_t> value) { F_Toggle_Sneak_Mods_Property()->Pack(value); }
+    void Vars_t::F_Toggle_Saddler_Mods(Vector_t<Int_t> value) { F_Toggle_Saddler_Mods_Property()->Pack(value); }
 
-    // Follower Keys
-    Variable_t* F_Toggle_Sneak_Value_Property() { DEFINE_PROPERTY("key_f_toggle_sneak"); }
-    Variable_t* F_Toggle_Saddler_Value_Property() { DEFINE_PROPERTY("key_f_toggle_saddler"); }
+    Int_t Vars_t::MS_Toggle_Display_Value() { return MS_Toggle_Display_Value_Property()->Int(); }
+    Int_t Vars_t::MS_Display_Previous_Value() { return MS_Display_Previous_Value_Property()->Int(); }
+    Int_t Vars_t::MS_Display_Next_Value() { return MS_Display_Next_Value_Property()->Int(); }
+    Vector_t<Int_t> Vars_t::MS_Toggle_Display_Mods() { return MS_Toggle_Display_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::MS_Display_Previous_Mods() { return MS_Display_Previous_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::MS_Display_Next_Mods() { return MS_Display_Next_Mods_Property()->Vector<Int_t>(); }
+    void Vars_t::MS_Toggle_Display_Value(Int_t value) { MS_Toggle_Display_Value_Property()->Int(value); }
+    void Vars_t::MS_Display_Previous_Value(Int_t value) { MS_Display_Previous_Value_Property()->Int(value); }
+    void Vars_t::MS_Display_Next_Value(Int_t value) { MS_Display_Next_Value_Property()->Int(value); }
+    void Vars_t::MS_Toggle_Display_Mods(Vector_t<Int_t> value) { MS_Toggle_Display_Mods_Property()->Pack(value); }
+    void Vars_t::MS_Display_Previous_Mods(Vector_t<Int_t> value) { MS_Display_Previous_Mods_Property()->Pack(value); }
+    void Vars_t::MS_Display_Next_Mods(Vector_t<Int_t> value) { MS_Display_Next_Mods_Property()->Pack(value); }
 
-    Variable_t* F_Toggle_Sneak_Mods_Property() { DEFINE_PROPERTY("key_f_toggle_sneak_mods"); }
-    Variable_t* F_Toggle_Saddler_Mods_Property() { DEFINE_PROPERTY("key_f_toggle_saddler_mods"); }
+    Int_t Vars_t::FS_Summon_All_Value() { return FS_Summon_All_Value_Property()->Int(); }
+    Int_t Vars_t::FS_Summon_Mobile_Value() { return FS_Summon_Mobile_Value_Property()->Int(); }
+    Int_t Vars_t::FS_Summon_Immobile_Value() { return FS_Summon_Immobile_Value_Property()->Int(); }
+    Int_t Vars_t::FS_Settle_Value() { return FS_Settle_Value_Property()->Int(); }
+    Int_t Vars_t::FS_Unsettle_Value() { return FS_Unsettle_Value_Property()->Int(); }
+    Int_t Vars_t::FS_Mobilize_Value() { return FS_Mobilize_Value_Property()->Int(); }
+    Int_t Vars_t::FS_Immobilize_Value() { return FS_Immobilize_Value_Property()->Int(); }
+    Int_t Vars_t::FS_Sneak_Value() { return FS_Sneak_Value_Property()->Int(); }
+    Int_t Vars_t::FS_Unsneak_Value() { return FS_Unsneak_Value_Property()->Int(); }
+    Int_t Vars_t::FS_Saddle_Value() { return FS_Saddle_Value_Property()->Int(); }
+    Int_t Vars_t::FS_Unsaddle_Value() { return FS_Unsaddle_Value_Property()->Int(); }
+    Int_t Vars_t::FS_Resurrect_Value() { return FS_Resurrect_Value_Property()->Int(); }
+    Vector_t<Int_t> Vars_t::FS_Summon_All_Mods() { return FS_Summon_All_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::FS_Summon_Mobile_Mods() { return FS_Summon_Mobile_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::FS_Summon_Immobile_Mods() { return FS_Summon_Immobile_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::FS_Settle_Mods() { return FS_Settle_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::FS_Unsettle_Mods() { return FS_Unsettle_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::FS_Mobilize_Mods() { return FS_Mobilize_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::FS_Immobilize_Mods() { return FS_Immobilize_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::FS_Sneak_Mods() { return FS_Sneak_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::FS_Unsneak_Mods() { return FS_Unsneak_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::FS_Saddle_Mods() { return FS_Saddle_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::FS_Unsaddle_Mods() { return FS_Unsaddle_Mods_Property()->Vector<Int_t>(); }
+    Vector_t<Int_t> Vars_t::FS_Resurrect_Mods() { return FS_Resurrect_Mods_Property()->Vector<Int_t>(); }
+    void Vars_t::FS_Summon_All_Value(Int_t value) { FS_Summon_All_Value_Property()->Int(value); }
+    void Vars_t::FS_Summon_Mobile_Value(Int_t value) { FS_Summon_Mobile_Value_Property()->Int(value); }
+    void Vars_t::FS_Summon_Immobile_Value(Int_t value) { FS_Summon_Immobile_Value_Property()->Int(value); }
+    void Vars_t::FS_Settle_Value(Int_t value) { FS_Settle_Value_Property()->Int(value); }
+    void Vars_t::FS_Unsettle_Value(Int_t value) { FS_Unsettle_Value_Property()->Int(value); }
+    void Vars_t::FS_Mobilize_Value(Int_t value) { FS_Mobilize_Value_Property()->Int(value); }
+    void Vars_t::FS_Immobilize_Value(Int_t value) { FS_Immobilize_Value_Property()->Int(value); }
+    void Vars_t::FS_Sneak_Value(Int_t value) { FS_Sneak_Value_Property()->Int(value); }
+    void Vars_t::FS_Unsneak_Value(Int_t value) { FS_Unsneak_Value_Property()->Int(value); }
+    void Vars_t::FS_Saddle_Value(Int_t value) { FS_Saddle_Value_Property()->Int(value); }
+    void Vars_t::FS_Unsaddle_Value(Int_t value) { FS_Unsaddle_Value_Property()->Int(value); }
+    void Vars_t::FS_Resurrect_Value(Int_t value) { FS_Resurrect_Value_Property()->Int(value); }
+    void Vars_t::FS_Summon_All_Mods(Vector_t<Int_t> value) { FS_Summon_All_Mods_Property()->Pack(value); }
+    void Vars_t::FS_Summon_Mobile_Mods(Vector_t<Int_t> value) { FS_Summon_Mobile_Mods_Property()->Pack(value); }
+    void Vars_t::FS_Summon_Immobile_Mods(Vector_t<Int_t> value) { FS_Summon_Immobile_Mods_Property()->Pack(value); }
+    void Vars_t::FS_Settle_Mods(Vector_t<Int_t> value) { FS_Settle_Mods_Property()->Pack(value); }
+    void Vars_t::FS_Unsettle_Mods(Vector_t<Int_t> value) { FS_Unsettle_Mods_Property()->Pack(value); }
+    void Vars_t::FS_Mobilize_Mods(Vector_t<Int_t> value) { FS_Mobilize_Mods_Property()->Pack(value); }
+    void Vars_t::FS_Immobilize_Mods(Vector_t<Int_t> value) { FS_Immobilize_Mods_Property()->Pack(value); }
+    void Vars_t::FS_Sneak_Mods(Vector_t<Int_t> value) { FS_Sneak_Mods_Property()->Pack(value); }
+    void Vars_t::FS_Unsneak_Mods(Vector_t<Int_t> value) { FS_Unsneak_Mods_Property()->Pack(value); }
+    void Vars_t::FS_Saddle_Mods(Vector_t<Int_t> value) { FS_Saddle_Mods_Property()->Pack(value); }
+    void Vars_t::FS_Unsaddle_Mods(Vector_t<Int_t> value) { FS_Unsaddle_Mods_Property()->Pack(value); }
+    void Vars_t::FS_Resurrect_Mods(Vector_t<Int_t> value) { FS_Resurrect_Mods_Property()->Pack(value); }
 
-    Int_t F_Toggle_Sneak_Value() { return F_Toggle_Sneak_Value_Property()->Int(); }
-    Int_t F_Toggle_Saddler_Value() { return F_Toggle_Saddler_Value_Property()->Int(); }
-
-    Vector_t<Int_t> F_Toggle_Sneak_Mods() { return F_Toggle_Sneak_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> F_Toggle_Saddler_Mods() { return F_Toggle_Saddler_Mods_Property()->Vector<Int_t>(); }
-
-    void F_Toggle_Sneak_Value(Int_t value) { F_Toggle_Sneak_Value_Property()->Int(value); }
-    void F_Toggle_Saddler_Value(Int_t value) { F_Toggle_Saddler_Value_Property()->Int(value); }
-
-    void F_Toggle_Sneak_Mods(Vector_t<Int_t> value) { F_Toggle_Sneak_Mods_Property()->Pack(value); }
-    void F_Toggle_Saddler_Mods(Vector_t<Int_t> value) { F_Toggle_Saddler_Mods_Property()->Pack(value); }
-
-    // Members Keys
-    Variable_t* MS_Toggle_Display_Value_Property() { DEFINE_PROPERTY("key_ms_toggle_display"); }
-    Variable_t* MS_Display_Previous_Value_Property() { DEFINE_PROPERTY("key_ms_display_previous"); }
-    Variable_t* MS_Display_Next_Value_Property() { DEFINE_PROPERTY("key_ms_display_next"); }
-
-    Variable_t* MS_Toggle_Display_Mods_Property() { DEFINE_PROPERTY("key_ms_toggle_display_mods"); }
-    Variable_t* MS_Display_Previous_Mods_Property() { DEFINE_PROPERTY("key_ms_display_previous_mods"); }
-    Variable_t* MS_Display_Next_Mods_Property() { DEFINE_PROPERTY("key_ms_display_next_mods"); }
-
-    Int_t MS_Toggle_Display_Value() { return MS_Toggle_Display_Value_Property()->Int(); }
-    Int_t MS_Display_Previous_Value() { return MS_Display_Previous_Value_Property()->Int(); }
-    Int_t MS_Display_Next_Value() { return MS_Display_Next_Value_Property()->Int(); }
-
-    Vector_t<Int_t> MS_Toggle_Display_Mods() { return MS_Toggle_Display_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> MS_Display_Previous_Mods() { return MS_Display_Previous_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> MS_Display_Next_Mods() { return MS_Display_Next_Mods_Property()->Vector<Int_t>(); }
-
-    void MS_Toggle_Display_Value(Int_t value) { MS_Toggle_Display_Value_Property()->Int(value); }
-    void MS_Display_Previous_Value(Int_t value) { MS_Display_Previous_Value_Property()->Int(value); }
-    void MS_Display_Next_Value(Int_t value) { MS_Display_Next_Value_Property()->Int(value); }
-
-    void MS_Toggle_Display_Mods(Vector_t<Int_t> value) { MS_Toggle_Display_Mods_Property()->Pack(value); }
-    void MS_Display_Previous_Mods(Vector_t<Int_t> value) { MS_Display_Previous_Mods_Property()->Pack(value); }
-    void MS_Display_Next_Mods(Vector_t<Int_t> value) { MS_Display_Next_Mods_Property()->Pack(value); }
-
-    // Followers Keys
-    Variable_t* FS_Summon_All_Value_Property() { DEFINE_PROPERTY("key_fs_summon_all"); }
-    Variable_t* FS_Summon_Mobile_Value_Property() { DEFINE_PROPERTY("key_fs_summon_mobile"); }
-    Variable_t* FS_Summon_Immobile_Value_Property() { DEFINE_PROPERTY("key_fs_summon_immobile"); }
-    Variable_t* FS_Settle_Value_Property() { DEFINE_PROPERTY("key_fs_settle"); }
-    Variable_t* FS_Unsettle_Value_Property() { DEFINE_PROPERTY("key_fs_unsettle"); }
-    Variable_t* FS_Mobilize_Value_Property() { DEFINE_PROPERTY("key_fs_mobilize"); }
-    Variable_t* FS_Immobilize_Value_Property() { DEFINE_PROPERTY("key_fs_immobilize"); }
-    Variable_t* FS_Sneak_Value_Property() { DEFINE_PROPERTY("key_fs_sneak"); }
-    Variable_t* FS_Unsneak_Value_Property() { DEFINE_PROPERTY("key_fs_unsneak"); }
-    Variable_t* FS_Saddle_Value_Property() { DEFINE_PROPERTY("key_fs_saddle"); }
-    Variable_t* FS_Unsaddle_Value_Property() { DEFINE_PROPERTY("key_fs_unsaddle"); }
-    Variable_t* FS_Resurrect_Value_Property() { DEFINE_PROPERTY("key_fs_resurrect"); }
-
-    Variable_t* FS_Summon_All_Mods_Property() { DEFINE_PROPERTY("key_fs_summon_all_mods"); }
-    Variable_t* FS_Summon_Mobile_Mods_Property() { DEFINE_PROPERTY("key_fs_summon_mobile_mods"); }
-    Variable_t* FS_Summon_Immobile_Mods_Property() { DEFINE_PROPERTY("key_fs_summon_immobile_mods"); }
-    Variable_t* FS_Settle_Mods_Property() { DEFINE_PROPERTY("key_fs_settle_mods"); }
-    Variable_t* FS_Unsettle_Mods_Property() { DEFINE_PROPERTY("key_fs_unsettle_mods"); }
-    Variable_t* FS_Mobilize_Mods_Property() { DEFINE_PROPERTY("key_fs_mobilize_mods"); }
-    Variable_t* FS_Immobilize_Mods_Property() { DEFINE_PROPERTY("key_fs_immobilize_mods"); }
-    Variable_t* FS_Sneak_Mods_Property() { DEFINE_PROPERTY("key_fs_sneak_mods"); }
-    Variable_t* FS_Unsneak_Mods_Property() { DEFINE_PROPERTY("key_fs_unsneak_mods"); }
-    Variable_t* FS_Saddle_Mods_Property() { DEFINE_PROPERTY("key_fs_saddle_mods"); }
-    Variable_t* FS_Unsaddle_Mods_Property() { DEFINE_PROPERTY("key_fs_unsaddle_mods"); }
-    Variable_t* FS_Resurrect_Mods_Property() { DEFINE_PROPERTY("key_fs_resurrect_mods"); }
-
-    Int_t FS_Summon_All_Value() { return FS_Summon_All_Value_Property()->Int(); }
-    Int_t FS_Summon_Mobile_Value() { return FS_Summon_Mobile_Value_Property()->Int(); }
-    Int_t FS_Summon_Immobile_Value() { return FS_Summon_Immobile_Value_Property()->Int(); }
-    Int_t FS_Settle_Value() { return FS_Settle_Value_Property()->Int(); }
-    Int_t FS_Unsettle_Value() { return FS_Unsettle_Value_Property()->Int(); }
-    Int_t FS_Mobilize_Value() { return FS_Mobilize_Value_Property()->Int(); }
-    Int_t FS_Immobilize_Value() { return FS_Immobilize_Value_Property()->Int(); }
-    Int_t FS_Sneak_Value() { return FS_Sneak_Value_Property()->Int(); }
-    Int_t FS_Unsneak_Value() { return FS_Unsneak_Value_Property()->Int(); }
-    Int_t FS_Saddle_Value() { return FS_Saddle_Value_Property()->Int(); }
-    Int_t FS_Unsaddle_Value() { return FS_Unsaddle_Value_Property()->Int(); }
-    Int_t FS_Resurrect_Value() { return FS_Resurrect_Value_Property()->Int(); }
-
-    Vector_t<Int_t> FS_Summon_All_Mods() { return FS_Summon_All_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> FS_Summon_Mobile_Mods() { return FS_Summon_Mobile_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> FS_Summon_Immobile_Mods() { return FS_Summon_Immobile_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> FS_Settle_Mods() { return FS_Settle_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> FS_Unsettle_Mods() { return FS_Unsettle_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> FS_Mobilize_Mods() { return FS_Mobilize_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> FS_Immobilize_Mods() { return FS_Immobilize_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> FS_Sneak_Mods() { return FS_Sneak_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> FS_Unsneak_Mods() { return FS_Unsneak_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> FS_Saddle_Mods() { return FS_Saddle_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> FS_Unsaddle_Mods() { return FS_Unsaddle_Mods_Property()->Vector<Int_t>(); }
-    Vector_t<Int_t> FS_Resurrect_Mods() { return FS_Resurrect_Mods_Property()->Vector<Int_t>(); }
-
-    void FS_Summon_All_Value(Int_t value) { FS_Summon_All_Value_Property()->Int(value); }
-    void FS_Summon_Mobile_Value(Int_t value) { FS_Summon_Mobile_Value_Property()->Int(value); }
-    void FS_Summon_Immobile_Value(Int_t value) { FS_Summon_Immobile_Value_Property()->Int(value); }
-    void FS_Settle_Value(Int_t value) { FS_Settle_Value_Property()->Int(value); }
-    void FS_Unsettle_Value(Int_t value) { FS_Unsettle_Value_Property()->Int(value); }
-    void FS_Mobilize_Value(Int_t value) { FS_Mobilize_Value_Property()->Int(value); }
-    void FS_Immobilize_Value(Int_t value) { FS_Immobilize_Value_Property()->Int(value); }
-    void FS_Sneak_Value(Int_t value) { FS_Sneak_Value_Property()->Int(value); }
-    void FS_Unsneak_Value(Int_t value) { FS_Unsneak_Value_Property()->Int(value); }
-    void FS_Saddle_Value(Int_t value) { FS_Saddle_Value_Property()->Int(value); }
-    void FS_Unsaddle_Value(Int_t value) { FS_Unsaddle_Value_Property()->Int(value); }
-    void FS_Resurrect_Value(Int_t value) { FS_Resurrect_Value_Property()->Int(value); }
-
-    void FS_Summon_All_Mods(Vector_t<Int_t> value) { FS_Summon_All_Mods_Property()->Pack(value); }
-    void FS_Summon_Mobile_Mods(Vector_t<Int_t> value) { FS_Summon_Mobile_Mods_Property()->Pack(value); }
-    void FS_Summon_Immobile_Mods(Vector_t<Int_t> value) { FS_Summon_Immobile_Mods_Property()->Pack(value); }
-    void FS_Settle_Mods(Vector_t<Int_t> value) { FS_Settle_Mods_Property()->Pack(value); }
-    void FS_Unsettle_Mods(Vector_t<Int_t> value) { FS_Unsettle_Mods_Property()->Pack(value); }
-    void FS_Mobilize_Mods(Vector_t<Int_t> value) { FS_Mobilize_Mods_Property()->Pack(value); }
-    void FS_Immobilize_Mods(Vector_t<Int_t> value) { FS_Immobilize_Mods_Property()->Pack(value); }
-    void FS_Sneak_Mods(Vector_t<Int_t> value) { FS_Sneak_Mods_Property()->Pack(value); }
-    void FS_Unsneak_Mods(Vector_t<Int_t> value) { FS_Unsneak_Mods_Property()->Pack(value); }
-    void FS_Saddle_Mods(Vector_t<Int_t> value) { FS_Saddle_Mods_Property()->Pack(value); }
-    void FS_Unsaddle_Mods(Vector_t<Int_t> value) { FS_Unsaddle_Mods_Property()->Pack(value); }
-    void FS_Resurrect_Mods(Vector_t<Int_t> value) { FS_Resurrect_Mods_Property()->Pack(value); }
-
-    #define VAR(TYPE_, NAME_)                                   \
-    M                                                           \
-        static const String_t variable_name = String_t(NAME_);  \
-        NPCP_ASSERT(variable_name);                             \
-        Variable_t* variable = Variable(variable_name);         \
-        NPCP_ASSERT(variable);                                  \
-        return variable->TYPE_();                               \
-    W
-
-    #define BOOL_VAR(NAME_) VAR(Bool, NAME_)
-
-    Bool_t Do_Force_Clone_Unique() { BOOL_VAR("p_force_clone_unique"); }
-    Bool_t Do_Force_Clone_Generic() { BOOL_VAR("p_force_clone_generic"); }
-    Bool_t Do_Force_Unclone_Unique() { BOOL_VAR("p_force_unclone_unique"); }
-    Bool_t Do_Force_Unclone_Generic() { BOOL_VAR("p_force_unclone_generic"); }
-    Bool_t Do_Fill_Outfit2s() { BOOL_VAR("p_fill_outfits"); }
-    Bool_t Do_Auto_Outfit2s() { BOOL_VAR("p_auto_outfit"); }
-    Bool_t Do_Auto_Immobile_Outfit2() { BOOL_VAR("p_auto_immobile_outfit"); }
-    Bool_t Do_Auto_Resurrect() { BOOL_VAR("p_auto_resurrect"); }
-
-    #undef BOOL_VAR
-
-    #define INT_VAR(NAME_) VAR(Int, NAME_)
-
-    Int_t Member_Limit() { INT_VAR("p_max_members"); }
-    Int_t Display_Count() { INT_VAR("p_num_display"); }
-    Int_t Clone_Outfit() { INT_VAR("p_clone_outfit"); }
-    Int_t Default_Style() { INT_VAR("p_auto_style"); }
-    Int_t Default_Vitality() { INT_VAR("p_auto_vitality"); }
-
-    #undef INT_VAR
-
-    #define STRING_VAR(NAME_) VAR(String, NAME_)
-
-    String_t Members_Sort_Algorithm() { STRING_VAR("p_str_sort_members"); }
-    String_t Followers_Sort_Algorithm() { STRING_VAR("p_str_sort_followers"); }
-
-    #undef STRING_VAR
-
-    #undef VAR
-
-    // temp
-    Bool_t Is_Leveling_Enabled(Vars_t* self) { return Is_Leveling_Enabled(); }
-    void Enable_Leveling(Vars_t* self) { return Enable_Leveling(); }
-    void Disable_Leveling(Vars_t* self) { return Disable_Leveling(); }
-
-    Bool_t Does_Allow_Chatter(Vars_t* self) { return Does_Allow_Chatter(); }
-    void Do_Allow_Chatter(Vars_t* self) { return Do_Allow_Chatter(); }
-    void Dont_Allow_Chatter(Vars_t* self) { return Dont_Allow_Chatter(); }
-
-}}
-
-namespace doticu_npcp { namespace Vars { namespace Exports {
-
-    bool Register(Papyrus::Registry_t* registry)
+    void Vars_t::Initialize() // may have to queue a callback, to wait for the quest to start?
     {
-        #define ADD_METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
-        M                                                               \
-            ADD_CLASS_METHOD("doticu_npcp_vars", Vars_t,                \
-                             STR_FUNC_, ARG_NUM_,                       \
-                             RETURN_, Vars::METHOD_, __VA_ARGS__);      \
-        W
+        NPCP_Major(Consts::NPCP_Major());
+        NPCP_Minor(Consts::NPCP_Minor());
+        NPCP_Patch(Consts::NPCP_Patch());
 
-        ADD_METHOD("Is_Leveling_Enabled", 0, Bool_t, Is_Leveling_Enabled);
-        ADD_METHOD("Enable_Leveling", 0, void, Enable_Leveling);
-        ADD_METHOD("Disable_Leveling", 0, void, Disable_Leveling);
+        Allow_Dialogue_For_All(true);
+        Allow_Chatter(true);
 
-        ADD_METHOD("Does_Allow_Chatter", 0, Bool_t, Does_Allow_Chatter);
-        ADD_METHOD("Do_Allow_Chatter", 0, void, Do_Allow_Chatter);
-        ADD_METHOD("Dont_Allow_Chatter", 0, void, Dont_Allow_Chatter);
+        Member_Limit(Party::Members_t::MAX);
+        Member_Display_Limit(Party::Members_t::DEFAULT_DISPLAY_LIMIT);
+        Default_Member_Style(CODES::STYLE::DEFAULT);
+        Default_Member_Vitality(CODES::VITALITY::PROTECTED);
 
-        #undef ADD_METHOD
+        Force_Clone_Uniques(false);
+        Force_Clone_Generics(false);
+        Force_Unclone_Uniques(false);
+        Force_Unclone_Generics(false);
+        Clone_Outfit_Algorithm(CODES::OUTFIT::REFERENCE);
 
-        return true;
+        Do_Auto_Resurrect_Followers(true);
+        Do_Level_Followers(true);
+
+        Do_Auto_Change_Outfits(false);
+        Do_Auto_Change_Immobile_Outfit(false);
+        Do_Auto_Fill_Outfits(true);
+        Fill_Outfit_Body_Chance(Party::Members_t::DEFAULT_OUTFIT_BODY_CHANCE);
+        Fill_Outfit_Head_Chance(Party::Members_t::DEFAULT_OUTFIT_HEAD_CHANCE);
+        Fill_Outfit_Hands_Chance(Party::Members_t::DEFAULT_OUTFIT_HANDS_CHANCE);
+        Fill_Outfit_Feet_Chance(Party::Members_t::DEFAULT_OUTFIT_FEET_CHANCE);
+
+        Member_Sort_Algorithm("NAME");
+        Follower_Sort_Algorithm("NAME");
     }
 
-}}}
+    void Vars_t::Register_Me(Virtual_Machine_t* vm)
+    {
+        #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                           \
+            FORWARD_METHOD(vm, Class_Name(), Vars_t,                \
+                           STR_FUNC_, ARG_NUM_,                     \
+                           RETURN_, METHOD_, __VA_ARGS__);          \
+        W
+
+        #undef METHOD
+    }
+
+}}

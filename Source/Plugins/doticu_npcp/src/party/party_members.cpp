@@ -188,16 +188,18 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     Bool_t Members_t::Should_Clone(Actor_t* actor)
     {
+        Modules::Vars_t* vars = Modules::Vars_t::Self();
         return
-            (Actor2::Is_Unique(actor) && Vars::Do_Force_Clone_Unique()) ||
-            (Actor2::Is_Generic(actor) && Vars::Do_Force_Clone_Generic());
+            (Actor2::Is_Unique(actor) && vars->Force_Clone_Uniques()) ||
+            (Actor2::Is_Generic(actor) && vars->Force_Clone_Generics());
     }
 
     Bool_t Members_t::Should_Unclone(Actor_t* actor)
     {
+        Modules::Vars_t* vars = Modules::Vars_t::Self();
         return
-            (Actor2::Is_Unique(actor) && Vars::Do_Force_Unclone_Unique()) ||
-            (Actor2::Is_Generic(actor) && Vars::Do_Force_Unclone_Generic());
+            (Actor2::Is_Unique(actor) && vars->Force_Unclone_Uniques()) ||
+            (Actor2::Is_Generic(actor) && vars->Force_Unclone_Generics());
     }
 
     Int_t Members_t::Max()
@@ -207,7 +209,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     Int_t Members_t::Limit()
     {
-        return Vars::Member_Limit();
+        return Modules::Vars_t::Self()->Member_Limit();
     }
 
     Int_t Members_t::Count_Filled()
@@ -405,7 +407,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     Vector_t<Member_t*> Members_t::Displayed()
     {
-        return Copy_If<Member_t>(Aliases(), &Member_t::Is_Display, Vars::Display_Count());
+        return Copy_If<Member_t>(Aliases(), &Member_t::Is_Display, Modules::Vars_t::Self()->Member_Display_Limit());
     }
 
     Vector_t<Member_t*> Members_t::Undisplayed()
@@ -415,7 +417,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     Vector_t<Member_t*> Members_t::Sort(Vector_t<Member_t*> members)
     {
-        return Aliases_t::Sort<Member_t>(members, Vars::Members_Sort_Algorithm());
+        return Aliases_t::Sort<Member_t>(members, Modules::Vars_t::Self()->Member_Sort_Algorithm());
     }
 
     Vector_t<Member_t*> Members_t::Sort_Filled(Int_t begin, Int_t end)
@@ -500,7 +502,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                 NPCP_ASSERT(marker);
                 Display_Marker_Variable()->Pack(marker);
 
-                Int_t display_count = Vars::Display_Count();
+                Int_t display_count = Modules::Vars_t::Self()->Member_Display_Limit();
                 Int_t slice_count = filter_count < display_count ? filter_count : display_count;
                 Display(filter, 0, slice_count, marker);
 
@@ -537,7 +539,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             Vector_t<Member_t*> filter = Current_Filter();
             Int_t filter_count = filter.size();
             if (filter_count > 0) {
-                Int_t display_count = Vars::Display_Count();
+                Int_t display_count = Modules::Vars_t::Self()->Member_Display_Limit();
                 Int_t slice_count = filter_count < display_count ? filter_count : display_count;
                 Int_t idx = Display_Idx_Variable()->Int();
                 if (idx < 0 || idx >= filter_count) {
@@ -568,7 +570,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             Vector_t<Member_t*> filter = Current_Filter();
             Int_t filter_count = filter.size();
             if (filter_count > 0) {
-                Int_t display_count = Vars::Display_Count();
+                Int_t display_count = Modules::Vars_t::Self()->Member_Display_Limit();
                 Int_t slice_count = filter_count < display_count ? filter_count : display_count;
                 Int_t idx = Display_Idx_Variable()->Int();
                 if (idx < 0 || idx >= filter_count) {
@@ -791,6 +793,15 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         } else {
             (*user_callback)->operator()(CODES::ACTOR, nullptr);
             delete (*user_callback);
+        }
+    }
+
+    void Members_t::On_Load_Mod()
+    {
+        Modules::Vars_t* vars = Modules::Vars_t::Self();
+        Int_t filled_count = Count_Filled();
+        if (vars->Member_Limit() < filled_count) {
+            vars->Member_Limit(filled_count);
         }
     }
 
@@ -1075,8 +1086,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         W
 
         METHOD("From_Actor", 1, Member_t*, From_Actor, Actor_t*);
-        METHOD("Max", 0, Int_t, Max);
-        METHOD("Count_Filled", 0, Int_t, Count_Filled);
 
         #undef METHOD
     }

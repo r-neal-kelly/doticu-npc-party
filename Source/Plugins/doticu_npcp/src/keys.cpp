@@ -286,17 +286,17 @@ namespace doticu_npcp { namespace Papyrus {
         default_values.reserve(64);
         default_mods.reserve(64);
 
-        #define ADD_HOTKEY(HOTKEY_, DEFAULT_VALUE_, ...)                        \
-        M                                                                       \
-            names.push_back(HOTKEY_());                                         \
-            current_values.push_back(                                           \
-                []()->Variable_t* { return Vars::HOTKEY_##_Value_Property(); }  \
-            );                                                                  \
-            current_mods.push_back(                                             \
-                []()->Variable_t* { return Vars::HOTKEY_##_Mods_Property(); }   \
-            );                                                                  \
-            default_values.push_back(DEFAULT_VALUE_);                           \
-            default_mods.push_back(Mods_t(__VA_ARGS__));                        \
+        #define ADD_HOTKEY(HOTKEY_, DEFAULT_VALUE_, ...)                                            \
+        M                                                                                           \
+            names.push_back(HOTKEY_());                                                             \
+            current_values.push_back(                                                               \
+                []()->Variable_t* { return Modules::Vars_t::Self()->HOTKEY_##_Value_Property(); }   \
+            );                                                                                      \
+            current_mods.push_back(                                                                 \
+                []()->Variable_t* { return Modules::Vars_t::Self()->HOTKEY_##_Mods_Property(); }    \
+            );                                                                                      \
+            default_values.push_back(DEFAULT_VALUE_);                                               \
+            default_mods.push_back(Mods_t(__VA_ARGS__));                                            \
         W
 
         ADD_HOTKEY(G_Dialogue_Menu, KEY_G, KEY_LEFT_CONTROL);
@@ -569,47 +569,49 @@ namespace doticu_npcp { namespace Papyrus {
             }
         };
 
+        Modules::Vars_t* vars = Modules::Vars_t::Self();
+
         // General
-        Try_To_Register(Vars::G_Dialogue_Menu_Value());
+        Try_To_Register(vars->G_Dialogue_Menu_Value());
 
         // NPC
-        Try_To_Register(Vars::N_Toggle_Member_Value());
-        Try_To_Register(Vars::N_Toggle_Move_Value());
-        Try_To_Register(Vars::N_Has_Base_Value());
-        Try_To_Register(Vars::N_Count_Base_Value());
-        Try_To_Register(Vars::N_Has_Head_Value());
-        Try_To_Register(Vars::N_Count_Heads_Value());
+        Try_To_Register(vars->N_Toggle_Member_Value());
+        Try_To_Register(vars->N_Toggle_Move_Value());
+        Try_To_Register(vars->N_Has_Base_Value());
+        Try_To_Register(vars->N_Count_Base_Value());
+        Try_To_Register(vars->N_Has_Head_Value());
+        Try_To_Register(vars->N_Count_Heads_Value());
 
         // Member
-        Try_To_Register(Vars::M_Toggle_Clone_Value());
-        Try_To_Register(Vars::M_Toggle_Immobile_Value());
-        Try_To_Register(Vars::M_Toggle_Settler_Value());
-        Try_To_Register(Vars::M_Toggle_Thrall_Value());
-        Try_To_Register(Vars::M_Toggle_Paralyzed_Value());
-        Try_To_Register(Vars::M_Toggle_Follower_Value());
+        Try_To_Register(vars->M_Toggle_Clone_Value());
+        Try_To_Register(vars->M_Toggle_Immobile_Value());
+        Try_To_Register(vars->M_Toggle_Settler_Value());
+        Try_To_Register(vars->M_Toggle_Thrall_Value());
+        Try_To_Register(vars->M_Toggle_Paralyzed_Value());
+        Try_To_Register(vars->M_Toggle_Follower_Value());
 
         // Follower
-        Try_To_Register(Vars::F_Toggle_Sneak_Value());
-        Try_To_Register(Vars::F_Toggle_Saddler_Value());
+        Try_To_Register(vars->F_Toggle_Sneak_Value());
+        Try_To_Register(vars->F_Toggle_Saddler_Value());
 
         // Members
-        Try_To_Register(Vars::MS_Toggle_Display_Value());
-        Try_To_Register(Vars::MS_Display_Previous_Value());
-        Try_To_Register(Vars::MS_Display_Next_Value());
+        Try_To_Register(vars->MS_Toggle_Display_Value());
+        Try_To_Register(vars->MS_Display_Previous_Value());
+        Try_To_Register(vars->MS_Display_Next_Value());
 
         // Followers
-        Try_To_Register(Vars::FS_Summon_All_Value());
-        Try_To_Register(Vars::FS_Summon_Mobile_Value());
-        Try_To_Register(Vars::FS_Summon_Immobile_Value());
-        Try_To_Register(Vars::FS_Mobilize_Value());
-        Try_To_Register(Vars::FS_Immobilize_Value());
-        Try_To_Register(Vars::FS_Settle_Value());
-        Try_To_Register(Vars::FS_Unsettle_Value());
-        Try_To_Register(Vars::FS_Sneak_Value());
-        Try_To_Register(Vars::FS_Unsneak_Value());
-        Try_To_Register(Vars::FS_Saddle_Value());
-        Try_To_Register(Vars::FS_Unsaddle_Value());
-        Try_To_Register(Vars::FS_Resurrect_Value());
+        Try_To_Register(vars->FS_Summon_All_Value());
+        Try_To_Register(vars->FS_Summon_Mobile_Value());
+        Try_To_Register(vars->FS_Summon_Immobile_Value());
+        Try_To_Register(vars->FS_Mobilize_Value());
+        Try_To_Register(vars->FS_Immobilize_Value());
+        Try_To_Register(vars->FS_Settle_Value());
+        Try_To_Register(vars->FS_Unsettle_Value());
+        Try_To_Register(vars->FS_Sneak_Value());
+        Try_To_Register(vars->FS_Unsneak_Value());
+        Try_To_Register(vars->FS_Saddle_Value());
+        Try_To_Register(vars->FS_Unsaddle_Value());
+        Try_To_Register(vars->FS_Resurrect_Value());
 
         Party::Movee_t::Self()->Register();
     }

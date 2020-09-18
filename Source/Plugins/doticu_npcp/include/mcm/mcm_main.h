@@ -64,6 +64,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Variable_t* Number_Values_Variable();
         Variable_t* States_Variable();
         Variable_t* Info_Text_Variable();
+        Variable_t* Slider_Parameters_Variable(); // Array_t* of Float_t
         Variable_t* Menu_Parameters_Variable(); // Array_t* of Int_t
 
         String_t Current_Page_Name();
@@ -103,11 +104,18 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
         void Number_Option_Value(Int_t index, Float_t value, Bool_t do_render);
         void String_Option_Value(Int_t index, String_t value, Bool_t do_render);
+        void Both_Option_Values(Int_t index, String_t string_value, Float_t number_value, Bool_t do_render);
+
+        void Slider_Dialog_Current_Value(Float_t value);
+        void Slider_Dialog_Default_Value(Float_t value);
+        void Slider_Dialog_Range_Values(Float_t min, Float_t max);
+        void Slider_Dialog_Interval_Value(Float_t value);
         void Menu_Dialog_Values(Vector_t<String_t> values);
         void Menu_Dialog_Default(Int_t index);
 
         void Text_Option_Value(Int_t option, String_t text, Bool_t do_render = true);
         void Toggle_Option_Value(Int_t option, Bool_t value, Bool_t do_render = true);
+        void Slider_Option_Value(Int_t option, Float_t value, String_t format = "{0}", Bool_t do_render = true);
         void Menu_Option_Value(Int_t option, String_t value, Bool_t do_render = true);
         void Input_Option_Value(Int_t option, String_t value, Bool_t do_render = true);
         void Keymap_Option_Value(Int_t option, Int_t key_code, Bool_t do_render = true);

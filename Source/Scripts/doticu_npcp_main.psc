@@ -59,18 +59,15 @@ bool function p_Has_Requires();;;
 endFunction
 
 function p_Create();;;
-    VARS.f_Create()
     FUNCS.f_Create()
     CONTROL.f_Create()
 
     FUNCS.f_Register()
-    MEMBERS.f_Register()
     CONTROL.f_Register()
 endFunction
 
 function p_Register();;;
     FUNCS.f_Register()
-    MEMBERS.f_Register()
     CONTROL.f_Register()
 endFunction
 

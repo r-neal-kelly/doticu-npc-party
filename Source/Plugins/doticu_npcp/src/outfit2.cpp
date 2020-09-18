@@ -70,7 +70,7 @@ namespace doticu_npcp { namespace Papyrus {
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::IMMOBILE);
         outfit2->Outfit1_Cache_Variable()->None(Object_Ref::Class_Info());
 
-        if (Vars::Do_Fill_Outfit2s()) {
+        if (Modules::Vars_t::Self()->Do_Auto_Fill_Outfits()) {
             Fill(outfit2, Consts::Immobile_Outfit2_Container());
         }
 
@@ -87,7 +87,7 @@ namespace doticu_npcp { namespace Papyrus {
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::SETTLER);
         outfit2->Outfit1_Cache_Variable()->None(Object_Ref::Class_Info());
 
-        if (Vars::Do_Fill_Outfit2s()) {
+        if (Modules::Vars_t::Self()->Do_Auto_Fill_Outfits()) {
             Fill(outfit2, Consts::Settler_Outfit2_Container());
         }
 
@@ -104,7 +104,7 @@ namespace doticu_npcp { namespace Papyrus {
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::THRALL);
         outfit2->Outfit1_Cache_Variable()->None(Object_Ref::Class_Info());
 
-        if (Vars::Do_Fill_Outfit2s()) {
+        if (Modules::Vars_t::Self()->Do_Auto_Fill_Outfits()) {
             Fill(outfit2, Consts::Thrall_Outfit2_Container());
         }
 
@@ -121,7 +121,7 @@ namespace doticu_npcp { namespace Papyrus {
         outfit2->Type_Variable()->Int(CODES::OUTFIT2::FOLLOWER);
         outfit2->Outfit1_Cache_Variable()->None(Object_Ref::Class_Info());
 
-        if (Vars::Do_Fill_Outfit2s()) {
+        if (Modules::Vars_t::Self()->Do_Auto_Fill_Outfits()) {
             Fill(outfit2, Consts::Follower_Outfit2_Container());
         }
 
