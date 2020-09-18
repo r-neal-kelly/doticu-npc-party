@@ -392,6 +392,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                 }
             }
         }
+
+        Object_Ref::Rename(Consts::Expo_Exit_Door(), "Exit Expo");
     }
 
     void Mannequins_t::Register_Me(Virtual_Machine_t* vm)
@@ -402,19 +404,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                            STR_FUNC_, ARG_NUM_,                     \
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
-
-        METHOD("Get_Cell_Name", 2, String_t, Cell_Name, Int_t, Int_t);
-        METHOD("Set_Cell_Name", 3, void, Cell_Name, Int_t, Int_t, String_t);
-
-        METHOD("Count_Expoees", 0, Int_t, Count_Expoees);
-        METHOD("Expoees", 2, Vector_t<Member_t*>, Expoees, Int_t, Int_t);
-        METHOD("Enforce_Expoee", 2, void, Enforce_Expoee, Int_t, Reference_t*);
-
-        METHOD("Is_Player_In_Expo", 0, Bool_t, Is_Player_In_Expo);
-
-        METHOD("Move_Player_To_Cell", 2, void, Move_Player_To_Cell, Int_t, Int_t);
-        METHOD("Move_Player_To_Antechamber", 0, void, Move_Player_To_Antechamber);
-        METHOD("Remove_Player", 0, void, Remove_Player);
 
         #undef METHOD
     }

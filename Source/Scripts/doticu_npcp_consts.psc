@@ -12,14 +12,6 @@ Quest function Bard_Songs_Quest() native global
 
 ; NPCP Globals
 GlobalVariable function Is_Installed_Global() native global
-GlobalVariable function Force_Clone_Uniques_Global() native global
-GlobalVariable function Force_Clone_Generics_Global() native global
-GlobalVariable function Force_Unclone_Uniques_Global() native global
-GlobalVariable function Force_Unclone_Generics_Global() native global
-GlobalVariable function No_Body_Percent_Global() native global
-GlobalVariable function No_Feet_Percent_Global() native global
-GlobalVariable function No_Hands_Percent_Global() native global
-GlobalVariable function No_Head_Percent_Global() native global
 
 ; NPCP Ints
 int function NPCP_Major() native global

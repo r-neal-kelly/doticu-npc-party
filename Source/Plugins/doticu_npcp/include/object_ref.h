@@ -142,6 +142,8 @@ namespace doticu_npcp { namespace Object_Ref {
     void Push_Actor_Away(Reference_t* ref, Actor_t* actor, Float_t knockback_force, Virtual_Callback_i** vcallback = nullptr);
     void Apply_Havok_Impulse(Reference_t* ref, Float_t x, Float_t y, Float_t z, Float_t magnitude, Virtual_Callback_i** vcallback = nullptr);
 
+    void Set_Open(Reference_t* ref, Bool_t is_open, Virtual_Callback_i* vcallback = nullptr);
+
     // these don't belong here.
     void Current_Crosshair_Reference(Virtual_Callback_i** callback);
     void Can_Use_Keys(Virtual_Callback_i** callback);

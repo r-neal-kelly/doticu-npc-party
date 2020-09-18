@@ -178,9 +178,3 @@ namespace doticu_npcp { namespace CODES {
     }
 
 }}
-
-namespace doticu_npcp { namespace CODES { namespace Exports {
-
-    bool Register(Registry_t* registry);
-
-}}}

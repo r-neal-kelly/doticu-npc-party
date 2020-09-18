@@ -13,11 +13,6 @@ doticu_npcp_funcs property FUNCS hidden
         return doticu_npcp.Funcs()
     endFunction
 endProperty
-doticu_npcp_members property MEMBERS hidden
-    doticu_npcp_members function Get()
-        return doticu_npcp.Members()
-    endFunction
-endProperty
 doticu_npcp_control property CONTROL hidden
     doticu_npcp_control function Get()
         return doticu_npcp.Control()

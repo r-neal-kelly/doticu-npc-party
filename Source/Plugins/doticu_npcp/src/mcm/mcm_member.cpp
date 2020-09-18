@@ -152,6 +152,12 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Party_Member_Variable()->Pack(member, Party::Member_t::Class_Info());
     }
 
+    void Member_t::View_Mannequins_Member(Party::Member_t* member)
+    {
+        Current_View_Variable()->Int(CODES::VIEW::MANNEQUINS_MEMBER);
+        Party_Member_Variable()->Pack(member, Party::Member_t::Class_Info());
+    }
+
     void Member_t::Build_Commands()
     {
         MCM::Main_t* mcm_main = Main();

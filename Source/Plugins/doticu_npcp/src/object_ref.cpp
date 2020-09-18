@@ -1506,6 +1506,30 @@ namespace doticu_npcp { namespace Object_Ref {
         );
     }
 
+    void Set_Open(Reference_t* ref, Bool_t is_open, Virtual_Callback_i* vcallback)
+    {
+        struct Arguments : public Virtual_Arguments_t {
+            Bool_t is_open;
+            Arguments(Bool_t is_open) :
+                is_open(is_open)
+            {
+            }
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(1);
+                arguments->At(0)->Bool(is_open);
+                return true;
+            }
+        } arguments(is_open);
+        Virtual_Machine_t::Self()->Call_Method(
+            ref,
+            "ObjectReference",
+            "SetOpen",
+            &arguments,
+            vcallback ? &vcallback : nullptr
+        );
+    }
+
     void Current_Crosshair_Reference(Virtual_Callback_i** callback)
     {
         Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(),

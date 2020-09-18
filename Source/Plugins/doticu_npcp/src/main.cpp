@@ -28,6 +28,7 @@
 #include "papyrus.inl"
 #include "perks.h"
 #include "quest.h"
+#include "references.h"
 #include "spell.h"
 #include "string2.h"
 #include "topic_infos.h"
@@ -50,6 +51,7 @@
 #include "mcm/mcm_main.h"
 #include "mcm/mcm_followers.h"
 #include "mcm/mcm_members.h"
+#include "mcm/mcm_mannequins.h"
 #include "mcm/mcm_member.h"
 #include "mcm/mcm_filter.h"
 #include "mcm/mcm_chests.h"
@@ -435,7 +437,6 @@ namespace doticu_npcp { namespace Main {
         REGISTER_NAMESPACE(Actor_Base2);
         REGISTER_NAMESPACE(Actor2);
         REGISTER_NAMESPACE(Cell);
-        REGISTER_NAMESPACE(CODES);
         REGISTER_NAMESPACE(Consts);
         REGISTER_NAMESPACE(Form);
         REGISTER_NAMESPACE(Form_Vector);
@@ -445,6 +446,7 @@ namespace doticu_npcp { namespace Main {
         REGISTER_NAMESPACE(Papyrus);
         REGISTER_NAMESPACE(Papyrus::Packages);
         REGISTER_NAMESPACE(Papyrus::Perks);
+        REGISTER_NAMESPACE(Papyrus::References);
         REGISTER_NAMESPACE(Papyrus::Topic_Infos);
         REGISTER_NAMESPACE(Quest);
         REGISTER_NAMESPACE(Spell);
@@ -484,6 +486,7 @@ namespace doticu_npcp { namespace Main {
         REGISTER_TYPE(MCM::Main_t);
         REGISTER_TYPE(MCM::Followers_t);
         REGISTER_TYPE(MCM::Members_t);
+        REGISTER_TYPE(MCM::Mannequins_t);
         REGISTER_TYPE(MCM::Member_t);
         REGISTER_TYPE(MCM::Filter_t);
         REGISTER_TYPE(MCM::Chests_t);

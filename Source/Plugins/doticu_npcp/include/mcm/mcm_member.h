@@ -97,6 +97,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         void View_Members_Member(Party::Member_t* member);
         void View_Followers_Member(Party::Member_t* member);
         void View_Filter_Members_Member(Party::Member_t* member);
+        void View_Mannequins_Member(Party::Member_t* member);
         void Build_Commands();
         void Update_Commands();
         void Build_Statistics();

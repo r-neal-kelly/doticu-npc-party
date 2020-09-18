@@ -371,6 +371,9 @@ namespace doticu_npcp { namespace Consts {
         // NPCP Reference Containers
         REFERENCE_CONTAINER_BUFFER                  = 0x3C37A9,
 
+        // NPCP Reference Doors
+        REFERENCE_DOOR_EXPO_EXIT                    = 0x25AB08,
+
         // NPCP Reference Markers
         REFERENCE_MARKER_CELL                       = 0x15C1AE,
         REFERENCE_MARKER_EXPO_ANTECHAMBER           = 0x2979B0,
@@ -738,6 +741,9 @@ namespace doticu_npcp { namespace Consts {
     // NPCP Reference Containers
     Reference_t* Container_Ref_Buffer() { NPCP_FORM(Reference_t, REFERENCE_CONTAINER_BUFFER); }
 
+    // NPCP Reference Doors
+    Reference_t* Expo_Exit_Door() { NPCP_FORM(Reference_t, REFERENCE_DOOR_EXPO_EXIT); }
+
     // NPCP Reference Markers
     Reference_t* Cell_Marker() { NPCP_FORM(Reference_t, REFERENCE_MARKER_CELL); }
     Reference_t* Expo_Antechamber_Marker() { NPCP_FORM(Reference_t, REFERENCE_MARKER_EXPO_ANTECHAMBER); }
@@ -928,14 +934,6 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
 
         // NPCP Globals
         ADD_GLOBAL("Is_Installed_Global", 0, Global_t*, Is_Installed_Global);
-        ADD_GLOBAL("Force_Clone_Uniques_Global", 0, Global_t*, Force_Clone_Uniques_Global);
-        ADD_GLOBAL("Force_Clone_Generics_Global", 0, Global_t*, Force_Clone_Generics_Global);
-        ADD_GLOBAL("Force_Unclone_Uniques_Global", 0, Global_t*, Force_Unclone_Uniques_Global);
-        ADD_GLOBAL("Force_Unclone_Generics_Global", 0, Global_t*, Force_Unclone_Generics_Global);
-        ADD_GLOBAL("No_Body_Percent_Global", 0, Global_t*, No_Body_Percent_Global);
-        ADD_GLOBAL("No_Feet_Percent_Global", 0, Global_t*, No_Feet_Percent_Global);
-        ADD_GLOBAL("No_Hands_Percent_Global", 0, Global_t*, No_Hands_Percent_Global);
-        ADD_GLOBAL("No_Head_Percent_Global", 0, Global_t*, No_Head_Percent_Global);
 
         // NPCP Ints
         ADD_GLOBAL("NPCP_Major", 0, Int_t, NPCP_Major);

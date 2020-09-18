@@ -21,8 +21,6 @@ int                 p_HEADERS_PER_PAGE      =     4
 int                 p_STRINGS_PER_PAGE      =     8
 
 ; Private Variables
-bool                p_is_created            = false
-
 string[]            p_arr_notes             =  none
 string[]            p_arr_errors            =  none
 int                 p_num_pages             =    -1
@@ -35,20 +33,6 @@ int                 p_option_clear_notes    =    -1
 int                 p_option_clear_errors   =    -1
 
 ; Friend Methods
-function f_Create()
-    p_is_created = true
-endFunction
-
-function f_Destroy()
-    p_is_created = false
-endFunction
-
-function f_Register()
-endFunction
-
-function f_Unregister()
-endFunction
-
 function f_Build_Page()
     int notes_count = LOGS.Get_Note_Count()
     int errors_count = LOGS.Get_Error_Count()

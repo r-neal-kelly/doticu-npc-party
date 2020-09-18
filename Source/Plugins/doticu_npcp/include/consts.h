@@ -280,6 +280,9 @@ namespace doticu_npcp { namespace Consts {
     // NPCP Reference Containers
     Reference_t* Container_Ref_Buffer();
 
+    // NPCP Reference Doors
+    Reference_t* Expo_Exit_Door();
+
     // NPCP Reference Markers
     Reference_t* Cell_Marker();
     Reference_t* Expo_Antechamber_Marker();

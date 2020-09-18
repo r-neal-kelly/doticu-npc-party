@@ -54,10 +54,6 @@ event OnActivate(ObjectReference ref_activator)
     GotoState("")
 endEvent
 
-event OnLoad()
-    MANNEQUINS.Enforce_Expoee(ID, MARKER)
-endEvent
-
 ; States
 state STATE_BUSY
     event OnActivate(ObjectReference ref_activator)

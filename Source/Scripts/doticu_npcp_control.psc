@@ -1,6 +1,4 @@
-;/
-    Copyright © 2020 r-neal-kelly, aka doticu
-/;
+; Copyright © 2020 r-neal-kelly, aka doticu
 
 Scriptname doticu_npcp_control extends Quest
 
@@ -21,23 +19,11 @@ doticu_npcp_mcm property MCM
     endFunction
 endProperty
 
-; Private Variables
-bool                p_is_created    = false
-
 ; Friend Methods
 function f_Create()
-    p_is_created = true
-
     MCM.f_Create()
-endFunction
-
-function f_Destroy()
-    MCM.f_Destroy()
-    
-    p_is_created = false
 endFunction
 
 function f_Register()
     KEYS.Register()
-    MCM.f_Register()
 endFunction
