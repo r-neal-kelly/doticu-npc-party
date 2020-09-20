@@ -77,6 +77,8 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Party::Member_t* Member();
         void Member(Party::Member_t* member);
 
+        std::string Cell_Name(Int_t column, Int_t row);
+
         void View_Mannequins();
         void Review_Mannequins();
 

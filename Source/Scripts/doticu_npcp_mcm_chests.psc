@@ -2,6 +2,8 @@
 
 Scriptname doticu_npcp_mcm_chests extends Quest
 
+string[]    p_custom_names              =  none
+
 int         p_option_input              =    -1
 
 int         p_option_swords             =    -1
@@ -99,17 +101,3 @@ int         p_option_rename_custom_12   =    -1
 int         p_option_rename_custom_13   =    -1
 int         p_option_rename_custom_14   =    -1
 int         p_option_rename_custom_15   =    -1
-
-string[]    p_custom_names              =  none
-
-function f_Build_Page() native
-
-function f_On_Option_Select         (int option) native
-function f_On_Option_Menu_Open      (int option) native
-function f_On_Option_Menu_Accept    (int option, int idx) native
-function f_On_Option_Slider_Open    (int option) native
-function f_On_Option_Slider_Accept  (int option, float value) native
-function f_On_Option_Input_Accept   (int option, string value) native
-function f_On_Option_Keymap_Change  (int option, int key_code, string conflict, string conflicting_mod) native
-function f_On_Option_Default        (int option) native
-function f_On_Option_Highlight      (int option) native

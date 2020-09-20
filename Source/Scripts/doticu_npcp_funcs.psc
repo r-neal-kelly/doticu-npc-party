@@ -2,43 +2,7 @@
 
 Scriptname doticu_npcp_funcs extends Quest
 
-; Modules
-doticu_npcp_logs property LOGS hidden
-    doticu_npcp_logs function Get()
-        return (self as Quest) as doticu_npcp_logs
-    endFunction
-endProperty
-doticu_npcp_actors property ACTORS hidden
-    doticu_npcp_actors function Get()
-        return (self as Quest) as doticu_npcp_actors
-    endFunction
-endProperty
-doticu_npcp_npcs property NPCS hidden
-    doticu_npcp_npcs function Get()
-        return (self as Quest) as doticu_npcp_npcs
-    endFunction
-endProperty
-doticu_npcp_mannequins property MANNEQUINS hidden
-    doticu_npcp_mannequins function Get()
-        return (self as Quest) as doticu_npcp_mannequins
-    endFunction
-endProperty
-
-; Friend Methods
-function f_Create()
-    LOGS.f_Create()
-    NPCS.f_Initialize()
-endFunction
-
-function f_Destroy()
-    NPCS.f_Uninitialize()
-    LOGS.f_Destroy()
-endFunction
-
-function f_Register()
-    LOGS.f_Register()
-    ACTORS.f_Register()
-endFunction
+; replace these with direct callbacks in c++
 
 ; Public Methods
 function Close_Menus();;;
@@ -82,4 +46,30 @@ endFunction
 
 ObjectReference function Current_Crosshair_Reference();;;
     return Game.GetCurrentCrosshairRef()
+endFunction
+
+function Stop_If_Playing_Music(Actor ref_actor);;;
+    BardSongsScript script = doticu_npcp_consts.Bard_Songs_Quest() as BardSongsScript
+
+    if script.BardSongs_Bard.GetActorReference() == ref_actor
+        script.StopAllSongs()
+        script.BardSongs_Bard.Clear()
+        ref_actor.Disable()
+        ref_actor.Enable()
+    elseIf script.BardSongs_Bard2.GetActorReference() == ref_actor
+        script.StopAllSongs()
+        script.BardSongs_Bard2.Clear()
+        ref_actor.Disable()
+        ref_actor.Enable()
+    elseIf script.BardSongsInstrumental_Bard.GetActorReference() == ref_actor
+        script.StopAllSongs()
+        script.BardSongsInstrumental_Bard.Clear()
+        ref_actor.Disable()
+        ref_actor.Enable()
+    elseIf script.BardSongsInstrumental_Bard2.GetActorReference() == ref_actor
+        script.StopAllSongs()
+        script.BardSongsInstrumental_Bard2.Clear()
+        ref_actor.Disable()
+        ref_actor.Enable()
+    endIf
 endFunction

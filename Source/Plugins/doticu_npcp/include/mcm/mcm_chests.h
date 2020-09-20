@@ -130,8 +130,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         void Uninitialize();
         void Reinitialize();
 
-        void Build_Page();
-
+        void On_Build_Page();
         void On_Option_Select(Int_t option);
         void On_Option_Menu_Open(Int_t option);
         void On_Option_Menu_Accept(Int_t option, Int_t idx);

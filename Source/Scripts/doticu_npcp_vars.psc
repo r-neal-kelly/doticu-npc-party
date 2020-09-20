@@ -95,36 +95,3 @@ int[] property key_fs_unsneak_mods = none auto hidden
 int[] property key_fs_saddle_mods = none auto hidden
 int[] property key_fs_unsaddle_mods = none auto hidden
 int[] property key_fs_resurrect_mods = none auto hidden
-
-int property version_major hidden
-    int function Get()
-        return p_version_major
-    endFunction
-    function Set(int val)
-        if val > -1
-            p_version_major = val
-        endIf
-    endFunction
-endProperty
-
-int property version_minor hidden
-    int function Get()
-        return p_version_minor
-    endFunction
-    function Set(int val)
-        if val > -1
-            p_version_minor = val
-        endIf
-    endFunction
-endProperty
-
-int property version_patch hidden
-    int function Get()
-        return p_version_patch
-    endFunction
-    function Set(int val)
-        if val > -1
-            p_version_patch = val
-        endIf
-    endFunction
-endProperty

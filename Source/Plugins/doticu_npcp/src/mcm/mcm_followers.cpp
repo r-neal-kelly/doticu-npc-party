@@ -518,19 +518,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        METHOD("View_Followers", 0, void, View_Followers);
-
-        METHOD("On_Build_Page", 0, void, On_Build_Page);
-        METHOD("On_Option_Select", 1, void, On_Option_Select, Int_t);
-        METHOD("On_Option_Menu_Open", 1, void, On_Option_Menu_Open, Int_t);
-        METHOD("On_Option_Menu_Accept", 2, void, On_Option_Menu_Accept, Int_t, Int_t);
-        METHOD("On_Option_Slider_Open", 1, void, On_Option_Slider_Open, Int_t);
-        METHOD("On_Option_Slider_Accept", 2, void, On_Option_Slider_Accept, Int_t, Float_t);
-        METHOD("On_Option_Input_Accept", 2, void, On_Option_Input_Accept, Int_t, String_t);
-        METHOD("On_Option_Keymap_Change", 4, void, On_Option_Keymap_Change, Int_t, Int_t, String_t, String_t);
-        METHOD("On_Option_Default", 1, void, On_Option_Default, Int_t);
-        METHOD("On_Option_Highlight", 1, void, On_Option_Highlight, Int_t);
-
         #undef METHOD
     }
 

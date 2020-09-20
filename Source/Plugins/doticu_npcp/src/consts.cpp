@@ -213,6 +213,8 @@ namespace doticu_npcp { namespace Consts {
         FORMLIST_GLOBALS_IS_SADDLER_SITTING         = 0x395E54,
         FORMLIST_MARKERS_EXPO_CELL                  = 0x2928AF,
         FORMLIST_MARKERS_SETTLER                    = 0x00B46E,
+        FORMLIST_BUTTONS_EXPOEE                     = 0x3C88DF,
+        FORMLIST_MARKERS_EXPOEE                     = 0x3C88E0,
 
         // NPCP Globals
         GLOBAL_IS_INSTALLED                         = 0x189ADD,
@@ -578,6 +580,8 @@ namespace doticu_npcp { namespace Consts {
     Formlist_t* Is_Saddler_Sitting_Globals_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_GLOBALS_IS_SADDLER_SITTING); }
     Formlist_t* Expo_Cell_Markers_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_MARKERS_EXPO_CELL); }
     Formlist_t* Settler_Markers_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_MARKERS_SETTLER); }
+    Formlist_t* Expoee_Buttons_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_BUTTONS_EXPOEE); }
+    Formlist_t* Expoee_Markers_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_MARKERS_EXPOEE); }
 
     // NPCP Globals
     Global_t* Is_Installed_Global() { NPCP_FORM(Global_t, GLOBAL_IS_INSTALLED); }
@@ -931,22 +935,6 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
 
         // Skyrim Quests
         ADD_GLOBAL("Bard_Songs_Quest", 0, Quest_t*, Bard_Songs_Quest);
-
-        // NPCP Globals
-        ADD_GLOBAL("Is_Installed_Global", 0, Global_t*, Is_Installed_Global);
-
-        // NPCP Ints
-        ADD_GLOBAL("NPCP_Major", 0, Int_t, NPCP_Major);
-        ADD_GLOBAL("NPCP_Minor", 0, Int_t, NPCP_Minor);
-        ADD_GLOBAL("NPCP_Patch", 0, Int_t, NPCP_Patch);
-
-        // NPCP Quests
-        ADD_GLOBAL("Main_Quest", 0, Quest_t*, Main_Quest);
-        ADD_GLOBAL("Vars_Quest", 0, Quest_t*, Vars_Quest);
-        ADD_GLOBAL("Funcs_Quest", 0, Quest_t*, Funcs_Quest);
-        ADD_GLOBAL("Members_Quest", 0, Quest_t*, Members_Quest);
-        ADD_GLOBAL("Followers_Quest", 0, Quest_t*, Followers_Quest);
-        ADD_GLOBAL("Control_Quest", 0, Quest_t*, Control_Quest);
 
         #undef ADD_GLOBAL
 

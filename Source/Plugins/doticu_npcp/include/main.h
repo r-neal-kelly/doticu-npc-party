@@ -41,7 +41,7 @@ namespace doticu_npcp { namespace Modules {
 
         void Init_Mod();
         void Load_Mod();
-        void Has_Requirements(Callback_t<Bool_t>* user_callback);
+        Bool_t Has_Requirements();
         Bool_t Try_Update();
         void Try_Cleanup();
 

@@ -354,9 +354,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        METHOD("f_Initialize", 0, void, Initialize);
-        METHOD("f_Uninitialize", 0, void, Uninitialize);
-
         #undef METHOD
     }
 

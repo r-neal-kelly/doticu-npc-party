@@ -927,7 +927,11 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                 Actor2::Pacify(target);
             }
 
-            if (Is_Follower()) {
+            Follower_t* follower = Follower();
+            if (follower) {
+                if (follower->Is_Retreater()) {
+                    Actor2::Stop_Combat_Alarm(actor);
+                }
                 if (combat_code == CODES::COMBAT::YES) {
                     player->Begin_Combat();
                 }
@@ -2040,6 +2044,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Actor2::Move_To_Orbit(actor, display_marker, 0.0f, 180.0f);
 
         Object_Ref::Enable(actor);
+        //Actor2::Set_Alpha(actor, 1.0f, false);
 
         Enforce_Display(actor, display_marker);
     }
@@ -3212,41 +3217,12 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     void Member_t::Register_Me(Virtual_Machine_t* vm)
     {
-        #define BMETHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...) \
-        M                                                           \
-            FORWARD_METHOD(vm, Class_Name(), Alias_t,               \
-                           STR_FUNC_, ARG_NUM_,                     \
-                           RETURN_, METHOD_, __VA_ARGS__);          \
-        W
-
         #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
         M                                                           \
             FORWARD_METHOD(vm, Class_Name(), Member_t,              \
                            STR_FUNC_, ARG_NUM_,                     \
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
-
-        METHOD("Actor", 0, Actor_t*, Actor);
-        METHOD("Follower", 0, Follower_t*, Follower);
-        METHOD("Style", 0, Int_t, Style);
-        METHOD("Vitality", 0, Int_t, Vitality);
-        METHOD("Rating", 0, Int_t, Rating);
-        METHOD("Name", 0, String_t, Name);
-        METHOD("Rating_Stars", 0, String_t, Rating_Stars);
-
-        BMETHOD("Is_Filled", 0, Bool_t, Is_Filled);
-        METHOD("Is_Mannequin", 0, Bool_t, Is_Mannequin);
-        METHOD("Isnt_Mannequin", 0, Bool_t, Isnt_Mannequin);
-        METHOD("Is_Follower", 0, Bool_t, Is_Follower);
-
-        METHOD("Mannequinize", 1, Int_t, Mannequinize, Reference_t*);
-        METHOD("Unmannequinize", 0, Int_t, Unmannequinize);
-
-        METHOD("Rate", 1, Int_t, Rate, Int_t);
-
-        METHOD("Rename", 1, Int_t, Rename, String_t);
-
-        METHOD("Stash", 0, Int_t, Stash);
 
         METHOD("OnDeath", 1, void, On_Death, Actor_t*);
         METHOD("OnActivate", 1, void, On_Activate, Reference_t*);
@@ -3255,7 +3231,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         METHOD("OnItemAdded", 4, void, On_Item_Added, Form_t*, Int_t, Reference_t*, Reference_t*);
         METHOD("OnItemRemoved", 4, void, On_Item_Removed, Form_t*, Int_t, Reference_t*, Reference_t*);
 
-        #undef BMETHOD
         #undef METHOD
     }
 

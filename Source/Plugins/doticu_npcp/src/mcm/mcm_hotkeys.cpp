@@ -2,9 +2,12 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "skse64/Hooks_DirectInput8Create.h"
+
 #include "actor2.h"
 #include "codes.h"
 #include "consts.h"
+#include "form.h"
 #include "keys.h"
 #include "papyrus.inl"
 #include "utils.h"
@@ -220,7 +223,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
     Int_t Hotkeys_t::FS_Unsaddle_Mods_Option() { return FS_Unsaddle_Mods_Option_Variable()->Int(); }
     Int_t Hotkeys_t::FS_Resurrect_Mods_Option() { return FS_Resurrect_Mods_Option_Variable()->Int(); }
 
-    void Hotkeys_t::Build_Page()
+    void Hotkeys_t::On_Build_Page()
     {
         Modules::Vars_t* vars = Modules::Vars_t::Self();
         Keys_t* keys = Keys_t::Self();
@@ -327,6 +330,163 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         mcm->Add_Empty_Option();
 
         #undef BUILD_HOTKEY
+    }
+
+    void Hotkeys_t::On_Option_Select(Int_t option)
+    {
+        MCM::Main_t* mcm = Main();
+
+        if (option == Set_Defaults_Option()) {
+            struct Callback : public Callback_t<Bool_t> {
+                Hotkeys_t* self;
+                Callback(Hotkeys_t* self) :
+                    self(self)
+                {
+                }
+                void operator()(Bool_t result)
+                {
+                    if (result) {
+                        self->Reset_Hotkeys();
+                    }
+                }
+            };
+            mcm->Show_Message("This will set all NPC Party hotkeys to their defaults. "
+                              "You will need to confirm any conflicts. Continue?",
+                              true, " Yes ", " No ", new Callback(this));
+        } else if (option == Unset_All_Option()) {
+            struct Callback : public Callback_t<Bool_t> {
+                Hotkeys_t* self;
+                Callback(Hotkeys_t* self) :
+                    self(self)
+                {
+                }
+                void operator()(Bool_t result)
+                {
+                    if (result) {
+                        self->Unset_Hotkeys();
+                    }
+                }
+            };
+            mcm->Show_Message("This will unset all NPC Party hotkeys. Continue?",
+                              true, " Yes ", " No ", new Callback(this));
+        } else {
+            String_t hotkey = Mods_Option_To_Hotkey(option);
+            if (hotkey && hotkey.data && hotkey.data[0]) {
+                struct Callback : public Callback_t<Vector_t<Int_t>> {
+                    Hotkeys_t* self;
+                    String_t hotkey;
+                    Callback(Hotkeys_t* self, String_t hotkey) :
+                        self(self), hotkey(hotkey)
+                    {
+                    }
+                    void operator()(Vector_t<Int_t> mods)
+                    {
+                        if (mods.size() > 0) {
+                            Int_t value = Keys_t::Self()->Current_Value(hotkey);
+                        }
+                    }
+                };
+                Read_Pressed_Mods(hotkey, new Callback(this, hotkey));
+            }
+        }
+        /*
+function f_On_Option_Select(int id_option)
+    else
+        string hotkey = Mods_Option_to_Hotkey(id_option)
+        if hotkey
+            int value = KEYS.Current_Value(hotkey)
+            int[] mods = p_Read_Pressed_Mods(hotkey)
+            if mods.length > 0 && p_Can_Set_Hotkey(hotkey, value, mods[0], mods[1], mods[2])
+                Change_Hotkey_Mods(id_option, mods[0], mods[1], mods[2])
+            endIf
+        endIf
+    endIf
+endFunction
+        */
+    }
+
+    void Hotkeys_t::On_Option_Menu_Open(Int_t option)
+    {
+
+    }
+
+    void Hotkeys_t::On_Option_Menu_Accept(Int_t option, Int_t idx)
+    {
+
+    }
+
+    void Hotkeys_t::On_Option_Slider_Open(Int_t option)
+    {
+
+    }
+
+    void Hotkeys_t::On_Option_Slider_Accept(Int_t option, Float_t value)
+    {
+
+    }
+
+    void Hotkeys_t::On_Option_Input_Accept(Int_t option, String_t value)
+    {
+
+    }
+
+    void Hotkeys_t::On_Option_Keymap_Change(Int_t option, Int_t key_code, String_t conflict, String_t conflicting_mod)
+    {
+        /*
+function f_On_Option_Keymap_Change(int id_option, int value, string conflicting_hotkey, string conflicting_mod)
+    string hotkey = Value_Option_to_Hotkey(id_option)
+    if hotkey
+        if value != KEYS.Current_Value(hotkey)
+            if value > -1 && conflicting_hotkey && conflicting_mod != MCM.ModName
+                string str_conflict_message = "This conflicts with '" + conflicting_hotkey + "'"
+                if conflicting_mod
+                    str_conflict_message += " in the mod '" + conflicting_mod + "'."
+                else
+                    str_conflict_message += " in vanilla Skyrim."
+                endIf
+                str_conflict_message += " Set key anyway?"
+                if !MCM.ShowMessage(str_conflict_message, true)
+                    return
+                endIf
+            endIf
+        
+            int[] mods = KEYS.Current_Mods(hotkey)
+            if p_Can_Set_Hotkey(hotkey, value, mods[0], mods[1], mods[2])
+                Change_Hotkey_Value(id_option, value)
+                KEYS.Register()
+            endIf
+        endIf
+    endIf
+endFunction
+        */
+    }
+
+    void Hotkeys_t::On_Option_Default(Int_t option)
+    {
+        /*
+function f_On_Option_Default(int id_option)
+    if id_option != p_option_set_defaults && id_option != p_option_unset_all
+        string hotkey = Value_Option_To_Hotkey(id_option)
+        if hotkey
+            int value = KEYS.Default_Value(hotkey)
+            int[] mods = KEYS.Current_Mods(hotkey)
+            if p_Can_Set_Hotkey(hotkey, value, mods[0], mods[1], mods[2])
+                Change_Hotkey_Value(id_option, value)
+                KEYS.Register()
+            endIf
+        else
+            hotkey = Mods_Option_To_Hotkey(id_option)
+            if hotkey
+                int value = KEYS.Current_Value(hotkey)
+                int[] mods = KEYS.Default_Mods(hotkey)
+                if p_Can_Set_Hotkey(hotkey, value, mods[0], mods[1], mods[2])
+                    Change_Hotkey_Mods(id_option, mods[0], mods[1], mods[2])
+                endIf
+            endIf
+        endIf
+    endIf
+endFunction
+        */
     }
 
     void Hotkeys_t::On_Option_Highlight(Int_t option)
@@ -491,7 +651,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         }
     }
 
-    void Hotkeys_t::Can_Change_Hotkey(String_t hotkey, Int_t value, Keys_t::Mods_t mods,
+    /*void Hotkeys_t::Can_Change_Hotkey(String_t hotkey, Int_t value, Keys_t::Mods_t mods,
                                       void (*callback)(Bool_t can_change, Int_t value, Keys_t::Mods_t mods))
     {
         if (value > Keys_t::KEY_INVALID) {
@@ -530,7 +690,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         } else {
             callback(true, value, mods); // for unset
         }
-    }
+    }*/
 
     void Hotkeys_t::Change_Hotkey_Value(Int_t option, Int_t value, Bool_t do_render)
     {
@@ -708,6 +868,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
     {
         Modules::Vars_t* vars = Modules::Vars_t::Self();
         Keys_t* keys = Keys_t::Self();
+        Main_t* mcm = Main();
 
         #define RESET_HOTKEY(HOTKEY_)                           \
         M                                                       \
@@ -764,15 +925,17 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
         #undef RESET_HOTKEY
         
-        Main()->Reset_Page();
-
         keys->Register();
+
+        mcm->Reset_Page();
+        mcm->Unlock();
     }
 
     void Hotkeys_t::Unset_Hotkeys()
     {
         Modules::Vars_t* vars = Modules::Vars_t::Self();
         Keys_t* keys = Keys_t::Self();
+        Main_t* mcm = Main();
 
         #define UNSET_HOTKEY(HOTKEY_)                           \
         M                                                       \
@@ -828,9 +991,10 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
         #undef UNSET_HOTKEY
 
-        Main()->Reset_Page();
-
         keys->Register();
+
+        mcm->Reset_Page();
+        mcm->Unlock();
     }
 
     String_t Hotkeys_t::Value_Option_To_Hotkey(Int_t value_option)
@@ -995,6 +1159,120 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         }
     }
 
+    void Hotkeys_t::Read_Pressed_Mods(String_t hotkey, Callback_t<Vector_t<Int_t>>* user_callback)
+    {
+        static DIHookControl& controls = DIHookControl::GetSingleton();
+
+        using UCallback_t = Callback_t<Vector_t<Int_t>>;
+
+        struct Callback : public Callback_t<Bool_t> {
+            Hotkeys_t* self;
+            UCallback_t* user_callback;
+            Callback(Hotkeys_t* self, UCallback_t* user_callback) :
+                self(self), user_callback(user_callback)
+            {
+            }
+            void operator()(Bool_t do_set)
+            {
+                if (do_set) {
+                    struct Callback : public Callback_t<Bool_t> {
+                        Hotkeys_t* self;
+                        UCallback_t* user_callback;
+                        Callback(Hotkeys_t* self, UCallback_t* user_callback) :
+                            self(self), user_callback(user_callback)
+                        {
+                        }
+                        void operator()(Bool_t do_change)
+                        {
+                            if (do_change) {
+                                Vector_t<Int_t> mods;
+                                mods.reserve(3);
+
+                                size_t key_count = controls.GetNumKeysPressed();
+                                if (key_count > 0) {
+                                    mods.push_back(controls.GetNthKeyPressed(0));
+                                } else {
+                                    mods.push_back(-1);
+                                }
+                                if (key_count > 1) {
+                                    mods.push_back(controls.GetNthKeyPressed(1));
+                                } else {
+                                    mods.push_back(-1);
+                                }
+                                if (key_count > 2) {
+                                    mods.push_back(controls.GetNthKeyPressed(2));
+                                } else {
+                                    mods.push_back(-1);
+                                }
+
+                                user_callback->operator()(mods);
+                                delete user_callback;
+                            } else {
+                                Vector_t<Int_t> mods;
+                                user_callback->operator()(mods);
+                                delete user_callback;
+                            }
+                        }
+                    };
+                    Main()->Show_Message("Press and hold up to three keys and click enter. Cancel will leave the mods as they are.",
+                                         true, " Accept ", " Cancel ", new Callback(self, user_callback));
+                } else {
+                    struct Callback : public Callback_t<Bool_t> {
+                        Hotkeys_t* self;
+                        UCallback_t* user_callback;
+                        Callback(Hotkeys_t* self, UCallback_t* user_callback) :
+                            self(self), user_callback(user_callback)
+                        {
+                        }
+                        void operator()(Bool_t do_clear)
+                        {
+                            if (do_clear) {
+                                Vector_t<Int_t> mods;
+                                mods.reserve(3);
+                                mods.push_back(-1);
+                                mods.push_back(-1);
+                                mods.push_back(-1);
+                                user_callback->operator()(mods);
+                                delete user_callback;
+                            } else {
+                                Vector_t<Int_t> mods;
+                                user_callback->operator()(mods);
+                                delete user_callback;
+                            }
+                        }
+                    };
+                    Main()->Show_Message("Are you sure you want to clear mods?",
+                                         true, " Yes ", " No ", new Callback(self, user_callback));
+                }
+            }
+        };
+        Main()->Show_Message("Set or Unset mods?",
+                             true, " Set ", " Unset ", new Callback(this, user_callback));
+    }
+
+    Bool_t Hotkeys_t::Can_Set_Hotkey(String_t hotkey, Int_t value, Int_t mod_1, Int_t mod_2, Int_t mod_3)
+    {
+        /*
+bool function p_Can_Set_Hotkey(string hotkey, int value, int mod_1, int mod_2, int mod_3)
+    if value > 0
+        string npcp_conflict = KEYS.Conflicting_Hotkey(hotkey, value, mod_1, mod_2, mod_3)
+        if npcp_conflict != ""
+            return MCM.ShowMessage("This conflicts with '" + npcp_conflict + "'. Set key anyway?", true)
+        else
+            string mcm_conflict = MCM.GetCustomControl(value)
+            if mcm_conflict && KEYS.Current_Value(hotkey) != value
+                return MCM.ShowMessage("This conflicts with '" + mcm_conflict + "'. Set key anyway?", true)
+            else
+                return true
+            endIf
+        endIf
+    else
+        return true
+    endIf
+endFunction
+        */
+    }
+
     void Hotkeys_t::Register_Me(Virtual_Machine_t* vm)
     {
         #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
@@ -1003,15 +1281,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                            STR_FUNC_, ARG_NUM_,                     \
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
-
-        METHOD("f_Build_Page", 0, void, Build_Page);
-        METHOD("f_On_Option_Highlight", 1, void, On_Option_Highlight, Int_t);
-        METHOD("Change_Hotkey_Value", 3, void, Change_Hotkey_Value, Int_t, Int_t, Bool_t);
-        METHOD("Change_Hotkey_Mods", 5, void, Change_Hotkey_Mods, Int_t, Int_t, Int_t, Int_t, Bool_t);
-        METHOD("Reset_Hotkeys", 0, void, Reset_Hotkeys);
-        METHOD("Unset_Hotkeys", 0, void, Unset_Hotkeys);
-        METHOD("Value_Option_To_Hotkey", 1, String_t, Value_Option_To_Hotkey, Int_t);
-        METHOD("Mods_Option_To_Hotkey", 1, String_t, Mods_Option_To_Hotkey, Int_t);
 
         #undef METHOD
     }

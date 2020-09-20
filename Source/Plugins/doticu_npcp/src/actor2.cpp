@@ -2068,7 +2068,7 @@ namespace doticu_npcp { namespace Actor2 {
             }
         } arguments(actor);
         Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(),
-                                               "doticu_npcp_actors",
+                                               "doticu_npcp_funcs",
                                                "Stop_If_Playing_Music",
                                                &arguments);
     }
@@ -2227,6 +2227,32 @@ namespace doticu_npcp { namespace Actor2 {
             actor,
             "Actor",
             "SetDoingFavor",
+            &arguments,
+            vcallback ? &vcallback : nullptr
+        );
+    }
+
+    void Set_Alpha(Actor_t* actor, Float_t alpha_0_to_1, Bool_t do_fade_in, Virtual_Callback_i* vcallback)
+    {
+        struct VArguments : public Virtual_Arguments_t {
+            Float_t alpha_0_to_1;
+            Bool_t do_fade_in;
+            VArguments(Float_t alpha_0_to_1, Bool_t do_fade_in) :
+                alpha_0_to_1(alpha_0_to_1), do_fade_in(do_fade_in)
+            {
+            }
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(2);
+                arguments->At(0)->Float(alpha_0_to_1);
+                arguments->At(1)->Bool(do_fade_in);
+                return true;
+            }
+        } arguments(alpha_0_to_1, do_fade_in);
+        Virtual_Machine_t::Self()->Call_Method(
+            actor,
+            "Actor",
+            "SetAlpha",
             &arguments,
             vcallback ? &vcallback : nullptr
         );

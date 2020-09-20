@@ -112,6 +112,8 @@ namespace doticu_npcp { namespace Actor2 {
     Actor_Base_t* Dynamic_Base(Actor_t* actor);
     Actor_Base_t* Real_Base(Actor_t* actor);
 
+    void Stop_Combat(Actor_t* actor);
+    void Stop_Combat_Alarm(Actor_t* actor);
     void Pacify(Actor_t* actor);
     void Kill(Actor_t* actor, Actor_t* killer = nullptr, Float_t damage = 0.0f, Bool_t do_send_event = true, Bool_t do_quick_ragdoll = false);
 
@@ -143,6 +145,8 @@ namespace doticu_npcp { namespace Actor2 {
     void Send_Animation_Event(Actor_t* actor, String_t animation, Virtual_Callback_i** callback = nullptr);
 
     void Set_Doing_Favor(Actor_t* actor, Bool_t is, Virtual_Callback_i* vcallback = nullptr);
+
+    void Set_Alpha(Actor_t* actor, Float_t alpha_0_to_1, Bool_t do_fade_in = false, Virtual_Callback_i* vcallback = nullptr);
 
 }}
 

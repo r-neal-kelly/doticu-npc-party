@@ -147,6 +147,23 @@ namespace doticu_npcp { namespace Papyrus { namespace UI {
         }
     }
 
+    template <typename Type>
+    inline void Run(String_t menu, String_t target, Array_t* arguments)
+    {
+        if (menu.data && target.data) {
+            UIManager* ui_manager = UIManager::GetSingleton();
+            if (ui_manager) {
+                size_t argument_count = arguments->count;
+                UIInvokeDelegate delegate(menu.data, target.data);
+                delegate.args.resize(argument_count);
+                for (size_t idx = 0; idx < argument_count; idx += 1) {
+                    Set_Value<Type>(&delegate.args[idx], *reinterpret_cast<Type*>(&arguments->Point(idx)->data));
+                }
+                delegate.Run();
+            }
+        }
+    }
+
     inline void Run(String_t menu, String_t target)
     {
         return Run<Bool_t>(menu, target, false);
@@ -170,6 +187,54 @@ namespace doticu_npcp { namespace Papyrus { namespace UI {
         } else {
             return false;
         }
+    }
+
+    inline void Message_Box(String_t message, Virtual_Callback_i* vcallback = nullptr)
+    {
+        struct VArguments : public Virtual_Arguments_t {
+            String_t message;
+            VArguments(String_t message) :
+                message(message)
+            {
+            }
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(1);
+                arguments->At(0)->String(message);
+                return true;
+            }
+        } arguments(message);
+
+        Virtual_Machine_t::Self()->Call_Global(
+            "Debug",
+            "MessageBox",
+            &arguments,
+            vcallback ? &vcallback : nullptr
+        );
+    }
+
+    inline void Notification(String_t note, Virtual_Callback_i* vcallback = nullptr)
+    {
+        struct VArguments : public Virtual_Arguments_t {
+            String_t note;
+            VArguments(String_t note) :
+                note(note)
+            {
+            }
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(1);
+                arguments->At(0)->String(note);
+                return true;
+            }
+        } arguments(note);
+
+        Virtual_Machine_t::Self()->Call_Global(
+            "Debug",
+            "Notification",
+            &arguments,
+            vcallback ? &vcallback : nullptr
+        );
     }
 
 }}}

@@ -187,7 +187,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Initialize();
     }
 
-    void Chests_t::Build_Page()
+    void Chests_t::On_Build_Page()
     {
         Main_t* mcm = Main();
 
@@ -790,18 +790,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                            STR_FUNC_, ARG_NUM_,                     \
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
-
-        METHOD("f_Build_Page", 0, void, Build_Page);
-
-        METHOD("f_On_Option_Select", 1, void, On_Option_Select, Int_t);
-        METHOD("f_On_Option_Menu_Open", 1, void, On_Option_Menu_Open, Int_t);
-        METHOD("f_On_Option_Menu_Accept", 2, void, On_Option_Menu_Accept, Int_t, Int_t);
-        METHOD("f_On_Option_Slider_Open", 1, void, On_Option_Slider_Open, Int_t);
-        METHOD("f_On_Option_Slider_Accept", 2, void, On_Option_Slider_Accept, Int_t, Float_t);
-        METHOD("f_On_Option_Input_Accept", 2, void, On_Option_Input_Accept, Int_t, String_t);
-        METHOD("f_On_Option_Keymap_Change", 4, void, On_Option_Keymap_Change, Int_t, Int_t, String_t, String_t);
-        METHOD("f_On_Option_Default", 1, void, On_Option_Default, Int_t);
-        METHOD("f_On_Option_Highlight", 1, void, On_Option_Highlight, Int_t);
 
         #undef METHOD
     }

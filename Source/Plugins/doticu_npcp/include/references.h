@@ -9,6 +9,7 @@
 namespace doticu_npcp { namespace Papyrus { namespace References {
 
     void On_Open(Reference_t* ref, Reference_t* activator);
+    void Expoee_Button_On_Activate(Reference_t* ref, Reference_t* activator);
 
 }}}
 

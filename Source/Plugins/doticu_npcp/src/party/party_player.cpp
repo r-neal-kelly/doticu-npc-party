@@ -263,6 +263,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     void Player_t::On_Load_Mod()
     {
+        On_Register();
         On_Update();
     }
 
@@ -395,7 +396,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        METHOD("On_Register", 0, void, On_Register);
         METHOD("OnControlDown", 1, void, On_Control_Down, String_t);
         
         #undef METHOD

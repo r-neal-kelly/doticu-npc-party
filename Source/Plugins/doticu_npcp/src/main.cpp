@@ -8,6 +8,7 @@
 
 #include "skse64/GameData.h"
 
+#include "active_magic_effects.h"
 #include "actor_base2.h"
 #include "actor2.h"
 #include "cell.h"
@@ -19,6 +20,7 @@
 #include "funcs.h"
 #include "game.h"
 #include "keys.h"
+#include "logs.h"
 #include "main.h"
 #include "object_ref.h"
 #include "outfit.h"
@@ -32,6 +34,7 @@
 #include "spell.h"
 #include "string2.h"
 #include "topic_infos.h"
+#include "ui.h"
 #include "utils.h"
 #include "vars.h"
 #include "vector.h"
@@ -57,6 +60,7 @@
 #include "mcm/mcm_chests.h"
 #include "mcm/mcm_settings.h"
 #include "mcm/mcm_hotkeys.h"
+#include "mcm/mcm_logs.h"
 
 namespace doticu_npcp { namespace Main {
 
@@ -141,58 +145,41 @@ namespace doticu_npcp { namespace Modules {
             }
             void operator()(Variable_t* result)
             {
-                struct Callback : public Callback_t<Bool_t> {
-                    Main_t* main;
-                    Callback(Main_t* main) :
-                        main(main)
-                    {
-                    }
-                    void operator()(Bool_t has_requirements)
-                    {
-                        if (has_requirements) {
-                            Quest::Start(Consts::Reanimated_Dialogue_Quest());
-                            Quest::Start(Consts::Thrall_Dialogue_Quest());
+                if (main->Has_Requirements()) {
+                    Quest::Start(Consts::Reanimated_Dialogue_Quest());
+                    Quest::Start(Consts::Thrall_Dialogue_Quest());
 
-                            Vector_t<Quest_t*> quests_to_start;
-                            quests_to_start.reserve(5);
-                            quests_to_start.push_back(Consts::Vars_Quest());
-                            quests_to_start.push_back(Consts::Funcs_Quest());
-                            quests_to_start.push_back(Consts::Members_Quest());
-                            quests_to_start.push_back(Consts::Followers_Quest());
-                            quests_to_start.push_back(Consts::Control_Quest());
+                    Vector_t<Quest_t*> quests_to_start;
+                    quests_to_start.reserve(5);
+                    quests_to_start.push_back(Consts::Vars_Quest());
+                    quests_to_start.push_back(Consts::Funcs_Quest());
+                    quests_to_start.push_back(Consts::Members_Quest());
+                    quests_to_start.push_back(Consts::Followers_Quest());
+                    quests_to_start.push_back(Consts::Control_Quest());
 
-                            struct Callback : public Callback_t<> {
-                                Main_t* main;
-                                Callback(Main_t* main) :
-                                    main(main)
-                                {
-                                }
-                                void operator()()
-                                {
-                                    Vars_t::Self()->Initialize();
-
-                                    struct VCallback : public Virtual_Callback_t {
-                                        Main_t* main;
-                                        VCallback(Main_t* main) :
-                                            main(main)
-                                        {
-                                        }
-                                        void operator()(Variable_t* result)
-                                        {
-                                            Consts::Is_Installed_Global()->value = 1.0f;
-                                            Modules::Control::Commands_t::Self()->Log_Note("Thank you for installing!", true);
-                                            Party::Player_t::Self()->On_Init_Mod();
-                                        }
-                                    };
-                                    Virtual_Callback_i* vcallback = new VCallback(main);
-                                    Virtual_Machine_t::Self()->Call_Method(main, main->Class_Name(), "p_Create", nullptr, &vcallback);
-                                }
-                            };
-                            Quest::Start_All(quests_to_start, new Callback(main));
+                    struct Callback : public Callback_t<> {
+                        Main_t* main;
+                        Callback(Main_t* main) :
+                            main(main)
+                        {
                         }
-                    }
-                };
-                main->Has_Requirements(new Callback(main));
+                        void operator()()
+                        {
+                            Vars_t::Self()->Initialize();
+                            Logs_t::Self()->Initialize();
+                            Party::NPCS_t::Self()->Initialize();
+                            Party::Player_t::Self()->On_Init_Mod();
+
+                            Papyrus::Keys_t::Self()->Register();
+                            Party::Movee_t::Self()->Register();
+                            Party::Player_t::Self()->On_Register();
+
+                            Consts::Is_Installed_Global()->value = 1.0f;
+                            Modules::Control::Commands_t::Self()->Log_Note("Thank you for installing!", true);
+                        }
+                    };
+                    Quest::Start_All(quests_to_start, new Callback(main));
+                }
             }
         };
         Virtual_Callback_i* vcallback = new VCallback(this);
@@ -209,71 +196,38 @@ namespace doticu_npcp { namespace Modules {
             }
             void operator()(Variable_t* result)
             {
-                struct Callback : public Callback_t<Bool_t> {
-                    Main_t* main;
-                    Callback(Main_t* main) :
-                        main(main)
-                    {
+                if (main->Has_Requirements()) {
+                    if (main->Try_Update()) {
+                        std::string note =
+                            "Running version " +
+                            std::to_string(Consts::NPCP_Major()) + "." +
+                            std::to_string(Consts::NPCP_Minor()) + "." +
+                            std::to_string(Consts::NPCP_Patch());
+                        Modules::Control::Commands_t::Self()->Log_Note(note.c_str(), true);
                     }
-                    void operator()(Bool_t has_requirements)
-                    {
-                        if (has_requirements) {
-                            struct VCallback : public Virtual_Callback_t {
-                                Main_t* main;
-                                VCallback(Main_t* main) :
-                                    main(main)
-                                {
-                                }
-                                void operator()(Variable_t* result)
-                                {
-                                    if (main->Try_Update()) {
-                                        std::string note =
-                                            "Running version " +
-                                            std::to_string(Consts::NPCP_Major()) + "." +
-                                            std::to_string(Consts::NPCP_Minor()) + "." +
-                                            std::to_string(Consts::NPCP_Patch());
-                                        Modules::Control::Commands_t::Self()->Log_Note(note.c_str(), true);
-                                    }
-                                    main->Try_Cleanup();
-                                    Party::Members_t::Self()->On_Load_Mod();
-                                    Party::Player_t::Self()->On_Load_Mod();
-                                    Party::Movee_t::Self()->On_Load_Mod();
-                                    Party::Mannequins_t::Self()->On_Load_Mod();
-                                    Utils::Print("NPC Party has loaded.");
-                                }
-                            };
-                            Virtual_Callback_i* vcallback = new VCallback(main);
-                            Virtual_Machine_t::Self()->Call_Method(main, main->Class_Name(), "p_Register", nullptr, &vcallback);
-                        }
-                    }
-                };
-                main->Has_Requirements(new Callback(main));
+                    main->Try_Cleanup();
+                    Party::Members_t::Self()->On_Load_Mod();
+                    Party::Player_t::Self()->On_Load_Mod();
+                    Party::Movee_t::Self()->On_Load_Mod();
+                    Party::Mannequins_t::Self()->On_Load_Mod();
+                    Utils::Print("NPC Party has loaded.");
+                }
             }
         };
         Virtual_Callback_i* vcallback = new VCallback(this);
         Funcs_t::Self()->Wait_Out_Of_Menu(1.0f, &vcallback);
     }
 
-    void Main_t::Has_Requirements(Callback_t<Bool_t>* user_callback)
+    Bool_t Main_t::Has_Requirements()
     {
-        NPCP_ASSERT(user_callback);
-
-        using UCallback_t = Callback_t<Bool_t>;
-
-        struct VCallback : public Virtual_Callback_t {
-            UCallback_t* user_callback;
-            VCallback(UCallback_t* user_callback) :
-                user_callback(user_callback)
-            {
-            }
-            void operator()(Variable_t* result)
-            {
-                user_callback->operator()(result ? result->Bool() : false);
-                delete user_callback;
-            }
-        };
-        Virtual_Callback_i* vcallback = new VCallback(user_callback);
-        Virtual_Machine_t::Self()->Call_Method(this, Class_Name(), "p_Has_Requires", nullptr, &vcallback);
+        if (Consts::Is_Installed_Global()->value > 0.0f && Is_NPCP_Version_Less_Than(0, 9, 1)) {
+            UI::Message_Box("NPC Party: This save has a version of NPC Party older than 0.9.1. "
+                            "The new version you are running will not work on this save yet. "
+                            "Exit without saving, and then update to version 0.9.1 before trying again.");
+            return false;
+        } else {
+            return true;
+        }
     }
 
     Bool_t Main_t::Try_Update()
@@ -353,7 +307,7 @@ namespace doticu_npcp { namespace Modules {
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        METHOD("p_Init_Mod", 0, void, Init_Mod);
+        METHOD("OnInit", 0, void, Init_Mod);
 
         #undef METHOD
     }
@@ -434,6 +388,7 @@ namespace doticu_npcp { namespace Main {
             }                                                                                   \
         W
 
+        REGISTER_NAMESPACE(Papyrus::Active_Magic_Effects);
         REGISTER_NAMESPACE(Actor_Base2);
         REGISTER_NAMESPACE(Actor2);
         REGISTER_NAMESPACE(Cell);
@@ -464,6 +419,7 @@ namespace doticu_npcp { namespace Main {
         REGISTER_TYPE(Modules::Main_t);
         REGISTER_TYPE(Modules::Funcs_t);
         REGISTER_TYPE(Modules::Vars_t);
+        REGISTER_TYPE(Modules::Logs_t);
 
         REGISTER_TYPE(Party::Player_t);
         REGISTER_TYPE(Party::Greeter_t);
@@ -492,6 +448,7 @@ namespace doticu_npcp { namespace Main {
         REGISTER_TYPE(MCM::Chests_t);
         REGISTER_TYPE(MCM::Settings_t);
         REGISTER_TYPE(MCM::Hotkeys_t);
+        REGISTER_TYPE(MCM::Logs_t);
 
         #undef REGISTER_TYPE
 

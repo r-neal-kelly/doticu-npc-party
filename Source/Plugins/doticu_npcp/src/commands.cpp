@@ -6,6 +6,7 @@
 #include "codes.h"
 #include "commands.h"
 #include "consts.h"
+#include "logs.h"
 #include "papyrus.inl"
 #include "utils.h"
 
@@ -52,24 +53,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
     void Commands_t::Log_Note(const char* note, Bool_t do_log)
     {
-        class Arguments : public Virtual_Arguments_t {
-        public:
-            String_t note;
-            Bool_t do_log;
-            Arguments(String_t note, Bool_t do_log) :
-                note(note), do_log(do_log)
-            {
-            }
-            Bool_t operator()(Arguments_t* arguments)
-            {
-                arguments->Resize(2);
-                arguments->At(0)->String(note);
-                arguments->At(1)->Bool(do_log);
-                return true;
-            }
-        } arguments(note, do_log);
-
-        Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(), "doticu_npcp_logs", "Create_Note", &arguments);
+        Modules::Logs_t::Self()->Log_Note(note, do_log);
     }
 
     void Commands_t::Log_Note(const char* part_1, const char* part_2, Bool_t do_log)
@@ -89,24 +73,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
     void Commands_t::Log_Error(const char* error, Int_t code, Bool_t do_log)
     {
-        class Arguments : public Virtual_Arguments_t {
-        public:
-            String_t error;
-            Bool_t do_log;
-            Arguments(String_t error, Bool_t do_log) :
-                error(error), do_log(do_log)
-            {
-            }
-            Bool_t operator()(Arguments_t* arguments)
-            {
-                arguments->Resize(2);
-                arguments->At(0)->String(error);
-                arguments->At(1)->Bool(do_log);
-                return true;
-            }
-        } arguments((std::string(error) + ": " + std::to_string(code)).c_str(), do_log);
-
-        Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(), "doticu_npcp_logs", "Create_Error", &arguments);
+        Modules::Logs_t::Self()->Log_Error((std::string(error) + ": " + std::to_string(code)).c_str(), do_log);
     }
 
     void Commands_t::Log_Error(const char* part_1, const char* part_2, Int_t code, Bool_t do_log)
@@ -2947,8 +2914,6 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                            STR_FUNC_, ARG_NUM_,                     \
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
-
-        METHOD("Toggle_Expoee", 2, void, Toggle_Expoee, Int_t, Reference_t*);
 
         #undef METHOD
     }

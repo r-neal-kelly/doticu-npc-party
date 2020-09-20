@@ -10,6 +10,7 @@
 #include "party/party_member.h"
 
 #include "mcm/mcm_main.h"
+#include "mcm/mcm_members.h"
 #include "mcm/mcm_member.h"
 #include "mcm/mcm_mannequins.h"
 
@@ -145,6 +146,16 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
     void Mannequins_t::Member(Party::Member_t* member)
     {
         Member_Variable()->Pack(member, Party::Member_t::Class_Info());
+    }
+
+    std::string Mannequins_t::Cell_Name(Int_t column, Int_t row)
+    {
+        String_t cell_name = Party::Mannequins_t::Self()->Cell_Name(column, row);
+        if (cell_name && cell_name.data && cell_name.data[0]) {
+            return std::string("C ") + std::to_string(column) + ", R " + std::to_string(row) + ": " + cell_name.data;
+        } else {
+            return std::string("C ") + std::to_string(column) + ", R " + std::to_string(row);
+        }
     }
 
     void Mannequins_t::View_Mannequins()
@@ -310,19 +321,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                     mcm->Cursor_Position(MANNEQUINS_HEADERS);
                 }
                 for (Int_t row = Party::Mannequins_t::ROWS; row > 0; row -= 1) {
-                    String_t cell_name = mannequins->Cell_Name(column, row);
-                    if (cell_name && cell_name.data && cell_name.data[0]) {
-                        std::string label =
-                            std::string("C ") + std::to_string(column) +
-                            ", R " + std::to_string(row) +
-                            ": " + cell_name.data;
-                        mcm->Add_Text_Option(label.c_str(), "...");
-                    } else {
-                        std::string label =
-                            std::string("Column ") + std::to_string(column) +
-                            ", Row " + std::to_string(row);
-                        mcm->Add_Text_Option(label.c_str(), "...");
-                    }
+                    mcm->Add_Text_Option(Cell_Name(column, row).c_str(), "...");
                 }
                 mcm->Add_Header_Option("");
             }
@@ -331,19 +330,20 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             MCM::Main_t* mcm = Main();
             Int_t current_column = Current_Column();
             Int_t current_row = Current_Row();
+            String_t cell_name = mannequins->Cell_Name(current_column, current_row);
+
             Members(Party::Mannequins_t::Self()->Expoees(current_column, current_row));
 
             // Title
             mcm->Title_Text(
-                (std::string("Mannequins: C ") + std::to_string(current_column) +
-                 ", R " + std::to_string(current_row)).c_str()
+                (std::string("Mannequins ") + Cell_Name(current_column, current_row)).c_str()
             );
 
             // Header
             mcm->Cursor_Position(0);
             mcm->Cursor_Fill_Mode(Cursor_Fill_Mode_e::LEFT_TO_RIGHT);
             Name_Option_Variable()->Int(
-                mcm->Add_Input_Option(mannequins->Cell_Name(current_column, current_row), " Detail ")
+                mcm->Add_Input_Option(cell_name, " Detail ")
             );
             Back_Option_Variable()->Int(
                 mcm->Add_Text_Option("                              Go Back", "")
@@ -674,39 +674,37 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 mcm->Info_Text("Open the next page of Expo columns.");
             } else {
                 mcm->Info_Text(
-                    (std::string("Open the menu for Column ") + std::to_string(Option_To_Column(option)) +
-                     ", Row " + std::to_string(Option_To_Row(option)) + "."
-                     ).c_str()
+                    (std::string("Open the menu for ") + Cell_Name(Option_To_Column(option), Option_To_Row(option)) + ".").c_str()
                 );
             }
         } else if (current_view == CODES::VIEW::MANNEQUINS_CELL) {
-            /*
-function f_On_Option_Highlight(int id_option)
-    if false
+            MCM::Main_t* mcm = Main();
 
-    elseIf id_option == p_option_back
-        MCM.SetInfoText("Go back to main Mannequins menu.")
-    elseIf id_option == p_option_enter
-        MCM.SetInfoText("Teleport to Expo C " + p_curr_column + ", R" + p_curr_row + ".")
-    elseIf id_option == p_option_exit
-        MCM.SetInfoText("Teleport back to Tamriel.")
-    elseIf id_option == p_option_north_1 || id_option == p_option_north_2
-        MCM.SetInfoText("Move the menu NORTH one cell, in relation to the position of this cell.")
-    elseIf id_option == p_option_south_1 || id_option == p_option_south_2
-        MCM.SetInfoText("Move the menu SOUTH one cell, in relation to the position of this cell.")
-    elseIf id_option == p_option_west
-        MCM.SetInfoText("Move the menu WEST one cell, in relation to the position of this cell.")
-    elseIf id_option == p_option_east
-        MCM.SetInfoText("Move the menu EAST one cell, in relation to the position of this cell.")
-    else
-        doticu_npcp_member ref_member = p_curr_members[p_Get_Idx_Entity(id_option)] as doticu_npcp_member
-        if ref_member
-            MCM.SetInfoText("Open the mannequin menu for " + ref_member.Name() + ".\n" + MCM.MCM_MEMBERS.Member_Info_String(ref_member as Alias))
-        endIf
-
-    endIf
-endFunction
-            */
+            if (option == Back_Option_Variable()->Int()) {
+                mcm->Info_Text("Go back to main Mannequins menu.");
+            } else if (option == Enter_Option_Variable()->Int()) {
+                mcm->Info_Text(
+                    ("Teleport to Expo " + Cell_Name(Current_Column(), Current_Row()) + ".").c_str()
+                );
+            } else if (option == Exit_Option_Variable()->Int()) {
+                mcm->Info_Text("Teleport back to Tamriel.");
+            } else if (option == North_1_Option_Variable()->Int() || option == North_2_Option_Variable()->Int()) {
+                mcm->Info_Text("Move the menu NORTH one cell, in relation to the position of this cell.");
+            } else if (option == South_1_Option_Variable()->Int() || option == South_2_Option_Variable()->Int()) {
+                mcm->Info_Text("Move the menu SOUTH one cell, in relation to the position of this cell.");
+            } else if (option == West_Option_Variable()->Int()) {
+                mcm->Info_Text("Move the menu WEST one cell, in relation to the position of this cell.");
+            } else if (option == East_Option_Variable()->Int()) {
+                mcm->Info_Text("Move the menu EAST one cell, in relation to the position of this cell.");
+            } else {
+                Party::Member_t* member = Option_To_Member(option);
+                if (member) {
+                    mcm->Info_Text(
+                        (std::string("Open the mannequin menu for ") + member->Name().data + ".\n" +
+                         MCM::Members_t::Self()->Member_Info_String(member).data).c_str()
+                    );
+                }
+            }
         } else if (current_view == CODES::VIEW::MANNEQUINS_MEMBER) {
             MCM::Member_t::Self()->On_Option_Highlight(option);
         }
@@ -720,19 +718,6 @@ endFunction
                            STR_FUNC_, ARG_NUM_,                     \
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
-
-        METHOD("View_Mannequins", 0, void, View_Mannequins);
-
-        METHOD("On_Build_Page", 0, void, On_Build_Page);
-        METHOD("On_Option_Select", 1, void, On_Option_Select, Int_t);
-        METHOD("On_Option_Menu_Open", 1, void, On_Option_Menu_Open, Int_t);
-        METHOD("On_Option_Menu_Accept", 2, void, On_Option_Menu_Accept, Int_t, Int_t);
-        METHOD("On_Option_Slider_Open", 1, void, On_Option_Slider_Open, Int_t);
-        METHOD("On_Option_Slider_Accept", 2, void, On_Option_Slider_Accept, Int_t, Float_t);
-        METHOD("On_Option_Input_Accept", 2, void, On_Option_Input_Accept, Int_t, String_t);
-        METHOD("On_Option_Keymap_Change", 4, void, On_Option_Keymap_Change, Int_t, Int_t, String_t, String_t);
-        METHOD("On_Option_Default", 1, void, On_Option_Default, Int_t);
-        METHOD("On_Option_Highlight", 1, void, On_Option_Highlight, Int_t);
 
         #undef METHOD
     }

@@ -2,7 +2,6 @@
 
 Scriptname doticu_npcp_member extends ReferenceAlias
 
-; Private Variables
 Actor                   p_ref_actor                         =  none
 ObjectReference         p_container_pack                    =  none
 ObjectReference         p_marker_mannequin                  =  none
@@ -38,36 +37,15 @@ int                     p_int_rating                        =     0
 string                  p_str_name                          =    ""
 
 Faction                 p_prev_faction_crime                =  none
-bool                    p_prev_faction_potential_follower   = false
 bool                    p_prev_faction_no_body_cleanup      = false
-float                   p_prev_aggression                   =   0.0
+
+float                   p_prev_aggression                   =   0.0; these may be unneeded
 float                   p_prev_confidence                   =   0.0
 float                   p_prev_assistance                   =   0.0
 float                   p_prev_morality                     =   0.0
 
-Faction[]               p_prev_factions                     =  none; to be deleted in a future update
-
-; Native Methods
-Actor function Actor() native
-Alias function Follower() native
-int function Style() native
-int function Vitality() native
-int function Rating() native
-string function Name() native
-string function Rating_Stars() native
-
-bool function Is_Filled() native
-bool function Is_Mannequin() native
-bool function Isnt_Mannequin() native
-bool function Is_Follower() native
-
-int function Mannequinize(ObjectReference marker) native
-int function Unmannequinize() native
-
-int function Rate(int rating) native
-int function Rename(string name) native
-
-int function Stash() native
+bool                    p_prev_faction_potential_follower   = false; to be deleted
+Faction[]               p_prev_factions                     =  none; to be deleted
 
 event OnDeath(Actor killer) native
 event OnActivate(ObjectReference activator) native

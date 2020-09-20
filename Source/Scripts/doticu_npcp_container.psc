@@ -1,9 +1,6 @@
-;/
-    Copyright © 2020 r-neal-kelly, aka doticu
-/;
+; Copyright © 2020 r-neal-kelly, aka doticu
 
 Scriptname doticu_npcp_container extends ObjectReference
 
-; sadly, we cannot delete this until we force a new game, because the engine deletes all member packs upon removal
-; the alternative is to transfer each item in each pack to a newly create ObjectReference instance, and delete
-; the this and the old instances in a subsequent update.
+; we can't remove this file until we recreate each member pack.
+; after that update, we would require future updates to require it.

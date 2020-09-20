@@ -117,6 +117,8 @@ namespace doticu_npcp { namespace Consts {
     Formlist_t* Is_Saddler_Sitting_Globals_Formlist();
     Formlist_t* Expo_Cell_Markers_Formlist();
     Formlist_t* Settler_Markers_Formlist();
+    Formlist_t* Expoee_Buttons_Formlist();
+    Formlist_t* Expoee_Markers_Formlist();
 
     // NPCP Globals
     Global_t* Is_Installed_Global();

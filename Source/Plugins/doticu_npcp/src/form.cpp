@@ -255,6 +255,64 @@ namespace doticu_npcp { namespace Form {
         );
     }
 
+    void Register_Mod_Event(Form_t* form, String_t event_name, String_t callback_name, Virtual_Callback_i* vcallback)
+    {
+        struct VArgs : public Virtual_Arguments_t {
+            String_t event_name;
+            String_t callback_name;
+            VArgs(String_t event_name, String_t callback_name) :
+                event_name(event_name), callback_name(callback_name)
+            {
+            }
+            Bool_t operator()(Arguments_t* args)
+            {
+                args->Resize(2);
+                args->At(0)->String(event_name);
+                args->At(1)->String(callback_name);
+                return true;
+            }
+        } args(event_name, callback_name);
+        Virtual_Machine_t::Self()->Call_Method(
+            form, "Form", "RegisterForModEvent", &args, vcallback ? &vcallback : nullptr
+        );
+    }
+
+    void Unregister_Mod_Event(Form_t* form, String_t event_name, Virtual_Callback_i* vcallback)
+    {
+        struct VArgs : public Virtual_Arguments_t {
+            String_t event_name;
+            VArgs(String_t event_name) :
+                event_name(event_name)
+            {
+            }
+            Bool_t operator()(Arguments_t* args)
+            {
+                args->Resize(1);
+                args->At(0)->String(event_name);
+                return true;
+            }
+        } args(event_name);
+        Virtual_Machine_t::Self()->Call_Method(
+            form, "Form", "UnregisterForModEvent", &args, vcallback ? &vcallback : nullptr
+        );
+    }
+
+    void Unregister_Mod_Events(Form_t* form, Virtual_Callback_i* vcallback)
+    {
+        Virtual_Machine_t::Self()->Call_Method(
+            form, "Form", "UnregisterForAllModEvents", nullptr, vcallback ? &vcallback : nullptr
+        );
+    }
+
+    void Queue(Form_t* form, Virtual_Callback_i* vcallback)
+    {
+        NPCP_ASSERT(vcallback);
+
+        Virtual_Machine_t::Self()->Call_Method(
+            form, "Form", "GetFormID", nullptr, &vcallback
+        );
+    }
+
     const char* Name(Form_t* form)
     {
         if (form) {

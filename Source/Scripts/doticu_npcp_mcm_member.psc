@@ -62,14 +62,3 @@ int                 p_option_relationship_rank  =    -1
 int                 p_option_worldspace         =    -1
 int                 p_option_location           =    -1
 int                 p_option_cell               =    -1
-
-function On_Build_Page() native
-function On_Option_Select(int option) native
-function On_Option_Menu_Open(int option) native
-function On_Option_Menu_Accept(int option, int idx) native
-function On_Option_Slider_Open(int option) native
-function On_Option_Slider_Accept(int option, float value) native
-function On_Option_Input_Accept(int option, string value) native
-function On_Option_Keymap_Change(int option, int key_code, string conflict, string conflicting_mod) native
-function On_Option_Default(int option) native
-function On_Option_Highlight(int option) native

@@ -211,7 +211,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         void On_Item_Removed_Impl(Form_t* form,
                                   Int_t count,
                                   Reference_t* ref,
-                                  Reference_t* source,
+                                  Reference_t* destination,
                                   Callback_t<Member_t*>* user_callback);
 
         void Lock(Callback_t<Member_t*>* on_lock, Float_t interval = 0.2f, Float_t limit = 10.0f);

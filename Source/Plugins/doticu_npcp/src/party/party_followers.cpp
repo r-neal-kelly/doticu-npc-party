@@ -1164,10 +1164,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        METHOD("From_Actor", 1, Follower_t*, From_Actor, Actor_t*);
-        METHOD("Level", 0, Int_t, Level);
-        METHOD("Unlevel", 0, Int_t, Unlevel);
-
         #undef METHOD
     }
 

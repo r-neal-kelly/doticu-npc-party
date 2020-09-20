@@ -1512,13 +1512,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     void Follower_t::Register_Me(Virtual_Machine_t* vm)
     {
-        #define BMETHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...) \
-        M                                                           \
-            FORWARD_METHOD(vm, Class_Name(), Alias_t,               \
-                           STR_FUNC_, ARG_NUM_,                     \
-                           RETURN_, METHOD_, __VA_ARGS__);          \
-        W
-
         #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
         M                                                           \
             FORWARD_METHOD(vm, Class_Name(), Follower_t,            \
@@ -1526,17 +1519,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        BMETHOD("ID", 0, Int_t, ID);
-        METHOD("Actor", 0, Actor_t*, Actor);
-        METHOD("Member", 0, Member_t*, Member);
-        METHOD("Name", 0, String_t, Name);
-
-        METHOD("Is_Immobile", 0, Bool_t, Is_Immobile);
-
-        METHOD("Retreat", 0, Int_t, Retreat);
-        METHOD("Unretreat", 0, Int_t, Unretreat);
-
-        #undef BMETHOD
         #undef METHOD
     }
 

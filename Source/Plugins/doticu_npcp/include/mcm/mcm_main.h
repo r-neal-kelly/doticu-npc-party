@@ -52,23 +52,30 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
     public:
         Object_t* Object();
         Variable_t* Variable(String_t variable_name);
+        Variable_t* Property(String_t property_name);
 
         Variable_t* Current_Page_Name_Variable();
         Variable_t* Current_Page_Number_Variable();
-        Variable_t* Current_State_Variable();
+        Variable_t* Current_State_Variable(); // Int_t
         Variable_t* Cursor_Position_Variable();
         Variable_t* Cursor_Fill_Mode_Variable();
-        Variable_t* Flags_Variable();
-        Variable_t* Labels_Variable();
-        Variable_t* String_Values_Variable();
-        Variable_t* Number_Values_Variable();
+        Variable_t* Flags_Variable(); // Array_t* of Int_t
+        Variable_t* Labels_Variable(); // Array_t* of String_t
+        Variable_t* String_Values_Variable(); // Array_t* of String_t
+        Variable_t* Number_Values_Variable(); // Array_t* of Float_t
         Variable_t* States_Variable();
         Variable_t* Info_Text_Variable();
         Variable_t* Slider_Parameters_Variable(); // Array_t* of Float_t
         Variable_t* Menu_Parameters_Variable(); // Array_t* of Int_t
+        Variable_t* Is_Waiting_For_Message_Variable(); // Bool_t
+        Variable_t* Message_Result_Variable(); // Bool_t
+
+        Variable_t* Mod_Name_Property(); // String_t
+        Variable_t* Pages_Property(); // Array_t* of String_t
 
         String_t Current_Page_Name();
         Int_t Current_Page_Number();
+        void Current_Page(String_t name);
         State_e Current_State();
         Int_t Cursor_Position();
         Cursor_Fill_Mode_e Cursor_Fill_Mode();
@@ -84,7 +91,8 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Int_t Pack_Flags(Int_t flags, Option_Type_e option_type);
         Int_t Pack_Option_ID(Int_t page_number, Int_t cursor_position);
 
-        void Reset(); // ClearOptionBuffers
+        void Clear_Buffers();
+        void Write_Buffers();
 
         void Title_Text(String_t title);
 
@@ -124,10 +132,13 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
         void Show_Message(String_t message,
                           Bool_t allow_cancel = true,
-                          String_t accept = "$Accept",
-                          String_t cancel = "$Cancel",
-                          Virtual_Callback_i** callback = nullptr);
+                          String_t accept_label = "$Accept",
+                          String_t cancel_label = "$Cancel",
+                          Callback_t<Bool_t>* user_callback = nullptr);
+
         void Reset_Page();
+        void Unlock();
+        void Open_Page(String_t page_name);
 
     public:
         static void Register_Me(Virtual_Machine_t* vm);
@@ -135,6 +146,16 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     class Main_t : public SKI_Config_Base_t {
     public:
+        static constexpr const char* FOLLOWERS_PAGE     = " Followers ";
+        static constexpr const char* MEMBERS_PAGE       = " Members ";
+        static constexpr const char* MANNEQUINS_PAGE    = " Mannequins ";
+        static constexpr const char* FILTER_PAGE        = " Filter ";
+        static constexpr const char* CHESTS_PAGE        = " Chests ";
+        static constexpr const char* SETTINGS_PAGE      = " Settings ";
+        static constexpr const char* HOTKEYS_PAGE       = " Hotkeys ";
+        static constexpr const char* LOGS_PAGE          = " Logs ";
+        static constexpr const char* DEFAULT_PAGE       = SETTINGS_PAGE;
+
         static String_t Class_Name();
         static Class_Info_t* Class_Info();
         static Main_t* Self();
@@ -142,6 +163,9 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     public:
         Variable_t* Variable(String_t variable_name);
+        Variable_t* Property(String_t property_name);
+
+        Variable_t* Last_Page_Variable(); // String_t
 
         void Close_Menus(Virtual_Callback_i** callback = nullptr);
         void Enable(Int_t option, Bool_t do_render = true, Bool_t with_unmap = false);
@@ -151,6 +175,19 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         void Flicker(Int_t option);
         String_t Concat(const char* a, const char* b);
         String_t Concat(const char* a, const char* b, const char* c);
+
+        void On_Config_Init();
+        Bool_t On_Config_Open(Virtual_Machine_t* vm, Stack_ID_t stack_id);
+        void On_Build_Page(String_t current_page);
+        void On_Option_Select(Int_t option);
+        void On_Option_Menu_Open(Int_t option);
+        void On_Option_Menu_Accept(Int_t option, Int_t idx);
+        void On_Option_Slider_Open(Int_t option);
+        void On_Option_Slider_Accept(Int_t option, Float_t value);
+        void On_Option_Input_Accept(Int_t option, String_t value);
+        void On_Option_Keymap_Change(Int_t option, Int_t key_code, String_t conflict, String_t conflicting_mod);
+        void On_Option_Default(Int_t option);
+        void On_Option_Highlight(Int_t option);
 
     public:
         static void Register_Me(Virtual_Machine_t* vm);

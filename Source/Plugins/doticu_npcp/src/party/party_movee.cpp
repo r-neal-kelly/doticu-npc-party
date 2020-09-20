@@ -602,8 +602,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        METHOD("Register", 0, void, Register);
-        METHOD("Unregister", 0, void, Unregister);
         METHOD("OnKeyDown", 1, void, On_Key_Down, Int_t);
         METHOD("OnKeyUp", 2, void, On_Key_Up, Int_t, Float_t);
 

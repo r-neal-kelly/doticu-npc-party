@@ -833,20 +833,6 @@ namespace doticu_npcp { namespace Papyrus {
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        METHOD("Register", 0, void, Register);
-        METHOD("Unregister", 0, void, Unregister);
-
-        METHOD("Default_Value", 1, Int_t, Default_Value, String_t);
-        METHOD("Current_Value", 1, Int_t, Current_Value, String_t);
-        METHOD("Default_Mods", 1, Vector_t<Int_t>, Default_Mods, String_t);
-        METHOD("Current_Mods", 1, Vector_t<Int_t>, Current_Mods, String_t);
-
-        METHOD("Default_Mods_To_String", 1, String_t, Default_Mods_String, String_t);
-        METHOD("Current_Mods_To_String", 1, String_t, Current_Mods_String, String_t);
-
-        METHOD("Conflicting_Hotkey", 5, String_t, Conflicting_Hotkey, String_t, Int_t, Int_t, Int_t, Int_t);
-        METHOD("Pressed_Hotkey", 1, String_t, Pressed_Hotkey, Int_t);
-
         METHOD("OnKeyDown", 1, void, On_Key_Down, Int_t);
         METHOD("OnKeyUp", 2, void, On_Key_Up, Int_t, Float_t);
 

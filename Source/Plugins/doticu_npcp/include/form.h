@@ -20,6 +20,12 @@ namespace doticu_npcp { namespace Form {
     void Unregister_Key(Form_t* form, Int_t key_code, Virtual_Callback_i* vcallback = nullptr);
     void Unregister_Keys(Form_t* form, Virtual_Callback_i* vcallback = nullptr);
 
+    void Register_Mod_Event(Form_t* form, String_t event_name, String_t callback_name, Virtual_Callback_i* vcallback = nullptr);
+    void Unregister_Mod_Event(Form_t* form, String_t event_name, Virtual_Callback_i* vcallback = nullptr);
+    void Unregister_Mod_Events(Form_t* form, Virtual_Callback_i* vcallback = nullptr);
+
+    void Queue(Form_t* form, Virtual_Callback_i* vcallback);
+
     const char* Name(Form_t* form);
     void Name(Form_t* form, const char* name);
 

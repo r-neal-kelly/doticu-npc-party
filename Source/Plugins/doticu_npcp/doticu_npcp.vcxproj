@@ -140,11 +140,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\active_magic_effects.cpp" />
     <ClCompile Include="src\actor_base2.cpp" />
     <ClCompile Include="src\cell.cpp" />
     <ClCompile Include="src\commands.cpp" />
     <ClCompile Include="src\consts.cpp" />
     <ClCompile Include="src\funcs.cpp" />
+    <ClCompile Include="src\logs.cpp" />
     <ClCompile Include="src\mcm\mcm_chests.cpp" />
     <ClCompile Include="src\mcm\mcm_filter.cpp" />
     <ClCompile Include="src\form_vector.cpp" />
@@ -153,6 +155,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mcm\mcm_followers.cpp" />
     <ClCompile Include="src\mcm\mcm_hotkeys.cpp" />
+    <ClCompile Include="src\mcm\mcm_logs.cpp" />
     <ClCompile Include="src\mcm\mcm_main.cpp" />
     <ClCompile Include="src\mcm\mcm_mannequins.cpp" />
     <ClCompile Include="src\mcm\mcm_member.cpp" />
@@ -194,6 +197,7 @@
     <ClCompile Include="src\xlist.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\active_magic_effects.h" />
     <ClInclude Include="include\actor_base2.h" />
     <ClInclude Include="include\cell.h" />
     <ClInclude Include="include\codes.h" />
@@ -205,11 +209,13 @@
     <ClInclude Include="include\funcs.h" />
     <ClInclude Include="include\game.h" />
     <ClInclude Include="include\keys.h" />
+    <ClInclude Include="include\logs.h" />
     <ClInclude Include="include\main.h" />
     <ClInclude Include="include\mcm\mcm_chests.h" />
     <ClInclude Include="include\mcm\mcm_filter.h" />
     <ClInclude Include="include\mcm\mcm_followers.h" />
     <ClInclude Include="include\mcm\mcm_hotkeys.h" />
+    <ClInclude Include="include\mcm\mcm_logs.h" />
     <ClInclude Include="include\mcm\mcm_main.h" />
     <ClInclude Include="include\mcm\mcm_mannequins.h" />
     <ClInclude Include="include\mcm\mcm_member.h" />

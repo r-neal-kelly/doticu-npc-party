@@ -1338,4 +1338,26 @@ namespace doticu_npcp { namespace Papyrus {
         }
     }
 
+    template <
+        typename Base_t,
+        Bool_t(Base_t::* method)(Virtual_Machine_t*, Stack_ID_t)
+    > auto Forward_Latent()
+    {
+        return [](Registry_t* registry, Stack_ID_t stack_id, Base_t* base)->Bool_t
+        {
+            NPCP_ASSERT(base);
+            return (base->*method)(reinterpret_cast<Virtual_Machine_t*>(registry), stack_id);
+        };
+    }
+
+    #define FORWARD_LATENT_METHOD(VM_, STR_CLASS_, TYPE_, STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)   \
+    M                                                                                                   \
+        auto METHOD_ = Forward_Latent<TYPE_, __VA_ARGS__, &TYPE_::METHOD_>();                           \
+        VM_->Bind_Function(                                                                             \
+            new LatentNativeFunction##ARG_NUM_ <TYPE_, RETURN_, __VA_ARGS__>(                           \
+                STR_FUNC_, STR_CLASS_, METHOD_, reinterpret_cast<Registry_t*>(VM_)                      \
+            )                                                                                           \
+        );                                                                                              \
+    W
+
 }}
