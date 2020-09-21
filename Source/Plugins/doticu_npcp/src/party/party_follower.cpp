@@ -776,7 +776,10 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Actor2::Ignore_Friendly_Hits(actor);
         Actor2::Hide_From_Stealth_Eye(actor);
 
-        Actor2::Relationship_Rank(actor, Player_t::Self()->Actor(), Relationship_t::Rank_e::ALLY);
+        Actor_t* player_actor = Consts::Player_Actor();
+        if (Actor2::Relationship_Rank(actor, player_actor) != Relationship_t::Rank_e::LOVER) {
+            Actor2::Relationship_Rank(actor, player_actor, Relationship_t::Rank_e::ALLY);
+        }
 
         Actor2::Evaluate_Package(actor);
     }

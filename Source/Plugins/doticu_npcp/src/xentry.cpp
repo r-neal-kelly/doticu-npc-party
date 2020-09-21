@@ -107,6 +107,7 @@ namespace doticu_npcp { namespace Papyrus {
     {
         if (to_xentry && to_reference && xlist) {
             Remove_XList(xlist);
+            XList::Validate(xlist);
             size_t xdata_count = XList::Clean_For_Move(xlist, to_reference);
             if (xdata_count == 0) {
                 to_xentry->Increment(1);

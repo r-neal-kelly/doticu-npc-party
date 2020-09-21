@@ -266,7 +266,7 @@ namespace doticu_npcp { namespace Object_Ref {
             }
         }
 
-        return count;
+        return count < 0 ? 1 : count;
     }
 
     Int_t Get_XEntry_Count(Reference_t* obj, Form_t* form)
@@ -616,38 +616,57 @@ namespace doticu_npcp { namespace Object_Ref {
 
     void Categorize(Reference_t *ref, Bool_t only_custom_categories) {
         if (ref) {
-            Vector_t<XEntry_t*> xentries_to_move;
             Vector_t<XEntry_t*> xentries_to_destroy;
-            xentries_to_move.reserve(8);
             xentries_to_destroy.reserve(2);
-
-            auto Preexisting_XEntry = [&xentries_to_move](Form_t* form)->XEntry_t*
-            {
-                for (size_t idx = 0, count = xentries_to_move.size(); idx < count; idx += 1) {
-                    XEntry_t* xentry = xentries_to_move[idx];
-                    if (xentry->form == form) {
-                        return xentry;
-                    }
-                }
-                return nullptr;
-            };
 
             XContainer_t* xcontainer = Get_XContainer(ref, false);
             if (xcontainer) {
                 for (XEntries_t::Iterator it = xcontainer->changes->xentries->Begin(); !it.End(); ++it) {
                     XEntry_t* xentry = it.Get();
                     if (xentry && xentry->form && xentry->form->IsPlayable()) {
-                        XEntry_t* preexisting_xentry = Preexisting_XEntry(xentry->form);
-                        if (preexisting_xentry) {
-                            Int_t bentry_count = Get_BEntry_Count(ref, xentry->form);
-                            Int_t entry_count = xentry->Delta_Count() + bentry_count;
-                            if (entry_count > 0) {
-                                preexisting_xentry->Increment(entry_count);
+                        Reference_t* category = only_custom_categories ?
+                            Game::Get_NPCP_Custom_Category(xentry->form) :
+                            Game::Get_NPCP_Category(xentry->form);
+                        if (category && category != ref) {
+                            XEntry_t* category_xentry = nullptr;
+
+                            Vector_t<XList_t*> xlists_to_move;
+                            xlists_to_move.reserve(2);
+                            for (XLists_t::Iterator it = xentry->xlists->Begin(); !it.End(); ++it) {
+                                XList_t* xlist = it.Get();
+                                if (xlist) {
+                                    xlists_to_move.push_back(xlist);
+                                }
                             }
-                            xentry->Delta_Count(0 - bentry_count);
-                            xentries_to_destroy.push_back(xentry);
-                        } else {
-                            xentries_to_move.push_back(xentry);
+
+                            size_t xlists_to_move_count = xlists_to_move.size();
+                            if (xlists_to_move_count > 0) {
+                                category_xentry = Get_XEntry(category, xentry->form, true);
+                                NPCP_ASSERT(category_xentry);
+                                for (size_t idx = 0; idx < xlists_to_move_count; idx += 1) {
+                                    XList_t* xlist = xlists_to_move[idx];
+                                    xentry->Move_XList(category_xentry, category, xlist);
+                                }
+                            }
+                            
+                            Int_t bentry_count = Get_BEntry_Count(ref, xentry->form);
+                            Int_t bentry_negation = 0 - bentry_count;
+                            if (xentry->Delta_Count() < bentry_negation) {
+                                xentry->Delta_Count(bentry_negation);
+                            }
+
+                            if (xentry->Delta_Count() > bentry_negation) {
+                                if (!category_xentry) {
+                                    category_xentry = Get_XEntry(category, xentry->form, true);
+                                    NPCP_ASSERT(category_xentry);
+                                }
+                                category_xentry->Increment(xentry->Delta_Count() - bentry_negation);
+                                xentry->Delta_Count(bentry_negation);
+                            }
+
+                            if (xentry->Delta_Count() == 0) {
+                                xentries_to_destroy.push_back(xentry);
+                            }
                         }
                     }
                 }
@@ -657,74 +676,6 @@ namespace doticu_npcp { namespace Object_Ref {
                 XEntry_t* xentry = xentries_to_destroy[idx];
                 Remove_XEntry(ref, xentry);
                 XEntry_t::Destroy(xentry);
-            }
-
-            for (size_t idx = 0, count = xentries_to_move.size(); idx < count; idx += 1) {
-                XEntry_t* xentry = xentries_to_move[idx];
-                Reference_t* category = only_custom_categories ?
-                    Game::Get_NPCP_Custom_Category(xentry->form) :
-                    Game::Get_NPCP_Category(xentry->form);
-                if (category && category != ref) {
-                    XEntry_t* category_xentry = Get_XEntry(category, xentry->form, false);
-                    if (category_xentry) {
-                        Vector_t<XList_t*> xlists_to_move;
-                        xentries_to_move.reserve(2);
-                        for (XLists_t::Iterator it = xentry->xlists->Begin(); !it.End(); ++it) {
-                            XList_t* xlist = it.Get();
-                            xlists_to_move.push_back(xlist);
-                        }
-
-                        for (size_t idx = 0, count = xlists_to_move.size(); idx < count; idx += 1) {
-                            XList_t* xlist = xlists_to_move[idx];
-                            xentry->Move_XList(category_xentry, category, xlist);
-                        }
-
-                        Int_t bentry_count = Get_BEntry_Count(ref, xentry->form);
-                        Int_t entry_count = bentry_count + xentry->Delta_Count();
-                        if (entry_count > 0) {
-                            category_xentry->Increment(entry_count);
-                            if (bentry_count > 0) {
-                                xentry->Delta_Count(0 - bentry_count);
-                            } else {
-                                Remove_XEntry(ref, xentry);
-                                XEntry_t::Destroy(xentry);
-                            }
-                        }
-                    } else {
-                        Int_t xlists_aggregate_count = 0;
-                        for (XLists_t::Iterator it = xentry->xlists->Begin(); !it.End(); ++it) {
-                            XList_t* xlist = it.Get();
-                            xlists_aggregate_count += XList::Get_Count(xlist);
-                        }
-                        if (xlists_aggregate_count < 0) {
-                            xlists_aggregate_count = 0;
-                            for (XLists_t::Iterator it = xentry->xlists->Begin(); !it.End(); ++it) {
-                                XList_t* xlist = it.Get();
-                                XList::Set_Count(xlist, 1);
-                                xlists_aggregate_count += 1;
-                            }
-                            if (xlists_aggregate_count < 0) {
-                                NPCP_ASSERT(false);
-                            }
-                        }
-
-                        Int_t bentry_count = Get_BEntry_Count(ref, xentry->form);
-                        Int_t entry_count = bentry_count + xentry->Delta_Count();
-                        if (entry_count < xlists_aggregate_count) {
-                            entry_count = xlists_aggregate_count;
-                            xentry->Delta_Count(xlists_aggregate_count - bentry_count);
-                        }
-
-                        if (bentry_count > 0) {
-                            xentry->Delta_Count(0 - bentry_count);
-                            XEntry_t* new_xentry = XEntry_t::Create(xentry->form, entry_count);
-                            Add_XEntry(category, new_xentry);
-                        } else {
-                            Remove_XEntry(ref, xentry);
-                            Add_XEntry(category, xentry);
-                        }
-                    }
-                }
             }
 
             BContainer_t* bcontainer = Object_Ref::Get_BContainer(ref);
@@ -739,6 +690,7 @@ namespace doticu_npcp { namespace Object_Ref {
                                     Game::Get_NPCP_Category(bentry->form);
                                 if (category && category != ref) {
                                     XEntry_t* category_xentry = Get_XEntry(category, bentry->form, true);
+                                    NPCP_ASSERT(category_xentry);
                                     category_xentry->Increment(bentry->count);
                                     XEntry_t* xentry = Get_XEntry(ref, bentry->form, true);
                                     xentry->Delta_Count(0 - bentry->count);

@@ -10,7 +10,7 @@ namespace doticu_npcp { namespace Papyrus {
 
     struct XEntry_t {
     public:
-        static XEntry_t* Create(Form_t* form, Int_t delta_count);
+        static XEntry_t* Create(Form_t* form, Int_t delta_count = 0);
         static void Destroy(XEntry_t* xentry);
 
     public:
