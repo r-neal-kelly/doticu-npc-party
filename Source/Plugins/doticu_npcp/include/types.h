@@ -207,9 +207,6 @@ namespace doticu_npcp {
     typedef TESContainer::Entry**   BEntries_t;
     typedef TESContainer::Entry     BEntry_t;
 
-    //typedef ExtraContainerChanges   XContainer_t;
-    //typedef EntryDataList           XEntries_t;
-    //typedef InventoryEntryData      XEntry_t;
     typedef ExtendDataList          XLists_t;
     typedef BaseExtraList           XList_t;
     typedef BSExtraData             XData_t;
@@ -219,6 +216,14 @@ namespace doticu_npcp {
     struct Callback_t {
         virtual ~Callback_t() = default;
         virtual void operator()(Arguments...) = 0;
+    };
+
+    template <typename Type, size_t count_>
+    struct Static_Array_t {
+        size_t count = count_;
+        Type data[count_];
+
+        Static_Array_t() {}
     };
 
     using Int_Callback_t = Callback_t<Int_t>;
@@ -783,17 +788,6 @@ namespace doticu_npcp {
         UInt32 pad_0C; // 14
     };
     STATIC_ASSERT(sizeof(ExtraOutfitItem) == 0x18);
-
-    /*class Extra_Container_Changes_t : public BSExtraData {
-    public:
-        static Extra_Container_Changes_t* Create(Reference_t* owner);
-        static void Destroy(Extra_Container_Changes_t* xchanges);
-    public:
-        virtual ~Extra_Container_Changes_t();
-
-        Container_Changes_t* changes;
-    };
-    STATIC_ASSERT(sizeof(Extra_Container_Changes_t) == 0x18);*/
 
 }
 

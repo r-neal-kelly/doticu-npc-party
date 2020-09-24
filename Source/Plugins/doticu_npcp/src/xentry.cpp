@@ -2,6 +2,8 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#undef max
+
 #include "form.h"
 #include "object_ref.h"
 #include "utils.h"
@@ -74,32 +76,47 @@ namespace doticu_npcp { namespace Papyrus {
             xlists = XLists_t::Create();
         }
 
-        XList::Validate(xlist);
         xlists->Insert(xlist);
-        Increment(XList::Get_Count(xlist));
+        Increment(XList::Count(xlist));
+    }
+
+    void XEntry_t::Add_Clean_XList(XList_t* xlist, Reference_t* owner)
+    {
+        size_t xdata_count = XList::Clean_For_Move(xlist, owner);
+        if (xdata_count == 0) {
+            Increment(1);
+            XList::Destroy(xlist);
+        } else if (xdata_count == 1 && xlist->m_data->GetType() == kExtraData_Count) {
+            Increment(XList::Count(xlist));
+            XList::Destroy(xlist);
+        } else {
+            Add_XList(xlist);
+        }
     }
 
     void XEntry_t::Remove_XList(XList_t* xlist)
     {
         NPCP_ASSERT(xlist);
 
-        XList::Validate(xlist);
-
         if (xlists) {
             struct Functor {
-                XList_t* to_remove;
-                Functor(XList_t* to_remove) :
-                    to_remove(to_remove)
+                XEntry_t* xentry;
+                XList_t* xlist_to_remove;
+                Functor(XEntry_t* xentry, XList_t* xlist_to_remove) :
+                    xentry(xentry), xlist_to_remove(xlist_to_remove)
                 {
                 }
                 Bool_t Accept(XList_t* xlist)
                 {
-                    return xlist == to_remove;
+                    if (xlist == xlist_to_remove) {
+                        xentry->Decrement(XList::Count(xlist));
+                        return true;
+                    } else {
+                        return false;
+                    }
                 }
-            } functor(xlist);
+            } functor(this, xlist);
             xlists->RemoveIf(functor);
-
-            Decrement(XList::Get_Count(xlist));
         }
     }
 
@@ -107,28 +124,18 @@ namespace doticu_npcp { namespace Papyrus {
     {
         if (to_xentry && to_reference && xlist) {
             Remove_XList(xlist);
-            XList::Validate(xlist);
-            size_t xdata_count = XList::Clean_For_Move(xlist, to_reference);
-            if (xdata_count == 0) {
-                to_xentry->Increment(1);
-                XList::Destroy(xlist);
-            } else if (xdata_count == 1 && xlist->m_data->GetType() == kExtraData_Count) {
-                to_xentry->Increment(XList::Get_Count(xlist));
-                XList::Destroy(xlist);
-            } else {
-                to_xentry->Add_XList(xlist);
-            }
+            Add_Clean_XList(xlist, to_reference);
         }
     }
 
-    void XEntry_t::Clean_XLists(Reference_t* to_reference)
+    void XEntry_t::Clean_XLists(Int_t from_bentry_count, Reference_t* to_reference)
     {
         if (xlists && to_reference) {
             std::vector<XList_t*> buffer;
             for (XLists_t::Iterator it = xlists->Begin(); !it.End(); ++it) {
                 XList_t* xlist = it.Get();
                 if (xlist) {
-                    XList::Validate(xlist);
+                    XList::Validate(xlist, delta_count, from_bentry_count);
                     buffer.push_back(xlist);
                 }
             }
@@ -141,7 +148,7 @@ namespace doticu_npcp { namespace Papyrus {
                     XList::Destroy(xlist);
                 } else if (xdata_count == 1 && xlist->m_data->GetType() == kExtraData_Count) {
                     Remove_XList(xlist);
-                    Increment(XList::Get_Count(xlist));
+                    Increment(XList::Count(xlist));
                     XList::Destroy(xlist);
                 }
             }
@@ -183,32 +190,25 @@ namespace doticu_npcp { namespace Papyrus {
         }
     }
 
-    void XEntry_t::Validate(Reference_t* owner)
+    Int_t XEntry_t::Validate(Int_t bentry_count)
     {
+        Int_t xlist_count = 0;
         if (xlists) {
-            NPCP_ASSERT(owner);
-
-            Int_t aggregate_xlist_count = 0;
             for (XLists_t::Iterator it = xlists->Begin(); !it.End(); ++it) {
                 XList_t* xlist = it.Get();
                 if (xlist) {
-                    XList::Validate(xlist);
-                    aggregate_xlist_count += XList::Get_Count(xlist);
+                    XList::Validate(xlist, delta_count, bentry_count);
+                    xlist_count += XList::Count(xlist);
                 }
             }
-            if (aggregate_xlist_count < 0) {
-                aggregate_xlist_count = 0;
-            }
-
-            Int_t bentry_count = Object_Ref::Get_BEntry_Count(owner, form);
-            if (Delta_Count() < (aggregate_xlist_count - bentry_count)) {
-                if (aggregate_xlist_count > 0) {
-                    Delta_Count(aggregate_xlist_count);
-                } else {
-                    Delta_Count(1);
-                }
+            if (xlist_count < 0) {
+                xlist_count = std::numeric_limits<Int_t>::max();
             }
         }
+        if (delta_count < xlist_count - bentry_count) {
+            delta_count = xlist_count - bentry_count;
+        }
+        return xlist_count;
     }
 
     void XEntry_t::Log(const std::string indent)

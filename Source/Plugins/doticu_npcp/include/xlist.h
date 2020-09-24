@@ -5,35 +5,64 @@
 #pragma once
 
 #include "types.h"
+#include "xentry.h"
+
+namespace doticu_npcp { namespace Papyrus {
+
+    class XList_t2 : public BaseExtraList {
+    public:
+        static XList_t* Create();
+        static void Destroy(XList_t* xlist);
+    public:
+        void Destroy();
+
+        void Validate(Int_t xentry_count, Int_t bentry_count);
+        void Validate_Without_Count();
+
+        Int_t Count();
+        void Count(Int_t count);
+
+        Int_t operator++();
+        Int_t operator++(int);
+    };
+
+}}
 
 namespace doticu_npcp { namespace XList {
 
-    XList_t *Create();
-    void Validate(XList_t* xlist);
-    void Destroy(XList_t *xlist);
+    using namespace Papyrus;
 
-    XList_t *Copy(XList_t *xlist);
+    XList_t* Create();
+    void Destroy(XList_t* xlist);
 
-    u64 Clean_For_Move(XList_t *xlist, TESObjectREFR *ref_to);
+    void Validate(XList_t* xlist, Int_t xentry_count, Int_t bentry_count);
+    void Validate_No_Count(XList_t* xlist);
 
-    UInt32 Get_Count(XList_t *xlist);
-    void Set_Count(XList_t *xlist, UInt32 count);
-    void Inc_Count(XList_t *xlist, UInt32 inc);
+    Int_t Count(XList_t* xlist);
+    void Count(XList_t* xlist, Int_t count);
+    void Increment(XList_t* xlist, Int_t increment);
+    void Decrement(XList_t* xlist, Int_t decrement);
 
-    bool Is_Similar(XList_t *xlist_a, XList_t *xlist_b);
-    bool Can_Copy(XList_t *xlist);
+    XList_t* Copy(XList_t* xlist); // xlist should be validated first.
+    void Owner(XList_t* xlist, Actor_Base_t* actor_base);
+
+    u64 Clean_For_Move(XList_t* xlist, TESObjectREFR* ref_to);
+
+    bool Is_Similar(XList_t* xlist_a, XList_t* xlist_b);
+    bool Can_Copy(XList_t* xlist);
     Bool_t Has_Health(XList_t* xlist);
     Bool_t Has_Enchantement(XList_t* xlist);
     Bool_t Has_Charge(XList_t* xlist);
-    bool Is_Worn(XList_t *xlist);
-    bool Is_Outfit_Item(XList_t *xlist);
-    bool Is_Leveled_Item(XList_t *xlist);
-    bool Is_Quest_Item(XList_t *xlist);
+    bool Is_Worn(XList_t* xlist);
+    bool Is_Outfit_Item(XList_t* xlist);
+    Bool_t Is_Outfit2_Item(XList_t* xlist, Actor_Base_t* owner);
+    bool Is_Leveled_Item(XList_t* xlist);
+    bool Is_Quest_Item(XList_t* xlist);
 
-    void Add_Outfit2_Flag(XList_t *xlist);
+    void Add_Outfit2_Flag(XList_t* xlist);
     void Remove_Outfit2_Flag(XList_t* xlist, Form_t* owner);
-    bool Has_Outfit2_Flag(XList_t *xlist);
+    bool Has_Outfit2_Flag(XList_t* xlist);
 
-    void Log(XList_t *xlist, const std::string str_indent);
+    void Log(XList_t* xlist, const std::string str_indent);
 
 }}

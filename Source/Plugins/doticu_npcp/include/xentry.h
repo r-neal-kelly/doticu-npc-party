@@ -16,7 +16,6 @@ namespace doticu_npcp { namespace Papyrus {
     public:
         Form_t* form;
         XLists_t* xlists;
-    private:
         Int_t delta_count;
 
     public:
@@ -26,15 +25,16 @@ namespace doticu_npcp { namespace Papyrus {
         void Decrement(Int_t by);
 
         void Add_XList(XList_t* xlist);
+        void Add_Clean_XList(XList_t* xlist, Reference_t* owner);
         void Remove_XList(XList_t* xlist);
         void Move_XList(XEntry_t* to_xentry, Reference_t* to_reference, XList_t* xlist);
-        void Clean_XLists(Reference_t* to_reference);
+        void Clean_XLists(Int_t from_bentry_count, Reference_t* to_reference);
 
         XList_t* Similar_XList(XList_t* similiar);
         Bool_t Has_Similar_XList(XList_t* similiar);
         Bool_t Has_Worn_XList();
 
-        void Validate(Reference_t* owner);
+        Int_t Validate(Int_t bentry_count);
 
         void Log(const std::string indent);
     };

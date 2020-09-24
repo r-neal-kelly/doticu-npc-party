@@ -7,9 +7,11 @@
 #include "offsets.h"
 #include "types.h"
 #include "papyrus.h"
+#include "object_ref.h"
 
 namespace doticu_npcp { namespace Actor2 {
 
+    using namespace Object_Ref;
     using namespace Papyrus;
 
     const char *Get_Base_Name(Actor *actor);
@@ -22,11 +24,43 @@ namespace doticu_npcp { namespace Actor2 {
     void Set_Outfit_Basic(Actor_t* actor, Outfit_t* outfit, Bool_t is_sleep_outfit = false, Bool_t allow_bcontainer = true);
     void Set_Outfit(Actor_t* actor, Outfit_t* outfit, Bool_t is_sleep_outfit = false);
 
-    Bool_t Set_Outfit2(Actor_t* actor, Reference_t* outfit1, Reference_t* outfit2, Reference_t* transfer);
+    class Outfit_Entry_t {
+    public:
+        Entry_t* outfit1 = nullptr;
+        Entry_t* outfit2 = nullptr;
+        Merged_XLists_t merged_xlists;
+        XList_t* loose_xlist = nullptr;
+
+        Outfit_Entry_t(Entry_t* outfit1 = nullptr, Entry_t* outfit2 = nullptr, Int_t loose_count = 0);
+        ~Outfit_Entry_t();
+
+        Form_t* Form();
+        XList_t* Copy(Merged_XList_t* outfit_xlist, Actor_Base_t* owner);
+    };
+
+    class Outfit_Inventory_t {
+    public:
+        Inventory_t outfit1;
+        Inventory_t outfit2;
+        Vector_t<Outfit_Entry_t> entries;
+
+        Outfit_Inventory_t(Reference_t* outfit1_ref, Reference_t* outfit2_ref);
+
+        Outfit_Entry_t* Entry(Form_t* form);
+
+        Int_t Count_Loose(Outfit_Entry_t* entry);
+
+        Bool_t Can_Evaluate_Actor_Form(Form_t* form);
+
+        Bool_t Evaluate_Linchpin(Inventory_t* actor);
+        Bool_t Evaluate_Existing(Inventory_t* actor, Inventory_t* transfer);
+        Bool_t Evaluate_Missing(Inventory_t* actor);
+    };
+
+    Bool_t Set_Outfit2(Actor_t* actor, Reference_t* outfit1 = nullptr, Reference_t* outfit2 = nullptr, Reference_t* transfer = nullptr);
     void Split_Inventory(Actor_t* actor, Reference_t* worn_out, Reference_t* pack_out);
     void Cache_Worn(Actor_t* actor, Reference_t* cache_out);
     void Cache_BContainer(Actor_t* actor, Reference_t* cache_out);
-    void Flag_Outfit1_As_Outfit2(Actor_t* actor);
 
     bool Has_Same_Head(Actor *actor_a, Actor *actor_b);
 

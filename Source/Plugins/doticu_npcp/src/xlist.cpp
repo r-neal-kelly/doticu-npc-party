@@ -2,15 +2,33 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#undef max
+#include <numeric>
+
 #include "skse64/PapyrusWornObject.h"
 
 #include "consts.h"
 #include "form.h"
 #include "object_ref.h"
+#include "papyrus.inl"
 #include "string2.h"
 #include "utils.h"
 #include "xdata.h"
 #include "xlist.h"
+
+namespace doticu_npcp { namespace Papyrus {
+
+    Int_t XList_t2::operator++()
+    {
+
+    }
+
+    Int_t XList_t2::operator++(int)
+    {
+
+    }
+
+}}
 
 namespace doticu_npcp { namespace XList {
 
@@ -20,10 +38,10 @@ namespace doticu_npcp { namespace XList {
 
         xlist->m_data = NULL;
 
-        xlist->m_presence = (XList_t::PresenceBitfield *)Heap_Allocate(sizeof(XList_t::PresenceBitfield));
+        xlist->m_presence = (XList_t::PresenceBitfield*)Heap_Allocate(sizeof(XList_t::PresenceBitfield));
         NPCP_ASSERT(xlist->m_presence);
 
-        u64 *bits = (u64 *)xlist->m_presence->bits;
+        u64* bits = (u64*)xlist->m_presence->bits;
         bits[0] = 0;
         bits[1] = 0;
         bits[2] = 0;
@@ -33,7 +51,22 @@ namespace doticu_npcp { namespace XList {
         return xlist;
     }
 
-    void Validate(XList_t* xlist)
+    void Destroy(XList_t *xlist) {
+        if (!xlist) {
+            return;
+        }
+
+        for (XData_t *xdata = xlist->m_data, *xdata_destroy; xdata != NULL;) {
+            xdata_destroy = xdata;
+            xdata = xdata->next;
+            XData::Destroy(xdata_destroy);
+        }
+
+        Heap_Free(xlist->m_presence);
+        Heap_Free(xlist);
+    }
+
+    void Validate(XList_t* xlist, Int_t xentry_count, Int_t bentry_count)
     {
         if (xlist) {
             if (!xlist->m_presence) {
@@ -48,55 +81,139 @@ namespace doticu_npcp { namespace XList {
                 xlist->m_lock = BSReadWriteLock();
             }
 
-            Get_Count(xlist);
-        }
-    }
-
-    void Destroy(XList_t *xlist) {
-        if (!xlist) {
-            return;
-        }
-
-        //BSReadAndWriteLocker locker(&xlist->m_lock);
-
-        for (XData_t *xdata = xlist->m_data, *xdata_destroy; xdata != NULL;) {
-            xdata_destroy = xdata;
-            xdata = xdata->next;
-            XData::Destroy(xdata_destroy);
-        }
-
-        Heap_Free(xlist->m_presence);
-        Heap_Free(xlist);
-    }
-
-    // this does copy count
-    XList_t *Copy(XList_t *xlist) {
-        if (!xlist) {
-            _ERROR("XList_t::Copy: Invalids args.");
-            return NULL;
-        }
-        if (Get_Count(xlist) < 1) {
-            return NULL;
-        }
-        if (!Can_Copy(xlist)) {
-            return NULL;
-        }
-
-        XList_t *xlist_new = Create();
-
-        for (XData_t *xdata = xlist->m_data; xdata != NULL; xdata = xdata->next) {
-            if (xdata->GetType() == kExtraData_Health) {
-                xlist_new->Add(kExtraData_Health, XData::Copy_Health((ExtraHealth *)xdata, &xlist->m_lock));
-            } else if (xdata->GetType() == kExtraData_Enchantment) {
-                xlist_new->Add(kExtraData_Enchantment, XData::Copy_Enchantment((ExtraEnchantment *)xdata, &xlist->m_lock));
-            } else if (xdata->GetType() == kExtraData_Charge) {
-                xlist_new->Add(kExtraData_Charge, XData::Copy_Charge((ExtraCharge *)xdata, &xlist->m_lock));
-            } else if (xdata->GetType() == kExtraData_Count) {
-                xlist_new->Add(kExtraData_Count, XData::Copy_Count((ExtraCount *)xdata, &xlist->m_lock));
+            XCount_t* xcount = static_cast<XCount_t*>(xlist->GetByType(kExtraData_Count));
+            if (xcount) {
+                if (bentry_count < 0) {
+                    bentry_count = 0;
+                }
+                if (xentry_count < 0 - bentry_count + 1) {
+                    xentry_count = 0 - bentry_count + 1;
+                }
+                if (static_cast<Int_t>(xcount->count) > xentry_count + bentry_count ||
+                    static_cast<Int_t>(xcount->count) < 0) {
+                    xcount->count = 1;
+                }
             }
         }
+    }
 
-        return xlist_new;
+    void Validate_No_Count(XList_t* xlist)
+    {
+        if (xlist) {
+            if (!xlist->m_presence) {
+                xlist->m_presence = (XList_t::PresenceBitfield*)Heap_Allocate(sizeof(XList_t::PresenceBitfield));
+                NPCP_ASSERT(xlist->m_presence);
+
+                u64* bits = (u64*)xlist->m_presence->bits;
+                bits[0] = 0;
+                bits[1] = 0;
+                bits[2] = 0;
+
+                xlist->m_lock = BSReadWriteLock();
+            }
+        }
+    }
+
+    Int_t Count(XList_t* xlist)
+    {
+        if (xlist) {
+            XCount_t* xcount = static_cast<XCount_t*>(xlist->GetByType(kExtraData_Count));
+            if (xcount) {
+                return xcount->count;
+            } else {
+                return 1;
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    void Count(XList_t* xlist, Int_t count)
+    {
+        if (xlist && count > 0) {
+            XCount_t* xcount = static_cast<XCount_t*>(xlist->GetByType(kExtraData_Count));
+            if (xcount) {
+                xcount->count = count;
+                if (static_cast<Int_t>(xcount->count) < 0) {
+                    xcount->count = std::numeric_limits<Int_t>::max();
+                }
+            } else if (count > 1) {
+                xcount = XCount_t::Create(count);
+                xlist->Add(kExtraData_Count, xcount);
+                if (static_cast<Int_t>(xcount->count) < 0) {
+                    xcount->count = std::numeric_limits<Int_t>::max();
+                }
+            }
+        }
+    }
+
+    void Increment(XList_t* xlist, Int_t increment)
+    {
+        if (xlist && increment > 0) {
+            XCount_t* xcount = static_cast<XCount_t*>(xlist->GetByType(kExtraData_Count));
+            if (xcount) {
+                xcount->count += increment;
+                if (static_cast<Int_t>(xcount->count) < 0) {
+                    xcount->count = std::numeric_limits<Int_t>::max();
+                }
+            } else {
+                xcount = XCount_t::Create(1 + increment);
+                xlist->Add(kExtraData_Count, xcount);
+                if (static_cast<Int_t>(xcount->count) < 0) {
+                    xcount->count = std::numeric_limits<Int_t>::max();
+                }
+            }
+        }
+    }
+
+    void Decrement(XList_t* xlist, Int_t decrement)
+    {
+        if (xlist && decrement > 0) {
+            XCount_t* xcount = static_cast<XCount_t*>(xlist->GetByType(kExtraData_Count));
+            if (xcount) {
+                if (xcount->count > decrement) {
+                    xcount->count -= decrement;
+                } else {
+                    xcount->count = 1;
+                }
+            }
+        }
+    }
+
+    XList_t *Copy(XList_t *xlist) {
+        if (xlist && Can_Copy(xlist)) {
+            XList_t* xlist_new = Create();
+            for (XData_t* xdata = xlist->m_data; xdata != NULL; xdata = xdata->next) {
+                if (xdata->GetType() == kExtraData_Health) {
+                    xlist_new->Add(kExtraData_Health, XData::Copy_Health((ExtraHealth*)xdata));
+                } else if (xdata->GetType() == kExtraData_Enchantment) {
+                    xlist_new->Add(kExtraData_Enchantment, XData::Copy_Enchantment((ExtraEnchantment*)xdata));
+                } else if (xdata->GetType() == kExtraData_Charge) {
+                    xlist_new->Add(kExtraData_Charge, XData::Copy_Charge((ExtraCharge*)xdata));
+                } else if (xdata->GetType() == kExtraData_Ownership) {
+                    xlist_new->Add(kExtraData_Ownership, XData::Copy_Ownership((ExtraOwnership*)xdata));
+                } else if (xdata->GetType() == kExtraData_Count) {
+                    xlist_new->Add(kExtraData_Count, XData::Copy_Count((ExtraCount*)xdata));
+                }
+            }
+            return xlist_new;
+        } else {
+            return nullptr;
+        }
+    }
+
+    void Owner(XList_t* xlist, Actor_Base_t* actor_base)
+    {
+        if (xlist) {
+            ExtraOwnership* ownership = static_cast<ExtraOwnership*>
+                (xlist->GetByType(kExtraData_Ownership));
+            if (ownership) {
+                ownership->owner = actor_base;
+            } else {
+                ownership = XData::Create_Ownership(actor_base);
+                xlist->Add(kExtraData_Ownership, ownership);
+            }
+        }
     }
 
     // certain xdata cannot be moved to another container without creating issues, e.g. worn, leveleditem. Others are just unneeded.
@@ -112,9 +229,7 @@ namespace doticu_npcp { namespace XList {
 
             if (type == kExtraData_ReferenceHandle) {
                 ExtraReferenceHandle *xref = (ExtraReferenceHandle *)xdata;
-                //BSReadLocker xlist_locker(&xlist->m_lock);
                 TESObjectREFR *obj = xref->GetReference();
-                //xlist_locker.~BSReadLocker();
                 if (!obj) {
                     vec_xdatas_to_destroy.push_back(xdata);
                 } else {
@@ -122,7 +237,6 @@ namespace doticu_npcp { namespace XList {
                     // we do not need to IncRef on new container and DecRef on old, that's apparently not how it works.
                     ExtraReferenceHandle *xref_obj = (ExtraReferenceHandle *)obj->extraData.GetByType(kExtraData_ReferenceHandle);
                     if (xref_obj) {
-                        //BSReadAndWriteLocker xlist_obj_locker(&obj->extraData.m_lock);
                         xref_obj->handle = ref_to->CreateRefHandle();
                     } else {
                         obj->extraData.Add(kExtraData_ReferenceHandle, XData::Create_Reference_Handle(ref_to));
@@ -130,7 +244,6 @@ namespace doticu_npcp { namespace XList {
                 }
             } else if (type == kExtraData_Ownership) {
                 ExtraOwnership *xownership = (ExtraOwnership *)xdata;
-                //BSReadLocker xlist_locker(&xlist->m_lock);
                 if (!xownership->owner) {
                     vec_xdatas_to_destroy.push_back(xdata);
                 }
@@ -140,7 +253,6 @@ namespace doticu_npcp { namespace XList {
                        type == kExtraData_LeveledItem ||
                        type == kExtraData_CannotWear ||
                        type == kExtraData_ShouldWear) {
-                // kExtraData_LeveledItemBase?
                 vec_xdatas_to_destroy.push_back(xdata);
             }
 
@@ -156,64 +268,22 @@ namespace doticu_npcp { namespace XList {
         return count_xdatas - vec_xdatas_to_destroy.size();
     }
 
-    UInt32 Get_Count(XList_t *xlist) {
-        if (!xlist) {
-            return 0;
-        }
-
-        ExtraCount *xcount = (ExtraCount *)xlist->GetByType(kExtraData_Count);
-        if (xcount) {
-            return xcount->Count();
-        } else {
-            return 1;
-        }
-    }
-
-    void Set_Count(XList_t *xlist, UInt32 count) {
-        if (!xlist || count < 1) {
-            // if the count < 1, then the xlist should be deleted.
-            _ERROR("XList_t::Set_Count: Invalids args.");
-            return;
-        }
-
-        ExtraCount *xcount = (ExtraCount *)xlist->GetByType(kExtraData_Count);
-        if (xcount) {
-            xcount->Count(count);
-        } else {
-            if (count > 1) {
-                xlist->Add(kExtraData_Count, XData::Create_Count(count));
-            }
-        }
-    }
-
-    void Inc_Count(XList_t *xlist, UInt32 inc) {
-        if (!xlist || inc < 1) {
-            return;
-        }
-
-        ExtraCount *xcount = (ExtraCount *)xlist->GetByType(kExtraData_Count);
-        if (xcount) {
-            xcount->Count(xcount->Count() + inc);
-        } else {
-            xlist->Add(kExtraData_Count, XData::Create_Count(inc + 1));
-        }
-    }
-
     bool Is_Similar(XList_t* xlist_a, XList_t* xlist_b)
     {
         if (xlist_a && xlist_b) {
             return
-                XData::Is_Same_Health(
-                    (ExtraHealth*)xlist_a->GetByType(kExtraData_Health),
-                    (ExtraHealth*)xlist_b->GetByType(kExtraData_Health)
+                XData::Has_Same_Health(
+                    static_cast<ExtraHealth*>(xlist_a->GetByType(kExtraData_Health)),
+                    static_cast<ExtraHealth*>(xlist_b->GetByType(kExtraData_Health))
                 ) &&
-                XData::Is_Same_Enchantment(
-                    (ExtraEnchantment*)xlist_a->GetByType(kExtraData_Enchantment),
-                    (ExtraEnchantment*)xlist_b->GetByType(kExtraData_Enchantment)
+                XData::Has_Same_Enchantment(
+                    static_cast<ExtraEnchantment*>(xlist_a->GetByType(kExtraData_Enchantment)),
+                    static_cast<ExtraEnchantment*>(xlist_b->GetByType(kExtraData_Enchantment))
                 ) &&
-                XData::Is_Same_Charge(
-                    (ExtraCharge*)xlist_a->GetByType(kExtraData_Charge),
-                    (ExtraCharge*)xlist_b->GetByType(kExtraData_Charge));
+                XData::Has_Same_Charge(
+                    static_cast<ExtraCharge*>(xlist_a->GetByType(kExtraData_Charge)),
+                    static_cast<ExtraCharge*>(xlist_b->GetByType(kExtraData_Charge))
+                );
         } else {
             return false;
         }
@@ -224,7 +294,8 @@ namespace doticu_npcp { namespace XList {
             return
                 xlist->HasType(kExtraData_Health) ||
                 xlist->HasType(kExtraData_Enchantment) ||
-                xlist->HasType(kExtraData_Charge);
+                xlist->HasType(kExtraData_Charge) ||
+                xlist->HasType(kExtraData_Ownership);
         } else {
             return false;
         }
@@ -259,6 +330,33 @@ namespace doticu_npcp { namespace XList {
         }
 
         return xlist->HasType(kExtraData_OutfitItem);
+    }
+
+    Bool_t Is_Outfit2_Item(XList_t* xlist, Actor_Base_t* owner)
+    {
+        if (xlist && owner) {
+            ExtraOwnership* xownership = static_cast<ExtraOwnership*>
+                (xlist->GetByType(kExtraData_Ownership));
+            if (xownership && xownership->owner == owner) {
+                for (XData_t* xdata = xlist->m_data; xdata != nullptr; xdata = xdata->next) {
+                    UInt32 type = xdata->GetType();
+                    if (type != kExtraData_Health &&
+                        type != kExtraData_Enchantment &&
+                        type != kExtraData_Charge &&
+                        type != kExtraData_Count &&
+                        type != kExtraData_Worn &&
+                        type != kExtraData_WornLeft &&
+                        type != kExtraData_Ownership) {
+                        return false;
+                    }
+                }
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     bool Is_Leveled_Item(XList_t *xlist) {

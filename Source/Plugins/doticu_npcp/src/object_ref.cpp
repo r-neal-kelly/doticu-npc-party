@@ -1,6 +1,9 @@
 /*
     Copyright © 2020 r-neal-kelly, aka doticu
 */
+#undef max
+
+#include <numeric>
 
 #include "skse64/GameRTTI.h"
 #include "skse64/PapyrusWornObject.h"
@@ -69,7 +72,7 @@ namespace doticu_npcp { namespace Object_Ref {
         if (ref) {
             XContainer_t* xcontainer = Get_XContainer(ref, false);
             if (xcontainer) {
-                xcontainer->Validate();
+                xcontainer->changes->Validate();
             }
         }
     }
@@ -174,59 +177,8 @@ namespace doticu_npcp { namespace Object_Ref {
         }
     }
 
-    void Remove_All_XEntries(Reference_t* ref)
-    {
-        NPCP_ASSERT(ref);
-
-        XContainer_t* xcontainer = Get_XContainer(ref, false);
-        if (xcontainer) {
-            xcontainer->changes->xentries->RemoveAll();
-        }
-    }
-
     bool Has_XEntry(TESObjectREFR *obj, TESForm *form) {
         return Get_XEntry(obj, form, false) != NULL;
-    }
-
-    void Move_Entry(TESObjectREFR *from, TESObjectREFR *to, TESForm *form) {
-        if (!from || !to || !form) {
-            return;
-        }
-
-        XContainer_t *xcontainer_from = Get_XContainer(from, true);
-        NPCP_ASSERT(xcontainer_from);
-
-        XContainer_t *xcontainer_to = Get_XContainer(to, true);
-        NPCP_ASSERT(xcontainer_to);
-
-        XEntry_t *xentry_from = Get_XEntry(from, form);
-        u64 count_bentry_from = Get_BEntry_Count(from, form);
-        if (xentry_from) {
-            u64 count_xentry_from = xentry_from->Delta_Count();
-            if (count_xentry_from == 0 && count_bentry_from == 0) {
-                Object_Ref::Remove_XEntry(from, xentry_from);
-                XEntry_t::Destroy(xentry_from);
-                return;
-            }
-
-            if (count_xentry_from <= 0 - count_bentry_from) {
-                xentry_from->Delta_Count(0 - count_bentry_from);
-                return;
-            }
-
-            Object_Ref::Remove_XEntry(from, xentry_from);
-            xentry_from->Clean_XLists(to);
-
-            if (count_bentry_from > 0) {
-                xentry_from->Increment(count_bentry_from);
-                Object_Ref::Add_XEntry(from, XEntry_t::Create(form, 0 - count_bentry_from));
-            }
-
-            Object_Ref::Add_XEntry(to, xentry_from);
-        } else if (count_bentry_from > 0) {
-            Object_Ref::Add_XEntry(from, XEntry_t::Create(form, 0 - count_bentry_from));
-            Object_Ref::Add_XEntry(to, XEntry_t::Create(form, count_bentry_from));
-        }
     }
 
     Bool_t Has_Similar_XList(Reference_t* ref, Form_t* form, XList_t* xlist_to_compare)
@@ -248,25 +200,23 @@ namespace doticu_npcp { namespace Object_Ref {
         }
     }
 
-    // need to study if a BContainer can have multiple entries of the same form or not. confer with editor.
-    Int_t Get_BEntry_Count(Reference_t* obj, Form_t* form)
+    Int_t Get_BEntry_Count(Reference_t* ref, Form_t* form)
     {
-        if (!obj || !form) {
-            return 0;
-        }
-
-        BContainer_t* bcontainer = Get_BContainer(obj);
-        SInt32 count = 0;
-        if (bcontainer) {
-            for (u64 idx = 0; idx < bcontainer->numEntries; idx += 1) {
-                BEntry_t* bentry = bcontainer->entries[idx];
-                if (bentry && bentry->form == form) {
-                    count += bentry->count;
+        if (ref && form) {
+            BContainer_t* bcontainer = Get_BContainer(ref);
+            Int_t count = 0;
+            if (bcontainer) {
+                for (size_t idx = 0, count = bcontainer->numEntries; idx < count; idx += 1) {
+                    BEntry_t* bentry = bcontainer->entries[idx];
+                    if (bentry && bentry->form == form) {
+                        count += bentry->count;
+                    }
                 }
             }
+            return count < 0 ? 1 : count;
+        } else {
+            return 0;
         }
-
-        return count < 0 ? 1 : count;
     }
 
     Int_t Get_XEntry_Count(Reference_t* obj, Form_t* form)
@@ -412,7 +362,7 @@ namespace doticu_npcp { namespace Object_Ref {
                             for (XLists_t::Iterator xlists = xentry->xlists->Begin(); !xlists.End(); ++xlists) {
                                 XList_t* xlist = xlists.Get();
                                 if (xlist) {
-                                    XList::Validate(xlist);
+                                    XList::Validate(xlist, xentry->delta_count, Get_BEntry_Count(from, xentry->form));
                                     if (should_remove_xlist(xlist, form)) {
                                         xlists_to_remove.push_back(xlist);
                                     }
@@ -621,6 +571,7 @@ namespace doticu_npcp { namespace Object_Ref {
 
             XContainer_t* xcontainer = Get_XContainer(ref, false);
             if (xcontainer) {
+                Init_Container_If_Needed(ref);
                 for (XEntries_t::Iterator it = xcontainer->changes->xentries->Begin(); !it.End(); ++it) {
                     XEntry_t* xentry = it.Get();
                     if (xentry && xentry->form && xentry->form->IsPlayable()) {
@@ -628,6 +579,9 @@ namespace doticu_npcp { namespace Object_Ref {
                             Game::Get_NPCP_Custom_Category(xentry->form) :
                             Game::Get_NPCP_Category(xentry->form);
                         if (category && category != ref) {
+                            Int_t bentry_count = Get_BEntry_Count(ref, xentry->form);
+                            xentry->Validate(bentry_count);
+
                             XEntry_t* category_xentry = nullptr;
 
                             Vector_t<XList_t*> xlists_to_move;
@@ -649,7 +603,6 @@ namespace doticu_npcp { namespace Object_Ref {
                                 }
                             }
                             
-                            Int_t bentry_count = Get_BEntry_Count(ref, xentry->form);
                             Int_t bentry_negation = 0 - bentry_count;
                             if (xentry->Delta_Count() < bentry_negation) {
                                 xentry->Delta_Count(bentry_negation);
@@ -693,6 +646,7 @@ namespace doticu_npcp { namespace Object_Ref {
                                     NPCP_ASSERT(category_xentry);
                                     category_xentry->Increment(bentry->count);
                                     XEntry_t* xentry = Get_XEntry(ref, bentry->form, true);
+                                    NPCP_ASSERT(xentry);
                                     xentry->Delta_Count(0 - bentry->count);
                                 }
                             }
@@ -989,7 +943,7 @@ namespace doticu_npcp { namespace Object_Ref {
     void Rename(Reference_t* ref, String_t new_name)
     {
         if (ref && new_name.data) {
-            XList::Validate(&ref->extraData);
+            XList::Validate_No_Count(&ref->extraData);
             referenceUtils::SetDisplayName(&ref->extraData, new_name, true);
         }
 
@@ -1088,7 +1042,7 @@ namespace doticu_npcp { namespace Object_Ref {
 
         Reference_t* reference = place_at_me(Virtual_Machine_t::Self(), 0, me, to_place, count, force_persist, initially_disabled);
         NPCP_ASSERT(reference);
-        XList::Validate(&reference->extraData);
+        XList::Validate_No_Count(&reference->extraData);
         return reference;
     }
 
@@ -1481,6 +1435,467 @@ namespace doticu_npcp { namespace Object_Ref {
             vcallback ? &vcallback : nullptr
         );
     }
+
+    Inventory_t::Inventory_t(Reference_t* reference)
+        : reference(reference)
+    {
+        if (reference) {
+            Init_Container_If_Needed(reference);
+            xcontainer = static_cast<XContainer_t*>
+                (reference->extraData.GetByType(kExtraData_ContainerChanges));
+            NPCP_ASSERT(xcontainer);
+
+            bcontainer = reference->baseForm ?
+                DYNAMIC_CAST(reference->baseForm, TESForm, TESContainer) : nullptr;
+            if (bcontainer) {
+                for (size_t idx = 0; idx < bcontainer->numEntries; idx += 1) {
+                    BEntry_t* bentry = bcontainer->entries[idx];
+                    if (bentry && bentry->form && bentry->count > 0) {
+                        Int_t bentry_count = bentry->count;
+                        if (bentry_count < 0) {
+                            bentry_count = 1;
+                        }
+                        Entry_t* entry = Entry(bentry->form);
+                        if (entry) {
+                            entry->bentry_count += bentry_count;
+                            if (entry->bentry_count < 0) {
+                                entry->bentry_count = std::numeric_limits<Int_t>::max();
+                            }
+                        } else {
+                            Entry_t entry;
+                            entry.form = bentry->form;
+                            entry.bentry_count = bentry_count;
+                            entry.xentry = nullptr;
+                            entry.xlist_count = 0;
+                            entries.push_back(entry);
+                        }
+                    }
+                }
+            }
+
+            Vector_t<XEntry_t*> xentries_to_destroy;
+            xentries_to_destroy.reserve(4);
+            for (XEntries_t::Iterator it = xcontainer->changes->xentries->Begin(); !it.End(); ++it) {
+                XEntry_t* xentry = it.Get();
+                if (xentry && xentry->form) {
+                    Entry_t* entry = Entry(xentry->form);
+                    if (entry) {
+                        Int_t xlist_count = xentry->Validate(entry->bentry_count);
+                        if (entry->xentry) {
+                            if (xentry->xlists) {
+                                Vector_t<XList_t*> xlists_to_move;
+                                xlists_to_move.reserve(2);
+                                for (XLists_t::Iterator it = xentry->xlists->Begin(); !it.End(); ++it) {
+                                    XList_t* xlist = it.Get();
+                                    if (xlist) {
+                                        xlists_to_move.push_back(xlist);
+                                    }
+                                }
+                                for (size_t idx = 0, count = xlists_to_move.size(); idx < count; idx += 1) {
+                                    XList_t* xlist = xlists_to_move[idx];
+                                    xentry->Move_XList(entry->xentry, reference, xlist);
+                                }
+                                entry->xlist_count += xlist_count;
+                                if (entry->xlist_count < 0) {
+                                    entry->xlist_count = std::numeric_limits<Int_t>::max();
+                                }
+                            }
+                            if (xentry->delta_count + entry->bentry_count > 0) {
+                                entry->xentry->delta_count += xentry->delta_count + entry->bentry_count;
+                            }
+                            if (entry->xentry->delta_count + entry->bentry_count < 0) {
+                                entry->xentry->delta_count = std::numeric_limits<Int_t>::max() - entry->bentry_count;
+                            }
+                            xentries_to_destroy.push_back(xentry);
+                        } else {
+                            entry->xentry = xentry;
+                            entry->xlist_count = xlist_count;
+                        }
+                    } else {
+                        Int_t xlist_count = xentry->Validate(0);
+                        Entry_t entry;
+                        entry.form = xentry->form;
+                        entry.bentry_count = 0;
+                        entry.xentry = xentry;
+                        entry.xlist_count = xlist_count;
+                        entries.push_back(entry);
+                    }
+                }
+            }
+            for (size_t idx = 0, count = xentries_to_destroy.size(); idx < count; idx += 1) {
+                XEntry_t* xentry = xentries_to_destroy[idx];
+                xcontainer->changes->Remove_XEntry(xentry);
+                XEntry_t::Destroy(xentry);
+            }
+        }
+    }
+
+    Entry_t* Inventory_t::Entry(Form_t* form)
+    {
+        if (reference && form) {
+            for (size_t idx = 0, count = entries.size(); idx < count; idx += 1) {
+                Entry_t* entry = &entries[idx];
+                if (entry->form == form) {
+                    return entry;
+                }
+            }
+            return nullptr;
+        } else {
+            return nullptr;
+        }
+    }
+
+    Entry_t* Inventory_t::Add_Entry(Form_t* form)
+    {
+        if (reference && form) {
+            Entry_t* entry = Entry(form);
+            if (entry) {
+                return entry;
+            } else {
+                Entry_t entry;
+                entry.form = form;
+                entry.bentry_count = 0;
+                entry.xentry = nullptr;
+                entry.xlist_count = 0;
+                entries.push_back(entry);
+                return &entries.back();
+            }
+        } else {
+            return nullptr;
+        }
+    }
+
+    Int_t Inventory_t::Find(Entry_t* entry)
+    {
+        if (reference && entry) {
+            for (size_t idx = 0, count = entries.size(); idx < count; idx += 1) {
+                if (&entries[idx] == entry) {
+                    return idx;
+                }
+            }
+            return -1;
+        } else {
+            return -1;
+        }
+    }
+
+    void Inventory_t::Validate(Entry_t* entry)
+    {
+        if (reference && entry) {
+            NPCP_ASSERT(entry->form);
+
+            //entry->bentry_count = Get_BEntry_Count(reference, entry->form);
+            //entry->xentry = Get_XEntry(reference, entry->form, false);
+            if (entry->xentry) {
+                entry->xlist_count = entry->xentry->Validate(entry->bentry_count);
+            } else {
+                entry->xlist_count = 0;
+            }
+        }
+    }
+
+    Int_t Inventory_t::Count(Entry_t* entry)
+    {
+        if (reference && entry) {
+            Int_t count = 0;
+            if (entry->xentry) {
+                count += entry->xentry->delta_count;
+            }
+            count += entry->bentry_count;
+            if (count < 0) {
+                count = std::numeric_limits<Int_t>::max();
+            }
+            return count;
+        } else {
+            return 0;
+        }
+    }
+
+    Int_t Inventory_t::Count_Base(Entry_t* entry)
+    {
+        if (reference && entry) {
+            return entry->bentry_count;
+        } else {
+            return 0;
+        }
+    }
+
+    Int_t Inventory_t::Count_Extra(Entry_t* entry)
+    {
+        if (reference && entry && entry->xentry) {
+            return entry->xentry->delta_count;
+        } else {
+            return 0;
+        }
+    }
+
+    Int_t Inventory_t::Count_Loose(Entry_t* entry)
+    {
+        if (reference && entry) {
+            if (entry->xentry) {
+                Int_t count = Count(entry) - entry->xlist_count;
+                if (count < 0) {
+                    Validate(entry);
+                    Int_t count = Count(entry) - entry->xlist_count;
+                    if (count < 0) {
+                        return 0;
+                    } else {
+                        return count;
+                    }
+                } else {
+                    return count;
+                }
+            } else {
+                return entry->bentry_count;
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    Int_t Inventory_t::Count_XLists(Entry_t* entry)
+    {
+        if (reference && entry) {
+            if (entry->xentry) {
+                return entry->xlist_count;
+            } else {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    void Inventory_t::Add_Loose(Entry_t* entry, Int_t count)
+    {
+        if (reference && entry) {
+            if (entry->xentry) {
+                entry->xentry->delta_count += count;
+                if (entry->xentry->delta_count + entry->bentry_count < 0) {
+                    entry->xentry->delta_count = std::numeric_limits<Int_t>::max() - entry->bentry_count;
+                }
+            } else {
+                entry->xentry = XEntry_t::Create(entry->form, count);
+                xcontainer->changes->Add_XEntry(entry->xentry, reference);
+                entry->xlist_count = 0;
+            }
+        }
+    }
+
+    void Inventory_t::Remove_Loose(Entry_t* entry, Int_t count)
+    {
+        if (reference && entry && count > 0) {
+            if (entry->xentry) {
+                Int_t entry_count = Count(entry);
+                if (entry_count - count > entry->xlist_count) {
+                    entry->xentry->delta_count -= count;
+                } else {
+                    entry->xentry->delta_count = entry->xlist_count - entry->bentry_count;
+                }
+                Try_To_Destroy_Entry(entry);
+            } else if (entry->bentry_count > 0) {
+                Int_t negative_count = 0 - count;
+                Int_t negative_bentry_count = 0 - entry->bentry_count;
+                if (negative_count < negative_bentry_count) {
+                    entry->xentry = XEntry_t::Create(entry->form, negative_bentry_count);
+                } else {
+                    entry->xentry = XEntry_t::Create(entry->form, negative_count);
+                }
+                xcontainer->changes->Add_XEntry(entry->xentry, reference);
+            }
+        }
+    }
+
+    void Inventory_t::Add_XList(Entry_t* entry, XList_t* xlist)
+    {
+        if (reference && entry && xlist) {
+            if (!entry->xentry) {
+                entry->xentry = XEntry_t::Create(entry->form, 0);
+                xcontainer->changes->Add_XEntry(entry->xentry, reference);
+            }
+            entry->xentry->Add_Clean_XList(xlist, reference);
+            entry->xlist_count += XList::Count(xlist);
+        }
+    }
+
+    void Inventory_t::Remove_XList(Entry_t* entry, XList_t* xlist)
+    {
+        if (reference && entry && xlist) {
+            if (entry->xentry) {
+                entry->xentry->Remove_XList(xlist);
+                entry->xlist_count -= XList::Count(xlist);
+                Try_To_Destroy_Entry(entry);
+            }
+        }
+    }
+
+    void Inventory_t::Increment_XList(Entry_t* entry, XList_t* xlist, Int_t count)
+    {
+        if (reference && entry && xlist && count > 0) {
+            XList::Increment(xlist, count);
+            entry->xlist_count += count;
+        }
+    }
+
+    void Inventory_t::Decrement_XList(Entry_t* entry, XList_t* xlist, Int_t count)
+    {
+        if (reference && entry && xlist && count > 0) {
+            Int_t xlist_count = XList::Count(xlist);
+            if (xlist_count > count) {
+                entry->xlist_count -= count;
+            } else {
+                entry->xlist_count -= xlist_count - 1;
+            }
+            XList::Decrement(xlist, count);
+        }
+    }
+
+    void Inventory_t::Try_To_Destroy_Entry(Entry_t* entry)
+    {
+        if (reference && entry) {
+            Int_t entry_index = Find(entry);
+            if (entry_index > -1) {
+                Validate(entry);
+                if (entry->xentry && entry->xlist_count == 0 && entry->xentry->delta_count == 0) {
+                    xcontainer->changes->Remove_XEntry(entry->xentry);
+                    XEntry_t::Destroy(entry->xentry);
+                    entry->xentry = nullptr;
+                }
+                /*if (!entry->xentry && entry->bentry_count == 0) {
+                    entries.erase(entries.begin() + entry_index);
+                }*/
+            }
+        }
+    }
+
+    void Inventory_t::Log(std::string indent)
+    {
+        if (reference) {
+            _MESSAGE((indent + "Log_Inventory: %s").c_str(), Get_Name(reference));
+
+            for (size_t idx = 0, end = entries.size(); idx < end; idx += 1) {
+                Entry_t& entry = entries[idx];
+                const char* name = Form::Name(entry.form);
+                if (!name || !name[0]) {
+                    name = "*";
+                }
+                _MESSAGE((indent + "    %-36s: total: %6i, base: %6i, extra: %6i, loose: %6i, xlists: %6i, form_type: %s").c_str(),
+                         name,
+                         Count(&entry),
+                         Count_Base(&entry),
+                         Count_Extra(&entry),
+                         Count_Loose(&entry),
+                         Count_XLists(&entry),
+                         Form::Get_Type_String(entry.form));
+                if (entry.xentry) {
+                    Merged_XLists_t mxlists(&entry, true);
+                    for (size_t idx = 0, end = mxlists.size(); idx < end; idx += 1) {
+                        Merged_XList_t& mxlist = mxlists[idx];
+                        _MESSAGE((indent + "        mxlist: %zu").c_str(), idx);
+                        for (size_t idx = 0, end = mxlist.size(); idx < end; idx += 1) {
+                            XList_t* xlist = mxlist[idx];
+                            _MESSAGE((indent + "            xlist: %zu").c_str(), idx);
+                            XList::Log(xlist, (indent + "                ").c_str());
+                        }
+                    }
+                }
+            }
+
+            _MESSAGE("");
+        }
+    }
+
+    Merged_XLists_t::Merged_XLists_t()
+    {
+    }
+
+    Merged_XLists_t::Merged_XLists_t(Entry_t* entry, Bool_t(*do_exclude)(XList_t*))
+    {
+        if (entry && entry->xentry && entry->xentry->xlists && do_exclude) {
+            reserve(4);
+            for (XLists_t::Iterator it = entry->xentry->xlists->Begin(); !it.End(); ++it) {
+                XList_t* xlist = it.Get();
+                if (xlist && !do_exclude(xlist)) {
+                    Merged_XList_t* merged_xlist = Merged_XList(xlist);
+                    if (merged_xlist) {
+                        merged_xlist->push_back(xlist);
+                    } else {
+                        Merged_XList_t merged_xlist;
+                        merged_xlist.push_back(xlist);
+                        push_back(merged_xlist);
+                    }
+                }
+            }
+        }
+    }
+
+    Merged_XLists_t::Merged_XLists_t(Entry_t* entry, Bool_t allow_quest_items)
+    {
+        if (allow_quest_items) {
+            auto Do_Exclude = [](XList_t* xlist)->Bool_t
+            {
+                return false;
+            };
+
+            *this = Merged_XLists_t(entry, Do_Exclude);
+        } else {
+            auto Do_Exclude = [](XList_t* xlist)->Bool_t
+            {
+                return XList::Is_Quest_Item(xlist);
+            };
+
+            *this = Merged_XLists_t(entry, XList::Is_Quest_Item);
+        }
+    }
+
+    Merged_XList_t* Merged_XLists_t::Merged_XList(XList_t* similar_xlist)
+    {
+        if (similar_xlist) {
+            for (size_t idx = 0, count = size(); idx < count; idx += 1) {
+                Merged_XList_t* merged_xlist = &at(idx);
+                if (XList::Is_Similar(merged_xlist->at(0), similar_xlist)) {
+                    return merged_xlist;
+                }
+            }
+            return nullptr;
+        } else {
+            return nullptr;
+        }
+    }
+
+    Int_t Merged_XLists_t::Count(Merged_XList_t* merged_xlist)
+    {
+        if (merged_xlist) {
+            Int_t xlist_count = 0;
+            for (size_t idx = 0, count = merged_xlist->size(); idx < count; idx += 1) {
+                XList_t* xlist = merged_xlist->at(idx);
+                xlist_count += XList::Count(xlist);
+            }
+            if (xlist_count < 0) {
+                xlist_count = std::numeric_limits<Int_t>::max();
+            }
+            return xlist_count;
+        } else {
+            return 0;
+        }
+    }
+
+    Bool_t Merged_XLists_t::Is_Worn(Merged_XList_t* merged_xlist)
+    {
+        if (merged_xlist) {
+            for (size_t idx = 0, count = merged_xlist->size(); idx < count; idx += 1) {
+                XList_t* xlist = merged_xlist->at(idx);
+                if (XList::Is_Worn(xlist)) {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            return false;
+        }
+    }
+
+
 
     void Current_Crosshair_Reference(Virtual_Callback_i** callback)
     {

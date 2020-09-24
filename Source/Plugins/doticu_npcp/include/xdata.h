@@ -5,6 +5,23 @@
 #pragma once
 
 #include "types.h"
+#include "xentry.h"
+
+namespace doticu_npcp { namespace Papyrus {
+
+    class XCount_t : public BSExtraData {
+    public:
+        static XCount_t* Create(Int_t count);
+        static void Destroy(XCount_t* xcount);
+    public:
+        virtual ~XCount_t();
+
+        UInt32 count; // 10
+        UInt32 pad_14; // 14
+    };
+    STATIC_ASSERT(sizeof(XCount_t) == 0x18);
+
+}}
 
 namespace doticu_npcp { namespace XData {
 
@@ -47,15 +64,17 @@ namespace doticu_npcp { namespace XData {
     ExtraOutfitItem* Create_Outfit_Item(Outfit_t* outfit);
     void Destroy(XData_t *xdata);
 
-    ExtraCount *Copy_Count(ExtraCount *xdata, BSReadWriteLock *xlist_lock);
-    ExtraHealth *Copy_Health(ExtraHealth *xdata, BSReadWriteLock *xlist_lock);
-    ExtraEnchantment *Copy_Enchantment(ExtraEnchantment *xdata, BSReadWriteLock *xlist_lock);
-    ExtraCharge *Copy_Charge(ExtraCharge *xdata, BSReadWriteLock *xlist_lock);
-    ExtraTextDisplayData *Copy_Text_Display(ExtraTextDisplayData *xdata, BSReadWriteLock *xlist_lock);
+    ExtraCount *Copy_Count(ExtraCount *xdata);
+    ExtraHealth *Copy_Health(ExtraHealth *xdata);
+    ExtraEnchantment *Copy_Enchantment(ExtraEnchantment *xdata);
+    ExtraCharge *Copy_Charge(ExtraCharge *xdata);
+    ExtraOwnership* Copy_Ownership(ExtraOwnership* xownership);
+    ExtraTextDisplayData *Copy_Text_Display(ExtraTextDisplayData *xdata);
 
-    bool Is_Same_Health(ExtraHealth *xdata_a, ExtraHealth *xdata_b);
-    bool Is_Same_Enchantment(ExtraEnchantment *xdata_a, ExtraEnchantment *xdata_b);
-    bool Is_Same_Charge(ExtraCharge *xdata_a, ExtraCharge *xdata_b);
+    Bool_t Has_Same_Health(ExtraHealth* xhealth_a, ExtraHealth* xhealth_b);
+    Bool_t Has_Same_Enchantment(ExtraEnchantment* xenchantment_a, ExtraEnchantment* xenchantment_b);
+    Bool_t Has_Same_Charge(ExtraCharge* xcharge_a, ExtraCharge* xcharge_b);
+    Bool_t Has_Same_Owner(ExtraOwnership* xownership_a, ExtraOwnership* xownership_b);
 
     const char *Get_Type_String(BSExtraData *xdata);
 

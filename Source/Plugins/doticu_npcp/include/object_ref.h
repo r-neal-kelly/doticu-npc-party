@@ -23,9 +23,7 @@ namespace doticu_npcp { namespace Object_Ref {
     XEntry_t *Get_XEntry(TESObjectREFR *obj, TESForm *form, bool do_create = false);
     void Add_XEntry(Reference_t* ref, XEntry_t* to_add);
     void Remove_XEntry(Reference_t* ref, XEntry_t* to_remove);
-    void Remove_All_XEntries(Reference_t* ref);
     bool Has_XEntry(TESObjectREFR *obj, TESForm *form);
-    void Move_Entry(TESObjectREFR *from, TESObjectREFR *to, TESForm *form);
     Bool_t Has_Similar_XList(Reference_t* ref, Form_t* form, XList_t* xlist_to_compare);
 
     Int_t Get_BEntry_Count(Reference_t* ref, Form_t* form);
@@ -143,6 +141,64 @@ namespace doticu_npcp { namespace Object_Ref {
     void Apply_Havok_Impulse(Reference_t* ref, Float_t x, Float_t y, Float_t z, Float_t magnitude, Virtual_Callback_i** vcallback = nullptr);
 
     void Set_Open(Reference_t* ref, Bool_t is_open, Virtual_Callback_i* vcallback = nullptr);
+
+    class Entry_t {
+    public:
+        Form_t* form;
+        Int_t bentry_count = 0;
+        XEntry_t* xentry = nullptr;
+        Int_t xlist_count = 0;
+    };
+
+    class Merged_XList_t : public Vector_t<XList_t*> {
+    public:
+    };
+
+    class Merged_XLists_t : public Vector_t<Merged_XList_t> {
+    public:
+        Merged_XLists_t();
+        Merged_XLists_t(Entry_t* entry, Bool_t(*do_exclude)(XList_t*));
+        Merged_XLists_t(Entry_t* entry, Bool_t allow_quest_items);
+
+        Merged_XList_t* Merged_XList(XList_t* similar_xlist);
+
+        Int_t Count(Merged_XList_t* merged_xlist);
+        Bool_t Is_Worn(Merged_XList_t* merged_xlist);
+    };
+
+    class Inventory_t {
+    public:
+        Reference_t* reference = nullptr;
+        BContainer_t* bcontainer = nullptr;
+        XContainer_t* xcontainer = nullptr;
+        Vector_t<Entry_t> entries;
+
+        Inventory_t(Reference_t* reference = nullptr);
+
+        Entry_t* Entry(Form_t* form);
+        Entry_t* Add_Entry(Form_t* form);
+
+        Int_t Find(Entry_t* entry);
+
+        void Validate(Entry_t* entry);
+
+        Int_t Count(Entry_t* entry);
+        Int_t Count_Base(Entry_t* entry);
+        Int_t Count_Extra(Entry_t* entry);
+        Int_t Count_Loose(Entry_t* entry);
+        Int_t Count_XLists(Entry_t* entry);
+
+        void Add_Loose(Entry_t* entry, Int_t count);
+        void Remove_Loose(Entry_t* entry, Int_t count);
+        void Add_XList(Entry_t* entry, XList_t* xlist);
+        void Remove_XList(Entry_t* entry, XList_t* xlist);
+        void Increment_XList(Entry_t* entry, XList_t* xlist, Int_t count);
+        void Decrement_XList(Entry_t* entry, XList_t* xlist, Int_t count);
+        
+        void Try_To_Destroy_Entry(Entry_t* entry);
+
+        void Log(std::string indent = "");
+    };
 
     // these don't belong here.
     void Current_Crosshair_Reference(Virtual_Callback_i** callback);

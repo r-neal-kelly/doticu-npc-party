@@ -33,7 +33,6 @@ namespace doticu_npcp { namespace Papyrus {
                             for (XLists_t::Iterator it = to_add->xlists->Begin(); !it.End(); ++it) {
                                 XList_t* xlist_to_add = it.Get();
                                 if (xlist_to_add) {
-                                    XList::Validate(xlist_to_add);
                                     xlists_to_add.push_back(xlist_to_add);
                                 }
                             }
@@ -102,7 +101,7 @@ namespace doticu_npcp { namespace Papyrus {
             for (XEntries_t::Iterator it = xentries->Begin(); !it.End(); ++it) {
                 XEntry_t* xentry = it.Get();
                 if (xentry) {
-                    xentry->Validate(owner);
+                    xentry->Validate(Object_Ref::Get_BEntry_Count(owner, xentry->form));
                 }
             }
         }
@@ -124,12 +123,6 @@ namespace doticu_npcp { namespace Papyrus {
     {
         NPCP_ASSERT(changes);
         return changes->XEntry(form, allow_creation);
-    }
-
-    void XContainer_t::Validate()
-    {
-        NPCP_ASSERT(changes);
-        changes->Validate();
     }
 
 }}

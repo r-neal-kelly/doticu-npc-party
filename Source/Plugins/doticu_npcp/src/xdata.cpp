@@ -5,6 +5,8 @@
 #include "offsets.h"
 #include "utils.h"
 #include "xdata.h"
+#include "xentry.h"
+#include "xlist.h"
 
 const char *arr_str_xdata_types[180]{
     "kExtraData_None",
@@ -188,6 +190,33 @@ const char *arr_str_xdata_types[180]{
     "kExtraData_GIDBuffer",
     "kExtraData_MissingRefIDs"
 };
+
+namespace doticu_npcp { namespace Papyrus {
+
+    XCount_t* XCount_t::Create(Int_t count)
+    {
+        XCount_t* xcount = static_cast<XCount_t*>(Heap_Allocate(sizeof(XCount_t)));
+        NPCP_ASSERT(xcount);
+        memset(xcount, 0, sizeof(XCount_t));
+        *reinterpret_cast<uintptr_t*>(xcount) =
+            Offsets::Extra::COUNT_V_TABLE + RelocationManager::s_baseAddr;
+
+        if (count < 1) {
+            count = 1;
+        }
+        xcount->count = count;
+
+        return xcount;
+    }
+
+    void XCount_t::Destroy(XCount_t* xcount)
+    {
+        if (xcount) {
+            static_cast<BSExtraData*>(xcount)->~BSExtraData();
+        }
+    }
+
+}}
 
 namespace doticu_npcp { namespace XData {
 
@@ -385,30 +414,32 @@ namespace doticu_npcp { namespace XData {
         }
     }
 
-    ExtraCount *Copy_Count(ExtraCount *xdata, BSReadWriteLock *xlist_lock) {
+    ExtraCount *Copy_Count(ExtraCount *xdata) {
         ExtraCount *xdata_new = ExtraCount::Create();
         NPCP_ASSERT(xdata_new);
 
-        xdata_new->Count(xdata->Count());
+        if (static_cast<Int_t>(xdata->count) < 0) {
+            xdata_new->count = 1;
+        } else {
+            xdata_new->count = xdata->count;
+        }
 
         return xdata_new;
     }
 
-    ExtraHealth *Copy_Health(ExtraHealth *xdata, BSReadWriteLock *xlist_lock) {
+    ExtraHealth *Copy_Health(ExtraHealth *xdata) {
         ExtraHealth *xdata_new = ExtraHealth::Create();
         NPCP_ASSERT(xdata_new);
 
-        //BSReadLocker locker(xlist_lock);
         xdata_new->health = xdata->health;
 
         return xdata_new;
     }
 
-    ExtraEnchantment *Copy_Enchantment(ExtraEnchantment *xdata, BSReadWriteLock *xlist_lock) {
+    ExtraEnchantment *Copy_Enchantment(ExtraEnchantment *xdata) {
         ExtraEnchantment *xdata_new = ExtraEnchantment::Create();
         NPCP_ASSERT(xdata_new);
 
-        //BSReadLocker locker(xlist_lock);
         xdata_new->enchant = xdata->enchant; // do we need to copy this? probably not.
         xdata_new->maxCharge = xdata->maxCharge;
         xdata_new->unk0E = xdata->unk0E;
@@ -416,21 +447,29 @@ namespace doticu_npcp { namespace XData {
         return xdata_new;
     }
 
-    ExtraCharge *Copy_Charge(ExtraCharge *xdata, BSReadWriteLock *xlist_lock) {
+    ExtraCharge *Copy_Charge(ExtraCharge *xdata) {
         ExtraCharge *xdata_new = ExtraCharge::Create();
         NPCP_ASSERT(xdata_new);
 
-        //BSReadLocker locker(xlist_lock);
         xdata_new->charge = xdata->charge;
 
         return xdata_new;
     }
 
-    ExtraTextDisplayData *Copy_Text_Display(ExtraTextDisplayData *xdata, BSReadWriteLock *xlist_lock) {
+    ExtraOwnership* Copy_Ownership(ExtraOwnership* xownership)
+    {
+        NPCP_ASSERT(xownership);
+
+        ExtraOwnership* new_xownership = Create_Ownership(xownership->owner);
+        NPCP_ASSERT(new_xownership);
+
+        return new_xownership;
+    }
+
+    ExtraTextDisplayData *Copy_Text_Display(ExtraTextDisplayData *xdata) {
         ExtraTextDisplayData *xdata_new = ExtraTextDisplayData::Create();
         NPCP_ASSERT(xdata_new);
 
-        //BSReadLocker locker(xlist_lock);
         xdata_new->name = xdata->name;
         xdata_new->message = xdata->message;
         xdata_new->owner = xdata->owner;
@@ -441,7 +480,7 @@ namespace doticu_npcp { namespace XData {
         return xdata_new;
     }
 
-    bool Is_Same_Health(ExtraHealth *xdata_a, ExtraHealth *xdata_b) {
+    Bool_t Has_Same_Health(ExtraHealth *xdata_a, ExtraHealth *xdata_b) {
         if (xdata_a && xdata_b) {
             return xdata_a->health == xdata_b->health;
         } else if (xdata_a) {
@@ -453,7 +492,7 @@ namespace doticu_npcp { namespace XData {
         }
     }
 
-    bool Is_Same_Enchantment(ExtraEnchantment *xdata_a, ExtraEnchantment *xdata_b) {
+    Bool_t Has_Same_Enchantment(ExtraEnchantment *xdata_a, ExtraEnchantment *xdata_b) {
         if (xdata_a && xdata_b) {
             return
                 xdata_a->enchant == xdata_b->enchant &&
@@ -468,12 +507,25 @@ namespace doticu_npcp { namespace XData {
         }
     }
 
-    bool Is_Same_Charge(ExtraCharge *xdata_a, ExtraCharge *xdata_b) {
+    Bool_t Has_Same_Charge(ExtraCharge *xdata_a, ExtraCharge *xdata_b) {
         if (xdata_a && xdata_b) {
             return xdata_a->charge == xdata_b->charge;
         } else if (xdata_a) {
             return false;
         } else if (xdata_b) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    Bool_t Has_Same_Owner(ExtraOwnership* xownership_a, ExtraOwnership* xownership_b)
+    {
+        if (xownership_a && xownership_b) {
+            return xownership_a->owner == xownership_b->owner;
+        } else if (xownership_a) {
+            return false;
+        } else if (xownership_b) {
             return false;
         } else {
             return true;
