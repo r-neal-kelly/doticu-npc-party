@@ -250,6 +250,9 @@ namespace doticu_npcp { namespace Modules {
             if (Is_NPCP_Version_Less_Than(0, 9, 9)) {
                 Party::Members_t::Self()->u_0_9_9();
             }
+            if (Is_NPCP_Version_Less_Than(0, 9, 12)) {
+                Party::Members_t::Self()->u_0_9_12();
+            }
 
             Vars_t* vars = Vars_t::Self();
             vars->NPCP_Major(curr_major);

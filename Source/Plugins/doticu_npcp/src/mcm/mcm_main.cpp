@@ -658,15 +658,18 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Option_Flags(option, MCM::HIDE, do_render);
     }
 
-    void Main_t::Flicker(Int_t option)
+    void Main_t::Flicker(Int_t option, Callback_t<>* user_callback)
     {
+        using UCallback_t = Callback_t<>;
+
         Option_Flags(option, MCM::DISABLE, true);
 
         struct VCallback : public Virtual_Callback_t {
             Main_t* self;
             Int_t option;
-            VCallback(Main_t* self, Int_t option) :
-                self(self), option(option)
+            UCallback_t* user_callback;
+            VCallback(Main_t* self, Int_t option, UCallback_t* user_callback) :
+                self(self), option(option), user_callback(user_callback)
             {
             }
             void operator()(Variable_t* result)
@@ -674,9 +677,14 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 if (self->Current_State() != State_e::RESET) {
                     self->Option_Flags(option, MCM::NONE, true);
                 }
+
+                if (user_callback) {
+                    user_callback->operator()();
+                    delete user_callback;
+                }
             }
         };
-        Virtual_Callback_i* vcallback = new VCallback(this, option);
+        Virtual_Callback_i* vcallback = new VCallback(this, option, user_callback);
         Modules::Funcs_t::Self()->Wait(0.2f, &vcallback);
     }
 
@@ -688,6 +696,14 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
     String_t Main_t::Concat(const char* a, const char* b, const char* c)
     {
         return (std::string(a) + b + c).c_str();
+    }
+
+    void Main_t::Return_Latent(Callback_t<>* user_callback)
+    {
+        NPCP_ASSERT(user_callback);
+
+        user_callback->operator()();
+        delete user_callback;
     }
 
     void Main_t::On_Config_Init()
@@ -759,8 +775,23 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Last_Page_Variable()->String(current_page);
     }
 
-    void Main_t::On_Option_Select(Int_t option)
+    Bool_t Main_t::On_Option_Select(Virtual_Machine_t* vm, Stack_ID_t stack_id, Int_t option)
     {
+        struct Callback : public Callback_t<> {
+            Virtual_Machine_t* vm;
+            Stack_ID_t stack_id;
+            Callback(Virtual_Machine_t* vm, Stack_ID_t stack_id) :
+                vm(vm), stack_id(stack_id)
+            {
+            }
+            void operator()()
+            {
+                Variable_t none;
+                vm->Return_Latent_Function(stack_id, &none);
+            }
+        };
+        Callback_t<>* user_callback = new Callback(vm, stack_id);
+
         String_t current_page = Current_Page_Name();
         auto Is_Page = [&current_page](const char* page)->Bool_t
         {
@@ -768,13 +799,13 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         };
 
         if (Is_Page(FOLLOWERS_PAGE)) {
-            MCM::Followers_t::Self()->On_Option_Select(option);
+            MCM::Followers_t::Self()->On_Option_Select(option, user_callback);
         } else if (Is_Page(MEMBERS_PAGE)) {
-            MCM::Members_t::Self()->On_Option_Select(option);
+            MCM::Members_t::Self()->On_Option_Select(option, user_callback);
         } else if (Is_Page(MANNEQUINS_PAGE)) {
-            MCM::Mannequins_t::Self()->On_Option_Select(option);
+            MCM::Mannequins_t::Self()->On_Option_Select(option, user_callback);
         } else if (Is_Page(FILTER_PAGE)) {
-            MCM::Filter_t::Self()->On_Option_Select(option);
+            MCM::Filter_t::Self()->On_Option_Select(option, user_callback);
         } else if (Is_Page(CHESTS_PAGE)) {
             MCM::Chests_t::Self()->On_Option_Select(option);
         } else if (Is_Page(SETTINGS_PAGE)) {
@@ -783,7 +814,11 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             MCM::Hotkeys_t::Self()->On_Option_Select(option);
         } else if (Is_Page(LOGS_PAGE)) {
             MCM::Logs_t::Self()->On_Option_Select(option);
+        } else {
+            Return_Latent(user_callback);
         }
+
+        return true;
     }
 
     void Main_t::On_Option_Menu_Open(Int_t option)
@@ -1011,11 +1046,11 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        #define LMETHOD(STR_FUNC_, ARG_NUM_, METHOD_, ...)  \
-        M                                                   \
-            FORWARD_LATENT_METHOD(vm, Class_Name(), Main_t, \
-                           STR_FUNC_, ARG_NUM_,             \
-                           METHOD_, __VA_ARGS__);           \
+        #define LMETHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...) \
+        M                                                           \
+            FORWARD_LATENT_METHOD(vm, Class_Name(), Main_t,         \
+                           STR_FUNC_, ARG_NUM_,                     \
+                           RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
         // these should be latent. they will need to pass a callback through the tree. We need
@@ -1024,7 +1059,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         // state in the before callback execution (especially with Show_Message())
 
         METHOD("OnPageReset", 1, void, On_Build_Page, String_t);
-        METHOD("OnOptionSelect", 1, void, On_Option_Select, Int_t);
+        LMETHOD("OnOptionSelect", 1, void, On_Option_Select, Int_t);
         METHOD("OnOptionMenuOpen", 1, void, On_Option_Menu_Open, Int_t);
         METHOD("OnOptionMenuAccept", 2, void, On_Option_Menu_Accept, Int_t, Int_t);
         METHOD("OnOptionSliderOpen", 1, void, On_Option_Slider_Open, Int_t);

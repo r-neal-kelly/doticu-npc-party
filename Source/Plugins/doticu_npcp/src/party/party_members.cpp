@@ -1076,6 +1076,39 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
     }
 
+    void Members_t::u_0_9_12()
+    {
+        Actor_Base_t* player_actor_base = static_cast<Actor_Base_t*>
+            (Consts::Player_Actor()->baseForm);
+
+        Vector_t<Member_t*> filled = Filled();
+        for (size_t idx = 0, count = filled.size(); idx < count; idx += 1) {
+            Member_t* member = filled[idx];
+            if (member) {
+                Actor_t* actor = member->Actor();
+                Actor_Base_t* actor_base = Actor2::Dynamic_Base(actor);
+                Object_Ref::Inventory_t actor_inventory(actor);
+                for (size_t idx = 0, end = actor_inventory.entries.size(); idx < end; idx += 1) {
+                    Object_Ref::Entry_t& entry = actor_inventory.entries[idx];
+                    if (Actor2::Outfit_Inventory_t::Can_Evaluate_Actor_Form(entry.form)) {
+                        if (entry.xentry && entry.xentry->xlists) {
+                            for (XLists_t::Iterator it = entry.xentry->xlists->Begin(); !it.End(); ++it) {
+                                XList_t* xlist = it.Get();
+                                if (xlist) {
+                                    ExtraOwnership* xownership = static_cast<ExtraOwnership*>
+                                        (xlist->GetByType(kExtraData_Ownership));
+                                    if (xownership && xownership->owner == player_actor_base) {
+                                        xownership->owner = actor_base;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     void Members_t::Register_Me(Virtual_Machine_t* vm)
     {
         #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \

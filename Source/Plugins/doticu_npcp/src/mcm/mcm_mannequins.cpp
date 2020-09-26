@@ -458,8 +458,11 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         }
     }
 
-    void Mannequins_t::On_Option_Select(Int_t option)
+    void Mannequins_t::On_Option_Select(Int_t option, Callback_t<>* user_callback)
     {
+        using UCallback_t = Callback_t<>*;
+        NPCP_ASSERT(user_callback);
+
         Int_t current_view = Current_View();
         if (current_view == CODES::VIEW::MANNEQUINS) {
             MCM::Main_t* mcm = Main();
@@ -512,6 +515,9 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 mcm->Disable(option);
                 mcm->Reset_Page();
             }
+
+            user_callback->operator()();
+            delete user_callback;
         } else if (current_view == CODES::VIEW::MANNEQUINS_CELL) {
             MCM::Main_t* mcm = Main();
             if (option == Back_Option_Variable()->Int()) {
@@ -565,8 +571,11 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 mcm->Disable(option);
                 mcm->Reset_Page();
             }
+
+            user_callback->operator()();
+            delete user_callback;
         } else if (current_view == CODES::VIEW::MANNEQUINS_MEMBER) {
-            MCM::Member_t::Self()->On_Option_Select(option);
+            MCM::Member_t::Self()->On_Option_Select(option, user_callback);
         }
     }
 

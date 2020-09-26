@@ -552,10 +552,13 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         }
     }
 
-    void Filter_t::On_Option_Select(Int_t option)
+    void Filter_t::On_Option_Select(Int_t option, Callback_t<>* user_callback)
     {
+        using UCallback_t = Callback_t<>*;
+        NPCP_ASSERT(user_callback);
+
         if (Current_View() == CODES::VIEW::FILTER_MEMBERS) {
-            MCM::Members_t::Self()->On_Option_Select(option);
+            MCM::Members_t::Self()->On_Option_Select(option, user_callback);
         } else {
             MCM::Main_t* mcm = Main();
 
@@ -646,6 +649,9 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             } else if (option == Is_Non_Saddler_Option_Variable()->Int()) {
                 Toggle_Ternary(Is_Saddler_Option_Variable(), Is_Non_Saddler_Option_Variable(), Saddler_Ternary_Variable(), false);
             }
+
+            user_callback->operator()();
+            delete user_callback;
         }
     }
 

@@ -148,6 +148,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         void u_0_9_6();
         void u_0_9_8();
         void u_0_9_9();
+        void u_0_9_12();
 
     public:
         static void Register_Me(Virtual_Machine_t* vm);

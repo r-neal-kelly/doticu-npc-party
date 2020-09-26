@@ -59,10 +59,6 @@ namespace doticu_npcp { namespace XList {
     bool Is_Leveled_Item(XList_t* xlist);
     bool Is_Quest_Item(XList_t* xlist);
 
-    void Add_Outfit2_Flag(XList_t* xlist);
-    void Remove_Outfit2_Flag(XList_t* xlist, Form_t* owner);
-    bool Has_Outfit2_Flag(XList_t* xlist);
-
     void Log(XList_t* xlist, const std::string str_indent);
 
 }}

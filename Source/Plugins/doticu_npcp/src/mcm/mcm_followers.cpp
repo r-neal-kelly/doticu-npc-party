@@ -201,98 +201,96 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Do_Next_Follower_Variable()->Bool(true);
     }
 
-    void Followers_t::Goto_Followers_Member(Bool_t is_building_page)
-    {
-        Array_t* followers = Followers();
-        if (followers && followers->count > 0) {
-            if (is_building_page) {
-                if (Do_Previous_Follower()) {
-                    Do_Previous_Follower(false);
-                    Follower(Previous_Follower());
-                } else if (Do_Next_Follower()) {
-                    Do_Next_Follower(false);
-                    Follower(Next_Follower());
-                }
-                Party::Follower_t* follower = Follower();
-                if (follower && follower->Is_Filled()) {
-                    Current_View(CODES::VIEW::FOLLOWERS_MEMBER);
-                    MCM::Member_t* mcm_member = MCM::Member_t::Self();
-                    mcm_member->View_Followers_Member(follower->Member());
-                    mcm_member->On_Build_Page();
-                }
-            } else {
-                Party::Follower_t* follower = Follower();
-                if (follower && follower->Is_Filled()) {
-                    Current_View(CODES::VIEW::FOLLOWERS_MEMBER);
-                    MCM::Member_t::Self()->View_Followers_Member(follower->Member());
-                    MCM::Main_t::Self()->Reset_Page();
-                }
-            }
-        }
-    }
-
     void Followers_t::On_Build_Page()
     {
         if (Current_View() == CODES::VIEW::FOLLOWERS_MEMBER) {
-            Party::Follower_t* follower = Follower();
-            if (follower && follower->Is_Filled()) {
-                Goto_Followers_Member(true);
-                return;
+            Array_t* followers = Followers();
+            if (followers && followers->count > 0) {
+                Party::Follower_t* follower = Follower();
+                if (follower && follower->Is_Filled()) {
+                    if (Do_Previous_Follower()) {
+                        Do_Previous_Follower(false);
+                        follower = Previous_Follower();
+                        Follower(follower);
+                    } else if (Do_Next_Follower()) {
+                        Do_Next_Follower(false);
+                        follower = Next_Follower();
+                        Follower(follower);
+                    }
+                    if (follower && follower->Is_Filled()) {
+                        Current_View(CODES::VIEW::FOLLOWERS_MEMBER);
+                        MCM::Member_t* mcm_member = MCM::Member_t::Self();
+                        mcm_member->View_Followers_Member(follower->Member());
+                        mcm_member->On_Build_Page();
+                    } else {
+                        Review_Followers();
+                        On_Build_Page();
+                    }
+                } else {
+                    Review_Followers();
+                    On_Build_Page();
+                }
             } else {
                 Review_Followers();
+                On_Build_Page();
             }
-        }
-
-        MCM::Main_t* mcm = Main();
-
-        mcm->Cursor_Position(0);
-        mcm->Cursor_Fill_Mode(Cursor_Fill_Mode_e::LEFT_TO_RIGHT);
-
-        Array_t* followers = Followers();
-        Int_t followers_count = followers ? followers->count : 0;
-        Int_t max_followers = Party::Followers_t::Self()->Max();
-        if (followers_count < 1) {
-            mcm->Title_Text(("Followers: 0/" + std::to_string(max_followers)).c_str());
-            mcm->Add_Header_Option(" No Followers ");
         } else {
-            mcm->Title_Text(("Followers: " + std::to_string(followers_count) + "/" + std::to_string(max_followers)).c_str());
+            MCM::Main_t* mcm = Main();
 
-            int menu_option = mcm->Add_Menu_Option("Command All ", "...");
-            Menu_Option_Variable()->Int(menu_option);
-            Options_Offset_Variable()->Int(menu_option);
-            mcm->Add_Empty_Option();
+            mcm->Cursor_Position(0);
+            mcm->Cursor_Fill_Mode(Cursor_Fill_Mode_e::LEFT_TO_RIGHT);
 
-            mcm->Cursor_Fill_Mode(Cursor_Fill_Mode_e::TOP_TO_BOTTOM);
+            Array_t* followers = Followers();
+            Int_t followers_count = followers ? followers->count : 0;
+            Int_t max_followers = Party::Followers_t::Self()->Max();
+            if (followers_count < 1) {
+                mcm->Title_Text(("Followers: 0/" + std::to_string(max_followers)).c_str());
+                mcm->Add_Header_Option(" No Followers ");
+            } else {
+                mcm->Title_Text(("Followers: " + std::to_string(followers_count) + "/" + std::to_string(max_followers)).c_str());
 
-            for (size_t idx = 0, count = followers_count, cursor = HEADERS; idx < count; idx += 1) {
-                Party::Follower_t* follower = static_cast<Party::Follower_t*>
-                    (followers->Point(idx)->Alias());
+                int menu_option = mcm->Add_Menu_Option("Command All ", "...");
+                Menu_Option_Variable()->Int(menu_option);
+                Options_Offset_Variable()->Int(menu_option);
+                mcm->Add_Empty_Option();
 
-                mcm->Cursor_Position(cursor);
+                mcm->Cursor_Fill_Mode(Cursor_Fill_Mode_e::TOP_TO_BOTTOM);
 
-                mcm->Add_Header_Option(follower->Name());
-                mcm->Add_Text_Option("   Summon", "");
-                mcm->Add_Text_Option("   Pack", "");
-                if (follower->Is_Immobile()) {
-                    mcm->Add_Text_Option("   Mobilize", "");
-                } else {
-                    mcm->Add_Text_Option("   Immobilize", "");
-                }
-                mcm->Add_Text_Option("   More", "...");
+                for (size_t idx = 0, count = followers_count, cursor = HEADERS; idx < count; idx += 1) {
+                    Party::Follower_t* follower = static_cast<Party::Follower_t*>
+                        (followers->Point(idx)->Alias());
 
-                if (cursor % 2 == 0) {
-                    cursor += 1;
-                } else {
-                    cursor = cursor - 1 + (OPTIONS_PER_FOLLOWER * 2);
+                    mcm->Cursor_Position(cursor);
+
+                    mcm->Add_Header_Option(follower->Name());
+                    mcm->Add_Text_Option("   Summon", "");
+                    mcm->Add_Text_Option("   Pack", "");
+                    if (follower->Is_Immobile()) {
+                        mcm->Add_Text_Option("   Mobilize", "");
+                    } else {
+                        mcm->Add_Text_Option("   Immobilize", "");
+                    }
+                    mcm->Add_Text_Option("   More", "...");
+
+                    if (cursor % 2 == 0) {
+                        cursor += 1;
+                    } else {
+                        cursor = cursor - 1 + (OPTIONS_PER_FOLLOWER * 2);
+                    }
                 }
             }
         }
     }
 
-    void Followers_t::On_Option_Select(Int_t option)
+    void Followers_t::On_Option_Select(Int_t option, Callback_t<>* user_callback)
     {
+        using UCallback_t = Callback_t<>;
+        NPCP_ASSERT(user_callback);
+
+        using namespace Modules::Control;
+
         if (Current_View() == CODES::VIEW::FOLLOWERS_MEMBER) {
-            MCM::Member_t::Self()->On_Option_Select(option);
+            MCM::Member_t::Self()->On_Option_Select(option, user_callback);
         } else {
             MCM::Main_t* mcm = Main();
 
@@ -304,38 +302,52 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                         (followers->Point(indices.follower)->Alias());
                     if (follower && follower->Is_Filled()) {
                         if (indices.option == 1) {
-                            Modules::Control::Commands_t::Self()->Summon(follower->Actor());
-                            mcm->Flicker(option);
+                            Commands_t::Self()->Summon(follower->Actor(), false);
+                            mcm->Flicker(option, user_callback);
                         } else if (indices.option == 2) {
                             mcm->Disable(option);
                             struct VCallback : public Virtual_Callback_t {
                                 Party::Follower_t* follower;
-                                VCallback(Party::Follower_t* follower) :
-                                    follower(follower)
+                                UCallback_t* user_callback;
+                                VCallback(Party::Follower_t* follower, UCallback_t* user_callback) :
+                                    follower(follower), user_callback(user_callback)
                                 {
                                 }
                                 void operator()(Variable_t* result)
                                 {
-                                    Modules::Control::Commands_t::Self()->Open_Pack(follower->Actor());
+                                    Commands_t::Self()->Open_Pack(follower->Actor());
+                                    MCM::Main_t::Self()->Return_Latent(user_callback);
                                 }
                             };
-                            Virtual_Callback_i* vcallback = new VCallback(follower);
+                            Virtual_Callback_i* vcallback = new VCallback(follower, user_callback);
                             mcm->Close_Menus(&vcallback);
                         } else if (indices.option == 3) {
                             mcm->Disable(option);
                             if (follower->Is_Immobile()) {
-                                Modules::Control::Commands_t::Self()->Mobilize(follower->Actor());
+                                Commands_t::Self()->Mobilize(follower->Actor());
                             } else {
-                                Modules::Control::Commands_t::Self()->Immobilize(follower->Actor());
+                                Commands_t::Self()->Immobilize(follower->Actor());
                             }
                             mcm->Reset_Page();
+                            mcm->Return_Latent(user_callback);
                         } else if (indices.option == 4) {
                             mcm->Disable(option);
                             Follower(follower);
-                            Goto_Followers_Member(false);
+                            Current_View(CODES::VIEW::FOLLOWERS_MEMBER);
+                            MCM::Member_t::Self()->View_Followers_Member(follower->Member());
+                            mcm->Reset_Page();
+                            mcm->Return_Latent(user_callback);
+                        } else {
+                            mcm->Return_Latent(user_callback);
                         }
+                    } else {
+                        mcm->Return_Latent(user_callback);
                     }
+                } else {
+                    mcm->Return_Latent(user_callback);
                 }
+            } else {
+                mcm->Return_Latent(user_callback);
             }
         }
     }

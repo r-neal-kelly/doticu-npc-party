@@ -140,7 +140,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         String_t Filter_String();
 
         void On_Build_Page();
-        void On_Option_Select(Int_t option);
+        void On_Option_Select(Int_t option, Callback_t<>* user_callback);
         void On_Option_Menu_Open(Int_t option);
         void On_Option_Menu_Accept(Int_t option, Int_t idx);
         void On_Option_Slider_Open(Int_t option);

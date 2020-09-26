@@ -582,8 +582,11 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         }
     }
 
-    void Member_t::On_Option_Select(Int_t option)
+    void Member_t::On_Option_Select(Int_t option, Callback_t<>* user_callback)
     {
+        using UCallback_t = Callback_t<>*;
+        NPCP_ASSERT(user_callback);
+
         using namespace Modules::Control;
 
         Party::Member_t* member = Party_Member();
@@ -613,7 +616,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 mcm->Reset_Page();
 
             } else if (option == Summon_Option_Variable()->Int()) {
-                Commands_t::Self()->Summon(actor);
+                Commands_t::Self()->Summon(actor, false);
                 Update_Commands();
                 mcm->Flicker(option);
             } else if (option == Goto_Option_Variable()->Int()) {
@@ -761,6 +764,12 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 Commands_t::Self()->Unmember(actor);
                 Go_Back();
             }
+
+            user_callback->operator()();
+            delete user_callback;
+        } else {
+            user_callback->operator()();
+            delete user_callback;
         }
     }
 

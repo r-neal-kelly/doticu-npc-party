@@ -60,7 +60,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         void Count_Heads(Actor_t* actor);
 
         // Member
-        void Summon(Actor_t* actor);
+        void Summon(Actor_t* actor, Bool_t do_notify_success);
         void Goto(Actor_t* actor);
         void Open_Pack(Actor_t* actor);
         void Stash(Actor_t* actor);

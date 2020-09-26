@@ -73,12 +73,16 @@ namespace doticu_npcp { namespace XList {
                 xlist->m_presence = (XList_t::PresenceBitfield*)Heap_Allocate(sizeof(XList_t::PresenceBitfield));
                 NPCP_ASSERT(xlist->m_presence);
 
-                u64* bits = (u64*)xlist->m_presence->bits;
-                bits[0] = 0;
-                bits[1] = 0;
-                bits[2] = 0;
-
                 xlist->m_lock = BSReadWriteLock();
+            }
+
+            u64* bits = (u64*)xlist->m_presence->bits;
+            bits[0] = 0;
+            bits[1] = 0;
+            bits[2] = 0;
+
+            for (XData_t* xdata = xlist->m_data; xdata != nullptr; xdata = xdata->next) {
+                xlist->MarkType(xdata->GetType(), false);
             }
 
             XCount_t* xcount = static_cast<XCount_t*>(xlist->GetByType(kExtraData_Count));
@@ -104,12 +108,16 @@ namespace doticu_npcp { namespace XList {
                 xlist->m_presence = (XList_t::PresenceBitfield*)Heap_Allocate(sizeof(XList_t::PresenceBitfield));
                 NPCP_ASSERT(xlist->m_presence);
 
-                u64* bits = (u64*)xlist->m_presence->bits;
-                bits[0] = 0;
-                bits[1] = 0;
-                bits[2] = 0;
-
                 xlist->m_lock = BSReadWriteLock();
+            }
+
+            u64* bits = (u64*)xlist->m_presence->bits;
+            bits[0] = 0;
+            bits[1] = 0;
+            bits[2] = 0;
+
+            for (XData_t* xdata = xlist->m_data; xdata != nullptr; xdata = xdata->next) {
+                xlist->MarkType(xdata->GetType(), false);
             }
         }
     }
@@ -383,52 +391,6 @@ namespace doticu_npcp { namespace XList {
         }
 
         return Object_Ref::Is_Quest_Item(ref);
-    }
-
-    void Add_Outfit2_Flag(XList_t* xlist)
-    {
-        if (xlist) {
-            ExtraOwnership* xowner = static_cast<ExtraOwnership*>
-                (xlist->GetByType(kExtraData_Ownership));
-            if (xowner) {
-                xowner->owner = Consts::Player_Actor()->baseForm;
-            } else {
-                xowner = XData::Create_Ownership(Consts::Player_Actor()->baseForm);
-                xlist->Add(kExtraData_Ownership, xowner);
-            }
-        }
-    }
-
-    void Remove_Outfit2_Flag(XList_t* xlist, Form_t* owner)
-    {
-        if (xlist) {
-            ExtraOwnership* xowner = static_cast<ExtraOwnership*>
-                (xlist->GetByType(kExtraData_Ownership));
-            if (xowner) {
-                if (owner) {
-                    xowner->owner = owner;
-                } else {
-                    xlist->Remove(kExtraData_Ownership, xowner);
-                    XData::Destroy(xowner);
-                }
-            } else {
-                if (owner) {
-                    xowner = XData::Create_Ownership(owner);
-                    xlist->Add(kExtraData_Ownership, xowner);
-                }
-            }
-        }
-    }
-
-    bool Has_Outfit2_Flag(XList_t* xlist)
-    {
-        if (xlist) {
-            ExtraOwnership* xowner = static_cast<ExtraOwnership*>
-                (xlist->GetByType(kExtraData_Ownership));
-            return xowner && xowner->owner == Consts::Player_Actor()->baseForm;
-        } else {
-            return false;
-        }
     }
 
     void Log(XList_t *xlist, const std::string str_indent) {

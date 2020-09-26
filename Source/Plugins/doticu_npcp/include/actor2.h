@@ -32,13 +32,15 @@ namespace doticu_npcp { namespace Actor2 {
         XList_t* loose_xlist = nullptr;
 
         Outfit_Entry_t(Entry_t* outfit1 = nullptr, Entry_t* outfit2 = nullptr, Int_t loose_count = 0);
-        ~Outfit_Entry_t();
 
         Form_t* Form();
         XList_t* Copy(Merged_XList_t* outfit_xlist, Actor_Base_t* owner);
+        void Cleanup();
     };
 
     class Outfit_Inventory_t {
+    public:
+        static Bool_t Can_Evaluate_Actor_Form(Form_t* form);
     public:
         Inventory_t outfit1;
         Inventory_t outfit2;
@@ -50,15 +52,15 @@ namespace doticu_npcp { namespace Actor2 {
 
         Int_t Count_Loose(Outfit_Entry_t* entry);
 
-        Bool_t Can_Evaluate_Actor_Form(Form_t* form);
-
         Bool_t Evaluate_Linchpin(Inventory_t* actor);
         Bool_t Evaluate_Existing(Inventory_t* actor, Inventory_t* transfer);
         Bool_t Evaluate_Missing(Inventory_t* actor);
+
+        void Cleanup();
     };
 
     Bool_t Set_Outfit2(Actor_t* actor, Reference_t* outfit1 = nullptr, Reference_t* outfit2 = nullptr, Reference_t* transfer = nullptr);
-    void Split_Inventory(Actor_t* actor, Reference_t* worn_out, Reference_t* pack_out);
+    void Split_Inventory(Actor_t* actor, Reference_t* worn, Reference_t* pack);
     void Cache_Worn(Actor_t* actor, Reference_t* cache_out);
     void Cache_BContainer(Actor_t* actor, Reference_t* cache_out);
 

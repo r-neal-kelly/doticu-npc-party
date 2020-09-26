@@ -248,9 +248,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         if (clone_outfit == CODES::OUTFIT::BASE) {
             //Actor2::Flag_Outfit1_As_Outfit2(clone);
         } else if (clone_outfit == CODES::OUTFIT::REFERENCE) {
-            Reference_t* trash = Object_Ref::Create_Container();
-            Actor2::Set_Outfit2(clone, nullptr, original, trash);
-            Object_Ref::Delete_Safe(trash);
+            Actor2::Set_Outfit2(clone, nullptr, original);
             Remove_All_Tokens(clone);
         }
 

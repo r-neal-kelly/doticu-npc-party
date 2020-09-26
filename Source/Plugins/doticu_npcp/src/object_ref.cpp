@@ -51,15 +51,14 @@ namespace doticu_npcp { namespace Object_Ref {
 
     XContainer_t *Get_XContainer(TESObjectREFR *obj, bool do_create) {
         if (obj) {
+            XList::Validate_No_Count(&obj->extraData);
             if (do_create) {
                 Init_Container_If_Needed(obj);
             }
             XContainer_t* xcontainer = static_cast<XContainer_t*>
                 (obj->extraData.GetByType(kExtraData_ContainerChanges));
-            if (xcontainer && !xcontainer->changes) {
+            if (xcontainer) {
                 Init_Container_If_Needed(obj);
-                xcontainer = static_cast<XContainer_t*>
-                    (obj->extraData.GetByType(kExtraData_ContainerChanges));
             }
             return xcontainer;
         } else {
@@ -70,8 +69,13 @@ namespace doticu_npcp { namespace Object_Ref {
     void Validate_XContainer(Reference_t* ref)
     {
         if (ref) {
+            XList::Validate_No_Count(&ref->extraData);
             XContainer_t* xcontainer = Get_XContainer(ref, false);
             if (xcontainer) {
+                if (!xcontainer->changes) {
+                    Init_Container_If_Needed(ref);
+                    NPCP_ASSERT(xcontainer->changes);
+                }
                 xcontainer->changes->Validate();
             }
         }
@@ -346,7 +350,7 @@ namespace doticu_npcp { namespace Object_Ref {
         }
 
         XContainer_t* xcontainer = Object_Ref::Get_XContainer(from, false);
-        if (xcontainer) {
+        if (xcontainer && xcontainer->changes && xcontainer->changes->xentries) {
             std::vector<XEntry_t*> xentries_to_destroy;
             xentries_to_destroy.reserve(4);
 
@@ -355,7 +359,8 @@ namespace doticu_npcp { namespace Object_Ref {
                 if (xentry) {
                     Form_t* form = xentry->form;
                     if (form) {
-                        if (should_remove_xform(form)) {
+                        //xentry->Validate(Get_BEntry_Count(from, form));
+                        if (should_remove_xform(form) && xentry->xlists) {
                             std::vector<XList_t*> xlists_to_remove;
                             xlists_to_remove.reserve(2);
 
@@ -571,13 +576,13 @@ namespace doticu_npcp { namespace Object_Ref {
 
             XContainer_t* xcontainer = Get_XContainer(ref, false);
             if (xcontainer) {
-                Init_Container_If_Needed(ref);
                 for (XEntries_t::Iterator it = xcontainer->changes->xentries->Begin(); !it.End(); ++it) {
                     XEntry_t* xentry = it.Get();
                     if (xentry && xentry->form && xentry->form->IsPlayable()) {
                         Reference_t* category = only_custom_categories ?
                             Game::Get_NPCP_Custom_Category(xentry->form) :
                             Game::Get_NPCP_Category(xentry->form);
+                        Init_Container_If_Needed(category);
                         if (category && category != ref) {
                             Int_t bentry_count = Get_BEntry_Count(ref, xentry->form);
                             xentry->Validate(bentry_count);
@@ -641,6 +646,7 @@ namespace doticu_npcp { namespace Object_Ref {
                                 Reference_t* category = only_custom_categories ?
                                     Game::Get_NPCP_Custom_Category(bentry->form) :
                                     Game::Get_NPCP_Category(bentry->form);
+                                Init_Container_If_Needed(category);
                                 if (category && category != ref) {
                                     XEntry_t* category_xentry = Get_XEntry(category, bentry->form, true);
                                     NPCP_ASSERT(category_xentry);
@@ -964,9 +970,10 @@ namespace doticu_npcp { namespace Object_Ref {
     void Init_Container_If_Needed(Reference_t* ref)
     {
         if (ref) {
+            XList::Validate_No_Count(&ref->extraData);
             XContainer_t* xcontainer = static_cast<XContainer_t*>
                 (ref->extraData.GetByType(kExtraData_ContainerChanges));
-            if (!xcontainer || !xcontainer->changes) {
+            if (!xcontainer || !xcontainer->changes || !xcontainer->changes->xentries) {
                 Weapon_t* blank_weapon = Consts::Blank_Weapon();
                 ref->Equip_Weapon(blank_weapon, 0, false, 0, 0);
                 XEntry_t* xentry = Get_XEntry(ref, blank_weapon, false);
@@ -1444,6 +1451,8 @@ namespace doticu_npcp { namespace Object_Ref {
             xcontainer = static_cast<XContainer_t*>
                 (reference->extraData.GetByType(kExtraData_ContainerChanges));
             NPCP_ASSERT(xcontainer);
+            NPCP_ASSERT(xcontainer->changes);
+            NPCP_ASSERT(xcontainer->changes->xentries);
 
             bcontainer = reference->baseForm ?
                 DYNAMIC_CAST(reference->baseForm, TESForm, TESContainer) : nullptr;
@@ -1533,10 +1542,10 @@ namespace doticu_npcp { namespace Object_Ref {
     Entry_t* Inventory_t::Entry(Form_t* form)
     {
         if (reference && form) {
-            for (size_t idx = 0, count = entries.size(); idx < count; idx += 1) {
-                Entry_t* entry = &entries[idx];
-                if (entry->form == form) {
-                    return entry;
+            for (size_t idx = 0, end = entries.size(); idx < end; idx += 1) {
+                Entry_t& entry = entries[idx];
+                if (entry.form == form) {
+                    return &entry;
                 }
             }
             return nullptr;
@@ -1771,7 +1780,7 @@ namespace doticu_npcp { namespace Object_Ref {
     void Inventory_t::Log(std::string indent)
     {
         if (reference) {
-            _MESSAGE((indent + "Log_Inventory: %s").c_str(), Get_Name(reference));
+            _MESSAGE((indent + "Log_Inventory: %s {").c_str(), Get_Name(reference));
 
             for (size_t idx = 0, end = entries.size(); idx < end; idx += 1) {
                 Entry_t& entry = entries[idx];
@@ -1801,8 +1810,25 @@ namespace doticu_npcp { namespace Object_Ref {
                 }
             }
 
-            _MESSAGE("");
+            _MESSAGE("}\n");
         }
+    }
+
+    Vector_t<XList_t*> Entry_t::XLists()
+    {
+        Vector_t<XList_t*> xlists;
+        xlists.reserve(4);
+
+        if (xentry && xentry->xlists) {
+            for (XLists_t::Iterator it = xentry->xlists->Begin(); !it.End(); ++it) {
+                XList_t* xlist = it.Get();
+                if (xlist) {
+                    xlists.push_back(xlist);
+                }
+            }
+        }
+
+        return xlists;
     }
 
     Merged_XLists_t::Merged_XLists_t()

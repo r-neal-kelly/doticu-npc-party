@@ -144,6 +144,16 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
+    Bool_t Outfit_Inventory_t::Can_Evaluate_Actor_Form(Form_t* form)
+    {
+        NPCP_ASSERT(form);
+
+        Form_t* linchpin = Consts::Blank_Armor();
+
+        return form != linchpin && form->formType != kFormType_LeveledItem &&
+            (form->IsPlayable() || form->IsArmor() || form->IsWeapon() || form->IsAmmo() || form->IsLight());
+    }
+
     Outfit_Inventory_t::Outfit_Inventory_t(Reference_t* outfit1_ref, Reference_t* outfit2_ref) :
         outfit1(outfit1_ref), outfit2(outfit2_ref)
     {
@@ -216,13 +226,6 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
-    Outfit_Entry_t::~Outfit_Entry_t()
-    {
-        if (loose_xlist != nullptr) {
-            //XList::Destroy(loose_xlist);
-        }
-    }
-
     Form_t* Outfit_Entry_t::Form()
     {
         if (outfit1) {
@@ -243,6 +246,13 @@ namespace doticu_npcp { namespace Actor2 {
         XList::Count(new_xlist, merged_xlists.Count(outfit_xlist));
         XList::Owner(new_xlist, owner);
         return new_xlist;
+    }
+
+    void Outfit_Entry_t::Cleanup()
+    {
+        if (loose_xlist) {
+            XList::Destroy(loose_xlist);
+        }
     }
 
     Outfit_Entry_t* Outfit_Inventory_t::Entry(Form_t* form)
@@ -277,16 +287,6 @@ namespace doticu_npcp { namespace Actor2 {
         return count;
     }
 
-    Bool_t Outfit_Inventory_t::Can_Evaluate_Actor_Form(Form_t* form)
-    {
-        NPCP_ASSERT(form);
-
-        static Form_t* linchpin = Consts::Blank_Armor();
-
-        return form != linchpin && form->formType != kFormType_LeveledItem &&
-            (form->IsPlayable() || form->IsArmor() || form->IsWeapon() || form->IsAmmo() || form->IsLight());
-    }
-
     Bool_t Outfit_Inventory_t::Evaluate_Linchpin(Object_Ref::Inventory_t* actor)
     {
         NPCP_ASSERT(actor);
@@ -294,45 +294,34 @@ namespace doticu_npcp { namespace Actor2 {
         Bool_t do_update = false;
 
         Form_t* linchpin = Consts::Blank_Armor();
+
         Entry_t* linchpin_entry = actor->Entry(linchpin);
-        actor->Validate(linchpin_entry);
         if (linchpin_entry) {
             Int_t linchpin_count = actor->Count(linchpin_entry);
             if (linchpin_count < 1) {
-                actor->Add_Loose(linchpin_entry, 1);
                 do_update = true;
+                actor->Add_Loose(linchpin_entry, 1);
             } else if (linchpin_count > 1) {
-                if (linchpin_entry->xentry) {
-                    Vector_t<XList_t*> xlists_to_remove;
-                    xlists_to_remove.reserve(2);
-                    if (linchpin_entry->xentry->xlists) {
-                        for (XLists_t::Iterator it = linchpin_entry->xentry->xlists->Begin(); !it.End(); ++it) {
-                            XList_t* xlist = it.Get();
-                            if (xlist && !xlist->HasType(kExtraData_Worn) && !xlist->HasType(kExtraData_WornLeft)) {
-                                xlists_to_remove.push_back(xlist);
-                            }
-                        }
-                    }
-                    Int_t xlists_removed = 0;
-                    for (size_t idx = 0, count = xlists_to_remove.size(); idx < count; idx += 1) {
-                        XList_t* xlist = xlists_to_remove[idx];
+                do_update = true;
+                Vector_t<XList_t*> xlists = linchpin_entry->XLists();
+                for (size_t idx = 0, end = xlists.size(); idx < end; idx += 1) {
+                    XList_t* xlist = xlists[idx];
+                    if (xlist->HasType(kExtraData_Worn) || xlist->HasType(kExtraData_WornLeft)) {
+                        do_update = false;
+                    } else {
                         actor->Remove_XList(linchpin_entry, xlist);
-                        xlists_removed += XList::Count(xlist);
                         XList::Destroy(xlist);
                     }
-                    linchpin_count -= xlists_removed;
-                    if (linchpin_count > 1) {
-                        actor->Remove_Loose(linchpin_entry, linchpin_count - 1);
-                    }
-                } else {
-                    actor->Remove_Loose(linchpin_entry, linchpin_count - 1);
-                    do_update = true;
+                }
+                Int_t linchpin_loose_count = actor->Count_Loose(linchpin_entry);
+                if (linchpin_loose_count > 0) {
+                    actor->Remove_Loose(linchpin_entry, linchpin_loose_count);
                 }
             }
         } else {
+            do_update = true;
             linchpin_entry = actor->Add_Entry(linchpin);
             actor->Add_Loose(linchpin_entry, 1);
-            do_update = true;
         }
 
         return do_update;
@@ -426,18 +415,18 @@ namespace doticu_npcp { namespace Actor2 {
                     if (!transfer_entry) {
                         transfer_entry = transfer->Add_Entry(form);
                     }
-                    transfer->Add_Loose(transfer_entry, actor_loose_count);
                     actor->Remove_Loose(actor_entry, actor_loose_count);
+                    transfer->Add_Loose(transfer_entry, actor_loose_count);
                 }
 
                 if (outfit_xlists) {
                     Merged_XLists_t actor_xlists = Merged_XLists_t(actor_entry, false);
-                    for (size_t idx = 0, count = outfit_xlists->size(); idx < count; idx += 1) {
-                        Merged_XList_t* outfit_xlist = &outfit_xlists->at(idx);
-                        Merged_XList_t* actor_xlist = actor_xlists.Merged_XList(outfit_xlist->at(0));
+                    for (size_t idx = 0, end = outfit_xlists->size(); idx < end; idx += 1) {
+                        Merged_XList_t& outfit_xlist = outfit_xlists->at(idx);
+                        Merged_XList_t* actor_xlist = actor_xlists.Merged_XList(outfit_xlist.at(0));
                         if (!actor_xlist) {
                             do_update = true;
-                            actor->Add_XList(actor_entry, outfit_entry->Copy(outfit_xlist, actor_base));
+                            actor->Add_XList(actor_entry, outfit_entry->Copy(&outfit_xlist, actor_base));
                         }
                     }
                 }
@@ -477,6 +466,14 @@ namespace doticu_npcp { namespace Actor2 {
 
         return do_update;
     }
+
+    void Outfit_Inventory_t::Cleanup()
+    {
+        for (size_t idx = 0, end = entries.size(); idx < end; idx += 1) {
+            Outfit_Entry_t& outfit_entry = entries[idx];
+            outfit_entry.Cleanup();
+        }
+    }
     
     Bool_t Set_Outfit2(Actor_t* actor, Reference_t* outfit1, Reference_t* outfit2, Reference_t* transfer)
     {
@@ -498,6 +495,7 @@ namespace doticu_npcp { namespace Actor2 {
         Bool_t should_update1 = outfit_inventory.Evaluate_Linchpin(&actor_inventory);
         Bool_t should_update2 = outfit_inventory.Evaluate_Existing(&actor_inventory, &transfer_inventory);
         Bool_t should_update3 = outfit_inventory.Evaluate_Missing(&actor_inventory);
+        outfit_inventory.Cleanup();
 
         if (do_delete_transfer) {
             Object_Ref::Delete_Safe(transfer);
@@ -506,117 +504,54 @@ namespace doticu_npcp { namespace Actor2 {
         return should_update1 || should_update2 || should_update3;
     }
 
-    void Split_Inventory(Actor_t* actor, Reference_t* worn_out, Reference_t* pack_out)
+    void Split_Inventory(Actor_t* actor, Reference_t* worn, Reference_t* pack)
     {
         NPCP_ASSERT(actor);
-        NPCP_ASSERT(worn_out);
-        NPCP_ASSERT(pack_out);
+        NPCP_ASSERT(worn);
+        NPCP_ASSERT(pack);
 
         Form_t* linchpin = Consts::Blank_Armor();
+        Actor_Base_t* actor_base = Dynamic_Base(actor);
 
-        XContainer_t* xcontainer_worn = Object_Ref::Get_XContainer(worn_out, true);
-        NPCP_ASSERT(xcontainer_worn);
+        Inventory_t actor_inventory(actor);
+        Inventory_t worn_inventory(worn);
+        Inventory_t pack_inventory(pack);
 
-        XContainer_t* xcontainer_pack = Object_Ref::Get_XContainer(pack_out, true);
-        NPCP_ASSERT(xcontainer_pack);
+        for (size_t idx = 0, end = actor_inventory.entries.size(); idx < end; idx += 1) {
+            Entry_t& actor_entry = actor_inventory.entries[idx];
+            Form_t* form = actor_entry.form;
+            if (form && form != linchpin && form->formType != kFormType_LeveledItem && form->IsPlayable()) {
+                Entry_t* worn_entry = worn_inventory.Entry(form);
+                Entry_t* pack_entry = pack_inventory.Entry(form);
 
-        XContainer_t* xcontainer_actor = Object_Ref::Get_XContainer(actor, false);
-        if (xcontainer_actor) {
-            for (XEntries_t::Iterator it_xentry_actor = xcontainer_actor->changes->xentries->Begin(); !it_xentry_actor.End(); ++it_xentry_actor) {
-                XEntry_t* xentry_actor = it_xentry_actor.Get();
-                if (!xentry_actor || !xentry_actor->form || xentry_actor->form == linchpin) {
-                    continue;
-                }
-
-                TESForm* form_actor = xentry_actor->form;
-                if (!form_actor->IsPlayable()) {
-                    continue;
-                }
-
-                xentry_actor->Validate(Object_Ref::Get_BEntry_Count(actor, form_actor));
-
-                u64 count_xlists_actor = 0;
-                if (xentry_actor->xlists) {
-                    std::vector<XList_t*> vec_xlists_worn;
-                    std::vector<XList_t*> vec_xlists_pack;
-                    vec_xlists_worn.reserve(2);
-                    vec_xlists_pack.reserve(2);
-
-                    for (XLists_t::Iterator it_xlist_actor = xentry_actor->xlists->Begin(); !it_xlist_actor.End(); ++it_xlist_actor) {
-                        XList_t* xlist_actor = it_xlist_actor.Get();
-                        if (xlist_actor) {
-                            count_xlists_actor += XList::Count(xlist_actor);
-
-                            if (XList::Is_Worn(xlist_actor) || XList::Has_Outfit2_Flag(xlist_actor)) {
-                                vec_xlists_worn.push_back(xlist_actor);
-                            } else {
-                                vec_xlists_pack.push_back(xlist_actor);
-                            }
+                Vector_t<XList_t*> xlists = actor_entry.XLists();
+                for (size_t idx = 0, end = xlists.size(); idx < end; idx += 1) {
+                    XList_t* xlist = xlists[idx];
+                    if (XList::Is_Worn(xlist) || XList::Is_Outfit2_Item(xlist, actor_base)) {
+                        if (!worn_entry) {
+                            worn_entry = worn_inventory.Add_Entry(form);
                         }
-                    }
-
-                    if (vec_xlists_worn.size() > 0) {
-                        XEntry_t* xentry_worn = Object_Ref::Get_XEntry(worn_out, form_actor, true);
-                        if (!xentry_worn) {
-                            continue;
+                        actor_inventory.Remove_XList(&actor_entry, xlist);
+                        worn_inventory.Add_XList(worn_entry, xlist);
+                    } else {
+                        if (!pack_entry) {
+                            pack_entry = pack_inventory.Add_Entry(form);
                         }
-
-                        for (u64 idx = 0, size = vec_xlists_worn.size(); idx < size; idx += 1) {
-                            XList_t* xlist_worn = vec_xlists_worn[idx];
-                            XList_t* xlist_copy = XList::Copy(xlist_worn);
-                            if (xlist_copy) {
-                                xentry_worn->Add_XList(xlist_copy);
-                            } else {
-                                xentry_worn->Increment(XList::Count(xlist_worn));
-                            }
-                        }
-                    }
-
-                    if (vec_xlists_pack.size() > 0) {
-                        XEntry_t* xentry_pack = Object_Ref::Get_XEntry(pack_out, form_actor, true);
-                        if (!xentry_pack) {
-                            continue;
-                        }
-
-                        for (u64 idx = 0, size = vec_xlists_pack.size(); idx < size; idx += 1) {
-                            XList_t* xlist_pack = vec_xlists_pack[idx];
-                            XList_t* xlist_copy = XList::Copy(xlist_pack);
-                            if (xlist_copy) {
-                                xentry_pack->Add_XList(xlist_copy);
-                            } else {
-                                xentry_pack->Increment(XList::Count(xlist_pack));
-                            }
-                        }
+                        actor_inventory.Remove_XList(&actor_entry, xlist);
+                        pack_inventory.Add_XList(pack_entry, xlist);
                     }
                 }
 
-                u64 count_remaining = Object_Ref::Get_BEntry_Count(actor, form_actor) + xentry_actor->Delta_Count() - count_xlists_actor;
-                if (count_remaining > 0) {
-                    XEntry_t* xentry_pack = Object_Ref::Get_XEntry(pack_out, form_actor, true);
-                    if (xentry_pack) {
-                        xentry_pack->Increment(count_remaining);
+                Int_t actor_loose_count = actor_inventory.Count_Loose(&actor_entry);
+                if (actor_loose_count > 0) {
+                    if (!pack_entry) {
+                        pack_entry = pack_inventory.Add_Entry(form);
                     }
-                }
-            }
-        }
-
-        BContainer_t* bcontainer_actor = Object_Ref::Get_BContainer(actor);
-        if (bcontainer_actor) {
-            for (u64 idx = 0; idx < bcontainer_actor->numEntries; idx += 1) {
-                BEntry_t* bentry_actor = bcontainer_actor->entries[idx];
-                if (!bentry_actor || !bentry_actor->form || bentry_actor->count < 1) {
-                    continue;
+                    actor_inventory.Remove_Loose(&actor_entry, actor_loose_count);
+                    pack_inventory.Add_Loose(pack_entry, actor_loose_count);
                 }
 
-                TESForm* form_actor = bentry_actor->form;
-                if (form_actor == linchpin || form_actor->formType == kFormType_LeveledItem || !form_actor->IsPlayable()) {
-                    continue;
-                }
-
-                if (!Object_Ref::Has_XEntry(actor, form_actor)) {
-                    XEntry_t* xentry_pack = Object_Ref::Get_XEntry(pack_out, form_actor, true);
-                    xentry_pack->Increment(bentry_actor->count);
-                }
+                actor_inventory.Try_To_Destroy_Entry(&actor_entry);
             }
         }
     }

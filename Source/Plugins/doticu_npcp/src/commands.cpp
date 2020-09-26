@@ -457,7 +457,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
     // Member
 
-    void Commands_t::Summon(Actor_t* actor)
+    void Commands_t::Summon(Actor_t* actor, Bool_t do_notify_success)
     {
         Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
 
@@ -473,7 +473,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
         switch (code) {
             case (CODES::SUCCESS):
-                return Log_Note(name, " has been summoned.");
+                return do_notify_success ? Log_Note(name, " has been summoned.") : (void)0;
             case (CODES::MEMBER):
                 return Log_Note(name, " isn't a member, and so can't be summoned.");
             case (CODES::MANNEQUIN):

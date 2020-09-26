@@ -172,14 +172,15 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         void Disable(Int_t option, Bool_t do_render = true);
         void Show(Int_t option, Bool_t do_render = true, Bool_t with_unmap = false);
         void Hide(Int_t option, Bool_t do_render = true);
-        void Flicker(Int_t option);
+        void Flicker(Int_t option, Callback_t<>* user_callback = nullptr);
         String_t Concat(const char* a, const char* b);
         String_t Concat(const char* a, const char* b, const char* c);
+        void Return_Latent(Callback_t<>* user_callback);
 
         void On_Config_Init();
         Bool_t On_Config_Open(Virtual_Machine_t* vm, Stack_ID_t stack_id);
         void On_Build_Page(String_t current_page);
-        void On_Option_Select(Int_t option);
+        Bool_t On_Option_Select(Virtual_Machine_t* vm, Stack_ID_t stack_id, Int_t option);
         void On_Option_Menu_Open(Int_t option);
         void On_Option_Menu_Accept(Int_t option, Int_t idx);
         void On_Option_Slider_Open(Int_t option);

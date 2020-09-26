@@ -53,7 +53,6 @@ namespace doticu_npcp { namespace Object_Ref {
     void Categorize(Reference_t* ref, Bool_t only_custom_categories = false);
     void Log_XContainer(TESObjectREFR *obj);
     void Log_XList(TESObjectREFR *ref_object);
-    void Validate_XContainer(Reference_t* ref);
 
     Worldspace_t* Worldspace(Reference_t* ref);
     Location_t* Location(Reference_t* ref);
@@ -148,6 +147,8 @@ namespace doticu_npcp { namespace Object_Ref {
         Int_t bentry_count = 0;
         XEntry_t* xentry = nullptr;
         Int_t xlist_count = 0;
+
+        Vector_t<XList_t*> XLists();
     };
 
     class Merged_XList_t : public Vector_t<XList_t*> {
