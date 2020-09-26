@@ -1738,24 +1738,19 @@ namespace doticu_npcp { namespace Object_Ref {
         }
     }
 
-    void Inventory_t::Increment_XList(Entry_t* entry, XList_t* xlist, Int_t count)
+    void Inventory_t::Increment_XList(Entry_t* entry, XList_t* xlist, Int_t increment)
     {
-        if (reference && entry && xlist && count > 0) {
-            XList::Increment(xlist, count);
-            entry->xlist_count += count;
+        if (reference && entry && entry->xentry && xlist && increment > 0) {
+            entry->xentry->Increment_XList(xlist, increment);
+            entry->xlist_count += increment;
         }
     }
 
-    void Inventory_t::Decrement_XList(Entry_t* entry, XList_t* xlist, Int_t count)
+    void Inventory_t::Decrement_XList(Entry_t* entry, XList_t* xlist, Int_t decrement)
     {
-        if (reference && entry && xlist && count > 0) {
-            Int_t xlist_count = XList::Count(xlist);
-            if (xlist_count > count) {
-                entry->xlist_count -= count;
-            } else {
-                entry->xlist_count -= xlist_count - 1;
-            }
-            XList::Decrement(xlist, count);
+        if (reference && entry && entry->xentry && xlist && decrement > 0) {
+            Int_t amount_decremented = entry->xentry->Decrement_XList(xlist, decrement);
+            entry->xlist_count -= amount_decremented;
         }
     }
 
@@ -1797,7 +1792,7 @@ namespace doticu_npcp { namespace Object_Ref {
                          Count_XLists(&entry),
                          Form::Get_Type_String(entry.form));
                 if (entry.xentry) {
-                    Merged_XLists_t mxlists(&entry, true);
+                    Merged_XLists_t mxlists = entry.Merged_XLists(true);
                     for (size_t idx = 0, end = mxlists.size(); idx < end; idx += 1) {
                         Merged_XList_t& mxlist = mxlists[idx];
                         _MESSAGE((indent + "        mxlist: %zu").c_str(), idx);
@@ -1831,6 +1826,23 @@ namespace doticu_npcp { namespace Object_Ref {
         return xlists;
     }
 
+    Merged_XLists_t Entry_t::Merged_XLists(Bool_t allow_quest_items)
+    {
+        if (allow_quest_items) {
+            static auto Do_Exclude = [](XList_t* xlist)->Bool_t
+            {
+                return false;
+            };
+            return Merged_XLists_t(this, Do_Exclude);
+        } else {
+            static auto Do_Exclude = [](XList_t* xlist)->Bool_t
+            {
+                return XList::Is_Quest_Item(xlist);
+            };
+            return Merged_XLists_t(this, XList::Is_Quest_Item);
+        }
+    }
+
     Merged_XLists_t::Merged_XLists_t()
     {
     }
@@ -1855,22 +1867,12 @@ namespace doticu_npcp { namespace Object_Ref {
         }
     }
 
-    Merged_XLists_t::Merged_XLists_t(Entry_t* entry, Bool_t allow_quest_items)
+    Merged_XList_t* Merged_XLists_t::Merged_XList(Merged_XList_t* similar_mxlist)
     {
-        if (allow_quest_items) {
-            auto Do_Exclude = [](XList_t* xlist)->Bool_t
-            {
-                return false;
-            };
-
-            *this = Merged_XLists_t(entry, Do_Exclude);
+        if (similar_mxlist && similar_mxlist->size() > 0) {
+            return Merged_XList(similar_mxlist->at(0));
         } else {
-            auto Do_Exclude = [](XList_t* xlist)->Bool_t
-            {
-                return XList::Is_Quest_Item(xlist);
-            };
-
-            *this = Merged_XLists_t(entry, XList::Is_Quest_Item);
+            return nullptr;
         }
     }
 
@@ -1889,36 +1891,52 @@ namespace doticu_npcp { namespace Object_Ref {
         }
     }
 
-    Int_t Merged_XLists_t::Count(Merged_XList_t* merged_xlist)
+    Int_t Merged_XLists_t::Count()
     {
-        if (merged_xlist) {
-            Int_t xlist_count = 0;
-            for (size_t idx = 0, count = merged_xlist->size(); idx < count; idx += 1) {
-                XList_t* xlist = merged_xlist->at(idx);
-                xlist_count += XList::Count(xlist);
-            }
-            if (xlist_count < 0) {
-                xlist_count = std::numeric_limits<Int_t>::max();
-            }
-            return xlist_count;
-        } else {
-            return 0;
+        Int_t count = 0;
+        for (size_t idx = 0, end = size(); idx < end; idx += 1) {
+            Merged_XList_t& mxlist = at(idx);
+            count += mxlist.Count();
         }
+        if (count < 0) {
+            count = std::numeric_limits<Int_t>::max();
+        }
+        return count;
     }
 
-    Bool_t Merged_XLists_t::Is_Worn(Merged_XList_t* merged_xlist)
+    Bool_t Merged_XLists_t::Is_Worn()
     {
-        if (merged_xlist) {
-            for (size_t idx = 0, count = merged_xlist->size(); idx < count; idx += 1) {
-                XList_t* xlist = merged_xlist->at(idx);
-                if (XList::Is_Worn(xlist)) {
-                    return true;
-                }
+        for (size_t idx = 0, end = size(); idx < end; idx += 1) {
+            Merged_XList_t& mxlist = at(idx);
+            if (mxlist.Is_Worn()) {
+                return true;
             }
-            return false;
-        } else {
-            return false;
         }
+        return false;
+    }
+
+    Int_t Merged_XList_t::Count()
+    {
+        Int_t count = 0;
+        for (size_t idx = 0, end = size(); idx < end; idx += 1) {
+            XList_t* xlist = at(idx);
+            count += XList::Count(xlist);
+        }
+        if (count < 0) {
+            count = std::numeric_limits<Int_t>::max();
+        }
+        return count;
+    }
+
+    Bool_t Merged_XList_t::Is_Worn()
+    {
+        for (size_t idx = 0, end = size(); idx < end; idx += 1) {
+            XList_t* xlist = at(idx);
+            if (XList::Is_Worn(xlist)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 

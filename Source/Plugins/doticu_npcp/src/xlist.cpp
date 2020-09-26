@@ -174,18 +174,27 @@ namespace doticu_npcp { namespace XList {
         }
     }
 
-    void Decrement(XList_t* xlist, Int_t decrement)
+    Int_t Decrement(XList_t* xlist, Int_t decrement)
     {
+        Int_t amount_decreased = 0;
+
         if (xlist && decrement > 0) {
             XCount_t* xcount = static_cast<XCount_t*>(xlist->GetByType(kExtraData_Count));
             if (xcount) {
                 if (xcount->count > decrement) {
+                    amount_decreased = decrement;
                     xcount->count -= decrement;
                 } else {
+                    amount_decreased = xcount->count - 1;
+                    if (amount_decreased < 0) {
+                        amount_decreased = 0;
+                    }
                     xcount->count = 1;
                 }
             }
         }
+
+        return amount_decreased;
     }
 
     XList_t *Copy(XList_t *xlist) {

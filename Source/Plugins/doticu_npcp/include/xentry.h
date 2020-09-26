@@ -29,6 +29,8 @@ namespace doticu_npcp { namespace Papyrus {
         void Remove_XList(XList_t* xlist);
         void Move_XList(XEntry_t* to_xentry, Reference_t* to_reference, XList_t* xlist);
         void Clean_XLists(Int_t from_bentry_count, Reference_t* to_reference);
+        void Increment_XList(XList_t* xlist, Int_t increment);
+        Int_t Decrement_XList(XList_t* xlist, Int_t decrement);
 
         XList_t* Similar_XList(XList_t* similiar);
         Bool_t Has_Similar_XList(XList_t* similiar);

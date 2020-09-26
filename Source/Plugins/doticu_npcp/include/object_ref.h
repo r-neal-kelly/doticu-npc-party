@@ -141,6 +141,25 @@ namespace doticu_npcp { namespace Object_Ref {
 
     void Set_Open(Reference_t* ref, Bool_t is_open, Virtual_Callback_i* vcallback = nullptr);
 
+    class Merged_XList_t : public Vector_t<XList_t*> {
+    public:
+        Int_t Count();
+        Bool_t Is_Worn();
+    };
+
+    class Entry_t;
+    class Merged_XLists_t : public Vector_t<Merged_XList_t> {
+    public:
+        Merged_XLists_t();
+        Merged_XLists_t(Entry_t* entry, Bool_t(*do_exclude)(XList_t*));
+
+        Merged_XList_t* Merged_XList(Merged_XList_t* similar_mxlist);
+        Merged_XList_t* Merged_XList(XList_t* similar_xlist);
+
+        Int_t Count();
+        Bool_t Is_Worn();
+    };
+
     class Entry_t {
     public:
         Form_t* form;
@@ -149,22 +168,7 @@ namespace doticu_npcp { namespace Object_Ref {
         Int_t xlist_count = 0;
 
         Vector_t<XList_t*> XLists();
-    };
-
-    class Merged_XList_t : public Vector_t<XList_t*> {
-    public:
-    };
-
-    class Merged_XLists_t : public Vector_t<Merged_XList_t> {
-    public:
-        Merged_XLists_t();
-        Merged_XLists_t(Entry_t* entry, Bool_t(*do_exclude)(XList_t*));
-        Merged_XLists_t(Entry_t* entry, Bool_t allow_quest_items);
-
-        Merged_XList_t* Merged_XList(XList_t* similar_xlist);
-
-        Int_t Count(Merged_XList_t* merged_xlist);
-        Bool_t Is_Worn(Merged_XList_t* merged_xlist);
+        Merged_XLists_t Merged_XLists(Bool_t allow_quest_items);
     };
 
     class Inventory_t {
@@ -193,8 +197,8 @@ namespace doticu_npcp { namespace Object_Ref {
         void Remove_Loose(Entry_t* entry, Int_t count);
         void Add_XList(Entry_t* entry, XList_t* xlist);
         void Remove_XList(Entry_t* entry, XList_t* xlist);
-        void Increment_XList(Entry_t* entry, XList_t* xlist, Int_t count);
-        void Decrement_XList(Entry_t* entry, XList_t* xlist, Int_t count);
+        void Increment_XList(Entry_t* entry, XList_t* xlist, Int_t increment);
+        void Decrement_XList(Entry_t* entry, XList_t* xlist, Int_t decrement);
         
         void Try_To_Destroy_Entry(Entry_t* entry);
 

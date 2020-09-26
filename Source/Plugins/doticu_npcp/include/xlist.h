@@ -41,7 +41,7 @@ namespace doticu_npcp { namespace XList {
     Int_t Count(XList_t* xlist);
     void Count(XList_t* xlist, Int_t count);
     void Increment(XList_t* xlist, Int_t increment);
-    void Decrement(XList_t* xlist, Int_t decrement);
+    Int_t Decrement(XList_t* xlist, Int_t decrement);
 
     XList_t* Copy(XList_t* xlist); // xlist should be validated first.
     void Owner(XList_t* xlist, Actor_Base_t* actor_base);

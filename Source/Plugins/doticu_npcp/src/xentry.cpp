@@ -155,6 +155,26 @@ namespace doticu_npcp { namespace Papyrus {
         }
     }
 
+    void XEntry_t::Increment_XList(XList_t* xlist, Int_t increment)
+    {
+        if (xlist && increment > 0) {
+            XList::Increment(xlist, increment);
+            delta_count += increment;
+        }
+    }
+
+    Int_t XEntry_t::Decrement_XList(XList_t* xlist, Int_t decrement)
+    {
+        Int_t amount_decreased = 0;
+
+        if (xlist && decrement > 0) {
+            amount_decreased = XList::Decrement(xlist, decrement);
+            delta_count -= amount_decreased;
+        }
+
+        return amount_decreased;
+    }
+
     XList_t* XEntry_t::Similar_XList(XList_t* xlist_to_compare)
     {
         if (xlist_to_compare && xlists) {

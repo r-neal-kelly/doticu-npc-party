@@ -167,7 +167,7 @@ namespace doticu_npcp { namespace Actor2 {
                 loose_count += outfit2.Count_Loose(outfit2_entry);
             }
             if (loose_count < 0) {
-                loose_count = 1;
+                loose_count = std::numeric_limits<Int_t>::max();
             }
             Outfit_Entry_t entry(outfit1_entry, outfit2_entry, loose_count);
             entries.push_back(entry);
@@ -182,32 +182,34 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
-    Outfit_Entry_t::Outfit_Entry_t(Entry_t* outfit1, Entry_t* outfit2, Int_t loose_count) :
-        outfit1(outfit1), outfit2(outfit2)
+    Outfit_Entry_t::Outfit_Entry_t(Entry_t* outfit1, Entry_t* outfit2, Int_t loose_count)
     {
         auto Combine_Merged_XLists = [&](Entry_t* entry)->void
         {
             if (entry) {
-                auto entry_merged_xlists = Merged_XLists_t(entry, true);
-                for (size_t idx = 0, count = entry_merged_xlists.size(); idx < count; idx += 1) {
-                    auto& entry_merged_xlist = entry_merged_xlists[idx];
-                    auto merged_xlist = merged_xlists.Merged_XList(entry_merged_xlist.at(0));
-                    if (merged_xlist) {
-                        for (size_t idx = 0, count = entry_merged_xlist.size(); idx < count; idx += 1) {
-                            merged_xlist->push_back(entry_merged_xlist[idx]);
+                Merged_XLists_t entry_mxlists = entry->Merged_XLists(true);
+                for (size_t idx = 0, count = entry_mxlists.size(); idx < count; idx += 1) {
+                    Merged_XList_t& entry_mxlist = entry_mxlists[idx];
+                    Merged_XList_t* outfit_mxlist = merged_xlists.Merged_XList(entry_mxlist.at(0));
+                    if (outfit_mxlist) {
+                        for (size_t idx = 0, count = entry_mxlist.size(); idx < count; idx += 1) {
+                            outfit_mxlist->push_back(entry_mxlist[idx]);
                         }
                     } else {
-                        merged_xlists.push_back(entry_merged_xlist);
+                        merged_xlists.push_back(entry_mxlist);
                     }
                 }
             }
         };
 
         if (outfit1) {
-            merged_xlists = Merged_XLists_t(outfit1, true);
+            form = outfit1->form;
+            merged_xlists = outfit1->Merged_XLists(true);
             Combine_Merged_XLists(outfit2);
         } else if (outfit2) {
-            merged_xlists = Merged_XLists_t(outfit2, true);
+            form = outfit2->form;
+            merged_xlists = outfit2->Merged_XLists(true);
+            Combine_Merged_XLists(outfit1);
         }
 
         if (loose_count > 0) {
@@ -226,26 +228,28 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
-    Form_t* Outfit_Entry_t::Form()
-    {
-        if (outfit1) {
-            return outfit1->form;
-        } else if (outfit2) {
-            return outfit2->form;
-        } else {
-            return nullptr;
-        }
-    }
-
     XList_t* Outfit_Entry_t::Copy(Merged_XList_t* outfit_xlist, Actor_Base_t* owner)
     {
+        NPCP_ASSERT(outfit_xlist);
+        NPCP_ASSERT(owner);
+
         XList_t* new_xlist = XList::Copy(outfit_xlist->at(0));
         if (!new_xlist) {
             new_xlist = XList::Create();
         }
-        XList::Count(new_xlist, merged_xlists.Count(outfit_xlist));
+        XList::Count(new_xlist, outfit_xlist->Count());
         XList::Owner(new_xlist, owner);
         return new_xlist;
+    }
+
+    Int_t Outfit_Entry_t::Count()
+    {
+        return merged_xlists.Count();
+    }
+
+    Bool_t Outfit_Entry_t::Is_Worn()
+    {
+        return merged_xlists.Is_Worn();
     }
 
     void Outfit_Entry_t::Cleanup()
@@ -259,32 +263,11 @@ namespace doticu_npcp { namespace Actor2 {
     {
         for (size_t idx = 0, count = entries.size(); idx < count; idx += 1) {
             Outfit_Entry_t& entry = entries[idx];
-            if (entry.outfit1 && entry.outfit1->form == form ||
-                entry.outfit2 && entry.outfit2->form == form) {
+            if (entry.form == form) {
                 return &entry;
             }
         }
         return nullptr;
-    }
-
-    Int_t Outfit_Inventory_t::Count_Loose(Outfit_Entry_t* entry)
-    {
-        NPCP_ASSERT(entry);
-
-        Int_t count = 0;
-
-        if (entry->outfit1) {
-            count += outfit1.Count_Loose(entry->outfit1);
-        }
-        if (entry->outfit2) {
-            count += outfit2.Count_Loose(entry->outfit2);
-        }
-
-        if (count < 0) {
-            count = 1;
-        }
-
-        return count;
     }
 
     Bool_t Outfit_Inventory_t::Evaluate_Linchpin(Object_Ref::Inventory_t* actor)
@@ -327,54 +310,56 @@ namespace doticu_npcp { namespace Actor2 {
         return do_update;
     }
 
-    Bool_t Outfit_Inventory_t::Evaluate_Existing(Inventory_t* actor, Inventory_t* transfer)
+    Int_t Outfit_Inventory_t::Evaluate_Existing(Inventory_t* actor, Inventory_t* transfer)
     {
         NPCP_ASSERT(actor);
         NPCP_ASSERT(transfer);
 
-        Bool_t do_update = false;
+        enum {
+            NO_UPDATE = 0,
+            DUPE_OUTFIT2_XLIST,
+            LESS_THAN_OUTFIT2_MXLIST_COUNT,
+            GREATER_THAN_OUTFIT2_MXLIST_COUNT,
+            NON_OUTFIT2_XLIST,
+            MISSING_OUTFIT2_XLIST,
+            NON_OUTFIT2_MXLIST,
+            MISSING_OUTFIT2_MXLIST,
+        };
+
+        Int_t return_code = NO_UPDATE;
 
         Actor_Base_t* actor_base = Actor2::Dynamic_Base(static_cast<Actor_t*>(actor->reference));
 
-        for (size_t idx = 0, count = actor->entries.size(); idx < count; idx += 1) {
+        for (size_t idx = 0, end = actor->entries.size(); idx < end; idx += 1) {
             Entry_t* actor_entry = &actor->entries[idx];
             Form_t* form = actor_entry->form;
             if (Can_Evaluate_Actor_Form(form)) {
                 Outfit_Entry_t* outfit_entry = Entry(form);
                 Entry_t* transfer_entry = transfer->Entry(form);
+                Merged_XLists_t actor_mxlists = actor_entry->Merged_XLists(false);
+                Merged_XLists_t* outfit_mxlists = outfit_entry ? &outfit_entry->merged_xlists : nullptr;
 
-                Merged_XLists_t actor_xlists = Merged_XLists_t(actor_entry, false);
-                Merged_XLists_t* outfit_xlists = outfit_entry ? &outfit_entry->merged_xlists : nullptr;
-
-                for (size_t idx = 0, count = actor_xlists.size(); idx < count; idx += 1) {
-                    Merged_XList_t& actor_xlist = actor_xlists[idx];
-                    Merged_XList_t* outfit_xlist = outfit_xlists ? outfit_xlists->Merged_XList(actor_xlist[0]) : nullptr;
-                    if (outfit_xlist) {
-                        XList_t* candidate = nullptr;
-                        for (size_t idx = 0, count = actor_xlist.size(); idx < count; idx += 1) {
-                            XList_t* xlist = actor_xlist[idx];
+                for (size_t idx = 0, end = actor_mxlists.size(); idx < end; idx += 1) {
+                    Merged_XList_t& actor_mxlist = actor_mxlists[idx];
+                    Merged_XList_t* outfit_mxlist = outfit_mxlists ? outfit_mxlists->Merged_XList(&actor_mxlist) : nullptr;
+                    if (outfit_mxlist) {
+                        XList_t* actor_unworn_xlist = nullptr;
+                        Vector_t<XList_t*> actor_worn_xlists;
+                        actor_worn_xlists.reserve(2);
+                        for (size_t idx = 0, end = actor_mxlist.size(); idx < end; idx += 1) {
+                            XList_t* xlist = actor_mxlist[idx];
                             if (XList::Is_Outfit2_Item(xlist, actor_base)) {
-                                if (candidate) {
-                                    if (XList::Is_Worn(xlist)) {
-                                        do_update = true;
-                                    }
+                                if (XList::Is_Worn(xlist)) {
+                                    actor_worn_xlists.push_back(xlist);
+                                } else if (actor_unworn_xlist) {
                                     actor->Remove_XList(actor_entry, xlist);
                                     XList::Destroy(xlist);
                                 } else {
-                                    candidate = xlist;
-                                    Int_t actor_count = XList::Count(xlist);
-                                    Int_t outfit_count = outfit_xlists->Count(outfit_xlist);
-                                    if (actor_count < outfit_count) {
-                                        do_update = true;
-                                        actor->Increment_XList(actor_entry, xlist, outfit_count - actor_count);
-                                    } else if (actor_count > outfit_count) {
-                                        do_update = true;
-                                        actor->Decrement_XList(actor_entry, xlist, actor_count - outfit_count);
-                                    }
+                                    actor_unworn_xlist = xlist;
                                 }
                             } else {
                                 if (XList::Is_Worn(xlist)) {
-                                    do_update = true;
+                                    return_code = NON_OUTFIT2_XLIST;
                                 }
                                 actor->Remove_XList(actor_entry, xlist);
                                 if (!form->IsPlayable() || XList::Is_Outfit_Item(xlist)) {
@@ -387,15 +372,62 @@ namespace doticu_npcp { namespace Actor2 {
                                 }
                             }
                         }
-                        if (!candidate) {
-                            do_update = true;
-                            actor->Add_XList(actor_entry, outfit_entry->Copy(outfit_xlist, actor_base));
+
+                        Int_t actor_mxlist_count = 0;
+                        Int_t outfit_mxlist_count = outfit_mxlist->Count();
+                        for (size_t idx = 0, end = actor_worn_xlists.size(); idx < end; idx += 1) {
+                            XList_t* worn_xlist = actor_worn_xlists[idx];
+                            if (actor_mxlist_count < outfit_mxlist_count) {
+                                Int_t worn_xlist_count = XList::Count(worn_xlist);
+                                if (actor_mxlist_count + worn_xlist_count > outfit_mxlist_count) {
+                                    Int_t difference = outfit_mxlist_count - actor_mxlist_count;
+                                    actor->Decrement_XList(actor_entry, worn_xlist, worn_xlist_count - difference);
+                                    actor_mxlist_count += difference;
+                                } else {
+                                    actor_mxlist_count += worn_xlist_count;
+                                }
+                            } else {
+                                return_code = GREATER_THAN_OUTFIT2_MXLIST_COUNT;
+                                actor->Remove_XList(actor_entry, worn_xlist);
+                                XList::Destroy(worn_xlist);
+                            }
+                        }
+                        if (actor_unworn_xlist) {
+                            if (actor_mxlist_count < outfit_mxlist_count) {
+                                Int_t unworn_xlist_count = XList::Count(actor_unworn_xlist);
+                                if (actor_mxlist_count + unworn_xlist_count > outfit_mxlist_count) {
+                                    Int_t difference = outfit_mxlist_count - actor_mxlist_count;
+                                    actor->Decrement_XList(actor_entry, actor_unworn_xlist, unworn_xlist_count - difference);
+                                    actor_mxlist_count += difference;
+                                } else if (actor_mxlist_count + unworn_xlist_count < outfit_mxlist_count) {
+                                    Int_t difference = outfit_mxlist_count - (actor_mxlist_count + unworn_xlist_count);
+                                    actor->Increment_XList(actor_entry, actor_unworn_xlist, difference);
+                                    actor_mxlist_count += unworn_xlist_count + difference;
+                                } else {
+                                    actor_mxlist_count += unworn_xlist_count;
+                                }
+                            } else {
+                                actor->Remove_XList(actor_entry, actor_unworn_xlist);
+                                XList::Destroy(actor_unworn_xlist);
+                            }
+                        } else {
+                            if (actor_mxlist_count < outfit_mxlist_count) {
+                                return_code = MISSING_OUTFIT2_XLIST;
+                                XList_t* xlist = outfit_entry->Copy(outfit_mxlist, actor_base);
+                                XList::Count(xlist, outfit_mxlist_count - actor_mxlist_count);
+                                actor->Add_XList(actor_entry, xlist);
+                            }
+                        }
+                        if (actor_mxlist_count != outfit_mxlist_count) {
+                            _MESSAGE("Failed to correct actor_mxlist_count!\n");
+                            actor->Log();
+                            Log();
                         }
                     } else {
-                        for (size_t idx = 0, count = actor_xlist.size(); idx < count; idx += 1) {
-                            XList_t* xlist = actor_xlist[idx];
+                        for (size_t idx = 0, end = actor_mxlist.size(); idx < end; idx += 1) {
+                            XList_t* xlist = actor_mxlist[idx];
                             if (XList::Is_Worn(xlist)) {
-                                do_update = true;
+                                return_code = NON_OUTFIT2_MXLIST;
                             }
                             actor->Remove_XList(actor_entry, xlist);
                             if (!form->IsPlayable() || XList::Is_Outfit_Item(xlist) || XList::Is_Outfit2_Item(xlist, actor_base)) {
@@ -419,14 +451,14 @@ namespace doticu_npcp { namespace Actor2 {
                     transfer->Add_Loose(transfer_entry, actor_loose_count);
                 }
 
-                if (outfit_xlists) {
-                    Merged_XLists_t actor_xlists = Merged_XLists_t(actor_entry, false);
-                    for (size_t idx = 0, end = outfit_xlists->size(); idx < end; idx += 1) {
-                        Merged_XList_t& outfit_xlist = outfit_xlists->at(idx);
-                        Merged_XList_t* actor_xlist = actor_xlists.Merged_XList(outfit_xlist.at(0));
-                        if (!actor_xlist) {
-                            do_update = true;
-                            actor->Add_XList(actor_entry, outfit_entry->Copy(&outfit_xlist, actor_base));
+                if (outfit_mxlists) {
+                    Merged_XLists_t actor_mxlists = actor_entry->Merged_XLists(false);
+                    for (size_t idx = 0, end = outfit_mxlists->size(); idx < end; idx += 1) {
+                        Merged_XList_t& outfit_mxlist = outfit_mxlists->at(idx);
+                        Merged_XList_t* actor_mxlist = actor_mxlists.Merged_XList(outfit_mxlist.at(0));
+                        if (!actor_mxlist) {
+                            return_code = MISSING_OUTFIT2_MXLIST;
+                            actor->Add_XList(actor_entry, outfit_entry->Copy(&outfit_mxlist, actor_base));
                         }
                     }
                 }
@@ -438,7 +470,7 @@ namespace doticu_npcp { namespace Actor2 {
             actor->Try_To_Destroy_Entry(actor_entry);
         }
 
-        return do_update;
+        return return_code;
     }
 
     Bool_t Outfit_Inventory_t::Evaluate_Missing(Inventory_t* actor)
@@ -451,7 +483,7 @@ namespace doticu_npcp { namespace Actor2 {
 
         for (size_t idx = 0, count = entries.size(); idx < count; idx += 1) {
             Outfit_Entry_t& outfit_entry = entries[idx];
-            Form_t* form = outfit_entry.Form(); NPCP_ASSERT(form);
+            Form_t* form = outfit_entry.form; NPCP_ASSERT(form);
             if (form->IsArmor() || form->IsWeapon() || form->IsAmmo() || form->IsLight()) {
                 if (!actor->Entry(form)) {
                     Entry_t* actor_entry = actor->Add_Entry(form); NPCP_ASSERT(actor_entry);
@@ -474,6 +506,34 @@ namespace doticu_npcp { namespace Actor2 {
             outfit_entry.Cleanup();
         }
     }
+
+    void Outfit_Inventory_t::Log(std::string indent)
+    {
+        _MESSAGE((indent + "Log_Outfit_Inventory: {").c_str());
+
+        for (size_t idx = 0, end = entries.size(); idx < end; idx += 1) {
+            Outfit_Entry_t& entry = entries[idx];
+            const char* name = Form::Name(entry.form);
+            if (!name || !name[0]) {
+                name = "*";
+            }
+            _MESSAGE((indent + "    %-36s: total: %6i, form_type: %s").c_str(),
+                     name,
+                     entry.Count(),
+                     Form::Get_Type_String(entry.form));
+            for (size_t idx = 0, end = entry.merged_xlists.size(); idx < end; idx += 1) {
+                Merged_XList_t& mxlist = entry.merged_xlists[idx];
+                _MESSAGE((indent + "        mxlist: %zu").c_str(), idx);
+                for (size_t idx = 0, end = mxlist.size(); idx < end; idx += 1) {
+                    XList_t* xlist = mxlist[idx];
+                    _MESSAGE((indent + "            xlist: %zu").c_str(), idx);
+                    XList::Log(xlist, (indent + "                ").c_str());
+                }
+            }
+        }
+
+        _MESSAGE("}\n");
+    }
     
     Bool_t Set_Outfit2(Actor_t* actor, Reference_t* outfit1, Reference_t* outfit2, Reference_t* transfer)
     {
@@ -493,7 +553,7 @@ namespace doticu_npcp { namespace Actor2 {
         Outfit_Inventory_t outfit_inventory(outfit1, outfit2);
 
         Bool_t should_update1 = outfit_inventory.Evaluate_Linchpin(&actor_inventory);
-        Bool_t should_update2 = outfit_inventory.Evaluate_Existing(&actor_inventory, &transfer_inventory);
+        Int_t existing_code = outfit_inventory.Evaluate_Existing(&actor_inventory, &transfer_inventory);
         Bool_t should_update3 = outfit_inventory.Evaluate_Missing(&actor_inventory);
         outfit_inventory.Cleanup();
 
@@ -501,7 +561,7 @@ namespace doticu_npcp { namespace Actor2 {
             Object_Ref::Delete_Safe(transfer);
         }
 
-        return should_update1 || should_update2 || should_update3;
+        return should_update1 || existing_code > 0 || should_update3;
     }
 
     void Split_Inventory(Actor_t* actor, Reference_t* worn, Reference_t* pack)

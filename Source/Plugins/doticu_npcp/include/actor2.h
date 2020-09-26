@@ -26,15 +26,15 @@ namespace doticu_npcp { namespace Actor2 {
 
     class Outfit_Entry_t {
     public:
-        Entry_t* outfit1 = nullptr;
-        Entry_t* outfit2 = nullptr;
+        Form_t* form = nullptr;
         Merged_XLists_t merged_xlists;
         XList_t* loose_xlist = nullptr;
 
         Outfit_Entry_t(Entry_t* outfit1 = nullptr, Entry_t* outfit2 = nullptr, Int_t loose_count = 0);
 
-        Form_t* Form();
         XList_t* Copy(Merged_XList_t* outfit_xlist, Actor_Base_t* owner);
+        Int_t Count();
+        Bool_t Is_Worn();
         void Cleanup();
     };
 
@@ -50,13 +50,12 @@ namespace doticu_npcp { namespace Actor2 {
 
         Outfit_Entry_t* Entry(Form_t* form);
 
-        Int_t Count_Loose(Outfit_Entry_t* entry);
-
         Bool_t Evaluate_Linchpin(Inventory_t* actor);
-        Bool_t Evaluate_Existing(Inventory_t* actor, Inventory_t* transfer);
+        Int_t Evaluate_Existing(Inventory_t* actor, Inventory_t* transfer);
         Bool_t Evaluate_Missing(Inventory_t* actor);
 
         void Cleanup();
+        void Log(std::string indent = "");
     };
 
     Bool_t Set_Outfit2(Actor_t* actor, Reference_t* outfit1 = nullptr, Reference_t* outfit2 = nullptr, Reference_t* transfer = nullptr);
