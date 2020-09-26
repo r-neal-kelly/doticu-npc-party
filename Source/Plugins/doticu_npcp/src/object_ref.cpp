@@ -434,27 +434,54 @@ namespace doticu_npcp { namespace Object_Ref {
         }
     }
 
-    void Remove_Wearables(Reference_t* obj, Reference_t* other, Bool_t remove_quest_items)
+    void Remove_Wearables(Reference_t* ref, Reference_t* destination, Bool_t do_remove_quest_items)
     {
-        auto should_remove_xform = [](Form_t* form) -> Bool_t
-        {
-            return form->IsArmor() || form->IsWeapon() || form->IsAmmo();
-        };
-
-        Bool_t (*should_remove_xlist)(XList_t*, Form_t*);
-        if (remove_quest_items) {
-            should_remove_xlist = [](XList_t* xlist, Form_t* form) -> Bool_t
-            {
-                return true;
-            };
+        Bool_t do_delete_destination;
+        if (destination) {
+            Init_Container_If_Needed(destination);
+            do_delete_destination = false;
         } else {
-            should_remove_xlist = [](XList_t* xlist, Form_t* form) -> Bool_t
-            {
-                return !XList::Is_Quest_Item(xlist);
-            };
+            destination = Create_Container();
+            do_delete_destination = true;
+        }
+        Object_Ref::Inventory_t destination_inventory(destination);
+
+        Object_Ref::Inventory_t ref_inventory(ref);
+        for (size_t idx = 0, end = ref_inventory.entries.size(); idx < end; idx += 1) {
+            Object_Ref::Entry_t& ref_entry = ref_inventory.entries[idx];
+            Form_t* form = ref_entry.form;
+            if (form && form->formType != kFormType_LeveledItem) {
+                if (form->IsArmor() || form->IsWeapon() || form->IsAmmo() || form->IsLight()) {
+                    Object_Ref::Entry_t* destination_entry = destination_inventory.Entry(form);
+                    Vector_t<XList_t*> xlists = ref_entry.XLists();
+                    for (size_t idx = 0, end = xlists.size(); idx < end; idx += 1) {
+                        XList_t* xlist = xlists[idx];
+                        if (xlist && (do_remove_quest_items || !XList::Is_Quest_Item(xlist))) {
+                            if (xlist && XList::Is_Outfit2_Item(xlist, ref->baseForm)) {
+                                XList::Owner(xlist, nullptr);
+                            }
+                            if (!destination_entry) {
+                                destination_entry = destination_inventory.Add_Entry(form);
+                            }
+                            ref_inventory.Remove_XList(&ref_entry, xlist);
+                            destination_inventory.Add_XList(destination_entry, xlist);
+                        }
+                    }
+                    Int_t loose_count = ref_inventory.Count_Loose(&ref_entry);
+                    if (loose_count > 0) {
+                        if (!destination_entry) {
+                            destination_entry = destination_inventory.Add_Entry(form);
+                        }
+                        ref_inventory.Remove_Loose(&ref_entry, loose_count);
+                        destination_inventory.Add_Loose(destination_entry, loose_count);
+                    }
+                }
+            }
         }
 
-        Remove_If(obj, other, should_remove_xform, should_remove_xlist);
+        if (do_delete_destination) {
+            Delete_Safe(destination);
+        }
     }
 
     void Remove_Unwearables(Reference_t* obj, Reference_t* other, Bool_t remove_quest_items)

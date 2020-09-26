@@ -413,9 +413,11 @@ namespace doticu_npcp { namespace Actor2 {
                         } else {
                             if (actor_mxlist_count < outfit_mxlist_count) {
                                 return_code = MISSING_OUTFIT2_XLIST;
+                                Int_t difference = outfit_mxlist_count - actor_mxlist_count;
                                 XList_t* xlist = outfit_entry->Copy(outfit_mxlist, actor_base);
-                                XList::Count(xlist, outfit_mxlist_count - actor_mxlist_count);
+                                XList::Count(xlist, difference);
                                 actor->Add_XList(actor_entry, xlist);
+                                actor_mxlist_count += difference;
                             }
                         }
                         if (actor_mxlist_count != outfit_mxlist_count) {

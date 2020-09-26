@@ -43,7 +43,7 @@ namespace doticu_npcp { namespace Object_Ref {
                    Bool_t(*should_remove_xform)(Form_t*) = nullptr, // if nullptr, will remove all
                    Bool_t(*should_remove_xlist)(XList_t*, Form_t*) = nullptr, // if nullptr, will remove non-quest items
                    Bool_t(*should_remove_bform)(Form_t*) = nullptr); // if nullptr, is the same as should_remove_xform
-    void Remove_Wearables(Reference_t* obj, Reference_t* other = nullptr, Bool_t remove_quest_items = false);
+    void Remove_Wearables(Reference_t* ref, Reference_t* destination = nullptr, Bool_t do_remove_quest_items = false);
     void Remove_Unwearables(Reference_t* obj, Reference_t* other = nullptr, Bool_t remove_quest_items = false);
     void Remove_Non_Outfit_Worn(Reference_t* obj, Reference_t* other = nullptr, Bool_t remove_quest_items = false);
     void Remove_All_Items(Reference_t* from, Reference_t* to = nullptr, Bool_t remove_quest_items = false, Bool_t remove_unplayable_items = true);

@@ -225,10 +225,16 @@ namespace doticu_npcp { namespace XList {
             ExtraOwnership* ownership = static_cast<ExtraOwnership*>
                 (xlist->GetByType(kExtraData_Ownership));
             if (ownership) {
-                ownership->owner = actor_base;
+                if (actor_base) {
+                    ownership->owner = actor_base;
+                } else {
+                    xlist->Remove(kExtraData_Ownership, ownership);
+                }
             } else {
-                ownership = XData::Create_Ownership(actor_base);
-                xlist->Add(kExtraData_Ownership, ownership);
+                if (actor_base) {
+                    ownership = XData::Create_Ownership(actor_base);
+                    xlist->Add(kExtraData_Ownership, ownership);
+                }
             }
         }
     }
@@ -349,7 +355,7 @@ namespace doticu_npcp { namespace XList {
         return xlist->HasType(kExtraData_OutfitItem);
     }
 
-    Bool_t Is_Outfit2_Item(XList_t* xlist, Actor_Base_t* owner)
+    Bool_t Is_Outfit2_Item(XList_t* xlist, Form_t* owner)
     {
         if (xlist && owner) {
             ExtraOwnership* xownership = static_cast<ExtraOwnership*>

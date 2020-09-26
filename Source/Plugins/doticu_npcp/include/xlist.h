@@ -55,7 +55,7 @@ namespace doticu_npcp { namespace XList {
     Bool_t Has_Charge(XList_t* xlist);
     bool Is_Worn(XList_t* xlist);
     bool Is_Outfit_Item(XList_t* xlist);
-    Bool_t Is_Outfit2_Item(XList_t* xlist, Actor_Base_t* owner);
+    Bool_t Is_Outfit2_Item(XList_t* xlist, Form_t* owner);
     bool Is_Leveled_Item(XList_t* xlist);
     bool Is_Quest_Item(XList_t* xlist);
 
