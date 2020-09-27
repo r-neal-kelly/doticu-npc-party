@@ -708,7 +708,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     void Main_t::On_Config_Init()
     {
-        Mod_Name_Property()->String(" NPC Party");
+        Mod_Name_Property()->String(MOD_NAME);
     }
 
     Bool_t Main_t::On_Config_Open(Virtual_Machine_t* vm, Stack_ID_t stack_id)
@@ -807,13 +807,13 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         } else if (Is_Page(FILTER_PAGE)) {
             MCM::Filter_t::Self()->On_Option_Select(option, user_callback);
         } else if (Is_Page(CHESTS_PAGE)) {
-            MCM::Chests_t::Self()->On_Option_Select(option);
+            MCM::Chests_t::Self()->On_Option_Select(option, user_callback);
         } else if (Is_Page(SETTINGS_PAGE)) {
-            MCM::Settings_t::Self()->On_Option_Select(option);
+            MCM::Settings_t::Self()->On_Option_Select(option, user_callback);
         } else if (Is_Page(HOTKEYS_PAGE)) {
-            MCM::Hotkeys_t::Self()->On_Option_Select(option);
+            MCM::Hotkeys_t::Self()->On_Option_Select(option, user_callback);
         } else if (Is_Page(LOGS_PAGE)) {
-            MCM::Logs_t::Self()->On_Option_Select(option);
+            MCM::Logs_t::Self()->On_Option_Select(option, user_callback);
         } else {
             Return_Latent(user_callback);
         }
@@ -956,8 +956,24 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         }
     }
 
-    void Main_t::On_Option_Keymap_Change(Int_t option, Int_t key_code, String_t conflict, String_t conflicting_mod)
+    Bool_t Main_t::On_Option_Keymap_Change(Virtual_Machine_t* vm, Stack_ID_t stack_id,
+                                           Int_t option, Int_t key_code, String_t conflict, String_t conflicting_mod)
     {
+        struct Callback : public Callback_t<> {
+            Virtual_Machine_t* vm;
+            Stack_ID_t stack_id;
+            Callback(Virtual_Machine_t* vm, Stack_ID_t stack_id) :
+                vm(vm), stack_id(stack_id)
+            {
+            }
+            void operator()()
+            {
+                Variable_t none;
+                vm->Return_Latent_Function(stack_id, &none);
+            }
+        };
+        Callback_t<>* user_callback = new Callback(vm, stack_id);
+        
         String_t current_page = Current_Page_Name();
         auto Is_Page = [&current_page](const char* page)->Bool_t
         {
@@ -965,22 +981,26 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         };
 
         if (Is_Page(FOLLOWERS_PAGE)) {
-            MCM::Followers_t::Self()->On_Option_Keymap_Change(option, key_code, conflict, conflicting_mod);
+            MCM::Followers_t::Self()->On_Option_Keymap_Change(option, key_code, conflict, conflicting_mod, user_callback);
         } else if (Is_Page(MEMBERS_PAGE)) {
-            MCM::Members_t::Self()->On_Option_Keymap_Change(option, key_code, conflict, conflicting_mod);
+            MCM::Members_t::Self()->On_Option_Keymap_Change(option, key_code, conflict, conflicting_mod, user_callback);
         } else if (Is_Page(MANNEQUINS_PAGE)) {
-            MCM::Mannequins_t::Self()->On_Option_Keymap_Change(option, key_code, conflict, conflicting_mod);
+            MCM::Mannequins_t::Self()->On_Option_Keymap_Change(option, key_code, conflict, conflicting_mod, user_callback);
         } else if (Is_Page(FILTER_PAGE)) {
-            MCM::Filter_t::Self()->On_Option_Keymap_Change(option, key_code, conflict, conflicting_mod);
+            MCM::Filter_t::Self()->On_Option_Keymap_Change(option, key_code, conflict, conflicting_mod, user_callback);
         } else if (Is_Page(CHESTS_PAGE)) {
-            MCM::Chests_t::Self()->On_Option_Keymap_Change(option, key_code, conflict, conflicting_mod);
+            MCM::Chests_t::Self()->On_Option_Keymap_Change(option, key_code, conflict, conflicting_mod, user_callback);
         } else if (Is_Page(SETTINGS_PAGE)) {
-            MCM::Settings_t::Self()->On_Option_Keymap_Change(option, key_code, conflict, conflicting_mod);
+            MCM::Settings_t::Self()->On_Option_Keymap_Change(option, key_code, conflict, conflicting_mod, user_callback);
         } else if (Is_Page(HOTKEYS_PAGE)) {
-            MCM::Hotkeys_t::Self()->On_Option_Keymap_Change(option, key_code, conflict, conflicting_mod);
+            MCM::Hotkeys_t::Self()->On_Option_Keymap_Change(option, key_code, conflict, conflicting_mod, user_callback);
         } else if (Is_Page(LOGS_PAGE)) {
-            MCM::Logs_t::Self()->On_Option_Keymap_Change(option, key_code, conflict, conflicting_mod);
+            MCM::Logs_t::Self()->On_Option_Keymap_Change(option, key_code, conflict, conflicting_mod, user_callback);
+        } else {
+            MCM::Main_t::Self()->Return_Latent(user_callback);
         }
+
+        return true;
     }
 
     void Main_t::On_Option_Default(Int_t option)
@@ -1053,11 +1073,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        // these should be latent. they will need to pass a callback through the tree. We need
-        // LatentNativeFunctions for Hotkeys in specific, so we could just hack it. but,
-        // properly speaking, they should all be latent to make sure that SkyUI doesn't change
-        // state in the before callback execution (especially with Show_Message())
-
         METHOD("OnPageReset", 1, void, On_Build_Page, String_t);
         LMETHOD("OnOptionSelect", 1, void, On_Option_Select, Int_t);
         METHOD("OnOptionMenuOpen", 1, void, On_Option_Menu_Open, Int_t);
@@ -1065,7 +1080,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         METHOD("OnOptionSliderOpen", 1, void, On_Option_Slider_Open, Int_t);
         METHOD("OnOptionSliderAccept", 2, void, On_Option_Slider_Accept, Int_t, Float_t);
         METHOD("OnOptionInputAccept", 2, void, On_Option_Input_Accept, Int_t, String_t);
-        METHOD("OnOptionKeymapChange", 4, void, On_Option_Keymap_Change, Int_t, Int_t, String_t, String_t);
+        LMETHOD("OnOptionKeymapChange", 4, void, On_Option_Keymap_Change, Int_t, Int_t, String_t, String_t);
         METHOD("OnOptionDefault", 1, void, On_Option_Default, Int_t);
         METHOD("OnOptionHighlight", 1, void, On_Option_Highlight, Int_t);
 

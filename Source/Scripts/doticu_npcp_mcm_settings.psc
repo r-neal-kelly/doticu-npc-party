@@ -4,6 +4,7 @@ Scriptname doticu_npcp_mcm_settings extends Quest
 
 int     p_option_allow_dialogue_for_all         =    -1
 int     p_option_allow_chatter                  =    -1
+int     p_option_force_cleanup                  =    -1
 
 int     p_option_member_limit                   =    -1
 int     p_option_member_display_limit           =    -1

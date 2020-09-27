@@ -643,15 +643,22 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         }
     }
 
-    void Mannequins_t::On_Option_Keymap_Change(Int_t option, Int_t key_code, String_t conflict, String_t conflicting_mod)
+    void Mannequins_t::On_Option_Keymap_Change(Int_t option,
+                                               Int_t key_code,
+                                               String_t conflict,
+                                               String_t conflicting_mod,
+                                               Callback_t<>* user_callback)
     {
+        using UCallback_t = Callback_t<>;
+        NPCP_ASSERT(user_callback);
+
         Int_t current_view = Current_View();
         if (current_view == CODES::VIEW::MANNEQUINS) {
-
+            MCM::Main_t::Self()->Return_Latent(user_callback);
         } else if (current_view == CODES::VIEW::MANNEQUINS_CELL) {
-
+            MCM::Main_t::Self()->Return_Latent(user_callback);
         } else if (current_view == CODES::VIEW::MANNEQUINS_MEMBER) {
-            MCM::Member_t::Self()->On_Option_Keymap_Change(option, key_code, conflict, conflicting_mod);
+            MCM::Member_t::Self()->On_Option_Keymap_Change(option, key_code, conflict, conflicting_mod, user_callback);
         }
     }
 

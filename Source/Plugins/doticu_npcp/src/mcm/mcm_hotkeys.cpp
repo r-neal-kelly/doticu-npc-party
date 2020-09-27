@@ -332,15 +332,19 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         #undef BUILD_HOTKEY
     }
 
-    void Hotkeys_t::On_Option_Select(Int_t option)
+    void Hotkeys_t::On_Option_Select(Int_t option, Callback_t<>* user_callback)
     {
+        using UCallback_t = Callback_t<>;
+        NPCP_ASSERT(user_callback);
+
         MCM::Main_t* mcm = Main();
 
         if (option == Set_Defaults_Option()) {
             struct Callback : public Callback_t<Bool_t> {
                 Hotkeys_t* self;
-                Callback(Hotkeys_t* self) :
-                    self(self)
+                UCallback_t* user_callback;
+                Callback(Hotkeys_t* self, UCallback_t* user_callback) :
+                    self(self), user_callback(user_callback)
                 {
                 }
                 void operator()(Bool_t result)
@@ -348,16 +352,18 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                     if (result) {
                         self->Reset_Hotkeys();
                     }
+                    MCM::Main_t::Self()->Return_Latent(user_callback);
                 }
             };
             mcm->Show_Message("This will set all NPC Party hotkeys to their defaults. "
                               "You will need to confirm any conflicts. Continue?",
-                              true, " Yes ", " No ", new Callback(this));
+                              true, " Yes ", " No ", new Callback(this, user_callback));
         } else if (option == Unset_All_Option()) {
             struct Callback : public Callback_t<Bool_t> {
                 Hotkeys_t* self;
-                Callback(Hotkeys_t* self) :
-                    self(self)
+                UCallback_t* user_callback;
+                Callback(Hotkeys_t* self, UCallback_t* user_callback) :
+                    self(self), user_callback(user_callback)
                 {
                 }
                 void operator()(Bool_t result)
@@ -365,44 +371,56 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                     if (result) {
                         self->Unset_Hotkeys();
                     }
+                    MCM::Main_t::Self()->Return_Latent(user_callback);
                 }
             };
             mcm->Show_Message("This will unset all NPC Party hotkeys. Continue?",
-                              true, " Yes ", " No ", new Callback(this));
+                              true, " Yes ", " No ", new Callback(this, user_callback));
         } else {
             String_t hotkey = Mods_Option_To_Hotkey(option);
             if (hotkey && hotkey.data && hotkey.data[0]) {
                 struct Callback : public Callback_t<Vector_t<Int_t>> {
                     Hotkeys_t* self;
+                    Int_t option;
                     String_t hotkey;
-                    Callback(Hotkeys_t* self, String_t hotkey) :
-                        self(self), hotkey(hotkey)
+                    UCallback_t* user_callback;
+                    Callback(Hotkeys_t* self, Int_t option, String_t hotkey, UCallback_t* user_callback) :
+                        self(self), option(option), hotkey(hotkey), user_callback(user_callback)
                     {
                     }
                     void operator()(Vector_t<Int_t> mods)
                     {
                         if (mods.size() > 0) {
                             Int_t value = Keys_t::Self()->Current_Value(hotkey);
+                            struct Callback : public Callback_t<Hotkeys_t*, Bool_t> {
+                                Int_t option;
+                                Vector_t<Int_t> mods;
+                                UCallback_t* user_callback;
+                                Callback(Int_t option, Vector_t<Int_t>mods, UCallback_t* user_callback) :
+                                    option(option), mods(mods), user_callback(user_callback)
+                                {
+                                }
+                                void operator()(Hotkeys_t* self, Bool_t can_set_hotkey)
+                                {
+                                    if (can_set_hotkey) {
+                                        self->Change_Hotkey_Mods(option, mods[0], mods[1], mods[2], true);
+                                        MCM::Main_t::Self()->Return_Latent(user_callback);
+                                    } else {
+                                        MCM::Main_t::Self()->Return_Latent(user_callback);
+                                    }
+                                }
+                            };
+                            self->Can_Change_Hotkey(hotkey, value, mods[0], mods[1], mods[2], new Callback(option, mods, user_callback));
+                        } else {
+                            MCM::Main_t::Self()->Return_Latent(user_callback);
                         }
                     }
                 };
-                Read_Pressed_Mods(hotkey, new Callback(this, hotkey));
+                Read_Pressed_Mods(hotkey, new Callback(this, option, hotkey, user_callback));
+            } else {
+                mcm->Return_Latent(user_callback);
             }
         }
-        /*
-function f_On_Option_Select(int id_option)
-    else
-        string hotkey = Mods_Option_to_Hotkey(id_option)
-        if hotkey
-            int value = KEYS.Current_Value(hotkey)
-            int[] mods = p_Read_Pressed_Mods(hotkey)
-            if mods.length > 0 && p_Can_Set_Hotkey(hotkey, value, mods[0], mods[1], mods[2])
-                Change_Hotkey_Mods(id_option, mods[0], mods[1], mods[2])
-            endIf
-        endIf
-    endIf
-endFunction
-        */
     }
 
     void Hotkeys_t::On_Option_Menu_Open(Int_t option)
@@ -430,35 +448,101 @@ endFunction
 
     }
 
-    void Hotkeys_t::On_Option_Keymap_Change(Int_t option, Int_t key_code, String_t conflict, String_t conflicting_mod)
+    void Hotkeys_t::On_Option_Keymap_Change(Int_t option,
+                                            Int_t key_code,
+                                            String_t conflict,
+                                            String_t conflict_mod,
+                                            Callback_t<>* user_callback)
     {
-        /*
-function f_On_Option_Keymap_Change(int id_option, int value, string conflicting_hotkey, string conflicting_mod)
-    string hotkey = Value_Option_to_Hotkey(id_option)
-    if hotkey
-        if value != KEYS.Current_Value(hotkey)
-            if value > -1 && conflicting_hotkey && conflicting_mod != MCM.ModName
-                string str_conflict_message = "This conflicts with '" + conflicting_hotkey + "'"
-                if conflicting_mod
-                    str_conflict_message += " in the mod '" + conflicting_mod + "'."
-                else
-                    str_conflict_message += " in vanilla Skyrim."
-                endIf
-                str_conflict_message += " Set key anyway?"
-                if !MCM.ShowMessage(str_conflict_message, true)
-                    return
-                endIf
-            endIf
-        
-            int[] mods = KEYS.Current_Mods(hotkey)
-            if p_Can_Set_Hotkey(hotkey, value, mods[0], mods[1], mods[2])
-                Change_Hotkey_Value(id_option, value)
-                KEYS.Register()
-            endIf
-        endIf
-    endIf
-endFunction
-        */
+        using UCallback_t = Callback_t<>;
+        NPCP_ASSERT(user_callback);
+
+        String_t hotkey = Value_Option_To_Hotkey(option);
+        if (hotkey && hotkey.data && hotkey.data[0]) {
+            if (key_code != Keys_t::Self()->Current_Value(hotkey)) {
+                if (!conflict || !conflict.data) {
+                    conflict = "";
+                }
+                if (!conflict_mod || !conflict_mod.data) {
+                    conflict_mod = "";
+                }
+                if (key_code > -1 && conflict.data[0] && !String2::Is_Same_Caseless(conflict_mod, MCM::Main_t::MOD_NAME)) {
+                    std::string str = std::string("This conflicts with '") + conflict.data + "'";
+                    if (conflict_mod.data[0]) {
+                        str += std::string(" in the mod '") + conflict_mod.data + "'.";
+                    } else {
+                        str += " in vanilla Skyrim.";
+                    }
+                    str += " Set key anyway?";
+                    struct Callback : public Callback_t<Bool_t> {
+                        Hotkeys_t* self;
+                        Int_t option;
+                        Int_t key_code;
+                        String_t hotkey;
+                        UCallback_t* user_callback;
+                        Callback(Hotkeys_t* self, Int_t option, Int_t key_code, String_t hotkey, UCallback_t* user_callback) :
+                            self(self), option(option), key_code(key_code), hotkey(hotkey), user_callback(user_callback)
+                        {
+                        }
+                        void operator()(Bool_t can_set)
+                        {
+                            if (can_set) {
+                                Vector_t<Int_t> mods = Keys_t::Self()->Current_Mods(hotkey);
+                                struct Callback : public Callback_t<Hotkeys_t*, Bool_t> {
+                                    Int_t option;
+                                    Int_t key_code;
+                                    UCallback_t* user_callback;
+                                    Callback(Int_t option, Int_t key_code, UCallback_t* user_callback) :
+                                        option(option), key_code(key_code), user_callback(user_callback)
+                                    {
+                                    }
+                                    void operator()(Hotkeys_t* self, Bool_t can_set)
+                                    {
+                                        if (can_set) {
+                                            self->Change_Hotkey_Value(option, key_code);
+                                            MCM::Main_t::Self()->Return_Latent(user_callback);
+                                        } else {
+                                            MCM::Main_t::Self()->Return_Latent(user_callback);
+                                        }
+                                    }
+                                };
+                                self->Can_Change_Hotkey(hotkey, key_code, mods[0], mods[1], mods[2],
+                                                        new Callback(option, key_code, user_callback));
+                            } else {
+                                MCM::Main_t::Self()->Return_Latent(user_callback);
+                            }
+                        }
+                    };
+                    MCM::Main_t::Self()->Show_Message(str.c_str(), true, " Yes ", " No ",
+                                                      new Callback(this, option, key_code, hotkey, user_callback));
+                } else {
+                    Vector_t<Int_t> mods = Keys_t::Self()->Current_Mods(hotkey);
+                    struct Callback : public Callback_t<Hotkeys_t*, Bool_t> {
+                        Int_t option;
+                        Int_t key_code;
+                        UCallback_t* user_callback;
+                        Callback(Int_t option, Int_t key_code, UCallback_t* user_callback) :
+                            option(option), key_code(key_code), user_callback(user_callback)
+                        {
+                        }
+                        void operator()(Hotkeys_t* self, Bool_t can_set)
+                        {
+                            if (can_set) {
+                                self->Change_Hotkey_Value(option, key_code);
+                                MCM::Main_t::Self()->Return_Latent(user_callback);
+                            } else {
+                                MCM::Main_t::Self()->Return_Latent(user_callback);
+                            }
+                        }
+                    };
+                    Can_Change_Hotkey(hotkey, key_code, mods[0], mods[1], mods[2], new Callback(option, key_code, user_callback));
+                }
+            } else {
+                MCM::Main_t::Self()->Return_Latent(user_callback);
+            }
+        } else {
+            MCM::Main_t::Self()->Return_Latent(user_callback);
+        }
     }
 
     void Hotkeys_t::On_Option_Default(Int_t option)
@@ -651,46 +735,39 @@ endFunction
         }
     }
 
-    /*void Hotkeys_t::Can_Change_Hotkey(String_t hotkey, Int_t value, Keys_t::Mods_t mods,
-                                      void (*callback)(Bool_t can_change, Int_t value, Keys_t::Mods_t mods))
+    void Hotkeys_t::Can_Change_Hotkey(String_t hotkey, Int_t value, Int_t mod_1, Int_t mod_2, Int_t mod_3,
+                                      Callback_t<Hotkeys_t*, Bool_t>* user_callback)
     {
-        if (value > Keys_t::KEY_INVALID) {
-            String_t npcp_conflict = Keys_t::Self()->Conflicting_Hotkey(hotkey, value, mods.mod_1, mods.mod_2, mods.mod_3);
+        using UCallback_t = Callback_t<Hotkeys_t*, Bool_t>;
+        NPCP_ASSERT(user_callback);
+
+        if (value > 0) {
+            String_t npcp_conflict = Keys_t::Self()->Conflicting_Hotkey(hotkey, value, mod_1, mod_2, mod_3);
             if (npcp_conflict && npcp_conflict.data && npcp_conflict.data[0]) {
-                class Message_Callback : public Virtual_Callback_t {
-                public:
-                    Int_t value;
-                    Keys_t::Mods_t mods;
-                    void (*callback)(Bool_t, Int_t, Keys_t::Mods_t);
-                    Message_Callback(Int_t value,
-                                     Keys_t::Mods_t mods,
-                                     void (*callback)(Bool_t, Int_t, Keys_t::Mods_t)) :
-                        value(value), mods(mods), callback(callback)
+                struct Callback : public Callback_t<Bool_t> {
+                    Hotkeys_t* self;
+                    UCallback_t* user_callback;
+                    Callback(Hotkeys_t* self, UCallback_t* user_callback) :
+                        self(self), user_callback(user_callback)
                     {
                     }
-                    void operator()(Variable_t* result)
+                    void operator()(Bool_t do_set)
                     {
-                        if (result) {
-                            callback(result->Bool(), value, mods);
-                        } else {
-                            callback(false, value, mods);
-                        }
+                        user_callback->operator()(self, do_set);
+                        delete user_callback;
                     }
                 };
-                Virtual_Callback_i* message_callback = new Message_Callback(value, mods, callback);
-
                 Main()->Show_Message((std::string("This conflicts with '") + npcp_conflict.data + "'. Set key anyway?").c_str(),
-                                     true,
-                                     "$Accept",
-                                     "$Cancel",
-                                     &message_callback);
+                                     true, " Yes ", " No ", new Callback(this, user_callback));
             } else {
-                callback(true, value, mods);
+                user_callback->operator()(this, true);
+                delete user_callback;
             }
         } else {
-            callback(true, value, mods); // for unset
+            user_callback->operator()(this, true);
+            delete user_callback;
         }
-    }*/
+    }
 
     void Hotkeys_t::Change_Hotkey_Value(Int_t option, Int_t value, Bool_t do_render)
     {
@@ -775,6 +852,8 @@ endFunction
         }
 
         Main()->Keymap_Option_Value(option, value, do_render);
+
+        Keys_t::Self()->Register();
     }
 
     void Hotkeys_t::Change_Hotkey_Mods(Int_t option, Int_t mod_1, Int_t mod_2, Int_t mod_3, Bool_t do_render)
@@ -1248,29 +1327,6 @@ endFunction
         };
         Main()->Show_Message("Set or Unset mods?",
                              true, " Set ", " Unset ", new Callback(this, user_callback));
-    }
-
-    Bool_t Hotkeys_t::Can_Set_Hotkey(String_t hotkey, Int_t value, Int_t mod_1, Int_t mod_2, Int_t mod_3)
-    {
-        /*
-bool function p_Can_Set_Hotkey(string hotkey, int value, int mod_1, int mod_2, int mod_3)
-    if value > 0
-        string npcp_conflict = KEYS.Conflicting_Hotkey(hotkey, value, mod_1, mod_2, mod_3)
-        if npcp_conflict != ""
-            return MCM.ShowMessage("This conflicts with '" + npcp_conflict + "'. Set key anyway?", true)
-        else
-            string mcm_conflict = MCM.GetCustomControl(value)
-            if mcm_conflict && KEYS.Current_Value(hotkey) != value
-                return MCM.ShowMessage("This conflicts with '" + mcm_conflict + "'. Set key anyway?", true)
-            else
-                return true
-            endIf
-        endIf
-    else
-        return true
-    endIf
-endFunction
-        */
     }
 
     void Hotkeys_t::Register_Me(Virtual_Machine_t* vm)

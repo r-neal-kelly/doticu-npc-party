@@ -470,10 +470,19 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         }
     }
 
-    void Followers_t::On_Option_Keymap_Change(Int_t option, Int_t key_code, String_t conflict, String_t conflicting_mod)
+    void Followers_t::On_Option_Keymap_Change(Int_t option,
+                                              Int_t key_code,
+                                              String_t conflict,
+                                              String_t conflicting_mod,
+                                              Callback_t<>* user_callback)
     {
+        using UCallback_t = Callback_t<>;
+        NPCP_ASSERT(user_callback);
+
         if (Current_View() == CODES::VIEW::FOLLOWERS_MEMBER) {
-            MCM::Member_t::Self()->On_Option_Keymap_Change(option, key_code, conflict, conflicting_mod);
+            MCM::Member_t::Self()->On_Option_Keymap_Change(option, key_code, conflict, conflicting_mod, user_callback);
+        } else {
+            MCM::Main_t::Self()->Return_Latent(user_callback);
         }
     }
 

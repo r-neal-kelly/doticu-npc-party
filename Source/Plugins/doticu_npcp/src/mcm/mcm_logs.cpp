@@ -207,8 +207,11 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         }
     }
 
-    void Logs_t::On_Option_Select(Int_t option)
+    void Logs_t::On_Option_Select(Int_t option, Callback_t<>* user_callback)
     {
+        using UCallback_t = Callback_t<>;
+        NPCP_ASSERT(user_callback);
+
         MCM::Main_t* mcm = Main();
 
         if (option == Previous_Option_Variable()->Int()) {
@@ -220,6 +223,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             }
             Page_Index(page_index);
             mcm->Reset_Page();
+            mcm->Return_Latent(user_callback);
         } else if (option == Next_Option_Variable()->Int()) {
             Int_t page_index = Page_Index();
             if (page_index == Page_Count() - 1) {
@@ -229,12 +233,17 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             }
             Page_Index(page_index);
             mcm->Reset_Page();
+            mcm->Return_Latent(user_callback);
         } else if (option == Clear_Notes_Option_Variable()->Int()) {
             Modules::Logs_t::Self()->Clear_Notes();
             mcm->Reset_Page();
+            mcm->Return_Latent(user_callback);
         } else if (option == Clear_Errors_Option_Variable()->Int()) {
             Modules::Logs_t::Self()->Clear_Errors();
             mcm->Reset_Page();
+            mcm->Return_Latent(user_callback);
+        } else {
+            mcm->Return_Latent(user_callback);
         }
     }
 
@@ -263,9 +272,16 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     }
 
-    void Logs_t::On_Option_Keymap_Change(Int_t option, Int_t key_code, String_t conflict, String_t conflicting_mod)
+    void Logs_t::On_Option_Keymap_Change(Int_t option,
+                                         Int_t key_code,
+                                         String_t conflict,
+                                         String_t conflicting_mod,
+                                         Callback_t<>* user_callback)
     {
+        using UCallback_t = Callback_t<>;
+        NPCP_ASSERT(user_callback);
 
+        MCM::Main_t::Self()->Return_Latent(user_callback);
     }
 
     void Logs_t::On_Option_Default(Int_t option)

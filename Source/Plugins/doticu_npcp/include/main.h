@@ -6,16 +6,6 @@
 
 #include "papyrus.h"
 
-namespace doticu_npcp {
-
-    const IDebugLog g_log;
-    const SKSEInterface* g_skse;
-    const SKSEPapyrusInterface* g_papyrus;
-    const SKSEMessagingInterface* g_messaging;
-    PluginHandle g_plugin_handle;
-
-}
-
 namespace doticu_npcp { namespace Modules {
 
     using namespace Papyrus;
@@ -44,6 +34,7 @@ namespace doticu_npcp { namespace Modules {
         Bool_t Has_Requirements();
         Bool_t Try_Update();
         void Try_Cleanup();
+        Int_t Force_Cleanup();
 
     public:
         static void Register_Me(Virtual_Machine_t* vm);

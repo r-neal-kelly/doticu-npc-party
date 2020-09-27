@@ -4,8 +4,11 @@
 
 #include "codes.h"
 #include "consts.h"
+#include "funcs.h"
+#include "main.h"
 #include "papyrus.inl"
 #include "string2.h"
+#include "ui.h"
 #include "utils.h"
 #include "vars.h"
 
@@ -57,6 +60,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
     // General
     Variable_t* Settings_t::Allow_Dialogue_For_All_Option_Variable() { DEFINE_VARIABLE("p_option_allow_dialogue_for_all"); }
     Variable_t* Settings_t::Allow_Chatter_Option_Variable() { DEFINE_VARIABLE("p_option_allow_chatter"); }
+    Variable_t* Settings_t::Force_Cleanup_Option_Variable() { DEFINE_VARIABLE("p_option_force_cleanup"); }
 
     // Members
     Variable_t* Settings_t::Member_Limit_Option_Variable() { DEFINE_VARIABLE("p_option_member_limit"); }
@@ -104,6 +108,9 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             Allow_Dialogue_For_All_Option_Variable()->Int(
                 mcm->Add_Toggle_Option(" Allow Dialogue For All ", Consts::Allow_Dialogue_For_All_Global()->value > 0.0f)
             );
+            /*Force_Cleanup_Option_Variable()->Int(
+                mcm->Add_Text_Option(" Force Cleanup of Unused Objects ", "")
+            );*/
         }
         mcm->Add_Empty_Option();
         mcm->Add_Empty_Option();
@@ -258,8 +265,11 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         mcm->Add_Empty_Option();
     }
 
-    void Settings_t::On_Option_Select(Int_t option)
+    void Settings_t::On_Option_Select(Int_t option, Callback_t<>* user_callback)
     {
+        using UCallback_t = Callback_t<>;
+        NPCP_ASSERT(user_callback);
+
         Modules::Vars_t* vars = Modules::Vars_t::Self();
         MCM::Main_t* mcm = Main();
 
@@ -267,6 +277,47 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             Bool_t value = !vars->Allow_Dialogue_For_All();
             vars->Allow_Dialogue_For_All(value);
             mcm->Toggle_Option_Value(option, value, true);
+            mcm->Return_Latent(user_callback);
+        /*} else if (option == Force_Cleanup_Option_Variable()->Int()) {
+            struct Callback : public Callback_t<Bool_t> {
+                Settings_t* self;
+                UCallback_t* user_callback;
+                Callback(Settings_t* self, UCallback_t* user_callback) :
+                    self(self), user_callback(user_callback)
+                {
+                }
+                void operator()(Bool_t may_continue)
+                {
+                    if (may_continue) {
+                        Int_t objects_deleted = Modules::Main_t::Self()->Force_Cleanup();
+                        struct VCallback : public Virtual_Callback_t {
+                            UCallback_t* user_callback;
+                            VCallback(UCallback_t* user_callback) :
+                                user_callback(user_callback)
+                            {
+                            }
+                            void operator()(Variable_t* result)
+                            {
+                                MCM::Main_t::Self()->Return_Latent(user_callback);
+                            }
+                        };
+                        std::string str;
+                        if (objects_deleted == 1) {
+                            str = "Deleted 1 object. ";
+                        } else {
+                            str = std::string("Deleted ") + std::to_string(objects_deleted) + " objects. ";
+                        }
+                        str += "It's best to save your game and reload. If the game crashes, retarting it should fix it.";
+                        UI::Message_Box(str.c_str(), new VCallback(user_callback));
+                    } else {
+                        MCM::Main_t::Self()->Return_Latent(user_callback);
+                    }
+                }
+            };
+            mcm->Show_Message("This will forcefully delete unused objects. NPC Party requests these objects to be deleted "
+                              "on game load, but Skyrim doesn't always seem to comply. "
+                              "You should save your game before proceeding as it may crash. Continue?",
+                              true, " Yes ", " No ", new Callback(this, user_callback));*/
 
         } else if (option == Default_Member_Style_Option_Variable()->Int()) { // Members
             Int_t style = vars->Default_Member_Style();
@@ -289,6 +340,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 vars->Default_Member_Style(CODES::STYLE::DEFAULT);
                 mcm->Text_Option_Value(option, " Default ", true);
             }
+            mcm->Return_Latent(user_callback);
         } else if (option == Default_Member_Vitality_Option_Variable()->Int()) {
             Int_t vitality = vars->Default_Member_Vitality();
             if (vitality == CODES::VITALITY::MORTAL) {
@@ -307,23 +359,28 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 vars->Default_Member_Vitality(CODES::VITALITY::MORTAL);
                 mcm->Text_Option_Value(option, " Mortal ", true);
             }
+            mcm->Return_Latent(user_callback);
 
         } else if (option == Force_Clone_Uniques_Option_Variable()->Int()) { // Clones
             Bool_t value = !vars->Force_Clone_Uniques();
             vars->Force_Clone_Uniques(value);
             mcm->Toggle_Option_Value(option, value, true);
+            mcm->Return_Latent(user_callback);
         } else if (option == Force_Unclone_Uniques_Option_Variable()->Int()) {
             Bool_t value = !vars->Force_Unclone_Uniques();
             vars->Force_Unclone_Uniques(value);
             mcm->Toggle_Option_Value(option, value, true);
+            mcm->Return_Latent(user_callback);
         } else if (option == Force_Clone_Generics_Option_Variable()->Int()) {
             Bool_t value = !vars->Force_Clone_Generics();
             vars->Force_Clone_Generics(value);
             mcm->Toggle_Option_Value(option, value, true);
+            mcm->Return_Latent(user_callback);
         } else if (option == Force_Unclone_Generics_Option_Variable()->Int()) {
             Bool_t value = !vars->Force_Unclone_Generics();
             vars->Force_Unclone_Generics(value);
             mcm->Toggle_Option_Value(option, value, true);
+            mcm->Return_Latent(user_callback);
         } else if (option == Clone_Outfit_Algorithm_Option_Variable()->Int()) {
             Int_t clone_outfit_algorithm = vars->Clone_Outfit_Algorithm();
             if (clone_outfit_algorithm == CODES::OUTFIT::BASE) {
@@ -336,11 +393,13 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 vars->Clone_Outfit_Algorithm(CODES::OUTFIT::REFERENCE);
                 mcm->Text_Option_Value(option, " Reference ", true);
             }
+            mcm->Return_Latent(user_callback);
 
         } else if (option == Do_Auto_Resurrect_Followers_Option_Variable()->Int()) { // Followers
             Bool_t value = !vars->Do_Auto_Resurrect_Followers();
             vars->Do_Auto_Resurrect_Followers(value);
             mcm->Toggle_Option_Value(option, value, true);
+            mcm->Return_Latent(user_callback);
         } else if (option == Do_Level_Followers_Option_Variable()->Int()) {
             if (vars->Do_Level_Followers()) {
                 Party::Followers_t::Self()->Unlevel();
@@ -351,6 +410,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 mcm->Toggle_Option_Value(option, true, true);
                 Party::Followers_t::Self()->Level();
             }
+            mcm->Return_Latent(user_callback);
 
         } else if (option == Do_Auto_Change_Outfits_Option_Variable()->Int()) { // Outfits
             Bool_t value = !vars->Do_Auto_Change_Outfits();
@@ -361,10 +421,12 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             } else {
                 mcm->Disable(Do_Auto_Change_Immobile_Outfit_Option_Variable()->Int(), true);
             }
+            mcm->Return_Latent(user_callback);
         } else if (option == Do_Auto_Change_Immobile_Outfit_Option_Variable()->Int()) {
             Bool_t value = !vars->Do_Auto_Change_Immobile_Outfit();
             vars->Do_Auto_Change_Immobile_Outfit(value);
             mcm->Toggle_Option_Value(option, value, true);
+            mcm->Return_Latent(user_callback);
         } else if (option == Do_Auto_Fill_Outfits_Option_Variable()->Int()) {
             Bool_t value = !vars->Do_Auto_Fill_Outfits();
             vars->Do_Auto_Fill_Outfits(value);
@@ -380,6 +442,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 mcm->Disable(Fill_Outfit_Hands_Chance_Option_Variable()->Int(), false);
                 mcm->Disable(Fill_Outfit_Feet_Chance_Option_Variable()->Int(), true);
             }
+            mcm->Return_Latent(user_callback);
 
         } else if (option == Member_Sort_Algorithm_Option_Variable()->Int()) { // Sorting
             String_t sort_algorithm = vars->Member_Sort_Algorithm();
@@ -396,6 +459,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             }
             vars->Member_Sort_Algorithm(sort_algorithm);
             mcm->Text_Option_Value(option, sort_algorithm, true);
+            mcm->Return_Latent(user_callback);
         } else if (option == Follower_Sort_Algorithm_Option_Variable()->Int()) {
             String_t sort_algorithm = vars->Follower_Sort_Algorithm();
             if (String2::Is_Same_Caseless(sort_algorithm, "NAME")) {
@@ -407,6 +471,9 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             }
             vars->Follower_Sort_Algorithm(sort_algorithm);
             mcm->Text_Option_Value(option, sort_algorithm, true);
+            mcm->Return_Latent(user_callback);
+        } else {
+            mcm->Return_Latent(user_callback);
         }
     }
 
@@ -489,8 +556,16 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
     {
     }
 
-    void Settings_t::On_Option_Keymap_Change(Int_t option, Int_t key_code, String_t conflict, String_t conflicting_mod)
+    void Settings_t::On_Option_Keymap_Change(Int_t option,
+                                             Int_t key_code,
+                                             String_t conflict,
+                                             String_t conflicting_mod,
+                                             Callback_t<>* user_callback)
     {
+        using UCallback_t = Callback_t<>;
+        NPCP_ASSERT(user_callback);
+
+        MCM::Main_t::Self()->Return_Latent(user_callback);
     }
 
     void Settings_t::On_Option_Default(Int_t option)
@@ -510,6 +585,9 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             mcm->Info_Text("Enabled: Members will talk more often and comment on the world around them.\n"
                            "Disabled: Members will remain silent unless they are fighting or you talk to them.\n"
                            "This feature is a work in progress, and so you may not notice any difference yet.");*/
+        /*} else if (option == Force_Cleanup_Option_Variable()->Int()) {
+            mcm->Info_Text("This will attempt to remove unused objects created by NPC Party from your save file. Use with "
+                           "caution, as this may crash your game. You may wish to try it when wrapping up your gaming session.");*/
 
         } else if (option == Member_Limit_Option_Variable()->Int()) { // Members
             mcm->Info_Text("This will limit the amount of members you can attain. You can always increase, "

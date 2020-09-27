@@ -62,6 +62,16 @@
 #include "mcm/mcm_hotkeys.h"
 #include "mcm/mcm_logs.h"
 
+namespace doticu_npcp {
+
+    const IDebugLog g_log;
+    const SKSEInterface* g_skse;
+    const SKSEPapyrusInterface* g_papyrus;
+    const SKSEMessagingInterface* g_messaging;
+    PluginHandle g_plugin_handle;
+
+}
+
 namespace doticu_npcp { namespace Main {
 
     bool Query_Plugin(const SKSEInterface* skse, PluginInfo* info);
@@ -301,6 +311,44 @@ namespace doticu_npcp { namespace Modules {
         }
     }
 
+    Int_t Main_t::Force_Cleanup()
+    {
+        Int_t objects_deleted = 0;
+
+        {
+            Vector_t<Reference_t*> outfit2s = Cell::References(Consts::Storage_Cell(), Consts::Outfit2_Container());
+            for (size_t idx = 0, count = outfit2s.size(); idx < count; idx += 1) {
+                Outfit2_t* outfit2 = static_cast<Outfit2_t*>(outfit2s.at(idx));
+                if (outfit2 && outfit2->Type() == CODES::OUTFIT2::DELETED) {
+                    Object_Ref::Delete_Unsafe(outfit2);
+                    objects_deleted += 1;
+                }
+            }
+        }
+
+        {
+            Party::NPCS_t* npcs = Party::NPCS_t::Self();
+            Form_Vector_t* bases = npcs->Bases();
+            Form_Vector_t* default_outfits = npcs->Default_Outfits();
+            Vector_t<Reference_t*> form_vectors = Cell::References(Consts::Storage_Cell(), Consts::Form_Vector());
+            for (size_t idx = 0, count = form_vectors.size(); idx < count; idx += 1) {
+                Form_Vector_t* form_vector = static_cast<Form_Vector_t*>(form_vectors.at(idx));
+                if (form_vector && form_vector != bases && form_vector != default_outfits) {
+                    Object_Ref::Delete_Unsafe(form_vector);
+                    objects_deleted += 1;
+                }
+            }
+        }
+
+        if (objects_deleted == 1) {
+            Utils::Print("NPC Party forced 1 object to be deleted.");
+        } else {
+            Utils::Print((std::string("NPC Party forced ") + std::to_string(objects_deleted) + " objects to be deleted.").c_str());
+        }
+
+        return objects_deleted;
+    }
+
     void Main_t::Register_Me(Virtual_Machine_t* vm)
     {
         #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
@@ -409,7 +457,6 @@ namespace doticu_npcp { namespace Main {
         REGISTER_NAMESPACE(Quest);
         REGISTER_NAMESPACE(Spell);
         REGISTER_NAMESPACE(String2);
-        REGISTER_NAMESPACE(Utils);
 
         #undef REGISTER_NAMESPACE
 

@@ -102,6 +102,7 @@ namespace doticu_npcp { namespace Object_Ref {
     Reference_t* Create_Container();
 
     void Delete_Safe(Reference_t* ref);
+    void Delete_Unsafe(Reference_t* ref);
 
     void Enable(Reference_t* ref, Bool_t do_fade_in = false, Virtual_Callback_i** callback = nullptr);
     void Disable(Reference_t* ref, Bool_t do_fade_out = false, Virtual_Callback_i** callback = nullptr);

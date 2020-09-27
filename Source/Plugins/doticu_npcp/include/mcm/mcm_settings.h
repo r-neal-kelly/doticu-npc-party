@@ -27,6 +27,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         // General
         Variable_t* Allow_Dialogue_For_All_Option_Variable();
         Variable_t* Allow_Chatter_Option_Variable();
+        Variable_t* Force_Cleanup_Option_Variable();
 
         // Members
         Variable_t* Member_Limit_Option_Variable();
@@ -59,13 +60,13 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Variable_t* Follower_Sort_Algorithm_Option_Variable();
 
         void On_Build_Page();
-        void On_Option_Select(Int_t option);
+        void On_Option_Select(Int_t option, Callback_t<>* user_callback);
         void On_Option_Menu_Open(Int_t option);
         void On_Option_Menu_Accept(Int_t option, Int_t idx);
         void On_Option_Slider_Open(Int_t option);
         void On_Option_Slider_Accept(Int_t option, Float_t value);
         void On_Option_Input_Accept(Int_t option, String_t value);
-        void On_Option_Keymap_Change(Int_t option, Int_t key_code, String_t conflict, String_t conflicting_mod);
+        void On_Option_Keymap_Change(Int_t option, Int_t key_code, String_t conflict, String_t conflicting_mod, Callback_t<>* user_callback);
         void On_Option_Default(Int_t option);
         void On_Option_Highlight(Int_t option);
 

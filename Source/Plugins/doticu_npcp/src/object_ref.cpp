@@ -1143,6 +1143,17 @@ namespace doticu_npcp { namespace Object_Ref {
         }
     }
 
+    void Delete_Unsafe(Reference_t* ref)
+    {
+        using namespace Papyrus;
+
+        if (ref) {
+            ref->Disable();
+            ref->flags = Utils::Bit_Off(ref->flags, 10);
+            Virtual_Machine_t::Self()->Call_Method(ref, "ObjectReference", "Delete");
+        }
+    }
+
     void Enable(Reference_t* ref, Bool_t do_fade_in, Virtual_Callback_i** callback)
     {
         NPCP_ASSERT(ref);

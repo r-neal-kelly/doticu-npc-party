@@ -1339,6 +1339,148 @@ namespace doticu_npcp { namespace Papyrus {
     }
 
     template <
+        typename Return_t, typename Base_t,
+        Return_t(Base_t::* method)()
+    > auto Forward()
+    {
+        return [](Base_t* base)->Return_t
+        {
+            NPCP_ASSERT(base);
+            return (base->*method)();
+        };
+    }
+
+    template <
+        typename Return_t, typename Base_t,
+        typename A,
+        Return_t(Base_t::* method)(A)
+    > auto Forward()
+    {
+        return [](Base_t* base, A a)->Return_t
+        {
+            NPCP_ASSERT(base);
+            return (base->*method)(a);
+        };
+    }
+
+    template <
+        typename Return_t, typename Base_t,
+        typename A, typename B,
+        Return_t(Base_t::* method)(A, B)
+    > auto Forward()
+    {
+        return [](Base_t* base, A a, B b)->Return_t
+        {
+            NPCP_ASSERT(base);
+            return (base->*method)(a, b);
+        };
+    }
+
+    template <
+        typename Return_t, typename Base_t,
+        typename A, typename B, typename C,
+        Return_t(Base_t::* method)(A, B, C)
+    > auto Forward()
+    {
+        return [](Base_t* base, A a, B b, C c)->Return_t
+        {
+            NPCP_ASSERT(base);
+            return (base->*method)(a, b, c);
+        };
+    }
+
+    template <
+        typename Return_t, typename Base_t,
+        typename A, typename B, typename C, typename D,
+        Return_t(Base_t::* method)(A, B, C, D)
+    > auto Forward()
+    {
+        return [](Base_t* base, A a, B b, C c, D d)->Return_t
+        {
+            NPCP_ASSERT(base);
+            return (base->*method)(a, b, c, d);
+        };
+    }
+
+    template <
+        typename Return_t, typename Base_t,
+        typename A, typename B, typename C, typename D, typename E,
+        Return_t(Base_t::* method)(A, B, C, D, E)
+    > auto Forward()
+    {
+        return [](Base_t* base, A a, B b, C c, D d, E e)->Return_t
+        {
+            NPCP_ASSERT(base);
+            return (base->*method)(a, b, c, d, e);
+        };
+    }
+
+    template <
+        typename Return_t, typename Base_t,
+        typename A, typename B, typename C, typename D, typename E, typename F,
+        Return_t(Base_t::* method)(A, B, C, D, E, F)
+    > auto Forward()
+    {
+        return [](Base_t* base, A a, B b, C c, D d, E e, F f)->Return_t
+        {
+            NPCP_ASSERT(base);
+            return (base->*method)(a, b, c, d, e, f);
+        };
+    }
+
+    template <
+        typename Return_t, typename Base_t,
+        typename A, typename B, typename C, typename D, typename E, typename F, typename G,
+        Return_t(Base_t::* method)(A, B, C, D, E, F, G)
+    > auto Forward()
+    {
+        return [](Base_t* base, A a, B b, C c, D d, E e, F f, G g)->Return_t
+        {
+            NPCP_ASSERT(base);
+            return (base->*method)(a, b, c, d, e, f, g);
+        };
+    }
+
+    template <
+        typename Return_t, typename Base_t,
+        typename A, typename B, typename C, typename D, typename E, typename F, typename G, typename H,
+        Return_t(Base_t::* method)(A, B, C, D, E, F, G, H)
+    > auto Forward()
+    {
+        return [](Base_t* base, A a, B b, C c, D d, E e, F f, G g, H h)->Return_t
+        {
+            NPCP_ASSERT(base);
+            return (base->*method)(a, b, c, d, e, f, g, h);
+        };
+    }
+
+    template <
+        typename Return_t, typename Base_t,
+        typename A, typename B, typename C, typename D, typename E, typename F, typename G, typename H, typename I,
+        Return_t(Base_t::* method)(A, B, C, D, E, F, G, H, I)
+    > auto Forward()
+    {
+        return [](Base_t* base, A a, B b, C c, D d, E e, F f, G g, H h, I i)->Return_t
+        {
+            NPCP_ASSERT(base);
+            return (base->*method)(a, b, c, d, e, f, g, h, i);
+        };
+    }
+
+    template <
+        typename Return_t, typename Base_t,
+        typename A, typename B, typename C, typename D, typename E, typename F, typename G, typename H, typename I, typename J,
+        Return_t(Base_t::* method)(A, B, C, D, E, F, G, H, I, J)
+    > auto Forward()
+    {
+        return [](Base_t* base, A a, B b, C c, D d, E e, F f, G g, H h, I i, J j)->Return_t
+        {
+            NPCP_ASSERT(base);
+            return (base->*method)(a, b, c, d, e, f, g, h, i, j);
+        };
+    }
+
+    template <
         typename Base_t,
         Bool_t(Base_t::* method)(Virtual_Machine_t*, Stack_ID_t)
     > auto Forward_Latent()
@@ -1363,6 +1505,176 @@ namespace doticu_npcp { namespace Papyrus {
                                    a);
         };
     }
+
+    template <
+        typename Base_t,
+        typename A, typename B,
+        Bool_t(Base_t::* method)(Virtual_Machine_t*, Stack_ID_t, A, B)
+    > auto Forward_Latent()
+    {
+        return [](Registry_t* registry, Stack_ID_t stack_id, Base_t* base, A a, B b)->Bool_t
+        {
+            NPCP_ASSERT(base);
+            return (base->*method)(reinterpret_cast<Virtual_Machine_t*>(registry), stack_id,
+                                   a, b);
+        };
+    }
+
+    template <
+        typename Base_t,
+        typename A, typename B, typename C,
+        Bool_t(Base_t::* method)(Virtual_Machine_t*, Stack_ID_t, A, B, C)
+    > auto Forward_Latent()
+    {
+        return [](Registry_t* registry, Stack_ID_t stack_id, Base_t* base, A a, B b, C c)->Bool_t
+        {
+            NPCP_ASSERT(base);
+            return (base->*method)(reinterpret_cast<Virtual_Machine_t*>(registry), stack_id,
+                                   a, b, c);
+        };
+    }
+
+    template <
+        typename Base_t,
+        typename A, typename B, typename C, typename D,
+        Bool_t(Base_t::* method)(Virtual_Machine_t*, Stack_ID_t, A, B, C, D)
+    > auto Forward_Latent()
+    {
+        return [](Registry_t* registry, Stack_ID_t stack_id, Base_t* base, A a, B b, C c, D d)->Bool_t
+        {
+            NPCP_ASSERT(base);
+            return (base->*method)(reinterpret_cast<Virtual_Machine_t*>(registry), stack_id,
+                                   a, b, c, d);
+        };
+    }
+
+    template <
+        typename Base_t,
+        typename A, typename B, typename C, typename D, typename E,
+        Bool_t(Base_t::* method)(Virtual_Machine_t*, Stack_ID_t, A, B, C, D, E)
+    > auto Forward_Latent()
+    {
+        return [](Registry_t* registry, Stack_ID_t stack_id, Base_t* base, A a, B b, C c, D d, E e)->Bool_t
+        {
+            NPCP_ASSERT(base);
+            return (base->*method)(reinterpret_cast<Virtual_Machine_t*>(registry), stack_id,
+                                   a, b, c, d, e);
+        };
+    }
+
+    template <
+        typename Base_t,
+        typename A, typename B, typename C, typename D, typename E, typename F,
+        Bool_t(Base_t::* method)(Virtual_Machine_t*, Stack_ID_t, A, B, C, D, E, F)
+    > auto Forward_Latent()
+    {
+        return [](Registry_t* registry, Stack_ID_t stack_id, Base_t* base, A a, B b, C c, D d, E e, F f)->Bool_t
+        {
+            NPCP_ASSERT(base);
+            return (base->*method)(reinterpret_cast<Virtual_Machine_t*>(registry), stack_id,
+                                   a, b, c, d, e, f);
+        };
+    }
+
+    template <
+        typename Base_t,
+        typename A, typename B, typename C, typename D, typename E, typename F, typename G,
+        Bool_t(Base_t::* method)(Virtual_Machine_t*, Stack_ID_t, A, B, C, D, E, F, G)
+    > auto Forward_Latent()
+    {
+        return [](Registry_t* registry, Stack_ID_t stack_id, Base_t* base, A a, B b, C c, D d, E e, F f, G g)->Bool_t
+        {
+            NPCP_ASSERT(base);
+            return (base->*method)(reinterpret_cast<Virtual_Machine_t*>(registry), stack_id,
+                                   a, b, c, d, e, f, g);
+        };
+    }
+
+    template <
+        typename Base_t,
+        typename A, typename B, typename C, typename D, typename E, typename F, typename G, typename H,
+        Bool_t(Base_t::* method)(Virtual_Machine_t*, Stack_ID_t, A, B, C, D, E, F, G, H)
+    > auto Forward_Latent()
+    {
+        return [](Registry_t* registry, Stack_ID_t stack_id, Base_t* base, A a, B b, C c, D d, E e, F f, G g, H h)->Bool_t
+        {
+            NPCP_ASSERT(base);
+            return (base->*method)(reinterpret_cast<Virtual_Machine_t*>(registry), stack_id,
+                                   a, b, c, d, e, f, g, h);
+        };
+    }
+
+    template <
+        typename Base_t,
+        typename A, typename B, typename C, typename D, typename E, typename F, typename G, typename H, typename I,
+        Bool_t(Base_t::* method)(Virtual_Machine_t*, Stack_ID_t, A, B, C, D, E, F, G, H, I)
+    > auto Forward_Latent()
+    {
+        return [](Registry_t* registry, Stack_ID_t stack_id, Base_t* base, A a, B b, C c, D d, E e, F f, G g, H h, I i)->Bool_t
+        {
+            NPCP_ASSERT(base);
+            return (base->*method)(reinterpret_cast<Virtual_Machine_t*>(registry), stack_id,
+                                   a, b, c, d, e, f, g, h, i);
+        };
+    }
+
+    template <
+        typename Base_t,
+        typename A, typename B, typename C, typename D, typename E, typename F, typename G, typename H, typename I, typename J,
+        Bool_t(Base_t::* method)(Virtual_Machine_t*, Stack_ID_t, A, B, C, D, E, F, G, H, I, J)
+    > auto Forward_Latent()
+    {
+        return [](Registry_t* registry, Stack_ID_t stack_id, Base_t* base, A a, B b, C c, D d, E e, F f, G g, H h, I i, J j)->Bool_t
+        {
+            NPCP_ASSERT(base);
+            return (base->*method)(reinterpret_cast<Virtual_Machine_t*>(registry), stack_id,
+                                   a, b, c, d, e, f, g, h, i, j);
+        };
+    }
+
+    #define DEFINE_VARIABLE(NAME_)                              \
+    M                                                           \
+        static const String_t variable_name = String_t(NAME_);  \
+        NPCP_ASSERT(variable_name);                             \
+        Variable_t* variable = Variable(variable_name);         \
+        NPCP_ASSERT(variable);                                  \
+        return variable;                                        \
+    W
+
+    #define DEFINE_PROPERTY(NAME_)                              \
+    M                                                           \
+        static const String_t property_name = String_t(NAME_);  \
+        NPCP_ASSERT(property_name);                             \
+        Variable_t* _property = Property(property_name);        \
+        NPCP_ASSERT(_property);                                 \
+        return _property;                                       \
+    W
+
+    #define DEFINE_STRING(NAME_)                        \
+    M                                                   \
+        static const String_t string = String_t(NAME_); \
+        NPCP_ASSERT(string);                            \
+        return string;                                  \
+    W
+
+    #define ADD_CLASS_METHOD(STR_CLASS_, BASE_, STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...) \
+    M                                                                                       \
+        registry->RegisterFunction(                                                         \
+            new NativeFunction##ARG_NUM_ <BASE_, RETURN_, __VA_ARGS__>(                     \
+                STR_FUNC_, STR_CLASS_, METHOD_, registry                                    \
+            )                                                                               \
+        );                                                                                  \
+    W
+
+    #define FORWARD_METHOD(VM_, STR_CLASS_, TYPE_, STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+    M                                                                                           \
+        auto METHOD_ = Forward<RETURN_, TYPE_, __VA_ARGS__, &TYPE_::METHOD_>();                 \
+        VM_->Bind_Function(                                                                     \
+            new NativeFunction##ARG_NUM_ <TYPE_, RETURN_, __VA_ARGS__>(                         \
+                STR_FUNC_, STR_CLASS_, METHOD_, reinterpret_cast<Registry_t*>(VM_)              \
+            )                                                                                   \
+        );                                                                                      \
+    W
 
     #define FORWARD_LATENT_METHOD(VM_, STR_CLASS_, TYPE_, STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)   \
     M                                                                                                   \

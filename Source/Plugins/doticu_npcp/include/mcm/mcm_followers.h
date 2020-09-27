@@ -74,7 +74,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         void On_Option_Slider_Open(Int_t option);
         void On_Option_Slider_Accept(Int_t option, Float_t value);
         void On_Option_Input_Accept(Int_t option, String_t value);
-        void On_Option_Keymap_Change(Int_t option, Int_t key_code, String_t conflict, String_t conflicting_mod);
+        void On_Option_Keymap_Change(Int_t option, Int_t key_code, String_t conflict, String_t conflicting_mod, Callback_t<>* user_callback);
         void On_Option_Default(Int_t option);
         void On_Option_Highlight(Int_t option);
         

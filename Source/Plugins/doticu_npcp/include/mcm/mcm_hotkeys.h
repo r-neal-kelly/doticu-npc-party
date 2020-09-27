@@ -190,18 +190,18 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Int_t FS_Resurrect_Mods_Option();
 
         void On_Build_Page();
-        void On_Option_Select(Int_t option);
+        void On_Option_Select(Int_t option, Callback_t<>* user_callback);
         void On_Option_Menu_Open(Int_t option);
         void On_Option_Menu_Accept(Int_t option, Int_t idx);
         void On_Option_Slider_Open(Int_t option);
         void On_Option_Slider_Accept(Int_t option, Float_t value);
         void On_Option_Input_Accept(Int_t option, String_t value);
-        void On_Option_Keymap_Change(Int_t option, Int_t key_code, String_t conflict, String_t conflicting_mod);
+        void On_Option_Keymap_Change(Int_t option, Int_t key_code, String_t conflict, String_t conflicting_mod, Callback_t<>* user_callback);
         void On_Option_Default(Int_t option);
         void On_Option_Highlight(Int_t option);
 
-        /*void Can_Change_Hotkey(String_t hotkey, Int_t value, Keys_t::Mods_t mods,
-                               void (*callback)(Bool_t can_change, Int_t value, Keys_t::Mods_t mods));*/
+        void Can_Change_Hotkey(String_t hotkey, Int_t value, Int_t mod_1, Int_t mod_2, Int_t mod_3,
+                               Callback_t<Hotkeys_t*, Bool_t>* user_callback);
         void Change_Hotkey_Value(Int_t option, Int_t value, Bool_t do_render = true);
         void Change_Hotkey_Mods(Int_t option, Int_t mod_1, Int_t mod_2, Int_t mod_3, Bool_t do_render = true);
         void Reset_Hotkeys();
@@ -210,7 +210,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         String_t Mods_Option_To_Hotkey(Int_t mods_option);
 
         void Read_Pressed_Mods(String_t hotkey, Callback_t<Vector_t<Int_t>>* user_callback);
-        Bool_t Can_Set_Hotkey(String_t hotkey, Int_t value, Int_t mod_1, Int_t mod_2, Int_t mod_3);
 
     public:
         static void Register_Me(Virtual_Machine_t* vm);

@@ -42,12 +42,3 @@ namespace doticu_npcp { namespace Utils {
     }
 
 }}
-
-namespace doticu_npcp { namespace Utils { namespace Exports {
-
-    bool Register(VMClassRegistry *registry)
-    {
-        return true;
-    }
-
-}}}
