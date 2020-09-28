@@ -32,8 +32,9 @@ namespace doticu_npcp { namespace Papyrus {
 
 namespace doticu_npcp { namespace XList {
 
-    XList_t *Create() {
-        XList_t *xlist = (XList_t *)Heap_Allocate(sizeof(XList_t));
+    XList_t* Create()
+    {
+        XList_t* xlist = (XList_t*)Heap_Allocate(sizeof(XList_t));
         NPCP_ASSERT(xlist);
 
         xlist->m_data = NULL;
@@ -51,19 +52,20 @@ namespace doticu_npcp { namespace XList {
         return xlist;
     }
 
-    void Destroy(XList_t *xlist) {
-        if (!xlist) {
-            return;
+    void Destroy(XList_t* xlist)
+    {
+        if (xlist) {
+            for (XData_t* xdata = xlist->m_data, *xdata_to_destroy; xdata != nullptr;) {
+                xdata_to_destroy = xdata;
+                xdata = xdata->next;
+                if (xdata_to_destroy->GetType() == kExtraData_Ownership) {
+                    static_cast<ExtraOwnership*>(xdata_to_destroy)->owner = nullptr;
+                }
+                XData::Destroy(xdata_to_destroy);
+            }
+            Heap_Free(xlist->m_presence);
+            Heap_Free(xlist);
         }
-
-        for (XData_t *xdata = xlist->m_data, *xdata_destroy; xdata != NULL;) {
-            xdata_destroy = xdata;
-            xdata = xdata->next;
-            XData::Destroy(xdata_destroy);
-        }
-
-        Heap_Free(xlist->m_presence);
-        Heap_Free(xlist);
     }
 
     void Validate(XList_t* xlist, Int_t xentry_count, Int_t bentry_count)
