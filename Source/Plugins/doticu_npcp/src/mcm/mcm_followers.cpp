@@ -324,9 +324,9 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                         } else if (indices.option == 3) {
                             mcm->Disable(option);
                             if (follower->Is_Immobile()) {
-                                Commands_t::Self()->Mobilize(follower->Actor());
+                                Commands_t::Self()->Mobilize(follower->Actor(), false);
                             } else {
-                                Commands_t::Self()->Immobilize(follower->Actor());
+                                Commands_t::Self()->Immobilize(follower->Actor(), false);
                             }
                             mcm->Reset_Page();
                             mcm->Return_Latent(user_callback);
@@ -486,10 +486,15 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         }
     }
 
-    void Followers_t::On_Option_Default(Int_t option)
+    void Followers_t::On_Option_Default(Int_t option, Callback_t<>* user_callback)
     {
+        using UCallback_t = Callback_t<>;
+        NPCP_ASSERT(user_callback);
+
         if (Current_View() == CODES::VIEW::FOLLOWERS_MEMBER) {
-            MCM::Member_t::Self()->On_Option_Default(option);
+            MCM::Member_t::Self()->On_Option_Default(option, user_callback);
+        } else {
+            MCM::Main_t::Self()->Return_Latent(user_callback);
         }
     }
 

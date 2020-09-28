@@ -607,7 +607,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         };
     }
 
-    void Commands_t::Mobilize(Actor_t* actor)
+    void Commands_t::Mobilize(Actor_t* actor, Bool_t do_notify_success)
     {
         Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
 
@@ -623,7 +623,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
         switch (code) {
             case (CODES::SUCCESS):
-                return Log_Note(name, " will start moving.");
+                return do_notify_success ? Log_Note(name, " will start moving.") : (void)0;
             case (CODES::MEMBER):
                 return Log_Note(name, " isn't a member, and so can't be mobilized.");
             case (CODES::IS):
@@ -633,7 +633,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         };
     }
 
-    void Commands_t::Immobilize(Actor_t* actor)
+    void Commands_t::Immobilize(Actor_t* actor, Bool_t do_notify_success)
     {
         Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
 
@@ -649,7 +649,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
         switch (code) {
             case (CODES::SUCCESS):
-                return Log_Note(name, " will stop moving.");
+                return do_notify_success ? Log_Note(name, " will stop moving.") : (void)0;
             case (CODES::MEMBER):
                 return Log_Note(name, " isn't a member, and so can't be immobilized.");
             case (CODES::IS):
@@ -659,7 +659,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         };
     }
 
-    void Commands_t::Settle(Actor_t* actor)
+    void Commands_t::Settle(Actor_t* actor, Bool_t do_notify_success)
     {
         Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
 
@@ -675,7 +675,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
         switch (code) {
             case (CODES::SUCCESS):
-                return Log_Note(name, " will settle here.");
+                return do_notify_success ? Log_Note(name, " will settle here.") : (void)0;
             case (CODES::MEMBER):
                 return Log_Note(name, " isn't a member, and so can't settle here.");
             case (CODES::IS):
@@ -685,7 +685,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         };
     }
 
-    void Commands_t::Resettle(Actor_t* actor)
+    void Commands_t::Resettle(Actor_t* actor, Bool_t do_notify_success)
     {
         Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
 
@@ -701,7 +701,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
         switch (code) {
             case (CODES::SUCCESS):
-                return Log_Note(name, " will resettle here.");
+                return do_notify_success ? Log_Note(name, " will resettle here.") : (void)0;
             case (CODES::MEMBER):
                 return Log_Note(name, " isn't a member, and so can't resettle.");
             case (CODES::ISNT):
@@ -711,7 +711,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         };
     }
 
-    void Commands_t::Unsettle(Actor_t* actor)
+    void Commands_t::Unsettle(Actor_t* actor, Bool_t do_notify_success)
     {
         Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
 
@@ -727,7 +727,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
         switch (code) {
             case (CODES::SUCCESS):
-                return Log_Note(name, " will not be a settler.");
+                return do_notify_success ? Log_Note(name, " will not be a settler.") : (void)0;
             case (CODES::MEMBER):
                 return Log_Note(name, " isn't a member, and so can't unsettle.");
             case (CODES::IS):
@@ -793,7 +793,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         };
     }
 
-    void Commands_t::Paralyze(Actor_t* actor)
+    void Commands_t::Paralyze(Actor_t* actor, Bool_t do_notify_success)
     {
         Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
 
@@ -809,7 +809,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
         switch (code) {
             case (CODES::SUCCESS):
-                return Log_Note(name, " will be paralyzed.");
+                return do_notify_success ? Log_Note(name, " will be paralyzed.") : (void)0;
             case (CODES::MEMBER):
                 return Log_Note(name, " isn't a member, and so can't be paralyzed.");
             case (CODES::IS):
@@ -819,7 +819,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         };
     }
 
-    void Commands_t::Unparalyze(Actor_t* actor)
+    void Commands_t::Unparalyze(Actor_t* actor, Bool_t do_notify_success)
     {
         Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
 
@@ -835,7 +835,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
         switch (code) {
             case (CODES::SUCCESS):
-                return Log_Note(name, " will no longer be paralyzed.");
+                return do_notify_success ? Log_Note(name, " will no longer be paralyzed.") : (void)0;
             case (CODES::MEMBER):
                 return Log_Note(name, " isn't a member, and so can't be unparalyzed.");
             case (CODES::IS):
@@ -1127,7 +1127,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         }
     }
 
-    void Commands_t::Stylize_Default(Actor_t* actor)
+    void Commands_t::Stylize_Default(Actor_t* actor, Bool_t do_notify_success)
     {
         Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
 
@@ -1143,7 +1143,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
         switch (code) {
             case (CODES::SUCCESS):
-                return Log_Note(name, " now fights with their default style.");
+                return do_notify_success ? Log_Note(name, " now fights with their default style.") : (void)0;
             case (CODES::MEMBER):
                 return Log_Note(name, " isn't a member, and so can't be stylized.");
             case (CODES::IS):
@@ -1153,7 +1153,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         };
     }
 
-    void Commands_t::Stylize_Warrior(Actor_t* actor)
+    void Commands_t::Stylize_Warrior(Actor_t* actor, Bool_t do_notify_success)
     {
         Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
 
@@ -1169,7 +1169,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
         switch (code) {
             case (CODES::SUCCESS):
-                return Log_Note(name, " now fights as a warrior.");
+                return do_notify_success ? Log_Note(name, " now fights as a warrior.") : (void)0;
             case (CODES::MEMBER):
                 return Log_Note(name, " isn't a member, and so can't be a warrior.");
             case (CODES::IS):
@@ -1179,7 +1179,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         };
     }
 
-    void Commands_t::Stylize_Mage(Actor_t* actor)
+    void Commands_t::Stylize_Mage(Actor_t* actor, Bool_t do_notify_success)
     {
         Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
 
@@ -1195,7 +1195,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
         switch (code) {
             case (CODES::SUCCESS):
-                return Log_Note(name, " now fights as a mage.");
+                return do_notify_success ? Log_Note(name, " now fights as a mage.") : (void)0;
             case (CODES::MEMBER):
                 return Log_Note(name, " isn't a member, and so can't be a mage.");
             case (CODES::IS):
@@ -1205,7 +1205,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         };
     }
 
-    void Commands_t::Stylize_Archer(Actor_t* actor)
+    void Commands_t::Stylize_Archer(Actor_t* actor, Bool_t do_notify_success)
     {
         Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
 
@@ -1221,7 +1221,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
         switch (code) {
             case (CODES::SUCCESS):
-                return Log_Note(name, " now fights as an archer.");
+                return do_notify_success ? Log_Note(name, " now fights as an archer.") : (void)0;
             case (CODES::MEMBER):
                 return Log_Note(name, " isn't a member, and so can't be an archer.");
             case (CODES::IS):
@@ -1231,7 +1231,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         };
     }
 
-    void Commands_t::Stylize_Coward(Actor_t* actor)
+    void Commands_t::Stylize_Coward(Actor_t* actor, Bool_t do_notify_success)
     {
         Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
 
@@ -1247,7 +1247,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
         switch (code) {
             case (CODES::SUCCESS):
-                return Log_Note(name, " now flees as a coward.");
+                return do_notify_success ? Log_Note(name, " now flees as a coward.") : (void)0;
             case (CODES::MEMBER):
                 return Log_Note(name, " isn't a member, and so can't be a coward.");
             case (CODES::IS):
@@ -1257,7 +1257,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         };
     }
 
-    void Commands_t::Vitalize_Mortal(Actor_t* actor)
+    void Commands_t::Vitalize_Mortal(Actor_t* actor, Bool_t do_notify_success)
     {
         Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
 
@@ -1273,7 +1273,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
         switch (code) {
             case (CODES::SUCCESS):
-                return Log_Note(name, " is now mortal.");
+                return do_notify_success ? Log_Note(name, " is now mortal.") : (void)0;
             case (CODES::MEMBER):
                 return Log_Note(name, " isn't a member, and so can't be made mortal.");
             case (CODES::IS):
@@ -1283,7 +1283,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         };
     }
 
-    void Commands_t::Vitalize_Protected(Actor_t* actor)
+    void Commands_t::Vitalize_Protected(Actor_t* actor, Bool_t do_notify_success)
     {
         Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
 
@@ -1299,7 +1299,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
         switch (code) {
             case (CODES::SUCCESS):
-                return Log_Note(name, " is now protected.");
+                return do_notify_success ? Log_Note(name, " is now protected.") : (void)0;
             case (CODES::MEMBER):
                 return Log_Note(name, " isn't a member, and so can't be protected.");
             case (CODES::IS):
@@ -1309,7 +1309,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         };
     }
 
-    void Commands_t::Vitalize_Essential(Actor_t* actor)
+    void Commands_t::Vitalize_Essential(Actor_t* actor, Bool_t do_notify_success)
     {
         Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
 
@@ -1325,7 +1325,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
         switch (code) {
             case (CODES::SUCCESS):
-                return Log_Note(name, " is now essential.");
+                return do_notify_success ? Log_Note(name, " is now essential.") : (void)0;
             case (CODES::MEMBER):
                 return Log_Note(name, " isn't a member, and so can't be essential.");
             case (CODES::IS):
@@ -1335,7 +1335,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         };
     }
 
-    void Commands_t::Vitalize_Invulnerable(Actor_t* actor)
+    void Commands_t::Vitalize_Invulnerable(Actor_t* actor, Bool_t do_notify_success)
     {
         Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
 
@@ -1351,7 +1351,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
         switch (code) {
             case (CODES::SUCCESS):
-                return Log_Note(name, " is now invulnerable.");
+                return do_notify_success ? Log_Note(name, " is now invulnerable.") : (void)0;
             case (CODES::MEMBER):
                 return Log_Note(name, " isn't a member, and so can't be invulnerable.");
             case (CODES::IS):
@@ -1553,7 +1553,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         };
     }
 
-    void Commands_t::Rate(Actor_t* actor, Int_t rating)
+    void Commands_t::Rate(Actor_t* actor, Int_t rating, Bool_t do_notify_success)
     {
         Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
 
@@ -1569,7 +1569,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
         switch (code) {
             case (CODES::SUCCESS):
-                return Log_Note(name, " has been rated.");
+                return do_notify_success ? Log_Note(name, " has been rated.") : (void)0;
             case (CODES::MEMBER):
                 return Log_Note(name, " isn't a member, and so can't be rated.");
             case (CODES::ISNT):
@@ -1586,9 +1586,9 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         Member_t* member = Party::Members_t::Self()->From_Actor(actor);
         if (member) {
             if (member->Is_Immobile()) {
-                Mobilize(actor);
+                Mobilize(actor, true);
             } else {
-                Immobilize(actor);
+                Immobilize(actor, true);
             }
         } else {
             class Add_Callback : public Callback_t<Int_t, Member_t*> {
@@ -1602,7 +1602,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                 virtual void operator()(Int_t code, Member_t* member) override
                 {
                     if (code == CODES::SUCCESS) {
-                        commands->Immobilize(actor);
+                        commands->Immobilize(actor, true);
                     } else {
                         commands->Log_Member(code, Actor2::Get_Name(actor));
                     }
@@ -1620,9 +1620,9 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         Member_t* member = Party::Members_t::Self()->From_Actor(actor);
         if (member) {
             if (member->Is_Settler()) {
-                Unsettle(actor);
+                Unsettle(actor, true);
             } else {
-                Settle(actor);
+                Settle(actor, true);
             }
         } else {
             class Add_Callback : public Callback_t<Int_t, Member_t*> {
@@ -1636,7 +1636,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                 virtual void operator()(Int_t code, Member_t* member) override
                 {
                     if (code == CODES::SUCCESS) {
-                        commands->Settle(actor);
+                        commands->Settle(actor, true);
                     } else {
                         commands->Log_Member(code, Actor2::Get_Name(actor));
                     }
@@ -1688,9 +1688,9 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         Member_t* member = Party::Members_t::Self()->From_Actor(actor);
         if (member) {
             if (member->Is_Paralyzed()) {
-                Unparalyze(actor);
+                Unparalyze(actor, true);
             } else {
-                Paralyze(actor);
+                Paralyze(actor, true);
             }
         } else {
             class Add_Callback : public Callback_t<Int_t, Member_t*> {
@@ -1704,7 +1704,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                 virtual void operator()(Int_t code, Member_t* member) override
                 {
                     if (code == CODES::SUCCESS) {
-                        commands->Paralyze(actor);
+                        commands->Paralyze(actor, true);
                     } else {
                         commands->Log_Member(code, Actor2::Get_Name(actor));
                     }
@@ -1925,7 +1925,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         };
     }
 
-    void Commands_t::Cycle_Style(Actor_t* actor)
+    void Commands_t::Cycle_Style(Actor_t* actor, Bool_t do_notify_success)
     {
         using namespace Party;
 
@@ -1934,40 +1934,41 @@ namespace doticu_npcp { namespace Modules { namespace Control {
             Int_t style = member->Style();
             switch (style) {
                 case (CODES::STYLE::DEFAULT):
-                    return Stylize_Warrior(actor);
+                    return Stylize_Warrior(actor, do_notify_success);
                 case (CODES::STYLE::WARRIOR):
-                    return Stylize_Mage(actor);
+                    return Stylize_Mage(actor, do_notify_success);
                 case (CODES::STYLE::MAGE):
-                    return Stylize_Archer(actor);
+                    return Stylize_Archer(actor, do_notify_success);
                 case (CODES::STYLE::ARCHER):
-                    return Stylize_Coward(actor);
+                    return Stylize_Coward(actor, do_notify_success);
                 case (CODES::STYLE::COWARD):
-                    return Stylize_Default(actor);
+                    return Stylize_Default(actor, do_notify_success);
             }
         } else {
             class Add_Callback : public Callback_t<Int_t, Member_t*> {
             public:
                 Commands_t* commands;
                 Actor_t* actor;
-                Add_Callback(Commands_t* commands, Actor_t* actor) :
-                    commands(commands), actor(actor)
+                Bool_t do_notify_success;
+                Add_Callback(Commands_t* commands, Actor_t* actor, Bool_t do_notify_success) :
+                    commands(commands), actor(actor), do_notify_success(do_notify_success)
                 {
                 }
                 virtual void operator()(Int_t code, Member_t* member) override
                 {
                     if (code == CODES::SUCCESS) {
-                        commands->Stylize_Default(actor);
+                        commands->Stylize_Default(actor, do_notify_success);
                     } else {
                         commands->Log_Member(code, Actor2::Get_Name(actor));
                     }
                 }
             };
-            Callback_t<Int_t, Member_t*>* add_callback = new Add_Callback(this, actor);
+            Callback_t<Int_t, Member_t*>* add_callback = new Add_Callback(this, actor, do_notify_success);
             Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
 
-    void Commands_t::Cycle_Vitality(Actor_t* actor)
+    void Commands_t::Cycle_Vitality(Actor_t* actor, Bool_t do_notify_success)
     {
         using namespace Party;
 
@@ -1976,38 +1977,39 @@ namespace doticu_npcp { namespace Modules { namespace Control {
             Int_t vitality = member->Vitality();
             switch (vitality) {
                 case (CODES::VITALITY::MORTAL):
-                    return Vitalize_Protected(actor);
+                    return Vitalize_Protected(actor, do_notify_success);
                 case (CODES::VITALITY::PROTECTED):
-                    return Vitalize_Essential(actor);
+                    return Vitalize_Essential(actor, do_notify_success);
                 case (CODES::VITALITY::ESSENTIAL):
-                    return Vitalize_Invulnerable(actor);
+                    return Vitalize_Invulnerable(actor, do_notify_success);
                 case (CODES::VITALITY::INVULNERABLE):
-                    return Vitalize_Mortal(actor);
+                    return Vitalize_Mortal(actor, do_notify_success);
             }
         } else {
             class Add_Callback : public Callback_t<Int_t, Member_t*> {
             public:
                 Commands_t* commands;
                 Actor_t* actor;
-                Add_Callback(Commands_t* commands, Actor_t* actor) :
-                    commands(commands), actor(actor)
+                Bool_t do_notify_success;
+                Add_Callback(Commands_t* commands, Actor_t* actor, Bool_t do_notify_success) :
+                    commands(commands), actor(actor), do_notify_success(do_notify_success)
                 {
                 }
                 virtual void operator()(Int_t code, Member_t* member) override
                 {
                     if (code == CODES::SUCCESS) {
-                        commands->Vitalize_Mortal(actor);
+                        commands->Vitalize_Mortal(actor, do_notify_success);
                     } else {
                         commands->Log_Member(code, Actor2::Get_Name(actor));
                     }
                 }
             };
-            Callback_t<Int_t, Member_t*>* add_callback = new Add_Callback(this, actor);
+            Callback_t<Int_t, Member_t*>* add_callback = new Add_Callback(this, actor, do_notify_success);
             Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
 
-    void Commands_t::Cycle_Rating(Actor_t* actor)
+    void Commands_t::Cycle_Rating(Actor_t* actor, Bool_t do_notify_success)
     {
         using namespace Party;
 
@@ -2016,44 +2018,45 @@ namespace doticu_npcp { namespace Modules { namespace Control {
             Int_t rating = member->Rating();
             switch (rating) {
                 case (0):
-                    return Rate(actor, 1);
+                    return Rate(actor, 1, do_notify_success);
                 case (1):
-                    return Rate(actor, 2);
+                    return Rate(actor, 2, do_notify_success);
                 case (2):
-                    return Rate(actor, 3);
+                    return Rate(actor, 3, do_notify_success);
                 case (3):
-                    return Rate(actor, 4);
+                    return Rate(actor, 4, do_notify_success);
                 case (4):
-                    return Rate(actor, 5);
+                    return Rate(actor, 5, do_notify_success);
                 case (5):
-                    return Rate(actor, 0);
+                    return Rate(actor, 0, do_notify_success);
             }
         } else {
             class Add_Callback : public Callback_t<Int_t, Member_t*> {
             public:
                 Commands_t* commands;
                 Actor_t* actor;
-                Add_Callback(Commands_t* commands, Actor_t* actor) :
-                    commands(commands), actor(actor)
+                Bool_t do_notify_success;
+                Add_Callback(Commands_t* commands, Actor_t* actor, Bool_t do_notify_success) :
+                    commands(commands), actor(actor), do_notify_success(do_notify_success)
                 {
                 }
                 virtual void operator()(Int_t code, Member_t* member) override
                 {
                     if (code == CODES::SUCCESS) {
-                        commands->Rate(actor, 1);
+                        commands->Rate(actor, 1, do_notify_success);
                     } else {
                         commands->Log_Member(code, Actor2::Get_Name(actor));
                     }
                 }
             };
-            Callback_t<Int_t, Member_t*>* add_callback = new Add_Callback(this, actor);
+            Callback_t<Int_t, Member_t*>* add_callback = new Add_Callback(this, actor, do_notify_success);
             Members_t::Self()->Add_Original(actor, &add_callback);
         }
     }
 
     // Follower
 
-    void Commands_t::Sneak(Actor_t* actor)
+    void Commands_t::Sneak(Actor_t* actor, Bool_t do_notify_success)
     {
         Party::Follower_t* follower = Party::Followers_t::Self()->From_Actor(actor);
 
@@ -2069,7 +2072,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
         switch (code) {
             case (CODES::SUCCESS):
-                return Log_Note(name, " will start sneaking.");
+                return do_notify_success ? Log_Note(name, " will start sneaking.") : (void)0;
             case (CODES::FOLLOWER):
                 return Log_Note(name, " isn't a follower, and so can't start sneaking.");
             case (CODES::IS):
@@ -2079,7 +2082,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         };
     }
 
-    void Commands_t::Unsneak(Actor_t* actor)
+    void Commands_t::Unsneak(Actor_t* actor, Bool_t do_notify_success)
     {
         Party::Follower_t* follower = Party::Followers_t::Self()->From_Actor(actor);
 
@@ -2095,7 +2098,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
         switch (code) {
             case (CODES::SUCCESS):
-                return Log_Note(name, " will stop sneaking.");
+                return do_notify_success ? Log_Note(name, " will stop sneaking.") : (void)0;
             case (CODES::FOLLOWER):
                 return Log_Note(name, " isn't a follower, and so can't stop sneaking.");
             case (CODES::IS):
@@ -2226,9 +2229,9 @@ namespace doticu_npcp { namespace Modules { namespace Control {
             Party::Follower_t* follower = member->Follower();
             if (follower) {
                 if (follower->Is_Sneak()) {
-                    Unsneak(actor);
+                    Unsneak(actor, true);
                 } else {
-                    Sneak(actor);
+                    Sneak(actor, true);
                 }
             } else {
                 class Add_Callback : public Callback_t<Int_t, Follower_t*> {
@@ -2243,7 +2246,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                     virtual void operator()(Int_t code, Follower_t* follower) override
                     {
                         if (code == CODES::SUCCESS) {
-                            commands->Sneak(actor);
+                            commands->Sneak(actor, true);
                         } else {
                             commands->Log_Follow(code, member->Name());
                         }

@@ -545,32 +545,65 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         }
     }
 
-    void Hotkeys_t::On_Option_Default(Int_t option)
+    void Hotkeys_t::On_Option_Default(Int_t option, Callback_t<>* user_callback)
     {
-        /*
-function f_On_Option_Default(int id_option)
-    if id_option != p_option_set_defaults && id_option != p_option_unset_all
-        string hotkey = Value_Option_To_Hotkey(id_option)
-        if hotkey
-            int value = KEYS.Default_Value(hotkey)
-            int[] mods = KEYS.Current_Mods(hotkey)
-            if p_Can_Set_Hotkey(hotkey, value, mods[0], mods[1], mods[2])
-                Change_Hotkey_Value(id_option, value)
-                KEYS.Register()
-            endIf
-        else
-            hotkey = Mods_Option_To_Hotkey(id_option)
-            if hotkey
-                int value = KEYS.Current_Value(hotkey)
-                int[] mods = KEYS.Default_Mods(hotkey)
-                if p_Can_Set_Hotkey(hotkey, value, mods[0], mods[1], mods[2])
-                    Change_Hotkey_Mods(id_option, mods[0], mods[1], mods[2])
-                endIf
-            endIf
-        endIf
-    endIf
-endFunction
-        */
+        using UCallback_t = Callback_t<>;
+        NPCP_ASSERT(user_callback);
+
+        if (option != Set_Defaults_Option_Variable()->Int() &&
+            option != Unset_All_Option_Variable()->Int()) {
+            String_t hotkey = Value_Option_To_Hotkey(option);
+            if (hotkey && hotkey.data && hotkey.data[0]) {
+                Keys_t* keys = Keys_t::Self();
+                Int_t value = keys->Default_Value(hotkey);
+                Vector_t<Int_t> mods = keys->Current_Mods(hotkey);
+                struct Callback : public Callback_t<Hotkeys_t*, Bool_t> {
+                    Int_t option;
+                    Int_t value;
+                    UCallback_t* user_callback;
+                    Callback(Int_t option, Int_t value, UCallback_t* user_callback) :
+                        option(option), value(value), user_callback(user_callback)
+                    {
+                    }
+                    void operator()(Hotkeys_t* self, Bool_t can_set)
+                    {
+                        if (can_set) {
+                            self->Change_Hotkey_Value(option, value);
+                            MCM::Main_t::Self()->Return_Latent(user_callback);
+                        } else {
+                            MCM::Main_t::Self()->Return_Latent(user_callback);
+                        }
+                    }
+                };
+                Can_Change_Hotkey(hotkey, value, mods[0], mods[1], mods[2], new Callback(option, value, user_callback));
+            } else {
+                hotkey = Mods_Option_To_Hotkey(option);
+                if (hotkey && hotkey.data && hotkey.data[0]) {
+                    Keys_t* keys = Keys_t::Self();
+                    Int_t value = keys->Current_Value(hotkey);
+                    Vector_t<Int_t> mods = keys->Default_Mods(hotkey);
+                    struct Callback : public Callback_t<Hotkeys_t*, Bool_t> {
+                        Int_t option;
+                        Vector_t<Int_t> mods;
+                        UCallback_t* user_callback;
+                        Callback(Int_t option, Vector_t<Int_t> mods, UCallback_t* user_callback) :
+                            option(option), mods(mods), user_callback(user_callback)
+                        {
+                        }
+                        void operator()(Hotkeys_t* self, Bool_t can_set)
+                        {
+                            if (can_set) {
+                                self->Change_Hotkey_Mods(option, mods[0], mods[1], mods[2]);
+                                MCM::Main_t::Self()->Return_Latent(user_callback);
+                            } else {
+                                MCM::Main_t::Self()->Return_Latent(user_callback);
+                            }
+                        }
+                    };
+                    Can_Change_Hotkey(hotkey, value, mods[0], mods[1], mods[2], new Callback(option, mods, user_callback));
+                }
+            }
+        }
     }
 
     void Hotkeys_t::On_Option_Highlight(Int_t option)

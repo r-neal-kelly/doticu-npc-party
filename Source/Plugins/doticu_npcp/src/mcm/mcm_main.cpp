@@ -631,7 +631,22 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         return Object()->Property(property_name);
     }
 
-    Variable_t* Main_t::Last_Page_Variable() { DEFINE_VARIABLE("p_last_page"); }
+    Variable_t* Main_t::Current_Page_Variable() { DEFINE_VARIABLE("p_current_page"); }
+
+    String_t Main_t::Current_Page()
+    {
+        String_t current_page = Current_Page_Variable()->String();
+        if (!current_page || !current_page.data || !current_page[0]) {
+            current_page = DEFAULT_PAGE;
+            Current_Page_Variable()->String(current_page);
+        }
+        return current_page;
+    }
+
+    String_t Main_t::Current_Page(String_t current_page)
+    {
+        Current_Page_Variable()->String(current_page);
+    }
 
     void Main_t::Close_Menus(Virtual_Callback_i** callback)
     {
@@ -734,8 +749,27 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         return true;
     }
 
-    void Main_t::On_Build_Page(String_t current_page)
+    Bool_t Main_t::On_Build_Page(Virtual_Machine_t* vm, Stack_ID_t stack_id, String_t current_page)
     {
+        struct Callback : public Callback_t<> {
+            Virtual_Machine_t* vm;
+            Stack_ID_t stack_id;
+            Callback(Virtual_Machine_t* vm, Stack_ID_t stack_id) :
+                vm(vm), stack_id(stack_id)
+            {
+            }
+            void operator()()
+            {
+                Variable_t none;
+                vm->Return_Latent_Function(stack_id, &none);
+            }
+        };
+        Callback_t<>* user_callback = new Callback(vm, stack_id);
+
+        if (!current_page || !current_page.data || !current_page[0]) {
+            current_page = Current_Page();
+        }
+
         auto Is_Page = [&current_page](const char* page)->Bool_t
         {
             return String2::Is_Same_Caseless(current_page, page);
@@ -763,16 +797,15 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             MCM::Hotkeys_t::Self()->On_Build_Page();
         } else if (Is_Page(LOGS_PAGE)) {
             MCM::Logs_t::Self()->On_Build_Page();
-        } /*else {
-            String_t last_page = Last_Page_Variable()->String();
-            if (last_page && last_page.data && last_page[0]) {
-                Open_Page(last_page);
-            } else {
-                Open_Page(DEFAULT_PAGE);
-            }
-        }*/
+        } else {
+            MCM::Settings_t::Self()->On_Build_Page();
+        }
 
-        Last_Page_Variable()->String(current_page);
+        Current_Page_Variable()->String(current_page);
+        
+        Return_Latent(user_callback); // kind of a hack. it should be passed to each method.
+
+        return true;
     }
 
     Bool_t Main_t::On_Option_Select(Virtual_Machine_t* vm, Stack_ID_t stack_id, Int_t option)
@@ -792,7 +825,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         };
         Callback_t<>* user_callback = new Callback(vm, stack_id);
 
-        String_t current_page = Current_Page_Name();
+        String_t current_page = Current_Page();
         auto Is_Page = [&current_page](const char* page)->Bool_t
         {
             return String2::Is_Same_Caseless(current_page, page);
@@ -823,7 +856,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     void Main_t::On_Option_Menu_Open(Int_t option)
     {
-        String_t current_page = Current_Page_Name();
+        String_t current_page = Current_Page();
         auto Is_Page = [&current_page](const char* page)->Bool_t
         {
             return String2::Is_Same_Caseless(current_page, page);
@@ -850,7 +883,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     void Main_t::On_Option_Menu_Accept(Int_t option, Int_t idx)
     {
-        String_t current_page = Current_Page_Name();
+        String_t current_page = Current_Page();
         auto Is_Page = [&current_page](const char* page)->Bool_t
         {
             return String2::Is_Same_Caseless(current_page, page);
@@ -877,7 +910,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     void Main_t::On_Option_Slider_Open(Int_t option)
     {
-        String_t current_page = Current_Page_Name();
+        String_t current_page = Current_Page();
         auto Is_Page = [&current_page](const char* page)->Bool_t
         {
             return String2::Is_Same_Caseless(current_page, page);
@@ -904,7 +937,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     void Main_t::On_Option_Slider_Accept(Int_t option, Float_t value)
     {
-        String_t current_page = Current_Page_Name();
+        String_t current_page = Current_Page();
         auto Is_Page = [&current_page](const char* page)->Bool_t
         {
             return String2::Is_Same_Caseless(current_page, page);
@@ -931,7 +964,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     void Main_t::On_Option_Input_Accept(Int_t option, String_t value)
     {
-        String_t current_page = Current_Page_Name();
+        String_t current_page = Current_Page();
         auto Is_Page = [&current_page](const char* page)->Bool_t
         {
             return String2::Is_Same_Caseless(current_page, page);
@@ -974,7 +1007,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         };
         Callback_t<>* user_callback = new Callback(vm, stack_id);
         
-        String_t current_page = Current_Page_Name();
+        String_t current_page = Current_Page();
         auto Is_Page = [&current_page](const char* page)->Bool_t
         {
             return String2::Is_Same_Caseless(current_page, page);
@@ -997,42 +1030,61 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         } else if (Is_Page(LOGS_PAGE)) {
             MCM::Logs_t::Self()->On_Option_Keymap_Change(option, key_code, conflict, conflicting_mod, user_callback);
         } else {
-            MCM::Main_t::Self()->Return_Latent(user_callback);
+            Return_Latent(user_callback);
         }
 
         return true;
     }
 
-    void Main_t::On_Option_Default(Int_t option)
+    Bool_t Main_t::On_Option_Default(Virtual_Machine_t* vm, Stack_ID_t stack_id, Int_t option)
     {
-        String_t current_page = Current_Page_Name();
+        struct Callback : public Callback_t<> {
+            Virtual_Machine_t* vm;
+            Stack_ID_t stack_id;
+            Callback(Virtual_Machine_t* vm, Stack_ID_t stack_id) :
+                vm(vm), stack_id(stack_id)
+            {
+            }
+            void operator()()
+            {
+                Variable_t none;
+                vm->Return_Latent_Function(stack_id, &none);
+            }
+        };
+        Callback_t<>* user_callback = new Callback(vm, stack_id);
+
+        String_t current_page = Current_Page();
         auto Is_Page = [&current_page](const char* page)->Bool_t
         {
             return String2::Is_Same_Caseless(current_page, page);
         };
 
         if (Is_Page(FOLLOWERS_PAGE)) {
-            MCM::Followers_t::Self()->On_Option_Default(option);
+            MCM::Followers_t::Self()->On_Option_Default(option, user_callback);
         } else if (Is_Page(MEMBERS_PAGE)) {
-            MCM::Members_t::Self()->On_Option_Default(option);
+            MCM::Members_t::Self()->On_Option_Default(option, user_callback);
         } else if (Is_Page(MANNEQUINS_PAGE)) {
-            MCM::Mannequins_t::Self()->On_Option_Default(option);
+            MCM::Mannequins_t::Self()->On_Option_Default(option, user_callback);
         } else if (Is_Page(FILTER_PAGE)) {
-            MCM::Filter_t::Self()->On_Option_Default(option);
+            MCM::Filter_t::Self()->On_Option_Default(option, user_callback);
         } else if (Is_Page(CHESTS_PAGE)) {
-            MCM::Chests_t::Self()->On_Option_Default(option);
+            MCM::Chests_t::Self()->On_Option_Default(option, user_callback);
         } else if (Is_Page(SETTINGS_PAGE)) {
-            MCM::Settings_t::Self()->On_Option_Default(option);
+            MCM::Settings_t::Self()->On_Option_Default(option, user_callback);
         } else if (Is_Page(HOTKEYS_PAGE)) {
-            MCM::Hotkeys_t::Self()->On_Option_Default(option);
+            MCM::Hotkeys_t::Self()->On_Option_Default(option, user_callback);
         } else if (Is_Page(LOGS_PAGE)) {
-            MCM::Logs_t::Self()->On_Option_Default(option);
+            MCM::Logs_t::Self()->On_Option_Default(option, user_callback);
+        } else {
+            Return_Latent(user_callback);
         }
+
+        return true;
     }
 
     void Main_t::On_Option_Highlight(Int_t option)
     {
-        String_t current_page = Current_Page_Name();
+        String_t current_page = Current_Page();
         auto Is_Page = [&current_page](const char* page)->Bool_t
         {
             return String2::Is_Same_Caseless(current_page, page);
@@ -1073,7 +1125,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                            RETURN_, METHOD_, __VA_ARGS__);          \
         W
 
-        METHOD("OnPageReset", 1, void, On_Build_Page, String_t);
+        LMETHOD("OnPageReset", 1, void, On_Build_Page, String_t);
         LMETHOD("OnOptionSelect", 1, void, On_Option_Select, Int_t);
         METHOD("OnOptionMenuOpen", 1, void, On_Option_Menu_Open, Int_t);
         METHOD("OnOptionMenuAccept", 2, void, On_Option_Menu_Accept, Int_t, Int_t);
@@ -1081,7 +1133,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         METHOD("OnOptionSliderAccept", 2, void, On_Option_Slider_Accept, Int_t, Float_t);
         METHOD("OnOptionInputAccept", 2, void, On_Option_Input_Accept, Int_t, String_t);
         LMETHOD("OnOptionKeymapChange", 4, void, On_Option_Keymap_Change, Int_t, Int_t, String_t, String_t);
-        METHOD("OnOptionDefault", 1, void, On_Option_Default, Int_t);
+        LMETHOD("OnOptionDefault", 1, void, On_Option_Default, Int_t);
         METHOD("OnOptionHighlight", 1, void, On_Option_Highlight, Int_t);
 
         //LMETHOD("OnConfigOpen", 0, void, On_Config_Open);

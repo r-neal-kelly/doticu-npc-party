@@ -981,10 +981,15 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         }
     }
 
-    void Filter_t::On_Option_Default(Int_t option)
+    void Filter_t::On_Option_Default(Int_t option, Callback_t<>* user_callback)
     {
+        using UCallback_t = Callback_t<>;
+        NPCP_ASSERT(user_callback);
+
         if (Current_View() == CODES::VIEW::FILTER_MEMBERS) {
-            MCM::Members_t::Self()->On_Option_Default(option);
+            MCM::Members_t::Self()->On_Option_Default(option, user_callback);
+        } else {
+            MCM::Main_t::Self()->Return_Latent(user_callback);
         }
     }
 

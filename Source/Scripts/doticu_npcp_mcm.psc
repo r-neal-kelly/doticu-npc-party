@@ -2,13 +2,11 @@
 
 Scriptname doticu_npcp_mcm extends SKI_ConfigBase
 
-string p_last_page = ""
-
-event OnConfigInit()
-    ModName = " NPC Party"
-endEvent
+string p_current_page = ""
 
 event OnConfigOpen()
+    ModName = " NPC Party "
+    
     Pages = Utility.CreateStringArray(8, "")
     Pages[0] = " Followers "
     Pages[1] = " Members "
@@ -20,7 +18,7 @@ event OnConfigOpen()
     Pages[7] = " Logs "
 endEvent
 
-event OnPageReset(String page) native
+event OnPageReset(String current_page) native
 event OnOptionSelect(int option) native
 event OnOptionMenuOpen(int option) native
 event OnOptionMenuAccept(int option, int idx) native

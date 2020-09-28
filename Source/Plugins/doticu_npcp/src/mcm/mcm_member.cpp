@@ -584,18 +584,20 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     void Member_t::On_Option_Select(Int_t option, Callback_t<>* user_callback)
     {
-        using UCallback_t = Callback_t<>*;
+        using UCallback_t = Callback_t<>;
         NPCP_ASSERT(user_callback);
 
         using namespace Modules::Control;
 
+        MCM::Main_t* mcm = Main();
+
         Party::Member_t* member = Party_Member();
         if (member) {
             Actor_t* actor = member->Actor();
-            MCM::Main_t* mcm = Main();
             if (option == Back_Option_Variable()->Int()) {
                 mcm->Disable(option);
                 Go_Back();
+                mcm->Return_Latent(user_callback);
             } else if (option == Previous_Option_Variable()->Int()) {
                 mcm->Disable(option);
                 Int_t current_view = Current_View();
@@ -605,6 +607,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                     MCM::Followers_t::Self()->Request_Previous_Follower();
                 }
                 mcm->Reset_Page();
+                mcm->Return_Latent(user_callback);
             } else if (option == Next_Option_Variable()->Int()) {
                 mcm->Disable(option);
                 Int_t current_view = Current_View();
@@ -614,98 +617,115 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                     MCM::Followers_t::Self()->Request_Next_Follower();
                 }
                 mcm->Reset_Page();
+                mcm->Return_Latent(user_callback);
 
             } else if (option == Summon_Option_Variable()->Int()) {
                 Commands_t::Self()->Summon(actor, false);
                 Update_Commands();
                 mcm->Flicker(option);
+                mcm->Return_Latent(user_callback);
             } else if (option == Goto_Option_Variable()->Int()) {
                 mcm->Disable(option);
                 struct Callback : public Virtual_Callback_t {
                     Actor_t* actor;
-                    Callback(Actor_t* actor) :
-                        actor(actor)
+                    UCallback_t* user_callback;
+                    Callback(Actor_t* actor, UCallback_t* user_callback) :
+                        actor(actor), user_callback(user_callback)
                     {
                     }
                     void operator()(Variable_t* result)
                     {
                         Commands_t::Self()->Goto(actor);
+                        MCM::Main_t::Self()->Return_Latent(user_callback);
                     }
                 };
-                Virtual_Callback_i* callback = new Callback(actor);
+                Virtual_Callback_i* callback = new Callback(actor, user_callback);
                 Main()->Close_Menus(&callback);
             } else if (option == Pack_Option_Variable()->Int()) {
                 mcm->Disable(option);
                 struct Callback : public Virtual_Callback_t {
                     Actor_t* actor;
-                    Callback(Actor_t* actor) :
-                        actor(actor)
+                    UCallback_t* user_callback;
+                    Callback(Actor_t* actor, UCallback_t* user_callback) :
+                        actor(actor), user_callback(user_callback)
                     {
                     }
                     void operator()(Variable_t* result)
                     {
                         Commands_t::Self()->Open_Pack(actor);
+                        MCM::Main_t::Self()->Return_Latent(user_callback);
                     }
                 };
-                Virtual_Callback_i* callback = new Callback(actor);
+                Virtual_Callback_i* callback = new Callback(actor, user_callback);
                 Main()->Close_Menus(&callback);
             } else if (option == Stash_Option_Variable()->Int()) {
                 Commands_t::Self()->Stash(actor);
                 Update_Commands();
                 mcm->Flicker(option);
+                mcm->Return_Latent(user_callback);
 
             } else if (option == Settle_Option_Variable()->Int()) {
                 mcm->Disable(option);
-                Commands_t::Self()->Settle(actor);
+                Commands_t::Self()->Settle(actor, false);
                 Update_Commands();
+                mcm->Return_Latent(user_callback);
             } else if (option == Resettle_Option_Variable()->Int()) {
-                Commands_t::Self()->Resettle(actor);
+                Commands_t::Self()->Resettle(actor, false);
                 Update_Commands();
                 mcm->Flicker(option);
+                mcm->Return_Latent(user_callback);
             } else if (option == Unsettle_Option_Variable()->Int()) {
                 mcm->Disable(option);
-                Commands_t::Self()->Unsettle(actor);
+                Commands_t::Self()->Unsettle(actor, false);
                 Update_Commands();
+                mcm->Return_Latent(user_callback);
 
             } else if (option == Immobilize_Option_Variable()->Int()) {
                 mcm->Disable(option);
-                Commands_t::Self()->Immobilize(actor);
+                Commands_t::Self()->Immobilize(actor, false);
                 Update_Commands();
+                mcm->Return_Latent(user_callback);
             } else if (option == Mobilize_Option_Variable()->Int()) {
                 mcm->Disable(option);
-                Commands_t::Self()->Mobilize(actor);
+                Commands_t::Self()->Mobilize(actor, false);
                 Update_Commands();
+                mcm->Return_Latent(user_callback);
             } else if (option == Paralyze_Option_Variable()->Int()) {
                 mcm->Disable(option);
-                Commands_t::Self()->Paralyze(actor);
+                Commands_t::Self()->Paralyze(actor, false);
                 Update_Commands();
+                mcm->Return_Latent(user_callback);
             } else if (option == Unparalyze_Option_Variable()->Int()) {
                 mcm->Disable(option);
-                Commands_t::Self()->Unparalyze(actor);
+                Commands_t::Self()->Unparalyze(actor, false);
                 Update_Commands();
+                mcm->Return_Latent(user_callback);
 
             } else if (option == Follow_Option_Variable()->Int()) {
                 mcm->Disable(option);
                 struct Callback : public Callback_t<Int_t, Party::Follower_t*> {
                     MCM::Member_t* self;
-                    Callback(MCM::Member_t* self) :
-                        self(self)
+                    UCallback_t* user_callback;
+                    Callback(MCM::Member_t* self, UCallback_t* user_callback) :
+                        self(self), user_callback(user_callback)
                     {
                     }
                     void operator()(Int_t code, Party::Follower_t* follower)
                     {
                         self->Update_Commands();
                         self->Update_Statistics();
+                        MCM::Main_t::Self()->Return_Latent(user_callback);
                     }
                 };
-                Callback_t<Int_t, Party::Follower_t*>* callback = new Callback(this);
+                Callback_t<Int_t, Party::Follower_t*>* callback = new Callback(this, user_callback);
                 Commands_t::Self()->Follow(actor, &callback);
             } else if (option == Unfollow_Option_Variable()->Int()) {
                 mcm->Disable(option);
                 struct Callback : public Callback_t<Int_t, Party::Member_t*> {
                     MCM::Member_t* self;
-                    Callback(MCM::Member_t* self) :
-                        self(self)
+                    UCallback_t* user_callback;
+                    Callback(MCM::Member_t* self, UCallback_t* user_callback) :
+                        self(self), user_callback(user_callback)
                     {
                     }
                     void operator()(Int_t code, Party::Member_t* member)
@@ -717,59 +737,67 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                             self->Update_Commands();
                             self->Update_Statistics();
                         }
+                        MCM::Main_t::Self()->Return_Latent(user_callback);
                     }
                 };
-                Callback_t<Int_t, Party::Member_t*>* callback = new Callback(this);
+                Callback_t<Int_t, Party::Member_t*>* callback = new Callback(this, user_callback);
                 Commands_t::Self()->Unfollow(actor, &callback);
             } else if (option == Sneak_Option_Variable()->Int()) {
                 mcm->Disable(option);
-                Commands_t::Self()->Sneak(actor);
+                Commands_t::Self()->Sneak(actor, false);
                 Update_Commands();
+                mcm->Return_Latent(user_callback);
             } else if (option == Unsneak_Option_Variable()->Int()) {
                 mcm->Disable(option);
-                Commands_t::Self()->Unsneak(actor);
+                Commands_t::Self()->Unsneak(actor, false);
                 Update_Commands();
+                mcm->Return_Latent(user_callback);
 
             } else if (option == Rating_Option_Variable()->Int()) {
                 mcm->Disable(option);
-                Commands_t::Self()->Cycle_Rating(actor);
+                Commands_t::Self()->Cycle_Rating(actor, false);
                 Update_Commands();
+                mcm->Return_Latent(user_callback);
             } else if (option == Stylize_Option_Variable()->Int()) {
                 mcm->Disable(option);
-                Commands_t::Self()->Cycle_Style(actor);
+                Commands_t::Self()->Cycle_Style(actor, false);
                 Update_Commands();
                 Update_Statistics();
+                mcm->Return_Latent(user_callback);
             } else if (option == Vitalize_Option_Variable()->Int()) {
                 mcm->Disable(option);
-                Commands_t::Self()->Cycle_Vitality(actor);
+                Commands_t::Self()->Cycle_Vitality(actor, false);
                 Update_Commands();
                 Update_Statistics();
+                mcm->Return_Latent(user_callback);
 
             } else if (option == Resurrect_Option_Variable()->Int()) {
                 mcm->Disable(option);
                 Commands_t::Self()->Resurrect(actor);
                 Update_Commands();
                 Update_Statistics();
+                mcm->Return_Latent(user_callback);
 
             } else if (option == Clone_Option_Variable()->Int()) {
                 Commands_t::Self()->Clone(actor);
                 Update_Commands();
                 mcm->Flicker(option);
+                mcm->Return_Latent(user_callback);
             } else if (option == Unclone_Option_Variable()->Int()) {
                 mcm->Disable(option);
                 Commands_t::Self()->Unclone(actor);
                 Go_Back();
+                mcm->Return_Latent(user_callback);
             } else if (option == Unmember_Option_Variable()->Int()) {
                 mcm->Disable(option);
                 Commands_t::Self()->Unmember(actor);
                 Go_Back();
+                mcm->Return_Latent(user_callback);
+            } else {
+                mcm->Return_Latent(user_callback);
             }
-
-            user_callback->operator()();
-            delete user_callback;
         } else {
-            user_callback->operator()();
-            delete user_callback;
+            mcm->Return_Latent(user_callback);
         }
     }
 
@@ -872,8 +900,12 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         MCM::Main_t::Self()->Return_Latent(user_callback);
     }
 
-    void Member_t::On_Option_Default(Int_t option)
+    void Member_t::On_Option_Default(Int_t option, Callback_t<>* user_callback)
     {
+        using UCallback_t = Callback_t<>;
+        NPCP_ASSERT(user_callback);
+
+        MCM::Main_t::Self()->Return_Latent(user_callback);
     }
 
     void Member_t::On_Option_Highlight(Int_t option)

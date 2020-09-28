@@ -662,15 +662,20 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         }
     }
 
-    void Mannequins_t::On_Option_Default(Int_t option)
+    void Mannequins_t::On_Option_Default(Int_t option, Callback_t<>* user_callback)
     {
+        using UCallback_t = Callback_t<>;
+        NPCP_ASSERT(user_callback);
+
         Int_t current_view = Current_View();
         if (current_view == CODES::VIEW::MANNEQUINS) {
-
+            MCM::Main_t::Self()->Return_Latent(user_callback);
         } else if (current_view == CODES::VIEW::MANNEQUINS_CELL) {
-
+            MCM::Main_t::Self()->Return_Latent(user_callback);
         } else if (current_view == CODES::VIEW::MANNEQUINS_MEMBER) {
-            MCM::Member_t::Self()->On_Option_Default(option);
+            MCM::Member_t::Self()->On_Option_Default(option, user_callback);
+        } else {
+            MCM::Main_t::Self()->Return_Latent(user_callback);
         }
     }
 

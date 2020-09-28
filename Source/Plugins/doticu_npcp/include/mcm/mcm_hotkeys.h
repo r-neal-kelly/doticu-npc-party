@@ -197,7 +197,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         void On_Option_Slider_Accept(Int_t option, Float_t value);
         void On_Option_Input_Accept(Int_t option, String_t value);
         void On_Option_Keymap_Change(Int_t option, Int_t key_code, String_t conflict, String_t conflicting_mod, Callback_t<>* user_callback);
-        void On_Option_Default(Int_t option);
+        void On_Option_Default(Int_t option, Callback_t<>* user_callback);
         void On_Option_Highlight(Int_t option);
 
         void Can_Change_Hotkey(String_t hotkey, Int_t value, Int_t mod_1, Int_t mod_2, Int_t mod_3,

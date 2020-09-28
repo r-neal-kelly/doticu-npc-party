@@ -146,7 +146,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     class Main_t : public SKI_Config_Base_t {
     public:
-        static constexpr const char* MOD_NAME           = " NPC Party";
+        static constexpr const char* MOD_NAME           = " NPC Party ";
         static constexpr const char* FOLLOWERS_PAGE     = " Followers ";
         static constexpr const char* MEMBERS_PAGE       = " Members ";
         static constexpr const char* MANNEQUINS_PAGE    = " Mannequins ";
@@ -166,7 +166,10 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Variable_t* Variable(String_t variable_name);
         Variable_t* Property(String_t property_name);
 
-        Variable_t* Last_Page_Variable(); // String_t
+        Variable_t* Current_Page_Variable(); // String_t
+
+        String_t Current_Page();
+        String_t Current_Page(String_t current_page);
 
         void Close_Menus(Virtual_Callback_i** callback = nullptr);
         void Enable(Int_t option, Bool_t do_render = true, Bool_t with_unmap = false);
@@ -180,9 +183,8 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
         void On_Config_Init();
         Bool_t On_Config_Open(Virtual_Machine_t* vm, Stack_ID_t stack_id);
-        void On_Build_Page(String_t current_page);
-        Bool_t On_Option_Select(Virtual_Machine_t* vm, Stack_ID_t stack_id,
-                                Int_t option);
+        Bool_t On_Build_Page(Virtual_Machine_t* vm, Stack_ID_t stack_id, String_t current_page);
+        Bool_t On_Option_Select(Virtual_Machine_t* vm, Stack_ID_t stack_id, Int_t option);
         void On_Option_Menu_Open(Int_t option);
         void On_Option_Menu_Accept(Int_t option, Int_t idx);
         void On_Option_Slider_Open(Int_t option);
@@ -190,7 +192,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         void On_Option_Input_Accept(Int_t option, String_t value);
         Bool_t On_Option_Keymap_Change(Virtual_Machine_t* vm, Stack_ID_t stack_id,
                                        Int_t option, Int_t key_code, String_t conflict, String_t conflicting_mod);
-        void On_Option_Default(Int_t option);
+        Bool_t On_Option_Default(Virtual_Machine_t* vm, Stack_ID_t stack_id, Int_t option);
         void On_Option_Highlight(Int_t option);
 
     public:

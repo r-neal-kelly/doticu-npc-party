@@ -98,7 +98,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Perks {
         Actor_t* actor = ref && ref->formType == kFormType_Character ?
             static_cast<Actor_t*>(ref) : nullptr;
         if (actor) {
-            Modules::Control::Commands_t::Self()->Unparalyze(actor);
+            Modules::Control::Commands_t::Self()->Unparalyze(actor, true);
         }
     }
 

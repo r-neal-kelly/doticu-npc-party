@@ -39,23 +39,23 @@ namespace doticu_npcp { namespace Papyrus { namespace Topic_Infos {
                     } else if (topic == Consts::Main_Follow_Topic()) {
                         Modules::Control::Commands_t::Self()->Follow(actor);
                     } else if (topic == Consts::Main_Immobilize_Topic()) {
-                        Modules::Control::Commands_t::Self()->Immobilize(actor);
+                        Modules::Control::Commands_t::Self()->Immobilize(actor, true);
                     } else if (topic == Consts::Main_Member_Topic()) {
                         Modules::Control::Commands_t::Self()->Member(actor);
                     } else if (topic == Consts::Main_Mobilize_Topic()) {
-                        Modules::Control::Commands_t::Self()->Mobilize(actor);
+                        Modules::Control::Commands_t::Self()->Mobilize(actor, true);
                     } else if (topic == Consts::Main_Pack_Topic()) {
                         Modules::Control::Commands_t::Self()->Open_Pack(actor);
                     } else if (topic == Consts::Main_Paralyze_Topic()) {
-                        Modules::Control::Commands_t::Self()->Paralyze(actor);
+                        Modules::Control::Commands_t::Self()->Paralyze(actor, true);
                     } else if (topic == Consts::Main_Resettle_Topic()) {
-                        Modules::Control::Commands_t::Self()->Resettle(actor);
+                        Modules::Control::Commands_t::Self()->Resettle(actor, true);
                     } else if (topic == Consts::Main_Saddle_Topic()) {
                         Modules::Control::Commands_t::Self()->Saddle(actor);
                     } else if (topic == Consts::Main_Settle_Topic()) {
-                        Modules::Control::Commands_t::Self()->Settle(actor);
+                        Modules::Control::Commands_t::Self()->Settle(actor, true);
                     } else if (topic == Consts::Main_Sneak_Topic()) {
-                        Modules::Control::Commands_t::Self()->Sneak(actor);
+                        Modules::Control::Commands_t::Self()->Sneak(actor, true);
                     } else if (topic == Consts::Main_Stash_Topic()) {
                         Modules::Control::Commands_t::Self()->Stash(actor);
                     } else if (topic == Consts::Main_Unclone_Topic()) {
@@ -67,9 +67,9 @@ namespace doticu_npcp { namespace Papyrus { namespace Topic_Infos {
                     } else if (topic == Consts::Main_Unsaddle_Topic()) {
                         Modules::Control::Commands_t::Self()->Unsaddle(actor);
                     } else if (topic == Consts::Main_Unsettle_Topic()) {
-                        Modules::Control::Commands_t::Self()->Unsettle(actor);
+                        Modules::Control::Commands_t::Self()->Unsettle(actor, true);
                     } else if (topic == Consts::Main_Unsneak_Topic()) {
-                        Modules::Control::Commands_t::Self()->Unsneak(actor);
+                        Modules::Control::Commands_t::Self()->Unsneak(actor, true);
                     } else if (topic == Consts::Main_Unthrall_Topic()) {
                         Modules::Control::Commands_t::Self()->Unthrall(actor);
                     }
@@ -106,28 +106,28 @@ namespace doticu_npcp { namespace Papyrus { namespace Topic_Infos {
                     if (topic == Consts::Main_Style_Topic()) {
                         Modules::Control::Commands_t::Self()->Show_Style(actor);
                     } else if (topic == Consts::Main_Style_Archer_Topic()) {
-                        Modules::Control::Commands_t::Self()->Stylize_Archer(actor);
+                        Modules::Control::Commands_t::Self()->Stylize_Archer(actor, true);
                     } else if (topic == Consts::Main_Style_Coward_Topic()) {
-                        Modules::Control::Commands_t::Self()->Stylize_Coward(actor);
+                        Modules::Control::Commands_t::Self()->Stylize_Coward(actor, true);
                     } else if (topic == Consts::Main_Style_Default_Topic()) {
-                        Modules::Control::Commands_t::Self()->Stylize_Default(actor);
+                        Modules::Control::Commands_t::Self()->Stylize_Default(actor, true);
                     } else if (topic == Consts::Main_Style_Mage_Topic()) {
-                        Modules::Control::Commands_t::Self()->Stylize_Mage(actor);
+                        Modules::Control::Commands_t::Self()->Stylize_Mage(actor, true);
                     } else if (topic == Consts::Main_Style_Warrior_Topic()) {
-                        Modules::Control::Commands_t::Self()->Stylize_Warrior(actor);
+                        Modules::Control::Commands_t::Self()->Stylize_Warrior(actor, true);
                     }
 
                 } else if (branch == Consts::Main_Vitality_Branch()) {
                     if (topic == Consts::Main_Vitality_Topic()) {
                         Modules::Control::Commands_t::Self()->Show_Vitality(actor);
                     } else if (topic == Consts::Main_Vitality_Essential_Topic()) {
-                        Modules::Control::Commands_t::Self()->Vitalize_Essential(actor);
+                        Modules::Control::Commands_t::Self()->Vitalize_Essential(actor, true);
                     } else if (topic == Consts::Main_Vitality_Invulnerable_Topic()) {
-                        Modules::Control::Commands_t::Self()->Vitalize_Invulnerable(actor);
+                        Modules::Control::Commands_t::Self()->Vitalize_Invulnerable(actor, true);
                     } else if (topic == Consts::Main_Vitality_Mortal_Topic()) {
-                        Modules::Control::Commands_t::Self()->Vitalize_Mortal(actor);
+                        Modules::Control::Commands_t::Self()->Vitalize_Mortal(actor, true);
                     } else if (topic == Consts::Main_Vitality_Protected_Topic()) {
-                        Modules::Control::Commands_t::Self()->Vitalize_Protected(actor);
+                        Modules::Control::Commands_t::Self()->Vitalize_Protected(actor, true);
                     }
 
                 } else if (branch == Consts::Menu_Followers_Branch()) {

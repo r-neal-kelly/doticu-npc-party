@@ -758,9 +758,12 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         MCM::Main_t::Self()->Return_Latent(user_callback);
     }
 
-    void Chests_t::On_Option_Default(Int_t option)
+    void Chests_t::On_Option_Default(Int_t option, Callback_t<>* user_callback)
     {
+        using UCallback_t = Callback_t<>;
+        NPCP_ASSERT(user_callback);
 
+        MCM::Main_t::Self()->Return_Latent(user_callback);
     }
 
     void Chests_t::On_Option_Highlight(Int_t option)
