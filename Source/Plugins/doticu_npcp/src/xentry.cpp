@@ -124,7 +124,7 @@ namespace doticu_npcp { namespace Papyrus {
     {
         if (to_xentry && to_reference && xlist) {
             Remove_XList(xlist);
-            Add_Clean_XList(xlist, to_reference);
+            to_xentry->Add_Clean_XList(xlist, to_reference);
         }
     }
 

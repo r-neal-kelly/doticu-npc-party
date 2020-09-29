@@ -428,7 +428,13 @@ namespace doticu_npcp { namespace XList {
                          str_indent.c_str(),
                          idx_xdata,
                          XData::Get_Type_String(xdata),
-                         Form::Get_Name(((ExtraOwnership *)xdata)->owner));
+                         Form::Get_Name(((ExtraOwnership*)xdata)->owner));
+            } else if (xdata->GetType() == kExtraData_Soul) {
+                _MESSAGE("%sxdata idx: %i, type: %s, level: %s",
+                         str_indent.c_str(),
+                         idx_xdata,
+                         XData::Get_Type_String(xdata),
+                         static_cast<Extra_Soul_t*>(xdata)->Soul_Level_String());
             } else if (xdata->GetType() == kExtraData_ReferenceHandle) {
                 TESObjectREFR* object = ((ExtraReferenceHandle*)xdata)->GetReference();
                 if (object) {

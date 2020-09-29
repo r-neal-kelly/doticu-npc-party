@@ -789,6 +789,56 @@ namespace doticu_npcp {
     };
     STATIC_ASSERT(sizeof(ExtraOutfitItem) == 0x18);
 
+    enum class Soul_Level_e : UInt8 {
+        NONE = 0,
+        PETTY = 1,
+        LESSER = 2,
+        COMMON = 3,
+        GREATER = 4,
+        GRAND = 5,
+    };
+
+    class Extra_Soul_t : public BSExtraData {
+    public:
+        virtual ~Extra_Soul_t();
+
+        Soul_Level_e soul_level; // 10
+        UInt8 pad_11; // 11
+        UInt16 pad_12; // 12
+        UInt32 pad_14; // 14
+
+        String_t Soul_Level_String()
+        {
+            switch (soul_level) {
+                case (Soul_Level_e::PETTY):
+                {
+                    return "PETTY";
+                }
+                case (Soul_Level_e::LESSER):
+                {
+                    return "LESSER";
+                }
+                case (Soul_Level_e::COMMON):
+                {
+                    return "COMMON";
+                }
+                case (Soul_Level_e::GREATER):
+                {
+                    return "GREATER";
+                }
+                case (Soul_Level_e::GRAND):
+                {
+                    return "GRAND";
+                }
+                default:
+                {
+                    return "NONE";
+                }
+            };
+        }
+    };
+    STATIC_ASSERT(sizeof(Extra_Soul_t) == 0x18);
+
 }
 
 namespace doticu_npcp {
