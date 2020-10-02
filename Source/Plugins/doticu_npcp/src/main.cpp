@@ -198,34 +198,36 @@ namespace doticu_npcp { namespace Modules {
 
     void Main_t::Load_Mod()
     {
-        struct VCallback : public Virtual_Callback_t {
-            Main_t* main;
-            VCallback(Main_t* main) :
-                main(main)
-            {
-            }
-            void operator()(Variable_t* result)
-            {
-                if (main->Has_Requirements()) {
-                    if (main->Try_Update()) {
-                        std::string note =
-                            "Running version " +
-                            std::to_string(Consts::NPCP_Major()) + "." +
-                            std::to_string(Consts::NPCP_Minor()) + "." +
-                            std::to_string(Consts::NPCP_Patch());
-                        Modules::Control::Commands_t::Self()->Log_Note(note.c_str(), true);
-                    }
-                    main->Try_Cleanup();
-                    Party::Members_t::Self()->On_Load_Mod();
-                    Party::Player_t::Self()->On_Load_Mod();
-                    Party::Movee_t::Self()->On_Load_Mod();
-                    Party::Mannequins_t::Self()->On_Load_Mod();
-                    Utils::Print("NPC Party has loaded.");
+        if (Consts::Is_Installed_Global()->value > 0.0f) {
+            struct VCallback : public Virtual_Callback_t {
+                Main_t* main;
+                VCallback(Main_t* main) :
+                    main(main)
+                {
                 }
-            }
-        };
-        Virtual_Callback_i* vcallback = new VCallback(this);
-        Funcs_t::Self()->Wait_Out_Of_Menu(1.0f, &vcallback);
+                void operator()(Variable_t* result)
+                {
+                    if (main->Has_Requirements()) {
+                        if (main->Try_Update()) {
+                            std::string note =
+                                "Running version " +
+                                std::to_string(Consts::NPCP_Major()) + "." +
+                                std::to_string(Consts::NPCP_Minor()) + "." +
+                                std::to_string(Consts::NPCP_Patch());
+                            Modules::Control::Commands_t::Self()->Log_Note(note.c_str(), true);
+                        }
+                        main->Try_Cleanup();
+                        Party::Members_t::Self()->On_Load_Mod();
+                        Party::Player_t::Self()->On_Load_Mod();
+                        Party::Movee_t::Self()->On_Load_Mod();
+                        Party::Mannequins_t::Self()->On_Load_Mod();
+                        Utils::Print("NPC Party has loaded.");
+                    }
+                }
+            };
+            Virtual_Callback_i* vcallback = new VCallback(this);
+            Funcs_t::Self()->Wait_Out_Of_Menu(1.0f, &vcallback);
+        }
     }
 
     Bool_t Main_t::Has_Requirements()
