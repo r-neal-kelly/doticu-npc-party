@@ -799,7 +799,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     void Members_t::On_Load_Mod()
     {
         Modules::Vars_t* vars = Modules::Vars_t::Self();
-        Int_t filled_count = Count_Filled();
+        Vector_t<Member_t*> filled = Filled();
+        Int_t filled_count = filled.size();
         if (vars->Member_Limit() < filled_count) {
             vars->Member_Limit(filled_count);
         }

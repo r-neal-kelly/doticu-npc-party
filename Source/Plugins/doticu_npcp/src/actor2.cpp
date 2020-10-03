@@ -137,7 +137,25 @@ namespace doticu_npcp { namespace Actor2 {
         if (actor && actor != Party::Player_t::Self()->Actor()) {
             Party::Member_t* member = Party::Members_t::Self()->From_Actor(actor);
             if (member) {
-                member->Change_Outfit1(outfit);
+                struct VCallback : public Virtual_Callback_t {
+                    Actor_t* actor;
+                    Party::Member_t* member;
+                    Outfit_t* outfit;
+                    VCallback(Actor_t* actor, Party::Member_t* member, Outfit_t* outfit) :
+                        actor(actor), member(member), outfit(outfit)
+                    {
+                    }
+                    void operator()(Variable_t* result)
+                    {
+                        if (result && result->Bool()) {
+                            member->Change_Outfit1(outfit);
+                        } else {
+                            Party::NPCS_t::Self()->Change_Default_Outfit(actor, outfit);
+                        }
+                    }
+                };
+                Virtual_Callback_i* vcallback = new VCallback(actor, member, outfit);
+                Is_Talking_To_Player(actor, &vcallback);
             } else {
                 Set_Outfit_Basic(actor, outfit, is_sleep_outfit, true); // could make this a setting
                 Party::NPCS_t::Self()->Change_Default_Outfit(actor, outfit);
@@ -1066,23 +1084,6 @@ namespace doticu_npcp { namespace Actor2 {
                 1 << Actor_t2::Update_3D_Flags::SKELETON_3D;
             Update_3D_Model(actor);
         }
-    }
-
-    void Queue_Fully_Update_3D_Model(Actor_t* actor)
-    {
-        struct Callback : public Virtual_Callback_t {
-            Actor_t* actor;
-            Callback(Actor_t* actor) :
-                actor(actor)
-            {
-            }
-            void operator()(Variable_t* result)
-            {
-                Fully_Update_3D_Model(actor);
-            }
-        };
-        Virtual_Callback_i* callback = new Callback(actor);
-        Object_Ref::Enable(actor, false, &callback);
     }
 
     void Queue_Ni_Node_Update(Actor_t* actor, bool do_update_weight)

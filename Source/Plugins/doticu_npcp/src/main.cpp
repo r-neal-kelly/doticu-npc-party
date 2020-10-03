@@ -322,6 +322,7 @@ namespace doticu_npcp { namespace Modules {
             for (size_t idx = 0, count = outfit2s.size(); idx < count; idx += 1) {
                 Outfit2_t* outfit2 = static_cast<Outfit2_t*>(outfit2s.at(idx));
                 if (outfit2 && outfit2->Type() == CODES::OUTFIT2::DELETED) {
+                    outfit2->flags = Utils::Bit_Off(outfit2->flags, 5);
                     Object_Ref::Delete_Unsafe(outfit2);
                     objects_deleted += 1;
                 }
@@ -336,6 +337,7 @@ namespace doticu_npcp { namespace Modules {
             for (size_t idx = 0, count = form_vectors.size(); idx < count; idx += 1) {
                 Form_Vector_t* form_vector = static_cast<Form_Vector_t*>(form_vectors.at(idx));
                 if (form_vector && form_vector != bases && form_vector != default_outfits) {
+                    form_vector->flags = Utils::Bit_Off(form_vector->flags, 5);
                     Object_Ref::Delete_Unsafe(form_vector);
                     objects_deleted += 1;
                 }

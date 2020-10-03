@@ -108,11 +108,11 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             Allow_Dialogue_For_All_Option_Variable()->Int(
                 mcm->Add_Toggle_Option(" Allow Dialogue For All ", Consts::Allow_Dialogue_For_All_Global()->value > 0.0f)
             );
-            /*Force_Cleanup_Option_Variable()->Int(
+            Force_Cleanup_Option_Variable()->Int(
                 mcm->Add_Text_Option(" Force Cleanup of Unused Objects ", "")
-            );*/
+            );
         }
-        mcm->Add_Empty_Option();
+        //mcm->Add_Empty_Option();
         mcm->Add_Empty_Option();
         mcm->Add_Empty_Option();
 
@@ -278,7 +278,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             vars->Allow_Dialogue_For_All(value);
             mcm->Toggle_Option_Value(option, value, true);
             mcm->Return_Latent(user_callback);
-        /*} else if (option == Force_Cleanup_Option_Variable()->Int()) {
+        } else if (option == Force_Cleanup_Option_Variable()->Int()) {
             struct Callback : public Callback_t<Bool_t> {
                 Settings_t* self;
                 UCallback_t* user_callback;
@@ -307,7 +307,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                         } else {
                             str = std::string("Deleted ") + std::to_string(objects_deleted) + " objects. ";
                         }
-                        str += "It's best to save your game and reload. If the game crashes, retarting it should fix it.";
+                        str += "It's best to save your game and reload. If the game crashes when you reload, it should be fine after a restart.";
                         UI::Message_Box(str.c_str(), new VCallback(user_callback));
                     } else {
                         MCM::Main_t::Self()->Return_Latent(user_callback);
@@ -315,9 +315,9 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 }
             };
             mcm->Show_Message("This will forcefully delete unused objects. NPC Party requests these objects to be deleted "
-                              "on game load, but Skyrim doesn't always seem to comply. "
+                              "on game load, but Skyrim doesn't always comply. "
                               "You should save your game before proceeding as it may crash. Continue?",
-                              true, " Yes ", " No ", new Callback(this, user_callback));*/
+                              true, " Yes ", " No ", new Callback(this, user_callback));
 
         } else if (option == Default_Member_Style_Option_Variable()->Int()) { // Members
             Int_t style = vars->Default_Member_Style();
@@ -589,9 +589,9 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             mcm->Info_Text("Enabled: Members will talk more often and comment on the world around them.\n"
                            "Disabled: Members will remain silent unless they are fighting or you talk to them.\n"
                            "This feature is a work in progress, and so you may not notice any difference yet.");*/
-        /*} else if (option == Force_Cleanup_Option_Variable()->Int()) {
+        } else if (option == Force_Cleanup_Option_Variable()->Int()) {
             mcm->Info_Text("This will attempt to remove unused objects created by NPC Party from your save file. Use with "
-                           "caution, as this may crash your game. You may wish to try it when wrapping up your gaming session.");*/
+                           "caution, as this may crash your game. You may wish to try it when wrapping up your gaming session.");
 
         } else if (option == Member_Limit_Option_Variable()->Int()) { // Members
             mcm->Info_Text("This will limit the amount of members you can attain. You can always increase, "

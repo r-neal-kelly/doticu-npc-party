@@ -1539,6 +1539,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     {
         NPCP_ASSERT(Is_Filled());
 
+        NPCS_t::Self()->Add_Base_If_Needed(actor, actor);
+
         Object_Ref::Token(actor, Consts::Member_Token(), ID() + 1);
         if (Is_Clone_Unsafe()) {
             Object_Ref::Token(actor, Consts::Clone_Token());
