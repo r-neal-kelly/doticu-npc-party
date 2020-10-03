@@ -11,6 +11,7 @@
 #include "consts.h"
 #include "form.h"
 #include "object_ref.h"
+#include "outfit.h"
 #include "outfit2.h"
 #include "papyrus.inl"
 #include "quest.h"
@@ -2642,6 +2643,23 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     {
         NPCP_ASSERT(Is_Filled());
 
+        struct Lock_t : public Callback_t<Member_t*> {
+            Outfit_t* outfit;
+            Lock_t(Outfit_t* outfit) :
+                outfit(outfit)
+            {
+            }
+            void operator()(Member_t* self)
+            {
+                self->Change_Outfit1_Impl(outfit);
+                self->Unlock();
+            }
+        };
+        Lock(new Lock_t(outfit));
+    }
+
+    void Member_t::Change_Outfit1_Impl(Outfit_t* outfit)
+    {
         if (!outfit) {
             outfit = Consts::Empty_Outfit();
         }

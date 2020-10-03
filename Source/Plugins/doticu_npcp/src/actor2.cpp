@@ -678,45 +678,27 @@ namespace doticu_npcp { namespace Actor2 {
 
         Form_t* linchpin = Consts::Blank_Armor();
 
-        XContainer_t* xcontainer_actor = Object_Ref::Get_XContainer(actor, false);
-        if (!xcontainer_actor) {
-            return;
-        }
+        Inventory_t actor_inventory(actor);
+        Inventory_t cache_inventory(cache_out);
 
-        for (XEntries_t::Iterator it_xentry_actor = xcontainer_actor->changes->xentries->Begin(); !it_xentry_actor.End(); ++it_xentry_actor) {
-            XEntry_t* xentry_actor = it_xentry_actor.Get();
-            if (!xentry_actor || !xentry_actor->form || xentry_actor->form == linchpin || !xentry_actor->xlists) {
-                continue;
-            }
-            xentry_actor->Validate(Object_Ref::Get_BEntry_Count(actor, xentry_actor->form));
-
-            std::vector<XList_t*> vec_xlists_worn;
-            vec_xlists_worn.reserve(2);
-
-            for (XLists_t::Iterator it_xlist_actor = xentry_actor->xlists->Begin(); !it_xlist_actor.End(); ++it_xlist_actor) {
-                XList_t* xlist_actor = it_xlist_actor.Get();
-                if (!xlist_actor) {
-                    continue;
-                }
-
-                if (XList::Is_Worn(xlist_actor)) {
-                    vec_xlists_worn.push_back(xlist_actor);
-                }
-            }
-
-            if (vec_xlists_worn.size() > 0) {
-                XEntry_t* xentry_cache = Object_Ref::Get_XEntry(cache_out, xentry_actor->form, true);
-                if (!xentry_cache) {
-                    continue;
-                }
-
-                for (u64 idx = 0, size = vec_xlists_worn.size(); idx < size; idx += 1) {
-                    XList_t* xlist_worn = vec_xlists_worn[idx];
-                    XList_t* xlist_cache = XList::Copy(xlist_worn);
-                    if (xlist_cache) {
-                        xentry_cache->Add_XList(xlist_cache);
-                    } else {
-                        xentry_cache->Increment(XList::Count(xlist_worn));
+        for (size_t idx = 0, end = actor_inventory.entries.size(); idx < end; idx += 1) {
+            Entry_t& actor_entry = actor_inventory.entries[idx];
+            Form_t* form = actor_entry.form;
+            if (form && form != linchpin && form->formType != kFormType_LeveledItem) {
+                Entry_t* cache_entry = cache_inventory.Entry(form);
+                Vector_t<XList_t*> xlists = actor_entry.XLists();
+                for (size_t idx = 0, end = xlists.size(); idx < end; idx += 1) {
+                    XList_t* xlist = xlists[idx];
+                    if (XList::Is_Worn(xlist)) {
+                        if (!cache_entry) {
+                            cache_entry = cache_inventory.Add_Entry(form);
+                        }
+                        XList_t* xlist_copy = XList::Copy(xlist);
+                        if (xlist_copy) {
+                            cache_inventory.Add_XList(cache_entry, xlist_copy);
+                        } else {
+                            cache_inventory.Add_Loose(cache_entry, XList::Count(xlist));
+                        }
                     }
                 }
             }

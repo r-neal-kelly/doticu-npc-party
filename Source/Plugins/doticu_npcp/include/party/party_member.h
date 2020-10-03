@@ -300,6 +300,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Int_t Unvitalize();
 
         void Change_Outfit1(Outfit_t* outfit);
+        void Change_Outfit1_Impl(Outfit_t* outfit);
         Int_t Change_Outfit2(Int_t outfit2_code);
         Int_t Change_Member_Outfit2();
         Int_t Change_Immobile_Outfit2();
