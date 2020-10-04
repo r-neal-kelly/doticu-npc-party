@@ -159,11 +159,18 @@ namespace doticu_npcp { namespace Modules {
         Int_t(Logs_t::* Get_Pivot)(), void(Logs_t::* Set_Pivot)(Int_t)
     > static inline void Log(Logs_t* logs, String_t str, Bool_t do_log)
     {
+        static Bool_t do_add_space = false;
+
         if (str && str.data && str.data[0]) {
             if (UI::Is_Menu_Open("Journal Menu")) { // may need to use callback
                 UI::Message_Box((std::string("NPC Party: ") + str.data).c_str());
             } else {
-                UI::Notification((std::string("NPC Party: ") + str.data).c_str());
+                if (do_add_space) {
+                    UI::Notification((std::string("NPC Party: ") + str.data + " ").c_str());
+                } else {
+                    UI::Notification((std::string("NPC Party: ") + str.data).c_str());
+                }
+                do_add_space = !do_add_space;
             }
 
             if (do_log) {
