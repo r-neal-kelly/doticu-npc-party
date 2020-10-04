@@ -232,7 +232,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
         Array_t* members = Members();
         NPCP_ASSERT(members);
-        if (member_idx > 0 && member_idx < members->count) {
+        if (member_idx > -1 && member_idx < members->count) {
             return static_cast<Party::Member_t*>
                 (members->Point(member_idx)->Alias());
         } else {
