@@ -1145,9 +1145,21 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                                 }
                                 void operator()(Variable_t* result)
                                 {
-                                    self->Change_Current_Outfit2();
-                                    user_callback->operator()(self);
-                                    delete user_callback;
+                                    struct Callback : public Callback_t<Actor_t*> {
+                                        Member_t* self;
+                                        UCallback_t* user_callback;
+                                        Callback(Member_t* self, UCallback_t* user_callback) :
+                                            self(self), user_callback(user_callback)
+                                        {
+                                        }
+                                        void operator()(Actor_t*)
+                                        {
+                                            self->Change_Current_Outfit2();
+                                            user_callback->operator()(self);
+                                            delete user_callback;
+                                        }
+                                    };
+                                    Actor2::Update_Equipment(self->Actor(), new Callback(self, user_callback));
                                 }
                             };
                             Modules::Funcs_t::Self()->Close_Menus(new VCallback(self, user_callback));

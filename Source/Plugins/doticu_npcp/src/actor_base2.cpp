@@ -39,6 +39,32 @@ namespace doticu_npcp { namespace Actor_Base2 {
         }
     }
 
+    Bool_t Has_Same_Hair_Color(Actor_Base_t* actor_base_a, Actor_Base_t* actor_base_b)
+    {
+        if (actor_base_a && actor_base_b) {
+            BGSColorForm* color_a = Get_Hair_Color(actor_base_a);
+            BGSColorForm* color_b = Get_Hair_Color(actor_base_b);
+            if (color_a && color_b) {
+                if (color_a == color_b) {
+                    return true;
+                } else {
+                    return
+                        color_a->color.red == color_b->color.red &&
+                        color_a->color.green == color_b->color.green &&
+                        color_a->color.blue == color_b->color.blue;
+                }
+            } else if (color_a) {
+                return false;
+            } else if (color_b) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
+    }
+
     bool Has_Same_Skin_Color(TESNPC* actor_base_a, TESNPC* actor_base_b)
     {
         return
@@ -68,7 +94,7 @@ namespace doticu_npcp { namespace Actor_Base2 {
             return false;
         }
 
-        if (Get_Hair_Color(actor_base_a) != Get_Hair_Color(actor_base_b)) {
+        if (!Has_Same_Hair_Color(actor_base_a, actor_base_b)) {
             return false;
         }
 
