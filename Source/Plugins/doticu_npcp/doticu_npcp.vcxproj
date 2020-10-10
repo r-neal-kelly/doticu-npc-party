@@ -181,6 +181,7 @@
     <ClCompile Include="src\party\party_movee.cpp" />
     <ClCompile Include="src\party\party_npcs.cpp" />
     <ClCompile Include="src\party\party_player.cpp" />
+    <ClCompile Include="src\party\party_settler.cpp" />
     <ClCompile Include="src\perks.cpp" />
     <ClCompile Include="src\quest.cpp" />
     <ClCompile Include="src\references.cpp" />
@@ -237,6 +238,7 @@
     <ClInclude Include="include\party\party_movee.h" />
     <ClInclude Include="include\party\party_npcs.h" />
     <ClInclude Include="include\party\party_player.h" />
+    <ClInclude Include="include\party\party_settler.h" />
     <ClInclude Include="include\perks.h" />
     <ClInclude Include="include\references.h" />
     <ClInclude Include="include\spell.h" />

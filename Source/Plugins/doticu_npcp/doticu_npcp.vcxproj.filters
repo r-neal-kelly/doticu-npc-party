@@ -180,6 +180,9 @@
     <ClCompile Include="src\mcm\mcm_logs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\party\party_settler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\object_ref.h">
@@ -354,6 +357,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\mcm\mcm_logs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party\party_settler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

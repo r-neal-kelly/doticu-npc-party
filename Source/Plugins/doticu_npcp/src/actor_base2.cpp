@@ -257,11 +257,3 @@ namespace doticu_npcp { namespace Actor_Base2 {
     }
 
 }}
-
-namespace doticu_npcp { namespace Actor_Base2 { namespace Exports {
-
-    bool Register(VMClassRegistry *registry) {
-        return true;
-    }
-
-}}}

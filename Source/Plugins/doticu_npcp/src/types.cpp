@@ -340,4 +340,22 @@ namespace doticu_npcp {
         ctor(this, quest, topic, topic_info, speaker);
     }
 
+    Package_Value_t::Type_e Package_Value_t::Type()
+    {
+        uintptr_t vtbl = *(uintptr_t*)this - RelocationManager::s_baseAddr;
+        if (vtbl == Offsets::Package::BOOL_VALUE) {
+            return Type_e::BOOL;
+        } else if (vtbl == Offsets::Package::INT_VALUE) {
+            return Type_e::INT;
+        } else if (vtbl == Offsets::Package::FLOAT_VALUE) {
+            return Type_e::FLOAT;
+        } else if (vtbl == Offsets::Package::LOCATION_VALUE) {
+            return Type_e::LOCATION;
+        } else if (vtbl == Offsets::Package::SINGLE_REFERENCE_VALUE) {
+            return Type_e::SINGLE_REFERENCE;
+        } else {
+            return Type_e::NONE;
+        }
+    }
+
 }

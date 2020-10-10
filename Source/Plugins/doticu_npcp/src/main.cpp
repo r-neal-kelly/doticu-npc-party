@@ -353,6 +353,36 @@ namespace doticu_npcp { namespace Modules {
         return objects_deleted;
     }
 
+    Int_t Main_t::Count_Unused_Objects()
+    {
+        Int_t unused_objects = 0;
+
+        {
+            Vector_t<Reference_t*> outfit2s = Cell::References(Consts::Storage_Cell(), Consts::Outfit2_Container());
+            for (size_t idx = 0, count = outfit2s.size(); idx < count; idx += 1) {
+                Outfit2_t* outfit2 = static_cast<Outfit2_t*>(outfit2s.at(idx));
+                if (outfit2 && outfit2->Type() == CODES::OUTFIT2::DELETED) {
+                    unused_objects += 1;
+                }
+            }
+        }
+
+        {
+            Party::NPCS_t* npcs = Party::NPCS_t::Self();
+            Form_Vector_t* bases = npcs->Bases();
+            Form_Vector_t* default_outfits = npcs->Default_Outfits();
+            Vector_t<Reference_t*> form_vectors = Cell::References(Consts::Storage_Cell(), Consts::Form_Vector());
+            for (size_t idx = 0, count = form_vectors.size(); idx < count; idx += 1) {
+                Form_Vector_t* form_vector = static_cast<Form_Vector_t*>(form_vectors.at(idx));
+                if (form_vector && form_vector != bases && form_vector != default_outfits) {
+                    unused_objects += 1;
+                }
+            }
+        }
+
+        return unused_objects;
+    }
+
     void Main_t::Register_Me(Virtual_Machine_t* vm)
     {
         #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
@@ -443,24 +473,13 @@ namespace doticu_npcp { namespace Main {
             }                                                                                   \
         W
 
-        REGISTER_NAMESPACE(Papyrus::Active_Magic_Effects);
-        REGISTER_NAMESPACE(Actor_Base2);
         REGISTER_NAMESPACE(Actor2);
-        REGISTER_NAMESPACE(Cell);
         REGISTER_NAMESPACE(Consts);
-        REGISTER_NAMESPACE(Form);
-        REGISTER_NAMESPACE(Form_Vector);
-        REGISTER_NAMESPACE(Game);
-        REGISTER_NAMESPACE(Object_Ref);
-        REGISTER_NAMESPACE(Outfit);
-        REGISTER_NAMESPACE(Papyrus);
+        REGISTER_NAMESPACE(Papyrus::Active_Magic_Effects);
         REGISTER_NAMESPACE(Papyrus::Packages);
         REGISTER_NAMESPACE(Papyrus::Perks);
         REGISTER_NAMESPACE(Papyrus::References);
         REGISTER_NAMESPACE(Papyrus::Topic_Infos);
-        REGISTER_NAMESPACE(Quest);
-        REGISTER_NAMESPACE(Spell);
-        REGISTER_NAMESPACE(String2);
 
         #undef REGISTER_NAMESPACE
 

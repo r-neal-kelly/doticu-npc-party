@@ -27,20 +27,3 @@ namespace doticu_npcp { namespace Outfit {
     }
 
 }}
-
-namespace doticu_npcp { namespace Outfit { namespace Exports {
-
-    bool Register(VMClassRegistry *registry) {
-        #define ADD_GLOBAL(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
-        M                                                               \
-            ADD_CLASS_METHOD("doticu_npcp", Selfless_t,                 \
-                             STR_FUNC_, ARG_NUM_,                       \
-                             RETURN_, Exports::METHOD_, __VA_ARGS__);   \
-        W
-
-        #undef ADD_GLOBAL
-
-        return true;
-    }
-
-}}}

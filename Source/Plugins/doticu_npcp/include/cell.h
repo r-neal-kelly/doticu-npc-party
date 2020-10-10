@@ -18,9 +18,3 @@ namespace doticu_npcp { namespace Cell {
     Vector_t<Reference_t*> References(Cell_t* cell, Form_t* of_base);
 
 }}
-
-namespace doticu_npcp { namespace Cell { namespace Exports {
-
-    bool Register(VMClassRegistry *registry);
-
-}}}

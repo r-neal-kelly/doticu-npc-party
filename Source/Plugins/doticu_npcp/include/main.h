@@ -35,6 +35,7 @@ namespace doticu_npcp { namespace Modules {
         Bool_t Try_Update();
         void Try_Cleanup();
         Int_t Force_Cleanup();
+        Int_t Count_Unused_Objects();
 
     public:
         static void Register_Me(Virtual_Machine_t* vm);

@@ -81,6 +81,13 @@ namespace doticu_npcp { namespace Consts {
         // Skyrim Miscs
         MISC_GOLD                                   = 0x00000F,
 
+        // Skyrim Packages
+        PACKAGE_TEMPLATE_FOLLOW                     = 0x019B2C,
+        PACKAGE_TEMPLATE_FOLLOW_PLAYER              = 0x0750BE,
+        PACKAGE_TEMPLATE_FOLLOW_AND_KEEP_DISTANCE   = 0x06F8F0,
+        PACKAGE_TEMPLATE_FOLLOW_IN_SINGLE_FILE      = 0x0C5811,
+        PACKAGE_TEMPLATE_FOLLOWER                   = 0x0D530D,
+
         // Skyrim Perks
         PERK_VAMPIRE_FEED                           = 0x0CF02C,
 
@@ -139,6 +146,13 @@ namespace doticu_npcp { namespace Consts {
 
     // Skyrim Miscs
     Misc_t* Gold() { SKYRIM_FORM(Misc_t, MISC_GOLD); }
+
+    // Skyrim Packages
+    Package_t* Follow_Template_Package() { SKYRIM_FORM(Package_t, PACKAGE_TEMPLATE_FOLLOW); }
+    Package_t* Follow_Player_Template_Package() { SKYRIM_FORM(Package_t, PACKAGE_TEMPLATE_FOLLOW_PLAYER); }
+    Package_t* Follow_And_Keep_Distance_Template_Package() { SKYRIM_FORM(Package_t, PACKAGE_TEMPLATE_FOLLOW_AND_KEEP_DISTANCE); }
+    Package_t* Follow_In_Single_File_Template_Package() { SKYRIM_FORM(Package_t, PACKAGE_TEMPLATE_FOLLOW_IN_SINGLE_FILE); }
+    Package_t* Follower_Template_Package() { SKYRIM_FORM(Package_t, PACKAGE_TEMPLATE_FOLLOWER); }
 
     // Skyrim Perks
     Perk_t* Vampire_Feed_Perk() { SKYRIM_FORM(Perk_t, PERK_VAMPIRE_FEED); }
@@ -213,6 +227,13 @@ namespace doticu_npcp { namespace Consts {
         FORMLIST_GLOBALS_IS_SADDLER_SITTING         = 0x395E54,
         FORMLIST_MARKERS_EXPO_CELL                  = 0x2928AF,
         FORMLIST_MARKERS_SETTLER                    = 0x00B46E,
+        FORMLIST_MARKERS_SETTLER_SLEEPER            = 0x3DCD12,
+        FORMLIST_MARKERS_SETTLER_EATER              = 0x3DCD13,
+        FORMLIST_MARKERS_SETTLER_GUARD              = 0x3DCD14,
+        FORMLIST_PACKAGES_SETTLER                   = 0x3D2B03,
+        FORMLIST_PACKAGES_SETTLER_SLEEPER           = 0x3DCD0C,
+        FORMLIST_PACKAGES_SETTLER_EATER             = 0x3DCD0D,
+        FORMLIST_PACKAGES_SETTLER_GUARD             = 0x3DCD0E,
         FORMLIST_BUTTONS_EXPOEE                     = 0x3C88DF,
         FORMLIST_MARKERS_EXPOEE                     = 0x3C88E0,
 
@@ -257,6 +278,9 @@ namespace doticu_npcp { namespace Consts {
         MISC_TOKEN_RETREATER                        = 0x2F3D00,
         MISC_TOKEN_SADDLER                          = 0x34F000,
         MISC_TOKEN_SETTLER                          = 0x000D73,
+        MISC_TOKEN_SETTLER_SLEEPER                  = 0x3D7C07,
+        MISC_TOKEN_SETTLER_EATER                    = 0x3D7C05,
+        MISC_TOKEN_SETTLER_GUARD                    = 0x3D7C08,
         MISC_TOKEN_STYLE_ARCHER                     = 0x0A045E,
         MISC_TOKEN_STYLE_COWARD                     = 0x2D56F3,
         MISC_TOKEN_STYLE_DEFAULT                    = 0x0A045D,
@@ -580,6 +604,13 @@ namespace doticu_npcp { namespace Consts {
     Formlist_t* Is_Saddler_Sitting_Globals_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_GLOBALS_IS_SADDLER_SITTING); }
     Formlist_t* Expo_Cell_Markers_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_MARKERS_EXPO_CELL); }
     Formlist_t* Settler_Markers_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_MARKERS_SETTLER); }
+    Formlist_t* Settler_Sleeper_Markers_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_MARKERS_SETTLER_SLEEPER); }
+    Formlist_t* Settler_Eater_Markers_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_MARKERS_SETTLER_EATER); }
+    Formlist_t* Settler_Guard_Markers_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_MARKERS_SETTLER_GUARD); }
+    Formlist_t* Settler_Packages_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_PACKAGES_SETTLER); }
+    Formlist_t* Settler_Sleeper_Packages_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_PACKAGES_SETTLER_SLEEPER); }
+    Formlist_t* Settler_Eater_Packages_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_PACKAGES_SETTLER_EATER); }
+    Formlist_t* Settler_Guard_Packages_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_PACKAGES_SETTLER_GUARD); }
     Formlist_t* Expoee_Buttons_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_BUTTONS_EXPOEE); }
     Formlist_t* Expoee_Markers_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_MARKERS_EXPOEE); }
 
@@ -600,7 +631,7 @@ namespace doticu_npcp { namespace Consts {
     // NPCP Ints
     Int_t NPCP_Major() { return 0; } // set manually upon each release
     Int_t NPCP_Minor() { return 9; } // set manually upon each release
-    Int_t NPCP_Patch() { return 12; } // set manually upon each release
+    Int_t NPCP_Patch() { return 14; } // set manually upon each release
 
     // NPCP Leveled Actor
     Leveled_Actor_t* Horse_Leveled_Actor() { NPCP_FORM(Leveled_Actor_t, LEVELED_ACTOR_HORSE); }
@@ -620,6 +651,9 @@ namespace doticu_npcp { namespace Consts {
     Misc_t* Movee_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_MOVEE); }
     Misc_t* Immobile_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_IMMOBILE); }
     Misc_t* Settler_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_SETTLER); }
+    Misc_t* Settler_Sleeper_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_SETTLER_SLEEPER); }
+    Misc_t* Settler_Eater_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_SETTLER_EATER); }
+    Misc_t* Settler_Guard_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_SETTLER_GUARD); }
     Misc_t* Thrall_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_THRALL); }
     Misc_t* Paralyzed_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_PARALYZED); }
     Misc_t* Mannequin_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_MANNEQUIN); }

@@ -261,7 +261,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         Actor2::Owner(actor, Actor2::Dynamic_Base(follower_actor));
 
-        Object_Ref::Enable(actor, false);
+        //Object_Ref::Enable(actor, false);
     }
 
     Int_t Horse_t::Ungroom()

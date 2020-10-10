@@ -39,10 +39,31 @@ string                  p_str_name                          =    ""
 Faction                 p_prev_faction_crime                =  none
 bool                    p_prev_faction_no_body_cleanup      = false
 
-float                   p_prev_aggression                   =   0.0; these may be unneeded
+float                   p_prev_aggression                   =   0.0; these four may be unneeded
 float                   p_prev_confidence                   =   0.0
 float                   p_prev_assistance                   =   0.0
 float                   p_prev_morality                     =   0.0
+
+; energy - 8bits
+; preferred_speed - 8bits
+
+int                     p_settler_sandboxer_flags           =     0
+int                     p_settler_sleeper_flags             =     0
+int                     p_settler_eater_flags               =     0
+int                     p_settler_guard_flags               =     0
+
+int                     p_settler_sandboxer_radius          =     0
+int                     p_settler_sleeper_radius            =     0
+int                     p_settler_eater_radius              =     0
+int                     p_settler_guard_radius              =     0
+
+int                     p_settler_sleeper_time              =     0
+int                     p_settler_eater_time                =     0
+int                     p_settler_guard_time                =     0
+
+int                     p_settler_sleeper_duration          =     0
+int                     p_settler_eater_duration            =     0
+int                     p_settler_guard_duration            =     0
 
 bool                    p_prev_faction_potential_follower   = false; to be deleted
 Faction[]               p_prev_factions                     =  none; to be deleted

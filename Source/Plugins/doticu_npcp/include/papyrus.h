@@ -633,9 +633,3 @@ namespace doticu_npcp { namespace Papyrus {
     }
 
 }}
-
-namespace doticu_npcp { namespace Papyrus { namespace Exports {
-
-    bool Register(Registry_t *registry);
-
-}}}

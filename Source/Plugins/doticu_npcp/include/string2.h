@@ -22,9 +22,3 @@ namespace doticu_npcp { namespace String2 {
     size_t Length(const char* str);
 
 }}
-
-namespace doticu_npcp { namespace String2 { namespace Exports {
-
-    bool Register(VMClassRegistry *registry);
-
-}}}

@@ -42,9 +42,3 @@ namespace doticu_npcp { namespace Papyrus {
     };
 
 }}
-
-namespace doticu_npcp { namespace Form_Vector { namespace Exports {
-
-    bool Register(VMClassRegistry *registry);
-
-}}}

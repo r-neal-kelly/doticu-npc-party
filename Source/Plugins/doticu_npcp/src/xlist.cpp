@@ -415,27 +415,30 @@ namespace doticu_npcp { namespace XList {
             return;
         }
 
+        const char* indent = str_indent.c_str();
+
         u64 idx_xdata = 0;
         for (XData_t *xdata = xlist->m_data; xdata != NULL; xdata = xdata->next, idx_xdata += 1) {
-            if (xdata->GetType() == kExtraData_Count) {
+            UInt32 type = xdata->GetType();
+            if (type == kExtraData_Count) {
                 _MESSAGE("%sxdata idx: %i, type: %s, count: %i",
                          str_indent.c_str(),
                          idx_xdata,
                          XData::Get_Type_String(xdata),
                          ((ExtraCount *)xdata)->Count());
-            } else if (xdata->GetType() == kExtraData_Ownership) {
+            } else if (type == kExtraData_Ownership) {
                 _MESSAGE("%sxdata idx: %i, type: %s, owner: %s",
                          str_indent.c_str(),
                          idx_xdata,
                          XData::Get_Type_String(xdata),
                          Form::Get_Name(((ExtraOwnership*)xdata)->owner));
-            } else if (xdata->GetType() == kExtraData_Soul) {
+            } else if (type == kExtraData_Soul) {
                 _MESSAGE("%sxdata idx: %i, type: %s, level: %s",
                          str_indent.c_str(),
                          idx_xdata,
                          XData::Get_Type_String(xdata),
                          static_cast<Extra_Soul_t*>(xdata)->Soul_Level_String());
-            } else if (xdata->GetType() == kExtraData_ReferenceHandle) {
+            } else if (type == kExtraData_ReferenceHandle) {
                 TESObjectREFR* object = ((ExtraReferenceHandle*)xdata)->GetReference();
                 if (object) {
                     _MESSAGE("%sxdata idx: %i, type: %s, name: %s, quest-item: %s, off-limits: %s",
@@ -452,14 +455,45 @@ namespace doticu_npcp { namespace XList {
                              idx_xdata,
                              XData::Get_Type_String(xdata));
                 }
-            } else if (xdata->GetType() == kExtraData_AliasInstanceArray) {
+            } else if (type == kExtraData_AliasInstanceArray) {
                 ExtraAliasInstanceArray* xaliases = reinterpret_cast<ExtraAliasInstanceArray*>(xdata);
-                _MESSAGE("%sxdata idx: %i, type: %s, quest_count: %u",
-                         str_indent.c_str(),
+                using Alias_Info_t = ExtraAliasInstanceArray::AliasInfo;
+                BSReadLocker locker(&xaliases->lock);
+                _MESSAGE("%sxdata idx: %i, type: %s, quest: %u",
+                         indent,
                          idx_xdata,
                          XData::Get_Type_String(xdata),
                          xaliases->aliases.count);
-            } else if (xdata->GetType() == kExtraData_Interaction) {
+                for (size_t idx = 0, end = xaliases->aliases.count; idx < end; idx += 1) {
+                    Alias_Info_t* alias_info = xaliases->aliases.entries[idx];
+                    if (alias_info) {
+                        _MESSAGE("%s    "
+                                 "idx: %zu, quest: %s, packages: %i",
+                                 indent,
+                                 idx,
+                                 alias_info->quest->Editor_ID(),
+                                 alias_info->packages ? alias_info->packages->count : 0);
+                    }
+                }
+            } else if (type == kExtraData_Follower) {
+                Extra_Followers_t* xfollowers = reinterpret_cast<Extra_Followers_t*>(xdata);
+                using Follower_Info_t = Extra_Followers_t::Follower_Info_t;
+                _MESSAGE("%sxdata idx: %i, type: %s, follower_count: %u",
+                         indent,
+                         idx_xdata,
+                         XData::Get_Type_String(xdata),
+                         xfollowers->follower_infos.count);
+                for (size_t idx = 0, end = xfollowers->follower_infos.count; idx < end; idx += 1) {
+                    Follower_Info_t& follower_info = xfollowers->follower_infos.entries[idx];
+                    Actor_t* actor = static_cast<Actor_t*>(Object_Ref::From_Handle(follower_info.actor_handle));
+                    if (actor && actor->formType == kFormType_Character) {
+                        _MESSAGE("%s    "
+                                 "idx: %zu, name: %s, distance: %f",
+                                 indent,
+                                 idx, Object_Ref::Get_Name(actor), follower_info.follow_distance);
+                    }
+                }
+            } else if (type == kExtraData_Interaction) {
                 XData::XInteraction* xinteraction = reinterpret_cast<XData::XInteraction*>(xdata);
                 if (xinteraction->interaction) {
                     NiPointer<TESObjectREFR> interactee = nullptr;

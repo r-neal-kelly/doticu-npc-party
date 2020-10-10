@@ -86,11 +86,3 @@ namespace doticu_npcp { namespace String2 {
     }
 
 }}
-
-namespace doticu_npcp { namespace String2 { namespace Exports {
-
-    bool Register(VMClassRegistry *registry) {
-        return true;
-    }
-
-}}}

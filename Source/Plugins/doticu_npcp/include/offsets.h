@@ -100,6 +100,16 @@ namespace doticu_npcp { namespace Offsets {
 
     }
 
+    namespace Package {
+
+        constexpr uintptr_t BOOL_VALUE                  = 0x01605DE0; // 252944
+        constexpr uintptr_t INT_VALUE                   = 0x016060A8; // 252946
+        constexpr uintptr_t FLOAT_VALUE                 = 0x01605F40; // 252945
+        constexpr uintptr_t LOCATION_VALUE              = 0x01606520; // 252956
+        constexpr uintptr_t SINGLE_REFERENCE_VALUE      = 0x016072A0; // 253026
+
+    }
+
     namespace Process_Lists {
 
         constexpr uintptr_t SELF                        = 0x01EBEAD0; // 514167

@@ -9,6 +9,7 @@
 #include "commands.h"
 #include "consts.h"
 #include "funcs.h"
+#include "game.h"
 #include "object_ref.h"
 #include "papyrus.inl"
 #include "utils.h"
@@ -1326,7 +1327,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         if (Is_Ready() && Is_Alive()) {
             Actor_t* actor = Actor();
 
-            if (!Followers_t::Self()->Can_Actor_Follow(actor)) {
+            if (Game::Is_Outsourced_Follower(actor)) {
                 Modules::Control::Commands_t::Self()->Relinquish(actor);
             } else {
                 Enforce_Follower(actor); // Backup should be Follow and Restore Unfollow

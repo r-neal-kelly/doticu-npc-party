@@ -583,15 +583,23 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
         if (option == Allow_Dialogue_For_All_Option_Variable()->Int()) { // General
             mcm->Info_Text("Enabled: You can access the [NPC Party] menu with any viable NPC.\n"
-                           "Disabled: You can only access the [NPC Party] menu with members.\n"
-                           "Either way, you can still use hotkeys to quickly add a member and access the menu.");
+                           "Disabled: You can only access the [NPC Party] menu with members and followers.\n"
+                           "Either way, you can still use hotkeys to quickly add a member and access their menu.");
         /*} else if (option == Allow_Chatter_Option_Variable()->Int()) {
             mcm->Info_Text("Enabled: Members will talk more often and comment on the world around them.\n"
                            "Disabled: Members will remain silent unless they are fighting or you talk to them.\n"
                            "This feature is a work in progress, and so you may not notice any difference yet.");*/
         } else if (option == Force_Cleanup_Option_Variable()->Int()) {
-            mcm->Info_Text("This will attempt to remove unused objects created by NPC Party from your save file. Use with "
-                           "caution, as this may crash your game. You may wish to try it when wrapping up your gaming session.");
+            Int_t unused_object_count = Modules::Main_t::Self()->Count_Unused_Objects();
+            std::string unused_object_string;
+            if (unused_object_count == 1) {
+                unused_object_string = "1 unused object";
+            } else {
+                unused_object_string = std::to_string(unused_object_count) + " unused objects";
+            }
+            mcm->Info_Text(("This will attempt to remove " + unused_object_string + " created by NPC Party from your save file. " +
+                            "Use with caution, because there is a rare chance it could crash your game. " +
+                            "You may wish to try it when wrapping up your gaming session.").c_str());
 
         } else if (option == Member_Limit_Option_Variable()->Int()) { // Members
             mcm->Info_Text("This will limit the amount of members you can attain. You can always increase, "

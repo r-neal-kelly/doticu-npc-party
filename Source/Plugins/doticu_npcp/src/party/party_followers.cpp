@@ -473,88 +473,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         return Slice(Sort(Filled()), begin, end);
     }
 
-    static Vector_t<Quest_t*> Follower_Like_Quests()
-    {
-        Quest_t* our_quest = Consts::Followers_Quest();
-
-        Vector_t<Quest_t*> quests;
-        quests.reserve(32);
-        quests.push_back(Consts::Follower_Dialogue_Quest());
-
-        DataHandler* data_handler = DataHandler::GetSingleton();
-        if (data_handler) {
-            for (size_t idx = 0, count = data_handler->quests.count; idx < count; idx += 1) {
-                Quest_t* quest = *(data_handler->quests.entries + idx);
-                if (quest->aliases.count > 0) {
-                    if (quest != our_quest) {
-                        const char* editor_id = quest->Editor_ID();
-                        if (String2::Contains_Caseless(editor_id, "follow")) {
-                            if (!Vector::Has(quests, quest)) {
-                                quests.push_back(quest);
-                            }
-                        } else {
-                            ModInfo* mod_info = quest->GetFinalSourceFile();
-                            while (mod_info) {
-                                if (String2::Contains_Caseless(mod_info->name, "follow") ||
-                                    String2::Contains(mod_info->name, "EFF")) {
-                                    if (!Vector::Has(quests, quest)) {
-                                        quests.push_back(quest);
-                                    }
-                                    mod_info = nullptr;
-                                } else {
-                                    ModInfo* parent = *reinterpret_cast<ModInfo**>
-                                        ((reinterpret_cast<UInt8*>(mod_info) + 0x008));
-                                    if (parent != mod_info) {
-                                        mod_info = parent;
-                                    } else {
-                                        mod_info = nullptr;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        /*for (size_t idx = 0, count = quests.size(); idx < count; idx += 1) {
-            _MESSAGE(quests[idx]->Editor_ID());
-        }*/
-
-        return quests;
-    }
-
-    Bool_t Followers_t::Can_Actor_Follow(Actor_t* actor) // check if they have breadcrumbs?
-    {
-        static Vector_t<Quest_t*> follower_like_quests = Follower_Like_Quests();
-
-        if (actor) {
-            if (Actor2::Has_Faction(actor, Consts::Current_Follower_Faction())) {
-                XAliases_t* xaliases = static_cast<XAliases_t*>(actor->extraData.GetByType(kExtraData_AliasInstanceArray));
-                if (xaliases) {
-                    for (size_t idx = 0, count = xaliases->aliases.count; idx < count; idx += 1) {
-                        XAliases_t::AliasInfo* info = xaliases->aliases[idx];
-                        if (info) {
-                            Quest_t* quest = info->quest;
-                            if (quest && quest != this) {
-                                if (Vector::Has(follower_like_quests, quest)) {
-                                    return false;
-                                }
-                            }
-                        }
-                    }
-                    return true;
-                } else {
-                    return true;
-                }
-            } else {
-                return true;
-            }
-        } else {
-            return false;
-        }
-    }
-
     void Followers_t::Add_Follower(Member_t* member, Callback_t<Int_t, Follower_t*>* user_callback)
     {
         NPCP_ASSERT(user_callback);
@@ -563,7 +481,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             if (member->Isnt_Mannequin()) {
                 Actor_t* actor = member->Actor();
                 if (Hasnt_Actor(actor)) {
-                    if (Can_Actor_Follow(actor)) {
+                    if (!Game::Is_Outsourced_Follower(actor)) {
                         if (Count_Filled() < Max()) {
                             Follower_t* follower = From_Unfilled();
                             NPCP_ASSERT(follower);

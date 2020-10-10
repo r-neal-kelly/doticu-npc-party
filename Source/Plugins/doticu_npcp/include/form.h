@@ -12,6 +12,7 @@ namespace doticu_npcp { namespace Form {
 
     const char *Get_Name(TESForm *ref_form);
     const char *Get_Type_String(TESForm *ref_form);
+    const char* Get_Type_String(UInt32 form_type);
     const char* Get_Any_Name(Form_t* form);
     bool Has_Keyword(TESForm *form, BGSKeyword *keyword);
     void Log_Flags(Form_t* form);
@@ -30,9 +31,3 @@ namespace doticu_npcp { namespace Form {
     void Name(Form_t* form, const char* name);
 
 }}
-
-namespace doticu_npcp { namespace Form { namespace Exports {
-
-    bool Register(VMClassRegistry *registry);
-
-}}}

@@ -12,9 +12,3 @@ namespace doticu_npcp { namespace Outfit {
     void Remove_Item(Outfit_t* outfit, Form_t* form);
 
 }}
-
-namespace doticu_npcp { namespace Outfit { namespace Exports {
-
-    bool Register(VMClassRegistry *registry);
-
-}}}

@@ -10,6 +10,8 @@
 #include "skse64/PapyrusNativeFunctions.h"
 #include "skse64/PluginAPI.h"
 
+#include "offsets.h"
+
 namespace doticu_npcp {
 
     typedef uint8_t         u8;
@@ -82,7 +84,6 @@ namespace doticu_npcp {
     typedef TESForm         Form_t;
     typedef TESWorldSpace   Worldspace_t;
     typedef TESObjectCELL   Cell_t;
-    typedef TESPackage      Package_t;
     typedef TESObjectREFR   Reference_t;
     typedef TESObjectMISC   Misc_t;
     typedef TESObjectSTAT   Static_t;
@@ -810,34 +811,332 @@ namespace doticu_npcp {
         String_t Soul_Level_String()
         {
             switch (soul_level) {
-                case (Soul_Level_e::PETTY):
-                {
-                    return "PETTY";
-                }
-                case (Soul_Level_e::LESSER):
-                {
-                    return "LESSER";
-                }
-                case (Soul_Level_e::COMMON):
-                {
-                    return "COMMON";
-                }
-                case (Soul_Level_e::GREATER):
-                {
-                    return "GREATER";
-                }
-                case (Soul_Level_e::GRAND):
-                {
-                    return "GRAND";
-                }
-                default:
-                {
-                    return "NONE";
-                }
+                case (Soul_Level_e::PETTY): return "PETTY";
+                case (Soul_Level_e::LESSER): return "LESSER";
+                case (Soul_Level_e::COMMON): return "COMMON";
+                case (Soul_Level_e::GREATER): return "GREATER";
+                case (Soul_Level_e::GRAND): return "GRAND";
+                default: return "NONE";
             };
         }
     };
     STATIC_ASSERT(sizeof(Extra_Soul_t) == 0x18);
+
+    class Extra_Followers_t : public BSExtraData {
+    public:
+        class Follower_Info_t {
+        public:
+            Reference_Handle_t actor_handle; // 0
+            Float_t follow_distance; // 4
+        };
+        STATIC_ASSERT(sizeof(Follower_Info_t) == 0x08);
+
+        virtual ~Extra_Followers_t();
+
+        tArray<Follower_Info_t> follower_infos; // 10
+    };
+    STATIC_ASSERT(sizeof(Extra_Followers_t) == 0x28);
+
+    /* Packages */
+
+    class Package_Value_t {
+    public:
+        virtual ~Package_Value_t();
+
+        enum class Type_e {
+            NONE,
+            BOOL,
+            INT,
+            FLOAT,
+            LOCATION,
+            SINGLE_REFERENCE,
+            TOPIC,
+        };
+
+        Type_e Type();
+    };
+    STATIC_ASSERT(sizeof(Package_Value_t) == 0x08);
+
+    class Package_Bool_Value_t : public Package_Value_t {
+    public:
+        virtual ~Package_Bool_Value_t();
+
+        UInt32 value; // 08
+        UInt32 pad_0C; // 0C
+    };
+    STATIC_ASSERT(sizeof(Package_Bool_Value_t) == 0x10);
+
+    class Package_Int_Value_t : public Package_Value_t {
+    public:
+        virtual ~Package_Int_Value_t();
+
+        UInt64 pad_08; // 08
+        Int_t value; // 10
+        UInt32 pad_14; // 14
+        void* unk_18; // 18
+        UInt64 unk_20; // 20
+        UInt64 unk_28; // 28
+    };
+    STATIC_ASSERT(sizeof(Package_Int_Value_t) == 0x30); // maybe 0x18
+
+    class Package_Float_Value_t : public Package_Value_t {
+    public:
+        virtual ~Package_Float_Value_t();
+
+        UInt64 pad_08; // 08
+        Float_t value; // 10
+        UInt32 pad_14; // 14
+        void* unk_18; // 18
+        UInt64 unk_20; // 20
+        UInt64 unk_28; // 28
+    };
+    STATIC_ASSERT(sizeof(Package_Float_Value_t) == 0x30); // maybe 0x18
+
+    class Package_Location_t;
+    class Package_Location_Value_t : public Package_Value_t {
+    public:
+        virtual ~Package_Location_Value_t();
+
+        UInt64 pad_08; // 08
+        Package_Location_t* location; // 10
+        void* unk_18; // 18
+    };
+    STATIC_ASSERT(sizeof(Package_Location_Value_t) == 0x20);
+
+    class Package_Target_t;
+    class Package_Single_Reference_Value_t : public Package_Value_t {
+    public:
+        virtual ~Package_Single_Reference_Value_t();
+
+        UInt64 pad_08; // 08
+        Package_Target_t* target; // 10
+        void* unk_18; // 18
+    };
+    STATIC_ASSERT(sizeof(Package_Single_Reference_Value_t) == 0x20);
+
+    class Package_t;
+    class Package_Data_t {
+    public:
+        virtual ~Package_Data_t();
+
+        Package_Value_t** values;
+        void* data_10; // 10 Variable Size, probably an array or hashmap (** ptr to ptrs) repeats more among like packages
+        UInt16 value_count; // 18
+        UInt8 marker; // 1A XNAM
+        UInt8 uint_1B; // 1B
+        Bool_t bool_1C; // 1C
+        UInt8 pad_1D; // 1D
+        UInt16 pad_1E; // 1E
+        void* shared_20; // 20 (connected with template. procedures or inputs)
+        void* shared_28; // 28 (connected with template. procedures or inputs)
+        Package_t* package_template; // 30
+        UInt16 version; // 38
+        UInt16 uint_3A; // 3A
+        Bool_t bool_3C; // 3C
+        UInt8 pad_3D; // 3D
+        UInt16 pad_3E; // 3E
+    };
+    STATIC_ASSERT(sizeof(Package_Data_t) == 0x40);
+
+    class Package_Location_t {
+    public:
+        virtual ~Package_Location_t();
+
+        enum class Type_e : UInt8 {
+            NEAR_REFERENCE = 0, // handle
+            NEAR_SELF = 12, // nullptr
+        };
+
+        union Location_u {
+            Reference_Handle_t handle;
+            Form_t* form;
+        };
+        STATIC_ASSERT(sizeof(Location_u) == 0x08);
+
+        Type_e type; // 08
+        UInt8 pad_09; // 09
+        UInt16 pad_0A; // 0A
+        UInt32 radius; // 0C
+        Location_u location; // 10
+    };
+    STATIC_ASSERT(sizeof(Package_Location_t) == 0x18);
+
+    class Package_Target_t {
+    public:
+        enum class Type_e : UInt8 {
+            SPECIFIC = 0, // Reference_handle_t
+            FORM_ID = 1, // form_id. need to verify this isn't 5 instead.
+            FORM_TYPE = 2, // form_type
+            LINKED = 3, // Form_t*
+            ALIAS_ID = 4, // alias_id
+            UNKNOWN = 5, // unknown, interrupt flag?
+            SELF = 6, // nullptr
+        };
+
+        union Target_u {
+            Reference_Handle_t specific;
+            UInt32 form_id;
+            UInt32 form_type;
+            Form_t* linked;
+            UInt32 alias_id;
+        };
+        STATIC_ASSERT(sizeof(Target_u) == 0x08);
+
+        Type_e type; // 00
+        UInt8 pad_01; // 01
+        UInt16 pad_02; // 02
+        Target_u target; // 08
+        Int_t count_or_distance; // 10
+        UInt32 pad_14; // 14
+    };
+    STATIC_ASSERT(sizeof(Package_Target_t) == 0x18);
+
+    class Package_Schedule_t {
+    public:
+        enum class Day_e : SInt8 {
+            ANY = -1,
+            SUNDAY = 0,
+            MONDAY = 1,
+            TUESDAY = 2,
+            WEDNESDAY = 3,
+            THURSDAY = 4,
+            FRIDAY = 5,
+            SATURDAY = 6,
+            WEEKDAYS = 7,
+            WEEKENDS = 8,
+            MONDAY_WEDNESDAY_FRIDAY = 9,
+            TUESDAY_THURSDAY = 10,
+        };
+
+        SInt8 month; // 00
+        Day_e day; // 01
+        SInt8 date; // 02
+        SInt8 hour; // 03
+        SInt8 minute; // 04
+        SInt8 pad_05; // 05
+        SInt8 pad_06; // 06
+        SInt8 pad_07; // 07
+        SInt32 duration_in_minutes; // 08
+    };
+    STATIC_ASSERT(sizeof(Package_Schedule_t) == 0x0C);
+
+    class Package_t : public Form_t {
+    public:
+        enum {
+            kTypeID = kFormType_Package,
+        };
+
+        enum class Type_e : UInt8 {
+            FIND = 0,
+            FOLLOWER,
+            ESCORT,
+            EAT,
+            SLEEP,
+            WANDER,
+            TRAVEL,
+            ACCOMPANY,
+            USE_ITEM_AT,
+            AMBUSH,
+            FLEE_NOT_COMBAT,
+            CAST_MAGIC,
+            SANDBOX,
+            PATROL,
+            GUARD,
+            DIALOGUE,
+            USE_WEAPON,
+            FIND_2,
+            PACKAGE,
+            PACKAGE_TEMPLATE,
+            ACTIVATE,
+            ALARM,
+            FLEE,
+            TRESPASS,
+            SPECTATOR,
+            REACT_TO_DEAD,
+            GET_UP_FROM_CHAIR_OR_BED,
+            DO_NOTHING,
+            IN_GAME_DIALOGUE,
+            SURFACE,
+            SEARCH_FOR_ATTACKER,
+            AVOID_PLAYER,
+            REACT_TO_DESTROYED_OBJECT,
+            REACT_TO_GRENADE_OR_MINE,
+            STEAL_WARNING,
+            PICK_POCKET_WARNING,
+            MOVEMENT_BLOCKED,
+            VAMPIRE_FEED,
+            CANNIBAL
+        };
+
+        enum class General_Flag_e : UInt32 {
+            OFFERS_SERVICES                 = 1 << 0,
+            MUST_COMPLETE                   = 1 << 2,
+            MAINTAIN_SPEED_AT_GOAL          = 1 << 3,
+            UNLOCKS_DOORS_AT_PACKAGE_START  = 1 << 6,
+            UNLOCKS_DOORS_AT_PACKAGE_END    = 1 << 7,
+            CONTINUE_IF_PC_NEAR             = 1 << 9,
+            ONCE_PER_DAY                    = 1 << 10,
+            PREFERRED_SPEED                 = 1 << 13,
+            ALWAYS_SNEAK                    = 1 << 17,
+            ALLOW_SWIMMING                  = 1 << 18,
+            IGNORE_COMBAT                   = 1 << 20,
+            WEAPONS_UNEQUIPPED              = 1 << 21,
+            WEAPNO_DRAWN                    = 1 << 23,
+            NO_COMBAT_ALERT                 = 1 << 27,
+            WEAR_SLEEP_OUTFIT               = 1 << 29,
+        };
+
+        enum class Interrupt_Flag_e : UInt16 {
+            HELLOS_TO_PLAYER            = 1 << 0,
+            RANDOM_CONVERSATIONS        = 1 << 1,
+            OBSERVE_COMBAT_BEHAVIOR     = 1 << 2,
+            GREET_CORPSE_BEHAVIOR       = 1 << 3,
+            REACTION_TO_PLAYER_ACTIONS  = 1 << 4,
+            FRIENDLY_FIRE_COMMENTS      = 1 << 5,
+            AGGRO_RADIUS_BEHAVIOR       = 1 << 6,
+            ALLOW_IDLE_CHATTER          = 1 << 7,
+            WORLD_INTERACTIONS          = 1 << 9,
+        };
+
+        enum class Preferred_Speed_e : UInt8 {
+            WALK        = 0,
+            JOG         = 1,
+            RUN         = 2,
+            FAST_WALK   = 3,
+        };
+
+        virtual ~Package_t();
+
+        virtual Bool_t Is_Actor_At_Location(Actor_t* actor, Bool_t arg_2, Float_t arg_3, Bool_t arg_4);
+        virtual Bool_t Is_Actor_At_Location_2(Actor_t* actor_1, Actor_t* actor_2, Bool_t arg_3, Float_t arg_4, Bool_t arg_5);
+        virtual Bool_t Is_Actor_At_Target(Actor_t* actor, SInt32 arg_2);
+        virtual Bool_t Is_Target_At_Location(Actor_t* actor, SInt32 arg_2);
+        virtual Bool_t Is_Package_Owner(Actor_t* actor);
+
+        UInt32 flags; // 20
+        Type_e type; // 24
+        UInt8 interrupt_override; // 25
+        Preferred_Speed_e preferred_speed; // 26
+        UInt8 pad_27; // 27
+        UInt16 interrupt_flags; // 28
+        UInt16 other_flags; // 2A
+        UInt32 pad_2C; // 2C
+        Package_Data_t* data; // 30
+        Package_Location_t* location; // 38
+        Package_Target_t* target; // 40
+        void* idles; // 48
+        Package_Schedule_t schedule; // 50
+        UInt32 pad_5C; // 5C
+        void* conditions; // 60
+        TESCombatStyle* combat_style; // 68
+        Quest_t* quest; // 70
+        UInt8 on_begin_event[0x20]; // 78
+        UInt8 on_end_event[0x20]; // 98
+        UInt8 on_change_event[0x20]; // B8
+        UInt32 procedure_type; // D8
+        UInt32 ref_count; // DC
+    };
+    STATIC_ASSERT(sizeof(Package_t) == 0xE0);
 
 }
 

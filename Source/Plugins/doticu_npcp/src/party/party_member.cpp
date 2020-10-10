@@ -27,6 +27,7 @@
 #include "party/party_npcs.h"
 #include "party/party_members.h"
 #include "party/party_member.h"
+#include "party/party_settler.h"
 #include "party/party_mannequins.h"
 #include "party/party_followers.h"
 #include "party/party_follower.h"
@@ -1588,7 +1589,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             Actor2::Talks_To_Player(actor, true);
         }
 
-        Object_Ref::Enable(actor, false);
+        //Object_Ref::Enable(actor, false);
     }
 
     void Member_t::Destroy_Member(Actor_t* actor)
@@ -1712,6 +1713,18 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         NPCP_ASSERT(actor);
 
         Object_Ref::Token(actor, Consts::Settler_Token());
+
+        /*// temp
+        return;
+        if (ID() == 0) {
+            Settler_t* settler = static_cast<Settler_t*>(this);
+            settler->Default_Sandboxer();
+            settler->Enable_Sleeper();
+            settler->Enable_Eater();
+            settler->Enable_Guard();
+            settler->Enforce(actor);
+        }
+        //*/
     }
 
     Int_t Member_t::Resettle()
@@ -2058,7 +2071,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         Actor2::Move_To_Orbit(actor, display_marker, 0.0f, 180.0f);
 
-        Object_Ref::Enable(actor);
+        //Object_Ref::Enable(actor);
         //Actor2::Set_Alpha(actor, 1.0f, false);
 
         Enforce_Display(actor, display_marker);

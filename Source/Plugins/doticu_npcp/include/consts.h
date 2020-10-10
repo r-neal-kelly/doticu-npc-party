@@ -57,6 +57,13 @@ namespace doticu_npcp { namespace Consts {
     // Skyrim Miscs
     Misc_t* Gold();
 
+    // Skyrim Packages
+    Package_t* Follow_Template_Package();
+    Package_t* Follow_Player_Template_Package();
+    Package_t* Follow_And_Keep_Distance_Template_Package();
+    Package_t* Follow_In_Single_File_Template_Package();
+    Package_t* Follower_Template_Package();
+
     // Skyrim Perks
     Perk_t* Vampire_Feed_Perk();
 
@@ -117,6 +124,13 @@ namespace doticu_npcp { namespace Consts {
     Formlist_t* Is_Saddler_Sitting_Globals_Formlist();
     Formlist_t* Expo_Cell_Markers_Formlist();
     Formlist_t* Settler_Markers_Formlist();
+    Formlist_t* Settler_Sleeper_Markers_Formlist();
+    Formlist_t* Settler_Eater_Markers_Formlist();
+    Formlist_t* Settler_Guard_Markers_Formlist();
+    Formlist_t* Settler_Packages_Formlist();
+    Formlist_t* Settler_Sleeper_Packages_Formlist();
+    Formlist_t* Settler_Eater_Packages_Formlist();
+    Formlist_t* Settler_Guard_Packages_Formlist();
     Formlist_t* Expoee_Buttons_Formlist();
     Formlist_t* Expoee_Markers_Formlist();
 
@@ -157,6 +171,9 @@ namespace doticu_npcp { namespace Consts {
     Misc_t* Movee_Token();
     Misc_t* Immobile_Token();
     Misc_t* Settler_Token();
+    Misc_t* Settler_Sleeper_Token();
+    Misc_t* Settler_Eater_Token();
+    Misc_t* Settler_Guard_Token();
     Misc_t* Thrall_Token();
     Misc_t* Paralyzed_Token();
     Misc_t* Mannequin_Token();

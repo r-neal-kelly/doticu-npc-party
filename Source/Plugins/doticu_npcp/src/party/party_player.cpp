@@ -242,7 +242,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Actor_t* menu_actor = static_cast<Actor_t*>
             (Object_Ref::Place_At_Me(player_actor, Consts::Menu_Actor_Base(), 1, true, false));
         Actor2::Move_To_Orbit(menu_actor, player_actor, 120.0f, 0.0f);
-        Object_Ref::Enable(menu_actor);
+        //Object_Ref::Enable(menu_actor);
 
         Menu_Actor_Variable()->Pack(menu_actor);
     }

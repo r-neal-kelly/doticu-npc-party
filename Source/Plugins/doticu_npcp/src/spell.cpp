@@ -35,12 +35,3 @@ namespace doticu_npcp { namespace Spell {
     }
 
 }}
-
-namespace doticu_npcp { namespace Spell { namespace Exports {
-
-    bool Register(VMClassRegistry* registry)
-    {
-        return true;
-    }
-
-}}}

@@ -40,6 +40,7 @@ namespace doticu_npcp { namespace Actor2 {
 
     class Outfit_Inventory_t {
     public:
+        static Bool_t Can_Outfit_Form(Form_t* form);
         static Bool_t Can_Evaluate_Actor_Form(Form_t* form);
     public:
         Inventory_t outfit1;
@@ -128,6 +129,7 @@ namespace doticu_npcp { namespace Actor2 {
     Bool_t Is_AI_Enabled(Actor_t* actor);
     void Enable_AI(Actor_t* actor);
     void Disable_AI(Actor_t* actor);
+    void Reset_AI(Actor_t* actor, Virtual_Callback_i* vcallback = nullptr);
     
     Bool_t Is_Ghost(Actor_t* actor);
     void Ghostify(Actor_t* actor);

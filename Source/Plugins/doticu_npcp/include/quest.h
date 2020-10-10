@@ -27,9 +27,3 @@ namespace doticu_npcp { namespace Quest {
     void Log_Start_Enabled_Dialogue();
 
 }}
-
-namespace doticu_npcp { namespace Quest { namespace Exports {
-
-    bool Register(VMClassRegistry *registry);
-
-}}}

@@ -4,9 +4,13 @@
 
 #pragma once
 
+#include "skse64/GameData.h"
+
 #include "types.h"
 
 namespace doticu_npcp { namespace Game {
+
+    DataHandler* Data_Handler();
 
     tArray<Reference_t*>& References();
 
@@ -25,6 +29,8 @@ namespace doticu_npcp { namespace Game {
     Bool_t Is_Form_In_Mod(UInt32 form_id, const char* mod_name);
     Bool_t Is_NPCP_Form(UInt32 form_id);
 
+    Bool_t Is_Outsourced_Follower(Actor_t* actor);
+
     VMResultArray<BSFixedString> Get_Male_Vanilla_Voice_Names();
     VMResultArray<BSFixedString> Get_Female_Vanilla_Voice_Names();
     BGSVoiceType *Get_Voice_By_Name(BSFixedString str_name);
@@ -34,13 +40,3 @@ namespace doticu_npcp { namespace Game {
     void Update_NPCP_Categories();
 
 }}
-
-namespace doticu_npcp { namespace Game { namespace Exports {
-
-    VMResultArray<BSFixedString> Get_Male_Vanilla_Voice_Names(StaticFunctionTag *);
-    VMResultArray<BSFixedString> Get_Female_Vanilla_Voice_Names(StaticFunctionTag *);
-    BGSVoiceType *Get_Voice_By_Name(StaticFunctionTag *, BSFixedString str_name);
-
-    bool Register(VMClassRegistry *registry);
-
-}}}

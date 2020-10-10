@@ -163,6 +163,16 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
+    Bool_t Outfit_Inventory_t::Can_Outfit_Form(Form_t* form)
+    {
+        return
+            form->formType == kFormType_Armor ||
+            form->formType == kFormType_Weapon ||
+            form->formType == kFormType_Ammo ||
+            form->formType == kFormType_Light ||
+            form->formType == kFormType_Key;
+    }
+
     Bool_t Outfit_Inventory_t::Can_Evaluate_Actor_Form(Form_t* form)
     {
         NPCP_ASSERT(form);
@@ -170,7 +180,7 @@ namespace doticu_npcp { namespace Actor2 {
         Form_t* linchpin = Consts::Blank_Armor();
 
         return form != linchpin && form->formType != kFormType_LeveledItem &&
-            (form->IsPlayable() || form->IsArmor() || form->IsWeapon() || form->IsAmmo() || form->IsLight());
+            (form->IsPlayable() || Can_Outfit_Form(form));
     }
 
     Outfit_Inventory_t::Outfit_Inventory_t(Reference_t* outfit1_ref, Reference_t* outfit2_ref) :
@@ -390,13 +400,6 @@ namespace doticu_npcp { namespace Actor2 {
                                 if (XList::Is_Worn(xlist)) {
                                     return_code.Code(NON_OUTFIT2_XLIST);
                                 }
-
-                                //temp
-                                //actor->Log();
-                                //transfer->Log();
-                                //UI::Message_Box("Not tagged as outfit2");
-                                //
-
                                 if (!form->IsPlayable() || XList::Is_Outfit_Item(xlist)) {
                                     actor->Remove_XList(actor_entry, xlist);
                                     XList::Destroy(xlist);
@@ -469,13 +472,6 @@ namespace doticu_npcp { namespace Actor2 {
                             if (XList::Is_Worn(xlist)) {
                                 return_code.Code(NON_OUTFIT2_MXLIST);
                             }
-
-                            //temp
-                            //actor->Log();
-                            //transfer->Log();
-                            //UI::Message_Box("Not found in outfit2");
-                            //
-
                             if (!form->IsPlayable() || XList::Is_Outfit_Item(xlist) || XList::Is_Outfit2_Item(xlist, actor_base)) {
                                 actor->Remove_XList(actor_entry, xlist);
                                 XList::Destroy(xlist);
@@ -492,13 +488,6 @@ namespace doticu_npcp { namespace Actor2 {
 
                 Int_t actor_loose_count = actor->Count_Loose(actor_entry);
                 if (actor_loose_count > 0) {
-
-                    //temp
-                    //actor->Log();
-                    //transfer->Log();
-                    //UI::Message_Box("Not an xlist.");
-                    //
-
                     if (!transfer_entry) {
                         transfer_entry = transfer->Add_Entry(form);
                     }
@@ -539,7 +528,7 @@ namespace doticu_npcp { namespace Actor2 {
         for (size_t idx = 0, count = entries.size(); idx < count; idx += 1) {
             Outfit_Entry_t& outfit_entry = entries[idx];
             Form_t* form = outfit_entry.form; NPCP_ASSERT(form);
-            if (form->IsArmor() || form->IsWeapon() || form->IsAmmo() || form->IsLight()) {
+            if (Can_Outfit_Form(form)) {
                 if (!actor->Entry(form)) {
                     Entry_t* actor_entry = actor->Add_Entry(form); NPCP_ASSERT(actor_entry);
                     Merged_XLists_t& outfit_xlists = outfit_entry.merged_xlists;
@@ -1542,6 +1531,19 @@ namespace doticu_npcp { namespace Actor2 {
     {
         if (actor) {
             actor->flags1 = Utils::Bit_Off(actor->flags1, Actor_t2::PROCESS_AI);
+        }
+    }
+
+    void Reset_AI(Actor_t* actor, Virtual_Callback_i* vcallback)
+    {
+        if (actor) {
+            Virtual_Machine_t::Self()->Call_Method(
+                actor,
+                "Actor",
+                "ResetAI",
+                nullptr,
+                vcallback ? &vcallback : nullptr
+            );
         }
     }
 

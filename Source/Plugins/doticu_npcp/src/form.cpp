@@ -173,6 +173,15 @@ namespace doticu_npcp { namespace Form {
         }
     }
 
+    const char* Get_Type_String(UInt32 form_type)
+    {
+        if (form_type < 143) {
+            return arr_str_form_types[form_type];
+        } else {
+            return "INVALID_FORM";
+        }
+    }
+
     const char* Get_Any_Name(Form_t* form)
     {
         if (form) {
@@ -339,12 +348,3 @@ namespace doticu_npcp { namespace Form {
     }
 
 }}
-
-namespace doticu_npcp { namespace Form { namespace Exports {
-
-    bool Register(VMClassRegistry* registry)
-    {
-        return true;
-    }
-
-}}}

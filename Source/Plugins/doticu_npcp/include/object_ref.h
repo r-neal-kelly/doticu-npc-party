@@ -212,9 +212,3 @@ namespace doticu_npcp { namespace Object_Ref {
     void Mapped_Control(Int_t key_code, Virtual_Callback_i* vcallback);
 
 }}
-
-namespace doticu_npcp { namespace Object_Ref { namespace Exports {
-
-    bool Register(VMClassRegistry *registry);
-
-}}}

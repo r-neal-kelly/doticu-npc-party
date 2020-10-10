@@ -2021,11 +2021,3 @@ namespace doticu_npcp { namespace Object_Ref {
     }
 
 }}
-
-namespace doticu_npcp { namespace Object_Ref { namespace Exports {
-
-    bool Register(VMClassRegistry *registry) {
-        return true;
-    }
-
-}}}

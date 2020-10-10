@@ -28,9 +28,3 @@ namespace doticu_npcp { namespace Actor_Base2 {
     void Essentialize(Actor_Base_t* actor_base);
     void Protect(Actor_Base_t* actor_base);
 }}
-
-namespace doticu_npcp { namespace Actor_Base2 { namespace Exports {
-
-    bool Register(VMClassRegistry *registry);
-
-}}}

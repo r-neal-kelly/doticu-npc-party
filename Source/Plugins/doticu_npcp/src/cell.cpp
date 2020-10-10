@@ -63,12 +63,3 @@ namespace doticu_npcp { namespace Cell {
     }
 
 }}
-
-namespace doticu_npcp { namespace Cell { namespace Exports {
-
-    bool Register(VMClassRegistry *registry)
-    {
-        return true;
-    }
-
-}}}

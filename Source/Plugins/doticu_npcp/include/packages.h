@@ -12,6 +12,9 @@ namespace doticu_npcp { namespace Papyrus { namespace Packages {
 
     void Execute_Menu_Exit();
 
+    void Log_Packages();
+    void Log_Template_Packages();
+
 }}}
 
 namespace doticu_npcp { namespace Papyrus { namespace Packages { namespace Exports {
