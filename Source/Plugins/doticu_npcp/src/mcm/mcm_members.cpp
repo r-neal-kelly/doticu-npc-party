@@ -342,12 +342,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             page_idx = page_count - 1;
         }
         Page_Index(page_idx);
-
-        Int_t begin = members_per_page * page_idx;
-        Int_t end = begin + members_per_page;
-        if (end > members_count) {
-            end = members_count;
-        }
     }
 
     void Members_t::Review_Members()

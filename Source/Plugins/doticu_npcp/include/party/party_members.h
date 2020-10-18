@@ -107,11 +107,14 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Vector_t<Member_t*> Unfilled();
         Vector_t<Member_t*> Loaded();
         Vector_t<Member_t*> Unloaded();
+        Vector_t<Member_t*> Settlers();
+        Vector_t<Member_t*> Non_Settlers();
         Vector_t<Member_t*> Displayed();
         Vector_t<Member_t*> Undisplayed();
 
         Vector_t<Member_t*> Sort(Vector_t<Member_t*> members);
         Vector_t<Member_t*> Sort_Filled(Int_t begin = 0, Int_t end = -1);
+        Vector_t<Member_t*> Sort_Settlers(Int_t begin = 0, Int_t end = -1);
 
         Vector_t<String_t> Race_Names();
 
@@ -149,6 +152,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         void u_0_9_8();
         void u_0_9_9();
         void u_0_9_12();
+        void u_0_9_15();
 
     public:
         static void Register_Me(Virtual_Machine_t* vm);

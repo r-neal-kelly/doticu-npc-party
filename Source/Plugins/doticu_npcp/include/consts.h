@@ -79,6 +79,7 @@ namespace doticu_npcp { namespace Consts {
 
     // Skyrim Statics
     Static_t* X_Marker_Static();
+    Static_t* Directed_X_Marker_Static();
 
     // Dawnguard Factions
     Faction_t* DLC1_Thrall_Faction();
@@ -124,11 +125,9 @@ namespace doticu_npcp { namespace Consts {
     Formlist_t* Is_Saddler_Sitting_Globals_Formlist();
     Formlist_t* Expo_Cell_Markers_Formlist();
     Formlist_t* Settler_Markers_Formlist();
-    Formlist_t* Settler_Sleeper_Markers_Formlist();
-    Formlist_t* Settler_Eater_Markers_Formlist();
-    Formlist_t* Settler_Guard_Markers_Formlist();
     Formlist_t* Settler_Packages_Formlist();
     Formlist_t* Settler_Sleeper_Packages_Formlist();
+    Formlist_t* Settler_Sitter_Packages_Formlist();
     Formlist_t* Settler_Eater_Packages_Formlist();
     Formlist_t* Settler_Guard_Packages_Formlist();
     Formlist_t* Expoee_Buttons_Formlist();
@@ -172,6 +171,7 @@ namespace doticu_npcp { namespace Consts {
     Misc_t* Immobile_Token();
     Misc_t* Settler_Token();
     Misc_t* Settler_Sleeper_Token();
+    Misc_t* Settler_Sitter_Token();
     Misc_t* Settler_Eater_Token();
     Misc_t* Settler_Guard_Token();
     Misc_t* Thrall_Token();

@@ -1103,10 +1103,10 @@ namespace doticu_npcp { namespace Object_Ref {
         return ptr.get();
     }
 
-    Reference_t* Create_Marker_At(Reference_t* ref)
+    Reference_t* Create_Marker_At(Reference_t* ref, Static_t* static_marker)
     {
         if (ref) {
-            Reference_t* marker = Place_At_Me(ref, Consts::X_Marker_Static(), 1, true, false);
+            Reference_t* marker = Place_At_Me(ref, static_marker, 1, true, false);
             if (marker) {
                 marker->pos.x = ref->pos.x;
                 marker->pos.y = ref->pos.y;
@@ -1122,6 +1122,16 @@ namespace doticu_npcp { namespace Object_Ref {
         } else {
             return nullptr;
         }
+    }
+
+    Reference_t* Create_Marker_At(Reference_t* ref)
+    {
+        return Create_Marker_At(ref, Consts::X_Marker_Static());
+    }
+
+    Reference_t* Create_Directed_Marker_At(Reference_t* ref)
+    {
+        return Create_Marker_At(ref, Consts::Directed_X_Marker_Static());
     }
 
     Reference_t* Create_Container()

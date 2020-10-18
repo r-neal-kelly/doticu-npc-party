@@ -99,6 +99,7 @@ namespace doticu_npcp { namespace Object_Ref {
     Reference_t* From_Handle(Reference_Handle_t handle);
 
     Reference_t* Create_Marker_At(Reference_t* ref);
+    Reference_t* Create_Directed_Marker_At(Reference_t* ref);
     Reference_t* Create_Container();
 
     void Delete_Safe(Reference_t* ref);

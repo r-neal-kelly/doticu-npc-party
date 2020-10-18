@@ -152,15 +152,21 @@ namespace doticu_npcp { namespace CODES {
         enum : Int_t {
 
             MEMBERS = -1000,
-            FOLLOWERS = -1100,
             MEMBERS_MEMBER = -1200,
+
+            FOLLOWERS = -1100,
             FOLLOWERS_MEMBER = -1300,
+
             FILTER = -2000,
             FILTER_MEMBERS = -2010,
             FILTER_MEMBERS_MEMBER = -2020,
+
             MANNEQUINS = -3000,
             MANNEQUINS_CELL = -3001,
-            MANNEQUINS_MEMBER = -3002
+            MANNEQUINS_MEMBER = -3002,
+
+            SETTLERS = -4000,
+            SETTLERS_SETTLER = -4001,
 
         };
     }

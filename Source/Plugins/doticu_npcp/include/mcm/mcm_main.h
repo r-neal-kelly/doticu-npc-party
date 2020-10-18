@@ -149,6 +149,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         static constexpr const char* MOD_NAME           = " NPC Party ";
         static constexpr const char* FOLLOWERS_PAGE     = " Followers ";
         static constexpr const char* MEMBERS_PAGE       = " Members ";
+        static constexpr const char* SETTLERS_PAGE      = " Settlers ";
         static constexpr const char* MANNEQUINS_PAGE    = " Mannequins ";
         static constexpr const char* FILTER_PAGE        = " Filter ";
         static constexpr const char* CHESTS_PAGE        = " Chests ";

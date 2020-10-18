@@ -12,6 +12,7 @@
 #include "mcm/mcm_main.h"
 #include "mcm/mcm_followers.h"
 #include "mcm/mcm_members.h"
+#include "mcm/mcm_settlers.h"
 #include "mcm/mcm_mannequins.h"
 #include "mcm/mcm_filter.h"
 #include "mcm/mcm_chests.h"
@@ -783,6 +784,8 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             MCM::Members_t* mcm_members = MCM::Members_t::Self();
             mcm_members->View_Members();
             mcm_members->On_Build_Page();
+        } else if (Is_Page(SETTLERS_PAGE)) {
+            MCM::Settlers_t::Self()->On_Build_Page();
         } else if (Is_Page(MANNEQUINS_PAGE)) {
             MCM::Mannequins_t* mcm_mannequins = MCM::Mannequins_t::Self();
             mcm_mannequins->View_Mannequins();
@@ -835,6 +838,8 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             MCM::Followers_t::Self()->On_Option_Select(option, user_callback);
         } else if (Is_Page(MEMBERS_PAGE)) {
             MCM::Members_t::Self()->On_Option_Select(option, user_callback);
+        } else if (Is_Page(SETTLERS_PAGE)) {
+            MCM::Settlers_t::Self()->On_Option_Select(option, user_callback);
         } else if (Is_Page(MANNEQUINS_PAGE)) {
             MCM::Mannequins_t::Self()->On_Option_Select(option, user_callback);
         } else if (Is_Page(FILTER_PAGE)) {
@@ -866,6 +871,8 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             MCM::Followers_t::Self()->On_Option_Menu_Open(option);
         } else if (Is_Page(MEMBERS_PAGE)) {
             MCM::Members_t::Self()->On_Option_Menu_Open(option);
+        } else if (Is_Page(SETTLERS_PAGE)) {
+            MCM::Settlers_t::Self()->On_Option_Menu_Open(option);
         } else if (Is_Page(MANNEQUINS_PAGE)) {
             MCM::Mannequins_t::Self()->On_Option_Menu_Open(option);
         } else if (Is_Page(FILTER_PAGE)) {
@@ -893,6 +900,8 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             MCM::Followers_t::Self()->On_Option_Menu_Accept(option, idx);
         } else if (Is_Page(MEMBERS_PAGE)) {
             MCM::Members_t::Self()->On_Option_Menu_Accept(option, idx);
+        } else if (Is_Page(SETTLERS_PAGE)) {
+            MCM::Settlers_t::Self()->On_Option_Menu_Accept(option, idx);
         } else if (Is_Page(MANNEQUINS_PAGE)) {
             MCM::Mannequins_t::Self()->On_Option_Menu_Accept(option, idx);
         } else if (Is_Page(FILTER_PAGE)) {
@@ -920,6 +929,8 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             MCM::Followers_t::Self()->On_Option_Slider_Open(option);
         } else if (Is_Page(MEMBERS_PAGE)) {
             MCM::Members_t::Self()->On_Option_Slider_Open(option);
+        } else if (Is_Page(SETTLERS_PAGE)) {
+            MCM::Settlers_t::Self()->On_Option_Slider_Open(option);
         } else if (Is_Page(MANNEQUINS_PAGE)) {
             MCM::Mannequins_t::Self()->On_Option_Slider_Open(option);
         } else if (Is_Page(FILTER_PAGE)) {
@@ -947,6 +958,8 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             MCM::Followers_t::Self()->On_Option_Slider_Accept(option, value);
         } else if (Is_Page(MEMBERS_PAGE)) {
             MCM::Members_t::Self()->On_Option_Slider_Accept(option, value);
+        } else if (Is_Page(SETTLERS_PAGE)) {
+            MCM::Settlers_t::Self()->On_Option_Slider_Accept(option, value);
         } else if (Is_Page(MANNEQUINS_PAGE)) {
             MCM::Mannequins_t::Self()->On_Option_Slider_Accept(option, value);
         } else if (Is_Page(FILTER_PAGE)) {
@@ -974,6 +987,8 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             MCM::Followers_t::Self()->On_Option_Input_Accept(option, value);
         } else if (Is_Page(MEMBERS_PAGE)) {
             MCM::Members_t::Self()->On_Option_Input_Accept(option, value);
+        } else if (Is_Page(SETTLERS_PAGE)) {
+            MCM::Settlers_t::Self()->On_Option_Input_Accept(option, value);
         } else if (Is_Page(MANNEQUINS_PAGE)) {
             MCM::Mannequins_t::Self()->On_Option_Input_Accept(option, value);
         } else if (Is_Page(FILTER_PAGE)) {
@@ -1017,6 +1032,8 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             MCM::Followers_t::Self()->On_Option_Keymap_Change(option, key_code, conflict, conflicting_mod, user_callback);
         } else if (Is_Page(MEMBERS_PAGE)) {
             MCM::Members_t::Self()->On_Option_Keymap_Change(option, key_code, conflict, conflicting_mod, user_callback);
+        } else if (Is_Page(SETTLERS_PAGE)) {
+            MCM::Settlers_t::Self()->On_Option_Keymap_Change(option, key_code, conflict, conflicting_mod, user_callback);
         } else if (Is_Page(MANNEQUINS_PAGE)) {
             MCM::Mannequins_t::Self()->On_Option_Keymap_Change(option, key_code, conflict, conflicting_mod, user_callback);
         } else if (Is_Page(FILTER_PAGE)) {
@@ -1063,6 +1080,8 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             MCM::Followers_t::Self()->On_Option_Default(option, user_callback);
         } else if (Is_Page(MEMBERS_PAGE)) {
             MCM::Members_t::Self()->On_Option_Default(option, user_callback);
+        } else if (Is_Page(SETTLERS_PAGE)) {
+            MCM::Settlers_t::Self()->On_Option_Default(option, user_callback);
         } else if (Is_Page(MANNEQUINS_PAGE)) {
             MCM::Mannequins_t::Self()->On_Option_Default(option, user_callback);
         } else if (Is_Page(FILTER_PAGE)) {
@@ -1094,6 +1113,8 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             MCM::Followers_t::Self()->On_Option_Highlight(option);
         } else if (Is_Page(MEMBERS_PAGE)) {
             MCM::Members_t::Self()->On_Option_Highlight(option);
+        } else if (Is_Page(SETTLERS_PAGE)) {
+            MCM::Settlers_t::Self()->On_Option_Highlight(option);
         } else if (Is_Page(MANNEQUINS_PAGE)) {
             MCM::Mannequins_t::Self()->On_Option_Highlight(option);
         } else if (Is_Page(FILTER_PAGE)) {

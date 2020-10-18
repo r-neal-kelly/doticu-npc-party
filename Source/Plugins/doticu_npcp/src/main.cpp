@@ -56,6 +56,7 @@
 #include "mcm/mcm_members.h"
 #include "mcm/mcm_mannequins.h"
 #include "mcm/mcm_member.h"
+#include "mcm/mcm_settlers.h"
 #include "mcm/mcm_filter.h"
 #include "mcm/mcm_chests.h"
 #include "mcm/mcm_settings.h"
@@ -264,6 +265,9 @@ namespace doticu_npcp { namespace Modules {
             }
             if (Is_NPCP_Version_Less_Than(0, 9, 12)) {
                 Party::Members_t::Self()->u_0_9_12();
+            }
+            if (Is_NPCP_Version_Less_Than(0, 9, 15)) {
+                Party::Members_t::Self()->u_0_9_15();
             }
 
             Vars_t* vars = Vars_t::Self();
@@ -517,6 +521,7 @@ namespace doticu_npcp { namespace Main {
         REGISTER_TYPE(MCM::Members_t);
         REGISTER_TYPE(MCM::Mannequins_t);
         REGISTER_TYPE(MCM::Member_t);
+        REGISTER_TYPE(MCM::Settlers_t);
         REGISTER_TYPE(MCM::Filter_t);
         REGISTER_TYPE(MCM::Chests_t);
         REGISTER_TYPE(MCM::Settings_t);

@@ -22,7 +22,6 @@ doticu_npcp_outfit      p_outfit2_auto_backup               =  none
 bool                    p_is_locked                         = false
 bool                    p_is_clone                          = false
 bool                    p_is_immobile                       = false
-bool                    p_is_settler                        = false
 bool                    p_is_thrall                         = false
 bool                    p_is_paralyzed                      = false
 bool                    p_is_mannequin                      = false
@@ -44,29 +43,42 @@ float                   p_prev_confidence                   =   0.0
 float                   p_prev_assistance                   =   0.0
 float                   p_prev_morality                     =   0.0
 
-; energy - 8bits
-; preferred_speed - 8bits
-
-int                     p_settler_sandboxer_flags           =     0
-int                     p_settler_sleeper_flags             =     0
-int                     p_settler_eater_flags               =     0
-int                     p_settler_guard_flags               =     0
+ObjectReference         p_settler_sleeper_marker            =  none
+ObjectReference         p_settler_sitter_marker             =  none
+ObjectReference         p_settler_eater_marker              =  none
+ObjectReference         p_settler_guard_marker              =  none
 
 int                     p_settler_sandboxer_radius          =     0
 int                     p_settler_sleeper_radius            =     0
+int                     p_settler_sitter_radius             =     0
 int                     p_settler_eater_radius              =     0
 int                     p_settler_guard_radius              =     0
 
 int                     p_settler_sleeper_time              =     0
+int                     p_settler_sitter_time               =     0
 int                     p_settler_eater_time                =     0
 int                     p_settler_guard_time                =     0
 
 int                     p_settler_sleeper_duration          =     0
+int                     p_settler_sitter_duration           =     0
 int                     p_settler_eater_duration            =     0
 int                     p_settler_guard_duration            =     0
 
+int                     p_settler_sandboxer_movement        =     0
+int                     p_settler_sleeper_movement          =     0
+int                     p_settler_sitter_movement           =     0
+int                     p_settler_eater_movement            =     0
+int                     p_settler_guard_movement            =     0
+
+int                     p_settler_sandboxer_flags           =     0
+int                     p_settler_sleeper_flags             =     0
+int                     p_settler_sitter_flags              =     0
+int                     p_settler_eater_flags               =     0
+int                     p_settler_guard_flags               =     0
+
 bool                    p_prev_faction_potential_follower   = false; to be deleted
 Faction[]               p_prev_factions                     =  none; to be deleted
+bool                    p_is_settler                        = false; to be deleted
 
 event OnDeath(Actor killer) native
 event OnActivate(ObjectReference activator) native

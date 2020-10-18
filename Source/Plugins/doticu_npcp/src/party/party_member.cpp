@@ -74,7 +74,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     Variable_t* Member_t::Is_Locked_Variable() { DEFINE_VARIABLE("p_is_locked"); }
     Variable_t* Member_t::Is_Clone_Variable() { DEFINE_VARIABLE("p_is_clone"); }
     Variable_t* Member_t::Is_Immobile_Variable() { DEFINE_VARIABLE("p_is_immobile"); }
-    Variable_t* Member_t::Is_Settler_Variable() { DEFINE_VARIABLE("p_is_settler"); }
     Variable_t* Member_t::Is_Thrall_Variable() { DEFINE_VARIABLE("p_is_thrall"); }
     Variable_t* Member_t::Is_Paralyzed_Variable() { DEFINE_VARIABLE("p_is_paralyzed"); }
     Variable_t* Member_t::Is_Mannequin_Variable() { DEFINE_VARIABLE("p_is_mannequin"); }
@@ -119,12 +118,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     {
         NPCP_ASSERT(Is_Filled());
         return Pack_Variable()->Reference();
-    }
-
-    Reference_t* Member_t::Settler_Marker()
-    {
-        NPCP_ASSERT(Is_Filled());
-        return static_cast<Reference_t*>(Consts::Settler_Markers_Formlist()->forms.entries[ID()]);
     }
 
     Reference_t* Member_t::Mannequin_Marker()
@@ -500,12 +493,12 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     Bool_t Member_t::Is_Settler()
     {
-        return Is_Filled() && Is_Settler_Variable()->Bool();
+        return Is_Filled() && static_cast<Settler_t*>(this)->Is_Sandboxer();
     }
 
     Bool_t Member_t::Isnt_Settler()
     {
-        return Is_Filled() && !Is_Settler_Variable()->Bool();
+        return Is_Filled() && !static_cast<Settler_t*>(this)->Is_Sandboxer();
     }
 
     Bool_t Member_t::Is_Thrall()
@@ -691,13 +684,13 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     Bool_t Member_t::Is_Settler_Unsafe()
     {
         NPCP_ASSERT(Is_Filled());
-        return Is_Settler_Variable()->Bool();
+        return static_cast<Settler_t*>(this)->Is_Sandboxer();
     }
 
     Bool_t Member_t::Isnt_Settler_Unsafe()
     {
         NPCP_ASSERT(Is_Filled());
-        return !Is_Settler_Variable()->Bool();
+        return !static_cast<Settler_t*>(this)->Is_Sandboxer();
     }
 
     Bool_t Member_t::Is_Thrall_Unsafe()
@@ -950,17 +943,21 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                           Bool_t is_blocked)
     {
         if (Is_Ready() && Is_Alive_Unsafe()) {
-            Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(Actor());
-            if (value_owner->Get_Actor_Value(Actor_Value_t::HEALTH) <= 0.0) {
-                Int_t vitality = Vitality();
-                if (vitality == CODES::VITALITY::MORTAL ||
-                    vitality == CODES::VITALITY::PROTECTED && attacker == Player_t::Self()->Actor()) {
-                    if (tool->formType != kFormType_Spell || Spell::Can_Damage_Health(static_cast<Spell_t*>(tool))) {
-                        Kill();
+            if (Is_Retreater()) {
+                Actor2::Stop_Combat_Alarm(Actor());
+            } else {
+                Actor_Value_Owner_t* value_owner = Actor2::Actor_Value_Owner(Actor());
+                if (value_owner->Get_Actor_Value(Actor_Value_t::HEALTH) <= 0.0) {
+                    Int_t vitality = Vitality();
+                    if (vitality == CODES::VITALITY::MORTAL ||
+                        vitality == CODES::VITALITY::PROTECTED && attacker == Player_t::Self()->Actor()) {
+                        if (tool->formType != kFormType_Spell || Spell::Can_Damage_Health(static_cast<Spell_t*>(tool))) {
+                            Kill();
+                        }
                     }
+                } else if (Vitality() == CODES::VITALITY::INVULNERABLE) {
+                    value_owner->Restore_Actor_Value(Actor_Modifier_t::DAMAGE, Actor_Value_t::HEALTH, 1000000000.0f);
                 }
-            } else if (Vitality() == CODES::VITALITY::INVULNERABLE) {
-                value_owner->Restore_Actor_Value(Actor_Modifier_t::DAMAGE, Actor_Value_t::HEALTH, 1000000000.0f);
             }
         }
     }
@@ -1283,12 +1280,12 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         Is_Clone_Variable()->Bool(is_clone);
         Is_Immobile_Variable()->Bool(false);
-        Is_Settler_Variable()->Bool(false);
         Is_Thrall_Variable()->Bool(false);
         Is_Paralyzed_Variable()->Bool(false);
         Is_Mannequin_Variable()->Bool(false);
         Is_Display_Variable()->Bool(false);
         Is_Reanimated_Variable()->Bool(false);
+        static_cast<Settler_t*>(this)->Clear_Variables();
 
         Modules::Vars_t* vars = Modules::Vars_t::Self();
         Style_Variable()->Int(vars->Default_Member_Style());
@@ -1444,12 +1441,12 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             Vitality_Variable()->Int(0);
             Style_Variable()->Int(0);
 
+            static_cast<Settler_t*>(this)->Clear_Variables();
             Is_Reanimated_Variable()->Bool(false);
             Is_Display_Variable()->Bool(false);
             Is_Mannequin_Variable()->Bool(false);
             Is_Paralyzed_Variable()->Bool(false);
             Is_Thrall_Variable()->Bool(false);
-            Is_Settler_Variable()->Bool(false);
             Is_Immobile_Variable()->Bool(false);
             Is_Clone_Variable()->Bool(false);
 
@@ -1689,11 +1686,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     {
         if (Is_Filled()) {
             if (Isnt_Settler()) {
-                Is_Settler_Variable()->Bool(true);
-
                 Actor_t* actor = Actor();
-                Object_Ref::Move_To_Orbit(Settler_Marker(), actor, 0.0f, 180.0f);
-                Enforce_Settler(actor);
+                static_cast<Settler_t*>(this)->Create(actor);
                 Enforce();
 
                 Actor2::Evaluate_Package(actor);
@@ -1712,19 +1706,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         NPCP_ASSERT(Is_Filled());
         NPCP_ASSERT(actor);
 
-        Object_Ref::Token(actor, Consts::Settler_Token());
-
-        /*// temp
-        return;
-        if (ID() == 0) {
-            Settler_t* settler = static_cast<Settler_t*>(this);
-            settler->Default_Sandboxer();
-            settler->Enable_Sleeper();
-            settler->Enable_Eater();
-            settler->Enable_Guard();
-            settler->Enforce(actor);
-        }
-        //*/
+        static_cast<Settler_t*>(this)->Enforce(actor);
     }
 
     Int_t Member_t::Resettle()
@@ -1732,8 +1714,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         if (Is_Filled()) {
             if (Is_Settler()) {
                 Actor_t* actor = Actor();
-                Object_Ref::Move_To_Orbit(Settler_Marker(), actor, 0.0f, 180.0f);
-                Enforce_Settler(actor);
+                static_cast<Settler_t*>(this)->Move_Sandboxer_Marker();
                 Enforce();
 
                 Actor2::Evaluate_Package(actor);
@@ -1770,9 +1751,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     {
         NPCP_ASSERT(actor);
 
-        Is_Settler_Variable()->Bool(false);
-        Object_Ref::Move_To_Orbit(Settler_Marker(), Consts::Storage_Marker(), 0.0f, 0.0f);
-        Enforce_Non_Settler(actor);
+        static_cast<Settler_t*>(this)->Destroy(actor);
     }
 
     void Member_t::Enforce_Non_Settler(Actor_t* actor)
@@ -1780,7 +1759,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         NPCP_ASSERT(Is_Filled());
         NPCP_ASSERT(actor);
 
-        Object_Ref::Untoken(actor, Consts::Settler_Token());
+        static_cast<Settler_t*>(this)->Enforce(actor);
     }
 
     Int_t Member_t::Enthrall()

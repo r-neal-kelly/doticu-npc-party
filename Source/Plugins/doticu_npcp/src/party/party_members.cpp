@@ -19,6 +19,7 @@
 #include "party/party_npcs.h"
 #include "party/party_members.h"
 #include "party/party_member.h"
+#include "party/party_settler.h"
 
 #include "mcm/mcm_filter.h"
 
@@ -405,6 +406,16 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         return Copy_If<Member_t>(Aliases(), &Member_t::Is_Unloaded, HALF);
     }
 
+    Vector_t<Member_t*> Members_t::Settlers()
+    {
+        return Copy_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Is_Settler, HALF);
+    }
+
+    Vector_t<Member_t*> Members_t::Non_Settlers()
+    {
+        return Copy_If<Member_t>(Aliases(), &Member_t::Is_Filled, &Member_t::Isnt_Settler, HALF);
+    }
+
     Vector_t<Member_t*> Members_t::Displayed()
     {
         return Copy_If<Member_t>(Aliases(), &Member_t::Is_Display, Modules::Vars_t::Self()->Member_Display_Limit());
@@ -423,6 +434,11 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     Vector_t<Member_t*> Members_t::Sort_Filled(Int_t begin, Int_t end)
     {
         return Slice(Sort(Filled()), begin, end);
+    }
+
+    Vector_t<Member_t*> Members_t::Sort_Settlers(Int_t begin, Int_t end)
+    {
+        return Slice(Sort(Settlers()), begin, end);
     }
 
     Vector_t<String_t> Members_t::Race_Names()
@@ -1105,6 +1121,24 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+
+    void Members_t::u_0_9_15()
+    {
+        Vector_t<Member_t*> filled = Filled();
+        for (size_t idx = 0, count = filled.size(); idx < count; idx += 1) {
+            Member_t* member = filled[idx];
+            Settler_t* settler = static_cast<Settler_t*>(member);
+            if (settler) {
+                Variable_t* is_settler_variable = member->Variable("p_is_settler");
+                NPCP_ASSERT(is_settler_variable);
+                if (is_settler_variable->Bool()) {
+                    settler->Flag(Settler_t::Sandboxer_Flag_e::IS_ENABLED);
+                    settler->Default_Sandboxer();
+                    settler->Enforce(settler->Actor(), true);
                 }
             }
         }

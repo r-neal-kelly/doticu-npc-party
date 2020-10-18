@@ -103,6 +103,7 @@ namespace doticu_npcp { namespace Consts {
 
         // Skyrim Statics
         STATIC_MARKER_X                             = 0x00003B,
+        STATIC_MARKER_X_DIRECTED                    = 0x000034,
     };
 
     #define SKYRIM_FORM(TYPE_, MOD_ID_) FORM(Skyrim_Form, TYPE_, MOD_ID_);
@@ -169,6 +170,7 @@ namespace doticu_npcp { namespace Consts {
 
     // Skyrim Statics
     Static_t* X_Marker_Static() { SKYRIM_FORM(Static_t, STATIC_MARKER_X); }
+    Static_t* Directed_X_Marker_Static() { SKYRIM_FORM(Static_t, STATIC_MARKER_X_DIRECTED); }
 
     #undef SKYRIM_FORM
 
@@ -227,11 +229,9 @@ namespace doticu_npcp { namespace Consts {
         FORMLIST_GLOBALS_IS_SADDLER_SITTING         = 0x395E54,
         FORMLIST_MARKERS_EXPO_CELL                  = 0x2928AF,
         FORMLIST_MARKERS_SETTLER                    = 0x00B46E,
-        FORMLIST_MARKERS_SETTLER_SLEEPER            = 0x3DCD12,
-        FORMLIST_MARKERS_SETTLER_EATER              = 0x3DCD13,
-        FORMLIST_MARKERS_SETTLER_GUARD              = 0x3DCD14,
         FORMLIST_PACKAGES_SETTLER                   = 0x3D2B03,
         FORMLIST_PACKAGES_SETTLER_SLEEPER           = 0x3DCD0C,
+        FORMLIST_PACKAGES_SETTLER_SITTER            = 0x3E1E18,
         FORMLIST_PACKAGES_SETTLER_EATER             = 0x3DCD0D,
         FORMLIST_PACKAGES_SETTLER_GUARD             = 0x3DCD0E,
         FORMLIST_BUTTONS_EXPOEE                     = 0x3C88DF,
@@ -279,6 +279,7 @@ namespace doticu_npcp { namespace Consts {
         MISC_TOKEN_SADDLER                          = 0x34F000,
         MISC_TOKEN_SETTLER                          = 0x000D73,
         MISC_TOKEN_SETTLER_SLEEPER                  = 0x3D7C07,
+        MISC_TOKEN_SETTLER_SITTER                   = 0x3E1E16,
         MISC_TOKEN_SETTLER_EATER                    = 0x3D7C05,
         MISC_TOKEN_SETTLER_GUARD                    = 0x3D7C08,
         MISC_TOKEN_STYLE_ARCHER                     = 0x0A045E,
@@ -604,11 +605,9 @@ namespace doticu_npcp { namespace Consts {
     Formlist_t* Is_Saddler_Sitting_Globals_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_GLOBALS_IS_SADDLER_SITTING); }
     Formlist_t* Expo_Cell_Markers_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_MARKERS_EXPO_CELL); }
     Formlist_t* Settler_Markers_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_MARKERS_SETTLER); }
-    Formlist_t* Settler_Sleeper_Markers_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_MARKERS_SETTLER_SLEEPER); }
-    Formlist_t* Settler_Eater_Markers_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_MARKERS_SETTLER_EATER); }
-    Formlist_t* Settler_Guard_Markers_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_MARKERS_SETTLER_GUARD); }
     Formlist_t* Settler_Packages_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_PACKAGES_SETTLER); }
     Formlist_t* Settler_Sleeper_Packages_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_PACKAGES_SETTLER_SLEEPER); }
+    Formlist_t* Settler_Sitter_Packages_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_PACKAGES_SETTLER_SITTER); }
     Formlist_t* Settler_Eater_Packages_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_PACKAGES_SETTLER_EATER); }
     Formlist_t* Settler_Guard_Packages_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_PACKAGES_SETTLER_GUARD); }
     Formlist_t* Expoee_Buttons_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_BUTTONS_EXPOEE); }
@@ -631,7 +630,7 @@ namespace doticu_npcp { namespace Consts {
     // NPCP Ints
     Int_t NPCP_Major() { return 0; } // set manually upon each release
     Int_t NPCP_Minor() { return 9; } // set manually upon each release
-    Int_t NPCP_Patch() { return 14; } // set manually upon each release
+    Int_t NPCP_Patch() { return 15; } // set manually upon each release
 
     // NPCP Leveled Actor
     Leveled_Actor_t* Horse_Leveled_Actor() { NPCP_FORM(Leveled_Actor_t, LEVELED_ACTOR_HORSE); }
@@ -652,6 +651,7 @@ namespace doticu_npcp { namespace Consts {
     Misc_t* Immobile_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_IMMOBILE); }
     Misc_t* Settler_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_SETTLER); }
     Misc_t* Settler_Sleeper_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_SETTLER_SLEEPER); }
+    Misc_t* Settler_Sitter_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_SETTLER_SITTER); }
     Misc_t* Settler_Eater_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_SETTLER_EATER); }
     Misc_t* Settler_Guard_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_SETTLER_GUARD); }
     Misc_t* Thrall_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_THRALL); }

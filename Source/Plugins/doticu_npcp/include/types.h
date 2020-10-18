@@ -1081,7 +1081,7 @@ namespace doticu_npcp {
             ALLOW_SWIMMING                  = 1 << 18,
             IGNORE_COMBAT                   = 1 << 20,
             WEAPONS_UNEQUIPPED              = 1 << 21,
-            WEAPNO_DRAWN                    = 1 << 23,
+            WEAPON_DRAWN                    = 1 << 23,
             NO_COMBAT_ALERT                 = 1 << 27,
             WEAR_SLEEP_OUTFIT               = 1 << 29,
         };

@@ -50,7 +50,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Variable_t* Is_Locked_Variable(); // Bool_t
         Variable_t* Is_Clone_Variable();
         Variable_t* Is_Immobile_Variable();
-        Variable_t* Is_Settler_Variable();
         Variable_t* Is_Thrall_Variable();
         Variable_t* Is_Paralyzed_Variable();
         Variable_t* Is_Mannequin_Variable();
@@ -76,7 +75,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Actor_t* Actor();
         Follower_t* Follower();
         Reference_t* Pack();
-        Reference_t* Settler_Marker();
         Reference_t* Mannequin_Marker();
         Reference_t* Display_Marker();
         Reference_t* Undisplay_Marker();
