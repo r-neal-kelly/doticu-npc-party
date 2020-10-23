@@ -108,6 +108,12 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         return actor;
     }
 
+    Actor_Base_t* Member_t::Base_Actor()
+    {
+        NPCP_ASSERT(Is_Filled());
+        return static_cast<Actor_Base_t*>(Actor()->baseForm);
+    }
+
     Follower_t* Member_t::Follower()
     {
         NPCP_ASSERT(Is_Filled());
@@ -1285,7 +1291,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Is_Mannequin_Variable()->Bool(false);
         Is_Display_Variable()->Bool(false);
         Is_Reanimated_Variable()->Bool(false);
-        static_cast<Settler_t*>(this)->Clear_Variables();
+        static_cast<Sandboxer_t*>(this)->Clear();
 
         Modules::Vars_t* vars = Modules::Vars_t::Self();
         Style_Variable()->Int(vars->Default_Member_Style());
@@ -1301,6 +1307,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
 
         Enforce_Impl(user_callback);
+
+        Actor2::Evaluate_Package(actor);
     }
 
     void Member_t::Unfill(Callback_t<Int_t, Actor_t*>* user_callback)
@@ -1441,7 +1449,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             Vitality_Variable()->Int(0);
             Style_Variable()->Int(0);
 
-            static_cast<Settler_t*>(this)->Clear_Variables();
+            static_cast<Sandboxer_t*>(this)->Clear();
             Is_Reanimated_Variable()->Bool(false);
             Is_Display_Variable()->Bool(false);
             Is_Mannequin_Variable()->Bool(false);
@@ -1594,6 +1602,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         NPCP_ASSERT(actor);
 
         Enforce_Non_Member(actor);
+        Actor2::Evaluate_Package(actor);
     }
 
     void Member_t::Enforce_Non_Member(Actor_t* actor)
@@ -1610,8 +1619,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Object_Ref::Untoken(actor, Consts::Member_Token());
         Object_Ref::Untoken(actor, Consts::Clone_Token());
         Object_Ref::Untoken(actor, Consts::Generic_Token());
-
-        Actor2::Evaluate_Package(actor);
     }
 
     Int_t Member_t::Mobilize()
@@ -1687,7 +1694,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         if (Is_Filled()) {
             if (Isnt_Settler()) {
                 Actor_t* actor = Actor();
-                static_cast<Settler_t*>(this)->Create(actor);
+                static_cast<Sandboxer_t*>(this)->Create();
                 Enforce();
 
                 Actor2::Evaluate_Package(actor);
@@ -1714,7 +1721,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         if (Is_Filled()) {
             if (Is_Settler()) {
                 Actor_t* actor = Actor();
-                static_cast<Settler_t*>(this)->Move_Sandboxer_Marker();
+                static_cast<Sandboxer_t*>(this)->Move_Marker();
                 Enforce();
 
                 Actor2::Evaluate_Package(actor);
@@ -1751,7 +1758,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     {
         NPCP_ASSERT(actor);
 
-        static_cast<Settler_t*>(this)->Destroy(actor);
+        static_cast<Sandboxer_t*>(this)->Destroy(true);
     }
 
     void Member_t::Enforce_Non_Settler(Actor_t* actor)
@@ -3083,8 +3090,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                     if (follower) {
                         follower->Enforce();
                     }
-
-                    Actor2::Evaluate_Package(actor);
 
                     user_callback->operator()(self);
                     delete user_callback;

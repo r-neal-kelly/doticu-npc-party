@@ -73,6 +73,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Variable_t* Previous_Morality_Variable();
 
         Actor_t* Actor();
+        Actor_Base_t* Base_Actor();
         Follower_t* Follower();
         Reference_t* Pack();
         Reference_t* Mannequin_Marker();

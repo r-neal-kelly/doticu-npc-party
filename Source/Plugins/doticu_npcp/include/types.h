@@ -101,6 +101,7 @@ namespace doticu_npcp {
     typedef EffectSetting   Magic_Effect_t;
     typedef ActiveEffect    Active_Magic_Effect_t;
     typedef SpellItem       Spell_t;
+    typedef TESFurniture    Furniture_t;
 
     typedef Actor           Actor_t;
     typedef TESNPC          Actor_Base_t;
@@ -1075,27 +1076,27 @@ namespace doticu_npcp {
             UNLOCKS_DOORS_AT_PACKAGE_START  = 1 << 6,
             UNLOCKS_DOORS_AT_PACKAGE_END    = 1 << 7,
             CONTINUE_IF_PC_NEAR             = 1 << 9,
-            ONCE_PER_DAY                    = 1 << 10,
-            PREFERRED_SPEED                 = 1 << 13,
+            ONLY_ONCE_PER_DAY               = 1 << 10,
+            ALLOW_PREFERRED_SPEED           = 1 << 13,
             ALWAYS_SNEAK                    = 1 << 17,
             ALLOW_SWIMMING                  = 1 << 18,
             IGNORE_COMBAT                   = 1 << 20,
-            WEAPONS_UNEQUIPPED              = 1 << 21,
-            WEAPON_DRAWN                    = 1 << 23,
-            NO_COMBAT_ALERT                 = 1 << 27,
+            HIDE_WEAPONS                    = 1 << 21,
+            KEEP_WEAPONS_DRAWN              = 1 << 23,
+            SKIP_COMBAT_ALERT               = 1 << 27,
             WEAR_SLEEP_OUTFIT               = 1 << 29,
         };
 
         enum class Interrupt_Flag_e : UInt16 {
-            HELLOS_TO_PLAYER            = 1 << 0,
-            RANDOM_CONVERSATIONS        = 1 << 1,
+            ALLOW_HELLOS_TO_PLAYER      = 1 << 0,
+            ALLOW_HELLOS_TO_NPCS        = 1 << 1,
             OBSERVE_COMBAT_BEHAVIOR     = 1 << 2,
-            GREET_CORPSE_BEHAVIOR       = 1 << 3,
-            REACTION_TO_PLAYER_ACTIONS  = 1 << 4,
-            FRIENDLY_FIRE_COMMENTS      = 1 << 5,
-            AGGRO_RADIUS_BEHAVIOR       = 1 << 6,
+            INSPECT_CORPSE_BEHAVIOR     = 1 << 3,
+            REACT_TO_PLAYER_ACTIONS     = 1 << 4,
+            COMMENT_ON_FRIENDLY_FIRE    = 1 << 5,
+            ALLOW_AGGRO_RADIUS_BEHAVIOR = 1 << 6,
             ALLOW_IDLE_CHATTER          = 1 << 7,
-            WORLD_INTERACTIONS          = 1 << 9,
+            ALLOW_WORLD_INTERACTIONS    = 1 << 9,
         };
 
         enum class Preferred_Speed_e : UInt8 {

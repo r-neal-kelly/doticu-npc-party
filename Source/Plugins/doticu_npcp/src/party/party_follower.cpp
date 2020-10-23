@@ -478,6 +478,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         Backup_State(actor);
         Actor2::Stop_If_Playing_Music(actor);
+        Actor2::Evaluate_Package(actor);
 
         struct Callback : public Callback_t<Member_t*> {
             Follower_t* follower;
@@ -618,6 +619,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             Horse_Variable()->None(Horse_t::Class_Info());
             Member_Variable()->None(Member_t::Class_Info());
             Actor_Variable()->None(Class_Info_t::Fetch(Actor_t::kTypeID, true));
+
+            Actor2::Evaluate_Package(actor);
 
             user_callback->operator()();
             delete user_callback;
@@ -781,8 +784,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         if (Actor2::Relationship_Rank(actor, player_actor) != Relationship_t::Rank_e::LOVER) {
             Actor2::Relationship_Rank(actor, player_actor, Relationship_t::Rank_e::ALLY);
         }
-
-        Actor2::Evaluate_Package(actor);
     }
 
     void Follower_t::Enforce_Non_Follower(Actor_t* actor)
@@ -795,8 +796,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Actor2::Remove_Faction(actor, Consts::No_Bard_Singer_Autostart_Faction());
 
         Object_Ref::Untoken(actor, Consts::Follower_Token());
-
-        Actor2::Evaluate_Package(actor);
     }
 
     void Follower_t::Level()

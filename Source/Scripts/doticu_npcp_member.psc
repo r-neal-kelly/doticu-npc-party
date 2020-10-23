@@ -70,11 +70,17 @@ int                     p_settler_sitter_movement           =     0
 int                     p_settler_eater_movement            =     0
 int                     p_settler_guard_movement            =     0
 
+int                     p_settler_sandboxer_wander_distance =     0
+int                     p_settler_sleeper_wander_distance   =     0
+int                     p_settler_eater_wander_distance     =     0
+
 int                     p_settler_sandboxer_flags           =     0
 int                     p_settler_sleeper_flags             =     0
 int                     p_settler_sitter_flags              =     0
 int                     p_settler_eater_flags               =     0
 int                     p_settler_guard_flags               =     0
+
+ObjectReference         p_settler_sleeper_bed               =  none
 
 bool                    p_prev_faction_potential_follower   = false; to be deleted
 Faction[]               p_prev_factions                     =  none; to be deleted

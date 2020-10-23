@@ -89,6 +89,11 @@ namespace doticu_npcp { namespace Game {
         return mod_info && mod_info->IsActive();
     }
 
+    Bool_t Is_NPCP_Installed()
+    {
+        return Is_Mod_Installed("doticu_npc_party.esp");
+    }
+
     Bool_t Is_Better_Vampires_Installed()
     {
         static const ModInfo* mod_info = Data_Handler()->LookupModByName("Better Vampires.esp");

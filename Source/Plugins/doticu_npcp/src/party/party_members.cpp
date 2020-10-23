@@ -820,6 +820,14 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         if (vars->Member_Limit() < filled_count) {
             vars->Member_Limit(filled_count);
         }
+
+        for (size_t idx = 0, end = filled.size(); idx < end; idx += 1) {
+            Member_t* member = filled[idx];
+            if (member && member->Is_Settler()) {
+                Settler_t* settler = static_cast<Settler_t*>(member);
+                settler->Enforce(settler->Actor(), true);
+            }
+        }
     }
 
     void Members_t::u_0_9_3()
@@ -1136,9 +1144,10 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                 Variable_t* is_settler_variable = member->Variable("p_is_settler");
                 NPCP_ASSERT(is_settler_variable);
                 if (is_settler_variable->Bool()) {
-                    settler->Flag(Settler_t::Sandboxer_Flag_e::IS_ENABLED);
-                    settler->Default_Sandboxer();
-                    settler->Enforce(settler->Actor(), true);
+                    Sandboxer_t* sandboxer = static_cast<Sandboxer_t*>(settler);
+                    sandboxer->Flag(Sandboxer_t::Flag_e::IS_ENABLED);
+                    sandboxer->Default();
+                    sandboxer->Enforce(sandboxer->Actor(), true);
                 }
             }
         }

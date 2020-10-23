@@ -143,6 +143,8 @@ namespace doticu_npcp { namespace Object_Ref {
 
     void Set_Open(Reference_t* ref, Bool_t is_open, Virtual_Callback_i* vcallback = nullptr);
 
+    void Owner(Reference_t* ref, Actor_Base_t* owner);
+
     class Merged_XList_t : public Vector_t<XList_t*> {
     public:
         Int_t Count();

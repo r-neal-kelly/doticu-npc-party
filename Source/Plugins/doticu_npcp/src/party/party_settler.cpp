@@ -16,6 +16,8 @@
 
 namespace doticu_npcp { namespace Papyrus { namespace Party {
 
+    /* Sandboxer_t */
+
     enum class Sandboxer_Value_e : UInt16 {
         LOCATION = 0,               // Location
         DO_UNLOCK_ON_ARRIVAL,       // Bool
@@ -29,7 +31,15 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         DO_PREFERRED_PATH_ONLY,     // Bool
         ALLOW_HORSE_RIDING,         // Bool
         ATTENTION,                  // Float
+        MIN_WANDER_DISTANCE,        // Float
     };
+
+    Variable_t* Sandboxer_t::Radius_Variable() { DEFINE_VARIABLE("p_settler_sandboxer_radius"); }
+    Variable_t* Sandboxer_t::Movement_Variable() { DEFINE_VARIABLE("p_settler_sandboxer_movement"); }
+    Variable_t* Sandboxer_t::Wander_Distance_Variable() { DEFINE_VARIABLE("p_settler_sandboxer_wander_distance"); }
+    Variable_t* Sandboxer_t::Flags_Variable() { DEFINE_VARIABLE("p_settler_sandboxer_flags"); }
+
+    /* Sleeper_t */
 
     enum class Sleeper_Value_e : UInt16 {
         LOCATION = 0,               // Location
@@ -51,6 +61,17 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         ATTENTION,                  // Float
     };
 
+    Variable_t* Sleeper_t::Marker_Variable() { DEFINE_VARIABLE("p_settler_sleeper_marker"); }
+    Variable_t* Sleeper_t::Radius_Variable() { DEFINE_VARIABLE("p_settler_sleeper_radius"); }
+    Variable_t* Sleeper_t::Time_Variable() { DEFINE_VARIABLE("p_settler_sleeper_time"); }
+    Variable_t* Sleeper_t::Duration_Variable() { DEFINE_VARIABLE("p_settler_sleeper_duration"); }
+    Variable_t* Sleeper_t::Movement_Variable() { DEFINE_VARIABLE("p_settler_sleeper_movement"); }
+    Variable_t* Sleeper_t::Wander_Distance_Variable() { DEFINE_VARIABLE("p_settler_sleeper_wander_distance"); }
+    Variable_t* Sleeper_t::Flags_Variable() { DEFINE_VARIABLE("p_settler_sleeper_flags"); }
+    Variable_t* Sleeper_t::Bed_Variable() { DEFINE_VARIABLE("p_settler_sleeper_bed"); }
+
+    /* Sitter_t */
+
     enum class Sitter_Value_e : UInt16 {
         LOCATION = 0,               // Location
         SEARCH_CRITERIA,            // Target_Selector
@@ -60,6 +81,15 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         DO_PREFERRED_PATH_ONLY,     // Bool
         FALSE_BOOL,                 // Bool
     };
+
+    Variable_t* Sitter_t::Marker_Variable() { DEFINE_VARIABLE("p_settler_sitter_marker"); }
+    Variable_t* Sitter_t::Radius_Variable() { DEFINE_VARIABLE("p_settler_sitter_radius"); }
+    Variable_t* Sitter_t::Time_Variable() { DEFINE_VARIABLE("p_settler_sitter_time"); }
+    Variable_t* Sitter_t::Duration_Variable() { DEFINE_VARIABLE("p_settler_sitter_duration"); }
+    Variable_t* Sitter_t::Movement_Variable() { DEFINE_VARIABLE("p_settler_sitter_movement"); }
+    Variable_t* Sitter_t::Flags_Variable() { DEFINE_VARIABLE("p_settler_sitter_flags"); }
+
+    /* Eater_t */
 
     enum class Eater_Value_e : UInt16 {
         LOCATION = 0,               // Location
@@ -85,71 +115,82 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         ATTENTION,                  // Float
     };
 
+    Variable_t* Eater_t::Marker_Variable() { DEFINE_VARIABLE("p_settler_eater_marker"); }
+    Variable_t* Eater_t::Radius_Variable() { DEFINE_VARIABLE("p_settler_eater_radius"); }
+    Variable_t* Eater_t::Time_Variable() { DEFINE_VARIABLE("p_settler_eater_time"); }
+    Variable_t* Eater_t::Duration_Variable() { DEFINE_VARIABLE("p_settler_eater_duration"); }
+    Variable_t* Eater_t::Movement_Variable() { DEFINE_VARIABLE("p_settler_eater_movement"); }
+    Variable_t* Eater_t::Wander_Distance_Variable() { DEFINE_VARIABLE("p_settler_eater_wander_distance"); }
+    Variable_t* Eater_t::Flags_Variable() { DEFINE_VARIABLE("p_settler_eater_flags"); }
+
+    /* Guard_t */
+
     enum class Guard_Value_e : UInt16 {
         WAIT_LOCATION,              // Location
         RESTRICTED_LOCATION,        // Location
     };
 
-    Variable_t* Settler_t::Sleeper_Marker_Variable() { DEFINE_VARIABLE("p_settler_sleeper_marker"); }
-    Variable_t* Settler_t::Sitter_Marker_Variable() { DEFINE_VARIABLE("p_settler_sitter_marker"); }
-    Variable_t* Settler_t::Eater_Marker_Variable() { DEFINE_VARIABLE("p_settler_eater_marker"); }
-    Variable_t* Settler_t::Guard_Marker_Variable() { DEFINE_VARIABLE("p_settler_guard_marker"); }
+    Variable_t* Guard_t::Marker_Variable() { DEFINE_VARIABLE("p_settler_guard_marker"); }
+    Variable_t* Guard_t::Radius_Variable() { DEFINE_VARIABLE("p_settler_guard_radius"); }
+    Variable_t* Guard_t::Time_Variable() { DEFINE_VARIABLE("p_settler_guard_time"); }
+    Variable_t* Guard_t::Duration_Variable() { DEFINE_VARIABLE("p_settler_guard_duration"); }
+    Variable_t* Guard_t::Movement_Variable() { DEFINE_VARIABLE("p_settler_guard_movement"); }
+    Variable_t* Guard_t::Flags_Variable() { DEFINE_VARIABLE("p_settler_guard_flags"); }
 
-    Variable_t* Settler_t::Sandboxer_Radius_Variable() { DEFINE_VARIABLE("p_settler_sandboxer_radius"); }
-    Variable_t* Settler_t::Sleeper_Radius_Variable() { DEFINE_VARIABLE("p_settler_sleeper_radius"); }
-    Variable_t* Settler_t::Sitter_Radius_Variable() { DEFINE_VARIABLE("p_settler_sitter_radius"); }
-    Variable_t* Settler_t::Eater_Radius_Variable() { DEFINE_VARIABLE("p_settler_eater_radius"); }
-    Variable_t* Settler_t::Guard_Radius_Variable() { DEFINE_VARIABLE("p_settler_guard_radius"); }
+    /* Token */
 
-    Variable_t* Settler_t::Sleeper_Time_Variable() { DEFINE_VARIABLE("p_settler_sleeper_time"); }
-    Variable_t* Settler_t::Sitter_Time_Variable() { DEFINE_VARIABLE("p_settler_sitter_time"); }
-    Variable_t* Settler_t::Eater_Time_Variable() { DEFINE_VARIABLE("p_settler_eater_time"); }
-    Variable_t* Settler_t::Guard_Time_Variable() { DEFINE_VARIABLE("p_settler_guard_time"); }
+    Misc_t* Sandboxer_t::Token()
+    {
+        return Consts::Settler_Token();
+    }
 
-    Variable_t* Settler_t::Sleeper_Duration_Variable() { DEFINE_VARIABLE("p_settler_sleeper_duration"); }
-    Variable_t* Settler_t::Sitter_Duration_Variable() { DEFINE_VARIABLE("p_settler_sitter_duration"); }
-    Variable_t* Settler_t::Eater_Duration_Variable() { DEFINE_VARIABLE("p_settler_eater_duration"); }
-    Variable_t* Settler_t::Guard_Duration_Variable() { DEFINE_VARIABLE("p_settler_guard_duration"); }
+    Misc_t* Sleeper_t::Token()
+    {
+        return Consts::Settler_Sleeper_Token();
+    }
 
-    Variable_t* Settler_t::Sandboxer_Movement_Variable() { DEFINE_VARIABLE("p_settler_sandboxer_movement"); }
-    Variable_t* Settler_t::Sleeper_Movement_Variable() { DEFINE_VARIABLE("p_settler_sleeper_movement"); }
-    Variable_t* Settler_t::Sitter_Movement_Variable() { DEFINE_VARIABLE("p_settler_sitter_movement"); }
-    Variable_t* Settler_t::Eater_Movement_Variable() { DEFINE_VARIABLE("p_settler_eater_movement"); }
-    Variable_t* Settler_t::Guard_Movement_Variable() { DEFINE_VARIABLE("p_settler_guard_movement"); }
+    Misc_t* Sitter_t::Token()
+    {
+        return Consts::Settler_Sitter_Token();
+    }
 
-    Variable_t* Settler_t::Sandboxer_Flags_Variable() { DEFINE_VARIABLE("p_settler_sandboxer_flags"); }
-    Variable_t* Settler_t::Sleeper_Flags_Variable() { DEFINE_VARIABLE("p_settler_sleeper_flags"); }
-    Variable_t* Settler_t::Sitter_Flags_Variable() { DEFINE_VARIABLE("p_settler_sitter_flags"); }
-    Variable_t* Settler_t::Eater_Flags_Variable() { DEFINE_VARIABLE("p_settler_eater_flags"); }
-    Variable_t* Settler_t::Guard_Flags_Variable() { DEFINE_VARIABLE("p_settler_guard_flags"); }
+    Misc_t* Eater_t::Token()
+    {
+        return Consts::Settler_Eater_Token();
+    }
+
+    Misc_t* Guard_t::Token()
+    {
+        return Consts::Settler_Guard_Token();
+    }
 
     /* Package */
 
-    Package_t* Settler_t::Sandboxer_Package()
+    Package_t* Sandboxer_t::Package()
     {
         return static_cast<Package_t*>
             (Consts::Settler_Packages_Formlist()->forms.entries[ID()]);
     }
 
-    Package_t* Settler_t::Sleeper_Package()
+    Package_t* Sleeper_t::Package()
     {
         return static_cast<Package_t*>
             (Consts::Settler_Sleeper_Packages_Formlist()->forms.entries[ID()]);
     }
 
-    Package_t* Settler_t::Sitter_Package()
+    Package_t* Sitter_t::Package()
     {
         return static_cast<Package_t*>
             (Consts::Settler_Sitter_Packages_Formlist()->forms.entries[ID()]);
     }
 
-    Package_t* Settler_t::Eater_Package()
+    Package_t* Eater_t::Package()
     {
         return static_cast<Package_t*>
             (Consts::Settler_Eater_Packages_Formlist()->forms.entries[ID()]);
     }
 
-    Package_t* Settler_t::Guard_Package()
+    Package_t* Guard_t::Package()
     {
         return static_cast<Package_t*>
             (Consts::Settler_Guard_Packages_Formlist()->forms.entries[ID()]);
@@ -157,71 +198,84 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     /* Marker */
 
-    inline Reference_t* Marker(Variable_t* variable)
+    template <typename Type_t>
+    Reference_t* Settler_t::Marker()
     {
+        Variable_t* variable = static_cast<Type_t*>(this)->Marker_Variable();
         return variable->Reference();
     }
 
-    Reference_t* Settler_t::Sandboxer_Marker()
+    template <>
+    Reference_t* Settler_t::Marker<Sandboxer_t>()
     {
         return static_cast<Reference_t*>
             (Consts::Settler_Markers_Formlist()->forms.entries[ID()]);
     }
 
-    Reference_t* Settler_t::Sleeper_Marker()
+    Reference_t* Sandboxer_t::Marker() { return Settler_t::Marker<Sandboxer_t>(); }
+    Reference_t* Sleeper_t::Marker() { return Settler_t::Marker<Sleeper_t>(); }
+    Reference_t* Sitter_t::Marker() { return Settler_t::Marker<Sitter_t>(); }
+    Reference_t* Eater_t::Marker() { return Settler_t::Marker<Eater_t>(); }
+    Reference_t* Guard_t::Marker() { return Settler_t::Marker<Guard_t>(); }
+
+    /* Move Marker */
+
+    template <typename Type_t>
+    void Settler_t::Move_Marker()
     {
-        return Marker(Sleeper_Marker_Variable());
+        if (static_cast<Type_t*>(this)->Is_Created()) {
+            Reference_t* marker = static_cast<Type_t*>(this)->Marker();
+            if (marker) {
+                Actor_t* actor = Actor();
+                Object_Ref::Move_To_Orbit(marker, Consts::Player_Actor(), 0.0f, 180.0f);
+                Enforce(actor, true);
+            }
+        }
     }
 
-    Reference_t* Settler_t::Sitter_Marker()
+    template <>
+    void Settler_t::Move_Marker<Sleeper_t>()
     {
-        return Marker(Sitter_Marker_Variable());
+        if (static_cast<Sleeper_t*>(this)->Is_Created()) {
+            Reference_t* marker = static_cast<Sleeper_t*>(this)->Marker();
+            Reference_t* bed = static_cast<Sleeper_t*>(this)->Bed_Variable()->Reference();
+            if (marker) {
+                Actor_t* actor = Actor();
+                Object_Ref::Move_To_Orbit(marker, Consts::Player_Actor(), 0.0f, 180.0f);
+                if (bed) {
+                    Object_Ref::Move_To_Orbit(bed, marker, 0.0f, 180.0f);
+                }
+                Enforce(actor, true);
+            }
+        }
     }
 
-    Reference_t* Settler_t::Eater_Marker()
-    {
-        return Marker(Eater_Marker_Variable());
-    }
-
-    Reference_t* Settler_t::Guard_Marker()
-    {
-        return Marker(Guard_Marker_Variable());
-    }
+    void Sandboxer_t::Move_Marker() { Settler_t::Move_Marker<Sandboxer_t>(); }
+    void Sleeper_t::Move_Marker() { Settler_t::Move_Marker<Sleeper_t>(); }
+    void Sitter_t::Move_Marker() { Settler_t::Move_Marker<Sitter_t>(); }
+    void Eater_t::Move_Marker() { Settler_t::Move_Marker<Eater_t>(); }
+    void Guard_t::Move_Marker() { Settler_t::Move_Marker<Guard_t>(); }
 
     /* Radius */
 
-    inline Int_t Radius(Variable_t* variable)
+    template <typename Type_t>
+    Int_t Settler_t::Radius()
     {
+        Variable_t* variable = static_cast<Type_t*>(this)->Radius_Variable();
         return variable->Int();
     }
 
-    Int_t Settler_t::Sandboxer_Radius()
-    {
-        return Radius(Sandboxer_Radius_Variable());
-    }
+    Int_t Sandboxer_t::Radius() { return Settler_t::Radius<Sandboxer_t>(); }
+    Int_t Sleeper_t::Radius() { return Settler_t::Radius<Sleeper_t>(); }
+    Int_t Sitter_t::Radius() { return Settler_t::Radius<Sitter_t>(); }
+    Int_t Eater_t::Radius() { return Settler_t::Radius<Eater_t>(); }
+    Int_t Guard_t::Radius() { return Settler_t::Radius<Guard_t>(); }
 
-    Int_t Settler_t::Sleeper_Radius()
+    template <typename Type_t>
+    void Settler_t::Radius(Int_t radius)
     {
-        return Radius(Sleeper_Radius_Variable());
-    }
+        Variable_t* variable = static_cast<Type_t*>(this)->Radius_Variable();
 
-    Int_t Settler_t::Sitter_Radius()
-    {
-        return Radius(Sitter_Radius_Variable());
-    }
-
-    Int_t Settler_t::Eater_Radius()
-    {
-        return Radius(Eater_Radius_Variable());
-    }
-
-    Int_t Settler_t::Guard_Radius()
-    {
-        return Radius(Guard_Radius_Variable());
-    }
-
-    inline void Radius(Variable_t* variable, Int_t radius)
-    {
         if (radius < Settler_t::MIN_RADIUS) {
             radius = Settler_t::MIN_RADIUS;
         } else if (radius > Settler_t::MAX_RADIUS) {
@@ -231,237 +285,384 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         variable->Int(radius);
     }
 
-    void Settler_t::Sandboxer_Radius(Int_t radius)
-    {
-        Radius(Sandboxer_Radius_Variable(), radius);
-    }
-
-    void Settler_t::Sleeper_Radius(Int_t radius)
-    {
-        Radius(Sleeper_Radius_Variable(), radius);
-    }
-
-    void Settler_t::Sitter_Radius(Int_t radius)
-    {
-        Radius(Sitter_Radius_Variable(), radius);
-    }
-
-    void Settler_t::Eater_Radius(Int_t radius)
-    {
-        Radius(Eater_Radius_Variable(), radius);
-    }
-
-    void Settler_t::Guard_Radius(Int_t radius)
-    {
-        Radius(Guard_Radius_Variable(), radius);
-    }
+    void Sandboxer_t::Radius(Int_t radius) { Settler_t::Radius<Sandboxer_t>(radius); }
+    void Sleeper_t::Radius(Int_t radius) { Settler_t::Radius<Sleeper_t>(radius); }
+    void Sitter_t::Radius(Int_t radius) { Settler_t::Radius<Sitter_t>(radius); }
+    void Eater_t::Radius(Int_t radius) { Settler_t::Radius<Eater_t>(radius); }
+    void Guard_t::Radius(Int_t radius) { Settler_t::Radius<Guard_t>(radius); }
 
     /* Hour */
 
-    inline Int_t Hour(Variable_t* variable)
+    template <typename Type_t>
+    Int_t Settler_t::Hour()
     {
-        return static_cast<Int_t>((static_cast<UInt32>(variable->Int()) & Settler_t::HOUR_MASK) >> 16) - 1;
+        Variable_t* variable = static_cast<Type_t*>(this)->Time_Variable();
+
+        return static_cast<Int_t>(
+            (static_cast<UInt32>(variable->Int()) & Settler_t::TIME_HOUR_MASK) >>
+            Settler_t::TIME_HOUR_IDX
+        );
     }
 
-    Int_t Settler_t::Sleeper_Hour()
-    {
-        return Hour(Sleeper_Time_Variable());
-    }
+    template <> Int_t Settler_t::Hour<Sandboxer_t>() = delete;
+    Int_t Sleeper_t::Hour() { return Settler_t::Hour<Sleeper_t>(); }
+    Int_t Sitter_t::Hour() { return Settler_t::Hour<Sitter_t>(); }
+    Int_t Eater_t::Hour() { return Settler_t::Hour<Eater_t>(); }
+    Int_t Guard_t::Hour() { return Settler_t::Hour<Guard_t>(); }
 
-    Int_t Settler_t::Sitter_Hour()
+    template <typename Type_t>
+    void Settler_t::Hour(Int_t hour)
     {
-        return Hour(Sitter_Time_Variable());
-    }
+        Variable_t* variable = static_cast<Type_t*>(this)->Time_Variable();
 
-    Int_t Settler_t::Eater_Hour()
-    {
-        return Hour(Eater_Time_Variable());
-    }
-
-    Int_t Settler_t::Guard_Hour()
-    {
-        return Hour(Guard_Time_Variable());
-    }
-
-    inline void Hour(Variable_t* variable, Int_t hour)
-    {
         if (hour < Settler_t::MIN_TIME_HOUR) {
             hour = Settler_t::MIN_TIME_HOUR;
         } else if (hour > Settler_t::MAX_TIME_HOUR) {
             hour = Settler_t::MAX_TIME_HOUR;
         }
-        hour += 1;
 
+        Int_t mask = variable->Int();
         variable->Int(
-            (static_cast<UInt32>(hour) << 16) |
-            (static_cast<UInt32>(variable->Int()) & Settler_t::MINUTE_MASK)
+            (static_cast<UInt32>(mask) & Settler_t::TIME_AM_PM_MASK) |
+            ((static_cast<UInt32>(hour) << Settler_t::TIME_HOUR_IDX) & Settler_t::TIME_HOUR_MASK) |
+            (static_cast<UInt32>(mask) & Settler_t::TIME_MINUTE_MASK)
         );
     }
 
-    void Settler_t::Sleeper_Hour(Int_t hour)
+    template <> void Settler_t::Hour<Sandboxer_t>(Int_t hour) = delete;
+    void Sleeper_t::Hour(Int_t hour) { Settler_t::Hour<Sleeper_t>(hour); }
+    void Sitter_t::Hour(Int_t hour) { Settler_t::Hour<Sitter_t>(hour); }
+    void Eater_t::Hour(Int_t hour) { Settler_t::Hour<Eater_t>(hour); }
+    void Guard_t::Hour(Int_t hour) { Settler_t::Hour<Guard_t>(hour); }
+
+    template <typename Type_t>
+    String_t Settler_t::Hour_String()
     {
-        Hour(Sleeper_Time_Variable(), hour);
+        Int_t hour = static_cast<Type_t*>(this)->Hour();
+
+        if (hour < Settler_t::MIN_TIME_HOUR) {
+            hour = Settler_t::MIN_TIME_HOUR;
+        } else if (hour > Settler_t::MAX_TIME_HOUR) {
+            hour = Settler_t::MAX_TIME_HOUR;
+        }
+
+        return (" " + std::to_string(hour) + " ").c_str();
     }
 
-    void Settler_t::Sitter_Hour(Int_t hour)
-    {
-        Hour(Sitter_Time_Variable(), hour);
-    }
-
-    void Settler_t::Eater_Hour(Int_t hour)
-    {
-        Hour(Eater_Time_Variable(), hour);
-    }
-
-    void Settler_t::Guard_Hour(Int_t hour)
-    {
-        Hour(Guard_Time_Variable(), hour);
-    }
+    template <> String_t Settler_t::Hour_String<Sandboxer_t>() = delete;
+    String_t Sleeper_t::Hour_String() { return Settler_t::Hour_String<Sleeper_t>(); }
+    String_t Sitter_t::Hour_String() { return Settler_t::Hour_String<Sitter_t>(); }
+    String_t Eater_t::Hour_String() { return Settler_t::Hour_String<Eater_t>(); }
+    String_t Guard_t::Hour_String() { return Settler_t::Hour_String<Guard_t>(); }
 
     /* Minute */
 
-    inline Int_t Minute(Variable_t* variable)
+    template <typename Type_t>
+    Int_t Settler_t::Minute()
     {
-        return static_cast<Int_t>(static_cast<UInt32>(variable->Int()) & Settler_t::MINUTE_MASK) - 1;
+        Variable_t* variable = static_cast<Type_t*>(this)->Time_Variable();
+
+        return static_cast<Int_t>(
+            (static_cast<UInt32>(variable->Int()) & Settler_t::TIME_MINUTE_MASK) >>
+            Settler_t::TIME_MINUTE_IDX
+        );
     }
 
-    Int_t Settler_t::Sleeper_Minute()
-    {
-        return Minute(Sleeper_Time_Variable());
-    }
+    template <> Int_t Settler_t::Minute<Sandboxer_t>() = delete;
+    Int_t Sleeper_t::Minute() { return Settler_t::Minute<Sleeper_t>(); }
+    Int_t Sitter_t::Minute() { return Settler_t::Minute<Sitter_t>(); }
+    Int_t Eater_t::Minute() { return Settler_t::Minute<Eater_t>(); }
+    Int_t Guard_t::Minute() { return Settler_t::Minute<Guard_t>(); }
 
-    Int_t Settler_t::Sitter_Minute()
+    template <typename Type_t>
+    void Settler_t::Minute(Int_t minute)
     {
-        return Minute(Sitter_Time_Variable());
-    }
+        Variable_t* variable = static_cast<Type_t*>(this)->Time_Variable();
 
-    Int_t Settler_t::Eater_Minute()
-    {
-        return Minute(Eater_Time_Variable());
-    }
-
-    Int_t Settler_t::Guard_Minute()
-    {
-        return Minute(Guard_Time_Variable());
-    }
-
-    inline void Minute(Variable_t* variable, Int_t minute)
-    {
         if (minute < Settler_t::MIN_TIME_MINUTE) {
             minute = Settler_t::MIN_TIME_MINUTE;
         } else if (minute > Settler_t::MAX_TIME_MINUTE) {
             minute = Settler_t::MAX_TIME_MINUTE;
         }
-        minute += 1;
 
+        Int_t mask = variable->Int();
         variable->Int(
-            (static_cast<UInt32>(variable->Int()) & Settler_t::HOUR_MASK) |
-            (static_cast<UInt32>(minute) & Settler_t::MINUTE_MASK)
+            (static_cast<UInt32>(mask) & Settler_t::TIME_AM_PM_MASK) |
+            (static_cast<UInt32>(mask) & Settler_t::TIME_HOUR_MASK) |
+            ((static_cast<UInt32>(minute) << Settler_t::TIME_MINUTE_IDX) & Settler_t::TIME_MINUTE_MASK)
         );
     }
 
-    void Settler_t::Sleeper_Minute(Int_t minute)
+    template <> void Settler_t::Minute<Sandboxer_t>(Int_t minute) = delete;
+    void Sleeper_t::Minute(Int_t minute) { Settler_t::Minute<Sleeper_t>(minute); }
+    void Sitter_t::Minute(Int_t minute) { Settler_t::Minute<Sitter_t>(minute); }
+    void Eater_t::Minute(Int_t minute) { Settler_t::Minute<Eater_t>(minute); }
+    void Guard_t::Minute(Int_t minute) { Settler_t::Minute<Guard_t>(minute); }
+
+    template <typename Type_t>
+    String_t Settler_t::Minute_String()
     {
-        Minute(Sleeper_Time_Variable(), minute);
+        Int_t minute = static_cast<Type_t*>(this)->Minute();
+
+        if (minute < Settler_t::MIN_TIME_MINUTE) {
+            minute = Settler_t::MIN_TIME_MINUTE;
+        } else if (minute > Settler_t::MAX_TIME_MINUTE) {
+            minute = Settler_t::MAX_TIME_MINUTE;
+        }
+
+        if (minute < 10) {
+            return (" 0" + std::to_string(minute) + " ").c_str();
+        } else {
+            return (" " + std::to_string(minute) + " ").c_str();
+        }
     }
 
-    void Settler_t::Sitter_Minute(Int_t minute)
+    template <> String_t Settler_t::Minute_String<Sandboxer_t>() = delete;
+    String_t Sleeper_t::Minute_String() { return Settler_t::Minute_String<Sleeper_t>(); }
+    String_t Sitter_t::Minute_String() { return Settler_t::Minute_String<Sitter_t>(); }
+    String_t Eater_t::Minute_String() { return Settler_t::Minute_String<Eater_t>(); }
+    String_t Guard_t::Minute_String() { return Settler_t::Minute_String<Guard_t>(); }
+
+    /* AM PM */
+
+    template <typename Type_t>
+    AM_PM_e Settler_t::AM_PM()
     {
-        Minute(Sitter_Time_Variable(), minute);
+        Variable_t* variable = static_cast<Type_t*>(this)->Time_Variable();
+
+        return static_cast<AM_PM_e>(
+            (static_cast<UInt32>(variable->Int()) & Settler_t::TIME_AM_PM_MASK) >>
+            Settler_t::TIME_AM_PM_IDX
+        );
     }
 
-    void Settler_t::Eater_Minute(Int_t minute)
+    template <> AM_PM_e Settler_t::AM_PM<Sandboxer_t>() = delete;
+    AM_PM_e Sleeper_t::AM_PM() { return Settler_t::AM_PM<Sleeper_t>(); }
+    AM_PM_e Sitter_t::AM_PM() { return Settler_t::AM_PM<Sitter_t>(); }
+    AM_PM_e Eater_t::AM_PM() { return Settler_t::AM_PM<Eater_t>(); }
+    AM_PM_e Guard_t::AM_PM() { return Settler_t::AM_PM<Guard_t>(); }
+
+    template <typename Type_t>
+    void Settler_t::AM_PM(AM_PM_e am_pm)
     {
-        Minute(Eater_Time_Variable(), minute);
+        Variable_t* variable = static_cast<Type_t*>(this)->Time_Variable();
+
+        if (am_pm != AM_PM_e::AM && am_pm != AM_PM_e::PM) {
+            am_pm = AM_PM_e::AM;
+        }
+
+        Int_t mask = variable->Int();
+        variable->Int(
+            ((static_cast<UInt32>(am_pm) << Settler_t::TIME_AM_PM_IDX) & Settler_t::TIME_AM_PM_MASK) |
+            (static_cast<UInt32>(mask) & Settler_t::TIME_HOUR_MASK) |
+            (static_cast<UInt32>(mask) & Settler_t::TIME_MINUTE_MASK)
+        );
     }
 
-    void Settler_t::Guard_Minute(Int_t minute)
+    template <> void Settler_t::AM_PM<Sandboxer_t>(AM_PM_e am_pm) = delete;
+    void Sleeper_t::AM_PM(AM_PM_e am_pm) { Settler_t::AM_PM<Sleeper_t>(am_pm); }
+    void Sitter_t::AM_PM(AM_PM_e am_pm) { Settler_t::AM_PM<Sitter_t>(am_pm); }
+    void Eater_t::AM_PM(AM_PM_e am_pm) { Settler_t::AM_PM<Eater_t>(am_pm); }
+    void Guard_t::AM_PM(AM_PM_e am_pm) { Settler_t::AM_PM<Guard_t>(am_pm); }
+
+    template <typename Type_t>
+    String_t Settler_t::AM_PM_String()
     {
-        Minute(Guard_Time_Variable(), minute);
+        AM_PM_e am_pm = static_cast<Type_t*>(this)->AM_PM();
+
+        if (am_pm != AM_PM_e::AM && am_pm != AM_PM_e::PM) {
+            am_pm = AM_PM_e::AM;
+        }
+
+        if (am_pm == AM_PM_e::AM) {
+            return " AM ";
+        } else {
+            return " PM ";
+        }
     }
 
-    /* Duration */
+    template <> String_t Settler_t::AM_PM_String<Sandboxer_t>() = delete;
+    String_t Sleeper_t::AM_PM_String() { return Settler_t::AM_PM_String<Sleeper_t>(); }
+    String_t Sitter_t::AM_PM_String() { return Settler_t::AM_PM_String<Sitter_t>(); }
+    String_t Eater_t::AM_PM_String() { return Settler_t::AM_PM_String<Eater_t>(); }
+    String_t Guard_t::AM_PM_String() { return Settler_t::AM_PM_String<Guard_t>(); }
 
-    inline Int_t Duration(Variable_t* variable)
+    /* Hour Duration */
+
+    template <typename Type_t>
+    Int_t Settler_t::Duration_Hours()
     {
-        return variable->Int();
+        Variable_t* variable = static_cast<Type_t*>(this)->Duration_Variable();
+
+        return static_cast<Int_t>(
+            (static_cast<UInt32>(variable->Int()) & Settler_t::DURATION_HOURS_MASK) >> 16
+        );
     }
 
-    Int_t Settler_t::Sleeper_Duration()
+    template <> Int_t Settler_t::Duration_Hours<Sandboxer_t>() = delete;
+    Int_t Sleeper_t::Duration_Hours() { return Settler_t::Duration_Hours<Sleeper_t>(); }
+    Int_t Sitter_t::Duration_Hours() { return Settler_t::Duration_Hours<Sitter_t>(); }
+    Int_t Eater_t::Duration_Hours() { return Settler_t::Duration_Hours<Eater_t>(); }
+    Int_t Guard_t::Duration_Hours() { return Settler_t::Duration_Hours<Guard_t>(); }
+
+    template <typename Type_t>
+    void Settler_t::Duration_Hours(Int_t hours)
     {
-        return Duration(Sleeper_Duration_Variable());
+        Variable_t* variable = static_cast<Type_t*>(this)->Duration_Variable();
+
+        if (hours < Settler_t::MIN_DURATION_HOURS) {
+            hours = Settler_t::MIN_DURATION_HOURS;
+        } else if (hours > Settler_t::MAX_DURATION_HOURS) {
+            hours = Settler_t::MAX_DURATION_HOURS;
+        }
+
+        variable->Int(
+            (static_cast<UInt32>(hours) << 16) |
+            (static_cast<UInt32>(hours == Settler_t::MAX_DURATION_HOURS ? 0 : variable->Int()) & Settler_t::DURATION_MINUTES_MASK)
+        );
     }
 
-    Int_t Settler_t::Sitter_Duration()
-    {
-        return Duration(Sitter_Duration_Variable());
-    }
+    template <> void Settler_t::Duration_Hours<Sandboxer_t>(Int_t hours) = delete;
+    void Sleeper_t::Duration_Hours(Int_t hours) { Settler_t::Duration_Hours<Sleeper_t>(hours); }
+    void Sitter_t::Duration_Hours(Int_t hours) { Settler_t::Duration_Hours<Sitter_t>(hours); }
+    void Eater_t::Duration_Hours(Int_t hours) { Settler_t::Duration_Hours<Eater_t>(hours); }
+    void Guard_t::Duration_Hours(Int_t hours) { Settler_t::Duration_Hours<Guard_t>(hours); }
 
-    Int_t Settler_t::Eater_Duration()
+    template <typename Type_t>
+    String_t Settler_t::Duration_Hours_String()
     {
-        return Duration(Eater_Duration_Variable());
-    }
+        Int_t hours = static_cast<Type_t*>(this)->Duration_Hours();
+        Int_t minutes = static_cast<Type_t*>(this)->Duration_Minutes();
 
-    Int_t Settler_t::Guard_Duration()
-    {
-        return Duration(Guard_Duration_Variable());
-    }
+        if (hours < Settler_t::MIN_DURATION_HOURS) {
+            hours = Settler_t::MIN_DURATION_HOURS;
+        } else if (hours > Settler_t::MAX_DURATION_HOURS) {
+            hours = Settler_t::MAX_DURATION_HOURS;
+        }
 
-    inline void Duration(Variable_t* variable, Int_t minutes)
-    {
         if (minutes < Settler_t::MIN_DURATION_MINUTES) {
             minutes = Settler_t::MIN_DURATION_MINUTES;
         } else if (minutes > Settler_t::MAX_DURATION_MINUTES) {
             minutes = Settler_t::MAX_DURATION_MINUTES;
         }
 
-        variable->Int(minutes);
+        if ((hours * 60) + minutes == 0) {
+            return " Never ";
+        } else {
+            if (hours == 1) {
+                return " 1 hour ";
+            } else {
+                return (" " + std::to_string(hours) + " hours ").c_str();
+            }
+        }
     }
 
-    void Settler_t::Sleeper_Duration(Int_t minutes)
+    template <> String_t Settler_t::Duration_Hours_String<Sandboxer_t>() = delete;
+    String_t Sleeper_t::Duration_Hours_String() { return Settler_t::Duration_Hours_String<Sleeper_t>(); }
+    String_t Sitter_t::Duration_Hours_String() { return Settler_t::Duration_Hours_String<Sitter_t>(); }
+    String_t Eater_t::Duration_Hours_String() { return Settler_t::Duration_Hours_String<Eater_t>(); }
+    String_t Guard_t::Duration_Hours_String() { return Settler_t::Duration_Hours_String<Guard_t>(); }
+
+    /* Minute Duration */
+
+    template <typename Type_t>
+    Int_t Settler_t::Duration_Minutes()
     {
-        Duration(Sleeper_Duration_Variable(), minutes);
+        Variable_t* variable = static_cast<Type_t*>(this)->Duration_Variable();
+
+        return static_cast<Int_t>(
+            static_cast<UInt32>(variable->Int()) & Settler_t::DURATION_MINUTES_MASK
+        );
     }
 
-    void Settler_t::Sitter_Duration(Int_t minutes)
+    template <> Int_t Settler_t::Duration_Minutes<Sandboxer_t>() = delete;
+    Int_t Sleeper_t::Duration_Minutes() { return Settler_t::Duration_Minutes<Sleeper_t>(); }
+    Int_t Sitter_t::Duration_Minutes() { return Settler_t::Duration_Minutes<Sitter_t>(); }
+    Int_t Eater_t::Duration_Minutes() { return Settler_t::Duration_Minutes<Eater_t>(); }
+    Int_t Guard_t::Duration_Minutes() { return Settler_t::Duration_Minutes<Guard_t>(); }
+
+    template <typename Type_t>
+    void Settler_t::Duration_Minutes(Int_t minutes)
     {
-        Duration(Sitter_Duration_Variable(), minutes);
+        Variable_t* variable = static_cast<Type_t*>(this)->Duration_Variable();
+        Int_t hours = static_cast<Type_t*>(this)->Duration_Hours();
+
+        if (minutes < Settler_t::MIN_DURATION_MINUTES) {
+            minutes = Settler_t::MIN_DURATION_MINUTES;
+        } else if (minutes > Settler_t::MAX_DURATION_MINUTES) {
+            minutes = Settler_t::MAX_DURATION_MINUTES;
+        }
+
+        variable->Int(
+            (static_cast<UInt32>(variable->Int()) & Settler_t::DURATION_HOURS_MASK) |
+            (static_cast<UInt32>(hours == Settler_t::MAX_DURATION_HOURS ? 0 : minutes) & Settler_t::DURATION_MINUTES_MASK)
+        );
     }
 
-    void Settler_t::Eater_Duration(Int_t minutes)
+    template <> void Settler_t::Duration_Minutes<Sandboxer_t>(Int_t minutes) = delete;
+    void Sleeper_t::Duration_Minutes(Int_t minutes) { Settler_t::Duration_Minutes<Sleeper_t>(minutes); }
+    void Sitter_t::Duration_Minutes(Int_t minutes) { Settler_t::Duration_Minutes<Sitter_t>(minutes); }
+    void Eater_t::Duration_Minutes(Int_t minutes) { Settler_t::Duration_Minutes<Eater_t>(minutes); }
+    void Guard_t::Duration_Minutes(Int_t minutes) { Settler_t::Duration_Minutes<Guard_t>(minutes); }
+
+    template <typename Type_t>
+    String_t Settler_t::Duration_Minutes_String()
     {
-        Duration(Eater_Duration_Variable(), minutes);
+        Int_t hours = static_cast<Type_t*>(this)->Duration_Hours();
+        Int_t minutes = static_cast<Type_t*>(this)->Duration_Minutes();
+
+        if (hours < Settler_t::MIN_DURATION_HOURS) {
+            hours = Settler_t::MIN_DURATION_HOURS;
+        } else if (hours > Settler_t::MAX_DURATION_HOURS) {
+            hours = Settler_t::MAX_DURATION_HOURS;
+        }
+
+        if (minutes < Settler_t::MIN_DURATION_MINUTES) {
+            minutes = Settler_t::MIN_DURATION_MINUTES;
+        } else if (minutes > Settler_t::MAX_DURATION_MINUTES) {
+            minutes = Settler_t::MAX_DURATION_MINUTES;
+        }
+
+        if ((hours * 60) + minutes == 0) {
+            return " Never ";
+        } else {
+            if (minutes == 1) {
+                return " 1 minute ";
+            } else {
+                return (" " + std::to_string(minutes) + " minutes ").c_str();
+            }
+        }
     }
 
-    void Settler_t::Guard_Duration(Int_t minutes)
-    {
-        Duration(Guard_Duration_Variable(), minutes);
-    }
+    template <> String_t Settler_t::Duration_Minutes_String<Sandboxer_t>() = delete;
+    String_t Sleeper_t::Duration_Minutes_String() { return Settler_t::Duration_Minutes_String<Sleeper_t>(); }
+    String_t Sitter_t::Duration_Minutes_String() { return Settler_t::Duration_Minutes_String<Sitter_t>(); }
+    String_t Eater_t::Duration_Minutes_String() { return Settler_t::Duration_Minutes_String<Eater_t>(); }
+    String_t Guard_t::Duration_Minutes_String() { return Settler_t::Duration_Minutes_String<Guard_t>(); }
 
     /* Attention */
 
-    inline Int_t Attention(Variable_t* variable)
+    template <typename Type_t>
+    Int_t Settler_t::Attention()
     {
-        return static_cast<Int_t>((static_cast<UInt32>(variable->Int()) & Settler_t::ATTENTION_MASK) >> 16);
+        Variable_t* variable = static_cast<Type_t*>(this)->Movement_Variable();
+
+        return static_cast<Int_t>(
+            (static_cast<UInt32>(variable->Int()) & Settler_t::ATTENTION_MASK) >> 16
+        );
     }
 
-    Int_t Settler_t::Sandboxer_Attention()
-    {
-        return Attention(Sandboxer_Movement_Variable());
-    }
+    Int_t Sandboxer_t::Attention() { return Settler_t::Attention<Sandboxer_t>(); }
+    Int_t Sleeper_t::Attention() { return Settler_t::Attention<Sleeper_t>(); }
+    template <> Int_t Settler_t::Attention<Sitter_t>() = delete;
+    Int_t Eater_t::Attention() { return Settler_t::Attention<Eater_t>(); }
+    template <> Int_t Settler_t::Attention<Guard_t>() = delete;
 
-    Int_t Settler_t::Sleeper_Attention()
+    template <typename Type_t>
+    void Settler_t::Attention(Int_t attention)
     {
-        return Attention(Sleeper_Movement_Variable());
-    }
+        Variable_t* variable = static_cast<Type_t*>(this)->Movement_Variable();
 
-    Int_t Settler_t::Eater_Attention()
-    {
-        return Attention(Eater_Movement_Variable());
-    }
-
-    inline void Attention(Variable_t* variable, Int_t attention)
-    {
         if (attention < Settler_t::MIN_ATTENTION) {
             attention = Settler_t::MIN_ATTENTION;
         } else if (attention > Settler_t::MAX_ATTENTION) {
@@ -474,567 +675,662 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         );
     }
 
-    void Settler_t::Sandboxer_Attention(Int_t attention)
-    {
-        Attention(Sandboxer_Movement_Variable(), attention);
-    }
-
-    void Settler_t::Sleeper_Attention(Int_t attention)
-    {
-        Attention(Sleeper_Movement_Variable(), attention);
-    }
-
-    void Settler_t::Eater_Attention(Int_t attention)
-    {
-        Attention(Eater_Movement_Variable(), attention);
-    }
+    void Sandboxer_t::Attention(Int_t attention) { Settler_t::Attention<Sandboxer_t>(attention); }
+    void Sleeper_t::Attention(Int_t attention) { Settler_t::Attention<Sleeper_t>(attention); }
+    template <> void Settler_t::Attention<Sitter_t>(Int_t attention) = delete;
+    void Eater_t::Attention(Int_t attention) { Settler_t::Attention<Eater_t>(attention); }
+    template <> void Settler_t::Attention<Guard_t>(Int_t attention) = delete;
 
     /* Speed */
 
-    inline Settler_Speed_e Speed(Variable_t* variable)
+    template <typename Type_t>
+    Settler_Speed_e Settler_t::Speed()
     {
-        return static_cast<Settler_Speed_e>(static_cast<UInt32>(variable->Int()) & Settler_t::SPEED_MASK);
+        Variable_t* variable = static_cast<Type_t*>(this)->Movement_Variable();
+
+        return static_cast<Settler_Speed_e>(
+            static_cast<UInt32>(variable->Int()) & Settler_t::SPEED_MASK
+        );
     }
 
-    Settler_Speed_e Settler_t::Sandboxer_Speed()
-    {
-        return Speed(Sandboxer_Movement_Variable());
-    }
+    Settler_Speed_e Sandboxer_t::Speed() { return Settler_t::Speed<Sandboxer_t>(); }
+    Settler_Speed_e Sleeper_t::Speed() { return Settler_t::Speed<Sleeper_t>(); }
+    Settler_Speed_e Sitter_t::Speed() { return Settler_t::Speed<Sitter_t>(); }
+    Settler_Speed_e Eater_t::Speed() { return Settler_t::Speed<Eater_t>(); }
+    Settler_Speed_e Guard_t::Speed() { return Settler_t::Speed<Guard_t>(); }
 
-    Settler_Speed_e Settler_t::Sleeper_Speed()
+    template <typename Type_t>
+    void Settler_t::Speed(Settler_Speed_e speed)
     {
-        return Speed(Sleeper_Movement_Variable());
-    }
+        Variable_t* variable = static_cast<Type_t*>(this)->Movement_Variable();
 
-    Settler_Speed_e Settler_t::Sitter_Speed()
-    {
-        return Speed(Sitter_Movement_Variable());
-    }
-
-    Settler_Speed_e Settler_t::Eater_Speed()
-    {
-        return Speed(Eater_Movement_Variable());
-    }
-
-    Settler_Speed_e Settler_t::Guard_Speed()
-    {
-        return Speed(Guard_Movement_Variable());
-    }
-
-    inline void Speed(Variable_t* variable, Settler_Speed_e speed)
-    {
         variable->Int(
             (static_cast<UInt32>(variable->Int()) & Settler_t::ATTENTION_MASK) |
             (static_cast<UInt32>(speed) & Settler_t::SPEED_MASK)
         );
     }
 
-    void Settler_t::Sandboxer_Speed(Settler_Speed_e speed)
+    void Sandboxer_t::Speed(Settler_Speed_e speed) { Settler_t::Speed<Sandboxer_t>(speed); }
+    void Sleeper_t::Speed(Settler_Speed_e speed) { Settler_t::Speed<Sleeper_t>(speed); }
+    void Sitter_t::Speed(Settler_Speed_e speed) { Settler_t::Speed<Sitter_t>(speed); }
+    void Eater_t::Speed(Settler_Speed_e speed) { Settler_t::Speed<Eater_t>(speed); }
+    void Guard_t::Speed(Settler_Speed_e speed) { Settler_t::Speed<Guard_t>(speed); }
+
+    template <typename Type_t>
+    String_t Settler_t::Speed_String()
     {
-        Speed(Sandboxer_Movement_Variable(), speed);
+        Settler_Speed_e speed = static_cast<Type_t*>(this)->Speed();
+
+        if (speed == Settler_Speed_e::WALK) {
+            return " Walk ";
+        } else if (speed == Settler_Speed_e::FAST_WALK) {
+            return " Fast Walk ";
+        } else if (speed == Settler_Speed_e::JOG) {
+            return " Jog ";
+        } else if (speed == Settler_Speed_e::RUN) {
+            return " Run ";
+        } else {
+            return "";
+        }
     }
 
-    void Settler_t::Sleeper_Speed(Settler_Speed_e speed)
+    String_t Sandboxer_t::Speed_String() { return Settler_t::Speed_String<Sandboxer_t>(); }
+    String_t Sleeper_t::Speed_String() { return Settler_t::Speed_String<Sleeper_t>(); }
+    String_t Sitter_t::Speed_String() { return Settler_t::Speed_String<Sitter_t>(); }
+    String_t Eater_t::Speed_String() { return Settler_t::Speed_String<Eater_t>(); }
+    String_t Guard_t::Speed_String() { return Settler_t::Speed_String<Guard_t>(); }
+
+    /* Wander Distance */
+
+    template <typename Type_t>
+    Int_t Settler_t::Wander_Distance()
     {
-        Speed(Sleeper_Movement_Variable(), speed);
+        Variable_t* variable = static_cast<Type_t*>(this)->Wander_Distance_Variable();
+
+        return variable->Int();
     }
 
-    void Settler_t::Sitter_Speed(Settler_Speed_e speed)
+    Int_t Sandboxer_t::Wander_Distance() { return Settler_t::Wander_Distance<Sandboxer_t>(); }
+    Int_t Sleeper_t::Wander_Distance() { return Settler_t::Wander_Distance<Sleeper_t>(); }
+    template <> Int_t Settler_t::Wander_Distance<Sitter_t>() = delete;
+    Int_t Eater_t::Wander_Distance() { return Settler_t::Wander_Distance<Eater_t>(); }
+    template <> Int_t Settler_t::Wander_Distance<Guard_t>() = delete;
+
+    template <typename Type_t>
+    void Settler_t::Wander_Distance(Int_t distance)
     {
-        Speed(Sitter_Movement_Variable(), speed);
+        Variable_t* variable = static_cast<Type_t*>(this)->Wander_Distance_Variable();
+
+        if (distance < Settler_t::MIN_RADIUS) {
+            distance = Settler_t::MIN_RADIUS;
+        } else if (distance > Settler_t::MAX_RADIUS) {
+            distance = Settler_t::MAX_RADIUS;
+        }
+
+        variable->Int(distance);
     }
 
-    void Settler_t::Eater_Speed(Settler_Speed_e speed)
-    {
-        Speed(Eater_Movement_Variable(), speed);
-    }
-
-    void Settler_t::Guard_Speed(Settler_Speed_e speed)
-    {
-        Speed(Guard_Movement_Variable(), speed);
-    }
+    void Sandboxer_t::Wander_Distance(Int_t distance) { Settler_t::Wander_Distance<Sandboxer_t>(distance); }
+    void Sleeper_t::Wander_Distance(Int_t distance) { Settler_t::Wander_Distance<Sleeper_t>(distance); }
+    template <> void Settler_t::Wander_Distance<Sitter_t>(Int_t distance) = delete;
+    void Eater_t::Wander_Distance(Int_t distance) { Settler_t::Wander_Distance<Eater_t>(distance); }
+    template <> void Settler_t::Wander_Distance<Guard_t>(Int_t distance) = delete;
 
     /* Flag */
 
-    inline Bool_t Is_Flagged_Impl(Variable_t* variable, UInt32 flag)
+    template <typename Type_t>
+    Bool_t Settler_t::Is_Flagged(UInt32 flag)
     {
+        Variable_t* variable = static_cast<Type_t*>(this)->Flags_Variable();
+
         return (static_cast<UInt32>(variable->Int()) & (static_cast<UInt32>(1) << flag)) > 0;
     }
 
-    Bool_t Settler_t::Is_Flagged(Sandboxer_Flag_e flag)
-    {
-        return Is_Flagged_Impl(Sandboxer_Flags_Variable(), static_cast<UInt32>(flag));
-    }
+    Bool_t Sandboxer_t::Is_Flagged(Sandboxer_t::Flag_e flag) { return Settler_t::Is_Flagged<Sandboxer_t>(static_cast<UInt32>(flag)); }
+    Bool_t Sleeper_t::Is_Flagged(Sleeper_t::Flag_e flag) { return Settler_t::Is_Flagged<Sleeper_t>(static_cast<UInt32>(flag)); }
+    Bool_t Sitter_t::Is_Flagged(Sitter_t::Flag_e flag) { return Settler_t::Is_Flagged<Sitter_t>(static_cast<UInt32>(flag)); }
+    Bool_t Eater_t::Is_Flagged(Eater_t::Flag_e flag) { return Settler_t::Is_Flagged<Eater_t>(static_cast<UInt32>(flag)); }
+    Bool_t Guard_t::Is_Flagged(Guard_t::Flag_e flag) { return Settler_t::Is_Flagged<Guard_t>(static_cast<UInt32>(flag)); }
 
-    Bool_t Settler_t::Is_Flagged(Sleeper_Flag_e flag)
+    template <typename Type_t>
+    void Settler_t::Flag(UInt32 flag)
     {
-        return Is_Flagged_Impl(Sleeper_Flags_Variable(), static_cast<UInt32>(flag));
-    }
+        Variable_t* variable = static_cast<Type_t*>(this)->Flags_Variable();
 
-    Bool_t Settler_t::Is_Flagged(Sitter_Flag_e flag)
-    {
-        return Is_Flagged_Impl(Sitter_Flags_Variable(), static_cast<UInt32>(flag));
-    }
-
-    Bool_t Settler_t::Is_Flagged(Eater_Flag_e flag)
-    {
-        return Is_Flagged_Impl(Eater_Flags_Variable(), static_cast<UInt32>(flag));
-    }
-
-    Bool_t Settler_t::Is_Flagged(Guard_Flag_e flag)
-    {
-        return Is_Flagged_Impl(Guard_Flags_Variable(), static_cast<UInt32>(flag));
-    }
-
-    inline void Flag_Impl(Variable_t* variable, UInt32 flag)
-    {
         variable->Int(
             static_cast<UInt32>(variable->Int()) |
             (static_cast<UInt32>(1) << flag)
         );
     }
 
-    void Settler_t::Flag(Sandboxer_Flag_e flag)
-    {
-        Flag_Impl(Sandboxer_Flags_Variable(), static_cast<UInt32>(flag));
-    }
+    void Sandboxer_t::Flag(Sandboxer_t::Flag_e flag) { Settler_t::Flag<Sandboxer_t>(static_cast<UInt32>(flag)); }
+    void Sleeper_t::Flag(Sleeper_t::Flag_e flag) { Settler_t::Flag<Sleeper_t>(static_cast<UInt32>(flag)); }
+    void Sitter_t::Flag(Sitter_t::Flag_e flag) { Settler_t::Flag<Sitter_t>(static_cast<UInt32>(flag)); }
+    void Eater_t::Flag(Eater_t::Flag_e flag) { Settler_t::Flag<Eater_t>(static_cast<UInt32>(flag)); }
+    void Guard_t::Flag(Guard_t::Flag_e flag) { Settler_t::Flag<Guard_t>(static_cast<UInt32>(flag)); }
 
-    void Settler_t::Flag(Sleeper_Flag_e flag)
+    template <typename Type_t>
+    void Settler_t::Unflag(UInt32 flag)
     {
-        Flag_Impl(Sleeper_Flags_Variable(), static_cast<UInt32>(flag));
-    }
+        Variable_t* variable = static_cast<Type_t*>(this)->Flags_Variable();
 
-    void Settler_t::Flag(Sitter_Flag_e flag)
-    {
-        Flag_Impl(Sitter_Flags_Variable(), static_cast<UInt32>(flag));
-    }
-
-    void Settler_t::Flag(Eater_Flag_e flag)
-    {
-        Flag_Impl(Eater_Flags_Variable(), static_cast<UInt32>(flag));
-    }
-
-    void Settler_t::Flag(Guard_Flag_e flag)
-    {
-        Flag_Impl(Guard_Flags_Variable(), static_cast<UInt32>(flag));
-    }
-
-    inline void Unflag_Impl(Variable_t* variable, UInt32 flag)
-    {
         variable->Int(
             static_cast<UInt32>(variable->Int()) &
             ~(static_cast<UInt32>(1) << flag)
         );
     }
 
-    void Settler_t::Unflag(Sandboxer_Flag_e flag)
-    {
-        Unflag_Impl(Sandboxer_Flags_Variable(), static_cast<UInt32>(flag));
-    }
-
-    void Settler_t::Unflag(Sleeper_Flag_e flag)
-    {
-        Unflag_Impl(Sleeper_Flags_Variable(), static_cast<UInt32>(flag));
-    }
-
-    void Settler_t::Unflag(Sitter_Flag_e flag)
-    {
-        Unflag_Impl(Sitter_Flags_Variable(), static_cast<UInt32>(flag));
-    }
-
-    void Settler_t::Unflag(Eater_Flag_e flag)
-    {
-        Unflag_Impl(Eater_Flags_Variable(), static_cast<UInt32>(flag));
-    }
-
-    void Settler_t::Unflag(Guard_Flag_e flag)
-    {
-        Unflag_Impl(Guard_Flags_Variable(), static_cast<UInt32>(flag));
-    }
-
-    /* Bool */
-
-    Bool_t Settler_t::Is_Sandboxer()
-    {
-        return Is_Flagged(Sandboxer_Flag_e::IS_ENABLED);
-    }
-
-    Bool_t Settler_t::Is_Sleeper()
-    {
-        return Is_Flagged(Sleeper_Flag_e::IS_ENABLED);
-    }
-
-    Bool_t Settler_t::Is_Sitter()
-    {
-        return Is_Flagged(Sitter_Flag_e::IS_ENABLED);
-    }
-
-    Bool_t Settler_t::Is_Eater()
-    {
-        return Is_Flagged(Eater_Flag_e::IS_ENABLED);
-    }
-
-    Bool_t Settler_t::Is_Guard()
-    {
-        return Is_Flagged(Guard_Flag_e::IS_ENABLED);
-    }
+    void Sandboxer_t::Unflag(Sandboxer_t::Flag_e flag) { Settler_t::Unflag<Sandboxer_t>(static_cast<UInt32>(flag)); }
+    void Sleeper_t::Unflag(Sleeper_t::Flag_e flag) { Settler_t::Unflag<Sleeper_t>(static_cast<UInt32>(flag)); }
+    void Sitter_t::Unflag(Sitter_t::Flag_e flag) { Settler_t::Unflag<Sitter_t>(static_cast<UInt32>(flag)); }
+    void Eater_t::Unflag(Eater_t::Flag_e flag) { Settler_t::Unflag<Eater_t>(static_cast<UInt32>(flag)); }
+    void Guard_t::Unflag(Guard_t::Flag_e flag) { Settler_t::Unflag<Guard_t>(static_cast<UInt32>(flag)); }
 
     /* Create/Destroy */
 
-    void Settler_t::Create(Actor_t* actor)
+    template <typename Type_t>
+    Bool_t Settler_t::Is_Created()
     {
-        Clear_Variables();
-        Create_Sandboxer(actor);
-        Enforce(actor, true);
+        return static_cast<Type_t*>(this)->Is_Flagged(Type_t::Flag_e::IS_ENABLED);
     }
 
-    void Settler_t::Create_Sandboxer(Actor_t* actor)
+    Bool_t Sandboxer_t::Is_Created() { return Settler_t::Is_Created<Sandboxer_t>(); }
+    Bool_t Sleeper_t::Is_Created() { return Settler_t::Is_Created<Sleeper_t>(); }
+    Bool_t Sitter_t::Is_Created() { return Settler_t::Is_Created<Sitter_t>(); }
+    Bool_t Eater_t::Is_Created() { return Settler_t::Is_Created<Eater_t>(); }
+    Bool_t Guard_t::Is_Created() { return Settler_t::Is_Created<Guard_t>(); }
+
+    template <typename Type_t>
+    void Settler_t::Create()
+    {
+        if (Is_Sandboxer() && !static_cast<Type_t*>(this)->Is_Created()) {
+            Actor_t* actor = Actor();
+
+            static_cast<Type_t*>(this)->Clear();
+
+            Reference_t* marker = Object_Ref::Create_Marker_At(static_cast<Sandboxer_t*>(this)->Marker());
+            static_cast<Type_t*>(this)->Marker_Variable()->Pack(marker);
+
+            static_cast<Type_t*>(this)->Flag(Type_t::Flag_e::IS_ENABLED);
+            static_cast<Type_t*>(this)->Default();
+
+            Object_Ref::Token(actor, static_cast<Type_t*>(this)->Token());
+
+            Enforce(actor, true);
+        }
+    }
+
+    template <>
+    void Settler_t::Create<Sandboxer_t>()
     {
         if (!Is_Sandboxer()) {
-            Object_Ref::Move_To_Orbit(Sandboxer_Marker(), actor, 0.0f, 180.0f); // move to player?
+            Actor_t* actor = Actor();
 
-            Flag(Sandboxer_Flag_e::IS_ENABLED);
-            Default_Sandboxer();
+            static_cast<Sandboxer_t*>(this)->Clear();
 
-            Object_Ref::Token(actor, Consts::Settler_Token());
+            Object_Ref::Move_To_Orbit(static_cast<Sandboxer_t*>(this)->Marker(), Consts::Player_Actor(), 0.0f, 180.0f);
+
+            static_cast<Sandboxer_t*>(this)->Flag(Sandboxer_t::Flag_e::IS_ENABLED);
+            static_cast<Sandboxer_t*>(this)->Default();
+
+            Object_Ref::Token(actor, static_cast<Sandboxer_t*>(this)->Token());
+
+            Enforce(actor, true);
         }
     }
 
-    void Settler_t::Create_Sleeper(Actor_t* actor)
+    void Sandboxer_t::Create() { Settler_t::Create<Sandboxer_t>(); }
+    void Sleeper_t::Create() { Settler_t::Create<Sleeper_t>(); }
+    void Sitter_t::Create() { Settler_t::Create<Sitter_t>(); }
+    void Eater_t::Create() { Settler_t::Create<Eater_t>(); }
+    void Guard_t::Create() { Settler_t::Create<Guard_t>(); }
+
+    template <typename Type_t>
+    void Settler_t::Destroy(Bool_t do_enforce)
     {
-        if (Is_Sandboxer() && !Is_Sleeper()) {
-            Reference_t* marker = Object_Ref::Create_Marker_At(Sandboxer_Marker());
-            Sleeper_Marker_Variable()->Pack(marker);
+        if (static_cast<Type_t*>(this)->Is_Created()) {
+            Actor_t* actor = Actor();
 
-            Flag(Sleeper_Flag_e::IS_ENABLED);
-            Default_Sleeper();
+            Object_Ref::Untoken(actor, static_cast<Type_t*>(this)->Token());
 
-            Object_Ref::Token(actor, Consts::Settler_Sleeper_Token());
+            Reference_t* marker = static_cast<Type_t*>(this)->Marker();
+            static_cast<Type_t*>(this)->Marker_Variable()->None(Object_Ref::Class_Info());
+            Object_Ref::Delete_Safe(marker);
+
+            static_cast<Type_t*>(this)->Unflag(Type_t::Flag_e::IS_ENABLED);
+
+            static_cast<Type_t*>(this)->Clear();
+
+            if (do_enforce) {
+                Enforce(actor, true);
+            }
         }
     }
 
-    void Settler_t::Create_Sitter(Actor_t* actor)
-    {
-        if (Is_Sandboxer() && !Is_Sitter()) {
-            Reference_t* marker = Object_Ref::Create_Marker_At(Sandboxer_Marker());
-            Sitter_Marker_Variable()->Pack(marker);
-
-            Flag(Sitter_Flag_e::IS_ENABLED);
-            Default_Sitter();
-
-            Object_Ref::Token(actor, Consts::Settler_Sitter_Token());
-        }
-    }
-
-    void Settler_t::Create_Eater(Actor_t* actor)
-    {
-        if (Is_Sandboxer() && !Is_Eater()) {
-            Reference_t* marker = Object_Ref::Create_Marker_At(Sandboxer_Marker());
-            Eater_Marker_Variable()->Pack(marker);
-
-            Flag(Eater_Flag_e::IS_ENABLED);
-            Default_Eater();
-
-            Object_Ref::Token(actor, Consts::Settler_Eater_Token());
-        }
-    }
-
-    void Settler_t::Create_Guard(Actor_t* actor)
-    {
-        if (Is_Sandboxer() && !Is_Guard()) {
-            Reference_t* marker = Object_Ref::Create_Directed_Marker_At(Sandboxer_Marker());
-            Guard_Marker_Variable()->Pack(marker);
-
-            Flag(Guard_Flag_e::IS_ENABLED);
-            Default_Guard();
-
-            Object_Ref::Token(actor, Consts::Settler_Guard_Token());
-        }
-    }
-
-    void Settler_t::Destroy(Actor_t* actor)
-    {
-        Destroy_Guard(actor);
-        Destroy_Eater(actor);
-        Destroy_Sitter(actor);
-        Destroy_Sleeper(actor);
-        Destroy_Sandboxer(actor);
-        Clear_Variables();
-    }
-
-    void Settler_t::Destroy_Sandboxer(Actor_t* actor)
+    template <>
+    void Settler_t::Destroy<Sandboxer_t>(Bool_t do_enforce)
     {
         if (Is_Sandboxer()) {
-            Object_Ref::Untoken(actor, Consts::Settler_Token());
+            Actor_t* actor = Actor();
 
-            Object_Ref::Move_To_Orbit(Sandboxer_Marker(), Consts::Storage_Marker(), 0.0f, 0.0f);
+            static_cast<Guard_t*>(this)->Destroy(false);
+            static_cast<Eater_t*>(this)->Destroy(false);
+            static_cast<Sitter_t*>(this)->Destroy(false);
+            static_cast<Sleeper_t*>(this)->Destroy(false);
 
-            Unflag(Sandboxer_Flag_e::IS_ENABLED);
+            Object_Ref::Untoken(actor, static_cast<Sandboxer_t*>(this)->Token());
+
+            Object_Ref::Move_To_Orbit(static_cast<Sandboxer_t*>(this)->Marker(), Consts::Storage_Marker(), 0.0f, 0.0f);
+
+            static_cast<Sandboxer_t*>(this)->Unflag(Sandboxer_t::Flag_e::IS_ENABLED);
+
+            static_cast<Sandboxer_t*>(this)->Clear();
+
+            if (do_enforce) {
+                Enforce(actor, true);
+            }
         }
     }
 
-    void Settler_t::Destroy_Sleeper(Actor_t* actor)
+    template <>
+    void Settler_t::Destroy<Sleeper_t>(Bool_t do_enforce)
     {
+        using Type_t = Sleeper_t;
+
         if (Is_Sleeper()) {
-            Object_Ref::Untoken(actor, Consts::Settler_Sleeper_Token());
+            Actor_t* actor = Actor();
 
-            Reference_t* marker = Sleeper_Marker_Variable()->Reference();
-            Sleeper_Marker_Variable()->None(Object_Ref::Class_Info());
+            static_cast<Type_t*>(this)->Destroy_Bed();
+
+            Object_Ref::Untoken(actor, static_cast<Type_t*>(this)->Token());
+
+            Reference_t* marker = static_cast<Type_t*>(this)->Marker();
+            static_cast<Type_t*>(this)->Marker_Variable()->None(Object_Ref::Class_Info());
             Object_Ref::Delete_Safe(marker);
 
-            Unflag(Sleeper_Flag_e::IS_ENABLED);
+            static_cast<Type_t*>(this)->Unflag(Type_t::Flag_e::IS_ENABLED);
+
+            static_cast<Type_t*>(this)->Clear();
+
+            if (do_enforce) {
+                Enforce(actor, true);
+            }
         }
     }
 
-    void Settler_t::Destroy_Sitter(Actor_t* actor)
-    {
-        if (Is_Sitter()) {
-            Object_Ref::Untoken(actor, Consts::Settler_Sitter_Token());
-
-            Reference_t* marker = Sitter_Marker_Variable()->Reference();
-            Sitter_Marker_Variable()->None(Object_Ref::Class_Info());
-            Object_Ref::Delete_Safe(marker);
-
-            Unflag(Sitter_Flag_e::IS_ENABLED);
-        }
-    }
-
-    void Settler_t::Destroy_Eater(Actor_t* actor)
-    {
-        if (Is_Eater()) {
-            Object_Ref::Untoken(actor, Consts::Settler_Eater_Token());
-
-            Reference_t* marker = Eater_Marker_Variable()->Reference();
-            Eater_Marker_Variable()->None(Object_Ref::Class_Info());
-            Object_Ref::Delete_Safe(marker);
-
-            Unflag(Eater_Flag_e::IS_ENABLED);
-        }
-    }
-
-    void Settler_t::Destroy_Guard(Actor_t* actor)
-    {
-        if (Is_Guard()) {
-            Object_Ref::Untoken(actor, Consts::Settler_Guard_Token());
-
-            Reference_t* marker = Guard_Marker_Variable()->Reference();
-            Guard_Marker_Variable()->None(Object_Ref::Class_Info());
-            Object_Ref::Delete_Safe(marker);
-
-            Unflag(Guard_Flag_e::IS_ENABLED);
-        }
-    }
-
-    void Settler_t::Clear_Variables()
-    {
-        Class_Info_t* reference_class_info = Object_Ref::Class_Info();
-        Sleeper_Marker_Variable()->None(reference_class_info);
-        Sitter_Marker_Variable()->None(reference_class_info);
-        Eater_Marker_Variable()->None(reference_class_info);
-        Guard_Marker_Variable()->None(reference_class_info);
-
-        Sandboxer_Radius_Variable()->Int(0);
-        Sleeper_Radius_Variable()->Int(0);
-        Sitter_Radius_Variable()->Int(0);
-        Eater_Radius_Variable()->Int(0);
-        Guard_Radius_Variable()->Int(0);
-
-        Sleeper_Time_Variable()->Int(0);
-        Sitter_Time_Variable()->Int(0);
-        Eater_Time_Variable()->Int(0);
-        Guard_Time_Variable()->Int(0);
-
-        Sleeper_Duration_Variable()->Int(0);
-        Sitter_Duration_Variable()->Int(0);
-        Eater_Duration_Variable()->Int(0);
-        Guard_Duration_Variable()->Int(0);
-
-        Sandboxer_Movement_Variable()->Int(0);
-        Sleeper_Movement_Variable()->Int(0);
-        Sitter_Movement_Variable()->Int(0);
-        Eater_Movement_Variable()->Int(0);
-        Guard_Movement_Variable()->Int(0);
-
-        Sandboxer_Flags_Variable()->Int(0);
-        Sleeper_Flags_Variable()->Int(0);
-        Sitter_Flags_Variable()->Int(0);
-        Eater_Flags_Variable()->Int(0);
-        Guard_Flags_Variable()->Int(0);
-    }
+    void Sandboxer_t::Destroy(Bool_t do_enforce) { Settler_t::Destroy<Sandboxer_t>(do_enforce); }
+    void Sleeper_t::Destroy(Bool_t do_enforce) { Settler_t::Destroy<Sleeper_t>(do_enforce); }
+    void Sitter_t::Destroy(Bool_t do_enforce) { Settler_t::Destroy<Sitter_t>(do_enforce); }
+    void Eater_t::Destroy(Bool_t do_enforce) { Settler_t::Destroy<Eater_t>(do_enforce); }
+    void Guard_t::Destroy(Bool_t do_enforce) { Settler_t::Destroy<Guard_t>(do_enforce); }
 
     /* Default */
 
-    void Settler_t::Default_Sandboxer()
+    template <>
+    void Settler_t::Default<Sandboxer_t>()
     {
-        Sandboxer_Radius(DEFAULT_RADIUS);
-        Sandboxer_Attention(40);
-        Sandboxer_Speed(Settler_Speed_e::WALK);
+        using Type_t = Sandboxer_t;
+        using Flag_e = Type_t::Flag_e;
+
+        static_cast<Type_t*>(this)->Radius(DEFAULT_RADIUS);
+        static_cast<Type_t*>(this)->Attention(40);
+        static_cast<Type_t*>(this)->Speed(Settler_Speed_e::WALK);
+        static_cast<Type_t*>(this)->Wander_Distance(DEFAULT_WANDER_DISTANCE);
+
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_SWIMMING);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALWAYS_SNEAK);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::IGNORE_COMBAT);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::KEEP_WEAPONS_DRAWN);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::HIDE_WEAPONS);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::SKIP_COMBAT_ALERT);
+
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_HELLOS_TO_PLAYER);
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_HELLOS_TO_NPCS);
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_IDLE_CHATTER);
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_AGGRO_RADIUS_BEHAVIOR);
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_WORLD_INTERACTIONS);
+        static_cast<Type_t*>(this)->Flag(Flag_e::COMMENT_ON_FRIENDLY_FIRE);
+        static_cast<Type_t*>(this)->Flag(Flag_e::INSPECT_CORPSE_BEHAVIOR);
+        static_cast<Type_t*>(this)->Flag(Flag_e::OBSERVE_COMBAT_BEHAVIOR);
+        static_cast<Type_t*>(this)->Flag(Flag_e::REACT_TO_PLAYER_ACTIONS);
+
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_CONVERSATION);
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_EATING);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALLOW_HORSE_RIDING);
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_IDLE_MARKERS);
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_SITTING);
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_SLEEPING);
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_SPECIAL_FURNITURE);
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_WANDERING);
+
+        static_cast<Type_t*>(this)->Unflag(Flag_e::PREFERRED_PATH_ONLY);
+        static_cast<Type_t*>(this)->Flag(Flag_e::UNLOCK_ON_ARRIVAL);
     }
 
-    void Settler_t::Default_Sleeper()
+    template <>
+    void Settler_t::Default<Sleeper_t>()
     {
-        Sleeper_Radius(DEFAULT_RADIUS);
-        Sleeper_Hour(10 + 12);
-        Sleeper_Minute(30);
-        Sleeper_Duration(8 * 60);
-        Sleeper_Attention(100);
-        Sleeper_Speed(Settler_Speed_e::JOG);
+        using Type_t = Sleeper_t;
+        using Flag_e = Type_t::Flag_e;
+
+        static_cast<Type_t*>(this)->Radius(DEFAULT_RADIUS);
+        static_cast<Type_t*>(this)->Hour(10);
+        static_cast<Type_t*>(this)->Minute(30);
+        static_cast<Type_t*>(this)->AM_PM(AM_PM_e::PM);
+        static_cast<Type_t*>(this)->Duration_Hours(8);
+        static_cast<Type_t*>(this)->Duration_Minutes(0);
+        static_cast<Type_t*>(this)->Attention(100);
+        static_cast<Type_t*>(this)->Speed(Settler_Speed_e::JOG);
+        static_cast<Type_t*>(this)->Wander_Distance(DEFAULT_WANDER_DISTANCE);
+
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_SWIMMING);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALWAYS_SNEAK);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::IGNORE_COMBAT);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::KEEP_WEAPONS_DRAWN);
+        static_cast<Type_t*>(this)->Flag(Flag_e::HIDE_WEAPONS);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::SKIP_COMBAT_ALERT);
+
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALLOW_HELLOS_TO_PLAYER);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALLOW_HELLOS_TO_NPCS);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALLOW_IDLE_CHATTER);
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_AGGRO_RADIUS_BEHAVIOR);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALLOW_WORLD_INTERACTIONS);
+        static_cast<Type_t*>(this)->Flag(Flag_e::COMMENT_ON_FRIENDLY_FIRE);
+        static_cast<Type_t*>(this)->Flag(Flag_e::INSPECT_CORPSE_BEHAVIOR);
+        static_cast<Type_t*>(this)->Flag(Flag_e::OBSERVE_COMBAT_BEHAVIOR);
+        static_cast<Type_t*>(this)->Flag(Flag_e::REACT_TO_PLAYER_ACTIONS);
+
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALLOW_CONVERSATION);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALLOW_EATING);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALLOW_HORSE_RIDING);
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_IDLE_MARKERS);
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_SITTING);
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_SLEEPING);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALLOW_SPECIAL_FURNITURE);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALLOW_WANDERING);
+
+        static_cast<Type_t*>(this)->Unflag(Flag_e::LOCK_DOORS);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::PREFERRED_PATH_ONLY);
+        static_cast<Type_t*>(this)->Flag(Flag_e::WARN_BEFORE_LOCKING);
     }
 
-    void Settler_t::Default_Sitter()
+    template <>
+    void Settler_t::Default<Sitter_t>()
     {
-        Sitter_Radius(DEFAULT_RADIUS);
-        Sitter_Hour(8);
-        Sitter_Minute(0);
-        Sitter_Duration(30);
-        Sitter_Speed(Settler_Speed_e::WALK);
+        using Type_t = Sitter_t;
+        using Flag_e = Type_t::Flag_e;
+
+        static_cast<Type_t*>(this)->Radius(DEFAULT_RADIUS);
+        static_cast<Type_t*>(this)->Hour(8);
+        static_cast<Type_t*>(this)->Minute(0);
+        static_cast<Type_t*>(this)->AM_PM(AM_PM_e::AM);
+        static_cast<Type_t*>(this)->Duration_Hours(0);
+        static_cast<Type_t*>(this)->Duration_Minutes(30);
+        static_cast<Type_t*>(this)->Speed(Settler_Speed_e::WALK);
+
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_SWIMMING);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALWAYS_SNEAK);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::IGNORE_COMBAT);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::KEEP_WEAPONS_DRAWN);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::HIDE_WEAPONS);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::SKIP_COMBAT_ALERT);
+
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_HELLOS_TO_PLAYER);
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_HELLOS_TO_NPCS);
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_IDLE_CHATTER);
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_AGGRO_RADIUS_BEHAVIOR);
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_WORLD_INTERACTIONS);
+        static_cast<Type_t*>(this)->Flag(Flag_e::COMMENT_ON_FRIENDLY_FIRE);
+        static_cast<Type_t*>(this)->Flag(Flag_e::INSPECT_CORPSE_BEHAVIOR);
+        static_cast<Type_t*>(this)->Flag(Flag_e::OBSERVE_COMBAT_BEHAVIOR);
+        static_cast<Type_t*>(this)->Flag(Flag_e::REACT_TO_PLAYER_ACTIONS);
+
+        static_cast<Type_t*>(this)->Unflag(Flag_e::PREFERRED_PATH_ONLY);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::STOP_MOVEMENT);
     }
 
-    void Settler_t::Default_Eater()
+    template <>
+    void Settler_t::Default<Eater_t>()
     {
-        Eater_Radius(DEFAULT_RADIUS);
-        Eater_Hour(12);
-        Eater_Minute(0);
-        Eater_Duration(2 * 60);
-        Eater_Attention(0);
-        Eater_Speed(Settler_Speed_e::FAST_WALK);
+        using Type_t = Eater_t;
+        using Flag_e = Type_t::Flag_e;
+
+        static_cast<Type_t*>(this)->Radius(DEFAULT_RADIUS);
+        static_cast<Type_t*>(this)->Hour(12);
+        static_cast<Type_t*>(this)->Minute(0);
+        static_cast<Type_t*>(this)->AM_PM(AM_PM_e::PM);
+        static_cast<Type_t*>(this)->Duration_Hours(2);
+        static_cast<Type_t*>(this)->Duration_Minutes(0);
+        static_cast<Type_t*>(this)->Attention(0);
+        static_cast<Type_t*>(this)->Speed(Settler_Speed_e::FAST_WALK);
+        static_cast<Type_t*>(this)->Wander_Distance(DEFAULT_WANDER_DISTANCE);
+
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_SWIMMING);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALWAYS_SNEAK);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::IGNORE_COMBAT);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::KEEP_WEAPONS_DRAWN);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::HIDE_WEAPONS);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::SKIP_COMBAT_ALERT);
+
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALLOW_HELLOS_TO_PLAYER);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALLOW_HELLOS_TO_NPCS);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALLOW_IDLE_CHATTER);
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_AGGRO_RADIUS_BEHAVIOR);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALLOW_WORLD_INTERACTIONS);
+        static_cast<Type_t*>(this)->Flag(Flag_e::COMMENT_ON_FRIENDLY_FIRE);
+        static_cast<Type_t*>(this)->Flag(Flag_e::INSPECT_CORPSE_BEHAVIOR);
+        static_cast<Type_t*>(this)->Flag(Flag_e::OBSERVE_COMBAT_BEHAVIOR);
+        static_cast<Type_t*>(this)->Flag(Flag_e::REACT_TO_PLAYER_ACTIONS);
+
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_ALREADY_HELD);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALLOW_CONVERSATION);
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_EATING);
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_FAKE_FOOD);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALLOW_HORSE_RIDING);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALLOW_IDLE_MARKERS);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALLOW_SITTING);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALLOW_SLEEPING);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALLOW_SPECIAL_FURNITURE);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALLOW_WANDERING);
+
+        static_cast<Type_t*>(this)->Unflag(Flag_e::PREFERRED_PATH_ONLY);
+        static_cast<Type_t*>(this)->Flag(Flag_e::UNLOCK_ON_ARRIVAL);
     }
 
-    void Settler_t::Default_Guard()
+    template <>
+    void Settler_t::Default<Guard_t>()
     {
-        Guard_Radius(DEFAULT_RADIUS);
-        Guard_Hour(2 + 12);
-        Guard_Minute(0);
-        Guard_Duration(6 * 60);
-        Guard_Speed(Settler_Speed_e::RUN);
+        using Type_t = Guard_t;
+        using Flag_e = Type_t::Flag_e;
+
+        static_cast<Type_t*>(this)->Radius(0);
+        static_cast<Type_t*>(this)->Hour(2);
+        static_cast<Type_t*>(this)->Minute(0);
+        static_cast<Type_t*>(this)->AM_PM(AM_PM_e::PM);
+        static_cast<Type_t*>(this)->Duration_Hours(5);
+        static_cast<Type_t*>(this)->Duration_Minutes(45);
+        static_cast<Type_t*>(this)->Speed(Settler_Speed_e::RUN);
+
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALLOW_SWIMMING);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALWAYS_SNEAK);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::IGNORE_COMBAT);
+        static_cast<Type_t*>(this)->Flag(Flag_e::KEEP_WEAPONS_DRAWN);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::HIDE_WEAPONS);
+        static_cast<Type_t*>(this)->Flag(Flag_e::SKIP_COMBAT_ALERT);
+
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALLOW_HELLOS_TO_PLAYER);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALLOW_HELLOS_TO_NPCS);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALLOW_IDLE_CHATTER);
+        static_cast<Type_t*>(this)->Flag(Flag_e::ALLOW_AGGRO_RADIUS_BEHAVIOR);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::ALLOW_WORLD_INTERACTIONS);
+        static_cast<Type_t*>(this)->Flag(Flag_e::COMMENT_ON_FRIENDLY_FIRE);
+        static_cast<Type_t*>(this)->Flag(Flag_e::INSPECT_CORPSE_BEHAVIOR);
+        static_cast<Type_t*>(this)->Flag(Flag_e::OBSERVE_COMBAT_BEHAVIOR);
+        static_cast<Type_t*>(this)->Unflag(Flag_e::REACT_TO_PLAYER_ACTIONS);
     }
 
-    /* Enable/Disable */
+    void Sandboxer_t::Default() { Settler_t::Default<Sandboxer_t>(); }
+    void Sleeper_t::Default() { Settler_t::Default<Sleeper_t>(); }
+    void Sitter_t::Default() { Settler_t::Default<Sitter_t>(); }
+    void Eater_t::Default() { Settler_t::Default<Eater_t>(); }
+    void Guard_t::Default() { Settler_t::Default<Guard_t>(); }
 
-    void Settler_t::Enable_Sleeper()
+    /* Clear */
+
+    template <>
+    void Settler_t::Clear<Sandboxer_t>()
     {
-        if (Is_Sandboxer() && !Is_Sleeper()) {
-            Actor_t* actor = Actor();
-            Create_Sleeper(actor);
-            Enforce(actor, true);
-        }
+        using Type_t = Sandboxer_t;
+
+        static_cast<Guard_t*>(this)->Clear();
+        static_cast<Eater_t*>(this)->Clear();
+        static_cast<Sitter_t*>(this)->Clear();
+        static_cast<Sleeper_t*>(this)->Clear();
+
+        static_cast<Type_t*>(this)->Radius_Variable()->Int(0);
+        static_cast<Type_t*>(this)->Movement_Variable()->Int(0);
+        static_cast<Type_t*>(this)->Wander_Distance_Variable()->Int(0);
+        static_cast<Type_t*>(this)->Flags_Variable()->Int(0);
     }
 
-    void Settler_t::Enable_Sitter()
+    template <>
+    void Settler_t::Clear<Sleeper_t>()
     {
-        if (Is_Sandboxer() && !Is_Sitter()) {
-            Actor_t* actor = Actor();
-            Create_Sitter(actor);
-            Enforce(actor, true);
-        }
+        using Type_t = Sleeper_t;
+
+        Class_Info_t* reference_class_info = Object_Ref::Class_Info();
+
+        static_cast<Type_t*>(this)->Marker_Variable()->None(reference_class_info);
+        static_cast<Type_t*>(this)->Radius_Variable()->Int(0);
+        static_cast<Type_t*>(this)->Time_Variable()->Int(0);
+        static_cast<Type_t*>(this)->Duration_Variable()->Int(0);
+        static_cast<Type_t*>(this)->Movement_Variable()->Int(0);
+        static_cast<Type_t*>(this)->Wander_Distance_Variable()->Int(0);
+        static_cast<Type_t*>(this)->Flags_Variable()->Int(0);
+        static_cast<Type_t*>(this)->Bed_Variable()->None(reference_class_info);
     }
 
-    void Settler_t::Enable_Eater()
+    template <>
+    void Settler_t::Clear<Sitter_t>()
     {
-        if (Is_Sandboxer() && !Is_Eater()) {
-            Actor_t* actor = Actor();
-            Create_Eater(actor);
-            Enforce(actor, true);
-        }
+        using Type_t = Sitter_t;
+
+        static_cast<Type_t*>(this)->Marker_Variable()->None(Object_Ref::Class_Info());
+        static_cast<Type_t*>(this)->Radius_Variable()->Int(0);
+        static_cast<Type_t*>(this)->Time_Variable()->Int(0);
+        static_cast<Type_t*>(this)->Duration_Variable()->Int(0);
+        static_cast<Type_t*>(this)->Movement_Variable()->Int(0);
+        static_cast<Type_t*>(this)->Flags_Variable()->Int(0);
     }
 
-    void Settler_t::Enable_Guard()
+    template <>
+    void Settler_t::Clear<Eater_t>()
     {
-        if (Is_Sandboxer() && !Is_Guard()) {
-            Actor_t* actor = Actor();
-            Create_Guard(actor);
-            Enforce(actor, true);
-        }
+        using Type_t = Eater_t;
+
+        static_cast<Type_t*>(this)->Marker_Variable()->None(Object_Ref::Class_Info());
+        static_cast<Type_t*>(this)->Radius_Variable()->Int(0);
+        static_cast<Type_t*>(this)->Time_Variable()->Int(0);
+        static_cast<Type_t*>(this)->Duration_Variable()->Int(0);
+        static_cast<Type_t*>(this)->Movement_Variable()->Int(0);
+        static_cast<Type_t*>(this)->Wander_Distance_Variable()->Int(0);
+        static_cast<Type_t*>(this)->Flags_Variable()->Int(0);
     }
 
-    void Settler_t::Disable_Sleeper()
+    template <>
+    void Settler_t::Clear<Guard_t>()
     {
-        if (Is_Sleeper()) {
-            Actor_t* actor = Actor();
-            Destroy_Sleeper(actor);
-            Enforce(actor, true);
-        }
+        using Type_t = Guard_t;
+
+        static_cast<Type_t*>(this)->Marker_Variable()->None(Object_Ref::Class_Info());
+        static_cast<Type_t*>(this)->Radius_Variable()->Int(0);
+        static_cast<Type_t*>(this)->Time_Variable()->Int(0);
+        static_cast<Type_t*>(this)->Duration_Variable()->Int(0);
+        static_cast<Type_t*>(this)->Movement_Variable()->Int(0);
+        static_cast<Type_t*>(this)->Flags_Variable()->Int(0);
     }
 
-    void Settler_t::Disable_Sitter()
-    {
-        if (Is_Sitter()) {
-            Actor_t* actor = Actor();
-            Destroy_Sitter(actor);
-            Enforce(actor, true);
-        }
-    }
+    void Sandboxer_t::Clear() { Settler_t::Clear<Sandboxer_t>(); }
+    void Sleeper_t::Clear() { Settler_t::Clear<Sleeper_t>(); }
+    void Sitter_t::Clear() { Settler_t::Clear<Sitter_t>(); }
+    void Eater_t::Clear() { Settler_t::Clear<Eater_t>(); }
+    void Guard_t::Clear() { Settler_t::Clear<Guard_t>(); }
 
-    void Settler_t::Disable_Eater()
-    {
-        if (Is_Eater()) {
-            Actor_t* actor = Actor();
-            Destroy_Eater(actor);
-            Enforce(actor, true);
-        }
-    }
+    /* Settler_t */
 
-    void Settler_t::Disable_Guard()
-    {
-        if (Is_Guard()) {
-            Actor_t* actor = Actor();
-            Destroy_Guard(actor);
-            Enforce(actor, true);
-        }
-    }
+    Bool_t Settler_t::Is_Sandboxer() { return static_cast<Sandboxer_t*>(this)->Is_Created(); }
+    Bool_t Settler_t::Is_Sleeper() { return static_cast<Sleeper_t*>(this)->Is_Created(); }
+    Bool_t Settler_t::Is_Sitter() { return static_cast<Sitter_t*>(this)->Is_Created(); }
+    Bool_t Settler_t::Is_Eater() { return static_cast<Eater_t*>(this)->Is_Created(); }
+    Bool_t Settler_t::Is_Guard() { return static_cast<Guard_t*>(this)->Is_Created(); }
 
-    /* Move Marker */
+    void Settler_t::Enable_Sandboxer() { static_cast<Sandboxer_t*>(this)->Create(); }
+    void Settler_t::Enable_Sleeper() { static_cast<Sleeper_t*>(this)->Create(); }
+    void Settler_t::Enable_Sitter() { static_cast<Sitter_t*>(this)->Create(); }
+    void Settler_t::Enable_Eater() { static_cast<Eater_t*>(this)->Create(); }
+    void Settler_t::Enable_Guard() { static_cast<Guard_t*>(this)->Create(); }
 
-    inline void Move_Marker(Settler_t* self, Reference_t* marker)
-    {
-        if (marker) {
-            Actor_t* actor = self->Actor();
-            Object_Ref::Move_To_Orbit(marker, Consts::Player_Actor(), 0.0f, 180.0f);
-            self->Enforce(actor);
-            Actor2::Evaluate_Package(actor);
-        }
-    }
-
-    void Settler_t::Move_Sandboxer_Marker()
-    {
-        if (Is_Sandboxer()) {
-            Move_Marker(this, Sandboxer_Marker());
-        }
-    }
-
-    void Settler_t::Move_Sleeper_Marker()
-    {
-        if (Is_Sleeper()) {
-            Move_Marker(this, Sleeper_Marker());
-        }
-    }
-
-    void Settler_t::Move_Sitter_Marker()
-    {
-        if (Is_Sitter()) {
-            Move_Marker(this, Sitter_Marker());
-        }
-    }
-
-    void Settler_t::Move_Eater_Marker()
-    {
-        if (Is_Eater()) {
-            Move_Marker(this, Eater_Marker());
-        }
-    }
-
-    void Settler_t::Move_Guard_Marker()
-    {
-        if (Is_Guard()) {
-            Move_Marker(this, Guard_Marker());
-        }
-    }
-
-    /* Enforce */
+    void Settler_t::Disable_Sandboxer() { static_cast<Sandboxer_t*>(this)->Destroy(true); }
+    void Settler_t::Disable_Sleeper() { static_cast<Sleeper_t*>(this)->Destroy(true); }
+    void Settler_t::Disable_Sitter() { static_cast<Sitter_t*>(this)->Destroy(true); }
+    void Settler_t::Disable_Eater() { static_cast<Eater_t*>(this)->Destroy(true); }
+    void Settler_t::Disable_Guard() { static_cast<Guard_t*>(this)->Destroy(true); }
 
     void Settler_t::Enforce(Actor_t* actor, Bool_t force_reset_ai)
     {
         Bool_t do_reset_ai = force_reset_ai;
+
+        auto Enforce_General_Flag = [&](Package_t* package, Package_t::General_Flag_e flag, Bool_t is_enabled)->void
+        {
+            if (is_enabled) {
+                if ((package->flags & static_cast<UInt32>(flag)) == 0) {
+                    do_reset_ai = true;
+                    package->flags |= static_cast<UInt32>(flag);
+                }
+            } else {
+                if ((package->flags & static_cast<UInt32>(flag)) != 0) {
+                    do_reset_ai = true;
+                    package->flags &= ~static_cast<UInt32>(flag);
+                }
+            }
+        };
+
+        auto Enforce_Interrupt_Flag = [&](Package_t* package, Package_t::Interrupt_Flag_e flag, Bool_t is_enabled)->void
+        {
+            if (is_enabled) {
+                if ((package->interrupt_flags & static_cast<UInt16>(flag)) == 0) {
+                    do_reset_ai = true;
+                    package->interrupt_flags |= static_cast<UInt16>(flag);
+                }
+            } else {
+                if ((package->interrupt_flags & static_cast<UInt16>(flag)) != 0) {
+                    do_reset_ai = true;
+                    package->interrupt_flags &= ~static_cast<UInt16>(flag);
+                }
+            }
+        };
+
+        auto Enforce_Bool = [&](Package_t* package, Bool_t is_enabled, UInt16 value_index)->void
+        {
+            enum {
+                IS_FALSE = 0,
+                IS_TRUE = 2,
+            };
+
+            Package_Bool_Value_t* value = static_cast<Package_Bool_Value_t*>
+                (package->data->values[value_index]);
+            if (is_enabled) {
+                if (value->value == IS_FALSE) {
+                    do_reset_ai = true;
+                    value->value = IS_TRUE;
+                }
+            } else {
+                if (value->value == IS_TRUE) {
+                    do_reset_ai = true;
+                    value->value = IS_FALSE;
+                }
+            }
+        };
 
         auto Enforce_Location = [&](Package_t* package, Reference_t* marker, Int_t radius, UInt16 value_index)->void
         {
@@ -1051,16 +1347,31 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             }
         };
 
-        auto Enforce_Time = [&](Package_t* package, Int_t hour, Int_t minute, Int_t duration)->void
+        auto Enforce_Time = [&](Package_t* package, Int_t hour, Int_t minute, AM_PM_e am_pm, Int_t duration_hours, Int_t duration_minutes)->void
         {
             Package_Schedule_t& schedule = package->schedule;
+
+            if (hour == 12) {
+                hour = 0;
+            }
+            if (am_pm == AM_PM_e::PM) {
+                hour += 12;
+            }
             if (schedule.hour != hour) {
                 do_reset_ai = true;
                 schedule.hour = hour;
             }
+
             if (schedule.minute != minute) {
                 do_reset_ai = true;
                 schedule.minute = minute;
+            }
+
+            Int_t duration = (duration_hours * 60) + duration_minutes;
+            if (duration < Settler_t::MIN_DURATION) {
+                duration = Settler_t::MIN_DURATION;
+            } else if (duration > Settler_t::MAX_DURATION) {
+                duration = Settler_t::MAX_DURATION;
             }
             if (schedule.duration_in_minutes != duration) {
                 do_reset_ai = true;
@@ -1080,104 +1391,332 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         auto Enforce_Speed = [&](Package_t* package, Settler_Speed_e speed)->void
         {
-            package->flags |= static_cast<UInt32>(Package_t::General_Flag_e::PREFERRED_SPEED);
-            package->preferred_speed = speed;
+            Enforce_General_Flag(package, Package_t::General_Flag_e::ALLOW_PREFERRED_SPEED, true);
+            if (package->preferred_speed != speed) {
+                do_reset_ai = true;
+                package->preferred_speed = speed;
+            }
+        };
+
+        auto Enforce_Wander_Distance = [&](Package_t* package, Float_t wander_distance, UInt16 value_index)->void
+        {
+            Package_Float_Value_t* value = static_cast<Package_Float_Value_t*>
+                (package->data->values[value_index]);
+            if (value->value != wander_distance) {
+                do_reset_ai = true;
+                value->value = wander_distance;
+            }
         };
 
         auto Enforce_Sandboxer = [&]()->void
         {
+            using General_e = Package_t::General_Flag_e;
+            using Interrupt_e = Package_t::Interrupt_Flag_e;
+            using Flag_e = Sandboxer_t::Flag_e;
+            using Value_e = Sandboxer_Value_e;
+
             enum : UInt16 {
-                LOCATION = static_cast<UInt16>(Sandboxer_Value_e::LOCATION),
-                ATTENTION = static_cast<UInt16>(Sandboxer_Value_e::ATTENTION),
+                LOCATION = static_cast<UInt16>(Value_e::LOCATION),
+                ATTENTION = static_cast<UInt16>(Value_e::ATTENTION),
+                MIN_WANDER_DISTANCE = static_cast<UInt16>(Value_e::MIN_WANDER_DISTANCE),
+
+                ALLOW_CONVERSATION = static_cast<UInt16>(Value_e::ALLOW_CONVERSATION),
+                ALLOW_EATING = static_cast<UInt16>(Value_e::ALLOW_EATING),
+                ALLOW_HORSE_RIDING = static_cast<UInt16>(Value_e::ALLOW_HORSE_RIDING),
+                ALLOW_IDLE_MARKERS = static_cast<UInt16>(Value_e::ALLOW_IDLE_MARKERS),
+                ALLOW_SITTING = static_cast<UInt16>(Value_e::ALLOW_SITTING),
+                ALLOW_SLEEPING = static_cast<UInt16>(Value_e::ALLOW_SLEEPING),
+                ALLOW_SPECIAL_FURNITURE = static_cast<UInt16>(Value_e::ALLOW_SPECIAL_FURNITURE),
+                ALLOW_WANDERING = static_cast<UInt16>(Value_e::ALLOW_WANDERING),
+                
+                DO_PREFERRED_PATH_ONLY = static_cast<UInt16>(Value_e::DO_PREFERRED_PATH_ONLY),
+                DO_UNLOCK_ON_ARRIVAL = static_cast<UInt16>(Value_e::DO_UNLOCK_ON_ARRIVAL),
             };
 
-            if (Is_Sandboxer()) {
-                Package_t* package = Sandboxer_Package();
-                Enforce_Location(package, Sandboxer_Marker(), Sandboxer_Radius(), LOCATION);
-                Enforce_Attention(package, Sandboxer_Attention(), ATTENTION);
-                Enforce_Speed(package, Sandboxer_Speed());
+            Sandboxer_t* self = static_cast<Sandboxer_t*>(this);
 
-                Object_Ref::Token(actor, Consts::Settler_Token());
+            if (self->Is_Created()) {
+                Package_t* package = self->Package();
+                Enforce_Location(package, self->Marker(), self->Radius(), LOCATION);
+                Enforce_Attention(package, self->Attention(), ATTENTION);
+                Enforce_Speed(package, self->Speed());
+                Enforce_Wander_Distance(package, self->Wander_Distance(), MIN_WANDER_DISTANCE);
+
+                Enforce_General_Flag(package, General_e::ALLOW_SWIMMING, self->Is_Flagged(Flag_e::ALLOW_SWIMMING));
+                Enforce_General_Flag(package, General_e::ALWAYS_SNEAK, self->Is_Flagged(Flag_e::ALWAYS_SNEAK));
+                Enforce_General_Flag(package, General_e::IGNORE_COMBAT, self->Is_Flagged(Flag_e::IGNORE_COMBAT));
+                Enforce_General_Flag(package, General_e::KEEP_WEAPONS_DRAWN, self->Is_Flagged(Flag_e::KEEP_WEAPONS_DRAWN));
+                Enforce_General_Flag(package, General_e::HIDE_WEAPONS, self->Is_Flagged(Flag_e::HIDE_WEAPONS));
+                Enforce_General_Flag(package, General_e::SKIP_COMBAT_ALERT, self->Is_Flagged(Flag_e::SKIP_COMBAT_ALERT));
+                
+                Enforce_Interrupt_Flag(package, Interrupt_e::ALLOW_HELLOS_TO_PLAYER, self->Is_Flagged(Flag_e::ALLOW_HELLOS_TO_PLAYER));
+                Enforce_Interrupt_Flag(package, Interrupt_e::ALLOW_HELLOS_TO_NPCS, self->Is_Flagged(Flag_e::ALLOW_HELLOS_TO_NPCS));
+                Enforce_Interrupt_Flag(package, Interrupt_e::ALLOW_IDLE_CHATTER, self->Is_Flagged(Flag_e::ALLOW_IDLE_CHATTER));
+                Enforce_Interrupt_Flag(package, Interrupt_e::ALLOW_AGGRO_RADIUS_BEHAVIOR, self->Is_Flagged(Flag_e::ALLOW_AGGRO_RADIUS_BEHAVIOR));
+                Enforce_Interrupt_Flag(package, Interrupt_e::ALLOW_WORLD_INTERACTIONS, self->Is_Flagged(Flag_e::ALLOW_WORLD_INTERACTIONS));
+                Enforce_Interrupt_Flag(package, Interrupt_e::COMMENT_ON_FRIENDLY_FIRE, self->Is_Flagged(Flag_e::COMMENT_ON_FRIENDLY_FIRE));
+                Enforce_Interrupt_Flag(package, Interrupt_e::INSPECT_CORPSE_BEHAVIOR, self->Is_Flagged(Flag_e::INSPECT_CORPSE_BEHAVIOR));
+                Enforce_Interrupt_Flag(package, Interrupt_e::OBSERVE_COMBAT_BEHAVIOR, self->Is_Flagged(Flag_e::OBSERVE_COMBAT_BEHAVIOR));
+                Enforce_Interrupt_Flag(package, Interrupt_e::REACT_TO_PLAYER_ACTIONS, self->Is_Flagged(Flag_e::REACT_TO_PLAYER_ACTIONS));
+
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::ALLOW_CONVERSATION), ALLOW_CONVERSATION);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::ALLOW_EATING), ALLOW_EATING);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::ALLOW_HORSE_RIDING), ALLOW_HORSE_RIDING);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::ALLOW_IDLE_MARKERS), ALLOW_IDLE_MARKERS);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::ALLOW_SITTING), ALLOW_SITTING);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::ALLOW_SLEEPING), ALLOW_SLEEPING);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::ALLOW_SPECIAL_FURNITURE), ALLOW_SPECIAL_FURNITURE);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::ALLOW_WANDERING), ALLOW_WANDERING);
+
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::PREFERRED_PATH_ONLY), DO_PREFERRED_PATH_ONLY);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::UNLOCK_ON_ARRIVAL), DO_UNLOCK_ON_ARRIVAL);
+
+                Object_Ref::Token(actor, self->Token());
             } else {
-                Object_Ref::Untoken(actor, Consts::Settler_Token());
+                Object_Ref::Untoken(actor, self->Token());
             }
         };
 
         auto Enforce_Sleeper = [&]()->void
         {
+            using General_e = Package_t::General_Flag_e;
+            using Interrupt_e = Package_t::Interrupt_Flag_e;
+            using Flag_e = Sleeper_t::Flag_e;
+            using Value_e = Sleeper_Value_e;
+
             enum : UInt16 {
-                LOCATION = static_cast<UInt16>(Sleeper_Value_e::LOCATION),
-                ATTENTION = static_cast<UInt16>(Sleeper_Value_e::ATTENTION),
+                LOCATION = static_cast<UInt16>(Value_e::LOCATION),
+                ATTENTION = static_cast<UInt16>(Value_e::ATTENTION),
+                MIN_WANDER_DISTANCE = static_cast<UInt16>(Value_e::MIN_WANDER_DISTANCE),
+
+                ALLOW_CONVERSATION = static_cast<UInt16>(Value_e::ALLOW_CONVERSATION),
+                ALLOW_EATING = static_cast<UInt16>(Value_e::ALLOW_EATING),
+                ALLOW_HORSE_RIDING = static_cast<UInt16>(Value_e::ALLOW_HORSE_RIDING),
+                ALLOW_IDLE_MARKERS = static_cast<UInt16>(Value_e::ALLOW_IDLE_MARKERS),
+                ALLOW_SITTING = static_cast<UInt16>(Value_e::ALLOW_SITTING),
+                ALLOW_SLEEPING = static_cast<UInt16>(Value_e::ALLOW_SLEEPING),
+                ALLOW_SPECIAL_FURNITURE = static_cast<UInt16>(Value_e::ALLOW_SPECIAL_FURNITURE),
+                ALLOW_WANDERING = static_cast<UInt16>(Value_e::ALLOW_WANDERING),
+
+                DO_LOCK_DOORS = static_cast<UInt16>(Value_e::DO_LOCK_DOORS),
+                DO_PREFERRED_PATH_ONLY = static_cast<UInt16>(Value_e::DO_PREFERRED_PATH_ONLY),
+                DO_WARN_BEFORE_LOCKING = static_cast<UInt16>(Value_e::DO_WARN_BEFORE_LOCKING),
             };
 
-            if (Is_Sleeper()) {
-                Package_t* package = Sleeper_Package();
-                Enforce_Location(package, Sleeper_Marker(), Sleeper_Radius(), LOCATION);
-                Enforce_Time(package, Sleeper_Hour(), Sleeper_Minute(), Sleeper_Duration());
-                Enforce_Attention(package, Sleeper_Attention(), ATTENTION);
-                Enforce_Speed(package, Sleeper_Speed());
+            Sleeper_t* self = static_cast<Sleeper_t*>(this);
 
-                Object_Ref::Token(actor, Consts::Settler_Sleeper_Token());
+            if (self->Is_Created()) {
+                Package_t* package = self->Package();
+                Enforce_Location(package, self->Marker(), self->Radius(), LOCATION);
+                Enforce_Time(package, self->Hour(), self->Minute(), self->AM_PM(), self->Duration_Hours(), self->Duration_Minutes());
+                Enforce_Attention(package, self->Attention(), ATTENTION);
+                Enforce_Speed(package, self->Speed());
+                Enforce_Wander_Distance(package, self->Wander_Distance(), MIN_WANDER_DISTANCE);
+
+                Enforce_General_Flag(package, General_e::ALLOW_SWIMMING, self->Is_Flagged(Flag_e::ALLOW_SWIMMING));
+                Enforce_General_Flag(package, General_e::ALWAYS_SNEAK, self->Is_Flagged(Flag_e::ALWAYS_SNEAK));
+                Enforce_General_Flag(package, General_e::IGNORE_COMBAT, self->Is_Flagged(Flag_e::IGNORE_COMBAT));
+                Enforce_General_Flag(package, General_e::KEEP_WEAPONS_DRAWN, self->Is_Flagged(Flag_e::KEEP_WEAPONS_DRAWN));
+                Enforce_General_Flag(package, General_e::HIDE_WEAPONS, self->Is_Flagged(Flag_e::HIDE_WEAPONS));
+                Enforce_General_Flag(package, General_e::SKIP_COMBAT_ALERT, self->Is_Flagged(Flag_e::SKIP_COMBAT_ALERT));
+
+                Enforce_Interrupt_Flag(package, Interrupt_e::ALLOW_HELLOS_TO_PLAYER, self->Is_Flagged(Flag_e::ALLOW_HELLOS_TO_PLAYER));
+                Enforce_Interrupt_Flag(package, Interrupt_e::ALLOW_HELLOS_TO_NPCS, self->Is_Flagged(Flag_e::ALLOW_HELLOS_TO_NPCS));
+                Enforce_Interrupt_Flag(package, Interrupt_e::ALLOW_IDLE_CHATTER, self->Is_Flagged(Flag_e::ALLOW_IDLE_CHATTER));
+                Enforce_Interrupt_Flag(package, Interrupt_e::ALLOW_AGGRO_RADIUS_BEHAVIOR, self->Is_Flagged(Flag_e::ALLOW_AGGRO_RADIUS_BEHAVIOR));
+                Enforce_Interrupt_Flag(package, Interrupt_e::ALLOW_WORLD_INTERACTIONS, self->Is_Flagged(Flag_e::ALLOW_WORLD_INTERACTIONS));
+                Enforce_Interrupt_Flag(package, Interrupt_e::COMMENT_ON_FRIENDLY_FIRE, self->Is_Flagged(Flag_e::COMMENT_ON_FRIENDLY_FIRE));
+                Enforce_Interrupt_Flag(package, Interrupt_e::INSPECT_CORPSE_BEHAVIOR, self->Is_Flagged(Flag_e::INSPECT_CORPSE_BEHAVIOR));
+                Enforce_Interrupt_Flag(package, Interrupt_e::OBSERVE_COMBAT_BEHAVIOR, self->Is_Flagged(Flag_e::OBSERVE_COMBAT_BEHAVIOR));
+                Enforce_Interrupt_Flag(package, Interrupt_e::REACT_TO_PLAYER_ACTIONS, self->Is_Flagged(Flag_e::REACT_TO_PLAYER_ACTIONS));
+
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::ALLOW_CONVERSATION), ALLOW_CONVERSATION);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::ALLOW_EATING), ALLOW_EATING);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::ALLOW_HORSE_RIDING), ALLOW_HORSE_RIDING);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::ALLOW_IDLE_MARKERS), ALLOW_IDLE_MARKERS);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::ALLOW_SITTING), ALLOW_SITTING);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::ALLOW_SLEEPING), ALLOW_SLEEPING);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::ALLOW_SPECIAL_FURNITURE), ALLOW_SPECIAL_FURNITURE);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::ALLOW_WANDERING), ALLOW_WANDERING);
+
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::LOCK_DOORS), DO_LOCK_DOORS);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::PREFERRED_PATH_ONLY), DO_PREFERRED_PATH_ONLY);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::WARN_BEFORE_LOCKING), DO_WARN_BEFORE_LOCKING);
+
+                Reference_t* bed = self->Bed_Variable()->Reference();
+                if (bed) {
+                    Object_Ref::Owner(bed, Base_Actor());
+                }
+
+                Object_Ref::Token(actor, self->Token());
             } else {
-                Object_Ref::Untoken(actor, Consts::Settler_Sleeper_Token());
+                Object_Ref::Untoken(actor, self->Token());
             }
         };
 
         auto Enforce_Sitter = [&]()
         {
+            using General_e = Package_t::General_Flag_e;
+            using Interrupt_e = Package_t::Interrupt_Flag_e;
+            using Flag_e = Sitter_t::Flag_e;
+            using Value_e = Sitter_Value_e;
+
             enum : UInt16 {
-                LOCATION = static_cast<UInt16>(Sitter_Value_e::LOCATION),
+                LOCATION = static_cast<UInt16>(Value_e::LOCATION),
+
+                DO_PREFERRED_PATH_ONLY = static_cast<UInt16>(Value_e::DO_PREFERRED_PATH_ONLY),
+                DO_STOP_MOVEMENT = static_cast<UInt16>(Value_e::DO_STOP_MOVEMENT),
             };
 
-            if (Is_Sitter()) {
-                Package_t* package = Sitter_Package();
-                Enforce_Location(package, Sitter_Marker(), Sitter_Radius(), LOCATION);
-                Enforce_Time(package, Sitter_Hour(), Sitter_Minute(), Sitter_Duration());
-                Enforce_Speed(package, Sitter_Speed());
+            Sitter_t* self = static_cast<Sitter_t*>(this);
 
-                Object_Ref::Token(actor, Consts::Settler_Sitter_Token());
+            if (self->Is_Created()) {
+                Package_t* package = self->Package();
+                Enforce_Location(package, self->Marker(), self->Radius(), LOCATION);
+                Enforce_Time(package, self->Hour(), self->Minute(), self->AM_PM(), self->Duration_Hours(), self->Duration_Minutes());
+                Enforce_Speed(package, self->Speed());
+
+                Enforce_General_Flag(package, General_e::ALLOW_SWIMMING, self->Is_Flagged(Flag_e::ALLOW_SWIMMING));
+                Enforce_General_Flag(package, General_e::ALWAYS_SNEAK, self->Is_Flagged(Flag_e::ALWAYS_SNEAK));
+                Enforce_General_Flag(package, General_e::IGNORE_COMBAT, self->Is_Flagged(Flag_e::IGNORE_COMBAT));
+                Enforce_General_Flag(package, General_e::KEEP_WEAPONS_DRAWN, self->Is_Flagged(Flag_e::KEEP_WEAPONS_DRAWN));
+                Enforce_General_Flag(package, General_e::HIDE_WEAPONS, self->Is_Flagged(Flag_e::HIDE_WEAPONS));
+                Enforce_General_Flag(package, General_e::SKIP_COMBAT_ALERT, self->Is_Flagged(Flag_e::SKIP_COMBAT_ALERT));
+
+                Enforce_Interrupt_Flag(package, Interrupt_e::ALLOW_HELLOS_TO_PLAYER, self->Is_Flagged(Flag_e::ALLOW_HELLOS_TO_PLAYER));
+                Enforce_Interrupt_Flag(package, Interrupt_e::ALLOW_HELLOS_TO_NPCS, self->Is_Flagged(Flag_e::ALLOW_HELLOS_TO_NPCS));
+                Enforce_Interrupt_Flag(package, Interrupt_e::ALLOW_IDLE_CHATTER, self->Is_Flagged(Flag_e::ALLOW_IDLE_CHATTER));
+                Enforce_Interrupt_Flag(package, Interrupt_e::ALLOW_AGGRO_RADIUS_BEHAVIOR, self->Is_Flagged(Flag_e::ALLOW_AGGRO_RADIUS_BEHAVIOR));
+                Enforce_Interrupt_Flag(package, Interrupt_e::ALLOW_WORLD_INTERACTIONS, self->Is_Flagged(Flag_e::ALLOW_WORLD_INTERACTIONS));
+                Enforce_Interrupt_Flag(package, Interrupt_e::COMMENT_ON_FRIENDLY_FIRE, self->Is_Flagged(Flag_e::COMMENT_ON_FRIENDLY_FIRE));
+                Enforce_Interrupt_Flag(package, Interrupt_e::INSPECT_CORPSE_BEHAVIOR, self->Is_Flagged(Flag_e::INSPECT_CORPSE_BEHAVIOR));
+                Enforce_Interrupt_Flag(package, Interrupt_e::OBSERVE_COMBAT_BEHAVIOR, self->Is_Flagged(Flag_e::OBSERVE_COMBAT_BEHAVIOR));
+                Enforce_Interrupt_Flag(package, Interrupt_e::REACT_TO_PLAYER_ACTIONS, self->Is_Flagged(Flag_e::REACT_TO_PLAYER_ACTIONS));
+
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::PREFERRED_PATH_ONLY), DO_PREFERRED_PATH_ONLY);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::STOP_MOVEMENT), DO_STOP_MOVEMENT);
+
+                Object_Ref::Token(actor, self->Token());
             } else {
-                Object_Ref::Untoken(actor, Consts::Settler_Sitter_Token());
+                Object_Ref::Untoken(actor, self->Token());
             }
         };
 
         auto Enforce_Eater = [&]()->void
         {
+            using General_e = Package_t::General_Flag_e;
+            using Interrupt_e = Package_t::Interrupt_Flag_e;
+            using Flag_e = Eater_t::Flag_e;
+            using Value_e = Eater_Value_e;
+
             enum : UInt16 {
-                LOCATION = static_cast<UInt16>(Eater_Value_e::LOCATION),
-                ATTENTION = static_cast<UInt16>(Eater_Value_e::ATTENTION),
+                LOCATION = static_cast<UInt16>(Value_e::LOCATION),
+                ATTENTION = static_cast<UInt16>(Value_e::ATTENTION),
+                MIN_WANDER_DISTANCE = static_cast<UInt16>(Value_e::MIN_WANDER_DISTANCE),
+
+                ALLOW_ALREADY_HELD = static_cast<UInt16>(Value_e::ALLOW_ALREADY_HELD),
+                ALLOW_CONVERSATION = static_cast<UInt16>(Value_e::ALLOW_CONVERSATION),
+                ALLOW_EATING = static_cast<UInt16>(Value_e::ALLOW_EATING),
+                ALLOW_FAKE_FOOD = static_cast<UInt16>(Value_e::ALLOW_FAKE_FOOD),
+                ALLOW_HORSE_RIDING = static_cast<UInt16>(Value_e::ALLOW_HORSE_RIDING),
+                ALLOW_IDLE_MARKERS = static_cast<UInt16>(Value_e::ALLOW_IDLE_MARKERS),
+                ALLOW_SITTING = static_cast<UInt16>(Value_e::ALLOW_SITTING),
+                ALLOW_SLEEPING = static_cast<UInt16>(Value_e::ALLOW_SLEEPING),
+                ALLOW_SPECIAL_FURNITURE = static_cast<UInt16>(Value_e::ALLOW_SPECIAL_FURNITURE),
+                ALLOW_WANDERING = static_cast<UInt16>(Value_e::ALLOW_WANDERING),
+
+                DO_PREFERRED_PATH_ONLY = static_cast<UInt16>(Value_e::DO_PREFERRED_PATH_ONLY),
+                DO_UNLOCK_ON_ARRIVAL = static_cast<UInt16>(Value_e::DO_UNLOCK_ON_ARRIVAL),
             };
 
-            if (Is_Eater()) {
-                Package_t* package = Eater_Package();
-                Enforce_Location(package, Eater_Marker(), Eater_Radius(), LOCATION);
-                Enforce_Time(package, Eater_Hour(), Eater_Minute(), Eater_Duration());
-                Enforce_Attention(package, Eater_Attention(), ATTENTION);
-                Enforce_Speed(package, Eater_Speed());
+            Eater_t* self = static_cast<Eater_t*>(this);
 
-                Object_Ref::Token(actor, Consts::Settler_Eater_Token());
+            if (self->Is_Created()) {
+                Package_t* package = self->Package();
+                Enforce_Location(package, self->Marker(), self->Radius(), LOCATION);
+                Enforce_Time(package, self->Hour(), self->Minute(), self->AM_PM(), self->Duration_Hours(), self->Duration_Minutes());
+                Enforce_Attention(package, self->Attention(), ATTENTION);
+                Enforce_Speed(package, self->Speed());
+                Enforce_Wander_Distance(package, self->Wander_Distance(), MIN_WANDER_DISTANCE);
+
+                Enforce_General_Flag(package, General_e::ALLOW_SWIMMING, self->Is_Flagged(Flag_e::ALLOW_SWIMMING));
+                Enforce_General_Flag(package, General_e::ALWAYS_SNEAK, self->Is_Flagged(Flag_e::ALWAYS_SNEAK));
+                Enforce_General_Flag(package, General_e::IGNORE_COMBAT, self->Is_Flagged(Flag_e::IGNORE_COMBAT));
+                Enforce_General_Flag(package, General_e::KEEP_WEAPONS_DRAWN, self->Is_Flagged(Flag_e::KEEP_WEAPONS_DRAWN));
+                Enforce_General_Flag(package, General_e::HIDE_WEAPONS, self->Is_Flagged(Flag_e::HIDE_WEAPONS));
+                Enforce_General_Flag(package, General_e::SKIP_COMBAT_ALERT, self->Is_Flagged(Flag_e::SKIP_COMBAT_ALERT));
+
+                Enforce_Interrupt_Flag(package, Interrupt_e::ALLOW_HELLOS_TO_PLAYER, self->Is_Flagged(Flag_e::ALLOW_HELLOS_TO_PLAYER));
+                Enforce_Interrupt_Flag(package, Interrupt_e::ALLOW_HELLOS_TO_NPCS, self->Is_Flagged(Flag_e::ALLOW_HELLOS_TO_NPCS));
+                Enforce_Interrupt_Flag(package, Interrupt_e::ALLOW_IDLE_CHATTER, self->Is_Flagged(Flag_e::ALLOW_IDLE_CHATTER));
+                Enforce_Interrupt_Flag(package, Interrupt_e::ALLOW_AGGRO_RADIUS_BEHAVIOR, self->Is_Flagged(Flag_e::ALLOW_AGGRO_RADIUS_BEHAVIOR));
+                Enforce_Interrupt_Flag(package, Interrupt_e::ALLOW_WORLD_INTERACTIONS, self->Is_Flagged(Flag_e::ALLOW_WORLD_INTERACTIONS));
+                Enforce_Interrupt_Flag(package, Interrupt_e::COMMENT_ON_FRIENDLY_FIRE, self->Is_Flagged(Flag_e::COMMENT_ON_FRIENDLY_FIRE));
+                Enforce_Interrupt_Flag(package, Interrupt_e::INSPECT_CORPSE_BEHAVIOR, self->Is_Flagged(Flag_e::INSPECT_CORPSE_BEHAVIOR));
+                Enforce_Interrupt_Flag(package, Interrupt_e::OBSERVE_COMBAT_BEHAVIOR, self->Is_Flagged(Flag_e::OBSERVE_COMBAT_BEHAVIOR));
+                Enforce_Interrupt_Flag(package, Interrupt_e::REACT_TO_PLAYER_ACTIONS, self->Is_Flagged(Flag_e::REACT_TO_PLAYER_ACTIONS));
+
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::ALLOW_ALREADY_HELD), ALLOW_ALREADY_HELD);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::ALLOW_CONVERSATION), ALLOW_CONVERSATION);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::ALLOW_EATING), ALLOW_EATING);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::ALLOW_FAKE_FOOD), ALLOW_FAKE_FOOD);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::ALLOW_HORSE_RIDING), ALLOW_HORSE_RIDING);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::ALLOW_IDLE_MARKERS), ALLOW_IDLE_MARKERS);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::ALLOW_SITTING), ALLOW_SITTING);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::ALLOW_SLEEPING), ALLOW_SLEEPING);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::ALLOW_SPECIAL_FURNITURE), ALLOW_SPECIAL_FURNITURE);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::ALLOW_WANDERING), ALLOW_WANDERING);
+
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::PREFERRED_PATH_ONLY), DO_PREFERRED_PATH_ONLY);
+                Enforce_Bool(package, self->Is_Flagged(Flag_e::UNLOCK_ON_ARRIVAL), DO_UNLOCK_ON_ARRIVAL);
+
+                Object_Ref::Token(actor, self->Token());
             } else {
-                Object_Ref::Untoken(actor, Consts::Settler_Eater_Token());
+                Object_Ref::Untoken(actor, self->Token());
             }
         };
 
         auto Enforce_Guard = [&]()->void
         {
+            using General_e = Package_t::General_Flag_e;
+            using Interrupt_e = Package_t::Interrupt_Flag_e;
+            using Flag_e = Guard_t::Flag_e;
+            using Value_e = Guard_Value_e;
+
             enum : UInt16 {
-                WAIT_LOCATION = static_cast<UInt16>(Guard_Value_e::WAIT_LOCATION),
-                RESTRICTED_LOCATION = static_cast<UInt16>(Guard_Value_e::RESTRICTED_LOCATION),
+                WAIT_LOCATION = static_cast<UInt16>(Value_e::WAIT_LOCATION),
+                RESTRICTED_LOCATION = static_cast<UInt16>(Value_e::RESTRICTED_LOCATION),
             };
 
-            if (Is_Guard()) {
-                Package_t* package = Guard_Package();
-                Enforce_Location(package, Guard_Marker(), 0, WAIT_LOCATION);
-                Enforce_Location(package, Guard_Marker(), Guard_Radius(), RESTRICTED_LOCATION);
-                Enforce_Time(package, Guard_Hour(), Guard_Minute(), Guard_Duration());
-                Enforce_Speed(package, Guard_Speed());
+            Guard_t* self = static_cast<Guard_t*>(this);
 
-                Object_Ref::Token(actor, Consts::Settler_Guard_Token());
+            if (self->Is_Created()) {
+                Package_t* package = self->Package();
+                Enforce_Location(package, self->Marker(), 0, WAIT_LOCATION);
+                Enforce_Location(package, self->Marker(), self->Radius(), RESTRICTED_LOCATION);
+                Enforce_Time(package, self->Hour(), self->Minute(), self->AM_PM(), self->Duration_Hours(), self->Duration_Minutes());
+                Enforce_Speed(package, self->Speed());
+
+                Enforce_General_Flag(package, General_e::ALLOW_SWIMMING, self->Is_Flagged(Flag_e::ALLOW_SWIMMING));
+                Enforce_General_Flag(package, General_e::ALWAYS_SNEAK, self->Is_Flagged(Flag_e::ALWAYS_SNEAK));
+                Enforce_General_Flag(package, General_e::IGNORE_COMBAT, self->Is_Flagged(Flag_e::IGNORE_COMBAT));
+                Enforce_General_Flag(package, General_e::KEEP_WEAPONS_DRAWN, self->Is_Flagged(Flag_e::KEEP_WEAPONS_DRAWN));
+                Enforce_General_Flag(package, General_e::HIDE_WEAPONS, self->Is_Flagged(Flag_e::HIDE_WEAPONS));
+                Enforce_General_Flag(package, General_e::SKIP_COMBAT_ALERT, self->Is_Flagged(Flag_e::SKIP_COMBAT_ALERT));
+
+                Enforce_Interrupt_Flag(package, Interrupt_e::ALLOW_HELLOS_TO_PLAYER, self->Is_Flagged(Flag_e::ALLOW_HELLOS_TO_PLAYER));
+                Enforce_Interrupt_Flag(package, Interrupt_e::ALLOW_HELLOS_TO_NPCS, self->Is_Flagged(Flag_e::ALLOW_HELLOS_TO_NPCS));
+                Enforce_Interrupt_Flag(package, Interrupt_e::ALLOW_IDLE_CHATTER, self->Is_Flagged(Flag_e::ALLOW_IDLE_CHATTER));
+                Enforce_Interrupt_Flag(package, Interrupt_e::ALLOW_AGGRO_RADIUS_BEHAVIOR, self->Is_Flagged(Flag_e::ALLOW_AGGRO_RADIUS_BEHAVIOR));
+                Enforce_Interrupt_Flag(package, Interrupt_e::ALLOW_WORLD_INTERACTIONS, self->Is_Flagged(Flag_e::ALLOW_WORLD_INTERACTIONS));
+                Enforce_Interrupt_Flag(package, Interrupt_e::COMMENT_ON_FRIENDLY_FIRE, self->Is_Flagged(Flag_e::COMMENT_ON_FRIENDLY_FIRE));
+                Enforce_Interrupt_Flag(package, Interrupt_e::INSPECT_CORPSE_BEHAVIOR, self->Is_Flagged(Flag_e::INSPECT_CORPSE_BEHAVIOR));
+                Enforce_Interrupt_Flag(package, Interrupt_e::OBSERVE_COMBAT_BEHAVIOR, self->Is_Flagged(Flag_e::OBSERVE_COMBAT_BEHAVIOR));
+                Enforce_Interrupt_Flag(package, Interrupt_e::REACT_TO_PLAYER_ACTIONS, self->Is_Flagged(Flag_e::REACT_TO_PLAYER_ACTIONS));
+
+                Object_Ref::Token(actor, self->Token());
             } else {
-                Object_Ref::Untoken(actor, Consts::Settler_Guard_Token());
+                Object_Ref::Untoken(actor, self->Token());
             }
         };
 
@@ -1189,6 +1728,58 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         if (do_reset_ai) {
             Actor2::Reset_AI(actor);
+        }
+    }
+
+    /* Sleeper_t */
+
+    Bool_t Sleeper_t::Has_Bed()
+    {
+        return Is_Sleeper() && Bed_Variable()->Has_Object();
+    }
+
+    void Sleeper_t::Create_Bed()
+    {
+        if (Is_Sleeper()) {
+            Reference_t* marker = Marker();
+            Reference_t* bed = Bed_Variable()->Reference();
+            if (!bed) {
+                bed = Object_Ref::Place_At_Me(marker, Consts::Bedroll_Furniture(), 1, true, false);
+                Bed_Variable()->Pack(bed);
+            }
+            Object_Ref::Move_To_Orbit(bed, marker, 0.0f, 180.0f);
+            Object_Ref::Owner(bed, Base_Actor());
+        }
+    }
+
+    void Sleeper_t::Destroy_Bed()
+    {
+        if (Has_Bed()) {
+            Actor_t* actor = Actor();
+            Reference_t* bed = Bed_Variable()->Reference();
+            Bed_Variable()->None(Object_Ref::Class_Info());
+            if (Object_Ref::Get_Distance(actor, bed) < 16.0f) {
+                Actor2::Move_To_Orbit(actor, bed, 0.0f, 180.0f);
+            }
+            Object_Ref::Delete_Safe(bed);
+        }
+    }
+
+    void Sleeper_t::Add_Bed()
+    {
+        if (Is_Sleeper()) {
+            Actor_t* actor = Actor();
+            Create_Bed();
+            Enforce(actor, true);
+        }
+    }
+
+    void Sleeper_t::Remove_Bed()
+    {
+        if (Is_Sleeper()) {
+            Actor_t* actor = Actor();
+            Destroy_Bed();
+            Enforce(actor, true);
         }
     }
 

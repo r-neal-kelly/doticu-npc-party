@@ -237,6 +237,9 @@ namespace doticu_npcp { namespace Consts {
         FORMLIST_BUTTONS_EXPOEE                     = 0x3C88DF,
         FORMLIST_MARKERS_EXPOEE                     = 0x3C88E0,
 
+        // NPCP Furnitures
+        FURNITURE_BEDROLL                           = 0x3E7F15,
+
         // NPCP Globals
         GLOBAL_IS_INSTALLED                         = 0x189ADD,
         GLOBAL_ALLOW_DIALOGUE_FOR_ALL               = 0x3B4463,
@@ -612,6 +615,9 @@ namespace doticu_npcp { namespace Consts {
     Formlist_t* Settler_Guard_Packages_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_PACKAGES_SETTLER_GUARD); }
     Formlist_t* Expoee_Buttons_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_BUTTONS_EXPOEE); }
     Formlist_t* Expoee_Markers_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_MARKERS_EXPOEE); }
+
+    // NPCP Furnitures
+    Furniture_t* Bedroll_Furniture() { NPCP_FORM(Furniture_t, FURNITURE_BEDROLL); }
 
     // NPCP Globals
     Global_t* Is_Installed_Global() { NPCP_FORM(Global_t, GLOBAL_IS_INSTALLED); }

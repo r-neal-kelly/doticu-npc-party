@@ -45,6 +45,7 @@
 #include "party/party_npcs.h"
 #include "party/party_members.h"
 #include "party/party_member.h"
+#include "party/party_settler.h"
 #include "party/party_mannequins.h"
 #include "party/party_followers.h"
 #include "party/party_follower.h"
@@ -451,7 +452,9 @@ namespace doticu_npcp { namespace Main {
             {
                 if (message) {
                     if (message->type == SKSEMessagingInterface::kMessage_PostLoadGame && message->data != nullptr) {
-                        Modules::Main_t::Self()->Load_Mod();
+                        if (Game::Is_NPCP_Installed()) {
+                            Modules::Main_t::Self()->Load_Mod();
+                        }
                     }
                 }
             };

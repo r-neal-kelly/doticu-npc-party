@@ -133,6 +133,9 @@ namespace doticu_npcp { namespace Consts {
     Formlist_t* Expoee_Buttons_Formlist();
     Formlist_t* Expoee_Markers_Formlist();
 
+    // NPCP Furnitures
+    Furniture_t* Bedroll_Furniture();
+
     // NPCP Globals
     Global_t* Is_Installed_Global();
     Global_t* Allow_Dialogue_For_All_Global();

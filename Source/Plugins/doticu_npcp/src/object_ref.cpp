@@ -1491,6 +1491,27 @@ namespace doticu_npcp { namespace Object_Ref {
         );
     }
 
+    void Owner(Reference_t* ref, Actor_Base_t* owner)
+    {
+        if (ref) {
+            ExtraOwnership* xowner = static_cast<ExtraOwnership*>
+                (ref->extraData.GetByType(kExtraData_Ownership));
+            if (xowner) {
+                if (owner) {
+                    xowner->owner = static_cast<Form_t*>(owner);
+                } else {
+                    ref->extraData.Remove(kExtraData_Ownership, xowner);
+                    XData::Destroy(xowner);
+                }
+            } else {
+                if (owner) {
+                    xowner = XData::Create_Ownership(static_cast<Form_t*>(owner));
+                    ref->extraData.Add(kExtraData_Ownership, xowner);
+                }
+            }
+        }
+    }
+
     Inventory_t::Inventory_t(Reference_t* reference)
         : reference(reference)
     {

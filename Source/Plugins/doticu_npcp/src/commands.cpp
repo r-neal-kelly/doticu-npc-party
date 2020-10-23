@@ -675,13 +675,13 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
         switch (code) {
             case (CODES::SUCCESS):
-                return do_notify_success ? Log_Note(name, " will settle here.") : (void)0;
+                return do_notify_success ? Log_Note(name, " will settle where you stand.") : (void)0;
             case (CODES::MEMBER):
-                return Log_Note(name, " isn't a member, and so can't settle here.");
+                return Log_Note(name, " isn't a member, and so can't settle.");
             case (CODES::IS):
                 return Log_Note(name, " is already settled.");
             default:
-                return Log_Error(name, " can't settle here", code);
+                return Log_Error(name, " can't settle", code);
         };
     }
 
@@ -701,7 +701,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
         switch (code) {
             case (CODES::SUCCESS):
-                return do_notify_success ? Log_Note(name, " will resettle here.") : (void)0;
+                return do_notify_success ? Log_Note(name, " will resettle where you stand.") : (void)0;
             case (CODES::MEMBER):
                 return Log_Note(name, " isn't a member, and so can't resettle.");
             case (CODES::ISNT):
@@ -727,7 +727,7 @@ namespace doticu_npcp { namespace Modules { namespace Control {
 
         switch (code) {
             case (CODES::SUCCESS):
-                return do_notify_success ? Log_Note(name, " will not be a settler.") : (void)0;
+                return do_notify_success ? Log_Note(name, " will no longer be a settler.") : (void)0;
             case (CODES::MEMBER):
                 return Log_Note(name, " isn't a member, and so can't unsettle.");
             case (CODES::IS):

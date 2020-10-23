@@ -37,6 +37,18 @@ W
 
 namespace doticu_npcp { namespace Utils {
 
+    template <typename Num>
+    inline Bool_t Is_Odd(Num num)
+    {
+        return num & static_cast<Num>(1);
+    }
+
+    template <typename Num>
+    inline Bool_t Is_Even(Num num)
+    {
+        return !Is_Odd(num);
+    }
+    
     inline Float_t To_Degrees(Float_t radians)
     {
         return radians * (180.0f / DOTICU_NPCP_PI);

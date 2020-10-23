@@ -24,6 +24,7 @@ namespace doticu_npcp { namespace Game {
     Form_t* NPCP_Form(UInt32 lower_form_id);
 
     Bool_t Is_Mod_Installed(const char* mod_name);
+    Bool_t Is_NPCP_Installed();
     Bool_t Is_Better_Vampires_Installed();
 
     Bool_t Is_Form_In_Mod(UInt32 form_id, const char* mod_name);

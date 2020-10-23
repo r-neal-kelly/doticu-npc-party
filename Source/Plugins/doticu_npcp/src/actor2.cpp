@@ -1971,23 +1971,7 @@ namespace doticu_npcp { namespace Actor2 {
 
     void Owner(Actor_t* actor, Actor_Base_t* owner)
     {
-        if (actor) {
-            ExtraOwnership* xowner = static_cast<ExtraOwnership*>
-                (actor->extraData.GetByType(kExtraData_Ownership));
-            if (xowner) {
-                if (owner) {
-                    xowner->owner = static_cast<Form_t*>(owner);
-                } else {
-                    actor->extraData.Remove(kExtraData_Ownership, xowner);
-                    XData::Destroy(xowner);
-                }
-            } else {
-                if (owner) {
-                    xowner = XData::Create_Ownership(static_cast<Form_t*>(owner));
-                    actor->extraData.Add(kExtraData_Ownership, xowner);
-                }
-            }
-        }
+        Object_Ref::Owner(actor, owner);
     }
 
     void Send_Animation_Event(Actor_t* actor, String_t animation, Virtual_Callback_i** callback)
