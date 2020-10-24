@@ -8,6 +8,7 @@ Scriptname doticu_npcp_funcs extends Quest
 function Close_Menus();;;
     while Utility.IsInMenuMode()
         Input.TapKey(Input.GetMappedKey("Tween Menu"))
+        Wait(0.1)
     endWhile
 endFunction
 
