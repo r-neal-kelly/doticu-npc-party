@@ -478,22 +478,24 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         Backup_State(actor);
         Actor2::Stop_If_Playing_Music(actor);
-        Actor2::Evaluate_Package(actor);
 
         struct Callback : public Callback_t<Member_t*> {
             Follower_t* follower;
+            Actor_t* actor;
             UCallback_t* user_callback;
-            Callback(Follower_t* follower, UCallback_t* user_callback) :
-                follower(follower), user_callback(user_callback)
+            Callback(Follower_t* follower, Actor_t* actor, UCallback_t* user_callback) :
+                follower(follower), actor(actor), user_callback(user_callback)
             {
             }
             void operator()(Member_t* member)
             {
+                Actor2::Evaluate_Package(actor);
+
                 user_callback->operator()(follower);
                 delete user_callback;
             }
         };
-        member->Enforce_Impl(new Callback(this, user_callback));
+        member->Enforce_Impl(new Callback(this, actor, user_callback));
     }
 
     void Follower_t::Unfill(Callback_t<Int_t, Member_t*>* user_callback)

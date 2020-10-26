@@ -261,6 +261,7 @@ namespace doticu_npcp { namespace Papyrus {
         void Unregister();
         void Actor_In_Crosshair(Bool_t allow_follower_horse, void(*callback)(Actor_t*));
 
+        void On_Load_Mod();
         void On_Key_Down(Int_t key_code);
         void On_Key_Up(Int_t key_code, Float_t time_held);
         void Process_On_Key_Up(Int_t key_code, Float_t time_held);

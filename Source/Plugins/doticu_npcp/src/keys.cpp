@@ -660,6 +660,11 @@ namespace doticu_npcp { namespace Papyrus {
         Object_Ref::Current_Crosshair_Reference(&vcallback);
     }
 
+    void Keys_t::On_Load_Mod()
+    {
+        Register();
+    }
+
     void Keys_t::On_Key_Down(Int_t value)
     {
         struct Callback : public Virtual_Callback_t {

@@ -103,6 +103,15 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         template <typename Type_t, typename Option_e>
         Bool_t Try_Select_Talking_Block(Main_t* mcm, Int_t option, Type_t* settler, Option_e option_enum);
 
+        template <typename Type_t, typename Option_e>
+        Bool_t Try_Highlight_Movement_Block(Main_t* mcm, Int_t option, Type_t* settler, Option_e option_enum, std::string& name);
+        template <typename Type_t, typename Option_e>
+        Bool_t Try_Highlight_Time_Block(Main_t* mcm, Int_t option, Type_t* settler, Option_e option_enum, std::string& name);
+        template <typename Type_t, typename Option_e>
+        Bool_t Try_Highlight_Combat_Block(Main_t* mcm, Int_t option, Type_t* settler, Option_e option_enum, std::string& name);
+        template <typename Type_t, typename Option_e>
+        Bool_t Try_Highlight_Talking_Block(Main_t* mcm, Int_t option, Type_t* settler, Option_e option_enum, std::string& name);
+
         template <typename Type_t, typename Flag_e>
         void Toggle_Flag(Main_t* mcm, Int_t option, Type_t* settler, Flag_e flag);
 

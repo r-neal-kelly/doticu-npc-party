@@ -165,19 +165,18 @@ namespace doticu_npcp { namespace Actor2 {
 
     Bool_t Outfit_Inventory_t::Can_Outfit_Form(Form_t* form)
     {
-        return
-            form->formType == kFormType_Armor ||
-            form->formType == kFormType_Weapon ||
-            form->formType == kFormType_Ammo ||
-            form->formType == kFormType_Light ||
-            form->formType == kFormType_Key;
+        static Form_t* linchpin = Consts::Blank_Armor();
+
+        NPCP_ASSERT(form);
+
+        return form != linchpin;
     }
 
     Bool_t Outfit_Inventory_t::Can_Evaluate_Actor_Form(Form_t* form)
     {
-        NPCP_ASSERT(form);
+        static Form_t* linchpin = Consts::Blank_Armor();
 
-        Form_t* linchpin = Consts::Blank_Armor();
+        NPCP_ASSERT(form);
 
         return form != linchpin && form->formType != kFormType_LeveledItem &&
             (form->IsPlayable() || Can_Outfit_Form(form));

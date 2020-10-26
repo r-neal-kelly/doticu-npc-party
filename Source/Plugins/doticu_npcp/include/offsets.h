@@ -148,6 +148,8 @@ namespace doticu_npcp { namespace Offsets {
 
     namespace String {
 
+        constexpr uintptr_t CREATE                      = 0x00C28BF0; // 67819
+        constexpr uintptr_t DESTROY                     = 0x00C28D40; // 67822
         constexpr uintptr_t SET                         = 0x00C28D60; // 67823
 
     }

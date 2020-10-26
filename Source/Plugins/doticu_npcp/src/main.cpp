@@ -219,6 +219,7 @@ namespace doticu_npcp { namespace Modules {
                             Modules::Control::Commands_t::Self()->Log_Note(note.c_str(), true);
                         }
                         main->Try_Cleanup();
+                        Modules::Keys_t::Self()->On_Load_Mod();
                         Party::Members_t::Self()->On_Load_Mod();
                         Party::Player_t::Self()->On_Load_Mod();
                         Party::Movee_t::Self()->On_Load_Mod();

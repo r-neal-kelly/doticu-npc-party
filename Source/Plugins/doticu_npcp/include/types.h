@@ -29,9 +29,27 @@ namespace doticu_npcp {
 namespace doticu_npcp {
 
     typedef SInt32          Int_t;
-    typedef BSFixedString   String_t;
     typedef float           Float_t;
     typedef bool            Bool_t;
+    typedef BSFixedString   String_t;
+
+    /*class String_t {
+    public:
+        String_t();
+        String_t(const char* str);
+        String_t(std::string str);
+
+        const char* data;
+
+        void Destroy();
+
+        Bool_t operator==(const String_t& lhs) const;
+        Bool_t operator<(const String_t& lhs) const;
+
+        operator const char* () const;
+        operator BSFixedString ();
+        operator BSFixedString () const;
+    };*/
 
     template <typename Key_t, typename Value_t>
     class Hash_Map_t {

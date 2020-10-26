@@ -9,6 +9,61 @@
 
 namespace doticu_npcp {
 
+    /* String_t */
+
+    /*String_t::String_t()
+    {
+        String_t("");
+    }
+
+    String_t::String_t(const char* str)
+    {
+        static auto create = reinterpret_cast
+            <void(*)(String_t*, const char* str)>
+            (RelocationManager::s_baseAddr + Offsets::String::CREATE);
+        create(this, str);
+    }
+
+    String_t::String_t(std::string str)
+    {
+        String_t(str.c_str());
+    }
+
+    void String_t::Destroy()
+    {
+        static auto destroy = reinterpret_cast
+            <void(*)(String_t*)>
+            (RelocationManager::s_baseAddr + Offsets::String::DESTROY);
+        destroy(this);
+    }
+
+    Bool_t String_t::operator==(const String_t& lhs) const
+    {
+        return data == lhs.data;
+    }
+
+    Bool_t String_t::operator<(const String_t& lhs) const
+    {
+        return data < lhs.data;
+    }
+
+    String_t::operator const char* () const
+    {
+        return data ? data : "";
+    }
+
+    String_t::operator BSFixedString ()
+    {
+        return *reinterpret_cast<BSFixedString*>(this);
+    }
+
+    String_t::operator BSFixedString () const
+    {
+        return *reinterpret_cast<const BSFixedString*>(this);
+    }*/
+
+    /* Actor_Base_Data_t */
+
     Bool_t Actor_Base_Data_t::Is_Unique()
     {
         return Utils::Is_Bit_On(flags, IS_UNIQUE);
@@ -58,58 +113,6 @@ namespace doticu_npcp {
         extra_health = 1.0f;
         custom_length = String2::Length(new_name);
     }
-
-    /*Container_Changes_t* Container_Changes_t::Create(Reference_t* owner)
-    {
-        static auto ctor = reinterpret_cast<Container_Changes_t* (*)(Container_Changes_t*, Reference_t*)>
-            (RelocationManager::s_baseAddr + Offsets::Container_Changes::CTOR);
-
-        Container_Changes_t self;
-        Container_Changes_t* changes = ctor(&self, owner);
-        NPCP_ASSERT(changes != nullptr);
-
-        _MESSAGE("entries: %p", changes->entries);
-        _MESSAGE("owner: %p", changes->owner);
-        _MESSAGE("total_weight: %f", changes->total_weight);
-        _MESSAGE("armor_weight: %f", changes->armor_weight);
-        _MESSAGE("has_changed: %i", changes->has_changed);
-        _MESSAGE("pad_19: %u", changes->pad_19);
-        _MESSAGE("pad_1A: %u", changes->pad_1A);
-        _MESSAGE("pad_1C: %u", changes->pad_1C);
-
-        return changes;
-    }
-
-    void Container_Changes_t::Destroy(Container_Changes_t* changes)
-    {
-        static auto dtor = reinterpret_cast<void(*)(Container_Changes_t*)>
-            (RelocationManager::s_baseAddr + Offsets::Container_Changes::DTOR);
-
-        if (changes) {
-            dtor(changes);
-        }
-    }*/
-
-    /*Extra_Container_Changes_t* Extra_Container_Changes_t::Create(Reference_t* owner)
-    {
-        Extra_Container_Changes_t* xchanges = static_cast<Extra_Container_Changes_t*>(XData_t::Create(
-            sizeof(Extra_Container_Changes_t),
-            RelocationManager::s_baseAddr + Offsets::Extra::CONTAINER_CHANGES_V_TABLE
-        ));
-        NPCP_ASSERT(xchanges != nullptr);
-
-        xchanges->changes = Container_Changes_t::Create(owner);
-
-        return xchanges;
-    }
-
-    void Extra_Container_Changes_t::Destroy(Extra_Container_Changes_t* xchanges)
-    {
-        if (xchanges) {
-            //Container_Changes_t::Destroy(xchanges->changes);
-            static_cast<BSExtraData*>(xchanges)->~BSExtraData();
-        }
-    }*/
 
     Bool_t Quest_t2::Hash_Map_t::Has_Key(UInt16 key)
     {

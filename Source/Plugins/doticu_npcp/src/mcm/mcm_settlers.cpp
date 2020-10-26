@@ -587,6 +587,86 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         return true;
     }
 
+    template <typename Type_t, typename Option_e>
+    Bool_t Settlers_t::Try_Highlight_Movement_Block(Main_t* mcm, Int_t option, Type_t* settler, Option_e option_enum, std::string& name)
+    {
+        if (option_enum == Option_e::MOVE_MARKER) {
+            mcm->Info_Text(name + " will stay around this invisible marker.");
+        } else if (option_enum == Option_e::MARKER_RADIUS) {
+            mcm->Info_Text("Change the range in which " + name + " will stay around the invisible marker.");
+        } else if (option_enum == Option_e::MOVEMENT_SPEED) {
+            mcm->Info_Text("Change how fast " + name + " will move around.");
+        } else if (option_enum == Option_e::ALLOW_SWIMMING) {
+            mcm->Info_Text(name + " will be allowed to swim to get to the next destination.");
+        } else if (option_enum == Option_e::ALWAYS_SNEAK) {
+            mcm->Info_Text(name + " will sneak around while moving.");
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    template <typename Type_t, typename Option_e>
+    Bool_t Settlers_t::Try_Highlight_Time_Block(Main_t* mcm, Int_t option, Type_t* settler, Option_e option_enum, std::string& name)
+    {
+        if (option_enum == Option_e::TIME_HOUR) {
+
+        } else if (option_enum == Option_e::TIME_MINUTE) {
+
+        } else if (option_enum == Option_e::TIME_AM_PM) {
+
+        } else if (option_enum == Option_e::DURATION_HOURS) {
+
+        } else if (option_enum == Option_e::DURATION_MINUTES) {
+
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    template <typename Type_t, typename Option_e>
+    Bool_t Settlers_t::Try_Highlight_Combat_Block(Main_t* mcm, Int_t option, Type_t* settler, Option_e option_enum, std::string& name)
+    {
+        if (option_enum == Option_e::IGNORE_COMBAT) {
+
+        } else if (option_enum == Option_e::SKIP_COMBAT_ALERT) {
+
+        } else if (option_enum == Option_e::ALLOW_AGGRO_RADIUS_BEHAVIOR) {
+
+        } else if (option_enum == Option_e::OBSERVE_COMBAT_BEHAVIOR) {
+
+        } else if (option_enum == Option_e::INSPECT_CORPSE_BEHAVIOR) {
+
+        } else if (option_enum == Option_e::KEEP_WEAPONS_DRAWN) {
+
+        } else if (option_enum == Option_e::HIDE_WEAPONS) {
+
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    template <typename Type_t, typename Option_e>
+    Bool_t Settlers_t::Try_Highlight_Talking_Block(Main_t* mcm, Int_t option, Type_t* settler, Option_e option_enum, std::string& name)
+    {
+        if (option_enum == Option_e::ALLOW_HELLOS_TO_PLAYER) {
+
+        } else if (option_enum == Option_e::ALLOW_HELLOS_TO_NPCS) {
+
+        } else if (option_enum == Option_e::ALLOW_IDLE_CHATTER) {
+
+        } else if (option_enum == Option_e::ALLOW_WORLD_INTERACTIONS) {
+
+        } else if (option_enum == Option_e::REACT_TO_PLAYER_ACTIONS) {
+
+        } else {
+            return false;
+        }
+        return true;
+    }
+
     template <typename Type_t, typename Flag_e>
     void Settlers_t::Toggle_Flag(Main_t* mcm, Int_t option, Type_t* settler, Flag_e flag)
     {
@@ -1841,7 +1921,85 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 }
             }
         } else if (current_view == CODES::VIEW::SETTLERS_SETTLER) {
+            Party::Settler_t* settler = Settler();
+            if (Is_Valid_Settler(settler)) {
+                std::string name = settler->Name().data;
+                Int_t page_index = Settler_Page_Index();
+                Int_t option_index = Settler_Option_Index(option);
+                if (page_index == 0) {
+                    if (Utils::Is_Even(option)) {
+                        using Option_e = Sandboxer_Option_e;
 
+                        Party::Sandboxer_t* sandboxer = static_cast<Party::Sandboxer_t*>(settler);
+                        Option_e option_enum = static_cast<Option_e>(option_index);
+                        if (option_enum == Option_e::UNSETTLE) {
+                            mcm->Info_Text(name + " will no longer be a settler. All other settler packages will also be disabled.");
+
+                        } else if (Try_Highlight_Movement_Block(mcm, option, sandboxer, option_enum, name)) {
+
+                        } else if (option_enum == Option_e::ALLOW_CONVERSATION) {
+                        } else if (option_enum == Option_e::ALLOW_EATING) {
+                        } else if (option_enum == Option_e::ALLOW_IDLE_MARKERS) {
+                        } else if (option_enum == Option_e::ALLOW_SITTING) {
+                        } else if (option_enum == Option_e::ALLOW_SLEEPING) {
+                        } else if (option_enum == Option_e::ALLOW_SPECIAL_FURNITURE) {
+                        } else if (option_enum == Option_e::ALLOW_WANDERING) {
+                        } else if (option_enum == Option_e::PREFERRED_PATH_ONLY) {
+                        } else if (option_enum == Option_e::MIN_WANDER_DISTANCE) {
+                        } else if (option_enum == Option_e::ATTENTION) {
+
+                        } else if (Try_Highlight_Combat_Block(mcm, option, sandboxer, option_enum, name)) {
+
+                        } else if (Try_Highlight_Talking_Block(mcm, option, sandboxer, option_enum, name)) {
+
+                        }
+                    } else {
+                        using Option_e = Sleeper_Option_e;
+
+                        Party::Sleeper_t* sleeper = static_cast<Party::Sleeper_t*>(settler);
+                        Option_e option_enum = static_cast<Option_e>(option_index);
+                        if (option_enum == Option_e::ENABLE) {
+
+                        } else if (Try_Highlight_Movement_Block(mcm, option, sleeper, option_enum, name)) {
+
+                        }
+                    }
+                } else if (page_index == 1) {
+                    if (Utils::Is_Even(option)) {
+                        using Option_e = Sitter_Option_e;
+
+                        Party::Sitter_t* sitter = static_cast<Party::Sitter_t*>(settler);
+                        Option_e option_enum = static_cast<Option_e>(option_index);
+                        if (option_enum == Option_e::ENABLE) {
+
+                        } else if (Try_Highlight_Movement_Block(mcm, option, sitter, option_enum, name)) {
+
+                        }
+                    } else {
+                        using Option_e = Eater_Option_e;
+
+                        Party::Eater_t* eater = static_cast<Party::Eater_t*>(settler);
+                        Option_e option_enum = static_cast<Option_e>(option_index);
+                        if (option_enum == Option_e::ENABLE) {
+
+                        } else if (Try_Highlight_Movement_Block(mcm, option, eater, option_enum, name)) {
+
+                        }
+                    }
+                } else if (page_index == 2) {
+                    if (Utils::Is_Even(option)) {
+                        using Option_e = Guard_Option_e;
+
+                        Party::Guard_t* guard = static_cast<Party::Guard_t*>(settler);
+                        Option_e option_enum = static_cast<Option_e>(option_index);
+                        if (option_enum == Option_e::ENABLE) {
+
+                        } else if (Try_Highlight_Movement_Block(mcm, option, guard, option_enum, name)) {
+
+                        }
+                    }
+                }
+            }
         } else {
 
         }
