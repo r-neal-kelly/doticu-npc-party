@@ -40,8 +40,7 @@ namespace doticu_npcp { namespace Actor2 {
 
     class Outfit_Inventory_t {
     public:
-        static Bool_t Can_Outfit_Form(Form_t* form);
-        static Bool_t Can_Evaluate_Actor_Form(Form_t* form);
+        static Bool_t Can_Evaluate_Form(Form_t* form);
     public:
         Inventory_t outfit1;
         Inventory_t outfit2;

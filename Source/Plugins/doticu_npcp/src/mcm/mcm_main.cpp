@@ -649,9 +649,9 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Current_Page_Variable()->String(current_page);
     }
 
-    void Main_t::Close_Menus(Virtual_Callback_i** callback)
+    void Main_t::Close_Menus(Callback_t<>* ucallback)
     {
-        Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(), "doticu_npcp_funcs", "Close_Menus", nullptr, callback);
+        Funcs_t::Self()->Close_Menus(ucallback);
     }
 
     void Main_t::Enable(Int_t option, Bool_t do_render, Bool_t with_unmap)

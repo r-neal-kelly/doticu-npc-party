@@ -1115,7 +1115,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                 Object_Ref::Inventory_t actor_inventory(actor);
                 for (size_t idx = 0, end = actor_inventory.entries.size(); idx < end; idx += 1) {
                     Object_Ref::Entry_t& entry = actor_inventory.entries[idx];
-                    if (Actor2::Outfit_Inventory_t::Can_Evaluate_Actor_Form(entry.form)) {
+                    if (Actor2::Outfit_Inventory_t::Can_Evaluate_Form(entry.form)) {
                         if (entry.xentry && entry.xentry->xlists) {
                             for (XLists_t::Iterator it = entry.xentry->xlists->Begin(); !it.End(); ++it) {
                                 XList_t* xlist = it.Get();

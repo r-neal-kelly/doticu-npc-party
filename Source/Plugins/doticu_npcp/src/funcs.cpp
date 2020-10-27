@@ -2,6 +2,9 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "skse64/Hooks_DirectInput8Create.h"
+#include "skse64/PapyrusInput.h"
+
 #include "consts.h"
 #include "funcs.h"
 #include "papyrus.inl"
@@ -91,6 +94,40 @@ namespace doticu_npcp { namespace Modules {
         );
     }
 
+    void Funcs_t::Is_In_Menu_Mode(Virtual_Callback_i* vcallback)
+    {
+        Virtual_Machine_t::Self()->Call_Global(
+            "Utility",
+            "IsInMenuMode",
+            nullptr,
+            vcallback ? &vcallback : nullptr
+        );
+    }
+
+    void Funcs_t::Tap_Key(Int_t key, Virtual_Callback_i* vcallback)
+    {
+        struct Arguments : public Virtual_Arguments_t {
+            Int_t key;
+            Arguments(Int_t key) :
+                key(key)
+            {
+            }
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(1);
+                arguments->At(0)->Int(key);
+                return true;
+            }
+        } arguments(key);
+
+        Virtual_Machine_t::Self()->Call_Global(
+            "Input",
+            "TapKey",
+            &arguments,
+            vcallback ? &vcallback : nullptr
+        );
+    }
+
     void Funcs_t::Open_Container(Reference_t* container, Virtual_Callback_i* vcallback)
     {
         struct Arguments : public Virtual_Arguments_t {
@@ -116,15 +153,75 @@ namespace doticu_npcp { namespace Modules {
         );
     }
 
-    void Funcs_t::Close_Menus(Virtual_Callback_i* vcallback)
+    void Funcs_t::Close_Menus(Callback_t<>* ucallback)
     {
-        Virtual_Machine_t::Self()->Call_Method(
-            Consts::Funcs_Quest(),
-            Class_Name(),
-            "Close_Menus",
-            nullptr,
-            vcallback ? &vcallback : nullptr
-        );
+        using UCallback_t = Callback_t<>;
+
+        Int_t key = papyrusInput::GetMappedKey(0, "Tween Menu", 0xFF);
+        if (key > -1) {
+            class Is_Open_VCallback : public Virtual_Callback_t {
+            public:
+                Funcs_t* self;
+                Int_t key;
+                UCallback_t* ucallback;
+                Is_Open_VCallback(Funcs_t* self, Int_t key, UCallback_t* ucallback) :
+                    self(self), key(key), ucallback(ucallback)
+                {
+                }
+                void operator()(Variable_t* result)
+                {
+                    if (result && result->Bool()) {
+                        _MESSAGE("is in menu mode.");
+                        class Tap_VCallback : public Virtual_Callback_t {
+                        public:
+                            Funcs_t* self;
+                            Int_t key;
+                            UCallback_t* ucallback;
+                            Tap_VCallback(Funcs_t* self, Int_t key, UCallback_t* ucallback) :
+                                self(self), key(key), ucallback(ucallback)
+                            {
+                            }
+                            void operator()(Variable_t*)
+                            {
+                                _MESSAGE("tapped key");
+                                class Wait_VCallback : public Virtual_Callback_t {
+                                public:
+                                    Funcs_t* self;
+                                    Int_t key;
+                                    UCallback_t* ucallback;
+                                    Wait_VCallback(Funcs_t* self, Int_t key, UCallback_t* ucallback) :
+                                        self(self), key(key), ucallback(ucallback)
+                                    {
+                                    }
+                                    void operator()(Variable_t*)
+                                    {
+                                        _MESSAGE("waited");
+                                        self->Is_In_Menu_Mode(new Is_Open_VCallback(self, key, ucallback));
+                                    }
+                                };
+                                Virtual_Callback_i* vcallback = new Wait_VCallback(self, key, ucallback);
+                                self->Wait(0.1f, &vcallback);
+                                _MESSAGE("waiting");
+                            }
+                        };
+                        self->Tap_Key(key, new Tap_VCallback(self, key, ucallback));
+                        _MESSAGE("tapping key");
+                    } else {
+                        _MESSAGE("out of menu mode.");
+                        if (ucallback) {
+                            ucallback->operator()();
+                            delete ucallback;
+                        }
+                    }
+                }
+            };
+            this->Is_In_Menu_Mode(new Is_Open_VCallback(this, key, ucallback));
+        } else {
+            if (ucallback) {
+                ucallback->operator()();
+                delete ucallback;
+            }
+        }
     }
 
     void Funcs_t::Force_Third_Person(Virtual_Callback_i* vcallback)
@@ -133,6 +230,31 @@ namespace doticu_npcp { namespace Modules {
             "Game",
             "ForceThirdPerson",
             nullptr,
+            vcallback ? &vcallback : nullptr
+        );
+    }
+
+    void Funcs_t::Enable_Actor(Actor_t* actor, Virtual_Callback_i* vcallback)
+    {
+        struct Arguments : public Virtual_Arguments_t {
+            Actor_t* actor;
+            Arguments(Actor_t* actor) :
+                actor(actor)
+            {
+            }
+            Bool_t operator()(Arguments_t* arguments)
+            {
+                arguments->Resize(1);
+                arguments->At(0)->Pack(actor);
+                return true;
+            }
+        } arguments(actor);
+
+        Virtual_Machine_t::Self()->Call_Method(
+            Consts::Funcs_Quest(),
+            Class_Name(),
+            "Enable_Actor",
+            &arguments,
             vcallback ? &vcallback : nullptr
         );
     }

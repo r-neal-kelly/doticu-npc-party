@@ -626,38 +626,36 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 mcm->Return_Latent(user_callback);
             } else if (option == Goto_Option_Variable()->Int()) {
                 mcm->Disable(option);
-                struct Callback : public Virtual_Callback_t {
+                struct Callback : public Callback_t<> {
                     Actor_t* actor;
                     UCallback_t* user_callback;
                     Callback(Actor_t* actor, UCallback_t* user_callback) :
                         actor(actor), user_callback(user_callback)
                     {
                     }
-                    void operator()(Variable_t* result)
+                    void operator()()
                     {
                         Commands_t::Self()->Goto(actor);
                         MCM::Main_t::Self()->Return_Latent(user_callback);
                     }
                 };
-                Virtual_Callback_i* callback = new Callback(actor, user_callback);
-                Main()->Close_Menus(&callback);
+                Main()->Close_Menus(new Callback(actor, user_callback));
             } else if (option == Pack_Option_Variable()->Int()) {
                 mcm->Disable(option);
-                struct Callback : public Virtual_Callback_t {
+                struct Callback : public Callback_t<> {
                     Actor_t* actor;
                     UCallback_t* user_callback;
                     Callback(Actor_t* actor, UCallback_t* user_callback) :
                         actor(actor), user_callback(user_callback)
                     {
                     }
-                    void operator()(Variable_t* result)
+                    void operator()()
                     {
                         Commands_t::Self()->Open_Pack(actor);
                         MCM::Main_t::Self()->Return_Latent(user_callback);
                     }
                 };
-                Virtual_Callback_i* callback = new Callback(actor, user_callback);
-                Main()->Close_Menus(&callback);
+                Main()->Close_Menus(new Callback(actor, user_callback));
             } else if (option == Stash_Option_Variable()->Int()) {
                 Commands_t::Self()->Stash(actor);
                 Update_Commands();
@@ -826,18 +824,20 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     void Member_t::On_Option_Menu_Accept(Int_t option, Int_t idx)
     {
+        MCM::Main_t* mcm = Main();
+
         if (option == Outfit2_Option_Variable()->Int()) {
             if (idx > -1) {
                 Party::Member_t* member = Party_Member();
                 if (member) {
-                    struct VCallback : public Virtual_Callback_t {
+                    struct Callback : public Callback_t<> {
                         Party::Member_t* member;
                         Int_t idx;
-                        VCallback(Party::Member_t* member, Int_t idx) :
+                        Callback(Party::Member_t* member, Int_t idx) :
                             member(member), idx(idx)
                         {
                         }
-                        void operator()(Variable_t* result)
+                        void operator()()
                         {
                             if (!Party::Player_t::Self()->Is_Vampire() && idx > 2) {
                                 idx += 1;
@@ -861,7 +861,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                             }
                         }
                     };
-                    Modules::Funcs_t::Self()->Close_Menus(new VCallback(member, idx));
+                    mcm->Close_Menus(new Callback(member, idx));
                 }
             }
         }

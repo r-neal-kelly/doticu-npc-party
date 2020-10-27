@@ -23,10 +23,15 @@ namespace doticu_npcp { namespace Modules {
         void Wait(Float_t seconds, Virtual_Callback_i** callback = nullptr);
         void Wait_Out_Of_Menu(Float_t seconds, Virtual_Callback_i** callback = nullptr);
 
+        void Is_In_Menu_Mode(Virtual_Callback_i* vcallback);
+        void Tap_Key(Int_t key, Virtual_Callback_i* vcallback);
+
         void Open_Container(Reference_t* container, Virtual_Callback_i* vcallback = nullptr);
-        void Close_Menus(Virtual_Callback_i* vcallback = nullptr);
+        void Close_Menus(Callback_t<>* ucallback = nullptr);
 
         void Force_Third_Person(Virtual_Callback_i* vcallback = nullptr);
+
+        void Enable_Actor(Actor_t* actor, Virtual_Callback_i* vcallback = nullptr);
 
     public:
         static void Register_Me(Virtual_Machine_t* vm);

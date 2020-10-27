@@ -1028,38 +1028,38 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                         {
                             if (do_outfit) {
                                 Modules::Control::Commands_t::Self()->Log_Note("Updated current outfit. Opening.", true);
-                                struct VCallback : public Virtual_Callback_t {
+                                struct Callback : public Callback_t<> {
                                     Member_t* self;
                                     UCallback_t* user_callback;
-                                    VCallback(Member_t* self, UCallback_t* user_callback) :
+                                    Callback(Member_t* self, UCallback_t* user_callback) :
                                         self(self), user_callback(user_callback)
                                     {
                                     }
-                                    void operator()(Variable_t* result)
+                                    void operator()()
                                     {
                                         self->Change_Current_Outfit2();
                                         user_callback->operator()(self);
                                         delete user_callback;
                                     }
                                 };
-                                Modules::Funcs_t::Self()->Close_Menus(new VCallback(self, user_callback));
+                                Modules::Funcs_t::Self()->Close_Menus(new Callback(self, user_callback));
                             } else {
                                 Modules::Control::Commands_t::Self()->Log_Note("Updated pack. Opening.", true);
-                                struct VCallback : public Virtual_Callback_t {
+                                struct Callback : public Callback_t<> {
                                     Member_t* self;
                                     UCallback_t* user_callback;
-                                    VCallback(Member_t* self, UCallback_t* user_callback) :
+                                    Callback(Member_t* self, UCallback_t* user_callback) :
                                         self(self), user_callback(user_callback)
                                     {
                                     }
-                                    void operator()(Variable_t* result)
+                                    void operator()()
                                     {
                                         self->Open_Pack();
                                         user_callback->operator()(self);
                                         delete user_callback;
                                     }
                                 };
-                                Modules::Funcs_t::Self()->Close_Menus(new VCallback(self, user_callback));
+                                Modules::Funcs_t::Self()->Close_Menus(new Callback(self, user_callback));
                             }
                         }
                     };
@@ -1140,14 +1140,14 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                         {
                             Modules::Control::Commands_t::Self()->Log_Note("Must remove from the current outfit. Opening.", true);
 
-                            struct VCallback : public Virtual_Callback_t {
+                            struct Callback : public Callback_t<> {
                                 Member_t* self;
                                 UCallback_t* user_callback;
-                                VCallback(Member_t* self, UCallback_t* user_callback) :
+                                Callback(Member_t* self, UCallback_t* user_callback) :
                                     self(self), user_callback(user_callback)
                                 {
                                 }
-                                void operator()(Variable_t* result)
+                                void operator()()
                                 {
                                     struct Callback : public Callback_t<Actor_t*> {
                                         Member_t* self;
@@ -1166,7 +1166,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                                     Actor2::Update_Equipment(self->Actor(), new Callback(self, user_callback));
                                 }
                             };
-                            Modules::Funcs_t::Self()->Close_Menus(new VCallback(self, user_callback));
+                            Modules::Funcs_t::Self()->Close_Menus(new Callback(self, user_callback));
                         }
                     };
                     Virtual_Callback_i* vcallback = new VCallback(self, user_callback);
@@ -1595,6 +1595,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         }
 
         //Object_Ref::Enable(actor, false);
+        Modules::Funcs_t::Self()->Enable_Actor(actor);
     }
 
     void Member_t::Destroy_Member(Actor_t* actor)

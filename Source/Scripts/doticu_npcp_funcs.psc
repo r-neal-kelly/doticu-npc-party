@@ -5,12 +5,6 @@ Scriptname doticu_npcp_funcs extends Quest
 ; replace these with direct callbacks in c++
 
 ; Public Methods
-function Close_Menus();;;
-    while Utility.IsInMenuMode()
-        Input.TapKey(Input.GetMappedKey("Tween Menu"))
-    endWhile
-endFunction
-
 bool function Can_Use_Keys();;;
     return !Utility.IsInMenuMode() && !UI.IsMenuOpen("Dialogue Menu")
 endFunction
@@ -28,6 +22,10 @@ function Open_Container(ObjectReference ref_container);;;
         ref_container.Activate(doticu_npcp_consts.Player_Actor())
         Wait_Out_Of_Menu(0.1)
     endIf
+endFunction
+
+function Enable_Actor(Actor ref_actor);;;
+    ref_actor.Enable(false)
 endFunction
 
 function Essentialize(ActorBase base_actor);;;

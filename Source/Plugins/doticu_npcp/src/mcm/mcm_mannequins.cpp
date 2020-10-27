@@ -468,24 +468,22 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             MCM::Main_t* mcm = Main();
             if (option == Enter_Option_Variable()->Int()) {
                 mcm->Disable(option);
-                struct VCallback : public Virtual_Callback_t {
-                    void operator()(Variable_t* result)
+                struct Callback : public Callback_t<> {
+                    void operator()()
                     {
                         Party::Mannequins_t::Self()->Move_Player_To_Antechamber();
                     }
                 };
-                Virtual_Callback_i* vcallback = new VCallback();
-                mcm->Close_Menus(&vcallback);
+                mcm->Close_Menus(new Callback());
             } else if (option == Exit_Option_Variable()->Int()) {
                 mcm->Disable(option);
-                struct VCallback : public Virtual_Callback_t {
-                    void operator()(Variable_t* result)
+                struct Callback : public Callback_t<> {
+                    void operator()()
                     {
                         Party::Mannequins_t::Self()->Remove_Player();
                     }
                 };
-                Virtual_Callback_i* vcallback = new VCallback();
-                mcm->Close_Menus(&vcallback);
+                mcm->Close_Menus(new Callback());
 
             } else if (option == Previous_Option_Variable()->Int()) {
                 mcm->Disable(option);
@@ -526,29 +524,27 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 mcm->Reset_Page();
             } else if (option == Enter_Option_Variable()->Int()) {
                 mcm->Disable(option);
-                struct VCallback : public Virtual_Callback_t {
+                struct Callback : public Callback_t<> {
                     MCM::Mannequins_t* self;
-                    VCallback(MCM::Mannequins_t* self) :
+                    Callback(MCM::Mannequins_t* self) :
                         self(self)
                     {
                     }
-                    void operator()(Variable_t* result)
+                    void operator()()
                     {
                         Party::Mannequins_t::Self()->Move_Player_To_Cell(self->Current_Column(), self->Current_Row());
                     }
                 };
-                Virtual_Callback_i* vcallback = new VCallback(this);
-                mcm->Close_Menus(&vcallback);
+                mcm->Close_Menus(new Callback(this));
             } else if (option == Exit_Option_Variable()->Int()) {
                 mcm->Disable(option);
-                struct VCallback : public Virtual_Callback_t {
-                    void operator()(Variable_t* result)
+                struct Callback : public Callback_t<> {
+                    void operator()()
                     {
                         Party::Mannequins_t::Self()->Remove_Player();
                     }
                 };
-                Virtual_Callback_i* vcallback = new VCallback();
-                mcm->Close_Menus(&vcallback);
+                mcm->Close_Menus(new Callback());
             } else if (option == North_1_Option_Variable()->Int() || option == North_2_Option_Variable()->Int()) {
                 Current_Row(Current_Row() + 1);
                 mcm->Disable(option);

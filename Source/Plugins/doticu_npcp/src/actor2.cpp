@@ -163,23 +163,20 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
-    Bool_t Outfit_Inventory_t::Can_Outfit_Form(Form_t* form)
+    Bool_t Outfit_Inventory_t::Can_Evaluate_Form(Form_t* form)
     {
         static Form_t* linchpin = Consts::Blank_Armor();
 
         NPCP_ASSERT(form);
 
-        return form != linchpin;
-    }
-
-    Bool_t Outfit_Inventory_t::Can_Evaluate_Actor_Form(Form_t* form)
-    {
-        static Form_t* linchpin = Consts::Blank_Armor();
-
-        NPCP_ASSERT(form);
-
-        return form != linchpin && form->formType != kFormType_LeveledItem &&
-            (form->IsPlayable() || Can_Outfit_Form(form));
+        return
+            form != linchpin &&
+            form->formType != kFormType_LeveledItem &&
+            (form->IsPlayable() ||
+             form->formType == kFormType_Armor ||
+             form->formType == kFormType_Weapon ||
+             form->formType == kFormType_Ammo ||
+             form->formType == kFormType_Light);
     }
 
     Outfit_Inventory_t::Outfit_Inventory_t(Reference_t* outfit1_ref, Reference_t* outfit2_ref) :
@@ -371,7 +368,7 @@ namespace doticu_npcp { namespace Actor2 {
         for (size_t idx = 0, end = actor->entries.size(); idx < end; idx += 1) {
             Entry_t* actor_entry = &actor->entries[idx];
             Form_t* form = actor_entry->form;
-            if (Can_Evaluate_Actor_Form(form)) {
+            if (Can_Evaluate_Form(form)) {
                 Outfit_Entry_t* outfit_entry = Entry(form);
                 Entry_t* transfer_entry = transfer->Entry(form);
                 Merged_XLists_t actor_mxlists = actor_entry->Merged_XLists(false);
@@ -527,7 +524,7 @@ namespace doticu_npcp { namespace Actor2 {
         for (size_t idx = 0, count = entries.size(); idx < count; idx += 1) {
             Outfit_Entry_t& outfit_entry = entries[idx];
             Form_t* form = outfit_entry.form; NPCP_ASSERT(form);
-            if (Can_Outfit_Form(form)) {
+            if (Can_Evaluate_Form(form)) {
                 if (!actor->Entry(form)) {
                     Entry_t* actor_entry = actor->Add_Entry(form); NPCP_ASSERT(actor_entry);
                     Merged_XLists_t& outfit_xlists = outfit_entry.merged_xlists;

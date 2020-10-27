@@ -784,7 +784,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Game::Update_NPCP_Categories();
         Object_Ref::Rename(chest, name);
 
-        class Callback : public Virtual_Callback_t {
+        class Callback : public Callback_t<> {
         public:
             Reference_t* chest;
             UCallback_t* user_callback;
@@ -792,14 +792,13 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 chest(chest), user_callback(user_callback)
             {
             }
-            void operator()(Variable_t* result)
+            void operator()()
             {
                 Object_Ref::Open_Container(chest);
                 MCM::Main_t::Self()->Return_Latent(user_callback);
             }
         };
-        Virtual_Callback_i* callback = new Callback(chest, user_callback);
-        Main()->Close_Menus(&callback);
+        Main()->Close_Menus(new Callback(chest, user_callback));
     }
 
     void Chests_t::Register_Me(Virtual_Machine_t* vm)

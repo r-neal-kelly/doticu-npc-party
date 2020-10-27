@@ -172,7 +172,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         String_t Current_Page();
         String_t Current_Page(String_t current_page);
 
-        void Close_Menus(Virtual_Callback_i** callback = nullptr);
+        void Close_Menus(Callback_t<>* ucallback = nullptr);
         void Enable(Int_t option, Bool_t do_render = true, Bool_t with_unmap = false);
         void Disable(Int_t option, Bool_t do_render = true);
         void Show(Int_t option, Bool_t do_render = true, Bool_t with_unmap = false);

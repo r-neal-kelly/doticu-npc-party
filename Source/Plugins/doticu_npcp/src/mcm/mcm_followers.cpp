@@ -306,21 +306,20 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                             mcm->Flicker(option, user_callback);
                         } else if (indices.option == 2) {
                             mcm->Disable(option);
-                            struct VCallback : public Virtual_Callback_t {
+                            struct Callback : public Callback_t<> {
                                 Party::Follower_t* follower;
                                 UCallback_t* user_callback;
-                                VCallback(Party::Follower_t* follower, UCallback_t* user_callback) :
+                                Callback(Party::Follower_t* follower, UCallback_t* user_callback) :
                                     follower(follower), user_callback(user_callback)
                                 {
                                 }
-                                void operator()(Variable_t* result)
+                                void operator()()
                                 {
                                     Commands_t::Self()->Open_Pack(follower->Actor());
                                     MCM::Main_t::Self()->Return_Latent(user_callback);
                                 }
                             };
-                            Virtual_Callback_i* vcallback = new VCallback(follower, user_callback);
-                            mcm->Close_Menus(&vcallback);
+                            mcm->Close_Menus(new Callback(follower, user_callback));
                         } else if (indices.option == 3) {
                             mcm->Disable(option);
                             if (follower->Is_Immobile()) {
