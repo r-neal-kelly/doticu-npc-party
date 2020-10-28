@@ -535,47 +535,6 @@ namespace doticu_npcp { namespace Papyrus {
     };
     STATIC_ASSERT(sizeof(Object_t) == 0x30);
 
-    class Function_t {
-    public:
-    };
-
-    class Scripts : public IForEachScriptObjectFunctor
-    {
-    public:
-        Handle_t handle;
-        std::vector<const char *> names;
-        std::vector<Script_t *> scripts;
-
-        Scripts(Form_t *form)
-        {
-            handle = Papyrus::Handle_t(form);
-            handle.Registry()->VisitScripts(handle, this);
-        }
-        Scripts(Alias_Base_t* alias)
-        {
-            handle = Papyrus::Handle_t(alias);
-            handle.Registry()->VisitScripts(handle, this);
-        }
-
-        virtual bool Visit(Script_t *script, void *)
-        {
-            names.push_back(script->classInfo->name.data);
-            scripts.push_back(script);
-            return true;
-        }
-
-        Script_t *Script(const char *script_name)
-        {
-            for (u64 idx = 0, size = names.size(); idx < size; idx += 1) {
-                if (_stricmp(script_name, names[idx]) == 0) {
-                    return scripts[idx];
-                }
-            }
-
-            return nullptr;
-        }
-    };
-
     template <typename Type>
     Vector_t<Type> Slice_Array(VMArray<Type> arr, SInt32 from = 0, SInt32 to_exclusive = -1)
     {

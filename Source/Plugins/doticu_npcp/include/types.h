@@ -1157,6 +1157,40 @@ namespace doticu_npcp {
     };
     STATIC_ASSERT(sizeof(Package_t) == 0xE0);
 
+    class Form_Factory_i {
+    public:
+        static Form_Factory_i* Form_Factory(Form_Type_t form_type);
+
+    public:
+        virtual ~Form_Factory_i(); // 00
+        virtual Form_t* Create(); // 01
+    };
+
+    class Script_t : public Form_t {
+    public:
+        enum class Compiler_e {
+            DEFAULT,
+            SYSTEM,
+            DIALOGUE,
+        };
+    public:
+        virtual ~Script_t();
+
+        void Command(const char* command);
+        void Execute(Reference_t* reference, Compiler_e compiler_enum = Compiler_e::SYSTEM);
+
+        UInt32 variable_count; // 20
+        UInt32 unk_24; // 24
+        UInt32 unk_28; // 28
+        UInt32 unk_2C; // 2C
+        Bool_t is_quest_script; // 30
+        Bool_t is_magic_effect_script; // 31
+        Bool_t is_compiled; // 32
+        UInt8 pad_33; // 33
+        UInt32 pad_34; // 34
+        char* text; // 38
+    };
+
 }
 
 namespace doticu_npcp {
@@ -1172,7 +1206,7 @@ namespace doticu_npcp { namespace Papyrus {
     typedef VMClassRegistry         Registry_t;
     typedef IObjectHandlePolicy     Policy_t;
     typedef UInt32                  Stack_ID_t;
-    typedef VMScriptInstance        Script_t;
+    typedef VMScriptInstance        VScript_t;
     typedef UInt64                  Type_e;
     typedef UInt32                  Type_ID_t;
 

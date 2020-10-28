@@ -510,23 +510,38 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
     template <typename Type_t>
     void Settlers_t::Build_Combat_Block(Main_t* mcm, Type_t* settler, Int_t flag)
     {
-        mcm->Add_Toggle_Option(" Ignore Combat ", settler->Is_Flagged(Type_t::Flag_e::IGNORE_COMBAT), flag);
-        mcm->Add_Toggle_Option(" Skip Combat Alert ", settler->Is_Flagged(Type_t::Flag_e::SKIP_COMBAT_ALERT), flag);
-        mcm->Add_Toggle_Option(" Allow Aggro Radius Behavior ", settler->Is_Flagged(Type_t::Flag_e::ALLOW_AGGRO_RADIUS_BEHAVIOR), flag);
-        mcm->Add_Toggle_Option(" Observe Combat Behavior ", settler->Is_Flagged(Type_t::Flag_e::OBSERVE_COMBAT_BEHAVIOR), flag);
-        mcm->Add_Toggle_Option(" Inspect Corpse Behavior ", settler->Is_Flagged(Type_t::Flag_e::INSPECT_CORPSE_BEHAVIOR), flag);
-        mcm->Add_Toggle_Option(" Keep Weapons Drawn ", settler->Is_Flagged(Type_t::Flag_e::KEEP_WEAPONS_DRAWN), flag);
-        mcm->Add_Toggle_Option(" Hide Weapons ", settler->Is_Flagged(Type_t::Flag_e::HIDE_WEAPONS), flag);
+        mcm->Add_Toggle_Option(" Ignore Combat ",               settler->Is_Flagged(Type_t::Flag_e::IGNORE_COMBAT),                 flag);
+        mcm->Add_Toggle_Option(" Skip Combat Alert ",           settler->Is_Flagged(Type_t::Flag_e::SKIP_COMBAT_ALERT),             flag);
+        mcm->Add_Toggle_Option(" Allow Aggro Radius Behavior ", settler->Is_Flagged(Type_t::Flag_e::ALLOW_AGGRO_RADIUS_BEHAVIOR),   flag);
+        mcm->Add_Toggle_Option(" Observe Combat Behavior ",     settler->Is_Flagged(Type_t::Flag_e::OBSERVE_COMBAT_BEHAVIOR),       flag);
+        mcm->Add_Toggle_Option(" Inspect Corpse Behavior ",     settler->Is_Flagged(Type_t::Flag_e::INSPECT_CORPSE_BEHAVIOR),       flag);
+        mcm->Add_Toggle_Option(" Keep Weapons Drawn ",          settler->Is_Flagged(Type_t::Flag_e::KEEP_WEAPONS_DRAWN),            flag);
+        mcm->Add_Toggle_Option(" Hide Weapons ",                settler->Is_Flagged(Type_t::Flag_e::HIDE_WEAPONS),                  flag);
     }
 
     template <typename Type_t>
     void Settlers_t::Build_Talking_Block(Main_t* mcm, Type_t* settler, Int_t flag)
     {
-        mcm->Add_Toggle_Option(" Allow Hellos to Player ", settler->Is_Flagged(Type_t::Flag_e::ALLOW_HELLOS_TO_PLAYER), flag);
-        mcm->Add_Toggle_Option(" Allow Hellos to NPCs ", settler->Is_Flagged(Type_t::Flag_e::ALLOW_HELLOS_TO_NPCS), flag);
-        mcm->Add_Toggle_Option(" Allow Idle Chatter ", settler->Is_Flagged(Type_t::Flag_e::ALLOW_IDLE_CHATTER), flag);
-        mcm->Add_Toggle_Option(" Allow World Interactions ", settler->Is_Flagged(Type_t::Flag_e::ALLOW_WORLD_INTERACTIONS), flag);
-        mcm->Add_Toggle_Option(" React to Player Actions ", settler->Is_Flagged(Type_t::Flag_e::REACT_TO_PLAYER_ACTIONS), flag);
+        mcm->Add_Toggle_Option(" Allow Hellos to Player ",      settler->Is_Flagged(Type_t::Flag_e::ALLOW_HELLOS_TO_PLAYER),    flag);
+        mcm->Add_Toggle_Option(" Allow Hellos to NPCs ",        settler->Is_Flagged(Type_t::Flag_e::ALLOW_HELLOS_TO_NPCS),      flag);
+        mcm->Add_Toggle_Option(" Allow Idle Chatter ",          settler->Is_Flagged(Type_t::Flag_e::ALLOW_IDLE_CHATTER),        flag);
+        mcm->Add_Toggle_Option(" Allow World Interactions ",    settler->Is_Flagged(Type_t::Flag_e::ALLOW_WORLD_INTERACTIONS),  flag);
+        mcm->Add_Toggle_Option(" React to Player Actions ",     settler->Is_Flagged(Type_t::Flag_e::REACT_TO_PLAYER_ACTIONS),   flag);
+    }
+
+    template <typename Type_t>
+    void Settlers_t::Build_Sandboxing_Block(Main_t* mcm, Type_t* settler, Int_t flag)
+    {
+        mcm->Add_Toggle_Option(" Allow Conversation ",          settler->Is_Flagged(Type_t::Flag_e::ALLOW_CONVERSATION),        flag);
+        mcm->Add_Toggle_Option(" Allow Eating ",                settler->Is_Flagged(Type_t::Flag_e::ALLOW_EATING),              flag);
+        mcm->Add_Toggle_Option(" Allow Idle Markers ",          settler->Is_Flagged(Type_t::Flag_e::ALLOW_IDLE_MARKERS),        flag);
+        mcm->Add_Toggle_Option(" Allow Sitting ",               settler->Is_Flagged(Type_t::Flag_e::ALLOW_SITTING),             flag);
+        mcm->Add_Toggle_Option(" Allow Sleeping ",              settler->Is_Flagged(Type_t::Flag_e::ALLOW_SLEEPING),            flag);
+        mcm->Add_Toggle_Option(" Allow Special Furniture ",     settler->Is_Flagged(Type_t::Flag_e::ALLOW_SPECIAL_FURNITURE),   flag);
+        mcm->Add_Toggle_Option(" Allow Wandering ",             settler->Is_Flagged(Type_t::Flag_e::ALLOW_WANDERING),           flag);
+        mcm->Add_Toggle_Option(" Wander Preferred Path ",       settler->Is_Flagged(Type_t::Flag_e::PREFERRED_PATH_ONLY),       flag);
+        mcm->Add_Slider_Option(" Minimum Wander Distance: ",    settler->Wander_Distance(), " {0} ", flag);
+        mcm->Add_Slider_Option(" Attention: ",                  settler->Attention(),       " {0} ", flag);
     }
 
     template <typename Type_t, typename Option_e>
@@ -588,6 +603,31 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
     }
 
     template <typename Type_t, typename Option_e>
+    Bool_t Settlers_t::Try_Select_Sandboxing_Block(Main_t* mcm, Int_t option, Type_t* settler, Option_e option_enum)
+    {
+        if (option_enum == Option_e::ALLOW_CONVERSATION) {
+            Toggle_Flag(mcm, option, settler, Type_t::Flag_e::ALLOW_CONVERSATION);
+        } else if (option_enum == Option_e::ALLOW_EATING) {
+            Toggle_Flag(mcm, option, settler, Type_t::Flag_e::ALLOW_EATING);
+        } else if (option_enum == Option_e::ALLOW_IDLE_MARKERS) {
+            Toggle_Flag(mcm, option, settler, Type_t::Flag_e::ALLOW_IDLE_MARKERS);
+        } else if (option_enum == Option_e::ALLOW_SITTING) {
+            Toggle_Flag(mcm, option, settler, Type_t::Flag_e::ALLOW_SITTING);
+        } else if (option_enum == Option_e::ALLOW_SLEEPING) {
+            Toggle_Flag(mcm, option, settler, Type_t::Flag_e::ALLOW_SLEEPING);
+        } else if (option_enum == Option_e::ALLOW_SPECIAL_FURNITURE) {
+            Toggle_Flag(mcm, option, settler, Type_t::Flag_e::ALLOW_SPECIAL_FURNITURE);
+        } else if (option_enum == Option_e::ALLOW_WANDERING) {
+            Toggle_Flag(mcm, option, settler, Type_t::Flag_e::ALLOW_WANDERING);
+        } else if (option_enum == Option_e::PREFERRED_PATH_ONLY) {
+            Toggle_Flag(mcm, option, settler, Type_t::Flag_e::PREFERRED_PATH_ONLY);
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    template <typename Type_t, typename Option_e>
     Bool_t Settlers_t::Try_Highlight_Movement_Block(Main_t* mcm, Int_t option, Type_t* settler, Option_e option_enum, std::string& name)
     {
         if (option_enum == Option_e::MOVE_MARKER) {
@@ -610,15 +650,15 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
     Bool_t Settlers_t::Try_Highlight_Time_Block(Main_t* mcm, Int_t option, Type_t* settler, Option_e option_enum, std::string& name)
     {
         if (option_enum == Option_e::TIME_HOUR) {
-
+            mcm->Info_Text("The hour at which " + name + " will begin this package.");
         } else if (option_enum == Option_e::TIME_MINUTE) {
-
+            mcm->Info_Text("The minute at which " + name + " will begin this package.");
         } else if (option_enum == Option_e::TIME_AM_PM) {
-
+            mcm->Info_Text("The period at which " + name + " will begin this package.");
         } else if (option_enum == Option_e::DURATION_HOURS) {
-
+            mcm->Info_Text("The duration in hours that " + name + " will continue this package.");
         } else if (option_enum == Option_e::DURATION_MINUTES) {
-
+            mcm->Info_Text("The duration in minutes that " + name + " will continue this package.");
         } else {
             return false;
         }
@@ -629,19 +669,19 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
     Bool_t Settlers_t::Try_Highlight_Combat_Block(Main_t* mcm, Int_t option, Type_t* settler, Option_e option_enum, std::string& name)
     {
         if (option_enum == Option_e::IGNORE_COMBAT) {
-
+            mcm->Info_Text(name + " will not fight or flee from combat.");
         } else if (option_enum == Option_e::SKIP_COMBAT_ALERT) {
-
+            mcm->Info_Text(name + " will immediately jump into battle, skipping the alert phase.");
         } else if (option_enum == Option_e::ALLOW_AGGRO_RADIUS_BEHAVIOR) {
-
+            mcm->Info_Text(name + " may warn a potential enemy before engaging in battle.");
         } else if (option_enum == Option_e::OBSERVE_COMBAT_BEHAVIOR) {
-
+            mcm->Info_Text(name + " may comment and observe a battle they are excluded from.");
         } else if (option_enum == Option_e::INSPECT_CORPSE_BEHAVIOR) {
-
+            mcm->Info_Text(name + " may comment and inspect a nearby corpse.");
         } else if (option_enum == Option_e::KEEP_WEAPONS_DRAWN) {
-
+            mcm->Info_Text(name + " will keep their weapons drawn.");
         } else if (option_enum == Option_e::HIDE_WEAPONS) {
-
+            mcm->Info_Text(name + " will hide their weapons away.");
         } else {
             return false;
         }
@@ -652,15 +692,44 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
     Bool_t Settlers_t::Try_Highlight_Talking_Block(Main_t* mcm, Int_t option, Type_t* settler, Option_e option_enum, std::string& name)
     {
         if (option_enum == Option_e::ALLOW_HELLOS_TO_PLAYER) {
-
+            mcm->Info_Text(name + " may speak to you when you draw near.");
         } else if (option_enum == Option_e::ALLOW_HELLOS_TO_NPCS) {
-
+            mcm->Info_Text(name + " may participate in a conversation with a sandboxing NPC.");
         } else if (option_enum == Option_e::ALLOW_IDLE_CHATTER) {
-
+            mcm->Info_Text(name + " may randomly speak out loud from time to time.");
         } else if (option_enum == Option_e::ALLOW_WORLD_INTERACTIONS) {
-
+            mcm->Info_Text(name + " may participate in world interaction events.");
         } else if (option_enum == Option_e::REACT_TO_PLAYER_ACTIONS) {
+            mcm->Info_Text(name + " may react to the player doing something.");
+        } else {
+            return false;
+        }
+        return true;
+    }
 
+    template <typename Type_t, typename Option_e>
+    Bool_t Settlers_t::Try_Highlight_Sandboxing_Block(Main_t* mcm, Int_t option, Type_t* settler, Option_e option_enum, std::string& name)
+    {
+        if (option_enum == Option_e::ALLOW_CONVERSATION) {
+            mcm->Info_Text(name + " may initiate a conversation with another NPC.");
+        } else if (option_enum == Option_e::ALLOW_EATING) {
+            mcm->Info_Text(name + " may eat while sandboxing.");
+        } else if (option_enum == Option_e::ALLOW_IDLE_MARKERS) {
+            mcm->Info_Text(name + " may stand at pre-determined locations within their environment.");
+        } else if (option_enum == Option_e::ALLOW_SITTING) {
+            mcm->Info_Text(name + " may sit while sandboxing. They may still sit if they are allowed to eat.");
+        } else if (option_enum == Option_e::ALLOW_SLEEPING) {
+            mcm->Info_Text(name + " may sleep while sandboxing. They will need to find a bed unowned by another NPC.");
+        } else if (option_enum == Option_e::ALLOW_SPECIAL_FURNITURE) {
+            mcm->Info_Text(name + " may use enchanting and alchemical tables, armory stations, etc.");
+        } else if (option_enum == Option_e::ALLOW_WANDERING) {
+            mcm->Info_Text(name + " may wander a little ways from their marker.");
+        } else if (option_enum == Option_e::PREFERRED_PATH_ONLY) {
+            mcm->Info_Text(name + " may wander only on preferred navmesh triangles.");
+        } else if (option_enum == Option_e::MIN_WANDER_DISTANCE) {
+            mcm->Info_Text("The minimum distance " + name + " should wander away from where they are standing.");
+        } else if (option_enum == Option_e::ATTENTION) {
+            mcm->Info_Text("Affects how long " + name + " will continue in their current sandboxing activity.");
         } else {
             return false;
         }
@@ -1128,16 +1197,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                         Build_Movement_Block(mcm, sandboxer, MCM::NONE);
 
                         mcm->Add_Empty_Option();
-                        mcm->Add_Toggle_Option(" Allow Conversation ", sandboxer->Is_Flagged(Flag_e::ALLOW_CONVERSATION));
-                        mcm->Add_Toggle_Option(" Allow Eating ", sandboxer->Is_Flagged(Flag_e::ALLOW_EATING));
-                        mcm->Add_Toggle_Option(" Allow Idle Markers ", sandboxer->Is_Flagged(Flag_e::ALLOW_IDLE_MARKERS));
-                        mcm->Add_Toggle_Option(" Allow Sitting ", sandboxer->Is_Flagged(Flag_e::ALLOW_SITTING));
-                        mcm->Add_Toggle_Option(" Allow Sleeping ", sandboxer->Is_Flagged(Flag_e::ALLOW_SLEEPING));
-                        mcm->Add_Toggle_Option(" Allow Special Furniture ", sandboxer->Is_Flagged(Flag_e::ALLOW_SPECIAL_FURNITURE));
-                        mcm->Add_Toggle_Option(" Allow Wandering ", sandboxer->Is_Flagged(Flag_e::ALLOW_WANDERING));
-                        mcm->Add_Toggle_Option(" Wander Preferred Path ", sandboxer->Is_Flagged(Flag_e::PREFERRED_PATH_ONLY));
-                        mcm->Add_Slider_Option(" Minimum Wander Distance: ", sandboxer->Wander_Distance(), " {0} ");
-                        mcm->Add_Slider_Option(" Attention: ", sandboxer->Attention(), " {0} ");
+                        Build_Sandboxing_Block(mcm, sandboxer, MCM::NONE);
 
                         mcm->Add_Empty_Option();
                         Build_Combat_Block(mcm, sandboxer, MCM::NONE);
@@ -1367,30 +1427,10 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                                 Modules::Control::Commands_t::Self()->Unsettle(sandboxer->Actor(), true);
                                 Review_Settlers();
                                 mcm->Reset_Page();
-
                             } else if (Try_Select_Movement_Block(mcm, option, sandboxer, option_enum)) {
-
-                            } else if (option_enum == Option_e::ALLOW_CONVERSATION) {
-                                Toggle_Flag(mcm, option, sandboxer, Flag_e::ALLOW_CONVERSATION);
-                            } else if (option_enum == Option_e::ALLOW_EATING) {
-                                Toggle_Flag(mcm, option, sandboxer, Flag_e::ALLOW_EATING);
-                            } else if (option_enum == Option_e::ALLOW_IDLE_MARKERS) {
-                                Toggle_Flag(mcm, option, sandboxer, Flag_e::ALLOW_IDLE_MARKERS);
-                            } else if (option_enum == Option_e::ALLOW_SITTING) {
-                                Toggle_Flag(mcm, option, sandboxer, Flag_e::ALLOW_SITTING);
-                            } else if (option_enum == Option_e::ALLOW_SLEEPING) {
-                                Toggle_Flag(mcm, option, sandboxer, Flag_e::ALLOW_SLEEPING);
-                            } else if (option_enum == Option_e::ALLOW_SPECIAL_FURNITURE) {
-                                Toggle_Flag(mcm, option, sandboxer, Flag_e::ALLOW_SPECIAL_FURNITURE);
-                            } else if (option_enum == Option_e::ALLOW_WANDERING) {
-                                Toggle_Flag(mcm, option, sandboxer, Flag_e::ALLOW_WANDERING);
-                            } else if (option_enum == Option_e::PREFERRED_PATH_ONLY) {
-                                Toggle_Flag(mcm, option, sandboxer, Flag_e::PREFERRED_PATH_ONLY);
-
+                            } else if (Try_Select_Sandboxing_Block(mcm, option, sandboxer, option_enum)) {
                             } else if (Try_Select_Combat_Block(mcm, option, sandboxer, option_enum)) {
-
                             } else if (Try_Select_Talking_Block(mcm, option, sandboxer, option_enum)) {
-
                             }
                         } else {
                             using Option_e = Sleeper_Option_e;
@@ -1405,7 +1445,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                                     sleeper->Enable_Sleeper();
                                 }
                                 mcm->Reset_Page();
-
                             } else if (Try_Select_Movement_Block(mcm, option, sleeper, option_enum)) {
                             } else if (option_enum == Option_e::CREATE_BED_AT_MARKER) {
                                 if (sleeper->Has_Bed()) {
@@ -1415,9 +1454,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                                     sleeper->Add_Bed();
                                     mcm->Toggle_Option_Value(option, true, true);
                                 }
-
                             } else if (Try_Select_Combat_Block(mcm, option, sleeper, option_enum)) {
-
                             }
                         }
                     } else if (page_index == 1) {
@@ -1434,13 +1471,9 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                                     sitter->Enable_Sitter();
                                 }
                                 mcm->Reset_Page();
-
                             } else if (Try_Select_Movement_Block(mcm, option, sitter, option_enum)) {
-
                             } else if (Try_Select_Combat_Block(mcm, option, sitter, option_enum)) {
-
                             } else if (Try_Select_Talking_Block(mcm, option, sitter, option_enum)) {
-
                             }
                         } else {
                             using Option_e = Eater_Option_e;
@@ -1455,13 +1488,9 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                                     eater->Enable_Eater();
                                 }
                                 mcm->Reset_Page();
-
                             } else if (Try_Select_Movement_Block(mcm, option, eater, option_enum)) {
-
                             } else if (Try_Select_Combat_Block(mcm, option, eater, option_enum)) {
-
                             } else if (Try_Select_Talking_Block(mcm, option, eater, option_enum)) {
-
                             }
                         }
                     } else if (page_index == 2) {
@@ -1478,13 +1507,9 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                                     guard->Enable_Guard();
                                 }
                                 mcm->Reset_Page();
-
                             } else if (Try_Select_Movement_Block(mcm, option, guard, option_enum)) {
-
                             } else if (Try_Select_Combat_Block(mcm, option, guard, option_enum)) {
-
                             } else if (Try_Select_Talking_Block(mcm, option, guard, option_enum)) {
-
                             }
                         }
                     }
@@ -1521,7 +1546,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                         Option_e option_enum = static_cast<Option_e>(option_index);
                         if (option_enum == Option_e::MOVEMENT_SPEED) {
                             Open_Movement_Speed_Menu();
-
                         } else if (option_enum == Option_e::TIME_HOUR) {
                             Open_Time_Hour_Menu();
                         } else if (option_enum == Option_e::TIME_MINUTE) {
@@ -1542,7 +1566,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                         Option_e option_enum = static_cast<Option_e>(option_index);
                         if (option_enum == Option_e::MOVEMENT_SPEED) {
                             Open_Movement_Speed_Menu();
-
                         } else if (option_enum == Option_e::TIME_HOUR) {
                             Open_Time_Hour_Menu();
                         } else if (option_enum == Option_e::TIME_MINUTE) {
@@ -1561,7 +1584,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                         Option_e option_enum = static_cast<Option_e>(option_index);
                         if (option_enum == Option_e::MOVEMENT_SPEED) {
                             Open_Movement_Speed_Menu();
-
                         } else if (option_enum == Option_e::TIME_HOUR) {
                             Open_Time_Hour_Menu();
                         } else if (option_enum == Option_e::TIME_MINUTE) {
@@ -1582,7 +1604,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                         Option_e option_enum = static_cast<Option_e>(option_index);
                         if (option_enum == Option_e::MOVEMENT_SPEED) {
                             Open_Movement_Speed_Menu();
-
                         } else if (option_enum == Option_e::TIME_HOUR) {
                             Open_Time_Hour_Menu();
                         } else if (option_enum == Option_e::TIME_MINUTE) {
@@ -1630,7 +1651,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                         Option_e option_enum = static_cast<Option_e>(option_index);
                         if (option_enum == Option_e::MOVEMENT_SPEED) {
                             Accept_Movement_Speed_Menu(option, idx, sleeper);
-
                         } else if (option_enum == Option_e::TIME_HOUR) {
                             Accept_Time_Hour_Menu(option, idx, sleeper);
                         } else if (option_enum == Option_e::TIME_MINUTE) {
@@ -1652,7 +1672,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                         Option_e option_enum = static_cast<Option_e>(option_index);
                         if (option_enum == Option_e::MOVEMENT_SPEED) {
                             Accept_Movement_Speed_Menu(option, idx, sitter);
-
                         } else if (option_enum == Option_e::TIME_HOUR) {
                             Accept_Time_Hour_Menu(option, idx, sitter);
                         } else if (option_enum == Option_e::TIME_MINUTE) {
@@ -1672,7 +1691,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                         Option_e option_enum = static_cast<Option_e>(option_index);
                         if (option_enum == Option_e::MOVEMENT_SPEED) {
                             Accept_Movement_Speed_Menu(option, idx, eater);
-
                         } else if (option_enum == Option_e::TIME_HOUR) {
                             Accept_Time_Hour_Menu(option, idx, eater);
                         } else if (option_enum == Option_e::TIME_MINUTE) {
@@ -1694,7 +1712,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                         Option_e option_enum = static_cast<Option_e>(option_index);
                         if (option_enum == Option_e::MOVEMENT_SPEED) {
                             Accept_Movement_Speed_Menu(option, idx, guard);
-
                         } else if (option_enum == Option_e::TIME_HOUR) {
                             Accept_Time_Hour_Menu(option, idx, guard);
                         } else if (option_enum == Option_e::TIME_MINUTE) {
@@ -1734,7 +1751,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                         Option_e option_enum = static_cast<Option_e>(option_index);
                         if (option_enum == Option_e::MARKER_RADIUS) {
                             Open_Marker_Radius_Slider(sandboxer);
-
                         } else if (option_enum == Option_e::MIN_WANDER_DISTANCE) {
                             Open_Wander_Distance_Slider(sandboxer);
                         } else if (option_enum == Option_e::ATTENTION) {
@@ -1803,7 +1819,6 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                         Option_e option_enum = static_cast<Option_e>(option_index);
                         if (option_enum == Option_e::MARKER_RADIUS) {
                             Accept_Marker_Radius_Slider(option, value, sandboxer);
-
                         } else if (option_enum == Option_e::MIN_WANDER_DISTANCE) {
                             Accept_Wander_Distance_Slider(option, value, sandboxer);
                         } else if (option_enum == Option_e::ATTENTION) {
@@ -1934,24 +1949,10 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                         Option_e option_enum = static_cast<Option_e>(option_index);
                         if (option_enum == Option_e::UNSETTLE) {
                             mcm->Info_Text(name + " will no longer be a settler. All other settler packages will also be disabled.");
-
                         } else if (Try_Highlight_Movement_Block(mcm, option, sandboxer, option_enum, name)) {
-
-                        } else if (option_enum == Option_e::ALLOW_CONVERSATION) {
-                        } else if (option_enum == Option_e::ALLOW_EATING) {
-                        } else if (option_enum == Option_e::ALLOW_IDLE_MARKERS) {
-                        } else if (option_enum == Option_e::ALLOW_SITTING) {
-                        } else if (option_enum == Option_e::ALLOW_SLEEPING) {
-                        } else if (option_enum == Option_e::ALLOW_SPECIAL_FURNITURE) {
-                        } else if (option_enum == Option_e::ALLOW_WANDERING) {
-                        } else if (option_enum == Option_e::PREFERRED_PATH_ONLY) {
-                        } else if (option_enum == Option_e::MIN_WANDER_DISTANCE) {
-                        } else if (option_enum == Option_e::ATTENTION) {
-
+                        } else if (Try_Highlight_Sandboxing_Block(mcm, option, sandboxer, option_enum, name)) {
                         } else if (Try_Highlight_Combat_Block(mcm, option, sandboxer, option_enum, name)) {
-
                         } else if (Try_Highlight_Talking_Block(mcm, option, sandboxer, option_enum, name)) {
-
                         }
                     } else {
                         using Option_e = Sleeper_Option_e;
@@ -1959,9 +1960,12 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                         Party::Sleeper_t* sleeper = static_cast<Party::Sleeper_t*>(settler);
                         Option_e option_enum = static_cast<Option_e>(option_index);
                         if (option_enum == Option_e::ENABLE) {
-
+                            mcm->Info_Text("Toggle the Sleeper package for " + name + ".");
+                        } else if (option_enum == Option_e::CREATE_BED_AT_MARKER) {
+                            mcm->Info_Text("Create a bed for " + name + " to sleep in, located where the marker is placed.");
                         } else if (Try_Highlight_Movement_Block(mcm, option, sleeper, option_enum, name)) {
-
+                        } else if (Try_Highlight_Time_Block(mcm, option, sleeper, option_enum, name)) {
+                        } else if (Try_Highlight_Combat_Block(mcm, option, sleeper, option_enum, name)) {
                         }
                     }
                 } else if (page_index == 1) {
@@ -1971,9 +1975,11 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                         Party::Sitter_t* sitter = static_cast<Party::Sitter_t*>(settler);
                         Option_e option_enum = static_cast<Option_e>(option_index);
                         if (option_enum == Option_e::ENABLE) {
-
+                            mcm->Info_Text("Toggle the Sitter package for " + name + ".");
                         } else if (Try_Highlight_Movement_Block(mcm, option, sitter, option_enum, name)) {
-
+                        } else if (Try_Highlight_Time_Block(mcm, option, sitter, option_enum, name)) {
+                        } else if (Try_Highlight_Combat_Block(mcm, option, sitter, option_enum, name)) {
+                        } else if (Try_Highlight_Talking_Block(mcm, option, sitter, option_enum, name)) {
                         }
                     } else {
                         using Option_e = Eater_Option_e;
@@ -1981,9 +1987,11 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                         Party::Eater_t* eater = static_cast<Party::Eater_t*>(settler);
                         Option_e option_enum = static_cast<Option_e>(option_index);
                         if (option_enum == Option_e::ENABLE) {
-
+                            mcm->Info_Text("Toggle the Eater package for " + name + ".");
                         } else if (Try_Highlight_Movement_Block(mcm, option, eater, option_enum, name)) {
-
+                        } else if (Try_Highlight_Time_Block(mcm, option, eater, option_enum, name)) {
+                        } else if (Try_Highlight_Combat_Block(mcm, option, eater, option_enum, name)) {
+                        } else if (Try_Highlight_Talking_Block(mcm, option, eater, option_enum, name)) {
                         }
                     }
                 } else if (page_index == 2) {
@@ -1993,9 +2001,11 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                         Party::Guard_t* guard = static_cast<Party::Guard_t*>(settler);
                         Option_e option_enum = static_cast<Option_e>(option_index);
                         if (option_enum == Option_e::ENABLE) {
-
+                            mcm->Info_Text("Toggle the Guard package for " + name + ".");
                         } else if (Try_Highlight_Movement_Block(mcm, option, guard, option_enum, name)) {
-
+                        } else if (Try_Highlight_Time_Block(mcm, option, guard, option_enum, name)) {
+                        } else if (Try_Highlight_Combat_Block(mcm, option, guard, option_enum, name)) {
+                        } else if (Try_Highlight_Talking_Block(mcm, option, guard, option_enum, name)) {
                         }
                     }
                 }

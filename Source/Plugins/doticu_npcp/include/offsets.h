@@ -80,6 +80,13 @@ namespace doticu_npcp { namespace Offsets {
 
     }
 
+    namespace Form_Factory {
+
+        constexpr uintptr_t IS_CREATED                  = 0x1EC3CB3; // 514349
+        constexpr uintptr_t FACTORIES                   = 0x1EC3CE0; // 514355
+
+    }
+
     namespace Magic_Target {
 
         constexpr uintptr_t HAS_MAGIC_EFFECT            = 0x005530D0; // 33733
@@ -143,6 +150,12 @@ namespace doticu_npcp { namespace Offsets {
         constexpr uintptr_t SELF                        = 0x01DD3EF8; // 502260
         constexpr uintptr_t GET_RELATIONSHIP_RANK       = 0x00345ED0; // 23624
         constexpr uintptr_t SET_RELATIONSHIP_RANK       = 0x00345B80; // 23623
+
+    }
+
+    namespace Script {
+
+        constexpr uintptr_t EXECUTE                     = 0x002E75F0; // 21416
 
     }
 

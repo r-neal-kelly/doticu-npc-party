@@ -361,4 +361,44 @@ namespace doticu_npcp {
         }
     }
 
+    Form_Factory_i* Form_Factory_i::Form_Factory(Form_Type_t form_type)
+    {
+        struct Form_Factories_t {
+            Form_Factory_i* factories[138];
+        };
+        static auto factories = reinterpret_cast
+            <Form_Factories_t*>
+            (RelocationManager::s_baseAddr + Offsets::Form_Factory::FACTORIES);
+        static Bool_t is_created = *reinterpret_cast
+            <Bool_t*>
+            (RelocationManager::s_baseAddr + Offsets::Form_Factory::IS_CREATED);
+
+        NPCP_ASSERT(is_created);
+        return factories->factories[form_type];
+    }
+
+    void Script_t::Command(const char* command)
+    {
+        size_t length = String2::Length(command) + 1;
+        if (length > 0) {
+            if (text) {
+                free(text);
+            }
+            text = static_cast<char*>(malloc(length));
+            std::memcpy(text, command, length);
+        }
+    }
+
+    void Script_t::Execute(Reference_t* reference, Script_t::Compiler_e compiler_enum)
+    {
+        class Compiler_t {
+        public:
+        };
+        static auto execute = reinterpret_cast
+            <void(*)(Script_t*, Compiler_t*, Compiler_e, Reference_t*)>
+            (RelocationManager::s_baseAddr + Offsets::Script::EXECUTE);
+        Compiler_t compiler;
+        execute(this, &compiler, compiler_enum, reference);
+    }
+
 }

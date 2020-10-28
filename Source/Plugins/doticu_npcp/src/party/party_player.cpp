@@ -330,9 +330,18 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         static auto Update_Members = [&]()->void
         {
             Members_t* members = Members_t::Self();
-            Vector_t<Member_t*> loaded_members = members->Loaded();
-            for (size_t idx = 0, count = loaded_members.size(); idx < count; idx += 1) {
-                loaded_members[idx]->Enforce();
+            Vector_t<Member_t*> filled = members->Filled();
+            for (size_t idx = 0, count = filled.size(); idx < count; idx += 1) {
+                Member_t* member = filled[idx];
+                if (member) {
+                    Actor_t* actor = member->Actor();
+                    if (actor) {
+                        Modules::Funcs_t::Self()->Enable(actor);
+                        if (member->Is_Loaded()) {
+                            member->Enforce();
+                        }
+                    }
+                }
             }
         };
 

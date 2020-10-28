@@ -1593,9 +1593,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         if (Actor2::Cant_Talk_To_Player(actor)) {
             Actor2::Talks_To_Player(actor, true);
         }
-
-        //Object_Ref::Enable(actor, false);
-        Modules::Funcs_t::Self()->Enable_Actor(actor);
     }
 
     void Member_t::Destroy_Member(Actor_t* actor)

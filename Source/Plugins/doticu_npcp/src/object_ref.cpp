@@ -1183,7 +1183,13 @@ namespace doticu_npcp { namespace Object_Ref {
             }
         } arguments(do_fade_in);
 
-        Virtual_Machine_t::Self()->Call_Method(ref, "ObjectReference", "Enable", &arguments, callback);
+        Virtual_Machine_t::Self()->Call_Method(
+            ref,
+            "ObjectReference",
+            "Enable",
+            &arguments,
+            callback
+        );
     }
 
     void Disable(Reference_t* ref, Bool_t do_fade_out, Virtual_Callback_i** callback)

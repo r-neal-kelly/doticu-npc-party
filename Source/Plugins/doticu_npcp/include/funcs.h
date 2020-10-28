@@ -31,7 +31,7 @@ namespace doticu_npcp { namespace Modules {
 
         void Force_Third_Person(Virtual_Callback_i* vcallback = nullptr);
 
-        void Enable_Actor(Actor_t* actor, Virtual_Callback_i* vcallback = nullptr);
+        void Enable(Reference_t* reference, Virtual_Callback_i* vcallback = nullptr);
 
     public:
         static void Register_Me(Virtual_Machine_t* vm);

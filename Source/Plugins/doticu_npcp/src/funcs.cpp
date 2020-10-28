@@ -234,29 +234,17 @@ namespace doticu_npcp { namespace Modules {
         );
     }
 
-    void Funcs_t::Enable_Actor(Actor_t* actor, Virtual_Callback_i* vcallback)
+    void Funcs_t::Enable(Reference_t* reference, Virtual_Callback_i* vcallback)
     {
-        struct Arguments : public Virtual_Arguments_t {
-            Actor_t* actor;
-            Arguments(Actor_t* actor) :
-                actor(actor)
-            {
-            }
-            Bool_t operator()(Arguments_t* arguments)
-            {
-                arguments->Resize(1);
-                arguments->At(0)->Pack(actor);
-                return true;
-            }
-        } arguments(actor);
+        static Form_Factory_i* script_factory = Form_Factory_i::Form_Factory(kFormType_Script);
 
-        Virtual_Machine_t::Self()->Call_Method(
-            Consts::Funcs_Quest(),
-            Class_Name(),
-            "Enable_Actor",
-            &arguments,
-            vcallback ? &vcallback : nullptr
-        );
+        if (reference) {
+            Script_t* script = static_cast<Script_t*>(script_factory->Create());
+            NPCP_ASSERT(script);
+            script->Command("enable");
+            script->Execute(reference);
+            delete script;
+        }
     }
 
     void Funcs_t::Register_Me(Virtual_Machine_t* vm)

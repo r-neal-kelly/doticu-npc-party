@@ -24,10 +24,6 @@ function Open_Container(ObjectReference ref_container);;;
     endIf
 endFunction
 
-function Enable_Actor(Actor ref_actor);;;
-    ref_actor.Enable(false)
-endFunction
-
 function Essentialize(ActorBase base_actor);;;
     Wait(1); is this necessary?
     base_actor.SetEssential(true)
@@ -48,7 +44,6 @@ endFunction
 
 function Stop_If_Playing_Music(Actor ref_actor);;;
     BardSongsScript script = doticu_npcp_consts.Bard_Songs_Quest() as BardSongsScript
-
     if script.BardSongs_Bard.GetActorReference() == ref_actor
         script.StopAllSongs()
         script.BardSongs_Bard.Clear()
