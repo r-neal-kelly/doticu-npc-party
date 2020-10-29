@@ -194,6 +194,8 @@ namespace doticu_npcp { namespace Consts {
     Misc_t* Invulnerable_Vitality_Token();
     Misc_t* Follower_Token();
     Misc_t* Sneak_Follower_Token();
+    Misc_t* Sojourner_Follower_Token();
+    Misc_t* Active_Sojourner_Follower_Token();
     Misc_t* Saddler_Token();
     Misc_t* Retreater_Token();
 
@@ -346,6 +348,7 @@ namespace doticu_npcp { namespace Consts {
     Topic_t* Main_Saddle_Topic();
     Topic_t* Main_Settle_Topic();
     Topic_t* Main_Sneak_Topic();
+    Topic_t* Main_Sojourn_Topic();
     Topic_t* Main_Stash_Topic();
     Topic_t* Main_Style_Topic();
     Topic_t* Main_Style2_Topic();
@@ -361,6 +364,7 @@ namespace doticu_npcp { namespace Consts {
     Topic_t* Main_Unsaddle_Topic();
     Topic_t* Main_Unsettle_Topic();
     Topic_t* Main_Unsneak_Topic();
+    Topic_t* Main_Unsojourn_Topic();
     Topic_t* Main_Unthrall_Topic();
     Topic_t* Main_Vitality_Topic();
     Topic_t* Main_Vitality2_Topic();

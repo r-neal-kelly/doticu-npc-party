@@ -134,12 +134,30 @@ namespace doticu_npcp {
         }
     }
 
+    Bool_t Actor_State_t::Is_Moving()
+    {
+        return
+            state.moving_forward ||
+            state.moving_left ||
+            state.moving_right ||
+            state.moving_back;
+    }
+
     void Actor_State_t::Stop_Movement()
     {
-        state.moving_back = 0;
-        state.moving_forward = 0;
-        state.moving_right = 0;
-        state.moving_left = 0;
+        state.moving_back = false;
+        state.moving_forward = false;
+        state.moving_right = false;
+        state.moving_left = false;
+    }
+
+    Actor_State_t::Weapon_e Actor_State_t::Weapon_State()
+    {
+        return static_cast<Weapon_e>(
+            static_cast<UInt8>(state.weapon_0) << 0 |
+            static_cast<UInt8>(state.weapon_1) << 1 |
+            static_cast<UInt8>(state.weapon_2) << 2
+        );
     }
 
     Actor_Equipper_t* Actor_Equipper_t::Self()

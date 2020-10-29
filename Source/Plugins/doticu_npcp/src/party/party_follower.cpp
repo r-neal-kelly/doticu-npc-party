@@ -50,6 +50,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
     Variable_t* Follower_t::Is_Locked_Variable() { DEFINE_VARIABLE("p_is_locked"); }
     Variable_t* Follower_t::Is_Sneak_Variable() { DEFINE_VARIABLE("p_is_sneak"); }
+    Variable_t* Follower_t::Is_Sojourner_Variable() { DEFINE_VARIABLE("p_is_sojourner"); }
     Variable_t* Follower_t::Is_Saddler_Variable() { DEFINE_VARIABLE("p_is_saddler"); }
     Variable_t* Follower_t::Is_Retreater_Variable() { DEFINE_VARIABLE("p_is_retreater"); }
 
@@ -300,6 +301,16 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         return Is_Filled() && !Is_Sneak_Variable()->Bool();
     }
 
+    Bool_t Follower_t::Is_Sojourner()
+    {
+        return Is_Filled() && Is_Sojourner_Variable()->Bool();
+    }
+
+    Bool_t Follower_t::Isnt_Sojourner()
+    {
+        return Is_Filled() && !Is_Sojourner_Variable()->Bool();
+    }
+
     Bool_t Follower_t::Is_Saddler()
     {
         return Is_Filled() && Is_Saddler_Variable()->Bool();
@@ -473,6 +484,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         Is_Locked_Variable()->Bool(false);
         Is_Sneak_Variable()->Bool(false);
+        Is_Sojourner_Variable()->Bool(false);
         Is_Saddler_Variable()->Bool(false);
         Is_Retreater_Variable()->Bool(false);
 
@@ -602,6 +614,9 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
             if (Is_Retreater()) {
                 Unretreat();
             }
+            if (Is_Sojourner()) {
+                Unsojourn();
+            }
             if (Is_Sneak()) {
                 Unsneak();
             }
@@ -616,6 +631,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
             Is_Retreater_Variable()->Bool(false);
             Is_Saddler_Variable()->Bool(false);
+            Is_Sojourner_Variable()->Bool(false);
             Is_Sneak_Variable()->Bool(false);
 
             Horse_Variable()->None(Horse_t::Class_Info());
@@ -708,6 +724,9 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                 if (Is_Retreater()) {
                     Unretreat();
                 }
+                if (Is_Sojourner()) {
+                    Unsojourn();
+                }
                 if (Is_Sneak()) {
                     Unsneak();
                 }
@@ -725,6 +744,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
                 Is_Retreater_Variable()->Bool(false);
                 Is_Saddler_Variable()->Bool(false);
+                Is_Sojourner_Variable()->Bool(false);
                 Is_Sneak_Variable()->Bool(false);
 
                 Horse_Variable()->None(Horse_t::Class_Info());
@@ -1142,6 +1162,79 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         values->Set_Actor_Value(Actor_Value_t::SPEED_MULT, MAX_UNSNEAK_SPEED);
     }
 
+    Int_t Follower_t::Sojourn()
+    {
+        if (Is_Filled()) {
+            if (Isnt_Sojourner()) {
+                Is_Sojourner_Variable()->Bool(true);
+
+                Actor_t* actor = Actor();
+                Enforce_Sojourner(actor);
+                Actor2::Evaluate_Package(actor);
+
+                return CODES::SUCCESS;
+            } else {
+                return CODES::IS;
+            }
+        } else {
+            return CODES::FOLLOWER;
+        }
+    }
+
+    void Follower_t::Enforce_Sojourner(Actor_t* actor)
+    {
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(Is_Sojourner());
+
+        Object_Ref::Token(actor, Consts::Sojourner_Follower_Token());
+
+        Actor_t* player_actor = Consts::Player_Actor();
+        Misc_t* active_token = Consts::Active_Sojourner_Follower_Token();
+        if (Object_Ref::Has_Token(actor, active_token)) {
+            if (Actor2::Is_Sneaking(player_actor) ||
+                Actor2::Has_Weapon_Drawn(player_actor) ||
+                Object_Ref::Get_Distance(actor, player_actor) > 768.0f) {
+                Object_Ref::Untoken(actor, active_token);
+                Actor2::Evaluate_Package(actor);
+            }
+        } else {
+            if (!Actor2::Is_Moving(player_actor) &&
+                !Actor2::Is_Sneaking(player_actor) &&
+                Actor2::Has_Weapon_Sheathed(player_actor)) {
+                Object_Ref::Token(actor, active_token);
+                Actor2::Evaluate_Package(actor);
+            }
+        }
+    }
+
+    Int_t Follower_t::Unsojourn()
+    {
+        if (Is_Filled()) {
+            if (Is_Sojourner()) {
+                Is_Sojourner_Variable()->Bool(false);
+
+                Actor_t* actor = Actor();
+                Enforce_Non_Sojourner(actor);
+                Actor2::Evaluate_Package(actor);
+
+                return CODES::SUCCESS;
+            } else {
+                return CODES::IS;
+            }
+        } else {
+            return CODES::FOLLOWER;
+        }
+    }
+
+    void Follower_t::Enforce_Non_Sojourner(Actor_t* actor)
+    {
+        NPCP_ASSERT(Is_Filled());
+        NPCP_ASSERT(Isnt_Sojourner());
+
+        Object_Ref::Untoken(actor, Consts::Sojourner_Follower_Token());
+        Object_Ref::Untoken(actor, Consts::Active_Sojourner_Follower_Token());
+    }
+
     void Follower_t::Saddle(Callback_t<Int_t, Follower_t*>** callback)
     {
         NPCP_ASSERT(callback);
@@ -1341,6 +1434,12 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                     Enforce_Non_Sneak(actor);
                 }
 
+                if (Is_Sojourner()) {
+                    Enforce_Sojourner(actor);
+                } else {
+                    Enforce_Non_Sojourner(actor);
+                }
+
                 if (Is_Saddler()) {
                     Enforce_Saddler(actor);
                 } else {
@@ -1479,8 +1578,13 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     void Follower_t::Catch_Up(Cell_t* new_cell, Cell_t* old_cell)
     {
         if (Is_Filled()) {
+            Actor_t* actor = Actor();
             if (Is_Mobile() && Isnt_Paralyzed() && Isnt_Mannequin() && Isnt_Display()) {
                 Player_t* player = Player_t::Self();
+                if (Is_Sojourner()) {
+                    Object_Ref::Untoken(actor, Consts::Active_Sojourner_Follower_Token());
+                    Actor2::Evaluate_Package(actor);
+                }
                 if (Is_Saddler() && player->Is_In_Exterior_Cell()) {
                     if (Cell::Is_Interior(old_cell) || !Cell::Has_Same_Worldspace(old_cell, new_cell)) {
                         Summon(player->Actor(), 256.0f, 0.0f);
@@ -1503,7 +1607,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                     }
                 }
             }
-            Actor2::Evaluate_Package(Actor());
+            Actor2::Evaluate_Package(actor);
         }
     }
 

@@ -1653,11 +1653,47 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
+    Bool_t Is_Moving(Actor_t* actor)
+    {
+        if (actor) {
+            Actor_State_t* actor_state = reinterpret_cast<Actor_State_t*>(&actor->actorState);
+            return actor_state->Is_Moving();
+        } else {
+            return false;
+        }
+    }
+
     void Stop_Movement(Actor_t* actor)
     {
         if (actor) {
             Actor_State_t* actor_state = reinterpret_cast<Actor_State_t*>(&actor->actorState);
             actor_state->Stop_Movement();
+        }
+    }
+
+    Bool_t Has_Weapon_Sheathed(Actor_t* actor)
+    {
+        if (actor) {
+            Actor_State_t* actor_state = reinterpret_cast<Actor_State_t*>(&actor->actorState);
+            Actor_State_t::Weapon_e weapon_state = actor_state->Weapon_State();
+            return
+                weapon_state == Actor_State_t::Weapon_e::SHEATHED ||
+                weapon_state == Actor_State_t::Weapon_e::SHEATHING;
+        } else {
+            return false;
+        }
+    }
+
+    Bool_t Has_Weapon_Drawn(Actor_t* actor)
+    {
+        if (actor) {
+            Actor_State_t* actor_state = reinterpret_cast<Actor_State_t*>(&actor->actorState);
+            Actor_State_t::Weapon_e weapon_state = actor_state->Weapon_State();
+            return
+                weapon_state == Actor_State_t::Weapon_e::DRAWN ||
+                weapon_state == Actor_State_t::Weapon_e::DRAWING;
+        } else {
+            return false;
         }
     }
 

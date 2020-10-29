@@ -31,6 +31,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         Variable_t* Is_Locked_Variable(); // Bool_t
         Variable_t* Is_Sneak_Variable(); // Bool_t
+        Variable_t* Is_Sojourner_Variable(); // Bool_t
         Variable_t* Is_Saddler_Variable(); // Bool_t
         Variable_t* Is_Retreater_Variable(); // Bool_t
 
@@ -83,6 +84,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Bool_t Isnt_Follower();
         Bool_t Is_Sneak();
         Bool_t Isnt_Sneak();
+        Bool_t Is_Sojourner();
+        Bool_t Isnt_Sojourner();
         Bool_t Is_Saddler();
         Bool_t Isnt_Saddler();
         Bool_t Is_Retreater();
@@ -117,6 +120,11 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         void Enforce_Sneak(Actor_t* actor);
         Int_t Unsneak();
         void Enforce_Non_Sneak(Actor_t* actor);
+
+        Int_t Sojourn();
+        void Enforce_Sojourner(Actor_t* actor);
+        Int_t Unsojourn();
+        void Enforce_Non_Sojourner(Actor_t* actor);
 
         void Saddle(Callback_t<Int_t, Follower_t*>** callback);
         void Enforce_Saddler(Actor_t* actor);

@@ -2108,6 +2108,58 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         };
     }
 
+    void Commands_t::Sojourn(Actor_t* actor, Bool_t do_notify_success)
+    {
+        Party::Follower_t* follower = Party::Followers_t::Self()->From_Actor(actor);
+
+        const char* name;
+        Int_t code;
+        if (follower) {
+            name = follower->Name().data;
+            code = follower->Sojourn();
+        } else {
+            name = Actor2::Get_Name(actor);
+            code = CODES::FOLLOWER;
+        }
+
+        switch (code) {
+            case (CODES::SUCCESS):
+                return do_notify_success ? Log_Note(name, " will sojourn.") : (void)0;
+            case (CODES::FOLLOWER):
+                return Log_Note(name, " isn't a follower, and so can't sojourn.");
+            case (CODES::IS):
+                return Log_Note(name, " is already sojourning.");
+            default:
+                return Log_Error(name, " can't sojourn", code);
+        };
+    }
+
+    void Commands_t::Unsojourn(Actor_t* actor, Bool_t do_notify_success)
+    {
+        Party::Follower_t* follower = Party::Followers_t::Self()->From_Actor(actor);
+
+        const char* name;
+        Int_t code;
+        if (follower) {
+            name = follower->Name().data;
+            code = follower->Unsojourn();
+        } else {
+            name = Actor2::Get_Name(actor);
+            code = CODES::FOLLOWER;
+        }
+
+        switch (code) {
+            case (CODES::SUCCESS):
+                return do_notify_success ? Log_Note(name, " will stop sojourning.") : (void)0;
+            case (CODES::FOLLOWER):
+                return Log_Note(name, " isn't a follower, and so can't stop sojourning.");
+            case (CODES::IS):
+                return Log_Note(name, " is not sojourning.");
+            default:
+                return Log_Error(name, " can't stop sojourning", code);
+        };
+    }
+
     void Commands_t::Saddle(Actor_t* actor)
     {
         using namespace Party;
@@ -2267,6 +2319,63 @@ namespace doticu_npcp { namespace Modules { namespace Control {
                 {
                     if (code == CODES::SUCCESS) {
                         commands->Toggle_Sneak(actor);
+                    } else {
+                        commands->Log_Member(code, Actor2::Get_Name(actor));
+                    }
+                }
+            };
+            Callback_t<Int_t, Member_t*>* add_callback = new Add_Callback(this, actor);
+            Members_t::Self()->Add_Original(actor, &add_callback);
+        }
+    }
+
+    void Commands_t::Toggle_Sojourner(Actor_t* actor)
+    {
+        using namespace Party;
+
+        Member_t* member = Party::Members_t::Self()->From_Actor(actor);
+        if (member) {
+            Party::Follower_t* follower = member->Follower();
+            if (follower) {
+                if (follower->Is_Sojourner()) {
+                    Unsojourn(actor, true);
+                } else {
+                    Sojourn(actor, true);
+                }
+            } else {
+                class Add_Callback : public Callback_t<Int_t, Follower_t*> {
+                public:
+                    Commands_t* commands;
+                    Actor_t* actor;
+                    Member_t* member;
+                    Add_Callback(Commands_t* commands, Actor_t* actor, Member_t* member) :
+                        commands(commands), actor(actor), member(member)
+                    {
+                    }
+                    virtual void operator()(Int_t code, Follower_t* follower) override
+                    {
+                        if (code == CODES::SUCCESS) {
+                            commands->Sojourn(actor, true);
+                        } else {
+                            commands->Log_Follow(code, member->Name());
+                        }
+                    }
+                };
+                Followers_t::Self()->Add_Follower(member, new Add_Callback(this, actor, member));
+            }
+        } else {
+            class Add_Callback : public Callback_t<Int_t, Member_t*> {
+            public:
+                Commands_t* commands;
+                Actor_t* actor;
+                Add_Callback(Commands_t* commands, Actor_t* actor) :
+                    commands(commands), actor(actor)
+                {
+                }
+                virtual void operator()(Int_t code, Member_t* member) override
+                {
+                    if (code == CODES::SUCCESS) {
+                        commands->Toggle_Sojourner(actor);
                     } else {
                         commands->Log_Member(code, Actor2::Get_Name(actor));
                     }

@@ -121,11 +121,14 @@ namespace doticu_npcp { namespace Modules { namespace Control {
         // Follower
         void Sneak(Actor_t* actor, Bool_t do_notify_success);
         void Unsneak(Actor_t* actor, Bool_t do_notify_success);
+        void Sojourn(Actor_t* actor, Bool_t do_notify_success);
+        void Unsojourn(Actor_t* actor, Bool_t do_notify_success);
         void Saddle(Actor_t* actor);
         void Unsaddle(Actor_t* actor);
         void Retreat(Actor_t* actor);
         void Unretreat(Actor_t* actor);
         void Toggle_Sneak(Actor_t* actor);
+        void Toggle_Sojourner(Actor_t* actor);
         void Toggle_Saddler(Actor_t* actor);
         void Toggle_Retreater(Actor_t* actor);
         void Relinquish(Actor_t* actor);

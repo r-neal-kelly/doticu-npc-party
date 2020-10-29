@@ -56,6 +56,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Topic_Infos {
                         Modules::Control::Commands_t::Self()->Settle(actor, true);
                     } else if (topic == Consts::Main_Sneak_Topic()) {
                         Modules::Control::Commands_t::Self()->Sneak(actor, true);
+                    } else if (topic == Consts::Main_Sojourn_Topic()) {
+                        Modules::Control::Commands_t::Self()->Sojourn(actor, true);
                     } else if (topic == Consts::Main_Stash_Topic()) {
                         Modules::Control::Commands_t::Self()->Stash(actor);
                     } else if (topic == Consts::Main_Unclone_Topic()) {
@@ -70,6 +72,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Topic_Infos {
                         Modules::Control::Commands_t::Self()->Unsettle(actor, true);
                     } else if (topic == Consts::Main_Unsneak_Topic()) {
                         Modules::Control::Commands_t::Self()->Unsneak(actor, true);
+                    } else if (topic == Consts::Main_Unsojourn_Topic()) {
+                        Modules::Control::Commands_t::Self()->Unsojourn(actor, true);
                     } else if (topic == Consts::Main_Unthrall_Topic()) {
                         Modules::Control::Commands_t::Self()->Unthrall(actor);
                     }

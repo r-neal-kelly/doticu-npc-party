@@ -143,7 +143,10 @@ namespace doticu_npcp { namespace Actor2 {
     void Show_On_Stealth_Eye(Actor_t* actor);
     void Hide_From_Stealth_Eye(Actor_t* actor);
 
+    Bool_t Is_Moving(Actor_t* actor);
     void Stop_Movement(Actor_t* actor);
+    Bool_t Has_Weapon_Sheathed(Actor_t* actor);
+    Bool_t Has_Weapon_Drawn(Actor_t* actor);
 
     Actor_Base_t* Dynamic_Base(Actor_t* actor);
     Actor_Base_t* Real_Base(Actor_t* actor);

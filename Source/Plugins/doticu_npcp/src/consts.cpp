@@ -270,6 +270,8 @@ namespace doticu_npcp { namespace Consts {
         MISC_TOKEN_DISPLAY                          = 0x13D7AC,
         MISC_TOKEN_FOLLOWER                         = 0x000D84,
         MISC_TOKEN_FOLLOWER_SNEAK                   = 0x000D85,
+        MISC_TOKEN_FOLLOWER_SOJOURNER               = 0x401417,
+        MISC_TOKEN_FOLLOWER_SOJOURNER_ACTIVE        = 0x40651D,
         MISC_TOKEN_GENERIC                          = 0x003DFE,
         MISC_TOKEN_GREETER                          = 0x057384,
         MISC_TOKEN_IMMOBILE                         = 0x000D77,
@@ -445,6 +447,7 @@ namespace doticu_npcp { namespace Consts {
         TOPIC_MAIN_SADDLE                           = 0x36D62B,
         TOPIC_MAIN_SETTLE                           = 0x00A43F,
         TOPIC_MAIN_SNEAK                            = 0x00C498,
+        TOPIC_MAIN_SOJOURN                          = 0x406519,
         TOPIC_MAIN_STASH                            = 0x312344,
         TOPIC_MAIN_STYLE                            = 0x040F10,
         TOPIC_MAIN_STYLE2                           = 0x1C67BB,
@@ -460,6 +463,7 @@ namespace doticu_npcp { namespace Consts {
         TOPIC_MAIN_UNSADDLE                         = 0x36D62C,
         TOPIC_MAIN_UNSETTLE                         = 0x00A441,
         TOPIC_MAIN_UNSNEAK                          = 0x00C499,
+        TOPIC_MAIN_UNSOJOURN                        = 0x40651B,
         TOPIC_MAIN_UNTHRALL                         = 0x02D232,
         TOPIC_MAIN_VITALITY                         = 0x0CDE67,
         TOPIC_MAIN_VITALITY2                        = 0x1C67BD,
@@ -677,6 +681,8 @@ namespace doticu_npcp { namespace Consts {
     Misc_t* Invulnerable_Vitality_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_VITALITY_INVULNERABLE); }
     Misc_t* Follower_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_FOLLOWER); }
     Misc_t* Sneak_Follower_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_FOLLOWER_SNEAK); }
+    Misc_t* Sojourner_Follower_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_FOLLOWER_SOJOURNER); }
+    Misc_t* Active_Sojourner_Follower_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_FOLLOWER_SOJOURNER_ACTIVE); }
     Misc_t* Saddler_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_SADDLER); }
     Misc_t* Retreater_Token() { NPCP_FORM(Misc_t, MISC_TOKEN_RETREATER); }
 
@@ -829,6 +835,7 @@ namespace doticu_npcp { namespace Consts {
     Topic_t* Main_Saddle_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_SADDLE); }
     Topic_t* Main_Settle_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_SETTLE); }
     Topic_t* Main_Sneak_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_SNEAK); }
+    Topic_t* Main_Sojourn_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_SOJOURN); }
     Topic_t* Main_Stash_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_STASH); }
     Topic_t* Main_Style_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_STYLE); }
     Topic_t* Main_Style2_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_STYLE2); }
@@ -844,6 +851,7 @@ namespace doticu_npcp { namespace Consts {
     Topic_t* Main_Unsaddle_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_UNSADDLE); }
     Topic_t* Main_Unsettle_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_UNSETTLE); }
     Topic_t* Main_Unsneak_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_UNSNEAK); }
+    Topic_t* Main_Unsojourn_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_UNSOJOURN); }
     Topic_t* Main_Unthrall_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_UNTHRALL); }
     Topic_t* Main_Vitality_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_VITALITY); }
     Topic_t* Main_Vitality2_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_VITALITY2); }

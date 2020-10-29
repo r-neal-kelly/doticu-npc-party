@@ -8,6 +8,7 @@ doticu_npcp_horse   p_ref_horse                 =  none
 
 bool                p_is_locked                 = false
 bool                p_is_sneak                  = false
+bool                p_is_sojourner              = false
 bool                p_is_saddler                = false
 bool                p_is_retreater              = false
 
