@@ -491,6 +491,10 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Backup_State(actor);
         Actor2::Stop_If_Playing_Music(actor);
 
+        if (Modules::Vars_t::Self()->Do_Auto_Sojourn_Followers()) {
+            Sojourn();
+        }
+
         struct Callback : public Callback_t<Member_t*> {
             Follower_t* follower;
             Actor_t* actor;
@@ -1110,6 +1114,9 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
                 Actor_t* actor = Actor();
                 Enforce_Sneak(actor);
+                if (Is_Sojourner()) {
+                    Enforce_Sojourner(actor);
+                }
                 Actor2::Evaluate_Package(actor);
 
                 return CODES::SUCCESS;
@@ -1140,6 +1147,9 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
                 Actor_t* actor = Actor();
                 Enforce_Non_Sneak(actor);
+                if (Is_Sojourner()) {
+                    Enforce_Sojourner(actor);
+                }
                 Actor2::Evaluate_Package(actor);
 
                 return CODES::SUCCESS;
@@ -1170,6 +1180,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
                 Actor_t* actor = Actor();
                 Enforce_Sojourner(actor);
+                // may want to enforce sneak, non_sneak
                 Actor2::Evaluate_Package(actor);
 
                 return CODES::SUCCESS;
@@ -1188,22 +1199,42 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
         Object_Ref::Token(actor, Consts::Sojourner_Follower_Token());
 
-        Actor_t* player_actor = Consts::Player_Actor();
+        static auto Can_Sandbox = [](Actor_t* actor)->Bool_t
+        {
+            Actor_t* player_actor = Consts::Player_Actor();
+            return
+                !Actor2::Is_Sneaking(player_actor) &&
+                Actor2::Has_Weapon_Sheathed(player_actor) &&
+                Object_Ref::Get_Distance(actor, player_actor) < 768.0f;
+        };
+
         Misc_t* active_token = Consts::Active_Sojourner_Follower_Token();
         if (Object_Ref::Has_Token(actor, active_token)) {
-            if (Actor2::Is_Sneaking(player_actor) ||
-                Actor2::Has_Weapon_Drawn(player_actor) ||
-                Object_Ref::Get_Distance(actor, player_actor) > 768.0f) {
+            if (!Can_Sandbox(actor)) {
                 Object_Ref::Untoken(actor, active_token);
                 Actor2::Evaluate_Package(actor);
             }
         } else {
-            if (!Actor2::Is_Moving(player_actor) &&
-                !Actor2::Is_Sneaking(player_actor) &&
-                Actor2::Has_Weapon_Sheathed(player_actor)) {
+            if (Can_Sandbox(actor)) {
                 Object_Ref::Token(actor, active_token);
                 Actor2::Evaluate_Package(actor);
             }
+        }
+
+        Package_t* sojourner_package = static_cast<Package_t*>
+            (Consts::Follower_Sojourner_Packages_Formlist()->forms.entries[ID()]);
+        Bool_t do_reset_ai = false;
+        if (Is_Sneak()) {
+            if (sojourner_package->Flag(Package_t::General_Flag_e::ALWAYS_SNEAK, true)) {
+                do_reset_ai = true;
+            }
+        } else {
+            if (sojourner_package->Flag(Package_t::General_Flag_e::ALWAYS_SNEAK, false)) {
+                do_reset_ai = true;
+            }
+        }
+        if (do_reset_ai) {
+            Actor2::Reset_AI(actor);
         }
     }
 
@@ -1600,7 +1631,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                 } else {
                     if (Isnt_Near_Player()) {
                         if (player->Is_In_Interior_Cell()) {
-                            Summon(player->Actor(), 128.0f, 180.0f);
+                            Summon(player->Actor(), 6.0f, 180.0f);
                         } else {
                             Summon(player->Actor(), 256.0f, 180.0f);
                         }

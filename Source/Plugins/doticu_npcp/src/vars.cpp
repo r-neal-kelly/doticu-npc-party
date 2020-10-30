@@ -64,6 +64,7 @@ namespace doticu_npcp { namespace Modules {
     Variable_t* Vars_t::Clone_Outfit_Algorithm_Variable() { DEFINE_VARIABLE("p_clone_outfit"); }
 
     Variable_t* Vars_t::Do_Auto_Resurrect_Followers_Variable() { DEFINE_VARIABLE("p_auto_resurrect"); }
+    Variable_t* Vars_t::Do_Auto_Sojourn_Followers_Variable() { DEFINE_VARIABLE("p_auto_sojourn"); }
 
     Variable_t* Vars_t::Do_Auto_Change_Outfits_Variable() { DEFINE_VARIABLE("p_auto_outfit"); }
     Variable_t* Vars_t::Do_Auto_Change_Immobile_Outfit_Variable() { DEFINE_VARIABLE("p_auto_immobile_outfit"); }
@@ -179,8 +180,10 @@ namespace doticu_npcp { namespace Modules {
     void Vars_t::Clone_Outfit_Algorithm(Int_t value) { Clone_Outfit_Algorithm_Variable()->Int(value); }
 
     Bool_t Vars_t::Do_Auto_Resurrect_Followers() { return Do_Auto_Resurrect_Followers_Variable()->Bool(); }
+    Bool_t Vars_t::Do_Auto_Sojourn_Followers() { return Do_Auto_Sojourn_Followers_Variable()->Bool(); }
     Bool_t Vars_t::Do_Level_Followers() { return Consts::Is_Leveling_Enabled_Global()->value > 0.0f; }
     void Vars_t::Do_Auto_Resurrect_Followers(Bool_t value) { Do_Auto_Resurrect_Followers_Variable()->Bool(value); }
+    void Vars_t::Do_Auto_Sojourn_Followers(Bool_t value) { Do_Auto_Sojourn_Followers_Variable()->Bool(value); }
     void Vars_t::Do_Level_Followers(Bool_t value) { Consts::Is_Leveling_Enabled_Global()->value = value ? 1.0f : 0.0f; }
 
     Bool_t Vars_t::Do_Auto_Change_Outfits() { return Do_Auto_Change_Outfits_Variable()->Bool(); }
@@ -366,6 +369,7 @@ namespace doticu_npcp { namespace Modules {
         Clone_Outfit_Algorithm(CODES::OUTFIT::REFERENCE);
 
         Do_Auto_Resurrect_Followers(true);
+        Do_Auto_Sojourn_Followers(false);
         Do_Level_Followers(true);
 
         Do_Auto_Change_Outfits(false);

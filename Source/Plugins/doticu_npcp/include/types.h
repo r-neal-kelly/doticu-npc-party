@@ -1193,6 +1193,11 @@ namespace doticu_npcp {
         UInt8 on_change_event[0x20]; // B8
         UInt32 procedure_type; // D8
         UInt32 ref_count; // DC
+
+        Bool_t Is_Flagged(General_Flag_e flag);
+        Bool_t Is_Flagged(Interrupt_Flag_e flag);
+        Bool_t Flag(General_Flag_e flag, Bool_t value);
+        Bool_t Flag(Interrupt_Flag_e flag, Bool_t value);
     };
     STATIC_ASSERT(sizeof(Package_t) == 0xE0);
 

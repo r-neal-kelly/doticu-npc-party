@@ -130,6 +130,7 @@ namespace doticu_npcp { namespace Consts {
     Formlist_t* Settler_Sitter_Packages_Formlist();
     Formlist_t* Settler_Eater_Packages_Formlist();
     Formlist_t* Settler_Guard_Packages_Formlist();
+    Formlist_t* Follower_Sojourner_Packages_Formlist();
     Formlist_t* Expoee_Buttons_Formlist();
     Formlist_t* Expoee_Markers_Formlist();
 

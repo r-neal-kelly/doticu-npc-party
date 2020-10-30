@@ -234,6 +234,7 @@ namespace doticu_npcp { namespace Consts {
         FORMLIST_PACKAGES_SETTLER_SITTER            = 0x3E1E18,
         FORMLIST_PACKAGES_SETTLER_EATER             = 0x3DCD0D,
         FORMLIST_PACKAGES_SETTLER_GUARD             = 0x3DCD0E,
+        FORMLIST_PACKAGES_FOLLOWER_SOJOURNER        = 0x40652D,
         FORMLIST_BUTTONS_EXPOEE                     = 0x3C88DF,
         FORMLIST_MARKERS_EXPOEE                     = 0x3C88E0,
 
@@ -617,6 +618,7 @@ namespace doticu_npcp { namespace Consts {
     Formlist_t* Settler_Sitter_Packages_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_PACKAGES_SETTLER_SITTER); }
     Formlist_t* Settler_Eater_Packages_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_PACKAGES_SETTLER_EATER); }
     Formlist_t* Settler_Guard_Packages_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_PACKAGES_SETTLER_GUARD); }
+    Formlist_t* Follower_Sojourner_Packages_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_PACKAGES_FOLLOWER_SOJOURNER); }
     Formlist_t* Expoee_Buttons_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_BUTTONS_EXPOEE); }
     Formlist_t* Expoee_Markers_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_MARKERS_EXPOEE); }
 

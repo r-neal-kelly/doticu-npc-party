@@ -33,6 +33,7 @@ namespace doticu_npcp { namespace Modules {
         Variable_t* Clone_Outfit_Algorithm_Variable(); // Int_t
 
         Variable_t* Do_Auto_Resurrect_Followers_Variable(); // Bool_t
+        Variable_t* Do_Auto_Sojourn_Followers_Variable();
 
         Variable_t* Do_Auto_Change_Outfits_Variable(); // Bool_t
         Variable_t* Do_Auto_Change_Immobile_Outfit_Variable(); // Bool_t
@@ -148,8 +149,10 @@ namespace doticu_npcp { namespace Modules {
         void Clone_Outfit_Algorithm(Int_t value);
 
         Bool_t Do_Auto_Resurrect_Followers();
+        Bool_t Do_Auto_Sojourn_Followers();
         Bool_t Do_Level_Followers();
         void Do_Auto_Resurrect_Followers(Bool_t value);
+        void Do_Auto_Sojourn_Followers(Bool_t value);
         void Do_Level_Followers(Bool_t value);
 
         Bool_t Do_Auto_Change_Outfits();

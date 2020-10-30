@@ -44,6 +44,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
         // Followers
         Variable_t* Do_Auto_Resurrect_Followers_Option_Variable();
+        Variable_t* Do_Auto_Sojourn_Followers_Option_Variable();
         Variable_t* Do_Level_Followers_Option_Variable();
 
         // Outfits

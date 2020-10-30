@@ -379,6 +379,54 @@ namespace doticu_npcp {
         }
     }
 
+    Bool_t Package_t::Is_Flagged(General_Flag_e flag)
+    {
+        return (flags & static_cast<UInt32>(flag)) != 0;
+    }
+
+    Bool_t Package_t::Is_Flagged(Interrupt_Flag_e flag)
+    {
+        return (interrupt_flags & static_cast<UInt16>(flag)) != 0;
+    }
+
+    Bool_t Package_t::Flag(General_Flag_e flag, Bool_t value)
+    {
+        if (value) {
+            if (!Is_Flagged(flag)) {
+                flags |= static_cast<UInt32>(flag);
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            if (Is_Flagged(flag)) {
+                flags &= ~static_cast<UInt32>(flag);
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    Bool_t Package_t::Flag(Interrupt_Flag_e flag, Bool_t value)
+    {
+        if (value) {
+            if (!Is_Flagged(flag)) {
+                interrupt_flags |= static_cast<UInt16>(flag);
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            if (Is_Flagged(flag)) {
+                interrupt_flags &= ~static_cast<UInt16>(flag);
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
     Form_Factory_i* Form_Factory_i::Form_Factory(Form_Type_t form_type)
     {
         struct Form_Factories_t {

@@ -1280,33 +1280,17 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     {
         Bool_t do_reset_ai = force_reset_ai;
 
-        auto Enforce_General_Flag = [&](Package_t* package, Package_t::General_Flag_e flag, Bool_t is_enabled)->void
+        auto Enforce_General_Flag = [&](Package_t* package, Package_t::General_Flag_e flag, Bool_t value)->void
         {
-            if (is_enabled) {
-                if ((package->flags & static_cast<UInt32>(flag)) == 0) {
-                    do_reset_ai = true;
-                    package->flags |= static_cast<UInt32>(flag);
-                }
-            } else {
-                if ((package->flags & static_cast<UInt32>(flag)) != 0) {
-                    do_reset_ai = true;
-                    package->flags &= ~static_cast<UInt32>(flag);
-                }
+            if (package->Flag(flag, value)) {
+                do_reset_ai = true;
             }
         };
 
-        auto Enforce_Interrupt_Flag = [&](Package_t* package, Package_t::Interrupt_Flag_e flag, Bool_t is_enabled)->void
+        auto Enforce_Interrupt_Flag = [&](Package_t* package, Package_t::Interrupt_Flag_e flag, Bool_t value)->void
         {
-            if (is_enabled) {
-                if ((package->interrupt_flags & static_cast<UInt16>(flag)) == 0) {
-                    do_reset_ai = true;
-                    package->interrupt_flags |= static_cast<UInt16>(flag);
-                }
-            } else {
-                if ((package->interrupt_flags & static_cast<UInt16>(flag)) != 0) {
-                    do_reset_ai = true;
-                    package->interrupt_flags &= ~static_cast<UInt16>(flag);
-                }
+            if (package->Flag(flag, value)) {
+                do_reset_ai = true;
             }
         };
 

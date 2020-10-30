@@ -14,6 +14,7 @@ int         p_auto_vitality         =    -1
 int         p_clone_outfit          =    -1
 
 bool        p_auto_resurrect        = false
+bool        p_auto_sojourn          = false
 
 bool        p_auto_outfit           = false
 bool        p_auto_immobile_outfit  = false

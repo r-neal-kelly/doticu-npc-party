@@ -77,6 +77,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
     // Followers
     Variable_t* Settings_t::Do_Auto_Resurrect_Followers_Option_Variable() { DEFINE_VARIABLE("p_option_do_auto_resurrect_followers"); }
+    Variable_t* Settings_t::Do_Auto_Sojourn_Followers_Option_Variable() { DEFINE_VARIABLE("p_option_do_auto_sojourn_followers"); }
     Variable_t* Settings_t::Do_Level_Followers_Option_Variable() { DEFINE_VARIABLE("p_option_do_level_followers"); }
 
     // Outfits
@@ -198,10 +199,14 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             Do_Auto_Resurrect_Followers_Option_Variable()->Int(
                 mcm->Add_Toggle_Option(" Auto Resurrect Followers ", vars->Do_Auto_Resurrect_Followers())
             );
+            Do_Auto_Sojourn_Followers_Option_Variable()->Int(
+                mcm->Add_Toggle_Option(" Auto Sojourn Followers ", vars->Do_Auto_Sojourn_Followers())
+            );
             Do_Level_Followers_Option_Variable()->Int(
                 mcm->Add_Toggle_Option(" Level Followers ", vars->Do_Level_Followers())
             );
         }
+        mcm->Add_Empty_Option();
         mcm->Add_Empty_Option();
         mcm->Add_Empty_Option();
 
@@ -398,6 +403,11 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         } else if (option == Do_Auto_Resurrect_Followers_Option_Variable()->Int()) { // Followers
             Bool_t value = !vars->Do_Auto_Resurrect_Followers();
             vars->Do_Auto_Resurrect_Followers(value);
+            mcm->Toggle_Option_Value(option, value, true);
+            mcm->Return_Latent(user_callback);
+        } else if (option == Do_Auto_Sojourn_Followers_Option_Variable()->Int()) {
+            Bool_t value = !vars->Do_Auto_Sojourn_Followers();
+            vars->Do_Auto_Sojourn_Followers(value);
             mcm->Toggle_Option_Value(option, value, true);
             mcm->Return_Latent(user_callback);
         } else if (option == Do_Level_Followers_Option_Variable()->Int()) {
@@ -639,6 +649,9 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         } else if (option == Do_Auto_Resurrect_Followers_Option_Variable()->Int()) { // Followers
             mcm->Info_Text("Enabled: Followers will automatically resurrect after each battle.\n"
                            "Disabled: Followers will not automatically resurrect after each battle.");
+        } else if (option == Do_Auto_Sojourn_Followers_Option_Variable()->Int()) {
+            mcm->Info_Text("Enabled: Members will automatically start sojourning when they become a follower.\n"
+                           "Disabled: Members will not automatically start sojourning when they become a follower.");
         } else if (option == Do_Level_Followers_Option_Variable()->Int()) {
             mcm->Info_Text("Enabled: Followers will be dynamically leveled in pace with the player's level.\n"
                            "Disabled: Followers will not be leveled, and their stats will not change.\n"

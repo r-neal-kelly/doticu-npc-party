@@ -18,6 +18,7 @@ int     p_option_force_unclone_generics         =    -1
 int     p_option_clone_outfit_algorithm         =    -1
 
 int     p_option_do_auto_resurrect_followers    =    -1
+int     p_option_do_auto_sojourn_followers      =    -1
 int     p_option_do_level_followers             =    -1
 
 int     p_option_do_auto_change_outfits         =    -1
