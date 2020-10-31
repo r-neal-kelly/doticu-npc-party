@@ -83,6 +83,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
         void Review_Settlers();
         void View_Settler(Party::Settler_t* settler);
+        void Reset_Page();
 
         String_t Format_Title(Int_t settler_count, Int_t page_index, Int_t page_count);
 

@@ -170,7 +170,9 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Variable_t* Current_Page_Variable(); // String_t
 
         String_t Current_Page();
-        String_t Current_Page(String_t current_page);
+        void Current_Page(String_t current_page);
+        const char*& Override_Page();
+        void Reset_Page(String_t override_page = "");
 
         void Close_Menus(Callback_t<>* ucallback = nullptr);
         void Enable(Int_t option, Bool_t do_render = true, Bool_t with_unmap = false);

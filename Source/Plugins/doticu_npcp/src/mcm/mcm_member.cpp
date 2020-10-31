@@ -13,6 +13,7 @@
 #include "party/party_player.h"
 #include "party/party_members.h"
 #include "party/party_member.h"
+#include "party/party_settler.h"
 #include "party/party_followers.h"
 
 #include "mcm/mcm_main.h"
@@ -20,6 +21,7 @@
 #include "mcm/mcm_member.h"
 #include "mcm/mcm_mannequins.h"
 #include "mcm/mcm_followers.h"
+#include "mcm/mcm_settlers.h"
 
 namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
@@ -75,6 +77,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
     Variable_t* Member_t::Settle_Option_Variable() { DEFINE_VARIABLE("p_option_settle"); }
     Variable_t* Member_t::Resettle_Option_Variable() { DEFINE_VARIABLE("p_option_resettle"); }
     Variable_t* Member_t::Unsettle_Option_Variable() { DEFINE_VARIABLE("p_option_unsettle"); }
+    Variable_t* Member_t::Open_Settler_Option_Variable() { DEFINE_VARIABLE("p_option_open_settler"); }
     Variable_t* Member_t::Enthrall_Option_Variable() { DEFINE_VARIABLE("p_option_enthrall"); }
     Variable_t* Member_t::Unthrall_Option_Variable() { DEFINE_VARIABLE("p_option_unthrall"); }
     Variable_t* Member_t::Paralyze_Option_Variable() { DEFINE_VARIABLE("p_option_paralyze"); }
@@ -189,10 +192,12 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             Settle_Option_Variable()->Int(mcm_main->Add_Text_Option(" Settle ", "", MCM::DISABLE));
             Resettle_Option_Variable()->Int(mcm_main->Add_Text_Option(" Resettle ", ""));
             Unsettle_Option_Variable()->Int(mcm_main->Add_Text_Option(" Unsettle ", ""));
+            Open_Settler_Option_Variable()->Int(mcm_main->Add_Text_Option(" Open Settler Menu", ""));
         } else {
             Settle_Option_Variable()->Int(mcm_main->Add_Text_Option(" Settle ", ""));
             Resettle_Option_Variable()->Int(mcm_main->Add_Text_Option(" Resettle ", "", MCM::DISABLE));
             Unsettle_Option_Variable()->Int(mcm_main->Add_Text_Option(" Unsettle ", "", MCM::DISABLE));
+            Open_Settler_Option_Variable()->Int(mcm_main->Add_Text_Option(" Open Settler Menu", "", MCM::DISABLE));
         }
 
         if (party_member->Is_Paralyzed()) {
@@ -297,10 +302,12 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             mcm_main->Option_Flags(Settle_Option_Variable()->Int(), MCM::DISABLE, false);
             mcm_main->Option_Flags(Resettle_Option_Variable()->Int(), MCM::NONE, false);
             mcm_main->Option_Flags(Unsettle_Option_Variable()->Int(), MCM::NONE, false);
+            mcm_main->Option_Flags(Open_Settler_Option_Variable()->Int(), MCM::NONE, false);
         } else {
             mcm_main->Option_Flags(Settle_Option_Variable()->Int(), MCM::NONE, false);
             mcm_main->Option_Flags(Resettle_Option_Variable()->Int(), MCM::DISABLE, false);
             mcm_main->Option_Flags(Unsettle_Option_Variable()->Int(), MCM::DISABLE, false);
+            mcm_main->Option_Flags(Open_Settler_Option_Variable()->Int(), MCM::DISABLE, false);
         }
 
         if (party_member->Is_Paralyzed()) {
@@ -676,6 +683,11 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 mcm->Disable(option);
                 Commands_t::Self()->Unsettle(actor, false);
                 Update_Commands();
+                mcm->Return_Latent(user_callback);
+            } else if (option == Open_Settler_Option_Variable()->Int()) {
+                mcm->Disable(option);
+                Settlers_t::Self()->View_Settler(static_cast<Party::Settler_t*>(member));
+                mcm->Reset_Page(Main_t::SETTLERS_PAGE);
                 mcm->Return_Latent(user_callback);
 
             } else if (option == Immobilize_Option_Variable()->Int()) {

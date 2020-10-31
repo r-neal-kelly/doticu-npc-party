@@ -18,6 +18,7 @@ int                 p_option_outfit             =    -1
 int                 p_option_settle             =    -1
 int                 p_option_resettle           =    -1
 int                 p_option_unsettle           =    -1
+int                 p_option_open_settler       =    -1
 int                 p_option_enthrall           =    -1
 int                 p_option_unthrall           =    -1
 int                 p_option_immobilize         =    -1

@@ -468,6 +468,11 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Do_Next_Settler(false);
     }
 
+    void Settlers_t::Reset_Page()
+    {
+        Main_t::Self()->Reset_Page(Main_t::SETTLERS_PAGE);
+    }
+
     String_t Settlers_t::Format_Title(Int_t settler_count, Int_t page_index, Int_t page_count)
     {
         std::string settlers =
@@ -1383,11 +1388,11 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 } else if (option == Previous_Option_Variable()->Int()) {
                     mcm->Disable(option);
                     Do_Previous_Settler(true);
-                    mcm->Reset_Page();
+                    Reset_Page();
                 } else if (option == Next_Option_Variable()->Int()) {
                     mcm->Disable(option);
                     Do_Next_Settler(true);
-                    mcm->Reset_Page();
+                    Reset_Page();
                 } else if (option == Previous_2_Option_Variable()->Int()) {
                     mcm->Disable(option);
 
@@ -1399,7 +1404,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                     }
                     Settler_Page_Index(page_idx);
 
-                    mcm->Reset_Page();
+                    Reset_Page();
                 } else if (option == Next_2_Option_Variable()->Int()) {
                     mcm->Disable(option);
 
@@ -1411,7 +1416,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                     }
                     Settler_Page_Index(page_idx);
 
-                    mcm->Reset_Page();
+                    Reset_Page();
                 } else {
                     Int_t page_index = Settler_Page_Index();
                     Int_t option_index = Settler_Option_Index(option);
@@ -1444,7 +1449,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                                 } else {
                                     sleeper->Enable_Sleeper();
                                 }
-                                mcm->Reset_Page();
+                                Reset_Page();
                             } else if (Try_Select_Movement_Block(mcm, option, sleeper, option_enum)) {
                             } else if (option_enum == Option_e::CREATE_BED_AT_MARKER) {
                                 if (sleeper->Has_Bed()) {
@@ -1470,7 +1475,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                                 } else {
                                     sitter->Enable_Sitter();
                                 }
-                                mcm->Reset_Page();
+                                Reset_Page();
                             } else if (Try_Select_Movement_Block(mcm, option, sitter, option_enum)) {
                             } else if (Try_Select_Combat_Block(mcm, option, sitter, option_enum)) {
                             } else if (Try_Select_Talking_Block(mcm, option, sitter, option_enum)) {
@@ -1487,7 +1492,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                                 } else {
                                     eater->Enable_Eater();
                                 }
-                                mcm->Reset_Page();
+                                Reset_Page();
                             } else if (Try_Select_Movement_Block(mcm, option, eater, option_enum)) {
                             } else if (Try_Select_Combat_Block(mcm, option, eater, option_enum)) {
                             } else if (Try_Select_Talking_Block(mcm, option, eater, option_enum)) {
@@ -1506,7 +1511,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                                 } else {
                                     guard->Enable_Guard();
                                 }
-                                mcm->Reset_Page();
+                                Reset_Page();
                             } else if (Try_Select_Movement_Block(mcm, option, guard, option_enum)) {
                             } else if (Try_Select_Combat_Block(mcm, option, guard, option_enum)) {
                             } else if (Try_Select_Talking_Block(mcm, option, guard, option_enum)) {

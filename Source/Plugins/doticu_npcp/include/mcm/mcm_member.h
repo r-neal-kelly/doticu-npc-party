@@ -42,6 +42,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Variable_t* Settle_Option_Variable();
         Variable_t* Resettle_Option_Variable();
         Variable_t* Unsettle_Option_Variable();
+        Variable_t* Open_Settler_Option_Variable();
         Variable_t* Enthrall_Option_Variable();
         Variable_t* Unthrall_Option_Variable();
         Variable_t* Paralyze_Option_Variable();

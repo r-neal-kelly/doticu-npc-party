@@ -644,9 +644,23 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         return current_page;
     }
 
-    String_t Main_t::Current_Page(String_t current_page)
+    void Main_t::Current_Page(String_t current_page)
     {
         Current_Page_Variable()->String(current_page);
+    }
+
+    const char*& Main_t::Override_Page()
+    {
+        static const char* override_page = "";
+        return override_page;
+    }
+
+    void Main_t::Reset_Page(String_t override_page)
+    {
+        if (override_page && override_page.data && override_page.data[0]) {
+            Override_Page() = override_page.data;
+        }
+        SKI_Config_Base_t::Reset_Page();
     }
 
     void Main_t::Close_Menus(Callback_t<>* ucallback)
@@ -767,7 +781,11 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         };
         Callback_t<>* user_callback = new Callback(vm, stack_id);
 
-        if (!current_page || !current_page.data || !current_page[0]) {
+        const char*& override_page = Override_Page();
+        if (override_page && override_page[0]) {
+            current_page = override_page;
+            override_page = "";
+        } else if (!current_page || !current_page.data || !current_page.data[0]) {
             current_page = Current_Page();
         }
 
@@ -804,7 +822,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
             MCM::Settings_t::Self()->On_Build_Page();
         }
 
-        Current_Page_Variable()->String(current_page);
+        Current_Page(current_page);
         
         Return_Latent(user_callback); // kind of a hack. it should be passed to each method.
 

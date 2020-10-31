@@ -1180,7 +1180,6 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
                 Actor_t* actor = Actor();
                 Enforce_Sojourner(actor);
-                // may want to enforce sneak, non_sneak
                 Actor2::Evaluate_Package(actor);
 
                 return CODES::SUCCESS;
@@ -1630,7 +1629,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                     }
                 } else {
                     if (Isnt_Near_Player()) {
-                        if (player->Is_In_Interior_Cell()) {
+                        if (Cell::Is_Interior(new_cell) || Cell::Is_Interior(old_cell)) {
                             Summon(player->Actor(), 6.0f, 180.0f);
                         } else {
                             Summon(player->Actor(), 256.0f, 180.0f);
