@@ -177,7 +177,7 @@ namespace doticu_npcp { namespace Modules {
                 Array_t* array = (logs->*Get_Array)();
 
                 Int_t pivot = (logs->*Get_Pivot)() + 1;
-                if (pivot >= array->count) {
+                if (pivot < 0 || pivot >= array->count) {
                     pivot = 0;
                 }
                 (logs->*Set_Pivot)(pivot);
@@ -258,6 +258,7 @@ namespace doticu_npcp { namespace Modules {
         if (slice_count < 1) {
             return Vector_t<String_t>();
         }
+
         Int_t slice_begin = pivot - begin;
         if (slice_begin < 0) {
             slice_begin += array->count;
@@ -265,7 +266,7 @@ namespace doticu_npcp { namespace Modules {
 
         Vector_t<String_t> slice;
         slice.reserve(slice_count);
-        for (size_t idx = slice_begin, count = 0; count < slice_count; idx -= 1, count += 1) {
+        for (Int_t idx = slice_begin, count = 0; count < slice_count; idx -= 1, count += 1) {
             if (idx < 0) {
                 idx = array->count - 1;
             }
