@@ -953,6 +953,8 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
                 mcm->Info_Text(mcm->Concat("Resettle ", name));
             } else if (option == Unsettle_Option_Variable()->Int()) {
                 mcm->Info_Text(mcm->Concat("Unsettle ", name));
+            } else if (option == Open_Settler_Option_Variable()->Int()) {
+                mcm->Info_Text(mcm->Concat("Open ", name, "'s settler menu."));
 
             } else if (option == Immobilize_Option_Variable()->Int()) {
                 mcm->Info_Text(mcm->Concat("Immobilize ", name));
