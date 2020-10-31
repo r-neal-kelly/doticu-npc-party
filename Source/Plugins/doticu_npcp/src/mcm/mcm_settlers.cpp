@@ -1152,12 +1152,11 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
 
         auto Build_Settler = [&]()
         {
+            Update_Settlers_Data();
             Update_Settler_Data();
 
             Party::Settler_t* settler = Settler();
             if (settler && Is_Valid_Settler(settler)) {
-                Update_Settlers_Data();
-
                 Main_t* mcm = Main_t::Self();
                 String_t settler_name = settler->Name();
                 Int_t page_index = Settler_Page_Index();

@@ -110,7 +110,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Int_t errors_count = logs->Errors_Count();
 
         Int_t page_count;
-        if (notes_count == 0 && errors_count == 0) {
+        if (notes_count < 1 && errors_count < 1) {
             page_count = 1;
         } else {
             if (notes_count > errors_count) {
@@ -122,7 +122,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Page_Count(page_count);
 
         Int_t page_index = Page_Index();
-        if (page_index >= page_count) {
+        if (page_index < 0 || page_index >= page_count) {
             page_index = 0;
             Page_Index(page_index);
         }
@@ -153,7 +153,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         Options_Offset_Variable()->Int(Previous_Option_Variable()->Int());
 
         {
-            Int_t notes_begin = STRINGS_PER_COLUMN * page_index;
+            Int_t notes_begin = page_index * STRINGS_PER_COLUMN;
             Int_t notes_end = notes_begin + STRINGS_PER_COLUMN;
             Vector_t<String_t> notes = logs->Notes(notes_begin, notes_end);
             Notes(notes);
@@ -180,7 +180,7 @@ namespace doticu_npcp { namespace Papyrus { namespace MCM {
         }
 
         {
-            Int_t errors_begin = STRINGS_PER_COLUMN * page_index;
+            Int_t errors_begin = page_index * STRINGS_PER_COLUMN;
             Int_t errors_end = errors_begin + STRINGS_PER_COLUMN;
             Vector_t<String_t> errors = logs->Errors(errors_begin, errors_end);
             Errors(errors);

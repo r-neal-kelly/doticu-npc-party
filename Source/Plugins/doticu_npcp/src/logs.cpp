@@ -177,7 +177,7 @@ namespace doticu_npcp { namespace Modules {
                 Array_t* array = (logs->*Get_Array)();
 
                 Int_t pivot = (logs->*Get_Pivot)() + 1;
-                if (pivot == array->count) {
+                if (pivot >= array->count) {
                     pivot = 0;
                 }
                 (logs->*Set_Pivot)(pivot);
@@ -230,11 +230,26 @@ namespace doticu_npcp { namespace Modules {
         Errors_Pivot(errors->count - 1);
     }
 
-    static Vector_t<String_t> Slice(Array_t* array, Int_t count, Int_t pivot, Int_t begin = 0, Int_t end = -1)
+    static inline Vector_t<String_t> Slice(Array_t* array, Int_t count, Int_t pivot, Int_t begin = 0, Int_t end = -1)
     {
+        NPCP_ASSERT(array);
+
+        if (count < 0) {
+            count = 0;
+        } else if (count > array->count) {
+            count = array->count;
+        }
+
+        if (pivot < 0) {
+            pivot = 0;
+        } else if (pivot >= array->count) {
+            pivot = array->count - 1;
+        }
+
         if (begin < 0) {
             begin = 0;
         }
+
         if (end > count || end < 0) {
             end = count;
         }
@@ -243,22 +258,16 @@ namespace doticu_npcp { namespace Modules {
         if (slice_count < 1) {
             return Vector_t<String_t>();
         }
+        Int_t slice_begin = pivot - begin;
+        if (slice_begin < 0) {
+            slice_begin += array->count;
+        }
 
         Vector_t<String_t> slice;
         slice.reserve(slice_count);
-
-        Int_t array_begin = pivot + 1;
-        if (array_begin >= array->count) {
-            array_begin = 0;
-        }
-        array_begin -= slice_count;
-        if (array_begin < 0) {
-            array_begin += array->count;
-        }
-
-        for (size_t idx = array_begin, count = 0; count < slice_count; idx += 1, count += 1) {
-            if (idx >= array->count) {
-                idx = 0;
+        for (size_t idx = slice_begin, count = 0; count < slice_count; idx -= 1, count += 1) {
+            if (idx < 0) {
+                idx = array->count - 1;
             }
             slice.push_back(array->Point(idx)->String());
         }
