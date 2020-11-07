@@ -1,0 +1,15 @@
+Follower {
+
+    topic_info: 0402BAF4 
+                I will shadow your steps.
+                (on follow, follower goodbye)
+
+}
+
+Member {
+
+    topic_info: 0402BAD2 
+                Very well.
+                (various)
+
+}

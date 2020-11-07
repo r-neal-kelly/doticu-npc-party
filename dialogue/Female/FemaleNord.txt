@@ -1,0 +1,15 @@
+Follower {
+    
+    topic_info: 000E36DB 
+                I'm ready. Let's go.
+                (on follow, follower goodbye)
+                
+}
+
+Member {
+
+    topic_info: 000E36DE 
+                No problem, I can carry a good bit of gear.
+                (pack)
+
+}

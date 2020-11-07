@@ -1,0 +1,27 @@
+Follower {
+
+    topic_info: 0007A518 
+                Good! Let's go find something to fight.
+                (follower goodbye)
+    topic_info: 0005C838 
+                As you will, my Thane. I will protect you with my life.
+                (on follow, other commands) (PlayerHousecarlFaction)
+    topic_info: 000D8DB3 
+                Lead the way.
+                (on follow, follower goodbye)
+
+}
+
+Member {
+
+    topic_info: 0007A512 
+                Sure, feel free to hand me all the gold you want.
+                (pack)
+    topic_info: 00060023 
+                I am sworn to carry your burdens.
+                (pack) (PlayerHousecarlFaction)
+    topic_info: 000D8DC1 
+                What do you need to take?
+                (pack, outfit?)
+
+}

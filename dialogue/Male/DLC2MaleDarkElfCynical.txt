@@ -1,0 +1,13 @@
+Member {
+
+    topic_info: 040208CB 
+                Sure thing, friend.
+                (on follow, various)
+    topic_info: 04036A6D 
+                I owe you that much.
+                (on follow, various)
+    topic_info: 04036A6A 
+                Whatever you say, boss.
+                (various)
+
+}

@@ -1,0 +1,30 @@
+Follower {
+
+    topic_info: 0007508E 
+                I'm right with you.
+                (on follow, follower goodbye)
+    topic_info: 0004C468 
+                Good. I'm ready for anything.
+                (follower goodbye)
+    topic_info: 000F11B1 
+                Great! Let's go!
+                (on follow)
+    topic_info: 0007A1EB 
+                Let's get going.
+                (follower goodbye)
+
+}
+
+Member {
+
+    topic_info: 000E26F6 
+                If it will help you, then certainly.
+                (pack, various)
+    topic_info: 000F11B3 
+                No problem! How can I help?
+                ([NPC Party])
+    topic_info: 0007A1E8 
+                What do you want me to carry?
+                (pack)
+
+}

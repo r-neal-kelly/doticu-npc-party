@@ -1,0 +1,5 @@
+quest: 000750BA DialogueFollower
+    branch: 000750BD 
+        topic: 00075083 DialogueFollowerFollowTopic
+    branch: 00060024 
+        topic: 00060020 DialogueFollowerTradeTopic

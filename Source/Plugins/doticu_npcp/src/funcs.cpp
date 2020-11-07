@@ -171,7 +171,6 @@ namespace doticu_npcp { namespace Modules {
                 void operator()(Variable_t* result)
                 {
                     if (result && result->Bool()) {
-                        _MESSAGE("is in menu mode.");
                         class Tap_VCallback : public Virtual_Callback_t {
                         public:
                             Funcs_t* self;
@@ -183,7 +182,6 @@ namespace doticu_npcp { namespace Modules {
                             }
                             void operator()(Variable_t*)
                             {
-                                _MESSAGE("tapped key");
                                 class Wait_VCallback : public Virtual_Callback_t {
                                 public:
                                     Funcs_t* self;
@@ -195,19 +193,15 @@ namespace doticu_npcp { namespace Modules {
                                     }
                                     void operator()(Variable_t*)
                                     {
-                                        _MESSAGE("waited");
                                         self->Is_In_Menu_Mode(new Is_Open_VCallback(self, key, ucallback));
                                     }
                                 };
                                 Virtual_Callback_i* vcallback = new Wait_VCallback(self, key, ucallback);
                                 self->Wait(0.1f, &vcallback);
-                                _MESSAGE("waiting");
                             }
                         };
                         self->Tap_Key(key, new Tap_VCallback(self, key, ucallback));
-                        _MESSAGE("tapping key");
                     } else {
-                        _MESSAGE("out of menu mode.");
                         if (ucallback) {
                             ucallback->operator()();
                             delete ucallback;

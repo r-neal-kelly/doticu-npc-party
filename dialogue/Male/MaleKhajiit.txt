@@ -1,0 +1,21 @@
+Follower {
+
+    topic_info: 000E26F2 
+                J'zargo is ready for more adventure.
+                (on follow, follower goodbye) (J'zargo)
+    topic_info: 000D8DB0 
+                Khajiit walks in your footsteps.
+                (follower goodbye)
+
+}
+
+Member {
+
+    topic_info: 000E26F7 
+                J'zargo only has so much room to carry things.
+                (pack, stash) (J'zargo)
+    topic_info: 000D8DBE 
+                I'll shoulder some of your burden.
+                (pack)
+
+}

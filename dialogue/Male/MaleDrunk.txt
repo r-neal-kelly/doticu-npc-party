@@ -1,0 +1,15 @@
+Follower {
+
+    topic_info: 000D8DB3 
+                Lead the way.
+                (on follow, follower goodbye)
+
+}
+
+Member {
+
+    topic_info: 000D8DC1 
+                What do you need to take?
+                (pack, outfit?)
+
+}
