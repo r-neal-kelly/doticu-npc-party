@@ -238,6 +238,10 @@ namespace doticu_npcp { namespace Consts {
         FORMLIST_BRANCHES_MAIN_OUTFIT               = 0x41748D,
         FORMLIST_BRANCHES_MAIN_STYLE                = 0x41748E,
         FORMLIST_BRANCHES_MAIN_VITALITY             = 0x41748F,
+        FORMLIST_TOPICS_FEMALE_MAIN                 = 0x417492,
+        FORMLIST_TOPICS_MALE_MAIN                   = 0x417493,
+        FORMLIST_VOICE_TYPES_FEMALE                 = 0x417494,
+        FORMLIST_VOICE_TYPES_MALE                   = 0x417495,
 
         // NPCP Furnitures
         FURNITURE_BEDROLL                           = 0x3E7F15,
@@ -307,6 +311,7 @@ namespace doticu_npcp { namespace Consts {
         OUTFIT_EMPTY                                = 0x0C3C64,
 
         // NPCP_Packages
+        PACKAGE_GREETER                             = 0x057385,
         PACKAGE_MENU_EXIT                           = 0x3309E0,
 
         // NPCP PERKS
@@ -322,9 +327,50 @@ namespace doticu_npcp { namespace Consts {
         QUEST_MEMBERS                               = 0x00184C,
         QUEST_FOLLOWERS                             = 0x000D83,
         QUEST_CONTROL                               = 0x000D7F,
-        QUEST_DIALOGUE_THRALL                       = 0x212D57,
-        QUEST_DIALOGUE_REANIMATED                   = 0x2089A9,
+        QUEST_FEMALE_ARGONIAN                       = 0x3C376A,
+        QUEST_FEMALE_COMMANDER                      = 0x3C376B,
+        QUEST_FEMALE_COMMONER                       = 0x3C376C,
+        QUEST_FEMALE_CONDESCENDING                  = 0x3C376D,
+        QUEST_FEMALE_COWARD                         = 0x3C376E,
+        QUEST_FEMALE_DARK_ELF                       = 0x3C376F,
+        QUEST_FEMALE_ELF_HAUGHTY                    = 0x3C3770,
+        QUEST_FEMALE_EVEN_TONED                     = 0x3C3771,
+        QUEST_FEMALE_KHAJIIT                        = 0x3C3772,
+        QUEST_FEMALE_NORD                           = 0x3C3773,
+        QUEST_FEMALE_OLD_GRUMPY                     = 0x3C3774,
+        QUEST_FEMALE_OLD_KINDLY                     = 0x3C3775,
+        QUEST_FEMALE_ORC                            = 0x3C3776,
+        QUEST_FEMALE_OTHER                          = 0x3C377A,
+        QUEST_FEMALE_SHRILL                         = 0x3C3777,
+        QUEST_FEMALE_SOLDIER                        = 0x3C3778,
+        QUEST_FEMALE_SULTRY                         = 0x3C3779,
         QUEST_FEMALE_YOUNG_EAGER                    = 0x3B9565,
+        QUEST_MALE_ARGONIAN                         = 0x3C377B,
+        QUEST_MALE_BANDIT                           = 0x3C377C,
+        QUEST_MALE_BRUTE                            = 0x3C377D,
+        QUEST_MALE_COMMANDER                        = 0x3C377E,
+        QUEST_MALE_COMMONER                         = 0x3C377F,
+        QUEST_MALE_COMMONER_ACCENTED                = 0x3C3780,
+        QUEST_MALE_CONDESCENDING                    = 0x3C3781,
+        QUEST_MALE_COWARD                           = 0x3C3782,
+        QUEST_MALE_DARK_ELF                         = 0x3C3783,
+        QUEST_MALE_DRUNK                            = 0x3C3784,
+        QUEST_MALE_ELF_HAUGHTY                      = 0x3C3785,
+        QUEST_MALE_EVEN_TONED                       = 0x3C3786,
+        QUEST_MALE_EVEN_TONED_ACCENTED              = 0x3C3787,
+        QUEST_MALE_FORSWORN                         = 0x3C3788,
+        QUEST_MALE_GUARD                            = 0x3C3789,
+        QUEST_MALE_KHAJIIT                          = 0x3C378A,
+        QUEST_MALE_NORD                             = 0x3C378B,
+        QUEST_MALE_NORD_COMMANDER                   = 0x3C378C,
+        QUEST_MALE_OLD_GRUMPY                       = 0x3C378D,
+        QUEST_MALE_OLD_KINDLY                       = 0x3C378E,
+        QUEST_MALE_ORC                              = 0x3C378F,
+        QUEST_MALE_OTHER                            = 0x3C3792,
+        QUEST_MALE_SLY_CYNICAL                      = 0x3C3790,
+        QUEST_MALE_SOLDIER                          = 0x3C3791,
+        QUEST_MALE_WARLOCK                          = 0x3C3793,
+        QUEST_MALE_YOUNG_EAGER                      = 0x3C3794,
 
         // NPCP Reference Categories
         REFERENCE_CATEGORY_INPUT                    = 0x395E55,
@@ -490,6 +536,10 @@ namespace doticu_npcp { namespace Consts {
     Formlist_t* Main_Outfit_Branches_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_BRANCHES_MAIN_OUTFIT); }
     Formlist_t* Main_Style_Branches_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_BRANCHES_MAIN_STYLE); }
     Formlist_t* Main_Vitality_Branches_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_BRANCHES_MAIN_VITALITY); }
+    Formlist_t* Main_Female_Topics_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_TOPICS_FEMALE_MAIN); }
+    Formlist_t* Main_Male_Topics_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_TOPICS_MALE_MAIN); }
+    Formlist_t* Female_Voice_Types_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_VOICE_TYPES_FEMALE); }
+    Formlist_t* Male_Voice_Types_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_VOICE_TYPES_MALE); }
 
     // NPCP Furnitures
     Furniture_t* Bedroll_Furniture() { NPCP_FORM(Furniture_t, FURNITURE_BEDROLL); }
@@ -511,7 +561,7 @@ namespace doticu_npcp { namespace Consts {
     // NPCP Ints
     Int_t NPCP_Major() { return 0; } // set manually upon each release
     Int_t NPCP_Minor() { return 9; } // set manually upon each release
-    Int_t NPCP_Patch() { return 15; } // set manually upon each release
+    Int_t NPCP_Patch() { return 16; } // set manually upon each release
 
     // NPCP Leveled Actor
     Leveled_Actor_t* Horse_Leveled_Actor() { NPCP_FORM(Leveled_Actor_t, LEVELED_ACTOR_HORSE); }
@@ -564,6 +614,7 @@ namespace doticu_npcp { namespace Consts {
     Outfit_t* Empty_Outfit() { NPCP_FORM(Outfit_t, OUTFIT_EMPTY); }
 
     // NPCP Packages
+    Package_t* Greeter_Package() { NPCP_FORM(Package_t, PACKAGE_GREETER); }
     Package_t* Menu_Exit_Package() { NPCP_FORM(Package_t, PACKAGE_MENU_EXIT); }
 
     // NPCP Perks
@@ -579,9 +630,50 @@ namespace doticu_npcp { namespace Consts {
     Quest_t* Members_Quest() { NPCP_FORM(Quest_t, QUEST_MEMBERS); }
     Quest_t* Followers_Quest() { NPCP_FORM(Quest_t, QUEST_FOLLOWERS); }
     Quest_t* Control_Quest() { NPCP_FORM(Quest_t, QUEST_CONTROL); }
-    Quest_t* Thrall_Dialogue_Quest() { NPCP_FORM(Quest_t, QUEST_DIALOGUE_THRALL); }
-    Quest_t* Reanimated_Dialogue_Quest() { NPCP_FORM(Quest_t, QUEST_DIALOGUE_REANIMATED); }
+    Quest_t* Female_Argonian_Quest() { NPCP_FORM(Quest_t, QUEST_FEMALE_ARGONIAN); }
+    Quest_t* Female_Commander_Quest() { NPCP_FORM(Quest_t, QUEST_FEMALE_COMMANDER); }
+    Quest_t* Female_Commoner_Quest() { NPCP_FORM(Quest_t, QUEST_FEMALE_COMMONER); }
+    Quest_t* Female_Condescending_Quest() { NPCP_FORM(Quest_t, QUEST_FEMALE_CONDESCENDING); }
+    Quest_t* Female_Coward_Quest() { NPCP_FORM(Quest_t, QUEST_FEMALE_COWARD); }
+    Quest_t* Female_Dark_Elf_Quest() { NPCP_FORM(Quest_t, QUEST_FEMALE_DARK_ELF); }
+    Quest_t* Female_Elf_Haughty_Quest() { NPCP_FORM(Quest_t, QUEST_FEMALE_ELF_HAUGHTY); }
+    Quest_t* Female_Even_Toned_Quest() { NPCP_FORM(Quest_t, QUEST_FEMALE_EVEN_TONED); }
+    Quest_t* Female_Khajiit_Quest() { NPCP_FORM(Quest_t, QUEST_FEMALE_KHAJIIT); }
+    Quest_t* Female_Nord_Quest() { NPCP_FORM(Quest_t, QUEST_FEMALE_NORD); }
+    Quest_t* Female_Old_Grumpy_Quest() { NPCP_FORM(Quest_t, QUEST_FEMALE_OLD_GRUMPY); }
+    Quest_t* Female_Old_Kindly_Quest() { NPCP_FORM(Quest_t, QUEST_FEMALE_OLD_KINDLY); }
+    Quest_t* Female_Orc_Quest() { NPCP_FORM(Quest_t, QUEST_FEMALE_ORC); }
+    Quest_t* Female_Other_Quest() { NPCP_FORM(Quest_t, QUEST_FEMALE_OTHER); }
+    Quest_t* Female_Shrill_Quest() { NPCP_FORM(Quest_t, QUEST_FEMALE_SHRILL); }
+    Quest_t* Female_Soldier_Quest() { NPCP_FORM(Quest_t, QUEST_FEMALE_SOLDIER); }
+    Quest_t* Female_Sultry_Quest() { NPCP_FORM(Quest_t, QUEST_FEMALE_SULTRY); }
     Quest_t* Female_Young_Eager_Quest() { NPCP_FORM(Quest_t, QUEST_FEMALE_YOUNG_EAGER); }
+    Quest_t* Male_Argonian_Quest() { NPCP_FORM(Quest_t, QUEST_MALE_ARGONIAN); }
+    Quest_t* Male_Bandit_Quest() { NPCP_FORM(Quest_t, QUEST_MALE_BANDIT); }
+    Quest_t* Male_Brute_Quest() { NPCP_FORM(Quest_t, QUEST_MALE_BRUTE); }
+    Quest_t* Male_Commander_Quest() { NPCP_FORM(Quest_t, QUEST_MALE_COMMANDER); }
+    Quest_t* Male_Commoner_Quest() { NPCP_FORM(Quest_t, QUEST_MALE_COMMONER); }
+    Quest_t* Male_Commoner_Accented_Quest() { NPCP_FORM(Quest_t, QUEST_MALE_COMMONER_ACCENTED); }
+    Quest_t* Male_Condescending_Quest() { NPCP_FORM(Quest_t, QUEST_MALE_CONDESCENDING); }
+    Quest_t* Male_Coward_Quest() { NPCP_FORM(Quest_t, QUEST_MALE_COWARD); }
+    Quest_t* Male_Dark_Elf_Quest() { NPCP_FORM(Quest_t, QUEST_MALE_DARK_ELF); }
+    Quest_t* Male_Drunk_Quest() { NPCP_FORM(Quest_t, QUEST_MALE_DRUNK); }
+    Quest_t* Male_Elf_Haughty_Quest() { NPCP_FORM(Quest_t, QUEST_MALE_ELF_HAUGHTY); }
+    Quest_t* Male_Even_Toned_Quest() { NPCP_FORM(Quest_t, QUEST_MALE_EVEN_TONED); }
+    Quest_t* Male_Even_Toned_Accented_Quest() { NPCP_FORM(Quest_t, QUEST_MALE_EVEN_TONED_ACCENTED); }
+    Quest_t* Male_Forsworn_Quest() { NPCP_FORM(Quest_t, QUEST_MALE_FORSWORN); }
+    Quest_t* Male_Guard_Quest() { NPCP_FORM(Quest_t, QUEST_MALE_GUARD); }
+    Quest_t* Male_Khajiit_Quest() { NPCP_FORM(Quest_t, QUEST_MALE_KHAJIIT); }
+    Quest_t* Male_Nord_Quest() { NPCP_FORM(Quest_t, QUEST_MALE_NORD); }
+    Quest_t* Male_Nord_Commander_Quest() { NPCP_FORM(Quest_t, QUEST_MALE_NORD_COMMANDER); }
+    Quest_t* Male_Old_Grumpy_Quest() { NPCP_FORM(Quest_t, QUEST_MALE_OLD_GRUMPY); }
+    Quest_t* Male_Old_Kindly_Quest() { NPCP_FORM(Quest_t, QUEST_MALE_OLD_KINDLY); }
+    Quest_t* Male_Orc_Quest() { NPCP_FORM(Quest_t, QUEST_MALE_ORC); }
+    Quest_t* Male_Other_Quest() { NPCP_FORM(Quest_t, QUEST_MALE_OTHER); }
+    Quest_t* Male_Sly_Cynical_Quest() { NPCP_FORM(Quest_t, QUEST_MALE_SLY_CYNICAL); }
+    Quest_t* Male_Soldier_Quest() { NPCP_FORM(Quest_t, QUEST_MALE_SOLDIER); }
+    Quest_t* Male_Warlock_Quest() { NPCP_FORM(Quest_t, QUEST_MALE_WARLOCK); }
+    Quest_t* Male_Young_Eager_Quest() { NPCP_FORM(Quest_t, QUEST_MALE_YOUNG_EAGER); }
 
     // NPCP Reference Categories
     Reference_t* Input_Category() { NPCP_FORM(Reference_t, REFERENCE_CATEGORY_INPUT); }

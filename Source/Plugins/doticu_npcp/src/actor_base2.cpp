@@ -256,4 +256,13 @@ namespace doticu_npcp { namespace Actor_Base2 {
         Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(), "doticu_npcp_funcs", "Protect", &arguments, nullptr);
     }
 
+    Voice_Type_t* Voice_Type(Actor_Base_t* actor_base)
+    {
+        if (actor_base) {
+            return actor_base->actorData.voiceType;
+        } else {
+            return nullptr;
+        }
+    }
+
 }}

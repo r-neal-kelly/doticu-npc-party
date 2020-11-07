@@ -130,6 +130,20 @@ namespace doticu_npcp { namespace Papyrus { namespace Packages {
                                  target->target.linked,
                                  target->count_or_distance);
                     }
+                } else if (value_type == Package_Value_t::Type_e::TOPIC) {
+                    Package_Topic_Value_t* topic_value =
+                        static_cast<Package_Topic_Value_t*>(value);
+                    if (!topic_value->is_subtype) {
+                        Topic_t* topic = topic_value->data.reference;
+                        _MESSAGE("        " "topic: %p, type: reference, reference: %p, editor_id: %s",
+                                 topic_value,
+                                 topic,
+                                 topic ? topic->Editor_ID() : "");
+                    } else {
+                        _MESSAGE("        " "topic: %p, type: subtype, subtype: %8.8X",
+                                 topic_value,
+                                 topic_value->data.subtype);
+                    }
                 } else {
                     _MESSAGE("        " "%p, vtbl offset: %p", value, (*(uintptr_t*)value) - RelocationManager::s_baseAddr);
                 }

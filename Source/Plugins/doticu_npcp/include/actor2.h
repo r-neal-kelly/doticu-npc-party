@@ -187,6 +187,8 @@ namespace doticu_npcp { namespace Actor2 {
 
     void Set_Alpha(Actor_t* actor, Float_t alpha_0_to_1, Bool_t do_fade_in = false, Virtual_Callback_i* vcallback = nullptr);
 
+    Voice_Type_t* Voice_Type(Actor_t* actor);
+
 }}
 
 namespace doticu_npcp { namespace Actor2 { namespace Exports {

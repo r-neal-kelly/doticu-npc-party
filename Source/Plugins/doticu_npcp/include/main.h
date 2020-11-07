@@ -36,6 +36,9 @@ namespace doticu_npcp { namespace Modules {
         void Try_Cleanup();
         Int_t Force_Cleanup();
         Int_t Count_Unused_Objects();
+        void Start_Voice_Quests();
+
+        void u_0_9_16();
 
     public:
         static void Register_Me(Virtual_Machine_t* vm);

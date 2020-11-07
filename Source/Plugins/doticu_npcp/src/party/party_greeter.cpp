@@ -52,6 +52,27 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
     Variable_t* Greeter_t::Actor_Variable() { DEFINE_VARIABLE("p_ref_actor"); }
     Variable_t* Greeter_t::Time_Waited_Variable() { DEFINE_VARIABLE("p_time_waited"); }
 
+    Topic_t* Greeter_t::Actor_To_Topic(Actor_t* actor)
+    {
+        Formlist_t* voices = nullptr;
+        Formlist_t* topics = nullptr;
+        if (Actor2::Sex(actor) == CODES::SEX::FEMALE) {
+            voices = Consts::Female_Voice_Types_Formlist();
+            topics = Consts::Main_Female_Topics_Formlist();
+        } else {
+            voices = Consts::Male_Voice_Types_Formlist();
+            topics = Consts::Main_Male_Topics_Formlist();
+        }
+        
+        Voice_Type_t * voice = Actor2::Voice_Type(actor);
+        for (size_t idx = 0, end = voices->forms.count; idx < end; idx += 1) {
+            if (voice == voices->forms[idx]) {
+                return static_cast<Topic_t*>(topics->forms[idx]);
+            }
+        }
+        return static_cast<Topic_t*>(topics->forms[topics->forms.count - 1]);
+    }
+
     void Greeter_t::Lock(Callback_t<Greeter_t*>* on_lock, Float_t interval, Float_t limit)
     {
         Alias_t::Lock(this, on_lock, interval, limit);
@@ -112,6 +133,11 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
                     user_callback->operator()(CODES::DISPLAY, nullptr);
                     delete user_callback;
                 } else {
+                    Package_Topic_Value_t* topic_value = static_cast<Package_Topic_Value_t*>
+                        (Consts::Greeter_Package()->data->values[0]);
+                    topic_value->is_subtype = false;
+                    topic_value->data.reference = Actor_To_Topic(actor);
+
                     struct VCallback : public Virtual_Callback_t {
                         Greeter_t* self;
                         Actor_t* actor;
@@ -127,7 +153,7 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
 
                             Object_Ref::Token(actor, Consts::Greeter_Token());
                             Actor2::Pacify(actor);
-                            Actor2::Evaluate_Package(actor);
+                            Actor2::Reset_AI(actor);
 
                             self->Update();
 

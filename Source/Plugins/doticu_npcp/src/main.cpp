@@ -158,8 +158,7 @@ namespace doticu_npcp { namespace Modules {
             void operator()(Variable_t* result)
             {
                 if (main->Has_Requirements()) {
-                    Quest::Start(Consts::Reanimated_Dialogue_Quest());
-                    Quest::Start(Consts::Thrall_Dialogue_Quest());
+                    main->Start_Voice_Quests();
 
                     Vector_t<Quest_t*> quests_to_start;
                     quests_to_start.reserve(5);
@@ -168,7 +167,6 @@ namespace doticu_npcp { namespace Modules {
                     quests_to_start.push_back(Consts::Members_Quest());
                     quests_to_start.push_back(Consts::Followers_Quest());
                     quests_to_start.push_back(Consts::Control_Quest());
-
                     struct Callback : public Callback_t<> {
                         Main_t* main;
                         Callback(Main_t* main) :
@@ -270,6 +268,9 @@ namespace doticu_npcp { namespace Modules {
             }
             if (Is_NPCP_Version_Less_Than(0, 9, 15)) {
                 Party::Members_t::Self()->u_0_9_15();
+            }
+            if (Is_NPCP_Version_Less_Than(0, 9, 16)) {
+                u_0_9_16();
             }
 
             Vars_t* vars = Vars_t::Self();
@@ -387,6 +388,59 @@ namespace doticu_npcp { namespace Modules {
         }
 
         return unused_objects;
+    }
+
+    void Main_t::Start_Voice_Quests()
+    {
+        Quest::Start(Consts::Female_Argonian_Quest());
+        Quest::Start(Consts::Female_Commander_Quest());
+        Quest::Start(Consts::Female_Commoner_Quest());
+        Quest::Start(Consts::Female_Condescending_Quest());
+        Quest::Start(Consts::Female_Coward_Quest());
+        Quest::Start(Consts::Female_Dark_Elf_Quest());
+        Quest::Start(Consts::Female_Elf_Haughty_Quest());
+        Quest::Start(Consts::Female_Even_Toned_Quest());
+        Quest::Start(Consts::Female_Khajiit_Quest());
+        Quest::Start(Consts::Female_Nord_Quest());
+        Quest::Start(Consts::Female_Old_Grumpy_Quest());
+        Quest::Start(Consts::Female_Old_Kindly_Quest());
+        Quest::Start(Consts::Female_Orc_Quest());
+        Quest::Start(Consts::Female_Other_Quest());
+        Quest::Start(Consts::Female_Shrill_Quest());
+        Quest::Start(Consts::Female_Soldier_Quest());
+        Quest::Start(Consts::Female_Sultry_Quest());
+        Quest::Start(Consts::Female_Young_Eager_Quest());
+        Quest::Start(Consts::Male_Argonian_Quest());
+        Quest::Start(Consts::Male_Bandit_Quest());
+        Quest::Start(Consts::Male_Brute_Quest());
+        Quest::Start(Consts::Male_Commander_Quest());
+        Quest::Start(Consts::Male_Commoner_Quest());
+        Quest::Start(Consts::Male_Commoner_Accented_Quest());
+        Quest::Start(Consts::Male_Condescending_Quest());
+        Quest::Start(Consts::Male_Coward_Quest());
+        Quest::Start(Consts::Male_Dark_Elf_Quest());
+        Quest::Start(Consts::Male_Drunk_Quest());
+        Quest::Start(Consts::Male_Elf_Haughty_Quest());
+        Quest::Start(Consts::Male_Even_Toned_Quest());
+        Quest::Start(Consts::Male_Even_Toned_Accented_Quest());
+        Quest::Start(Consts::Male_Forsworn_Quest());
+        Quest::Start(Consts::Male_Guard_Quest());
+        Quest::Start(Consts::Male_Khajiit_Quest());
+        Quest::Start(Consts::Male_Nord_Quest());
+        Quest::Start(Consts::Male_Nord_Commander_Quest());
+        Quest::Start(Consts::Male_Old_Grumpy_Quest());
+        Quest::Start(Consts::Male_Old_Kindly_Quest());
+        Quest::Start(Consts::Male_Orc_Quest());
+        Quest::Start(Consts::Male_Other_Quest());
+        Quest::Start(Consts::Male_Sly_Cynical_Quest());
+        Quest::Start(Consts::Male_Soldier_Quest());
+        Quest::Start(Consts::Male_Warlock_Quest());
+        Quest::Start(Consts::Male_Young_Eager_Quest());
+    }
+
+    void Main_t::u_0_9_16()
+    {
+        Start_Voice_Quests();
     }
 
     void Main_t::Register_Me(Virtual_Machine_t* vm)

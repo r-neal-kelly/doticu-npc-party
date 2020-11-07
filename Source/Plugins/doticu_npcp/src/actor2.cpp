@@ -2076,6 +2076,11 @@ namespace doticu_npcp { namespace Actor2 {
         );
     }
 
+    Voice_Type_t* Voice_Type(Actor_t* actor)
+    {
+        return Actor_Base2::Voice_Type(Dynamic_Base(actor));
+    }
+
 }}
 
 namespace doticu_npcp { namespace Actor2 { namespace Exports {

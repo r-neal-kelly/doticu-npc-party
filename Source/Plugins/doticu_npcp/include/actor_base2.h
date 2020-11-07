@@ -27,4 +27,6 @@ namespace doticu_npcp { namespace Actor_Base2 {
 
     void Essentialize(Actor_Base_t* actor_base);
     void Protect(Actor_Base_t* actor_base);
+
+    Voice_Type_t* Voice_Type(Actor_Base_t* actor_base);
 }}

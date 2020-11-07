@@ -27,6 +27,8 @@ namespace doticu_npcp { namespace Papyrus { namespace Party {
         Variable_t* Actor_Variable(); // Actor_t
         Variable_t* Time_Waited_Variable(); // Float_t
 
+        Topic_t* Actor_To_Topic(Actor_t* actor);
+
         void Lock(Callback_t<Greeter_t*>* on_lock, Float_t interval = 0.2f, Float_t limit = 10.0f);
         void Unlock();
 

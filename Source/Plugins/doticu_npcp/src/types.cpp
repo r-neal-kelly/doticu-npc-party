@@ -374,6 +374,8 @@ namespace doticu_npcp {
             return Type_e::LOCATION;
         } else if (vtbl == Offsets::Package::SINGLE_REFERENCE_VALUE) {
             return Type_e::SINGLE_REFERENCE;
+        } else if (vtbl == Offsets::Package::TOPIC_VALUE) {
+            return Type_e::TOPIC;
         } else {
             return Type_e::NONE;
         }

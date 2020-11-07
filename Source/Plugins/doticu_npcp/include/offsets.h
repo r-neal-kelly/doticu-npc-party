@@ -114,6 +114,7 @@ namespace doticu_npcp { namespace Offsets {
         constexpr uintptr_t FLOAT_VALUE                 = 0x01605F40; // 252945
         constexpr uintptr_t LOCATION_VALUE              = 0x01606520; // 252956
         constexpr uintptr_t SINGLE_REFERENCE_VALUE      = 0x016072A0; // 253026
+        constexpr uintptr_t TOPIC_VALUE                 = 0x016073F8; // 253033
 
     }
 

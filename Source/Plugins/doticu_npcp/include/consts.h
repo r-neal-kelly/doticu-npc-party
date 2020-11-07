@@ -134,6 +134,10 @@ namespace doticu_npcp { namespace Consts {
     Formlist_t* Main_Outfit_Branches_Formlist();
     Formlist_t* Main_Style_Branches_Formlist();
     Formlist_t* Main_Vitality_Branches_Formlist();
+    Formlist_t* Main_Female_Topics_Formlist();
+    Formlist_t* Main_Male_Topics_Formlist();
+    Formlist_t* Female_Voice_Types_Formlist();
+    Formlist_t* Male_Voice_Types_Formlist();
 
     // NPCP Furnitures
     Furniture_t* Bedroll_Furniture();
@@ -208,6 +212,7 @@ namespace doticu_npcp { namespace Consts {
     Outfit_t* Empty_Outfit();
 
     // NPCP Packages
+    Package_t* Greeter_Package();
     Package_t* Menu_Exit_Package();
 
     // NPCP Perks
@@ -223,9 +228,50 @@ namespace doticu_npcp { namespace Consts {
     Quest_t* Members_Quest();
     Quest_t* Followers_Quest();
     Quest_t* Control_Quest();
-    Quest_t* Thrall_Dialogue_Quest();
-    Quest_t* Reanimated_Dialogue_Quest();
+    Quest_t* Female_Argonian_Quest();
+    Quest_t* Female_Commander_Quest();
+    Quest_t* Female_Commoner_Quest();
+    Quest_t* Female_Condescending_Quest();
+    Quest_t* Female_Coward_Quest();
+    Quest_t* Female_Dark_Elf_Quest();
+    Quest_t* Female_Elf_Haughty_Quest();
+    Quest_t* Female_Even_Toned_Quest();
+    Quest_t* Female_Khajiit_Quest();
+    Quest_t* Female_Nord_Quest();
+    Quest_t* Female_Old_Grumpy_Quest();
+    Quest_t* Female_Old_Kindly_Quest();
+    Quest_t* Female_Orc_Quest();
+    Quest_t* Female_Other_Quest();
+    Quest_t* Female_Shrill_Quest();
+    Quest_t* Female_Soldier_Quest();
+    Quest_t* Female_Sultry_Quest();
     Quest_t* Female_Young_Eager_Quest();
+    Quest_t* Male_Argonian_Quest();
+    Quest_t* Male_Bandit_Quest();
+    Quest_t* Male_Brute_Quest();
+    Quest_t* Male_Commander_Quest();
+    Quest_t* Male_Commoner_Quest();
+    Quest_t* Male_Commoner_Accented_Quest();
+    Quest_t* Male_Condescending_Quest();
+    Quest_t* Male_Coward_Quest();
+    Quest_t* Male_Dark_Elf_Quest();
+    Quest_t* Male_Drunk_Quest();
+    Quest_t* Male_Elf_Haughty_Quest();
+    Quest_t* Male_Even_Toned_Quest();
+    Quest_t* Male_Even_Toned_Accented_Quest();
+    Quest_t* Male_Forsworn_Quest();
+    Quest_t* Male_Guard_Quest();
+    Quest_t* Male_Khajiit_Quest();
+    Quest_t* Male_Nord_Quest();
+    Quest_t* Male_Nord_Commander_Quest();
+    Quest_t* Male_Old_Grumpy_Quest();
+    Quest_t* Male_Old_Kindly_Quest();
+    Quest_t* Male_Orc_Quest();
+    Quest_t* Male_Other_Quest();
+    Quest_t* Male_Sly_Cynical_Quest();
+    Quest_t* Male_Soldier_Quest();
+    Quest_t* Male_Warlock_Quest();
+    Quest_t* Male_Young_Eager_Quest();
 
     // NPCP Reference Categories
     Reference_t* Input_Category();

@@ -131,6 +131,8 @@ namespace doticu_npcp {
 
     typedef BGSListForm     Formlist_t;
 
+    typedef BGSVoiceType    Voice_Type_t;
+
     typedef TESQuest            Quest_t;
 
     typedef BGSDialogueBranch   Branch_t;
@@ -971,6 +973,22 @@ namespace doticu_npcp {
         void* unk_18; // 18
     };
     STATIC_ASSERT(sizeof(Package_Single_Reference_Value_t) == 0x20);
+
+    class Package_Topic_Value_t : public Package_Value_t {
+    public:
+        virtual ~Package_Topic_Value_t();
+
+        UInt64 pad_08; // 08
+        Bool_t is_subtype; // 10
+        UInt8 pad_11; // 11
+        UInt16 pad_12; // 12
+        UInt32 pad_14; // 14
+        union {
+            Topic_t* reference;
+            UInt32 subtype;
+        } data; // 18
+    };
+    STATIC_ASSERT(sizeof(Package_Topic_Value_t) == 0x20);
 
     class Package_t;
     class Package_Data_t {
