@@ -196,11 +196,7 @@ namespace doticu_npcp { namespace Consts {
         ARMOR_BLANK                                 = 0x1EF2A5,
 
         // NPCP Branches
-        BRANCH_MAIN                                 = 0x0083EF,
-        BRANCH_MAIN_DIRECT                          = 0x3A515A,
-        BRANCH_MAIN_OUTFIT                          = 0x0CDE73,
-        BRANCH_MAIN_STYLE                           = 0x040F0F,
-        BRANCH_MAIN_VITALITY                        = 0x0CDE66,
+        BRANCH_MENU                                 = 0x32674B,
         BRANCH_MENU_CHESTS                          = 0x32674F,
         BRANCH_MENU_CHESTS_APPAREL                  = 0x32B853,
         BRANCH_MENU_CHESTS_BOOKS                    = 0x32B859,
@@ -237,6 +233,11 @@ namespace doticu_npcp { namespace Consts {
         FORMLIST_PACKAGES_FOLLOWER_SOJOURNER        = 0x40652D,
         FORMLIST_BUTTONS_EXPOEE                     = 0x3C88DF,
         FORMLIST_MARKERS_EXPOEE                     = 0x3C88E0,
+        FORMLIST_BRANCHES_MAIN                      = 0x41748B,
+        FORMLIST_BRANCHES_MAIN_DIRECT               = 0x41748C,
+        FORMLIST_BRANCHES_MAIN_OUTFIT               = 0x41748D,
+        FORMLIST_BRANCHES_MAIN_STYLE                = 0x41748E,
+        FORMLIST_BRANCHES_MAIN_VITALITY             = 0x41748F,
 
         // NPCP Furnitures
         FURNITURE_BEDROLL                           = 0x3E7F15,
@@ -417,155 +418,22 @@ namespace doticu_npcp { namespace Consts {
         SPELL_ABILITY_RETREAT                       = 0x2F3CFF,
 
         // NPCP Topics
-        TOPIC_MAIN                                  = 0x0083F1,
-        TOPIC_MAIN_BACK                             = 0x0083F2,
-        TOPIC_MAIN_CLONE                            = 0x020C2A,
-        TOPIC_MAIN_DIRECT                           = 0x3A5158,
-        TOPIC_MAIN_DIRECT_BLOCK                     = 0x3A515B,
-        TOPIC_MAIN_DIRECT_CONTINUE                  = 0x3A515D,
-        TOPIC_MAIN_DIRECT_END                       = 0x3A515F,
-        TOPIC_MAIN_ENTHRALL                         = 0x02D231,
-        TOPIC_MAIN_FOLLOW                           = 0x00AF09,
-        TOPIC_MAIN_GOODBYE                          = 0x19DF1A,
-        TOPIC_MAIN_HELLO                            = 0x08C049,
-        TOPIC_MAIN_IMMOBILIZE                       = 0x00A440,
-        TOPIC_MAIN_MEMBER                           = 0x00B9D2,
-        TOPIC_MAIN_MOBILIZE                         = 0x00A442,
-        TOPIC_MAIN_OUTFIT                           = 0x0CDE74,
-        TOPIC_MAIN_OUTFIT2                          = 0x1C67B9,
-        TOPIC_MAIN_OUTFIT_BACK                      = 0x0CDE76,
-        TOPIC_MAIN_OUTFIT_CURRENT                   = 0x1335AA,
-        TOPIC_MAIN_OUTFIT_DEFAULT                   = 0x1E9FA0,
-        TOPIC_MAIN_OUTFIT_FOLLOWER                  = 0x0CDE77,
-        TOPIC_MAIN_OUTFIT_IMMOBILE                  = 0x12E4A2,
-        TOPIC_MAIN_OUTFIT_MEMBER                    = 0x0CDE75,
-        TOPIC_MAIN_OUTFIT_SETTLER                   = 0x12E4A1,
-        TOPIC_MAIN_OUTFIT_THRALL                    = 0x12E4A5,
-        TOPIC_MAIN_OUTFIT_VANILLA                   = 0x1E9F9E,
-        TOPIC_MAIN_PACK                             = 0x008EB9,
-        TOPIC_MAIN_PARALYZE                         = 0x1705D2,
-        TOPIC_MAIN_RESETTLE                         = 0x00B46F,
-        TOPIC_MAIN_SADDLE                           = 0x36D62B,
-        TOPIC_MAIN_SETTLE                           = 0x00A43F,
-        TOPIC_MAIN_SNEAK                            = 0x00C498,
-        TOPIC_MAIN_SOJOURN                          = 0x406519,
-        TOPIC_MAIN_STASH                            = 0x312344,
-        TOPIC_MAIN_STYLE                            = 0x040F10,
-        TOPIC_MAIN_STYLE2                           = 0x1C67BB,
-        TOPIC_MAIN_STYLE_ARCHER                     = 0x040F17,
-        TOPIC_MAIN_STYLE_BACK                       = 0x040F11,
-        TOPIC_MAIN_STYLE_COWARD                     = 0x2D56F6,
-        TOPIC_MAIN_STYLE_DEFAULT                    = 0x040F14,
-        TOPIC_MAIN_STYLE_MAGE                       = 0x040F16,
-        TOPIC_MAIN_STYLE_WARRIOR                    = 0x040F15,
-        TOPIC_MAIN_UNCLONE                          = 0x0233C8,
-        TOPIC_MAIN_UNFOLLOW                         = 0x00AF0A,
-        TOPIC_MAIN_UNMEMBER                         = 0x00B9D3,
-        TOPIC_MAIN_UNSADDLE                         = 0x36D62C,
-        TOPIC_MAIN_UNSETTLE                         = 0x00A441,
-        TOPIC_MAIN_UNSNEAK                          = 0x00C499,
-        TOPIC_MAIN_UNSOJOURN                        = 0x40651B,
-        TOPIC_MAIN_UNTHRALL                         = 0x02D232,
-        TOPIC_MAIN_VITALITY                         = 0x0CDE67,
-        TOPIC_MAIN_VITALITY2                        = 0x1C67BD,
-        TOPIC_MAIN_VITALITY_BACK                    = 0x0CDE68,
-        TOPIC_MAIN_VITALITY_ESSENTIAL               = 0x0CDE6B,
-        TOPIC_MAIN_VITALITY_INVULNERABLE            = 0x0CDE6C,
-        TOPIC_MAIN_VITALITY_MORTAL                  = 0x0CDE69,
-        TOPIC_MAIN_VITALITY_PROTECTED               = 0x0CDE6A,
-        TOPIC_MENU_FOLLOWERS                        = 0x344DE3,
-        TOPIC_MENU_FOLLOWERS_BACK                   = 0x344DE4,
-        TOPIC_MENU_FOLLOWERS_IMMOBILIZE             = 0x344DE9,
-        TOPIC_MENU_FOLLOWERS_MOBILIZE               = 0x344DE8,
-        TOPIC_MENU_FOLLOWERS_SADDLE                 = 0x36D62F,
-        TOPIC_MENU_FOLLOWERS_SETTLE                 = 0x344DEC,
-        TOPIC_MENU_FOLLOWERS_SNEAK                  = 0x344DEA,
-        TOPIC_MENU_FOLLOWERS_STASH                  = 0x349EFD,
-        TOPIC_MENU_FOLLOWERS_SUMMON_ALL             = 0x344DE5,
-        TOPIC_MENU_FOLLOWERS_SUMMON_IMMOBILE        = 0x344DE7,
-        TOPIC_MENU_FOLLOWERS_SUMMON_MOBILE          = 0x344DE6,
-        TOPIC_MENU_FOLLOWERS_UNFOLLOW               = 0x344DEE,
-        TOPIC_MENU_FOLLOWERS_UNMEMBER               = 0x344DEF,
-        TOPIC_MENU_FOLLOWERS_UNSADDLE               = 0x36D630,
-        TOPIC_MENU_FOLLOWERS_UNSETTLE               = 0x344DED,
-        TOPIC_MENU_FOLLOWERS_UNSNEAK                = 0x344DEB,
-
-        // NPCP Topic Infos
-        TOPIC_INFO_MENU_CHESTS_INPUT                = 0x39AF57,
-        TOPIC_INFO_MENU_CHESTS_WEAPONS_SWORDS       = 0x32B8DC,
-        TOPIC_INFO_MENU_CHESTS_WEAPONS_GREATSWORDS  = 0x32B8D9,
-        TOPIC_INFO_MENU_CHESTS_WEAPONS_WARAXES      = 0x32B8DD,
-        TOPIC_INFO_MENU_CHESTS_WEAPONS_BATTLEAXES   = 0x32B8D6,
-        TOPIC_INFO_MENU_CHESTS_WEAPONS_MACES        = 0x32B8DA,
-        TOPIC_INFO_MENU_CHESTS_WEAPONS_WARHAMMERS   = 0x32B8DE,
-        TOPIC_INFO_MENU_CHESTS_WEAPONS_DAGGERS      = 0x32B8D8,
-        TOPIC_INFO_MENU_CHESTS_WEAPONS_STAVES       = 0x32B8DB,
-        TOPIC_INFO_MENU_CHESTS_WEAPONS_BOWS         = 0x32B8D7,
-        TOPIC_INFO_MENU_CHESTS_WEAPONS_AMMO         = 0x32B8CC,
-        TOPIC_INFO_MENU_CHESTS_WEAPONS_OTHERS       = 0x32B8DF,
-        TOPIC_INFO_MENU_CHESTS_APPAREL_LIGHT_ARMOR  = 0x32B8AA,
-        TOPIC_INFO_MENU_CHESTS_APPAREL_HEAVY_ARMOR  = 0x32B8A8,
-        TOPIC_INFO_MENU_CHESTS_APPAREL_SHIELDS      = 0x32B8AB,
-        TOPIC_INFO_MENU_CHESTS_APPAREL_JEWELRY      = 0x32B8A9,
-        TOPIC_INFO_MENU_CHESTS_APPAREL_CLOTHES      = 0x32B8A7,
-        TOPIC_INFO_MENU_CHESTS_EDIBLES_POTIONS      = 0x32B8CB,
-        TOPIC_INFO_MENU_CHESTS_EDIBLES_POISONS      = 0x32B8CA,
-        TOPIC_INFO_MENU_CHESTS_EDIBLES_INGREDIENTS  = 0x32B8CF,
-        TOPIC_INFO_MENU_CHESTS_EDIBLES_FOOD         = 0x32B8C9,
-        TOPIC_INFO_MENU_CHESTS_MISC_SOULGEMS        = 0x32B8D5,
-        TOPIC_INFO_MENU_CHESTS_MISC_SCROLLS         = 0x32B8D4,
-        TOPIC_INFO_MENU_CHESTS_MISC_METALS          = 0x32B8D2,
-        TOPIC_INFO_MENU_CHESTS_MISC_LEATHER         = 0x32B8D1,
-        TOPIC_INFO_MENU_CHESTS_MISC_GEMS            = 0x32B8CE,
-        TOPIC_INFO_MENU_CHESTS_MISC_CLUTTER         = 0x32B8CD,
-        TOPIC_INFO_MENU_CHESTS_MISC_KEYS            = 0x32B8D0,
-        TOPIC_INFO_MENU_CHESTS_MISC_OTHERS          = 0x32B8D3,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_SPELL_TOMES    = 0x32B8C1,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_RECIPES        = 0x32B8BF,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_A              = 0x32B8AC,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_B              = 0x32B8AD,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_C              = 0x32B8AE,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_D              = 0x32B8AF,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_E              = 0x32B8B0,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_F              = 0x32B8B1,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_G              = 0x32B8B2,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_H              = 0x32B8B3,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_I              = 0x32B8B4,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_J              = 0x32B8B5,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_K              = 0x32B8B6,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_L              = 0x32B8B7,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_M              = 0x32B8B8,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_N              = 0x32B8B9,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_O              = 0x32B8BA,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_P              = 0x32B8BC,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_Q              = 0x32B8BD,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_R              = 0x32B8BE,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_S              = 0x32B8C0,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_T              = 0x32B8C2,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_U              = 0x32B8C3,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_V              = 0x32B8C4,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_W              = 0x32B8C5,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_X              = 0x32B8C6,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_Y              = 0x32B8C7,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_Z              = 0x32B8C8,
-        TOPIC_INFO_MENU_CHESTS_BOOKS_OTHERS         = 0x32B8BB,
-        TOPIC_INFO_MENU_CHESTS_CUSTOM               = 0x3C37BE,
-        TOPIC_INFO_MENU_CHESTS_CUSTOM_00            = 0x3C37C0,
-        TOPIC_INFO_MENU_CHESTS_CUSTOM_01            = 0x3C37C2,
-        TOPIC_INFO_MENU_CHESTS_CUSTOM_02            = 0x3C37C4,
-        TOPIC_INFO_MENU_CHESTS_CUSTOM_03            = 0x3C37C6,
-        TOPIC_INFO_MENU_CHESTS_CUSTOM_04            = 0x3C37C8,
-        TOPIC_INFO_MENU_CHESTS_CUSTOM_05            = 0x3C37CA,
-        TOPIC_INFO_MENU_CHESTS_CUSTOM_06            = 0x3C37CC,
-        TOPIC_INFO_MENU_CHESTS_CUSTOM_07            = 0x3C37CE,
-        TOPIC_INFO_MENU_CHESTS_CUSTOM_08            = 0x3C37D0,
-        TOPIC_INFO_MENU_CHESTS_CUSTOM_09            = 0x3C37D2,
-        TOPIC_INFO_MENU_CHESTS_CUSTOM_10            = 0x3C37D4,
-        TOPIC_INFO_MENU_CHESTS_CUSTOM_11            = 0x3C37D6,
-        TOPIC_INFO_MENU_CHESTS_CUSTOM_12            = 0x3C37D8,
-        TOPIC_INFO_MENU_CHESTS_CUSTOM_13            = 0x3C37DA,
-        TOPIC_INFO_MENU_CHESTS_CUSTOM_14            = 0x3C37DC,
-        TOPIC_INFO_MENU_CHESTS_CUSTOM_15            = 0x3C37DE,
+        TOPIC_MENU_CHESTS_CUSTOM_00                 = 0x3C37BF,
+        TOPIC_MENU_CHESTS_CUSTOM_01                 = 0x3C37C1,
+        TOPIC_MENU_CHESTS_CUSTOM_02                 = 0x3C37C3,
+        TOPIC_MENU_CHESTS_CUSTOM_03                 = 0x3C37C5,
+        TOPIC_MENU_CHESTS_CUSTOM_04                 = 0x3C37C7,
+        TOPIC_MENU_CHESTS_CUSTOM_05                 = 0x3C37C9,
+        TOPIC_MENU_CHESTS_CUSTOM_06                 = 0x3C37CB,
+        TOPIC_MENU_CHESTS_CUSTOM_07                 = 0x3C37CD,
+        TOPIC_MENU_CHESTS_CUSTOM_08                 = 0x3C37CF,
+        TOPIC_MENU_CHESTS_CUSTOM_09                 = 0x3C37D1,
+        TOPIC_MENU_CHESTS_CUSTOM_10                 = 0x3C37D3,
+        TOPIC_MENU_CHESTS_CUSTOM_11                 = 0x3C37D5,
+        TOPIC_MENU_CHESTS_CUSTOM_12                 = 0x3C37D7,
+        TOPIC_MENU_CHESTS_CUSTOM_13                 = 0x3C37D9,
+        TOPIC_MENU_CHESTS_CUSTOM_14                 = 0x3C37DB,
+        TOPIC_MENU_CHESTS_CUSTOM_15                 = 0x3C37DD,
 
         // NPCP Weapons
         WEAPON_BLANK                                = 0x0C8D65,
@@ -580,11 +448,7 @@ namespace doticu_npcp { namespace Consts {
     Armor_t* Blank_Armor() { NPCP_FORM(Armor_t, ARMOR_BLANK); }
 
     // NPCP Branches
-    Branch_t* Main_Branch() { NPCP_FORM(Branch_t, BRANCH_MAIN); }
-    Branch_t* Main_Direct_Branch() { NPCP_FORM(Branch_t, BRANCH_MAIN_DIRECT); }
-    Branch_t* Main_Outfit_Branch() { NPCP_FORM(Branch_t, BRANCH_MAIN_OUTFIT); }
-    Branch_t* Main_Style_Branch() { NPCP_FORM(Branch_t, BRANCH_MAIN_STYLE); }
-    Branch_t* Main_Vitality_Branch() { NPCP_FORM(Branch_t, BRANCH_MAIN_VITALITY); }
+    Branch_t* Menu_Branch() { NPCP_FORM(Branch_t, BRANCH_MENU); }
     Branch_t* Menu_Chests_Branch() { NPCP_FORM(Branch_t, BRANCH_MENU_CHESTS); }
     Branch_t* Menu_Chests_Weapons_Branch() { NPCP_FORM(Branch_t, BRANCH_MENU_CHESTS_WEAPONS); }
     Branch_t* Menu_Chests_Apparel_Branch() { NPCP_FORM(Branch_t, BRANCH_MENU_CHESTS_APPAREL); }
@@ -621,6 +485,11 @@ namespace doticu_npcp { namespace Consts {
     Formlist_t* Follower_Sojourner_Packages_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_PACKAGES_FOLLOWER_SOJOURNER); }
     Formlist_t* Expoee_Buttons_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_BUTTONS_EXPOEE); }
     Formlist_t* Expoee_Markers_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_MARKERS_EXPOEE); }
+    Formlist_t* Main_Branches_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_BRANCHES_MAIN); }
+    Formlist_t* Main_Direct_Branches_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_BRANCHES_MAIN_DIRECT); }
+    Formlist_t* Main_Outfit_Branches_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_BRANCHES_MAIN_OUTFIT); }
+    Formlist_t* Main_Style_Branches_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_BRANCHES_MAIN_STYLE); }
+    Formlist_t* Main_Vitality_Branches_Formlist() { NPCP_FORM(Formlist_t, FORMLIST_BRANCHES_MAIN_VITALITY); }
 
     // NPCP Furnitures
     Furniture_t* Bedroll_Furniture() { NPCP_FORM(Furniture_t, FURNITURE_BEDROLL); }
@@ -806,155 +675,22 @@ namespace doticu_npcp { namespace Consts {
     Spell_t* Retreat_Ability_Spell() { NPCP_FORM(Spell_t, SPELL_ABILITY_RETREAT); }
 
     // NPCP Topics
-    Topic_t* Main_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN); }
-    Topic_t* Main_Back_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_BACK); }
-    Topic_t* Main_Clone_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_CLONE); }
-    Topic_t* Main_Direct_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_DIRECT); }
-    Topic_t* Main_Direct_Block_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_DIRECT_BLOCK); }
-    Topic_t* Main_Direct_Continue_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_DIRECT_CONTINUE); }
-    Topic_t* Main_Direct_End_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_DIRECT_END); }
-    Topic_t* Main_Enthrall_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_ENTHRALL); }
-    Topic_t* Main_Follow_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_FOLLOW); }
-    Topic_t* Main_Goodbye_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_GOODBYE); }
-    Topic_t* Main_Hello_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_HELLO); }
-    Topic_t* Main_Immobilize_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_IMMOBILIZE); }
-    Topic_t* Main_Member_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_MEMBER); }
-    Topic_t* Main_Mobilize_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_MOBILIZE); }
-    Topic_t* Main_Outfit_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_OUTFIT); }
-    Topic_t* Main_Outfit2_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_OUTFIT2); }
-    Topic_t* Main_Outfit_Back_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_OUTFIT_BACK); }
-    Topic_t* Main_Outfit_Current_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_OUTFIT_CURRENT); }
-    Topic_t* Main_Outfit_Default_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_OUTFIT_DEFAULT); }
-    Topic_t* Main_Outfit_Follower_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_OUTFIT_FOLLOWER); }
-    Topic_t* Main_Outfit_Immobile_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_OUTFIT_IMMOBILE); }
-    Topic_t* Main_Outfit_Member_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_OUTFIT_MEMBER); }
-    Topic_t* Main_Outfit_Settler_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_OUTFIT_SETTLER); }
-    Topic_t* Main_Outfit_Thrall_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_OUTFIT_THRALL); }
-    Topic_t* Main_Outfit_Vanilla_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_OUTFIT_VANILLA); }
-    Topic_t* Main_Pack_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_PACK); }
-    Topic_t* Main_Paralyze_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_PARALYZE); }
-    Topic_t* Main_Resettle_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_RESETTLE); }
-    Topic_t* Main_Saddle_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_SADDLE); }
-    Topic_t* Main_Settle_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_SETTLE); }
-    Topic_t* Main_Sneak_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_SNEAK); }
-    Topic_t* Main_Sojourn_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_SOJOURN); }
-    Topic_t* Main_Stash_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_STASH); }
-    Topic_t* Main_Style_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_STYLE); }
-    Topic_t* Main_Style2_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_STYLE2); }
-    Topic_t* Main_Style_Archer_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_STYLE_ARCHER); }
-    Topic_t* Main_Style_Back_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_STYLE_BACK); }
-    Topic_t* Main_Style_Coward_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_STYLE_COWARD); }
-    Topic_t* Main_Style_Default_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_STYLE_DEFAULT); }
-    Topic_t* Main_Style_Mage_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_STYLE_MAGE); }
-    Topic_t* Main_Style_Warrior_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_STYLE_WARRIOR); }
-    Topic_t* Main_Unclone_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_UNCLONE); }
-    Topic_t* Main_Unfollow_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_UNFOLLOW); }
-    Topic_t* Main_Unmember_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_UNMEMBER); }
-    Topic_t* Main_Unsaddle_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_UNSADDLE); }
-    Topic_t* Main_Unsettle_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_UNSETTLE); }
-    Topic_t* Main_Unsneak_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_UNSNEAK); }
-    Topic_t* Main_Unsojourn_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_UNSOJOURN); }
-    Topic_t* Main_Unthrall_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_UNTHRALL); }
-    Topic_t* Main_Vitality_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_VITALITY); }
-    Topic_t* Main_Vitality2_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_VITALITY2); }
-    Topic_t* Main_Vitality_Back_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_VITALITY_BACK); }
-    Topic_t* Main_Vitality_Essential_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_VITALITY_ESSENTIAL); }
-    Topic_t* Main_Vitality_Invulnerable_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_VITALITY_INVULNERABLE); }
-    Topic_t* Main_Vitality_Mortal_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_VITALITY_MORTAL); }
-    Topic_t* Main_Vitality_Protected_Topic() { NPCP_FORM(Topic_t, TOPIC_MAIN_VITALITY_PROTECTED); }
-    Topic_t* Menu_Followers_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS); }
-    Topic_t* Menu_Followers_Back_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_BACK); }
-    Topic_t* Menu_Followers_Immobilize_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_IMMOBILIZE); }
-    Topic_t* Menu_Followers_Mobilize_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_MOBILIZE); }
-    Topic_t* Menu_Followers_Saddle_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_SADDLE); }
-    Topic_t* Menu_Followers_Settle_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_SETTLE); }
-    Topic_t* Menu_Followers_Sneak_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_SNEAK); }
-    Topic_t* Menu_Followers_Stash_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_STASH); }
-    Topic_t* Menu_Followers_Summon_All_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_SUMMON_ALL); }
-    Topic_t* Menu_Followers_Summon_Immobile_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_SUMMON_IMMOBILE); }
-    Topic_t* Menu_Followers_Summon_Mobile_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_SUMMON_MOBILE); }
-    Topic_t* Menu_Followers_Unfollow_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_UNFOLLOW); }
-    Topic_t* Menu_Followers_Unmember_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_UNMEMBER); }
-    Topic_t* Menu_Followers_Unsaddle_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_UNSADDLE); }
-    Topic_t* Menu_Followers_Unsettle_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_UNSETTLE); }
-    Topic_t* Menu_Followers_Unsneak_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_FOLLOWERS_UNSNEAK); }
-
-    // NPCP Topic Infos
-    Topic_Info_t* Menu_Chests_Input_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_INPUT); }
-    Topic_Info_t* Menu_Chests_Weapons_Swords_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_WEAPONS_SWORDS); }
-    Topic_Info_t* Menu_Chests_Weapons_Greatswords_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_WEAPONS_GREATSWORDS); }
-    Topic_Info_t* Menu_Chests_Weapons_Waraxes_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_WEAPONS_WARAXES); }
-    Topic_Info_t* Menu_Chests_Weapons_Battleaxes_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_WEAPONS_BATTLEAXES); }
-    Topic_Info_t* Menu_Chests_Weapons_Maces_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_WEAPONS_MACES); }
-    Topic_Info_t* Menu_Chests_Weapons_Warhammers_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_WEAPONS_WARHAMMERS); }
-    Topic_Info_t* Menu_Chests_Weapons_Daggers_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_WEAPONS_DAGGERS); }
-    Topic_Info_t* Menu_Chests_Weapons_Staves_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_WEAPONS_STAVES); }
-    Topic_Info_t* Menu_Chests_Weapons_Bows_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_WEAPONS_BOWS); }
-    Topic_Info_t* Menu_Chests_Weapons_Ammo_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_WEAPONS_AMMO); }
-    Topic_Info_t* Menu_Chests_Weapons_Others_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_WEAPONS_OTHERS); }
-    Topic_Info_t* Menu_Chests_Apparel_Light_Armor_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_APPAREL_LIGHT_ARMOR); }
-    Topic_Info_t* Menu_Chests_Apparel_Heavy_Armor_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_APPAREL_HEAVY_ARMOR); }
-    Topic_Info_t* Menu_Chests_Apparel_Shields_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_APPAREL_SHIELDS); }
-    Topic_Info_t* Menu_Chests_Apparel_Jewelry_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_APPAREL_JEWELRY); }
-    Topic_Info_t* Menu_Chests_Apparel_Clothes_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_APPAREL_CLOTHES); }
-    Topic_Info_t* Menu_Chests_Edibles_Potions_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_EDIBLES_POTIONS); }
-    Topic_Info_t* Menu_Chests_Edibles_Poisons_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_EDIBLES_POISONS); }
-    Topic_Info_t* Menu_Chests_Edibles_Ingredients_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_EDIBLES_INGREDIENTS); }
-    Topic_Info_t* Menu_Chests_Edibles_Food_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_EDIBLES_FOOD); }
-    Topic_Info_t* Menu_Chests_Misc_Soulgems_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_MISC_SOULGEMS); }
-    Topic_Info_t* Menu_Chests_Misc_Scrolls_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_MISC_SCROLLS); }
-    Topic_Info_t* Menu_Chests_Misc_Metals_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_MISC_METALS); }
-    Topic_Info_t* Menu_Chests_Misc_Leather_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_MISC_LEATHER); }
-    Topic_Info_t* Menu_Chests_Misc_Gems_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_MISC_GEMS); }
-    Topic_Info_t* Menu_Chests_Misc_Clutter_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_MISC_CLUTTER); }
-    Topic_Info_t* Menu_Chests_Misc_Keys_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_MISC_KEYS); }
-    Topic_Info_t* Menu_Chests_Misc_Others_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_MISC_OTHERS); }
-    Topic_Info_t* Menu_Chests_Books_Spell_Tomes_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_SPELL_TOMES); }
-    Topic_Info_t* Menu_Chests_Books_Recipes_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_RECIPES); }
-    Topic_Info_t* Menu_Chests_Books_A_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_A); }
-    Topic_Info_t* Menu_Chests_Books_B_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_B); }
-    Topic_Info_t* Menu_Chests_Books_C_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_C); }
-    Topic_Info_t* Menu_Chests_Books_D_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_D); }
-    Topic_Info_t* Menu_Chests_Books_E_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_E); }
-    Topic_Info_t* Menu_Chests_Books_F_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_F); }
-    Topic_Info_t* Menu_Chests_Books_G_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_G); }
-    Topic_Info_t* Menu_Chests_Books_H_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_H); }
-    Topic_Info_t* Menu_Chests_Books_I_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_I); }
-    Topic_Info_t* Menu_Chests_Books_J_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_J); }
-    Topic_Info_t* Menu_Chests_Books_K_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_K); }
-    Topic_Info_t* Menu_Chests_Books_L_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_L); }
-    Topic_Info_t* Menu_Chests_Books_M_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_M); }
-    Topic_Info_t* Menu_Chests_Books_N_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_N); }
-    Topic_Info_t* Menu_Chests_Books_O_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_O); }
-    Topic_Info_t* Menu_Chests_Books_P_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_P); }
-    Topic_Info_t* Menu_Chests_Books_Q_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_Q); }
-    Topic_Info_t* Menu_Chests_Books_R_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_R); }
-    Topic_Info_t* Menu_Chests_Books_S_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_S); }
-    Topic_Info_t* Menu_Chests_Books_T_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_T); }
-    Topic_Info_t* Menu_Chests_Books_U_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_U); }
-    Topic_Info_t* Menu_Chests_Books_V_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_V); }
-    Topic_Info_t* Menu_Chests_Books_W_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_W); }
-    Topic_Info_t* Menu_Chests_Books_X_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_X); }
-    Topic_Info_t* Menu_Chests_Books_Y_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_Y); }
-    Topic_Info_t* Menu_Chests_Books_Z_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_Z); }
-    Topic_Info_t* Menu_Chests_Books_Others_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_BOOKS_OTHERS); }
-    Topic_Info_t* Menu_Chests_Custom_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM); }
-    Topic_Info_t* Menu_Chests_Custom_00_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_00); }
-    Topic_Info_t* Menu_Chests_Custom_01_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_01); }
-    Topic_Info_t* Menu_Chests_Custom_02_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_02); }
-    Topic_Info_t* Menu_Chests_Custom_03_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_03); }
-    Topic_Info_t* Menu_Chests_Custom_04_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_04); }
-    Topic_Info_t* Menu_Chests_Custom_05_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_05); }
-    Topic_Info_t* Menu_Chests_Custom_06_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_06); }
-    Topic_Info_t* Menu_Chests_Custom_07_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_07); }
-    Topic_Info_t* Menu_Chests_Custom_08_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_08); }
-    Topic_Info_t* Menu_Chests_Custom_09_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_09); }
-    Topic_Info_t* Menu_Chests_Custom_10_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_10); }
-    Topic_Info_t* Menu_Chests_Custom_11_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_11); }
-    Topic_Info_t* Menu_Chests_Custom_12_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_12); }
-    Topic_Info_t* Menu_Chests_Custom_13_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_13); }
-    Topic_Info_t* Menu_Chests_Custom_14_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_14); }
-    Topic_Info_t* Menu_Chests_Custom_15_Topic_Info() { NPCP_FORM(Topic_Info_t, TOPIC_INFO_MENU_CHESTS_CUSTOM_15); }
+    Topic_t* Menu_Chests_Custom_00_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_CHESTS_CUSTOM_00); }
+    Topic_t* Menu_Chests_Custom_01_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_CHESTS_CUSTOM_01); }
+    Topic_t* Menu_Chests_Custom_02_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_CHESTS_CUSTOM_02); }
+    Topic_t* Menu_Chests_Custom_03_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_CHESTS_CUSTOM_03); }
+    Topic_t* Menu_Chests_Custom_04_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_CHESTS_CUSTOM_04); }
+    Topic_t* Menu_Chests_Custom_05_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_CHESTS_CUSTOM_05); }
+    Topic_t* Menu_Chests_Custom_06_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_CHESTS_CUSTOM_06); }
+    Topic_t* Menu_Chests_Custom_07_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_CHESTS_CUSTOM_07); }
+    Topic_t* Menu_Chests_Custom_08_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_CHESTS_CUSTOM_08); }
+    Topic_t* Menu_Chests_Custom_09_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_CHESTS_CUSTOM_09); }
+    Topic_t* Menu_Chests_Custom_10_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_CHESTS_CUSTOM_10); }
+    Topic_t* Menu_Chests_Custom_11_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_CHESTS_CUSTOM_11); }
+    Topic_t* Menu_Chests_Custom_12_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_CHESTS_CUSTOM_12); }
+    Topic_t* Menu_Chests_Custom_13_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_CHESTS_CUSTOM_13); }
+    Topic_t* Menu_Chests_Custom_14_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_CHESTS_CUSTOM_14); }
+    Topic_t* Menu_Chests_Custom_15_Topic() { NPCP_FORM(Topic_t, TOPIC_MENU_CHESTS_CUSTOM_15); }
 
     // NPCP Weapons
     Weapon_t* Blank_Weapon() { NPCP_FORM(Weapon_t, WEAPON_BLANK); }

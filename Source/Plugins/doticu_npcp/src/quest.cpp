@@ -170,67 +170,189 @@ namespace doticu_npcp { namespace Quest {
         Papyrus::Virtual_Machine_t::Self()->Call_Method(quest, "Quest", "Start", nullptr, nullptr);
     }*/
 
-    void Log_Dialogue(Quest_t* quest)
+    Vector_t<Custom_Branch_t> Custom_Branches(Quest_t* quest)
     {
-        if (quest) {
-            auto log_topic = [](Quest_t* quest, Topic_t* topic, std::string indent = "")
-            {
-                if (topic) {
-                    _MESSAGE((indent + "topic: %8.8X %s").c_str(), topic->formID, topic->Editor_ID());
-                    Topic_Info_t** topic_infos = topic->topic_infos;
-                    for (size_t idx = 0, count = topic->topic_info_count; idx < count; idx += 1) {
-                        Topic_Info_t* topic_info = topic_infos[idx];
-                        if (topic_info) {
-                            _MESSAGE((indent + "    topic_info: %8.8X %s").c_str(), topic_info->formID, topic_info->Editor_ID());
-                            Dialogue_Info_t dialogue_info(quest, topic, topic_info, nullptr);
-                            for (auto it = dialogue_info.responses.Begin(); !it.End(); ++it) {
-                                Dialogue_Response_t* response = it.Get();
-                                if (response) {
-                                    _MESSAGE((indent + "        %s").c_str(), response->text.Get());
-                                }
-                            }
-                        }
-                    }
-                }
-            };
+        NPCP_ASSERT(quest);
 
-            _MESSAGE("quest: %8.8X %s", quest->formID, quest->Editor_ID());
-            for (size_t idx = 0, count = 2; idx < count; idx += 1) {
-                using Branch_Map_t = Hash_Map_t<Branch_t*, tArray<Topic_t*>*>;
-                Branch_Map_t& branch_tab = reinterpret_cast<Branch_Map_t&>(quest->unk118[idx]);
-                for (size_t idx = 0, count = branch_tab.capacity; idx < count; idx += 1) {
-                    Branch_Map_t::Entry_t* entry = branch_tab.entries + idx;
-                    if (entry && entry->chain != nullptr) {
-                        Branch_t* branch = entry->tuple.key;
-                        tArray<Topic_t*>* topics = entry->tuple.value;
-                        if (branch && topics) {
-                            _MESSAGE("    branch: %8.8X %s", branch->formID, branch->Editor_ID());
-                            for (size_t idx = 0, count = topics->count; idx < count; idx += 1) {
-                                Topic_t* topic = *(topics->entries + idx);
-                                log_topic(quest, topic, "        ");
-                            }
-                        }
+        Vector_t<Custom_Branch_t> branches;
+
+        for (size_t idx = 0, count = 2; idx < count; idx += 1) {
+            using Branch_Map_t = Hash_Map_t<Branch_t*, tArray<Topic_t*>*>;
+            Branch_Map_t& branch_tab = reinterpret_cast<Branch_Map_t&>(quest->unk118[idx]);
+            for (size_t idx = 0, count = branch_tab.capacity; idx < count; idx += 1) {
+                Branch_Map_t::Entry_t* entry = branch_tab.entries + idx;
+                if (entry && entry->chain != nullptr) {
+                    Branch_t* branch = entry->tuple.key;
+                    tArray<Topic_t*>* topics = entry->tuple.value;
+                    if (branch && topics) {
+                        branches.push_back(
+                            Custom_Branch_t(branch, reinterpret_cast<tArray<Topic_t*>&>(*topics))
+                        );
                     }
                 }
             }
-            for (size_t idx = 0, count = 6; idx < count; idx += 1) {
-                tArray<Topic_t*>& tab = reinterpret_cast<tArray<Topic_t*>&>(quest->unk178[idx]);
-                if (tab.count > 0) {
-                    if (idx == 0) {
-                        _MESSAGE("    branch: SCENE");
-                    } else if (idx == 1) {
-                        _MESSAGE("    branch: COMBAT");
-                    } else if (idx == 2) {
-                        _MESSAGE("    branch: FAVORS");
-                    } else if (idx == 3) {
-                        _MESSAGE("    branch: DETECTION");
-                    } else if (idx == 4) {
-                        _MESSAGE("    branch: SERVICE");
-                    } else if (idx == 5) {
-                        _MESSAGE("    branch: MISC");
+        }
+
+        return branches;
+    }
+
+    enum {
+        QUEST_BRANCH_SCENE = 0,
+        QUEST_BRANCH_COMBAT,
+        QUEST_BRANCH_FAVORS,
+        QUEST_BRANCH_DETECTION,
+        QUEST_BRANCH_SERVICE,
+        QUEST_BRANCH_MISC,
+    };
+
+    tArray<Topic_t*>& Scene_Branch(Quest_t* quest)
+    {
+        NPCP_ASSERT(quest);
+        return reinterpret_cast<tArray<Topic_t*>&>(quest->unk178[QUEST_BRANCH_SCENE]);
+    }
+
+    tArray<Topic_t*>& Combat_Branch(Quest_t* quest)
+    {
+        NPCP_ASSERT(quest);
+        return reinterpret_cast<tArray<Topic_t*>&>(quest->unk178[QUEST_BRANCH_COMBAT]);
+    }
+
+    tArray<Topic_t*>& Favors_Branch(Quest_t* quest)
+    {
+        NPCP_ASSERT(quest);
+        return reinterpret_cast<tArray<Topic_t*>&>(quest->unk178[QUEST_BRANCH_FAVORS]);
+    }
+
+    tArray<Topic_t*>& Detection_Branch(Quest_t* quest)
+    {
+        NPCP_ASSERT(quest);
+        return reinterpret_cast<tArray<Topic_t*>&>(quest->unk178[QUEST_BRANCH_DETECTION]);
+    }
+
+    tArray<Topic_t*>& Service_Branch(Quest_t* quest)
+    {
+        NPCP_ASSERT(quest);
+        return reinterpret_cast<tArray<Topic_t*>&>(quest->unk178[QUEST_BRANCH_SERVICE]);
+    }
+
+    tArray<Topic_t*>& Misc_Branch(Quest_t* quest)
+    {
+        NPCP_ASSERT(quest);
+        return reinterpret_cast<tArray<Topic_t*>&>(quest->unk178[QUEST_BRANCH_MISC]);
+    }
+
+    Bool_t Has_Single(tArray<Topic_t*>& topics)
+    {
+        if (topics.count > 0) {
+            for (size_t idx = 0, end = topics.count; idx < end; idx += 1) {
+                if (Has_Single(topics[idx])) {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            return false;
+        }
+    }
+
+    Bool_t Has_Single(Topic_t* topic)
+    {
+        if (topic) {
+            NPCP_ASSERT(topic->quest);
+            if (topic->topic_info_count > 0) {
+                for (size_t idx = 0, end = topic->topic_info_count; idx < end; idx += 1) {
+                    Topic_Info_t* topic_info = topic->topic_infos[idx];
+                    if (topic_info) {
+                        Dialogue_Info_t dialogue_info(topic->quest, topic, topic_info, nullptr);
+                        if (dialogue_info.responses.Count() == 1) {
+                            return true;
+                        }
                     }
-                    for (size_t idx = 0, count = tab.count; idx < count; idx += 1) {
-                        log_topic(quest, tab[idx], "        ");
+                }
+                return false;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    void Log_Dialogue(Quest_t* quest, Bool_t do_empty, Bool_t only_singles)
+    {
+        if (quest) {
+            _MESSAGE("quest: %8.8X %s", quest->formID, quest->Editor_ID());
+
+            Vector_t<Custom_Branch_t> player_branches = Custom_Branches(quest);
+            for (size_t idx = 0, end = player_branches.size(); idx < end; idx += 1) {
+                Custom_Branch_t player_branch = player_branches[idx];
+                Log_Branch(player_branch.branch, player_branch.topics, "    ", do_empty, only_singles);
+            }
+
+            Log_Branch("SCENE", Scene_Branch(quest), "    ", do_empty, only_singles);
+            Log_Branch("COMBAT", Combat_Branch(quest), "    ", do_empty, only_singles);
+            Log_Branch("FAVORS", Favors_Branch(quest), "    ", do_empty, only_singles);
+            Log_Branch("DETECTION", Detection_Branch(quest), "    ", do_empty, only_singles);
+            Log_Branch("SERVICE", Service_Branch(quest), "    ", do_empty, only_singles);
+            Log_Branch("MISC", Misc_Branch(quest), "    ", do_empty, only_singles);
+        }
+    }
+
+    void Log_Branch(Branch_t* branch, tArray<Topic_t*>& topics, std::string indent, Bool_t do_empty, Bool_t only_singles)
+    {
+        if (branch) {
+            if (do_empty || topics.count > 0) {
+                if (!only_singles || Has_Single(topics)) {
+                    _MESSAGE((indent + "branch: %8.8X %s").c_str(), branch->formID, branch->Editor_ID());
+                    for (size_t idx = 0, end = topics.count; idx < end; idx += 1) {
+                        Log_Topic(topics[idx], indent + "    ", do_empty, only_singles);
+                    }
+                }
+            }
+        }
+    }
+
+    void Log_Branch(const char* name, tArray<Topic_t*>& topics, std::string indent, Bool_t do_empty, Bool_t only_singles)
+    {
+        if (do_empty || topics.count > 0) {
+            if (!only_singles || Has_Single(topics)) {
+                _MESSAGE((indent + "branch: %s").c_str(), name);
+                for (size_t idx = 0, end = topics.count; idx < end; idx += 1) {
+                    Log_Topic(topics[idx], indent + "    ", do_empty, only_singles);
+                }
+            }
+        }
+    }
+
+    void Log_Topic(Topic_t* topic, std::string indent, Bool_t do_empty, Bool_t only_singles)
+    {
+        if (topic) {
+            if (do_empty || topic->topic_info_count > 0) {
+                if (!only_singles || Has_Single(topic)) {
+                    _MESSAGE((indent + "topic: %8.8X %s").c_str(), topic->formID, topic->Editor_ID());
+                    for (size_t idx = 0, end = topic->topic_info_count; idx < end; idx += 1) {
+                        Log_Topic_Info(topic->topic_infos[idx], indent + "    ", do_empty, only_singles);
+                    }
+                }
+            }
+        }
+    }
+
+    void Log_Topic_Info(Topic_Info_t* topic_info, std::string indent, Bool_t do_empty, Bool_t only_singles)
+    {
+        if (topic_info) {
+            NPCP_ASSERT(topic_info->topic);
+            NPCP_ASSERT(topic_info->topic->quest);
+            Dialogue_Info_t dialogue_info(topic_info->topic->quest, topic_info->topic, topic_info, nullptr);
+            Int_t response_count = dialogue_info.responses.Count();
+            if (do_empty || response_count > 0) {
+                if (!only_singles || response_count == 1) {
+                    _MESSAGE((indent + "topic_info: %8.8X %s").c_str(), topic_info->formID, topic_info->Editor_ID());
+                    for (auto it = dialogue_info.responses.Begin(); !it.End(); ++it) {
+                        Dialogue_Response_t* response = it.Get();
+                        if (response) {
+                            _MESSAGE((indent + "    %s").c_str(), response->text.Get());
+                        }
                     }
                 }
             }
@@ -243,8 +365,8 @@ namespace doticu_npcp { namespace Quest {
         if (data_handler) {
             for (size_t idx = 0, count = data_handler->quests.count; idx < count; idx += 1) {
                 Quest_t* quest = *(data_handler->quests.entries + idx);
-                if (quest && quest->unk0D8.flags & (1 << 4)) {
-                    Log_Dialogue(quest);
+                if (quest && (quest->unk0D8.flags & (1 << 4))) {
+                    Log_Dialogue(quest, false, true);
                 }
             }
         }

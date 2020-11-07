@@ -25,6 +25,39 @@ namespace doticu_npcp { namespace String2 {
         return true;
     }
 
+    Bool_t Ends_With(const char* subject, const char* object, Bool_t caseless)
+    {
+        if (!subject || !object) {
+            return false;
+        } else if (subject[0] == 0 && object[0] == 0) {
+            return true;
+        } else if (subject[0] == 0 || object[0] == 0) {
+            return false;
+        } else {
+            const char* s_it = subject + Length(subject) + 1;
+            const char* o_it = object + Length(object) + 1;
+            if (caseless) {
+                while (s_it != subject && o_it != object) {
+                    s_it -= 1;
+                    o_it -= 1;
+                    if (tolower(*s_it) != tolower(*o_it)) {
+                        return false;
+                    }
+                }
+                return true;
+            } else {
+                while (s_it != subject && o_it != object) {
+                    s_it -= 1;
+                    o_it -= 1;
+                    if (*s_it != *o_it) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+    }
+
     bool Contains(const char *str_subject, const char *str_object) {
         for (u64 idx = 0; str_subject[idx] != 0; idx += 1) {
             if (Starts_With(str_subject + idx, str_object)) {
