@@ -6,5 +6,17 @@ Member {
     topic_info: 0002CCC5 
                 (bark)
                 (various)
+    topic_info: 0002708D 
+                (panting)
+                (various)
+    topic_info: 00026FE6 
+                (woof)
+                (various)
+    topic_info: 00026F4B 
+                (bark)
+                (various)
+    topic_info: 0002708F 
+                (bark)
+                (various)
 
 }

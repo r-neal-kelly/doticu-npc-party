@@ -17,5 +17,17 @@ Member {
     topic_info: 0007A1E8 
                 What do you want me to carry?
                 (pack)
+    topic_info: 000E1565 
+                Still need me to do something?
+                (favor query)
+    topic_info: 000D8DCC 
+                Let's see it.
+                (favor continue, outfit)
+    topic_info: 000D8E14 
+                All right.
+                (favor end)
+    topic_info: 000E1567 
+                All right. What is it?
+                (favor begin)
 
 }

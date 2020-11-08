@@ -9,5 +9,17 @@ Member {
     topic_info: 040208C3 
                 Habichaaalakawaramalek.
                 (various) (more intricate)
+    topic_info: 040208C9 
+                Hafahoo?!
+                (various) (question)
+    topic_info: 040208C5 
+                Bafagra badee.
+                (various) (accept)
+    topic_info: 040208C6 
+                Hoo jah.
+                (various) (accept)
+    topic_info: 040208C7 
+                Takafala gajoo?
+                (various) (question)
 
 }

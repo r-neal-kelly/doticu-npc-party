@@ -11,5 +11,17 @@ Member {
     topic_info: 000D8DC0 
                 Fine. Let's trade, then.
                 (pack, stash)
+    topic_info: 000D8DDD 
+                You still wish something of me?
+                (favor query)
+    topic_info: 000D8DCF 
+                As you will.
+                (favor continue, accept)
+    topic_info: 000D8E17 
+                Fine.
+                (favor end)
+    topic_info: 000D8DC5 
+                What is it?
+                (favor begin)
 
 }

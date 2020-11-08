@@ -1,0 +1,13 @@
+Member {
+
+    topic_info: 001074CD 
+                You want me to do something or not?
+                ([NPC Party], favor query)
+    topic_info: 001074D8 
+                With pleasure.
+                (favor continue, accept)
+    topic_info: 001074D0 
+                Okie dokie, Listener.
+                (favor end)
+
+}

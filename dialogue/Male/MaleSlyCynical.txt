@@ -1,0 +1,13 @@
+Member {
+
+    topic_info: 001074CE 
+                Do you have any orders?
+                ([NPC Party], favor query)
+    topic_info: 001074D6 
+                I'm on it.
+                (favor continue, accept)
+    topic_info: 001074D1 
+                All right.
+                (favor end)
+
+}

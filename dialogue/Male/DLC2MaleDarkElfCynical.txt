@@ -9,5 +9,17 @@ Member {
     topic_info: 04036A6A 
                 Whatever you say, boss.
                 (various)
+    topic_info: 04036A6F 
+                What was it you needed, again?
+                (favor query)
+    topic_info: 04036A70 
+                Go on, then.
+                (favor continue, outfit, accept)
+    topic_info: 04036A71 
+                Suit yourself.
+                (favor end)
+    topic_info: 04036A6C 
+                Just let me know what needs doing.
+                (favor begin)
 
 }

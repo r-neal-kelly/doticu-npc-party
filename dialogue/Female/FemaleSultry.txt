@@ -1,0 +1,13 @@
+Member {
+
+    topic_info: 001074CF 
+                Still something you'd like me to do?
+                (favor query)
+    topic_info: 001074D7 
+                Right away.
+                (favor continue, accept)
+    topic_info: 001074D2 
+                As you will.
+                (favor end)
+
+}

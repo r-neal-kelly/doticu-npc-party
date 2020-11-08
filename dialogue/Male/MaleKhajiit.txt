@@ -6,6 +6,9 @@ Follower {
     topic_info: 000D8DB0 
                 Khajiit walks in your footsteps.
                 (follower goodbye)
+    topic_info: 000D8DCD 
+                Point the way.
+                (favor continue, on follow)
 
 }
 
@@ -17,5 +20,20 @@ Member {
     topic_info: 000D8DBE 
                 I'll shoulder some of your burden.
                 (pack)
+    topic_info: 000D8DDA 
+                Did you require something of J'zargo?
+                ([NPC Party], favor query) (J'zargo)
+    topic_info: 000D8DDB 
+                Do you still need me to do something?
+                (favor query)
+    topic_info: 000D8E15 
+                As you wish.
+                (favor end)
+    topic_info: 000D8DC2 
+                J'zargo is listening.
+                (favor begin) (J'zargo)
+    topic_info: 000D8DC3 
+                What do you need?
+                (favor begin)
 
 }

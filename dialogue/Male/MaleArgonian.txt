@@ -11,5 +11,17 @@ Member {
     topic_info: 000D8DBF 
                 Need me to carry something?
                 (pack)
+    topic_info: 000D8DDC 
+                You wanted me to do something, yes?
+                (favor query)
+    topic_info: 000D8DCE 
+                Let us see it, then.
+                (favor continue)
+    topic_info: 000D8E16 
+                Very well.
+                (favor end)
+    topic_info: 000D8DC4 
+                Go ahead. What is it?
+                (favor begin)
 
 }

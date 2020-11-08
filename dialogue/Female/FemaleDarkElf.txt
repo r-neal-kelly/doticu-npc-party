@@ -17,5 +17,17 @@ Member {
     topic_info: 000D8DC1 
                 What do you need to take?
                 (pack, outfit?)
+    topic_info: 000D8DDE 
+                Still have something you need?
+                (favor query)
+    topic_info: 000D8DD0 
+                Right, then.
+                (favor continue, accept)
+    topic_info: 000D8E18 
+                Your call.
+                (favor end)
+    topic_info: 000D8DC6 
+                Fine. What?
+                (favor begin)
 
 }

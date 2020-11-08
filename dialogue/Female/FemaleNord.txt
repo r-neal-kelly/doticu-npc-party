@@ -11,5 +11,17 @@ Member {
     topic_info: 000E36DE 
                 No problem, I can carry a good bit of gear.
                 (pack)
+    topic_info: 000E36E1 
+                Did you still need me for something?
+                (favor query)
+    topic_info: 000FECF5 
+                Right.
+                (favor continue, accept)
+    topic_info: 000FECF6 
+                Very well.
+                (favor end)
+    topic_info: 000E36DC 
+                Anything, as long as I get to fight.
+                (favor being, non-coward)
 
 }

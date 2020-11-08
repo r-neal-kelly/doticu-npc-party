@@ -3,6 +3,9 @@ Follower {
     topic_info: 0402BAF4 
                 I will shadow your steps.
                 (on follow, follower goodbye)
+    topic_info: 0402BADC 
+                I am watching, Skaal-friend.
+                (favor continue, on follow)
 
 }
 
@@ -11,5 +14,14 @@ Member {
     topic_info: 0402BAD2 
                 Very well.
                 (various)
+    topic_info: 0402BAD7 
+                Is there still something you need of me?
+                (favor query)
+    topic_info: 0402BAD6 
+                As you wish.
+                (favor end)
+    topic_info: 0402BAD5 
+                What would you ask of me?
+                (favor begin)
 
 }

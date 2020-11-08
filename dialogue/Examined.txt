@@ -3,3 +3,11 @@ quest: 000750BA DialogueFollower
         topic: 00075083 DialogueFollowerFollowTopic
     branch: 00060024 
         topic: 00060020 DialogueFollowerTradeTopic
+    branch: 00027096 
+        topic: 00026E0D DialogueFollowerDoingFavorBlockingTopic
+        topic: 00026DFF DialogueFollowerContinueFavorState
+        topic: 00026DFD DialogueFollowerEndFavorState
+    branch: 00027095 
+        topic: 00026E0E DialogueFollowerFavorStateTopic
+    branch: 0005C84F 
+        topic: 0005C80C DialogueFollowerDismissTopic (*wip)
