@@ -1,5 +1,20 @@
+Main
+{
+    topic_info: 03015D52 
+                How can I serve you, my Thane?
+                (in PlayerHousecarlFaction)
+    topic_info: 03015D51 
+                I am at your command.
+}
+
 Main_Follow
 {
+    topic_info: 0005C838 
+                As you will, my Thane. I will protect you with my life.
+                (in PlayerHousecarlFaction)
+    topic_info: 03015D3B 
+                As you command, my Thane.
+                (in PlayerHousecarlFaction)
     topic_info: 000E26F3 
                 Of course. Let's go.
     topic_info: 0007A1EB 
@@ -8,6 +23,12 @@ Main_Follow
 
 Main_Pack
 {
+    topic_info: 00060023 
+                I am sworn to carry your burdens.
+                (in PlayerHousecarlFaction)
+    topic_info: 03015D3B 
+                As you command, my Thane.
+                (in PlayerHousecarlFaction)
     topic_info: 0007A510 
                 I'm a mage, not a pawnbroker, you know.
                 (is mage)
@@ -15,35 +36,8 @@ Main_Pack
                 What do you want me to carry?
 }
 
-Pool
+Unused
 {
-    topic_info: 0005C838 
-                As you will, my Thane. I will protect you with my life.
-                (on follow, other commands) (PlayerHousecarlFaction)
-    topic_info: 03015D3B 
-                As you command, my Thane.
-                (on follow, other commands) (PlayerHousecarlFaction)
-    topic_info: 000E26F3 
-                Of course. Let's go.
-                (on follow)
-    topic_info: 0007A1EB 
-                Let's get going.
-                (follower goodbye)
-    topic_info: 00060023 
-                I am sworn to carry your burdens.
-                (pack) (PlayerHousecarlFaction)
-    topic_info: 0007A510 
-                I'm a mage, not a pawnbroker, you know.
-                (pack, stash) (mage)
-    topic_info: 0007A1E8 
-                What do you want me to carry?
-                (pack)
-    topic_info: 03015D51 
-                I am at your command.
-                ([NPC Party], various)
-    topic_info: 03015D52 
-                How can I serve you, my Thane?
-                ([NPC Party], various) (PlayerHousecarlFaction)
     topic_info: 000E1565 
                 Still need me to do something?
                 (favor query)
