@@ -1,5 +1,4 @@
-Member {
-
+Unsorted {
     topic_info: 001074CE 
                 Do you have any orders?
                 ([NPC Party], favor query)
@@ -9,5 +8,4 @@ Member {
     topic_info: 001074D1 
                 All right.
                 (favor end)
-
 }

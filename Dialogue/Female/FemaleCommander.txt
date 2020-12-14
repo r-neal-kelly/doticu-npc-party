@@ -1,5 +1,4 @@
-Follower {
-
+Unsorted {
     topic_info: 03015D38 
                 My blade is yours to command, Thane.
                 (on follow) (PlayerHousecarlFaction)
@@ -12,11 +11,6 @@ Follower {
     topic_info: 000D8DB3 
                 Lead the way.
                 (on follow, follower goodbye)
-
-}
-
-Member {
-
     topic_info: 03015D4E 
                 Of course, Thane. How can I be of service?
                 ([NPC Party]) (PlayerHousecarlFaction)
@@ -50,5 +44,4 @@ Member {
     topic_info: 03015D11 
                 As you command.
                 (favor begin)
-
 }

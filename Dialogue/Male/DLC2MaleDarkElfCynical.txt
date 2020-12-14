@@ -1,5 +1,4 @@
-Member {
-
+Unsorted {
     topic_info: 040208CB 
                 Sure thing, friend.
                 (on follow, various)
@@ -21,5 +20,4 @@ Member {
     topic_info: 04036A6C 
                 Just let me know what needs doing.
                 (favor begin)
-
 }

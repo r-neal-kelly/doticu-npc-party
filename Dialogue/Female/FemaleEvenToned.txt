@@ -1,5 +1,4 @@
-Follower {
-    
+Unsorted {
     topic_info: 0005C838 
                 As you will, my Thane. I will protect you with my life.
                 (on follow, other commands) (PlayerHousecarlFaction)
@@ -9,11 +8,6 @@ Follower {
     topic_info: 0007A1EB 
                 Let's get going.
                 (follower goodbye)
-
-}
-
-Member {
-
     topic_info: 00060023 
                 I am sworn to carry your burdens.
                 (pack) (PlayerHousecarlFaction)
@@ -44,5 +38,4 @@ Member {
     topic_info: 03015D11 
                 As you command.
                 (favor begin)
-
 }

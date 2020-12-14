@@ -1,7 +1,5 @@
-Follower {
-
+Unsorted {
     topic_info: 000E155C 
                 Good. We should keep moving.
                 (follower goodbye)
-
 }

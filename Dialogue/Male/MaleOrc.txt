@@ -1,13 +1,7 @@
-Follower {
-
+Unsorted {
     topic_info: 000D8DB2 
                 To the next fight.
                 (follower goodbye)
-
-}
-
-Member {
-
     topic_info: 000D8DC0 
                 Fine. Let's trade, then.
                 (pack, stash)
@@ -23,5 +17,4 @@ Member {
     topic_info: 000D8DC5 
                 What is it?
                 (favor begin)
-
 }

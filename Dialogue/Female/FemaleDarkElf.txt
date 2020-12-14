@@ -1,16 +1,10 @@
-Follower {
-    
+Unsorted {
     topic_info: 0007A517 
                 I am the shadow at your back.
                 (follower goodbye)
     topic_info: 000D8DB3 
                 Lead the way.
                 (on follow, follower goodbye)
-
-}
-
-Member {
-
     topic_info: 0007A513 
                 If that is what you wish.
                 (various)
@@ -29,5 +23,4 @@ Member {
     topic_info: 000D8DC6 
                 Fine. What?
                 (favor begin)
-
 }

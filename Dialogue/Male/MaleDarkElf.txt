@@ -1,16 +1,10 @@
-Follower {
-    
+Unsorted {
     topic_info: 000E3E79 
                 Certainly, I'm ready.
                 (on follow)
     topic_info: 000D8DB3 
                 Lead the way.
                 (on follow, follower goodbye)
-
-}
-
-Member {
-
     topic_info: 000E1568 
                 Running out of room, eh? I'll be glad to help.
                 (pack, stash)
@@ -35,5 +29,4 @@ Member {
     topic_info: 000D8DC6 
                 Fine. What?
                 (favor begin)
-
 }

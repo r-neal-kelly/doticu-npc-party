@@ -1,5 +1,4 @@
-Main
-{
+Main {
     topic_info: 03015D52 
                 How can I serve you, my Thane?
                 (in PlayerHousecarlFaction)
@@ -7,8 +6,12 @@ Main
                 I am at your command.
 }
 
-Main_Follow
-{
+Main_Back {
+    topic_info: 000D8E14 
+                All right.
+}
+
+Main_Follow {
     topic_info: 0005C838 
                 As you will, my Thane. I will protect you with my life.
                 (in PlayerHousecarlFaction)
@@ -21,39 +24,41 @@ Main_Follow
                 Let's get going.
 }
 
-Main_Pack
-{
+Main_Outfit {
+    topic_info: 000E1567 
+                All right. What is it?
+    topic_info: 000D8DCC 
+                Let's see it.
+}
+
+Main_Outfit_Back {
+    topic_info: 000E1565 
+                Still need me to do something?
+}
+
+Main_Pack {
     topic_info: 00060023 
                 I am sworn to carry your burdens.
                 (in PlayerHousecarlFaction)
     topic_info: 03015D3B 
                 As you command, my Thane.
                 (in PlayerHousecarlFaction)
+    topic_info: 000DE50E 
+                Yes, Thane. What is it?
+                (in PlayerHousecarlFaction)
     topic_info: 0007A510 
                 I'm a mage, not a pawnbroker, you know.
                 (is mage)
     topic_info: 0007A1E8 
                 What do you want me to carry?
-}
-
-Unused
-{
-    topic_info: 000E1565 
-                Still need me to do something?
-                (favor query)
-    topic_info: 000D8DCC 
-                Let's see it.
-                (favor continue, outfit)
-    topic_info: 000D8E14 
-                All right.
-                (favor end)
     topic_info: 000E1567 
                 All right. What is it?
-                (favor begin)
-    topic_info: 000DE50E 
-                Yes, Thane. What is it?
-                (favor begin) (PlayerHousecarlFaction)
+}
+
+Main_Settle {
     topic_info: 03015D11 
                 As you command.
-                (favor begin)
+}
+
+Unsorted {
 }

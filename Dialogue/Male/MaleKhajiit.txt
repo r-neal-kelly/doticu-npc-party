@@ -1,5 +1,4 @@
-Follower {
-
+Unsorted {
     topic_info: 000E26F2 
                 J'zargo is ready for more adventure.
                 (on follow, follower goodbye) (J'zargo)
@@ -9,11 +8,6 @@ Follower {
     topic_info: 000D8DCD 
                 Point the way.
                 (favor continue, on follow)
-
-}
-
-Member {
-
     topic_info: 000E26F7 
                 J'zargo only has so much room to carry things.
                 (pack, stash) (J'zargo)
@@ -35,5 +29,4 @@ Member {
     topic_info: 000D8DC3 
                 What do you need?
                 (favor begin)
-
 }

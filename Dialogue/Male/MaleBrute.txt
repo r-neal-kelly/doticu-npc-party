@@ -1,5 +1,4 @@
-Follower {
-
+Unsorted {
     topic_info: 0007A518 
                 Good! Let's go find something to fight.
                 (follower goodbye)
@@ -9,11 +8,6 @@ Follower {
     topic_info: 000D8DB3 
                 Lead the way.
                 (on follow, follower goodbye)
-
-}
-
-Member {
-
     topic_info: 0007A512 
                 Sure, feel free to hand me all the gold you want.
                 (pack)
@@ -38,5 +32,4 @@ Member {
     topic_info: 000DE50E 
                 Yes, Thane. What is it?
                 (favor begin) (PlayerHousecarlFaction)
-
 }

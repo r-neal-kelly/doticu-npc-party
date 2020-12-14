@@ -1,13 +1,7 @@
-Follower {
-    
+Unsorted {
     topic_info: 000E36DB 
                 I'm ready. Let's go.
                 (on follow, follower goodbye)
-                
-}
-
-Member {
-
     topic_info: 000E36DE 
                 No problem, I can carry a good bit of gear.
                 (pack)
@@ -23,5 +17,4 @@ Member {
     topic_info: 000E36DC 
                 Anything, as long as I get to fight.
                 (favor being, non-coward)
-
 }

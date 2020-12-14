@@ -1,16 +1,10 @@
-Follower {
-    
+Unsorted {
     topic_info: 0007A515 
                 Try not to walk into any spike-filled pits or filthy skeever dens.
                 (follower goodbye)
     topic_info: 0007A1EB 
                 Let's get going.
                 (follower goodbye)
-
-}
-
-Member {
-
     topic_info: 0007A511 
                 I am an apprentice wizard, not a pack mule! Oh very well, but make it quick.
                 (pack) (mage)
@@ -29,5 +23,4 @@ Member {
     topic_info: 000E1567 
                 All right. What is it?
                 (favor begin)
-
 }

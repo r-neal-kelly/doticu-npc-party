@@ -1,13 +1,7 @@
-Follower {
-
+Unsorted {
     topic_info: 000D8DB3 
                 Lead the way.
                 (on follow, follower goodbye)
-
-}
-
-Member {
-
     topic_info: 000D8DC1 
                 What do you need to take?
                 (pack, outfit?)
@@ -23,5 +17,4 @@ Member {
     topic_info: 000D8DC6 
                 Fine. What?
                 (favor begin)
-
 }

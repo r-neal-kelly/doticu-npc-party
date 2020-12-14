@@ -1,16 +1,10 @@
-Follower {
-    
+Unsorted {
     topic_info: 0007A519 
                 I'm ready.
                 (on follow, follower goodbye)
     topic_info: 0007A1EB 
                 Let's get going.
                 (follower goodbye)
-
-}
-
-Member {
-
     topic_info: 0007A514 
                 Sure, what have you got?
                 (pack)
@@ -29,5 +23,4 @@ Member {
     topic_info: 000E1567 
                 All right. What is it?
                 (favor begin)
-
 }

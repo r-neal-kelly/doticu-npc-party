@@ -1,13 +1,7 @@
-Follower {
-
+Unsorted {
     topic_info: 000D8DB1 
                 I will walk alongside you.
                 (on follow, follower goodbye)
-
-}
-
-Member {
-
     topic_info: 000D8DBF 
                 Need me to carry something?
                 (pack)
@@ -23,5 +17,4 @@ Member {
     topic_info: 000D8DC4 
                 Go ahead. What is it?
                 (favor begin)
-
 }

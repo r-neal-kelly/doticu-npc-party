@@ -1,5 +1,4 @@
-Follower {
-
+Unsorted {
     topic_info: 0007A516 
                 Onward to our next adventure!
                 (follower goodbye)
@@ -18,11 +17,6 @@ Follower {
     topic_info: 000D8DB3 
                 Lead the way.
                 (on follow, follower goodbye)
-
-}
-
-Member {
-
     topic_info: 000E1569 
                 Do I get to keep it? Just kidding.
                 (pack, stash)
@@ -62,5 +56,4 @@ Member {
     topic_info: 03015D11 
                 As you command.
                 (favor begin)
-
 }
