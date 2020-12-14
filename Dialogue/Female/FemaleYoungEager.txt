@@ -24,6 +24,12 @@ Main_Follow {
                 Let's get going.
 }
 
+Main_Immobilize {
+    topic_info: 03015D3B 
+                As you command, my Thane.
+                (in PlayerHousecarlFaction)
+}
+
 Main_Outfit {
     topic_info: 000E1567 
                 All right. What is it?
