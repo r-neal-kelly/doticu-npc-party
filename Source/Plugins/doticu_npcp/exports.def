@@ -1,4 +1,0 @@
-LIBRARY     "doticu_npcp"
-EXPORTS
-            SKSEPlugin_Query
-            SKSEPlugin_Load

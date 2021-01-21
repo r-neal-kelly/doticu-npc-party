@@ -4,14 +4,32 @@
 
 #pragma once
 
-#include "papyrus.h"
+#include "skse64/PluginAPI.h"
 
-namespace doticu_npcp { namespace Modules {
+#include "doticu_skylib/quest.h"
 
-    using namespace Papyrus;
+#include "intrinsic.h"
 
-    class Main_t : public Quest_t {
+namespace doticu_npcp {
+
+    class Main_t : public Quest_t
+    {
     public:
+        static const    SKSEInterface*          SKSE;
+        static const    SKSEPapyrusInterface*   SKSE_PAPYRUS;
+        static const    SKSEMessagingInterface* SKSE_MESSAGING;
+        static          PluginHandle            SKSE_PLUGIN_HANDLE;
+        static          IDebugLog               SKSE_LOG;
+
+    public:
+        static Bool_t   SKSE_Query_Plugin(const SKSEInterface* skse, PluginInfo* info);
+        static Bool_t   SKSE_Load_Plugin(const SKSEInterface* skse);
+        static Bool_t   SKSE_Register_Functions(V::Machine_t* machine);
+
+    public:
+        //static void Register_Me(V::Machine_t* machine);
+
+    /*public:
         static String_t Class_Name();
         static Class_Info_t* Class_Info();
         static Main_t* Self();
@@ -38,10 +56,7 @@ namespace doticu_npcp { namespace Modules {
         Int_t Count_Unused_Objects();
         void Start_Voice_Quests();
 
-        void u_0_9_16();
-
-    public:
-        static void Register_Me(Virtual_Machine_t* vm);
+        void u_0_9_16();*/
     };
 
-}}
+}

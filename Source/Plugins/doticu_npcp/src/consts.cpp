@@ -4,17 +4,22 @@
 
 #pragma once
 
+#include "doticu_skylib/game_macros.h"
+
 #include "consts.h"
-#include "game.h"
+
+namespace doticu_npcp {
+
+    const Version_t<u16> Consts_t::Skyrim::Required_Version() { DEFINE_VERSION(u16, 1, 5, 97, 0); }
+
+    const Version_t<u16> Consts_t::SKSE::Minimum_Version() { DEFINE_VERSION(u16, 2, 0, 17); }
+
+    const Version_t<u16> Consts_t::NPCP::Current_Version() { DEFINE_VERSION(u16, 0, 10, 0); }
+
+}
+
+/*#include "game.h"
 #include "utils.h"
-
-#include "papyrus.inl"
-
-/*
-    We us macros in this module, because we want the
-    assert to show us which variable is actually nullptr,
-    instead of it being ambiguous through a template.
-*/
 
 namespace doticu_npcp { namespace Consts {
 
@@ -819,4 +824,4 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
         return true;
     }
 
-}}}
+}}}*/

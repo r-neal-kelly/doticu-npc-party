@@ -368,11 +368,11 @@
     <ClInclude Include="include\mcm\mcm_settlers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\intrinsic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="exports.def">
-      <Filter>Source Files</Filter>
-    </None>
     <None Include="scripts\doticu_npcp.psc" />
     <None Include="include\papyrus.inl">
       <Filter>Header Files</Filter>

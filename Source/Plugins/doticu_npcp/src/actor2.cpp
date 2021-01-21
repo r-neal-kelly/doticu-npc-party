@@ -1614,14 +1614,14 @@ namespace doticu_npcp { namespace Actor2 {
     void Enable_Havok_Collision(Actor_t* actor)
     {
         if (actor) {
-            actor->flags = Utils::Bit_Off(actor->flags, Actor_t2::Form_Flags::HASNT_HAVOK_COLLISION);
+            actor->flags = Utils::Bit_Off(actor->flags, Actor_t2::Form_Flags::HASNT_HAVOK_COLLISION); // 1 << 4
         }
     }
 
     void Disable_Havok_Collision(Actor_t* actor)
     {
         if (actor) {
-            actor->flags = Utils::Bit_On(actor->flags, Actor_t2::Form_Flags::HASNT_HAVOK_COLLISION);
+            actor->flags = Utils::Bit_On(actor->flags, Actor_t2::Form_Flags::HASNT_HAVOK_COLLISION); // 1 << 4
         }
     }
 

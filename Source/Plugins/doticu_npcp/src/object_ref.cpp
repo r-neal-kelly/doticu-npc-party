@@ -1092,17 +1092,6 @@ namespace doticu_npcp { namespace Object_Ref {
         virtual_machine->Return_Latent_Function(0, &none);
     }
 
-    Reference_t* From_Handle(Reference_Handle_t handle)
-    {
-        static auto lookup_reference_handle = reinterpret_cast
-            <Reference_t* (*)(Reference_Handle_t&, NiPointer<Reference_t>&)>
-            (RelocationManager::s_baseAddr + Offsets::Reference::LOOKUP_REFERENCE_BY_HANDLE1);
-
-        NiPointer<Reference_t> ptr;
-        lookup_reference_handle(handle, ptr);
-        return ptr.get();
-    }
-
     Reference_t* Create_Marker_At(Reference_t* ref, Static_t* static_marker)
     {
         if (ref) {

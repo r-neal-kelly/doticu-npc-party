@@ -169,16 +169,6 @@ namespace doticu_npcp { namespace Papyrus { namespace UI {
         return Run<Bool_t>(menu, target, false);
     }
 
-    inline Bool_t Is_In_Menu_Mode()
-    {
-        MenuManager* menu_manager = MenuManager::GetSingleton();
-        if (menu_manager) {
-            return reinterpret_cast<Menu_Manager_t*>(menu_manager)->menu_stack.count > 1;
-        } else {
-            return false;
-        }
-    }
-
     inline Bool_t Is_Menu_Open(String_t menu)
     {
         MenuManager* menu_manager = MenuManager::GetSingleton();

@@ -4,7 +4,35 @@
 
 #pragma once
 
-#include "types.h"
+#include "intrinsic.h"
+
+namespace doticu_npcp {
+
+    class Consts_t
+    {
+    public:
+        class Skyrim
+        {
+        public:
+            static const Version_t<u16> Required_Version();
+        };
+
+        class SKSE
+        {
+        public:
+            static const Version_t<u16> Minimum_Version();
+        };
+
+        class NPCP
+        {
+        public:
+            static const Version_t<u16> Current_Version();
+        };
+    };
+
+}
+
+/*#include "types.h"
 #include "papyrus.h"
 
 namespace doticu_npcp { namespace Consts {
@@ -391,4 +419,4 @@ namespace doticu_npcp { namespace Consts { namespace Exports {
 
     bool Register(Registry_t* registry);
 
-}}}
+}}}*/

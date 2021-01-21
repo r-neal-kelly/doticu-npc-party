@@ -4,87 +4,98 @@
 
 #include <ShlObj.h>
 
-#include "skse64_common/skse_version.h"
-
-#include "skse64/GameData.h"
-
-#include "active_magic_effects.h"
-#include "actor_base2.h"
-#include "actor2.h"
-#include "cell.h"
-#include "codes.h"
-#include "commands.h"
 #include "consts.h"
-#include "form.h"
-#include "form_vector.h"
-#include "funcs.h"
-#include "game.h"
-#include "keys.h"
-#include "logs.h"
 #include "main.h"
-#include "object_ref.h"
-#include "outfit.h"
-#include "outfit2.h"
-#include "packages.h"
-#include "papyrus.h"
-#include "papyrus.inl"
-#include "perks.h"
-#include "quest.h"
-#include "references.h"
-#include "spell.h"
-#include "string2.h"
-#include "topic_infos.h"
-#include "ui.h"
-#include "utils.h"
-#include "vars.h"
-#include "vector.h"
-
-#include "party/party_player.h"
-#include "party/party_greeter.h"
-#include "party/party_movee.h"
-#include "party/party_npcs.h"
-#include "party/party_members.h"
-#include "party/party_member.h"
-#include "party/party_settler.h"
-#include "party/party_mannequins.h"
-#include "party/party_followers.h"
-#include "party/party_follower.h"
-#include "party/party_horses.h"
-#include "party/party_horse.h"
-
-#include "mcm/mcm_main.h"
-#include "mcm/mcm_followers.h"
-#include "mcm/mcm_members.h"
-#include "mcm/mcm_mannequins.h"
-#include "mcm/mcm_member.h"
-#include "mcm/mcm_settlers.h"
-#include "mcm/mcm_filter.h"
-#include "mcm/mcm_chests.h"
-#include "mcm/mcm_settings.h"
-#include "mcm/mcm_hotkeys.h"
-#include "mcm/mcm_logs.h"
 
 namespace doticu_npcp {
 
-    const IDebugLog g_log;
-    const SKSEInterface* g_skse;
-    const SKSEPapyrusInterface* g_papyrus;
-    const SKSEMessagingInterface* g_messaging;
-    PluginHandle g_plugin_handle;
+    const SKSEInterface*            Main_t::SKSE                = nullptr;
+    const SKSEPapyrusInterface*     Main_t::SKSE_PAPYRUS        = nullptr;
+    const SKSEMessagingInterface*   Main_t::SKSE_MESSAGING      = nullptr;
+    PluginHandle                    Main_t::SKSE_PLUGIN_HANDLE  = 0;
 
-}
+    Bool_t Main_t::SKSE_Query_Plugin(const SKSEInterface* skse, PluginInfo* info)
+    {
+        if (skse && info) {
+            info->infoVersion = PluginInfo::kInfoVersion;
+            info->name = "doticu_npcp";
+            info->version = 1;
 
-namespace doticu_npcp { namespace Main {
+            if (Version_t<u16>::From_MM_mm_ppp_b(skse->runtimeVersion) == Consts_t::Skyrim::Required_Version()) {
+                if (Version_t<u16>::From_MM_mm_ppp_b(skse->skseVersion) >= Consts_t::SKSE::Minimum_Version()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
 
-    bool Query_Plugin(const SKSEInterface* skse, PluginInfo* info);
-    bool Load_Plugin(const SKSEInterface* skse);
-    bool Register_Functions(Papyrus::Registry_t* registry);
+    Bool_t Main_t::SKSE_Load_Plugin(const SKSEInterface* skse)
+    {
+        SKSE_LOG.OpenRelative(CSIDL_MYDOCUMENTS, "\\My Games\\Skyrim Special Edition\\SKSE\\doticu_npcp.log");
+        if (skse) {
+            SKSE = skse;
+            SKSE_PAPYRUS = static_cast<const SKSEPapyrusInterface*>(SKSE->QueryInterface(kInterface_Papyrus));
+            SKSE_MESSAGING = static_cast<const SKSEMessagingInterface*>(SKSE->QueryInterface(kInterface_Messaging));
+            SKSE_PLUGIN_HANDLE = SKSE->GetPluginHandle();
+            if (SKSE_PAPYRUS && SKSE_MESSAGING) {
+                if (SKSE_PAPYRUS->Register(reinterpret_cast<SKSEPapyrusInterface::RegisterFunctions>(SKSE_Register_Functions))) {
+                    auto Callback = [](SKSEMessagingInterface::Message* message)->void
+                    {
+                        if (message) {
+                            if (message->type == SKSEMessagingInterface::kMessage_PostLoadGame && message->data != nullptr) {
+                                /*if (Game::Is_NPCP_Installed()) {
+                                    Modules::Main_t::Self()->Load_Mod();
+                                }*/
+                            }
+                        }
+                    };
+                    SKSE_MESSAGING->RegisterListener(SKSE_PLUGIN_HANDLE, "SKSE", Callback);
+                    //Papyrus::Keys_t::On_Load_Plugin();
+                    return true;
+                } else {
+                    _FATALERROR("Unable to register functions.");
+                    return false;
+                }
+            } else {
+                _FATALERROR("Unable to get papyrus and/or messaging interface.");
+                return false;
+            }
+        } else {
+            _FATALERROR("Unable to get skse interface.");
+            return false;
+        }
+    }
 
-}}
+    Bool_t Main_t::SKSE_Register_Functions(V::Machine_t* machine)
+    {
+        SKYLIB_LOG("Added all functions.\n");
 
-namespace doticu_npcp { namespace Modules {
+        return true;
+    }
 
-    String_t Main_t::Class_Name()
+    /*void Main_t::Register_Me(Virtual_Machine_t* vm)
+    {
+        #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
+        M                                                           \
+            FORWARD_METHOD(vm, Class_Name(), Main_t,                \
+                           STR_FUNC_, ARG_NUM_,                     \
+                           RETURN_, METHOD_, __VA_ARGS__);          \
+        W
+
+        METHOD("OnInit", 0, void, Init_Mod);
+
+        #undef METHOD
+    }*/
+
+
+
+    /*String_t Main_t::Class_Name()
     {
         static const String_t class_name = String_t("doticu_npcp_main");
         NPCP_ASSERT(class_name);
@@ -441,170 +452,23 @@ namespace doticu_npcp { namespace Modules {
     void Main_t::u_0_9_16()
     {
         Start_Voice_Quests();
-    }
+    }*/
 
-    void Main_t::Register_Me(Virtual_Machine_t* vm)
-    {
-        #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
-        M                                                           \
-            FORWARD_METHOD(vm, Class_Name(), Main_t,                \
-                           STR_FUNC_, ARG_NUM_,                     \
-                           RETURN_, METHOD_, __VA_ARGS__);          \
-        W
-
-        METHOD("OnInit", 0, void, Init_Mod);
-
-        #undef METHOD
-    }
-
-}}
-
-namespace doticu_npcp { namespace Main {
-
-    bool Query_Plugin(const SKSEInterface* skse, PluginInfo* info)
-    {
-        if (!skse || !info) {
-            return false;
-        }
-
-        info->infoVersion = PluginInfo::kInfoVersion; // constant
-        info->name = "doticu_npcp"; // exposed to plugin query API
-        info->version = 1; // exposed to scripts
-
-        if (skse->skseVersion < MAKE_EXE_VERSION(2, 0, 17)) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    bool Load_Plugin(const SKSEInterface* skse)
-    {
-        g_skse = skse;
-        g_papyrus = static_cast<SKSEPapyrusInterface*>(skse->QueryInterface(kInterface_Papyrus));
-        g_messaging = static_cast<SKSEMessagingInterface*>(skse->QueryInterface(kInterface_Messaging));
-        g_plugin_handle = skse->GetPluginHandle();
-
-        if (!g_skse) {
-            _FATALERROR(DOTICU_NPCP_PRINT_PREFIX "Could not get skse interface.");
-            return false;
-        }
-
-        if (!g_papyrus) {
-            _FATALERROR(DOTICU_NPCP_PRINT_PREFIX "Could not get papyrus interface.");
-            return false;
-        }
-
-        if (!g_papyrus->Register(Register_Functions)) {
-            _FATALERROR(DOTICU_NPCP_PRINT_PREFIX "Could not add Papyrus functions.");
-            return false;
-        }
-
-        g_log.OpenRelative(CSIDL_MYDOCUMENTS, "\\My Games\\Skyrim Special Edition\\SKSE\\doticu_npcp.log");
-
-        if (g_messaging) {
-            auto Callback = [](SKSEMessagingInterface::Message* message)->void
-            {
-                if (message) {
-                    if (message->type == SKSEMessagingInterface::kMessage_PostLoadGame && message->data != nullptr) {
-                        if (Game::Is_NPCP_Installed()) {
-                            Modules::Main_t::Self()->Load_Mod();
-                        }
-                    }
-                }
-            };
-            g_messaging->RegisterListener(g_plugin_handle, "SKSE", Callback);
-        }
-
-        Papyrus::Keys_t::On_Load_Plugin();
-
-        return true;
-    }
-
-    bool Register_Functions(Papyrus::Registry_t* registry)
-    {
-        using namespace Papyrus;
-
-        #define REGISTER_NAMESPACE(NAMESPACE_)                                                  \
-        M                                                                                       \
-            if (!doticu_npcp::NAMESPACE_::Exports::Register(registry)) {                        \
-                _MESSAGE(DOTICU_NPCP_PRINT_PREFIX "Failed to add " #NAMESPACE_ " functions.");  \
-                return false;                                                                   \
-            } else {                                                                            \
-                _MESSAGE(DOTICU_NPCP_PRINT_PREFIX "Added " #NAMESPACE_ " functions.");          \
-            }                                                                                   \
-        W
-
-        REGISTER_NAMESPACE(Actor2);
-        REGISTER_NAMESPACE(Consts);
-        REGISTER_NAMESPACE(Papyrus::Active_Magic_Effects);
-        REGISTER_NAMESPACE(Papyrus::Packages);
-        REGISTER_NAMESPACE(Papyrus::Perks);
-        REGISTER_NAMESPACE(Papyrus::References);
-        REGISTER_NAMESPACE(Papyrus::Topic_Infos);
-
-        #undef REGISTER_NAMESPACE
-
-        #define REGISTER_TYPE(TYPE_)                                            \
-        M                                                                       \
-            TYPE_::Register_Me(reinterpret_cast<Virtual_Machine_t*>(registry)); \
-            _MESSAGE(DOTICU_NPCP_PRINT_PREFIX "Added " #TYPE_ " functions.");   \
-        W
-
-        REGISTER_TYPE(Modules::Main_t);
-        REGISTER_TYPE(Modules::Funcs_t);
-        REGISTER_TYPE(Modules::Vars_t);
-        REGISTER_TYPE(Modules::Logs_t);
-
-        REGISTER_TYPE(Party::Player_t);
-        REGISTER_TYPE(Party::Greeter_t);
-        REGISTER_TYPE(Party::Movee_t);
-        REGISTER_TYPE(Party::NPCS_t);
-        REGISTER_TYPE(Party::Members_t);
-        REGISTER_TYPE(Party::Member_t);
-        REGISTER_TYPE(Party::Mannequins_t);
-        REGISTER_TYPE(Party::Followers_t);
-        REGISTER_TYPE(Party::Follower_t);
-        REGISTER_TYPE(Party::Horses_t);
-        REGISTER_TYPE(Party::Horse_t);
-        REGISTER_TYPE(Papyrus::Outfit2_t);
-
-        REGISTER_TYPE(Modules::Control::Commands_t);
-
-        REGISTER_TYPE(Papyrus::Keys_t);
-
-        REGISTER_TYPE(MCM::SKI_Config_Base_t);
-        REGISTER_TYPE(MCM::Main_t);
-        REGISTER_TYPE(MCM::Followers_t);
-        REGISTER_TYPE(MCM::Members_t);
-        REGISTER_TYPE(MCM::Mannequins_t);
-        REGISTER_TYPE(MCM::Member_t);
-        REGISTER_TYPE(MCM::Settlers_t);
-        REGISTER_TYPE(MCM::Filter_t);
-        REGISTER_TYPE(MCM::Chests_t);
-        REGISTER_TYPE(MCM::Settings_t);
-        REGISTER_TYPE(MCM::Hotkeys_t);
-        REGISTER_TYPE(MCM::Logs_t);
-
-        #undef REGISTER_TYPE
-
-        _MESSAGE(DOTICU_NPCP_PRINT_PREFIX "Added all functions.\n");
-
-        return true;
-    }
-
-}}
+}
 
 extern "C" {
 
-    bool SKSEPlugin_Query(const SKSEInterface* skse, PluginInfo* info)
+    _declspec(dllexport) skylib::Bool_t SKSEPlugin_Query(const SKSEInterface*, PluginInfo*);
+    _declspec(dllexport) skylib::Bool_t SKSEPlugin_Load(const SKSEInterface*);
+
+    skylib::Bool_t SKSEPlugin_Query(const SKSEInterface* skse, PluginInfo* info)
     {
-        return doticu_npcp::Main::Query_Plugin(skse, info);
+        return doticu_npcp::Main_t::SKSE_Query_Plugin(skse, info);
     }
 
-    bool SKSEPlugin_Load(const SKSEInterface* skse)
+    skylib::Bool_t SKSEPlugin_Load(const SKSEInterface* skse)
     {
-        return doticu_npcp::Main::Load_Plugin(skse);
+        return doticu_npcp::Main_t::SKSE_Load_Plugin(skse);
     }
 
 }
