@@ -14,137 +14,133 @@ namespace doticu_npcp {
         class Skyrim
         {
         public:
-            class Version
+            static maybe<Mod_t*> Mod();
+
+        public:
+            struct Actor
             {
-            public:
+                static some<Actor_t*> Player();
+            };
+            struct Armor
+            {
+                static some<Armor_t*> Belted_Tunic();
+                static some<Armor_t*> Gold_Ring();
+            };
+            struct Effect_Shader
+            {
+                static some<Effect_Shader_t*> Reanimate();
+            };
+            struct Faction
+            {
+                static some<Faction_t*> Bard_Singer_No_Autostart();
+                static some<Faction_t*> Current_Follower();
+                static some<Faction_t*> Player_Follower();
+                static some<Faction_t*> Potential_Follower();
+                static some<Faction_t*> WI_No_Body_Cleanup();
+            };
+            struct Global
+            {
+                static some<Global_t*> Player_Follower_Count();
+            };
+            struct Keyword
+            {
+                static some<Keyword_t*> Magic_Damage_Fire();
+                static some<Keyword_t*> Magic_Damage_Frost();
+                static some<Keyword_t*> Magic_Damage_Shock();
+                static some<Keyword_t*> Magic_Vampire_Drain();
+                static some<Keyword_t*> Vampire();
+                static some<Keyword_t*> Vendor_Item_Staff();
+                static some<Keyword_t*> Weapon_Type_Sword();
+                static some<Keyword_t*> Weapon_Type_Greatsword();
+                static some<Keyword_t*> Weapon_Type_Waraxe();
+                static some<Keyword_t*> Weapon_Type_Battleaxe();
+                static some<Keyword_t*> Weapon_Type_Mace();
+                static some<Keyword_t*> Weapon_Type_Warhammer();
+                static some<Keyword_t*> Weapon_Type_Dagger();
+                static some<Keyword_t*> Weapon_Type_Bow();
+                static some<Keyword_t*> Weapon_Type_Staff();
+            };
+            struct Misc
+            {
+                static some<Misc_t*> Gold();
+            };
+            struct Package
+            {
+                static some<Package_t*> Follow_Template();
+                static some<Package_t*> Follow_Player_Template();
+                static some<Package_t*> Follow_And_Keep_Distance_Template();
+                static some<Package_t*> Follow_In_Single_File_Template();
+                static some<Package_t*> Follower_Template();
+            };
+            struct Perk
+            {
+                static some<Perk_t*> Vampire_Feed();
+            };
+            struct Quest
+            {
+                static some<Quest_t*> Bard_Songs();
+                static some<Quest_t*> Follower_Dialogue();
+                static some<Quest_t*> Player_Vampire();
+                static some<Quest_t*> WI_Change_Location_01();
+                static some<Quest_t*> WI_Remove_Item_04();
+            };
+            struct Reference
+            {
+                static some<Reference_t*> Riverwood_Location_Center_Marker();
+            };
+            struct Static
+            {
+                static some<Static_t*> X_Marker();
+                static some<Static_t*> X_Marker_Heading();
+            };
+            struct Version
+            {
                 static const Version_t<u16> Required();
             };
         };
 
+    public:
+        class Dawnguard
+        {
+        public:
+            static maybe<Mod_t*> Mod();
+
+        public:
+            struct Faction
+            {
+                static some<Faction_t*> DLC1_Thrall();
+                static some<Faction_t*> DLC1_Vampire_Feed_No_Crime();
+            };
+        };
+
+    public:
         class SKSE
         {
         public:
-            class Version
+            struct Version
             {
-            public:
                 static const Version_t<u16> Minimum();
             };
         };
 
+    public:
         class NPCP
         {
         public:
             static maybe<Mod_t*> Mod();
 
-            class Quest
+        public:
+            struct Actor_Base
             {
-            public:
-                static some<Quest_t*> Main();
-                static some<Quest_t*> Vars();
-                static some<Quest_t*> Funcs();
-                static some<Quest_t*> Members();
-                static some<Quest_t*> Followers();
-                static some<Quest_t*> Control();
+                static some<Actor_Base_t*> Menu();
             };
-
-            class Version
+            struct Armor
             {
-            public:
-                static const Version_t<u16> Current();
+                static some<Armor_t*> Blank();
             };
-        };
-    };
-
-}
-
-/*#include "types.h"
-#include "papyrus.h"
-
-namespace doticu_npcp { namespace Consts {
-
-    using namespace Papyrus;
-
-    constexpr size_t MAX_MEMBERS = 1024;
-    constexpr size_t MAX_FOLLOWERS = 16;
-
-    String_t Class_Name();
-    Class_Info_t* Class_Info();
-
-    // Skyrim Actors
-    Actor_t* Player_Actor();
-
-    // Skyrim Armors
-    Armor_t* Belted_Tunic_Armor();
-    Armor_t* Gold_Ring();
-
-    // Skyrim Effect Shaders
-    Effect_Shader_t* Reanimate_Effect_Shader();
-
-    // Skyrim Factions
-    Faction_t* No_Bard_Singer_Autostart_Faction();
-    Faction_t* Current_Follower_Faction();
-    Faction_t* Player_Follower_Faction();
-    Faction_t* Potential_Follower_Faction();
-    Faction_t* WI_No_Body_Cleanup_Faction();
-
-    // Skyrim Globals
-    Global_t* Player_Follower_Count_Global();
-
-    // Skyrim Keywords
-    Keyword_t* Fire_Damage_Magic_Keyword();
-    Keyword_t* Frost_Damage_Magic_Keyword();
-    Keyword_t* Shock_Damage_Magic_Keyword();
-    Keyword_t* Vampire_Drain_Magic_Keyword();
-    Keyword_t* Vampire_Keyword();
-    Keyword_t* Staff_Vendor_Item_Keyword();
-    Keyword_t* Sword_Weapon_Type_Keyword();
-    Keyword_t* Greatsword_Weapon_Type_Keyword();
-    Keyword_t* Waraxe_Weapon_Type_Keyword();
-    Keyword_t* Battleaxe_Weapon_Type_Keyword();
-    Keyword_t* Mace_Weapon_Type_Keyword();
-    Keyword_t* Warhammer_Weapon_Type_Keyword();
-    Keyword_t* Dagger_Weapon_Type_Keyword();
-    Keyword_t* Bow_Weapon_Type_Keyword();
-    Keyword_t* Staff_Weapon_Type_Keyword();
-
-    // Skyrim Miscs
-    Misc_t* Gold();
-
-    // Skyrim Packages
-    Package_t* Follow_Template_Package();
-    Package_t* Follow_Player_Template_Package();
-    Package_t* Follow_And_Keep_Distance_Template_Package();
-    Package_t* Follow_In_Single_File_Template_Package();
-    Package_t* Follower_Template_Package();
-
-    // Skyrim Perks
-    Perk_t* Vampire_Feed_Perk();
-
-    // Skyrim Quests
-    Quest_t* Bard_Songs_Quest();
-    Quest_t* Follower_Dialogue_Quest();
-    Quest_t* Player_Vampire_Quest();
-    Quest_t* WI_Change_Location_01_Quest();
-    Quest_t* WI_Remove_Item_04_Quest();
-
-    // Skyrim Reference Markers
-    Reference_t* Safe_Go_Back_Marker();
-
-    // Skyrim Statics
-    Static_t* X_Marker_Static();
-    Static_t* Directed_X_Marker_Static();
-
-    // Dawnguard Factions
-    Faction_t* DLC1_Thrall_Faction();
-    Faction_t* DLC1_Vampire_Feed_No_Crime_Faction();
-    
-    // NPCP Actor Base
-    Actor_Base_t* Menu_Actor_Base();
-
-    // NPCP Armors
-    Armor_t* Blank_Armor();
-
-    // NPCP Branches
+            struct Branch
+            {
+                /*
     Branch_t* Menu_Branch();
     Branch_t* Menu_Chests_Branch();
     Branch_t* Menu_Chests_Weapons_Branch();
@@ -154,77 +150,102 @@ namespace doticu_npcp { namespace Consts {
     Branch_t* Menu_Chests_Books_Branch();
     Branch_t* Menu_Chests_Custom_Branch();
     Branch_t* Menu_Followers_Branch();
-
-    // NPCP Cells
-    Cell_t* Storage_Cell();
-
-    // NPCP Containers
-    Container_t* Empty_Container();
-    Container_t* Outfit2_Container();
-    Container_t* Immobile_Outfit2_Container();
-    Container_t* Settler_Outfit2_Container();
-    Container_t* Thrall_Outfit2_Container();
-    Container_t* Follower_Outfit2_Container();
-
-    // NPCP Factions
-    Faction_t* Member_Faction();
-    Faction_t* Horse_Faction();
-
-    // NPCP Formlists
-    Formlist_t* Is_Saddler_Sitting_Globals_Formlist();
-    Formlist_t* Expo_Cell_Markers_Formlist();
-    Formlist_t* Settler_Markers_Formlist();
-    Formlist_t* Settler_Packages_Formlist();
-    Formlist_t* Settler_Sleeper_Packages_Formlist();
-    Formlist_t* Settler_Sitter_Packages_Formlist();
-    Formlist_t* Settler_Eater_Packages_Formlist();
-    Formlist_t* Settler_Guard_Packages_Formlist();
-    Formlist_t* Follower_Sojourner_Packages_Formlist();
-    Formlist_t* Expoee_Buttons_Formlist();
-    Formlist_t* Expoee_Markers_Formlist();
-    Formlist_t* Main_Branches_Formlist();
-    Formlist_t* Main_Direct_Branches_Formlist();
-    Formlist_t* Main_Outfit_Branches_Formlist();
-    Formlist_t* Main_Style_Branches_Formlist();
-    Formlist_t* Main_Vitality_Branches_Formlist();
-    Formlist_t* Main_Female_Topics_Formlist();
-    Formlist_t* Main_Male_Topics_Formlist();
-    Formlist_t* Female_Voice_Types_Formlist();
-    Formlist_t* Male_Voice_Types_Formlist();
-
-    // NPCP Furnitures
-    Furniture_t* Bedroll_Furniture();
-
-    // NPCP Globals
-    Global_t* Is_Installed_Global();
-    Global_t* Allow_Dialogue_For_All_Global();
-    Global_t* Allow_Chatter_Global();
-    Global_t* Force_Clone_Uniques_Global();
-    Global_t* Force_Clone_Generics_Global();
-    Global_t* Force_Unclone_Uniques_Global();
-    Global_t* Force_Unclone_Generics_Global();
-    Global_t* Is_Leveling_Enabled_Global();
-    Global_t* No_Body_Percent_Global();
-    Global_t* No_Feet_Percent_Global();
-    Global_t* No_Hands_Percent_Global();
-    Global_t* No_Head_Percent_Global();
-
-    // NPCP Ints
-    Int_t NPCP_Major();
-    Int_t NPCP_Minor();
-    Int_t NPCP_Patch();
-
-    // NPCP Leveled Actor
+                */
+            };
+            struct Cell
+            {
+                static some<Cell_t*> Storage();
+            };
+            struct Container
+            {
+                static some<Container_t*> Empty();
+                static some<Container_t*> Outfit2();
+                static some<Container_t*> Immobile_Outfit2();
+                static some<Container_t*> Settler_Outfit2();
+                static some<Container_t*> Thrall_Outfit2();
+                static some<Container_t*> Follower_Outfit2();
+            };
+            struct Faction
+            {
+                static some<Faction_t*> Horse();
+                static some<Faction_t*> Member();
+            };
+            struct Form_List
+            {
+                static some<Form_List_t*> Is_Saddler_Sitting_Globals();
+                static some<Form_List_t*> Expo_Cell_Markers();
+                static some<Form_List_t*> Settler_Markers();
+                static some<Form_List_t*> Settler_Packages();
+                static some<Form_List_t*> Settler_Sleeper_Packages();
+                static some<Form_List_t*> Settler_Sitter_Packages();
+                static some<Form_List_t*> Settler_Eater_Packages();
+                static some<Form_List_t*> Settler_Guard_Packages();
+                static some<Form_List_t*> Follower_Sojourner_Packages();
+                static some<Form_List_t*> Expoee_Buttons();
+                static some<Form_List_t*> Expoee_Markers();
+                static some<Form_List_t*> Main_Branches();
+                static some<Form_List_t*> Main_Direct_Branches();
+                static some<Form_List_t*> Main_Outfit_Branches();
+                static some<Form_List_t*> Main_Style_Branches();
+                static some<Form_List_t*> Main_Vitality_Branches();
+                static some<Form_List_t*> Main_Female_Topics();
+                static some<Form_List_t*> Main_Male_Topics();
+                static some<Form_List_t*> Female_Voice_Types();
+                static some<Form_List_t*> Male_Voice_Types();
+            };
+            struct Furniture
+            {
+                static some<Furniture_t*> Bedroll();
+            };
+            struct Global
+            {
+                static some<Global_t*> Is_Installed();
+                static some<Global_t*> Allow_Dialogue_For_All();
+                static some<Global_t*> Allow_Chatter();
+                static some<Global_t*> Force_Clone_Uniques();
+                static some<Global_t*> Force_Clone_Generics();
+                static some<Global_t*> Force_Unclone_Uniques();
+                static some<Global_t*> Force_Unclone_Generics();
+                static some<Global_t*> Is_Leveling_Enabled();
+                static some<Global_t*> No_Body_Percent();
+                static some<Global_t*> No_Feet_Percent();
+                static some<Global_t*> No_Hands_Percent();
+                static some<Global_t*> No_Head_Percent();
+            };
+            struct Int
+            {
+                /*
+    constexpr size_t MAX_MEMBERS = 1024;
+    constexpr size_t MAX_FOLLOWERS = 16;
+                */
+            };
+            struct Leveled_Actor_Base
+            {
+                /*
     Leveled_Actor_t* Horse_Leveled_Actor();
-
-    // NPCP Location
+                */
+            };
+            struct Location
+            {
+                /*
     Location_t* Expo_Location();
-
-    // NPCP Magic Effects
+                */
+            };
+            struct Magic_Effect
+            {
+                /*
     Magic_Effect_t* Reanimate_Magic_Effect();
     Magic_Effect_t* Retreat_Magic_Effect();
-
-    // NPCP Misc Tokens
+                */
+            };
+            struct Misc
+            {
+                /*
+    Misc_t* Form_Vector();
+                */
+                struct Token
+                {
+                    /*
     Misc_t* Member_Token();
     Misc_t* Generic_Token();
     Misc_t* Clone_Token();
@@ -257,25 +278,40 @@ namespace doticu_npcp { namespace Consts {
     Misc_t* Active_Sojourner_Follower_Token();
     Misc_t* Saddler_Token();
     Misc_t* Retreater_Token();
-
-    // NPCP Misc
-    Misc_t* Form_Vector();
-
-    // NPCP Outfits
+                */
+                };
+            };
+            struct Outfit
+            {
+                /*
     Outfit_t* Empty_Outfit();
-
-    // NPCP Packages
+                */
+            };
+            struct Package
+            {
+                /*
     Package_t* Greeter_Package();
     Package_t* Menu_Exit_Package();
-
-    // NPCP Perks
+                */
+            };
+            struct Perk
+            {
+                /*
     Perk_t* Kiss_Thrall_Perk();
     Perk_t* Reanimate_Perk();
     Perk_t* Resurrect_Perk();
     Perk_t* Unparalyze_Perk();
-
-    // NPCP Quests
-    
+                */
+            };
+            struct Quest
+            {
+                static some<Quest_t*> Main();
+                static some<Quest_t*> Vars();
+                static some<Quest_t*> Funcs();
+                static some<Quest_t*> Members();
+                static some<Quest_t*> Followers();
+                static some<Quest_t*> Control();
+                /*
     Quest_t* Female_Argonian_Quest();
     Quest_t* Female_Commander_Quest();
     Quest_t* Female_Commoner_Quest();
@@ -320,8 +356,20 @@ namespace doticu_npcp { namespace Consts {
     Quest_t* Male_Soldier_Quest();
     Quest_t* Male_Warlock_Quest();
     Quest_t* Male_Young_Eager_Quest();
-
-    // NPCP Reference Categories
+                */
+            };
+            struct Reference
+            {
+                /*
+    Reference_t* Container_Ref_Buffer();
+    Reference_t* Expo_Exit_Door();
+    Reference_t* Cell_Marker();
+    Reference_t* Expo_Antechamber_Marker();
+    Reference_t* Storage_Marker();
+                */
+                struct Category
+                {
+                    /*
     Reference_t* Input_Category();
     Reference_t* Swords_Category();
     Reference_t* Greatswords_Category();
@@ -396,23 +444,19 @@ namespace doticu_npcp { namespace Consts {
     Reference_t* Custom_13_Category();
     Reference_t* Custom_14_Category();
     Reference_t* Custom_15_Category();
-
-    // NPCP Reference Containers
-    Reference_t* Container_Ref_Buffer();
-
-    // NPCP Reference Doors
-    Reference_t* Expo_Exit_Door();
-
-    // NPCP Reference Markers
-    Reference_t* Cell_Marker();
-    Reference_t* Expo_Antechamber_Marker();
-    Reference_t* Storage_Marker();
-
-    // NPCP Spells
+                */
+                };
+            };
+            struct Spell
+            {
+                /*
     Spell_t* Reanimate_Ability_Spell();
     Spell_t* Retreat_Ability_Spell();
-
-    // NPCP Topics
+                */
+            };
+            struct Topic
+            {
+                /*
     Topic_t* Menu_Chests_Custom_00_Topic();
     Topic_t* Menu_Chests_Custom_01_Topic();
     Topic_t* Menu_Chests_Custom_02_Topic();
@@ -429,14 +473,17 @@ namespace doticu_npcp { namespace Consts {
     Topic_t* Menu_Chests_Custom_13_Topic();
     Topic_t* Menu_Chests_Custom_14_Topic();
     Topic_t* Menu_Chests_Custom_15_Topic();
+                */
+            };
+            struct Version
+            {
+                static const Version_t<u16> Current();
+            };
+            struct Weapon
+            {
+                static some<Weapon_t*> Blank();
+            };
+        };
+    };
 
-    // NPCP Weapons
-    Weapon_t* Blank_Weapon();
-
-}}
-
-namespace doticu_npcp { namespace Consts { namespace Exports {
-
-    bool Register(Registry_t* registry);
-
-}}}*/
+}
