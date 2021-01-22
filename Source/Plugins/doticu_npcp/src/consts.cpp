@@ -10,11 +10,26 @@
 
 namespace doticu_npcp {
 
-    const Version_t<u16> Consts_t::Skyrim::Required_Version() { DEFINE_VERSION(u16, 1, 5, 97, 0); }
+    /* SKYRIM */
 
-    const Version_t<u16> Consts_t::SKSE::Minimum_Version() { DEFINE_VERSION(u16, 2, 0, 17); }
+    const Version_t<u16> Consts_t::Skyrim::Version::Required() { DEFINE_VERSION(u16, 1, 5, 97, 0); }
 
-    const Version_t<u16> Consts_t::NPCP::Current_Version() { DEFINE_VERSION(u16, 0, 10, 0); }
+    /* SKSE */
+
+    const Version_t<u16> Consts_t::SKSE::Version::Minimum() { DEFINE_VERSION(u16, 2, 0, 17); }
+
+    /* NPCP */
+
+    maybe<Mod_t*> Consts_t::NPCP::Mod() { DEFINE_MOD("doticu_npc_party.esp"); }
+
+    some<Quest_t*> Consts_t::NPCP::Quest::Main()        { DEFINE_FORM(Mod(), Quest_t, 0x005385); }
+    some<Quest_t*> Consts_t::NPCP::Quest::Vars()        { DEFINE_FORM(Mod(), Quest_t, 0x003DFF); }
+    some<Quest_t*> Consts_t::NPCP::Quest::Funcs()       { DEFINE_FORM(Mod(), Quest_t, 0x005384); }
+    some<Quest_t*> Consts_t::NPCP::Quest::Members()     { DEFINE_FORM(Mod(), Quest_t, 0x00184C); }
+    some<Quest_t*> Consts_t::NPCP::Quest::Followers()   { DEFINE_FORM(Mod(), Quest_t, 0x000D83); }
+    some<Quest_t*> Consts_t::NPCP::Quest::Control()     { DEFINE_FORM(Mod(), Quest_t, 0x000D7F); }
+
+    const Version_t<u16> Consts_t::NPCP::Version::Current() { DEFINE_VERSION(u16, 0, 10, 0); }
 
 }
 
@@ -326,12 +341,6 @@ namespace doticu_npcp { namespace Consts {
         PERK_UNPARALYZE                             = 0x16B4D1,
 
         // NPCP Quests
-        QUEST_MAIN                                  = 0x005385,
-        QUEST_VARS                                  = 0x003DFF,
-        QUEST_FUNCS                                 = 0x005384,
-        QUEST_MEMBERS                               = 0x00184C,
-        QUEST_FOLLOWERS                             = 0x000D83,
-        QUEST_CONTROL                               = 0x000D7F,
         QUEST_FEMALE_ARGONIAN                       = 0x3C376A,
         QUEST_FEMALE_COMMANDER                      = 0x3C376B,
         QUEST_FEMALE_COMMONER                       = 0x3C376C,
@@ -629,12 +638,6 @@ namespace doticu_npcp { namespace Consts {
     Perk_t* Unparalyze_Perk() { NPCP_FORM(Perk_t, PERK_UNPARALYZE); }
 
     // NPCP Quests
-    Quest_t* Main_Quest() { NPCP_FORM(Quest_t, QUEST_MAIN); }
-    Quest_t* Vars_Quest() { NPCP_FORM(Quest_t, QUEST_VARS); }
-    Quest_t* Funcs_Quest() { NPCP_FORM(Quest_t, QUEST_FUNCS); }
-    Quest_t* Members_Quest() { NPCP_FORM(Quest_t, QUEST_MEMBERS); }
-    Quest_t* Followers_Quest() { NPCP_FORM(Quest_t, QUEST_FOLLOWERS); }
-    Quest_t* Control_Quest() { NPCP_FORM(Quest_t, QUEST_CONTROL); }
     Quest_t* Female_Argonian_Quest() { NPCP_FORM(Quest_t, QUEST_FEMALE_ARGONIAN); }
     Quest_t* Female_Commander_Quest() { NPCP_FORM(Quest_t, QUEST_FEMALE_COMMANDER); }
     Quest_t* Female_Commoner_Quest() { NPCP_FORM(Quest_t, QUEST_FEMALE_COMMONER); }

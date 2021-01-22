@@ -374,9 +374,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="scripts\doticu_npcp.psc" />
-    <None Include="include\papyrus.inl">
-      <Filter>Header Files</Filter>
-    </None>
     <None Include="include\party\party_aliases.inl">
       <Filter>Header Files</Filter>
     </None>

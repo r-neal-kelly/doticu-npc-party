@@ -40,12 +40,6 @@ namespace doticu_npcp { namespace Offsets {
 
     }
 
-    namespace Array {
-
-        constexpr uintptr_t DESTROY                     = 0x01241E40; // 97723
-
-    }
-
     namespace Container_Changes {
 
         constexpr uintptr_t CTOR                        = 0x001D9200; // 15812

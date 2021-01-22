@@ -27,36 +27,30 @@ namespace doticu_npcp {
         static Bool_t   SKSE_Register_Functions(V::Machine_t* machine);
 
     public:
-        //static void Register_Me(V::Machine_t* machine);
+        static some<Main_t*>        Self();
+        static String_t             Class_Name();
+        static some<V::Class_t*>    Class();
+        static some<V::Object_t*>   Object();
+        static void                 Register_Me(V::Machine_t* machine);
 
-    /*public:
-        static String_t Class_Name();
-        static Class_Info_t* Class_Info();
-        static Main_t* Self();
-        static Object_t* Object();
     public:
-        Variable_t* Variable(String_t variable_name);
+        static Bool_t  Has_Requirements();
+        static Bool_t  Is_Active();
+        static Bool_t  Is_Installed();
 
-        Bool_t Is_Version_Less_Than(Int_t major,
-                                    Int_t minor,
-                                    Int_t patch,
-                                    Int_t min_major,
-                                    Int_t min_minor,
-                                    Int_t min_patch);
-        Bool_t Is_NPCP_Version_Less_Than(Int_t min_major,
-                                         Int_t min_minor,
-                                         Int_t min_patch);
+    public:
+        void    Init();
+        void    After_Load();
 
-        void Init_Mod();
-        void Load_Mod();
-        Bool_t Has_Requirements();
+    /*
+    public:
         Bool_t Try_Update();
         void Try_Cleanup();
         Int_t Force_Cleanup();
         Int_t Count_Unused_Objects();
         void Start_Voice_Quests();
 
-        void u_0_9_16();*/
+        void u_0_10_0();*/
     };
 
 }

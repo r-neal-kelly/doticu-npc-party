@@ -4,6 +4,10 @@
 
 #include <ShlObj.h>
 
+#include "doticu_skylib/ui.h"
+
+#include "doticu_skylib/virtual_macros.h"
+
 #include "consts.h"
 #include "main.h"
 
@@ -21,8 +25,8 @@ namespace doticu_npcp {
             info->name = "doticu_npcp";
             info->version = 1;
 
-            if (Version_t<u16>::From_MM_mm_ppp_b(skse->runtimeVersion) == Consts_t::Skyrim::Required_Version()) {
-                if (Version_t<u16>::From_MM_mm_ppp_b(skse->skseVersion) >= Consts_t::SKSE::Minimum_Version()) {
+            if (Version_t<u16>::From_MM_mm_ppp_b(skse->runtimeVersion) == Consts_t::Skyrim::Version::Required()) {
+                if (Version_t<u16>::From_MM_mm_ppp_b(skse->skseVersion) >= Consts_t::SKSE::Version::Minimum()) {
                     return true;
                 } else {
                     return false;
@@ -79,85 +83,66 @@ namespace doticu_npcp {
         return true;
     }
 
-    /*void Main_t::Register_Me(Virtual_Machine_t* vm)
-    {
-        #define METHOD(STR_FUNC_, ARG_NUM_, RETURN_, METHOD_, ...)  \
-        M                                                           \
-            FORWARD_METHOD(vm, Class_Name(), Main_t,                \
-                           STR_FUNC_, ARG_NUM_,                     \
-                           RETURN_, METHOD_, __VA_ARGS__);          \
-        W
+    some<Main_t*>       Main_t::Self()          { return Consts_t::NPCP::Quest::Main(); }
+    String_t            Main_t::Class_Name()    { DEFINE_CLASS_NAME("doticu_npcp_main"); }
+    some<V::Class_t*>   Main_t::Class()         { DEFINE_CLASS(); }
+    some<V::Object_t*>  Main_t::Object()        { DEFINE_OBJECT_STATIC(); }
 
-        METHOD("OnInit", 0, void, Init_Mod);
+    void Main_t::Register_Me(V::Machine_t* machine)
+    {
+        String_t class_name = Class_Name();
+
+        #define STATIC(STATIC_NAME_, WAITS_FOR_FRAME_, RETURN_TYPE_, STATIC_, ...)  \
+        SKYLIB_M                                                                    \
+            BIND_STATIC(machine, class_name, STATIC_NAME_, WAITS_FOR_FRAME_,        \
+                        RETURN_TYPE_, STATIC_, __VA_ARGS__);                        \
+        SKYLIB_W
+
+        #undef STATIC
+
+        #define METHOD(METHOD_NAME_, WAITS_FOR_FRAME_, RETURN_TYPE_, METHOD_, ...)      \
+        SKYLIB_M                                                                        \
+            BIND_METHOD(machine, class_name, Main_t, METHOD_NAME_, WAITS_FOR_FRAME_,    \
+                        RETURN_TYPE_, METHOD_, __VA_ARGS__);                            \
+        SKYLIB_W
+
+        // OnInit Init_Mod
 
         #undef METHOD
-    }*/
-
-
-
-    /*String_t Main_t::Class_Name()
-    {
-        static const String_t class_name = String_t("doticu_npcp_main");
-        NPCP_ASSERT(class_name);
-        return class_name;
     }
 
-    Class_Info_t* Main_t::Class_Info()
+    Bool_t Main_t::Has_Requirements()
     {
-        static Class_Info_t* class_info = Class_Info_t::Fetch(Class_Name());
-        NPCP_ASSERT(class_info);
-        return class_info;
+        // need to check that NPC Party is on the latest version, because we're not supporting updates from anything before 0.9.15.
+        /*
+            vars->NPCP_Major(),
+            vars->NPCP_Minor(),
+            vars->NPCP_Patch(),
+        */
     }
 
-    Main_t* Main_t::Self()
+    Bool_t Main_t::Is_Active()
     {
-        return static_cast<Main_t*>(Consts::Main_Quest());
+        return Consts_t::NPCP::Mod() != nullptr;
     }
 
-    Object_t* Main_t::Object()
+    Bool_t Main_t::Is_Installed()
     {
-        Object_t* object = Object_t::Fetch(Self(), Class_Name());
-        NPCP_ASSERT(object);
-        object->Decrement_Lock();
-        return object;
+        //Game::Is_NPCP_Installed()
     }
 
-    Variable_t* Main_t::Variable(String_t variable_name)
+    void Main_t::Init()
     {
-        return Object()->Variable(variable_name);
+
     }
 
-    Bool_t Main_t::Is_Version_Less_Than(Int_t major,
-                                        Int_t minor,
-                                        Int_t patch,
-                                        Int_t min_major,
-                                        Int_t min_minor,
-                                        Int_t min_patch)
+    void Main_t::After_Load()
     {
-        if (major != min_major) {
-            return major < min_major;
-        } else if (minor != min_minor) {
-            return minor < min_minor;
-        } else if (patch != min_patch) {
-            return patch < min_patch;
-        } else {
-            return false;
-        }
+
     }
 
-    Bool_t Main_t::Is_NPCP_Version_Less_Than(Int_t min_major,
-                                             Int_t min_minor,
-                                             Int_t min_patch)
-    {
-        Vars_t* vars = Vars_t::Self();
-        return Is_Version_Less_Than(vars->NPCP_Major(),
-                                    vars->NPCP_Minor(),
-                                    vars->NPCP_Patch(),
-                                    min_major,
-                                    min_minor,
-                                    min_patch);
-    }
 
+    /*
     void Main_t::Init_Mod()
     {
         struct VCallback : public Virtual_Callback_t {
@@ -449,7 +434,7 @@ namespace doticu_npcp {
         Quest::Start(Consts::Male_Young_Eager_Quest());
     }
 
-    void Main_t::u_0_9_16()
+    void Main_t::u_0_10_0()
     {
         Start_Voice_Quests();
     }*/

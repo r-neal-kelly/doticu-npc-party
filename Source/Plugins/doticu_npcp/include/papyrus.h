@@ -1,12 +1,6 @@
-/*
-    Copyright © 2020 r-neal-kelly, aka doticu
-*/
 
-#pragma once
 
-namespace doticu_npcp { namespace Papyrus {
-
-    template <typename Type>
+    /*template <typename Type>
     Vector_t<Type> Slice_Array(VMArray<Type> arr, SInt32 from = 0, SInt32 to_exclusive = -1)
     {
         Vector_t<Type> slice;
@@ -60,6 +54,4 @@ namespace doticu_npcp { namespace Papyrus {
         }
 
         return slice;
-    }
-
-}}
+    }*/

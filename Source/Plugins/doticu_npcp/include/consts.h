@@ -14,19 +14,44 @@ namespace doticu_npcp {
         class Skyrim
         {
         public:
-            static const Version_t<u16> Required_Version();
+            class Version
+            {
+            public:
+                static const Version_t<u16> Required();
+            };
         };
 
         class SKSE
         {
         public:
-            static const Version_t<u16> Minimum_Version();
+            class Version
+            {
+            public:
+                static const Version_t<u16> Minimum();
+            };
         };
 
         class NPCP
         {
         public:
-            static const Version_t<u16> Current_Version();
+            static maybe<Mod_t*> Mod();
+
+            class Quest
+            {
+            public:
+                static some<Quest_t*> Main();
+                static some<Quest_t*> Vars();
+                static some<Quest_t*> Funcs();
+                static some<Quest_t*> Members();
+                static some<Quest_t*> Followers();
+                static some<Quest_t*> Control();
+            };
+
+            class Version
+            {
+            public:
+                static const Version_t<u16> Current();
+            };
         };
     };
 
@@ -250,12 +275,7 @@ namespace doticu_npcp { namespace Consts {
     Perk_t* Unparalyze_Perk();
 
     // NPCP Quests
-    Quest_t* Main_Quest();
-    Quest_t* Vars_Quest();
-    Quest_t* Funcs_Quest();
-    Quest_t* Members_Quest();
-    Quest_t* Followers_Quest();
-    Quest_t* Control_Quest();
+    
     Quest_t* Female_Argonian_Quest();
     Quest_t* Female_Commander_Quest();
     Quest_t* Female_Commoner_Quest();

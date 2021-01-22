@@ -38,6 +38,13 @@ namespace doticu_npcp {
     using Word_t                = skylib::Word_t;
 
     template <typename T>
+    using none                  = skylib::none<T>;
+    template <typename T>
+    using maybe                 = skylib::maybe<T>;
+    template <typename T>
+    using some                  = skylib::some<T>;
+
+    template <typename T>
     using Range_t               = skylib::Range_t<T>;
     template <typename T>
     using Vector_t              = skylib::Vector_t<T>;
@@ -61,6 +68,7 @@ namespace doticu_npcp {
     using Form_t                = skylib::Form_t;
     using Form_List_t           = skylib::Form_List_t;
     using Furniture_t           = skylib::Furniture_t;
+    using Game_t                = skylib::Game_t;
     using Keyword_t             = skylib::Keyword_t;
     using Leveled_Actor_Base_t  = skylib::Leveled_Actor_Base_t;
     using Leveled_Item_t        = skylib::Leveled_Item_t;
@@ -68,6 +76,7 @@ namespace doticu_npcp {
     using Magic_Effect_t        = skylib::Magic_Effect_t;
     using Magic_Target_t        = skylib::Magic_Target_t;
     using Misc_t                = skylib::Misc_t;
+    using Mod_t                 = skylib::Mod_t;
     using Outfit_t              = skylib::Outfit_t;
     using Perk_t                = skylib::Perk_t;
     using Player_t              = skylib::Player_t;
