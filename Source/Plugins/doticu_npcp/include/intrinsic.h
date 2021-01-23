@@ -62,6 +62,8 @@ namespace doticu_npcp {
     using Cell_t                    = skylib::Cell_t;
     using Character_t               = skylib::Character_t;
     using Container_t               = skylib::Container_t;
+    using Dialogue_Branch_t         = skylib::Dialogue_Branch_t;
+    using Dialogue_Topic_t          = skylib::Dialogue_Topic_t;
     using Effect_Shader_t           = skylib::Effect_Shader_t;
     using Faction_t                 = skylib::Faction_t;
     using Faction_And_Rank_t        = skylib::Faction_And_Rank_t;
@@ -96,6 +98,7 @@ namespace doticu_npcp {
     using Quest_t                   = skylib::Quest_t;
     using Reference_t               = skylib::Reference_t;
     using Reference_Handle_t        = skylib::Reference_Handle_t;
+    using Spell_t                   = skylib::Spell_t;
     using Static_t                  = skylib::Static_t;
     using Weapon_t                  = skylib::Weapon_t;
     using Worldspace_t              = skylib::Worldspace_t;

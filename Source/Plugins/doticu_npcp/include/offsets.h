@@ -4,14 +4,6 @@
 
 #pragma once
 
-#include "skse64_common/Relocation.h"
-
-// credit goes to meh321 of 'Address Library for SKSE Plugins' for the offsets
-// and also Ryan-rsm-McKenzie of CommonLibSSE for the ids
-
-// this is for version 1.5.97.0 only. use the ids in comments for other versions.
-// as much as possible we need to gather all offsets that we use and get their id,
-// so it's easier to update if we get an new version of Skyrim
 namespace doticu_npcp { namespace Offsets {
 
     namespace Actor {
@@ -23,92 +15,10 @@ namespace doticu_npcp { namespace Offsets {
 
     }
 
-    namespace Actor_Equipper {
-
-        constexpr uintptr_t SELF                        = 0x02EC4838; // 514494
-        constexpr uintptr_t EQUIP_ITEM                  = 0x00637A80; // 37938
-        constexpr uintptr_t UNEQUIP_ITEM                = 0x00638190; // 37945
-        constexpr uintptr_t RIGHT_HAND_SLOT             = 0x00331620; // 23151
-        constexpr uintptr_t LEFT_HAND_SLOT              = 0x003315F0; // 23150
-        constexpr uintptr_t EITHER_HAND_SLOT            = 0x00331650; // 23152
-
-    }
-
-    namespace Virtual_Arguments {
-
-        constexpr uintptr_t RESIZE                      = 0x00920360; // 53105
-
-    }
-
     namespace Container_Changes {
 
         constexpr uintptr_t CTOR                        = 0x001D9200; // 15812
         constexpr uintptr_t DTOR                        = 0x001D92F0; // 15813
-
-    }
-
-    namespace CRC32 {
-
-        constexpr uintptr_t BY_SIZE                     = 0x00C06490; // 66962
-        constexpr uintptr_t BY_32                       = 0x00C064F0; // 66963
-        constexpr uintptr_t BY_64                       = 0x00C06570; // 66964
-
-    }
-
-    namespace Dialogue_Info {
-
-        constexpr uintptr_t CTOR                        = 0x0056C9D0; // 34413
-
-    }
-
-    namespace Extra {
-
-        constexpr uintptr_t CAN_TALK_TO_PLAYER_V_TABLE  = 0x0152C740; // 229596
-        constexpr uintptr_t CONTAINER_CHANGES_V_TABLE   = 0x0152F260; // 229886
-        constexpr uintptr_t FACTION_CHANGES_V_TABLE     = 0x0152C800; // 229602
-        constexpr uintptr_t FLAGS_V_TABLE               = 0x0152CBC0; // 229632
-        constexpr uintptr_t GHOST_V_TABLE               = 0x0152F2A0; // 229888
-        constexpr uintptr_t TEXT_DISPLAY_V_TABLE        = 0x0152CAE0; // 229625
-        constexpr uintptr_t OUTFIT_ITEM_V_TABLE         = 0x0152c1e0; // 229553
-        constexpr uintptr_t COUNT_V_TABLE               = 0x0152BFE0; // 229537
-
-    }
-
-    namespace Form_Factory {
-
-        constexpr uintptr_t IS_CREATED                  = 0x1EC3CB3; // 514349
-        constexpr uintptr_t FACTORIES                   = 0x1EC3CE0; // 514355
-
-    }
-
-    namespace Magic_Target {
-
-        constexpr uintptr_t HAS_MAGIC_EFFECT            = 0x005530D0; // 33733
-
-    }
-
-    namespace Object {
-
-        constexpr uintptr_t INCREMENT_LOCK              = 0x01234360; // 97468
-        constexpr uintptr_t DECREMENT_LOCK              = 0x01234410; // 97469
-        constexpr uintptr_t DESTROY                     = 0x01233670; // 97462
-
-    }
-
-    namespace Object_Policy {
-
-        constexpr uintptr_t BIND_OBJECT                 = 0x0122DAD0; // 97379
-
-    }
-
-    namespace Package {
-
-        constexpr uintptr_t BOOL_VALUE                  = 0x01605DE0; // 252944
-        constexpr uintptr_t INT_VALUE                   = 0x016060A8; // 252946
-        constexpr uintptr_t FLOAT_VALUE                 = 0x01605F40; // 252945
-        constexpr uintptr_t LOCATION_VALUE              = 0x01606520; // 252956
-        constexpr uintptr_t SINGLE_REFERENCE_VALUE      = 0x016072A0; // 253026
-        constexpr uintptr_t TOPIC_VALUE                 = 0x016073F8; // 253033
 
     }
 
@@ -121,10 +31,6 @@ namespace doticu_npcp { namespace Offsets {
 
     namespace Quest {
 
-        //constexpr uintptr_t CLEAR_ALL_ALIASES         = 0x003745D0; // 24520
-        //constexpr uintptr_t RESET_ALIAS_HASHMAP       = 0x00374880; // 24521
-        //constexpr uintptr_t FORCE_REFERENCE_TO        = 0x00375050; // 24523
-
         constexpr uintptr_t START                       = 0x00370910; // 24481
 
     }
@@ -132,40 +38,8 @@ namespace doticu_npcp { namespace Offsets {
     namespace Reference {
 
         constexpr uintptr_t ADD_ITEM                    = 0x00993100; // 55616
-        constexpr uintptr_t LOOKUP_REFERENCE_BY_HANDLE1 = 0x001328A0; // 12203
         constexpr uintptr_t LOOKUP_REFERENCE_BY_HANDLE2 = 0x001329D0; // 12204
-        constexpr uintptr_t PLACE_AT_ME                 = 0x009951F0; // 55672
         constexpr uintptr_t PLAY_ANIMATION              = 0x00189E30; // 14189
-        constexpr uintptr_t WORLDSPACE                  = 0x00299750; // 19389
-
-    }
-
-    namespace Relationships {
-
-        constexpr uintptr_t SELF                        = 0x01DD3EF8; // 502260
-        constexpr uintptr_t GET_RELATIONSHIP_RANK       = 0x00345ED0; // 23624
-        constexpr uintptr_t SET_RELATIONSHIP_RANK       = 0x00345B80; // 23623
-
-    }
-
-    namespace Script {
-
-        constexpr uintptr_t EXECUTE                     = 0x002E75F0; // 21416
-
-    }
-
-    namespace String {
-
-        constexpr uintptr_t CREATE                      = 0x00C28BF0; // 67819
-        constexpr uintptr_t DESTROY                     = 0x00C28D40; // 67822
-        constexpr uintptr_t SET                         = 0x00C28D60; // 67823
-
-    }
-
-    namespace Variable {
-
-        constexpr uintptr_t COPY                        = 0x01236E50; // 97509
-        constexpr uintptr_t DESTROY                     = 0x01236D10; // 97508
 
     }
 

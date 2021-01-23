@@ -87,18 +87,6 @@ namespace doticu_npcp {
 
     some<Armor_t*> Consts_t::NPCP::Armor::Blank() { DEFINE_FORM(Mod(), Armor_t, 0x1EF2A5); }
 
-    /*
-        BRANCH_MENU                                 = 0x32674B,
-        BRANCH_MENU_CHESTS                          = 0x32674F,
-        BRANCH_MENU_CHESTS_APPAREL                  = 0x32B853,
-        BRANCH_MENU_CHESTS_BOOKS                    = 0x32B859,
-        BRANCH_MENU_CHESTS_CUSTOM                   = 0x3C37BA,
-        BRANCH_MENU_CHESTS_EDIBLES                  = 0x32B855,
-        BRANCH_MENU_CHESTS_MISC                     = 0x32B857,
-        BRANCH_MENU_CHESTS_WEAPONS                  = 0x32B851,
-        BRANCH_MENU_FOLLOWERS                       = 0x344DE2,
-    */
-
     some<Cell_t*> Consts_t::NPCP::Cell::Storage() { DEFINE_FORM(Mod(), Cell_t, 0x114F9C); }
 
     some<Container_t*> Consts_t::NPCP::Container::Empty()               { DEFINE_FORM(Mod(), Container_t, 0x0A5561); }
@@ -107,6 +95,33 @@ namespace doticu_npcp {
     some<Container_t*> Consts_t::NPCP::Container::Settler_Outfit2()     { DEFINE_FORM(Mod(), Container_t, 0x1663CD); }
     some<Container_t*> Consts_t::NPCP::Container::Thrall_Outfit2()      { DEFINE_FORM(Mod(), Container_t, 0x1663CC); }
     some<Container_t*> Consts_t::NPCP::Container::Follower_Outfit2()    { DEFINE_FORM(Mod(), Container_t, 0x1663C7); }
+
+    some<Dialogue_Branch_t*> Consts_t::NPCP::Dialogue_Branch::Menu()                { DEFINE_FORM(Mod(), Dialogue_Branch_t, 0x32674B); }
+    some<Dialogue_Branch_t*> Consts_t::NPCP::Dialogue_Branch::Menu_Chests()         { DEFINE_FORM(Mod(), Dialogue_Branch_t, 0x32674F); }
+    some<Dialogue_Branch_t*> Consts_t::NPCP::Dialogue_Branch::Menu_Chests_Weapons() { DEFINE_FORM(Mod(), Dialogue_Branch_t, 0x32B851); }
+    some<Dialogue_Branch_t*> Consts_t::NPCP::Dialogue_Branch::Menu_Chests_Apparel() { DEFINE_FORM(Mod(), Dialogue_Branch_t, 0x32B853); }
+    some<Dialogue_Branch_t*> Consts_t::NPCP::Dialogue_Branch::Menu_Chests_Edibles() { DEFINE_FORM(Mod(), Dialogue_Branch_t, 0x32B855); }
+    some<Dialogue_Branch_t*> Consts_t::NPCP::Dialogue_Branch::Menu_Chests_Misc()    { DEFINE_FORM(Mod(), Dialogue_Branch_t, 0x32B857); }
+    some<Dialogue_Branch_t*> Consts_t::NPCP::Dialogue_Branch::Menu_Chests_Books()   { DEFINE_FORM(Mod(), Dialogue_Branch_t, 0x32B859); }
+    some<Dialogue_Branch_t*> Consts_t::NPCP::Dialogue_Branch::Menu_Chests_Custom()  { DEFINE_FORM(Mod(), Dialogue_Branch_t, 0x3C37BA); }
+    some<Dialogue_Branch_t*> Consts_t::NPCP::Dialogue_Branch::Menu_Followers()      { DEFINE_FORM(Mod(), Dialogue_Branch_t, 0x344DE2); }
+
+    some<Dialogue_Topic_t*> Consts_t::NPCP::Dialogue_Topic::Menu_Chests_Custom_00() { DEFINE_FORM(Mod(), Dialogue_Topic_t, 0x3C37BF); }
+    some<Dialogue_Topic_t*> Consts_t::NPCP::Dialogue_Topic::Menu_Chests_Custom_01() { DEFINE_FORM(Mod(), Dialogue_Topic_t, 0x3C37C1); }
+    some<Dialogue_Topic_t*> Consts_t::NPCP::Dialogue_Topic::Menu_Chests_Custom_02() { DEFINE_FORM(Mod(), Dialogue_Topic_t, 0x3C37C3); }
+    some<Dialogue_Topic_t*> Consts_t::NPCP::Dialogue_Topic::Menu_Chests_Custom_03() { DEFINE_FORM(Mod(), Dialogue_Topic_t, 0x3C37C5); }
+    some<Dialogue_Topic_t*> Consts_t::NPCP::Dialogue_Topic::Menu_Chests_Custom_04() { DEFINE_FORM(Mod(), Dialogue_Topic_t, 0x3C37C7); }
+    some<Dialogue_Topic_t*> Consts_t::NPCP::Dialogue_Topic::Menu_Chests_Custom_05() { DEFINE_FORM(Mod(), Dialogue_Topic_t, 0x3C37C9); }
+    some<Dialogue_Topic_t*> Consts_t::NPCP::Dialogue_Topic::Menu_Chests_Custom_06() { DEFINE_FORM(Mod(), Dialogue_Topic_t, 0x3C37CB); }
+    some<Dialogue_Topic_t*> Consts_t::NPCP::Dialogue_Topic::Menu_Chests_Custom_07() { DEFINE_FORM(Mod(), Dialogue_Topic_t, 0x3C37CD); }
+    some<Dialogue_Topic_t*> Consts_t::NPCP::Dialogue_Topic::Menu_Chests_Custom_08() { DEFINE_FORM(Mod(), Dialogue_Topic_t, 0x3C37CF); }
+    some<Dialogue_Topic_t*> Consts_t::NPCP::Dialogue_Topic::Menu_Chests_Custom_09() { DEFINE_FORM(Mod(), Dialogue_Topic_t, 0x3C37D1); }
+    some<Dialogue_Topic_t*> Consts_t::NPCP::Dialogue_Topic::Menu_Chests_Custom_10() { DEFINE_FORM(Mod(), Dialogue_Topic_t, 0x3C37D3); }
+    some<Dialogue_Topic_t*> Consts_t::NPCP::Dialogue_Topic::Menu_Chests_Custom_11() { DEFINE_FORM(Mod(), Dialogue_Topic_t, 0x3C37D5); }
+    some<Dialogue_Topic_t*> Consts_t::NPCP::Dialogue_Topic::Menu_Chests_Custom_12() { DEFINE_FORM(Mod(), Dialogue_Topic_t, 0x3C37D7); }
+    some<Dialogue_Topic_t*> Consts_t::NPCP::Dialogue_Topic::Menu_Chests_Custom_13() { DEFINE_FORM(Mod(), Dialogue_Topic_t, 0x3C37D9); }
+    some<Dialogue_Topic_t*> Consts_t::NPCP::Dialogue_Topic::Menu_Chests_Custom_14() { DEFINE_FORM(Mod(), Dialogue_Topic_t, 0x3C37DB); }
+    some<Dialogue_Topic_t*> Consts_t::NPCP::Dialogue_Topic::Menu_Chests_Custom_15() { DEFINE_FORM(Mod(), Dialogue_Topic_t, 0x3C37DD); }
 
     some<Faction_t*> Consts_t::NPCP::Faction::Horse()   { DEFINE_FORM(Mod(), Faction_t, 0x354111); }
     some<Faction_t*> Consts_t::NPCP::Faction::Member()  { DEFINE_FORM(Mod(), Faction_t, 0x091154); }
@@ -131,6 +146,7 @@ namespace doticu_npcp {
     some<Form_List_t*> Consts_t::NPCP::Form_List::Main_Male_Topics()            { DEFINE_FORM(Mod(), Form_List_t, 0x417493); }
     some<Form_List_t*> Consts_t::NPCP::Form_List::Female_Voice_Types()          { DEFINE_FORM(Mod(), Form_List_t, 0x417494); }
     some<Form_List_t*> Consts_t::NPCP::Form_List::Male_Voice_Types()            { DEFINE_FORM(Mod(), Form_List_t, 0x417495); }
+    some<Form_List_t*> Consts_t::NPCP::Form_List::Voice_Quests()                { DEFINE_FORM(Mod(), Form_List_t, 0x4216D4); }
 
     some<Furniture_t*> Consts_t::NPCP::Furniture::Bedroll() { DEFINE_FORM(Mod(), Furniture_t, 0x3E7F15); }
 
@@ -147,73 +163,57 @@ namespace doticu_npcp {
     some<Global_t*> Consts_t::NPCP::Global::No_Hands_Percent()          { DEFINE_FORM(Mod(), Global_t, 0x193CE8); }
     some<Global_t*> Consts_t::NPCP::Global::No_Head_Percent()           { DEFINE_FORM(Mod(), Global_t, 0x193CE6); }
 
-    /*
-        LEVELED_ACTOR_HORSE                         = 0x354127,
-    */
+    some<Leveled_Actor_Base_t*> Consts_t::NPCP::Leveled_Actor_Base::Horse() { DEFINE_FORM(Mod(), Leveled_Actor_Base_t, 0x354127); }
 
-    /*
-        LOCATION_EXPO                               = 0x27E48E,
-    */
+    some<Location_t*> Consts_t::NPCP::Location::Expo() { DEFINE_FORM(Mod(), Location_t, 0x27E48E); }
 
-    /*
-        MAGIC_EFFECT_REANIMATE                      = 0x3AF361,
-        MAGIC_EFFECT_RETREAT                        = 0x2DF8FA,
-    */
+    some<Magic_Effect_t*> Consts_t::NPCP::Magic_Effect::Reanimate() { DEFINE_FORM(Mod(), Magic_Effect_t, 0x3AF361); }
+    some<Magic_Effect_t*> Consts_t::NPCP::Magic_Effect::Retreat()   { DEFINE_FORM(Mod(), Magic_Effect_t, 0x2DF8FA); }
 
-    /*
-        MISC_VECTOR_FORM                            = 0x15C1B2,
-    */
+    some<Misc_t*> Consts_t::NPCP::Misc::Form_Vector() { DEFINE_FORM(Mod(), Misc_t, 0x15C1B2); }
 
-    /*
-        MISC_TOKEN_BANISHED                         = 0x003DFD,
-        MISC_TOKEN_CLONE                            = 0x003DFC,
-        MISC_TOKEN_DISPLAY                          = 0x13D7AC,
-        MISC_TOKEN_FOLLOWER                         = 0x000D84,
-        MISC_TOKEN_FOLLOWER_SNEAK                   = 0x000D85,
-        MISC_TOKEN_FOLLOWER_SOJOURNER               = 0x401417,
-        MISC_TOKEN_FOLLOWER_SOJOURNER_ACTIVE        = 0x40651D,
-        MISC_TOKEN_GENERIC                          = 0x003DFE,
-        MISC_TOKEN_GREETER                          = 0x057384,
-        MISC_TOKEN_IMMOBILE                         = 0x000D77,
-        MISC_TOKEN_MANNEQUIN                        = 0x264F42,
-        MISC_TOKEN_MEMBER                           = 0x000D75,
-        MISC_TOKEN_MOVEE                            = 0x1612B3,
-        MISC_TOKEN_PARALYZED                        = 0x12E4A7,
-        MISC_TOKEN_REANIMATED                       = 0x1E4E9D,
-        MISC_TOKEN_RETREATER                        = 0x2F3D00,
-        MISC_TOKEN_SADDLER                          = 0x34F000,
-        MISC_TOKEN_SETTLER                          = 0x000D73,
-        MISC_TOKEN_SETTLER_SLEEPER                  = 0x3D7C07,
-        MISC_TOKEN_SETTLER_SITTER                   = 0x3E1E16,
-        MISC_TOKEN_SETTLER_EATER                    = 0x3D7C05,
-        MISC_TOKEN_SETTLER_GUARD                    = 0x3D7C08,
-        MISC_TOKEN_STYLE_ARCHER                     = 0x0A045E,
-        MISC_TOKEN_STYLE_COWARD                     = 0x2D56F3,
-        MISC_TOKEN_STYLE_DEFAULT                    = 0x0A045D,
-        MISC_TOKEN_STYLE_MAGE                       = 0x0A045F,
-        MISC_TOKEN_STYLE_WARRIOR                    = 0x0A0460,
-        MISC_TOKEN_THRALL                           = 0x011E90,
-        MISC_TOKEN_VITALITY_ESSENTIAL               = 0x0A0459,
-        MISC_TOKEN_VITALITY_INVULNERABLE            = 0x0A045C,
-        MISC_TOKEN_VITALITY_MORTAL                  = 0x0A045B,
-        MISC_TOKEN_VITALITY_PROTECTED               = 0x0A045A,
-    */
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Member()                     { DEFINE_FORM(Mod(), Misc_t, 0x000D75); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Generic()                    { DEFINE_FORM(Mod(), Misc_t, 0x003DFE); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Clone()                      { DEFINE_FORM(Mod(), Misc_t, 0x003DFC); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Greeter()                    { DEFINE_FORM(Mod(), Misc_t, 0x057384); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Movee()                      { DEFINE_FORM(Mod(), Misc_t, 0x1612B3); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Immobile()                   { DEFINE_FORM(Mod(), Misc_t, 0x000D77); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Settler()                    { DEFINE_FORM(Mod(), Misc_t, 0x000D73); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Settler_Sleeper()            { DEFINE_FORM(Mod(), Misc_t, 0x3D7C07); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Settler_Sitter()             { DEFINE_FORM(Mod(), Misc_t, 0x3E1E16); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Settler_Eater()              { DEFINE_FORM(Mod(), Misc_t, 0x3D7C05); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Settler_Guard()              { DEFINE_FORM(Mod(), Misc_t, 0x3D7C08); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Thrall()                     { DEFINE_FORM(Mod(), Misc_t, 0x011E90); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Paralyzed()                  { DEFINE_FORM(Mod(), Misc_t, 0x12E4A7); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Mannequin()                  { DEFINE_FORM(Mod(), Misc_t, 0x264F42); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Display()                    { DEFINE_FORM(Mod(), Misc_t, 0x13D7AC); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Reanimated()                 { DEFINE_FORM(Mod(), Misc_t, 0x1E4E9D); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Banished()                   { DEFINE_FORM(Mod(), Misc_t, 0x003DFD); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Default_Style()              { DEFINE_FORM(Mod(), Misc_t, 0x0A045D); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Warrior_Style()              { DEFINE_FORM(Mod(), Misc_t, 0x0A0460); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Mage_Style()                 { DEFINE_FORM(Mod(), Misc_t, 0x0A045F); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Archer_Style()               { DEFINE_FORM(Mod(), Misc_t, 0x0A045E); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Coward_Style()               { DEFINE_FORM(Mod(), Misc_t, 0x2D56F3); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Mortal_Vitality()            { DEFINE_FORM(Mod(), Misc_t, 0x0A045B); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Protected_Vitality()         { DEFINE_FORM(Mod(), Misc_t, 0x0A045A); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Essential_Vitality()         { DEFINE_FORM(Mod(), Misc_t, 0x0A0459); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Invulnerable_Vitality()      { DEFINE_FORM(Mod(), Misc_t, 0x0A045C); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Follower()                   { DEFINE_FORM(Mod(), Misc_t, 0x000D84); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Sneak_Follower()             { DEFINE_FORM(Mod(), Misc_t, 0x000D85); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Sojourner_Follower()         { DEFINE_FORM(Mod(), Misc_t, 0x401417); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Active_Sojourner_Follower()  { DEFINE_FORM(Mod(), Misc_t, 0x40651D); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Saddler()                    { DEFINE_FORM(Mod(), Misc_t, 0x34F000); }
+    some<Misc_t*> Consts_t::NPCP::Misc::Token::Retreater()                  { DEFINE_FORM(Mod(), Misc_t, 0x2F3D00); }
 
-    /*
-        OUTFIT_EMPTY                                = 0x0C3C64,
-    */
+    some<Outfit_t*> Consts_t::NPCP::Outfit::Empty() { DEFINE_FORM(Mod(), Outfit_t, 0x0C3C64); }
 
-    /*
-        PACKAGE_GREETER                             = 0x057385,
-        PACKAGE_MENU_EXIT                           = 0x3309E0,
-    */
+    some<Package_t*> Consts_t::NPCP::Package::Greeter()     { DEFINE_FORM(Mod(), Package_t, 0x057385); }
+    some<Package_t*> Consts_t::NPCP::Package::Menu_Exit()   { DEFINE_FORM(Mod(), Package_t, 0x3309E0); }
 
-    /*
-        PERK_KISS_THRALL                            = 0x07CD48,
-        PERK_REANIMATE                              = 0x1DFD9C,
-        PERK_RESURRECT                              = 0x0D2F7C,
-        PERK_UNPARALYZE                             = 0x16B4D1,
-    */
+    some<Perk_t*> Consts_t::NPCP::Perk::Kiss_Thrall()   { DEFINE_FORM(Mod(), Perk_t, 0x07CD48); }
+    some<Perk_t*> Consts_t::NPCP::Perk::Reanimate()     { DEFINE_FORM(Mod(), Perk_t, 0x1DFD9C); }
+    some<Perk_t*> Consts_t::NPCP::Perk::Resurrect()     { DEFINE_FORM(Mod(), Perk_t, 0x0D2F7C); }
+    some<Perk_t*> Consts_t::NPCP::Perk::Unparalyze()    { DEFINE_FORM(Mod(), Perk_t, 0x16B4D1); }
 
     some<Quest_t*> Consts_t::NPCP::Quest::Main()        { DEFINE_FORM(Mod(), Quest_t, 0x005385); }
     some<Quest_t*> Consts_t::NPCP::Quest::Vars()        { DEFINE_FORM(Mod(), Quest_t, 0x003DFF); }
@@ -221,161 +221,90 @@ namespace doticu_npcp {
     some<Quest_t*> Consts_t::NPCP::Quest::Members()     { DEFINE_FORM(Mod(), Quest_t, 0x00184C); }
     some<Quest_t*> Consts_t::NPCP::Quest::Followers()   { DEFINE_FORM(Mod(), Quest_t, 0x000D83); }
     some<Quest_t*> Consts_t::NPCP::Quest::Control()     { DEFINE_FORM(Mod(), Quest_t, 0x000D7F); }
-    /*
-        QUEST_FEMALE_ARGONIAN                       = 0x3C376A,
-        QUEST_FEMALE_COMMANDER                      = 0x3C376B,
-        QUEST_FEMALE_COMMONER                       = 0x3C376C,
-        QUEST_FEMALE_CONDESCENDING                  = 0x3C376D,
-        QUEST_FEMALE_COWARD                         = 0x3C376E,
-        QUEST_FEMALE_DARK_ELF                       = 0x3C376F,
-        QUEST_FEMALE_ELF_HAUGHTY                    = 0x3C3770,
-        QUEST_FEMALE_EVEN_TONED                     = 0x3C3771,
-        QUEST_FEMALE_KHAJIIT                        = 0x3C3772,
-        QUEST_FEMALE_NORD                           = 0x3C3773,
-        QUEST_FEMALE_OLD_GRUMPY                     = 0x3C3774,
-        QUEST_FEMALE_OLD_KINDLY                     = 0x3C3775,
-        QUEST_FEMALE_ORC                            = 0x3C3776,
-        QUEST_FEMALE_OTHER                          = 0x3C377A,
-        QUEST_FEMALE_SHRILL                         = 0x3C3777,
-        QUEST_FEMALE_SOLDIER                        = 0x3C3778,
-        QUEST_FEMALE_SULTRY                         = 0x3C3779,
-        QUEST_FEMALE_YOUNG_EAGER                    = 0x3B9565,
-        QUEST_MALE_ARGONIAN                         = 0x3C377B,
-        QUEST_MALE_BANDIT                           = 0x3C377C,
-        QUEST_MALE_BRUTE                            = 0x3C377D,
-        QUEST_MALE_COMMANDER                        = 0x3C377E,
-        QUEST_MALE_COMMONER                         = 0x3C377F,
-        QUEST_MALE_COMMONER_ACCENTED                = 0x3C3780,
-        QUEST_MALE_CONDESCENDING                    = 0x3C3781,
-        QUEST_MALE_COWARD                           = 0x3C3782,
-        QUEST_MALE_DARK_ELF                         = 0x3C3783,
-        QUEST_MALE_DRUNK                            = 0x3C3784,
-        QUEST_MALE_ELF_HAUGHTY                      = 0x3C3785,
-        QUEST_MALE_EVEN_TONED                       = 0x3C3786,
-        QUEST_MALE_EVEN_TONED_ACCENTED              = 0x3C3787,
-        QUEST_MALE_FORSWORN                         = 0x3C3788,
-        QUEST_MALE_GUARD                            = 0x3C3789,
-        QUEST_MALE_KHAJIIT                          = 0x3C378A,
-        QUEST_MALE_NORD                             = 0x3C378B,
-        QUEST_MALE_NORD_COMMANDER                   = 0x3C378C,
-        QUEST_MALE_OLD_GRUMPY                       = 0x3C378D,
-        QUEST_MALE_OLD_KINDLY                       = 0x3C378E,
-        QUEST_MALE_ORC                              = 0x3C378F,
-        QUEST_MALE_OTHER                            = 0x3C3792,
-        QUEST_MALE_SLY_CYNICAL                      = 0x3C3790,
-        QUEST_MALE_SOLDIER                          = 0x3C3791,
-        QUEST_MALE_WARLOCK                          = 0x3C3793,
-        QUEST_MALE_YOUNG_EAGER                      = 0x3C3794,
-    */
 
-    /*
-        REFERENCE_CONTAINER_BUFFER                  = 0x3C37A9,
-        REFERENCE_DOOR_EXPO_EXIT                    = 0x25AB08,
-        REFERENCE_MARKER_CELL                       = 0x15C1AE,
-        REFERENCE_MARKER_EXPO_ANTECHAMBER           = 0x2979B0,
-        REFERENCE_MARKER_STORAGE                    = 0x114F9D,
-    */
+    some<Reference_t*> Consts_t::NPCP::Reference::Buffer_Container()        { DEFINE_FORM(Mod(), Reference_t, 0x3C37A9); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Expo_Exit_Door()          { DEFINE_FORM(Mod(), Reference_t, 0x25AB08); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Cell_Marker()             { DEFINE_FORM(Mod(), Reference_t, 0x15C1AE); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Expo_Antechamber_Marker() { DEFINE_FORM(Mod(), Reference_t, 0x2979B0); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Storage_Marker()          { DEFINE_FORM(Mod(), Reference_t, 0x114F9D); }
 
-    /*
-        REFERENCE_CATEGORY_INPUT                    = 0x395E55,
-        REFERENCE_CATEGORY_SWORDS                   = 0x30D20A,
-        REFERENCE_CATEGORY_GREATSWORDS              = 0x30D20B,
-        REFERENCE_CATEGORY_WARAXES                  = 0x30D20C,
-        REFERENCE_CATEGORY_BATTLEAXES               = 0x30D20D,
-        REFERENCE_CATEGORY_MACES                    = 0x30D20E,
-        REFERENCE_CATEGORY_WARHAMMERS               = 0x30D20F,
-        REFERENCE_CATEGORY_DAGGERS                  = 0x30D210,
-        REFERENCE_CATEGORY_STAVES                   = 0x30D212,
-        REFERENCE_CATEGORY_BOWS                     = 0x30D211,
-        REFERENCE_CATEGORY_AMMO                     = 0x30D23D,
-        REFERENCE_CATEGORY_WEAPONS                  = 0x30D213,
-        REFERENCE_CATEGORY_LIGHT_ARMOR              = 0x30D214,
-        REFERENCE_CATEGORY_HEAVY_ARMOR              = 0x30D215,
-        REFERENCE_CATEGORY_SHIELDS                  = 0x30D216,
-        REFERENCE_CATEGORY_JEWELRY                  = 0x30D217,
-        REFERENCE_CATEGORY_CLOTHES                  = 0x30D218,
-        REFERENCE_CATEGORY_POTIONS                  = 0x30D219,
-        REFERENCE_CATEGORY_POISONS                  = 0x30D21A,
-        REFERENCE_CATEGORY_INGREDIENTS              = 0x30D23E,
-        REFERENCE_CATEGORY_FOOD                     = 0x30D21B,
-        REFERENCE_CATEGORY_SOULGEMS                 = 0x30D240,
-        REFERENCE_CATEGORY_SCROLLS                  = 0x30D23F,
-        REFERENCE_CATEGORY_METALS                   = 0x30D239,
-        REFERENCE_CATEGORY_LEATHER                  = 0x30D23A,
-        REFERENCE_CATEGORY_GEMS                     = 0x30D23B,
-        REFERENCE_CATEGORY_CLUTTER                  = 0x30D23C,
-        REFERENCE_CATEGORY_KEYS                     = 0x30D241,
-        REFERENCE_CATEGORY_MISC                     = 0x30D242,
-        REFERENCE_CATEGORY_SPELL_TOMES              = 0x30D21C,
-        REFERENCE_CATEGORY_RECIPES                  = 0x30D21D,
-        REFERENCE_CATEGORY_BOOKS_A                  = 0x30D21E,
-        REFERENCE_CATEGORY_BOOKS_B                  = 0x30D21F,
-        REFERENCE_CATEGORY_BOOKS_C                  = 0x30D220,
-        REFERENCE_CATEGORY_BOOKS_D                  = 0x30D221,
-        REFERENCE_CATEGORY_BOOKS_E                  = 0x30D222,
-        REFERENCE_CATEGORY_BOOKS_F                  = 0x30D223,
-        REFERENCE_CATEGORY_BOOKS_G                  = 0x30D224,
-        REFERENCE_CATEGORY_BOOKS_H                  = 0x30D225,
-        REFERENCE_CATEGORY_BOOKS_I                  = 0x30D226,
-        REFERENCE_CATEGORY_BOOKS_J                  = 0x30D227,
-        REFERENCE_CATEGORY_BOOKS_K                  = 0x30D228,
-        REFERENCE_CATEGORY_BOOKS_L                  = 0x30D229,
-        REFERENCE_CATEGORY_BOOKS_M                  = 0x30D22A,
-        REFERENCE_CATEGORY_BOOKS_N                  = 0x30D22B,
-        REFERENCE_CATEGORY_BOOKS_O                  = 0x30D22C,
-        REFERENCE_CATEGORY_BOOKS_P                  = 0x30D22D,
-        REFERENCE_CATEGORY_BOOKS_Q                  = 0x30D22E,
-        REFERENCE_CATEGORY_BOOKS_R                  = 0x30D22F,
-        REFERENCE_CATEGORY_BOOKS_S                  = 0x30D230,
-        REFERENCE_CATEGORY_BOOKS_T                  = 0x30D231,
-        REFERENCE_CATEGORY_BOOKS_U                  = 0x30D232,
-        REFERENCE_CATEGORY_BOOKS_V                  = 0x30D233,
-        REFERENCE_CATEGORY_BOOKS_W                  = 0x30D234,
-        REFERENCE_CATEGORY_BOOKS_X                  = 0x30D235,
-        REFERENCE_CATEGORY_BOOKS_Y                  = 0x30D236,
-        REFERENCE_CATEGORY_BOOKS_Z                  = 0x30D237,
-        REFERENCE_CATEGORY_BOOKS                    = 0x30D238,
-        REFERENCE_CATEGORY_CUSTOM_00                = 0x3C37AA,
-        REFERENCE_CATEGORY_CUSTOM_01                = 0x3C37AB,
-        REFERENCE_CATEGORY_CUSTOM_02                = 0x3C37AC,
-        REFERENCE_CATEGORY_CUSTOM_03                = 0x3C37AD,
-        REFERENCE_CATEGORY_CUSTOM_04                = 0x3C37AE,
-        REFERENCE_CATEGORY_CUSTOM_05                = 0x3C37AF,
-        REFERENCE_CATEGORY_CUSTOM_06                = 0x3C37B0,
-        REFERENCE_CATEGORY_CUSTOM_07                = 0x3C37B1,
-        REFERENCE_CATEGORY_CUSTOM_08                = 0x3C37B2,
-        REFERENCE_CATEGORY_CUSTOM_09                = 0x3C37B3,
-        REFERENCE_CATEGORY_CUSTOM_10                = 0x3C37B4,
-        REFERENCE_CATEGORY_CUSTOM_11                = 0x3C37B5,
-        REFERENCE_CATEGORY_CUSTOM_12                = 0x3C37B6,
-        REFERENCE_CATEGORY_CUSTOM_13                = 0x3C37B7,
-        REFERENCE_CATEGORY_CUSTOM_14                = 0x3C37B8,
-        REFERENCE_CATEGORY_CUSTOM_15                = 0x3C37B9,
-    */
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Input()         { DEFINE_FORM(Mod(), Reference_t, 0x395E55); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Swords()        { DEFINE_FORM(Mod(), Reference_t, 0x30D20A); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Greatswords()   { DEFINE_FORM(Mod(), Reference_t, 0x30D20B); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Waraxes()       { DEFINE_FORM(Mod(), Reference_t, 0x30D20C); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Battleaxes()    { DEFINE_FORM(Mod(), Reference_t, 0x30D20D); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Maces()         { DEFINE_FORM(Mod(), Reference_t, 0x30D20E); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Warhammers()    { DEFINE_FORM(Mod(), Reference_t, 0x30D20F); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Daggers()       { DEFINE_FORM(Mod(), Reference_t, 0x30D210); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Staves()        { DEFINE_FORM(Mod(), Reference_t, 0x30D212); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Bows()          { DEFINE_FORM(Mod(), Reference_t, 0x30D211); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Ammo()          { DEFINE_FORM(Mod(), Reference_t, 0x30D23D); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Other_Weapons() { DEFINE_FORM(Mod(), Reference_t, 0x30D213); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Light_Armor()   { DEFINE_FORM(Mod(), Reference_t, 0x30D214); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Heavy_Armor()   { DEFINE_FORM(Mod(), Reference_t, 0x30D215); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Shields()       { DEFINE_FORM(Mod(), Reference_t, 0x30D216); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Jewelry()       { DEFINE_FORM(Mod(), Reference_t, 0x30D217); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Clothes()       { DEFINE_FORM(Mod(), Reference_t, 0x30D218); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Potions()       { DEFINE_FORM(Mod(), Reference_t, 0x30D219); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Poisons()       { DEFINE_FORM(Mod(), Reference_t, 0x30D21A); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Ingredients()   { DEFINE_FORM(Mod(), Reference_t, 0x30D23E); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Food()          { DEFINE_FORM(Mod(), Reference_t, 0x30D21B); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Soulgems()      { DEFINE_FORM(Mod(), Reference_t, 0x30D240); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Scrolls()       { DEFINE_FORM(Mod(), Reference_t, 0x30D23F); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Metals()        { DEFINE_FORM(Mod(), Reference_t, 0x30D239); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Leather()       { DEFINE_FORM(Mod(), Reference_t, 0x30D23A); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Gems()          { DEFINE_FORM(Mod(), Reference_t, 0x30D23B); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Clutter()       { DEFINE_FORM(Mod(), Reference_t, 0x30D23C); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Keys()          { DEFINE_FORM(Mod(), Reference_t, 0x30D241); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Misc()          { DEFINE_FORM(Mod(), Reference_t, 0x30D242); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Spell_Tomes()   { DEFINE_FORM(Mod(), Reference_t, 0x30D21C); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Recipes()       { DEFINE_FORM(Mod(), Reference_t, 0x30D21D); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::A_Books()       { DEFINE_FORM(Mod(), Reference_t, 0x30D21E); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::B_Books()       { DEFINE_FORM(Mod(), Reference_t, 0x30D21F); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::C_Books()       { DEFINE_FORM(Mod(), Reference_t, 0x30D220); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::D_Books()       { DEFINE_FORM(Mod(), Reference_t, 0x30D221); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::E_Books()       { DEFINE_FORM(Mod(), Reference_t, 0x30D222); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::F_Books()       { DEFINE_FORM(Mod(), Reference_t, 0x30D223); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::G_Books()       { DEFINE_FORM(Mod(), Reference_t, 0x30D224); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::H_Books()       { DEFINE_FORM(Mod(), Reference_t, 0x30D225); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::I_Books()       { DEFINE_FORM(Mod(), Reference_t, 0x30D226); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::J_Books()       { DEFINE_FORM(Mod(), Reference_t, 0x30D227); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::K_Books()       { DEFINE_FORM(Mod(), Reference_t, 0x30D228); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::L_Books()       { DEFINE_FORM(Mod(), Reference_t, 0x30D229); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::M_Books()       { DEFINE_FORM(Mod(), Reference_t, 0x30D22A); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::N_Books()       { DEFINE_FORM(Mod(), Reference_t, 0x30D22B); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::O_Books()       { DEFINE_FORM(Mod(), Reference_t, 0x30D22C); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::P_Books()       { DEFINE_FORM(Mod(), Reference_t, 0x30D22D); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Q_Books()       { DEFINE_FORM(Mod(), Reference_t, 0x30D22E); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::R_Books()       { DEFINE_FORM(Mod(), Reference_t, 0x30D22F); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::S_Books()       { DEFINE_FORM(Mod(), Reference_t, 0x30D230); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::T_Books()       { DEFINE_FORM(Mod(), Reference_t, 0x30D231); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::U_Books()       { DEFINE_FORM(Mod(), Reference_t, 0x30D232); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::V_Books()       { DEFINE_FORM(Mod(), Reference_t, 0x30D233); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::W_Books()       { DEFINE_FORM(Mod(), Reference_t, 0x30D234); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::X_Books()       { DEFINE_FORM(Mod(), Reference_t, 0x30D235); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Y_Books()       { DEFINE_FORM(Mod(), Reference_t, 0x30D236); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Z_Books()       { DEFINE_FORM(Mod(), Reference_t, 0x30D237); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Other_Books()   { DEFINE_FORM(Mod(), Reference_t, 0x30D238); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Custom_00()     { DEFINE_FORM(Mod(), Reference_t, 0x3C37AA); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Custom_01()     { DEFINE_FORM(Mod(), Reference_t, 0x3C37AB); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Custom_02()     { DEFINE_FORM(Mod(), Reference_t, 0x3C37AC); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Custom_03()     { DEFINE_FORM(Mod(), Reference_t, 0x3C37AD); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Custom_04()     { DEFINE_FORM(Mod(), Reference_t, 0x3C37AE); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Custom_05()     { DEFINE_FORM(Mod(), Reference_t, 0x3C37AF); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Custom_06()     { DEFINE_FORM(Mod(), Reference_t, 0x3C37B0); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Custom_07()     { DEFINE_FORM(Mod(), Reference_t, 0x3C37B1); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Custom_08()     { DEFINE_FORM(Mod(), Reference_t, 0x3C37B2); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Custom_09()     { DEFINE_FORM(Mod(), Reference_t, 0x3C37B3); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Custom_10()     { DEFINE_FORM(Mod(), Reference_t, 0x3C37B4); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Custom_11()     { DEFINE_FORM(Mod(), Reference_t, 0x3C37B5); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Custom_12()     { DEFINE_FORM(Mod(), Reference_t, 0x3C37B6); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Custom_13()     { DEFINE_FORM(Mod(), Reference_t, 0x3C37B7); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Custom_14()     { DEFINE_FORM(Mod(), Reference_t, 0x3C37B8); }
+    some<Reference_t*> Consts_t::NPCP::Reference::Category::Custom_15()     { DEFINE_FORM(Mod(), Reference_t, 0x3C37B9); }
 
-    /*
-        SPELL_ABILITY_REANIMATE                     = 0x3AF362,
-        SPELL_ABILITY_RETREAT                       = 0x2F3CFF,
-    */
-
-    /*
-        TOPIC_MENU_CHESTS_CUSTOM_00                 = 0x3C37BF,
-        TOPIC_MENU_CHESTS_CUSTOM_01                 = 0x3C37C1,
-        TOPIC_MENU_CHESTS_CUSTOM_02                 = 0x3C37C3,
-        TOPIC_MENU_CHESTS_CUSTOM_03                 = 0x3C37C5,
-        TOPIC_MENU_CHESTS_CUSTOM_04                 = 0x3C37C7,
-        TOPIC_MENU_CHESTS_CUSTOM_05                 = 0x3C37C9,
-        TOPIC_MENU_CHESTS_CUSTOM_06                 = 0x3C37CB,
-        TOPIC_MENU_CHESTS_CUSTOM_07                 = 0x3C37CD,
-        TOPIC_MENU_CHESTS_CUSTOM_08                 = 0x3C37CF,
-        TOPIC_MENU_CHESTS_CUSTOM_09                 = 0x3C37D1,
-        TOPIC_MENU_CHESTS_CUSTOM_10                 = 0x3C37D3,
-        TOPIC_MENU_CHESTS_CUSTOM_11                 = 0x3C37D5,
-        TOPIC_MENU_CHESTS_CUSTOM_12                 = 0x3C37D7,
-        TOPIC_MENU_CHESTS_CUSTOM_13                 = 0x3C37D9,
-        TOPIC_MENU_CHESTS_CUSTOM_14                 = 0x3C37DB,
-        TOPIC_MENU_CHESTS_CUSTOM_15                 = 0x3C37DD,
-    */
+    some<Spell_t*> Consts_t::NPCP::Spell::Reanimate_Ability()   { DEFINE_FORM(Mod(), Spell_t, 0x3AF362); }
+    some<Spell_t*> Consts_t::NPCP::Spell::Retreat_Ability()     { DEFINE_FORM(Mod(), Spell_t, 0x2F3CFF); }
 
     const Version_t<u16> Consts_t::NPCP::Version::Current() { DEFINE_VERSION(u16, 0, 10, 0); }
 
