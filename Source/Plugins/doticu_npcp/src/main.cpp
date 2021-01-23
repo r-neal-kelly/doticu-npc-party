@@ -4,9 +4,12 @@
 
 #include <ShlObj.h>
 
+#include "doticu_skylib/global.h"
 #include "doticu_skylib/ui.h"
 
+#include "doticu_skylib/virtual_callback.h"
 #include "doticu_skylib/virtual_macros.h"
+#include "doticu_skylib/virtual_utils.h"
 
 #include "consts.h"
 #include "main.h"
@@ -78,6 +81,16 @@ namespace doticu_npcp {
 
     Bool_t Main_t::SKSE_Register_Functions(V::Machine_t* machine)
     {
+        #define REGISTER(TYPE_)                         \
+        SKYLIB_M                                        \
+            TYPE_::Register_Me(machine);                \
+            SKYLIB_LOG("Added " #TYPE_ " functions.");  \
+        SKYLIB_W
+
+        REGISTER(doticu_npcp::Main_t);
+
+        #undef REGISTER
+
         SKYLIB_LOG("Added all functions.\n");
 
         return true;
@@ -106,19 +119,9 @@ namespace doticu_npcp {
                         RETURN_TYPE_, METHOD_, __VA_ARGS__);                            \
         SKYLIB_W
 
-        // OnInit Init_Mod
+        METHOD("OnInit", true, void, Initialize);
 
         #undef METHOD
-    }
-
-    Bool_t Main_t::Has_Requirements()
-    {
-        // need to check that NPC Party is on the latest version, because we're not supporting updates from anything before 0.9.15.
-        /*
-            vars->NPCP_Major(),
-            vars->NPCP_Minor(),
-            vars->NPCP_Patch(),
-        */
     }
 
     Bool_t Main_t::Is_Active()
@@ -126,84 +129,52 @@ namespace doticu_npcp {
         return Consts_t::NPCP::Mod() != nullptr;
     }
 
-    Bool_t Main_t::Is_Installed()
+    Bool_t Main_t::Is_Initialized()
     {
-        //Game::Is_NPCP_Installed()
+        return Consts_t::NPCP::Global::Is_Initialized()->Bool();
     }
 
-    void Main_t::Init()
+    void Main_t::Initialize()
     {
+        struct Wait_Callback_t : public V::Callback_t
+        {
+        public:
+            void operator ()(V::Variable_t*)
+            {
+                if (!Consts_t::NPCP::Global::Is_Initialized()->Bool()) {
+                    Consts_t::NPCP::Global::Is_Initialized()->Bool(true);
+                    /*
+                        Vars_t::Self()->Initialize();
+                        Logs_t::Self()->Initialize();
+                        Party::NPCS_t::Self()->Initialize();
+                        Party::Player_t::Self()->On_Init_Mod();
 
+                        Papyrus::Keys_t::Self()->Register();
+                        Party::Movee_t::Self()->Register();
+                        Party::Player_t::Self()->On_Register();
+
+                        Modules::Control::Commands_t::Self()->Log_Note("Thank you for installing!", true);
+                    */
+                }
+            }
+        };
+        V::Utils_t::Wait_Out_Of_Menu(1.0f, new Wait_Callback_t());
     }
 
     void Main_t::After_Load()
     {
-
-    }
-
-
-    /*
-    void Main_t::Init_Mod()
-    {
-        struct VCallback : public Virtual_Callback_t {
-            Main_t* main;
-            VCallback(Main_t* main) :
-                main(main)
+        struct Wait_Callback_t : public V::Callback_t
+        {
+        public:
+            some<Main_t*> self;
+            Wait_Callback_t(some<Main_t*> self) :
+                self(self)
             {
             }
-            void operator()(Variable_t* result)
+            void operator ()(V::Variable_t*)
             {
-                if (main->Has_Requirements()) {
-                    main->Start_Voice_Quests();
-
-                    Vector_t<Quest_t*> quests_to_start;
-                    quests_to_start.reserve(5);
-                    quests_to_start.push_back(Consts::Vars_Quest());
-                    quests_to_start.push_back(Consts::Funcs_Quest());
-                    quests_to_start.push_back(Consts::Members_Quest());
-                    quests_to_start.push_back(Consts::Followers_Quest());
-                    quests_to_start.push_back(Consts::Control_Quest());
-                    struct Callback : public Callback_t<> {
-                        Main_t* main;
-                        Callback(Main_t* main) :
-                            main(main)
-                        {
-                        }
-                        void operator()()
-                        {
-                            Vars_t::Self()->Initialize();
-                            Logs_t::Self()->Initialize();
-                            Party::NPCS_t::Self()->Initialize();
-                            Party::Player_t::Self()->On_Init_Mod();
-
-                            Papyrus::Keys_t::Self()->Register();
-                            Party::Movee_t::Self()->Register();
-                            Party::Player_t::Self()->On_Register();
-
-                            Consts::Is_Installed_Global()->value = 1.0f;
-                            Modules::Control::Commands_t::Self()->Log_Note("Thank you for installing!", true);
-                        }
-                    };
-                    Quest::Start_All(quests_to_start, new Callback(main));
-                }
-            }
-        };
-        Virtual_Callback_i* vcallback = new VCallback(this);
-        Funcs_t::Self()->Wait_Out_Of_Menu(1.0f, &vcallback);
-    }
-
-    void Main_t::Load_Mod()
-    {
-        if (Consts::Is_Installed_Global()->value > 0.0f) {
-            struct VCallback : public Virtual_Callback_t {
-                Main_t* main;
-                VCallback(Main_t* main) :
-                    main(main)
-                {
-                }
-                void operator()(Variable_t* result)
-                {
-                    if (main->Has_Requirements()) {
+                if (Consts_t::NPCP::Global::Is_Initialized()->Bool()) {
+                    /*
                         if (main->Try_Update()) {
                             std::string note =
                                 "Running version " +
@@ -212,23 +183,23 @@ namespace doticu_npcp {
                                 std::to_string(Consts::NPCP_Patch());
                             Modules::Control::Commands_t::Self()->Log_Note(note.c_str(), true);
                         }
-                        main->Try_Cleanup();
                         Modules::Keys_t::Self()->On_Load_Mod();
                         Party::Members_t::Self()->On_Load_Mod();
                         Party::Player_t::Self()->On_Load_Mod();
                         Party::Movee_t::Self()->On_Load_Mod();
                         Party::Mannequins_t::Self()->On_Load_Mod();
                         Utils::Print("NPC Party has loaded.");
-                    }
+                    */
                 }
-            };
-            Virtual_Callback_i* vcallback = new VCallback(this);
-            Funcs_t::Self()->Wait_Out_Of_Menu(1.0f, &vcallback);
-        }
+            }
+        };
+        V::Utils_t::Wait_Out_Of_Menu(1.0f, new Wait_Callback_t(this));
     }
 
+    /*
     Bool_t Main_t::Has_Requirements()
     {
+        // this will be check in the update routine now.
         if (Consts::Is_Installed_Global()->value > 0.0f && Is_NPCP_Version_Less_Than(0, 9, 1)) {
             UI::Message_Box("NPC Party: This save has a version of NPC Party older than 0.9.1. "
                             "The new version you are running will not work on this save yet. "
@@ -277,42 +248,6 @@ namespace doticu_npcp {
             return true;
         } else {
             return false;
-        }
-    }
-
-    void Main_t::Try_Cleanup()
-    {
-        Int_t objects_deleted = 0;
-
-        {
-            Vector_t<Reference_t*> outfit2s = Cell::References(Consts::Storage_Cell(), Consts::Outfit2_Container());
-            for (size_t idx = 0, count = outfit2s.size(); idx < count; idx += 1) {
-                Outfit2_t* outfit2 = static_cast<Outfit2_t*>(outfit2s.at(idx));
-                if (outfit2 && outfit2->Type() == CODES::OUTFIT2::DELETED) {
-                    Object_Ref::Delete_Safe(outfit2);
-                    objects_deleted += 1;
-                }
-            }
-        }
-        
-        {
-            Party::NPCS_t* npcs = Party::NPCS_t::Self();
-            Form_Vector_t* bases = npcs->Bases();
-            Form_Vector_t* default_outfits = npcs->Default_Outfits();
-            Vector_t<Reference_t*> form_vectors = Cell::References(Consts::Storage_Cell(), Consts::Form_Vector());
-            for (size_t idx = 0, count = form_vectors.size(); idx < count; idx += 1) {
-                Form_Vector_t* form_vector = static_cast<Form_Vector_t*>(form_vectors.at(idx));
-                if (form_vector && form_vector != bases && form_vector != default_outfits) {
-                    Object_Ref::Delete_Safe(form_vector);
-                    objects_deleted += 1;
-                }
-            }
-        }
-
-        if (objects_deleted == 1) {
-            Utils::Print("NPC Party requested 1 object to be deleted.");
-        } else {
-            Utils::Print((std::string("NPC Party requested ") + std::to_string(objects_deleted) + " objects to be deleted.").c_str());
         }
     }
 
@@ -384,59 +319,6 @@ namespace doticu_npcp {
         }
 
         return unused_objects;
-    }
-
-    void Main_t::Start_Voice_Quests()
-    {
-        Quest::Start(Consts::Female_Argonian_Quest());
-        Quest::Start(Consts::Female_Commander_Quest());
-        Quest::Start(Consts::Female_Commoner_Quest());
-        Quest::Start(Consts::Female_Condescending_Quest());
-        Quest::Start(Consts::Female_Coward_Quest());
-        Quest::Start(Consts::Female_Dark_Elf_Quest());
-        Quest::Start(Consts::Female_Elf_Haughty_Quest());
-        Quest::Start(Consts::Female_Even_Toned_Quest());
-        Quest::Start(Consts::Female_Khajiit_Quest());
-        Quest::Start(Consts::Female_Nord_Quest());
-        Quest::Start(Consts::Female_Old_Grumpy_Quest());
-        Quest::Start(Consts::Female_Old_Kindly_Quest());
-        Quest::Start(Consts::Female_Orc_Quest());
-        Quest::Start(Consts::Female_Other_Quest());
-        Quest::Start(Consts::Female_Shrill_Quest());
-        Quest::Start(Consts::Female_Soldier_Quest());
-        Quest::Start(Consts::Female_Sultry_Quest());
-        Quest::Start(Consts::Female_Young_Eager_Quest());
-        Quest::Start(Consts::Male_Argonian_Quest());
-        Quest::Start(Consts::Male_Bandit_Quest());
-        Quest::Start(Consts::Male_Brute_Quest());
-        Quest::Start(Consts::Male_Commander_Quest());
-        Quest::Start(Consts::Male_Commoner_Quest());
-        Quest::Start(Consts::Male_Commoner_Accented_Quest());
-        Quest::Start(Consts::Male_Condescending_Quest());
-        Quest::Start(Consts::Male_Coward_Quest());
-        Quest::Start(Consts::Male_Dark_Elf_Quest());
-        Quest::Start(Consts::Male_Drunk_Quest());
-        Quest::Start(Consts::Male_Elf_Haughty_Quest());
-        Quest::Start(Consts::Male_Even_Toned_Quest());
-        Quest::Start(Consts::Male_Even_Toned_Accented_Quest());
-        Quest::Start(Consts::Male_Forsworn_Quest());
-        Quest::Start(Consts::Male_Guard_Quest());
-        Quest::Start(Consts::Male_Khajiit_Quest());
-        Quest::Start(Consts::Male_Nord_Quest());
-        Quest::Start(Consts::Male_Nord_Commander_Quest());
-        Quest::Start(Consts::Male_Old_Grumpy_Quest());
-        Quest::Start(Consts::Male_Old_Kindly_Quest());
-        Quest::Start(Consts::Male_Orc_Quest());
-        Quest::Start(Consts::Male_Other_Quest());
-        Quest::Start(Consts::Male_Sly_Cynical_Quest());
-        Quest::Start(Consts::Male_Soldier_Quest());
-        Quest::Start(Consts::Male_Warlock_Quest());
-        Quest::Start(Consts::Male_Young_Eager_Quest());
-    }
-
-    void Main_t::u_0_10_0()
-    {
-        Start_Voice_Quests();
     }*/
 
 }

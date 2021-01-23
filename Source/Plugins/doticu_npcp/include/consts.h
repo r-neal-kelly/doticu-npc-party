@@ -217,7 +217,7 @@ namespace doticu_npcp {
             };
             struct Global
             {
-                static some<Global_t*> Is_Installed();
+                static some<Global_t*> Is_Initialized();
                 static some<Global_t*> Allow_Dialogue_For_All();
                 static some<Global_t*> Allow_Chatter();
                 static some<Global_t*> Force_Clone_Uniques();

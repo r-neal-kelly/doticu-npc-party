@@ -34,23 +34,19 @@ namespace doticu_npcp {
         static void                 Register_Me(V::Machine_t* machine);
 
     public:
-        static Bool_t  Has_Requirements();
-        static Bool_t  Is_Active();
-        static Bool_t  Is_Installed();
+        static Bool_t Is_Active();
+        static Bool_t Is_Initialized();
 
     public:
-        void    Init();
-        void    After_Load();
+        void Initialize();
+        void After_Load();
 
     /*
     public:
         Bool_t Try_Update();
-        void Try_Cleanup();
         Int_t Force_Cleanup();
         Int_t Count_Unused_Objects();
-        void Start_Voice_Quests();
-
-        void u_0_10_0();*/
+    */
     };
 
 }

@@ -118,6 +118,7 @@ namespace doticu_npcp {
         using Object_t              = skylib::Virtual::Object_t;
         using Object_Policy_t       = skylib::Virtual::Object_Policy_t;
         using Stack_ID_t            = skylib::Virtual::Stack_ID_t;
+        using Utils_t               = skylib::Virtual::Utils_t;
         using Variable_t            = skylib::Virtual::Variable_t;
 
         template <typename T>
