@@ -36,17 +36,17 @@ namespace doticu_npcp {
     public:
         static Bool_t Is_Active();
         static Bool_t Is_Initialized();
+        static Bool_t Has_Requirements();
 
     public:
-        void Initialize();
-        void After_Load();
+        static void Initialize();
+        static void After_Load();
 
-    /*
     public:
-        Bool_t Try_Update();
-        Int_t Force_Cleanup();
-        Int_t Count_Unused_Objects();
-    */
+        static Bool_t Try_Update();
+
+    public:
+        void On_Init();
     };
 
 }

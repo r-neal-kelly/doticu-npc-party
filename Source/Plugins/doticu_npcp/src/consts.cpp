@@ -151,17 +151,17 @@ namespace doticu_npcp {
     some<Furniture_t*>          Consts_t::NPCP::Furniture::Bedroll()                        { DEFINE_FORM(Mod(), Furniture_t, 0x3E7F15); }
 
     some<Global_t*>             Consts_t::NPCP::Global::Is_Initialized()                    { DEFINE_FORM(Mod(), Global_t, 0x189ADD); }
-    some<Global_t*>             Consts_t::NPCP::Global::Allow_Dialogue_For_All()            { DEFINE_FORM(Mod(), Global_t, 0x3B4463); }
-    some<Global_t*>             Consts_t::NPCP::Global::Allow_Chatter()                     { DEFINE_FORM(Mod(), Global_t, 0x3B9568); }
-    some<Global_t*>             Consts_t::NPCP::Global::Force_Clone_Uniques()               { DEFINE_FORM(Mod(), Global_t, 0x05244D); }
-    some<Global_t*>             Consts_t::NPCP::Global::Force_Clone_Generics()              { DEFINE_FORM(Mod(), Global_t, 0x05244E); }
-    some<Global_t*>             Consts_t::NPCP::Global::Force_Unclone_Uniques()             { DEFINE_FORM(Mod(), Global_t, 0x05244F); }
-    some<Global_t*>             Consts_t::NPCP::Global::Force_Unclone_Generics()            { DEFINE_FORM(Mod(), Global_t, 0x052450); }
-    some<Global_t*>             Consts_t::NPCP::Global::Is_Leveling_Enabled()               { DEFINE_FORM(Mod(), Global_t, 0x3B4464); }
-    some<Global_t*>             Consts_t::NPCP::Global::No_Body_Percent()                   { DEFINE_FORM(Mod(), Global_t, 0x193CEA); }
-    some<Global_t*>             Consts_t::NPCP::Global::No_Feet_Percent()                   { DEFINE_FORM(Mod(), Global_t, 0x193CE7); }
-    some<Global_t*>             Consts_t::NPCP::Global::No_Hands_Percent()                  { DEFINE_FORM(Mod(), Global_t, 0x193CE8); }
-    some<Global_t*>             Consts_t::NPCP::Global::No_Head_Percent()                   { DEFINE_FORM(Mod(), Global_t, 0x193CE6); }
+    some<Global_t*>             Consts_t::NPCP::Global::Do_Allow_Dialogue_For_All()         { DEFINE_FORM(Mod(), Global_t, 0x3B4463); }
+    some<Global_t*>             Consts_t::NPCP::Global::Do_Allow_Chatter()                  { DEFINE_FORM(Mod(), Global_t, 0x3B9568); }
+    some<Global_t*>             Consts_t::NPCP::Global::Do_Force_Clone_Uniques()            { DEFINE_FORM(Mod(), Global_t, 0x05244D); }
+    some<Global_t*>             Consts_t::NPCP::Global::Do_Force_Clone_Generics()           { DEFINE_FORM(Mod(), Global_t, 0x05244E); }
+    some<Global_t*>             Consts_t::NPCP::Global::Do_Force_Unclone_Uniques()          { DEFINE_FORM(Mod(), Global_t, 0x05244F); }
+    some<Global_t*>             Consts_t::NPCP::Global::Do_Force_Unclone_Generics()         { DEFINE_FORM(Mod(), Global_t, 0x052450); }
+    some<Global_t*>             Consts_t::NPCP::Global::Do_Level_Followers()                { DEFINE_FORM(Mod(), Global_t, 0x3B4464); }
+    some<Global_t*>             Consts_t::NPCP::Global::Empty_Outfit_Body_Percent()         { DEFINE_FORM(Mod(), Global_t, 0x193CEA); }
+    some<Global_t*>             Consts_t::NPCP::Global::Empty_Outfit_Feet_Percent()         { DEFINE_FORM(Mod(), Global_t, 0x193CE7); }
+    some<Global_t*>             Consts_t::NPCP::Global::Empty_Outfit_Hands_Percent()        { DEFINE_FORM(Mod(), Global_t, 0x193CE8); }
+    some<Global_t*>             Consts_t::NPCP::Global::Empty_Outfit_Head_Percent()         { DEFINE_FORM(Mod(), Global_t, 0x193CE6); }
 
     some<Leveled_Actor_Base_t*> Consts_t::NPCP::Leveled_Actor_Base::Horse()                 { DEFINE_FORM(Mod(), Leveled_Actor_Base_t, 0x354127); }
 

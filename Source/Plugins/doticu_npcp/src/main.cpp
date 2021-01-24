@@ -13,6 +13,7 @@
 
 #include "consts.h"
 #include "main.h"
+#include "vars.h"
 
 namespace doticu_npcp {
 
@@ -56,9 +57,7 @@ namespace doticu_npcp {
                     {
                         if (message) {
                             if (message->type == SKSEMessagingInterface::kMessage_PostLoadGame && message->data != nullptr) {
-                                /*if (Game::Is_NPCP_Installed()) {
-                                    Modules::Main_t::Self()->Load_Mod();
-                                }*/
+                                After_Load();
                             }
                         }
                     };
@@ -88,6 +87,7 @@ namespace doticu_npcp {
         SKYLIB_W
 
         REGISTER(doticu_npcp::Main_t);
+        REGISTER(doticu_npcp::Vars_t);
 
         #undef REGISTER
 
@@ -119,7 +119,7 @@ namespace doticu_npcp {
                         RETURN_TYPE_, METHOD_, __VA_ARGS__);                            \
         SKYLIB_W
 
-        METHOD("OnInit", true, void, Initialize);
+        METHOD("OnInit", true, void, On_Init);
 
         #undef METHOD
     }
@@ -134,6 +134,20 @@ namespace doticu_npcp {
         return Consts_t::NPCP::Global::Is_Initialized()->Bool();
     }
 
+    Bool_t Main_t::Has_Requirements()
+    {
+        if (Is_Initialized()) {
+            if (Vars_t::Version() < Version_t<u16>(0, 9, 15)) {
+                UI_t::Message_Box("Update failed. You must have version 0.9.15-beta installed first.");
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
     void Main_t::Initialize()
     {
         struct Wait_Callback_t : public V::Callback_t
@@ -141,10 +155,12 @@ namespace doticu_npcp {
         public:
             void operator ()(V::Variable_t*)
             {
-                if (!Consts_t::NPCP::Global::Is_Initialized()->Bool()) {
+                if (!Is_Initialized() && Has_Requirements()) {
+                    Vars_t::Initialize();
+
                     Consts_t::NPCP::Global::Is_Initialized()->Bool(true);
+
                     /*
-                        Vars_t::Self()->Initialize();
                         Logs_t::Self()->Initialize();
                         Party::NPCS_t::Self()->Initialize();
                         Party::Player_t::Self()->On_Init_Mod();
@@ -166,23 +182,19 @@ namespace doticu_npcp {
         struct Wait_Callback_t : public V::Callback_t
         {
         public:
-            some<Main_t*> self;
-            Wait_Callback_t(some<Main_t*> self) :
-                self(self)
-            {
-            }
             void operator ()(V::Variable_t*)
             {
-                if (Consts_t::NPCP::Global::Is_Initialized()->Bool()) {
+                if (Is_Initialized() && Has_Requirements()) {
+                    if (Try_Update()) {
+                        const Version_t<u16> version = Vars_t::Version();
+                        std::string note =
+                            "Running version " +
+                            std::to_string(version.major) + "." +
+                            std::to_string(version.minor) + "." +
+                            std::to_string(version.patch);
+                        UI_t::Notification(note.c_str()); // will want to save this message in logs.
+                    }
                     /*
-                        if (main->Try_Update()) {
-                            std::string note =
-                                "Running version " +
-                                std::to_string(Consts::NPCP_Major()) + "." +
-                                std::to_string(Consts::NPCP_Minor()) + "." +
-                                std::to_string(Consts::NPCP_Patch());
-                            Modules::Control::Commands_t::Self()->Log_Note(note.c_str(), true);
-                        }
                         Modules::Keys_t::Self()->On_Load_Mod();
                         Party::Members_t::Self()->On_Load_Mod();
                         Party::Player_t::Self()->On_Load_Mod();
@@ -193,133 +205,27 @@ namespace doticu_npcp {
                 }
             }
         };
-        V::Utils_t::Wait_Out_Of_Menu(1.0f, new Wait_Callback_t(this));
-    }
-
-    /*
-    Bool_t Main_t::Has_Requirements()
-    {
-        // this will be check in the update routine now.
-        if (Consts::Is_Installed_Global()->value > 0.0f && Is_NPCP_Version_Less_Than(0, 9, 1)) {
-            UI::Message_Box("NPC Party: This save has a version of NPC Party older than 0.9.1. "
-                            "The new version you are running will not work on this save yet. "
-                            "Exit without saving, and then update to version 0.9.1 before trying again.");
-            return false;
-        } else {
-            return true;
-        }
+        V::Utils_t::Wait_Out_Of_Menu(1.0f, new Wait_Callback_t());
     }
 
     Bool_t Main_t::Try_Update()
     {
-        Int_t curr_major = Consts::NPCP_Major();
-        Int_t curr_minor = Consts::NPCP_Minor();
-        Int_t curr_patch = Consts::NPCP_Patch();
+        SKYLIB_ASSERT(Is_Initialized());
 
-        if (Is_NPCP_Version_Less_Than(curr_major, curr_minor, curr_patch)) {
-
-            if (Is_NPCP_Version_Less_Than(0, 9, 3)) {
-                Party::Members_t::Self()->u_0_9_3();
-            }
-            if (Is_NPCP_Version_Less_Than(0, 9, 6)) {
-                Party::Members_t::Self()->u_0_9_6();
-            }
-            if (Is_NPCP_Version_Less_Than(0, 9, 8)) {
-                Party::Members_t::Self()->u_0_9_8();
-            }
-            if (Is_NPCP_Version_Less_Than(0, 9, 9)) {
-                Party::Members_t::Self()->u_0_9_9();
-            }
-            if (Is_NPCP_Version_Less_Than(0, 9, 12)) {
-                Party::Members_t::Self()->u_0_9_12();
-            }
-            if (Is_NPCP_Version_Less_Than(0, 9, 15)) {
-                Party::Members_t::Self()->u_0_9_15();
-            }
-            if (Is_NPCP_Version_Less_Than(0, 9, 16)) {
-                u_0_9_16();
-            }
-
-            Vars_t* vars = Vars_t::Self();
-            vars->NPCP_Major(curr_major);
-            vars->NPCP_Minor(curr_minor);
-            vars->NPCP_Patch(curr_patch);
-
+        const Version_t<u16> current_version = Consts_t::NPCP::Version::Current();
+        const Version_t<u16> installed_version = Vars_t::Version();
+        if (installed_version < current_version) {
+            Vars_t::Version(current_version);
             return true;
         } else {
             return false;
         }
     }
 
-    Int_t Main_t::Force_Cleanup()
+    void Main_t::On_Init()
     {
-        Int_t objects_deleted = 0;
-
-        {
-            Vector_t<Reference_t*> outfit2s = Cell::References(Consts::Storage_Cell(), Consts::Outfit2_Container());
-            for (size_t idx = 0, count = outfit2s.size(); idx < count; idx += 1) {
-                Outfit2_t* outfit2 = static_cast<Outfit2_t*>(outfit2s.at(idx));
-                if (outfit2 && outfit2->Type() == CODES::OUTFIT2::DELETED) {
-                    outfit2->flags = Utils::Bit_Off(outfit2->flags, 5);
-                    Object_Ref::Delete_Unsafe(outfit2);
-                    objects_deleted += 1;
-                }
-            }
-        }
-
-        {
-            Party::NPCS_t* npcs = Party::NPCS_t::Self();
-            Form_Vector_t* bases = npcs->Bases();
-            Form_Vector_t* default_outfits = npcs->Default_Outfits();
-            Vector_t<Reference_t*> form_vectors = Cell::References(Consts::Storage_Cell(), Consts::Form_Vector());
-            for (size_t idx = 0, count = form_vectors.size(); idx < count; idx += 1) {
-                Form_Vector_t* form_vector = static_cast<Form_Vector_t*>(form_vectors.at(idx));
-                if (form_vector && form_vector != bases && form_vector != default_outfits) {
-                    form_vector->flags = Utils::Bit_Off(form_vector->flags, 5);
-                    Object_Ref::Delete_Unsafe(form_vector);
-                    objects_deleted += 1;
-                }
-            }
-        }
-
-        if (objects_deleted == 1) {
-            Utils::Print("NPC Party forced 1 object to be deleted.");
-        } else {
-            Utils::Print((std::string("NPC Party forced ") + std::to_string(objects_deleted) + " objects to be deleted.").c_str());
-        }
-
-        return objects_deleted;
+        Initialize();
     }
-
-    Int_t Main_t::Count_Unused_Objects()
-    {
-        Int_t unused_objects = 0;
-
-        {
-            Vector_t<Reference_t*> outfit2s = Cell::References(Consts::Storage_Cell(), Consts::Outfit2_Container());
-            for (size_t idx = 0, count = outfit2s.size(); idx < count; idx += 1) {
-                Outfit2_t* outfit2 = static_cast<Outfit2_t*>(outfit2s.at(idx));
-                if (outfit2 && outfit2->Type() == CODES::OUTFIT2::DELETED) {
-                    unused_objects += 1;
-                }
-            }
-        }
-
-        {
-            Party::NPCS_t* npcs = Party::NPCS_t::Self();
-            Form_Vector_t* bases = npcs->Bases();
-            Form_Vector_t* default_outfits = npcs->Default_Outfits();
-            Vector_t<Reference_t*> form_vectors = Cell::References(Consts::Storage_Cell(), Consts::Form_Vector());
-            for (size_t idx = 0, count = form_vectors.size(); idx < count; idx += 1) {
-                Form_Vector_t* form_vector = static_cast<Form_Vector_t*>(form_vectors.at(idx));
-                if (form_vector && form_vector != bases && form_vector != default_outfits) {
-                    unused_objects += 1;
-                }
-            }
-        }
-
-        return unused_objects;
-    }*/
 
 }
 

@@ -100,6 +100,7 @@ namespace doticu_npcp {
     using Reference_Handle_t        = skylib::Reference_Handle_t;
     using Spell_t                   = skylib::Spell_t;
     using Static_t                  = skylib::Static_t;
+    using UI_t                      = skylib::UI_t;
     using Weapon_t                  = skylib::Weapon_t;
     using Worldspace_t              = skylib::Worldspace_t;
 
