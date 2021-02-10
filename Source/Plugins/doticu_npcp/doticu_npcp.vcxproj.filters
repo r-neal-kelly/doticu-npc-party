@@ -90,9 +90,6 @@
     <ClCompile Include="src\mcm\mcm_member.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\mcm\mcm_main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\mcm\mcm_hotkeys.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -100,9 +97,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\mcm\mcm_filter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mcm\mcm_chests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\commands.cpp">
@@ -186,6 +180,18 @@
     <ClCompile Include="src\mcm\mcm_settlers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\mcm_chests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\strings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mcm_main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\chests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\object_ref.h">
@@ -266,73 +272,10 @@
     <ClInclude Include="include\outfit2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\mcm\mcm_member.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\mcm\mcm_main.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\mcm\mcm_hotkeys.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\mcm\mcm_members.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\mcm\mcm_filter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\mcm\mcm_chests.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\commands.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\party\party_member.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party\party_members.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party\party_follower.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party\party_followers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party\party_horse.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party\party_horses.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party\party_alias.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party\party_aliases.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party\party_player.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party\party_movee.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party\party_greeter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party\party_npcs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party\party_mannequins.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\ui.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\mcm\mcm_followers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\mcm\mcm_mannequins.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\funcs.h">
@@ -347,9 +290,6 @@
     <ClInclude Include="include\packages.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\mcm\mcm_settings.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\references.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -359,25 +299,100 @@
     <ClInclude Include="include\logs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\mcm\mcm_logs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party\party_settler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\mcm\mcm_settlers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\intrinsic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mcm_chests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mcm_filter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mcm_followers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mcm_hotkeys.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mcm_logs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mcm_mannequins.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mcm_member.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mcm_members.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mcm_settings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mcm_settlers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_alias.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_aliases.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_follower.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_followers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_greeter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_horse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_horses.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_mannequins.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_member.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_members.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_movee.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_npcs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mcm_main_old.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mcm_main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\strings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\chests.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="scripts\doticu_npcp.psc" />
-    <None Include="include\party\party_aliases.inl">
+    <None Include="include\party_alias.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="include\party\party_alias.inl">
+    <None Include="include\party_aliases.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

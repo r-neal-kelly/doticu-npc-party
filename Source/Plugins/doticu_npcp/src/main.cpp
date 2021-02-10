@@ -13,6 +13,7 @@
 
 #include "consts.h"
 #include "main.h"
+#include "mcm_main.h"
 #include "vars.h"
 
 namespace doticu_npcp {
@@ -56,7 +57,9 @@ namespace doticu_npcp {
                     auto Callback = [](SKSEMessagingInterface::Message* message)->void
                     {
                         if (message) {
-                            if (message->type == SKSEMessagingInterface::kMessage_PostLoadGame && message->data != nullptr) {
+                            if (message->type == SKSEMessagingInterface::kMessage_SaveGame) {
+                                Before_Save();
+                            } else if (message->type == SKSEMessagingInterface::kMessage_PostLoadGame && message->data != nullptr) {
                                 After_Load();
                             }
                         }
@@ -80,16 +83,9 @@ namespace doticu_npcp {
 
     Bool_t Main_t::SKSE_Register_Functions(V::Machine_t* machine)
     {
-        #define REGISTER(TYPE_)                         \
-        SKYLIB_M                                        \
-            TYPE_::Register_Me(machine);                \
-            SKYLIB_LOG("Added " #TYPE_ " functions.");  \
-        SKYLIB_W
-
-        REGISTER(doticu_npcp::Main_t);
-        REGISTER(doticu_npcp::Vars_t);
-
-        #undef REGISTER
+        Main_t::Register_Me(machine);
+        Vars_t::Register_Me(machine);
+        MCM::Main_t::Register_Me(machine);
 
         SKYLIB_LOG("Added all functions.\n");
 
@@ -101,8 +97,10 @@ namespace doticu_npcp {
     some<V::Class_t*>   Main_t::Class()         { DEFINE_CLASS(); }
     some<V::Object_t*>  Main_t::Object()        { DEFINE_OBJECT_STATIC(); }
 
-    void Main_t::Register_Me(V::Machine_t* machine)
+    void Main_t::Register_Me(some<V::Machine_t*> machine)
     {
+        SKYLIB_ASSERT_SOME(machine);
+
         String_t class_name = Class_Name();
 
         #define STATIC(STATIC_NAME_, WAITS_FOR_FRAME_, RETURN_TYPE_, STATIC_, ...)  \
@@ -126,7 +124,7 @@ namespace doticu_npcp {
 
     Bool_t Main_t::Is_Active()
     {
-        return Consts_t::NPCP::Mod() != nullptr;
+        return !!Consts_t::NPCP::Mod();
     }
 
     Bool_t Main_t::Is_Initialized()
@@ -155,8 +153,9 @@ namespace doticu_npcp {
         public:
             void operator ()(V::Variable_t*)
             {
-                if (!Is_Initialized() && Has_Requirements()) {
+                if (Is_Active() && !Is_Initialized() && Has_Requirements()) {
                     Vars_t::Initialize();
+                    MCM::Main_t::Initialize();
 
                     Consts_t::NPCP::Global::Is_Initialized()->Bool(true);
 
@@ -177,6 +176,13 @@ namespace doticu_npcp {
         V::Utils_t::Wait_Out_Of_Menu(1.0f, new Wait_Callback_t());
     }
 
+    void Main_t::Before_Save()
+    {
+        if (Is_Active() && Is_Initialized() && Has_Requirements()) {
+            MCM::Main_t::Before_Save();
+        }
+    }
+
     void Main_t::After_Load()
     {
         struct Wait_Callback_t : public V::Callback_t
@@ -184,7 +190,7 @@ namespace doticu_npcp {
         public:
             void operator ()(V::Variable_t*)
             {
-                if (Is_Initialized() && Has_Requirements()) {
+                if (Is_Active() && Is_Initialized() && Has_Requirements()) {
                     if (Try_Update()) {
                         const Version_t<u16> version = Vars_t::Version();
                         std::string note =
@@ -193,6 +199,8 @@ namespace doticu_npcp {
                             std::to_string(version.minor) + "." +
                             std::to_string(version.patch);
                         UI_t::Notification(note.c_str()); // will want to save this message in logs.
+
+                        MCM::Main_t::After_Load();
                     }
                     /*
                         Modules::Keys_t::Self()->On_Load_Mod();
@@ -215,6 +223,7 @@ namespace doticu_npcp {
         const Version_t<u16> current_version = Consts_t::NPCP::Version::Current();
         const Version_t<u16> installed_version = Vars_t::Version();
         if (installed_version < current_version) {
+            // apply updates here
             Vars_t::Version(current_version);
             return true;
         } else {

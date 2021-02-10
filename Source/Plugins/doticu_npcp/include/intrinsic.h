@@ -14,9 +14,6 @@
 namespace doticu_skylib {}
 namespace skylib = doticu_skylib;
 
-namespace doticu_mcmlib {}
-namespace mcmlib = doticu_mcmlib;
-
 namespace doticu_npcp {
 
     using u8                        = skylib::u8;
@@ -49,6 +46,9 @@ namespace doticu_npcp {
     template <typename T>
     using Vector_t                  = skylib::Vector_t<T>;
 
+    template <typename ...Ts>
+    using Callback_i                = skylib::Callback_i<Ts...>;
+
     template <typename T>
     using Version_t                 = skylib::Version_t<T>;
 
@@ -68,6 +68,7 @@ namespace doticu_npcp {
     using Faction_t                 = skylib::Faction_t;
     using Faction_And_Rank_t        = skylib::Faction_And_Rank_t;
     using Form_t                    = skylib::Form_t;
+    using Form_ID_t                 = skylib::Form_ID_t;
     using Form_List_t               = skylib::Form_List_t;
     using Furniture_t               = skylib::Furniture_t;
     using Game_t                    = skylib::Game_t;
@@ -96,6 +97,7 @@ namespace doticu_npcp {
     using Perk_t                    = skylib::Perk_t;
     using Player_t                  = skylib::Player_t;
     using Quest_t                   = skylib::Quest_t;
+    using Raw_Form_ID_t             = skylib::Raw_Form_ID_t;
     using Reference_t               = skylib::Reference_t;
     using Reference_Handle_t        = skylib::Reference_Handle_t;
     using Spell_t                   = skylib::Spell_t;
@@ -128,3 +130,6 @@ namespace doticu_npcp {
     }
 
 }
+
+namespace doticu_mcmlib {}
+namespace mcmlib = doticu_mcmlib;

@@ -31,7 +31,7 @@ namespace doticu_npcp {
         static String_t             Class_Name();
         static some<V::Class_t*>    Class();
         static some<V::Object_t*>   Object();
-        static void                 Register_Me(V::Machine_t* machine);
+        static void                 Register_Me(some<V::Machine_t*> machine);
 
     public:
         static Bool_t Is_Active();
@@ -40,6 +40,7 @@ namespace doticu_npcp {
 
     public:
         static void Initialize();
+        static void Before_Save();
         static void After_Load();
 
     public:
