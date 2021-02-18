@@ -221,9 +221,6 @@
     <ClInclude Include="include\outfit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\xlist.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\xdata.h">
       <Filter>Header Files</Filter>
     </ClInclude>

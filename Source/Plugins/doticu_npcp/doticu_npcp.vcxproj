@@ -187,7 +187,6 @@
     <ClInclude Include="include\utils.h" />
     <ClInclude Include="include\object_ref.h" />
     <ClInclude Include="include\xdata.h" />
-    <ClInclude Include="include\xlist.h" />
     <ClInclude Include="include\types.h" />
   </ItemGroup>
   <ItemGroup>

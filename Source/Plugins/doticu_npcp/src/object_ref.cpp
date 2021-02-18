@@ -41,150 +41,6 @@ namespace doticu_npcp { namespace Object_Ref {
         return class_info;
     }
 
-    BContainer_t *Get_BContainer(TESObjectREFR *obj) {
-        if (!obj || !obj->baseForm) {
-            return NULL;
-        } else {
-            return DYNAMIC_CAST(obj->baseForm, TESForm, TESContainer);
-        }
-    }
-
-    XContainer_t *Get_XContainer(TESObjectREFR *obj, bool do_create) {
-        if (obj) {
-            XList::Validate_No_Count(&obj->extraData);
-            if (do_create) {
-                Init_Container_If_Needed(obj);
-            }
-            XContainer_t* xcontainer = static_cast<XContainer_t*>
-                (obj->extraData.GetByType(kExtraData_ContainerChanges));
-            if (xcontainer) {
-                Init_Container_If_Needed(obj);
-            }
-            return xcontainer;
-        } else {
-            return nullptr;
-        }
-    }
-
-    void Validate_XContainer(Reference_t* ref)
-    {
-        if (ref) {
-            XList::Validate_No_Count(&ref->extraData);
-            XContainer_t* xcontainer = Get_XContainer(ref, false);
-            if (xcontainer) {
-                if (!xcontainer->changes) {
-                    Init_Container_If_Needed(ref);
-                    NPCP_ASSERT(xcontainer->changes);
-                }
-                xcontainer->changes->Validate();
-            }
-        }
-    }
-
-    Worldspace_t* Worldspace(Reference_t* ref)
-    {
-        static auto worldspace = reinterpret_cast
-            <Worldspace_t* (*)(Reference_t*)>
-            (RelocationManager::s_baseAddr + Offsets::Reference::WORLDSPACE);
-
-        if (ref) {
-            return worldspace(ref);
-        } else {
-            return nullptr;
-        }
-    }
-
-    Location_t* Location(Reference_t* ref)
-    {
-        if (ref) {
-            Cell_t* cell = Cell(ref);
-            if (cell) {
-                ExtraLocation* xlocation = static_cast<ExtraLocation*>
-                    (reinterpret_cast<XList_t*>(&cell->unk048)->GetByType(kExtraData_Location));
-                return xlocation ? xlocation->location : nullptr;
-            } else {
-                return nullptr;
-            }
-        } else {
-            return nullptr;
-        }
-    }
-
-    Cell_t* Cell(Reference_t* ref)
-    {
-        if (ref) {
-            return ref->parentCell;
-        } else {
-            return nullptr;
-        }
-    }
-
-    BEntry_t *Get_BEntry(TESObjectREFR *obj, TESForm *form) {
-        if (!obj || !form) {
-            return NULL;
-        }
-
-        BContainer_t *bcontainer = Get_BContainer(obj);
-        if (bcontainer) {
-            for (u64 idx = 0; idx < bcontainer->numEntries; idx += 1) {
-                BEntry_t *bentry = bcontainer->entries[idx];
-                if (bentry && bentry->form == form) {
-                    return bentry;
-                }
-            }
-        }
-
-        return NULL;
-    }
-
-    XEntry_t *Get_XEntry(TESObjectREFR *obj, TESForm *form, bool do_create) {
-        if (!obj || !form) {
-            return NULL;
-        }
-
-        XContainer_t *xcontainer = Get_XContainer(obj, do_create);
-        if (do_create) {
-            NPCP_ASSERT(xcontainer);
-        }
-
-        if (xcontainer) {
-            for (XEntries_t::Iterator it = xcontainer->changes->xentries->Begin(); !it.End(); ++it) {
-                XEntry_t *entry = it.Get();
-                if (entry && entry->form == form) {
-                    return entry;
-                }
-            }
-            if (do_create) {
-                XEntry_t *entry_new = XEntry_t::Create(form, 0);
-                xcontainer->Add_XEntry(entry_new, obj);
-                return entry_new;
-            }
-        }
-
-        return NULL;
-    }
-
-    void Add_XEntry(Reference_t* ref, XEntry_t* to_add) {
-        if (ref && to_add) {
-            XContainer_t* xcontainer_obj = Get_XContainer(ref, true);
-            NPCP_ASSERT(xcontainer_obj);
-            xcontainer_obj->Add_XEntry(to_add, ref);
-        }
-    }
-
-    void Remove_XEntry(Reference_t* ref, XEntry_t* to_remove) {
-        if (ref && to_remove) {
-            XContainer_t* xcontainer = Get_XContainer(ref, false);
-            if (xcontainer) {
-                xcontainer->Remove_XEntry(to_remove);
-            }
-        }
-    }
-
-    bool Has_XEntry(TESObjectREFR *obj, TESForm *form) {
-        return Get_XEntry(obj, form, false) != NULL;
-    }
-
     Bool_t Has_Similar_XList(Reference_t* ref, Form_t* form, XList_t* xlist_to_compare)
     {
         if (ref) {
@@ -223,53 +79,9 @@ namespace doticu_npcp { namespace Object_Ref {
         }
     }
 
-    Int_t Get_XEntry_Count(Reference_t* obj, Form_t* form)
-    {
-        if (obj && form) {
-            XEntry_t* xentry = Get_XEntry(obj, form, false);
-            if (xentry) {
-                return xentry->Delta_Count();
-            } else {
-                return 0;
-            }
-        } else {
-            return 0;
-        }
-    }
-
     Int_t Get_Entry_Count(Reference_t* obj, Form_t* form)
     {
         return Get_BEntry_Count(obj, form) + Get_XEntry_Count(obj, form);
-    }
-
-    const char *Get_Base_Name(TESObjectREFR *ref_object) {
-        if (!ref_object || !ref_object->baseForm) {
-            return "";
-        }
-
-        return Form::Get_Name(ref_object->baseForm);
-    }
-
-    const char *Get_Ref_Name(TESObjectREFR *ref_object) {
-        if (!ref_object) {
-            return "";
-        }
-
-        const char *name = CALL_MEMBER_FN(ref_object, GetReferenceName)();
-        if (!name) {
-            return "";
-        }
-
-        return name;
-    }
-
-    const char *Get_Name(TESObjectREFR *ref_object) {
-        const char *str_name = Get_Ref_Name(ref_object);
-        if (str_name[0] != NULL) {
-            return str_name;
-        } else {
-            return Get_Base_Name(ref_object);
-        }
     }
 
     // this appears to indicate if the object is stolen/stealable
@@ -279,30 +91,6 @@ namespace doticu_npcp { namespace Object_Ref {
         }
 
         return CALL_MEMBER_FN(ref_object, IsOffLimits)();
-    }
-
-    bool Is_Quest_Item(TESObjectREFR *obj) {
-        if (!obj || !obj->extraData.HasType(kExtraData_AliasInstanceArray)) {
-            return false;
-        }
-
-        ExtraAliasInstanceArray *xaliases = (ExtraAliasInstanceArray *)obj->extraData.GetByType(kExtraData_AliasInstanceArray);
-        if (!xaliases) {
-            return false;
-        }
-
-        // just the fact that it has this extra data does not make it a quest item.
-        // it appears to be a list of all this reference's aliases and their respective quests
-        for (u64 idx = 0, count = xaliases->aliases.count; idx < count; idx += 1) {
-            ExtraAliasInstanceArray::AliasInfo *info = xaliases->aliases[idx];
-            if (info && info->alias) {
-                if (Utils::Is_Bit_On(info->alias->flags, 2)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 
     bool Is_Worn(TESObjectREFR *obj, TESForm *form) {
@@ -690,105 +478,6 @@ namespace doticu_npcp { namespace Object_Ref {
         }
     }
 
-    void Log_XContainer(TESObjectREFR *ref_object) {
-        if (!ref_object) {
-            _MESSAGE("Log_XContainer: Not an object.");
-            return;
-        }
-
-        const char *str_object = Get_Name(ref_object);
-        if (str_object && str_object[0]) {
-            _MESSAGE("Log_XContainer: %s", str_object);
-        } else {
-            _MESSAGE("Log_XContainer: (no name)");
-        }
-
-        XContainer_t *xcontainer = Object_Ref::Get_XContainer(ref_object, false);
-        if (xcontainer) {
-            for (XEntries_t::Iterator it_xentry = xcontainer->changes->xentries->Begin(); !it_xentry.End(); ++it_xentry) {
-                XEntry_t *xentry = it_xentry.Get();
-                if (xentry) {
-                    xentry->Log("    ");
-                }
-            }
-        }
-
-        _MESSAGE("End of Log_XContainer.");
-    }
-
-    void Log_XList(TESObjectREFR *obj) {
-        if (!obj) {
-            _MESSAGE("Log_XList: Not an object.");
-            return;
-        }
-
-        const char *name = Get_Name(obj);
-        if (name && name[0]) {
-            _MESSAGE("Logging XList: %s", name);
-        } else {
-            _MESSAGE("Logging XList: (no name)");
-        }
-
-        XList_t *xlist = &obj->extraData;
-        XList::Log(xlist, "    ");
-
-        _MESSAGE("End of XList.");
-    }
-
-    void Move_To_Orbit(TESObjectREFR *obj, TESObjectREFR *target, float radius, float angle_degree) {
-        if (!obj || !target) {
-            return;
-        }
-
-        UInt32 target_handle = target->CreateRefHandle();
-        if (target_handle == *g_invalidRefHandle) {
-            return;
-        }
-
-        TESObjectCELL *target_cell = target->parentCell;
-        if (!target_cell) {
-            return;
-        }
-
-        TESWorldSpace *target_world = CALL_MEMBER_FN(target, GetWorldspace)();
-
-        float angle_radians = target->rot.z - (angle_degree * DOTICU_NPCP_PI / 180.0f);
-        NiPoint3 obj_pos(
-            target->pos.x + radius * sin(angle_radians),
-            target->pos.y + radius * cos(angle_radians),
-            target->pos.z
-        );
-        NiPoint3 obj_rot(
-            0.0,
-            0.0,
-            target->rot.z + ((180.0f - angle_degree) * DOTICU_NPCP_PI / 180.0f)
-        );
-
-        MoveRefrToPosition(obj, &target_handle, target_cell, target_world, &obj_pos, &obj_rot);
-    }
-
-    float Get_Distance(TESObjectREFR *obj, TESObjectREFR *target) {
-        if (!obj || !target) {
-            return -1.0;
-        }
-
-        float dist_x;
-        if (obj->pos.x > target->pos.x) {
-            dist_x = obj->pos.x - target->pos.x;
-        } else {
-            dist_x = target->pos.x - obj->pos.x;
-        }
-
-        float dist_y;
-        if (obj->pos.y > target->pos.y) {
-            dist_y = obj->pos.y - target->pos.y;
-        } else {
-            dist_y = target->pos.y - obj->pos.y;
-        }
-
-        return sqrt(pow(dist_x, 2) + pow(dist_y, 2));
-    }
-
     bool Is_Near_Player(TESObjectREFR *obj, float max_radius) {
         Actor *actor_player = *g_thePlayer;
         TESObjectCELL *cell_player = actor_player->parentCell;
@@ -857,87 +546,6 @@ namespace doticu_npcp { namespace Object_Ref {
         }
     }
 
-    void Block_Activation(Reference_t* ref)
-    {
-        if (ref) {
-            ExtraFlags* xflags = static_cast<ExtraFlags*>(ref->extraData.GetByType(kExtraData_Flags));
-            if (xflags) {
-                xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_ACTIVATION);
-            } else {
-                xflags = XData::Create_Flags();
-                if (xflags) {
-                    ref->extraData.Add(kExtraData_Flags, xflags);
-                    xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_ACTIVATION);
-                }
-            }
-        }
-    }
-
-    void Unblock_Activation(Reference_t* ref)
-    {
-        if (ref) {
-            ExtraFlags* xflags = static_cast<ExtraFlags*>(ref->extraData.GetByType(kExtraData_Flags));
-            if (xflags) {
-                xflags->flags = Utils::Bit_Off(xflags->flags, ExtraFlags::BLOCKS_ACTIVATION);
-            }
-        }
-    }
-
-    void Block_Player_Activation(Reference_t* ref)
-    {
-        if (ref) {
-            ExtraFlags* xflags = static_cast<ExtraFlags*>(ref->extraData.GetByType(kExtraData_Flags));
-            if (xflags) {
-                xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_PLAYER_ACTIVATION);
-            } else {
-                xflags = XData::Create_Flags();
-                if (xflags) {
-                    ref->extraData.Add(kExtraData_Flags, xflags);
-                    xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_PLAYER_ACTIVATION);
-                }
-            }
-        }
-    }
-
-    void Unblock_Player_Activation(Reference_t* ref)
-    {
-        if (ref) {
-            ExtraFlags* xflags = static_cast<ExtraFlags*>(ref->extraData.GetByType(kExtraData_Flags));
-            if (xflags) {
-                xflags->flags = Utils::Bit_Off(xflags->flags, ExtraFlags::BLOCKS_PLAYER_ACTIVATION);
-            }
-        }
-    }
-
-    void Block_All_Activation(Reference_t* ref)
-    {
-        if (ref) {
-            ExtraFlags* xflags = static_cast<ExtraFlags*>(ref->extraData.GetByType(kExtraData_Flags));
-            if (xflags) {
-                xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_ACTIVATION);
-                xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_PLAYER_ACTIVATION);
-            } else {
-                xflags = XData::Create_Flags();
-                if (xflags) {
-                    ref->extraData.Add(kExtraData_Flags, xflags);
-                    xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_ACTIVATION);
-                    xflags->flags = Utils::Bit_On(xflags->flags, ExtraFlags::BLOCKS_PLAYER_ACTIVATION);
-                }
-            }
-        }
-    }
-
-    void Unblock_All_Activation(Reference_t* ref)
-    {
-        if (ref) {
-            ExtraFlags* xflags = static_cast<ExtraFlags*>(ref->extraData.GetByType(kExtraData_Flags));
-            if (xflags) {
-                xflags->flags = Utils::Bit_Off(xflags->flags, ExtraFlags::BLOCKS_ACTIVATION);
-                xflags->flags = Utils::Bit_Off(xflags->flags, ExtraFlags::BLOCKS_PLAYER_ACTIVATION);
-            }
-        }
-    }
-
     void Block_Activation(Reference_t* ref, Bool_t do_block, Virtual_Callback_i* vcallback)
     {
         struct Arguments : public Virtual_Arguments_t {
@@ -994,24 +602,6 @@ namespace doticu_npcp { namespace Object_Ref {
         }*/
     }
 
-    void Init_Container_If_Needed(Reference_t* ref)
-    {
-        if (ref) {
-            XList::Validate_No_Count(&ref->extraData);
-            XContainer_t* xcontainer = static_cast<XContainer_t*>
-                (ref->extraData.GetByType(kExtraData_ContainerChanges));
-            if (!xcontainer || !xcontainer->changes || !xcontainer->changes->xentries) {
-                Weapon_t* blank_weapon = Consts::Blank_Weapon();
-                ref->Equip_Weapon(blank_weapon, 0, false, 0, 0);
-                XEntry_t* xentry = Get_XEntry(ref, blank_weapon, false);
-                if (xentry) {
-                    Remove_XEntry(ref, xentry);
-                    XEntry_t::Destroy(xentry);
-                }
-            }
-        }
-    }
-
     void Open_Container(Reference_t* ref, Papyrus::Virtual_Callback_i** callback)
     {
         using namespace Papyrus;
@@ -1034,33 +624,6 @@ namespace doticu_npcp { namespace Object_Ref {
         } arguments(ref);
 
         Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(), "doticu_npcp_funcs", "Open_Container", &arguments, callback);
-    }
-
-    void Activate(Reference_t* ref,
-                  Reference_t* activator,
-                  Bool_t do_default_processing_only,
-                  Papyrus::Virtual_Callback_i** callback)
-    {
-        using namespace Papyrus;
-
-        class Arguments : public Virtual_Arguments_t {
-        public:
-            Reference_t* activator;
-            Bool_t do_default_processing_only;
-            Arguments(Reference_t* activator, Bool_t do_default_processing_only) :
-                activator(activator), do_default_processing_only(do_default_processing_only)
-            {
-            }
-            Bool_t operator()(Arguments_t* arguments)
-            {
-                arguments->Resize(2);
-                arguments->At(0)->Pack(activator);
-                arguments->At(1)->Bool(do_default_processing_only);
-                return true;
-            }
-        } arguments(activator, do_default_processing_only);
-
-        Virtual_Machine_t::Self()->Call_Method(ref, "ObjectReference", "Activate", &arguments, callback);
     }
 
     Reference_t* Place_At_Me(Reference_t* me,
@@ -1131,78 +694,6 @@ namespace doticu_npcp { namespace Object_Ref {
         return container;
     }
 
-    void Delete_Safe(Reference_t* ref)
-    {
-        using namespace Papyrus;
-
-        if (ref) {
-            ref->Disable();
-            Enable(ref);
-            Virtual_Machine_t::Self()->Call_Method(ref, "ObjectReference", "Delete");
-        }
-    }
-
-    void Delete_Unsafe(Reference_t* ref)
-    {
-        using namespace Papyrus;
-
-        if (ref) {
-            ref->Disable();
-            ref->flags = Utils::Bit_Off(ref->flags, 10);
-            Virtual_Machine_t::Self()->Call_Method(ref, "ObjectReference", "Delete");
-        }
-    }
-
-    void Enable(Reference_t* ref, Bool_t do_fade_in, Virtual_Callback_i** callback)
-    {
-        NPCP_ASSERT(ref);
-
-        class Arguments : public Virtual_Arguments_t {
-        public:
-            Bool_t do_fade_in;
-            Arguments(Bool_t do_fade_in) :
-                do_fade_in(do_fade_in)
-            {
-            }
-            Bool_t operator()(Arguments_t* arguments)
-            {
-                arguments->Resize(1);
-                arguments->At(0)->Bool(do_fade_in);
-                return true;
-            }
-        } arguments(do_fade_in);
-
-        Virtual_Machine_t::Self()->Call_Method(
-            ref,
-            "ObjectReference",
-            "Enable",
-            &arguments,
-            callback
-        );
-    }
-
-    void Disable(Reference_t* ref, Bool_t do_fade_out, Virtual_Callback_i** callback)
-    {
-        NPCP_ASSERT(ref);
-
-        class Arguments : public Virtual_Arguments_t {
-        public:
-            Bool_t do_fade_out;
-            Arguments(Bool_t do_fade_out) :
-                do_fade_out(do_fade_out)
-            {
-            }
-            Bool_t operator()(Arguments_t* arguments)
-            {
-                arguments->Resize(1);
-                arguments->At(0)->Bool(do_fade_out);
-                return true;
-            }
-        } arguments(do_fade_out);
-
-        Virtual_Machine_t::Self()->Call_Method(ref, "ObjectReference", "Disable", &arguments, callback);
-    }
-
     bool Is_In_Interior_Cell(Reference_t* ref)
     {
         if (ref) {
@@ -1219,12 +710,6 @@ namespace doticu_npcp { namespace Object_Ref {
         } else {
             return false;
         }
-    }
-
-    UInt32 Ref_Count(Reference_t* ref)
-    {
-        NPCP_ASSERT(ref);
-        return ref->handleRefObject.m_uiRefCount & 0x3FF;
     }
 
     void Add_Item_And_Callback(Reference_t* ref,
@@ -1484,27 +969,6 @@ namespace doticu_npcp { namespace Object_Ref {
             &arguments,
             vcallback ? &vcallback : nullptr
         );
-    }
-
-    void Owner(Reference_t* ref, Actor_Base_t* owner)
-    {
-        if (ref) {
-            ExtraOwnership* xowner = static_cast<ExtraOwnership*>
-                (ref->extraData.GetByType(kExtraData_Ownership));
-            if (xowner) {
-                if (owner) {
-                    xowner->owner = static_cast<Form_t*>(owner);
-                } else {
-                    ref->extraData.Remove(kExtraData_Ownership, xowner);
-                    XData::Destroy(xowner);
-                }
-            } else {
-                if (owner) {
-                    xowner = XData::Create_Ownership(static_cast<Form_t*>(owner));
-                    ref->extraData.Add(kExtraData_Ownership, xowner);
-                }
-            }
-        }
     }
 
     Inventory_t::Inventory_t(Reference_t* reference)
