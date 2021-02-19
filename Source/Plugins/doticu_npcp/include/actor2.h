@@ -4,23 +4,8 @@
 
 #pragma once
 
-#include "offsets.h"
-#include "types.h"
-#include "papyrus.h"
-#include "object_ref.h"
-
 namespace doticu_npcp { namespace Actor2 {
 
-    using namespace Object_Ref;
-    using namespace Papyrus;
-
-    const char *Get_Base_Name(Actor *actor);
-    const char *Get_Ref_Name(Actor *actor);
-    const char *Get_Name(Actor *actor);
-
-    Outfit_t* Base_Outfit(Actor_t* actor);
-    void Base_Outfit(Actor_t* actor, Outfit_t* outfit);
-    void Base_Sleep_Outfit(Actor_t* actor, Outfit_t* outfit);
     void Set_Outfit_Basic(Actor_t* actor, Outfit_t* outfit, Bool_t is_sleep_outfit = false, Bool_t allow_bcontainer = true);
     void Set_Outfit(Actor_t* actor, Outfit_t* outfit, Bool_t is_sleep_outfit = false);
 
@@ -65,17 +50,6 @@ namespace doticu_npcp { namespace Actor2 {
 
     bool Has_Same_Head(Actor *actor_a, Actor *actor_b);
 
-    bool Is_Alive(Actor *actor);
-    bool Is_Dead(Actor *actor);
-    bool Is_Loaded(Actor_t *actor);
-    bool Is_Unloaded(Actor_t* actor);
-    bool Is_Unique(Actor_t* actor);
-    bool Is_Generic(Actor_t* actor);
-    bool Is_Aliased_In_Quest(Actor *actor, TESQuest *quest);
-    Bool_t Is_Vampire(Actor_t* actor);
-
-    void Move_To_Orbit(Actor* actor, Reference_t* origin, float radius, float degree);
-
     Actor_Value_Owner_t* Actor_Value_Owner(Actor_t* actor);
     float Get_Actor_Value(Actor *actor, const char *name);
     float Get_Base_Actor_Value(Actor *actor, const char *name);
@@ -83,14 +57,6 @@ namespace doticu_npcp { namespace Actor2 {
     void Set_Actor_Value(Actor *actor, const char *name, float value);
     void Reset_Actor_Value(Actor *actor, const char *name);
     void Log_Actor_Values(Actor *actor);
-
-    Actor_t* Get_Mount(Actor_t* mounter);
-    Actor_t* Get_Mounted_Actor(Actor_t* horse);
-    bool Is_On_Mount(Actor_t* actor);
-
-    Int_t Sex(Actor_t* actor);
-    String_t Sex_String(Actor_t* actor);
-    String_t Race(Actor_t* actor);
 
     void Evaluate_Package(Actor_t* actor, bool unk_01 = false, bool unk_02 = false);
     void Update_3D_Model(Actor_t* actor);
@@ -190,9 +156,3 @@ namespace doticu_npcp { namespace Actor2 {
     Voice_Type_t* Voice_Type(Actor_t* actor);
 
 }}
-
-namespace doticu_npcp { namespace Actor2 { namespace Exports {
-
-    bool Register(VMClassRegistry *registry);
-
-}}}

@@ -18,31 +18,19 @@
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\utils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\outfit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\object_ref.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\form.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\actor2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\string2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\quest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\xlist.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\xdata.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\xentry.cpp">
@@ -54,16 +42,7 @@
     <ClCompile Include="src\game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\xcontainer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\cell.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\papyrus.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\vector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\keys.cpp">
@@ -194,16 +173,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\object_ref.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\utils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\vector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\form.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\actor2.h">
@@ -212,19 +182,10 @@
     <ClInclude Include="include\papyrus.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\string2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\quest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\outfit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\xdata.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\xentry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\types.h">
@@ -234,12 +195,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\game.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\xcontainer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\cell.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\main.h">
@@ -252,9 +207,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\consts.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\offsets.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\codes.h">

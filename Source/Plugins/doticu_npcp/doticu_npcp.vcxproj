@@ -66,7 +66,6 @@
   <ItemGroup>
     <ClCompile Include="src\active_magic_effects.cpp" />
     <ClCompile Include="src\actor_base2.cpp" />
-    <ClCompile Include="src\cell.cpp" />
     <ClCompile Include="src\chests.cpp" />
     <ClCompile Include="src\commands.cpp" />
     <ClCompile Include="src\consts.cpp" />
@@ -90,7 +89,6 @@
     <ClCompile Include="src\outfit.cpp" />
     <ClCompile Include="src\actor2.cpp" />
     <ClCompile Include="src\object_ref.cpp" />
-    <ClCompile Include="src\form.cpp" />
     <ClCompile Include="src\outfit2.cpp" />
     <ClCompile Include="src\packages.cpp" />
     <ClCompile Include="src\papyrus.cpp" />
@@ -116,24 +114,17 @@
     <ClCompile Include="src\topic_infos.cpp" />
     <ClCompile Include="src\types.cpp" />
     <ClCompile Include="src\vars.cpp" />
-    <ClCompile Include="src\vector.cpp" />
-    <ClCompile Include="src\xcontainer.cpp" />
     <ClCompile Include="src\xentry.cpp" />
-    <ClCompile Include="src\string2.cpp" />
-    <ClCompile Include="src\utils.cpp" />
-    <ClCompile Include="src\xdata.cpp" />
     <ClCompile Include="src\xlist.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\active_magic_effects.h" />
     <ClInclude Include="include\actor_base2.h" />
-    <ClInclude Include="include\cell.h" />
     <ClInclude Include="include\chests.h" />
     <ClInclude Include="include\mcm_chests.h" />
     <ClInclude Include="include\codes.h" />
     <ClInclude Include="include\commands.h" />
     <ClInclude Include="include\consts.h" />
-    <ClInclude Include="include\form.h" />
     <ClInclude Include="include\actor2.h" />
     <ClInclude Include="include\form_vector.h" />
     <ClInclude Include="include\funcs.h" />
@@ -154,7 +145,6 @@
     <ClInclude Include="include\mcm_settings.h" />
     <ClInclude Include="include\mcm_settlers.h" />
     <ClInclude Include="include\strings.h" />
-    <ClInclude Include="include\offsets.h" />
     <ClInclude Include="include\outfit2.h" />
     <ClInclude Include="include\packages.h" />
     <ClInclude Include="include\party_alias.h" />
@@ -177,16 +167,10 @@
     <ClInclude Include="include\topic_infos.h" />
     <ClInclude Include="include\ui.h" />
     <ClInclude Include="include\vars.h" />
-    <ClInclude Include="include\xcontainer.h" />
-    <ClInclude Include="include\xentry.h" />
     <ClInclude Include="include\outfit.h" />
     <ClInclude Include="include\papyrus.h" />
     <ClInclude Include="include\quest.h" />
-    <ClInclude Include="include\string2.h" />
-    <ClInclude Include="include\vector.h" />
     <ClInclude Include="include\utils.h" />
-    <ClInclude Include="include\object_ref.h" />
-    <ClInclude Include="include\xdata.h" />
     <ClInclude Include="include\types.h" />
   </ItemGroup>
   <ItemGroup>

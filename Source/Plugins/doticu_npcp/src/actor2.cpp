@@ -2,76 +2,7 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
-#undef max
-
-#include "skse64/GameData.h"
-#include "skse64/GameRTTI.h"
-#include "skse64/PapyrusActor.h"
-
-#include "actor_base2.h"
-#include "actor2.h"
-#include "codes.h"
-#include "consts.h"
-#include "form.h"
-#include "funcs.h"
-#include "object_ref.h"
-#include "outfit.h"
-#include "papyrus.h"
-#include "papyrus.inl"
-#include "ui.h"
-#include "utils.h"
-#include "vector.h"
-#include "xcontainer.h"
-#include "xdata.h"
-#include "xentry.h"
-#include "xlist.h"
-
-#include "party/party_player.h"
-#include "party/party_npcs.h"
-#include "party/party_members.h"
-#include "party/party_member.h"
-
 namespace doticu_npcp { namespace Actor2 {
-
-    const char *Get_Base_Name(Actor *actor) {
-        return Object_Ref::Get_Base_Name(actor);
-    }
-
-    const char *Get_Ref_Name(Actor *actor) {
-        return Object_Ref::Get_Ref_Name(actor);
-    }
-
-    const char *Get_Name(Actor *actor) {
-        return Object_Ref::Get_Name(actor);
-    }
-
-    Outfit_t* Base_Outfit(Actor_t* actor)
-    {
-        if (actor) {
-            Actor_Base_t* base_actor = Dynamic_Base(actor);
-            return base_actor->defaultOutfit;
-        } else {
-            return nullptr;
-        }
-    }
-
-    void Base_Outfit(Actor_t* actor, Outfit_t* outfit)
-    {
-        if (actor) {
-            Actor_Base_t* base_actor = Dynamic_Base(actor);
-            base_actor->defaultOutfit = outfit;
-            base_actor->MarkChanged(0x1000); // Thank you to Ian Patterson of SKSE for how to save the outfit!
-        }
-    }
-
-    void Base_Sleep_Outfit(Actor_t* actor, Outfit_t* outfit)
-    {
-        if (actor) {
-            Actor_Base_t* base_actor = Dynamic_Base(actor);
-            base_actor->sleepOutfit = outfit;
-            base_actor->MarkChanged(0x2000);
-        }
-    }
 
     void Set_Outfit_Basic(Actor_t* actor, Outfit_t* outfit, Bool_t is_sleep_outfit, Bool_t allow_bcontainer)
     {
@@ -726,62 +657,6 @@ namespace doticu_npcp { namespace Actor2 {
         return Actor_Base2::Has_Same_Head(actor_base_a, actor_base_b);
     }
 
-    bool Is_Alive(Actor *actor) {
-        if (!actor) {
-            return false;
-        }
-
-        return !actor->IsDead(1);
-    }
-
-    bool Is_Dead(Actor *actor) {
-        if (!actor) {
-            return false;
-        }
-
-        return actor->IsDead(1);
-    }
-
-    bool Is_Loaded(Actor_t* actor)
-    {
-        return actor && actor->loadedState != nullptr;
-    }
-
-    bool Is_Unloaded(Actor_t* actor)
-    {
-        return actor && actor->loadedState == nullptr;
-    }
-
-    bool Is_Unique(Actor_t* actor)
-    {
-        if (actor) {
-            TESNPC* base_npc = DYNAMIC_CAST(actor->baseForm, TESForm, TESNPC);
-            if (base_npc) {
-                Actor_Base_Data_t* base_data = reinterpret_cast<Actor_Base_Data_t*>(&base_npc->actorData);
-                return base_data->Is_Unique();
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    bool Is_Generic(Actor_t* actor)
-    {
-        if (actor) {
-            TESNPC* base_npc = DYNAMIC_CAST(actor->baseForm, TESForm, TESNPC);
-            if (base_npc) {
-                Actor_Base_Data_t* base_data = reinterpret_cast<Actor_Base_Data_t*>(&base_npc->actorData);
-                return !base_data->Is_Unique();
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
     bool Is_Aliased_In_Quest(Actor* actor, TESQuest* quest)
     {
         if (actor && quest) {
@@ -799,25 +674,6 @@ namespace doticu_npcp { namespace Actor2 {
             }
         } else {
             return false;
-        }
-    }
-
-    Bool_t Is_Vampire(Actor_t* actor)
-    {
-        if (actor) {
-            return actor->Has_Keyword(Consts::Vampire_Keyword());
-        } else {
-            return false;
-        }
-    }
-
-    void Move_To_Orbit(Actor* actor, Reference_t* origin, float radius, float degree)
-    {
-        if (actor && origin) {
-            Object_Ref::Move_To_Orbit(actor, origin, radius, degree);
-            if (Is_Loaded(actor)) {
-                actor->Update_3D_Position();
-            }
         }
     }
 
@@ -938,82 +794,6 @@ namespace doticu_npcp { namespace Actor2 {
         LOG_ACTOR_VALUE("Speechcraft");
 
         #undef LOG_ACTOR_VALUE
-    }
-
-    Actor_t* Get_Mount(Actor_t* mounter)
-    {
-        if (mounter) {
-            XData::XInteraction* xinteraction = (XData::XInteraction*)mounter->extraData.GetByType(kExtraData_Interaction);
-            if (xinteraction && xinteraction->interaction) {
-                NiPointer<TESObjectREFR> interactee = nullptr;
-                LookupREFRByHandle(xinteraction->interaction->interactee_handle, interactee);
-                return (Actor_t*)(TESObjectREFR*)interactee;
-            } else {
-                return nullptr;
-            }
-        } else {
-            return nullptr;
-        }
-    }
-
-    Actor_t* Get_Mounted_Actor(Actor_t* horse)
-    {
-        if (horse) {
-            XData::XInteraction* xinteraction = (XData::XInteraction*)horse->extraData.GetByType(kExtraData_Interaction);
-            if (xinteraction && xinteraction->interaction) {
-                NiPointer<TESObjectREFR> interactor = nullptr;
-                LookupREFRByHandle(xinteraction->interaction->interactor_handle, interactor);
-                return (Actor_t*)(TESObjectREFR*)interactor;
-            } else {
-                return nullptr;
-            }
-        } else {
-            return nullptr;
-        }
-    }
-
-    bool Is_On_Mount(Actor_t* actor)
-    {
-        return actor && Get_Mount(actor) != nullptr;
-    }
-
-    Int_t Sex(Actor_t* actor)
-    {
-        if (actor && actor->baseForm) {
-            return CALL_MEMBER_FN(static_cast<TESNPC*>(actor->baseForm), GetSex)();
-        } else {
-            return ~0;
-        }
-    }
-
-    String_t Sex_String(Actor_t* actor)
-    {
-        static const String_t male = String_t("male");
-        static const String_t female = String_t("female");
-        static const String_t none = String_t("none");
-        static const String_t invalid = String_t("");
-
-        NPCP_ASSERT(male && female && none && invalid);
-
-        Int_t sex = Sex(actor);
-        if (sex == CODES::SEX::MALE) {
-            return male;
-        } else if (sex == CODES::SEX::FEMALE) {
-            return female;
-        } else if (sex == CODES::SEX::NONE) {
-            return none;
-        } else {
-            return invalid;
-        }
-    }
-
-    String_t Race(Actor_t* actor)
-    {
-        if (actor && actor->race) {
-            return actor->race->fullName.name;
-        } else {
-            return "";
-        }
     }
 
     void Evaluate_Package(Actor_t* actor, bool unk_01, bool unk_02)
