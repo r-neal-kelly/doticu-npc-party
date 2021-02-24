@@ -58,10 +58,8 @@ namespace doticu_npcp { namespace Actor2 {
     void Reset_Actor_Value(Actor *actor, const char *name);
     void Log_Actor_Values(Actor *actor);
 
-    void Evaluate_Package(Actor_t* actor, bool unk_01 = false, bool unk_02 = false);
     void Update_3D_Model(Actor_t* actor);
     void Fully_Update_3D_Model(Actor_t* actor);
-    void Queue_Ni_Node_Update(Actor_t* actor, bool do_update_weight = false);
     
     XFactions_t* XFactions(Actor_t* actor, bool do_create = false);
     BFaction_Ranks_t* BFaction_Ranks(Actor_t* actor);
@@ -82,35 +80,10 @@ namespace doticu_npcp { namespace Actor2 {
     void Factions_And_Ranks(Actor_t* actor, Factions_And_Ranks_t& results, Int_t min_rank = -128, Int_t max_rank = 127);
     Faction_t* Crime_Faction(Actor_t* actor);
 
-    void Join_Player_Team(Actor_t* actor, Bool_t allow_favors = true);
-    void Leave_Player_Team(Actor_t* actor);
-    Bool_t Is_Player_Teammate(Actor_t* actor);
-    void Talks_To_Player(Actor_t* actor, Bool_t can_talk);
-    Bool_t Can_Talk_To_Player(Actor_t* actor);
-    Bool_t Cant_Talk_To_Player(Actor_t* actor);
-    Bool_t Race_Can_Talk_To_Player(Actor_t* actor);
-    Bool_t Race_Cant_Talk_To_Player(Actor_t* actor);
-
-    Bool_t Is_AI_Enabled(Actor_t* actor);
-    void Enable_AI(Actor_t* actor);
-    void Disable_AI(Actor_t* actor);
-    void Reset_AI(Actor_t* actor, Virtual_Callback_i* vcallback = nullptr);
-    
-    Bool_t Is_Ghost(Actor_t* actor);
-    void Ghostify(Actor_t* actor);
-    void Unghostify(Actor_t* actor);
-    void Set_Ghost(Actor_t* actor, Bool_t is_ghost, Virtual_Callback_i* vcallback = nullptr);
-
     void Enable_Havok_Collision(Actor_t* actor);
     void Disable_Havok_Collision(Actor_t* actor);
 
-    void Ignore_Friendly_Hits(Actor_t* actor);
-    void Notice_Friendly_Hits(Actor_t* actor);
-    void Show_On_Stealth_Eye(Actor_t* actor);
-    void Hide_From_Stealth_Eye(Actor_t* actor);
-
     Bool_t Is_Moving(Actor_t* actor);
-    void Stop_Movement(Actor_t* actor);
     Bool_t Has_Weapon_Sheathed(Actor_t* actor);
     Bool_t Has_Weapon_Drawn(Actor_t* actor);
 
@@ -132,9 +105,6 @@ namespace doticu_npcp { namespace Actor2 {
     void Update_Equipment(Actor_t* actor, Callback_t<Actor_t*>* user_callback = nullptr);
 
     void Stop_If_Playing_Music(Actor_t* actor);
-
-    Relationship_t::Rank_e Relationship_Rank(Actor_t* actor, Actor_t* other);
-    void Relationship_Rank(Actor_t* actor, Actor_t* other, Relationship_t::Rank_e rank);
 
     Bool_t Has_Magic_Effect(Actor_t* actor, Magic_Effect_t* magic_effect);
 

@@ -796,17 +796,6 @@ namespace doticu_npcp { namespace Actor2 {
         #undef LOG_ACTOR_VALUE
     }
 
-    void Evaluate_Package(Actor_t* actor, bool unk_01, bool unk_02)
-    {
-        using func_type = void(*)(Actor_t*, bool, bool);
-        static func_type func = reinterpret_cast<func_type>
-            (RelocationManager::s_baseAddr + Offsets::Actor::EVALUATE_PACKAGE);
-
-        if (actor) {
-            return func(actor, unk_01, unk_02);
-        }
-    }
-
     void Update_3D_Model(Actor_t* actor)
     {
         using func_type = void(*)(ActorProcessManager*, Actor_t*);
@@ -830,16 +819,6 @@ namespace doticu_npcp { namespace Actor2 {
                 1 << Actor_t2::Update_3D_Flags::SCALE_3D |
                 1 << Actor_t2::Update_3D_Flags::SKELETON_3D;
             Update_3D_Model(actor);
-        }
-    }
-
-    void Queue_Ni_Node_Update(Actor_t* actor, bool do_update_weight)
-    {
-        static auto queue_ni_node_update = reinterpret_cast
-            <void (*)(Actor_t*, bool)>
-            (RelocationManager::s_baseAddr + Offsets::Actor::QUEUE_NI_NODE_UPDATE);
-        if (actor) {
-            queue_ni_node_update(actor, do_update_weight);
         }
     }
 
@@ -1185,212 +1164,6 @@ namespace doticu_npcp { namespace Actor2 {
         return crime_faction;
     }
 
-    void Join_Player_Team(Actor_t* actor, Bool_t allow_favors)
-    {
-        if (actor) {
-            if (Utils::Is_Bit_Off(actor->flags1, Actor_t2::IS_PLAYER_TEAMMATE)) {
-                actor->flags1 = Utils::Bit_On(actor->flags1, Actor_t2::IS_PLAYER_TEAMMATE);
-
-                Party::Player_t::Self()->Player_Character()->numTeammates += 1; // necessary to get quick commands to work
-            }
-            if (allow_favors && Utils::Is_Bit_Off(actor->flags2, Actor_t2::DOES_FAVORS)) {
-                actor->flags2 = Utils::Bit_On(actor->flags2, Actor_t2::DOES_FAVORS);
-            }
-        }
-    }
-
-    void Leave_Player_Team(Actor_t* actor)
-    {
-        if (actor) {
-            if (Utils::Is_Bit_On(actor->flags1, Actor_t2::IS_PLAYER_TEAMMATE)) {
-                actor->flags1 = Utils::Bit_Off(actor->flags1, Actor_t2::IS_PLAYER_TEAMMATE);
-
-                UInt32* teammate_count = &Party::Player_t::Self()->Player_Character()->numTeammates;
-                if (*teammate_count > 0) {
-                    *teammate_count -= 1;
-                }
-            }
-            if (Utils::Is_Bit_On(actor->flags2, Actor_t2::DOES_FAVORS)) {
-                actor->flags2 = Utils::Bit_Off(actor->flags2, Actor_t2::DOES_FAVORS);
-            }
-        }
-    }
-
-    Bool_t Is_Player_Teammate(Actor_t* actor)
-    {
-        if (actor) {
-            return Utils::Is_Bit_On(actor->flags1, Actor_t2::IS_PLAYER_TEAMMATE);
-        } else {
-            return false;
-        }
-    }
-
-    void Talks_To_Player(Actor_t* actor, Bool_t can_talk)
-    {
-        if (actor) {
-            ExtraCanTalkToPlayer* xcan_talk = static_cast<ExtraCanTalkToPlayer*>
-                (actor->extraData.GetByType(kExtraData_CanTalkToPlayer));
-            if (xcan_talk) {
-                xcan_talk->can_talk = can_talk;
-            } else {
-                xcan_talk = XData::Create_Can_Talk_To_Player(can_talk);
-                if (xcan_talk) {
-                    actor->extraData.Add(kExtraData_CanTalkToPlayer, xcan_talk);
-                }
-            }
-        }
-    }
-
-    Bool_t Can_Talk_To_Player(Actor_t* actor)
-    {
-        if (actor) {
-            ExtraCanTalkToPlayer* xcan_talk = static_cast<ExtraCanTalkToPlayer*>
-                (actor->extraData.GetByType(kExtraData_CanTalkToPlayer));
-            if (xcan_talk) {
-                return xcan_talk->can_talk;
-            } else {
-                if (actor->race) {
-                    return (actor->race->data.raceFlags & TESRace::kRace_AllowPCDialogue) != 0;
-                } else {
-                    return false;
-                }
-            }
-        } else {
-            return false;
-        }
-    }
-
-    Bool_t Cant_Talk_To_Player(Actor_t* actor)
-    {
-        if (actor) {
-            return !Can_Talk_To_Player(actor);
-        } else {
-            return false;
-        }
-    }
-
-    Bool_t Race_Can_Talk_To_Player(Actor_t* actor)
-    {
-        if (actor && actor->race) {
-            return (actor->race->data.raceFlags & TESRace::kRace_AllowPCDialogue) != 0;
-        } else {
-            return false;
-        }
-    }
-
-    Bool_t Race_Cant_Talk_To_Player(Actor_t* actor)
-    {
-        if (actor && actor->race) {
-            return (actor->race->data.raceFlags & TESRace::kRace_AllowPCDialogue) == 0;
-        } else {
-            return false;
-        }
-    }
-
-    Bool_t Is_AI_Enabled(Actor_t* actor)
-    {
-        if (actor) {
-            return Utils::Is_Bit_On(actor->flags1, Actor_t2::PROCESS_AI);
-        } else {
-            return false;
-        }
-    }
-
-    void Enable_AI(Actor_t* actor)
-    {
-        if (actor) {
-            actor->flags1 = Utils::Bit_On(actor->flags1, Actor_t2::PROCESS_AI);
-        }
-    }
-
-    void Disable_AI(Actor_t* actor)
-    {
-        if (actor) {
-            actor->flags1 = Utils::Bit_Off(actor->flags1, Actor_t2::PROCESS_AI);
-        }
-    }
-
-    void Reset_AI(Actor_t* actor, Virtual_Callback_i* vcallback)
-    {
-        if (actor) {
-            Virtual_Machine_t::Self()->Call_Method(
-                actor,
-                "Actor",
-                "ResetAI",
-                nullptr,
-                vcallback ? &vcallback : nullptr
-            );
-        }
-    }
-
-    Bool_t Is_Ghost(Actor_t* actor)
-    {
-        if (actor) {
-            ExtraGhost* xghost = static_cast<ExtraGhost*>(actor->extraData.GetByType(kExtraData_Ghost));
-            if (xghost) {
-                return xghost->is_ghost;
-            } else {
-                return Actor_Base2::Is_Ghost(static_cast<Actor_Base_t*>(actor->baseForm));
-            }
-        } else {
-            return false;
-        }
-    }
-
-    void Ghostify(Actor_t* actor)
-    {
-        if (actor) {
-            ExtraGhost* xghost = static_cast<ExtraGhost*>(actor->extraData.GetByType(kExtraData_Ghost));
-            if (xghost) {
-                xghost->is_ghost = true;
-            } else if (!Actor_Base2::Is_Ghost(static_cast<Actor_Base_t*>(actor->baseForm))) {
-                ExtraGhost* xghost = XData::Create_Ghost(true);
-                if (xghost) {
-                    actor->extraData.Add(kExtraData_Ghost, xghost);
-                }
-            }
-        }
-    }
-
-    void Unghostify(Actor_t* actor)
-    {
-        if (actor) {
-            ExtraGhost* xghost = static_cast<ExtraGhost*>(actor->extraData.GetByType(kExtraData_Ghost));
-            if (xghost) {
-                xghost->is_ghost = false;
-            } else if (Actor_Base2::Is_Ghost(static_cast<Actor_Base_t*>(actor->baseForm))) {
-                ExtraGhost* xghost = XData::Create_Ghost(false);
-                if (xghost) {
-                    actor->extraData.Add(kExtraData_Ghost, xghost);
-                }
-            }
-        }
-    }
-
-    void Set_Ghost(Actor_t* actor, Bool_t is_ghost, Virtual_Callback_i* vcallback)
-    {
-        struct Arguments : public Virtual_Arguments_t {
-            Bool_t is_ghost;
-            Arguments(Bool_t is_ghost) :
-                is_ghost(is_ghost)
-            {
-            }
-            Bool_t operator()(Arguments_t* arguments)
-            {
-                arguments->Resize(1);
-                arguments->At(0)->Bool(is_ghost);
-                return true;
-            }
-        } arguments(is_ghost);
-        Virtual_Machine_t::Self()->Call_Method(
-            actor,
-            "Actor",
-            "SetGhost",
-            &arguments,
-            vcallback ? &vcallback : nullptr
-        );
-    }
-
     void Enable_Havok_Collision(Actor_t* actor)
     {
         if (actor) {
@@ -1405,34 +1178,6 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
-    void Ignore_Friendly_Hits(Actor_t* actor)
-    {
-        if (actor) {
-            actor->flags = Utils::Bit_On(actor->flags, Actor_t2::Form_Flags::IGNORES_FRIENDLY_HITS);
-        }
-    }
-
-    void Notice_Friendly_Hits(Actor_t* actor)
-    {
-        if (actor) {
-            actor->flags = Utils::Bit_Off(actor->flags, Actor_t2::Form_Flags::IGNORES_FRIENDLY_HITS);
-        }
-    }
-
-    void Show_On_Stealth_Eye(Actor_t* actor)
-    {
-        if (actor) {
-            actor->flags2 = Utils::Bit_Off(actor->flags2, Actor_t2::Flags_2::HIDDEN_FROM_STEALTH_EYE);
-        }
-    }
-
-    void Hide_From_Stealth_Eye(Actor_t* actor)
-    {
-        if (actor) {
-            actor->flags2 = Utils::Bit_On(actor->flags2, Actor_t2::Flags_2::HIDDEN_FROM_STEALTH_EYE);
-        }
-    }
-
     Bool_t Is_Moving(Actor_t* actor)
     {
         if (actor) {
@@ -1440,14 +1185,6 @@ namespace doticu_npcp { namespace Actor2 {
             return actor_state->Is_Moving();
         } else {
             return false;
-        }
-    }
-
-    void Stop_Movement(Actor_t* actor)
-    {
-        if (actor) {
-            Actor_State_t* actor_state = reinterpret_cast<Actor_State_t*>(&actor->actorState);
-            actor_state->Stop_Movement();
         }
     }
 
@@ -1685,22 +1422,6 @@ namespace doticu_npcp { namespace Actor2 {
                                                "doticu_npcp_funcs",
                                                "Stop_If_Playing_Music",
                                                &arguments);
-    }
-
-    Relationship_t::Rank_e Relationship_Rank(Actor_t* actor, Actor_t* other)
-    {
-        if (actor && other) {
-            return Relationships_t::Self()->Relationship_Rank(Dynamic_Base(actor), Dynamic_Base(other));
-        } else {
-            return Relationship_t::Rank_e::ACQUAINTANCE;
-        }
-    }
-
-    void Relationship_Rank(Actor_t* actor, Actor_t* other, Relationship_t::Rank_e rank)
-    {
-        if (actor && other) {
-            Relationships_t::Self()->Relationship_Rank(Dynamic_Base(actor), Dynamic_Base(other), rank);
-        }
     }
 
     Bool_t Has_Magic_Effect(Actor_t* actor, Magic_Effect_t* magic_effect)
