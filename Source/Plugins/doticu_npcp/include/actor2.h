@@ -74,11 +74,7 @@ namespace doticu_npcp { namespace Actor2 {
     Bool_t Has_Faction_Rank(Actor_t* actor, Faction_t* faction, Int_t rank);
     void Add_Faction(Actor_t* actor, Faction_t* faction, Int_t rank = 0);
     void Remove_Faction(Actor_t* actor, Faction_t* faction);
-    void Add_Crime_Faction(Actor_t* actor, Faction_t* crime_faction);
-    void Remove_Crime_Faction(Actor_t* actor);
-    void Log_Factions(Actor_t* actor);
     void Factions_And_Ranks(Actor_t* actor, Factions_And_Ranks_t& results, Int_t min_rank = -128, Int_t max_rank = 127);
-    Faction_t* Crime_Faction(Actor_t* actor);
 
     void Enable_Havok_Collision(Actor_t* actor);
     void Disable_Havok_Collision(Actor_t* actor);

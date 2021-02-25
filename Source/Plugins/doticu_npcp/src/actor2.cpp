@@ -1025,79 +1025,6 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
-    void Add_Crime_Faction(Actor_t* actor, Faction_t* crime_faction)
-    {
-        if (actor && crime_faction) {
-            Actor_Base_t* actor_base = static_cast<Actor_Base_t*>(actor->baseForm);
-            if (actor_base->faction == crime_faction) {
-                XFactions_t* xfactions = XFactions(actor, false);
-                if (xfactions) {
-                    xfactions->unk28 = reinterpret_cast<UInt64>(crime_faction);
-                }
-            } else {
-                XFactions_t* xfactions = XFactions(actor, true);
-                if (xfactions) {
-                    xfactions->unk28 = reinterpret_cast<UInt64>(crime_faction);
-                }
-            }
-        }
-    }
-
-    void Remove_Crime_Faction(Actor_t* actor)
-    {
-        if (actor) {
-            Actor_Base_t* actor_base = static_cast<Actor_Base_t*>(actor->baseForm);
-            if (actor_base->faction == nullptr) {
-                XFactions_t* xfactions = XFactions(actor, false);
-                if (xfactions) {
-                    xfactions->unk28 = reinterpret_cast<UInt64>(nullptr);
-                }
-            } else {
-                XFactions_t* xfactions = XFactions(actor, true);
-                if (xfactions) {
-                    xfactions->unk28 = reinterpret_cast<UInt64>(nullptr);
-                }
-            }
-        }
-    }
-
-    void Log_Factions(Actor_t* actor)
-    {
-        if (actor) {
-            _MESSAGE("Log_Factions: %s {", Get_Name(actor));
-
-            _MESSAGE("    BFactions:");
-            BFaction_Ranks_t* bfaction_ranks = BFaction_Ranks(actor);
-            if (bfaction_ranks) {
-                for (size_t idx = 0, count = bfaction_ranks->count; idx < count; idx += 1) {
-                    BFaction_Rank_t& bfaction_rank = bfaction_ranks->entries[idx];
-                    _MESSAGE("        form: %X, name: %s, rank: %i, is_in_faction: %i %i",
-                             bfaction_rank.faction->formID,
-                             bfaction_rank.faction->fullName.name,
-                             bfaction_rank.rank,
-                             actor->Is_In_Faction(bfaction_rank.faction),
-                             Has_Faction(actor, bfaction_rank.faction));
-                }
-            }
-
-            _MESSAGE("    XFactions:");
-            XFaction_Ranks_t* xfaction_ranks = XFaction_Ranks(actor);
-            if (xfaction_ranks) {
-                for (size_t idx = 0, count = xfaction_ranks->count; idx < count; idx += 1) {
-                    XFaction_Rank_t& xfaction_rank = xfaction_ranks->entries[idx];
-                    _MESSAGE("        form: %X, name: %s, rank: %i, is_in_faction: %i %i",
-                             xfaction_rank.faction->formID,
-                             xfaction_rank.faction->fullName.name,
-                             xfaction_rank.rank,
-                             actor->Is_In_Faction(xfaction_rank.faction),
-                             Has_Faction(actor, xfaction_rank.faction));
-                }
-            }
-
-            _MESSAGE("}\n");
-        }
-    }
-
     void Factions_And_Ranks(Actor_t* actor, Factions_And_Ranks_t& results, Int_t min_rank, Int_t max_rank)
     {
         NPCP_ASSERT(actor);
@@ -1141,27 +1068,6 @@ namespace doticu_npcp { namespace Actor2 {
                 }
             }
         }
-    }
-
-    Faction_t* Crime_Faction(Actor_t* actor)
-    {
-        NPCP_ASSERT(actor);
-
-        Actor_Base_t* actor_base = static_cast<Actor_Base_t*>(actor->baseForm);
-        NPCP_ASSERT(actor_base);
-
-        Faction_t* crime_faction = nullptr;
-
-        XFactions_t* xfactions = XFactions(actor, false);
-        if (xfactions) {
-            crime_faction = reinterpret_cast<Faction_t*>(xfactions->unk28);
-        }
-
-        if (!crime_faction) {
-            crime_faction = actor_base->faction;
-        }
-
-        return crime_faction;
     }
 
     void Enable_Havok_Collision(Actor_t* actor)
