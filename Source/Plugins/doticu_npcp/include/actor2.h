@@ -60,21 +60,6 @@ namespace doticu_npcp { namespace Actor2 {
 
     void Update_3D_Model(Actor_t* actor);
     void Fully_Update_3D_Model(Actor_t* actor);
-    
-    XFactions_t* XFactions(Actor_t* actor, bool do_create = false);
-    BFaction_Ranks_t* BFaction_Ranks(Actor_t* actor);
-    XFaction_Ranks_t* XFaction_Ranks(Actor_t* actor, bool do_create = false);
-    
-    struct Factions_And_Ranks_t {
-        Vector_t<Faction_t*> factions;
-        Vector_t<Int_t> ranks;
-    };
-
-    Bool_t Has_Faction(Actor_t* actor, Faction_t* faction);
-    Bool_t Has_Faction_Rank(Actor_t* actor, Faction_t* faction, Int_t rank);
-    void Add_Faction(Actor_t* actor, Faction_t* faction, Int_t rank = 0);
-    void Remove_Faction(Actor_t* actor, Faction_t* faction);
-    void Factions_And_Ranks(Actor_t* actor, Factions_And_Ranks_t& results, Int_t min_rank = -128, Int_t max_rank = 127);
 
     void Enable_Havok_Collision(Actor_t* actor);
     void Disable_Havok_Collision(Actor_t* actor);
