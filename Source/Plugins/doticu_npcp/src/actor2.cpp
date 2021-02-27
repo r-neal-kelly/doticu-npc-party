@@ -836,63 +836,6 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
-    Bool_t Is_Moving(Actor_t* actor)
-    {
-        if (actor) {
-            Actor_State_t* actor_state = reinterpret_cast<Actor_State_t*>(&actor->actorState);
-            return actor_state->Is_Moving();
-        } else {
-            return false;
-        }
-    }
-
-    Bool_t Has_Weapon_Sheathed(Actor_t* actor)
-    {
-        if (actor) {
-            Actor_State_t* actor_state = reinterpret_cast<Actor_State_t*>(&actor->actorState);
-            Actor_State_t::Weapon_e weapon_state = actor_state->Weapon_State();
-            return
-                weapon_state == Actor_State_t::Weapon_e::SHEATHED ||
-                weapon_state == Actor_State_t::Weapon_e::SHEATHING;
-        } else {
-            return false;
-        }
-    }
-
-    Bool_t Has_Weapon_Drawn(Actor_t* actor)
-    {
-        if (actor) {
-            Actor_State_t* actor_state = reinterpret_cast<Actor_State_t*>(&actor->actorState);
-            Actor_State_t::Weapon_e weapon_state = actor_state->Weapon_State();
-            return
-                weapon_state == Actor_State_t::Weapon_e::DRAWN ||
-                weapon_state == Actor_State_t::Weapon_e::DRAWING;
-        } else {
-            return false;
-        }
-    }
-
-    Actor_Base_t* Dynamic_Base(Actor_t* actor)
-    {
-        NPCP_ASSERT(actor);
-        Actor_Base_t* dynamic_base = static_cast<Actor_Base_t*>(actor->baseForm);
-        NPCP_ASSERT(dynamic_base);
-        return dynamic_base;
-    }
-
-    Actor_Base_t* Real_Base(Actor_t* actor)
-    {
-        if (actor) {
-            Actor_Base_t* real_base = Dynamic_Base(actor);
-            while (real_base->nextTemplate) {
-                real_base = real_base->nextTemplate;
-            }
-            return real_base;
-        } else {
-            return nullptr;
-        }
-    }
-
     void Stop_Combat(Actor_t* actor)
     {
         if (actor) {
