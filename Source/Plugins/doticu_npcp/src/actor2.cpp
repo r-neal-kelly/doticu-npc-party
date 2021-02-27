@@ -1090,19 +1090,6 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
-    Bool_t Is_Sneaking(Actor_t* actor)
-    {
-        return reinterpret_cast<Actor_State_t*>(&actor->actorState)->state.sneaking;
-    }
-
-    void Is_Talking_To_Player(Actor_t* actor, Virtual_Callback_i** callback)
-    {
-        NPCP_ASSERT(actor);
-        NPCP_ASSERT(callback);
-
-        Virtual_Machine_t::Self()->Call_Method(actor, "ObjectReference", "IsInDialogueWithPlayer", nullptr, callback);
-    }
-
     void Owner(Actor_t* actor, Actor_Base_t* owner)
     {
         Object_Ref::Owner(actor, owner);
