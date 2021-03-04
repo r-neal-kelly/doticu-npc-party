@@ -2,25 +2,7 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
-#include "skse64/GameData.h"
-
-#include "actor_base2.h"
-#include "consts.h"
-#include "form.h"
-#include "papyrus.h"
-#include "papyrus.inl"
-
 namespace doticu_npcp { namespace Actor_Base2 {
-
-    using namespace Papyrus;
-
-    BGSColorForm *Get_Hair_Color(TESNPC *actor_base) {
-        if (!actor_base || !actor_base->headData) {
-            return NULL;
-        }
-
-        return actor_base->headData->hairColor;
-    }
 
     TESObjectARMO *Get_Skin(TESNPC *actor_base) {
         if (!actor_base) {
@@ -179,15 +161,6 @@ namespace doticu_npcp { namespace Actor_Base2 {
         }
 
         return actor_base->actorValueOwner.GetMaximum(id_value);
-    }
-
-    Voice_Type_t* Voice_Type(Actor_Base_t* actor_base)
-    {
-        if (actor_base) {
-            return actor_base->actorData.voiceType;
-        } else {
-            return nullptr;
-        }
     }
 
 }}

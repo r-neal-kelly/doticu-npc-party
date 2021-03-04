@@ -4,11 +4,8 @@
 
 #pragma once
 
-#include "types.h"
-
 namespace doticu_npcp { namespace Actor_Base2 {
 
-    BGSColorForm *Get_Hair_Color(TESNPC *actor_base);
     TESObjectARMO *Get_Skin(TESNPC *actor_base);
     TESNPC::Color* Get_Skin_Color(TESNPC* actor_base);
     Bool_t Has_Same_Hair_Color(Actor_Base_t* actor_base_a, Actor_Base_t* actor_base_b);
@@ -19,6 +16,4 @@ namespace doticu_npcp { namespace Actor_Base2 {
     float Get_Actor_Value(TESNPC *actor_base, const char *name);
     float Get_Base_Actor_Value(TESNPC *actor_base, const char *name);
     float Get_Max_Actor_Value(TESNPC *actor_base, const char *name);
-
-    Voice_Type_t* Voice_Type(Actor_Base_t* actor_base);
 }}

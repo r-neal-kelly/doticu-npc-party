@@ -56,29 +56,15 @@ namespace doticu_npcp { namespace Actor2 {
     float Get_Max_Actor_Value(Actor *actor, const char *name);
     void Set_Actor_Value(Actor *actor, const char *name, float value);
     void Reset_Actor_Value(Actor *actor, const char *name);
-    void Log_Actor_Values(Actor *actor);
-
-    void Update_3D_Model(Actor_t* actor);
-    void Fully_Update_3D_Model(Actor_t* actor);
 
     void Enable_Havok_Collision(Actor_t* actor);
     void Disable_Havok_Collision(Actor_t* actor);
 
-    void Stop_Combat(Actor_t* actor);
-    void Stop_Combat_Alarm(Actor_t* actor);
-    void Pacify(Actor_t* actor);
     void Kill(Actor_t* actor, Actor_t* killer = nullptr, Float_t damage = 0.0f, Bool_t do_send_event = true, Bool_t do_quick_ragdoll = false);
 
     Actor_t* Clone(Actor_t* actor, Reference_t* marker = nullptr);
     void Resurrect(Actor_t* actor, Bool_t do_reset_inventory = false);
     Bool_t Try_Resurrect(Actor_t* actor, Bool_t do_reset_inventory = false);
-
-    Bool_t Is_Child(Actor_t* actor);
-    Bool_t Isnt_Child(Actor_t* actor);
-
-    void Update_Equipment(Actor_t* actor, Callback_t<Actor_t*>* user_callback = nullptr);
-
-    void Stop_If_Playing_Music(Actor_t* actor);
 
     Bool_t Has_Magic_Effect(Actor_t* actor, Magic_Effect_t* magic_effect);
 
@@ -93,7 +79,5 @@ namespace doticu_npcp { namespace Actor2 {
     void Set_Doing_Favor(Actor_t* actor, Bool_t is, Virtual_Callback_i* vcallback = nullptr);
 
     void Set_Alpha(Actor_t* actor, Float_t alpha_0_to_1, Bool_t do_fade_in = false, Virtual_Callback_i* vcallback = nullptr);
-
-    Voice_Type_t* Voice_Type(Actor_t* actor);
 
 }}

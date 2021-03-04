@@ -657,26 +657,6 @@ namespace doticu_npcp { namespace Actor2 {
         return Actor_Base2::Has_Same_Head(actor_base_a, actor_base_b);
     }
 
-    bool Is_Aliased_In_Quest(Actor* actor, TESQuest* quest)
-    {
-        if (actor && quest) {
-            ExtraAliasInstanceArray* xaliases = (ExtraAliasInstanceArray*)actor->extraData.GetByType(kExtraData_AliasInstanceArray);
-            if (xaliases) {
-                for (u64 idx = 0, size = xaliases->aliases.count; idx < size; idx += 1) {
-                    ExtraAliasInstanceArray::AliasInfo* info = xaliases->aliases[idx];
-                    if (info && info->quest == quest) {
-                        return true;
-                    }
-                }
-                return false;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
     Actor_Value_Owner_t* Actor_Value_Owner(Actor_t* actor)
     {
         NPCP_ASSERT(actor);
@@ -753,75 +733,6 @@ namespace doticu_npcp { namespace Actor2 {
         Set_Actor_Value(actor, name, Actor_Base2::Get_Base_Actor_Value(actor_base, name));
     }
 
-    void Log_Actor_Values(Actor *actor) {
-        if (!actor) {
-            return;
-        }
-
-        _MESSAGE("Logging Actor Values: %s", Get_Name(actor));
-
-        #define LOG_ACTOR_VALUE(NAME)                                   \
-        M                                                               \
-            _MESSAGE("    " NAME ": curr %10f, base %10f, max %10f",    \
-                     Get_Actor_Value(actor, NAME),                      \
-                     Get_Base_Actor_Value(actor, NAME),                 \
-                     Get_Max_Actor_Value(actor, NAME));                 \
-        W
-
-        LOG_ACTOR_VALUE("Health");
-        LOG_ACTOR_VALUE("Magicka");
-        LOG_ACTOR_VALUE("Stamina");
-
-        LOG_ACTOR_VALUE("OneHanded");
-        LOG_ACTOR_VALUE("TwoHanded");
-        LOG_ACTOR_VALUE("Block");
-        LOG_ACTOR_VALUE("HeavyArmor");
-        LOG_ACTOR_VALUE("LightArmor");
-        LOG_ACTOR_VALUE("Smithing");
-
-        LOG_ACTOR_VALUE("Destruction");
-        LOG_ACTOR_VALUE("Restoration");
-        LOG_ACTOR_VALUE("Conjuration");
-        LOG_ACTOR_VALUE("Alteration");
-        LOG_ACTOR_VALUE("Illusion");
-        LOG_ACTOR_VALUE("Enchanting");
-
-        LOG_ACTOR_VALUE("Marksman");
-        LOG_ACTOR_VALUE("Sneak");
-        LOG_ACTOR_VALUE("Alchemy");
-        LOG_ACTOR_VALUE("Lockpicking");
-        LOG_ACTOR_VALUE("Pickpocket");
-        LOG_ACTOR_VALUE("Speechcraft");
-
-        #undef LOG_ACTOR_VALUE
-    }
-
-    void Update_3D_Model(Actor_t* actor)
-    {
-        using func_type = void(*)(ActorProcessManager*, Actor_t*);
-        static func_type func = reinterpret_cast<func_type>
-            (RelocationManager::s_baseAddr + Offsets::Actor::UPDATE_3D_MODEL);
-
-        if (actor && Is_Loaded(actor)) {
-            return func(actor->processManager, actor);
-        }
-    }
-
-    void Fully_Update_3D_Model(Actor_t* actor)
-    {
-        if (actor && Is_Loaded(actor) && actor->processManager && actor->processManager->middleProcess) {
-            u8* flags_3d = ((u8*)actor->processManager->middleProcess + 0x311);
-            *flags_3d = 0 |
-                1 << Actor_t2::Update_3D_Flags::MODEL_3D |
-                1 << Actor_t2::Update_3D_Flags::SKIN_3D |
-                1 << Actor_t2::Update_3D_Flags::HEAD_3D |
-                1 << Actor_t2::Update_3D_Flags::FACE_3D |
-                1 << Actor_t2::Update_3D_Flags::SCALE_3D |
-                1 << Actor_t2::Update_3D_Flags::SKELETON_3D;
-            Update_3D_Model(actor);
-        }
-    }
-
     void Enable_Havok_Collision(Actor_t* actor)
     {
         if (actor) {
@@ -833,31 +744,6 @@ namespace doticu_npcp { namespace Actor2 {
     {
         if (actor) {
             actor->flags = Utils::Bit_On(actor->flags, Actor_t2::Form_Flags::HASNT_HAVOK_COLLISION); // 1 << 4
-        }
-    }
-
-    void Stop_Combat(Actor_t* actor)
-    {
-        if (actor) {
-            actor->Stop_Combat();
-            actor->Update_Combat(); // maybe not necessary?
-        }
-    }
-
-    void Stop_Combat_Alarm(Actor_t* actor)
-    {
-        if (actor) {
-            Process_Lists_t::Self()->Stop_Combat_Alarm(actor);
-        }
-    }
-
-    void Pacify(Actor_t* actor)
-    {
-        if (actor) {
-            Actor_Value_Owner(actor)->Set_Actor_Value(Actor_Value_t::AGGRESSION, 0.0f);
-            Stop_Combat(actor);
-            Stop_Combat_Alarm(actor);
-            Evaluate_Package(actor);
         }
     }
 
@@ -941,88 +827,6 @@ namespace doticu_npcp { namespace Actor2 {
 
         Resurrect(actor, do_reset_inventory);
         return Is_Alive(actor);
-    }
-
-    Bool_t Is_Child(Actor_t* actor)
-    {
-        return actor->Is_Child();
-    }
-
-    Bool_t Isnt_Child(Actor_t* actor)
-    {
-        return !actor->Is_Child();
-    }
-
-    void Update_Equipment(Actor_t* actor, Callback_t<Actor_t*>* user_callback)
-    {
-        using namespace Papyrus;
-        using UCallback_t = Callback_t<Actor_t*>;
-
-        if (actor) {
-            Bool_t is_player_teammate = Is_Player_Teammate(actor);
-            if (!is_player_teammate) {
-                Join_Player_Team(actor);
-            }
-
-            struct VCallback : public Virtual_Callback_t {
-                Actor_t* actor;
-                Bool_t is_player_teammate;
-                UCallback_t* user_callback;
-                VCallback(Actor_t* actor, Bool_t is_player_teammate, UCallback_t* user_callback) :
-                    actor(actor), is_player_teammate(is_player_teammate), user_callback(user_callback)
-                {
-                }
-                void operator()(Variable_t* result)
-                {
-                    XEntry_t* xentry = Object_Ref::Get_XEntry(actor, Consts::Blank_Weapon(), false);
-                    if (xentry) {
-                        Object_Ref::Remove_XEntry(actor, xentry);
-                        XEntry_t::Destroy(xentry);
-                    }
-
-                    if (!is_player_teammate) {
-                        Leave_Player_Team(actor);
-                    }
-
-                    if (user_callback) {
-                        user_callback->operator()(actor);
-                        delete user_callback;
-                    }
-                }
-            };
-            Virtual_Callback_i* vcallback = new VCallback(actor, is_player_teammate, user_callback);
-            Object_Ref::Add_Item_And_Callback(actor, Consts::Blank_Weapon(), 1, false, &vcallback);
-        } else {
-            if (user_callback) {
-                user_callback->operator()(nullptr);
-                delete user_callback;
-            }
-        }
-    }
-
-    void Stop_If_Playing_Music(Actor_t* actor)
-    {
-        NPCP_ASSERT(actor);
-
-        class Arguments : public Virtual_Arguments_t {
-        public:
-            Actor_t* actor;
-            Arguments(Actor_t* actor) :
-                actor(actor)
-            {
-            }
-            Bool_t operator()(Arguments_t* arguments)
-            {
-                arguments->Resize(1);
-                arguments->At(0)->Pack(actor);
-
-                return true;
-            }
-        } arguments(actor);
-        Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(),
-                                               "doticu_npcp_funcs",
-                                               "Stop_If_Playing_Music",
-                                               &arguments);
     }
 
     Bool_t Has_Magic_Effect(Actor_t* actor, Magic_Effect_t* magic_effect)
@@ -1163,11 +967,6 @@ namespace doticu_npcp { namespace Actor2 {
             &arguments,
             vcallback ? &vcallback : nullptr
         );
-    }
-
-    Voice_Type_t* Voice_Type(Actor_t* actor)
-    {
-        return Actor_Base2::Voice_Type(Dynamic_Base(actor));
     }
 
 }}
