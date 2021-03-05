@@ -4,19 +4,6 @@ Scriptname doticu_npcp_funcs extends Quest
 
 ; replace these with direct callbacks in c++
 
-; Public Methods
-bool function Can_Use_Keys();;;
-    return !Utility.IsInMenuMode() && !UI.IsMenuOpen("Dialogue Menu")
-endFunction
-
-Actor function Find_Closest_Actor_From(ObjectReference ref, float radius);;;
-    return Game.FindClosestActorFromRef(ref, radius)
-endFunction
-
-ObjectReference function Current_Crosshair_Reference();;;
-    return Game.GetCurrentCrosshairRef()
-endFunction
-
 function Stop_If_Playing_Music(Actor ref_actor);;;
     BardSongsScript script = doticu_npcp_consts.Bard_Songs_Quest() as BardSongsScript
     if script.BardSongs_Bard.GetActorReference() == ref_actor

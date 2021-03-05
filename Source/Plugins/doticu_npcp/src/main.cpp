@@ -6,10 +6,10 @@
 
 #include "doticu_skylib/global.h"
 #include "doticu_skylib/ui.h"
-
 #include "doticu_skylib/virtual_callback.h"
 #include "doticu_skylib/virtual_macros.h"
-#include "doticu_skylib/virtual_utils.h"
+#include "doticu_skylib/virtual_utility.h"
+#include "doticu_skylib/virtual_variable.inl"
 
 #include "consts.h"
 #include "main.h"
@@ -146,6 +146,39 @@ namespace doticu_npcp {
         }
     }
 
+    void Main_t::Can_Use_Hotkeys(some<unique<Callback_i<Bool_t>>> callback)
+    {
+        using Callback = some<unique<Callback_i<Bool_t>>>;
+
+        class Is_In_Menu_Mode_Callback :
+            public V::Callback_t
+        {
+        public:
+            Callback callback;
+
+        public:
+            Is_In_Menu_Mode_Callback(Callback callback) :
+                callback(std::move(callback))
+            {
+            }
+
+        public:
+            virtual void operator()(V::Variable_t* result) override
+            {
+                Bool_t is_in_menu_mode = result ? result->As<Bool_t>() : false;
+                (*this->callback)(!is_in_menu_mode);
+            }
+        };
+
+        SKYLIB_ASSERT_SOME(callback);
+
+        if (UI_t::Is_Menu_Open("Dialogue Menu")) {
+            (*callback)(false);
+        } else {
+            UI_t::Is_In_Menu_Mode(new Is_In_Menu_Mode_Callback(std::move(callback)));
+        }
+    }
+
     void Main_t::Initialize()
     {
         struct Wait_Callback_t : public V::Callback_t
@@ -173,7 +206,7 @@ namespace doticu_npcp {
                 }
             }
         };
-        V::Utils_t::Wait_Out_Of_Menu(1.0f, new Wait_Callback_t());
+        V::Utility_t::Wait_Out_Of_Menu(1.0f, new Wait_Callback_t());
     }
 
     void Main_t::Before_Save()
@@ -213,7 +246,7 @@ namespace doticu_npcp {
                 }
             }
         };
-        V::Utils_t::Wait_Out_Of_Menu(1.0f, new Wait_Callback_t());
+        V::Utility_t::Wait_Out_Of_Menu(1.0f, new Wait_Callback_t());
     }
 
     Bool_t Main_t::Try_Update()

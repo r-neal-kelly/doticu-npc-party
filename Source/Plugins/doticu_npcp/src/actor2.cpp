@@ -733,20 +733,6 @@ namespace doticu_npcp { namespace Actor2 {
         Set_Actor_Value(actor, name, Actor_Base2::Get_Base_Actor_Value(actor_base, name));
     }
 
-    void Enable_Havok_Collision(Actor_t* actor)
-    {
-        if (actor) {
-            actor->flags = Utils::Bit_Off(actor->flags, Actor_t2::Form_Flags::HASNT_HAVOK_COLLISION); // 1 << 4
-        }
-    }
-
-    void Disable_Havok_Collision(Actor_t* actor)
-    {
-        if (actor) {
-            actor->flags = Utils::Bit_On(actor->flags, Actor_t2::Form_Flags::HASNT_HAVOK_COLLISION); // 1 << 4
-        }
-    }
-
     void Kill(Actor_t* actor, Actor_t* killer, Float_t damage, Bool_t do_send_event, Bool_t do_quick_ragdoll)
     {
         if (actor && Is_Alive(actor)) {
@@ -829,144 +815,9 @@ namespace doticu_npcp { namespace Actor2 {
         return Is_Alive(actor);
     }
 
-    Bool_t Has_Magic_Effect(Actor_t* actor, Magic_Effect_t* magic_effect)
-    {
-        if (actor) {
-            return reinterpret_cast<Magic_Target_t*>(&actor->magicTarget)->Has_Magic_Effect(magic_effect);
-        } else {
-            return false;
-        }
-    }
-
-    Bool_t Add_Spell(Actor_t* actor, Spell_t* spell)
-    {
-        static auto add_spell = reinterpret_cast
-            <Bool_t(*)(Actor_t*, Spell_t*)>
-            (RelocationManager::s_baseAddr + Offsets::Actor::ADD_SPELL);
-        if (actor && spell) {
-            return add_spell(actor, spell);
-        } else {
-            return false;
-        }
-    }
-
-    void Add_Spell(Actor_t* actor, Spell_t* spell, Bool_t be_verbose, Virtual_Callback_i** callback)
-    {
-        if (actor && spell) {
-            class Arguments : public Virtual_Arguments_t {
-            public:
-                Spell_t* spell;
-                Bool_t be_verbose;
-                Arguments(Spell_t* spell, Bool_t be_verbose) :
-                    spell(spell), be_verbose(be_verbose)
-                {
-                }
-                Bool_t operator()(Arguments_t* arguments)
-                {
-                    arguments->Resize(2);
-                    arguments->At(0)->Pack(spell);
-                    arguments->At(1)->Bool(be_verbose);
-                    return true;
-                }
-            } arguments(spell, be_verbose);
-            Virtual_Machine_t::Self()->Call_Method(actor, "Actor", "AddSpell", &arguments, callback);
-        }
-    }
-
-    void Remove_Spell(Actor_t* actor, Spell_t* spell, Virtual_Callback_i** callback)
-    {
-        if (actor && spell) {
-            class Arguments : public Virtual_Arguments_t {
-            public:
-                Spell_t* spell;
-                Arguments(Spell_t* spell) :
-                    spell(spell)
-                {
-                }
-                Bool_t operator()(Arguments_t* arguments)
-                {
-                    arguments->Resize(1);
-                    arguments->At(0)->Pack(spell);
-                    return true;
-                }
-            } arguments(spell);
-            Virtual_Machine_t::Self()->Call_Method(actor, "Actor", "RemoveSpell", &arguments, callback);
-        }
-    }
-
     void Owner(Actor_t* actor, Actor_Base_t* owner)
     {
         Object_Ref::Owner(actor, owner);
-    }
-
-    void Send_Animation_Event(Actor_t* actor, String_t animation, Virtual_Callback_i** callback)
-    {
-        struct Arguments : public Virtual_Arguments_t {
-            Actor_t* actor;
-            String_t animation;
-            Arguments(Actor_t* actor, String_t animation) :
-                actor(actor), animation(animation)
-            {
-            }
-            Bool_t operator()(Arguments_t* arguments)
-            {
-                arguments->Resize(2);
-                arguments->At(0)->Pack(static_cast<Reference_t*>(actor));
-                arguments->At(1)->String(animation);
-                return true;
-            }
-        } arguments(actor, animation);
-        Virtual_Machine_t::Self()->Call_Global("Debug", "SendAnimationEvent", &arguments, callback);
-    }
-
-    void Set_Doing_Favor(Actor_t* actor, Bool_t is, Virtual_Callback_i* vcallback)
-    {
-        struct VArguments : public Virtual_Arguments_t {
-            Bool_t is;
-            VArguments(Bool_t is) :
-                is(is)
-            {
-            }
-            Bool_t operator()(Arguments_t* arguments)
-            {
-                arguments->Resize(1);
-                arguments->At(0)->Bool(is);
-                return true;
-            }
-        } arguments(is);
-        Virtual_Machine_t::Self()->Call_Method(
-            actor,
-            "Actor",
-            "SetDoingFavor",
-            &arguments,
-            vcallback ? &vcallback : nullptr
-        );
-    }
-
-    void Set_Alpha(Actor_t* actor, Float_t alpha_0_to_1, Bool_t do_fade_in, Virtual_Callback_i* vcallback)
-    {
-        struct VArguments : public Virtual_Arguments_t {
-            Float_t alpha_0_to_1;
-            Bool_t do_fade_in;
-            VArguments(Float_t alpha_0_to_1, Bool_t do_fade_in) :
-                alpha_0_to_1(alpha_0_to_1), do_fade_in(do_fade_in)
-            {
-            }
-            Bool_t operator()(Arguments_t* arguments)
-            {
-                arguments->Resize(2);
-                arguments->At(0)->Float(alpha_0_to_1);
-                arguments->At(1)->Bool(do_fade_in);
-                return true;
-            }
-        } arguments(alpha_0_to_1, do_fade_in);
-        Virtual_Machine_t::Self()->Call_Method(
-            actor,
-            "Actor",
-            "SetAlpha",
-            &arguments,
-            vcallback ? &vcallback : nullptr
-        );
     }
 
 }}

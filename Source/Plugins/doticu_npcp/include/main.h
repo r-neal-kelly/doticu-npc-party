@@ -34,9 +34,10 @@ namespace doticu_npcp {
         static void                 Register_Me(some<V::Machine_t*> machine);
 
     public:
-        static Bool_t Is_Active();
-        static Bool_t Is_Initialized();
-        static Bool_t Has_Requirements();
+        static Bool_t   Is_Active();
+        static Bool_t   Is_Initialized();
+        static Bool_t   Has_Requirements();
+        static void     Can_Use_Hotkeys(some<unique<Callback_i<Bool_t>>> callback);
 
     public:
         static void Initialize();

@@ -57,27 +57,12 @@ namespace doticu_npcp { namespace Actor2 {
     void Set_Actor_Value(Actor *actor, const char *name, float value);
     void Reset_Actor_Value(Actor *actor, const char *name);
 
-    void Enable_Havok_Collision(Actor_t* actor);
-    void Disable_Havok_Collision(Actor_t* actor);
-
     void Kill(Actor_t* actor, Actor_t* killer = nullptr, Float_t damage = 0.0f, Bool_t do_send_event = true, Bool_t do_quick_ragdoll = false);
 
     Actor_t* Clone(Actor_t* actor, Reference_t* marker = nullptr);
     void Resurrect(Actor_t* actor, Bool_t do_reset_inventory = false);
     Bool_t Try_Resurrect(Actor_t* actor, Bool_t do_reset_inventory = false);
 
-    Bool_t Has_Magic_Effect(Actor_t* actor, Magic_Effect_t* magic_effect);
-
-    Bool_t Add_Spell(Actor_t* actor, Spell_t* spell);
-    void Add_Spell(Actor_t* actor, Spell_t* spell, Bool_t be_verbose, Virtual_Callback_i** callback = nullptr);
-    void Remove_Spell(Actor_t* actor, Spell_t* spell, Virtual_Callback_i** callback = nullptr);
-
     void Owner(Actor_t* actor, Actor_Base_t* owner); // maybe we could try the reference instead of base, for horses
-
-    void Send_Animation_Event(Actor_t* actor, String_t animation, Virtual_Callback_i** callback = nullptr);
-
-    void Set_Doing_Favor(Actor_t* actor, Bool_t is, Virtual_Callback_i* vcallback = nullptr);
-
-    void Set_Alpha(Actor_t* actor, Float_t alpha_0_to_1, Bool_t do_fade_in = false, Virtual_Callback_i* vcallback = nullptr);
 
 }}

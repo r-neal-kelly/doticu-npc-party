@@ -4,20 +4,6 @@
 
 namespace doticu_npcp { namespace Object_Ref {
 
-    String_t Class_Name()
-    {
-        static const String_t class_name = String_t("ObjectReference");
-        NPCP_ASSERT(class_name);
-        return class_name;
-    }
-
-    Class_Info_t* Class_Info()
-    {
-        static Class_Info_t* class_info = Class_Info_t::Fetch(Class_Name());
-        NPCP_ASSERT(class_info);
-        return class_info;
-    }
-
     Bool_t Has_Similar_XList(Reference_t* ref, Form_t* form, XList_t* xlist_to_compare)
     {
         if (ref) {
@@ -513,30 +499,6 @@ namespace doticu_npcp { namespace Object_Ref {
         }*/
     }
 
-    void Open_Container(Reference_t* ref, Papyrus::Virtual_Callback_i** callback)
-    {
-        using namespace Papyrus;
-
-        NPCP_ASSERT(ref && ref->baseForm && ref->baseForm->formType == kFormType_Container);
-
-        class Arguments : public Virtual_Arguments_t {
-        public:
-            Reference_t* ref;
-            Arguments(Reference_t* ref) :
-                ref(ref)
-            {
-            }
-            Bool_t operator()(Arguments_t* arguments)
-            {
-                arguments->Resize(1);
-                arguments->At(0)->Pack(ref);
-                return true;
-            }
-        } arguments(ref);
-
-        Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(), "doticu_npcp_funcs", "Open_Container", &arguments, callback);
-    }
-
     Reference_t* Create_Marker_At(Reference_t* ref, Static_t* static_marker)
     {
         if (ref) {
@@ -594,31 +556,7 @@ namespace doticu_npcp { namespace Object_Ref {
         }
     }
 
-    void Find_Closest_Actor_From(Reference_t* ref, Float_t radius, Virtual_Callback_i** callback)
-    {
-        class Arguments : public Virtual_Arguments_t {
-        public:
-            Reference_t* ref;
-            Float_t radius;
-            Arguments(Reference_t* ref, Float_t radius) :
-                ref(ref), radius(radius)
-            {
-            }
-            Bool_t operator()(Arguments_t* arguments)
-            {
-                arguments->Resize(2);
-                arguments->At(0)->Pack(ref);
-                arguments->At(1)->Float(radius);
-                return true;
-            }
-        } arguments(ref, radius);
 
-        Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(),
-                                               "doticu_npcp_funcs",
-                                               "Find_Closest_Actor_From",
-                                               &arguments,
-                                               callback);
-    }
 
     void Translate_To(Reference_t* ref,
                       Float_t pos_degree_x,
@@ -777,47 +715,6 @@ namespace doticu_npcp { namespace Object_Ref {
             ref,
             "ObjectReference",
             "SetOpen",
-            &arguments,
-            vcallback ? &vcallback : nullptr
-        );
-    }
-
-    void Current_Crosshair_Reference(Virtual_Callback_i** callback)
-    {
-        Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(),
-                                               "doticu_npcp_funcs",
-                                               "Current_Crosshair_Reference",
-                                               nullptr,
-                                               callback);
-    }
-
-    void Can_Use_Keys(Virtual_Callback_i** callback)
-    {
-        Virtual_Machine_t::Self()->Call_Method(Consts::Funcs_Quest(),
-                                               "doticu_npcp_funcs",
-                                               "Can_Use_Keys",
-                                               nullptr,
-                                               callback);
-    }
-
-    void Mapped_Control(Int_t key_code, Virtual_Callback_i* vcallback)
-    {
-        struct Arguments : public Virtual_Arguments_t {
-            Int_t key_code;
-            Arguments(Int_t key_code) :
-                key_code(key_code)
-            {
-            }
-            Bool_t operator()(Arguments_t* arguments)
-            {
-                arguments->Resize(1);
-                arguments->At(0)->Int(key_code);
-                return true;
-            }
-        } arguments(key_code);
-        Virtual_Machine_t::Self()->Call_Global(
-            "Input",
-            "GetMappedControl",
             &arguments,
             vcallback ? &vcallback : nullptr
         );
