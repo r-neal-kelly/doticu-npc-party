@@ -733,32 +733,6 @@ namespace doticu_npcp { namespace Actor2 {
         Set_Actor_Value(actor, name, Actor_Base2::Get_Base_Actor_Value(actor_base, name));
     }
 
-    void Kill(Actor_t* actor, Actor_t* killer, Float_t damage, Bool_t do_send_event, Bool_t do_quick_ragdoll)
-    {
-        if (actor && Is_Alive(actor)) {
-            Actor_Base_t* base_actor = Dynamic_Base(actor);
-            Actor_Base_Data_t* base_data = reinterpret_cast<Actor_Base_Data_t*>(&base_actor->actorData);
-
-            Bool_t is_essential = base_data->Is_Essential();
-            if (is_essential) {
-                base_data->Unessentialize();
-            }
-
-            Bool_t is_protected = base_data->Is_Protected();
-            if (is_protected) {
-                base_data->Unprotect();
-            }
-
-            actor->Kill(killer, damage, do_send_event, do_quick_ragdoll);
-
-            if (is_essential) {
-                Actor_Base2::Essentialize(static_cast<Actor_Base_t*>(actor->baseForm));
-            } else if (is_protected) {
-                Actor_Base2::Protect(static_cast<Actor_Base_t*>(actor->baseForm));
-            }
-        }
-    }
-
     Actor_t* Clone(Actor_t* actor, Reference_t* marker)
     {
         if (actor) {
@@ -785,39 +759,6 @@ namespace doticu_npcp { namespace Actor2 {
         } else {
             return nullptr;
         }
-    }
-
-    void Resurrect(Actor_t* actor, Bool_t do_reset_inventory)
-    {
-        if (actor) {
-            // it may actually be okay to use this, perhaps after PushActorAway
-            /*if (Actor2::Is_Loaded(actor) && actor->processManager && actor->processManager->middleProcess) {
-                u8* flags_3d = ((u8*)actor->processManager->middleProcess + 0x311);
-                *flags_3d = 0 |
-                    1 << Actor_t2::Update_3D_Flags::MODEL_3D |
-                    1 << Actor_t2::Update_3D_Flags::SKIN_3D |
-                    1 << Actor_t2::Update_3D_Flags::HEAD_3D |
-                    1 << Actor_t2::Update_3D_Flags::FACE_3D |
-                    1 << Actor_t2::Update_3D_Flags::SCALE_3D |
-                    1 << Actor_t2::Update_3D_Flags::SKELETON_3D;
-            }*/
-            actor->Resurrect(do_reset_inventory, true);
-            Pacify(actor);
-            Object_Ref::Push_Actor_Away(actor, actor, 0.01f);
-        }
-    }
-
-    Bool_t Try_Resurrect(Actor_t* actor, Bool_t do_reset_inventory)
-    {
-        NPCP_ASSERT(Is_Dead(actor));
-
-        Resurrect(actor, do_reset_inventory);
-        return Is_Alive(actor);
-    }
-
-    void Owner(Actor_t* actor, Actor_Base_t* owner)
-    {
-        Object_Ref::Owner(actor, owner);
     }
 
 }}

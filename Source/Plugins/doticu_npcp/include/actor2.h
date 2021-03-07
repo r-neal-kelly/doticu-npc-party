@@ -63,6 +63,4 @@ namespace doticu_npcp { namespace Actor2 {
     void Resurrect(Actor_t* actor, Bool_t do_reset_inventory = false);
     Bool_t Try_Resurrect(Actor_t* actor, Bool_t do_reset_inventory = false);
 
-    void Owner(Actor_t* actor, Actor_Base_t* owner); // maybe we could try the reference instead of base, for horses
-
 }}
