@@ -4,25 +4,6 @@
 
 namespace doticu_npcp { namespace Object_Ref {
 
-    Bool_t Has_Similar_XList(Reference_t* ref, Form_t* form, XList_t* xlist_to_compare)
-    {
-        if (ref) {
-            XContainer_t* xcontainer = Get_XContainer(ref, false);
-            if (xcontainer) {
-                XEntry_t* xentry = xcontainer->XEntry(form, false);
-                if (xentry) {
-                    return xentry->Has_Similar_XList(xlist_to_compare);
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
     void Remove_If(Reference_t* from,
                    Reference_t* to,
                    Bool_t(*should_remove_xform)(Form_t*),
@@ -473,63 +454,6 @@ namespace doticu_npcp { namespace Object_Ref {
                 }
             }
         }*/
-    }
-
-    Reference_t* Create_Marker_At(Reference_t* ref, Static_t* static_marker)
-    {
-        if (ref) {
-            Reference_t* marker = Place_At_Me(ref, static_marker, 1, true, false);
-            if (marker) {
-                marker->pos.x = ref->pos.x;
-                marker->pos.y = ref->pos.y;
-                marker->pos.z = ref->pos.z;
-                marker->rot.x = ref->rot.x;
-                marker->rot.y = ref->rot.y;
-                marker->rot.z = ref->rot.z;
-                marker->Update_3D_Position();
-                return marker;
-            } else {
-                return nullptr;
-            }
-        } else {
-            return nullptr;
-        }
-    }
-
-    Reference_t* Create_Marker_At(Reference_t* ref)
-    {
-        return Create_Marker_At(ref, Consts::X_Marker_Static());
-    }
-
-    Reference_t* Create_Directed_Marker_At(Reference_t* ref)
-    {
-        return Create_Marker_At(ref, Consts::Directed_X_Marker_Static());
-    }
-
-    Reference_t* Create_Container()
-    {
-        Reference_t* container = Place_At_Me(Consts::Storage_Marker(), Consts::Empty_Container(), 1, true, false);
-        NPCP_ASSERT(container);
-        Init_Container_If_Needed(container);
-        return container;
-    }
-
-    bool Is_In_Interior_Cell(Reference_t* ref)
-    {
-        if (ref) {
-            return ref->parentCell && Cell::Is_Interior(ref->parentCell);
-        } else {
-            return false;
-        }
-    }
-
-    bool Is_In_Exterior_Cell(Reference_t* ref)
-    {
-        if (ref) {
-            return ref->parentCell && Cell::Is_Exterior(ref->parentCell);
-        } else {
-            return false;
-        }
     }
 
 }}

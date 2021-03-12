@@ -57,10 +57,6 @@ namespace doticu_npcp { namespace Actor2 {
     void Set_Actor_Value(Actor *actor, const char *name, float value);
     void Reset_Actor_Value(Actor *actor, const char *name);
 
-    void Kill(Actor_t* actor, Actor_t* killer = nullptr, Float_t damage = 0.0f, Bool_t do_send_event = true, Bool_t do_quick_ragdoll = false);
-
     Actor_t* Clone(Actor_t* actor, Reference_t* marker = nullptr);
-    void Resurrect(Actor_t* actor, Bool_t do_reset_inventory = false);
-    Bool_t Try_Resurrect(Actor_t* actor, Bool_t do_reset_inventory = false);
 
 }}
