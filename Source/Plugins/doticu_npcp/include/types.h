@@ -8,6 +8,5 @@ namespace doticu_npcp {
 
     typedef Projectile      Projectile_t;
     typedef BGSProjectile   Projectile_Base_t;
-    typedef BGSVoiceType    Voice_Type_t;
 
 }

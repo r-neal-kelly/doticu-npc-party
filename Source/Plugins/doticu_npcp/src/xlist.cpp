@@ -63,19 +63,4 @@ namespace doticu_npcp { namespace XList {
         return count_xdatas - vec_xdatas_to_destroy.size();
     }
 
-    Bool_t Has_Health(XList_t* xlist)
-    {
-        return xlist->HasType(kExtraData_Health);
-    }
-
-    Bool_t Has_Enchantement(XList_t* xlist)
-    {
-        return xlist->HasType(kExtraData_Enchantment);
-    }
-
-    Bool_t Has_Charge(XList_t* xlist)
-    {
-        return xlist->HasType(kExtraData_Charge);
-    }
-
 }}
