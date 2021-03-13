@@ -109,7 +109,6 @@
     <ClCompile Include="src\perks.cpp" />
     <ClCompile Include="src\quest.cpp" />
     <ClCompile Include="src\references.cpp" />
-    <ClCompile Include="src\spell.cpp" />
     <ClCompile Include="src\strings.cpp" />
     <ClCompile Include="src\topic_infos.cpp" />
     <ClCompile Include="src\types.cpp" />
@@ -163,7 +162,6 @@
     <ClInclude Include="include\party_settler.h" />
     <ClInclude Include="include\perks.h" />
     <ClInclude Include="include\references.h" />
-    <ClInclude Include="include\spell.h" />
     <ClInclude Include="include\topic_infos.h" />
     <ClInclude Include="include\ui.h" />
     <ClInclude Include="include\vars.h" />
@@ -171,7 +169,6 @@
     <ClInclude Include="include\papyrus.h" />
     <ClInclude Include="include\quest.h" />
     <ClInclude Include="include\utils.h" />
-    <ClInclude Include="include\types.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\party_alias.inl" />
