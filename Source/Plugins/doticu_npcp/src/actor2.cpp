@@ -146,40 +146,6 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
-    void Cache_Worn(Actor_t* actor, Reference_t* cache_out)
-    {
-        NPCP_ASSERT(actor);
-        NPCP_ASSERT(cache_out);
-
-        Form_t* linchpin = Consts::Blank_Armor();
-
-        Inventory_t actor_inventory(actor);
-        Inventory_t cache_inventory(cache_out);
-
-        for (size_t idx = 0, end = actor_inventory.entries.size(); idx < end; idx += 1) {
-            Entry_t& actor_entry = actor_inventory.entries[idx];
-            Form_t* form = actor_entry.form;
-            if (form && form != linchpin && form->formType != kFormType_LeveledItem) {
-                Entry_t* cache_entry = cache_inventory.Entry(form);
-                Vector_t<XList_t*> xlists = actor_entry.XLists();
-                for (size_t idx = 0, end = xlists.size(); idx < end; idx += 1) {
-                    XList_t* xlist = xlists[idx];
-                    if (XList::Is_Worn(xlist)) {
-                        if (!cache_entry) {
-                            cache_entry = cache_inventory.Add_Entry(form);
-                        }
-                        XList_t* xlist_copy = XList::Copy(xlist);
-                        if (xlist_copy) {
-                            cache_inventory.Add_XList(cache_entry, xlist_copy);
-                        } else {
-                            cache_inventory.Add_Loose(cache_entry, XList::Count(xlist));
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     bool Has_Same_Head(Actor *actor_a, Actor *actor_b) {
         if (!actor_a || !actor_b) {
             return false;
