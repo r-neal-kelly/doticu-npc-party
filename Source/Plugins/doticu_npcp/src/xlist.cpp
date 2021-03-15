@@ -4,28 +4,6 @@
 
 namespace doticu_npcp { namespace XList {
 
-    XList_t *Copy(XList_t *xlist) {
-        if (xlist && Can_Copy(xlist)) {
-            XList_t* xlist_new = Create();
-            for (XData_t* xdata = xlist->m_data; xdata != NULL; xdata = xdata->next) {
-                if (xdata->GetType() == kExtraData_Health) {
-                    xlist_new->Add(kExtraData_Health, XData::Copy_Health((ExtraHealth*)xdata));
-                } else if (xdata->GetType() == kExtraData_Enchantment) {
-                    xlist_new->Add(kExtraData_Enchantment, XData::Copy_Enchantment((ExtraEnchantment*)xdata));
-                } else if (xdata->GetType() == kExtraData_Charge) {
-                    xlist_new->Add(kExtraData_Charge, XData::Copy_Charge((ExtraCharge*)xdata));
-                } else if (xdata->GetType() == kExtraData_Ownership) {
-                    xlist_new->Add(kExtraData_Ownership, XData::Copy_Ownership((ExtraOwnership*)xdata));
-                } else if (xdata->GetType() == kExtraData_Count) {
-                    xlist_new->Add(kExtraData_Count, XData::Copy_Count((ExtraCount*)xdata));
-                }
-            }
-            return xlist_new;
-        } else {
-            return nullptr;
-        }
-    }
-
     // certain xdata cannot be moved to another container without creating issues, e.g. worn, leveleditem. Others are just unneeded.
     u64 Clean_For_Move(XList_t *xlist, TESObjectREFR *ref_to) {
         if (!xlist || !Object_Ref::Get_XContainer(ref_to, false)) {

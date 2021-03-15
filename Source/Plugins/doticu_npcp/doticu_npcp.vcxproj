@@ -69,7 +69,6 @@
     <ClCompile Include="src\chests.cpp" />
     <ClCompile Include="src\commands.cpp" />
     <ClCompile Include="src\consts.cpp" />
-    <ClCompile Include="src\funcs.cpp" />
     <ClCompile Include="src\logs.cpp" />
     <ClCompile Include="src\mcm_filter.cpp" />
     <ClCompile Include="src\form_vector.cpp" />
@@ -126,7 +125,6 @@
     <ClInclude Include="include\consts.h" />
     <ClInclude Include="include\actor2.h" />
     <ClInclude Include="include\form_vector.h" />
-    <ClInclude Include="include\funcs.h" />
     <ClInclude Include="include\game.h" />
     <ClInclude Include="include\intrinsic.h" />
     <ClInclude Include="include\keys.h" />
@@ -163,7 +161,6 @@
     <ClInclude Include="include\perks.h" />
     <ClInclude Include="include\references.h" />
     <ClInclude Include="include\topic_infos.h" />
-    <ClInclude Include="include\ui.h" />
     <ClInclude Include="include\vars.h" />
     <ClInclude Include="include\outfit.h" />
     <ClInclude Include="include\papyrus.h" />

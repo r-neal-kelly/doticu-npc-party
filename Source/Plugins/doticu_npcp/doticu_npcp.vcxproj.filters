@@ -66,9 +66,6 @@
     <ClCompile Include="src\commands.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\funcs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\topic_infos.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -213,12 +210,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\commands.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ui.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\funcs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\topic_infos.h">

@@ -256,36 +256,6 @@ namespace doticu_npcp { namespace Object_Ref {
         Remove_If(ref, transfer, should_remove_xform, should_remove_xlist);
     }
 
-    Bool_t Contains_Form(Reference_t* ref, Form_t* form)
-    {
-        if (ref && form) {
-            BContainer_t* bcontainer = Object_Ref::Get_BContainer(ref);
-            if (bcontainer) {
-                for (size_t idx = 0, count = bcontainer->numEntries; idx < count; idx += 1) {
-                    BEntry_t* bentry = bcontainer->entries[idx];
-                    if (bentry && bentry->form == form && bentry->count > 0) {
-                        XEntry_t* xentry = Get_XEntry(ref, form, false);
-                        if (!xentry || xentry->Delta_Count() > 0 - bentry->count) {
-                            return true;
-                        }
-                    }
-                }
-            }
-            XContainer_t* xcontainer = Object_Ref::Get_XContainer(ref, false);
-            if (xcontainer) {
-                for (XEntries_t::Iterator it = xcontainer->changes->xentries->Begin(); !it.End(); ++it) {
-                    XEntry_t* xentry = it.Get();
-                    if (xentry && xentry->form == form && xentry->Delta_Count() > 0) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        } else {
-            return false;
-        }
-    }
-
     void Categorize(Reference_t *ref, Bool_t only_custom_categories) {
         if (ref) {
             Vector_t<XEntry_t*> xentries_to_destroy;
