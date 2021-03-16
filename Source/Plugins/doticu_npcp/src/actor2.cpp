@@ -94,58 +94,6 @@ namespace doticu_npcp { namespace Actor2 {
         }
     }
 
-    void Split_Inventory(Actor_t* actor, Reference_t* worn, Reference_t* pack)
-    {
-        NPCP_ASSERT(actor);
-        NPCP_ASSERT(worn);
-        NPCP_ASSERT(pack);
-
-        Form_t* linchpin = Consts::Blank_Armor();
-        Actor_Base_t* actor_base = Dynamic_Base(actor);
-
-        Inventory_t actor_inventory(actor);
-        Inventory_t worn_inventory(worn);
-        Inventory_t pack_inventory(pack);
-
-        for (size_t idx = 0, end = actor_inventory.entries.size(); idx < end; idx += 1) {
-            Entry_t& actor_entry = actor_inventory.entries[idx];
-            Form_t* form = actor_entry.form;
-            if (form && form != linchpin && form->formType != kFormType_LeveledItem && form->IsPlayable()) {
-                Entry_t* worn_entry = worn_inventory.Entry(form);
-                Entry_t* pack_entry = pack_inventory.Entry(form);
-
-                Vector_t<XList_t*> xlists = actor_entry.XLists();
-                for (size_t idx = 0, end = xlists.size(); idx < end; idx += 1) {
-                    XList_t* xlist = xlists[idx];
-                    if (XList::Is_Worn(xlist) || XList::Is_Outfit2_Item(xlist, actor_base)) {
-                        if (!worn_entry) {
-                            worn_entry = worn_inventory.Add_Entry(form);
-                        }
-                        actor_inventory.Remove_XList(&actor_entry, xlist);
-                        worn_inventory.Add_XList(worn_entry, xlist);
-                    } else {
-                        if (!pack_entry) {
-                            pack_entry = pack_inventory.Add_Entry(form);
-                        }
-                        actor_inventory.Remove_XList(&actor_entry, xlist);
-                        pack_inventory.Add_XList(pack_entry, xlist);
-                    }
-                }
-
-                Int_t actor_loose_count = actor_inventory.Count_Loose(&actor_entry);
-                if (actor_loose_count > 0) {
-                    if (!pack_entry) {
-                        pack_entry = pack_inventory.Add_Entry(form);
-                    }
-                    actor_inventory.Remove_Loose(&actor_entry, actor_loose_count);
-                    pack_inventory.Add_Loose(pack_entry, actor_loose_count);
-                }
-
-                actor_inventory.Try_To_Destroy_Entry(&actor_entry);
-            }
-        }
-    }
-
     bool Has_Same_Head(Actor *actor_a, Actor *actor_b) {
         if (!actor_a || !actor_b) {
             return false;
