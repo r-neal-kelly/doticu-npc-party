@@ -18,9 +18,6 @@
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\outfit.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\object_ref.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -28,12 +25,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\quest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\xlist.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\xentry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\actor_base2.cpp">
@@ -52,9 +43,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\consts.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\types.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\form_vector.cpp">
@@ -179,13 +167,7 @@
     <ClInclude Include="include\quest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\outfit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\actor_base2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\main.h">

@@ -85,7 +85,6 @@
     <ClCompile Include="src\mcm_settlers.cpp" />
     <ClCompile Include="src\mcm_chests.cpp" />
     <ClCompile Include="src\mcm_main.cpp" />
-    <ClCompile Include="src\outfit.cpp" />
     <ClCompile Include="src\actor2.cpp" />
     <ClCompile Include="src\object_ref.cpp" />
     <ClCompile Include="src\outfit2.cpp" />
@@ -110,10 +109,7 @@
     <ClCompile Include="src\references.cpp" />
     <ClCompile Include="src\strings.cpp" />
     <ClCompile Include="src\topic_infos.cpp" />
-    <ClCompile Include="src\types.cpp" />
     <ClCompile Include="src\vars.cpp" />
-    <ClCompile Include="src\xentry.cpp" />
-    <ClCompile Include="src\xlist.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\active_magic_effects.h" />
@@ -125,7 +121,6 @@
     <ClInclude Include="include\consts.h" />
     <ClInclude Include="include\actor2.h" />
     <ClInclude Include="include\form_vector.h" />
-    <ClInclude Include="include\game.h" />
     <ClInclude Include="include\intrinsic.h" />
     <ClInclude Include="include\keys.h" />
     <ClInclude Include="include\logs.h" />
@@ -162,7 +157,6 @@
     <ClInclude Include="include\references.h" />
     <ClInclude Include="include\topic_infos.h" />
     <ClInclude Include="include\vars.h" />
-    <ClInclude Include="include\outfit.h" />
     <ClInclude Include="include\papyrus.h" />
     <ClInclude Include="include\quest.h" />
     <ClInclude Include="include\utils.h" />

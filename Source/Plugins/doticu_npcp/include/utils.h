@@ -4,6 +4,8 @@
 
 namespace doticu_npcp { namespace Utils {
 
+    // put this in Game_t
+
     inline std::vector<char> To_Binary(void* data, size_t bytes)
     {
         static const char* half_bytes[16] = {
