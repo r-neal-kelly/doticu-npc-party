@@ -8,23 +8,19 @@
 
 namespace doticu_npcp {
 
-    class Form_t;
-    class Reference_t;
-
     class Chests_t
     {
     public:
         static constexpr size_t MAX_CUSTOM_CHESTS = 16;
 
     public:
-        static some<Reference_t*>   Chest(some<Form_t*> form);
-        static some<Reference_t*>   Custom_Chest(some<Form_t*> form);
-        static void                 Open_Chest(some<Reference_t*> chest);
-        static void                 Update_Chests();
+        static some<Reference_t*>   Chest(some<Bound_Object_t*> object);
+        static maybe<Reference_t*>  Custom_Chest(some<Bound_Object_t*> object);
+        static void                 Open_Chest(some<Reference_t*> chest, String_t name, maybe<unique<Callback_i<Bool_t>>> callback);
 
-    public:
-        static void Categorize_All_Items(some<Reference_t*> ref);
-        static void Categorize_Custom_Items(some<Reference_t*> ref);
+        static void                 Categorize_Chests();
+        static void                 Categorize_Into_All_Chests(some<Reference_t*> reference);
+        static void                 Categorize_Into_Custom_Chests(some<Reference_t*> reference);
     };
 
 }

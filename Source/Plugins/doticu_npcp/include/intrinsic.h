@@ -62,6 +62,7 @@ namespace doticu_npcp {
     using Actor_t                   = skylib::Actor_t;
     using Actor_Base_t              = skylib::Actor_Base_t;
     using Armor_t                   = skylib::Armor_t;
+    using Bound_Object_t            = skylib::Bound_Object_t;
     using Cell_t                    = skylib::Cell_t;
     using Character_t               = skylib::Character_t;
     using Container_t               = skylib::Container_t;

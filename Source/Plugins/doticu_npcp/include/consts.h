@@ -352,7 +352,7 @@ namespace doticu_npcp {
                 static some<Reference_t*> Expo_Antechamber_Marker();
                 static some<Reference_t*> Storage_Marker();
 
-                struct Category
+                struct Chest
                 {
                     static some<Reference_t*> Input();
                     static some<Reference_t*> Swords();
