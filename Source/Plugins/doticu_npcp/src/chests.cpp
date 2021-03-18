@@ -51,38 +51,23 @@ namespace doticu_npcp {
         } else {
             maybe<Weapon_t*> weapon = object->As_Weapon();
             if (weapon) {
-                // we can actually check flags instead of keywords for some form types, e.g. Weapon_t
-                if (weapon->Component_Has_Keyword(Consts_t::Skyrim::Keyword::Weapon_Type_Bow())) {
-                    return Consts_t::NPCP::Reference::Chest::Bows();
-                }
+                if (weapon->Is_Bow_Or_Crossbow())   return Consts_t::NPCP::Reference::Chest::Bows();
+                else if (weapon->Is_Dagger())       return Consts_t::NPCP::Reference::Chest::Daggers();
+                else if (weapon->Is_Greatsword())   return Consts_t::NPCP::Reference::Chest::Greatswords();
+                else if (weapon->Is_Sword())        return Consts_t::NPCP::Reference::Chest::Swords();
+                else if (weapon->Is_Battleaxe())    return Consts_t::NPCP::Reference::Chest::Battleaxes();
+                else if (weapon->Is_Waraxe())       return Consts_t::NPCP::Reference::Chest::Waraxes();
+                else if (weapon->Is_Warhammer())    return Consts_t::NPCP::Reference::Chest::Warhammers();
+                else if (weapon->Is_Mace())         return Consts_t::NPCP::Reference::Chest::Maces();
+                else if (weapon->Is_Staff())        return Consts_t::NPCP::Reference::Chest::Staves();
+                else                                return Consts_t::NPCP::Reference::Chest::Other_Weapons();
+            }
+            maybe<Armor_t*> armor = object->As_Armor();
+            if (armor) {
+
             }
             /*
         switch (form->formType) {
-            case (kFormType_Weapon):
-            {
-                if (Form::Has_Keyword(form, keywords->WeapTypeBow)) {
-                    return Consts::Bows_Category();
-                } else if (Form::Has_Keyword(form, keywords->WeapTypeDagger)) {
-                    return Consts::Daggers_Category();
-                } else if (Form::Has_Keyword(form, keywords->WeapTypeGreatsword)) {
-                    return Consts::Greatswords_Category();
-                } else if (Form::Has_Keyword(form, keywords->WeapTypeSword)) {
-                    return Consts::Swords_Category();
-                } else if (Form::Has_Keyword(form, keywords->WeapTypeBattleaxe)) {
-                    return Consts::Battleaxes_Category();
-                } else if (Form::Has_Keyword(form, keywords->WeapTypeWarAxe)) {
-                    return Consts::Waraxes_Category();
-                } else if (Form::Has_Keyword(form, keywords->WeapTypeWarhammer)) {
-                    return Consts::Warhammers_Category();
-                } else if (Form::Has_Keyword(form, keywords->WeapTypeMace)) {
-                    return Consts::Maces_Category();
-                } else if (Form::Has_Keyword(form, keywords->WeapTypeStaff) ||
-                           Form::Has_Keyword(form, keywords->VendorItemStaff)) {
-                    return Consts::Staves_Category();
-                } else {
-                    return Consts::Weapons_Category();
-                }
-            }
             case (kFormType_Armor):
             {
                 if (Form::Has_Keyword(form, keywords->ArmorLight)) {

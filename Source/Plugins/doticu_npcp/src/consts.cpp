@@ -29,42 +29,6 @@ namespace doticu_npcp {
 
     some<Global_t*>         Consts_t::Skyrim::Global::Player_Follower_Count()               { DEFINE_FORM(Mod(), Global_t, 0x0BCC98); }
 
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Armor_Boots()                        { DEFINE_FORM(Mod(), Keyword_t, 0x06C0ED); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Armor_Clothing()                     { DEFINE_FORM(Mod(), Keyword_t, 0x06BBE8); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Armor_Cuirass()                      { DEFINE_FORM(Mod(), Keyword_t, 0x06C0EC); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Armor_Gauntlets()                    { DEFINE_FORM(Mod(), Keyword_t, 0x06C0EF); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Armor_Heavy()                        { DEFINE_FORM(Mod(), Keyword_t, 0x06BBD2); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Armor_Helmet()                       { DEFINE_FORM(Mod(), Keyword_t, 0x06C0EE); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Armor_Jewelry()                      { DEFINE_FORM(Mod(), Keyword_t, 0x06BBE9); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Armor_Light()                        { DEFINE_FORM(Mod(), Keyword_t, 0x06BBD3); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Armor_Shield()                       { DEFINE_FORM(Mod(), Keyword_t, 0x0965B2); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Clothing_Circlet()                   { DEFINE_FORM(Mod(), Keyword_t, 0x10CD08); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Clothing_Necklace()                  { DEFINE_FORM(Mod(), Keyword_t, 0x10CD0A); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Clothing_Ring()                      { DEFINE_FORM(Mod(), Keyword_t, 0x10CD09); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Magic_Damage_Fire()                  { DEFINE_FORM(Mod(), Keyword_t, 0x01CEAD); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Magic_Damage_Frost()                 { DEFINE_FORM(Mod(), Keyword_t, 0x01CEAE); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Magic_Damage_Shock()                 { DEFINE_FORM(Mod(), Keyword_t, 0x01CEAF); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Magic_Vampire_Drain()                { DEFINE_FORM(Mod(), Keyword_t, 0x101BDE); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Vampire()                            { DEFINE_FORM(Mod(), Keyword_t, 0x0A82BB); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Vendor_Item_Animal_Hide()            { DEFINE_FORM(Mod(), Keyword_t, 0x0914EA); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Vendor_Item_Gem()                    { DEFINE_FORM(Mod(), Keyword_t, 0x0914ED); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Vendor_Item_Jewelry()                { DEFINE_FORM(Mod(), Keyword_t, 0x08F95A); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Vendor_Item_Ore_Ingot()              { DEFINE_FORM(Mod(), Keyword_t, 0x0914EC); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Vendor_Item_Poison()                 { DEFINE_FORM(Mod(), Keyword_t, 0x08CDED); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Vendor_Item_Potion()                 { DEFINE_FORM(Mod(), Keyword_t, 0x08CDEC); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Vendor_Item_Recipe()                 { DEFINE_FORM(Mod(), Keyword_t, 0x0F5CB0); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Vendor_Item_Spell_Tome()             { DEFINE_FORM(Mod(), Keyword_t, 0x0937A5); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Vendor_Item_Staff()                  { DEFINE_FORM(Mod(), Keyword_t, 0x0937A4); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Weapon_Type_Battleaxe()              { DEFINE_FORM(Mod(), Keyword_t, 0x06D932); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Weapon_Type_Bow()                    { DEFINE_FORM(Mod(), Keyword_t, 0x01E715); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Weapon_Type_Dagger()                 { DEFINE_FORM(Mod(), Keyword_t, 0x01E713); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Weapon_Type_Greatsword()             { DEFINE_FORM(Mod(), Keyword_t, 0x06D931); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Weapon_Type_Mace()                   { DEFINE_FORM(Mod(), Keyword_t, 0x01E714); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Weapon_Type_Staff()                  { DEFINE_FORM(Mod(), Keyword_t, 0x01E716); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Weapon_Type_Sword()                  { DEFINE_FORM(Mod(), Keyword_t, 0x01E711); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Weapon_Type_Waraxe()                 { DEFINE_FORM(Mod(), Keyword_t, 0x01E712); }
-    some<Keyword_t*>        Consts_t::Skyrim::Keyword::Weapon_Type_Warhammer()              { DEFINE_FORM(Mod(), Keyword_t, 0x06D930); }
-
     some<Misc_t*>           Consts_t::Skyrim::Misc::Gold()                                  { DEFINE_FORM(Mod(), Misc_t, 0x00000F); }
 
     some<Package_t*>        Consts_t::Skyrim::Package::Follow_Template()                    { DEFINE_FORM(Mod(), Package_t, 0x019B2C); }

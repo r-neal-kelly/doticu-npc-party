@@ -42,44 +42,6 @@ namespace doticu_npcp {
             {
                 static some<Global_t*> Player_Follower_Count();
             };
-            struct Keyword
-            {
-                static some<Keyword_t*> Armor_Boots();
-                static some<Keyword_t*> Armor_Clothing();
-                static some<Keyword_t*> Armor_Cuirass();
-                static some<Keyword_t*> Armor_Gauntlets();
-                static some<Keyword_t*> Armor_Heavy();
-                static some<Keyword_t*> Armor_Helmet();
-                static some<Keyword_t*> Armor_Jewelry();
-                static some<Keyword_t*> Armor_Light();
-                static some<Keyword_t*> Armor_Shield();
-                static some<Keyword_t*> Clothing_Circlet();
-                static some<Keyword_t*> Clothing_Necklace();
-                static some<Keyword_t*> Clothing_Ring();
-                static some<Keyword_t*> Magic_Damage_Fire();
-                static some<Keyword_t*> Magic_Damage_Frost();
-                static some<Keyword_t*> Magic_Damage_Shock();
-                static some<Keyword_t*> Magic_Vampire_Drain();
-                static some<Keyword_t*> Vampire();
-                static some<Keyword_t*> Vendor_Item_Animal_Hide();
-                static some<Keyword_t*> Vendor_Item_Gem();
-                static some<Keyword_t*> Vendor_Item_Jewelry();
-                static some<Keyword_t*> Vendor_Item_Ore_Ingot();
-                static some<Keyword_t*> Vendor_Item_Poison();
-                static some<Keyword_t*> Vendor_Item_Potion();
-                static some<Keyword_t*> Vendor_Item_Recipe();
-                static some<Keyword_t*> Vendor_Item_Spell_Tome();
-                static some<Keyword_t*> Vendor_Item_Staff();
-                static some<Keyword_t*> Weapon_Type_Battleaxe();
-                static some<Keyword_t*> Weapon_Type_Bow();
-                static some<Keyword_t*> Weapon_Type_Dagger();
-                static some<Keyword_t*> Weapon_Type_Greatsword();
-                static some<Keyword_t*> Weapon_Type_Mace();
-                static some<Keyword_t*> Weapon_Type_Staff();
-                static some<Keyword_t*> Weapon_Type_Sword();
-                static some<Keyword_t*> Weapon_Type_Waraxe();
-                static some<Keyword_t*> Weapon_Type_Warhammer();
-            };
             struct Misc
             {
                 static some<Misc_t*> Gold();
