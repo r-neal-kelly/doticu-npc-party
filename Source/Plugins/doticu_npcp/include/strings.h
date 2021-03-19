@@ -111,7 +111,7 @@ namespace doticu_npcp {
         static const String_t SETTINGS;
         static const String_t SETTLERS;
         static const String_t SHIELDS;
-        static const String_t SOULGEMS;
+        static const String_t SOUL_GEMS;
         static const String_t SPECIAL;
         static const String_t SPELL_TOMES;
         static const String_t STAVES;

@@ -337,7 +337,7 @@ namespace doticu_npcp {
                     static some<Reference_t*> Poisons();
                     static some<Reference_t*> Ingredients();
                     static some<Reference_t*> Food();
-                    static some<Reference_t*> Soulgems();
+                    static some<Reference_t*> Soul_Gems();
                     static some<Reference_t*> Scrolls();
                     static some<Reference_t*> Metals();
                     static some<Reference_t*> Leather();

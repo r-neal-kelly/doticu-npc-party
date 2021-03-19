@@ -106,7 +106,7 @@ namespace doticu_npcp {
     const String_t Strings_t::SETTINGS                  = "$dnpcp_settings";
     const String_t Strings_t::SETTLERS                  = "$dnpcp_settlers";
     const String_t Strings_t::SHIELDS                   = "$dnpcp_shields";
-    const String_t Strings_t::SOULGEMS                  = "$dnpcp_soulgems";
+    const String_t Strings_t::SOUL_GEMS                 = "$dnpcp_soul_gems";
     const String_t Strings_t::SPECIAL                   = "$dnpcp_special";
     const String_t Strings_t::SPELL_TOMES               = "$dnpcp_spell_tomes";
     const String_t Strings_t::STAVES                    = "$dnpcp_staves";

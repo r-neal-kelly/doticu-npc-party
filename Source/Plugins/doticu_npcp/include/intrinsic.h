@@ -61,7 +61,9 @@ namespace doticu_npcp {
     using Active_Magic_Effect_t     = skylib::Active_Magic_Effect_t;
     using Actor_t                   = skylib::Actor_t;
     using Actor_Base_t              = skylib::Actor_Base_t;
+    using Ammo_t                    = skylib::Ammo_t;
     using Armor_t                   = skylib::Armor_t;
+    using Book_t                    = skylib::Book_t;
     using Bound_Object_t            = skylib::Bound_Object_t;
     using Cell_t                    = skylib::Cell_t;
     using Character_t               = skylib::Character_t;
@@ -77,6 +79,7 @@ namespace doticu_npcp {
     using Furniture_t               = skylib::Furniture_t;
     using Game_t                    = skylib::Game_t;
     using Global_t                  = skylib::Global_t;
+    using Ingredient_t              = skylib::Ingredient_t;
     using Keyword_t                 = skylib::Keyword_t;
     using Leveled_Actor_Base_t      = skylib::Leveled_Actor_Base_t;
     using Leveled_Item_t            = skylib::Leveled_Item_t;
@@ -105,6 +108,7 @@ namespace doticu_npcp {
     using Raw_Form_ID_t             = skylib::Raw_Form_ID_t;
     using Reference_t               = skylib::Reference_t;
     using Reference_Handle_t        = skylib::Reference_Handle_t;
+    using Scroll_t                  = skylib::Scroll_t;
     using Spell_t                   = skylib::Spell_t;
     using Static_t                  = skylib::Static_t;
     using UI_t                      = skylib::UI_t;

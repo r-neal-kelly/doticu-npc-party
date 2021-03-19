@@ -15,7 +15,13 @@ namespace doticu_npcp {
 
     public:
         static some<Reference_t*>   Chest(some<Bound_Object_t*> object);
+        static maybe<Reference_t*>  Armor_Chest(some<Bound_Object_t*> object);
+        static maybe<Reference_t*>  Book_Chest(some<Bound_Object_t*> object);
         static maybe<Reference_t*>  Custom_Chest(some<Bound_Object_t*> object);
+        static maybe<Reference_t*>  Edible_Chest(some<Bound_Object_t*> object);
+        static maybe<Reference_t*>  Misc_Chest(some<Bound_Object_t*> object);
+        static maybe<Reference_t*>  Weapon_Chest(some<Bound_Object_t*> object);
+
         static void                 Open_Chest(some<Reference_t*> chest, String_t name, maybe<unique<Callback_i<Bool_t>>> callback);
 
         static void                 Categorize_Chests();

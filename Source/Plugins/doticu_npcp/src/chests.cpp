@@ -3,7 +3,9 @@
 */
 
 #include "doticu_skylib/armor.h"
+#include "doticu_skylib/book.h"
 #include "doticu_skylib/bound_object.h"
+#include "doticu_skylib/misc.h"
 #include "doticu_skylib/potion.h"
 #include "doticu_skylib/reference.h"
 #include "doticu_skylib/reference_container.h"
@@ -16,7 +18,72 @@ namespace doticu_npcp {
 
     some<Reference_t*> Chests_t::Chest(some<Bound_Object_t*> object)
     {
-        static some<Reference_t*> a_to_z_book_chests[26] = {
+        SKYLIB_ASSERT_SOME(object);
+
+        maybe<Reference_t*> custom_chest = Custom_Chest(object);
+        if (custom_chest) {
+            return custom_chest();
+        } else {
+            maybe<Reference_t*> armor_chest = Armor_Chest(object);
+            if (armor_chest) {
+                return armor_chest();
+            } else {
+                maybe<Reference_t*> weapon_chest = Weapon_Chest(object);
+                if (weapon_chest) {
+                    return weapon_chest();
+                } else {
+                    maybe<Reference_t*> edible_chest = Edible_Chest(object);
+                    if (edible_chest) {
+                        return edible_chest();
+                    } else {
+                        maybe<Reference_t*> book_chest = Book_Chest(object);
+                        if (book_chest) {
+                            return book_chest();
+                        } else {
+                            maybe<Reference_t*> misc_chest = Misc_Chest(object);
+                            if (misc_chest) {
+                                return misc_chest();
+                            } else {
+                                return Consts_t::NPCP::Reference::Chest::Misc();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    maybe<Reference_t*> Chests_t::Armor_Chest(some<Bound_Object_t*> object)
+    {
+        SKYLIB_ASSERT_SOME(object);
+
+        maybe<Armor_t*> armor = object->As_Armor();
+        if (armor) {
+            if (armor->Is_Light_Armor()) {
+                return Consts_t::NPCP::Reference::Chest::Light_Armor()();
+            } else if (armor->Is_Heavy_Armor()) {
+                return Consts_t::NPCP::Reference::Chest::Heavy_Armor()();
+            } else if (armor->Is_Shield()) {
+                return Consts_t::NPCP::Reference::Chest::Shields()();
+            } else if (armor->Is_Likely_Jewelry()) {
+                return Consts_t::NPCP::Reference::Chest::Jewelry()();
+            } else if (armor->Is_Likely_Clothing()) {
+                return Consts_t::NPCP::Reference::Chest::Clothes()();
+            } else if (armor->Is_Surely_Armor()) {
+                return Consts_t::NPCP::Reference::Chest::Light_Armor()();
+            } else if (armor->Is_Surely_Jewelry()) {
+                return Consts_t::NPCP::Reference::Chest::Jewelry()();
+            } else {
+                return Consts_t::NPCP::Reference::Chest::Clothes()();
+            }
+        } else {
+            return none<Reference_t*>();
+        }
+    }
+
+    maybe<Reference_t*> Chests_t::Book_Chest(some<Bound_Object_t*> object)
+    {
+        static some<Reference_t*> a_to_z_chests[26] = {
             Consts_t::NPCP::Reference::Chest::A_Books(),
             Consts_t::NPCP::Reference::Chest::B_Books(),
             Consts_t::NPCP::Reference::Chest::C_Books(),
@@ -47,96 +114,23 @@ namespace doticu_npcp {
 
         SKYLIB_ASSERT_SOME(object);
 
-        maybe<Reference_t*> custom_chest = Custom_Chest(object);
-        if (custom_chest) {
-            return custom_chest();
+        maybe<Book_t*> book = object->As_Book();
+        if (book) {
+            if (book->Is_Spell_Tome()) {
+                return Consts_t::NPCP::Reference::Chest::Spell_Tomes()();
+            } else if (book->Is_Recipe()) {
+                return Consts_t::NPCP::Reference::Chest::Recipes()();
+            } else {
+                some<const char*> component_name = book->Component_Name();
+                const char first_letter = tolower(component_name[0]);
+                if (first_letter >= 'a' && first_letter <= 'z') {
+                    return a_to_z_chests[first_letter - 'a']();
+                } else {
+                    return Consts_t::NPCP::Reference::Chest::Other_Books()();
+                }
+            }
         } else {
-            maybe<Weapon_t*> weapon = object->As_Weapon();
-            if (weapon) {
-                if (weapon->Is_Bow_Or_Crossbow())   return Consts_t::NPCP::Reference::Chest::Bows();
-                else if (weapon->Is_Dagger())       return Consts_t::NPCP::Reference::Chest::Daggers();
-                else if (weapon->Is_Greatsword())   return Consts_t::NPCP::Reference::Chest::Greatswords();
-                else if (weapon->Is_Sword())        return Consts_t::NPCP::Reference::Chest::Swords();
-                else if (weapon->Is_Battleaxe())    return Consts_t::NPCP::Reference::Chest::Battleaxes();
-                else if (weapon->Is_Waraxe())       return Consts_t::NPCP::Reference::Chest::Waraxes();
-                else if (weapon->Is_Warhammer())    return Consts_t::NPCP::Reference::Chest::Warhammers();
-                else if (weapon->Is_Mace())         return Consts_t::NPCP::Reference::Chest::Maces();
-                else if (weapon->Is_Staff())        return Consts_t::NPCP::Reference::Chest::Staves();
-                else                                return Consts_t::NPCP::Reference::Chest::Other_Weapons();
-            }
-            maybe<Armor_t*> armor = object->As_Armor();
-            if (armor) {
-                if (armor->Is_Light_Armor())            return Consts_t::NPCP::Reference::Chest::Light_Armor();
-                else if (armor->Is_Heavy_Armor())       return Consts_t::NPCP::Reference::Chest::Heavy_Armor();
-                else if (armor->Is_Shield())            return Consts_t::NPCP::Reference::Chest::Shields();
-                else if (armor->Is_Likely_Jewelry())    return Consts_t::NPCP::Reference::Chest::Jewelry();
-                else if (armor->Is_Likely_Clothing())   return Consts_t::NPCP::Reference::Chest::Clothes();
-                else if (armor->Is_Surely_Armor())      return Consts_t::NPCP::Reference::Chest::Light_Armor();
-                else if (armor->Is_Surely_Jewelry())    return Consts_t::NPCP::Reference::Chest::Jewelry();
-                else                                    return Consts_t::NPCP::Reference::Chest::Clothes();
-            }
-            maybe<Potion_t*> potion = object->As_Potion();
-            if (potion) {
-                if (potion->Is_Medicine())      return Consts_t::NPCP::Reference::Chest::Potions();
-                else if (potion->Is_Poison())   return Consts_t::NPCP::Reference::Chest::Poisons();
-                else                            return Consts_t::NPCP::Reference::Chest::Food();
-            }
-            /*
-        switch (form->formType) {
-            case (kFormType_Book):
-            {
-                if (Form::Has_Keyword(form, keywords->VendorItemSpellTome)) {
-                    return Consts::Spell_Tomes_Category();
-                } else if (Form::Has_Keyword(form, keywords->VendorItemRecipe)) {
-                    return Consts::Recipes_Category();
-                } else {
-                    const char chr = tolower(Form::Get_Name(form)[0]);
-                    s64 idx_chars = chr >= 'a' && chr <= 'z' ? chr - 'a' : -1;
-                    if (idx_chars > -1 && idx_chars < 26) {
-                        return book_categories[idx_chars];
-                    } else {
-                        return Consts::Books_Category();
-                    }
-                }
-            }
-            case (kFormType_Misc):
-            {
-                if (Form::Has_Keyword(form, keywords->VendorItemOreIngot)) {
-                    return Consts::Metals_Category();
-                } else if (Form::Has_Keyword(form, keywords->VendorItemAnimalHide)) {
-                    return Consts::Leather_Category();
-                } else if (Form::Has_Keyword(form, keywords->VendorItemGem)) {
-                    return Consts::Gems_Category();
-                } else {
-                    return Consts::Clutter_Category();
-                }
-            }
-            case (kFormType_Ammo):
-            {
-                return Consts::Ammo_Category();
-            }
-            case (kFormType_Ingredient):
-            {
-                return Consts::Ingredients_Category();
-            }
-            case (kFormType_ScrollItem):
-            {
-                return Consts::Scrolls_Category();
-            }
-            case (kFormType_SoulGem):
-            {
-                return Consts::Soulgems_Category();
-            }
-            case (kFormType_Key):
-            {
-                return Consts::Keys_Category();
-            }
-            default:
-            {
-                return Consts::Misc_Category();
-            }
-        }
-            */
+            return none<Reference_t*>();
         }
     }
 
@@ -171,6 +165,95 @@ namespace doticu_npcp {
         }
 
         return none<Reference_t*>();
+    }
+
+    maybe<Reference_t*> Chests_t::Edible_Chest(some<Bound_Object_t*> object)
+    {
+        SKYLIB_ASSERT_SOME(object);
+
+        maybe<Ingredient_t*> ingredient = object->As_Ingredient();
+        if (ingredient) {
+            return Consts_t::NPCP::Reference::Chest::Ingredients()();
+        } else {
+            maybe<Potion_t*> potion = object->As_Potion();
+            if (potion) {
+                if (potion->Is_Potion()) {
+                    return Consts_t::NPCP::Reference::Chest::Potions()();
+                } else if (potion->Is_Poison()) {
+                    return Consts_t::NPCP::Reference::Chest::Poisons()();
+                } else {
+                    return Consts_t::NPCP::Reference::Chest::Food()();
+                }
+            } else {
+                return none<Reference_t*>();
+            }
+        }
+    }
+
+    maybe<Reference_t*> Chests_t::Misc_Chest(some<Bound_Object_t*> object)
+    {
+        SKYLIB_ASSERT_SOME(object);
+
+        maybe<Misc_t*> misc = object->As_Misc();
+        if (misc) {
+            if (misc->Is_Soul_Gem()) {
+                return Consts_t::NPCP::Reference::Chest::Soul_Gems()();
+            } else if (misc->Is_Key()) {
+                return Consts_t::NPCP::Reference::Chest::Keys()();
+            } else if (misc->Is_Ore_Or_Ingot()) {
+                return Consts_t::NPCP::Reference::Chest::Metals()();
+            } else if (misc->Is_Animal_Hide()) {
+                return Consts_t::NPCP::Reference::Chest::Leather()();
+            } else if (misc->Is_Gem()) {
+                return Consts_t::NPCP::Reference::Chest::Gems()();
+            } else {
+                return Consts_t::NPCP::Reference::Chest::Clutter()();
+            }
+        } else {
+            maybe<Scroll_t*> scroll = object->As_Scroll();
+            if (scroll) {
+                return Consts_t::NPCP::Reference::Chest::Scrolls()();
+            } else {
+                return none<Reference_t*>();
+            }
+        }
+    }
+
+    maybe<Reference_t*> Chests_t::Weapon_Chest(some<Bound_Object_t*> object)
+    {
+        SKYLIB_ASSERT_SOME(object);
+
+        maybe<Weapon_t*> weapon = object->As_Weapon();
+        if (weapon) {
+            if (weapon->Is_Bow_Or_Crossbow()) {
+                return Consts_t::NPCP::Reference::Chest::Bows()();
+            } else if (weapon->Is_Dagger()) {
+                return Consts_t::NPCP::Reference::Chest::Daggers()();
+            } else if (weapon->Is_Greatsword()) {
+                return Consts_t::NPCP::Reference::Chest::Greatswords()();
+            } else if (weapon->Is_Sword()) {
+                return Consts_t::NPCP::Reference::Chest::Swords()();
+            } else if (weapon->Is_Battleaxe()) {
+                return Consts_t::NPCP::Reference::Chest::Battleaxes()();
+            } else if (weapon->Is_Waraxe()) {
+                return Consts_t::NPCP::Reference::Chest::Waraxes()();
+            } else if (weapon->Is_Warhammer()) {
+                return Consts_t::NPCP::Reference::Chest::Warhammers()();
+            } else if (weapon->Is_Mace()) {
+                return Consts_t::NPCP::Reference::Chest::Maces()();
+            } else if (weapon->Is_Staff()) {
+                return Consts_t::NPCP::Reference::Chest::Staves()();
+            } else {
+                return Consts_t::NPCP::Reference::Chest::Other_Weapons()();
+            }
+        } else {
+            maybe<Ammo_t*> ammo = object->As_Ammo();
+            if (ammo) {
+                return Consts_t::NPCP::Reference::Chest::Ammo()();
+            } else {
+                return none<Reference_t*>();
+            }
+        }
     }
 
     void Chests_t::Open_Chest(some<Reference_t*> chest, String_t name, maybe<unique<Callback_i<Bool_t>>> callback)
@@ -208,7 +291,7 @@ namespace doticu_npcp {
         Categorize_Into_Custom_Chests(Consts_t::NPCP::Reference::Chest::Ingredients());
         Categorize_Into_Custom_Chests(Consts_t::NPCP::Reference::Chest::Food());
 
-        Categorize_Into_Custom_Chests(Consts_t::NPCP::Reference::Chest::Soulgems());
+        Categorize_Into_Custom_Chests(Consts_t::NPCP::Reference::Chest::Soul_Gems());
         Categorize_Into_Custom_Chests(Consts_t::NPCP::Reference::Chest::Scrolls());
         Categorize_Into_Custom_Chests(Consts_t::NPCP::Reference::Chest::Metals());
         Categorize_Into_Custom_Chests(Consts_t::NPCP::Reference::Chest::Leather());

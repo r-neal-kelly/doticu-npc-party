@@ -129,7 +129,7 @@ namespace doticu_npcp { namespace MCM {
 
         mcm->Add_Header_Option(Strings_t::MISCELLANEOUS);
         mcm->Add_Empty_Option();
-        options.soulgems = mcm->Add_Text_Option(Strings_t::SOULGEMS, Strings_t::_NONE_);
+        options.soulgems = mcm->Add_Text_Option(Strings_t::SOUL_GEMS, Strings_t::_NONE_);
         options.scrolls = mcm->Add_Text_Option(Strings_t::SCROLLS, Strings_t::_NONE_);
         options.metals = mcm->Add_Text_Option(Strings_t::METALS, Strings_t::_NONE_);
         options.leather = mcm->Add_Text_Option(Strings_t::LEATHER, Strings_t::_NONE_);

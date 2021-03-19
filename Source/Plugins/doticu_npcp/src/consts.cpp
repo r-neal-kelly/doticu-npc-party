@@ -239,7 +239,7 @@ namespace doticu_npcp {
     some<Reference_t*>          Consts_t::NPCP::Reference::Chest::Poisons()                 { DEFINE_FORM(Mod(), Reference_t, 0x30D21A); }
     some<Reference_t*>          Consts_t::NPCP::Reference::Chest::Ingredients()             { DEFINE_FORM(Mod(), Reference_t, 0x30D23E); }
     some<Reference_t*>          Consts_t::NPCP::Reference::Chest::Food()                    { DEFINE_FORM(Mod(), Reference_t, 0x30D21B); }
-    some<Reference_t*>          Consts_t::NPCP::Reference::Chest::Soulgems()                { DEFINE_FORM(Mod(), Reference_t, 0x30D240); }
+    some<Reference_t*>          Consts_t::NPCP::Reference::Chest::Soul_Gems()               { DEFINE_FORM(Mod(), Reference_t, 0x30D240); }
     some<Reference_t*>          Consts_t::NPCP::Reference::Chest::Scrolls()                 { DEFINE_FORM(Mod(), Reference_t, 0x30D23F); }
     some<Reference_t*>          Consts_t::NPCP::Reference::Chest::Metals()                  { DEFINE_FORM(Mod(), Reference_t, 0x30D239); }
     some<Reference_t*>          Consts_t::NPCP::Reference::Chest::Leather()                 { DEFINE_FORM(Mod(), Reference_t, 0x30D23A); }
