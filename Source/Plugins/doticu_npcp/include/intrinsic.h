@@ -100,6 +100,7 @@ namespace doticu_npcp {
     using Package_Value_t           = skylib::Package_Value_t;
     using Perk_t                    = skylib::Perk_t;
     using Player_t                  = skylib::Player_t;
+    using Potion_t                  = skylib::Potion_t;
     using Quest_t                   = skylib::Quest_t;
     using Raw_Form_ID_t             = skylib::Raw_Form_ID_t;
     using Reference_t               = skylib::Reference_t;

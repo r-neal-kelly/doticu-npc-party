@@ -2,7 +2,9 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "doticu_skylib/armor.h"
 #include "doticu_skylib/bound_object.h"
+#include "doticu_skylib/potion.h"
 #include "doticu_skylib/reference.h"
 #include "doticu_skylib/reference_container.h"
 #include "doticu_skylib/weapon.h"
@@ -64,46 +66,23 @@ namespace doticu_npcp {
             }
             maybe<Armor_t*> armor = object->As_Armor();
             if (armor) {
-
+                if (armor->Is_Light_Armor())            return Consts_t::NPCP::Reference::Chest::Light_Armor();
+                else if (armor->Is_Heavy_Armor())       return Consts_t::NPCP::Reference::Chest::Heavy_Armor();
+                else if (armor->Is_Shield())            return Consts_t::NPCP::Reference::Chest::Shields();
+                else if (armor->Is_Likely_Jewelry())    return Consts_t::NPCP::Reference::Chest::Jewelry();
+                else if (armor->Is_Likely_Clothing())   return Consts_t::NPCP::Reference::Chest::Clothes();
+                else if (armor->Is_Surely_Armor())      return Consts_t::NPCP::Reference::Chest::Light_Armor();
+                else if (armor->Is_Surely_Jewelry())    return Consts_t::NPCP::Reference::Chest::Jewelry();
+                else                                    return Consts_t::NPCP::Reference::Chest::Clothes();
+            }
+            maybe<Potion_t*> potion = object->As_Potion();
+            if (potion) {
+                if (potion->Is_Medicine())      return Consts_t::NPCP::Reference::Chest::Potions();
+                else if (potion->Is_Poison())   return Consts_t::NPCP::Reference::Chest::Poisons();
+                else                            return Consts_t::NPCP::Reference::Chest::Food();
             }
             /*
         switch (form->formType) {
-            case (kFormType_Armor):
-            {
-                if (Form::Has_Keyword(form, keywords->ArmorLight)) {
-                    return Consts::Light_Armor_Category();
-                } else if (Form::Has_Keyword(form, keywords->ArmorHeavy)) {
-                    return Consts::Heavy_Armor_Category();
-                } else if (Form::Has_Keyword(form, keywords->ArmorShield)) {
-                    return Consts::Shields_Category();
-                } else if (Form::Has_Keyword(form, keywords->ArmorJewelry)) {
-                    return Consts::Jewelry_Category();
-                } else if (Form::Has_Keyword(form, keywords->ArmorClothing)) {
-                    return Consts::Clothes_Category();
-                } else if (Form::Has_Keyword(form, keywords->ArmorBoots) ||
-                           Form::Has_Keyword(form, keywords->ArmorCuirass) ||
-                           Form::Has_Keyword(form, keywords->ArmorGauntlets) ||
-                           Form::Has_Keyword(form, keywords->ArmorHelmet)) {
-                    return Consts::Light_Armor_Category();
-                } else if (Form::Has_Keyword(form, keywords->VendorItemJewelry) ||
-                           Form::Has_Keyword(form, keywords->ClothingCirclet) ||
-                           Form::Has_Keyword(form, keywords->ClothingNecklace) ||
-                           Form::Has_Keyword(form, keywords->ClothingRing)) {
-                    return Consts::Jewelry_Category();
-                } else {
-                    return Consts::Clothes_Category();
-                }
-            }
-            case (kFormType_Potion):
-            {
-                if (Form::Has_Keyword(form, keywords->VendorItemPotion)) {
-                    return Consts::Potions_Category();
-                } else if (Form::Has_Keyword(form, keywords->VendorItemPoison)) {
-                    return Consts::Poisons_Category();
-                } else {
-                    return Consts::Food_Category();
-                }
-            }
             case (kFormType_Book):
             {
                 if (Form::Has_Keyword(form, keywords->VendorItemSpellTome)) {
