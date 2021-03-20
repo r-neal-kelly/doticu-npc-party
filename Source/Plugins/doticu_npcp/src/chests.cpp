@@ -8,10 +8,9 @@
 #include "doticu_skylib/misc.h"
 #include "doticu_skylib/potion.h"
 #include "doticu_skylib/reference.h"
-#include "doticu_skylib/reference_container.h"
 #include "doticu_skylib/weapon.h"
 
-#include "chests.h"
+#include "chests.inl"
 #include "consts.h"
 
 namespace doticu_npcp {
@@ -256,12 +255,53 @@ namespace doticu_npcp {
         }
     }
 
-    void Chests_t::Open_Chest(some<Reference_t*> chest, String_t name, maybe<unique<Callback_i<Bool_t>>> callback)
+    void Chests_t::Categorize_Into_All_Chests(some<Reference_t*> reference)
     {
-        SKYLIB_ASSERT_SOME(chest);
+        SKYLIB_ASSERT_SOME(reference);
 
-        chest->Name(name);
-        chest->Open_Inventory(std::move(callback));
+        Categorize_Into_Chests(reference, &Chest);
+    }
+
+    void Chests_t::Categorize_Into_Armor_Chests(some<Reference_t*> reference)
+    {
+        SKYLIB_ASSERT_SOME(reference);
+
+        Categorize_Into_Chests(reference, &Armor_Chest);
+    }
+
+    void Chests_t::Categorize_Into_Book_Chests(some<Reference_t*> reference)
+    {
+        SKYLIB_ASSERT_SOME(reference);
+
+        Categorize_Into_Chests(reference, &Book_Chest);
+    }
+
+    void Chests_t::Categorize_Into_Custom_Chests(some<Reference_t*> reference)
+    {
+        SKYLIB_ASSERT_SOME(reference);
+
+        Categorize_Into_Chests(reference, &Custom_Chest);
+    }
+
+    void Chests_t::Categorize_Into_Edible_Chests(some<Reference_t*> reference)
+    {
+        SKYLIB_ASSERT_SOME(reference);
+
+        Categorize_Into_Chests(reference, &Edible_Chest);
+    }
+
+    void Chests_t::Categorize_Into_Misc_Chests(some<Reference_t*> reference)
+    {
+        SKYLIB_ASSERT_SOME(reference);
+
+        Categorize_Into_Chests(reference, &Misc_Chest);
+    }
+
+    void Chests_t::Categorize_Into_Weapon_Chests(some<Reference_t*> reference)
+    {
+        SKYLIB_ASSERT_SOME(reference);
+
+        Categorize_Into_Chests(reference, &Weapon_Chest);
     }
 
     void Chests_t::Categorize_Chests()
@@ -331,112 +371,12 @@ namespace doticu_npcp {
         Categorize_Into_Custom_Chests(Consts_t::NPCP::Reference::Chest::Other_Books());
     }
 
-    void Chests_t::Categorize_Into_All_Chests(some<Reference_t*> reference)
+    void Chests_t::Open_Chest(some<Reference_t*> chest, String_t name, maybe<unique<Callback_i<Bool_t>>> callback)
     {
-        SKYLIB_ASSERT_SOME(reference);
+        SKYLIB_ASSERT_SOME(chest);
 
-
-    }
-
-    /*
-    void Categorize(Reference_t *ref, Bool_t only_custom_categories) {
-        if (ref) {
-            Vector_t<XEntry_t*> xentries_to_destroy;
-            xentries_to_destroy.reserve(2);
-
-            XContainer_t* xcontainer = Get_XContainer(ref, false);
-            if (xcontainer) {
-                for (XEntries_t::Iterator it = xcontainer->changes->xentries->Begin(); !it.End(); ++it) {
-                    XEntry_t* xentry = it.Get();
-                    if (xentry && xentry->form && xentry->form->IsPlayable()) {
-                        Reference_t* category = only_custom_categories ?
-                            Game::Get_NPCP_Custom_Category(xentry->form) :
-                            Game::Get_NPCP_Category(xentry->form);
-                        Init_Container_If_Needed(category);
-                        if (category && category != ref) {
-                            Int_t bentry_count = Get_BEntry_Count(ref, xentry->form);
-                            xentry->Validate(bentry_count);
-
-                            XEntry_t* category_xentry = nullptr;
-
-                            Vector_t<XList_t*> xlists_to_move;
-                            xlists_to_move.reserve(2);
-                            for (XLists_t::Iterator it = xentry->xlists->Begin(); !it.End(); ++it) {
-                                XList_t* xlist = it.Get();
-                                if (xlist) {
-                                    xlists_to_move.push_back(xlist);
-                                }
-                            }
-
-                            size_t xlists_to_move_count = xlists_to_move.size();
-                            if (xlists_to_move_count > 0) {
-                                category_xentry = Get_XEntry(category, xentry->form, true);
-                                NPCP_ASSERT(category_xentry);
-                                for (size_t idx = 0; idx < xlists_to_move_count; idx += 1) {
-                                    XList_t* xlist = xlists_to_move[idx];
-                                    xentry->Move_XList(category_xentry, category, xlist);
-                                }
-                            }
-                            
-                            Int_t bentry_negation = 0 - bentry_count;
-                            if (xentry->Delta_Count() < bentry_negation) {
-                                xentry->Delta_Count(bentry_negation);
-                            }
-
-                            if (xentry->Delta_Count() > bentry_negation) {
-                                if (!category_xentry) {
-                                    category_xentry = Get_XEntry(category, xentry->form, true);
-                                    NPCP_ASSERT(category_xentry);
-                                }
-                                category_xentry->Increment(xentry->Delta_Count() - bentry_negation);
-                                xentry->Delta_Count(bentry_negation);
-                            }
-
-                            if (xentry->Delta_Count() == 0) {
-                                xentries_to_destroy.push_back(xentry);
-                            }
-                        }
-                    }
-                }
-            }
-
-            for (size_t idx = 0, count = xentries_to_destroy.size(); idx < count; idx += 1) {
-                XEntry_t* xentry = xentries_to_destroy[idx];
-                Remove_XEntry(ref, xentry);
-                XEntry_t::Destroy(xentry);
-            }
-
-            BContainer_t* bcontainer = Object_Ref::Get_BContainer(ref);
-            if (bcontainer) {
-                for (size_t idx = 0; idx < bcontainer->numEntries; idx += 1) {
-                    BEntry_t* bentry = bcontainer->entries[idx];
-                    if (bentry && bentry->form && bentry->count > 0) {
-                        if (bentry->form->IsPlayable() && bentry->form->formType != kFormType_LeveledItem) {
-                            if (Get_XEntry(ref, bentry->form, false) == nullptr) {
-                                Reference_t* category = only_custom_categories ?
-                                    Game::Get_NPCP_Custom_Category(bentry->form) :
-                                    Game::Get_NPCP_Category(bentry->form);
-                                Init_Container_If_Needed(category);
-                                if (category && category != ref) {
-                                    XEntry_t* category_xentry = Get_XEntry(category, bentry->form, true);
-                                    NPCP_ASSERT(category_xentry);
-                                    category_xentry->Increment(bentry->count);
-                                    XEntry_t* xentry = Get_XEntry(ref, bentry->form, true);
-                                    NPCP_ASSERT(xentry);
-                                    xentry->Delta_Count(0 - bentry->count);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    */
-
-    void Chests_t::Categorize_Into_Custom_Chests(some<Reference_t*> reference)
-    {
-        SKYLIB_ASSERT_SOME(reference);
+        chest->Name(name);
+        chest->Open_Inventory(std::move(callback));
     }
 
 }

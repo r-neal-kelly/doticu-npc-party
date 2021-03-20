@@ -308,5 +308,8 @@
     <None Include="include\party_aliases.inl">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="include\chests.inl">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

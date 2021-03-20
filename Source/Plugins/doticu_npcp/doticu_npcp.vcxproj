@@ -162,6 +162,7 @@
     <ClInclude Include="include\utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="include\chests.inl" />
     <None Include="include\party_alias.inl" />
     <None Include="include\party_aliases.inl" />
     <None Include="scripts\doticu_npcp.psc" />
