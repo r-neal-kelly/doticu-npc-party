@@ -20,8 +20,8 @@ namespace doticu_npcp { namespace MCM {
         }
     }
 
-    Chests_t::Options   Chests_t::options   = Chests_t::Options();
-    Chests_t::Save      Chests_t::save      = Chests_t::Save();
+    Chests_t::Options   Chests_t::options = Chests_t::Options();
+    Chests_t::Save      Chests_t::save = Chests_t::Save();
 
     some<Chests_t*>     Chests_t::Self()        { return Consts_t::NPCP::Quest::Control(); }
     String_t            Chests_t::Class_Name()  { DEFINE_CLASS_NAME("doticu_npcp_mcm_chests"); }
@@ -181,7 +181,7 @@ namespace doticu_npcp { namespace MCM {
         mcm->Add_Empty_Option();
         for (size_t idx = 0, end = MAX_CUSTOM_CHESTS; idx < end; idx += 1) {
             options.custom_chests[idx] = mcm->Add_Text_Option(save.custom_names[idx], Strings_t::_NONE_);
-            options.custom_renames[idx] = mcm->Add_Text_Option(Strings_t::RENAME, Strings_t::_NONE_);
+            options.custom_renames[idx] = mcm->Add_Input_Option(Strings_t::RENAME, Strings_t::_NONE_);
         }
         mcm->Add_Empty_Option();
         mcm->Add_Empty_Option();
@@ -289,6 +289,13 @@ namespace doticu_npcp { namespace MCM {
 
     void Chests_t::On_Option_Input_Accept(Int_t option, String_t value, Latent_ID_t latent_id)
     {
+        for (size_t idx = 0, end = MAX_CUSTOM_CHESTS; idx < end; idx += 1) {
+            if (options.custom_renames[idx] == option) {
+                save.custom_names[idx] = value ? value : Index_To_Default_Custom_Name(idx);
+                Main_t::Self()->Reset_Page();
+                return;
+            }
+        }
     }
 
     void Chests_t::On_Option_Keymap_Change(Int_t option, Int_t key, String_t conflict, String_t mod, Latent_ID_t latent_id)
@@ -301,6 +308,13 @@ namespace doticu_npcp { namespace MCM {
 
     void Chests_t::On_Option_Highlight(Int_t option, Latent_ID_t latent_id)
     {
+        some<Main_t*> mcm = Main_t::Self();
+
+        if (option == options.input) {
+            mcm->Current_Info_Text() =
+                "Opens the input chest. The items contained therein will be sorted into each respective category below.\n"
+                "Items will first be filtered through Custom Categories by their form id, and then into other chests.";
+        }
     }
 
 }}
