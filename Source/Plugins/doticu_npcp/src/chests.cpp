@@ -464,7 +464,7 @@ namespace doticu_npcp {
         if (reference) {
             Categorize_Chests();
             reference->Name(name);
-            reference->Open_Inventory(std::move(callback)); // we need to make sure this closes menu for us.
+            reference->Open_Inventory(std::move(callback));
         }
     }
 

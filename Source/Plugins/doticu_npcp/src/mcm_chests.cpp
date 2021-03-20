@@ -20,8 +20,8 @@ namespace doticu_npcp { namespace MCM {
         }
     }
 
-    Chests_t::Options   Chests_t::options = Chests_t::Options();
-    Chests_t::Save      Chests_t::save = Chests_t::Save();
+    Chests_t::Options   Chests_t::options   = Chests_t::Options();
+    Chests_t::Save      Chests_t::save      = Chests_t::Save();
 
     some<Chests_t*>     Chests_t::Self()        { return Consts_t::NPCP::Quest::Control(); }
     String_t            Chests_t::Class_Name()  { DEFINE_CLASS_NAME("doticu_npcp_mcm_chests"); }
