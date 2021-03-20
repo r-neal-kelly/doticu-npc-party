@@ -59,7 +59,9 @@ namespace doticu_npcp {
     using Version_t                     = skylib::Version_t<T>;
 
     using Form_Type_e                   = skylib::Form_Type_e;
+    using Relation_e                    = skylib::Relation_e;
     using Script_Type_e                 = skylib::Script_Type_e;
+    using Vitality_e                    = skylib::Vitality_e;
 
     using Active_Magic_Effect_t         = skylib::Active_Magic_Effect_t;
     using Actor_t                       = skylib::Actor_t;
@@ -118,6 +120,7 @@ namespace doticu_npcp {
     using Spell_t                       = skylib::Spell_t;
     using Static_t                      = skylib::Static_t;
     using UI_t                          = skylib::UI_t;
+    using Voice_Type_t                  = skylib::Voice_Type_t;
     using Weapon_t                      = skylib::Weapon_t;
     using Worldspace_t                  = skylib::Worldspace_t;
 

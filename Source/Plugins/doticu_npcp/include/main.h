@@ -12,7 +12,8 @@
 
 namespace doticu_npcp {
 
-    class Main_t : public Quest_t
+    class Main_t :
+        public Quest_t
     {
     public:
         static const    SKSEInterface*          SKSE;
@@ -54,7 +55,7 @@ namespace doticu_npcp {
     /*
         Just some quick notes:
             We should use the owner faction on x_lists to with a custom faction indicating that the item is an outfit item.
-            We should try to mark x_lists as outfit items and point to the default outfit that is on the base actor. Maybe then we won't need any blank armor.
+            We can mark x_lists as outfit items and point to the default outfit that is on the base actor. then we won't need any blank armor.
     */
 
 }

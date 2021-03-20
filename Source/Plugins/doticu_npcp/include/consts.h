@@ -225,7 +225,6 @@ namespace doticu_npcp {
             };
             struct Int
             {
-                static constexpr size_t MAX_MEMBERS = 1024; // these two should go in their respective types I think.
                 static constexpr size_t MAX_FOLLOWERS = 16;
             };
             struct Leveled_Actor_Base

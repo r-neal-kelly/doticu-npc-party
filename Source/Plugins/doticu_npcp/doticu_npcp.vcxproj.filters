@@ -138,7 +138,7 @@
     <ClCompile Include="src\party_member.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\party_members.cpp">
+    <ClCompile Include="src\old_party_members.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\party_movee.cpp">
@@ -151,6 +151,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\party_settler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\party_members.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -272,7 +275,7 @@
     <ClInclude Include="include\party_member.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\party_members.h">
+    <ClInclude Include="include\old_party_members.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\party_movee.h">
@@ -297,6 +300,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\chests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_members.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

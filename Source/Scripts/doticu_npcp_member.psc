@@ -19,7 +19,6 @@ doticu_npcp_outfit      p_outfit2_default                   =  none
 doticu_npcp_outfit      p_outfit2_current                   =  none
 doticu_npcp_outfit      p_outfit2_auto_backup               =  none
 
-bool                    p_is_locked                         = false
 bool                    p_is_clone                          = false
 bool                    p_is_immobile                       = false
 bool                    p_is_thrall                         = false
@@ -35,13 +34,7 @@ int                     p_int_rating                        =     0
 
 string                  p_str_name                          =    ""
 
-Faction                 p_prev_faction_crime                =  none
 bool                    p_prev_faction_no_body_cleanup      = false
-
-float                   p_prev_aggression                   =   0.0; these four may be unneeded
-float                   p_prev_confidence                   =   0.0
-float                   p_prev_assistance                   =   0.0
-float                   p_prev_morality                     =   0.0
 
 ObjectReference         p_settler_sleeper_marker            =  none
 ObjectReference         p_settler_sitter_marker             =  none
@@ -81,10 +74,6 @@ int                     p_settler_eater_flags               =     0
 int                     p_settler_guard_flags               =     0
 
 ObjectReference         p_settler_sleeper_bed               =  none
-
-bool                    p_prev_faction_potential_follower   = false; to be deleted
-Faction[]               p_prev_factions                     =  none; to be deleted
-bool                    p_is_settler                        = false; to be deleted
 
 event OnDeath(Actor killer) native
 event OnActivate(ObjectReference activator) native
