@@ -5,6 +5,7 @@
 #include "doticu_skylib/armor.h"
 #include "doticu_skylib/book.h"
 #include "doticu_skylib/bound_object.h"
+#include "doticu_skylib/cstring.h"
 #include "doticu_skylib/misc.h"
 #include "doticu_skylib/potion.h"
 #include "doticu_skylib/reference.h"
@@ -14,6 +15,92 @@
 #include "consts.h"
 
 namespace doticu_npcp {
+
+    maybe<Reference_t*> Chests_t::Chest(Chest_e chest)
+    {
+        if (chest == Chest_e::INPUT)                return Consts_t::NPCP::Reference::Chest::Input()();
+
+        else if (chest == Chest_e::SWORDS)          return Consts_t::NPCP::Reference::Chest::Swords()();
+        else if (chest == Chest_e::GREATSWORDS)     return Consts_t::NPCP::Reference::Chest::Greatswords()();
+        else if (chest == Chest_e::WARAXES)         return Consts_t::NPCP::Reference::Chest::Waraxes()();
+        else if (chest == Chest_e::BATTLEAXES)      return Consts_t::NPCP::Reference::Chest::Battleaxes()();
+        else if (chest == Chest_e::MACES)           return Consts_t::NPCP::Reference::Chest::Maces()();
+        else if (chest == Chest_e::WARHAMMERS)      return Consts_t::NPCP::Reference::Chest::Warhammers()();
+        else if (chest == Chest_e::DAGGERS)         return Consts_t::NPCP::Reference::Chest::Daggers()();
+        else if (chest == Chest_e::STAVES)          return Consts_t::NPCP::Reference::Chest::Staves()();
+        else if (chest == Chest_e::BOWS)            return Consts_t::NPCP::Reference::Chest::Bows()();
+        else if (chest == Chest_e::AMMO)            return Consts_t::NPCP::Reference::Chest::Ammo()();
+        else if (chest == Chest_e::OTHER_WEAPONS)   return Consts_t::NPCP::Reference::Chest::Other_Weapons()();
+
+        else if (chest == Chest_e::LIGHT_ARMOR)     return Consts_t::NPCP::Reference::Chest::Light_Armor()();
+        else if (chest == Chest_e::HEAVY_ARMOR)     return Consts_t::NPCP::Reference::Chest::Heavy_Armor()();
+        else if (chest == Chest_e::SHIELDS)         return Consts_t::NPCP::Reference::Chest::Shields()();
+        else if (chest == Chest_e::JEWELRY)         return Consts_t::NPCP::Reference::Chest::Jewelry()();
+        else if (chest == Chest_e::CLOTHES)         return Consts_t::NPCP::Reference::Chest::Clothes()();
+
+        else if (chest == Chest_e::POTIONS)         return Consts_t::NPCP::Reference::Chest::Potions()();
+        else if (chest == Chest_e::POISONS)         return Consts_t::NPCP::Reference::Chest::Poisons()();
+        else if (chest == Chest_e::INGREDIENTS)     return Consts_t::NPCP::Reference::Chest::Ingredients()();
+        else if (chest == Chest_e::FOOD)            return Consts_t::NPCP::Reference::Chest::Food()();
+
+        else if (chest == Chest_e::SOUL_GEMS)       return Consts_t::NPCP::Reference::Chest::Soul_Gems()();
+        else if (chest == Chest_e::SCROLLS)         return Consts_t::NPCP::Reference::Chest::Scrolls()();
+        else if (chest == Chest_e::METALS)          return Consts_t::NPCP::Reference::Chest::Metals()();
+        else if (chest == Chest_e::LEATHER)         return Consts_t::NPCP::Reference::Chest::Leather()();
+        else if (chest == Chest_e::GEMS)            return Consts_t::NPCP::Reference::Chest::Gems()();
+        else if (chest == Chest_e::CLUTTER)         return Consts_t::NPCP::Reference::Chest::Clutter()();
+        else if (chest == Chest_e::KEYS)            return Consts_t::NPCP::Reference::Chest::Keys()();
+        else if (chest == Chest_e::OTHER_MISC)      return Consts_t::NPCP::Reference::Chest::Other_Misc()();
+
+        else if (chest == Chest_e::SPELL_TOMES)     return Consts_t::NPCP::Reference::Chest::Spell_Tomes()();
+        else if (chest == Chest_e::RECIPES)         return Consts_t::NPCP::Reference::Chest::Recipes()();
+        else if (chest == Chest_e::A_BOOKS)         return Consts_t::NPCP::Reference::Chest::A_Books()();
+        else if (chest == Chest_e::B_BOOKS)         return Consts_t::NPCP::Reference::Chest::B_Books()();
+        else if (chest == Chest_e::C_BOOKS)         return Consts_t::NPCP::Reference::Chest::C_Books()();
+        else if (chest == Chest_e::D_BOOKS)         return Consts_t::NPCP::Reference::Chest::D_Books()();
+        else if (chest == Chest_e::E_BOOKS)         return Consts_t::NPCP::Reference::Chest::E_Books()();
+        else if (chest == Chest_e::F_BOOKS)         return Consts_t::NPCP::Reference::Chest::F_Books()();
+        else if (chest == Chest_e::G_BOOKS)         return Consts_t::NPCP::Reference::Chest::G_Books()();
+        else if (chest == Chest_e::H_BOOKS)         return Consts_t::NPCP::Reference::Chest::H_Books()();
+        else if (chest == Chest_e::I_BOOKS)         return Consts_t::NPCP::Reference::Chest::I_Books()();
+        else if (chest == Chest_e::J_BOOKS)         return Consts_t::NPCP::Reference::Chest::J_Books()();
+        else if (chest == Chest_e::K_BOOKS)         return Consts_t::NPCP::Reference::Chest::K_Books()();
+        else if (chest == Chest_e::L_BOOKS)         return Consts_t::NPCP::Reference::Chest::L_Books()();
+        else if (chest == Chest_e::M_BOOKS)         return Consts_t::NPCP::Reference::Chest::M_Books()();
+        else if (chest == Chest_e::N_BOOKS)         return Consts_t::NPCP::Reference::Chest::N_Books()();
+        else if (chest == Chest_e::O_BOOKS)         return Consts_t::NPCP::Reference::Chest::O_Books()();
+        else if (chest == Chest_e::P_BOOKS)         return Consts_t::NPCP::Reference::Chest::P_Books()();
+        else if (chest == Chest_e::Q_BOOKS)         return Consts_t::NPCP::Reference::Chest::Q_Books()();
+        else if (chest == Chest_e::R_BOOKS)         return Consts_t::NPCP::Reference::Chest::R_Books()();
+        else if (chest == Chest_e::S_BOOKS)         return Consts_t::NPCP::Reference::Chest::S_Books()();
+        else if (chest == Chest_e::T_BOOKS)         return Consts_t::NPCP::Reference::Chest::T_Books()();
+        else if (chest == Chest_e::U_BOOKS)         return Consts_t::NPCP::Reference::Chest::U_Books()();
+        else if (chest == Chest_e::V_BOOKS)         return Consts_t::NPCP::Reference::Chest::V_Books()();
+        else if (chest == Chest_e::W_BOOKS)         return Consts_t::NPCP::Reference::Chest::W_Books()();
+        else if (chest == Chest_e::X_BOOKS)         return Consts_t::NPCP::Reference::Chest::X_Books()();
+        else if (chest == Chest_e::Y_BOOKS)         return Consts_t::NPCP::Reference::Chest::Y_Books()();
+        else if (chest == Chest_e::Z_BOOKS)         return Consts_t::NPCP::Reference::Chest::Z_Books()();
+        else if (chest == Chest_e::OTHER_BOOKS)     return Consts_t::NPCP::Reference::Chest::Other_Books()();
+
+        else if (chest == Chest_e::CUSTOM_00)       return Consts_t::NPCP::Reference::Chest::Custom_00()();
+        else if (chest == Chest_e::CUSTOM_01)       return Consts_t::NPCP::Reference::Chest::Custom_01()();
+        else if (chest == Chest_e::CUSTOM_02)       return Consts_t::NPCP::Reference::Chest::Custom_02()();
+        else if (chest == Chest_e::CUSTOM_03)       return Consts_t::NPCP::Reference::Chest::Custom_03()();
+        else if (chest == Chest_e::CUSTOM_04)       return Consts_t::NPCP::Reference::Chest::Custom_04()();
+        else if (chest == Chest_e::CUSTOM_05)       return Consts_t::NPCP::Reference::Chest::Custom_05()();
+        else if (chest == Chest_e::CUSTOM_06)       return Consts_t::NPCP::Reference::Chest::Custom_06()();
+        else if (chest == Chest_e::CUSTOM_07)       return Consts_t::NPCP::Reference::Chest::Custom_07()();
+        else if (chest == Chest_e::CUSTOM_08)       return Consts_t::NPCP::Reference::Chest::Custom_08()();
+        else if (chest == Chest_e::CUSTOM_09)       return Consts_t::NPCP::Reference::Chest::Custom_09()();
+        else if (chest == Chest_e::CUSTOM_10)       return Consts_t::NPCP::Reference::Chest::Custom_10()();
+        else if (chest == Chest_e::CUSTOM_11)       return Consts_t::NPCP::Reference::Chest::Custom_11()();
+        else if (chest == Chest_e::CUSTOM_12)       return Consts_t::NPCP::Reference::Chest::Custom_12()();
+        else if (chest == Chest_e::CUSTOM_13)       return Consts_t::NPCP::Reference::Chest::Custom_13()();
+        else if (chest == Chest_e::CUSTOM_14)       return Consts_t::NPCP::Reference::Chest::Custom_14()();
+        else if (chest == Chest_e::CUSTOM_15)       return Consts_t::NPCP::Reference::Chest::Custom_15()();
+
+        else                                        return none<Reference_t*>();
+    }
 
     some<Reference_t*> Chests_t::Chest(some<Bound_Object_t*> object)
     {
@@ -43,7 +130,7 @@ namespace doticu_npcp {
                             if (misc_chest) {
                                 return misc_chest();
                             } else {
-                                return Consts_t::NPCP::Reference::Chest::Misc();
+                                return Consts_t::NPCP::Reference::Chest::Other_Misc();
                             }
                         }
                     }
@@ -259,7 +346,7 @@ namespace doticu_npcp {
     {
         SKYLIB_ASSERT_SOME(reference);
 
-        Categorize_Into_Chests(reference, &Chest);
+        Categorize_Into_Chests<some<Reference_t*>(*)(some<Bound_Object_t*>)>(reference, &Chest);
     }
 
     void Chests_t::Categorize_Into_Armor_Chests(some<Reference_t*> reference)
@@ -338,7 +425,7 @@ namespace doticu_npcp {
         Categorize_Into_Custom_Chests(Consts_t::NPCP::Reference::Chest::Gems());
         Categorize_Into_Custom_Chests(Consts_t::NPCP::Reference::Chest::Clutter());
         Categorize_Into_Custom_Chests(Consts_t::NPCP::Reference::Chest::Keys());
-        Categorize_Into_Custom_Chests(Consts_t::NPCP::Reference::Chest::Misc());
+        Categorize_Into_Custom_Chests(Consts_t::NPCP::Reference::Chest::Other_Misc());
 
         Categorize_Into_Custom_Chests(Consts_t::NPCP::Reference::Chest::Spell_Tomes());
         Categorize_Into_Custom_Chests(Consts_t::NPCP::Reference::Chest::Recipes());
@@ -371,12 +458,14 @@ namespace doticu_npcp {
         Categorize_Into_Custom_Chests(Consts_t::NPCP::Reference::Chest::Other_Books());
     }
 
-    void Chests_t::Open_Chest(some<Reference_t*> chest, String_t name, maybe<unique<Callback_i<Bool_t>>> callback)
+    void Chests_t::Open_Chest(Chest_e chest, String_t name, maybe<unique<Callback_i<Bool_t>>> callback)
     {
-        SKYLIB_ASSERT_SOME(chest);
-
-        chest->Name(name);
-        chest->Open_Inventory(std::move(callback));
+        maybe<Reference_t*> reference = Chest(chest);
+        if (reference) {
+            Categorize_Chests();
+            reference->Name(name);
+            reference->Open_Inventory(std::move(callback)); // we need to make sure this closes menu for us.
+        }
     }
 
 }

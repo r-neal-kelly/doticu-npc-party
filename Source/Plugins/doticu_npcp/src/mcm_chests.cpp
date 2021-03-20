@@ -10,6 +10,8 @@
 
 namespace doticu_npcp { namespace MCM {
 
+    using Const_Chests_t = doticu_npcp::Chests_t;
+
     Chests_t::Options::Options()
     {
         for (size_t idx = 0, end = MAX_CUSTOM_CHESTS; idx < end; idx += 1) {
@@ -19,7 +21,7 @@ namespace doticu_npcp { namespace MCM {
     }
 
     Chests_t::Options   Chests_t::options   = Chests_t::Options();
-    Chests_t::Save_Data Chests_t::save_data = Chests_t::Save_Data();
+    Chests_t::Save      Chests_t::save      = Chests_t::Save();
 
     some<Chests_t*>     Chests_t::Self()        { return Consts_t::NPCP::Quest::Control(); }
     String_t            Chests_t::Class_Name()  { DEFINE_CLASS_NAME("doticu_npcp_mcm_chests"); }
@@ -44,24 +46,24 @@ namespace doticu_npcp { namespace MCM {
     void Chests_t::Initialize()
     {
         options = Options();
-        save_data = Save_Data();
+        save = Save();
 
-        save_data.custom_names.reserve(MAX_CUSTOM_CHESTS);
+        save.custom_names.reserve(MAX_CUSTOM_CHESTS);
         for (size_t idx = 0, end = MAX_CUSTOM_CHESTS; idx < end; idx += 1) {
-            save_data.custom_names.push_back(Index_To_Default_Custom_Name(idx));
+            save.custom_names.push_back(Index_To_Default_Custom_Name(idx));
         }
     }
 
     void Chests_t::Before_Save()
     {
-        Custom_Names() = save_data.custom_names;
+        Custom_Names() = save.custom_names;
     }
 
     void Chests_t::After_Load()
     {
-        save_data.custom_names = Custom_Names();
-        for (size_t idx = 0, end = MAX_CUSTOM_CHESTS - save_data.custom_names.size(); idx < end; idx += 1) {
-            save_data.custom_names.push_back(Index_To_Default_Custom_Name(idx));
+        save.custom_names = Custom_Names();
+        for (size_t idx = 0, end = MAX_CUSTOM_CHESTS - save.custom_names.size(); idx < end; idx += 1) {
+            save.custom_names.push_back(Index_To_Default_Custom_Name(idx));
         }
     }
 
@@ -129,14 +131,14 @@ namespace doticu_npcp { namespace MCM {
 
         mcm->Add_Header_Option(Strings_t::MISCELLANEOUS);
         mcm->Add_Empty_Option();
-        options.soulgems = mcm->Add_Text_Option(Strings_t::SOUL_GEMS, Strings_t::_NONE_);
+        options.soul_gems = mcm->Add_Text_Option(Strings_t::SOUL_GEMS, Strings_t::_NONE_);
         options.scrolls = mcm->Add_Text_Option(Strings_t::SCROLLS, Strings_t::_NONE_);
         options.metals = mcm->Add_Text_Option(Strings_t::METALS, Strings_t::_NONE_);
         options.leather = mcm->Add_Text_Option(Strings_t::LEATHER, Strings_t::_NONE_);
         options.gems = mcm->Add_Text_Option(Strings_t::GEMS, Strings_t::_NONE_);
         options.clutter = mcm->Add_Text_Option(Strings_t::CLUTTER, Strings_t::_NONE_);
         options.keys = mcm->Add_Text_Option(Strings_t::KEYS, Strings_t::_NONE_);
-        options.miscellaneous = mcm->Add_Text_Option(Strings_t::MISCELLANEOUS, Strings_t::_NONE_);
+        options.other_misc = mcm->Add_Text_Option(Strings_t::OTHER_MISC, Strings_t::_NONE_);
         mcm->Add_Empty_Option();
         mcm->Add_Empty_Option();
 
@@ -170,7 +172,7 @@ namespace doticu_npcp { namespace MCM {
         options.x_books = mcm->Add_Text_Option(Strings_t::X, Strings_t::_NONE_);
         options.y_books = mcm->Add_Text_Option(Strings_t::Y, Strings_t::_NONE_);
         options.z_books = mcm->Add_Text_Option(Strings_t::Z, Strings_t::_NONE_);
-        options.other_books = mcm->Add_Text_Option(Strings_t::_POUND_, Strings_t::_NONE_);
+        options.other_books = mcm->Add_Text_Option(Strings_t::OTHER_BOOKS, Strings_t::_NONE_);
         mcm->Add_Empty_Option();
         mcm->Add_Empty_Option();
         mcm->Add_Empty_Option();
@@ -178,7 +180,7 @@ namespace doticu_npcp { namespace MCM {
         mcm->Add_Header_Option(Strings_t::CUSTOM);
         mcm->Add_Empty_Option();
         for (size_t idx = 0, end = MAX_CUSTOM_CHESTS; idx < end; idx += 1) {
-            options.custom_chests[idx] = mcm->Add_Text_Option(save_data.custom_names[idx], Strings_t::_NONE_);
+            options.custom_chests[idx] = mcm->Add_Text_Option(save.custom_names[idx], Strings_t::_NONE_);
             options.custom_renames[idx] = mcm->Add_Text_Option(Strings_t::RENAME, Strings_t::_NONE_);
         }
         mcm->Add_Empty_Option();
@@ -187,6 +189,86 @@ namespace doticu_npcp { namespace MCM {
 
     void Chests_t::On_Option_Select(Int_t option, Latent_ID_t latent_id)
     {
+        if (option == options.input)                    Const_Chests_t::Open_Chest(Chest_e::INPUT, Strings_t::INPUT);
+
+        else if (option == options.swords)              Const_Chests_t::Open_Chest(Chest_e::SWORDS, Strings_t::SWORDS);
+        else if (option == options.greatswords)         Const_Chests_t::Open_Chest(Chest_e::GREATSWORDS, Strings_t::GREATSWORDS);
+        else if (option == options.waraxes)             Const_Chests_t::Open_Chest(Chest_e::WARAXES, Strings_t::WARAXES);
+        else if (option == options.battleaxes)          Const_Chests_t::Open_Chest(Chest_e::BATTLEAXES, Strings_t::BATTLEAXES);
+        else if (option == options.maces)               Const_Chests_t::Open_Chest(Chest_e::MACES, Strings_t::MACES);
+        else if (option == options.warhammers)          Const_Chests_t::Open_Chest(Chest_e::WARHAMMERS, Strings_t::WARHAMMERS);
+        else if (option == options.daggers)             Const_Chests_t::Open_Chest(Chest_e::DAGGERS, Strings_t::DAGGERS);
+        else if (option == options.staves)              Const_Chests_t::Open_Chest(Chest_e::STAVES, Strings_t::STAVES);
+        else if (option == options.bows)                Const_Chests_t::Open_Chest(Chest_e::BOWS, Strings_t::BOWS);
+        else if (option == options.ammo)                Const_Chests_t::Open_Chest(Chest_e::AMMO, Strings_t::AMMO);
+        else if (option == options.other_weapons)       Const_Chests_t::Open_Chest(Chest_e::OTHER_WEAPONS, Strings_t::OTHER_WEAPONS);
+
+        else if (option == options.light_armor)         Const_Chests_t::Open_Chest(Chest_e::LIGHT_ARMOR, Strings_t::LIGHT_ARMOR);
+        else if (option == options.heavy_armor)         Const_Chests_t::Open_Chest(Chest_e::HEAVY_ARMOR, Strings_t::HEAVY_ARMOR);
+        else if (option == options.shields)             Const_Chests_t::Open_Chest(Chest_e::SHIELDS, Strings_t::SHIELDS);
+        else if (option == options.jewelry)             Const_Chests_t::Open_Chest(Chest_e::JEWELRY, Strings_t::JEWELRY);
+        else if (option == options.clothes)             Const_Chests_t::Open_Chest(Chest_e::CLOTHES, Strings_t::CLOTHES);
+
+        else if (option == options.potions)             Const_Chests_t::Open_Chest(Chest_e::POTIONS, Strings_t::POTIONS);
+        else if (option == options.poisons)             Const_Chests_t::Open_Chest(Chest_e::POISONS, Strings_t::POISONS);
+        else if (option == options.ingredients)         Const_Chests_t::Open_Chest(Chest_e::INGREDIENTS, Strings_t::INGREDIENTS);
+        else if (option == options.food)                Const_Chests_t::Open_Chest(Chest_e::FOOD, Strings_t::FOOD);
+
+        else if (option == options.soul_gems)           Const_Chests_t::Open_Chest(Chest_e::SOUL_GEMS, Strings_t::SOUL_GEMS);
+        else if (option == options.scrolls)             Const_Chests_t::Open_Chest(Chest_e::SCROLLS, Strings_t::SCROLLS);
+        else if (option == options.metals)              Const_Chests_t::Open_Chest(Chest_e::METALS, Strings_t::METALS);
+        else if (option == options.leather)             Const_Chests_t::Open_Chest(Chest_e::LEATHER, Strings_t::LEATHER);
+        else if (option == options.gems)                Const_Chests_t::Open_Chest(Chest_e::GEMS, Strings_t::GEMS);
+        else if (option == options.clutter)             Const_Chests_t::Open_Chest(Chest_e::CLUTTER, Strings_t::CLUTTER);
+        else if (option == options.keys)                Const_Chests_t::Open_Chest(Chest_e::KEYS, Strings_t::KEYS);
+        else if (option == options.other_misc)          Const_Chests_t::Open_Chest(Chest_e::OTHER_MISC, Strings_t::OTHER_MISC);
+
+        else if (option == options.spell_tomes)         Const_Chests_t::Open_Chest(Chest_e::SPELL_TOMES, Strings_t::SPELL_TOMES);
+        else if (option == options.recipes)             Const_Chests_t::Open_Chest(Chest_e::RECIPES, Strings_t::RECIPES);
+        else if (option == options.a_books)             Const_Chests_t::Open_Chest(Chest_e::A_BOOKS, Strings_t::A_BOOKS);
+        else if (option == options.b_books)             Const_Chests_t::Open_Chest(Chest_e::B_BOOKS, Strings_t::B_BOOKS);
+        else if (option == options.c_books)             Const_Chests_t::Open_Chest(Chest_e::C_BOOKS, Strings_t::C_BOOKS);
+        else if (option == options.d_books)             Const_Chests_t::Open_Chest(Chest_e::D_BOOKS, Strings_t::D_BOOKS);
+        else if (option == options.e_books)             Const_Chests_t::Open_Chest(Chest_e::E_BOOKS, Strings_t::E_BOOKS);
+        else if (option == options.f_books)             Const_Chests_t::Open_Chest(Chest_e::F_BOOKS, Strings_t::F_BOOKS);
+        else if (option == options.g_books)             Const_Chests_t::Open_Chest(Chest_e::G_BOOKS, Strings_t::G_BOOKS);
+        else if (option == options.h_books)             Const_Chests_t::Open_Chest(Chest_e::H_BOOKS, Strings_t::H_BOOKS);
+        else if (option == options.i_books)             Const_Chests_t::Open_Chest(Chest_e::I_BOOKS, Strings_t::I_BOOKS);
+        else if (option == options.j_books)             Const_Chests_t::Open_Chest(Chest_e::J_BOOKS, Strings_t::J_BOOKS);
+        else if (option == options.k_books)             Const_Chests_t::Open_Chest(Chest_e::K_BOOKS, Strings_t::K_BOOKS);
+        else if (option == options.l_books)             Const_Chests_t::Open_Chest(Chest_e::L_BOOKS, Strings_t::L_BOOKS);
+        else if (option == options.m_books)             Const_Chests_t::Open_Chest(Chest_e::M_BOOKS, Strings_t::M_BOOKS);
+        else if (option == options.n_books)             Const_Chests_t::Open_Chest(Chest_e::N_BOOKS, Strings_t::N_BOOKS);
+        else if (option == options.o_books)             Const_Chests_t::Open_Chest(Chest_e::O_BOOKS, Strings_t::O_BOOKS);
+        else if (option == options.p_books)             Const_Chests_t::Open_Chest(Chest_e::P_BOOKS, Strings_t::P_BOOKS);
+        else if (option == options.q_books)             Const_Chests_t::Open_Chest(Chest_e::Q_BOOKS, Strings_t::Q_BOOKS);
+        else if (option == options.r_books)             Const_Chests_t::Open_Chest(Chest_e::R_BOOKS, Strings_t::R_BOOKS);
+        else if (option == options.s_books)             Const_Chests_t::Open_Chest(Chest_e::S_BOOKS, Strings_t::S_BOOKS);
+        else if (option == options.t_books)             Const_Chests_t::Open_Chest(Chest_e::T_BOOKS, Strings_t::T_BOOKS);
+        else if (option == options.u_books)             Const_Chests_t::Open_Chest(Chest_e::U_BOOKS, Strings_t::U_BOOKS);
+        else if (option == options.v_books)             Const_Chests_t::Open_Chest(Chest_e::V_BOOKS, Strings_t::V_BOOKS);
+        else if (option == options.w_books)             Const_Chests_t::Open_Chest(Chest_e::W_BOOKS, Strings_t::W_BOOKS);
+        else if (option == options.x_books)             Const_Chests_t::Open_Chest(Chest_e::X_BOOKS, Strings_t::X_BOOKS);
+        else if (option == options.y_books)             Const_Chests_t::Open_Chest(Chest_e::Y_BOOKS, Strings_t::Y_BOOKS);
+        else if (option == options.z_books)             Const_Chests_t::Open_Chest(Chest_e::Z_BOOKS, Strings_t::Z_BOOKS);
+        else if (option == options.other_books)         Const_Chests_t::Open_Chest(Chest_e::OTHER_BOOKS, Strings_t::OTHER_BOOKS);
+
+        else if (option == options.custom_chests[0])    Const_Chests_t::Open_Chest(Chest_e::CUSTOM_00, save.custom_names[0]);
+        else if (option == options.custom_chests[1])    Const_Chests_t::Open_Chest(Chest_e::CUSTOM_01, save.custom_names[1]);
+        else if (option == options.custom_chests[2])    Const_Chests_t::Open_Chest(Chest_e::CUSTOM_02, save.custom_names[2]);
+        else if (option == options.custom_chests[3])    Const_Chests_t::Open_Chest(Chest_e::CUSTOM_03, save.custom_names[3]);
+        else if (option == options.custom_chests[4])    Const_Chests_t::Open_Chest(Chest_e::CUSTOM_04, save.custom_names[4]);
+        else if (option == options.custom_chests[5])    Const_Chests_t::Open_Chest(Chest_e::CUSTOM_05, save.custom_names[5]);
+        else if (option == options.custom_chests[6])    Const_Chests_t::Open_Chest(Chest_e::CUSTOM_06, save.custom_names[6]);
+        else if (option == options.custom_chests[7])    Const_Chests_t::Open_Chest(Chest_e::CUSTOM_07, save.custom_names[7]);
+        else if (option == options.custom_chests[8])    Const_Chests_t::Open_Chest(Chest_e::CUSTOM_08, save.custom_names[8]);
+        else if (option == options.custom_chests[9])    Const_Chests_t::Open_Chest(Chest_e::CUSTOM_09, save.custom_names[9]);
+        else if (option == options.custom_chests[10])   Const_Chests_t::Open_Chest(Chest_e::CUSTOM_10, save.custom_names[10]);
+        else if (option == options.custom_chests[11])   Const_Chests_t::Open_Chest(Chest_e::CUSTOM_11, save.custom_names[11]);
+        else if (option == options.custom_chests[12])   Const_Chests_t::Open_Chest(Chest_e::CUSTOM_12, save.custom_names[12]);
+        else if (option == options.custom_chests[13])   Const_Chests_t::Open_Chest(Chest_e::CUSTOM_13, save.custom_names[13]);
+        else if (option == options.custom_chests[14])   Const_Chests_t::Open_Chest(Chest_e::CUSTOM_14, save.custom_names[14]);
+        else if (option == options.custom_chests[15])   Const_Chests_t::Open_Chest(Chest_e::CUSTOM_15, save.custom_names[15]);
     }
 
     void Chests_t::On_Option_Menu_Open(Int_t option, Latent_ID_t latent_id)

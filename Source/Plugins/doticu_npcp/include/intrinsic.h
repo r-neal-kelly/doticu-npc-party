@@ -40,7 +40,6 @@ namespace doticu_npcp {
     using maybe                         = skylib::maybe<T>;
     template <typename T>
     using some                          = skylib::some<T>;
-
     template <typename T>
     using unique                        = skylib::unique<T>;
 
@@ -54,6 +53,8 @@ namespace doticu_npcp {
     template <typename Return_t, typename ...Ts>
     using Functor_i                     = skylib::Functor_i<Return_t, Ts...>;
 
+    template <typename T>
+    using Enum_t                        = skylib::Enum_t<T>;
     template <typename T>
     using Version_t                     = skylib::Version_t<T>;
 

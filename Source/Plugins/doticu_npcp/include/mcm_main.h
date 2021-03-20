@@ -14,7 +14,7 @@
 
 namespace doticu_npcp { namespace MCM {
 
-    class Latent_ID_t
+    class Latent_ID_t // maybe should go in mcmlib
     {
     public:
         const maybe<V::Stack_ID_t> stack_id;
@@ -32,7 +32,7 @@ namespace doticu_npcp { namespace MCM {
         public mcmlib::Config_Base_t
     {
     protected:
-        class Save_Data
+        class Save
         {
         public:
             String_t current_page = "";
@@ -40,7 +40,7 @@ namespace doticu_npcp { namespace MCM {
 
     protected:
         static std::mutex   event_mutex;
-        static Save_Data    save_data;
+        static Save         save;
 
     public:
         static some<Main_t*>        Self();

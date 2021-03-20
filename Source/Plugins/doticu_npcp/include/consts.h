@@ -344,7 +344,7 @@ namespace doticu_npcp {
                     static some<Reference_t*> Gems();
                     static some<Reference_t*> Clutter();
                     static some<Reference_t*> Keys();
-                    static some<Reference_t*> Misc();
+                    static some<Reference_t*> Other_Misc();
                     static some<Reference_t*> Spell_Tomes();
                     static some<Reference_t*> Recipes();
                     static some<Reference_t*> A_Books();

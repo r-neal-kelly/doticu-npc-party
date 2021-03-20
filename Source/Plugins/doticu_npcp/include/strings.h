@@ -18,15 +18,18 @@ namespace doticu_npcp {
         static const String_t _SPACE_;
 
         static const String_t A;
+        static const String_t A_BOOKS;
         static const String_t AMMO;
         static const String_t APPAREL;
 
         static const String_t B;
+        static const String_t B_BOOKS;
         static const String_t BATTLEAXES;
         static const String_t BOOKS;
         static const String_t BOWS;
 
         static const String_t C;
+        static const String_t C_BOOKS;
         static const String_t CHESTS;
         static const String_t CLOTHES;
         static const String_t CLUTTER;
@@ -49,40 +52,50 @@ namespace doticu_npcp {
         static const String_t CUSTOM_16;
 
         static const String_t D;
+        static const String_t D_BOOKS;
         static const String_t DAGGERS;
 
         static const String_t E;
+        static const String_t E_BOOKS;
         static const String_t EDIBLES;
 
         static const String_t F;
+        static const String_t F_BOOKS;
         static const String_t FILTER;
         static const String_t FOLLOWERS;
         static const String_t FOOD;
 
         static const String_t G;
+        static const String_t G_BOOKS;
         static const String_t GEMS;
         static const String_t GREATSWORDS;
 
         static const String_t H;
+        static const String_t H_BOOKS;
         static const String_t HEAVY_ARMOR;
         static const String_t HOTKEYS;
 
         static const String_t I;
+        static const String_t I_BOOKS;
         static const String_t INGREDIENTS;
         static const String_t INPUT;
 
         static const String_t J;
+        static const String_t J_BOOKS;
         static const String_t JEWELRY;
 
         static const String_t K;
+        static const String_t K_BOOKS;
         static const String_t KEYS;
 
         static const String_t L;
+        static const String_t L_BOOKS;
         static const String_t LEATHER;
         static const String_t LIGHT_ARMOR;
         static const String_t LOGS;
 
         static const String_t M;
+        static const String_t M_BOOKS;
         static const String_t MACES;
         static const String_t MANNEQUINS;
         static const String_t MEMBERS;
@@ -90,23 +103,31 @@ namespace doticu_npcp {
         static const String_t MISCELLANEOUS;
 
         static const String_t N;
+        static const String_t N_BOOKS;
         static const String_t NPC_PARTY_PRIORITIZED;
         static const String_t NPC_PARTY_UNPRIORITIZED;
 
         static const String_t O;
+        static const String_t O_BOOKS;
+        static const String_t OTHER_BOOKS;
+        static const String_t OTHER_MISC;
         static const String_t OTHER_WEAPONS;
 
         static const String_t P;
+        static const String_t P_BOOKS;
         static const String_t POISONS;
         static const String_t POTIONS;
 
         static const String_t Q;
+        static const String_t Q_BOOKS;
 
         static const String_t R;
+        static const String_t R_BOOKS;
         static const String_t RECIPES;
         static const String_t RENAME;
 
         static const String_t S;
+        static const String_t S_BOOKS;
         static const String_t SCROLLS;
         static const String_t SETTINGS;
         static const String_t SETTLERS;
@@ -118,22 +139,29 @@ namespace doticu_npcp {
         static const String_t SWORDS;
 
         static const String_t T;
+        static const String_t T_BOOKS;
 
         static const String_t U;
+        static const String_t U_BOOKS;
         static const String_t UNKNOWN;
 
         static const String_t V;
+        static const String_t V_BOOKS;
 
         static const String_t W;
+        static const String_t W_BOOKS;
         static const String_t WARHAMMERS;
         static const String_t WARAXES;
         static const String_t WEAPONS;
 
         static const String_t X;
+        static const String_t X_BOOKS;
 
         static const String_t Y;
+        static const String_t Y_BOOKS;
 
         static const String_t Z;
+        static const String_t Z_BOOKS;
     };
 
 }

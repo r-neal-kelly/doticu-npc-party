@@ -246,7 +246,7 @@ namespace doticu_npcp {
     some<Reference_t*>          Consts_t::NPCP::Reference::Chest::Gems()                    { DEFINE_FORM(Mod(), Reference_t, 0x30D23B); }
     some<Reference_t*>          Consts_t::NPCP::Reference::Chest::Clutter()                 { DEFINE_FORM(Mod(), Reference_t, 0x30D23C); }
     some<Reference_t*>          Consts_t::NPCP::Reference::Chest::Keys()                    { DEFINE_FORM(Mod(), Reference_t, 0x30D241); }
-    some<Reference_t*>          Consts_t::NPCP::Reference::Chest::Misc()                    { DEFINE_FORM(Mod(), Reference_t, 0x30D242); }
+    some<Reference_t*>          Consts_t::NPCP::Reference::Chest::Other_Misc()              { DEFINE_FORM(Mod(), Reference_t, 0x30D242); }
     some<Reference_t*>          Consts_t::NPCP::Reference::Chest::Spell_Tomes()             { DEFINE_FORM(Mod(), Reference_t, 0x30D21C); }
     some<Reference_t*>          Consts_t::NPCP::Reference::Chest::Recipes()                 { DEFINE_FORM(Mod(), Reference_t, 0x30D21D); }
     some<Reference_t*>          Consts_t::NPCP::Reference::Chest::A_Books()                 { DEFINE_FORM(Mod(), Reference_t, 0x30D21E); }

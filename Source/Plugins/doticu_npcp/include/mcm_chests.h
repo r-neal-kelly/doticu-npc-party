@@ -46,14 +46,14 @@ namespace doticu_npcp { namespace MCM {
             Int_t ingredients       = -1;
             Int_t food              = -1;
 
-            Int_t soulgems          = -1;
+            Int_t soul_gems         = -1;
             Int_t scrolls           = -1;
             Int_t metals            = -1;
             Int_t leather           = -1;
             Int_t gems              = -1;
             Int_t clutter           = -1;
             Int_t keys              = -1;
-            Int_t miscellaneous     = -1;
+            Int_t other_misc        = -1;
 
             Int_t spell_tomes       = -1;
             Int_t recipes           = -1;
@@ -92,15 +92,15 @@ namespace doticu_npcp { namespace MCM {
             Options();
         };
 
-        class Save_Data
+        class Save
         {
         public:
             Vector_t<String_t> custom_names;
         };
 
     protected:
-        static Options      options;
-        static Save_Data    save_data;
+        static Options  options;
+        static Save     save;
 
     public:
         static some<Chests_t*>      Self();

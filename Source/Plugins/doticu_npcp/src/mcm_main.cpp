@@ -24,13 +24,12 @@ namespace doticu_npcp { namespace MCM {
     Latent_ID_t::~Latent_ID_t()
     {
         if (this->stack_id) {
-            V::Variable_t none;
-            V::Machine_t::Self()->Return_Latent_Function(stack_id(), &none);
+            V::Machine_t::Self()->Return_Latent_Function(stack_id(), V::Variable_t());
         }
     }
 
-    std::mutex          Main_t::event_mutex = std::mutex();
-    Main_t::Save_Data   Main_t::save_data   = Main_t::Save_Data();
+    std::mutex      Main_t::event_mutex = std::mutex();
+    Main_t::Save    Main_t::save        = Main_t::Save();
 
     some<Main_t*>       Main_t::Self()          { return Consts_t::NPCP::Quest::Control(); }
     String_t            Main_t::Class_Name()    { DEFINE_CLASS_NAME("doticu_npcp_mcm_main"); }
@@ -75,8 +74,8 @@ namespace doticu_npcp { namespace MCM {
     {
         std::lock_guard<std::mutex> guard(event_mutex);
 
-        save_data = Save_Data();
-        save_data.current_page = Strings_t::SETTINGS;
+        save = Save();
+        save.current_page = Strings_t::SETTINGS;
 
         Chests_t::Initialize();
     }
@@ -85,7 +84,7 @@ namespace doticu_npcp { namespace MCM {
     {
         std::lock_guard<std::mutex> guard(event_mutex);
 
-        Current_Page() = save_data.current_page;
+        Current_Page() = save.current_page;
 
         Chests_t::Before_Save();
     }
@@ -94,7 +93,7 @@ namespace doticu_npcp { namespace MCM {
     {
         std::lock_guard<std::mutex> guard(event_mutex);
 
-        save_data.current_page = Current_Page();
+        save.current_page = Current_Page();
 
         Chests_t::After_Load();
     }

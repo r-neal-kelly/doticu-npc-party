@@ -4,9 +4,103 @@
 
 #pragma once
 
+#include "doticu_skylib/enum.h"
+
 #include "intrinsic.h"
 
 namespace doticu_npcp {
+
+    class Chest_e :
+        public Enum_t<Word_t>
+    {
+    public:
+        enum enum_type : value_type
+        {
+            INPUT,
+
+            SWORDS,
+            GREATSWORDS,
+            WARAXES,
+            BATTLEAXES,
+            MACES,
+            WARHAMMERS,
+            DAGGERS,
+            STAVES,
+            BOWS,
+            AMMO,
+            OTHER_WEAPONS,
+
+            LIGHT_ARMOR,
+            HEAVY_ARMOR,
+            SHIELDS,
+            JEWELRY,
+            CLOTHES,
+
+            POTIONS,
+            POISONS,
+            INGREDIENTS,
+            FOOD,
+
+            SOUL_GEMS,
+            SCROLLS,
+            METALS,
+            LEATHER,
+            GEMS,
+            CLUTTER,
+            KEYS,
+            OTHER_MISC,
+
+            SPELL_TOMES,
+            RECIPES,
+            A_BOOKS,
+            B_BOOKS,
+            C_BOOKS,
+            D_BOOKS,
+            E_BOOKS,
+            F_BOOKS,
+            G_BOOKS,
+            H_BOOKS,
+            I_BOOKS,
+            J_BOOKS,
+            K_BOOKS,
+            L_BOOKS,
+            M_BOOKS,
+            N_BOOKS,
+            O_BOOKS,
+            P_BOOKS,
+            Q_BOOKS,
+            R_BOOKS,
+            S_BOOKS,
+            T_BOOKS,
+            U_BOOKS,
+            V_BOOKS,
+            W_BOOKS,
+            X_BOOKS,
+            Y_BOOKS,
+            Z_BOOKS,
+            OTHER_BOOKS,
+
+            CUSTOM_00,
+            CUSTOM_01,
+            CUSTOM_02,
+            CUSTOM_03,
+            CUSTOM_04,
+            CUSTOM_05,
+            CUSTOM_06,
+            CUSTOM_07,
+            CUSTOM_08,
+            CUSTOM_09,
+            CUSTOM_10,
+            CUSTOM_11,
+            CUSTOM_12,
+            CUSTOM_13,
+            CUSTOM_14,
+            CUSTOM_15,
+        };
+
+    public:
+        using Enum_t::Enum_t;
+    };
 
     class Chests_t
     {
@@ -14,6 +108,8 @@ namespace doticu_npcp {
         static constexpr size_t MAX_CUSTOM_CHESTS = 16;
 
     public:
+        static maybe<Reference_t*>  Chest(Chest_e chest);
+
         static some<Reference_t*>   Chest(some<Bound_Object_t*> object);
         static maybe<Reference_t*>  Armor_Chest(some<Bound_Object_t*> object);
         static maybe<Reference_t*>  Book_Chest(some<Bound_Object_t*> object);
@@ -42,7 +138,7 @@ namespace doticu_npcp {
         static void     Categorize_Chests();
 
     public:
-        static void Open_Chest(some<Reference_t*> chest, String_t name, maybe<unique<Callback_i<Bool_t>>> callback);
+        static void Open_Chest(Chest_e chest, String_t name, maybe<unique<Callback_i<Bool_t>>> callback = nullptr);
     };
 
 }
