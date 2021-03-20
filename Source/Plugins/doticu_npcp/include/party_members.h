@@ -7,11 +7,13 @@
 #include "doticu_skylib/quest.h"
 
 #include "intrinsic.h"
+#include "party_member_flags.h"
 #include "party_member_rating.h"
+#include "party_member_style.h"
 
 namespace doticu_npcp { namespace Party {
 
-    class Member_Outfit_t;
+    class Member_Suit_t;
 
     class Members_t :
         public Quest_t
@@ -23,34 +25,32 @@ namespace doticu_npcp { namespace Party {
         class State
         {
         public:
-            Vector_t<maybe<Actor_t*>>               actors;                     // u64
+            Vector_t<maybe<Actor_t*>>       actors;
+            Vector_t<maybe<Actor_Base_t*>>  original_bases;
+            Vector_t<maybe<Actor_Base_t*>>  custom_bases;
 
-            Vector_t<maybe<const Actor_Base_t*>>    static_bases;               // u64
-            Vector_t<maybe<Actor_Base_t*>>          custom_bases;               // u64
+            Vector_t<Member_Flags_e>        flags;
 
-            Vector_t<maybe<Outfit_t*>>              default_outfits;            // u64
-            Vector_t<maybe<Outfit_t*>>              vanilla_outfits;            // u64
+            Vector_t<String_t>              names;
+            Vector_t<maybe<Reference_t*>>   packs;
+            Vector_t<maybe<Voice_Type_t*>>  voice_types;
 
-            Vector_t<maybe<Member_Outfit_t*>>       member_member_outfits;      // u64
-            Vector_t<maybe<Member_Outfit_t*>>       immobile_member_outfits;    // u64
-            Vector_t<maybe<Member_Outfit_t*>>       settler_member_outfits;     // u64
-            Vector_t<maybe<Member_Outfit_t*>>       thrall_member_outfits;      // u64
-            Vector_t<maybe<Member_Outfit_t*>>       follower_member_outfits;    // u64
-            Vector_t<maybe<Member_Outfit_t*>>       vanilla_member_outfits;     // u64
-            Vector_t<maybe<Member_Outfit_t*>>       default_member_outfits;     // u64
-            Vector_t<maybe<Member_Outfit_t*>>       current_member_outfits;     // u64
-            Vector_t<maybe<Member_Outfit_t*>>       backup_member_outfits;      // u64
+            Vector_t<maybe<Outfit_t*>>      default_outfits;
+            Vector_t<maybe<Outfit_t*>>      vanilla_outfits;
+            Vector_t<maybe<Member_Suit_t*>> member_suits;
+            Vector_t<maybe<Member_Suit_t*>> immobile_suits;
+            Vector_t<maybe<Member_Suit_t*>> settler_suits;
+            Vector_t<maybe<Member_Suit_t*>> thrall_suits;
+            Vector_t<maybe<Member_Suit_t*>> follower_suits;
+            Vector_t<maybe<Member_Suit_t*>> vanilla_suits;
+            Vector_t<maybe<Member_Suit_t*>> default_suits;
+            Vector_t<maybe<Member_Suit_t*>> current_suits;
+            Vector_t<maybe<Member_Suit_t*>> backup_suits;
 
-            Vector_t<String_t>                      names;                      // u64
-
-            Vector_t<maybe<Reference_t*>>           packs;                      // u64
-
-            Vector_t<maybe<Voice_Type_t*>>          voice_types;                // u64
-
-            Vector_t<Relation_e>                    player_relations;           // u8
-            //Vector_t<Style_e>                       styles;                     // u8 (we need to define this)
-            Vector_t<Vitality_e>                    vitalities;                 // u8
-            Vector_t<Member_Rating_t>               ratings;                    // u8
+            Vector_t<Member_Rating_t>       ratings;
+            Vector_t<Relation_e>            relations;
+            Vector_t<Member_Style_e>        styles;
+            Vector_t<Vitality_e>            vitalities;
 
         public:
             State();

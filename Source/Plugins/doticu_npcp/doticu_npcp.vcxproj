@@ -138,6 +138,11 @@
     <ClInclude Include="include\mcm_settings.h" />
     <ClInclude Include="include\mcm_settlers.h" />
     <ClInclude Include="include\party_members.h" />
+    <ClInclude Include="include\party_member_flags.h" />
+    <ClInclude Include="include\party_member_style.h" />
+    <ClInclude Include="include\party_member_suit.h" />
+    <ClInclude Include="include\party_member_suit_type.h" />
+    <ClInclude Include="include\party_member_rating.h" />
     <ClInclude Include="include\strings.h" />
     <ClInclude Include="include\outfit2.h" />
     <ClInclude Include="include\packages.h" />

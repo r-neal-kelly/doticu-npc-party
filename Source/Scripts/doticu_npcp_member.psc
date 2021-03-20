@@ -2,13 +2,21 @@
 
 Scriptname doticu_npcp_member extends ReferenceAlias
 
+; Members_t
 Actor                   p_ref_actor                         =  none
+
+bool                    p_is_clone                          = false
+bool                    p_is_immobile                       = false
+bool                    p_is_thrall                         = false
+bool                    p_is_paralyzed                      = false; paralyzed and mannequin may be conflated, I'm not sure. Expo_t will have its own list.
+bool                    p_is_mannequin                      = false
+bool                    p_is_display                        = false; delete? Displays_t will have its own list.
+bool                    p_is_reanimated                     = false
+string                  p_str_name                          =    ""
 ObjectReference         p_container_pack                    =  none
-ObjectReference         p_marker_mannequin                  =  none
-ObjectReference         p_marker_display                    =  none
-ObjectReference         p_marker_undisplay                  =  none
-Outfit                  p_outfit_vanilla                    =  none
+
 Outfit                  p_outfit_default                    =  none
+Outfit                  p_outfit_vanilla                    =  none
 doticu_npcp_outfit      p_outfit2_member                    =  none
 doticu_npcp_outfit      p_outfit2_immobile                  =  none
 doticu_npcp_outfit      p_outfit2_settler                   =  none
@@ -19,23 +27,18 @@ doticu_npcp_outfit      p_outfit2_default                   =  none
 doticu_npcp_outfit      p_outfit2_current                   =  none
 doticu_npcp_outfit      p_outfit2_auto_backup               =  none
 
-bool                    p_is_clone                          = false
-bool                    p_is_immobile                       = false
-bool                    p_is_thrall                         = false
-bool                    p_is_paralyzed                      = false
-bool                    p_is_mannequin                      = false
-bool                    p_is_display                        = false
-bool                    p_is_reanimated                     = false
-
 int                     p_code_style                        =     0
 int                     p_code_vitality                     =     0
-int                     p_code_outfit2                      =     0
 int                     p_int_rating                        =     0
 
-string                  p_str_name                          =    ""
+; Mannequins_t
+ObjectReference         p_marker_mannequin                  =  none
 
-bool                    p_prev_faction_no_body_cleanup      = false
+; Displays_t
+ObjectReference         p_marker_display                    =  none
+ObjectReference         p_marker_undisplay                  =  none
 
+; Settlers_t
 ObjectReference         p_settler_sleeper_marker            =  none
 ObjectReference         p_settler_sitter_marker             =  none
 ObjectReference         p_settler_eater_marker              =  none
@@ -75,6 +78,10 @@ int                     p_settler_guard_flags               =     0
 
 ObjectReference         p_settler_sleeper_bed               =  none
 
+; to be deleted
+bool                    p_prev_faction_no_body_cleanup      = false
+
+; we'll try to remove these as much as possible and just use the clock.
 event OnDeath(Actor killer) native
 event OnActivate(ObjectReference activator) native
 event OnCombatStateChanged(Actor target, int combat_code) native

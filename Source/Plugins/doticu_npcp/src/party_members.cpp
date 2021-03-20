@@ -11,13 +11,31 @@ namespace doticu_npcp { namespace Party {
 
     Members_t::State::State() :
         actors(Vector_t<maybe<Actor_t*>>(MAX_MEMBERS)),
-        static_bases(Vector_t<maybe<const Actor_Base_t*>>(MAX_MEMBERS)),
+        original_bases(Vector_t<maybe<Actor_Base_t*>>(MAX_MEMBERS)),
         custom_bases(Vector_t<maybe<Actor_Base_t*>>(MAX_MEMBERS)),
+
+        flags(Vector_t<Member_Flags_e>(MAX_MEMBERS)),
+
         names(Vector_t<String_t>(MAX_MEMBERS)),
         packs(Vector_t<maybe<Reference_t*>>(MAX_MEMBERS)),
         voice_types(Vector_t<maybe<Voice_Type_t*>>(MAX_MEMBERS)),
 
-        ratings(Vector_t<Member_Rating_t>(MAX_MEMBERS))
+        default_outfits(Vector_t<maybe<Outfit_t*>>(MAX_MEMBERS)),
+        vanilla_outfits(Vector_t<maybe<Outfit_t*>>(MAX_MEMBERS)),
+        member_suits(Vector_t<maybe<Member_Suit_t*>>(MAX_MEMBERS)),
+        immobile_suits(Vector_t<maybe<Member_Suit_t*>>(MAX_MEMBERS)),
+        settler_suits(Vector_t<maybe<Member_Suit_t*>>(MAX_MEMBERS)),
+        thrall_suits(Vector_t<maybe<Member_Suit_t*>>(MAX_MEMBERS)),
+        follower_suits(Vector_t<maybe<Member_Suit_t*>>(MAX_MEMBERS)),
+        vanilla_suits(Vector_t<maybe<Member_Suit_t*>>(MAX_MEMBERS)),
+        default_suits(Vector_t<maybe<Member_Suit_t*>>(MAX_MEMBERS)),
+        current_suits(Vector_t<maybe<Member_Suit_t*>>(MAX_MEMBERS)),
+        backup_suits(Vector_t<maybe<Member_Suit_t*>>(MAX_MEMBERS)),
+
+        ratings(Vector_t<Member_Rating_t>(MAX_MEMBERS)),
+        relations(Vector_t<Relation_e>(MAX_MEMBERS)),
+        styles(Vector_t<Member_Style_e>(MAX_MEMBERS)),
+        vitalities(Vector_t<Vitality_e>(MAX_MEMBERS))
     {
     }
 
