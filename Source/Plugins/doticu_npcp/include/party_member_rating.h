@@ -20,10 +20,12 @@ namespace doticu_npcp { namespace Party {
 
     public:
         Member_Rating_t();
-        Member_Rating_t(const Member_Rating_t& other) = delete;
-        Member_Rating_t(Member_Rating_t&& other) noexcept = delete;
-        Member_Rating_t& operator =(const Member_Rating_t& other) = delete;
-        Member_Rating_t& operator =(Member_Rating_t&& other) noexcept = delete;
+        Member_Rating_t(u8 rating);
+        Member_Rating_t(Int_t rating);
+        Member_Rating_t(const Member_Rating_t& other);
+        Member_Rating_t(Member_Rating_t&& other) noexcept;
+        Member_Rating_t& operator =(const Member_Rating_t& other);
+        Member_Rating_t& operator =(Member_Rating_t&& other) noexcept;
         ~Member_Rating_t();
     };
 

@@ -14,6 +14,7 @@
 #include "consts.h"
 #include "main.h"
 #include "mcm_main.h"
+#include "party_members.h"
 #include "vars.h"
 
 namespace doticu_npcp {
@@ -122,6 +123,12 @@ namespace doticu_npcp {
         #undef METHOD
     }
 
+    Party::Members_t& Main_t::Party_Members()
+    {
+        static Party::Members_t party_members(Consts_t::NPCP::Quest::Members());
+        return party_members;
+    }
+
     Bool_t Main_t::Is_Active()
     {
         return !!Consts_t::NPCP::Mod();
@@ -136,7 +143,7 @@ namespace doticu_npcp {
     {
         if (Is_Initialized()) {
             if (Vars_t::Version() < Version_t<u16>(0, 9, 15)) {
-                UI_t::Message_Box("Update failed. You must have version 0.9.15-beta installed first.");
+                UI_t::Create_Message_Box("Update failed. You must have version 0.9.15-beta installed first.", none<V::Callback_i*>());
                 return false;
             } else {
                 return true;
@@ -212,8 +219,25 @@ namespace doticu_npcp {
     void Main_t::Before_Save()
     {
         if (Is_Active() && Is_Initialized() && Has_Requirements()) {
+            Party_Members().Before_Save();
             MCM::Main_t::Before_Save();
+
+            Main_t::After_Save();
         }
+    }
+
+    void Main_t::After_Save()
+    {
+        class Wait_Callback :
+            public V::Callback_t
+        {
+        public:
+            virtual void operator()(V::Variable_t*) override
+            {
+                Party_Members().After_Save();
+            }
+        };
+        V::Utility_t::Wait_Even_In_Menu(0.1f, new Wait_Callback());
     }
 
     void Main_t::After_Load()
@@ -231,8 +255,9 @@ namespace doticu_npcp {
                             std::to_string(version.major) + "." +
                             std::to_string(version.minor) + "." +
                             std::to_string(version.patch);
-                        UI_t::Notification(note.c_str()); // will want to save this message in logs.
+                        UI_t::Create_Notification(note.c_str(), none<V::Callback_i*>()); // will want to save this message in logs.
 
+                        Party_Members().After_Load();
                         MCM::Main_t::After_Load();
                     }
                     /*

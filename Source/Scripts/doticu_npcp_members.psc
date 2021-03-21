@@ -19,15 +19,16 @@ VoiceType[]         voice_types         = none
 
 Outfit[]            default_outfits     = none
 Outfit[]            vanilla_outfits     = none
-ObjectReference[]   member_suits        = none
+
+ObjectReference[]   backup_suits        = none
+ObjectReference[]   current_suits       = none
+ObjectReference[]   default_suits       = none
+ObjectReference[]   follower_suits      = none
 ObjectReference[]   immobile_suits      = none
+ObjectReference[]   member_suits        = none
 ObjectReference[]   settler_suits       = none
 ObjectReference[]   thrall_suits        = none
-ObjectReference[]   follower_suits      = none
 ObjectReference[]   vanilla_suits       = none
-ObjectReference[]   default_suits       = none
-ObjectReference[]   current_suits       = none
-ObjectReference[]   backup_suits        = none
 
 int[]               ratings             = none
 int[]               relations           = none

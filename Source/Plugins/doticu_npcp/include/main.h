@@ -9,6 +9,7 @@
 #include "doticu_skylib/quest.h"
 
 #include "intrinsic.h"
+#include "party_members.h"
 
 namespace doticu_npcp {
 
@@ -35,6 +36,9 @@ namespace doticu_npcp {
         static void                 Register_Me(some<V::Machine_t*> machine);
 
     public:
+        static Party::Members_t&    Party_Members();
+
+    public:
         static Bool_t   Is_Active();
         static Bool_t   Is_Initialized();
         static Bool_t   Has_Requirements();
@@ -43,6 +47,7 @@ namespace doticu_npcp {
     public:
         static void Initialize();
         static void Before_Save();
+        static void After_Save();
         static void After_Load();
 
     public:
