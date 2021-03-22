@@ -66,6 +66,8 @@ namespace doticu_npcp {
     using Active_Magic_Effect_t         = skylib::Active_Magic_Effect_t;
     using Actor_t                       = skylib::Actor_t;
     using Actor_Base_t                  = skylib::Actor_Base_t;
+    using Alias_Base_t                  = skylib::Alias_Base_t;
+    using Alias_Reference_t             = skylib::Alias_Reference_t;
     using Ammo_t                        = skylib::Ammo_t;
     using Armor_t                       = skylib::Armor_t;
     using Book_t                        = skylib::Book_t;

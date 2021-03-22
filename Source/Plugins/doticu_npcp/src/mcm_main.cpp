@@ -28,13 +28,28 @@ namespace doticu_npcp { namespace MCM {
         }
     }
 
-    std::mutex      Main_t::event_mutex = std::mutex();
+    std::mutex      Main_t::event_mutex;
     Main_t::Save    Main_t::save        = Main_t::Save();
 
-    some<Main_t*>       Main_t::Self()          { return Consts_t::NPCP::Quest::Control(); }
-    String_t            Main_t::Class_Name()    { DEFINE_CLASS_NAME("doticu_npcp_mcm_main"); }
-    some<V::Class_t*>   Main_t::Class()         { DEFINE_CLASS(); }
-    some<V::Object_t*>  Main_t::Object()        { DEFINE_OBJECT_STATIC(); }
+    some<Main_t*> Main_t::Self()
+    {
+        return Consts_t::NPCP::Quest::Control();
+    }
+
+    String_t Main_t::Class_Name()
+    {
+        DEFINE_CLASS_NAME("doticu_npcp_mcm_main");
+    }
+
+    some<V::Class_t*> Main_t::Class()
+    {
+        DEFINE_CLASS();
+    }
+
+    some<V::Object_t*> Main_t::Object()
+    {
+        DEFINE_OBJECT_STATIC();
+    }
 
     void Main_t::Register_Me(some<V::Machine_t*> machine)
     {
@@ -68,7 +83,10 @@ namespace doticu_npcp { namespace MCM {
         Chests_t::Register_Me(machine);
     }
 
-    V::Variable_tt<String_t>& Main_t::Current_Page() { DEFINE_VARIABLE_REFERENCE(String_t, "p_current_page"); }
+    V::Variable_tt<String_t>& Main_t::Current_Page()
+    {
+        DEFINE_VARIABLE_REFERENCE(String_t, "p_current_page");
+    }
 
     void Main_t::Initialize()
     {
@@ -102,7 +120,7 @@ namespace doticu_npcp { namespace MCM {
     {
         std::lock_guard<std::mutex> guard(this->event_mutex);
 
-        Latent_ID_t latent_id(stack_id);
+        const Latent_ID_t latent_id(stack_id);
 
         Vector_t<String_t> pages;
         pages.reserve(9);
@@ -126,7 +144,7 @@ namespace doticu_npcp { namespace MCM {
     {
         std::lock_guard<std::mutex> guard(this->event_mutex);
 
-        Latent_ID_t latent_id(stack_id);
+        const Latent_ID_t latent_id(stack_id);
 
         Chests_t::On_Config_Close();
 
@@ -135,52 +153,52 @@ namespace doticu_npcp { namespace MCM {
 
     Bool_t Main_t::On_Page_Open(V::Stack_ID_t stack_id, String_t page)
     {
-
+        return true;
     }
 
     Bool_t Main_t::On_Option_Select(V::Stack_ID_t stack_id, Int_t option)
     {
-
+        return true;
     }
 
     Bool_t Main_t::On_Option_Menu_Open(V::Stack_ID_t stack_id, Int_t option)
     {
-
+        return true;
     }
 
     Bool_t Main_t::On_Option_Menu_Accept(V::Stack_ID_t stack_id, Int_t option, Int_t index)
     {
-
+        return true;
     }
 
     Bool_t Main_t::On_Option_Slider_Open(V::Stack_ID_t stack_id, Int_t option)
     {
-
+        return true;
     }
 
     Bool_t Main_t::On_Option_Slider_Accept(V::Stack_ID_t stack_id, Int_t option, Float_t value)
     {
-
+        return true;
     }
 
     Bool_t Main_t::On_Option_Input_Accept(V::Stack_ID_t stack_id, Int_t option, String_t value)
     {
-
+        return true;
     }
 
     Bool_t Main_t::On_Option_Keymap_Change(V::Stack_ID_t stack_id, Int_t option, Int_t key, String_t conflict, String_t mod)
     {
-
+        return true;
     }
 
     Bool_t Main_t::On_Option_Default(V::Stack_ID_t stack_id, Int_t option)
     {
-
+        return true;
     }
 
     Bool_t Main_t::On_Option_Highlight(V::Stack_ID_t stack_id, Int_t option)
     {
-
+        return true;
     }
 
 }}

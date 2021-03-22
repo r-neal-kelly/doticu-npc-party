@@ -4,7 +4,31 @@
 
 #pragma once
 
+#include "doticu_skylib/actor.h"
+#include "doticu_skylib/actor_base.h"
+#include "doticu_skylib/armor.h"
+#include "doticu_skylib/cell.h"
+#include "doticu_skylib/container.h"
+#include "doticu_skylib/dialogue_branch.h"
+#include "doticu_skylib/dialogue_topic.h"
+#include "doticu_skylib/effect_shader.h"
+#include "doticu_skylib/faction.h"
+#include "doticu_skylib/form_list.h"
+#include "doticu_skylib/furniture.h"
 #include "doticu_skylib/game_macros.h"
+#include "doticu_skylib/global.h"
+#include "doticu_skylib/leveled_actor_base.h"
+#include "doticu_skylib/location.h"
+#include "doticu_skylib/magic_effect.h"
+#include "doticu_skylib/misc.h"
+#include "doticu_skylib/outfit.h"
+#include "doticu_skylib/package.h"
+#include "doticu_skylib/perk.h"
+#include "doticu_skylib/quest.h"
+#include "doticu_skylib/reference.h"
+#include "doticu_skylib/spell.h"
+#include "doticu_skylib/static.h"
+#include "doticu_skylib/weapon.h"
 
 #include "consts.h"
 

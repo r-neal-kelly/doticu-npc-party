@@ -2,15 +2,14 @@
 
 Scriptname doticu_npcp_member extends ReferenceAlias
 
-; Members_t
+; (to be deleted) Members_t
 Actor                   p_ref_actor                         =  none
 
 bool                    p_is_clone                          = false
 bool                    p_is_immobile                       = false
 bool                    p_is_thrall                         = false
-bool                    p_is_paralyzed                      = false; paralyzed and mannequin may be conflated, I'm not sure. Expo_t will have its own list.
+bool                    p_is_paralyzed                      = false
 bool                    p_is_mannequin                      = false
-bool                    p_is_display                        = false; delete? Displays_t will have its own list.
 bool                    p_is_reanimated                     = false
 string                  p_str_name                          =    ""
 ObjectReference         p_container_pack                    =  none
@@ -37,6 +36,7 @@ ObjectReference         p_marker_mannequin                  =  none
 ; Displays_t
 ObjectReference         p_marker_display                    =  none
 ObjectReference         p_marker_undisplay                  =  none
+bool                    p_is_display                        = false; delete? Displays_t will have its own list.
 
 ; Settlers_t
 ObjectReference         p_settler_sleeper_marker            =  none

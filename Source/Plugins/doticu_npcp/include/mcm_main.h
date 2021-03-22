@@ -16,8 +16,8 @@ namespace doticu_npcp { namespace MCM {
 
     class Latent_ID_t // maybe should go in mcmlib
     {
-    public:
-        const maybe<V::Stack_ID_t> stack_id;
+    protected:
+        maybe<V::Stack_ID_t> stack_id;
 
     public:
         Latent_ID_t(maybe<V::Stack_ID_t> stack_id);

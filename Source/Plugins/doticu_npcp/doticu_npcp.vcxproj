@@ -64,79 +64,23 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\active_magic_effects.cpp" />
-    <ClCompile Include="src\actor_base2.cpp" />
     <ClCompile Include="src\chests.cpp" />
-    <ClCompile Include="src\commands.cpp" />
     <ClCompile Include="src\consts.cpp" />
-    <ClCompile Include="src\logs.cpp" />
-    <ClCompile Include="src\mcm_filter.cpp" />
-    <ClCompile Include="src\form_vector.cpp" />
-    <ClCompile Include="src\game.cpp" />
-    <ClCompile Include="src\keys.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\mcm_followers.cpp" />
-    <ClCompile Include="src\mcm_hotkeys.cpp" />
-    <ClCompile Include="src\mcm_logs.cpp" />
-    <ClCompile Include="src\mcm_mannequins.cpp" />
-    <ClCompile Include="src\mcm_member.cpp" />
-    <ClCompile Include="src\mcm_members.cpp" />
-    <ClCompile Include="src\mcm_settings.cpp" />
-    <ClCompile Include="src\mcm_settlers.cpp" />
     <ClCompile Include="src\mcm_chests.cpp" />
     <ClCompile Include="src\mcm_main.cpp" />
-    <ClCompile Include="src\actor2.cpp" />
-    <ClCompile Include="src\object_ref.cpp" />
-    <ClCompile Include="src\outfit2.cpp" />
-    <ClCompile Include="src\packages.cpp" />
-    <ClCompile Include="src\papyrus.cpp" />
-    <ClCompile Include="src\party_alias.cpp" />
-    <ClCompile Include="src\party_aliases.cpp" />
-    <ClCompile Include="src\party_follower.cpp" />
-    <ClCompile Include="src\party_followers.cpp" />
-    <ClCompile Include="src\party_greeter.cpp" />
-    <ClCompile Include="src\party_horse.cpp" />
-    <ClCompile Include="src\party_horses.cpp" />
-    <ClCompile Include="src\party_mannequins.cpp" />
-    <ClCompile Include="src\party_member.cpp" />
-    <ClCompile Include="src\old_party_members.cpp" />
     <ClCompile Include="src\party_members.cpp" />
-    <ClCompile Include="src\party_movee.cpp" />
-    <ClCompile Include="src\party_npcs.cpp" />
-    <ClCompile Include="src\party_player.cpp" />
-    <ClCompile Include="src\party_settler.cpp" />
-    <ClCompile Include="src\perks.cpp" />
-    <ClCompile Include="src\quest.cpp" />
-    <ClCompile Include="src\references.cpp" />
+    <ClCompile Include="src\party_member_rating.cpp" />
     <ClCompile Include="src\strings.cpp" />
-    <ClCompile Include="src\topic_infos.cpp" />
     <ClCompile Include="src\vars.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\active_magic_effects.h" />
-    <ClInclude Include="include\actor_base2.h" />
     <ClInclude Include="include\chests.h" />
     <ClInclude Include="include\mcm_chests.h" />
-    <ClInclude Include="include\codes.h" />
-    <ClInclude Include="include\commands.h" />
     <ClInclude Include="include\consts.h" />
-    <ClInclude Include="include\actor2.h" />
-    <ClInclude Include="include\form_vector.h" />
     <ClInclude Include="include\intrinsic.h" />
-    <ClInclude Include="include\keys.h" />
-    <ClInclude Include="include\logs.h" />
     <ClInclude Include="include\main.h" />
-    <ClInclude Include="include\mcm_filter.h" />
-    <ClInclude Include="include\mcm_followers.h" />
-    <ClInclude Include="include\mcm_hotkeys.h" />
-    <ClInclude Include="include\mcm_logs.h" />
     <ClInclude Include="include\mcm_main.h" />
-    <ClInclude Include="include\mcm_main_old.h" />
-    <ClInclude Include="include\mcm_mannequins.h" />
-    <ClInclude Include="include\mcm_member.h" />
-    <ClInclude Include="include\mcm_members.h" />
-    <ClInclude Include="include\mcm_settings.h" />
-    <ClInclude Include="include\mcm_settlers.h" />
     <ClInclude Include="include\party_members.h" />
     <ClInclude Include="include\party_member_flags.h" />
     <ClInclude Include="include\party_member_style.h" />
@@ -144,34 +88,10 @@
     <ClInclude Include="include\party_member_suit_type.h" />
     <ClInclude Include="include\party_member_rating.h" />
     <ClInclude Include="include\strings.h" />
-    <ClInclude Include="include\outfit2.h" />
-    <ClInclude Include="include\packages.h" />
-    <ClInclude Include="include\party_alias.h" />
-    <ClInclude Include="include\party_aliases.h" />
-    <ClInclude Include="include\party_follower.h" />
-    <ClInclude Include="include\party_followers.h" />
-    <ClInclude Include="include\party_greeter.h" />
-    <ClInclude Include="include\party_horse.h" />
-    <ClInclude Include="include\party_horses.h" />
-    <ClInclude Include="include\party_mannequins.h" />
-    <ClInclude Include="include\party_member.h" />
-    <ClInclude Include="include\old_party_members.h" />
-    <ClInclude Include="include\party_movee.h" />
-    <ClInclude Include="include\party_npcs.h" />
-    <ClInclude Include="include\party_player.h" />
-    <ClInclude Include="include\party_settler.h" />
-    <ClInclude Include="include\perks.h" />
-    <ClInclude Include="include\references.h" />
-    <ClInclude Include="include\topic_infos.h" />
     <ClInclude Include="include\vars.h" />
-    <ClInclude Include="include\papyrus.h" />
-    <ClInclude Include="include\quest.h" />
-    <ClInclude Include="include\utils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\chests.inl" />
-    <None Include="include\party_alias.inl" />
-    <None Include="include\party_aliases.inl" />
     <None Include="scripts\doticu_npcp.psc" />
   </ItemGroup>
   <ItemGroup>

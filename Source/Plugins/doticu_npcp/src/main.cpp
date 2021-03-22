@@ -30,16 +30,9 @@ namespace doticu_npcp {
             info->infoVersion = PluginInfo::kInfoVersion;
             info->name = "doticu_npcp";
             info->version = 1;
-
-            if (Version_t<u16>::From_MM_mm_ppp_b(skse->runtimeVersion) == Consts_t::Skyrim::Version::Required()) {
-                if (Version_t<u16>::From_MM_mm_ppp_b(skse->skseVersion) >= Consts_t::SKSE::Version::Minimum()) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
+            return
+                Version_t<u16>::From_MM_mm_ppp_b(skse->runtimeVersion) == Consts_t::Skyrim::Version::Required() &&
+                Version_t<u16>::From_MM_mm_ppp_b(skse->skseVersion) >= Consts_t::SKSE::Version::Minimum();
         } else {
             return false;
         }
@@ -60,6 +53,9 @@ namespace doticu_npcp {
                         if (message) {
                             if (message->type == SKSEMessagingInterface::kMessage_SaveGame) {
                                 Before_Save();
+                            } else if (message->type == SKSEMessagingInterface::kMessage_PreLoadGame) {
+                                // interestingly, this callback will give us the savefile path as message->data
+                                Before_Load();
                             } else if (message->type == SKSEMessagingInterface::kMessage_PostLoadGame && message->data != nullptr) {
                                 After_Load();
                             }
@@ -86,6 +82,7 @@ namespace doticu_npcp {
     {
         Main_t::Register_Me(machine);
         Vars_t::Register_Me(machine);
+        Party::Members_t::Register_Me(machine);
         MCM::Main_t::Register_Me(machine);
 
         SKYLIB_LOG("Added all functions.\n");
@@ -93,10 +90,25 @@ namespace doticu_npcp {
         return true;
     }
 
-    some<Main_t*>       Main_t::Self()          { return Consts_t::NPCP::Quest::Main(); }
-    String_t            Main_t::Class_Name()    { DEFINE_CLASS_NAME("doticu_npcp_main"); }
-    some<V::Class_t*>   Main_t::Class()         { DEFINE_CLASS(); }
-    some<V::Object_t*>  Main_t::Object()        { DEFINE_OBJECT_STATIC(); }
+    some<Main_t*> Main_t::Self()
+    {
+        return Consts_t::NPCP::Quest::Main();
+    }
+
+    String_t Main_t::Class_Name()
+    {
+        DEFINE_CLASS_NAME("doticu_npcp_main");
+    }
+
+    some<V::Class_t*> Main_t::Class()
+    {
+        DEFINE_CLASS();
+    }
+
+    some<V::Object_t*> Main_t::Object()
+    {
+        DEFINE_OBJECT_STATIC();
+    }
 
     void Main_t::Register_Me(some<V::Machine_t*> machine)
     {
@@ -125,6 +137,7 @@ namespace doticu_npcp {
 
     Party::Members_t& Main_t::Party_Members()
     {
+        // this needs to be reinitialized for new game!
         static Party::Members_t party_members(Consts_t::NPCP::Quest::Members());
         return party_members;
     }
@@ -143,7 +156,10 @@ namespace doticu_npcp {
     {
         if (Is_Initialized()) {
             if (Vars_t::Version() < Version_t<u16>(0, 9, 15)) {
-                UI_t::Create_Message_Box("Update failed. You must have version 0.9.15-beta installed first.", none<V::Callback_i*>());
+                UI_t::Create_Message_Box(
+                    "Update failed. You must have version 0.9.15-beta installed first.",
+                    none<V::Callback_i*>()
+                );
                 return false;
             } else {
                 return true;
@@ -188,16 +204,24 @@ namespace doticu_npcp {
 
     void Main_t::Initialize()
     {
-        struct Wait_Callback_t : public V::Callback_t
+        struct Wait_Callback_t :
+            public V::Callback_t
         {
         public:
-            void operator ()(V::Variable_t*)
+            virtual void operator ()(V::Variable_t*) override
             {
                 if (Is_Active() && !Is_Initialized() && Has_Requirements()) {
                     Vars_t::Initialize();
+                    Party_Members().Initialize(); // Party::Main_t::Initialize();
                     MCM::Main_t::Initialize();
 
                     Consts_t::NPCP::Global::Is_Initialized()->Bool(true);
+
+                    // this needs to be saved to log.
+                    UI_t::Create_Notification(
+                        "Thank you for installing!",
+                        none<V::Callback_i*>()
+                    );
 
                     /*
                         Logs_t::Self()->Initialize();
@@ -232,46 +256,47 @@ namespace doticu_npcp {
             public V::Callback_t
         {
         public:
-            virtual void operator()(V::Variable_t*) override
+            virtual void operator ()(V::Variable_t*) override
             {
-                Party_Members().After_Save();
+                if (Is_Active() && Is_Initialized() && Has_Requirements()) {
+                    Party_Members().After_Save();
+                }
             }
         };
         V::Utility_t::Wait_Even_In_Menu(0.1f, new Wait_Callback());
     }
 
+    void Main_t::Before_Load()
+    {
+        if (Is_Active() && Is_Initialized() && Has_Requirements()) {
+            Party_Members().Before_Load();
+        }
+    }
+
     void Main_t::After_Load()
     {
-        struct Wait_Callback_t : public V::Callback_t
-        {
-        public:
-            void operator ()(V::Variable_t*)
-            {
-                if (Is_Active() && Is_Initialized() && Has_Requirements()) {
-                    if (Try_Update()) {
-                        const Version_t<u16> version = Vars_t::Version();
-                        std::string note =
-                            "Running version " +
-                            std::to_string(version.major) + "." +
-                            std::to_string(version.minor) + "." +
-                            std::to_string(version.patch);
-                        UI_t::Create_Notification(note.c_str(), none<V::Callback_i*>()); // will want to save this message in logs.
+        if (Is_Active() && Is_Initialized() && Has_Requirements()) {
+            if (Try_Update()) {
+                const Version_t<u16> version = Vars_t::Version();
+                std::string note =
+                    "Running version " +
+                    std::to_string(version.major) + "." +
+                    std::to_string(version.minor) + "." +
+                    std::to_string(version.patch);
+                UI_t::Create_Notification(note.c_str(), none<V::Callback_i*>()); // will want to save this message in logs.
 
-                        Party_Members().After_Load();
-                        MCM::Main_t::After_Load();
-                    }
-                    /*
-                        Modules::Keys_t::Self()->On_Load_Mod();
-                        Party::Members_t::Self()->On_Load_Mod();
-                        Party::Player_t::Self()->On_Load_Mod();
-                        Party::Movee_t::Self()->On_Load_Mod();
-                        Party::Mannequins_t::Self()->On_Load_Mod();
-                        Utils::Print("NPC Party has loaded.");
-                    */
-                }
+                Party_Members().After_Load();
+                MCM::Main_t::After_Load();
             }
-        };
-        V::Utility_t::Wait_Out_Of_Menu(1.0f, new Wait_Callback_t());
+            /*
+                Modules::Keys_t::Self()->On_Load_Mod();
+                Party::Members_t::Self()->On_Load_Mod();
+                Party::Player_t::Self()->On_Load_Mod();
+                Party::Movee_t::Self()->On_Load_Mod();
+                Party::Mannequins_t::Self()->On_Load_Mod();
+                Utils::Print("NPC Party has loaded.");
+            */
+        }
     }
 
     Bool_t Main_t::Try_Update()
@@ -281,12 +306,19 @@ namespace doticu_npcp {
         const Version_t<u16> current_version = Consts_t::NPCP::Version::Current();
         const Version_t<u16> installed_version = Vars_t::Version();
         if (installed_version < current_version) {
-            // apply updates here
+            if (installed_version < Version_t<u16>(0, 10, 0)) {
+                u_0_10_0();
+            }
             Vars_t::Version(current_version);
             return true;
         } else {
             return false;
         }
+    }
+
+    void Main_t::u_0_10_0()
+    {
+        Party_Members().u_0_10_0();
     }
 
     void Main_t::On_Init()

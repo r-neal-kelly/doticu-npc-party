@@ -9,6 +9,7 @@
 #include "doticu_skylib/virtual_macros.h"
 
 #include "consts.h"
+#include "party_members.h"
 #include "vars.h"
 
 #define VAR DEFINE_VARIABLE_REFERENCE
@@ -164,7 +165,7 @@ namespace doticu_npcp {
     {
         Version(Consts_t::NPCP::Version::Current());
 
-        Member_Limit() = static_cast<Int_t>(Consts_t::NPCP::Int::MAX_MEMBERS);  // Party::Members_t::MAX
+        Member_Limit() = static_cast<Int_t>(Party::Members_t::MAX_MEMBERS);
         Member_Display_Limit() = static_cast<Int_t>(5);                         // Party::Members_t::DEFAULT_DISPLAY_LIMIT
         Default_Member_Style() = "DEFAULT";                                     // CODES::STYLE::DEFAULT
         Default_Member_Vitality() = "PROTECTED";                                // CODES::VITALITY::PROTECTED

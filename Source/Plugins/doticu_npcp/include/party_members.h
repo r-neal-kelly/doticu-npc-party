@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include "doticu_skylib/quest.h"
-
 #include "intrinsic.h"
 #include "party_member_flags.h"
 #include "party_member_rating.h"
@@ -117,24 +115,35 @@ namespace doticu_npcp { namespace Party {
         V::Variable_tt<Vector_t<String_t>>&         Vitalities_Variables();
 
     public:
+        void    Initialize();
         void    Before_Save();
         void    After_Save();
+        void    Before_Load();
         void    After_Load();
 
         void    u_0_10_0();
 
     public:
-        maybe<Member_ID_t>  Add_Member(some<Actor_t*> actor);
-        maybe<Member_ID_t>  Add_Member_Clone(some<Actor_t*> actor);
-        void                Remove_Member(Member_ID_t member_id);
-        Bool_t              Validate_Member(Member_ID_t member_id);
+        maybe<Member_ID_t>      Add_Member(some<Actor_t*> actor);
+        maybe<Member_ID_t>      Add_Member_Clone(some<Actor_t*> actor);
+        void                    Remove_Member(Member_ID_t member_id);
+        Bool_t                  Validate_Member(Member_ID_t member_id);
 
-        some<Actor_t*>      Some_Actor(Member_ID_t valid_member_id);
-        some<Actor_Base_t*> Some_Original_Base(Member_ID_t valid_member_id);
-        some<Actor_Base_t*> Some_Custom_Base(Member_ID_t valid_member_id);
+        some<Actor_t*>          Some_Actor(Member_ID_t valid_member_id);
+        some<Actor_Base_t*>     Some_Original_Base(Member_ID_t valid_member_id);
+        some<Actor_Base_t*>     Some_Custom_Base(Member_ID_t valid_member_id);
+
+        maybe<Member_Suit_t*>   Maybe_Current_Suit(Member_ID_t valid_member_id); // if none, they are excluded from algorithm, else we need a flag
+        void                    Maybe_Current_Suit(Member_ID_t valid_member_id, maybe<Member_Suit_t*> current_suit);
 
     public:
         void Log(std::string indent = "");
     };
+
+    /*
+        Just some quick outfitting notes:
+            We should use the owner faction on x_lists to with a custom faction indicating that the item is an outfit item.
+            We can mark x_lists as outfit items and point to the default outfit that is on the base actor. then we won't need any blank armor.
+    */
 
 }}

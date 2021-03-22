@@ -45,22 +45,17 @@ namespace doticu_npcp {
         static void     Can_Use_Hotkeys(some<unique<Callback_i<Bool_t>>> callback);
 
     public:
-        static void Initialize();
-        static void Before_Save();
-        static void After_Save();
-        static void After_Load();
+        static void     Initialize();
+        static void     Before_Save();
+        static void     After_Save();
+        static void     Before_Load();
+        static void     After_Load();
 
-    public:
-        static Bool_t Try_Update();
+        static Bool_t   Try_Update();
+        static void     u_0_10_0();
 
     public:
         void On_Init();
     };
-
-    /*
-        Just some quick notes:
-            We should use the owner faction on x_lists to with a custom faction indicating that the item is an outfit item.
-            We can mark x_lists as outfit items and point to the default outfit that is on the base actor. then we won't need any blank armor.
-    */
 
 }

@@ -8,8 +8,6 @@
 
 namespace doticu_npcp { namespace Party {
 
-    // the valid values are 0, 1, 2, 3, 4, 5
-
     class Member_Rating_t
     {
     public:
@@ -27,6 +25,13 @@ namespace doticu_npcp { namespace Party {
         Member_Rating_t& operator =(const Member_Rating_t& other);
         Member_Rating_t& operator =(Member_Rating_t&& other) noexcept;
         ~Member_Rating_t();
+
+    public:
+        const char* As_String() const;
+
+    public:
+        operator value_type() const;
+        operator String_t() const;
     };
 
 }}
