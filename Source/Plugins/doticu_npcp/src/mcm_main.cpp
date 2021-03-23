@@ -2,6 +2,7 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "doticu_skylib/virtual_latent_id.h"
 #include "doticu_skylib/virtual_macros.h"
 
 #include "consts.h"
@@ -10,23 +11,6 @@
 #include "strings.h"
 
 namespace doticu_npcp { namespace MCM {
-
-    Latent_ID_t::Latent_ID_t(maybe<V::Stack_ID_t> stack_id) :
-        stack_id(stack_id)
-    {
-    }
-
-    Latent_ID_t::Latent_ID_t(Latent_ID_t&& other) noexcept :
-        stack_id(std::exchange(other.stack_id, none<V::Stack_ID_t>()))
-    {
-    }
-
-    Latent_ID_t::~Latent_ID_t()
-    {
-        if (this->stack_id) {
-            V::Machine_t::Self()->Return_Latent_Function(stack_id(), V::Variable_t());
-        }
-    }
 
     std::mutex      Main_t::event_mutex;
     Main_t::Save    Main_t::save        = Main_t::Save();
@@ -120,7 +104,7 @@ namespace doticu_npcp { namespace MCM {
     {
         std::lock_guard<std::mutex> guard(this->event_mutex);
 
-        const Latent_ID_t latent_id(stack_id);
+        const V::Latent_ID_t latent_id(stack_id);
 
         Vector_t<String_t> pages;
         pages.reserve(9);
@@ -144,7 +128,7 @@ namespace doticu_npcp { namespace MCM {
     {
         std::lock_guard<std::mutex> guard(this->event_mutex);
 
-        const Latent_ID_t latent_id(stack_id);
+        const V::Latent_ID_t latent_id(stack_id);
 
         Chests_t::On_Config_Close();
 

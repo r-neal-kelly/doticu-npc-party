@@ -66,6 +66,7 @@
   <ItemGroup>
     <ClCompile Include="src\chests.cpp" />
     <ClCompile Include="src\consts.cpp" />
+    <ClCompile Include="src\hotkeys.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mcm_chests.cpp" />
     <ClCompile Include="src\mcm_main.cpp" />
@@ -76,6 +77,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\chests.h" />
+    <ClInclude Include="include\hotkeys.h" />
     <ClInclude Include="include\mcm_chests.h" />
     <ClInclude Include="include\consts.h" />
     <ClInclude Include="include\intrinsic.h" />

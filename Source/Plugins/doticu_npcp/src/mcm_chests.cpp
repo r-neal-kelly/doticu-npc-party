@@ -2,6 +2,7 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "doticu_skylib/virtual_latent_id.h"
 #include "doticu_skylib/virtual_macros.h"
 
 #include "consts.h"
@@ -93,7 +94,7 @@ namespace doticu_npcp { namespace MCM {
     {
     }
 
-    void Chests_t::On_Page_Open(Bool_t is_refresh, const Latent_ID_t latent_id)
+    void Chests_t::On_Page_Open(Bool_t is_refresh, const V::Latent_ID_t latent_id)
     {
         some<Main_t*> mcm = Main_t::Self();
 
@@ -205,7 +206,7 @@ namespace doticu_npcp { namespace MCM {
         mcm->Add_Empty_Option();
     }
 
-    void Chests_t::On_Option_Select(Int_t option, const Latent_ID_t latent_id)
+    void Chests_t::On_Option_Select(Int_t option, const V::Latent_ID_t latent_id)
     {
         if (option == options.input)                    Const_Chests_t::Open_Chest(Chest_e::INPUT, Strings_t::INPUT);
 
@@ -289,23 +290,23 @@ namespace doticu_npcp { namespace MCM {
         else if (option == options.custom_chests[15])   Const_Chests_t::Open_Chest(Chest_e::CUSTOM_15, save.custom_names[15]);
     }
 
-    void Chests_t::On_Option_Menu_Open(Int_t option, const Latent_ID_t latent_id)
+    void Chests_t::On_Option_Menu_Open(Int_t option, const V::Latent_ID_t latent_id)
     {
     }
 
-    void Chests_t::On_Option_Menu_Accept(Int_t option, Int_t index, const Latent_ID_t latent_id)
+    void Chests_t::On_Option_Menu_Accept(Int_t option, Int_t index, const V::Latent_ID_t latent_id)
     {
     }
 
-    void Chests_t::On_Option_Slider_Open(Int_t option, const Latent_ID_t latent_id)
+    void Chests_t::On_Option_Slider_Open(Int_t option, const V::Latent_ID_t latent_id)
     {
     }
 
-    void Chests_t::On_Option_Slider_Accept(Int_t option, Float_t value, const Latent_ID_t latent_id)
+    void Chests_t::On_Option_Slider_Accept(Int_t option, Float_t value, const V::Latent_ID_t latent_id)
     {
     }
 
-    void Chests_t::On_Option_Input_Accept(Int_t option, String_t value, const Latent_ID_t latent_id)
+    void Chests_t::On_Option_Input_Accept(Int_t option, String_t value, const V::Latent_ID_t latent_id)
     {
         for (size_t idx = 0, end = MAX_CUSTOM_CHESTS; idx < end; idx += 1) {
             if (options.custom_renames[idx] == option) {
@@ -316,15 +317,15 @@ namespace doticu_npcp { namespace MCM {
         }
     }
 
-    void Chests_t::On_Option_Keymap_Change(Int_t option, Int_t key, String_t conflict, String_t mod, const Latent_ID_t latent_id)
+    void Chests_t::On_Option_Keymap_Change(Int_t option, Int_t key, String_t conflict, String_t mod, const V::Latent_ID_t latent_id)
     {
     }
 
-    void Chests_t::On_Option_Default(Int_t option, const Latent_ID_t latent_id)
+    void Chests_t::On_Option_Default(Int_t option, const V::Latent_ID_t latent_id)
     {
     }
 
-    void Chests_t::On_Option_Highlight(Int_t option, const Latent_ID_t latent_id)
+    void Chests_t::On_Option_Highlight(Int_t option, const V::Latent_ID_t latent_id)
     {
         some<Main_t*> mcm = Main_t::Self();
 

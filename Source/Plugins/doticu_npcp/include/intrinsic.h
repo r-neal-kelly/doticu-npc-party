@@ -136,7 +136,9 @@ namespace doticu_npcp {
         using Callback_i                = skylib::Virtual::Callback_i;
         using Callback_t                = skylib::Virtual::Callback_t;
         using Class_t                   = skylib::Virtual::Class_t;
+        using Debug_t                   = skylib::Virtual::Debug_t;
         using Handle_Policy_t           = skylib::Virtual::Handle_Policy_t;
+        using Latent_ID_t               = skylib::Virtual::Latent_ID_t;
         using Machine_t                 = skylib::Virtual::Machine_t;
         using Object_t                  = skylib::Virtual::Object_t;
         using Object_Policy_t           = skylib::Virtual::Object_Policy_t;

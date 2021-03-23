@@ -120,16 +120,16 @@ namespace doticu_npcp { namespace MCM {
     public:
         static void On_Config_Open();
         static void On_Config_Close();
-        static void On_Page_Open(Bool_t is_refresh, const Latent_ID_t latent_id);
-        static void On_Option_Select(Int_t option, const Latent_ID_t latent_id);
-        static void On_Option_Menu_Open(Int_t option, const Latent_ID_t latent_id);
-        static void On_Option_Menu_Accept(Int_t option, Int_t index, const Latent_ID_t latent_id);
-        static void On_Option_Slider_Open(Int_t option, const Latent_ID_t latent_id);
-        static void On_Option_Slider_Accept(Int_t option, Float_t value, const Latent_ID_t latent_id);
-        static void On_Option_Input_Accept(Int_t option, String_t value, const Latent_ID_t latent_id);
-        static void On_Option_Keymap_Change(Int_t option, Int_t key, String_t conflict, String_t mod, const Latent_ID_t latent_id);
-        static void On_Option_Default(Int_t option, const Latent_ID_t latent_id);
-        static void On_Option_Highlight(Int_t option, const Latent_ID_t latent_id);
+        static void On_Page_Open(Bool_t is_refresh, const V::Latent_ID_t latent_id);
+        static void On_Option_Select(Int_t option, const V::Latent_ID_t latent_id);
+        static void On_Option_Menu_Open(Int_t option, const V::Latent_ID_t latent_id);
+        static void On_Option_Menu_Accept(Int_t option, Int_t index, const V::Latent_ID_t latent_id);
+        static void On_Option_Slider_Open(Int_t option, const V::Latent_ID_t latent_id);
+        static void On_Option_Slider_Accept(Int_t option, Float_t value, const V::Latent_ID_t latent_id);
+        static void On_Option_Input_Accept(Int_t option, String_t value, const V::Latent_ID_t latent_id);
+        static void On_Option_Keymap_Change(Int_t option, Int_t key, String_t conflict, String_t mod, const V::Latent_ID_t latent_id);
+        static void On_Option_Default(Int_t option, const V::Latent_ID_t latent_id);
+        static void On_Option_Highlight(Int_t option, const V::Latent_ID_t latent_id);
     };
 
 }}

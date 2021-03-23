@@ -88,10 +88,14 @@ namespace doticu_npcp { namespace Party {
         custom_bases(Vector_t<maybe<Actor_Base_t*>>(MAX_MEMBERS))
     {
         SKYLIB_ASSERT_SOME(quest);
+
+        // this maybe should go ahead and load available data?
+        // we would need that if we have this object reinstantiated each game load by Main_t.
     }
 
     Members_t::~Members_t()
     {
+        // we maybe should destroy all custom_bases here.
     }
 
     some<V::Object_t*> Members_t::Object()

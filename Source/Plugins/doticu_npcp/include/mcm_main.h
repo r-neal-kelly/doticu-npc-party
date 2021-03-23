@@ -6,27 +6,11 @@
 
 #include <mutex>
 
-#include "doticu_skylib/virtual_stack_id.h"
-
 #include "doticu_mcmlib/config_base.h"
 
 #include "intrinsic.h"
 
 namespace doticu_npcp { namespace MCM {
-
-    class Latent_ID_t // maybe should go in mcmlib
-    {
-    protected:
-        maybe<V::Stack_ID_t> stack_id;
-
-    public:
-        Latent_ID_t(maybe<V::Stack_ID_t> stack_id);
-        Latent_ID_t(const Latent_ID_t& other) = delete;
-        Latent_ID_t(Latent_ID_t&& other) noexcept;
-        Latent_ID_t& operator=(const Latent_ID_t& other) = delete;
-        Latent_ID_t& operator=(Latent_ID_t&& other) noexcept = delete;
-        ~Latent_ID_t();
-    };
 
     class Main_t :
         public mcmlib::Config_Base_t
