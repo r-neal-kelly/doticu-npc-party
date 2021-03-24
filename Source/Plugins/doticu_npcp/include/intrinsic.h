@@ -155,3 +155,8 @@ namespace doticu_npcp {
 
 namespace doticu_mcmlib {}
 namespace mcmlib = doticu_mcmlib;
+
+#define NPCP_PRINT_HEAD         \
+(                               \
+    std::string("NPC Party: ")  \
+)

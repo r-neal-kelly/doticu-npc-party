@@ -23,16 +23,20 @@ namespace doticu_npcp {
         static some<V::Class_t*>    Class();
         static void                 Register_Me(some<V::Machine_t*> machine);
 
+    public:
+        static void Can_Use_Hotkeys(some<unique<Callback_i<Bool_t>>> callback);
+
     protected:
         const some<Quest_t*>    quest;
         Int_t                   currently_pressed_key;
 
     public:
         Hotkeys_t(some<Quest_t*> quest);
-        Hotkeys_t(const Hotkeys_t& other)                   = delete;
-        Hotkeys_t(Hotkeys_t&& other) noexcept               = delete;
-        Hotkeys_t& operator =(const Hotkeys_t& other)       = delete;
-        Hotkeys_t& operator =(Hotkeys_t&& other) noexcept   = delete;
+        Hotkeys_t(some<Quest_t*> quest, const Version_t<u16> version_to_update);
+        Hotkeys_t(const Hotkeys_t& other)                                           = delete;
+        Hotkeys_t(Hotkeys_t&& other) noexcept                                       = delete;
+        Hotkeys_t& operator =(const Hotkeys_t& other)                               = delete;
+        Hotkeys_t& operator =(Hotkeys_t&& other) noexcept                           = delete;
         ~Hotkeys_t();
 
     protected:

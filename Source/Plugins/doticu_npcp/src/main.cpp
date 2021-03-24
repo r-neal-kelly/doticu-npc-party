@@ -51,18 +51,19 @@ namespace doticu_npcp {
                     auto Callback = [](SKSEMessagingInterface::Message* message)->void
                     {
                         if (message) {
+                            // SaveGame and PreLoadGame will give us the savefile path as message->data, and it's char length too
                             if (message->type == SKSEMessagingInterface::kMessage_SaveGame) {
                                 Before_Save();
                             } else if (message->type == SKSEMessagingInterface::kMessage_PreLoadGame) {
-                                // interestingly, this callback will give us the savefile path as message->data
                                 Before_Load();
                             } else if (message->type == SKSEMessagingInterface::kMessage_PostLoadGame && message->data != nullptr) {
                                 After_Load();
+                            } else if (message->type == SKSEMessagingInterface::kMessage_NewGame) {
+                                Before_New_Game();
                             }
                         }
                     };
                     SKSE_MESSAGING->RegisterListener(SKSE_PLUGIN_HANDLE, "SKSE", Callback);
-                    //Papyrus::Keys_t::On_Load_Plugin();
                     return true;
                 } else {
                     _FATALERROR("Unable to register functions.");
@@ -91,13 +92,66 @@ namespace doticu_npcp {
         return true;
     }
 
-    Main_t::NPCP_State_t::NPCP_State_t() :
+    Main_t::NPCP_State_t::NPCP_State_t(Bool_t is_new_game) :
         party_members(Consts_t::NPCP::Quest::Members()),
         hotkeys(Consts_t::NPCP::Quest::Control())
     {
     }
 
+    Main_t::NPCP_State_t::NPCP_State_t(const Version_t<u16> version_to_update) :
+        party_members(Consts_t::NPCP::Quest::Members(), version_to_update),
+        hotkeys(Consts_t::NPCP::Quest::Control(), version_to_update)
+    {
+    }
+
     Main_t::NPCP_State_t::~NPCP_State_t()
+    {
+    }
+
+    void Main_t::NPCP_State_t::Before_Save()
+    {
+        this->party_members.Before_Save();
+        this->hotkeys.Before_Save();
+    }
+
+    void Main_t::NPCP_State_t::After_Save()
+    {
+        this->party_members.After_Save();
+        this->hotkeys.After_Save();
+    }
+
+    Main_t::Protected_Locker_t::Protected_Locker_t(std::unique_lock<std::mutex>& lock) :
+        lock(&lock)
+    {
+    }
+
+    Main_t::Protected_Locker_t::Protected_Locker_t(const Protected_Locker_t& other) :
+        lock(other.lock)
+    {
+    }
+
+    Main_t::Protected_Locker_t::Protected_Locker_t(Protected_Locker_t&& other) noexcept :
+        lock(std::move(other.lock))
+    {
+    }
+
+    Main_t::Protected_Locker_t& Main_t::Protected_Locker_t::operator =(const Protected_Locker_t& other)
+    {
+        if (this != std::addressof(other)) {
+            this->lock = other.lock;
+        }
+        return *this;
+    }
+
+    Main_t::Protected_Locker_t& Main_t::Protected_Locker_t::operator =(Protected_Locker_t&& other) noexcept
+    {
+        if (this != std::addressof(other)) {
+            this->lock = std::move(other.lock);
+        }
+        return *this;
+    }
+
+    Main_t::Protected_Locker_t::~Protected_Locker_t()
     {
     }
 
@@ -149,65 +203,40 @@ namespace doticu_npcp {
         DEFINE_OBJECT_STATIC();
     }
 
-    Bool_t Main_t::Is_Active(std::lock_guard<std::mutex>& locker)
+    Bool_t Main_t::Is_Active(const Protected_Locker_t locker)
     {
         return !!Consts_t::NPCP::Mod();
     }
 
-    Bool_t Main_t::Is_Initialized(std::lock_guard<std::mutex>& locker)
+    Bool_t Main_t::Is_Initialized(const Protected_Locker_t locker)
     {
         return Consts_t::NPCP::Global::Is_Initialized()->Bool();
     }
 
-    Bool_t Main_t::Has_Requirements(std::lock_guard<std::mutex>& locker)
+    Bool_t Main_t::Has_Requirements(const Protected_Locker_t locker)
     {
         if (Is_Initialized(locker) && Vars_t::Version() < Version_t<u16>(0, 9, 15)) {
-            UI_t::Create_Message_Box(
-                "Update failed. You must have version 0.9.15-beta installed first.",
-                none<V::Callback_i*>()
-            );
+            UI_t::Create_Message_Box("Update failed. You must have version 0.9.15-beta installed first.",
+                                     none<V::Callback_i*>());
             return false;
         } else {
             return true;
         }
     }
 
-    void Main_t::Can_Use_Hotkeys(some<unique<Callback_i<Bool_t>>> callback)
+    void Main_t::Before_New_Game()
     {
-        using Callback = some<unique<Callback_i<Bool_t>>>;
+        std::unique_lock<std::mutex> locker(npcp_state_lock);
 
-        class Is_In_Menu_Mode_Callback :
-            public V::Callback_t
-        {
-        public:
-            Callback callback;
-
-        public:
-            Is_In_Menu_Mode_Callback(Callback callback) :
-                callback(std::move(callback))
-            {
-            }
-
-        public:
-            virtual void operator()(V::Variable_t* result) override
-            {
-                Bool_t is_in_menu_mode = result ? result->As<Bool_t>() : false;
-                (*this->callback)(!is_in_menu_mode);
-            }
-        };
-
-        SKYLIB_ASSERT_SOME(callback);
-
-        if (UI_t::Is_Menu_Open("Dialogue Menu")) {
-            (*callback)(false);
-        } else {
-            UI_t::Is_In_Menu_Mode(new Is_In_Menu_Mode_Callback(std::move(callback)));
+        if (npcp_state) {
+            // if this causes a crash for any reason, we'll just need to let the memory leak.
+            delete npcp_state();
         }
     }
 
-    void Main_t::Initialize()
+    void Main_t::After_New_Game()
     {
-        std::lock_guard<std::mutex> locker(npcp_state_lock);
+        std::unique_lock<std::mutex> locker(npcp_state_lock);
 
         if (Is_Active(locker) && Has_Requirements(locker) && !Is_Initialized(locker)) {
             Vector_t<some<Quest_t*>> quests;
@@ -248,39 +277,17 @@ namespace doticu_npcp {
                     public:
                         virtual void operator ()(Bool_t quests_are_running) override
                         {
-                            std::lock_guard<std::mutex> locker(npcp_state_lock);
+                            std::unique_lock<std::mutex> locker(npcp_state_lock);
 
                             if (quests_are_running) {
                                 if (!Is_Initialized(locker)) {
-                                    if (npcp_state) {
-                                        // we may need to let the old data leak.
-                                        // I just don't know if it's safe to delete the old state, because
-                                        // its various destructors may try to delete data that the game already deallocated.
-                                    }
-                                    npcp_state = new NPCP_State_t();
-
-                                    Vars_t::Initialize();
-                                    MCM::Main_t::Initialize();
+                                    SKYLIB_ASSERT(!npcp_state);
+                                    npcp_state = new NPCP_State_t(true);
 
                                     Consts_t::NPCP::Global::Is_Initialized()->Bool(true);
 
-                                    // this needs to be saved to log.
-                                    UI_t::Create_Notification(
-                                        "Thank you for installing!",
-                                        none<V::Callback_i*>()
-                                    );
-
-                                    /*
-                                        Logs_t::Self()->Initialize();
-                                        Party::NPCS_t::Self()->Initialize();
-                                        Party::Player_t::Self()->On_Init_Mod();
-
-                                        Papyrus::Keys_t::Self()->Register();
-                                        Party::Movee_t::Self()->Register();
-                                        Party::Player_t::Self()->On_Register();
-
-                                        Modules::Control::Commands_t::Self()->Log_Note("Thank you for installing!", true);
-                                    */
+                                    UI_t::Create_Notification(NPCP_PRINT_HEAD + "Thank you for installing!",
+                                                              none<V::Callback_i*>()); // Log_t it
                                 }
                             } else {
                                 V::Utility_t::Wait_Out_Of_Menu(1.0f, new Wait_Callback(std::move(this->quests)));
@@ -296,15 +303,11 @@ namespace doticu_npcp {
 
     void Main_t::Before_Save()
     {
-        std::lock_guard<std::mutex> locker(npcp_state_lock);
+        std::unique_lock<std::mutex> locker(npcp_state_lock);
 
         if (Is_Active(locker) && Has_Requirements(locker) && Is_Initialized(locker)) {
             SKYLIB_ASSERT(npcp_state);
-            npcp_state->party_members.Before_Save();
-            npcp_state->hotkeys.Before_Save();
-
-            MCM::Main_t::Before_Save();
-
+            npcp_state->Before_Save();
             Main_t::After_Save();
         }
     }
@@ -317,12 +320,11 @@ namespace doticu_npcp {
         public:
             virtual void operator ()(V::Variable_t*) override
             {
-                std::lock_guard<std::mutex> locker(npcp_state_lock);
+                std::unique_lock<std::mutex> locker(npcp_state_lock);
 
                 if (Is_Active(locker) && Has_Requirements(locker) && Is_Initialized(locker)) {
                     SKYLIB_ASSERT(npcp_state);
-                    npcp_state->party_members.After_Save();
-                    npcp_state->hotkeys.After_Save();
+                    npcp_state->After_Save();
                 }
             }
         };
@@ -331,7 +333,7 @@ namespace doticu_npcp {
 
     void Main_t::Before_Load()
     {
-        std::lock_guard<std::mutex> locker(npcp_state_lock);
+        std::unique_lock<std::mutex> locker(npcp_state_lock);
 
         if (Is_Active(locker) && Has_Requirements(locker) && Is_Initialized(locker)) {
             SKYLIB_ASSERT(npcp_state);
@@ -341,64 +343,37 @@ namespace doticu_npcp {
 
     void Main_t::After_Load()
     {
-        std::lock_guard<std::mutex> locker(npcp_state_lock);
+        std::unique_lock<std::mutex> locker(npcp_state_lock);
 
         if (Is_Active(locker) && Has_Requirements(locker)) {
             if (Is_Initialized(locker)) {
                 SKYLIB_ASSERT(!npcp_state);
-                npcp_state = new NPCP_State_t(); // use a different constructor for version.
+                const Version_t<u16> current_version = Consts_t::NPCP::Version::Current();
+                const Version_t<u16> installed_version = Vars_t::Version();
+                if (installed_version < current_version) {
+                    npcp_state = new NPCP_State_t(installed_version);
 
-                // I think I want to move Try_Update into this function
 
-                if (Try_Update()) {
-                    const Version_t<u16> version = Vars_t::Version();
-                    std::string note =
-                        "Running version " +
-                        std::to_string(version.major) + "." +
-                        std::to_string(version.minor) + "." +
-                        std::to_string(version.patch);
-                    UI_t::Create_Notification(note.c_str(), none<V::Callback_i*>()); // will want to save this message in logs.
+                    Vars_t::Version(current_version); // Vars_t itself should handle this.
 
-                    MCM::Main_t::After_Load();
+                    UI_t::Create_Notification(NPCP_PRINT_HEAD + "Running version " +
+                                              std::to_string(current_version.major) + "." +
+                                              std::to_string(current_version.minor) + "." +
+                                              std::to_string(current_version.patch),
+                                              none<V::Callback_i*>()); // Log_t it
+                } else {
+                    npcp_state = new NPCP_State_t(false);
                 }
-                /*
-                    Modules::Keys_t::Self()->On_Load_Mod();
-                    Party::Members_t::Self()->On_Load_Mod();
-                    Party::Player_t::Self()->On_Load_Mod();
-                    Party::Movee_t::Self()->On_Load_Mod();
-                    Party::Mannequins_t::Self()->On_Load_Mod();
-                    Utils::Print("NPC Party has loaded.");
-                */
             } else {
-                locker.~lock_guard();
-                Initialize();
+                locker.~unique_lock();
+                After_New_Game();
             }
         }
-    }
-
-    Bool_t Main_t::Try_Update() // return maybe<Version_t<u16>>
-    {
-        const Version_t<u16> current_version = Consts_t::NPCP::Version::Current();
-        const Version_t<u16> installed_version = Vars_t::Version();
-        if (installed_version < current_version) {
-            if (installed_version < Version_t<u16>(0, 10, 0)) {
-                u_0_10_0(); // instead of this, maybe we can return the version and let load pass it to NPCP_State_t as a constructor.
-            }
-            Vars_t::Version(current_version);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    void Main_t::u_0_10_0()
-    {
-        //Party_Members().u_0_10_0();
     }
 
     void Main_t::On_Init()
     {
-        Initialize();
+        After_New_Game();
     }
 
 }

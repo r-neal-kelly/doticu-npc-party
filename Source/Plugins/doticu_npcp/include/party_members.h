@@ -72,10 +72,11 @@ namespace doticu_npcp { namespace Party {
 
     public:
         Members_t(some<Quest_t*> quest);
-        Members_t(const Members_t& other)                   = delete;
-        Members_t(Members_t&& other) noexcept               = delete;
-        Members_t& operator =(const Members_t& other)       = delete;
-        Members_t& operator =(Members_t&& other) noexcept   = delete;
+        Members_t(some<Quest_t*> quest, const Version_t<u16> version_to_update);
+        Members_t(const Members_t& other)                                           = delete;
+        Members_t(Members_t&& other) noexcept                                       = delete;
+        Members_t& operator =(const Members_t& other)                               = delete;
+        Members_t& operator =(Members_t&& other) noexcept                           = delete;
         ~Members_t();
 
     protected:

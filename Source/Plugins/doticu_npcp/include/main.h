@@ -43,12 +43,31 @@ namespace doticu_npcp {
             //MCM::Main_t         mcm_main;
 
         public:
-            NPCP_State_t();
-            NPCP_State_t(const NPCP_State_t& other)                 = delete;
-            NPCP_State_t(NPCP_State_t&& other) noexcept             = delete;
-            NPCP_State_t& operator =(const NPCP_State_t& other)     = delete;
-            NPCP_State_t& operator =(NPCP_State_t&& other) noexcept = delete;
+            NPCP_State_t(Bool_t is_new_game);
+            NPCP_State_t(const Version_t<u16> version_to_update);
+            NPCP_State_t(const NPCP_State_t& other)                                 = delete;
+            NPCP_State_t(NPCP_State_t&& other) noexcept                             = delete;
+            NPCP_State_t& operator =(const NPCP_State_t& other)                     = delete;
+            NPCP_State_t& operator =(NPCP_State_t&& other) noexcept                 = delete;
             ~NPCP_State_t();
+
+        public:
+            void Before_Save();
+            void After_Save();
+        };
+
+        class Protected_Locker_t
+        {
+        protected:
+            some<std::unique_lock<std::mutex>*> lock;
+
+        public:
+            Protected_Locker_t(std::unique_lock<std::mutex>& lock);
+            Protected_Locker_t(const Protected_Locker_t& other);
+            Protected_Locker_t(Protected_Locker_t&& other) noexcept;
+            Protected_Locker_t& operator =(const Protected_Locker_t& other);
+            Protected_Locker_t& operator =(Protected_Locker_t&& other) noexcept;
+            ~Protected_Locker_t();
         };
 
     protected:
@@ -64,22 +83,17 @@ namespace doticu_npcp {
         static some<V::Object_t*>   Object();
 
     protected:
-        static Bool_t   Is_Active(std::lock_guard<std::mutex>& locker);
-        static Bool_t   Is_Initialized(std::lock_guard<std::mutex>& locker);
-        static Bool_t   Has_Requirements(std::lock_guard<std::mutex>& locker);
-
-    public:
-        static void Can_Use_Hotkeys(some<unique<Callback_i<Bool_t>>> callback); // this should be moved to Hotkeys_t
+        static Bool_t   Is_Active(const Protected_Locker_t locker);
+        static Bool_t   Is_Initialized(const Protected_Locker_t locker);
+        static Bool_t   Has_Requirements(const Protected_Locker_t locker);
 
     protected:
-        static void     Initialize();
+        static void     Before_New_Game();
+        static void     After_New_Game();
         static void     Before_Save();
         static void     After_Save();
         static void     Before_Load();
         static void     After_Load();
-
-        static Bool_t   Try_Update(); // I think these two will be deleted in favor of constructors with version param
-        static void     u_0_10_0();
 
     protected:
         void On_Init();

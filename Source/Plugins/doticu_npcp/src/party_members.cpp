@@ -93,6 +93,11 @@ namespace doticu_npcp { namespace Party {
         // we would need that if we have this object reinstantiated each game load by Main_t.
     }
 
+    Members_t::Members_t(some<Quest_t*> quest, const Version_t<u16> version_to_update) :
+        Members_t(quest)
+    {
+    }
+
     Members_t::~Members_t()
     {
         // we maybe should destroy all custom_bases here.

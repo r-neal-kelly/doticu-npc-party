@@ -3,6 +3,7 @@
 */
 
 #include "doticu_skylib/quest.h"
+#include "doticu_skylib/ui.h"
 #include "doticu_skylib/virtual_callback.h"
 #include "doticu_skylib/virtual_debug.h"
 #include "doticu_skylib/virtual_latent_id.h"
@@ -48,11 +49,49 @@ namespace doticu_npcp {
         #undef METHOD
     }
 
+    void Hotkeys_t::Can_Use_Hotkeys(some<unique<Callback_i<Bool_t>>> callback)
+    {
+        using Callback = some<unique<Callback_i<Bool_t>>>;
+
+        class Is_In_Menu_Mode_Callback :
+            public V::Callback_t
+        {
+        public:
+            Callback callback;
+
+        public:
+            Is_In_Menu_Mode_Callback(Callback callback) :
+                callback(std::move(callback))
+            {
+            }
+
+        public:
+            virtual void operator()(V::Variable_t* result) override
+            {
+                Bool_t is_in_menu_mode = result ? result->As<Bool_t>() : false;
+                (*this->callback)(!is_in_menu_mode);
+            }
+        };
+
+        SKYLIB_ASSERT_SOME(callback);
+
+        if (UI_t::Is_Menu_Open("Dialogue Menu")) {
+            (*callback)(false);
+        } else {
+            UI_t::Is_In_Menu_Mode(new Is_In_Menu_Mode_Callback(std::move(callback)));
+        }
+    }
+
     Hotkeys_t::Hotkeys_t(some<Quest_t*> quest) :
         quest(quest), currently_pressed_key(-1)
     {
         // we need to as some point register for base keys. might only be necessary after load game.
         this->quest->Register_Key_Event(52, none<V::Callback_i*>());
+    }
+
+    Hotkeys_t::Hotkeys_t(some<Quest_t*> quest, const Version_t<u16> version_to_update) :
+        Hotkeys_t(quest)
+    {
     }
 
     Hotkeys_t::~Hotkeys_t()
