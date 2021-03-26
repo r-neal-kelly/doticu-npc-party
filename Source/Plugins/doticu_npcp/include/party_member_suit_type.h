@@ -16,15 +16,17 @@ namespace doticu_npcp { namespace Party {
     public:
         enum enum_type : value_type
         {
-            MEMBER,
+            _NONE_      = static_cast<value_type>(-1),
+
+            MEMBER      = static_cast<value_type>(0),
             IMMOBILE,
             SETTLER,
             THRALL,
             FOLLOWER,
             VANILLA,
             DEFAULT,
-            CURRENT,
-            BACKUP,
+
+            _TOTAL_,
         };
 
     public:

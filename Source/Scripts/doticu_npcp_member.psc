@@ -2,34 +2,6 @@
 
 Scriptname doticu_npcp_member extends ReferenceAlias
 
-; (to be deleted) Members_t
-Actor                   p_ref_actor                         =  none
-
-bool                    p_is_clone                          = false
-bool                    p_is_immobile                       = false
-bool                    p_is_thrall                         = false
-bool                    p_is_paralyzed                      = false
-bool                    p_is_mannequin                      = false
-bool                    p_is_reanimated                     = false
-string                  p_str_name                          =    ""
-ObjectReference         p_container_pack                    =  none
-
-Outfit                  p_outfit_default                    =  none
-Outfit                  p_outfit_vanilla                    =  none
-doticu_npcp_outfit      p_outfit2_member                    =  none
-doticu_npcp_outfit      p_outfit2_immobile                  =  none
-doticu_npcp_outfit      p_outfit2_settler                   =  none
-doticu_npcp_outfit      p_outfit2_thrall                    =  none
-doticu_npcp_outfit      p_outfit2_follower                  =  none
-doticu_npcp_outfit      p_outfit2_vanilla                   =  none
-doticu_npcp_outfit      p_outfit2_default                   =  none
-doticu_npcp_outfit      p_outfit2_current                   =  none
-doticu_npcp_outfit      p_outfit2_auto_backup               =  none
-
-int                     p_code_style                        =     0
-int                     p_code_vitality                     =     0
-int                     p_int_rating                        =     0
-
 ; Mannequins_t
 ObjectReference         p_marker_mannequin                  =  none
 

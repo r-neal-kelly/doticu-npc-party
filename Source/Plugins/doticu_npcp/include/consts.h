@@ -138,11 +138,10 @@ namespace doticu_npcp {
             struct Container
             {
                 static some<Container_t*> Empty();
-                static some<Container_t*> Outfit2();
-                static some<Container_t*> Immobile_Outfit2();
-                static some<Container_t*> Settler_Outfit2();
-                static some<Container_t*> Thrall_Outfit2();
-                static some<Container_t*> Follower_Outfit2();
+                static some<Container_t*> Immobile_Outfit_Template();
+                static some<Container_t*> Settler_Outfit_Template();
+                static some<Container_t*> Thrall_Outfit_Template();
+                static some<Container_t*> Follower_Outfit_Template();
             };
             struct Dialogue_Branch
             {
@@ -179,6 +178,7 @@ namespace doticu_npcp {
             {
                 static some<Faction_t*> Horse();
                 static some<Faction_t*> Member();
+                static some<Faction_t*> Outfit();
             };
             struct Form_List
             {
@@ -210,14 +210,11 @@ namespace doticu_npcp {
             };
             struct Global
             {
-                static some<Global_t*> Is_Initialized();
-                static some<Global_t*> Do_Allow_Dialogue_For_All();
-                static some<Global_t*> Do_Allow_Chatter();
+                static some<Global_t*> Do_Allow_Menu_For_All_Actors();
                 static some<Global_t*> Do_Force_Clone_Uniques();
                 static some<Global_t*> Do_Force_Clone_Generics();
                 static some<Global_t*> Do_Force_Unclone_Uniques();
                 static some<Global_t*> Do_Force_Unclone_Generics();
-                static some<Global_t*> Do_Level_Followers();
                 static some<Global_t*> Empty_Outfit_Body_Percent();
                 static some<Global_t*> Empty_Outfit_Feet_Percent();
                 static some<Global_t*> Empty_Outfit_Hands_Percent();
@@ -242,8 +239,6 @@ namespace doticu_npcp {
             };
             struct Misc
             {
-                static some<Misc_t*> Form_Vector();
-
                 struct Token
                 {
                     static some<Misc_t*> Member();
@@ -299,7 +294,6 @@ namespace doticu_npcp {
             struct Quest
             {
                 static some<Quest_t*> Main();
-                static some<Quest_t*> Vars();
                 static some<Quest_t*> Funcs();
                 static some<Quest_t*> Members();
                 static some<Quest_t*> Followers();

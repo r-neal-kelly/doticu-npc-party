@@ -82,7 +82,7 @@ namespace doticu_npcp {
         }
     }
 
-    Hotkeys_t::Hotkeys_t(some<Quest_t*> quest) :
+    Hotkeys_t::Hotkeys_t(some<Quest_t*> quest, Bool_t is_new_game) :
         quest(quest), currently_pressed_key(-1)
     {
         // we need to as some point register for base keys. might only be necessary after load game.
@@ -90,7 +90,7 @@ namespace doticu_npcp {
     }
 
     Hotkeys_t::Hotkeys_t(some<Quest_t*> quest, const Version_t<u16> version_to_update) :
-        Hotkeys_t(quest)
+        Hotkeys_t(quest, false)
     {
     }
 
@@ -125,14 +125,6 @@ namespace doticu_npcp {
     }
 
     void Hotkeys_t::After_Save()
-    {
-    }
-
-    void Hotkeys_t::Before_Load()
-    {
-    }
-
-    void Hotkeys_t::After_Load()
     {
     }
 

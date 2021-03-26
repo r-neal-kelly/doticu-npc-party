@@ -104,11 +104,10 @@ namespace doticu_npcp {
     some<Cell_t*>               Consts_t::NPCP::Cell::Storage()                             { DEFINE_FORM(Mod(), Cell_t, 0x114F9C); }
 
     some<Container_t*>          Consts_t::NPCP::Container::Empty()                          { DEFINE_FORM(Mod(), Container_t, 0x0A5561); }
-    some<Container_t*>          Consts_t::NPCP::Container::Outfit2()                        { DEFINE_FORM(Mod(), Container_t, 0x0B9A63); }
-    some<Container_t*>          Consts_t::NPCP::Container::Immobile_Outfit2()               { DEFINE_FORM(Mod(), Container_t, 0x1663CE); }
-    some<Container_t*>          Consts_t::NPCP::Container::Settler_Outfit2()                { DEFINE_FORM(Mod(), Container_t, 0x1663CD); }
-    some<Container_t*>          Consts_t::NPCP::Container::Thrall_Outfit2()                 { DEFINE_FORM(Mod(), Container_t, 0x1663CC); }
-    some<Container_t*>          Consts_t::NPCP::Container::Follower_Outfit2()               { DEFINE_FORM(Mod(), Container_t, 0x1663C7); }
+    some<Container_t*>          Consts_t::NPCP::Container::Immobile_Outfit_Template()       { DEFINE_FORM(Mod(), Container_t, 0x1663CE); }
+    some<Container_t*>          Consts_t::NPCP::Container::Settler_Outfit_Template()        { DEFINE_FORM(Mod(), Container_t, 0x1663CD); }
+    some<Container_t*>          Consts_t::NPCP::Container::Thrall_Outfit_Template()         { DEFINE_FORM(Mod(), Container_t, 0x1663CC); }
+    some<Container_t*>          Consts_t::NPCP::Container::Follower_Outfit_Template()       { DEFINE_FORM(Mod(), Container_t, 0x1663C7); }
 
     some<Dialogue_Branch_t*>    Consts_t::NPCP::Dialogue_Branch::Menu()                     { DEFINE_FORM(Mod(), Dialogue_Branch_t, 0x32674B); }
     some<Dialogue_Branch_t*>    Consts_t::NPCP::Dialogue_Branch::Menu_Chests()              { DEFINE_FORM(Mod(), Dialogue_Branch_t, 0x32674F); }
@@ -139,6 +138,7 @@ namespace doticu_npcp {
 
     some<Faction_t*>            Consts_t::NPCP::Faction::Horse()                            { DEFINE_FORM(Mod(), Faction_t, 0x354111); }
     some<Faction_t*>            Consts_t::NPCP::Faction::Member()                           { DEFINE_FORM(Mod(), Faction_t, 0x091154); }
+    some<Faction_t*>            Consts_t::NPCP::Faction::Outfit()                           { DEFINE_FORM(Mod(), Faction_t, 0x4267D8); }
 
     some<Form_List_t*>          Consts_t::NPCP::Form_List::Is_Saddler_Sitting_Globals()     { DEFINE_FORM(Mod(), Form_List_t, 0x395E54); }
     some<Form_List_t*>          Consts_t::NPCP::Form_List::Expo_Cell_Markers()              { DEFINE_FORM(Mod(), Form_List_t, 0x2928AF); }
@@ -164,14 +164,11 @@ namespace doticu_npcp {
 
     some<Furniture_t*>          Consts_t::NPCP::Furniture::Bedroll()                        { DEFINE_FORM(Mod(), Furniture_t, 0x3E7F15); }
 
-    some<Global_t*>             Consts_t::NPCP::Global::Is_Initialized()                    { DEFINE_FORM(Mod(), Global_t, 0x189ADD); }
-    some<Global_t*>             Consts_t::NPCP::Global::Do_Allow_Dialogue_For_All()         { DEFINE_FORM(Mod(), Global_t, 0x3B4463); }
-    some<Global_t*>             Consts_t::NPCP::Global::Do_Allow_Chatter()                  { DEFINE_FORM(Mod(), Global_t, 0x3B9568); }
+    some<Global_t*>             Consts_t::NPCP::Global::Do_Allow_Menu_For_All_Actors()      { DEFINE_FORM(Mod(), Global_t, 0x3B4463); }
     some<Global_t*>             Consts_t::NPCP::Global::Do_Force_Clone_Uniques()            { DEFINE_FORM(Mod(), Global_t, 0x05244D); }
     some<Global_t*>             Consts_t::NPCP::Global::Do_Force_Clone_Generics()           { DEFINE_FORM(Mod(), Global_t, 0x05244E); }
     some<Global_t*>             Consts_t::NPCP::Global::Do_Force_Unclone_Uniques()          { DEFINE_FORM(Mod(), Global_t, 0x05244F); }
     some<Global_t*>             Consts_t::NPCP::Global::Do_Force_Unclone_Generics()         { DEFINE_FORM(Mod(), Global_t, 0x052450); }
-    some<Global_t*>             Consts_t::NPCP::Global::Do_Level_Followers()                { DEFINE_FORM(Mod(), Global_t, 0x3B4464); }
     some<Global_t*>             Consts_t::NPCP::Global::Empty_Outfit_Body_Percent()         { DEFINE_FORM(Mod(), Global_t, 0x193CEA); }
     some<Global_t*>             Consts_t::NPCP::Global::Empty_Outfit_Feet_Percent()         { DEFINE_FORM(Mod(), Global_t, 0x193CE7); }
     some<Global_t*>             Consts_t::NPCP::Global::Empty_Outfit_Hands_Percent()        { DEFINE_FORM(Mod(), Global_t, 0x193CE8); }
@@ -183,8 +180,6 @@ namespace doticu_npcp {
 
     some<Magic_Effect_t*>       Consts_t::NPCP::Magic_Effect::Reanimate()                   { DEFINE_FORM(Mod(), Magic_Effect_t, 0x3AF361); }
     some<Magic_Effect_t*>       Consts_t::NPCP::Magic_Effect::Retreat()                     { DEFINE_FORM(Mod(), Magic_Effect_t, 0x2DF8FA); }
-
-    some<Misc_t*>               Consts_t::NPCP::Misc::Form_Vector()                         { DEFINE_FORM(Mod(), Misc_t, 0x15C1B2); }
 
     some<Misc_t*>               Consts_t::NPCP::Misc::Token::Member()                       { DEFINE_FORM(Mod(), Misc_t, 0x000D75); }
     some<Misc_t*>               Consts_t::NPCP::Misc::Token::Generic()                      { DEFINE_FORM(Mod(), Misc_t, 0x003DFE); }
@@ -230,7 +225,6 @@ namespace doticu_npcp {
     some<Perk_t*>               Consts_t::NPCP::Perk::Unparalyze()                          { DEFINE_FORM(Mod(), Perk_t, 0x16B4D1); }
 
     some<Quest_t*>              Consts_t::NPCP::Quest::Main()                               { DEFINE_FORM(Mod(), Quest_t, 0x005385); }
-    some<Quest_t*>              Consts_t::NPCP::Quest::Vars()                               { DEFINE_FORM(Mod(), Quest_t, 0x003DFF); }
     some<Quest_t*>              Consts_t::NPCP::Quest::Funcs()                              { DEFINE_FORM(Mod(), Quest_t, 0x005384); }
     some<Quest_t*>              Consts_t::NPCP::Quest::Members()                            { DEFINE_FORM(Mod(), Quest_t, 0x00184C); }
     some<Quest_t*>              Consts_t::NPCP::Quest::Followers()                          { DEFINE_FORM(Mod(), Quest_t, 0x000D83); }
@@ -320,7 +314,7 @@ namespace doticu_npcp {
     some<Spell_t*>              Consts_t::NPCP::Spell::Reanimate_Ability()                  { DEFINE_FORM(Mod(), Spell_t, 0x3AF362); }
     some<Spell_t*>              Consts_t::NPCP::Spell::Retreat_Ability()                    { DEFINE_FORM(Mod(), Spell_t, 0x2F3CFF); }
 
-    const Version_t<u16>        Consts_t::NPCP::Version::Current()                          { DEFINE_VERSION(u16, 0, 10, 0); }
+    const Version_t<u16>        Consts_t::NPCP::Version::Current()                          { DEFINE_VERSION(u16, 1, 0, 0); }
 
     some<Weapon_t*>             Consts_t::NPCP::Weapon::Blank()                             { DEFINE_FORM(Mod(), Weapon_t, 0x0C8D65); }
 

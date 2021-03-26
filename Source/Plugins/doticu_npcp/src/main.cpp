@@ -2,9 +2,9 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
-#include <ShlObj.h>
-
-#include "doticu_skylib/global.h"
+#include "doticu_skylib/dynamic_array.inl"
+#include "doticu_skylib/global.inl"
+#include "doticu_skylib/quest.h"
 #include "doticu_skylib/ui.h"
 #include "doticu_skylib/virtual_callback.h"
 #include "doticu_skylib/virtual_macros.h"
@@ -13,154 +13,36 @@
 
 #include "consts.h"
 #include "main.h"
-#include "mcm_main.h"
-#include "party_members.h"
-#include "vars.h"
+#include "strings.h"
 
 namespace doticu_npcp {
 
-    const SKSEInterface*            Main_t::SKSE                = nullptr;
-    const SKSEPapyrusInterface*     Main_t::SKSE_PAPYRUS        = nullptr;
-    const SKSEMessagingInterface*   Main_t::SKSE_MESSAGING      = nullptr;
-    PluginHandle                    Main_t::SKSE_PLUGIN_HANDLE  = 0;
-
-    Bool_t Main_t::SKSE_Query_Plugin(const SKSEInterface* skse, PluginInfo* info)
-    {
-        if (skse && info) {
-            info->infoVersion = PluginInfo::kInfoVersion;
-            info->name = "doticu_npcp";
-            info->version = 1;
-            return
-                Version_t<u16>::From_MM_mm_ppp_b(skse->runtimeVersion) == Consts_t::Skyrim::Version::Required() &&
-                Version_t<u16>::From_MM_mm_ppp_b(skse->skseVersion) >= Consts_t::SKSE::Version::Minimum();
-        } else {
-            return false;
-        }
-    }
-
-    Bool_t Main_t::SKSE_Load_Plugin(const SKSEInterface* skse)
-    {
-        SKSE_LOG.OpenRelative(CSIDL_MYDOCUMENTS, "\\My Games\\Skyrim Special Edition\\SKSE\\doticu_npcp.log");
-        if (skse) {
-            SKSE = skse;
-            SKSE_PAPYRUS = static_cast<const SKSEPapyrusInterface*>(SKSE->QueryInterface(kInterface_Papyrus));
-            SKSE_MESSAGING = static_cast<const SKSEMessagingInterface*>(SKSE->QueryInterface(kInterface_Messaging));
-            SKSE_PLUGIN_HANDLE = SKSE->GetPluginHandle();
-            if (SKSE_PAPYRUS && SKSE_MESSAGING) {
-                if (SKSE_PAPYRUS->Register(reinterpret_cast<SKSEPapyrusInterface::RegisterFunctions>(SKSE_Register_Functions))) {
-                    auto Callback = [](SKSEMessagingInterface::Message* message)->void
-                    {
-                        if (message) {
-                            // SaveGame and PreLoadGame will give us the savefile path as message->data, and it's char length too
-                            if (message->type == SKSEMessagingInterface::kMessage_SaveGame) {
-                                Before_Save();
-                            } else if (message->type == SKSEMessagingInterface::kMessage_PreLoadGame) {
-                                Before_Load();
-                            } else if (message->type == SKSEMessagingInterface::kMessage_PostLoadGame && message->data != nullptr) {
-                                After_Load();
-                            } else if (message->type == SKSEMessagingInterface::kMessage_NewGame) {
-                                Before_New_Game();
-                            }
-                        }
-                    };
-                    SKSE_MESSAGING->RegisterListener(SKSE_PLUGIN_HANDLE, "SKSE", Callback);
-                    return true;
-                } else {
-                    _FATALERROR("Unable to register functions.");
-                    return false;
-                }
-            } else {
-                _FATALERROR("Unable to get papyrus and/or messaging interface.");
-                return false;
-            }
-        } else {
-            _FATALERROR("Unable to get skse interface.");
-            return false;
-        }
-    }
-
-    Bool_t Main_t::SKSE_Register_Functions(V::Machine_t* machine)
-    {
-        Main_t::Register_Me(machine);
-        Vars_t::Register_Me(machine);
-        Party::Members_t::Register_Me(machine);
-        Hotkeys_t::Register_Me(machine);
-        MCM::Main_t::Register_Me(machine);
-
-        SKYLIB_LOG("Added all functions.\n");
-
-        return true;
-    }
-
-    Main_t::NPCP_State_t::NPCP_State_t(Bool_t is_new_game) :
-        party_members(Consts_t::NPCP::Quest::Members()),
-        hotkeys(Consts_t::NPCP::Quest::Control())
+    Main_t::State_t::State_t(Bool_t is_new_game) :
+        party_members(Consts_t::NPCP::Quest::Members(), is_new_game),
+        hotkeys(Consts_t::NPCP::Quest::Control(), is_new_game)
     {
     }
 
-    Main_t::NPCP_State_t::NPCP_State_t(const Version_t<u16> version_to_update) :
+    Main_t::State_t::State_t(const Version_t<u16> version_to_update) :
         party_members(Consts_t::NPCP::Quest::Members(), version_to_update),
         hotkeys(Consts_t::NPCP::Quest::Control(), version_to_update)
     {
     }
 
-    Main_t::NPCP_State_t::~NPCP_State_t()
+    Main_t::State_t::~State_t()
     {
     }
 
-    void Main_t::NPCP_State_t::Before_Save()
+    void Main_t::State_t::Before_Save()
     {
         this->party_members.Before_Save();
         this->hotkeys.Before_Save();
     }
 
-    void Main_t::NPCP_State_t::After_Save()
+    void Main_t::State_t::After_Save()
     {
         this->party_members.After_Save();
         this->hotkeys.After_Save();
-    }
-
-    Main_t::Protected_Locker_t::Protected_Locker_t(std::unique_lock<std::mutex>& lock) :
-        lock(&lock)
-    {
-    }
-
-    Main_t::Protected_Locker_t::Protected_Locker_t(const Protected_Locker_t& other) :
-        lock(other.lock)
-    {
-    }
-
-    Main_t::Protected_Locker_t::Protected_Locker_t(Protected_Locker_t&& other) noexcept :
-        lock(std::move(other.lock))
-    {
-    }
-
-    Main_t::Protected_Locker_t& Main_t::Protected_Locker_t::operator =(const Protected_Locker_t& other)
-    {
-        if (this != std::addressof(other)) {
-            this->lock = other.lock;
-        }
-        return *this;
-    }
-
-    Main_t::Protected_Locker_t& Main_t::Protected_Locker_t::operator =(Protected_Locker_t&& other) noexcept
-    {
-        if (this != std::addressof(other)) {
-            this->lock = std::move(other.lock);
-        }
-        return *this;
-    }
-
-    Main_t::Protected_Locker_t::~Protected_Locker_t()
-    {
-    }
-
-    maybe<Main_t::NPCP_State_t*>    Main_t::npcp_state = none<Main_t::NPCP_State_t*>();
-    std::mutex                      Main_t::npcp_state_lock;
-
-    some<Main_t*> Main_t::Self()
-    {
-        return Consts_t::NPCP::Quest::Main();
     }
 
     String_t Main_t::Class_Name()
@@ -193,122 +75,135 @@ namespace doticu_npcp {
                         RETURN_TYPE_, METHOD_, __VA_ARGS__);                            \
         SKYLIB_W
 
-        METHOD("OnInit", true, void, On_Init);
-
         #undef METHOD
+
+        Party::Members_t::Register_Me(machine);
+        Hotkeys_t::Register_Me(machine);
+        //MCM::Main_t::Register_Me(machine);
+    }
+
+    Main_t::Main_t(some<Quest_t*> quest) :
+        quest(quest), state(none<State_t*>())
+    {
+    }
+
+    Main_t::~Main_t()
+    {
     }
 
     some<V::Object_t*> Main_t::Object()
     {
-        DEFINE_OBJECT_STATIC();
+        DEFINE_COMPONENT_OBJECT_METHOD(this->quest());
     }
 
-    Bool_t Main_t::Is_Active(const Protected_Locker_t locker)
+    V::Variable_tt<Bool_t>& Main_t::Is_Initialized()
     {
-        return !!Consts_t::NPCP::Mod();
+        DEFINE_VARIABLE_REFERENCE(Bool_t, "is_initialized");
     }
 
-    Bool_t Main_t::Is_Initialized(const Protected_Locker_t locker)
+    V::Variable_tt<Int_t>& Main_t::Major_Version()
     {
-        return Consts_t::NPCP::Global::Is_Initialized()->Bool();
+        DEFINE_VARIABLE_REFERENCE(Int_t, "major_version");
     }
 
-    Bool_t Main_t::Has_Requirements(const Protected_Locker_t locker)
+    V::Variable_tt<Int_t>& Main_t::Minor_Version()
     {
-        if (Is_Initialized(locker) && Vars_t::Version() < Version_t<u16>(0, 9, 15)) {
-            UI_t::Create_Message_Box("Update failed. You must have version 0.9.15-beta installed first.",
-                                     none<V::Callback_i*>());
-            return false;
-        } else {
-            return true;
+        DEFINE_VARIABLE_REFERENCE(Int_t, "minor_version");
+    }
+
+    V::Variable_tt<Int_t>& Main_t::Patch_Version()
+    {
+        DEFINE_VARIABLE_REFERENCE(Int_t, "patch_version");
+    }
+
+    const Version_t<u16> Main_t::Static_Version()
+    {
+        return Consts_t::NPCP::Version::Current();
+    }
+
+    const Version_t<u16> Main_t::Dynamic_Version()
+    {
+        return Version_t<u16>(static_cast<u16>(Major_Version()),
+                              static_cast<u16>(Minor_Version()),
+                              static_cast<u16>(Patch_Version()));
+    }
+
+    void Main_t::Dynamic_Version(const Version_t<u16> dynamic_version)
+    {
+        Major_Version() = static_cast<Int_t>(dynamic_version.major);
+        Minor_Version() = static_cast<Int_t>(dynamic_version.minor);
+        Patch_Version() = static_cast<Int_t>(dynamic_version.patch);
+    }
+
+    Vector_t<some<Quest_t*>> Main_t::Logic_Quests()
+    {
+        Vector_t<some<Quest_t*>> results;
+
+        results.push_back(Consts_t::NPCP::Quest::Main());
+        results.push_back(Consts_t::NPCP::Quest::Funcs());
+        results.push_back(Consts_t::NPCP::Quest::Members());
+        results.push_back(Consts_t::NPCP::Quest::Followers());
+        results.push_back(Consts_t::NPCP::Quest::Control());
+
+        return results;
+    }
+
+    void Main_t::Create_State(Bool_t is_new_game)
+    {
+        Delete_State();
+        this->state = new State_t(is_new_game);
+    }
+
+    void Main_t::Create_State(const Version_t<u16> version_to_update)
+    {
+        Delete_State();
+        this->state = new State_t(version_to_update);
+    }
+
+    void Main_t::Delete_State()
+    {
+        if (this->state) {
+            delete this->state();
+            this->state = none<State_t*>();
         }
     }
 
-    void Main_t::Before_New_Game()
+    void Main_t::New_Game()
     {
-        std::unique_lock<std::mutex> locker(npcp_state_lock);
+        if (!Is_Initialized()) {
+            SKYLIB_LOG(NPCP_PRINT_HEAD + "Initializing...");
 
-        if (npcp_state) {
-            // if this causes a crash for any reason, we'll just need to let the memory leak.
-            delete npcp_state();
-        }
-    }
+            Create_State(true);
+            Dynamic_Version(Static_Version());
+            Is_Initialized() = true;
 
-    void Main_t::After_New_Game()
-    {
-        std::unique_lock<std::mutex> locker(npcp_state_lock);
-
-        if (Is_Active(locker) && Has_Requirements(locker) && !Is_Initialized(locker)) {
-            Vector_t<some<Quest_t*>> quests;
-            quests.push_back(Consts_t::NPCP::Quest::Main());
-            quests.push_back(Consts_t::NPCP::Quest::Vars());
-            quests.push_back(Consts_t::NPCP::Quest::Funcs());
-            quests.push_back(Consts_t::NPCP::Quest::Members());
-            quests.push_back(Consts_t::NPCP::Quest::Followers());
-            quests.push_back(Consts_t::NPCP::Quest::Control());
-
-            struct Wait_Callback :
-                public V::Callback_t
+            class Wait_Callback :
+                public Callback_i<>
             {
             public:
-                const Vector_t<some<Quest_t*>> quests;
-
-            public:
-                Wait_Callback(const Vector_t<some<Quest_t*>> quests) :
-                    quests(std::move(quests))
+                virtual void operator ()() override
                 {
-                }
-
-            public:
-                virtual void operator ()(V::Variable_t*) override
-                {
-                    class Quests_Are_Running_Callback :
-                        public skylib::Callback_i<Bool_t>
-                    {
-                    public:
-                        const Vector_t<some<Quest_t*>> quests;
-
-                    public:
-                        Quests_Are_Running_Callback(const Vector_t<some<Quest_t*>> quests) :
-                            quests(std::move(quests))
-                        {
-                        }
-
-                    public:
-                        virtual void operator ()(Bool_t quests_are_running) override
-                        {
-                            std::unique_lock<std::mutex> locker(npcp_state_lock);
-
-                            if (quests_are_running) {
-                                if (!Is_Initialized(locker)) {
-                                    SKYLIB_ASSERT(!npcp_state);
-                                    npcp_state = new NPCP_State_t(true);
-
-                                    Consts_t::NPCP::Global::Is_Initialized()->Bool(true);
-
-                                    UI_t::Create_Notification(NPCP_PRINT_HEAD + "Thank you for installing!",
-                                                              none<V::Callback_i*>()); // Log_t it
-                                }
-                            } else {
-                                V::Utility_t::Wait_Out_Of_Menu(1.0f, new Wait_Callback(std::move(this->quests)));
-                            }
-                        }
-                    };
-                    Quest_t::Are_Running(this->quests, new Quests_Are_Running_Callback(std::move(this->quests)));
+                    UI_t::Create_Notification(Strings_t::THANK_YOU_FOR_INSTALLING, none<V::Callback_i*>());
                 }
             };
-            V::Utility_t::Wait_Out_Of_Menu(1.0f, new Wait_Callback(std::move(quests)));
+            some<Wait_Callback*> wait_callback = new Wait_Callback();
+            V::Utility_t::Wait_Out_Of_Menu(1.0f, wait_callback());
+            (*wait_callback)();
+
+            SKYLIB_LOG(NPCP_PRINT_HEAD + "Initialized.");
         }
     }
 
     void Main_t::Before_Save()
     {
-        std::unique_lock<std::mutex> locker(npcp_state_lock);
-
-        if (Is_Active(locker) && Has_Requirements(locker) && Is_Initialized(locker)) {
-            SKYLIB_ASSERT(npcp_state);
-            npcp_state->Before_Save();
-            Main_t::After_Save();
+        if (Is_Initialized()) {
+            if (this->state) {
+                SKYLIB_LOG(NPCP_PRINT_HEAD + "Saving...");
+                this->state->Before_Save();
+                After_Save();
+            } else {
+                SKYLIB_LOG(NPCP_PRINT_HEAD + "Missing state, cannot save NPC Party data.");
+            }
         }
     }
 
@@ -320,11 +215,14 @@ namespace doticu_npcp {
         public:
             virtual void operator ()(V::Variable_t*) override
             {
-                std::unique_lock<std::mutex> locker(npcp_state_lock);
-
-                if (Is_Active(locker) && Has_Requirements(locker) && Is_Initialized(locker)) {
-                    SKYLIB_ASSERT(npcp_state);
-                    npcp_state->After_Save();
+                Main_t& self = NPCP.Main();
+                if (self.Is_Initialized()) {
+                    if (self.state) {
+                        self.state->After_Save();
+                        SKYLIB_LOG(NPCP_PRINT_HEAD + "Saved.");
+                    } else {
+                        SKYLIB_LOG(NPCP_PRINT_HEAD + "Missing state, cannot finish saving NPC Party data.");
+                    }
                 }
             }
         };
@@ -333,64 +231,32 @@ namespace doticu_npcp {
 
     void Main_t::Before_Load()
     {
-        std::unique_lock<std::mutex> locker(npcp_state_lock);
-
-        if (Is_Active(locker) && Has_Requirements(locker) && Is_Initialized(locker)) {
-            SKYLIB_ASSERT(npcp_state);
-            delete npcp_state();
-        }
+        Delete_State();
     }
 
     void Main_t::After_Load()
     {
-        std::unique_lock<std::mutex> locker(npcp_state_lock);
+        if (Is_Initialized()) {
+            SKYLIB_LOG(NPCP_PRINT_HEAD + "Loading...");
 
-        if (Is_Active(locker) && Has_Requirements(locker)) {
-            if (Is_Initialized(locker)) {
-                SKYLIB_ASSERT(!npcp_state);
-                const Version_t<u16> current_version = Consts_t::NPCP::Version::Current();
-                const Version_t<u16> installed_version = Vars_t::Version();
-                if (installed_version < current_version) {
-                    npcp_state = new NPCP_State_t(installed_version);
-
-
-                    Vars_t::Version(current_version); // Vars_t itself should handle this.
-
-                    UI_t::Create_Notification(NPCP_PRINT_HEAD + "Running version " +
-                                              std::to_string(current_version.major) + "." +
-                                              std::to_string(current_version.minor) + "." +
-                                              std::to_string(current_version.patch),
-                                              none<V::Callback_i*>()); // Log_t it
-                } else {
-                    npcp_state = new NPCP_State_t(false);
-                }
+            const Version_t<u16> static_version = Static_Version();
+            const Version_t<u16> dynamic_version = Dynamic_Version();
+            if (dynamic_version < static_version) {
+                Create_State(dynamic_version);
+                Dynamic_Version(static_version);
+                UI_t::Create_Notification(NPCP_PRINT_HEAD + "Updated to version " +
+                                          std::to_string(static_version.major) + "." +
+                                          std::to_string(static_version.minor) + "." +
+                                          std::to_string(static_version.patch),
+                                          none<V::Callback_i*>());
             } else {
-                locker.~unique_lock();
-                After_New_Game();
+                Create_State(false);
             }
+
+            SKYLIB_LOG(NPCP_PRINT_HEAD + "Loaded...");
+        } else {
+            New_Game();
         }
-    }
-
-    void Main_t::On_Init()
-    {
-        After_New_Game();
-    }
-
-}
-
-extern "C" {
-
-    _declspec(dllexport) skylib::Bool_t SKSEPlugin_Query(const SKSEInterface*, PluginInfo*);
-    _declspec(dllexport) skylib::Bool_t SKSEPlugin_Load(const SKSEInterface*);
-
-    skylib::Bool_t SKSEPlugin_Query(const SKSEInterface* skse, PluginInfo* info)
-    {
-        return doticu_npcp::Main_t::SKSE_Query_Plugin(skse, info);
-    }
-
-    skylib::Bool_t SKSEPlugin_Load(const SKSEInterface* skse)
-    {
-        return doticu_npcp::Main_t::SKSE_Load_Plugin(skse);
     }
 
 }

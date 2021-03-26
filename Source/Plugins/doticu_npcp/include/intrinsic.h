@@ -59,6 +59,7 @@ namespace doticu_npcp {
     using Version_t                     = skylib::Version_t<T>;
 
     using Form_Type_e                   = skylib::Form_Type_e;
+    using Operator_e                    = skylib::Operator_e;
     using Relation_e                    = skylib::Relation_e;
     using Script_Type_e                 = skylib::Script_Type_e;
     using Vitality_e                    = skylib::Vitality_e;
@@ -119,6 +120,8 @@ namespace doticu_npcp {
     using Reference_Container_Entry_t   = skylib::Reference_Container_Entry_t;
     using Reference_Handle_t            = skylib::Reference_Handle_t;
     using Scroll_t                      = skylib::Scroll_t;
+    using SKSE_Message_t                = skylib::SKSE_Message_t;
+    using SKSE_Plugin_t                 = skylib::SKSE_Plugin_t;
     using Spell_t                       = skylib::Spell_t;
     using Static_t                      = skylib::Static_t;
     using UI_t                          = skylib::UI_t;

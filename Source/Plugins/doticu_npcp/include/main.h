@@ -6,97 +6,92 @@
 
 #include <mutex>
 
-#include "skse64/PluginAPI.h"
-
-#include "doticu_skylib/quest.h"
+#include "doticu_skylib/enum_script_type.h"
 
 #include "hotkeys.h"
 #include "intrinsic.h"
 #include "mcm_main.h"
+#include "npcp.h"
 #include "party_members.h"
-#include "vars.h"
 
 namespace doticu_npcp {
 
-    class Main_t :
-        public Quest_t
+    class Main_t
     {
-    protected:
-        static const    SKSEInterface*          SKSE;
-        static const    SKSEPapyrusInterface*   SKSE_PAPYRUS;
-        static const    SKSEMessagingInterface* SKSE_MESSAGING;
-        static          PluginHandle            SKSE_PLUGIN_HANDLE;
-        static          IDebugLog               SKSE_LOG;
+    public:
+        friend class NPCP_t;
 
     public:
-        static Bool_t   SKSE_Query_Plugin(const SKSEInterface* skse, PluginInfo* info);
-        static Bool_t   SKSE_Load_Plugin(const SKSEInterface* skse);
-        static Bool_t   SKSE_Register_Functions(V::Machine_t* machine);
-
-    protected:
-        class NPCP_State_t
+        enum
         {
-        public:
-            //Vars_t              vars;
-            Party::Members_t    party_members;
+            SCRIPT_TYPE = Script_Type_e::QUEST,
+        };
+
+    public:
+        class State_t
+        {
+        protected:
+            Party::Members_t    party_members; // we may want a Party::Main_t that delegates
             Hotkeys_t           hotkeys;
             //MCM::Main_t         mcm_main;
 
         public:
-            NPCP_State_t(Bool_t is_new_game);
-            NPCP_State_t(const Version_t<u16> version_to_update);
-            NPCP_State_t(const NPCP_State_t& other)                                 = delete;
-            NPCP_State_t(NPCP_State_t&& other) noexcept                             = delete;
-            NPCP_State_t& operator =(const NPCP_State_t& other)                     = delete;
-            NPCP_State_t& operator =(NPCP_State_t&& other) noexcept                 = delete;
-            ~NPCP_State_t();
+            State_t(Bool_t is_new_game);
+            State_t(const Version_t<u16> version_to_update);
+            State_t(const State_t& other)                       = delete;
+            State_t(State_t&& other) noexcept                   = delete;
+            State_t& operator =(const State_t& other)           = delete;
+            State_t& operator =(State_t&& other) noexcept       = delete;
+            ~State_t();
 
         public:
             void Before_Save();
             void After_Save();
         };
 
-        class Protected_Locker_t
-        {
-        protected:
-            some<std::unique_lock<std::mutex>*> lock;
-
-        public:
-            Protected_Locker_t(std::unique_lock<std::mutex>& lock);
-            Protected_Locker_t(const Protected_Locker_t& other);
-            Protected_Locker_t(Protected_Locker_t&& other) noexcept;
-            Protected_Locker_t& operator =(const Protected_Locker_t& other);
-            Protected_Locker_t& operator =(Protected_Locker_t&& other) noexcept;
-            ~Protected_Locker_t();
-        };
-
-    protected:
-        static maybe<NPCP_State_t*> npcp_state;
-        static std::mutex           npcp_state_lock;
-
-    protected:
-        static some<Main_t*>        Self();
+    public:
         static String_t             Class_Name();
         static some<V::Class_t*>    Class();
         static void                 Register_Me(some<V::Machine_t*> machine);
 
-        static some<V::Object_t*>   Object();
+    public:
+        const some<Quest_t*>    quest;
+        maybe<State_t*>         state;
+
+    public:
+        Main_t(some<Quest_t*> quest);
+        Main_t(const Main_t& other)                 = delete;
+        Main_t(Main_t&& other) noexcept             = delete;
+        Main_t& operator =(const Main_t& other)     = delete;
+        Main_t& operator =(Main_t&& other) noexcept = delete;
+        ~Main_t();
 
     protected:
-        static Bool_t   Is_Active(const Protected_Locker_t locker);
-        static Bool_t   Is_Initialized(const Protected_Locker_t locker);
-        static Bool_t   Has_Requirements(const Protected_Locker_t locker);
+        some<V::Object_t*>      Object();
+
+        V::Variable_tt<Bool_t>& Is_Initialized();
+
+        V::Variable_tt<Int_t>&  Major_Version();
+        V::Variable_tt<Int_t>&  Minor_Version();
+        V::Variable_tt<Int_t>&  Patch_Version();
 
     protected:
-        static void     Before_New_Game();
-        static void     After_New_Game();
-        static void     Before_Save();
-        static void     After_Save();
-        static void     Before_Load();
-        static void     After_Load();
+        const Version_t<u16>        Static_Version();
+        const Version_t<u16>        Dynamic_Version();
+        void                        Dynamic_Version(const Version_t<u16> dynamic_version);
+
+        Vector_t<some<Quest_t*>>    Logic_Quests();
+
+        void                        Create_State(Bool_t is_new_game);
+        void                        Create_State(const Version_t<u16> version_to_update);
+        void                        Delete_State();
 
     protected:
-        void On_Init();
+        void    New_Game();
+        void    Before_Save();
+        void    After_Save();
+        void    Before_Load();
+        void    After_Load();
     };
 
 }

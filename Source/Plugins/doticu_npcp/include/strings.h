@@ -140,6 +140,7 @@ namespace doticu_npcp {
 
         static const String_t T;
         static const String_t T_BOOKS;
+        static const String_t THANK_YOU_FOR_INSTALLING;
 
         static const String_t U;
         static const String_t U_BOOKS;
