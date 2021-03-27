@@ -15,14 +15,14 @@ namespace doticu_npcp { namespace MCM {
     class Main_t :
         public mcmlib::Config_Base_t
     {
-    protected:
+    public:
         class Save
         {
         public:
             String_t current_page = "";
         };
 
-    protected:
+    public:
         static std::mutex   event_mutex;
         static Save         save;
 

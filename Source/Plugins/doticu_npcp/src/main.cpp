@@ -13,6 +13,7 @@
 
 #include "consts.h"
 #include "main.h"
+#include "npcp.h"
 #include "strings.h"
 
 namespace doticu_npcp {

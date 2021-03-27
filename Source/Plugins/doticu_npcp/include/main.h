@@ -4,23 +4,17 @@
 
 #pragma once
 
-#include <mutex>
-
 #include "doticu_skylib/enum_script_type.h"
 
 #include "hotkeys.h"
 #include "intrinsic.h"
 #include "mcm_main.h"
-#include "npcp.h"
 #include "party_members.h"
 
 namespace doticu_npcp {
 
     class Main_t
     {
-    public:
-        friend class NPCP_t;
-
     public:
         enum
         {
@@ -30,7 +24,7 @@ namespace doticu_npcp {
     public:
         class State_t
         {
-        protected:
+        public:
             Party::Members_t    party_members; // we may want a Party::Main_t that delegates
             Hotkeys_t           hotkeys;
             //MCM::Main_t         mcm_main;
@@ -66,7 +60,7 @@ namespace doticu_npcp {
         Main_t& operator =(Main_t&& other) noexcept = delete;
         ~Main_t();
 
-    protected:
+    public:
         some<V::Object_t*>      Object();
 
         V::Variable_tt<Bool_t>& Is_Initialized();
@@ -75,7 +69,7 @@ namespace doticu_npcp {
         V::Variable_tt<Int_t>&  Minor_Version();
         V::Variable_tt<Int_t>&  Patch_Version();
 
-    protected:
+    public:
         const Version_t<u16>        Static_Version();
         const Version_t<u16>        Dynamic_Version();
         void                        Dynamic_Version(const Version_t<u16> dynamic_version);
@@ -86,7 +80,7 @@ namespace doticu_npcp {
         void                        Create_State(const Version_t<u16> version_to_update);
         void                        Delete_State();
 
-    protected:
+    public:
         void    New_Game();
         void    Before_Save();
         void    After_Save();

@@ -15,7 +15,7 @@ namespace doticu_npcp {
     class NPCP_t :
         public SKSE_Plugin_t
     {
-    protected:
+    public:
         maybe<Main_t*> main;
 
     public:

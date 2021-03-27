@@ -17,7 +17,7 @@ namespace doticu_npcp { namespace MCM {
     public:
         static constexpr size_t MAX_CUSTOM_CHESTS = doticu_npcp::Chests_t::MAX_CUSTOM_CHESTS;
 
-    protected:
+    public:
         class Options
         {
         public:
@@ -98,7 +98,7 @@ namespace doticu_npcp { namespace MCM {
             Vector_t<String_t> custom_names;
         };
 
-    protected:
+    public:
         static Options  options;
         static Save     save;
 

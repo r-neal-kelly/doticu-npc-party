@@ -275,6 +275,39 @@ namespace doticu_npcp { namespace Party {
 
     void Members_t::Save_State::Write()
     {
+        Vector_t<Bool_t> is_banished_flags(MAX_MEMBERS, false);
+        Vector_t<Bool_t> is_clone_flags(MAX_MEMBERS, false);
+        Vector_t<Bool_t> is_immobile_flags(MAX_MEMBERS, false);
+        Vector_t<Bool_t> is_mannequin_flags(MAX_MEMBERS, false);
+        Vector_t<Bool_t> is_paralyzed_flags(MAX_MEMBERS, false);
+        Vector_t<Bool_t> is_reanimated_flags(MAX_MEMBERS, false);
+        Vector_t<Bool_t> is_thrall_flags(MAX_MEMBERS, false);
+
+        Vector_t<Int_t> ratings(MAX_MEMBERS, 0);
+        Vector_t<Int_t> relations(MAX_MEMBERS, 0);
+        Vector_t<String_t> styles(MAX_MEMBERS, "");
+        Vector_t<String_t> suit_types(MAX_MEMBERS, "");
+        Vector_t<String_t> vitalities(MAX_MEMBERS, "");
+
+        for (Member_ID_t idx = 0, end = this->actors.size(); idx < end; idx += 1) {
+            if (this->actors[idx]) {
+                Member_Flags_e flags = this->flags[idx];
+                is_banished_flags[idx] = flags.Is_Flagged(Member_Flags_e::IS_BANISHED);
+                is_clone_flags[idx] = flags.Is_Flagged(Member_Flags_e::IS_CLONE);
+                is_immobile_flags[idx] = flags.Is_Flagged(Member_Flags_e::IS_IMMOBILE);
+                is_mannequin_flags[idx] = flags.Is_Flagged(Member_Flags_e::IS_MANNEQUIN);
+                is_paralyzed_flags[idx] = flags.Is_Flagged(Member_Flags_e::IS_PARALYZED);
+                is_reanimated_flags[idx] = flags.Is_Flagged(Member_Flags_e::IS_REANIMATED);
+                is_thrall_flags[idx] = flags.Is_Flagged(Member_Flags_e::IS_THRALL);
+
+                ratings[idx] = this->ratings[idx];
+                relations[idx] = this->relations[idx];
+                //styles[idx] = this->styles[idx].As_String();
+                //suit_types[idx] = this->suit_types[idx].As_String();
+                vitalities[idx] = this->vitalities[idx].As_String();
+            }
+        }
+
         Actors() = reinterpret_cast<Vector_t<Actor_t*>&>(this->actors);
         Original_Bases() = reinterpret_cast<Vector_t<Actor_Base_t*>&>(this->original_bases);
         Ratings() = reinterpret_cast<Vector_t<Int_t>&>(this->ratings); // this is not correct.
@@ -435,6 +468,8 @@ namespace doticu_npcp { namespace Party {
         custom_bases(Vector_t<maybe<Actor_Base_t*>>(MAX_MEMBERS)),
         save_state(*this)
     {
+        // update code goes here
+
         this->save_state.Read();
         Validate_Aliases_And_Members();
     }
@@ -473,6 +508,8 @@ namespace doticu_npcp { namespace Party {
     maybe<Member_ID_t> Members_t::Add_Member(some<Actor_t*> actor)
     {
         SKYLIB_ASSERT_SOME(actor);
+
+        // tbd
 
         return 0;
     }
@@ -541,6 +578,8 @@ namespace doticu_npcp { namespace Party {
 
     some<Alias_Reference_t*> Members_t::Some_Alias_Reference(Member_ID_t valid_member_id)
     {
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+
         some<Alias_Reference_t*> alias_reference = this->quest->Index_To_Alias_Reference(valid_member_id)();
         SKYLIB_ASSERT_SOME(alias_reference);
         return alias_reference;
@@ -548,6 +587,8 @@ namespace doticu_npcp { namespace Party {
 
     some<Actor_t*> Members_t::Some_Actor(Member_ID_t valid_member_id)
     {
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+
         some<Actor_t*> actor = this->save_state.actors[valid_member_id]();
         SKYLIB_ASSERT_SOME(actor);
         return actor;
@@ -555,6 +596,8 @@ namespace doticu_npcp { namespace Party {
 
     some<Actor_Base_t*> Members_t::Some_Original_Base(Member_ID_t valid_member_id)
     {
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+
         some<Actor_Base_t*> original_base = this->save_state.original_bases[valid_member_id]();
         SKYLIB_ASSERT_SOME(original_base);
         return original_base;
@@ -562,6 +605,8 @@ namespace doticu_npcp { namespace Party {
 
     some<Actor_Base_t*> Members_t::Some_Custom_Base(Member_ID_t valid_member_id)
     {
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+
         some<Actor_Base_t*> custom_base = this->custom_bases[valid_member_id]();
         SKYLIB_ASSERT_SOME(custom_base);
         return custom_base;

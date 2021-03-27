@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "doticu_skylib/vitality.h"
+#include "doticu_skylib/enum_vitality.h"
 
 #include "intrinsic.h"
 

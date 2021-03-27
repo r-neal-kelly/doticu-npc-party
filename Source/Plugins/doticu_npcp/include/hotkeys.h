@@ -26,7 +26,7 @@ namespace doticu_npcp {
     public:
         static void Can_Use_Hotkeys(some<unique<Callback_i<Bool_t>>> callback);
 
-    protected:
+    public:
         const some<Quest_t*>    quest;
         Int_t                   currently_pressed_key;
 
@@ -39,7 +39,7 @@ namespace doticu_npcp {
         Hotkeys_t& operator =(Hotkeys_t&& other) noexcept                           = delete;
         ~Hotkeys_t();
 
-    protected:
+    public:
         some<V::Object_t*>                  Object();
 
         V::Variable_tt<Int_t>&              Global_Dialogue_Menu();

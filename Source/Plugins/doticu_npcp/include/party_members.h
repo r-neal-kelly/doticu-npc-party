@@ -37,7 +37,7 @@ namespace doticu_npcp { namespace Party {
         static constexpr size_t DEFAULT_FILL_OUTFIT_HANDS_PERCENT   = 66;
         static constexpr size_t DEFAULT_FILL_OUTFIT_HEAD_PERCENT    = 33;
 
-    protected:
+    public:
         class Save_State
         {
         public:
@@ -173,7 +173,7 @@ namespace doticu_npcp { namespace Party {
         static Int_t    Fill_Outfit_Head_Percent();
         static void     Fill_Outfit_Head_Percent(Int_t value);
 
-    protected:
+    public:
         const some<Quest_t*>            quest;
         Vector_t<maybe<Actor_Base_t*>>  custom_bases;
         Save_State                      save_state;
