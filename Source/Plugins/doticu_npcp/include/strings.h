@@ -123,6 +123,12 @@ namespace doticu_npcp {
 
         static const String_t R;
         static const String_t R_BOOKS;
+        static const String_t RATING_0_STARS;
+        static const String_t RATING_1_STARS;
+        static const String_t RATING_2_STARS;
+        static const String_t RATING_3_STARS;
+        static const String_t RATING_4_STARS;
+        static const String_t RATING_5_STARS;
         static const String_t RECIPES;
         static const String_t RENAME;
 

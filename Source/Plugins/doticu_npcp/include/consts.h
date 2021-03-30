@@ -394,6 +394,10 @@ namespace doticu_npcp {
             {
                 static const Version_t<u16> Current();
             };
+            struct Voice_Type
+            {
+                static some<Voice_Type_t*> Blank();
+            };
             struct Weapon
             {
                 static some<Weapon_t*> Blank();

@@ -28,6 +28,7 @@
 #include "doticu_skylib/reference.h"
 #include "doticu_skylib/spell.h"
 #include "doticu_skylib/static.h"
+#include "doticu_skylib/voice_type.h"
 #include "doticu_skylib/weapon.h"
 
 #include "consts.h"
@@ -315,6 +316,8 @@ namespace doticu_npcp {
     some<Spell_t*>              Consts_t::NPCP::Spell::Retreat_Ability()                    { DEFINE_FORM(Mod(), Spell_t, 0x2F3CFF); }
 
     const Version_t<u16>        Consts_t::NPCP::Version::Current()                          { DEFINE_VERSION(u16, 1, 0, 0); }
+
+    some<Voice_Type_t*>         Consts_t::NPCP::Voice_Type::Blank()                         { DEFINE_FORM(Mod(), Voice_Type_t, 0x4267D9); }
 
     some<Weapon_t*>             Consts_t::NPCP::Weapon::Blank()                             { DEFINE_FORM(Mod(), Weapon_t, 0x0C8D65); }
 

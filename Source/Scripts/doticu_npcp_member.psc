@@ -2,6 +2,8 @@
 
 Scriptname doticu_npcp_member extends ReferenceAlias
 
+; this shall have no state.
+
 ; Mannequins_t
 ObjectReference         p_marker_mannequin                  =  none
 

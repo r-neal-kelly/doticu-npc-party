@@ -16,6 +16,11 @@
 #include "npcp.h"
 #include "strings.h"
 
+//temp
+#include "doticu_skylib/actor_base.h"
+#include "doticu_skylib/voice_type.h"
+//
+
 namespace doticu_npcp {
 
     Main_t::State_t::State_t(Bool_t is_new_game) :
@@ -255,6 +260,20 @@ namespace doticu_npcp {
             }
 
             SKYLIB_LOG(NPCP_PRINT_HEAD + "Loaded...");
+
+            //temp
+            some<Actor_Base_t*> vici = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x1327a)());
+            for (size_t idx = 0, end = 50; idx < end; idx += 1) {
+                this->state->party_members.Add_Member(vici);
+            }
+
+            for (size_t idx = 0, end = 1024; idx < end; idx += 1) {
+                if (this->state->party_members.Has_Member(idx)) {
+                    this->state->party_members.Some_Voice_Type(idx, static_cast<Voice_Type_t*>(Game_t::Form(0x00013BC3)()));
+                    this->state->party_members.Validate_Member(idx);
+                }
+            }
+            //
         } else {
             New_Game();
         }

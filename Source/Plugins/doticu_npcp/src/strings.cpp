@@ -118,6 +118,12 @@ namespace doticu_npcp {
 
     const String_t Strings_t::R                         = "$dnpcp_r";
     const String_t Strings_t::R_BOOKS                   = "$dnpcp_r_books";
+    const String_t Strings_t::RATING_0_STARS            = "$dnpcp_rating_0_stars";
+    const String_t Strings_t::RATING_1_STARS            = "$dnpcp_rating_1_stars";
+    const String_t Strings_t::RATING_2_STARS            = "$dnpcp_rating_2_stars";
+    const String_t Strings_t::RATING_3_STARS            = "$dnpcp_rating_3_stars";
+    const String_t Strings_t::RATING_4_STARS            = "$dnpcp_rating_4_stars";
+    const String_t Strings_t::RATING_5_STARS            = "$dnpcp_rating_5_stars";
     const String_t Strings_t::RECIPES                   = "$dnpcp_recipes";
     const String_t Strings_t::RENAME                    = "$dnpcp_rename";
 

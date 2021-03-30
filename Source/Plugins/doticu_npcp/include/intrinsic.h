@@ -41,6 +41,18 @@ namespace doticu_npcp {
     template <typename T>
     using some                          = skylib::some<T>;
     template <typename T>
+    using none_numeric                  = skylib::none_numeric<T>;
+    template <typename T>
+    using maybe_numeric                 = skylib::maybe_numeric<T>;
+    template <typename T>
+    using some_numeric                  = skylib::some_numeric<T>;
+    template <typename T>
+    using none_enum                     = skylib::none_enum<T>;
+    template <typename T>
+    using maybe_enum                    = skylib::maybe_enum<T>;
+    template <typename T>
+    using some_enum                     = skylib::some_enum<T>;
+    template <typename T>
     using unique                        = skylib::unique<T>;
 
     template <typename T>
@@ -56,6 +68,14 @@ namespace doticu_npcp {
     template <typename T>
     using Enum_t                        = skylib::Enum_t<T>;
     template <typename T>
+    using Enum_Type_t                   = skylib::Enum_Type_t<T>;
+    template <typename T>
+    using Enum_Type_Data_t              = skylib::Enum_Type_Data_t<T>;
+    template <typename T>
+    using Numeric_t                     = skylib::Numeric_t<T>;
+    template <typename T, T none_value>
+    using Numeric_Data_t                = skylib::Numeric_Data_t<T, none_value>;
+    template <typename T>
     using Version_t                     = skylib::Version_t<T>;
 
     using Form_Type_e                   = skylib::Form_Type_e;
@@ -68,6 +88,7 @@ namespace doticu_npcp {
     using Actor_t                       = skylib::Actor_t;
     using Actor_Base_t                  = skylib::Actor_Base_t;
     using Alias_Base_t                  = skylib::Alias_Base_t;
+    using Alias_ID_t                    = skylib::Alias_ID_t;
     using Alias_Reference_t             = skylib::Alias_Reference_t;
     using Ammo_t                        = skylib::Ammo_t;
     using Armor_t                       = skylib::Armor_t;

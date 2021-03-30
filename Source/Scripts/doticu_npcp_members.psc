@@ -8,11 +8,12 @@ bool                do_auto_suits           = false
 bool                do_auto_immobile_suit   = false
 bool                do_fill_suits           = false
 
+string              default_relation        = ""
 string              default_style           = ""
 string              default_suit_type       = ""
 string              default_vitality        = ""
 
-string              member_suit_fill_type   = ""
+string              clone_suit_fill_type    = ""
 string              sort_type               = ""
 
 Actor[]             actors                  = none
@@ -43,7 +44,7 @@ ObjectReference[]   thrall_suits            = none
 ObjectReference[]   vanilla_suits           = none
 
 int[]               ratings                 = none
-int[]               relations               = none
+string[]            relations               = none
 string[]            styles                  = none
 string[]            suit_types              = none
 string[]            vitalities              = none
