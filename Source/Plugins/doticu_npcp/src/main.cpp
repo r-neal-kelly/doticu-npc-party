@@ -269,7 +269,12 @@ namespace doticu_npcp {
 
             for (size_t idx = 0, end = 1024; idx < end; idx += 1) {
                 if (this->state->party_members.Has_Member(idx)) {
-                    this->state->party_members.Some_Voice_Type(idx, static_cast<Voice_Type_t*>(Game_t::Form(0x00013BC3)()));
+                    if (doticu_skylib::Is_Odd(idx)) {
+                        this->state->party_members.Voice_Type(idx, static_cast<Voice_Type_t*>(Game_t::Form(0x00013BC3)()));
+                        this->state->party_members.Vitality(idx, Party::Member_Vitality_e::INVULNERABLE);
+                    } else {
+                        this->state->party_members.Vitality(idx, Party::Member_Vitality_e::MORTAL);
+                    }
                     this->state->party_members.Validate_Member(idx);
                 }
             }

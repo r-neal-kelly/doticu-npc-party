@@ -12,7 +12,7 @@ namespace doticu_npcp { namespace Party {
         return
             this->members &&
             this->members->Has_Member(this->member_id) &&
-            this->members->Some_Actor(this->member_id) == this->actor;
+            this->members->Actor(this->member_id) == this->actor;
     }
 
 }}

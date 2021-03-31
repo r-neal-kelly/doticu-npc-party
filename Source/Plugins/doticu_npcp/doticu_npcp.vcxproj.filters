@@ -57,12 +57,6 @@
     <ClCompile Include="src\party_member_suit_fill_type.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\party_member_vitality.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\party_member_relation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\party_member.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

@@ -35,10 +35,11 @@ namespace doticu_npcp { namespace Party {
         static void                 Register_Me(some<V::Machine_t*> machine);
 
     public:
+        some<Alias_Reference_t*>    alias_reference;
+
         some<Members_t*>            members;
         Member_ID_t                 member_id;
 
-        some<Alias_Reference_t*>    alias_reference;
         some<Actor_t*>              actor;
         some<Actor_Base_t*>         original_base;
         some<Actor_Base_t*>         custom_base;
@@ -65,9 +66,10 @@ namespace doticu_npcp { namespace Party {
         some<Member_Relation_e>     relation;
         some<Member_Style_e>        style;
         maybe<Member_Suit_Type_e>   suit_type;
-        some<Member_Vitality_e>     member_vitality;
+        some<Member_Vitality_e>     vitality;
 
     public:
+        Member_t(some<Alias_Reference_t*> alias_reference);
         Member_t(some<Members_t*> members, Member_ID_t member_id);
         Member_t(const Member_t& other)                                                 = delete;
         Member_t(Member_t&& other) noexcept                                             = delete;

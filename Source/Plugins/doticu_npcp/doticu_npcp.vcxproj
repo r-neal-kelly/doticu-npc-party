@@ -74,12 +74,10 @@
     <ClCompile Include="src\party_member.cpp" />
     <ClCompile Include="src\party_members.cpp" />
     <ClCompile Include="src\party_member_rating.cpp" />
-    <ClCompile Include="src\party_member_relation.cpp" />
     <ClCompile Include="src\party_member_sort_type.cpp" />
     <ClCompile Include="src\party_member_style.cpp" />
     <ClCompile Include="src\party_member_suit_fill_type.cpp" />
     <ClCompile Include="src\party_member_suit_type.cpp" />
-    <ClCompile Include="src\party_member_vitality.cpp" />
     <ClCompile Include="src\strings.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -43,10 +43,10 @@ namespace doticu_npcp { namespace Party {
         static constexpr Bool_t                                 DEFAULT_DO_AUTO_IMMOBILE_SUIT       = false;
         static constexpr Bool_t                                 DEFAULT_DO_FILL_SUITS               = true;
 
-        static constexpr Member_Relation_e::value_type          DEFAULT_RELATION                    = Member_Relation_e::DEFAULT;
+        static constexpr Member_Relation_e::value_type          DEFAULT_RELATION                    = Member_Relation_e::_NONE_;
         static constexpr Member_Style_e::value_type             DEFAULT_STYLE                       = Member_Style_e::DEFAULT;
         static constexpr Member_Suit_Type_e::value_type         DEFAULT_SUIT_TYPE                   = Member_Suit_Type_e::MEMBER;
-        static constexpr Member_Vitality_e::value_type          DEFAULT_VITALITY                    = Member_Vitality_e::DEFAULT;
+        static constexpr Member_Vitality_e::value_type          DEFAULT_VITALITY                    = Member_Vitality_e::_NONE_;
 
         static constexpr Member_Suit_Fill_Type_e::value_type    DEFAULT_CLONE_SUIT_FILL_TYPE        = Member_Suit_Fill_Type_e::REFERENCE;
         static constexpr Member_Sort_Type_e::value_type         DEFAULT_SORT_TYPE                   = Member_Sort_Type_e::NAME;
@@ -220,16 +220,19 @@ namespace doticu_npcp { namespace Party {
         void                        Validate();
 
     public:
-        some<Alias_Reference_t*>    Some_Alias_Reference(Member_ID_t valid_member_id);
-        some<Actor_t*>              Some_Actor(Member_ID_t valid_member_id);
-        some<Actor_Base_t*>         Some_Original_Base(Member_ID_t valid_member_id);
-        some<Actor_Base_t*>         Some_Custom_Base(Member_ID_t valid_member_id);
+        some<Alias_Reference_t*>    Alias_Reference(Member_ID_t valid_member_id);
+        some<Actor_t*>              Actor(Member_ID_t valid_member_id);
+        some<Actor_Base_t*>         Original_Base(Member_ID_t valid_member_id);
+        some<Actor_Base_t*>         Custom_Base(Member_ID_t valid_member_id);
 
         maybe<Member_Suit_Type_e>   Maybe_Current_Suit_Type(Member_ID_t valid_member_id);
         maybe<Member_Suit_t*>       Maybe_Current_Suit(Member_ID_t valid_member_id);
 
-        some<Voice_Type_t*>         Some_Voice_Type(Member_ID_t valid_member_id);
-        void                        Some_Voice_Type(Member_ID_t valid_member_id, some<Voice_Type_t*> voice_type);
+        some<Voice_Type_t*>         Voice_Type(Member_ID_t valid_member_id);
+        void                        Voice_Type(Member_ID_t valid_member_id, some<Voice_Type_t*> voice_type);
+
+        some<Member_Vitality_e>     Vitality(Member_ID_t valid_member_id);
+        void                        Vitality(Member_ID_t valid_member_id, some<Member_Vitality_e> vitality);
 
         Bool_t                      Validate_Member(Member_ID_t member_id);
 
