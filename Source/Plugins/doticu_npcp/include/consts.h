@@ -66,10 +66,6 @@ namespace doticu_npcp {
             {
                 static some<Reference_t*> Riverwood_Location_Center_Marker();
             };
-            struct Spell
-            {
-                static some<Spell_t*> Ghost_Ability();
-            };
             struct Static
             {
                 static some<Static_t*> X_Marker();

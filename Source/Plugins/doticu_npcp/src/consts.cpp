@@ -71,8 +71,6 @@ namespace doticu_npcp {
 
     some<Reference_t*>      Consts_t::Skyrim::Reference::Riverwood_Location_Center_Marker() { DEFINE_FORM(Mod(), Reference_t, 0x01BDF3); }
 
-    some<Spell_t*>          Consts_t::Skyrim::Spell::Ghost_Ability()                        { DEFINE_FORM(Mod(), Spell_t, 0x05030B); }
-
     some<Static_t*>         Consts_t::Skyrim::Static::X_Marker()                            { DEFINE_FORM(Mod(), Static_t, 0x00003B); }
     some<Static_t*>         Consts_t::Skyrim::Static::X_Marker_Heading()                    { DEFINE_FORM(Mod(), Static_t, 0x000034); }
 

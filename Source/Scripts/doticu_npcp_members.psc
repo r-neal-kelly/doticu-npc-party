@@ -30,6 +30,7 @@ bool[]              is_thrall_flags         = none
 string[]            names                   = none
 ObjectReference[]   packs                   = none
 CombatStyle[]       combat_styles           = none
+Spell[]             ghost_abilities         = none
 VoiceType[]         voice_types             = none
 
 Outfit[]            default_outfits         = none
@@ -44,6 +45,7 @@ ObjectReference[]   settler_suits           = none
 ObjectReference[]   thrall_suits            = none
 ObjectReference[]   vanilla_suits           = none
 
+float[]             alphas                  = none
 int[]               ratings                 = none
 string[]            relations               = none
 string[]            suit_types              = none

@@ -73,8 +73,8 @@ namespace doticu_npcp {
     using Enum_Type_Data_t              = skylib::Enum_Type_Data_t<T>;
     template <typename T>
     using Numeric_t                     = skylib::Numeric_t<T>;
-    template <typename T, T none_value>
-    using Numeric_Data_t                = skylib::Numeric_Data_t<T, none_value>;
+    template <typename T>
+    using Numeric_Data_t                = skylib::Numeric_Data_t<T>;
     template <typename T>
     using Version_t                     = skylib::Version_t<T>;
 
@@ -90,6 +90,7 @@ namespace doticu_npcp {
     using Alias_Base_t                  = skylib::Alias_Base_t;
     using Alias_ID_t                    = skylib::Alias_ID_t;
     using Alias_Reference_t             = skylib::Alias_Reference_t;
+    using Alpha_t                       = skylib::Alpha_t;
     using Ammo_t                        = skylib::Ammo_t;
     using Armor_t                       = skylib::Armor_t;
     using Book_t                        = skylib::Book_t;

@@ -12,10 +12,11 @@
 namespace doticu_npcp { namespace Party {
 
     class Member_Rating_t_data :
-        public Numeric_Data_t<u8, 0>
+        public Numeric_Data_t<u8>
     {
     public:
-        static constexpr size_t _MAX_ = 5;
+        static constexpr value_type _NONE_  = 0;
+        static constexpr value_type _MAX_   = 5;
 
     public:
         static Bool_t Is_Valid(value_type value)

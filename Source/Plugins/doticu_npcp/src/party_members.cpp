@@ -7,12 +7,15 @@
 #include "doticu_skylib/alias_base.h"
 #include "doticu_skylib/alias_reference.h"
 #include "doticu_skylib/combat_style.h"
+#include "doticu_skylib/const_actors.h"
 #include "doticu_skylib/const_actor_bases.h"
+#include "doticu_skylib/const_spells.h"
 #include "doticu_skylib/dynamic_array.inl"
 #include "doticu_skylib/global.h"
 #include "doticu_skylib/misc.h"
 #include "doticu_skylib/outfit.h"
 #include "doticu_skylib/quest.h"
+#include "doticu_skylib/spell.h"
 #include "doticu_skylib/voice_type.h"
 #include "doticu_skylib/virtual_macros.h"
 
@@ -47,6 +50,7 @@ namespace doticu_npcp { namespace Party {
         names(Vector_t<String_t>(MAX_MEMBERS, "")),
         packs(Vector_t<maybe<Reference_t*>>(MAX_MEMBERS, none<Reference_t*>())),
         combat_styles(Vector_t<maybe<Combat_Style_t*>>(MAX_MEMBERS, none<Combat_Style_t*>())),
+        ghost_abilities(Vector_t<maybe<Spell_t*>>(MAX_MEMBERS, none<Spell_t*>())),
         voice_types(Vector_t<maybe<Voice_Type_t*>>(MAX_MEMBERS, none<Voice_Type_t*>())),
 
         default_outfits(Vector_t<maybe<Outfit_t*>>(MAX_MEMBERS, none<Outfit_t*>())),
@@ -61,7 +65,8 @@ namespace doticu_npcp { namespace Party {
         thrall_suits(Vector_t<maybe<Member_Suit_t*>>(MAX_MEMBERS, none<Member_Suit_t*>())),
         vanilla_suits(Vector_t<maybe<Member_Suit_t*>>(MAX_MEMBERS, none<Member_Suit_t*>())),
 
-        ratings(Vector_t<maybe<Member_Rating_t>>(MAX_MEMBERS, 0)),
+        alphas(Vector_t<maybe<Member_Alpha_t>>(MAX_MEMBERS, DEFAULT_ALPHA)),
+        ratings(Vector_t<maybe<Member_Rating_t>>(MAX_MEMBERS, DEFAULT_RATING)),
         relations(Vector_t<maybe<Member_Relation_e>>(MAX_MEMBERS, DEFAULT_RELATION)),
         suit_types(Vector_t<maybe<Member_Suit_Type_e>>(MAX_MEMBERS, DEFAULT_SUIT_TYPE)),
         vitalities(Vector_t<maybe<Member_Vitality_e>>(MAX_MEMBERS, DEFAULT_VITALITY))
@@ -187,6 +192,11 @@ namespace doticu_npcp { namespace Party {
         DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Combat_Style_t*>>, "combat_styles");
     }
 
+    V::Variable_tt<Vector_t<maybe<Spell_t*>>>& Members_t::Save_State::Ghost_Abilities()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Spell_t*>>, "ghost_abilities");
+    }
+
     V::Variable_tt<Vector_t<maybe<Voice_Type_t*>>>& Members_t::Save_State::Voice_Types()
     {
         DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Voice_Type_t*>>, "voice_types");
@@ -242,6 +252,11 @@ namespace doticu_npcp { namespace Party {
         DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Reference_t*>>, "vanilla_suits");
     }
 
+    V::Variable_tt<Vector_t<Float_t>>& Members_t::Save_State::Alphas()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Float_t>, "alphas");
+    }
+
     V::Variable_tt<Vector_t<Int_t>>& Members_t::Save_State::Ratings()
     {
         DEFINE_VARIABLE_REFERENCE(Vector_t<Int_t>, "ratings");
@@ -292,6 +307,7 @@ namespace doticu_npcp { namespace Party {
         this->names = Names();
         this->packs = Packs();
         this->combat_styles = Combat_Styles();
+        this->ghost_abilities = Ghost_Abilities();
         this->voice_types = Voice_Types();
 
         this->default_outfits = Default_Outfits();
@@ -306,6 +322,7 @@ namespace doticu_npcp { namespace Party {
         this->thrall_suits = Thrall_Suits().As<Vector_t<maybe<Member_Suit_t*>>>();
         this->vanilla_suits = Vanilla_Suits().As<Vector_t<maybe<Member_Suit_t*>>>();
 
+        Vector_t<Float_t> alphas = Alphas();
         Vector_t<Int_t> ratings = Ratings();
         Vector_t<String_t> relations = Relations();
         Vector_t<String_t> suit_types = Suit_Types();
@@ -325,6 +342,7 @@ namespace doticu_npcp { namespace Party {
         this->names.resize(MAX_MEMBERS);
         this->packs.resize(MAX_MEMBERS);
         this->combat_styles.resize(MAX_MEMBERS);
+        this->ghost_abilities.resize(MAX_MEMBERS);
         this->voice_types.resize(MAX_MEMBERS);
 
         this->default_outfits.resize(MAX_MEMBERS);
@@ -339,7 +357,8 @@ namespace doticu_npcp { namespace Party {
         this->thrall_suits.resize(MAX_MEMBERS);
         this->vanilla_suits.resize(MAX_MEMBERS);
 
-        ratings.resize(MAX_MEMBERS);
+        alphas.resize(MAX_MEMBERS, DEFAULT_ALPHA);
+        ratings.resize(MAX_MEMBERS, DEFAULT_RATING);
         relations.resize(MAX_MEMBERS);
         suit_types.resize(MAX_MEMBERS);
         vitalities.resize(MAX_MEMBERS);
@@ -354,6 +373,7 @@ namespace doticu_npcp { namespace Party {
             flags.Is_Flagged(Member_Flags_e::IS_REANIMATED, is_reanimated_flags[member_id]);
             flags.Is_Flagged(Member_Flags_e::IS_THRALL, is_thrall_flags[member_id]);
 
+            this->alphas[member_id] = alphas[member_id];
             this->ratings[member_id] = ratings[member_id];
             this->relations[member_id] = relations[member_id];
             this->suit_types[member_id] = suit_types[member_id];
@@ -371,7 +391,8 @@ namespace doticu_npcp { namespace Party {
         Vector_t<Bool_t> is_reanimated_flags(MAX_MEMBERS, false);
         Vector_t<Bool_t> is_thrall_flags(MAX_MEMBERS, false);
 
-        Vector_t<Int_t> ratings(MAX_MEMBERS, Member_Rating_t::_NONE_);
+        Vector_t<Float_t> alphas(MAX_MEMBERS, DEFAULT_ALPHA);
+        Vector_t<Int_t> ratings(MAX_MEMBERS, DEFAULT_RATING);
         Vector_t<String_t> relations(MAX_MEMBERS, "");
         Vector_t<String_t> suit_types(MAX_MEMBERS, "");
         Vector_t<String_t> vitalities(MAX_MEMBERS, "");
@@ -387,6 +408,7 @@ namespace doticu_npcp { namespace Party {
                 is_reanimated_flags[idx] = flags.Is_Flagged(Member_Flags_e::IS_REANIMATED);
                 is_thrall_flags[idx] = flags.Is_Flagged(Member_Flags_e::IS_THRALL);
 
+                alphas[idx] = this->alphas[idx]();
                 ratings[idx] = this->ratings[idx]();
                 relations[idx] = this->relations[idx]().As_String();
                 suit_types[idx] = this->suit_types[idx]().As_String();
@@ -422,6 +444,7 @@ namespace doticu_npcp { namespace Party {
         Names() = this->names;
         Packs() = this->packs;
         Combat_Styles() = this->combat_styles;
+        Ghost_Abilities() = this->ghost_abilities;
         Voice_Types() = this->voice_types;
 
         Default_Outfits() = this->default_outfits;
@@ -436,6 +459,7 @@ namespace doticu_npcp { namespace Party {
         Thrall_Suits() = reinterpret_cast<Vector_t<maybe<Reference_t*>>&>(this->thrall_suits);
         Vanilla_Suits() = reinterpret_cast<Vector_t<maybe<Reference_t*>>&>(this->vanilla_suits);
 
+        Alphas() = alphas;
         Ratings() = ratings;
         Relations() = relations;
         Suit_Types() = suit_types;
@@ -567,8 +591,9 @@ namespace doticu_npcp { namespace Party {
 
     Members_t::Members_t(some<Quest_t*> quest, Bool_t is_new_game) :
         quest(quest),
+        save_state(*this),
         custom_bases(Vector_t<maybe<Actor_Base_t*>>(MAX_MEMBERS)),
-        save_state(*this)
+        vanilla_ghost_abilities(skylib::Const::Spells::Ghost_Abilities())
     {
         SKYLIB_ASSERT_SOME(quest);
 
@@ -586,18 +611,22 @@ namespace doticu_npcp { namespace Party {
             Fill_Outfit_Head_Percent(DEFAULT_FILL_OUTFIT_HEAD_PERCENT);
         } else {
             this->save_state.Read();
+
             Validate();
         }
     }
 
     Members_t::Members_t(some<Quest_t*> quest, const Version_t<u16> version_to_update) :
         quest(quest),
+        save_state(*this),
         custom_bases(Vector_t<maybe<Actor_Base_t*>>(MAX_MEMBERS)),
-        save_state(*this)
+        vanilla_ghost_abilities(skylib::Const::Spells::Ghost_Abilities())
     {
         // update code goes here
 
-        new (this) Members_t(quest, false);
+        this->save_state.Read();
+
+        Validate();
     }
 
     Members_t::~Members_t()
@@ -611,14 +640,11 @@ namespace doticu_npcp { namespace Party {
                     if (original_base) {
                         actor->Actor_Base(original_base(), false);
                         Actor_Base_t::Destroy(custom_base());
-                        this->custom_bases[member_id] = none<Actor_Base_t*>();
-                    } else {
-                        this->custom_bases[member_id] = none<Actor_Base_t*>();
                     }
                 } else {
                     Actor_Base_t::Destroy(custom_base());
-                    this->custom_bases[member_id] = none<Actor_Base_t*>();
                 }
+                this->custom_bases[member_id] = none<Actor_Base_t*>();
             }
         }
     }
@@ -676,9 +702,12 @@ namespace doticu_npcp { namespace Party {
         self->save_state.actors[member_id] = actor();
         self->save_state.original_bases[member_id] = base();
 
+        // do we handle flags here also?
+
         self->save_state.names[member_id] = actor->Name();
         self->save_state.packs[member_id] = none<Reference_t*>();
         self->save_state.combat_styles[member_id] = self->save_state.default_combat_style();
+        self->save_state.ghost_abilities[member_id] = none<Spell_t*>(); // maybe should look at actor for any acceptable ability
         self->save_state.voice_types[member_id] = none<Voice_Type_t*>(); // we need to have 2 defaults: male/female
 
         maybe<Outfit_t*> default_outfit = base->Default_Outfit();
@@ -696,7 +725,8 @@ namespace doticu_npcp { namespace Party {
         self->save_state.thrall_suits[member_id] = none<Member_Suit_t*>();
         self->save_state.vanilla_suits[member_id] = none<Member_Suit_t*>();
 
-        self->save_state.ratings[member_id] = 0;
+        self->save_state.alphas[member_id] = Members_t::DEFAULT_ALPHA;
+        self->save_state.ratings[member_id] = Members_t::DEFAULT_RATING;
         self->save_state.relations[member_id] = self->save_state.default_relation;
         self->save_state.suit_types[member_id] = self->save_state.default_suit_type;
         self->save_state.vitalities[member_id] = self->save_state.default_vitality;
@@ -925,6 +955,20 @@ namespace doticu_npcp { namespace Party {
         this->save_state.combat_styles[valid_member_id] = combat_style;
     }
 
+    maybe<Spell_t*> Members_t::Ghost_Ability(Member_ID_t valid_member_id)
+    {
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+
+        return this->save_state.ghost_abilities[valid_member_id];
+    }
+
+    void Members_t::Ghost_Ability(Member_ID_t valid_member_id, maybe<Spell_t*> ghost_ability)
+    {
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+
+        this->save_state.ghost_abilities[valid_member_id] = ghost_ability;
+    }
+
     some<Voice_Type_t*> Members_t::Voice_Type(Member_ID_t valid_member_id)
     {
         SKYLIB_ASSERT(Has_Member(valid_member_id));
@@ -950,6 +994,20 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
         this->save_state.voice_types[valid_member_id] = voice_type;
+    }
+
+    maybe<Member_Alpha_t> Members_t::Alpha(Member_ID_t valid_member_id)
+    {
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+
+        return this->save_state.alphas[valid_member_id];
+    }
+
+    void Members_t::Alpha(Member_ID_t valid_member_id, maybe<Member_Alpha_t> alpha)
+    {
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+
+        this->save_state.alphas[valid_member_id] = alpha;
     }
 
     some<Member_Relation_e> Members_t::Relation(Member_ID_t valid_member_id)
@@ -997,22 +1055,45 @@ namespace doticu_npcp { namespace Party {
     Bool_t Members_t::Validate_Member(Member_ID_t member_id)
     {
         if (Has_Member(member_id)) {
-            some<Actor_Base_t*> custom_base = Custom_Base(member_id);
-            custom_base->Name(Name(member_id));
-            custom_base->Combat_Style(Combat_Style(member_id));
-            custom_base->Voice_Type(Voice_Type(member_id)());
-            custom_base->Relation(skylib::Const::Actor_Base::Player(), Relation(member_id));
-            custom_base->Vitality(Vitality(member_id), false);
-
             some<Actor_t*> actor = Actor(member_id);
+            some<Actor_Base_t*> custom_base = Custom_Base(member_id);
+
             actor->Actor_Base(Custom_Base(member_id), false);
+
+            custom_base->Name(Name(member_id));
             actor->x_list.Destroy_Extra_Text_Display();
+
+            custom_base->Combat_Style(Combat_Style(member_id));
+
+            for (size_t idx = 0, end = this->vanilla_ghost_abilities.size(); idx < end; idx += 1) {
+                actor->Remove_Spell(this->vanilla_ghost_abilities[idx]);
+            }
+            maybe<Spell_t*> ghost_ability = Ghost_Ability(member_id);
+            if (ghost_ability) {
+                actor->Add_Spell(ghost_ability());
+            }
+            actor->Is_Ghost(false);
+
+            custom_base->Voice_Type(Voice_Type(member_id)());
+
+            actor->Alpha(Alpha(member_id)());
+
+            custom_base->Relation(skylib::Const::Actor_Base::Player(), Relation(member_id));
+
+            custom_base->Vitality(Vitality(member_id), false);
 
             return true;
         } else {
             Remove_Member(member_id);
 
             return false;
+        }
+    }
+
+    void Members_t::Validate_Members()
+    {
+        for (size_t member_id = 0, end = this->save_state.actors.size(); member_id < end; member_id += 1) {
+            Validate_Member(member_id);
         }
     }
 

@@ -7,6 +7,7 @@
 #include "doticu_skylib/enum_script_type.h"
 
 #include "intrinsic.h"
+#include "party_member_alpha.h"
 #include "party_member_combat_style.h"
 #include "party_member_flags.h"
 #include "party_member_id.h"
@@ -43,6 +44,8 @@ namespace doticu_npcp { namespace Party {
         static constexpr Bool_t                                 DEFAULT_DO_AUTO_IMMOBILE_SUIT       = false;
         static constexpr Bool_t                                 DEFAULT_DO_FILL_SUITS               = true;
 
+        static constexpr Member_Alpha_t::value_type             DEFAULT_ALPHA                       = Member_Alpha_t::_MAX_;
+        static constexpr Member_Rating_t::value_type            DEFAULT_RATING                      = Member_Rating_t::_NONE_;
         static constexpr Member_Relation_e::value_type          DEFAULT_RELATION                    = Member_Relation_e::_NONE_;
         static constexpr Member_Combat_Style_e::value_type      DEFAULT_COMBAT_STYLE                = Member_Combat_Style_e::_NONE_;
         static constexpr Member_Suit_Type_e::value_type         DEFAULT_SUIT_TYPE                   = Member_Suit_Type_e::MEMBER; // maybe _NONE_?
@@ -81,6 +84,7 @@ namespace doticu_npcp { namespace Party {
             Vector_t<String_t>                  names;
             Vector_t<maybe<Reference_t*>>       packs;
             Vector_t<maybe<Combat_Style_t*>>    combat_styles;
+            Vector_t<maybe<Spell_t*>>           ghost_abilities;
             Vector_t<maybe<Voice_Type_t*>>      voice_types;
 
             Vector_t<maybe<Outfit_t*>>          default_outfits;
@@ -95,6 +99,7 @@ namespace doticu_npcp { namespace Party {
             Vector_t<maybe<Member_Suit_t*>>     thrall_suits;
             Vector_t<maybe<Member_Suit_t*>>     vanilla_suits;
 
+            Vector_t<maybe<Member_Alpha_t>>     alphas;
             Vector_t<maybe<Member_Rating_t>>    ratings;
             Vector_t<maybe<Member_Relation_e>>  relations;
             Vector_t<maybe<Member_Suit_Type_e>> suit_types;
@@ -139,6 +144,7 @@ namespace doticu_npcp { namespace Party {
             V::Variable_tt<Vector_t<String_t>>&                 Names();
             V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Packs();
             V::Variable_tt<Vector_t<maybe<Combat_Style_t*>>>&   Combat_Styles();
+            V::Variable_tt<Vector_t<maybe<Spell_t*>>>&          Ghost_Abilities();
             V::Variable_tt<Vector_t<maybe<Voice_Type_t*>>>&     Voice_Types();
 
             V::Variable_tt<Vector_t<maybe<Outfit_t*>>>&         Default_Outfits();
@@ -153,6 +159,7 @@ namespace doticu_npcp { namespace Party {
             V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Thrall_Suits();
             V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Vanilla_Suits();
 
+            V::Variable_tt<Vector_t<Float_t>>&                  Alphas();
             V::Variable_tt<Vector_t<Int_t>>&                    Ratings();
             V::Variable_tt<Vector_t<String_t>>&                 Relations();
             V::Variable_tt<Vector_t<String_t>>&                 Suit_Types();
@@ -192,8 +199,9 @@ namespace doticu_npcp { namespace Party {
 
     public:
         const some<Quest_t*>            quest;
-        Vector_t<maybe<Actor_Base_t*>>  custom_bases;
         Save_State                      save_state;
+        Vector_t<maybe<Actor_Base_t*>>  custom_bases;
+        Vector_t<some<Spell_t*>>        vanilla_ghost_abilities;
 
     public:
         Members_t(some<Quest_t*> quest, Bool_t is_new_game);
@@ -230,15 +238,20 @@ namespace doticu_npcp { namespace Party {
         void                        Name(Member_ID_t valid_member_id, String_t name);
         maybe<Combat_Style_t*>      Combat_Style(Member_ID_t valid_member_id);
         void                        Combat_Style(Member_ID_t valid_member_id, maybe<Combat_Style_t*> combat_style);
+        maybe<Spell_t*>             Ghost_Ability(Member_ID_t valid_member_id);
+        void                        Ghost_Ability(Member_ID_t valid_member_id, maybe<Spell_t*> ghost_ability);
         some<Voice_Type_t*>         Voice_Type(Member_ID_t valid_member_id);
         void                        Voice_Type(Member_ID_t valid_member_id, maybe<Voice_Type_t*> voice_type);
 
+        maybe<Member_Alpha_t>       Alpha(Member_ID_t valid_member_id);
+        void                        Alpha(Member_ID_t valid_member_id, maybe<Member_Alpha_t> alpha);
         some<Member_Relation_e>     Relation(Member_ID_t valid_member_id);
         void                        Relation(Member_ID_t valid_member_id, maybe<Member_Relation_e> relation);
         some<Member_Vitality_e>     Vitality(Member_ID_t valid_member_id);
         void                        Vitality(Member_ID_t valid_member_id, maybe<Member_Vitality_e> vitality);
 
         Bool_t                      Validate_Member(Member_ID_t member_id);
+        void                        Validate_Members();
 
     public:
         void    Before_Save();
