@@ -17,10 +17,6 @@ namespace doticu_npcp {
             static maybe<Mod_t*> Mod();
 
         public:
-            struct Actor
-            {
-                static some<Actor_t*> Player();
-            };
             struct Armor
             {
                 static some<Armor_t*> Belted_Tunic();
@@ -134,6 +130,13 @@ namespace doticu_npcp {
             struct Cell
             {
                 static some<Cell_t*> Storage();
+            };
+            struct Combat_Style
+            {
+                static some<Combat_Style_t*> Archer();
+                static some<Combat_Style_t*> Coward();
+                static some<Combat_Style_t*> Mage();
+                static some<Combat_Style_t*> Warrior();
             };
             struct Container
             {

@@ -8,12 +8,12 @@ bool                do_auto_suits           = false
 bool                do_auto_immobile_suit   = false
 bool                do_fill_suits           = false
 
+string              default_combat_style    = ""
 string              default_relation        = ""
-string              default_style           = ""
 string              default_suit_type       = ""
 string              default_vitality        = ""
 
-string              clone_suit_fill_type    = ""
+string              member_suit_fill_type   = ""
 string              sort_type               = ""
 
 Actor[]             actors                  = none
@@ -29,6 +29,7 @@ bool[]              is_thrall_flags         = none
 
 string[]            names                   = none
 ObjectReference[]   packs                   = none
+CombatStyle[]       combat_styles           = none
 VoiceType[]         voice_types             = none
 
 Outfit[]            default_outfits         = none
@@ -45,6 +46,5 @@ ObjectReference[]   vanilla_suits           = none
 
 int[]               ratings                 = none
 string[]            relations               = none
-string[]            styles                  = none
 string[]            suit_types              = none
 string[]            vitalities              = none

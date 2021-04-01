@@ -7,12 +7,12 @@
 #include "doticu_skylib/enum_script_type.h"
 
 #include "intrinsic.h"
+#include "party_member_combat_style.h"
 #include "party_member_flags.h"
 #include "party_member_id.h"
 #include "party_member_rating.h"
 #include "party_member_relation.h"
 #include "party_member_sort_type.h"
-#include "party_member_style.h"
 #include "party_member_suit_fill_type.h"
 #include "party_member_suit_type.h"
 #include "party_member_vitality.h"
@@ -44,11 +44,12 @@ namespace doticu_npcp { namespace Party {
         static constexpr Bool_t                                 DEFAULT_DO_FILL_SUITS               = true;
 
         static constexpr Member_Relation_e::value_type          DEFAULT_RELATION                    = Member_Relation_e::_NONE_;
-        static constexpr Member_Style_e::value_type             DEFAULT_STYLE                       = Member_Style_e::DEFAULT;
-        static constexpr Member_Suit_Type_e::value_type         DEFAULT_SUIT_TYPE                   = Member_Suit_Type_e::MEMBER;
+        static constexpr Member_Combat_Style_e::value_type      DEFAULT_COMBAT_STYLE                = Member_Combat_Style_e::_NONE_;
+        static constexpr Member_Suit_Type_e::value_type         DEFAULT_SUIT_TYPE                   = Member_Suit_Type_e::MEMBER; // maybe _NONE_?
         static constexpr Member_Vitality_e::value_type          DEFAULT_VITALITY                    = Member_Vitality_e::_NONE_;
+        // maybe default male and default female voices?
 
-        static constexpr Member_Suit_Fill_Type_e::value_type    DEFAULT_CLONE_SUIT_FILL_TYPE        = Member_Suit_Fill_Type_e::REFERENCE;
+        static constexpr Member_Suit_Fill_Type_e::value_type    DEFAULT_MEMBER_SUIT_FILL_TYPE       = Member_Suit_Fill_Type_e::REFERENCE;
         static constexpr Member_Sort_Type_e::value_type         DEFAULT_SORT_TYPE                   = Member_Sort_Type_e::NAME;
 
     public:
@@ -64,12 +65,12 @@ namespace doticu_npcp { namespace Party {
             Bool_t                              do_auto_immobile_suit;
             Bool_t                              do_fill_suits;
 
-            some<Member_Relation_e>             default_relation;
-            some<Member_Style_e>                default_style;
+            maybe<Member_Combat_Style_e>        default_combat_style;
+            maybe<Member_Relation_e>            default_relation;
             maybe<Member_Suit_Type_e>           default_suit_type;
-            some<Member_Vitality_e>             default_vitality;
+            maybe<Member_Vitality_e>            default_vitality;
 
-            some<Member_Suit_Fill_Type_e>       clone_suit_fill_type;
+            some<Member_Suit_Fill_Type_e>       member_suit_fill_type;
             some<Member_Sort_Type_e>            sort_type;
 
             Vector_t<maybe<Actor_t*>>           actors;
@@ -79,6 +80,7 @@ namespace doticu_npcp { namespace Party {
 
             Vector_t<String_t>                  names;
             Vector_t<maybe<Reference_t*>>       packs;
+            Vector_t<maybe<Combat_Style_t*>>    combat_styles;
             Vector_t<maybe<Voice_Type_t*>>      voice_types;
 
             Vector_t<maybe<Outfit_t*>>          default_outfits;
@@ -95,7 +97,6 @@ namespace doticu_npcp { namespace Party {
 
             Vector_t<maybe<Member_Rating_t>>    ratings;
             Vector_t<maybe<Member_Relation_e>>  relations;
-            Vector_t<maybe<Member_Style_e>>     styles;
             Vector_t<maybe<Member_Suit_Type_e>> suit_types;
             Vector_t<maybe<Member_Vitality_e>>  vitalities;
 
@@ -108,54 +109,54 @@ namespace doticu_npcp { namespace Party {
             ~Save_State();
 
         public:
-            some<V::Object_t*>                              Object();
+            some<V::Object_t*>                                  Object();
 
-            V::Variable_tt<Int_t>&                          Limit();
+            V::Variable_tt<Int_t>&                              Limit();
 
-            V::Variable_tt<Bool_t>&                         Do_Auto_Suits();
-            V::Variable_tt<Bool_t>&                         Do_Auto_Immobile_Suit();
-            V::Variable_tt<Bool_t>&                         Do_Fill_Suits();
+            V::Variable_tt<Bool_t>&                             Do_Auto_Suits();
+            V::Variable_tt<Bool_t>&                             Do_Auto_Immobile_Suit();
+            V::Variable_tt<Bool_t>&                             Do_Fill_Suits();
 
-            V::Variable_tt<String_t>&                       Default_Relation();
-            V::Variable_tt<String_t>&                       Default_Style();
-            V::Variable_tt<String_t>&                       Default_Suit_Type();
-            V::Variable_tt<String_t>&                       Default_Vitality();
+            V::Variable_tt<String_t>&                           Default_Combat_Style();
+            V::Variable_tt<String_t>&                           Default_Relation();
+            V::Variable_tt<String_t>&                           Default_Suit_Type();
+            V::Variable_tt<String_t>&                           Default_Vitality();
 
-            V::Variable_tt<String_t>&                       Clone_Suit_Fill_Type();
-            V::Variable_tt<String_t>&                       Sort_Type();
+            V::Variable_tt<String_t>&                           Member_Suit_Fill_Type();
+            V::Variable_tt<String_t>&                           Sort_Type();
 
-            V::Variable_tt<Vector_t<maybe<Actor_t*>>>&      Actors();
-            V::Variable_tt<Vector_t<maybe<Actor_Base_t*>>>& Original_Bases();
+            V::Variable_tt<Vector_t<maybe<Actor_t*>>>&          Actors();
+            V::Variable_tt<Vector_t<maybe<Actor_Base_t*>>>&     Original_Bases();
 
-            V::Variable_tt<Vector_t<Bool_t>>&               Is_Banished_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&               Is_Clone_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&               Is_Immobile_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&               Is_Mannequin_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&               Is_Paralyzed_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&               Is_Reanimated_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&               Is_Thrall_Flags();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Is_Banished_Flags();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Is_Clone_Flags();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Is_Immobile_Flags();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Is_Mannequin_Flags();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Is_Paralyzed_Flags();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Is_Reanimated_Flags();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Is_Thrall_Flags();
 
-            V::Variable_tt<Vector_t<String_t>>&             Names();
-            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&  Packs();
-            V::Variable_tt<Vector_t<maybe<Voice_Type_t*>>>& Voice_Types();
+            V::Variable_tt<Vector_t<String_t>>&                 Names();
+            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Packs();
+            V::Variable_tt<Vector_t<maybe<Combat_Style_t*>>>&   Combat_Styles();
+            V::Variable_tt<Vector_t<maybe<Voice_Type_t*>>>&     Voice_Types();
 
-            V::Variable_tt<Vector_t<maybe<Outfit_t*>>>&     Default_Outfits();
-            V::Variable_tt<Vector_t<maybe<Outfit_t*>>>&     Vanilla_Outfits();
+            V::Variable_tt<Vector_t<maybe<Outfit_t*>>>&         Default_Outfits();
+            V::Variable_tt<Vector_t<maybe<Outfit_t*>>>&         Vanilla_Outfits();
 
-            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&  Backup_Suits();
-            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&  Default_Suits();
-            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&  Follower_Suits();
-            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&  Immobile_Suits();
-            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&  Member_Suits();
-            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&  Settler_Suits();
-            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&  Thrall_Suits();
-            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&  Vanilla_Suits();
+            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Backup_Suits();
+            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Default_Suits();
+            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Follower_Suits();
+            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Immobile_Suits();
+            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Member_Suits();
+            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Settler_Suits();
+            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Thrall_Suits();
+            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Vanilla_Suits();
 
-            V::Variable_tt<Vector_t<Int_t>>&                Ratings();
-            V::Variable_tt<Vector_t<String_t>>&             Relations();
-            V::Variable_tt<Vector_t<String_t>>&             Styles();
-            V::Variable_tt<Vector_t<String_t>>&             Suit_Types();
-            V::Variable_tt<Vector_t<String_t>>&             Vitalities();
+            V::Variable_tt<Vector_t<Int_t>>&                    Ratings();
+            V::Variable_tt<Vector_t<String_t>>&                 Relations();
+            V::Variable_tt<Vector_t<String_t>>&                 Suit_Types();
+            V::Variable_tt<Vector_t<String_t>>&                 Vitalities();
 
         public:
             void Read();
@@ -225,14 +226,17 @@ namespace doticu_npcp { namespace Party {
         some<Actor_Base_t*>         Original_Base(Member_ID_t valid_member_id);
         some<Actor_Base_t*>         Custom_Base(Member_ID_t valid_member_id);
 
-        maybe<Member_Suit_Type_e>   Maybe_Current_Suit_Type(Member_ID_t valid_member_id);
-        maybe<Member_Suit_t*>       Maybe_Current_Suit(Member_ID_t valid_member_id);
-
+        String_t                    Name(Member_ID_t valid_member_id);
+        void                        Name(Member_ID_t valid_member_id, String_t name);
+        maybe<Combat_Style_t*>      Combat_Style(Member_ID_t valid_member_id);
+        void                        Combat_Style(Member_ID_t valid_member_id, maybe<Combat_Style_t*> combat_style);
         some<Voice_Type_t*>         Voice_Type(Member_ID_t valid_member_id);
-        void                        Voice_Type(Member_ID_t valid_member_id, some<Voice_Type_t*> voice_type);
+        void                        Voice_Type(Member_ID_t valid_member_id, maybe<Voice_Type_t*> voice_type);
 
+        some<Member_Relation_e>     Relation(Member_ID_t valid_member_id);
+        void                        Relation(Member_ID_t valid_member_id, maybe<Member_Relation_e> relation);
         some<Member_Vitality_e>     Vitality(Member_ID_t valid_member_id);
-        void                        Vitality(Member_ID_t valid_member_id, some<Member_Vitality_e> vitality);
+        void                        Vitality(Member_ID_t valid_member_id, maybe<Member_Vitality_e> vitality);
 
         Bool_t                      Validate_Member(Member_ID_t member_id);
 
@@ -241,7 +245,7 @@ namespace doticu_npcp { namespace Party {
         void    After_Save();
 
     public:
-        void Log(std::string indent = "");
+        void    Log(std::string indent = "");
     };
 
     /*

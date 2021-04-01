@@ -18,6 +18,7 @@
 
 //temp
 #include "doticu_skylib/actor_base.h"
+#include "doticu_skylib/const_voice_types.h"
 #include "doticu_skylib/voice_type.h"
 //
 
@@ -262,20 +263,29 @@ namespace doticu_npcp {
             SKYLIB_LOG(NPCP_PRINT_HEAD + "Loaded...");
 
             //temp
+            Party::Members_t& members = this->state->party_members;
+
             some<Actor_Base_t*> vici = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x1327a)());
             for (size_t idx = 0, end = 50; idx < end; idx += 1) {
-                this->state->party_members.Add_Member(vici);
+                members.Add_Member(vici);
             }
 
             for (size_t idx = 0, end = 1024; idx < end; idx += 1) {
-                if (this->state->party_members.Has_Member(idx)) {
+                if (members.Has_Member(idx)) {
                     if (doticu_skylib::Is_Odd(idx)) {
-                        this->state->party_members.Voice_Type(idx, static_cast<Voice_Type_t*>(Game_t::Form(0x00013BC3)()));
-                        this->state->party_members.Vitality(idx, Party::Member_Vitality_e::INVULNERABLE);
+                        members.Name(idx, " Dark Elf Commoner ");
+                        members.Combat_Style(idx, Party::Member_Combat_Style_e::To_Combat_Style(Party::Member_Combat_Style_e::MAGE));
+                        members.Voice_Type(idx, skylib::Const::Voice_Type::Female_Dark_Elf_Commoner()());
+                        members.Relation(idx, Party::Member_Relation_e::ALLY);
+                        members.Vitality(idx, Party::Member_Vitality_e::INVULNERABLE);
                     } else {
-                        this->state->party_members.Vitality(idx, Party::Member_Vitality_e::MORTAL);
+                        members.Name(idx, " Serana ");
+                        members.Combat_Style(idx, Party::Member_Combat_Style_e::To_Combat_Style(Party::Member_Combat_Style_e::ARCHER));
+                        members.Voice_Type(idx, skylib::Const::Voice_Type::Female_Unique_Serana()());
+                        members.Relation(idx, Party::Member_Relation_e::ARCHNEMESIS);
+                        members.Vitality(idx, Party::Member_Vitality_e::MORTAL);
                     }
-                    this->state->party_members.Validate_Member(idx);
+                    members.Validate_Member(idx);
                 }
             }
             //

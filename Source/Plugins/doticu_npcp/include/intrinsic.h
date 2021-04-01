@@ -96,6 +96,7 @@ namespace doticu_npcp {
     using Bound_Object_t                = skylib::Bound_Object_t;
     using Cell_t                        = skylib::Cell_t;
     using Character_t                   = skylib::Character_t;
+    using Combat_Style_t                = skylib::Combat_Style_t;
     using Container_t                   = skylib::Container_t;
     using Dialogue_Branch_t             = skylib::Dialogue_Branch_t;
     using Dialogue_Topic_t              = skylib::Dialogue_Topic_t;

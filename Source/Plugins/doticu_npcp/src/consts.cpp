@@ -8,6 +8,7 @@
 #include "doticu_skylib/actor_base.h"
 #include "doticu_skylib/armor.h"
 #include "doticu_skylib/cell.h"
+#include "doticu_skylib/combat_style.h"
 #include "doticu_skylib/container.h"
 #include "doticu_skylib/dialogue_branch.h"
 #include "doticu_skylib/dialogue_topic.h"
@@ -38,8 +39,6 @@ namespace doticu_npcp {
     /* SKYRIM */
 
     maybe<Mod_t*>           Consts_t::Skyrim::Mod()                                         { DEFINE_MOD("Skyrim.esm"); }
-
-    some<Actor_t*>          Consts_t::Skyrim::Actor::Player()                               { DEFINE_FORM(Mod(), Actor_t, 0x000014); }
 
     some<Armor_t*>          Consts_t::Skyrim::Armor::Belted_Tunic()                         { DEFINE_FORM(Mod(), Armor_t, 0x01BE1A); }
     some<Armor_t*>          Consts_t::Skyrim::Armor::Gold_Ring()                            { DEFINE_FORM(Mod(), Armor_t, 0x01CF2B); }
@@ -103,6 +102,11 @@ namespace doticu_npcp {
     some<Armor_t*>              Consts_t::NPCP::Armor::Blank()                              { DEFINE_FORM(Mod(), Armor_t, 0x1EF2A5); }
 
     some<Cell_t*>               Consts_t::NPCP::Cell::Storage()                             { DEFINE_FORM(Mod(), Cell_t, 0x114F9C); }
+
+    some<Combat_Style_t*>       Consts_t::NPCP::Combat_Style::Archer()                      { DEFINE_FORM(Mod(), Combat_Style_t, 0x02F9D0); }
+    some<Combat_Style_t*>       Consts_t::NPCP::Combat_Style::Coward()                      { DEFINE_FORM(Mod(), Combat_Style_t, 0x2D56F4); }
+    some<Combat_Style_t*>       Consts_t::NPCP::Combat_Style::Mage()                        { DEFINE_FORM(Mod(), Combat_Style_t, 0x02F9CF); }
+    some<Combat_Style_t*>       Consts_t::NPCP::Combat_Style::Warrior()                     { DEFINE_FORM(Mod(), Combat_Style_t, 0x02F9CE); }
 
     some<Container_t*>          Consts_t::NPCP::Container::Empty()                          { DEFINE_FORM(Mod(), Container_t, 0x0A5561); }
     some<Container_t*>          Consts_t::NPCP::Container::Immobile_Outfit_Template()       { DEFINE_FORM(Mod(), Container_t, 0x1663CE); }

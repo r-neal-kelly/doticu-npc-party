@@ -6,8 +6,11 @@
 #include "doticu_skylib/actor_base.h"
 #include "doticu_skylib/alias_base.h"
 #include "doticu_skylib/alias_reference.h"
+#include "doticu_skylib/combat_style.h"
+#include "doticu_skylib/const_actor_bases.h"
 #include "doticu_skylib/dynamic_array.inl"
 #include "doticu_skylib/global.h"
+#include "doticu_skylib/misc.h"
 #include "doticu_skylib/outfit.h"
 #include "doticu_skylib/quest.h"
 #include "doticu_skylib/voice_type.h"
@@ -28,12 +31,12 @@ namespace doticu_npcp { namespace Party {
         do_auto_immobile_suit(DEFAULT_DO_AUTO_IMMOBILE_SUIT),
         do_fill_suits(DEFAULT_DO_FILL_SUITS),
 
+        default_combat_style(DEFAULT_COMBAT_STYLE),
         default_relation(DEFAULT_RELATION),
-        default_style(DEFAULT_STYLE),
         default_suit_type(DEFAULT_SUIT_TYPE),
         default_vitality(DEFAULT_VITALITY),
 
-        clone_suit_fill_type(DEFAULT_CLONE_SUIT_FILL_TYPE),
+        member_suit_fill_type(DEFAULT_MEMBER_SUIT_FILL_TYPE),
         sort_type(DEFAULT_SORT_TYPE),
 
         actors(Vector_t<maybe<Actor_t*>>(MAX_MEMBERS, none<Actor_t*>())),
@@ -43,6 +46,7 @@ namespace doticu_npcp { namespace Party {
 
         names(Vector_t<String_t>(MAX_MEMBERS, "")),
         packs(Vector_t<maybe<Reference_t*>>(MAX_MEMBERS, none<Reference_t*>())),
+        combat_styles(Vector_t<maybe<Combat_Style_t*>>(MAX_MEMBERS, none<Combat_Style_t*>())),
         voice_types(Vector_t<maybe<Voice_Type_t*>>(MAX_MEMBERS, none<Voice_Type_t*>())),
 
         default_outfits(Vector_t<maybe<Outfit_t*>>(MAX_MEMBERS, none<Outfit_t*>())),
@@ -59,7 +63,6 @@ namespace doticu_npcp { namespace Party {
 
         ratings(Vector_t<maybe<Member_Rating_t>>(MAX_MEMBERS, 0)),
         relations(Vector_t<maybe<Member_Relation_e>>(MAX_MEMBERS, DEFAULT_RELATION)),
-        styles(Vector_t<maybe<Member_Style_e>>(MAX_MEMBERS, DEFAULT_STYLE)),
         suit_types(Vector_t<maybe<Member_Suit_Type_e>>(MAX_MEMBERS, DEFAULT_SUIT_TYPE)),
         vitalities(Vector_t<maybe<Member_Vitality_e>>(MAX_MEMBERS, DEFAULT_VITALITY))
     {
@@ -94,14 +97,14 @@ namespace doticu_npcp { namespace Party {
         DEFINE_VARIABLE_REFERENCE(Bool_t, "do_fill_suits");
     }
 
+    V::Variable_tt<String_t>& Members_t::Save_State::Default_Combat_Style()
+    {
+        DEFINE_VARIABLE_REFERENCE(String_t, "default_combat_style");
+    }
+
     V::Variable_tt<String_t>& Members_t::Save_State::Default_Relation()
     {
         DEFINE_VARIABLE_REFERENCE(String_t, "default_relation");
-    }
-
-    V::Variable_tt<String_t>& Members_t::Save_State::Default_Style()
-    {
-        DEFINE_VARIABLE_REFERENCE(String_t, "default_style");
     }
 
     V::Variable_tt<String_t>& Members_t::Save_State::Default_Suit_Type()
@@ -114,9 +117,9 @@ namespace doticu_npcp { namespace Party {
         DEFINE_VARIABLE_REFERENCE(String_t, "default_vitality");
     }
 
-    V::Variable_tt<String_t>& Members_t::Save_State::Clone_Suit_Fill_Type()
+    V::Variable_tt<String_t>& Members_t::Save_State::Member_Suit_Fill_Type()
     {
-        DEFINE_VARIABLE_REFERENCE(String_t, "clone_suit_fill_type");
+        DEFINE_VARIABLE_REFERENCE(String_t, "member_suit_fill_type");
     }
 
     V::Variable_tt<String_t>& Members_t::Save_State::Sort_Type()
@@ -177,6 +180,11 @@ namespace doticu_npcp { namespace Party {
     V::Variable_tt<Vector_t<maybe<Reference_t*>>>& Members_t::Save_State::Packs()
     {
         DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Reference_t*>>, "packs");
+    }
+
+    V::Variable_tt<Vector_t<maybe<Combat_Style_t*>>>& Members_t::Save_State::Combat_Styles()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Combat_Style_t*>>, "combat_styles");
     }
 
     V::Variable_tt<Vector_t<maybe<Voice_Type_t*>>>& Members_t::Save_State::Voice_Types()
@@ -244,11 +252,6 @@ namespace doticu_npcp { namespace Party {
         DEFINE_VARIABLE_REFERENCE(Vector_t<String_t>, "relations");
     }
 
-    V::Variable_tt<Vector_t<String_t>>& Members_t::Save_State::Styles()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<String_t>, "styles");
-    }
-
     V::Variable_tt<Vector_t<String_t>>& Members_t::Save_State::Suit_Types()
     {
         DEFINE_VARIABLE_REFERENCE(Vector_t<String_t>, "suit_types");
@@ -267,12 +270,12 @@ namespace doticu_npcp { namespace Party {
         this->do_auto_immobile_suit = Do_Auto_Immobile_Suit();
         this->do_fill_suits = Do_Fill_Suits();
 
+        this->default_combat_style = Default_Combat_Style().As<String_t>();
         this->default_relation = Default_Relation().As<String_t>();
-        this->default_style = Default_Style().As<String_t>();
         this->default_suit_type = Default_Suit_Type().As<String_t>();
         this->default_vitality = Default_Vitality().As<String_t>();
 
-        this->clone_suit_fill_type = Clone_Suit_Fill_Type().As<String_t>();
+        this->member_suit_fill_type = Member_Suit_Fill_Type().As<String_t>();
         this->sort_type = Sort_Type().As<String_t>();
 
         this->actors = Actors();
@@ -288,6 +291,7 @@ namespace doticu_npcp { namespace Party {
 
         this->names = Names();
         this->packs = Packs();
+        this->combat_styles = Combat_Styles();
         this->voice_types = Voice_Types();
 
         this->default_outfits = Default_Outfits();
@@ -304,7 +308,6 @@ namespace doticu_npcp { namespace Party {
 
         Vector_t<Int_t> ratings = Ratings();
         Vector_t<String_t> relations = Relations();
-        Vector_t<String_t> styles = Styles();
         Vector_t<String_t> suit_types = Suit_Types();
         Vector_t<String_t> vitalities = Vitalities();
 
@@ -321,6 +324,7 @@ namespace doticu_npcp { namespace Party {
 
         this->names.resize(MAX_MEMBERS);
         this->packs.resize(MAX_MEMBERS);
+        this->combat_styles.resize(MAX_MEMBERS);
         this->voice_types.resize(MAX_MEMBERS);
 
         this->default_outfits.resize(MAX_MEMBERS);
@@ -337,7 +341,6 @@ namespace doticu_npcp { namespace Party {
 
         ratings.resize(MAX_MEMBERS);
         relations.resize(MAX_MEMBERS);
-        styles.resize(MAX_MEMBERS);
         suit_types.resize(MAX_MEMBERS);
         vitalities.resize(MAX_MEMBERS);
 
@@ -353,7 +356,6 @@ namespace doticu_npcp { namespace Party {
 
             this->ratings[member_id] = ratings[member_id];
             this->relations[member_id] = relations[member_id];
-            this->styles[member_id] = styles[member_id];
             this->suit_types[member_id] = suit_types[member_id];
             this->vitalities[member_id] = vitalities[member_id];
         }
@@ -371,7 +373,6 @@ namespace doticu_npcp { namespace Party {
 
         Vector_t<Int_t> ratings(MAX_MEMBERS, Member_Rating_t::_NONE_);
         Vector_t<String_t> relations(MAX_MEMBERS, "");
-        Vector_t<String_t> styles(MAX_MEMBERS, "");
         Vector_t<String_t> suit_types(MAX_MEMBERS, "");
         Vector_t<String_t> vitalities(MAX_MEMBERS, "");
 
@@ -388,7 +389,6 @@ namespace doticu_npcp { namespace Party {
 
                 ratings[idx] = this->ratings[idx]();
                 relations[idx] = this->relations[idx]().As_String();
-                styles[idx] = this->styles[idx]().As_String();
                 suit_types[idx] = this->suit_types[idx]().As_String();
                 vitalities[idx] = this->vitalities[idx]().As_String();
             }
@@ -400,12 +400,12 @@ namespace doticu_npcp { namespace Party {
         Do_Auto_Immobile_Suit() = this->do_auto_immobile_suit;
         Do_Fill_Suits() = this->do_fill_suits;
 
+        Default_Combat_Style() = this->default_combat_style().As_String();
         Default_Relation() = this->default_relation().As_String();
-        Default_Style() = this->default_style().As_String();
         Default_Suit_Type() = this->default_suit_type().As_String();
         Default_Vitality() = this->default_vitality().As_String();
 
-        Clone_Suit_Fill_Type() = this->clone_suit_fill_type().As_String();
+        Member_Suit_Fill_Type() = this->member_suit_fill_type().As_String();
         Sort_Type() = this->sort_type().As_String();
 
         Actors() = this->actors;
@@ -421,6 +421,7 @@ namespace doticu_npcp { namespace Party {
 
         Names() = this->names;
         Packs() = this->packs;
+        Combat_Styles() = this->combat_styles;
         Voice_Types() = this->voice_types;
 
         Default_Outfits() = this->default_outfits;
@@ -437,7 +438,6 @@ namespace doticu_npcp { namespace Party {
 
         Ratings() = ratings;
         Relations() = relations;
-        Styles() = styles;
         Suit_Types() = suit_types;
         Vitalities() = vitalities;
     }
@@ -664,6 +664,47 @@ namespace doticu_npcp { namespace Party {
         return none<Member_ID_t>();
     }
 
+    static void Add_Member(some<Members_t*> self,
+                           some<Actor_t*> actor,
+                           some<Actor_Base_t*> base,
+                           Member_ID_t member_id)
+    {
+        SKYLIB_ASSERT_SOME(self);
+        SKYLIB_ASSERT_SOME(actor);
+        SKYLIB_ASSERT_SOME(base);
+
+        self->save_state.actors[member_id] = actor();
+        self->save_state.original_bases[member_id] = base();
+
+        self->save_state.names[member_id] = actor->Name();
+        self->save_state.packs[member_id] = none<Reference_t*>();
+        self->save_state.combat_styles[member_id] = self->save_state.default_combat_style();
+        self->save_state.voice_types[member_id] = none<Voice_Type_t*>(); // we need to have 2 defaults: male/female
+
+        maybe<Outfit_t*> default_outfit = base->Default_Outfit();
+        self->save_state.default_outfits[member_id] = default_outfit;
+        self->save_state.vanilla_outfits[member_id] = default_outfit;
+
+        // so the member_suit_fill_type determines whether we use a ref or a base to fill the member suit.
+        // with a clone, that ref should be the original actor. when we clone, we could just copy all the items onto clone first
+        self->save_state.backup_suits[member_id] = none<Member_Suit_t*>(); // should be set to member
+        self->save_state.default_suits[member_id] = none<Member_Suit_t*>();
+        self->save_state.follower_suits[member_id] = none<Member_Suit_t*>();
+        self->save_state.immobile_suits[member_id] = none<Member_Suit_t*>();
+        self->save_state.member_suits[member_id] = none<Member_Suit_t*>(); // shall be created in this func.
+        self->save_state.settler_suits[member_id] = none<Member_Suit_t*>();
+        self->save_state.thrall_suits[member_id] = none<Member_Suit_t*>();
+        self->save_state.vanilla_suits[member_id] = none<Member_Suit_t*>();
+
+        self->save_state.ratings[member_id] = 0;
+        self->save_state.relations[member_id] = self->save_state.default_relation;
+        self->save_state.suit_types[member_id] = self->save_state.default_suit_type;
+        self->save_state.vitalities[member_id] = self->save_state.default_vitality;
+
+        self->Validate_Member(member_id);
+        self->Alias_Reference(member_id)->Fill(actor, none<V::Callback_i*>());
+    }
+
     maybe<Member_ID_t> Members_t::Add_Member(some<Actor_t*> actor)
     {
         SKYLIB_ASSERT_SOME(actor);
@@ -674,10 +715,7 @@ namespace doticu_npcp { namespace Party {
                 maybe<Member_ID_t> maybe_member_id = Maybe_Free_Member_ID();
                 if (maybe_member_id.Has_Value()) {
                     Member_ID_t member_id = maybe_member_id.Value();
-                    this->save_state.actors[member_id] = actor();
-                    this->save_state.original_bases[member_id] = base;
-                    Validate_Member(member_id);
-                    Alias_Reference(member_id)->Fill(actor, none<V::Callback_i*>());
+                    Party::Add_Member(this, actor, base(), member_id);
                     return member_id;
                 } else {
                     return none<Member_ID_t>();
@@ -700,10 +738,7 @@ namespace doticu_npcp { namespace Party {
                 maybe<Actor_t*> actor = Actor_t::Create(base, true, true, true);
                 if (actor && actor->Is_Valid() && actor->Isnt_Deleted()) {
                     Member_ID_t member_id = maybe_member_id.Value();
-                    this->save_state.actors[member_id] = actor;
-                    this->save_state.original_bases[member_id] = base();
-                    Validate_Member(member_id);
-                    Alias_Reference(member_id)->Fill(actor(), none<V::Callback_i*>());
+                    Party::Add_Member(this, actor(), base, member_id);
                     return member_id;
                 } else {
                     return none<Member_ID_t>();
@@ -727,10 +762,8 @@ namespace doticu_npcp { namespace Party {
                 maybe<Actor_t*> actor = Actor_t::Create(base(), true, true, true);
                 if (actor && actor->Is_Valid() && actor->Isnt_Deleted()) {
                     Member_ID_t member_id = maybe_member_id.Value();
-                    this->save_state.actors[member_id] = actor();
-                    this->save_state.original_bases[member_id] = base();
-                    Validate_Member(member_id);
-                    Alias_Reference(member_id)->Fill(actor(), none<V::Callback_i*>());
+                    this->save_state.flags[member_id].Flag(Member_Flags_e::IS_CLONE);
+                    Party::Add_Member(this, actor(), base(), member_id);
                     return member_id;
                 } else {
                     return none<Member_ID_t>();
@@ -772,18 +805,8 @@ namespace doticu_npcp { namespace Party {
             this->save_state.limit = MAX_MEMBERS;
         }
 
-        if (!this->save_state.default_relation) {
-            this->save_state.default_relation = DEFAULT_RELATION;
-        }
-        if (!this->save_state.default_style) {
-            this->save_state.default_style = DEFAULT_STYLE;
-        }
-        if (!this->save_state.default_vitality) {
-            this->save_state.default_vitality = DEFAULT_VITALITY;
-        }
-
-        if (!this->save_state.clone_suit_fill_type) {
-            this->save_state.clone_suit_fill_type = DEFAULT_CLONE_SUIT_FILL_TYPE;
+        if (!this->save_state.member_suit_fill_type) {
+            this->save_state.member_suit_fill_type = DEFAULT_MEMBER_SUIT_FILL_TYPE;
         }
         if (!this->save_state.sort_type) {
             this->save_state.sort_type = DEFAULT_SORT_TYPE;
@@ -864,42 +887,49 @@ namespace doticu_npcp { namespace Party {
         return custom_base();
     }
 
-    maybe<Member_Suit_Type_e> Members_t::Maybe_Current_Suit_Type(Member_ID_t valid_member_id)
+    String_t Members_t::Name(Member_ID_t valid_member_id)
     {
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        return this->save_state.suit_types[valid_member_id];
+        String_t name = this->save_state.names[valid_member_id];
+        if (!name) {
+            name = Original_Base(valid_member_id)->Name();
+        }
+
+        return name;
     }
 
-    maybe<Member_Suit_t*> Members_t::Maybe_Current_Suit(Member_ID_t valid_member_id)
+    void Members_t::Name(Member_ID_t valid_member_id, String_t name)
     {
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        maybe<Member_Suit_Type_e> current_suit_type = Maybe_Current_Suit_Type(valid_member_id);
-        if (current_suit_type == Member_Suit_Type_e::MEMBER) {
-            return this->save_state.member_suits[valid_member_id];
-        } else if (current_suit_type == Member_Suit_Type_e::IMMOBILE) {
-            return this->save_state.immobile_suits[valid_member_id];
-        } else if (current_suit_type == Member_Suit_Type_e::SETTLER) {
-            return this->save_state.settler_suits[valid_member_id];
-        } else if (current_suit_type == Member_Suit_Type_e::THRALL) {
-            return this->save_state.thrall_suits[valid_member_id];
-        } else if (current_suit_type == Member_Suit_Type_e::FOLLOWER) {
-            return this->save_state.follower_suits[valid_member_id];
-        } else if (current_suit_type == Member_Suit_Type_e::VANILLA) {
-            return this->save_state.vanilla_suits[valid_member_id];
-        } else if (current_suit_type == Member_Suit_Type_e::DEFAULT) {
-            return this->save_state.default_suits[valid_member_id];
-        } else {
-            none<Member_Suit_t*>();
+        this->save_state.names[valid_member_id] = name;
+    }
+
+    maybe<Combat_Style_t*> Members_t::Combat_Style(Member_ID_t valid_member_id)
+    {
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+
+        maybe<Combat_Style_t*> combat_style = this->save_state.combat_styles[valid_member_id];
+        if (!combat_style) {
+            combat_style = Original_Base(valid_member_id)->Combat_Style();
         }
+
+        return combat_style;
+    }
+
+    void Members_t::Combat_Style(Member_ID_t valid_member_id, maybe<Combat_Style_t*> combat_style)
+    {
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+
+        this->save_state.combat_styles[valid_member_id] = combat_style;
     }
 
     some<Voice_Type_t*> Members_t::Voice_Type(Member_ID_t valid_member_id)
     {
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        maybe<Voice_Type_t*>& voice_type = this->save_state.voice_types[valid_member_id];
+        maybe<Voice_Type_t*> voice_type = this->save_state.voice_types[valid_member_id];
         if (!voice_type) {
             voice_type = Original_Base(valid_member_id)->Voice_Type();
             if (!voice_type) {
@@ -908,52 +938,80 @@ namespace doticu_npcp { namespace Party {
                     voice_type = Consts_t::NPCP::Voice_Type::Blank()();
                 }
             }
-            SKYLIB_ASSERT_SOME(voice_type);
         }
+
+        SKYLIB_ASSERT_SOME(voice_type);
 
         return voice_type();
     }
 
-    void Members_t::Voice_Type(Member_ID_t valid_member_id, some<Voice_Type_t*> voice_type)
+    void Members_t::Voice_Type(Member_ID_t valid_member_id, maybe<Voice_Type_t*> voice_type)
     {
         SKYLIB_ASSERT(Has_Member(valid_member_id));
-        SKYLIB_ASSERT_SOME(voice_type);
 
-        this->save_state.voice_types[valid_member_id] = voice_type();
+        this->save_state.voice_types[valid_member_id] = voice_type;
+    }
+
+    some<Member_Relation_e> Members_t::Relation(Member_ID_t valid_member_id)
+    {
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+
+        maybe<Member_Relation_e> relation = this->save_state.relations[valid_member_id];
+        if (!relation) {
+            relation = Original_Base(valid_member_id)->Relation(skylib::Const::Actor_Base::Player());
+        }
+
+        SKYLIB_ASSERT_SOME(relation);
+
+        return relation();
+    }
+
+    void Members_t::Relation(Member_ID_t valid_member_id, maybe<Member_Relation_e> relation)
+    {
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+
+        this->save_state.relations[valid_member_id] = relation;
     }
 
     some<Member_Vitality_e> Members_t::Vitality(Member_ID_t valid_member_id)
     {
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        maybe<Vitality_e>& vitality = this->save_state.vitalities[valid_member_id];
+        maybe<Member_Vitality_e> vitality = this->save_state.vitalities[valid_member_id];
         if (!vitality) {
             vitality = Original_Base(valid_member_id)->Vitality();
-            SKYLIB_ASSERT_SOME(vitality);
         }
+
+        SKYLIB_ASSERT_SOME(vitality);
 
         return vitality();
     }
 
-    void Members_t::Vitality(Member_ID_t valid_member_id, some<Member_Vitality_e> vitality)
+    void Members_t::Vitality(Member_ID_t valid_member_id, maybe<Member_Vitality_e> vitality)
     {
         SKYLIB_ASSERT(Has_Member(valid_member_id));
-        SKYLIB_ASSERT_SOME(vitality);
 
-        this->save_state.vitalities[valid_member_id] = vitality();
+        this->save_state.vitalities[valid_member_id] = vitality;
     }
 
     Bool_t Members_t::Validate_Member(Member_ID_t member_id)
     {
         if (Has_Member(member_id)) {
-            some<Actor_t*> actor = Actor(member_id);
             some<Actor_Base_t*> custom_base = Custom_Base(member_id);
+            custom_base->Name(Name(member_id));
+            custom_base->Combat_Style(Combat_Style(member_id));
             custom_base->Voice_Type(Voice_Type(member_id)());
+            custom_base->Relation(skylib::Const::Actor_Base::Player(), Relation(member_id));
             custom_base->Vitality(Vitality(member_id), false);
+
+            some<Actor_t*> actor = Actor(member_id);
             actor->Actor_Base(Custom_Base(member_id), false);
+            actor->x_list.Destroy_Extra_Text_Display();
+
             return true;
         } else {
             Remove_Member(member_id);
+
             return false;
         }
     }

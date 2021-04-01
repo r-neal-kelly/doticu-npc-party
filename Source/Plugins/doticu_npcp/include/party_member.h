@@ -8,11 +8,11 @@
 
 #include "intrinsic.h"
 
+#include "party_member_combat_style.h"
 #include "party_member_flags.h"
 #include "party_member_id.h"
 #include "party_member_rating.h"
 #include "party_member_relation.h"
-#include "party_member_style.h"
 #include "party_member_suit_type.h"
 #include "party_member_vitality.h"
 
@@ -48,6 +48,7 @@ namespace doticu_npcp { namespace Party {
 
         String_t                    name;
         maybe<Reference_t*>         pack; // maybe some?
+        some<Combat_Style_t*>       combat_style;
         some<Voice_Type_t*>         voice_type;
 
         maybe<Outfit_t*>            default_outfit;
@@ -64,7 +65,7 @@ namespace doticu_npcp { namespace Party {
 
         maybe<Member_Rating_t>      rating;
         some<Member_Relation_e>     relation;
-        some<Member_Style_e>        style;
+        
         maybe<Member_Suit_Type_e>   suit_type;
         some<Member_Vitality_e>     vitality;
 

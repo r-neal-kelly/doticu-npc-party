@@ -75,7 +75,7 @@
     <ClCompile Include="src\party_members.cpp" />
     <ClCompile Include="src\party_member_rating.cpp" />
     <ClCompile Include="src\party_member_sort_type.cpp" />
-    <ClCompile Include="src\party_member_style.cpp" />
+    <ClCompile Include="src\party_member_combat_style.cpp" />
     <ClCompile Include="src\party_member_suit_fill_type.cpp" />
     <ClCompile Include="src\party_member_suit_type.cpp" />
     <ClCompile Include="src\strings.cpp" />
@@ -97,7 +97,7 @@
     <ClInclude Include="include\party_member_id.h" />
     <ClInclude Include="include\party_member_relation.h" />
     <ClInclude Include="include\party_member_sort_type.h" />
-    <ClInclude Include="include\party_member_style.h" />
+    <ClInclude Include="include\party_member_combat_style.h" />
     <ClInclude Include="include\party_member_suit.h" />
     <ClInclude Include="include\party_member_rating.h" />
     <ClInclude Include="include\party_member_suit_fill_type.h" />
