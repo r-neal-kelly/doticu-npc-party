@@ -17,6 +17,7 @@
 #include "party_member_sort_type.h"
 #include "party_member_suit_fill_type.h"
 #include "party_member_suit_type.h"
+#include "party_member_update_ai.h"
 #include "party_member_vitality.h"
 
 namespace doticu_npcp { namespace Party {
@@ -32,29 +33,31 @@ namespace doticu_npcp { namespace Party {
         };
 
     public:
-        static constexpr size_t                                 MAX_MEMBERS                         = 1024;
+        static constexpr size_t                                 MAX_MEMBERS                             = 1024;
 
-        static constexpr size_t                                 DEFAULT_FILL_OUTFIT_BODY_PERCENT    = 100;
-        static constexpr size_t                                 DEFAULT_FILL_OUTFIT_FEET_PERCENT    = 66;
-        static constexpr size_t                                 DEFAULT_FILL_OUTFIT_HANDS_PERCENT   = 66;
-        static constexpr size_t                                 DEFAULT_FILL_OUTFIT_HEAD_PERCENT    = 33;
+        static constexpr size_t                                 DEFAULT_FILL_OUTFIT_BODY_PERCENT        = 100;
+        static constexpr size_t                                 DEFAULT_FILL_OUTFIT_FEET_PERCENT        = 66;
+        static constexpr size_t                                 DEFAULT_FILL_OUTFIT_HANDS_PERCENT       = 66;
+        static constexpr size_t                                 DEFAULT_FILL_OUTFIT_HEAD_PERCENT        = 33;
 
-        static constexpr Int_t                                  DEFAULT_LIMIT                       = MAX_MEMBERS;
+        static constexpr Int_t                                  DEFAULT_LIMIT                           = MAX_MEMBERS;
 
-        static constexpr Bool_t                                 DEFAULT_DO_AUTO_SUITS               = false;
-        static constexpr Bool_t                                 DEFAULT_DO_AUTO_IMMOBILE_SUIT       = false;
-        static constexpr Bool_t                                 DEFAULT_DO_FILL_SUITS               = true;
+        static constexpr Bool_t                                 DEFAULT_DO_AUTO_SUITS                   = false;
+        static constexpr Bool_t                                 DEFAULT_DO_AUTO_IMMOBILE_SUIT           = false;
+        static constexpr Bool_t                                 DEFAULT_DO_FILL_SUITS                   = true;
 
-        static constexpr Member_Alpha_t::value_type             DEFAULT_ALPHA                       = Member_Alpha_t::_MAX_;
-        static constexpr Member_Rating_t::value_type            DEFAULT_RATING                      = Member_Rating_t::_NONE_;
-        static constexpr Member_Relation_e::value_type          DEFAULT_RELATION                    = Member_Relation_e::_NONE_;
-        static constexpr Member_Combat_Style_e::value_type      DEFAULT_COMBAT_STYLE                = Member_Combat_Style_e::_NONE_;
-        static constexpr Member_Suit_Type_e::value_type         DEFAULT_SUIT_TYPE                   = Member_Suit_Type_e::MEMBER; // maybe _NONE_?
-        static constexpr Member_Vitality_e::value_type          DEFAULT_VITALITY                    = Member_Vitality_e::_NONE_;
+        static constexpr Bool_t                                 DEFAULT_HAS_UNTOUCHABLE_INVULNERABLES   = false;
+
+        static constexpr Member_Alpha_t::value_type             DEFAULT_ALPHA                           = Member_Alpha_t::_MAX_;
+        static constexpr Member_Rating_t::value_type            DEFAULT_RATING                          = Member_Rating_t::_NONE_;
+        static constexpr Member_Relation_e::value_type          DEFAULT_RELATION                        = Member_Relation_e::_NONE_;
+        static constexpr Member_Combat_Style_e::value_type      DEFAULT_COMBAT_STYLE                    = Member_Combat_Style_e::_NONE_;
+        static constexpr Member_Suit_Type_e::value_type         DEFAULT_SUIT_TYPE                       = Member_Suit_Type_e::MEMBER;
+        static constexpr Member_Vitality_e::value_type          DEFAULT_VITALITY                        = Member_Vitality_e::_NONE_;
         // maybe default male and default female voices?
 
-        static constexpr Member_Suit_Fill_Type_e::value_type    DEFAULT_MEMBER_SUIT_FILL_TYPE       = Member_Suit_Fill_Type_e::REFERENCE;
-        static constexpr Member_Sort_Type_e::value_type         DEFAULT_SORT_TYPE                   = Member_Sort_Type_e::NAME;
+        static constexpr Member_Suit_Fill_Type_e::value_type    DEFAULT_MEMBER_SUIT_FILL_TYPE           = Member_Suit_Fill_Type_e::REFERENCE;
+        static constexpr Member_Sort_Type_e::value_type         DEFAULT_SORT_TYPE                       = Member_Sort_Type_e::NAME;
 
     public:
         class Save_State
@@ -68,6 +71,8 @@ namespace doticu_npcp { namespace Party {
             Bool_t                              do_auto_suits;
             Bool_t                              do_auto_immobile_suit;
             Bool_t                              do_fill_suits;
+
+            Bool_t                              has_untouchable_invulnerables;
 
             maybe<Member_Combat_Style_e>        default_combat_style;
             maybe<Member_Relation_e>            default_relation;
@@ -122,6 +127,8 @@ namespace doticu_npcp { namespace Party {
             V::Variable_tt<Bool_t>&                             Do_Auto_Suits();
             V::Variable_tt<Bool_t>&                             Do_Auto_Immobile_Suit();
             V::Variable_tt<Bool_t>&                             Do_Fill_Suits();
+
+            V::Variable_tt<Bool_t>&                             Has_Untouchable_Invulnerables();
 
             V::Variable_tt<String_t>&                           Default_Combat_Style();
             V::Variable_tt<String_t>&                           Default_Relation();
@@ -199,11 +206,14 @@ namespace doticu_npcp { namespace Party {
         static void     Fill_Outfit_Head_Percent(Int_t value);
 
     public:
-        const some<Quest_t*>            quest;
-        Save_State                      save_state;
-        Vector_t<maybe<Actor_Base_t*>>  custom_bases;
-        //Vector_t<some<Script_t*>>       scripts; // this would be good to save on allocations
-        Vector_t<some<Spell_t*>>        vanilla_ghost_abilities;
+        const some<Quest_t*>                quest;
+        Save_State                          save_state;
+
+        Vector_t<maybe<Actor_Base_t*>>      custom_bases;
+        Vector_t<maybe<Script_t*>>          scripts;
+        Vector_t<maybe<Member_Update_AI_e>> update_ais;
+
+        const Vector_t<some<Spell_t*>>      vanilla_ghost_abilities;
 
     public:
         Members_t(some<Quest_t*> quest, Bool_t is_new_game);
@@ -215,32 +225,47 @@ namespace doticu_npcp { namespace Party {
         ~Members_t();
 
     public:
-        Bool_t                      Has_Alias(Member_ID_t member_id);
-        Bool_t                      Has_Alias(Alias_ID_t alias_id);
-        Bool_t                      Has_Member(Member_ID_t member_id);
-        Bool_t                      Has_Member(some<Actor_t*> actor);
+        Bool_t  Has_Untouchable_Invulnerables();
+        void    Has_Untouchable_Invulnerables(Bool_t value);
 
-        maybe<Member_ID_t>          Maybe_Free_Member_ID();
-        maybe<Member_ID_t>          Add_Member(some<Actor_t*> actor);
-        maybe<Member_ID_t>          Add_Member(some<Actor_Base_t*> base);
-        maybe<Member_ID_t>          Add_Member_Clone(some<Actor_t*> actor);
-        Bool_t                      Remove_Member(Member_ID_t member_id);
+    public:
+        Bool_t              Has_Alias(Member_ID_t member_id);
+        Bool_t              Has_Alias(Alias_ID_t alias_id);
+        Bool_t              Has_Member(Member_ID_t member_id);
+        Bool_t              Has_Member(some<Actor_t*> actor);
 
-        size_t                      Member_Count();
+        maybe<Member_ID_t>  Maybe_Free_Member_ID();
+        maybe<Member_ID_t>  Add_Member(some<Actor_t*> actor);
+        maybe<Member_ID_t>  Add_Member(some<Actor_Base_t*> base);
+        maybe<Member_ID_t>  Add_Member_Clone(some<Actor_t*> actor);
+        Bool_t              Remove_Member(Member_ID_t member_id);
 
-        void                        Validate();
+        size_t              Member_Count();
+
+        void                Validate();
 
     public:
         some<Alias_Reference_t*>    Alias_Reference(Member_ID_t valid_member_id);
         some<Actor_t*>              Actor(Member_ID_t valid_member_id);
         some<Actor_Base_t*>         Original_Base(Member_ID_t valid_member_id);
         some<Actor_Base_t*>         Custom_Base(Member_ID_t valid_member_id);
+        some<Script_t*>             Script(Member_ID_t valid_member_id);
+        void                        Update_AI(Member_ID_t valid_member_id, some<Member_Update_AI_e> update_ai);
 
         Bool_t                      Is_Banished(Member_ID_t valid_member_id);
         void                        Is_Banished(Member_ID_t valid_member_id, Bool_t value);
 
+        Bool_t                      Is_Clone(Member_ID_t valid_member_id);
+        void                        Is_Clone(Member_ID_t valid_member_id, Bool_t value);
+
         Bool_t                      Is_Immobile(Member_ID_t valid_member_id);
         void                        Is_Immobile(Member_ID_t valid_member_id, Bool_t value);
+
+        Bool_t                      Is_Mannequin(Member_ID_t valid_member_id);
+        void                        Is_Mannequin(Member_ID_t valid_member_id, Bool_t value);
+
+        Bool_t                      Is_Paralyzed(Member_ID_t valid_member_id);
+        void                        Is_Paralyzed(Member_ID_t valid_member_id, Bool_t value);
 
         Bool_t                      Is_Reanimated(Member_ID_t valid_member_id);
         void                        Is_Reanimated(Member_ID_t valid_member_id, Bool_t value);
@@ -250,20 +275,46 @@ namespace doticu_npcp { namespace Party {
 
         String_t                    Name(Member_ID_t valid_member_id);
         void                        Name(Member_ID_t valid_member_id, String_t name);
+
         maybe<Combat_Style_t*>      Combat_Style(Member_ID_t valid_member_id);
         void                        Combat_Style(Member_ID_t valid_member_id, maybe<Combat_Style_t*> combat_style);
         void                        Combat_Style(Member_ID_t valid_member_id, Member_Combat_Style_e combat_style);
+
         maybe<Spell_t*>             Ghost_Ability(Member_ID_t valid_member_id);
         void                        Ghost_Ability(Member_ID_t valid_member_id, maybe<Spell_t*> ghost_ability);
+
         some<Voice_Type_t*>         Voice_Type(Member_ID_t valid_member_id);
         void                        Voice_Type(Member_ID_t valid_member_id, maybe<Voice_Type_t*> voice_type);
 
         maybe<Member_Alpha_t>       Alpha(Member_ID_t valid_member_id);
         void                        Alpha(Member_ID_t valid_member_id, maybe<Member_Alpha_t> alpha);
+
+        maybe<Member_Rating_t>      Rating(Member_ID_t valid_member_id);
+        void                        Rating(Member_ID_t valid_member_id, maybe<Member_Rating_t> rating);
+
         some<Member_Relation_e>     Relation(Member_ID_t valid_member_id);
         void                        Relation(Member_ID_t valid_member_id, maybe<Member_Relation_e> relation);
+
+        maybe<Member_Suit_Type_e>   Suit_Type(Member_ID_t valid_member_id);
+        void                        Suit_Type(Member_ID_t valid_member_id, maybe<Member_Suit_Type_e> suit_type);
+
         some<Member_Vitality_e>     Vitality(Member_ID_t valid_member_id);
         void                        Vitality(Member_ID_t valid_member_id, maybe<Member_Vitality_e> vitality);
+        Bool_t                      Is_Mortal(Member_ID_t valid_member_id);
+        void                        Is_Mortal(Member_ID_t valid_member_id, Bool_t value);
+        Bool_t                      Is_Protected(Member_ID_t valid_member_id);
+        void                        Is_Protected(Member_ID_t valid_member_id, Bool_t value);
+        Bool_t                      Is_Essential(Member_ID_t valid_member_id);
+        void                        Is_Essential(Member_ID_t valid_member_id, Bool_t value);
+        Bool_t                      Is_Invulnerable(Member_ID_t valid_member_id);
+        void                        Is_Invulnerable(Member_ID_t valid_member_id, Bool_t value);
+
+    public:
+        Bool_t                      Is_Enabled(Member_ID_t valid_member_id);
+        Bool_t                      Is_Untouchable(Member_ID_t valid_member_id);
+        Bool_t                      Has_AI(Member_ID_t valid_member_id);
+
+        maybe<Member_Suit_t*>       Suit(Member_ID_t valid_member_id);
 
         void                        Tokenize(Member_ID_t valid_member_id,
                                              some<Bound_Object_t*> object,

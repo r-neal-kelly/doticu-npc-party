@@ -275,6 +275,8 @@ namespace doticu_npcp {
             //temp
             Party::Members_t& members = this->state->party_members;
 
+            members.Has_Untouchable_Invulnerables(false);
+
             some<Actor_Base_t*> vici = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x1327a)());
             some<Actor_Base_t*> katria = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x02004D0C)());
             some<Actor_Base_t*> maven = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x1336a)());

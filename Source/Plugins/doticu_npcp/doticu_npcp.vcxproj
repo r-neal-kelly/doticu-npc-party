@@ -78,6 +78,7 @@
     <ClCompile Include="src\party_member_combat_style.cpp" />
     <ClCompile Include="src\party_member_suit_fill_type.cpp" />
     <ClCompile Include="src\party_member_suit_type.cpp" />
+    <ClCompile Include="src\party_member_update_ai.cpp" />
     <ClCompile Include="src\strings.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -103,6 +104,7 @@
     <ClInclude Include="include\party_member_rating.h" />
     <ClInclude Include="include\party_member_suit_fill_type.h" />
     <ClInclude Include="include\party_member_suit_type.h" />
+    <ClInclude Include="include\party_member_update_ai.h" />
     <ClInclude Include="include\party_member_vitality.h" />
     <ClInclude Include="include\strings.h" />
   </ItemGroup>

@@ -144,6 +144,7 @@ namespace doticu_npcp {
     using Reference_Container_t         = skylib::Reference_Container_t;
     using Reference_Container_Entry_t   = skylib::Reference_Container_Entry_t;
     using Reference_Handle_t            = skylib::Reference_Handle_t;
+    using Script_t                      = skylib::Script_t;
     using Scroll_t                      = skylib::Scroll_t;
     using SKSE_Message_t                = skylib::SKSE_Message_t;
     using SKSE_Plugin_t                 = skylib::SKSE_Plugin_t;
