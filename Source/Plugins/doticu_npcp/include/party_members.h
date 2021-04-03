@@ -5,6 +5,7 @@
 #pragma once
 
 #include "doticu_skylib/enum_script_type.h"
+#include "doticu_skylib/container_entry_count.h"
 
 #include "intrinsic.h"
 #include "party_member_alpha.h"
@@ -201,6 +202,7 @@ namespace doticu_npcp { namespace Party {
         const some<Quest_t*>            quest;
         Save_State                      save_state;
         Vector_t<maybe<Actor_Base_t*>>  custom_bases;
+        //Vector_t<some<Script_t*>>       scripts; // this would be good to save on allocations
         Vector_t<some<Spell_t*>>        vanilla_ghost_abilities;
 
     public:
@@ -234,10 +236,23 @@ namespace doticu_npcp { namespace Party {
         some<Actor_Base_t*>         Original_Base(Member_ID_t valid_member_id);
         some<Actor_Base_t*>         Custom_Base(Member_ID_t valid_member_id);
 
+        Bool_t                      Is_Banished(Member_ID_t valid_member_id);
+        void                        Is_Banished(Member_ID_t valid_member_id, Bool_t value);
+
+        Bool_t                      Is_Immobile(Member_ID_t valid_member_id);
+        void                        Is_Immobile(Member_ID_t valid_member_id, Bool_t value);
+
+        Bool_t                      Is_Reanimated(Member_ID_t valid_member_id);
+        void                        Is_Reanimated(Member_ID_t valid_member_id, Bool_t value);
+
+        Bool_t                      Is_Thrall(Member_ID_t valid_member_id);
+        void                        Is_Thrall(Member_ID_t valid_member_id, Bool_t value);
+
         String_t                    Name(Member_ID_t valid_member_id);
         void                        Name(Member_ID_t valid_member_id, String_t name);
         maybe<Combat_Style_t*>      Combat_Style(Member_ID_t valid_member_id);
         void                        Combat_Style(Member_ID_t valid_member_id, maybe<Combat_Style_t*> combat_style);
+        void                        Combat_Style(Member_ID_t valid_member_id, Member_Combat_Style_e combat_style);
         maybe<Spell_t*>             Ghost_Ability(Member_ID_t valid_member_id);
         void                        Ghost_Ability(Member_ID_t valid_member_id, maybe<Spell_t*> ghost_ability);
         some<Voice_Type_t*>         Voice_Type(Member_ID_t valid_member_id);
@@ -249,6 +264,12 @@ namespace doticu_npcp { namespace Party {
         void                        Relation(Member_ID_t valid_member_id, maybe<Member_Relation_e> relation);
         some<Member_Vitality_e>     Vitality(Member_ID_t valid_member_id);
         void                        Vitality(Member_ID_t valid_member_id, maybe<Member_Vitality_e> vitality);
+
+        void                        Tokenize(Member_ID_t valid_member_id,
+                                             some<Bound_Object_t*> object,
+                                             Container_Entry_Count_t count = 1);
+        void                        Untokenize(Member_ID_t valid_member_id,
+                                               some<Bound_Object_t*> object);
 
         Bool_t                      Validate_Member(Member_ID_t member_id);
         void                        Validate_Members();

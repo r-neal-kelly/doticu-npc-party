@@ -19,10 +19,15 @@
 //temp
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/actor_base.h"
+#include "doticu_skylib/actor_head_data.h"
+#include "doticu_skylib/color.h"
+#include "doticu_skylib/const_actors.h"
+#include "doticu_skylib/const_spells.h"
 #include "doticu_skylib/const_voice_types.h"
 #include "doticu_skylib/cstring.h"
 #include "doticu_skylib/game.inl"
 #include "doticu_skylib/mod.h"
+#include "doticu_skylib/os.h"
 #include "doticu_skylib/spell.h"
 #include "doticu_skylib/voice_type.h"
 //
@@ -270,24 +275,31 @@ namespace doticu_npcp {
             //temp
             Party::Members_t& members = this->state->party_members;
 
-            //some<Actor_Base_t*> vici = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x1327a)());
-            //some<Actor_Base_t*> katria = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x02004D0C)());
+            some<Actor_Base_t*> vici = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x1327a)());
+            some<Actor_Base_t*> katria = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x02004D0C)());
             some<Actor_Base_t*> maven = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x1336a)());
+            some<Actor_Base_t*> fjori = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x0003D725)());
             for (size_t idx = 0, end = 50; idx < end; idx += 1) {
-                members.Add_Member(maven);
+                members.Add_Member(fjori);
             }
 
             for (size_t idx = 0, end = 1024; idx < end; idx += 1) {
                 if (members.Has_Member(idx)) {
                     if (doticu_skylib::Is_Odd(idx)) {
+                        members.Is_Banished(idx, false);
+                        members.Is_Reanimated(idx, false);
                         members.Name(idx, " Dark Elf Commoner ");
-                        members.Combat_Style(idx, Party::Member_Combat_Style_e::To_Combat_Style(Party::Member_Combat_Style_e::ARCHER));
+                        members.Combat_Style(idx, Party::Member_Combat_Style_e::ARCHER);
+                        members.Ghost_Ability(idx, skylib::Const::Spell::Ghost_Ability_Soul_Cairn()());
                         members.Voice_Type(idx, skylib::Const::Voice_Type::Female_Dark_Elf_Commoner()());
                         members.Relation(idx, Party::Member_Relation_e::ALLY);
                         members.Vitality(idx, Party::Member_Vitality_e::INVULNERABLE);
                     } else {
+                        members.Is_Banished(idx, false);
+                        members.Is_Reanimated(idx, true);
                         members.Name(idx, " Serana ");
-                        members.Combat_Style(idx, Party::Member_Combat_Style_e::To_Combat_Style(Party::Member_Combat_Style_e::COWARD));
+                        members.Combat_Style(idx, Party::Member_Combat_Style_e::COWARD);
+                        members.Ghost_Ability(idx, none<Spell_t*>());
                         members.Voice_Type(idx, skylib::Const::Voice_Type::Female_Unique_Serana()());
                         members.Relation(idx, Party::Member_Relation_e::ARCHNEMESIS);
                         members.Vitality(idx, Party::Member_Vitality_e::MORTAL);
@@ -296,7 +308,6 @@ namespace doticu_npcp {
                 }
             }
 
-            /*
             class Wait_Callback :
                 public V::Callback_t
             {
@@ -313,11 +324,10 @@ namespace doticu_npcp {
                 virtual void operator ()(V::Variable_t*) override
                 {
                     self->state->party_members.Validate_Members();
-                    V::Utility_t::Wait_Out_Of_Menu(5.0f, new Wait_Callback(self));
+                    V::Utility_t::Wait_Out_Of_Menu(2.0f, new Wait_Callback(self));
                 }
             };
-            V::Utility_t::Wait_Out_Of_Menu(5.0f, new Wait_Callback(this));
-            */
+            V::Utility_t::Wait_Out_Of_Menu(2.0f, new Wait_Callback(this));
 
             /*
             Vector_t<some<Form_t*>> forms = Game_t::Forms();

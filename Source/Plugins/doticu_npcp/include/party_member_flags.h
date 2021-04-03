@@ -16,15 +16,15 @@ namespace doticu_npcp { namespace Party {
     public:
         enum enum_type : value_type
         {
-            IS_BANISHED,
-            IS_CLONE,
-            IS_IMMOBILE,
-            IS_MANNEQUIN,
-            IS_PARALYZED,
-            IS_REANIMATED,
-            IS_THRALL,
+            IS_BANISHED     = static_cast<value_type>(1 << 0),
+            IS_CLONE        = static_cast<value_type>(1 << 1),
+            IS_IMMOBILE     = static_cast<value_type>(1 << 2),
+            IS_MANNEQUIN    = static_cast<value_type>(1 << 3),
+            IS_PARALYZED    = static_cast<value_type>(1 << 4),
+            IS_REANIMATED   = static_cast<value_type>(1 << 5),
+            IS_THRALL       = static_cast<value_type>(1 << 6),
 
-            _TOTAL_,
+            _TOTAL_         = 7,
         };
 
     public:

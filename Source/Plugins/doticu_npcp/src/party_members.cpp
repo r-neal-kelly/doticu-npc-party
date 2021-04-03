@@ -11,10 +11,12 @@
 #include "doticu_skylib/const_actor_bases.h"
 #include "doticu_skylib/const_spells.h"
 #include "doticu_skylib/dynamic_array.inl"
+#include "doticu_skylib/forward_list.inl"
 #include "doticu_skylib/global.h"
 #include "doticu_skylib/misc.h"
 #include "doticu_skylib/outfit.h"
 #include "doticu_skylib/quest.h"
+#include "doticu_skylib/reference_container.h"
 #include "doticu_skylib/spell.h"
 #include "doticu_skylib/voice_type.h"
 #include "doticu_skylib/virtual_macros.h"
@@ -731,7 +733,7 @@ namespace doticu_npcp { namespace Party {
         self->save_state.suit_types[member_id] = self->save_state.default_suit_type;
         self->save_state.vitalities[member_id] = self->save_state.default_vitality;
 
-        self->Validate_Member(member_id);
+        self->Validate_Member(member_id); // we may need to call this in script queue, because spells can miss their effects right after a spawn.
         self->Alias_Reference(member_id)->Fill(actor, none<V::Callback_i*>());
     }
 
@@ -810,6 +812,8 @@ namespace doticu_npcp { namespace Party {
     {
         // this will cleanse anything under the id that it can, even if the data is incomplete in some manner, it cleans it up.
         // it fails gracefully and just defaults the values.
+
+        // also, this must destroy the custom base so it's created again for the next actor
         return false;
     }
 
@@ -917,6 +921,62 @@ namespace doticu_npcp { namespace Party {
         return custom_base();
     }
 
+    Bool_t Members_t::Is_Banished(Member_ID_t valid_member_id)
+    {
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+
+        return this->save_state.flags[valid_member_id].Is_Flagged(Member_Flags_e::IS_BANISHED);
+    }
+
+    void Members_t::Is_Banished(Member_ID_t valid_member_id, Bool_t value)
+    {
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+
+        this->save_state.flags[valid_member_id].Is_Flagged(Member_Flags_e::IS_BANISHED, value);
+    }
+
+    Bool_t Members_t::Is_Immobile(Member_ID_t valid_member_id)
+    {
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+
+        return this->save_state.flags[valid_member_id].Is_Flagged(Member_Flags_e::IS_IMMOBILE);
+    }
+
+    void Members_t::Is_Immobile(Member_ID_t valid_member_id, Bool_t value)
+    {
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+
+        this->save_state.flags[valid_member_id].Is_Flagged(Member_Flags_e::IS_IMMOBILE, value);
+    }
+
+    Bool_t Members_t::Is_Reanimated(Member_ID_t valid_member_id)
+    {
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+
+        return this->save_state.flags[valid_member_id].Is_Flagged(Member_Flags_e::IS_REANIMATED);
+    }
+
+    void Members_t::Is_Reanimated(Member_ID_t valid_member_id, Bool_t value)
+    {
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+
+        this->save_state.flags[valid_member_id].Is_Flagged(Member_Flags_e::IS_REANIMATED, value);
+    }
+
+    Bool_t Members_t::Is_Thrall(Member_ID_t valid_member_id)
+    {
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+
+        return this->save_state.flags[valid_member_id].Is_Flagged(Member_Flags_e::IS_THRALL);
+    }
+
+    void Members_t::Is_Thrall(Member_ID_t valid_member_id, Bool_t value)
+    {
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+
+        this->save_state.flags[valid_member_id].Is_Flagged(Member_Flags_e::IS_THRALL, value);
+    }
+
     String_t Members_t::Name(Member_ID_t valid_member_id)
     {
         SKYLIB_ASSERT(Has_Member(valid_member_id));
@@ -953,6 +1013,13 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
         this->save_state.combat_styles[valid_member_id] = combat_style;
+    }
+
+    void Members_t::Combat_Style(Member_ID_t valid_member_id, Member_Combat_Style_e combat_style)
+    {
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+
+        Combat_Style(valid_member_id, combat_style.As_Combat_Style());
     }
 
     maybe<Spell_t*> Members_t::Ghost_Ability(Member_ID_t valid_member_id)
@@ -1052,25 +1119,92 @@ namespace doticu_npcp { namespace Party {
         this->save_state.vitalities[valid_member_id] = vitality;
     }
 
+    void Members_t::Tokenize(Member_ID_t valid_member_id,
+                             some<Bound_Object_t*> object,
+                             Container_Entry_Count_t count)
+    {
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+        SKYLIB_ASSERT_SOME(object);
+        SKYLIB_ASSERT(count > 0);
+
+        some<Actor_t*> actor = Actor(valid_member_id);
+        Reference_Container_t container = actor->Container();
+        some<Reference_Container_Entry_t*> entry = container.Some_Entry(object);
+        entry->Decrement_Count(&container, Container_Entry_Count_t::_MAX_);
+        entry->Increment_Count(&container, count);
+    }
+
+    void Members_t::Untokenize(Member_ID_t valid_member_id,
+                               some<Bound_Object_t*> object)
+    {
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+        SKYLIB_ASSERT_SOME(object);
+
+        some<Actor_t*> actor = Actor(valid_member_id);
+        Reference_Container_t container = actor->Container();
+        some<Reference_Container_Entry_t*> entry = container.Some_Entry(object);
+        entry->Decrement_Count(&container, Container_Entry_Count_t::_MAX_);
+    }
+
     Bool_t Members_t::Validate_Member(Member_ID_t member_id)
     {
         if (Has_Member(member_id)) {
             some<Actor_t*> actor = Actor(member_id);
             some<Actor_Base_t*> custom_base = Custom_Base(member_id);
 
+            Vector_t<some<Spell_t*>> spells_to_add;
+            spells_to_add.reserve(4);
+
             actor->Actor_Base(Custom_Base(member_id), false);
+
+            Tokenize(member_id, Consts_t::NPCP::Misc::Token::Member(), member_id + 1);
+
+            if (Is_Banished(member_id)) {
+                Tokenize(member_id, Consts_t::NPCP::Misc::Token::Banished());
+
+                actor->Disable();
+            } else {
+                Untokenize(member_id, Consts_t::NPCP::Misc::Token::Banished());
+
+                actor->Enable();
+            }
+
+            if (Is_Immobile(member_id)) {
+                Tokenize(member_id, Consts_t::NPCP::Misc::Token::Immobile());
+            } else {
+                Untokenize(member_id, Consts_t::NPCP::Misc::Token::Immobile());
+            }
+
+            if (Is_Reanimated(member_id)) {
+                Tokenize(member_id, Consts_t::NPCP::Misc::Token::Reanimated());
+
+                spells_to_add.push_back(Consts_t::NPCP::Spell::Reanimate_Ability());
+            } else {
+                Untokenize(member_id, Consts_t::NPCP::Misc::Token::Reanimated());
+
+                actor->Remove_Spell(Consts_t::NPCP::Spell::Reanimate_Ability());
+            }
+
+            if (Is_Thrall(member_id)) {
+                Tokenize(member_id, Consts_t::NPCP::Misc::Token::Thrall());
+            } else {
+                Untokenize(member_id, Consts_t::NPCP::Misc::Token::Thrall());
+            }
 
             custom_base->Name(Name(member_id));
             actor->x_list.Destroy_Extra_Text_Display();
 
             custom_base->Combat_Style(Combat_Style(member_id));
 
-            for (size_t idx = 0, end = this->vanilla_ghost_abilities.size(); idx < end; idx += 1) {
-                actor->Remove_Spell(this->vanilla_ghost_abilities[idx]);
-            }
             maybe<Spell_t*> ghost_ability = Ghost_Ability(member_id);
+            for (size_t idx = 0, end = this->vanilla_ghost_abilities.size(); idx < end; idx += 1) {
+                some<Spell_t*> vanilla_ghost_ability = this->vanilla_ghost_abilities[idx];
+                if (vanilla_ghost_ability != ghost_ability) {
+                    actor->Remove_Spell(this->vanilla_ghost_abilities[idx]);
+                }
+            }
             if (ghost_ability) {
-                actor->Add_Spell(ghost_ability());
+                spells_to_add.push_back(ghost_ability());
             }
             actor->Is_Ghost(false);
 
@@ -1081,6 +1215,19 @@ namespace doticu_npcp { namespace Party {
             custom_base->Relation(skylib::Const::Actor_Base::Player(), Relation(member_id));
 
             custom_base->Vitality(Vitality(member_id), false);
+
+            if (actor->Is_Attached()) {
+                for (size_t idx = 0, end = spells_to_add.size(); idx < end; idx += 1) {
+                    some<Spell_t*> spell = spells_to_add[idx];
+                    if (!actor->Has_Magic_Effects(spell)) {
+                        actor->Reset_Spell(spell);
+                    }
+                }
+            } else {
+                for (size_t idx = 0, end = spells_to_add.size(); idx < end; idx += 1) {
+                    actor->Remove_Spell(spells_to_add[idx]);
+                }
+            }
 
             return true;
         } else {
