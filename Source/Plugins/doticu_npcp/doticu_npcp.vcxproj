@@ -71,6 +71,10 @@
     <ClCompile Include="src\mcm_chests.cpp" />
     <ClCompile Include="src\mcm_main.cpp" />
     <ClCompile Include="src\npcp.cpp" />
+    <ClCompile Include="src\party_displays.cpp" />
+    <ClCompile Include="src\party_expoees.cpp" />
+    <ClCompile Include="src\party_followers.cpp" />
+    <ClCompile Include="src\party_main.cpp" />
     <ClCompile Include="src\party_member.cpp" />
     <ClCompile Include="src\party_members.cpp" />
     <ClCompile Include="src\party_member_rating.cpp" />
@@ -79,6 +83,7 @@
     <ClCompile Include="src\party_member_suit_fill_type.cpp" />
     <ClCompile Include="src\party_member_suit_type.cpp" />
     <ClCompile Include="src\party_member_update_ai.cpp" />
+    <ClCompile Include="src\party_settlers.cpp" />
     <ClCompile Include="src\strings.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -90,8 +95,11 @@
     <ClInclude Include="include\main.h" />
     <ClInclude Include="include\mcm_main.h" />
     <ClInclude Include="include\npcp.h" />
+    <ClInclude Include="include\party_displays.h" />
+    <ClInclude Include="include\party_expoees.h" />
     <ClInclude Include="include\party_followers.h" />
     <ClInclude Include="include\party_follower_sort_type.h" />
+    <ClInclude Include="include\party_main.h" />
     <ClInclude Include="include\party_member.h" />
     <ClInclude Include="include\party_members.h" />
     <ClInclude Include="include\party_member_alpha.h" />
@@ -106,6 +114,7 @@
     <ClInclude Include="include\party_member_suit_type.h" />
     <ClInclude Include="include\party_member_update_ai.h" />
     <ClInclude Include="include\party_member_vitality.h" />
+    <ClInclude Include="include\party_settlers.h" />
     <ClInclude Include="include\strings.h" />
   </ItemGroup>
   <ItemGroup>

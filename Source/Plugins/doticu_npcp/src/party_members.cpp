@@ -483,7 +483,7 @@ namespace doticu_npcp { namespace Party {
 
     String_t Members_t::Class_Name()
     {
-        DEFINE_CLASS_NAME("doticu_npcp_members");
+        DEFINE_CLASS_NAME("doticu_npcp_party_members");
     }
 
     some<V::Class_t*> Members_t::Class()
@@ -672,6 +672,25 @@ namespace doticu_npcp { namespace Party {
         }
 
         // we need to destroy scripts too
+    }
+
+    void Members_t::Before_Save()
+    {
+        for (Member_ID_t member_id = 0, end = this->save_state.actors.size(); member_id < end; member_id += 1) {
+            if (Validate_Member(member_id)) {
+                Actor(member_id)->Actor_Base(Original_Base(member_id), false);
+            }
+        }
+        this->save_state.Write();
+    }
+
+    void Members_t::After_Save()
+    {
+        for (Member_ID_t member_id = 0, end = this->save_state.actors.size(); member_id < end; member_id += 1) {
+            if (Has_Member(member_id)) {
+                Actor(member_id)->Actor_Base(Custom_Base(member_id), false);
+            }
+        }
     }
 
     Bool_t Members_t::Has_Untouchable_Invulnerables()
@@ -1518,25 +1537,6 @@ namespace doticu_npcp { namespace Party {
     {
         for (size_t member_id = 0, end = this->save_state.actors.size(); member_id < end; member_id += 1) {
             Validate_Member(member_id);
-        }
-    }
-
-    void Members_t::Before_Save()
-    {
-        for (Member_ID_t member_id = 0, end = this->save_state.actors.size(); member_id < end; member_id += 1) {
-            if (Validate_Member(member_id)) {
-                Actor(member_id)->Actor_Base(Original_Base(member_id), false);
-            }
-        }
-        this->save_state.Write();
-    }
-
-    void Members_t::After_Save()
-    {
-        for (Member_ID_t member_id = 0, end = this->save_state.actors.size(); member_id < end; member_id += 1) {
-            if (Has_Member(member_id)) {
-                Actor(member_id)->Actor_Base(Custom_Base(member_id), false);
-            }
         }
     }
 

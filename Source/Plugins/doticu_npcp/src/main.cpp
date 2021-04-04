@@ -35,13 +35,13 @@
 namespace doticu_npcp {
 
     Main_t::State_t::State_t(Bool_t is_new_game) :
-        party_members(Consts_t::NPCP::Quest::Members(), is_new_game),
+        party(is_new_game),
         hotkeys(Consts_t::NPCP::Quest::Control(), is_new_game)
     {
     }
 
     Main_t::State_t::State_t(const Version_t<u16> version_to_update) :
-        party_members(Consts_t::NPCP::Quest::Members(), version_to_update),
+        party(version_to_update),
         hotkeys(Consts_t::NPCP::Quest::Control(), version_to_update)
     {
     }
@@ -52,13 +52,13 @@ namespace doticu_npcp {
 
     void Main_t::State_t::Before_Save()
     {
-        this->party_members.Before_Save();
+        this->party.Before_Save();
         this->hotkeys.Before_Save();
     }
 
     void Main_t::State_t::After_Save()
     {
-        this->party_members.After_Save();
+        this->party.After_Save();
         this->hotkeys.After_Save();
     }
 
@@ -273,7 +273,7 @@ namespace doticu_npcp {
             SKYLIB_LOG(NPCP_PRINT_HEAD + "Loaded.");
 
             //temp
-            Party::Members_t& members = this->state->party_members;
+            Party::Members_t& members = this->state->party.members;
 
             members.Has_Untouchable_Invulnerables(false);
 
@@ -325,7 +325,7 @@ namespace doticu_npcp {
             public:
                 virtual void operator ()(V::Variable_t*) override
                 {
-                    self->state->party_members.Validate_Members();
+                    self->state->party.members.Validate_Members();
                     V::Utility_t::Wait_Out_Of_Menu(2.0f, new Wait_Callback(self));
                 }
             };

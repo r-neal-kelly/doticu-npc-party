@@ -9,7 +9,7 @@
 #include "hotkeys.h"
 #include "intrinsic.h"
 #include "mcm_main.h"
-#include "party_members.h"
+#include "party_main.h"
 
 namespace doticu_npcp {
 
@@ -25,8 +25,8 @@ namespace doticu_npcp {
         class State_t
         {
         public:
-            Party::Members_t    party_members; // we may want a Party::Main_t that delegates
-            Hotkeys_t           hotkeys;
+            Party::Main_t   party;
+            Hotkeys_t       hotkeys;
             //MCM::Main_t         mcm_main;
 
         public:

@@ -65,7 +65,6 @@ namespace doticu_npcp { namespace Party {
         public:
             Members_t&                          members;
 
-        public:
             Int_t                               limit;
 
             Bool_t                              do_auto_suits;
@@ -174,8 +173,8 @@ namespace doticu_npcp { namespace Party {
             V::Variable_tt<Vector_t<String_t>>&                 Vitalities();
 
         public:
-            void Read();
-            void Write();
+            void    Read();
+            void    Write();
         };
 
     public:
@@ -223,6 +222,10 @@ namespace doticu_npcp { namespace Party {
         Members_t& operator =(const Members_t& other)                               = delete;
         Members_t& operator =(Members_t&& other) noexcept                           = delete;
         ~Members_t();
+
+    public:
+        void    Before_Save();
+        void    After_Save();
 
     public:
         Bool_t  Has_Untouchable_Invulnerables();
@@ -324,10 +327,6 @@ namespace doticu_npcp { namespace Party {
 
         Bool_t                      Validate_Member(Member_ID_t member_id);
         void                        Validate_Members();
-
-    public:
-        void    Before_Save();
-        void    After_Save();
 
     public:
         void    Log(std::string indent = "");
