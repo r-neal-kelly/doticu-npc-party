@@ -8,6 +8,7 @@
 #include "doticu_skylib/container_entry_count.h"
 
 #include "intrinsic.h"
+#include "party_main.h"
 #include "party_member_alpha.h"
 #include "party_member_combat_style.h"
 #include "party_member_flags.h"
@@ -33,7 +34,7 @@ namespace doticu_npcp { namespace Party {
         };
 
     public:
-        static constexpr size_t                                 MAX_MEMBERS                             = 1024;
+        static constexpr size_t                                 MAX_MEMBERS                             = Main_t::MAX_MEMBERS;
 
         static constexpr size_t                                 DEFAULT_FILL_OUTFIT_BODY_PERCENT        = 100;
         static constexpr size_t                                 DEFAULT_FILL_OUTFIT_FEET_PERCENT        = 66;
@@ -234,10 +235,12 @@ namespace doticu_npcp { namespace Party {
     public:
         Bool_t              Has_Alias(Member_ID_t member_id);
         Bool_t              Has_Alias(Alias_ID_t alias_id);
-        Bool_t              Has_Member(Member_ID_t member_id);
+        Bool_t              Has_Member(some<Member_ID_t> member_id);
         Bool_t              Has_Member(some<Actor_t*> actor);
 
-        maybe<Member_ID_t>  Maybe_Free_Member_ID();
+        maybe<Member_ID_t>  Used_Member_ID(some<Actor_t*> actor);
+        maybe<Member_ID_t>  Unused_Member_ID();
+
         maybe<Member_ID_t>  Add_Member(some<Actor_t*> actor);
         maybe<Member_ID_t>  Add_Member(some<Actor_Base_t*> base);
         maybe<Member_ID_t>  Add_Member_Clone(some<Actor_t*> actor);

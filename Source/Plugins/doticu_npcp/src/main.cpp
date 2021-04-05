@@ -12,8 +12,11 @@
 #include "doticu_skylib/virtual_variable.inl"
 
 #include "consts.h"
+#include "hotkeys.h"
 #include "main.h"
+#include "mcm_main.h"
 #include "npcp.h"
+#include "party_main.h"
 #include "strings.h"
 
 //temp
@@ -30,36 +33,27 @@
 #include "doticu_skylib/os.h"
 #include "doticu_skylib/spell.h"
 #include "doticu_skylib/voice_type.h"
+
+#include "party_members.h"
+#include "party_settlers.h"
 //
 
 namespace doticu_npcp {
 
-    Main_t::State_t::State_t(Bool_t is_new_game) :
-        party(is_new_game),
-        hotkeys(Consts_t::NPCP::Quest::Control(), is_new_game)
+    Main_t::State::State(Bool_t is_new_game) :
+        party(new Party::Main_t(is_new_game)),
+        hotkeys(new Hotkeys_t(Consts_t::NPCP::Quest::Control(), is_new_game))
     {
     }
 
-    Main_t::State_t::State_t(const Version_t<u16> version_to_update) :
-        party(version_to_update),
-        hotkeys(Consts_t::NPCP::Quest::Control(), version_to_update)
+    Main_t::State::State(const Version_t<u16> version_to_update) :
+        party(new Party::Main_t(version_to_update)),
+        hotkeys(new Hotkeys_t(Consts_t::NPCP::Quest::Control(), version_to_update))
     {
     }
 
-    Main_t::State_t::~State_t()
+    Main_t::State::~State()
     {
-    }
-
-    void Main_t::State_t::Before_Save()
-    {
-        this->party.Before_Save();
-        this->hotkeys.Before_Save();
-    }
-
-    void Main_t::State_t::After_Save()
-    {
-        this->party.After_Save();
-        this->hotkeys.After_Save();
     }
 
     String_t Main_t::Class_Name()
@@ -94,18 +88,18 @@ namespace doticu_npcp {
 
         #undef METHOD
 
-        Party::Members_t::Register_Me(machine);
+        Party::Main_t::Register_Me(machine);
         Hotkeys_t::Register_Me(machine);
-        //MCM::Main_t::Register_Me(machine);
     }
 
     Main_t::Main_t(some<Quest_t*> quest) :
-        quest(quest), state(none<State_t*>())
+        quest(quest), state(none<State*>())
     {
     }
 
     Main_t::~Main_t()
     {
+        Delete_State();
     }
 
     some<V::Object_t*> Main_t::Object()
@@ -152,37 +146,38 @@ namespace doticu_npcp {
         Patch_Version() = static_cast<Int_t>(dynamic_version.patch);
     }
 
-    Vector_t<some<Quest_t*>> Main_t::Logic_Quests()
-    {
-        Vector_t<some<Quest_t*>> results;
-
-        results.push_back(Consts_t::NPCP::Quest::Main());
-        results.push_back(Consts_t::NPCP::Quest::Funcs());
-        results.push_back(Consts_t::NPCP::Quest::Members());
-        results.push_back(Consts_t::NPCP::Quest::Followers());
-        results.push_back(Consts_t::NPCP::Quest::Control());
-
-        return results;
-    }
-
     void Main_t::Create_State(Bool_t is_new_game)
     {
         Delete_State();
-        this->state = new State_t(is_new_game);
+        this->state = new State(is_new_game);
     }
 
     void Main_t::Create_State(const Version_t<u16> version_to_update)
     {
         Delete_State();
-        this->state = new State_t(version_to_update);
+        this->state = new State(version_to_update);
     }
 
     void Main_t::Delete_State()
     {
         if (this->state) {
             delete this->state();
-            this->state = none<State_t*>();
+            this->state = none<State*>();
         }
+    }
+
+    Party::Main_t& Main_t::Party()
+    {
+        SKYLIB_ASSERT_SOME(this->state);
+
+        return *this->state->party;
+    }
+
+    Hotkeys_t& Main_t::Hotkeys()
+    {
+        SKYLIB_ASSERT_SOME(this->state);
+
+        return *this->state->hotkeys;
     }
 
     void Main_t::New_Game()
@@ -216,7 +211,8 @@ namespace doticu_npcp {
         if (Is_Initialized()) {
             if (this->state) {
                 SKYLIB_LOG(NPCP_PRINT_HEAD + "Saving...");
-                this->state->Before_Save();
+                Party().Before_Save();
+                Hotkeys().Before_Save();
                 After_Save();
             } else {
                 SKYLIB_LOG(NPCP_PRINT_HEAD + "Missing state, cannot save NPC Party data.");
@@ -235,7 +231,8 @@ namespace doticu_npcp {
                 Main_t& self = NPCP.Main();
                 if (self.Is_Initialized()) {
                     if (self.state) {
-                        self.state->After_Save();
+                        self.Party().After_Save();
+                        self.Hotkeys().After_Save();
                         SKYLIB_LOG(NPCP_PRINT_HEAD + "Saved.");
                     } else {
                         SKYLIB_LOG(NPCP_PRINT_HEAD + "Missing state, cannot finish saving NPC Party data.");
@@ -273,8 +270,9 @@ namespace doticu_npcp {
             SKYLIB_LOG(NPCP_PRINT_HEAD + "Loaded.");
 
             //temp
-            Party::Members_t& members = this->state->party.members;
-            Party::Settlers_t& settlers = this->state->party.settlers;
+            Party::Main_t& party = Party();
+            Party::Members_t& members = party.Members();
+            Party::Settlers_t& settlers = party.Settlers();
 
             members.Has_Untouchable_Invulnerables(false);
 
@@ -326,7 +324,7 @@ namespace doticu_npcp {
             public:
                 virtual void operator ()(V::Variable_t*) override
                 {
-                    self->state->party.members.Validate_Members();
+                    self->Party().Members().Validate_Members();
                     V::Utility_t::Wait_Out_Of_Menu(2.0f, new Wait_Callback(self));
                 }
             };

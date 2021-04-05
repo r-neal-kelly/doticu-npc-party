@@ -6,12 +6,17 @@
 
 #include "doticu_skylib/enum_script_type.h"
 
-#include "hotkeys.h"
 #include "intrinsic.h"
-#include "mcm_main.h"
-#include "party_main.h"
 
 namespace doticu_npcp {
+
+    class Hotkeys_t;
+
+    namespace Party {
+
+        class Main_t;
+
+    }
 
     class Main_t
     {
@@ -22,25 +27,20 @@ namespace doticu_npcp {
         };
 
     public:
-        class State_t
+        class State
         {
         public:
-            Party::Main_t   party;
-            Hotkeys_t       hotkeys;
-            //MCM::Main_t         mcm_main;
+            const some<unique<Party::Main_t>>   party;
+            const some<unique<Hotkeys_t>>       hotkeys;
 
         public:
-            State_t(Bool_t is_new_game);
-            State_t(const Version_t<u16> version_to_update);
-            State_t(const State_t& other)                       = delete;
-            State_t(State_t&& other) noexcept                   = delete;
-            State_t& operator =(const State_t& other)           = delete;
-            State_t& operator =(State_t&& other) noexcept       = delete;
-            ~State_t();
-
-        public:
-            void Before_Save();
-            void After_Save();
+            State(Bool_t is_new_game);
+            State(const Version_t<u16> version_to_update);
+            State(const Main_t& other)                      = delete;
+            State(Main_t&& other) noexcept                  = delete;
+            State& operator =(const State& other)           = delete;
+            State& operator =(State&& other) noexcept       = delete;
+            ~State();
         };
 
     public:
@@ -50,7 +50,7 @@ namespace doticu_npcp {
 
     public:
         const some<Quest_t*>    quest;
-        maybe<State_t*>         state;
+        maybe<State*>           state;
 
     public:
         Main_t(some<Quest_t*> quest);
@@ -61,6 +61,7 @@ namespace doticu_npcp {
         ~Main_t();
 
     public:
+        // we should move this to global data
         some<V::Object_t*>      Object();
 
         V::Variable_tt<Bool_t>& Is_Initialized();
@@ -74,11 +75,12 @@ namespace doticu_npcp {
         const Version_t<u16>        Dynamic_Version();
         void                        Dynamic_Version(const Version_t<u16> dynamic_version);
 
-        Vector_t<some<Quest_t*>>    Logic_Quests();
-
         void                        Create_State(Bool_t is_new_game);
         void                        Create_State(const Version_t<u16> version_to_update);
         void                        Delete_State();
+
+        Party::Main_t&              Party();
+        Hotkeys_t&                  Hotkeys();
 
     public:
         void    New_Game();

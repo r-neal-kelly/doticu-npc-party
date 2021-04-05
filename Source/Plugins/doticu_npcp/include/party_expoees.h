@@ -7,7 +7,7 @@
 #include "doticu_skylib/enum_script_type.h"
 
 #include "intrinsic.h"
-#include "party_members.h"
+#include "party_main.h"
 
 namespace doticu_npcp { namespace Party {
 
@@ -20,7 +20,7 @@ namespace doticu_npcp { namespace Party {
         };
 
     public:
-        static constexpr size_t MAX_EXPOEES = Members_t::MAX_MEMBERS;
+        static constexpr size_t MAX_EXPOEES = Main_t::MAX_EXPOEES;
 
     public:
         class Save_State

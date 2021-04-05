@@ -224,6 +224,18 @@
     <ClInclude Include="include\party_settler_flags_guard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\party_settler_id.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_expoee_id.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_display_id.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_follower_id.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="scripts\doticu_npcp.psc" />

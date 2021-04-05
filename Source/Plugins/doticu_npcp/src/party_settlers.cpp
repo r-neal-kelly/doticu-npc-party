@@ -6,6 +6,10 @@
 #include "doticu_skylib/reference.h"
 #include "doticu_skylib/virtual_macros.h"
 
+#include "main.h"
+#include "npcp.h"
+#include "party_main.h"
+#include "party_members.h"
 #include "party_settlers.h"
 
 namespace doticu_npcp { namespace Party {
@@ -588,6 +592,49 @@ namespace doticu_npcp { namespace Party {
 
     void Settlers_t::Validate()
     {
+    }
+
+    Bool_t Settlers_t::Has_Settler(some<Member_ID_t> member_id)
+    {
+        SKYLIB_ASSERT_SOME(member_id);
+
+        if (NPCP.Main().Party().Members().Has_Member(member_id)) {
+            return Has_Sandboxer(member_id);
+        } else {
+            return false;
+        }
+    }
+
+    Bool_t Settlers_t::Has_Settler(some<Settler_ID_t> settler_id)
+    {
+        SKYLIB_ASSERT_SOME(settler_id);
+
+        return Has_Sandboxer(settler_id()());
+    }
+
+    Bool_t Settlers_t::Has_Settler(some<Actor_t*> actor)
+    {
+        maybe<Member_ID_t> valid_member_id = NPCP.Main().Party().Members().Used_Member_ID(actor);
+        if (valid_member_id) {
+            return Has_Sandboxer(valid_member_id());
+        } else {
+            return false;
+        }
+    }
+
+    Bool_t Settlers_t::Has_Sandboxer(some<Member_ID_t> valid_member_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_member_id);
+        SKYLIB_ASSERT(NPCP.Main().Party().Members().Has_Member(valid_member_id));
+
+        return this->save_state.sandboxer_flags[valid_member_id()].Is_Flagged(Settler_Flags_Sandboxer_e::IS_ENABLED);
+    }
+
+    Bool_t Settlers_t::Has_Sleeper(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT(Has_Settler(valid_settler_id));
+
+        return this->save_state.sleeper_flags[valid_settler_id()].Is_Flagged(Settler_Flags_Sleeper_e::IS_ENABLED);
     }
 
 }}

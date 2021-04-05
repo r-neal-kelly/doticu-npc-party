@@ -5,8 +5,8 @@
 #pragma once
 
 #include "intrinsic.h"
+#include "party_main.h"
 #include "party_member_id.h"
-#include "party_members.h"
 #include "party_settler_attention.h"
 #include "party_settler_duration.h"
 #include "party_settler_duration_hours.h"
@@ -16,6 +16,7 @@
 #include "party_settler_flags_sandboxer.h"
 #include "party_settler_flags_sitter.h"
 #include "party_settler_flags_sleeper.h"
+#include "party_settler_id.h"
 #include "party_settler_radius.h"
 #include "party_settler_speed.h"
 #include "party_settler_time.h"
@@ -35,7 +36,7 @@ namespace doticu_npcp { namespace Party {
         };
 
     public:
-        static constexpr size_t                                 MAX_SETTLERS                = Members_t::MAX_MEMBERS;
+        static constexpr size_t                                 MAX_SETTLERS                = Main_t::MAX_SETTLERS;
 
         static constexpr Settler_Radius_t::value_type           DEFAULT_RADIUS              = 2048;
 
@@ -192,6 +193,12 @@ namespace doticu_npcp { namespace Party {
 
     public:
         void    Validate();
+
+        Bool_t  Has_Settler(some<Member_ID_t> member_id);
+        Bool_t  Has_Settler(some<Settler_ID_t> settler_id);
+        Bool_t  Has_Settler(some<Actor_t*> actor);
+        Bool_t  Has_Sandboxer(some<Member_ID_t> valid_member_id);
+        Bool_t  Has_Sleeper(some<Settler_ID_t> valid_settler_id);
 
     public:
         void    Log(std::string indent = "");

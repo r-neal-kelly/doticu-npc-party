@@ -376,21 +376,21 @@ namespace doticu_npcp { namespace Party {
         suit_types.resize(MAX_MEMBERS);
         vitalities.resize(MAX_MEMBERS);
 
-        for (Member_ID_t member_id = 0, end = this->actors.size(); member_id < end; member_id += 1) {
-            Member_Flags_e& flags = this->flags[member_id];
-            flags.Is_Flagged(Member_Flags_e::IS_BANISHED, is_banished_flags[member_id]);
-            flags.Is_Flagged(Member_Flags_e::IS_CLONE, is_clone_flags[member_id]);
-            flags.Is_Flagged(Member_Flags_e::IS_IMMOBILE, is_immobile_flags[member_id]);
-            flags.Is_Flagged(Member_Flags_e::IS_MANNEQUIN, is_mannequin_flags[member_id]);
-            flags.Is_Flagged(Member_Flags_e::IS_PARALYZED, is_paralyzed_flags[member_id]);
-            flags.Is_Flagged(Member_Flags_e::IS_REANIMATED, is_reanimated_flags[member_id]);
-            flags.Is_Flagged(Member_Flags_e::IS_THRALL, is_thrall_flags[member_id]);
+        for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
+            Member_Flags_e& flags = this->flags[idx];
+            flags.Is_Flagged(Member_Flags_e::IS_BANISHED, is_banished_flags[idx]);
+            flags.Is_Flagged(Member_Flags_e::IS_CLONE, is_clone_flags[idx]);
+            flags.Is_Flagged(Member_Flags_e::IS_IMMOBILE, is_immobile_flags[idx]);
+            flags.Is_Flagged(Member_Flags_e::IS_MANNEQUIN, is_mannequin_flags[idx]);
+            flags.Is_Flagged(Member_Flags_e::IS_PARALYZED, is_paralyzed_flags[idx]);
+            flags.Is_Flagged(Member_Flags_e::IS_REANIMATED, is_reanimated_flags[idx]);
+            flags.Is_Flagged(Member_Flags_e::IS_THRALL, is_thrall_flags[idx]);
 
-            this->alphas[member_id] = alphas[member_id];
-            this->ratings[member_id] = ratings[member_id];
-            this->relations[member_id] = relations[member_id];
-            this->suit_types[member_id] = suit_types[member_id];
-            this->vitalities[member_id] = vitalities[member_id];
+            this->alphas[idx] = alphas[idx];
+            this->ratings[idx] = ratings[idx];
+            this->relations[idx] = relations[idx];
+            this->suit_types[idx] = suit_types[idx];
+            this->vitalities[idx] = vitalities[idx];
         }
     }
 
@@ -410,7 +410,7 @@ namespace doticu_npcp { namespace Party {
         Vector_t<String_t> suit_types(MAX_MEMBERS, "");
         Vector_t<String_t> vitalities(MAX_MEMBERS, "");
 
-        for (Member_ID_t idx = 0, end = this->actors.size(); idx < end; idx += 1) {
+        for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
             if (this->actors[idx]) {
                 Member_Flags_e flags = this->flags[idx];
                 is_banished_flags[idx] = flags.Is_Flagged(Member_Flags_e::IS_BANISHED);
@@ -654,12 +654,12 @@ namespace doticu_npcp { namespace Party {
 
     Members_t::~Members_t()
     {
-        for (Member_ID_t member_id = 0, end = this->custom_bases.size(); member_id < end; member_id += 1) {
-            maybe<Actor_Base_t*> custom_base = this->custom_bases[member_id];
+        for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
+            maybe<Actor_Base_t*> custom_base = this->custom_bases[idx];
             if (custom_base) {
-                maybe<Actor_t*> actor = this->save_state.actors[member_id];
+                maybe<Actor_t*> actor = this->save_state.actors[idx];
                 if (actor) {
-                    maybe<Actor_Base_t*> original_base = this->save_state.original_bases[member_id];
+                    maybe<Actor_Base_t*> original_base = this->save_state.original_bases[idx];
                     if (original_base) {
                         actor->Actor_Base(original_base(), false);
                         Actor_Base_t::Destroy(custom_base());
@@ -667,7 +667,7 @@ namespace doticu_npcp { namespace Party {
                 } else {
                     Actor_Base_t::Destroy(custom_base());
                 }
-                this->custom_bases[member_id] = none<Actor_Base_t*>();
+                this->custom_bases[idx] = none<Actor_Base_t*>();
             }
         }
 
@@ -676,9 +676,9 @@ namespace doticu_npcp { namespace Party {
 
     void Members_t::Before_Save()
     {
-        for (Member_ID_t member_id = 0, end = this->save_state.actors.size(); member_id < end; member_id += 1) {
-            if (Validate_Member(member_id)) {
-                Actor(member_id)->Actor_Base(Original_Base(member_id), false);
+        for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
+            if (Validate_Member(idx)) {
+                Actor(idx)->Actor_Base(Original_Base(idx), false);
             }
         }
         this->save_state.Write();
@@ -686,9 +686,9 @@ namespace doticu_npcp { namespace Party {
 
     void Members_t::After_Save()
     {
-        for (Member_ID_t member_id = 0, end = this->save_state.actors.size(); member_id < end; member_id += 1) {
-            if (Has_Member(member_id)) {
-                Actor(member_id)->Actor_Base(Custom_Base(member_id), false);
+        for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
+            if (Has_Member(idx)) {
+                Actor(idx)->Actor_Base(Custom_Base(idx), false);
             }
         }
     }
@@ -713,37 +713,47 @@ namespace doticu_npcp { namespace Party {
         return this->quest->Has_Alias_ID(alias_id);
     }
 
-    Bool_t Members_t::Has_Member(Member_ID_t member_id)
+    Bool_t Members_t::Has_Member(some<Member_ID_t> member_id)
     {
-        if (member_id < MAX_MEMBERS) {
-            maybe<Actor_t*> actor = this->save_state.actors[member_id];
-            maybe<Actor_Base_t*> base = this->save_state.original_bases[member_id];
-            return
-                actor && actor->Is_Valid() && actor->Isnt_Deleted() &&
-                base && base->Is_Valid() && base->Isnt_Deleted();
-        } else {
-            return false;
-        }
+        SKYLIB_ASSERT_SOME(member_id);
+
+        maybe<Actor_t*> actor = this->save_state.actors[member_id()];
+        maybe<Actor_Base_t*> base = this->save_state.original_bases[member_id()];
+        return
+            actor && actor->Is_Valid() && actor->Isnt_Deleted() &&
+            base && base->Is_Valid() && base->Isnt_Deleted();
     }
 
     Bool_t Members_t::Has_Member(some<Actor_t*> actor)
     {
         SKYLIB_ASSERT_SOME(actor);
 
-        for (size_t member_id = 0, end = this->save_state.actors.size(); member_id < end; member_id += 1) {
-            if (this->save_state.actors[member_id] == actor) {
-                return Has_Member(member_id);
+        for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
+            if (this->save_state.actors[idx] == actor) {
+                return Has_Member(idx);
             }
         }
         return false;
     }
 
-    maybe<Member_ID_t> Members_t::Maybe_Free_Member_ID()
+    maybe<Member_ID_t> Members_t::Used_Member_ID(some<Actor_t*> actor)
+    {
+        SKYLIB_ASSERT_SOME(actor);
+
+        for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
+            if (this->save_state.actors[idx] == actor && Has_Member(idx)) {
+                return idx;
+            }
+        }
+        return none<Member_ID_t>();
+    }
+
+    maybe<Member_ID_t> Members_t::Unused_Member_ID()
     {
         // this needs to be locked.
-        for (size_t member_id = 0, end = this->save_state.actors.size(); member_id < end; member_id += 1) {
-            if (!Has_Member(member_id)) {
-                return member_id;
+        for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
+            if (!Has_Member(idx)) {
+                return idx;
             }
         }
         return none<Member_ID_t>();
@@ -824,10 +834,9 @@ namespace doticu_npcp { namespace Party {
         if (actor->Is_Valid() && actor->Isnt_Deleted() && !Has_Member(actor)) {
             maybe<Actor_Base_t*> base = actor->Actor_Base();
             if (base && base->Is_Valid() && base->Isnt_Deleted()) {
-                maybe<Member_ID_t> maybe_member_id = Maybe_Free_Member_ID();
-                if (maybe_member_id.Has_Value()) {
-                    Member_ID_t member_id = maybe_member_id.Value();
-                    Party::Add_Member(this, member_id, actor, base());
+                maybe<Member_ID_t> member_id = Unused_Member_ID();
+                if (member_id) {
+                    Party::Add_Member(this, member_id(), actor, base());
                     return member_id;
                 } else {
                     return none<Member_ID_t>();
@@ -845,12 +854,11 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT_SOME(base);
 
         if (base->Is_Valid() && base->Isnt_Deleted()) {
-            maybe<Member_ID_t> maybe_member_id = Maybe_Free_Member_ID();
-            if (maybe_member_id.Has_Value()) {
+            maybe<Member_ID_t> member_id = Unused_Member_ID();
+            if (member_id) {
                 maybe<Actor_t*> actor = Actor_t::Create(base, true, true, true);
                 if (actor && actor->Is_Valid() && actor->Isnt_Deleted()) {
-                    Member_ID_t member_id = maybe_member_id.Value();
-                    Party::Add_Member(this, member_id, actor(), base);
+                    Party::Add_Member(this, member_id(), actor(), base);
                     return member_id;
                 } else {
                     return none<Member_ID_t>();
@@ -869,13 +877,12 @@ namespace doticu_npcp { namespace Party {
 
         maybe<Actor_Base_t*> base = actor->Actor_Base();
         if (base && base->Is_Valid() && base->Isnt_Deleted()) {
-            maybe<Member_ID_t> maybe_member_id = Maybe_Free_Member_ID();
-            if (maybe_member_id.Has_Value()) {
+            maybe<Member_ID_t> member_id = Unused_Member_ID();
+            if (member_id) {
                 maybe<Actor_t*> actor = Actor_t::Create(base(), true, true, true);
                 if (actor && actor->Is_Valid() && actor->Isnt_Deleted()) {
-                    Member_ID_t member_id = maybe_member_id.Value();
-                    this->save_state.flags[member_id].Flag(Member_Flags_e::IS_CLONE);
-                    Party::Add_Member(this, member_id, actor(), base());
+                    this->save_state.flags[member_id()].Flag(Member_Flags_e::IS_CLONE);
+                    Party::Add_Member(this, member_id(), actor(), base());
                     return member_id;
                 } else {
                     return none<Member_ID_t>();
@@ -900,8 +907,8 @@ namespace doticu_npcp { namespace Party {
     size_t Members_t::Member_Count()
     {
         size_t result = 0;
-        for (size_t member_id = 0, end = this->save_state.actors.size(); member_id < end; member_id += 1) {
-            if (Has_Member(member_id)) {
+        for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
+            if (Has_Member(idx)) {
                 result += 1;
             }
         }
@@ -927,17 +934,17 @@ namespace doticu_npcp { namespace Party {
         }
 
         // we unfill first because the quest currently doesn't allow dupe aliases.
-        for (Member_ID_t member_id = 0, end = this->save_state.actors.size(); member_id < end; member_id += 1) {
-            maybe<Alias_Reference_t*> alias_reference = this->quest->Index_To_Alias_Reference(member_id);
+        for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
+            maybe<Alias_Reference_t*> alias_reference = this->quest->Index_To_Alias_Reference(idx);
             SKYLIB_ASSERT_SOME(alias_reference);
             alias_reference->Unfill(none<V::Callback_i*>());
         }
 
-        for (Member_ID_t member_id = 0, end = this->save_state.actors.size(); member_id < end; member_id += 1) {
-            if (Has_Member(member_id)) {
-                Fill_Member(this, member_id, Actor(member_id));
+        for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
+            if (Has_Member(idx)) {
+                Fill_Member(this, idx, Actor(idx));
             } else {
-                Remove_Member(member_id);
+                Remove_Member(idx);
             }
         }
     }
@@ -1535,8 +1542,8 @@ namespace doticu_npcp { namespace Party {
 
     void Members_t::Validate_Members()
     {
-        for (size_t member_id = 0, end = this->save_state.actors.size(); member_id < end; member_id += 1) {
-            Validate_Member(member_id);
+        for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
+            Validate_Member(idx);
         }
     }
 

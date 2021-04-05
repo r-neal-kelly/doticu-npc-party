@@ -12,13 +12,13 @@
 
 namespace doticu_npcp { namespace Party {
 
-    class Member_ID_t_data :
+    class Follower_ID_t_data :
         public Numeric_Data_t<size_t>
     {
     public:
         static constexpr value_type _NONE_  = ~0;
         static constexpr value_type _MIN_   = 0;
-        static constexpr value_type _MAX_   = Main_t::MAX_MEMBERS - 1;
+        static constexpr value_type _MAX_   = Main_t::MAX_FOLLOWERS - 1;
 
     public:
         static Bool_t Is_Valid(value_type value)
@@ -27,8 +27,8 @@ namespace doticu_npcp { namespace Party {
         }
     };
 
-    class Member_ID_t :
-        public Numeric_t<Member_ID_t_data>
+    class Follower_ID_t :
+        public Numeric_t<Follower_ID_t_data>
     {
     public:
         using Numeric_t::Numeric_t;
@@ -39,24 +39,24 @@ namespace doticu_npcp { namespace Party {
 namespace doticu_skylib {
 
     template <>
-    class none<doticu_npcp::Party::Member_ID_t> :
-        public none_numeric<doticu_npcp::Party::Member_ID_t>
+    class none<doticu_npcp::Party::Follower_ID_t> :
+        public none_numeric<doticu_npcp::Party::Follower_ID_t>
     {
     public:
         using none_numeric::none_numeric;
     };
 
     template <>
-    class maybe<doticu_npcp::Party::Member_ID_t> :
-        public maybe_numeric<doticu_npcp::Party::Member_ID_t>
+    class maybe<doticu_npcp::Party::Follower_ID_t> :
+        public maybe_numeric<doticu_npcp::Party::Follower_ID_t>
     {
     public:
         using maybe_numeric::maybe_numeric;
     };
 
     template <>
-    class some<doticu_npcp::Party::Member_ID_t> :
-        public some_numeric<doticu_npcp::Party::Member_ID_t>
+    class some<doticu_npcp::Party::Follower_ID_t> :
+        public some_numeric<doticu_npcp::Party::Follower_ID_t>
     {
     public:
         using some_numeric::some_numeric;

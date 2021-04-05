@@ -4,23 +4,36 @@
 
 #pragma once
 
+#include "doticu_skylib/unique.h"
+
 #include "intrinsic.h"
-#include "party_displays.h"
-#include "party_expoees.h"
-#include "party_followers.h"
-#include "party_members.h"
-#include "party_settlers.h"
 
 namespace doticu_npcp { namespace Party {
+
+    class Displays_t;
+    class Expoees_t;
+    class Followers_t;
+    class Members_t;
+    class Settlers_t;
 
     class Main_t
     {
     public:
-        Members_t   members;
-        Settlers_t  settlers;
-        Expoees_t   expoees;
-        Displays_t  displays;
-        Followers_t followers;
+        static constexpr size_t MAX_MEMBERS     = 1024;
+        static constexpr size_t MAX_SETTLERS    = MAX_MEMBERS;
+        static constexpr size_t MAX_EXPOEES     = MAX_MEMBERS;
+        static constexpr size_t MAX_DISPLAYS    = 16;
+        static constexpr size_t MAX_FOLLOWERS   = 16;
+
+    public:
+        static void Register_Me(some<V::Machine_t*> machine);
+
+    public:
+        const some<unique<Members_t>>   members;
+        const some<unique<Settlers_t>>  settlers;
+        const some<unique<Expoees_t>>   expoees;
+        const some<unique<Displays_t>>  displays;
+        const some<unique<Followers_t>> followers;
 
     public:
         Main_t(Bool_t is_new_game);
@@ -34,6 +47,13 @@ namespace doticu_npcp { namespace Party {
     public:
         void    Before_Save();
         void    After_Save();
+
+    public:
+        Members_t&      Members();
+        Settlers_t&     Settlers();
+        Expoees_t&      Expoees();
+        Displays_t&     Displays();
+        Followers_t&    Followers();
 
     public:
         void    Log(std::string indent = "");
