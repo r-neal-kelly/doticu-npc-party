@@ -5,7 +5,24 @@
 #pragma once
 
 #include "intrinsic.h"
+#include "party_member_id.h"
 #include "party_members.h"
+#include "party_settler_attention.h"
+#include "party_settler_duration.h"
+#include "party_settler_duration_hours.h"
+#include "party_settler_duration_minutes.h"
+#include "party_settler_flags_eater.h"
+#include "party_settler_flags_guard.h"
+#include "party_settler_flags_sandboxer.h"
+#include "party_settler_flags_sitter.h"
+#include "party_settler_flags_sleeper.h"
+#include "party_settler_radius.h"
+#include "party_settler_speed.h"
+#include "party_settler_time.h"
+#include "party_settler_time_am_pm.h"
+#include "party_settler_time_hour.h"
+#include "party_settler_time_minute.h"
+#include "party_settler_wander_distance.h"
 
 namespace doticu_npcp { namespace Party {
 
@@ -18,13 +35,77 @@ namespace doticu_npcp { namespace Party {
         };
 
     public:
-        static constexpr size_t MAX_SETTLERS    = Members_t::MAX_MEMBERS;
+        static constexpr size_t                                 MAX_SETTLERS                = Members_t::MAX_MEMBERS;
+
+        static constexpr Settler_Radius_t::value_type           DEFAULT_RADIUS              = 2048;
+
+        static constexpr Settler_Time_AM_PM_e::value_type       DEFAULT_TIME_AM_PM          = Settler_Time_AM_PM_e::PM;
+        static constexpr Settler_Time_Hour_t::value_type        DEFAULT_TIME_HOUR           = 6;
+        static constexpr Settler_Time_Minute_t::value_type      DEFAULT_TIME_MINUTE         = 0;
+
+        static constexpr Settler_Duration_Hours_t::value_type   DEFAULT_DURATION_HOURS      = 4;
+        static constexpr Settler_Duration_Minutes_t::value_type DEFAULT_DURATION_MINUTES    = 0;
+
+        static constexpr Settler_Attention_t::value_type        DEFAULT_ATTENTION           = 50;
+
+        static constexpr Settler_Speed_e::value_type            DEFAULT_SPEED               = Settler_Speed_e::WALK;
+
+        static constexpr Settler_Wander_Distance_t::value_type  DEFAULT_WANDER_DISTANCE     = 512;
+
+    public:
+        static const    Settler_Duration_t  DEFAULT_DURATION;
+        static const    Settler_Time_t      DEFAULT_TIME;
 
     public:
         class Save_State
         {
         public:
-            const some<Quest_t*>    quest;
+            const some<Quest_t*>                        quest;
+
+            Vector_t<Settler_Flags_Sandboxer_e>         sandboxer_flags;
+            Vector_t<Settler_Flags_Sleeper_e>           sleeper_flags;
+            Vector_t<Settler_Flags_Sitter_e>            sitter_flags;
+            Vector_t<Settler_Flags_Eater_e>             eater_flags;
+            Vector_t<Settler_Flags_Guard_e>             guard_flags;
+
+            Vector_t<maybe<Reference_t*>>               sleeper_markers;
+            Vector_t<maybe<Reference_t*>>               sitter_markers;
+            Vector_t<maybe<Reference_t*>>               eater_markers;
+            Vector_t<maybe<Reference_t*>>               guard_markers;
+
+            Vector_t<maybe<Settler_Radius_t>>           sandboxer_radii;
+            Vector_t<maybe<Settler_Radius_t>>           sleeper_radii;
+            Vector_t<maybe<Settler_Radius_t>>           sitter_radii;
+            Vector_t<maybe<Settler_Radius_t>>           eater_radii;
+            Vector_t<maybe<Settler_Radius_t>>           guard_radii;
+
+            Vector_t<maybe<Settler_Time_t>>             sleeper_times;
+            Vector_t<maybe<Settler_Time_t>>             sitter_times;
+            Vector_t<maybe<Settler_Time_t>>             eater_times;
+            Vector_t<maybe<Settler_Time_t>>             guard_times;
+
+            Vector_t<maybe<Settler_Duration_t>>         sleeper_durations;
+            Vector_t<maybe<Settler_Duration_t>>         sitter_durations;
+            Vector_t<maybe<Settler_Duration_t>>         eater_durations;
+            Vector_t<maybe<Settler_Duration_t>>         guard_durations;
+
+            Vector_t<maybe<Settler_Attention_t>>        sandboxer_attentions;
+            Vector_t<maybe<Settler_Attention_t>>        sleeper_attentions;
+            Vector_t<maybe<Settler_Attention_t>>        sitter_attentions;
+            Vector_t<maybe<Settler_Attention_t>>        eater_attentions;
+            Vector_t<maybe<Settler_Attention_t>>        guard_attentions;
+
+            Vector_t<maybe<Settler_Speed_e>>            sandboxer_speeds;
+            Vector_t<maybe<Settler_Speed_e>>            sleeper_speeds;
+            Vector_t<maybe<Settler_Speed_e>>            sitter_speeds;
+            Vector_t<maybe<Settler_Speed_e>>            eater_speeds;
+            Vector_t<maybe<Settler_Speed_e>>            guard_speeds;
+
+            Vector_t<maybe<Settler_Wander_Distance_t>>  sandboxer_wander_distances;
+            Vector_t<maybe<Settler_Wander_Distance_t>>  sleeper_wander_distances;
+            Vector_t<maybe<Settler_Wander_Distance_t>>  eater_wander_distances;
+
+            Vector_t<maybe<Reference_t*>>               sleeper_beds;
 
         public:
             Save_State(const some<Quest_t*> quest);
@@ -35,7 +116,52 @@ namespace doticu_npcp { namespace Party {
             ~Save_State();
 
         public:
-            some<V::Object_t*>  Object();
+            some<V::Object_t*>                              Object();
+
+            V::Variable_tt<Vector_t<Int_t>>&                Sandboxer_Flags();
+            V::Variable_tt<Vector_t<Int_t>>&                Sleeper_Flags();
+            V::Variable_tt<Vector_t<Int_t>>&                Sitter_Flags();
+            V::Variable_tt<Vector_t<Int_t>>&                Eater_Flags();
+            V::Variable_tt<Vector_t<Int_t>>&                Guard_Flags();
+
+            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&  Sleeper_Markers();
+            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&  Sitter_Markers();
+            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&  Eater_Markers();
+            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&  Guard_Markers();
+
+            V::Variable_tt<Vector_t<Int_t>>&                Sandboxer_Radii();
+            V::Variable_tt<Vector_t<Int_t>>&                Sleeper_Radii();
+            V::Variable_tt<Vector_t<Int_t>>&                Sitter_Radii();
+            V::Variable_tt<Vector_t<Int_t>>&                Eater_Radii();
+            V::Variable_tt<Vector_t<Int_t>>&                Guard_Radii();
+
+            V::Variable_tt<Vector_t<Int_t>>&                Sleeper_Times();
+            V::Variable_tt<Vector_t<Int_t>>&                Sitter_Times();
+            V::Variable_tt<Vector_t<Int_t>>&                Eater_Times();
+            V::Variable_tt<Vector_t<Int_t>>&                Guard_Times();
+
+            V::Variable_tt<Vector_t<Int_t>>&                Sleeper_Durations();
+            V::Variable_tt<Vector_t<Int_t>>&                Sitter_Durations();
+            V::Variable_tt<Vector_t<Int_t>>&                Eater_Durations();
+            V::Variable_tt<Vector_t<Int_t>>&                Guard_Durations();
+
+            V::Variable_tt<Vector_t<Int_t>>&                Sandboxer_Attentions();
+            V::Variable_tt<Vector_t<Int_t>>&                Sleeper_Attentions();
+            V::Variable_tt<Vector_t<Int_t>>&                Sitter_Attentions();
+            V::Variable_tt<Vector_t<Int_t>>&                Eater_Attentions();
+            V::Variable_tt<Vector_t<Int_t>>&                Guard_Attentions();
+
+            V::Variable_tt<Vector_t<Int_t>>&                Sandboxer_Speeds();
+            V::Variable_tt<Vector_t<Int_t>>&                Sleeper_Speeds();
+            V::Variable_tt<Vector_t<Int_t>>&                Sitter_Speeds();
+            V::Variable_tt<Vector_t<Int_t>>&                Eater_Speeds();
+            V::Variable_tt<Vector_t<Int_t>>&                Guard_Speeds();
+
+            V::Variable_tt<Vector_t<Int_t>>&                Sandboxer_Wander_Distances();
+            V::Variable_tt<Vector_t<Int_t>>&                Sleeper_Wander_Distances();
+            V::Variable_tt<Vector_t<Int_t>>&                Eater_Wander_Distances();
+
+            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&  Sleeper_Beds();
 
         public:
             void    Read();

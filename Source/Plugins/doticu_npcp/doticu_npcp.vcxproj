@@ -84,6 +84,9 @@
     <ClCompile Include="src\party_member_suit_type.cpp" />
     <ClCompile Include="src\party_member_update_ai.cpp" />
     <ClCompile Include="src\party_settlers.cpp" />
+    <ClCompile Include="src\party_settler_duration.cpp" />
+    <ClCompile Include="src\party_settler_time.cpp" />
+    <ClCompile Include="src\party_settler_time_am_pm.cpp" />
     <ClCompile Include="src\strings.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -115,6 +118,22 @@
     <ClInclude Include="include\party_member_update_ai.h" />
     <ClInclude Include="include\party_member_vitality.h" />
     <ClInclude Include="include\party_settlers.h" />
+    <ClInclude Include="include\party_settler_flags_eater.h" />
+    <ClInclude Include="include\party_settler_flags_guard.h" />
+    <ClInclude Include="include\party_settler_flags_sandboxer.h" />
+    <ClInclude Include="include\party_settler_flags_sitter.h" />
+    <ClInclude Include="include\party_settler_flags_sleeper.h" />
+    <ClInclude Include="include\party_settler_time_am_pm.h" />
+    <ClInclude Include="include\party_settler_attention.h" />
+    <ClInclude Include="include\party_settler_duration.h" />
+    <ClInclude Include="include\party_settler_time_hour.h" />
+    <ClInclude Include="include\party_settler_duration_hours.h" />
+    <ClInclude Include="include\party_settler_time_minute.h" />
+    <ClInclude Include="include\party_settler_duration_minutes.h" />
+    <ClInclude Include="include\party_settler_radius.h" />
+    <ClInclude Include="include\party_settler_speed.h" />
+    <ClInclude Include="include\party_settler_time.h" />
+    <ClInclude Include="include\party_settler_wander_distance.h" />
     <ClInclude Include="include\strings.h" />
   </ItemGroup>
   <ItemGroup>

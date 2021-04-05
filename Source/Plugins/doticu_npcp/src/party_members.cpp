@@ -29,8 +29,8 @@
 
 namespace doticu_npcp { namespace Party {
 
-    Members_t::Save_State::Save_State(Members_t& members) :
-        members(members),
+    Members_t::Save_State::Save_State(const some<Quest_t*> quest) :
+        quest(quest),
 
         limit(MAX_MEMBERS),
 
@@ -85,7 +85,7 @@ namespace doticu_npcp { namespace Party {
 
     some<V::Object_t*> Members_t::Save_State::Object()
     {
-        DEFINE_COMPONENT_OBJECT_METHOD(this->members.quest());
+        DEFINE_COMPONENT_OBJECT_METHOD(this->quest());
     }
 
     V::Variable_tt<Int_t>& Members_t::Save_State::Limit()
@@ -606,7 +606,7 @@ namespace doticu_npcp { namespace Party {
 
     Members_t::Members_t(some<Quest_t*> quest, Bool_t is_new_game) :
         quest(quest),
-        save_state(*this),
+        save_state(quest),
 
         custom_bases(Vector_t<maybe<Actor_Base_t*>>(MAX_MEMBERS)),
         scripts(Vector_t<maybe<Script_t*>>(MAX_MEMBERS)),
@@ -637,7 +637,7 @@ namespace doticu_npcp { namespace Party {
 
     Members_t::Members_t(some<Quest_t*> quest, const Version_t<u16> version_to_update) :
         quest(quest),
-        save_state(*this),
+        save_state(quest),
 
         custom_bases(Vector_t<maybe<Actor_Base_t*>>(MAX_MEMBERS)),
         scripts(Vector_t<maybe<Script_t*>>(MAX_MEMBERS)),

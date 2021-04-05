@@ -274,6 +274,7 @@ namespace doticu_npcp {
 
             //temp
             Party::Members_t& members = this->state->party.members;
+            Party::Settlers_t& settlers = this->state->party.settlers;
 
             members.Has_Untouchable_Invulnerables(false);
 

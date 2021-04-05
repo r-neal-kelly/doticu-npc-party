@@ -63,7 +63,7 @@ namespace doticu_npcp { namespace Party {
         class Save_State
         {
         public:
-            Members_t&                          members;
+            const some<Quest_t*>                quest;
 
             Int_t                               limit;
 
@@ -111,7 +111,7 @@ namespace doticu_npcp { namespace Party {
             Vector_t<maybe<Member_Vitality_e>>  vitalities;
 
         public:
-            Save_State(Members_t& members);
+            Save_State(const some<Quest_t*> quest);
             Save_State(const Save_State& other)                 = delete;
             Save_State(Save_State&& other) noexcept             = delete;
             Save_State& operator =(const Save_State& other)     = delete;
