@@ -253,7 +253,7 @@ namespace doticu_npcp { namespace Party {
         template <typename T>
         void                                Bed(some<Settler_ID_t> valid_settler_id, maybe<Reference_t*> bed);
 
-        void                                Validate_Settler(some<Settler_ID_t> settler_id);
+        void                                Enforce(some<Settler_ID_t> settler_id);
 
     public:
         void    Log(std::string indent = "");

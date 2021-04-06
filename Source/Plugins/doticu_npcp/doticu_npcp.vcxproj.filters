@@ -239,6 +239,24 @@
     <ClInclude Include="include\party_settler_flags.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\party_settler_value_sandboxer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_value_sleeper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_value_sitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_value_eater.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_value_guard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_value.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="scripts\doticu_npcp.psc" />

@@ -647,7 +647,7 @@ namespace doticu_npcp { namespace Party {
         maybe<Settler_ID_t> settler_id = valid_member_id();
         if (settler_id && !Has_Settler(settler_id())) {
             Is_Enabled<Sandboxer_t>(settler_id(), true);
-            Validate_Settler(settler_id());
+            Enforce(settler_id());
             return settler_id;
         } else {
             return none<Settler_ID_t>();
@@ -659,9 +659,25 @@ namespace doticu_npcp { namespace Party {
 
     }
 
-    void Settlers_t::Validate_Settler(some<Settler_ID_t> settler_id)
+    void Settlers_t::Enforce(some<Settler_ID_t> settler_id)
     {
+        SKYLIB_ASSERT_SOME(settler_id);
 
+        if (Is_Enabled<Sandboxer_t>(settler_id)) {
+            some<Package_t*> package = Package<Sandboxer_t>(settler_id);
+        }
+        if (Is_Enabled<Sleeper_t>(settler_id)) {
+
+        }
+        if (Is_Enabled<Sitter_t>(settler_id)) {
+
+        }
+        if (Is_Enabled<Eater_t>(settler_id)) {
+
+        }
+        if (Is_Enabled<Guard_t>(settler_id)) {
+
+        }
     }
 
 }}

@@ -329,8 +329,8 @@ namespace doticu_npcp { namespace Party {
         void                        Untokenize(Member_ID_t valid_member_id,
                                                some<Bound_Object_t*> object);
 
-        Bool_t                      Validate_Member(Member_ID_t member_id);
-        void                        Validate_Members();
+        Bool_t                      Enforce(Member_ID_t member_id);
+        void                        Enforce();
 
     public:
         void    Log(std::string indent = "");

@@ -677,7 +677,7 @@ namespace doticu_npcp { namespace Party {
     void Members_t::Before_Save()
     {
         for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
-            if (Validate_Member(idx)) {
+            if (Enforce(idx)) {
                 Actor(idx)->Actor_Base(Original_Base(idx), false);
             }
         }
@@ -821,7 +821,7 @@ namespace doticu_npcp { namespace Party {
         public:
             virtual void operator ()(V::Variable_t*) override
             {
-                this->self->Validate_Member(this->member_id);
+                this->self->Enforce(this->member_id);
             }
         };
         self->Alias_Reference(member_id)->Fill(actor, new Fill_Callback(self, member_id));
@@ -1405,7 +1405,7 @@ namespace doticu_npcp { namespace Party {
         entry->Decrement_Count(&container, Container_Entry_Count_t::_MAX_);
     }
 
-    Bool_t Members_t::Validate_Member(Member_ID_t member_id)
+    Bool_t Members_t::Enforce(Member_ID_t member_id)
     {
         // we may want a different smaller branch if the actor is in combat, or a separate func to call
 
@@ -1541,10 +1541,10 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
-    void Members_t::Validate_Members()
+    void Members_t::Enforce()
     {
         for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
-            Validate_Member(idx);
+            Enforce(idx);
         }
     }
 

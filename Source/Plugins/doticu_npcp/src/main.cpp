@@ -31,6 +31,7 @@
 #include "doticu_skylib/game.inl"
 #include "doticu_skylib/mod.h"
 #include "doticu_skylib/os.h"
+#include "doticu_skylib/package.h"
 #include "doticu_skylib/spell.h"
 #include "doticu_skylib/voice_type.h"
 
@@ -318,7 +319,7 @@ namespace doticu_npcp {
                     members.Relation(idx, Party::Member_Relation_e::ARCHNEMESIS);
                     members.Vitality(idx, Party::Member_Vitality_e::MORTAL);
                 }
-                members.Validate_Member(idx);
+                members.Enforce(idx);
             }
         }
 
@@ -337,33 +338,21 @@ namespace doticu_npcp {
         public:
             virtual void operator ()(V::Variable_t*) override
             {
-                self->Party().Members().Validate_Members();
+                self->Party().Members().Enforce();
                 V::Utility_t::Wait_Out_Of_Menu(2.0f, new Wait_Callback(self));
             }
         };
         V::Utility_t::Wait_Out_Of_Menu(2.0f, new Wait_Callback(this));
 
-        /*
         Vector_t<some<Form_t*>> forms = Game_t::Forms();
         for (size_t idx = 0, end = forms.size(); idx < end; idx += 1) {
-            maybe<Spell_t*> spell = forms[idx]->As_Spell();
-            if (spell) {
-                String_t name = spell->Name();
-
-                String_t editor_id;
-                maybe<Mod_t*> highest_mod = spell->Get_Highest_Mod();
-                if (highest_mod) {
-                    editor_id = highest_mod->Allocate_Editor_ID("SPEL", spell->form_id);
-                }
-
-                if (CString_t::Contains(name, "ghost", true) ||
-                    CString_t::Contains(editor_id, "ghost", true)) {
-                    String_t form_id = spell->form_id;
-                    _MESSAGE("%s: %s, %s", form_id, name, editor_id);
-                }
+            maybe<Package_t*> package = forms[idx]->As_Package();
+            if (package) {
+                _MESSAGE("package_form_id: %s", package->form_id.As_String());
+                package->Log_Data();
+                _MESSAGE("");
             }
         }
-        */
     }
     //
 
