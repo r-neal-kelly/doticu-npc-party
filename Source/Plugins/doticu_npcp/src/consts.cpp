@@ -146,7 +146,7 @@ namespace doticu_npcp {
     some<Form_List_t*>          Consts_t::NPCP::Form_List::Is_Saddler_Sitting_Globals()     { DEFINE_FORM(Mod(), Form_List_t, 0x395E54); }
     some<Form_List_t*>          Consts_t::NPCP::Form_List::Expo_Cell_Markers()              { DEFINE_FORM(Mod(), Form_List_t, 0x2928AF); }
     some<Form_List_t*>          Consts_t::NPCP::Form_List::Settler_Markers()                { DEFINE_FORM(Mod(), Form_List_t, 0x00B46E); }
-    some<Form_List_t*>          Consts_t::NPCP::Form_List::Settler_Packages()               { DEFINE_FORM(Mod(), Form_List_t, 0x3D2B03); }
+    some<Form_List_t*>          Consts_t::NPCP::Form_List::Settler_Sandboxer_Packages()     { DEFINE_FORM(Mod(), Form_List_t, 0x3D2B03); }
     some<Form_List_t*>          Consts_t::NPCP::Form_List::Settler_Sleeper_Packages()       { DEFINE_FORM(Mod(), Form_List_t, 0x3DCD0C); }
     some<Form_List_t*>          Consts_t::NPCP::Form_List::Settler_Sitter_Packages()        { DEFINE_FORM(Mod(), Form_List_t, 0x3E1E18); }
     some<Form_List_t*>          Consts_t::NPCP::Form_List::Settler_Eater_Packages()         { DEFINE_FORM(Mod(), Form_List_t, 0x3DCD0D); }

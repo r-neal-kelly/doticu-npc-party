@@ -246,6 +246,13 @@ namespace doticu_npcp { namespace Party {
         template <typename T>
         void                                Radius(some<Settler_ID_t> valid_settler_id, some<Settler_Radius_t> radius);
 
+        template <typename T>
+        Vector_t<maybe<Reference_t*>>&      Beds();
+        template <typename T>
+        maybe<Reference_t*>                 Bed(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                Bed(some<Settler_ID_t> valid_settler_id, maybe<Reference_t*> bed);
+
         void                                Validate_Settler(some<Settler_ID_t> settler_id);
 
     public:

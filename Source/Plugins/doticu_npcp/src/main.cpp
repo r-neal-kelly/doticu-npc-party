@@ -308,9 +308,6 @@ namespace doticu_npcp {
                     members.Vitality(idx, Party::Member_Vitality_e::INVULNERABLE);
 
                     settlers.Add_Settler(idx);
-                    _MESSAGE("default radius: %i", settlers.Radius<Party::Sandboxer_t>(idx));
-                    settlers.Radius<Party::Sandboxer_t>(idx, 512 + idx);
-                    _MESSAGE("custom radius: %i", settlers.Radius<Party::Sandboxer_t>(idx));
                 } else {
                     members.Is_Banished(idx, false);
                     members.Is_Reanimated(idx, true);
