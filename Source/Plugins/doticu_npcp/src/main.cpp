@@ -35,7 +35,7 @@
 #include "doticu_skylib/voice_type.h"
 
 #include "party_members.h"
-#include "party_settlers.h"
+#include "party_settlers.inl"
 //
 
 namespace doticu_npcp {
@@ -99,7 +99,10 @@ namespace doticu_npcp {
 
     Main_t::~Main_t()
     {
-        Delete_State();
+        // this needs to leak, as it's only called at the end of
+        // program's life when forms are already unloaded.
+        // we would crash if we tried to call its destructor.
+        this->state = none<State*>();
     }
 
     some<V::Object_t*> Main_t::Object()
@@ -269,92 +272,102 @@ namespace doticu_npcp {
 
             SKYLIB_LOG(NPCP_PRINT_HEAD + "Loaded.");
 
-            //temp
-            Party::Main_t& party = Party();
-            Party::Members_t& members = party.Members();
-            Party::Settlers_t& settlers = party.Settlers();
-
-            members.Has_Untouchable_Invulnerables(false);
-
-            some<Actor_Base_t*> vici = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x1327a)());
-            some<Actor_Base_t*> katria = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x02004D0C)());
-            some<Actor_Base_t*> maven = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x1336a)());
-            some<Actor_Base_t*> fjori = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x0003D725)());
-            for (size_t idx = 0, end = 50; idx < end; idx += 1) {
-                members.Add_Member(fjori);
-            }
-
-            for (size_t idx = 0, end = 1024; idx < end; idx += 1) {
-                if (members.Has_Member(idx)) {
-                    if (doticu_skylib::Is_Odd(idx)) {
-                        members.Is_Banished(idx, false);
-                        members.Is_Reanimated(idx, false);
-                        members.Name(idx, " Dark Elf Commoner ");
-                        members.Combat_Style(idx, Party::Member_Combat_Style_e::ARCHER);
-                        members.Ghost_Ability(idx, skylib::Const::Spell::Ghost_Ability_Soul_Cairn()());
-                        members.Voice_Type(idx, skylib::Const::Voice_Type::Female_Dark_Elf_Commoner()());
-                        members.Relation(idx, Party::Member_Relation_e::ALLY);
-                        members.Vitality(idx, Party::Member_Vitality_e::INVULNERABLE);
-                    } else {
-                        members.Is_Banished(idx, false);
-                        members.Is_Reanimated(idx, true);
-                        members.Name(idx, " Serana ");
-                        members.Combat_Style(idx, Party::Member_Combat_Style_e::COWARD);
-                        members.Ghost_Ability(idx, none<Spell_t*>());
-                        members.Voice_Type(idx, skylib::Const::Voice_Type::Female_Unique_Serana()());
-                        members.Relation(idx, Party::Member_Relation_e::ARCHNEMESIS);
-                        members.Vitality(idx, Party::Member_Vitality_e::MORTAL);
-                    }
-                    members.Validate_Member(idx);
-                }
-            }
-
-            class Wait_Callback :
-                public V::Callback_t
-            {
-            public:
-                some<Main_t*> self;
-
-            public:
-                Wait_Callback(some<Main_t*> self) :
-                    self(self)
-                {
-                }
-
-            public:
-                virtual void operator ()(V::Variable_t*) override
-                {
-                    self->Party().Members().Validate_Members();
-                    V::Utility_t::Wait_Out_Of_Menu(2.0f, new Wait_Callback(self));
-                }
-            };
-            V::Utility_t::Wait_Out_Of_Menu(2.0f, new Wait_Callback(this));
-
-            /*
-            Vector_t<some<Form_t*>> forms = Game_t::Forms();
-            for (size_t idx = 0, end = forms.size(); idx < end; idx += 1) {
-                maybe<Spell_t*> spell = forms[idx]->As_Spell();
-                if (spell) {
-                    String_t name = spell->Name();
-
-                    String_t editor_id;
-                    maybe<Mod_t*> highest_mod = spell->Get_Highest_Mod();
-                    if (highest_mod) {
-                        editor_id = highest_mod->Allocate_Editor_ID("SPEL", spell->form_id);
-                    }
-
-                    if (CString_t::Contains(name, "ghost", true) ||
-                        CString_t::Contains(editor_id, "ghost", true)) {
-                        String_t form_id = spell->form_id;
-                        _MESSAGE("%s: %s, %s", form_id, name, editor_id);
-                    }
-                }
-            }
-            */
-            //
+            Temp(); //temp
         } else {
             New_Game();
         }
     }
+
+    //temp
+    void Main_t::Temp()
+    {
+        Party::Main_t& party = Party();
+        Party::Members_t& members = party.Members();
+        Party::Settlers_t& settlers = party.Settlers();
+
+        members.Has_Untouchable_Invulnerables(false);
+
+        some<Actor_Base_t*> vici = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x1327a)());
+        some<Actor_Base_t*> katria = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x02004D0C)());
+        some<Actor_Base_t*> maven = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x1336a)());
+        some<Actor_Base_t*> fjori = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x0003D725)());
+        for (size_t idx = 0, end = 50; idx < end; idx += 1) {
+            members.Add_Member(fjori);
+        }
+
+        for (size_t idx = 0, end = 1024; idx < end; idx += 1) {
+            if (members.Has_Member(idx)) {
+                if (doticu_skylib::Is_Odd(idx)) {
+                    members.Is_Banished(idx, false);
+                    members.Is_Reanimated(idx, false);
+                    members.Name(idx, " Dark Elf Commoner ");
+                    members.Combat_Style(idx, Party::Member_Combat_Style_e::ARCHER);
+                    members.Ghost_Ability(idx, skylib::Const::Spell::Ghost_Ability_Soul_Cairn()());
+                    members.Voice_Type(idx, skylib::Const::Voice_Type::Female_Dark_Elf_Commoner()());
+                    members.Relation(idx, Party::Member_Relation_e::ALLY);
+                    members.Vitality(idx, Party::Member_Vitality_e::INVULNERABLE);
+
+                    settlers.Add_Settler(idx);
+                    _MESSAGE("default radius: %i", settlers.Radius<Party::Sandboxer_t>(idx));
+                    settlers.Radius<Party::Sandboxer_t>(idx, 512 + idx);
+                    _MESSAGE("custom radius: %i", settlers.Radius<Party::Sandboxer_t>(idx));
+                } else {
+                    members.Is_Banished(idx, false);
+                    members.Is_Reanimated(idx, true);
+                    members.Name(idx, " Serana ");
+                    members.Combat_Style(idx, Party::Member_Combat_Style_e::COWARD);
+                    members.Ghost_Ability(idx, none<Spell_t*>());
+                    members.Voice_Type(idx, skylib::Const::Voice_Type::Female_Unique_Serana()());
+                    members.Relation(idx, Party::Member_Relation_e::ARCHNEMESIS);
+                    members.Vitality(idx, Party::Member_Vitality_e::MORTAL);
+                }
+                members.Validate_Member(idx);
+            }
+        }
+
+        class Wait_Callback :
+            public V::Callback_t
+        {
+        public:
+            some<Main_t*> self;
+
+        public:
+            Wait_Callback(some<Main_t*> self) :
+                self(self)
+            {
+            }
+
+        public:
+            virtual void operator ()(V::Variable_t*) override
+            {
+                self->Party().Members().Validate_Members();
+                V::Utility_t::Wait_Out_Of_Menu(2.0f, new Wait_Callback(self));
+            }
+        };
+        V::Utility_t::Wait_Out_Of_Menu(2.0f, new Wait_Callback(this));
+
+        /*
+        Vector_t<some<Form_t*>> forms = Game_t::Forms();
+        for (size_t idx = 0, end = forms.size(); idx < end; idx += 1) {
+            maybe<Spell_t*> spell = forms[idx]->As_Spell();
+            if (spell) {
+                String_t name = spell->Name();
+
+                String_t editor_id;
+                maybe<Mod_t*> highest_mod = spell->Get_Highest_Mod();
+                if (highest_mod) {
+                    editor_id = highest_mod->Allocate_Editor_ID("SPEL", spell->form_id);
+                }
+
+                if (CString_t::Contains(name, "ghost", true) ||
+                    CString_t::Contains(editor_id, "ghost", true)) {
+                    String_t form_id = spell->form_id;
+                    _MESSAGE("%s: %s, %s", form_id, name, editor_id);
+                }
+            }
+        }
+        */
+    }
+    //
 
 }

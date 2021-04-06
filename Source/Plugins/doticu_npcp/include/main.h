@@ -61,7 +61,6 @@ namespace doticu_npcp {
         ~Main_t();
 
     public:
-        // we should move this to global data
         some<V::Object_t*>      Object();
 
         V::Variable_tt<Bool_t>& Is_Initialized();
@@ -88,6 +87,8 @@ namespace doticu_npcp {
         void    After_Save();
         void    Before_Load();
         void    After_Load();
+
+        void    Temp(); //temp
     };
 
 }

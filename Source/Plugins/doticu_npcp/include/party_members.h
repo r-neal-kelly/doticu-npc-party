@@ -252,7 +252,7 @@ namespace doticu_npcp { namespace Party {
 
     public:
         some<Alias_Reference_t*>    Alias_Reference(Member_ID_t valid_member_id);
-        some<Actor_t*>              Actor(Member_ID_t valid_member_id);
+        some<Actor_t*>              Actor(some<Member_ID_t> valid_member_id);
         some<Actor_Base_t*>         Original_Base(Member_ID_t valid_member_id);
         some<Actor_Base_t*>         Custom_Base(Member_ID_t valid_member_id);
         some<Script_t*>             Script(Member_ID_t valid_member_id);
@@ -316,6 +316,7 @@ namespace doticu_npcp { namespace Party {
         void                        Is_Invulnerable(Member_ID_t valid_member_id, Bool_t value);
 
     public:
+        // part of this functionality should probably go on main
         Bool_t                      Is_Enabled(Member_ID_t valid_member_id);
         Bool_t                      Is_Untouchable(Member_ID_t valid_member_id);
         Bool_t                      Has_AI(Member_ID_t valid_member_id);

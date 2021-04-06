@@ -958,11 +958,12 @@ namespace doticu_npcp { namespace Party {
         return alias_reference;
     }
 
-    some<Actor_t*> Members_t::Actor(Member_ID_t valid_member_id)
+    some<Actor_t*> Members_t::Actor(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        some<Actor_t*> actor = this->save_state.actors[valid_member_id]();
+        some<Actor_t*> actor = this->save_state.actors[valid_member_id()]();
         SKYLIB_ASSERT_SOME(actor);
         return actor;
     }

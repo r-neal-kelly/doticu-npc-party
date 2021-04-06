@@ -8,6 +8,7 @@ int[]               sitter_flags                = none
 int[]               eater_flags                 = none
 int[]               guard_flags                 = none
 
+ObjectReference[]   sandboxer_markers           = none
 ObjectReference[]   sleeper_markers             = none
 ObjectReference[]   sitter_markers              = none
 ObjectReference[]   eater_markers               = none

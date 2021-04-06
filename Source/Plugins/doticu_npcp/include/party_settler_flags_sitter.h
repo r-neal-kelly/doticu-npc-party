@@ -7,11 +7,12 @@
 #include "doticu_skylib/enum.h"
 
 #include "intrinsic.h"
+#include "party_settler_flags.h"
 
 namespace doticu_npcp { namespace Party {
 
     class Settler_Flags_Sitter_e :
-        public Enum_t<u32>
+        public Settler_Flags_e
     {
     public:
         enum enum_type : value_type
@@ -42,7 +43,7 @@ namespace doticu_npcp { namespace Party {
         };
 
     public:
-        using Enum_t::Enum_t;
+        using Settler_Flags_e::Settler_Flags_e;
     };
 
 }}

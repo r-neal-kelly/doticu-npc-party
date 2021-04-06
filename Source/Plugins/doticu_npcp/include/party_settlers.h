@@ -11,6 +11,7 @@
 #include "party_settler_duration.h"
 #include "party_settler_duration_hours.h"
 #include "party_settler_duration_minutes.h"
+#include "party_settler_flags.h"
 #include "party_settler_flags_eater.h"
 #include "party_settler_flags_guard.h"
 #include "party_settler_flags_sandboxer.h"
@@ -26,6 +27,12 @@
 #include "party_settler_wander_distance.h"
 
 namespace doticu_npcp { namespace Party {
+
+    class Eater_t;
+    class Guard_t;
+    class Sandboxer_t;
+    class Sitter_t;
+    class Sleeper_t;
 
     class Settlers_t
     {
@@ -69,6 +76,7 @@ namespace doticu_npcp { namespace Party {
             Vector_t<Settler_Flags_Eater_e>             eater_flags;
             Vector_t<Settler_Flags_Guard_e>             guard_flags;
 
+            Vector_t<maybe<Reference_t*>>               sandboxer_markers;
             Vector_t<maybe<Reference_t*>>               sleeper_markers;
             Vector_t<maybe<Reference_t*>>               sitter_markers;
             Vector_t<maybe<Reference_t*>>               eater_markers;
@@ -125,6 +133,7 @@ namespace doticu_npcp { namespace Party {
             V::Variable_tt<Vector_t<Int_t>>&                Eater_Flags();
             V::Variable_tt<Vector_t<Int_t>>&                Guard_Flags();
 
+            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&  Sandboxer_Markers();
             V::Variable_tt<Vector_t<maybe<Reference_t*>>>&  Sleeper_Markers();
             V::Variable_tt<Vector_t<maybe<Reference_t*>>>&  Sitter_Markers();
             V::Variable_tt<Vector_t<maybe<Reference_t*>>>&  Eater_Markers();
@@ -192,13 +201,52 @@ namespace doticu_npcp { namespace Party {
         void    After_Save();
 
     public:
-        void    Validate();
+        Members_t&          Members();
 
-        Bool_t  Has_Settler(some<Member_ID_t> member_id);
-        Bool_t  Has_Settler(some<Settler_ID_t> settler_id);
-        Bool_t  Has_Settler(some<Actor_t*> actor);
-        Bool_t  Has_Sandboxer(some<Member_ID_t> valid_member_id);
-        Bool_t  Has_Sleeper(some<Settler_ID_t> valid_settler_id);
+        Bool_t              Has_Settler(some<Settler_ID_t> settler_id);
+        Bool_t              Has_Settler(some<Member_ID_t> member_id);
+        Bool_t              Has_Settler(some<Actor_t*> actor);
+
+        maybe<Settler_ID_t> Add_Settler(some<Member_ID_t> valid_member_id);
+        Bool_t              Remove_Settler(some<Settler_ID_t> settler_id);
+
+        void                Validate();
+
+    public:
+        template <typename T>
+        Vector_t<Settler_Flags_e>&          Flags();
+        template <typename T>
+        Settler_Flags_e&                    Flags(some<Settler_ID_t> settler_id);
+        template <typename T>
+        Bool_t                              Is_Flagged(some<Settler_ID_t> settler_id, Settler_Flags_e flag);
+        template <typename T>
+        void                                Is_Flagged(some<Settler_ID_t> settler_id, Settler_Flags_e flag, Bool_t value);
+
+        template <typename T>
+        Bool_t                              Is_Enabled(some<Settler_ID_t> settler_id);
+        template <typename T>
+        void                                Is_Enabled(some<Settler_ID_t> settler_id, Bool_t value);
+
+        template <typename T>
+        some<Form_List_t*>                  Packages();
+        template <typename T>
+        some<Package_t*>                    Package(some<Settler_ID_t> valid_settler_id);
+
+        template <typename T>
+        Vector_t<maybe<Reference_t*>>&      Markers();
+        template <typename T>
+        some<Reference_t*>                  Marker(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                Move_Marker(some<Settler_ID_t> valid_settler_id, some<Reference_t*> to);
+
+        template <typename T>
+        Vector_t<maybe<Settler_Radius_t>>&  Radii();
+        template <typename T>
+        some<Settler_Radius_t>              Radius(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                Radius(some<Settler_ID_t> valid_settler_id, some<Settler_Radius_t> radius);
+
+        void                                Validate_Settler(some<Settler_ID_t> settler_id);
 
     public:
         void    Log(std::string indent = "");

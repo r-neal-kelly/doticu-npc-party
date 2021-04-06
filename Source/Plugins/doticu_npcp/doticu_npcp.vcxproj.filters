@@ -236,10 +236,16 @@
     <ClInclude Include="include\party_follower_id.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\party_settler_flags.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="scripts\doticu_npcp.psc" />
     <None Include="include\chests.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="include\party_settlers.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

@@ -9,6 +9,7 @@
 
 #include "intrinsic.h"
 #include "party_main.h"
+#include "party_member_id.h"
 
 namespace doticu_npcp { namespace Party {
 
@@ -32,6 +33,20 @@ namespace doticu_npcp { namespace Party {
     {
     public:
         using Numeric_t::Numeric_t;
+
+    public:
+        Settler_ID_t() = default;
+
+        Settler_ID_t(Member_ID_t member_id) :
+            Numeric_t(member_id())
+        {
+        }
+
+    public:
+        operator Member_ID_t() const
+        {
+            return this->value;
+        }
     };
 
 }}
@@ -44,6 +59,12 @@ namespace doticu_skylib {
     {
     public:
         using none_numeric::none_numeric;
+
+    public:
+        operator none<doticu_npcp::Party::Member_ID_t>() const
+        {
+            return none<doticu_npcp::Party::Member_ID_t>();
+        }
     };
 
     template <>
@@ -52,6 +73,20 @@ namespace doticu_skylib {
     {
     public:
         using maybe_numeric::maybe_numeric;
+
+    public:
+        maybe() = default;
+
+        maybe(doticu_npcp::Party::Member_ID_t member_id) :
+            maybe_numeric(member_id())
+        {
+        }
+
+    public:
+        operator maybe<doticu_npcp::Party::Member_ID_t>() const
+        {
+            return this->value();
+        }
     };
 
     template <>
@@ -60,6 +95,20 @@ namespace doticu_skylib {
     {
     public:
         using some_numeric::some_numeric;
+
+    public:
+        some() = delete;
+
+        some(doticu_npcp::Party::Member_ID_t member_id) :
+            some_numeric(member_id())
+        {
+        }
+
+    public:
+        operator some<doticu_npcp::Party::Member_ID_t>() const
+        {
+            return this->value();
+        }
     };
 
 }

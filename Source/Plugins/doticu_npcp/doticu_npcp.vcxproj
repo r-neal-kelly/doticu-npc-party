@@ -121,6 +121,7 @@
     <ClInclude Include="include\party_member_update_ai.h" />
     <ClInclude Include="include\party_member_vitality.h" />
     <ClInclude Include="include\party_settlers.h" />
+    <ClInclude Include="include\party_settler_flags.h" />
     <ClInclude Include="include\party_settler_flags_eater.h" />
     <ClInclude Include="include\party_settler_flags_guard.h" />
     <ClInclude Include="include\party_settler_flags_sandboxer.h" />
@@ -142,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="include\chests.inl" />
+    <None Include="include\party_settlers.inl" />
     <None Include="scripts\doticu_npcp.psc" />
   </ItemGroup>
   <ItemGroup>

@@ -2,15 +2,17 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "doticu_skylib/actor.h"
 #include "doticu_skylib/quest.h"
 #include "doticu_skylib/reference.h"
+#include "doticu_skylib/static.h"
 #include "doticu_skylib/virtual_macros.h"
 
 #include "main.h"
 #include "npcp.h"
 #include "party_main.h"
 #include "party_members.h"
-#include "party_settlers.h"
+#include "party_settlers.inl"
 
 namespace doticu_npcp { namespace Party {
 
@@ -26,6 +28,7 @@ namespace doticu_npcp { namespace Party {
         eater_flags(Vector_t<Settler_Flags_Eater_e>(MAX_SETTLERS, 0)),
         guard_flags(Vector_t<Settler_Flags_Guard_e>(MAX_SETTLERS, 0)),
 
+        sandboxer_markers(Vector_t<maybe<Reference_t*>>(MAX_SETTLERS, none<Reference_t*>())),
         sleeper_markers(Vector_t<maybe<Reference_t*>>(MAX_SETTLERS, none<Reference_t*>())),
         sitter_markers(Vector_t<maybe<Reference_t*>>(MAX_SETTLERS, none<Reference_t*>())),
         eater_markers(Vector_t<maybe<Reference_t*>>(MAX_SETTLERS, none<Reference_t*>())),
@@ -99,6 +102,11 @@ namespace doticu_npcp { namespace Party {
     V::Variable_tt<Vector_t<Int_t>>& Settlers_t::Save_State::Guard_Flags()
     {
         DEFINE_VARIABLE_REFERENCE(Vector_t<Int_t>, "guard_flags");
+    }
+
+    V::Variable_tt<Vector_t<maybe<Reference_t*>>>& Settlers_t::Save_State::Sandboxer_Markers()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Reference_t*>>, "sandboxer_markers");
     }
 
     V::Variable_tt<Vector_t<maybe<Reference_t*>>>& Settlers_t::Save_State::Sleeper_Markers()
@@ -265,6 +273,7 @@ namespace doticu_npcp { namespace Party {
         Vector_t<Int_t> eater_flags = Eater_Flags();
         Vector_t<Int_t> guard_flags = Guard_Flags();
 
+        this->sandboxer_markers = Sandboxer_Markers();
         this->sleeper_markers = Sleeper_Markers();
         this->sitter_markers = Sitter_Markers();
         this->eater_markers = Eater_Markers();
@@ -311,6 +320,7 @@ namespace doticu_npcp { namespace Party {
         eater_flags.resize(MAX_SETTLERS, 0);
         guard_flags.resize(MAX_SETTLERS, 0);
 
+        this->sandboxer_markers.resize(MAX_SETTLERS, none<Reference_t*>());
         this->sleeper_markers.resize(MAX_SETTLERS, none<Reference_t*>());
         this->sitter_markers.resize(MAX_SETTLERS, none<Reference_t*>());
         this->eater_markers.resize(MAX_SETTLERS, none<Reference_t*>());
@@ -481,6 +491,7 @@ namespace doticu_npcp { namespace Party {
         Eater_Flags() = eater_flags;
         Guard_Flags() = guard_flags;
 
+        Sandboxer_Markers() = this->sandboxer_markers;
         Sleeper_Markers() = this->sleeper_markers;
         Sitter_Markers() = this->sitter_markers;
         Eater_Markers() = this->eater_markers;
@@ -590,51 +601,67 @@ namespace doticu_npcp { namespace Party {
     {
     }
 
-    void Settlers_t::Validate()
+    Members_t& Settlers_t::Members()
     {
-    }
-
-    Bool_t Settlers_t::Has_Settler(some<Member_ID_t> member_id)
-    {
-        SKYLIB_ASSERT_SOME(member_id);
-
-        if (NPCP.Main().Party().Members().Has_Member(member_id)) {
-            return Has_Sandboxer(member_id);
-        } else {
-            return false;
-        }
+        return NPCP.Main().Party().Members();
     }
 
     Bool_t Settlers_t::Has_Settler(some<Settler_ID_t> settler_id)
     {
         SKYLIB_ASSERT_SOME(settler_id);
 
-        return Has_Sandboxer(settler_id()());
+        return
+            Is_Enabled<Sandboxer_t>(settler_id) ||
+            Is_Enabled<Sleeper_t>(settler_id) ||
+            Is_Enabled<Sitter_t>(settler_id) ||
+            Is_Enabled<Eater_t>(settler_id) ||
+            Is_Enabled<Guard_t>(settler_id);
     }
 
-    Bool_t Settlers_t::Has_Settler(some<Actor_t*> actor)
+    Bool_t Settlers_t::Has_Settler(some<Member_ID_t> member_id)
     {
-        maybe<Member_ID_t> valid_member_id = NPCP.Main().Party().Members().Used_Member_ID(actor);
-        if (valid_member_id) {
-            return Has_Sandboxer(valid_member_id());
+        SKYLIB_ASSERT_SOME(member_id);
+
+        if (Members().Has_Member(member_id)) {
+            return Has_Settler(some<Settler_ID_t>(member_id()));
         } else {
             return false;
         }
     }
 
-    Bool_t Settlers_t::Has_Sandboxer(some<Member_ID_t> valid_member_id)
+    Bool_t Settlers_t::Has_Settler(some<Actor_t*> actor)
     {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(NPCP.Main().Party().Members().Has_Member(valid_member_id));
-
-        return this->save_state.sandboxer_flags[valid_member_id()].Is_Flagged(Settler_Flags_Sandboxer_e::IS_ENABLED);
+        maybe<Member_ID_t> valid_member_id = Members().Used_Member_ID(actor);
+        if (valid_member_id) {
+            return Has_Settler(some<Settler_ID_t>(valid_member_id()));
+        } else {
+            return false;
+        }
     }
 
-    Bool_t Settlers_t::Has_Sleeper(some<Settler_ID_t> valid_settler_id)
+    maybe<Settler_ID_t> Settlers_t::Add_Settler(some<Member_ID_t> valid_member_id)
     {
-        SKYLIB_ASSERT(Has_Settler(valid_settler_id));
+        SKYLIB_ASSERT_SOME(valid_member_id);
+        SKYLIB_ASSERT(Members().Has_Member(valid_member_id));
 
-        return this->save_state.sleeper_flags[valid_settler_id()].Is_Flagged(Settler_Flags_Sleeper_e::IS_ENABLED);
+        maybe<Settler_ID_t> settler_id = valid_member_id();
+        if (settler_id && !Has_Settler(settler_id())) {
+            Is_Enabled<Sandboxer_t>(settler_id(), true);
+            Validate_Settler(settler_id());
+            return settler_id;
+        } else {
+            return none<Settler_ID_t>();
+        }
+    }
+
+    void Settlers_t::Validate()
+    {
+
+    }
+
+    void Settlers_t::Validate_Settler(some<Settler_ID_t> settler_id)
+    {
+
     }
 
 }}
