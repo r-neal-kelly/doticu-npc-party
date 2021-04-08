@@ -660,42 +660,65 @@ namespace doticu_npcp { namespace Party {
 
     }
 
-    Bool_t Settlers_t::Bool(some<Package_t*> package, Settler_Value_Index_e index)
-    {
-        SKYLIB_ASSERT_SOME(package);
-        SKYLIB_ASSERT_SOME(package->data);
-
-        return package->data->Bool(index);
-    }
-
-    Bool_t Settlers_t::Bool(some<Package_t*> package, Settler_Value_Index_e index, Bool_t value)
+    void Settlers_t::Bool(some<Package_t*> package,
+                          Settler_Value_Index_e index,
+                          Bool_t value,
+                          Bool_t& do_reset_ai)
     {
         SKYLIB_ASSERT_SOME(package);
         SKYLIB_ASSERT_SOME(package->data);
 
         if (package->data->Bool(index) != value) {
             package->data->Bool(index, value);
-            return true;
-        } else {
-            return false;
+            do_reset_ai = true;
         }
     }
 
-    some<Package_Location_t*> Settlers_t::Location(some<Package_t*> package, Settler_Value_Index_e index)
+    void Settlers_t::Flag_General(some<Package_t*> package,
+                                  Package_Flags_e general_flag,
+                                  Bool_t value,
+                                  Bool_t& do_reset_ai)
     {
         SKYLIB_ASSERT_SOME(package);
-        SKYLIB_ASSERT_SOME(package->data);
 
-        maybe<Package_Location_t*> location = package->data->Location(index);
-        SKYLIB_ASSERT_SOME(location);
-
-        return location();
+        if (package->package_flags.Is_Flagged(general_flag) != value) {
+            package->package_flags.Is_Flagged(general_flag, value);
+            do_reset_ai = true;
+        }
     }
 
-    Bool_t Settlers_t::Location(some<Package_t*> package,
-                                Settler_Value_Index_e index,
-                                some<Reference_t*> marker,
-                                some<Settler_Radius_t> radius)
+    void Settlers_t::Flag_Interrupt(some<Package_t*> package,
+                                    Package_Interrupt_Flags_e interrupt_flag,
+                                    Bool_t value,
+                                    Bool_t& do_reset_ai)
+    {
+        SKYLIB_ASSERT_SOME(package);
+
+        if (package->interrupt_flags.Is_Flagged(interrupt_flag) != value) {
+            package->interrupt_flags.Is_Flagged(interrupt_flag, value);
+            do_reset_ai = true;
+        }
+    }
+
+    void Settlers_t::Float(some<Package_t*> package,
+                           Settler_Value_Index_e index,
+                           Float_t value,
+                           Bool_t& do_reset_ai)
+    {
+        SKYLIB_ASSERT_SOME(package);
+        SKYLIB_ASSERT_SOME(package->data);
+
+        if (package->data->Float(index) != value) {
+            package->data->Float(index, value);
+            do_reset_ai = true;
+        }
+    }
+
+    void Settlers_t::Location(some<Package_t*> package,
+                              Settler_Value_Index_e index,
+                              some<Reference_t*> marker,
+                              some<Settler_Radius_t> radius,
+                              Bool_t& do_reset_ai)
     {
         SKYLIB_ASSERT_SOME(package);
         SKYLIB_ASSERT_SOME(package->data);
@@ -703,34 +726,129 @@ namespace doticu_npcp { namespace Party {
         maybe<Package_Location_t*> location = package->data->Location(index);
         SKYLIB_ASSERT_SOME(location);
 
-        Bool_t do_reset_ai = false;
         if (location->Reference() != marker()) {
             location->Reference(marker());
             do_reset_ai = true;
         }
+
         if (location->Radius() != radius) {
             location->Radius(radius());
             do_reset_ai = true;
         }
-        return do_reset_ai;
+    }
+
+    void Settlers_t::Speed(some<Package_t*> package,
+                           some<Settler_Speed_e> speed,
+                           Bool_t& do_reset_ai)
+    {
+        SKYLIB_ASSERT_SOME(package);
+        SKYLIB_ASSERT_SOME(speed);
+
+        if (package->preferred_speed != speed) {
+            package->preferred_speed = speed();
+            do_reset_ai = true;
+        }
+    }
+
+    void Settlers_t::Schedule(some<Package_t*> package,
+                              maybe<Settler_Time_t> time,
+                              maybe<Settler_Duration_t> duration,
+                              Bool_t& do_reset_ai)
+    {
+        SKYLIB_ASSERT_SOME(package);
+
+        if (time) {
+            s32 hour = time().Military_Hour();
+            if (package->schedule.hour != hour) {
+                package->schedule.hour = hour;
+                do_reset_ai = true;
+            }
+            s32 minute = time().Minute()();
+            if (package->schedule.minute != minute) {
+                package->schedule.minute = minute;
+                do_reset_ai = true;
+            }
+        } else {
+            if (package->schedule.hour != -1) {
+                package->schedule.hour = -1;
+                do_reset_ai = true;
+            }
+            if (package->schedule.minute != -1) {
+                package->schedule.minute = -1;
+                do_reset_ai = true;
+            }
+        }
+
+        if (duration) {
+            s32 duration_in_minutes = duration().Total_Minutes();
+            if (package->schedule.duration_in_minutes != duration_in_minutes) {
+                package->schedule.duration_in_minutes = duration_in_minutes;
+                do_reset_ai = true;
+            }
+        } else {
+            if (package->schedule.duration_in_minutes != 0) {
+                package->schedule.duration_in_minutes = 0;
+                do_reset_ai = true;
+            }
+        }
     }
 
     void Settlers_t::Enforce(some<Settler_ID_t> settler_id)
     {
+        using General = Package_Flags_e;
+        using Interrupt = Package_Interrupt_Flags_e;
+
         SKYLIB_ASSERT_SOME(settler_id);
 
         Members_t& members = Members();
-        //some<Actor_t*> actor = Members().Actor(settler_id);
+        Bool_t do_reset_ai = false;
 
         if (Is_Enabled<Sandboxer_t>(settler_id)) {
+            using Type = Sandboxer_t;
+            using Flag = Settler_Flags_Sandboxer_e;
+            using Value = Settler_Value_Index_Sandboxer_e;
+
+            some<Package_t*> package = Package<Type>(settler_id);
+            Settler_Flags_e flags = Flags<Type>(settler_id);
+
+            Bool(package, Value::ALLOW_CONVERSATION, flags.Is_Flagged(Flag::ALLOW_CONVERSATION), do_reset_ai);
+            Bool(package, Value::ALLOW_EATING, flags.Is_Flagged(Flag::ALLOW_EATING), do_reset_ai);
+            Bool(package, Value::ALLOW_HORSE_RIDING, flags.Is_Flagged(Flag::ALLOW_HORSE_RIDING), do_reset_ai);
+            Bool(package, Value::ALLOW_IDLE_MARKERS, flags.Is_Flagged(Flag::ALLOW_IDLE_MARKERS), do_reset_ai);
+            Bool(package, Value::ALLOW_SITTING, flags.Is_Flagged(Flag::ALLOW_SITTING), do_reset_ai);
+            Bool(package, Value::ALLOW_SLEEPING, flags.Is_Flagged(Flag::ALLOW_SLEEPING), do_reset_ai);
+            Bool(package, Value::ALLOW_SPECIAL_FURNITURE, flags.Is_Flagged(Flag::ALLOW_SPECIAL_FURNITURE), do_reset_ai);
+            Bool(package, Value::ALLOW_WANDERING, flags.Is_Flagged(Flag::ALLOW_WANDERING), do_reset_ai);
+            Bool(package, Value::ONLY_PREFERRED_PATH, flags.Is_Flagged(Flag::ONLY_PREFERRED_PATH), do_reset_ai);
+            Bool(package, Value::UNLOCK_ON_ARRIVAL, flags.Is_Flagged(Flag::UNLOCK_ON_ARRIVAL), do_reset_ai);
+
+            Float(package, Value::ATTENTION, Attention<Type>(settler_id)(), do_reset_ai);
+            Float(package, Value::WANDER_DISTANCE, Wander_Distance<Type>(settler_id)(), do_reset_ai);
+
+            Location(package, Value::LOCATION, Marker<Type>(settler_id), Radius<Type>(settler_id), do_reset_ai);
+
+            Speed(package, Speed<Type>(settler_id), do_reset_ai);
+
+            Schedule(package, none<Settler_Time_t>(), none<Settler_Duration_t>(), do_reset_ai);
+
+            Flag_General(package, General::ALLOW_SWIMMING, flags.Is_Flagged(Flag::ALLOW_SWIMMING), do_reset_ai);
+            Flag_General(package, General::ALWAYS_SNEAK, flags.Is_Flagged(Flag::ALWAYS_SNEAK), do_reset_ai);
+            Flag_General(package, General::IGNORE_COMBAT, flags.Is_Flagged(Flag::IGNORE_COMBAT), do_reset_ai);
+            Flag_General(package, General::KEEP_WEAPONS_DRAWN, flags.Is_Flagged(Flag::KEEP_WEAPONS_DRAWN), do_reset_ai);
+            Flag_General(package, General::HIDE_WEAPONS, flags.Is_Flagged(Flag::HIDE_WEAPONS), do_reset_ai);
+            Flag_General(package, General::SKIP_COMBAT_ALERT, flags.Is_Flagged(Flag::SKIP_COMBAT_ALERT), do_reset_ai);
+
+            Flag_Interrupt(package, Interrupt::ALLOW_HELLOS_TO_PLAYER, flags.Is_Flagged(Flag::ALLOW_HELLOS_TO_PLAYER), do_reset_ai);
+            Flag_Interrupt(package, Interrupt::ALLOW_HELLOS_TO_NPCS, flags.Is_Flagged(Flag::ALLOW_HELLOS_TO_NPCS), do_reset_ai);
+            Flag_Interrupt(package, Interrupt::ALLOW_IDLE_CHATTER, flags.Is_Flagged(Flag::ALLOW_IDLE_CHATTER), do_reset_ai);
+            Flag_Interrupt(package, Interrupt::ALLOW_AGGRO_RADIUS_BEHAVIOR, flags.Is_Flagged(Flag::ALLOW_AGGRO_RADIUS_BEHAVIOR), do_reset_ai);
+            Flag_Interrupt(package, Interrupt::ALLOW_WORLD_INTERACTIONS, flags.Is_Flagged(Flag::ALLOW_WORLD_INTERACTIONS), do_reset_ai);
+            Flag_Interrupt(package, Interrupt::COMMENT_ON_FRIENDLY_FIRE, flags.Is_Flagged(Flag::COMMENT_ON_FRIENDLY_FIRE), do_reset_ai);
+            Flag_Interrupt(package, Interrupt::INSPECT_CORPSE_BEHAVIOR, flags.Is_Flagged(Flag::INSPECT_CORPSE_BEHAVIOR), do_reset_ai);
+            Flag_Interrupt(package, Interrupt::OBSERVE_COMBAT_BEHAVIOR, flags.Is_Flagged(Flag::OBSERVE_COMBAT_BEHAVIOR), do_reset_ai);
+            Flag_Interrupt(package, Interrupt::REACT_TO_PLAYER_ACTIONS, flags.Is_Flagged(Flag::REACT_TO_PLAYER_ACTIONS), do_reset_ai);
+
             members.Tokenize(settler_id, Token<Sandboxer_t>());
-
-            some<Package_t*> package = Package<Sandboxer_t>(settler_id);
-
-            Location(package,
-                     Settler_Value_Index_Sandboxer_e::LOCATION,
-                     Marker<Sandboxer_t>(settler_id),
-                     Radius<Sandboxer_t>(settler_id));
         } else {
             members.Untokenize(settler_id, Token<Sandboxer_t>());
         }

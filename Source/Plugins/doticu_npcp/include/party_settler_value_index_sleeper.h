@@ -21,8 +21,8 @@ namespace doticu_npcp { namespace Party {
 
             LOCATION,                   // Location
             SEARCH_CRITERIA,            // Target
-            DO_LOCK_DOORS,              // Bool
-            DO_WARN_BEFORE_LOCKING,     // Bool
+            LOCK_DOORS,                 // Bool
+            WARN_BEFORE_LOCKING,        // Bool
             ALLOW_HORSE_RIDING,         // Bool
             BED_LIST,                   // List
             FALSE_BOOL,                 // Bool
@@ -33,8 +33,8 @@ namespace doticu_npcp { namespace Party {
             ALLOW_SITTING,              // Bool
             ALLOW_SPECIAL_FURNITURE,    // Bool
             ALLOW_WANDERING,            // Bool
-            MIN_WANDER_DISTANCE,        // Float
-            DO_PREFERRED_PATH_ONLY,     // Bool
+            WANDER_DISTANCE,            // Float
+            ONLY_PREFERRED_PATH,        // Bool
             ATTENTION,                  // Float
 
             _TOTAL_,

@@ -20,7 +20,7 @@ namespace doticu_npcp { namespace Party {
             _NONE_ = -1,
 
             LOCATION,                   // Location
-            DO_UNLOCK_ON_ARRIVAL,       // Bool
+            UNLOCK_ON_ARRIVAL,          // Bool
             FOOD_CRITERIA,              // Target
             FOOD_LIST,                  // List
             CHAIR_CRITERIA,             // Target
@@ -37,8 +37,8 @@ namespace doticu_npcp { namespace Party {
             ALLOW_SPECIAL_FURNITURE,    // Bool
             ALLOW_SITTING,              // Bool
             ALLOW_WANDERING,            // Bool
-            MIN_WANDER_DISTANCE,        // Float
-            DO_PREFERRED_PATH_ONLY,     // Bool
+            WANDER_DISTANCE,            // Float
+            ONLY_PREFERRED_PATH,        // Bool
             ATTENTION,                  // Float
 
             _TOTAL_,

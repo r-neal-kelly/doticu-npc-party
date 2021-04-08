@@ -13,9 +13,15 @@ namespace doticu_npcp { namespace Party {
         Minutes(minutes);
     }
 
-    maybe<Settler_Duration_Hours_t> Settler_Duration_t::Hours() const
+    some<Settler_Duration_Hours_t> Settler_Duration_t::Hours() const
     {
-        return (static_cast<u32>(this->value) & HOURS_MASK) >> HOURS_BIT_INDEX;
+        maybe<Settler_Duration_Hours_t> hours =
+            (static_cast<u32>(this->value) & HOURS_MASK) >> HOURS_BIT_INDEX;
+        if (hours) {
+            return hours();
+        } else {
+            return Settler_Duration_Hours_t::_MIN_;
+        }
     }
 
     void Settler_Duration_t::Hours(some<Settler_Duration_Hours_t> hours)
@@ -27,9 +33,19 @@ namespace doticu_npcp { namespace Party {
             (static_cast<u32>(this->value) & ~HOURS_MASK);
     }
 
-    maybe<Settler_Duration_Minutes_t> Settler_Duration_t::Minutes() const
+    some<Settler_Duration_Minutes_t> Settler_Duration_t::Minutes() const
     {
-        return (static_cast<u32>(this->value) & MINUTES_MASK) >> MINUTES_BIT_INDEX;
+        maybe<Settler_Duration_Minutes_t> minutes =
+            (static_cast<u32>(this->value) & MINUTES_MASK) >> MINUTES_BIT_INDEX;
+        if (minutes) {
+            if (Hours() == Settler_Duration_Hours_t::_MAX_) {
+                return Settler_Duration_Minutes_t::_MIN_;
+            } else {
+                return minutes();
+            }
+        } else {
+            return Settler_Duration_Minutes_t::_MIN_;
+        }
     }
 
     void Settler_Duration_t::Minutes(some<Settler_Duration_Minutes_t> minutes)
@@ -41,12 +57,17 @@ namespace doticu_npcp { namespace Party {
             (static_cast<u32>(this->value) & ~MINUTES_MASK);
     }
 
-    Settler_Duration_t::operator maybe<Settler_Duration_Hours_t>() const
+    u32 Settler_Duration_t::Total_Minutes() const
+    {
+        return (Hours()() * 60) + Minutes()();
+    }
+
+    Settler_Duration_t::operator some<Settler_Duration_Hours_t>() const
     {
         return Hours();
     }
 
-    Settler_Duration_t::operator maybe<Settler_Duration_Minutes_t>() const
+    Settler_Duration_t::operator some<Settler_Duration_Minutes_t>() const
     {
         return Minutes();
     }

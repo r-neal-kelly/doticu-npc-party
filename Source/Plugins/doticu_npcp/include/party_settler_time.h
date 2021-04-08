@@ -49,19 +49,21 @@ namespace doticu_npcp { namespace Party {
                        some<Settler_Time_Minute_t> minute);
 
     public:
-        maybe<Settler_Time_AM_PM_e>     AM_PM() const;
-        void                            AM_PM(some<Settler_Time_AM_PM_e> am_pm);
+        some<Settler_Time_AM_PM_e>  AM_PM() const;
+        void                        AM_PM(some<Settler_Time_AM_PM_e> am_pm);
 
-        maybe<Settler_Time_Hour_t>      Hour() const;
-        void                            Hour(some<Settler_Time_Hour_t> hour);
+        some<Settler_Time_Hour_t>   Hour() const;
+        void                        Hour(some<Settler_Time_Hour_t> hour);
 
-        maybe<Settler_Time_Minute_t>    Minute() const;
-        void                            Minute(some<Settler_Time_Minute_t> minute);
+        some<Settler_Time_Minute_t> Minute() const;
+        void                        Minute(some<Settler_Time_Minute_t> minute);
+
+        s32                         Military_Hour();
 
     public:
-        operator maybe<Settler_Time_AM_PM_e>() const;
-        operator maybe<Settler_Time_Hour_t>() const;
-        operator maybe<Settler_Time_Minute_t>() const;
+        operator    some<Settler_Time_AM_PM_e>() const;
+        operator    some<Settler_Time_Hour_t>() const;
+        operator    some<Settler_Time_Minute_t>() const;
     };
 
 }}

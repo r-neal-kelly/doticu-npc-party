@@ -20,7 +20,7 @@ namespace doticu_npcp { namespace Party {
             _NONE_ = -1,
 
             LOCATION,                   // Location
-            DO_UNLOCK_ON_ARRIVAL,       // Bool
+            UNLOCK_ON_ARRIVAL,          // Bool
             ALLOW_EATING,               // Bool
             ALLOW_SLEEPING,             // Bool
             ALLOW_CONVERSATION,         // Bool
@@ -28,10 +28,10 @@ namespace doticu_npcp { namespace Party {
             ALLOW_SITTING,              // Bool
             ALLOW_SPECIAL_FURNITURE,    // Bool
             ALLOW_WANDERING,            // Bool
-            DO_PREFERRED_PATH_ONLY,     // Bool
+            ONLY_PREFERRED_PATH,        // Bool
             ALLOW_HORSE_RIDING,         // Bool
             ATTENTION,                  // Float
-            MIN_WANDER_DISTANCE,        // Float
+            WANDER_DISTANCE,            // Float
 
             _TOTAL_,
         };

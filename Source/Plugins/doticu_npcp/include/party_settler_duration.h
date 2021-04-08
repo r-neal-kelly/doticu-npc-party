@@ -17,7 +17,7 @@ namespace doticu_npcp { namespace Party {
         public Numeric_Data_t<Int_t>
     {
     public:
-        static constexpr value_type _NONE_  = -1;
+        static constexpr value_type _NONE_  = 0;
 
     public:
         static Bool_t Is_Valid(value_type value)
@@ -37,7 +37,7 @@ namespace doticu_npcp { namespace Party {
         static constexpr u32    MINUTES_BIT_INDEX   = 0;
 
         static constexpr u32    MIN_DURATION        = 0;
-        static constexpr u32    MAX_DURATION        = 24 * 60;
+        static constexpr u32    MAX_DURATION        = Settler_Duration_Hours_t::_MAX_ * 60;
 
     public:
         using Numeric_t::Numeric_t;
@@ -48,15 +48,17 @@ namespace doticu_npcp { namespace Party {
                            some<Settler_Duration_Minutes_t> minutes);
 
     public:
-        maybe<Settler_Duration_Hours_t>     Hours() const;
+        some<Settler_Duration_Hours_t>      Hours() const;
         void                                Hours(some<Settler_Duration_Hours_t> hours);
 
-        maybe<Settler_Duration_Minutes_t>   Minutes() const;
+        some<Settler_Duration_Minutes_t>    Minutes() const;
         void                                Minutes(some<Settler_Duration_Minutes_t> minutes);
 
+        u32                                 Total_Minutes() const;
+
     public:
-        operator maybe<Settler_Duration_Hours_t>() const;
-        operator maybe<Settler_Duration_Minutes_t>() const;
+        operator    some<Settler_Duration_Hours_t>() const;
+        operator    some<Settler_Duration_Minutes_t>() const;
     };
 
 }}

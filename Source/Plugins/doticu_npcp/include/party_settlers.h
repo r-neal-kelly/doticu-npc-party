@@ -325,16 +325,36 @@ namespace doticu_npcp { namespace Party {
         void                                        Bed(some<Settler_ID_t> valid_settler_id, maybe<Reference_t*> bed);
 
     public:
-        Bool_t                      Bool(some<Package_t*> package, Settler_Value_Index_e index);
-        Bool_t                      Bool(some<Package_t*> package, Settler_Value_Index_e index, Bool_t value);
+        void    Bool(some<Package_t*> package,
+                     Settler_Value_Index_e index,
+                     Bool_t value,
+                     Bool_t& do_reset_ai);
+        void    Flag_General(some<Package_t*> package,
+                             Package_Flags_e general_flag,
+                             Bool_t value,
+                             Bool_t& do_reset_ai);
+        void    Flag_Interrupt(some<Package_t*> package,
+                               Package_Interrupt_Flags_e interrupt_flag,
+                               Bool_t value,
+                               Bool_t& do_reset_ai);
+        void    Float(some<Package_t*> package,
+                      Settler_Value_Index_e index,
+                      Float_t value,
+                      Bool_t& do_reset_ai);
+        void    Location(some<Package_t*> package,
+                         Settler_Value_Index_e index,
+                         some<Reference_t*> marker,
+                         some<Settler_Radius_t> radius,
+                         Bool_t& do_reset_ai);
+        void    Speed(some<Package_t*> package,
+                      some<Settler_Speed_e> speed,
+                      Bool_t& do_reset_ai);
+        void    Schedule(some<Package_t*> package,
+                         maybe<Settler_Time_t> time,
+                         maybe<Settler_Duration_t> duration,
+                         Bool_t& do_reset_ai);
 
-        some<Package_Location_t*>   Location(some<Package_t*> package, Settler_Value_Index_e index);
-        Bool_t                      Location(some<Package_t*> package,
-                                             Settler_Value_Index_e index,
-                                             some<Reference_t*> marker,
-                                             some<Settler_Radius_t> radius);
-
-        void                        Enforce(some<Settler_ID_t> settler_id);
+        void    Enforce(some<Settler_ID_t> settler_id);
 
     public:
         void    Log(std::string indent = "");

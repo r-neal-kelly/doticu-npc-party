@@ -23,8 +23,8 @@ namespace doticu_npcp { namespace Party {
             SEARCH_CRITERIA,        // Target
             CHAIR_LIST,             // List
             WAIT_TIME,              // Float
-            DO_STOP_MOVEMENT,       // Bool
-            DO_PREFERRED_PATH_ONLY, // Bool
+            STOP_MOVEMENT,          // Bool
+            ONLY_PREFERRED_PATH,    // Bool
             FALSE_BOOL,             // Bool
 
             _TOTAL_,
