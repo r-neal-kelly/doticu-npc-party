@@ -7,12 +7,12 @@
 #include "doticu_skylib/enum.h"
 
 #include "intrinsic.h"
-#include "party_settler_value.h"
+#include "party_settler_value_index.h"
 
 namespace doticu_npcp { namespace Party {
 
-    class Settler_Value_Sitter_e :
-        public Settler_Value_e
+    class Settler_Value_Index_Sitter_e :
+        public Settler_Value_Index_e
     {
     public:
         enum enum_type : value_type
@@ -31,7 +31,7 @@ namespace doticu_npcp { namespace Party {
         };
 
     public:
-        using Settler_Value_e::Settler_Value_e;
+        using Settler_Value_Index_e::Settler_Value_Index_e;
     };
 
 }}

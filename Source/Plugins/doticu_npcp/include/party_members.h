@@ -323,10 +323,10 @@ namespace doticu_npcp { namespace Party {
 
         maybe<Member_Suit_t*>       Suit(Member_ID_t valid_member_id);
 
-        void                        Tokenize(Member_ID_t valid_member_id,
+        void                        Tokenize(some<Member_ID_t> valid_member_id,
                                              some<Bound_Object_t*> object,
                                              Container_Entry_Count_t count = 1);
-        void                        Untokenize(Member_ID_t valid_member_id,
+        void                        Untokenize(some<Member_ID_t> valid_member_id,
                                                some<Bound_Object_t*> object);
 
         Bool_t                      Enforce(Member_ID_t member_id);

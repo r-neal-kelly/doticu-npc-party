@@ -138,12 +138,12 @@
     <ClInclude Include="include\party_settler_radius.h" />
     <ClInclude Include="include\party_settler_speed.h" />
     <ClInclude Include="include\party_settler_time.h" />
-    <ClInclude Include="include\party_settler_value.h" />
-    <ClInclude Include="include\party_settler_value_eater.h" />
-    <ClInclude Include="include\party_settler_value_guard.h" />
-    <ClInclude Include="include\party_settler_value_sandboxer.h" />
-    <ClInclude Include="include\party_settler_value_sitter.h" />
-    <ClInclude Include="include\party_settler_value_sleeper.h" />
+    <ClInclude Include="include\party_settler_value_index.h" />
+    <ClInclude Include="include\party_settler_value_index_eater.h" />
+    <ClInclude Include="include\party_settler_value_index_guard.h" />
+    <ClInclude Include="include\party_settler_value_index_sandboxer.h" />
+    <ClInclude Include="include\party_settler_value_index_sitter.h" />
+    <ClInclude Include="include\party_settler_value_index_sleeper.h" />
     <ClInclude Include="include\party_settler_wander_distance.h" />
     <ClInclude Include="include\strings.h" />
   </ItemGroup>

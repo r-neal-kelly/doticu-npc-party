@@ -343,16 +343,6 @@ namespace doticu_npcp {
             }
         };
         V::Utility_t::Wait_Out_Of_Menu(2.0f, new Wait_Callback(this));
-
-        Vector_t<some<Form_t*>> forms = Game_t::Forms();
-        for (size_t idx = 0, end = forms.size(); idx < end; idx += 1) {
-            maybe<Package_t*> package = forms[idx]->As_Package();
-            if (package) {
-                _MESSAGE("package_form_id: %s", package->form_id.As_String());
-                package->Log_Data();
-                _MESSAGE("");
-            }
-        }
     }
     //
 

@@ -7,12 +7,12 @@
 #include "doticu_skylib/enum.h"
 
 #include "intrinsic.h"
-#include "party_settler_value.h"
+#include "party_settler_value_index.h"
 
 namespace doticu_npcp { namespace Party {
 
-    class Settler_Value_Sandboxer_e :
-        public Settler_Value_e
+    class Settler_Value_Index_Sleeper_e :
+        public Settler_Value_Index_e
     {
     public:
         enum enum_type : value_type
@@ -20,7 +20,12 @@ namespace doticu_npcp { namespace Party {
             _NONE_ = -1,
 
             LOCATION,                   // Location
-            DO_UNLOCK_ON_ARRIVAL,       // Bool
+            SEARCH_CRITERIA,            // Target
+            DO_LOCK_DOORS,              // Bool
+            DO_WARN_BEFORE_LOCKING,     // Bool
+            ALLOW_HORSE_RIDING,         // Bool
+            BED_LIST,                   // List
+            FALSE_BOOL,                 // Bool
             ALLOW_EATING,               // Bool
             ALLOW_SLEEPING,             // Bool
             ALLOW_CONVERSATION,         // Bool
@@ -28,16 +33,15 @@ namespace doticu_npcp { namespace Party {
             ALLOW_SITTING,              // Bool
             ALLOW_SPECIAL_FURNITURE,    // Bool
             ALLOW_WANDERING,            // Bool
-            DO_PREFERRED_PATH_ONLY,     // Bool
-            ALLOW_HORSE_RIDING,         // Bool
-            ATTENTION,                  // Float
             MIN_WANDER_DISTANCE,        // Float
+            DO_PREFERRED_PATH_ONLY,     // Bool
+            ATTENTION,                  // Float
 
             _TOTAL_,
         };
 
     public:
-        using Settler_Value_e::Settler_Value_e;
+        using Settler_Value_Index_e::Settler_Value_Index_e;
     };
 
 }}

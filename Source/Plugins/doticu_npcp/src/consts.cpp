@@ -190,7 +190,7 @@ namespace doticu_npcp {
     some<Misc_t*>               Consts_t::NPCP::Misc::Token::Greeter()                      { DEFINE_FORM(Mod(), Misc_t, 0x057384); }
     some<Misc_t*>               Consts_t::NPCP::Misc::Token::Movee()                        { DEFINE_FORM(Mod(), Misc_t, 0x1612B3); }
     some<Misc_t*>               Consts_t::NPCP::Misc::Token::Immobile()                     { DEFINE_FORM(Mod(), Misc_t, 0x000D77); }
-    some<Misc_t*>               Consts_t::NPCP::Misc::Token::Settler()                      { DEFINE_FORM(Mod(), Misc_t, 0x000D73); }
+    some<Misc_t*>               Consts_t::NPCP::Misc::Token::Settler_Sandboxer()            { DEFINE_FORM(Mod(), Misc_t, 0x000D73); }
     some<Misc_t*>               Consts_t::NPCP::Misc::Token::Settler_Sleeper()              { DEFINE_FORM(Mod(), Misc_t, 0x3D7C07); }
     some<Misc_t*>               Consts_t::NPCP::Misc::Token::Settler_Sitter()               { DEFINE_FORM(Mod(), Misc_t, 0x3E1E16); }
     some<Misc_t*>               Consts_t::NPCP::Misc::Token::Settler_Eater()                { DEFINE_FORM(Mod(), Misc_t, 0x3D7C05); }

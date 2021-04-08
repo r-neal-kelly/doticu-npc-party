@@ -80,6 +80,8 @@ namespace doticu_npcp {
 
     using Form_Type_e                   = skylib::Form_Type_e;
     using Operator_e                    = skylib::Operator_e;
+    using Package_Flags_e               = skylib::Package_Flags_e;
+    using Package_Interrupt_Flags_e     = skylib::Package_Interrupt_Flags_e;
     using Relation_e                    = skylib::Relation_e;
     using Script_Type_e                 = skylib::Script_Type_e;
     using Vitality_e                    = skylib::Vitality_e;

@@ -647,6 +647,7 @@ namespace doticu_npcp { namespace Party {
         maybe<Settler_ID_t> settler_id = valid_member_id();
         if (settler_id && !Has_Settler(settler_id())) {
             Is_Enabled<Sandboxer_t>(settler_id(), true);
+            // we need to default the settings.
             Enforce(settler_id());
             return settler_id;
         } else {
@@ -659,24 +660,103 @@ namespace doticu_npcp { namespace Party {
 
     }
 
+    Bool_t Settlers_t::Bool(some<Package_t*> package, Settler_Value_Index_e index)
+    {
+        SKYLIB_ASSERT_SOME(package);
+        SKYLIB_ASSERT_SOME(package->data);
+
+        return package->data->Bool(index);
+    }
+
+    Bool_t Settlers_t::Bool(some<Package_t*> package, Settler_Value_Index_e index, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(package);
+        SKYLIB_ASSERT_SOME(package->data);
+
+        if (package->data->Bool(index) != value) {
+            package->data->Bool(index, value);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    some<Package_Location_t*> Settlers_t::Location(some<Package_t*> package, Settler_Value_Index_e index)
+    {
+        SKYLIB_ASSERT_SOME(package);
+        SKYLIB_ASSERT_SOME(package->data);
+
+        maybe<Package_Location_t*> location = package->data->Location(index);
+        SKYLIB_ASSERT_SOME(location);
+
+        return location();
+    }
+
+    Bool_t Settlers_t::Location(some<Package_t*> package,
+                                Settler_Value_Index_e index,
+                                some<Reference_t*> marker,
+                                some<Settler_Radius_t> radius)
+    {
+        SKYLIB_ASSERT_SOME(package);
+        SKYLIB_ASSERT_SOME(package->data);
+
+        maybe<Package_Location_t*> location = package->data->Location(index);
+        SKYLIB_ASSERT_SOME(location);
+
+        Bool_t do_reset_ai = false;
+        if (location->Reference() != marker()) {
+            location->Reference(marker());
+            do_reset_ai = true;
+        }
+        if (location->Radius() != radius) {
+            location->Radius(radius());
+            do_reset_ai = true;
+        }
+        return do_reset_ai;
+    }
+
     void Settlers_t::Enforce(some<Settler_ID_t> settler_id)
     {
         SKYLIB_ASSERT_SOME(settler_id);
 
+        Members_t& members = Members();
+        //some<Actor_t*> actor = Members().Actor(settler_id);
+
         if (Is_Enabled<Sandboxer_t>(settler_id)) {
+            members.Tokenize(settler_id, Token<Sandboxer_t>());
+
             some<Package_t*> package = Package<Sandboxer_t>(settler_id);
+
+            Location(package,
+                     Settler_Value_Index_Sandboxer_e::LOCATION,
+                     Marker<Sandboxer_t>(settler_id),
+                     Radius<Sandboxer_t>(settler_id));
+        } else {
+            members.Untokenize(settler_id, Token<Sandboxer_t>());
         }
+
         if (Is_Enabled<Sleeper_t>(settler_id)) {
-
+            members.Tokenize(settler_id, Token<Sleeper_t>());
+        } else {
+            members.Untokenize(settler_id, Token<Sleeper_t>());
         }
+
         if (Is_Enabled<Sitter_t>(settler_id)) {
-
+            members.Tokenize(settler_id, Token<Sitter_t>());
+        } else {
+            members.Untokenize(settler_id, Token<Sitter_t>());
         }
+
         if (Is_Enabled<Eater_t>(settler_id)) {
-
+            members.Tokenize(settler_id, Token<Eater_t>());
+        } else {
+            members.Untokenize(settler_id, Token<Eater_t>());
         }
-        if (Is_Enabled<Guard_t>(settler_id)) {
 
+        if (Is_Enabled<Guard_t>(settler_id)) {
+            members.Tokenize(settler_id, Token<Guard_t>());
+        } else {
+            members.Untokenize(settler_id, Token<Guard_t>());
         }
     }
 

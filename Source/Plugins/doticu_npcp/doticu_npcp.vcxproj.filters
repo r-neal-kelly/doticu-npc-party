@@ -239,22 +239,22 @@
     <ClInclude Include="include\party_settler_flags.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\party_settler_value_sandboxer.h">
+    <ClInclude Include="include\party_settler_value_index_sandboxer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\party_settler_value_sleeper.h">
+    <ClInclude Include="include\party_settler_value_index_sleeper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\party_settler_value_sitter.h">
+    <ClInclude Include="include\party_settler_value_index_sitter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\party_settler_value_eater.h">
+    <ClInclude Include="include\party_settler_value_index_eater.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\party_settler_value_guard.h">
+    <ClInclude Include="include\party_settler_value_index_guard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\party_settler_value.h">
+    <ClInclude Include="include\party_settler_value_index.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

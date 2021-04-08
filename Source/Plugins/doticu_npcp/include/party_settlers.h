@@ -24,6 +24,12 @@
 #include "party_settler_time_am_pm.h"
 #include "party_settler_time_hour.h"
 #include "party_settler_time_minute.h"
+#include "party_settler_value_index.h"
+#include "party_settler_value_index_eater.h"
+#include "party_settler_value_index_guard.h"
+#include "party_settler_value_index_sandboxer.h"
+#include "party_settler_value_index_sitter.h"
+#include "party_settler_value_index_sleeper.h"
 #include "party_settler_wander_distance.h"
 
 namespace doticu_npcp { namespace Party {
@@ -214,46 +220,121 @@ namespace doticu_npcp { namespace Party {
 
     public:
         template <typename T>
-        Vector_t<Settler_Flags_e>&          Flags();
-        template <typename T>
-        Settler_Flags_e&                    Flags(some<Settler_ID_t> settler_id);
-        template <typename T>
-        Bool_t                              Is_Flagged(some<Settler_ID_t> settler_id, Settler_Flags_e flag);
-        template <typename T>
-        void                                Is_Flagged(some<Settler_ID_t> settler_id, Settler_Flags_e flag, Bool_t value);
+        some<Misc_t*>                               Token();
 
         template <typename T>
-        Bool_t                              Is_Enabled(some<Settler_ID_t> settler_id);
+        some<Form_List_t*>                          Packages();
         template <typename T>
-        void                                Is_Enabled(some<Settler_ID_t> settler_id, Bool_t value);
+        some<Package_t*>                            Package(some<Settler_ID_t> valid_settler_id);
 
         template <typename T>
-        some<Form_List_t*>                  Packages();
+        Vector_t<Settler_Flags_e>&                  Flags();
         template <typename T>
-        some<Package_t*>                    Package(some<Settler_ID_t> valid_settler_id);
+        Settler_Flags_e&                            Flags(some<Settler_ID_t> settler_id);
+        template <typename T>
+        Bool_t                                      Is_Flagged(some<Settler_ID_t> settler_id, Settler_Flags_e flag);
+        template <typename T>
+        void                                        Is_Flagged(some<Settler_ID_t> settler_id, Settler_Flags_e flag, Bool_t value);
 
         template <typename T>
-        Vector_t<maybe<Reference_t*>>&      Markers();
+        Bool_t                                      Is_Enabled(some<Settler_ID_t> settler_id);
         template <typename T>
-        some<Reference_t*>                  Marker(some<Settler_ID_t> valid_settler_id);
-        template <typename T>
-        void                                Move_Marker(some<Settler_ID_t> valid_settler_id, some<Reference_t*> to);
+        void                                        Is_Enabled(some<Settler_ID_t> settler_id, Bool_t value);
 
         template <typename T>
-        Vector_t<maybe<Settler_Radius_t>>&  Radii();
+        Vector_t<maybe<Reference_t*>>&              Markers();
         template <typename T>
-        some<Settler_Radius_t>              Radius(some<Settler_ID_t> valid_settler_id);
+        some<Reference_t*>                          Marker(some<Settler_ID_t> valid_settler_id);
         template <typename T>
-        void                                Radius(some<Settler_ID_t> valid_settler_id, some<Settler_Radius_t> radius);
+        void                                        Move_Marker(some<Settler_ID_t> valid_settler_id, some<Reference_t*> to);
 
         template <typename T>
-        Vector_t<maybe<Reference_t*>>&      Beds();
+        Vector_t<maybe<Settler_Radius_t>>&          Radii();
         template <typename T>
-        maybe<Reference_t*>                 Bed(some<Settler_ID_t> valid_settler_id);
+        some<Settler_Radius_t>                      Radius(some<Settler_ID_t> valid_settler_id);
         template <typename T>
-        void                                Bed(some<Settler_ID_t> valid_settler_id, maybe<Reference_t*> bed);
+        void                                        Radius(some<Settler_ID_t> valid_settler_id, some<Settler_Radius_t> radius);
 
-        void                                Enforce(some<Settler_ID_t> settler_id);
+        template <typename T>
+        Vector_t<maybe<Settler_Time_t>>&            Times();
+        template <typename T>
+        some<Settler_Time_t>                        Time(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Time(some<Settler_ID_t> valid_settler_id, some<Settler_Time_t> time);
+        template <typename T>
+        some<Settler_Time_AM_PM_e>                  Time_AM_PM(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Time_AM_PM(some<Settler_ID_t> valid_settler_id,
+                                                               some<Settler_Time_AM_PM_e> am_pm);
+        template <typename T>
+        some<Settler_Time_Hour_t>                   Time_Hour(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Time_Hour(some<Settler_ID_t> valid_settler_id,
+                                                              some<Settler_Time_Hour_t> hour);
+        template <typename T>
+        some<Settler_Time_Minute_t>                 Time_Minute(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Time_Minute(some<Settler_ID_t> valid_settler_id,
+                                                                some<Settler_Time_Minute_t> minute);
+
+        template <typename T>
+        Vector_t<maybe<Settler_Duration_t>>&        Durations();
+        template <typename T>
+        some<Settler_Duration_t>                    Duration(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Duration(some<Settler_ID_t> valid_settler_id,
+                                                             some<Settler_Duration_t> duration);
+        template <typename T>
+        some<Settler_Duration_Hours_t>              Duration_Hours(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Duration_Hours(some<Settler_ID_t> valid_settler_id,
+                                                                   some<Settler_Duration_Hours_t> hours);
+        template <typename T>
+        some<Settler_Duration_Minutes_t>            Duration_Minutes(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Duration_Minutes(some<Settler_ID_t> valid_settler_id,
+                                                                     some<Settler_Duration_Minutes_t> minutes);
+
+        template <typename T>
+        Vector_t<maybe<Settler_Attention_t>>&       Attentions();
+        template <typename T>
+        some<Settler_Attention_t>                   Attention(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Attention(some<Settler_ID_t> valid_settler_id, some<Settler_Attention_t> attention);
+
+        template <typename T>
+        Vector_t<maybe<Settler_Speed_e>>&           Speeds();
+        template <typename T>
+        some<Settler_Speed_e>                       Speed(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Speed(some<Settler_ID_t> valid_settler_id, some<Settler_Speed_e> speed);
+
+        template <typename T>
+        Vector_t<maybe<Settler_Wander_Distance_t>>& Wander_Distances();
+        template <typename T>
+        some<Settler_Wander_Distance_t>             Wander_Distance(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Wander_Distance(some<Settler_ID_t> valid_settler_id,
+                                                                    some<Settler_Wander_Distance_t> wander_distance);
+
+        template <typename T>
+        Vector_t<maybe<Reference_t*>>&              Beds();
+        template <typename T>
+        maybe<Reference_t*>                         Bed(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Bed(some<Settler_ID_t> valid_settler_id, maybe<Reference_t*> bed);
+
+    public:
+        Bool_t                      Bool(some<Package_t*> package, Settler_Value_Index_e index);
+        Bool_t                      Bool(some<Package_t*> package, Settler_Value_Index_e index, Bool_t value);
+
+        some<Package_Location_t*>   Location(some<Package_t*> package, Settler_Value_Index_e index);
+        Bool_t                      Location(some<Package_t*> package,
+                                             Settler_Value_Index_e index,
+                                             some<Reference_t*> marker,
+                                             some<Settler_Radius_t> radius);
+
+        void                        Enforce(some<Settler_ID_t> settler_id);
 
     public:
         void    Log(std::string indent = "");

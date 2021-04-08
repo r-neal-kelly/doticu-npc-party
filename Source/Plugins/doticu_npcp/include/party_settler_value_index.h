@@ -10,7 +10,7 @@
 
 namespace doticu_npcp { namespace Party {
 
-    class Settler_Value_e :
+    class Settler_Value_Index_e :
         public Enum_t<s64>
     {
     public:

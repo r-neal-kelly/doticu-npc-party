@@ -246,7 +246,7 @@ namespace doticu_npcp {
                     static some<Misc_t*> Greeter();
                     static some<Misc_t*> Movee();
                     static some<Misc_t*> Immobile();
-                    static some<Misc_t*> Settler();
+                    static some<Misc_t*> Settler_Sandboxer();
                     static some<Misc_t*> Settler_Sleeper();
                     static some<Misc_t*> Settler_Sitter();
                     static some<Misc_t*> Settler_Eater();

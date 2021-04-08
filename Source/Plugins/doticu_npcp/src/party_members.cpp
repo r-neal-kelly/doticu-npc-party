@@ -1378,7 +1378,7 @@ namespace doticu_npcp { namespace Party {
         return none<Member_Suit_t*>();
     }
 
-    void Members_t::Tokenize(Member_ID_t valid_member_id,
+    void Members_t::Tokenize(some<Member_ID_t> valid_member_id,
                              some<Bound_Object_t*> object,
                              Container_Entry_Count_t count)
     {
@@ -1393,7 +1393,7 @@ namespace doticu_npcp { namespace Party {
         entry->Increment_Count(&container, count);
     }
 
-    void Members_t::Untokenize(Member_ID_t valid_member_id,
+    void Members_t::Untokenize(some<Member_ID_t> valid_member_id,
                                some<Bound_Object_t*> object)
     {
         SKYLIB_ASSERT(Has_Member(valid_member_id));
