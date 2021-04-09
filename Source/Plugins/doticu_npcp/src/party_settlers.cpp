@@ -600,7 +600,7 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT_SOME(member_id);
 
         if (Members().Has_Member(member_id)) {
-            return Has_Settler(some<Settler_ID_t>(member_id()));
+            return Has_Settler(some<Settler_ID_t>(member_id));
         } else {
             return false;
         }
@@ -627,7 +627,7 @@ namespace doticu_npcp { namespace Party {
             Default<Sandboxer_t>(settler_id);
             Marker<Sandboxer_t>(settler_id)->Move_To_Orbit(Members().Actor(settler_id), 0.0f, 180.0f);
             Main().Update_AI(settler_id, Member_Update_AI_e::EVALUATE_PACKAGE);
-            Main().Enforce(settler_id);
+            //Main().Enforce(settler_id);
             return settler_id;
         } else {
             return none<Settler_ID_t>();
@@ -766,6 +766,8 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT_SOME(package);
         SKYLIB_ASSERT_SOME(speed);
 
+        General_Flag(package, Package_Flags_e::ALLOW_PREFERRED_SPEED, true, do_reset_ai);
+
         if (package->preferred_speed != speed) {
             package->preferred_speed = speed();
             do_reset_ai = true;
@@ -789,6 +791,12 @@ namespace doticu_npcp { namespace Party {
 
             if (Is_Enabled<Sleeper_t>(settler_id)) {
                 Enforce_Package<Sleeper_t>(settler_id, do_reset_ai);
+
+                maybe<Reference_t*> bed = Bed<Sleeper_t>(settler_id);
+                if (bed) {
+                    bed->This_Actor_Base_Owner(members.Custom_Base(settler_id)); // this may need to be cleared in dtor?
+                }
+
                 members.Tokenize(settler_id, Token<Sleeper_t>());
             } else {
                 members.Untokenize(settler_id, Token<Sleeper_t>());

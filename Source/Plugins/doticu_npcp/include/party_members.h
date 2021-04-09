@@ -234,7 +234,7 @@ namespace doticu_npcp { namespace Party {
         void    Has_Untouchable_Invulnerables(Bool_t value);
 
     public:
-        Bool_t              Has_Alias(Member_ID_t member_id);
+        Bool_t              Has_Alias(some<Member_ID_t> member_id);
         Bool_t              Has_Alias(Alias_ID_t alias_id);
         Bool_t              Has_Member(some<Member_ID_t> member_id);
         Bool_t              Has_Member(some<Actor_t*> actor);
@@ -245,84 +245,83 @@ namespace doticu_npcp { namespace Party {
         maybe<Member_ID_t>  Add_Member(some<Actor_t*> actor);
         maybe<Member_ID_t>  Add_Member(some<Actor_Base_t*> base);
         maybe<Member_ID_t>  Add_Member_Clone(some<Actor_t*> actor);
-        Bool_t              Remove_Member(Member_ID_t member_id);
+        Bool_t              Remove_Member(some<Member_ID_t> member_id);
 
         size_t              Member_Count();
 
         void                Validate();
 
     public:
-        some<Alias_Reference_t*>    Alias_Reference(Member_ID_t valid_member_id);
+        some<Alias_Reference_t*>    Alias_Reference(some<Member_ID_t> valid_member_id);
         some<Actor_t*>              Actor(some<Member_ID_t> valid_member_id);
-        some<Actor_Base_t*>         Original_Base(Member_ID_t valid_member_id);
-        some<Actor_Base_t*>         Custom_Base(Member_ID_t valid_member_id);
-        some<Script_t*>             Script(Member_ID_t valid_member_id);
-        void                        Update_AI(some<Member_ID_t> valid_member_id, some<Member_Update_AI_e> update_ai);
+        some<Actor_Base_t*>         Original_Base(some<Member_ID_t> valid_member_id);
+        some<Actor_Base_t*>         Custom_Base(some<Member_ID_t> valid_member_id);
+        some<Script_t*>             Script(some<Member_ID_t> valid_member_id);
 
-        Bool_t                      Is_Banished(Member_ID_t valid_member_id);
-        void                        Is_Banished(Member_ID_t valid_member_id, Bool_t value);
+        Bool_t                      Is_Banished(some<Member_ID_t> valid_member_id);
+        void                        Is_Banished(some<Member_ID_t> valid_member_id, Bool_t value);
 
-        Bool_t                      Is_Clone(Member_ID_t valid_member_id);
-        void                        Is_Clone(Member_ID_t valid_member_id, Bool_t value);
+        Bool_t                      Is_Clone(some<Member_ID_t> valid_member_id);
+        void                        Is_Clone(some<Member_ID_t> valid_member_id, Bool_t value);
 
-        Bool_t                      Is_Immobile(Member_ID_t valid_member_id);
-        void                        Is_Immobile(Member_ID_t valid_member_id, Bool_t value);
+        Bool_t                      Is_Immobile(some<Member_ID_t> valid_member_id);
+        void                        Is_Immobile(some<Member_ID_t> valid_member_id, Bool_t value);
 
-        Bool_t                      Is_Mannequin(Member_ID_t valid_member_id);
-        void                        Is_Mannequin(Member_ID_t valid_member_id, Bool_t value);
+        Bool_t                      Is_Mannequin(some<Member_ID_t> valid_member_id);
+        void                        Is_Mannequin(some<Member_ID_t> valid_member_id, Bool_t value);
 
-        Bool_t                      Is_Paralyzed(Member_ID_t valid_member_id);
-        void                        Is_Paralyzed(Member_ID_t valid_member_id, Bool_t value);
+        Bool_t                      Is_Paralyzed(some<Member_ID_t> valid_member_id);
+        void                        Is_Paralyzed(some<Member_ID_t> valid_member_id, Bool_t value);
 
-        Bool_t                      Is_Reanimated(Member_ID_t valid_member_id);
-        void                        Is_Reanimated(Member_ID_t valid_member_id, Bool_t value);
+        Bool_t                      Is_Reanimated(some<Member_ID_t> valid_member_id);
+        void                        Is_Reanimated(some<Member_ID_t> valid_member_id, Bool_t value);
 
-        Bool_t                      Is_Thrall(Member_ID_t valid_member_id);
-        void                        Is_Thrall(Member_ID_t valid_member_id, Bool_t value);
+        Bool_t                      Is_Thrall(some<Member_ID_t> valid_member_id);
+        void                        Is_Thrall(some<Member_ID_t> valid_member_id, Bool_t value);
 
-        String_t                    Name(Member_ID_t valid_member_id);
-        void                        Name(Member_ID_t valid_member_id, String_t name);
+        String_t                    Name(some<Member_ID_t> valid_member_id);
+        void                        Name(some<Member_ID_t> valid_member_id, String_t name);
 
-        maybe<Combat_Style_t*>      Combat_Style(Member_ID_t valid_member_id);
-        void                        Combat_Style(Member_ID_t valid_member_id, maybe<Combat_Style_t*> combat_style);
-        void                        Combat_Style(Member_ID_t valid_member_id, Member_Combat_Style_e combat_style);
+        maybe<Combat_Style_t*>      Combat_Style(some<Member_ID_t> valid_member_id);
+        void                        Combat_Style(some<Member_ID_t> valid_member_id, maybe<Combat_Style_t*> combat_style);
+        void                        Combat_Style(some<Member_ID_t> valid_member_id, Member_Combat_Style_e combat_style);
 
-        maybe<Spell_t*>             Ghost_Ability(Member_ID_t valid_member_id);
-        void                        Ghost_Ability(Member_ID_t valid_member_id, maybe<Spell_t*> ghost_ability);
+        maybe<Spell_t*>             Ghost_Ability(some<Member_ID_t> valid_member_id);
+        void                        Ghost_Ability(some<Member_ID_t> valid_member_id, maybe<Spell_t*> ghost_ability);
 
-        some<Voice_Type_t*>         Voice_Type(Member_ID_t valid_member_id);
-        void                        Voice_Type(Member_ID_t valid_member_id, maybe<Voice_Type_t*> voice_type);
+        some<Voice_Type_t*>         Voice_Type(some<Member_ID_t> valid_member_id);
+        void                        Voice_Type(some<Member_ID_t> valid_member_id, maybe<Voice_Type_t*> voice_type);
 
-        maybe<Member_Alpha_t>       Alpha(Member_ID_t valid_member_id);
-        void                        Alpha(Member_ID_t valid_member_id, maybe<Member_Alpha_t> alpha);
+        maybe<Member_Alpha_t>       Alpha(some<Member_ID_t> valid_member_id);
+        void                        Alpha(some<Member_ID_t> valid_member_id, maybe<Member_Alpha_t> alpha);
 
-        maybe<Member_Rating_t>      Rating(Member_ID_t valid_member_id);
-        void                        Rating(Member_ID_t valid_member_id, maybe<Member_Rating_t> rating);
+        maybe<Member_Rating_t>      Rating(some<Member_ID_t> valid_member_id);
+        void                        Rating(some<Member_ID_t> valid_member_id, maybe<Member_Rating_t> rating);
 
-        some<Member_Relation_e>     Relation(Member_ID_t valid_member_id);
-        void                        Relation(Member_ID_t valid_member_id, maybe<Member_Relation_e> relation);
+        some<Member_Relation_e>     Relation(some<Member_ID_t> valid_member_id);
+        void                        Relation(some<Member_ID_t> valid_member_id, maybe<Member_Relation_e> relation);
 
-        maybe<Member_Suit_Type_e>   Suit_Type(Member_ID_t valid_member_id);
-        void                        Suit_Type(Member_ID_t valid_member_id, maybe<Member_Suit_Type_e> suit_type);
+        maybe<Member_Suit_Type_e>   Suit_Type(some<Member_ID_t> valid_member_id);
+        void                        Suit_Type(some<Member_ID_t> valid_member_id, maybe<Member_Suit_Type_e> suit_type);
 
-        some<Member_Vitality_e>     Vitality(Member_ID_t valid_member_id);
-        void                        Vitality(Member_ID_t valid_member_id, maybe<Member_Vitality_e> vitality);
-        Bool_t                      Is_Mortal(Member_ID_t valid_member_id);
-        void                        Is_Mortal(Member_ID_t valid_member_id, Bool_t value);
-        Bool_t                      Is_Protected(Member_ID_t valid_member_id);
-        void                        Is_Protected(Member_ID_t valid_member_id, Bool_t value);
-        Bool_t                      Is_Essential(Member_ID_t valid_member_id);
-        void                        Is_Essential(Member_ID_t valid_member_id, Bool_t value);
-        Bool_t                      Is_Invulnerable(Member_ID_t valid_member_id);
-        void                        Is_Invulnerable(Member_ID_t valid_member_id, Bool_t value);
+        some<Member_Vitality_e>     Vitality(some<Member_ID_t> valid_member_id);
+        void                        Vitality(some<Member_ID_t> valid_member_id, maybe<Member_Vitality_e> vitality);
+        Bool_t                      Is_Mortal(some<Member_ID_t> valid_member_id);
+        void                        Is_Mortal(some<Member_ID_t> valid_member_id, Bool_t value);
+        Bool_t                      Is_Protected(some<Member_ID_t> valid_member_id);
+        void                        Is_Protected(some<Member_ID_t> valid_member_id, Bool_t value);
+        Bool_t                      Is_Essential(some<Member_ID_t> valid_member_id);
+        void                        Is_Essential(some<Member_ID_t> valid_member_id, Bool_t value);
+        Bool_t                      Is_Invulnerable(some<Member_ID_t> valid_member_id);
+        void                        Is_Invulnerable(some<Member_ID_t> valid_member_id, Bool_t value);
 
     public:
-        // part of this functionality should probably go on main
-        Bool_t                      Is_Enabled(Member_ID_t valid_member_id);
-        Bool_t                      Is_Untouchable(Member_ID_t valid_member_id);
-        Bool_t                      Has_AI(Member_ID_t valid_member_id);
+        // more of this functionality should probably go on main
+        Bool_t                      Is_Enabled(some<Member_ID_t> valid_member_id);
+        Bool_t                      Is_Untouchable(some<Member_ID_t> valid_member_id);
+        Bool_t                      Has_AI(some<Member_ID_t> valid_member_id);
 
-        maybe<Member_Suit_t*>       Suit(Member_ID_t valid_member_id);
+        maybe<Member_Suit_t*>       Suit(some<Member_ID_t> valid_member_id);
 
         void                        Tokenize(some<Member_ID_t> valid_member_id,
                                              some<Bound_Object_t*> object,
@@ -330,7 +329,7 @@ namespace doticu_npcp { namespace Party {
         void                        Untokenize(some<Member_ID_t> valid_member_id,
                                                some<Bound_Object_t*> object);
 
-        Bool_t                      Enforce(Member_ID_t member_id);
+        Bool_t                      Enforce(some<Member_ID_t> member_id);
 
     public:
         void    Log(std::string indent = "");

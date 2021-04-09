@@ -269,9 +269,127 @@ namespace doticu_npcp { namespace Party {
         void                                        Is_Enabled(some<Settler_ID_t> settler_id, Bool_t value);
 
         template <typename T>
+        Bool_t                                      Allow_Swimming(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Allow_Swimming(some<Settler_ID_t> valid_settler_id, Bool_t value);
+        template <typename T>
         Bool_t                                      Always_Sneak(some<Settler_ID_t> valid_settler_id);
         template <typename T>
         void                                        Always_Sneak(some<Settler_ID_t> valid_settler_id, Bool_t value);
+        template <typename T>
+        Bool_t                                      Ignore_Combat(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Ignore_Combat(some<Settler_ID_t> valid_settler_id, Bool_t value);
+        template <typename T>
+        Bool_t                                      Keep_Weapons_Drawn(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Keep_Weapons_Drawn(some<Settler_ID_t> valid_settler_id, Bool_t value);
+        template <typename T>
+        Bool_t                                      Hide_Weapons(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Hide_Weapons(some<Settler_ID_t> valid_settler_id, Bool_t value);
+        template <typename T>
+        Bool_t                                      Skip_Combat_Alert(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Skip_Combat_Alert(some<Settler_ID_t> valid_settler_id, Bool_t value);
+
+        template <typename T>
+        Bool_t                                      Allow_Hellos_To_Player(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Allow_Hellos_To_Player(some<Settler_ID_t> valid_settler_id, Bool_t value);
+        template <typename T>
+        Bool_t                                      Allow_Hellos_To_NPCs(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Allow_Hellos_To_NPCs(some<Settler_ID_t> valid_settler_id, Bool_t value);
+        template <typename T>
+        Bool_t                                      Allow_Idle_Chatter(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Allow_Idle_Chatter(some<Settler_ID_t> valid_settler_id, Bool_t value);
+        template <typename T>
+        Bool_t                                      Allow_Aggro_Radius(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Allow_Aggro_Radius(some<Settler_ID_t> valid_settler_id, Bool_t value);
+        template <typename T>
+        Bool_t                                      Allow_World_Interactions(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Allow_World_Interactions(some<Settler_ID_t> valid_settler_id, Bool_t value);
+        template <typename T>
+        Bool_t                                      Comment_On_Friendly_Fire(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Comment_On_Friendly_Fire(some<Settler_ID_t> valid_settler_id, Bool_t value);
+        template <typename T>
+        Bool_t                                      Inspect_Corpses(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Inspect_Corpses(some<Settler_ID_t> valid_settler_id, Bool_t value);
+        template <typename T>
+        Bool_t                                      Observe_Combat(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Observe_Combat(some<Settler_ID_t> valid_settler_id, Bool_t value);
+        template <typename T>
+        Bool_t                                      React_To_Player_Actions(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        React_To_Player_Actions(some<Settler_ID_t> valid_settler_id, Bool_t value);
+
+        template <typename T>
+        Bool_t                                      Allow_Already_Held_Food(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Allow_Already_Held_Food(some<Settler_ID_t> valid_settler_id, Bool_t value);
+        template <typename T>
+        Bool_t                                      Allow_Conversation(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Allow_Conversation(some<Settler_ID_t> valid_settler_id, Bool_t value);
+        template <typename T>
+        Bool_t                                      Allow_Eating(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Allow_Eating(some<Settler_ID_t> valid_settler_id, Bool_t value);
+        template <typename T>
+        Bool_t                                      Allow_Fake_Food(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Allow_Fake_Food(some<Settler_ID_t> valid_settler_id, Bool_t value);
+        template <typename T>
+        Bool_t                                      Allow_Horse_Riding(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Allow_Horse_Riding(some<Settler_ID_t> valid_settler_id, Bool_t value);
+        template <typename T>
+        Bool_t                                      Allow_Idle_Markers(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Allow_Idle_Markers(some<Settler_ID_t> valid_settler_id, Bool_t value);
+        template <typename T>
+        Bool_t                                      Allow_Sitting(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Allow_Sitting(some<Settler_ID_t> valid_settler_id, Bool_t value);
+        template <typename T>
+        Bool_t                                      Allow_Sleeping(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Allow_Sleeping(some<Settler_ID_t> valid_settler_id, Bool_t value);
+        template <typename T>
+        Bool_t                                      Allow_Special_Furniture(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Allow_Special_Furniture(some<Settler_ID_t> valid_settler_id, Bool_t value);
+        template <typename T>
+        Bool_t                                      Allow_Wandering(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Allow_Wandering(some<Settler_ID_t> valid_settler_id, Bool_t value);
+        template <typename T>
+        Bool_t                                      Lock_Doors(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Lock_Doors(some<Settler_ID_t> valid_settler_id, Bool_t value);
+        template <typename T>
+        Bool_t                                      Only_Preferred_Path(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Only_Preferred_Path(some<Settler_ID_t> valid_settler_id, Bool_t value);
+        template <typename T>
+        Bool_t                                      Stop_Movement(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Stop_Movement(some<Settler_ID_t> valid_settler_id, Bool_t value);
+        template <typename T>
+        Bool_t                                      Unlock_On_Arrival(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Unlock_On_Arrival(some<Settler_ID_t> valid_settler_id, Bool_t value);
+        template <typename T>
+        Bool_t                                      Warn_Before_Locking(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Warn_Before_Locking(some<Settler_ID_t> valid_settler_id, Bool_t value);
 
         template <typename T>
         Vector_t<maybe<Reference_t*>>&              Markers();

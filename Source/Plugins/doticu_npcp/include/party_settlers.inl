@@ -185,6 +185,24 @@ namespace doticu_npcp { namespace Party {
     }
 
     template <typename T>
+    Bool_t Settlers_t::Allow_Swimming(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_SWIMMING);
+    }
+
+    template <typename T>
+    void Settlers_t::Allow_Swimming(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_SWIMMING, value);
+    }
+
+    template <typename T>
     Bool_t Settlers_t::Always_Sneak(some<Settler_ID_t> valid_settler_id)
     {
         SKYLIB_ASSERT_SOME(valid_settler_id);
@@ -200,6 +218,510 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
 
         Is_Flagged<T>(valid_settler_id, T::Flags_e::ALWAYS_SNEAK, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::Ignore_Combat(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::IGNORE_COMBAT);
+    }
+
+    template <typename T>
+    void Settlers_t::Ignore_Combat(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::IGNORE_COMBAT, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::Keep_Weapons_Drawn(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::KEEP_WEAPONS_DRAWN);
+    }
+
+    template <typename T>
+    void Settlers_t::Keep_Weapons_Drawn(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::KEEP_WEAPONS_DRAWN, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::Hide_Weapons(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::HIDE_WEAPONS);
+    }
+
+    template <typename T>
+    void Settlers_t::Hide_Weapons(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::HIDE_WEAPONS, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::Skip_Combat_Alert(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::SKIP_COMBAT_ALERT);
+    }
+
+    template <typename T>
+    void Settlers_t::Skip_Combat_Alert(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::SKIP_COMBAT_ALERT, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::Allow_Hellos_To_Player(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_HELLOS_TO_PLAYER);
+    }
+
+    template <typename T>
+    void Settlers_t::Allow_Hellos_To_Player(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_HELLOS_TO_PLAYER, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::Allow_Hellos_To_NPCs(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_HELLOS_TO_NPCS);
+    }
+
+    template <typename T>
+    void Settlers_t::Allow_Hellos_To_NPCs(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_HELLOS_TO_NPCS, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::Allow_Idle_Chatter(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_IDLE_CHATTER);
+    }
+
+    template <typename T>
+    void Settlers_t::Allow_Idle_Chatter(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_IDLE_CHATTER, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::Allow_Aggro_Radius(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_AGGRO_RADIUS);
+    }
+
+    template <typename T>
+    void Settlers_t::Allow_Aggro_Radius(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_AGGRO_RADIUS, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::Allow_World_Interactions(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_WORLD_INTERACTIONS);
+    }
+
+    template <typename T>
+    void Settlers_t::Allow_World_Interactions(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_WORLD_INTERACTIONS, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::Comment_On_Friendly_Fire(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::COMMENT_ON_FRIENDLY_FIRE);
+    }
+
+    template <typename T>
+    void Settlers_t::Comment_On_Friendly_Fire(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::COMMENT_ON_FRIENDLY_FIRE, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::Inspect_Corpses(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::INSPECT_CORPSES);
+    }
+
+    template <typename T>
+    void Settlers_t::Inspect_Corpses(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::INSPECT_CORPSES, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::Observe_Combat(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::OBSERVE_COMBAT);
+    }
+
+    template <typename T>
+    void Settlers_t::Observe_Combat(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::OBSERVE_COMBAT, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::React_To_Player_Actions(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::REACT_TO_PLAYER_ACTIONS);
+    }
+
+    template <typename T>
+    void Settlers_t::React_To_Player_Actions(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::REACT_TO_PLAYER_ACTIONS, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::Allow_Already_Held_Food(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_ALREADY_HELD_FOOD);
+    }
+
+    template <typename T>
+    void Settlers_t::Allow_Already_Held_Food(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_ALREADY_HELD_FOOD, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::Allow_Conversation(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_CONVERSATION);
+    }
+
+    template <typename T>
+    void Settlers_t::Allow_Conversation(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_CONVERSATION, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::Allow_Eating(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_EATING);
+    }
+
+    template <typename T>
+    void Settlers_t::Allow_Eating(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_EATING, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::Allow_Fake_Food(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_FAKE_FOOD);
+    }
+
+    template <typename T>
+    void Settlers_t::Allow_Fake_Food(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_FAKE_FOOD, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::Allow_Horse_Riding(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_HORSE_RIDING);
+    }
+
+    template <typename T>
+    void Settlers_t::Allow_Horse_Riding(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_HORSE_RIDING, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::Allow_Idle_Markers(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_IDLE_MARKERS);
+    }
+
+    template <typename T>
+    void Settlers_t::Allow_Idle_Markers(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_IDLE_MARKERS, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::Allow_Sitting(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_SITTING);
+    }
+
+    template <typename T>
+    void Settlers_t::Allow_Sitting(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_SITTING, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::Allow_Sleeping(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_SLEEPING);
+    }
+
+    template <typename T>
+    void Settlers_t::Allow_Sleeping(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_SLEEPING, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::Allow_Special_Furniture(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_SPECIAL_FURNITURE);
+    }
+
+    template <typename T>
+    void Settlers_t::Allow_Special_Furniture(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_SPECIAL_FURNITURE, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::Allow_Wandering(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_WANDERING);
+    }
+
+    template <typename T>
+    void Settlers_t::Allow_Wandering(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::ALLOW_WANDERING, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::Lock_Doors(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::LOCK_DOORS);
+    }
+
+    template <typename T>
+    void Settlers_t::Lock_Doors(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::LOCK_DOORS, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::Only_Preferred_Path(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::ONLY_PREFERRED_PATH);
+    }
+
+    template <typename T>
+    void Settlers_t::Only_Preferred_Path(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::ONLY_PREFERRED_PATH, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::Stop_Movement(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::STOP_MOVEMENT);
+    }
+
+    template <typename T>
+    void Settlers_t::Stop_Movement(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::STOP_MOVEMENT, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::Unlock_On_Arrival(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::UNLOCK_ON_ARRIVAL);
+    }
+
+    template <typename T>
+    void Settlers_t::Unlock_On_Arrival(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::UNLOCK_ON_ARRIVAL, value);
+    }
+
+    template <typename T>
+    Bool_t Settlers_t::Warn_Before_Locking(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::WARN_BEFORE_LOCKING);
+    }
+
+    template <typename T>
+    void Settlers_t::Warn_Before_Locking(some<Settler_ID_t> valid_settler_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::WARN_BEFORE_LOCKING, value);
     }
 
     template <typename T>
@@ -903,11 +1425,11 @@ namespace doticu_npcp { namespace Party {
         flags.Is_Flagged(F::ALLOW_HELLOS_TO_PLAYER, true);
         flags.Is_Flagged(F::ALLOW_HELLOS_TO_NPCS, true);
         flags.Is_Flagged(F::ALLOW_IDLE_CHATTER, true);
-        flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS_BEHAVIOR, true);
+        flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS, true);
         flags.Is_Flagged(F::ALLOW_WORLD_INTERACTIONS, true);
         flags.Is_Flagged(F::COMMENT_ON_FRIENDLY_FIRE, true);
-        flags.Is_Flagged(F::INSPECT_CORPSE_BEHAVIOR, true);
-        flags.Is_Flagged(F::OBSERVE_COMBAT_BEHAVIOR, true);
+        flags.Is_Flagged(F::INSPECT_CORPSES, true);
+        flags.Is_Flagged(F::OBSERVE_COMBAT, true);
         flags.Is_Flagged(F::REACT_TO_PLAYER_ACTIONS, true);
 
         flags.Is_Flagged(F::ALLOW_CONVERSATION, true);
@@ -964,8 +1486,8 @@ namespace doticu_npcp { namespace Party {
     inline void Settlers_t::Enforce_Package<Sandboxer_t>(some<Settler_ID_t> id, Bool_t& do_reset_ai)
     {
         using T = Sandboxer_t;
-        using F = Settler_Flags_Sandboxer_e;
-        using V = Settler_Value_Index_Sandboxer_e;
+        using F = T::Flags_e;
+        using V = T::Value_e;
         using G = Package_Flags_e;
         using I = Package_Interrupt_Flags_e;
 
@@ -996,11 +1518,11 @@ namespace doticu_npcp { namespace Party {
         Interrupt_Flag(package, I::ALLOW_HELLOS_TO_PLAYER, flags.Is_Flagged(F::ALLOW_HELLOS_TO_PLAYER), do_reset_ai);
         Interrupt_Flag(package, I::ALLOW_HELLOS_TO_NPCS, flags.Is_Flagged(F::ALLOW_HELLOS_TO_NPCS), do_reset_ai);
         Interrupt_Flag(package, I::ALLOW_IDLE_CHATTER, flags.Is_Flagged(F::ALLOW_IDLE_CHATTER), do_reset_ai);
-        Interrupt_Flag(package, I::ALLOW_AGGRO_RADIUS_BEHAVIOR, flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS_BEHAVIOR), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_AGGRO_RADIUS, flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS), do_reset_ai);
         Interrupt_Flag(package, I::ALLOW_WORLD_INTERACTIONS, flags.Is_Flagged(F::ALLOW_WORLD_INTERACTIONS), do_reset_ai);
         Interrupt_Flag(package, I::COMMENT_ON_FRIENDLY_FIRE, flags.Is_Flagged(F::COMMENT_ON_FRIENDLY_FIRE), do_reset_ai);
-        Interrupt_Flag(package, I::INSPECT_CORPSE_BEHAVIOR, flags.Is_Flagged(F::INSPECT_CORPSE_BEHAVIOR), do_reset_ai);
-        Interrupt_Flag(package, I::OBSERVE_COMBAT_BEHAVIOR, flags.Is_Flagged(F::OBSERVE_COMBAT_BEHAVIOR), do_reset_ai);
+        Interrupt_Flag(package, I::INSPECT_CORPSES, flags.Is_Flagged(F::INSPECT_CORPSES), do_reset_ai);
+        Interrupt_Flag(package, I::OBSERVE_COMBAT, flags.Is_Flagged(F::OBSERVE_COMBAT), do_reset_ai);
         Interrupt_Flag(package, I::REACT_TO_PLAYER_ACTIONS, flags.Is_Flagged(F::REACT_TO_PLAYER_ACTIONS), do_reset_ai);
 
         Location(package, V::LOCATION, Marker<T>(id), Radius<T>(id), do_reset_ai);
@@ -1014,8 +1536,8 @@ namespace doticu_npcp { namespace Party {
     inline void Settlers_t::Enforce_Package<Sleeper_t>(some<Settler_ID_t> id, Bool_t& do_reset_ai)
     {
         using T = Sleeper_t;
-        using F = Settler_Flags_Sleeper_e;
-        using V = Settler_Value_Index_Sleeper_e;
+        using F = T::Flags_e;
+        using V = T::Value_e;
         using G = Package_Flags_e;
         using I = Package_Interrupt_Flags_e;
 
@@ -1047,11 +1569,11 @@ namespace doticu_npcp { namespace Party {
         Interrupt_Flag(package, I::ALLOW_HELLOS_TO_PLAYER, flags.Is_Flagged(F::ALLOW_HELLOS_TO_PLAYER), do_reset_ai);
         Interrupt_Flag(package, I::ALLOW_HELLOS_TO_NPCS, flags.Is_Flagged(F::ALLOW_HELLOS_TO_NPCS), do_reset_ai);
         Interrupt_Flag(package, I::ALLOW_IDLE_CHATTER, flags.Is_Flagged(F::ALLOW_IDLE_CHATTER), do_reset_ai);
-        Interrupt_Flag(package, I::ALLOW_AGGRO_RADIUS_BEHAVIOR, flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS_BEHAVIOR), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_AGGRO_RADIUS, flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS), do_reset_ai);
         Interrupt_Flag(package, I::ALLOW_WORLD_INTERACTIONS, flags.Is_Flagged(F::ALLOW_WORLD_INTERACTIONS), do_reset_ai);
         Interrupt_Flag(package, I::COMMENT_ON_FRIENDLY_FIRE, flags.Is_Flagged(F::COMMENT_ON_FRIENDLY_FIRE), do_reset_ai);
-        Interrupt_Flag(package, I::INSPECT_CORPSE_BEHAVIOR, flags.Is_Flagged(F::INSPECT_CORPSE_BEHAVIOR), do_reset_ai);
-        Interrupt_Flag(package, I::OBSERVE_COMBAT_BEHAVIOR, flags.Is_Flagged(F::OBSERVE_COMBAT_BEHAVIOR), do_reset_ai);
+        Interrupt_Flag(package, I::INSPECT_CORPSES, flags.Is_Flagged(F::INSPECT_CORPSES), do_reset_ai);
+        Interrupt_Flag(package, I::OBSERVE_COMBAT, flags.Is_Flagged(F::OBSERVE_COMBAT), do_reset_ai);
         Interrupt_Flag(package, I::REACT_TO_PLAYER_ACTIONS, flags.Is_Flagged(F::REACT_TO_PLAYER_ACTIONS), do_reset_ai);
 
         Location(package, V::LOCATION, Marker<T>(id), Radius<T>(id), do_reset_ai);
@@ -1065,8 +1587,8 @@ namespace doticu_npcp { namespace Party {
     inline void Settlers_t::Enforce_Package<Sitter_t>(some<Settler_ID_t> id, Bool_t& do_reset_ai)
     {
         using T = Sitter_t;
-        using F = Settler_Flags_Sitter_e;
-        using V = Settler_Value_Index_Sitter_e;
+        using F = T::Flags_e;
+        using V = T::Value_e;
         using G = Package_Flags_e;
         using I = Package_Interrupt_Flags_e;
 
@@ -1086,11 +1608,11 @@ namespace doticu_npcp { namespace Party {
         Interrupt_Flag(package, I::ALLOW_HELLOS_TO_PLAYER, flags.Is_Flagged(F::ALLOW_HELLOS_TO_PLAYER), do_reset_ai);
         Interrupt_Flag(package, I::ALLOW_HELLOS_TO_NPCS, flags.Is_Flagged(F::ALLOW_HELLOS_TO_NPCS), do_reset_ai);
         Interrupt_Flag(package, I::ALLOW_IDLE_CHATTER, flags.Is_Flagged(F::ALLOW_IDLE_CHATTER), do_reset_ai);
-        Interrupt_Flag(package, I::ALLOW_AGGRO_RADIUS_BEHAVIOR, flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS_BEHAVIOR), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_AGGRO_RADIUS, flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS), do_reset_ai);
         Interrupt_Flag(package, I::ALLOW_WORLD_INTERACTIONS, flags.Is_Flagged(F::ALLOW_WORLD_INTERACTIONS), do_reset_ai);
         Interrupt_Flag(package, I::COMMENT_ON_FRIENDLY_FIRE, flags.Is_Flagged(F::COMMENT_ON_FRIENDLY_FIRE), do_reset_ai);
-        Interrupt_Flag(package, I::INSPECT_CORPSE_BEHAVIOR, flags.Is_Flagged(F::INSPECT_CORPSE_BEHAVIOR), do_reset_ai);
-        Interrupt_Flag(package, I::OBSERVE_COMBAT_BEHAVIOR, flags.Is_Flagged(F::OBSERVE_COMBAT_BEHAVIOR), do_reset_ai);
+        Interrupt_Flag(package, I::INSPECT_CORPSES, flags.Is_Flagged(F::INSPECT_CORPSES), do_reset_ai);
+        Interrupt_Flag(package, I::OBSERVE_COMBAT, flags.Is_Flagged(F::OBSERVE_COMBAT), do_reset_ai);
         Interrupt_Flag(package, I::REACT_TO_PLAYER_ACTIONS, flags.Is_Flagged(F::REACT_TO_PLAYER_ACTIONS), do_reset_ai);
 
         Location(package, V::LOCATION, Marker<T>(id), Radius<T>(id), do_reset_ai);
@@ -1104,15 +1626,15 @@ namespace doticu_npcp { namespace Party {
     inline void Settlers_t::Enforce_Package<Eater_t>(some<Settler_ID_t> id, Bool_t& do_reset_ai)
     {
         using T = Eater_t;
-        using F = Settler_Flags_Eater_e;
-        using V = Settler_Value_Index_Eater_e;
+        using F = T::Flags_e;
+        using V = T::Value_e;
         using G = Package_Flags_e;
         using I = Package_Interrupt_Flags_e;
 
         some<Package_t*> package = Package<T>(id);
         Settler_Flags_e flags = Flags<T>(id);
 
-        Bool(package, V::ALLOW_ALREADY_HELD, flags.Is_Flagged(F::ALLOW_ALREADY_HELD), do_reset_ai);
+        Bool(package, V::ALLOW_ALREADY_HELD_FOOD, flags.Is_Flagged(F::ALLOW_ALREADY_HELD_FOOD), do_reset_ai);
         Bool(package, V::ALLOW_CONVERSATION, flags.Is_Flagged(F::ALLOW_CONVERSATION), do_reset_ai);
         Bool(package, V::ALLOW_EATING, flags.Is_Flagged(F::ALLOW_EATING), do_reset_ai);
         Bool(package, V::ALLOW_FAKE_FOOD, flags.Is_Flagged(F::ALLOW_FAKE_FOOD), do_reset_ai);
@@ -1138,11 +1660,11 @@ namespace doticu_npcp { namespace Party {
         Interrupt_Flag(package, I::ALLOW_HELLOS_TO_PLAYER, flags.Is_Flagged(F::ALLOW_HELLOS_TO_PLAYER), do_reset_ai);
         Interrupt_Flag(package, I::ALLOW_HELLOS_TO_NPCS, flags.Is_Flagged(F::ALLOW_HELLOS_TO_NPCS), do_reset_ai);
         Interrupt_Flag(package, I::ALLOW_IDLE_CHATTER, flags.Is_Flagged(F::ALLOW_IDLE_CHATTER), do_reset_ai);
-        Interrupt_Flag(package, I::ALLOW_AGGRO_RADIUS_BEHAVIOR, flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS_BEHAVIOR), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_AGGRO_RADIUS, flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS), do_reset_ai);
         Interrupt_Flag(package, I::ALLOW_WORLD_INTERACTIONS, flags.Is_Flagged(F::ALLOW_WORLD_INTERACTIONS), do_reset_ai);
         Interrupt_Flag(package, I::COMMENT_ON_FRIENDLY_FIRE, flags.Is_Flagged(F::COMMENT_ON_FRIENDLY_FIRE), do_reset_ai);
-        Interrupt_Flag(package, I::INSPECT_CORPSE_BEHAVIOR, flags.Is_Flagged(F::INSPECT_CORPSE_BEHAVIOR), do_reset_ai);
-        Interrupt_Flag(package, I::OBSERVE_COMBAT_BEHAVIOR, flags.Is_Flagged(F::OBSERVE_COMBAT_BEHAVIOR), do_reset_ai);
+        Interrupt_Flag(package, I::INSPECT_CORPSES, flags.Is_Flagged(F::INSPECT_CORPSES), do_reset_ai);
+        Interrupt_Flag(package, I::OBSERVE_COMBAT, flags.Is_Flagged(F::OBSERVE_COMBAT), do_reset_ai);
         Interrupt_Flag(package, I::REACT_TO_PLAYER_ACTIONS, flags.Is_Flagged(F::REACT_TO_PLAYER_ACTIONS), do_reset_ai);
 
         Location(package, V::LOCATION, Marker<T>(id), Radius<T>(id), do_reset_ai);
@@ -1156,8 +1678,8 @@ namespace doticu_npcp { namespace Party {
     inline void Settlers_t::Enforce_Package<Guard_t>(some<Settler_ID_t> id, Bool_t& do_reset_ai)
     {
         using T = Guard_t;
-        using F = Settler_Flags_Guard_e;
-        using V = Settler_Value_Index_Guard_e;
+        using F = T::Flags_e;
+        using V = T::Value_e;
         using G = Package_Flags_e;
         using I = Package_Interrupt_Flags_e;
 
@@ -1175,11 +1697,11 @@ namespace doticu_npcp { namespace Party {
         Interrupt_Flag(package, I::ALLOW_HELLOS_TO_PLAYER, flags.Is_Flagged(F::ALLOW_HELLOS_TO_PLAYER), do_reset_ai);
         Interrupt_Flag(package, I::ALLOW_HELLOS_TO_NPCS, flags.Is_Flagged(F::ALLOW_HELLOS_TO_NPCS), do_reset_ai);
         Interrupt_Flag(package, I::ALLOW_IDLE_CHATTER, flags.Is_Flagged(F::ALLOW_IDLE_CHATTER), do_reset_ai);
-        Interrupt_Flag(package, I::ALLOW_AGGRO_RADIUS_BEHAVIOR, flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS_BEHAVIOR), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_AGGRO_RADIUS, flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS), do_reset_ai);
         Interrupt_Flag(package, I::ALLOW_WORLD_INTERACTIONS, flags.Is_Flagged(F::ALLOW_WORLD_INTERACTIONS), do_reset_ai);
         Interrupt_Flag(package, I::COMMENT_ON_FRIENDLY_FIRE, flags.Is_Flagged(F::COMMENT_ON_FRIENDLY_FIRE), do_reset_ai);
-        Interrupt_Flag(package, I::INSPECT_CORPSE_BEHAVIOR, flags.Is_Flagged(F::INSPECT_CORPSE_BEHAVIOR), do_reset_ai);
-        Interrupt_Flag(package, I::OBSERVE_COMBAT_BEHAVIOR, flags.Is_Flagged(F::OBSERVE_COMBAT_BEHAVIOR), do_reset_ai);
+        Interrupt_Flag(package, I::INSPECT_CORPSES, flags.Is_Flagged(F::INSPECT_CORPSES), do_reset_ai);
+        Interrupt_Flag(package, I::OBSERVE_COMBAT, flags.Is_Flagged(F::OBSERVE_COMBAT), do_reset_ai);
         Interrupt_Flag(package, I::REACT_TO_PLAYER_ACTIONS, flags.Is_Flagged(F::REACT_TO_PLAYER_ACTIONS), do_reset_ai);
 
         Location(package, V::WAIT_LOCATION, marker, 0, do_reset_ai);

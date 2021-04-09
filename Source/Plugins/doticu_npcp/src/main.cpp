@@ -312,7 +312,9 @@ namespace doticu_npcp {
                     members.Vitality(idx, Party::Member_Vitality_e::INVULNERABLE);
 
                     settlers.Add_Settler(idx);
+                    settlers.Allow_Hellos_To_Player<Party::Sandboxer_t>(idx, false);
                     settlers.Always_Sneak<Party::Sandboxer_t>(idx, true);
+                    settlers.Speed<Party::Sandboxer_t>(idx, Party::Settler_Speed_e::RUN);
                 } else {
                     members.Is_Banished(idx, false);
                     members.Is_Reanimated(idx, true);
@@ -325,6 +327,8 @@ namespace doticu_npcp {
                 }
             }
         }
+
+        // changed packages should be reverted in settlers type, upon state creation/deletion.
 
         Party().Enforce();
 

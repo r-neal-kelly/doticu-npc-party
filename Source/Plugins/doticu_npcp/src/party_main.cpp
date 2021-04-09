@@ -130,7 +130,6 @@ namespace doticu_npcp { namespace Party {
     void Main_t::Enforce()
     {
         Members_t& members = Members();
-        Settlers_t& settlers = Settlers();
         for (size_t idx = 0, end = Consts_t::NPCP::Int::MAX_MEMBERS; idx < end; idx += 1) {
             if (members.Has_Member(idx)) {
                 Enforce(idx);

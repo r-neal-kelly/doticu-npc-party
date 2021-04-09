@@ -708,9 +708,11 @@ namespace doticu_npcp { namespace Party {
         this->save_state.has_untouchable_invulnerables = value;
     }
 
-    Bool_t Members_t::Has_Alias(Member_ID_t member_id)
+    Bool_t Members_t::Has_Alias(some<Member_ID_t> member_id)
     {
-        return this->quest->Has_Alias_Index(member_id);
+        SKYLIB_ASSERT_SOME(member_id);
+
+        return this->quest->Has_Alias_Index(member_id());
     }
 
     Bool_t Members_t::Has_Alias(Alias_ID_t alias_id)
@@ -764,9 +766,6 @@ namespace doticu_npcp { namespace Party {
         return none<Member_ID_t>();
     }
 
-    static void Add_Member(some<Members_t*> self, Member_ID_t member_id, some<Actor_t*> actor, some<Actor_Base_t*> base);
-    static void Fill_Member(some<Members_t*> self, Member_ID_t member_id, some<Actor_t*> actor);
-
     static void Add_Member(some<Members_t*> self, Member_ID_t member_id, some<Actor_t*> actor, some<Actor_Base_t*> base)
     {
         SKYLIB_ASSERT_SOME(self);
@@ -805,31 +804,7 @@ namespace doticu_npcp { namespace Party {
         self->save_state.suit_types[member_id] = self->save_state.default_suit_type;
         self->save_state.vitalities[member_id] = self->save_state.default_vitality;
 
-        Fill_Member(self, member_id, actor);
-    }
-
-    static void Fill_Member(some<Members_t*> self, Member_ID_t member_id, some<Actor_t*> actor)
-    {
-        class Fill_Callback :
-            public V::Callback_t
-        {
-        public:
-            some<Members_t*>    self;
-            Member_ID_t         member_id;
-
-        public:
-            Fill_Callback(some<Members_t*> self, Member_ID_t member_id) :
-                self(self), member_id(member_id)
-            {
-            }
-
-        public:
-            virtual void operator ()(V::Variable_t*) override
-            {
-                this->self->Enforce(this->member_id);
-            }
-        };
-        self->Alias_Reference(member_id)->Fill(actor, new Fill_Callback(self, member_id));
+        self->Alias_Reference(member_id)->Fill(actor, none<V::Callback_i*>());
     }
 
     maybe<Member_ID_t> Members_t::Add_Member(some<Actor_t*> actor)
@@ -900,12 +875,16 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
-    Bool_t Members_t::Remove_Member(Member_ID_t member_id)
+    Bool_t Members_t::Remove_Member(some<Member_ID_t> member_id)
     {
+        SKYLIB_ASSERT_SOME(member_id);
+
         // this will cleanse anything under the id that it can, even if the data is incomplete in some manner, it cleans it up.
         // it fails gracefully and just defaults the values.
 
         // also, this must destroy the custom base so it's created again for the next actor
+
+        // this should forcibly reset ai and make sure other state is reset that is needed.
         return false;
     }
 
@@ -947,18 +926,19 @@ namespace doticu_npcp { namespace Party {
 
         for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
             if (Has_Member(idx)) {
-                Fill_Member(this, idx, Actor(idx));
+                Alias_Reference(idx)->Fill(Actor(idx), none<V::Callback_i*>());
             } else {
                 Remove_Member(idx);
             }
         }
     }
 
-    some<Alias_Reference_t*> Members_t::Alias_Reference(Member_ID_t valid_member_id)
+    some<Alias_Reference_t*> Members_t::Alias_Reference(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        some<Alias_Reference_t*> alias_reference = this->quest->Index_To_Alias_Reference(valid_member_id)();
+        some<Alias_Reference_t*> alias_reference = this->quest->Index_To_Alias_Reference(valid_member_id())();
         SKYLIB_ASSERT_SOME(alias_reference);
         return alias_reference;
     }
@@ -973,20 +953,22 @@ namespace doticu_npcp { namespace Party {
         return actor;
     }
 
-    some<Actor_Base_t*> Members_t::Original_Base(Member_ID_t valid_member_id)
+    some<Actor_Base_t*> Members_t::Original_Base(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        some<Actor_Base_t*> original_base = this->save_state.original_bases[valid_member_id]();
+        some<Actor_Base_t*> original_base = this->save_state.original_bases[valid_member_id()]();
         SKYLIB_ASSERT_SOME(original_base);
         return original_base;
     }
 
-    some<Actor_Base_t*> Members_t::Custom_Base(Member_ID_t valid_member_id)
+    some<Actor_Base_t*> Members_t::Custom_Base(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        maybe<Actor_Base_t*>& custom_base = this->custom_bases[valid_member_id];
+        maybe<Actor_Base_t*>& custom_base = this->custom_bases[valid_member_id()];
         if (!custom_base) {
             custom_base = Actor_Base_t::Create_Temporary_Copy(Original_Base(valid_member_id))();
             SKYLIB_ASSERT_SOME(custom_base);
@@ -995,11 +977,12 @@ namespace doticu_npcp { namespace Party {
         return custom_base();
     }
 
-    some<Script_t*> Members_t::Script(Member_ID_t valid_member_id)
+    some<Script_t*> Members_t::Script(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        maybe<Script_t*>& script = this->scripts[valid_member_id];
+        maybe<Script_t*>& script = this->scripts[valid_member_id()];
         if (!script) {
             script = Script_t::Create()();
             SKYLIB_ASSERT_SOME(script);
@@ -1008,109 +991,124 @@ namespace doticu_npcp { namespace Party {
         return script();
     }
 
-    Bool_t Members_t::Is_Banished(Member_ID_t valid_member_id)
+    Bool_t Members_t::Is_Banished(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        return this->save_state.flags[valid_member_id].Is_Flagged(Member_Flags_e::IS_BANISHED);
+        return this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_BANISHED);
     }
 
-    void Members_t::Is_Banished(Member_ID_t valid_member_id, Bool_t value)
+    void Members_t::Is_Banished(some<Member_ID_t> valid_member_id, Bool_t value)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        this->save_state.flags[valid_member_id].Is_Flagged(Member_Flags_e::IS_BANISHED, value);
+        this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_BANISHED, value);
     }
 
-    Bool_t Members_t::Is_Clone(Member_ID_t valid_member_id)
+    Bool_t Members_t::Is_Clone(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        return this->save_state.flags[valid_member_id].Is_Flagged(Member_Flags_e::IS_CLONE);
+        return this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_CLONE);
     }
 
-    void Members_t::Is_Clone(Member_ID_t valid_member_id, Bool_t value)
+    void Members_t::Is_Clone(some<Member_ID_t> valid_member_id, Bool_t value)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        this->save_state.flags[valid_member_id].Is_Flagged(Member_Flags_e::IS_CLONE, value);
+        this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_CLONE, value);
     }
 
-    Bool_t Members_t::Is_Immobile(Member_ID_t valid_member_id)
+    Bool_t Members_t::Is_Immobile(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        return this->save_state.flags[valid_member_id].Is_Flagged(Member_Flags_e::IS_IMMOBILE);
+        return this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_IMMOBILE);
     }
 
-    void Members_t::Is_Immobile(Member_ID_t valid_member_id, Bool_t value)
+    void Members_t::Is_Immobile(some<Member_ID_t> valid_member_id, Bool_t value)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        this->save_state.flags[valid_member_id].Is_Flagged(Member_Flags_e::IS_IMMOBILE, value);
+        this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_IMMOBILE, value);
     }
 
-    Bool_t Members_t::Is_Mannequin(Member_ID_t valid_member_id)
+    Bool_t Members_t::Is_Mannequin(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        return this->save_state.flags[valid_member_id].Is_Flagged(Member_Flags_e::IS_MANNEQUIN);
+        return this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_MANNEQUIN);
     }
 
-    void Members_t::Is_Mannequin(Member_ID_t valid_member_id, Bool_t value)
+    void Members_t::Is_Mannequin(some<Member_ID_t> valid_member_id, Bool_t value)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        this->save_state.flags[valid_member_id].Is_Flagged(Member_Flags_e::IS_MANNEQUIN, value);
+        this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_MANNEQUIN, value);
     }
 
-    Bool_t Members_t::Is_Paralyzed(Member_ID_t valid_member_id)
+    Bool_t Members_t::Is_Paralyzed(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        return this->save_state.flags[valid_member_id].Is_Flagged(Member_Flags_e::IS_PARALYZED);
+        return this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_PARALYZED);
     }
 
-    void Members_t::Is_Paralyzed(Member_ID_t valid_member_id, Bool_t value)
+    void Members_t::Is_Paralyzed(some<Member_ID_t> valid_member_id, Bool_t value)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        this->save_state.flags[valid_member_id].Is_Flagged(Member_Flags_e::IS_PARALYZED, value);
+        this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_PARALYZED, value);
     }
 
-    Bool_t Members_t::Is_Reanimated(Member_ID_t valid_member_id)
+    Bool_t Members_t::Is_Reanimated(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        return this->save_state.flags[valid_member_id].Is_Flagged(Member_Flags_e::IS_REANIMATED);
+        return this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_REANIMATED);
     }
 
-    void Members_t::Is_Reanimated(Member_ID_t valid_member_id, Bool_t value)
+    void Members_t::Is_Reanimated(some<Member_ID_t> valid_member_id, Bool_t value)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        this->save_state.flags[valid_member_id].Is_Flagged(Member_Flags_e::IS_REANIMATED, value);
+        this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_REANIMATED, value);
     }
 
-    Bool_t Members_t::Is_Thrall(Member_ID_t valid_member_id)
+    Bool_t Members_t::Is_Thrall(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        return this->save_state.flags[valid_member_id].Is_Flagged(Member_Flags_e::IS_THRALL);
+        return this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_THRALL);
     }
 
-    void Members_t::Is_Thrall(Member_ID_t valid_member_id, Bool_t value)
+    void Members_t::Is_Thrall(some<Member_ID_t> valid_member_id, Bool_t value)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        this->save_state.flags[valid_member_id].Is_Flagged(Member_Flags_e::IS_THRALL, value);
+        this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_THRALL, value);
     }
 
-    String_t Members_t::Name(Member_ID_t valid_member_id)
+    String_t Members_t::Name(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        String_t name = this->save_state.names[valid_member_id];
+        String_t name = this->save_state.names[valid_member_id()];
         if (!name) {
             name = Original_Base(valid_member_id)->Name();
         }
@@ -1118,18 +1116,20 @@ namespace doticu_npcp { namespace Party {
         return name;
     }
 
-    void Members_t::Name(Member_ID_t valid_member_id, String_t name)
+    void Members_t::Name(some<Member_ID_t> valid_member_id, String_t name)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        this->save_state.names[valid_member_id] = name;
+        this->save_state.names[valid_member_id()] = name;
     }
 
-    maybe<Combat_Style_t*> Members_t::Combat_Style(Member_ID_t valid_member_id)
+    maybe<Combat_Style_t*> Members_t::Combat_Style(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        maybe<Combat_Style_t*> combat_style = this->save_state.combat_styles[valid_member_id];
+        maybe<Combat_Style_t*> combat_style = this->save_state.combat_styles[valid_member_id()];
         if (!combat_style) {
             combat_style = Original_Base(valid_member_id)->Combat_Style();
         }
@@ -1137,39 +1137,44 @@ namespace doticu_npcp { namespace Party {
         return combat_style;
     }
 
-    void Members_t::Combat_Style(Member_ID_t valid_member_id, maybe<Combat_Style_t*> combat_style)
+    void Members_t::Combat_Style(some<Member_ID_t> valid_member_id, maybe<Combat_Style_t*> combat_style)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        this->save_state.combat_styles[valid_member_id] = combat_style;
+        this->save_state.combat_styles[valid_member_id()] = combat_style;
     }
 
-    void Members_t::Combat_Style(Member_ID_t valid_member_id, Member_Combat_Style_e combat_style)
+    void Members_t::Combat_Style(some<Member_ID_t> valid_member_id, Member_Combat_Style_e combat_style)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
         Combat_Style(valid_member_id, combat_style.As_Combat_Style());
     }
 
-    maybe<Spell_t*> Members_t::Ghost_Ability(Member_ID_t valid_member_id)
+    maybe<Spell_t*> Members_t::Ghost_Ability(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        return this->save_state.ghost_abilities[valid_member_id];
+        return this->save_state.ghost_abilities[valid_member_id()];
     }
 
-    void Members_t::Ghost_Ability(Member_ID_t valid_member_id, maybe<Spell_t*> ghost_ability)
+    void Members_t::Ghost_Ability(some<Member_ID_t> valid_member_id, maybe<Spell_t*> ghost_ability)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        this->save_state.ghost_abilities[valid_member_id] = ghost_ability;
+        this->save_state.ghost_abilities[valid_member_id()] = ghost_ability;
     }
 
-    some<Voice_Type_t*> Members_t::Voice_Type(Member_ID_t valid_member_id)
+    some<Voice_Type_t*> Members_t::Voice_Type(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        maybe<Voice_Type_t*> voice_type = this->save_state.voice_types[valid_member_id];
+        maybe<Voice_Type_t*> voice_type = this->save_state.voice_types[valid_member_id()];
         if (!voice_type) {
             voice_type = Original_Base(valid_member_id)->Voice_Type();
             if (!voice_type) {
@@ -1185,50 +1190,56 @@ namespace doticu_npcp { namespace Party {
         return voice_type();
     }
 
-    void Members_t::Voice_Type(Member_ID_t valid_member_id, maybe<Voice_Type_t*> voice_type)
+    void Members_t::Voice_Type(some<Member_ID_t> valid_member_id, maybe<Voice_Type_t*> voice_type)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        this->save_state.voice_types[valid_member_id] = voice_type;
+        this->save_state.voice_types[valid_member_id()] = voice_type;
     }
 
-    maybe<Member_Alpha_t> Members_t::Alpha(Member_ID_t valid_member_id)
+    maybe<Member_Alpha_t> Members_t::Alpha(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
         if (!Is_Enabled(valid_member_id)) {
             return 0.0f;
         } else {
-            return this->save_state.alphas[valid_member_id];
+            return this->save_state.alphas[valid_member_id()];
         }
     }
 
-    void Members_t::Alpha(Member_ID_t valid_member_id, maybe<Member_Alpha_t> alpha)
+    void Members_t::Alpha(some<Member_ID_t> valid_member_id, maybe<Member_Alpha_t> alpha)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        this->save_state.alphas[valid_member_id] = alpha;
+        this->save_state.alphas[valid_member_id()] = alpha;
     }
 
-    maybe<Member_Rating_t> Members_t::Rating(Member_ID_t valid_member_id)
+    maybe<Member_Rating_t> Members_t::Rating(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        return this->save_state.ratings[valid_member_id];
+        return this->save_state.ratings[valid_member_id()];
     }
 
-    void Members_t::Rating(Member_ID_t valid_member_id, maybe<Member_Rating_t> rating)
+    void Members_t::Rating(some<Member_ID_t> valid_member_id, maybe<Member_Rating_t> rating)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        this->save_state.ratings[valid_member_id] = rating;
+        this->save_state.ratings[valid_member_id()] = rating;
     }
 
-    some<Member_Relation_e> Members_t::Relation(Member_ID_t valid_member_id)
+    some<Member_Relation_e> Members_t::Relation(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        maybe<Member_Relation_e> relation = this->save_state.relations[valid_member_id];
+        maybe<Member_Relation_e> relation = this->save_state.relations[valid_member_id()];
         if (!relation) {
             relation = Original_Base(valid_member_id)->Relation(skylib::Const::Actor_Base::Player());
         }
@@ -1238,32 +1249,36 @@ namespace doticu_npcp { namespace Party {
         return relation();
     }
 
-    void Members_t::Relation(Member_ID_t valid_member_id, maybe<Member_Relation_e> relation)
+    void Members_t::Relation(some<Member_ID_t> valid_member_id, maybe<Member_Relation_e> relation)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        this->save_state.relations[valid_member_id] = relation;
+        this->save_state.relations[valid_member_id()] = relation;
     }
 
-    maybe<Member_Suit_Type_e> Members_t::Suit_Type(Member_ID_t valid_member_id)
+    maybe<Member_Suit_Type_e> Members_t::Suit_Type(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
         // this should at least partially calculate what outfit is going to be worn.
 
-        return this->save_state.suit_types[valid_member_id];
+        return this->save_state.suit_types[valid_member_id()];
     }
 
-    void Members_t::Suit_Type(Member_ID_t valid_member_id, maybe<Member_Suit_Type_e> suit_type)
+    void Members_t::Suit_Type(some<Member_ID_t> valid_member_id, maybe<Member_Suit_Type_e> suit_type)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
     }
 
-    some<Member_Vitality_e> Members_t::Vitality(Member_ID_t valid_member_id)
+    some<Member_Vitality_e> Members_t::Vitality(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        maybe<Member_Vitality_e> vitality = this->save_state.vitalities[valid_member_id];
+        maybe<Member_Vitality_e> vitality = this->save_state.vitalities[valid_member_id()];
         if (!vitality) {
             vitality = Original_Base(valid_member_id)->Vitality();
         }
@@ -1273,87 +1288,99 @@ namespace doticu_npcp { namespace Party {
         return vitality();
     }
 
-    void Members_t::Vitality(Member_ID_t valid_member_id, maybe<Member_Vitality_e> vitality)
+    void Members_t::Vitality(some<Member_ID_t> valid_member_id, maybe<Member_Vitality_e> vitality)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        this->save_state.vitalities[valid_member_id] = vitality;
+        this->save_state.vitalities[valid_member_id()] = vitality;
     }
 
-    Bool_t Members_t::Is_Mortal(Member_ID_t valid_member_id)
+    Bool_t Members_t::Is_Mortal(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
         return Vitality(valid_member_id) == Member_Vitality_e::MORTAL;
     }
 
-    void Members_t::Is_Mortal(Member_ID_t valid_member_id, Bool_t value)
+    void Members_t::Is_Mortal(some<Member_ID_t> valid_member_id, Bool_t value)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
         Vitality(valid_member_id, Member_Vitality_e::MORTAL);
     }
 
-    Bool_t Members_t::Is_Protected(Member_ID_t valid_member_id)
+    Bool_t Members_t::Is_Protected(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
         return Vitality(valid_member_id) == Member_Vitality_e::PROTECTED;
     }
 
-    void Members_t::Is_Protected(Member_ID_t valid_member_id, Bool_t value)
+    void Members_t::Is_Protected(some<Member_ID_t> valid_member_id, Bool_t value)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
         Vitality(valid_member_id, Member_Vitality_e::PROTECTED);
     }
 
-    Bool_t Members_t::Is_Essential(Member_ID_t valid_member_id)
+    Bool_t Members_t::Is_Essential(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
         return Vitality(valid_member_id) == Member_Vitality_e::ESSENTIAL;
     }
 
-    void Members_t::Is_Essential(Member_ID_t valid_member_id, Bool_t value)
+    void Members_t::Is_Essential(some<Member_ID_t> valid_member_id, Bool_t value)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
         Vitality(valid_member_id, Member_Vitality_e::ESSENTIAL);
     }
 
-    Bool_t Members_t::Is_Invulnerable(Member_ID_t valid_member_id)
+    Bool_t Members_t::Is_Invulnerable(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
         return Vitality(valid_member_id) == Member_Vitality_e::INVULNERABLE;
     }
 
-    void Members_t::Is_Invulnerable(Member_ID_t valid_member_id, Bool_t value)
+    void Members_t::Is_Invulnerable(some<Member_ID_t> valid_member_id, Bool_t value)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
         Vitality(valid_member_id, Member_Vitality_e::INVULNERABLE);
     }
 
-    Bool_t Members_t::Is_Enabled(Member_ID_t valid_member_id)
+    Bool_t Members_t::Is_Enabled(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
         return
             !Is_Banished(valid_member_id);
     }
 
-    Bool_t Members_t::Is_Untouchable(Member_ID_t valid_member_id)
+    Bool_t Members_t::Is_Untouchable(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
         return
             (Has_Untouchable_Invulnerables() && Is_Invulnerable(valid_member_id));
     }
 
-    Bool_t Members_t::Has_AI(Member_ID_t valid_member_id)
+    Bool_t Members_t::Has_AI(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
         return
@@ -1362,8 +1389,9 @@ namespace doticu_npcp { namespace Party {
             !Is_Paralyzed(valid_member_id);
     }
 
-    maybe<Member_Suit_t*> Members_t::Suit(Member_ID_t valid_member_id)
+    maybe<Member_Suit_t*> Members_t::Suit(some<Member_ID_t> valid_member_id)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
         // this needs to calc the exact suit to oufit the actor with, if any.
@@ -1376,6 +1404,7 @@ namespace doticu_npcp { namespace Party {
                              some<Bound_Object_t*> object,
                              Container_Entry_Count_t count)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
         SKYLIB_ASSERT_SOME(object);
         SKYLIB_ASSERT(count > 0);
@@ -1390,6 +1419,7 @@ namespace doticu_npcp { namespace Party {
     void Members_t::Untokenize(some<Member_ID_t> valid_member_id,
                                some<Bound_Object_t*> object)
     {
+        SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
         SKYLIB_ASSERT_SOME(object);
 
@@ -1399,8 +1429,10 @@ namespace doticu_npcp { namespace Party {
         entry->Decrement_Count(&container, Container_Entry_Count_t::_MAX_);
     }
 
-    Bool_t Members_t::Enforce(Member_ID_t member_id)
+    Bool_t Members_t::Enforce(some<Member_ID_t> member_id)
     {
+        SKYLIB_ASSERT_SOME(member_id);
+
         // we may want a different smaller branch if the actor is in combat, or a separate func to call
 
         if (Has_Member(member_id)) {
@@ -1412,7 +1444,7 @@ namespace doticu_npcp { namespace Party {
 
             actor->Actor_Base(Custom_Base(member_id), false);
 
-            Tokenize(member_id, Consts_t::NPCP::Misc::Token::Member(), member_id + 1);
+            Tokenize(member_id, Consts_t::NPCP::Misc::Token::Member(), member_id() + 1);
             actor->Faction_Rank(Consts_t::NPCP::Faction::Member(), 0);
 
             if (Is_Banished(member_id)) {

@@ -26,7 +26,7 @@ namespace doticu_npcp { namespace Party {
             CHAIR_CRITERIA,             // Target
             CHAIR_LIST,                 // List
             FOOD_ITEM_COUNT,            // Int
-            ALLOW_ALREADY_HELD,         // Bool
+            ALLOW_ALREADY_HELD_FOOD,    // Bool
             ALLOW_HORSE_RIDING,         // Bool
             FALSE_BOOL,                 // Bool
             ALLOW_FAKE_FOOD,            // Bool
