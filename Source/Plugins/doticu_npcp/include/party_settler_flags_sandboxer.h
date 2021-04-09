@@ -44,7 +44,6 @@ namespace doticu_npcp { namespace Party {
             ALLOW_SLEEPING              = static_cast<value_type>(1 << 21),
             ALLOW_SPECIAL_FURNITURE     = static_cast<value_type>(1 << 22),
             ALLOW_WANDERING             = static_cast<value_type>(1 << 23),
-
             ONLY_PREFERRED_PATH         = static_cast<value_type>(1 << 24),
             UNLOCK_ON_ARRIVAL           = static_cast<value_type>(1 << 25),
 

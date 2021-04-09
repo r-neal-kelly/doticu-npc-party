@@ -282,6 +282,19 @@ namespace doticu_npcp {
     //temp
     void Main_t::Temp()
     {
+        /*
+        Vector_t<some<Form_t*>> forms = Game_t::Forms();
+        for (size_t idx = 0, end = forms.size(); idx < end; idx += 1) {
+            maybe<Package_t*> package = forms[idx]->As_Package();
+            if (package) {
+                SKYLIB_LOG("%s", package->form_id.As_String());
+                package->Log_Data();
+            }
+        }
+        SKYLIB_LOG("the game will now likely crash, because we loaded too many references.");
+        return;
+        */
+
         Party::Main_t& party = Party();
         Party::Members_t& members = party.Members();
         Party::Settlers_t& settlers = party.Settlers();
@@ -322,6 +335,8 @@ namespace doticu_npcp {
                 members.Enforce(idx);
             }
         }
+
+        // check if changed packages need to be reverted, especially concerning markers.
 
         class Wait_Callback :
             public V::Callback_t

@@ -256,7 +256,7 @@ namespace doticu_npcp { namespace Party {
         some<Actor_Base_t*>         Original_Base(Member_ID_t valid_member_id);
         some<Actor_Base_t*>         Custom_Base(Member_ID_t valid_member_id);
         some<Script_t*>             Script(Member_ID_t valid_member_id);
-        void                        Update_AI(Member_ID_t valid_member_id, some<Member_Update_AI_e> update_ai);
+        void                        Update_AI(some<Member_ID_t> valid_member_id, some<Member_Update_AI_e> update_ai);
 
         Bool_t                      Is_Banished(Member_ID_t valid_member_id);
         void                        Is_Banished(Member_ID_t valid_member_id, Bool_t value);

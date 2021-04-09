@@ -36,7 +36,7 @@ namespace doticu_npcp { namespace Party {
             OBSERVE_COMBAT_BEHAVIOR     = static_cast<value_type>(1 << 14),
             REACT_TO_PLAYER_ACTIONS     = static_cast<value_type>(1 << 15),
 
-            PREFERRED_PATH_ONLY         = static_cast<value_type>(1 << 16),
+            ONLY_PREFERRED_PATH         = static_cast<value_type>(1 << 16),
             STOP_MOVEMENT               = static_cast<value_type>(1 << 17),
 
             _TOTAL_                     = 18,

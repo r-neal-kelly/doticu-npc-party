@@ -106,9 +106,7 @@ namespace doticu_npcp { namespace Party {
 
             Vector_t<maybe<Settler_Attention_t>>        sandboxer_attentions;
             Vector_t<maybe<Settler_Attention_t>>        sleeper_attentions;
-            Vector_t<maybe<Settler_Attention_t>>        sitter_attentions;
             Vector_t<maybe<Settler_Attention_t>>        eater_attentions;
-            Vector_t<maybe<Settler_Attention_t>>        guard_attentions;
 
             Vector_t<maybe<Settler_Speed_e>>            sandboxer_speeds;
             Vector_t<maybe<Settler_Speed_e>>            sleeper_speeds;
@@ -163,9 +161,7 @@ namespace doticu_npcp { namespace Party {
 
             V::Variable_tt<Vector_t<Int_t>>&                Sandboxer_Attentions();
             V::Variable_tt<Vector_t<Int_t>>&                Sleeper_Attentions();
-            V::Variable_tt<Vector_t<Int_t>>&                Sitter_Attentions();
             V::Variable_tt<Vector_t<Int_t>>&                Eater_Attentions();
-            V::Variable_tt<Vector_t<Int_t>>&                Guard_Attentions();
 
             V::Variable_tt<Vector_t<Int_t>>&                Sandboxer_Speeds();
             V::Variable_tt<Vector_t<Int_t>>&                Sleeper_Speeds();
@@ -300,7 +296,8 @@ namespace doticu_npcp { namespace Party {
         template <typename T>
         some<Settler_Attention_t>                   Attention(some<Settler_ID_t> valid_settler_id);
         template <typename T>
-        void                                        Attention(some<Settler_ID_t> valid_settler_id, some<Settler_Attention_t> attention);
+        void                                        Attention(some<Settler_ID_t> valid_settler_id,
+                                                              some<Settler_Attention_t> attention);
 
         template <typename T>
         Vector_t<maybe<Settler_Speed_e>>&           Speeds();
@@ -329,31 +326,33 @@ namespace doticu_npcp { namespace Party {
                      Settler_Value_Index_e index,
                      Bool_t value,
                      Bool_t& do_reset_ai);
-        void    Flag_General(some<Package_t*> package,
-                             Package_Flags_e general_flag,
-                             Bool_t value,
-                             Bool_t& do_reset_ai);
-        void    Flag_Interrupt(some<Package_t*> package,
-                               Package_Interrupt_Flags_e interrupt_flag,
-                               Bool_t value,
-                               Bool_t& do_reset_ai);
         void    Float(some<Package_t*> package,
                       Settler_Value_Index_e index,
                       Float_t value,
                       Bool_t& do_reset_ai);
+        void    General_Flag(some<Package_t*> package,
+                             Package_Flags_e general_flag,
+                             Bool_t value,
+                             Bool_t& do_reset_ai);
+        void    Interrupt_Flag(some<Package_t*> package,
+                               Package_Interrupt_Flags_e interrupt_flag,
+                               Bool_t value,
+                               Bool_t& do_reset_ai);
         void    Location(some<Package_t*> package,
                          Settler_Value_Index_e index,
                          some<Reference_t*> marker,
                          some<Settler_Radius_t> radius,
                          Bool_t& do_reset_ai);
-        void    Speed(some<Package_t*> package,
-                      some<Settler_Speed_e> speed,
-                      Bool_t& do_reset_ai);
         void    Schedule(some<Package_t*> package,
                          maybe<Settler_Time_t> time,
                          maybe<Settler_Duration_t> duration,
                          Bool_t& do_reset_ai);
+        void    Speed(some<Package_t*> package,
+                      some<Settler_Speed_e> speed,
+                      Bool_t& do_reset_ai);
 
+        template <typename T>
+        void    Enforce_Package(some<Settler_ID_t> valid_settler_id, Bool_t& do_reset_ai);
         void    Enforce(some<Settler_ID_t> settler_id);
 
     public:

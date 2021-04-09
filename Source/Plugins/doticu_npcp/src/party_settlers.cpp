@@ -2,10 +2,6 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
-#include "doticu_skylib/actor.h"
-#include "doticu_skylib/quest.h"
-#include "doticu_skylib/reference.h"
-#include "doticu_skylib/static.h"
 #include "doticu_skylib/virtual_macros.h"
 
 #include "main.h"
@@ -52,9 +48,7 @@ namespace doticu_npcp { namespace Party {
 
         sandboxer_attentions(Vector_t<maybe<Settler_Attention_t>>(MAX_SETTLERS, DEFAULT_ATTENTION)),
         sleeper_attentions(Vector_t<maybe<Settler_Attention_t>>(MAX_SETTLERS, DEFAULT_ATTENTION)),
-        sitter_attentions(Vector_t<maybe<Settler_Attention_t>>(MAX_SETTLERS, DEFAULT_ATTENTION)),
         eater_attentions(Vector_t<maybe<Settler_Attention_t>>(MAX_SETTLERS, DEFAULT_ATTENTION)),
-        guard_attentions(Vector_t<maybe<Settler_Attention_t>>(MAX_SETTLERS, DEFAULT_ATTENTION)),
 
         sandboxer_speeds(Vector_t<maybe<Settler_Speed_e>>(MAX_SETTLERS, DEFAULT_SPEED)),
         sleeper_speeds(Vector_t<maybe<Settler_Speed_e>>(MAX_SETTLERS, DEFAULT_SPEED)),
@@ -204,19 +198,9 @@ namespace doticu_npcp { namespace Party {
         DEFINE_VARIABLE_REFERENCE(Vector_t<Int_t>, "sleeper_attentions");
     }
 
-    V::Variable_tt<Vector_t<Int_t>>& Settlers_t::Save_State::Sitter_Attentions()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<Int_t>, "sitter_attentions");
-    }
-
     V::Variable_tt<Vector_t<Int_t>>& Settlers_t::Save_State::Eater_Attentions()
     {
         DEFINE_VARIABLE_REFERENCE(Vector_t<Int_t>, "eater_attentions");
-    }
-
-    V::Variable_tt<Vector_t<Int_t>>& Settlers_t::Save_State::Guard_Attentions()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<Int_t>, "guard_attentions");
     }
 
     V::Variable_tt<Vector_t<Int_t>>& Settlers_t::Save_State::Sandboxer_Speeds()
@@ -297,9 +281,7 @@ namespace doticu_npcp { namespace Party {
 
         Vector_t<Int_t> sandboxer_attentions = Sandboxer_Attentions();
         Vector_t<Int_t> sleeper_attentions = Sleeper_Attentions();
-        Vector_t<Int_t> sitter_attentions = Sitter_Attentions();
         Vector_t<Int_t> eater_attentions = Eater_Attentions();
-        Vector_t<Int_t> guard_attentions = Guard_Attentions();
 
         Vector_t<Int_t> sandboxer_speeds = Sandboxer_Speeds();
         Vector_t<Int_t> sleeper_speeds = Sleeper_Speeds();
@@ -344,9 +326,7 @@ namespace doticu_npcp { namespace Party {
 
         sandboxer_attentions.resize(MAX_SETTLERS, DEFAULT_ATTENTION);
         sleeper_attentions.resize(MAX_SETTLERS, DEFAULT_ATTENTION);
-        sitter_attentions.resize(MAX_SETTLERS, DEFAULT_ATTENTION);
         eater_attentions.resize(MAX_SETTLERS, DEFAULT_ATTENTION);
-        guard_attentions.resize(MAX_SETTLERS, DEFAULT_ATTENTION);
 
         sandboxer_speeds.resize(MAX_SETTLERS, DEFAULT_SPEED);
         sleeper_speeds.resize(MAX_SETTLERS, DEFAULT_SPEED);
@@ -386,9 +366,7 @@ namespace doticu_npcp { namespace Party {
 
             this->sandboxer_attentions[idx] = sandboxer_attentions[idx];
             this->sleeper_attentions[idx] = sleeper_attentions[idx];
-            this->sitter_attentions[idx] = sitter_attentions[idx];
             this->eater_attentions[idx] = eater_attentions[idx];
-            this->guard_attentions[idx] = guard_attentions[idx];
 
             this->sandboxer_speeds[idx] = sandboxer_speeds[idx];
             this->sleeper_speeds[idx] = sleeper_speeds[idx];
@@ -429,9 +407,7 @@ namespace doticu_npcp { namespace Party {
 
         Vector_t<Int_t> sandboxer_attentions(MAX_SETTLERS, DEFAULT_ATTENTION);
         Vector_t<Int_t> sleeper_attentions(MAX_SETTLERS, DEFAULT_ATTENTION);
-        Vector_t<Int_t> sitter_attentions(MAX_SETTLERS, DEFAULT_ATTENTION);
         Vector_t<Int_t> eater_attentions(MAX_SETTLERS, DEFAULT_ATTENTION);
-        Vector_t<Int_t> guard_attentions(MAX_SETTLERS, DEFAULT_ATTENTION);
 
         Vector_t<Int_t> sandboxer_speeds(MAX_SETTLERS, DEFAULT_SPEED);
         Vector_t<Int_t> sleeper_speeds(MAX_SETTLERS, DEFAULT_SPEED);
@@ -469,9 +445,7 @@ namespace doticu_npcp { namespace Party {
 
             sandboxer_attentions[idx] = this->sandboxer_attentions[idx]();
             sleeper_attentions[idx] = this->sleeper_attentions[idx]();
-            sitter_attentions[idx] = this->sitter_attentions[idx]();
             eater_attentions[idx] = this->eater_attentions[idx]();
-            guard_attentions[idx] = this->guard_attentions[idx]();
 
             sandboxer_speeds[idx] = this->sandboxer_speeds[idx]();
             sleeper_speeds[idx] = this->sleeper_speeds[idx]();
@@ -515,9 +489,7 @@ namespace doticu_npcp { namespace Party {
 
         Sandboxer_Attentions() = sandboxer_attentions;
         Sleeper_Attentions() = sleeper_attentions;
-        Sitter_Attentions() = sitter_attentions;
         Eater_Attentions() = eater_attentions;
-        Guard_Attentions() = guard_attentions;
 
         Sandboxer_Speeds() = sandboxer_speeds;
         Sleeper_Speeds() = sleeper_speeds;
@@ -674,7 +646,21 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
-    void Settlers_t::Flag_General(some<Package_t*> package,
+    void Settlers_t::Float(some<Package_t*> package,
+                           Settler_Value_Index_e index,
+                           Float_t value,
+                           Bool_t& do_reset_ai)
+    {
+        SKYLIB_ASSERT_SOME(package);
+        SKYLIB_ASSERT_SOME(package->data);
+
+        if (package->data->Float(index) != value) {
+            package->data->Float(index, value);
+            do_reset_ai = true;
+        }
+    }
+
+    void Settlers_t::General_Flag(some<Package_t*> package,
                                   Package_Flags_e general_flag,
                                   Bool_t value,
                                   Bool_t& do_reset_ai)
@@ -687,7 +673,7 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
-    void Settlers_t::Flag_Interrupt(some<Package_t*> package,
+    void Settlers_t::Interrupt_Flag(some<Package_t*> package,
                                     Package_Interrupt_Flags_e interrupt_flag,
                                     Bool_t value,
                                     Bool_t& do_reset_ai)
@@ -696,20 +682,6 @@ namespace doticu_npcp { namespace Party {
 
         if (package->interrupt_flags.Is_Flagged(interrupt_flag) != value) {
             package->interrupt_flags.Is_Flagged(interrupt_flag, value);
-            do_reset_ai = true;
-        }
-    }
-
-    void Settlers_t::Float(some<Package_t*> package,
-                           Settler_Value_Index_e index,
-                           Float_t value,
-                           Bool_t& do_reset_ai)
-    {
-        SKYLIB_ASSERT_SOME(package);
-        SKYLIB_ASSERT_SOME(package->data);
-
-        if (package->data->Float(index) != value) {
-            package->data->Float(index, value);
             do_reset_ai = true;
         }
     }
@@ -733,19 +705,6 @@ namespace doticu_npcp { namespace Party {
 
         if (location->Radius() != radius) {
             location->Radius(radius());
-            do_reset_ai = true;
-        }
-    }
-
-    void Settlers_t::Speed(some<Package_t*> package,
-                           some<Settler_Speed_e> speed,
-                           Bool_t& do_reset_ai)
-    {
-        SKYLIB_ASSERT_SOME(package);
-        SKYLIB_ASSERT_SOME(speed);
-
-        if (package->preferred_speed != speed) {
-            package->preferred_speed = speed();
             do_reset_ai = true;
         }
     }
@@ -793,88 +752,63 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
+    void Settlers_t::Speed(some<Package_t*> package,
+                           some<Settler_Speed_e> speed,
+                           Bool_t& do_reset_ai)
+    {
+        SKYLIB_ASSERT_SOME(package);
+        SKYLIB_ASSERT_SOME(speed);
+
+        if (package->preferred_speed != speed) {
+            package->preferred_speed = speed();
+            do_reset_ai = true;
+        }
+    }
+
     void Settlers_t::Enforce(some<Settler_ID_t> settler_id)
     {
-        using General = Package_Flags_e;
-        using Interrupt = Package_Interrupt_Flags_e;
-
         SKYLIB_ASSERT_SOME(settler_id);
 
         Members_t& members = Members();
         Bool_t do_reset_ai = false;
 
         if (Is_Enabled<Sandboxer_t>(settler_id)) {
-            using Type = Sandboxer_t;
-            using Flag = Settler_Flags_Sandboxer_e;
-            using Value = Settler_Value_Index_Sandboxer_e;
-
-            some<Package_t*> package = Package<Type>(settler_id);
-            Settler_Flags_e flags = Flags<Type>(settler_id);
-
-            Bool(package, Value::ALLOW_CONVERSATION, flags.Is_Flagged(Flag::ALLOW_CONVERSATION), do_reset_ai);
-            Bool(package, Value::ALLOW_EATING, flags.Is_Flagged(Flag::ALLOW_EATING), do_reset_ai);
-            Bool(package, Value::ALLOW_HORSE_RIDING, flags.Is_Flagged(Flag::ALLOW_HORSE_RIDING), do_reset_ai);
-            Bool(package, Value::ALLOW_IDLE_MARKERS, flags.Is_Flagged(Flag::ALLOW_IDLE_MARKERS), do_reset_ai);
-            Bool(package, Value::ALLOW_SITTING, flags.Is_Flagged(Flag::ALLOW_SITTING), do_reset_ai);
-            Bool(package, Value::ALLOW_SLEEPING, flags.Is_Flagged(Flag::ALLOW_SLEEPING), do_reset_ai);
-            Bool(package, Value::ALLOW_SPECIAL_FURNITURE, flags.Is_Flagged(Flag::ALLOW_SPECIAL_FURNITURE), do_reset_ai);
-            Bool(package, Value::ALLOW_WANDERING, flags.Is_Flagged(Flag::ALLOW_WANDERING), do_reset_ai);
-            Bool(package, Value::ONLY_PREFERRED_PATH, flags.Is_Flagged(Flag::ONLY_PREFERRED_PATH), do_reset_ai);
-            Bool(package, Value::UNLOCK_ON_ARRIVAL, flags.Is_Flagged(Flag::UNLOCK_ON_ARRIVAL), do_reset_ai);
-
-            Float(package, Value::ATTENTION, Attention<Type>(settler_id)(), do_reset_ai);
-            Float(package, Value::WANDER_DISTANCE, Wander_Distance<Type>(settler_id)(), do_reset_ai);
-
-            Location(package, Value::LOCATION, Marker<Type>(settler_id), Radius<Type>(settler_id), do_reset_ai);
-
-            Speed(package, Speed<Type>(settler_id), do_reset_ai);
-
-            Schedule(package, none<Settler_Time_t>(), none<Settler_Duration_t>(), do_reset_ai);
-
-            Flag_General(package, General::ALLOW_SWIMMING, flags.Is_Flagged(Flag::ALLOW_SWIMMING), do_reset_ai);
-            Flag_General(package, General::ALWAYS_SNEAK, flags.Is_Flagged(Flag::ALWAYS_SNEAK), do_reset_ai);
-            Flag_General(package, General::IGNORE_COMBAT, flags.Is_Flagged(Flag::IGNORE_COMBAT), do_reset_ai);
-            Flag_General(package, General::KEEP_WEAPONS_DRAWN, flags.Is_Flagged(Flag::KEEP_WEAPONS_DRAWN), do_reset_ai);
-            Flag_General(package, General::HIDE_WEAPONS, flags.Is_Flagged(Flag::HIDE_WEAPONS), do_reset_ai);
-            Flag_General(package, General::SKIP_COMBAT_ALERT, flags.Is_Flagged(Flag::SKIP_COMBAT_ALERT), do_reset_ai);
-
-            Flag_Interrupt(package, Interrupt::ALLOW_HELLOS_TO_PLAYER, flags.Is_Flagged(Flag::ALLOW_HELLOS_TO_PLAYER), do_reset_ai);
-            Flag_Interrupt(package, Interrupt::ALLOW_HELLOS_TO_NPCS, flags.Is_Flagged(Flag::ALLOW_HELLOS_TO_NPCS), do_reset_ai);
-            Flag_Interrupt(package, Interrupt::ALLOW_IDLE_CHATTER, flags.Is_Flagged(Flag::ALLOW_IDLE_CHATTER), do_reset_ai);
-            Flag_Interrupt(package, Interrupt::ALLOW_AGGRO_RADIUS_BEHAVIOR, flags.Is_Flagged(Flag::ALLOW_AGGRO_RADIUS_BEHAVIOR), do_reset_ai);
-            Flag_Interrupt(package, Interrupt::ALLOW_WORLD_INTERACTIONS, flags.Is_Flagged(Flag::ALLOW_WORLD_INTERACTIONS), do_reset_ai);
-            Flag_Interrupt(package, Interrupt::COMMENT_ON_FRIENDLY_FIRE, flags.Is_Flagged(Flag::COMMENT_ON_FRIENDLY_FIRE), do_reset_ai);
-            Flag_Interrupt(package, Interrupt::INSPECT_CORPSE_BEHAVIOR, flags.Is_Flagged(Flag::INSPECT_CORPSE_BEHAVIOR), do_reset_ai);
-            Flag_Interrupt(package, Interrupt::OBSERVE_COMBAT_BEHAVIOR, flags.Is_Flagged(Flag::OBSERVE_COMBAT_BEHAVIOR), do_reset_ai);
-            Flag_Interrupt(package, Interrupt::REACT_TO_PLAYER_ACTIONS, flags.Is_Flagged(Flag::REACT_TO_PLAYER_ACTIONS), do_reset_ai);
-
+            Enforce_Package<Sandboxer_t>(settler_id, do_reset_ai);
             members.Tokenize(settler_id, Token<Sandboxer_t>());
         } else {
             members.Untokenize(settler_id, Token<Sandboxer_t>());
         }
 
         if (Is_Enabled<Sleeper_t>(settler_id)) {
+            Enforce_Package<Sleeper_t>(settler_id, do_reset_ai);
             members.Tokenize(settler_id, Token<Sleeper_t>());
         } else {
             members.Untokenize(settler_id, Token<Sleeper_t>());
         }
 
         if (Is_Enabled<Sitter_t>(settler_id)) {
+            Enforce_Package<Sitter_t>(settler_id, do_reset_ai);
             members.Tokenize(settler_id, Token<Sitter_t>());
         } else {
             members.Untokenize(settler_id, Token<Sitter_t>());
         }
 
         if (Is_Enabled<Eater_t>(settler_id)) {
+            Enforce_Package<Eater_t>(settler_id, do_reset_ai);
             members.Tokenize(settler_id, Token<Eater_t>());
         } else {
             members.Untokenize(settler_id, Token<Eater_t>());
         }
 
         if (Is_Enabled<Guard_t>(settler_id)) {
+            Enforce_Package<Guard_t>(settler_id, do_reset_ai);
             members.Tokenize(settler_id, Token<Guard_t>());
         } else {
             members.Untokenize(settler_id, Token<Guard_t>());
+        }
+
+        if (do_reset_ai) {
+            members.Update_AI(settler_id, Member_Update_AI_e::RESET_AI);
         }
     }
 

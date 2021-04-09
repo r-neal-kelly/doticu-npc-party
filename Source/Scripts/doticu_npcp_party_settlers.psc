@@ -32,9 +32,7 @@ int[]               guard_durations             = none
 
 int[]               sandboxer_attentions        = none
 int[]               sleeper_attentions          = none
-int[]               sitter_attentions           = none
 int[]               eater_attentions            = none
-int[]               guard_attentions            = none
 
 int[]               sandboxer_speeds            = none
 int[]               sleeper_speeds              = none

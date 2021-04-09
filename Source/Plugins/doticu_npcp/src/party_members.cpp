@@ -1003,12 +1003,12 @@ namespace doticu_npcp { namespace Party {
         return script();
     }
 
-    void Members_t::Update_AI(Member_ID_t valid_member_id, some<Member_Update_AI_e> update_ai)
+    void Members_t::Update_AI(some<Member_ID_t> valid_member_id, some<Member_Update_AI_e> update_ai)
     {
         SKYLIB_ASSERT(Has_Member(valid_member_id));
         SKYLIB_ASSERT_SOME(update_ai);
 
-        maybe<Member_Update_AI_e>& this_update_ai = this->update_ais[valid_member_id];
+        maybe<Member_Update_AI_e>& this_update_ai = this->update_ais[valid_member_id()];
         if (this_update_ai != Member_Update_AI_e::RESET_AI) {
             this_update_ai = update_ai;
         }

@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "doticu_skylib/actor.h"
 #include "doticu_skylib/const_actors.h"
 #include "doticu_skylib/form_list.h"
 #include "doticu_skylib/misc.h"
@@ -19,6 +20,8 @@
 #include "doticu_skylib/package_value_reference.h"
 #include "doticu_skylib/package_value_target.h"
 #include "doticu_skylib/package_value_topic.h"
+#include "doticu_skylib/quest.h"
+#include "doticu_skylib/reference.h"
 #include "doticu_skylib/static.h"
 
 #include "consts.h"
@@ -686,10 +689,7 @@ namespace doticu_npcp { namespace Party {
     }
 
     template <>
-    inline Vector_t<maybe<Settler_Attention_t>>& Settlers_t::Attentions<Sitter_t>()
-    {
-        return this->save_state.sitter_attentions;
-    }
+    inline Vector_t<maybe<Settler_Attention_t>>& Settlers_t::Attentions<Sitter_t>() = delete;
 
     template <>
     inline Vector_t<maybe<Settler_Attention_t>>& Settlers_t::Attentions<Eater_t>()
@@ -698,10 +698,7 @@ namespace doticu_npcp { namespace Party {
     }
 
     template <>
-    inline Vector_t<maybe<Settler_Attention_t>>& Settlers_t::Attentions<Guard_t>()
-    {
-        return this->save_state.guard_attentions;
-    }
+    inline Vector_t<maybe<Settler_Attention_t>>& Settlers_t::Attentions<Guard_t>() = delete;
 
     template <typename T>
     inline some<Settler_Attention_t> Settlers_t::Attention(some<Settler_ID_t> valid_settler_id)
@@ -718,8 +715,15 @@ namespace doticu_npcp { namespace Party {
         return attention();
     }
 
+    template <>
+    inline some<Settler_Attention_t> Settlers_t::Attention<Sitter_t>(some<Settler_ID_t> valid_settler_id) = delete;
+
+    template <>
+    inline some<Settler_Attention_t> Settlers_t::Attention<Guard_t>(some<Settler_ID_t> valid_settler_id) = delete;
+
     template <typename T>
-    inline void Settlers_t::Attention(some<Settler_ID_t> valid_settler_id, some<Settler_Attention_t> attention)
+    inline void Settlers_t::Attention(some<Settler_ID_t> valid_settler_id,
+                                      some<Settler_Attention_t> attention)
     {
         SKYLIB_ASSERT_SOME(valid_settler_id);
         SKYLIB_ASSERT_SOME(attention);
@@ -727,6 +731,14 @@ namespace doticu_npcp { namespace Party {
 
         Attentions<T>()[valid_settler_id()] = attention;
     }
+
+    template <>
+    inline void Settlers_t::Attention<Sitter_t>(some<Settler_ID_t> valid_settler_id,
+                                                some<Settler_Attention_t> attention) = delete;
+
+    template <>
+    inline void Settlers_t::Attention<Guard_t>(some<Settler_ID_t> valid_settler_id,
+                                               some<Settler_Attention_t> attention) = delete;
 
     template <typename T>
     inline Vector_t<maybe<Settler_Speed_e>>& Settlers_t::Speeds()
@@ -921,5 +933,240 @@ namespace doticu_npcp { namespace Party {
 
     template <>
     inline void Settlers_t::Bed<Guard_t>(some<Settler_ID_t> valid_settler_id, maybe<Reference_t*> bed) = delete;
+
+    template <typename T>
+    inline void Settlers_t::Enforce_Package(some<Settler_ID_t> valid_settler_id, Bool_t& do_reset_ai)
+    {
+    }
+
+    template <>
+    inline void Settlers_t::Enforce_Package<Sandboxer_t>(some<Settler_ID_t> id, Bool_t& do_reset_ai)
+    {
+        using T = Sandboxer_t;
+        using F = Settler_Flags_Sandboxer_e;
+        using V = Settler_Value_Index_Sandboxer_e;
+        using G = Package_Flags_e;
+        using I = Package_Interrupt_Flags_e;
+
+        some<Package_t*> package = Package<T>(id);
+        Settler_Flags_e flags = Flags<T>(id);
+
+        Bool(package, V::ALLOW_CONVERSATION, flags.Is_Flagged(F::ALLOW_CONVERSATION), do_reset_ai);
+        Bool(package, V::ALLOW_EATING, flags.Is_Flagged(F::ALLOW_EATING), do_reset_ai);
+        Bool(package, V::ALLOW_HORSE_RIDING, flags.Is_Flagged(F::ALLOW_HORSE_RIDING), do_reset_ai);
+        Bool(package, V::ALLOW_IDLE_MARKERS, flags.Is_Flagged(F::ALLOW_IDLE_MARKERS), do_reset_ai);
+        Bool(package, V::ALLOW_SITTING, flags.Is_Flagged(F::ALLOW_SITTING), do_reset_ai);
+        Bool(package, V::ALLOW_SLEEPING, flags.Is_Flagged(F::ALLOW_SLEEPING), do_reset_ai);
+        Bool(package, V::ALLOW_SPECIAL_FURNITURE, flags.Is_Flagged(F::ALLOW_SPECIAL_FURNITURE), do_reset_ai);
+        Bool(package, V::ALLOW_WANDERING, flags.Is_Flagged(F::ALLOW_WANDERING), do_reset_ai);
+        Bool(package, V::ONLY_PREFERRED_PATH, flags.Is_Flagged(F::ONLY_PREFERRED_PATH), do_reset_ai);
+        Bool(package, V::UNLOCK_ON_ARRIVAL, flags.Is_Flagged(F::UNLOCK_ON_ARRIVAL), do_reset_ai);
+
+        Float(package, V::ATTENTION, Attention<T>(id)(), do_reset_ai);
+        Float(package, V::WANDER_DISTANCE, Wander_Distance<T>(id)(), do_reset_ai);
+
+        General_Flag(package, G::ALLOW_SWIMMING, flags.Is_Flagged(F::ALLOW_SWIMMING), do_reset_ai);
+        General_Flag(package, G::ALWAYS_SNEAK, flags.Is_Flagged(F::ALWAYS_SNEAK), do_reset_ai);
+        General_Flag(package, G::IGNORE_COMBAT, flags.Is_Flagged(F::IGNORE_COMBAT), do_reset_ai);
+        General_Flag(package, G::KEEP_WEAPONS_DRAWN, flags.Is_Flagged(F::KEEP_WEAPONS_DRAWN), do_reset_ai);
+        General_Flag(package, G::HIDE_WEAPONS, flags.Is_Flagged(F::HIDE_WEAPONS), do_reset_ai);
+        General_Flag(package, G::SKIP_COMBAT_ALERT, flags.Is_Flagged(F::SKIP_COMBAT_ALERT), do_reset_ai);
+
+        Interrupt_Flag(package, I::ALLOW_HELLOS_TO_PLAYER, flags.Is_Flagged(F::ALLOW_HELLOS_TO_PLAYER), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_HELLOS_TO_NPCS, flags.Is_Flagged(F::ALLOW_HELLOS_TO_NPCS), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_IDLE_CHATTER, flags.Is_Flagged(F::ALLOW_IDLE_CHATTER), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_AGGRO_RADIUS_BEHAVIOR, flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS_BEHAVIOR), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_WORLD_INTERACTIONS, flags.Is_Flagged(F::ALLOW_WORLD_INTERACTIONS), do_reset_ai);
+        Interrupt_Flag(package, I::COMMENT_ON_FRIENDLY_FIRE, flags.Is_Flagged(F::COMMENT_ON_FRIENDLY_FIRE), do_reset_ai);
+        Interrupt_Flag(package, I::INSPECT_CORPSE_BEHAVIOR, flags.Is_Flagged(F::INSPECT_CORPSE_BEHAVIOR), do_reset_ai);
+        Interrupt_Flag(package, I::OBSERVE_COMBAT_BEHAVIOR, flags.Is_Flagged(F::OBSERVE_COMBAT_BEHAVIOR), do_reset_ai);
+        Interrupt_Flag(package, I::REACT_TO_PLAYER_ACTIONS, flags.Is_Flagged(F::REACT_TO_PLAYER_ACTIONS), do_reset_ai);
+
+        Location(package, V::LOCATION, Marker<T>(id), Radius<T>(id), do_reset_ai);
+
+        Schedule(package, none<Settler_Time_t>(), none<Settler_Duration_t>(), do_reset_ai);
+
+        Speed(package, Speed<T>(id), do_reset_ai);
+    }
+
+    template <>
+    inline void Settlers_t::Enforce_Package<Sleeper_t>(some<Settler_ID_t> id, Bool_t& do_reset_ai)
+    {
+        using T = Sleeper_t;
+        using F = Settler_Flags_Sleeper_e;
+        using V = Settler_Value_Index_Sleeper_e;
+        using G = Package_Flags_e;
+        using I = Package_Interrupt_Flags_e;
+
+        some<Package_t*> package = Package<T>(id);
+        Settler_Flags_e flags = Flags<T>(id);
+
+        Bool(package, V::ALLOW_CONVERSATION, flags.Is_Flagged(F::ALLOW_CONVERSATION), do_reset_ai);
+        Bool(package, V::ALLOW_EATING, flags.Is_Flagged(F::ALLOW_EATING), do_reset_ai);
+        Bool(package, V::ALLOW_HORSE_RIDING, flags.Is_Flagged(F::ALLOW_HORSE_RIDING), do_reset_ai);
+        Bool(package, V::ALLOW_IDLE_MARKERS, flags.Is_Flagged(F::ALLOW_IDLE_MARKERS), do_reset_ai);
+        Bool(package, V::ALLOW_SITTING, flags.Is_Flagged(F::ALLOW_SITTING), do_reset_ai);
+        Bool(package, V::ALLOW_SLEEPING, flags.Is_Flagged(F::ALLOW_SLEEPING), do_reset_ai);
+        Bool(package, V::ALLOW_SPECIAL_FURNITURE, flags.Is_Flagged(F::ALLOW_SPECIAL_FURNITURE), do_reset_ai);
+        Bool(package, V::ALLOW_WANDERING, flags.Is_Flagged(F::ALLOW_WANDERING), do_reset_ai);
+        Bool(package, V::LOCK_DOORS, flags.Is_Flagged(F::LOCK_DOORS), do_reset_ai);
+        Bool(package, V::ONLY_PREFERRED_PATH, flags.Is_Flagged(F::ONLY_PREFERRED_PATH), do_reset_ai);
+        Bool(package, V::WARN_BEFORE_LOCKING, flags.Is_Flagged(F::WARN_BEFORE_LOCKING), do_reset_ai);
+
+        Float(package, V::ATTENTION, Attention<T>(id)(), do_reset_ai);
+        Float(package, V::WANDER_DISTANCE, Wander_Distance<T>(id)(), do_reset_ai);
+
+        General_Flag(package, G::ALLOW_SWIMMING, flags.Is_Flagged(F::ALLOW_SWIMMING), do_reset_ai);
+        General_Flag(package, G::ALWAYS_SNEAK, flags.Is_Flagged(F::ALWAYS_SNEAK), do_reset_ai);
+        General_Flag(package, G::IGNORE_COMBAT, flags.Is_Flagged(F::IGNORE_COMBAT), do_reset_ai);
+        General_Flag(package, G::KEEP_WEAPONS_DRAWN, flags.Is_Flagged(F::KEEP_WEAPONS_DRAWN), do_reset_ai);
+        General_Flag(package, G::HIDE_WEAPONS, flags.Is_Flagged(F::HIDE_WEAPONS), do_reset_ai);
+        General_Flag(package, G::SKIP_COMBAT_ALERT, flags.Is_Flagged(F::SKIP_COMBAT_ALERT), do_reset_ai);
+
+        Interrupt_Flag(package, I::ALLOW_HELLOS_TO_PLAYER, flags.Is_Flagged(F::ALLOW_HELLOS_TO_PLAYER), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_HELLOS_TO_NPCS, flags.Is_Flagged(F::ALLOW_HELLOS_TO_NPCS), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_IDLE_CHATTER, flags.Is_Flagged(F::ALLOW_IDLE_CHATTER), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_AGGRO_RADIUS_BEHAVIOR, flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS_BEHAVIOR), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_WORLD_INTERACTIONS, flags.Is_Flagged(F::ALLOW_WORLD_INTERACTIONS), do_reset_ai);
+        Interrupt_Flag(package, I::COMMENT_ON_FRIENDLY_FIRE, flags.Is_Flagged(F::COMMENT_ON_FRIENDLY_FIRE), do_reset_ai);
+        Interrupt_Flag(package, I::INSPECT_CORPSE_BEHAVIOR, flags.Is_Flagged(F::INSPECT_CORPSE_BEHAVIOR), do_reset_ai);
+        Interrupt_Flag(package, I::OBSERVE_COMBAT_BEHAVIOR, flags.Is_Flagged(F::OBSERVE_COMBAT_BEHAVIOR), do_reset_ai);
+        Interrupt_Flag(package, I::REACT_TO_PLAYER_ACTIONS, flags.Is_Flagged(F::REACT_TO_PLAYER_ACTIONS), do_reset_ai);
+
+        Location(package, V::LOCATION, Marker<T>(id), Radius<T>(id), do_reset_ai);
+
+        Schedule(package, Time<T>(id), Duration<T>(id), do_reset_ai);
+
+        Speed(package, Speed<T>(id), do_reset_ai);
+    }
+
+    template <>
+    inline void Settlers_t::Enforce_Package<Sitter_t>(some<Settler_ID_t> id, Bool_t& do_reset_ai)
+    {
+        using T = Sitter_t;
+        using F = Settler_Flags_Sitter_e;
+        using V = Settler_Value_Index_Sitter_e;
+        using G = Package_Flags_e;
+        using I = Package_Interrupt_Flags_e;
+
+        some<Package_t*> package = Package<T>(id);
+        Settler_Flags_e flags = Flags<T>(id);
+
+        Bool(package, V::ONLY_PREFERRED_PATH, flags.Is_Flagged(F::ONLY_PREFERRED_PATH), do_reset_ai);
+        Bool(package, V::STOP_MOVEMENT, flags.Is_Flagged(F::STOP_MOVEMENT), do_reset_ai);
+
+        General_Flag(package, G::ALLOW_SWIMMING, flags.Is_Flagged(F::ALLOW_SWIMMING), do_reset_ai);
+        General_Flag(package, G::ALWAYS_SNEAK, flags.Is_Flagged(F::ALWAYS_SNEAK), do_reset_ai);
+        General_Flag(package, G::IGNORE_COMBAT, flags.Is_Flagged(F::IGNORE_COMBAT), do_reset_ai);
+        General_Flag(package, G::KEEP_WEAPONS_DRAWN, flags.Is_Flagged(F::KEEP_WEAPONS_DRAWN), do_reset_ai);
+        General_Flag(package, G::HIDE_WEAPONS, flags.Is_Flagged(F::HIDE_WEAPONS), do_reset_ai);
+        General_Flag(package, G::SKIP_COMBAT_ALERT, flags.Is_Flagged(F::SKIP_COMBAT_ALERT), do_reset_ai);
+
+        Interrupt_Flag(package, I::ALLOW_HELLOS_TO_PLAYER, flags.Is_Flagged(F::ALLOW_HELLOS_TO_PLAYER), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_HELLOS_TO_NPCS, flags.Is_Flagged(F::ALLOW_HELLOS_TO_NPCS), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_IDLE_CHATTER, flags.Is_Flagged(F::ALLOW_IDLE_CHATTER), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_AGGRO_RADIUS_BEHAVIOR, flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS_BEHAVIOR), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_WORLD_INTERACTIONS, flags.Is_Flagged(F::ALLOW_WORLD_INTERACTIONS), do_reset_ai);
+        Interrupt_Flag(package, I::COMMENT_ON_FRIENDLY_FIRE, flags.Is_Flagged(F::COMMENT_ON_FRIENDLY_FIRE), do_reset_ai);
+        Interrupt_Flag(package, I::INSPECT_CORPSE_BEHAVIOR, flags.Is_Flagged(F::INSPECT_CORPSE_BEHAVIOR), do_reset_ai);
+        Interrupt_Flag(package, I::OBSERVE_COMBAT_BEHAVIOR, flags.Is_Flagged(F::OBSERVE_COMBAT_BEHAVIOR), do_reset_ai);
+        Interrupt_Flag(package, I::REACT_TO_PLAYER_ACTIONS, flags.Is_Flagged(F::REACT_TO_PLAYER_ACTIONS), do_reset_ai);
+
+        Location(package, V::LOCATION, Marker<T>(id), Radius<T>(id), do_reset_ai);
+
+        Schedule(package, Time<T>(id), Duration<T>(id), do_reset_ai);
+
+        Speed(package, Speed<T>(id), do_reset_ai);
+    }
+
+    template <>
+    inline void Settlers_t::Enforce_Package<Eater_t>(some<Settler_ID_t> id, Bool_t& do_reset_ai)
+    {
+        using T = Eater_t;
+        using F = Settler_Flags_Eater_e;
+        using V = Settler_Value_Index_Eater_e;
+        using G = Package_Flags_e;
+        using I = Package_Interrupt_Flags_e;
+
+        some<Package_t*> package = Package<T>(id);
+        Settler_Flags_e flags = Flags<T>(id);
+
+        Bool(package, V::ALLOW_ALREADY_HELD, flags.Is_Flagged(F::ALLOW_ALREADY_HELD), do_reset_ai);
+        Bool(package, V::ALLOW_CONVERSATION, flags.Is_Flagged(F::ALLOW_CONVERSATION), do_reset_ai);
+        Bool(package, V::ALLOW_EATING, flags.Is_Flagged(F::ALLOW_EATING), do_reset_ai);
+        Bool(package, V::ALLOW_FAKE_FOOD, flags.Is_Flagged(F::ALLOW_FAKE_FOOD), do_reset_ai);
+        Bool(package, V::ALLOW_HORSE_RIDING, flags.Is_Flagged(F::ALLOW_HORSE_RIDING), do_reset_ai);
+        Bool(package, V::ALLOW_IDLE_MARKERS, flags.Is_Flagged(F::ALLOW_IDLE_MARKERS), do_reset_ai);
+        Bool(package, V::ALLOW_SITTING, flags.Is_Flagged(F::ALLOW_SITTING), do_reset_ai);
+        Bool(package, V::ALLOW_SLEEPING, flags.Is_Flagged(F::ALLOW_SLEEPING), do_reset_ai);
+        Bool(package, V::ALLOW_SPECIAL_FURNITURE, flags.Is_Flagged(F::ALLOW_SPECIAL_FURNITURE), do_reset_ai);
+        Bool(package, V::ALLOW_WANDERING, flags.Is_Flagged(F::ALLOW_WANDERING), do_reset_ai);
+        Bool(package, V::ONLY_PREFERRED_PATH, flags.Is_Flagged(F::ONLY_PREFERRED_PATH), do_reset_ai);
+        Bool(package, V::UNLOCK_ON_ARRIVAL, flags.Is_Flagged(F::UNLOCK_ON_ARRIVAL), do_reset_ai);
+
+        Float(package, V::ATTENTION, Attention<T>(id)(), do_reset_ai);
+        Float(package, V::WANDER_DISTANCE, Wander_Distance<T>(id)(), do_reset_ai);
+
+        General_Flag(package, G::ALLOW_SWIMMING, flags.Is_Flagged(F::ALLOW_SWIMMING), do_reset_ai);
+        General_Flag(package, G::ALWAYS_SNEAK, flags.Is_Flagged(F::ALWAYS_SNEAK), do_reset_ai);
+        General_Flag(package, G::IGNORE_COMBAT, flags.Is_Flagged(F::IGNORE_COMBAT), do_reset_ai);
+        General_Flag(package, G::KEEP_WEAPONS_DRAWN, flags.Is_Flagged(F::KEEP_WEAPONS_DRAWN), do_reset_ai);
+        General_Flag(package, G::HIDE_WEAPONS, flags.Is_Flagged(F::HIDE_WEAPONS), do_reset_ai);
+        General_Flag(package, G::SKIP_COMBAT_ALERT, flags.Is_Flagged(F::SKIP_COMBAT_ALERT), do_reset_ai);
+
+        Interrupt_Flag(package, I::ALLOW_HELLOS_TO_PLAYER, flags.Is_Flagged(F::ALLOW_HELLOS_TO_PLAYER), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_HELLOS_TO_NPCS, flags.Is_Flagged(F::ALLOW_HELLOS_TO_NPCS), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_IDLE_CHATTER, flags.Is_Flagged(F::ALLOW_IDLE_CHATTER), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_AGGRO_RADIUS_BEHAVIOR, flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS_BEHAVIOR), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_WORLD_INTERACTIONS, flags.Is_Flagged(F::ALLOW_WORLD_INTERACTIONS), do_reset_ai);
+        Interrupt_Flag(package, I::COMMENT_ON_FRIENDLY_FIRE, flags.Is_Flagged(F::COMMENT_ON_FRIENDLY_FIRE), do_reset_ai);
+        Interrupt_Flag(package, I::INSPECT_CORPSE_BEHAVIOR, flags.Is_Flagged(F::INSPECT_CORPSE_BEHAVIOR), do_reset_ai);
+        Interrupt_Flag(package, I::OBSERVE_COMBAT_BEHAVIOR, flags.Is_Flagged(F::OBSERVE_COMBAT_BEHAVIOR), do_reset_ai);
+        Interrupt_Flag(package, I::REACT_TO_PLAYER_ACTIONS, flags.Is_Flagged(F::REACT_TO_PLAYER_ACTIONS), do_reset_ai);
+
+        Location(package, V::LOCATION, Marker<T>(id), Radius<T>(id), do_reset_ai);
+
+        Schedule(package, Time<T>(id), Duration<T>(id), do_reset_ai);
+
+        Speed(package, Speed<T>(id), do_reset_ai);
+    }
+
+    template <>
+    inline void Settlers_t::Enforce_Package<Guard_t>(some<Settler_ID_t> id, Bool_t& do_reset_ai)
+    {
+        using T = Guard_t;
+        using F = Settler_Flags_Guard_e;
+        using V = Settler_Value_Index_Guard_e;
+        using G = Package_Flags_e;
+        using I = Package_Interrupt_Flags_e;
+
+        some<Package_t*> package = Package<T>(id);
+        Settler_Flags_e flags = Flags<T>(id);
+        some<Reference_t*> marker = Marker<T>(id);
+
+        General_Flag(package, G::ALLOW_SWIMMING, flags.Is_Flagged(F::ALLOW_SWIMMING), do_reset_ai);
+        General_Flag(package, G::ALWAYS_SNEAK, flags.Is_Flagged(F::ALWAYS_SNEAK), do_reset_ai);
+        General_Flag(package, G::IGNORE_COMBAT, flags.Is_Flagged(F::IGNORE_COMBAT), do_reset_ai);
+        General_Flag(package, G::KEEP_WEAPONS_DRAWN, flags.Is_Flagged(F::KEEP_WEAPONS_DRAWN), do_reset_ai);
+        General_Flag(package, G::HIDE_WEAPONS, flags.Is_Flagged(F::HIDE_WEAPONS), do_reset_ai);
+        General_Flag(package, G::SKIP_COMBAT_ALERT, flags.Is_Flagged(F::SKIP_COMBAT_ALERT), do_reset_ai);
+
+        Interrupt_Flag(package, I::ALLOW_HELLOS_TO_PLAYER, flags.Is_Flagged(F::ALLOW_HELLOS_TO_PLAYER), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_HELLOS_TO_NPCS, flags.Is_Flagged(F::ALLOW_HELLOS_TO_NPCS), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_IDLE_CHATTER, flags.Is_Flagged(F::ALLOW_IDLE_CHATTER), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_AGGRO_RADIUS_BEHAVIOR, flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS_BEHAVIOR), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_WORLD_INTERACTIONS, flags.Is_Flagged(F::ALLOW_WORLD_INTERACTIONS), do_reset_ai);
+        Interrupt_Flag(package, I::COMMENT_ON_FRIENDLY_FIRE, flags.Is_Flagged(F::COMMENT_ON_FRIENDLY_FIRE), do_reset_ai);
+        Interrupt_Flag(package, I::INSPECT_CORPSE_BEHAVIOR, flags.Is_Flagged(F::INSPECT_CORPSE_BEHAVIOR), do_reset_ai);
+        Interrupt_Flag(package, I::OBSERVE_COMBAT_BEHAVIOR, flags.Is_Flagged(F::OBSERVE_COMBAT_BEHAVIOR), do_reset_ai);
+        Interrupt_Flag(package, I::REACT_TO_PLAYER_ACTIONS, flags.Is_Flagged(F::REACT_TO_PLAYER_ACTIONS), do_reset_ai);
+
+        Location(package, V::WAIT_LOCATION, marker, 0, do_reset_ai);
+        Location(package, V::RESTRICTED_LOCATION, marker, Radius<T>(id), do_reset_ai);
+
+        Schedule(package, Time<T>(id), Duration<T>(id), do_reset_ai);
+
+        Speed(package, Speed<T>(id), do_reset_ai);
+    }
 
 }}
