@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "consts.h"
 #include "intrinsic.h"
 #include "party_main.h"
 #include "party_member_id.h"
@@ -34,11 +35,40 @@
 
 namespace doticu_npcp { namespace Party {
 
-    class Eater_t;
-    class Guard_t;
-    class Sandboxer_t;
-    class Sitter_t;
-    class Sleeper_t;
+    class Eater_t
+    {
+    public:
+        using Flags_e = Settler_Flags_Eater_e;
+        using Value_e = Settler_Value_Index_Eater_e;
+    };
+
+    class Guard_t
+    {
+    public:
+        using Flags_e = Settler_Flags_Guard_e;
+        using Value_e = Settler_Value_Index_Guard_e;
+    };
+
+    class Sandboxer_t
+    {
+    public:
+        using Flags_e = Settler_Flags_Sandboxer_e;
+        using Value_e = Settler_Value_Index_Sandboxer_e;
+    };
+
+    class Sitter_t
+    {
+    public:
+        using Flags_e = Settler_Flags_Sitter_e;
+        using Value_e = Settler_Value_Index_Sitter_e;
+    };
+
+    class Sleeper_t
+    {
+    public:
+        using Flags_e = Settler_Flags_Sleeper_e;
+        using Value_e = Settler_Value_Index_Sleeper_e;
+    };
 
     class Settlers_t
     {
@@ -49,7 +79,7 @@ namespace doticu_npcp { namespace Party {
         };
 
     public:
-        static constexpr size_t                                 MAX_SETTLERS                = Main_t::MAX_SETTLERS;
+        static constexpr size_t                                 MAX_SETTLERS                = Consts_t::NPCP::Int::MAX_SETTLERS;
 
         static constexpr Settler_Radius_t::value_type           DEFAULT_RADIUS              = 2048;
 
@@ -203,6 +233,7 @@ namespace doticu_npcp { namespace Party {
         void    After_Save();
 
     public:
+        Main_t&             Main();
         Members_t&          Members();
 
         Bool_t              Has_Settler(some<Settler_ID_t> settler_id);
@@ -236,6 +267,11 @@ namespace doticu_npcp { namespace Party {
         Bool_t                                      Is_Enabled(some<Settler_ID_t> settler_id);
         template <typename T>
         void                                        Is_Enabled(some<Settler_ID_t> settler_id, Bool_t value);
+
+        template <typename T>
+        Bool_t                                      Always_Sneak(some<Settler_ID_t> valid_settler_id);
+        template <typename T>
+        void                                        Always_Sneak(some<Settler_ID_t> valid_settler_id, Bool_t value);
 
         template <typename T>
         Vector_t<maybe<Reference_t*>>&              Markers();
@@ -320,6 +356,9 @@ namespace doticu_npcp { namespace Party {
         maybe<Reference_t*>                         Bed(some<Settler_ID_t> valid_settler_id);
         template <typename T>
         void                                        Bed(some<Settler_ID_t> valid_settler_id, maybe<Reference_t*> bed);
+
+        template <typename T>
+        void                                        Default(some<Settler_ID_t> valid_settler_id);
 
     public:
         void    Bool(some<Package_t*> package,

@@ -7,6 +7,7 @@
 #include "doticu_skylib/enum_script_type.h"
 #include "doticu_skylib/container_entry_count.h"
 
+#include "consts.h"
 #include "intrinsic.h"
 #include "party_main.h"
 #include "party_member_alpha.h"
@@ -18,7 +19,6 @@
 #include "party_member_sort_type.h"
 #include "party_member_suit_fill_type.h"
 #include "party_member_suit_type.h"
-#include "party_member_update_ai.h"
 #include "party_member_vitality.h"
 
 namespace doticu_npcp { namespace Party {
@@ -34,7 +34,7 @@ namespace doticu_npcp { namespace Party {
         };
 
     public:
-        static constexpr size_t                                 MAX_MEMBERS                             = Main_t::MAX_MEMBERS;
+        static constexpr size_t                                 MAX_MEMBERS                             = Consts_t::NPCP::Int::MAX_MEMBERS;
 
         static constexpr size_t                                 DEFAULT_FILL_OUTFIT_BODY_PERCENT        = 100;
         static constexpr size_t                                 DEFAULT_FILL_OUTFIT_FEET_PERCENT        = 66;
@@ -211,7 +211,6 @@ namespace doticu_npcp { namespace Party {
 
         Vector_t<maybe<Actor_Base_t*>>      custom_bases;
         Vector_t<maybe<Script_t*>>          scripts;
-        Vector_t<maybe<Member_Update_AI_e>> update_ais;
 
         const Vector_t<some<Spell_t*>>      vanilla_ghost_abilities;
 
@@ -229,6 +228,8 @@ namespace doticu_npcp { namespace Party {
         void    After_Save();
 
     public:
+        Main_t& Main();
+
         Bool_t  Has_Untouchable_Invulnerables();
         void    Has_Untouchable_Invulnerables(Bool_t value);
 
@@ -330,7 +331,6 @@ namespace doticu_npcp { namespace Party {
                                                some<Bound_Object_t*> object);
 
         Bool_t                      Enforce(Member_ID_t member_id);
-        void                        Enforce();
 
     public:
         void    Log(std::string indent = "");

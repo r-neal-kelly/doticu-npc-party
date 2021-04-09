@@ -7,8 +7,8 @@
 #include "doticu_skylib/maybe_numeric.h"
 #include "doticu_skylib/numeric.h"
 
+#include "consts.h"
 #include "intrinsic.h"
-#include "party_main.h"
 
 namespace doticu_npcp { namespace Party {
 
@@ -18,7 +18,7 @@ namespace doticu_npcp { namespace Party {
     public:
         static constexpr value_type _NONE_  = ~0;
         static constexpr value_type _MIN_   = 0;
-        static constexpr value_type _MAX_   = Main_t::MAX_DISPLAYS - 1;
+        static constexpr value_type _MAX_   = Consts_t::NPCP::Int::MAX_DISPLAYS - 1;
 
     public:
         static Bool_t Is_Valid(value_type value)

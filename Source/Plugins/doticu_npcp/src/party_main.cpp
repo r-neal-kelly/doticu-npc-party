@@ -2,6 +2,8 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "doticu_skylib/actor.h"
+
 #include "consts.h"
 #include "party_displays.h"
 #include "party_expoees.h"
@@ -28,7 +30,9 @@ namespace doticu_npcp { namespace Party {
         settlers(new Settlers_t(Consts_t::NPCP::Quest::Members(), is_new_game)),
         expoees(new Expoees_t(Consts_t::NPCP::Quest::Members(), is_new_game)),
         displays(new Displays_t(Consts_t::NPCP::Quest::Members(), is_new_game)),
-        followers(new Followers_t(Consts_t::NPCP::Quest::Followers(), is_new_game))
+        followers(new Followers_t(Consts_t::NPCP::Quest::Followers(), is_new_game)),
+
+        update_ais(Vector_t<maybe<Member_Update_AI_e>>(Consts_t::NPCP::Int::MAX_MEMBERS, Member_Update_AI_e::RESET_AI))
     {
     }
 
@@ -37,7 +41,9 @@ namespace doticu_npcp { namespace Party {
         settlers(new Settlers_t(Consts_t::NPCP::Quest::Members(), version_to_update)),
         expoees(new Expoees_t(Consts_t::NPCP::Quest::Members(), version_to_update)),
         displays(new Displays_t(Consts_t::NPCP::Quest::Members(), version_to_update)),
-        followers(new Followers_t(Consts_t::NPCP::Quest::Followers(), version_to_update))
+        followers(new Followers_t(Consts_t::NPCP::Quest::Followers(), version_to_update)),
+
+        update_ais(Vector_t<maybe<Member_Update_AI_e>>(Consts_t::NPCP::Int::MAX_MEMBERS, Member_Update_AI_e::RESET_AI))
     {
     }
 
@@ -86,6 +92,50 @@ namespace doticu_npcp { namespace Party {
     Followers_t& Main_t::Followers()
     {
         return *this->followers;
+    }
+
+    void Main_t::Update_AI(some<Member_ID_t> valid_member_id, some<Member_Update_AI_e> update_ai)
+    {
+        SKYLIB_ASSERT_SOME(valid_member_id);
+        SKYLIB_ASSERT(Members().Has_Member(valid_member_id));
+        SKYLIB_ASSERT_SOME(update_ai);
+
+        maybe<Member_Update_AI_e>& this_update_ai = this->update_ais[valid_member_id()];
+        if (this_update_ai != Member_Update_AI_e::RESET_AI) {
+            this_update_ai = update_ai;
+        }
+    }
+
+    void Main_t::Enforce(some<Member_ID_t> valid_member_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_member_id);
+        SKYLIB_ASSERT(Members().Has_Member(valid_member_id));
+
+        Members_t& members = Members();
+        Settlers_t& settlers = Settlers();
+        Member_ID_t::value_type id = valid_member_id();
+
+        members.Enforce(id);
+        settlers.Enforce(id);
+
+        maybe<Member_Update_AI_e>& update_ai = this->update_ais[id];
+        if (update_ai == Member_Update_AI_e::RESET_AI) {
+            members.Actor(id)->Reset_AI();
+        } else if (update_ai == Member_Update_AI_e::EVALUATE_PACKAGE) {
+            members.Actor(id)->Evaluate_Package(true, false);
+        }
+        update_ai = Member_Update_AI_e::_NONE_;
+    }
+
+    void Main_t::Enforce()
+    {
+        Members_t& members = Members();
+        Settlers_t& settlers = Settlers();
+        for (size_t idx = 0, end = Consts_t::NPCP::Int::MAX_MEMBERS; idx < end; idx += 1) {
+            if (members.Has_Member(idx)) {
+                Enforce(idx);
+            }
+        }
     }
 
 }}

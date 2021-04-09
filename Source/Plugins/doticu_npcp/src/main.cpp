@@ -27,11 +27,14 @@
 #include "doticu_skylib/const_actors.h"
 #include "doticu_skylib/const_spells.h"
 #include "doticu_skylib/const_voice_types.h"
+#include "doticu_skylib/container_changes.h"
+#include "doticu_skylib/container_changes_entry.h"
 #include "doticu_skylib/cstring.h"
 #include "doticu_skylib/game.inl"
 #include "doticu_skylib/mod.h"
 #include "doticu_skylib/os.h"
 #include "doticu_skylib/package.h"
+#include "doticu_skylib/quest.h"
 #include "doticu_skylib/spell.h"
 #include "doticu_skylib/voice_type.h"
 
@@ -282,19 +285,6 @@ namespace doticu_npcp {
     //temp
     void Main_t::Temp()
     {
-        /*
-        Vector_t<some<Form_t*>> forms = Game_t::Forms();
-        for (size_t idx = 0, end = forms.size(); idx < end; idx += 1) {
-            maybe<Package_t*> package = forms[idx]->As_Package();
-            if (package) {
-                SKYLIB_LOG("%s", package->form_id.As_String());
-                package->Log_Data();
-            }
-        }
-        SKYLIB_LOG("the game will now likely crash, because we loaded too many references.");
-        return;
-        */
-
         Party::Main_t& party = Party();
         Party::Members_t& members = party.Members();
         Party::Settlers_t& settlers = party.Settlers();
@@ -305,8 +295,8 @@ namespace doticu_npcp {
         some<Actor_Base_t*> katria = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x02004D0C)());
         some<Actor_Base_t*> maven = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x1336a)());
         some<Actor_Base_t*> fjori = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x0003D725)());
-        for (size_t idx = 0, end = 50; idx < end; idx += 1) {
-            members.Add_Member(fjori);
+        for (size_t idx = 0, end = 2; idx < end; idx += 1) {
+            members.Add_Member(vici);
         }
 
         for (size_t idx = 0, end = 1024; idx < end; idx += 1) {
@@ -317,11 +307,12 @@ namespace doticu_npcp {
                     members.Name(idx, " Dark Elf Commoner ");
                     members.Combat_Style(idx, Party::Member_Combat_Style_e::ARCHER);
                     members.Ghost_Ability(idx, skylib::Const::Spell::Ghost_Ability_Soul_Cairn()());
-                    members.Voice_Type(idx, skylib::Const::Voice_Type::Female_Dark_Elf_Commoner()());
+                    members.Voice_Type(idx, skylib::Const::Voice_Type::Female_Sultry()());
                     members.Relation(idx, Party::Member_Relation_e::ALLY);
                     members.Vitality(idx, Party::Member_Vitality_e::INVULNERABLE);
 
                     settlers.Add_Settler(idx);
+                    settlers.Always_Sneak<Party::Sandboxer_t>(idx, true);
                 } else {
                     members.Is_Banished(idx, false);
                     members.Is_Reanimated(idx, true);
@@ -332,11 +323,10 @@ namespace doticu_npcp {
                     members.Relation(idx, Party::Member_Relation_e::ARCHNEMESIS);
                     members.Vitality(idx, Party::Member_Vitality_e::MORTAL);
                 }
-                members.Enforce(idx);
             }
         }
 
-        // check if changed packages need to be reverted, especially concerning markers.
+        Party().Enforce();
 
         class Wait_Callback :
             public V::Callback_t
@@ -353,7 +343,7 @@ namespace doticu_npcp {
         public:
             virtual void operator ()(V::Variable_t*) override
             {
-                self->Party().Members().Enforce();
+                self->Party().Enforce();
                 V::Utility_t::Wait_Out_Of_Menu(2.0f, new Wait_Callback(self));
             }
         };

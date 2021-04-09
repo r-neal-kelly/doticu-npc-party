@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "consts.h"
 #include "intrinsic.h"
 #include "party_main.h"
 
@@ -26,7 +27,7 @@ namespace doticu_npcp { namespace Party {
         };
 
     public:
-        static constexpr size_t MAX_FOLLOWERS   = Main_t::MAX_FOLLOWERS;
+        static constexpr size_t MAX_FOLLOWERS   = Consts_t::NPCP::Int::MAX_FOLLOWERS;
 
     public:
         class Save_State

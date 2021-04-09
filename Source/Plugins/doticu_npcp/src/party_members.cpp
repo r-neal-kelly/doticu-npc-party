@@ -24,6 +24,8 @@
 #include "doticu_skylib/virtual_macros.h"
 
 #include "consts.h"
+#include "main.h"
+#include "npcp.h"
 #include "party_members.h"
 #include "party_member_suit.h"
 
@@ -610,7 +612,6 @@ namespace doticu_npcp { namespace Party {
 
         custom_bases(Vector_t<maybe<Actor_Base_t*>>(MAX_MEMBERS)),
         scripts(Vector_t<maybe<Script_t*>>(MAX_MEMBERS)),
-        update_ais(Vector_t<maybe<Member_Update_AI_e>>(MAX_MEMBERS, Member_Update_AI_e::RESET_AI)),
 
         vanilla_ghost_abilities(skylib::Const::Spells::Ghost_Abilities())
     {
@@ -641,7 +642,6 @@ namespace doticu_npcp { namespace Party {
 
         custom_bases(Vector_t<maybe<Actor_Base_t*>>(MAX_MEMBERS)),
         scripts(Vector_t<maybe<Script_t*>>(MAX_MEMBERS)),
-        update_ais(Vector_t<maybe<Member_Update_AI_e>>(MAX_MEMBERS, Member_Update_AI_e::RESET_AI)),
 
         vanilla_ghost_abilities(skylib::Const::Spells::Ghost_Abilities())
     {
@@ -691,6 +691,11 @@ namespace doticu_npcp { namespace Party {
                 Actor(idx)->Actor_Base(Custom_Base(idx), false);
             }
         }
+    }
+
+    Main_t& Members_t::Main()
+    {
+        return NPCP.Main().Party();
     }
 
     Bool_t Members_t::Has_Untouchable_Invulnerables()
@@ -1001,17 +1006,6 @@ namespace doticu_npcp { namespace Party {
         }
 
         return script();
-    }
-
-    void Members_t::Update_AI(some<Member_ID_t> valid_member_id, some<Member_Update_AI_e> update_ai)
-    {
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-        SKYLIB_ASSERT_SOME(update_ai);
-
-        maybe<Member_Update_AI_e>& this_update_ai = this->update_ais[valid_member_id()];
-        if (this_update_ai != Member_Update_AI_e::RESET_AI) {
-            this_update_ai = update_ai;
-        }
     }
 
     Bool_t Members_t::Is_Banished(Member_ID_t valid_member_id)
@@ -1492,7 +1486,7 @@ namespace doticu_npcp { namespace Party {
             if (Has_AI(member_id)) {
                 if (!actor->Has_AI()) {
                     actor->Has_AI(true);
-                    Update_AI(member_id, Member_Update_AI_e::RESET_AI);
+                    Main().Update_AI(member_id, Member_Update_AI_e::RESET_AI);
                 }
             } else {
                 if (actor->Has_AI()) {
@@ -1519,32 +1513,15 @@ namespace doticu_npcp { namespace Party {
                     // we need to handle aggression also, but that needs to be done along with other factors?
                     actor->Stop_Combat_And_Alarm();
                     actor->actor_flags_2.Unflag(skylib::Actor_Flags_2_e::IS_ANGRY_WITH_PLAYER);
-                    Update_AI(member_id, Member_Update_AI_e::RESET_AI);
+                    Main().Update_AI(member_id, Member_Update_AI_e::RESET_AI);
                 }
             }
-
-            // we need to call other Validate methods, Settlers, Displays, Followers, etc. before updating ai
-
-            maybe<Member_Update_AI_e>& update_ai = this->update_ais[member_id];
-            if (update_ai == Member_Update_AI_e::RESET_AI) {
-                actor->Reset_AI();
-            } else if (update_ai == Member_Update_AI_e::EVALUATE_PACKAGE) {
-                actor->Evaluate_Package(true, false);
-            }
-            update_ai = Member_Update_AI_e::_NONE_;
 
             return true;
         } else {
             Remove_Member(member_id);
 
             return false;
-        }
-    }
-
-    void Members_t::Enforce()
-    {
-        for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
-            Enforce(idx);
         }
     }
 

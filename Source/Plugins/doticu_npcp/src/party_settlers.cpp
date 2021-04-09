@@ -573,6 +573,11 @@ namespace doticu_npcp { namespace Party {
     {
     }
 
+    Main_t& Settlers_t::Main()
+    {
+        return NPCP.Main().Party();
+    }
+
     Members_t& Settlers_t::Members()
     {
         return NPCP.Main().Party().Members();
@@ -616,11 +621,13 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Members().Has_Member(valid_member_id));
 
-        maybe<Settler_ID_t> settler_id = valid_member_id();
-        if (settler_id && !Has_Settler(settler_id())) {
-            Is_Enabled<Sandboxer_t>(settler_id(), true);
-            // we need to default the settings.
-            Enforce(settler_id());
+        some<Settler_ID_t> settler_id = valid_member_id;
+        if (!Has_Settler(settler_id)) {
+            Is_Enabled<Sandboxer_t>(settler_id, true);
+            Default<Sandboxer_t>(settler_id);
+            Marker<Sandboxer_t>(settler_id)->Move_To_Orbit(Members().Actor(settler_id), 0.0f, 180.0f);
+            Main().Update_AI(settler_id, Member_Update_AI_e::EVALUATE_PACKAGE);
+            Main().Enforce(settler_id);
             return settler_id;
         } else {
             return none<Settler_ID_t>();
@@ -770,45 +777,47 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT_SOME(settler_id);
 
         Members_t& members = Members();
-        Bool_t do_reset_ai = false;
+        if (members.Has_Member(settler_id())) {
+            Bool_t do_reset_ai = false;
 
-        if (Is_Enabled<Sandboxer_t>(settler_id)) {
-            Enforce_Package<Sandboxer_t>(settler_id, do_reset_ai);
-            members.Tokenize(settler_id, Token<Sandboxer_t>());
-        } else {
-            members.Untokenize(settler_id, Token<Sandboxer_t>());
-        }
+            if (Is_Enabled<Sandboxer_t>(settler_id)) {
+                Enforce_Package<Sandboxer_t>(settler_id, do_reset_ai);
+                members.Tokenize(settler_id, Token<Sandboxer_t>());
+            } else {
+                members.Untokenize(settler_id, Token<Sandboxer_t>());
+            }
 
-        if (Is_Enabled<Sleeper_t>(settler_id)) {
-            Enforce_Package<Sleeper_t>(settler_id, do_reset_ai);
-            members.Tokenize(settler_id, Token<Sleeper_t>());
-        } else {
-            members.Untokenize(settler_id, Token<Sleeper_t>());
-        }
+            if (Is_Enabled<Sleeper_t>(settler_id)) {
+                Enforce_Package<Sleeper_t>(settler_id, do_reset_ai);
+                members.Tokenize(settler_id, Token<Sleeper_t>());
+            } else {
+                members.Untokenize(settler_id, Token<Sleeper_t>());
+            }
 
-        if (Is_Enabled<Sitter_t>(settler_id)) {
-            Enforce_Package<Sitter_t>(settler_id, do_reset_ai);
-            members.Tokenize(settler_id, Token<Sitter_t>());
-        } else {
-            members.Untokenize(settler_id, Token<Sitter_t>());
-        }
+            if (Is_Enabled<Sitter_t>(settler_id)) {
+                Enforce_Package<Sitter_t>(settler_id, do_reset_ai);
+                members.Tokenize(settler_id, Token<Sitter_t>());
+            } else {
+                members.Untokenize(settler_id, Token<Sitter_t>());
+            }
 
-        if (Is_Enabled<Eater_t>(settler_id)) {
-            Enforce_Package<Eater_t>(settler_id, do_reset_ai);
-            members.Tokenize(settler_id, Token<Eater_t>());
-        } else {
-            members.Untokenize(settler_id, Token<Eater_t>());
-        }
+            if (Is_Enabled<Eater_t>(settler_id)) {
+                Enforce_Package<Eater_t>(settler_id, do_reset_ai);
+                members.Tokenize(settler_id, Token<Eater_t>());
+            } else {
+                members.Untokenize(settler_id, Token<Eater_t>());
+            }
 
-        if (Is_Enabled<Guard_t>(settler_id)) {
-            Enforce_Package<Guard_t>(settler_id, do_reset_ai);
-            members.Tokenize(settler_id, Token<Guard_t>());
-        } else {
-            members.Untokenize(settler_id, Token<Guard_t>());
-        }
+            if (Is_Enabled<Guard_t>(settler_id)) {
+                Enforce_Package<Guard_t>(settler_id, do_reset_ai);
+                members.Tokenize(settler_id, Token<Guard_t>());
+            } else {
+                members.Untokenize(settler_id, Token<Guard_t>());
+            }
 
-        if (do_reset_ai) {
-            members.Update_AI(settler_id, Member_Update_AI_e::RESET_AI);
+            if (do_reset_ai) {
+                Main().Update_AI(settler_id, Member_Update_AI_e::RESET_AI);
+            }
         }
     }
 

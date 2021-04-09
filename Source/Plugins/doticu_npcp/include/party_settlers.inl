@@ -171,91 +171,35 @@ namespace doticu_npcp { namespace Party {
     template <typename T>
     inline Bool_t Settlers_t::Is_Enabled(some<Settler_ID_t> settler_id)
     {
-    }
-
-    template <>
-    inline Bool_t Settlers_t::Is_Enabled<Sandboxer_t>(some<Settler_ID_t> settler_id)
-    {
         SKYLIB_ASSERT_SOME(settler_id);
 
-        return Is_Flagged<Sandboxer_t>(settler_id, Settler_Flags_Sandboxer_e::IS_ENABLED);
-    }
-
-    template <>
-    inline Bool_t Settlers_t::Is_Enabled<Sleeper_t>(some<Settler_ID_t> settler_id)
-    {
-        SKYLIB_ASSERT_SOME(settler_id);
-
-        return Is_Flagged<Sleeper_t>(settler_id, Settler_Flags_Sleeper_e::IS_ENABLED);
-    }
-
-    template <>
-    inline Bool_t Settlers_t::Is_Enabled<Sitter_t>(some<Settler_ID_t> settler_id)
-    {
-        SKYLIB_ASSERT_SOME(settler_id);
-
-        return Is_Flagged<Sitter_t>(settler_id, Settler_Flags_Sitter_e::IS_ENABLED);
-    }
-
-    template <>
-    inline Bool_t Settlers_t::Is_Enabled<Eater_t>(some<Settler_ID_t> settler_id)
-    {
-        SKYLIB_ASSERT_SOME(settler_id);
-
-        return Is_Flagged<Eater_t>(settler_id, Settler_Flags_Eater_e::IS_ENABLED);
-    }
-
-    template <>
-    inline Bool_t Settlers_t::Is_Enabled<Guard_t>(some<Settler_ID_t> settler_id)
-    {
-        SKYLIB_ASSERT_SOME(settler_id);
-
-        return Is_Flagged<Guard_t>(settler_id, Settler_Flags_Guard_e::IS_ENABLED);
+        return Is_Flagged<T>(settler_id, T::Flags_e::IS_ENABLED);
     }
 
     template <typename T>
     inline void Settlers_t::Is_Enabled(some<Settler_ID_t> settler_id, Bool_t value)
     {
-    }
-
-    template <>
-    inline void Settlers_t::Is_Enabled<Sandboxer_t>(some<Settler_ID_t> settler_id, Bool_t value)
-    {
         SKYLIB_ASSERT_SOME(settler_id);
 
-        Is_Flagged<Sandboxer_t>(settler_id, Settler_Flags_Sandboxer_e::IS_ENABLED, value);
+        Is_Flagged<T>(settler_id, T::Flags_e::IS_ENABLED, value);
     }
 
-    template <>
-    inline void Settlers_t::Is_Enabled<Sleeper_t>(some<Settler_ID_t> settler_id, Bool_t value)
+    template <typename T>
+    Bool_t Settlers_t::Always_Sneak(some<Settler_ID_t> valid_settler_id)
     {
-        SKYLIB_ASSERT_SOME(settler_id);
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
 
-        Is_Flagged<Sleeper_t>(settler_id, Settler_Flags_Sleeper_e::IS_ENABLED, value);
+        return Is_Flagged<T>(valid_settler_id, T::Flags_e::ALWAYS_SNEAK);
     }
 
-    template <>
-    inline void Settlers_t::Is_Enabled<Sitter_t>(some<Settler_ID_t> settler_id, Bool_t value)
+    template <typename T>
+    void Settlers_t::Always_Sneak(some<Settler_ID_t> valid_settler_id, Bool_t value)
     {
-        SKYLIB_ASSERT_SOME(settler_id);
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
 
-        Is_Flagged<Sitter_t>(settler_id, Settler_Flags_Sitter_e::IS_ENABLED, value);
-    }
-
-    template <>
-    inline void Settlers_t::Is_Enabled<Eater_t>(some<Settler_ID_t> settler_id, Bool_t value)
-    {
-        SKYLIB_ASSERT_SOME(settler_id);
-
-        Is_Flagged<Eater_t>(settler_id, Settler_Flags_Eater_e::IS_ENABLED, value);
-    }
-
-    template <>
-    inline void Settlers_t::Is_Enabled<Guard_t>(some<Settler_ID_t> settler_id, Bool_t value)
-    {
-        SKYLIB_ASSERT_SOME(settler_id);
-
-        Is_Flagged<Guard_t>(settler_id, Settler_Flags_Guard_e::IS_ENABLED, value);
+        Is_Flagged<T>(valid_settler_id, T::Flags_e::ALWAYS_SNEAK, value);
     }
 
     template <typename T>
@@ -933,6 +877,83 @@ namespace doticu_npcp { namespace Party {
 
     template <>
     inline void Settlers_t::Bed<Guard_t>(some<Settler_ID_t> valid_settler_id, maybe<Reference_t*> bed) = delete;
+
+    template <typename T>
+    inline void Settlers_t::Default(some<Settler_ID_t> valid_settler_id)
+    {
+    }
+
+    template <>
+    inline void Settlers_t::Default<Sandboxer_t>(some<Settler_ID_t> valid_settler_id)
+    {
+        using T = Sandboxer_t;
+        using F = Settler_Flags_Sandboxer_e;
+
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Settler_Flags_e& flags = Flags<T>(valid_settler_id);
+        flags.Is_Flagged(F::ALLOW_SWIMMING, true);
+        flags.Is_Flagged(F::ALWAYS_SNEAK, false);
+        flags.Is_Flagged(F::IGNORE_COMBAT, false);
+        flags.Is_Flagged(F::KEEP_WEAPONS_DRAWN, false);
+        flags.Is_Flagged(F::HIDE_WEAPONS, false);
+        flags.Is_Flagged(F::SKIP_COMBAT_ALERT, false);
+
+        flags.Is_Flagged(F::ALLOW_HELLOS_TO_PLAYER, true);
+        flags.Is_Flagged(F::ALLOW_HELLOS_TO_NPCS, true);
+        flags.Is_Flagged(F::ALLOW_IDLE_CHATTER, true);
+        flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS_BEHAVIOR, true);
+        flags.Is_Flagged(F::ALLOW_WORLD_INTERACTIONS, true);
+        flags.Is_Flagged(F::COMMENT_ON_FRIENDLY_FIRE, true);
+        flags.Is_Flagged(F::INSPECT_CORPSE_BEHAVIOR, true);
+        flags.Is_Flagged(F::OBSERVE_COMBAT_BEHAVIOR, true);
+        flags.Is_Flagged(F::REACT_TO_PLAYER_ACTIONS, true);
+
+        flags.Is_Flagged(F::ALLOW_CONVERSATION, true);
+        flags.Is_Flagged(F::ALLOW_EATING, true);
+        flags.Is_Flagged(F::ALLOW_HORSE_RIDING, false);
+        flags.Is_Flagged(F::ALLOW_IDLE_MARKERS, true);
+        flags.Is_Flagged(F::ALLOW_SITTING, true);
+        flags.Is_Flagged(F::ALLOW_SLEEPING, true);
+        flags.Is_Flagged(F::ALLOW_SPECIAL_FURNITURE, true);
+        flags.Is_Flagged(F::ALLOW_WANDERING, true);
+        flags.Is_Flagged(F::ONLY_PREFERRED_PATH, false);
+        flags.Is_Flagged(F::UNLOCK_ON_ARRIVAL, true);
+
+        Attention<T>(valid_settler_id, 40);
+        Radius<T>(valid_settler_id, DEFAULT_RADIUS);
+        Speed<T>(valid_settler_id, Settler_Speed_e::WALK);
+        Wander_Distance<T>(valid_settler_id, DEFAULT_WANDER_DISTANCE);
+    }
+
+    template <>
+    inline void Settlers_t::Default<Sleeper_t>(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<Sleeper_t>(valid_settler_id));
+    }
+
+    template <>
+    inline void Settlers_t::Default<Sitter_t>(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<Sitter_t>(valid_settler_id));
+    }
+
+    template <>
+    inline void Settlers_t::Default<Eater_t>(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<Eater_t>(valid_settler_id));
+    }
+
+    template <>
+    inline void Settlers_t::Default<Guard_t>(some<Settler_ID_t> valid_settler_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT(Is_Enabled<Guard_t>(valid_settler_id));
+    }
 
     template <typename T>
     inline void Settlers_t::Enforce_Package(some<Settler_ID_t> valid_settler_id, Bool_t& do_reset_ai)

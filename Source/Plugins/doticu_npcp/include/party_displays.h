@@ -6,6 +6,7 @@
 
 #include "doticu_skylib/enum_script_type.h"
 
+#include "consts.h"
 #include "intrinsic.h"
 #include "party_main.h"
 
@@ -20,7 +21,7 @@ namespace doticu_npcp { namespace Party {
         };
 
     public:
-        static constexpr size_t MAX_DISPLAYS    = Main_t::MAX_DISPLAYS;
+        static constexpr size_t MAX_DISPLAYS    = Consts_t::NPCP::Int::MAX_DISPLAYS;
 
         static constexpr size_t DEFAULT_LIMIT   = 8;
 
