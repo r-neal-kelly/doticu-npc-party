@@ -29,7 +29,7 @@ namespace doticu_npcp { namespace Party {
         const some<unique<Expoees_t>>       expoees;
         const some<unique<Displays_t>>      displays;
         const some<unique<Followers_t>>     followers;
-
+        Vector_t<maybe<Script_t*>>          scripts;
         Vector_t<maybe<Member_Update_AI_e>> update_ais;
 
     public:
@@ -53,9 +53,11 @@ namespace doticu_npcp { namespace Party {
         Followers_t&    Followers();
 
     public:
-        void    Update_AI(some<Member_ID_t> valid_member_id, some<Member_Update_AI_e> update_ai);
-        void    Enforce(some<Member_ID_t> valid_member_id);
-        void    Enforce();
+        some<Script_t*> Script(some<Member_ID_t> valid_member_id);
+        void            Update_AI(some<Member_ID_t> valid_member_id, some<Member_Update_AI_e> update_ai);
+
+        void            Enforce(some<Member_ID_t> valid_member_id);
+        void            Enforce();
 
     public:
         void    Log(std::string indent = "");

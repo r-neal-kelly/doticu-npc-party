@@ -112,6 +112,7 @@ namespace doticu_npcp {
     using Form_t                        = skylib::Form_t;
     using Form_ID_t                     = skylib::Form_ID_t;
     using Form_List_t                   = skylib::Form_List_t;
+    using Form_Owner_t                  = skylib::Form_Owner_t;
     using Furniture_t                   = skylib::Furniture_t;
     using Game_t                        = skylib::Game_t;
     using Global_t                      = skylib::Global_t;

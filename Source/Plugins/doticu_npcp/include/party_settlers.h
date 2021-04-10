@@ -148,7 +148,9 @@ namespace doticu_npcp { namespace Party {
             Vector_t<maybe<Settler_Wander_Distance_t>>  sleeper_wander_distances;
             Vector_t<maybe<Settler_Wander_Distance_t>>  eater_wander_distances;
 
-            Vector_t<maybe<Reference_t*>>               sleeper_beds;
+            Vector_t<maybe<Reference_t*>>               sleeper_beds; // I can see this being a chair for sitters.
+
+            // let's add idle markers, maybe three per relevant type?
 
         public:
             Save_State(const some<Quest_t*> quest);
@@ -239,9 +241,6 @@ namespace doticu_npcp { namespace Party {
         Bool_t              Has_Settler(some<Settler_ID_t> settler_id);
         Bool_t              Has_Settler(some<Member_ID_t> member_id);
         Bool_t              Has_Settler(some<Actor_t*> actor);
-
-        maybe<Settler_ID_t> Add_Settler(some<Member_ID_t> valid_member_id);
-        Bool_t              Remove_Settler(some<Settler_ID_t> settler_id);
 
         void                Validate();
 
@@ -474,9 +473,16 @@ namespace doticu_npcp { namespace Party {
         maybe<Reference_t*>                         Bed(some<Settler_ID_t> valid_settler_id);
         template <typename T>
         void                                        Bed(some<Settler_ID_t> valid_settler_id, maybe<Reference_t*> bed);
+        template <typename T>
+        void                                        Bed(some<Settler_ID_t> valid_settler_id, some<Furniture_t*> bed);
 
         template <typename T>
         void                                        Default(some<Settler_ID_t> valid_settler_id);
+
+        template <typename T>
+        some<Settler_ID_t>                          Add(some<Member_ID_t> valid_member_id);
+        template <typename T>
+        Bool_t                                      Remove(some<Settler_ID_t> settler_id);
 
     public:
         void    Bool(some<Package_t*> package,

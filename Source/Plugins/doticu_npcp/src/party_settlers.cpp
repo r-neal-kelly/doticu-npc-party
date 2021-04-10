@@ -616,24 +616,6 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
-    maybe<Settler_ID_t> Settlers_t::Add_Settler(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Members().Has_Member(valid_member_id));
-
-        some<Settler_ID_t> settler_id = valid_member_id;
-        if (!Has_Settler(settler_id)) {
-            Is_Enabled<Sandboxer_t>(settler_id, true);
-            Default<Sandboxer_t>(settler_id);
-            Marker<Sandboxer_t>(settler_id)->Move_To_Orbit(Members().Actor(settler_id), 0.0f, 180.0f);
-            Main().Update_AI(settler_id, Member_Update_AI_e::EVALUATE_PACKAGE);
-            //Main().Enforce(settler_id);
-            return settler_id;
-        } else {
-            return none<Settler_ID_t>();
-        }
-    }
-
     void Settlers_t::Validate()
     {
 
@@ -705,7 +687,7 @@ namespace doticu_npcp { namespace Party {
         maybe<Package_Location_t*> location = package->data->Location(index);
         SKYLIB_ASSERT_SOME(location);
 
-        if (location->Reference() != marker()) {
+        if (location->Reference() != marker) {
             location->Reference(marker());
             do_reset_ai = true;
         }
@@ -794,7 +776,12 @@ namespace doticu_npcp { namespace Party {
 
                 maybe<Reference_t*> bed = Bed<Sleeper_t>(settler_id);
                 if (bed) {
-                    bed->This_Actor_Base_Owner(members.Custom_Base(settler_id)); // this may need to be cleared in dtor?
+                    some<Actor_Base_t*> custom_base = members.Custom_Base(settler_id);
+                    maybe<Form_Owner_t> owner = bed->x_list.Owner();
+                    if (!owner.Has_Value() || owner.Value().As_Actor_Base() != custom_base) {
+                        bed->x_list.Owner(custom_base); // this may need to be cleared in dtor?
+                        do_reset_ai = true;
+                    }
                 }
 
                 members.Tokenize(settler_id, Token<Sleeper_t>());

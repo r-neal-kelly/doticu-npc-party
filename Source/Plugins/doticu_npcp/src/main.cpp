@@ -25,6 +25,7 @@
 #include "doticu_skylib/actor_head_data.h"
 #include "doticu_skylib/color.h"
 #include "doticu_skylib/const_actors.h"
+#include "doticu_skylib/const_furnitures.h"
 #include "doticu_skylib/const_spells.h"
 #include "doticu_skylib/const_voice_types.h"
 #include "doticu_skylib/container_changes.h"
@@ -310,11 +311,18 @@ namespace doticu_npcp {
                     members.Voice_Type(idx, skylib::Const::Voice_Type::Female_Sultry()());
                     members.Relation(idx, Party::Member_Relation_e::ALLY);
                     members.Vitality(idx, Party::Member_Vitality_e::INVULNERABLE);
+                    members.Alpha(idx, 0.4f);
 
-                    settlers.Add_Settler(idx);
+                    settlers.Add<Party::Sandboxer_t>(idx);
                     settlers.Allow_Hellos_To_Player<Party::Sandboxer_t>(idx, false);
                     settlers.Always_Sneak<Party::Sandboxer_t>(idx, true);
                     settlers.Speed<Party::Sandboxer_t>(idx, Party::Settler_Speed_e::RUN);
+
+                    settlers.Add<Party::Sleeper_t>(idx);
+                    settlers.Always_Sneak<Party::Sleeper_t>(idx, false);
+                    settlers.Bed<Party::Sleeper_t>(idx, skylib::Const::Furniture::Bedroll_01_FLR());
+                    settlers.Duration_Hours<Party::Sleeper_t>(idx, 24);
+                    settlers.Allow_Sitting<Party::Sleeper_t>(idx, false);
                 } else {
                     members.Is_Banished(idx, false);
                     members.Is_Reanimated(idx, true);

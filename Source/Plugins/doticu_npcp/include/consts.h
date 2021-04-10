@@ -203,10 +203,6 @@ namespace doticu_npcp {
                 static some<Form_List_t*> Male_Voice_Types();
                 static some<Form_List_t*> Voice_Quests();
             };
-            struct Furniture
-            {
-                static some<Furniture_t*> Bedroll();
-            };
             struct Global
             {
                 static some<Global_t*> Do_Allow_Menu_For_All_Actors();

@@ -165,8 +165,6 @@ namespace doticu_npcp {
     some<Form_List_t*>          Consts_t::NPCP::Form_List::Male_Voice_Types()               { DEFINE_FORM(Mod(), Form_List_t, 0x417495); }
     some<Form_List_t*>          Consts_t::NPCP::Form_List::Voice_Quests()                   { DEFINE_FORM(Mod(), Form_List_t, 0x4216D4); }
 
-    some<Furniture_t*>          Consts_t::NPCP::Furniture::Bedroll()                        { DEFINE_FORM(Mod(), Furniture_t, 0x3E7F15); }
-
     some<Global_t*>             Consts_t::NPCP::Global::Do_Allow_Menu_For_All_Actors()      { DEFINE_FORM(Mod(), Global_t, 0x3B4463); }
     some<Global_t*>             Consts_t::NPCP::Global::Do_Force_Clone_Uniques()            { DEFINE_FORM(Mod(), Global_t, 0x05244D); }
     some<Global_t*>             Consts_t::NPCP::Global::Do_Force_Clone_Generics()           { DEFINE_FORM(Mod(), Global_t, 0x05244E); }

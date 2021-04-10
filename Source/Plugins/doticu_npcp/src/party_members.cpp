@@ -18,7 +18,6 @@
 #include "doticu_skylib/outfit.h"
 #include "doticu_skylib/quest.h"
 #include "doticu_skylib/reference_container.h"
-#include "doticu_skylib/script.h"
 #include "doticu_skylib/spell.h"
 #include "doticu_skylib/voice_type.h"
 #include "doticu_skylib/virtual_macros.h"
@@ -609,10 +608,7 @@ namespace doticu_npcp { namespace Party {
     Members_t::Members_t(some<Quest_t*> quest, Bool_t is_new_game) :
         quest(quest),
         save_state(quest),
-
         custom_bases(Vector_t<maybe<Actor_Base_t*>>(MAX_MEMBERS)),
-        scripts(Vector_t<maybe<Script_t*>>(MAX_MEMBERS)),
-
         vanilla_ghost_abilities(skylib::Const::Spells::Ghost_Abilities())
     {
         SKYLIB_ASSERT_SOME(quest);
@@ -639,10 +635,7 @@ namespace doticu_npcp { namespace Party {
     Members_t::Members_t(some<Quest_t*> quest, const Version_t<u16> version_to_update) :
         quest(quest),
         save_state(quest),
-
         custom_bases(Vector_t<maybe<Actor_Base_t*>>(MAX_MEMBERS)),
-        scripts(Vector_t<maybe<Script_t*>>(MAX_MEMBERS)),
-
         vanilla_ghost_abilities(skylib::Const::Spells::Ghost_Abilities())
     {
         // update code goes here
@@ -670,8 +663,6 @@ namespace doticu_npcp { namespace Party {
                 this->custom_bases[idx] = none<Actor_Base_t*>();
             }
         }
-
-        // we need to destroy scripts too
     }
 
     void Members_t::Before_Save()
@@ -975,20 +966,6 @@ namespace doticu_npcp { namespace Party {
         }
 
         return custom_base();
-    }
-
-    some<Script_t*> Members_t::Script(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        maybe<Script_t*>& script = this->scripts[valid_member_id()];
-        if (!script) {
-            script = Script_t::Create()();
-            SKYLIB_ASSERT_SOME(script);
-        }
-
-        return script();
     }
 
     Bool_t Members_t::Is_Banished(some<Member_ID_t> valid_member_id)
@@ -1436,6 +1413,7 @@ namespace doticu_npcp { namespace Party {
         // we may want a different smaller branch if the actor is in combat, or a separate func to call
 
         if (Has_Member(member_id)) {
+            Main_t& main = Main();
             some<Actor_t*> actor = Actor(member_id);
             some<Actor_Base_t*> custom_base = Custom_Base(member_id);
 
@@ -1493,7 +1471,7 @@ namespace doticu_npcp { namespace Party {
 
             custom_base->Voice_Type(Voice_Type(member_id)());
 
-            actor->Alpha(Alpha(member_id)());
+            actor->Alpha(Alpha(member_id)(), main.Script(member_id));
 
             custom_base->Relation(skylib::Const::Actor_Base::Player(), Relation(member_id));
 
@@ -1518,7 +1496,7 @@ namespace doticu_npcp { namespace Party {
             if (Has_AI(member_id)) {
                 if (!actor->Has_AI()) {
                     actor->Has_AI(true);
-                    Main().Update_AI(member_id, Member_Update_AI_e::RESET_AI);
+                    main.Update_AI(member_id, Member_Update_AI_e::RESET_AI);
                 }
             } else {
                 if (actor->Has_AI()) {
@@ -1545,7 +1523,7 @@ namespace doticu_npcp { namespace Party {
                     // we need to handle aggression also, but that needs to be done along with other factors?
                     actor->Stop_Combat_And_Alarm();
                     actor->actor_flags_2.Unflag(skylib::Actor_Flags_2_e::IS_ANGRY_WITH_PLAYER);
-                    Main().Update_AI(member_id, Member_Update_AI_e::RESET_AI);
+                    main.Update_AI(member_id, Member_Update_AI_e::RESET_AI);
                 }
             }
 

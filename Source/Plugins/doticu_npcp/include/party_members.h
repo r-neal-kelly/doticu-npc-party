@@ -206,13 +206,10 @@ namespace doticu_npcp { namespace Party {
         static void     Fill_Outfit_Head_Percent(Int_t value);
 
     public:
-        const some<Quest_t*>                quest;
-        Save_State                          save_state;
-
-        Vector_t<maybe<Actor_Base_t*>>      custom_bases;
-        Vector_t<maybe<Script_t*>>          scripts;
-
-        const Vector_t<some<Spell_t*>>      vanilla_ghost_abilities;
+        const some<Quest_t*>            quest;
+        Save_State                      save_state;
+        Vector_t<maybe<Actor_Base_t*>>  custom_bases;
+        const Vector_t<some<Spell_t*>>  vanilla_ghost_abilities;
 
     public:
         Members_t(some<Quest_t*> quest, Bool_t is_new_game);
@@ -256,7 +253,6 @@ namespace doticu_npcp { namespace Party {
         some<Actor_t*>              Actor(some<Member_ID_t> valid_member_id);
         some<Actor_Base_t*>         Original_Base(some<Member_ID_t> valid_member_id);
         some<Actor_Base_t*>         Custom_Base(some<Member_ID_t> valid_member_id);
-        some<Script_t*>             Script(some<Member_ID_t> valid_member_id);
 
         Bool_t                      Is_Banished(some<Member_ID_t> valid_member_id);
         void                        Is_Banished(some<Member_ID_t> valid_member_id, Bool_t value);

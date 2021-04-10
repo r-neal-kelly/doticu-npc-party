@@ -3,6 +3,7 @@
 */
 
 #include "doticu_skylib/actor.h"
+#include "doticu_skylib/script.h"
 
 #include "consts.h"
 #include "party_displays.h"
@@ -31,7 +32,7 @@ namespace doticu_npcp { namespace Party {
         expoees(new Expoees_t(Consts_t::NPCP::Quest::Members(), is_new_game)),
         displays(new Displays_t(Consts_t::NPCP::Quest::Members(), is_new_game)),
         followers(new Followers_t(Consts_t::NPCP::Quest::Followers(), is_new_game)),
-
+        scripts(Vector_t<maybe<Script_t*>>(Consts_t::NPCP::Int::MAX_MEMBERS)),
         update_ais(Vector_t<maybe<Member_Update_AI_e>>(Consts_t::NPCP::Int::MAX_MEMBERS, Member_Update_AI_e::RESET_AI))
     {
     }
@@ -42,13 +43,19 @@ namespace doticu_npcp { namespace Party {
         expoees(new Expoees_t(Consts_t::NPCP::Quest::Members(), version_to_update)),
         displays(new Displays_t(Consts_t::NPCP::Quest::Members(), version_to_update)),
         followers(new Followers_t(Consts_t::NPCP::Quest::Followers(), version_to_update)),
-
+        scripts(Vector_t<maybe<Script_t*>>(Consts_t::NPCP::Int::MAX_MEMBERS)),
         update_ais(Vector_t<maybe<Member_Update_AI_e>>(Consts_t::NPCP::Int::MAX_MEMBERS, Member_Update_AI_e::RESET_AI))
     {
     }
 
     Main_t::~Main_t()
     {
+        for (size_t idx = 0, end = Consts_t::NPCP::Int::MAX_MEMBERS; idx < end; idx += 1) {
+            maybe<Script_t*> script = this->scripts[idx];
+            if (script) {
+                Script_t::Destroy(script());
+            }
+        }
     }
 
     void Main_t::Before_Save()
@@ -92,6 +99,20 @@ namespace doticu_npcp { namespace Party {
     Followers_t& Main_t::Followers()
     {
         return *this->followers;
+    }
+
+    some<Script_t*> Main_t::Script(some<Member_ID_t> valid_member_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_member_id);
+        SKYLIB_ASSERT(Members().Has_Member(valid_member_id));
+
+        maybe<Script_t*>& script = this->scripts[valid_member_id()];
+        if (!script) {
+            script = Script_t::Create()();
+            SKYLIB_ASSERT_SOME(script);
+        }
+
+        return script();
     }
 
     void Main_t::Update_AI(some<Member_ID_t> valid_member_id, some<Member_Update_AI_e> update_ai)

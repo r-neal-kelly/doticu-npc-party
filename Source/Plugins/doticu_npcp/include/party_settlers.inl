@@ -5,8 +5,13 @@
 #pragma once
 
 #include "doticu_skylib/actor.h"
+#include "doticu_skylib/actor_base.h"
 #include "doticu_skylib/const_actors.h"
+#include "doticu_skylib/extra_list.inl"
+#include "doticu_skylib/faction.h"
 #include "doticu_skylib/form_list.h"
+#include "doticu_skylib/form_owner.h"
+#include "doticu_skylib/furniture.h"
 #include "doticu_skylib/misc.h"
 #include "doticu_skylib/package.h"
 #include "doticu_skylib/package_data.h"
@@ -928,10 +933,7 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT_SOME(valid_settler_id);
         SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
 
-        maybe<Settler_Time_AM_PM_e> am_pm = Time<T>(valid_settler_id).AM_PM();
-        SKYLIB_ASSERT_SOME(am_pm);
-
-        return am_pm();
+        return Time<T>(valid_settler_id)().AM_PM();
     }
 
     template <>
@@ -945,7 +947,7 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
 
         some<Settler_Time_t> time = Time<T>(valid_settler_id);
-        time.AM_PM(am_pm);
+        time().AM_PM(am_pm);
         Time<T>(valid_settler_id, time);
     }
 
@@ -958,10 +960,7 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT_SOME(valid_settler_id);
         SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
 
-        maybe<Settler_Time_Hour_t> hour = Time<T>(valid_settler_id).Hour();
-        SKYLIB_ASSERT_SOME(hour);
-
-        return hour();
+        return Time<T>(valid_settler_id)().Hour();
     }
 
     template <>
@@ -975,7 +974,7 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
 
         some<Settler_Time_t> time = Time<T>(valid_settler_id);
-        time.Hour(hour);
+        time().Hour(hour);
         Time<T>(valid_settler_id, time);
     }
 
@@ -988,10 +987,7 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT_SOME(valid_settler_id);
         SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
 
-        maybe<Settler_Time_Minute_t> minute = Time<T>(valid_settler_id).Minute();
-        SKYLIB_ASSERT_SOME(minute);
-
-        return minute();
+        return Time<T>(valid_settler_id)().Minute();
     }
 
     template <>
@@ -1005,7 +1001,7 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
 
         some<Settler_Time_t> time = Time<T>(valid_settler_id);
-        time.Minute(minute);
+        time().Minute(minute);
         Time<T>(valid_settler_id, time);
     }
 
@@ -1081,10 +1077,7 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT_SOME(valid_settler_id);
         SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
 
-        maybe<Settler_Duration_Hours_t> hours = Duration<T>(valid_settler_id).Hours();
-        SKYLIB_ASSERT_SOME(hours);
-
-        return hours();
+        return Duration<T>(valid_settler_id)().Hours();
     }
 
     template <>
@@ -1098,7 +1091,7 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
 
         some<Settler_Duration_t> duration = Duration<T>(valid_settler_id);
-        duration.Hours(hours);
+        duration().Hours(hours);
         Duration<T>(valid_settler_id, duration);
     }
 
@@ -1112,10 +1105,7 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT_SOME(valid_settler_id);
         SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
 
-        maybe<Settler_Duration_Minutes_t> minutes = Duration<T>(valid_settler_id).Minutes();
-        SKYLIB_ASSERT_SOME(minutes);
-
-        return minutes();
+        return Duration<T>(valid_settler_id)().Minutes();
     }
 
     template <>
@@ -1129,7 +1119,7 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
 
         some<Settler_Duration_t> duration = Duration<T>(valid_settler_id);
-        duration.Minutes(minutes);
+        duration().Minutes(minutes);
         Duration<T>(valid_settler_id, duration);
     }
 
@@ -1385,6 +1375,14 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT_SOME(valid_settler_id);
         SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
 
+        if (bed) {
+            maybe<Reference_t*> old_bed = Bed<T>(valid_settler_id);
+            if (old_bed) {
+                old_bed->Move_To_Orbit(Consts_t::NPCP::Reference::Storage_Marker(), 0.0f, 0.0f);
+                old_bed->Mark_For_Delete(true);
+            }
+            bed->Move_To_Orbit(Marker<T>(valid_settler_id), 0.0f, 180.0f);
+        }
         Beds<T>()[valid_settler_id()] = bed;
     }
 
@@ -1401,6 +1399,28 @@ namespace doticu_npcp { namespace Party {
     inline void Settlers_t::Bed<Guard_t>(some<Settler_ID_t> valid_settler_id, maybe<Reference_t*> bed) = delete;
 
     template <typename T>
+    inline void Settlers_t::Bed(some<Settler_ID_t> valid_settler_id, some<Furniture_t*> bed)
+    {
+        SKYLIB_ASSERT_SOME(valid_settler_id);
+        SKYLIB_ASSERT_SOME(bed);
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Bed<T>(valid_settler_id, Reference_t::Create(bed, 1, Marker<T>(valid_settler_id), true, false, true));
+    }
+
+    template <>
+    inline void Settlers_t::Bed<Sandboxer_t>(some<Settler_ID_t> valid_settler_id, some<Furniture_t*> bed) = delete;
+
+    template <>
+    inline void Settlers_t::Bed<Sitter_t>(some<Settler_ID_t> valid_settler_id, some<Furniture_t*> bed) = delete;
+
+    template <>
+    inline void Settlers_t::Bed<Eater_t>(some<Settler_ID_t> valid_settler_id, some<Furniture_t*> bed) = delete;
+
+    template <>
+    inline void Settlers_t::Bed<Guard_t>(some<Settler_ID_t> valid_settler_id, some<Furniture_t*> bed) = delete;
+
+    template <typename T>
     inline void Settlers_t::Default(some<Settler_ID_t> valid_settler_id)
     {
     }
@@ -1409,7 +1429,7 @@ namespace doticu_npcp { namespace Party {
     inline void Settlers_t::Default<Sandboxer_t>(some<Settler_ID_t> valid_settler_id)
     {
         using T = Sandboxer_t;
-        using F = Settler_Flags_Sandboxer_e;
+        using F = T::Flags_e;
 
         SKYLIB_ASSERT_SOME(valid_settler_id);
         SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
@@ -1452,8 +1472,52 @@ namespace doticu_npcp { namespace Party {
     template <>
     inline void Settlers_t::Default<Sleeper_t>(some<Settler_ID_t> valid_settler_id)
     {
+        using T = Sleeper_t;
+        using F = T::Flags_e;
+
         SKYLIB_ASSERT_SOME(valid_settler_id);
         SKYLIB_ASSERT(Is_Enabled<Sleeper_t>(valid_settler_id));
+
+        Settler_Flags_e& flags = Flags<T>(valid_settler_id);
+        flags.Is_Flagged(F::ALLOW_SWIMMING, true);
+        flags.Is_Flagged(F::ALWAYS_SNEAK, false);
+        flags.Is_Flagged(F::IGNORE_COMBAT, false);
+        flags.Is_Flagged(F::KEEP_WEAPONS_DRAWN, false);
+        flags.Is_Flagged(F::HIDE_WEAPONS, true);
+        flags.Is_Flagged(F::SKIP_COMBAT_ALERT, false);
+
+        flags.Is_Flagged(F::ALLOW_HELLOS_TO_PLAYER, false);
+        flags.Is_Flagged(F::ALLOW_HELLOS_TO_NPCS, false);
+        flags.Is_Flagged(F::ALLOW_IDLE_CHATTER, false);
+        flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS, true);
+        flags.Is_Flagged(F::ALLOW_WORLD_INTERACTIONS, false);
+        flags.Is_Flagged(F::COMMENT_ON_FRIENDLY_FIRE, true);
+        flags.Is_Flagged(F::INSPECT_CORPSES, true);
+        flags.Is_Flagged(F::OBSERVE_COMBAT, true);
+        flags.Is_Flagged(F::REACT_TO_PLAYER_ACTIONS, true);
+
+        flags.Is_Flagged(F::ALLOW_CONVERSATION, false);
+        flags.Is_Flagged(F::ALLOW_EATING, false);
+        flags.Is_Flagged(F::ALLOW_HORSE_RIDING, false);
+        flags.Is_Flagged(F::ALLOW_IDLE_MARKERS, true);
+        flags.Is_Flagged(F::ALLOW_SITTING, true);
+        flags.Is_Flagged(F::ALLOW_SLEEPING, true);
+        flags.Is_Flagged(F::ALLOW_SPECIAL_FURNITURE, false);
+        flags.Is_Flagged(F::ALLOW_WANDERING, false);
+        flags.Is_Flagged(F::LOCK_DOORS, false);
+        flags.Is_Flagged(F::ONLY_PREFERRED_PATH, false);
+        flags.Is_Flagged(F::WARN_BEFORE_LOCKING, true);
+
+        Attention<T>(valid_settler_id, 100);
+        Bed<T>(valid_settler_id, none<Reference_t*>());
+        Duration_Hours<T>(valid_settler_id, 8);
+        Duration_Minutes<T>(valid_settler_id, 0);
+        Radius<T>(valid_settler_id, DEFAULT_RADIUS);
+        Speed<T>(valid_settler_id, Settler_Speed_e::JOG);
+        Time_AM_PM<T>(valid_settler_id, Settler_Time_AM_PM_e::PM);
+        Time_Hour<T>(valid_settler_id, 10);
+        Time_Minute<T>(valid_settler_id, 30);
+        Wander_Distance<T>(valid_settler_id, DEFAULT_WANDER_DISTANCE);
     }
 
     template <>
@@ -1475,6 +1539,36 @@ namespace doticu_npcp { namespace Party {
     {
         SKYLIB_ASSERT_SOME(valid_settler_id);
         SKYLIB_ASSERT(Is_Enabled<Guard_t>(valid_settler_id));
+    }
+
+    template <typename T>
+    inline some<Settler_ID_t> Settlers_t::Add(some<Member_ID_t> valid_member_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_member_id);
+        SKYLIB_ASSERT(Members().Has_Member(valid_member_id));
+
+        some<Settler_ID_t> settler_id = valid_member_id;
+        if (!Is_Enabled<T>(settler_id)) {
+            Is_Enabled<T>(settler_id, true);
+            Default<T>(settler_id);
+            Marker<T>(settler_id)->Move_To_Orbit(Members().Actor(settler_id), 0.0f, 180.0f);
+            Main().Update_AI(settler_id, Member_Update_AI_e::EVALUATE_PACKAGE);
+            return settler_id;
+        }
+        return settler_id;
+    }
+
+    template <typename T>
+    inline Bool_t Settlers_t::Remove(some<Settler_ID_t> settler_id)
+    {
+        SKYLIB_ASSERT_SOME(settler_id);
+
+        if (Is_Enabled<T>(settler_id)) {
+            // incomplete
+            return true;
+        } else {
+            return false;
+        }
     }
 
     template <typename T>
