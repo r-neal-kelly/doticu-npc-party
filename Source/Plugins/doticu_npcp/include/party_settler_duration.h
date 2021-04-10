@@ -17,7 +17,7 @@ namespace doticu_npcp { namespace Party {
         public Numeric_Data_t<Int_t>
     {
     public:
-        static constexpr value_type _NONE_  = 0;
+        static constexpr value_type _NONE_  = -1;
 
     public:
         static Bool_t Is_Valid(value_type value)

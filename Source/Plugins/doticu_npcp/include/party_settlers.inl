@@ -1476,7 +1476,7 @@ namespace doticu_npcp { namespace Party {
         using F = T::Flags_e;
 
         SKYLIB_ASSERT_SOME(valid_settler_id);
-        SKYLIB_ASSERT(Is_Enabled<Sleeper_t>(valid_settler_id));
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
 
         Settler_Flags_e& flags = Flags<T>(valid_settler_id);
         flags.Is_Flagged(F::ALLOW_SWIMMING, true);
@@ -1523,22 +1523,127 @@ namespace doticu_npcp { namespace Party {
     template <>
     inline void Settlers_t::Default<Sitter_t>(some<Settler_ID_t> valid_settler_id)
     {
+        using T = Sitter_t;
+        using F = T::Flags_e;
+
         SKYLIB_ASSERT_SOME(valid_settler_id);
-        SKYLIB_ASSERT(Is_Enabled<Sitter_t>(valid_settler_id));
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Settler_Flags_e& flags = Flags<T>(valid_settler_id);
+        flags.Is_Flagged(F::ALLOW_SWIMMING, true);
+        flags.Is_Flagged(F::ALWAYS_SNEAK, false);
+        flags.Is_Flagged(F::IGNORE_COMBAT, false);
+        flags.Is_Flagged(F::KEEP_WEAPONS_DRAWN, false);
+        flags.Is_Flagged(F::HIDE_WEAPONS, false);
+        flags.Is_Flagged(F::SKIP_COMBAT_ALERT, false);
+
+        flags.Is_Flagged(F::ALLOW_HELLOS_TO_PLAYER, true);
+        flags.Is_Flagged(F::ALLOW_HELLOS_TO_NPCS, true);
+        flags.Is_Flagged(F::ALLOW_IDLE_CHATTER, true);
+        flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS, true);
+        flags.Is_Flagged(F::ALLOW_WORLD_INTERACTIONS, true);
+        flags.Is_Flagged(F::COMMENT_ON_FRIENDLY_FIRE, true);
+        flags.Is_Flagged(F::INSPECT_CORPSES, true);
+        flags.Is_Flagged(F::OBSERVE_COMBAT, true);
+        flags.Is_Flagged(F::REACT_TO_PLAYER_ACTIONS, true);
+
+        flags.Is_Flagged(F::ONLY_PREFERRED_PATH, false);
+        flags.Is_Flagged(F::STOP_MOVEMENT, false);
+
+        Duration_Hours<T>(valid_settler_id, 0);
+        Duration_Minutes<T>(valid_settler_id, 30);
+        Radius<T>(valid_settler_id, DEFAULT_RADIUS);
+        Speed<T>(valid_settler_id, Settler_Speed_e::WALK);
+        Time_AM_PM<T>(valid_settler_id, Settler_Time_AM_PM_e::AM);
+        Time_Hour<T>(valid_settler_id, 8);
+        Time_Minute<T>(valid_settler_id, 0);
     }
 
     template <>
     inline void Settlers_t::Default<Eater_t>(some<Settler_ID_t> valid_settler_id)
     {
+        using T = Eater_t;
+        using F = T::Flags_e;
+
         SKYLIB_ASSERT_SOME(valid_settler_id);
-        SKYLIB_ASSERT(Is_Enabled<Eater_t>(valid_settler_id));
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Settler_Flags_e& flags = Flags<T>(valid_settler_id);
+        flags.Is_Flagged(F::ALLOW_SWIMMING, true);
+        flags.Is_Flagged(F::ALWAYS_SNEAK, false);
+        flags.Is_Flagged(F::IGNORE_COMBAT, false);
+        flags.Is_Flagged(F::KEEP_WEAPONS_DRAWN, false);
+        flags.Is_Flagged(F::HIDE_WEAPONS, false);
+        flags.Is_Flagged(F::SKIP_COMBAT_ALERT, false);
+
+        flags.Is_Flagged(F::ALLOW_HELLOS_TO_PLAYER, false);
+        flags.Is_Flagged(F::ALLOW_HELLOS_TO_NPCS, false);
+        flags.Is_Flagged(F::ALLOW_IDLE_CHATTER, false);
+        flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS, true);
+        flags.Is_Flagged(F::ALLOW_WORLD_INTERACTIONS, false);
+        flags.Is_Flagged(F::COMMENT_ON_FRIENDLY_FIRE, true);
+        flags.Is_Flagged(F::INSPECT_CORPSES, true);
+        flags.Is_Flagged(F::OBSERVE_COMBAT, true);
+        flags.Is_Flagged(F::REACT_TO_PLAYER_ACTIONS, true);
+
+        flags.Is_Flagged(F::ALLOW_ALREADY_HELD_FOOD, true);
+        flags.Is_Flagged(F::ALLOW_CONVERSATION, false);
+        flags.Is_Flagged(F::ALLOW_EATING, true);
+        flags.Is_Flagged(F::ALLOW_FAKE_FOOD, true);
+        flags.Is_Flagged(F::ALLOW_HORSE_RIDING, false);
+        flags.Is_Flagged(F::ALLOW_IDLE_MARKERS, false);
+        flags.Is_Flagged(F::ALLOW_SITTING, false);
+        flags.Is_Flagged(F::ALLOW_SLEEPING, false);
+        flags.Is_Flagged(F::ALLOW_SPECIAL_FURNITURE, false);
+        flags.Is_Flagged(F::ALLOW_WANDERING, false);
+        flags.Is_Flagged(F::ONLY_PREFERRED_PATH, false);
+        flags.Is_Flagged(F::UNLOCK_ON_ARRIVAL, true);
+
+        Attention<T>(valid_settler_id, 0);
+        Duration_Hours<T>(valid_settler_id, 2);
+        Duration_Minutes<T>(valid_settler_id, 0);
+        Radius<T>(valid_settler_id, DEFAULT_RADIUS);
+        Speed<T>(valid_settler_id, Settler_Speed_e::FAST_WALK);
+        Time_AM_PM<T>(valid_settler_id, Settler_Time_AM_PM_e::PM);
+        Time_Hour<T>(valid_settler_id, 12);
+        Time_Minute<T>(valid_settler_id, 0);
+        Wander_Distance<T>(valid_settler_id, DEFAULT_WANDER_DISTANCE);
     }
 
     template <>
     inline void Settlers_t::Default<Guard_t>(some<Settler_ID_t> valid_settler_id)
     {
+        using T = Guard_t;
+        using F = T::Flags_e;
+
         SKYLIB_ASSERT_SOME(valid_settler_id);
-        SKYLIB_ASSERT(Is_Enabled<Guard_t>(valid_settler_id));
+        SKYLIB_ASSERT(Is_Enabled<T>(valid_settler_id));
+
+        Settler_Flags_e& flags = Flags<T>(valid_settler_id);
+        flags.Is_Flagged(F::ALLOW_SWIMMING, false);
+        flags.Is_Flagged(F::ALWAYS_SNEAK, false);
+        flags.Is_Flagged(F::IGNORE_COMBAT, false);
+        flags.Is_Flagged(F::KEEP_WEAPONS_DRAWN, true);
+        flags.Is_Flagged(F::HIDE_WEAPONS, false);
+        flags.Is_Flagged(F::SKIP_COMBAT_ALERT, true);
+
+        flags.Is_Flagged(F::ALLOW_HELLOS_TO_PLAYER, false);
+        flags.Is_Flagged(F::ALLOW_HELLOS_TO_NPCS, false);
+        flags.Is_Flagged(F::ALLOW_IDLE_CHATTER, false);
+        flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS, true);
+        flags.Is_Flagged(F::ALLOW_WORLD_INTERACTIONS, false);
+        flags.Is_Flagged(F::COMMENT_ON_FRIENDLY_FIRE, true);
+        flags.Is_Flagged(F::INSPECT_CORPSES, true);
+        flags.Is_Flagged(F::OBSERVE_COMBAT, true);
+        flags.Is_Flagged(F::REACT_TO_PLAYER_ACTIONS, false);
+
+        Duration_Hours<T>(valid_settler_id, 5);
+        Duration_Minutes<T>(valid_settler_id, 45);
+        Radius<T>(valid_settler_id, 0);
+        Speed<T>(valid_settler_id, Settler_Speed_e::RUN);
+        Time_AM_PM<T>(valid_settler_id, Settler_Time_AM_PM_e::PM);
+        Time_Hour<T>(valid_settler_id, 2);
+        Time_Minute<T>(valid_settler_id, 0);
     }
 
     template <typename T>
@@ -1550,8 +1655,8 @@ namespace doticu_npcp { namespace Party {
         some<Settler_ID_t> settler_id = valid_member_id;
         if (!Is_Enabled<T>(settler_id)) {
             Is_Enabled<T>(settler_id, true);
-            Default<T>(settler_id);
             Marker<T>(settler_id)->Move_To_Orbit(Members().Actor(settler_id), 0.0f, 180.0f);
+            Default<T>(settler_id);
             Main().Update_AI(settler_id, Member_Update_AI_e::EVALUATE_PACKAGE);
             return settler_id;
         }

@@ -321,8 +321,14 @@ namespace doticu_npcp {
                     settlers.Add<Party::Sleeper_t>(idx);
                     settlers.Always_Sneak<Party::Sleeper_t>(idx, false);
                     settlers.Bed<Party::Sleeper_t>(idx, skylib::Const::Furniture::Bedroll_01_FLR());
-                    settlers.Duration_Hours<Party::Sleeper_t>(idx, 24);
+                    settlers.Duration_Hours<Party::Sleeper_t>(idx, 7);
                     settlers.Allow_Sitting<Party::Sleeper_t>(idx, false);
+
+                    settlers.Add<Party::Sitter_t>(idx);
+
+                    settlers.Add<Party::Eater_t>(idx);
+
+                    settlers.Add<Party::Guard_t>(idx);
                 } else {
                     members.Is_Banished(idx, false);
                     members.Is_Reanimated(idx, true);

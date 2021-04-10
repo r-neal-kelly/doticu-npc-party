@@ -127,6 +127,39 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
+    void Main_t::Tokenize(some<Member_ID_t> valid_member_id,
+                          some<Bound_Object_t*> object,
+                          Container_Entry_Count_t count)
+    {
+        SKYLIB_ASSERT_SOME(valid_member_id);
+        SKYLIB_ASSERT(Members().Has_Member(valid_member_id));
+        SKYLIB_ASSERT_SOME(object);
+        SKYLIB_ASSERT(count > 0);
+
+        some<Actor_t*> actor = Members().Actor(valid_member_id);
+        Reference_Container_t container = actor->Container();
+        some<Reference_Container_Entry_t*> entry = container.Some_Entry(object);
+        if (entry->Non_Extra_Lists_Count() != count) {
+            entry->Decrement_Count(&container, Container_Entry_Count_t::_MAX_);
+            entry->Increment_Count(&container, count);
+        }
+    }
+
+    void Main_t::Untokenize(some<Member_ID_t> valid_member_id,
+                            some<Bound_Object_t*> object)
+    {
+        SKYLIB_ASSERT_SOME(valid_member_id);
+        SKYLIB_ASSERT(Members().Has_Member(valid_member_id));
+        SKYLIB_ASSERT_SOME(object);
+
+        some<Actor_t*> actor = Members().Actor(valid_member_id);
+        Reference_Container_t container = actor->Container();
+        maybe<Reference_Container_Entry_t*> entry = container.Maybe_Entry(object);
+        if (entry && entry->Non_Extra_Lists_Count() > 0) {
+            entry->Decrement_Count(&container, Container_Entry_Count_t::_MAX_);
+        }
+    }
+
     void Main_t::Enforce(some<Member_ID_t> valid_member_id)
     {
         SKYLIB_ASSERT_SOME(valid_member_id);

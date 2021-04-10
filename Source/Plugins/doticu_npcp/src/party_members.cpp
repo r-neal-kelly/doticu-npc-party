@@ -1377,35 +1377,6 @@ namespace doticu_npcp { namespace Party {
         return none<Member_Suit_t*>();
     }
 
-    void Members_t::Tokenize(some<Member_ID_t> valid_member_id,
-                             some<Bound_Object_t*> object,
-                             Container_Entry_Count_t count)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-        SKYLIB_ASSERT_SOME(object);
-        SKYLIB_ASSERT(count > 0);
-
-        some<Actor_t*> actor = Actor(valid_member_id);
-        Reference_Container_t container = actor->Container();
-        some<Reference_Container_Entry_t*> entry = container.Some_Entry(object);
-        entry->Decrement_Count(&container, Container_Entry_Count_t::_MAX_);
-        entry->Increment_Count(&container, count);
-    }
-
-    void Members_t::Untokenize(some<Member_ID_t> valid_member_id,
-                               some<Bound_Object_t*> object)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-        SKYLIB_ASSERT_SOME(object);
-
-        some<Actor_t*> actor = Actor(valid_member_id);
-        Reference_Container_t container = actor->Container();
-        some<Reference_Container_Entry_t*> entry = container.Some_Entry(object);
-        entry->Decrement_Count(&container, Container_Entry_Count_t::_MAX_);
-    }
-
     Bool_t Members_t::Enforce(some<Member_ID_t> member_id)
     {
         SKYLIB_ASSERT_SOME(member_id);
@@ -1422,35 +1393,35 @@ namespace doticu_npcp { namespace Party {
 
             actor->Actor_Base(Custom_Base(member_id), false);
 
-            Tokenize(member_id, Consts_t::NPCP::Misc::Token::Member(), member_id() + 1);
+            main.Tokenize(member_id, Consts_t::NPCP::Misc::Token::Member(), member_id() + 1);
             actor->Faction_Rank(Consts_t::NPCP::Faction::Member(), 0);
 
             if (Is_Banished(member_id)) {
-                Tokenize(member_id, Consts_t::NPCP::Misc::Token::Banished());
+                main.Tokenize(member_id, Consts_t::NPCP::Misc::Token::Banished());
             } else {
-                Untokenize(member_id, Consts_t::NPCP::Misc::Token::Banished());
+                main.Untokenize(member_id, Consts_t::NPCP::Misc::Token::Banished());
             }
 
             if (Is_Immobile(member_id)) {
-                Tokenize(member_id, Consts_t::NPCP::Misc::Token::Immobile());
+                main.Tokenize(member_id, Consts_t::NPCP::Misc::Token::Immobile());
             } else {
-                Untokenize(member_id, Consts_t::NPCP::Misc::Token::Immobile());
+                main.Untokenize(member_id, Consts_t::NPCP::Misc::Token::Immobile());
             }
 
             if (Is_Reanimated(member_id)) {
-                Tokenize(member_id, Consts_t::NPCP::Misc::Token::Reanimated());
+                main.Tokenize(member_id, Consts_t::NPCP::Misc::Token::Reanimated());
 
                 spells_to_add.push_back(Consts_t::NPCP::Spell::Reanimate_Ability());
             } else {
-                Untokenize(member_id, Consts_t::NPCP::Misc::Token::Reanimated());
+                main.Untokenize(member_id, Consts_t::NPCP::Misc::Token::Reanimated());
 
                 actor->Remove_Spell(Consts_t::NPCP::Spell::Reanimate_Ability());
             }
 
             if (Is_Thrall(member_id)) {
-                Tokenize(member_id, Consts_t::NPCP::Misc::Token::Thrall());
+                main.Tokenize(member_id, Consts_t::NPCP::Misc::Token::Thrall());
             } else {
-                Untokenize(member_id, Consts_t::NPCP::Misc::Token::Thrall());
+                main.Untokenize(member_id, Consts_t::NPCP::Misc::Token::Thrall());
             }
 
             custom_base->Name(Name(member_id));

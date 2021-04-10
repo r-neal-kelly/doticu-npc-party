@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "doticu_skylib/container_entry_count.h"
 #include "doticu_skylib/unique.h"
 
 #include "intrinsic.h"
@@ -55,6 +56,12 @@ namespace doticu_npcp { namespace Party {
     public:
         some<Script_t*> Script(some<Member_ID_t> valid_member_id);
         void            Update_AI(some<Member_ID_t> valid_member_id, some<Member_Update_AI_e> update_ai);
+
+        void            Tokenize(some<Member_ID_t> valid_member_id,
+                                 some<Bound_Object_t*> object,
+                                 Container_Entry_Count_t count = 1);
+        void            Untokenize(some<Member_ID_t> valid_member_id,
+                                   some<Bound_Object_t*> object);
 
         void            Enforce(some<Member_ID_t> valid_member_id);
         void            Enforce();
