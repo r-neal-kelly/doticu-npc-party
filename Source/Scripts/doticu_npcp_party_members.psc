@@ -25,7 +25,6 @@ bool[]              is_banished_flags               = none
 bool[]              is_clone_flags                  = none
 bool[]              is_immobile_flags               = none
 bool[]              is_mannequin_flags              = none
-bool[]              is_paralyzed_flags              = none
 bool[]              is_reanimated_flags             = none
 bool[]              is_thrall_flags                 = none
 
@@ -33,19 +32,8 @@ string[]            names                           = none
 ObjectReference[]   packs                           = none
 CombatStyle[]       combat_styles                   = none
 Spell[]             ghost_abilities                 = none
+ObjectReference[]   suitcases                       = none
 VoiceType[]         voice_types                     = none
-
-Outfit[]            default_outfits                 = none
-Outfit[]            vanilla_outfits                 = none
-
-ObjectReference[]   backup_suits                    = none
-ObjectReference[]   default_suits                   = none
-ObjectReference[]   follower_suits                  = none
-ObjectReference[]   immobile_suits                  = none
-ObjectReference[]   member_suits                    = none
-ObjectReference[]   settler_suits                   = none
-ObjectReference[]   thrall_suits                    = none
-ObjectReference[]   vanilla_suits                   = none
 
 float[]             alphas                          = none
 int[]               ratings                         = none

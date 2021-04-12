@@ -177,7 +177,25 @@ namespace doticu_npcp {
             {
                 static some<Faction_t*> Horse();
                 static some<Faction_t*> Member();
-                static some<Faction_t*> Outfit();
+                static some<Faction_t*> Suit_Active();
+                static some<Faction_t*> Suit_Civilized();
+                static some<Faction_t*> Suit_Combatant();
+                static some<Faction_t*> Suit_Dangerous();
+                static some<Faction_t*> Suit_Eater();
+                static some<Faction_t*> Suit_Exterior();
+                static some<Faction_t*> Suit_Follower();
+                static some<Faction_t*> Suit_Guard();
+                static some<Faction_t*> Suit_Home();
+                static some<Faction_t*> Suit_Immobile();
+                static some<Faction_t*> Suit_Inn();
+                static some<Faction_t*> Suit_Interior();
+                static some<Faction_t*> Suit_Mannequin();
+                static some<Faction_t*> Suit_Member();
+                static some<Faction_t*> Suit_Sandboxer();
+                static some<Faction_t*> Suit_Settlement();
+                static some<Faction_t*> Suit_Sitter();
+                static some<Faction_t*> Suit_Sleeper();
+                static some<Faction_t*> Suit_Thrall();
             };
             struct Form_List
             {
@@ -252,7 +270,6 @@ namespace doticu_npcp {
                     static some<Misc_t*> Settler_Eater();
                     static some<Misc_t*> Settler_Guard();
                     static some<Misc_t*> Thrall();
-                    static some<Misc_t*> Paralyzed();
                     static some<Misc_t*> Mannequin();
                     static some<Misc_t*> Display();
                     static some<Misc_t*> Reanimated();

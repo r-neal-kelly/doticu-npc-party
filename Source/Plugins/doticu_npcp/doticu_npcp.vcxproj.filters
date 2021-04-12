@@ -48,9 +48,6 @@
     <ClCompile Include="src\party_member_combat_style.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\party_member_suit_type.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\party_member_sort_type.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -87,6 +84,9 @@
     <ClCompile Include="src\party_settler_duration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\party_member_suitcase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\main.h">
@@ -116,7 +116,7 @@
     <ClInclude Include="include\party_member_rating.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\party_member_suit.h">
+    <ClInclude Include="include\party_member_suitcase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\party_member_flags.h">

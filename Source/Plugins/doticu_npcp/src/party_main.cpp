@@ -140,8 +140,8 @@ namespace doticu_npcp { namespace Party {
         Reference_Container_t container = actor->Container();
         some<Reference_Container_Entry_t*> entry = container.Some_Entry(object);
         if (entry->Non_Extra_Lists_Count() != count) {
-            entry->Decrement_Count(&container, Container_Entry_Count_t::_MAX_);
-            entry->Increment_Count(&container, count);
+            entry->Decrement_Count(container, Container_Entry_Count_t::_MAX_);
+            entry->Increment_Count(container, count);
         }
     }
 
@@ -156,7 +156,7 @@ namespace doticu_npcp { namespace Party {
         Reference_Container_t container = actor->Container();
         maybe<Reference_Container_Entry_t*> entry = container.Maybe_Entry(object);
         if (entry && entry->Non_Extra_Lists_Count() > 0) {
-            entry->Decrement_Count(&container, Container_Entry_Count_t::_MAX_);
+            entry->Decrement_Count(container, Container_Entry_Count_t::_MAX_);
         }
     }
 

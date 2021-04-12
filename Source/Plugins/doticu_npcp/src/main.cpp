@@ -23,22 +23,27 @@
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/actor_base.h"
 #include "doticu_skylib/actor_head_data.h"
+#include "doticu_skylib/cell.h"
 #include "doticu_skylib/color.h"
 #include "doticu_skylib/const_actors.h"
 #include "doticu_skylib/const_furnitures.h"
+#include "doticu_skylib/const_keywords.h"
 #include "doticu_skylib/const_spells.h"
 #include "doticu_skylib/const_voice_types.h"
 #include "doticu_skylib/container_changes.h"
 #include "doticu_skylib/container_changes_entry.h"
 #include "doticu_skylib/cstring.h"
 #include "doticu_skylib/game.inl"
+#include "doticu_skylib/location.h"
 #include "doticu_skylib/mod.h"
 #include "doticu_skylib/os.h"
 #include "doticu_skylib/package.h"
 #include "doticu_skylib/quest.h"
 #include "doticu_skylib/spell.h"
+#include "doticu_skylib/virtual_debug.h"
 #include "doticu_skylib/voice_type.h"
 
+#include "party_member_suitcase.h"
 #include "party_members.h"
 #include "party_settlers.inl"
 //
@@ -342,6 +347,14 @@ namespace doticu_npcp {
             }
         }
 
+        //temp
+        some<Actor_t*> actor = members.Actor(0);
+        some<Party::Member_Suitcase_t*> suitcase = members.Suitcase(0);
+        suitcase->Copy_Items(skylib::Const::Actor::Player(), Party::Member_Suit_Type_e::FOLLOWER, false);
+        Reference_Container_t(actor).Log();
+        Reference_Container_t(suitcase).Log();
+        //
+
         // changed packages should be reverted in settlers type, upon state creation/deletion.
 
         Party().Enforce();
@@ -363,6 +376,20 @@ namespace doticu_npcp {
             {
                 self->Party().Enforce();
                 V::Utility_t::Wait_Out_Of_Menu(2.0f, new Wait_Callback(self));
+
+                //temp
+                maybe<Cell_t*> cell = skylib::Const::Actor::Player()->Cell();
+                if (cell) {
+                    maybe<Location_t*> location = cell->Location();
+                    if (location) {
+                        if (location->Has_Keyword(skylib::Const::Keyword::Location_Type_City())) {
+                            V::Debug_t::Create_Notification("in city", none<V::Callback_i*>());
+                        } else if (location->Is_Likely_Dangerous()) {
+                            V::Debug_t::Create_Notification("dangerous", none<V::Callback_i*>());
+                        }
+                    }
+                }
+                //
             }
         };
         V::Utility_t::Wait_Out_Of_Menu(2.0f, new Wait_Callback(this));

@@ -22,7 +22,7 @@
 
 namespace doticu_npcp { namespace Party {
 
-    class Member_Suit_t;
+    class Member_Suitcase_t;
 
     class Members_t
     {
@@ -90,19 +90,8 @@ namespace doticu_npcp { namespace Party {
             Vector_t<maybe<Reference_t*>>       packs;
             Vector_t<maybe<Combat_Style_t*>>    combat_styles;
             Vector_t<maybe<Spell_t*>>           ghost_abilities;
+            Vector_t<maybe<Member_Suitcase_t*>> suitcases;
             Vector_t<maybe<Voice_Type_t*>>      voice_types;
-
-            Vector_t<maybe<Outfit_t*>>          default_outfits;
-            Vector_t<maybe<Outfit_t*>>          vanilla_outfits;
-
-            Vector_t<maybe<Member_Suit_t*>>     backup_suits;
-            Vector_t<maybe<Member_Suit_t*>>     default_suits;
-            Vector_t<maybe<Member_Suit_t*>>     follower_suits;
-            Vector_t<maybe<Member_Suit_t*>>     immobile_suits;
-            Vector_t<maybe<Member_Suit_t*>>     member_suits;
-            Vector_t<maybe<Member_Suit_t*>>     settler_suits;
-            Vector_t<maybe<Member_Suit_t*>>     thrall_suits;
-            Vector_t<maybe<Member_Suit_t*>>     vanilla_suits;
 
             Vector_t<maybe<Member_Alpha_t>>     alphas;
             Vector_t<maybe<Member_Rating_t>>    ratings;
@@ -144,7 +133,6 @@ namespace doticu_npcp { namespace Party {
             V::Variable_tt<Vector_t<Bool_t>>&                   Is_Clone_Flags();
             V::Variable_tt<Vector_t<Bool_t>>&                   Is_Immobile_Flags();
             V::Variable_tt<Vector_t<Bool_t>>&                   Is_Mannequin_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Is_Paralyzed_Flags();
             V::Variable_tt<Vector_t<Bool_t>>&                   Is_Reanimated_Flags();
             V::Variable_tt<Vector_t<Bool_t>>&                   Is_Thrall_Flags();
 
@@ -152,19 +140,8 @@ namespace doticu_npcp { namespace Party {
             V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Packs();
             V::Variable_tt<Vector_t<maybe<Combat_Style_t*>>>&   Combat_Styles();
             V::Variable_tt<Vector_t<maybe<Spell_t*>>>&          Ghost_Abilities();
+            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Suitcases();
             V::Variable_tt<Vector_t<maybe<Voice_Type_t*>>>&     Voice_Types();
-
-            V::Variable_tt<Vector_t<maybe<Outfit_t*>>>&         Default_Outfits();
-            V::Variable_tt<Vector_t<maybe<Outfit_t*>>>&         Vanilla_Outfits();
-
-            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Backup_Suits();
-            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Default_Suits();
-            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Follower_Suits();
-            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Immobile_Suits();
-            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Member_Suits();
-            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Settler_Suits();
-            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Thrall_Suits();
-            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Vanilla_Suits();
 
             V::Variable_tt<Vector_t<Float_t>>&                  Alphas();
             V::Variable_tt<Vector_t<Int_t>>&                    Ratings();
@@ -265,9 +242,6 @@ namespace doticu_npcp { namespace Party {
         Bool_t                      Is_Mannequin(some<Member_ID_t> valid_member_id);
         void                        Is_Mannequin(some<Member_ID_t> valid_member_id, Bool_t value);
 
-        Bool_t                      Is_Paralyzed(some<Member_ID_t> valid_member_id);
-        void                        Is_Paralyzed(some<Member_ID_t> valid_member_id, Bool_t value);
-
         Bool_t                      Is_Reanimated(some<Member_ID_t> valid_member_id);
         void                        Is_Reanimated(some<Member_ID_t> valid_member_id, Bool_t value);
 
@@ -283,6 +257,8 @@ namespace doticu_npcp { namespace Party {
 
         maybe<Spell_t*>             Ghost_Ability(some<Member_ID_t> valid_member_id);
         void                        Ghost_Ability(some<Member_ID_t> valid_member_id, maybe<Spell_t*> ghost_ability);
+
+        some<Member_Suitcase_t*>    Suitcase(some<Member_ID_t> valid_member_id);
 
         some<Voice_Type_t*>         Voice_Type(some<Member_ID_t> valid_member_id);
         void                        Voice_Type(some<Member_ID_t> valid_member_id, maybe<Voice_Type_t*> voice_type);
@@ -315,8 +291,6 @@ namespace doticu_npcp { namespace Party {
         Bool_t                      Is_Enabled(some<Member_ID_t> valid_member_id);
         Bool_t                      Is_Untouchable(some<Member_ID_t> valid_member_id);
         Bool_t                      Has_AI(some<Member_ID_t> valid_member_id);
-
-        maybe<Member_Suit_t*>       Suit(some<Member_ID_t> valid_member_id);
 
         Bool_t                      Enforce(some<Member_ID_t> member_id);
 

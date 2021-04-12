@@ -26,7 +26,7 @@
 #include "main.h"
 #include "npcp.h"
 #include "party_members.h"
-#include "party_member_suit.h"
+#include "party_member_suitcase.h"
 
 namespace doticu_npcp { namespace Party {
 
@@ -58,19 +58,8 @@ namespace doticu_npcp { namespace Party {
         packs(Vector_t<maybe<Reference_t*>>(MAX_MEMBERS, none<Reference_t*>())),
         combat_styles(Vector_t<maybe<Combat_Style_t*>>(MAX_MEMBERS, none<Combat_Style_t*>())),
         ghost_abilities(Vector_t<maybe<Spell_t*>>(MAX_MEMBERS, none<Spell_t*>())),
+        suitcases(Vector_t<maybe<Member_Suitcase_t*>>(MAX_MEMBERS, none<Member_Suitcase_t*>())),
         voice_types(Vector_t<maybe<Voice_Type_t*>>(MAX_MEMBERS, none<Voice_Type_t*>())),
-
-        default_outfits(Vector_t<maybe<Outfit_t*>>(MAX_MEMBERS, none<Outfit_t*>())),
-        vanilla_outfits(Vector_t<maybe<Outfit_t*>>(MAX_MEMBERS, none<Outfit_t*>())),
-
-        backup_suits(Vector_t<maybe<Member_Suit_t*>>(MAX_MEMBERS, none<Member_Suit_t*>())),
-        default_suits(Vector_t<maybe<Member_Suit_t*>>(MAX_MEMBERS, none<Member_Suit_t*>())),
-        follower_suits(Vector_t<maybe<Member_Suit_t*>>(MAX_MEMBERS, none<Member_Suit_t*>())),
-        immobile_suits(Vector_t<maybe<Member_Suit_t*>>(MAX_MEMBERS, none<Member_Suit_t*>())),
-        member_suits(Vector_t<maybe<Member_Suit_t*>>(MAX_MEMBERS, none<Member_Suit_t*>())),
-        settler_suits(Vector_t<maybe<Member_Suit_t*>>(MAX_MEMBERS, none<Member_Suit_t*>())),
-        thrall_suits(Vector_t<maybe<Member_Suit_t*>>(MAX_MEMBERS, none<Member_Suit_t*>())),
-        vanilla_suits(Vector_t<maybe<Member_Suit_t*>>(MAX_MEMBERS, none<Member_Suit_t*>())),
 
         alphas(Vector_t<maybe<Member_Alpha_t>>(MAX_MEMBERS, DEFAULT_ALPHA)),
         ratings(Vector_t<maybe<Member_Rating_t>>(MAX_MEMBERS, DEFAULT_RATING)),
@@ -174,11 +163,6 @@ namespace doticu_npcp { namespace Party {
         DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "is_mannequin_flags");
     }
 
-    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Is_Paralyzed_Flags()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "is_paralyzed_flags");
-    }
-
     V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Is_Reanimated_Flags()
     {
         DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "is_reanimated_flags");
@@ -209,59 +193,14 @@ namespace doticu_npcp { namespace Party {
         DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Spell_t*>>, "ghost_abilities");
     }
 
+    V::Variable_tt<Vector_t<maybe<Reference_t*>>>& Members_t::Save_State::Suitcases()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Reference_t*>>, "suitcases");
+    }
+
     V::Variable_tt<Vector_t<maybe<Voice_Type_t*>>>& Members_t::Save_State::Voice_Types()
     {
         DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Voice_Type_t*>>, "voice_types");
-    }
-
-    V::Variable_tt<Vector_t<maybe<Outfit_t*>>>& Members_t::Save_State::Default_Outfits()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Outfit_t*>>, "default_outfits");
-    }
-
-    V::Variable_tt<Vector_t<maybe<Outfit_t*>>>& Members_t::Save_State::Vanilla_Outfits()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Outfit_t*>>, "vanilla_outfits");
-    }
-
-    V::Variable_tt<Vector_t<maybe<Reference_t*>>>& Members_t::Save_State::Backup_Suits()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Reference_t*>>, "backup_suits");
-    }
-
-    V::Variable_tt<Vector_t<maybe<Reference_t*>>>& Members_t::Save_State::Default_Suits()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Reference_t*>>, "default_suits");
-    }
-
-    V::Variable_tt<Vector_t<maybe<Reference_t*>>>& Members_t::Save_State::Follower_Suits()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Reference_t*>>, "follower_suits");
-    }
-
-    V::Variable_tt<Vector_t<maybe<Reference_t*>>>& Members_t::Save_State::Immobile_Suits()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Reference_t*>>, "immobile_suits");
-    }
-
-    V::Variable_tt<Vector_t<maybe<Reference_t*>>>& Members_t::Save_State::Member_Suits()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Reference_t*>>, "member_suits");
-    }
-
-    V::Variable_tt<Vector_t<maybe<Reference_t*>>>& Members_t::Save_State::Settler_Suits()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Reference_t*>>, "settler_suits");
-    }
-
-    V::Variable_tt<Vector_t<maybe<Reference_t*>>>& Members_t::Save_State::Thrall_Suits()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Reference_t*>>, "thrall_suits");
-    }
-
-    V::Variable_tt<Vector_t<maybe<Reference_t*>>>& Members_t::Save_State::Vanilla_Suits()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Reference_t*>>, "vanilla_suits");
     }
 
     V::Variable_tt<Vector_t<Float_t>>& Members_t::Save_State::Alphas()
@@ -314,7 +253,6 @@ namespace doticu_npcp { namespace Party {
         Vector_t<Bool_t> is_clone_flags = Is_Clone_Flags();
         Vector_t<Bool_t> is_immobile_flags = Is_Immobile_Flags();
         Vector_t<Bool_t> is_mannequin_flags = Is_Mannequin_Flags();
-        Vector_t<Bool_t> is_paralyzed_flags = Is_Paralyzed_Flags();
         Vector_t<Bool_t> is_reanimated_flags = Is_Reanimated_Flags();
         Vector_t<Bool_t> is_thrall_flags = Is_Thrall_Flags();
 
@@ -322,19 +260,8 @@ namespace doticu_npcp { namespace Party {
         this->packs = Packs();
         this->combat_styles = Combat_Styles();
         this->ghost_abilities = Ghost_Abilities();
+        this->suitcases = Suitcases().As<Vector_t<maybe<Member_Suitcase_t*>>>();
         this->voice_types = Voice_Types();
-
-        this->default_outfits = Default_Outfits();
-        this->vanilla_outfits = Vanilla_Outfits();
-
-        this->backup_suits = Backup_Suits().As<Vector_t<maybe<Member_Suit_t*>>>();
-        this->default_suits = Default_Suits().As<Vector_t<maybe<Member_Suit_t*>>>();
-        this->follower_suits = Follower_Suits().As<Vector_t<maybe<Member_Suit_t*>>>();
-        this->immobile_suits = Immobile_Suits().As<Vector_t<maybe<Member_Suit_t*>>>();
-        this->member_suits = Member_Suits().As<Vector_t<maybe<Member_Suit_t*>>>();
-        this->settler_suits = Settler_Suits().As<Vector_t<maybe<Member_Suit_t*>>>();
-        this->thrall_suits = Thrall_Suits().As<Vector_t<maybe<Member_Suit_t*>>>();
-        this->vanilla_suits = Vanilla_Suits().As<Vector_t<maybe<Member_Suit_t*>>>();
 
         Vector_t<Float_t> alphas = Alphas();
         Vector_t<Int_t> ratings = Ratings();
@@ -349,7 +276,6 @@ namespace doticu_npcp { namespace Party {
         is_clone_flags.resize(MAX_MEMBERS);
         is_immobile_flags.resize(MAX_MEMBERS);
         is_mannequin_flags.resize(MAX_MEMBERS);
-        is_paralyzed_flags.resize(MAX_MEMBERS);
         is_reanimated_flags.resize(MAX_MEMBERS);
         is_thrall_flags.resize(MAX_MEMBERS);
 
@@ -357,19 +283,8 @@ namespace doticu_npcp { namespace Party {
         this->packs.resize(MAX_MEMBERS);
         this->combat_styles.resize(MAX_MEMBERS);
         this->ghost_abilities.resize(MAX_MEMBERS);
+        this->suitcases.resize(MAX_MEMBERS);
         this->voice_types.resize(MAX_MEMBERS);
-
-        this->default_outfits.resize(MAX_MEMBERS);
-        this->vanilla_outfits.resize(MAX_MEMBERS);
-
-        this->backup_suits.resize(MAX_MEMBERS);
-        this->default_suits.resize(MAX_MEMBERS);
-        this->follower_suits.resize(MAX_MEMBERS);
-        this->immobile_suits.resize(MAX_MEMBERS);
-        this->member_suits.resize(MAX_MEMBERS);
-        this->settler_suits.resize(MAX_MEMBERS);
-        this->thrall_suits.resize(MAX_MEMBERS);
-        this->vanilla_suits.resize(MAX_MEMBERS);
 
         alphas.resize(MAX_MEMBERS, DEFAULT_ALPHA);
         ratings.resize(MAX_MEMBERS, DEFAULT_RATING);
@@ -383,7 +298,6 @@ namespace doticu_npcp { namespace Party {
             flags.Is_Flagged(Member_Flags_e::IS_CLONE, is_clone_flags[idx]);
             flags.Is_Flagged(Member_Flags_e::IS_IMMOBILE, is_immobile_flags[idx]);
             flags.Is_Flagged(Member_Flags_e::IS_MANNEQUIN, is_mannequin_flags[idx]);
-            flags.Is_Flagged(Member_Flags_e::IS_PARALYZED, is_paralyzed_flags[idx]);
             flags.Is_Flagged(Member_Flags_e::IS_REANIMATED, is_reanimated_flags[idx]);
             flags.Is_Flagged(Member_Flags_e::IS_THRALL, is_thrall_flags[idx]);
 
@@ -401,7 +315,6 @@ namespace doticu_npcp { namespace Party {
         Vector_t<Bool_t> is_clone_flags(MAX_MEMBERS, false);
         Vector_t<Bool_t> is_immobile_flags(MAX_MEMBERS, false);
         Vector_t<Bool_t> is_mannequin_flags(MAX_MEMBERS, false);
-        Vector_t<Bool_t> is_paralyzed_flags(MAX_MEMBERS, false);
         Vector_t<Bool_t> is_reanimated_flags(MAX_MEMBERS, false);
         Vector_t<Bool_t> is_thrall_flags(MAX_MEMBERS, false);
 
@@ -418,7 +331,6 @@ namespace doticu_npcp { namespace Party {
                 is_clone_flags[idx] = flags.Is_Flagged(Member_Flags_e::IS_CLONE);
                 is_immobile_flags[idx] = flags.Is_Flagged(Member_Flags_e::IS_IMMOBILE);
                 is_mannequin_flags[idx] = flags.Is_Flagged(Member_Flags_e::IS_MANNEQUIN);
-                is_paralyzed_flags[idx] = flags.Is_Flagged(Member_Flags_e::IS_PARALYZED);
                 is_reanimated_flags[idx] = flags.Is_Flagged(Member_Flags_e::IS_REANIMATED);
                 is_thrall_flags[idx] = flags.Is_Flagged(Member_Flags_e::IS_THRALL);
 
@@ -453,7 +365,6 @@ namespace doticu_npcp { namespace Party {
         Is_Clone_Flags() = is_clone_flags;
         Is_Immobile_Flags() = is_immobile_flags;
         Is_Mannequin_Flags() = is_mannequin_flags;
-        Is_Paralyzed_Flags() = is_paralyzed_flags;
         Is_Reanimated_Flags() = is_reanimated_flags;
         Is_Thrall_Flags() = is_thrall_flags;
 
@@ -461,19 +372,8 @@ namespace doticu_npcp { namespace Party {
         Packs() = this->packs;
         Combat_Styles() = this->combat_styles;
         Ghost_Abilities() = this->ghost_abilities;
+        Suitcases() = reinterpret_cast<Vector_t<maybe<Reference_t*>>&>(this->suitcases);
         Voice_Types() = this->voice_types;
-
-        Default_Outfits() = this->default_outfits;
-        Vanilla_Outfits() = this->vanilla_outfits;
-
-        Backup_Suits() = reinterpret_cast<Vector_t<maybe<Reference_t*>>&>(this->backup_suits);
-        Default_Suits() = reinterpret_cast<Vector_t<maybe<Reference_t*>>&>(this->default_suits);
-        Follower_Suits() = reinterpret_cast<Vector_t<maybe<Reference_t*>>&>(this->follower_suits);
-        Immobile_Suits() = reinterpret_cast<Vector_t<maybe<Reference_t*>>&>(this->immobile_suits);
-        Member_Suits() = reinterpret_cast<Vector_t<maybe<Reference_t*>>&>(this->member_suits);
-        Settler_Suits() = reinterpret_cast<Vector_t<maybe<Reference_t*>>&>(this->settler_suits);
-        Thrall_Suits() = reinterpret_cast<Vector_t<maybe<Reference_t*>>&>(this->thrall_suits);
-        Vanilla_Suits() = reinterpret_cast<Vector_t<maybe<Reference_t*>>&>(this->vanilla_suits);
 
         Alphas() = alphas;
         Ratings() = ratings;
@@ -772,22 +672,11 @@ namespace doticu_npcp { namespace Party {
         self->save_state.packs[member_id] = none<Reference_t*>();
         self->save_state.combat_styles[member_id] = self->save_state.default_combat_style();
         self->save_state.ghost_abilities[member_id] = none<Spell_t*>(); // maybe should look at actor for any acceptable ability
+        self->save_state.suitcases[member_id] = none<Member_Suitcase_t*>(); // this needs to be created as some, either here or in getter
         self->save_state.voice_types[member_id] = none<Voice_Type_t*>(); // we need to have 2 defaults: male/female
-
-        maybe<Outfit_t*> default_outfit = base->Default_Outfit();
-        self->save_state.default_outfits[member_id] = default_outfit;
-        self->save_state.vanilla_outfits[member_id] = default_outfit;
 
         // so the member_suit_fill_type determines whether we use a ref or a base to fill the member suit.
         // with a clone, that ref should be the original actor. when we clone, we could just copy all the items onto clone first
-        self->save_state.backup_suits[member_id] = none<Member_Suit_t*>(); // should be set to member
-        self->save_state.default_suits[member_id] = none<Member_Suit_t*>();
-        self->save_state.follower_suits[member_id] = none<Member_Suit_t*>();
-        self->save_state.immobile_suits[member_id] = none<Member_Suit_t*>();
-        self->save_state.member_suits[member_id] = none<Member_Suit_t*>(); // shall be created in this func.
-        self->save_state.settler_suits[member_id] = none<Member_Suit_t*>();
-        self->save_state.thrall_suits[member_id] = none<Member_Suit_t*>();
-        self->save_state.vanilla_suits[member_id] = none<Member_Suit_t*>();
 
         self->save_state.alphas[member_id] = Members_t::DEFAULT_ALPHA;
         self->save_state.ratings[member_id] = Members_t::DEFAULT_RATING;
@@ -852,8 +741,8 @@ namespace doticu_npcp { namespace Party {
             if (member_id) {
                 maybe<Actor_t*> actor = Actor_t::Create(base(), true, true, true);
                 if (actor && actor->Is_Valid() && actor->Isnt_Deleted()) {
-                    this->save_state.flags[member_id()].Flag(Member_Flags_e::IS_CLONE);
                     Party::Add_Member(this, member_id(), actor(), base());
+                    this->save_state.flags[member_id()].Flag(Member_Flags_e::IS_CLONE);
                     return member_id;
                 } else {
                     return none<Member_ID_t>();
@@ -1032,22 +921,6 @@ namespace doticu_npcp { namespace Party {
         this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_MANNEQUIN, value);
     }
 
-    Bool_t Members_t::Is_Paralyzed(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        return this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_PARALYZED);
-    }
-
-    void Members_t::Is_Paralyzed(some<Member_ID_t> valid_member_id, Bool_t value)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_PARALYZED, value);
-    }
-
     Bool_t Members_t::Is_Reanimated(some<Member_ID_t> valid_member_id)
     {
         SKYLIB_ASSERT_SOME(valid_member_id);
@@ -1144,6 +1017,20 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
         this->save_state.ghost_abilities[valid_member_id()] = ghost_ability;
+    }
+
+    some<Member_Suitcase_t*> Members_t::Suitcase(some<Member_ID_t> valid_member_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_member_id);
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+
+        maybe<Member_Suitcase_t*>& suitcase = this->save_state.suitcases[valid_member_id()];
+        if (!suitcase) {
+            suitcase = Member_Suitcase_t::Create()();
+            SKYLIB_ASSERT_SOME(suitcase);
+        }
+
+        return suitcase();
     }
 
     some<Voice_Type_t*> Members_t::Voice_Type(some<Member_ID_t> valid_member_id)
@@ -1362,19 +1249,7 @@ namespace doticu_npcp { namespace Party {
 
         return
             !Is_Banished(valid_member_id) &&
-            !Is_Mannequin(valid_member_id) &&
-            !Is_Paralyzed(valid_member_id);
-    }
-
-    maybe<Member_Suit_t*> Members_t::Suit(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        // this needs to calc the exact suit to oufit the actor with, if any.
-        // it may also need to create it and insert it into save_state.
-
-        return none<Member_Suit_t*>();
+            !Is_Mannequin(valid_member_id);
     }
 
     Bool_t Members_t::Enforce(some<Member_ID_t> member_id)

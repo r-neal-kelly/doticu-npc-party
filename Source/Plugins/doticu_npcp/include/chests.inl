@@ -36,12 +36,12 @@ namespace doticu_npcp {
                 if (!object->Is_Leveled_Item() && object->Is_Playable()) {
                     maybe<Reference_t*> chest = Chest(object)();
                     if (chest && chest != reference) {
-                        entry.Remove_Count_To(&container, entry.Non_Extra_Lists_Count(), chest());
+                        entry.Remove_Count_To(container, entry.Non_Extra_Lists_Count(), chest());
                         Vector_t<some<Extra_List_t*>> x_lists = entry.Some_Extra_Lists();
                         for (size_t idx = 0, end = x_lists.size(); idx < end; idx += 1) {
                             some<Extra_List_t*> x_list = x_lists[idx];
-                            if (!x_list->Is_Quest_Item()) {
-                                entry.Remove_To(&container, x_list, chest());
+                            if (!x_list->Is_Quest_Item()) { // maybe we should allow this here and filter above this func?
+                                entry.Remove_To(container, x_list, chest());
                             }
                         }
                     }

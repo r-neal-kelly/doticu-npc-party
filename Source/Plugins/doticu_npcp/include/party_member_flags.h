@@ -20,9 +20,8 @@ namespace doticu_npcp { namespace Party {
             IS_CLONE        = static_cast<value_type>(1 << 1),
             IS_IMMOBILE     = static_cast<value_type>(1 << 2),
             IS_MANNEQUIN    = static_cast<value_type>(1 << 3),
-            IS_PARALYZED    = static_cast<value_type>(1 << 4),
-            IS_REANIMATED   = static_cast<value_type>(1 << 5),
-            IS_THRALL       = static_cast<value_type>(1 << 6),
+            IS_REANIMATED   = static_cast<value_type>(1 << 4),
+            IS_THRALL       = static_cast<value_type>(1 << 5),
 
             _TOTAL_         = 7,
         };
