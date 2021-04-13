@@ -29,9 +29,10 @@ bool[]              is_reanimated_flags             = none
 bool[]              is_thrall_flags                 = none
 
 string[]            names                           = none
-ObjectReference[]   packs                           = none
+
 CombatStyle[]       combat_styles                   = none
 Spell[]             ghost_abilities                 = none
+ObjectReference[]   packs                           = none
 ObjectReference[]   suitcases                       = none
 VoiceType[]         voice_types                     = none
 

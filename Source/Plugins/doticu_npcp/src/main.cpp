@@ -43,6 +43,7 @@
 #include "doticu_skylib/virtual_debug.h"
 #include "doticu_skylib/voice_type.h"
 
+#include "chests.h"
 #include "party_member_suitcase.h"
 #include "party_members.h"
 #include "party_settlers.inl"
@@ -344,16 +345,11 @@ namespace doticu_npcp {
                     members.Relation(idx, Party::Member_Relation_e::ARCHNEMESIS);
                     members.Vitality(idx, Party::Member_Vitality_e::MORTAL);
                 }
+
+                some<Party::Member_Suitcase_t*> suitcase = members.Suitcase(idx);
+                suitcase->Copy_From(skylib::Const::Actor::Player(), Party::Member_Suit_Type_e::FOLLOWER, true);
             }
         }
-
-        //temp
-        some<Actor_t*> actor = members.Actor(0);
-        some<Party::Member_Suitcase_t*> suitcase = members.Suitcase(0);
-        suitcase->Copy_Items(skylib::Const::Actor::Player(), Party::Member_Suit_Type_e::FOLLOWER, false);
-        Reference_Container_t(actor).Log();
-        Reference_Container_t(suitcase).Log();
-        //
 
         // changed packages should be reverted in settlers type, upon state creation/deletion.
 
@@ -376,6 +372,20 @@ namespace doticu_npcp {
             {
                 self->Party().Enforce();
                 V::Utility_t::Wait_Out_Of_Menu(2.0f, new Wait_Callback(self));
+
+                Party::Members_t& members = self->Party().Members();
+                for (size_t idx = 0, end = 1024; idx < end; idx += 1) {
+                    if (members.Has_Member(idx)) {
+                        members.Suitcase(idx)->Apply_Unto(
+                            members.Actor(idx),
+                            Party::Member_Suit_Type_e::FOLLOWER,
+                            true,
+                            false,
+                            members.Pack(idx)
+                        );
+                        Reference_Container_t(members.Pack(idx)).Log();
+                    }
+                }
 
                 //temp
                 maybe<Cell_t*> cell = skylib::Const::Actor::Player()->Cell();

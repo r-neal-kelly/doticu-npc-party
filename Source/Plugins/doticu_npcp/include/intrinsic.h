@@ -62,6 +62,8 @@ namespace doticu_npcp {
 
     template <typename ...Ts>
     using Callback_i                    = skylib::Callback_i<Ts...>;
+    template <typename ...Ts>
+    using Filter_i                      = skylib::Filter_i<Ts...>;
     template <typename Return_t, typename ...Ts>
     using Functor_i                     = skylib::Functor_i<Return_t, Ts...>;
 
@@ -78,6 +80,7 @@ namespace doticu_npcp {
     template <typename T>
     using Version_t                     = skylib::Version_t<T>;
 
+    using Extra_Type_e                  = skylib::Extra_Type_e;
     using Form_Type_e                   = skylib::Form_Type_e;
     using Operator_e                    = skylib::Operator_e;
     using Package_Flags_e               = skylib::Package_Flags_e;
@@ -107,6 +110,7 @@ namespace doticu_npcp {
     using Dialogue_Topic_t              = skylib::Dialogue_Topic_t;
     using Effect_Shader_t               = skylib::Effect_Shader_t;
     using Extra_List_t                  = skylib::Extra_List_t;
+    using Extra_Owner_t                 = skylib::Extra_Owner_t;
     using Faction_t                     = skylib::Faction_t;
     using Faction_And_Rank_t            = skylib::Faction_And_Rank_t;
     using Form_t                        = skylib::Form_t;

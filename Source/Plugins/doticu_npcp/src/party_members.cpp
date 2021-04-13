@@ -11,6 +11,7 @@
 #include "doticu_skylib/const_actor_bases.h"
 #include "doticu_skylib/const_factions.h"
 #include "doticu_skylib/const_spells.h"
+#include "doticu_skylib/container.h"
 #include "doticu_skylib/dynamic_array.inl"
 #include "doticu_skylib/forward_list.inl"
 #include "doticu_skylib/global.h"
@@ -55,9 +56,10 @@ namespace doticu_npcp { namespace Party {
         flags(Vector_t<Member_Flags_e>(MAX_MEMBERS, 0)),
 
         names(Vector_t<String_t>(MAX_MEMBERS, "")),
-        packs(Vector_t<maybe<Reference_t*>>(MAX_MEMBERS, none<Reference_t*>())),
+
         combat_styles(Vector_t<maybe<Combat_Style_t*>>(MAX_MEMBERS, none<Combat_Style_t*>())),
         ghost_abilities(Vector_t<maybe<Spell_t*>>(MAX_MEMBERS, none<Spell_t*>())),
+        packs(Vector_t<maybe<Reference_t*>>(MAX_MEMBERS, none<Reference_t*>())),
         suitcases(Vector_t<maybe<Member_Suitcase_t*>>(MAX_MEMBERS, none<Member_Suitcase_t*>())),
         voice_types(Vector_t<maybe<Voice_Type_t*>>(MAX_MEMBERS, none<Voice_Type_t*>())),
 
@@ -178,11 +180,6 @@ namespace doticu_npcp { namespace Party {
         DEFINE_VARIABLE_REFERENCE(Vector_t<String_t>, "names");
     }
 
-    V::Variable_tt<Vector_t<maybe<Reference_t*>>>& Members_t::Save_State::Packs()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Reference_t*>>, "packs");
-    }
-
     V::Variable_tt<Vector_t<maybe<Combat_Style_t*>>>& Members_t::Save_State::Combat_Styles()
     {
         DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Combat_Style_t*>>, "combat_styles");
@@ -191,6 +188,11 @@ namespace doticu_npcp { namespace Party {
     V::Variable_tt<Vector_t<maybe<Spell_t*>>>& Members_t::Save_State::Ghost_Abilities()
     {
         DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Spell_t*>>, "ghost_abilities");
+    }
+
+    V::Variable_tt<Vector_t<maybe<Reference_t*>>>& Members_t::Save_State::Packs()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Reference_t*>>, "packs");
     }
 
     V::Variable_tt<Vector_t<maybe<Reference_t*>>>& Members_t::Save_State::Suitcases()
@@ -257,9 +259,10 @@ namespace doticu_npcp { namespace Party {
         Vector_t<Bool_t> is_thrall_flags = Is_Thrall_Flags();
 
         this->names = Names();
-        this->packs = Packs();
+
         this->combat_styles = Combat_Styles();
         this->ghost_abilities = Ghost_Abilities();
+        this->packs = Packs();
         this->suitcases = Suitcases().As<Vector_t<maybe<Member_Suitcase_t*>>>();
         this->voice_types = Voice_Types();
 
@@ -280,9 +283,10 @@ namespace doticu_npcp { namespace Party {
         is_thrall_flags.resize(MAX_MEMBERS);
 
         this->names.resize(MAX_MEMBERS);
-        this->packs.resize(MAX_MEMBERS);
+
         this->combat_styles.resize(MAX_MEMBERS);
         this->ghost_abilities.resize(MAX_MEMBERS);
+        this->packs.resize(MAX_MEMBERS);
         this->suitcases.resize(MAX_MEMBERS);
         this->voice_types.resize(MAX_MEMBERS);
 
@@ -369,9 +373,10 @@ namespace doticu_npcp { namespace Party {
         Is_Thrall_Flags() = is_thrall_flags;
 
         Names() = this->names;
-        Packs() = this->packs;
+
         Combat_Styles() = this->combat_styles;
         Ghost_Abilities() = this->ghost_abilities;
+        Packs() = this->packs;
         Suitcases() = reinterpret_cast<Vector_t<maybe<Reference_t*>>&>(this->suitcases);
         Voice_Types() = this->voice_types;
 
@@ -669,9 +674,10 @@ namespace doticu_npcp { namespace Party {
         // do we handle flags here also?
 
         self->save_state.names[member_id] = actor->Name();
-        self->save_state.packs[member_id] = none<Reference_t*>();
+
         self->save_state.combat_styles[member_id] = self->save_state.default_combat_style();
         self->save_state.ghost_abilities[member_id] = none<Spell_t*>(); // maybe should look at actor for any acceptable ability
+        self->save_state.packs[member_id] = none<Reference_t*>();
         self->save_state.suitcases[member_id] = none<Member_Suitcase_t*>(); // this needs to be created as some, either here or in getter
         self->save_state.voice_types[member_id] = none<Voice_Type_t*>(); // we need to have 2 defaults: male/female
 
@@ -1017,6 +1023,23 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
         this->save_state.ghost_abilities[valid_member_id()] = ghost_ability;
+    }
+
+    some<Reference_t*> Members_t::Pack(some<Member_ID_t> valid_member_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_member_id);
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+
+        maybe<Reference_t*>& pack = this->save_state.packs[valid_member_id()];
+        if (!pack) {
+            pack = Container_t::Create_Reference(
+                Consts_t::NPCP::Container::Empty(),
+                Consts_t::NPCP::Reference::Storage_Marker()
+            )();
+            SKYLIB_ASSERT_SOME(pack);
+        }
+
+        return pack();
     }
 
     some<Member_Suitcase_t*> Members_t::Suitcase(some<Member_ID_t> valid_member_id)
