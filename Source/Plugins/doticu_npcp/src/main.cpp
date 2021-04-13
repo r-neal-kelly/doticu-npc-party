@@ -373,20 +373,6 @@ namespace doticu_npcp {
                 self->Party().Enforce();
                 V::Utility_t::Wait_Out_Of_Menu(2.0f, new Wait_Callback(self));
 
-                Party::Members_t& members = self->Party().Members();
-                for (size_t idx = 0, end = 1024; idx < end; idx += 1) {
-                    if (members.Has_Member(idx)) {
-                        members.Suitcase(idx)->Apply_Unto(
-                            members.Actor(idx),
-                            Party::Member_Suit_Type_e::FOLLOWER,
-                            true,
-                            false,
-                            members.Pack(idx)
-                        );
-                        Reference_Container_t(members.Pack(idx)).Log();
-                    }
-                }
-
                 //temp
                 maybe<Cell_t*> cell = skylib::Const::Actor::Player()->Cell();
                 if (cell) {

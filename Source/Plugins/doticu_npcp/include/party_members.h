@@ -90,6 +90,7 @@ namespace doticu_npcp { namespace Party {
 
             Vector_t<maybe<Combat_Style_t*>>    combat_styles;
             Vector_t<maybe<Spell_t*>>           ghost_abilities;
+            Vector_t<maybe<Outfit_t*>>          outfits;
             Vector_t<maybe<Reference_t*>>       packs;
             Vector_t<maybe<Member_Suitcase_t*>> suitcases;
             Vector_t<maybe<Voice_Type_t*>>      voice_types;
@@ -141,6 +142,7 @@ namespace doticu_npcp { namespace Party {
 
             V::Variable_tt<Vector_t<maybe<Combat_Style_t*>>>&   Combat_Styles();
             V::Variable_tt<Vector_t<maybe<Spell_t*>>>&          Ghost_Abilities();
+            V::Variable_tt<Vector_t<maybe<Outfit_t*>>>&         Outfits();
             V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Packs();
             V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Suitcases();
             V::Variable_tt<Vector_t<maybe<Voice_Type_t*>>>&     Voice_Types();
@@ -259,6 +261,9 @@ namespace doticu_npcp { namespace Party {
 
         maybe<Spell_t*>             Ghost_Ability(some<Member_ID_t> valid_member_id);
         void                        Ghost_Ability(some<Member_ID_t> valid_member_id, maybe<Spell_t*> ghost_ability);
+
+        maybe<Outfit_t*>            Outfit(some<Member_ID_t> valid_member_id);
+        void                        Outfit(some<Member_ID_t> valid_member_id, maybe<Outfit_t*> outfit);
 
         some<Reference_t*>          Pack(some<Member_ID_t> valid_member_id);
 

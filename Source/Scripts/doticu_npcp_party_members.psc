@@ -32,6 +32,7 @@ string[]            names                           = none
 
 CombatStyle[]       combat_styles                   = none
 Spell[]             ghost_abilities                 = none
+Outfit[]            outfits                         = none
 ObjectReference[]   packs                           = none
 ObjectReference[]   suitcases                       = none
 VoiceType[]         voice_types                     = none

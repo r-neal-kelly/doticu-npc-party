@@ -326,6 +326,8 @@ namespace doticu_npcp { namespace Party {
             }
         }
 
+        // instead we could always add the blank armor with outfit,
+        // and when we have an outfit on actor we can use it to determine if an external outfit change occured.
         if (outfit && !entries.Has_Copies()) {
             some<Suit_Entry_t*> suit_entry = entries.Some_Entry(Consts_t::NPCP::Armor::Blank());
             some<Extra_List_t*> x_list = Extra_List_t::Create();
@@ -389,6 +391,10 @@ namespace doticu_npcp { namespace Party {
                             }
                         } else if (do_strict && unto_entry.Is_Playable_Item()) {
                             unto_entry.Remove_To(unto_container, unto_x_list, to_reference);
+                            has_changed_container = true;
+                        } else if (unto_x_list->Is_Outfit_Item()) {
+                            unto_entry.Remove(unto_container, unto_x_list);
+                            Extra_List_t::Destroy(unto_x_list);
                             has_changed_container = true;
                         }
                     }

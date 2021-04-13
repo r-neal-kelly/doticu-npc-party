@@ -59,6 +59,7 @@ namespace doticu_npcp { namespace Party {
 
         combat_styles(Vector_t<maybe<Combat_Style_t*>>(MAX_MEMBERS, none<Combat_Style_t*>())),
         ghost_abilities(Vector_t<maybe<Spell_t*>>(MAX_MEMBERS, none<Spell_t*>())),
+        outfits(Vector_t<maybe<Outfit_t*>>(MAX_MEMBERS, none<Outfit_t*>())),
         packs(Vector_t<maybe<Reference_t*>>(MAX_MEMBERS, none<Reference_t*>())),
         suitcases(Vector_t<maybe<Member_Suitcase_t*>>(MAX_MEMBERS, none<Member_Suitcase_t*>())),
         voice_types(Vector_t<maybe<Voice_Type_t*>>(MAX_MEMBERS, none<Voice_Type_t*>())),
@@ -190,6 +191,11 @@ namespace doticu_npcp { namespace Party {
         DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Spell_t*>>, "ghost_abilities");
     }
 
+    V::Variable_tt<Vector_t<maybe<Outfit_t*>>>& Members_t::Save_State::Outfits()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Outfit_t*>>, "outfits");
+    }
+
     V::Variable_tt<Vector_t<maybe<Reference_t*>>>& Members_t::Save_State::Packs()
     {
         DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Reference_t*>>, "packs");
@@ -262,6 +268,7 @@ namespace doticu_npcp { namespace Party {
 
         this->combat_styles = Combat_Styles();
         this->ghost_abilities = Ghost_Abilities();
+        this->outfits = Outfits();
         this->packs = Packs();
         this->suitcases = Suitcases().As<Vector_t<maybe<Member_Suitcase_t*>>>();
         this->voice_types = Voice_Types();
@@ -286,6 +293,7 @@ namespace doticu_npcp { namespace Party {
 
         this->combat_styles.resize(MAX_MEMBERS);
         this->ghost_abilities.resize(MAX_MEMBERS);
+        this->outfits.resize(MAX_MEMBERS);
         this->packs.resize(MAX_MEMBERS);
         this->suitcases.resize(MAX_MEMBERS);
         this->voice_types.resize(MAX_MEMBERS);
@@ -376,6 +384,7 @@ namespace doticu_npcp { namespace Party {
 
         Combat_Styles() = this->combat_styles;
         Ghost_Abilities() = this->ghost_abilities;
+        Outfits() = this->outfits;
         Packs() = this->packs;
         Suitcases() = reinterpret_cast<Vector_t<maybe<Reference_t*>>&>(this->suitcases);
         Voice_Types() = this->voice_types;
@@ -677,8 +686,9 @@ namespace doticu_npcp { namespace Party {
 
         self->save_state.combat_styles[member_id] = self->save_state.default_combat_style();
         self->save_state.ghost_abilities[member_id] = none<Spell_t*>(); // maybe should look at actor for any acceptable ability
+        self->save_state.outfits[member_id] = base->Default_Outfit();
         self->save_state.packs[member_id] = none<Reference_t*>();
-        self->save_state.suitcases[member_id] = none<Member_Suitcase_t*>(); // this needs to be created as some, either here or in getter
+        self->save_state.suitcases[member_id] = none<Member_Suitcase_t*>();
         self->save_state.voice_types[member_id] = none<Voice_Type_t*>(); // we need to have 2 defaults: male/female
 
         // so the member_suit_fill_type determines whether we use a ref or a base to fill the member suit.
@@ -689,6 +699,11 @@ namespace doticu_npcp { namespace Party {
         self->save_state.relations[member_id] = self->save_state.default_relation;
         self->save_state.suit_types[member_id] = self->save_state.default_suit_type;
         self->save_state.vitalities[member_id] = self->save_state.default_vitality;
+
+        maybe<Member_Suit_Type_e> default_suit_type = self->save_state.default_suit_type;
+        if (default_suit_type) {
+            self->Suitcase(member_id)->Copy_From(actor, default_suit_type(), true); // will have to handle unplayables better and by param.
+        }
 
         self->Alias_Reference(member_id)->Fill(actor, none<V::Callback_i*>());
     }
@@ -857,6 +872,7 @@ namespace doticu_npcp { namespace Party {
         maybe<Actor_Base_t*>& custom_base = this->custom_bases[valid_member_id()];
         if (!custom_base) {
             custom_base = Actor_Base_t::Create_Temporary_Copy(Original_Base(valid_member_id))();
+            custom_base->Default_Outfit(Outfit(valid_member_id));
             SKYLIB_ASSERT_SOME(custom_base);
         }
 
@@ -1025,6 +1041,22 @@ namespace doticu_npcp { namespace Party {
         this->save_state.ghost_abilities[valid_member_id()] = ghost_ability;
     }
 
+    maybe<Outfit_t*> Members_t::Outfit(some<Member_ID_t> valid_member_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_member_id);
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+
+        return this->save_state.outfits[valid_member_id()];
+    }
+
+    void Members_t::Outfit(some<Member_ID_t> valid_member_id, maybe<Outfit_t*> outfit)
+    {
+        SKYLIB_ASSERT_SOME(valid_member_id);
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+
+        this->save_state.outfits[valid_member_id()] = outfit;
+    }
+
     some<Reference_t*> Members_t::Pack(some<Member_ID_t> valid_member_id)
     {
         SKYLIB_ASSERT_SOME(valid_member_id);
@@ -1149,7 +1181,7 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT_SOME(valid_member_id);
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        // this should at least partially calculate what outfit is going to be worn.
+        // this should calculate the suit type by precedence and whether or not auto-outfitting for this member is enabled.
 
         return this->save_state.suit_types[valid_member_id()];
     }
@@ -1336,6 +1368,18 @@ namespace doticu_npcp { namespace Party {
             }
             if (ghost_ability) {
                 spells_to_add.push_back(ghost_ability());
+            }
+
+            maybe<Outfit_t*> outfit = Outfit(member_id);
+            maybe<Outfit_t*> custom_outfit = custom_base->Default_Outfit();
+            if (outfit != custom_outfit) {
+                Outfit(member_id, custom_outfit);
+            }
+
+            maybe<Member_Suit_Type_e> suit_type = Suit_Type(member_id);
+            if (suit_type) {
+                some<Member_Suitcase_t*> suitcase = Suitcase(member_id);
+                suitcase->Apply_Unto(actor, suit_type(), true, true, Pack(member_id));
             }
 
             custom_base->Voice_Type(Voice_Type(member_id)());
