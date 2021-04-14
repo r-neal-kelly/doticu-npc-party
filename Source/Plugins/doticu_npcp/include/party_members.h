@@ -12,6 +12,8 @@
 #include "party_member_alpha.h"
 #include "party_member_combat_style.h"
 #include "party_member_flags.h"
+#include "party_member_flags_allow_unplayables.h"
+#include "party_member_flags_has_suit.h"
 #include "party_member_id.h"
 #include "party_member_rating.h"
 #include "party_member_relation.h"
@@ -63,44 +65,46 @@ namespace doticu_npcp { namespace Party {
         class Save_State
         {
         public:
-            const some<Quest_t*>                quest;
+            const some<Quest_t*>                        quest;
 
-            Int_t                               limit;
+            Int_t                                       limit;
 
-            Bool_t                              do_auto_suits;
-            Bool_t                              do_auto_immobile_suit;
-            Bool_t                              do_fill_suits;
+            Bool_t                                      do_auto_suits;
+            Bool_t                                      do_auto_immobile_suit;
+            Bool_t                                      do_fill_suits;
 
-            Bool_t                              has_untouchable_invulnerables;
+            Bool_t                                      has_untouchable_invulnerables;
 
-            maybe<Member_Combat_Style_e>        default_combat_style;
-            maybe<Member_Relation_e>            default_relation;
-            maybe<Member_Suit_Type_e>           default_suit_type;
-            maybe<Member_Vitality_e>            default_vitality;
+            maybe<Member_Combat_Style_e>                default_combat_style;
+            maybe<Member_Relation_e>                    default_relation;
+            maybe<Member_Suit_Type_e>                   default_suit_type;
+            maybe<Member_Vitality_e>                    default_vitality;
 
-            some<Member_Suit_Fill_Type_e>       member_suit_fill_type;
-            some<Member_Sort_Type_e>            sort_type;
+            some<Member_Suit_Fill_Type_e>               member_suit_fill_type;
+            some<Member_Sort_Type_e>                    sort_type;
 
-            Vector_t<maybe<Actor_t*>>           actors;
-            Vector_t<maybe<Actor_Base_t*>>      original_bases;
+            Vector_t<maybe<Actor_t*>>                   actors;
+            Vector_t<maybe<Actor_Base_t*>>              original_bases;
 
-            Vector_t<Member_Flags_e>            flags;
+            Vector_t<Member_Flags_e>                    flags;
+            Vector_t<Member_Flags_Allow_Unplayables_e>  flags_allow_unplayables;
+            Vector_t<Member_Flags_Has_Suit_e>           flags_has_suit;
 
-            Vector_t<String_t>                  names;
+            Vector_t<String_t>                          names;
 
-            Vector_t<maybe<Reference_t*>>       caches;
-            Vector_t<maybe<Combat_Style_t*>>    combat_styles;
-            Vector_t<maybe<Spell_t*>>           ghost_abilities;
-            Vector_t<maybe<Outfit_t*>>          outfits;
-            Vector_t<maybe<Reference_t*>>       packs;
-            Vector_t<maybe<Member_Suitcase_t*>> suitcases;
-            Vector_t<maybe<Voice_Type_t*>>      voice_types;
+            Vector_t<maybe<Reference_t*>>               caches;
+            Vector_t<maybe<Combat_Style_t*>>            combat_styles;
+            Vector_t<maybe<Spell_t*>>                   ghost_abilities;
+            Vector_t<maybe<Outfit_t*>>                  outfits;
+            Vector_t<maybe<Reference_t*>>               packs;
+            Vector_t<maybe<Member_Suitcase_t*>>         suitcases;
+            Vector_t<maybe<Voice_Type_t*>>              voice_types;
 
-            Vector_t<maybe<Member_Alpha_t>>     alphas;
-            Vector_t<maybe<Member_Rating_t>>    ratings;
-            Vector_t<maybe<Member_Relation_e>>  relations;
-            Vector_t<maybe<Member_Suit_Type_e>> suit_types;
-            Vector_t<maybe<Member_Vitality_e>>  vitalities;
+            Vector_t<maybe<Member_Alpha_t>>             alphas;
+            Vector_t<maybe<Member_Rating_t>>            ratings;
+            Vector_t<maybe<Member_Relation_e>>          relations;
+            Vector_t<maybe<Member_Suit_Type_e>>         suit_types;
+            Vector_t<maybe<Member_Vitality_e>>          vitalities;
 
         public:
             Save_State(const some<Quest_t*> quest);
@@ -132,31 +136,50 @@ namespace doticu_npcp { namespace Party {
             V::Variable_tt<Vector_t<maybe<Actor_t*>>>&          Actors();
             V::Variable_tt<Vector_t<maybe<Actor_Base_t*>>>&     Original_Bases();
 
-            V::Variable_tt<Vector_t<Bool_t>>&                   Is_Banished_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Is_Clone_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Is_Immobile_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Is_Mannequin_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Is_Reanimated_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Is_Thrall_Flags();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Is_Banished();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Is_Clone();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Is_Immobile();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Is_Mannequin();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Is_Reanimated();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Is_Thrall();
 
-            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Civilized_Suit_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Combatant_Suit_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Dangerous_Suit_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Eater_Suit_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Exterior_Suit_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Follower_Suit_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Guard_Suit_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Home_Suit_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Immobile_Suit_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Inn_Suit_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Interior_Suit_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Mannequin_Suit_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Member_Suit_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Sandboxer_Suit_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Settlement_Suit_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Sitter_Suit_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Sleeper_Suit_Flags();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Thrall_Suit_Flags();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Allow_Unplayables_Civilized();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Allow_Unplayables_Combatant();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Allow_Unplayables_Dangerous();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Allow_Unplayables_Eater();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Allow_Unplayables_Exterior();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Allow_Unplayables_Follower();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Allow_Unplayables_Guard();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Allow_Unplayables_Home();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Allow_Unplayables_Immobile();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Allow_Unplayables_Inn();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Allow_Unplayables_Interior();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Allow_Unplayables_Mannequin();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Allow_Unplayables_Member();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Allow_Unplayables_Sandboxer();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Allow_Unplayables_Settlement();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Allow_Unplayables_Sitter();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Allow_Unplayables_Sleeper();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Allow_Unplayables_Thrall();
+
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Civilized();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Combatant();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Dangerous();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Eater();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Exterior();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Follower();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Guard();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Home();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Immobile();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Inn();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Interior();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Mannequin();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Member();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Sandboxer();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Settlement();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Sitter();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Sleeper();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Thrall();
 
             V::Variable_tt<Vector_t<String_t>>&                 Names();
 
@@ -273,6 +296,9 @@ namespace doticu_npcp { namespace Party {
         Bool_t                      Is_Thrall(some<Member_ID_t> valid_member_id);
         void                        Is_Thrall(some<Member_ID_t> valid_member_id, Bool_t value);
 
+        Bool_t                      Allow_Unplayables(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type);
+        void                        Allow_Unplayables(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, Bool_t value);
+
         Bool_t                      Has_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type);
         void                        Has_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, Bool_t value);
 
@@ -338,11 +364,5 @@ namespace doticu_npcp { namespace Party {
     public:
         void    Log(std::string indent = "");
     };
-
-    /*
-        Just some quick outfitting notes:
-            We should use the owner faction on x_lists to with a custom faction indicating that the item is an outfit item.
-            We can mark x_lists as outfit items and point to the default outfit that is on the base actor. then we won't need any blank armor.
-    */
 
 }}

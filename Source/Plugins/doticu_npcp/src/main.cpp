@@ -303,7 +303,7 @@ namespace doticu_npcp {
         some<Actor_Base_t*> katria = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x02004D0C)());
         some<Actor_Base_t*> maven = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x1336a)());
         some<Actor_Base_t*> fjori = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x0003D725)());
-        for (size_t idx = 0, end = 2; idx < end; idx += 1) {
+        for (size_t idx = 0, end = 1; idx < end; idx += 1) {
             members.Add_Member(vici);
         }
 
@@ -346,8 +346,8 @@ namespace doticu_npcp {
                     members.Relation(idx, Party::Member_Relation_e::ARCHNEMESIS);
                     members.Vitality(idx, Party::Member_Vitality_e::MORTAL);
 
-                    some<Outfit_t*> outfit = static_cast<Outfit_t*>(Game_t::Form(0x00016FFD)());
                     members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, katria);
+                    members.Allow_Unplayables(idx, Party::Member_Suit_Type_e::MEMBER, true);
                 }
             }
         }

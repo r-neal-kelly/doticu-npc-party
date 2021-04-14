@@ -110,7 +110,9 @@
     <ClInclude Include="include\party_members.h" />
     <ClInclude Include="include\party_member_alpha.h" />
     <ClInclude Include="include\party_member_flags.h" />
+    <ClInclude Include="include\party_member_flags_allow_unplayables.h" />
     <ClInclude Include="include\party_member_id.h" />
+    <ClInclude Include="include\party_member_flags_has_suit.h" />
     <ClInclude Include="include\party_member_relation.h" />
     <ClInclude Include="include\party_member_sort_type.h" />
     <ClInclude Include="include\party_member_combat_style.h" />

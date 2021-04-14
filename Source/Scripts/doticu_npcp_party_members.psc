@@ -2,63 +2,82 @@
 
 Scriptname doticu_npcp_party_members extends Quest
 
-int                 limit                           = 0
+int                 limit                               = 0
 
-bool                do_auto_suits                   = false
-bool                do_auto_immobile_suit           = false
-bool                do_fill_suits                   = false
+bool                do_auto_suits                       = false
+bool                do_auto_immobile_suit               = false
+bool                do_fill_suits                       = false
 
-bool                has_untouchable_invulnerables   = false
+bool                has_untouchable_invulnerables       = false
 
-string              default_combat_style            = ""
-string              default_relation                = ""
-string              default_suit_type               = ""
-string              default_vitality                = ""
+string              default_combat_style                = ""
+string              default_relation                    = ""
+string              default_suit_type                   = ""
+string              default_vitality                    = ""
 
-string              member_suit_fill_type           = ""
-string              sort_type                       = ""
+string              member_suit_fill_type               = ""
+string              sort_type                           = ""
 
-Actor[]             actors                          = none
-ActorBase[]         original_bases                  = none
+Actor[]             actors                              = none
+ActorBase[]         original_bases                      = none
 
-bool[]              is_banished_flags               = none
-bool[]              is_clone_flags                  = none
-bool[]              is_immobile_flags               = none
-bool[]              is_mannequin_flags              = none
-bool[]              is_reanimated_flags             = none
-bool[]              is_thrall_flags                 = none
+bool[]              flags_is_banished                   = none
+bool[]              flags_is_clone                      = none
+bool[]              flags_is_immobile                   = none
+bool[]              flags_is_mannequin                  = none
+bool[]              flags_is_reanimated                 = none
+bool[]              flags_is_thrall                     = none
 
-bool[]              has_civilized_suit_flags        = none
-bool[]              has_combatant_suit_flags        = none
-bool[]              has_dangerous_suit_flags        = none
-bool[]              has_eater_suit_flags            = none
-bool[]              has_exterior_suit_flags         = none
-bool[]              has_follower_suit_flags         = none
-bool[]              has_guard_suit_flags            = none
-bool[]              has_home_suit_flags             = none
-bool[]              has_immobile_suit_flags         = none
-bool[]              has_inn_suit_flags              = none
-bool[]              has_interior_suit_flags         = none
-bool[]              has_mannequin_suit_flags        = none
-bool[]              has_member_suit_flags           = none
-bool[]              has_sandboxer_suit_flags        = none
-bool[]              has_settlement_suit_flags       = none
-bool[]              has_sitter_suit_flags           = none
-bool[]              has_sleeper_suit_flags          = none
-bool[]              has_thrall_suit_flags           = none
+bool[]              flags_allow_unplayables_civilized   = none
+bool[]              flags_allow_unplayables_combatant   = none
+bool[]              flags_allow_unplayables_dangerous   = none
+bool[]              flags_allow_unplayables_eater       = none
+bool[]              flags_allow_unplayables_exterior    = none
+bool[]              flags_allow_unplayables_follower    = none
+bool[]              flags_allow_unplayables_guard       = none
+bool[]              flags_allow_unplayables_home        = none
+bool[]              flags_allow_unplayables_immobile    = none
+bool[]              flags_allow_unplayables_inn         = none
+bool[]              flags_allow_unplayables_interior    = none
+bool[]              flags_allow_unplayables_mannequin   = none
+bool[]              flags_allow_unplayables_member      = none
+bool[]              flags_allow_unplayables_sandboxer   = none
+bool[]              flags_allow_unplayables_settlement  = none
+bool[]              flags_allow_unplayables_sitter      = none
+bool[]              flags_allow_unplayables_sleeper     = none
+bool[]              flags_allow_unplayables_thrall      = none
 
-string[]            names                           = none
+bool[]              flags_has_suit_civilized            = none
+bool[]              flags_has_suit_combatant            = none
+bool[]              flags_has_suit_dangerous            = none
+bool[]              flags_has_suit_eater                = none
+bool[]              flags_has_suit_exterior             = none
+bool[]              flags_has_suit_follower             = none
+bool[]              flags_has_suit_guard                = none
+bool[]              flags_has_suit_home                 = none
+bool[]              flags_has_suit_immobile             = none
+bool[]              flags_has_suit_inn                  = none
+bool[]              flags_has_suit_interior             = none
+bool[]              flags_has_suit_mannequin            = none
+bool[]              flags_has_suit_member               = none
+bool[]              flags_has_suit_sandboxer            = none
+bool[]              flags_has_suit_settlement           = none
+bool[]              flags_has_suit_sitter               = none
+bool[]              flags_has_suit_sleeper              = none
+bool[]              flags_has_suit_thrall               = none
 
-ObjectReference[]   caches                          = none
-CombatStyle[]       combat_styles                   = none
-Spell[]             ghost_abilities                 = none
-Outfit[]            outfits                         = none
-ObjectReference[]   packs                           = none
-ObjectReference[]   suitcases                       = none
-VoiceType[]         voice_types                     = none
+string[]            names                               = none
 
-float[]             alphas                          = none
-int[]               ratings                         = none
-string[]            relations                       = none
-string[]            suit_types                      = none
-string[]            vitalities                      = none
+ObjectReference[]   caches                              = none
+CombatStyle[]       combat_styles                       = none
+Spell[]             ghost_abilities                     = none
+Outfit[]            outfits                             = none
+ObjectReference[]   packs                               = none
+ObjectReference[]   suitcases                           = none
+VoiceType[]         voice_types                         = none
+
+float[]             alphas                              = none
+int[]               ratings                             = none
+string[]            relations                           = none
+string[]            suit_types                          = none
+string[]            vitalities                          = none

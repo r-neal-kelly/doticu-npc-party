@@ -64,7 +64,7 @@ namespace doticu_npcp { namespace Party {
 
         for (size_t idx = 0, end = this->copies.size(); idx < end; idx += 1) {
             some<Extra_List_t*> copy = this->copies[idx];
-            if (copy->Has_Equal_Extra_Datas(extra_list, filter)) {
+            if (copy->Is_Equal(extra_list, filter)) {
                 this->copies.Unstable_Remove(copy);
                 Extra_List_t::Destroy(copy);
                 return true;
@@ -475,13 +475,11 @@ namespace doticu_npcp { namespace Party {
                         if (unto_owner.Has_Value() && unto_owner().As_Faction() == active_suit_faction) {
                             if (suit_entry && suit_entry->Has_Copies()) {
                                 if (!suit_entry->Destroy_Copy_If_Equals(unto_x_list)) {
-                                    unto_entry.Remove(unto_container, unto_x_list);
-                                    Extra_List_t::Destroy(unto_x_list);
+                                    unto_entry.Remove_And_Destroy(unto_container, unto_x_list);
                                     has_changed_container = true;
                                 }
                             } else {
-                                unto_entry.Remove(unto_container, unto_x_list);
-                                Extra_List_t::Destroy(unto_x_list);
+                                unto_entry.Remove_And_Destroy(unto_container, unto_x_list);
                                 has_changed_container = true;
                             }
                         } else if (do_strict && unto_entry.Is_Playable_Item()) {
