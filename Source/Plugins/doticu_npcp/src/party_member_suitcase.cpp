@@ -129,34 +129,48 @@ namespace doticu_npcp { namespace Party {
         return entry();
     }
 
-    Bool_t Member_Suitcase_t::Filter_Out_Default_Objects_t::operator ()(some<Bound_Object_t*> object)
+    Bool_t Member_Suitcase_t::Filter_Out_Blank_Objects_t::operator ()(some<Bound_Object_t*> object)
     {
-        return
-            !NPCP.Main().Party().Is_Token(object) &&
-            object != static_cast<some<Bound_Object_t*>>(Consts_t::NPCP::Armor::Blank());
+        return object != static_cast<some<Bound_Object_t*>>(Consts_t::NPCP::Armor::Blank());
     }
 
-    Bool_t Member_Suitcase_t::Filter_Out_Default_And_Unplayable_Objects_t::operator ()(some<Bound_Object_t*> object)
+    Bool_t Member_Suitcase_t::Filter_Out_Token_Objects_t::operator ()(some<Bound_Object_t*> object)
     {
-        return filter_out_default_objects(object) && object->Is_Playable();
+        return !NPCP.Main().Party().Is_Token(object);
     }
 
-    Bool_t Member_Suitcase_t::Filter_Out_Default_Extra_Lists_t::operator ()(some<Bound_Object_t*> object,
-                                                                            some<Extra_List_t*> x_list)
+    Bool_t Member_Suitcase_t::Filter_Out_Unplayable_Objects_t::operator ()(some<Bound_Object_t*> object)
+    {
+        return object->Is_Playable();
+    }
+
+    Bool_t Member_Suitcase_t::Filter_Out_Blank_Or_Token_Objects_t::operator ()(some<Bound_Object_t*> object)
+    {
+        return filter_out_blank_objects(object) && filter_out_token_objects(object);
+    }
+
+    Bool_t Member_Suitcase_t::Filter_Out_Blank_Or_Token_Or_Unplayable_Objects_t::operator ()(some<Bound_Object_t*> object)
+    {
+        return filter_out_blank_objects(object) && filter_out_token_objects(object) && filter_out_unplayable_objects(object);
+    }
+
+    Bool_t Member_Suitcase_t::Filter_Out_No_Extra_Lists_t::operator ()(some<Bound_Object_t*> object, some<Extra_List_t*> x_list)
     {
         return true;
     }
 
-    Bool_t Member_Suitcase_t::Filter_Out_Default_And_Quest_Extra_Lists_t::operator ()(some<Bound_Object_t*> object,
-                                                                                      some<Extra_List_t*> x_list)
+    Bool_t Member_Suitcase_t::Filter_Out_Quest_Extra_Lists_t::operator ()(some<Bound_Object_t*> object, some<Extra_List_t*> x_list)
     {
-        return filter_out_default_extra_lists(object, x_list) && !x_list->Is_Quest_Item();
+        return !x_list->Is_Quest_Item();
     }
 
-    Member_Suitcase_t::Filter_Out_Default_Objects_t                 Member_Suitcase_t::filter_out_default_objects;
-    Member_Suitcase_t::Filter_Out_Default_And_Unplayable_Objects_t  Member_Suitcase_t::filter_out_default_and_unplayable_objects;
-    Member_Suitcase_t::Filter_Out_Default_Extra_Lists_t             Member_Suitcase_t::filter_out_default_extra_lists;
-    Member_Suitcase_t::Filter_Out_Default_And_Quest_Extra_Lists_t   Member_Suitcase_t::filter_out_default_and_quest_extra_lists;
+    Member_Suitcase_t::Filter_Out_Blank_Objects_t                           Member_Suitcase_t::filter_out_blank_objects;
+    Member_Suitcase_t::Filter_Out_Token_Objects_t                           Member_Suitcase_t::filter_out_token_objects;
+    Member_Suitcase_t::Filter_Out_Unplayable_Objects_t                      Member_Suitcase_t::filter_out_unplayable_objects;
+    Member_Suitcase_t::Filter_Out_Blank_Or_Token_Objects_t                  Member_Suitcase_t::filter_out_blank_or_token_objects;
+    Member_Suitcase_t::Filter_Out_Blank_Or_Token_Or_Unplayable_Objects_t    Member_Suitcase_t::filter_out_blank_or_token_or_unplayable_objects;
+    Member_Suitcase_t::Filter_Out_No_Extra_Lists_t                          Member_Suitcase_t::filter_out_no_extra_lists;
+    Member_Suitcase_t::Filter_Out_Quest_Extra_Lists_t                       Member_Suitcase_t::filter_out_quest_extra_lists;
 
     some<Member_Suitcase_t*> Member_Suitcase_t::Create()
     {
@@ -170,8 +184,8 @@ namespace doticu_npcp { namespace Party {
     {
         SKYLIB_ASSERT_SOME(suitcase);
         suitcase->Move_All_To(none<Reference_t*>(),
-                              filter_out_default_and_unplayable_objects,
-                              filter_out_default_extra_lists);
+                              filter_out_blank_or_token_or_unplayable_objects,
+                              filter_out_no_extra_lists);
         suitcase->Mark_For_Delete();
     }
 
@@ -404,6 +418,7 @@ namespace doticu_npcp { namespace Party {
             Reference_Container_Entry_t& this_entry = this_container[idx];
             some<Bound_Object_t*> bound_object = this_entry.Some_Object();
             if (!this_entry.Is_Leveled_Item() && bound_object_filter(bound_object)) {
+                Bool_t is_armor = bound_object->Is_Armor();
                 some<Suit_Entry_t*> suit_entry = entries.Some_Entry(bound_object);
                 Vector_t<some<Extra_List_t*>> x_lists = this_entry.Some_Extra_Lists();
                 for (size_t idx = 0, end = x_lists.size(); idx < end; idx += 1) {
@@ -413,6 +428,11 @@ namespace doticu_npcp { namespace Party {
                         if (owner.Has_Value() && owner().As_Faction() == target_suit_faction) {
                             some<Extra_List_t*> copy = Reference_Container_Entry_t::Some_Extra_List_Copy(x_list);
                             copy->Owner(active_suit_faction);
+                            if (is_armor) {
+                                copy->Outfit(outfit);
+                            } else {
+                                copy->Outfit(none<Outfit_t*>());
+                            }
                             suit_entry->copies.push_back(copy);
                         }
                     }
@@ -449,8 +469,8 @@ namespace doticu_npcp { namespace Party {
 
         for (size_t idx = 0, end = unto_container.Count(); idx < end; idx += 1) {
             Reference_Container_Entry_t& unto_entry = unto_container[idx];
+            some<Bound_Object_t*> bound_object = unto_entry.Some_Object();
             if (!unto_entry.Is_Leveled_Item()) {
-                some<Bound_Object_t*> bound_object = unto_entry.Some_Object();
                 maybe<Suit_Entry_t*> suit_entry = suit_entries.Maybe_Entry(bound_object);
 
                 maybe<Reference_t*> to_reference = none<Reference_t*>();
@@ -459,10 +479,14 @@ namespace doticu_npcp { namespace Party {
                     SKYLIB_ASSERT_SOME(to_reference);
                 }
 
-                if (do_strict && unto_entry.Is_Playable_Item()) {
+                if (do_strict && filter_out_token_objects(bound_object)) {
                     Container_Entry_Count_t non_x_list_count = unto_entry.Non_Extra_Lists_Count();
                     if (non_x_list_count > 0) {
-                        unto_entry.Remove_Count_To(unto_container, unto_entry.Non_Extra_Lists_Count(), to_reference());
+                        if (bound_object->Is_Playable()) {
+                            unto_entry.Remove_Count_To(unto_container, non_x_list_count, to_reference());
+                        } else {
+                            unto_entry.Decrement_Count(unto_container, non_x_list_count);
+                        }
                         has_changed_container = true;
                     }
                 }
@@ -470,20 +494,19 @@ namespace doticu_npcp { namespace Party {
                 Vector_t<some<Extra_List_t*>> unto_x_lists = unto_entry.Some_Extra_Lists();
                 for (size_t idx = 0, end = unto_x_lists.size(); idx < end; idx += 1) {
                     some<Extra_List_t*> unto_x_list = unto_x_lists[idx];
-                    if (!unto_x_list->Should_Be_Destroyed() && !unto_x_list->Is_Quest_Item()) {
+                    if (!unto_x_list->Should_Be_Destroyed() && filter_out_quest_extra_lists(bound_object, unto_x_list)) {
                         maybe<Form_Owner_t> unto_owner = unto_x_list->Owner();
                         if (unto_owner.Has_Value() && unto_owner().As_Faction() == active_suit_faction) {
-                            if (suit_entry && suit_entry->Has_Copies()) {
-                                if (!suit_entry->Destroy_Copy_If_Equals(unto_x_list)) {
-                                    unto_entry.Remove_And_Destroy(unto_container, unto_x_list);
-                                    has_changed_container = true;
-                                }
-                            } else {
+                            if (!suit_entry->Destroy_Copy_If_Equals(unto_x_list)) {
                                 unto_entry.Remove_And_Destroy(unto_container, unto_x_list);
                                 has_changed_container = true;
                             }
-                        } else if (do_strict && unto_entry.Is_Playable_Item()) {
-                            unto_entry.Remove_To(unto_container, unto_x_list, to_reference());
+                        } else if (do_strict) {
+                            if (unto_entry.Is_Playable_Item()) {
+                                unto_entry.Remove_To(unto_container, unto_x_list, to_reference());
+                            } else {
+                                unto_entry.Remove_And_Destroy(unto_container, unto_x_list);
+                            }
                             has_changed_container = true;
                         } else if (unto_x_list->Is_Outfit_Item()) {
                             unto_entry.Remove_And_Destroy(unto_container, unto_x_list);

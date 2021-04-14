@@ -1834,8 +1834,8 @@ namespace doticu_npcp { namespace Party {
         outfit->Add_Items_To(cache);
         Suitcase(valid_id)->Move_From(cache,
                                       type,
-                                      Member_Suitcase_t::filter_out_default_objects,
-                                      Member_Suitcase_t::filter_out_default_and_quest_extra_lists);
+                                      Member_Suitcase_t::filter_out_blank_or_token_objects,
+                                      Member_Suitcase_t::filter_out_quest_extra_lists);
         cache->Destroy_Non_Quest_Items();
     }
 
@@ -1858,8 +1858,8 @@ namespace doticu_npcp { namespace Party {
         }
         Suitcase(valid_id)->Move_From(cache,
                                       type,
-                                      Member_Suitcase_t::filter_out_default_objects,
-                                      Member_Suitcase_t::filter_out_default_and_quest_extra_lists);
+                                      Member_Suitcase_t::filter_out_blank_or_token_objects,
+                                      Member_Suitcase_t::filter_out_quest_extra_lists);
         cache->Destroy_Non_Quest_Items();
     }
 
@@ -1877,13 +1877,13 @@ namespace doticu_npcp { namespace Party {
         if (do_copy) {
             Suitcase(valid_id)->Copy_From(reference,
                                           type,
-                                          Member_Suitcase_t::filter_out_default_objects,
-                                          Member_Suitcase_t::filter_out_default_extra_lists);
+                                          Member_Suitcase_t::filter_out_blank_or_token_objects,
+                                          Member_Suitcase_t::filter_out_no_extra_lists);
         } else {
             Suitcase(valid_id)->Move_From(reference,
                                           type,
-                                          Member_Suitcase_t::filter_out_default_objects,
-                                          Member_Suitcase_t::filter_out_default_and_quest_extra_lists);
+                                          Member_Suitcase_t::filter_out_blank_or_token_objects,
+                                          Member_Suitcase_t::filter_out_quest_extra_lists);
         }
     }
 
@@ -1897,8 +1897,8 @@ namespace doticu_npcp { namespace Party {
         if (Has_Suit(valid_id, type)) {
             Suitcase(valid_id)->Move_To(Pack(valid_id), // there needs to be an option to remove items to chests or pack.
                                         type,
-                                        Member_Suitcase_t::filter_out_default_and_unplayable_objects,
-                                        Member_Suitcase_t::filter_out_default_extra_lists);
+                                        Member_Suitcase_t::filter_out_blank_or_token_or_unplayable_objects,
+                                        Member_Suitcase_t::filter_out_no_extra_lists);
 
             Has_Suit(valid_id, type, false);
         }
@@ -1985,13 +1985,13 @@ namespace doticu_npcp { namespace Party {
                     if (Allow_Unplayables(member_id, suit_type())) {
                         suitcase->Apply_Unto(actor,
                                              suit_type(),
-                                             Member_Suitcase_t::filter_out_default_objects,
+                                             Member_Suitcase_t::filter_out_blank_or_token_objects,
                                              true, // option for strict
                                              Pack(member_id)); // option for pack or chests
                     } else {
                         suitcase->Apply_Unto(actor,
                                              suit_type(),
-                                             Member_Suitcase_t::filter_out_default_and_unplayable_objects,
+                                             Member_Suitcase_t::filter_out_blank_or_token_or_unplayable_objects,
                                              true, // option for strict
                                              Pack(member_id)); // option for pack or chests
                     }

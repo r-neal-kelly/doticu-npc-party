@@ -58,28 +58,49 @@ namespace doticu_npcp { namespace Party {
             some<Suit_Entry_t*>     Some_Entry(some<Bound_Object_t*> bound_object);
         };
 
-        class Filter_Out_Default_Objects_t :
+        class Filter_Out_Blank_Objects_t :
             public Filter_i<some<Bound_Object_t*>>
         {
         public:
             virtual Bool_t operator ()(some<Bound_Object_t*> object) override;
         };
 
-        class Filter_Out_Default_And_Unplayable_Objects_t :
+        class Filter_Out_Token_Objects_t :
             public Filter_i<some<Bound_Object_t*>>
         {
         public:
             virtual Bool_t operator ()(some<Bound_Object_t*> object) override;
         };
 
-        class Filter_Out_Default_Extra_Lists_t :
+        class Filter_Out_Unplayable_Objects_t :
+            public Filter_i<some<Bound_Object_t*>>
+        {
+        public:
+            virtual Bool_t operator ()(some<Bound_Object_t*> object) override;
+        };
+
+        class Filter_Out_Blank_Or_Token_Objects_t :
+            public Filter_i<some<Bound_Object_t*>>
+        {
+        public:
+            virtual Bool_t operator ()(some<Bound_Object_t*> object) override;
+        };
+
+        class Filter_Out_Blank_Or_Token_Or_Unplayable_Objects_t :
+            public Filter_i<some<Bound_Object_t*>>
+        {
+        public:
+            virtual Bool_t operator ()(some<Bound_Object_t*> object) override;
+        };
+
+        class Filter_Out_No_Extra_Lists_t :
             public Filter_i<some<Bound_Object_t*>, some<Extra_List_t*>>
         {
         public:
             virtual Bool_t operator ()(some<Bound_Object_t*> object, some<Extra_List_t*> x_list) override;
         };
 
-        class Filter_Out_Default_And_Quest_Extra_Lists_t :
+        class Filter_Out_Quest_Extra_Lists_t :
             public Filter_i<some<Bound_Object_t*>, some<Extra_List_t*>>
         {
         public:
@@ -87,10 +108,13 @@ namespace doticu_npcp { namespace Party {
         };
 
     public:
-        static Filter_Out_Default_Objects_t                 filter_out_default_objects;
-        static Filter_Out_Default_And_Unplayable_Objects_t  filter_out_default_and_unplayable_objects;
-        static Filter_Out_Default_Extra_Lists_t             filter_out_default_extra_lists;
-        static Filter_Out_Default_And_Quest_Extra_Lists_t   filter_out_default_and_quest_extra_lists;
+        static Filter_Out_Blank_Objects_t                           filter_out_blank_objects;
+        static Filter_Out_Token_Objects_t                           filter_out_token_objects;
+        static Filter_Out_Unplayable_Objects_t                      filter_out_unplayable_objects;
+        static Filter_Out_Blank_Or_Token_Objects_t                  filter_out_blank_or_token_objects;
+        static Filter_Out_Blank_Or_Token_Or_Unplayable_Objects_t    filter_out_blank_or_token_or_unplayable_objects;
+        static Filter_Out_No_Extra_Lists_t                          filter_out_no_extra_lists;
+        static Filter_Out_Quest_Extra_Lists_t                       filter_out_quest_extra_lists;
 
     public:
         static some<Member_Suitcase_t*> Create();
