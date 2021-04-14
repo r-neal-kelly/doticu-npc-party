@@ -70,6 +70,8 @@ namespace doticu_npcp {
     template <typename T>
     using Enum_t                        = skylib::Enum_t<T>;
     template <typename T>
+    using Enum_Base_t                   = skylib::Enum_Base_t<T>;
+    template <typename T>
     using Enum_Type_t                   = skylib::Enum_Type_t<T>;
     template <typename T>
     using Enum_Type_Data_t              = skylib::Enum_Type_Data_t<T>;

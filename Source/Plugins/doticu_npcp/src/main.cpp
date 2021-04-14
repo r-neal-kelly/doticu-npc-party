@@ -36,6 +36,7 @@
 #include "doticu_skylib/game.inl"
 #include "doticu_skylib/location.h"
 #include "doticu_skylib/mod.h"
+#include "doticu_skylib/outfit.h"
 #include "doticu_skylib/os.h"
 #include "doticu_skylib/package.h"
 #include "doticu_skylib/quest.h"
@@ -312,7 +313,7 @@ namespace doticu_npcp {
                     members.Is_Banished(idx, false);
                     members.Is_Reanimated(idx, false);
                     members.Name(idx, " Dark Elf Commoner ");
-                    members.Combat_Style(idx, Party::Member_Combat_Style_e::ARCHER);
+                    members.Combat_Style(idx, Party::Member_Combat_Style_e::COWARD);
                     members.Ghost_Ability(idx, skylib::Const::Spell::Ghost_Ability_Soul_Cairn()());
                     members.Voice_Type(idx, skylib::Const::Voice_Type::Female_Sultry()());
                     members.Relation(idx, Party::Member_Relation_e::ALLY);
@@ -339,15 +340,15 @@ namespace doticu_npcp {
                     members.Is_Banished(idx, false);
                     members.Is_Reanimated(idx, true);
                     members.Name(idx, " Serana ");
-                    members.Combat_Style(idx, Party::Member_Combat_Style_e::COWARD);
+                    members.Combat_Style(idx, Party::Member_Combat_Style_e::ARCHER);
                     members.Ghost_Ability(idx, none<Spell_t*>());
                     members.Voice_Type(idx, skylib::Const::Voice_Type::Female_Unique_Serana()());
                     members.Relation(idx, Party::Member_Relation_e::ARCHNEMESIS);
                     members.Vitality(idx, Party::Member_Vitality_e::MORTAL);
-                }
 
-                some<Party::Member_Suitcase_t*> suitcase = members.Suitcase(idx);
-                suitcase->Copy_From(skylib::Const::Actor::Player(), Party::Member_Suit_Type_e::FOLLOWER, true);
+                    some<Outfit_t*> outfit = static_cast<Outfit_t*>(Game_t::Form(0x00016FFD)());
+                    members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, katria);
+                }
             }
         }
 

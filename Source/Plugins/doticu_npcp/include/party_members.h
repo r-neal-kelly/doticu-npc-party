@@ -88,6 +88,7 @@ namespace doticu_npcp { namespace Party {
 
             Vector_t<String_t>                  names;
 
+            Vector_t<maybe<Reference_t*>>       caches;
             Vector_t<maybe<Combat_Style_t*>>    combat_styles;
             Vector_t<maybe<Spell_t*>>           ghost_abilities;
             Vector_t<maybe<Outfit_t*>>          outfits;
@@ -138,8 +139,28 @@ namespace doticu_npcp { namespace Party {
             V::Variable_tt<Vector_t<Bool_t>>&                   Is_Reanimated_Flags();
             V::Variable_tt<Vector_t<Bool_t>>&                   Is_Thrall_Flags();
 
+            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Civilized_Suit_Flags();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Combatant_Suit_Flags();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Dangerous_Suit_Flags();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Eater_Suit_Flags();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Exterior_Suit_Flags();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Follower_Suit_Flags();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Guard_Suit_Flags();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Home_Suit_Flags();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Immobile_Suit_Flags();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Inn_Suit_Flags();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Interior_Suit_Flags();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Mannequin_Suit_Flags();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Member_Suit_Flags();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Sandboxer_Suit_Flags();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Settlement_Suit_Flags();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Sitter_Suit_Flags();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Sleeper_Suit_Flags();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Has_Thrall_Suit_Flags();
+
             V::Variable_tt<Vector_t<String_t>>&                 Names();
 
+            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Caches();
             V::Variable_tt<Vector_t<maybe<Combat_Style_t*>>>&   Combat_Styles();
             V::Variable_tt<Vector_t<maybe<Spell_t*>>>&          Ghost_Abilities();
             V::Variable_tt<Vector_t<maybe<Outfit_t*>>>&         Outfits();
@@ -252,8 +273,13 @@ namespace doticu_npcp { namespace Party {
         Bool_t                      Is_Thrall(some<Member_ID_t> valid_member_id);
         void                        Is_Thrall(some<Member_ID_t> valid_member_id, Bool_t value);
 
+        Bool_t                      Has_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type);
+        void                        Has_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, Bool_t value);
+
         String_t                    Name(some<Member_ID_t> valid_member_id);
         void                        Name(some<Member_ID_t> valid_member_id, String_t name);
+
+        some<Reference_t*>          Cache(some<Member_ID_t> valid_id);
 
         maybe<Combat_Style_t*>      Combat_Style(some<Member_ID_t> valid_member_id);
         void                        Combat_Style(some<Member_ID_t> valid_member_id, maybe<Combat_Style_t*> combat_style);
@@ -281,8 +307,8 @@ namespace doticu_npcp { namespace Party {
         some<Member_Relation_e>     Relation(some<Member_ID_t> valid_member_id);
         void                        Relation(some<Member_ID_t> valid_member_id, maybe<Member_Relation_e> relation);
 
-        maybe<Member_Suit_Type_e>   Suit_Type(some<Member_ID_t> valid_member_id);
-        void                        Suit_Type(some<Member_ID_t> valid_member_id, maybe<Member_Suit_Type_e> suit_type);
+        maybe<Member_Suit_Type_e>   Suit_Type(some<Member_ID_t> valid_id);
+        void                        Suit_Type(some<Member_ID_t> valid_id, maybe<Member_Suit_Type_e> type);
 
         some<Member_Vitality_e>     Vitality(some<Member_ID_t> valid_member_id);
         void                        Vitality(some<Member_ID_t> valid_member_id, maybe<Member_Vitality_e> vitality);
@@ -297,11 +323,17 @@ namespace doticu_npcp { namespace Party {
 
     public:
         // more of this functionality should probably go on main
-        Bool_t                      Is_Enabled(some<Member_ID_t> valid_member_id);
-        Bool_t                      Is_Untouchable(some<Member_ID_t> valid_member_id);
-        Bool_t                      Has_AI(some<Member_ID_t> valid_member_id);
+        Bool_t  Is_Enabled(some<Member_ID_t> valid_member_id);
+        Bool_t  Is_Untouchable(some<Member_ID_t> valid_member_id);
+        Bool_t  Has_AI(some<Member_ID_t> valid_member_id);
 
-        Bool_t                      Enforce(some<Member_ID_t> member_id);
+        void    Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type);
+        void    Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, some<Outfit_t*> outfit);
+        void    Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, some<Actor_Base_t*> actor_base);
+        void    Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, some<Reference_t*> reference, Bool_t do_copy);
+        void    Remove_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type);
+
+        Bool_t  Enforce(some<Member_ID_t> member_id);
 
     public:
         void    Log(std::string indent = "");

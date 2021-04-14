@@ -57,6 +57,8 @@ namespace doticu_npcp { namespace Party {
         some<Script_t*> Script(some<Member_ID_t> valid_member_id);
         void            Update_AI(some<Member_ID_t> valid_member_id, some<Member_Update_AI_e> update_ai);
 
+        Bool_t          Is_Token(some<Bound_Object_t*> bound_object);
+
         void            Tokenize(some<Member_ID_t> valid_member_id,
                                  some<Bound_Object_t*> object,
                                  Container_Entry_Count_t count = 1);

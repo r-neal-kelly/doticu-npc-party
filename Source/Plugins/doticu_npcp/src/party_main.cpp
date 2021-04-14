@@ -3,6 +3,7 @@
 */
 
 #include "doticu_skylib/actor.h"
+#include "doticu_skylib/bound_object.h"
 #include "doticu_skylib/script.h"
 
 #include "consts.h"
@@ -125,6 +126,13 @@ namespace doticu_npcp { namespace Party {
         if (this_update_ai != Member_Update_AI_e::RESET_AI) {
             this_update_ai = update_ai;
         }
+    }
+
+    Bool_t Main_t::Is_Token(some<Bound_Object_t*> bound_object)
+    {
+        SKYLIB_ASSERT_SOME(bound_object);
+
+        return bound_object->Is_Misc() && bound_object->form_id.Has_Mod(Consts_t::NPCP::Mod()());
     }
 
     void Main_t::Tokenize(some<Member_ID_t> valid_member_id,

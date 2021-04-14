@@ -8,6 +8,7 @@
 
 #include "consts.h"
 #include "intrinsic.h"
+#include "party_member_flags.h"
 
 namespace doticu_npcp { namespace Party {
 
@@ -152,6 +153,52 @@ namespace doticu_npcp { namespace Party {
             else if (faction == Consts_t::NPCP::Faction::Suit_Thrall())     return THRALL;
             else                                                            return _NONE_;
         }
+
+        static inline Member_Flags_e To_Member_Flag(value_type value)
+        {
+            if (value == CIVILIZED)         return Member_Flags_e::HAS_CIVILIZED_SUIT;
+            else if (value == COMBATANT)    return Member_Flags_e::HAS_COMBATANT_SUIT;
+            else if (value == DANGEROUS)    return Member_Flags_e::HAS_DANGEROUS_SUIT;
+            else if (value == EATER)        return Member_Flags_e::HAS_EATER_SUIT;
+            else if (value == EXTERIOR)     return Member_Flags_e::HAS_EXTERIOR_SUIT;
+            else if (value == FOLLOWER)     return Member_Flags_e::HAS_FOLLOWER_SUIT;
+            else if (value == GUARD)        return Member_Flags_e::HAS_GUARD_SUIT;
+            else if (value == HOME)         return Member_Flags_e::HAS_HOME_SUIT;
+            else if (value == IMMOBILE)     return Member_Flags_e::HAS_IMMOBILE_SUIT;
+            else if (value == INN)          return Member_Flags_e::HAS_INN_SUIT;
+            else if (value == INTERIOR)     return Member_Flags_e::HAS_INTERIOR_SUIT;
+            else if (value == MANNEQUIN)    return Member_Flags_e::HAS_MANNEQUIN_SUIT;
+            else if (value == MEMBER)       return Member_Flags_e::HAS_MEMBER_SUIT;
+            else if (value == SANDBOXER)    return Member_Flags_e::HAS_SANDBOXER_SUIT;
+            else if (value == SETTLEMENT)   return Member_Flags_e::HAS_SETTLEMENT_SUIT;
+            else if (value == SITTER)       return Member_Flags_e::HAS_SITTER_SUIT;
+            else if (value == SLEEPER)      return Member_Flags_e::HAS_SLEEPER_SUIT;
+            else if (value == THRALL)       return Member_Flags_e::HAS_THRALL_SUIT;
+            else                            return Member_Flags_e::_NONE_;
+        }
+
+        static inline value_type From_Member_Flag(Member_Flags_e flag)
+        {
+            if (flag == Member_Flags_e::HAS_CIVILIZED_SUIT)         return CIVILIZED;
+            else if (flag == Member_Flags_e::HAS_COMBATANT_SUIT)    return COMBATANT;
+            else if (flag == Member_Flags_e::HAS_DANGEROUS_SUIT)    return DANGEROUS;
+            else if (flag == Member_Flags_e::HAS_EATER_SUIT)        return EATER;
+            else if (flag == Member_Flags_e::HAS_EXTERIOR_SUIT)     return EXTERIOR;
+            else if (flag == Member_Flags_e::HAS_FOLLOWER_SUIT)     return FOLLOWER;
+            else if (flag == Member_Flags_e::HAS_GUARD_SUIT)        return GUARD;
+            else if (flag == Member_Flags_e::HAS_HOME_SUIT)         return HOME;
+            else if (flag == Member_Flags_e::HAS_IMMOBILE_SUIT)     return IMMOBILE;
+            else if (flag == Member_Flags_e::HAS_INN_SUIT)          return INN;
+            else if (flag == Member_Flags_e::HAS_INTERIOR_SUIT)     return INTERIOR;
+            else if (flag == Member_Flags_e::HAS_MANNEQUIN_SUIT)    return MANNEQUIN;
+            else if (flag == Member_Flags_e::HAS_MEMBER_SUIT)       return MEMBER;
+            else if (flag == Member_Flags_e::HAS_SANDBOXER_SUIT)    return SANDBOXER;
+            else if (flag == Member_Flags_e::HAS_SETTLEMENT_SUIT)   return SETTLEMENT;
+            else if (flag == Member_Flags_e::HAS_SITTER_SUIT)       return SITTER;
+            else if (flag == Member_Flags_e::HAS_SLEEPER_SUIT)      return SLEEPER;
+            else if (flag == Member_Flags_e::HAS_THRALL_SUIT)       return THRALL;
+            else                                                    return _NONE_;
+        }
     };
 
     class Member_Suit_Type_e :
@@ -164,6 +211,11 @@ namespace doticu_npcp { namespace Party {
         maybe<Faction_t*> As_Faction() const
         {
             return To_Faction(*this);
+        }
+
+        Member_Flags_e As_Member_Flag() const
+        {
+            return To_Member_Flag(*this);
         }
     };
 

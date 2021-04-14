@@ -28,8 +28,28 @@ bool[]              is_mannequin_flags              = none
 bool[]              is_reanimated_flags             = none
 bool[]              is_thrall_flags                 = none
 
+bool[]              has_civilized_suit_flags        = none
+bool[]              has_combatant_suit_flags        = none
+bool[]              has_dangerous_suit_flags        = none
+bool[]              has_eater_suit_flags            = none
+bool[]              has_exterior_suit_flags         = none
+bool[]              has_follower_suit_flags         = none
+bool[]              has_guard_suit_flags            = none
+bool[]              has_home_suit_flags             = none
+bool[]              has_immobile_suit_flags         = none
+bool[]              has_inn_suit_flags              = none
+bool[]              has_interior_suit_flags         = none
+bool[]              has_mannequin_suit_flags        = none
+bool[]              has_member_suit_flags           = none
+bool[]              has_sandboxer_suit_flags        = none
+bool[]              has_settlement_suit_flags       = none
+bool[]              has_sitter_suit_flags           = none
+bool[]              has_sleeper_suit_flags          = none
+bool[]              has_thrall_suit_flags           = none
+
 string[]            names                           = none
 
+ObjectReference[]   caches                          = none
 CombatStyle[]       combat_styles                   = none
 Spell[]             ghost_abilities                 = none
 Outfit[]            outfits                         = none

@@ -57,6 +57,7 @@ namespace doticu_npcp { namespace Party {
 
         names(Vector_t<String_t>(MAX_MEMBERS, "")),
 
+        caches(Vector_t<maybe<Reference_t*>>(MAX_MEMBERS, none<Reference_t*>())),
         combat_styles(Vector_t<maybe<Combat_Style_t*>>(MAX_MEMBERS, none<Combat_Style_t*>())),
         ghost_abilities(Vector_t<maybe<Spell_t*>>(MAX_MEMBERS, none<Spell_t*>())),
         outfits(Vector_t<maybe<Outfit_t*>>(MAX_MEMBERS, none<Outfit_t*>())),
@@ -176,9 +177,104 @@ namespace doticu_npcp { namespace Party {
         DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "is_thrall_flags");
     }
 
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Has_Civilized_Suit_Flags()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "has_civilized_suit_flags");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Has_Combatant_Suit_Flags()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "has_combatant_suit_flags");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Has_Dangerous_Suit_Flags()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "has_dangerous_suit_flags");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Has_Eater_Suit_Flags()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "has_eater_suit_flags");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Has_Exterior_Suit_Flags()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "has_exterior_suit_flags");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Has_Follower_Suit_Flags()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "has_follower_suit_flags");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Has_Guard_Suit_Flags()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "has_guard_suit_flags");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Has_Home_Suit_Flags()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "has_home_suit_flags");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Has_Immobile_Suit_Flags()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "has_immobile_suit_flags");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Has_Inn_Suit_Flags()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "has_inn_suit_flags");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Has_Interior_Suit_Flags()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "has_interior_suit_flags");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Has_Mannequin_Suit_Flags()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "has_mannequin_suit_flags");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Has_Member_Suit_Flags()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "has_member_suit_flags");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Has_Sandboxer_Suit_Flags()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "has_sandboxer_suit_flags");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Has_Settlement_Suit_Flags()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "has_settlement_suit_flags");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Has_Sitter_Suit_Flags()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "has_sitter_suit_flags");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Has_Sleeper_Suit_Flags()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "has_sleeper_suit_flags");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Has_Thrall_Suit_Flags()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "has_thrall_suit_flags");
+    }
+
     V::Variable_tt<Vector_t<String_t>>& Members_t::Save_State::Names()
     {
         DEFINE_VARIABLE_REFERENCE(Vector_t<String_t>, "names");
+    }
+
+    V::Variable_tt<Vector_t<maybe<Reference_t*>>>& Members_t::Save_State::Caches()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<maybe<Reference_t*>>, "caches");
     }
 
     V::Variable_tt<Vector_t<maybe<Combat_Style_t*>>>& Members_t::Save_State::Combat_Styles()
@@ -264,8 +360,28 @@ namespace doticu_npcp { namespace Party {
         Vector_t<Bool_t> is_reanimated_flags = Is_Reanimated_Flags();
         Vector_t<Bool_t> is_thrall_flags = Is_Thrall_Flags();
 
+        Vector_t<Bool_t> has_civilized_suit_flags = Has_Civilized_Suit_Flags();
+        Vector_t<Bool_t> has_combatant_suit_flags = Has_Combatant_Suit_Flags();
+        Vector_t<Bool_t> has_dangerous_suit_flags = Has_Dangerous_Suit_Flags();
+        Vector_t<Bool_t> has_eater_suit_flags = Has_Eater_Suit_Flags();
+        Vector_t<Bool_t> has_exterior_suit_flags = Has_Exterior_Suit_Flags();
+        Vector_t<Bool_t> has_follower_suit_flags = Has_Follower_Suit_Flags();
+        Vector_t<Bool_t> has_guard_suit_flags = Has_Guard_Suit_Flags();
+        Vector_t<Bool_t> has_home_suit_flags = Has_Home_Suit_Flags();
+        Vector_t<Bool_t> has_immobile_suit_flags = Has_Immobile_Suit_Flags();
+        Vector_t<Bool_t> has_inn_suit_flags = Has_Inn_Suit_Flags();
+        Vector_t<Bool_t> has_interior_suit_flags = Has_Interior_Suit_Flags();
+        Vector_t<Bool_t> has_mannequin_suit_flags = Has_Mannequin_Suit_Flags();
+        Vector_t<Bool_t> has_member_suit_flags = Has_Member_Suit_Flags();
+        Vector_t<Bool_t> has_sandboxer_suit_flags = Has_Sandboxer_Suit_Flags();
+        Vector_t<Bool_t> has_settlement_suit_flags = Has_Settlement_Suit_Flags();
+        Vector_t<Bool_t> has_sitter_suit_flags = Has_Sitter_Suit_Flags();
+        Vector_t<Bool_t> has_sleeper_suit_flags = Has_Sleeper_Suit_Flags();
+        Vector_t<Bool_t> has_thrall_suit_flags = Has_Thrall_Suit_Flags();
+
         this->names = Names();
 
+        this->caches = Caches();
         this->combat_styles = Combat_Styles();
         this->ghost_abilities = Ghost_Abilities();
         this->outfits = Outfits();
@@ -289,8 +405,28 @@ namespace doticu_npcp { namespace Party {
         is_reanimated_flags.resize(MAX_MEMBERS);
         is_thrall_flags.resize(MAX_MEMBERS);
 
+        has_civilized_suit_flags.resize(MAX_MEMBERS);
+        has_combatant_suit_flags.resize(MAX_MEMBERS);
+        has_dangerous_suit_flags.resize(MAX_MEMBERS);
+        has_eater_suit_flags.resize(MAX_MEMBERS);
+        has_exterior_suit_flags.resize(MAX_MEMBERS);
+        has_follower_suit_flags.resize(MAX_MEMBERS);
+        has_guard_suit_flags.resize(MAX_MEMBERS);
+        has_home_suit_flags.resize(MAX_MEMBERS);
+        has_immobile_suit_flags.resize(MAX_MEMBERS);
+        has_inn_suit_flags.resize(MAX_MEMBERS);
+        has_interior_suit_flags.resize(MAX_MEMBERS);
+        has_mannequin_suit_flags.resize(MAX_MEMBERS);
+        has_member_suit_flags.resize(MAX_MEMBERS);
+        has_sandboxer_suit_flags.resize(MAX_MEMBERS);
+        has_settlement_suit_flags.resize(MAX_MEMBERS);
+        has_sitter_suit_flags.resize(MAX_MEMBERS);
+        has_sleeper_suit_flags.resize(MAX_MEMBERS);
+        has_thrall_suit_flags.resize(MAX_MEMBERS);
+
         this->names.resize(MAX_MEMBERS);
 
+        this->caches.resize(MAX_MEMBERS);
         this->combat_styles.resize(MAX_MEMBERS);
         this->ghost_abilities.resize(MAX_MEMBERS);
         this->outfits.resize(MAX_MEMBERS);
@@ -313,6 +449,25 @@ namespace doticu_npcp { namespace Party {
             flags.Is_Flagged(Member_Flags_e::IS_REANIMATED, is_reanimated_flags[idx]);
             flags.Is_Flagged(Member_Flags_e::IS_THRALL, is_thrall_flags[idx]);
 
+            flags.Is_Flagged(Member_Flags_e::HAS_CIVILIZED_SUIT, has_civilized_suit_flags[idx]);
+            flags.Is_Flagged(Member_Flags_e::HAS_COMBATANT_SUIT, has_combatant_suit_flags[idx]);
+            flags.Is_Flagged(Member_Flags_e::HAS_DANGEROUS_SUIT, has_dangerous_suit_flags[idx]);
+            flags.Is_Flagged(Member_Flags_e::HAS_EATER_SUIT, has_eater_suit_flags[idx]);
+            flags.Is_Flagged(Member_Flags_e::HAS_EXTERIOR_SUIT, has_exterior_suit_flags[idx]);
+            flags.Is_Flagged(Member_Flags_e::HAS_FOLLOWER_SUIT, has_follower_suit_flags[idx]);
+            flags.Is_Flagged(Member_Flags_e::HAS_GUARD_SUIT, has_guard_suit_flags[idx]);
+            flags.Is_Flagged(Member_Flags_e::HAS_HOME_SUIT, has_home_suit_flags[idx]);
+            flags.Is_Flagged(Member_Flags_e::HAS_IMMOBILE_SUIT, has_immobile_suit_flags[idx]);
+            flags.Is_Flagged(Member_Flags_e::HAS_INN_SUIT, has_inn_suit_flags[idx]);
+            flags.Is_Flagged(Member_Flags_e::HAS_INTERIOR_SUIT, has_interior_suit_flags[idx]);
+            flags.Is_Flagged(Member_Flags_e::HAS_MANNEQUIN_SUIT, has_mannequin_suit_flags[idx]);
+            flags.Is_Flagged(Member_Flags_e::HAS_MEMBER_SUIT, has_member_suit_flags[idx]);
+            flags.Is_Flagged(Member_Flags_e::HAS_SANDBOXER_SUIT, has_sandboxer_suit_flags[idx]);
+            flags.Is_Flagged(Member_Flags_e::HAS_SETTLEMENT_SUIT, has_settlement_suit_flags[idx]);
+            flags.Is_Flagged(Member_Flags_e::HAS_SITTER_SUIT, has_sitter_suit_flags[idx]);
+            flags.Is_Flagged(Member_Flags_e::HAS_SLEEPER_SUIT, has_sleeper_suit_flags[idx]);
+            flags.Is_Flagged(Member_Flags_e::HAS_THRALL_SUIT, has_thrall_suit_flags[idx]);
+
             this->alphas[idx] = alphas[idx];
             this->ratings[idx] = ratings[idx];
             this->relations[idx] = relations[idx];
@@ -330,6 +485,25 @@ namespace doticu_npcp { namespace Party {
         Vector_t<Bool_t> is_reanimated_flags(MAX_MEMBERS, false);
         Vector_t<Bool_t> is_thrall_flags(MAX_MEMBERS, false);
 
+        Vector_t<Bool_t> has_civilized_suit_flags(MAX_MEMBERS, false);
+        Vector_t<Bool_t> has_combatant_suit_flags(MAX_MEMBERS, false);
+        Vector_t<Bool_t> has_dangerous_suit_flags(MAX_MEMBERS, false);
+        Vector_t<Bool_t> has_eater_suit_flags(MAX_MEMBERS, false);
+        Vector_t<Bool_t> has_exterior_suit_flags(MAX_MEMBERS, false);
+        Vector_t<Bool_t> has_follower_suit_flags(MAX_MEMBERS, false);
+        Vector_t<Bool_t> has_guard_suit_flags(MAX_MEMBERS, false);
+        Vector_t<Bool_t> has_home_suit_flags(MAX_MEMBERS, false);
+        Vector_t<Bool_t> has_immobile_suit_flags(MAX_MEMBERS, false);
+        Vector_t<Bool_t> has_inn_suit_flags(MAX_MEMBERS, false);
+        Vector_t<Bool_t> has_interior_suit_flags(MAX_MEMBERS, false);
+        Vector_t<Bool_t> has_mannequin_suit_flags(MAX_MEMBERS, false);
+        Vector_t<Bool_t> has_member_suit_flags(MAX_MEMBERS, false);
+        Vector_t<Bool_t> has_sandboxer_suit_flags(MAX_MEMBERS, false);
+        Vector_t<Bool_t> has_settlement_suit_flags(MAX_MEMBERS, false);
+        Vector_t<Bool_t> has_sitter_suit_flags(MAX_MEMBERS, false);
+        Vector_t<Bool_t> has_sleeper_suit_flags(MAX_MEMBERS, false);
+        Vector_t<Bool_t> has_thrall_suit_flags(MAX_MEMBERS, false);
+
         Vector_t<Float_t> alphas(MAX_MEMBERS, DEFAULT_ALPHA);
         Vector_t<Int_t> ratings(MAX_MEMBERS, DEFAULT_RATING);
         Vector_t<String_t> relations(MAX_MEMBERS, "");
@@ -345,6 +519,25 @@ namespace doticu_npcp { namespace Party {
                 is_mannequin_flags[idx] = flags.Is_Flagged(Member_Flags_e::IS_MANNEQUIN);
                 is_reanimated_flags[idx] = flags.Is_Flagged(Member_Flags_e::IS_REANIMATED);
                 is_thrall_flags[idx] = flags.Is_Flagged(Member_Flags_e::IS_THRALL);
+
+                has_civilized_suit_flags[idx] = flags.Is_Flagged(Member_Flags_e::HAS_CIVILIZED_SUIT);
+                has_combatant_suit_flags[idx] = flags.Is_Flagged(Member_Flags_e::HAS_COMBATANT_SUIT);
+                has_dangerous_suit_flags[idx] = flags.Is_Flagged(Member_Flags_e::HAS_DANGEROUS_SUIT);
+                has_eater_suit_flags[idx] = flags.Is_Flagged(Member_Flags_e::HAS_EATER_SUIT);
+                has_exterior_suit_flags[idx] = flags.Is_Flagged(Member_Flags_e::HAS_EXTERIOR_SUIT);
+                has_follower_suit_flags[idx] = flags.Is_Flagged(Member_Flags_e::HAS_FOLLOWER_SUIT);
+                has_guard_suit_flags[idx] = flags.Is_Flagged(Member_Flags_e::HAS_GUARD_SUIT);
+                has_home_suit_flags[idx] = flags.Is_Flagged(Member_Flags_e::HAS_HOME_SUIT);
+                has_immobile_suit_flags[idx] = flags.Is_Flagged(Member_Flags_e::HAS_IMMOBILE_SUIT);
+                has_inn_suit_flags[idx] = flags.Is_Flagged(Member_Flags_e::HAS_INN_SUIT);
+                has_interior_suit_flags[idx] = flags.Is_Flagged(Member_Flags_e::HAS_INTERIOR_SUIT);
+                has_mannequin_suit_flags[idx] = flags.Is_Flagged(Member_Flags_e::HAS_MANNEQUIN_SUIT);
+                has_member_suit_flags[idx] = flags.Is_Flagged(Member_Flags_e::HAS_MEMBER_SUIT);
+                has_sandboxer_suit_flags[idx] = flags.Is_Flagged(Member_Flags_e::HAS_SANDBOXER_SUIT);
+                has_settlement_suit_flags[idx] = flags.Is_Flagged(Member_Flags_e::HAS_SETTLEMENT_SUIT);
+                has_sitter_suit_flags[idx] = flags.Is_Flagged(Member_Flags_e::HAS_SITTER_SUIT);
+                has_sleeper_suit_flags[idx] = flags.Is_Flagged(Member_Flags_e::HAS_SLEEPER_SUIT);
+                has_thrall_suit_flags[idx] = flags.Is_Flagged(Member_Flags_e::HAS_THRALL_SUIT);
 
                 alphas[idx] = this->alphas[idx]();
                 ratings[idx] = this->ratings[idx]();
@@ -380,8 +573,28 @@ namespace doticu_npcp { namespace Party {
         Is_Reanimated_Flags() = is_reanimated_flags;
         Is_Thrall_Flags() = is_thrall_flags;
 
+        Has_Civilized_Suit_Flags() = has_civilized_suit_flags;
+        Has_Combatant_Suit_Flags() = has_combatant_suit_flags;
+        Has_Dangerous_Suit_Flags() = has_dangerous_suit_flags;
+        Has_Eater_Suit_Flags() = has_eater_suit_flags;
+        Has_Exterior_Suit_Flags() = has_exterior_suit_flags;
+        Has_Follower_Suit_Flags() = has_follower_suit_flags;
+        Has_Guard_Suit_Flags() = has_guard_suit_flags;
+        Has_Home_Suit_Flags() = has_home_suit_flags;
+        Has_Immobile_Suit_Flags() = has_immobile_suit_flags;
+        Has_Inn_Suit_Flags() = has_inn_suit_flags;
+        Has_Interior_Suit_Flags() = has_interior_suit_flags;
+        Has_Mannequin_Suit_Flags() = has_mannequin_suit_flags;
+        Has_Member_Suit_Flags() = has_member_suit_flags;
+        Has_Sandboxer_Suit_Flags() = has_sandboxer_suit_flags;
+        Has_Settlement_Suit_Flags() = has_settlement_suit_flags;
+        Has_Sitter_Suit_Flags() = has_sitter_suit_flags;
+        Has_Sleeper_Suit_Flags() = has_sleeper_suit_flags;
+        Has_Thrall_Suit_Flags() = has_thrall_suit_flags;
+
         Names() = this->names;
 
+        Caches() = this->caches;
         Combat_Styles() = this->combat_styles;
         Ghost_Abilities() = this->ghost_abilities;
         Outfits() = this->outfits;
@@ -684,6 +897,7 @@ namespace doticu_npcp { namespace Party {
 
         self->save_state.names[member_id] = actor->Name();
 
+        self->save_state.caches[member_id] = none<Reference_t*>();
         self->save_state.combat_styles[member_id] = self->save_state.default_combat_style();
         self->save_state.ghost_abilities[member_id] = none<Spell_t*>(); // maybe should look at actor for any acceptable ability
         self->save_state.outfits[member_id] = base->Default_Outfit();
@@ -702,7 +916,7 @@ namespace doticu_npcp { namespace Party {
 
         maybe<Member_Suit_Type_e> default_suit_type = self->save_state.default_suit_type;
         if (default_suit_type) {
-            self->Suitcase(member_id)->Copy_From(actor, default_suit_type(), true); // will have to handle unplayables better and by param.
+            self->Add_Suit(member_id, default_suit_type(), actor, false);
         }
 
         self->Alias_Reference(member_id)->Fill(actor, none<V::Callback_i*>());
@@ -975,6 +1189,32 @@ namespace doticu_npcp { namespace Party {
         this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_THRALL, value);
     }
 
+    Bool_t Members_t::Has_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type)
+    {
+        SKYLIB_ASSERT_SOME(valid_id);
+        SKYLIB_ASSERT_SOME(type);
+        SKYLIB_ASSERT(Has_Member(valid_id));
+        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
+
+        Member_Flags_e flag = type().As_Member_Flag();
+        SKYLIB_ASSERT_SOME(flag);
+
+        return this->save_state.flags[valid_id()].Is_Flagged(flag);
+    }
+
+    void Members_t::Has_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_id);
+        SKYLIB_ASSERT_SOME(type);
+        SKYLIB_ASSERT(Has_Member(valid_id));
+        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
+
+        Member_Flags_e flag = type().As_Member_Flag();
+        SKYLIB_ASSERT_SOME(flag);
+
+        this->save_state.flags[valid_id()].Is_Flagged(flag, value);
+    }
+
     String_t Members_t::Name(some<Member_ID_t> valid_member_id)
     {
         SKYLIB_ASSERT_SOME(valid_member_id);
@@ -994,6 +1234,23 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT(Has_Member(valid_member_id));
 
         this->save_state.names[valid_member_id()] = name;
+    }
+
+    some<Reference_t*> Members_t::Cache(some<Member_ID_t> valid_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_id);
+        SKYLIB_ASSERT(Has_Member(valid_id));
+
+        maybe<Reference_t*>& cache = this->save_state.caches[valid_id()];
+        if (!cache) {
+            cache = Container_t::Create_Reference(
+                Consts_t::NPCP::Container::Empty(),
+                Consts_t::NPCP::Reference::Storage_Marker()
+            )();
+            SKYLIB_ASSERT_SOME(cache);
+        }
+
+        return cache();
     }
 
     maybe<Combat_Style_t*> Members_t::Combat_Style(some<Member_ID_t> valid_member_id)
@@ -1176,20 +1433,28 @@ namespace doticu_npcp { namespace Party {
         this->save_state.relations[valid_member_id()] = relation;
     }
 
-    maybe<Member_Suit_Type_e> Members_t::Suit_Type(some<Member_ID_t> valid_member_id)
+    maybe<Member_Suit_Type_e> Members_t::Suit_Type(some<Member_ID_t> valid_id)
     {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
+        SKYLIB_ASSERT_SOME(valid_id);
+        SKYLIB_ASSERT(Has_Member(valid_id));
 
         // this should calculate the suit type by precedence and whether or not auto-outfitting for this member is enabled.
 
-        return this->save_state.suit_types[valid_member_id()];
+        return this->save_state.suit_types[valid_id()];
     }
 
-    void Members_t::Suit_Type(some<Member_ID_t> valid_member_id, maybe<Member_Suit_Type_e> suit_type)
+    void Members_t::Suit_Type(some<Member_ID_t> valid_id, maybe<Member_Suit_Type_e> type)
     {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
+        SKYLIB_ASSERT_SOME(valid_id);
+        SKYLIB_ASSERT(Has_Member(valid_id));
+
+        if (type) {
+            SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
+            SKYLIB_ASSERT(Has_Suit(valid_id, type()));
+            this->save_state.suit_types[valid_id()] = type;
+        } else {
+            this->save_state.suit_types[valid_id()] = none<Member_Suit_Type_e>();
+        }
     }
 
     some<Member_Vitality_e> Members_t::Vitality(some<Member_ID_t> valid_member_id)
@@ -1307,6 +1572,102 @@ namespace doticu_npcp { namespace Party {
             !Is_Mannequin(valid_member_id);
     }
 
+    void Members_t::Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type)
+    {
+        SKYLIB_ASSERT_SOME(valid_id);
+        SKYLIB_ASSERT_SOME(type);
+        SKYLIB_ASSERT(Has_Member(valid_id));
+        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
+
+        Remove_Suit(valid_id, type);
+        Has_Suit(valid_id, type, true);
+    }
+
+    void Members_t::Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, some<Outfit_t*> outfit)
+    {
+        SKYLIB_ASSERT_SOME(valid_id);
+        SKYLIB_ASSERT_SOME(type);
+        SKYLIB_ASSERT_SOME(outfit);
+        SKYLIB_ASSERT(Has_Member(valid_id));
+        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
+
+        Remove_Suit(valid_id, type);
+        Has_Suit(valid_id, type, true);
+
+        some<Reference_t*> cache = Cache(valid_id);
+        outfit->Add_Items_To(cache);
+        Suitcase(valid_id)->Move_From(cache,
+                                      type,
+                                      Member_Suitcase_t::filter_out_default_objects,
+                                      Member_Suitcase_t::filter_out_default_and_quest_extra_lists);
+        cache->Destroy_Non_Quest_Items();
+    }
+
+    void Members_t::Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, some<Actor_Base_t*> actor_base)
+    {
+        SKYLIB_ASSERT_SOME(valid_id);
+        SKYLIB_ASSERT_SOME(type);
+        SKYLIB_ASSERT_SOME(actor_base);
+        SKYLIB_ASSERT(Has_Member(valid_id));
+        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
+
+        Remove_Suit(valid_id, type);
+        Has_Suit(valid_id, type, true);
+
+        some<Reference_t*> cache = Cache(valid_id);
+        maybe<Outfit_t*> outfit = actor_base->Default_Outfit();
+        actor_base->Container_Add_Items_To(cache);
+        if (outfit) {
+            outfit->Add_Items_To(cache);
+        }
+        Suitcase(valid_id)->Move_From(cache,
+                                      type,
+                                      Member_Suitcase_t::filter_out_default_objects,
+                                      Member_Suitcase_t::filter_out_default_and_quest_extra_lists);
+        cache->Destroy_Non_Quest_Items();
+    }
+
+    void Members_t::Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, some<Reference_t*> reference, Bool_t do_copy)
+    {
+        SKYLIB_ASSERT_SOME(valid_id);
+        SKYLIB_ASSERT_SOME(type);
+        SKYLIB_ASSERT_SOME(reference);
+        SKYLIB_ASSERT(Has_Member(valid_id));
+        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
+
+        Remove_Suit(valid_id, type);
+        Has_Suit(valid_id, type, true);
+
+        if (do_copy) {
+            Suitcase(valid_id)->Copy_From(reference,
+                                          type,
+                                          Member_Suitcase_t::filter_out_default_objects,
+                                          Member_Suitcase_t::filter_out_default_extra_lists);
+        } else {
+            Suitcase(valid_id)->Move_From(reference,
+                                          type,
+                                          Member_Suitcase_t::filter_out_default_objects,
+                                          Member_Suitcase_t::filter_out_default_and_quest_extra_lists);
+        }
+    }
+
+    void Members_t::Remove_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type)
+    {
+        SKYLIB_ASSERT_SOME(valid_id);
+        SKYLIB_ASSERT_SOME(type);
+        SKYLIB_ASSERT(Has_Member(valid_id));
+        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
+
+        if (Has_Suit(valid_id, type)) {
+            Suitcase(valid_id)->Move_To(Pack(valid_id), // there needs to be an option to remove items to chests or pack.
+                                        type,
+                                        Member_Suitcase_t::filter_out_default_and_unplayable_objects,
+                                        Member_Suitcase_t::filter_out_default_extra_lists);
+
+            Has_Suit(valid_id, type, false);
+        }
+    }
+
     Bool_t Members_t::Enforce(some<Member_ID_t> member_id)
     {
         SKYLIB_ASSERT_SOME(member_id);
@@ -1379,7 +1740,18 @@ namespace doticu_npcp { namespace Party {
             maybe<Member_Suit_Type_e> suit_type = Suit_Type(member_id);
             if (suit_type) {
                 some<Member_Suitcase_t*> suitcase = Suitcase(member_id);
-                suitcase->Apply_Unto(actor, suit_type(), true, true, Pack(member_id));
+                if (suitcase->Has_Inactive_Outfit_Item(actor)) {
+                    // we need to have either a global option or member option here, to initiate the auto-change
+                    Suit_Type(member_id, none<Member_Suit_Type_e>());
+                    suit_type = none<Member_Suit_Type_e>();
+                }
+                if (suit_type) {
+                    suitcase->Apply_Unto(actor,
+                                         suit_type(),
+                                         Member_Suitcase_t::filter_out_default_objects, // option for only playables
+                                         true, // option for strict
+                                         Pack(member_id)); // option for pack or chests
+                }
             }
 
             custom_base->Voice_Type(Voice_Type(member_id)());
