@@ -297,13 +297,15 @@ namespace doticu_npcp {
         Party::Members_t& members = party.Members();
         Party::Settlers_t& settlers = party.Settlers();
 
+        members.Do_Fill_Suits_Automatically(true);
+        members.Do_Fill_Suits_Strictly(true);
         members.Has_Untouchable_Invulnerables(false);
 
         some<Actor_Base_t*> vici = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x1327a)());
         some<Actor_Base_t*> katria = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x02004D0C)());
         some<Actor_Base_t*> maven = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x1336a)());
         some<Actor_Base_t*> fjori = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x0003D725)());
-        for (size_t idx = 0, end = 1; idx < end; idx += 1) {
+        for (size_t idx = 0, end = 2; idx < end; idx += 1) {
             members.Add_Member(vici);
         }
 
@@ -318,7 +320,7 @@ namespace doticu_npcp {
                     members.Voice_Type(idx, skylib::Const::Voice_Type::Female_Sultry()());
                     members.Relation(idx, Party::Member_Relation_e::ALLY);
                     members.Vitality(idx, Party::Member_Vitality_e::INVULNERABLE);
-                    members.Alpha(idx, 0.4f);
+                    members.Alpha(idx, 0.9f);
 
                     settlers.Add<Party::Sandboxer_t>(idx);
                     settlers.Allow_Hellos_To_Player<Party::Sandboxer_t>(idx, false);
@@ -346,8 +348,8 @@ namespace doticu_npcp {
                     members.Relation(idx, Party::Member_Relation_e::ARCHNEMESIS);
                     members.Vitality(idx, Party::Member_Vitality_e::MORTAL);
 
-                    members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, katria);
-                    members.Allow_Unplayables(idx, Party::Member_Suit_Type_e::MEMBER, true);
+                    some<Outfit_t*> outfit = static_cast<Outfit_t*>(Game_t::Form(0x0F122A)());
+                    members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, outfit);
                 }
             }
         }

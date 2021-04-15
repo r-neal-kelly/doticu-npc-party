@@ -8,8 +8,8 @@
 
 #include "consts.h"
 #include "intrinsic.h"
-#include "party_member_flags_allow_unplayables.h"
 #include "party_member_flags_has_suit.h"
+#include "party_member_flags_only_playables.h"
 
 namespace doticu_npcp { namespace Party {
 
@@ -136,52 +136,6 @@ namespace doticu_npcp { namespace Party {
             else                                                            return _NONE_;
         }
 
-        static inline Member_Flags_Allow_Unplayables_e To_Member_Flag_Allow_Unplayables(value_type value)
-        {
-            if (value == CIVILIZED)         return Member_Flags_Allow_Unplayables_e::CIVILIZED;
-            else if (value == COMBATANT)    return Member_Flags_Allow_Unplayables_e::COMBATANT;
-            else if (value == DANGEROUS)    return Member_Flags_Allow_Unplayables_e::DANGEROUS;
-            else if (value == EATER)        return Member_Flags_Allow_Unplayables_e::EATER;
-            else if (value == EXTERIOR)     return Member_Flags_Allow_Unplayables_e::EXTERIOR;
-            else if (value == FOLLOWER)     return Member_Flags_Allow_Unplayables_e::FOLLOWER;
-            else if (value == GUARD)        return Member_Flags_Allow_Unplayables_e::GUARD;
-            else if (value == HOME)         return Member_Flags_Allow_Unplayables_e::HOME;
-            else if (value == IMMOBILE)     return Member_Flags_Allow_Unplayables_e::IMMOBILE;
-            else if (value == INN)          return Member_Flags_Allow_Unplayables_e::INN;
-            else if (value == INTERIOR)     return Member_Flags_Allow_Unplayables_e::INTERIOR;
-            else if (value == MANNEQUIN)    return Member_Flags_Allow_Unplayables_e::MANNEQUIN;
-            else if (value == MEMBER)       return Member_Flags_Allow_Unplayables_e::MEMBER;
-            else if (value == SANDBOXER)    return Member_Flags_Allow_Unplayables_e::SANDBOXER;
-            else if (value == SETTLEMENT)   return Member_Flags_Allow_Unplayables_e::SETTLEMENT;
-            else if (value == SITTER)       return Member_Flags_Allow_Unplayables_e::SITTER;
-            else if (value == SLEEPER)      return Member_Flags_Allow_Unplayables_e::SLEEPER;
-            else if (value == THRALL)       return Member_Flags_Allow_Unplayables_e::THRALL;
-            else                            return Member_Flags_Allow_Unplayables_e::_NONE_;
-        }
-
-        static inline value_type From_Member_Flag_Allow_Unplayables(Member_Flags_Allow_Unplayables_e flag)
-        {
-            if (flag == Member_Flags_Allow_Unplayables_e::CIVILIZED)        return CIVILIZED;
-            else if (flag == Member_Flags_Allow_Unplayables_e::COMBATANT)   return COMBATANT;
-            else if (flag == Member_Flags_Allow_Unplayables_e::DANGEROUS)   return DANGEROUS;
-            else if (flag == Member_Flags_Allow_Unplayables_e::EATER)       return EATER;
-            else if (flag == Member_Flags_Allow_Unplayables_e::EXTERIOR)    return EXTERIOR;
-            else if (flag == Member_Flags_Allow_Unplayables_e::FOLLOWER)    return FOLLOWER;
-            else if (flag == Member_Flags_Allow_Unplayables_e::GUARD)       return GUARD;
-            else if (flag == Member_Flags_Allow_Unplayables_e::HOME)        return HOME;
-            else if (flag == Member_Flags_Allow_Unplayables_e::IMMOBILE)    return IMMOBILE;
-            else if (flag == Member_Flags_Allow_Unplayables_e::INN)         return INN;
-            else if (flag == Member_Flags_Allow_Unplayables_e::INTERIOR)    return INTERIOR;
-            else if (flag == Member_Flags_Allow_Unplayables_e::MANNEQUIN)   return MANNEQUIN;
-            else if (flag == Member_Flags_Allow_Unplayables_e::MEMBER)      return MEMBER;
-            else if (flag == Member_Flags_Allow_Unplayables_e::SANDBOXER)   return SANDBOXER;
-            else if (flag == Member_Flags_Allow_Unplayables_e::SETTLEMENT)  return SETTLEMENT;
-            else if (flag == Member_Flags_Allow_Unplayables_e::SITTER)      return SITTER;
-            else if (flag == Member_Flags_Allow_Unplayables_e::SLEEPER)     return SLEEPER;
-            else if (flag == Member_Flags_Allow_Unplayables_e::THRALL)      return THRALL;
-            else                                                            return _NONE_;
-        }
-
         static inline Member_Flags_Has_Suit_e To_Member_Flag_Has_Suit(value_type value)
         {
             if (value == CIVILIZED)         return Member_Flags_Has_Suit_e::CIVILIZED;
@@ -227,6 +181,52 @@ namespace doticu_npcp { namespace Party {
             else if (flag == Member_Flags_Has_Suit_e::THRALL)       return THRALL;
             else                                                    return _NONE_;
         }
+
+        static inline Member_Flags_Only_Playables_e To_Member_Flag_Only_Playables(value_type value)
+        {
+            if (value == CIVILIZED)         return Member_Flags_Only_Playables_e::CIVILIZED;
+            else if (value == COMBATANT)    return Member_Flags_Only_Playables_e::COMBATANT;
+            else if (value == DANGEROUS)    return Member_Flags_Only_Playables_e::DANGEROUS;
+            else if (value == EATER)        return Member_Flags_Only_Playables_e::EATER;
+            else if (value == EXTERIOR)     return Member_Flags_Only_Playables_e::EXTERIOR;
+            else if (value == FOLLOWER)     return Member_Flags_Only_Playables_e::FOLLOWER;
+            else if (value == GUARD)        return Member_Flags_Only_Playables_e::GUARD;
+            else if (value == HOME)         return Member_Flags_Only_Playables_e::HOME;
+            else if (value == IMMOBILE)     return Member_Flags_Only_Playables_e::IMMOBILE;
+            else if (value == INN)          return Member_Flags_Only_Playables_e::INN;
+            else if (value == INTERIOR)     return Member_Flags_Only_Playables_e::INTERIOR;
+            else if (value == MANNEQUIN)    return Member_Flags_Only_Playables_e::MANNEQUIN;
+            else if (value == MEMBER)       return Member_Flags_Only_Playables_e::MEMBER;
+            else if (value == SANDBOXER)    return Member_Flags_Only_Playables_e::SANDBOXER;
+            else if (value == SETTLEMENT)   return Member_Flags_Only_Playables_e::SETTLEMENT;
+            else if (value == SITTER)       return Member_Flags_Only_Playables_e::SITTER;
+            else if (value == SLEEPER)      return Member_Flags_Only_Playables_e::SLEEPER;
+            else if (value == THRALL)       return Member_Flags_Only_Playables_e::THRALL;
+            else                            return Member_Flags_Only_Playables_e::_NONE_;
+        }
+
+        static inline value_type From_Member_Flag_Only_Playables(Member_Flags_Only_Playables_e flag)
+        {
+            if (flag == Member_Flags_Only_Playables_e::CIVILIZED)       return CIVILIZED;
+            else if (flag == Member_Flags_Only_Playables_e::COMBATANT)  return COMBATANT;
+            else if (flag == Member_Flags_Only_Playables_e::DANGEROUS)  return DANGEROUS;
+            else if (flag == Member_Flags_Only_Playables_e::EATER)      return EATER;
+            else if (flag == Member_Flags_Only_Playables_e::EXTERIOR)   return EXTERIOR;
+            else if (flag == Member_Flags_Only_Playables_e::FOLLOWER)   return FOLLOWER;
+            else if (flag == Member_Flags_Only_Playables_e::GUARD)      return GUARD;
+            else if (flag == Member_Flags_Only_Playables_e::HOME)       return HOME;
+            else if (flag == Member_Flags_Only_Playables_e::IMMOBILE)   return IMMOBILE;
+            else if (flag == Member_Flags_Only_Playables_e::INN)        return INN;
+            else if (flag == Member_Flags_Only_Playables_e::INTERIOR)   return INTERIOR;
+            else if (flag == Member_Flags_Only_Playables_e::MANNEQUIN)  return MANNEQUIN;
+            else if (flag == Member_Flags_Only_Playables_e::MEMBER)     return MEMBER;
+            else if (flag == Member_Flags_Only_Playables_e::SANDBOXER)  return SANDBOXER;
+            else if (flag == Member_Flags_Only_Playables_e::SETTLEMENT) return SETTLEMENT;
+            else if (flag == Member_Flags_Only_Playables_e::SITTER)     return SITTER;
+            else if (flag == Member_Flags_Only_Playables_e::SLEEPER)    return SLEEPER;
+            else if (flag == Member_Flags_Only_Playables_e::THRALL)     return THRALL;
+            else                                                        return _NONE_;
+        }
     };
 
     class Member_Suit_Type_e :
@@ -241,14 +241,19 @@ namespace doticu_npcp { namespace Party {
             return To_Faction(*this);
         }
 
-        Member_Flags_Allow_Unplayables_e As_Member_Flag_Allow_Unplayables() const
-        {
-            return To_Member_Flag_Allow_Unplayables(*this);
-        }
-
         Member_Flags_Has_Suit_e As_Member_Flag_Has_Suit() const
         {
             return To_Member_Flag_Has_Suit(*this);
+        }
+
+        Member_Flags_Only_Playables_e As_Member_Flag_Only_Playables() const
+        {
+            return To_Member_Flag_Only_Playables(*this);
+        }
+
+        Vector_t<Bound_Object_t*> As_Template() const
+        {
+            return Vector_t<Bound_Object_t*>(); // we should build our own randomized list of items per type.
         }
     };
 

@@ -137,10 +137,6 @@ namespace doticu_npcp {
             struct Container
             {
                 static some<Container_t*> Empty();
-                static some<Container_t*> Immobile_Outfit_Template();
-                static some<Container_t*> Settler_Outfit_Template();
-                static some<Container_t*> Thrall_Outfit_Template();
-                static some<Container_t*> Follower_Outfit_Template();
             };
             struct Dialogue_Branch
             {

@@ -433,6 +433,7 @@ namespace doticu_npcp { namespace Party {
                             } else {
                                 copy->Outfit(none<Outfit_t*>());
                             }
+                            copy->Name(String_t("NPC Party: ") + bound_object->Component_Name());
                             suit_entry->copies.push_back(copy);
                         }
                     }

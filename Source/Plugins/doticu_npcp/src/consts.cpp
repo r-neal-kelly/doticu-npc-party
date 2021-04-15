@@ -107,10 +107,6 @@ namespace doticu_npcp {
     some<Combat_Style_t*>       Consts_t::NPCP::Combat_Style::Warrior()                     { DEFINE_FORM(Mod(), Combat_Style_t, 0x02F9CE); }
 
     some<Container_t*>          Consts_t::NPCP::Container::Empty()                          { DEFINE_FORM(Mod(), Container_t, 0x0A5561); }
-    some<Container_t*>          Consts_t::NPCP::Container::Immobile_Outfit_Template()       { DEFINE_FORM(Mod(), Container_t, 0x1663CE); }
-    some<Container_t*>          Consts_t::NPCP::Container::Settler_Outfit_Template()        { DEFINE_FORM(Mod(), Container_t, 0x1663CD); }
-    some<Container_t*>          Consts_t::NPCP::Container::Thrall_Outfit_Template()         { DEFINE_FORM(Mod(), Container_t, 0x1663CC); }
-    some<Container_t*>          Consts_t::NPCP::Container::Follower_Outfit_Template()       { DEFINE_FORM(Mod(), Container_t, 0x1663C7); }
 
     some<Dialogue_Branch_t*>    Consts_t::NPCP::Dialogue_Branch::Menu()                     { DEFINE_FORM(Mod(), Dialogue_Branch_t, 0x32674B); }
     some<Dialogue_Branch_t*>    Consts_t::NPCP::Dialogue_Branch::Menu_Chests()              { DEFINE_FORM(Mod(), Dialogue_Branch_t, 0x32674F); }

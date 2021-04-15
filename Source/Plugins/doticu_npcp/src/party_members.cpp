@@ -37,8 +37,10 @@ namespace doticu_npcp { namespace Party {
         limit(MAX_MEMBERS),
 
         do_auto_suits(DEFAULT_DO_AUTO_SUITS),
-        do_auto_immobile_suit(DEFAULT_DO_AUTO_IMMOBILE_SUIT),
         do_fill_suits(DEFAULT_DO_FILL_SUITS),
+        do_fill_suits_automatically(DEFAULT_DO_FILL_SUITS_AUTOMATICALLY),
+        do_fill_suits_strictly(DEFAULT_DO_FILL_SUITS_STRICTLY),
+        do_unfill_suits_to_pack(DEFAULT_DO_UNFILL_SUITS_TO_PACK),
 
         has_untouchable_invulnerables(DEFAULT_HAS_UNTOUCHABLE_INVULNERABLES),
 
@@ -54,8 +56,8 @@ namespace doticu_npcp { namespace Party {
         original_bases(Vector_t<maybe<Actor_Base_t*>>(MAX_MEMBERS, none<Actor_Base_t*>())),
 
         flags(Vector_t<Member_Flags_e>(MAX_MEMBERS, 0)),
-        flags_allow_unplayables(Vector_t<Member_Flags_Allow_Unplayables_e>(MAX_MEMBERS, 0)),
         flags_has_suit(Vector_t<Member_Flags_Has_Suit_e>(MAX_MEMBERS, 0)),
+        flags_only_playables(Vector_t<Member_Flags_Only_Playables_e>(MAX_MEMBERS, 0)),
 
         names(Vector_t<String_t>(MAX_MEMBERS, "")),
 
@@ -94,14 +96,24 @@ namespace doticu_npcp { namespace Party {
         DEFINE_VARIABLE_REFERENCE(Bool_t, "do_auto_suits");
     }
 
-    V::Variable_tt<Bool_t>& Members_t::Save_State::Do_Auto_Immobile_Suit()
-    {
-        DEFINE_VARIABLE_REFERENCE(Bool_t, "do_auto_immobile_suit");
-    }
-
     V::Variable_tt<Bool_t>& Members_t::Save_State::Do_Fill_Suits()
     {
         DEFINE_VARIABLE_REFERENCE(Bool_t, "do_fill_suits");
+    }
+
+    V::Variable_tt<Bool_t>& Members_t::Save_State::Do_Fill_Suits_Automatically()
+    {
+        DEFINE_VARIABLE_REFERENCE(Bool_t, "do_fill_suits_automatically");
+    }
+
+    V::Variable_tt<Bool_t>& Members_t::Save_State::Do_Fill_Suits_Strictly()
+    {
+        DEFINE_VARIABLE_REFERENCE(Bool_t, "do_fill_suits_strictly");
+    }
+
+    V::Variable_tt<Bool_t>& Members_t::Save_State::Do_Unfill_Suits_To_Pack()
+    {
+        DEFINE_VARIABLE_REFERENCE(Bool_t, "do_unfill_suits_to_pack");
     }
 
     V::Variable_tt<Bool_t>& Members_t::Save_State::Has_Untouchable_Invulnerables()
@@ -177,96 +189,6 @@ namespace doticu_npcp { namespace Party {
     V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Is_Thrall()
     {
         DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_is_thrall");
-    }
-
-    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Allow_Unplayables_Civilized()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_allow_unplayables_civilized");
-    }
-
-    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Allow_Unplayables_Combatant()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_allow_unplayables_combatant");
-    }
-
-    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Allow_Unplayables_Dangerous()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_allow_unplayables_dangerous");
-    }
-
-    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Allow_Unplayables_Eater()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_allow_unplayables_eater");
-    }
-
-    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Allow_Unplayables_Exterior()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_allow_unplayables_exterior");
-    }
-
-    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Allow_Unplayables_Follower()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_allow_unplayables_follower");
-    }
-
-    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Allow_Unplayables_Guard()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_allow_unplayables_guard");
-    }
-
-    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Allow_Unplayables_Home()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_allow_unplayables_home");
-    }
-
-    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Allow_Unplayables_Immobile()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_allow_unplayables_immobile");
-    }
-
-    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Allow_Unplayables_Inn()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_allow_unplayables_inn");
-    }
-
-    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Allow_Unplayables_Interior()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_allow_unplayables_interior");
-    }
-
-    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Allow_Unplayables_Mannequin()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_allow_unplayables_mannequin");
-    }
-
-    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Allow_Unplayables_Member()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_allow_unplayables_member");
-    }
-
-    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Allow_Unplayables_Sandboxer()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_allow_unplayables_sandboxer");
-    }
-
-    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Allow_Unplayables_Settlement()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_allow_unplayables_settlement");
-    }
-
-    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Allow_Unplayables_Sitter()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_allow_unplayables_sitter");
-    }
-
-    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Allow_Unplayables_Sleeper()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_allow_unplayables_sleeper");
-    }
-
-    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Allow_Unplayables_Thrall()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_allow_unplayables_thrall");
     }
 
     V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Has_Suit_Civilized()
@@ -359,6 +281,96 @@ namespace doticu_npcp { namespace Party {
         DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_has_suit_thrall");
     }
 
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Only_Playables_Civilized()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_only_playables_civilized");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Only_Playables_Combatant()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_only_playables_combatant");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Only_Playables_Dangerous()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_only_playables_dangerous");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Only_Playables_Eater()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_only_playables_eater");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Only_Playables_Exterior()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_only_playables_exterior");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Only_Playables_Follower()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_only_playables_follower");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Only_Playables_Guard()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_only_playables_guard");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Only_Playables_Home()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_only_playables_home");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Only_Playables_Immobile()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_only_playables_immobile");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Only_Playables_Inn()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_only_playables_inn");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Only_Playables_Interior()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_only_playables_interior");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Only_Playables_Mannequin()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_only_playables_mannequin");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Only_Playables_Member()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_only_playables_member");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Only_Playables_Sandboxer()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_only_playables_sandboxer");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Only_Playables_Settlement()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_only_playables_settlement");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Only_Playables_Sitter()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_only_playables_sitter");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Only_Playables_Sleeper()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_only_playables_sleeper");
+    }
+
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Only_Playables_Thrall()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_only_playables_thrall");
+    }
+
     V::Variable_tt<Vector_t<String_t>>& Members_t::Save_State::Names()
     {
         DEFINE_VARIABLE_REFERENCE(Vector_t<String_t>, "names");
@@ -429,8 +441,10 @@ namespace doticu_npcp { namespace Party {
         this->limit = Limit();
 
         this->do_auto_suits = Do_Auto_Suits();
-        this->do_auto_immobile_suit = Do_Auto_Immobile_Suit();
         this->do_fill_suits = Do_Fill_Suits();
+        this->do_fill_suits = Do_Fill_Suits_Automatically();
+        this->do_fill_suits_strictly = Do_Fill_Suits_Strictly();
+        this->do_unfill_suits_to_pack = Do_Unfill_Suits_To_Pack();
 
         this->has_untouchable_invulnerables = Has_Untouchable_Invulnerables();
 
@@ -452,25 +466,6 @@ namespace doticu_npcp { namespace Party {
         Vector_t<Bool_t> flags_is_reanimated = Flags_Is_Reanimated();
         Vector_t<Bool_t> flags_is_thrall = Flags_Is_Thrall();
 
-        Vector_t<Bool_t> flags_allow_unplayables_civilized = Flags_Allow_Unplayables_Civilized();
-        Vector_t<Bool_t> flags_allow_unplayables_combatant = Flags_Allow_Unplayables_Combatant();
-        Vector_t<Bool_t> flags_allow_unplayables_dangerous = Flags_Allow_Unplayables_Dangerous();
-        Vector_t<Bool_t> flags_allow_unplayables_eater = Flags_Allow_Unplayables_Eater();
-        Vector_t<Bool_t> flags_allow_unplayables_exterior = Flags_Allow_Unplayables_Exterior();
-        Vector_t<Bool_t> flags_allow_unplayables_follower = Flags_Allow_Unplayables_Follower();
-        Vector_t<Bool_t> flags_allow_unplayables_guard = Flags_Allow_Unplayables_Guard();
-        Vector_t<Bool_t> flags_allow_unplayables_home = Flags_Allow_Unplayables_Home();
-        Vector_t<Bool_t> flags_allow_unplayables_immobile = Flags_Allow_Unplayables_Immobile();
-        Vector_t<Bool_t> flags_allow_unplayables_inn = Flags_Allow_Unplayables_Inn();
-        Vector_t<Bool_t> flags_allow_unplayables_interior = Flags_Allow_Unplayables_Interior();
-        Vector_t<Bool_t> flags_allow_unplayables_mannequin = Flags_Allow_Unplayables_Mannequin();
-        Vector_t<Bool_t> flags_allow_unplayables_member = Flags_Allow_Unplayables_Member();
-        Vector_t<Bool_t> flags_allow_unplayables_sandboxer = Flags_Allow_Unplayables_Sandboxer();
-        Vector_t<Bool_t> flags_allow_unplayables_settlement = Flags_Allow_Unplayables_Settlement();
-        Vector_t<Bool_t> flags_allow_unplayables_sitter = Flags_Allow_Unplayables_Sitter();
-        Vector_t<Bool_t> flags_allow_unplayables_sleeper = Flags_Allow_Unplayables_Sleeper();
-        Vector_t<Bool_t> flags_allow_unplayables_thrall = Flags_Allow_Unplayables_Thrall();
-
         Vector_t<Bool_t> flags_has_suit_civilized = Flags_Has_Suit_Civilized();
         Vector_t<Bool_t> flags_has_suit_combatant = Flags_Has_Suit_Combatant();
         Vector_t<Bool_t> flags_has_suit_dangerous = Flags_Has_Suit_Dangerous();
@@ -489,6 +484,25 @@ namespace doticu_npcp { namespace Party {
         Vector_t<Bool_t> flags_has_suit_sitter = Flags_Has_Suit_Sitter();
         Vector_t<Bool_t> flags_has_suit_sleeper = Flags_Has_Suit_Sleeper();
         Vector_t<Bool_t> flags_has_suit_thrall = Flags_Has_Suit_Thrall();
+
+        Vector_t<Bool_t> flags_only_playables_civilized = Flags_Only_Playables_Civilized();
+        Vector_t<Bool_t> flags_only_playables_combatant = Flags_Only_Playables_Combatant();
+        Vector_t<Bool_t> flags_only_playables_dangerous = Flags_Only_Playables_Dangerous();
+        Vector_t<Bool_t> flags_only_playables_eater = Flags_Only_Playables_Eater();
+        Vector_t<Bool_t> flags_only_playables_exterior = Flags_Only_Playables_Exterior();
+        Vector_t<Bool_t> flags_only_playables_follower = Flags_Only_Playables_Follower();
+        Vector_t<Bool_t> flags_only_playables_guard = Flags_Only_Playables_Guard();
+        Vector_t<Bool_t> flags_only_playables_home = Flags_Only_Playables_Home();
+        Vector_t<Bool_t> flags_only_playables_immobile = Flags_Only_Playables_Immobile();
+        Vector_t<Bool_t> flags_only_playables_inn = Flags_Only_Playables_Inn();
+        Vector_t<Bool_t> flags_only_playables_interior = Flags_Only_Playables_Interior();
+        Vector_t<Bool_t> flags_only_playables_mannequin = Flags_Only_Playables_Mannequin();
+        Vector_t<Bool_t> flags_only_playables_member = Flags_Only_Playables_Member();
+        Vector_t<Bool_t> flags_only_playables_sandboxer = Flags_Only_Playables_Sandboxer();
+        Vector_t<Bool_t> flags_only_playables_settlement = Flags_Only_Playables_Settlement();
+        Vector_t<Bool_t> flags_only_playables_sitter = Flags_Only_Playables_Sitter();
+        Vector_t<Bool_t> flags_only_playables_sleeper = Flags_Only_Playables_Sleeper();
+        Vector_t<Bool_t> flags_only_playables_thrall = Flags_Only_Playables_Thrall();
 
         this->names = Names();
 
@@ -516,25 +530,6 @@ namespace doticu_npcp { namespace Party {
         flags_is_reanimated.resize(MAX_MEMBERS);
         flags_is_thrall.resize(MAX_MEMBERS);
 
-        flags_allow_unplayables_civilized.resize(MAX_MEMBERS);
-        flags_allow_unplayables_combatant.resize(MAX_MEMBERS);
-        flags_allow_unplayables_dangerous.resize(MAX_MEMBERS);
-        flags_allow_unplayables_eater.resize(MAX_MEMBERS);
-        flags_allow_unplayables_exterior.resize(MAX_MEMBERS);
-        flags_allow_unplayables_follower.resize(MAX_MEMBERS);
-        flags_allow_unplayables_guard.resize(MAX_MEMBERS);
-        flags_allow_unplayables_home.resize(MAX_MEMBERS);
-        flags_allow_unplayables_immobile.resize(MAX_MEMBERS);
-        flags_allow_unplayables_inn.resize(MAX_MEMBERS);
-        flags_allow_unplayables_interior.resize(MAX_MEMBERS);
-        flags_allow_unplayables_mannequin.resize(MAX_MEMBERS);
-        flags_allow_unplayables_member.resize(MAX_MEMBERS);
-        flags_allow_unplayables_sandboxer.resize(MAX_MEMBERS);
-        flags_allow_unplayables_settlement.resize(MAX_MEMBERS);
-        flags_allow_unplayables_sitter.resize(MAX_MEMBERS);
-        flags_allow_unplayables_sleeper.resize(MAX_MEMBERS);
-        flags_allow_unplayables_thrall.resize(MAX_MEMBERS);
-
         flags_has_suit_civilized.resize(MAX_MEMBERS);
         flags_has_suit_combatant.resize(MAX_MEMBERS);
         flags_has_suit_dangerous.resize(MAX_MEMBERS);
@@ -553,6 +548,25 @@ namespace doticu_npcp { namespace Party {
         flags_has_suit_sitter.resize(MAX_MEMBERS);
         flags_has_suit_sleeper.resize(MAX_MEMBERS);
         flags_has_suit_thrall.resize(MAX_MEMBERS);
+
+        flags_only_playables_civilized.resize(MAX_MEMBERS);
+        flags_only_playables_combatant.resize(MAX_MEMBERS);
+        flags_only_playables_dangerous.resize(MAX_MEMBERS);
+        flags_only_playables_eater.resize(MAX_MEMBERS);
+        flags_only_playables_exterior.resize(MAX_MEMBERS);
+        flags_only_playables_follower.resize(MAX_MEMBERS);
+        flags_only_playables_guard.resize(MAX_MEMBERS);
+        flags_only_playables_home.resize(MAX_MEMBERS);
+        flags_only_playables_immobile.resize(MAX_MEMBERS);
+        flags_only_playables_inn.resize(MAX_MEMBERS);
+        flags_only_playables_interior.resize(MAX_MEMBERS);
+        flags_only_playables_mannequin.resize(MAX_MEMBERS);
+        flags_only_playables_member.resize(MAX_MEMBERS);
+        flags_only_playables_sandboxer.resize(MAX_MEMBERS);
+        flags_only_playables_settlement.resize(MAX_MEMBERS);
+        flags_only_playables_sitter.resize(MAX_MEMBERS);
+        flags_only_playables_sleeper.resize(MAX_MEMBERS);
+        flags_only_playables_thrall.resize(MAX_MEMBERS);
 
         this->names.resize(MAX_MEMBERS);
 
@@ -579,26 +593,6 @@ namespace doticu_npcp { namespace Party {
             flags.Is_Flagged(Member_Flags_e::IS_REANIMATED, flags_is_reanimated[idx]);
             flags.Is_Flagged(Member_Flags_e::IS_THRALL, flags_is_thrall[idx]);
 
-            Member_Flags_Allow_Unplayables_e& flags_allow_unplayables = this->flags_allow_unplayables[idx];
-            flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::CIVILIZED, flags_allow_unplayables_civilized[idx]);
-            flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::COMBATANT, flags_allow_unplayables_combatant[idx]);
-            flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::DANGEROUS, flags_allow_unplayables_dangerous[idx]);
-            flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::EATER, flags_allow_unplayables_eater[idx]);
-            flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::EXTERIOR, flags_allow_unplayables_exterior[idx]);
-            flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::FOLLOWER, flags_allow_unplayables_follower[idx]);
-            flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::GUARD, flags_allow_unplayables_guard[idx]);
-            flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::HOME, flags_allow_unplayables_home[idx]);
-            flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::IMMOBILE, flags_allow_unplayables_immobile[idx]);
-            flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::INN, flags_allow_unplayables_inn[idx]);
-            flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::INTERIOR, flags_allow_unplayables_interior[idx]);
-            flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::MANNEQUIN, flags_allow_unplayables_mannequin[idx]);
-            flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::MEMBER, flags_allow_unplayables_member[idx]);
-            flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::SANDBOXER, flags_allow_unplayables_sandboxer[idx]);
-            flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::SETTLEMENT, flags_allow_unplayables_settlement[idx]);
-            flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::SITTER, flags_allow_unplayables_sitter[idx]);
-            flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::SLEEPER, flags_allow_unplayables_sleeper[idx]);
-            flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::THRALL, flags_allow_unplayables_thrall[idx]);
-
             Member_Flags_Has_Suit_e& flags_has_suit = this->flags_has_suit[idx];
             flags_has_suit.Is_Flagged(Member_Flags_Has_Suit_e::CIVILIZED, flags_has_suit_civilized[idx]);
             flags_has_suit.Is_Flagged(Member_Flags_Has_Suit_e::COMBATANT, flags_has_suit_combatant[idx]);
@@ -619,6 +613,26 @@ namespace doticu_npcp { namespace Party {
             flags_has_suit.Is_Flagged(Member_Flags_Has_Suit_e::SLEEPER, flags_has_suit_sleeper[idx]);
             flags_has_suit.Is_Flagged(Member_Flags_Has_Suit_e::THRALL, flags_has_suit_thrall[idx]);
 
+            Member_Flags_Only_Playables_e& flags_only_playables = this->flags_only_playables[idx];
+            flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::CIVILIZED, flags_only_playables_civilized[idx]);
+            flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::COMBATANT, flags_only_playables_combatant[idx]);
+            flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::DANGEROUS, flags_only_playables_dangerous[idx]);
+            flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::EATER, flags_only_playables_eater[idx]);
+            flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::EXTERIOR, flags_only_playables_exterior[idx]);
+            flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::FOLLOWER, flags_only_playables_follower[idx]);
+            flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::GUARD, flags_only_playables_guard[idx]);
+            flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::HOME, flags_only_playables_home[idx]);
+            flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::IMMOBILE, flags_only_playables_immobile[idx]);
+            flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::INN, flags_only_playables_inn[idx]);
+            flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::INTERIOR, flags_only_playables_interior[idx]);
+            flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::MANNEQUIN, flags_only_playables_mannequin[idx]);
+            flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::MEMBER, flags_only_playables_member[idx]);
+            flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::SANDBOXER, flags_only_playables_sandboxer[idx]);
+            flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::SETTLEMENT, flags_only_playables_settlement[idx]);
+            flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::SITTER, flags_only_playables_sitter[idx]);
+            flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::SLEEPER, flags_only_playables_sleeper[idx]);
+            flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::THRALL, flags_only_playables_thrall[idx]);
+
             this->alphas[idx] = alphas[idx];
             this->ratings[idx] = ratings[idx];
             this->relations[idx] = relations[idx];
@@ -635,25 +649,6 @@ namespace doticu_npcp { namespace Party {
         Vector_t<Bool_t> flags_is_mannequin(MAX_MEMBERS, false);
         Vector_t<Bool_t> flags_is_reanimated(MAX_MEMBERS, false);
         Vector_t<Bool_t> flags_is_thrall(MAX_MEMBERS, false);
-
-        Vector_t<Bool_t> flags_allow_unplayables_civilized(MAX_MEMBERS, false);
-        Vector_t<Bool_t> flags_allow_unplayables_combatant(MAX_MEMBERS, false);
-        Vector_t<Bool_t> flags_allow_unplayables_dangerous(MAX_MEMBERS, false);
-        Vector_t<Bool_t> flags_allow_unplayables_eater(MAX_MEMBERS, false);
-        Vector_t<Bool_t> flags_allow_unplayables_exterior(MAX_MEMBERS, false);
-        Vector_t<Bool_t> flags_allow_unplayables_follower(MAX_MEMBERS, false);
-        Vector_t<Bool_t> flags_allow_unplayables_guard(MAX_MEMBERS, false);
-        Vector_t<Bool_t> flags_allow_unplayables_home(MAX_MEMBERS, false);
-        Vector_t<Bool_t> flags_allow_unplayables_immobile(MAX_MEMBERS, false);
-        Vector_t<Bool_t> flags_allow_unplayables_inn(MAX_MEMBERS, false);
-        Vector_t<Bool_t> flags_allow_unplayables_interior(MAX_MEMBERS, false);
-        Vector_t<Bool_t> flags_allow_unplayables_mannequin(MAX_MEMBERS, false);
-        Vector_t<Bool_t> flags_allow_unplayables_member(MAX_MEMBERS, false);
-        Vector_t<Bool_t> flags_allow_unplayables_sandboxer(MAX_MEMBERS, false);
-        Vector_t<Bool_t> flags_allow_unplayables_settlement(MAX_MEMBERS, false);
-        Vector_t<Bool_t> flags_allow_unplayables_sitter(MAX_MEMBERS, false);
-        Vector_t<Bool_t> flags_allow_unplayables_sleeper(MAX_MEMBERS, false);
-        Vector_t<Bool_t> flags_allow_unplayables_thrall(MAX_MEMBERS, false);
 
         Vector_t<Bool_t> flags_has_suit_civilized(MAX_MEMBERS, false);
         Vector_t<Bool_t> flags_has_suit_combatant(MAX_MEMBERS, false);
@@ -674,6 +669,25 @@ namespace doticu_npcp { namespace Party {
         Vector_t<Bool_t> flags_has_suit_sleeper(MAX_MEMBERS, false);
         Vector_t<Bool_t> flags_has_suit_thrall(MAX_MEMBERS, false);
 
+        Vector_t<Bool_t> flags_only_playables_civilized(MAX_MEMBERS, false);
+        Vector_t<Bool_t> flags_only_playables_combatant(MAX_MEMBERS, false);
+        Vector_t<Bool_t> flags_only_playables_dangerous(MAX_MEMBERS, false);
+        Vector_t<Bool_t> flags_only_playables_eater(MAX_MEMBERS, false);
+        Vector_t<Bool_t> flags_only_playables_exterior(MAX_MEMBERS, false);
+        Vector_t<Bool_t> flags_only_playables_follower(MAX_MEMBERS, false);
+        Vector_t<Bool_t> flags_only_playables_guard(MAX_MEMBERS, false);
+        Vector_t<Bool_t> flags_only_playables_home(MAX_MEMBERS, false);
+        Vector_t<Bool_t> flags_only_playables_immobile(MAX_MEMBERS, false);
+        Vector_t<Bool_t> flags_only_playables_inn(MAX_MEMBERS, false);
+        Vector_t<Bool_t> flags_only_playables_interior(MAX_MEMBERS, false);
+        Vector_t<Bool_t> flags_only_playables_mannequin(MAX_MEMBERS, false);
+        Vector_t<Bool_t> flags_only_playables_member(MAX_MEMBERS, false);
+        Vector_t<Bool_t> flags_only_playables_sandboxer(MAX_MEMBERS, false);
+        Vector_t<Bool_t> flags_only_playables_settlement(MAX_MEMBERS, false);
+        Vector_t<Bool_t> flags_only_playables_sitter(MAX_MEMBERS, false);
+        Vector_t<Bool_t> flags_only_playables_sleeper(MAX_MEMBERS, false);
+        Vector_t<Bool_t> flags_only_playables_thrall(MAX_MEMBERS, false);
+
         Vector_t<Float_t> alphas(MAX_MEMBERS, DEFAULT_ALPHA);
         Vector_t<Int_t> ratings(MAX_MEMBERS, DEFAULT_RATING);
         Vector_t<String_t> relations(MAX_MEMBERS, "");
@@ -689,26 +703,6 @@ namespace doticu_npcp { namespace Party {
                 flags_is_mannequin[idx] = flags.Is_Flagged(Member_Flags_e::IS_MANNEQUIN);
                 flags_is_reanimated[idx] = flags.Is_Flagged(Member_Flags_e::IS_REANIMATED);
                 flags_is_thrall[idx] = flags.Is_Flagged(Member_Flags_e::IS_THRALL);
-
-                Member_Flags_Allow_Unplayables_e& flags_allow_unplayables = this->flags_allow_unplayables[idx];
-                flags_allow_unplayables_civilized[idx] = flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::CIVILIZED);
-                flags_allow_unplayables_combatant[idx] = flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::COMBATANT);
-                flags_allow_unplayables_dangerous[idx] = flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::DANGEROUS);
-                flags_allow_unplayables_eater[idx] = flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::EATER);
-                flags_allow_unplayables_exterior[idx] = flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::EXTERIOR);
-                flags_allow_unplayables_follower[idx] = flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::FOLLOWER);
-                flags_allow_unplayables_guard[idx] = flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::GUARD);
-                flags_allow_unplayables_home[idx] = flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::HOME);
-                flags_allow_unplayables_immobile[idx] = flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::IMMOBILE);
-                flags_allow_unplayables_inn[idx] = flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::INN);
-                flags_allow_unplayables_interior[idx] = flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::INTERIOR);
-                flags_allow_unplayables_mannequin[idx] = flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::MANNEQUIN);
-                flags_allow_unplayables_member[idx] = flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::MEMBER);
-                flags_allow_unplayables_sandboxer[idx] = flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::SANDBOXER);
-                flags_allow_unplayables_settlement[idx] = flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::SETTLEMENT);
-                flags_allow_unplayables_sitter[idx] = flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::SITTER);
-                flags_allow_unplayables_sleeper[idx] = flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::SLEEPER);
-                flags_allow_unplayables_thrall[idx] = flags_allow_unplayables.Is_Flagged(Member_Flags_Allow_Unplayables_e::THRALL);
 
                 Member_Flags_Has_Suit_e& flags_has_suit = this->flags_has_suit[idx];
                 flags_has_suit_civilized[idx] = flags_has_suit.Is_Flagged(Member_Flags_Has_Suit_e::CIVILIZED);
@@ -730,6 +724,26 @@ namespace doticu_npcp { namespace Party {
                 flags_has_suit_sleeper[idx] = flags_has_suit.Is_Flagged(Member_Flags_Has_Suit_e::SLEEPER);
                 flags_has_suit_thrall[idx] = flags_has_suit.Is_Flagged(Member_Flags_Has_Suit_e::THRALL);
 
+                Member_Flags_Only_Playables_e& flags_only_playables = this->flags_only_playables[idx];
+                flags_only_playables_civilized[idx] = flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::CIVILIZED);
+                flags_only_playables_combatant[idx] = flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::COMBATANT);
+                flags_only_playables_dangerous[idx] = flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::DANGEROUS);
+                flags_only_playables_eater[idx] = flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::EATER);
+                flags_only_playables_exterior[idx] = flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::EXTERIOR);
+                flags_only_playables_follower[idx] = flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::FOLLOWER);
+                flags_only_playables_guard[idx] = flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::GUARD);
+                flags_only_playables_home[idx] = flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::HOME);
+                flags_only_playables_immobile[idx] = flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::IMMOBILE);
+                flags_only_playables_inn[idx] = flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::INN);
+                flags_only_playables_interior[idx] = flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::INTERIOR);
+                flags_only_playables_mannequin[idx] = flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::MANNEQUIN);
+                flags_only_playables_member[idx] = flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::MEMBER);
+                flags_only_playables_sandboxer[idx] = flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::SANDBOXER);
+                flags_only_playables_settlement[idx] = flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::SETTLEMENT);
+                flags_only_playables_sitter[idx] = flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::SITTER);
+                flags_only_playables_sleeper[idx] = flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::SLEEPER);
+                flags_only_playables_thrall[idx] = flags_only_playables.Is_Flagged(Member_Flags_Only_Playables_e::THRALL);
+
                 alphas[idx] = this->alphas[idx]();
                 ratings[idx] = this->ratings[idx]();
                 relations[idx] = this->relations[idx]().As_String();
@@ -741,8 +755,10 @@ namespace doticu_npcp { namespace Party {
         Limit() = this->limit;
 
         Do_Auto_Suits() = this->do_auto_suits;
-        Do_Auto_Immobile_Suit() = this->do_auto_immobile_suit;
         Do_Fill_Suits() = this->do_fill_suits;
+        Do_Fill_Suits_Automatically() = this->do_fill_suits_automatically;
+        Do_Fill_Suits_Strictly() = this->do_fill_suits_strictly;
+        Do_Unfill_Suits_To_Pack() = this->do_unfill_suits_to_pack;
 
         Has_Untouchable_Invulnerables() = this->has_untouchable_invulnerables;
 
@@ -764,25 +780,6 @@ namespace doticu_npcp { namespace Party {
         Flags_Is_Reanimated() = flags_is_reanimated;
         Flags_Is_Thrall() = flags_is_thrall;
 
-        Flags_Allow_Unplayables_Civilized() = flags_allow_unplayables_civilized;
-        Flags_Allow_Unplayables_Combatant() = flags_allow_unplayables_combatant;
-        Flags_Allow_Unplayables_Dangerous() = flags_allow_unplayables_dangerous;
-        Flags_Allow_Unplayables_Eater() = flags_allow_unplayables_eater;
-        Flags_Allow_Unplayables_Exterior() = flags_allow_unplayables_exterior;
-        Flags_Allow_Unplayables_Follower() = flags_allow_unplayables_follower;
-        Flags_Allow_Unplayables_Guard() = flags_allow_unplayables_guard;
-        Flags_Allow_Unplayables_Home() = flags_allow_unplayables_home;
-        Flags_Allow_Unplayables_Immobile() = flags_allow_unplayables_immobile;
-        Flags_Allow_Unplayables_Inn() = flags_allow_unplayables_inn;
-        Flags_Allow_Unplayables_Interior() = flags_allow_unplayables_interior;
-        Flags_Allow_Unplayables_Mannequin() = flags_allow_unplayables_mannequin;
-        Flags_Allow_Unplayables_Member() = flags_allow_unplayables_member;
-        Flags_Allow_Unplayables_Sandboxer() = flags_allow_unplayables_sandboxer;
-        Flags_Allow_Unplayables_Settlement() = flags_allow_unplayables_settlement;
-        Flags_Allow_Unplayables_Sitter() = flags_allow_unplayables_sitter;
-        Flags_Allow_Unplayables_Sleeper() = flags_allow_unplayables_sleeper;
-        Flags_Allow_Unplayables_Thrall() = flags_allow_unplayables_thrall;
-
         Flags_Has_Suit_Civilized() = flags_has_suit_civilized;
         Flags_Has_Suit_Combatant() = flags_has_suit_combatant;
         Flags_Has_Suit_Dangerous() = flags_has_suit_dangerous;
@@ -801,6 +798,25 @@ namespace doticu_npcp { namespace Party {
         Flags_Has_Suit_Sitter() = flags_has_suit_sitter;
         Flags_Has_Suit_Sleeper() = flags_has_suit_sleeper;
         Flags_Has_Suit_Thrall() = flags_has_suit_thrall;
+
+        Flags_Only_Playables_Civilized() = flags_only_playables_civilized;
+        Flags_Only_Playables_Combatant() = flags_only_playables_combatant;
+        Flags_Only_Playables_Dangerous() = flags_only_playables_dangerous;
+        Flags_Only_Playables_Eater() = flags_only_playables_eater;
+        Flags_Only_Playables_Exterior() = flags_only_playables_exterior;
+        Flags_Only_Playables_Follower() = flags_only_playables_follower;
+        Flags_Only_Playables_Guard() = flags_only_playables_guard;
+        Flags_Only_Playables_Home() = flags_only_playables_home;
+        Flags_Only_Playables_Immobile() = flags_only_playables_immobile;
+        Flags_Only_Playables_Inn() = flags_only_playables_inn;
+        Flags_Only_Playables_Interior() = flags_only_playables_interior;
+        Flags_Only_Playables_Mannequin() = flags_only_playables_mannequin;
+        Flags_Only_Playables_Member() = flags_only_playables_member;
+        Flags_Only_Playables_Sandboxer() = flags_only_playables_sandboxer;
+        Flags_Only_Playables_Settlement() = flags_only_playables_settlement;
+        Flags_Only_Playables_Sitter() = flags_only_playables_sitter;
+        Flags_Only_Playables_Sleeper() = flags_only_playables_sleeper;
+        Flags_Only_Playables_Thrall() = flags_only_playables_thrall;
 
         Names() = this->names;
 
@@ -1026,6 +1042,36 @@ namespace doticu_npcp { namespace Party {
         return NPCP.Main().Party();
     }
 
+    Bool_t Members_t::Do_Fill_Suits_Automatically()
+    {
+        return this->save_state.do_fill_suits_automatically;
+    }
+
+    void Members_t::Do_Fill_Suits_Automatically(Bool_t value)
+    {
+        this->save_state.do_fill_suits_automatically = value;
+    }
+
+    Bool_t Members_t::Do_Fill_Suits_Strictly()
+    {
+        return this->save_state.do_fill_suits_strictly;
+    }
+
+    void Members_t::Do_Fill_Suits_Strictly(Bool_t value)
+    {
+        this->save_state.do_fill_suits_strictly = value;
+    }
+
+    Bool_t Members_t::Do_Unfill_Suits_To_Pack()
+    {
+        return this->save_state.do_unfill_suits_to_pack;
+    }
+
+    void Members_t::Do_Unfill_Suits_To_Pack(Bool_t value)
+    {
+        this->save_state.do_unfill_suits_to_pack = value;
+    }
+
     Bool_t Members_t::Has_Untouchable_Invulnerables()
     {
         return this->save_state.has_untouchable_invulnerables;
@@ -1034,6 +1080,18 @@ namespace doticu_npcp { namespace Party {
     void Members_t::Has_Untouchable_Invulnerables(Bool_t value)
     {
         this->save_state.has_untouchable_invulnerables = value;
+    }
+
+    maybe<Member_Suit_Type_e> Members_t::Default_Suit_Type()
+    {
+        return this->save_state.default_suit_type;
+    }
+
+    void Members_t::Default_Suit_Type(maybe<Member_Suit_Type_e> suit_type)
+    {
+        SKYLIB_ASSERT(suit_type != Member_Suit_Type_e::ACTIVE);
+
+        this->save_state.default_suit_type = suit_type;
     }
 
     Bool_t Members_t::Has_Alias(some<Member_ID_t> member_id)
@@ -1124,9 +1182,18 @@ namespace doticu_npcp { namespace Party {
         self->save_state.suit_types[member_id] = self->save_state.default_suit_type;
         self->save_state.vitalities[member_id] = self->save_state.default_vitality;
 
-        maybe<Member_Suit_Type_e> default_suit_type = self->save_state.default_suit_type;
-        if (default_suit_type) {
-            self->Add_Suit(member_id, default_suit_type(), actor, false);
+        // we can just do member suit by base for clone.
+        maybe<Member_Suit_Type_e> default_suit_type = self->Default_Suit_Type();
+        if (self->Do_Fill_Suits_Automatically()) {
+            self->Add_Suit(member_id, Member_Suit_Type_e::MEMBER, actor, false);
+            if (default_suit_type && default_suit_type != Member_Suit_Type_e::MEMBER) {
+                //self->Add_Suit(member_id, default_suit_type(), default_suit_type().As_Template()());
+            }
+        } else {
+            self->Add_Suit(member_id, Member_Suit_Type_e::MEMBER);
+            if (default_suit_type && default_suit_type != Member_Suit_Type_e::MEMBER) {
+                self->Add_Suit(member_id, default_suit_type());
+            }
         }
 
         self->Alias_Reference(member_id)->Fill(actor, none<V::Callback_i*>());
@@ -1399,32 +1466,6 @@ namespace doticu_npcp { namespace Party {
         this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_THRALL, value);
     }
 
-    Bool_t Members_t::Allow_Unplayables(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type)
-    {
-        SKYLIB_ASSERT_SOME(valid_id);
-        SKYLIB_ASSERT_SOME(type);
-        SKYLIB_ASSERT(Has_Member(valid_id));
-        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
-
-        Member_Flags_Allow_Unplayables_e flag = type().As_Member_Flag_Allow_Unplayables();
-        SKYLIB_ASSERT_SOME(flag);
-
-        return this->save_state.flags_allow_unplayables[valid_id()].Is_Flagged(flag);
-    }
-
-    void Members_t::Allow_Unplayables(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, Bool_t value)
-    {
-        SKYLIB_ASSERT_SOME(valid_id);
-        SKYLIB_ASSERT_SOME(type);
-        SKYLIB_ASSERT(Has_Member(valid_id));
-        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
-
-        Member_Flags_Allow_Unplayables_e flag = type().As_Member_Flag_Allow_Unplayables();
-        SKYLIB_ASSERT_SOME(flag);
-
-        this->save_state.flags_allow_unplayables[valid_id()].Is_Flagged(flag, value);
-    }
-
     Bool_t Members_t::Has_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type)
     {
         SKYLIB_ASSERT_SOME(valid_id);
@@ -1449,6 +1490,32 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT_SOME(flag);
 
         this->save_state.flags_has_suit[valid_id()].Is_Flagged(flag, value);
+    }
+
+    Bool_t Members_t::Only_Playables(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type)
+    {
+        SKYLIB_ASSERT_SOME(valid_id);
+        SKYLIB_ASSERT_SOME(type);
+        SKYLIB_ASSERT(Has_Member(valid_id));
+        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
+
+        Member_Flags_Only_Playables_e flag = type().As_Member_Flag_Only_Playables();
+        SKYLIB_ASSERT_SOME(flag);
+
+        return this->save_state.flags_only_playables[valid_id()].Is_Flagged(flag);
+    }
+
+    void Members_t::Only_Playables(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_id);
+        SKYLIB_ASSERT_SOME(type);
+        SKYLIB_ASSERT(Has_Member(valid_id));
+        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
+
+        Member_Flags_Only_Playables_e flag = type().As_Member_Flag_Only_Playables();
+        SKYLIB_ASSERT_SOME(flag);
+
+        this->save_state.flags_only_playables[valid_id()].Is_Flagged(flag, value);
     }
 
     String_t Members_t::Name(some<Member_ID_t> valid_member_id)
@@ -1839,6 +1906,26 @@ namespace doticu_npcp { namespace Party {
         cache->Destroy_Non_Quest_Items();
     }
 
+    void Members_t::Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, some<Container_t*> container)
+    {
+        SKYLIB_ASSERT_SOME(valid_id);
+        SKYLIB_ASSERT_SOME(type);
+        SKYLIB_ASSERT_SOME(container);
+        SKYLIB_ASSERT(Has_Member(valid_id));
+        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
+
+        Remove_Suit(valid_id, type);
+        Has_Suit(valid_id, type, true);
+
+        some<Reference_t*> cache = Cache(valid_id);
+        container->Container_Add_Items_To(cache);
+        Suitcase(valid_id)->Move_From(cache,
+                                      type,
+                                      Member_Suitcase_t::filter_out_blank_or_token_objects,
+                                      Member_Suitcase_t::filter_out_quest_extra_lists);
+        cache->Destroy_Non_Quest_Items();
+    }
+
     void Members_t::Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, some<Actor_Base_t*> actor_base)
     {
         SKYLIB_ASSERT_SOME(valid_id);
@@ -1895,7 +1982,7 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
 
         if (Has_Suit(valid_id, type)) {
-            Suitcase(valid_id)->Move_To(Pack(valid_id), // there needs to be an option to remove items to chests or pack.
+            Suitcase(valid_id)->Move_To(Do_Unfill_Suits_To_Pack() ? Pack(valid_id)() : none<Reference_t*>()(),
                                         type,
                                         Member_Suitcase_t::filter_out_blank_or_token_or_unplayable_objects,
                                         Member_Suitcase_t::filter_out_no_extra_lists);
@@ -1982,18 +2069,18 @@ namespace doticu_npcp { namespace Party {
                     suit_type = none<Member_Suit_Type_e>();
                 }
                 if (suit_type) {
-                    if (Allow_Unplayables(member_id, suit_type())) {
-                        suitcase->Apply_Unto(actor,
-                                             suit_type(),
-                                             Member_Suitcase_t::filter_out_blank_or_token_objects,
-                                             true, // option for strict
-                                             Pack(member_id)); // option for pack or chests
-                    } else {
+                    if (Only_Playables(member_id, suit_type())) {
                         suitcase->Apply_Unto(actor,
                                              suit_type(),
                                              Member_Suitcase_t::filter_out_blank_or_token_or_unplayable_objects,
-                                             true, // option for strict
-                                             Pack(member_id)); // option for pack or chests
+                                             Do_Fill_Suits_Strictly(),
+                                             Do_Unfill_Suits_To_Pack() ? Pack(member_id)() : none<Reference_t*>()());
+                    } else {
+                        suitcase->Apply_Unto(actor,
+                                             suit_type(),
+                                             Member_Suitcase_t::filter_out_blank_or_token_objects,
+                                             Do_Fill_Suits_Strictly(),
+                                             Do_Unfill_Suits_To_Pack() ? Pack(member_id)() : none<Reference_t*>()());
                     }
                 }
             }

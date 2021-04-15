@@ -260,7 +260,7 @@
     <ClInclude Include="include\party_member_flags_has_suit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\party_member_flags_allow_unplayables.h">
+    <ClInclude Include="include\party_member_flags_only_playables.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
