@@ -23,13 +23,16 @@
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/actor_base.h"
 #include "doticu_skylib/actor_head_data.h"
+#include "doticu_skylib/armor.h"
 #include "doticu_skylib/cell.h"
 #include "doticu_skylib/color.h"
 #include "doticu_skylib/const_actors.h"
+#include "doticu_skylib/const_armors.h"
 #include "doticu_skylib/const_furnitures.h"
 #include "doticu_skylib/const_keywords.h"
 #include "doticu_skylib/const_spells.h"
 #include "doticu_skylib/const_voice_types.h"
+#include "doticu_skylib/const_weapons.h"
 #include "doticu_skylib/container_changes.h"
 #include "doticu_skylib/container_changes_entry.h"
 #include "doticu_skylib/cstring.h"
@@ -43,6 +46,7 @@
 #include "doticu_skylib/spell.h"
 #include "doticu_skylib/virtual_debug.h"
 #include "doticu_skylib/voice_type.h"
+#include "doticu_skylib/weapon.h"
 
 #include "chests.h"
 #include "party_member_suitcase.h"
@@ -348,8 +352,11 @@ namespace doticu_npcp {
                     members.Relation(idx, Party::Member_Relation_e::ARCHNEMESIS);
                     members.Vitality(idx, Party::Member_Vitality_e::MORTAL);
 
-                    some<Outfit_t*> outfit = static_cast<Outfit_t*>(Game_t::Form(0x0F122A)());
-                    members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, outfit);
+                    //some<Outfit_t*> outfit = static_cast<Outfit_t*>(Game_t::Form(0x0F122A)());
+                    //members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, outfit);
+
+                    Vector_t<some<Armor_t*>> armors = skylib::Const::Armors::Outfit_Bonemold_Pauldron(true);
+                    members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, armors);
                 }
             }
         }

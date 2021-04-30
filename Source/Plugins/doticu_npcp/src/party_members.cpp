@@ -6,6 +6,7 @@
 #include "doticu_skylib/actor_base.h"
 #include "doticu_skylib/alias_base.h"
 #include "doticu_skylib/alias_reference.h"
+#include "doticu_skylib/armor.h"
 #include "doticu_skylib/combat_style.h"
 #include "doticu_skylib/const_actors.h"
 #include "doticu_skylib/const_actor_bases.h"
@@ -1943,6 +1944,29 @@ namespace doticu_npcp { namespace Party {
         if (outfit) {
             outfit->Add_Items_To(cache);
         }
+        Suitcase(valid_id)->Move_From(cache,
+                                      type,
+                                      Member_Suitcase_t::filter_out_blank_or_token_objects,
+                                      Member_Suitcase_t::filter_out_quest_extra_lists);
+        cache->Destroy_Non_Quest_Items();
+    }
+
+    void Members_t::Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, Vector_t<some<Armor_t*>>& armors)
+    {
+        SKYLIB_ASSERT_SOME(valid_id);
+        SKYLIB_ASSERT_SOME(type);
+        SKYLIB_ASSERT(Has_Member(valid_id));
+        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
+
+        Remove_Suit(valid_id, type);
+        Has_Suit(valid_id, type, true);
+
+        some<Reference_t*> cache = Cache(valid_id);
+
+        for (size_t idx = 0, end = armors.size(); idx < end; idx += 1) {
+            cache->Add_Item(armors[idx], none<Extra_List_t*>(), 1, none<Reference_t*>());
+        }
+
         Suitcase(valid_id)->Move_From(cache,
                                       type,
                                       Member_Suitcase_t::filter_out_blank_or_token_objects,

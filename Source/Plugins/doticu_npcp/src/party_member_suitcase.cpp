@@ -55,7 +55,6 @@ namespace doticu_npcp { namespace Party {
             virtual Bool_t operator ()(Extra_Type_e extra_type) override
             {
                 return
-                    extra_type != Extra_Type_e::OUTFIT &&
                     extra_type != Extra_Type_e::WORN &&
                     extra_type != Extra_Type_e::WORN_LEFT;
             }
@@ -498,7 +497,7 @@ namespace doticu_npcp { namespace Party {
                     if (!unto_x_list->Should_Be_Destroyed() && filter_out_quest_extra_lists(bound_object, unto_x_list)) {
                         maybe<Form_Owner_t> unto_owner = unto_x_list->Owner();
                         if (unto_owner.Has_Value() && unto_owner().As_Faction() == active_suit_faction) {
-                            if (!suit_entry->Destroy_Copy_If_Equals(unto_x_list)) {
+                            if (!suit_entry || !suit_entry->Destroy_Copy_If_Equals(unto_x_list)) {
                                 unto_entry.Remove_And_Destroy(unto_container, unto_x_list);
                                 has_changed_container = true;
                             }
