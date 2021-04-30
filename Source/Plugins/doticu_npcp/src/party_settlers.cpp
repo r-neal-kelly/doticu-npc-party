@@ -777,6 +777,10 @@ namespace doticu_npcp { namespace Party {
 
                 maybe<Reference_t*> bed = Bed<Sleeper_t>(settler_id);
                 if (bed) {
+                    if (bed->Is_Disabled()) {
+                        bed->Enable();
+                        do_reset_ai = true;
+                    }
                     some<Actor_Base_t*> custom_base = members.Custom_Base(settler_id);
                     maybe<Form_Owner_t> owner = bed->x_list.Owner();
                     if (!owner.Has_Value() || owner.Value().As_Actor_Base() != custom_base) {

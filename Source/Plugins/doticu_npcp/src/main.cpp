@@ -309,7 +309,7 @@ namespace doticu_npcp {
         some<Actor_Base_t*> katria = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x02004D0C)());
         some<Actor_Base_t*> maven = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x1336a)());
         some<Actor_Base_t*> fjori = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x0003D725)());
-        for (size_t idx = 0, end = 2; idx < end; idx += 1) {
+        for (size_t idx = 0, end = 12; idx < end; idx += 1) {
             members.Add_Member(vici);
         }
 
@@ -355,7 +355,7 @@ namespace doticu_npcp {
                     //some<Outfit_t*> outfit = static_cast<Outfit_t*>(Game_t::Form(0x0F122A)());
                     //members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, outfit);
 
-                    Vector_t<some<Armor_t*>> armors = skylib::Const::Armors::Outfit_Bonemold_Pauldron(true);
+                    Vector_t<some<Armor_t*>> armors = skylib::Const::Armors::Outfit_Ancient_Falmer_Auriel();
                     members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, armors);
                 }
             }

@@ -10,6 +10,7 @@
 #include "doticu_skylib/combat_style.h"
 #include "doticu_skylib/const_actors.h"
 #include "doticu_skylib/const_actor_bases.h"
+#include "doticu_skylib/const_armors.h"
 #include "doticu_skylib/const_factions.h"
 #include "doticu_skylib/const_spells.h"
 #include "doticu_skylib/container.h"

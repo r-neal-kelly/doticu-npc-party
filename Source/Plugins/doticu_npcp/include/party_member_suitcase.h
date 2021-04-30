@@ -33,6 +33,11 @@ namespace doticu_npcp { namespace Party {
         public:
             Bool_t  Has_Copies();
             Bool_t  Destroy_Copy_If_Equals(some<Extra_List_t*> extra_list);
+
+            void    Add_Copy(some<Extra_List_t*> original, s16 count, maybe<Outfit_t*> outfit);
+
+        public:
+            void    Log(std::string indent = "");
         };
 
         class Suit_Entries_t
