@@ -146,6 +146,8 @@ namespace doticu_npcp { namespace Party {
                             Filter_i<some<Bound_Object_t*>>& bound_object_filter,
                             Filter_i<some<Bound_Object_t*>, some<Extra_List_t*>>& extra_list_filter);
 
+        void    Remove_Suit(maybe<Reference_t*> to, some<Member_Suit_Type_e> suit_type);
+
     public:
         Suit_Entries_t  Active_Suit_Entries(some<Member_Suit_Type_e> suit_type,
                                             maybe<Outfit_t*> outfit,

@@ -10,7 +10,6 @@
 #include "doticu_skylib/combat_style.h"
 #include "doticu_skylib/const_actors.h"
 #include "doticu_skylib/const_actor_bases.h"
-#include "doticu_skylib/const_armors.h"
 #include "doticu_skylib/const_factions.h"
 #include "doticu_skylib/const_spells.h"
 #include "doticu_skylib/container.h"
@@ -2007,11 +2006,7 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
 
         if (Has_Suit(valid_id, type)) {
-            Suitcase(valid_id)->Move_To(Do_Unfill_Suits_To_Pack() ? Pack(valid_id)() : none<Reference_t*>()(),
-                                        type,
-                                        Member_Suitcase_t::filter_out_blank_or_token_or_unplayable_objects,
-                                        Member_Suitcase_t::filter_out_no_extra_lists);
-
+            Suitcase(valid_id)->Remove_Suit(Do_Unfill_Suits_To_Pack() ? Pack(valid_id)() : none<Reference_t*>()(), type);
             Has_Suit(valid_id, type, false);
         }
     }

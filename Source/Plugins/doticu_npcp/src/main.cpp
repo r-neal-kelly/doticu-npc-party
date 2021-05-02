@@ -320,7 +320,7 @@ namespace doticu_npcp {
                     members.Is_Reanimated(idx, false);
                     members.Name(idx, " Dark Elf Commoner ");
                     members.Combat_Style(idx, Party::Member_Combat_Style_e::COWARD);
-                    members.Ghost_Ability(idx, skylib::Const::Spell::Ghost_Ability_Soul_Cairn()());
+                    //members.Ghost_Ability(idx, skylib::Const::Spell::Ghost_Ability_Soul_Cairn()());
                     members.Voice_Type(idx, skylib::Const::Voice_Type::Female_Sultry()());
                     members.Relation(idx, Party::Member_Relation_e::ALLY);
                     members.Vitality(idx, Party::Member_Vitality_e::INVULNERABLE);
@@ -351,13 +351,10 @@ namespace doticu_npcp {
                     members.Voice_Type(idx, skylib::Const::Voice_Type::Female_Unique_Serana()());
                     members.Relation(idx, Party::Member_Relation_e::ARCHNEMESIS);
                     members.Vitality(idx, Party::Member_Vitality_e::MORTAL);
-
-                    //some<Outfit_t*> outfit = static_cast<Outfit_t*>(Game_t::Form(0x0F122A)());
-                    //members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, outfit);
-
-                    Vector_t<some<Armor_t*>> armors = skylib::Const::Armors::Outfit_Ancient_Falmer_Auriel();
-                    members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, armors);
                 }
+
+                Vector_t<some<Armor_t*>> outfit = skylib::Const::Armors::Outfit_Random_Armor_Unweighted();
+                members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, outfit);
             }
         }
 
@@ -380,6 +377,19 @@ namespace doticu_npcp {
         public:
             virtual void operator ()(V::Variable_t*) override
             {
+                //temp
+                Party::Main_t& party = self->Party();
+                Party::Members_t& members = party.Members();
+                //Vector_t<some<Armor_t*>> outfit = skylib::Const::Armors::Outfit_Random_Armor();
+                //Vector_t<some<Armor_t*>> outfit = skylib::Const::Armors::Outfit_Random_Armor_Unweighted();
+                for (size_t idx = 0, end = 1024; idx < end; idx += 1) {
+                    if (members.Has_Member(idx)) {
+                        Vector_t<some<Armor_t*>> outfit = skylib::Const::Armors::Outfit_Random_Armor_Guard();
+                        members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, outfit);
+                    }
+                }
+                //
+
                 self->Party().Enforce();
                 V::Utility_t::Wait_Out_Of_Menu(2.0f, new Wait_Callback(self));
 

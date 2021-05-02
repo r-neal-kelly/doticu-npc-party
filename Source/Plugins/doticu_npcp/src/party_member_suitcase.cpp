@@ -427,6 +427,55 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
+    void Member_Suitcase_t::Remove_Suit(maybe<Reference_t*> to, some<Member_Suit_Type_e> suit_type)
+    {
+        SKYLIB_ASSERT_SOME(suit_type);
+
+        some<Faction_t*> suit_faction = suit_type().As_Faction()();
+        SKYLIB_ASSERT_SOME(suit_faction);
+
+        Reference_Container_t this_container(this);
+        SKYLIB_ASSERT(this_container.Is_Valid());
+
+        for (size_t idx = 0, end = this_container.Count(); idx < end; idx += 1) {
+            Reference_Container_Entry_t& this_entry = this_container[idx];
+            some<Bound_Object_t*> bound_object = this_entry.Some_Object();
+            if (!this_entry.Is_Leveled_Item()) {
+                if (filter_out_blank_or_token_or_unplayable_objects(bound_object)) {
+                    some<Reference_t*> to_reference = to ? to() : Chests_t::Chest(bound_object);
+                    Container_Entry_Count_t non_x_list_count = this_entry.Non_Extra_Lists_Count();
+                    if (non_x_list_count > 0) {
+                        this_entry.Remove_Count_To(this_container, non_x_list_count, to_reference);
+                    }
+                    Vector_t<some<Extra_List_t*>> x_lists = this_entry.Some_Extra_Lists();
+                    for (size_t idx = 0, end = x_lists.size(); idx < end; idx += 1) {
+                        some<Extra_List_t*> x_list = x_lists[idx];
+                        if (!x_list->Should_Be_Destroyed()) {
+                            maybe<Form_Owner_t> owner = x_list->Owner();
+                            if (!owner.Has_Value() || !owner.Value() || owner.Value().As_Faction() == suit_faction) {
+                                x_list->Remove_And_Destroy<Extra_Owner_t>();
+                                this_entry.Remove_To(this_container, x_list, to_reference);
+                            }
+                        }
+                    }
+                } else {
+                    Container_Entry_Count_t non_x_list_count = this_entry.Non_Extra_Lists_Count();
+                    if (non_x_list_count > 0) {
+                        this_entry.Decrement_Count(this_container, non_x_list_count);
+                    }
+                    Vector_t<some<Extra_List_t*>> x_lists = this_entry.Some_Extra_Lists();
+                    for (size_t idx = 0, end = x_lists.size(); idx < end; idx += 1) {
+                        some<Extra_List_t*> x_list = x_lists[idx];
+                        maybe<Form_Owner_t> owner = x_list->Owner();
+                        if (!owner.Has_Value() || !owner.Value() || owner.Value().As_Faction() == suit_faction) {
+                            this_entry.Remove_And_Destroy(this_container, x_list);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     Member_Suitcase_t::Suit_Entries_t Member_Suitcase_t::Active_Suit_Entries(some<Member_Suit_Type_e> suit_type,
                                                                              maybe<Outfit_t*> outfit,
                                                                              Filter_i<some<Bound_Object_t*>>& bound_object_filter)
