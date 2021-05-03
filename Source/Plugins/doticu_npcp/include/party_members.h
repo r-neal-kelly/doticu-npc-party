@@ -380,7 +380,7 @@ namespace doticu_npcp { namespace Party {
         void    Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, some<Outfit_t*> outfit);
         void    Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, some<Container_t*> container);
         void    Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, some<Actor_Base_t*> actor_base);
-        void    Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, Vector_t<some<Armor_t*>>& armors);
+        void    Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, Armor_Set_t armor_set);
         void    Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, some<Reference_t*> reference, Bool_t do_copy);
         void    Remove_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type);
 

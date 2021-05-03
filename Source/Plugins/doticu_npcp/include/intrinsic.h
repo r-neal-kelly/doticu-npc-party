@@ -100,6 +100,7 @@ namespace doticu_npcp {
     using Alpha_t                       = skylib::Alpha_t;
     using Ammo_t                        = skylib::Ammo_t;
     using Armor_t                       = skylib::Armor_t;
+    using Armor_Set_t                   = skylib::Armor_Set_t;
     using Book_t                        = skylib::Book_t;
     using Bound_Object_t                = skylib::Bound_Object_t;
     using Cell_t                        = skylib::Cell_t;

@@ -353,8 +353,7 @@ namespace doticu_npcp {
                     members.Vitality(idx, Party::Member_Vitality_e::MORTAL);
                 }
 
-                Vector_t<some<Armor_t*>> outfit = skylib::Const::Armors::Outfit_Random_Armor_Unweighted();
-                members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, outfit);
+                members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, skylib::Const::Armors::Outfit_Random_Armor_Unweighted());
             }
         }
 
@@ -384,8 +383,7 @@ namespace doticu_npcp {
                 //Vector_t<some<Armor_t*>> outfit = skylib::Const::Armors::Outfit_Random_Armor_Unweighted();
                 for (size_t idx = 0, end = 1024; idx < end; idx += 1) {
                     if (members.Has_Member(idx)) {
-                        Vector_t<some<Armor_t*>> outfit = skylib::Const::Armors::Outfit_Random_Armor_Guard();
-                        members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, outfit);
+                        members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, skylib::Const::Armors::Outfit_Random());
                     }
                 }
                 //

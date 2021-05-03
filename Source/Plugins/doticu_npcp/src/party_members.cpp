@@ -7,6 +7,7 @@
 #include "doticu_skylib/alias_base.h"
 #include "doticu_skylib/alias_reference.h"
 #include "doticu_skylib/armor.h"
+#include "doticu_skylib/armor_set.h"
 #include "doticu_skylib/combat_style.h"
 #include "doticu_skylib/const_actors.h"
 #include "doticu_skylib/const_actor_bases.h"
@@ -1951,7 +1952,7 @@ namespace doticu_npcp { namespace Party {
         cache->Destroy_Non_Quest_Items();
     }
 
-    void Members_t::Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, Vector_t<some<Armor_t*>>& armors)
+    void Members_t::Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, Armor_Set_t armor_set)
     {
         SKYLIB_ASSERT_SOME(valid_id);
         SKYLIB_ASSERT_SOME(type);
@@ -1963,9 +1964,25 @@ namespace doticu_npcp { namespace Party {
 
         some<Reference_t*> cache = Cache(valid_id);
 
-        for (size_t idx = 0, end = armors.size(); idx < end; idx += 1) {
-            cache->Add_Item(armors[idx], none<Extra_List_t*>(), 1, none<Reference_t*>());
-        }
+        maybe<Armor_t*> aura = armor_set.Aura(100);
+        maybe<Armor_t*> body = armor_set.Body(85);
+        maybe<Armor_t*> feet = armor_set.Feet(33);
+        maybe<Armor_t*> finger = armor_set.Finger(100);
+        maybe<Armor_t*> forearm = armor_set.Forearm(33);
+        maybe<Armor_t*> forehead = armor_set.Forehead(100);
+        maybe<Armor_t*> hands = armor_set.Hands(33);
+        maybe<Armor_t*> head = armor_set.Head(15);
+        maybe<Armor_t*> neck = armor_set.Neck(100);
+
+        if (aura) cache->Add_Item(aura(), none<Extra_List_t*>(), 1, none<Reference_t*>());
+        if (body) cache->Add_Item(body(), none<Extra_List_t*>(), 1, none<Reference_t*>());
+        if (feet) cache->Add_Item(feet(), none<Extra_List_t*>(), 1, none<Reference_t*>());
+        if (finger) cache->Add_Item(finger(), none<Extra_List_t*>(), 1, none<Reference_t*>());
+        if (forearm) cache->Add_Item(forearm(), none<Extra_List_t*>(), 1, none<Reference_t*>());
+        if (forehead) cache->Add_Item(forehead(), none<Extra_List_t*>(), 1, none<Reference_t*>());
+        if (hands) cache->Add_Item(hands(), none<Extra_List_t*>(), 1, none<Reference_t*>());
+        if (head) cache->Add_Item(head(), none<Extra_List_t*>(), 1, none<Reference_t*>());
+        if (neck) cache->Add_Item(neck(), none<Extra_List_t*>(), 1, none<Reference_t*>());
 
         Suitcase(valid_id)->Move_From(cache,
                                       type,
