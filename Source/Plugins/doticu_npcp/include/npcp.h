@@ -23,8 +23,8 @@ namespace doticu_npcp {
 
     public:
         virtual         ~NPCP_t();
-        virtual Bool_t  Register_Functions(some<V::Machine_t*> machine) override;
-        virtual void    Process_SKSE_Event(some<SKSE_Message_t*> message) override;
+        virtual Bool_t  On_Register(some<V::Machine_t*> machine) override;
+        virtual void    On_Message(some<SKSE_Message_t*> message) override;
 
     public:
         Bool_t  Is_Active();

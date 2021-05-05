@@ -26,13 +26,13 @@ namespace doticu_npcp {
         }
     }
 
-    Bool_t NPCP_t::Register_Functions(some<V::Machine_t*> machine)
+    Bool_t NPCP_t::On_Register(some<V::Machine_t*> machine)
     {
         Main_t::Register_Me(machine);
         return true;
     }
 
-    void NPCP_t::Process_SKSE_Event(some<SKSE_Message_t*> message)
+    void NPCP_t::On_Message(some<SKSE_Message_t*> message)
     {
         // SaveGame and PreLoadGame will give us the savefile path as message->data, and it's char length too
         if (message->type == SKSEMessagingInterface::kMessage_SaveGame) {
