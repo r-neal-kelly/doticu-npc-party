@@ -33,6 +33,7 @@
 #include "doticu_skylib/const_spells.h"
 #include "doticu_skylib/const_voice_types.h"
 #include "doticu_skylib/const_weapons.h"
+#include "doticu_skylib/container.h"
 #include "doticu_skylib/container_changes.h"
 #include "doticu_skylib/container_changes_entry.h"
 #include "doticu_skylib/cstring.h"
@@ -305,6 +306,8 @@ namespace doticu_npcp {
         members.Do_Fill_Suits_Strictly(true);
         members.Has_Untouchable_Invulnerables(false);
 
+        members.Reset_Fill_Suit_Probabilities();
+
         some<Actor_Base_t*> vici = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x1327a)());
         some<Actor_Base_t*> katria = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x02004D0C)());
         some<Actor_Base_t*> maven = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x1336a)());
@@ -321,10 +324,11 @@ namespace doticu_npcp {
                     members.Name(idx, " Dark Elf Commoner ");
                     members.Combat_Style(idx, Party::Member_Combat_Style_e::COWARD);
                     //members.Ghost_Ability(idx, skylib::Const::Spell::Ghost_Ability_Soul_Cairn()());
+                    members.Ghost_Ability(idx, none<Spell_t*>());
                     members.Voice_Type(idx, skylib::Const::Voice_Type::Female_Sultry()());
                     members.Relation(idx, Party::Member_Relation_e::ALLY);
                     members.Vitality(idx, Party::Member_Vitality_e::INVULNERABLE);
-                    members.Alpha(idx, 0.9f);
+                    members.Alpha(idx, 1.0f);
 
                     settlers.Add<Party::Sandboxer_t>(idx);
                     settlers.Allow_Hellos_To_Player<Party::Sandboxer_t>(idx, false);
@@ -342,6 +346,8 @@ namespace doticu_npcp {
                     settlers.Add<Party::Eater_t>(idx);
 
                     settlers.Add<Party::Guard_t>(idx);
+
+                    members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, skylib::Const::Armors::Set_Clothes_Fine_A_Blue());
                 } else {
                     members.Is_Banished(idx, false);
                     members.Is_Reanimated(idx, true);
@@ -351,15 +357,19 @@ namespace doticu_npcp {
                     members.Voice_Type(idx, skylib::Const::Voice_Type::Female_Unique_Serana()());
                     members.Relation(idx, Party::Member_Relation_e::ARCHNEMESIS);
                     members.Vitality(idx, Party::Member_Vitality_e::MORTAL);
-                }
 
-                members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, skylib::Const::Armors::Outfit_Random_Armor_Unweighted());
+                    members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, skylib::Const::Armors::Set_Clothes_Fine_A_Green());
+                }
             }
         }
 
         // changed packages should be reverted in settlers type, upon state creation/deletion.
 
         Party().Enforce();
+
+        static Vector_t<some<skylib::Const::Armors::Set_f>> sets = skylib::Const::Armors::Sets();
+        static size_t sets_idx = 0;
+        static size_t sets_end = sets.size();
 
         class Wait_Callback :
             public V::Callback_t
@@ -379,11 +389,19 @@ namespace doticu_npcp {
                 //temp
                 Party::Main_t& party = self->Party();
                 Party::Members_t& members = party.Members();
+
+                Armor_Set_t set;
+                if (sets_idx < sets_end) {
+                    set = (*sets[sets_idx])();
+                    sets_idx += 1;
+                }
+
                 //Vector_t<some<Armor_t*>> outfit = skylib::Const::Armors::Outfit_Random_Armor();
                 //Vector_t<some<Armor_t*>> outfit = skylib::Const::Armors::Outfit_Random_Armor_Unweighted();
                 for (size_t idx = 0, end = 1024; idx < end; idx += 1) {
                     if (members.Has_Member(idx)) {
-                        members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, skylib::Const::Armors::Outfit_Random());
+                        members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, set);
+                        //members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, skylib::Const::Armors::Random_Set());
                     }
                 }
                 //

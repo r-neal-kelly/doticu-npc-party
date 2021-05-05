@@ -37,10 +37,15 @@ namespace doticu_npcp { namespace Party {
     public:
         static constexpr size_t                                 MAX_MEMBERS                             = Consts_t::NPCP::Int::MAX_MEMBERS;
 
-        static constexpr size_t                                 DEFAULT_FILL_OUTFIT_BODY_PERCENT        = 100;
-        static constexpr size_t                                 DEFAULT_FILL_OUTFIT_FEET_PERCENT        = 66;
-        static constexpr size_t                                 DEFAULT_FILL_OUTFIT_HANDS_PERCENT       = 66;
-        static constexpr size_t                                 DEFAULT_FILL_OUTFIT_HEAD_PERCENT        = 33;
+        static constexpr size_t                                 DEFAULT_FILL_SUIT_AURA_PROBABILITY      = 100;
+        static constexpr size_t                                 DEFAULT_FILL_SUIT_BODY_PROBABILITY      = 100;
+        static constexpr size_t                                 DEFAULT_FILL_SUIT_FEET_PROBABILITY      = 66;
+        static constexpr size_t                                 DEFAULT_FILL_SUIT_FINGER_PROBABILITY    = 66;
+        static constexpr size_t                                 DEFAULT_FILL_SUIT_FOREARM_PROBABILITY   = 50;
+        static constexpr size_t                                 DEFAULT_FILL_SUIT_FOREHEAD_PROBABILITY  = 50;
+        static constexpr size_t                                 DEFAULT_FILL_SUIT_HANDS_PROBABILITY     = 66;
+        static constexpr size_t                                 DEFAULT_FILL_SUIT_HEAD_PROBABILITY      = 33;
+        static constexpr size_t                                 DEFAULT_FILL_SUIT_NECK_PROBABILITY      = 50;
 
         static constexpr Int_t                                  DEFAULT_LIMIT                           = MAX_MEMBERS;
 
@@ -71,6 +76,16 @@ namespace doticu_npcp { namespace Party {
 
         public:
             Int_t                                   limit;
+
+            u8                                      fill_suit_aura_probability;
+            u8                                      fill_suit_body_probability;
+            u8                                      fill_suit_feet_probability;
+            u8                                      fill_suit_finger_probability;
+            u8                                      fill_suit_forearm_probability;
+            u8                                      fill_suit_forehead_probability;
+            u8                                      fill_suit_hands_probability;
+            u8                                      fill_suit_head_probability;
+            u8                                      fill_suit_neck_probability;
 
             Bool_t                                  do_auto_suits;
             Bool_t                                  do_fill_suits;
@@ -125,6 +140,16 @@ namespace doticu_npcp { namespace Party {
 
         public:
             V::Variable_tt<Int_t>&                              Limit();
+
+            V::Variable_tt<Int_t>&                              Fill_Suit_Aura_Probability();
+            V::Variable_tt<Int_t>&                              Fill_Suit_Body_Probability();
+            V::Variable_tt<Int_t>&                              Fill_Suit_Feet_Probability();
+            V::Variable_tt<Int_t>&                              Fill_Suit_Finger_Probability();
+            V::Variable_tt<Int_t>&                              Fill_Suit_Forearm_Probability();
+            V::Variable_tt<Int_t>&                              Fill_Suit_Forehead_Probability();
+            V::Variable_tt<Int_t>&                              Fill_Suit_Hands_Probability();
+            V::Variable_tt<Int_t>&                              Fill_Suit_Head_Probability();
+            V::Variable_tt<Int_t>&                              Fill_Suit_Neck_Probability();
 
             V::Variable_tt<Bool_t>&                             Do_Auto_Suits();
             V::Variable_tt<Bool_t>&                             Do_Fill_Suits();
@@ -230,15 +255,6 @@ namespace doticu_npcp { namespace Party {
         static Bool_t   Do_Force_Unclone_Generics();
         static void     Do_Force_Unclone_Generics(Bool_t value);
 
-        static Int_t    Fill_Outfit_Body_Percent();
-        static void     Fill_Outfit_Body_Percent(Int_t value);
-        static Int_t    Fill_Outfit_Feet_Percent();
-        static void     Fill_Outfit_Feet_Percent(Int_t value);
-        static Int_t    Fill_Outfit_Hands_Percent();
-        static void     Fill_Outfit_Hands_Percent(Int_t value);
-        static Int_t    Fill_Outfit_Head_Percent();
-        static void     Fill_Outfit_Head_Percent(Int_t value);
-
     public:
         const some<Quest_t*>            quest;
         Save_State                      save_state;
@@ -262,6 +278,27 @@ namespace doticu_npcp { namespace Party {
         Main_t& Main();
 
     public:
+        u8                          Fill_Suit_Aura_Probability();
+        void                        Fill_Suit_Aura_Probability(u8 value);
+        u8                          Fill_Suit_Body_Probability();
+        void                        Fill_Suit_Body_Probability(u8 value);
+        u8                          Fill_Suit_Feet_Probability();
+        void                        Fill_Suit_Feet_Probability(u8 value);
+        u8                          Fill_Suit_Finger_Probability();
+        void                        Fill_Suit_Finger_Probability(u8 value);
+        u8                          Fill_Suit_Forearm_Probability();
+        void                        Fill_Suit_Forearm_Probability(u8 value);
+        u8                          Fill_Suit_Forehead_Probability();
+        void                        Fill_Suit_Forehead_Probability(u8 value);
+        u8                          Fill_Suit_Hands_Probability();
+        void                        Fill_Suit_Hands_Probability(u8 value);
+        u8                          Fill_Suit_Head_Probability();
+        void                        Fill_Suit_Head_Probability(u8 value);
+        u8                          Fill_Suit_Neck_Probability();
+        void                        Fill_Suit_Neck_Probability(u8 value);
+
+        void                        Reset_Fill_Suit_Probabilities();
+
         Bool_t                      Do_Fill_Suits_Automatically();
         void                        Do_Fill_Suits_Automatically(Bool_t value);
 

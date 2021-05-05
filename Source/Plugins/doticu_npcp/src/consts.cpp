@@ -184,10 +184,6 @@ namespace doticu_npcp {
     some<Global_t*>             Consts_t::NPCP::Global::Do_Force_Clone_Generics()           { DEFINE_FORM(Mod(), Global_t, 0x05244E); }
     some<Global_t*>             Consts_t::NPCP::Global::Do_Force_Unclone_Uniques()          { DEFINE_FORM(Mod(), Global_t, 0x05244F); }
     some<Global_t*>             Consts_t::NPCP::Global::Do_Force_Unclone_Generics()         { DEFINE_FORM(Mod(), Global_t, 0x052450); }
-    some<Global_t*>             Consts_t::NPCP::Global::Empty_Outfit_Body_Percent()         { DEFINE_FORM(Mod(), Global_t, 0x193CEA); }
-    some<Global_t*>             Consts_t::NPCP::Global::Empty_Outfit_Feet_Percent()         { DEFINE_FORM(Mod(), Global_t, 0x193CE7); }
-    some<Global_t*>             Consts_t::NPCP::Global::Empty_Outfit_Hands_Percent()        { DEFINE_FORM(Mod(), Global_t, 0x193CE8); }
-    some<Global_t*>             Consts_t::NPCP::Global::Empty_Outfit_Head_Percent()         { DEFINE_FORM(Mod(), Global_t, 0x193CE6); }
 
     some<Leveled_Actor_Base_t*> Consts_t::NPCP::Leveled_Actor_Base::Horse()                 { DEFINE_FORM(Mod(), Leveled_Actor_Base_t, 0x354127); }
 

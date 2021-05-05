@@ -38,6 +38,16 @@ namespace doticu_npcp { namespace Party {
 
         limit(MAX_MEMBERS),
 
+        fill_suit_aura_probability(DEFAULT_FILL_SUIT_AURA_PROBABILITY),
+        fill_suit_body_probability(DEFAULT_FILL_SUIT_BODY_PROBABILITY),
+        fill_suit_feet_probability(DEFAULT_FILL_SUIT_FEET_PROBABILITY),
+        fill_suit_finger_probability(DEFAULT_FILL_SUIT_FINGER_PROBABILITY),
+        fill_suit_forearm_probability(DEFAULT_FILL_SUIT_FOREARM_PROBABILITY),
+        fill_suit_forehead_probability(DEFAULT_FILL_SUIT_FOREHEAD_PROBABILITY),
+        fill_suit_hands_probability(DEFAULT_FILL_SUIT_HANDS_PROBABILITY),
+        fill_suit_head_probability(DEFAULT_FILL_SUIT_HEAD_PROBABILITY),
+        fill_suit_neck_probability(DEFAULT_FILL_SUIT_NECK_PROBABILITY),
+
         do_auto_suits(DEFAULT_DO_AUTO_SUITS),
         do_fill_suits(DEFAULT_DO_FILL_SUITS),
         do_fill_suits_automatically(DEFAULT_DO_FILL_SUITS_AUTOMATICALLY),
@@ -91,6 +101,51 @@ namespace doticu_npcp { namespace Party {
     V::Variable_tt<Int_t>& Members_t::Save_State::Limit()
     {
         DEFINE_VARIABLE_REFERENCE(Int_t, "limit");
+    }
+
+    V::Variable_tt<Int_t>& Members_t::Save_State::Fill_Suit_Aura_Probability()
+    {
+        DEFINE_VARIABLE_REFERENCE(Int_t, "fill_suit_aura_probability");
+    }
+
+    V::Variable_tt<Int_t>& Members_t::Save_State::Fill_Suit_Body_Probability()
+    {
+        DEFINE_VARIABLE_REFERENCE(Int_t, "fill_suit_body_probability");
+    }
+
+    V::Variable_tt<Int_t>& Members_t::Save_State::Fill_Suit_Feet_Probability()
+    {
+        DEFINE_VARIABLE_REFERENCE(Int_t, "fill_suit_feet_probability");
+    }
+
+    V::Variable_tt<Int_t>& Members_t::Save_State::Fill_Suit_Finger_Probability()
+    {
+        DEFINE_VARIABLE_REFERENCE(Int_t, "fill_suit_finger_probability");
+    }
+
+    V::Variable_tt<Int_t>& Members_t::Save_State::Fill_Suit_Forearm_Probability()
+    {
+        DEFINE_VARIABLE_REFERENCE(Int_t, "fill_suit_forearm_probability");
+    }
+
+    V::Variable_tt<Int_t>& Members_t::Save_State::Fill_Suit_Forehead_Probability()
+    {
+        DEFINE_VARIABLE_REFERENCE(Int_t, "fill_suit_forehead_probability");
+    }
+
+    V::Variable_tt<Int_t>& Members_t::Save_State::Fill_Suit_Hands_Probability()
+    {
+        DEFINE_VARIABLE_REFERENCE(Int_t, "fill_suit_hands_probability");
+    }
+
+    V::Variable_tt<Int_t>& Members_t::Save_State::Fill_Suit_Head_Probability()
+    {
+        DEFINE_VARIABLE_REFERENCE(Int_t, "fill_suit_head_probability");
+    }
+
+    V::Variable_tt<Int_t>& Members_t::Save_State::Fill_Suit_Neck_Probability()
+    {
+        DEFINE_VARIABLE_REFERENCE(Int_t, "fill_suit_neck_probability");
     }
 
     V::Variable_tt<Bool_t>& Members_t::Save_State::Do_Auto_Suits()
@@ -442,6 +497,16 @@ namespace doticu_npcp { namespace Party {
     {
         this->limit = Limit();
 
+        this->fill_suit_aura_probability = Fill_Suit_Aura_Probability();
+        this->fill_suit_body_probability = Fill_Suit_Body_Probability();
+        this->fill_suit_feet_probability = Fill_Suit_Feet_Probability();
+        this->fill_suit_finger_probability = Fill_Suit_Finger_Probability();
+        this->fill_suit_forearm_probability = Fill_Suit_Forearm_Probability();
+        this->fill_suit_forehead_probability = Fill_Suit_Forehead_Probability();
+        this->fill_suit_hands_probability = Fill_Suit_Hands_Probability();
+        this->fill_suit_head_probability = Fill_Suit_Head_Probability();
+        this->fill_suit_neck_probability = Fill_Suit_Neck_Probability();
+
         this->do_auto_suits = Do_Auto_Suits();
         this->do_fill_suits = Do_Fill_Suits();
         this->do_fill_suits = Do_Fill_Suits_Automatically();
@@ -756,6 +821,16 @@ namespace doticu_npcp { namespace Party {
 
         Limit() = this->limit;
 
+        Fill_Suit_Aura_Probability() = static_cast<Int_t>(this->fill_suit_aura_probability);
+        Fill_Suit_Body_Probability() = static_cast<Int_t>(this->fill_suit_body_probability);
+        Fill_Suit_Feet_Probability() = static_cast<Int_t>(this->fill_suit_feet_probability);
+        Fill_Suit_Finger_Probability() = static_cast<Int_t>(this->fill_suit_finger_probability);
+        Fill_Suit_Forearm_Probability() = static_cast<Int_t>(this->fill_suit_forearm_probability);
+        Fill_Suit_Forehead_Probability() = static_cast<Int_t>(this->fill_suit_forehead_probability);
+        Fill_Suit_Hands_Probability() = static_cast<Int_t>(this->fill_suit_hands_probability);
+        Fill_Suit_Head_Probability() = static_cast<Int_t>(this->fill_suit_head_probability);
+        Fill_Suit_Neck_Probability() = static_cast<Int_t>(this->fill_suit_neck_probability);
+
         Do_Auto_Suits() = this->do_auto_suits;
         Do_Fill_Suits() = this->do_fill_suits;
         Do_Fill_Suits_Automatically() = this->do_fill_suits_automatically;
@@ -920,46 +995,6 @@ namespace doticu_npcp { namespace Party {
         Consts_t::NPCP::Global::Do_Force_Unclone_Generics()->Bool(value);
     }
 
-    Int_t Members_t::Fill_Outfit_Body_Percent()
-    {
-        return 100 - Consts_t::NPCP::Global::Empty_Outfit_Body_Percent()->Percent();
-    }
-
-    void Members_t::Fill_Outfit_Body_Percent(Int_t value)
-    {
-        Consts_t::NPCP::Global::Empty_Outfit_Body_Percent()->Percent(100 - value);
-    }
-
-    Int_t Members_t::Fill_Outfit_Feet_Percent()
-    {
-        return 100 - Consts_t::NPCP::Global::Empty_Outfit_Feet_Percent()->Percent();
-    }
-
-    void Members_t::Fill_Outfit_Feet_Percent(Int_t value)
-    {
-        Consts_t::NPCP::Global::Empty_Outfit_Feet_Percent()->Percent(100 - value);
-    }
-
-    Int_t Members_t::Fill_Outfit_Hands_Percent()
-    {
-        return 100 - Consts_t::NPCP::Global::Empty_Outfit_Hands_Percent()->Percent();
-    }
-
-    void Members_t::Fill_Outfit_Hands_Percent(Int_t value)
-    {
-        Consts_t::NPCP::Global::Empty_Outfit_Hands_Percent()->Percent(100 - value);
-    }
-
-    Int_t Members_t::Fill_Outfit_Head_Percent()
-    {
-        return 100 - Consts_t::NPCP::Global::Empty_Outfit_Head_Percent()->Percent();
-    }
-
-    void Members_t::Fill_Outfit_Head_Percent(Int_t value)
-    {
-        Consts_t::NPCP::Global::Empty_Outfit_Head_Percent()->Percent(100 - value);
-    }
-
     Members_t::Members_t(some<Quest_t*> quest, Bool_t is_new_game) :
         quest(quest),
         save_state(quest),
@@ -975,11 +1010,6 @@ namespace doticu_npcp { namespace Party {
             Do_Force_Clone_Generics(false);
             Do_Force_Unclone_Uniques(false);
             Do_Force_Unclone_Generics(false);
-
-            Fill_Outfit_Body_Percent(DEFAULT_FILL_OUTFIT_BODY_PERCENT);
-            Fill_Outfit_Feet_Percent(DEFAULT_FILL_OUTFIT_FEET_PERCENT);
-            Fill_Outfit_Hands_Percent(DEFAULT_FILL_OUTFIT_HANDS_PERCENT);
-            Fill_Outfit_Head_Percent(DEFAULT_FILL_OUTFIT_HEAD_PERCENT);
         } else {
             this->save_state.Read();
 
@@ -1042,6 +1072,109 @@ namespace doticu_npcp { namespace Party {
     Main_t& Members_t::Main()
     {
         return NPCP.Main().Party();
+    }
+
+    u8 Members_t::Fill_Suit_Aura_Probability()
+    {
+        return this->save_state.fill_suit_aura_probability;
+    }
+
+    void Members_t::Fill_Suit_Aura_Probability(u8 value)
+    {
+        this->save_state.fill_suit_aura_probability = value;
+    }
+
+    u8 Members_t::Fill_Suit_Body_Probability()
+    {
+        return this->save_state.fill_suit_body_probability;
+    }
+
+    void Members_t::Fill_Suit_Body_Probability(u8 value)
+    {
+        this->save_state.fill_suit_body_probability = value;
+    }
+
+    u8 Members_t::Fill_Suit_Feet_Probability()
+    {
+        return this->save_state.fill_suit_feet_probability;
+    }
+
+    void Members_t::Fill_Suit_Feet_Probability(u8 value)
+    {
+        this->save_state.fill_suit_feet_probability = value;
+    }
+
+    u8 Members_t::Fill_Suit_Finger_Probability()
+    {
+        return this->save_state.fill_suit_finger_probability;
+    }
+
+    void Members_t::Fill_Suit_Finger_Probability(u8 value)
+    {
+        this->save_state.fill_suit_finger_probability = value;
+    }
+
+    u8 Members_t::Fill_Suit_Forearm_Probability()
+    {
+        return this->save_state.fill_suit_forearm_probability;
+    }
+
+    void Members_t::Fill_Suit_Forearm_Probability(u8 value)
+    {
+        this->save_state.fill_suit_forearm_probability = value;
+    }
+
+    u8 Members_t::Fill_Suit_Forehead_Probability()
+    {
+        return this->save_state.fill_suit_forehead_probability;
+    }
+
+    void Members_t::Fill_Suit_Forehead_Probability(u8 value)
+    {
+        this->save_state.fill_suit_forehead_probability = value;
+    }
+
+    u8 Members_t::Fill_Suit_Hands_Probability()
+    {
+        return this->save_state.fill_suit_hands_probability;
+    }
+
+    void Members_t::Fill_Suit_Hands_Probability(u8 value)
+    {
+        this->save_state.fill_suit_hands_probability = value;
+    }
+
+    u8 Members_t::Fill_Suit_Head_Probability()
+    {
+        return this->save_state.fill_suit_head_probability;
+    }
+
+    void Members_t::Fill_Suit_Head_Probability(u8 value)
+    {
+        this->save_state.fill_suit_head_probability = value;
+    }
+
+    u8 Members_t::Fill_Suit_Neck_Probability()
+    {
+        return this->save_state.fill_suit_neck_probability;
+    }
+
+    void Members_t::Fill_Suit_Neck_Probability(u8 value)
+    {
+        this->save_state.fill_suit_neck_probability = value;
+    }
+
+    void Members_t::Reset_Fill_Suit_Probabilities()
+    {
+        Fill_Suit_Aura_Probability(DEFAULT_FILL_SUIT_AURA_PROBABILITY);
+        Fill_Suit_Body_Probability(DEFAULT_FILL_SUIT_BODY_PROBABILITY);
+        Fill_Suit_Feet_Probability(DEFAULT_FILL_SUIT_FEET_PROBABILITY);
+        Fill_Suit_Finger_Probability(DEFAULT_FILL_SUIT_FINGER_PROBABILITY);
+        Fill_Suit_Forearm_Probability(DEFAULT_FILL_SUIT_FOREARM_PROBABILITY);
+        Fill_Suit_Forehead_Probability(DEFAULT_FILL_SUIT_FOREHEAD_PROBABILITY);
+        Fill_Suit_Hands_Probability(DEFAULT_FILL_SUIT_HANDS_PROBABILITY);
+        Fill_Suit_Head_Probability(DEFAULT_FILL_SUIT_HEAD_PROBABILITY);
+        Fill_Suit_Neck_Probability(DEFAULT_FILL_SUIT_NECK_PROBABILITY);
     }
 
     Bool_t Members_t::Do_Fill_Suits_Automatically()
@@ -1964,15 +2097,15 @@ namespace doticu_npcp { namespace Party {
 
         some<Reference_t*> cache = Cache(valid_id);
 
-        maybe<Armor_t*> aura = armor_set.Aura(100);
-        maybe<Armor_t*> body = armor_set.Body(85);
-        maybe<Armor_t*> feet = armor_set.Feet(33);
-        maybe<Armor_t*> finger = armor_set.Finger(100);
-        maybe<Armor_t*> forearm = armor_set.Forearm(33);
-        maybe<Armor_t*> forehead = armor_set.Forehead(100);
-        maybe<Armor_t*> hands = armor_set.Hands(33);
-        maybe<Armor_t*> head = armor_set.Head(15);
-        maybe<Armor_t*> neck = armor_set.Neck(100);
+        maybe<Armor_t*> aura = armor_set.Aura(Fill_Suit_Aura_Probability());
+        maybe<Armor_t*> body = armor_set.Body(Fill_Suit_Body_Probability());
+        maybe<Armor_t*> feet = armor_set.Feet(Fill_Suit_Feet_Probability());
+        maybe<Armor_t*> finger = armor_set.Finger(Fill_Suit_Finger_Probability());
+        maybe<Armor_t*> forearm = armor_set.Forearm(Fill_Suit_Forearm_Probability());
+        maybe<Armor_t*> forehead = armor_set.Forehead(Fill_Suit_Forehead_Probability());
+        maybe<Armor_t*> hands = armor_set.Hands(Fill_Suit_Hands_Probability());
+        maybe<Armor_t*> head = armor_set.Head(Fill_Suit_Head_Probability());
+        maybe<Armor_t*> neck = armor_set.Neck(Fill_Suit_Neck_Probability());
 
         if (aura) cache->Add_Item(aura(), none<Extra_List_t*>(), 1, none<Reference_t*>());
         if (body) cache->Add_Item(body(), none<Extra_List_t*>(), 1, none<Reference_t*>());

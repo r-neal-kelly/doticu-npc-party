@@ -4,6 +4,16 @@ Scriptname doticu_npcp_party_members extends Quest
 
 int                 limit                           = 0
 
+int                 fill_suit_aura_probability      = 0
+int                 fill_suit_body_probability      = 0
+int                 fill_suit_feet_probability      = 0
+int                 fill_suit_finger_probability    = 0
+int                 fill_suit_forearm_probability   = 0
+int                 fill_suit_forehead_probability  = 0
+int                 fill_suit_hands_probability     = 0
+int                 fill_suit_head_probability      = 0
+int                 fill_suit_neck_probability      = 0
+
 bool                do_auto_suits                   = false
 bool                do_fill_suits                   = false
 bool                do_fill_suits_automatically     = false

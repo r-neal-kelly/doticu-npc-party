@@ -224,10 +224,6 @@ namespace doticu_npcp {
                 static some<Global_t*> Do_Force_Clone_Generics();
                 static some<Global_t*> Do_Force_Unclone_Uniques();
                 static some<Global_t*> Do_Force_Unclone_Generics();
-                static some<Global_t*> Empty_Outfit_Body_Percent();
-                static some<Global_t*> Empty_Outfit_Feet_Percent();
-                static some<Global_t*> Empty_Outfit_Hands_Percent();
-                static some<Global_t*> Empty_Outfit_Head_Percent();
             };
             struct Int
             {
