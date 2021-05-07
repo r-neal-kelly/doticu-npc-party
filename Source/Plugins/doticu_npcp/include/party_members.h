@@ -178,8 +178,10 @@ namespace doticu_npcp { namespace Party {
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Is_Reanimated();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Is_Thrall();
 
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Archer();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Civilized();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Combatant();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Coward();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Dangerous();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Eater();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Exterior();
@@ -189,6 +191,7 @@ namespace doticu_npcp { namespace Party {
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Immobile();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Inn();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Interior();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Mage();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Mannequin();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Member();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Sandboxer();
@@ -196,9 +199,12 @@ namespace doticu_npcp { namespace Party {
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Sitter();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Sleeper();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Thrall();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Warrior();
 
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Archer();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Civilized();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Combatant();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Coward();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Dangerous();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Eater();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Exterior();
@@ -208,6 +214,7 @@ namespace doticu_npcp { namespace Party {
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Immobile();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Inn();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Interior();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Mage();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Mannequin();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Member();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Sandboxer();
@@ -215,6 +222,7 @@ namespace doticu_npcp { namespace Party {
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Sitter();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Sleeper();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Thrall();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Warrior();
 
             V::Variable_tt<Vector_t<String_t>>&                 Names();
 
@@ -417,7 +425,7 @@ namespace doticu_npcp { namespace Party {
         void    Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, some<Outfit_t*> outfit);
         void    Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, some<Container_t*> container);
         void    Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, some<Actor_Base_t*> actor_base);
-        void    Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, Armor_Set_t armor_set);
+        void    Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, Member_Suit_Template_t suit_template);
         void    Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, some<Reference_t*> reference, Bool_t do_copy);
         void    Remove_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type);
 

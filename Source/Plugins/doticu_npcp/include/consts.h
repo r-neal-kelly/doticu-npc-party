@@ -174,8 +174,10 @@ namespace doticu_npcp {
                 static some<Faction_t*> Horse();
                 static some<Faction_t*> Member();
                 static some<Faction_t*> Suit_Active();
+                static some<Faction_t*> Suit_Archer();
                 static some<Faction_t*> Suit_Civilized();
                 static some<Faction_t*> Suit_Combatant();
+                static some<Faction_t*> Suit_Coward();
                 static some<Faction_t*> Suit_Dangerous();
                 static some<Faction_t*> Suit_Eater();
                 static some<Faction_t*> Suit_Exterior();
@@ -185,6 +187,7 @@ namespace doticu_npcp {
                 static some<Faction_t*> Suit_Immobile();
                 static some<Faction_t*> Suit_Inn();
                 static some<Faction_t*> Suit_Interior();
+                static some<Faction_t*> Suit_Mage();
                 static some<Faction_t*> Suit_Mannequin();
                 static some<Faction_t*> Suit_Member();
                 static some<Faction_t*> Suit_Sandboxer();
@@ -192,6 +195,7 @@ namespace doticu_npcp {
                 static some<Faction_t*> Suit_Sitter();
                 static some<Faction_t*> Suit_Sleeper();
                 static some<Faction_t*> Suit_Thrall();
+                static some<Faction_t*> Suit_Warrior();
             };
             struct Form_List
             {

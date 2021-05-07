@@ -82,6 +82,7 @@
     <ClCompile Include="src\party_member_sort_type.cpp" />
     <ClCompile Include="src\party_member_combat_style.cpp" />
     <ClCompile Include="src\party_member_suit_fill_type.cpp" />
+    <ClCompile Include="src\party_member_suit_template.cpp" />
     <ClCompile Include="src\party_member_update_ai.cpp" />
     <ClCompile Include="src\party_settlers.cpp" />
     <ClCompile Include="src\party_settler_duration.cpp" />
@@ -119,6 +120,7 @@
     <ClInclude Include="include\party_member_suitcase.h" />
     <ClInclude Include="include\party_member_rating.h" />
     <ClInclude Include="include\party_member_suit_fill_type.h" />
+    <ClInclude Include="include\party_member_suit_template.h" />
     <ClInclude Include="include\party_member_suit_type.h" />
     <ClInclude Include="include\party_member_update_ai.h" />
     <ClInclude Include="include\party_member_vitality.h" />

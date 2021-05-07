@@ -87,6 +87,9 @@
     <ClCompile Include="src\party_member_suitcase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\party_member_suit_template.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\main.h">
@@ -261,6 +264,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\party_member_flags_only_playables.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_member_suit_template.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

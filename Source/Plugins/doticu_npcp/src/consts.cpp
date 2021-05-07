@@ -138,8 +138,10 @@ namespace doticu_npcp {
     some<Faction_t*>            Consts_t::NPCP::Faction::Horse()                            { DEFINE_FORM(Mod(), Faction_t, 0x354111); }
     some<Faction_t*>            Consts_t::NPCP::Faction::Member()                           { DEFINE_FORM(Mod(), Faction_t, 0x091154); }
     some<Faction_t*>            Consts_t::NPCP::Faction::Suit_Active()                      { DEFINE_FORM(Mod(), Faction_t, 0x4267D8); }
+    some<Faction_t*>            Consts_t::NPCP::Faction::Suit_Archer()                      { DEFINE_FORM(Mod(), Faction_t, 0x4267EF); }
     some<Faction_t*>            Consts_t::NPCP::Faction::Suit_Civilized()                   { DEFINE_FORM(Mod(), Faction_t, 0x4267DE); }
     some<Faction_t*>            Consts_t::NPCP::Faction::Suit_Combatant()                   { DEFINE_FORM(Mod(), Faction_t, 0x4267E9); }
+    some<Faction_t*>            Consts_t::NPCP::Faction::Suit_Coward()                      { DEFINE_FORM(Mod(), Faction_t, 0x4267F0); }
     some<Faction_t*>            Consts_t::NPCP::Faction::Suit_Dangerous()                   { DEFINE_FORM(Mod(), Faction_t, 0x4267DF); }
     some<Faction_t*>            Consts_t::NPCP::Faction::Suit_Eater()                       { DEFINE_FORM(Mod(), Faction_t, 0x4267E3); }
     some<Faction_t*>            Consts_t::NPCP::Faction::Suit_Exterior()                    { DEFINE_FORM(Mod(), Faction_t, 0x4267DC); }
@@ -149,6 +151,7 @@ namespace doticu_npcp {
     some<Faction_t*>            Consts_t::NPCP::Faction::Suit_Immobile()                    { DEFINE_FORM(Mod(), Faction_t, 0x4267EA); }
     some<Faction_t*>            Consts_t::NPCP::Faction::Suit_Inn()                         { DEFINE_FORM(Mod(), Faction_t, 0x4267E8); }
     some<Faction_t*>            Consts_t::NPCP::Faction::Suit_Interior()                    { DEFINE_FORM(Mod(), Faction_t, 0x4267DD); }
+    some<Faction_t*>            Consts_t::NPCP::Faction::Suit_Mage()                        { DEFINE_FORM(Mod(), Faction_t, 0x4267EE); }
     some<Faction_t*>            Consts_t::NPCP::Faction::Suit_Mannequin()                   { DEFINE_FORM(Mod(), Faction_t, 0x4267EB); }
     some<Faction_t*>            Consts_t::NPCP::Faction::Suit_Member()                      { DEFINE_FORM(Mod(), Faction_t, 0x4267DA); }
     some<Faction_t*>            Consts_t::NPCP::Faction::Suit_Sandboxer()                   { DEFINE_FORM(Mod(), Faction_t, 0x4267E0); }
@@ -156,6 +159,7 @@ namespace doticu_npcp {
     some<Faction_t*>            Consts_t::NPCP::Faction::Suit_Sitter()                      { DEFINE_FORM(Mod(), Faction_t, 0x4267E2); }
     some<Faction_t*>            Consts_t::NPCP::Faction::Suit_Sleeper()                     { DEFINE_FORM(Mod(), Faction_t, 0x4267E1); }
     some<Faction_t*>            Consts_t::NPCP::Faction::Suit_Thrall()                      { DEFINE_FORM(Mod(), Faction_t, 0x4267DB); }
+    some<Faction_t*>            Consts_t::NPCP::Faction::Suit_Warrior()                     { DEFINE_FORM(Mod(), Faction_t, 0x4267ED); }
 
     some<Form_List_t*>          Consts_t::NPCP::Form_List::Is_Saddler_Sitting_Globals()     { DEFINE_FORM(Mod(), Form_List_t, 0x395E54); }
     some<Form_List_t*>          Consts_t::NPCP::Form_List::Expo_Cell_Markers()              { DEFINE_FORM(Mod(), Form_List_t, 0x2928AF); }

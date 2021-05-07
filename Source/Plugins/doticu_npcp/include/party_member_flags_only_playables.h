@@ -16,8 +16,10 @@ namespace doticu_npcp { namespace Party {
     public:
         enum enum_type : value_type
         {
+            ARCHER,
             CIVILIZED,
             COMBATANT,
+            COWARD,
             DANGEROUS,
             EATER,
             EXTERIOR,
@@ -27,6 +29,7 @@ namespace doticu_npcp { namespace Party {
             IMMOBILE,
             INN,
             INTERIOR,
+            MAGE,
             MANNEQUIN,
             MEMBER,
             SANDBOXER,
@@ -34,6 +37,7 @@ namespace doticu_npcp { namespace Party {
             SITTER,
             SLEEPER,
             THRALL,
+            WARRIOR,
 
             _TOTAL_,
         };
@@ -47,8 +51,10 @@ namespace doticu_npcp { namespace Party {
         {
             _NONE_ = 0,
 
+            SKYLIB_DEFINE_FLAG(Member_Flags_Only_Playables_e_data, ARCHER),
             SKYLIB_DEFINE_FLAG(Member_Flags_Only_Playables_e_data, CIVILIZED),
             SKYLIB_DEFINE_FLAG(Member_Flags_Only_Playables_e_data, COMBATANT),
+            SKYLIB_DEFINE_FLAG(Member_Flags_Only_Playables_e_data, COWARD),
             SKYLIB_DEFINE_FLAG(Member_Flags_Only_Playables_e_data, DANGEROUS),
             SKYLIB_DEFINE_FLAG(Member_Flags_Only_Playables_e_data, EATER),
             SKYLIB_DEFINE_FLAG(Member_Flags_Only_Playables_e_data, EXTERIOR),
@@ -58,6 +64,7 @@ namespace doticu_npcp { namespace Party {
             SKYLIB_DEFINE_FLAG(Member_Flags_Only_Playables_e_data, IMMOBILE),
             SKYLIB_DEFINE_FLAG(Member_Flags_Only_Playables_e_data, INN),
             SKYLIB_DEFINE_FLAG(Member_Flags_Only_Playables_e_data, INTERIOR),
+            SKYLIB_DEFINE_FLAG(Member_Flags_Only_Playables_e_data, MAGE),
             SKYLIB_DEFINE_FLAG(Member_Flags_Only_Playables_e_data, MANNEQUIN),
             SKYLIB_DEFINE_FLAG(Member_Flags_Only_Playables_e_data, MEMBER),
             SKYLIB_DEFINE_FLAG(Member_Flags_Only_Playables_e_data, SANDBOXER),
@@ -65,6 +72,7 @@ namespace doticu_npcp { namespace Party {
             SKYLIB_DEFINE_FLAG(Member_Flags_Only_Playables_e_data, SITTER),
             SKYLIB_DEFINE_FLAG(Member_Flags_Only_Playables_e_data, SLEEPER),
             SKYLIB_DEFINE_FLAG(Member_Flags_Only_Playables_e_data, THRALL),
+            SKYLIB_DEFINE_FLAG(Member_Flags_Only_Playables_e_data, WARRIOR),
 
             _TOTAL_ = Member_Flags_Only_Playables_e_data::_TOTAL_,
         };

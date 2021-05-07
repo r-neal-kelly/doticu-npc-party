@@ -50,6 +50,7 @@
 #include "doticu_skylib/weapon.h"
 
 #include "chests.h"
+#include "party_member_suit_template.h"
 #include "party_member_suitcase.h"
 #include "party_members.h"
 #include "party_settlers.inl"
@@ -322,7 +323,7 @@ namespace doticu_npcp {
                     members.Is_Banished(idx, false);
                     members.Is_Reanimated(idx, false);
                     members.Name(idx, " Dark Elf Commoner ");
-                    members.Combat_Style(idx, Party::Member_Combat_Style_e::COWARD);
+                    members.Combat_Style(idx, Party::Member_Combat_Style_e::ARCHER);
                     //members.Ghost_Ability(idx, skylib::Const::Spell::Ghost_Ability_Soul_Cairn()());
                     members.Ghost_Ability(idx, none<Spell_t*>());
                     members.Voice_Type(idx, skylib::Const::Voice_Type::Female_Sultry()());
@@ -347,7 +348,7 @@ namespace doticu_npcp {
 
                     settlers.Add<Party::Guard_t>(idx);
 
-                    members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, skylib::Const::Armors::Set_Clothes_Fine_A_Blue());
+                    members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, Party::Member_Suit_Template_t::Member());
                 } else {
                     members.Is_Banished(idx, false);
                     members.Is_Reanimated(idx, true);
@@ -358,7 +359,7 @@ namespace doticu_npcp {
                     members.Relation(idx, Party::Member_Relation_e::ARCHNEMESIS);
                     members.Vitality(idx, Party::Member_Vitality_e::MORTAL);
 
-                    members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, skylib::Const::Armors::Set_Clothes_Fine_A_Green());
+                    members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, Party::Member_Suit_Template_t::Member());
                 }
             }
         }
@@ -400,7 +401,7 @@ namespace doticu_npcp {
                 //Vector_t<some<Armor_t*>> outfit = skylib::Const::Armors::Outfit_Random_Armor_Unweighted();
                 for (size_t idx = 0, end = 1024; idx < end; idx += 1) {
                     if (members.Has_Member(idx)) {
-                        members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, set);
+                        //members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, set);
                         //members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, skylib::Const::Armors::Random_Set());
                     }
                 }
