@@ -2330,27 +2330,29 @@ namespace doticu_npcp { namespace Party {
                 Outfit(member_id, custom_outfit);
             }
 
-            maybe<Member_Suit_Type_e> suit_type = Suit_Type(member_id);
-            if (suit_type) {
-                some<Member_Suitcase_t*> suitcase = Suitcase(member_id);
-                if (suitcase->Has_Inactive_Outfit_Item(actor)) {
-                    // we need to have either a global option or member option here, to initiate the auto-change
-                    Suit_Type(member_id, none<Member_Suit_Type_e>());
-                    suit_type = none<Member_Suit_Type_e>();
-                }
+            if (!actor->Is_In_Combat()) {
+                maybe<Member_Suit_Type_e> suit_type = Suit_Type(member_id);
                 if (suit_type) {
-                    if (Only_Playables(member_id, suit_type())) {
-                        suitcase->Apply_Unto(actor,
-                                             suit_type(),
-                                             Member_Suitcase_t::filter_out_blank_or_token_or_unplayable_objects,
-                                             Do_Fill_Suits_Strictly(),
-                                             Do_Unfill_Suits_To_Pack() ? Pack(member_id)() : none<Reference_t*>()());
-                    } else {
-                        suitcase->Apply_Unto(actor,
-                                             suit_type(),
-                                             Member_Suitcase_t::filter_out_blank_or_token_objects,
-                                             Do_Fill_Suits_Strictly(),
-                                             Do_Unfill_Suits_To_Pack() ? Pack(member_id)() : none<Reference_t*>()());
+                    some<Member_Suitcase_t*> suitcase = Suitcase(member_id);
+                    if (suitcase->Has_Inactive_Outfit_Item(actor)) {
+                        // we need to have either a global option or member option here, to initiate the auto-change
+                        Suit_Type(member_id, none<Member_Suit_Type_e>());
+                        suit_type = none<Member_Suit_Type_e>();
+                    }
+                    if (suit_type) {
+                        if (Only_Playables(member_id, suit_type())) {
+                            suitcase->Apply_Unto(actor,
+                                                 suit_type(),
+                                                 Member_Suitcase_t::filter_out_blank_or_token_or_unplayable_objects,
+                                                 Do_Fill_Suits_Strictly(),
+                                                 Do_Unfill_Suits_To_Pack() ? Pack(member_id)() : none<Reference_t*>()());
+                        } else {
+                            suitcase->Apply_Unto(actor,
+                                                 suit_type(),
+                                                 Member_Suitcase_t::filter_out_blank_or_token_objects,
+                                                 Do_Fill_Suits_Strictly(),
+                                                 Do_Unfill_Suits_To_Pack() ? Pack(member_id)() : none<Reference_t*>()());
+                        }
                     }
                 }
             }
