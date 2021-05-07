@@ -348,7 +348,7 @@ namespace doticu_npcp {
 
                     settlers.Add<Party::Guard_t>(idx);
 
-                    members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, Party::Member_Suit_Template_t::Member());
+                    members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, Party::Member_Suit_Template_t::Archer());
                 } else {
                     members.Is_Banished(idx, false);
                     members.Is_Reanimated(idx, true);
@@ -359,7 +359,7 @@ namespace doticu_npcp {
                     members.Relation(idx, Party::Member_Relation_e::ARCHNEMESIS);
                     members.Vitality(idx, Party::Member_Vitality_e::MORTAL);
 
-                    members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, Party::Member_Suit_Template_t::Member());
+                    members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, Party::Member_Suit_Template_t::Archer());
                 }
             }
         }

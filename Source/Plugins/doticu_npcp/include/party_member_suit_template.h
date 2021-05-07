@@ -37,9 +37,10 @@ namespace doticu_npcp { namespace Party {
         static Member_Suit_Template_t   Warrior();
 
     public:
-        Armor_Set_t                 armor;
-        Vector_t<some<Weapon_t*>>   weapons;
-        maybe<Ammo_t*>              ammo;
+        Armor_Set_t         armor;
+        maybe<Weapon_t*>    weapon_a;
+        maybe<Weapon_t*>    weapon_b;
+        maybe<Ammo_t*>      ammo;
 
     public:
         Member_Suit_Template_t();

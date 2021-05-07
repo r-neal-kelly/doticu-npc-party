@@ -2207,10 +2207,12 @@ namespace doticu_npcp { namespace Party {
         if (head) cache->Add_Item(head(), none<Extra_List_t*>(), 1, none<Reference_t*>());
         if (neck) cache->Add_Item(neck(), none<Extra_List_t*>(), 1, none<Reference_t*>());
 
-        for (size_t idx = 0, end = suit_template.weapons.size(); idx < end; idx += 1) {
-            cache->Add_Item(suit_template.weapons[idx], none<Extra_List_t*>(), 1, none<Reference_t*>());
+        if (suit_template.weapon_a) {
+            cache->Add_Item(suit_template.weapon_a(), none<Extra_List_t*>(), 1, none<Reference_t*>());
         }
-
+        if (suit_template.weapon_b) {
+            cache->Add_Item(suit_template.weapon_b(), none<Extra_List_t*>(), 1, none<Reference_t*>());
+        }
         if (suit_template.ammo) {
             cache->Add_Item(suit_template.ammo(), none<Extra_List_t*>(), 100, none<Reference_t*>());
         }
