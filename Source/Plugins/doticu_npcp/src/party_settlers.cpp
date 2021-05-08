@@ -760,8 +760,10 @@ namespace doticu_npcp { namespace Party {
         if (members.Has_Member(settler_id())) {
             Main_t& main = Main();
             Bool_t do_reset_ai = false;
+            Bool_t is_sneak = members.Is_Sneak(settler_id());
 
             if (Is_Enabled<Sandboxer_t>(settler_id)) {
+                Always_Sneak<Sandboxer_t>(settler_id, is_sneak);
                 Enforce_Package<Sandboxer_t>(settler_id, do_reset_ai);
                 main.Tokenize(settler_id, Token<Sandboxer_t>());
             } else {
@@ -769,6 +771,7 @@ namespace doticu_npcp { namespace Party {
             }
 
             if (Is_Enabled<Sleeper_t>(settler_id)) {
+                Always_Sneak<Sleeper_t>(settler_id, is_sneak);
                 Enforce_Package<Sleeper_t>(settler_id, do_reset_ai);
 
                 maybe<Reference_t*> bed = Bed<Sleeper_t>(settler_id);
@@ -791,6 +794,7 @@ namespace doticu_npcp { namespace Party {
             }
 
             if (Is_Enabled<Sitter_t>(settler_id)) {
+                Always_Sneak<Sitter_t>(settler_id, is_sneak);
                 Enforce_Package<Sitter_t>(settler_id, do_reset_ai);
                 main.Tokenize(settler_id, Token<Sitter_t>());
             } else {
@@ -798,6 +802,7 @@ namespace doticu_npcp { namespace Party {
             }
 
             if (Is_Enabled<Eater_t>(settler_id)) {
+                Always_Sneak<Eater_t>(settler_id, is_sneak);
                 Enforce_Package<Eater_t>(settler_id, do_reset_ai);
                 main.Tokenize(settler_id, Token<Eater_t>());
             } else {
@@ -805,6 +810,7 @@ namespace doticu_npcp { namespace Party {
             }
 
             if (Is_Enabled<Guard_t>(settler_id)) {
+                Always_Sneak<Guard_t>(settler_id, is_sneak);
                 Enforce_Package<Guard_t>(settler_id, do_reset_ai);
                 main.Tokenize(settler_id, Token<Guard_t>());
             } else {

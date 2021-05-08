@@ -1676,22 +1676,62 @@ namespace doticu_npcp { namespace Party {
         }
     }
 
+    template <typename F>
+    inline void Settlers_t::Enforce_Package_General_Flags(some<Package_t*> package,
+                                                          Settler_Flags_e flags,
+                                                          Bool_t& do_reset_ai)
+    {
+        using G = Package_Flags_e;
+
+        SKYLIB_ASSERT(package);
+
+        General_Flag(package, G::ALLOW_SWIMMING, flags.Is_Flagged(F::ALLOW_SWIMMING), do_reset_ai);
+        General_Flag(package, G::ALWAYS_SNEAK, flags.Is_Flagged(F::ALWAYS_SNEAK), do_reset_ai);
+        General_Flag(package, G::IGNORE_COMBAT, flags.Is_Flagged(F::IGNORE_COMBAT), do_reset_ai);
+        General_Flag(package, G::KEEP_WEAPONS_DRAWN, flags.Is_Flagged(F::KEEP_WEAPONS_DRAWN), do_reset_ai);
+        General_Flag(package, G::HIDE_WEAPONS, flags.Is_Flagged(F::HIDE_WEAPONS), do_reset_ai);
+        General_Flag(package, G::SKIP_COMBAT_ALERT, flags.Is_Flagged(F::SKIP_COMBAT_ALERT), do_reset_ai);
+    }
+
+    template <typename F>
+    inline void Settlers_t::Enforce_Package_Interrupt_Flags(some<Package_t*> package,
+                                                            Settler_Flags_e flags,
+                                                            Bool_t& do_reset_ai)
+    {
+        using I = Package_Interrupt_Flags_e;
+
+        SKYLIB_ASSERT(package);
+
+        Interrupt_Flag(package, I::ALLOW_HELLOS_TO_PLAYER, flags.Is_Flagged(F::ALLOW_HELLOS_TO_PLAYER), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_HELLOS_TO_NPCS, flags.Is_Flagged(F::ALLOW_HELLOS_TO_NPCS), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_IDLE_CHATTER, flags.Is_Flagged(F::ALLOW_IDLE_CHATTER), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_AGGRO_RADIUS, flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS), do_reset_ai);
+        Interrupt_Flag(package, I::ALLOW_WORLD_INTERACTIONS, flags.Is_Flagged(F::ALLOW_WORLD_INTERACTIONS), do_reset_ai);
+        Interrupt_Flag(package, I::COMMENT_ON_FRIENDLY_FIRE, flags.Is_Flagged(F::COMMENT_ON_FRIENDLY_FIRE), do_reset_ai);
+        Interrupt_Flag(package, I::INSPECT_CORPSES, flags.Is_Flagged(F::INSPECT_CORPSES), do_reset_ai);
+        Interrupt_Flag(package, I::OBSERVE_COMBAT, flags.Is_Flagged(F::OBSERVE_COMBAT), do_reset_ai);
+        Interrupt_Flag(package, I::REACT_TO_PLAYER_ACTIONS, flags.Is_Flagged(F::REACT_TO_PLAYER_ACTIONS), do_reset_ai);
+    }
+
     template <typename T>
-    inline void Settlers_t::Enforce_Package(some<Settler_ID_t> valid_settler_id, Bool_t& do_reset_ai)
+    inline void Settlers_t::Enforce_Package(some<Settler_ID_t> valid_settler_id,
+                                            Bool_t& do_reset_ai)
     {
     }
 
     template <>
-    inline void Settlers_t::Enforce_Package<Sandboxer_t>(some<Settler_ID_t> id, Bool_t& do_reset_ai)
+    inline void Settlers_t::Enforce_Package<Sandboxer_t>(some<Settler_ID_t> id,
+                                                         Bool_t& do_reset_ai)
     {
         using T = Sandboxer_t;
         using F = T::Flags_e;
         using V = T::Value_e;
-        using G = Package_Flags_e;
-        using I = Package_Interrupt_Flags_e;
 
         some<Package_t*> package = Package<T>(id);
         Settler_Flags_e flags = Flags<T>(id);
+
+        Enforce_Package_General_Flags<F>(package, flags, do_reset_ai);
+        Enforce_Package_Interrupt_Flags<F>(package, flags, do_reset_ai);
 
         Bool(package, V::ALLOW_CONVERSATION, flags.Is_Flagged(F::ALLOW_CONVERSATION), do_reset_ai);
         Bool(package, V::ALLOW_EATING, flags.Is_Flagged(F::ALLOW_EATING), do_reset_ai);
@@ -1707,23 +1747,6 @@ namespace doticu_npcp { namespace Party {
         Float(package, V::ATTENTION, Attention<T>(id)(), do_reset_ai);
         Float(package, V::WANDER_DISTANCE, Wander_Distance<T>(id)(), do_reset_ai);
 
-        General_Flag(package, G::ALLOW_SWIMMING, flags.Is_Flagged(F::ALLOW_SWIMMING), do_reset_ai);
-        General_Flag(package, G::ALWAYS_SNEAK, flags.Is_Flagged(F::ALWAYS_SNEAK), do_reset_ai);
-        General_Flag(package, G::IGNORE_COMBAT, flags.Is_Flagged(F::IGNORE_COMBAT), do_reset_ai);
-        General_Flag(package, G::KEEP_WEAPONS_DRAWN, flags.Is_Flagged(F::KEEP_WEAPONS_DRAWN), do_reset_ai);
-        General_Flag(package, G::HIDE_WEAPONS, flags.Is_Flagged(F::HIDE_WEAPONS), do_reset_ai);
-        General_Flag(package, G::SKIP_COMBAT_ALERT, flags.Is_Flagged(F::SKIP_COMBAT_ALERT), do_reset_ai);
-
-        Interrupt_Flag(package, I::ALLOW_HELLOS_TO_PLAYER, flags.Is_Flagged(F::ALLOW_HELLOS_TO_PLAYER), do_reset_ai);
-        Interrupt_Flag(package, I::ALLOW_HELLOS_TO_NPCS, flags.Is_Flagged(F::ALLOW_HELLOS_TO_NPCS), do_reset_ai);
-        Interrupt_Flag(package, I::ALLOW_IDLE_CHATTER, flags.Is_Flagged(F::ALLOW_IDLE_CHATTER), do_reset_ai);
-        Interrupt_Flag(package, I::ALLOW_AGGRO_RADIUS, flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS), do_reset_ai);
-        Interrupt_Flag(package, I::ALLOW_WORLD_INTERACTIONS, flags.Is_Flagged(F::ALLOW_WORLD_INTERACTIONS), do_reset_ai);
-        Interrupt_Flag(package, I::COMMENT_ON_FRIENDLY_FIRE, flags.Is_Flagged(F::COMMENT_ON_FRIENDLY_FIRE), do_reset_ai);
-        Interrupt_Flag(package, I::INSPECT_CORPSES, flags.Is_Flagged(F::INSPECT_CORPSES), do_reset_ai);
-        Interrupt_Flag(package, I::OBSERVE_COMBAT, flags.Is_Flagged(F::OBSERVE_COMBAT), do_reset_ai);
-        Interrupt_Flag(package, I::REACT_TO_PLAYER_ACTIONS, flags.Is_Flagged(F::REACT_TO_PLAYER_ACTIONS), do_reset_ai);
-
         Location(package, V::LOCATION, Marker<T>(id), Radius<T>(id), do_reset_ai);
 
         Schedule(package, none<Settler_Time_t>(), none<Settler_Duration_t>(), do_reset_ai);
@@ -1732,16 +1755,18 @@ namespace doticu_npcp { namespace Party {
     }
 
     template <>
-    inline void Settlers_t::Enforce_Package<Sleeper_t>(some<Settler_ID_t> id, Bool_t& do_reset_ai)
+    inline void Settlers_t::Enforce_Package<Sleeper_t>(some<Settler_ID_t> id,
+                                                       Bool_t& do_reset_ai)
     {
         using T = Sleeper_t;
         using F = T::Flags_e;
         using V = T::Value_e;
-        using G = Package_Flags_e;
-        using I = Package_Interrupt_Flags_e;
 
         some<Package_t*> package = Package<T>(id);
         Settler_Flags_e flags = Flags<T>(id);
+
+        Enforce_Package_General_Flags<F>(package, flags, do_reset_ai);
+        Enforce_Package_Interrupt_Flags<F>(package, flags, do_reset_ai);
 
         Bool(package, V::ALLOW_CONVERSATION, flags.Is_Flagged(F::ALLOW_CONVERSATION), do_reset_ai);
         Bool(package, V::ALLOW_EATING, flags.Is_Flagged(F::ALLOW_EATING), do_reset_ai);
@@ -1758,23 +1783,6 @@ namespace doticu_npcp { namespace Party {
         Float(package, V::ATTENTION, Attention<T>(id)(), do_reset_ai);
         Float(package, V::WANDER_DISTANCE, Wander_Distance<T>(id)(), do_reset_ai);
 
-        General_Flag(package, G::ALLOW_SWIMMING, flags.Is_Flagged(F::ALLOW_SWIMMING), do_reset_ai);
-        General_Flag(package, G::ALWAYS_SNEAK, flags.Is_Flagged(F::ALWAYS_SNEAK), do_reset_ai);
-        General_Flag(package, G::IGNORE_COMBAT, flags.Is_Flagged(F::IGNORE_COMBAT), do_reset_ai);
-        General_Flag(package, G::KEEP_WEAPONS_DRAWN, flags.Is_Flagged(F::KEEP_WEAPONS_DRAWN), do_reset_ai);
-        General_Flag(package, G::HIDE_WEAPONS, flags.Is_Flagged(F::HIDE_WEAPONS), do_reset_ai);
-        General_Flag(package, G::SKIP_COMBAT_ALERT, flags.Is_Flagged(F::SKIP_COMBAT_ALERT), do_reset_ai);
-
-        Interrupt_Flag(package, I::ALLOW_HELLOS_TO_PLAYER, flags.Is_Flagged(F::ALLOW_HELLOS_TO_PLAYER), do_reset_ai);
-        Interrupt_Flag(package, I::ALLOW_HELLOS_TO_NPCS, flags.Is_Flagged(F::ALLOW_HELLOS_TO_NPCS), do_reset_ai);
-        Interrupt_Flag(package, I::ALLOW_IDLE_CHATTER, flags.Is_Flagged(F::ALLOW_IDLE_CHATTER), do_reset_ai);
-        Interrupt_Flag(package, I::ALLOW_AGGRO_RADIUS, flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS), do_reset_ai);
-        Interrupt_Flag(package, I::ALLOW_WORLD_INTERACTIONS, flags.Is_Flagged(F::ALLOW_WORLD_INTERACTIONS), do_reset_ai);
-        Interrupt_Flag(package, I::COMMENT_ON_FRIENDLY_FIRE, flags.Is_Flagged(F::COMMENT_ON_FRIENDLY_FIRE), do_reset_ai);
-        Interrupt_Flag(package, I::INSPECT_CORPSES, flags.Is_Flagged(F::INSPECT_CORPSES), do_reset_ai);
-        Interrupt_Flag(package, I::OBSERVE_COMBAT, flags.Is_Flagged(F::OBSERVE_COMBAT), do_reset_ai);
-        Interrupt_Flag(package, I::REACT_TO_PLAYER_ACTIONS, flags.Is_Flagged(F::REACT_TO_PLAYER_ACTIONS), do_reset_ai);
-
         Location(package, V::LOCATION, Marker<T>(id), Radius<T>(id), do_reset_ai);
 
         Schedule(package, Time<T>(id), Duration<T>(id), do_reset_ai);
@@ -1783,36 +1791,21 @@ namespace doticu_npcp { namespace Party {
     }
 
     template <>
-    inline void Settlers_t::Enforce_Package<Sitter_t>(some<Settler_ID_t> id, Bool_t& do_reset_ai)
+    inline void Settlers_t::Enforce_Package<Sitter_t>(some<Settler_ID_t> id,
+                                                      Bool_t& do_reset_ai)
     {
         using T = Sitter_t;
         using F = T::Flags_e;
         using V = T::Value_e;
-        using G = Package_Flags_e;
-        using I = Package_Interrupt_Flags_e;
 
         some<Package_t*> package = Package<T>(id);
         Settler_Flags_e flags = Flags<T>(id);
 
+        Enforce_Package_General_Flags<F>(package, flags, do_reset_ai);
+        Enforce_Package_Interrupt_Flags<F>(package, flags, do_reset_ai);
+
         Bool(package, V::ONLY_PREFERRED_PATH, flags.Is_Flagged(F::ONLY_PREFERRED_PATH), do_reset_ai);
         Bool(package, V::STOP_MOVEMENT, flags.Is_Flagged(F::STOP_MOVEMENT), do_reset_ai);
-
-        General_Flag(package, G::ALLOW_SWIMMING, flags.Is_Flagged(F::ALLOW_SWIMMING), do_reset_ai);
-        General_Flag(package, G::ALWAYS_SNEAK, flags.Is_Flagged(F::ALWAYS_SNEAK), do_reset_ai);
-        General_Flag(package, G::IGNORE_COMBAT, flags.Is_Flagged(F::IGNORE_COMBAT), do_reset_ai);
-        General_Flag(package, G::KEEP_WEAPONS_DRAWN, flags.Is_Flagged(F::KEEP_WEAPONS_DRAWN), do_reset_ai);
-        General_Flag(package, G::HIDE_WEAPONS, flags.Is_Flagged(F::HIDE_WEAPONS), do_reset_ai);
-        General_Flag(package, G::SKIP_COMBAT_ALERT, flags.Is_Flagged(F::SKIP_COMBAT_ALERT), do_reset_ai);
-
-        Interrupt_Flag(package, I::ALLOW_HELLOS_TO_PLAYER, flags.Is_Flagged(F::ALLOW_HELLOS_TO_PLAYER), do_reset_ai);
-        Interrupt_Flag(package, I::ALLOW_HELLOS_TO_NPCS, flags.Is_Flagged(F::ALLOW_HELLOS_TO_NPCS), do_reset_ai);
-        Interrupt_Flag(package, I::ALLOW_IDLE_CHATTER, flags.Is_Flagged(F::ALLOW_IDLE_CHATTER), do_reset_ai);
-        Interrupt_Flag(package, I::ALLOW_AGGRO_RADIUS, flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS), do_reset_ai);
-        Interrupt_Flag(package, I::ALLOW_WORLD_INTERACTIONS, flags.Is_Flagged(F::ALLOW_WORLD_INTERACTIONS), do_reset_ai);
-        Interrupt_Flag(package, I::COMMENT_ON_FRIENDLY_FIRE, flags.Is_Flagged(F::COMMENT_ON_FRIENDLY_FIRE), do_reset_ai);
-        Interrupt_Flag(package, I::INSPECT_CORPSES, flags.Is_Flagged(F::INSPECT_CORPSES), do_reset_ai);
-        Interrupt_Flag(package, I::OBSERVE_COMBAT, flags.Is_Flagged(F::OBSERVE_COMBAT), do_reset_ai);
-        Interrupt_Flag(package, I::REACT_TO_PLAYER_ACTIONS, flags.Is_Flagged(F::REACT_TO_PLAYER_ACTIONS), do_reset_ai);
 
         Location(package, V::LOCATION, Marker<T>(id), Radius<T>(id), do_reset_ai);
 
@@ -1822,16 +1815,18 @@ namespace doticu_npcp { namespace Party {
     }
 
     template <>
-    inline void Settlers_t::Enforce_Package<Eater_t>(some<Settler_ID_t> id, Bool_t& do_reset_ai)
+    inline void Settlers_t::Enforce_Package<Eater_t>(some<Settler_ID_t> id,
+                                                     Bool_t& do_reset_ai)
     {
         using T = Eater_t;
         using F = T::Flags_e;
         using V = T::Value_e;
-        using G = Package_Flags_e;
-        using I = Package_Interrupt_Flags_e;
 
         some<Package_t*> package = Package<T>(id);
         Settler_Flags_e flags = Flags<T>(id);
+
+        Enforce_Package_General_Flags<F>(package, flags, do_reset_ai);
+        Enforce_Package_Interrupt_Flags<F>(package, flags, do_reset_ai);
 
         Bool(package, V::ALLOW_ALREADY_HELD_FOOD, flags.Is_Flagged(F::ALLOW_ALREADY_HELD_FOOD), do_reset_ai);
         Bool(package, V::ALLOW_CONVERSATION, flags.Is_Flagged(F::ALLOW_CONVERSATION), do_reset_ai);
@@ -1849,23 +1844,6 @@ namespace doticu_npcp { namespace Party {
         Float(package, V::ATTENTION, Attention<T>(id)(), do_reset_ai);
         Float(package, V::WANDER_DISTANCE, Wander_Distance<T>(id)(), do_reset_ai);
 
-        General_Flag(package, G::ALLOW_SWIMMING, flags.Is_Flagged(F::ALLOW_SWIMMING), do_reset_ai);
-        General_Flag(package, G::ALWAYS_SNEAK, flags.Is_Flagged(F::ALWAYS_SNEAK), do_reset_ai);
-        General_Flag(package, G::IGNORE_COMBAT, flags.Is_Flagged(F::IGNORE_COMBAT), do_reset_ai);
-        General_Flag(package, G::KEEP_WEAPONS_DRAWN, flags.Is_Flagged(F::KEEP_WEAPONS_DRAWN), do_reset_ai);
-        General_Flag(package, G::HIDE_WEAPONS, flags.Is_Flagged(F::HIDE_WEAPONS), do_reset_ai);
-        General_Flag(package, G::SKIP_COMBAT_ALERT, flags.Is_Flagged(F::SKIP_COMBAT_ALERT), do_reset_ai);
-
-        Interrupt_Flag(package, I::ALLOW_HELLOS_TO_PLAYER, flags.Is_Flagged(F::ALLOW_HELLOS_TO_PLAYER), do_reset_ai);
-        Interrupt_Flag(package, I::ALLOW_HELLOS_TO_NPCS, flags.Is_Flagged(F::ALLOW_HELLOS_TO_NPCS), do_reset_ai);
-        Interrupt_Flag(package, I::ALLOW_IDLE_CHATTER, flags.Is_Flagged(F::ALLOW_IDLE_CHATTER), do_reset_ai);
-        Interrupt_Flag(package, I::ALLOW_AGGRO_RADIUS, flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS), do_reset_ai);
-        Interrupt_Flag(package, I::ALLOW_WORLD_INTERACTIONS, flags.Is_Flagged(F::ALLOW_WORLD_INTERACTIONS), do_reset_ai);
-        Interrupt_Flag(package, I::COMMENT_ON_FRIENDLY_FIRE, flags.Is_Flagged(F::COMMENT_ON_FRIENDLY_FIRE), do_reset_ai);
-        Interrupt_Flag(package, I::INSPECT_CORPSES, flags.Is_Flagged(F::INSPECT_CORPSES), do_reset_ai);
-        Interrupt_Flag(package, I::OBSERVE_COMBAT, flags.Is_Flagged(F::OBSERVE_COMBAT), do_reset_ai);
-        Interrupt_Flag(package, I::REACT_TO_PLAYER_ACTIONS, flags.Is_Flagged(F::REACT_TO_PLAYER_ACTIONS), do_reset_ai);
-
         Location(package, V::LOCATION, Marker<T>(id), Radius<T>(id), do_reset_ai);
 
         Schedule(package, Time<T>(id), Duration<T>(id), do_reset_ai);
@@ -1874,34 +1852,19 @@ namespace doticu_npcp { namespace Party {
     }
 
     template <>
-    inline void Settlers_t::Enforce_Package<Guard_t>(some<Settler_ID_t> id, Bool_t& do_reset_ai)
+    inline void Settlers_t::Enforce_Package<Guard_t>(some<Settler_ID_t> id,
+                                                     Bool_t& do_reset_ai)
     {
         using T = Guard_t;
         using F = T::Flags_e;
         using V = T::Value_e;
-        using G = Package_Flags_e;
-        using I = Package_Interrupt_Flags_e;
 
         some<Package_t*> package = Package<T>(id);
         Settler_Flags_e flags = Flags<T>(id);
         some<Reference_t*> marker = Marker<T>(id);
 
-        General_Flag(package, G::ALLOW_SWIMMING, flags.Is_Flagged(F::ALLOW_SWIMMING), do_reset_ai);
-        General_Flag(package, G::ALWAYS_SNEAK, flags.Is_Flagged(F::ALWAYS_SNEAK), do_reset_ai);
-        General_Flag(package, G::IGNORE_COMBAT, flags.Is_Flagged(F::IGNORE_COMBAT), do_reset_ai);
-        General_Flag(package, G::KEEP_WEAPONS_DRAWN, flags.Is_Flagged(F::KEEP_WEAPONS_DRAWN), do_reset_ai);
-        General_Flag(package, G::HIDE_WEAPONS, flags.Is_Flagged(F::HIDE_WEAPONS), do_reset_ai);
-        General_Flag(package, G::SKIP_COMBAT_ALERT, flags.Is_Flagged(F::SKIP_COMBAT_ALERT), do_reset_ai);
-
-        Interrupt_Flag(package, I::ALLOW_HELLOS_TO_PLAYER, flags.Is_Flagged(F::ALLOW_HELLOS_TO_PLAYER), do_reset_ai);
-        Interrupt_Flag(package, I::ALLOW_HELLOS_TO_NPCS, flags.Is_Flagged(F::ALLOW_HELLOS_TO_NPCS), do_reset_ai);
-        Interrupt_Flag(package, I::ALLOW_IDLE_CHATTER, flags.Is_Flagged(F::ALLOW_IDLE_CHATTER), do_reset_ai);
-        Interrupt_Flag(package, I::ALLOW_AGGRO_RADIUS, flags.Is_Flagged(F::ALLOW_AGGRO_RADIUS), do_reset_ai);
-        Interrupt_Flag(package, I::ALLOW_WORLD_INTERACTIONS, flags.Is_Flagged(F::ALLOW_WORLD_INTERACTIONS), do_reset_ai);
-        Interrupt_Flag(package, I::COMMENT_ON_FRIENDLY_FIRE, flags.Is_Flagged(F::COMMENT_ON_FRIENDLY_FIRE), do_reset_ai);
-        Interrupt_Flag(package, I::INSPECT_CORPSES, flags.Is_Flagged(F::INSPECT_CORPSES), do_reset_ai);
-        Interrupt_Flag(package, I::OBSERVE_COMBAT, flags.Is_Flagged(F::OBSERVE_COMBAT), do_reset_ai);
-        Interrupt_Flag(package, I::REACT_TO_PLAYER_ACTIONS, flags.Is_Flagged(F::REACT_TO_PLAYER_ACTIONS), do_reset_ai);
+        Enforce_Package_General_Flags<F>(package, flags, do_reset_ai);
+        Enforce_Package_Interrupt_Flags<F>(package, flags, do_reset_ai);
 
         Location(package, V::WAIT_LOCATION, marker, 0, do_reset_ai);
         Location(package, V::RESTRICTED_LOCATION, marker, Radius<T>(id), do_reset_ai);

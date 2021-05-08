@@ -222,7 +222,7 @@ namespace doticu_npcp {
     some<Misc_t*>               Consts_t::NPCP::Misc::Token::Essential_Vitality()           { DEFINE_FORM(Mod(), Misc_t, 0x0A0459); }
     some<Misc_t*>               Consts_t::NPCP::Misc::Token::Invulnerable_Vitality()        { DEFINE_FORM(Mod(), Misc_t, 0x0A045C); }
     some<Misc_t*>               Consts_t::NPCP::Misc::Token::Follower()                     { DEFINE_FORM(Mod(), Misc_t, 0x000D84); }
-    some<Misc_t*>               Consts_t::NPCP::Misc::Token::Sneak_Follower()               { DEFINE_FORM(Mod(), Misc_t, 0x000D85); }
+    some<Misc_t*>               Consts_t::NPCP::Misc::Token::Sneak()                        { DEFINE_FORM(Mod(), Misc_t, 0x4267F1); }
     some<Misc_t*>               Consts_t::NPCP::Misc::Token::Sojourner_Follower()           { DEFINE_FORM(Mod(), Misc_t, 0x401417); }
     some<Misc_t*>               Consts_t::NPCP::Misc::Token::Active_Sojourner_Follower()    { DEFINE_FORM(Mod(), Misc_t, 0x40651D); }
     some<Misc_t*>               Consts_t::NPCP::Misc::Token::Saddler()                      { DEFINE_FORM(Mod(), Misc_t, 0x34F000); }

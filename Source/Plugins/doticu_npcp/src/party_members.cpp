@@ -2365,12 +2365,15 @@ namespace doticu_npcp { namespace Party {
                 actor->Remove_Spell(Consts_t::NPCP::Spell::Reanimate_Ability());
             }
 
-            // need to add a token
             if (Is_Sneak(member_id)) {
+                main.Tokenize(member_id, Consts_t::NPCP::Misc::Token::Sneak());
+
                 if (!actor->Is_Forced_To_Sneak()) {
                     actor->Is_Forced_To_Sneak(true, main.Script(member_id));
                 }
             } else {
+                main.Untokenize(member_id, Consts_t::NPCP::Misc::Token::Sneak());
+
                 if (actor->Is_Forced_To_Sneak()) {
                     actor->Is_Forced_To_Sneak(false, main.Script(member_id));
                 }

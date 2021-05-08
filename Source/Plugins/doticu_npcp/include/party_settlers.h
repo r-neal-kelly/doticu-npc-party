@@ -513,8 +513,17 @@ namespace doticu_npcp { namespace Party {
                       some<Settler_Speed_e> speed,
                       Bool_t& do_reset_ai);
 
+        template <typename F>
+        void    Enforce_Package_General_Flags(some<Package_t*> package,
+                                              Settler_Flags_e flags,
+                                              Bool_t& do_reset_ai);
+        template <typename F>
+        void    Enforce_Package_Interrupt_Flags(some<Package_t*> package,
+                                                Settler_Flags_e flags,
+                                                Bool_t& do_reset_ai);
         template <typename T>
-        void    Enforce_Package(some<Settler_ID_t> valid_settler_id, Bool_t& do_reset_ai);
+        void    Enforce_Package(some<Settler_ID_t> valid_settler_id,
+                                Bool_t& do_reset_ai);
         void    Enforce(some<Settler_ID_t> settler_id);
 
     public:

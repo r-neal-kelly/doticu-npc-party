@@ -312,6 +312,7 @@ namespace doticu_npcp {
         Party::Main_t& party = Party();
         Party::Members_t& members = party.Members();
         Party::Settlers_t& settlers = party.Settlers();
+        Party::Followers_t& followers = party.Followers();
 
         members.Do_Fill_Suits_Automatically(true);
         members.Do_Fill_Suits_Strictly(true);
@@ -344,11 +345,9 @@ namespace doticu_npcp {
 
                     settlers.Add<Party::Sandboxer_t>(idx);
                     settlers.Allow_Hellos_To_Player<Party::Sandboxer_t>(idx, false);
-                    settlers.Always_Sneak<Party::Sandboxer_t>(idx, false);
                     settlers.Speed<Party::Sandboxer_t>(idx, Party::Settler_Speed_e::RUN);
 
                     settlers.Add<Party::Sleeper_t>(idx);
-                    settlers.Always_Sneak<Party::Sleeper_t>(idx, false);
                     settlers.Bed<Party::Sleeper_t>(idx, skylib::Const::Furniture::Bedroll_01_FLR());
                     settlers.Duration_Hours<Party::Sleeper_t>(idx, 7);
                     settlers.Allow_Sitting<Party::Sleeper_t>(idx, false);
@@ -361,7 +360,7 @@ namespace doticu_npcp {
 
                     members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, Party::Member_Suit_Template_t::Thrall());
 
-                    //Party().Followers().Add_Follower(idx);
+                    //followers.Add_Follower(idx);
                 } else {
                     members.Is_Banished(idx, false);
                     members.Is_Reanimated(idx, true);
@@ -375,7 +374,7 @@ namespace doticu_npcp {
 
                     members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, Party::Member_Suit_Template_t::Thrall());
 
-                    Party().Followers().Add_Follower(idx);
+                    followers.Add_Follower(idx);
                 }
             }
         }

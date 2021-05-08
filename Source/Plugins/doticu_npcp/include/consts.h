@@ -280,7 +280,7 @@ namespace doticu_npcp {
                     static some<Misc_t*> Essential_Vitality();
                     static some<Misc_t*> Invulnerable_Vitality();
                     static some<Misc_t*> Follower();
-                    static some<Misc_t*> Sneak_Follower();
+                    static some<Misc_t*> Sneak();
                     static some<Misc_t*> Sojourner_Follower();
                     static some<Misc_t*> Active_Sojourner_Follower();
                     static some<Misc_t*> Saddler();
