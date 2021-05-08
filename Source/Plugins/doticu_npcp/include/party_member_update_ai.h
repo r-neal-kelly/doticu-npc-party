@@ -25,11 +25,31 @@ namespace doticu_npcp { namespace Party {
         };
 
     public:
-        static Bool_t                   Is_Valid(value_type value);
+        static inline Bool_t Is_Valid(value_type value)
+        {
+            return value > _NONE_ && value < _TOTAL_;
+        }
 
-        static some<const char* const*> Strings();
-        static some<const char*>        To_String(value_type value);
-        static value_type               From_String(maybe<const char*> string);
+        static inline some<const char* const*> Strings()
+        {
+            static const char* const strings[_TOTAL_] =
+            {
+                SKYLIB_ENUM_TO_STRING(EVALUATE_PACKAGE),
+                SKYLIB_ENUM_TO_STRING(RESET_AI),
+            };
+
+            return strings;
+        }
+
+        static inline some<const char*> To_String(value_type value)
+        {
+            return Enum_Type_Data_t::To_String(Strings(), "NONE", &Is_Valid, value);
+        }
+
+        static inline value_type From_String(maybe<const char*> string)
+        {
+            return Enum_Type_Data_t::From_String(Strings(), _NONE_, _TOTAL_, string);
+        }
     };
 
     class Member_Update_AI_e :

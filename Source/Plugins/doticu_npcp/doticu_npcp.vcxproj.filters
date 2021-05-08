@@ -42,19 +42,7 @@
     <ClCompile Include="src\npcp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\party_member_combat_style.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\party_member_sort_type.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\party_member_suit_fill_type.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\party_member.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\party_member_update_ai.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\party_main.cpp">
@@ -73,9 +61,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\party_settler_time.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\party_settler_time_am_pm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\party_settler_duration.cpp">
