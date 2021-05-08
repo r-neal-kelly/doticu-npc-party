@@ -81,11 +81,6 @@ namespace doticu_npcp { namespace Party {
         DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_is_saddler");
     }
 
-    V::Variable_tt<Vector_t<Bool_t>>& Followers_t::Save_State::Flags_Is_Sneak()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_is_sneak");
-    }
-
     V::Variable_tt<Vector_t<Bool_t>>& Followers_t::Save_State::Flags_Is_Sojourner()
     {
         DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_is_sojourner");
@@ -105,14 +100,12 @@ namespace doticu_npcp { namespace Party {
 
         Vector_t<Bool_t> flags_is_retreater = Flags_Is_Retreater();
         Vector_t<Bool_t> flags_is_saddler = Flags_Is_Saddler();
-        Vector_t<Bool_t> flags_is_sneak = Flags_Is_Sneak();
         Vector_t<Bool_t> flags_is_sojourner = Flags_Is_Sojourner();
 
         member_ids.resize(MAX_FOLLOWERS);
 
         flags_is_retreater.resize(MAX_FOLLOWERS);
         flags_is_saddler.resize(MAX_FOLLOWERS);
-        flags_is_sneak.resize(MAX_FOLLOWERS);
         flags_is_sojourner.resize(MAX_FOLLOWERS);
 
         for (size_t idx = 0, end = MAX_FOLLOWERS; idx < end; idx += 1) {
@@ -121,7 +114,6 @@ namespace doticu_npcp { namespace Party {
             Follower_Flags_e& flags = this->flags[idx];
             flags.Is_Flagged(Follower_Flags_e::IS_RETREATER, flags_is_retreater[idx]);
             flags.Is_Flagged(Follower_Flags_e::IS_SADDLER, flags_is_saddler[idx]);
-            flags.Is_Flagged(Follower_Flags_e::IS_SNEAK, flags_is_sneak[idx]);
             flags.Is_Flagged(Follower_Flags_e::IS_SOJOURNER, flags_is_sojourner[idx]);
         }
     }
@@ -132,7 +124,6 @@ namespace doticu_npcp { namespace Party {
 
         Vector_t<Bool_t> flags_is_retreater(MAX_FOLLOWERS, false);
         Vector_t<Bool_t> flags_is_saddler(MAX_FOLLOWERS, false);
-        Vector_t<Bool_t> flags_is_sneak(MAX_FOLLOWERS, false);
         Vector_t<Bool_t> flags_is_sojourner(MAX_FOLLOWERS, false);
 
         for (size_t idx = 0, end = MAX_FOLLOWERS; idx < end; idx += 1) {
@@ -141,7 +132,6 @@ namespace doticu_npcp { namespace Party {
             Follower_Flags_e flags = this->flags[idx];
             flags_is_retreater[idx] = flags.Is_Flagged(Follower_Flags_e::IS_RETREATER);
             flags_is_saddler[idx] = flags.Is_Flagged(Follower_Flags_e::IS_SADDLER);
-            flags_is_sneak[idx] = flags.Is_Flagged(Follower_Flags_e::IS_SNEAK);
             flags_is_sojourner[idx] = flags.Is_Flagged(Follower_Flags_e::IS_SOJOURNER);
         }
 
@@ -157,7 +147,6 @@ namespace doticu_npcp { namespace Party {
 
         Flags_Is_Retreater() = flags_is_retreater;
         Flags_Is_Saddler() = flags_is_saddler;
-        Flags_Is_Sneak() = flags_is_sneak;
         Flags_Is_Sojourner() = flags_is_sojourner;
     }
 
@@ -236,6 +225,10 @@ namespace doticu_npcp { namespace Party {
             if (this->save_state.limit() < follower_count) {
                 this->save_state.limit = follower_count;
             }
+        }
+
+        if (!this->save_state.sort_type) {
+            this->save_state.sort_type = DEFAULT_SORT_TYPE;
         }
 
         class Unfill_Aliases_Callback :
@@ -320,10 +313,6 @@ namespace doticu_npcp { namespace Party {
 
     some<Member_Sort_Type_e> Followers_t::Sort_Type()
     {
-        if (!this->save_state.sort_type) {
-            this->save_state.sort_type = DEFAULT_SORT_TYPE;
-        }
-
         return this->save_state.sort_type;
     }
 
@@ -415,7 +404,6 @@ namespace doticu_npcp { namespace Party {
         Follower_Flags_e& flags = self.save_state.flags[follower_id()];
         flags.Is_Flagged(Follower_Flags_e::IS_RETREATER, false);
         flags.Is_Flagged(Follower_Flags_e::IS_SADDLER, false);
-        flags.Is_Flagged(Follower_Flags_e::IS_SNEAK, false);
         flags.Is_Flagged(Follower_Flags_e::IS_SOJOURNER, false);
 
         self.Alias_Reference(follower_id)->Fill(self.Actor(follower_id), none<V::Callback_i*>());
@@ -496,6 +484,54 @@ namespace doticu_npcp { namespace Party {
         some<Member_ID_t> member_id = this->save_state.member_ids[valid_follower_id()]();
         SKYLIB_ASSERT_SOME(member_id);
         return member_id;
+    }
+
+    Bool_t Followers_t::Is_Retreater(some<Follower_ID_t> valid_follower_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_follower_id);
+        SKYLIB_ASSERT(Has_Follower(valid_follower_id));
+
+        return this->save_state.flags[valid_follower_id()].Is_Flagged(Follower_Flags_e::IS_RETREATER);
+    }
+
+    void Followers_t::Is_Retreater(some<Follower_ID_t> valid_follower_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_follower_id);
+        SKYLIB_ASSERT(Has_Follower(valid_follower_id));
+
+        this->save_state.flags[valid_follower_id()].Is_Flagged(Follower_Flags_e::IS_RETREATER, value);
+    }
+
+    Bool_t Followers_t::Is_Saddler(some<Follower_ID_t> valid_follower_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_follower_id);
+        SKYLIB_ASSERT(Has_Follower(valid_follower_id));
+
+        return this->save_state.flags[valid_follower_id()].Is_Flagged(Follower_Flags_e::IS_SADDLER);
+    }
+
+    void Followers_t::Is_Saddler(some<Follower_ID_t> valid_follower_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_follower_id);
+        SKYLIB_ASSERT(Has_Follower(valid_follower_id));
+
+        this->save_state.flags[valid_follower_id()].Is_Flagged(Follower_Flags_e::IS_SADDLER, value);
+    }
+
+    Bool_t Followers_t::Is_Sojourner(some<Follower_ID_t> valid_follower_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_follower_id);
+        SKYLIB_ASSERT(Has_Follower(valid_follower_id));
+
+        return this->save_state.flags[valid_follower_id()].Is_Flagged(Follower_Flags_e::IS_SOJOURNER);
+    }
+
+    void Followers_t::Is_Sojourner(some<Follower_ID_t> valid_follower_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_follower_id);
+        SKYLIB_ASSERT(Has_Follower(valid_follower_id));
+
+        this->save_state.flags[valid_follower_id()].Is_Flagged(Follower_Flags_e::IS_SOJOURNER, value);
     }
 
     void Followers_t::Enforce(some<Follower_ID_t> follower_id)

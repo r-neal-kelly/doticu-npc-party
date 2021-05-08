@@ -14,5 +14,4 @@ int[]               member_ids                      = none
 
 bool[]              flags_is_retreater              = none
 bool[]              flags_is_saddler                = none
-bool[]              flags_is_sneak                  = none
 bool[]              flags_is_sojourner              = none

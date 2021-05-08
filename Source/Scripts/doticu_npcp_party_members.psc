@@ -38,6 +38,7 @@ bool[]              flags_is_clone                  = none
 bool[]              flags_is_immobile               = none
 bool[]              flags_is_mannequin              = none
 bool[]              flags_is_reanimated             = none
+bool[]              flags_is_sneak                  = none
 bool[]              flags_is_thrall                 = none
 
 bool[]              flags_has_suit_archer           = none

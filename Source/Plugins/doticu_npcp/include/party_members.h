@@ -177,6 +177,7 @@ namespace doticu_npcp { namespace Party {
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Is_Immobile();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Is_Mannequin();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Is_Reanimated();
+            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Is_Sneak();
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Is_Thrall();
 
             V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Archer();
@@ -366,6 +367,9 @@ namespace doticu_npcp { namespace Party {
 
         Bool_t                      Is_Reanimated(some<Member_ID_t> valid_member_id);
         void                        Is_Reanimated(some<Member_ID_t> valid_member_id, Bool_t value);
+
+        Bool_t                      Is_Sneak(some<Member_ID_t> valid_member_id);
+        void                        Is_Sneak(some<Member_ID_t> valid_member_id, Bool_t value);
 
         Bool_t                      Is_Thrall(some<Member_ID_t> valid_member_id);
         void                        Is_Thrall(some<Member_ID_t> valid_member_id, Bool_t value);

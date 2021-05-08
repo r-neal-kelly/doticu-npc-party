@@ -78,7 +78,6 @@ namespace doticu_npcp { namespace Party {
 
             V::Variable_tt<Vector_t<Bool_t>>&   Flags_Is_Retreater();
             V::Variable_tt<Vector_t<Bool_t>>&   Flags_Is_Saddler();
-            V::Variable_tt<Vector_t<Bool_t>>&   Flags_Is_Sneak();
             V::Variable_tt<Vector_t<Bool_t>>&   Flags_Is_Sojourner();
 
         public:
@@ -150,10 +149,10 @@ namespace doticu_npcp { namespace Party {
 
         Bool_t                      Is_Retreater(some<Follower_ID_t> valid_follower_id);
         void                        Is_Retreater(some<Follower_ID_t> valid_follower_id, Bool_t value);
+
         Bool_t                      Is_Saddler(some<Follower_ID_t> valid_follower_id);
         void                        Is_Saddler(some<Follower_ID_t> valid_follower_id, Bool_t value);
-        Bool_t                      Is_Sneak(some<Follower_ID_t> valid_follower_id);
-        void                        Is_Sneak(some<Follower_ID_t> valid_follower_id, Bool_t value);
+
         Bool_t                      Is_Sojourner(some<Follower_ID_t> valid_follower_id);
         void                        Is_Sojourner(some<Follower_ID_t> valid_follower_id, Bool_t value);
 

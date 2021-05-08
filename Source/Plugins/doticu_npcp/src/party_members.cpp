@@ -245,6 +245,11 @@ namespace doticu_npcp { namespace Party {
         DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_is_reanimated");
     }
 
+    V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Is_Sneak()
+    {
+        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_is_sneak");
+    }
+
     V::Variable_tt<Vector_t<Bool_t>>& Members_t::Save_State::Flags_Is_Thrall()
     {
         DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_is_thrall");
@@ -573,6 +578,7 @@ namespace doticu_npcp { namespace Party {
         Vector_t<Bool_t> flags_is_immobile = Flags_Is_Immobile();
         Vector_t<Bool_t> flags_is_mannequin = Flags_Is_Mannequin();
         Vector_t<Bool_t> flags_is_reanimated = Flags_Is_Reanimated();
+        Vector_t<Bool_t> flags_is_sneak = Flags_Is_Sneak();
         Vector_t<Bool_t> flags_is_thrall = Flags_Is_Thrall();
 
         Vector_t<Bool_t> flags_has_suit_archer = Flags_Has_Suit_Archer();
@@ -645,6 +651,7 @@ namespace doticu_npcp { namespace Party {
         flags_is_immobile.resize(MAX_MEMBERS);
         flags_is_mannequin.resize(MAX_MEMBERS);
         flags_is_reanimated.resize(MAX_MEMBERS);
+        flags_is_sneak.resize(MAX_MEMBERS);
         flags_is_thrall.resize(MAX_MEMBERS);
 
         flags_has_suit_archer.resize(MAX_MEMBERS);
@@ -716,6 +723,7 @@ namespace doticu_npcp { namespace Party {
             flags.Is_Flagged(Member_Flags_e::IS_IMMOBILE, flags_is_immobile[idx]);
             flags.Is_Flagged(Member_Flags_e::IS_MANNEQUIN, flags_is_mannequin[idx]);
             flags.Is_Flagged(Member_Flags_e::IS_REANIMATED, flags_is_reanimated[idx]);
+            flags.Is_Flagged(Member_Flags_e::IS_SNEAK, flags_is_sneak[idx]);
             flags.Is_Flagged(Member_Flags_e::IS_THRALL, flags_is_thrall[idx]);
 
             Member_Flags_Has_Suit_e& flags_has_suit = this->flags_has_suit[idx];
@@ -781,6 +789,7 @@ namespace doticu_npcp { namespace Party {
         Vector_t<Bool_t> flags_is_immobile(MAX_MEMBERS, false);
         Vector_t<Bool_t> flags_is_mannequin(MAX_MEMBERS, false);
         Vector_t<Bool_t> flags_is_reanimated(MAX_MEMBERS, false);
+        Vector_t<Bool_t> flags_is_sneak(MAX_MEMBERS, false);
         Vector_t<Bool_t> flags_is_thrall(MAX_MEMBERS, false);
 
         Vector_t<Bool_t> flags_has_suit_archer(MAX_MEMBERS, false);
@@ -843,6 +852,7 @@ namespace doticu_npcp { namespace Party {
                 flags_is_immobile[idx] = flags.Is_Flagged(Member_Flags_e::IS_IMMOBILE);
                 flags_is_mannequin[idx] = flags.Is_Flagged(Member_Flags_e::IS_MANNEQUIN);
                 flags_is_reanimated[idx] = flags.Is_Flagged(Member_Flags_e::IS_REANIMATED);
+                flags_is_sneak[idx] = flags.Is_Flagged(Member_Flags_e::IS_SNEAK);
                 flags_is_thrall[idx] = flags.Is_Flagged(Member_Flags_e::IS_THRALL);
 
                 Member_Flags_Has_Suit_e& flags_has_suit = this->flags_has_suit[idx];
@@ -937,6 +947,7 @@ namespace doticu_npcp { namespace Party {
         Flags_Is_Immobile() = flags_is_immobile;
         Flags_Is_Mannequin() = flags_is_mannequin;
         Flags_Is_Reanimated() = flags_is_reanimated;
+        Flags_Is_Sneak() = flags_is_sneak;
         Flags_Is_Thrall() = flags_is_thrall;
 
         Flags_Has_Suit_Archer() = flags_has_suit_archer;
@@ -1711,6 +1722,22 @@ namespace doticu_npcp { namespace Party {
         this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_REANIMATED, value);
     }
 
+    Bool_t Members_t::Is_Sneak(some<Member_ID_t> valid_member_id)
+    {
+        SKYLIB_ASSERT_SOME(valid_member_id);
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+
+        return this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_SNEAK);
+    }
+
+    void Members_t::Is_Sneak(some<Member_ID_t> valid_member_id, Bool_t value)
+    {
+        SKYLIB_ASSERT_SOME(valid_member_id);
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
+
+        this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_SNEAK, value);
+    }
+
     Bool_t Members_t::Is_Thrall(some<Member_ID_t> valid_member_id)
     {
         SKYLIB_ASSERT_SOME(valid_member_id);
@@ -2336,6 +2363,17 @@ namespace doticu_npcp { namespace Party {
                 main.Untokenize(member_id, Consts_t::NPCP::Misc::Token::Reanimated());
 
                 actor->Remove_Spell(Consts_t::NPCP::Spell::Reanimate_Ability());
+            }
+
+            // need to add a token
+            if (Is_Sneak(member_id)) {
+                if (!actor->Is_Forced_To_Sneak()) {
+                    actor->Is_Forced_To_Sneak(true, main.Script(member_id));
+                }
+            } else {
+                if (actor->Is_Forced_To_Sneak()) {
+                    actor->Is_Forced_To_Sneak(false, main.Script(member_id));
+                }
             }
 
             if (Is_Thrall(member_id)) {

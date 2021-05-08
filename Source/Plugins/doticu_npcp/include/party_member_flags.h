@@ -21,6 +21,7 @@ namespace doticu_npcp { namespace Party {
             IS_IMMOBILE,
             IS_MANNEQUIN,
             IS_REANIMATED,
+            IS_SNEAK,
             IS_THRALL,
 
             _TOTAL_,
@@ -40,6 +41,7 @@ namespace doticu_npcp { namespace Party {
             SKYLIB_DEFINE_FLAG(Member_Flags_e_data, IS_IMMOBILE),
             SKYLIB_DEFINE_FLAG(Member_Flags_e_data, IS_MANNEQUIN),
             SKYLIB_DEFINE_FLAG(Member_Flags_e_data, IS_REANIMATED),
+            SKYLIB_DEFINE_FLAG(Member_Flags_e_data, IS_SNEAK),
             SKYLIB_DEFINE_FLAG(Member_Flags_e_data, IS_THRALL),
 
             _TOTAL_ = Member_Flags_e_data::_TOTAL_,

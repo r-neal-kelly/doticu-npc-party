@@ -18,7 +18,6 @@ namespace doticu_npcp { namespace Party {
         {
             IS_RETREATER,
             IS_SADDLER,
-            IS_SNEAK,
             IS_SOJOURNER,
 
             _TOTAL_,
@@ -35,7 +34,6 @@ namespace doticu_npcp { namespace Party {
 
             SKYLIB_DEFINE_FLAG(Follower_Flags_e_data, IS_RETREATER),
             SKYLIB_DEFINE_FLAG(Follower_Flags_e_data, IS_SADDLER),
-            SKYLIB_DEFINE_FLAG(Follower_Flags_e_data, IS_SNEAK),
             SKYLIB_DEFINE_FLAG(Follower_Flags_e_data, IS_SOJOURNER),
 
             _TOTAL_ = Follower_Flags_e_data::_TOTAL_,

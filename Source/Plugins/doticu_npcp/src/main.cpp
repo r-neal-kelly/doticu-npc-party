@@ -332,6 +332,7 @@ namespace doticu_npcp {
                 if (doticu_skylib::Is_Odd(idx)) {
                     members.Is_Banished(idx, false);
                     members.Is_Reanimated(idx, false);
+                    members.Is_Sneak(idx, true);
                     members.Name(idx, " Dark Elf Commoner ");
                     members.Combat_Style(idx, Party::Member_Combat_Style_e::ARCHER);
                     //members.Ghost_Ability(idx, skylib::Const::Spell::Ghost_Ability_Soul_Cairn()());
@@ -343,7 +344,7 @@ namespace doticu_npcp {
 
                     settlers.Add<Party::Sandboxer_t>(idx);
                     settlers.Allow_Hellos_To_Player<Party::Sandboxer_t>(idx, false);
-                    settlers.Always_Sneak<Party::Sandboxer_t>(idx, true);
+                    settlers.Always_Sneak<Party::Sandboxer_t>(idx, false);
                     settlers.Speed<Party::Sandboxer_t>(idx, Party::Settler_Speed_e::RUN);
 
                     settlers.Add<Party::Sleeper_t>(idx);
@@ -364,6 +365,7 @@ namespace doticu_npcp {
                 } else {
                     members.Is_Banished(idx, false);
                     members.Is_Reanimated(idx, true);
+                    members.Is_Sneak(idx, true);
                     members.Name(idx, " Serana ");
                     members.Combat_Style(idx, Party::Member_Combat_Style_e::ARCHER);
                     members.Ghost_Ability(idx, none<Spell_t*>());
