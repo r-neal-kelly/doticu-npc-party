@@ -537,7 +537,7 @@ namespace doticu_npcp { namespace Party {
 
     void Members_t::Save_State::Read()
     {
-        this->limit = Limit();
+        this->limit = static_cast<Member_Limit_t::value_type>(Limit());
 
         this->fill_suit_aura_probability = Fill_Suit_Aura_Probability();
         this->fill_suit_body_probability = Fill_Suit_Body_Probability();
@@ -901,7 +901,7 @@ namespace doticu_npcp { namespace Party {
             }
         }
 
-        Limit() = this->limit;
+        Limit() = static_cast<Member_Limit_t::value_type>(this->limit());
 
         Fill_Suit_Aura_Probability() = static_cast<Int_t>(this->fill_suit_aura_probability);
         Fill_Suit_Body_Probability() = static_cast<Int_t>(this->fill_suit_body_probability);
@@ -1102,8 +1102,6 @@ namespace doticu_npcp { namespace Party {
             Do_Force_Unclone_Generics(false);
         } else {
             this->save_state.Read();
-
-            Validate();
         }
     }
 
@@ -1116,8 +1114,6 @@ namespace doticu_npcp { namespace Party {
         // update code goes here
 
         this->save_state.Read();
-
-        Validate();
     }
 
     Members_t::~Members_t()
@@ -1155,6 +1151,38 @@ namespace doticu_npcp { namespace Party {
         for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
             if (Has_Member(idx)) {
                 Actor(idx)->Actor_Base(Custom_Base(idx), false);
+            }
+        }
+    }
+
+    void Members_t::Validate()
+    {
+        size_t member_count = Member_Count();
+        if (!this->save_state.limit) {
+            this->save_state.limit = Member_Limit_t::_MAX_;
+        } else if (this->save_state.limit() < member_count) {
+            this->save_state.limit = member_count;
+        }
+
+        if (!this->save_state.member_suit_fill_type) {
+            this->save_state.member_suit_fill_type = DEFAULT_MEMBER_SUIT_FILL_TYPE;
+        }
+        if (!this->save_state.sort_type) {
+            this->save_state.sort_type = DEFAULT_SORT_TYPE;
+        }
+
+        // we unfill first because the quest currently doesn't allow dupe aliases.
+        for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
+            maybe<Alias_Reference_t*> alias_reference = this->quest->Index_To_Alias_Reference(idx);
+            SKYLIB_ASSERT_SOME(alias_reference);
+            alias_reference->Unfill(none<V::Callback_i*>());
+        }
+
+        for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
+            if (Has_Member(idx)) {
+                Alias_Reference(idx)->Fill(Actor(idx), none<V::Callback_i*>());
+            } else {
+                Remove_Member(idx);
             }
         }
     }
@@ -1434,6 +1462,7 @@ namespace doticu_npcp { namespace Party {
                 maybe<Member_ID_t> member_id = Unused_Member_ID();
                 if (member_id) {
                     Party::Add_Member(this, member_id(), actor, base());
+                    Enforce(member_id());
                     return member_id;
                 } else {
                     return none<Member_ID_t>();
@@ -1456,6 +1485,7 @@ namespace doticu_npcp { namespace Party {
                 maybe<Actor_t*> actor = Actor_t::Create(base, true, true, true);
                 if (actor && actor->Is_Valid() && actor->Isnt_Deleted()) {
                     Party::Add_Member(this, member_id(), actor(), base);
+                    Enforce(member_id());
                     return member_id;
                 } else {
                     return none<Member_ID_t>();
@@ -1480,6 +1510,7 @@ namespace doticu_npcp { namespace Party {
                 if (actor && actor->Is_Valid() && actor->Isnt_Deleted()) {
                     Party::Add_Member(this, member_id(), actor(), base());
                     this->save_state.flags[member_id()].Flag(Member_Flags_e::IS_CLONE);
+                    Enforce(member_id());
                     return member_id;
                 } else {
                     return none<Member_ID_t>();
@@ -1514,40 +1545,6 @@ namespace doticu_npcp { namespace Party {
             }
         }
         return result;
-    }
-
-    void Members_t::Validate()
-    {
-        size_t member_count = Member_Count();
-        if (this->save_state.limit < member_count) {
-            this->save_state.limit = member_count;
-        } else if (this->save_state.limit < 1) {
-            this->save_state.limit = 1;
-        } else if (this->save_state.limit > MAX_MEMBERS) {
-            this->save_state.limit = MAX_MEMBERS;
-        }
-
-        if (!this->save_state.member_suit_fill_type) {
-            this->save_state.member_suit_fill_type = DEFAULT_MEMBER_SUIT_FILL_TYPE;
-        }
-        if (!this->save_state.sort_type) {
-            this->save_state.sort_type = DEFAULT_SORT_TYPE;
-        }
-
-        // we unfill first because the quest currently doesn't allow dupe aliases.
-        for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
-            maybe<Alias_Reference_t*> alias_reference = this->quest->Index_To_Alias_Reference(idx);
-            SKYLIB_ASSERT_SOME(alias_reference);
-            alias_reference->Unfill(none<V::Callback_i*>());
-        }
-
-        for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
-            if (Has_Member(idx)) {
-                Alias_Reference(idx)->Fill(Actor(idx), none<V::Callback_i*>());
-            } else {
-                Remove_Member(idx);
-            }
-        }
     }
 
     some<Alias_Reference_t*> Members_t::Alias_Reference(some<Member_ID_t> valid_member_id)

@@ -11,7 +11,7 @@ int                 p_curr_column               =     0
 int                 p_curr_row                  =     0
 
 Alias[]             p_curr_members              =  none
-doticu_npcp_member  p_ref_member                =  none
+;doticu_npcp_member  p_ref_member                =  none
 
 int                 p_options_offset            =    -1
 int                 p_option_enter              =    -1

@@ -5,7 +5,7 @@ Scriptname doticu_npcp_mcm_followers extends Quest
 int                     p_code_view                 =     0
 
 Alias[]                 p_arr_aliases               =  none
-doticu_npcp_follower    p_ref_follower              =  none
+;doticu_npcp_follower    p_ref_follower              =  none
 
 bool                    p_do_prev_follower          = false
 bool                    p_do_next_follower          = false

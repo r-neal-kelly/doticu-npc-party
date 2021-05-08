@@ -128,6 +128,7 @@ namespace doticu_npcp {
     public:
         void    Before_Save();
         void    After_Save();
+        void    Validate();
 
     public:
         void Log(std::string indent = "");

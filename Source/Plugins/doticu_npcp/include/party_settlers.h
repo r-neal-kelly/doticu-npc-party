@@ -233,6 +233,7 @@ namespace doticu_npcp { namespace Party {
     public:
         void    Before_Save();
         void    After_Save();
+        void    Validate();
 
     public:
         Main_t&             Main();
@@ -241,8 +242,6 @@ namespace doticu_npcp { namespace Party {
         Bool_t              Has_Settler(some<Settler_ID_t> settler_id);
         Bool_t              Has_Settler(some<Member_ID_t> member_id);
         Bool_t              Has_Settler(some<Actor_t*> actor);
-
-        void                Validate();
 
     public:
         template <typename T>

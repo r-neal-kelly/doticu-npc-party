@@ -23,6 +23,7 @@
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/actor_base.h"
 #include "doticu_skylib/actor_head_data.h"
+#include "doticu_skylib/alias_base.h"
 #include "doticu_skylib/armor.h"
 #include "doticu_skylib/cell.h"
 #include "doticu_skylib/color.h"
@@ -50,6 +51,7 @@
 #include "doticu_skylib/weapon.h"
 
 #include "chests.h"
+#include "party_followers.h"
 #include "party_member_suit_template.h"
 #include "party_member_suitcase.h"
 #include "party_members.h"
@@ -72,6 +74,12 @@ namespace doticu_npcp {
 
     Main_t::State::~State()
     {
+    }
+
+    void Main_t::State::Validate()
+    {
+        this->party->Validate();
+        this->hotkeys->Validate();
     }
 
     String_t Main_t::Class_Name()
@@ -171,12 +179,14 @@ namespace doticu_npcp {
     {
         Delete_State();
         this->state = new State(is_new_game);
+        this->state->Validate();
     }
 
     void Main_t::Create_State(const Version_t<u16> version_to_update)
     {
         Delete_State();
         this->state = new State(version_to_update);
+        this->state->Validate();
     }
 
     void Main_t::Delete_State()
@@ -313,7 +323,7 @@ namespace doticu_npcp {
         some<Actor_Base_t*> katria = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x02004D0C)());
         some<Actor_Base_t*> maven = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x1336a)());
         some<Actor_Base_t*> fjori = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x0003D725)());
-        for (size_t idx = 0, end = 12; idx < end; idx += 1) {
+        for (size_t idx = 0, end = 16; idx < end; idx += 1) {
             members.Add_Member(vici);
         }
 
@@ -349,6 +359,8 @@ namespace doticu_npcp {
                     settlers.Add<Party::Guard_t>(idx);
 
                     members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, Party::Member_Suit_Template_t::Thrall());
+
+                    Party().Followers().Add_Follower(idx);
                 } else {
                     members.Is_Banished(idx, false);
                     members.Is_Reanimated(idx, true);
@@ -360,6 +372,8 @@ namespace doticu_npcp {
                     members.Vitality(idx, Party::Member_Vitality_e::MORTAL);
 
                     members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, Party::Member_Suit_Template_t::Thrall());
+
+                    Party().Followers().Add_Follower(idx);
                 }
             }
         }
@@ -367,10 +381,6 @@ namespace doticu_npcp {
         // changed packages should be reverted in settlers type, upon state creation/deletion.
 
         Party().Enforce();
-
-        static Vector_t<some<skylib::Const::Armors::Set_f>> sets = skylib::Const::Armors::Sets();
-        static size_t sets_idx = 0;
-        static size_t sets_end = sets.size();
 
         class Wait_Callback :
             public V::Callback_t
@@ -388,6 +398,10 @@ namespace doticu_npcp {
             virtual void operator ()(V::Variable_t*) override
             {
                 //temp
+                static Vector_t<some<skylib::Const::Armors::Set_f>> sets = skylib::Const::Armors::Sets();
+                static size_t sets_idx = 0;
+                static size_t sets_end = sets.size();
+
                 Party::Main_t& party = self->Party();
                 Party::Members_t& members = party.Members();
 

@@ -36,9 +36,6 @@
     <ClCompile Include="src\party_members.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\party_member_rating.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\hotkeys.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -267,6 +264,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\party_member_suit_template.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_follower_flags.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_follower_limit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_member_limit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -8,6 +8,7 @@
 #include "doticu_skylib/numeric.h"
 
 #include "intrinsic.h"
+#include "strings.h"
 
 namespace doticu_npcp { namespace Party {
 
@@ -33,13 +34,28 @@ namespace doticu_npcp { namespace Party {
 
     public:
         Member_Rating_t() = default;
-        Member_Rating_t(Int_t value);
+
+        Member_Rating_t(Int_t rating) :
+            Member_Rating_t(static_cast<value_type>(rating))
+        {
+        }
 
     public:
-        String_t As_String() const;
+        String_t As_String() const
+        {
+            if (*this == 1)         return Strings_t::RATING_1_STARS;
+            else if (*this == 2)    return Strings_t::RATING_2_STARS;
+            else if (*this == 3)    return Strings_t::RATING_3_STARS;
+            else if (*this == 4)    return Strings_t::RATING_4_STARS;
+            else if (*this == 5)    return Strings_t::RATING_5_STARS;
+            else                    return Strings_t::RATING_0_STARS;
+        }
 
     public:
-        operator String_t() const;
+        operator String_t() const
+        {
+            return As_String();
+        }
     };
 
 }}

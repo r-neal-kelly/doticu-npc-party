@@ -15,6 +15,7 @@
 #include "party_member_flags_has_suit.h"
 #include "party_member_flags_only_playables.h"
 #include "party_member_id.h"
+#include "party_member_limit.h"
 #include "party_member_rating.h"
 #include "party_member_relation.h"
 #include "party_member_sort_type.h"
@@ -37,6 +38,8 @@ namespace doticu_npcp { namespace Party {
     public:
         static constexpr size_t                                 MAX_MEMBERS                             = Consts_t::NPCP::Int::MAX_MEMBERS;
 
+        static constexpr Member_Limit_t::value_type             DEFAULT_LIMIT                           = MAX_MEMBERS;
+
         static constexpr size_t                                 DEFAULT_FILL_SUIT_AURA_PROBABILITY      = 100;
         static constexpr size_t                                 DEFAULT_FILL_SUIT_BODY_PROBABILITY      = 100;
         static constexpr size_t                                 DEFAULT_FILL_SUIT_FEET_PROBABILITY      = 66;
@@ -46,8 +49,6 @@ namespace doticu_npcp { namespace Party {
         static constexpr size_t                                 DEFAULT_FILL_SUIT_HANDS_PROBABILITY     = 66;
         static constexpr size_t                                 DEFAULT_FILL_SUIT_HEAD_PROBABILITY      = 33;
         static constexpr size_t                                 DEFAULT_FILL_SUIT_NECK_PROBABILITY      = 50;
-
-        static constexpr Int_t                                  DEFAULT_LIMIT                           = MAX_MEMBERS;
 
         static constexpr Bool_t                                 DEFAULT_DO_AUTO_SUITS                   = false;
         static constexpr Bool_t                                 DEFAULT_DO_FILL_SUITS                   = true;
@@ -75,7 +76,7 @@ namespace doticu_npcp { namespace Party {
             const some<Quest_t*>                    quest;
 
         public:
-            Int_t                                   limit;
+            some<Member_Limit_t>                    limit;
 
             u8                                      fill_suit_aura_probability;
             u8                                      fill_suit_body_probability;
@@ -281,6 +282,7 @@ namespace doticu_npcp { namespace Party {
     public:
         void    Before_Save();
         void    After_Save();
+        void    Validate();
 
     public:
         Main_t& Main();
@@ -337,8 +339,6 @@ namespace doticu_npcp { namespace Party {
         Bool_t              Remove_Member(some<Member_ID_t> member_id);
 
         size_t              Member_Count();
-
-        void                Validate();
 
     public:
         some<Alias_Reference_t*>    Alias_Reference(some<Member_ID_t> valid_member_id);

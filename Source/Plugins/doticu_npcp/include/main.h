@@ -41,6 +41,9 @@ namespace doticu_npcp {
             State& operator =(const State& other)           = delete;
             State& operator =(State&& other) noexcept       = delete;
             ~State();
+
+        public:
+            void Validate();
         };
 
     public:

@@ -77,6 +77,15 @@ namespace doticu_npcp { namespace Party {
         followers->After_Save();
     }
 
+    void Main_t::Validate()
+    {
+        members->Validate();
+        settlers->Validate();
+        expoees->Validate();
+        displays->Validate();
+        followers->Validate();
+    }
+
     Members_t& Main_t::Members()
     {
         return *this->members;
@@ -150,6 +159,7 @@ namespace doticu_npcp { namespace Party {
         if (entry->Non_Extra_Lists_Count() != count) {
             entry->Decrement_Count(container, Container_Entry_Count_t::_MAX_);
             entry->Increment_Count(container, count);
+            Update_AI(valid_member_id, Member_Update_AI_e::EVALUATE_PACKAGE);
         }
     }
 
@@ -165,6 +175,7 @@ namespace doticu_npcp { namespace Party {
         maybe<Reference_Container_Entry_t*> entry = container.Maybe_Entry(object);
         if (entry && entry->Non_Extra_Lists_Count() > 0) {
             entry->Decrement_Count(container, Container_Entry_Count_t::_MAX_);
+            Update_AI(valid_member_id, Member_Update_AI_e::EVALUATE_PACKAGE);
         }
     }
 
@@ -175,16 +186,22 @@ namespace doticu_npcp { namespace Party {
 
         Members_t& members = Members();
         Settlers_t& settlers = Settlers();
-        Member_ID_t::value_type id = valid_member_id();
+        Followers_t& followers = Followers();
 
-        members.Enforce(id);
-        settlers.Enforce(id);
+        members.Enforce(valid_member_id);
 
-        maybe<Member_Update_AI_e>& update_ai = this->update_ais[id];
+        settlers.Enforce(valid_member_id);
+
+        maybe<Follower_ID_t> follower_id = followers.Used_Follower_ID(valid_member_id);
+        if (follower_id) {
+            followers.Enforce(follower_id());
+        }
+
+        maybe<Member_Update_AI_e>& update_ai = this->update_ais[valid_member_id()];
         if (update_ai == Member_Update_AI_e::RESET_AI) {
-            members.Actor(id)->Reset_AI();
+            members.Actor(valid_member_id)->Reset_AI();
         } else if (update_ai == Member_Update_AI_e::EVALUATE_PACKAGE) {
-            members.Actor(id)->Evaluate_Package(true, false);
+            members.Actor(valid_member_id)->Evaluate_Package(true, false);
         }
         update_ai = Member_Update_AI_e::_NONE_;
     }

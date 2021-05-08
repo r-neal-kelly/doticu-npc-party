@@ -72,7 +72,6 @@ namespace doticu_npcp { namespace Party {
 
         } else {
             this->save_state.Read();
-            Validate();
         }
     }
 
@@ -83,7 +82,6 @@ namespace doticu_npcp { namespace Party {
         // update code goes here
 
         this->save_state.Read();
-        Validate();
     }
 
     Expoees_t::~Expoees_t()

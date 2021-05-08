@@ -72,8 +72,6 @@ namespace doticu_npcp { namespace Party {
     public:
         void    Before_Save();
         void    After_Save();
-
-    public:
         void    Validate();
 
     public:

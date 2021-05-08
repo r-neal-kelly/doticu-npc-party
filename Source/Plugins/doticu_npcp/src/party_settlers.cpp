@@ -545,7 +545,6 @@ namespace doticu_npcp { namespace Party {
 
         } else {
             this->save_state.Read();
-            Validate();
         }
     }
 
@@ -556,7 +555,6 @@ namespace doticu_npcp { namespace Party {
         // update code goes here
 
         this->save_state.Read();
-        Validate();
     }
 
     Settlers_t::~Settlers_t()
@@ -565,11 +563,14 @@ namespace doticu_npcp { namespace Party {
 
     void Settlers_t::Before_Save()
     {
-        Validate();
         this->save_state.Write();
     }
 
     void Settlers_t::After_Save()
+    {
+    }
+
+    void Settlers_t::Validate()
     {
     }
 
@@ -614,11 +615,6 @@ namespace doticu_npcp { namespace Party {
         } else {
             return false;
         }
-    }
-
-    void Settlers_t::Validate()
-    {
-
     }
 
     void Settlers_t::Bool(some<Package_t*> package,

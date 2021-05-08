@@ -128,4 +128,8 @@ namespace doticu_npcp {
     {
     }
 
+    void Hotkeys_t::Validate()
+    {
+    }
+
 }

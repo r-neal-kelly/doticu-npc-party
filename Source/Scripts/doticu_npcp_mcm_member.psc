@@ -3,7 +3,7 @@
 Scriptname doticu_npcp_mcm_member extends Quest
 
 int                 p_code_view                 =     0
-doticu_npcp_member  p_ref_member                =  none
+;doticu_npcp_member  p_ref_member                =  none
 
 int                 p_option_rename             =    -1
 int                 p_option_back               =    -1
