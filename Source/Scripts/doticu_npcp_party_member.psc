@@ -22,7 +22,3 @@ bool                    p_prev_faction_no_body_cleanup      = false; still need 
 ;event OnHit(ObjectReference attacker, Form tool, Projectile projectile, bool is_power, bool is_sneak, bool is_bash, bool is_blocked) native
 ;event OnItemAdded(Form item_form, int item_count, ObjectReference item_ref, ObjectReference item_source) native
 ;event OnItemRemoved(Form item_form, int item_count, ObjectReference item_ref, ObjectReference item_destination) native
-
-event OnHit(ObjectReference attacker, Form tool, Projectile projectile, bool is_power, bool is_sneak, bool is_bash, bool is_blocked)
-    Debug.Trace("MEMBER")
-endEvent

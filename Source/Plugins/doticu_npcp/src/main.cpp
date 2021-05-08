@@ -360,7 +360,7 @@ namespace doticu_npcp {
 
                     members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, Party::Member_Suit_Template_t::Thrall());
 
-                    Party().Followers().Add_Follower(idx);
+                    //Party().Followers().Add_Follower(idx);
                 } else {
                     members.Is_Banished(idx, false);
                     members.Is_Reanimated(idx, true);

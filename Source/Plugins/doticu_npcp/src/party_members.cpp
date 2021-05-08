@@ -1157,39 +1157,66 @@ namespace doticu_npcp { namespace Party {
 
     void Members_t::Validate()
     {
-        size_t member_count = Member_Count();
         if (!this->save_state.limit) {
             this->save_state.limit = Member_Limit_t::_MAX_;
-        } else if (this->save_state.limit() < member_count) {
-            this->save_state.limit = member_count;
+        } else {
+            size_t member_count = Member_Count();
+            if (this->save_state.limit() < member_count) {
+                this->save_state.limit = member_count;
+            }
         }
 
         if (!this->save_state.member_suit_fill_type) {
             this->save_state.member_suit_fill_type = DEFAULT_MEMBER_SUIT_FILL_TYPE;
         }
+
         if (!this->save_state.sort_type) {
             this->save_state.sort_type = DEFAULT_SORT_TYPE;
         }
 
-        // we unfill first because the quest currently doesn't allow dupe aliases.
-        for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
-            maybe<Alias_Reference_t*> alias_reference = this->quest->Index_To_Alias_Reference(idx);
-            SKYLIB_ASSERT_SOME(alias_reference);
-            alias_reference->Unfill(none<V::Callback_i*>());
-        }
+        class Unfill_Aliases_Callback :
+            public Callback_i<>
+        {
+        public:
+            Members_t& self;
 
-        for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
-            if (Has_Member(idx)) {
-                Alias_Reference(idx)->Fill(Actor(idx), none<V::Callback_i*>());
-            } else {
-                Remove_Member(idx);
+        public:
+            Unfill_Aliases_Callback(Members_t& self) :
+                self(self)
+            {
             }
-        }
+
+        public:
+            virtual void operator ()() override
+            {
+                for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
+                    if (this->self.Has_Member(idx)) {
+                        this->self.Alias_Reference(idx)->Fill(this->self.Actor(idx), none<V::Callback_i*>());
+                    } else {
+                        this->self.Remove_Member(idx);
+                    }
+                }
+            }
+        };
+        this->quest->Unfill_Aliases(new Unfill_Aliases_Callback(*this));
     }
 
     Main_t& Members_t::Main()
     {
         return NPCP.Main().Party();
+    }
+
+    some<Member_Limit_t> Members_t::Limit()
+    {
+        return this->save_state.limit;
+    }
+
+    void Members_t::Limit(some<Member_Limit_t> value)
+    {
+        SKYLIB_ASSERT_SOME(value);
+        SKYLIB_ASSERT(value() >= Member_Count());
+
+        this->save_state.limit = value;
     }
 
     u8 Members_t::Fill_Suit_Aura_Probability()
@@ -1345,6 +1372,18 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT(suit_type != Member_Suit_Type_e::ACTIVE);
 
         this->save_state.default_suit_type = suit_type;
+    }
+
+    some<Member_Sort_Type_e> Members_t::Sort_Type()
+    {
+        return this->save_state.sort_type;
+    }
+
+    void Members_t::Sort_Type(some<Member_Sort_Type_e> value)
+    {
+        SKYLIB_ASSERT_SOME(value);
+
+        this->save_state.sort_type = value;
     }
 
     Bool_t Members_t::Has_Alias(some<Member_ID_t> member_id)

@@ -13,10 +13,10 @@
 namespace doticu_npcp { namespace Party {
 
     class Expoee_ID_t_data :
-        public Numeric_Data_t<size_t>
+        public Numeric_Data_t<Int_t>
     {
     public:
-        static constexpr value_type _NONE_  = ~0;
+        static constexpr value_type _NONE_  = -1;
         static constexpr value_type _MIN_   = 0;
         static constexpr value_type _MAX_   = Consts_t::NPCP::Int::MAX_EXPOEES - 1;
 

@@ -288,6 +288,9 @@ namespace doticu_npcp { namespace Party {
         Main_t& Main();
 
     public:
+        some<Member_Limit_t>        Limit();
+        void                        Limit(some<Member_Limit_t> value);
+
         u8                          Fill_Suit_Aura_Probability();
         void                        Fill_Suit_Aura_Probability(u8 value);
         u8                          Fill_Suit_Body_Probability();
@@ -323,6 +326,9 @@ namespace doticu_npcp { namespace Party {
 
         maybe<Member_Suit_Type_e>   Default_Suit_Type();
         void                        Default_Suit_Type(maybe<Member_Suit_Type_e> suit_type);
+
+        some<Member_Sort_Type_e>    Sort_Type();
+        void                        Sort_Type(some<Member_Sort_Type_e> value);
 
     public:
         Bool_t              Has_Alias(some<Member_ID_t> member_id);

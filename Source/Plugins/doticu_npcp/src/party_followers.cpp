@@ -128,7 +128,7 @@ namespace doticu_npcp { namespace Party {
 
     void Followers_t::Save_State::Write()
     {
-        Vector_t<Int_t> member_ids(MAX_FOLLOWERS, static_cast<Int_t>(Member_ID_t::_NONE_));
+        Vector_t<Int_t> member_ids(MAX_FOLLOWERS, Member_ID_t::_NONE_);
 
         Vector_t<Bool_t> flags_is_retreater(MAX_FOLLOWERS, false);
         Vector_t<Bool_t> flags_is_saddler(MAX_FOLLOWERS, false);
@@ -229,19 +229,40 @@ namespace doticu_npcp { namespace Party {
 
     void Followers_t::Validate()
     {
-        for (size_t idx = 0, end = MAX_FOLLOWERS; idx < end; idx += 1) {
-            maybe<Alias_Reference_t*> alias_reference = this->quest->Index_To_Alias_Reference(idx);
-            SKYLIB_ASSERT_SOME(alias_reference);
-            alias_reference->Unfill(none<V::Callback_i*>());
-        }
-
-        for (size_t idx = 0, end = MAX_FOLLOWERS; idx < end; idx += 1) {
-            if (Has_Follower(Follower_ID_t(idx))) {
-                Alias_Reference(idx)->Fill(Actor(idx), none<V::Callback_i*>());
-            } else {
-                Remove_Follower(idx);
+        if (!this->save_state.limit) {
+            this->save_state.limit = Follower_Limit_t::_MAX_;
+        } else {
+            size_t follower_count = Follower_Count();
+            if (this->save_state.limit() < follower_count) {
+                this->save_state.limit = follower_count;
             }
         }
+
+        class Unfill_Aliases_Callback :
+            public Callback_i<>
+        {
+        public:
+            Followers_t& self;
+
+        public:
+            Unfill_Aliases_Callback(Followers_t& self) :
+                self(self)
+            {
+            }
+
+        public:
+            virtual void operator ()() override
+            {
+                for (size_t idx = 0, end = MAX_FOLLOWERS; idx < end; idx += 1) {
+                    if (this->self.Has_Follower(Follower_ID_t(idx))) {
+                        this->self.Alias_Reference(idx)->Fill(this->self.Actor(idx), none<V::Callback_i*>());
+                    } else {
+                        this->self.Remove_Follower(idx);
+                    }
+                }
+            }
+        };
+        this->quest->Unfill_Aliases(new Unfill_Aliases_Callback(*this));
     }
 
     Main_t& Followers_t::Main()
@@ -256,27 +277,15 @@ namespace doticu_npcp { namespace Party {
 
     some<Follower_Limit_t> Followers_t::Limit()
     {
-        if (!this->save_state.limit) {
-            this->save_state.limit = Follower_Limit_t::_MAX_;
-        } else {
-            size_t follower_count = Follower_Count();
-            if (this->save_state.limit() < follower_count) {
-                this->save_state.limit = follower_count;
-            }
-        }
-
         return this->save_state.limit;
     }
 
     void Followers_t::Limit(some<Follower_Limit_t> value)
     {
         SKYLIB_ASSERT_SOME(value);
+        SKYLIB_ASSERT(value() >= Follower_Count());
 
-        size_t follower_count = Follower_Count();
-        if (value() < follower_count) {
-            value = follower_count;
-        }
-        this->save_state.limit = follower_count;
+        this->save_state.limit = value;
     }
 
     Bool_t Followers_t::Do_Auto_Resurrect()
@@ -311,6 +320,10 @@ namespace doticu_npcp { namespace Party {
 
     some<Member_Sort_Type_e> Followers_t::Sort_Type()
     {
+        if (!this->save_state.sort_type) {
+            this->save_state.sort_type = DEFAULT_SORT_TYPE;
+        }
+
         return this->save_state.sort_type;
     }
 
