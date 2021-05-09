@@ -18,6 +18,7 @@
 #include "doticu_skylib/dynamic_array.inl"
 #include "doticu_skylib/forward_list.inl"
 #include "doticu_skylib/global.h"
+#include "doticu_skylib/location.h"
 #include "doticu_skylib/misc.h"
 #include "doticu_skylib/outfit.h"
 #include "doticu_skylib/quest.h"
@@ -50,8 +51,7 @@ namespace doticu_npcp { namespace Party {
         fill_suit_head_probability(DEFAULT_FILL_SUIT_HEAD_PROBABILITY),
         fill_suit_neck_probability(DEFAULT_FILL_SUIT_NECK_PROBABILITY),
 
-        do_auto_suits(DEFAULT_DO_AUTO_SUITS),
-        do_fill_suits(DEFAULT_DO_FILL_SUITS),
+        do_change_suits_automatically(DEFAULT_DO_CHANGE_SUITS_AUTOMATICALLY),
         do_fill_suits_automatically(DEFAULT_DO_FILL_SUITS_AUTOMATICALLY),
         do_fill_suits_strictly(DEFAULT_DO_FILL_SUITS_STRICTLY),
         do_unfill_suits_to_pack(DEFAULT_DO_UNFILL_SUITS_TO_PACK),
@@ -150,14 +150,9 @@ namespace doticu_npcp { namespace Party {
         DEFINE_VARIABLE_REFERENCE(Int_t, "fill_suit_neck_probability");
     }
 
-    V::Variable_tt<Bool_t>& Members_t::Save_State::Do_Auto_Suits()
+    V::Variable_tt<Bool_t>& Members_t::Save_State::Do_Change_Suits_Automatically()
     {
-        DEFINE_VARIABLE_REFERENCE(Bool_t, "do_auto_suits");
-    }
-
-    V::Variable_tt<Bool_t>& Members_t::Save_State::Do_Fill_Suits()
-    {
-        DEFINE_VARIABLE_REFERENCE(Bool_t, "do_fill_suits");
+        DEFINE_VARIABLE_REFERENCE(Bool_t, "do_change_suits_automatically");
     }
 
     V::Variable_tt<Bool_t>& Members_t::Save_State::Do_Fill_Suits_Automatically()
@@ -554,9 +549,8 @@ namespace doticu_npcp { namespace Party {
         this->fill_suit_head_probability = Fill_Suit_Head_Probability();
         this->fill_suit_neck_probability = Fill_Suit_Neck_Probability();
 
-        this->do_auto_suits = Do_Auto_Suits();
-        this->do_fill_suits = Do_Fill_Suits();
-        this->do_fill_suits = Do_Fill_Suits_Automatically();
+        this->do_change_suits_automatically = Do_Change_Suits_Automatically();
+        this->do_fill_suits_automatically = Do_Fill_Suits_Automatically();
         this->do_fill_suits_strictly = Do_Fill_Suits_Strictly();
         this->do_unfill_suits_to_pack = Do_Unfill_Suits_To_Pack();
 
@@ -923,8 +917,7 @@ namespace doticu_npcp { namespace Party {
         Fill_Suit_Head_Probability() = static_cast<Int_t>(this->fill_suit_head_probability);
         Fill_Suit_Neck_Probability() = static_cast<Int_t>(this->fill_suit_neck_probability);
 
-        Do_Auto_Suits() = this->do_auto_suits;
-        Do_Fill_Suits() = this->do_fill_suits;
+        Do_Change_Suits_Automatically() = this->do_change_suits_automatically;
         Do_Fill_Suits_Automatically() = this->do_fill_suits_automatically;
         Do_Fill_Suits_Strictly() = this->do_fill_suits_strictly;
         Do_Unfill_Suits_To_Pack() = this->do_unfill_suits_to_pack;
@@ -1331,6 +1324,16 @@ namespace doticu_npcp { namespace Party {
         Fill_Suit_Hands_Probability(DEFAULT_FILL_SUIT_HANDS_PROBABILITY);
         Fill_Suit_Head_Probability(DEFAULT_FILL_SUIT_HEAD_PROBABILITY);
         Fill_Suit_Neck_Probability(DEFAULT_FILL_SUIT_NECK_PROBABILITY);
+    }
+
+    Bool_t Members_t::Do_Change_Suits_Automatically()
+    {
+        return this->save_state.do_change_suits_automatically;
+    }
+
+    void Members_t::Do_Change_Suits_Automatically(Bool_t value)
+    {
+        this->save_state.do_change_suits_automatically = value;
     }
 
     Bool_t Members_t::Do_Fill_Suits_Automatically()
@@ -2024,14 +2027,26 @@ namespace doticu_npcp { namespace Party {
         this->save_state.relations[valid_member_id()] = relation;
     }
 
-    maybe<Member_Suit_Type_e> Members_t::Suit_Type(some<Member_ID_t> valid_id)
+    maybe<Member_Suit_Type_e> Members_t::Suit_Type(some<Member_ID_t> valid_member_id)
     {
-        SKYLIB_ASSERT_SOME(valid_id);
-        SKYLIB_ASSERT(Has_Member(valid_id));
+        SKYLIB_ASSERT_SOME(valid_member_id);
+        SKYLIB_ASSERT(Has_Member(valid_member_id));
 
-        // this should calculate the suit type by precedence and whether or not auto-outfitting for this member is enabled.
-
-        return this->save_state.suit_types[valid_id()];
+        maybe<Member_Suit_Type_e> suit_type = this->save_state.suit_types[valid_member_id()];
+        if (suit_type && Do_Change_Suits_Automatically()) {
+            maybe<Location_t*> location = Actor(valid_member_id)->Location();
+            if (location) {
+                if (Has_Suit(valid_member_id, Member_Suit_Type_e::SETTLEMENT) && location->Is_City_Or_Town()) {
+                    return Member_Suit_Type_e::SETTLEMENT;
+                } else {
+                    return suit_type;
+                }
+            } else {
+                return suit_type;
+            }
+        } else {
+            return suit_type;
+        }
     }
 
     void Members_t::Suit_Type(some<Member_ID_t> valid_id, maybe<Member_Suit_Type_e> type)

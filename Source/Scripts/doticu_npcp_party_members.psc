@@ -14,8 +14,7 @@ int                 fill_suit_hands_probability     = 0
 int                 fill_suit_head_probability      = 0
 int                 fill_suit_neck_probability      = 0
 
-bool                do_auto_suits                   = false
-bool                do_fill_suits                   = false
+bool                do_change_suits_automatically   = false
 bool                do_fill_suits_automatically     = false
 bool                do_fill_suits_strictly          = false
 bool                do_unfill_suits_to_pack         = false

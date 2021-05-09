@@ -50,8 +50,7 @@ namespace doticu_npcp { namespace Party {
         static constexpr size_t                                 DEFAULT_FILL_SUIT_HEAD_PROBABILITY      = 33;
         static constexpr size_t                                 DEFAULT_FILL_SUIT_NECK_PROBABILITY      = 50;
 
-        static constexpr Bool_t                                 DEFAULT_DO_AUTO_SUITS                   = false;
-        static constexpr Bool_t                                 DEFAULT_DO_FILL_SUITS                   = true;
+        static constexpr Bool_t                                 DEFAULT_DO_CHANGE_SUITS_AUTOMATICALLY   = false;
         static constexpr Bool_t                                 DEFAULT_DO_FILL_SUITS_AUTOMATICALLY     = true;
         static constexpr Bool_t                                 DEFAULT_DO_FILL_SUITS_STRICTLY          = false;
         static constexpr Bool_t                                 DEFAULT_DO_UNFILL_SUITS_TO_PACK         = false;
@@ -88,8 +87,7 @@ namespace doticu_npcp { namespace Party {
             u8                                      fill_suit_head_probability;
             u8                                      fill_suit_neck_probability;
 
-            Bool_t                                  do_auto_suits;
-            Bool_t                                  do_fill_suits;
+            Bool_t                                  do_change_suits_automatically;
             Bool_t                                  do_fill_suits_automatically;
             Bool_t                                  do_fill_suits_strictly;
             Bool_t                                  do_unfill_suits_to_pack;
@@ -152,8 +150,7 @@ namespace doticu_npcp { namespace Party {
             V::Variable_tt<Int_t>&                              Fill_Suit_Head_Probability();
             V::Variable_tt<Int_t>&                              Fill_Suit_Neck_Probability();
 
-            V::Variable_tt<Bool_t>&                             Do_Auto_Suits();
-            V::Variable_tt<Bool_t>&                             Do_Fill_Suits();
+            V::Variable_tt<Bool_t>&                             Do_Change_Suits_Automatically();
             V::Variable_tt<Bool_t>&                             Do_Fill_Suits_Automatically();
             V::Variable_tt<Bool_t>&                             Do_Fill_Suits_Strictly();
             V::Variable_tt<Bool_t>&                             Do_Unfill_Suits_To_Pack();
@@ -313,6 +310,9 @@ namespace doticu_npcp { namespace Party {
 
         void                        Reset_Fill_Suit_Probabilities();
 
+        Bool_t                      Do_Change_Suits_Automatically();
+        void                        Do_Change_Suits_Automatically(Bool_t value);
+
         Bool_t                      Do_Fill_Suits_Automatically();
         void                        Do_Fill_Suits_Automatically(Bool_t value);
 
@@ -411,8 +411,8 @@ namespace doticu_npcp { namespace Party {
         some<Member_Relation_e>     Relation(some<Member_ID_t> valid_member_id);
         void                        Relation(some<Member_ID_t> valid_member_id, maybe<Member_Relation_e> relation);
 
-        maybe<Member_Suit_Type_e>   Suit_Type(some<Member_ID_t> valid_id);
-        void                        Suit_Type(some<Member_ID_t> valid_id, maybe<Member_Suit_Type_e> type);
+        maybe<Member_Suit_Type_e>   Suit_Type(some<Member_ID_t> valid_member_id);
+        void                        Suit_Type(some<Member_ID_t> valid_member_id, maybe<Member_Suit_Type_e> type);
 
         some<Member_Vitality_e>     Vitality(some<Member_ID_t> valid_member_id);
         void                        Vitality(some<Member_ID_t> valid_member_id, maybe<Member_Vitality_e> vitality);
