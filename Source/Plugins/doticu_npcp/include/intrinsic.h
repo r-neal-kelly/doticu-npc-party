@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <mutex>
+
 #include "doticu_skylib/skylib.h"
 #include "doticu_skylib/virtual.h"
 
@@ -15,6 +17,9 @@ namespace doticu_skylib {}
 namespace skylib = doticu_skylib;
 
 namespace doticu_npcp {
+
+    using Lock_t                        = std::mutex;
+    using Locker_t                      = std::unique_lock<std::mutex>;
 
     using u8                            = skylib::u8;
     using u16                           = skylib::u16;

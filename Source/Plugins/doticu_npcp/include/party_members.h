@@ -9,6 +9,7 @@
 #include "consts.h"
 #include "intrinsic.h"
 #include "party_main.h"
+#include "party_member.h"
 #include "party_member_alpha.h"
 #include "party_member_combat_style.h"
 #include "party_member_flags.h"
@@ -265,7 +266,10 @@ namespace doticu_npcp { namespace Party {
     public:
         const some<Quest_t*>            quest;
         Save_State                      save_state;
+
+        Vector_t<Lock_t>                locks;
         Vector_t<maybe<Actor_Base_t*>>  custom_bases;
+
         const Vector_t<some<Spell_t*>>  vanilla_ghost_abilities;
 
     public:
@@ -332,118 +336,23 @@ namespace doticu_npcp { namespace Party {
         void                        Sort_Type(some<Member_Sort_Type_e> value);
 
     public:
-        Bool_t              Has_Alias(some<Member_ID_t> member_id);
-        Bool_t              Has_Alias(Alias_ID_t alias_id);
-        Bool_t              Has_Member(some<Member_ID_t> member_id);
-        Bool_t              Has_Member(some<Actor_t*> actor);
+        Lock_t&                     Lock(some<Member_ID_t> member_id);
+        some<Alias_Reference_t*>    Alias_Reference(some<Member_ID_t> member_id);
 
-        maybe<Member_ID_t>  Used_Member_ID(some<Actor_t*> actor);
-        maybe<Member_ID_t>  Unused_Member_ID();
+        Bool_t                      Has_Alias(some<Member_ID_t> member_id);
+        Bool_t                      Has_Alias(Alias_ID_t alias_id);
+        Bool_t                      Has_Member(some<Member_ID_t> member_id);
+        Bool_t                      Has_Member(some<Actor_t*> actor);
 
-        maybe<Member_ID_t>  Add_Member(some<Actor_t*> actor);
-        maybe<Member_ID_t>  Add_Member(some<Actor_Base_t*> base);
-        maybe<Member_ID_t>  Add_Member_Clone(some<Actor_t*> actor);
-        Bool_t              Remove_Member(some<Member_ID_t> member_id);
+        maybe<Member_ID_t>          Used_Member_ID(some<Actor_t*> actor);
+        maybe<Member_ID_t>          Unused_Member_ID();
 
-        size_t              Member_Count();
+        maybe<Member_ID_t>          Add_Member(some<Actor_t*> actor);
+        maybe<Member_ID_t>          Add_Member(some<Actor_Base_t*> base);
+        maybe<Member_ID_t>          Add_Member_Clone(some<Actor_t*> actor);
+        Bool_t                      Remove_Member(some<Member_ID_t> member_id);
 
-    public:
-        some<Alias_Reference_t*>    Alias_Reference(some<Member_ID_t> valid_member_id);
-        some<Actor_t*>              Actor(some<Member_ID_t> valid_member_id);
-        some<Actor_Base_t*>         Original_Base(some<Member_ID_t> valid_member_id);
-        some<Actor_Base_t*>         Custom_Base(some<Member_ID_t> valid_member_id);
-
-        Bool_t                      Is_Banished(some<Member_ID_t> valid_member_id);
-        void                        Is_Banished(some<Member_ID_t> valid_member_id, Bool_t value);
-
-        Bool_t                      Is_Clone(some<Member_ID_t> valid_member_id);
-        void                        Is_Clone(some<Member_ID_t> valid_member_id, Bool_t value);
-
-        Bool_t                      Is_Immobile(some<Member_ID_t> valid_member_id);
-        void                        Is_Immobile(some<Member_ID_t> valid_member_id, Bool_t value);
-
-        Bool_t                      Is_Mannequin(some<Member_ID_t> valid_member_id);
-        void                        Is_Mannequin(some<Member_ID_t> valid_member_id, Bool_t value);
-
-        Bool_t                      Is_Reanimated(some<Member_ID_t> valid_member_id);
-        void                        Is_Reanimated(some<Member_ID_t> valid_member_id, Bool_t value);
-
-        Bool_t                      Is_Sneak(some<Member_ID_t> valid_member_id);
-        void                        Is_Sneak(some<Member_ID_t> valid_member_id, Bool_t value);
-
-        Bool_t                      Is_Thrall(some<Member_ID_t> valid_member_id);
-        void                        Is_Thrall(some<Member_ID_t> valid_member_id, Bool_t value);
-
-        Bool_t                      Has_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type);
-        void                        Has_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, Bool_t value);
-
-        Bool_t                      Only_Playables(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type);
-        void                        Only_Playables(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, Bool_t value);
-
-        String_t                    Name(some<Member_ID_t> valid_member_id);
-        void                        Name(some<Member_ID_t> valid_member_id, String_t name);
-
-        some<Reference_t*>          Cache(some<Member_ID_t> valid_id);
-
-        maybe<Combat_Style_t*>      Combat_Style(some<Member_ID_t> valid_member_id);
-        void                        Combat_Style(some<Member_ID_t> valid_member_id, maybe<Combat_Style_t*> combat_style);
-        void                        Combat_Style(some<Member_ID_t> valid_member_id, Member_Combat_Style_e combat_style);
-        Bool_t                      Is_Warrior(some<Member_ID_t> valid_member_id);
-        Bool_t                      Is_Mage(some<Member_ID_t> valid_member_id);
-        Bool_t                      Is_Archer(some<Member_ID_t> valid_member_id);
-        Bool_t                      Is_Coward(some<Member_ID_t> valid_member_id);
-
-        maybe<Spell_t*>             Ghost_Ability(some<Member_ID_t> valid_member_id);
-        void                        Ghost_Ability(some<Member_ID_t> valid_member_id, maybe<Spell_t*> ghost_ability);
-
-        maybe<Outfit_t*>            Outfit(some<Member_ID_t> valid_member_id);
-        void                        Outfit(some<Member_ID_t> valid_member_id, maybe<Outfit_t*> outfit);
-
-        some<Reference_t*>          Pack(some<Member_ID_t> valid_member_id);
-
-        some<Member_Suitcase_t*>    Suitcase(some<Member_ID_t> valid_member_id);
-
-        some<Voice_Type_t*>         Voice_Type(some<Member_ID_t> valid_member_id);
-        void                        Voice_Type(some<Member_ID_t> valid_member_id, maybe<Voice_Type_t*> voice_type);
-
-        maybe<Member_Alpha_t>       Alpha(some<Member_ID_t> valid_member_id);
-        void                        Alpha(some<Member_ID_t> valid_member_id, maybe<Member_Alpha_t> alpha);
-
-        maybe<Member_Rating_t>      Rating(some<Member_ID_t> valid_member_id);
-        void                        Rating(some<Member_ID_t> valid_member_id, maybe<Member_Rating_t> rating);
-
-        some<Member_Relation_e>     Relation(some<Member_ID_t> valid_member_id);
-        void                        Relation(some<Member_ID_t> valid_member_id, maybe<Member_Relation_e> relation);
-
-        maybe<Member_Suit_Type_e>   Suit_Type(some<Member_ID_t> valid_member_id);
-        void                        Suit_Type(some<Member_ID_t> valid_member_id, maybe<Member_Suit_Type_e> type);
-
-        some<Member_Vitality_e>     Vitality(some<Member_ID_t> valid_member_id);
-        void                        Vitality(some<Member_ID_t> valid_member_id, maybe<Member_Vitality_e> vitality);
-        Bool_t                      Is_Mortal(some<Member_ID_t> valid_member_id);
-        void                        Is_Mortal(some<Member_ID_t> valid_member_id, Bool_t value);
-        Bool_t                      Is_Protected(some<Member_ID_t> valid_member_id);
-        void                        Is_Protected(some<Member_ID_t> valid_member_id, Bool_t value);
-        Bool_t                      Is_Essential(some<Member_ID_t> valid_member_id);
-        void                        Is_Essential(some<Member_ID_t> valid_member_id, Bool_t value);
-        Bool_t                      Is_Invulnerable(some<Member_ID_t> valid_member_id);
-        void                        Is_Invulnerable(some<Member_ID_t> valid_member_id, Bool_t value);
-
-    public:
-        // more of this functionality should probably go on main
-        Bool_t  Is_Enabled(some<Member_ID_t> valid_member_id);
-        Bool_t  Is_Untouchable(some<Member_ID_t> valid_member_id);
-        Bool_t  Has_AI(some<Member_ID_t> valid_member_id);
-
-        void    Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type);
-        void    Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, some<Outfit_t*> outfit);
-        void    Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, some<Container_t*> container);
-        void    Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, some<Actor_Base_t*> actor_base);
-        void    Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, Member_Suit_Template_t suit_template);
-        void    Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, some<Reference_t*> reference, Bool_t do_copy);
-        void    Remove_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type);
-
-        Bool_t  Enforce(some<Member_ID_t> member_id);
+        size_t                      Member_Count();
 
     public:
         void    Log(std::string indent = "");

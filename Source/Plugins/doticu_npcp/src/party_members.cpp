@@ -1093,7 +1093,10 @@ namespace doticu_npcp { namespace Party {
     Members_t::Members_t(some<Quest_t*> quest, Bool_t is_new_game) :
         quest(quest),
         save_state(quest),
+
+        locks(Vector_t<Lock_t>(MAX_MEMBERS)),
         custom_bases(Vector_t<maybe<Actor_Base_t*>>(MAX_MEMBERS)),
+
         vanilla_ghost_abilities(skylib::Const::Spells::Ghost_Abilities())
     {
         SKYLIB_ASSERT_SOME(quest);
@@ -1113,7 +1116,10 @@ namespace doticu_npcp { namespace Party {
     Members_t::Members_t(some<Quest_t*> quest, const Version_t<u16> version_to_update) :
         quest(quest),
         save_state(quest),
+
+        locks(Vector_t<Lock_t>(MAX_MEMBERS)),
         custom_bases(Vector_t<maybe<Actor_Base_t*>>(MAX_MEMBERS)),
+
         vanilla_ghost_abilities(skylib::Const::Spells::Ghost_Abilities())
     {
         // update code goes here
@@ -1144,8 +1150,10 @@ namespace doticu_npcp { namespace Party {
     void Members_t::Before_Save()
     {
         for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
-            if (Enforce(idx)) {
-                Actor(idx)->Actor_Base(Original_Base(idx), false);
+            Member_t member(idx);
+            if (member) {
+                member.Enforce();
+                member.Actor()->Actor_Base(member.Original_Base(), false);
             }
         }
         this->save_state.Write();
@@ -1154,8 +1162,9 @@ namespace doticu_npcp { namespace Party {
     void Members_t::After_Save()
     {
         for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
-            if (Has_Member(idx)) {
-                Actor(idx)->Actor_Base(Custom_Base(idx), false);
+            Member_t member(idx);
+            if (member) {
+                member.Actor()->Actor_Base(member.Custom_Base(), false);
             }
         }
     }
@@ -1195,8 +1204,9 @@ namespace doticu_npcp { namespace Party {
             virtual void operator ()() override
             {
                 for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
-                    if (this->self.Has_Member(idx)) {
-                        this->self.Alias_Reference(idx)->Fill(this->self.Actor(idx), none<V::Callback_i*>());
+                    Member_t member(idx);
+                    if (member) {
+                        this->self.Alias_Reference(idx)->Fill(member.Actor(), none<V::Callback_i*>());
                     } else {
                         this->self.Remove_Member(idx);
                     }
@@ -1401,6 +1411,22 @@ namespace doticu_npcp { namespace Party {
         this->save_state.sort_type = value;
     }
 
+    Lock_t& Members_t::Lock(some<Member_ID_t> member_id)
+    {
+        SKYLIB_ASSERT_SOME(member_id);
+
+        return this->locks[member_id()];
+    }
+
+    some<Alias_Reference_t*> Members_t::Alias_Reference(some<Member_ID_t> member_id)
+    {
+        SKYLIB_ASSERT_SOME(member_id);
+
+        some<Alias_Reference_t*> alias_reference = this->quest->Index_To_Alias_Reference(member_id())();
+        SKYLIB_ASSERT_SOME(alias_reference);
+        return alias_reference;
+    }
+
     Bool_t Members_t::Has_Alias(some<Member_ID_t> member_id)
     {
         SKYLIB_ASSERT_SOME(member_id);
@@ -1490,16 +1516,17 @@ namespace doticu_npcp { namespace Party {
         self->save_state.vitalities[member_id] = self->save_state.default_vitality;
 
         // we can just do member suit by base for clone.
+        Member_t member(member_id);
         maybe<Member_Suit_Type_e> default_suit_type = self->Default_Suit_Type();
         if (self->Do_Fill_Suits_Automatically()) {
-            self->Add_Suit(member_id, Member_Suit_Type_e::MEMBER, actor, false);
+            member.Add_Suit(Member_Suit_Type_e::MEMBER, actor, false);
             if (default_suit_type && default_suit_type != Member_Suit_Type_e::MEMBER) {
-                self->Add_Suit(member_id, default_suit_type(), default_suit_type().As_Template());
+                member.Add_Suit(default_suit_type(), default_suit_type().As_Template());
             }
         } else {
-            self->Add_Suit(member_id, Member_Suit_Type_e::MEMBER);
+            member.Add_Suit(Member_Suit_Type_e::MEMBER);
             if (default_suit_type && default_suit_type != Member_Suit_Type_e::MEMBER) {
-                self->Add_Suit(member_id, default_suit_type());
+                member.Add_Suit(default_suit_type());
             }
         }
 
@@ -1516,7 +1543,7 @@ namespace doticu_npcp { namespace Party {
                 maybe<Member_ID_t> member_id = Unused_Member_ID();
                 if (member_id) {
                     Party::Add_Member(this, member_id(), actor, base());
-                    Enforce(member_id());
+                    Member_t(member_id()).Enforce();
                     return member_id;
                 } else {
                     return none<Member_ID_t>();
@@ -1539,7 +1566,7 @@ namespace doticu_npcp { namespace Party {
                 maybe<Actor_t*> actor = Actor_t::Create(base, true, true, true);
                 if (actor && actor->Is_Valid() && actor->Isnt_Deleted()) {
                     Party::Add_Member(this, member_id(), actor(), base);
-                    Enforce(member_id());
+                    Member_t(member_id()).Enforce();
                     return member_id;
                 } else {
                     return none<Member_ID_t>();
@@ -1564,7 +1591,7 @@ namespace doticu_npcp { namespace Party {
                 if (actor && actor->Is_Valid() && actor->Isnt_Deleted()) {
                     Party::Add_Member(this, member_id(), actor(), base());
                     this->save_state.flags[member_id()].Flag(Member_Flags_e::IS_CLONE);
-                    Enforce(member_id());
+                    Member_t(member_id()).Enforce();
                     return member_id;
                 } else {
                     return none<Member_ID_t>();
@@ -1599,982 +1626,6 @@ namespace doticu_npcp { namespace Party {
             }
         }
         return result;
-    }
-
-    some<Alias_Reference_t*> Members_t::Alias_Reference(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        some<Alias_Reference_t*> alias_reference = this->quest->Index_To_Alias_Reference(valid_member_id())();
-        SKYLIB_ASSERT_SOME(alias_reference);
-        return alias_reference;
-    }
-
-    some<Actor_t*> Members_t::Actor(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        some<Actor_t*> actor = this->save_state.actors[valid_member_id()]();
-        SKYLIB_ASSERT_SOME(actor);
-        return actor;
-    }
-
-    some<Actor_Base_t*> Members_t::Original_Base(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        some<Actor_Base_t*> original_base = this->save_state.original_bases[valid_member_id()]();
-        SKYLIB_ASSERT_SOME(original_base);
-        return original_base;
-    }
-
-    some<Actor_Base_t*> Members_t::Custom_Base(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        maybe<Actor_Base_t*>& custom_base = this->custom_bases[valid_member_id()];
-        if (!custom_base) {
-            custom_base = Actor_Base_t::Create_Temporary_Copy(Original_Base(valid_member_id))();
-            custom_base->Default_Outfit(Outfit(valid_member_id));
-            SKYLIB_ASSERT_SOME(custom_base);
-        }
-
-        return custom_base();
-    }
-
-    Bool_t Members_t::Is_Banished(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        return this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_BANISHED);
-    }
-
-    void Members_t::Is_Banished(some<Member_ID_t> valid_member_id, Bool_t value)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_BANISHED, value);
-    }
-
-    Bool_t Members_t::Is_Clone(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        return this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_CLONE);
-    }
-
-    void Members_t::Is_Clone(some<Member_ID_t> valid_member_id, Bool_t value)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_CLONE, value);
-    }
-
-    Bool_t Members_t::Is_Immobile(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        return this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_IMMOBILE);
-    }
-
-    void Members_t::Is_Immobile(some<Member_ID_t> valid_member_id, Bool_t value)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_IMMOBILE, value);
-    }
-
-    Bool_t Members_t::Is_Mannequin(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        return this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_MANNEQUIN);
-    }
-
-    void Members_t::Is_Mannequin(some<Member_ID_t> valid_member_id, Bool_t value)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_MANNEQUIN, value);
-    }
-
-    Bool_t Members_t::Is_Reanimated(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        return this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_REANIMATED);
-    }
-
-    void Members_t::Is_Reanimated(some<Member_ID_t> valid_member_id, Bool_t value)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_REANIMATED, value);
-    }
-
-    Bool_t Members_t::Is_Sneak(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        return this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_SNEAK);
-    }
-
-    void Members_t::Is_Sneak(some<Member_ID_t> valid_member_id, Bool_t value)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_SNEAK, value);
-    }
-
-    Bool_t Members_t::Is_Thrall(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        return this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_THRALL);
-    }
-
-    void Members_t::Is_Thrall(some<Member_ID_t> valid_member_id, Bool_t value)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        this->save_state.flags[valid_member_id()].Is_Flagged(Member_Flags_e::IS_THRALL, value);
-    }
-
-    Bool_t Members_t::Has_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type)
-    {
-        SKYLIB_ASSERT_SOME(valid_id);
-        SKYLIB_ASSERT_SOME(type);
-        SKYLIB_ASSERT(Has_Member(valid_id));
-        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
-
-        Member_Flags_Has_Suit_e flag = type().As_Member_Flag_Has_Suit();
-        SKYLIB_ASSERT_SOME(flag);
-
-        return this->save_state.flags_has_suit[valid_id()].Is_Flagged(flag);
-    }
-
-    void Members_t::Has_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, Bool_t value)
-    {
-        SKYLIB_ASSERT_SOME(valid_id);
-        SKYLIB_ASSERT_SOME(type);
-        SKYLIB_ASSERT(Has_Member(valid_id));
-        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
-
-        Member_Flags_Has_Suit_e flag = type().As_Member_Flag_Has_Suit();
-        SKYLIB_ASSERT_SOME(flag);
-
-        this->save_state.flags_has_suit[valid_id()].Is_Flagged(flag, value);
-    }
-
-    Bool_t Members_t::Only_Playables(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type)
-    {
-        SKYLIB_ASSERT_SOME(valid_id);
-        SKYLIB_ASSERT_SOME(type);
-        SKYLIB_ASSERT(Has_Member(valid_id));
-        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
-
-        Member_Flags_Only_Playables_e flag = type().As_Member_Flag_Only_Playables();
-        SKYLIB_ASSERT_SOME(flag);
-
-        return this->save_state.flags_only_playables[valid_id()].Is_Flagged(flag);
-    }
-
-    void Members_t::Only_Playables(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, Bool_t value)
-    {
-        SKYLIB_ASSERT_SOME(valid_id);
-        SKYLIB_ASSERT_SOME(type);
-        SKYLIB_ASSERT(Has_Member(valid_id));
-        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
-
-        Member_Flags_Only_Playables_e flag = type().As_Member_Flag_Only_Playables();
-        SKYLIB_ASSERT_SOME(flag);
-
-        this->save_state.flags_only_playables[valid_id()].Is_Flagged(flag, value);
-    }
-
-    String_t Members_t::Name(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        String_t name = this->save_state.names[valid_member_id()];
-        if (!name) {
-            name = Original_Base(valid_member_id)->Name();
-        }
-
-        return name;
-    }
-
-    void Members_t::Name(some<Member_ID_t> valid_member_id, String_t name)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        this->save_state.names[valid_member_id()] = name;
-    }
-
-    some<Reference_t*> Members_t::Cache(some<Member_ID_t> valid_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_id);
-        SKYLIB_ASSERT(Has_Member(valid_id));
-
-        maybe<Reference_t*>& cache = this->save_state.caches[valid_id()];
-        if (!cache) {
-            cache = Container_t::Create_Reference(
-                Consts_t::NPCP::Container::Empty(),
-                Consts_t::NPCP::Reference::Storage_Marker()
-            )();
-            SKYLIB_ASSERT_SOME(cache);
-        }
-
-        return cache();
-    }
-
-    maybe<Combat_Style_t*> Members_t::Combat_Style(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        maybe<Combat_Style_t*> combat_style = this->save_state.combat_styles[valid_member_id()];
-        if (!combat_style) {
-            combat_style = Original_Base(valid_member_id)->Combat_Style();
-        }
-
-        return combat_style;
-    }
-
-    void Members_t::Combat_Style(some<Member_ID_t> valid_member_id, maybe<Combat_Style_t*> combat_style)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        this->save_state.combat_styles[valid_member_id()] = combat_style;
-    }
-
-    void Members_t::Combat_Style(some<Member_ID_t> valid_member_id, Member_Combat_Style_e combat_style)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        Combat_Style(valid_member_id, combat_style.As_Combat_Style());
-    }
-
-    Bool_t Members_t::Is_Warrior(some<Member_ID_t> valid_member_id)
-    {
-        return Member_Combat_Style_e::From_Combat_Style(Combat_Style(valid_member_id)) == Member_Combat_Style_e::WARRIOR;
-    }
-
-    Bool_t Members_t::Is_Mage(some<Member_ID_t> valid_member_id)
-    {
-        return Member_Combat_Style_e::From_Combat_Style(Combat_Style(valid_member_id)) == Member_Combat_Style_e::MAGE;
-    }
-
-    Bool_t Members_t::Is_Archer(some<Member_ID_t> valid_member_id)
-    {
-        return Member_Combat_Style_e::From_Combat_Style(Combat_Style(valid_member_id)) == Member_Combat_Style_e::ARCHER;
-    }
-
-    Bool_t Members_t::Is_Coward(some<Member_ID_t> valid_member_id)
-    {
-        return Member_Combat_Style_e::From_Combat_Style(Combat_Style(valid_member_id)) == Member_Combat_Style_e::COWARD;
-    }
-
-    maybe<Spell_t*> Members_t::Ghost_Ability(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        return this->save_state.ghost_abilities[valid_member_id()];
-    }
-
-    void Members_t::Ghost_Ability(some<Member_ID_t> valid_member_id, maybe<Spell_t*> ghost_ability)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        this->save_state.ghost_abilities[valid_member_id()] = ghost_ability;
-    }
-
-    maybe<Outfit_t*> Members_t::Outfit(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        return this->save_state.outfits[valid_member_id()];
-    }
-
-    void Members_t::Outfit(some<Member_ID_t> valid_member_id, maybe<Outfit_t*> outfit)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        this->save_state.outfits[valid_member_id()] = outfit;
-    }
-
-    some<Reference_t*> Members_t::Pack(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        maybe<Reference_t*>& pack = this->save_state.packs[valid_member_id()];
-        if (!pack) {
-            pack = Container_t::Create_Reference(
-                Consts_t::NPCP::Container::Empty(),
-                Consts_t::NPCP::Reference::Storage_Marker()
-            )();
-            SKYLIB_ASSERT_SOME(pack);
-        }
-
-        return pack();
-    }
-
-    some<Member_Suitcase_t*> Members_t::Suitcase(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        maybe<Member_Suitcase_t*>& suitcase = this->save_state.suitcases[valid_member_id()];
-        if (!suitcase) {
-            suitcase = Member_Suitcase_t::Create()();
-            SKYLIB_ASSERT_SOME(suitcase);
-        }
-
-        return suitcase();
-    }
-
-    some<Voice_Type_t*> Members_t::Voice_Type(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        maybe<Voice_Type_t*> voice_type = this->save_state.voice_types[valid_member_id()];
-        if (!voice_type) {
-            voice_type = Original_Base(valid_member_id)->Voice_Type();
-            if (!voice_type) {
-                voice_type = Actor(valid_member_id)->Race_Voice_Type();
-                if (!voice_type) {
-                    voice_type = Consts_t::NPCP::Voice_Type::Blank()();
-                }
-            }
-        }
-
-        SKYLIB_ASSERT_SOME(voice_type);
-
-        return voice_type();
-    }
-
-    void Members_t::Voice_Type(some<Member_ID_t> valid_member_id, maybe<Voice_Type_t*> voice_type)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        this->save_state.voice_types[valid_member_id()] = voice_type;
-    }
-
-    maybe<Member_Alpha_t> Members_t::Alpha(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        if (!Is_Enabled(valid_member_id)) {
-            return 0.0f;
-        } else {
-            return this->save_state.alphas[valid_member_id()];
-        }
-    }
-
-    void Members_t::Alpha(some<Member_ID_t> valid_member_id, maybe<Member_Alpha_t> alpha)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        this->save_state.alphas[valid_member_id()] = alpha;
-    }
-
-    maybe<Member_Rating_t> Members_t::Rating(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        return this->save_state.ratings[valid_member_id()];
-    }
-
-    void Members_t::Rating(some<Member_ID_t> valid_member_id, maybe<Member_Rating_t> rating)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        this->save_state.ratings[valid_member_id()] = rating;
-    }
-
-    some<Member_Relation_e> Members_t::Relation(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        maybe<Member_Relation_e> relation = this->save_state.relations[valid_member_id()];
-        if (!relation) {
-            relation = Original_Base(valid_member_id)->Relation(skylib::Const::Actor_Base::Player());
-        }
-
-        SKYLIB_ASSERT_SOME(relation);
-
-        return relation();
-    }
-
-    void Members_t::Relation(some<Member_ID_t> valid_member_id, maybe<Member_Relation_e> relation)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        this->save_state.relations[valid_member_id()] = relation;
-    }
-
-    maybe<Member_Suit_Type_e> Members_t::Suit_Type(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        maybe<Member_Suit_Type_e> suit_type = this->save_state.suit_types[valid_member_id()];
-        if (suit_type && Do_Change_Suits_Automatically()) {
-            Main_t& main = Main();
-            some<Actor_t*> actor = Actor(valid_member_id);
-            maybe<Cell_t*> cell = actor->Cell(true);
-            maybe<Location_t*> location = actor->Location();
-
-            if (Has_Suit(valid_member_id, Member_Suit_Type_e::MANNEQUIN) && Is_Mannequin(valid_member_id)) {
-                return Member_Suit_Type_e::MANNEQUIN;
-            } else if (Has_Suit(valid_member_id, Member_Suit_Type_e::IMMOBILE) && Is_Immobile(valid_member_id)) {
-                return Member_Suit_Type_e::IMMOBILE;
-            } else if (Has_Suit(valid_member_id, Member_Suit_Type_e::COMBATANT) && actor->Is_In_Combat()) {
-                return Member_Suit_Type_e::COMBATANT;
-            } else if (location && Has_Suit(valid_member_id, Member_Suit_Type_e::INN) && location->Is_Inn()) {
-                return Member_Suit_Type_e::INN;
-            } else if (location && Has_Suit(valid_member_id, Member_Suit_Type_e::HOME) && location->Is_Likely_Home()) {
-                return Member_Suit_Type_e::HOME;
-            } else if (location && Has_Suit(valid_member_id, Member_Suit_Type_e::SETTLEMENT) && location->Is_Likely_City_Or_Town()) {
-                return Member_Suit_Type_e::SETTLEMENT;
-            } else if (Has_Suit(valid_member_id, Member_Suit_Type_e::FOLLOWER) && main.Is_Follower(valid_member_id)) {
-                return Member_Suit_Type_e::FOLLOWER;
-            } else if (Has_Suit(valid_member_id, Member_Suit_Type_e::GUARD) && main.Is_Currently_Guard(valid_member_id)) {
-                return Member_Suit_Type_e::GUARD;
-            } else if (Has_Suit(valid_member_id, Member_Suit_Type_e::EATER) && main.Is_Currently_Eater(valid_member_id)) {
-                return Member_Suit_Type_e::EATER;
-            } else if (Has_Suit(valid_member_id, Member_Suit_Type_e::SITTER) && main.Is_Currently_Sitter(valid_member_id)) {
-                return Member_Suit_Type_e::SITTER;
-            } else if (Has_Suit(valid_member_id, Member_Suit_Type_e::SLEEPER) && main.Is_Currently_Sleeper(valid_member_id)) {
-                return Member_Suit_Type_e::SLEEPER;
-            } else if (Has_Suit(valid_member_id, Member_Suit_Type_e::SANDBOXER) && main.Is_Currently_Sandboxer(valid_member_id)) {
-                return Member_Suit_Type_e::SANDBOXER;
-            } else if (location && Has_Suit(valid_member_id, Member_Suit_Type_e::DANGEROUS) && location->Is_Likely_Dangerous()) {
-                return Member_Suit_Type_e::DANGEROUS;
-            } else if (location && Has_Suit(valid_member_id, Member_Suit_Type_e::CIVILIZED) && location->Is_Likely_Civilized()) {
-                return Member_Suit_Type_e::CIVILIZED;
-            } else if (cell && Has_Suit(valid_member_id, Member_Suit_Type_e::INTERIOR) && cell->Is_Interior()) {
-                return Member_Suit_Type_e::INTERIOR;
-            } else if (cell && Has_Suit(valid_member_id, Member_Suit_Type_e::EXTERIOR) && cell->Is_Exterior()) {
-                return Member_Suit_Type_e::EXTERIOR;
-            } else if (Has_Suit(valid_member_id, Member_Suit_Type_e::COWARD) && Is_Coward(valid_member_id)) {
-                return Member_Suit_Type_e::COWARD;
-            } else if (Has_Suit(valid_member_id, Member_Suit_Type_e::ARCHER) && Is_Archer(valid_member_id)) {
-                return Member_Suit_Type_e::ARCHER;
-            } else if (Has_Suit(valid_member_id, Member_Suit_Type_e::MAGE) && Is_Mage(valid_member_id)) {
-                return Member_Suit_Type_e::MAGE;
-            } else if (Has_Suit(valid_member_id, Member_Suit_Type_e::WARRIOR) && Is_Warrior(valid_member_id)) {
-                return Member_Suit_Type_e::WARRIOR;
-            } else if (Has_Suit(valid_member_id, Member_Suit_Type_e::THRALL) && Is_Thrall(valid_member_id)) {
-                return Member_Suit_Type_e::THRALL;
-            } else {
-                return Member_Suit_Type_e::MEMBER;
-            }
-        } else {
-            return suit_type;
-        }
-    }
-
-    void Members_t::Suit_Type(some<Member_ID_t> valid_id, maybe<Member_Suit_Type_e> type)
-    {
-        SKYLIB_ASSERT_SOME(valid_id);
-        SKYLIB_ASSERT(Has_Member(valid_id));
-
-        if (type) {
-            SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
-            SKYLIB_ASSERT(Has_Suit(valid_id, type()));
-            this->save_state.suit_types[valid_id()] = type;
-        } else {
-            this->save_state.suit_types[valid_id()] = none<Member_Suit_Type_e>();
-        }
-    }
-
-    some<Member_Vitality_e> Members_t::Vitality(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        maybe<Member_Vitality_e> vitality = this->save_state.vitalities[valid_member_id()];
-        if (!vitality) {
-            vitality = Original_Base(valid_member_id)->Vitality();
-        }
-
-        SKYLIB_ASSERT_SOME(vitality);
-
-        return vitality();
-    }
-
-    void Members_t::Vitality(some<Member_ID_t> valid_member_id, maybe<Member_Vitality_e> vitality)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        this->save_state.vitalities[valid_member_id()] = vitality;
-    }
-
-    Bool_t Members_t::Is_Mortal(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        return Vitality(valid_member_id) == Member_Vitality_e::MORTAL;
-    }
-
-    void Members_t::Is_Mortal(some<Member_ID_t> valid_member_id, Bool_t value)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        Vitality(valid_member_id, Member_Vitality_e::MORTAL);
-    }
-
-    Bool_t Members_t::Is_Protected(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        return Vitality(valid_member_id) == Member_Vitality_e::PROTECTED;
-    }
-
-    void Members_t::Is_Protected(some<Member_ID_t> valid_member_id, Bool_t value)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        Vitality(valid_member_id, Member_Vitality_e::PROTECTED);
-    }
-
-    Bool_t Members_t::Is_Essential(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        return Vitality(valid_member_id) == Member_Vitality_e::ESSENTIAL;
-    }
-
-    void Members_t::Is_Essential(some<Member_ID_t> valid_member_id, Bool_t value)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        Vitality(valid_member_id, Member_Vitality_e::ESSENTIAL);
-    }
-
-    Bool_t Members_t::Is_Invulnerable(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        return Vitality(valid_member_id) == Member_Vitality_e::INVULNERABLE;
-    }
-
-    void Members_t::Is_Invulnerable(some<Member_ID_t> valid_member_id, Bool_t value)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        Vitality(valid_member_id, Member_Vitality_e::INVULNERABLE);
-    }
-
-    Bool_t Members_t::Is_Enabled(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        return
-            !Is_Banished(valid_member_id);
-    }
-
-    Bool_t Members_t::Is_Untouchable(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        return
-            (Has_Untouchable_Invulnerables() && Is_Invulnerable(valid_member_id));
-    }
-
-    Bool_t Members_t::Has_AI(some<Member_ID_t> valid_member_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Has_Member(valid_member_id));
-
-        return
-            !Is_Banished(valid_member_id) &&
-            !Is_Mannequin(valid_member_id);
-    }
-
-    void Members_t::Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type)
-    {
-        SKYLIB_ASSERT_SOME(valid_id);
-        SKYLIB_ASSERT_SOME(type);
-        SKYLIB_ASSERT(Has_Member(valid_id));
-        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
-
-        Remove_Suit(valid_id, type);
-        Has_Suit(valid_id, type, true);
-    }
-
-    void Members_t::Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, some<Outfit_t*> outfit)
-    {
-        SKYLIB_ASSERT_SOME(valid_id);
-        SKYLIB_ASSERT_SOME(type);
-        SKYLIB_ASSERT_SOME(outfit);
-        SKYLIB_ASSERT(Has_Member(valid_id));
-        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
-
-        Remove_Suit(valid_id, type);
-        Has_Suit(valid_id, type, true);
-
-        some<Reference_t*> cache = Cache(valid_id);
-        outfit->Add_Items_To(cache);
-        Suitcase(valid_id)->Move_From(cache,
-                                      type,
-                                      Member_Suitcase_t::filter_out_blank_or_token_objects,
-                                      Member_Suitcase_t::filter_out_quest_extra_lists);
-        cache->Destroy_Non_Quest_Items();
-    }
-
-    void Members_t::Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, some<Container_t*> container)
-    {
-        SKYLIB_ASSERT_SOME(valid_id);
-        SKYLIB_ASSERT_SOME(type);
-        SKYLIB_ASSERT_SOME(container);
-        SKYLIB_ASSERT(Has_Member(valid_id));
-        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
-
-        Remove_Suit(valid_id, type);
-        Has_Suit(valid_id, type, true);
-
-        some<Reference_t*> cache = Cache(valid_id);
-        container->Container_Add_Items_To(cache);
-        Suitcase(valid_id)->Move_From(cache,
-                                      type,
-                                      Member_Suitcase_t::filter_out_blank_or_token_objects,
-                                      Member_Suitcase_t::filter_out_quest_extra_lists);
-        cache->Destroy_Non_Quest_Items();
-    }
-
-    void Members_t::Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, some<Actor_Base_t*> actor_base)
-    {
-        SKYLIB_ASSERT_SOME(valid_id);
-        SKYLIB_ASSERT_SOME(type);
-        SKYLIB_ASSERT_SOME(actor_base);
-        SKYLIB_ASSERT(Has_Member(valid_id));
-        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
-
-        Remove_Suit(valid_id, type);
-        Has_Suit(valid_id, type, true);
-
-        some<Reference_t*> cache = Cache(valid_id);
-        maybe<Outfit_t*> outfit = actor_base->Default_Outfit();
-        actor_base->Container_Add_Items_To(cache);
-        if (outfit) {
-            outfit->Add_Items_To(cache);
-        }
-        Suitcase(valid_id)->Move_From(cache,
-                                      type,
-                                      Member_Suitcase_t::filter_out_blank_or_token_objects,
-                                      Member_Suitcase_t::filter_out_quest_extra_lists);
-        cache->Destroy_Non_Quest_Items();
-    }
-
-    void Members_t::Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, Member_Suit_Template_t suit_template)
-    {
-        SKYLIB_ASSERT_SOME(valid_id);
-        SKYLIB_ASSERT_SOME(type);
-        SKYLIB_ASSERT(Has_Member(valid_id));
-        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
-
-        Remove_Suit(valid_id, type);
-        Has_Suit(valid_id, type, true);
-
-        some<Reference_t*> cache = Cache(valid_id);
-
-        maybe<Armor_t*> aura = suit_template.armor.Aura(Fill_Suit_Aura_Probability());
-        maybe<Armor_t*> body = suit_template.armor.Body(Fill_Suit_Body_Probability());
-        maybe<Armor_t*> feet = suit_template.armor.Feet(Fill_Suit_Feet_Probability());
-        maybe<Armor_t*> finger = suit_template.armor.Finger(Fill_Suit_Finger_Probability());
-        maybe<Armor_t*> forearm = suit_template.armor.Forearm(Fill_Suit_Forearm_Probability());
-        maybe<Armor_t*> forehead = suit_template.armor.Forehead(Fill_Suit_Forehead_Probability());
-        maybe<Armor_t*> hands = suit_template.armor.Hands(Fill_Suit_Hands_Probability());
-        maybe<Armor_t*> head = suit_template.armor.Head(Fill_Suit_Head_Probability());
-        maybe<Armor_t*> neck = suit_template.armor.Neck(Fill_Suit_Neck_Probability());
-
-        if (aura) cache->Add_Item(aura(), none<Extra_List_t*>(), 1, none<Reference_t*>());
-        if (body) cache->Add_Item(body(), none<Extra_List_t*>(), 1, none<Reference_t*>());
-        if (feet) cache->Add_Item(feet(), none<Extra_List_t*>(), 1, none<Reference_t*>());
-        if (finger) cache->Add_Item(finger(), none<Extra_List_t*>(), 1, none<Reference_t*>());
-        if (forearm) cache->Add_Item(forearm(), none<Extra_List_t*>(), 1, none<Reference_t*>());
-        if (forehead) cache->Add_Item(forehead(), none<Extra_List_t*>(), 1, none<Reference_t*>());
-        if (hands) cache->Add_Item(hands(), none<Extra_List_t*>(), 1, none<Reference_t*>());
-        if (head) cache->Add_Item(head(), none<Extra_List_t*>(), 1, none<Reference_t*>());
-        if (neck) cache->Add_Item(neck(), none<Extra_List_t*>(), 1, none<Reference_t*>());
-
-        if (suit_template.weapon_a) {
-            cache->Add_Item(suit_template.weapon_a(), none<Extra_List_t*>(), 1, none<Reference_t*>());
-        }
-        if (suit_template.weapon_b) {
-            cache->Add_Item(suit_template.weapon_b(), none<Extra_List_t*>(), 1, none<Reference_t*>());
-        }
-        if (suit_template.ammo) {
-            cache->Add_Item(suit_template.ammo(), none<Extra_List_t*>(), 100, none<Reference_t*>());
-        }
-
-        Suitcase(valid_id)->Move_From(cache,
-                                      type,
-                                      Member_Suitcase_t::filter_out_blank_or_token_objects,
-                                      Member_Suitcase_t::filter_out_quest_extra_lists);
-        cache->Destroy_Non_Quest_Items();
-    }
-
-    void Members_t::Add_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type, some<Reference_t*> reference, Bool_t do_copy)
-    {
-        SKYLIB_ASSERT_SOME(valid_id);
-        SKYLIB_ASSERT_SOME(type);
-        SKYLIB_ASSERT_SOME(reference);
-        SKYLIB_ASSERT(Has_Member(valid_id));
-        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
-
-        Remove_Suit(valid_id, type);
-        Has_Suit(valid_id, type, true);
-
-        if (do_copy) {
-            Suitcase(valid_id)->Copy_From(reference,
-                                          type,
-                                          Member_Suitcase_t::filter_out_blank_or_token_objects,
-                                          Member_Suitcase_t::filter_out_no_extra_lists);
-        } else {
-            Suitcase(valid_id)->Move_From(reference,
-                                          type,
-                                          Member_Suitcase_t::filter_out_blank_or_token_objects,
-                                          Member_Suitcase_t::filter_out_quest_extra_lists);
-        }
-    }
-
-    void Members_t::Remove_Suit(some<Member_ID_t> valid_id, some<Member_Suit_Type_e> type)
-    {
-        SKYLIB_ASSERT_SOME(valid_id);
-        SKYLIB_ASSERT_SOME(type);
-        SKYLIB_ASSERT(Has_Member(valid_id));
-        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
-
-        if (Has_Suit(valid_id, type)) {
-            Suitcase(valid_id)->Remove_Suit(Do_Unfill_Suits_To_Pack() ? Pack(valid_id)() : none<Reference_t*>()(), type);
-            Has_Suit(valid_id, type, false);
-        }
-    }
-
-    Bool_t Members_t::Enforce(some<Member_ID_t> member_id)
-    {
-        SKYLIB_ASSERT_SOME(member_id);
-
-        // we may want a different smaller branch if the actor is in combat, or a separate func to call
-
-        if (Has_Member(member_id)) {
-            Main_t& main = Main();
-            some<Actor_t*> actor = Actor(member_id);
-            some<Actor_Base_t*> custom_base = Custom_Base(member_id);
-
-            Vector_t<some<Spell_t*>> spells_to_add;
-            spells_to_add.reserve(4);
-
-            actor->Actor_Base(Custom_Base(member_id), false);
-
-            main.Tokenize(member_id, Consts_t::NPCP::Misc::Token::Member(), member_id() + 1);
-            actor->Faction_Rank(Consts_t::NPCP::Faction::Member(), 0);
-
-            if (Is_Banished(member_id)) {
-                main.Tokenize(member_id, Consts_t::NPCP::Misc::Token::Banished());
-            } else {
-                main.Untokenize(member_id, Consts_t::NPCP::Misc::Token::Banished());
-            }
-
-            if (Is_Immobile(member_id)) {
-                main.Tokenize(member_id, Consts_t::NPCP::Misc::Token::Immobile());
-            } else {
-                main.Untokenize(member_id, Consts_t::NPCP::Misc::Token::Immobile());
-            }
-
-            if (Is_Reanimated(member_id)) {
-                main.Tokenize(member_id, Consts_t::NPCP::Misc::Token::Reanimated());
-
-                spells_to_add.push_back(Consts_t::NPCP::Spell::Reanimate_Ability());
-            } else {
-                main.Untokenize(member_id, Consts_t::NPCP::Misc::Token::Reanimated());
-
-                actor->Remove_Spell(Consts_t::NPCP::Spell::Reanimate_Ability());
-            }
-
-            if (Is_Sneak(member_id)) {
-                main.Tokenize(member_id, Consts_t::NPCP::Misc::Token::Sneak());
-
-                if (!actor->Is_Forced_To_Sneak()) {
-                    actor->Is_Forced_To_Sneak(true, main.Script(member_id));
-                }
-            } else {
-                main.Untokenize(member_id, Consts_t::NPCP::Misc::Token::Sneak());
-
-                if (actor->Is_Forced_To_Sneak()) {
-                    actor->Is_Forced_To_Sneak(false, main.Script(member_id));
-                }
-            }
-
-            if (Is_Thrall(member_id)) {
-                main.Tokenize(member_id, Consts_t::NPCP::Misc::Token::Thrall());
-            } else {
-                main.Untokenize(member_id, Consts_t::NPCP::Misc::Token::Thrall());
-            }
-
-            custom_base->Name(Name(member_id), false);
-            actor->x_list.Destroy_Extra_Text_Display();
-
-            custom_base->Combat_Style(Combat_Style(member_id));
-
-            maybe<Spell_t*> ghost_ability = Ghost_Ability(member_id);
-            for (size_t idx = 0, end = this->vanilla_ghost_abilities.size(); idx < end; idx += 1) {
-                some<Spell_t*> vanilla_ghost_ability = this->vanilla_ghost_abilities[idx];
-                if (vanilla_ghost_ability != ghost_ability) {
-                    actor->Remove_Spell(this->vanilla_ghost_abilities[idx]);
-                }
-            }
-            if (ghost_ability) {
-                spells_to_add.push_back(ghost_ability());
-            }
-
-            maybe<Outfit_t*> outfit = Outfit(member_id);
-            maybe<Outfit_t*> custom_outfit = custom_base->Default_Outfit();
-            if (outfit != custom_outfit) {
-                Outfit(member_id, custom_outfit);
-            }
-
-            // if we limit to attached actors, we need to stop the disabling of suit on the first suitup
-            if (!actor->Is_In_Combat()) {
-                maybe<Member_Suit_Type_e> suit_type = Suit_Type(member_id);
-                if (suit_type) {
-                    some<Member_Suitcase_t*> suitcase = Suitcase(member_id);
-                    if (suitcase->Has_Inactive_Outfit_Item(actor)) {
-                        // we need to have either a global option or member option here, to initiate the auto-change
-                        Suit_Type(member_id, none<Member_Suit_Type_e>());
-                        suit_type = none<Member_Suit_Type_e>();
-                    }
-                    if (suit_type) {
-                        if (Only_Playables(member_id, suit_type())) {
-                            suitcase->Apply_Unto(actor,
-                                                 suit_type(),
-                                                 Member_Suitcase_t::filter_out_blank_or_token_or_unplayable_objects,
-                                                 Do_Fill_Suits_Strictly(),
-                                                 Do_Unfill_Suits_To_Pack() ? Pack(member_id)() : none<Reference_t*>()());
-                        } else {
-                            suitcase->Apply_Unto(actor,
-                                                 suit_type(),
-                                                 Member_Suitcase_t::filter_out_blank_or_token_objects,
-                                                 Do_Fill_Suits_Strictly(),
-                                                 Do_Unfill_Suits_To_Pack() ? Pack(member_id)() : none<Reference_t*>()());
-                        }
-                    }
-                }
-            }
-
-            custom_base->Voice_Type(Voice_Type(member_id)());
-
-            actor->Alpha(Alpha(member_id)(), main.Script(member_id));
-
-            custom_base->Relation(skylib::Const::Actor_Base::Player(), Relation(member_id));
-
-            custom_base->Vitality(Vitality(member_id), false);
-
-            if (Is_Enabled(member_id)) {
-                if (actor->Is_Disabled()) {
-                    actor->Enable();
-                }
-            } else {
-                if (actor->Is_Enabled()) {
-                    actor->Disable();
-                }
-            }
-
-            if (Is_Untouchable(member_id)) {
-                actor->Is_Ghost(true);
-            } else {
-                actor->Is_Ghost(false);
-            }
-
-            if (Has_AI(member_id)) {
-                if (!actor->Has_AI()) {
-                    actor->Has_AI(true);
-                    main.Update_AI(member_id, Member_Update_AI_e::RESET_AI);
-                }
-            } else {
-                if (actor->Has_AI()) {
-                    actor->Has_AI(false);
-                }
-            }
-
-            if (actor->Is_Attached()) {
-                for (size_t idx = 0, end = spells_to_add.size(); idx < end; idx += 1) {
-                    some<Spell_t*> spell = spells_to_add[idx];
-                    if (!actor->Has_Magic_Effects(spell)) {
-                        actor->Reset_Spell(spell);
-                    }
-                }
-            } else {
-                for (size_t idx = 0, end = spells_to_add.size(); idx < end; idx += 1) {
-                    actor->Remove_Spell(spells_to_add[idx]);
-                }
-            }
-
-            maybe<Actor_t*> combat_target = actor->Current_Combat_Target();
-            if (combat_target) {
-                if (combat_target == skylib::Const::Actor::Player() || Has_Member(combat_target())) {
-                    // we need to handle aggression also, but that needs to be done along with other factors?
-                    actor->Stop_Combat_And_Alarm();
-                    actor->actor_flags_2.Unflag(skylib::Actor_Flags_2_e::IS_ANGRY_WITH_PLAYER);
-                    main.Update_AI(member_id, Member_Update_AI_e::RESET_AI);
-                }
-            }
-
-            return true;
-        } else {
-            Remove_Member(member_id);
-
-            return false;
-        }
     }
 
 }}

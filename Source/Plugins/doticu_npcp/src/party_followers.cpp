@@ -11,6 +11,7 @@
 #include "main.h"
 #include "npcp.h"
 #include "party_followers.h"
+#include "party_member.h"
 #include "party_members.h"
 
 namespace doticu_npcp { namespace Party {
@@ -375,7 +376,7 @@ namespace doticu_npcp { namespace Party {
 
         for (size_t idx = 0, end = MAX_FOLLOWERS; idx < end; idx += 1) {
             maybe<Member_ID_t> member_id = this->save_state.member_ids[idx];
-            if (member_id && Members().Has_Member(member_id()) && Members().Actor(member_id()) == actor) {
+            if (member_id && Members().Has_Member(member_id()) && Member_t(member_id()).Actor() == actor) {
                 return idx;
             }
         }
@@ -473,7 +474,7 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT_SOME(valid_follower_id);
         SKYLIB_ASSERT(Has_Follower(valid_follower_id));
 
-        return Members().Actor(Member_ID(valid_follower_id));
+        return Member_t(Member_ID(valid_follower_id)).Actor();
     }
 
     some<Member_ID_t> Followers_t::Member_ID(some<Follower_ID_t> valid_follower_id)
@@ -547,7 +548,7 @@ namespace doticu_npcp { namespace Party {
             some<Actor_t*> actor = Actor(follower_id);
             some<Member_ID_t> member_id = Member_ID(follower_id);
 
-            main.Tokenize(member_id, Consts_t::NPCP::Misc::Token::Follower(), follower_id() + 1);
+            Member_t(member_id).Tokenize(Consts_t::NPCP::Misc::Token::Follower(), follower_id() + 1);
 
             actor->Is_Player_Teammate(true);
         } else {

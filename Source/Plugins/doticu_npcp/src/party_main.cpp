@@ -11,6 +11,7 @@
 #include "party_expoees.h"
 #include "party_followers.h"
 #include "party_main.h"
+#include "party_member.h"
 #include "party_members.h"
 #include "party_settlers.inl"
 
@@ -199,75 +200,39 @@ namespace doticu_npcp { namespace Party {
         return bound_object->Is_Misc() && bound_object->form_id.Has_Mod(Consts_t::NPCP::Mod()());
     }
 
-    void Main_t::Tokenize(some<Member_ID_t> valid_member_id,
-                          some<Bound_Object_t*> object,
-                          Container_Entry_Count_t count)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Members().Has_Member(valid_member_id));
-        SKYLIB_ASSERT_SOME(object);
-        SKYLIB_ASSERT(count > 0);
-
-        some<Actor_t*> actor = Members().Actor(valid_member_id);
-        Reference_Container_t container = actor->Container();
-        some<Reference_Container_Entry_t*> entry = container.Some_Entry(object);
-        if (entry->Non_Extra_Lists_Count() != count) {
-            entry->Decrement_Count(container, Container_Entry_Count_t::_MAX_);
-            entry->Increment_Count(container, count);
-            Update_AI(valid_member_id, Member_Update_AI_e::EVALUATE_PACKAGE);
-        }
-    }
-
-    void Main_t::Untokenize(some<Member_ID_t> valid_member_id,
-                            some<Bound_Object_t*> object)
-    {
-        SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Members().Has_Member(valid_member_id));
-        SKYLIB_ASSERT_SOME(object);
-
-        some<Actor_t*> actor = Members().Actor(valid_member_id);
-        Reference_Container_t container = actor->Container();
-        maybe<Reference_Container_Entry_t*> entry = container.Maybe_Entry(object);
-        if (entry && entry->Non_Extra_Lists_Count() > 0) {
-            entry->Decrement_Count(container, Container_Entry_Count_t::_MAX_);
-            Update_AI(valid_member_id, Member_Update_AI_e::EVALUATE_PACKAGE);
-        }
-    }
-
     void Main_t::Enforce(some<Member_ID_t> valid_member_id)
     {
         SKYLIB_ASSERT_SOME(valid_member_id);
-        SKYLIB_ASSERT(Members().Has_Member(valid_member_id));
 
-        Members_t& members = Members();
-        Settlers_t& settlers = Settlers();
-        Followers_t& followers = Followers();
+        Member_t member = Member_t(valid_member_id);
+        if (member) {
+            member.Enforce();
 
-        members.Enforce(valid_member_id);
+            Settlers_t& settlers = Settlers();
+            Followers_t& followers = Followers();
 
-        settlers.Enforce(valid_member_id);
+            /*settlers.Enforce(valid_member_id);
 
-        maybe<Follower_ID_t> follower_id = followers.Used_Follower_ID(valid_member_id);
-        if (follower_id) {
-            followers.Enforce(follower_id());
+            maybe<Follower_ID_t> follower_id = followers.Used_Follower_ID(valid_member_id);
+            if (follower_id) {
+                followers.Enforce(follower_id());
+            }*/
+
+            maybe<Member_Update_AI_e>& update_ai = this->update_ais[valid_member_id()];
+            if (update_ai == Member_Update_AI_e::RESET_AI) {
+                member.Actor()->Reset_AI();
+            } else if (update_ai == Member_Update_AI_e::EVALUATE_PACKAGE) {
+                member.Actor()->Evaluate_Package(true, false);
+            }
+            update_ai = Member_Update_AI_e::_NONE_;
         }
-
-        maybe<Member_Update_AI_e>& update_ai = this->update_ais[valid_member_id()];
-        if (update_ai == Member_Update_AI_e::RESET_AI) {
-            members.Actor(valid_member_id)->Reset_AI();
-        } else if (update_ai == Member_Update_AI_e::EVALUATE_PACKAGE) {
-            members.Actor(valid_member_id)->Evaluate_Package(true, false);
-        }
-        update_ai = Member_Update_AI_e::_NONE_;
     }
 
     void Main_t::Enforce()
     {
         Members_t& members = Members();
         for (size_t idx = 0, end = Consts_t::NPCP::Int::MAX_MEMBERS; idx < end; idx += 1) {
-            if (members.Has_Member(idx)) {
-                Enforce(idx);
-            }
+            Enforce(idx);
         }
     }
 

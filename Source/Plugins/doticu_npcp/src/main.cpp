@@ -20,6 +20,7 @@
 #include "strings.h"
 
 //temp
+#include <thread>
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/actor_base.h"
 #include "doticu_skylib/actor_head_data.h"
@@ -53,6 +54,7 @@
 
 #include "chests.h"
 #include "party_followers.h"
+#include "party_member.h"
 #include "party_member_suit_template.h"
 #include "party_member_suitcase.h"
 #include "party_members.h"
@@ -323,29 +325,27 @@ namespace doticu_npcp {
         members.Reset_Fill_Suit_Probabilities();
 
         some<Actor_Base_t*> vici = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x1327a)());
-        some<Actor_Base_t*> katria = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x02004D0C)());
-        some<Actor_Base_t*> maven = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x1336a)());
-        some<Actor_Base_t*> fjori = static_cast<Actor_Base_t*>(skylib::Game_t::Form(0x0003D725)());
         for (size_t idx = 0, end = 16; idx < end; idx += 1) {
             members.Add_Member(vici);
         }
 
         for (size_t idx = 0, end = 1024; idx < end; idx += 1) {
-            if (members.Has_Member(idx)) {
+            Party::Member_t member(idx);
+            if (member) {
                 if (doticu_skylib::Is_Odd(idx)) {
-                    members.Is_Banished(idx, false);
-                    members.Is_Reanimated(idx, false);
-                    members.Is_Sneak(idx, true);
-                    members.Name(idx, " Dark Elf Commoner ");
-                    members.Combat_Style(idx, Party::Member_Combat_Style_e::ARCHER);
-                    //members.Ghost_Ability(idx, skylib::Const::Spell::Ghost_Ability_Soul_Cairn()());
-                    members.Ghost_Ability(idx, none<Spell_t*>());
-                    members.Voice_Type(idx, skylib::Const::Voice_Type::Female_Sultry()());
-                    members.Relation(idx, Party::Member_Relation_e::ALLY);
-                    members.Vitality(idx, Party::Member_Vitality_e::INVULNERABLE);
-                    members.Alpha(idx, 1.0f);
+                    member.Is_Banished(false);
+                    member.Is_Reanimated(false);
+                    member.Is_Sneak(true);
+                    member.Name(" Dark Elf Commoner ");
+                    member.Combat_Style(Party::Member_Combat_Style_e::ARCHER);
+                    //member.Ghost_Ability(skylib::Const::Spell::Ghost_Ability_Soul_Cairn()());
+                    member.Ghost_Ability(none<Spell_t*>());
+                    member.Voice_Type(skylib::Const::Voice_Type::Female_Sultry()());
+                    member.Relation(Party::Member_Relation_e::ALLY);
+                    member.Vitality(Party::Member_Vitality_e::INVULNERABLE);
+                    member.Alpha(1.0f);
 
-                    settlers.Add<Party::Sandboxer_t>(idx);
+                    /*settlers.Add<Party::Sandboxer_t>(idx);
                     settlers.Allow_Hellos_To_Player<Party::Sandboxer_t>(idx, false);
                     settlers.Speed<Party::Sandboxer_t>(idx, Party::Settler_Speed_e::RUN);
 
@@ -358,28 +358,28 @@ namespace doticu_npcp {
 
                     settlers.Add<Party::Eater_t>(idx);
 
-                    settlers.Add<Party::Guard_t>(idx);
+                    settlers.Add<Party::Guard_t>(idx);*/
 
-                    members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, Party::Member_Suit_Template_t::Archer());
+                    member.Add_Suit(Party::Member_Suit_Type_e::MEMBER, Party::Member_Suit_Template_t::Archer());
 
                     //followers.Add_Follower(idx);
                 } else {
-                    members.Is_Banished(idx, false);
-                    members.Is_Reanimated(idx, true);
-                    members.Is_Sneak(idx, true);
-                    members.Name(idx, " Serana ");
-                    members.Combat_Style(idx, Party::Member_Combat_Style_e::ARCHER);
-                    members.Ghost_Ability(idx, none<Spell_t*>());
-                    members.Voice_Type(idx, skylib::Const::Voice_Type::Female_Unique_Serana()());
-                    members.Relation(idx, Party::Member_Relation_e::ARCHNEMESIS);
-                    members.Vitality(idx, Party::Member_Vitality_e::MORTAL);
+                    member.Is_Banished(false);
+                    member.Is_Reanimated(true);
+                    member.Is_Sneak(true);
+                    member.Name(" Serana ");
+                    member.Combat_Style(Party::Member_Combat_Style_e::ARCHER);
+                    member.Ghost_Ability(none<Spell_t*>());
+                    member.Voice_Type(skylib::Const::Voice_Type::Female_Unique_Serana()());
+                    member.Relation(Party::Member_Relation_e::ARCHNEMESIS);
+                    member.Vitality(Party::Member_Vitality_e::MORTAL);
 
-                    members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, Party::Member_Suit_Template_t::Archer());
-                    members.Add_Suit(idx, Party::Member_Suit_Type_e::SETTLEMENT, Party::Member_Suit_Template_t::Thrall());
-                    members.Add_Suit(idx, Party::Member_Suit_Type_e::HOME, Party::Member_Suit_Template_t::Member());
-                    members.Add_Suit(idx, Party::Member_Suit_Type_e::INN, Party::Member_Suit_Template_t::Member());
+                    member.Add_Suit(Party::Member_Suit_Type_e::MEMBER, Party::Member_Suit_Template_t::Archer());
+                    member.Add_Suit(Party::Member_Suit_Type_e::SETTLEMENT, Party::Member_Suit_Template_t::Thrall());
+                    member.Add_Suit(Party::Member_Suit_Type_e::HOME, Party::Member_Suit_Template_t::Member());
+                    member.Add_Suit(Party::Member_Suit_Type_e::INN, Party::Member_Suit_Template_t::Member());
 
-                    followers.Add_Follower(idx);
+                    //followers.Add_Follower(idx);
                 }
             }
         }
@@ -405,54 +405,8 @@ namespace doticu_npcp {
         public:
             virtual void operator ()(V::Variable_t*) override
             {
-                //temp
-                static Vector_t<some<skylib::Const::Armors::Set_f>> sets = skylib::Const::Armors::Sets();
-                static size_t sets_idx = 0;
-                static size_t sets_end = sets.size();
-
-                Party::Main_t& party = self->Party();
-                Party::Members_t& members = party.Members();
-
-                Armor_Set_t set;
-                if (sets_idx < sets_end) {
-                    set = (*sets[sets_idx])();
-                    sets_idx += 1;
-                }
-
-                //Vector_t<some<Armor_t*>> outfit = skylib::Const::Armors::Outfit_Random_Armor();
-                //Vector_t<some<Armor_t*>> outfit = skylib::Const::Armors::Outfit_Random_Armor_Unweighted();
-                for (size_t idx = 0, end = 1024; idx < end; idx += 1) {
-                    if (members.Has_Member(idx)) {
-                        //members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, set);
-                        //members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, skylib::Const::Armors::Random_Set());
-                    }
-                }
-                //
-
                 self->Party().Enforce();
                 V::Utility_t::Wait_Out_Of_Menu(2.0f, new Wait_Callback(self));
-
-                //temp
-                maybe<Cell_t*> cell = skylib::Const::Actor::Player()->Cell(true);
-                if (cell) {
-                    maybe<Location_t*> location = cell->Location();
-                    if (location) {
-                        if (location->Is_Inn()) {
-                            V::Debug_t::Create_Notification("inn", none<V::Callback_i*>());
-                        } else if (location->Is_Likely_Home()) {
-                            V::Debug_t::Create_Notification("home", none<V::Callback_i*>());
-                        } else if (location->Is_Likely_City_Or_Town()) {
-                            V::Debug_t::Create_Notification("city or town", none<V::Callback_i*>());
-                        } else if (location->Is_Likely_Dangerous()) {
-                            V::Debug_t::Create_Notification("dangerous", none<V::Callback_i*>());
-                        } else if (location->Is_Likely_Civilized()) {
-                            V::Debug_t::Create_Notification("civilized", none<V::Callback_i*>());
-                        }
-                    }
-                } else {
-                    V::Debug_t::Create_Notification("no cell", none<V::Callback_i*>());
-                }
-                //
             }
         };
         V::Utility_t::Wait_Out_Of_Menu(2.0f, new Wait_Callback(this));

@@ -784,7 +784,7 @@ namespace doticu_npcp { namespace Party {
 
         maybe<Reference_t*>& marker = Markers<T>()[valid_settler_id()];
         if (!marker || !marker->Is_Valid() || marker->Is_Deleted()) {
-            marker = Static_t::Create_X_Marker(Members().Actor(valid_settler_id)())();
+            marker = Static_t::Create_X_Marker(Member_t(valid_settler_id).Actor()())();
             SKYLIB_ASSERT_SOME(marker);
         }
 
@@ -1667,7 +1667,7 @@ namespace doticu_npcp { namespace Party {
         some<Settler_ID_t> settler_id = valid_member_id;
         if (!Is_Enabled<T>(settler_id)) {
             Is_Enabled<T>(settler_id, true);
-            Marker<T>(settler_id)->Move_To_Orbit(Members().Actor(settler_id), 0.0f, 180.0f);
+            Marker<T>(settler_id)->Move_To_Orbit(Member_t(settler_id).Actor(), 0.0f, 180.0f);
             Default<T>(settler_id);
             Main().Update_AI(settler_id, Member_Update_AI_e::EVALUATE_PACKAGE);
             return settler_id;

@@ -7,6 +7,7 @@
 #include "main.h"
 #include "npcp.h"
 #include "party_main.h"
+#include "party_member.h"
 #include "party_members.h"
 #include "party_settlers.inl"
 
@@ -756,18 +757,18 @@ namespace doticu_npcp { namespace Party {
     {
         SKYLIB_ASSERT_SOME(settler_id);
 
-        Members_t& members = Members();
-        if (members.Has_Member(settler_id())) {
+        Member_t member(settler_id);
+        if (member) {
             Main_t& main = Main();
             Bool_t do_reset_ai = false;
-            Bool_t is_sneak = members.Is_Sneak(settler_id());
+            Bool_t is_sneak = member.Is_Sneak();
 
             if (Is_Enabled<Sandboxer_t>(settler_id)) {
                 Always_Sneak<Sandboxer_t>(settler_id, is_sneak);
                 Enforce_Package<Sandboxer_t>(settler_id, do_reset_ai);
-                main.Tokenize(settler_id, Token<Sandboxer_t>());
+                member.Tokenize(Token<Sandboxer_t>());
             } else {
-                main.Untokenize(settler_id, Token<Sandboxer_t>());
+                member.Untokenize(Token<Sandboxer_t>());
             }
 
             if (Is_Enabled<Sleeper_t>(settler_id)) {
@@ -780,7 +781,7 @@ namespace doticu_npcp { namespace Party {
                         bed->Enable();
                         do_reset_ai = true;
                     }
-                    some<Actor_Base_t*> custom_base = members.Custom_Base(settler_id);
+                    some<Actor_Base_t*> custom_base = member.Custom_Base();
                     maybe<Form_Owner_t> owner = bed->x_list.Owner();
                     if (!owner.Has_Value() || owner.Value().As_Actor_Base() != custom_base) {
                         bed->x_list.Owner(custom_base); // this may need to be cleared in dtor?
@@ -788,33 +789,33 @@ namespace doticu_npcp { namespace Party {
                     }
                 }
 
-                main.Tokenize(settler_id, Token<Sleeper_t>());
+                member.Tokenize(Token<Sleeper_t>());
             } else {
-                main.Untokenize(settler_id, Token<Sleeper_t>());
+                member.Untokenize(Token<Sleeper_t>());
             }
 
             if (Is_Enabled<Sitter_t>(settler_id)) {
                 Always_Sneak<Sitter_t>(settler_id, is_sneak);
                 Enforce_Package<Sitter_t>(settler_id, do_reset_ai);
-                main.Tokenize(settler_id, Token<Sitter_t>());
+                member.Tokenize(Token<Sitter_t>());
             } else {
-                main.Untokenize(settler_id, Token<Sitter_t>());
+                member.Untokenize(Token<Sitter_t>());
             }
 
             if (Is_Enabled<Eater_t>(settler_id)) {
                 Always_Sneak<Eater_t>(settler_id, is_sneak);
                 Enforce_Package<Eater_t>(settler_id, do_reset_ai);
-                main.Tokenize(settler_id, Token<Eater_t>());
+                member.Tokenize(Token<Eater_t>());
             } else {
-                main.Untokenize(settler_id, Token<Eater_t>());
+                member.Untokenize(Token<Eater_t>());
             }
 
             if (Is_Enabled<Guard_t>(settler_id)) {
                 Always_Sneak<Guard_t>(settler_id, is_sneak);
                 Enforce_Package<Guard_t>(settler_id, do_reset_ai);
-                main.Tokenize(settler_id, Token<Guard_t>());
+                member.Tokenize(Token<Guard_t>());
             } else {
-                main.Untokenize(settler_id, Token<Guard_t>());
+                member.Untokenize(Token<Guard_t>());
             }
 
             if (do_reset_ai) {
