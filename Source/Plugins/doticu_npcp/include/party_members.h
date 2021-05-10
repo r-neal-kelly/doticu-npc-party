@@ -388,6 +388,10 @@ namespace doticu_npcp { namespace Party {
         maybe<Combat_Style_t*>      Combat_Style(some<Member_ID_t> valid_member_id);
         void                        Combat_Style(some<Member_ID_t> valid_member_id, maybe<Combat_Style_t*> combat_style);
         void                        Combat_Style(some<Member_ID_t> valid_member_id, Member_Combat_Style_e combat_style);
+        Bool_t                      Is_Warrior(some<Member_ID_t> valid_member_id);
+        Bool_t                      Is_Mage(some<Member_ID_t> valid_member_id);
+        Bool_t                      Is_Archer(some<Member_ID_t> valid_member_id);
+        Bool_t                      Is_Coward(some<Member_ID_t> valid_member_id);
 
         maybe<Spell_t*>             Ghost_Ability(some<Member_ID_t> valid_member_id);
         void                        Ghost_Ability(some<Member_ID_t> valid_member_id, maybe<Spell_t*> ghost_ability);

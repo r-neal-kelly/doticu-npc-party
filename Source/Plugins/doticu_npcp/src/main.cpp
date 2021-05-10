@@ -361,7 +361,6 @@ namespace doticu_npcp {
                     settlers.Add<Party::Guard_t>(idx);
 
                     members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, Party::Member_Suit_Template_t::Archer());
-                    members.Add_Suit(idx, Party::Member_Suit_Type_e::SETTLEMENT, Party::Member_Suit_Template_t::Thrall());
 
                     //followers.Add_Follower(idx);
                 } else {
@@ -377,6 +376,8 @@ namespace doticu_npcp {
 
                     members.Add_Suit(idx, Party::Member_Suit_Type_e::MEMBER, Party::Member_Suit_Template_t::Archer());
                     members.Add_Suit(idx, Party::Member_Suit_Type_e::SETTLEMENT, Party::Member_Suit_Template_t::Thrall());
+                    members.Add_Suit(idx, Party::Member_Suit_Type_e::HOME, Party::Member_Suit_Template_t::Member());
+                    members.Add_Suit(idx, Party::Member_Suit_Type_e::INN, Party::Member_Suit_Template_t::Member());
 
                     followers.Add_Follower(idx);
                 }
@@ -385,10 +386,9 @@ namespace doticu_npcp {
 
         // changed packages should be reverted in settlers type, upon state creation/deletion.
 
-        Party().Enforce();
+        // we should add an option to change the update interval from 2 seconds to something like 5 seconds, in case it matters.
 
-        // I need to know how Cell extra location interplays with worldspace. I don't think it overrides it, but
-        // is treated as an accumulation? It may only be used for interior cells, which don't have a worldspace.
+        Party().Enforce();
 
         class Wait_Callback :
             public V::Callback_t
@@ -437,10 +437,16 @@ namespace doticu_npcp {
                 if (cell) {
                     maybe<Location_t*> location = cell->Location();
                     if (location) {
-                        if (location->Has_Or_Inherits_Keyword(skylib::Const::Keyword::Location_Type_City())) {
-                            V::Debug_t::Create_Notification("in city", none<V::Callback_i*>());
+                        if (location->Is_Inn()) {
+                            V::Debug_t::Create_Notification("inn", none<V::Callback_i*>());
+                        } else if (location->Is_Likely_Home()) {
+                            V::Debug_t::Create_Notification("home", none<V::Callback_i*>());
+                        } else if (location->Is_Likely_City_Or_Town()) {
+                            V::Debug_t::Create_Notification("city or town", none<V::Callback_i*>());
                         } else if (location->Is_Likely_Dangerous()) {
                             V::Debug_t::Create_Notification("dangerous", none<V::Callback_i*>());
+                        } else if (location->Is_Likely_Civilized()) {
+                            V::Debug_t::Create_Notification("civilized", none<V::Callback_i*>());
                         }
                     }
                 } else {

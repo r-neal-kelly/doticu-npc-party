@@ -9,6 +9,7 @@
 #include "doticu_skylib/ammo.h"
 #include "doticu_skylib/armor.h"
 #include "doticu_skylib/armor_set.h"
+#include "doticu_skylib/cell.h"
 #include "doticu_skylib/combat_style.h"
 #include "doticu_skylib/const_actors.h"
 #include "doticu_skylib/const_actor_bases.h"
@@ -1876,6 +1877,26 @@ namespace doticu_npcp { namespace Party {
         Combat_Style(valid_member_id, combat_style.As_Combat_Style());
     }
 
+    Bool_t Members_t::Is_Warrior(some<Member_ID_t> valid_member_id)
+    {
+        return Member_Combat_Style_e::From_Combat_Style(Combat_Style(valid_member_id)) == Member_Combat_Style_e::WARRIOR;
+    }
+
+    Bool_t Members_t::Is_Mage(some<Member_ID_t> valid_member_id)
+    {
+        return Member_Combat_Style_e::From_Combat_Style(Combat_Style(valid_member_id)) == Member_Combat_Style_e::MAGE;
+    }
+
+    Bool_t Members_t::Is_Archer(some<Member_ID_t> valid_member_id)
+    {
+        return Member_Combat_Style_e::From_Combat_Style(Combat_Style(valid_member_id)) == Member_Combat_Style_e::ARCHER;
+    }
+
+    Bool_t Members_t::Is_Coward(some<Member_ID_t> valid_member_id)
+    {
+        return Member_Combat_Style_e::From_Combat_Style(Combat_Style(valid_member_id)) == Member_Combat_Style_e::COWARD;
+    }
+
     maybe<Spell_t*> Members_t::Ghost_Ability(some<Member_ID_t> valid_member_id)
     {
         SKYLIB_ASSERT_SOME(valid_member_id);
@@ -2034,15 +2055,55 @@ namespace doticu_npcp { namespace Party {
 
         maybe<Member_Suit_Type_e> suit_type = this->save_state.suit_types[valid_member_id()];
         if (suit_type && Do_Change_Suits_Automatically()) {
-            maybe<Location_t*> location = Actor(valid_member_id)->Location();
-            if (location) {
-                if (Has_Suit(valid_member_id, Member_Suit_Type_e::SETTLEMENT) && location->Is_City_Or_Town()) {
-                    return Member_Suit_Type_e::SETTLEMENT;
-                } else {
-                    return suit_type;
-                }
+            Main_t& main = Main();
+            some<Actor_t*> actor = Actor(valid_member_id);
+            maybe<Cell_t*> cell = actor->Cell(true);
+            maybe<Location_t*> location = actor->Location();
+
+            if (Has_Suit(valid_member_id, Member_Suit_Type_e::MANNEQUIN) && Is_Mannequin(valid_member_id)) {
+                return Member_Suit_Type_e::MANNEQUIN;
+            } else if (Has_Suit(valid_member_id, Member_Suit_Type_e::IMMOBILE) && Is_Immobile(valid_member_id)) {
+                return Member_Suit_Type_e::IMMOBILE;
+            } else if (Has_Suit(valid_member_id, Member_Suit_Type_e::COMBATANT) && actor->Is_In_Combat()) {
+                return Member_Suit_Type_e::COMBATANT;
+            } else if (location && Has_Suit(valid_member_id, Member_Suit_Type_e::INN) && location->Is_Inn()) {
+                return Member_Suit_Type_e::INN;
+            } else if (location && Has_Suit(valid_member_id, Member_Suit_Type_e::HOME) && location->Is_Likely_Home()) {
+                return Member_Suit_Type_e::HOME;
+            } else if (location && Has_Suit(valid_member_id, Member_Suit_Type_e::SETTLEMENT) && location->Is_Likely_City_Or_Town()) {
+                return Member_Suit_Type_e::SETTLEMENT;
+            } else if (Has_Suit(valid_member_id, Member_Suit_Type_e::FOLLOWER) && main.Is_Follower(valid_member_id)) {
+                return Member_Suit_Type_e::FOLLOWER;
+            } else if (Has_Suit(valid_member_id, Member_Suit_Type_e::GUARD) && main.Is_Currently_Guard(valid_member_id)) {
+                return Member_Suit_Type_e::GUARD;
+            } else if (Has_Suit(valid_member_id, Member_Suit_Type_e::EATER) && main.Is_Currently_Eater(valid_member_id)) {
+                return Member_Suit_Type_e::EATER;
+            } else if (Has_Suit(valid_member_id, Member_Suit_Type_e::SITTER) && main.Is_Currently_Sitter(valid_member_id)) {
+                return Member_Suit_Type_e::SITTER;
+            } else if (Has_Suit(valid_member_id, Member_Suit_Type_e::SLEEPER) && main.Is_Currently_Sleeper(valid_member_id)) {
+                return Member_Suit_Type_e::SLEEPER;
+            } else if (Has_Suit(valid_member_id, Member_Suit_Type_e::SANDBOXER) && main.Is_Currently_Sandboxer(valid_member_id)) {
+                return Member_Suit_Type_e::SANDBOXER;
+            } else if (location && Has_Suit(valid_member_id, Member_Suit_Type_e::DANGEROUS) && location->Is_Likely_Dangerous()) {
+                return Member_Suit_Type_e::DANGEROUS;
+            } else if (location && Has_Suit(valid_member_id, Member_Suit_Type_e::CIVILIZED) && location->Is_Likely_Civilized()) {
+                return Member_Suit_Type_e::CIVILIZED;
+            } else if (cell && Has_Suit(valid_member_id, Member_Suit_Type_e::INTERIOR) && cell->Is_Interior()) {
+                return Member_Suit_Type_e::INTERIOR;
+            } else if (cell && Has_Suit(valid_member_id, Member_Suit_Type_e::EXTERIOR) && cell->Is_Exterior()) {
+                return Member_Suit_Type_e::EXTERIOR;
+            } else if (Has_Suit(valid_member_id, Member_Suit_Type_e::COWARD) && Is_Coward(valid_member_id)) {
+                return Member_Suit_Type_e::COWARD;
+            } else if (Has_Suit(valid_member_id, Member_Suit_Type_e::ARCHER) && Is_Archer(valid_member_id)) {
+                return Member_Suit_Type_e::ARCHER;
+            } else if (Has_Suit(valid_member_id, Member_Suit_Type_e::MAGE) && Is_Mage(valid_member_id)) {
+                return Member_Suit_Type_e::MAGE;
+            } else if (Has_Suit(valid_member_id, Member_Suit_Type_e::WARRIOR) && Is_Warrior(valid_member_id)) {
+                return Member_Suit_Type_e::WARRIOR;
+            } else if (Has_Suit(valid_member_id, Member_Suit_Type_e::THRALL) && Is_Thrall(valid_member_id)) {
+                return Member_Suit_Type_e::THRALL;
             } else {
-                return suit_type;
+                return Member_Suit_Type_e::MEMBER;
             }
         } else {
             return suit_type;
@@ -2400,7 +2461,7 @@ namespace doticu_npcp { namespace Party {
                 main.Untokenize(member_id, Consts_t::NPCP::Misc::Token::Thrall());
             }
 
-            custom_base->Name(Name(member_id));
+            custom_base->Name(Name(member_id), false);
             actor->x_list.Destroy_Extra_Text_Display();
 
             custom_base->Combat_Style(Combat_Style(member_id));
@@ -2422,6 +2483,7 @@ namespace doticu_npcp { namespace Party {
                 Outfit(member_id, custom_outfit);
             }
 
+            // if we limit to attached actors, we need to stop the disabling of suit on the first suitup
             if (!actor->Is_In_Combat()) {
                 maybe<Member_Suit_Type_e> suit_type = Suit_Type(member_id);
                 if (suit_type) {

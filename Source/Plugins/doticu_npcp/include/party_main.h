@@ -55,6 +55,21 @@ namespace doticu_npcp { namespace Party {
         Followers_t&    Followers();
 
     public:
+        Bool_t  Is_Sandboxer(some<Member_ID_t> valid_member_id);
+        Bool_t  Is_Sleeper(some<Member_ID_t> valid_member_id);
+        Bool_t  Is_Sitter(some<Member_ID_t> valid_member_id);
+        Bool_t  Is_Eater(some<Member_ID_t> valid_member_id);
+        Bool_t  Is_Guard(some<Member_ID_t> valid_member_id);
+
+        Bool_t  Is_Currently_Sandboxer(some<Member_ID_t> valid_member_id);
+        Bool_t  Is_Currently_Sleeper(some<Member_ID_t> valid_member_id);
+        Bool_t  Is_Currently_Sitter(some<Member_ID_t> valid_member_id);
+        Bool_t  Is_Currently_Eater(some<Member_ID_t> valid_member_id);
+        Bool_t  Is_Currently_Guard(some<Member_ID_t> valid_member_id);
+
+        Bool_t  Is_Follower(some<Member_ID_t> valid_member_id);
+
+    public:
         some<Script_t*> Script(some<Member_ID_t> valid_member_id);
         void            Update_AI(some<Member_ID_t> valid_member_id, some<Member_Update_AI_e> update_ai);
 

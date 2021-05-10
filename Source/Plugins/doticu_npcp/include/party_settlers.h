@@ -265,6 +265,8 @@ namespace doticu_npcp { namespace Party {
         Bool_t                                      Is_Enabled(some<Settler_ID_t> settler_id);
         template <typename T>
         void                                        Is_Enabled(some<Settler_ID_t> settler_id, Bool_t value);
+        template <typename T>
+        Bool_t                                      Is_Currently_Enabled(some<Settler_ID_t> settler_id);
 
         template <typename T>
         Bool_t                                      Allow_Swimming(some<Settler_ID_t> valid_settler_id);

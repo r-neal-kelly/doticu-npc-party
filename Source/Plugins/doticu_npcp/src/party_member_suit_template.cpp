@@ -7,6 +7,7 @@
 #include "doticu_skylib/const_ammos.h"
 #include "doticu_skylib/const_armors.h"
 #include "doticu_skylib/const_weapons.h"
+#include "doticu_skylib/weapon.h"
 
 #include "intrinsic.h"
 #include "party_member_suit_template.h"
@@ -693,6 +694,14 @@ namespace doticu_npcp { namespace Party {
         Member_Suit_Template_t suit_template;
 
         suit_template.armor = skylib::Const::Armors::Random_Set_Unweighted();
+
+        suit_template.weapon_a = skylib::Const::Weapons::All().Random();
+
+        if (suit_template.weapon_a->Is_Bow()) {
+            suit_template.ammo = skylib::Const::Ammos::Arrow().Random();
+        } else if (suit_template.weapon_a->Is_Crossbow()) {
+            suit_template.ammo = skylib::Const::Ammos::Bolt().Random();
+        }
 
         return suit_template;
     }

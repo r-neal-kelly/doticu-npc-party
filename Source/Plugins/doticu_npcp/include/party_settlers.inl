@@ -190,6 +190,18 @@ namespace doticu_npcp { namespace Party {
     }
 
     template <typename T>
+    inline Bool_t Settlers_t::Is_Currently_Enabled(some<Settler_ID_t> settler_id)
+    {
+        SKYLIB_ASSERT_SOME(settler_id);
+
+        if (Is_Enabled<T>(settler_id)) {
+            return true; // we need to check the time on Calendar_t, but it's missing minutes. where is that stored? in ini?
+        } else {
+            return false;
+        }
+    }
+
+    template <typename T>
     Bool_t Settlers_t::Allow_Swimming(some<Settler_ID_t> valid_settler_id)
     {
         SKYLIB_ASSERT_SOME(valid_settler_id);

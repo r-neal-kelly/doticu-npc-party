@@ -12,7 +12,7 @@
 #include "party_followers.h"
 #include "party_main.h"
 #include "party_members.h"
-#include "party_settlers.h"
+#include "party_settlers.inl"
 
 namespace doticu_npcp { namespace Party {
 
@@ -109,6 +109,61 @@ namespace doticu_npcp { namespace Party {
     Followers_t& Main_t::Followers()
     {
         return *this->followers;
+    }
+
+    Bool_t Main_t::Is_Sandboxer(some<Member_ID_t> valid_member_id)
+    {
+        return Settlers().Is_Enabled<Sandboxer_t>(valid_member_id);
+    }
+
+    Bool_t Main_t::Is_Sleeper(some<Member_ID_t> valid_member_id)
+    {
+        return Settlers().Is_Enabled<Sleeper_t>(valid_member_id);
+    }
+
+    Bool_t Main_t::Is_Sitter(some<Member_ID_t> valid_member_id)
+    {
+        return Settlers().Is_Enabled<Sitter_t>(valid_member_id);
+    }
+
+    Bool_t Main_t::Is_Eater(some<Member_ID_t> valid_member_id)
+    {
+        return Settlers().Is_Enabled<Eater_t>(valid_member_id);
+    }
+
+    Bool_t Main_t::Is_Guard(some<Member_ID_t> valid_member_id)
+    {
+        return Settlers().Is_Enabled<Guard_t>(valid_member_id);
+    }
+
+    Bool_t Main_t::Is_Currently_Sandboxer(some<Member_ID_t> valid_member_id)
+    {
+        return Settlers().Is_Currently_Enabled<Sandboxer_t>(valid_member_id);
+    }
+
+    Bool_t Main_t::Is_Currently_Sleeper(some<Member_ID_t> valid_member_id)
+    {
+        return Settlers().Is_Currently_Enabled<Sleeper_t>(valid_member_id);
+    }
+
+    Bool_t Main_t::Is_Currently_Sitter(some<Member_ID_t> valid_member_id)
+    {
+        return Settlers().Is_Currently_Enabled<Sitter_t>(valid_member_id);
+    }
+
+    Bool_t Main_t::Is_Currently_Eater(some<Member_ID_t> valid_member_id)
+    {
+        return Settlers().Is_Currently_Enabled<Eater_t>(valid_member_id);
+    }
+
+    Bool_t Main_t::Is_Currently_Guard(some<Member_ID_t> valid_member_id)
+    {
+        return Settlers().Is_Currently_Enabled<Guard_t>(valid_member_id);
+    }
+
+    Bool_t Main_t::Is_Follower(some<Member_ID_t> valid_member_id)
+    {
+        return Followers().Has_Follower(valid_member_id);
     }
 
     some<Script_t*> Main_t::Script(some<Member_ID_t> valid_member_id)
