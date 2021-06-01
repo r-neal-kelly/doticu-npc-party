@@ -120,7 +120,7 @@
     <ClCompile Include="src\party_displays.cpp" />
     <ClCompile Include="src\party_expoees.cpp" />
     <ClCompile Include="src\party_followers.cpp" />
-    <ClCompile Include="src\party_main.cpp" />
+    <ClCompile Include="src\party.cpp" />
     <ClCompile Include="src\party_member.cpp" />
     <ClCompile Include="src\party_members.cpp" />
     <ClCompile Include="src\party_member_suit_template.cpp" />

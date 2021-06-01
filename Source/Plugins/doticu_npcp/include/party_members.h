@@ -4,13 +4,14 @@
 
 #pragma once
 
+#include <fstream>
 #include <mutex>
 
 #include "doticu_skylib/enum_script_type.h"
 
 #include "consts.h"
 #include "intrinsic.h"
-#include "party_main.h"
+#include "party.h"
 #include "party_member.h"
 #include "party_member_alpha.h"
 #include "party_member_combat_style.h"
@@ -26,7 +27,7 @@
 #include "party_member_suit_type.h"
 #include "party_member_vitality.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
 
     class Member_Suitcase_t;
 
@@ -275,13 +276,21 @@ namespace doticu_npcp { namespace Party {
         const Vector_t<some<Spell_t*>>  vanilla_ghost_abilities;
 
     public:
-        Members_t(some<Quest_t*> quest, Bool_t is_new_game);
-        Members_t(some<Quest_t*> quest, const Version_t<u16> version_to_update);
+        Members_t();
         Members_t(const Members_t& other)                                           = delete;
         Members_t(Members_t&& other) noexcept                                       = delete;
         Members_t& operator =(const Members_t& other)                               = delete;
         Members_t& operator =(Members_t&& other) noexcept                           = delete;
         ~Members_t();
+
+    public:
+        void    On_After_New_Game();
+        void    On_Before_Save_Game(std::ofstream& file);
+        void    On_After_Save_Game();
+        void    On_Before_Load_Game();
+        void    On_After_Load_Game(std::ifstream& file);
+        void    On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update);
+        void    On_Update();
 
     public:
         void    Before_Save();

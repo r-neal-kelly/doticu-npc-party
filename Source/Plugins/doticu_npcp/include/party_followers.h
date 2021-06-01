@@ -4,15 +4,17 @@
 
 #pragma once
 
+#include <fstream>
+
 #include "consts.h"
 #include "intrinsic.h"
+#include "party.h"
 #include "party_follower_flags.h"
 #include "party_follower_id.h"
 #include "party_follower_limit.h"
-#include "party_main.h"
 #include "party_member_sort_type.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
 
     class Followers_t
     {
@@ -95,13 +97,21 @@ namespace doticu_npcp { namespace Party {
         Save_State              save_state;
 
     public:
-        Followers_t(some<Quest_t*> quest, Bool_t is_new_game);
-        Followers_t(some<Quest_t*> quest, const Version_t<u16> version_to_update);
+        Followers_t();
         Followers_t(const Followers_t& other)                                       = delete;
         Followers_t(Followers_t&& other) noexcept                                   = delete;
         Followers_t& operator =(const Followers_t& other)                           = delete;
         Followers_t& operator =(Followers_t&& other) noexcept                       = delete;
         ~Followers_t();
+
+    public:
+        void    On_After_New_Game();
+        void    On_Before_Save_Game(std::ofstream& file);
+        void    On_After_Save_Game();
+        void    On_Before_Load_Game();
+        void    On_After_Load_Game(std::ifstream& file);
+        void    On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update);
+        void    On_Update();
 
     public:
         void    Before_Save();

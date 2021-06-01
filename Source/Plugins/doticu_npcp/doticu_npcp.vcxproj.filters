@@ -42,7 +42,7 @@
     <ClCompile Include="src\party_member.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\party_main.cpp">
+    <ClCompile Include="src\party.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\party_displays.cpp">

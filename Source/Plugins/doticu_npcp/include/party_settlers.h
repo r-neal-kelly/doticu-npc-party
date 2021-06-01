@@ -4,9 +4,11 @@
 
 #pragma once
 
+#include <fstream>
+
 #include "consts.h"
 #include "intrinsic.h"
-#include "party_main.h"
+#include "party.h"
 #include "party_member_id.h"
 #include "party_settler.h"
 #include "party_settler_attention.h"
@@ -29,7 +31,7 @@
 #include "party_settler_value_index.h"
 #include "party_settler_wander_distance.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
 
     class Settlers_t
     {
@@ -183,13 +185,21 @@ namespace doticu_npcp { namespace Party {
         Save_State              save_state;
 
     public:
-        Settlers_t(some<Quest_t*> quest, Bool_t is_new_game);
-        Settlers_t(some<Quest_t*> quest, const Version_t<u16> version_to_update);
+        Settlers_t();
         Settlers_t(const Settlers_t& other)                                         = delete;
         Settlers_t(Settlers_t&& other) noexcept                                     = delete;
         Settlers_t& operator =(const Settlers_t& other)                             = delete;
         Settlers_t& operator =(Settlers_t&& other) noexcept                         = delete;
         ~Settlers_t();
+
+    public:
+        void    On_After_New_Game();
+        void    On_Before_Save_Game(std::ofstream& file);
+        void    On_After_Save_Game();
+        void    On_Before_Load_Game();
+        void    On_After_Load_Game(std::ifstream& file);
+        void    On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update);
+        void    On_Update();
 
     public:
         void    Before_Save();
@@ -440,6 +450,20 @@ namespace doticu_npcp { namespace Party {
         some<Settler_ID_t>                          Add(some<Member_ID_t> valid_member_id);
         template <typename T>
         Bool_t                                      Remove(some<Settler_ID_t> settler_id);
+
+        /*
+        Bool_t  Is_Sandboxer(some<Member_ID_t> valid_member_id);
+        Bool_t  Is_Sleeper(some<Member_ID_t> valid_member_id);
+        Bool_t  Is_Sitter(some<Member_ID_t> valid_member_id);
+        Bool_t  Is_Eater(some<Member_ID_t> valid_member_id);
+        Bool_t  Is_Guard(some<Member_ID_t> valid_member_id);
+
+        Bool_t  Is_Active_Sandboxer(some<Member_ID_t> valid_member_id);
+        Bool_t  Is_Active_Sleeper(some<Member_ID_t> valid_member_id);
+        Bool_t  Is_Active_Sitter(some<Member_ID_t> valid_member_id);
+        Bool_t  Is_Active_Eater(some<Member_ID_t> valid_member_id);
+        Bool_t  Is_Active_Guard(some<Member_ID_t> valid_member_id);
+        */
 
     public:
         void    Bool(some<Package_t*> package,

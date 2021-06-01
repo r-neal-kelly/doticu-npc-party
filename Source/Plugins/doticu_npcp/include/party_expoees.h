@@ -4,13 +4,15 @@
 
 #pragma once
 
+#include <fstream>
+
 #include "doticu_skylib/enum_script_type.h"
 
 #include "consts.h"
 #include "intrinsic.h"
-#include "party_main.h"
+#include "party.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
 
     class Expoees_t
     {
@@ -55,13 +57,21 @@ namespace doticu_npcp { namespace Party {
         Save_State              save_state;
 
     public:
-        Expoees_t(some<Quest_t*> quest, Bool_t is_new_game);
-        Expoees_t(some<Quest_t*> quest, const Version_t<u16> version_to_update);
+        Expoees_t();
         Expoees_t(const Expoees_t& other)                                           = delete;
         Expoees_t(Expoees_t&& other) noexcept                                       = delete;
         Expoees_t& operator =(const Expoees_t& other)                               = delete;
         Expoees_t& operator =(Expoees_t&& other) noexcept                           = delete;
         ~Expoees_t();
+
+    public:
+        void    On_After_New_Game();
+        void    On_Before_Save_Game(std::ofstream& file);
+        void    On_After_Save_Game();
+        void    On_Before_Load_Game();
+        void    On_After_Load_Game(std::ifstream& file);
+        void    On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update);
+        void    On_Update();
 
     public:
         void    Before_Save();
