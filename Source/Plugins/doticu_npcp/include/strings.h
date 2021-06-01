@@ -146,7 +146,6 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         static const String_t T;
         static const String_t T_BOOKS;
-        static const String_t THANK_YOU_FOR_INSTALLING;
 
         static const String_t U;
         static const String_t U_BOOKS;
@@ -169,6 +168,12 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         static const String_t Z;
         static const String_t Z_BOOKS;
+
+        static const String_t THANK_YOU_FOR_PLAYING;
+
+        static const String_t ERROR_LOAD;
+        static const String_t ERROR_LOAD_VERSION;
+        static const String_t ERROR_SAVE;
     };
 
 }}

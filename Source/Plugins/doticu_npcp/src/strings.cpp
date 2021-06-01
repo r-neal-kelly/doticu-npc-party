@@ -141,7 +141,6 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     const String_t Strings_t::T                         = "$dnpcp_t";
     const String_t Strings_t::T_BOOKS                   = "$dnpcp_t_books";
-    const String_t Strings_t::THANK_YOU_FOR_INSTALLING  = "$dnpcp_thank_you_for_installing";
 
     const String_t Strings_t::U                         = "$dnpcp_u";
     const String_t Strings_t::U_BOOKS                   = "$dnpcp_u_books";
@@ -164,5 +163,11 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     const String_t Strings_t::Z                         = "$dnpcp_z";
     const String_t Strings_t::Z_BOOKS                   = "$dnpcp_z_books";
+
+    const String_t Strings_t::THANK_YOU_FOR_PLAYING     = "$dnpcp_thank_you_for_playing";
+
+    const String_t Strings_t::ERROR_LOAD                = "$dnpcp_error_load";
+    const String_t Strings_t::ERROR_LOAD_VERSION        = "$dnpcp_error_load_version";
+    const String_t Strings_t::ERROR_SAVE                = "$dnpcp_error_save";
 
 }}

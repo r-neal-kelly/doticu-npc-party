@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <fstream>
-
 #include "doticu_skylib/skse_plugin.h"
 
 #include "intrinsic.h"
@@ -34,10 +32,6 @@ namespace doticu_skylib { namespace doticu_npcp {
             Save_t& operator =(const Save_t& other) = delete;
             Save_t& operator =(Save_t&& other) noexcept = delete;
             ~Save_t();
-
-        public:
-            void    Read(std::ifstream& file);
-            void    Write(std::ofstream& file);
         };
 
         class State_t
@@ -70,7 +64,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     public:
         virtual         ~NPCP_t();
 
-        virtual Bool_t  On_Register(some<Virtual::Machine_t*> v_machine) override;
+        virtual Bool_t  On_Register(some<Virtual::Machine_t*> machine) override;
 
         virtual void    On_After_Load_Data() override;
         virtual void    On_After_New_Game() override;
@@ -80,6 +74,9 @@ namespace doticu_skylib { namespace doticu_npcp {
         virtual void    On_After_Load_Game(const std::string& file_name, Bool_t did_load_successfully) override;
         virtual void    On_Before_Delete_Game(const std::string& file_name) override;
         virtual void    On_Update(u32 time_stamp) override;
+
+        virtual void    On_Log(some<const char*> log);
+        virtual void    On_Error(some<const char*> error, String_t user_message);
 
     public:
         Bool_t  Is_Active();

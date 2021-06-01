@@ -20,17 +20,85 @@ namespace doticu_skylib { namespace doticu_npcp {
             SCRIPT_TYPE = Script_Type_e::QUEST,
         };
 
+        class Save_t
+        {
+        public:
+            u16 global_dialogue_menu[4];
+
+            u16 actor_toggle_member[4];
+            u16 actor_toggle_move[4];
+            u16 actor_move_nearer[4];
+            u16 actor_move_farther[4];
+            u16 actor_move_rotate_left[4];
+            u16 actor_move_rotate_right[4];
+            u16 actor_has_base[4];
+            u16 actor_count_base[4];
+            u16 actor_has_head[4];
+            u16 actor_count_heads[4];
+
+            u16 member_toggle_clone[4];
+            u16 member_toggle_settler[4];
+            u16 member_toggle_thrall[4];
+            u16 member_toggle_immobile[4];
+            u16 member_toggle_paralyzed[4];
+            u16 member_toggle_follower[4];
+
+            u16 follower_toggle_sneak[4];
+            u16 follower_toggle_saddler[4];
+
+            u16 members_toggle_display[4];
+            u16 members_display_previous[4];
+            u16 members_display_next[4];
+
+            u16 followers_summon_all[4];
+            u16 followers_summon_mobile[4];
+            u16 followers_summon_immobile[4];
+            u16 followers_settle[4];
+            u16 followers_unsettle[4];
+            u16 followers_mobilize[4];
+            u16 followers_immobilize[4];
+            u16 followers_sneak[4];
+            u16 followers_unsneak[4];
+            u16 followers_saddle[4];
+            u16 followers_unsaddle[4];
+            u16 followers_resurrect[4];
+
+        public:
+            Save_t();
+            Save_t(const Save_t& other) = delete;
+            Save_t(Save_t&& other) noexcept = delete;
+            Save_t& operator =(const Save_t& other) = delete;
+            Save_t& operator =(Save_t&& other) noexcept = delete;
+            ~Save_t();
+        };
+
+        class State_t
+        {
+        public:
+            Save_t                  save;
+
+            const some<Quest_t*>    quest;
+            u16                     currently_pressed_key;
+
+        public:
+            State_t();
+            State_t(const State_t& other) = delete;
+            State_t(State_t&& other) noexcept = delete;
+            State_t& operator =(const State_t& other) = delete;
+            State_t& operator =(State_t&& other) noexcept = delete;
+            ~State_t();
+        };
+
     public:
-        static String_t             Class_Name();
-        static some<V::Class_t*>    Class();
-        static void                 Register_Me(some<V::Machine_t*> machine);
+        static String_t                 Class_Name();
+        static some<Virtual::Class_t*>  Class();
+        static void                     Register_Me(some<Virtual::Machine_t*> machine);
 
     public:
         static void Can_Use_Hotkeys(some<unique<Callback_i<Bool_t>>> callback);
 
     public:
-        const some<Quest_t*>    quest;
-        Int_t                   currently_pressed_key;
+        State_t state;
 
     public:
         Hotkeys_t();
@@ -39,12 +107,6 @@ namespace doticu_skylib { namespace doticu_npcp {
         Hotkeys_t& operator =(const Hotkeys_t& other) = delete;
         Hotkeys_t& operator =(Hotkeys_t&& other) noexcept = delete;
         ~Hotkeys_t();
-
-    public:
-        some<V::Object_t*>                  Object();
-
-        Bool_t                              On_Key_Down(V::Stack_ID_t stack_id, Int_t key_code);
-        Bool_t                              On_Key_Up(V::Stack_ID_t stack_id, Int_t key_code, Float_t time_held);
 
     public:
         void    On_After_New_Game();
@@ -56,7 +118,16 @@ namespace doticu_skylib { namespace doticu_npcp {
         void    On_Update();
 
     public:
-        void Log(std::string indent = "");
+        State_t&    State();
+
+    public:
+        some<Virtual::Object_t*>    Object();
+
+        Bool_t                      On_Key_Down(Virtual::Stack_ID_t stack_id, Int_t key_code);
+        Bool_t                      On_Key_Up(Virtual::Stack_ID_t stack_id, Int_t key_code, Float_t time_held);
+
+    public:
+        void    Log(std::string indent = "");
     };
 
 }}

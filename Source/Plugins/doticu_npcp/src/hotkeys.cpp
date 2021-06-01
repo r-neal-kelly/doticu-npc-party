@@ -9,22 +9,84 @@
 #include "doticu_skylib/virtual_latent_id.h"
 #include "doticu_skylib/virtual_macros.h"
 
+#include "consts.h"
 #include "hotkeys.h"
 
-namespace doticu_npcp {
+namespace doticu_skylib { namespace doticu_npcp {
+
+    Hotkeys_t::Save_t::Save_t() :
+        global_dialogue_menu{ 0, 0, 0, 0 },
+
+        actor_toggle_member{ 0, 0, 0, 0 },
+        actor_toggle_move{ 0, 0, 0, 0 },
+        actor_move_nearer{ 0, 0, 0, 0 },
+        actor_move_farther{ 0, 0, 0, 0 },
+        actor_move_rotate_left{ 0, 0, 0, 0 },
+        actor_move_rotate_right{ 0, 0, 0, 0 },
+        actor_has_base{ 0, 0, 0, 0 },
+        actor_count_base{ 0, 0, 0, 0 },
+        actor_has_head{ 0, 0, 0, 0 },
+        actor_count_heads{ 0, 0, 0, 0 },
+
+        member_toggle_clone{ 0, 0, 0, 0 },
+        member_toggle_settler{ 0, 0, 0, 0 },
+        member_toggle_thrall{ 0, 0, 0, 0 },
+        member_toggle_immobile{ 0, 0, 0, 0 },
+        member_toggle_paralyzed{ 0, 0, 0, 0 },
+        member_toggle_follower{ 0, 0, 0, 0 },
+
+        follower_toggle_sneak{ 0, 0, 0, 0 },
+        follower_toggle_saddler{ 0, 0, 0, 0 },
+
+        members_toggle_display{ 0, 0, 0, 0 },
+        members_display_previous{ 0, 0, 0, 0 },
+        members_display_next{ 0, 0, 0, 0 },
+
+        followers_summon_all{ 0, 0, 0, 0 },
+        followers_summon_mobile{ 0, 0, 0, 0 },
+        followers_summon_immobile{ 0, 0, 0, 0 },
+        followers_settle{ 0, 0, 0, 0 },
+        followers_unsettle{ 0, 0, 0, 0 },
+        followers_mobilize{ 0, 0, 0, 0 },
+        followers_immobilize{ 0, 0, 0, 0 },
+        followers_sneak{ 0, 0, 0, 0 },
+        followers_unsneak{ 0, 0, 0, 0 },
+        followers_saddle{ 0, 0, 0, 0 },
+        followers_unsaddle{ 0, 0, 0, 0 },
+        followers_resurrect{ 0, 0, 0, 0 }
+    {
+    }
+
+    Hotkeys_t::Save_t::~Save_t()
+    {
+    }
+
+    Hotkeys_t::State_t::State_t() :
+        save(),
+
+        quest(Consts_t::NPCP::Quest::Control()),
+        currently_pressed_key(0)
+    {
+    }
+
+    Hotkeys_t::State_t::~State_t()
+    {
+    }
 
     String_t Hotkeys_t::Class_Name()
     {
         DEFINE_CLASS_NAME("doticu_npcp_hotkeys");
     }
 
-    some<V::Class_t*> Hotkeys_t::Class()
+    some<Virtual::Class_t*> Hotkeys_t::Class()
     {
         DEFINE_CLASS();
     }
 
-    void Hotkeys_t::Register_Me(some<V::Machine_t*> machine)
+    void Hotkeys_t::Register_Me(some<Virtual::Machine_t*> machine)
     {
+        using Type_t = Hotkeys_t;
+
         SKYLIB_ASSERT_SOME(machine);
 
         String_t class_name = Class_Name();
@@ -39,7 +101,7 @@ namespace doticu_npcp {
 
         #define METHOD(METHOD_NAME_, WAITS_FOR_FRAME_, RETURN_TYPE_, METHOD_, ...)      \
         SKYLIB_M                                                                        \
-            BIND_METHOD(machine, class_name, Hotkeys_t, METHOD_NAME_, WAITS_FOR_FRAME_, \
+            BIND_METHOD(machine, class_name, Type_t, METHOD_NAME_, WAITS_FOR_FRAME_,    \
                         RETURN_TYPE_, METHOD_, __VA_ARGS__);                            \
         SKYLIB_W
 
@@ -54,7 +116,7 @@ namespace doticu_npcp {
         using Callback = some<unique<Callback_i<Bool_t>>>;
 
         class Is_In_Menu_Mode_Callback :
-            public V::Callback_t
+            public Virtual::Callback_t
         {
         public:
             Callback callback;
@@ -66,7 +128,7 @@ namespace doticu_npcp {
             }
 
         public:
-            virtual void operator()(V::Variable_t* result) override
+            virtual void operator()(Virtual::Variable_t* result) override
             {
                 Bool_t is_in_menu_mode = result ? result->As<Bool_t>() : false;
                 (*this->callback)(!is_in_menu_mode);
@@ -82,54 +144,72 @@ namespace doticu_npcp {
         }
     }
 
-    Hotkeys_t::Hotkeys_t(some<Quest_t*> quest, Bool_t is_new_game) :
-        quest(quest), currently_pressed_key(-1)
+    Hotkeys_t::Hotkeys_t() :
+        state()
     {
         // we need to as some point register for base keys. might only be necessary after load game.
-        this->quest->Register_Key_Event(52, none<V::Callback_i*>());
-    }
-
-    Hotkeys_t::Hotkeys_t(some<Quest_t*> quest, const Version_t<u16> version_to_update) :
-        Hotkeys_t(quest, false)
-    {
+        State().quest->Register_Key_Event(52, none<Virtual::Callback_i*>());
     }
 
     Hotkeys_t::~Hotkeys_t()
     {
-        this->currently_pressed_key = -1;
     }
 
-    some<V::Object_t*> Hotkeys_t::Object()
+    void Hotkeys_t::On_After_New_Game()
     {
-        DEFINE_COMPONENT_OBJECT_METHOD(this->quest());
     }
 
-    Bool_t Hotkeys_t::On_Key_Down(V::Stack_ID_t stack_id, Int_t key_code)
+    void Hotkeys_t::On_Before_Save_Game(std::ofstream& file)
     {
-        const V::Latent_ID_t latent_id(stack_id);
+        file.write(reinterpret_cast<char*>(&State().save), sizeof(Save_t));
+    }
 
-        V::Debug_t::Create_Notification("Working.", none<V::Callback_i*>());
+    void Hotkeys_t::On_After_Save_Game()
+    {
+    }
+
+    void Hotkeys_t::On_Before_Load_Game()
+    {
+    }
+
+    void Hotkeys_t::On_After_Load_Game(std::ifstream& file)
+    {
+        file.read(reinterpret_cast<char*>(&State().save), sizeof(Save_t));
+    }
+
+    void Hotkeys_t::On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update)
+    {
+        On_After_Load_Game(file);
+    }
+
+    void Hotkeys_t::On_Update()
+    {
+    }
+
+    Hotkeys_t::State_t& Hotkeys_t::State()
+    {
+        return this->state;
+    }
+
+    some<Virtual::Object_t*> Hotkeys_t::Object()
+    {
+        DEFINE_COMPONENT_OBJECT_METHOD(State().quest());
+    }
+
+    Bool_t Hotkeys_t::On_Key_Down(Virtual::Stack_ID_t stack_id, Int_t key_code)
+    {
+        const Virtual::Latent_ID_t latent_id(stack_id);
+
+        Virtual::Debug_t::Create_Notification("Working.", none<Virtual::Callback_i*>());
 
         return true;
     }
 
-    Bool_t Hotkeys_t::On_Key_Up(V::Stack_ID_t stack_id, Int_t key_code, Float_t time_held)
+    Bool_t Hotkeys_t::On_Key_Up(Virtual::Stack_ID_t stack_id, Int_t key_code, Float_t time_held)
     {
-        const V::Latent_ID_t latent_id(stack_id);
+        const Virtual::Latent_ID_t latent_id(stack_id);
 
         return true;
     }
 
-    void Hotkeys_t::Before_Save()
-    {
-    }
-
-    void Hotkeys_t::After_Save()
-    {
-    }
-
-    void Hotkeys_t::Validate()
-    {
-    }
-
-}
+}}
