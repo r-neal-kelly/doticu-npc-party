@@ -113,7 +113,6 @@
     <ClCompile Include="src\chests.cpp" />
     <ClCompile Include="src\consts.cpp" />
     <ClCompile Include="src\hotkeys.cpp" />
-    <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mcm_chests.cpp" />
     <ClCompile Include="src\mcm_main.cpp" />
     <ClCompile Include="src\party_member_suitcase.cpp" />
@@ -143,7 +142,6 @@
     <ClInclude Include="include\mcm_chests.h" />
     <ClInclude Include="include\consts.h" />
     <ClInclude Include="include\intrinsic.h" />
-    <ClInclude Include="include\main.h" />
     <ClInclude Include="include\mcm_main.h" />
     <ClInclude Include="include\npcp.h" />
     <ClInclude Include="include\party_displays.h" />

@@ -12,13 +12,8 @@
 
 namespace doticu_skylib { namespace doticu_npcp {
 
-    namespace Party {
-
-        class Main_t;
-
-    }
-
     class Hotkeys_t;
+    class Party_t;
 
     class NPCP_t :
         public SKSE_Plugin_t
@@ -41,17 +36,17 @@ namespace doticu_skylib { namespace doticu_npcp {
             ~Save_t();
 
         public:
-            void    Read(std::ifstream& save);
-            void    Write(std::ofstream& save);
+            void    Read(std::ifstream& file);
+            void    Write(std::ofstream& file);
         };
 
         class State_t
         {
         public:
-            Save_t                              save;
+            Save_t                          save;
 
-            const some<unique<Party::Main_t>>   party;
-            const some<unique<Hotkeys_t>>       hotkeys;
+            const some<unique<Party_t>>     party;
+            const some<unique<Hotkeys_t>>   hotkeys;
 
         public:
             State_t();
@@ -100,7 +95,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         const Version_t<u16>    Version();
         void                    Version(const Version_t<u16> value);
 
-        Party::Main_t&          Party();
+        Party_t&                Party();
         Hotkeys_t&              Hotkeys();
     };
 

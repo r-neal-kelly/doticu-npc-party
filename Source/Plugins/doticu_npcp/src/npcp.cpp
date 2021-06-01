@@ -10,7 +10,7 @@
 #include "consts.h"
 #include "hotkeys.h"
 #include "npcp.h"
-#include "party_main.h"
+#include "party.h"
 #include "strings.h"
 
 namespace doticu_skylib { namespace doticu_npcp {
@@ -27,23 +27,26 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
     }
 
-    void NPCP_t::Save_t::Read(std::ifstream& save)
+    void NPCP_t::Save_t::Read(std::ifstream& file)
     {
-        save >> version_major;
-        save >> version_minor;
-        save >> version_patch;
-        save >> version_build;
+        file >> version_major;
+        file >> version_minor;
+        file >> version_patch;
+        file >> version_build;
     }
 
-    void NPCP_t::Save_t::Write(std::ofstream& save)
+    void NPCP_t::Save_t::Write(std::ofstream& file)
     {
-
+        file << version_major;
+        file << version_minor;
+        file << version_patch;
+        file << version_build;
     }
 
     NPCP_t::State_t::State_t() :
         save(),
 
-        party(new Party::Main_t()),
+        party(new Party_t()),
         hotkeys(new Hotkeys_t())
     {
     }
@@ -78,7 +81,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT_SOME(v_machine);
 
-        Party::Main_t::Register_Me(v_machine);
+        Party_t::Register_Me(v_machine);
         Hotkeys_t::Register_Me(v_machine);
 
         return true;
@@ -125,12 +128,12 @@ namespace doticu_skylib { namespace doticu_npcp {
         if (Is_Valid()) {
             SKYLIB_LOG("NPC Party: Saving...");
 
-            std::ofstream save(Game_t::Save_File_Path(file_name.c_str(), "npcp"), std::ios::out);
-            if (save.is_open() && save.good()) {
-                State().save.Write(save);
+            std::ofstream file(Game_t::Save_File_Path(file_name.c_str(), "npcp"), std::ios::out);
+            if (file.is_open() && file.good()) {
+                State().save.Write(file);
 
-                Party().On_Before_Save_Game(save);
-                Hotkeys().On_Before_Save_Game(save);
+                Party().On_Before_Save_Game(file);
+                Hotkeys().On_Before_Save_Game(file);
 
                 SKYLIB_LOG("NPC Party: Saved.");
             } else {
@@ -159,35 +162,33 @@ namespace doticu_skylib { namespace doticu_npcp {
     void NPCP_t::On_After_Load_Game(const std::string& file_name, Bool_t did_load_successfully)
     {
         if (did_load_successfully && Is_Active()) {
-            std::ifstream save(Game_t::Save_File_Path(file_name.c_str(), "npcp"), std::ios::in);
-            if (save.is_open() && save.good()) {
+            std::ifstream file(Game_t::Save_File_Path(file_name.c_str(), "npcp"), std::ios::in);
+            if (file.is_open() && file.good()) {
                 SKYLIB_LOG("NPC Party: Loading...");
 
                 Create_State();
 
-                State().save.Read(save);
+                State().save.Read(file);
 
                 const Version_t<u16> save_version = Version();
                 const Version_t<u16> const_version = Consts_t::NPCP::Version::Current();
-                if (save_version <= const_version) {
-                    if (save_version < const_version) {
-                        Party().On_After_Load_Game(save, save_version);
-                        Hotkeys().On_After_Load_Game(save, save_version);
+                if (save_version == const_version) {
+                    Party().On_After_Load_Game(file);
+                    Hotkeys().On_After_Load_Game(file);
 
-                        Version(const_version);
-                        UI_t::Create_Notification("NPC Party: Updated to version " +
-                                                  std::to_string(const_version.major) + "." +
-                                                  std::to_string(const_version.minor) + "." +
-                                                  std::to_string(const_version.patch),
-                                                  none<Virtual::Callback_i*>());
+                    SKYLIB_LOG("NPC Party: Loaded.");
+                } else if (save_version < const_version) {
+                    Party().On_After_Load_Game(file, save_version);
+                    Hotkeys().On_After_Load_Game(file, save_version);
 
-                        SKYLIB_LOG("NPC Party: Updated and loaded.");
-                    } else {
-                        Party().On_After_Load_Game(save);
-                        Hotkeys().On_After_Load_Game(save);
+                    Version(const_version);
+                    UI_t::Create_Notification("NPC Party: Updated to version " +
+                                              std::to_string(const_version.major) + "." +
+                                              std::to_string(const_version.minor) + "." +
+                                              std::to_string(const_version.patch),
+                                              none<Virtual::Callback_i*>());
 
-                        SKYLIB_LOG("NPC Party: Loaded.");
-                    }
+                    SKYLIB_LOG("NPC Party: Updated and loaded.");
                 } else {
                     Delete_State();
 
@@ -208,7 +209,8 @@ namespace doticu_skylib { namespace doticu_npcp {
     void NPCP_t::On_Update(u32 time_stamp)
     {
         if (Is_Valid()) {
-            Party().Enforce();
+            Party().On_Update();
+            Hotkeys().On_Update();
         }
     }
 
@@ -263,7 +265,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         this->state->save.version_build = value.build;
     }
 
-    Party::Main_t& NPCP_t::Party()
+    Party_t& NPCP_t::Party()
     {
         SKYLIB_ASSERT_SOME(Is_Valid());
 

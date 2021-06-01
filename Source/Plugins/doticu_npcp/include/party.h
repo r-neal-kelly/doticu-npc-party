@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <fstream>
+
 #include "doticu_skylib/container_entry_count.h"
 #include "doticu_skylib/unique.h"
 
@@ -11,7 +13,7 @@
 #include "party_member_id.h"
 #include "party_member_update_ai.h"
 
-namespace doticu_skylib { namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
 
     class Displays_t;
     class Expoees_t;
@@ -19,10 +21,10 @@ namespace doticu_skylib { namespace doticu_npcp { namespace Party {
     class Members_t;
     class Settlers_t;
 
-    class Main_t
+    class Party_t
     {
     public:
-        static void Register_Me(some<V::Machine_t*> machine);
+        static void Register_Me(some<Virtual::Machine_t*> machine);
 
     public:
         const some<unique<Members_t>>       members;
@@ -34,18 +36,21 @@ namespace doticu_skylib { namespace doticu_npcp { namespace Party {
         Vector_t<maybe<Member_Update_AI_e>> update_ais;
 
     public:
-        Main_t(Bool_t is_new_game);
-        Main_t(const Version_t<u16> version_to_update);
-        Main_t(const Main_t& other)                     = delete;
-        Main_t(Main_t&& other) noexcept                 = delete;
-        Main_t& operator =(const Main_t& other)         = delete;
-        Main_t& operator =(Main_t&& other) noexcept     = delete;
-        ~Main_t();
+        Party_t();
+        Party_t(const Party_t& other) = delete;
+        Party_t(Party_t&& other) noexcept = delete;
+        Party_t& operator =(const Party_t& other) = delete;
+        Party_t& operator =(Party_t&& other) noexcept = delete;
+        ~Party_t();
 
     public:
-        void    Before_Save();
-        void    After_Save();
-        void    Validate();
+        void    On_After_New_Game();
+        void    On_Before_Save_Game(std::ofstream& file);
+        void    On_After_Save_Game();
+        void    On_Before_Load_Game();
+        void    On_After_Load_Game(std::ifstream& file);
+        void    On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update);
+        void    On_Update();
 
     public:
         Members_t&      Members();
@@ -82,4 +87,4 @@ namespace doticu_skylib { namespace doticu_npcp { namespace Party {
         void    Log(std::string indent = "");
     };
 
-}}}
+}}
