@@ -135,7 +135,7 @@ namespace doticu_skylib { namespace doticu_npcp {
                 SKYLIB_LOG("NPC Party: Saved.");
             } else {
                 // notify the player
-                SKYLIB_LOG("NPC Party: Failed to save!");
+                SKYLIB_LOG("NPC Party: Failed to create a save file.");
             }
         }
     }
@@ -158,19 +158,17 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void NPCP_t::On_After_Load_Game(const std::string& file_name, Bool_t did_load_successfully)
     {
-        if (Is_Valid()) {
-            SKYLIB_LOG("NPC Party: Loading...");
-
-            Delete_State();
-
+        if (did_load_successfully && Is_Active()) {
             std::ifstream save(Game_t::Save_File_Path(file_name.c_str(), "npcp"), std::ios::in);
             if (save.is_open() && save.good()) {
+                SKYLIB_LOG("NPC Party: Loading...");
+
                 Create_State();
 
                 State().save.Read(save);
 
-                const Version_t<u16> const_version = Consts_t::NPCP::Version::Current();
                 const Version_t<u16> save_version = Version();
+                const Version_t<u16> const_version = Consts_t::NPCP::Version::Current();
                 if (save_version <= const_version) {
                     if (save_version < const_version) {
                         Party().On_After_Load_Game(save, save_version);
@@ -182,24 +180,23 @@ namespace doticu_skylib { namespace doticu_npcp {
                                                   std::to_string(const_version.minor) + "." +
                                                   std::to_string(const_version.patch),
                                                   none<Virtual::Callback_i*>());
+
+                        SKYLIB_LOG("NPC Party: Updated and loaded.");
                     } else {
                         Party().On_After_Load_Game(save);
                         Hotkeys().On_After_Load_Game(save);
-                    }
 
-                    SKYLIB_LOG("NPC Party: Loaded.");
+                        SKYLIB_LOG("NPC Party: Loaded.");
+                    }
                 } else {
                     Delete_State();
 
                     // notify the player
-                    SKYLIB_LOG("NPC Party: This version cannot load a newer version's save file!");
+                    SKYLIB_LOG("NPC Party: This version cannot load a newer version's save file.");
                 }
             } else {
-                // notify the player
-                SKYLIB_LOG("NPC Party: Failed to open save file!");
+                On_After_New_Game();
             }
-        } else {
-            On_After_New_Game();
         }
     }
 
