@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <mutex>
+
 #include "doticu_skylib/enum_script_type.h"
 
 #include "consts.h"
@@ -267,7 +269,7 @@ namespace doticu_npcp { namespace Party {
         const some<Quest_t*>            quest;
         Save_State                      save_state;
 
-        Vector_t<Lock_t>                locks;
+        Vector_t<std::mutex>            locks;
         Vector_t<maybe<Actor_Base_t*>>  custom_bases;
 
         const Vector_t<some<Spell_t*>>  vanilla_ghost_abilities;
@@ -336,7 +338,7 @@ namespace doticu_npcp { namespace Party {
         void                        Sort_Type(some<Member_Sort_Type_e> value);
 
     public:
-        Lock_t&                     Lock(some<Member_ID_t> member_id);
+        std::mutex&                 Lock(some<Member_ID_t> member_id);
         some<Alias_Reference_t*>    Alias_Reference(some<Member_ID_t> member_id);
 
         Bool_t                      Has_Alias(some<Member_ID_t> member_id);

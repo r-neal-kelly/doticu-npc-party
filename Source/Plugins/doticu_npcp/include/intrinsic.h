@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <mutex>
-
 #include "doticu_skylib/skylib.h"
 #include "doticu_skylib/virtual.h"
 
@@ -17,9 +15,6 @@ namespace doticu_skylib {}
 namespace skylib = doticu_skylib;
 
 namespace doticu_npcp {
-
-    using Lock_t                        = std::mutex;
-    using Locker_t                      = std::unique_lock<std::mutex>;
 
     using u8                            = skylib::u8;
     using u16                           = skylib::u16;
@@ -45,12 +40,6 @@ namespace doticu_npcp {
     using maybe                         = skylib::maybe<T>;
     template <typename T>
     using some                          = skylib::some<T>;
-    template <typename T>
-    using none_numeric                  = skylib::none_numeric<T>;
-    template <typename T>
-    using maybe_numeric                 = skylib::maybe_numeric<T>;
-    template <typename T>
-    using some_numeric                  = skylib::some_numeric<T>;
     template <typename T>
     using none_enum                     = skylib::none_enum<T>;
     template <typename T>
@@ -200,8 +189,3 @@ namespace doticu_npcp {
 
 namespace doticu_mcmlib {}
 namespace mcmlib = doticu_mcmlib;
-
-#define NPCP_PRINT_HEAD         \
-(                               \
-    std::string("NPC Party: ")  \
-)

@@ -589,12 +589,13 @@ namespace doticu_npcp { namespace Party {
     {
         SKYLIB_ASSERT_SOME(settler_id);
 
-        return
+        /*return
             Is_Enabled<Sandboxer_t>(settler_id) ||
             Is_Enabled<Sleeper_t>(settler_id) ||
             Is_Enabled<Sitter_t>(settler_id) ||
             Is_Enabled<Eater_t>(settler_id) ||
-            Is_Enabled<Guard_t>(settler_id);
+            Is_Enabled<Guard_t>(settler_id);*/
+        return false;
     }
 
     Bool_t Settlers_t::Has_Settler(some<Member_ID_t> member_id)
@@ -602,7 +603,7 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT_SOME(member_id);
 
         if (Members().Has_Member(member_id)) {
-            return Has_Settler(some<Settler_ID_t>(member_id));
+            return Has_Settler(some<Settler_ID_t>(member_id()));
         } else {
             return false;
         }
@@ -689,7 +690,7 @@ namespace doticu_npcp { namespace Party {
             do_reset_ai = true;
         }
 
-        if (location->Radius() != radius) {
+        if (location->Radius() != radius()) {
             location->Radius(radius());
             do_reset_ai = true;
         }
@@ -703,12 +704,12 @@ namespace doticu_npcp { namespace Party {
         SKYLIB_ASSERT_SOME(package);
 
         if (time) {
-            s32 hour = time().Military_Hour();
+            s32 hour = time.Military_Hour();
             if (package->schedule.hour != hour) {
                 package->schedule.hour = hour;
                 do_reset_ai = true;
             }
-            s32 minute = time().Minute()();
+            s32 minute = time.Minute()();
             if (package->schedule.minute != minute) {
                 package->schedule.minute = minute;
                 do_reset_ai = true;
@@ -725,7 +726,7 @@ namespace doticu_npcp { namespace Party {
         }
 
         if (duration) {
-            s32 duration_in_minutes = duration().Total_Minutes();
+            s32 duration_in_minutes = duration.Total_Minutes();
             if (package->schedule.duration_in_minutes != duration_in_minutes) {
                 package->schedule.duration_in_minutes = duration_in_minutes;
                 do_reset_ai = true;
@@ -755,7 +756,7 @@ namespace doticu_npcp { namespace Party {
 
     void Settlers_t::Enforce(some<Settler_ID_t> settler_id)
     {
-        SKYLIB_ASSERT_SOME(settler_id);
+        /*SKYLIB_ASSERT_SOME(settler_id);
 
         Member_t member(settler_id);
         if (member) {
@@ -821,7 +822,7 @@ namespace doticu_npcp { namespace Party {
             if (do_reset_ai) {
                 Main().Update_AI(settler_id, Member_Update_AI_e::RESET_AI);
             }
-        }
+        }*/
     }
 
 }}

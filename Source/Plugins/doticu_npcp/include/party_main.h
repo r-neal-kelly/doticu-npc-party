@@ -11,7 +11,7 @@
 #include "party_member_id.h"
 #include "party_member_update_ai.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp { namespace Party {
 
     class Displays_t;
     class Expoees_t;
@@ -61,11 +61,11 @@ namespace doticu_npcp { namespace Party {
         Bool_t  Is_Eater(some<Member_ID_t> valid_member_id);
         Bool_t  Is_Guard(some<Member_ID_t> valid_member_id);
 
-        Bool_t  Is_Currently_Sandboxer(some<Member_ID_t> valid_member_id);
-        Bool_t  Is_Currently_Sleeper(some<Member_ID_t> valid_member_id);
-        Bool_t  Is_Currently_Sitter(some<Member_ID_t> valid_member_id);
-        Bool_t  Is_Currently_Eater(some<Member_ID_t> valid_member_id);
-        Bool_t  Is_Currently_Guard(some<Member_ID_t> valid_member_id);
+        Bool_t  Is_Active_Sandboxer(some<Member_ID_t> valid_member_id);
+        Bool_t  Is_Active_Sleeper(some<Member_ID_t> valid_member_id);
+        Bool_t  Is_Active_Sitter(some<Member_ID_t> valid_member_id);
+        Bool_t  Is_Active_Eater(some<Member_ID_t> valid_member_id);
+        Bool_t  Is_Active_Guard(some<Member_ID_t> valid_member_id);
 
         Bool_t  Is_Follower(some<Member_ID_t> valid_member_id);
 
@@ -82,4 +82,4 @@ namespace doticu_npcp { namespace Party {
         void    Log(std::string indent = "");
     };
 
-}}
+}}}

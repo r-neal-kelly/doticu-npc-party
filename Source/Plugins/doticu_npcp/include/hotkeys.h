@@ -8,7 +8,7 @@
 
 #include "intrinsic.h"
 
-namespace doticu_npcp {
+namespace doticu_skylib { namespace doticu_npcp {
 
     class Hotkeys_t
     {
@@ -134,4 +134,4 @@ namespace doticu_npcp {
         void Log(std::string indent = "");
     };
 
-}
+}}

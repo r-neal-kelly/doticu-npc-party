@@ -34,77 +34,7 @@
 #include "party_settlers.h"
 
 namespace doticu_npcp { namespace Party {
-
-    template <typename T>
-    inline some<Misc_t*> Settlers_t::Token()
-    {
-    }
-
-    template <>
-    inline some<Misc_t*> Settlers_t::Token<Sandboxer_t>()
-    {
-        return Consts_t::NPCP::Misc::Token::Settler_Sandboxer();
-    }
-
-    template <>
-    inline some<Misc_t*> Settlers_t::Token<Sleeper_t>()
-    {
-        return Consts_t::NPCP::Misc::Token::Settler_Sleeper();
-    }
-
-    template <>
-    inline some<Misc_t*> Settlers_t::Token<Sitter_t>()
-    {
-        return Consts_t::NPCP::Misc::Token::Settler_Sitter();
-    }
-
-    template <>
-    inline some<Misc_t*> Settlers_t::Token<Eater_t>()
-    {
-        return Consts_t::NPCP::Misc::Token::Settler_Eater();
-    }
-
-    template <>
-    inline some<Misc_t*> Settlers_t::Token<Guard_t>()
-    {
-        return Consts_t::NPCP::Misc::Token::Settler_Guard();
-    }
-
-    template <typename T>
-    inline some<Form_List_t*> Settlers_t::Packages()
-    {
-    }
-
-    template <>
-    inline some<Form_List_t*> Settlers_t::Packages<Sandboxer_t>()
-    {
-        return Consts_t::NPCP::Form_List::Settler_Sandboxer_Packages();
-    }
-
-    template <>
-    inline some<Form_List_t*> Settlers_t::Packages<Sleeper_t>()
-    {
-        return Consts_t::NPCP::Form_List::Settler_Sleeper_Packages();
-    }
-
-    template <>
-    inline some<Form_List_t*> Settlers_t::Packages<Sitter_t>()
-    {
-        return Consts_t::NPCP::Form_List::Settler_Sitter_Packages();
-    }
-
-    template <>
-    inline some<Form_List_t*> Settlers_t::Packages<Eater_t>()
-    {
-        return Consts_t::NPCP::Form_List::Settler_Eater_Packages();
-    }
-
-    template <>
-    inline some<Form_List_t*> Settlers_t::Packages<Guard_t>()
-    {
-        return Consts_t::NPCP::Form_List::Settler_Guard_Packages();
-    }
-
+    /*
     template <typename T>
     inline some<Package_t*> Settlers_t::Package(some<Settler_ID_t> valid_settler_id)
     {
@@ -1885,5 +1815,5 @@ namespace doticu_npcp { namespace Party {
 
         Speed(package, Speed<T>(id), do_reset_ai);
     }
-
+    */
 }}

@@ -114,52 +114,62 @@ namespace doticu_npcp { namespace Party {
 
     Bool_t Main_t::Is_Sandboxer(some<Member_ID_t> valid_member_id)
     {
-        return Settlers().Is_Enabled<Sandboxer_t>(valid_member_id);
+        //return Settlers().Is_Enabled<Sandboxer_t>(valid_member_id);
+        return false;
     }
 
     Bool_t Main_t::Is_Sleeper(some<Member_ID_t> valid_member_id)
     {
-        return Settlers().Is_Enabled<Sleeper_t>(valid_member_id);
+        //return Settlers().Is_Enabled<Sleeper_t>(valid_member_id);
+        return false;
     }
 
     Bool_t Main_t::Is_Sitter(some<Member_ID_t> valid_member_id)
     {
-        return Settlers().Is_Enabled<Sitter_t>(valid_member_id);
+        //return Settlers().Is_Enabled<Sitter_t>(valid_member_id);
+        return false;
     }
 
     Bool_t Main_t::Is_Eater(some<Member_ID_t> valid_member_id)
     {
-        return Settlers().Is_Enabled<Eater_t>(valid_member_id);
+        //return Settlers().Is_Enabled<Eater_t>(valid_member_id);
+        return false;
     }
 
     Bool_t Main_t::Is_Guard(some<Member_ID_t> valid_member_id)
     {
-        return Settlers().Is_Enabled<Guard_t>(valid_member_id);
+        //return Settlers().Is_Enabled<Guard_t>(valid_member_id);
+        return false;
     }
 
-    Bool_t Main_t::Is_Currently_Sandboxer(some<Member_ID_t> valid_member_id)
+    Bool_t Main_t::Is_Active_Sandboxer(some<Member_ID_t> valid_member_id)
     {
-        return Settlers().Is_Currently_Enabled<Sandboxer_t>(valid_member_id);
+        //return Settlers().Is_Currently_Enabled<Sandboxer_t>(valid_member_id);
+        return false;
     }
 
-    Bool_t Main_t::Is_Currently_Sleeper(some<Member_ID_t> valid_member_id)
+    Bool_t Main_t::Is_Active_Sleeper(some<Member_ID_t> valid_member_id)
     {
-        return Settlers().Is_Currently_Enabled<Sleeper_t>(valid_member_id);
+        //return Settlers().Is_Currently_Enabled<Sleeper_t>(valid_member_id);
+        return false;
     }
 
-    Bool_t Main_t::Is_Currently_Sitter(some<Member_ID_t> valid_member_id)
+    Bool_t Main_t::Is_Active_Sitter(some<Member_ID_t> valid_member_id)
     {
-        return Settlers().Is_Currently_Enabled<Sitter_t>(valid_member_id);
+        //return Settlers().Is_Currently_Enabled<Sitter_t>(valid_member_id);
+        return false;
     }
 
-    Bool_t Main_t::Is_Currently_Eater(some<Member_ID_t> valid_member_id)
+    Bool_t Main_t::Is_Active_Eater(some<Member_ID_t> valid_member_id)
     {
-        return Settlers().Is_Currently_Enabled<Eater_t>(valid_member_id);
+        //return Settlers().Is_Currently_Enabled<Eater_t>(valid_member_id);
+        return false;
     }
 
-    Bool_t Main_t::Is_Currently_Guard(some<Member_ID_t> valid_member_id)
+    Bool_t Main_t::Is_Active_Guard(some<Member_ID_t> valid_member_id)
     {
-        return Settlers().Is_Currently_Enabled<Guard_t>(valid_member_id);
+        //return Settlers().Is_Currently_Enabled<Guard_t>(valid_member_id);
+        return false;
     }
 
     Bool_t Main_t::Is_Follower(some<Member_ID_t> valid_member_id)

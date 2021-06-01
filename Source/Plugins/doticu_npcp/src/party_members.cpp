@@ -1094,7 +1094,7 @@ namespace doticu_npcp { namespace Party {
         quest(quest),
         save_state(quest),
 
-        locks(Vector_t<Lock_t>(MAX_MEMBERS)),
+        locks(Vector_t<std::mutex>(MAX_MEMBERS)),
         custom_bases(Vector_t<maybe<Actor_Base_t*>>(MAX_MEMBERS)),
 
         vanilla_ghost_abilities(skylib::Const::Spells::Ghost_Abilities())
@@ -1117,7 +1117,7 @@ namespace doticu_npcp { namespace Party {
         quest(quest),
         save_state(quest),
 
-        locks(Vector_t<Lock_t>(MAX_MEMBERS)),
+        locks(Vector_t<std::mutex>(MAX_MEMBERS)),
         custom_bases(Vector_t<maybe<Actor_Base_t*>>(MAX_MEMBERS)),
 
         vanilla_ghost_abilities(skylib::Const::Spells::Ghost_Abilities())
@@ -1411,7 +1411,7 @@ namespace doticu_npcp { namespace Party {
         this->save_state.sort_type = value;
     }
 
-    Lock_t& Members_t::Lock(some<Member_ID_t> member_id)
+    std::mutex& Members_t::Lock(some<Member_ID_t> member_id)
     {
         SKYLIB_ASSERT_SOME(member_id);
 

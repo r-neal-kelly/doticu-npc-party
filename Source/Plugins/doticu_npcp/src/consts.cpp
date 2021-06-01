@@ -34,7 +34,7 @@
 
 #include "consts.h"
 
-namespace doticu_npcp {
+namespace doticu_skylib { namespace doticu_npcp {
 
     /* SKYRIM */
 
@@ -238,7 +238,6 @@ namespace doticu_npcp {
     some<Perk_t*>               Consts_t::NPCP::Perk::Resurrect()                           { DEFINE_FORM(Mod(), Perk_t, 0x0D2F7C); }
     some<Perk_t*>               Consts_t::NPCP::Perk::Unparalyze()                          { DEFINE_FORM(Mod(), Perk_t, 0x16B4D1); }
 
-    some<Quest_t*>              Consts_t::NPCP::Quest::Main()                               { DEFINE_FORM(Mod(), Quest_t, 0x005385); }
     some<Quest_t*>              Consts_t::NPCP::Quest::Funcs()                              { DEFINE_FORM(Mod(), Quest_t, 0x005384); }
     some<Quest_t*>              Consts_t::NPCP::Quest::Members()                            { DEFINE_FORM(Mod(), Quest_t, 0x00184C); }
     some<Quest_t*>              Consts_t::NPCP::Quest::Followers()                          { DEFINE_FORM(Mod(), Quest_t, 0x000D83); }
@@ -334,4 +333,4 @@ namespace doticu_npcp {
 
     some<Weapon_t*>             Consts_t::NPCP::Weapon::Blank()                             { DEFINE_FORM(Mod(), Weapon_t, 0x0C8D65); }
 
-}
+}}

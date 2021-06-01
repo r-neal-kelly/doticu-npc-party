@@ -6,7 +6,6 @@
 
 #include "doticu_skylib/enum_script_type.h"
 
-#include "intrinsic.h"
 #include "party_member.h"
 #include "party_settler_id.h"
 
@@ -26,11 +25,11 @@ namespace doticu_npcp { namespace Party {
         static void                 Register_Me(some<V::Machine_t*> machine);
 
     public:
-        Member_t            member;
-        some<Settler_ID_t>  id;
+        Member_t    member;
 
     public:
         Settler_t(some<Settler_ID_t> id);
+        Settler_t(some<Settler_ID_t> id, std::mutex& lock);
         Settler_t(const Settler_t& other) = delete;
         Settler_t(Settler_t&& other) noexcept;
         Settler_t& operator =(const Settler_t& other) = delete;

@@ -6,7 +6,7 @@
 
 #include "intrinsic.h"
 
-namespace doticu_npcp {
+namespace doticu_skylib { namespace doticu_npcp {
 
     class Strings_t
     {
@@ -171,4 +171,4 @@ namespace doticu_npcp {
         static const String_t Z_BOOKS;
     };
 
-}
+}}

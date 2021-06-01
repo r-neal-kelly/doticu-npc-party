@@ -2,6 +2,7 @@
 
 Scriptname doticu_npcp_party_settlers extends Quest
 
+; Old
 int[]               sandboxer_flags             = none
 int[]               sleeper_flags               = none
 int[]               sitter_flags                = none

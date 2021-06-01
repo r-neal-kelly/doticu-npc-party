@@ -4,6 +4,9 @@
 
 #pragma once
 
+#include <mutex>
+
+#include "doticu_skylib/container_entry_count.h"
 #include "doticu_skylib/enum_script_type.h"
 
 #include "intrinsic.h"
@@ -33,11 +36,12 @@ namespace doticu_npcp { namespace Party {
         static void                 Register_Me(some<V::Machine_t*> machine);
 
     public:
-        some<Member_ID_t>   id;
-        Locker_t            locker;
+        std::unique_lock<std::mutex>    locker;
+        some<Member_ID_t>               id;
 
     public:
         Member_t(some<Member_ID_t> id);
+        Member_t(some<Member_ID_t> id, std::mutex& lock);
         Member_t(const Member_t& other) = delete;
         Member_t(Member_t&& other) noexcept;
         Member_t& operator =(const Member_t& other) = delete;

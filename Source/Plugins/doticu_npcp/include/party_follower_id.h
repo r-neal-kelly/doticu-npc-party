@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "doticu_skylib/maybe_numeric.h"
 #include "doticu_skylib/numeric.h"
 
 #include "consts.h"

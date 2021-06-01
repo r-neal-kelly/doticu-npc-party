@@ -125,8 +125,15 @@
     <ClCompile Include="src\party_member.cpp" />
     <ClCompile Include="src\party_members.cpp" />
     <ClCompile Include="src\party_member_suit_template.cpp" />
+    <ClCompile Include="src\party_settler.cpp" />
     <ClCompile Include="src\party_settlers.cpp" />
     <ClCompile Include="src\party_settler_duration.cpp" />
+    <ClCompile Include="src\party_settler_eater.cpp" />
+    <ClCompile Include="src\party_settler_guard.cpp" />
+    <ClCompile Include="src\party_settler_sandboxer.cpp" />
+    <ClCompile Include="src\party_settler_sitter.cpp" />
+    <ClCompile Include="src\party_settler_sleeper.cpp" />
+    <ClCompile Include="src\party_settler_slots.cpp" />
     <ClCompile Include="src\party_settler_time.cpp" />
     <ClCompile Include="src\strings.cpp" />
   </ItemGroup>
@@ -170,13 +177,19 @@
     <ClInclude Include="include\party_member_vitality.h" />
     <ClInclude Include="include\party_settler.h" />
     <ClInclude Include="include\party_settlers.h" />
+    <ClInclude Include="include\party_settler_eater.h" />
     <ClInclude Include="include\party_settler_flags.h" />
     <ClInclude Include="include\party_settler_flags_eater.h" />
     <ClInclude Include="include\party_settler_flags_guard.h" />
     <ClInclude Include="include\party_settler_flags_sandboxer.h" />
     <ClInclude Include="include\party_settler_flags_sitter.h" />
     <ClInclude Include="include\party_settler_flags_sleeper.h" />
+    <ClInclude Include="include\party_settler_guard.h" />
     <ClInclude Include="include\party_settler_id.h" />
+    <ClInclude Include="include\party_settler_sandboxer.h" />
+    <ClInclude Include="include\party_settler_sitter.h" />
+    <ClInclude Include="include\party_settler_sleeper.h" />
+    <ClInclude Include="include\party_settler_slots.h" />
     <ClInclude Include="include\party_settler_time_am_pm.h" />
     <ClInclude Include="include\party_settler_attention.h" />
     <ClInclude Include="include\party_settler_duration.h" />
@@ -187,6 +200,7 @@
     <ClInclude Include="include\party_settler_radius.h" />
     <ClInclude Include="include\party_settler_speed.h" />
     <ClInclude Include="include\party_settler_time.h" />
+    <ClInclude Include="include\party_settler_type.h" />
     <ClInclude Include="include\party_settler_value_index.h" />
     <ClInclude Include="include\party_settler_value_index_eater.h" />
     <ClInclude Include="include\party_settler_value_index_guard.h" />

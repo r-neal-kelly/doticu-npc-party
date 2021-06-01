@@ -6,7 +6,7 @@
 
 #include "intrinsic.h"
 
-namespace doticu_npcp {
+namespace doticu_skylib { namespace doticu_npcp {
 
     class Consts_t
     {
@@ -305,7 +305,6 @@ namespace doticu_npcp {
             };
             struct Quest
             {
-                static some<Quest_t*> Main();
                 static some<Quest_t*> Funcs();
                 static some<Quest_t*> Members();
                 static some<Quest_t*> Followers();
@@ -417,4 +416,4 @@ namespace doticu_npcp {
         };
     };
 
-}
+}}

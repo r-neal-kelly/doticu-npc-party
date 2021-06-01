@@ -8,67 +8,28 @@
 #include "intrinsic.h"
 #include "party_main.h"
 #include "party_member_id.h"
+#include "party_settler.h"
 #include "party_settler_attention.h"
 #include "party_settler_duration.h"
 #include "party_settler_duration_hours.h"
 #include "party_settler_duration_minutes.h"
+#include "party_settler_eater.h"
 #include "party_settler_flags.h"
-#include "party_settler_flags_eater.h"
-#include "party_settler_flags_guard.h"
-#include "party_settler_flags_sandboxer.h"
-#include "party_settler_flags_sitter.h"
-#include "party_settler_flags_sleeper.h"
+#include "party_settler_guard.h"
 #include "party_settler_id.h"
 #include "party_settler_radius.h"
+#include "party_settler_sandboxer.h"
+#include "party_settler_sitter.h"
+#include "party_settler_sleeper.h"
 #include "party_settler_speed.h"
 #include "party_settler_time.h"
 #include "party_settler_time_am_pm.h"
 #include "party_settler_time_hour.h"
 #include "party_settler_time_minute.h"
 #include "party_settler_value_index.h"
-#include "party_settler_value_index_eater.h"
-#include "party_settler_value_index_guard.h"
-#include "party_settler_value_index_sandboxer.h"
-#include "party_settler_value_index_sitter.h"
-#include "party_settler_value_index_sleeper.h"
 #include "party_settler_wander_distance.h"
 
 namespace doticu_npcp { namespace Party {
-
-    class Eater_t
-    {
-    public:
-        using Flags_e = Settler_Flags_Eater_e;
-        using Value_e = Settler_Value_Index_Eater_e;
-    };
-
-    class Guard_t
-    {
-    public:
-        using Flags_e = Settler_Flags_Guard_e;
-        using Value_e = Settler_Value_Index_Guard_e;
-    };
-
-    class Sandboxer_t
-    {
-    public:
-        using Flags_e = Settler_Flags_Sandboxer_e;
-        using Value_e = Settler_Value_Index_Sandboxer_e;
-    };
-
-    class Sitter_t
-    {
-    public:
-        using Flags_e = Settler_Flags_Sitter_e;
-        using Value_e = Settler_Value_Index_Sitter_e;
-    };
-
-    class Sleeper_t
-    {
-    public:
-        using Flags_e = Settler_Flags_Sleeper_e;
-        using Value_e = Settler_Value_Index_Sleeper_e;
-    };
 
     class Settlers_t
     {
@@ -245,11 +206,6 @@ namespace doticu_npcp { namespace Party {
 
     public:
         template <typename T>
-        some<Misc_t*>                               Token();
-
-        template <typename T>
-        some<Form_List_t*>                          Packages();
-        template <typename T>
         some<Package_t*>                            Package(some<Settler_ID_t> valid_settler_id);
 
         template <typename T>
@@ -266,7 +222,7 @@ namespace doticu_npcp { namespace Party {
         template <typename T>
         void                                        Is_Enabled(some<Settler_ID_t> settler_id, Bool_t value);
         template <typename T>
-        Bool_t                                      Is_Currently_Enabled(some<Settler_ID_t> settler_id);
+        Bool_t                                      Is_Currently_Enabled(some<Settler_ID_t> settler_id); // Is_Active, Is_Current
 
         template <typename T>
         Bool_t                                      Allow_Swimming(some<Settler_ID_t> valid_settler_id);

@@ -4,7 +4,7 @@
 
 #include "strings.h"
 
-namespace doticu_npcp {
+namespace doticu_skylib { namespace doticu_npcp {
 
     const String_t Strings_t::_COLON_SPACE_             = ": ";
     const String_t Strings_t::_DASH_                    = " - ";
@@ -165,4 +165,4 @@ namespace doticu_npcp {
     const String_t Strings_t::Z                         = "$dnpcp_z";
     const String_t Strings_t::Z_BOOKS                   = "$dnpcp_z_books";
 
-}
+}}

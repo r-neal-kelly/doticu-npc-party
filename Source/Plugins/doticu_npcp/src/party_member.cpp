@@ -40,8 +40,19 @@ namespace doticu_npcp { namespace Party {
     }
 
     Member_t::Member_t(some<Member_ID_t> id) :
-        id(id),
-        locker(Members().Lock(id))
+        locker(Members().Lock(id), std::defer_lock),
+        id(id)
+    {
+        SKYLIB_ASSERT(this->id);
+
+        if (!this->locker.owns_lock()) {
+            this->locker.lock();
+        }
+    }
+
+    Member_t::Member_t(some<Member_ID_t> id, std::mutex& lock) :
+        locker(lock, std::defer_lock),
+        id(id)
     {
         SKYLIB_ASSERT(this->id);
 
@@ -549,15 +560,15 @@ namespace doticu_npcp { namespace Party {
                 return Member_Suit_Type_e::SETTLEMENT;
             } else if (Has_Suit(Member_Suit_Type_e::FOLLOWER) && main.Is_Follower(this->id)) {
                 return Member_Suit_Type_e::FOLLOWER;
-            } else if (Has_Suit(Member_Suit_Type_e::GUARD) && main.Is_Currently_Guard(this->id)) {
+            } else if (Has_Suit(Member_Suit_Type_e::GUARD) && main.Is_Active_Guard(this->id)) {
                 return Member_Suit_Type_e::GUARD;
-            } else if (Has_Suit(Member_Suit_Type_e::EATER) && main.Is_Currently_Eater(this->id)) {
+            } else if (Has_Suit(Member_Suit_Type_e::EATER) && main.Is_Active_Eater(this->id)) {
                 return Member_Suit_Type_e::EATER;
-            } else if (Has_Suit(Member_Suit_Type_e::SITTER) && main.Is_Currently_Sitter(this->id)) {
+            } else if (Has_Suit(Member_Suit_Type_e::SITTER) && main.Is_Active_Sitter(this->id)) {
                 return Member_Suit_Type_e::SITTER;
-            } else if (Has_Suit(Member_Suit_Type_e::SLEEPER) && main.Is_Currently_Sleeper(this->id)) {
+            } else if (Has_Suit(Member_Suit_Type_e::SLEEPER) && main.Is_Active_Sleeper(this->id)) {
                 return Member_Suit_Type_e::SLEEPER;
-            } else if (Has_Suit(Member_Suit_Type_e::SANDBOXER) && main.Is_Currently_Sandboxer(this->id)) {
+            } else if (Has_Suit(Member_Suit_Type_e::SANDBOXER) && main.Is_Active_Sandboxer(this->id)) {
                 return Member_Suit_Type_e::SANDBOXER;
             } else if (location && Has_Suit(Member_Suit_Type_e::DANGEROUS) && location->Is_Likely_Dangerous()) {
                 return Member_Suit_Type_e::DANGEROUS;

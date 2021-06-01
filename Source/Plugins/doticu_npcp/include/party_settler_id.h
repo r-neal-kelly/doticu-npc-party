@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include "doticu_skylib/maybe_numeric.h"
-
 #include "consts.h"
 #include "intrinsic.h"
 #include "party_member_id.h"
