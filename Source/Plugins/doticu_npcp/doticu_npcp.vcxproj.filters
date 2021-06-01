@@ -164,7 +164,7 @@
     <ClInclude Include="include\party_member_update_ai.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\party_main.h">
+    <ClInclude Include="include\party.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\party_settlers.h">

@@ -154,7 +154,7 @@
     <ClInclude Include="include\party_follower_id.h" />
     <ClInclude Include="include\party_follower_limit.h" />
     <ClInclude Include="include\party_follower_sort_type.h" />
-    <ClInclude Include="include\party_main.h" />
+    <ClInclude Include="include\party.h" />
     <ClInclude Include="include\party_member.h" />
     <ClInclude Include="include\party_members.h" />
     <ClInclude Include="include\party_member_alpha.h" />
