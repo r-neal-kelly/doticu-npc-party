@@ -108,8 +108,8 @@ namespace doticu_skylib { namespace doticu_npcp {
         const Version_t<u16>            Version();
         void                            Version(const Version_t<u16> value);
 
-        const Vector_t<maybe<Mod_t*>>   Heavy_Mods();
-        const Vector_t<maybe<Mod_t*>>   Light_Mods();
+        const Vector_t<maybe<Mod_t*>>   Deserialized_Heavy_Mods();
+        const Vector_t<maybe<Mod_t*>>   Deserialized_Light_Mods();
 
         Party_t&                        Party();
         Hotkeys_t&                      Hotkeys();

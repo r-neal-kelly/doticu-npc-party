@@ -314,8 +314,8 @@ namespace doticu_skylib { namespace doticu_npcp {
         size_t heavy_byte_count = this->serialized_heavy_mods.size();
         size_t light_byte_count = this->serialized_light_mods.size();
 
-        (file.write(reinterpret_cast<const char*>(&heavy_byte_count), sizeof(heavy_byte_count)), file.good()) &&
-            (file.write(reinterpret_cast<const char*>(&light_byte_count), sizeof(light_byte_count)), file.good()) &&
+        (file.write(reinterpret_cast<char*>(&heavy_byte_count), sizeof(heavy_byte_count)), file.good()) &&
+            (file.write(reinterpret_cast<char*>(&light_byte_count), sizeof(light_byte_count)), file.good()) &&
             (file.write(this->serialized_heavy_mods.data(), heavy_byte_count), file.good()) &&
             (file.write(this->serialized_light_mods.data(), light_byte_count), file.good());
     }
@@ -395,14 +395,14 @@ namespace doticu_skylib { namespace doticu_npcp {
         this->state->save.version_build = value.build;
     }
 
-    const Vector_t<maybe<Mod_t*>> NPCP_t::Heavy_Mods()
+    const Vector_t<maybe<Mod_t*>> NPCP_t::Deserialized_Heavy_Mods()
     {
         SKYLIB_ASSERT(Is_Valid());
 
         return State().deserialized_heavy_mods;
     }
 
-    const Vector_t<maybe<Mod_t*>> NPCP_t::Light_Mods()
+    const Vector_t<maybe<Mod_t*>> NPCP_t::Deserialized_Light_Mods()
     {
         SKYLIB_ASSERT(Is_Valid());
 
