@@ -8,7 +8,7 @@
 
 #include "intrinsic.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
 
     class Follower_Flags_e_data :
         public Enum_t<Word_t>

@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <fstream>
+
 #include "doticu_skylib/skse_plugin.h"
 
 #include "intrinsic.h"
@@ -39,6 +41,9 @@ namespace doticu_skylib { namespace doticu_npcp {
         public:
             Save_t                          save;
 
+            Vector_t<maybe<Mod_t*>>         deserialized_heavy_mods;
+            Vector_t<maybe<Mod_t*>>         deserialized_light_mods;
+
             const some<unique<Party_t>>     party;
             const some<unique<Hotkeys_t>>   hotkeys;
 
@@ -52,7 +57,10 @@ namespace doticu_skylib { namespace doticu_npcp {
         };
 
     public:
-        maybe<State_t*> state;
+        Vector_t<const char>    serialized_heavy_mods;
+        Vector_t<const char>    serialized_light_mods;
+
+        maybe<State_t*>         state;
 
     public:
         NPCP_t();
@@ -75,6 +83,10 @@ namespace doticu_skylib { namespace doticu_npcp {
         virtual void    On_Before_Delete_Game(const std::string& file_name) override;
         virtual void    On_Update(u32 time_stamp) override;
 
+        virtual void    On_Before_Save_Game(std::ofstream& file);
+        virtual void    On_After_Load_Game(std::ifstream& file);
+        virtual void    On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update);
+
         virtual void    On_Log(some<const char*> log);
         virtual void    On_Error(some<const char*> error, String_t user_message);
 
@@ -84,16 +96,23 @@ namespace doticu_skylib { namespace doticu_npcp {
         void    Create_State();
         void    Delete_State();
 
+        void    Create_Serialized_Mods();
+        void    Write_Serialized_Mods(std::ofstream& file);
+        void    Read_Deserialized_Mods(std::ifstream& file);
+
     public:
-        Bool_t                  Is_Valid();
+        Bool_t                          Is_Valid();
 
-        State_t&                State();
+        State_t&                        State();
 
-        const Version_t<u16>    Version();
-        void                    Version(const Version_t<u16> value);
+        const Version_t<u16>            Version();
+        void                            Version(const Version_t<u16> value);
 
-        Party_t&                Party();
-        Hotkeys_t&              Hotkeys();
+        const Vector_t<maybe<Mod_t*>>   Heavy_Mods();
+        const Vector_t<maybe<Mod_t*>>   Light_Mods();
+
+        Party_t&                        Party();
+        Hotkeys_t&                      Hotkeys();
     };
 
     extern NPCP_t NPCP;

@@ -26,6 +26,7 @@
 #include "party_member_suit_fill_type.h"
 #include "party_member_suit_type.h"
 #include "party_member_vitality.h"
+#include "percent.h"
 
 namespace doticu_skylib { namespace doticu_npcp {
 
@@ -44,15 +45,15 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         static constexpr Member_Limit_t::value_type             DEFAULT_LIMIT                           = MAX_MEMBERS;
 
-        static constexpr size_t                                 DEFAULT_FILL_SUIT_AURA_PROBABILITY      = 100;
-        static constexpr size_t                                 DEFAULT_FILL_SUIT_BODY_PROBABILITY      = 100;
-        static constexpr size_t                                 DEFAULT_FILL_SUIT_FEET_PROBABILITY      = 66;
-        static constexpr size_t                                 DEFAULT_FILL_SUIT_FINGER_PROBABILITY    = 66;
-        static constexpr size_t                                 DEFAULT_FILL_SUIT_FOREARM_PROBABILITY   = 50;
-        static constexpr size_t                                 DEFAULT_FILL_SUIT_FOREHEAD_PROBABILITY  = 50;
-        static constexpr size_t                                 DEFAULT_FILL_SUIT_HANDS_PROBABILITY     = 66;
-        static constexpr size_t                                 DEFAULT_FILL_SUIT_HEAD_PROBABILITY      = 33;
-        static constexpr size_t                                 DEFAULT_FILL_SUIT_NECK_PROBABILITY      = 50;
+        static constexpr Percent_t::value_type                  DEFAULT_FILL_SUIT_AURA_PERCENT          = 100;
+        static constexpr Percent_t::value_type                  DEFAULT_FILL_SUIT_BODY_PERCENT          = 100;
+        static constexpr Percent_t::value_type                  DEFAULT_FILL_SUIT_FEET_PERCENT          = 66;
+        static constexpr Percent_t::value_type                  DEFAULT_FILL_SUIT_FINGER_PERCENT        = 66;
+        static constexpr Percent_t::value_type                  DEFAULT_FILL_SUIT_FOREARM_PERCENT       = 50;
+        static constexpr Percent_t::value_type                  DEFAULT_FILL_SUIT_FOREHEAD_PERCENT      = 50;
+        static constexpr Percent_t::value_type                  DEFAULT_FILL_SUIT_HANDS_PERCENT         = 66;
+        static constexpr Percent_t::value_type                  DEFAULT_FILL_SUIT_HEAD_PERCENT          = 33;
+        static constexpr Percent_t::value_type                  DEFAULT_FILL_SUIT_NECK_PERCENT          = 50;
 
         static constexpr Bool_t                                 DEFAULT_DO_CHANGE_SUITS_AUTOMATICALLY   = false;
         static constexpr Bool_t                                 DEFAULT_DO_FILL_SUITS_AUTOMATICALLY     = true;
@@ -76,25 +77,21 @@ namespace doticu_skylib { namespace doticu_npcp {
         class Save_State
         {
         public:
-            const some<Quest_t*>                    quest;
-
-        public:
-            some<Member_Limit_t>                    limit;
-
-            u8                                      fill_suit_aura_probability;
-            u8                                      fill_suit_body_probability;
-            u8                                      fill_suit_feet_probability;
-            u8                                      fill_suit_finger_probability;
-            u8                                      fill_suit_forearm_probability;
-            u8                                      fill_suit_forehead_probability;
-            u8                                      fill_suit_hands_probability;
-            u8                                      fill_suit_head_probability;
-            u8                                      fill_suit_neck_probability;
+            maybe<Member_Limit_t>                   limit;
 
             Bool_t                                  do_change_suits_automatically;
             Bool_t                                  do_fill_suits_automatically;
             Bool_t                                  do_fill_suits_strictly;
             Bool_t                                  do_unfill_suits_to_pack;
+            maybe<Percent_t>                        fill_suit_aura_percent;
+            maybe<Percent_t>                        fill_suit_body_percent;
+            maybe<Percent_t>                        fill_suit_feet_percent;
+            maybe<Percent_t>                        fill_suit_finger_percent;
+            maybe<Percent_t>                        fill_suit_forearm_percent;
+            maybe<Percent_t>                        fill_suit_forehead_percent;
+            maybe<Percent_t>                        fill_suit_hands_percent;
+            maybe<Percent_t>                        fill_suit_head_percent;
+            maybe<Percent_t>                        fill_suit_neck_percent;            
 
             Bool_t                                  has_untouchable_invulnerables;
 
@@ -116,7 +113,6 @@ namespace doticu_skylib { namespace doticu_npcp {
 
             Vector_t<String_t>                      names;
 
-            Vector_t<maybe<Reference_t*>>           caches;
             Vector_t<maybe<Combat_Style_t*>>        combat_styles;
             Vector_t<maybe<Spell_t*>>               ghost_abilities;
             Vector_t<maybe<Outfit_t*>>              outfits;
@@ -140,108 +136,6 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         public:
             some<V::Object_t*>                                  Object();
-
-        public:
-            V::Variable_tt<Int_t>&                              Limit();
-
-            V::Variable_tt<Int_t>&                              Fill_Suit_Aura_Probability();
-            V::Variable_tt<Int_t>&                              Fill_Suit_Body_Probability();
-            V::Variable_tt<Int_t>&                              Fill_Suit_Feet_Probability();
-            V::Variable_tt<Int_t>&                              Fill_Suit_Finger_Probability();
-            V::Variable_tt<Int_t>&                              Fill_Suit_Forearm_Probability();
-            V::Variable_tt<Int_t>&                              Fill_Suit_Forehead_Probability();
-            V::Variable_tt<Int_t>&                              Fill_Suit_Hands_Probability();
-            V::Variable_tt<Int_t>&                              Fill_Suit_Head_Probability();
-            V::Variable_tt<Int_t>&                              Fill_Suit_Neck_Probability();
-
-            V::Variable_tt<Bool_t>&                             Do_Change_Suits_Automatically();
-            V::Variable_tt<Bool_t>&                             Do_Fill_Suits_Automatically();
-            V::Variable_tt<Bool_t>&                             Do_Fill_Suits_Strictly();
-            V::Variable_tt<Bool_t>&                             Do_Unfill_Suits_To_Pack();
-
-            V::Variable_tt<Bool_t>&                             Has_Untouchable_Invulnerables();
-
-            V::Variable_tt<String_t>&                           Default_Combat_Style();
-            V::Variable_tt<String_t>&                           Default_Relation();
-            V::Variable_tt<String_t>&                           Default_Suit_Type();
-            V::Variable_tt<String_t>&                           Default_Vitality();
-
-            V::Variable_tt<String_t>&                           Member_Suit_Fill_Type();
-            V::Variable_tt<String_t>&                           Sort_Type();
-
-        public:
-            V::Variable_tt<Vector_t<maybe<Actor_t*>>>&          Actors();
-            V::Variable_tt<Vector_t<maybe<Actor_Base_t*>>>&     Original_Bases();
-
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Is_Banished();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Is_Clone();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Is_Immobile();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Is_Mannequin();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Is_Reanimated();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Is_Sneak();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Is_Thrall();
-
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Archer();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Civilized();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Combatant();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Coward();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Dangerous();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Eater();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Exterior();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Follower();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Guard();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Home();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Immobile();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Inn();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Interior();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Mage();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Mannequin();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Member();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Sandboxer();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Settlement();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Sitter();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Sleeper();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Thrall();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Has_Suit_Warrior();
-
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Archer();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Civilized();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Combatant();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Coward();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Dangerous();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Eater();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Exterior();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Follower();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Guard();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Home();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Immobile();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Inn();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Interior();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Mage();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Mannequin();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Member();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Sandboxer();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Settlement();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Sitter();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Sleeper();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Thrall();
-            V::Variable_tt<Vector_t<Bool_t>>&                   Flags_Only_Playables_Warrior();
-
-            V::Variable_tt<Vector_t<String_t>>&                 Names();
-
-            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Caches();
-            V::Variable_tt<Vector_t<maybe<Combat_Style_t*>>>&   Combat_Styles();
-            V::Variable_tt<Vector_t<maybe<Spell_t*>>>&          Ghost_Abilities();
-            V::Variable_tt<Vector_t<maybe<Outfit_t*>>>&         Outfits();
-            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Packs();
-            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&      Suitcases();
-            V::Variable_tt<Vector_t<maybe<Voice_Type_t*>>>&     Voice_Types();
-
-            V::Variable_tt<Vector_t<Float_t>>&                  Alphas();
-            V::Variable_tt<Vector_t<Int_t>>&                    Ratings();
-            V::Variable_tt<Vector_t<String_t>>&                 Relations();
-            V::Variable_tt<Vector_t<String_t>>&                 Suit_Types();
-            V::Variable_tt<Vector_t<String_t>>&                 Vitalities();
 
         public:
             void    Read();
@@ -364,6 +258,8 @@ namespace doticu_skylib { namespace doticu_npcp {
         Bool_t                      Remove_Member(some<Member_ID_t> member_id);
 
         size_t                      Member_Count();
+
+        static some<Reference_t*>   Suit_Buffer(); // we'll be using Consts_t::NPCP::Reference::Suit_Buffer(), lock it somehow
 
     public:
         void    Log(std::string indent = "");

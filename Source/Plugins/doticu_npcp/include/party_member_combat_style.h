@@ -7,7 +7,7 @@
 #include "consts.h"
 #include "intrinsic.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
 
     class Member_Combat_Style_e_data :
         public Enum_Type_Data_t<s8>
@@ -97,24 +97,24 @@ namespace doticu_npcp { namespace Party {
 namespace doticu_skylib {
 
     template <>
-    class none<doticu_npcp::Party::Member_Combat_Style_e> :
-        public none_enum<doticu_npcp::Party::Member_Combat_Style_e>
+    class none<doticu_npcp::Member_Combat_Style_e> :
+        public none_enum<doticu_npcp::Member_Combat_Style_e>
     {
     public:
         using none_enum::none_enum;
     };
 
     template <>
-    class maybe<doticu_npcp::Party::Member_Combat_Style_e> :
-        public maybe_enum<doticu_npcp::Party::Member_Combat_Style_e>
+    class maybe<doticu_npcp::Member_Combat_Style_e> :
+        public maybe_enum<doticu_npcp::Member_Combat_Style_e>
     {
     public:
         using maybe_enum::maybe_enum;
     };
 
     template <>
-    class some<doticu_npcp::Party::Member_Combat_Style_e> :
-        public some_enum<doticu_npcp::Party::Member_Combat_Style_e>
+    class some<doticu_npcp::Member_Combat_Style_e> :
+        public some_enum<doticu_npcp::Member_Combat_Style_e>
     {
     public:
         using some_enum::some_enum;

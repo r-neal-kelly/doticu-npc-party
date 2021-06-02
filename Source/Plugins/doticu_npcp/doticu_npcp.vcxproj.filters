@@ -302,6 +302,9 @@
     <ClInclude Include="include\party_settler_type.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\percent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="scripts\doticu_npcp.psc" />

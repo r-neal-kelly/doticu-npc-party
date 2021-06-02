@@ -9,7 +9,7 @@
 #include "intrinsic.h"
 #include "party_member_suit_type.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
 
     class Member_Suitcase_t :
         public Reference_t

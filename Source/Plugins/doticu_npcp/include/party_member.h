@@ -112,8 +112,6 @@ namespace doticu_npcp { namespace Party {
         maybe<Member_Alpha_t>       Alpha();
         void                        Alpha(maybe<Member_Alpha_t> alpha);
 
-        some<Reference_t*>          Cache();
-
         maybe<Combat_Style_t*>      Combat_Style();
         void                        Combat_Style(maybe<Combat_Style_t*> combat_style);
         void                        Combat_Style(Member_Combat_Style_e combat_style);

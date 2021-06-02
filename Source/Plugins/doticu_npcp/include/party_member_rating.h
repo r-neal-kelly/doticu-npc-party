@@ -9,7 +9,7 @@
 #include "intrinsic.h"
 #include "strings.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
 
     class Member_Rating_t_data :
         public Numeric_Data_t<u8>
@@ -62,24 +62,24 @@ namespace doticu_npcp { namespace Party {
 namespace doticu_skylib {
 
     template <>
-    class none<doticu_npcp::Party::Member_Rating_t> :
-        public none_numeric<doticu_npcp::Party::Member_Rating_t>
+    class none<doticu_npcp::Member_Rating_t> :
+        public none_numeric<doticu_npcp::Member_Rating_t>
     {
     public:
         using none_numeric::none_numeric;
     };
 
     template <>
-    class maybe<doticu_npcp::Party::Member_Rating_t> :
-        public maybe_numeric<doticu_npcp::Party::Member_Rating_t>
+    class maybe<doticu_npcp::Member_Rating_t> :
+        public maybe_numeric<doticu_npcp::Member_Rating_t>
     {
     public:
         using maybe_numeric::maybe_numeric;
     };
 
     template <>
-    class some<doticu_npcp::Party::Member_Rating_t> :
-        public some_numeric<doticu_npcp::Party::Member_Rating_t>
+    class some<doticu_npcp::Member_Rating_t> :
+        public some_numeric<doticu_npcp::Member_Rating_t>
     {
     public:
         using some_numeric::some_numeric;

@@ -94,13 +94,12 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Party_t::On_Before_Save_Game(std::ofstream& file)
     {
-        if (file.write(reinterpret_cast<char*>(&State().save), sizeof(Save_t))) {
-            Members().On_Before_Save_Game(file);
-            Settlers().On_Before_Save_Game(file);
-            Expoees().On_Before_Save_Game(file);
-            Displays().On_Before_Save_Game(file);
-            Followers().On_Before_Save_Game(file);
-        }
+        (file.write(reinterpret_cast<char*>(&State().save), sizeof(Save_t)).good()) &&
+            (Members().On_Before_Save_Game(file), file.good()) &&
+            (Settlers().On_Before_Save_Game(file), file.good()) &&
+            (Expoees().On_Before_Save_Game(file), file.good()) &&
+            (Displays().On_Before_Save_Game(file), file.good()) &&
+            (Followers().On_Before_Save_Game(file), file.good());
     }
 
     void Party_t::On_After_Save_Game()
@@ -123,24 +122,22 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Party_t::On_After_Load_Game(std::ifstream& file)
     {
-        if (file.read(reinterpret_cast<char*>(&State().save), sizeof(Save_t))) {
-            Members().On_After_Load_Game(file);
-            Settlers().On_After_Load_Game(file);
-            Expoees().On_After_Load_Game(file);
-            Displays().On_After_Load_Game(file);
-            Followers().On_After_Load_Game(file);
-        }
+        (file.read(reinterpret_cast<char*>(&State().save), sizeof(Save_t)).good()) &&
+            (Members().On_After_Load_Game(file), file.good()) &&
+            (Settlers().On_After_Load_Game(file), file.good()) &&
+            (Expoees().On_After_Load_Game(file), file.good()) &&
+            (Displays().On_After_Load_Game(file), file.good()) &&
+            (Followers().On_After_Load_Game(file), file.good());
     }
 
     void Party_t::On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update)
     {
-        if (file.read(reinterpret_cast<char*>(&State().save), sizeof(Save_t))) {
-            Members().On_After_Load_Game(file, version_to_update);
-            Settlers().On_After_Load_Game(file, version_to_update);
-            Expoees().On_After_Load_Game(file, version_to_update);
-            Displays().On_After_Load_Game(file, version_to_update);
-            Followers().On_After_Load_Game(file, version_to_update);
-        }
+        (file.read(reinterpret_cast<char*>(&State().save), sizeof(Save_t)).good()) &&
+            (Members().On_After_Load_Game(file, version_to_update), file.good()) &&
+            (Settlers().On_After_Load_Game(file, version_to_update), file.good()) &&
+            (Expoees().On_After_Load_Game(file, version_to_update), file.good()) &&
+            (Displays().On_After_Load_Game(file, version_to_update), file.good()) &&
+            (Followers().On_After_Load_Game(file, version_to_update), file.good());
     }
 
     void Party_t::On_Update()

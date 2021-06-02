@@ -9,7 +9,7 @@
 #include "consts.h"
 #include "intrinsic.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
 
     class Display_ID_t_data :
         public Numeric_Data_t<Int_t>
@@ -38,24 +38,24 @@ namespace doticu_npcp { namespace Party {
 namespace doticu_skylib {
 
     template <>
-    class none<doticu_npcp::Party::Display_ID_t> :
-        public none_numeric<doticu_npcp::Party::Display_ID_t>
+    class none<doticu_npcp::Display_ID_t> :
+        public none_numeric<doticu_npcp::Display_ID_t>
     {
     public:
         using none_numeric::none_numeric;
     };
 
     template <>
-    class maybe<doticu_npcp::Party::Display_ID_t> :
-        public maybe_numeric<doticu_npcp::Party::Display_ID_t>
+    class maybe<doticu_npcp::Display_ID_t> :
+        public maybe_numeric<doticu_npcp::Display_ID_t>
     {
     public:
         using maybe_numeric::maybe_numeric;
     };
 
     template <>
-    class some<doticu_npcp::Party::Display_ID_t> :
-        public some_numeric<doticu_npcp::Party::Display_ID_t>
+    class some<doticu_npcp::Display_ID_t> :
+        public some_numeric<doticu_npcp::Display_ID_t>
     {
     public:
         using some_numeric::some_numeric;

@@ -243,7 +243,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     some<Quest_t*>              Consts_t::NPCP::Quest::Followers()                          { DEFINE_FORM(Mod(), Quest_t, 0x000D83); }
     some<Quest_t*>              Consts_t::NPCP::Quest::Control()                            { DEFINE_FORM(Mod(), Quest_t, 0x000D7F); }
 
-    some<Reference_t*>          Consts_t::NPCP::Reference::Buffer_Container()               { DEFINE_FORM(Mod(), Reference_t, 0x3C37A9); }
+    some<Reference_t*>          Consts_t::NPCP::Reference::Suit_Buffer()                    { DEFINE_FORM(Mod(), Reference_t, 0x3C37A9); }
     some<Reference_t*>          Consts_t::NPCP::Reference::Expo_Exit_Door()                 { DEFINE_FORM(Mod(), Reference_t, 0x25AB08); }
     some<Reference_t*>          Consts_t::NPCP::Reference::Cell_Marker()                    { DEFINE_FORM(Mod(), Reference_t, 0x15C1AE); }
     some<Reference_t*>          Consts_t::NPCP::Reference::Expo_Antechamber_Marker()        { DEFINE_FORM(Mod(), Reference_t, 0x2979B0); }

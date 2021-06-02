@@ -12,7 +12,7 @@
 #include "party_member_flags_only_playables.h"
 #include "party_member_suit_template.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
 
     class Member_Suit_Type_e_data :
         public Enum_Type_Data_t<s8>
@@ -322,24 +322,24 @@ namespace doticu_npcp { namespace Party {
 namespace doticu_skylib {
 
     template <>
-    class none<doticu_npcp::Party::Member_Suit_Type_e> :
-        public none_enum<doticu_npcp::Party::Member_Suit_Type_e>
+    class none<doticu_npcp::Member_Suit_Type_e> :
+        public none_enum<doticu_npcp::Member_Suit_Type_e>
     {
     public:
         using none_enum::none_enum;
     };
 
     template <>
-    class maybe<doticu_npcp::Party::Member_Suit_Type_e> :
-        public maybe_enum<doticu_npcp::Party::Member_Suit_Type_e>
+    class maybe<doticu_npcp::Member_Suit_Type_e> :
+        public maybe_enum<doticu_npcp::Member_Suit_Type_e>
     {
     public:
         using maybe_enum::maybe_enum;
     };
 
     template <>
-    class some<doticu_npcp::Party::Member_Suit_Type_e> :
-        public some_enum<doticu_npcp::Party::Member_Suit_Type_e>
+    class some<doticu_npcp::Member_Suit_Type_e> :
+        public some_enum<doticu_npcp::Member_Suit_Type_e>
     {
     public:
         using some_enum::some_enum;

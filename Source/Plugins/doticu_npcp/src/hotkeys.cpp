@@ -161,7 +161,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Hotkeys_t::On_Before_Save_Game(std::ofstream& file)
     {
-        file.write(reinterpret_cast<char*>(&State().save), sizeof(Save_t));
+        (file.write(reinterpret_cast<char*>(&State().save), sizeof(Save_t)).good());
     }
 
     void Hotkeys_t::On_After_Save_Game()
@@ -174,12 +174,12 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Hotkeys_t::On_After_Load_Game(std::ifstream& file)
     {
-        file.read(reinterpret_cast<char*>(&State().save), sizeof(Save_t));
+        (file.read(reinterpret_cast<char*>(&State().save), sizeof(Save_t)).good());
     }
 
     void Hotkeys_t::On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update)
     {
-        On_After_Load_Game(file);
+        (file.read(reinterpret_cast<char*>(&State().save), sizeof(Save_t)).good());
     }
 
     void Hotkeys_t::On_Update()

@@ -312,7 +312,7 @@ namespace doticu_skylib { namespace doticu_npcp {
             };
             struct Reference
             {
-                static some<Reference_t*> Buffer_Container();
+                static some<Reference_t*> Suit_Buffer();
                 static some<Reference_t*> Expo_Exit_Door();
                 static some<Reference_t*> Cell_Marker();
                 static some<Reference_t*> Expo_Antechamber_Marker();

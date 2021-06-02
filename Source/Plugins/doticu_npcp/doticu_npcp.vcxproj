@@ -138,6 +138,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\chests.h" />
+    <ClInclude Include="include\percent.h" />
     <ClInclude Include="include\hotkeys.h" />
     <ClInclude Include="include\mcm_chests.h" />
     <ClInclude Include="include\consts.h" />
