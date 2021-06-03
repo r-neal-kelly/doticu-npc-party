@@ -64,6 +64,8 @@ namespace doticu_skylib { namespace doticu_npcp {
             }
         }
 
+        NPCP.Write(file, this->id);
+
         NPCP.Write_Form(file, static_base);
         NPCP.Write_Form(file, this->actual_base);
         NPCP.Write_Form(file, this->actor);
@@ -91,30 +93,12 @@ namespace doticu_skylib { namespace doticu_npcp {
     void Member_t::Save_t::Read(std::ifstream& file)
     {
         maybe<Actor_Base_t*> static_base;
-        maybe<Actor_Base_t*> actual_base;
-        maybe<Actor_t*> actor;
+
+        NPCP.Read(file, this->id);
 
         NPCP.Read_Form(file, static_base);
-        NPCP.Read_Form(file, actual_base);
-        NPCP.Read_Form(file, actor);
-        if (static_base) {
-            if (!actual_base || actual_base->Identifiable_Static_Base() != static_base) {
-                actual_base = static_base;
-            }
-            if (!actor) {
-                actor = Actor_t::Create(actual_base(), !actual_base->Does_Respawn(), true, false);
-            }
-            if (actor) {
-                this->actor = actor;
-                this->actual_base = actual_base;
-            } else {
-                this->actor = none<Actor_t*>();
-                this->actual_base = none<Actor_Base_t*>();
-            }
-        } else {
-            this->actor = none<Actor_t*>();
-            this->actual_base = none<Actor_Base_t*>();
-        }
+        NPCP.Read_Form(file, this->actual_base);
+        NPCP.Read_Form(file, this->actor);
 
         NPCP.Read(file, this->flags);
         NPCP.Read(file, this->flags_has_suit);
@@ -134,13 +118,28 @@ namespace doticu_skylib { namespace doticu_npcp {
         NPCP.Read_Form(file, this->voice_type);
 
         NPCP.Read_String(file, this->name);
+
+        if (this->id && static_base) {
+            if (!this->actual_base || this->actual_base->Identifiable_Static_Base() != static_base) {
+                this->actual_base = static_base;
+            }
+            if (!this->actor) {
+                this->actor = Actor_t::Create(this->actual_base(), !this->actual_base->Does_Respawn(), true, false);
+            }
+            if (!this->actor) {
+                this->id = none<Member_ID_t>();
+                this->actual_base = none<Actor_Base_t*>();
+                this->actor = none<Actor_t*>();
+            }
+        } else {
+            this->id = none<Member_ID_t>();
+            this->actual_base = none<Actor_Base_t*>();
+            this->actor = none<Actor_t*>();
+        }
     }
 
     Member_t::State_t::State_t() :
         save(),
-
-        id(),
-        alias(),
 
         custom_base()
     {
@@ -200,8 +199,31 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
     }
 
+    Member_t::Member_t(some<Member_ID_t> id, some<Actor_t*> actor) :
+        state()
+    {
+        SKYLIB_ASSERT_SOME(id);
+        SKYLIB_ASSERT_SOME(actor);
+
+        Save().id = id;
+
+        Save().actual_base = actor->Actor_Base();
+        Save().actor = actor;
+
+        // need to fill in default values
+        // needs to be added to alias, probably do that in Members_t
+    }
+
     Member_t::~Member_t()
     {
+        if (Is_Valid()) {
+            if (State().custom_base) {
+                Save().actor->Actor_Base(Save().actual_base(), false);
+                Actor_Base_t::Destroy(State().custom_base());
+                State().custom_base = none<Actor_Base_t*>();
+            }
+        }
+        // needs to be removed from alias, probably do that in Members_t
     }
 
     void Member_t::On_After_New_Game()
@@ -245,68 +267,37 @@ namespace doticu_skylib { namespace doticu_npcp {
         return this->state.save;
     }
 
-    Bool_t Member_t::Is_Filled()
+    Bool_t Member_t::Is_Valid()
     {
-        return State().id && State().alias && Save().actual_base && Save().actor;
+        return Save().id && Save().actual_base && Save().actor;
     }
-
-    void Member_t::Fill(some<Member_ID_t> id, some<Actor_t*> actor)
-    {
-        SKYLIB_ASSERT_SOME(id);
-        SKYLIB_ASSERT_SOME(actor);
-
-        State().id = id;
-        State().alias = Members().Alias_Reference(id);
-        Save().actual_base = actor->Actor_Base();
-        Save().actor = actor;
-
-        // need to fill in default values. we may want to add this to a second ctor instead
-
-        // needs to be added to alias, probably do that in Members_t
-    }
-
-    void Member_t::Unfill()
-    {
-        State().id = none<Member_ID_t>();
-        State().alias = none<Alias_Reference_t*>();
-        Save().actual_base = none<Actor_Base_t*>();
-        Save().actor = none<Actor_t*>();
-
-        // destroy custom base. we may want that in dtor instead, and just recreate this object to clear all state
-
-        // needs to be removed from alias, probably do that in Members_t
-    }
-
-
-
-
 
     Bool_t Member_t::Is_Banished()
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        return State().flags[this->id()].Is_Flagged(Member_Flags_e::IS_BANISHED);
+        return Save().flags.Is_Flagged(Member_Flags_e::IS_BANISHED);
     }
 
     void Member_t::Is_Banished(Bool_t value)
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        State().flags[this->id()].Is_Flagged(Member_Flags_e::IS_BANISHED, value);
+        Save().flags.Is_Flagged(Member_Flags_e::IS_BANISHED, value);
     }
 
     Bool_t Member_t::Is_Clone()
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        return State().flags[this->id()].Is_Flagged(Member_Flags_e::IS_CLONE);
+        return Save().flags.Is_Flagged(Member_Flags_e::IS_CLONE);
     }
 
     void Member_t::Is_Clone(Bool_t value)
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        State().flags[this->id()].Is_Flagged(Member_Flags_e::IS_CLONE, value);
+        Save().flags.Is_Flagged(Member_Flags_e::IS_CLONE, value);
     }
 
     Bool_t Member_t::Is_Enabled()
@@ -320,70 +311,70 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        return State().flags[this->id()].Is_Flagged(Member_Flags_e::IS_IMMOBILE);
+        return Save().flags.Is_Flagged(Member_Flags_e::IS_IMMOBILE);
     }
 
     void Member_t::Is_Immobile(Bool_t value)
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        State().flags[this->id()].Is_Flagged(Member_Flags_e::IS_IMMOBILE, value);
+        Save().flags.Is_Flagged(Member_Flags_e::IS_IMMOBILE, value);
     }
 
     Bool_t Member_t::Is_Mannequin()
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        return State().flags[this->id()].Is_Flagged(Member_Flags_e::IS_MANNEQUIN);
+        return Save().flags.Is_Flagged(Member_Flags_e::IS_MANNEQUIN);
     }
 
     void Member_t::Is_Mannequin(Bool_t value)
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        State().flags[this->id()].Is_Flagged(Member_Flags_e::IS_MANNEQUIN, value);
+        Save().flags.Is_Flagged(Member_Flags_e::IS_MANNEQUIN, value);
     }
 
     Bool_t Member_t::Is_Reanimated()
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        return State().flags[this->id()].Is_Flagged(Member_Flags_e::IS_REANIMATED);
+        return Save().flags.Is_Flagged(Member_Flags_e::IS_REANIMATED);
     }
 
     void Member_t::Is_Reanimated(Bool_t value)
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        State().flags[this->id()].Is_Flagged(Member_Flags_e::IS_REANIMATED, value);
+        Save().flags.Is_Flagged(Member_Flags_e::IS_REANIMATED, value);
     }
 
     Bool_t Member_t::Is_Sneak()
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        return State().flags[this->id()].Is_Flagged(Member_Flags_e::IS_SNEAK);
+        return Save().flags.Is_Flagged(Member_Flags_e::IS_SNEAK);
     }
 
     void Member_t::Is_Sneak(Bool_t value)
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        State().flags[this->id()].Is_Flagged(Member_Flags_e::IS_SNEAK, value);
+        Save().flags.Is_Flagged(Member_Flags_e::IS_SNEAK, value);
     }
 
     Bool_t Member_t::Is_Thrall()
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        return State().flags[this->id()].Is_Flagged(Member_Flags_e::IS_THRALL);
+        return Save().flags.Is_Flagged(Member_Flags_e::IS_THRALL);
     }
 
     void Member_t::Is_Thrall(Bool_t value)
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        State().flags[this->id()].Is_Flagged(Member_Flags_e::IS_THRALL, value);
+        Save().flags.Is_Flagged(Member_Flags_e::IS_THRALL, value);
     }
 
     Bool_t Member_t::Is_Untouchable()
@@ -484,30 +475,6 @@ namespace doticu_skylib { namespace doticu_npcp {
         return !Is_Banished() && !Is_Mannequin();
     }
 
-    Bool_t Member_t::Has_Only_Playables(some<Member_Suit_Type_e> type)
-    {
-        SKYLIB_ASSERT(Is_Valid());
-        SKYLIB_ASSERT_SOME(type);
-        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
-
-        Member_Flags_Only_Playables_e flag = type().As_Member_Flag_Only_Playables();
-        SKYLIB_ASSERT_SOME(flag);
-
-        return State().flags_only_playables[this->id()].Is_Flagged(flag);
-    }
-
-    void Member_t::Has_Only_Playables(some<Member_Suit_Type_e> type, Bool_t value)
-    {
-        SKYLIB_ASSERT(Is_Valid());
-        SKYLIB_ASSERT_SOME(type);
-        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
-
-        Member_Flags_Only_Playables_e flag = type().As_Member_Flag_Only_Playables();
-        SKYLIB_ASSERT_SOME(flag);
-
-        State().flags_only_playables[this->id()].Is_Flagged(flag, value);
-    }
-
     Bool_t Member_t::Has_Suit(some<Member_Suit_Type_e> type)
     {
         SKYLIB_ASSERT(Is_Valid());
@@ -517,7 +484,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         Member_Flags_Has_Suit_e flag = type().As_Member_Flag_Has_Suit();
         SKYLIB_ASSERT_SOME(flag);
 
-        return State().flags_has_suit[this->id()].Is_Flagged(flag);
+        return Save().flags_has_suit.Is_Flagged(flag);
     }
 
     void Member_t::Has_Suit(some<Member_Suit_Type_e> type, Bool_t value)
@@ -529,32 +496,52 @@ namespace doticu_skylib { namespace doticu_npcp {
         Member_Flags_Has_Suit_e flag = type().As_Member_Flag_Has_Suit();
         SKYLIB_ASSERT_SOME(flag);
 
-        State().flags_has_suit[this->id()].Is_Flagged(flag, value);
+        Save().flags_has_suit.Is_Flagged(flag, value);
     }
 
-    some<Alias_Reference_t*> Member_t::Alias_Reference()
+    Bool_t Member_t::Has_Only_Playables(some<Member_Suit_Type_e> type)
+    {
+        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT_SOME(type);
+        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
+
+        Member_Flags_Only_Playables_e flag = type().As_Member_Flag_Only_Playables();
+        SKYLIB_ASSERT_SOME(flag);
+
+        return Save().flags_only_playables.Is_Flagged(flag);
+    }
+
+    void Member_t::Has_Only_Playables(some<Member_Suit_Type_e> type, Bool_t value)
+    {
+        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT_SOME(type);
+        SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
+
+        Member_Flags_Only_Playables_e flag = type().As_Member_Flag_Only_Playables();
+        SKYLIB_ASSERT_SOME(flag);
+
+        Save().flags_only_playables.Is_Flagged(flag, value);
+    }
+
+    some<Member_ID_t> Member_t::ID()
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        return Members().Alias_Reference(this->id);
+        return Save().id;
     }
 
-    some<Actor_t*> Member_t::Actor()
+    some<Alias_Reference_t*> Member_t::Alias()
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        some<Actor_t*> actor = State().actors[this->id()]();
-        SKYLIB_ASSERT_SOME(actor);
-        return actor;
+        return Members().Alias_Reference(ID());
     }
 
-    some<Actor_Base_t*> Member_t::Original_Base()
+    some<Actor_Base_t*> Member_t::Actual_Base()
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        some<Actor_Base_t*> original_base = State().original_bases[this->id()]();
-        SKYLIB_ASSERT_SOME(original_base);
-        return original_base;
+        return Save().actual_base();
     }
 
     some<Actor_Base_t*> Member_t::Custom_Base()
@@ -569,6 +556,15 @@ namespace doticu_skylib { namespace doticu_npcp {
         }
 
         return custom_base();
+    }
+
+    some<Actor_t*> Member_t::Actor()
+    {
+        SKYLIB_ASSERT(Is_Valid());
+
+        some<Actor_t*> actor = State().actors[this->id()]();
+        SKYLIB_ASSERT_SOME(actor);
+        return actor;
     }
 
     maybe<Member_Alpha_t> Member_t::Alpha()

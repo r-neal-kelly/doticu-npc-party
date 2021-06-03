@@ -169,7 +169,7 @@
     <ClInclude Include="include\party_member_combat_style.h" />
     <ClInclude Include="include\party_member_suitcase.h" />
     <ClInclude Include="include\party_member_rating.h" />
-    <ClInclude Include="include\party_member_suit_fill_type.h" />
+    <ClInclude Include="include\party_member_clone_suit_type.h" />
     <ClInclude Include="include\party_member_suit_template.h" />
     <ClInclude Include="include\party_member_suit_type.h" />
     <ClInclude Include="include\party_member_update_ai.h" />
@@ -211,6 +211,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="include\chests.inl" />
+    <None Include="include\npcp.inl" />
     <None Include="include\party_settlers.inl" />
     <None Include="scripts\doticu_npcp.psc" />
   </ItemGroup>

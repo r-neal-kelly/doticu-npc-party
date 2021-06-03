@@ -252,7 +252,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         size_t                      Member_Count();
 
-        static some<Reference_t*>   Suit_Buffer(); // we'll be using Consts_t::NPCP::Reference::Suit_Buffer(), lock it somehow
+        static some<Reference_t*>   Suit_Buffer(); // we'll be using Consts_t::NPCP::Reference::Suit_Buffer(), needs to be locked.
 
     public:
         void    Log(std::string indent = "");

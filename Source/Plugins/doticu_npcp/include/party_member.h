@@ -32,6 +32,8 @@ namespace doticu_skylib { namespace doticu_npcp {
         class Save_t
         {
         public:
+            maybe<Member_ID_t>              id;
+
             maybe<Actor_Base_t*>            actual_base;
             maybe<Actor_t*>                 actor;
 
@@ -70,12 +72,9 @@ namespace doticu_skylib { namespace doticu_npcp {
         class State_t
         {
         public:
-            Save_t                      save;
+            Save_t                  save;
 
-            maybe<Member_ID_t>          id;
-            maybe<Alias_Reference_t*>   alias;
-
-            maybe<Actor_Base_t*>        custom_base;
+            maybe<Actor_Base_t*>    custom_base;
 
         public:
             State_t();
@@ -99,6 +98,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     public:
         Member_t();
+        Member_t(some<Member_ID_t> id, some<Actor_t*> actor); // either pass is_clone or do_clone
         Member_t(const Member_t& other) = delete;
         Member_t(Member_t&& other) noexcept = delete;
         Member_t& operator =(const Member_t& other) = delete;
@@ -118,11 +118,9 @@ namespace doticu_skylib { namespace doticu_npcp {
         State_t&    State();
         Save_t&     Save();
 
-        Bool_t      Is_Filled();
-        void        Fill(some<Member_ID_t> id, some<Actor_t*> actor);
-        void        Unfill();
-
     public:
+        Bool_t  Is_Valid();
+
         Bool_t  Is_Banished();
         void    Is_Banished(Bool_t value);
 
@@ -167,16 +165,18 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         Bool_t  Has_AI();
 
-        Bool_t  Has_Only_Playables(some<Member_Suit_Type_e> type);
-        void    Has_Only_Playables(some<Member_Suit_Type_e> type, Bool_t value);
-
         Bool_t  Has_Suit(some<Member_Suit_Type_e> type);
         void    Has_Suit(some<Member_Suit_Type_e> type, Bool_t value);
 
+        Bool_t  Has_Only_Playables(some<Member_Suit_Type_e> type);
+        void    Has_Only_Playables(some<Member_Suit_Type_e> type, Bool_t value);
+
     public:
+        some<Member_ID_t>           ID();
+
         some<Alias_Reference_t*>    Alias();
-        some<Actor_Base_t*>         Custom_Base();
         some<Actor_Base_t*>         Actual_Base();
+        some<Actor_Base_t*>         Custom_Base();
         some<Actor_t*>              Actor();
 
         maybe<Member_Alpha_t>       Alpha();

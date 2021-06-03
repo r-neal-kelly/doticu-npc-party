@@ -146,7 +146,7 @@
     <ClInclude Include="include\party_member_id.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\party_member_suit_fill_type.h">
+    <ClInclude Include="include\party_member_clone_suit_type.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\party_member_sort_type.h">
@@ -312,6 +312,9 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="include\party_settlers.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="include\npcp.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>
