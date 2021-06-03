@@ -108,8 +108,24 @@ namespace doticu_skylib { namespace doticu_npcp {
         const Version_t<u16>            Version();
         void                            Version(const Version_t<u16> value);
 
-        const Vector_t<maybe<Mod_t*>>   Deserialized_Heavy_Mods();
-        const Vector_t<maybe<Mod_t*>>   Deserialized_Light_Mods();
+        const Vector_t<maybe<Mod_t*>>&  Deserialized_Heavy_Mods();
+        const Vector_t<maybe<Mod_t*>>&  Deserialized_Light_Mods();
+
+        template <typename T>
+        maybe<T*>                       Deserialized_Form(maybe<Form_ID_t> form_id);
+
+        template <typename T>
+        void                            Write(std::ofstream& file, const T& data);
+        template <typename T>
+        void                            Read(std::ifstream& file, T& data);
+
+        template <typename T>
+        void                            Write_Form(std::ofstream& file, const maybe<T*>& form);
+        template <typename T>
+        void                            Read_Form(std::ifstream& file, maybe<T*>& form);
+
+        void                            Write_String(std::ofstream& file, const String_t& string);
+        void                            Read_String(std::ifstream& file, String_t& string);
 
         Party_t&                        Party();
         Hotkeys_t&                      Hotkeys();

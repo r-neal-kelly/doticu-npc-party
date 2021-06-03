@@ -397,18 +397,42 @@ namespace doticu_skylib { namespace doticu_npcp {
         this->state->save.version_build = value.build;
     }
 
-    const Vector_t<maybe<Mod_t*>> NPCP_t::Deserialized_Heavy_Mods()
+    const Vector_t<maybe<Mod_t*>>& NPCP_t::Deserialized_Heavy_Mods()
     {
         SKYLIB_ASSERT(Is_Valid());
 
         return State().deserialized_heavy_mods;
     }
 
-    const Vector_t<maybe<Mod_t*>> NPCP_t::Deserialized_Light_Mods()
+    const Vector_t<maybe<Mod_t*>>& NPCP_t::Deserialized_Light_Mods()
     {
         SKYLIB_ASSERT(Is_Valid());
 
         return State().deserialized_light_mods;
+    }
+
+    void NPCP_t::Write_String(std::ofstream& file, const String_t& string)
+    {
+        if (file.good()) {
+            file.write(string, CString_t::Length(string, true));
+        }
+    }
+
+    void NPCP_t::Read_String(std::ifstream& file, String_t& string)
+    {
+        static Vector_t<const char> buffer;
+        buffer.clear();
+
+        char c;
+        while (file.good()) {
+            file.read(&c, sizeof(c));
+            buffer.push_back(c);
+            if (c == 0) {
+                string = buffer.data();
+                return;
+            }
+        }
+        string = "";
     }
 
     Party_t& NPCP_t::Party()

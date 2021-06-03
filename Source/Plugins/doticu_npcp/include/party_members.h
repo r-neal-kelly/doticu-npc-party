@@ -12,7 +12,6 @@
 #include "consts.h"
 #include "intrinsic.h"
 #include "party.h"
-#include "party_member.h"
 #include "party_member_alpha.h"
 #include "party_member_clone_suit_type.h"
 #include "party_member_combat_style.h"
@@ -123,30 +122,6 @@ namespace doticu_skylib { namespace doticu_npcp {
             maybe<Member_Vitality_e>        default_vitality;
 
         public:
-            maybe<Actor_t*>                 actors[MAX_MEMBERS]; // maybe all of these should go on Member_t
-            maybe<Actor_Base_t*>            actual_bases[MAX_MEMBERS];
-            maybe<Actor_Base_t*>            static_bases[MAX_MEMBERS];
-
-            Member_Flags_e                  flags[MAX_MEMBERS];
-            Member_Flags_Has_Suit_e         flags_has_suit[MAX_MEMBERS];
-            Member_Flags_Only_Playables_e   flags_only_playables[MAX_MEMBERS];
-
-            String_t                        names[MAX_MEMBERS];
-
-            maybe<Combat_Style_t*>          combat_styles[MAX_MEMBERS];
-            maybe<Spell_t*>                 ghost_abilities[MAX_MEMBERS];
-            maybe<Outfit_t*>                outfits[MAX_MEMBERS];
-            maybe<Reference_t*>             packs[MAX_MEMBERS];
-            maybe<Member_Suitcase_t*>       suitcases[MAX_MEMBERS];
-            maybe<Voice_Type_t*>            voice_types[MAX_MEMBERS];
-
-            maybe<Member_Alpha_t>           alphas[MAX_MEMBERS];
-            maybe<Member_Rating_t>          ratings[MAX_MEMBERS];
-            maybe<Member_Relation_e>        relations[MAX_MEMBERS];
-            maybe<Member_Suit_Type_e>       suit_types[MAX_MEMBERS];
-            maybe<Member_Vitality_e>        vitalities[MAX_MEMBERS];
-
-        public:
             Save_t();
             Save_t(const Save_t& other) = delete;
             Save_t(Save_t&& other) noexcept = delete;
@@ -155,18 +130,16 @@ namespace doticu_skylib { namespace doticu_npcp {
             ~Save_t();
 
         public:
-            void    Read(std::ifstream& file); // should go ahead and validate values
+            void    Read(std::ifstream& file);
             void    Write(std::ofstream& file);
         };
 
         class State_t
         {
         public:
-            Save_t                  save;
+            Save_t      save;
 
-            Member_t                members[MAX_MEMBERS];
-
-            maybe<Actor_Base_t*>    custom_bases[MAX_MEMBERS]; // maybe goes on Member_t
+            Member_t    members[MAX_MEMBERS];
 
         public:
             State_t();

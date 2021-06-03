@@ -14,29 +14,182 @@
 #include "doticu_skylib/misc.h"
 #include "doticu_skylib/outfit.h"
 #include "doticu_skylib/reference.h"
+#include "doticu_skylib/virtual_macros.h"
 #include "doticu_skylib/weapon.h"
 
-#include "main.h"
-#include "npcp.h"
+#include "npcp.inl"
+#include "party.h"
 #include "party_member.h"
 #include "party_member_suitcase.h"
 #include "party_members.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
 
-    static inline Main_t& Main()
+    Member_t::Save_t::Save_t() :
+        actual_base(),
+        actor(),
+
+        flags(),
+        flags_has_suit(),
+        flags_only_playables(),
+
+        alpha(),
+        rating(),
+        relation(),
+        suit_type(),
+        vitality(),
+
+        combat_style(),
+        ghost_ability(),
+        outfit(),
+        pack(),
+        suitcase(),
+        voice_type(),
+
+        name()
     {
-        return NPCP.Main().Party();
     }
 
-    static inline Members_t& Members()
+    Member_t::Save_t::~Save_t()
     {
-        return NPCP.Main().Party().Members();
     }
 
-    static inline Members_t::Save_State& State()
+    void Member_t::Save_t::Write(std::ofstream& file)
     {
-        return NPCP.Main().Party().Members().save_state;
+        maybe<Actor_Base_t*> static_base = none<Actor_Base_t*>();
+        if (this->actual_base) {
+            static_base = actual_base->Identifiable_Static_Base();
+            if (!static_base) {
+                static_base = this->actual_base;
+            }
+        }
+
+        NPCP.Write_Form(file, static_base);
+        NPCP.Write_Form(file, this->actual_base);
+        NPCP.Write_Form(file, this->actor);
+
+        NPCP.Write(file, this->flags);
+        NPCP.Write(file, this->flags_has_suit);
+        NPCP.Write(file, this->flags_only_playables);
+
+        NPCP.Write(file, this->alpha);
+        NPCP.Write(file, this->rating);
+        NPCP.Write(file, this->relation);
+        NPCP.Write(file, this->suit_type);
+        NPCP.Write(file, this->vitality);
+
+        NPCP.Write_Form(file, this->combat_style);
+        NPCP.Write_Form(file, this->ghost_ability);
+        NPCP.Write_Form(file, this->outfit);
+        NPCP.Write_Form(file, this->pack);
+        NPCP.Write_Form(file, this->suitcase);
+        NPCP.Write_Form(file, this->voice_type);
+
+        NPCP.Write_String(file, this->name);
+    }
+
+    void Member_t::Save_t::Read(std::ifstream& file)
+    {
+        maybe<Actor_Base_t*> static_base;
+        maybe<Actor_Base_t*> actual_base;
+        maybe<Actor_t*> actor;
+
+        NPCP.Read_Form(file, static_base);
+        NPCP.Read_Form(file, actual_base);
+        NPCP.Read_Form(file, actor);
+        if (static_base) {
+            if (!actual_base || actual_base->Identifiable_Static_Base() != static_base) {
+                actual_base = static_base;
+            }
+            if (!actor) {
+                actor = Actor_t::Create(actual_base(), !actual_base->Does_Respawn(), true, false);
+            }
+            if (actor) {
+                this->actor = actor;
+                this->actual_base = actual_base;
+            } else {
+                this->actor = none<Actor_t*>();
+                this->actual_base = none<Actor_Base_t*>();
+            }
+        } else {
+            this->actor = none<Actor_t*>();
+            this->actual_base = none<Actor_Base_t*>();
+        }
+
+        NPCP.Read(file, this->flags);
+        NPCP.Read(file, this->flags_has_suit);
+        NPCP.Read(file, this->flags_only_playables);
+
+        NPCP.Read(file, this->alpha);
+        NPCP.Read(file, this->rating);
+        NPCP.Read(file, this->relation);
+        NPCP.Read(file, this->suit_type);
+        NPCP.Read(file, this->vitality);
+
+        NPCP.Read_Form(file, this->combat_style);
+        NPCP.Read_Form(file, this->ghost_ability);
+        NPCP.Read_Form(file, this->outfit);
+        NPCP.Read_Form(file, this->pack);
+        NPCP.Read_Form(file, this->suitcase);
+        NPCP.Read_Form(file, this->voice_type);
+
+        NPCP.Read_String(file, this->name);
+    }
+
+    Member_t::State_t::State_t() :
+        save(),
+
+        custom_base()
+    {
+    }
+
+    Member_t::State_t::~State_t()
+    {
+    }
+
+    String_t Member_t::Class_Name()
+    {
+        DEFINE_CLASS_NAME("doticu_npcp_party_member");
+    }
+
+    some<Virtual::Class_t*> Member_t::Class()
+    {
+        DEFINE_CLASS();
+    }
+
+    void Member_t::Register_Me(some<Virtual::Machine_t*> machine)
+    {
+        using Type_t = Member_t;
+
+        SKYLIB_ASSERT_SOME(machine);
+
+        String_t class_name = Class_Name();
+
+        #define STATIC(STATIC_NAME_, WAITS_FOR_FRAME_, RETURN_TYPE_, STATIC_, ...)  \
+        SKYLIB_M                                                                    \
+            BIND_STATIC(machine, class_name, STATIC_NAME_, WAITS_FOR_FRAME_,        \
+                        RETURN_TYPE_, STATIC_, __VA_ARGS__);                        \
+        SKYLIB_W
+
+        #undef STATIC
+
+        #define METHOD(METHOD_NAME_, WAITS_FOR_FRAME_, RETURN_TYPE_, METHOD_, ...)      \
+        SKYLIB_M                                                                        \
+            BIND_METHOD(machine, class_name, Type_t, METHOD_NAME_, WAITS_FOR_FRAME_,    \
+                        RETURN_TYPE_, METHOD_, __VA_ARGS__);                            \
+        SKYLIB_W
+
+        #undef METHOD
+    }
+
+    Party_t& Member_t::Party()
+    {
+        return NPCP.Party();
+    }
+
+    Members_t& Member_t::Members()
+    {
+        return NPCP.Party().Members();
     }
 
     Member_t::Member_t(some<Member_ID_t> id) :

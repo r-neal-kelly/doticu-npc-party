@@ -4,12 +4,8 @@
 
 #pragma once
 
-#include <mutex>
-
-#include "doticu_skylib/container_entry_count.h"
 #include "doticu_skylib/enum_script_type.h"
 
-#include "intrinsic.h"
 #include "party_member_alpha.h"
 #include "party_member_combat_style.h"
 #include "party_member_id.h"
@@ -21,6 +17,8 @@
 namespace doticu_skylib { namespace doticu_npcp {
 
     class Member_Suitcase_t;
+    class Members_t;
+    class Party_t;
 
     class Member_t
     {
@@ -31,12 +29,67 @@ namespace doticu_skylib { namespace doticu_npcp {
         };
 
     public:
-        static String_t             Class_Name();
-        static some<V::Class_t*>    Class();
-        static void                 Register_Me(some<V::Machine_t*> machine);
+        class Save_t
+        {
+        public:
+            maybe<Actor_Base_t*>            actual_base;
+            maybe<Actor_t*>                 actor;
+
+            Member_Flags_e                  flags;
+            Member_Flags_Has_Suit_e         flags_has_suit;
+            Member_Flags_Only_Playables_e   flags_only_playables;
+
+            maybe<Member_Alpha_t>           alpha;
+            maybe<Member_Rating_t>          rating;
+            maybe<Member_Relation_e>        relation;
+            maybe<Member_Suit_Type_e>       suit_type;
+            maybe<Member_Vitality_e>        vitality;
+
+            maybe<Combat_Style_t*>          combat_style;
+            maybe<Spell_t*>                 ghost_ability;
+            maybe<Outfit_t*>                outfit;
+            maybe<Reference_t*>             pack;
+            maybe<Member_Suitcase_t*>       suitcase;
+            maybe<Voice_Type_t*>            voice_type;
+
+            String_t                        name;
+
+        public:
+            Save_t();
+            Save_t(const Save_t& other) = delete;
+            Save_t(Save_t&& other) noexcept = delete;
+            Save_t& operator =(const Save_t& other) = delete;
+            Save_t& operator =(Save_t&& other) noexcept = delete;
+            ~Save_t();
+
+        public:
+            void    Write(std::ofstream& file);
+            void    Read(std::ifstream& file);
+        };
+
+        class State_t
+        {
+        public:
+            Save_t                  save;
+
+            maybe<Actor_Base_t*>    custom_base;
+
+        public:
+            State_t();
+            State_t(const State_t& other) = delete;
+            State_t(State_t&& other) noexcept = delete;
+            State_t& operator =(const State_t& other) = delete;
+            State_t& operator =(State_t&& other) noexcept = delete;
+            ~State_t();
+        };
 
     public:
-        std::unique_lock<std::mutex>    locker;
+        static String_t                 Class_Name();
+        static some<Virtual::Class_t*>  Class();
+        static void                     Register_Me(some<Virtual::Machine_t*> machine);
+
+        static Party_t&                 Party();
+        static Members_t&               Members();
 
     public:
         Member_t();
@@ -45,6 +98,15 @@ namespace doticu_skylib { namespace doticu_npcp {
         Member_t& operator =(const Member_t& other) = delete;
         Member_t& operator =(Member_t&& other) noexcept = delete;
         ~Member_t();
+
+    public:
+        void    On_After_New_Game();
+        void    On_Before_Save_Game(std::ofstream& file);
+        void    On_After_Save_Game();
+        void    On_Before_Load_Game();
+        void    On_After_Load_Game(std::ifstream& file);
+        void    On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update);
+        void    On_Update();
 
     public:
         Bool_t  Is_Valid();
