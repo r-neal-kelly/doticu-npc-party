@@ -70,9 +70,12 @@ namespace doticu_skylib { namespace doticu_npcp {
         class State_t
         {
         public:
-            Save_t                  save;
+            Save_t                      save;
 
-            maybe<Actor_Base_t*>    custom_base;
+            maybe<Member_ID_t>          id;
+            maybe<Alias_Reference_t*>   alias;
+
+            maybe<Actor_Base_t*>        custom_base;
 
         public:
             State_t();
@@ -92,6 +95,9 @@ namespace doticu_skylib { namespace doticu_npcp {
         static Members_t&               Members();
 
     public:
+        State_t state;
+
+    public:
         Member_t();
         Member_t(const Member_t& other) = delete;
         Member_t(Member_t&& other) noexcept = delete;
@@ -109,7 +115,12 @@ namespace doticu_skylib { namespace doticu_npcp {
         void    On_Update();
 
     public:
-        Bool_t  Is_Valid();
+        State_t&    State();
+        Save_t&     Save();
+
+        Bool_t      Is_Filled();
+        void        Fill(some<Member_ID_t> id, some<Actor_t*> actor);
+        void        Unfill();
 
     public:
         Bool_t  Is_Banished();
@@ -163,11 +174,10 @@ namespace doticu_skylib { namespace doticu_npcp {
         void    Has_Suit(some<Member_Suit_Type_e> type, Bool_t value);
 
     public:
-        some<Alias_Reference_t*>    Alias_Reference();
-        some<Actor_t*>              Actor();
-
-        some<Actor_Base_t*>         Original_Base();
+        some<Alias_Reference_t*>    Alias();
         some<Actor_Base_t*>         Custom_Base();
+        some<Actor_Base_t*>         Actual_Base();
+        some<Actor_t*>              Actor();
 
         maybe<Member_Alpha_t>       Alpha();
         void                        Alpha(maybe<Member_Alpha_t> alpha);
@@ -220,9 +230,6 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     public:
         explicit operator Bool_t();
-
-    public:
-        void    Log(std::string indent = "");
     };
 
 }}

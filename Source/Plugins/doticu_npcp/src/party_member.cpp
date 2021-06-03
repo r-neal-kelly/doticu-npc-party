@@ -139,6 +139,9 @@ namespace doticu_skylib { namespace doticu_npcp {
     Member_t::State_t::State_t() :
         save(),
 
+        id(),
+        alias(),
+
         custom_base()
     {
     }
@@ -192,54 +195,91 @@ namespace doticu_skylib { namespace doticu_npcp {
         return NPCP.Party().Members();
     }
 
-    Member_t::Member_t(some<Member_ID_t> id) :
-        locker(Members().Lock(id), std::defer_lock),
-        id(id)
+    Member_t::Member_t() :
+        state()
     {
-        SKYLIB_ASSERT(this->id);
-
-        if (!this->locker.owns_lock()) {
-            this->locker.lock();
-        }
-    }
-
-    Member_t::Member_t(some<Member_ID_t> id, std::mutex& lock) :
-        locker(lock, std::defer_lock),
-        id(id)
-    {
-        SKYLIB_ASSERT(this->id);
-
-        if (!this->locker.owns_lock()) {
-            this->locker.lock();
-        }
-    }
-
-    Member_t::Member_t(Member_t&& other) noexcept :
-        id(std::move(other.id)),
-        locker(std::move(other.locker))
-    {
-    }
-
-    Member_t& Member_t::operator=(Member_t&& other) noexcept
-    {
-        if (this != std::addressof(other)) {
-            this->id = std::move(other.id);
-            this->locker = std::move(other.locker);
-        }
-        return *this;
     }
 
     Member_t::~Member_t()
     {
-        if (this->locker.owns_lock()) {
-            this->locker.unlock();
-        }
     }
 
-    Bool_t Member_t::Is_Valid()
+    void Member_t::On_After_New_Game()
     {
-        return Members().Has_Member(this->id);
     }
+
+    void Member_t::On_Before_Save_Game(std::ofstream& file)
+    {
+        Save().Write(file);
+    }
+
+    void Member_t::On_After_Save_Game()
+    {
+    }
+
+    void Member_t::On_Before_Load_Game()
+    {
+    }
+
+    void Member_t::On_After_Load_Game(std::ifstream& file)
+    {
+        Save().Read(file);
+    }
+
+    void Member_t::On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update)
+    {
+        Save().Read(file);
+    }
+
+    void Member_t::On_Update()
+    {
+    }
+
+    Member_t::State_t& Member_t::State()
+    {
+        return this->state;
+    }
+
+    Member_t::Save_t& Member_t::Save()
+    {
+        return this->state.save;
+    }
+
+    Bool_t Member_t::Is_Filled()
+    {
+        return State().id && State().alias && Save().actual_base && Save().actor;
+    }
+
+    void Member_t::Fill(some<Member_ID_t> id, some<Actor_t*> actor)
+    {
+        SKYLIB_ASSERT_SOME(id);
+        SKYLIB_ASSERT_SOME(actor);
+
+        State().id = id;
+        State().alias = Members().Alias_Reference(id);
+        Save().actual_base = actor->Actor_Base();
+        Save().actor = actor;
+
+        // need to fill in default values. we may want to add this to a second ctor instead
+
+        // needs to be added to alias, probably do that in Members_t
+    }
+
+    void Member_t::Unfill()
+    {
+        State().id = none<Member_ID_t>();
+        State().alias = none<Alias_Reference_t*>();
+        Save().actual_base = none<Actor_Base_t*>();
+        Save().actor = none<Actor_t*>();
+
+        // destroy custom base. we may want that in dtor instead, and just recreate this object to clear all state
+
+        // needs to be removed from alias, probably do that in Members_t
+    }
+
+
+
+
 
     Bool_t Member_t::Is_Banished()
     {
