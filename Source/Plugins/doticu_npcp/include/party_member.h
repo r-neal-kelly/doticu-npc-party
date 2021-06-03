@@ -127,8 +127,6 @@ namespace doticu_skylib { namespace doticu_npcp {
         Bool_t  Is_Clone();
         void    Is_Clone(Bool_t value);
 
-        Bool_t  Is_Enabled();
-
         Bool_t  Is_Immobile();
         void    Is_Immobile(Bool_t value);
 
@@ -144,6 +142,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         Bool_t  Is_Thrall();
         void    Is_Thrall(Bool_t value);
 
+        Bool_t  Is_Enabled();
         Bool_t  Is_Untouchable();
 
         Bool_t  Is_Warrior();

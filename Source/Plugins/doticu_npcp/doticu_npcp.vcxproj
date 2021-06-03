@@ -123,6 +123,7 @@
     <ClCompile Include="src\party.cpp" />
     <ClCompile Include="src\party_member.cpp" />
     <ClCompile Include="src\party_members.cpp" />
+    <ClCompile Include="src\party_member_suit_buffer.cpp" />
     <ClCompile Include="src\party_member_suit_template.cpp" />
     <ClCompile Include="src\party_settler.cpp" />
     <ClCompile Include="src\party_settlers.cpp" />
@@ -138,6 +139,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\chests.h" />
+    <ClInclude Include="include\party_member_suit_buffer.h" />
     <ClInclude Include="include\percent.h" />
     <ClInclude Include="include\hotkeys.h" />
     <ClInclude Include="include\mcm_chests.h" />

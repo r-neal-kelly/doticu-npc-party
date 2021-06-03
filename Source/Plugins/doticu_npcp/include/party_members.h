@@ -23,28 +23,12 @@
 #include "party_member_rating.h"
 #include "party_member_relation.h"
 #include "party_member_sort_type.h"
+#include "party_member_suit_buffer.h"
 #include "party_member_suit_type.h"
 #include "party_member_vitality.h"
 #include "percent.h"
 
 namespace doticu_skylib { namespace doticu_npcp {
-
-    /*
-        Okay, so we need to save info info for each actor and its base to be reconstituted upon game-load.
-        Essentially, the form ids may no longer match to our member if the actor is removed from the game,
-        or even its base actor. We need to at a minimum save each base and actor. However, we may want to store yet
-        a third item, that being the indentifiable static base, which will ensure that our base actor is actually what
-        we think it is. The identifiable static base essentially only comes into play when the actor base is dynamic.
-        It is the first static base that can be used to identify that the dynamic base matches up to an existing
-        mod and an existing base in that mod. We may actually be able to just save the indentifiable static base,
-        because we can just read the actual base from the actor itself. However, we wouldn't be able to regen the actor if
-        it is the only thing missing. I think we should have all three.
-
-        Also, we may want to do the actors and all of their data dynamically sized, so that it's easy to add members in the future.
-        (probably never going to happen, but it would allow us to expand if we really wanted to.)
-
-        However, it would not be too difficult to do that in a future update when we actually need it. why add the complication now?
-    */
 
     class Member_Suitcase_t;
 
@@ -251,8 +235,6 @@ namespace doticu_skylib { namespace doticu_npcp {
         Bool_t                      Remove_Member(some<Member_ID_t> member_id);
 
         size_t                      Member_Count();
-
-        static some<Reference_t*>   Suit_Buffer(); // we'll be using Consts_t::NPCP::Reference::Suit_Buffer(), needs to be locked.
 
     public:
         void    Log(std::string indent = "");

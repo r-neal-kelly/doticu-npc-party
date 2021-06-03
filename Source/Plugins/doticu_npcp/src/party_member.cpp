@@ -20,6 +20,7 @@
 #include "npcp.inl"
 #include "party.h"
 #include "party_member.h"
+#include "party_member_suit_buffer.h"
 #include "party_member_suitcase.h"
 #include "party_members.h"
 
@@ -123,18 +124,9 @@ namespace doticu_skylib { namespace doticu_npcp {
             if (!this->actual_base || this->actual_base->Identifiable_Static_Base() != static_base) {
                 this->actual_base = static_base;
             }
-            if (!this->actor) {
-                this->actor = Actor_t::Create(this->actual_base(), !this->actual_base->Does_Respawn(), true, false);
-            }
-            if (!this->actor) {
-                this->id = none<Member_ID_t>();
-                this->actual_base = none<Actor_Base_t*>();
-                this->actor = none<Actor_t*>();
-            }
         } else {
             this->id = none<Member_ID_t>();
             this->actual_base = none<Actor_Base_t*>();
-            this->actor = none<Actor_t*>();
         }
     }
 
@@ -269,7 +261,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     Bool_t Member_t::Is_Valid()
     {
-        return Save().id && Save().actual_base && Save().actor;
+        return Save().id && Save().actual_base;
     }
 
     Bool_t Member_t::Is_Banished()
@@ -298,13 +290,6 @@ namespace doticu_skylib { namespace doticu_npcp {
         SKYLIB_ASSERT(Is_Valid());
 
         Save().flags.Is_Flagged(Member_Flags_e::IS_CLONE, value);
-    }
-
-    Bool_t Member_t::Is_Enabled()
-    {
-        SKYLIB_ASSERT(Is_Valid());
-
-        return !Is_Banished();
     }
 
     Bool_t Member_t::Is_Immobile()
@@ -375,6 +360,13 @@ namespace doticu_skylib { namespace doticu_npcp {
         SKYLIB_ASSERT(Is_Valid());
 
         Save().flags.Is_Flagged(Member_Flags_e::IS_THRALL, value);
+    }
+
+    Bool_t Member_t::Is_Enabled()
+    {
+        SKYLIB_ASSERT(Is_Valid());
+
+        return !Is_Banished();
     }
 
     Bool_t Member_t::Is_Untouchable()
@@ -548,10 +540,9 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        maybe<Actor_Base_t*>& custom_base = Members().custom_bases[this->id()];
+        maybe<Actor_Base_t*>& custom_base = State().custom_base;
         if (!custom_base) {
-            custom_base = Actor_Base_t::Create_Temporary_Copy(Original_Base())();
-            custom_base->Default_Outfit(Outfit());
+            custom_base = Actor_Base_t::Create_Temporary_Copy(Actual_Base());
             SKYLIB_ASSERT_SOME(custom_base);
         }
 
@@ -562,9 +553,14 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        some<Actor_t*> actor = State().actors[this->id()]();
-        SKYLIB_ASSERT_SOME(actor);
-        return actor;
+        maybe<Actor_t*>& actor = Save().actor;
+        if (!actor) {
+            some<Actor_Base_t*> actual_base = Actual_Base();
+            actor = Actor_t::Create(actual_base, !actual_base->Does_Respawn(), true, false);
+            SKYLIB_ASSERT_SOME(actor);
+        }
+
+        return actor();
     }
 
     maybe<Member_Alpha_t> Member_t::Alpha()
@@ -574,7 +570,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         if (!Is_Enabled()) {
             return 0.0f;
         } else {
-            return State().alphas[this->id()];
+            return Save().alpha;
         }
     }
 
@@ -582,32 +578,16 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        State().alphas[this->id()] = alpha;
-    }
-
-    some<Reference_t*> Member_t::Cache()
-    {
-        SKYLIB_ASSERT(Is_Valid());
-
-        maybe<Reference_t*>& cache = State().caches[this->id()];
-        if (!cache) {
-            cache = Container_t::Create_Reference(
-                Consts_t::NPCP::Container::Empty(),
-                Consts_t::NPCP::Reference::Storage_Marker()
-            )();
-            SKYLIB_ASSERT_SOME(cache);
-        }
-
-        return cache();
+        Save().alpha = alpha;
     }
 
     maybe<Combat_Style_t*> Member_t::Combat_Style()
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        maybe<Combat_Style_t*> combat_style = State().combat_styles[this->id()];
+        maybe<Combat_Style_t*> combat_style = Save().combat_style;
         if (!combat_style) {
-            combat_style = Original_Base()->Combat_Style();
+            combat_style = Actual_Base()->Combat_Style();
         }
 
         return combat_style;
@@ -617,7 +597,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        State().combat_styles[this->id()] = combat_style;
+        Save().combat_style = combat_style;
     }
 
     void Member_t::Combat_Style(Member_Combat_Style_e combat_style)
@@ -631,23 +611,23 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        return State().ghost_abilities[this->id()];
+        return Save().ghost_ability;
     }
 
     void Member_t::Ghost_Ability(maybe<Spell_t*> ghost_ability)
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        State().ghost_abilities[this->id()] = ghost_ability;
+        Save().ghost_ability = ghost_ability;
     }
 
     String_t Member_t::Name()
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        String_t name = State().names[this->id()];
+        String_t name = Save().name;
         if (!name) {
-            name = Original_Base()->Name();
+            name = Actor()->Name();
         }
 
         return name;
@@ -657,28 +637,28 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        State().names[this->id()] = name;
+        Save().name = name;
     }
 
     maybe<Outfit_t*> Member_t::Outfit()
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        return State().outfits[this->id()];
+        return Save().outfit;
     }
 
     void Member_t::Outfit(maybe<Outfit_t*> outfit)
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        State().outfits[this->id()] = outfit;
+        Save().outfit = outfit;
     }
 
     some<Reference_t*> Member_t::Pack()
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        maybe<Reference_t*>& pack = State().packs[this->id()];
+        maybe<Reference_t*>& pack = Save().pack;
         if (!pack) {
             pack = Container_t::Create_Reference(
                 Consts_t::NPCP::Container::Empty(),
@@ -694,23 +674,23 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        return State().ratings[this->id()];
+        return Save().rating;
     }
 
     void Member_t::Rating(maybe<Member_Rating_t> rating)
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        State().ratings[this->id()] = rating;
+        Save().rating = rating;
     }
 
     some<Member_Relation_e> Member_t::Relation()
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        maybe<Member_Relation_e> relation = State().relations[this->id()];
+        maybe<Member_Relation_e> relation = Save().relation;
         if (!relation) {
-            relation = Original_Base()->Relation(skylib::Const::Actor_Base::Player());
+            relation = Actual_Base()->Relation(Const::Actor_Base::Player());
             SKYLIB_ASSERT_SOME(relation);
         }
 
@@ -721,20 +701,18 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        State().relations[this->id()] = relation;
+        Save().relation = relation;
     }
 
     maybe<Member_Suit_Type_e> Member_t::Suit_Type()
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        maybe<Member_Suit_Type_e> suit_type = State().suit_types[this->id()];
+        maybe<Member_Suit_Type_e> suit_type = Save().suit_type;
         if (suit_type && Members().Do_Change_Suits_Automatically()) {
-            Main_t& main = Members().Main();
             some<Actor_t*> actor = Actor();
             maybe<Cell_t*> cell = actor->Cell(true);
             maybe<Location_t*> location = actor->Location();
-
             if (Has_Suit(Member_Suit_Type_e::MANNEQUIN) && Is_Mannequin()) {
                 return Member_Suit_Type_e::MANNEQUIN;
             } else if (Has_Suit(Member_Suit_Type_e::IMMOBILE) && Is_Immobile()) {
@@ -747,17 +725,17 @@ namespace doticu_skylib { namespace doticu_npcp {
                 return Member_Suit_Type_e::HOME;
             } else if (location && Has_Suit(Member_Suit_Type_e::SETTLEMENT) && location->Is_Likely_City_Or_Town()) {
                 return Member_Suit_Type_e::SETTLEMENT;
-            } else if (Has_Suit(Member_Suit_Type_e::FOLLOWER) && main.Is_Follower(this->id)) {
+            } else if (Has_Suit(Member_Suit_Type_e::FOLLOWER) && Party().Is_Follower(ID())) {
                 return Member_Suit_Type_e::FOLLOWER;
-            } else if (Has_Suit(Member_Suit_Type_e::GUARD) && main.Is_Active_Guard(this->id)) {
+            } else if (Has_Suit(Member_Suit_Type_e::GUARD) && Party().Is_Active_Guard(ID())) {
                 return Member_Suit_Type_e::GUARD;
-            } else if (Has_Suit(Member_Suit_Type_e::EATER) && main.Is_Active_Eater(this->id)) {
+            } else if (Has_Suit(Member_Suit_Type_e::EATER) && Party().Is_Active_Eater(ID())) {
                 return Member_Suit_Type_e::EATER;
-            } else if (Has_Suit(Member_Suit_Type_e::SITTER) && main.Is_Active_Sitter(this->id)) {
+            } else if (Has_Suit(Member_Suit_Type_e::SITTER) && Party().Is_Active_Sitter(ID())) {
                 return Member_Suit_Type_e::SITTER;
-            } else if (Has_Suit(Member_Suit_Type_e::SLEEPER) && main.Is_Active_Sleeper(this->id)) {
+            } else if (Has_Suit(Member_Suit_Type_e::SLEEPER) && Party().Is_Active_Sleeper(ID())) {
                 return Member_Suit_Type_e::SLEEPER;
-            } else if (Has_Suit(Member_Suit_Type_e::SANDBOXER) && main.Is_Active_Sandboxer(this->id)) {
+            } else if (Has_Suit(Member_Suit_Type_e::SANDBOXER) && Party().Is_Active_Sandboxer(ID())) {
                 return Member_Suit_Type_e::SANDBOXER;
             } else if (location && Has_Suit(Member_Suit_Type_e::DANGEROUS) && location->Is_Likely_Dangerous()) {
                 return Member_Suit_Type_e::DANGEROUS;
@@ -792,9 +770,9 @@ namespace doticu_skylib { namespace doticu_npcp {
         if (type) {
             SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
             SKYLIB_ASSERT(Has_Suit(type()));
-            State().suit_types[this->id()] = type;
+            Save().suit_type = type;
         } else {
-            State().suit_types[this->id()] = none<Member_Suit_Type_e>();
+            Save().suit_type = none<Member_Suit_Type_e>();
         }
     }
 
@@ -802,9 +780,9 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        maybe<Member_Suitcase_t*>& suitcase = State().suitcases[this->id()];
+        maybe<Member_Suitcase_t*>& suitcase = Save().suitcase;
         if (!suitcase) {
-            suitcase = Member_Suitcase_t::Create()();
+            suitcase = Member_Suitcase_t::Create();
             SKYLIB_ASSERT_SOME(suitcase);
         }
 
@@ -815,9 +793,9 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        maybe<Member_Vitality_e> vitality = State().vitalities[this->id()];
+        maybe<Member_Vitality_e> vitality = Save().vitality;
         if (!vitality) {
-            vitality = Original_Base()->Vitality();
+            vitality = Actual_Base()->Vitality();
             SKYLIB_ASSERT_SOME(vitality);
         }
 
@@ -828,20 +806,20 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        State().vitalities[this->id()] = vitality;
+        Save().vitality = vitality;
     }
 
     some<Voice_Type_t*> Member_t::Voice_Type()
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        maybe<Voice_Type_t*> voice_type = State().voice_types[this->id()];
+        maybe<Voice_Type_t*> voice_type = Save().voice_type;
         if (!voice_type) {
-            voice_type = Original_Base()->Voice_Type();
+            voice_type = Actual_Base()->Voice_Type();
             if (!voice_type) {
                 voice_type = Actor()->Race_Voice_Type();
                 if (!voice_type) {
-                    voice_type = Consts_t::NPCP::Voice_Type::Blank()();
+                    voice_type = Consts_t::NPCP::Voice_Type::Blank();
                 }
             }
             SKYLIB_ASSERT_SOME(voice_type);
@@ -854,7 +832,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        State().voice_types[this->id()] = voice_type;
+        Save().voice_type = voice_type;
     }
 
     void Member_t::Tokenize(some<Bound_Object_t*> object, Container_Entry_Count_t count)
@@ -868,7 +846,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         if (entry->Non_Extra_Lists_Count() != count) {
             entry->Decrement_Count(container, Container_Entry_Count_t::_MAX_);
             entry->Increment_Count(container, count);
-            Main().Update_AI(this->id, Member_Update_AI_e::EVALUATE_PACKAGE);
+            Party().Update_AI(ID(), Member_Update_AI_e::EVALUATE_PACKAGE);
         }
     }
 
@@ -881,7 +859,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         maybe<Reference_Container_Entry_t*> entry = container.Maybe_Entry(object);
         if (entry && entry->Non_Extra_Lists_Count() > 0) {
             entry->Decrement_Count(container, Container_Entry_Count_t::_MAX_);
-            Main().Update_AI(this->id, Member_Update_AI_e::EVALUATE_PACKAGE);
+            Party().Update_AI(ID(), Member_Update_AI_e::EVALUATE_PACKAGE);
         }
     }
 
@@ -905,13 +883,12 @@ namespace doticu_skylib { namespace doticu_npcp {
         Remove_Suit(type);
         Has_Suit(type, true);
 
-        some<Reference_t*> cache = Cache();
-        outfit->Add_Items_To(cache);
-        Suitcase()->Move_From(cache,
+        Member_Suit_Buffer_t buffer;
+        outfit->Add_Items_To(buffer.reference);
+        Suitcase()->Move_From(buffer.reference,
                               type,
                               Member_Suitcase_t::filter_out_blank_or_token_objects,
                               Member_Suitcase_t::filter_out_quest_extra_lists);
-        cache->Destroy_Non_Quest_Items();
     }
 
     void Member_t::Add_Suit(some<Member_Suit_Type_e> type, some<Container_t*> container)
@@ -924,13 +901,12 @@ namespace doticu_skylib { namespace doticu_npcp {
         Remove_Suit(type);
         Has_Suit(type, true);
 
-        some<Reference_t*> cache = Cache();
-        container->Container_Add_Items_To(cache);
-        Suitcase()->Move_From(cache,
+        Member_Suit_Buffer_t buffer;
+        container->Container_Add_Items_To(buffer.reference);
+        Suitcase()->Move_From(buffer.reference,
                               type,
                               Member_Suitcase_t::filter_out_blank_or_token_objects,
                               Member_Suitcase_t::filter_out_quest_extra_lists);
-        cache->Destroy_Non_Quest_Items();
     }
 
     void Member_t::Add_Suit(some<Member_Suit_Type_e> type, some<Actor_Base_t*> actor_base)
@@ -943,17 +919,16 @@ namespace doticu_skylib { namespace doticu_npcp {
         Remove_Suit(type);
         Has_Suit(type, true);
 
-        some<Reference_t*> cache = Cache();
+        Member_Suit_Buffer_t buffer;
         maybe<Outfit_t*> outfit = actor_base->Default_Outfit();
-        actor_base->Container_Add_Items_To(cache);
+        actor_base->Container_Add_Items_To(buffer.reference);
         if (outfit) {
-            outfit->Add_Items_To(cache);
+            outfit->Add_Items_To(buffer.reference);
         }
-        Suitcase()->Move_From(cache,
+        Suitcase()->Move_From(buffer.reference,
                               type,
                               Member_Suitcase_t::filter_out_blank_or_token_objects,
                               Member_Suitcase_t::filter_out_quest_extra_lists);
-        cache->Destroy_Non_Quest_Items();
     }
 
     void Member_t::Add_Suit(some<Member_Suit_Type_e> type, some<Reference_t*> reference, Bool_t do_copy)
@@ -988,7 +963,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         Remove_Suit(type);
         Has_Suit(type, true);
 
-        some<Reference_t*> cache = Cache();
+        Member_Suit_Buffer_t buffer;
 
         maybe<Armor_t*> aura = suit_template.armor.Aura(Members().Fill_Suit_Aura_Probability());
         maybe<Armor_t*> body = suit_template.armor.Body(Members().Fill_Suit_Body_Probability());
@@ -1000,31 +975,30 @@ namespace doticu_skylib { namespace doticu_npcp {
         maybe<Armor_t*> head = suit_template.armor.Head(Members().Fill_Suit_Head_Probability());
         maybe<Armor_t*> neck = suit_template.armor.Neck(Members().Fill_Suit_Neck_Probability());
 
-        if (aura) cache->Add_Item(aura(), none<Extra_List_t*>(), 1, none<Reference_t*>());
-        if (body) cache->Add_Item(body(), none<Extra_List_t*>(), 1, none<Reference_t*>());
-        if (feet) cache->Add_Item(feet(), none<Extra_List_t*>(), 1, none<Reference_t*>());
-        if (finger) cache->Add_Item(finger(), none<Extra_List_t*>(), 1, none<Reference_t*>());
-        if (forearm) cache->Add_Item(forearm(), none<Extra_List_t*>(), 1, none<Reference_t*>());
-        if (forehead) cache->Add_Item(forehead(), none<Extra_List_t*>(), 1, none<Reference_t*>());
-        if (hands) cache->Add_Item(hands(), none<Extra_List_t*>(), 1, none<Reference_t*>());
-        if (head) cache->Add_Item(head(), none<Extra_List_t*>(), 1, none<Reference_t*>());
-        if (neck) cache->Add_Item(neck(), none<Extra_List_t*>(), 1, none<Reference_t*>());
+        if (aura) buffer.reference->Add_Item(aura(), none<Extra_List_t*>(), 1, none<Reference_t*>());
+        if (body) buffer.reference->Add_Item(body(), none<Extra_List_t*>(), 1, none<Reference_t*>());
+        if (feet) buffer.reference->Add_Item(feet(), none<Extra_List_t*>(), 1, none<Reference_t*>());
+        if (finger) buffer.reference->Add_Item(finger(), none<Extra_List_t*>(), 1, none<Reference_t*>());
+        if (forearm) buffer.reference->Add_Item(forearm(), none<Extra_List_t*>(), 1, none<Reference_t*>());
+        if (forehead) buffer.reference->Add_Item(forehead(), none<Extra_List_t*>(), 1, none<Reference_t*>());
+        if (hands) buffer.reference->Add_Item(hands(), none<Extra_List_t*>(), 1, none<Reference_t*>());
+        if (head) buffer.reference->Add_Item(head(), none<Extra_List_t*>(), 1, none<Reference_t*>());
+        if (neck) buffer.reference->Add_Item(neck(), none<Extra_List_t*>(), 1, none<Reference_t*>());
 
         if (suit_template.weapon_a) {
-            cache->Add_Item(suit_template.weapon_a(), none<Extra_List_t*>(), 1, none<Reference_t*>());
+            buffer.reference->Add_Item(suit_template.weapon_a(), none<Extra_List_t*>(), 1, none<Reference_t*>());
         }
         if (suit_template.weapon_b) {
-            cache->Add_Item(suit_template.weapon_b(), none<Extra_List_t*>(), 1, none<Reference_t*>());
+            buffer.reference->Add_Item(suit_template.weapon_b(), none<Extra_List_t*>(), 1, none<Reference_t*>());
         }
         if (suit_template.ammo) {
-            cache->Add_Item(suit_template.ammo(), none<Extra_List_t*>(), 100, none<Reference_t*>());
+            buffer.reference->Add_Item(suit_template.ammo(), none<Extra_List_t*>(), 100, none<Reference_t*>());
         }
 
-        Suitcase()->Move_From(cache,
+        Suitcase()->Move_From(buffer.reference,
                               type,
                               Member_Suitcase_t::filter_out_blank_or_token_objects,
                               Member_Suitcase_t::filter_out_quest_extra_lists);
-        cache->Destroy_Non_Quest_Items();
     }
 
     void Member_t::Remove_Suit(some<Member_Suit_Type_e> type)
@@ -1044,7 +1018,6 @@ namespace doticu_skylib { namespace doticu_npcp {
         SKYLIB_ASSERT(Is_Valid());
 
         // we may want a different smaller branch if the actor is in combat, or a separate func to call
-        Main_t& main = Main();
         Members_t& members = Members();
         some<Actor_t*> actor = Actor();
         some<Actor_Base_t*> custom_base = Custom_Base();
@@ -1054,7 +1027,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         actor->Actor_Base(Custom_Base(), false);
 
-        Tokenize(Consts_t::NPCP::Misc::Token::Member(), this->id() + 1);
+        Tokenize(Consts_t::NPCP::Misc::Token::Member(), ID()() + 1);
         actor->Faction_Rank(Consts_t::NPCP::Faction::Member(), 0);
 
         if (Is_Banished()) {
@@ -1083,13 +1056,13 @@ namespace doticu_skylib { namespace doticu_npcp {
             Tokenize(Consts_t::NPCP::Misc::Token::Sneak());
 
             if (!actor->Is_Forced_To_Sneak()) {
-                actor->Is_Forced_To_Sneak(true, main.Script(this->id));
+                actor->Is_Forced_To_Sneak(true, Party().Script(ID()));
             }
         } else {
             Untokenize(Consts_t::NPCP::Misc::Token::Sneak());
 
             if (actor->Is_Forced_To_Sneak()) {
-                actor->Is_Forced_To_Sneak(false, main.Script(this->id));
+                actor->Is_Forced_To_Sneak(false, Party().Script(ID()));
             }
         }
 
@@ -1151,9 +1124,9 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         custom_base->Voice_Type(Voice_Type()());
 
-        actor->Alpha(Alpha()(), main.Script(this->id));
+        actor->Alpha(Alpha()(), Party().Script(ID()));
 
-        custom_base->Relation(skylib::Const::Actor_Base::Player(), Relation());
+        custom_base->Relation(Const::Actor_Base::Player(), Relation());
 
         custom_base->Vitality(Vitality(), false);
 
@@ -1176,7 +1149,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         if (Has_AI()) {
             if (!actor->Has_AI()) {
                 actor->Has_AI(true);
-                main.Update_AI(this->id, Member_Update_AI_e::RESET_AI);
+                Party().Update_AI(ID(), Member_Update_AI_e::RESET_AI);
             }
         } else {
             if (actor->Has_AI()) {
@@ -1199,11 +1172,11 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         maybe<Actor_t*> combat_target = actor->Current_Combat_Target();
         if (combat_target) {
-            if (combat_target == skylib::Const::Actor::Player() || members.Has_Member(combat_target())) {
+            if (combat_target == Const::Actor::Player() || members.Has_Member(combat_target())) {
                 // we need to handle aggression also, but that needs to be done along with other factors?
                 actor->Stop_Combat_And_Alarm();
-                actor->actor_flags_2.Unflag(skylib::Actor_Flags_2_e::IS_ANGRY_WITH_PLAYER);
-                main.Update_AI(this->id, Member_Update_AI_e::RESET_AI);
+                actor->actor_flags_2.Unflag(Actor_Flags_2_e::IS_ANGRY_WITH_PLAYER);
+                Party().Update_AI(ID(), Member_Update_AI_e::RESET_AI);
             }
         }
     }
