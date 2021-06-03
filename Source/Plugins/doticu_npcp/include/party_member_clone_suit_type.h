@@ -10,7 +10,7 @@
 
 namespace doticu_skylib { namespace doticu_npcp {
 
-    class Member_Suit_Fill_Type_e_data :
+    class Member_Clone_Suit_Type_e_data :
         public Enum_Type_Data_t<s8>
     {
     public:
@@ -52,8 +52,8 @@ namespace doticu_skylib { namespace doticu_npcp {
         }
     };
 
-    class Member_Suit_Fill_Type_e :
-        public Enum_Type_t<Member_Suit_Fill_Type_e_data>
+    class Member_Clone_Suit_Type_e :
+        public Enum_Type_t<Member_Clone_Suit_Type_e_data>
     {
     public:
         using Enum_Type_t::Enum_Type_t;
@@ -64,24 +64,24 @@ namespace doticu_skylib { namespace doticu_npcp {
 namespace doticu_skylib {
 
     template <>
-    class none<doticu_npcp::Member_Suit_Fill_Type_e> :
-        public none_enum<doticu_npcp::Member_Suit_Fill_Type_e>
+    class none<doticu_npcp::Member_Clone_Suit_Type_e> :
+        public none_enum<doticu_npcp::Member_Clone_Suit_Type_e>
     {
     public:
         using none_enum::none_enum;
     };
 
     template <>
-    class maybe<doticu_npcp::Member_Suit_Fill_Type_e> :
-        public maybe_enum<doticu_npcp::Member_Suit_Fill_Type_e>
+    class maybe<doticu_npcp::Member_Clone_Suit_Type_e> :
+        public maybe_enum<doticu_npcp::Member_Clone_Suit_Type_e>
     {
     public:
         using maybe_enum::maybe_enum;
     };
 
     template <>
-    class some<doticu_npcp::Member_Suit_Fill_Type_e> :
-        public some_enum<doticu_npcp::Member_Suit_Fill_Type_e>
+    class some<doticu_npcp::Member_Clone_Suit_Type_e> :
+        public some_enum<doticu_npcp::Member_Clone_Suit_Type_e>
     {
     public:
         using some_enum::some_enum;

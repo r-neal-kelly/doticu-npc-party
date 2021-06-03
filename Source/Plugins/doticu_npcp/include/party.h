@@ -12,13 +12,13 @@
 #include "intrinsic.h"
 #include "party_member_id.h"
 #include "party_member_update_ai.h"
+#include "party_members.h"
 
 namespace doticu_skylib { namespace doticu_npcp {
 
     class Displays_t;
     class Expoees_t;
     class Followers_t;
-    class Members_t;
     class Settlers_t;
 
     class Party_t

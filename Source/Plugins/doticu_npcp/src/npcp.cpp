@@ -197,6 +197,8 @@ namespace doticu_skylib { namespace doticu_npcp {
             } else {
                 On_After_New_Game();
             }
+        } else {
+            Delete_State();
         }
     }
 

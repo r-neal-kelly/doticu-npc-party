@@ -18,7 +18,7 @@
 #include "party_member_suit_type.h"
 #include "party_member_vitality.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
 
     class Member_Suitcase_t;
 
@@ -37,15 +37,13 @@ namespace doticu_npcp { namespace Party {
 
     public:
         std::unique_lock<std::mutex>    locker;
-        some<Member_ID_t>               id;
 
     public:
-        Member_t(some<Member_ID_t> id);
-        Member_t(some<Member_ID_t> id, std::mutex& lock);
+        Member_t();
         Member_t(const Member_t& other) = delete;
-        Member_t(Member_t&& other) noexcept;
+        Member_t(Member_t&& other) noexcept = delete;
         Member_t& operator =(const Member_t& other) = delete;
-        Member_t& operator =(Member_t&& other) noexcept;
+        Member_t& operator =(Member_t&& other) noexcept = delete;
         ~Member_t();
 
     public:

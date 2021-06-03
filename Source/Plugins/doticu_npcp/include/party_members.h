@@ -14,6 +14,7 @@
 #include "party.h"
 #include "party_member.h"
 #include "party_member_alpha.h"
+#include "party_member_clone_suit_type.h"
 #include "party_member_combat_style.h"
 #include "party_member_flags.h"
 #include "party_member_flags_has_suit.h"
@@ -23,12 +24,28 @@
 #include "party_member_rating.h"
 #include "party_member_relation.h"
 #include "party_member_sort_type.h"
-#include "party_member_suit_fill_type.h"
 #include "party_member_suit_type.h"
 #include "party_member_vitality.h"
 #include "percent.h"
 
 namespace doticu_skylib { namespace doticu_npcp {
+
+    /*
+        Okay, so we need to save info info for each actor and its base to be reconstituted upon game-load.
+        Essentially, the form ids may no longer match to our member if the actor is removed from the game,
+        or even its base actor. We need to at a minimum save each base and actor. However, we may want to store yet
+        a third item, that being the indentifiable static base, which will ensure that our base actor is actually what
+        we think it is. The identifiable static base essentially only comes into play when the actor base is dynamic.
+        It is the first static base that can be used to identify that the dynamic base matches up to an existing
+        mod and an existing base in that mod. We may actually be able to just save the indentifiable static base,
+        because we can just read the actual base from the actor itself. However, we wouldn't be able to regen the actor if
+        it is the only thing missing. I think we should have all three.
+
+        Also, we may want to do the actors and all of their data dynamically sized, so that it's easy to add members in the future.
+        (probably never going to happen, but it would allow us to expand if we really wanted to.)
+
+        However, it would not be too difficult to do that in a future update when we actually need it. why add the complication now?
+    */
 
     class Member_Suitcase_t;
 
@@ -43,7 +60,17 @@ namespace doticu_skylib { namespace doticu_npcp {
     public:
         static constexpr size_t                                 MAX_MEMBERS                             = Consts_t::NPCP::Int::MAX_MEMBERS;
 
+        static constexpr Bool_t                                 DEFAULT_HAS_UNTOUCHABLE_INVULNERABLES   = false;
+
+        static constexpr Bool_t                                 DEFAULT_DO_SUITS                        = true;
+        static constexpr Bool_t                                 DEFAULT_DO_SUITS_STRICTLY               = false;
+        static constexpr Bool_t                                 DEFAULT_DO_FILL_SUITS_AUTOMATICALLY     = true;
+        static constexpr Bool_t                                 DEFAULT_DO_UNFILL_SUITS_INTO_PACK       = false;
+        static constexpr Bool_t                                 DEFAULT_DO_CHANGE_SUITS_AUTOMATICALLY   = false;
+
         static constexpr Member_Limit_t::value_type             DEFAULT_LIMIT                           = MAX_MEMBERS;
+        static constexpr Member_Sort_Type_e::value_type         DEFAULT_SORT_TYPE                       = Member_Sort_Type_e::NAME;
+        static constexpr Member_Clone_Suit_Type_e::value_type   DEFAULT_CLONE_SUIT_TYPE                 = Member_Clone_Suit_Type_e::REFERENCE;
 
         static constexpr Percent_t::value_type                  DEFAULT_FILL_SUIT_AURA_PERCENT          = 100;
         static constexpr Percent_t::value_type                  DEFAULT_FILL_SUIT_BODY_PERCENT          = 100;
@@ -55,97 +82,103 @@ namespace doticu_skylib { namespace doticu_npcp {
         static constexpr Percent_t::value_type                  DEFAULT_FILL_SUIT_HEAD_PERCENT          = 33;
         static constexpr Percent_t::value_type                  DEFAULT_FILL_SUIT_NECK_PERCENT          = 50;
 
-        static constexpr Bool_t                                 DEFAULT_DO_CHANGE_SUITS_AUTOMATICALLY   = false;
-        static constexpr Bool_t                                 DEFAULT_DO_FILL_SUITS_AUTOMATICALLY     = true;
-        static constexpr Bool_t                                 DEFAULT_DO_FILL_SUITS_STRICTLY          = false;
-        static constexpr Bool_t                                 DEFAULT_DO_UNFILL_SUITS_TO_PACK         = false;
-
-        static constexpr Bool_t                                 DEFAULT_HAS_UNTOUCHABLE_INVULNERABLES   = false;
-
         static constexpr Member_Alpha_t::value_type             DEFAULT_ALPHA                           = Member_Alpha_t::_MAX_;
+        static constexpr Member_Combat_Style_e::value_type      DEFAULT_COMBAT_STYLE                    = Member_Combat_Style_e::_NONE_;
         static constexpr Member_Rating_t::value_type            DEFAULT_RATING                          = Member_Rating_t::_NONE_;
         static constexpr Member_Relation_e::value_type          DEFAULT_RELATION                        = Member_Relation_e::_NONE_;
-        static constexpr Member_Combat_Style_e::value_type      DEFAULT_COMBAT_STYLE                    = Member_Combat_Style_e::_NONE_;
         static constexpr Member_Suit_Type_e::value_type         DEFAULT_SUIT_TYPE                       = Member_Suit_Type_e::MEMBER;
         static constexpr Member_Vitality_e::value_type          DEFAULT_VITALITY                        = Member_Vitality_e::_NONE_;
-        // maybe default male and default female voices?
-
-        static constexpr Member_Suit_Fill_Type_e::value_type    DEFAULT_MEMBER_SUIT_FILL_TYPE           = Member_Suit_Fill_Type_e::REFERENCE;
-        static constexpr Member_Sort_Type_e::value_type         DEFAULT_SORT_TYPE                       = Member_Sort_Type_e::NAME;
 
     public:
-        class Save_State
+        class Save_t
         {
         public:
-            maybe<Member_Limit_t>                   limit;
+            Bool_t                          has_untouchable_invulnerables;
+            
+            Bool_t                          do_suits;
+            Bool_t                          do_suits_strictly;
+            Bool_t                          do_fill_suits_automatically;
+            Bool_t                          do_unfill_suits_into_pack;
+            Bool_t                          do_change_suits_automatically;
 
-            Bool_t                                  do_change_suits_automatically;
-            Bool_t                                  do_fill_suits_automatically;
-            Bool_t                                  do_fill_suits_strictly;
-            Bool_t                                  do_unfill_suits_to_pack;
-            maybe<Percent_t>                        fill_suit_aura_percent;
-            maybe<Percent_t>                        fill_suit_body_percent;
-            maybe<Percent_t>                        fill_suit_feet_percent;
-            maybe<Percent_t>                        fill_suit_finger_percent;
-            maybe<Percent_t>                        fill_suit_forearm_percent;
-            maybe<Percent_t>                        fill_suit_forehead_percent;
-            maybe<Percent_t>                        fill_suit_hands_percent;
-            maybe<Percent_t>                        fill_suit_head_percent;
-            maybe<Percent_t>                        fill_suit_neck_percent;            
+            some<Member_Limit_t>            limit;
+            some<Member_Sort_Type_e>        sort_type;
+            some<Member_Clone_Suit_Type_e>  clone_suit_type;
 
-            Bool_t                                  has_untouchable_invulnerables;
+            some<Percent_t>                 fill_suit_aura_percent;
+            some<Percent_t>                 fill_suit_body_percent;
+            some<Percent_t>                 fill_suit_feet_percent;
+            some<Percent_t>                 fill_suit_finger_percent;
+            some<Percent_t>                 fill_suit_forearm_percent;
+            some<Percent_t>                 fill_suit_forehead_percent;
+            some<Percent_t>                 fill_suit_hands_percent;
+            some<Percent_t>                 fill_suit_head_percent;
+            some<Percent_t>                 fill_suit_neck_percent;
 
-            maybe<Member_Combat_Style_e>            default_combat_style;
-            maybe<Member_Relation_e>                default_relation;
-            maybe<Member_Suit_Type_e>               default_suit_type;
-            maybe<Member_Vitality_e>                default_vitality;
-
-            some<Member_Suit_Fill_Type_e>           member_suit_fill_type;
-            some<Member_Sort_Type_e>                sort_type;
-
-        public:
-            Vector_t<maybe<Actor_t*>>               actors;
-            Vector_t<maybe<Actor_Base_t*>>          original_bases;
-
-            Vector_t<Member_Flags_e>                flags;
-            Vector_t<Member_Flags_Has_Suit_e>       flags_has_suit;
-            Vector_t<Member_Flags_Only_Playables_e> flags_only_playables;
-
-            Vector_t<String_t>                      names;
-
-            Vector_t<maybe<Combat_Style_t*>>        combat_styles;
-            Vector_t<maybe<Spell_t*>>               ghost_abilities;
-            Vector_t<maybe<Outfit_t*>>              outfits;
-            Vector_t<maybe<Reference_t*>>           packs;
-            Vector_t<maybe<Member_Suitcase_t*>>     suitcases;
-            Vector_t<maybe<Voice_Type_t*>>          voice_types;
-
-            Vector_t<maybe<Member_Alpha_t>>         alphas;
-            Vector_t<maybe<Member_Rating_t>>        ratings;
-            Vector_t<maybe<Member_Relation_e>>      relations;
-            Vector_t<maybe<Member_Suit_Type_e>>     suit_types;
-            Vector_t<maybe<Member_Vitality_e>>      vitalities;
+            maybe<Member_Alpha_t>           default_alpha;
+            maybe<Member_Combat_Style_e>    default_combat_style;
+            maybe<Member_Rating_t>          default_rating;
+            maybe<Member_Relation_e>        default_relation;
+            maybe<Member_Suit_Type_e>       default_suit_type;
+            maybe<Member_Vitality_e>        default_vitality;
 
         public:
-            Save_State(const some<Quest_t*> quest);
-            Save_State(const Save_State& other)                 = delete;
-            Save_State(Save_State&& other) noexcept             = delete;
-            Save_State& operator =(const Save_State& other)     = delete;
-            Save_State& operator =(Save_State&& other) noexcept = delete;
-            ~Save_State();
+            maybe<Actor_t*>                 actors[MAX_MEMBERS]; // maybe all of these should go on Member_t
+            maybe<Actor_Base_t*>            actual_bases[MAX_MEMBERS];
+            maybe<Actor_Base_t*>            static_bases[MAX_MEMBERS];
+
+            Member_Flags_e                  flags[MAX_MEMBERS];
+            Member_Flags_Has_Suit_e         flags_has_suit[MAX_MEMBERS];
+            Member_Flags_Only_Playables_e   flags_only_playables[MAX_MEMBERS];
+
+            String_t                        names[MAX_MEMBERS];
+
+            maybe<Combat_Style_t*>          combat_styles[MAX_MEMBERS];
+            maybe<Spell_t*>                 ghost_abilities[MAX_MEMBERS];
+            maybe<Outfit_t*>                outfits[MAX_MEMBERS];
+            maybe<Reference_t*>             packs[MAX_MEMBERS];
+            maybe<Member_Suitcase_t*>       suitcases[MAX_MEMBERS];
+            maybe<Voice_Type_t*>            voice_types[MAX_MEMBERS];
+
+            maybe<Member_Alpha_t>           alphas[MAX_MEMBERS];
+            maybe<Member_Rating_t>          ratings[MAX_MEMBERS];
+            maybe<Member_Relation_e>        relations[MAX_MEMBERS];
+            maybe<Member_Suit_Type_e>       suit_types[MAX_MEMBERS];
+            maybe<Member_Vitality_e>        vitalities[MAX_MEMBERS];
 
         public:
-            some<V::Object_t*>                                  Object();
+            Save_t();
+            Save_t(const Save_t& other) = delete;
+            Save_t(Save_t&& other) noexcept = delete;
+            Save_t& operator =(const Save_t& other) = delete;
+            Save_t& operator =(Save_t&& other) noexcept = delete;
+            ~Save_t();
 
         public:
-            void    Read();
-            void    Write();
+            void    Read(std::ifstream& file); // should go ahead and validate values
+            void    Write(std::ofstream& file);
+        };
+
+        class State_t
+        {
+        public:
+            Save_t                  save;
+
+            Member_t                members[MAX_MEMBERS];
+
+            maybe<Actor_Base_t*>    custom_bases[MAX_MEMBERS]; // maybe goes on Member_t
+
+        public:
+            State_t();
+            State_t(const State_t& other) = delete;
+            State_t(State_t&& other) noexcept = delete;
+            State_t& operator =(const State_t& other) = delete;
+            State_t& operator =(State_t&& other) noexcept = delete;
+            ~State_t();
         };
 
     public:
-        static String_t             Class_Name();
-        static some<V::Class_t*>    Class();
-        static void                 Register_Me(some<V::Machine_t*> machine);
+        static void Register_Me(some<Virtual::Machine_t*> machine);
 
     public:
         static Bool_t   Do_Allow_Menu_For_All_Actors();
@@ -161,20 +194,15 @@ namespace doticu_skylib { namespace doticu_npcp {
         static void     Do_Force_Unclone_Generics(Bool_t value);
 
     public:
-        const some<Quest_t*>            quest;
-        Save_State                      save_state;
-
         Vector_t<std::mutex>            locks;
-        Vector_t<maybe<Actor_Base_t*>>  custom_bases;
-
         const Vector_t<some<Spell_t*>>  vanilla_ghost_abilities;
 
     public:
         Members_t();
-        Members_t(const Members_t& other)                                           = delete;
-        Members_t(Members_t&& other) noexcept                                       = delete;
-        Members_t& operator =(const Members_t& other)                               = delete;
-        Members_t& operator =(Members_t&& other) noexcept                           = delete;
+        Members_t(const Members_t& other) = delete;
+        Members_t(Members_t&& other) noexcept = delete;
+        Members_t& operator =(const Members_t& other) = delete;
+        Members_t& operator =(Members_t&& other) noexcept = delete;
         ~Members_t();
 
     public:
@@ -185,14 +213,6 @@ namespace doticu_skylib { namespace doticu_npcp {
         void    On_After_Load_Game(std::ifstream& file);
         void    On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update);
         void    On_Update();
-
-    public:
-        void    Before_Save();
-        void    After_Save();
-        void    Validate();
-
-    public:
-        Main_t& Main();
 
     public:
         some<Member_Limit_t>        Limit();
