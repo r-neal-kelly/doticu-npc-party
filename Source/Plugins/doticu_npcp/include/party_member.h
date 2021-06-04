@@ -99,7 +99,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     public:
         Member_t();
-        Member_t(some<Member_ID_t> id, some<Actor_t*> actor); // either pass is_clone or do_clone
+        Member_t(some<Member_ID_t> id, some<Actor_t*> actor, Bool_t is_clone);
         Member_t(const Member_t& other) = delete;
         Member_t(Member_t&& other) noexcept = delete;
         Member_t& operator =(const Member_t& other) = delete;

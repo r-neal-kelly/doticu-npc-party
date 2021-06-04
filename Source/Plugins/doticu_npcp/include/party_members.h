@@ -247,17 +247,23 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         some<Quest_t*>              Quest();
         some<Alias_Reference_t*>    Alias(some<Member_ID_t> id);
+
         Member_t&                   Member(some<Member_ID_t> id);
-        maybe<Member_t*>            Active_Member(some<Actor_t*> actor);
-        maybe<Member_t*>            Inactive_Member();
+        maybe<Member_ID_t>          Active_Member_ID(some<Actor_t*> actor);
+        maybe<Member_ID_t>          Inactive_Member_ID();
         size_t                      Active_Member_Count();
         size_t                      Inactive_Member_Count();
 
-        maybe<Member_ID_t>          Add(some<Actor_t*> actor);
-        maybe<Member_ID_t>          Add(some<Actor_Base_t*> base);
-        maybe<Member_ID_t>          Add_Clone(some<Actor_t*> actor);
+        Bool_t                      Has(some<Member_ID_t> id);
+        Bool_t                      Has(some<Actor_t*> actor);
+        maybe<Member_t*>            Add(some<Actor_t*> actor, Bool_t do_clone);
+        maybe<Member_t*>            Add(some<Actor_Base_t*> base);
+        Bool_t                      Remove(Member_t& member);
         Bool_t                      Remove(some<Member_ID_t> id);
         Bool_t                      Remove(some<Actor_t*> actor);
+
+        // add/remove should be done through Party_t, with a passed lock, so that all other types, like Settler are cleaned up.
+        // also, so update_ai can be reset, and anything else that is needed.
     };
 
 }}

@@ -193,19 +193,20 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
     }
 
-    Member_t::Member_t(some<Member_ID_t> id, some<Actor_t*> actor) :
+    Member_t::Member_t(some<Member_ID_t> id, some<Actor_t*> actor, Bool_t is_clone) :
         state()
     {
         SKYLIB_ASSERT_SOME(id);
         SKYLIB_ASSERT_SOME(actor);
 
         Save().id = id;
-
         Save().actual_base = actor->Actor_Base();
         Save().actor = actor;
 
-        // need to fill in default values
-        // needs to be added to alias, probably do that in Members_t
+        if (Is_Active()) {
+            Is_Clone(is_clone);
+            // need to fill in default values
+        }
     }
 
     Member_t::~Member_t()
@@ -276,7 +277,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     Bool_t Member_t::Is_Active()
     {
-        return Save().id && Save().actual_base && !Save().actual_base->Is_Deleted();
+        return Save().id && Save().actual_base;
     }
 
     Bool_t Member_t::Is_Banished()

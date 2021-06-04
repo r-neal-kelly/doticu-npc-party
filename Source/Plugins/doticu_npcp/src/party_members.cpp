@@ -267,8 +267,15 @@ namespace doticu_skylib { namespace doticu_npcp {
         Consts_t::NPCP::Global::Do_Force_Unclone_Uniques()->Bool(Do_Force_Unclone_Uniques());
         Consts_t::NPCP::Global::Do_Force_Unclone_Generics()->Bool(Do_Force_Unclone_Generics());
 
+        some<Quest_t*> quest = Quest();
         for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
-            State().members[idx].On_Update();
+            Member_t& member = Member(idx);
+            if (member) {
+                member.On_Update();
+                if (!quest->Has_Filled_Alias(idx)) {
+                    Alias(idx)->Fill(member.Actor(), none<Virtual::Callback_i*>());
+                }
+            }
         }
     }
 
@@ -698,26 +705,26 @@ namespace doticu_skylib { namespace doticu_npcp {
         return State().members[id()];
     }
 
-    maybe<Member_t*> Members_t::Active_Member(some<Actor_t*> actor)
+    maybe<Member_ID_t> Members_t::Active_Member_ID(some<Actor_t*> actor)
     {
         for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
             Member_t& member = Member(idx);
             if (member && member.Actor() == actor) {
-                return &member;
+                return idx;
             }
         }
-        return none<Member_t*>();
+        return none<Member_ID_t>();
     }
 
-    maybe<Member_t*> Members_t::Inactive_Member()
+    maybe<Member_ID_t> Members_t::Inactive_Member_ID()
     {
         for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
             Member_t& member = Member(idx);
             if (!member) {
-                return &member;
+                return idx;
             }
         }
-        return none<Member_t*>();
+        return none<Member_ID_t>();
     }
 
     size_t Members_t::Active_Member_Count()
@@ -736,6 +743,102 @@ namespace doticu_skylib { namespace doticu_npcp {
         return MAX_MEMBERS - Active_Member_Count();
     }
 
+    Bool_t Members_t::Has(some<Member_ID_t> id)
+    {
+        SKYLIB_ASSERT_SOME(id);
+
+        return Member(id).Is_Active();
+    }
+
+    Bool_t Members_t::Has(some<Actor_t*> actor)
+    {
+        SKYLIB_ASSERT_SOME(actor);
+
+        return Active_Member_ID(actor) != none<Member_ID_t>();
+    }
+
+    maybe<Member_t*> Members_t::Add(some<Actor_t*> actor, Bool_t do_clone)
+    {
+        SKYLIB_ASSERT_SOME(actor);
+
+        if (do_clone) {
+            maybe<Member_ID_t> id = Inactive_Member_ID();
+            if (id) {
+                maybe<Actor_Base_t*> base = actor->Actor_Base();
+                if (base) {
+                    maybe<Actor_t*> clone = Actor_t::Create(base(), true, true, true);
+                    if (clone) {
+                        Member_t& member = Member(id);
+                        member.~Member_t();
+                        new (&member) Member_t(id, clone(), true);
+                        if (member) {
+                            Alias(id)->Fill(member.Actor(), none<Virtual::Callback_i*>());
+                            return &member;
+                        } else {
+                            return none<Member_t*>();
+                        }
+                    } else {
+                        return none<Member_t*>();
+                    }
+                } else {
+                    return none<Member_t*>();
+                }
+            } else {
+                return none<Member_t*>();
+            }
+        } else if (!Has(actor)) {
+            maybe<Member_ID_t> id = Inactive_Member_ID();
+            if (id) {
+                Member_t& member = Member(id);
+                member.~Member_t();
+                new (&member) Member_t(id, actor, false);
+                if (member) {
+                    Alias(id)->Fill(member.Actor(), none<Virtual::Callback_i*>());
+                    return &member;
+                } else {
+                    return none<Member_t*>();
+                }
+            } else {
+                return none<Member_t*>();
+            }
+        } else {
+            return none<Member_t*>();
+        }
+    }
+
+    maybe<Member_t*> Members_t::Add(some<Actor_Base_t*> base)
+    {
+        maybe<Actor_t*> actor = Actor_t::Create(base, true, true, true);
+        if (actor) {
+            return Add(actor(), false);
+        } else {
+            return none<Member_t*>();
+        }
+    }
+
+    Bool_t Members_t::Remove(Member_t& member)
+    {
+        if (member.Is_Active()) {
+            member.~Member_t();
+        } else {
+            return false;
+        }
+    }
+
+    Bool_t Members_t::Remove(some<Member_ID_t> id)
+    {
+        return Remove(Member(id));
+    }
+
+    Bool_t Members_t::Remove(some<Actor_t*> actor)
+    {
+        maybe<Member_ID_t> id = Active_Member_ID(actor);
+        if (id) {
+            return Remove(id);
+        } else {
+            return false;
+        }
+    }
 
 
 
@@ -787,92 +890,6 @@ namespace doticu_skylib { namespace doticu_npcp {
                 member.Add_Suit(default_suit_type());
             }
         }
-
-        self->Alias_Reference(member_id)->Fill(actor, none<V::Callback_i*>());
-    }
-
-    maybe<Member_ID_t> Members_t::Add_Member(some<Actor_t*> actor)
-    {
-        SKYLIB_ASSERT_SOME(actor);
-
-        if (actor->Is_Valid() && actor->Isnt_Deleted() && !Has_Member(actor)) {
-            maybe<Actor_Base_t*> base = actor->Actor_Base();
-            if (base && base->Is_Valid() && base->Isnt_Deleted()) {
-                maybe<Member_ID_t> member_id = Unused_Member_ID();
-                if (member_id) {
-                    Party::Add_Member(this, member_id(), actor, base());
-                    Member_t(member_id()).Enforce();
-                    return member_id;
-                } else {
-                    return none<Member_ID_t>();
-                }
-            } else {
-                return none<Member_ID_t>();
-            }
-        } else {
-            return none<Member_ID_t>();
-        }
-    }
-
-    maybe<Member_ID_t> Members_t::Add_Member(some<Actor_Base_t*> base)
-    {
-        SKYLIB_ASSERT_SOME(base);
-
-        if (base->Is_Valid() && base->Isnt_Deleted()) {
-            maybe<Member_ID_t> member_id = Unused_Member_ID();
-            if (member_id) {
-                maybe<Actor_t*> actor = Actor_t::Create(base, true, true, true);
-                if (actor && actor->Is_Valid() && actor->Isnt_Deleted()) {
-                    Party::Add_Member(this, member_id(), actor(), base);
-                    Member_t(member_id()).Enforce();
-                    return member_id;
-                } else {
-                    return none<Member_ID_t>();
-                }
-            } else {
-                return none<Member_ID_t>();
-            }
-        } else {
-            return none<Member_ID_t>();
-        }
-    }
-
-    maybe<Member_ID_t> Members_t::Add_Member_Clone(some<Actor_t*> actor)
-    {
-        SKYLIB_ASSERT_SOME(actor);
-
-        maybe<Actor_Base_t*> base = actor->Actor_Base();
-        if (base && base->Is_Valid() && base->Isnt_Deleted()) {
-            maybe<Member_ID_t> member_id = Unused_Member_ID();
-            if (member_id) {
-                maybe<Actor_t*> actor = Actor_t::Create(base(), true, true, true);
-                if (actor && actor->Is_Valid() && actor->Isnt_Deleted()) {
-                    Party::Add_Member(this, member_id(), actor(), base());
-                    this->save_state.flags[member_id()].Flag(Member_Flags_e::IS_CLONE);
-                    Member_t(member_id()).Enforce();
-                    return member_id;
-                } else {
-                    return none<Member_ID_t>();
-                }
-            } else {
-                return none<Member_ID_t>();
-            }
-        } else {
-            return none<Member_ID_t>();
-        }
-    }
-
-    Bool_t Members_t::Remove_Member(some<Member_ID_t> member_id)
-    {
-        SKYLIB_ASSERT_SOME(member_id);
-
-        // this will cleanse anything under the id that it can, even if the data is incomplete in some manner, it cleans it up.
-        // it fails gracefully and just defaults the values.
-
-        // also, this must destroy the custom base so it's created again for the next actor
-
-        // this should forcibly reset ai and make sure other state is reset that is needed.
-        return false;
     }
 
 }}
