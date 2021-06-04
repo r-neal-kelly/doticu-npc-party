@@ -119,7 +119,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save_t&     Save();
 
     public:
-        Bool_t  Is_Valid();
+        Bool_t  Is_Active();
 
         Bool_t  Is_Banished();
         void    Is_Banished(Bool_t value);
@@ -151,16 +151,9 @@ namespace doticu_skylib { namespace doticu_npcp {
         Bool_t  Is_Coward();
 
         Bool_t  Is_Mortal();
-        void    Is_Mortal(Bool_t value);
-
         Bool_t  Is_Protected();
-        void    Is_Protected(Bool_t value);
-
         Bool_t  Is_Essential();
-        void    Is_Essential(Bool_t value);
-
         Bool_t  Is_Invulnerable();
-        void    Is_Invulnerable(Bool_t value);
 
         Bool_t  Has_AI();
 
@@ -179,11 +172,11 @@ namespace doticu_skylib { namespace doticu_npcp {
         some<Actor_t*>              Actor();
 
         maybe<Member_Alpha_t>       Alpha();
-        void                        Alpha(maybe<Member_Alpha_t> alpha);
+        void                        Alpha(some<Member_Alpha_t> alpha);
 
         maybe<Combat_Style_t*>      Combat_Style();
         void                        Combat_Style(maybe<Combat_Style_t*> combat_style);
-        void                        Combat_Style(Member_Combat_Style_e combat_style);
+        void                        Combat_Style(maybe<Member_Combat_Style_e> combat_style);
 
         maybe<Spell_t*>             Ghost_Ability();
         void                        Ghost_Ability(maybe<Spell_t*> ghost_ability);

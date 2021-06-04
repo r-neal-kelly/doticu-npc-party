@@ -29,227 +29,673 @@
 #include "doticu_skylib/weapon.h"
 
 #include "consts.h"
-#include "main.h"
 #include "npcp.h"
 #include "party_members.h"
 #include "party_member_suitcase.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
 
-    Members_t::Save_State::Save_State(const some<Quest_t*> quest) :
-        quest(quest),
+    Members_t::Save_t::Save_t() :
+        do_allow_menu_for_all_actors(DEFAULT_DO_ALLOW_MENU_FOR_ALL_ACTORS),
 
-        limit(MAX_MEMBERS),
-
-        fill_suit_aura_probability(DEFAULT_FILL_SUIT_AURA_PROBABILITY),
-        fill_suit_body_probability(DEFAULT_FILL_SUIT_BODY_PROBABILITY),
-        fill_suit_feet_probability(DEFAULT_FILL_SUIT_FEET_PROBABILITY),
-        fill_suit_finger_probability(DEFAULT_FILL_SUIT_FINGER_PROBABILITY),
-        fill_suit_forearm_probability(DEFAULT_FILL_SUIT_FOREARM_PROBABILITY),
-        fill_suit_forehead_probability(DEFAULT_FILL_SUIT_FOREHEAD_PROBABILITY),
-        fill_suit_hands_probability(DEFAULT_FILL_SUIT_HANDS_PROBABILITY),
-        fill_suit_head_probability(DEFAULT_FILL_SUIT_HEAD_PROBABILITY),
-        fill_suit_neck_probability(DEFAULT_FILL_SUIT_NECK_PROBABILITY),
-
-        do_change_suits_automatically(DEFAULT_DO_CHANGE_SUITS_AUTOMATICALLY),
-        do_fill_suits_automatically(DEFAULT_DO_FILL_SUITS_AUTOMATICALLY),
-        do_fill_suits_strictly(DEFAULT_DO_FILL_SUITS_STRICTLY),
-        do_unfill_suits_to_pack(DEFAULT_DO_UNFILL_SUITS_TO_PACK),
+        do_force_clone_uniques(DEFAULT_DO_FORCE_CLONE_UNIQUES),
+        do_force_clone_generics(DEFAULT_DO_FORCE_CLONE_GENERICS),
+        do_force_unclone_uniques(DEFAULT_DO_FORCE_UNCLONE_UNIQUES),
+        do_force_unclone_generics(DEFAULT_DO_FORCE_UNCLONE_GENERICS),
 
         has_untouchable_invulnerables(DEFAULT_HAS_UNTOUCHABLE_INVULNERABLES),
 
-        default_combat_style(DEFAULT_COMBAT_STYLE),
-        default_relation(DEFAULT_RELATION),
-        default_suit_type(DEFAULT_SUIT_TYPE),
-        default_vitality(DEFAULT_VITALITY),
+        do_suits(DEFAULT_DO_SUITS),
+        do_suits_strictly(DEFAULT_DO_SUITS_STRICTLY),
+        do_fill_suits_automatically(DEFAULT_DO_FILL_SUITS_AUTOMATICALLY),
+        do_unfill_suits_into_pack(DEFAULT_DO_UNFILL_SUITS_INTO_PACK),
+        do_change_suits_automatically(DEFAULT_DO_CHANGE_SUITS_AUTOMATICALLY),
 
-        member_suit_fill_type(DEFAULT_MEMBER_SUIT_FILL_TYPE),
+        limit(DEFAULT_LIMIT),
+
         sort_type(DEFAULT_SORT_TYPE),
 
-        actors(Vector_t<maybe<Actor_t*>>(MAX_MEMBERS, none<Actor_t*>())),
-        original_bases(Vector_t<maybe<Actor_Base_t*>>(MAX_MEMBERS, none<Actor_Base_t*>())),
+        clone_suit_type(DEFAULT_CLONE_SUIT_TYPE),
 
-        flags(Vector_t<Member_Flags_e>(MAX_MEMBERS, 0)),
-        flags_has_suit(Vector_t<Member_Flags_Has_Suit_e>(MAX_MEMBERS, 0)),
-        flags_only_playables(Vector_t<Member_Flags_Only_Playables_e>(MAX_MEMBERS, 0)),
+        fill_suit_aura_percent(DEFAULT_FILL_SUIT_AURA_PERCENT),
+        fill_suit_body_percent(DEFAULT_FILL_SUIT_BODY_PERCENT),
+        fill_suit_feet_percent(DEFAULT_FILL_SUIT_FEET_PERCENT),
+        fill_suit_finger_percent(DEFAULT_FILL_SUIT_FINGER_PERCENT),
+        fill_suit_forearm_percent(DEFAULT_FILL_SUIT_FOREARM_PERCENT),
+        fill_suit_forehead_percent(DEFAULT_FILL_SUIT_FOREHEAD_PERCENT),
+        fill_suit_hands_percent(DEFAULT_FILL_SUIT_HANDS_PERCENT),
+        fill_suit_head_percent(DEFAULT_FILL_SUIT_HEAD_PERCENT),
+        fill_suit_neck_percent(DEFAULT_FILL_SUIT_NECK_PERCENT),
 
-        names(Vector_t<String_t>(MAX_MEMBERS, "")),
-
-        caches(Vector_t<maybe<Reference_t*>>(MAX_MEMBERS, none<Reference_t*>())),
-        combat_styles(Vector_t<maybe<Combat_Style_t*>>(MAX_MEMBERS, none<Combat_Style_t*>())),
-        ghost_abilities(Vector_t<maybe<Spell_t*>>(MAX_MEMBERS, none<Spell_t*>())),
-        outfits(Vector_t<maybe<Outfit_t*>>(MAX_MEMBERS, none<Outfit_t*>())),
-        packs(Vector_t<maybe<Reference_t*>>(MAX_MEMBERS, none<Reference_t*>())),
-        suitcases(Vector_t<maybe<Member_Suitcase_t*>>(MAX_MEMBERS, none<Member_Suitcase_t*>())),
-        voice_types(Vector_t<maybe<Voice_Type_t*>>(MAX_MEMBERS, none<Voice_Type_t*>())),
-
-        alphas(Vector_t<maybe<Member_Alpha_t>>(MAX_MEMBERS, DEFAULT_ALPHA)),
-        ratings(Vector_t<maybe<Member_Rating_t>>(MAX_MEMBERS, DEFAULT_RATING)),
-        relations(Vector_t<maybe<Member_Relation_e>>(MAX_MEMBERS, DEFAULT_RELATION)),
-        suit_types(Vector_t<maybe<Member_Suit_Type_e>>(MAX_MEMBERS, DEFAULT_SUIT_TYPE)),
-        vitalities(Vector_t<maybe<Member_Vitality_e>>(MAX_MEMBERS, DEFAULT_VITALITY))
+        default_alpha(DEFAULT_ALPHA),
+        default_combat_style(DEFAULT_COMBAT_STYLE),
+        default_rating(DEFAULT_RATING),
+        default_relation(DEFAULT_RELATION),
+        default_suit_type(DEFAULT_SUIT_TYPE),
+        default_vitality(DEFAULT_VITALITY)
     {
     }
 
-    Members_t::Save_State::~Save_State()
+    Members_t::Save_t::~Save_t()
     {
     }
 
-    some<V::Object_t*> Members_t::Save_State::Object()
+    void Members_t::Save_t::Write(std::ofstream& file)
     {
-        DEFINE_COMPONENT_OBJECT_METHOD(this->quest());
+        NPCP.Write(file, this->do_allow_menu_for_all_actors);
+
+        NPCP.Write(file, this->do_force_clone_uniques);
+        NPCP.Write(file, this->do_force_clone_generics);
+        NPCP.Write(file, this->do_force_unclone_uniques);
+        NPCP.Write(file, this->do_force_unclone_generics);
+
+        NPCP.Write(file, this->has_untouchable_invulnerables);
+
+        NPCP.Write(file, this->do_suits);
+        NPCP.Write(file, this->do_suits_strictly);
+        NPCP.Write(file, this->do_fill_suits_automatically);
+        NPCP.Write(file, this->do_unfill_suits_into_pack);
+        NPCP.Write(file, this->do_change_suits_automatically);
+
+        NPCP.Write(file, this->limit);
+
+        NPCP.Write(file, this->sort_type);
+
+        NPCP.Write(file, this->clone_suit_type);
+
+        NPCP.Write(file, this->fill_suit_aura_percent);
+        NPCP.Write(file, this->fill_suit_body_percent);
+        NPCP.Write(file, this->fill_suit_feet_percent);
+        NPCP.Write(file, this->fill_suit_finger_percent);
+        NPCP.Write(file, this->fill_suit_forearm_percent);
+        NPCP.Write(file, this->fill_suit_forehead_percent);
+        NPCP.Write(file, this->fill_suit_hands_percent);
+        NPCP.Write(file, this->fill_suit_head_percent);
+        NPCP.Write(file, this->fill_suit_neck_percent);
+
+        NPCP.Write(file, this->default_alpha);
+        NPCP.Write(file, this->default_combat_style);
+        NPCP.Write(file, this->default_rating);
+        NPCP.Write(file, this->default_relation);
+        NPCP.Write(file, this->default_suit_type);
+        NPCP.Write(file, this->default_vitality);
     }
 
-    
-
-    Bool_t Members_t::Do_Allow_Menu_For_All_Actors()
+    void Members_t::Save_t::Read(std::ifstream& file)
     {
-        return Consts_t::NPCP::Global::Do_Allow_Menu_For_All_Actors()->Bool();
+        NPCP.Read(file, this->do_allow_menu_for_all_actors);
+
+        NPCP.Read(file, this->do_force_clone_uniques);
+        NPCP.Read(file, this->do_force_clone_generics);
+        NPCP.Read(file, this->do_force_unclone_uniques);
+        NPCP.Read(file, this->do_force_unclone_generics);
+
+        NPCP.Read(file, this->has_untouchable_invulnerables);
+
+        NPCP.Read(file, this->do_suits);
+        NPCP.Read(file, this->do_suits_strictly);
+        NPCP.Read(file, this->do_fill_suits_automatically);
+        NPCP.Read(file, this->do_unfill_suits_into_pack);
+        NPCP.Read(file, this->do_change_suits_automatically);
+
+        NPCP.Read(file, this->limit);
+
+        NPCP.Read(file, this->sort_type);
+
+        NPCP.Read(file, this->clone_suit_type);
+
+        NPCP.Read(file, this->fill_suit_aura_percent);
+        NPCP.Read(file, this->fill_suit_body_percent);
+        NPCP.Read(file, this->fill_suit_feet_percent);
+        NPCP.Read(file, this->fill_suit_finger_percent);
+        NPCP.Read(file, this->fill_suit_forearm_percent);
+        NPCP.Read(file, this->fill_suit_forehead_percent);
+        NPCP.Read(file, this->fill_suit_hands_percent);
+        NPCP.Read(file, this->fill_suit_head_percent);
+        NPCP.Read(file, this->fill_suit_neck_percent);
+
+        NPCP.Read(file, this->default_alpha);
+        NPCP.Read(file, this->default_combat_style);
+        NPCP.Read(file, this->default_rating);
+        NPCP.Read(file, this->default_relation);
+        NPCP.Read(file, this->default_suit_type);
+        NPCP.Read(file, this->default_vitality);
     }
 
-    void Members_t::Do_Allow_Menu_For_All_Actors(Bool_t value)
+    Members_t::State_t::State_t() :
+        save(),
+
+        members(),
+
+        ghost_abilities(Const::Spells::Ghost_Abilities())
     {
-        Consts_t::NPCP::Global::Do_Allow_Menu_For_All_Actors()->Bool(value);
     }
 
-    Bool_t Members_t::Do_Force_Clone_Uniques()
+    Members_t::State_t::~State_t()
     {
-        return Consts_t::NPCP::Global::Do_Force_Clone_Uniques()->Bool();
     }
 
-    void Members_t::Do_Force_Clone_Uniques(Bool_t value)
+    void Members_t::Register_Me(some<Virtual::Machine_t*> machine)
     {
-        Consts_t::NPCP::Global::Do_Force_Clone_Uniques()->Bool(value);
+        SKYLIB_ASSERT_SOME(machine);
+
+        Member_t::Register_Me(machine);
     }
 
-    Bool_t Members_t::Do_Force_Clone_Generics()
+    Party_t& Members_t::Party()
     {
-        return Consts_t::NPCP::Global::Do_Force_Clone_Generics()->Bool();
+        return NPCP.Party();
     }
 
-    void Members_t::Do_Force_Clone_Generics(Bool_t value)
+    Members_t::Members_t() :
+        state()
     {
-        Consts_t::NPCP::Global::Do_Force_Clone_Generics()->Bool(value);
-    }
-
-    Bool_t Members_t::Do_Force_Unclone_Uniques()
-    {
-        return Consts_t::NPCP::Global::Do_Force_Unclone_Uniques()->Bool();
-    }
-
-    void Members_t::Do_Force_Unclone_Uniques(Bool_t value)
-    {
-        Consts_t::NPCP::Global::Do_Force_Unclone_Uniques()->Bool(value);
-    }
-
-    Bool_t Members_t::Do_Force_Unclone_Generics()
-    {
-        return Consts_t::NPCP::Global::Do_Force_Unclone_Generics()->Bool();
-    }
-
-    void Members_t::Do_Force_Unclone_Generics(Bool_t value)
-    {
-        Consts_t::NPCP::Global::Do_Force_Unclone_Generics()->Bool(value);
-    }
-
-    Members_t::Members_t(some<Quest_t*> quest, Bool_t is_new_game) :
-        quest(quest),
-        save_state(quest),
-
-        locks(Vector_t<std::mutex>(MAX_MEMBERS)),
-        custom_bases(Vector_t<maybe<Actor_Base_t*>>(MAX_MEMBERS)),
-
-        vanilla_ghost_abilities(skylib::Const::Spells::Ghost_Abilities())
-    {
-        SKYLIB_ASSERT_SOME(quest);
-
-        if (is_new_game) {
-            Do_Allow_Menu_For_All_Actors(true);
-
-            Do_Force_Clone_Uniques(false);
-            Do_Force_Clone_Generics(false);
-            Do_Force_Unclone_Uniques(false);
-            Do_Force_Unclone_Generics(false);
-        } else {
-            this->save_state.Read();
-        }
-    }
-
-    Members_t::Members_t(some<Quest_t*> quest, const Version_t<u16> version_to_update) :
-        quest(quest),
-        save_state(quest),
-
-        locks(Vector_t<std::mutex>(MAX_MEMBERS)),
-        custom_bases(Vector_t<maybe<Actor_Base_t*>>(MAX_MEMBERS)),
-
-        vanilla_ghost_abilities(skylib::Const::Spells::Ghost_Abilities())
-    {
-        // update code goes here
-
-        this->save_state.Read();
     }
 
     Members_t::~Members_t()
     {
+    }
+
+    void Members_t::On_After_New_Game()
+    {
         for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
-            maybe<Actor_Base_t*> custom_base = this->custom_bases[idx];
-            if (custom_base) {
-                maybe<Actor_t*> actor = this->save_state.actors[idx];
-                if (actor) {
-                    maybe<Actor_Base_t*> original_base = this->save_state.original_bases[idx];
-                    if (original_base) {
-                        actor->Actor_Base(original_base(), false);
-                        Actor_Base_t::Destroy(custom_base());
-                    }
-                } else {
-                    Actor_Base_t::Destroy(custom_base());
-                }
-                this->custom_bases[idx] = none<Actor_Base_t*>();
-            }
+            State().members[idx].On_After_New_Game();
         }
     }
 
-    void Members_t::Before_Save()
+    void Members_t::On_Before_Save_Game(std::ofstream& file)
     {
+        Save().Write(file);
         for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
-            Member_t member(idx);
-            if (member) {
-                member.Enforce();
-                member.Actor()->Actor_Base(member.Original_Base(), false);
-            }
+            State().members[idx].On_Before_Save_Game(file);
         }
-        this->save_state.Write();
     }
 
-    void Members_t::After_Save()
+    void Members_t::On_After_Save_Game()
     {
         for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
-            Member_t member(idx);
-            if (member) {
-                member.Actor()->Actor_Base(member.Custom_Base(), false);
-            }
+            State().members[idx].On_After_Save_Game();
         }
     }
+
+    void Members_t::On_Before_Load_Game()
+    {
+        for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
+            State().members[idx].On_Before_Load_Game();
+        }
+    }
+
+    void Members_t::On_After_Load_Game(std::ifstream& file)
+    {
+        Save().Read(file);
+        for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
+            State().members[idx].On_After_Load_Game(file);
+        }
+    }
+
+    void Members_t::On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update)
+    {
+        On_After_Load_Game(file);
+    }
+
+    void Members_t::On_Update()
+    {
+        Consts_t::NPCP::Global::Do_Allow_Menu_For_All_Actors()->Bool(Do_Allow_Menu_For_All_Actors());
+
+        Consts_t::NPCP::Global::Do_Force_Clone_Uniques()->Bool(Do_Force_Clone_Uniques());
+        Consts_t::NPCP::Global::Do_Force_Clone_Generics()->Bool(Do_Force_Clone_Generics());
+        Consts_t::NPCP::Global::Do_Force_Unclone_Uniques()->Bool(Do_Force_Unclone_Uniques());
+        Consts_t::NPCP::Global::Do_Force_Unclone_Generics()->Bool(Do_Force_Unclone_Generics());
+
+        for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
+            State().members[idx].On_Update();
+        }
+    }
+
+    Members_t::State_t& Members_t::State()
+    {
+        return this->state;
+    }
+
+    Members_t::Save_t& Members_t::Save()
+    {
+        return State().save;
+    }
+
+    Bool_t Members_t::Do_Allow_Menu_For_All_Actors()
+    {
+        return Save().do_allow_menu_for_all_actors;
+    }
+
+    void Members_t::Do_Allow_Menu_For_All_Actors(Bool_t value)
+    {
+        Save().do_allow_menu_for_all_actors = value;
+    }
+
+    Bool_t Members_t::Do_Force_Clone_Uniques()
+    {
+        return Save().do_force_clone_uniques;
+    }
+
+    void Members_t::Do_Force_Clone_Uniques(Bool_t value)
+    {
+        Save().do_force_clone_uniques = value;
+    }
+
+    Bool_t Members_t::Do_Force_Clone_Generics()
+    {
+        return Save().do_force_clone_generics;
+    }
+
+    void Members_t::Do_Force_Clone_Generics(Bool_t value)
+    {
+        Save().do_force_clone_generics = value;
+    }
+
+    Bool_t Members_t::Do_Force_Unclone_Uniques()
+    {
+        return Save().do_force_unclone_uniques;
+    }
+
+    void Members_t::Do_Force_Unclone_Uniques(Bool_t value)
+    {
+        Save().do_force_unclone_uniques = value;
+    }
+
+    Bool_t Members_t::Do_Force_Unclone_Generics()
+    {
+        return Save().do_force_unclone_generics;
+    }
+
+    void Members_t::Do_Force_Unclone_Generics(Bool_t value)
+    {
+        Save().do_force_unclone_generics = value;
+    }
+
+    Bool_t Members_t::Has_Untouchable_Invulnerables()
+    {
+        return Save().has_untouchable_invulnerables;
+    }
+
+    void Members_t::Has_Untouchable_Invulnerables(Bool_t value)
+    {
+        Save().has_untouchable_invulnerables = value;
+    }
+
+    Bool_t Members_t::Do_Suits()
+    {
+        return Save().do_suits;
+    }
+
+    void Members_t::Do_Suits(Bool_t value)
+    {
+        Save().do_suits = value;
+    }
+
+    Bool_t Members_t::Do_Suits_Strictly()
+    {
+        return Save().do_suits_strictly;
+    }
+
+    void Members_t::Do_Suits_Strictly(Bool_t value)
+    {
+        Save().do_suits_strictly = value;
+    }
+
+    Bool_t Members_t::Do_Fill_Suits_Automatically()
+    {
+        return Save().do_fill_suits_automatically;
+    }
+
+    void Members_t::Do_Fill_Suits_Automatically(Bool_t value)
+    {
+        Save().do_fill_suits_automatically = value;
+    }
+
+    Bool_t Members_t::Do_Unfill_Suits_Into_Pack()
+    {
+        return Save().do_unfill_suits_into_pack;
+    }
+
+    void Members_t::Do_Unfill_Suits_Into_Pack(Bool_t value)
+    {
+        Save().do_unfill_suits_into_pack = value;
+    }
+
+    Bool_t Members_t::Do_Change_Suits_Automatically()
+    {
+        return Save().do_change_suits_automatically;
+    }
+
+    void Members_t::Do_Change_Suits_Automatically(Bool_t value)
+    {
+        Save().do_change_suits_automatically = value;
+    }
+
+    some<Member_Limit_t> Members_t::Limit()
+    {
+        maybe<Member_Limit_t>& value = Save().limit;
+        if (!value) {
+            value = DEFAULT_LIMIT;
+        }
+
+        size_t active_count = Active_Count();
+        if (value() < active_count) {
+            value = active_count;
+        }
+
+        SKYLIB_ASSERT_SOME(value);
+
+        return value();
+    }
+
+    void Members_t::Limit(maybe<Member_Limit_t> value)
+    {
+        Save().limit = value;
+    }
+
+    some<Member_Sort_Type_e> Members_t::Sort_Type()
+    {
+        maybe<Member_Sort_Type_e>& value = Save().sort_type;
+        if (!value) {
+            value = DEFAULT_SORT_TYPE;
+        }
+
+        SKYLIB_ASSERT_SOME(value);
+
+        return value();
+    }
+
+    void Members_t::Sort_Type(maybe<Member_Sort_Type_e> value)
+    {
+        Save().sort_type = value;
+    }
+
+    some<Member_Clone_Suit_Type_e> Members_t::Clone_Suit_Type()
+    {
+        maybe<Member_Clone_Suit_Type_e>& value = Save().clone_suit_type;
+        if (!value) {
+            value = DEFAULT_CLONE_SUIT_TYPE;
+        }
+
+        SKYLIB_ASSERT_SOME(value);
+
+        return value();
+    }
+
+    void Members_t::Clone_Suit_Type(maybe<Member_Clone_Suit_Type_e> value)
+    {
+        Save().clone_suit_type = value;
+    }
+
+    some<Percent_t> Members_t::Fill_Suit_Aura_Percent()
+    {
+        maybe<Percent_t>& value = Save().fill_suit_aura_percent;
+        if (!value) {
+            value = DEFAULT_FILL_SUIT_AURA_PERCENT;
+        }
+
+        SKYLIB_ASSERT_SOME(value);
+
+        return value();
+    }
+
+    void Members_t::Fill_Suit_Aura_Percent(maybe<Percent_t> value)
+    {
+        Save().fill_suit_aura_percent = value;
+    }
+
+    some<Percent_t> Members_t::Fill_Suit_Body_Percent()
+    {
+        maybe<Percent_t>& value = Save().fill_suit_body_percent;
+        if (!value) {
+            value = DEFAULT_FILL_SUIT_BODY_PERCENT;
+        }
+
+        SKYLIB_ASSERT_SOME(value);
+
+        return value();
+    }
+
+    void Members_t::Fill_Suit_Body_Percent(maybe<Percent_t> value)
+    {
+        Save().fill_suit_body_percent = value;
+    }
+
+    some<Percent_t> Members_t::Fill_Suit_Feet_Percent()
+    {
+        maybe<Percent_t>& value = Save().fill_suit_feet_percent;
+        if (!value) {
+            value = DEFAULT_FILL_SUIT_FEET_PERCENT;
+        }
+
+        SKYLIB_ASSERT_SOME(value);
+
+        return value();
+    }
+
+    void Members_t::Fill_Suit_Feet_Percent(maybe<Percent_t> value)
+    {
+        Save().fill_suit_feet_percent = value;
+    }
+
+    some<Percent_t> Members_t::Fill_Suit_Finger_Percent()
+    {
+        maybe<Percent_t>& value = Save().fill_suit_finger_percent;
+        if (!value) {
+            value = DEFAULT_FILL_SUIT_FINGER_PERCENT;
+        }
+
+        SKYLIB_ASSERT_SOME(value);
+
+        return value();
+    }
+
+    void Members_t::Fill_Suit_Finger_Percent(maybe<Percent_t> value)
+    {
+        Save().fill_suit_finger_percent = value;
+    }
+
+    some<Percent_t> Members_t::Fill_Suit_Forearm_Percent()
+    {
+        maybe<Percent_t>& value = Save().fill_suit_forearm_percent;
+        if (!value) {
+            value = DEFAULT_FILL_SUIT_FOREARM_PERCENT;
+        }
+
+        SKYLIB_ASSERT_SOME(value);
+
+        return value();
+    }
+
+    void Members_t::Fill_Suit_Forearm_Percent(maybe<Percent_t> value)
+    {
+        Save().fill_suit_forearm_percent = value;
+    }
+
+    some<Percent_t> Members_t::Fill_Suit_Forehead_Percent()
+    {
+        maybe<Percent_t>& value = Save().fill_suit_forehead_percent;
+        if (!value) {
+            value = DEFAULT_FILL_SUIT_FOREHEAD_PERCENT;
+        }
+
+        SKYLIB_ASSERT_SOME(value);
+
+        return value();
+    }
+
+    void Members_t::Fill_Suit_Forehead_Percent(maybe<Percent_t> value)
+    {
+        Save().fill_suit_forehead_percent = value;
+    }
+
+    some<Percent_t> Members_t::Fill_Suit_Hands_Percent()
+    {
+        maybe<Percent_t>& value = Save().fill_suit_hands_percent;
+        if (!value) {
+            value = DEFAULT_FILL_SUIT_HANDS_PERCENT;
+        }
+
+        SKYLIB_ASSERT_SOME(value);
+
+        return value();
+    }
+
+    void Members_t::Fill_Suit_Hands_Percent(maybe<Percent_t> value)
+    {
+        Save().fill_suit_hands_percent = value;
+    }
+
+    some<Percent_t> Members_t::Fill_Suit_Head_Percent()
+    {
+        maybe<Percent_t>& value = Save().fill_suit_head_percent;
+        if (!value) {
+            value = DEFAULT_FILL_SUIT_HEAD_PERCENT;
+        }
+
+        SKYLIB_ASSERT_SOME(value);
+
+        return value();
+    }
+
+    void Members_t::Fill_Suit_Head_Percent(maybe<Percent_t> value)
+    {
+        Save().fill_suit_head_percent = value;
+    }
+
+    some<Percent_t> Members_t::Fill_Suit_Neck_Percent()
+    {
+        maybe<Percent_t>& value = Save().fill_suit_neck_percent;
+        if (!value) {
+            value = DEFAULT_FILL_SUIT_NECK_PERCENT;
+        }
+
+        SKYLIB_ASSERT_SOME(value);
+
+        return value();
+    }
+
+    void Members_t::Fill_Suit_Neck_Percent(maybe<Percent_t> value)
+    {
+        Save().fill_suit_neck_percent = value;
+    }
+
+    some<Member_Alpha_t> Members_t::Default_Alpha()
+    {
+        maybe<Member_Alpha_t>& value = Save().default_alpha;
+        if (!value) {
+            value = DEFAULT_ALPHA;
+        }
+
+        SKYLIB_ASSERT_SOME(value);
+
+        return value();
+    }
+
+    void Members_t::Default_Alpha(maybe<Member_Alpha_t> value)
+    {
+        Save().default_alpha = value;
+    }
+
+    maybe<Member_Combat_Style_e> Members_t::Default_Combat_Style()
+    {
+        maybe<Member_Combat_Style_e>& value = Save().default_combat_style;
+        if (!value) {
+            value = DEFAULT_COMBAT_STYLE;
+        }
+
+        SKYLIB_ASSERT_SOME(value);
+
+        return value();
+    }
+
+    void Members_t::Default_Combat_Style(maybe<Member_Combat_Style_e> value)
+    {
+        Save().default_combat_style = value;
+    }
+
+    maybe<Member_Rating_t> Members_t::Default_Rating()
+    {
+        maybe<Member_Rating_t>& value = Save().default_rating;
+        if (!value) {
+            value = DEFAULT_RATING;
+        }
+
+        SKYLIB_ASSERT_SOME(value);
+
+        return value();
+    }
+
+    void Members_t::Default_Rating(maybe<Member_Rating_t> value)
+    {
+        Save().default_rating = value;
+    }
+
+    maybe<Member_Relation_e> Members_t::Default_Relation()
+    {
+        maybe<Member_Relation_e>& value = Save().default_relation;
+        if (!value) {
+            value = DEFAULT_RELATION;
+        }
+
+        SKYLIB_ASSERT_SOME(value);
+
+        return value();
+    }
+
+    void Members_t::Default_Relation(maybe<Member_Relation_e> value)
+    {
+        Save().default_relation = value;
+    }
+
+    maybe<Member_Suit_Type_e> Members_t::Default_Suit_Type()
+    {
+        maybe<Member_Suit_Type_e>& value = Save().default_suit_type;
+        if (!value) {
+            value = DEFAULT_SUIT_TYPE;
+        }
+
+        SKYLIB_ASSERT_SOME(value);
+
+        return value();
+    }
+
+    void Members_t::Default_Suit_Type(maybe<Member_Suit_Type_e> value)
+    {
+        Save().default_suit_type = value;
+    }
+
+    maybe<Member_Vitality_e> Members_t::Default_Vitality()
+    {
+        maybe<Member_Vitality_e>& value = Save().default_vitality;
+        if (!value) {
+            value = DEFAULT_VITALITY;
+        }
+
+        SKYLIB_ASSERT_SOME(value);
+
+        return value();
+    }
+
+    void Members_t::Default_Vitality(maybe<Member_Vitality_e> value)
+    {
+        Save().default_vitality = value;
+    }
+
+    void Members_t::Reset_Options()
+    {
+        State().save.~Save_t();
+        new (&State().save) Save_t();
+    }
+
+
+
+
+
 
     void Members_t::Validate()
     {
-        if (!this->save_state.limit) {
-            this->save_state.limit = Member_Limit_t::_MAX_;
-        } else {
-            size_t member_count = Member_Count();
-            if (this->save_state.limit() < member_count) {
-                this->save_state.limit = member_count;
-            }
-        }
-
-        if (!this->save_state.member_suit_fill_type) {
-            this->save_state.member_suit_fill_type = DEFAULT_MEMBER_SUIT_FILL_TYPE;
-        }
-
-        if (!this->save_state.sort_type) {
-            this->save_state.sort_type = DEFAULT_SORT_TYPE;
-        }
-
         class Unfill_Aliases_Callback :
             public Callback_i<>
         {
@@ -278,177 +724,7 @@ namespace doticu_npcp { namespace Party {
         this->quest->Unfill_Aliases(new Unfill_Aliases_Callback(*this));
     }
 
-    Main_t& Members_t::Main()
-    {
-        return NPCP.Main().Party();
-    }
-
-    some<Member_Limit_t> Members_t::Limit()
-    {
-        return this->save_state.limit;
-    }
-
-    void Members_t::Limit(some<Member_Limit_t> value)
-    {
-        SKYLIB_ASSERT_SOME(value);
-        SKYLIB_ASSERT(value() >= Member_Count());
-
-        this->save_state.limit = value;
-    }
-
-    u8 Members_t::Fill_Suit_Aura_Probability()
-    {
-        return this->save_state.fill_suit_aura_probability;
-    }
-
-    void Members_t::Fill_Suit_Aura_Probability(u8 value)
-    {
-        this->save_state.fill_suit_aura_probability = value;
-    }
-
-    u8 Members_t::Fill_Suit_Body_Probability()
-    {
-        return this->save_state.fill_suit_body_probability;
-    }
-
-    void Members_t::Fill_Suit_Body_Probability(u8 value)
-    {
-        this->save_state.fill_suit_body_probability = value;
-    }
-
-    u8 Members_t::Fill_Suit_Feet_Probability()
-    {
-        return this->save_state.fill_suit_feet_probability;
-    }
-
-    void Members_t::Fill_Suit_Feet_Probability(u8 value)
-    {
-        this->save_state.fill_suit_feet_probability = value;
-    }
-
-    u8 Members_t::Fill_Suit_Finger_Probability()
-    {
-        return this->save_state.fill_suit_finger_probability;
-    }
-
-    void Members_t::Fill_Suit_Finger_Probability(u8 value)
-    {
-        this->save_state.fill_suit_finger_probability = value;
-    }
-
-    u8 Members_t::Fill_Suit_Forearm_Probability()
-    {
-        return this->save_state.fill_suit_forearm_probability;
-    }
-
-    void Members_t::Fill_Suit_Forearm_Probability(u8 value)
-    {
-        this->save_state.fill_suit_forearm_probability = value;
-    }
-
-    u8 Members_t::Fill_Suit_Forehead_Probability()
-    {
-        return this->save_state.fill_suit_forehead_probability;
-    }
-
-    void Members_t::Fill_Suit_Forehead_Probability(u8 value)
-    {
-        this->save_state.fill_suit_forehead_probability = value;
-    }
-
-    u8 Members_t::Fill_Suit_Hands_Probability()
-    {
-        return this->save_state.fill_suit_hands_probability;
-    }
-
-    void Members_t::Fill_Suit_Hands_Probability(u8 value)
-    {
-        this->save_state.fill_suit_hands_probability = value;
-    }
-
-    u8 Members_t::Fill_Suit_Head_Probability()
-    {
-        return this->save_state.fill_suit_head_probability;
-    }
-
-    void Members_t::Fill_Suit_Head_Probability(u8 value)
-    {
-        this->save_state.fill_suit_head_probability = value;
-    }
-
-    u8 Members_t::Fill_Suit_Neck_Probability()
-    {
-        return this->save_state.fill_suit_neck_probability;
-    }
-
-    void Members_t::Fill_Suit_Neck_Probability(u8 value)
-    {
-        this->save_state.fill_suit_neck_probability = value;
-    }
-
-    void Members_t::Reset_Fill_Suit_Probabilities()
-    {
-        Fill_Suit_Aura_Probability(DEFAULT_FILL_SUIT_AURA_PROBABILITY);
-        Fill_Suit_Body_Probability(DEFAULT_FILL_SUIT_BODY_PROBABILITY);
-        Fill_Suit_Feet_Probability(DEFAULT_FILL_SUIT_FEET_PROBABILITY);
-        Fill_Suit_Finger_Probability(DEFAULT_FILL_SUIT_FINGER_PROBABILITY);
-        Fill_Suit_Forearm_Probability(DEFAULT_FILL_SUIT_FOREARM_PROBABILITY);
-        Fill_Suit_Forehead_Probability(DEFAULT_FILL_SUIT_FOREHEAD_PROBABILITY);
-        Fill_Suit_Hands_Probability(DEFAULT_FILL_SUIT_HANDS_PROBABILITY);
-        Fill_Suit_Head_Probability(DEFAULT_FILL_SUIT_HEAD_PROBABILITY);
-        Fill_Suit_Neck_Probability(DEFAULT_FILL_SUIT_NECK_PROBABILITY);
-    }
-
-    Bool_t Members_t::Do_Change_Suits_Automatically()
-    {
-        return this->save_state.do_change_suits_automatically;
-    }
-
-    void Members_t::Do_Change_Suits_Automatically(Bool_t value)
-    {
-        this->save_state.do_change_suits_automatically = value;
-    }
-
-    Bool_t Members_t::Do_Fill_Suits_Automatically()
-    {
-        return this->save_state.do_fill_suits_automatically;
-    }
-
-    void Members_t::Do_Fill_Suits_Automatically(Bool_t value)
-    {
-        this->save_state.do_fill_suits_automatically = value;
-    }
-
-    Bool_t Members_t::Do_Fill_Suits_Strictly()
-    {
-        return this->save_state.do_fill_suits_strictly;
-    }
-
-    void Members_t::Do_Fill_Suits_Strictly(Bool_t value)
-    {
-        this->save_state.do_fill_suits_strictly = value;
-    }
-
-    Bool_t Members_t::Do_Unfill_Suits_To_Pack()
-    {
-        return this->save_state.do_unfill_suits_to_pack;
-    }
-
-    void Members_t::Do_Unfill_Suits_To_Pack(Bool_t value)
-    {
-        this->save_state.do_unfill_suits_to_pack = value;
-    }
-
-    Bool_t Members_t::Has_Untouchable_Invulnerables()
-    {
-        return this->save_state.has_untouchable_invulnerables;
-    }
-
-    void Members_t::Has_Untouchable_Invulnerables(Bool_t value)
-    {
-        this->save_state.has_untouchable_invulnerables = value;
-    }
-
+    
     maybe<Member_Suit_Type_e> Members_t::Default_Suit_Type()
     {
         return this->save_state.default_suit_type;
@@ -461,24 +737,12 @@ namespace doticu_npcp { namespace Party {
         this->save_state.default_suit_type = suit_type;
     }
 
-    some<Member_Sort_Type_e> Members_t::Sort_Type()
-    {
-        return this->save_state.sort_type;
-    }
 
-    void Members_t::Sort_Type(some<Member_Sort_Type_e> value)
-    {
-        SKYLIB_ASSERT_SOME(value);
 
-        this->save_state.sort_type = value;
-    }
 
-    std::mutex& Members_t::Lock(some<Member_ID_t> member_id)
-    {
-        SKYLIB_ASSERT_SOME(member_id);
 
-        return this->locks[member_id()];
-    }
+
+
 
     some<Alias_Reference_t*> Members_t::Alias_Reference(some<Member_ID_t> member_id)
     {

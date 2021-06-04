@@ -12,7 +12,7 @@
 namespace doticu_skylib { namespace doticu_npcp {
 
     class Member_Limit_t_data :
-        public Numeric_Data_t<Int_t>
+        public Numeric_Data_t<size_t>
     {
     public:
         static constexpr value_type _NONE_  = 0;

@@ -63,8 +63,6 @@ namespace doticu_skylib { namespace doticu_npcp {
         Expoees_t::Register_Me(machine);
         Displays_t::Register_Me(machine);
         Followers_t::Register_Me(machine);
-
-        NPCP.On_Log("Registered Party functions.");
     }
 
     Bool_t Party_t::Is_Token(some<Bound_Object_t*> bound_object)

@@ -12,6 +12,7 @@
 #include "consts.h"
 #include "intrinsic.h"
 #include "party.h"
+#include "party_member.h"
 #include "party_member_alpha.h"
 #include "party_member_clone_suit_type.h"
 #include "party_member_combat_style.h"
@@ -30,18 +31,17 @@
 
 namespace doticu_skylib { namespace doticu_npcp {
 
-    class Member_Suitcase_t;
-
     class Members_t
     {
     public:
-        enum
-        {
-            SCRIPT_TYPE = Script_Type_e::QUEST,
-        };
-
-    public:
         static constexpr size_t                                 MAX_MEMBERS                             = Consts_t::NPCP::Int::MAX_MEMBERS;
+
+        static constexpr Bool_t                                 DEFAULT_DO_ALLOW_MENU_FOR_ALL_ACTORS    = true;
+
+        static constexpr Bool_t                                 DEFAULT_DO_FORCE_CLONE_UNIQUES          = false;
+        static constexpr Bool_t                                 DEFAULT_DO_FORCE_CLONE_GENERICS         = false;
+        static constexpr Bool_t                                 DEFAULT_DO_FORCE_UNCLONE_UNIQUES        = false;
+        static constexpr Bool_t                                 DEFAULT_DO_FORCE_UNCLONE_GENERICS       = false;
 
         static constexpr Bool_t                                 DEFAULT_HAS_UNTOUCHABLE_INVULNERABLES   = false;
 
@@ -76,6 +76,13 @@ namespace doticu_skylib { namespace doticu_npcp {
         class Save_t
         {
         public:
+            Bool_t                          do_allow_menu_for_all_actors;
+
+            Bool_t                          do_force_clone_uniques;
+            Bool_t                          do_force_clone_generics;
+            Bool_t                          do_force_unclone_uniques;
+            Bool_t                          do_force_unclone_generics;
+
             Bool_t                          has_untouchable_invulnerables;
             
             Bool_t                          do_suits;
@@ -84,19 +91,21 @@ namespace doticu_skylib { namespace doticu_npcp {
             Bool_t                          do_unfill_suits_into_pack;
             Bool_t                          do_change_suits_automatically;
 
-            some<Member_Limit_t>            limit;
-            some<Member_Sort_Type_e>        sort_type;
-            some<Member_Clone_Suit_Type_e>  clone_suit_type;
+            maybe<Member_Limit_t>           limit;
 
-            some<Percent_t>                 fill_suit_aura_percent;
-            some<Percent_t>                 fill_suit_body_percent;
-            some<Percent_t>                 fill_suit_feet_percent;
-            some<Percent_t>                 fill_suit_finger_percent;
-            some<Percent_t>                 fill_suit_forearm_percent;
-            some<Percent_t>                 fill_suit_forehead_percent;
-            some<Percent_t>                 fill_suit_hands_percent;
-            some<Percent_t>                 fill_suit_head_percent;
-            some<Percent_t>                 fill_suit_neck_percent;
+            maybe<Member_Sort_Type_e>       sort_type;
+
+            maybe<Member_Clone_Suit_Type_e> clone_suit_type;
+
+            maybe<Percent_t>                fill_suit_aura_percent;
+            maybe<Percent_t>                fill_suit_body_percent;
+            maybe<Percent_t>                fill_suit_feet_percent;
+            maybe<Percent_t>                fill_suit_finger_percent;
+            maybe<Percent_t>                fill_suit_forearm_percent;
+            maybe<Percent_t>                fill_suit_forehead_percent;
+            maybe<Percent_t>                fill_suit_hands_percent;
+            maybe<Percent_t>                fill_suit_head_percent;
+            maybe<Percent_t>                fill_suit_neck_percent;
 
             maybe<Member_Alpha_t>           default_alpha;
             maybe<Member_Combat_Style_e>    default_combat_style;
@@ -114,16 +123,18 @@ namespace doticu_skylib { namespace doticu_npcp {
             ~Save_t();
 
         public:
-            void    Read(std::ifstream& file);
             void    Write(std::ofstream& file);
+            void    Read(std::ifstream& file);
         };
 
         class State_t
         {
         public:
-            Save_t      save;
+            Save_t                          save;
 
-            Member_t    members[MAX_MEMBERS];
+            Member_t                        members[MAX_MEMBERS];
+
+            const Vector_t<some<Spell_t*>>  ghost_abilities;
 
         public:
             State_t();
@@ -135,24 +146,12 @@ namespace doticu_skylib { namespace doticu_npcp {
         };
 
     public:
-        static void Register_Me(some<Virtual::Machine_t*> machine);
+        static void     Register_Me(some<Virtual::Machine_t*> machine);
+
+        static Party_t& Party();
 
     public:
-        static Bool_t   Do_Allow_Menu_For_All_Actors();
-        static void     Do_Allow_Menu_For_All_Actors(Bool_t value);
-
-        static Bool_t   Do_Force_Clone_Uniques();
-        static void     Do_Force_Clone_Uniques(Bool_t value);
-        static Bool_t   Do_Force_Clone_Generics();
-        static void     Do_Force_Clone_Generics(Bool_t value);
-        static Bool_t   Do_Force_Unclone_Uniques();
-        static void     Do_Force_Unclone_Uniques(Bool_t value);
-        static Bool_t   Do_Force_Unclone_Generics();
-        static void     Do_Force_Unclone_Generics(Bool_t value);
-
-    public:
-        Vector_t<std::mutex>            locks;
-        const Vector_t<some<Spell_t*>>  vanilla_ghost_abilities;
+        State_t state;
 
     public:
         Members_t();
@@ -172,72 +171,93 @@ namespace doticu_skylib { namespace doticu_npcp {
         void    On_Update();
 
     public:
-        some<Member_Limit_t>        Limit();
-        void                        Limit(some<Member_Limit_t> value);
-
-        u8                          Fill_Suit_Aura_Probability();
-        void                        Fill_Suit_Aura_Probability(u8 value);
-        u8                          Fill_Suit_Body_Probability();
-        void                        Fill_Suit_Body_Probability(u8 value);
-        u8                          Fill_Suit_Feet_Probability();
-        void                        Fill_Suit_Feet_Probability(u8 value);
-        u8                          Fill_Suit_Finger_Probability();
-        void                        Fill_Suit_Finger_Probability(u8 value);
-        u8                          Fill_Suit_Forearm_Probability();
-        void                        Fill_Suit_Forearm_Probability(u8 value);
-        u8                          Fill_Suit_Forehead_Probability();
-        void                        Fill_Suit_Forehead_Probability(u8 value);
-        u8                          Fill_Suit_Hands_Probability();
-        void                        Fill_Suit_Hands_Probability(u8 value);
-        u8                          Fill_Suit_Head_Probability();
-        void                        Fill_Suit_Head_Probability(u8 value);
-        u8                          Fill_Suit_Neck_Probability();
-        void                        Fill_Suit_Neck_Probability(u8 value);
-
-        void                        Reset_Fill_Suit_Probabilities();
-
-        Bool_t                      Do_Change_Suits_Automatically();
-        void                        Do_Change_Suits_Automatically(Bool_t value);
-
-        Bool_t                      Do_Fill_Suits_Automatically();
-        void                        Do_Fill_Suits_Automatically(Bool_t value);
-
-        Bool_t                      Do_Fill_Suits_Strictly();
-        void                        Do_Fill_Suits_Strictly(Bool_t value);
-
-        Bool_t                      Do_Unfill_Suits_To_Pack();
-        void                        Do_Unfill_Suits_To_Pack(Bool_t value);
-
-        Bool_t                      Has_Untouchable_Invulnerables();
-        void                        Has_Untouchable_Invulnerables(Bool_t value);
-
-        maybe<Member_Suit_Type_e>   Default_Suit_Type();
-        void                        Default_Suit_Type(maybe<Member_Suit_Type_e> suit_type);
-
-        some<Member_Sort_Type_e>    Sort_Type();
-        void                        Sort_Type(some<Member_Sort_Type_e> value);
+        State_t&    State();
+        Save_t&     Save();
 
     public:
-        std::mutex&                 Lock(some<Member_ID_t> member_id);
-        some<Alias_Reference_t*>    Alias_Reference(some<Member_ID_t> member_id);
+        Bool_t  Do_Allow_Menu_For_All_Actors();
+        void    Do_Allow_Menu_For_All_Actors(Bool_t value);
 
-        Bool_t                      Has_Alias(some<Member_ID_t> member_id);
-        Bool_t                      Has_Alias(Alias_ID_t alias_id);
-        Bool_t                      Has_Member(some<Member_ID_t> member_id);
-        Bool_t                      Has_Member(some<Actor_t*> actor);
+        Bool_t  Do_Force_Clone_Uniques();
+        void    Do_Force_Clone_Uniques(Bool_t value);
+        Bool_t  Do_Force_Clone_Generics();
+        void    Do_Force_Clone_Generics(Bool_t value);
+        Bool_t  Do_Force_Unclone_Uniques();
+        void    Do_Force_Unclone_Uniques(Bool_t value);
+        Bool_t  Do_Force_Unclone_Generics();
+        void    Do_Force_Unclone_Generics(Bool_t value);
 
-        maybe<Member_ID_t>          Used_Member_ID(some<Actor_t*> actor);
-        maybe<Member_ID_t>          Unused_Member_ID();
+        Bool_t  Has_Untouchable_Invulnerables();
+        void    Has_Untouchable_Invulnerables(Bool_t value);
 
-        maybe<Member_ID_t>          Add_Member(some<Actor_t*> actor);
-        maybe<Member_ID_t>          Add_Member(some<Actor_Base_t*> base);
-        maybe<Member_ID_t>          Add_Member_Clone(some<Actor_t*> actor);
-        Bool_t                      Remove_Member(some<Member_ID_t> member_id);
-
-        size_t                      Member_Count();
+        Bool_t  Do_Suits();
+        void    Do_Suits(Bool_t value);
+        Bool_t  Do_Suits_Strictly();
+        void    Do_Suits_Strictly(Bool_t value);
+        Bool_t  Do_Fill_Suits_Automatically();
+        void    Do_Fill_Suits_Automatically(Bool_t value);
+        Bool_t  Do_Unfill_Suits_Into_Pack();
+        void    Do_Unfill_Suits_Into_Pack(Bool_t value);
+        Bool_t  Do_Change_Suits_Automatically();
+        void    Do_Change_Suits_Automatically(Bool_t value);
 
     public:
-        void    Log(std::string indent = "");
+        some<Member_Limit_t>            Limit();
+        void                            Limit(maybe<Member_Limit_t> value);
+
+        some<Member_Sort_Type_e>        Sort_Type();
+        void                            Sort_Type(maybe<Member_Sort_Type_e> value);
+
+        some<Member_Clone_Suit_Type_e>  Clone_Suit_Type();
+        void                            Clone_Suit_Type(maybe<Member_Clone_Suit_Type_e> value);
+
+        some<Percent_t>                 Fill_Suit_Aura_Percent();
+        void                            Fill_Suit_Aura_Percent(maybe<Percent_t> value);
+        some<Percent_t>                 Fill_Suit_Body_Percent();
+        void                            Fill_Suit_Body_Percent(maybe<Percent_t> value);
+        some<Percent_t>                 Fill_Suit_Feet_Percent();
+        void                            Fill_Suit_Feet_Percent(maybe<Percent_t> value);
+        some<Percent_t>                 Fill_Suit_Finger_Percent();
+        void                            Fill_Suit_Finger_Percent(maybe<Percent_t> value);
+        some<Percent_t>                 Fill_Suit_Forearm_Percent();
+        void                            Fill_Suit_Forearm_Percent(maybe<Percent_t> value);
+        some<Percent_t>                 Fill_Suit_Forehead_Percent();
+        void                            Fill_Suit_Forehead_Percent(maybe<Percent_t> value);
+        some<Percent_t>                 Fill_Suit_Hands_Percent();
+        void                            Fill_Suit_Hands_Percent(maybe<Percent_t> value);
+        some<Percent_t>                 Fill_Suit_Head_Percent();
+        void                            Fill_Suit_Head_Percent(maybe<Percent_t> value);
+        some<Percent_t>                 Fill_Suit_Neck_Percent();
+        void                            Fill_Suit_Neck_Percent(maybe<Percent_t> value);
+
+        some<Member_Alpha_t>            Default_Alpha();
+        void                            Default_Alpha(maybe<Member_Alpha_t> value);
+        maybe<Member_Combat_Style_e>    Default_Combat_Style();
+        void                            Default_Combat_Style(maybe<Member_Combat_Style_e> value);
+        maybe<Member_Rating_t>          Default_Rating();
+        void                            Default_Rating(maybe<Member_Rating_t> value);
+        maybe<Member_Relation_e>        Default_Relation();
+        void                            Default_Relation(maybe<Member_Relation_e> value);
+        maybe<Member_Suit_Type_e>       Default_Suit_Type();
+        void                            Default_Suit_Type(maybe<Member_Suit_Type_e> value);
+        maybe<Member_Vitality_e>        Default_Vitality();
+        void                            Default_Vitality(maybe<Member_Vitality_e> value);
+
+    public:
+        void                        Reset_Options();
+
+        some<Alias_Reference_t*>    Alias(some<Member_ID_t> id);
+        maybe<Member_ID_t>          Active_ID(some<Actor_t*> actor);
+        maybe<Member_ID_t>          Inactive_ID();
+        size_t                      Active_Count();
+
+        Member_t&                   Member(some<Member_ID_t> id);
+
+        maybe<Member_ID_t>          Add(some<Actor_t*> actor);
+        maybe<Member_ID_t>          Add(some<Actor_Base_t*> base);
+        maybe<Member_ID_t>          Add_Clone(some<Actor_t*> actor);
+        Bool_t                      Remove(some<Member_ID_t> id);
+        Bool_t                      Remove(some<Actor_t*> actor);
     };
 
 }}

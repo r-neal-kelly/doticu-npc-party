@@ -208,13 +208,15 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     Member_t::~Member_t()
     {
-        if (Is_Valid()) {
+        if (Is_Active()) {
             if (State().custom_base) {
                 Save().actor->Actor_Base(Save().actual_base(), false);
                 Actor_Base_t::Destroy(State().custom_base());
                 State().custom_base = none<Actor_Base_t*>();
             }
         }
+        // we also need to delete things like the pack, or make them static refs
+        // maybe same thing with suit buffers
         // needs to be removed from alias, probably do that in Members_t
     }
 
@@ -224,11 +226,22 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Member_t::On_Before_Save_Game(std::ofstream& file)
     {
+        if (Is_Active()) {
+            // we check, because I'm not sure if creating a ref here would freeze the game.
+            // we should try it.
+            if (Save().actor) {
+                Save().actor->Actor_Base(Actual_Base(), false);
+            }
+        }
+
         Save().Write(file);
     }
 
     void Member_t::On_After_Save_Game()
     {
+        if (Is_Active()) {
+            Actor()->Actor_Base(Custom_Base(), false);
+        }
     }
 
     void Member_t::On_Before_Load_Game()
@@ -259,217 +272,189 @@ namespace doticu_skylib { namespace doticu_npcp {
         return this->state.save;
     }
 
-    Bool_t Member_t::Is_Valid()
+    Bool_t Member_t::Is_Active()
     {
         return Save().id && Save().actual_base;
     }
 
     Bool_t Member_t::Is_Banished()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         return Save().flags.Is_Flagged(Member_Flags_e::IS_BANISHED);
     }
 
     void Member_t::Is_Banished(Bool_t value)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         Save().flags.Is_Flagged(Member_Flags_e::IS_BANISHED, value);
     }
 
     Bool_t Member_t::Is_Clone()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         return Save().flags.Is_Flagged(Member_Flags_e::IS_CLONE);
     }
 
     void Member_t::Is_Clone(Bool_t value)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         Save().flags.Is_Flagged(Member_Flags_e::IS_CLONE, value);
     }
 
     Bool_t Member_t::Is_Immobile()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         return Save().flags.Is_Flagged(Member_Flags_e::IS_IMMOBILE);
     }
 
     void Member_t::Is_Immobile(Bool_t value)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         Save().flags.Is_Flagged(Member_Flags_e::IS_IMMOBILE, value);
     }
 
     Bool_t Member_t::Is_Mannequin()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         return Save().flags.Is_Flagged(Member_Flags_e::IS_MANNEQUIN);
     }
 
     void Member_t::Is_Mannequin(Bool_t value)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         Save().flags.Is_Flagged(Member_Flags_e::IS_MANNEQUIN, value);
     }
 
     Bool_t Member_t::Is_Reanimated()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         return Save().flags.Is_Flagged(Member_Flags_e::IS_REANIMATED);
     }
 
     void Member_t::Is_Reanimated(Bool_t value)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         Save().flags.Is_Flagged(Member_Flags_e::IS_REANIMATED, value);
     }
 
     Bool_t Member_t::Is_Sneak()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         return Save().flags.Is_Flagged(Member_Flags_e::IS_SNEAK);
     }
 
     void Member_t::Is_Sneak(Bool_t value)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         Save().flags.Is_Flagged(Member_Flags_e::IS_SNEAK, value);
     }
 
     Bool_t Member_t::Is_Thrall()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         return Save().flags.Is_Flagged(Member_Flags_e::IS_THRALL);
     }
 
     void Member_t::Is_Thrall(Bool_t value)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         Save().flags.Is_Flagged(Member_Flags_e::IS_THRALL, value);
     }
 
     Bool_t Member_t::Is_Enabled()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         return !Is_Banished();
     }
 
     Bool_t Member_t::Is_Untouchable()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         return Members().Has_Untouchable_Invulnerables() && Is_Invulnerable();
     }
 
     Bool_t Member_t::Is_Warrior()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         return Member_Combat_Style_e::From_Combat_Style(Combat_Style()) == Member_Combat_Style_e::WARRIOR;
     }
 
     Bool_t Member_t::Is_Mage()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         return Member_Combat_Style_e::From_Combat_Style(Combat_Style()) == Member_Combat_Style_e::MAGE;
     }
 
     Bool_t Member_t::Is_Archer()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         return Member_Combat_Style_e::From_Combat_Style(Combat_Style()) == Member_Combat_Style_e::ARCHER;
     }
 
     Bool_t Member_t::Is_Coward()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         return Member_Combat_Style_e::From_Combat_Style(Combat_Style()) == Member_Combat_Style_e::COWARD;
     }
 
     Bool_t Member_t::Is_Mortal()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         return Vitality() == Member_Vitality_e::MORTAL;
     }
 
-    void Member_t::Is_Mortal(Bool_t value)
-    {
-        SKYLIB_ASSERT(Is_Valid());
-
-        Vitality(Member_Vitality_e::MORTAL);
-    }
-
     Bool_t Member_t::Is_Protected()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         return Vitality() == Member_Vitality_e::PROTECTED;
     }
 
-    void Member_t::Is_Protected(Bool_t value)
-    {
-        SKYLIB_ASSERT(Is_Valid());
-
-        Vitality(Member_Vitality_e::PROTECTED);
-    }
-
     Bool_t Member_t::Is_Essential()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         return Vitality() == Member_Vitality_e::ESSENTIAL;
     }
 
-    void Member_t::Is_Essential(Bool_t value)
-    {
-        SKYLIB_ASSERT(Is_Valid());
-
-        Vitality(Member_Vitality_e::ESSENTIAL);
-    }
-
     Bool_t Member_t::Is_Invulnerable()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         return Vitality() == Member_Vitality_e::INVULNERABLE;
     }
 
-    void Member_t::Is_Invulnerable(Bool_t value)
-    {
-        SKYLIB_ASSERT(Is_Valid());
-
-        Vitality(Member_Vitality_e::INVULNERABLE);
-    }
-
     Bool_t Member_t::Has_AI()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         return !Is_Banished() && !Is_Mannequin();
     }
 
     Bool_t Member_t::Has_Suit(some<Member_Suit_Type_e> type)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
         SKYLIB_ASSERT_SOME(type);
         SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
 
@@ -481,7 +466,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Member_t::Has_Suit(some<Member_Suit_Type_e> type, Bool_t value)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
         SKYLIB_ASSERT_SOME(type);
         SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
 
@@ -493,7 +478,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     Bool_t Member_t::Has_Only_Playables(some<Member_Suit_Type_e> type)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
         SKYLIB_ASSERT_SOME(type);
         SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
 
@@ -505,7 +490,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Member_t::Has_Only_Playables(some<Member_Suit_Type_e> type, Bool_t value)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
         SKYLIB_ASSERT_SOME(type);
         SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
 
@@ -517,28 +502,28 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     some<Member_ID_t> Member_t::ID()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         return Save().id;
     }
 
     some<Alias_Reference_t*> Member_t::Alias()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
-        return Members().Alias_Reference(ID());
+        return Members().Alias(ID());
     }
 
     some<Actor_Base_t*> Member_t::Actual_Base()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         return Save().actual_base();
     }
 
     some<Actor_Base_t*> Member_t::Custom_Base()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         maybe<Actor_Base_t*>& custom_base = State().custom_base;
         if (!custom_base) {
@@ -551,7 +536,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     some<Actor_t*> Member_t::Actor()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         maybe<Actor_t*>& actor = Save().actor;
         if (!actor) {
@@ -565,7 +550,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     maybe<Member_Alpha_t> Member_t::Alpha()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         if (!Is_Enabled()) {
             return 0.0f;
@@ -574,16 +559,17 @@ namespace doticu_skylib { namespace doticu_npcp {
         }
     }
 
-    void Member_t::Alpha(maybe<Member_Alpha_t> alpha)
+    void Member_t::Alpha(some<Member_Alpha_t> alpha)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
+        SKYLIB_ASSERT_SOME(alpha);
 
         Save().alpha = alpha;
     }
 
     maybe<Combat_Style_t*> Member_t::Combat_Style()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         maybe<Combat_Style_t*> combat_style = Save().combat_style;
         if (!combat_style) {
@@ -595,35 +581,39 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Member_t::Combat_Style(maybe<Combat_Style_t*> combat_style)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         Save().combat_style = combat_style;
     }
 
-    void Member_t::Combat_Style(Member_Combat_Style_e combat_style)
+    void Member_t::Combat_Style(maybe<Member_Combat_Style_e> combat_style)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
-        Combat_Style(combat_style.As_Combat_Style());
+        if (combat_style) {
+            Combat_Style(combat_style().As_Combat_Style());
+        } else {
+            Combat_Style(none<Combat_Style_t*>());
+        }
     }
 
     maybe<Spell_t*> Member_t::Ghost_Ability()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         return Save().ghost_ability;
     }
 
     void Member_t::Ghost_Ability(maybe<Spell_t*> ghost_ability)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         Save().ghost_ability = ghost_ability;
     }
 
     String_t Member_t::Name()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         String_t name = Save().name;
         if (!name) {
@@ -635,28 +625,28 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Member_t::Name(String_t name)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         Save().name = name;
     }
 
     maybe<Outfit_t*> Member_t::Outfit()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         return Save().outfit;
     }
 
     void Member_t::Outfit(maybe<Outfit_t*> outfit)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         Save().outfit = outfit;
     }
 
     some<Reference_t*> Member_t::Pack()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         maybe<Reference_t*>& pack = Save().pack;
         if (!pack) {
@@ -672,21 +662,21 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     maybe<Member_Rating_t> Member_t::Rating()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         return Save().rating;
     }
 
     void Member_t::Rating(maybe<Member_Rating_t> rating)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         Save().rating = rating;
     }
 
     some<Member_Relation_e> Member_t::Relation()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         maybe<Member_Relation_e> relation = Save().relation;
         if (!relation) {
@@ -699,14 +689,14 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Member_t::Relation(maybe<Member_Relation_e> relation)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         Save().relation = relation;
     }
 
     maybe<Member_Suit_Type_e> Member_t::Suit_Type()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         maybe<Member_Suit_Type_e> suit_type = Save().suit_type;
         if (suit_type && Members().Do_Change_Suits_Automatically()) {
@@ -765,7 +755,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Member_t::Suit_Type(maybe<Member_Suit_Type_e> type)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         if (type) {
             SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
@@ -778,7 +768,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     some<Member_Suitcase_t*> Member_t::Suitcase()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         maybe<Member_Suitcase_t*>& suitcase = Save().suitcase;
         if (!suitcase) {
@@ -791,7 +781,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     some<Member_Vitality_e> Member_t::Vitality()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         maybe<Member_Vitality_e> vitality = Save().vitality;
         if (!vitality) {
@@ -804,14 +794,14 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Member_t::Vitality(maybe<Member_Vitality_e> vitality)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         Save().vitality = vitality;
     }
 
     some<Voice_Type_t*> Member_t::Voice_Type()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         maybe<Voice_Type_t*> voice_type = Save().voice_type;
         if (!voice_type) {
@@ -830,14 +820,14 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Member_t::Voice_Type(maybe<Voice_Type_t*> voice_type)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         Save().voice_type = voice_type;
     }
 
     void Member_t::Tokenize(some<Bound_Object_t*> object, Container_Entry_Count_t count)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
         SKYLIB_ASSERT_SOME(object);
         SKYLIB_ASSERT(count > 0);
 
@@ -852,7 +842,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Member_t::Untokenize(some<Bound_Object_t*> object)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
         SKYLIB_ASSERT_SOME(object);
 
         Reference_Container_t container = Actor()->Container();
@@ -865,7 +855,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Member_t::Add_Suit(some<Member_Suit_Type_e> type)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
         SKYLIB_ASSERT_SOME(type);
         SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
 
@@ -875,7 +865,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Member_t::Add_Suit(some<Member_Suit_Type_e> type, some<Outfit_t*> outfit)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
         SKYLIB_ASSERT_SOME(type);
         SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
         SKYLIB_ASSERT_SOME(outfit);
@@ -893,7 +883,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Member_t::Add_Suit(some<Member_Suit_Type_e> type, some<Container_t*> container)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
         SKYLIB_ASSERT_SOME(type);
         SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
         SKYLIB_ASSERT_SOME(container);
@@ -911,7 +901,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Member_t::Add_Suit(some<Member_Suit_Type_e> type, some<Actor_Base_t*> actor_base)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
         SKYLIB_ASSERT_SOME(type);
         SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
         SKYLIB_ASSERT_SOME(actor_base);
@@ -933,7 +923,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Member_t::Add_Suit(some<Member_Suit_Type_e> type, some<Reference_t*> reference, Bool_t do_copy)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
         SKYLIB_ASSERT_SOME(type);
         SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
         SKYLIB_ASSERT_SOME(reference);
@@ -956,7 +946,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Member_t::Add_Suit(some<Member_Suit_Type_e> type, Member_Suit_Template_t suit_template)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
         SKYLIB_ASSERT_SOME(type);
         SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
 
@@ -965,15 +955,15 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         Member_Suit_Buffer_t buffer;
 
-        maybe<Armor_t*> aura = suit_template.armor.Aura(Members().Fill_Suit_Aura_Probability());
-        maybe<Armor_t*> body = suit_template.armor.Body(Members().Fill_Suit_Body_Probability());
-        maybe<Armor_t*> feet = suit_template.armor.Feet(Members().Fill_Suit_Feet_Probability());
-        maybe<Armor_t*> finger = suit_template.armor.Finger(Members().Fill_Suit_Finger_Probability());
-        maybe<Armor_t*> forearm = suit_template.armor.Forearm(Members().Fill_Suit_Forearm_Probability());
-        maybe<Armor_t*> forehead = suit_template.armor.Forehead(Members().Fill_Suit_Forehead_Probability());
-        maybe<Armor_t*> hands = suit_template.armor.Hands(Members().Fill_Suit_Hands_Probability());
-        maybe<Armor_t*> head = suit_template.armor.Head(Members().Fill_Suit_Head_Probability());
-        maybe<Armor_t*> neck = suit_template.armor.Neck(Members().Fill_Suit_Neck_Probability());
+        maybe<Armor_t*> aura = suit_template.armor.Aura(Members().Fill_Suit_Aura_Percent());
+        maybe<Armor_t*> body = suit_template.armor.Body(Members().Fill_Suit_Body_Percent());
+        maybe<Armor_t*> feet = suit_template.armor.Feet(Members().Fill_Suit_Feet_Percent());
+        maybe<Armor_t*> finger = suit_template.armor.Finger(Members().Fill_Suit_Finger_Percent());
+        maybe<Armor_t*> forearm = suit_template.armor.Forearm(Members().Fill_Suit_Forearm_Percent());
+        maybe<Armor_t*> forehead = suit_template.armor.Forehead(Members().Fill_Suit_Forehead_Percent());
+        maybe<Armor_t*> hands = suit_template.armor.Hands(Members().Fill_Suit_Hands_Percent());
+        maybe<Armor_t*> head = suit_template.armor.Head(Members().Fill_Suit_Head_Percent());
+        maybe<Armor_t*> neck = suit_template.armor.Neck(Members().Fill_Suit_Neck_Percent());
 
         if (aura) buffer.reference->Add_Item(aura(), none<Extra_List_t*>(), 1, none<Reference_t*>());
         if (body) buffer.reference->Add_Item(body(), none<Extra_List_t*>(), 1, none<Reference_t*>());
@@ -1003,7 +993,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Member_t::Remove_Suit(some<Member_Suit_Type_e> type)
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
         SKYLIB_ASSERT_SOME(type);
         SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
 
@@ -1015,7 +1005,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Member_t::Enforce()
     {
-        SKYLIB_ASSERT(Is_Valid());
+        SKYLIB_ASSERT(Is_Active());
 
         // we may want a different smaller branch if the actor is in combat, or a separate func to call
         Members_t& members = Members();
@@ -1183,7 +1173,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     Member_t::operator Bool_t()
     {
-        return Is_Valid();
+        return Is_Active();
     }
 
 }}
