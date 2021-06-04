@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "doticu_skylib/container_entry_count.h"
 #include "doticu_skylib/enum_script_type.h"
 
 #include "party_member_alpha.h"
@@ -119,51 +120,50 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save_t&     Save();
 
     public:
-        Bool_t  Is_Active();
+        Bool_t                      Is_Active();
 
-        Bool_t  Is_Banished();
-        void    Is_Banished(Bool_t value);
+        Bool_t                      Is_Banished();
+        void                        Is_Banished(Bool_t value);
 
-        Bool_t  Is_Clone();
-        void    Is_Clone(Bool_t value);
+        Bool_t                      Is_Clone();
+        void                        Is_Clone(Bool_t value);
 
-        Bool_t  Is_Immobile();
-        void    Is_Immobile(Bool_t value);
+        Bool_t                      Is_Immobile();
+        void                        Is_Immobile(Bool_t value);
 
-        Bool_t  Is_Mannequin();
-        void    Is_Mannequin(Bool_t value);
+        Bool_t                      Is_Mannequin();
+        void                        Is_Mannequin(Bool_t value);
 
-        Bool_t  Is_Reanimated();
-        void    Is_Reanimated(Bool_t value);
+        Bool_t                      Is_Reanimated();
+        void                        Is_Reanimated(Bool_t value);
 
-        Bool_t  Is_Sneak();
-        void    Is_Sneak(Bool_t value);
+        Bool_t                      Is_Sneak();
+        void                        Is_Sneak(Bool_t value);
 
-        Bool_t  Is_Thrall();
-        void    Is_Thrall(Bool_t value);
+        Bool_t                      Is_Thrall();
+        void                        Is_Thrall(Bool_t value);
 
-        Bool_t  Is_Enabled();
-        Bool_t  Is_Untouchable();
+        Bool_t                      Is_Enabled();
+        Bool_t                      Is_Untouchable();
 
-        Bool_t  Is_Warrior();
-        Bool_t  Is_Mage();
-        Bool_t  Is_Archer();
-        Bool_t  Is_Coward();
+        Bool_t                      Is_Warrior();
+        Bool_t                      Is_Mage();
+        Bool_t                      Is_Archer();
+        Bool_t                      Is_Coward();
 
-        Bool_t  Is_Mortal();
-        Bool_t  Is_Protected();
-        Bool_t  Is_Essential();
-        Bool_t  Is_Invulnerable();
+        Bool_t                      Is_Mortal();
+        Bool_t                      Is_Protected();
+        Bool_t                      Is_Essential();
+        Bool_t                      Is_Invulnerable();
 
-        Bool_t  Has_AI();
+        Bool_t                      Has_AI();
 
-        Bool_t  Has_Suit(some<Member_Suit_Type_e> type);
-        void    Has_Suit(some<Member_Suit_Type_e> type, Bool_t value);
+        Bool_t                      Has_Suit(some<Member_Suit_Type_e> type);
+        void                        Has_Suit(some<Member_Suit_Type_e> type, Bool_t value);
 
-        Bool_t  Has_Only_Playables(some<Member_Suit_Type_e> type);
-        void    Has_Only_Playables(some<Member_Suit_Type_e> type, Bool_t value);
+        Bool_t                      Has_Only_Playables(some<Member_Suit_Type_e> type);
+        void                        Has_Only_Playables(some<Member_Suit_Type_e> type, Bool_t value);
 
-    public:
         some<Member_ID_t>           ID();
 
         some<Alias_Reference_t*>    Alias();

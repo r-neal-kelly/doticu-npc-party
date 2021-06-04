@@ -228,9 +228,29 @@ namespace doticu_skylib { namespace doticu_npcp {
     void Members_t::On_After_Load_Game(std::ifstream& file)
     {
         Save().Read(file);
+
         for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
             State().members[idx].On_After_Load_Game(file);
         }
+
+        class Unfill_Aliases_Callback :
+            public Callback_i<>
+        {
+        public:
+            virtual void operator ()() override
+            {
+                if (NPCP.Is_Valid()) {
+                    Members_t& members = NPCP.Party().Members();
+                    for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
+                        Member_t& member = members.Member(idx);
+                        if (member) {
+                            members.Alias(idx)->Fill(member.Actor(), none<Virtual::Callback_i*>());
+                        }
+                    }
+                }
+            }
+        };
+        Quest()->Unfill_Aliases(new Unfill_Aliases_Callback());
     }
 
     void Members_t::On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update)
@@ -379,9 +399,9 @@ namespace doticu_skylib { namespace doticu_npcp {
             value = DEFAULT_LIMIT;
         }
 
-        size_t active_count = Active_Count();
-        if (value() < active_count) {
-            value = active_count;
+        size_t active_member_count = Active_Member_Count();
+        if (value() < active_member_count) {
+            value = active_member_count;
         }
 
         SKYLIB_ASSERT_SOME(value);
@@ -600,14 +620,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     maybe<Member_Combat_Style_e> Members_t::Default_Combat_Style()
     {
-        maybe<Member_Combat_Style_e>& value = Save().default_combat_style;
-        if (!value) {
-            value = DEFAULT_COMBAT_STYLE;
-        }
-
-        SKYLIB_ASSERT_SOME(value);
-
-        return value();
+        return Save().default_combat_style;
     }
 
     void Members_t::Default_Combat_Style(maybe<Member_Combat_Style_e> value)
@@ -617,14 +630,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     maybe<Member_Rating_t> Members_t::Default_Rating()
     {
-        maybe<Member_Rating_t>& value = Save().default_rating;
-        if (!value) {
-            value = DEFAULT_RATING;
-        }
-
-        SKYLIB_ASSERT_SOME(value);
-
-        return value();
+        return Save().default_rating;
     }
 
     void Members_t::Default_Rating(maybe<Member_Rating_t> value)
@@ -634,14 +640,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     maybe<Member_Relation_e> Members_t::Default_Relation()
     {
-        maybe<Member_Relation_e>& value = Save().default_relation;
-        if (!value) {
-            value = DEFAULT_RELATION;
-        }
-
-        SKYLIB_ASSERT_SOME(value);
-
-        return value();
+        return Save().default_relation;
     }
 
     void Members_t::Default_Relation(maybe<Member_Relation_e> value)
@@ -651,31 +650,19 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     maybe<Member_Suit_Type_e> Members_t::Default_Suit_Type()
     {
-        maybe<Member_Suit_Type_e>& value = Save().default_suit_type;
-        if (!value) {
-            value = DEFAULT_SUIT_TYPE;
-        }
-
-        SKYLIB_ASSERT_SOME(value);
-
-        return value();
+        return Save().default_suit_type;
     }
 
     void Members_t::Default_Suit_Type(maybe<Member_Suit_Type_e> value)
     {
+        SKYLIB_ASSERT(value != Member_Suit_Type_e::ACTIVE);
+
         Save().default_suit_type = value;
     }
 
     maybe<Member_Vitality_e> Members_t::Default_Vitality()
     {
-        maybe<Member_Vitality_e>& value = Save().default_vitality;
-        if (!value) {
-            value = DEFAULT_VITALITY;
-        }
-
-        SKYLIB_ASSERT_SOME(value);
-
-        return value();
+        return Save().default_vitality;
     }
 
     void Members_t::Default_Vitality(maybe<Member_Vitality_e> value)
@@ -689,128 +676,73 @@ namespace doticu_skylib { namespace doticu_npcp {
         new (&State().save) Save_t();
     }
 
-
-
-
-
-
-    void Members_t::Validate()
+    some<Quest_t*> Members_t::Quest()
     {
-        class Unfill_Aliases_Callback :
-            public Callback_i<>
-        {
-        public:
-            Members_t& self;
-
-        public:
-            Unfill_Aliases_Callback(Members_t& self) :
-                self(self)
-            {
-            }
-
-        public:
-            virtual void operator ()() override
-            {
-                for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
-                    Member_t member(idx);
-                    if (member) {
-                        this->self.Alias_Reference(idx)->Fill(member.Actor(), none<V::Callback_i*>());
-                    } else {
-                        this->self.Remove_Member(idx);
-                    }
-                }
-            }
-        };
-        this->quest->Unfill_Aliases(new Unfill_Aliases_Callback(*this));
+        return Consts_t::NPCP::Quest::Members();
     }
 
-    
-    maybe<Member_Suit_Type_e> Members_t::Default_Suit_Type()
+    some<Alias_Reference_t*> Members_t::Alias(some<Member_ID_t> id)
     {
-        return this->save_state.default_suit_type;
+        SKYLIB_ASSERT_SOME(id);
+
+        maybe<Alias_Reference_t*> alias = Quest()->Index_To_Alias_Reference(id());
+        SKYLIB_ASSERT_SOME(alias);
+
+        return alias();
     }
 
-    void Members_t::Default_Suit_Type(maybe<Member_Suit_Type_e> suit_type)
+    Member_t& Members_t::Member(some<Member_ID_t> id)
     {
-        SKYLIB_ASSERT(suit_type != Member_Suit_Type_e::ACTIVE);
+        SKYLIB_ASSERT_SOME(id);
 
-        this->save_state.default_suit_type = suit_type;
+        return State().members[id()];
     }
 
-
-
-
-
-
-
-
-    some<Alias_Reference_t*> Members_t::Alias_Reference(some<Member_ID_t> member_id)
+    maybe<Member_t*> Members_t::Active_Member(some<Actor_t*> actor)
     {
-        SKYLIB_ASSERT_SOME(member_id);
-
-        some<Alias_Reference_t*> alias_reference = this->quest->Index_To_Alias_Reference(member_id())();
-        SKYLIB_ASSERT_SOME(alias_reference);
-        return alias_reference;
-    }
-
-    Bool_t Members_t::Has_Alias(some<Member_ID_t> member_id)
-    {
-        SKYLIB_ASSERT_SOME(member_id);
-
-        return this->quest->Has_Alias_Index(member_id());
-    }
-
-    Bool_t Members_t::Has_Alias(Alias_ID_t alias_id)
-    {
-        return this->quest->Has_Alias_ID(alias_id);
-    }
-
-    Bool_t Members_t::Has_Member(some<Member_ID_t> member_id)
-    {
-        SKYLIB_ASSERT_SOME(member_id);
-
-        maybe<Actor_t*> actor = this->save_state.actors[member_id()];
-        maybe<Actor_Base_t*> base = this->save_state.original_bases[member_id()];
-        return
-            actor && actor->Is_Valid() && actor->Isnt_Deleted() &&
-            base && base->Is_Valid() && base->Isnt_Deleted();
-    }
-
-    Bool_t Members_t::Has_Member(some<Actor_t*> actor)
-    {
-        SKYLIB_ASSERT_SOME(actor);
-
         for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
-            if (this->save_state.actors[idx] == actor) {
-                return Has_Member(idx);
+            Member_t& member = Member(idx);
+            if (member && member.Actor() == actor) {
+                return &member;
             }
         }
-        return false;
+        return none<Member_t*>();
     }
 
-    maybe<Member_ID_t> Members_t::Used_Member_ID(some<Actor_t*> actor)
+    maybe<Member_t*> Members_t::Inactive_Member()
     {
-        SKYLIB_ASSERT_SOME(actor);
-
         for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
-            if (this->save_state.actors[idx] == actor && Has_Member(idx)) {
-                return idx;
+            Member_t& member = Member(idx);
+            if (!member) {
+                return &member;
             }
         }
-        return none<Member_ID_t>();
+        return none<Member_t*>();
     }
 
-    maybe<Member_ID_t> Members_t::Unused_Member_ID()
+    size_t Members_t::Active_Member_Count()
     {
-        // this needs to be locked.
+        size_t count = 0;
         for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
-            if (!Has_Member(idx)) {
-                return idx;
+            if (Member(idx)) {
+                count += 1;
             }
         }
-        return none<Member_ID_t>();
+        return count;
     }
 
+    size_t Members_t::Inactive_Member_Count()
+    {
+        return MAX_MEMBERS - Active_Member_Count();
+    }
+
+
+
+
+
+
+
+    // this basically needs to go in Member_t, except the crap that can be taken out.
     static void Add_Member(some<Members_t*> self, Member_ID_t member_id, some<Actor_t*> actor, some<Actor_Base_t*> base)
     {
         SKYLIB_ASSERT_SOME(self);
@@ -941,17 +873,6 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         // this should forcibly reset ai and make sure other state is reset that is needed.
         return false;
-    }
-
-    size_t Members_t::Member_Count()
-    {
-        size_t result = 0;
-        for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
-            if (Has_Member(idx)) {
-                result += 1;
-            }
-        }
-        return result;
     }
 
 }}

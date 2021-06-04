@@ -120,8 +120,10 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         NPCP.Read_String(file, this->name);
 
-        if (this->id && static_base) {
-            if (!this->actual_base || this->actual_base->Identifiable_Static_Base() != static_base) {
+        if (this->id && static_base && !static_base->Is_Deleted()) {
+            if (!this->actual_base ||
+                this->actual_base->Is_Deleted() ||
+                this->actual_base->Identifiable_Static_Base() != static_base) {
                 this->actual_base = static_base;
             }
         } else {
@@ -274,7 +276,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     Bool_t Member_t::Is_Active()
     {
-        return Save().id && Save().actual_base;
+        return Save().id && Save().actual_base && !Save().actual_base->Is_Deleted();
     }
 
     Bool_t Member_t::Is_Banished()
@@ -539,7 +541,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         SKYLIB_ASSERT(Is_Active());
 
         maybe<Actor_t*>& actor = Save().actor;
-        if (!actor) {
+        if (!actor || actor->Is_Deleted()) {
             some<Actor_Base_t*> actual_base = Actual_Base();
             actor = Actor_t::Create(actual_base, !actual_base->Does_Respawn(), true, false);
             SKYLIB_ASSERT_SOME(actor);
@@ -634,7 +636,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT(Is_Active());
 
-        return Save().outfit;
+        return Save().outfit; // maybe should grab from base
     }
 
     void Member_t::Outfit(maybe<Outfit_t*> outfit)

@@ -175,33 +175,32 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save_t&     Save();
 
     public:
-        Bool_t  Do_Allow_Menu_For_All_Actors();
-        void    Do_Allow_Menu_For_All_Actors(Bool_t value);
+        Bool_t                          Do_Allow_Menu_For_All_Actors();
+        void                            Do_Allow_Menu_For_All_Actors(Bool_t value);
 
-        Bool_t  Do_Force_Clone_Uniques();
-        void    Do_Force_Clone_Uniques(Bool_t value);
-        Bool_t  Do_Force_Clone_Generics();
-        void    Do_Force_Clone_Generics(Bool_t value);
-        Bool_t  Do_Force_Unclone_Uniques();
-        void    Do_Force_Unclone_Uniques(Bool_t value);
-        Bool_t  Do_Force_Unclone_Generics();
-        void    Do_Force_Unclone_Generics(Bool_t value);
+        Bool_t                          Do_Force_Clone_Uniques();
+        void                            Do_Force_Clone_Uniques(Bool_t value);
+        Bool_t                          Do_Force_Clone_Generics();
+        void                            Do_Force_Clone_Generics(Bool_t value);
+        Bool_t                          Do_Force_Unclone_Uniques();
+        void                            Do_Force_Unclone_Uniques(Bool_t value);
+        Bool_t                          Do_Force_Unclone_Generics();
+        void                            Do_Force_Unclone_Generics(Bool_t value);
 
-        Bool_t  Has_Untouchable_Invulnerables();
-        void    Has_Untouchable_Invulnerables(Bool_t value);
+        Bool_t                          Has_Untouchable_Invulnerables();
+        void                            Has_Untouchable_Invulnerables(Bool_t value);
 
-        Bool_t  Do_Suits();
-        void    Do_Suits(Bool_t value);
-        Bool_t  Do_Suits_Strictly();
-        void    Do_Suits_Strictly(Bool_t value);
-        Bool_t  Do_Fill_Suits_Automatically();
-        void    Do_Fill_Suits_Automatically(Bool_t value);
-        Bool_t  Do_Unfill_Suits_Into_Pack();
-        void    Do_Unfill_Suits_Into_Pack(Bool_t value);
-        Bool_t  Do_Change_Suits_Automatically();
-        void    Do_Change_Suits_Automatically(Bool_t value);
+        Bool_t                          Do_Suits();
+        void                            Do_Suits(Bool_t value);
+        Bool_t                          Do_Suits_Strictly();
+        void                            Do_Suits_Strictly(Bool_t value);
+        Bool_t                          Do_Fill_Suits_Automatically();
+        void                            Do_Fill_Suits_Automatically(Bool_t value);
+        Bool_t                          Do_Unfill_Suits_Into_Pack();
+        void                            Do_Unfill_Suits_Into_Pack(Bool_t value);
+        Bool_t                          Do_Change_Suits_Automatically();
+        void                            Do_Change_Suits_Automatically(Bool_t value);
 
-    public:
         some<Member_Limit_t>            Limit();
         void                            Limit(maybe<Member_Limit_t> value);
 
@@ -246,12 +245,13 @@ namespace doticu_skylib { namespace doticu_npcp {
     public:
         void                        Reset_Options();
 
+        some<Quest_t*>              Quest();
         some<Alias_Reference_t*>    Alias(some<Member_ID_t> id);
-        maybe<Member_ID_t>          Active_ID(some<Actor_t*> actor);
-        maybe<Member_ID_t>          Inactive_ID();
-        size_t                      Active_Count();
-
         Member_t&                   Member(some<Member_ID_t> id);
+        maybe<Member_t*>            Active_Member(some<Actor_t*> actor);
+        maybe<Member_t*>            Inactive_Member();
+        size_t                      Active_Member_Count();
+        size_t                      Inactive_Member_Count();
 
         maybe<Member_ID_t>          Add(some<Actor_t*> actor);
         maybe<Member_ID_t>          Add(some<Actor_Base_t*> base);
