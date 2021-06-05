@@ -5,6 +5,7 @@
 #pragma once
 
 #include <fstream>
+#include <mutex>
 
 #include "doticu_skylib/skse_plugin.h"
 
@@ -19,6 +20,20 @@ namespace doticu_skylib { namespace doticu_npcp {
         public SKSE_Plugin_t
     {
     public:
+        class Lock_t :
+            public std::mutex
+        {
+        public:
+            using std::mutex::mutex;
+        };
+
+        class Locker_t :
+            public std::unique_lock<std::mutex>
+        {
+        public:
+            using std::unique_lock<std::mutex>::unique_lock;
+        };
+
         class Save_t
         {
         public:
@@ -57,6 +72,12 @@ namespace doticu_skylib { namespace doticu_npcp {
         };
 
     public:
+        static void Log(some<const char*> log);
+        static void Error(some<const char*> error, String_t user_message);
+
+    public:
+        Lock_t                  lock;
+
         Vector_t<const char>    serialized_heavy_mods;
         Vector_t<const char>    serialized_light_mods;
 
@@ -83,12 +104,18 @@ namespace doticu_skylib { namespace doticu_npcp {
         virtual void    On_Before_Delete_Game(const std::string& file_name) override;
         virtual void    On_Update(u32 time_stamp) override;
 
-        virtual void    On_Before_Save_Game(std::ofstream& file);
-        virtual void    On_After_Load_Game(std::ifstream& file);
-        virtual void    On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update);
+    public:
+        Locker_t    Locker(Bool_t do_lock = true);
 
-        virtual void    On_Log(some<const char*> log);
-        virtual void    On_Error(some<const char*> error, String_t user_message);
+    public:
+        void    After_Load_Data();
+        void    After_New_Game();
+        void    Before_Save_Game(const std::string& file_name);
+        void    After_Save_Game(const std::string& file_name);
+        void    Before_Load_Game(const std::string& file_name);
+        void    After_Load_Game(const std::string& file_name, Bool_t did_load_successfully);
+        void    Before_Delete_Game(const std::string& file_name);
+        void    Update(u32 time_stamp);
 
     public:
         Bool_t  Is_Active();

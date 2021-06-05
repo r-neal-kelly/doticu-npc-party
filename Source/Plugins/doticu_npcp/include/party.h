@@ -100,9 +100,6 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         maybe<Member_Update_AI_e>   Update_AI(some<Member_ID_t> valid_id);
         void                        Update_AI(some<Member_ID_t> valid_id, some<Member_Update_AI_e> value);
-
-    public:
-        void    Log(std::string indent = "");
     };
 
 }}

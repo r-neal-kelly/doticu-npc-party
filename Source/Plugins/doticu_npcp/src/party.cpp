@@ -140,6 +140,11 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Party_t::On_Update()
     {
+        // we'll eval all members here, by creating a series of threads of parallel execution,
+        // each thread locking the NPCP_t::Lock_t. Every thread, or outside source, needs to lock
+        // that lock, so that means the dialogue events and the menu events, any Papyrus call needs to lock it.
+        // NPCP_t alreadys locks on this thread for us, so we may do preliminary updating on the sub types.
+
         Members().On_Update();
         Settlers().On_Update();
         Expoees().On_Update();
@@ -180,7 +185,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     some<Script_t*> Party_t::Script(some<Member_ID_t> valid_id)
     {
         SKYLIB_ASSERT_SOME(valid_id);
-        SKYLIB_ASSERT(Members().Has_Member(valid_id));
+        SKYLIB_ASSERT(Members().Has(valid_id));
 
         maybe<Script_t*>& script = State().scripts[valid_id()];
         if (!script) {
@@ -194,7 +199,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     maybe<Member_Update_AI_e> Party_t::Update_AI(some<Member_ID_t> valid_id)
     {
         SKYLIB_ASSERT_SOME(valid_id);
-        SKYLIB_ASSERT(Members().Has_Member(valid_id));
+        SKYLIB_ASSERT(Members().Has(valid_id));
 
         return State().update_ais[valid_id()];
     }
@@ -202,7 +207,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     void Party_t::Update_AI(some<Member_ID_t> valid_id, some<Member_Update_AI_e> value)
     {
         SKYLIB_ASSERT_SOME(valid_id);
-        SKYLIB_ASSERT(Members().Has_Member(valid_id));
+        SKYLIB_ASSERT(Members().Has(valid_id));
         SKYLIB_ASSERT_SOME(value);
 
         maybe<Member_Update_AI_e>& update_ai = State().update_ais[valid_id()];

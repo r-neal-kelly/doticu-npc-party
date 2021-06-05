@@ -43,12 +43,30 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
     }
 
+    void NPCP_t::Log(some<const char*> log)
+    {
+        SKYLIB_ASSERT_SOME(log);
+
+        SKYLIB_LOG("- %s", log);
+    }
+
+    void NPCP_t::Error(some<const char*> error, String_t user_message)
+    {
+        SKYLIB_ASSERT_SOME(error);
+
+        SKYLIB_LOG("- Error: %s", error);
+
+        UI_t::Create_Message_Box(user_message, none<Virtual::Callback_i*>());
+    }
+
     NPCP_t::NPCP_t() :
         SKSE_Plugin_t("doticu_npcp",
                       Consts_t::Skyrim::Version::Required(),
                       Operator_e::EQUAL_TO,
                       Consts_t::SKSE::Version::Minimum(),
                       Operator_e::GREATER_THAN_OR_EQUAL_TO),
+
+        lock(),
 
         serialized_heavy_mods(),
         serialized_light_mods(),
@@ -63,7 +81,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         // this needs to leak, as it's only called at the end of
         // program's life when forms are already unloaded.
         // we would crash if we tried to call its destructor,
-        // because some types dtors rely on those forms to be in memory.
+        // because some type's dtors rely on those forms to be in memory.
         if (this->state) {
             this->state = none<State_t*>();
         }
@@ -73,15 +91,82 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT_SOME(machine);
 
+        Locker_t locker = Locker();
+
         Party_t::Register_Me(machine);
         Hotkeys_t::Register_Me(machine);
 
-        On_Log("Registered all functions.");
+        Log("Registered all functions.");
 
         return true;
     }
 
     void NPCP_t::On_After_Load_Data()
+    {
+        Locker_t locker = Locker();
+
+        After_Load_Data();
+    }
+
+    void NPCP_t::On_After_New_Game()
+    {
+        Locker_t locker = Locker();
+
+        After_New_Game();
+    }
+
+    void NPCP_t::On_Before_Save_Game(const std::string& file_name)
+    {
+        Locker_t locker = Locker();
+
+        Before_Save_Game(file_name);
+    }
+
+    void NPCP_t::On_After_Save_Game(const std::string& file_name)
+    {
+        Locker_t locker = Locker();
+
+        After_Save_Game(file_name);
+    }
+
+    void NPCP_t::On_Before_Load_Game(const std::string& file_name)
+    {
+        Locker_t locker = Locker();
+
+        Before_Load_Game(file_name);
+    }
+
+    void NPCP_t::On_After_Load_Game(const std::string& file_name, Bool_t did_load_successfully)
+    {
+        Locker_t locker = Locker();
+
+        After_Load_Game(file_name, did_load_successfully);
+    }
+
+    void NPCP_t::On_Before_Delete_Game(const std::string& file_name)
+    {
+        Locker_t locker = Locker();
+
+        Before_Delete_Game(file_name);
+    }
+
+    void NPCP_t::On_Update(u32 time_stamp)
+    {
+        Locker_t locker = Locker();
+
+        Update(time_stamp);
+    }
+
+    NPCP_t::Locker_t NPCP_t::Locker(Bool_t do_lock)
+    {
+        if (do_lock) {
+            return std::move(Locker_t(this->lock));
+        } else {
+            return std::move(Locker_t(this->lock, std::defer_lock));
+        }
+    }
+
+    void NPCP_t::After_Load_Data()
     {
         if (Is_Active()) {
             Create_Serialized_Mods();
@@ -89,10 +174,10 @@ namespace doticu_skylib { namespace doticu_npcp {
         }
     }
 
-    void NPCP_t::On_After_New_Game()
+    void NPCP_t::After_New_Game()
     {
         if (Is_Active()) {
-            On_Log("Initializing...");
+            Log("Initializing...");
 
             Create_State();
 
@@ -114,28 +199,37 @@ namespace doticu_skylib { namespace doticu_npcp {
             (*wait_callback)();
             Virtual::Utility_t::Wait_Out_Of_Menu(1.0f, wait_callback());
 
-            On_Log("Initialized.");
+            Log("Initialized.");
         }
     }
 
-    void NPCP_t::On_Before_Save_Game(const std::string& file_name)
+    void NPCP_t::Before_Save_Game(const std::string& file_name)
     {
         if (Is_Valid()) {
-            On_Log("Saving...");
+            Log("Saving...");
             std::ofstream file(Game_t::Save_File_Path(file_name.c_str(), "npcp"), std::ios::out);
             if (file.is_open() && file.good()) {
-                if (On_Before_Save_Game(file), file.good()) {
-                    On_Log("Saved.");
+                Write(file, State().save);
+                Write_Serialized_Mods(file);
+
+                Party().On_Before_Save_Game(file);
+                Hotkeys().On_Before_Save_Game(file);
+
+                Byte_t last_byte = 0;
+                Write(file, last_byte);
+
+                if (file.good()) {
+                    Log("Saved.");
                 } else {
-                    On_Error("Failed to save.", Strings_t::ERROR_SAVE);
+                    Error("Failed to save.", Strings_t::ERROR_SAVE);
                 }
             } else {
-                On_Error("Failed to save.", Strings_t::ERROR_SAVE);
+                Error("Failed to save.", Strings_t::ERROR_SAVE);
             }
         }
     }
 
-    void NPCP_t::On_After_Save_Game(const std::string& file_name)
+    void NPCP_t::After_Save_Game(const std::string& file_name)
     {
         if (Is_Valid()) {
             Party().On_After_Save_Game();
@@ -143,7 +237,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         }
     }
 
-    void NPCP_t::On_Before_Load_Game(const std::string& file_name)
+    void NPCP_t::Before_Load_Game(const std::string& file_name)
     {
         if (Is_Valid()) {
             Party().On_Before_Load_Game();
@@ -151,109 +245,75 @@ namespace doticu_skylib { namespace doticu_npcp {
         }
     }
 
-    void NPCP_t::On_After_Load_Game(const std::string& file_name, Bool_t did_load_successfully)
+    void NPCP_t::After_Load_Game(const std::string& file_name, Bool_t did_load_successfully)
     {
         if (Is_Active() && did_load_successfully) {
             std::ifstream file(Game_t::Save_File_Path(file_name.c_str(), "npcp"), std::ios::in);
             if (file.is_open()) {
-                On_Log("Loading...");
+                Log("Loading...");
                 if (file.good()) {
                     Create_State();
                     if (file.read(reinterpret_cast<char*>(&State().save), sizeof(Save_t)).good()) {
                         const Version_t<u16> save_version = Version();
                         const Version_t<u16> const_version = Consts_t::NPCP::Version::Current();
                         if (save_version == const_version) {
-                            if (On_After_Load_Game(file), file.good()) {
-                                On_Log("Loaded.");
+                            Read_Deserialized_Mods(file);
+                            Party().On_After_Load_Game(file);
+                            Hotkeys().On_After_Load_Game(file);
+                            if (file.good()) {
+                                Log("Loaded.");
                             } else {
-                                On_Error("Failed to load.", Strings_t::ERROR_LOAD);
-                                On_After_New_Game();
+                                Error("Failed to load.", Strings_t::ERROR_LOAD);
+                                After_New_Game();
                             }
                         } else if (save_version < const_version) {
-                            if (On_After_Load_Game(file, save_version), file.good()) {
+                            Read_Deserialized_Mods(file);
+                            Party().On_After_Load_Game(file, save_version);
+                            Hotkeys().On_After_Load_Game(file, save_version);
+                            if (file.good()) {
                                 Version(const_version);
                                 UI_t::Create_Notification("NPC Party: Updated to version " +
                                                           std::to_string(const_version.major) + "." +
                                                           std::to_string(const_version.minor) + "." +
                                                           std::to_string(const_version.patch),
                                                           none<Virtual::Callback_i*>());
-                                On_Log("Updated and loaded.");
+                                Log("Updated and loaded.");
                             } else {
-                                On_Error("Failed to load.", Strings_t::ERROR_LOAD);
-                                On_After_New_Game();
+                                Error("Failed to load.", Strings_t::ERROR_LOAD);
+                                After_New_Game();
                             }
                         } else {
-                            On_Error("Failed to load. File is from a newer version.", Strings_t::ERROR_LOAD_VERSION);
-                            On_After_New_Game();
+                            Error("Failed to load. File is from a newer version.", Strings_t::ERROR_LOAD_VERSION);
+                            After_New_Game();
                         }
                     } else {
-                        On_Error("Failed to load.", Strings_t::ERROR_LOAD);
-                        On_After_New_Game();
+                        Error("Failed to load.", Strings_t::ERROR_LOAD);
+                        After_New_Game();
                     }
                 } else {
-                    On_Error("Failed to load.", Strings_t::ERROR_LOAD);
-                    On_After_New_Game();
+                    Error("Failed to load.", Strings_t::ERROR_LOAD);
+                    After_New_Game();
                 }
             } else {
-                On_After_New_Game();
+                After_New_Game();
             }
         } else {
             Delete_State();
         }
     }
 
-    void NPCP_t::On_Before_Delete_Game(const std::string& file_name)
+    void NPCP_t::Before_Delete_Game(const std::string& file_name)
     {
-        On_Log((std::string("Deleting save file: ") + file_name + ".npcp").c_str());
+        Log((std::string("Deleting save file: ") + file_name + ".npcp").c_str());
         OS_t::Delete_File(Game_t::Save_File_Path(file_name.c_str(), "npcp"));
     }
 
-    void NPCP_t::On_Update(u32 time_stamp)
+    void NPCP_t::Update(u32 time_stamp)
     {
         if (Is_Valid()) {
             Party().On_Update();
             Hotkeys().On_Update();
         }
-    }
-
-    void NPCP_t::On_Before_Save_Game(std::ofstream& file)
-    {
-        Byte_t last_byte = 0;
-        (file.write(reinterpret_cast<char*>(&State().save), sizeof(Save_t)).good()) &&
-            (Write_Serialized_Mods(file), file.good()) &&
-            (Party().On_Before_Save_Game(file), file.good()) &&
-            (Hotkeys().On_Before_Save_Game(file), file.good()) &&
-            (file.write(reinterpret_cast<char*>(&last_byte), sizeof(last_byte)).good());
-    }
-
-    void NPCP_t::On_After_Load_Game(std::ifstream& file)
-    {
-        (Read_Deserialized_Mods(file), file.good()) &&
-            (Party().On_After_Load_Game(file), file.good()) &&
-            (Hotkeys().On_After_Load_Game(file), file.good());
-    }
-
-    void NPCP_t::On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update)
-    {
-        (Read_Deserialized_Mods(file), file.good()) &&
-            (Party().On_After_Load_Game(file, version_to_update), file.good()) &&
-            (Hotkeys().On_After_Load_Game(file, version_to_update), file.good());
-    }
-
-    void NPCP_t::On_Log(some<const char*> log)
-    {
-        SKYLIB_ASSERT_SOME(log);
-
-        SKYLIB_LOG("- %s", log);
-    }
-
-    void NPCP_t::On_Error(some<const char*> error, String_t user_message)
-    {
-        SKYLIB_ASSERT_SOME(error);
-
-        SKYLIB_LOG("- Error: %s", error);
-
-        UI_t::Create_Message_Box(user_message, none<Virtual::Callback_i*>());
     }
 
     Bool_t NPCP_t::Is_Active()
@@ -263,7 +323,9 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void NPCP_t::Create_State()
     {
-        Delete_State();
+        if (this->state) {
+            delete this->state();
+        }
         this->state = new State_t();
     }
 
@@ -313,53 +375,57 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        size_t heavy_byte_count = this->serialized_heavy_mods.size();
-        size_t light_byte_count = this->serialized_light_mods.size();
+        if (file.good()) {
+            size_t heavy_byte_count = this->serialized_heavy_mods.size();
+            size_t light_byte_count = this->serialized_light_mods.size();
 
-        (file.write(reinterpret_cast<char*>(&heavy_byte_count), sizeof(heavy_byte_count)), file.good()) &&
-            (file.write(reinterpret_cast<char*>(&light_byte_count), sizeof(light_byte_count)), file.good()) &&
-            (file.write(this->serialized_heavy_mods.data(), heavy_byte_count), file.good()) &&
-            (file.write(this->serialized_light_mods.data(), light_byte_count), file.good());
+            (file.write(reinterpret_cast<char*>(&heavy_byte_count), sizeof(heavy_byte_count)), file.good()) &&
+                (file.write(reinterpret_cast<char*>(&light_byte_count), sizeof(light_byte_count)), file.good()) &&
+                (file.write(this->serialized_heavy_mods.data(), heavy_byte_count), file.good()) &&
+                (file.write(this->serialized_light_mods.data(), light_byte_count), file.good());
+        }
     }
 
     void NPCP_t::Read_Deserialized_Mods(std::ifstream& file)
     {
         SKYLIB_ASSERT(Is_Valid());
 
-        size_t heavy_byte_count = 0;
-        size_t light_byte_count = 0;
-        if (file.read(reinterpret_cast<char*>(&heavy_byte_count), sizeof(heavy_byte_count)).good() &&
-            file.read(reinterpret_cast<char*>(&light_byte_count), sizeof(light_byte_count)).good()) {
-            char c = 0;
-            Vector_t<const char> mod_name;
-            mod_name.reserve(MAX_PATH);
+        if (file.good()) {
+            size_t heavy_byte_count = 0;
+            size_t light_byte_count = 0;
+            if (file.read(reinterpret_cast<char*>(&heavy_byte_count), sizeof(heavy_byte_count)).good() &&
+                file.read(reinterpret_cast<char*>(&light_byte_count), sizeof(light_byte_count)).good()) {
+                char c = 0;
+                Vector_t<const char> mod_name;
+                mod_name.reserve(MAX_PATH);
 
-            State().deserialized_heavy_mods.clear();
-            State().deserialized_light_mods.clear();
+                State().deserialized_heavy_mods.clear();
+                State().deserialized_light_mods.clear();
 
-            mod_name.clear();
-            for (size_t idx = 0, end = heavy_byte_count; idx < end; idx += 1) {
-                if (file.read(&c, sizeof(c)).good()) {
-                    mod_name.push_back(c);
-                    if (c == 0) {
-                        State().deserialized_heavy_mods.push_back(Mod_t::Active_Heavy_Mod(mod_name.data()));
-                        mod_name.clear();
+                mod_name.clear();
+                for (size_t idx = 0, end = heavy_byte_count; idx < end; idx += 1) {
+                    if (file.read(&c, sizeof(c)).good()) {
+                        mod_name.push_back(c);
+                        if (c == 0) {
+                            State().deserialized_heavy_mods.push_back(Mod_t::Active_Heavy_Mod(mod_name.data()));
+                            mod_name.clear();
+                        }
+                    } else {
+                        return;
                     }
-                } else {
-                    return;
                 }
-            }
 
-            mod_name.clear();
-            for (size_t idx = 0, end = light_byte_count; idx < end; idx += 1) {
-                if (file.read(&c, sizeof(c)).good()) {
-                    mod_name.push_back(c);
-                    if (c == 0) {
-                        State().deserialized_light_mods.push_back(Mod_t::Active_Light_Mod(mod_name.data()));
-                        mod_name.clear();
+                mod_name.clear();
+                for (size_t idx = 0, end = light_byte_count; idx < end; idx += 1) {
+                    if (file.read(&c, sizeof(c)).good()) {
+                        mod_name.push_back(c);
+                        if (c == 0) {
+                            State().deserialized_light_mods.push_back(Mod_t::Active_Light_Mod(mod_name.data()));
+                            mod_name.clear();
+                        }
+                    } else {
+                        return;
                     }
-                } else {
-                    return;
                 }
             }
         }
