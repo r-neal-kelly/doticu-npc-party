@@ -6,10 +6,9 @@
 
 #include "doticu_skylib/enum.h"
 
-#include "intrinsic.h"
 #include "party_settler_flags.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
 
     class Settler_Flags_Sleeper_e :
         public Settler_Flags_e

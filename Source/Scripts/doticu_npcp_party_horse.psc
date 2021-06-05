@@ -3,3 +3,4 @@
 Scriptname doticu_npcp_party_horse extends ReferenceAlias
 
 event OnActivate(ObjectReference activator) native
+    

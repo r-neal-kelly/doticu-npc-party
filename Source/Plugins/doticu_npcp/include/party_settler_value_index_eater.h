@@ -9,7 +9,7 @@
 #include "intrinsic.h"
 #include "party_settler_value_index.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
 
     class Settler_Value_Index_Eater_e :
         public Settler_Value_Index_e

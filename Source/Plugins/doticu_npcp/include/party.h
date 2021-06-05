@@ -17,16 +17,11 @@
 
 namespace doticu_skylib { namespace doticu_npcp {
 
-    class Displays_t;
-    class Expoees_t;
-    class Followers_t;
-    class Settlers_t;
-
     class Party_t
     {
     public:
-        static constexpr size_t MAX_MEMBERS = Consts_t::NPCP::Int::MAX_MEMBERS;
-        static constexpr size_t MAX_FOLLOWERS = Consts_t::NPCP::Int::MAX_FOLLOWERS;
+        static constexpr size_t MAX_MEMBERS     = Consts_t::NPCP::Int::MAX_MEMBERS;
+        static constexpr size_t MAX_FOLLOWERS   = Consts_t::NPCP::Int::MAX_FOLLOWERS;
 
     public:
         class Save_t
@@ -46,10 +41,10 @@ namespace doticu_skylib { namespace doticu_npcp {
             Save_t                      save;
 
             Members_t                   members;
-            Settlers_t                  settlers;
+            /*Settlers_t                  settlers;
             Expoees_t                   expoees;
             Displays_t                  displays;
-            Followers_t                 followers;
+            Followers_t                 followers;*/
 
             maybe<Script_t*>            scripts[MAX_MEMBERS];
             maybe<Member_Update_AI_e>   update_ais[MAX_MEMBERS];
@@ -92,10 +87,10 @@ namespace doticu_skylib { namespace doticu_npcp {
         State_t&        State();
 
         Members_t&      Members();
-        Settlers_t&     Settlers();
+        /*Settlers_t&     Settlers();
         Expoees_t&      Expoees();
         Displays_t&     Displays();
-        Followers_t&    Followers();
+        Followers_t&    Followers();*/
 
     public:
         some<Script_t*>             Script(some<Member_ID_t> valid_id);

@@ -10,7 +10,7 @@
 
 #include "consts.h"
 #include "hotkeys.h"
-#include "npcp.h"
+#include "npcp.inl"
 #include "party.h"
 #include "strings.h"
 
@@ -396,7 +396,7 @@ namespace doticu_skylib { namespace doticu_npcp {
             if (file.read(reinterpret_cast<char*>(&heavy_byte_count), sizeof(heavy_byte_count)).good() &&
                 file.read(reinterpret_cast<char*>(&light_byte_count), sizeof(light_byte_count)).good()) {
                 char c = 0;
-                Vector_t<const char> mod_name;
+                Vector_t<char> mod_name;
                 mod_name.reserve(MAX_PATH);
 
                 State().deserialized_heavy_mods.clear();
@@ -486,7 +486,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void NPCP_t::Read_String(std::ifstream& file, String_t& string)
     {
-        static Vector_t<const char> buffer;
+        static Vector_t<char> buffer;
         buffer.clear();
 
         char c;

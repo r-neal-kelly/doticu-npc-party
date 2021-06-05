@@ -15,7 +15,7 @@
 
 #include "chests.h"
 
-namespace doticu_npcp {
+namespace doticu_skylib { namespace doticu_npcp {
 
     template <typename T,
         std::enable_if_t<
@@ -50,4 +50,4 @@ namespace doticu_npcp {
         }
     }
 
-}
+}}

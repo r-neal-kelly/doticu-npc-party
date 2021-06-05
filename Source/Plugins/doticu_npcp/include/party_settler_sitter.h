@@ -8,7 +8,7 @@
 #include "party_settler_flags_sitter.h"
 #include "party_settler_value_index_sitter.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
 
     class Settler_Sitter_t :
         public Settler_t

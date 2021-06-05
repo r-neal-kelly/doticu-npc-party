@@ -11,6 +11,9 @@
 
 #include "party_member_alpha.h"
 #include "party_member_combat_style.h"
+#include "party_member_flags.h"
+#include "party_member_flags_has_suit.h"
+#include "party_member_flags_only_playables.h"
 #include "party_member_id.h"
 #include "party_member_rating.h"
 #include "party_member_relation.h"
@@ -221,9 +224,6 @@ namespace doticu_skylib { namespace doticu_npcp {
         void    Remove_Suit(some<Member_Suit_Type_e> type);
 
         void    Evaluate_In_Parallel(std::mutex& parallel_lock);
-
-    public:
-        explicit operator Bool_t();
     };
 
 }}

@@ -12,7 +12,7 @@
 #include "intrinsic.h"
 #include "party_member_suit_template.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
 
     /*
     Armor_Set_t                 Set_Armor_Ancient_Falmer();
@@ -398,104 +398,104 @@ namespace doticu_npcp { namespace Party {
 
         suit_template.armor = Vector_t<Armor_Set_t(*)()>
         {
-            &skylib::Const::Armors::Set_Armor_Ancient_Falmer,
-            &skylib::Const::Armors::Set_Armor_Ancient_Falmer_Pauldronless,
+            &Const::Armors::Set_Armor_Ancient_Falmer,
+            &Const::Armors::Set_Armor_Ancient_Falmer_Pauldronless,
 
-            &skylib::Const::Armors::Set_Armor_Chitin_Light,
-            &skylib::Const::Armors::Set_Armor_Chitin_Light_Enchanted,
+            &Const::Armors::Set_Armor_Chitin_Light,
+            &Const::Armors::Set_Armor_Chitin_Light_Enchanted,
 
-            &skylib::Const::Armors::Set_Armor_Dawnguard_Light_Brown,
-            &skylib::Const::Armors::Set_Armor_Dawnguard_Light_Grey,
-            &skylib::Const::Armors::Set_Armor_Dawnguard_Light_Red,
+            &Const::Armors::Set_Armor_Dawnguard_Light_Brown,
+            &Const::Armors::Set_Armor_Dawnguard_Light_Grey,
+            &Const::Armors::Set_Armor_Dawnguard_Light_Red,
 
-            &skylib::Const::Armors::Set_Armor_Dragonscale,
-            &skylib::Const::Armors::Set_Armor_Dragonscale_Enchanted,
+            &Const::Armors::Set_Armor_Dragonscale,
+            &Const::Armors::Set_Armor_Dragonscale_Enchanted,
 
-            &skylib::Const::Armors::Set_Armor_Elven,
-            &skylib::Const::Armors::Set_Armor_Elven_Enchanted,
-            &skylib::Const::Armors::Set_Armor_Elven_Pauldronless,
-            &skylib::Const::Armors::Set_Armor_Elven_Pauldronless_Enchanted,
+            &Const::Armors::Set_Armor_Elven,
+            &Const::Armors::Set_Armor_Elven_Enchanted,
+            &Const::Armors::Set_Armor_Elven_Pauldronless,
+            &Const::Armors::Set_Armor_Elven_Pauldronless_Enchanted,
 
-            &skylib::Const::Armors::Set_Armor_Forsworn,
-            &skylib::Const::Armors::Set_Armor_Forsworn_Old_Gods,
+            &Const::Armors::Set_Armor_Forsworn,
+            &Const::Armors::Set_Armor_Forsworn_Old_Gods,
 
-            &skylib::Const::Armors::Set_Armor_Fur,
-            &skylib::Const::Armors::Set_Armor_Fur_Topless,
-            &skylib::Const::Armors::Set_Armor_Fur_Topless_Pauldron,
-            &skylib::Const::Armors::Set_Armor_Fur_Saviors_Hide,
-            &skylib::Const::Armors::Set_Armor_Fur_Sleeveless,
+            &Const::Armors::Set_Armor_Fur,
+            &Const::Armors::Set_Armor_Fur_Topless,
+            &Const::Armors::Set_Armor_Fur_Topless_Pauldron,
+            &Const::Armors::Set_Armor_Fur_Saviors_Hide,
+            &Const::Armors::Set_Armor_Fur_Sleeveless,
 
-            &skylib::Const::Armors::Set_Armor_Hide,
-            &skylib::Const::Armors::Set_Armor_Hide_Enchanted,
-            &skylib::Const::Armors::Set_Armor_Hide_Predators_Grace,
-            &skylib::Const::Armors::Set_Armor_Hide_Predators_Grace_Enchanted,
-            &skylib::Const::Armors::Set_Armor_Hide_Studded,
-            &skylib::Const::Armors::Set_Armor_Hide_Studded_Enchanted,
+            &Const::Armors::Set_Armor_Hide,
+            &Const::Armors::Set_Armor_Hide_Enchanted,
+            &Const::Armors::Set_Armor_Hide_Predators_Grace,
+            &Const::Armors::Set_Armor_Hide_Predators_Grace_Enchanted,
+            &Const::Armors::Set_Armor_Hide_Studded,
+            &Const::Armors::Set_Armor_Hide_Studded_Enchanted,
 
-            &skylib::Const::Armors::Set_Armor_Imperial_Light,
-            &skylib::Const::Armors::Set_Armor_Imperial_Light_Enchanted,
-            &skylib::Const::Armors::Set_Armor_Imperial_Light_Studded,
-            &skylib::Const::Armors::Set_Armor_Imperial_Light_Studded_Enchanted,
+            &Const::Armors::Set_Armor_Imperial_Light,
+            &Const::Armors::Set_Armor_Imperial_Light_Enchanted,
+            &Const::Armors::Set_Armor_Imperial_Light_Studded,
+            &Const::Armors::Set_Armor_Imperial_Light_Studded_Enchanted,
 
-            &skylib::Const::Armors::Set_Armor_Leather,
-            &skylib::Const::Armors::Set_Armor_Leather_Enchanted,
+            &Const::Armors::Set_Armor_Leather,
+            &Const::Armors::Set_Armor_Leather_Enchanted,
 
-            &skylib::Const::Armors::Set_Armor_Morag_Tong,
+            &Const::Armors::Set_Armor_Morag_Tong,
 
-            &skylib::Const::Armors::Set_Armor_Nightingale_Reward,
-            &skylib::Const::Armors::Set_Armor_Nightingale_Reward_1,
-            &skylib::Const::Armors::Set_Armor_Nightingale_Reward_2,
-            &skylib::Const::Armors::Set_Armor_Nightingale_Reward_3,
+            &Const::Armors::Set_Armor_Nightingale_Reward,
+            &Const::Armors::Set_Armor_Nightingale_Reward_1,
+            &Const::Armors::Set_Armor_Nightingale_Reward_2,
+            &Const::Armors::Set_Armor_Nightingale_Reward_3,
 
-            &skylib::Const::Armors::Set_Armor_Penitus_Oculatus,
+            &Const::Armors::Set_Armor_Penitus_Oculatus,
 
-            &skylib::Const::Armors::Set_Armor_Scaled,
-            &skylib::Const::Armors::Set_Armor_Scaled_Enchanted,
-            &skylib::Const::Armors::Set_Armor_Scaled_Horned,
-            &skylib::Const::Armors::Set_Armor_Scaled_Horned_Enchanted,
+            &Const::Armors::Set_Armor_Scaled,
+            &Const::Armors::Set_Armor_Scaled_Enchanted,
+            &Const::Armors::Set_Armor_Scaled_Horned,
+            &Const::Armors::Set_Armor_Scaled_Horned_Enchanted,
 
-            &skylib::Const::Armors::Set_Armor_Shrouded,
-            &skylib::Const::Armors::Set_Armor_Shrouded_Ancient,
-            &skylib::Const::Armors::Set_Armor_Shrouded_Maskless,
-            &skylib::Const::Armors::Set_Armor_Shrouded_Short_Sleeved,
-            &skylib::Const::Armors::Set_Armor_Shrouded_Tumblerbane,
-            &skylib::Const::Armors::Set_Armor_Shrouded_Worn,
+            &Const::Armors::Set_Armor_Shrouded,
+            &Const::Armors::Set_Armor_Shrouded_Ancient,
+            &Const::Armors::Set_Armor_Shrouded_Maskless,
+            &Const::Armors::Set_Armor_Shrouded_Short_Sleeved,
+            &Const::Armors::Set_Armor_Shrouded_Tumblerbane,
+            &Const::Armors::Set_Armor_Shrouded_Worn,
 
-            &skylib::Const::Armors::Set_Armor_Stalhrim_Light,
-            &skylib::Const::Armors::Set_Armor_Stalhrim_Light_Enchanted,
-            &skylib::Const::Armors::Set_Armor_Stalhrim_Light_Deathbrand,
-            &skylib::Const::Armors::Set_Armor_Stalhrim_Light_Deathbrand_Enchanted,
+            &Const::Armors::Set_Armor_Stalhrim_Light,
+            &Const::Armors::Set_Armor_Stalhrim_Light_Enchanted,
+            &Const::Armors::Set_Armor_Stalhrim_Light_Deathbrand,
+            &Const::Armors::Set_Armor_Stalhrim_Light_Deathbrand_Enchanted,
 
-            &skylib::Const::Armors::Set_Armor_Stormcloak_Officer,
+            &Const::Armors::Set_Armor_Stormcloak_Officer,
 
-            &skylib::Const::Armors::Set_Armor_Thieves_Guild,
-            &skylib::Const::Armors::Set_Armor_Thieves_Guild_Alternate,
-            &skylib::Const::Armors::Set_Armor_Thieves_Guild_Blackguard,
-            &skylib::Const::Armors::Set_Armor_Thieves_Guild_Improved,
-            &skylib::Const::Armors::Set_Armor_Thieves_Guild_Karliah,
-            &skylib::Const::Armors::Set_Armor_Thieves_Guild_Master,
-            &skylib::Const::Armors::Set_Armor_Thieves_Guild_Torturer,
-            &skylib::Const::Armors::Set_Armor_Thieves_Guild_Variant,
+            &Const::Armors::Set_Armor_Thieves_Guild,
+            &Const::Armors::Set_Armor_Thieves_Guild_Alternate,
+            &Const::Armors::Set_Armor_Thieves_Guild_Blackguard,
+            &Const::Armors::Set_Armor_Thieves_Guild_Improved,
+            &Const::Armors::Set_Armor_Thieves_Guild_Karliah,
+            &Const::Armors::Set_Armor_Thieves_Guild_Master,
+            &Const::Armors::Set_Armor_Thieves_Guild_Torturer,
+            &Const::Armors::Set_Armor_Thieves_Guild_Variant,
 
-            &skylib::Const::Armors::Set_Armor_Tsun,
+            &Const::Armors::Set_Armor_Tsun,
 
-            &skylib::Const::Armors::Set_Armor_Vampire_Black,
-            &skylib::Const::Armors::Set_Armor_Vampire_Black_Enchanted,
-            &skylib::Const::Armors::Set_Armor_Vampire_Grey,
-            &skylib::Const::Armors::Set_Armor_Vampire_Grey_Enchanted,
-            &skylib::Const::Armors::Set_Armor_Vampire_Red,
-            &skylib::Const::Armors::Set_Armor_Vampire_Red_Enchanted,
-            &skylib::Const::Armors::Set_Armor_Vampire_Royal,
-            &skylib::Const::Armors::Set_Armor_Vampire_Royal_Serana,
-            &skylib::Const::Armors::Set_Armor_Vampire_Royal_Valerica,
+            &Const::Armors::Set_Armor_Vampire_Black,
+            &Const::Armors::Set_Armor_Vampire_Black_Enchanted,
+            &Const::Armors::Set_Armor_Vampire_Grey,
+            &Const::Armors::Set_Armor_Vampire_Grey_Enchanted,
+            &Const::Armors::Set_Armor_Vampire_Red,
+            &Const::Armors::Set_Armor_Vampire_Red_Enchanted,
+            &Const::Armors::Set_Armor_Vampire_Royal,
+            &Const::Armors::Set_Armor_Vampire_Royal_Serana,
+            &Const::Armors::Set_Armor_Vampire_Royal_Valerica,
         }.Random()();
 
-        if (skylib::Math_t::Random_Bool()) {
-            suit_template.weapon_a = skylib::Const::Weapons::Bow().Random();
-            suit_template.ammo = skylib::Const::Ammos::Arrow().Random();
+        if (Math_t::Random_Bool()) {
+            suit_template.weapon_a = Const::Weapons::Bow().Random();
+            suit_template.ammo = Const::Ammos::Arrow().Random();
         } else {
-            suit_template.weapon_a = skylib::Const::Weapons::Crossbow().Random();
-            suit_template.ammo = skylib::Const::Ammos::Bolt().Random();
+            suit_template.weapon_a = Const::Weapons::Crossbow().Random();
+            suit_template.ammo = Const::Ammos::Bolt().Random();
         }
 
         return suit_template;
@@ -507,90 +507,90 @@ namespace doticu_npcp { namespace Party {
 
         suit_template.armor = Vector_t<Armor_Set_t(*)()>
         {
-            &skylib::Const::Armors::Set_Clothes_Bar_Keeper_Bright,
-            &skylib::Const::Armors::Set_Clothes_Bar_Keeper_Dark,
+            &Const::Armors::Set_Clothes_Bar_Keeper_Bright,
+            &Const::Armors::Set_Clothes_Bar_Keeper_Dark,
 
-            &skylib::Const::Armors::Set_Clothes_Black_Smith_Grey,
-            &skylib::Const::Armors::Set_Clothes_Black_Smith_Red,
+            &Const::Armors::Set_Clothes_Black_Smith_Grey,
+            &Const::Armors::Set_Clothes_Black_Smith_Red,
 
-            &skylib::Const::Armors::Set_Clothes_Blind_Priest,
+            &Const::Armors::Set_Clothes_Blind_Priest,
 
-            &skylib::Const::Armors::Set_Clothes_Dunmer_Blue,
-            &skylib::Const::Armors::Set_Clothes_Dunmer_Blue_Hooded,
-            &skylib::Const::Armors::Set_Clothes_Dunmer_Brown,
-            &skylib::Const::Armors::Set_Clothes_Dunmer_Brown_Hooded,
-            &skylib::Const::Armors::Set_Clothes_Dunmer_Red,
-            &skylib::Const::Armors::Set_Clothes_Dunmer_Red_Hooded,
+            &Const::Armors::Set_Clothes_Dunmer_Blue,
+            &Const::Armors::Set_Clothes_Dunmer_Blue_Hooded,
+            &Const::Armors::Set_Clothes_Dunmer_Brown,
+            &Const::Armors::Set_Clothes_Dunmer_Brown_Hooded,
+            &Const::Armors::Set_Clothes_Dunmer_Red,
+            &Const::Armors::Set_Clothes_Dunmer_Red_Hooded,
 
-            &skylib::Const::Armors::Set_Clothes_Emperor,
+            &Const::Armors::Set_Clothes_Emperor,
 
-            &skylib::Const::Armors::Set_Clothes_Farm_A,
-            &skylib::Const::Armors::Set_Clothes_Farm_B_Bright,
-            &skylib::Const::Armors::Set_Clothes_Farm_B_Dark,
-            &skylib::Const::Armors::Set_Clothes_Farm_C_Bright,
-            &skylib::Const::Armors::Set_Clothes_Farm_C_Bright_Hooded,
-            &skylib::Const::Armors::Set_Clothes_Farm_C_Dark,
-            &skylib::Const::Armors::Set_Clothes_Farm_D_Bright,
-            &skylib::Const::Armors::Set_Clothes_Farm_D_Dark,
+            &Const::Armors::Set_Clothes_Farm_A,
+            &Const::Armors::Set_Clothes_Farm_B_Bright,
+            &Const::Armors::Set_Clothes_Farm_B_Dark,
+            &Const::Armors::Set_Clothes_Farm_C_Bright,
+            &Const::Armors::Set_Clothes_Farm_C_Bright_Hooded,
+            &Const::Armors::Set_Clothes_Farm_C_Dark,
+            &Const::Armors::Set_Clothes_Farm_D_Bright,
+            &Const::Armors::Set_Clothes_Farm_D_Dark,
 
-            &skylib::Const::Armors::Set_Clothes_Fine_A_Blue,
-            &skylib::Const::Armors::Set_Clothes_Fine_A_Green,
-            &skylib::Const::Armors::Set_Clothes_Fine_B_Blue,
-            &skylib::Const::Armors::Set_Clothes_Fine_B_Red,
+            &Const::Armors::Set_Clothes_Fine_A_Blue,
+            &Const::Armors::Set_Clothes_Fine_A_Green,
+            &Const::Armors::Set_Clothes_Fine_B_Blue,
+            &Const::Armors::Set_Clothes_Fine_B_Red,
 
-            &skylib::Const::Armors::Set_Clothes_Jarl_A_Blue,
-            &skylib::Const::Armors::Set_Clothes_Jarl_A_Green,
-            &skylib::Const::Armors::Set_Clothes_Jarl_A_Yellow,
-            &skylib::Const::Armors::Set_Clothes_Jarl_B,
-            &skylib::Const::Armors::Set_Clothes_Jarl_C_Bright,
-            &skylib::Const::Armors::Set_Clothes_Jarl_C_Dark,
+            &Const::Armors::Set_Clothes_Jarl_A_Blue,
+            &Const::Armors::Set_Clothes_Jarl_A_Green,
+            &Const::Armors::Set_Clothes_Jarl_A_Yellow,
+            &Const::Armors::Set_Clothes_Jarl_B,
+            &Const::Armors::Set_Clothes_Jarl_C_Bright,
+            &Const::Armors::Set_Clothes_Jarl_C_Dark,
 
-            &skylib::Const::Armors::Set_Clothes_Mage_Adept,
-            &skylib::Const::Armors::Set_Clothes_Mage_Adept_Enchanted,
-            &skylib::Const::Armors::Set_Clothes_Mage_Apprentice,
-            &skylib::Const::Armors::Set_Clothes_Mage_Apprentice_Enchanted,
-            &skylib::Const::Armors::Set_Clothes_Mage_Archmage,
-            &skylib::Const::Armors::Set_Clothes_Mage_Archmage_Hooded,
-            &skylib::Const::Armors::Set_Clothes_Mage_Expert,
-            &skylib::Const::Armors::Set_Clothes_Mage_Expert_Enchanted,
-            &skylib::Const::Armors::Set_Clothes_Mage_Master,
-            &skylib::Const::Armors::Set_Clothes_Mage_Master_Enchanted,
-            &skylib::Const::Armors::Set_Clothes_Mage_Novice,
-            &skylib::Const::Armors::Set_Clothes_Mage_Novice_Enchanted,
+            &Const::Armors::Set_Clothes_Mage_Adept,
+            &Const::Armors::Set_Clothes_Mage_Adept_Enchanted,
+            &Const::Armors::Set_Clothes_Mage_Apprentice,
+            &Const::Armors::Set_Clothes_Mage_Apprentice_Enchanted,
+            &Const::Armors::Set_Clothes_Mage_Archmage,
+            &Const::Armors::Set_Clothes_Mage_Archmage_Hooded,
+            &Const::Armors::Set_Clothes_Mage_Expert,
+            &Const::Armors::Set_Clothes_Mage_Expert_Enchanted,
+            &Const::Armors::Set_Clothes_Mage_Master,
+            &Const::Armors::Set_Clothes_Mage_Master_Enchanted,
+            &Const::Armors::Set_Clothes_Mage_Novice,
+            &Const::Armors::Set_Clothes_Mage_Novice_Enchanted,
 
-            &skylib::Const::Armors::Set_Clothes_Merchant_Bright,
-            &skylib::Const::Armors::Set_Clothes_Merchant_Dark,
+            &Const::Armors::Set_Clothes_Merchant_Bright,
+            &Const::Armors::Set_Clothes_Merchant_Dark,
 
-            &skylib::Const::Armors::Set_Clothes_Miner_Bright,
-            &skylib::Const::Armors::Set_Clothes_Miner_Dark,
+            &Const::Armors::Set_Clothes_Miner_Bright,
+            &Const::Armors::Set_Clothes_Miner_Dark,
 
-            &skylib::Const::Armors::Set_Clothes_Monk,
-            &skylib::Const::Armors::Set_Clothes_Monk_Hooded,
+            &Const::Armors::Set_Clothes_Monk,
+            &Const::Armors::Set_Clothes_Monk_Hooded,
 
-            &skylib::Const::Armors::Set_Clothes_Mourner,
+            &Const::Armors::Set_Clothes_Mourner,
 
-            &skylib::Const::Armors::Set_Clothes_Redguard_Bright,
-            &skylib::Const::Armors::Set_Clothes_Redguard_Dark,
+            &Const::Armors::Set_Clothes_Redguard_Bright,
+            &Const::Armors::Set_Clothes_Redguard_Dark,
 
-            &skylib::Const::Armors::Set_Clothes_Robes_Black,
-            &skylib::Const::Armors::Set_Clothes_Robes_Black_Hooded,
-            &skylib::Const::Armors::Set_Clothes_Robes_Blue,
-            &skylib::Const::Armors::Set_Clothes_Robes_Blue_Hooded,
-            &skylib::Const::Armors::Set_Clothes_Robes_Blue_Hooded_Enchanted,
-            &skylib::Const::Armors::Set_Clothes_Robes_Brown,
-            &skylib::Const::Armors::Set_Clothes_Robes_Brown_Hooded,
-            &skylib::Const::Armors::Set_Clothes_Robes_Green,
-            &skylib::Const::Armors::Set_Clothes_Robes_Green_Hooded,
-            &skylib::Const::Armors::Set_Clothes_Robes_Grey,
-            &skylib::Const::Armors::Set_Clothes_Robes_Grey_Hooded,
-            &skylib::Const::Armors::Set_Clothes_Robes_Red,
-            &skylib::Const::Armors::Set_Clothes_Robes_Red_Hooded,
+            &Const::Armors::Set_Clothes_Robes_Black,
+            &Const::Armors::Set_Clothes_Robes_Black_Hooded,
+            &Const::Armors::Set_Clothes_Robes_Blue,
+            &Const::Armors::Set_Clothes_Robes_Blue_Hooded,
+            &Const::Armors::Set_Clothes_Robes_Blue_Hooded_Enchanted,
+            &Const::Armors::Set_Clothes_Robes_Brown,
+            &Const::Armors::Set_Clothes_Robes_Brown_Hooded,
+            &Const::Armors::Set_Clothes_Robes_Green,
+            &Const::Armors::Set_Clothes_Robes_Green_Hooded,
+            &Const::Armors::Set_Clothes_Robes_Grey,
+            &Const::Armors::Set_Clothes_Robes_Grey_Hooded,
+            &Const::Armors::Set_Clothes_Robes_Red,
+            &Const::Armors::Set_Clothes_Robes_Red_Hooded,
 
-            &skylib::Const::Armors::Set_Clothes_Wench,
+            &Const::Armors::Set_Clothes_Wench,
         }.Random()();
 
-        if (skylib::Math_t::Random_Bool()) {
-            suit_template.weapon_a = skylib::Const::Weapons::Dagger().Random();
+        if (Math_t::Random_Bool()) {
+            suit_template.weapon_a = Const::Weapons::Dagger().Random();
         }
 
         return suit_template;
@@ -649,7 +649,7 @@ namespace doticu_npcp { namespace Party {
     {
         Member_Suit_Template_t suit_template;
 
-        suit_template.armor = skylib::Const::Armors::Set_Clothes_Farm_C_Dark();
+        suit_template.armor = Const::Armors::Set_Clothes_Farm_C_Dark();
 
         return suit_template;
     }
@@ -693,14 +693,14 @@ namespace doticu_npcp { namespace Party {
     {
         Member_Suit_Template_t suit_template;
 
-        suit_template.armor = skylib::Const::Armors::Random_Set_Unweighted();
+        suit_template.armor = Const::Armors::Random_Set_Unweighted();
 
-        suit_template.weapon_a = skylib::Const::Weapons::All().Random();
+        suit_template.weapon_a = Const::Weapons::All().Random();
 
         if (suit_template.weapon_a->Is_Bow()) {
-            suit_template.ammo = skylib::Const::Ammos::Arrow().Random();
+            suit_template.ammo = Const::Ammos::Arrow().Random();
         } else if (suit_template.weapon_a->Is_Crossbow()) {
-            suit_template.ammo = skylib::Const::Ammos::Bolt().Random();
+            suit_template.ammo = Const::Ammos::Bolt().Random();
         }
 
         return suit_template;
@@ -740,37 +740,37 @@ namespace doticu_npcp { namespace Party {
 
         suit_template.armor = Vector_t<Armor_Set_t(*)()>
         {
-            &skylib::Const::Armors::Set_Armor_Falmer,
+            &Const::Armors::Set_Armor_Falmer,
 
-            &skylib::Const::Armors::Set_Armor_Forsworn,
-            &skylib::Const::Armors::Set_Armor_Forsworn_Old_Gods,
+            &Const::Armors::Set_Armor_Forsworn,
+            &Const::Armors::Set_Armor_Forsworn_Old_Gods,
 
-            &skylib::Const::Armors::Set_Armor_Fur_Topless,
+            &Const::Armors::Set_Armor_Fur_Topless,
 
-            &skylib::Const::Armors::Set_Clothes_Bandages,
+            &Const::Armors::Set_Clothes_Bandages,
 
-            &skylib::Const::Armors::Set_Clothes_Beggar,
+            &Const::Armors::Set_Clothes_Beggar,
 
-            &skylib::Const::Armors::Set_Clothes_Executionee_Bright,
-            &skylib::Const::Armors::Set_Clothes_Executionee_Dark,
+            &Const::Armors::Set_Clothes_Executionee_Bright,
+            &Const::Armors::Set_Clothes_Executionee_Dark,
 
-            &skylib::Const::Armors::Set_Clothes_Nocturnal,
+            &Const::Armors::Set_Clothes_Nocturnal,
 
-            &skylib::Const::Armors::Set_Clothes_Prisoner,
-            &skylib::Const::Armors::Set_Clothes_Prisoner_Bloody,
-            &skylib::Const::Armors::Set_Clothes_Prisoner_Shirted,
+            &Const::Armors::Set_Clothes_Prisoner,
+            &Const::Armors::Set_Clothes_Prisoner_Bloody,
+            &Const::Armors::Set_Clothes_Prisoner_Shirted,
 
-            &skylib::Const::Armors::Set_Clothes_Wedding_Dress,
+            &Const::Armors::Set_Clothes_Wedding_Dress,
 
-            &skylib::Const::Armors::Set_Clothes_Wench,
+            &Const::Armors::Set_Clothes_Wench,
         }.Random()();
         suit_template.armor.forearm = none<Armor_t*>();
 
         suit_template.weapon_a = Vector_t<some<Weapon_t*>(*)()>
         {
-            &skylib::Const::Weapon::Dagger_Iron_Fork,
-            &skylib::Const::Weapon::Dagger_Iron_Knife,
-            &skylib::Const::Weapon::Dagger_Iron_Shiv,
+            &Const::Weapon::Dagger_Iron_Fork,
+            &Const::Weapon::Dagger_Iron_Knife,
+            &Const::Weapon::Dagger_Iron_Shiv,
         }.Random()();
 
         return suit_template;

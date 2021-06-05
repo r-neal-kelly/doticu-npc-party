@@ -5,13 +5,8 @@
 #pragma once
 
 #include <fstream>
-#include <mutex>
-
-#include "doticu_skylib/enum_script_type.h"
 
 #include "consts.h"
-#include "intrinsic.h"
-#include "party.h"
 #include "party_member.h"
 #include "party_member_alpha.h"
 #include "party_member_clone_suit_type.h"

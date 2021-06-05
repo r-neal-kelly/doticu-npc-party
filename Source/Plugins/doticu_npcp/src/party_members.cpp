@@ -29,7 +29,8 @@
 #include "doticu_skylib/weapon.h"
 
 #include "consts.h"
-#include "npcp.h"
+#include "npcp.inl"
+#include "party.h"
 #include "party_members.h"
 #include "party_member_suitcase.h"
 
@@ -243,7 +244,7 @@ namespace doticu_skylib { namespace doticu_npcp {
                     Members_t& members = NPCP.Party().Members();
                     for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
                         Member_t& member = members.Member(idx);
-                        if (member) {
+                        if (member.Is_Active()) {
                             members.Alias(idx)->Fill(member.Actor(), none<Virtual::Callback_i*>());
                         }
                     }
@@ -270,7 +271,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         some<Quest_t*> quest = Quest();
         for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
             Member_t& member = Member(idx);
-            if (member) {
+            if (member.Is_Active()) {
                 member.On_Update();
                 if (!quest->Has_Filled_Alias(idx)) {
                     Alias(idx)->Fill(member.Actor(), none<Virtual::Callback_i*>());
@@ -709,7 +710,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
             Member_t& member = Member(idx);
-            if (member && member.Actor() == actor) {
+            if (member.Is_Active() && member.Actor() == actor) {
                 return idx;
             }
         }
@@ -720,7 +721,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
             Member_t& member = Member(idx);
-            if (!member) {
+            if (!member.Is_Active()) {
                 return idx;
             }
         }
@@ -731,7 +732,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         size_t count = 0;
         for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
-            if (Member(idx)) {
+            if (Member(idx).Is_Active()) {
                 count += 1;
             }
         }
@@ -768,11 +769,11 @@ namespace doticu_skylib { namespace doticu_npcp {
                 if (base) {
                     maybe<Actor_t*> clone = Actor_t::Create(base(), true, true, true);
                     if (clone) {
-                        Member_t& member = Member(id);
+                        Member_t& member = Member(id());
                         member.~Member_t();
-                        new (&member) Member_t(id, clone(), true);
-                        if (member) {
-                            Alias(id)->Fill(member.Actor(), none<Virtual::Callback_i*>());
+                        new (&member) Member_t(id(), clone(), true);
+                        if (member.Is_Active()) {
+                            Alias(id())->Fill(member.Actor(), none<Virtual::Callback_i*>());
                             return &member;
                         } else {
                             return none<Member_t*>();
@@ -789,11 +790,11 @@ namespace doticu_skylib { namespace doticu_npcp {
         } else if (!Has(actor)) {
             maybe<Member_ID_t> id = Inactive_Member_ID();
             if (id) {
-                Member_t& member = Member(id);
+                Member_t& member = Member(id());
                 member.~Member_t();
-                new (&member) Member_t(id, actor, false);
-                if (member) {
-                    Alias(id)->Fill(member.Actor(), none<Virtual::Callback_i*>());
+                new (&member) Member_t(id(), actor, false);
+                if (member.Is_Active()) {
+                    Alias(id())->Fill(member.Actor(), none<Virtual::Callback_i*>());
                     return &member;
                 } else {
                     return none<Member_t*>();
@@ -834,7 +835,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         maybe<Member_ID_t> id = Active_Member_ID(actor);
         if (id) {
-            return Remove(id);
+            return Remove(id());
         } else {
             return false;
         }
@@ -846,7 +847,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
 
     // this basically needs to go in Member_t, except the crap that can be taken out.
-    static void Add_Member(some<Members_t*> self, Member_ID_t member_id, some<Actor_t*> actor, some<Actor_Base_t*> base)
+    /*static void Add_Member(some<Members_t*> self, Member_ID_t member_id, some<Actor_t*> actor, some<Actor_Base_t*> base)
     {
         SKYLIB_ASSERT_SOME(self);
         SKYLIB_ASSERT_SOME(actor);
@@ -890,6 +891,6 @@ namespace doticu_skylib { namespace doticu_npcp {
                 member.Add_Suit(default_suit_type());
             }
         }
-    }
+    }*/
 
 }}

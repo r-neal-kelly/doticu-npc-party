@@ -8,7 +8,7 @@
 #include "party_settler_flags_sandboxer.h"
 #include "party_settler_value_index_sandboxer.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
 
     class Settler_Sandboxer_t :
         public Settler_t

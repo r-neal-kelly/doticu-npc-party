@@ -33,7 +33,7 @@
 #include "intrinsic.h"
 #include "party_settlers.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
     /*
     template <typename T>
     inline some<Package_t*> Settlers_t::Package(some<Settler_ID_t> valid_settler_id)

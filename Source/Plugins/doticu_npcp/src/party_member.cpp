@@ -7,6 +7,7 @@
 #include "doticu_skylib/ammo.h"
 #include "doticu_skylib/armor.h"
 #include "doticu_skylib/cell.h"
+#include "doticu_skylib/combat_style.h"
 #include "doticu_skylib/const_actors.h"
 #include "doticu_skylib/const_actor_bases.h"
 #include "doticu_skylib/container.h"
@@ -14,7 +15,9 @@
 #include "doticu_skylib/misc.h"
 #include "doticu_skylib/outfit.h"
 #include "doticu_skylib/reference.h"
+#include "doticu_skylib/spell.h"
 #include "doticu_skylib/virtual_macros.h"
+#include "doticu_skylib/voice_type.h"
 #include "doticu_skylib/weapon.h"
 
 #include "npcp.inl"
@@ -507,7 +510,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT(Is_Active());
 
-        return Save().id;
+        return Save().id();
     }
 
     some<Alias_Reference_t*> Member_t::Alias()
@@ -718,7 +721,7 @@ namespace doticu_skylib { namespace doticu_npcp {
                 return Member_Suit_Type_e::HOME;
             } else if (location && Has_Suit(Member_Suit_Type_e::SETTLEMENT) && location->Is_Likely_City_Or_Town()) {
                 return Member_Suit_Type_e::SETTLEMENT;
-            } else if (Has_Suit(Member_Suit_Type_e::FOLLOWER) && Party().Is_Follower(ID())) {
+            /*} else if (Has_Suit(Member_Suit_Type_e::FOLLOWER) && Party().Is_Follower(ID())) {
                 return Member_Suit_Type_e::FOLLOWER;
             } else if (Has_Suit(Member_Suit_Type_e::GUARD) && Party().Is_Active_Guard(ID())) {
                 return Member_Suit_Type_e::GUARD;
@@ -729,7 +732,7 @@ namespace doticu_skylib { namespace doticu_npcp {
             } else if (Has_Suit(Member_Suit_Type_e::SLEEPER) && Party().Is_Active_Sleeper(ID())) {
                 return Member_Suit_Type_e::SLEEPER;
             } else if (Has_Suit(Member_Suit_Type_e::SANDBOXER) && Party().Is_Active_Sandboxer(ID())) {
-                return Member_Suit_Type_e::SANDBOXER;
+                return Member_Suit_Type_e::SANDBOXER;*/
             } else if (location && Has_Suit(Member_Suit_Type_e::DANGEROUS) && location->Is_Likely_Dangerous()) {
                 return Member_Suit_Type_e::DANGEROUS;
             } else if (location && Has_Suit(Member_Suit_Type_e::CIVILIZED) && location->Is_Likely_Civilized()) {
@@ -958,15 +961,15 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         Member_Suit_Buffer_t buffer;
 
-        maybe<Armor_t*> aura = suit_template.armor.Aura(Members().Fill_Suit_Aura_Percent());
-        maybe<Armor_t*> body = suit_template.armor.Body(Members().Fill_Suit_Body_Percent());
-        maybe<Armor_t*> feet = suit_template.armor.Feet(Members().Fill_Suit_Feet_Percent());
-        maybe<Armor_t*> finger = suit_template.armor.Finger(Members().Fill_Suit_Finger_Percent());
-        maybe<Armor_t*> forearm = suit_template.armor.Forearm(Members().Fill_Suit_Forearm_Percent());
-        maybe<Armor_t*> forehead = suit_template.armor.Forehead(Members().Fill_Suit_Forehead_Percent());
-        maybe<Armor_t*> hands = suit_template.armor.Hands(Members().Fill_Suit_Hands_Percent());
-        maybe<Armor_t*> head = suit_template.armor.Head(Members().Fill_Suit_Head_Percent());
-        maybe<Armor_t*> neck = suit_template.armor.Neck(Members().Fill_Suit_Neck_Percent());
+        maybe<Armor_t*> aura = suit_template.armor.Aura(Members().Fill_Suit_Aura_Percent()());
+        maybe<Armor_t*> body = suit_template.armor.Body(Members().Fill_Suit_Body_Percent()());
+        maybe<Armor_t*> feet = suit_template.armor.Feet(Members().Fill_Suit_Feet_Percent()());
+        maybe<Armor_t*> finger = suit_template.armor.Finger(Members().Fill_Suit_Finger_Percent()());
+        maybe<Armor_t*> forearm = suit_template.armor.Forearm(Members().Fill_Suit_Forearm_Percent()());
+        maybe<Armor_t*> forehead = suit_template.armor.Forehead(Members().Fill_Suit_Forehead_Percent()());
+        maybe<Armor_t*> hands = suit_template.armor.Hands(Members().Fill_Suit_Hands_Percent()());
+        maybe<Armor_t*> head = suit_template.armor.Head(Members().Fill_Suit_Head_Percent()());
+        maybe<Armor_t*> neck = suit_template.armor.Neck(Members().Fill_Suit_Neck_Percent()());
 
         if (aura) buffer.reference->Add_Item(aura(), none<Extra_List_t*>(), 1, none<Reference_t*>());
         if (body) buffer.reference->Add_Item(body(), none<Extra_List_t*>(), 1, none<Reference_t*>());
@@ -1001,7 +1004,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
 
         if (Has_Suit(type)) {
-            Suitcase()->Remove_Suit(Members().Do_Unfill_Suits_To_Pack() ? Pack()() : none<Reference_t*>()(), type);
+            Suitcase()->Remove_Suit(Members().Do_Unfill_Suits_Into_Pack() ? Pack()() : none<Reference_t*>()(), type);
             Has_Suit(type, false);
         }
     }
@@ -1070,7 +1073,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         custom_base->Combat_Style(Combat_Style());
 
-        maybe<Spell_t*> ghost_ability = Ghost_Ability();
+        /*maybe<Spell_t*> ghost_ability = Ghost_Ability();
         for (size_t idx = 0, end = members.vanilla_ghost_abilities.size(); idx < end; idx += 1) {
             some<Spell_t*> vanilla_ghost_ability = members.vanilla_ghost_abilities[idx];
             if (vanilla_ghost_ability != ghost_ability) {
@@ -1079,7 +1082,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         }
         if (ghost_ability) {
             spells_to_add.push_back(ghost_ability());
-        }
+        }*/
 
         maybe<Outfit_t*> outfit = Outfit();
         maybe<Outfit_t*> custom_outfit = custom_base->Default_Outfit();
@@ -1102,14 +1105,14 @@ namespace doticu_skylib { namespace doticu_npcp {
                         suitcase->Apply_Unto(actor,
                                              suit_type(),
                                              Member_Suitcase_t::filter_out_blank_or_token_or_unplayable_objects,
-                                             members.Do_Fill_Suits_Strictly(),
-                                             members.Do_Unfill_Suits_To_Pack() ? Pack()() : none<Reference_t*>()());
+                                             members.Do_Suits_Strictly(),
+                                             members.Do_Unfill_Suits_Into_Pack() ? Pack()() : none<Reference_t*>()());
                     } else {
                         suitcase->Apply_Unto(actor,
                                              suit_type(),
                                              Member_Suitcase_t::filter_out_blank_or_token_objects,
-                                             members.Do_Fill_Suits_Strictly(),
-                                             members.Do_Unfill_Suits_To_Pack() ? Pack()() : none<Reference_t*>()());
+                                             members.Do_Suits_Strictly(),
+                                             members.Do_Unfill_Suits_Into_Pack() ? Pack()() : none<Reference_t*>()());
                     }
                 }
             }
@@ -1165,18 +1168,13 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         maybe<Actor_t*> combat_target = actor->Current_Combat_Target();
         if (combat_target) {
-            if (combat_target == Const::Actor::Player() || members.Has_Member(combat_target())) {// just check token to make it parallel
+            if (combat_target == Const::Actor::Player() || members.Has(combat_target())) {// just check token to make it parallel
                 // we need to handle aggression also, but that needs to be done along with other factors?
                 actor->Stop_Combat_And_Alarm();
                 actor->actor_flags_2.Unflag(Actor_Flags_2_e::IS_ANGRY_WITH_PLAYER);
                 Party().Update_AI(ID(), Member_Update_AI_e::RESET_AI);
             }
         }
-    }
-
-    Member_t::operator Bool_t()
-    {
-        return Is_Active();
     }
 
 }}

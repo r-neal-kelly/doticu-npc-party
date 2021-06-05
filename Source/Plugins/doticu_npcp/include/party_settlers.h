@@ -7,7 +7,6 @@
 #include <fstream>
 
 #include "consts.h"
-#include "intrinsic.h"
 #include "party.h"
 #include "party_member_id.h"
 #include "party_settler.h"
@@ -23,17 +22,30 @@
 #include "party_settler_sandboxer.h"
 #include "party_settler_sitter.h"
 #include "party_settler_sleeper.h"
-#include "party_settler_speed.h"
-#include "party_settler_time.h"
 #include "party_settler_time_am_pm.h"
-#include "party_settler_time_hour.h"
-#include "party_settler_time_minute.h"
 #include "party_settler_value_index.h"
 #include "party_settler_wander_distance.h"
 
+/*
+int[]               types               = none; determines how to interpret the data, and which data is used
+int[]               flags               = none; keep the is_enabled flag, so we can simply turn it off without deleting?
+
+ObjectReference[]   markers             = none
+int[]               radii               = none
+
+int[]               times               = none
+int[]               durations           = none
+int[]               speeds              = none
+
+int[]               attentions          = none
+int[]               wander_distances    = none
+
+ObjectReference[]   interactables       = none; bed for sleeper, chair for sitter, etc.
+*/
+
 namespace doticu_skylib { namespace doticu_npcp {
 
-    class Settlers_t
+    /*class Settlers_t
     {
     public:
         enum
@@ -124,60 +136,11 @@ namespace doticu_skylib { namespace doticu_npcp {
             ~Save_State();
 
         public:
-            some<V::Object_t*>                              Object();
-
-            V::Variable_tt<Vector_t<Int_t>>&                Sandboxer_Flags();
-            V::Variable_tt<Vector_t<Int_t>>&                Sleeper_Flags();
-            V::Variable_tt<Vector_t<Int_t>>&                Sitter_Flags();
-            V::Variable_tt<Vector_t<Int_t>>&                Eater_Flags();
-            V::Variable_tt<Vector_t<Int_t>>&                Guard_Flags();
-
-            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&  Sandboxer_Markers();
-            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&  Sleeper_Markers();
-            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&  Sitter_Markers();
-            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&  Eater_Markers();
-            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&  Guard_Markers();
-
-            V::Variable_tt<Vector_t<Int_t>>&                Sandboxer_Radii();
-            V::Variable_tt<Vector_t<Int_t>>&                Sleeper_Radii();
-            V::Variable_tt<Vector_t<Int_t>>&                Sitter_Radii();
-            V::Variable_tt<Vector_t<Int_t>>&                Eater_Radii();
-            V::Variable_tt<Vector_t<Int_t>>&                Guard_Radii();
-
-            V::Variable_tt<Vector_t<Int_t>>&                Sleeper_Times();
-            V::Variable_tt<Vector_t<Int_t>>&                Sitter_Times();
-            V::Variable_tt<Vector_t<Int_t>>&                Eater_Times();
-            V::Variable_tt<Vector_t<Int_t>>&                Guard_Times();
-
-            V::Variable_tt<Vector_t<Int_t>>&                Sleeper_Durations();
-            V::Variable_tt<Vector_t<Int_t>>&                Sitter_Durations();
-            V::Variable_tt<Vector_t<Int_t>>&                Eater_Durations();
-            V::Variable_tt<Vector_t<Int_t>>&                Guard_Durations();
-
-            V::Variable_tt<Vector_t<Int_t>>&                Sandboxer_Attentions();
-            V::Variable_tt<Vector_t<Int_t>>&                Sleeper_Attentions();
-            V::Variable_tt<Vector_t<Int_t>>&                Eater_Attentions();
-
-            V::Variable_tt<Vector_t<Int_t>>&                Sandboxer_Speeds();
-            V::Variable_tt<Vector_t<Int_t>>&                Sleeper_Speeds();
-            V::Variable_tt<Vector_t<Int_t>>&                Sitter_Speeds();
-            V::Variable_tt<Vector_t<Int_t>>&                Eater_Speeds();
-            V::Variable_tt<Vector_t<Int_t>>&                Guard_Speeds();
-
-            V::Variable_tt<Vector_t<Int_t>>&                Sandboxer_Wander_Distances();
-            V::Variable_tt<Vector_t<Int_t>>&                Sleeper_Wander_Distances();
-            V::Variable_tt<Vector_t<Int_t>>&                Eater_Wander_Distances();
-
-            V::Variable_tt<Vector_t<maybe<Reference_t*>>>&  Sleeper_Beds();
-
-        public:
             void    Read();
             void    Write();
         };
 
     public:
-        static String_t             Class_Name();
-        static some<V::Class_t*>    Class();
         static void                 Register_Me(some<V::Machine_t*> machine);
 
     public:
@@ -200,11 +163,6 @@ namespace doticu_skylib { namespace doticu_npcp {
         void    On_After_Load_Game(std::ifstream& file);
         void    On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update);
         void    On_Update();
-
-    public:
-        void    Before_Save();
-        void    After_Save();
-        void    Validate();
 
     public:
         Main_t&             Main();
@@ -451,7 +409,6 @@ namespace doticu_skylib { namespace doticu_npcp {
         template <typename T>
         Bool_t                                      Remove(some<Settler_ID_t> settler_id);
 
-        /*
         Bool_t  Is_Sandboxer(some<Member_ID_t> valid_member_id);
         Bool_t  Is_Sleeper(some<Member_ID_t> valid_member_id);
         Bool_t  Is_Sitter(some<Member_ID_t> valid_member_id);
@@ -463,7 +420,6 @@ namespace doticu_skylib { namespace doticu_npcp {
         Bool_t  Is_Active_Sitter(some<Member_ID_t> valid_member_id);
         Bool_t  Is_Active_Eater(some<Member_ID_t> valid_member_id);
         Bool_t  Is_Active_Guard(some<Member_ID_t> valid_member_id);
-        */
 
     public:
         void    Bool(some<Package_t*> package,
@@ -510,6 +466,6 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     public:
         void    Log(std::string indent = "");
-    };
+    };*/
 
 }}

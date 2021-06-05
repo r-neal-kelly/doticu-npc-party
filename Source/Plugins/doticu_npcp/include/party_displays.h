@@ -6,68 +6,70 @@
 
 #include <fstream>
 
-#include "doticu_skylib/enum_script_type.h"
-
 #include "consts.h"
 #include "intrinsic.h"
 #include "party.h"
+#include "party_display.h"
+#include "party_display_limit.h"
 
 namespace doticu_skylib { namespace doticu_npcp {
 
     class Displays_t
     {
     public:
-        enum
+        static constexpr size_t                         MAX_DISPLAYS    = Consts_t::NPCP::Int::MAX_DISPLAYS;
+
+        static constexpr Display_Limit_t::value_type    DEFAULT_LIMIT   = MAX_DISPLAYS;
+
+    public:
+        class Save_t
         {
-            SCRIPT_TYPE = Script_Type_e::QUEST,
+        public:
+            maybe<Display_Limit_t>  limit;
+
+        public:
+            Save_t();
+            Save_t(const Save_t& other) = delete;
+            Save_t(Save_t&& other) noexcept = delete;
+            Save_t& operator =(const Save_t& other) = delete;
+            Save_t& operator =(Save_t&& other) noexcept = delete;
+            ~Save_t();
+
+        public:
+            void    Write(std::ofstream& file);
+            void    Read(std::ifstream& file);
+        };
+
+        class State_t
+        {
+        public:
+            Save_t      save;
+
+            Display_t   displays[MAX_DISPLAYS];
+
+        public:
+            State_t();
+            State_t(const State_t& other) = delete;
+            State_t(State_t&& other) noexcept = delete;
+            State_t& operator =(const State_t& other) = delete;
+            State_t& operator =(State_t&& other) noexcept = delete;
+            ~State_t();
         };
 
     public:
-        static constexpr size_t MAX_DISPLAYS    = Consts_t::NPCP::Int::MAX_DISPLAYS;
+        static void     Register_Me(some<Virtual::Machine_t*> machine);
 
-        static constexpr size_t DEFAULT_LIMIT   = 8;
-
-    public:
-        class Save_State
-        {
-        public:
-            const some<Quest_t*>    quest;
-
-            u16                     limit;
-
-        public:
-            Save_State(const some<Quest_t*> quest);
-            Save_State(const Save_State& other)                 = delete;
-            Save_State(Save_State&& other) noexcept             = delete;
-            Save_State& operator =(const Save_State& other)     = delete;
-            Save_State& operator =(Save_State&& other) noexcept = delete;
-            ~Save_State();
-
-        public:
-            some<V::Object_t*>      Object();
-
-            V::Variable_tt<Int_t>&  Limit();
-
-        public:
-            void    Read();
-            void    Write();
-        };
+        static Party_t& Party();
 
     public:
-        static String_t             Class_Name();
-        static some<V::Class_t*>    Class();
-        static void                 Register_Me(some<V::Machine_t*> machine);
-
-    public:
-        const some<Quest_t*>    quest;
-        Save_State              save_state;
+        State_t state;
 
     public:
         Displays_t();
-        Displays_t(const Displays_t& other)                                         = delete;
-        Displays_t(Displays_t&& other) noexcept                                     = delete;
-        Displays_t& operator =(const Displays_t& other)                             = delete;
-        Displays_t& operator =(Displays_t&& other) noexcept                         = delete;
+        Displays_t(const Displays_t& other) = delete;
+        Displays_t(Displays_t&& other) noexcept = delete;
+        Displays_t& operator =(const Displays_t& other) = delete;
+        Displays_t& operator =(Displays_t&& other) noexcept = delete;
         ~Displays_t();
 
     public:
@@ -80,12 +82,8 @@ namespace doticu_skylib { namespace doticu_npcp {
         void    On_Update();
 
     public:
-        void    Before_Save();
-        void    After_Save();
-        void    Validate();
-
-    public:
-        void    Log(std::string indent = "");
+        State_t&    State();
+        Save_t&     Save();
     };
 
 }}

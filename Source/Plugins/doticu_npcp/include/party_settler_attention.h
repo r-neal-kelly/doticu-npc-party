@@ -8,7 +8,7 @@
 
 #include "intrinsic.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
 
     class Settler_Attention_t_data :
         public Numeric_Data_t<Int_t>
@@ -37,24 +37,24 @@ namespace doticu_npcp { namespace Party {
 namespace doticu_skylib {
 
     template <>
-    class none<doticu_npcp::Party::Settler_Attention_t> :
-        public none_numeric<doticu_npcp::Party::Settler_Attention_t>
+    class none<doticu_npcp::Settler_Attention_t> :
+        public none_numeric<doticu_npcp::Settler_Attention_t>
     {
     public:
         using none_numeric::none_numeric;
     };
 
     template <>
-    class maybe<doticu_npcp::Party::Settler_Attention_t> :
-        public maybe_numeric<doticu_npcp::Party::Settler_Attention_t>
+    class maybe<doticu_npcp::Settler_Attention_t> :
+        public maybe_numeric<doticu_npcp::Settler_Attention_t>
     {
     public:
         using maybe_numeric::maybe_numeric;
     };
 
     template <>
-    class some<doticu_npcp::Party::Settler_Attention_t> :
-        public some_numeric<doticu_npcp::Party::Settler_Attention_t>
+    class some<doticu_npcp::Settler_Attention_t> :
+        public some_numeric<doticu_npcp::Settler_Attention_t>
     {
     public:
         using some_numeric::some_numeric;

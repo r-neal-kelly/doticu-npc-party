@@ -8,7 +8,7 @@
 #include "party_settler_flags_sleeper.h"
 #include "party_settler_value_index_sleeper.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
 
     class Settler_Sleeper_t :
         public Settler_t

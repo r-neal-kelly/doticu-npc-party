@@ -32,10 +32,10 @@ namespace doticu_skylib { namespace doticu_npcp {
         save(),
 
         members(),
-        settlers(),
+        /*settlers(),
         expoees(),
         displays(),
-        followers(),
+        followers(),*/
 
         scripts(),
         update_ais()
@@ -61,10 +61,10 @@ namespace doticu_skylib { namespace doticu_npcp {
         SKYLIB_ASSERT_SOME(machine);
 
         Members_t::Register_Me(machine);
-        Settlers_t::Register_Me(machine);
+        /*Settlers_t::Register_Me(machine);
         Expoees_t::Register_Me(machine);
         Displays_t::Register_Me(machine);
-        Followers_t::Register_Me(machine);
+        Followers_t::Register_Me(machine);*/
     }
 
     Bool_t Party_t::Is_Token(some<Bound_Object_t*> bound_object)
@@ -86,67 +86,67 @@ namespace doticu_skylib { namespace doticu_npcp {
     void Party_t::On_After_New_Game()
     {
         Members().On_After_New_Game();
-        Settlers().On_After_New_Game();
+        /*Settlers().On_After_New_Game();
         Expoees().On_After_New_Game();
         Displays().On_After_New_Game();
-        Followers().On_After_New_Game();
+        Followers().On_After_New_Game();*/
     }
 
     void Party_t::On_Before_Save_Game(std::ofstream& file)
     {
         (file.write(reinterpret_cast<char*>(&State().save), sizeof(Save_t)).good()) &&
-            (Members().On_Before_Save_Game(file), file.good()) &&
+            (Members().On_Before_Save_Game(file), file.good())/* &&
             (Settlers().On_Before_Save_Game(file), file.good()) &&
             (Expoees().On_Before_Save_Game(file), file.good()) &&
             (Displays().On_Before_Save_Game(file), file.good()) &&
-            (Followers().On_Before_Save_Game(file), file.good());
+            (Followers().On_Before_Save_Game(file), file.good())*/;
     }
 
     void Party_t::On_After_Save_Game()
     {
         Members().On_After_Save_Game();
-        Settlers().On_After_Save_Game();
+        /*Settlers().On_After_Save_Game();
         Expoees().On_After_Save_Game();
         Displays().On_After_Save_Game();
-        Followers().On_After_Save_Game();
+        Followers().On_After_Save_Game();*/
     }
 
     void Party_t::On_Before_Load_Game()
     {
         Members().On_Before_Load_Game();
-        Settlers().On_Before_Load_Game();
+        /*Settlers().On_Before_Load_Game();
         Expoees().On_Before_Load_Game();
         Displays().On_Before_Load_Game();
-        Followers().On_Before_Load_Game();
+        Followers().On_Before_Load_Game();*/
     }
 
     void Party_t::On_After_Load_Game(std::ifstream& file)
     {
         (file.read(reinterpret_cast<char*>(&State().save), sizeof(Save_t)).good()) &&
-            (Members().On_After_Load_Game(file), file.good()) &&
+            (Members().On_After_Load_Game(file), file.good())/* &&
             (Settlers().On_After_Load_Game(file), file.good()) &&
             (Expoees().On_After_Load_Game(file), file.good()) &&
             (Displays().On_After_Load_Game(file), file.good()) &&
-            (Followers().On_After_Load_Game(file), file.good());
+            (Followers().On_After_Load_Game(file), file.good())*/;
     }
 
     void Party_t::On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update)
     {
         (file.read(reinterpret_cast<char*>(&State().save), sizeof(Save_t)).good()) &&
-            (Members().On_After_Load_Game(file, version_to_update), file.good()) &&
+            (Members().On_After_Load_Game(file, version_to_update), file.good())/* &&
             (Settlers().On_After_Load_Game(file, version_to_update), file.good()) &&
             (Expoees().On_After_Load_Game(file, version_to_update), file.good()) &&
             (Displays().On_After_Load_Game(file, version_to_update), file.good()) &&
-            (Followers().On_After_Load_Game(file, version_to_update), file.good());
+            (Followers().On_After_Load_Game(file, version_to_update), file.good())*/;
     }
 
     void Party_t::On_Update()
     {
         Members().On_Update();
-        Settlers().On_Update();
+        /*Settlers().On_Update();
         Expoees().On_Update();
         Displays().On_Update();
-        Followers().On_Update();
+        Followers().On_Update();*/
 
         Evaluate();
     }
@@ -161,7 +161,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         return State().members;
     }
 
-    Settlers_t& Party_t::Settlers()
+    /*Settlers_t& Party_t::Settlers()
     {
         return State().settlers;
     }
@@ -179,7 +179,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     Followers_t& Party_t::Followers()
     {
         return State().followers;
-    }
+    }*/
 
     some<Script_t*> Party_t::Script(some<Member_ID_t> valid_id)
     {

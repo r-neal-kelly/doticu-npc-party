@@ -8,7 +8,7 @@
 
 #include "intrinsic.h"
 
-namespace doticu_npcp {
+namespace doticu_skylib { namespace doticu_npcp {
 
     class Chest_e :
         public Enum_t<Word_t>
@@ -141,4 +141,4 @@ namespace doticu_npcp {
         static void Open_Chest(Chest_e chest, String_t name, maybe<unique<Callback_i<Bool_t>>> callback = nullptr);
     };
 
-}
+}}

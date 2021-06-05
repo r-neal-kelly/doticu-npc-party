@@ -18,13 +18,7 @@
     <ClCompile Include="src\consts.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\mcm_chests.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\strings.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mcm_main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\chests.cpp">
@@ -45,49 +39,10 @@
     <ClCompile Include="src\party.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\party_displays.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\party_expoees.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\party_followers.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\party_settlers.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\party_settler_time.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\party_settler_duration.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\party_member_suitcase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\party_member_suit_template.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\party_settler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\party_settler_sandboxer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\party_settler_eater.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\party_settler_guard.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\party_settler_sitter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\party_settler_sleeper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\party_settler_slots.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\party_member_suit_buffer.cpp">
@@ -99,12 +54,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\intrinsic.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\mcm_chests.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\mcm_main.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\strings.h">
@@ -131,9 +80,6 @@
     <ClInclude Include="include\hotkeys.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\party_followers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\npcp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -155,9 +101,6 @@
     <ClInclude Include="include\party_member_sort_type.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\party_follower_sort_type.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\party_member.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -170,96 +113,6 @@
     <ClInclude Include="include\party.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\party_settlers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_displays.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_expoees.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_radius.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_time_am_pm.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_time_hour.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_time_minute.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_wander_distance.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_time.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_speed.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_attention.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_duration_hours.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_duration_minutes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_duration.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_flags_sandboxer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_flags_sleeper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_flags_sitter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_flags_eater.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_flags_guard.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_id.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_expoee_id.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_display_id.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_follower_id.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_flags.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_value_index_sandboxer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_value_index_sleeper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_value_index_sitter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_value_index_eater.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_value_index_guard.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_value_index.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\party_member_flags_has_suit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -269,40 +122,7 @@
     <ClInclude Include="include\party_member_suit_template.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\party_follower_flags.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_follower_limit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\party_member_limit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_follower.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_sandboxer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_sleeper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_sitter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_eater.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_guard.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_slots.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\party_settler_type.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\percent.h">
@@ -311,16 +131,136 @@
     <ClInclude Include="include\party_member_suit_buffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\party_display.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_displays.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_display_id.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_display_limit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_expoees.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_expoee_id.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_follower.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_followers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_follower_id.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_follower_limit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_follower_sort_type.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_expoee.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_attention.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_duration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_duration_hours.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_duration_minutes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_eater.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_flags.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_flags_eater.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_flags_guard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_flags_sandboxer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_flags_sitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_flags_sleeper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_guard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_id.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_radius.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_sandboxer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_sitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_sleeper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_type.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_value_index.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_value_index_eater.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_value_index_guard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_value_index_sandboxer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_value_index_sitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_value_index_sleeper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_wander_distance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settlers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_time_am_pm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="scripts\doticu_npcp.psc" />
     <None Include="include\chests.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="include\party_settlers.inl">
+    <None Include="include\npcp.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="include\npcp.inl">
+    <None Include="include\party_settlers.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

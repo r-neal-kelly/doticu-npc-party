@@ -8,7 +8,7 @@
 
 #include "intrinsic.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
 
     class Settler_Value_Index_e :
         public Enum_t<s64>

@@ -14,18 +14,18 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     Member_Suit_Buffer_t::Member_Suit_Buffer_t() :
         locker(lock, std::defer_lock),
-        buffer(Consts_t::NPCP::Reference::Suit_Buffer())
+        reference(Consts_t::NPCP::Reference::Suit_Buffer())
     {
         if (!locker.owns_lock()) {
             locker.lock();
         }
 
-        this->buffer->Destroy_Non_Quest_Items();
+        this->reference->Destroy_Non_Quest_Items();
     }
 
     Member_Suit_Buffer_t::Member_Suit_Buffer_t(Member_Suit_Buffer_t&& other) noexcept :
         locker(std::move(other.locker)),
-        buffer(std::move(other.buffer))
+        reference(std::move(other.reference))
     {
     }
 
@@ -33,14 +33,14 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         if (this != std::addressof(other)) {
             this->locker = std::move(other.locker);
-            this->buffer = std::move(other.buffer);
+            this->reference = std::move(other.reference);
         }
         return *this;
     }
 
     Member_Suit_Buffer_t::~Member_Suit_Buffer_t()
     {
-        this->buffer->Destroy_Non_Quest_Items();
+        this->reference->Destroy_Non_Quest_Items();
 
         if (locker.owns_lock()) {
             locker.unlock();

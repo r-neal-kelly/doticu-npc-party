@@ -76,12 +76,12 @@ namespace doticu_skylib { namespace doticu_npcp {
         static void Error(some<const char*> error, String_t user_message);
 
     public:
-        Lock_t                  lock;
+        Lock_t          lock;
 
-        Vector_t<const char>    serialized_heavy_mods;
-        Vector_t<const char>    serialized_light_mods;
+        Vector_t<char>  serialized_heavy_mods;
+        Vector_t<char>  serialized_light_mods;
 
-        maybe<State_t*>         state;
+        maybe<State_t*> state;
 
     public:
         NPCP_t();

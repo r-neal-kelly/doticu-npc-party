@@ -14,7 +14,7 @@
 #include "chests.inl"
 #include "consts.h"
 
-namespace doticu_npcp {
+namespace doticu_skylib { namespace doticu_npcp {
 
     maybe<Reference_t*> Chests_t::Chest(Chest_e chest)
     {
@@ -468,4 +468,4 @@ namespace doticu_npcp {
         }
     }
 
-}
+}}

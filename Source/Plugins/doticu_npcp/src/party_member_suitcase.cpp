@@ -13,12 +13,11 @@
 
 #include "chests.h"
 #include "consts.h"
-#include "main.h"
 #include "npcp.h"
-#include "party_main.h"
+#include "party.h"
 #include "party_member_suitcase.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
 
     Member_Suitcase_t::Suit_Entry_t::Suit_Entry_t(some<Bound_Object_t*> bound_object) :
         bound_object(bound_object), copies()
@@ -166,7 +165,7 @@ namespace doticu_npcp { namespace Party {
 
     Bool_t Member_Suitcase_t::Filter_Out_Token_Objects_t::operator ()(some<Bound_Object_t*> object)
     {
-        return !NPCP.Main().Party().Is_Token(object);
+        return !NPCP.Party().Is_Token(object);
     }
 
     Bool_t Member_Suitcase_t::Filter_Out_Unplayable_Objects_t::operator ()(some<Bound_Object_t*> object)
