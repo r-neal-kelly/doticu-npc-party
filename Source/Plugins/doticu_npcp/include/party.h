@@ -5,6 +5,7 @@
 #pragma once
 
 #include <fstream>
+#include <mutex>
 
 #include "doticu_skylib/unique.h"
 
@@ -25,6 +26,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
     public:
         static constexpr size_t MAX_MEMBERS = Consts_t::NPCP::Int::MAX_MEMBERS;
+        static constexpr size_t MAX_FOLLOWERS = Consts_t::NPCP::Int::MAX_FOLLOWERS;
 
     public:
         class Save_t
@@ -100,6 +102,10 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         maybe<Member_Update_AI_e>   Update_AI(some<Member_ID_t> valid_id);
         void                        Update_AI(some<Member_ID_t> valid_id, some<Member_Update_AI_e> value);
+
+    public:
+        void    Evaluate();
+        void    Evaluate_In_Parallel(some<Member_ID_t> id, std::mutex& parallel_lock);
     };
 
 }}

@@ -2,6 +2,8 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include <thread>
+
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/bound_object.h"
 #include "doticu_skylib/script.h"
@@ -140,16 +142,13 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Party_t::On_Update()
     {
-        // we'll eval all members here, by creating a series of threads of parallel execution,
-        // each thread locking the NPCP_t::Lock_t. Every thread, or outside source, needs to lock
-        // that lock, so that means the dialogue events and the menu events, any Papyrus call needs to lock it.
-        // NPCP_t alreadys locks on this thread for us, so we may do preliminary updating on the sub types.
-
         Members().On_Update();
         Settlers().On_Update();
         Expoees().On_Update();
         Displays().On_Update();
         Followers().On_Update();
+
+        Evaluate();
     }
 
     Party_t::State_t& Party_t::State()
@@ -213,6 +212,64 @@ namespace doticu_skylib { namespace doticu_npcp {
         maybe<Member_Update_AI_e>& update_ai = State().update_ais[valid_id()];
         if (update_ai != Member_Update_AI_e::RESET_AI) {
             update_ai = value;
+        }
+    }
+
+    void Party_t::Evaluate()
+    {
+        static std::mutex parallel_lock; // only used in rare circumstances, e.g. Member_t needs to access Members_t state
+
+        std::thread(
+            []()->void
+            {
+                const size_t THREAD_COUNT = 8;
+                SKYLIB_ASSERT(MAX_MEMBERS % THREAD_COUNT == 0);
+                SKYLIB_ASSERT(MAX_FOLLOWERS % THREAD_COUNT == 0);
+
+                Vector_t<std::thread> threads;
+                threads.reserve(THREAD_COUNT);
+
+                // once we get Follower_t setup, we can eval those first and mark their ids as evaluated
+
+                for (size_t m = 0; m < MAX_MEMBERS; m += THREAD_COUNT) {
+                    threads.clear();
+                    {
+                        NPCP_t::Locker_t locker = NPCP.Locker();
+                        if (NPCP.Is_Valid()) {
+                            for (size_t t = 0; t < THREAD_COUNT; t += 1) {
+                                some<Member_ID_t> id = m + t;
+                                threads.push_back(std::thread(
+                                    [id]()->void
+                                    {
+                                        SKYLIB_ASSERT_SOME(id);
+                                        NPCP.Party().Evaluate_In_Parallel(id(), parallel_lock);
+                                    }
+                                ));
+                            }
+                            for (size_t t = 0; t < THREAD_COUNT; t += 1) {
+                                if (threads[t].joinable()) {
+                                    threads[t].join();
+                                }
+                            }
+                        } else {
+                            return;
+                        }
+                    }
+                    std::this_thread::sleep_for(std::chrono::nanoseconds(0)); // increase only if necessary
+                }
+            }
+        ).detach();
+    }
+
+    void Party_t::Evaluate_In_Parallel(some<Member_ID_t> id, std::mutex& parallel_lock)
+    {
+        SKYLIB_ASSERT_SOME(id);
+
+        Member_t& member = Members().Member(id);
+        // we'll grab all the types here, so that we can execute with precedence.
+
+        if (member.Is_Active()) {
+            member.Evaluate_In_Parallel(parallel_lock);
         }
     }
 

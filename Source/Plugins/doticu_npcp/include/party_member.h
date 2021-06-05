@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <mutex>
+
 #include "doticu_skylib/container_entry_count.h"
 #include "doticu_skylib/enum_script_type.h"
 
@@ -218,7 +220,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         void    Add_Suit(some<Member_Suit_Type_e> type, Member_Suit_Template_t suit_template);
         void    Remove_Suit(some<Member_Suit_Type_e> type);
 
-        void    Enforce();
+        void    Evaluate_In_Parallel(std::mutex& parallel_lock);
 
     public:
         explicit operator Bool_t();

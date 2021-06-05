@@ -1006,7 +1006,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         }
     }
 
-    void Member_t::Enforce()
+    void Member_t::Evaluate_In_Parallel(std::mutex& parallel_lock)
     {
         SKYLIB_ASSERT(Is_Active());
 
@@ -1165,7 +1165,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         maybe<Actor_t*> combat_target = actor->Current_Combat_Target();
         if (combat_target) {
-            if (combat_target == Const::Actor::Player() || members.Has_Member(combat_target())) {
+            if (combat_target == Const::Actor::Player() || members.Has_Member(combat_target())) {// just check token to make it parallel
                 // we need to handle aggression also, but that needs to be done along with other factors?
                 actor->Stop_Combat_And_Alarm();
                 actor->actor_flags_2.Unflag(Actor_Flags_2_e::IS_ANGRY_WITH_PLAYER);
