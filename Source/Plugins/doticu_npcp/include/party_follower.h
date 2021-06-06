@@ -4,8 +4,7 @@
 
 #pragma once
 
-#include <fstream>
-
+#include "intrinsic.h"
 #include "party_follower_id.h"
 #include "party_member_id.h"
 
@@ -13,6 +12,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     class Followers_t;
     class Member_t;
+    class Members_t;
     class Party_t;
 
     class Follower_t
@@ -21,12 +21,11 @@ namespace doticu_skylib { namespace doticu_npcp {
         class Save_t
         {
         public:
-            maybe<Member_ID_t>      member_id;
-            maybe<Follower_ID_t>    follower_id;
+            maybe<Member_ID_t>  member_id;
 
-            Bool_t                  is_retreater;
-            Bool_t                  is_saddler;
-            Bool_t                  is_sojourner;
+            Bool_t              is_retreater;
+            Bool_t              is_saddler;
+            Bool_t              is_sojourner;
 
         public:
             Save_t();
@@ -56,9 +55,8 @@ namespace doticu_skylib { namespace doticu_npcp {
         };
 
     public:
-        static void         Register_Me(some<Virtual::Machine_t*> machine);
-
         static Party_t&     Party();
+        static Members_t&   Members();
         static Followers_t& Followers();
 
     public:
@@ -66,7 +64,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     public:
         Follower_t();
-        Follower_t(some<Member_ID_t> member_id, some<Follower_ID_t> follower_id);
+        Follower_t(some<Member_ID_t> member_id);
         Follower_t(const Follower_t& other) = delete;
         Follower_t(Follower_t&& other) noexcept = delete;
         Follower_t& operator =(const Follower_t& other) = delete;
@@ -80,16 +78,18 @@ namespace doticu_skylib { namespace doticu_npcp {
         void    On_Before_Load_Game();
         void    On_After_Load_Game(std::ifstream& file);
         void    On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update);
-        void    On_Update();
 
     public:
         State_t&    State();
         Save_t&     Save();
 
     public:
-        Bool_t      Is_Active();
+        Bool_t              Is_Active();
 
-        Member_t&   Member();
+        some<Member_ID_t>   Member_ID();
+        some<Follower_ID_t> Follower_ID();
+
+        Member_t&           Member();
 
     public:
         void    Evaluate_In_Parallel(std::mutex& parallel_lock);

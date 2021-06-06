@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <mutex>
-
 #include "doticu_mcmlib/config_base.h"
 
 #include "intrinsic.h"

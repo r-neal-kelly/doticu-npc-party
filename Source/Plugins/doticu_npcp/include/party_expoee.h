@@ -4,8 +4,7 @@
 
 #pragma once
 
-#include <fstream>
-
+#include "intrinsic.h"
 #include "party_expoee_id.h"
 #include "party_member_id.h"
 
@@ -13,6 +12,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     class Expoees_t;
     class Member_t;
+    class Members_t;
     class Party_t;
 
     class Expoee_t
@@ -22,7 +22,6 @@ namespace doticu_skylib { namespace doticu_npcp {
         {
         public:
             maybe<Member_ID_t>  member_id;
-            maybe<Expoee_ID_t>  expoee_id;
 
         public:
             Save_t();
@@ -52,9 +51,8 @@ namespace doticu_skylib { namespace doticu_npcp {
         };
 
     public:
-        static void         Register_Me(some<Virtual::Machine_t*> machine);
-
         static Party_t&     Party();
+        static Members_t&   Members();
         static Expoees_t&   Expoees();
 
     public:
@@ -62,7 +60,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     public:
         Expoee_t();
-        Expoee_t(some<Member_ID_t> member_id, some<Expoee_ID_t> expoee_id);
+        Expoee_t(some<Member_ID_t> member_id);
         Expoee_t(const Expoee_t& other) = delete;
         Expoee_t(Expoee_t&& other) noexcept = delete;
         Expoee_t& operator =(const Expoee_t& other) = delete;
@@ -76,16 +74,18 @@ namespace doticu_skylib { namespace doticu_npcp {
         void    On_Before_Load_Game();
         void    On_After_Load_Game(std::ifstream& file);
         void    On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update);
-        void    On_Update();
 
     public:
         State_t&    State();
         Save_t&     Save();
 
     public:
-        Bool_t      Is_Active();
+        Bool_t              Is_Active();
 
-        Member_t&   Member();
+        some<Member_ID_t>   Member_ID();
+        some<Expoee_ID_t>   Expoee_ID();
+
+        Member_t&           Member();
 
     public:
         void    Evaluate_In_Parallel(std::mutex& parallel_lock);

@@ -5,28 +5,22 @@
 #pragma once
 
 #include "intrinsic.h"
-#include "party_member_id.h"
-#include "party_settler_id.h"
-#include "party_settler_slot.h"
-#include "party_settler_slot_id.h"
+#include "party_settler_eater.h"
+#include "party_settler_guard.h"
+#include "party_settler_sandboxer.h"
+#include "party_settler_sitter.h"
+#include "party_settler_sleeper.h"
+#include "party_settler_type.h"
 
 namespace doticu_skylib { namespace doticu_npcp {
 
-    class Member_t;
-    class Members_t;
-    class Party_t;
-    class Settlers_t;
-
-    class Settler_t
+    class Settler_Slot_t
     {
-    public:
-        static constexpr size_t MAX_SETTLER_SLOTS   = Consts_t::NPCP::Int::MAX_SETTLER_SLOTS;
-
     public:
         class Save_t
         {
         public:
-            maybe<Member_ID_t>  member_id;
+            maybe<Settler_Type_e>   settler_type;
 
         public:
             Save_t();
@@ -41,12 +35,30 @@ namespace doticu_skylib { namespace doticu_npcp {
             void    Read(std::ifstream& file);
         };
 
+        union Settler_u
+        {
+        public:
+            Settler_Sandboxer_t sandboxer;
+            Settler_Sleeper_t   sleeper;
+            Settler_Sitter_t    sitter;
+            Settler_Eater_t     eater;
+            Settler_Guard_t     guard;
+
+        public:
+            Settler_u();
+            Settler_u(const Settler_u& other) = delete;
+            Settler_u(Settler_u&& other) noexcept = delete;
+            Settler_u& operator =(const Settler_u& other) = delete;
+            Settler_u& operator =(Settler_u&& other) noexcept = delete;
+            ~Settler_u();
+        };
+
         class State_t
         {
         public:
-            Save_t          save;
+            Save_t      save;
 
-            Settler_Slot_t  slots[8];
+            Settler_u   settler;
 
         public:
             State_t();
@@ -58,21 +70,16 @@ namespace doticu_skylib { namespace doticu_npcp {
         };
 
     public:
-        static Party_t&     Party();
-        static Members_t&   Members();
-        static Settlers_t&  Settlers();
-
-    public:
         State_t state;
 
     public:
-        Settler_t();
-        Settler_t(some<Member_ID_t> member_id);
-        Settler_t(const Settler_t& other) = delete;
-        Settler_t(Settler_t&& other) noexcept = delete;
-        Settler_t& operator =(const Settler_t& other) = delete;
-        Settler_t& operator =(Settler_t&& other) noexcept = delete;
-        ~Settler_t();
+        Settler_Slot_t();
+        Settler_Slot_t(some<Settler_Type_e> settler_type);
+        Settler_Slot_t(const Settler_Slot_t& other) = delete;
+        Settler_Slot_t(Settler_Slot_t&& other) noexcept = delete;
+        Settler_Slot_t& operator =(const Settler_Slot_t& other) = delete;
+        Settler_Slot_t& operator =(Settler_Slot_t&& other) noexcept = delete;
+        ~Settler_Slot_t();
 
     public:
         void    On_After_New_Game();
@@ -87,16 +94,8 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save_t&     Save();
 
     public:
-        Bool_t              Is_Active();
+        Bool_t  Is_Active();
 
-        some<Member_ID_t>   Member_ID();
-        some<Settler_ID_t>  Settler_ID();
-
-        Member_t&           Member();
-
-        Settler_Slot_t&     Slot(some<Settler_Slot_ID_t> slot_id);
-
-    public:
         void    Evaluate_In_Parallel(std::mutex& parallel_lock);
     };
 

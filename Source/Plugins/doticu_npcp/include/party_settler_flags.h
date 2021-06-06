@@ -11,7 +11,7 @@
 namespace doticu_skylib { namespace doticu_npcp {
 
     class Settler_Flags_e :
-        public Enum_t<u32>
+        public Enum_t<u64>
     {
     public:
         enum enum_type : value_type

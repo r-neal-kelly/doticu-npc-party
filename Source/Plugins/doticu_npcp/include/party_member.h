@@ -4,11 +4,14 @@
 
 #pragma once
 
-#include <mutex>
-
 #include "doticu_skylib/container_entry_count.h"
 #include "doticu_skylib/enum_script_type.h"
 
+#include "intrinsic.h"
+#include "party_display_id.h"
+#include "party_expoee_id.h"
+#include "party_follower_id.h"
+#include "party_settler_id.h"
 #include "party_member_alpha.h"
 #include "party_member_combat_style.h"
 #include "party_member_flags.h"
@@ -22,9 +25,17 @@
 
 namespace doticu_skylib { namespace doticu_npcp {
 
+    class Display_t;
+    class Displays_t;
+    class Expoee_t;
+    class Expoees_t;
+    class Follower_t;
+    class Followers_t;
     class Member_Suitcase_t;
     class Members_t;
     class Party_t;
+    class Settler_t;
+    class Settlers_t;
 
     class Member_t
     {
@@ -38,7 +49,11 @@ namespace doticu_skylib { namespace doticu_npcp {
         class Save_t
         {
         public:
-            maybe<Member_ID_t>              id;
+            maybe<Member_ID_t>              member_id;
+            maybe<Settler_ID_t>             settler_id;
+            maybe<Expoee_ID_t>              expoee_id;
+            maybe<Display_ID_t>             display_id;
+            maybe<Follower_ID_t>            follower_id;
 
             maybe<Actor_Base_t*>            actual_base;
             maybe<Actor_t*>                 actor;
@@ -98,13 +113,17 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         static Party_t&                 Party();
         static Members_t&               Members();
+        static Settlers_t&              Settlers();
+        static Expoees_t&               Expoees();
+        static Displays_t&              Displays();
+        static Followers_t&             Followers();
 
     public:
         State_t state;
 
     public:
         Member_t();
-        Member_t(some<Member_ID_t> id, some<Actor_t*> actor, Bool_t is_clone);
+        Member_t(some<Member_ID_t> member_id, some<Actor_t*> actor, Bool_t is_clone);
         Member_t(const Member_t& other) = delete;
         Member_t(Member_t&& other) noexcept = delete;
         Member_t& operator =(const Member_t& other) = delete;
@@ -118,7 +137,6 @@ namespace doticu_skylib { namespace doticu_npcp {
         void    On_Before_Load_Game();
         void    On_After_Load_Game(std::ifstream& file);
         void    On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update);
-        void    On_Update();
 
     public:
         State_t&    State();
@@ -169,12 +187,21 @@ namespace doticu_skylib { namespace doticu_npcp {
         Bool_t                      Has_Only_Playables(some<Member_Suit_Type_e> type);
         void                        Has_Only_Playables(some<Member_Suit_Type_e> type, Bool_t value);
 
-        some<Member_ID_t>           ID();
+        some<Member_ID_t>           Member_ID();
+        maybe<Settler_ID_t>         Settler_ID();
+        maybe<Expoee_ID_t>          Expoee_ID();
+        maybe<Display_ID_t>         Display_ID();
+        maybe<Follower_ID_t>        Follower_ID();
 
         some<Alias_Reference_t*>    Alias();
         some<Actor_Base_t*>         Actual_Base();
         some<Actor_Base_t*>         Custom_Base();
         some<Actor_t*>              Actor();
+
+        maybe<Settler_t*>           Settler();
+        maybe<Expoee_t*>            Expoee();
+        maybe<Display_t*>           Display();
+        maybe<Follower_t*>          Follower();
 
         maybe<Member_Alpha_t>       Alpha();
         void                        Alpha(some<Member_Alpha_t> alpha);

@@ -7,6 +7,7 @@
 #include "doticu_skylib/quest.h"
 
 #include "chests.h"
+#include "intrinsic.h"
 #include "mcm_main.h"
 
 namespace doticu_npcp { namespace MCM {

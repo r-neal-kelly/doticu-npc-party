@@ -4,16 +4,15 @@
 
 #pragma once
 
-#include <fstream>
-#include <mutex>
-
-#include "doticu_skylib/unique.h"
-
 #include "consts.h"
 #include "intrinsic.h"
+#include "party_displays.h"
+#include "party_expoees.h"
+#include "party_followers.h"
 #include "party_member_id.h"
 #include "party_member_update_ai.h"
 #include "party_members.h"
+#include "party_settlers.h"
 
 namespace doticu_skylib { namespace doticu_npcp {
 
@@ -33,6 +32,10 @@ namespace doticu_skylib { namespace doticu_npcp {
             Save_t& operator =(const Save_t& other) = delete;
             Save_t& operator =(Save_t&& other) noexcept = delete;
             ~Save_t();
+
+        public:
+            void    Write(std::ofstream& file);
+            void    Read(std::ifstream& file);
         };
 
         class State_t
@@ -41,10 +44,10 @@ namespace doticu_skylib { namespace doticu_npcp {
             Save_t                      save;
 
             Members_t                   members;
-            /*Settlers_t                  settlers;
+            Settlers_t                  settlers;
             Expoees_t                   expoees;
             Displays_t                  displays;
-            Followers_t                 followers;*/
+            Followers_t                 followers;
 
             maybe<Script_t*>            scripts[MAX_MEMBERS];
             maybe<Member_Update_AI_e>   update_ais[MAX_MEMBERS];
@@ -85,12 +88,13 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     public:
         State_t&        State();
+        Save_t&         Save();
 
         Members_t&      Members();
-        /*Settlers_t&     Settlers();
+        Settlers_t&     Settlers();
         Expoees_t&      Expoees();
         Displays_t&     Displays();
-        Followers_t&    Followers();*/
+        Followers_t&    Followers();
 
     public:
         some<Script_t*>             Script(some<Member_ID_t> valid_id);

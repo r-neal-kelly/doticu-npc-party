@@ -231,11 +231,12 @@ namespace doticu_skylib { namespace doticu_npcp {
             };
             struct Int
             {
-                static constexpr size_t MAX_MEMBERS     = 1024;
-                static constexpr size_t MAX_SETTLERS    = 1024;
-                static constexpr size_t MAX_EXPOEES     = 1024;
-                static constexpr size_t MAX_DISPLAYS    = 16;
-                static constexpr size_t MAX_FOLLOWERS   = 16;
+                static constexpr size_t MAX_MEMBERS         = 1024;
+                static constexpr size_t MAX_SETTLERS        = 1024;
+                static constexpr size_t MAX_EXPOEES         = 1024;
+                static constexpr size_t MAX_DISPLAYS        = 16;
+                static constexpr size_t MAX_FOLLOWERS       = 16;
+                static constexpr size_t MAX_SETTLER_SLOTS   = 8;
             };
             struct Leveled_Actor_Base
             {

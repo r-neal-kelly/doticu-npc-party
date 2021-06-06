@@ -22,14 +22,24 @@
 
 #include "npcp.inl"
 #include "party.h"
+#include "party_displays.h"
+#include "party_expoees.h"
+#include "party_followers.h"
 #include "party_member.h"
 #include "party_member_suit_buffer.h"
 #include "party_member_suitcase.h"
 #include "party_members.h"
+#include "party_settlers.h"
 
 namespace doticu_skylib { namespace doticu_npcp {
 
     Member_t::Save_t::Save_t() :
+        member_id(),
+        settler_id(),
+        expoee_id(),
+        display_id(),
+        follower_id(),
+
         actual_base(),
         actor(),
 
@@ -68,7 +78,11 @@ namespace doticu_skylib { namespace doticu_npcp {
             }
         }
 
-        NPCP.Write(file, this->id);
+        NPCP.Write(file, this->member_id);
+        NPCP.Write(file, this->settler_id);
+        NPCP.Write(file, this->expoee_id);
+        NPCP.Write(file, this->display_id);
+        NPCP.Write(file, this->follower_id);
 
         NPCP.Write_Form(file, static_base);
         NPCP.Write_Form(file, this->actual_base);
@@ -98,7 +112,11 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         maybe<Actor_Base_t*> static_base;
 
-        NPCP.Read(file, this->id);
+        NPCP.Read(file, this->member_id);
+        NPCP.Read(file, this->settler_id);
+        NPCP.Read(file, this->expoee_id);
+        NPCP.Read(file, this->display_id);
+        NPCP.Read(file, this->follower_id);
 
         NPCP.Read_Form(file, static_base);
         NPCP.Read_Form(file, this->actual_base);
@@ -123,14 +141,14 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         NPCP.Read_String(file, this->name);
 
-        if (this->id && static_base && !static_base->Is_Deleted()) {
+        if (this->member_id && static_base && !static_base->Is_Deleted()) {
             if (!this->actual_base ||
                 this->actual_base->Is_Deleted() ||
                 this->actual_base->Identifiable_Static_Base() != static_base) {
                 this->actual_base = static_base;
             }
         } else {
-            this->id = none<Member_ID_t>();
+            this->member_id = none<Member_ID_t>();
             this->actual_base = none<Actor_Base_t*>();
         }
     }
@@ -191,22 +209,42 @@ namespace doticu_skylib { namespace doticu_npcp {
         return NPCP.Party().Members();
     }
 
+    Settlers_t& Member_t::Settlers()
+    {
+        return NPCP.Party().Settlers();
+    }
+
+    Expoees_t& Member_t::Expoees()
+    {
+        return NPCP.Party().Expoees();
+    }
+
+    Displays_t& Member_t::Displays()
+    {
+        return NPCP.Party().Displays();
+    }
+
+    Followers_t& Member_t::Followers()
+    {
+        return NPCP.Party().Followers();
+    }
+
     Member_t::Member_t() :
         state()
     {
     }
 
-    Member_t::Member_t(some<Member_ID_t> id, some<Actor_t*> actor, Bool_t is_clone) :
+    Member_t::Member_t(some<Member_ID_t> member_id, some<Actor_t*> actor, Bool_t is_clone) :
         state()
     {
-        SKYLIB_ASSERT_SOME(id);
+        SKYLIB_ASSERT_SOME(member_id);
         SKYLIB_ASSERT_SOME(actor);
 
-        Save().id = id;
+        Save().member_id = member_id;
         Save().actual_base = actor->Actor_Base();
         Save().actor = actor;
 
-        if (Is_Active()) {
+        if (Is_Active()) { // is this necessary?
             Is_Clone(is_clone);
             // need to fill in default values
         }
@@ -264,10 +302,6 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save().Read(file);
     }
 
-    void Member_t::On_Update()
-    {
-    }
-
     Member_t::State_t& Member_t::State()
     {
         return this->state;
@@ -280,7 +314,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     Bool_t Member_t::Is_Active()
     {
-        return Save().id && Save().actual_base;
+        return Save().member_id && Save().actual_base;
     }
 
     Bool_t Member_t::Is_Banished()
@@ -506,18 +540,46 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save().flags_only_playables.Is_Flagged(flag, value);
     }
 
-    some<Member_ID_t> Member_t::ID()
+    some<Member_ID_t> Member_t::Member_ID()
     {
         SKYLIB_ASSERT(Is_Active());
 
-        return Save().id();
+        return Save().member_id();
+    }
+
+    maybe<Settler_ID_t> Member_t::Settler_ID()
+    {
+        SKYLIB_ASSERT(Is_Active());
+
+        return Save().settler_id;
+    }
+
+    maybe<Expoee_ID_t> Member_t::Expoee_ID()
+    {
+        SKYLIB_ASSERT(Is_Active());
+
+        return Save().expoee_id;
+    }
+
+    maybe<Display_ID_t> Member_t::Display_ID()
+    {
+        SKYLIB_ASSERT(Is_Active());
+
+        return Save().display_id;
+    }
+
+    maybe<Follower_ID_t> Member_t::Follower_ID()
+    {
+        SKYLIB_ASSERT(Is_Active());
+
+        return Save().follower_id;
     }
 
     some<Alias_Reference_t*> Member_t::Alias()
     {
         SKYLIB_ASSERT(Is_Active());
 
-        return Members().Alias(ID());
+        return Members().Alias(Member_ID());
     }
 
     some<Actor_Base_t*> Member_t::Actual_Base()
@@ -552,6 +614,62 @@ namespace doticu_skylib { namespace doticu_npcp {
         }
 
         return actor();
+    }
+
+    maybe<Settler_t*> Member_t::Settler()
+    {
+        SKYLIB_ASSERT(Is_Active());
+
+        maybe<Settler_ID_t> settler_id = Settler_ID();
+        if (settler_id) {
+            Settler_t& settler = Settlers().Settler(settler_id());
+            SKYLIB_ASSERT(settler.Member_ID() == Member_ID());
+            return &settler;
+        } else {
+            return none<Settler_t*>();
+        }
+    }
+
+    maybe<Expoee_t*> Member_t::Expoee()
+    {
+        SKYLIB_ASSERT(Is_Active());
+
+        maybe<Expoee_ID_t> expoee_id = Expoee_ID();
+        if (expoee_id) {
+            Expoee_t& expoee = Expoees().Expoee(expoee_id());
+            SKYLIB_ASSERT(expoee.Member_ID() == Member_ID());
+            return &expoee;
+        } else {
+            return none<Expoee_t*>();
+        }
+    }
+
+    maybe<Display_t*> Member_t::Display()
+    {
+        SKYLIB_ASSERT(Is_Active());
+
+        maybe<Display_ID_t> display_id = Display_ID();
+        if (display_id) {
+            Display_t& display = Displays().Display(display_id());
+            SKYLIB_ASSERT(display.Member_ID() == Member_ID());
+            return &display;
+        } else {
+            return none<Display_t*>();
+        }
+    }
+
+    maybe<Follower_t*> Member_t::Follower()
+    {
+        SKYLIB_ASSERT(Is_Active());
+
+        maybe<Follower_ID_t> follower_id = Follower_ID();
+        if (follower_id) {
+            Follower_t& follower = Followers().Follower(follower_id());
+            SKYLIB_ASSERT(follower.Member_ID() == Member_ID());
+            return &follower;
+        } else {
+            return none<Follower_t*>();
+        }
     }
 
     maybe<Member_Alpha_t> Member_t::Alpha()
@@ -842,7 +960,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         if (entry->Non_Extra_Lists_Count() != count) {
             entry->Decrement_Count(container, Container_Entry_Count_t::_MAX_);
             entry->Increment_Count(container, count);
-            Party().Update_AI(ID(), Member_Update_AI_e::EVALUATE_PACKAGE);
+            Party().Update_AI(Member_ID(), Member_Update_AI_e::EVALUATE_PACKAGE);
         }
     }
 
@@ -855,7 +973,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         maybe<Reference_Container_Entry_t*> entry = container.Maybe_Entry(object);
         if (entry && entry->Non_Extra_Lists_Count() > 0) {
             entry->Decrement_Count(container, Container_Entry_Count_t::_MAX_);
-            Party().Update_AI(ID(), Member_Update_AI_e::EVALUATE_PACKAGE);
+            Party().Update_AI(Member_ID(), Member_Update_AI_e::EVALUATE_PACKAGE);
         }
     }
 
@@ -1023,7 +1141,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         actor->Actor_Base(Custom_Base(), false);
 
-        Tokenize(Consts_t::NPCP::Misc::Token::Member(), ID()() + 1);
+        Tokenize(Consts_t::NPCP::Misc::Token::Member(), Member_ID()() + 1);
         actor->Faction_Rank(Consts_t::NPCP::Faction::Member(), 0);
 
         if (Is_Banished()) {
@@ -1052,13 +1170,13 @@ namespace doticu_skylib { namespace doticu_npcp {
             Tokenize(Consts_t::NPCP::Misc::Token::Sneak());
 
             if (!actor->Is_Forced_To_Sneak()) {
-                actor->Is_Forced_To_Sneak(true, Party().Script(ID()));
+                actor->Is_Forced_To_Sneak(true, Party().Script(Member_ID()));
             }
         } else {
             Untokenize(Consts_t::NPCP::Misc::Token::Sneak());
 
             if (actor->Is_Forced_To_Sneak()) {
-                actor->Is_Forced_To_Sneak(false, Party().Script(ID()));
+                actor->Is_Forced_To_Sneak(false, Party().Script(Member_ID()));
             }
         }
 
@@ -1120,7 +1238,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         custom_base->Voice_Type(Voice_Type()());
 
-        actor->Alpha(Alpha()(), Party().Script(ID()));
+        actor->Alpha(Alpha()(), Party().Script(Member_ID()));
 
         custom_base->Relation(Const::Actor_Base::Player(), Relation());
 
@@ -1145,7 +1263,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         if (Has_AI()) {
             if (!actor->Has_AI()) {
                 actor->Has_AI(true);
-                Party().Update_AI(ID(), Member_Update_AI_e::RESET_AI);
+                Party().Update_AI(Member_ID(), Member_Update_AI_e::RESET_AI);
             }
         } else {
             if (actor->Has_AI()) {
@@ -1172,7 +1290,7 @@ namespace doticu_skylib { namespace doticu_npcp {
                 // we need to handle aggression also, but that needs to be done along with other factors?
                 actor->Stop_Combat_And_Alarm();
                 actor->actor_flags_2.Unflag(Actor_Flags_2_e::IS_ANGRY_WITH_PLAYER);
-                Party().Update_AI(ID(), Member_Update_AI_e::RESET_AI);
+                Party().Update_AI(Member_ID(), Member_Update_AI_e::RESET_AI);
             }
         }
     }

@@ -2,103 +2,141 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
-#include "doticu_skylib/quest.h"
-#include "doticu_skylib/virtual_macros.h"
-
+#include "npcp.inl"
+#include "party.h"
 #include "party_expoees.h"
+#include "party_members.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
 
-    Expoees_t::Save_State::Save_State(const some<Quest_t*> quest) :
-        quest(quest)
+    Expoees_t::Save_t::Save_t() :
+        sort_type(DEFAULT_SORT_TYPE)
     {
     }
 
-    Expoees_t::Save_State::~Save_State()
+    Expoees_t::Save_t::~Save_t()
     {
     }
 
-    some<V::Object_t*> Expoees_t::Save_State::Object()
+    void Expoees_t::Save_t::Write(std::ofstream& file)
     {
-        DEFINE_COMPONENT_OBJECT_METHOD(this->quest());
+        NPCP.Write(file, this->sort_type);
     }
 
-    void Expoees_t::Save_State::Read()
+    void Expoees_t::Save_t::Read(std::ifstream& file)
+    {
+        NPCP.Read(file, this->sort_type);
+    }
+
+    Expoees_t::State_t::State_t() :
+        save(),
+
+        expoees()
     {
     }
 
-    void Expoees_t::Save_State::Write()
+    Expoees_t::State_t::~State_t()
     {
     }
 
-    String_t Expoees_t::Class_Name()
+    Party_t& Expoees_t::Party()
     {
-        DEFINE_CLASS_NAME("doticu_npcp_party_expoees");
+        return NPCP.Party();
     }
 
-    some<V::Class_t*> Expoees_t::Class()
+    Members_t& Expoees_t::Members()
     {
-        DEFINE_CLASS();
+        return Party().Members();
     }
 
-    void Expoees_t::Register_Me(some<V::Machine_t*> machine)
+    Expoees_t::Expoees_t() :
+        state()
     {
-        SKYLIB_ASSERT_SOME(machine);
-
-        String_t class_name = Class_Name();
-
-        #define STATIC(STATIC_NAME_, WAITS_FOR_FRAME_, RETURN_TYPE_, STATIC_, ...)  \
-        SKYLIB_M                                                                    \
-            BIND_STATIC(machine, class_name, STATIC_NAME_, WAITS_FOR_FRAME_,        \
-                        RETURN_TYPE_, STATIC_, __VA_ARGS__);                        \
-        SKYLIB_W
-
-        #undef STATIC
-
-        #define METHOD(METHOD_NAME_, WAITS_FOR_FRAME_, RETURN_TYPE_, METHOD_, ...)      \
-        SKYLIB_M                                                                        \
-            BIND_METHOD(machine, class_name, Expoees_t, METHOD_NAME_, WAITS_FOR_FRAME_, \
-                        RETURN_TYPE_, METHOD_, __VA_ARGS__);                            \
-        SKYLIB_W
-
-        #undef METHOD
-    }
-
-    Expoees_t::Expoees_t(some<Quest_t*> quest, Bool_t is_new_game) :
-        quest(quest),
-        save_state(quest)
-    {
-        if (is_new_game) {
-
-        } else {
-            this->save_state.Read();
-        }
-    }
-
-    Expoees_t::Expoees_t(some<Quest_t*> quest, const Version_t<u16> version_to_update) :
-        quest(quest),
-        save_state(quest)
-    {
-        // update code goes here
-
-        this->save_state.Read();
     }
 
     Expoees_t::~Expoees_t()
     {
     }
 
-    void Expoees_t::Before_Save()
+    void Expoees_t::On_After_New_Game()
     {
-        this->save_state.Write();
+        for (size_t idx = 0, end = MAX_EXPOEES; idx < end; idx += 1) {
+            State().expoees[idx].On_After_New_Game();
+        }
     }
 
-    void Expoees_t::After_Save()
+    void Expoees_t::On_Before_Save_Game(std::ofstream& file)
+    {
+        Save().Write(file);
+
+        for (size_t idx = 0, end = MAX_EXPOEES; idx < end; idx += 1) {
+            State().expoees[idx].On_Before_Save_Game(file);
+        }
+    }
+
+    void Expoees_t::On_After_Save_Game()
+    {
+        for (size_t idx = 0, end = MAX_EXPOEES; idx < end; idx += 1) {
+            State().expoees[idx].On_After_Save_Game();
+        }
+    }
+
+    void Expoees_t::On_Before_Load_Game()
+    {
+        for (size_t idx = 0, end = MAX_EXPOEES; idx < end; idx += 1) {
+            State().expoees[idx].On_Before_Load_Game();
+        }
+    }
+
+    void Expoees_t::On_After_Load_Game(std::ifstream& file)
+    {
+        Save().Read(file);
+
+        for (size_t idx = 0, end = MAX_EXPOEES; idx < end; idx += 1) {
+            State().expoees[idx].On_After_Load_Game(file);
+        }
+    }
+
+    void Expoees_t::On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update)
+    {
+        Save().Read(file);
+
+        for (size_t idx = 0, end = MAX_EXPOEES; idx < end; idx += 1) {
+            State().expoees[idx].On_After_Load_Game(file, version_to_update);
+        }
+    }
+
+    void Expoees_t::On_Update()
     {
     }
 
-    void Expoees_t::Validate()
+    Expoees_t::State_t& Expoees_t::State()
     {
+        return this->state;
+    }
+
+    Expoees_t::Save_t& Expoees_t::Save()
+    {
+        return State().save;
+    }
+
+    Expoee_t& Expoees_t::Expoee(some<Expoee_ID_t> expoee_id)
+    {
+        SKYLIB_ASSERT_SOME(expoee_id);
+
+        return State().expoees[expoee_id()];
+    }
+
+    maybe<Expoee_t*> Expoees_t::Active_Expoee(some<Member_ID_t> member_id)
+    {
+        SKYLIB_ASSERT_SOME(member_id);
+
+        Member_t& member = Members().Member(member_id);
+        if (member.Is_Active()) {
+            return member.Expoee();
+        } else {
+            return none<Expoee_t*>();
+        }
     }
 
 }}

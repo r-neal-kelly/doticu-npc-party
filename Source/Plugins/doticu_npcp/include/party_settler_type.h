@@ -4,7 +4,9 @@
 
 #pragma once
 
-#include "consts.h"
+#include "doticu_skylib/enum_type.h"
+
+#include "intrinsic.h"
 
 namespace doticu_skylib { namespace doticu_npcp {
 

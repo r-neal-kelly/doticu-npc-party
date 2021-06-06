@@ -4,55 +4,89 @@
 
 #pragma once
 
-#include <fstream>
-
 #include "consts.h"
-#include "party.h"
-#include "party_member_id.h"
+#include "intrinsic.h"
 #include "party_settler.h"
-#include "party_settler_attention.h"
-#include "party_settler_duration.h"
-#include "party_settler_duration_hours.h"
-#include "party_settler_duration_minutes.h"
-#include "party_settler_eater.h"
-#include "party_settler_flags.h"
-#include "party_settler_guard.h"
-#include "party_settler_id.h"
-#include "party_settler_radius.h"
-#include "party_settler_sandboxer.h"
-#include "party_settler_sitter.h"
-#include "party_settler_sleeper.h"
-#include "party_settler_time_am_pm.h"
-#include "party_settler_value_index.h"
-#include "party_settler_wander_distance.h"
-
-/*
-int[]               types               = none; determines how to interpret the data, and which data is used
-int[]               flags               = none; keep the is_enabled flag, so we can simply turn it off without deleting?
-
-ObjectReference[]   markers             = none
-int[]               radii               = none
-
-int[]               times               = none
-int[]               durations           = none
-int[]               speeds              = none
-
-int[]               attentions          = none
-int[]               wander_distances    = none
-
-ObjectReference[]   interactables       = none; bed for sleeper, chair for sitter, etc.
-*/
 
 namespace doticu_skylib { namespace doticu_npcp {
 
-    /*class Settlers_t
+    class Members_t;
+    class Party;
+
+    class Settlers_t
     {
     public:
-        enum
+        static constexpr size_t MAX_SETTLERS    = Consts_t::NPCP::Int::MAX_SETTLERS;
+
+    public:
+        class Save_t
         {
-            SCRIPT_TYPE = Script_Type_e::QUEST,
+        public:
+            Save_t();
+            Save_t(const Save_t& other) = delete;
+            Save_t(Save_t&& other) noexcept = delete;
+            Save_t& operator =(const Save_t& other) = delete;
+            Save_t& operator =(Save_t&& other) noexcept = delete;
+            ~Save_t();
+
+        public:
+            void    Write(std::ofstream& file);
+            void    Read(std::ifstream& file);
         };
 
+        class State_t
+        {
+        public:
+            Save_t      save;
+
+            Settler_t   settlers[MAX_SETTLERS];
+
+        public:
+            State_t();
+            State_t(const State_t& other) = delete;
+            State_t(State_t&& other) noexcept = delete;
+            State_t& operator =(const State_t& other) = delete;
+            State_t& operator =(State_t&& other) noexcept = delete;
+            ~State_t();
+        };
+
+    public:
+        static Party_t&     Party();
+        static Members_t&   Members();
+
+    public:
+        State_t state;
+
+    public:
+        Settlers_t();
+        Settlers_t(const Settlers_t& other) = delete;
+        Settlers_t(Settlers_t&& other) noexcept = delete;
+        Settlers_t& operator =(const Settlers_t& other) = delete;
+        Settlers_t& operator =(Settlers_t&& other) noexcept = delete;
+        ~Settlers_t();
+
+    public:
+        void    On_After_New_Game();
+        void    On_Before_Save_Game(std::ofstream& file);
+        void    On_After_Save_Game();
+        void    On_Before_Load_Game();
+        void    On_After_Load_Game(std::ifstream& file);
+        void    On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update);
+        void    On_Update();
+
+    public:
+        State_t&    State();
+        Save_t&     Save();
+
+    public:
+        Settler_t&          Settler(some<Settler_ID_t> settler_id);
+
+        maybe<Settler_t*>   Active_Settler(some<Member_ID_t> member_id);
+    };
+
+}}
+
+    /*
     public:
         static constexpr size_t                                 MAX_SETTLERS                = Consts_t::NPCP::Int::MAX_SETTLERS;
 
@@ -74,95 +108,6 @@ namespace doticu_skylib { namespace doticu_npcp {
     public:
         static const    Settler_Duration_t  DEFAULT_DURATION;
         static const    Settler_Time_t      DEFAULT_TIME;
-
-    public:
-        class Save_State
-        {
-        public:
-            const some<Quest_t*>                        quest;
-
-            Vector_t<Settler_Flags_Sandboxer_e>         sandboxer_flags;
-            Vector_t<Settler_Flags_Sleeper_e>           sleeper_flags;
-            Vector_t<Settler_Flags_Sitter_e>            sitter_flags;
-            Vector_t<Settler_Flags_Eater_e>             eater_flags;
-            Vector_t<Settler_Flags_Guard_e>             guard_flags;
-
-            Vector_t<maybe<Reference_t*>>               sandboxer_markers;
-            Vector_t<maybe<Reference_t*>>               sleeper_markers;
-            Vector_t<maybe<Reference_t*>>               sitter_markers;
-            Vector_t<maybe<Reference_t*>>               eater_markers;
-            Vector_t<maybe<Reference_t*>>               guard_markers;
-
-            Vector_t<maybe<Settler_Radius_t>>           sandboxer_radii;
-            Vector_t<maybe<Settler_Radius_t>>           sleeper_radii;
-            Vector_t<maybe<Settler_Radius_t>>           sitter_radii;
-            Vector_t<maybe<Settler_Radius_t>>           eater_radii;
-            Vector_t<maybe<Settler_Radius_t>>           guard_radii;
-
-            Vector_t<maybe<Settler_Time_t>>             sleeper_times;
-            Vector_t<maybe<Settler_Time_t>>             sitter_times;
-            Vector_t<maybe<Settler_Time_t>>             eater_times;
-            Vector_t<maybe<Settler_Time_t>>             guard_times;
-
-            Vector_t<maybe<Settler_Duration_t>>         sleeper_durations;
-            Vector_t<maybe<Settler_Duration_t>>         sitter_durations;
-            Vector_t<maybe<Settler_Duration_t>>         eater_durations;
-            Vector_t<maybe<Settler_Duration_t>>         guard_durations;
-
-            Vector_t<maybe<Settler_Attention_t>>        sandboxer_attentions;
-            Vector_t<maybe<Settler_Attention_t>>        sleeper_attentions;
-            Vector_t<maybe<Settler_Attention_t>>        eater_attentions;
-
-            Vector_t<maybe<Settler_Speed_e>>            sandboxer_speeds;
-            Vector_t<maybe<Settler_Speed_e>>            sleeper_speeds;
-            Vector_t<maybe<Settler_Speed_e>>            sitter_speeds;
-            Vector_t<maybe<Settler_Speed_e>>            eater_speeds;
-            Vector_t<maybe<Settler_Speed_e>>            guard_speeds;
-
-            Vector_t<maybe<Settler_Wander_Distance_t>>  sandboxer_wander_distances;
-            Vector_t<maybe<Settler_Wander_Distance_t>>  sleeper_wander_distances;
-            Vector_t<maybe<Settler_Wander_Distance_t>>  eater_wander_distances;
-
-            Vector_t<maybe<Reference_t*>>               sleeper_beds; // I can see this being a chair for sitters.
-
-            // let's add idle markers, maybe three per relevant type?
-
-        public:
-            Save_State(const some<Quest_t*> quest);
-            Save_State(const Save_State& other)                 = delete;
-            Save_State(Save_State&& other) noexcept             = delete;
-            Save_State& operator =(const Save_State& other)     = delete;
-            Save_State& operator =(Save_State&& other) noexcept = delete;
-            ~Save_State();
-
-        public:
-            void    Read();
-            void    Write();
-        };
-
-    public:
-        static void                 Register_Me(some<V::Machine_t*> machine);
-
-    public:
-        const some<Quest_t*>    quest;
-        Save_State              save_state;
-
-    public:
-        Settlers_t();
-        Settlers_t(const Settlers_t& other)                                         = delete;
-        Settlers_t(Settlers_t&& other) noexcept                                     = delete;
-        Settlers_t& operator =(const Settlers_t& other)                             = delete;
-        Settlers_t& operator =(Settlers_t&& other) noexcept                         = delete;
-        ~Settlers_t();
-
-    public:
-        void    On_After_New_Game();
-        void    On_Before_Save_Game(std::ofstream& file);
-        void    On_After_Save_Game();
-        void    On_Before_Load_Game();
-        void    On_After_Load_Game(std::ifstream& file);
-        void    On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update);
-        void    On_Update();
 
     public:
         Main_t&             Main();
@@ -466,6 +411,4 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     public:
         void    Log(std::string indent = "");
-    };*/
-
-}}
+    */

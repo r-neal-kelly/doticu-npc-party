@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <fstream>
-
 #include "doticu_skylib/enum_script_type.h"
 
 #include "intrinsic.h"

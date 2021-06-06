@@ -4,15 +4,17 @@
 
 #pragma once
 
-#include <fstream>
-
 #include "consts.h"
-#include "party.h"
+#include "intrinsic.h"
 #include "party_expoee.h"
 #include "party_expoee_id.h"
+#include "party_member_id.h"
 #include "party_member_sort_type.h"
 
 namespace doticu_skylib { namespace doticu_npcp {
+
+    class Members_t;
+    class Party_t;
 
     class Expoees_t
     {
@@ -57,9 +59,8 @@ namespace doticu_skylib { namespace doticu_npcp {
         };
 
     public:
-        static void     Register_Me(some<Virtual::Machine_t*> machine);
-
-        static Party_t& Party();
+        static Party_t&     Party();
+        static Members_t&   Members();
 
     public:
         State_t state;
@@ -84,6 +85,11 @@ namespace doticu_skylib { namespace doticu_npcp {
     public:
         State_t&    State();
         Save_t&     Save();
+
+    public:
+        Expoee_t&           Expoee(some<Expoee_ID_t> expoee_id);
+
+        maybe<Expoee_t*>    Active_Expoee(some<Member_ID_t> member_id);
     };
 
 }}

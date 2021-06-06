@@ -4,9 +4,6 @@
 
 #pragma once
 
-#include <fstream>
-#include <mutex>
-
 #include "doticu_skylib/skse_plugin.h"
 
 #include "intrinsic.h"

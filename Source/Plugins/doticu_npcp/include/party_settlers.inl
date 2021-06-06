@@ -2,38 +2,6 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
-#pragma once
-
-#include "doticu_skylib/actor.h"
-#include "doticu_skylib/actor_base.h"
-#include "doticu_skylib/const_actors.h"
-#include "doticu_skylib/extra_list.inl"
-#include "doticu_skylib/faction.h"
-#include "doticu_skylib/form_list.h"
-#include "doticu_skylib/form_owner.h"
-#include "doticu_skylib/furniture.h"
-#include "doticu_skylib/misc.h"
-#include "doticu_skylib/package.h"
-#include "doticu_skylib/package_data.h"
-#include "doticu_skylib/package_location.h"
-#include "doticu_skylib/package_value.h"
-#include "doticu_skylib/package_value_bool.h"
-#include "doticu_skylib/package_value_float.h"
-#include "doticu_skylib/package_value_int.h"
-#include "doticu_skylib/package_value_list.h"
-#include "doticu_skylib/package_value_location.h"
-#include "doticu_skylib/package_value_reference.h"
-#include "doticu_skylib/package_value_target.h"
-#include "doticu_skylib/package_value_topic.h"
-#include "doticu_skylib/quest.h"
-#include "doticu_skylib/reference.h"
-#include "doticu_skylib/static.h"
-
-#include "consts.h"
-#include "intrinsic.h"
-#include "party_settlers.h"
-
-namespace doticu_skylib { namespace doticu_npcp {
     /*
     template <typename T>
     inline some<Package_t*> Settlers_t::Package(some<Settler_ID_t> valid_settler_id)
@@ -1816,4 +1784,3 @@ namespace doticu_skylib { namespace doticu_npcp {
         Speed(package, Speed<T>(id), do_reset_ai);
     }
     */
-}}

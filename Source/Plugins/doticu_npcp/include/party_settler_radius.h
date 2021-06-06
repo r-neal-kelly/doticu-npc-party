@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "doticu_skylib/math.h"
 #include "doticu_skylib/numeric.h"
 
 #include "intrinsic.h"
@@ -11,12 +12,12 @@
 namespace doticu_skylib { namespace doticu_npcp {
 
     class Settler_Radius_t_data :
-        public Numeric_Data_t<Int_t>
+        public Numeric_Data_t<s16>
     {
     public:
         static constexpr value_type _NONE_  = -1;
         static constexpr value_type _MIN_   = 0;
-        static constexpr value_type _MAX_   = 32768;
+        static constexpr value_type _MAX_   = std::numeric_limits<value_type>::max();
 
     public:
         static Bool_t Is_Valid(value_type value)

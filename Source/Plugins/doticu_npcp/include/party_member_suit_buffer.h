@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <mutex>
-
 #include "consts.h"
 #include "intrinsic.h"
 

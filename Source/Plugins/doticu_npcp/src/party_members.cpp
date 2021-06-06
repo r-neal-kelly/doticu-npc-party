@@ -207,6 +207,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     void Members_t::On_Before_Save_Game(std::ofstream& file)
     {
         Save().Write(file);
+
         for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
             State().members[idx].On_Before_Save_Game(file);
         }
@@ -234,29 +235,18 @@ namespace doticu_skylib { namespace doticu_npcp {
             State().members[idx].On_After_Load_Game(file);
         }
 
-        class Unfill_Aliases_Callback :
-            public Callback_i<>
-        {
-        public:
-            virtual void operator ()() override
-            {
-                if (NPCP.Is_Valid()) {
-                    Members_t& members = NPCP.Party().Members();
-                    for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
-                        Member_t& member = members.Member(idx);
-                        if (member.Is_Active()) {
-                            members.Alias(idx)->Fill(member.Actor(), none<Virtual::Callback_i*>());
-                        }
-                    }
-                }
-            }
-        };
-        Quest()->Unfill_Aliases(new Unfill_Aliases_Callback());
+        Refill_Aliases();
     }
 
     void Members_t::On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update)
     {
-        On_After_Load_Game(file);
+        Save().Read(file);
+
+        for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
+            State().members[idx].On_After_Load_Game(file, version_to_update);
+        }
+
+        Refill_Aliases();
     }
 
     void Members_t::On_Update()
@@ -272,7 +262,6 @@ namespace doticu_skylib { namespace doticu_npcp {
         for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
             Member_t& member = Member(idx);
             if (member.Is_Active()) {
-                member.On_Update();
                 if (!quest->Has_Filled_Alias(idx)) {
                     Alias(idx)->Fill(member.Actor(), none<Virtual::Callback_i*>());
                 }
@@ -682,6 +671,34 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         State().save.~Save_t();
         new (&State().save) Save_t();
+    }
+
+    void Members_t::Refill_Aliases()
+    {
+        class Unfill_Aliases_Callback :
+            public Callback_i<>
+        {
+        public:
+            virtual void operator ()() override
+            {
+                std::thread(
+                    []()->void
+                    {
+                        NPCP_t::Locker_t locker = NPCP.Locker();
+                        if (NPCP.Is_Valid()) {
+                            Members_t& members = NPCP.Party().Members();
+                            for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
+                                Member_t& member = members.Member(idx);
+                                if (member.Is_Active()) {
+                                    members.Alias(idx)->Fill(member.Actor(), none<Virtual::Callback_i*>());
+                                }
+                            }
+                        }
+                    }
+                ).detach();
+            }
+        };
+        Quest()->Unfill_Aliases(new Unfill_Aliases_Callback());
     }
 
     some<Quest_t*> Members_t::Quest()

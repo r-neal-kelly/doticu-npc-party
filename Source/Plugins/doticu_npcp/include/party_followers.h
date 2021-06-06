@@ -4,16 +4,18 @@
 
 #pragma once
 
-#include <fstream>
-
 #include "consts.h"
-#include "party.h"
+#include "intrinsic.h"
 #include "party_follower.h"
 #include "party_follower_id.h"
 #include "party_follower_limit.h"
+#include "party_member_id.h"
 #include "party_member_sort_type.h"
 
 namespace doticu_skylib { namespace doticu_npcp {
+
+    class Members_t;
+    class Party_t;
 
     class Followers_t
     {
@@ -70,9 +72,8 @@ namespace doticu_skylib { namespace doticu_npcp {
         };
 
     public:
-        static void     Register_Me(some<Virtual::Machine_t*> machine);
-
-        static Party_t& Party();
+        static Party_t&     Party();
+        static Members_t&   Members();
 
     public:
         State_t state;
@@ -99,7 +100,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save_t&     Save();
 
     public:
-        Bool_t                      Do_Auto_Resurrect();
+        /*Bool_t                      Do_Auto_Resurrect();
         void                        Do_Auto_Resurrect(Bool_t value);
         Bool_t                      Do_Auto_Sojourn();
         void                        Do_Auto_Sojourn(Bool_t value);
@@ -110,10 +111,14 @@ namespace doticu_skylib { namespace doticu_npcp {
         void                        Limit(maybe<Follower_Limit_t> value);
 
         some<Member_Sort_Type_e>    Sort_Type();
-        void                        Sort_Type(maybe<Member_Sort_Type_e> value);
+        void                        Sort_Type(maybe<Member_Sort_Type_e> value);*/
 
     public:
-        Bool_t                  Has_Alias(some<Follower_ID_t> follower_id);
+        Follower_t&         Follower(some<Follower_ID_t> follower_id);
+
+        maybe<Follower_t*>  Active_Follower(some<Member_ID_t> member_id);
+
+        /*Bool_t                  Has_Alias(some<Follower_ID_t> follower_id);
         Bool_t                  Has_Alias(Alias_ID_t alias_id);
         Bool_t                  Has_Follower(some<Follower_ID_t> follower_id);
         Bool_t                  Has_Follower(some<Member_ID_t> member_id);
@@ -140,7 +145,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         void                        Is_Saddler(some<Follower_ID_t> valid_follower_id, Bool_t value);
 
         Bool_t                      Is_Sojourner(some<Follower_ID_t> valid_follower_id);
-        void                        Is_Sojourner(some<Follower_ID_t> valid_follower_id, Bool_t value);
+        void                        Is_Sojourner(some<Follower_ID_t> valid_follower_id, Bool_t value);*/
     };
 
 }}

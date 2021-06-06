@@ -4,9 +4,8 @@
 
 #pragma once
 
-#include <fstream>
-
 #include "consts.h"
+#include "intrinsic.h"
 #include "party_member.h"
 #include "party_member_alpha.h"
 #include "party_member_clone_suit_type.h"
@@ -239,6 +238,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     public:
         void                        Reset_Options();
+        void                        Refill_Aliases();
 
         some<Quest_t*>              Quest();
         some<Alias_Reference_t*>    Alias(some<Member_ID_t> id);

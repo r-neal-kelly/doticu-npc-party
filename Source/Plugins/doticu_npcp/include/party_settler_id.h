@@ -4,16 +4,33 @@
 
 #pragma once
 
+#include "doticu_skylib/numeric.h"
+
 #include "consts.h"
-#include "party_member_id.h"
+#include "intrinsic.h"
 
 namespace doticu_skylib { namespace doticu_npcp {
 
-    class Settler_ID_t :
-        public Member_ID_t
+    class Settler_ID_t_data :
+        public Numeric_Data_t<s64>
     {
     public:
-        using Member_ID_t::Member_ID_t;
+        static constexpr value_type _NONE_  = -1;
+        static constexpr value_type _MIN_   = 0;
+        static constexpr value_type _MAX_   = Consts_t::NPCP::Int::MAX_SETTLERS - 1;
+
+    public:
+        static Bool_t Is_Valid(value_type value)
+        {
+            return value >= _MIN_ && value <= _MAX_;
+        }
+    };
+
+    class Settler_ID_t :
+        public Numeric_t<Settler_ID_t_data>
+    {
+    public:
+        using Numeric_t::Numeric_t;
     };
 
 }}

@@ -2,116 +2,140 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
-#include "doticu_skylib/quest.h"
-#include "doticu_skylib/virtual_macros.h"
-
+#include "npcp.inl"
+#include "party.h"
 #include "party_displays.h"
+#include "party_members.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
 
-    Displays_t::Save_State::Save_State(const some<Quest_t*> quest) :
-        quest(quest),
-
+    Displays_t::Save_t::Save_t() :
         limit(DEFAULT_LIMIT)
     {
     }
 
-    Displays_t::Save_State::~Save_State()
+    Displays_t::Save_t::~Save_t()
     {
     }
 
-    some<V::Object_t*> Displays_t::Save_State::Object()
+    void Displays_t::Save_t::Write(std::ofstream& file)
     {
-        DEFINE_COMPONENT_OBJECT_METHOD(this->quest());
+        NPCP.Write(file, this->limit);
     }
 
-    V::Variable_tt<Int_t>& Displays_t::Save_State::Limit()
+    void Displays_t::Save_t::Read(std::ifstream& file)
     {
-        DEFINE_VARIABLE_REFERENCE(Int_t, "limit");
+        NPCP.Read(file, this->limit);
     }
 
-    void Displays_t::Save_State::Read()
+    Displays_t::State_t::State_t() :
+        save(),
+
+        displays()
     {
-        this->limit = Limit();
     }
 
-    void Displays_t::Save_State::Write()
+    Displays_t::State_t::~State_t()
     {
-        Limit() = static_cast<Int_t>(this->limit);
     }
 
-    String_t Displays_t::Class_Name()
+    Party_t& Displays_t::Party()
     {
-        DEFINE_CLASS_NAME("doticu_npcp_party_displays");
+        return NPCP.Party();
     }
 
-    some<V::Class_t*> Displays_t::Class()
+    Members_t& Displays_t::Members()
     {
-        DEFINE_CLASS();
+        return Party().Members();
     }
 
-    void Displays_t::Register_Me(some<V::Machine_t*> machine)
+    Displays_t::Displays_t() :
+        state()
     {
-        SKYLIB_ASSERT_SOME(machine);
-
-        String_t class_name = Class_Name();
-
-        #define STATIC(STATIC_NAME_, WAITS_FOR_FRAME_, RETURN_TYPE_, STATIC_, ...)  \
-        SKYLIB_M                                                                    \
-            BIND_STATIC(machine, class_name, STATIC_NAME_, WAITS_FOR_FRAME_,        \
-                        RETURN_TYPE_, STATIC_, __VA_ARGS__);                        \
-        SKYLIB_W
-
-        #undef STATIC
-
-        #define METHOD(METHOD_NAME_, WAITS_FOR_FRAME_, RETURN_TYPE_, METHOD_, ...)          \
-        SKYLIB_M                                                                            \
-            BIND_METHOD(machine, class_name, Displays_t, METHOD_NAME_, WAITS_FOR_FRAME_,    \
-                        RETURN_TYPE_, METHOD_, __VA_ARGS__);                                \
-        SKYLIB_W
-
-        #undef METHOD
-    }
-
-    Displays_t::Displays_t(some<Quest_t*> quest, Bool_t is_new_game) :
-        quest(quest),
-        save_state(quest)
-    {
-        if (is_new_game) {
-
-        } else {
-            this->save_state.Read();
-        }
-    }
-
-    Displays_t::Displays_t(some<Quest_t*> quest, const Version_t<u16> version_to_update) :
-        quest(quest),
-        save_state(quest)
-    {
-        // update code goes here
-
-        this->save_state.Read();
     }
 
     Displays_t::~Displays_t()
     {
     }
 
-    void Displays_t::Before_Save()
+    void Displays_t::On_After_New_Game()
     {
-        this->save_state.Write();
+        for (size_t idx = 0, end = MAX_DISPLAYS; idx < end; idx += 1) {
+            State().displays[idx].On_After_New_Game();
+        }
     }
 
-    void Displays_t::After_Save()
+    void Displays_t::On_Before_Save_Game(std::ofstream& file)
+    {
+        Save().Write(file);
+
+        for (size_t idx = 0, end = MAX_DISPLAYS; idx < end; idx += 1) {
+            State().displays[idx].On_Before_Save_Game(file);
+        }
+    }
+
+    void Displays_t::On_After_Save_Game()
+    {
+        for (size_t idx = 0, end = MAX_DISPLAYS; idx < end; idx += 1) {
+            State().displays[idx].On_After_Save_Game();
+        }
+    }
+
+    void Displays_t::On_Before_Load_Game()
+    {
+        for (size_t idx = 0, end = MAX_DISPLAYS; idx < end; idx += 1) {
+            State().displays[idx].On_Before_Load_Game();
+        }
+    }
+
+    void Displays_t::On_After_Load_Game(std::ifstream& file)
+    {
+        Save().Read(file);
+
+        for (size_t idx = 0, end = MAX_DISPLAYS; idx < end; idx += 1) {
+            State().displays[idx].On_After_Load_Game(file);
+        }
+    }
+
+    void Displays_t::On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update)
+    {
+        Save().Read(file);
+
+        for (size_t idx = 0, end = MAX_DISPLAYS; idx < end; idx += 1) {
+            State().displays[idx].On_After_Load_Game(file, version_to_update);
+        }
+    }
+
+    void Displays_t::On_Update()
     {
     }
 
-    void Displays_t::Validate()
+    Displays_t::State_t& Displays_t::State()
     {
-        if (this->save_state.limit < 1) {
-            this->save_state.limit = 1;
-        } else if (this->save_state.limit > MAX_DISPLAYS) {
-            this->save_state.limit = MAX_DISPLAYS;
+        return this->state;
+    }
+
+    Displays_t::Save_t& Displays_t::Save()
+    {
+        return State().save;
+    }
+
+    Display_t& Displays_t::Display(some<Display_ID_t> display_id)
+    {
+        SKYLIB_ASSERT_SOME(display_id);
+
+        return State().displays[display_id()];
+    }
+
+    maybe<Display_t*> Displays_t::Active_Display(some<Member_ID_t> member_id)
+    {
+        SKYLIB_ASSERT_SOME(member_id);
+
+        Member_t& member = Members().Member(member_id);
+        if (member.Is_Active()) {
+            return member.Display();
+        } else {
+            return none<Display_t*>();
         }
     }
 

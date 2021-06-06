@@ -2,397 +2,169 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
-#include "doticu_skylib/actor.h"
-#include "doticu_skylib/alias_reference.h"
-#include "doticu_skylib/misc.h"
-#include "doticu_skylib/quest.h"
-#include "doticu_skylib/virtual_macros.h"
-
-#include "main.h"
-#include "npcp.h"
+#include "npcp.inl"
+#include "party.h"
 #include "party_followers.h"
-#include "party_member.h"
 #include "party_members.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
 
-    Followers_t::Save_State::Save_State(const some<Quest_t*> quest) :
-        quest(quest),
+    Followers_t::Save_t::Save_t() :
+        do_level(DEFAULT_DO_LEVEL),
+        do_resurrect_automatically(DEFAULT_DO_RESURRECT_AUTOMATICALLY),
+        do_sojourn_automatically(DEFAULT_DO_SOJOURN_AUTOMATICALLY),
 
         limit(DEFAULT_LIMIT),
 
-        do_auto_resurrect(DEFAULT_DO_AUTO_RESURRECT),
-        do_auto_sojourn(DEFAULT_DO_AUTO_SOJOURN),
-        do_level(DEFAULT_DO_LEVEL),
-
-        sort_type(DEFAULT_SORT_TYPE),
-
-        member_ids(Vector_t<maybe<Member_ID_t>>(MAX_FOLLOWERS, none<Member_ID_t>())),
-
-        flags(Vector_t<Follower_Flags_e>(MAX_FOLLOWERS, 0))
+        sort_type(DEFAULT_SORT_TYPE)
     {
     }
 
-    Followers_t::Save_State::~Save_State()
+    Followers_t::Save_t::~Save_t()
     {
     }
 
-    some<V::Object_t*> Followers_t::Save_State::Object()
+    void Followers_t::Save_t::Write(std::ofstream& file)
     {
-        DEFINE_COMPONENT_OBJECT_METHOD(this->quest());
+        NPCP.Write(file, this->do_level);
+        NPCP.Write(file, this->do_resurrect_automatically);
+        NPCP.Write(file, this->do_sojourn_automatically);
+
+        NPCP.Write(file, this->limit);
+
+        NPCP.Write(file, this->sort_type);
     }
 
-    V::Variable_tt<Int_t>& Followers_t::Save_State::Limit()
+    void Followers_t::Save_t::Read(std::ifstream& file)
     {
-        DEFINE_VARIABLE_REFERENCE(Int_t, "limit");
+        NPCP.Read(file, this->do_level);
+        NPCP.Read(file, this->do_resurrect_automatically);
+        NPCP.Read(file, this->do_sojourn_automatically);
+
+        NPCP.Read(file, this->limit);
+
+        NPCP.Read(file, this->sort_type);
     }
 
-    V::Variable_tt<Bool_t>& Followers_t::Save_State::Do_Auto_Resurrect()
+    Followers_t::State_t::State_t() :
+        save(),
+
+        followers()
     {
-        DEFINE_VARIABLE_REFERENCE(Bool_t, "do_auto_resurrect");
     }
 
-    V::Variable_tt<Bool_t>& Followers_t::Save_State::Do_Auto_Sojourn()
+    Followers_t::State_t::~State_t()
     {
-        DEFINE_VARIABLE_REFERENCE(Bool_t, "do_auto_sojourn");
     }
 
-    V::Variable_tt<Bool_t>& Followers_t::Save_State::Do_Level()
+    Party_t& Followers_t::Party()
     {
-        DEFINE_VARIABLE_REFERENCE(Bool_t, "do_level");
+        return NPCP.Party();
     }
 
-    V::Variable_tt<String_t>& Followers_t::Save_State::Sort_Type()
+    Members_t& Followers_t::Members()
     {
-        DEFINE_VARIABLE_REFERENCE(String_t, "sort_type");
+        return Party().Members();
     }
 
-    V::Variable_tt<Vector_t<Int_t>>& Followers_t::Save_State::Member_IDs()
+    Followers_t::Followers_t() :
+        state()
     {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<Int_t>, "member_ids");
-    }
-
-    V::Variable_tt<Vector_t<Bool_t>>& Followers_t::Save_State::Flags_Is_Retreater()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_is_retreater");
-    }
-
-    V::Variable_tt<Vector_t<Bool_t>>& Followers_t::Save_State::Flags_Is_Saddler()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_is_saddler");
-    }
-
-    V::Variable_tt<Vector_t<Bool_t>>& Followers_t::Save_State::Flags_Is_Sojourner()
-    {
-        DEFINE_VARIABLE_REFERENCE(Vector_t<Bool_t>, "flags_is_sojourner");
-    }
-
-    void Followers_t::Save_State::Read()
-    {
-        this->limit = static_cast<Follower_Limit_t::value_type>(Limit());
-
-        this->do_auto_resurrect = Do_Auto_Resurrect();
-        this->do_auto_sojourn = Do_Auto_Sojourn();
-        this->do_level = Do_Level();
-
-        this->sort_type = Sort_Type().As<String_t>();
-
-        Vector_t<Int_t> member_ids = Member_IDs();
-
-        Vector_t<Bool_t> flags_is_retreater = Flags_Is_Retreater();
-        Vector_t<Bool_t> flags_is_saddler = Flags_Is_Saddler();
-        Vector_t<Bool_t> flags_is_sojourner = Flags_Is_Sojourner();
-
-        member_ids.resize(MAX_FOLLOWERS);
-
-        flags_is_retreater.resize(MAX_FOLLOWERS);
-        flags_is_saddler.resize(MAX_FOLLOWERS);
-        flags_is_sojourner.resize(MAX_FOLLOWERS);
-
-        for (size_t idx = 0, end = MAX_FOLLOWERS; idx < end; idx += 1) {
-            this->member_ids[idx] = member_ids[idx];
-
-            Follower_Flags_e& flags = this->flags[idx];
-            flags.Is_Flagged(Follower_Flags_e::IS_RETREATER, flags_is_retreater[idx]);
-            flags.Is_Flagged(Follower_Flags_e::IS_SADDLER, flags_is_saddler[idx]);
-            flags.Is_Flagged(Follower_Flags_e::IS_SOJOURNER, flags_is_sojourner[idx]);
-        }
-    }
-
-    void Followers_t::Save_State::Write()
-    {
-        Vector_t<Int_t> member_ids(MAX_FOLLOWERS, Member_ID_t::_NONE_);
-
-        Vector_t<Bool_t> flags_is_retreater(MAX_FOLLOWERS, false);
-        Vector_t<Bool_t> flags_is_saddler(MAX_FOLLOWERS, false);
-        Vector_t<Bool_t> flags_is_sojourner(MAX_FOLLOWERS, false);
-
-        for (size_t idx = 0, end = MAX_FOLLOWERS; idx < end; idx += 1) {
-            member_ids[idx] = this->member_ids[idx]();
-
-            Follower_Flags_e flags = this->flags[idx];
-            flags_is_retreater[idx] = flags.Is_Flagged(Follower_Flags_e::IS_RETREATER);
-            flags_is_saddler[idx] = flags.Is_Flagged(Follower_Flags_e::IS_SADDLER);
-            flags_is_sojourner[idx] = flags.Is_Flagged(Follower_Flags_e::IS_SOJOURNER);
-        }
-
-        Limit() = static_cast<Follower_Limit_t::value_type>(this->limit());
-
-        Do_Auto_Resurrect() = this->do_auto_resurrect;
-        Do_Auto_Sojourn() = this->do_auto_sojourn;
-        Do_Level() = this->do_level;
-
-        Sort_Type() = this->sort_type().As_String();
-
-        Member_IDs() = member_ids;
-
-        Flags_Is_Retreater() = flags_is_retreater;
-        Flags_Is_Saddler() = flags_is_saddler;
-        Flags_Is_Sojourner() = flags_is_sojourner;
-    }
-
-    String_t Followers_t::Class_Name()
-    {
-        DEFINE_CLASS_NAME("doticu_npcp_party_followers");
-    }
-
-    some<V::Class_t*> Followers_t::Class()
-    {
-        DEFINE_CLASS();
-    }
-
-    void Followers_t::Register_Me(some<V::Machine_t*> machine)
-    {
-        SKYLIB_ASSERT_SOME(machine);
-
-        String_t class_name = Class_Name();
-
-        #define STATIC(STATIC_NAME_, WAITS_FOR_FRAME_, RETURN_TYPE_, STATIC_, ...)  \
-        SKYLIB_M                                                                    \
-            BIND_STATIC(machine, class_name, STATIC_NAME_, WAITS_FOR_FRAME_,        \
-                        RETURN_TYPE_, STATIC_, __VA_ARGS__);                        \
-        SKYLIB_W
-
-        #undef STATIC
-
-        #define METHOD(METHOD_NAME_, WAITS_FOR_FRAME_, RETURN_TYPE_, METHOD_, ...)          \
-        SKYLIB_M                                                                            \
-            BIND_METHOD(machine, class_name, Followers_t, METHOD_NAME_, WAITS_FOR_FRAME_,   \
-                        RETURN_TYPE_, METHOD_, __VA_ARGS__);                                \
-        SKYLIB_W
-
-        #undef METHOD
-    }
-
-    Followers_t::Followers_t(some<Quest_t*> quest, Bool_t is_new_game) :
-        quest(quest),
-        save_state(quest)
-    {
-        if (is_new_game) {
-
-        } else {
-            this->save_state.Read();
-        }
-    }
-
-    Followers_t::Followers_t(some<Quest_t*> quest, const Version_t<u16> version_to_update) :
-        quest(quest),
-        save_state(quest)
-    {
-        // update code goes here
-
-        this->save_state.Read();
     }
 
     Followers_t::~Followers_t()
     {
     }
 
-    void Followers_t::Before_Save()
+    void Followers_t::On_After_New_Game()
     {
-        this->save_state.Write();
+        for (size_t idx = 0, end = MAX_FOLLOWERS; idx < end; idx += 1) {
+            State().followers[idx].On_After_New_Game();
+        }
     }
 
-    void Followers_t::After_Save()
+    void Followers_t::On_Before_Save_Game(std::ofstream& file)
+    {
+        Save().Write(file);
+
+        for (size_t idx = 0, end = MAX_FOLLOWERS; idx < end; idx += 1) {
+            State().followers[idx].On_Before_Save_Game(file);
+        }
+    }
+
+    void Followers_t::On_After_Save_Game()
+    {
+        for (size_t idx = 0, end = MAX_FOLLOWERS; idx < end; idx += 1) {
+            State().followers[idx].On_After_Save_Game();
+        }
+    }
+
+    void Followers_t::On_Before_Load_Game()
+    {
+        for (size_t idx = 0, end = MAX_FOLLOWERS; idx < end; idx += 1) {
+            State().followers[idx].On_Before_Load_Game();
+        }
+    }
+
+    void Followers_t::On_After_Load_Game(std::ifstream& file)
+    {
+        Save().Read(file);
+
+        for (size_t idx = 0, end = MAX_FOLLOWERS; idx < end; idx += 1) {
+            State().followers[idx].On_After_Load_Game(file);
+        }
+    }
+
+    void Followers_t::On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update)
+    {
+        Save().Read(file);
+
+        for (size_t idx = 0, end = MAX_FOLLOWERS; idx < end; idx += 1) {
+            State().followers[idx].On_After_Load_Game(file, version_to_update);
+        }
+    }
+
+    void Followers_t::On_Update()
     {
     }
 
-    void Followers_t::Validate()
+    Followers_t::State_t& Followers_t::State()
     {
-        if (!this->save_state.limit) {
-            this->save_state.limit = Follower_Limit_t::_MAX_;
+        return this->state;
+    }
+
+    Followers_t::Save_t& Followers_t::Save()
+    {
+        return State().save;
+    }
+
+    Follower_t& Followers_t::Follower(some<Follower_ID_t> follower_id)
+    {
+        SKYLIB_ASSERT_SOME(follower_id);
+
+        return State().followers[follower_id()];
+    }
+
+    maybe<Follower_t*> Followers_t::Active_Follower(some<Member_ID_t> member_id)
+    {
+        SKYLIB_ASSERT_SOME(member_id);
+
+        Member_t& member = Members().Member(member_id);
+        if (member.Is_Active()) {
+            return member.Follower();
         } else {
-            size_t follower_count = Follower_Count();
-            if (this->save_state.limit() < follower_count) {
-                this->save_state.limit = follower_count;
-            }
+            return none<Follower_t*>();
         }
-
-        if (!this->save_state.sort_type) {
-            this->save_state.sort_type = DEFAULT_SORT_TYPE;
-        }
-
-        class Unfill_Aliases_Callback :
-            public Callback_i<>
-        {
-        public:
-            Followers_t& self;
-
-        public:
-            Unfill_Aliases_Callback(Followers_t& self) :
-                self(self)
-            {
-            }
-
-        public:
-            virtual void operator ()() override
-            {
-                for (size_t idx = 0, end = MAX_FOLLOWERS; idx < end; idx += 1) {
-                    if (this->self.Has_Follower(Follower_ID_t(idx))) {
-                        this->self.Alias_Reference(idx)->Fill(this->self.Actor(idx), none<V::Callback_i*>());
-                    } else {
-                        this->self.Remove_Follower(idx);
-                    }
-                }
-            }
-        };
-        this->quest->Unfill_Aliases(new Unfill_Aliases_Callback(*this));
     }
 
-    Main_t& Followers_t::Main()
-    {
-        return NPCP.Main().Party();
-    }
+}}
 
-    Members_t& Followers_t::Members()
-    {
-        return NPCP.Main().Party().Members();
-    }
 
-    some<Follower_Limit_t> Followers_t::Limit()
-    {
-        return this->save_state.limit;
-    }
 
-    void Followers_t::Limit(some<Follower_Limit_t> value)
-    {
-        SKYLIB_ASSERT_SOME(value);
-        SKYLIB_ASSERT(value() >= Follower_Count());
 
-        this->save_state.limit = value;
-    }
 
-    Bool_t Followers_t::Do_Auto_Resurrect()
-    {
-        return this->save_state.do_auto_resurrect;
-    }
-
-    void Followers_t::Do_Auto_Resurrect(Bool_t value)
-    {
-        this->save_state.do_auto_resurrect = value;
-    }
-
-    Bool_t Followers_t::Do_Auto_Sojourn()
-    {
-        return this->save_state.do_auto_sojourn;
-    }
-
-    void Followers_t::Do_Auto_Sojourn(Bool_t value)
-    {
-        this->save_state.do_auto_sojourn = value;
-    }
-
-    Bool_t Followers_t::Do_Level()
-    {
-        return this->save_state.do_level;
-    }
-
-    void Followers_t::Do_Level(Bool_t value)
-    {
-        this->save_state.do_level = value;
-    }
-
-    some<Member_Sort_Type_e> Followers_t::Sort_Type()
-    {
-        return this->save_state.sort_type;
-    }
-
-    void Followers_t::Sort_Type(some<Member_Sort_Type_e> value)
-    {
-        SKYLIB_ASSERT_SOME(value);
-
-        this->save_state.sort_type = value;
-    }
-
-    Bool_t Followers_t::Has_Alias(some<Follower_ID_t> follower_id)
-    {
-        SKYLIB_ASSERT_SOME(follower_id);
-
-        return this->quest->Has_Alias_Index(follower_id());
-    }
-
-    Bool_t Followers_t::Has_Alias(Alias_ID_t alias_id)
-    {
-        return this->quest->Has_Alias_ID(alias_id);
-    }
-
-    Bool_t Followers_t::Has_Follower(some<Follower_ID_t> follower_id)
-    {
-        SKYLIB_ASSERT_SOME(follower_id);
-
-        maybe<Member_ID_t> member_id = this->save_state.member_ids[follower_id()];
-        return member_id && Members().Has_Member(member_id());
-    }
-
-    Bool_t Followers_t::Has_Follower(some<Member_ID_t> member_id)
-    {
-        SKYLIB_ASSERT_SOME(member_id);
-
-        return Used_Follower_ID(member_id) != none<Follower_ID_t>();
-    }
-
-    Bool_t Followers_t::Has_Follower(some<Actor_t*> actor)
-    {
-        SKYLIB_ASSERT_SOME(actor);
-
-        return Used_Follower_ID(actor) != none<Follower_ID_t>();
-    }
-
-    maybe<Follower_ID_t> Followers_t::Used_Follower_ID(some<Member_ID_t> member_id)
-    {
-        SKYLIB_ASSERT_SOME(member_id);
-
-        for (size_t idx = 0, end = MAX_FOLLOWERS; idx < end; idx += 1) {
-            if (this->save_state.member_ids[idx] == member_id && Members().Has_Member(member_id())) {
-                return idx;
-            }
-        }
-        return none<Follower_ID_t>();
-    }
-
-    maybe<Follower_ID_t> Followers_t::Used_Follower_ID(some<Actor_t*> actor)
-    {
-        SKYLIB_ASSERT_SOME(actor);
-
-        for (size_t idx = 0, end = MAX_FOLLOWERS; idx < end; idx += 1) {
-            maybe<Member_ID_t> member_id = this->save_state.member_ids[idx];
-            if (member_id && Members().Has_Member(member_id()) && Member_t(member_id()).Actor() == actor) {
-                return idx;
-            }
-        }
-        return none<Follower_ID_t>();
-    }
-
-    maybe<Follower_ID_t> Followers_t::Unused_Follower_ID()
-    {
-        // this needs to be locked.
-        for (size_t idx = 0, end = MAX_FOLLOWERS; idx < end; idx += 1) {
-            if (!Has_Follower(Follower_ID_t(idx))) {
-                return idx;
-            }
-        }
-        return none<Follower_ID_t>();
-    }
+/*
+namespace doticu_npcp { namespace Party {
 
     static void Add_Follower(Followers_t& self, some<Follower_ID_t> follower_id, some<Member_ID_t> member_id)
     {
@@ -448,17 +220,6 @@ namespace doticu_npcp { namespace Party {
         return false;
     }
 
-    size_t Followers_t::Follower_Count()
-    {
-        size_t result = 0;
-        for (size_t idx = 0, end = MAX_FOLLOWERS; idx < end; idx += 1) {
-            if (Has_Follower(Follower_ID_t(idx))) {
-                result += 1;
-            }
-        }
-        return result;
-    }
-
     some<Alias_Reference_t*> Followers_t::Alias_Reference(some<Follower_ID_t> valid_follower_id)
     {
         SKYLIB_ASSERT_SOME(valid_follower_id);
@@ -467,72 +228,6 @@ namespace doticu_npcp { namespace Party {
         some<Alias_Reference_t*> alias_reference = this->quest->Index_To_Alias_Reference(valid_follower_id())();
         SKYLIB_ASSERT_SOME(alias_reference);
         return alias_reference;
-    }
-
-    some<Actor_t*> Followers_t::Actor(some<Follower_ID_t> valid_follower_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_follower_id);
-        SKYLIB_ASSERT(Has_Follower(valid_follower_id));
-
-        return Member_t(Member_ID(valid_follower_id)).Actor();
-    }
-
-    some<Member_ID_t> Followers_t::Member_ID(some<Follower_ID_t> valid_follower_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_follower_id);
-        SKYLIB_ASSERT(Has_Follower(valid_follower_id));
-
-        some<Member_ID_t> member_id = this->save_state.member_ids[valid_follower_id()]();
-        SKYLIB_ASSERT_SOME(member_id);
-        return member_id;
-    }
-
-    Bool_t Followers_t::Is_Retreater(some<Follower_ID_t> valid_follower_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_follower_id);
-        SKYLIB_ASSERT(Has_Follower(valid_follower_id));
-
-        return this->save_state.flags[valid_follower_id()].Is_Flagged(Follower_Flags_e::IS_RETREATER);
-    }
-
-    void Followers_t::Is_Retreater(some<Follower_ID_t> valid_follower_id, Bool_t value)
-    {
-        SKYLIB_ASSERT_SOME(valid_follower_id);
-        SKYLIB_ASSERT(Has_Follower(valid_follower_id));
-
-        this->save_state.flags[valid_follower_id()].Is_Flagged(Follower_Flags_e::IS_RETREATER, value);
-    }
-
-    Bool_t Followers_t::Is_Saddler(some<Follower_ID_t> valid_follower_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_follower_id);
-        SKYLIB_ASSERT(Has_Follower(valid_follower_id));
-
-        return this->save_state.flags[valid_follower_id()].Is_Flagged(Follower_Flags_e::IS_SADDLER);
-    }
-
-    void Followers_t::Is_Saddler(some<Follower_ID_t> valid_follower_id, Bool_t value)
-    {
-        SKYLIB_ASSERT_SOME(valid_follower_id);
-        SKYLIB_ASSERT(Has_Follower(valid_follower_id));
-
-        this->save_state.flags[valid_follower_id()].Is_Flagged(Follower_Flags_e::IS_SADDLER, value);
-    }
-
-    Bool_t Followers_t::Is_Sojourner(some<Follower_ID_t> valid_follower_id)
-    {
-        SKYLIB_ASSERT_SOME(valid_follower_id);
-        SKYLIB_ASSERT(Has_Follower(valid_follower_id));
-
-        return this->save_state.flags[valid_follower_id()].Is_Flagged(Follower_Flags_e::IS_SOJOURNER);
-    }
-
-    void Followers_t::Is_Sojourner(some<Follower_ID_t> valid_follower_id, Bool_t value)
-    {
-        SKYLIB_ASSERT_SOME(valid_follower_id);
-        SKYLIB_ASSERT(Has_Follower(valid_follower_id));
-
-        this->save_state.flags[valid_follower_id()].Is_Flagged(Follower_Flags_e::IS_SOJOURNER, value);
     }
 
     void Followers_t::Enforce(some<Follower_ID_t> follower_id)
@@ -557,3 +252,4 @@ namespace doticu_npcp { namespace Party {
     }
 
 }}
+*/

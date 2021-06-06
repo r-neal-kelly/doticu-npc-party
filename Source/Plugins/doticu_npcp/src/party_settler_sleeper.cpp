@@ -2,10 +2,14 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "doticu_skylib/form_list.h"
+#include "doticu_skylib/reference.h"
+
 #include "consts.h"
+#include "npcp.inl"
 #include "party_settler_sleeper.h"
 
-namespace doticu_npcp { namespace Party {
+namespace doticu_skylib { namespace doticu_npcp {
 
     some<Form_List_t*> Settler_Sleeper_t::Packages()
     {
@@ -17,39 +21,122 @@ namespace doticu_npcp { namespace Party {
         return Consts_t::NPCP::Misc::Token::Settler_Sleeper();
     }
 
-    Settler_Sleeper_t::Settler_Sleeper_t(some<Settler_ID_t> id) :
-        Settler_t(id)
+    Settler_Sleeper_t::Save_t::Save_t() :
+        flags(),
+        time(),
+        duration(),
+        marker(),
+        radius(),
+        speed(),
+        attention(),
+        wander_distance(),
+        bed()
     {
     }
 
-    Settler_Sleeper_t::Settler_Sleeper_t(some<Settler_ID_t> id, std::mutex& lock) :
-        Settler_t(id, lock)
+    Settler_Sleeper_t::Save_t::~Save_t()
     {
     }
 
-    Settler_Sleeper_t::Settler_Sleeper_t(Settler_Sleeper_t&& other) noexcept :
-        Settler_t(std::move(other))
+    void Settler_Sleeper_t::Save_t::Write(std::ofstream& file)
+    {
+        NPCP.Write(file, this->flags);
+        NPCP.Write(file, this->time);
+        NPCP.Write(file, this->duration);
+        this->marker.Write(file);
+        NPCP.Write(file, this->radius);
+        NPCP.Write(file, this->speed);
+        NPCP.Write(file, this->attention);
+        NPCP.Write(file, this->wander_distance);
+        NPCP.Write_Form(file, this->bed);
+    }
+
+    void Settler_Sleeper_t::Save_t::Read(std::ifstream& file)
+    {
+        NPCP.Read(file, this->flags);
+        NPCP.Read(file, this->time);
+        NPCP.Read(file, this->duration);
+        this->marker.Read(file);
+        NPCP.Read(file, this->radius);
+        NPCP.Read(file, this->speed);
+        NPCP.Read(file, this->attention);
+        NPCP.Read(file, this->wander_distance);
+        NPCP.Read_Form(file, this->bed);
+    }
+
+    Settler_Sleeper_t::State_t::State_t() :
+        save()
     {
     }
 
-    Settler_Sleeper_t& Settler_Sleeper_t::operator =(Settler_Sleeper_t&& other) noexcept
+    Settler_Sleeper_t::State_t::~State_t()
     {
-        Settler_t::operator =(std::move(other));
-        return *this;
+    }
+
+    Settler_Sleeper_t::Settler_Sleeper_t() :
+        state()
+    {
     }
 
     Settler_Sleeper_t::~Settler_Sleeper_t()
     {
     }
 
-    Bool_t Settler_Sleeper_t::Is_Valid()
+    void Settler_Sleeper_t::On_After_New_Game()
     {
-
     }
 
-    some<Package_t*> Settler_Sleeper_t::Package()
+    void Settler_Sleeper_t::On_Before_Save_Game(std::ofstream& file)
     {
+        Save().Write(file);
+    }
 
+    void Settler_Sleeper_t::On_After_Save_Game()
+    {
+    }
+
+    void Settler_Sleeper_t::On_Before_Load_Game()
+    {
+    }
+
+    void Settler_Sleeper_t::On_After_Load_Game(std::ifstream& file)
+    {
+        Save().Read(file);
+    }
+
+    void Settler_Sleeper_t::On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update)
+    {
+        Save().Read(file);
+    }
+
+    Settler_Sleeper_t::State_t& Settler_Sleeper_t::State()
+    {
+        return this->state;
+    }
+
+    Settler_Sleeper_t::Save_t& Settler_Sleeper_t::Save()
+    {
+        return State().save;
+    }
+
+    Bool_t Settler_Sleeper_t::Is_Enabled()
+    {
+        return Save().flags.Is_Flagged(Flags_e::IS_ENABLED);
+    }
+
+    void Settler_Sleeper_t::Is_Enabled(Bool_t value)
+    {
+        Save().flags.Is_Flagged(Flags_e::IS_ENABLED, value);
+    }
+
+    some<Package_t*> Settler_Sleeper_t::Package(some<Settler_ID_t> settler_id)
+    {
+        SKYLIB_ASSERT_SOME(settler_id);
+
+        maybe<Package_t*> package = Packages()->Static_At(settler_id())->As_Package();
+        SKYLIB_ASSERT_SOME(package);
+
+        return package();
     }
 
 }}

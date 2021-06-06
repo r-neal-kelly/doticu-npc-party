@@ -11,7 +11,7 @@
 namespace doticu_skylib { namespace doticu_npcp {
 
     class Settler_Wander_Distance_t_data :
-        public Numeric_Data_t<Int_t>
+        public Numeric_Data_t<s16>
     {
     public:
         static constexpr value_type _NONE_  = -1;

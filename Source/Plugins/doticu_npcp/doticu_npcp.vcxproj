@@ -113,6 +113,12 @@
     <ClCompile Include="src\chests.cpp" />
     <ClCompile Include="src\consts.cpp" />
     <ClCompile Include="src\hotkeys.cpp" />
+    <ClCompile Include="src\party_display.cpp" />
+    <ClCompile Include="src\party_displays.cpp" />
+    <ClCompile Include="src\party_expoee.cpp" />
+    <ClCompile Include="src\party_expoees.cpp" />
+    <ClCompile Include="src\party_follower.cpp" />
+    <ClCompile Include="src\party_followers.cpp" />
     <ClCompile Include="src\party_member_suitcase.cpp" />
     <ClCompile Include="src\npcp.cpp" />
     <ClCompile Include="src\party.cpp" />
@@ -120,6 +126,15 @@
     <ClCompile Include="src\party_members.cpp" />
     <ClCompile Include="src\party_member_suit_buffer.cpp" />
     <ClCompile Include="src\party_member_suit_template.cpp" />
+    <ClCompile Include="src\party_settler.cpp" />
+    <ClCompile Include="src\party_settlers.cpp" />
+    <ClCompile Include="src\party_settler_eater.cpp" />
+    <ClCompile Include="src\party_settler_guard.cpp" />
+    <ClCompile Include="src\party_settler_marker.cpp" />
+    <ClCompile Include="src\party_settler_sandboxer.cpp" />
+    <ClCompile Include="src\party_settler_sitter.cpp" />
+    <ClCompile Include="src\party_settler_sleeper.cpp" />
+    <ClCompile Include="src\party_settler_slot.cpp" />
     <ClCompile Include="src\strings.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -139,11 +154,7 @@
     <ClInclude Include="include\party_member_suit_buffer.h" />
     <ClInclude Include="include\party_settler.h" />
     <ClInclude Include="include\party_settlers.h" />
-    <ClInclude Include="include\party_settler_time_am_pm.h" />
     <ClInclude Include="include\party_settler_attention.h" />
-    <ClInclude Include="include\party_settler_duration.h" />
-    <ClInclude Include="include\party_settler_duration_hours.h" />
-    <ClInclude Include="include\party_settler_duration_minutes.h" />
     <ClInclude Include="include\party_settler_eater.h" />
     <ClInclude Include="include\party_settler_flags.h" />
     <ClInclude Include="include\party_settler_flags_eater.h" />
@@ -157,6 +168,8 @@
     <ClInclude Include="include\party_settler_sandboxer.h" />
     <ClInclude Include="include\party_settler_sitter.h" />
     <ClInclude Include="include\party_settler_sleeper.h" />
+    <ClInclude Include="include\party_settler_slot.h" />
+    <ClInclude Include="include\party_settler_slot_id.h" />
     <ClInclude Include="include\party_settler_type.h" />
     <ClInclude Include="include\party_settler_value_index.h" />
     <ClInclude Include="include\party_settler_value_index_eater.h" />
@@ -189,6 +202,7 @@
     <ClInclude Include="include\party_member_suit_type.h" />
     <ClInclude Include="include\party_member_update_ai.h" />
     <ClInclude Include="include\party_member_vitality.h" />
+    <ClInclude Include="include\party_settler_marker.h" />
     <ClInclude Include="include\strings.h" />
   </ItemGroup>
   <ItemGroup>
