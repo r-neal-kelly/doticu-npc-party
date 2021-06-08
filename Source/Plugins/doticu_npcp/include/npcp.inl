@@ -14,36 +14,29 @@ namespace doticu_skylib { namespace doticu_npcp {
     template <typename T>
     inline maybe<T*> NPCP_t::Deserialized_Form(maybe<Form_ID_t> form_id)
     {
+        maybe<Form_t*> form = none<Form_t*>();
         if (form_id) {
-            if (form_id.Is_Heavy()) {
+            if (form_id.Is_Dynamic()) {
+                form = Game_t::Form(form_id());
+            } else if (form_id.Is_Heavy()) {
                 maybe<Heavy_Mod_Index_t> mod_index = form_id.Heavy_Mod_Index();
                 maybe<Heavy_Form_Index_t> form_index = form_id.Heavy_Form_Index();
                 const Vector_t<maybe<Mod_t*>>& mods = Deserialized_Heavy_Mods();
                 if (mod_index && form_index && mod_index() < mods.size() && mods[mod_index()]) {
-                    maybe<Form_t*> form = Game_t::Form(mods[mod_index()](), form_index());
-                    if (form) {
-                        return form->As<T>();
-                    } else {
-                        return none<T*>();
-                    }
-                } else {
-                    return none<T*>();
+                    form = Game_t::Form(mods[mod_index()](), form_index());
                 }
             } else {
                 maybe<Light_Mod_Index_t> mod_index = form_id.Light_Mod_Index();
                 maybe<Light_Form_Index_t> form_index = form_id.Light_Form_Index();
                 const Vector_t<maybe<Mod_t*>>& mods = Deserialized_Light_Mods();
                 if (mod_index && form_index && mod_index() < mods.size() && mods[mod_index()]) {
-                    maybe<Form_t*> form = Game_t::Form(mods[mod_index()](), form_index());
-                    if (form) {
-                        return form->As<T>();
-                    } else {
-                        return none<T*>();
-                    }
-                } else {
-                    return none<T*>();
+                    form = Game_t::Form(mods[mod_index()](), form_index());
                 }
             }
+        }
+
+        if (form) {
+            return form->As<T>();
         } else {
             return none<T*>();
         }

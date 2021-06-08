@@ -79,17 +79,28 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save_t&     Save();
 
     public:
-        Settler_t&          Settler(some<Settler_ID_t> settler_id);
+        Settler_t&              Settler(some<Settler_ID_t> settler_id);
+        maybe<Settler_t*>       Settler(Member_t& member);
+        maybe<Settler_t*>       Settler(some<Actor_t*> actor);
 
-        maybe<Settler_t*>   Active_Settler(some<Member_ID_t> member_id);
+        maybe<Settler_ID_t>     Inactive_ID();
+        size_t                  Active_Count();
+        size_t                  Inactive_Count();
+
+        Bool_t                  Has(Member_t& member);
+        Bool_t                  Has(some<Actor_t*> actor);
+        maybe<Settler_t*>       Add(Member_t& member);
+        maybe<Settler_t*>       Add(some<Actor_t*> actor);
+        Bool_t                  Remove(Settler_t& settler);
+        Bool_t                  Remove(some<Actor_t*> actor);
+
+        void                    Reset_Options();
     };
 
 }}
 
     /*
     public:
-        static constexpr size_t                                 MAX_SETTLERS                = Consts_t::NPCP::Int::MAX_SETTLERS;
-
         static constexpr Settler_Radius_t::value_type           DEFAULT_RADIUS              = 2048;
 
         static constexpr Settler_Time_AM_PM_e::value_type       DEFAULT_TIME_AM_PM          = Settler_Time_AM_PM_e::PM;

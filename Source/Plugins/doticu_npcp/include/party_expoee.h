@@ -60,7 +60,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     public:
         Expoee_t();
-        Expoee_t(some<Member_ID_t> member_id);
+        Expoee_t(some<Member_ID_t> member_id, some<Expoee_ID_t> expoee_id);
         Expoee_t(const Expoee_t& other) = delete;
         Expoee_t(Expoee_t&& other) noexcept = delete;
         Expoee_t& operator =(const Expoee_t& other) = delete;
@@ -76,8 +76,14 @@ namespace doticu_skylib { namespace doticu_npcp {
         void    On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update);
 
     public:
-        State_t&    State();
-        Save_t&     Save();
+        State_t&            State();
+        Save_t&             Save();
+
+        maybe<Member_ID_t>  Paired_Member_ID();
+        void                Paired_Member_ID(maybe<Member_ID_t> member_id);
+        maybe<Member_t*>    Paired_Member();
+
+        void                Reset();
 
     public:
         Bool_t              Is_Active();
@@ -85,6 +91,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         some<Member_ID_t>   Member_ID();
         some<Expoee_ID_t>   Expoee_ID();
 
+        some<Actor_t*>      Actor();
         Member_t&           Member();
 
     public:

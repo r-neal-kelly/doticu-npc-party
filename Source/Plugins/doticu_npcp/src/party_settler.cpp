@@ -60,16 +60,24 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
     }
 
-    Settler_t::Settler_t(some<Member_ID_t> member_id) :
+    Settler_t::Settler_t(some<Member_ID_t> member_id, some<Settler_ID_t> settler_id) :
         state()
     {
         SKYLIB_ASSERT_SOME(member_id);
+        SKYLIB_ASSERT_SOME(settler_id);
+        SKYLIB_ASSERT(Members().Member(member_id).Is_Active());
 
-        Save().member_id = member_id;
+        Paired_Member_ID(member_id);
+        Members().Member(member_id).Paired_Settler_ID(settler_id);
+        Party().Update_AI(member_id, Member_Update_AI_e::RESET_AI);
     }
 
     Settler_t::~Settler_t()
     {
+        if (Is_Active()) {
+            Party().Update_AI(Member_ID(), Member_Update_AI_e::RESET_AI);
+            Member().Paired_Settler_ID(none<Settler_ID_t>());
+        }
     }
 
     void Settler_t::On_After_New_Game()
@@ -130,9 +138,45 @@ namespace doticu_skylib { namespace doticu_npcp {
         return State().save;
     }
 
+    maybe<Member_ID_t> Settler_t::Paired_Member_ID()
+    {
+        return Save().member_id;
+    }
+
+    void Settler_t::Paired_Member_ID(maybe<Member_ID_t> member_id)
+    {
+        Save().member_id = member_id;
+    }
+
+    maybe<Member_t*> Settler_t::Paired_Member()
+    {
+        maybe<Member_ID_t> paired_member_id = Paired_Member_ID();
+        if (paired_member_id) {
+            return &Members().Member(paired_member_id());
+        } else {
+            return none<Member_t*>();
+        }
+    }
+
+    void Settler_t::Reset()
+    {
+        this->~Settler_t();
+        new (this) Settler_t();
+    }
+
     Bool_t Settler_t::Is_Active()
     {
-        return Save().member_id && Members().Member(Save().member_id()).Is_Active();
+        maybe<Member_t*> paired_member = Paired_Member();
+        if (paired_member) {
+            if (paired_member->Is_Active() && paired_member->Paired_Settler() == this) {
+                return true;
+            } else {
+                Reset();
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     some<Member_ID_t> Settler_t::Member_ID()
@@ -146,7 +190,14 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT(Is_Active());
 
-        return Member().Settler_ID()();
+        return Member().Paired_Settler_ID()();
+    }
+
+    some<Actor_t*> Settler_t::Actor()
+    {
+        SKYLIB_ASSERT(Is_Active());
+
+        return Member().Actor();
     }
 
     Member_t& Settler_t::Member()

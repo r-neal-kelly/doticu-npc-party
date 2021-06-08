@@ -139,11 +139,34 @@ namespace doticu_skylib { namespace doticu_npcp {
         void    On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update);
 
     public:
-        State_t&    State();
-        Save_t&     Save();
+        State_t&                State();
+        Save_t&                 Save();
+
+        maybe<Settler_ID_t>     Paired_Settler_ID();
+        void                    Paired_Settler_ID(maybe<Settler_ID_t> settler_id);
+        maybe<Settler_t*>       Paired_Settler();
+
+        maybe<Expoee_ID_t>      Paired_Expoee_ID();
+        void                    Paired_Expoee_ID(maybe<Expoee_ID_t> expoee_id);
+        maybe<Expoee_t*>        Paired_Expoee();
+
+        maybe<Display_ID_t>     Paired_Display_ID();
+        void                    Paired_Display_ID(maybe<Display_ID_t> display_id);
+        maybe<Display_t*>       Paired_Display();
+
+        maybe<Follower_ID_t>    Paired_Follower_ID();
+        void                    Paired_Follower_ID(maybe<Follower_ID_t> follower_id);
+        maybe<Follower_t*>      Paired_Follower();
+
+        void                    Reset();
 
     public:
         Bool_t                      Is_Active();
+
+        Bool_t                      Is_Settler();
+        Bool_t                      Is_Expoee();
+        Bool_t                      Is_Display();
+        Bool_t                      Is_Follower();
 
         Bool_t                      Is_Banished();
         void                        Is_Banished(Bool_t value);
@@ -188,10 +211,6 @@ namespace doticu_skylib { namespace doticu_npcp {
         void                        Has_Only_Playables(some<Member_Suit_Type_e> type, Bool_t value);
 
         some<Member_ID_t>           Member_ID();
-        maybe<Settler_ID_t>         Settler_ID();
-        maybe<Expoee_ID_t>          Expoee_ID();
-        maybe<Display_ID_t>         Display_ID();
-        maybe<Follower_ID_t>        Follower_ID();
 
         some<Alias_Reference_t*>    Alias();
         some<Actor_Base_t*>         Actual_Base();

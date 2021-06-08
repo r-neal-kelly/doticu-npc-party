@@ -4,6 +4,7 @@
 
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/actor_base.h"
+#include "doticu_skylib/alias_reference.h"
 #include "doticu_skylib/ammo.h"
 #include "doticu_skylib/armor.h"
 #include "doticu_skylib/cell.h"
@@ -244,9 +245,10 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save().actual_base = actor->Actor_Base();
         Save().actor = actor;
 
-        if (Is_Active()) { // is this necessary?
+        if (Is_Active()) {
             Is_Clone(is_clone);
             // need to fill in default values
+            Party().Update_AI(member_id, Member_Update_AI_e::RESET_AI);
         }
     }
 
@@ -258,10 +260,10 @@ namespace doticu_skylib { namespace doticu_npcp {
                 Actor_Base_t::Destroy(State().custom_base());
                 State().custom_base = none<Actor_Base_t*>();
             }
+            Party().Update_AI(Member_ID(), Member_Update_AI_e::RESET_AI);
         }
         // we also need to delete things like the pack, or make them static refs
         // maybe same thing with suit buffers
-        // needs to be removed from alias, probably do that in Members_t
     }
 
     void Member_t::On_After_New_Game()
@@ -271,7 +273,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     void Member_t::On_Before_Save_Game(std::ofstream& file)
     {
         if (Is_Active()) {
-            // we check, because I'm not sure if creating a ref here would freeze the game.
+            // we check, because I'm not sure if auto creating a ref here would freeze the game.
             // we should try it.
             if (Save().actor) {
                 Save().actor->Actor_Base(Actual_Base(), false);
@@ -312,9 +314,115 @@ namespace doticu_skylib { namespace doticu_npcp {
         return this->state.save;
     }
 
+    maybe<Settler_ID_t> Member_t::Paired_Settler_ID()
+    {
+        return Save().settler_id;
+    }
+
+    void Member_t::Paired_Settler_ID(maybe<Settler_ID_t> settler_id)
+    {
+        Save().settler_id == settler_id;
+    }
+
+    maybe<Settler_t*> Member_t::Paired_Settler()
+    {
+        maybe<Settler_ID_t> paired_settler_id = Paired_Settler_ID();
+        if (paired_settler_id) {
+            return &Settlers().Settler(paired_settler_id());
+        } else {
+            return none<Settler_t*>();
+        }
+    }
+
+    maybe<Expoee_ID_t> Member_t::Paired_Expoee_ID()
+    {
+        return Save().expoee_id;
+    }
+
+    void Member_t::Paired_Expoee_ID(maybe<Expoee_ID_t> expoee_id)
+    {
+        Save().expoee_id == expoee_id;
+    }
+
+    maybe<Expoee_t*> Member_t::Paired_Expoee()
+    {
+        maybe<Expoee_ID_t> paired_expoee_id = Paired_Expoee_ID();
+        if (paired_expoee_id) {
+            return &Expoees().Expoee(paired_expoee_id());
+        } else {
+            return none<Expoee_t*>();
+        }
+    }
+
+    maybe<Display_ID_t> Member_t::Paired_Display_ID()
+    {
+        return Save().display_id;
+    }
+
+    void Member_t::Paired_Display_ID(maybe<Display_ID_t> display_id)
+    {
+        Save().display_id == display_id;
+    }
+
+    maybe<Display_t*> Member_t::Paired_Display()
+    {
+        maybe<Display_ID_t> paired_display_id = Paired_Display_ID();
+        if (paired_display_id) {
+            return &Displays().Display(paired_display_id());
+        } else {
+            return none<Display_t*>();
+        }
+    }
+
+    maybe<Follower_ID_t> Member_t::Paired_Follower_ID()
+    {
+        return Save().follower_id;
+    }
+
+    void Member_t::Paired_Follower_ID(maybe<Follower_ID_t> follower_id)
+    {
+        Save().follower_id == follower_id;
+    }
+
+    maybe<Follower_t*> Member_t::Paired_Follower()
+    {
+        maybe<Follower_ID_t> paired_follower_id = Paired_Follower_ID();
+        if (paired_follower_id) {
+            return &Followers().Follower(paired_follower_id());
+        } else {
+            return none<Follower_t*>();
+        }
+    }
+
+    void Member_t::Reset()
+    {
+        this->~Member_t();
+        new (this) Member_t();
+    }
+
     Bool_t Member_t::Is_Active()
     {
         return Save().member_id && Save().actual_base;
+    }
+
+    Bool_t Member_t::Is_Settler()
+    {
+        return Settler() != none<Settler_t*>();
+    }
+
+    Bool_t Member_t::Is_Expoee()
+    {
+        return Expoee() != none<Expoee_t*>();
+    }
+
+    Bool_t Member_t::Is_Display()
+    {
+        return Display() != none<Display_t*>();
+    }
+
+    Bool_t Member_t::Is_Follower()
+    {
+        return Follower() != none<Follower_t*>();
     }
 
     Bool_t Member_t::Is_Banished()
@@ -547,34 +655,6 @@ namespace doticu_skylib { namespace doticu_npcp {
         return Save().member_id();
     }
 
-    maybe<Settler_ID_t> Member_t::Settler_ID()
-    {
-        SKYLIB_ASSERT(Is_Active());
-
-        return Save().settler_id;
-    }
-
-    maybe<Expoee_ID_t> Member_t::Expoee_ID()
-    {
-        SKYLIB_ASSERT(Is_Active());
-
-        return Save().expoee_id;
-    }
-
-    maybe<Display_ID_t> Member_t::Display_ID()
-    {
-        SKYLIB_ASSERT(Is_Active());
-
-        return Save().display_id;
-    }
-
-    maybe<Follower_ID_t> Member_t::Follower_ID()
-    {
-        SKYLIB_ASSERT(Is_Active());
-
-        return Save().follower_id;
-    }
-
     some<Alias_Reference_t*> Member_t::Alias()
     {
         SKYLIB_ASSERT(Is_Active());
@@ -611,6 +691,10 @@ namespace doticu_skylib { namespace doticu_npcp {
             some<Actor_Base_t*> actual_base = Actual_Base();
             actor = Actor_t::Create(actual_base, !actual_base->Does_Respawn(), true, false);
             SKYLIB_ASSERT_SOME(actor);
+            Alias()->Fill(actor(), none<Virtual::Callback_i*>());
+            if (Is_Follower()) {
+                Follower()->Alias()->Fill(actor(), none<Virtual::Callback_i*>());
+            }
         }
 
         return actor();
@@ -620,11 +704,14 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT(Is_Active());
 
-        maybe<Settler_ID_t> settler_id = Settler_ID();
-        if (settler_id) {
-            Settler_t& settler = Settlers().Settler(settler_id());
-            SKYLIB_ASSERT(settler.Member_ID() == Member_ID());
-            return &settler;
+        maybe<Settler_t*> paired_settler = Paired_Settler();
+        if (paired_settler) {
+            if (paired_settler->Is_Active() && paired_settler->Paired_Member() == this) {
+                return paired_settler;
+            } else {
+                Paired_Settler_ID(none<Settler_ID_t>());
+                return none<Settler_t*>();
+            }
         } else {
             return none<Settler_t*>();
         }
@@ -634,11 +721,14 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT(Is_Active());
 
-        maybe<Expoee_ID_t> expoee_id = Expoee_ID();
-        if (expoee_id) {
-            Expoee_t& expoee = Expoees().Expoee(expoee_id());
-            SKYLIB_ASSERT(expoee.Member_ID() == Member_ID());
-            return &expoee;
+        maybe<Expoee_t*> paired_expoee = Paired_Expoee();
+        if (paired_expoee) {
+            if (paired_expoee->Is_Active() && paired_expoee->Paired_Member() == this) {
+                return paired_expoee;
+            } else {
+                Paired_Expoee_ID(none<Expoee_ID_t>());
+                return none<Expoee_t*>();
+            }
         } else {
             return none<Expoee_t*>();
         }
@@ -648,11 +738,14 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT(Is_Active());
 
-        maybe<Display_ID_t> display_id = Display_ID();
-        if (display_id) {
-            Display_t& display = Displays().Display(display_id());
-            SKYLIB_ASSERT(display.Member_ID() == Member_ID());
-            return &display;
+        maybe<Display_t*> paired_display = Paired_Display();
+        if (paired_display) {
+            if (paired_display->Is_Active() && paired_display->Paired_Member() == this) {
+                return paired_display;
+            } else {
+                Paired_Display_ID(none<Display_ID_t>());
+                return none<Display_t*>();
+            }
         } else {
             return none<Display_t*>();
         }
@@ -662,11 +755,14 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT(Is_Active());
 
-        maybe<Follower_ID_t> follower_id = Follower_ID();
-        if (follower_id) {
-            Follower_t& follower = Followers().Follower(follower_id());
-            SKYLIB_ASSERT(follower.Member_ID() == Member_ID());
-            return &follower;
+        maybe<Follower_t*> paired_follower = Paired_Follower();
+        if (paired_follower) {
+            if (paired_follower->Is_Active() && paired_follower->Paired_Member() == this) {
+                return paired_follower;
+            } else {
+                Paired_Follower_ID(none<Follower_ID_t>());
+                return none<Follower_t*>();
+            }
         } else {
             return none<Follower_t*>();
         }
@@ -741,7 +837,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         String_t name = Save().name;
         if (!name) {
-            name = Actor()->Name();
+            name = Actor()->Any_Name();
         }
 
         return name;
@@ -1131,10 +1227,19 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT(Is_Active());
 
-        // we may want a different smaller branch if the actor is in combat, or a separate func to call
-        Members_t& members = Members();
         some<Actor_t*> actor = Actor();
         some<Actor_Base_t*> custom_base = Custom_Base();
+
+        actor->Actor_Base(custom_base, false);
+
+        custom_base->Name(Name(), false);
+        actor->x_list.Destroy_Extra_Text_Display();
+
+        return;
+
+        // we may want a different smaller branch if the actor is in combat, or a separate func to call
+        Members_t& members = Members();
+       
 
         Vector_t<some<Spell_t*>> spells_to_add;
         spells_to_add.reserve(4);

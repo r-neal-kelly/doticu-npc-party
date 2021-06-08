@@ -140,9 +140,13 @@ namespace doticu_skylib { namespace doticu_npcp {
         };
 
     public:
-        static void     Register_Me(some<Virtual::Machine_t*> machine);
+        static void         Register_Me(some<Virtual::Machine_t*> machine);
 
-        static Party_t& Party();
+        static Party_t&     Party();
+        static Settlers_t&  Settlers();
+        static Expoees_t&   Expoees();
+        static Displays_t&  Displays();
+        static Followers_t& Followers();
 
     public:
         State_t state;
@@ -237,28 +241,23 @@ namespace doticu_skylib { namespace doticu_npcp {
         void                            Default_Vitality(maybe<Member_Vitality_e> value);
 
     public:
-        void                        Reset_Options();
-        void                        Refill_Aliases();
-
         some<Quest_t*>              Quest();
-        some<Alias_Reference_t*>    Alias(some<Member_ID_t> id);
+        some<Alias_Reference_t*>    Alias(some<Member_ID_t> member_id);
+        Member_t&                   Member(some<Member_ID_t> member_id);
+        maybe<Member_t*>            Member(some<Actor_t*> actor);
 
-        Member_t&                   Member(some<Member_ID_t> id);
-        maybe<Member_ID_t>          Active_Member_ID(some<Actor_t*> actor);
-        maybe<Member_ID_t>          Inactive_Member_ID();
-        size_t                      Active_Member_Count();
-        size_t                      Inactive_Member_Count();
+        maybe<Member_ID_t>          Inactive_ID();
+        size_t                      Active_Count();
+        size_t                      Inactive_Count();
 
-        Bool_t                      Has(some<Member_ID_t> id);
         Bool_t                      Has(some<Actor_t*> actor);
         maybe<Member_t*>            Add(some<Actor_t*> actor, Bool_t do_clone);
         maybe<Member_t*>            Add(some<Actor_Base_t*> base);
         Bool_t                      Remove(Member_t& member);
-        Bool_t                      Remove(some<Member_ID_t> id);
         Bool_t                      Remove(some<Actor_t*> actor);
 
-        // add/remove should be done through Party_t, with a passed lock, so that all other types, like Settler are cleaned up.
-        // also, so update_ai can be reset, and anything else that is needed.
+        void                        Refill_Aliases();
+        void                        Reset_Options();
     };
 
 }}

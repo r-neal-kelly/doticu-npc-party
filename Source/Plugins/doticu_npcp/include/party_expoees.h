@@ -87,9 +87,22 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save_t&     Save();
 
     public:
-        Expoee_t&           Expoee(some<Expoee_ID_t> expoee_id);
+        Expoee_t&               Expoee(some<Expoee_ID_t> expoee_id);
+        maybe<Expoee_t*>        Expoee(Member_t& member);
+        maybe<Expoee_t*>        Expoee(some<Actor_t*> actor);
 
-        maybe<Expoee_t*>    Active_Expoee(some<Member_ID_t> member_id);
+        maybe<Expoee_ID_t>      Inactive_ID();
+        size_t                  Active_Count();
+        size_t                  Inactive_Count();
+
+        Bool_t                  Has(Member_t& member);
+        Bool_t                  Has(some<Actor_t*> actor);
+        maybe<Expoee_t*>        Add(Member_t& member);
+        maybe<Expoee_t*>        Add(some<Actor_t*> actor);
+        Bool_t                  Remove(Expoee_t& expoee);
+        Bool_t                  Remove(some<Actor_t*> actor);
+
+        void                    Reset_Options();
     };
 
 }}

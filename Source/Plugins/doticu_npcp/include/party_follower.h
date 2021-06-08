@@ -21,11 +21,11 @@ namespace doticu_skylib { namespace doticu_npcp {
         class Save_t
         {
         public:
-            maybe<Member_ID_t>  member_id;
+            maybe<Member_ID_t>      member_id;
 
-            Bool_t              is_retreater;
-            Bool_t              is_saddler;
-            Bool_t              is_sojourner;
+            Bool_t                  is_retreater;
+            Bool_t                  is_saddler;
+            Bool_t                  is_sojourner;
 
         public:
             Save_t();
@@ -64,7 +64,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     public:
         Follower_t();
-        Follower_t(some<Member_ID_t> member_id);
+        Follower_t(some<Member_ID_t> member_id, some<Follower_ID_t> follower_id);
         Follower_t(const Follower_t& other) = delete;
         Follower_t(Follower_t&& other) noexcept = delete;
         Follower_t& operator =(const Follower_t& other) = delete;
@@ -80,16 +80,33 @@ namespace doticu_skylib { namespace doticu_npcp {
         void    On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update);
 
     public:
-        State_t&    State();
-        Save_t&     Save();
+        State_t&            State();
+        Save_t&             Save();
+
+        maybe<Member_ID_t>  Paired_Member_ID();
+        void                Paired_Member_ID(maybe<Member_ID_t> member_id);
+        maybe<Member_t*>    Paired_Member();
+
+        void                Reset();
 
     public:
-        Bool_t              Is_Active();
+        Bool_t                      Is_Active();
 
-        some<Member_ID_t>   Member_ID();
-        some<Follower_ID_t> Follower_ID();
+        Bool_t                      Is_Retreater();
+        void                        Is_Retreater(Bool_t value);
 
-        Member_t&           Member();
+        Bool_t                      Is_Saddler();
+        void                        Is_Saddler(Bool_t value);
+
+        Bool_t                      Is_Sojourner();
+        void                        Is_Sojourner(Bool_t value);
+
+        some<Member_ID_t>           Member_ID();
+        some<Follower_ID_t>         Follower_ID();
+
+        some<Alias_Reference_t*>    Alias();
+        some<Actor_t*>              Actor();
+        Member_t&                   Member();
 
     public:
         void    Evaluate_In_Parallel(std::mutex& parallel_lock);

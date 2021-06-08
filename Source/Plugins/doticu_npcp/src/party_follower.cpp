@@ -70,16 +70,24 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
     }
 
-    Follower_t::Follower_t(some<Member_ID_t> member_id) :
+    Follower_t::Follower_t(some<Member_ID_t> member_id, some<Follower_ID_t> follower_id) :
         state()
     {
         SKYLIB_ASSERT_SOME(member_id);
+        SKYLIB_ASSERT_SOME(follower_id);
+        SKYLIB_ASSERT(Members().Member(member_id).Is_Active());
 
-        Save().member_id = member_id;
+        Paired_Member_ID(member_id);
+        Members().Member(member_id).Paired_Follower_ID(follower_id);
+        Party().Update_AI(member_id, Member_Update_AI_e::RESET_AI);
     }
 
     Follower_t::~Follower_t()
     {
+        if (Is_Active()) {
+            Party().Update_AI(Member_ID(), Member_Update_AI_e::RESET_AI);
+            Member().Paired_Follower_ID(none<Follower_ID_t>());
+        }
     }
 
     void Follower_t::On_After_New_Game()
@@ -119,9 +127,75 @@ namespace doticu_skylib { namespace doticu_npcp {
         return State().save;
     }
 
+    maybe<Member_ID_t> Follower_t::Paired_Member_ID()
+    {
+        return Save().member_id;
+    }
+
+    void Follower_t::Paired_Member_ID(maybe<Member_ID_t> member_id)
+    {
+        Save().member_id = member_id;
+    }
+
+    maybe<Member_t*> Follower_t::Paired_Member()
+    {
+        maybe<Member_ID_t> paired_member_id = Paired_Member_ID();
+        if (paired_member_id) {
+            return &Members().Member(paired_member_id());
+        } else {
+            return none<Member_t*>();
+        }
+    }
+
+    void Follower_t::Reset()
+    {
+        this->~Follower_t();
+        new (this) Follower_t();
+    }
+
     Bool_t Follower_t::Is_Active()
     {
-        return Save().member_id && Members().Member(Save().member_id()).Is_Active();
+        maybe<Member_t*> paired_member = Paired_Member();
+        if (paired_member) {
+            if (paired_member->Is_Active() && paired_member->Paired_Follower() == this) {
+                return true;
+            } else {
+                Reset();
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    Bool_t Follower_t::Is_Retreater()
+    {
+        return Save().is_retreater;
+    }
+
+    void Follower_t::Is_Retreater(Bool_t value)
+    {
+        Save().is_retreater = value;
+    }
+
+    Bool_t Follower_t::Is_Saddler()
+    {
+        return Save().is_saddler;
+    }
+
+    void Follower_t::Is_Saddler(Bool_t value)
+    {
+        Save().is_saddler = value;
+    }
+
+    Bool_t Follower_t::Is_Sojourner()
+    {
+        return Save().is_sojourner;
+    }
+
+    void Follower_t::Is_Sojourner(Bool_t value)
+    {
+        Save().is_sojourner = value;
     }
 
     some<Member_ID_t> Follower_t::Member_ID()
@@ -135,14 +209,28 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT(Is_Active());
 
-        return Member().Follower_ID()();
+        return Member().Paired_Follower_ID()();
+    }
+
+    some<Alias_Reference_t*> Follower_t::Alias()
+    {
+        SKYLIB_ASSERT(Is_Active());
+
+        return Followers().Alias(Follower_ID());
+    }
+
+    some<Actor_t*> Follower_t::Actor()
+    {
+        SKYLIB_ASSERT(Is_Active());
+
+        return Member().Actor();
     }
 
     Member_t& Follower_t::Member()
     {
         SKYLIB_ASSERT(Is_Active());
 
-        return Members().Member(Member_ID());
+        return *Paired_Member();
     }
 
     void Follower_t::Evaluate_In_Parallel(std::mutex& parallel_lock)

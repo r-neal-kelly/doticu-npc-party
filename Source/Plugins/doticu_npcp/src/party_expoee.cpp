@@ -58,16 +58,24 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
     }
 
-    Expoee_t::Expoee_t(some<Member_ID_t> member_id) :
+    Expoee_t::Expoee_t(some<Member_ID_t> member_id, some<Expoee_ID_t> expoee_id) :
         state()
     {
         SKYLIB_ASSERT_SOME(member_id);
+        SKYLIB_ASSERT_SOME(expoee_id);
+        SKYLIB_ASSERT(Members().Member(member_id).Is_Active());
 
-        Save().member_id = member_id;
+        Paired_Member_ID(member_id);
+        Members().Member(member_id).Paired_Expoee_ID(expoee_id);
+        Party().Update_AI(member_id, Member_Update_AI_e::RESET_AI);
     }
 
     Expoee_t::~Expoee_t()
     {
+        if (Is_Active()) {
+            Party().Update_AI(Member_ID(), Member_Update_AI_e::RESET_AI);
+            Member().Paired_Expoee_ID(none<Expoee_ID_t>());
+        }
     }
 
     void Expoee_t::On_After_New_Game()
@@ -107,9 +115,45 @@ namespace doticu_skylib { namespace doticu_npcp {
         return State().save;
     }
 
+    maybe<Member_ID_t> Expoee_t::Paired_Member_ID()
+    {
+        return Save().member_id;
+    }
+
+    void Expoee_t::Paired_Member_ID(maybe<Member_ID_t> member_id)
+    {
+        Save().member_id = member_id;
+    }
+
+    maybe<Member_t*> Expoee_t::Paired_Member()
+    {
+        maybe<Member_ID_t> paired_member_id = Paired_Member_ID();
+        if (paired_member_id) {
+            return &Members().Member(paired_member_id());
+        } else {
+            return none<Member_t*>();
+        }
+    }
+
+    void Expoee_t::Reset()
+    {
+        this->~Expoee_t();
+        new (this) Expoee_t();
+    }
+
     Bool_t Expoee_t::Is_Active()
     {
-        return Save().member_id && Members().Member(Save().member_id()).Is_Active();
+        maybe<Member_t*> paired_member = Paired_Member();
+        if (paired_member) {
+            if (paired_member->Is_Active() && paired_member->Paired_Expoee() == this) {
+                return true;
+            } else {
+                Reset();
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     some<Member_ID_t> Expoee_t::Member_ID()
@@ -123,7 +167,14 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT(Is_Active());
 
-        return Member().Expoee_ID()();
+        return Member().Paired_Expoee_ID()();
+    }
+
+    some<Actor_t*> Expoee_t::Actor()
+    {
+        SKYLIB_ASSERT(Is_Active());
+
+        return Member().Actor();
     }
 
     Member_t& Expoee_t::Member()

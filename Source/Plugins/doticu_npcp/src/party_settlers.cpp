@@ -2,6 +2,8 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "doticu_skylib/actor.h"
+
 #include "npcp.inl"
 #include "party.h"
 #include "party_settlers.h"
@@ -123,16 +125,128 @@ namespace doticu_skylib { namespace doticu_npcp {
         return State().settlers[settler_id()];
     }
 
-    maybe<Settler_t*> Settlers_t::Active_Settler(some<Member_ID_t> member_id)
+    maybe<Settler_t*> Settlers_t::Settler(Member_t& member)
     {
-        SKYLIB_ASSERT_SOME(member_id);
+        return member.Settler();
+    }
 
-        Member_t& member = Members().Member(member_id);
-        if (member.Is_Active()) {
-            return member.Settler();
+    maybe<Settler_t*> Settlers_t::Settler(some<Actor_t*> actor)
+    {
+        SKYLIB_ASSERT_SOME(actor);
+
+        for (size_t idx = 0, end = MAX_SETTLERS; idx < end; idx += 1) {
+            Settler_t& settler = Settler(idx);
+            if (settler.Is_Active() && settler.Actor() == actor) {
+                return &settler;
+            }
+        }
+        return none<Settler_t*>();
+    }
+
+    maybe<Settler_ID_t> Settlers_t::Inactive_ID()
+    {
+        for (size_t idx = 0, end = MAX_SETTLERS; idx < end; idx += 1) {
+            Settler_t& settler = Settler(idx);
+            if (!settler.Is_Active()) {
+                return idx;
+            }
+        }
+        return none<Settler_ID_t>();
+    }
+
+    size_t Settlers_t::Active_Count()
+    {
+        size_t count = 0;
+        for (size_t idx = 0, end = MAX_SETTLERS; idx < end; idx += 1) {
+            if (Settler(idx).Is_Active()) {
+                count += 1;
+            }
+        }
+        return count;
+    }
+
+    size_t Settlers_t::Inactive_Count()
+    {
+        return MAX_SETTLERS - Active_Count();
+    }
+
+    Bool_t Settlers_t::Has(Member_t& member)
+    {
+        return member.Is_Settler();
+    }
+
+    Bool_t Settlers_t::Has(some<Actor_t*> actor)
+    {
+        SKYLIB_ASSERT_SOME(actor);
+
+        return Settler(actor) != none<Settler_t*>();
+    }
+
+    maybe<Settler_t*> Settlers_t::Add(Member_t& member)
+    {
+        if (member.Is_Active() && !Has(member)) {
+            maybe<Settler_ID_t> settler_id = Inactive_ID();
+            if (settler_id) {
+                Settler_t& settler = Settler(settler_id());
+                settler.~Settler_t();
+                new (&settler) Settler_t(member.Member_ID(), settler_id());
+                if (settler.Is_Active()) {
+                    return &settler;
+                } else {
+                    return none<Settler_t*>();
+                }
+            } else {
+                return none<Settler_t*>();
+            }
         } else {
             return none<Settler_t*>();
         }
+    }
+
+    maybe<Settler_t*> Settlers_t::Add(some<Actor_t*> actor)
+    {
+        SKYLIB_ASSERT_SOME(actor);
+
+        maybe<Member_t*> member = Members().Member(actor);
+        if (member) {
+            return Add(*member);
+        } else {
+            member = Members().Add(actor, false);
+            if (member) {
+                return Add(*member);
+            } else {
+                return none<Settler_t*>();
+            }
+        }
+    }
+
+    Bool_t Settlers_t::Remove(Settler_t& settler)
+    {
+        if (settler.Is_Active()) {
+            settler.Reset();
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    Bool_t Settlers_t::Remove(some<Actor_t*> actor)
+    {
+        SKYLIB_ASSERT_SOME(actor);
+
+        maybe<Settler_t*> settler = Settler(actor);
+        if (settler) {
+            return Remove(*settler);
+        } else {
+            return false;
+        }
+    }
+
+    void Settlers_t::Reset_Options()
+    {
+        State().save.~Save_t();
+        new (&State().save) Save_t();
     }
 
 }}

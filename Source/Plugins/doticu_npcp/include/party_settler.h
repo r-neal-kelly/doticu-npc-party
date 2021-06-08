@@ -67,7 +67,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     public:
         Settler_t();
-        Settler_t(some<Member_ID_t> member_id);
+        Settler_t(some<Member_ID_t> member_id, some<Settler_ID_t> settler_id);
         Settler_t(const Settler_t& other) = delete;
         Settler_t(Settler_t&& other) noexcept = delete;
         Settler_t& operator =(const Settler_t& other) = delete;
@@ -83,8 +83,14 @@ namespace doticu_skylib { namespace doticu_npcp {
         void    On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update);
 
     public:
-        State_t&    State();
-        Save_t&     Save();
+        State_t&            State();
+        Save_t&             Save();
+
+        maybe<Member_ID_t>  Paired_Member_ID();
+        void                Paired_Member_ID(maybe<Member_ID_t> member_id);
+        maybe<Member_t*>    Paired_Member();
+
+        void                Reset();
 
     public:
         Bool_t              Is_Active();
@@ -92,6 +98,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         some<Member_ID_t>   Member_ID();
         some<Settler_ID_t>  Settler_ID();
 
+        some<Actor_t*>      Actor();
         Member_t&           Member();
 
         Settler_Slot_t&     Slot(some<Settler_Slot_ID_t> slot_id);

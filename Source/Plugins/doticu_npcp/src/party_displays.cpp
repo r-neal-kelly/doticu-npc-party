@@ -2,6 +2,8 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "doticu_skylib/actor.h"
+
 #include "npcp.inl"
 #include "party.h"
 #include "party_displays.h"
@@ -127,16 +129,128 @@ namespace doticu_skylib { namespace doticu_npcp {
         return State().displays[display_id()];
     }
 
-    maybe<Display_t*> Displays_t::Active_Display(some<Member_ID_t> member_id)
+    maybe<Display_t*> Displays_t::Display(Member_t& member)
     {
-        SKYLIB_ASSERT_SOME(member_id);
+        return member.Display();
+    }
 
-        Member_t& member = Members().Member(member_id);
-        if (member.Is_Active()) {
-            return member.Display();
+    maybe<Display_t*> Displays_t::Display(some<Actor_t*> actor)
+    {
+        SKYLIB_ASSERT_SOME(actor);
+
+        for (size_t idx = 0, end = MAX_DISPLAYS; idx < end; idx += 1) {
+            Display_t& display = Display(idx);
+            if (display.Is_Active() && display.Actor() == actor) {
+                return &display;
+            }
+        }
+        return none<Display_t*>();
+    }
+
+    maybe<Display_ID_t> Displays_t::Inactive_ID()
+    {
+        for (size_t idx = 0, end = MAX_DISPLAYS; idx < end; idx += 1) {
+            Display_t& display = Display(idx);
+            if (!display.Is_Active()) {
+                return idx;
+            }
+        }
+        return none<Display_ID_t>();
+    }
+
+    size_t Displays_t::Active_Count()
+    {
+        size_t count = 0;
+        for (size_t idx = 0, end = MAX_DISPLAYS; idx < end; idx += 1) {
+            if (Display(idx).Is_Active()) {
+                count += 1;
+            }
+        }
+        return count;
+    }
+
+    size_t Displays_t::Inactive_Count()
+    {
+        return MAX_DISPLAYS - Active_Count();
+    }
+
+    Bool_t Displays_t::Has(Member_t& member)
+    {
+        return member.Is_Display();
+    }
+
+    Bool_t Displays_t::Has(some<Actor_t*> actor)
+    {
+        SKYLIB_ASSERT_SOME(actor);
+
+        return Display(actor) != none<Display_t*>();
+    }
+
+    maybe<Display_t*> Displays_t::Add(Member_t& member)
+    {
+        if (member.Is_Active() && !Has(member)) {
+            maybe<Display_ID_t> display_id = Inactive_ID();
+            if (display_id) {
+                Display_t& display = Display(display_id());
+                display.~Display_t();
+                new (&display) Display_t(member.Member_ID(), display_id());
+                if (display.Is_Active()) {
+                    return &display;
+                } else {
+                    return none<Display_t*>();
+                }
+            } else {
+                return none<Display_t*>();
+            }
         } else {
             return none<Display_t*>();
         }
+    }
+
+    maybe<Display_t*> Displays_t::Add(some<Actor_t*> actor)
+    {
+        SKYLIB_ASSERT_SOME(actor);
+
+        maybe<Member_t*> member = Members().Member(actor);
+        if (member) {
+            return Add(*member);
+        } else {
+            member = Members().Add(actor, false);
+            if (member) {
+                return Add(*member);
+            } else {
+                return none<Display_t*>();
+            }
+        }
+    }
+
+    Bool_t Displays_t::Remove(Display_t& display)
+    {
+        if (display.Is_Active()) {
+            display.Reset();
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    Bool_t Displays_t::Remove(some<Actor_t*> actor)
+    {
+        SKYLIB_ASSERT_SOME(actor);
+
+        maybe<Display_t*> display = Display(actor);
+        if (display) {
+            return Remove(*display);
+        } else {
+            return false;
+        }
+    }
+
+    void Displays_t::Reset_Options()
+    {
+        State().save.~Save_t();
+        new (&State().save) Save_t();
     }
 
 }}

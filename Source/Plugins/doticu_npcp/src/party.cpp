@@ -2,8 +2,6 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
-#include <thread>
-
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/bound_object.h"
 #include "doticu_skylib/script.h"
@@ -196,12 +194,11 @@ namespace doticu_skylib { namespace doticu_npcp {
         return State().followers;
     }
 
-    some<Script_t*> Party_t::Script(some<Member_ID_t> valid_id)
+    some<Script_t*> Party_t::Script(some<Member_ID_t> member_id)
     {
-        SKYLIB_ASSERT_SOME(valid_id);
-        SKYLIB_ASSERT(Members().Has(valid_id));
+        SKYLIB_ASSERT_SOME(member_id);
 
-        maybe<Script_t*>& script = State().scripts[valid_id()];
+        maybe<Script_t*>& script = State().scripts[member_id()];
         if (!script) {
             script = Script_t::Create()();
             SKYLIB_ASSERT_SOME(script);
@@ -210,21 +207,19 @@ namespace doticu_skylib { namespace doticu_npcp {
         return script();
     }
 
-    maybe<Member_Update_AI_e> Party_t::Update_AI(some<Member_ID_t> valid_id)
+    maybe<Member_Update_AI_e> Party_t::Update_AI(some<Member_ID_t> member_id)
     {
-        SKYLIB_ASSERT_SOME(valid_id);
-        SKYLIB_ASSERT(Members().Has(valid_id));
+        SKYLIB_ASSERT_SOME(member_id);
 
-        return State().update_ais[valid_id()];
+        return State().update_ais[member_id()];
     }
 
-    void Party_t::Update_AI(some<Member_ID_t> valid_id, some<Member_Update_AI_e> value)
+    void Party_t::Update_AI(some<Member_ID_t> member_id, some<Member_Update_AI_e> value)
     {
-        SKYLIB_ASSERT_SOME(valid_id);
-        SKYLIB_ASSERT(Members().Has(valid_id));
+        SKYLIB_ASSERT_SOME(member_id);
         SKYLIB_ASSERT_SOME(value);
 
-        maybe<Member_Update_AI_e>& update_ai = State().update_ais[valid_id()];
+        maybe<Member_Update_AI_e>& update_ai = State().update_ais[member_id()];
         if (update_ai != Member_Update_AI_e::RESET_AI) {
             update_ai = value;
         }
@@ -232,45 +227,96 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Party_t::Evaluate()
     {
-        static std::mutex parallel_lock; // only used in rare circumstances, e.g. Member_t needs to access Members_t state
+        static std::mutex parallel_lock;
+
+        static auto Try_Spawn_Thread = [](Vector_t<std::thread>& threads,
+                                          Bool_t* evaluated_member_ids,
+                                          some<Member_ID_t> member_id)->Bool_t
+        {
+            if (!evaluated_member_ids[member_id()]) {
+                evaluated_member_ids[member_id()] = true;
+                threads.push_back(std::thread(
+                    [member_id]()->void
+                    {
+                        NPCP.Party().Evaluate_In_Parallel(member_id, parallel_lock);
+                    }
+                ));
+                return true;
+            } else {
+                return false;
+            }
+        };
+
+        static auto Await_Threads = [](Vector_t<std::thread>& threads)->void
+        {
+            for (size_t idx = 0, end = threads.size(); idx < end; idx += 1) {
+                if (threads[idx].joinable()) {
+                    threads[idx].join();
+                }
+            }
+        };
 
         std::thread(
             []()->void
             {
                 const size_t THREAD_COUNT = 8;
-                SKYLIB_ASSERT(MAX_MEMBERS % THREAD_COUNT == 0);
-                SKYLIB_ASSERT(MAX_FOLLOWERS % THREAD_COUNT == 0);
-
                 Vector_t<std::thread> threads;
                 threads.reserve(THREAD_COUNT);
 
-                // once we get Display_t and Follower_t setup, we can eval those first and mark their ids as evaluated
+                Bool_t evaluated_member_ids[MAX_MEMBERS] = { false };
 
-                for (size_t m = 0; m < MAX_MEMBERS; m += THREAD_COUNT) {
-                    threads.clear();
+                for (size_t id = 0; id < MAX_DISPLAYS;) {
                     {
                         NPCP_t::Locker_t locker = NPCP.Locker();
                         if (NPCP.Is_Valid()) {
-                            for (size_t t = 0; t < THREAD_COUNT; t += 1) {
-                                some<Member_ID_t> id = m + t;
-                                threads.push_back(std::thread(
-                                    [id]()->void
-                                    {
-                                        SKYLIB_ASSERT_SOME(id);
-                                        NPCP.Party().Evaluate_In_Parallel(id(), parallel_lock);
+                            for (size_t t = 0; t < THREAD_COUNT && id < MAX_DISPLAYS; id += 1) {
+                                Display_t& display = NPCP.Party().Displays().Display(id);
+                                if (display.Is_Active()) {
+                                    if (Try_Spawn_Thread(threads, evaluated_member_ids, display.Member_ID())) {
+                                        t += 1;
                                     }
-                                ));
-                            }
-                            for (size_t t = 0; t < THREAD_COUNT; t += 1) {
-                                if (threads[t].joinable()) {
-                                    threads[t].join();
                                 }
                             }
-                        } else {
-                            return;
+                            Await_Threads(threads);
                         }
                     }
-                    std::this_thread::sleep_for(std::chrono::nanoseconds(0)); // increase only if necessary
+                    threads.clear();
+                }
+
+                for (size_t id = 0; id < MAX_FOLLOWERS;) {
+                    {
+                        NPCP_t::Locker_t locker = NPCP.Locker();
+                        if (NPCP.Is_Valid()) {
+                            for (size_t t = 0; t < THREAD_COUNT && id < MAX_FOLLOWERS; id += 1) {
+                                Follower_t& follower = NPCP.Party().Followers().Follower(id);
+                                if (follower.Is_Active()) {
+                                    if (Try_Spawn_Thread(threads, evaluated_member_ids, follower.Member_ID())) {
+                                        t += 1;
+                                    }
+                                }
+                            }
+                            Await_Threads(threads);
+                        }
+                    }
+                    threads.clear();
+                }
+
+                for (size_t id = 0; id < MAX_MEMBERS;) {
+                    {
+                        NPCP_t::Locker_t locker = NPCP.Locker();
+                        if (NPCP.Is_Valid()) {
+                            for (size_t t = 0; t < THREAD_COUNT && id < MAX_MEMBERS; id += 1) {
+                                Member_t& member = NPCP.Party().Members().Member(id);
+                                if (member.Is_Active()) {
+                                    if (Try_Spawn_Thread(threads, evaluated_member_ids, member.Member_ID())) {
+                                        t += 1;
+                                    }
+                                }
+                            }
+                            Await_Threads(threads);
+                        }
+                    }
+                    threads.clear();
                 }
             }
         ).detach();
@@ -283,7 +329,6 @@ namespace doticu_skylib { namespace doticu_npcp {
         Member_t& member = Members().Member(id);
         if (member.Is_Active()) {
             member.Evaluate_In_Parallel(parallel_lock);
-
             maybe<Display_t*> display = member.Display();
             if (display) {
                 display->Evaluate_In_Parallel(parallel_lock);

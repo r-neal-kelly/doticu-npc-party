@@ -21,6 +21,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     public:
         static constexpr size_t MAX_MEMBERS     = Consts_t::NPCP::Int::MAX_MEMBERS;
         static constexpr size_t MAX_FOLLOWERS   = Consts_t::NPCP::Int::MAX_FOLLOWERS;
+        static constexpr size_t MAX_DISPLAYS    = Consts_t::NPCP::Int::MAX_DISPLAYS;
 
     public:
         class Save_t
@@ -97,10 +98,10 @@ namespace doticu_skylib { namespace doticu_npcp {
         Followers_t&    Followers();
 
     public:
-        some<Script_t*>             Script(some<Member_ID_t> valid_id);
+        some<Script_t*>             Script(some<Member_ID_t> member_id);
 
-        maybe<Member_Update_AI_e>   Update_AI(some<Member_ID_t> valid_id);
-        void                        Update_AI(some<Member_ID_t> valid_id, some<Member_Update_AI_e> value);
+        maybe<Member_Update_AI_e>   Update_AI(some<Member_ID_t> member_id);
+        void                        Update_AI(some<Member_ID_t> member_id, some<Member_Update_AI_e> value);
 
     public:
         void    Evaluate();

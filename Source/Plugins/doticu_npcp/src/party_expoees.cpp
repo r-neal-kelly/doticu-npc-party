@@ -2,6 +2,8 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "doticu_skylib/actor.h"
+
 #include "npcp.inl"
 #include "party.h"
 #include "party_expoees.h"
@@ -127,16 +129,128 @@ namespace doticu_skylib { namespace doticu_npcp {
         return State().expoees[expoee_id()];
     }
 
-    maybe<Expoee_t*> Expoees_t::Active_Expoee(some<Member_ID_t> member_id)
+    maybe<Expoee_t*> Expoees_t::Expoee(Member_t& member)
     {
-        SKYLIB_ASSERT_SOME(member_id);
+        return member.Expoee();
+    }
 
-        Member_t& member = Members().Member(member_id);
-        if (member.Is_Active()) {
-            return member.Expoee();
+    maybe<Expoee_t*> Expoees_t::Expoee(some<Actor_t*> actor)
+    {
+        SKYLIB_ASSERT_SOME(actor);
+
+        for (size_t idx = 0, end = MAX_EXPOEES; idx < end; idx += 1) {
+            Expoee_t& expoee = Expoee(idx);
+            if (expoee.Is_Active() && expoee.Actor() == actor) {
+                return &expoee;
+            }
+        }
+        return none<Expoee_t*>();
+    }
+
+    maybe<Expoee_ID_t> Expoees_t::Inactive_ID()
+    {
+        for (size_t idx = 0, end = MAX_EXPOEES; idx < end; idx += 1) {
+            Expoee_t& expoee = Expoee(idx);
+            if (!expoee.Is_Active()) {
+                return idx;
+            }
+        }
+        return none<Expoee_ID_t>();
+    }
+
+    size_t Expoees_t::Active_Count()
+    {
+        size_t count = 0;
+        for (size_t idx = 0, end = MAX_EXPOEES; idx < end; idx += 1) {
+            if (Expoee(idx).Is_Active()) {
+                count += 1;
+            }
+        }
+        return count;
+    }
+
+    size_t Expoees_t::Inactive_Count()
+    {
+        return MAX_EXPOEES - Active_Count();
+    }
+
+    Bool_t Expoees_t::Has(Member_t& member)
+    {
+        return member.Is_Expoee();
+    }
+
+    Bool_t Expoees_t::Has(some<Actor_t*> actor)
+    {
+        SKYLIB_ASSERT_SOME(actor);
+
+        return Expoee(actor) != none<Expoee_t*>();
+    }
+
+    maybe<Expoee_t*> Expoees_t::Add(Member_t& member)
+    {
+        if (member.Is_Active() && !Has(member)) {
+            maybe<Expoee_ID_t> expoee_id = Inactive_ID();
+            if (expoee_id) {
+                Expoee_t& expoee = Expoee(expoee_id());
+                expoee.~Expoee_t();
+                new (&expoee) Expoee_t(member.Member_ID(), expoee_id());
+                if (expoee.Is_Active()) {
+                    return &expoee;
+                } else {
+                    return none<Expoee_t*>();
+                }
+            } else {
+                return none<Expoee_t*>();
+            }
         } else {
             return none<Expoee_t*>();
         }
+    }
+
+    maybe<Expoee_t*> Expoees_t::Add(some<Actor_t*> actor)
+    {
+        SKYLIB_ASSERT_SOME(actor);
+
+        maybe<Member_t*> member = Members().Member(actor);
+        if (member) {
+            return Add(*member);
+        } else {
+            member = Members().Add(actor, false);
+            if (member) {
+                return Add(*member);
+            } else {
+                return none<Expoee_t*>();
+            }
+        }
+    }
+
+    Bool_t Expoees_t::Remove(Expoee_t& expoee)
+    {
+        if (expoee.Is_Active()) {
+            expoee.Reset();
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    Bool_t Expoees_t::Remove(some<Actor_t*> actor)
+    {
+        SKYLIB_ASSERT_SOME(actor);
+
+        maybe<Expoee_t*> expoee = Expoee(actor);
+        if (expoee) {
+            return Remove(*expoee);
+        } else {
+            return false;
+        }
+    }
+
+    void Expoees_t::Reset_Options()
+    {
+        State().save.~Save_t();
+        new (&State().save) Save_t();
     }
 
 }}

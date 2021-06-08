@@ -6,6 +6,7 @@
 
 #include <fstream>
 #include <mutex>
+#include <thread>
 
 #include "doticu_skylib/reference_handle.h"
 #include "doticu_skylib/skylib.h"

@@ -153,6 +153,9 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         Party_t&                        Party();
         Hotkeys_t&                      Hotkeys();
+
+    public:
+        void    Test();
     };
 
     extern NPCP_t NPCP;

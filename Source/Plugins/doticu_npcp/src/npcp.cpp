@@ -14,6 +14,10 @@
 #include "party.h"
 #include "strings.h"
 
+//temp
+#include "doticu_skylib/actor_base.h"
+//
+
 namespace doticu_skylib { namespace doticu_npcp {
 
     NPCP_t::Save_t::Save_t() :
@@ -141,6 +145,10 @@ namespace doticu_skylib { namespace doticu_npcp {
         Locker_t locker = Locker();
 
         After_Load_Game(file_name, did_load_successfully);
+
+        //temp
+        Test();
+        //
     }
 
     void NPCP_t::On_Before_Delete_Game(const std::string& file_name)
@@ -514,6 +522,31 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         return *State().hotkeys;
     }
+
+    //temp
+    void NPCP_t::Test()
+    {
+        std::thread(
+            []()->void
+            {
+                std::this_thread::sleep_for(std::chrono::seconds(5));
+                {
+                    NPCP_t::Locker_t locker = NPCP.Locker();
+                    if (NPCP.Is_Valid()) {
+                        _MESSAGE("testing.");
+                        some<Actor_Base_t*> vici = static_cast<Actor_Base_t*>(Game_t::Form(0x0001327A)());
+                        for (size_t idx = 0, end = 1; idx < end; idx += 1) {
+                            maybe<Member_t*> member = NPCP.Party().Members().Add(vici);
+                            if (member) {
+                                member->Name("Tess");
+                            }
+                        }
+                    }
+                }
+            }
+        ).detach();
+    }
+    //
 
     NPCP_t NPCP;
 

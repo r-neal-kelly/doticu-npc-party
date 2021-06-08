@@ -188,6 +188,26 @@ namespace doticu_skylib { namespace doticu_npcp {
         return NPCP.Party();
     }
 
+    Settlers_t& Members_t::Settlers()
+    {
+        return Party().Settlers();
+    }
+
+    Expoees_t& Members_t::Expoees()
+    {
+        return Party().Expoees();
+    }
+
+    Displays_t& Members_t::Displays()
+    {
+        return Party().Displays();
+    }
+
+    Followers_t& Members_t::Followers()
+    {
+        return Party().Followers();
+    }
+
     Members_t::Members_t() :
         state()
     {
@@ -264,6 +284,10 @@ namespace doticu_skylib { namespace doticu_npcp {
             if (member.Is_Active()) {
                 if (!quest->Has_Filled_Alias(idx)) {
                     Alias(idx)->Fill(member.Actor(), none<Virtual::Callback_i*>());
+                }
+            } else {
+                if (quest->Has_Filled_Alias(idx)) {
+                    Alias(idx)->Unfill(none<Virtual::Callback_i*>());
                 }
             }
         }
@@ -396,7 +420,7 @@ namespace doticu_skylib { namespace doticu_npcp {
             value = DEFAULT_LIMIT;
         }
 
-        size_t active_member_count = Active_Member_Count();
+        size_t active_member_count = Active_Count();
         if (value() < active_member_count) {
             value = active_member_count;
         }
@@ -667,74 +691,42 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save().default_vitality = value;
     }
 
-    void Members_t::Reset_Options()
-    {
-        State().save.~Save_t();
-        new (&State().save) Save_t();
-    }
-
-    void Members_t::Refill_Aliases()
-    {
-        class Unfill_Aliases_Callback :
-            public Callback_i<>
-        {
-        public:
-            virtual void operator ()() override
-            {
-                std::thread(
-                    []()->void
-                    {
-                        NPCP_t::Locker_t locker = NPCP.Locker();
-                        if (NPCP.Is_Valid()) {
-                            Members_t& members = NPCP.Party().Members();
-                            for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
-                                Member_t& member = members.Member(idx);
-                                if (member.Is_Active()) {
-                                    members.Alias(idx)->Fill(member.Actor(), none<Virtual::Callback_i*>());
-                                }
-                            }
-                        }
-                    }
-                ).detach();
-            }
-        };
-        Quest()->Unfill_Aliases(new Unfill_Aliases_Callback());
-    }
-
     some<Quest_t*> Members_t::Quest()
     {
         return Consts_t::NPCP::Quest::Members();
     }
 
-    some<Alias_Reference_t*> Members_t::Alias(some<Member_ID_t> id)
+    some<Alias_Reference_t*> Members_t::Alias(some<Member_ID_t> member_id)
     {
-        SKYLIB_ASSERT_SOME(id);
+        SKYLIB_ASSERT_SOME(member_id);
 
-        maybe<Alias_Reference_t*> alias = Quest()->Index_To_Alias_Reference(id());
+        maybe<Alias_Reference_t*> alias = Quest()->Index_To_Alias_Reference(member_id());
         SKYLIB_ASSERT_SOME(alias);
 
         return alias();
     }
 
-    Member_t& Members_t::Member(some<Member_ID_t> id)
+    Member_t& Members_t::Member(some<Member_ID_t> member_id)
     {
-        SKYLIB_ASSERT_SOME(id);
+        SKYLIB_ASSERT_SOME(member_id);
 
-        return State().members[id()];
+        return State().members[member_id()];
     }
 
-    maybe<Member_ID_t> Members_t::Active_Member_ID(some<Actor_t*> actor)
+    maybe<Member_t*> Members_t::Member(some<Actor_t*> actor)
     {
+        SKYLIB_ASSERT_SOME(actor);
+
         for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
             Member_t& member = Member(idx);
             if (member.Is_Active() && member.Actor() == actor) {
-                return idx;
+                return &member;
             }
         }
-        return none<Member_ID_t>();
+        return none<Member_t*>();
     }
 
-    maybe<Member_ID_t> Members_t::Inactive_Member_ID()
+    maybe<Member_ID_t> Members_t::Inactive_ID()
     {
         for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
             Member_t& member = Member(idx);
@@ -745,7 +737,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         return none<Member_ID_t>();
     }
 
-    size_t Members_t::Active_Member_Count()
+    size_t Members_t::Active_Count()
     {
         size_t count = 0;
         for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
@@ -756,23 +748,16 @@ namespace doticu_skylib { namespace doticu_npcp {
         return count;
     }
 
-    size_t Members_t::Inactive_Member_Count()
+    size_t Members_t::Inactive_Count()
     {
-        return MAX_MEMBERS - Active_Member_Count();
-    }
-
-    Bool_t Members_t::Has(some<Member_ID_t> id)
-    {
-        SKYLIB_ASSERT_SOME(id);
-
-        return Member(id).Is_Active();
+        return MAX_MEMBERS - Active_Count();
     }
 
     Bool_t Members_t::Has(some<Actor_t*> actor)
     {
         SKYLIB_ASSERT_SOME(actor);
 
-        return Active_Member_ID(actor) != none<Member_ID_t>();
+        return Member(actor) != none<Member_t*>();
     }
 
     maybe<Member_t*> Members_t::Add(some<Actor_t*> actor, Bool_t do_clone)
@@ -780,7 +765,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         SKYLIB_ASSERT_SOME(actor);
 
         if (do_clone) {
-            maybe<Member_ID_t> id = Inactive_Member_ID();
+            maybe<Member_ID_t> id = Inactive_ID();
             if (id) {
                 maybe<Actor_Base_t*> base = actor->Actor_Base();
                 if (base) {
@@ -793,6 +778,7 @@ namespace doticu_skylib { namespace doticu_npcp {
                             Alias(id())->Fill(member.Actor(), none<Virtual::Callback_i*>());
                             return &member;
                         } else {
+                            Alias(id())->Unfill(none<Virtual::Callback_i*>());
                             return none<Member_t*>();
                         }
                     } else {
@@ -805,7 +791,7 @@ namespace doticu_skylib { namespace doticu_npcp {
                 return none<Member_t*>();
             }
         } else if (!Has(actor)) {
-            maybe<Member_ID_t> id = Inactive_Member_ID();
+            maybe<Member_ID_t> id = Inactive_ID();
             if (id) {
                 Member_t& member = Member(id());
                 member.~Member_t();
@@ -814,6 +800,7 @@ namespace doticu_skylib { namespace doticu_npcp {
                     Alias(id())->Fill(member.Actor(), none<Virtual::Callback_i*>());
                     return &member;
                 } else {
+                    Alias(id())->Unfill(none<Virtual::Callback_i*>());
                     return none<Member_t*>();
                 }
             } else {
@@ -837,26 +824,82 @@ namespace doticu_skylib { namespace doticu_npcp {
     Bool_t Members_t::Remove(Member_t& member)
     {
         if (member.Is_Active()) {
-            member.~Member_t();
+            maybe<Follower_t*> follower = member.Follower();
+            if (follower) {
+                Followers().Remove(*follower);
+            }
+
+            maybe<Display_t*> display = member.Display();
+            if (display) {
+                Displays().Remove(*display);
+            }
+
+            maybe<Expoee_t*> expoee = member.Expoee();
+            if (expoee) {
+                Expoees().Remove(*expoee);
+            }
+
+            maybe<Settler_t*> settler = member.Settler();
+            if (settler) {
+                Settlers().Remove(*settler);
+            }
+
+            member.Alias()->Unfill(none<Virtual::Callback_i*>());
+            member.Reset();
+
+            return true;
         } else {
             return false;
         }
-    }
-
-    Bool_t Members_t::Remove(some<Member_ID_t> id)
-    {
-        return Remove(Member(id));
     }
 
     Bool_t Members_t::Remove(some<Actor_t*> actor)
     {
-        maybe<Member_ID_t> id = Active_Member_ID(actor);
-        if (id) {
-            return Remove(id());
+        SKYLIB_ASSERT_SOME(actor);
+
+        maybe<Member_t*> member = Member(actor);
+        if (member) {
+            return Remove(*member);
         } else {
             return false;
         }
     }
+
+    void Members_t::Refill_Aliases()
+    {
+        class Unfill_Aliases_Callback :
+            public Callback_i<>
+        {
+        public:
+            virtual void operator ()() override
+            {
+                std::thread(
+                    []()->void
+                    {
+                        NPCP_t::Locker_t locker = NPCP.Locker();
+                        if (NPCP.Is_Valid()) {
+                            Members_t& members = NPCP.Party().Members();
+                            for (size_t idx = 0, end = MAX_MEMBERS; idx < end; idx += 1) {
+                                Member_t& member = members.Member(idx);
+                                if (member.Is_Active()) {
+                                    member.Alias()->Fill(member.Actor(), none<Virtual::Callback_i*>());
+                                }
+                            }
+                        }
+                    }
+                ).detach();
+            }
+        };
+        Quest()->Unfill_Aliases(new Unfill_Aliases_Callback());
+    }
+
+    void Members_t::Reset_Options()
+    {
+        State().save.~Save_t();
+        new (&State().save) Save_t();
+    }
+
+    
 
 
 

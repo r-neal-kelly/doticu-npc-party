@@ -14,6 +14,7 @@
 
 namespace doticu_skylib { namespace doticu_npcp {
 
+    class Member_t;
     class Members_t;
     class Party_t;
 
@@ -100,52 +101,39 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save_t&     Save();
 
     public:
-        /*Bool_t                      Do_Auto_Resurrect();
-        void                        Do_Auto_Resurrect(Bool_t value);
-        Bool_t                      Do_Auto_Sojourn();
-        void                        Do_Auto_Sojourn(Bool_t value);
         Bool_t                      Do_Level();
         void                        Do_Level(Bool_t value);
+        Bool_t                      Do_Resurrect_Automatically();
+        void                        Do_Resurrect_Automatically(Bool_t value);
+        Bool_t                      Do_Sojourn_Automatically();
+        void                        Do_Sojourn_Automatically(Bool_t value);
 
         some<Follower_Limit_t>      Limit();
         void                        Limit(maybe<Follower_Limit_t> value);
 
         some<Member_Sort_Type_e>    Sort_Type();
-        void                        Sort_Type(maybe<Member_Sort_Type_e> value);*/
+        void                        Sort_Type(maybe<Member_Sort_Type_e> value);
 
     public:
-        Follower_t&         Follower(some<Follower_ID_t> follower_id);
+        some<Quest_t*>              Quest();
+        some<Alias_Reference_t*>    Alias(some<Follower_ID_t> follower_id);
+        Follower_t&                 Follower(some<Follower_ID_t> follower_id);
+        maybe<Follower_t*>          Follower(Member_t& member);
+        maybe<Follower_t*>          Follower(some<Actor_t*> actor);
 
-        maybe<Follower_t*>  Active_Follower(some<Member_ID_t> member_id);
+        maybe<Follower_ID_t>        Inactive_ID();
+        size_t                      Active_Count();
+        size_t                      Inactive_Count();
 
-        /*Bool_t                  Has_Alias(some<Follower_ID_t> follower_id);
-        Bool_t                  Has_Alias(Alias_ID_t alias_id);
-        Bool_t                  Has_Follower(some<Follower_ID_t> follower_id);
-        Bool_t                  Has_Follower(some<Member_ID_t> member_id);
-        Bool_t                  Has_Follower(some<Actor_t*> actor);
+        Bool_t                      Has(Member_t& member);
+        Bool_t                      Has(some<Actor_t*> actor);
+        maybe<Follower_t*>          Add(Member_t& member);
+        maybe<Follower_t*>          Add(some<Actor_t*> actor);
+        Bool_t                      Remove(Follower_t& follower);
+        Bool_t                      Remove(some<Actor_t*> actor);
 
-        maybe<Follower_ID_t>    Used_Follower_ID(some<Member_ID_t> member_id);
-        maybe<Follower_ID_t>    Used_Follower_ID(some<Actor_t*> actor);
-        maybe<Follower_ID_t>    Unused_Follower_ID();
-
-        maybe<Follower_ID_t>    Add_Follower(some<Member_ID_t> member_id);
-        Bool_t                  Remove_Follower(some<Follower_ID_t> follower_id);
-
-        size_t                  Follower_Count();
-
-    public:
-        some<Alias_Reference_t*>    Alias(some<Follower_ID_t> valid_follower_id);
-        some<Actor_t*>              Actor(some<Follower_ID_t> valid_follower_id);
-        some<Member_ID_t>           Member_ID(some<Follower_ID_t> valid_follower_id);
-
-        Bool_t                      Is_Retreater(some<Follower_ID_t> valid_follower_id);
-        void                        Is_Retreater(some<Follower_ID_t> valid_follower_id, Bool_t value);
-
-        Bool_t                      Is_Saddler(some<Follower_ID_t> valid_follower_id);
-        void                        Is_Saddler(some<Follower_ID_t> valid_follower_id, Bool_t value);
-
-        Bool_t                      Is_Sojourner(some<Follower_ID_t> valid_follower_id);
-        void                        Is_Sojourner(some<Follower_ID_t> valid_follower_id, Bool_t value);*/
+        void                        Refill_Aliases();
+        void                        Reset_Options();
     };
 
 }}
