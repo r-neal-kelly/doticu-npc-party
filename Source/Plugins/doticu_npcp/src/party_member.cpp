@@ -247,6 +247,8 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         if (Is_Active()) {
             Is_Clone(is_clone);
+
+            Name(actor->Any_Name());
             // need to fill in default values
             Party().Update_AI(member_id, Member_Update_AI_e::RESET_AI);
         }
@@ -254,13 +256,30 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     Member_t::~Member_t()
     {
-        if (Is_Active()) {
-            if (State().custom_base) {
-                Save().actor->Actor_Base(Save().actual_base(), false);
-                Actor_Base_t::Destroy(State().custom_base());
-                State().custom_base = none<Actor_Base_t*>();
+        maybe<Member_ID_t>& member_id = Save().member_id;
+        if (member_id) {
+            maybe<Actor_t*>& actor = Save().actor;
+            maybe<Actor_Base_t*>& actual_base = Save().actual_base;
+            maybe<Actor_Base_t*>& custom_base = State().custom_base;
+            String_t& name = Save().name;
+
+            if (actor) {
+                if (actual_base) {
+                    actor->Actor_Base(actual_base(), false);
+                }
+
+                if (name) {
+                    actor->Name(name);
+                } else {
+                    actor->x_list.Destroy_Extra_Text_Display();
+                }
             }
-            Party().Update_AI(Member_ID(), Member_Update_AI_e::RESET_AI);
+
+            if (custom_base) {
+                Actor_Base_t::Destroy(custom_base());
+            }
+
+            Party().Update_AI(member_id(), Member_Update_AI_e::RESET_AI);
         }
         // we also need to delete things like the pack, or make them static refs
         // maybe same thing with suit buffers
