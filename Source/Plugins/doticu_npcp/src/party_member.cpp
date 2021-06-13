@@ -1064,7 +1064,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save().voice_type = voice_type;
     }
 
-    void Member_t::Tokenize(some<Bound_Object_t*> object, Container_Entry_Count_t count)
+    void Member_t::Tokenize(some<Bound_Object_t*> object, sp32 count)
     {
         SKYLIB_ASSERT(Is_Active());
         SKYLIB_ASSERT_SOME(object);
@@ -1073,7 +1073,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         Reference_Container_t container = Actor()->Container();
         some<Reference_Container_Entry_t*> entry = container.Some_Entry(object);
         if (entry->Non_Extra_Lists_Count() != count) {
-            entry->Decrement_Count(container, Container_Entry_Count_t::_MAX_);
+            entry->Decrement_Count(container, sp32::_MAX_);
             entry->Increment_Count(container, count);
             Party().Update_AI(Member_ID(), Member_Update_AI_e::EVALUATE_PACKAGE);
         }
@@ -1087,7 +1087,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         Reference_Container_t container = Actor()->Container();
         maybe<Reference_Container_Entry_t*> entry = container.Maybe_Entry(object);
         if (entry && entry->Non_Extra_Lists_Count() > 0) {
-            entry->Decrement_Count(container, Container_Entry_Count_t::_MAX_);
+            entry->Decrement_Count(container, sp32::_MAX_);
             Party().Update_AI(Member_ID(), Member_Update_AI_e::EVALUATE_PACKAGE);
         }
     }

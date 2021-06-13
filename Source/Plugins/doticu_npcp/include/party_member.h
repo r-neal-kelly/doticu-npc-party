@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "doticu_skylib/container_entry_count.h"
 #include "doticu_skylib/enum_script_type.h"
 
 #include "intrinsic.h"
@@ -258,7 +257,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         void                        Voice_Type(maybe<Voice_Type_t*> voice_type);
 
     public:
-        void    Tokenize(some<Bound_Object_t*> object, Container_Entry_Count_t count = 1);
+        void    Tokenize(some<Bound_Object_t*> object, sp32 count = 1);
         void    Untokenize(some<Bound_Object_t*> object);
 
         void    Add_Suit(some<Member_Suit_Type_e> type);

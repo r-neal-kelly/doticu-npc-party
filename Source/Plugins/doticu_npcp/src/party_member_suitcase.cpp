@@ -293,7 +293,7 @@ namespace doticu_skylib { namespace doticu_npcp {
                 Reference_Container_Entry_t& from_entry = from_container[idx];
                 some<Bound_Object_t*> bound_object = from_entry.Some_Object();
                 if (!from_entry.Is_Leveled_Item() && bound_object_filter(bound_object)) {
-                    Container_Entry_Count_t non_x_list_count = from_entry.Non_Extra_Lists_Count();
+                    sp32 non_x_list_count = from_entry.Non_Extra_Lists_Count();
                     Vector_t<some<Extra_List_t*>> x_lists = from_entry.Some_Extra_Lists();
                     size_t x_list_count = x_lists.size();
                     if (non_x_list_count > 0 || x_list_count > 0) {
@@ -337,7 +337,7 @@ namespace doticu_skylib { namespace doticu_npcp {
                 Reference_Container_Entry_t& from_entry = from_container[idx];
                 some<Bound_Object_t*> bound_object = from_entry.Some_Object();
                 if (!from_entry.Is_Leveled_Item() && bound_object_filter(bound_object)) {
-                    Container_Entry_Count_t non_x_list_count = from_entry.Non_Extra_Lists_Count();
+                    sp32 non_x_list_count = from_entry.Non_Extra_Lists_Count();
                     Vector_t<some<Extra_List_t*>> x_lists = from_entry.Some_Extra_Lists();
                     size_t x_list_count = x_lists.size();
                     if (non_x_list_count > 0 || x_list_count > 0) {
@@ -379,7 +379,7 @@ namespace doticu_skylib { namespace doticu_npcp {
             some<Bound_Object_t*> bound_object = this_entry.Some_Object();
             if (!this_entry.Is_Leveled_Item() && bound_object_filter(bound_object)) {
                 some<Reference_t*> to_reference = to ? to() : Chests_t::Chest(bound_object);
-                Container_Entry_Count_t non_x_list_count = this_entry.Non_Extra_Lists_Count();
+                sp32 non_x_list_count = this_entry.Non_Extra_Lists_Count();
                 if (non_x_list_count > 0) {
                     this_entry.Remove_Count_To(this_container, non_x_list_count, to_reference);
                 }
@@ -410,7 +410,7 @@ namespace doticu_skylib { namespace doticu_npcp {
             some<Bound_Object_t*> bound_object = this_entry.Some_Object();
             if (!this_entry.Is_Leveled_Item() && bound_object_filter(bound_object)) {
                 some<Reference_t*> to_reference = to ? to() : Chests_t::Chest(bound_object);
-                Container_Entry_Count_t non_x_list_count = this_entry.Non_Extra_Lists_Count();
+                sp32 non_x_list_count = this_entry.Non_Extra_Lists_Count();
                 if (non_x_list_count > 0) {
                     this_entry.Remove_Count_To(this_container, non_x_list_count, to_reference);
                 }
@@ -442,7 +442,7 @@ namespace doticu_skylib { namespace doticu_npcp {
             if (!this_entry.Is_Leveled_Item()) {
                 if (filter_out_blank_or_token_or_unplayable_objects(bound_object)) {
                     some<Reference_t*> to_reference = to ? to() : Chests_t::Chest(bound_object);
-                    Container_Entry_Count_t non_x_list_count = this_entry.Non_Extra_Lists_Count();
+                    sp32 non_x_list_count = this_entry.Non_Extra_Lists_Count();
                     if (non_x_list_count > 0) {
                         this_entry.Remove_Count_To(this_container, non_x_list_count, to_reference);
                     }
@@ -458,7 +458,7 @@ namespace doticu_skylib { namespace doticu_npcp {
                         }
                     }
                 } else {
-                    Container_Entry_Count_t non_x_list_count = this_entry.Non_Extra_Lists_Count();
+                    sp32 non_x_list_count = this_entry.Non_Extra_Lists_Count();
                     if (non_x_list_count > 0) {
                         this_entry.Decrement_Count(this_container, non_x_list_count);
                     }
@@ -556,7 +556,7 @@ namespace doticu_skylib { namespace doticu_npcp {
                 }
 
                 if (do_strict && filter_out_token_objects(bound_object)) {
-                    Container_Entry_Count_t non_x_list_count = unto_entry.Non_Extra_Lists_Count();
+                    sp32 non_x_list_count = unto_entry.Non_Extra_Lists_Count();
                     if (non_x_list_count > 0) {
                         if (bound_object->Is_Playable()) {
                             unto_entry.Remove_Count_To(unto_container, non_x_list_count, to_reference());
