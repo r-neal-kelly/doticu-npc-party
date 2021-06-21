@@ -286,6 +286,8 @@ namespace doticu_skylib { namespace doticu_npcp {
                 }
             }
 
+            Vitality(members.Default_Vitality());
+
             // need to fill in default values
 
             Party().Update_AI(member_id, Member_Update_AI_e::RESET_AI);
@@ -1308,6 +1310,8 @@ namespace doticu_skylib { namespace doticu_npcp {
             }
         }
 
+        custom_base->Vitality(Vitality(), false);
+
         return;
 
         // we may want a different smaller branch if the actor is in combat, or a separate func to call
@@ -1391,8 +1395,6 @@ namespace doticu_skylib { namespace doticu_npcp {
         actor->Alpha(Alpha()(), Party().Script(Member_ID()));
 
         custom_base->Relation(Const::Actor_Base::Player(), Relation());
-
-        custom_base->Vitality(Vitality(), false);
 
         if (Is_Enabled()) {
             if (actor->Is_Disabled()) {

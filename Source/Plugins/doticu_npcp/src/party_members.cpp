@@ -781,6 +781,7 @@ namespace doticu_skylib { namespace doticu_npcp {
                 if (base) {
                     maybe<Actor_t*> clone = Actor_t::Create(base(), true, true, true);
                     if (clone) {
+                        Write_Locker_t locker(clone->x_list.lock);
                         Member_t& member = Member(id());
                         member.~Member_t();
                         new (&member) Member_t(id(), clone(), true);
@@ -825,6 +826,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         maybe<Actor_t*> actor = Actor_t::Create(base, true, true, true);
         if (actor) {
+            Write_Locker_t locker(actor->x_list.lock);
             return Add(actor(), false);
         } else {
             return none<Member_t*>();

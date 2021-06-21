@@ -533,12 +533,15 @@ namespace doticu_skylib { namespace doticu_npcp {
                 {
                     NPCP_t::Locker_t locker = NPCP.Locker();
                     if (NPCP.Is_Valid()) {
-                        _MESSAGE("testing.");
+                        Members_t& members = NPCP.Party().Members();
+                        members.Default_Suit_Type(Member_Suit_Type_e::ARCHER);
+                        members.Default_Vitality(Member_Vitality_e::INVULNERABLE);
+
                         some<Actor_Base_t*> vici = static_cast<Actor_Base_t*>(Game_t::Form(0x0001327A)());
-                        for (size_t idx = 0, end = 1; idx < end; idx += 1) {
-                            maybe<Member_t*> member = NPCP.Party().Members().Add(vici);
+                        for (size_t idx = 0, end = 12; idx < end; idx += 1) {
+                            maybe<Member_t*> member = members.Add(vici);
                             if (member) {
-                                member->Name("Tess");
+                                member->Name(std::to_string(idx));
                             }
                         }
                     }
