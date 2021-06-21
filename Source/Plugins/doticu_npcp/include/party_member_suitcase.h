@@ -130,32 +130,19 @@ namespace doticu_skylib { namespace doticu_npcp {
         void    Destroy_Inactive_Outfit_Items(some<Actor_t*> actor);
 
     public:
-        void    Copy_From(some<Reference_t*> from,
-                          some<Member_Suit_Type_e> suit_type,
-                          Filter_i<some<Bound_Object_t*>>& bound_object_filter,
-                          Filter_i<some<Bound_Object_t*>, some<Extra_List_t*>>& extra_list_filter);
-        void    Move_From(some<Reference_t*> from,
-                          some<Member_Suit_Type_e> suit_type,
-                          Filter_i<some<Bound_Object_t*>>& bound_object_filter,
-                          Filter_i<some<Bound_Object_t*>, some<Extra_List_t*>>& extra_list_filter);
-        void    Move_To(maybe<Reference_t*> to,
-                        some<Member_Suit_Type_e> suit_type,
-                        Filter_i<some<Bound_Object_t*>>& bound_object_filter,
-                        Filter_i<some<Bound_Object_t*>, some<Extra_List_t*>>& extra_list_filter);
-        void    Move_All_To(maybe<Reference_t*> to,
-                            Filter_i<some<Bound_Object_t*>>& bound_object_filter,
-                            Filter_i<some<Bound_Object_t*>, some<Extra_List_t*>>& extra_list_filter);
-
-        void    Remove_Suit(maybe<Reference_t*> to, some<Member_Suit_Type_e> suit_type);
+        void    Copy_From(some<Reference_t*> from, some<Member_Suit_Type_e> suit_type);
+        void    Move_From(some<Reference_t*> from, some<Member_Suit_Type_e> suit_type);
+        void    Move_To(maybe<Reference_t*> to, some<Member_Suit_Type_e> suit_type);
+        void    Move_All_To(maybe<Reference_t*> to);
 
     public:
         Suit_Entries_t  Active_Suit_Entries(some<Member_Suit_Type_e> suit_type,
                                             maybe<Outfit_t*> outfit,
-                                            Filter_i<some<Bound_Object_t*>>& bound_object_filter);
+                                            Bool_t do_only_playables);
 
         void            Apply_Unto(some<Actor_t*> unto,
                                    some<Member_Suit_Type_e> suit_type,
-                                   Filter_i<some<Bound_Object_t*>>& suit_bound_object_filter,
+                                   Bool_t do_only_playables,
                                    Bool_t do_strict,
                                    maybe<Reference_t*> strict_destination);
     };

@@ -169,34 +169,36 @@ namespace doticu_skylib { namespace doticu_npcp {
         void    On_Update();
 
     public:
-        State_t&    State();
-        Save_t&     Save();
+        State_t&        State();
+        const State_t&  State() const;
+        Save_t&         Save();
+        const Save_t&   Save() const;
 
     public:
-        Bool_t                          Do_Allow_Menu_For_All_Actors();
+        Bool_t                          Do_Allow_Menu_For_All_Actors() const;
         void                            Do_Allow_Menu_For_All_Actors(Bool_t value);
 
-        Bool_t                          Do_Force_Clone_Uniques();
+        Bool_t                          Do_Force_Clone_Uniques() const;
         void                            Do_Force_Clone_Uniques(Bool_t value);
-        Bool_t                          Do_Force_Clone_Generics();
+        Bool_t                          Do_Force_Clone_Generics() const;
         void                            Do_Force_Clone_Generics(Bool_t value);
-        Bool_t                          Do_Force_Unclone_Uniques();
+        Bool_t                          Do_Force_Unclone_Uniques() const;
         void                            Do_Force_Unclone_Uniques(Bool_t value);
-        Bool_t                          Do_Force_Unclone_Generics();
+        Bool_t                          Do_Force_Unclone_Generics() const;
         void                            Do_Force_Unclone_Generics(Bool_t value);
 
-        Bool_t                          Has_Untouchable_Invulnerables();
+        Bool_t                          Has_Untouchable_Invulnerables() const;
         void                            Has_Untouchable_Invulnerables(Bool_t value);
 
-        Bool_t                          Do_Suits();
+        Bool_t                          Do_Suits() const;
         void                            Do_Suits(Bool_t value);
-        Bool_t                          Do_Suits_Strictly();
+        Bool_t                          Do_Suits_Strictly() const;
         void                            Do_Suits_Strictly(Bool_t value);
-        Bool_t                          Do_Fill_Suits_Automatically();
+        Bool_t                          Do_Fill_Suits_Automatically() const;
         void                            Do_Fill_Suits_Automatically(Bool_t value);
-        Bool_t                          Do_Unfill_Suits_Into_Pack();
+        Bool_t                          Do_Unfill_Suits_Into_Pack() const;
         void                            Do_Unfill_Suits_Into_Pack(Bool_t value);
-        Bool_t                          Do_Change_Suits_Automatically();
+        Bool_t                          Do_Change_Suits_Automatically() const;
         void                            Do_Change_Suits_Automatically(Bool_t value);
 
         some<Member_Limit_t>            Limit();

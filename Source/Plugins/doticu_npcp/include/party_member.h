@@ -139,28 +139,30 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     public:
         State_t&                State();
+        const State_t&          State() const;
         Save_t&                 Save();
+        const Save_t&           Save() const;
 
-        maybe<Settler_ID_t>     Paired_Settler_ID();
+        maybe<Settler_ID_t>     Paired_Settler_ID() const;
         void                    Paired_Settler_ID(maybe<Settler_ID_t> settler_id);
-        maybe<Settler_t*>       Paired_Settler();
+        maybe<Settler_t*>       Paired_Settler() const;
 
-        maybe<Expoee_ID_t>      Paired_Expoee_ID();
+        maybe<Expoee_ID_t>      Paired_Expoee_ID() const;
         void                    Paired_Expoee_ID(maybe<Expoee_ID_t> expoee_id);
-        maybe<Expoee_t*>        Paired_Expoee();
+        maybe<Expoee_t*>        Paired_Expoee() const;
 
-        maybe<Display_ID_t>     Paired_Display_ID();
+        maybe<Display_ID_t>     Paired_Display_ID() const;
         void                    Paired_Display_ID(maybe<Display_ID_t> display_id);
-        maybe<Display_t*>       Paired_Display();
+        maybe<Display_t*>       Paired_Display() const;
 
-        maybe<Follower_ID_t>    Paired_Follower_ID();
+        maybe<Follower_ID_t>    Paired_Follower_ID() const;
         void                    Paired_Follower_ID(maybe<Follower_ID_t> follower_id);
-        maybe<Follower_t*>      Paired_Follower();
+        maybe<Follower_t*>      Paired_Follower() const;
 
         void                    Reset();
 
     public:
-        Bool_t                      Is_Active();
+        Bool_t                      Is_Active() const;
 
         Bool_t                      Is_Settler();
         Bool_t                      Is_Expoee();
@@ -206,7 +208,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         Bool_t                      Has_Suit(some<Member_Suit_Type_e> type);
         void                        Has_Suit(some<Member_Suit_Type_e> type, Bool_t value);
 
-        Bool_t                      Has_Only_Playables(some<Member_Suit_Type_e> type);
+        Bool_t                      Has_Only_Playables(some<Member_Suit_Type_e> type) const;
         void                        Has_Only_Playables(some<Member_Suit_Type_e> type, Bool_t value);
 
         some<Member_ID_t>           Member_ID();

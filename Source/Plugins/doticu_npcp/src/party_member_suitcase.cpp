@@ -212,9 +212,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     void Member_Suitcase_t::Destroy(some<Member_Suitcase_t*> suitcase)
     {
         SKYLIB_ASSERT_SOME(suitcase);
-        suitcase->Move_All_To(none<Reference_t*>(),
-                              filter_out_blank_or_token_or_unplayable_objects,
-                              filter_out_no_extra_lists);
+        suitcase->Move_All_To(none<Reference_t*>());
         suitcase->Mark_For_Delete();
     }
 
@@ -273,10 +271,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         }
     }
 
-    void Member_Suitcase_t::Copy_From(some<Reference_t*> from,
-                                      some<Member_Suit_Type_e> suit_type,
-                                      Filter_i<some<Bound_Object_t*>>& bound_object_filter,
-                                      Filter_i<some<Bound_Object_t*>, some<Extra_List_t*>>& extra_list_filter)
+    void Member_Suitcase_t::Copy_From(some<Reference_t*> from, some<Member_Suit_Type_e> suit_type)
     {
         SKYLIB_ASSERT_SOME(from);
         SKYLIB_ASSERT_SOME(suit_type);
@@ -292,7 +287,7 @@ namespace doticu_skylib { namespace doticu_npcp {
             for (size_t idx = 0, end = from_container.Count(); idx < end; idx += 1) {
                 Reference_Container_Entry_t& from_entry = from_container[idx];
                 some<Bound_Object_t*> bound_object = from_entry.Some_Object();
-                if (!from_entry.Is_Leveled_Item() && bound_object_filter(bound_object)) {
+                if (!from_entry.Is_Leveled_Item() && filter_out_blank_or_token_objects(bound_object)) {
                     sp32 non_x_list_count = from_entry.Non_Extra_Lists_Count();
                     Vector_t<some<Extra_List_t*>> x_lists = from_entry.Some_Extra_Lists();
                     size_t x_list_count = x_lists.size();
@@ -305,7 +300,7 @@ namespace doticu_skylib { namespace doticu_npcp {
                         }
                         for (size_t idx = 0, end = x_list_count; idx < end; idx += 1) {
                             some<Extra_List_t*> x_list = x_lists[idx];
-                            if (!x_list->Should_Be_Destroyed() && extra_list_filter(bound_object, x_list)) {
+                            if (!x_list->Should_Be_Destroyed()) {
                                 some<Extra_List_t*> x_list_copy = Reference_Container_Entry_t::Some_Extra_List_Copy(x_list);
                                 x_list_copy->Owner(suit_faction);
                                 this_entry->Add(this_container, x_list_copy);
@@ -317,10 +312,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         }
     }
 
-    void Member_Suitcase_t::Move_From(some<Reference_t*> from,
-                                      some<Member_Suit_Type_e> suit_type,
-                                      Filter_i<some<Bound_Object_t*>>& bound_object_filter,
-                                      Filter_i<some<Bound_Object_t*>, some<Extra_List_t*>>& extra_list_filter)
+    void Member_Suitcase_t::Move_From(some<Reference_t*> from, some<Member_Suit_Type_e> suit_type)
     {
         SKYLIB_ASSERT_SOME(from);
         SKYLIB_ASSERT_SOME(suit_type);
@@ -336,7 +328,7 @@ namespace doticu_skylib { namespace doticu_npcp {
             for (size_t idx = 0, end = from_container.Count(); idx < end; idx += 1) {
                 Reference_Container_Entry_t& from_entry = from_container[idx];
                 some<Bound_Object_t*> bound_object = from_entry.Some_Object();
-                if (!from_entry.Is_Leveled_Item() && bound_object_filter(bound_object)) {
+                if (!from_entry.Is_Leveled_Item() && filter_out_blank_or_token_objects(bound_object)) {
                     sp32 non_x_list_count = from_entry.Non_Extra_Lists_Count();
                     Vector_t<some<Extra_List_t*>> x_lists = from_entry.Some_Extra_Lists();
                     size_t x_list_count = x_lists.size();
@@ -350,7 +342,7 @@ namespace doticu_skylib { namespace doticu_npcp {
                         }
                         for (size_t idx = 0, end = x_list_count; idx < end; idx += 1) {
                             some<Extra_List_t*> x_list = x_lists[idx];
-                            if (!x_list->Should_Be_Destroyed() && extra_list_filter(bound_object, x_list)) {
+                            if (!x_list->Should_Be_Destroyed() && filter_out_quest_extra_lists(bound_object, x_list)) {
                                 x_list->Owner(suit_faction);
                                 from_entry.Remove_To(from_container, x_list, this_container);
                             }
@@ -361,72 +353,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         }
     }
 
-    void Member_Suitcase_t::Move_To(maybe<Reference_t*> to,
-                                    some<Member_Suit_Type_e> suit_type,
-                                    Filter_i<some<Bound_Object_t*>>& bound_object_filter,
-                                    Filter_i<some<Bound_Object_t*>, some<Extra_List_t*>>& extra_list_filter)
-    {
-        SKYLIB_ASSERT_SOME(suit_type);
-
-        some<Faction_t*> suit_faction = suit_type().As_Faction()();
-        SKYLIB_ASSERT_SOME(suit_faction);
-
-        Reference_Container_t this_container(this);
-        SKYLIB_ASSERT(this_container.Is_Valid());
-
-        for (size_t idx = 0, end = this_container.Count(); idx < end; idx += 1) {
-            Reference_Container_Entry_t& this_entry = this_container[idx];
-            some<Bound_Object_t*> bound_object = this_entry.Some_Object();
-            if (!this_entry.Is_Leveled_Item() && bound_object_filter(bound_object)) {
-                some<Reference_t*> to_reference = to ? to() : Chests_t::Chest(bound_object);
-                sp32 non_x_list_count = this_entry.Non_Extra_Lists_Count();
-                if (non_x_list_count > 0) {
-                    this_entry.Remove_Count_To(this_container, non_x_list_count, to_reference);
-                }
-                Vector_t<some<Extra_List_t*>> x_lists = this_entry.Some_Extra_Lists();
-                for (size_t idx = 0, end = x_lists.size(); idx < end; idx += 1) {
-                    some<Extra_List_t*> x_list = x_lists[idx];
-                    if (!x_list->Should_Be_Destroyed() && extra_list_filter(bound_object, x_list)) {
-                        maybe<Form_Owner_t> owner = x_list->Owner();
-                        if (!owner.Has_Value() || !owner.Value() || owner.Value().As_Faction() == suit_faction) {
-                            x_list->Remove_And_Destroy<Extra_Owner_t>();
-                            this_entry.Remove_To(this_container, x_list, to_reference);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    void Member_Suitcase_t::Move_All_To(maybe<Reference_t*> to,
-                                        Filter_i<some<Bound_Object_t*>>& bound_object_filter,
-                                        Filter_i<some<Bound_Object_t*>, some<Extra_List_t*>>& extra_list_filter)
-    {
-        Reference_Container_t this_container(this);
-        SKYLIB_ASSERT(this_container.Is_Valid());
-
-        for (size_t idx = 0, end = this_container.Count(); idx < end; idx += 1) {
-            Reference_Container_Entry_t& this_entry = this_container[idx];
-            some<Bound_Object_t*> bound_object = this_entry.Some_Object();
-            if (!this_entry.Is_Leveled_Item() && bound_object_filter(bound_object)) {
-                some<Reference_t*> to_reference = to ? to() : Chests_t::Chest(bound_object);
-                sp32 non_x_list_count = this_entry.Non_Extra_Lists_Count();
-                if (non_x_list_count > 0) {
-                    this_entry.Remove_Count_To(this_container, non_x_list_count, to_reference);
-                }
-                Vector_t<some<Extra_List_t*>> x_lists = this_entry.Some_Extra_Lists();
-                for (size_t idx = 0, end = x_lists.size(); idx < end; idx += 1) {
-                    some<Extra_List_t*> x_list = x_lists[idx];
-                    if (!x_list->Should_Be_Destroyed() && extra_list_filter(bound_object, x_list)) {
-                        x_list->Remove_And_Destroy<Extra_Owner_t>();
-                        this_entry.Remove_To(this_container, x_list, to_reference);
-                    }
-                }
-            }
-        }
-    }
-
-    void Member_Suitcase_t::Remove_Suit(maybe<Reference_t*> to, some<Member_Suit_Type_e> suit_type)
+    void Member_Suitcase_t::Move_To(maybe<Reference_t*> to, some<Member_Suit_Type_e> suit_type)
     {
         SKYLIB_ASSERT_SOME(suit_type);
 
@@ -475,9 +402,35 @@ namespace doticu_skylib { namespace doticu_npcp {
         }
     }
 
+    void Member_Suitcase_t::Move_All_To(maybe<Reference_t*> to)
+    {
+        Reference_Container_t this_container(this);
+        SKYLIB_ASSERT(this_container.Is_Valid());
+
+        for (size_t idx = 0, end = this_container.Count(); idx < end; idx += 1) {
+            Reference_Container_Entry_t& this_entry = this_container[idx];
+            some<Bound_Object_t*> bound_object = this_entry.Some_Object();
+            if (!this_entry.Is_Leveled_Item() && filter_out_blank_or_token_or_unplayable_objects(bound_object)) { // this should delete what doesn't pass this filter
+                some<Reference_t*> to_reference = to ? to() : Chests_t::Chest(bound_object);
+                sp32 non_x_list_count = this_entry.Non_Extra_Lists_Count();
+                if (non_x_list_count > 0) {
+                    this_entry.Remove_Count_To(this_container, non_x_list_count, to_reference);
+                }
+                Vector_t<some<Extra_List_t*>> x_lists = this_entry.Some_Extra_Lists();
+                for (size_t idx = 0, end = x_lists.size(); idx < end; idx += 1) {
+                    some<Extra_List_t*> x_list = x_lists[idx];
+                    if (!x_list->Should_Be_Destroyed()) {
+                        x_list->Remove_And_Destroy<Extra_Owner_t>();
+                        this_entry.Remove_To(this_container, x_list, to_reference);
+                    }
+                }
+            }
+        }
+    }
+
     Member_Suitcase_t::Suit_Entries_t Member_Suitcase_t::Active_Suit_Entries(some<Member_Suit_Type_e> suit_type,
                                                                              maybe<Outfit_t*> outfit,
-                                                                             Filter_i<some<Bound_Object_t*>>& bound_object_filter)
+                                                                             Bool_t do_only_playables)
     {
         static some<Faction_t*> active_suit_faction = Consts_t::NPCP::Faction::Suit_Active();
 
@@ -488,6 +441,10 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         Reference_Container_t this_container(this);
         SKYLIB_ASSERT(this_container.Is_Valid());
+
+        Filter_i<some<Bound_Object_t*>>& bound_object_filter = do_only_playables ?
+            static_cast<Filter_i<some<Bound_Object_t*>>&>(filter_out_blank_or_token_or_unplayable_objects) :
+            static_cast<Filter_i<some<Bound_Object_t*>>&>(filter_out_blank_or_token_objects);
 
         Suit_Entries_t entries;
 
@@ -529,7 +486,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Member_Suitcase_t::Apply_Unto(some<Actor_t*> unto,
                                        some<Member_Suit_Type_e> suit_type,
-                                       Filter_i<some<Bound_Object_t*>>& suit_bound_object_filter,
+                                       Bool_t do_only_playables,
                                        Bool_t do_strict,
                                        maybe<Reference_t*> strict_destination)
     {
@@ -539,7 +496,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         some<Faction_t*> active_suit_faction = Member_Suit_Type_e::To_Faction(Member_Suit_Type_e::ACTIVE)();
         SKYLIB_ASSERT_SOME(active_suit_faction);
 
-        Suit_Entries_t suit_entries = Active_Suit_Entries(suit_type, unto->Base_Default_Outfit(), suit_bound_object_filter);
+        Suit_Entries_t suit_entries = Active_Suit_Entries(suit_type, unto->Base_Default_Outfit(), do_only_playables);
 
         Reference_Container_t unto_container(unto);
         SKYLIB_ASSERT(unto_container.Is_Valid());

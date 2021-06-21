@@ -298,12 +298,22 @@ namespace doticu_skylib { namespace doticu_npcp {
         return this->state;
     }
 
+    const Members_t::State_t& Members_t::State() const
+    {
+        return this->state;
+    }
+
     Members_t::Save_t& Members_t::Save()
     {
         return State().save;
     }
 
-    Bool_t Members_t::Do_Allow_Menu_For_All_Actors()
+    const Members_t::Save_t& Members_t::Save() const
+    {
+        return State().save;
+    }
+
+    Bool_t Members_t::Do_Allow_Menu_For_All_Actors() const
     {
         return Save().do_allow_menu_for_all_actors;
     }
@@ -313,7 +323,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save().do_allow_menu_for_all_actors = value;
     }
 
-    Bool_t Members_t::Do_Force_Clone_Uniques()
+    Bool_t Members_t::Do_Force_Clone_Uniques() const
     {
         return Save().do_force_clone_uniques;
     }
@@ -323,7 +333,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save().do_force_clone_uniques = value;
     }
 
-    Bool_t Members_t::Do_Force_Clone_Generics()
+    Bool_t Members_t::Do_Force_Clone_Generics() const
     {
         return Save().do_force_clone_generics;
     }
@@ -333,7 +343,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save().do_force_clone_generics = value;
     }
 
-    Bool_t Members_t::Do_Force_Unclone_Uniques()
+    Bool_t Members_t::Do_Force_Unclone_Uniques() const
     {
         return Save().do_force_unclone_uniques;
     }
@@ -343,7 +353,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save().do_force_unclone_uniques = value;
     }
 
-    Bool_t Members_t::Do_Force_Unclone_Generics()
+    Bool_t Members_t::Do_Force_Unclone_Generics() const
     {
         return Save().do_force_unclone_generics;
     }
@@ -353,7 +363,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save().do_force_unclone_generics = value;
     }
 
-    Bool_t Members_t::Has_Untouchable_Invulnerables()
+    Bool_t Members_t::Has_Untouchable_Invulnerables() const
     {
         return Save().has_untouchable_invulnerables;
     }
@@ -363,7 +373,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save().has_untouchable_invulnerables = value;
     }
 
-    Bool_t Members_t::Do_Suits()
+    Bool_t Members_t::Do_Suits() const
     {
         return Save().do_suits;
     }
@@ -373,7 +383,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save().do_suits = value;
     }
 
-    Bool_t Members_t::Do_Suits_Strictly()
+    Bool_t Members_t::Do_Suits_Strictly() const
     {
         return Save().do_suits_strictly;
     }
@@ -383,7 +393,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save().do_suits_strictly = value;
     }
 
-    Bool_t Members_t::Do_Fill_Suits_Automatically()
+    Bool_t Members_t::Do_Fill_Suits_Automatically() const
     {
         return Save().do_fill_suits_automatically;
     }
@@ -393,7 +403,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save().do_fill_suits_automatically = value;
     }
 
-    Bool_t Members_t::Do_Unfill_Suits_Into_Pack()
+    Bool_t Members_t::Do_Unfill_Suits_Into_Pack() const
     {
         return Save().do_unfill_suits_into_pack;
     }
@@ -403,7 +413,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save().do_unfill_suits_into_pack = value;
     }
 
-    Bool_t Members_t::Do_Change_Suits_Automatically()
+    Bool_t Members_t::Do_Change_Suits_Automatically() const
     {
         return Save().do_change_suits_automatically;
     }
@@ -928,29 +938,13 @@ namespace doticu_skylib { namespace doticu_npcp {
         self->save_state.suitcases[member_id] = none<Member_Suitcase_t*>();
         self->save_state.voice_types[member_id] = none<Voice_Type_t*>(); // we need to have 2 defaults: male/female
 
-        // so the member_suit_fill_type determines whether we use a ref or a base to fill the member suit.
-        // with a clone, that ref should be the original actor. when we clone, we could just copy all the items onto clone first
-
         self->save_state.alphas[member_id] = Members_t::DEFAULT_ALPHA;
         self->save_state.ratings[member_id] = Members_t::DEFAULT_RATING;
         self->save_state.relations[member_id] = self->save_state.default_relation;
         self->save_state.suit_types[member_id] = self->save_state.default_suit_type;
         self->save_state.vitalities[member_id] = self->save_state.default_vitality;
 
-        // we can just do member suit by base for clone.
-        Member_t member(member_id);
-        maybe<Member_Suit_Type_e> default_suit_type = self->Default_Suit_Type();
-        if (self->Do_Fill_Suits_Automatically()) {
-            member.Add_Suit(Member_Suit_Type_e::MEMBER, actor, false);
-            if (default_suit_type && default_suit_type != Member_Suit_Type_e::MEMBER) {
-                member.Add_Suit(default_suit_type(), default_suit_type().As_Template());
-            }
-        } else {
-            member.Add_Suit(Member_Suit_Type_e::MEMBER);
-            if (default_suit_type && default_suit_type != Member_Suit_Type_e::MEMBER) {
-                member.Add_Suit(default_suit_type());
-            }
-        }
+        
     }*/
 
 }}
