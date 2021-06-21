@@ -328,6 +328,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         Member_t& member = Members().Member(id);
         if (member.Is_Active()) {
+            Write_Locker_t locker(member.Actor()->x_list.lock);
             member.Evaluate_In_Parallel(parallel_lock);
             maybe<Display_t*> display = member.Display();
             if (display) {
