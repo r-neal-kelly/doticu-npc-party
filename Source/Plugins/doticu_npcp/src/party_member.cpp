@@ -235,7 +235,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
     }
 
-    Member_t::Member_t(some<Member_ID_t> member_id, some<Actor_t*> actor, Bool_t is_clone) :
+    Member_t::Member_t(some<Member_ID_t> member_id, some<Actor_t*> actor, Bool_t is_clone) : // we need original actor or a separate ctor
         state()
     {
         SKYLIB_ASSERT_SOME(member_id);
@@ -276,9 +276,9 @@ namespace doticu_skylib { namespace doticu_npcp {
                 Suit_Type(default_suit_type);
                 
                 if (default_suit_type) {
-                    Suitcase()->Apply_Unto(
-                        actor,
+                    Suitcase()->Apply_Suit(
                         default_suit_type(),
+                        actor,
                         Has_Only_Playables(default_suit_type()),
                         members.Do_Suits_Strictly(),
                         members.Do_Unfill_Suits_Into_Pack() ? Pack()() : none<Reference_t*>()()
@@ -301,7 +301,20 @@ namespace doticu_skylib { namespace doticu_npcp {
             maybe<Actor_t*>& actor = Save().actor;
             maybe<Actor_Base_t*>& actual_base = Save().actual_base;
             maybe<Actor_Base_t*>& custom_base = State().custom_base;
+
+            maybe<Reference_t*> pack = Save().pack;
+            maybe<Member_Suitcase_t*> suitcase = Save().suitcase;
+
             String_t& name = Save().name;
+
+            // we should have a Member_Pack_t with Destroy static func to send all to chests
+            if (pack) {
+
+            }
+
+            if (suitcase) {
+                Member_Suitcase_t::Destroy(suitcase());
+            }
 
             if (actor) {
                 if (actual_base) {
@@ -321,8 +334,6 @@ namespace doticu_skylib { namespace doticu_npcp {
 
             Party().Update_AI(member_id(), Member_Update_AI_e::RESET_AI);
         }
-        // we also need to delete things like the pack, or make them static refs
-        // maybe same thing with suit buffers
     }
 
     void Member_t::On_After_New_Game()
@@ -1164,7 +1175,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         Member_Suit_Buffer_t buffer;
         outfit->Add_Items_To(buffer.reference);
-        Suitcase()->Move_From(buffer.reference, type);
+        Suitcase()->Move_Suit_From(type, buffer.reference);
     }
 
     void Member_t::Add_Suit(some<Member_Suit_Type_e> type, some<Container_t*> container)
@@ -1179,7 +1190,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         Member_Suit_Buffer_t buffer;
         container->Container_Add_Items_To(buffer.reference);
-        Suitcase()->Move_From(buffer.reference, type);
+        Suitcase()->Move_Suit_From(type, buffer.reference);
     }
 
     void Member_t::Add_Suit(some<Member_Suit_Type_e> type, some<Actor_Base_t*> actor_base)
@@ -1198,7 +1209,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         if (outfit) {
             outfit->Add_Items_To(buffer.reference);
         }
-        Suitcase()->Move_From(buffer.reference, type);
+        Suitcase()->Move_Suit_From(type, buffer.reference);
     }
 
     void Member_t::Add_Suit(some<Member_Suit_Type_e> type, some<Reference_t*> reference, Bool_t do_copy)
@@ -1212,9 +1223,9 @@ namespace doticu_skylib { namespace doticu_npcp {
         Has_Suit(type, true);
 
         if (do_copy) {
-            Suitcase()->Copy_From(reference, type);
+            Suitcase()->Copy_Suit_From(type, reference);
         } else {
-            Suitcase()->Move_From(reference, type);
+            Suitcase()->Move_Suit_From(type, reference);
         }
     }
 
@@ -1259,7 +1270,7 @@ namespace doticu_skylib { namespace doticu_npcp {
             buffer.reference->Add_Item(suit_template.ammo(), none<Extra_List_t*>(), 100, none<Reference_t*>());
         }
 
-        Suitcase()->Move_From(buffer.reference, type);
+        Suitcase()->Move_Suit_From(type, buffer.reference);
     }
 
     void Member_t::Remove_Suit(some<Member_Suit_Type_e> type)
@@ -1269,7 +1280,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         SKYLIB_ASSERT(type != Member_Suit_Type_e::ACTIVE);
 
         if (Has_Suit(type)) {
-            Suitcase()->Move_To(Members().Do_Unfill_Suits_Into_Pack() ? Pack()() : none<Reference_t*>()(), type);
+            Suitcase()->Move_Suit_To(type, Members().Do_Unfill_Suits_Into_Pack() ? Pack()() : none<Reference_t*>()());
             Has_Suit(type, false);
         }
     }
@@ -1291,6 +1302,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         custom_base->Name(Name(), false);
         actor->x_list.Destroy_Extra_Text_Display();
 
+        // we maybe should do this only outside of combat to prevent equipment repeatedly being requipped.
         maybe<Member_Suit_Type_e> suit_type = Suit_Type();
         if (suit_type) {
             some<Member_Suitcase_t*> suitcase = Suitcase();
@@ -1300,9 +1312,9 @@ namespace doticu_skylib { namespace doticu_npcp {
                 suit_type = none<Member_Suit_Type_e>();
             }
             if (suit_type) {
-                suitcase->Apply_Unto(
-                    actor,
+                suitcase->Apply_Suit(
                     suit_type(),
+                    actor,
                     Has_Only_Playables(suit_type()),
                     members.Do_Suits_Strictly(),
                     members.Do_Unfill_Suits_Into_Pack() ? Pack()() : none<Reference_t*>()()

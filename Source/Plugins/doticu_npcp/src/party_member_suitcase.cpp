@@ -212,7 +212,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     void Member_Suitcase_t::Destroy(some<Member_Suitcase_t*> suitcase)
     {
         SKYLIB_ASSERT_SOME(suitcase);
-        suitcase->Move_All_To(none<Reference_t*>());
+        suitcase->Move_All_Suits_To(none<Reference_t*>());
         suitcase->Mark_For_Delete();
     }
 
@@ -271,12 +271,12 @@ namespace doticu_skylib { namespace doticu_npcp {
         }
     }
 
-    void Member_Suitcase_t::Copy_From(some<Reference_t*> from, some<Member_Suit_Type_e> suit_type)
+    void Member_Suitcase_t::Copy_Suit_From(some<Member_Suit_Type_e> suit, some<Reference_t*> from)
     {
+        SKYLIB_ASSERT_SOME(suit);
         SKYLIB_ASSERT_SOME(from);
-        SKYLIB_ASSERT_SOME(suit_type);
 
-        some<Faction_t*> suit_faction = suit_type().As_Faction()();
+        some<Faction_t*> suit_faction = suit().As_Faction()();
         SKYLIB_ASSERT_SOME(suit_faction);
 
         Reference_Container_t this_container(this);
@@ -312,12 +312,12 @@ namespace doticu_skylib { namespace doticu_npcp {
         }
     }
 
-    void Member_Suitcase_t::Move_From(some<Reference_t*> from, some<Member_Suit_Type_e> suit_type)
+    void Member_Suitcase_t::Move_Suit_From(some<Member_Suit_Type_e> suit, some<Reference_t*> from)
     {
         SKYLIB_ASSERT_SOME(from);
-        SKYLIB_ASSERT_SOME(suit_type);
+        SKYLIB_ASSERT_SOME(suit);
 
-        some<Faction_t*> suit_faction = suit_type().As_Faction()();
+        some<Faction_t*> suit_faction = suit().As_Faction()();
         SKYLIB_ASSERT_SOME(suit_faction);
 
         Reference_Container_t this_container(this);
@@ -353,11 +353,11 @@ namespace doticu_skylib { namespace doticu_npcp {
         }
     }
 
-    void Member_Suitcase_t::Move_To(maybe<Reference_t*> to, some<Member_Suit_Type_e> suit_type)
+    void Member_Suitcase_t::Move_Suit_To(some<Member_Suit_Type_e> suit, maybe<Reference_t*> to)
     {
-        SKYLIB_ASSERT_SOME(suit_type);
+        SKYLIB_ASSERT_SOME(suit);
 
-        some<Faction_t*> suit_faction = suit_type().As_Faction()();
+        some<Faction_t*> suit_faction = suit().As_Faction()();
         SKYLIB_ASSERT_SOME(suit_faction);
 
         Reference_Container_t this_container(this);
@@ -402,7 +402,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         }
     }
 
-    void Member_Suitcase_t::Move_All_To(maybe<Reference_t*> to)
+    void Member_Suitcase_t::Move_All_Suits_To(maybe<Reference_t*> to)
     {
         Reference_Container_t this_container(this);
         SKYLIB_ASSERT(this_container.Is_Valid());
@@ -430,7 +430,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     Member_Suitcase_t::Suit_Entries_t Member_Suitcase_t::Active_Suit_Entries(some<Member_Suit_Type_e> suit_type,
                                                                              maybe<Outfit_t*> outfit,
-                                                                             Bool_t do_only_playables)
+                                                                             Bool_t only_playables)
     {
         static some<Faction_t*> active_suit_faction = Consts_t::NPCP::Faction::Suit_Active();
 
@@ -442,7 +442,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         Reference_Container_t this_container(this);
         SKYLIB_ASSERT(this_container.Is_Valid());
 
-        Filter_i<some<Bound_Object_t*>>& bound_object_filter = do_only_playables ?
+        Filter_i<some<Bound_Object_t*>>& bound_object_filter = only_playables ?
             static_cast<Filter_i<some<Bound_Object_t*>>&>(filter_out_blank_or_token_or_unplayable_objects) :
             static_cast<Filter_i<some<Bound_Object_t*>>&>(filter_out_blank_or_token_objects);
 
@@ -484,85 +484,85 @@ namespace doticu_skylib { namespace doticu_npcp {
         return std::move(entries);
     }
 
-    void Member_Suitcase_t::Apply_Unto(some<Actor_t*> unto,
-                                       some<Member_Suit_Type_e> suit_type,
-                                       Bool_t do_only_playables,
-                                       Bool_t do_strict,
-                                       maybe<Reference_t*> strict_destination)
+    void Member_Suitcase_t::Apply_Suit(some<Member_Suit_Type_e> suit,
+                                       some<Actor_t*> actor,
+                                       Bool_t only_playables,
+                                       Bool_t remove_non_suit_items,
+                                       maybe<Reference_t*> non_suit_destination)
     {
-        SKYLIB_ASSERT_SOME(unto);
-        SKYLIB_ASSERT_SOME(suit_type);
+        SKYLIB_ASSERT_SOME(suit);
+        SKYLIB_ASSERT_SOME(actor);
 
         some<Faction_t*> active_suit_faction = Member_Suit_Type_e::To_Faction(Member_Suit_Type_e::ACTIVE)();
         SKYLIB_ASSERT_SOME(active_suit_faction);
 
-        Suit_Entries_t suit_entries = Active_Suit_Entries(suit_type, unto->Base_Default_Outfit(), do_only_playables);
+        Suit_Entries_t active_suit_entries = Active_Suit_Entries(suit, actor->Base_Default_Outfit(), only_playables);
 
-        Reference_Container_t unto_container(unto);
-        SKYLIB_ASSERT(unto_container.Is_Valid());
-        Bool_t has_changed_container = false;
+        Reference_Container_t actor_container(actor);
+        SKYLIB_ASSERT(actor_container.Is_Valid());
+        Bool_t has_changed_actor_container = false;
 
-        for (size_t idx = 0, end = unto_container.Count(); idx < end; idx += 1) {
-            Reference_Container_Entry_t& unto_entry = unto_container[idx];
-            some<Bound_Object_t*> bound_object = unto_entry.Some_Object();
-            if (!unto_entry.Is_Leveled_Item()) {
-                maybe<Reference_t*> to_reference = none<Reference_t*>();
-                if (do_strict) {
-                    to_reference = strict_destination ? strict_destination() : Chests_t::Chest(bound_object)();
-                    SKYLIB_ASSERT_SOME(to_reference);
+        for (size_t idx = 0, end = actor_container.Count(); idx < end; idx += 1) {
+            Reference_Container_Entry_t& actor_entry = actor_container[idx];
+            some<Bound_Object_t*> bound_object = actor_entry.Some_Object();
+            if (!actor_entry.Is_Leveled_Item()) {
+                maybe<Reference_t*> remove_destination = none<Reference_t*>();
+                if (remove_non_suit_items) {
+                    remove_destination = non_suit_destination ? non_suit_destination() : Chests_t::Chest(bound_object)();
+                    SKYLIB_ASSERT_SOME(remove_destination);
                 }
 
-                if (do_strict && filter_out_token_objects(bound_object)) {
-                    sp32 non_x_list_count = unto_entry.Non_Extra_Lists_Count();
+                if (remove_non_suit_items && filter_out_token_objects(bound_object)) {
+                    sp32 non_x_list_count = actor_entry.Non_Extra_Lists_Count();
                     if (non_x_list_count > 0) {
                         if (bound_object->Is_Playable()) {
-                            unto_entry.Remove_Count_To(unto_container, non_x_list_count, to_reference());
+                            actor_entry.Remove_Count_To(actor_container, non_x_list_count, remove_destination());
                         } else {
-                            unto_entry.Decrement_Count(unto_container, non_x_list_count);
+                            actor_entry.Decrement_Count(actor_container, non_x_list_count);
                         }
-                        has_changed_container = true;
+                        has_changed_actor_container = true;
                     }
                 }
 
-                maybe<Suit_Entry_t*> suit_entry = suit_entries.Maybe_Entry(bound_object);
-                Vector_t<some<Extra_List_t*>> unto_x_lists = unto_entry.Some_Extra_Lists();
-                for (size_t idx = 0, end = unto_x_lists.size(); idx < end; idx += 1) {
-                    some<Extra_List_t*> unto_x_list = unto_x_lists[idx];
-                    if (!unto_x_list->Should_Be_Destroyed() && filter_out_quest_extra_lists(bound_object, unto_x_list)) {
-                        maybe<Form_Owner_t> unto_owner = unto_x_list->Owner();
-                        if (unto_owner.Has_Value() && unto_owner().As_Faction() == active_suit_faction) {
-                            if (!suit_entry || !suit_entry->Destroy_Copy_If_Equals(unto_x_list)) {
-                                unto_entry.Remove_And_Destroy(unto_container, unto_x_list);
-                                has_changed_container = true;
+                maybe<Suit_Entry_t*> suit_entry = active_suit_entries.Maybe_Entry(bound_object);
+                Vector_t<some<Extra_List_t*>> actor_x_lists = actor_entry.Some_Extra_Lists();
+                for (size_t idx = 0, end = actor_x_lists.size(); idx < end; idx += 1) {
+                    some<Extra_List_t*> actor_x_list = actor_x_lists[idx];
+                    if (!actor_x_list->Should_Be_Destroyed() && filter_out_quest_extra_lists(bound_object, actor_x_list)) {
+                        maybe<Form_Owner_t> actor_owner = actor_x_list->Owner();
+                        if (actor_owner.Has_Value() && actor_owner().As_Faction() == active_suit_faction) {
+                            if (!suit_entry || !suit_entry->Destroy_Copy_If_Equals(actor_x_list)) {
+                                actor_entry.Remove_And_Destroy(actor_container, actor_x_list);
+                                has_changed_actor_container = true;
                             }
-                        } else if (do_strict) {
-                            if (unto_entry.Is_Playable_Item()) {
-                                unto_entry.Remove_To(unto_container, unto_x_list, to_reference());
+                        } else if (remove_non_suit_items) {
+                            if (actor_entry.Is_Playable_Item()) {
+                                actor_entry.Remove_To(actor_container, actor_x_list, remove_destination());
                             } else {
-                                unto_entry.Remove_And_Destroy(unto_container, unto_x_list);
+                                actor_entry.Remove_And_Destroy(actor_container, actor_x_list);
                             }
-                            has_changed_container = true;
-                        } else if (unto_x_list->Is_Outfit_Item()) {
-                            unto_entry.Remove_And_Destroy(unto_container, unto_x_list);
-                            has_changed_container = true;
+                            has_changed_actor_container = true;
+                        } else if (actor_x_list->Is_Outfit_Item()) {
+                            actor_entry.Remove_And_Destroy(actor_container, actor_x_list);
+                            has_changed_actor_container = true;
                         }
                     }
                 }
             }
         }
 
-        for (size_t idx = 0, end = suit_entries.Count(); idx < end; idx += 1) {
-            Suit_Entry_t& suit_entry = suit_entries.entries[idx];
+        for (size_t idx = 0, end = active_suit_entries.Count(); idx < end; idx += 1) {
+            Suit_Entry_t& suit_entry = active_suit_entries.entries[idx];
             if (suit_entry.Has_Copies()) {
-                some<Reference_Container_Entry_t*> unto_entry = unto_container.Some_Entry(suit_entry.bound_object);
+                some<Reference_Container_Entry_t*> actor_entry = actor_container.Some_Entry(suit_entry.bound_object);
                 for (size_t idx = 0, end = suit_entry.copies.size(); idx < end; idx += 1) {
-                    unto_entry->Add(unto_container, suit_entry.copies[idx]);
+                    actor_entry->Add(actor_container, suit_entry.copies[idx]);
                 }
-                has_changed_container = true;
+                has_changed_actor_container = true;
             }
         }
 
-        unto_container.Has_Changed(has_changed_container);
+        actor_container.Has_Changed(has_changed_actor_container);
     }
 
 }}

@@ -130,21 +130,21 @@ namespace doticu_skylib { namespace doticu_npcp {
         void    Destroy_Inactive_Outfit_Items(some<Actor_t*> actor);
 
     public:
-        void    Copy_From(some<Reference_t*> from, some<Member_Suit_Type_e> suit_type);
-        void    Move_From(some<Reference_t*> from, some<Member_Suit_Type_e> suit_type);
-        void    Move_To(maybe<Reference_t*> to, some<Member_Suit_Type_e> suit_type);
-        void    Move_All_To(maybe<Reference_t*> to);
+        void    Copy_Suit_From(some<Member_Suit_Type_e> suit, some<Reference_t*> from);
+        void    Move_Suit_From(some<Member_Suit_Type_e> suit, some<Reference_t*> from);
+        void    Move_Suit_To(some<Member_Suit_Type_e> suit, maybe<Reference_t*> to);
+        void    Move_All_Suits_To(maybe<Reference_t*> to);
 
     public:
         Suit_Entries_t  Active_Suit_Entries(some<Member_Suit_Type_e> suit_type,
                                             maybe<Outfit_t*> outfit,
-                                            Bool_t do_only_playables);
+                                            Bool_t only_playables);
 
-        void            Apply_Unto(some<Actor_t*> unto,
-                                   some<Member_Suit_Type_e> suit_type,
-                                   Bool_t do_only_playables,
-                                   Bool_t do_strict,
-                                   maybe<Reference_t*> strict_destination);
+        void            Apply_Suit(some<Member_Suit_Type_e> suit,
+                                   some<Actor_t*> actor,
+                                   Bool_t only_playables,
+                                   Bool_t remove_non_suit_items,
+                                   maybe<Reference_t*> non_suit_destination);
     };
 
 }}
