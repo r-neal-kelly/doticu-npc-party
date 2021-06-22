@@ -17,6 +17,7 @@
 #include "party_member_flags_has_suit.h"
 #include "party_member_flags_only_playables.h"
 #include "party_member_id.h"
+#include "party_member_pack.h"
 #include "party_member_rating.h"
 #include "party_member_relation.h"
 #include "party_member_suit_type.h"
@@ -57,7 +58,7 @@ namespace doticu_skylib { namespace doticu_npcp {
             maybe<Actor_Base_t*>            actual_base;
             maybe<Actor_t*>                 actor;
 
-            Member_Flags_e                  flags;
+            Member_Flags_e                  flags; // make separate
             Member_Flags_Has_Suit_e         flags_has_suit;
             Member_Flags_Only_Playables_e   flags_only_playables;
 
@@ -70,7 +71,7 @@ namespace doticu_skylib { namespace doticu_npcp {
             maybe<Combat_Style_t*>          combat_style;
             maybe<Spell_t*>                 ghost_ability;
             maybe<Outfit_t*>                outfit;
-            maybe<Reference_t*>             pack;
+            maybe<Member_Pack_t*>           pack;
             maybe<Member_Suitcase_t*>       suitcase;
             maybe<Voice_Type_t*>            voice_type;
 

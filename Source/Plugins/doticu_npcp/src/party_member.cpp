@@ -163,6 +163,10 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     Member_t::State_t::~State_t()
     {
+        if (this->custom_base) {
+            Actor_Base_t::Destroy(this->custom_base());
+        }
+        this->custom_base = none<Actor_Base_t*>();
     }
 
     String_t Member_t::Class_Name()
@@ -296,44 +300,6 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     Member_t::~Member_t()
     {
-        maybe<Member_ID_t>& member_id = Save().member_id;
-        if (member_id) {
-            maybe<Actor_t*>& actor = Save().actor;
-            maybe<Actor_Base_t*>& actual_base = Save().actual_base;
-            maybe<Actor_Base_t*>& custom_base = State().custom_base;
-
-            maybe<Reference_t*> pack = Save().pack;
-            maybe<Member_Suitcase_t*> suitcase = Save().suitcase;
-
-            String_t& name = Save().name;
-
-            // we should have a Member_Pack_t with Destroy static func to send all to chests
-            if (pack) {
-
-            }
-
-            if (suitcase) {
-                Member_Suitcase_t::Destroy(suitcase());
-            }
-
-            if (actor) {
-                if (actual_base) {
-                    actor->Actor_Base(actual_base(), false);
-                }
-
-                if (name) {
-                    actor->Name(name);
-                } else {
-                    actor->x_list.Destroy_Extra_Text_Display();
-                }
-            }
-
-            if (custom_base) {
-                Actor_Base_t::Destroy(custom_base());
-            }
-
-            Party().Update_AI(member_id(), Member_Update_AI_e::RESET_AI);
-        }
     }
 
     void Member_t::On_After_New_Game()
@@ -476,6 +442,61 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Member_t::Reset()
     {
+        const Members_t& members = Members();
+
+        maybe<Member_ID_t>& member_id = Save().member_id;
+
+        maybe<Actor_Base_t*>& actual_base = Save().actual_base;
+        maybe<Actor_Base_t*>& custom_base = State().custom_base;
+        maybe<Actor_t*>& actor = Save().actor;
+
+        Bool_t is_clone = Save().flags.Is_Flagged(Member_Flags_e::IS_CLONE);
+
+        maybe<Member_Pack_t*>& pack = Save().pack;
+        maybe<Member_Suitcase_t*>& suitcase = Save().suitcase;
+
+        String_t& name = Save().name;
+
+        if (suitcase) {
+            Member_Suitcase_t::Destroy(suitcase());
+        }
+        suitcase = none<Member_Suitcase_t*>();
+
+        if (pack) {
+            Member_Pack_t::Destroy(pack());
+        }
+        pack = none<Member_Pack_t*>();
+
+        if (actor) {
+            if (actual_base) {
+                actor->Actor_Base(actual_base(), false);
+            }
+
+            if (is_clone &&
+                (actor->Is_Unique() && members.Do_Force_Unclone_Uniques() ||
+                 actor->Is_Generic() && members.Do_Force_Unclone_Generics())) {
+                actor->Mark_For_Delete();
+            } else {
+                if (name) {
+                    actor->Name(name);
+                } else {
+                    actor->x_list.Destroy_Extra_Text_Display();
+                }
+            }
+        }
+        actor = none<Actor_t*>();
+
+        if (custom_base) {
+            Actor_Base_t::Destroy(custom_base());
+        }
+        custom_base = none<Actor_Base_t*>();
+
+        actual_base = none<Actor_Base_t*>();
+
+        if (member_id) {
+            Party().Update_AI(member_id(), Member_Update_AI_e::RESET_AI);
+        }
+
         this->~Member_t();
         new (this) Member_t();
     }
@@ -948,12 +969,9 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT(Is_Active());
 
-        maybe<Reference_t*>& pack = Save().pack;
+        maybe<Member_Pack_t*>& pack = Save().pack;
         if (!pack) {
-            pack = Container_t::Create_Reference(
-                Consts_t::NPCP::Container::Empty(),
-                Consts_t::NPCP::Reference::Storage_Marker()
-            )();
+            pack = Member_Pack_t::Create();
             SKYLIB_ASSERT_SOME(pack);
         }
 

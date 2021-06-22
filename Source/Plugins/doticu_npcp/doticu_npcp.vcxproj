@@ -119,6 +119,7 @@
     <ClCompile Include="src\party_expoees.cpp" />
     <ClCompile Include="src\party_follower.cpp" />
     <ClCompile Include="src\party_followers.cpp" />
+    <ClCompile Include="src\party_member_pack.cpp" />
     <ClCompile Include="src\party_member_suitcase.cpp" />
     <ClCompile Include="src\npcp.cpp" />
     <ClCompile Include="src\party.cpp" />
@@ -151,6 +152,7 @@
     <ClInclude Include="include\party_follower_id.h" />
     <ClInclude Include="include\party_follower_limit.h" />
     <ClInclude Include="include\party_follower_sort_type.h" />
+    <ClInclude Include="include\party_member_pack.h" />
     <ClInclude Include="include\party_member_suit_buffer.h" />
     <ClInclude Include="include\party_settler.h" />
     <ClInclude Include="include\party_settlers.h" />

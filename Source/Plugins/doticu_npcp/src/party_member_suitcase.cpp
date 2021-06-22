@@ -212,6 +212,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     void Member_Suitcase_t::Destroy(some<Member_Suitcase_t*> suitcase)
     {
         SKYLIB_ASSERT_SOME(suitcase);
+
         suitcase->Move_All_Suits_To(none<Reference_t*>());
         suitcase->Mark_For_Delete();
     }
@@ -410,18 +411,30 @@ namespace doticu_skylib { namespace doticu_npcp {
         for (size_t idx = 0, end = this_container.Count(); idx < end; idx += 1) {
             Reference_Container_Entry_t& this_entry = this_container[idx];
             some<Bound_Object_t*> bound_object = this_entry.Some_Object();
-            if (!this_entry.Is_Leveled_Item() && filter_out_blank_or_token_or_unplayable_objects(bound_object)) { // this should delete what doesn't pass this filter
-                some<Reference_t*> to_reference = to ? to() : Chests_t::Chest(bound_object);
-                sp32 non_x_list_count = this_entry.Non_Extra_Lists_Count();
-                if (non_x_list_count > 0) {
-                    this_entry.Remove_Count_To(this_container, non_x_list_count, to_reference);
-                }
-                Vector_t<some<Extra_List_t*>> x_lists = this_entry.Some_Extra_Lists();
-                for (size_t idx = 0, end = x_lists.size(); idx < end; idx += 1) {
-                    some<Extra_List_t*> x_list = x_lists[idx];
-                    if (!x_list->Should_Be_Destroyed()) {
-                        x_list->Remove_And_Destroy<Extra_Owner_t>();
-                        this_entry.Remove_To(this_container, x_list, to_reference);
+            if (!this_entry.Is_Leveled_Item()) {
+                if (filter_out_blank_or_token_or_unplayable_objects(bound_object)) {
+                    some<Reference_t*> to_reference = to ? to() : Chests_t::Chest(bound_object);
+                    sp32 non_x_list_count = this_entry.Non_Extra_Lists_Count();
+                    if (non_x_list_count > 0) {
+                        this_entry.Remove_Count_To(this_container, non_x_list_count, to_reference);
+                    }
+                    Vector_t<some<Extra_List_t*>> x_lists = this_entry.Some_Extra_Lists();
+                    for (size_t idx = 0, end = x_lists.size(); idx < end; idx += 1) {
+                        some<Extra_List_t*> x_list = x_lists[idx];
+                        if (!x_list->Should_Be_Destroyed()) {
+                            x_list->Remove_And_Destroy<Extra_Owner_t>();
+                            this_entry.Remove_To(this_container, x_list, to_reference);
+                        }
+                    }
+                } else {
+                    sp32 non_x_list_count = this_entry.Non_Extra_Lists_Count();
+                    if (non_x_list_count > 0) {
+                        this_entry.Decrement_Count(this_container, non_x_list_count);
+                    }
+                    Vector_t<some<Extra_List_t*>> x_lists = this_entry.Some_Extra_Lists();
+                    for (size_t idx = 0, end = x_lists.size(); idx < end; idx += 1) {
+                        some<Extra_List_t*> x_list = x_lists[idx];
+                        this_entry.Remove_And_Destroy(this_container, x_list);
                     }
                 }
             }

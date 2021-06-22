@@ -93,6 +93,9 @@
     <ClCompile Include="src\party_follower.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\party_member_pack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\consts.h">
@@ -291,6 +294,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\party_settler_marker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_member_pack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
